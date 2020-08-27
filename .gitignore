@@ -1,0 +1,8 @@
+.vscode
+
+#external libraries
+LibCombatLogHealth-1.0/
+LibStub/
+
+#unused
+unused/

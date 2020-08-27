@@ -1,0 +1,23 @@
+## Interface: 80300
+## Title: Cell
+## Version: r1
+## Author: 篠崎
+## SavedVariables: CellDB
+
+Locales\enUS.lua
+Locales\zhCN.lua
+
+Libs\LoadLibs.xml
+
+Core.lua
+Utils.lua
+
+RaidFrame\MainFrame.lua
+RaidFrame\UnitButton.lua
+RaidFrame\UnitButton.xml
+RaidFrame\Groups\SoloFrame.lua
+RaidFrame\Groups\PartyFrame.lua
+RaidFrame\Groups\RaidFrame.lua
+
+OptionFrames\LoadOptionFrames.xml
+Modules\LoadModules.xml
