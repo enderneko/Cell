@@ -2,7 +2,7 @@ local _, Cell = ...
 local L = Cell.L
 local F = Cell.funcs
 
-local optionsFrame = Cell:CreateFrame("CellOptionsFrame", Cell.frames.mainFrame, 397, 300)
+local optionsFrame = Cell:CreateFrame("CellOptionsFrame", Cell.frames.mainFrame, 397, 397)
 Cell.frames.optionsFrame = optionsFrame
 optionsFrame:SetPoint("BOTTOMLEFT", Cell.frames.mainFrame, "TOPLEFT", 0, 16)
 optionsFrame:SetFrameStrata("MEDIUM")

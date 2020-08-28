@@ -98,8 +98,7 @@ local function MainFrame_UpdateLayout(layout, which)
     cellMainFrame:SetClampRectInsets(0, 0, 15, 0)
 
     if not which or which == "font" then
-        F:UpdateFontSize()
-
+        F:UpdateFont()
         F:IterateAllUnitButtons(function(b)
             b:GetScript("OnSizeChanged")(b)
         end)

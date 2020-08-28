@@ -328,7 +328,7 @@ end
 -----------------------------------------
 -- check button
 -----------------------------------------
-function addon:CreateCheckButton(parent, label, color, onClick, ...)
+function addon:CreateCheckButton(parent, label, onClick, ...)
 	-- InterfaceOptionsCheckButtonTemplate --> FrameXML\InterfaceOptionsPanels.xml line 19
 	-- OptionsBaseCheckButtonTemplate -->  FrameXML\OptionsPanelTemplates.xml line 10
 	
@@ -341,21 +341,26 @@ function addon:CreateCheckButton(parent, label, color, onClick, ...)
 	
 	cb.label = cb:CreateFontString(nil, "ARTWORK", font_name)
 	cb.label:SetText(label)
-	cb.label:SetPoint("LEFT", cb, "RIGHT", 2, 0)
-	if color then
-		cb.label:SetTextColor(color.r, color.g, color.b)
-	end
+	cb.label:SetPoint("LEFT", cb, "RIGHT", 5, 0)
+	-- cb.label:SetTextColor(classColor.t[1], classColor.t[2], classColor.t[3])
 	
-	cb:SetSize(16, 16)
+	cb:SetSize(14, 14)
 	cb:SetHitRectInsets(0, -cb.label:GetStringWidth(), 0, 0)
+
+	cb:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8x8", edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = 1})
+	cb:SetBackdropColor(.1, .1, .1, .9)
+	cb:SetBackdropBorderColor(0, 0, 0, 1)
+
+	local checkedTexture = cb:CreateTexture(nil, "ARTWORK")
+	checkedTexture:SetColorTexture(classColor.t[1], classColor.t[2], classColor.t[3], .7)
+	checkedTexture:SetPoint("CENTER")
+	checkedTexture:SetSize(12, 12)
 	
-	cb:SetNormalTexture([[Interface\AddOns\Cell\Media\CheckBox\CheckBox-Normal-16x16]])
-	-- cb:SetPushedTexture()
-	cb:SetHighlightTexture([[Interface\AddOns\Cell\Media\CheckBox\CheckBox-Highlight-16x16]], "ADD")
-	cb:SetCheckedTexture([[Interface\AddOns\Cell\Media\CheckBox\CheckBox-Checked-16x16]])
-	cb:SetDisabledCheckedTexture([[Interface\AddOns\Cell\Media\CheckBox\CheckBox-DisabledChecked-16x16]])
+	cb:SetCheckedTexture(checkedTexture)
+	-- cb:SetHighlightTexture([[Interface\AddOns\Cell\Media\CheckBox\CheckBox-Highlight-16x16]], "ADD")
+	-- cb:SetDisabledCheckedTexture([[Interface\AddOns\Cell\Media\CheckBox\CheckBox-DisabledChecked-16x16]])
 	
-	SetTooltip(cb, "ANCHOR_TOPLEFT", 0, 0, ...)
+	SetTooltip(cb, "ANCHOR_TOPLEFT", 0, 1, ...)
 
 	return cb
 end

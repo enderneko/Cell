@@ -32,14 +32,14 @@ end
 local font_name = CreateFont("CELL_FONT_NAME")
 font_name:SetFont(GameFontNormal:GetFont(), 13)
 font_name:SetTextColor(1, 1, 1, 1)
-font_name:SetShadowColor(0, 0, 0)
+font_name:SetShadowColor(0, 0, 0, 1)
 font_name:SetShadowOffset(1, -1)
 font_name:SetJustifyH("CENTER")
 
 local font_status = CreateFont("CELL_FONT_STATUS")
 font_status:SetFont(GameFontNormal:GetFont(), 11)
 font_status:SetTextColor(1, 1, 1, 1)
-font_status:SetShadowColor(0, 0, 0)
+font_status:SetShadowColor(0, 0, 0, 1)
 font_status:SetShadowOffset(1, -1)
 font_status:SetJustifyH("CENTER")
 
@@ -108,10 +108,25 @@ function F:UpdateLayout()
     -- end
 end
 
-function F:UpdateFontSize()
+function F:UpdateFont()
     local layout = Cell.vars.currentLayoutTable
-    font_name:SetFont(font_name:GetFont(), layout["font"]["name"])
-    font_status:SetFont(font_status:GetFont(), layout["font"]["status"])
+    local flags
+
+    if CellDB["outline"] == "Shadow" then
+        font_name:SetShadowColor(0, 0, 0, 1)
+        font_status:SetShadowColor(0, 0, 0, 1)
+    else
+        font_name:SetShadowColor(0, 0, 0, 0)
+        font_status:SetShadowColor(0, 0, 0, 0)
+        if CellDB["outline"] == "Outline" then
+            flags = "OUTLINE"
+        else -- Monochrome Outline
+            flags = "OUTLINE, MONOCHROME"
+        end
+    end
+
+    font_name:SetFont(font_name:GetFont(), layout["font"]["name"], flags)
+    font_status:SetFont(font_status:GetFont(), layout["font"]["status"], flags)
 end
 
 -------------------------------------------------
@@ -147,8 +162,12 @@ function eventFrame:ADDON_LOADED(arg1)
 
         if type(CellDB["texture"]) ~= "string" then CellDB["texture"] = "Cell ".._G.DEFAULT end
         if type(CellDB["scale"]) ~= "number" then CellDB["scale"] = 1 end
+        if type(CellDB["outline"]) ~= "string" then CellDB["outline"] = "Shadow" end
+        if type(CellDB["hideBlizzard"]) ~= "boolean" then CellDB["hideBlizzard"] = "true" end
+        -- if type(CellDB["clamped"]) ~= "boolean" then CellDB["clamped"] = "false" end
         
         Cell.loaded = true
+        if CellDB["hideBlizzard"] then F:HideBlizzard() end
         F:UpdateLayout()
         Cell.vars.playerClass = select(2, UnitClass("player"))
     end
