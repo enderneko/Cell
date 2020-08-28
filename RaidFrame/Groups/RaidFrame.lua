@@ -68,6 +68,7 @@ end
 
 for i = 1, 8 do
     local header = CreateGroupHeader(i)
+    header:Show()
 	-- local helper = CreateFrame("Frame", nil, header, "SecureHandlerShowHideTemplate")
 	-- header.monitorFrame = helper
 	-- helper:Hide()
@@ -109,7 +110,14 @@ local function RaidFrame_UpdateLayout(layout, which)
             header:SetAttribute("point", "TOP")
             header:SetAttribute("yOffset", -layout["spacing"])
         end
-        header:Show()
+
+        if not which or which == "groupFilter" then
+            if layout["groupFilter"][i] then
+                header:Show()
+            else
+                header:Hide()
+            end
+        end
     end
 end
 Cell:RegisterEvent("UpdateLayout", "RaidFrame_UpdateLayout", RaidFrame_UpdateLayout)

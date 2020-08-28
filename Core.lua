@@ -156,6 +156,7 @@ function eventFrame:ADDON_LOADED(arg1)
                         ["center"] = 20,
                         ["debuff"] = 16,
                     },
+                    ["groupFilter"] = {true, true, true, true, true, true, true, true},
                 },
             }
         end

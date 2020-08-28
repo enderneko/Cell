@@ -268,9 +268,9 @@ Cell:CreateMask(appearanceTab, nil, {1, -75, -1, 1})
 appearanceTab.mask:Hide()
 
 -- apply
-local applyBtn = Cell:CreateButton(appearanceTab, L["Apply"], "class-hover", {50, 20})
-applyBtn:SetPoint("LEFT", layoutDropdown, "RIGHT", 20, 0)
-applyBtn:SetScript("OnClick", function()
+local enableBtn = Cell:CreateButton(appearanceTab, L["Enable"], "class-hover", {50, 20})
+enableBtn:SetPoint("LEFT", layoutDropdown, "RIGHT", 20, 0)
+enableBtn:SetScript("OnClick", function()
     CellDB["layout"] = selectedLayout
     F:UpdateLayout()
     UpdateButtonStates()
@@ -279,7 +279,7 @@ end)
 
 -- rename
 local renameBtn = Cell:CreateButton(appearanceTab, L["Rename"], "class-hover", {50, 20})
-renameBtn:SetPoint("LEFT", applyBtn, "RIGHT", -1, 0)
+renameBtn:SetPoint("LEFT", enableBtn, "RIGHT", -1, 0)
 renameBtn:SetScript("OnClick", function()
     local popup = Cell:CreateConfirmPopup(appearanceTab, 200, L["Rename layout"].." "..selectedLayout, function(self)
         local name = strtrim(self.editBox:GetText())
@@ -365,7 +365,7 @@ end)
 
 UpdateButtonStates = function()
     if selectedLayout == Cell.vars.currentLayout then
-        applyBtn:SetEnabled(false)
+        enableBtn:SetEnabled(false)
         deleteBtn:SetEnabled(false)
         
         if selectedLayout == "default" then
@@ -375,7 +375,7 @@ UpdateButtonStates = function()
         end
 
     else -- selectedLayout ~= Cell.vars.currentLayout
-        applyBtn:SetEnabled(true)
+        enableBtn:SetEnabled(true)
         
         if selectedLayout == "default" then
             deleteBtn:SetEnabled(false)
@@ -393,14 +393,38 @@ end
 local groupFilterText = Cell:CreateSeparator(L["Group Filter"], appearanceTab, 387)
 groupFilterText:SetPoint("TOPLEFT", 5, -200)
 
+local function UpdateButtonBorderColor(flag, b)
+    local borderColor 
+    if flag then
+        borderColor = {b.hoverColor[1], b.hoverColor[2], b.hoverColor[3], 1}
+    else
+        borderColor = {0, 0, 0, 1}
+    end
+    b:SetBackdropBorderColor(unpack(borderColor))
+end
+
 local groupButtons = {}
 for i = 1, 8 do
     groupButtons[i] = Cell:CreateButton(appearanceTab, i, "class-hover", {20, 20})
+    groupButtons[i]:SetScript("OnClick", function()
+        selectedLayoutTable["groupFilter"][i] = not selectedLayoutTable["groupFilter"][i]
+        UpdateButtonBorderColor(selectedLayoutTable["groupFilter"][i], groupButtons[i])
+
+        if selectedLayout == Cell.vars.currentLayout then
+            Cell:FireEvent("UpdateLayout", selectedLayout, "groupFilter")
+        end
+    end)
     
     if i == 1 then
         groupButtons[i]:SetPoint("TOPLEFT", groupFilterText, "BOTTOMLEFT", 5, -12)
     else
         groupButtons[i]:SetPoint("LEFT", groupButtons[i-1], "RIGHT", 3, 0)
+    end
+end
+
+local function UpdateGroupFilter()
+    for i = 1, 8 do
+        UpdateButtonBorderColor(selectedLayoutTable["groupFilter"][i], groupButtons[i])
     end
 end
 
@@ -495,6 +519,7 @@ LoadLayoutDB = function(layout)
     centerIconSlider:SetValue(selectedLayoutTable["icon"]["center"])
     debuffIconSlider:SetValue(selectedLayoutTable["icon"]["debuff"])
 
+    UpdateGroupFilter()
     UpdatePreviewButton()
 end
 
