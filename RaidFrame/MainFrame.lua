@@ -61,34 +61,34 @@ RegisterDragForMainFrame(tools)
 --         layouts:Hide()
 --     end
 -- end
--- Cell:RegisterEvent("GroupTypeChanged", "MainFrame_GroupTypeChanged", MainFrame_GroupTypeChanged)
+-- Cell:RegisterCallback("GroupTypeChanged", "MainFrame_GroupTypeChanged", MainFrame_GroupTypeChanged)
 
 -------------------------------------------------
 -- load & update
 -------------------------------------------------
-local function MainFrame_UpdateClampRectInsets()
-	if not Cell.loaded then return end
-    -- F:Debug("UpdateClampRectInsets")
+-- local function MainFrame_UpdateClampRectInsets()
+-- 	if not Cell.loaded then return end
+--     -- F:Debug("UpdateClampRectInsets")
 
-    local row, col = 1, 1
-    if Cell.vars.groupType == "raid" then
+--     local row, col = 1, 1
+--     if Cell.vars.groupType == "raid" then
 
-    elseif Cell.vars.groupType == "party" then
+--     elseif Cell.vars.groupType == "party" then
 
-    else
-        row, col = F:GetSoloFrameMatrix()
-    end
+--     else
+--         row, col = F:GetSoloFrameMatrix()
+--     end
 
-    local layout = Cell.vars.currentLayoutTable
-    local width, height = unpack(layout["size"])
-    local right, bottom
-    right = width * col + layout["spacing"] * (col - 1) - width
-    bottom = height - (height * row + layout["spacing"] * (row - 1))
+--     local layout = Cell.vars.currentLayoutTable
+--     local width, height = unpack(layout["size"])
+--     local right, bottom
+--     right = width * col + layout["spacing"] * (col - 1) - width
+--     bottom = height - (height * row + layout["spacing"] * (row - 1))
 
-    cellMainFrame:SetClampRectInsets(0, right, 20, bottom)
-end
+--     cellMainFrame:SetClampRectInsets(0, right, 20, bottom)
+-- end
 --! no need to SetClampRectInsets for now, but keep it here
--- Cell:RegisterEvent("UpdateClampRectInsets", "MainFrame_UpdateClampRectInsets", MainFrame_UpdateClampRectInsets)
+-- Cell:RegisterCallback("UpdateClampRectInsets", "MainFrame_UpdateClampRectInsets", MainFrame_UpdateClampRectInsets)
 
 local function MainFrame_UpdateLayout(layout, which)
     F:Debug("UpdateLayout layout:" .. (layout or "nil") .. " which:" .. (which or "nil"))
@@ -116,4 +116,4 @@ local function MainFrame_UpdateLayout(layout, which)
         end)
     end
 end
-Cell:RegisterEvent("UpdateLayout", "MainFrame_UpdateLayout", MainFrame_UpdateLayout)
+Cell:RegisterCallback("UpdateLayout", "MainFrame_UpdateLayout", MainFrame_UpdateLayout)

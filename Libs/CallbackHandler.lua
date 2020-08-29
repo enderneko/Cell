@@ -2,22 +2,22 @@ local addonName, addon = ...
 
 local callbacks = {}
 
-function addon:RegisterEvent(eventName, onEventFuncName, onEventFunc)
+function addon:RegisterCallback(eventName, onEventFuncName, onEventFunc)
     if not callbacks[eventName] then callbacks[eventName] = {} end
     callbacks[eventName][onEventFuncName] = onEventFunc
 end
 
-function addon:UnregisterEvent(eventName, onEventFuncName)
+function addon:UnregisterCallback(eventName, onEventFuncName)
     if not callbacks[eventName] then return end
     callbacks[eventName][onEventFuncName] = nil
 end
 
-function addon:UnregisterAllEvents(eventName)
+function addon:UnregisterAllCallbacks(eventName)
     if not callbacks[eventName] then return end
     callbacks[eventName] = nil
 end
 
-function addon:FireEvent(eventName, ...)
+function addon:Fire(eventName, ...)
     if not callbacks[eventName] then return end
 
     for onEventFuncName, onEventFunc in pairs(callbacks[eventName]) do

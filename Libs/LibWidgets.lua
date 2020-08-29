@@ -510,6 +510,15 @@ function addon:CreateDropdownMenu(parent, width)
 		end
 	end
 
+	function menu:SetSelectedItem(itemNum)
+		local b = menu.items[itemNum]
+		menu.text:SetText(b.text)
+		menu.selected = text
+
+		hightlightTexture:ClearAllPoints()
+		hightlightTexture:SetAllPoints(b)
+	end
+
 	function menu:ClearItems()
 		for _, b in pairs(menu.items) do
 			b:SetParent(nil)

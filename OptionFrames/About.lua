@@ -55,4 +55,4 @@ local function ShowTab(tab)
         aboutTab:Hide()
     end
 end
-Cell:RegisterEvent("ShowOptionsTab", "AboutTab_ShowTab", ShowTab)
+Cell:RegisterCallback("ShowOptionsTab", "AboutTab_ShowTab", ShowTab)

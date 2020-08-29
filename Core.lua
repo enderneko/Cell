@@ -74,19 +74,19 @@ local GetNumGroupMembers = GetNumGroupMembers
 function F:UpdateLayout()
     Cell.vars.currentLayout = CellDB["layout"]
     Cell.vars.currentLayoutTable = CellDB["layouts"][CellDB["layout"]]
-    Cell:FireEvent("UpdateLayout", Cell.vars.currentLayout)
+    Cell:Fire("UpdateLayout", Cell.vars.currentLayout)
     
     -- local numGroupMembers = GetNumGroupMembers()
     -- if Cell.vars.numGroupMembers ~= numGroupMembers then
     --     Cell.vars.numGroupMembers = numGroupMembers
-    --     -- Cell:FireEvent("GroupSizeChanged", numGroupMembers)
+    --     -- Cell:Fire("GroupSizeChanged", numGroupMembers)
         
     --     if numGroupMembers <= 5 then
     --         if Cell.vars.currentLayout ~= 5 then
     --             F:Debug("UpdateLayout: 5")
     --             Cell.vars.currentLayout = 5
     --             Cell.vars.currentLayoutTable = CellDB["layouts"][5]
-    --             Cell:FireEvent("UpdateLayout", 5)
+    --             Cell:Fire("UpdateLayout", 5)
     --         end
             
     --     elseif CellDB["layouts"][30]["enabled"] and numGroupMembers <= 30 then
@@ -94,7 +94,7 @@ function F:UpdateLayout()
     --             F:Debug("UpdateLayout: 30")
     --             Cell.vars.currentLayout = 30
     --             Cell.vars.currentLayoutTable = CellDB["layouts"][30]
-    --             Cell:FireEvent("UpdateLayout", 30)
+    --             Cell:Fire("UpdateLayout", 30)
     --         end
             
     --     elseif CellDB["layouts"][40]["enabled"] and numGroupMembers <= 40 then
@@ -102,7 +102,7 @@ function F:UpdateLayout()
     --             F:Debug("UpdateLayout: 40")
     --             Cell.vars.currentLayout = 40
     --             Cell.vars.currentLayoutTable = CellDB["layouts"][40]
-    --             Cell:FireEvent("UpdateLayout", 40)
+    --             Cell:Fire("UpdateLayout", 40)
     --         end
     --     end
     -- end
@@ -136,12 +136,15 @@ local eventFrame = CreateFrame("Frame")
 eventFrame:RegisterEvent("ADDON_LOADED")
 eventFrame:RegisterEvent("GROUP_ROSTER_UPDATE")
 eventFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
+eventFrame:RegisterEvent("PLAYER_LOGIN")
+eventFrame:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
 
 function eventFrame:ADDON_LOADED(arg1)
     if arg1 == addonName then
 		eventFrame:UnregisterEvent("ADDON_LOADED")
         if type(CellDB) ~= "table" then CellDB = {} end
 
+        -- appearance -----------------------------------------------------------------------------
         if type(CellDB["layout"]) ~= "string" then CellDB["layout"] = "default" end
         if type(CellDB["layouts"]) ~= "table" then
             CellDB["layouts"] = {
@@ -160,7 +163,7 @@ function eventFrame:ADDON_LOADED(arg1)
                 },
             }
         end
-
+        
         if type(CellDB["texture"]) ~= "string" then CellDB["texture"] = "Cell ".._G.DEFAULT end
         if type(CellDB["scale"]) ~= "number" then CellDB["scale"] = 1 end
         if type(CellDB["outline"]) ~= "string" then CellDB["outline"] = "Shadow" end
@@ -170,7 +173,26 @@ function eventFrame:ADDON_LOADED(arg1)
         Cell.loaded = true
         if CellDB["hideBlizzard"] then F:HideBlizzard() end
         F:UpdateLayout()
-        Cell.vars.playerClass = select(2, UnitClass("player"))
+        
+        -- click-casting --------------------------------------------------------------------------
+        if type(CellDB["clickCastings"]) ~= "table" then CellDB["clickCastings"] = {} end
+        Cell.vars.playerClass, Cell.vars.playerClassID = select(2, UnitClass("player"))
+
+        if type(CellDB["clickCastings"][Cell.vars.playerClass]) ~= "table" then
+            CellDB["clickCastings"][Cell.vars.playerClass] = {
+                ["useCommon"] = true,
+                ["common"] = {
+                    {"type1", "target"},
+                    {"type2", "togglemenu"},
+                },
+            }
+            -- https://wow.gamepedia.com/SpecializationID
+            for sepcIndex = 1, GetNumSpecializationsForClassID(Cell.vars.playerClassID) do
+                local specID = GetSpecializationInfoForClassID(Cell.vars.playerClassID, sepcIndex)
+                CellDB["clickCastings"][Cell.vars.playerClass][specID] = {} 
+            end
+        end
+        Cell.vars.clickCastingTable = CellDB["clickCastings"][Cell.vars.playerClass]
     end
 end
 
@@ -178,17 +200,17 @@ function eventFrame:GROUP_ROSTER_UPDATE()
     if IsInRaid() then
         if Cell.vars.groupType ~= "raid" then
             Cell.vars.groupType = "raid"
-            Cell:FireEvent("GroupTypeChanged", "raid")
+            Cell:Fire("GroupTypeChanged", "raid")
         end
     elseif IsInGroup() then
         if Cell.vars.groupType ~= "party" then
             Cell.vars.groupType = "party"
-            Cell:FireEvent("GroupTypeChanged", "party")
+            Cell:Fire("GroupTypeChanged", "party")
         end
     else
         if Cell.vars.groupType ~= "solo" then
             Cell.vars.groupType = "solo"
-            Cell:FireEvent("GroupTypeChanged", "solo")
+            Cell:Fire("GroupTypeChanged", "solo")
         end
     end
 
@@ -200,7 +222,17 @@ function eventFrame:PLAYER_ENTERING_WORLD()
     F:Debug("PLAYER_ENTERING_WORLD")
     eventFrame:GROUP_ROSTER_UPDATE()
     -- update texture
-    Cell:FireEvent("UpdateLayout", nil, "texture")
+    Cell:Fire("UpdateLayout", nil, "texture")
+end
+
+function eventFrame:PLAYER_LOGIN()
+    -- update vars
+    Cell.vars.playerSpecID, Cell.vars.playerSpecName, _, Cell.vars.playerSpecIcon = GetSpecializationInfo(GetSpecialization())
+    Cell:Fire("UpdateClickCastings")
+end
+
+function eventFrame:ACTIVE_TALENT_GROUP_CHANGED()
+    Cell:Fire("UpdateClickCastings")
 end
 
 eventFrame:SetScript("OnEvent", function(self, event, ...)

@@ -106,7 +106,7 @@ local function CheckTextures()
                 ["texture"] = textures[name],
                 ["onClick"] = function()
                     CellDB["texture"] = name
-                    Cell:FireEvent("UpdateLayout", nil, "texture")
+                    Cell:Fire("UpdateLayout", nil, "texture")
                     UpdatePreviewButton("texture", textures[name])
                 end,
             })
@@ -120,7 +120,7 @@ local function CheckTextures()
             ["texture"] = defaultTexture,
             ["onClick"] = function()
                 CellDB["texture"] = defaultTextureName
-                Cell:FireEvent("UpdateLayout", nil, "texture")
+                Cell:Fire("UpdateLayout", nil, "texture")
                 UpdatePreviewButton("texture", textures[name])
             end,
         })
@@ -163,7 +163,7 @@ do
             ["text"] = scales[value],
             ["onClick"] = function()
                 CellDB["scale"] = value
-                Cell:FireEvent("UpdateLayout", nil, "scale")
+                Cell:Fire("UpdateLayout", nil, "scale")
             end,
         })
     end
@@ -184,7 +184,7 @@ fontOutlineDropdown:SetItems({
         ["text"] = L["Shadow"],
         ["onClick"] = function()
             CellDB["outline"] = "Shadow"
-            Cell:FireEvent("UpdateLayout", nil, "font")
+            Cell:Fire("UpdateLayout", nil, "font")
             UpdatePreviewButton("font")
         end,
     },
@@ -192,7 +192,7 @@ fontOutlineDropdown:SetItems({
         ["text"] = L["Outline"],
         ["onClick"] = function()
             CellDB["outline"] = "Outline"
-            Cell:FireEvent("UpdateLayout", nil, "font")
+            Cell:Fire("UpdateLayout", nil, "font")
             UpdatePreviewButton("font")
         end,
     },
@@ -200,7 +200,7 @@ fontOutlineDropdown:SetItems({
         ["text"] = L["Monochrome Outline"],
         ["onClick"] = function()
             CellDB["outline"] = "Monochrome Outline"
-            Cell:FireEvent("UpdateLayout", nil, "font")
+            Cell:Fire("UpdateLayout", nil, "font")
             UpdatePreviewButton("font")
         end,
     },
@@ -212,9 +212,9 @@ fontOutlineDropdown:SetItems({
 local blizzardText = Cell:CreateSeparator(L["Blizzard Raid Frame"], appearanceTab, 188)
 blizzardText:SetPoint("TOPLEFT", 203, -70)
 
-local hideBlizzardCB = Cell:CreateCheckButton(appearanceTab, L["Hide Blizzard Raid Frame"], function(checked, self)
+local hideBlizzardCB = Cell:CreateCheckButton(appearanceTab, L["Hide Blizzard Raid / Party"], function(checked, self)
     CellDB["hideBlizzard"] = checked
-end, L["Hide Blizzard Raid Frame"], L["Require reload of the UI"])
+end, L["Hide Blizzard Frames"], L["Require reload of the UI"])
 hideBlizzardCB:SetPoint("TOPLEFT", blizzardText, "BOTTOMLEFT", 5, -15)
 
 -------------------------------------------------
@@ -411,7 +411,7 @@ for i = 1, 8 do
         UpdateButtonBorderColor(selectedLayoutTable["groupFilter"][i], groupButtons[i])
 
         if selectedLayout == Cell.vars.currentLayout then
-            Cell:FireEvent("UpdateLayout", selectedLayout, "groupFilter")
+            Cell:Fire("UpdateLayout", selectedLayout, "groupFilter")
         end
     end)
     
@@ -438,7 +438,7 @@ buttonSizeText:SetPoint("TOPLEFT", 5, -265)
 local widthSlider = Cell:CreateSlider(L["Width"], appearanceTab, 40, 100, 100, 2, function(value)
     selectedLayoutTable["size"][1] = value
     if selectedLayout == Cell.vars.currentLayout then
-        Cell:FireEvent("UpdateLayout", selectedLayout, "size")
+        Cell:Fire("UpdateLayout", selectedLayout, "size")
     end
     UpdatePreviewButton("size")
 end)
@@ -448,7 +448,7 @@ widthSlider:SetPoint("TOPLEFT", buttonSizeText, "BOTTOMLEFT", 5, -25)
 local heightSlider = Cell:CreateSlider(L["Height"], appearanceTab, 20, 80, 100, 2, function(value)
     selectedLayoutTable["size"][2] = value
     if selectedLayout == Cell.vars.currentLayout then
-        Cell:FireEvent("UpdateLayout", selectedLayout, "size")
+        Cell:Fire("UpdateLayout", selectedLayout, "size")
     end
     UpdatePreviewButton("size")
 end)
@@ -464,7 +464,7 @@ fontSizeText:SetPoint("TOPLEFT", 137, -265)
 local nameFontSlider = Cell:CreateSlider(L["Name"], appearanceTab, 5, 20, 100, 1, function(value)
     selectedLayoutTable["font"]["name"] = value
     if selectedLayout == Cell.vars.currentLayout then
-        Cell:FireEvent("UpdateLayout", selectedLayout, "font")
+        Cell:Fire("UpdateLayout", selectedLayout, "font")
     end
     UpdatePreviewButton("nameFont", value)
 end)
@@ -474,7 +474,7 @@ nameFontSlider:SetPoint("TOPLEFT", fontSizeText, "BOTTOMLEFT", 5, -25)
 local statusFontSlider = Cell:CreateSlider(L["Status"], appearanceTab, 5, 20, 100, 1, function(value)
     selectedLayoutTable["font"]["status"] = value
     if selectedLayout == Cell.vars.currentLayout then
-        Cell:FireEvent("UpdateLayout", selectedLayout, "font")
+        Cell:Fire("UpdateLayout", selectedLayout, "font")
     end
     UpdatePreviewButton("statusFont", value)
 end)
@@ -543,4 +543,4 @@ local function ShowTab(tab)
         appearanceTab:Hide()
     end
 end
-Cell:RegisterEvent("ShowOptionsTab", "AppearanceTab_ShowTab", ShowTab)
+Cell:RegisterCallback("ShowOptionsTab", "AppearanceTab_ShowTab", ShowTab)

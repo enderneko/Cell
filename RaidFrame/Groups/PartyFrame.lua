@@ -35,9 +35,9 @@ for i = 0, 4 do
 	end
 end
 
-function F:GetPartyFrameMatrix()
-    return 1, 1
-end
+-- function F:GetPartyFrameMatrix()
+--     return 1, 1
+-- end
 
 local function PartyFrame_UpdateLayout(layout, which)
 	if layout ~= Cell.vars.currentLayout then return end
@@ -69,4 +69,4 @@ local function PartyFrame_UpdateLayout(layout, which)
 		end
     end
 end
-Cell:RegisterEvent("UpdateLayout", "PartyFrame_UpdateLayout", PartyFrame_UpdateLayout)
+Cell:RegisterCallback("UpdateLayout", "PartyFrame_UpdateLayout", PartyFrame_UpdateLayout)

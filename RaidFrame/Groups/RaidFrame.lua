@@ -78,9 +78,9 @@ for i = 1, 8 do
 	-- helper:SetAttribute("_onhide", [[ self:GetFrameRef("targetframe"):SetAttribute("helpershow", 0) ]])
 end
 
-function F:GetRaidFrameMatrix()
-    return 1, 1
-end
+-- function F:GetRaidFrameMatrix()
+--     return 1, 1
+-- end
 
 local function RaidFrame_UpdateLayout(layout, which)
     if layout ~= Cell.vars.currentLayout then return end
@@ -120,4 +120,4 @@ local function RaidFrame_UpdateLayout(layout, which)
         end
     end
 end
-Cell:RegisterEvent("UpdateLayout", "RaidFrame_UpdateLayout", RaidFrame_UpdateLayout)
+Cell:RegisterCallback("UpdateLayout", "RaidFrame_UpdateLayout", RaidFrame_UpdateLayout)

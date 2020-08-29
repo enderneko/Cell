@@ -20,5 +20,6 @@ RaidFrame\Groups\SoloFrame.lua
 RaidFrame\Groups\PartyFrame.lua
 RaidFrame\Groups\RaidFrame.lua
 
+ToolFrames\LoadToolFrames.xml
 OptionFrames\LoadOptionFrames.xml
 Modules\LoadModules.xml

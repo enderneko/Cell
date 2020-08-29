@@ -17,9 +17,9 @@ petButton:SetAttribute("unit", "pet")
 RegisterAttributeDriver(petButton, "state-visibility", "[nopet] hide; [vehicleui] hide; show")
 Cell.unitButtons.solo["pet"] = petButton
 
-function F:GetSoloFrameMatrix()
-    return 1, 1
-end
+-- function F:GetSoloFrameMatrix()
+--     return 1, 1
+-- end
 
 local function SoloFrame_UpdateLayout(layout, which)
     if layout ~= Cell.vars.currentLayout then return end
@@ -36,4 +36,4 @@ local function SoloFrame_UpdateLayout(layout, which)
         petButton:SetPoint("TOP", playerButton, "BOTTOM", 0, -layout["spacing"])
     end
 end
-Cell:RegisterEvent("UpdateLayout", "SoloFrame_UpdateLayout", SoloFrame_UpdateLayout)
+Cell:RegisterCallback("UpdateLayout", "SoloFrame_UpdateLayout", SoloFrame_UpdateLayout)

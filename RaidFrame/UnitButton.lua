@@ -668,12 +668,12 @@ end
 local function UnitButton_OnShow(self)
 	-- self.updateRequired = nil -- prevent UnitButton_UpdateAll twice. when convert party <-> raid, GROUP_ROSTER_UPDATE fired.
 	UnitButton_RegisterEvents(self)
-	-- Cell:FireEvent("UpdateClampRectInsets")
+	-- Cell:Fire("UpdateClampRectInsets")
 end
 
 local function UnitButton_OnHide(self)
 	UnitButton_UnregisterEvents(self)
-	-- Cell:FireEvent("UpdateClampRectInsets")
+	-- Cell:Fire("UpdateClampRectInsets")
 end
 
 local function UnitButton_OnEnter(self)
