@@ -2,7 +2,7 @@
 
 #external libraries
 LibCombatLogHealth-1.0/
-LibStub/
+/Libs/LibStub/tests
 
 #unused
 unused/

@@ -12,6 +12,7 @@ Libs\LoadLibs.xml
 Core.lua
 Utils.lua
 HideBlizzard.lua
+Comm.lua
 
 RaidFrame\MainFrame.lua
 RaidFrame\UnitButton.lua
