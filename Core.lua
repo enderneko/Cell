@@ -72,8 +72,8 @@ local IsInGroup = IsInGroup
 local GetNumGroupMembers = GetNumGroupMembers
 
 function F:UpdateLayout()
-    Cell.vars.currentLayout = CellDB["layout"]
-    Cell.vars.currentLayoutTable = CellDB["layouts"][CellDB["layout"]]
+    Cell.vars.currentLayout = CellCharacterDB["layout"]
+    Cell.vars.currentLayoutTable = CellDB["layouts"][CellCharacterDB["layout"]]
     Cell:Fire("UpdateLayout", Cell.vars.currentLayout)
     
     -- local numGroupMembers = GetNumGroupMembers()
@@ -137,15 +137,16 @@ eventFrame:RegisterEvent("ADDON_LOADED")
 eventFrame:RegisterEvent("GROUP_ROSTER_UPDATE")
 eventFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
 eventFrame:RegisterEvent("PLAYER_LOGIN")
-eventFrame:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
+eventFrame:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
 
 function eventFrame:ADDON_LOADED(arg1)
     if arg1 == addonName then
 		eventFrame:UnregisterEvent("ADDON_LOADED")
         if type(CellDB) ~= "table" then CellDB = {} end
+        if type(CellCharacterDB) ~= "table" then CellCharacterDB = {} end
 
         -- appearance -----------------------------------------------------------------------------
-        if type(CellDB["layout"]) ~= "string" then CellDB["layout"] = "default" end
+        if type(CellCharacterDB["layout"]) ~= "string" then CellCharacterDB["layout"] = "default" end
         if type(CellDB["layouts"]) ~= "table" then
             CellDB["layouts"] = {
                 ["default"] = {
@@ -189,10 +190,15 @@ function eventFrame:ADDON_LOADED(arg1)
             -- https://wow.gamepedia.com/SpecializationID
             for sepcIndex = 1, GetNumSpecializationsForClassID(Cell.vars.playerClassID) do
                 local specID = GetSpecializationInfoForClassID(Cell.vars.playerClassID, sepcIndex)
-                CellDB["clickCastings"][Cell.vars.playerClass][specID] = {} 
+                CellDB["clickCastings"][Cell.vars.playerClass][specID] = {
+                    {"type1", "target"},
+                    {"type2", "togglemenu"},
+                } 
             end
         end
         Cell.vars.clickCastingTable = CellDB["clickCastings"][Cell.vars.playerClass]
+
+        Cell.version = GetAddOnMetadata(addonName, "version")
     end
 end
 
@@ -226,12 +232,15 @@ function eventFrame:PLAYER_ENTERING_WORLD()
 end
 
 function eventFrame:PLAYER_LOGIN()
-    -- update vars
+    -- update spec vars
     Cell.vars.playerSpecID, Cell.vars.playerSpecName, _, Cell.vars.playerSpecIcon = GetSpecializationInfo(GetSpecialization())
     Cell:Fire("UpdateClickCastings")
 end
 
-function eventFrame:ACTIVE_TALENT_GROUP_CHANGED()
+function eventFrame:PLAYER_SPECIALIZATION_CHANGED(unit) --! ACTIVE_TALENT_GROUP_CHANGED always fire TWICE!
+    -- update spec vars
+    Cell.vars.playerSpecID, Cell.vars.playerSpecName, _, Cell.vars.playerSpecIcon = GetSpecializationInfo(GetSpecialization())
+    if unit ~= "player" or CellDB["clickCastings"][Cell.vars.playerClass]["useCommon"] then return end
     Cell:Fire("UpdateClickCastings")
 end
 
@@ -253,6 +262,7 @@ function SlashCmdList.CELL(msg, editbox)
         Cell.frames.anchorFrame:ClearAllPoints()
         Cell.frames.anchorFrame:SetPoint("CENTER", UIParent)
         CellDB = nil
+        CellCharacterDB = nil
         ReloadUI()
 
     else

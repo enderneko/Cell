@@ -1,7 +1,7 @@
 local _, Cell = ...
 local L = Cell.L
 local F = Cell.funcs
--- local LPP = LibStub:GetLibrary("LibPixelPerfect")
+local LPP = LibStub:GetLibrary("LibPixelPerfect")
 
 Cell.unitButtons = {
     ["solo"] = {},
@@ -106,6 +106,7 @@ local function MainFrame_UpdateLayout(layout, which)
 
     if not which or which == "scale" then
         cellMainFrame:SetScale(CellDB["scale"])
+        CellTooltip:SetScale(LPP:GetPixelPerfectScale() * CellDB["scale"])
     end
 
     if which == "texture" then

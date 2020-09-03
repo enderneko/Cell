@@ -4,7 +4,6 @@ local F = Cell.funcs
 local raidFrame = CreateFrame("Frame", "CellRaidFrame", Cell.frames.mainFrame, "SecureFrameTemplate")
 Cell.frames.raidFrame = raidFrame
 raidFrame:SetAllPoints(Cell.frames.mainFrame)
-RegisterAttributeDriver(raidFrame, "state-visibility", "[group:raid] show; [group:party] hide; hide")
 
 --[[ Interface\FrameXML\SecureGroupHeaders.lua
 List of the various configuration attributes
@@ -68,14 +67,18 @@ end
 
 for i = 1, 8 do
     local header = CreateGroupHeader(i)
-    header:Show()
-	-- local helper = CreateFrame("Frame", nil, header, "SecureHandlerShowHideTemplate")
-	-- header.monitorFrame = helper
-	-- helper:Hide()
-	-- helper:SetFrameRef("targetframe", frame)
-	-- frame:SetFrameRef("buttonhelper"..i, helper)
-	-- helper:SetAttribute("_onshow", [[ self:GetFrameRef("targetframe"):SetAttribute("helpershow", 1) ]])
-	-- helper:SetAttribute("_onhide", [[ self:GetFrameRef("targetframe"):SetAttribute("helpershow", 0) ]])
+
+    --[[ Interface\FrameXML\SecureGroupHeaders.lua line 150
+        local loopStart = startingIndex;
+        local loopFinish = min((startingIndex - 1) + unitsPerColumn * numColumns, unitCount)
+        -- ensure there are enough buttons
+        local needButtons = max(1, numDisplayed); --! to make needButtons == 5
+    ]]
+    
+    --! to make needButtons == 5 cheat configureChildren in SecureGroupHeaders.lua
+    header:SetAttribute("startingIndex", -4)
+	header:Show()
+    header:SetAttribute("startingIndex", 1)
 end
 
 -- function F:GetRaidFrameMatrix()
@@ -118,6 +121,7 @@ local function RaidFrame_UpdateLayout(layout, which)
                 header:Hide()
             end
         end
+        -- header:SetAttribute("unitsPerColumn", 5)
     end
 end
 Cell:RegisterCallback("UpdateLayout", "RaidFrame_UpdateLayout", RaidFrame_UpdateLayout)

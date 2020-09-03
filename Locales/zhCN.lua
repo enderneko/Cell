@@ -33,3 +33,24 @@ L["DECLINED"] = "已拒绝"
 -- options
 -------------------------------------------------
 L["Can't change options in combat."] = "无法在战斗中更改设置。"
+
+-------------------------------------------------
+-- click-castings
+-------------------------------------------------
+L["Left"] = "左键"
+L["Right"] = "右键"
+L["Middle"] = "中键"
+L["Button4"] = "侧键4"
+L["Button5"] = "侧键5"
+L["ScrollUp"] = "滚轮上"
+L["ScrollDown"] = "滚轮下"
+L["General"] = "常规"
+L["Macro"] = "宏"
+L["Spell"] = "法术"
+L["New"] = "新建"
+L["Save"] = "保存"
+L["Discard"] = "撤销"
+L["left-click: edit"] = "左键：编辑"
+L["right-click: delete"] = "右键：删除"
+L["T"] = "天赋"
+L["P"] = "PvP天赋"

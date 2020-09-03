@@ -3,6 +3,7 @@
 ## Version: r1
 ## Author: 篠崎
 ## SavedVariables: CellDB
+## SavedVariablesPerCharacter: CellCharacterDB
 
 Locales\enUS.lua
 Locales\zhCN.lua
@@ -23,4 +24,3 @@ RaidFrame\Groups\RaidFrame.lua
 
 ToolFrames\LoadToolFrames.xml
 OptionFrames\LoadOptionFrames.xml
-Modules\LoadModules.xml

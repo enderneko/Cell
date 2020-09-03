@@ -2,6 +2,7 @@
 ..\FrameXML\UI.xsd">
 	<Script file="OptionsFrame.lua"/>
 	<Script file="Appearance.lua"/>
+	<Script file="ClickCastings_DefaultSpells.lua"/>
 	<Script file="ClickCastings.lua"/>
 	<Script file="About.lua"/>
 </Ui>

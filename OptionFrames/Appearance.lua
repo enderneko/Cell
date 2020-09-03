@@ -21,6 +21,7 @@ previewButton:SetScript("OnEnter", nil)
 previewButton:SetScript("OnLeave", nil)
 previewButton:SetScript("OnShow", nil)
 previewButton:SetScript("OnHide", nil)
+previewButton:Show()
 
 local function UpdatePreviewButton(which, value)
     if not previewButton.loaded then
@@ -238,7 +239,7 @@ local layoutDropdown = Cell:CreateDropdownMenu(appearanceTab, 150)
 layoutDropdown:SetPoint("TOPLEFT", layoutText, "BOTTOMLEFT", 5, -12)
 
 local function LoadLayoutDropdown()
-    local layout, layouts = CellDB["layout"], CellDB["layouts"]
+    local layout, layouts = CellCharacterDB["layout"], CellDB["layouts"]
 
     local indices = {}
     for name, _ in pairs(CellDB["layouts"]) do
@@ -260,18 +261,18 @@ local function LoadLayoutDropdown()
         })
     end
     layoutDropdown:SetItems(items)
-    layoutDropdown:SetSelected(CellDB["layout"])
+    layoutDropdown:SetSelected(CellCharacterDB["layout"])
 end
 
 -- mask
-Cell:CreateMask(appearanceTab, nil, {1, -75, -1, 1})
+Cell:CreateMask(appearanceTab, nil, {1, -135, -1, 1})
 appearanceTab.mask:Hide()
 
 -- apply
 local enableBtn = Cell:CreateButton(appearanceTab, L["Enable"], "class-hover", {50, 20})
 enableBtn:SetPoint("LEFT", layoutDropdown, "RIGHT", 20, 0)
 enableBtn:SetScript("OnClick", function()
-    CellDB["layout"] = selectedLayout
+    CellCharacterDB["layout"] = selectedLayout
     F:UpdateLayout()
     UpdateButtonStates()
     UpdateEnabledLayoutText()
@@ -289,7 +290,7 @@ renameBtn:SetScript("OnClick", function()
             CellDB["layouts"][selectedLayout] = nil
 
             if selectedLayout == Cell.vars.currentLayout then
-                CellDB["layout"] = name
+                CellCharacterDB["layout"] = name
                 
                 -- update vars
                 Cell.vars.currentLayout = name
@@ -316,7 +317,7 @@ renameBtn:SetScript("OnClick", function()
             F:Print(L["Invalid layout name."])
         end
     end, true, true)
-    popup:SetPoint("TOPLEFT", 100, -100)
+    popup:SetPoint("TOPLEFT", 100, -185)
 end)
 
 -- new
@@ -344,7 +345,7 @@ newBtn:SetScript("OnClick", function()
             F:Print(L["Invalid layout name."])
         end
     end, true, true)
-    popup:SetPoint("TOPLEFT", 100, -100)
+    popup:SetPoint("TOPLEFT", 100, -185)
 end)
 
 -- delete
@@ -360,7 +361,7 @@ deleteBtn:SetScript("OnClick", function()
         LoadLayoutDB(Cell.vars.currentLayout)
         UpdateButtonStates()
     end, false, true)
-    popup:SetPoint("TOPLEFT", 100, -100)
+    popup:SetPoint("TOPLEFT", 100, -185)
 end)
 
 UpdateButtonStates = function()

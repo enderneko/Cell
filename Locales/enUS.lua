@@ -5,7 +5,12 @@
 -- key - A key in the table (cannot be nil) (value)
 -- value - New value to set for the key (value)
 select(2, ...).L = setmetatable({
-	
+	["target"] = "Target",
+	["focus"] = "Focus",
+	["assist"] = "Assist",
+	["togglemenu"] = "Menu",
+	["T"] = "Talent",
+	["P"] = "PvP Talent",
 }, {
 	__index = function(self, Key)
 		if (Key ~= nil) then

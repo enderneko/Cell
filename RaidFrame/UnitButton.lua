@@ -2,7 +2,7 @@ local _, Cell = ...
 local L = Cell.L
 local F = Cell.funcs
 
-local LibCLHealth = LibStub("LibCombatLogHealth-1.0")
+-- local LibCLHealth = LibStub("LibCombatLogHealth-1.0")
 
 local UnitGUID = UnitGUID
 -- local UnitHealth = LibCLHealth.UnitHealth
@@ -442,7 +442,7 @@ local function UnitButton_UpdateNameAndColor(self)
 
 	if UnitIsPlayer(unit) then -- player
 		if not UnitIsConnected(unit) then
-			self.state.color = {.5, .5, .5}
+			self.state.color = {.4, .4, .4}
 			nameText:SetTextColor(F:GetClassColor(self.state.class))
 		elseif self.state.inVehicle then
 			self.state.color = {0, 1, .2}
@@ -1046,8 +1046,8 @@ function F:UnitButton_OnLoad(button)
 	button:SetScript("OnAttributeChanged", UnitButton_OnAttributeChanged) -- init
 	button:SetScript("OnShow", UnitButton_OnShow)
 	button:SetScript("OnHide", UnitButton_OnHide)
-	button:SetScript("OnEnter", UnitButton_OnEnter)
-	button:SetScript("OnLeave", UnitButton_OnLeave)
+	button:HookScript("OnEnter", UnitButton_OnEnter) -- SecureHandlerEnterLeaveTemplate
+	button:HookScript("OnLeave", UnitButton_OnLeave) -- SecureHandlerEnterLeaveTemplate
 	button:SetScript("OnUpdate", UnitButton_OnUpdate)
 	button:SetScript("OnEvent", UnitButton_OnEvent)
 	button:SetScript("OnSizeChanged", UnitButton_OnSizeChanged)

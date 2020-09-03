@@ -2,7 +2,7 @@ local _, Cell = ...
 local L = Cell.L
 local F = Cell.funcs
 
-local optionsFrame = Cell:CreateFrame("CellOptionsFrame", Cell.frames.mainFrame, 397, 397)
+local optionsFrame = Cell:CreateFrame("CellOptionsFrame", Cell.frames.mainFrame, 397, 401)
 Cell.frames.optionsFrame = optionsFrame
 optionsFrame:SetPoint("BOTTOMLEFT", Cell.frames.mainFrame, "TOPLEFT", 0, 16)
 optionsFrame:SetFrameStrata("MEDIUM")
@@ -56,6 +56,15 @@ function F:ShowOptionsFrame()
     
     optionsFrame:Show()
 end
+
+optionsFrame:SetScript("OnHide", function()
+    -- stolen from dbm
+    if not InCombatLockdown() and not UnitAffectingCombat("player") and not IsFalling() then
+        F:Debug("|cffff7777collectgarbage")
+        collectgarbage("collect")
+        -- UpdateAddOnMemoryUsage() -- stuck like hell
+    end
+end)
 
 optionsFrame:RegisterEvent("PLAYER_REGEN_DISABLED")
 optionsFrame:SetScript("OnEvent", function()

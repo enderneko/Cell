@@ -2,6 +2,27 @@ local _, Cell = ...
 local L = Cell.L
 local F = Cell.funcs
 
+function F:UpperFirst(str)
+    return (str:gsub("^%l", string.upper))
+end
+
+function F:Getn(t)
+	local count = 0
+	for k, v in pairs(t) do
+		count = count + 1
+	end
+	return count
+end
+
+function F:GetIndex(t, e)
+	for i, v in pairs(t) do
+		if e == v then
+			return i
+		end
+	end
+	return nil
+end
+
 function F:Copy(t)
 	local newTbl = {}
 	for k, v in pairs(t) do
@@ -12,6 +33,27 @@ function F:Copy(t)
         end  
 	end
 	return newTbl
+end
+
+function F:TContains(t, v)
+	for _, value in pairs(t) do
+		if value == v then return true end
+	end
+	return false
+end
+
+function F:RemoveElementsByKeys(tbl, keys, returnNewTable) -- keys is a table
+	local newTbl = {}
+	for k, v in pairs(tbl) do
+		if not F:TContains(keys, k) then
+			newTbl[k] = tbl[k]
+		end
+    end
+    if returnNewTable then
+        return newTbl
+    else
+        tbl = newTbl
+    end
 end
 
 function F:Sort(t, k1, order1, k2, order2, k3, order3)

@@ -1,6 +1,6 @@
 local addonName, addon = ...
 local L = addon.L
-local LPP = LibStub:GetLibrary("LibPixelPerfect")
+-- local LPP = LibStub:GetLibrary("LibPixelPerfect")
 
 -----------------------------------------
 -- Color
@@ -117,50 +117,20 @@ function addon:CreateFrame(name, parent, width, height, isTransparent)
 	return f
 end
 
------------------------------------------
--- Tooltip
------------------------------------------
-local tooltip = CreateFrame("GameTooltip", addonName .. "Tooltip", nil, "GameTooltipTemplate")
-tooltip:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8x8", edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = 1})
-tooltip:SetBackdropColor(.1, .1, .1, .8)
-tooltip:SetBackdropBorderColor(0, 0, 0, 1)
-tooltip:SetOwner(UIParent, "ANCHOR_NONE")
-LPP:PixelPerfectScale(tooltip)
-tooltip:SetScript("OnTooltipCleared", function()
-	-- reset border color
-	tooltip:SetBackdropBorderColor(0, 0, 0, 1)
-end)
-
-tooltip:SetScript("OnTooltipSetItem", function()
-	-- color border with item quality color
-	tooltip:SetBackdropBorderColor(_G[name .. "TextLeft1"]:GetTextColor())
-end)
-
-tooltip:SetScript("OnHide", function()
-	-- SetX with invalid data may or may not clear the tooltip's contents.
-	tooltip:ClearLines()
-	-- prepare for the next SetX()
-	if tooltip.shoppingTooltips then
-		for _, tip in pairs(tooltip.shoppingTooltips) do
-			tip:Hide()
-		end
-	end
-end)
-
 local function SetTooltip(widget, anchor, x, y, ...)
 	local tooltips = {...}
 
 	if #tooltips ~= 0 then
 		widget:HookScript("OnEnter", function()
-			tooltip:SetOwner(widget, anchor or "ANCHOR_TOP", x or 0, y or 0)
-            tooltip:AddLine(tooltips[1])
+			CellTooltip:SetOwner(widget, anchor or "ANCHOR_TOP", x or 0, y or 0)
+            CellTooltip:AddLine(tooltips[1])
             for i = 2, #tooltips do
-                tooltip:AddLine("|cffffffff" .. tooltips[i])
+                CellTooltip:AddLine("|cffffffff" .. tooltips[i])
             end
-            tooltip:Show()
+            CellTooltip:Show()
 		end)
 		widget:HookScript("OnLeave", function()
-			tooltip:Hide()
+			CellTooltip:Hide()
 		end)
 	end
 end
@@ -173,7 +143,7 @@ function addon:CreateButton(parent, text, buttonColor, size, noBorder, fontNorma
 	if parent then b:SetFrameLevel(parent:GetFrameLevel()+1) end
 	b:SetText(text)
 	b:SetSize(unpack(size))
-	
+
 	local color, hoverColor
 	if buttonColor == "red" then
 		color = {.6, .1, .1, .6}
@@ -203,11 +173,11 @@ function addon:CreateButton(parent, text, buttonColor, size, noBorder, fontNorma
 		color = {.1, .1, .1, 1}
 		hoverColor = {.7, .7, 0, 1}
 	elseif buttonColor == "class" then
-		color = {classColor.t[1], classColor.t[2], classColor.t[3], .4}
-		hoverColor = {classColor.t[1], classColor.t[2], classColor.t[3], .7}
+		color = {classColor.t[1], classColor.t[2], classColor.t[3], .3}
+		hoverColor = {classColor.t[1], classColor.t[2], classColor.t[3], .6}
 	elseif buttonColor == "class-hover" then
 		color = {.1, .1, .1, 1}
-		hoverColor = {classColor.t[1], classColor.t[2], classColor.t[3], .7}
+		hoverColor = {classColor.t[1], classColor.t[2], classColor.t[3], .6}
 	elseif buttonColor == "chartreuse" then
 		color = {.5, 1, 0, .6}
 		hoverColor = {.5, 1, 0, .8}
@@ -225,7 +195,7 @@ function addon:CreateButton(parent, text, buttonColor, size, noBorder, fontNorma
 		hoverColor = {.5, 1, 0, .5}
 	elseif buttonColor == "transparent-class" then -- drop down item
 		color = {0, 0, 0, 0}
-		hoverColor = {classColor.t[1], classColor.t[2], classColor.t[3], .7}
+		hoverColor = {classColor.t[1], classColor.t[2], classColor.t[3], .6}
 	elseif buttonColor == "none" then
 		color = {0, 0, 0, 0}
 	else
@@ -261,6 +231,10 @@ function addon:CreateButton(parent, text, buttonColor, size, noBorder, fontNorma
 		b:SetBackdropBorderColor(1, 1, 1, 0)
 		b:SetPushedTextOffset(0, 0)
 	else
+		-- local bg = b:CreateTexture(nil, "BACKGROUND")
+		-- bg:SetAllPoints(b)
+		-- bg:SetColorTexture(0, 0, 0, 1)
+
     	b:SetBackdropBorderColor(0, 0, 0, 1)
 		b:SetPushedTextOffset(0, -1)
 	end
@@ -272,10 +246,10 @@ function addon:CreateButton(parent, text, buttonColor, size, noBorder, fontNorma
 	b:SetHighlightFontObject(fontNormal or font)
 	
 	if buttonColor ~= "none" then
-		b:SetScript("OnEnter", function(self) self:SetBackdropColor(unpack(hoverColor)) end)
-		b:SetScript("OnLeave", function(self) self:SetBackdropColor(unpack(color)) end)
+		b:SetScript("OnEnter", function(self) self:SetBackdropColor(unpack(self.hoverColor)) end)
+		b:SetScript("OnLeave", function(self) self:SetBackdropColor(unpack(self.color)) end)
 	end
-	
+
 	-- click sound
 	b:SetScript("PostClick", function() PlaySound(SOUNDKIT.U_CHAT_SCROLL_BUTTON) end)
 
@@ -872,6 +846,7 @@ function addon:CreateConfirmPopup(parent, width, text, onAccept, hasEditBox, mas
 		if not parent.confirmPopup.editBox then
 			parent.confirmPopup.editBox = addon:CreateEditBox(parent.confirmPopup, width-40, 20)
 			parent.confirmPopup.editBox:SetPoint("TOP", parent.confirmPopup.text, "BOTTOM", 0, -5)
+			parent.confirmPopup.editBox:SetAutoFocus(true)
 			parent.confirmPopup.editBox:SetScript("OnHide", function()
 				parent.confirmPopup.editBox:SetText("")
 			end)
@@ -917,4 +892,508 @@ function addon:CreateConfirmPopup(parent, width, text, onAccept, hasEditBox, mas
 	parent.confirmPopup:Show()
 
 	return parent.confirmPopup
+end
+
+-----------------------------------------
+-- popup edit box
+-----------------------------------------
+function addon:CreatePopupEditBox(parent, width, func, multiLine)
+	if not addon.popupEditBox then
+		local eb = CreateFrame("EditBox", addonName.."PopupEditBox")
+		addon.popupEditBox = eb
+		eb:Hide()
+		eb:SetWidth(width)
+		eb:SetAutoFocus(true)
+		eb:SetFontObject(font)
+		eb:SetJustifyH("LEFT")
+		eb:SetMultiLine(true)
+		eb:SetMaxLetters(255)
+		eb:SetTextInsets(5, 5, 3, 4)
+		eb:SetPoint("TOPLEFT")
+		eb:SetPoint("TOPRIGHT")
+		StylizeFrame(eb, {.1, .1, .1, 1}, {classColor.t[1], classColor.t[2], classColor.t[3], 1})
+		
+		eb:SetScript("OnHide", function()
+			eb:Hide() -- hide self when parent hides
+		end)
+
+		eb:SetScript("OnEscapePressed", function()
+			eb:SetText("")
+			eb:Hide()
+		end)
+
+		function eb:ShowEditBox(text)
+			eb:SetText(text)
+			eb:Show()
+		end
+
+		local tipsText = eb:CreateFontString(nil, "OVERLAY", font_name)
+		tipsText:SetPoint("TOPLEFT", eb, "BOTTOMLEFT", 2, -1)
+		tipsText:SetJustifyH("LEFT")
+		-- tipsText:SetText("|cff777777"..L["Shift+Enter: add a new line\nEnter: apply\nESC: discard"])
+
+		function eb:SetTips(text)
+			tipsText:SetText(text)
+		end
+
+		local tipsBackground = CreateFrame("Frame", nil, eb)
+		tipsBackground:SetPoint("TOPLEFT", eb, "BOTTOMLEFT")
+		tipsBackground:SetPoint("TOPRIGHT", eb, "BOTTOMRIGHT")
+		tipsBackground:SetPoint("BOTTOM", tipsText, 0, -2)
+		-- tipsBackground:SetHeight(41)
+		tipsBackground:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8x8"})
+		tipsBackground:SetBackdropColor(.1, .1, .1, .9)
+		tipsBackground:SetFrameStrata("HIGH")
+	end
+	
+	addon.popupEditBox:SetScript("OnEnterPressed", function(self)
+		if multiLine and IsShiftKeyDown() then -- new line
+			self:Insert("\n")
+		else
+			func(self:GetText())
+			self:Hide()
+			self:SetText("")
+		end
+	end)
+
+	-- set parent(for hiding) & size
+	addon.popupEditBox:ClearAllPoints()
+	addon.popupEditBox:SetParent(parent)
+	addon.popupEditBox:SetWidth(width)
+	addon.popupEditBox:SetFrameStrata("DIALOG")
+
+	return addon.popupEditBox
+end
+
+-----------------------------------------
+-- cascaded menu
+-----------------------------------------
+local menu = addon:CreateFrame(addonName.."CascadedMenu", UIParent, 100, 20)
+addon.menu = menu
+tinsert(UISpecialFrames, menu:GetName())
+menu:SetBackdropColor(.12, .12, .12, 1)
+menu:SetBackdropBorderColor(classColor.t[1], classColor.t[2], classColor.t[3], 1)
+menu:SetFrameStrata("TOOLTIP")
+menu.items = {}
+
+-- items: menu items table
+-- itemTable: table to store item buttons --> menu/submenu
+-- itemParent: menu/submenu
+-- level: menu level, 0, 1, 2, 3, ...
+local function CreateItemButtons(items, itemTable, itemParent, level)
+	itemParent:SetScript("OnHide", function(self) self:Hide() end)
+
+	for i, item in pairs(items) do
+		local b
+		if itemTable[i] and itemTable[i]:GetObjectType() == "Button" then
+			b = itemTable[i]
+			b:SetText(item.text)
+			if level == 0 then b:Show() end -- show valid top menu buttons
+		else
+			b = addon:CreateButton(itemParent, item.text, "transparent-class", {98 ,18}, true)
+			tinsert(itemTable, b)
+			if i == 1 then
+				b:SetPoint("TOPLEFT", 1, -1)
+				b:SetPoint("RIGHT", -1, 0)
+			else
+				b:SetPoint("TOPLEFT", itemTable[i-1], "BOTTOMLEFT")
+				b:SetPoint("RIGHT", itemTable[i-1])
+			end
+		end
+
+		if item.textColor then
+			b:GetFontString():SetTextColor(unpack(item.textColor))
+		end
+
+		if item.icon then
+			if not b.icon then
+				b.icon = b:CreateTexture(nil, "ARTWORK")
+				b.icon:SetPoint("LEFT", b, 5, 0)
+				b.icon:SetSize(14, 14)
+				b.icon:SetTexCoord(.08, .92, .08, .92)
+			end
+			b.icon:SetTexture(item.icon)
+			b.icon:Show()
+			b:GetFontString():SetPoint("LEFT", b.icon, "RIGHT", 5, 0)
+		else
+			if b.icon then b.icon:Hide() end
+			b:GetFontString():SetPoint("LEFT", 5, 0)
+		end
+
+		if level > 0 then
+			b:Hide()
+			b:SetScript("OnHide", function(self) self:Hide() end)
+		end
+		
+		if item.children then
+			-- create sub menu level+1
+			if not menu[level+1] then
+				-- menu[level+1] parent == menu[level]
+				menu[level+1] = addon:CreateFrame(addonName.."CascadedSubMenu"..level, level == 0 and menu or menu[level], 100, 20)
+				menu[level+1]:SetBackdropColor(.12, .12, .12, 1)
+				menu[level+1]:SetBackdropBorderColor(classColor.t[1], classColor.t[2], classColor.t[3], 1)
+				-- menu[level+1]:SetScript("OnHide", function(self) self:Hide() end)
+			end
+
+			if not b.childrenSymbol then
+				b.childrenSymbol = b:CreateFontString(nil, "OVERLAY", font_name)
+				b.childrenSymbol:SetText("|cFF777777>")
+				b.childrenSymbol:SetPoint("RIGHT", -5, 0)
+			end
+			b.childrenSymbol:Show()
+
+			CreateItemButtons(item.children, b, menu[level+1], level+1) -- itemTable == b, insert children to its table
+			
+			b:SetScript("OnEnter", function()
+				b:SetBackdropColor(unpack(b.hoverColor))
+
+				menu[level+1]:Hide()
+
+				menu[level+1]:ClearAllPoints()
+				menu[level+1]:SetPoint("TOPLEFT", b, "TOPRIGHT", 2, 1)
+				menu[level+1]:Show()
+
+				for _, b in ipairs(b) do
+					b:Show()
+				end
+			end)
+		else
+			if b.childrenSymbol then b.childrenSymbol:Hide() end
+
+			b:SetScript("OnEnter", function()
+				b:SetBackdropColor(unpack(b.hoverColor))
+
+				if menu[level+1] then menu[level+1]:Hide() end
+			end)
+
+			b:SetScript("OnClick", function()
+				PlaySound(SOUNDKIT.U_CHAT_SCROLL_BUTTON)
+				menu:Hide()
+				if item.onClick then item.onClick(item.text) end
+			end)
+		end
+	end
+
+	-- update menu/submenu height
+	itemParent:SetHeight(2 + #items*18)
+end
+
+function menu:SetItems(items)
+	-- clear topmenu
+	for _, b in pairs({menu:GetChildren()}) do
+		if b:GetObjectType() == "Button" then
+			b:Hide()
+		end
+	end
+	-- create buttons
+	CreateItemButtons(items, menu.items, menu, 0)
+end
+
+function menu:SetWidths(...)
+	local widths = {...}
+	menu:SetWidth(widths[1])
+	if #widths == 1 then
+		for _, m in ipairs(menu) do
+			m:SetWidth(widths[1])
+		end
+	else
+		for i, m in ipairs(menu) do
+			if widths[i+1] then m:SetWidth(widths[i+1]) end
+		end
+	end
+end
+
+function menu:ShowMenu()
+	for i, m in ipairs(menu) do
+		m:Hide()
+	end
+	menu:Show()
+end
+
+function menu:SetMenuParent(parent)
+	menu:SetParent(parent)
+	menu:SetFrameStrata("TOOLTIP")
+end
+
+-----------------------------------------------------------------------------------
+-- create scroll frame (with scrollbar & content frame) 2017-07-17 08:40:41
+-----------------------------------------------------------------------------------
+function addon:CreateScrollFrame(parent, top, bottom, color, border)
+	-- create scrollFrame & scrollbar seperately (instead of UIPanelScrollFrameTemplate), in order to custom it
+	local scrollFrame = CreateFrame("ScrollFrame", parent:GetName().."ScrollFrame", parent)
+	parent.scrollFrame = scrollFrame
+	top = top or 0
+	bottom = bottom or 0
+	scrollFrame:SetPoint("TOPLEFT", 0, top) 
+	scrollFrame:SetPoint("BOTTOMRIGHT", 0, bottom)
+
+	if color then
+		StylizeFrame(scrollFrame, color, border)
+	end
+
+	function scrollFrame:Resize(newTop, newBottom)
+		top = newTop
+		bottom = newBottom
+		scrollFrame:SetPoint("TOPLEFT", 0, top) 
+		scrollFrame:SetPoint("BOTTOMRIGHT", 0, bottom)
+	end
+	
+	-- content
+	local content = CreateFrame("Frame", nil, scrollFrame)
+	content:SetSize(scrollFrame:GetWidth(), 20)
+	scrollFrame:SetScrollChild(content)
+	scrollFrame.content = content
+	-- content:SetFrameLevel(2)
+	
+	-- scrollbar
+	local scrollbar = CreateFrame("Frame", nil, scrollFrame)
+	scrollbar:SetPoint("TOPLEFT", scrollFrame, "TOPRIGHT", 2, 0)
+	scrollbar:SetPoint("BOTTOMRIGHT", scrollFrame, 7, 0)
+	scrollbar:Hide()
+	StylizeFrame(scrollbar, {.1, .1, .1, .8})
+	scrollFrame.scrollbar = scrollbar
+	
+	-- scrollbar thumb
+	local scrollThumb = CreateFrame("Frame", nil, scrollbar)
+	scrollThumb:SetWidth(5) -- scrollbar's width is 5
+	scrollThumb:SetHeight(scrollbar:GetHeight())
+	scrollThumb:SetPoint("TOP")
+	StylizeFrame(scrollThumb, {classColor.t[1], classColor.t[2], classColor.t[3], .8})
+	scrollThumb:EnableMouse(true)
+	scrollThumb:SetMovable(true)
+	scrollThumb:SetHitRectInsets(-5, -5, 0, 0) -- Frame:SetHitRectInsets(left, right, top, bottom)
+	
+	-- reset content height manually ==> content:GetBoundsRect() make it right @OnUpdate
+	function scrollFrame:ResetHeight()
+		content:SetHeight(20)
+	end
+	
+	-- reset to top, useful when used with DropDownMenu (variable content height)
+	function scrollFrame:ResetScroll()
+		scrollFrame:SetVerticalScroll(0)
+	end
+	
+	-- local scrollRange -- ACCURATE scroll range, for SetVerticalScroll(), instead of scrollFrame:GetVerticalScrollRange()
+	function scrollFrame:VerticalScroll(step)
+		local scroll = scrollFrame:GetVerticalScroll() + step
+		-- if CANNOT SCROLL then scroll = -25/25, scrollFrame:GetVerticalScrollRange() = 0
+		-- then scrollFrame:SetVerticalScroll(0) and scrollFrame:SetVerticalScroll(scrollFrame:GetVerticalScrollRange()) ARE THE SAME
+		if scroll <= 0 then
+			scrollFrame:SetVerticalScroll(0)
+		elseif  scroll >= scrollFrame:GetVerticalScrollRange() then
+			scrollFrame:SetVerticalScroll(scrollFrame:GetVerticalScrollRange())
+		else
+			scrollFrame:SetVerticalScroll(scroll)
+		end
+	end
+
+	-- to remove/hide widgets "widget:SetParent(nil)" MUST be called!!!
+	scrollFrame:SetScript("OnUpdate", function()
+		-- set content height, check if it CAN SCROLL
+		content:SetHeight(select(4, content:GetBoundsRect()))
+	end)
+	
+	-- stores all widgets on content frame
+	local autoWidthWidgets = {}
+
+	function scrollFrame:ClearContent()
+		for _, c in pairs({content:GetChildren()}) do
+			c:SetParent(nil)  -- or it will show (OnUpdate)
+			c:ClearAllPoints()
+			c:Hide()
+		end
+		wipe(autoWidthWidgets)
+		scrollFrame:ResetHeight()
+	end
+
+	function scrollFrame:Reset()
+		scrollFrame:ResetScroll()
+		scrollFrame:ClearContent()
+	end
+	
+	function scrollFrame:SetWidgetAutoWidth(widget)
+		table.insert(autoWidthWidgets, widget)
+	end
+	
+	-- on width changed, make the same change to widgets
+	scrollFrame:SetScript("OnSizeChanged", function()
+		-- change widgets width (marked as auto width)
+		for i = 1, #autoWidthWidgets do
+			autoWidthWidgets[i]:SetWidth(scrollFrame:GetWidth())
+		end
+		
+		-- update content width
+		content:SetWidth(scrollFrame:GetWidth())
+	end)
+
+	-- check if it can scroll
+	content:SetScript("OnSizeChanged", function()
+		-- set ACCURATE scroll range
+		-- scrollRange = content:GetHeight() - scrollFrame:GetHeight()
+
+		-- set thumb height (%)
+		local p = scrollFrame:GetHeight() / content:GetHeight()
+		p = tonumber(string.format("%.3f", p))
+		if p < 1 then -- can scroll
+			scrollThumb:SetHeight(scrollbar:GetHeight()*p)
+			-- space for scrollbar
+			scrollFrame:SetPoint("BOTTOMRIGHT", parent, -7, bottom)
+			scrollbar:Show()
+		else
+			scrollFrame:SetPoint("BOTTOMRIGHT", parent, 0, bottom)
+			scrollbar:Hide()
+		end
+	end)
+
+	-- DO NOT USE OnScrollRangeChanged to check whether it can scroll.
+	-- "invisible" widgets should be hidden, then the scroll range is NOT accurate!
+	-- scrollFrame:SetScript("OnScrollRangeChanged", function(self, xOffset, yOffset) end)
+	
+	-- dragging and scrolling
+	scrollThumb:SetScript("OnMouseDown", function(self, button)
+		if button ~= 'LeftButton' then return end
+		local offsetY = select(5, scrollThumb:GetPoint(1))
+		local mouseY = select(2, GetCursorPosition())
+		local currentScroll = scrollFrame:GetVerticalScroll()
+		self:SetScript("OnUpdate", function(self)
+			--------------------- y offset before dragging + mouse offset
+			local newOffsetY = offsetY + (select(2, GetCursorPosition()) - mouseY)
+			
+			-- even scrollThumb:SetPoint is already done in OnVerticalScroll, but it's useful in some cases.
+			if newOffsetY >= 0 then -- @top
+				scrollThumb:SetPoint("TOP")
+				newOffsetY = 0
+			elseif (-newOffsetY) + scrollThumb:GetHeight() >= scrollbar:GetHeight() then -- @bottom
+				scrollThumb:SetPoint("TOP", 0, -(scrollbar:GetHeight() - scrollThumb:GetHeight()))
+				newOffsetY = -(scrollbar:GetHeight() - scrollThumb:GetHeight())
+			else
+				scrollThumb:SetPoint("TOP", 0, newOffsetY)
+			end
+			local vs = (-newOffsetY / (scrollbar:GetHeight()-scrollThumb:GetHeight())) * scrollFrame:GetVerticalScrollRange()
+			scrollFrame:SetVerticalScroll(vs)
+		end)
+	end)
+
+	scrollThumb:SetScript("OnMouseUp", function(self)
+		self:SetScript("OnUpdate", nil)
+	end)
+	
+	scrollFrame:SetScript("OnVerticalScroll", function(self, offset)
+		local scrollP = scrollFrame:GetVerticalScroll()/scrollFrame:GetVerticalScrollRange()
+		local yoffset = -((scrollbar:GetHeight()-scrollThumb:GetHeight())*scrollP)
+		scrollThumb:SetPoint("TOP", 0, yoffset)
+	end)
+	
+	local step = 25
+	function scrollFrame:SetScrollStep(s)
+		step = s
+	end
+	
+	-- enable mouse wheel scroll
+	scrollFrame:EnableMouseWheel(true)
+	scrollFrame:SetScript("OnMouseWheel", function(self, delta)
+		if delta == 1 then -- scroll up
+			scrollFrame:VerticalScroll(-step)
+		elseif delta == -1 then -- scroll down
+			scrollFrame:VerticalScroll(step)
+		end
+	end)
+	
+	return scrollFrame
+end
+
+-----------------------------------------
+-- binding button
+-----------------------------------------
+local function CreateGrid(parent, text, width)
+	local grid = CreateFrame("Button", nil, parent)
+	grid:SetFrameLevel(6)
+	grid:SetSize(width, 20)
+	grid:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8x8", edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = 1})
+	grid:SetBackdropColor(0, 0, 0, 0) 
+	grid:SetBackdropBorderColor(0, 0, 0, 1)
+
+	-- to avoid SetText("") -> GetFontString() == nil
+	grid.text = grid:CreateFontString(nil, "OVERLAY", font_name)
+	grid.text:SetWordWrap(false)
+	grid.text:SetJustifyH("LEFT")
+	grid.text:SetPoint("LEFT", 5, 0)
+	grid.text:SetPoint("RIGHT", -5, 0)
+	grid.text:SetText(text)
+
+	function grid:SetText(s)
+		grid.text:SetText(s)
+	end
+
+	function grid:GetText()
+		return grid.text:GetText()
+	end
+
+	function grid:IsTruncated()
+		return grid.text:IsTruncated()
+	end
+
+	grid:RegisterForClicks("LeftButtonUp", "RightButtonUp")
+
+	grid:SetScript("OnEnter", function() 
+		grid:SetBackdropColor(classColor.t[1], classColor.t[2], classColor.t[3], .15)
+		parent:Highlight()
+	end)
+
+	grid:SetScript("OnLeave", function()
+		grid:SetBackdropColor(0, 0, 0, 0)
+		parent:Unhighlight()
+	end)
+
+	return grid
+end
+
+function addon:CreateBindingButton(parent, modifier, bindKey, bindType, bindAction)
+	local b = CreateFrame("Button", nil, parent)
+	b:SetFrameLevel(5)
+	b:SetSize(100, 20)
+	b:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8x8", edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = 1})
+	b:SetBackdropColor(.12, .12, .12, 1) 
+    b:SetBackdropBorderColor(0, 0, 0, 1)
+
+	function b:Highlight()
+		b:SetBackdropColor(classColor.t[1], classColor.t[2], classColor.t[3], .1)
+	end
+
+	function b:Unhighlight()
+		b:SetBackdropColor(.12, .12, .12, 1)
+	end
+
+	local keyGrid = CreateGrid(b, modifier..bindKey, 127)
+	b.keyGrid = keyGrid
+	keyGrid:SetPoint("LEFT")
+
+	local typeGrid = CreateGrid(b, bindType, 65)
+	b.typeGrid = typeGrid
+	typeGrid:SetPoint("LEFT", keyGrid, "RIGHT", -1, 0)
+
+	local actionGrid = CreateGrid(b, bindAction, 100)
+	b.actionGrid = actionGrid
+	actionGrid:SetPoint("LEFT", typeGrid, "RIGHT", -1, 0)
+	actionGrid:SetPoint("RIGHT")
+
+	if actionGrid:IsTruncated() then
+		SetTooltip(actionGrid, "ANCHOR_TOPLEFT", 1, 0, L["Action"], bindAction)
+	end
+
+	function b:SetBorderColor(...)
+		keyGrid:SetBackdropBorderColor(...)
+		typeGrid:SetBackdropBorderColor(...)
+		actionGrid:SetBackdropBorderColor(...)
+	end
+
+	function b:SetChanged(isChanged)
+		if isChanged then
+			b:SetBorderColor(classColor.t[1], classColor.t[2], classColor.t[3], 1)
+		else
+			b:SetBorderColor(0, 0, 0, 1)
+		end
+	end
+
+	return b
 end
