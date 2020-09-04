@@ -251,9 +251,9 @@ local function UnitButton_UpdateHealthPrediction(self)
 
 	UpdateUnitHealthState(self)
 
-	local dbWidth = Cell.vars.currentLayoutTable["size"][1]
-	local incomingHealWidth = value / self.state.healthMax * dbWidth
-	local lostHealthWidth = dbWidth * (1 - self.state.healthPercent)
+	local barWidth = self.widget.healthBar:GetWidth()
+	local incomingHealWidth = value / self.state.healthMax * barWidth
+	local lostHealthWidth = barWidth * (1 - self.state.healthPercent)
 
 	if lostHealthWidth == 0 then
 		self.widget.incomingHeal:Hide()
@@ -275,19 +275,19 @@ local function UnitButton_UpdateShieldAbsorbs(self)
 	if value > 0 then
 		UpdateUnitHealthState(self)
 
-		local dbWidth = Cell.vars.currentLayoutTable["size"][1]
+		local barWidth = self.widget.healthBar:GetWidth()
 		local shieldPercent = value / self.state.healthMax
 		if shieldPercent + self.state.healthPercent > 1 then -- overshield
 			local p = 1 - self.state.healthPercent
 			if p ~= 0 then
-				self.widget.shieldBar:SetWidth(p * dbWidth)
+				self.widget.shieldBar:SetWidth(p * barWidth)
 				self.widget.shieldBar:Show()
 			else
 				self.widget.shieldBar:Hide()
 			end
 			self.widget.overShieldGlow:Show()
 		else
-			self.widget.shieldBar:SetWidth(shieldPercent * dbWidth)
+			self.widget.shieldBar:SetWidth(shieldPercent * barWidth)
 			self.widget.shieldBar:Show()
 			self.widget.overShieldGlow:Hide()
 		end
@@ -305,12 +305,12 @@ local function UnitButton_UpdateHealthAbsorbs(self)
 	if value > 0 then
 		UpdateUnitHealthState(self)
 
-		local dbWidth = Cell.vars.currentLayoutTable["size"][1]
+		local barWidth = self.widget.healthBar:GetWidth()
 		local absorbsPercent = value / self.state.healthMax
 		if absorbsPercent > self.state.healthPercent then
 			absorbsPercent = self.state.healthPercent
 		end
-		self.widget.absorbsBar:SetWidth(absorbsPercent * dbWidth)
+		self.widget.absorbsBar:SetWidth(absorbsPercent * barWidth)
 		self.widget.absorbsBar:Show()
 	else
 		self.widget.absorbsBar:Hide()
@@ -332,6 +332,21 @@ local function UnitButton_UpdateThreat(self)
 		self.widget.aggroIndicator:Show()
 	else
 		self.widget.aggroIndicator:Hide()
+	end
+end
+
+local function UnitButton_UpdateThreatBar(self)
+	local unit = self.state.displayedUnit
+	if not unit then return end
+
+	-- isTanking, status, scaledPercentage, rawPercentage, threatValue = UnitDetailedThreatSituation(unit, mobUnit)
+	local _, status, scaledPercentage, rawPercentage = UnitDetailedThreatSituation(unit, "target")
+	if status then
+		self.widget.aggroBar:Show()
+		self.widget.aggroBar:SetValue(scaledPercentage)
+		self.widget.aggroBar:SetStatusBarColor(GetThreatStatusColor(status))
+	else
+		self.widget.aggroBar:Hide()
 	end
 end
 
@@ -485,6 +500,7 @@ local function UnitButton_UpdateAll(self)
 	UnitButton_UpdateRole(self)
 	UnitButton_UpdateReadyCheck(self)
 	UnitButton_UpdateThreat(self)
+	UnitButton_UpdateThreatBar(self)
 	UnitButton_UpdatePhase(self)
 	-- UnitButton_UpdateAuras(self)
 end
@@ -511,6 +527,7 @@ local function UnitButton_RegisterEvents(self)
 	self:RegisterEvent("UNIT_HEAL_ABSORB_AMOUNT_CHANGED")
 
 	self:RegisterEvent("UNIT_THREAT_SITUATION_UPDATE")
+	self:RegisterEvent("UNIT_THREAT_LIST_UPDATE")
 	self:RegisterEvent("UNIT_ENTERED_VEHICLE")
 	self:RegisterEvent("UNIT_EXITED_VEHICLE")
 	
@@ -611,7 +628,7 @@ local function UnitButton_OnEvent(self, event, unit)
 			
 		elseif event == "UNIT_THREAT_SITUATION_UPDATE" then
 			UnitButton_UpdateThreat(self)
-	
+
 		elseif event == "INCOMING_RESURRECT_CHANGED" or event == "UNIT_PHASE" or event == "PARTY_MEMBER_DISABLE" or event == "PARTY_MEMBER_ENABLE" then
 			UnitButton_UpdatePhase(self)
 	
@@ -630,6 +647,10 @@ local function UnitButton_OnEvent(self, event, unit)
 	
 		elseif event == "PLAYER_TARGET_CHANGED" then
 			UnitButton_UpdateTarget(self)
+			UnitButton_UpdateThreatBar(self)
+		
+		elseif event == "UNIT_THREAT_LIST_UPDATE" then
+			UnitButton_UpdateThreatBar(self)
 	
 		-- // elseif event == "PLAYER_ROLES_ASSIGNED" then
 		-- // 	UnitButton_UpdateRole(self)
@@ -774,6 +795,7 @@ function F:UnitButton_OnLoad(button)
 	button.widget = {}
 	button.state = {}
 	button.func = {}
+	button.indicators = {}
 
 	-- background
 	local background = button:CreateTexture(name.."Background", "BORDER")
@@ -887,7 +909,7 @@ function F:UnitButton_OnLoad(button)
 		end)
 
 		button.func.ShowFlash = function(lostPercent, currentPercent)
-			local barWidth = Cell.vars.currentLayoutTable["size"][1] - 2
+			local barWidth = healthBar:GetWidth()
 			damageFlashTex:SetWidth(barWidth * lostPercent)
 			damageFlashTex:Show()
 			damageFlashAG:Play()
@@ -1034,7 +1056,13 @@ function F:UnitButton_OnLoad(button)
 	aggroIndicator:SetScript("OnHide", function(self)
 		self.blink:Stop()
 	end)
-	
+
+	local aggroBar = Cell:CreateStatusBar(overlayFrame, 18, 2, 100, true)
+	button.widget.aggroBar = aggroBar
+	-- aggroBar:SetPoint("TOPLEFT", roleIcon, "TOPRIGHT", -1, -1)
+	aggroBar:SetPoint("BOTTOMLEFT", overlayFrame, "TOPLEFT", 1, 0)
+	aggroBar:Hide()
+
 	-- phase icon
 	local phaseIcon = overlayFrame:CreateTexture(name.."PhaseIcon", "OVERLAY", nil, -7)
 	button.widget.phaseIcon = phaseIcon

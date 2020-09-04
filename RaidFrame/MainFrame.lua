@@ -39,7 +39,7 @@ end
 -- buttons
 -------------------------------------------------
 local options = Cell:CreateButton(cellMainFrame, "", "red", {20, 10}, false, nil, nil, L["Options"])
-options:SetPoint("BOTTOMLEFT", cellMainFrame, "TOPLEFT", 0, 3)
+options:SetPoint("BOTTOMLEFT", cellMainFrame, "TOPLEFT", 0, 4)
 RegisterDragForMainFrame(options)
 options:SetScript("OnClick", function()
     F:ShowOptionsFrame()

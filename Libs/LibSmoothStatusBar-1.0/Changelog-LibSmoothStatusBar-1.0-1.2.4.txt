@@ -1,0 +1,12 @@
+tag 1.2.4
+56e388f26b611fa370db47fb8b481f0a8b78496c
+galedric <g@ledric.me>
+2015-04-24 19:11:01 +0200
+
+Tagging as 1.2.4
+
+
+--------------------
+
+galedric:
+	- Algebra

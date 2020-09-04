@@ -1,0 +1,5 @@
+## Interface: 60000
+## Title: Lib: SmoothStatusBar-1.0
+## Notes: Smoothly animates status bar
+
+LibSmoothStatusBar-1.0.xml

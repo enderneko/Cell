@@ -1,6 +1,7 @@
 local addonName, addon = ...
 local L = addon.L
 -- local LPP = LibStub:GetLibrary("LibPixelPerfect")
+local LSSB = LibStub:GetLibrary("LibSmoothStatusBar-1.0")
 
 -----------------------------------------
 -- Color
@@ -426,6 +427,73 @@ function addon:CreateSlider(name, parent, low, high, width, step, onValueChanged
 	
 	
 	return slider
+end
+
+-----------------------------------------
+-- status bar
+-----------------------------------------
+function addon:CreateStatusBar(parent, width, height, maxValue, smooth, func, showText, texture, color)
+	local bar = CreateFrame("StatusBar", nil, parent)
+
+	if not color then color = {classColor.t[1], classColor.t[2], classColor.t[3], 1} end
+	if not texture then
+		local tex = bar:CreateTexture(nil, "ARTWORK")
+		tex:SetColorTexture(1, 1, 1, 1)
+
+		bar:SetStatusBarTexture(tex)
+		bar:SetStatusBarColor(unpack(color))
+	else
+		bar:SetStatusBarTexture(texture)
+		bar:SetStatusBarColor(unpack(color))
+	end
+	
+	-- bar:GetStatusBarTexture():SetHorizTile(false)
+	bar:SetWidth(width)
+	bar:SetHeight(height)
+	bar:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8x8", edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = -1})
+	bar:SetBackdropColor(.07, .07, .07, .9)
+	bar:SetBackdropBorderColor(0, 0, 0, 1)
+
+	if showText then
+		bar.text = bar:CreateFontString(nil, "OVERLAY", font_name)
+		bar.text:SetJustifyH("CENTER")
+		bar.text:SetJustifyV("MIDDLE")
+		bar.text:SetPoint("CENTER")
+		bar.text:SetText("0%")
+	end
+
+	bar:SetMinMaxValues(0, maxValue)
+	bar:SetValue(0)
+	if smooth then LSSB:SmoothBar(bar) end -- smooth progress bar
+
+	function bar:SetMaxValue(m)
+		maxValue = m
+		bar:SetMinMaxValues(0, m)
+	end
+	
+	function bar:Reset()
+		LSSB:ResetBar(bar) -- disable smooth
+		bar:SetValue(0)
+		LSSB:SmoothBar(bar) -- re-enable smooth
+	end
+
+	bar:SetScript("OnValueChanged", function(self, value)
+		if showText then
+			bar.text:SetText(format("%d%%", value / maxValue * 100))
+		end
+		
+		if func then func() end
+	end)
+
+	bar:SetScript("OnHide", function()
+		if smooth then
+			bar:Reset()
+		else
+			bar:SetValue(0)
+		end
+	end)
+
+	return bar
 end
 
 ------------------------------------------------
