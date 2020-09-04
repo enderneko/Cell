@@ -99,7 +99,7 @@ end
 -----------------------------------------
 -- Frame
 -----------------------------------------
-local function StylizeFrame(frame, color, borderColor)
+function addon:StylizeFrame(frame, color, borderColor)
 	if not color then color = {.1, .1, .1, .9} end
 	if not borderColor then borderColor = {0, 0, 0, 1} end
 
@@ -111,7 +111,7 @@ end
 function addon:CreateFrame(name, parent, width, height, isTransparent)
 	local f = CreateFrame("Frame", name, parent)
 	f:Hide()
-	if not isTransparent then StylizeFrame(f) end
+	if not isTransparent then addon:StylizeFrame(f) end
 	f:EnableMouse(true)
 	if width and height then f:SetSize(width, height) end
 	return f
@@ -346,7 +346,7 @@ function addon:CreateEditBox(parent, width, height, isNumeric, font)
 	if not font then font = font_name end
 
 	local eb = CreateFrame("EditBox", nil, parent)
-	StylizeFrame(eb, {.1, .1, .1, .9})
+	addon:StylizeFrame(eb, {.1, .1, .1, .9})
 	eb:SetFontObject(font)
 	eb:SetMultiLine(false)
 	eb:SetMaxLetters(0)
@@ -380,7 +380,7 @@ function addon:CreateSlider(name, parent, low, high, width, step, onValueChanged
 	slider:SetOrientation("HORIZONTAL")
 	slider:SetSize(width, 10)
 
-	StylizeFrame(slider)
+	addon:StylizeFrame(slider)
 	
 	local nameText = slider:CreateFontString(nil, "OVERLAY", font_name)
 	nameText:SetText(name)
@@ -432,11 +432,11 @@ function addon:CreateDropdownMenu(parent, width)
 	menu:SetSize(width, 20)
 	menu:EnableMouse(true)
 	menu:SetFrameLevel(5)
-	StylizeFrame(menu)
+	addon:StylizeFrame(menu)
 	
 	-- button: open/close menu list
 	menu.button = addon:CreateButton(menu, "", "transparent-class", {18 ,20})
-	StylizeFrame(menu.button)
+	addon:StylizeFrame(menu.button)
 	menu.button:SetPoint("RIGHT")
 	menu.button:SetFrameLevel(6)
 	menu.button:SetNormalTexture([[Interface\AddOns\Cell\Media\dropdown]])
@@ -453,7 +453,7 @@ function addon:CreateDropdownMenu(parent, width)
 	
 	-- item list
 	local list = CreateFrame("Frame", nil, menu)
-	StylizeFrame(list, {.1, .1, .1, 1})
+	addon:StylizeFrame(list, {.1, .1, .1, 1})
 	list:SetPoint("TOP", menu, "BOTTOM", 0, -2)
 	list:SetFrameLevel(7) -- top of its strata
 	list:SetSize(width, 5)
@@ -635,11 +635,11 @@ function addon:CreateTextureDropdown(parent, width)
 	menu:SetSize(width, 20)
 	menu:EnableMouse(true)
 	menu:SetFrameLevel(5)
-	StylizeFrame(menu)
+	addon:StylizeFrame(menu)
 	
 	-- button: open/close menu list
 	menu.button = addon:CreateButton(menu, "", "transparent-class", {18 ,20})
-	StylizeFrame(menu.button)
+	addon:StylizeFrame(menu.button)
 	menu.button:SetPoint("RIGHT")
 	menu.button:SetFrameLevel(6)
 	menu.button:SetNormalTexture([[Interface\AddOns\Cell\Media\dropdown]])
@@ -661,7 +661,7 @@ function addon:CreateTextureDropdown(parent, width)
 	
 	-- item list
 	local list = CreateFrame("Frame", nil, menu)
-	StylizeFrame(list, {.1, .1, .1, 1})
+	addon:StylizeFrame(list, {.1, .1, .1, 1})
 	list:SetPoint("TOP", menu, "BOTTOM", 0, -2)
 	list:SetFrameLevel(7) -- top of its strata
 	list:SetSize(width, 5)
@@ -770,7 +770,7 @@ end
 function addon:CreateMask(parent, text, points) -- points = {topleftX, topleftY, bottomrightX, bottomrightY}
 	if not parent.mask then -- not init
 		parent.mask = CreateFrame("Frame", nil, parent)
-		StylizeFrame(parent.mask, {.15, .15, .15, .6}, {0, 0, 0, 0})
+		addon:StylizeFrame(parent.mask, {.15, .15, .15, .6}, {0, 0, 0, 0})
 		parent.mask:SetFrameStrata("HIGH")
 		parent.mask:SetFrameLevel(100)
 		parent.mask:EnableMouse(true) -- can't click-through
@@ -807,7 +807,7 @@ function addon:CreateConfirmPopup(parent, width, text, onAccept, hasEditBox, mas
 	if not parent.confirmPopup then -- not init
 		parent.confirmPopup = CreateFrame("Frame", nil, parent)
 		parent.confirmPopup:SetSize(width, 100)
-		StylizeFrame(parent.confirmPopup, {.07, .07, .07, .95}, {classColor.t[1], classColor.t[2], classColor.t[3], .7})
+		addon:StylizeFrame(parent.confirmPopup, {.07, .07, .07, .95}, {classColor.t[1], classColor.t[2], classColor.t[3], .7})
 		parent.confirmPopup:SetFrameStrata("DIALOG")
 		parent.confirmPopup:SetFrameLevel(2)
 		parent.confirmPopup:Hide()
@@ -911,7 +911,7 @@ function addon:CreatePopupEditBox(parent, width, func, multiLine)
 		eb:SetTextInsets(5, 5, 3, 4)
 		eb:SetPoint("TOPLEFT")
 		eb:SetPoint("TOPRIGHT")
-		StylizeFrame(eb, {.1, .1, .1, 1}, {classColor.t[1], classColor.t[2], classColor.t[3], 1})
+		addon:StylizeFrame(eb, {.1, .1, .1, 1}, {classColor.t[1], classColor.t[2], classColor.t[3], 1})
 		
 		eb:SetScript("OnHide", function()
 			eb:Hide() -- hide self when parent hides
@@ -1128,7 +1128,7 @@ function addon:CreateScrollFrame(parent, top, bottom, color, border)
 	scrollFrame:SetPoint("BOTTOMRIGHT", 0, bottom)
 
 	if color then
-		StylizeFrame(scrollFrame, color, border)
+		addon:StylizeFrame(scrollFrame, color, border)
 	end
 
 	function scrollFrame:Resize(newTop, newBottom)
@@ -1150,7 +1150,7 @@ function addon:CreateScrollFrame(parent, top, bottom, color, border)
 	scrollbar:SetPoint("TOPLEFT", scrollFrame, "TOPRIGHT", 2, 0)
 	scrollbar:SetPoint("BOTTOMRIGHT", scrollFrame, 7, 0)
 	scrollbar:Hide()
-	StylizeFrame(scrollbar, {.1, .1, .1, .8})
+	addon:StylizeFrame(scrollbar, {.1, .1, .1, .8})
 	scrollFrame.scrollbar = scrollbar
 	
 	-- scrollbar thumb
@@ -1158,7 +1158,7 @@ function addon:CreateScrollFrame(parent, top, bottom, color, border)
 	scrollThumb:SetWidth(5) -- scrollbar's width is 5
 	scrollThumb:SetHeight(scrollbar:GetHeight())
 	scrollThumb:SetPoint("TOP")
-	StylizeFrame(scrollThumb, {classColor.t[1], classColor.t[2], classColor.t[3], .8})
+	addon:StylizeFrame(scrollThumb, {classColor.t[1], classColor.t[2], classColor.t[3], .8})
 	scrollThumb:EnableMouse(true)
 	scrollThumb:SetMovable(true)
 	scrollThumb:SetHitRectInsets(-5, -5, 0, 0) -- Frame:SetHitRectInsets(left, right, top, bottom)
