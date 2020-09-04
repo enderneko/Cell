@@ -156,10 +156,7 @@ function eventFrame:ADDON_LOADED(arg1)
                         ["name"] = 13,
                         ["status"] = 11,
                     },
-                    ["icon"] = {
-                        ["center"] = 20,
-                        ["debuff"] = 16,
-                    },
+                    ["iconScaleFactor"] = 1,
                     ["groupFilter"] = {true, true, true, true, true, true, true, true},
                 },
             }
