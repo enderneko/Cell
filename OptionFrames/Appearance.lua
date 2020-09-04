@@ -11,8 +11,6 @@ local selectedLayout, selectedLayoutTable
 -------------------------------------------------
 -- preview frame
 -------------------------------------------------
-local previewFrame
-
 local previewButton = CreateFrame("Button", appearanceTab:GetName().."_PreviewButton", appearanceTab, "CellUnitButtonTemplate")
 previewButton:SetPoint("BOTTOMRIGHT", appearanceTab, "BOTTOMLEFT", -5, 0)
 -- previewButton:SetAttribute("unit", "player")
@@ -22,6 +20,17 @@ previewButton:SetScript("OnLeave", nil)
 previewButton:SetScript("OnShow", nil)
 previewButton:SetScript("OnHide", nil)
 previewButton:Show()
+
+local previewButtonBG = Cell:CreateFrame(appearanceTab:GetName().."_PreviewButtonBG", appearanceTab)
+previewButtonBG:SetPoint("TOPLEFT", previewButton, 0, 20)
+previewButtonBG:SetPoint("BOTTOMRIGHT", previewButton, "TOPRIGHT")
+previewButtonBG:SetFrameStrata("BACKGROUND")
+Cell:StylizeFrame(previewButtonBG, {.1, .1, .1, .7}, {0, 0, 0, 0})
+previewButtonBG:Show()
+
+local previewText = previewButtonBG:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET_TITLE")
+previewText:SetPoint("TOP", 0, -3)
+previewText:SetText(L["Preview"])
 
 local function UpdatePreviewButton(which, value)
     if not previewButton.loaded then
@@ -482,25 +491,27 @@ end)
 statusFontSlider:SetPoint("TOP", nameFontSlider, "BOTTOM", 0, -40)
 
 -------------------------------------------------
--- icon size
+-- icon & spacing
 -------------------------------------------------
-local iconSizeText = Cell:CreateSeparator(L["Icon Size"], appearanceTab, 122)
-iconSizeText:SetPoint("TOPLEFT", 269, -265)
+local miscText = Cell:CreateSeparator(L["Icon & Spacing"], appearanceTab, 122)
+miscText:SetPoint("TOPLEFT", 269, -265)
 
--- center
-local centerIconSlider = Cell:CreateSlider(L["Center Icon"], appearanceTab, 15, 25, 100, 1, function(value)
-    selectedLayoutTable["icon"]["center"] = value
+-- icon
+local iconFactorSlider = Cell:CreateSlider(L["Icon Scale Factor"], appearanceTab, 1, 3, 100, 0.1, function(value)
+    selectedLayoutTable["iconScaleFactor"] = value
     UpdatePreviewButton()
 end)
-centerIconSlider:SetPoint("TOPLEFT", iconSizeText, "BOTTOMLEFT", 5, -25)
+iconFactorSlider:SetPoint("TOPLEFT", miscText, "BOTTOMLEFT", 5, -25)
 
--- debuff
-local debuffIconSlider = Cell:CreateSlider(L["Debuff Icon"], appearanceTab, 10, 20, 100, 1, function(value)
-    selectedLayoutTable["icon"]["debuff"] = value
-    UpdatePreviewButton()
+-- spacing
+local spacingSlider = Cell:CreateSlider(L["Spacing"], appearanceTab, 3, 7, 100, 1, function(value)
+    selectedLayoutTable["spacing"] = value
+    if selectedLayout == Cell.vars.currentLayout then
+        Cell:Fire("UpdateLayout", selectedLayout, "spacing")
+    end
+    -- UpdatePreviewButton()
 end)
-debuffIconSlider:SetPoint("TOP", centerIconSlider, "BOTTOM", 0, -40)
-debuffIconSlider:SetEnabled(false)
+spacingSlider:SetPoint("TOP", iconFactorSlider, "BOTTOM", 0, -40)
 
 -------------------------------------------------
 -- functions
@@ -517,8 +528,8 @@ LoadLayoutDB = function(layout)
     nameFontSlider:SetValue(selectedLayoutTable["font"]["name"])
     statusFontSlider:SetValue(selectedLayoutTable["font"]["status"])
 
-    centerIconSlider:SetValue(selectedLayoutTable["icon"]["center"])
-    debuffIconSlider:SetValue(selectedLayoutTable["icon"]["debuff"])
+    iconFactorSlider:SetValue(selectedLayoutTable["iconScaleFactor"])
+    spacingSlider:SetValue(selectedLayoutTable["spacing"])
 
     UpdateGroupFilter()
     UpdatePreviewButton()

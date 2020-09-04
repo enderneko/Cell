@@ -36,7 +36,7 @@ authorNameText:SetText("篠崎-影之哀伤(CN)")
 -------------------------------------------------
 -- bugreport
 -------------------------------------------------
-local bugReportText = Cell:CreateSeparator(L["Bug Report"], aboutTab, 387)
+local bugReportText = Cell:CreateSeparator(L["Bug Report & Suggestion"], aboutTab, 387)
 bugReportText:SetPoint("TOPLEFT", 5, -190)
 
 -- local bugReportText2 = aboutTab:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")

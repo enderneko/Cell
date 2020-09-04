@@ -416,6 +416,10 @@ function addon:CreateSlider(name, parent, low, high, width, step, onValueChanged
 		if oldValue == value then return end
 		oldValue = value
 
+		if math.floor(value) < value then -- decimal
+			value = tonumber(string.format("%.1f", value))
+		end
+
 		currentText:SetText(value)
         if userChanged and onValueChangedFn then onValueChangedFn(value) end
 	end)
