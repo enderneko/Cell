@@ -18,7 +18,7 @@ introduceText:SetPoint("TOPLEFT", nameText, "BOTTOMLEFT", 5, -12)
 introduceText:SetPoint("RIGHT", -10, 0)
 introduceText:SetJustifyH("LEFT")
 introduceText:SetSpacing(5)
-introduceText:SetText("Cell is a improved and rewritten version of CompactRaid (by Abin).\nSome ideas are stolen from other great raid frame addons, like Aptechka, Grid2.")
+introduceText:SetText("Cell is a improved and rewritten version of CompactRaid (by Abin).\nSome ideas are stolen from other great raid frame addons, such as Aptechka, Grid2.")
 
 -------------------------------------------------
 -- author
@@ -30,7 +30,7 @@ local authorNameText = aboutTab:CreateFontString(nil, "OVERLAY")
 authorNameText:SetPoint("TOPLEFT", authorText, "BOTTOMLEFT", 5, -12)
 authorNameText:SetJustifyH("LEFT")
 authorNameText:SetJustifyV("MIDDLE")
-authorNameText:SetFont("Interface\\AddOns\\Cell\\Media\\author.ttf", 12)
+authorNameText:SetFont("Interface\\AddOns\\Cell\\Media\\font.ttf", 12)
 authorNameText:SetText("篠崎-影之哀伤(CN)")
 
 -------------------------------------------------

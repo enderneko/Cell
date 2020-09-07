@@ -1,90 +1,12 @@
 local _, Cell = ...
 local L = Cell.L
 local F = Cell.funcs
+local LPP = LibStub:GetLibrary("LibPixelPerfect")
 
 local appearanceTab = Cell:CreateFrame("CellOptionsFrame_AppearanceTab", Cell.frames.optionsFrame, nil, nil, true)
 Cell.frames.appearanceTab = appearanceTab
 appearanceTab:SetAllPoints(Cell.frames.optionsFrame)
 appearanceTab:Hide()
-
-local selectedLayout, selectedLayoutTable
--------------------------------------------------
--- preview frame
--------------------------------------------------
-local previewButton = CreateFrame("Button", appearanceTab:GetName().."_PreviewButton", appearanceTab, "CellUnitButtonTemplate")
-previewButton:SetPoint("BOTTOMRIGHT", appearanceTab, "BOTTOMLEFT", -5, 0)
--- previewButton:SetAttribute("unit", "player")
-previewButton:UnregisterAllEvents()
-previewButton:SetScript("OnEnter", nil)
-previewButton:SetScript("OnLeave", nil)
-previewButton:SetScript("OnShow", nil)
-previewButton:SetScript("OnHide", nil)
-previewButton:Show()
-
-local previewButtonBG = Cell:CreateFrame(appearanceTab:GetName().."_PreviewButtonBG", appearanceTab)
-previewButtonBG:SetPoint("TOPLEFT", previewButton, 0, 20)
-previewButtonBG:SetPoint("BOTTOMRIGHT", previewButton, "TOPRIGHT")
-previewButtonBG:SetFrameStrata("BACKGROUND")
-Cell:StylizeFrame(previewButtonBG, {.1, .1, .1, .7}, {0, 0, 0, 0})
-previewButtonBG:Show()
-
-local previewText = previewButtonBG:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET_TITLE")
-previewText:SetPoint("TOP", 0, -3)
-previewText:SetText(L["Preview"])
-
-local function UpdatePreviewButton(which, value)
-    if not previewButton.loaded then
-        previewButton.loaded = true
-        
-        -- bar
-        previewButton.widget.healthBar:SetStatusBarColor(F:GetClassColor(Cell.vars.playerClass))
-        local r, g, b = F:GetPowerColor("player")
-        previewButton.widget.powerBar:SetStatusBarColor(r, g, b)
-        
-        -- text
-        local name, vehicleName, status = UnitName("player"), L["vehicle name"], L["DEAD"]
-        
-        previewButton.widget.nameText:SetText(name)
-        previewButton.widget.vehicleText:SetText(vehicleName)
-        previewButton.widget.statusText:SetText(status)
-
-        previewButton.widget.nameText:SetFont(CELL_FONT_NAME:GetFont(), selectedLayoutTable["font"]["name"])
-        previewButton.widget.vehicleText:SetFont(CELL_FONT_STATUS:GetFont(), selectedLayoutTable["font"]["status"])
-        previewButton.widget.statusText:SetFont(CELL_FONT_STATUS:GetFont(), selectedLayoutTable["font"]["status"])
-
-        previewButton:SetScript("OnSizeChanged", function(self)
-            F:SetTextLimitWidth(self.widget.nameText, name, 0.75)
-			F:SetTextLimitWidth(self.widget.vehicleText, vehicleName, 0.75)
-        end)
-    end
-
-    if not which or which == "size" then
-        previewButton:SetSize(unpack(selectedLayoutTable["size"]))
-    end
-
-    if not which or which == "texture" then
-        previewButton.widget.healthBar:SetStatusBarTexture(which and value or Cell.vars.texture)
-        previewButton.widget.powerBar:SetStatusBarTexture(which and value or Cell.vars.texture)
-    end
-
-    local flags
-    if CellDB["outline"] == "Outline" then
-        flags = "OUTLINE"
-    elseif CellDB["outline"] == "Monochrome Outline" then
-        flags = "OUTLINE, MONOCHROME"
-    end    
-
-    if not which or which == "font" or which == "nameFont" then
-        previewButton.widget.nameText:SetFont(CELL_FONT_NAME:GetFont(), value or selectedLayoutTable["font"]["name"], flags)
-        previewButton:GetScript("OnSizeChanged")(previewButton)
-    end
-    
-    if not which or which == "font" or which == "statusFont" then
-        previewButton.widget.vehicleText:SetFont(CELL_FONT_NAME:GetFont(), value or selectedLayoutTable["font"]["status"], flags)
-        previewButton.widget.statusText:SetFont(CELL_FONT_NAME:GetFont(), value or selectedLayoutTable["font"]["status"], flags)
-        previewButton:GetScript("OnSizeChanged")(previewButton)
-    end
-end
 
 -------------------------------------------------
 -- texture
@@ -92,18 +14,15 @@ end
 local textureText = Cell:CreateSeparator(L["Texture"], appearanceTab, 188)
 textureText:SetPoint("TOPLEFT", 5, -5)
 
-local textureDropdown = Cell:CreateTextureDropdown(appearanceTab, 150)
+local textureDropdown = Cell:CreateDropdown(appearanceTab, 150, "texture")
 textureDropdown:SetPoint("TOPLEFT", textureText, "BOTTOMLEFT", 5, -12)
 
-local texturesLoaded
 local function CheckTextures()
-    if texturesLoaded then return end -- texture already loaded
-    
     local items = {}
     local textures, textureNames
     local defaultTexture, defaultTextureName = "Interface\\AddOns\\Cell\\Media\\statusbar.tga", "Cell ".._G.DEFAULT
     
-    local LSM = LibStub("LibSharedMedia-3.0")
+    local LSM = LibStub("LibSharedMedia-3.0", true)
     if LSM then
         textures, textureNames = F:Copy(LSM:HashTable("statusbar")), F:Copy(LSM:List("statusbar"))
         -- insert default texture
@@ -116,8 +35,7 @@ local function CheckTextures()
                 ["texture"] = textures[name],
                 ["onClick"] = function()
                     CellDB["texture"] = name
-                    Cell:Fire("UpdateLayout", nil, "texture")
-                    UpdatePreviewButton("texture", textures[name])
+                    Cell:Fire("UpdateAppearance", "texture")
                 end,
             })
         end
@@ -130,8 +48,7 @@ local function CheckTextures()
             ["texture"] = defaultTexture,
             ["onClick"] = function()
                 CellDB["texture"] = defaultTextureName
-                Cell:Fire("UpdateLayout", nil, "texture")
-                UpdatePreviewButton("texture", textures[name])
+                Cell:Fire("UpdateAppearance", "texture")
             end,
         })
     end
@@ -143,8 +60,6 @@ local function CheckTextures()
     else
         textureDropdown:SetSelected(defaultTextureName, defaultTexture)
     end
-
-    texturesLoaded = true
 end
 
 
@@ -154,7 +69,7 @@ end
 local scaleText = Cell:CreateSeparator(L["Scale"], appearanceTab, 188)
 scaleText:SetPoint("TOPLEFT", 203, -5)
 
-local scaleDropdown = Cell:CreateDropdownMenu(appearanceTab, 150)
+local scaleDropdown = Cell:CreateDropdown(appearanceTab, 150)
 scaleDropdown:SetPoint("TOPLEFT", scaleText, "BOTTOMLEFT", 5, -12)
 
 local scales = {
@@ -173,7 +88,7 @@ do
             ["text"] = scales[value],
             ["onClick"] = function()
                 CellDB["scale"] = value
-                Cell:Fire("UpdateLayout", nil, "scale")
+                Cell:Fire("UpdateAppearance", "scale")
             end,
         })
     end
@@ -181,37 +96,89 @@ do
 end
 
 -------------------------------------------------
+-- font
+-------------------------------------------------
+local fontText = Cell:CreateSeparator(L["Font"], appearanceTab, 188)
+fontText:SetPoint("TOPLEFT", 5, -90)
+
+-- drop down
+local fontDropdown = Cell:CreateDropdown(appearanceTab, 150, "font")
+fontDropdown:SetPoint("TOPLEFT", fontText, "BOTTOMLEFT", 5, -12)
+
+local function CheckFonts()
+    local items = {}
+    local fonts, fontNames
+    local defaultFont, defaultFontName = GameFontNormal:GetFont(), "Cell ".._G.DEFAULT
+    
+    local LSM = LibStub("LibSharedMedia-3.0", true)
+    if LSM then
+        fonts, fontNames = F:Copy(LSM:HashTable("font")), F:Copy(LSM:List("font"))
+        -- insert default texture
+        tinsert(fontNames, 1, defaultFontName)
+        fonts[defaultFontName] = defaultFont
+
+        for _, name in pairs(fontNames) do
+            tinsert(items, {
+                ["text"] = name,
+                ["font"] = fonts[name],
+                ["onClick"] = function()
+                    CellDB["font"] = name
+                    Cell:Fire("UpdateAppearance", "font")
+                end,
+            })
+        end
+    else
+        fontNames = {defaultFontName}
+        fonts = {[defaultFontName] = defaultFont}
+
+        tinsert(items, {
+            ["text"] = defaultFontName,
+            ["font"] = defaultFont,
+            ["onClick"] = function()
+                CellDB["font"] = defaultFontName
+                Cell:Fire("UpdateAppearance", "font")
+            end,
+        })
+    end
+    fontDropdown:SetItems(items)
+    
+    -- validation
+    if fonts[CellDB["font"]] then
+        fontDropdown:SetSelected(CellDB["font"], fonts[CellDB["font"]])
+    else
+        fontDropdown:SetSelected(defaultFontName, defaultFont)
+    end
+end
+
+-------------------------------------------------
 -- font outline
 -------------------------------------------------
 local fontOutlineText = Cell:CreateSeparator(L["Font Outline"], appearanceTab, 188)
-fontOutlineText:SetPoint("TOPLEFT", 5, -70)
+fontOutlineText:SetPoint("TOPLEFT", 203, -90)
 
 -- drop down
-local fontOutlineDropdown = Cell:CreateDropdownMenu(appearanceTab, 150)
+local fontOutlineDropdown = Cell:CreateDropdown(appearanceTab, 150)
 fontOutlineDropdown:SetPoint("TOPLEFT", fontOutlineText, "BOTTOMLEFT", 5, -12)
 fontOutlineDropdown:SetItems({
     {
         ["text"] = L["Shadow"],
         ["onClick"] = function()
             CellDB["outline"] = "Shadow"
-            Cell:Fire("UpdateLayout", nil, "font")
-            UpdatePreviewButton("font")
+            Cell:Fire("UpdateAppearance", "font")
         end,
     },
     {
         ["text"] = L["Outline"],
         ["onClick"] = function()
             CellDB["outline"] = "Outline"
-            Cell:Fire("UpdateLayout", nil, "font")
-            UpdatePreviewButton("font")
+            Cell:Fire("UpdateAppearance", "font")
         end,
     },
     {
         ["text"] = L["Monochrome Outline"],
         ["onClick"] = function()
             CellDB["outline"] = "Monochrome Outline"
-            Cell:Fire("UpdateLayout", nil, "font")
-            UpdatePreviewButton("font")
+            Cell:Fire("UpdateAppearance", "font")
         end,
     },
 })
@@ -219,8 +186,8 @@ fontOutlineDropdown:SetItems({
 -------------------------------------------------
 -- hide blizzard
 -------------------------------------------------
-local blizzardText = Cell:CreateSeparator(L["Blizzard Raid Frame"], appearanceTab, 188)
-blizzardText:SetPoint("TOPLEFT", 203, -70)
+local blizzardText = Cell:CreateSeparator(L["Blizzard Frames"], appearanceTab, 188)
+blizzardText:SetPoint("TOPLEFT", 5, -175)
 
 local hideBlizzardCB = Cell:CreateCheckButton(appearanceTab, L["Hide Blizzard Raid / Party"], function(checked, self)
     CellDB["hideBlizzard"] = checked
@@ -228,331 +195,65 @@ end, L["Hide Blizzard Frames"], L["Require reload of the UI"])
 hideBlizzardCB:SetPoint("TOPLEFT", blizzardText, "BOTTOMLEFT", 5, -15)
 
 -------------------------------------------------
--- layout
+-- tooltip
 -------------------------------------------------
-local LoadLayoutDB, UpdateButtonStates
+local tooltipsText = Cell:CreateSeparator(L["Tooltips"], appearanceTab, 188)
+tooltipsText:SetPoint("TOPLEFT", 203, -175)
 
-local layoutText = Cell:CreateSeparator(L["Layout"], appearanceTab, 387)
-layoutText:SetPoint("TOPLEFT", 5, -135)
-
-local enabledLayoutText = appearanceTab:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET_TITLE")
-enabledLayoutText:SetPoint("LEFT", layoutText, "RIGHT", 5, 0)
-enabledLayoutText:SetJustifyH("LEFT")
-
-local function UpdateEnabledLayoutText()
-    enabledLayoutText:SetText("|cFF777777"..L["currently enabled"]..": "..Cell.vars.currentLayout)
-end
-
--- drop down
-local layoutDropdown = Cell:CreateDropdownMenu(appearanceTab, 150)
-layoutDropdown:SetPoint("TOPLEFT", layoutText, "BOTTOMLEFT", 5, -12)
-
-local function LoadLayoutDropdown()
-    local layout, layouts = CellCharacterDB["layout"], CellDB["layouts"]
-
-    local indices = {}
-    for name, _ in pairs(CellDB["layouts"]) do
-        if name ~= "default" then
-            tinsert(indices, name)
-        end
-    end
-    table.sort(indices)
-    tinsert(indices, 1, "default") -- make default first
-
-    local items = {}
-    for _, value in pairs(indices) do
-        table.insert(items, {
-            ["text"] = value,
-            ["onClick"] = function()
-                LoadLayoutDB(value)
-                UpdateButtonStates()
-            end,
-        })
-    end
-    layoutDropdown:SetItems(items)
-    layoutDropdown:SetSelected(CellCharacterDB["layout"])
-end
-
--- mask
-Cell:CreateMask(appearanceTab, nil, {1, -135, -1, 1})
-appearanceTab.mask:Hide()
-
--- apply
-local enableBtn = Cell:CreateButton(appearanceTab, L["Enable"], "class-hover", {50, 20})
-enableBtn:SetPoint("LEFT", layoutDropdown, "RIGHT", 20, 0)
-enableBtn:SetScript("OnClick", function()
-    CellCharacterDB["layout"] = selectedLayout
-    F:UpdateLayout()
-    UpdateButtonStates()
-    UpdateEnabledLayoutText()
+local disableTooltipsCB = Cell:CreateCheckButton(appearanceTab, L["Disable tooltips"], function(checked, self)
+    CellDB["disableTooltips"] = checked
 end)
-
--- rename
-local renameBtn = Cell:CreateButton(appearanceTab, L["Rename"], "class-hover", {50, 20})
-renameBtn:SetPoint("LEFT", enableBtn, "RIGHT", -1, 0)
-renameBtn:SetScript("OnClick", function()
-    local popup = Cell:CreateConfirmPopup(appearanceTab, 200, L["Rename layout"].." "..selectedLayout, function(self)
-        local name = strtrim(self.editBox:GetText())
-        if name ~= "" and not CellDB["layouts"][name] then
-            -- update db
-            CellDB["layouts"][name] = F:Copy(CellDB["layouts"][selectedLayout])
-            CellDB["layouts"][selectedLayout] = nil
-
-            if selectedLayout == Cell.vars.currentLayout then
-                CellCharacterDB["layout"] = name
-                
-                -- update vars
-                Cell.vars.currentLayout = name
-                Cell.vars.currentLayoutTable = CellDB["layouts"][name]
-
-                -- update text
-                UpdateEnabledLayoutText()
-            end
-
-            -- update dropdown
-            layoutDropdown:SetCurrentItem({
-                ["text"] = name,
-                ["onClick"] = function()
-                    LoadLayoutDB(name)
-                    UpdateButtonStates()
-                end,
-            })
-            layoutDropdown:SetSelected(name)
-
-            LoadLayoutDB(name)
-            UpdateButtonStates()
-            F:Print(L["Layout renamed: "].." "..selectedLayout.." "..L["to"].." "..name..".")
-        else
-            F:Print(L["Invalid layout name."])
-        end
-    end, true, true)
-    popup:SetPoint("TOPLEFT", 100, -185)
-end)
-
--- new
-local newBtn = Cell:CreateButton(appearanceTab, L["New"], "class-hover", {50, 20})
-newBtn:SetPoint("LEFT", renameBtn, "RIGHT", -1, 0)
-newBtn:SetScript("OnClick", function()
-    local popup = Cell:CreateConfirmPopup(appearanceTab, 200, L["Create new layout"], function(self)
-        local name = strtrim(self.editBox:GetText())
-        if name ~= "" and not CellDB["layouts"][name] then
-            -- update db copy current layout
-            CellDB["layouts"][name] = F:Copy(CellDB["layouts"][Cell.vars.currentLayout])
-            -- update dropdown
-            layoutDropdown:AddItem({
-                ["text"] = name,
-                ["onClick"] = function()
-                    LoadLayoutDB(name)
-                    UpdateButtonStates()
-                end,
-            })
-            layoutDropdown:SetSelected(name)
-            LoadLayoutDB(name)
-            UpdateButtonStates()
-            F:Print(L["Layout added: "]..name..".")
-        else
-            F:Print(L["Invalid layout name."])
-        end
-    end, true, true)
-    popup:SetPoint("TOPLEFT", 100, -185)
-end)
-
--- delete
-local deleteBtn = Cell:CreateButton(appearanceTab, L["Delete"], "class-hover", {50, 20})
-deleteBtn:SetPoint("LEFT", newBtn, "RIGHT", -1, 0)
-deleteBtn:SetScript("OnClick", function()
-    local popup = Cell:CreateConfirmPopup(appearanceTab, 200, L["Delete layout"].." "..selectedLayout.."?", function(self)
-        CellDB["layouts"][selectedLayout] = nil
-        F:Print(L["Layout deleted: "]..selectedLayout..".")
-        -- update dropdown
-        layoutDropdown:RemoveCurrentItem()
-        layoutDropdown:SetSelected(Cell.vars.currentLayout)
-        LoadLayoutDB(Cell.vars.currentLayout)
-        UpdateButtonStates()
-    end, false, true)
-    popup:SetPoint("TOPLEFT", 100, -185)
-end)
-
-UpdateButtonStates = function()
-    if selectedLayout == Cell.vars.currentLayout then
-        enableBtn:SetEnabled(false)
-        deleteBtn:SetEnabled(false)
-        
-        if selectedLayout == "default" then
-            renameBtn:SetEnabled(false)
-        else
-            renameBtn:SetEnabled(true)
-        end
-
-    else -- selectedLayout ~= Cell.vars.currentLayout
-        enableBtn:SetEnabled(true)
-        
-        if selectedLayout == "default" then
-            deleteBtn:SetEnabled(false)
-            renameBtn:SetEnabled(false)
-        else
-            deleteBtn:SetEnabled(true)
-            renameBtn:SetEnabled(true)
-        end
-    end
-end
-
--------------------------------------------------
--- group filter
--------------------------------------------------
-local groupFilterText = Cell:CreateSeparator(L["Group Filter"], appearanceTab, 387)
-groupFilterText:SetPoint("TOPLEFT", 5, -200)
-
-local function UpdateButtonBorderColor(flag, b)
-    local borderColor 
-    if flag then
-        borderColor = {b.hoverColor[1], b.hoverColor[2], b.hoverColor[3], 1}
-    else
-        borderColor = {0, 0, 0, 1}
-    end
-    b:SetBackdropBorderColor(unpack(borderColor))
-end
-
-local groupButtons = {}
-for i = 1, 8 do
-    groupButtons[i] = Cell:CreateButton(appearanceTab, i, "class-hover", {20, 20})
-    groupButtons[i]:SetScript("OnClick", function()
-        selectedLayoutTable["groupFilter"][i] = not selectedLayoutTable["groupFilter"][i]
-        UpdateButtonBorderColor(selectedLayoutTable["groupFilter"][i], groupButtons[i])
-
-        if selectedLayout == Cell.vars.currentLayout then
-            Cell:Fire("UpdateLayout", selectedLayout, "groupFilter")
-        end
-    end)
-    
-    if i == 1 then
-        groupButtons[i]:SetPoint("TOPLEFT", groupFilterText, "BOTTOMLEFT", 5, -12)
-    else
-        groupButtons[i]:SetPoint("LEFT", groupButtons[i-1], "RIGHT", 3, 0)
-    end
-end
-
-local function UpdateGroupFilter()
-    for i = 1, 8 do
-        UpdateButtonBorderColor(selectedLayoutTable["groupFilter"][i], groupButtons[i])
-    end
-end
-
--------------------------------------------------
--- button size
--------------------------------------------------
-local buttonSizeText = Cell:CreateSeparator(L["Unit Button Size"], appearanceTab, 122)
-buttonSizeText:SetPoint("TOPLEFT", 5, -265)
-
--- width
-local widthSlider = Cell:CreateSlider(L["Width"], appearanceTab, 40, 100, 100, 2, function(value)
-    selectedLayoutTable["size"][1] = value
-    if selectedLayout == Cell.vars.currentLayout then
-        Cell:Fire("UpdateLayout", selectedLayout, "size")
-    end
-    UpdatePreviewButton("size")
-end)
-widthSlider:SetPoint("TOPLEFT", buttonSizeText, "BOTTOMLEFT", 5, -25)
-
--- height
-local heightSlider = Cell:CreateSlider(L["Height"], appearanceTab, 20, 80, 100, 2, function(value)
-    selectedLayoutTable["size"][2] = value
-    if selectedLayout == Cell.vars.currentLayout then
-        Cell:Fire("UpdateLayout", selectedLayout, "size")
-    end
-    UpdatePreviewButton("size")
-end)
-heightSlider:SetPoint("TOP", widthSlider, "BOTTOM", 0, -40)
-
--------------------------------------------------
--- font size
--------------------------------------------------
-local fontSizeText = Cell:CreateSeparator(L["Font Size"], appearanceTab, 122)
-fontSizeText:SetPoint("TOPLEFT", 137, -265)
-
--- name text
-local nameFontSlider = Cell:CreateSlider(L["Name"], appearanceTab, 5, 20, 100, 1, function(value)
-    selectedLayoutTable["font"]["name"] = value
-    if selectedLayout == Cell.vars.currentLayout then
-        Cell:Fire("UpdateLayout", selectedLayout, "font")
-    end
-    UpdatePreviewButton("nameFont", value)
-end)
-nameFontSlider:SetPoint("TOPLEFT", fontSizeText, "BOTTOMLEFT", 5, -25)
-
--- status text
-local statusFontSlider = Cell:CreateSlider(L["Status"], appearanceTab, 5, 20, 100, 1, function(value)
-    selectedLayoutTable["font"]["status"] = value
-    if selectedLayout == Cell.vars.currentLayout then
-        Cell:Fire("UpdateLayout", selectedLayout, "font")
-    end
-    UpdatePreviewButton("statusFont", value)
-end)
-statusFontSlider:SetPoint("TOP", nameFontSlider, "BOTTOM", 0, -40)
-
--------------------------------------------------
--- icon & spacing
--------------------------------------------------
-local miscText = Cell:CreateSeparator(L["Icon & Spacing"], appearanceTab, 122)
-miscText:SetPoint("TOPLEFT", 269, -265)
-
--- icon
-local iconFactorSlider = Cell:CreateSlider(L["Icon Scale Factor"], appearanceTab, 1, 3, 100, 0.1, function(value)
-    selectedLayoutTable["iconScaleFactor"] = value
-    UpdatePreviewButton()
-end)
-iconFactorSlider:SetPoint("TOPLEFT", miscText, "BOTTOMLEFT", 5, -25)
-
--- spacing
-local spacingSlider = Cell:CreateSlider(L["Spacing"], appearanceTab, 3, 7, 100, 1, function(value)
-    selectedLayoutTable["spacing"] = value
-    if selectedLayout == Cell.vars.currentLayout then
-        Cell:Fire("UpdateLayout", selectedLayout, "spacing")
-    end
-    -- UpdatePreviewButton()
-end)
-spacingSlider:SetPoint("TOP", iconFactorSlider, "BOTTOM", 0, -40)
+disableTooltipsCB:SetPoint("TOPLEFT", tooltipsText, "BOTTOMLEFT", 5, -15)
 
 -------------------------------------------------
 -- functions
 -------------------------------------------------
-LoadLayoutDB = function(layout)
-    F:Debug("LoadLayoutDB: "..layout)
-
-    selectedLayout = layout
-    selectedLayoutTable = CellDB["layouts"][layout]
-
-    widthSlider:SetValue(selectedLayoutTable["size"][1])
-    heightSlider:SetValue(selectedLayoutTable["size"][2])
-
-    nameFontSlider:SetValue(selectedLayoutTable["font"]["name"])
-    statusFontSlider:SetValue(selectedLayoutTable["font"]["status"])
-
-    iconFactorSlider:SetValue(selectedLayoutTable["iconScaleFactor"])
-    spacingSlider:SetValue(selectedLayoutTable["spacing"])
-
-    UpdateGroupFilter()
-    UpdatePreviewButton()
-end
-
+local loaded
 local function ShowTab(tab)
     if tab == "appearance" then
         appearanceTab:Show()
-        if selectedLayout then return end
-        
+        if loaded then return end
+        loaded = true
+
         -- load data
         CheckTextures()
         scaleDropdown:SetSelected(scales[CellDB["scale"]])
+        CheckFonts()
         fontOutlineDropdown:SetSelected(CellDB["outline"])
         hideBlizzardCB:SetChecked(CellDB["hideBlizzard"])
-
-        -- layout related
-        UpdateEnabledLayoutText()
-        LoadLayoutDropdown()
-        LoadLayoutDB(Cell.vars.currentLayout)
-        UpdateButtonStates()
+        disableTooltipsCB:SetChecked(CellDB["disableTooltips"])
     else
         appearanceTab:Hide()
     end
 end
 Cell:RegisterCallback("ShowOptionsTab", "AppearanceTab_ShowTab", ShowTab)
+
+-------------------------------------------------
+-- update appearance
+-------------------------------------------------
+local function UpdateAppearance(which)
+    F:Debug("UpdateAppearance: "..(which or "all"))
+    
+    if not which or which == "font" or which == "texture" then
+        F:UpdateFont()
+        local tex = F:GetBarTexture()
+
+        F:IterateAllUnitButtons(function(b)
+            -- font width
+            if not which or which == "font" then
+                b:GetScript("OnSizeChanged")(b)
+            end
+            -- texture
+            if not which or which == "texture" then
+                b.func.SetTexture(tex)
+            end
+        end)
+    end
+
+    -- scale
+    if not which or which == "scale" then
+        Cell.frames.mainFrame:SetScale(CellDB["scale"])
+        CellTooltip:SetScale(LPP:GetPixelPerfectScale() * CellDB["scale"])
+    end
+end
+Cell:RegisterCallback("UpdateAppearance", "UpdateAppearance", UpdateAppearance)

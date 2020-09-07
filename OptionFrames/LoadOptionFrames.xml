@@ -4,5 +4,7 @@
 	<Script file="Appearance.lua"/>
 	<Script file="ClickCastings_DefaultSpells.lua"/>
 	<Script file="ClickCastings.lua"/>
+	<Script file="Layouts.lua"/>
+	<Script file="Indicators.lua"/>
 	<Script file="About.lua"/>
 </Ui>

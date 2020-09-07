@@ -1,0 +1,12 @@
+tag 648b01168be33c5ee2cebb19f893c13ed149f4d3 1.0.3
+Author:	Benjamin Staneck <staneck@gmail.com>
+Date:	Sat Aug 10 23:00:24 2019 +0200
+
+Tag as 1.0.3
+
+commit 6efc82df449dea8a78f7ab647c252afafc45c381
+Author: Benjamin Staneck <staneck@gmail.com>
+Date:   Sat Aug 10 23:00:12 2019 +0200
+
+    bump minor version
+

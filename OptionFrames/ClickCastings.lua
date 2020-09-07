@@ -194,7 +194,7 @@ local function InitMouseWheel(b)
 end
 
 -------------------------------------------------
--- apply click-castings
+-- update click-castings
 -------------------------------------------------
 local function ClearClickCastings(b)
     for i = 1, 21 do
@@ -249,7 +249,7 @@ Cell:RegisterCallback("UpdateClickCastings", "UpdateClickCastings", UpdateClickC
 local profileText = Cell:CreateSeparator(L["Profiles"], clickCastingsTab, 387)
 profileText:SetPoint("TOPLEFT", 5, -5)
 
-local profileDropdown = Cell:CreateDropdownMenu(clickCastingsTab, 250)
+local profileDropdown = Cell:CreateDropdown(clickCastingsTab, 250)
 profileDropdown:SetPoint("TOPLEFT", profileText, "BOTTOMLEFT", 5, -12)
 
 profileDropdown:SetItems({

@@ -14,7 +14,7 @@ L["reset all Cell options and reload UI"] = "重置所有Cell设置并重载界�
 -------------------------------------------------
 L["Options"] = "选项"
 L["Tools"] = "工具"
-L["Layouts"] = "布局"
+-- L["Layouts"] = "布局"
 L["Raid Markers"] = "队伍标记"
 L["World Markers"] = "世界标记"
 

@@ -75,37 +75,6 @@ function F:UpdateLayout()
     Cell.vars.currentLayout = CellCharacterDB["layout"]
     Cell.vars.currentLayoutTable = CellDB["layouts"][CellCharacterDB["layout"]]
     Cell:Fire("UpdateLayout", Cell.vars.currentLayout)
-    
-    -- local numGroupMembers = GetNumGroupMembers()
-    -- if Cell.vars.numGroupMembers ~= numGroupMembers then
-    --     Cell.vars.numGroupMembers = numGroupMembers
-    --     -- Cell:Fire("GroupSizeChanged", numGroupMembers)
-        
-    --     if numGroupMembers <= 5 then
-    --         if Cell.vars.currentLayout ~= 5 then
-    --             F:Debug("UpdateLayout: 5")
-    --             Cell.vars.currentLayout = 5
-    --             Cell.vars.currentLayoutTable = CellDB["layouts"][5]
-    --             Cell:Fire("UpdateLayout", 5)
-    --         end
-            
-    --     elseif CellDB["layouts"][30]["enabled"] and numGroupMembers <= 30 then
-    --         if Cell.vars.currentLayout ~= 30 then
-    --             F:Debug("UpdateLayout: 30")
-    --             Cell.vars.currentLayout = 30
-    --             Cell.vars.currentLayoutTable = CellDB["layouts"][30]
-    --             Cell:Fire("UpdateLayout", 30)
-    --         end
-            
-    --     elseif CellDB["layouts"][40]["enabled"] and numGroupMembers <= 40 then
-    --         if Cell.vars.currentLayout ~= 40 then
-    --             F:Debug("UpdateLayout: 40")
-    --             Cell.vars.currentLayout = 40
-    --             Cell.vars.currentLayoutTable = CellDB["layouts"][40]
-    --             Cell:Fire("UpdateLayout", 40)
-    --         end
-    --     end
-    -- end
 end
 
 function F:UpdateFont()
@@ -125,8 +94,16 @@ function F:UpdateFont()
         end
     end
 
-    font_name:SetFont(font_name:GetFont(), layout["font"]["name"], flags)
-    font_status:SetFont(font_status:GetFont(), layout["font"]["status"], flags)
+    local font
+    if CellDB["font"] == "Cell".._G.DEFAULT then
+        font = GameFontNormal:GetFont()
+    else
+        font = F:GetFont()
+    end
+
+
+    font_name:SetFont(font, layout["font"]["name"], flags)
+    font_status:SetFont(font, layout["font"]["status"], flags)
 end
 
 -------------------------------------------------
@@ -146,31 +123,13 @@ function eventFrame:ADDON_LOADED(arg1)
         if type(CellCharacterDB) ~= "table" then CellCharacterDB = {} end
 
         -- appearance -----------------------------------------------------------------------------
-        if type(CellCharacterDB["layout"]) ~= "string" then CellCharacterDB["layout"] = "default" end
-        if type(CellDB["layouts"]) ~= "table" then
-            CellDB["layouts"] = {
-                ["default"] = {
-                    ["size"] = {66, 46},
-                    ["spacing"] = 3,
-                    ["font"] = {
-                        ["name"] = 13,
-                        ["status"] = 11,
-                    },
-                    ["iconScaleFactor"] = 1,
-                    ["groupFilter"] = {true, true, true, true, true, true, true, true},
-                },
-            }
-        end
-        
         if type(CellDB["texture"]) ~= "string" then CellDB["texture"] = "Cell ".._G.DEFAULT end
         if type(CellDB["scale"]) ~= "number" then CellDB["scale"] = 1 end
+        if type(CellDB["font"]) ~= "string" then CellDB["font"] = "Cell ".._G.DEFAULT end
         if type(CellDB["outline"]) ~= "string" then CellDB["outline"] = "Shadow" end
-        if type(CellDB["hideBlizzard"]) ~= "boolean" then CellDB["hideBlizzard"] = "true" end
-        -- if type(CellDB["clamped"]) ~= "boolean" then CellDB["clamped"] = "false" end
-        
-        Cell.loaded = true
-        if CellDB["hideBlizzard"] then F:HideBlizzard() end
-        F:UpdateLayout()
+        if type(CellDB["hideBlizzard"]) ~= "boolean" then CellDB["hideBlizzard"] = true end
+        if type(CellDB["disableTooltips"]) ~= "boolean" then CellDB["disableTooltips"] = false end
+        -- if type(CellDB["clamped"]) ~= "boolean" then CellDB["clamped"] = false end
         
         -- click-casting --------------------------------------------------------------------------
         if type(CellDB["clickCastings"]) ~= "table" then CellDB["clickCastings"] = {} end
@@ -195,7 +154,111 @@ function eventFrame:ADDON_LOADED(arg1)
         end
         Cell.vars.clickCastingTable = CellDB["clickCastings"][Cell.vars.playerClass]
 
+        -- layouts --------------------------------------------------------------------------------
+        if type(CellCharacterDB["layout"]) ~= "string" then CellCharacterDB["layout"] = "default" end
+        if type(CellDB["layouts"]) ~= "table" then
+            CellDB["layouts"] = {
+                ["default"] = {
+                    ["size"] = {66, 46},
+                    ["spacing"] = 3,
+                    ["font"] = {
+                        ["name"] = 13,
+                        ["status"] = 11,
+                    },
+                    ["iconScaleFactor"] = 1,
+                    ["groupFilter"] = {true, true, true, true, true, true, true, true},
+                    ["indicators"] = {
+                        ["aggroBar"] = {
+                            ["frameName"] = "aggroBar",
+                            ["type"] = "built-in",
+                            ["enabled"] = true,
+                            ["position"] = {"BOTTOMLEFT", "TOPLEFT", 1, 0},
+                            ["size"] = {18, 2},
+                        },
+                        ["externalCooldown"] = {
+                            ["type"] = "built-in",
+                            ["enabled"] = true,
+                            ["position"] = {"RIGHT", "RIGHT", 0, 0},
+                            ["size"] = {10, 20},
+                        },
+                        ["defensiveCooldown"] = {
+                            ["type"] = "built-in",
+                            ["enabled"] = true,
+                            ["position"] = {"LEFT", "LEFT", 0, 0},
+                            ["size"] = {18, 2},
+                        },
+                        ["tankActiveMitigation"] = {
+                            ["type"] = "built-in",
+                            ["enabled"] = true,
+                            ["position"] = {"TOPLEFT", "TOPLEFT", 10, 0},
+                            ["size"] = {18, 3},
+                        },
+                    },
+                },
+            }
+        end
+
+        -- indicators -----------------------------------------------------------------------------
+        -- if type(CellDB["indicators"]) ~= "table" then
+        --     CellDB["indicators"] = {
+        --         ["common"] = {
+        --             -- built-in indicators only have on/off option
+        --             ["aggroBar"] = true,
+        --             ["externalCooldown"] = true,
+        --             ["defensiveCooldown"] = true,
+        --             ["tankActiveMitigation"] = true,
+        --         },
+        --     }
+        -- end
+        -- if type(CellDB["indicators"][Cell.vars.playerClass]) ~= "table" then
+        --     CellDB["indicators"][Cell.vars.playerClass] = {
+        --         {
+        --             ["style"] = {
+        --                 -- icon
+        --                 ["type"] = "icon",
+        --                 ["cooldownType"] = "orignal/unique/hide",
+        --                 ["font"] = "",
+        --                 ["durationPosition"] = {
+        --                     "TOPLEFT",
+        --                     0,
+        --                     0,
+        --                 },
+        --                 ["stackPosition"] = {
+        --                     "TOPLEFT",
+        --                     0,
+        --                     0,
+        --                 },
+
+        --                 -- statusbar
+
+        --                 -- square
+
+        --                 -- text
+
+        --             },
+        --             ["position"] = {
+        --                 "TOPLEFT",
+        --                 0,
+        --                 0,
+        --             },
+        --             ["showIfMine"] = true,
+        --             ["showIfMissing"] = false,
+        --             ["auras"] = {
+
+        --             },
+        --         },
+        --     }
+            -- for sepcIndex = 1, GetNumSpecializationsForClassID(Cell.vars.playerClassID) do
+            --     local specID = GetSpecializationInfoForClassID(Cell.vars.playerClassID, sepcIndex)
+            --     CellDB["indicators"][Cell.vars.playerClass][specID] = {} 
+            -- end
+        -- end
+
+        -- apply ----------------------------------------------------------------------------------
+        if CellDB["hideBlizzard"] then F:HideBlizzard() end
+        F:UpdateLayout()
         Cell.version = GetAddOnMetadata(addonName, "version")
+        Cell.loaded = true
     end
 end
 
@@ -216,29 +279,32 @@ function eventFrame:GROUP_ROSTER_UPDATE()
             Cell:Fire("GroupTypeChanged", "solo")
         end
     end
-
-    -- UpdateLayout()
 end
 
 function eventFrame:PLAYER_ENTERING_WORLD()
     eventFrame:UnregisterEvent("PLAYER_ENTERING_WORLD")
     F:Debug("PLAYER_ENTERING_WORLD")
     eventFrame:GROUP_ROSTER_UPDATE()
-    -- update texture
-    Cell:Fire("UpdateLayout", nil, "texture")
 end
 
 function eventFrame:PLAYER_LOGIN()
     -- update spec vars
     Cell.vars.playerSpecID, Cell.vars.playerSpecName, _, Cell.vars.playerSpecIcon = GetSpecializationInfo(GetSpecialization())
     Cell:Fire("UpdateClickCastings")
+    Cell:Fire("UpdateIndicators")
+    -- update texture and font
+    Cell:Fire("UpdateAppearance")
 end
 
 function eventFrame:PLAYER_SPECIALIZATION_CHANGED(unit) --! ACTIVE_TALENT_GROUP_CHANGED always fire TWICE!
-    -- update spec vars
-    Cell.vars.playerSpecID, Cell.vars.playerSpecName, _, Cell.vars.playerSpecIcon = GetSpecializationInfo(GetSpecialization())
-    if unit ~= "player" or CellDB["clickCastings"][Cell.vars.playerClass]["useCommon"] then return end
-    Cell:Fire("UpdateClickCastings")
+    if unit == "player" then
+        -- update spec vars
+        Cell.vars.playerSpecID, Cell.vars.playerSpecName, _, Cell.vars.playerSpecIcon = GetSpecializationInfo(GetSpecialization())
+        
+        if CellDB["clickCastings"][Cell.vars.playerClass]["useCommon"] then
+            Cell:Fire("UpdateClickCastings")
+        end
+    end
 end
 
 eventFrame:SetScript("OnEvent", function(self, event, ...)

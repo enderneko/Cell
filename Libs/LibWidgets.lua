@@ -29,6 +29,7 @@ local font_title_name = strupper(addonName).."_FONT_WIDGET_TITLE"
 local font_title_disable_name = strupper(addonName).."_FONT_WIDGET_TITLE_DISABLE"
 local font_name = strupper(addonName).."_FONT_WIDGET"
 local font_disable_name = strupper(addonName).."_FONT_WIDGET_DISABLE"
+local font_special_name = strupper(addonName).."_FONT_SPECIAL"
 
 local font_title = CreateFont(font_title_name)
 font_title:SetFont(GameFontNormal:GetFont(), 14)
@@ -57,6 +58,14 @@ font_disable:SetTextColor(.4, .4, .4, 1)
 font_disable:SetShadowColor(0, 0, 0)
 font_disable:SetShadowOffset(1, -1)
 font_disable:SetJustifyH("CENTER")
+
+local font_special = CreateFont(font_special_name)
+font_special:SetFont("Interface\\AddOns\\Cell\\Media\\font.ttf", 12)
+font_special:SetTextColor(1, 1, 1, 1)
+font_special:SetShadowColor(0, 0, 0)
+font_special:SetShadowOffset(1, -1)
+font_special:SetJustifyH("CENTER")
+font_special:SetJustifyV("MIDDLE")
 
 -- local font_large = CreateFont(font_large_name)
 -- font_large:SetFont(GameFontNormal:GetFont(), 14)
@@ -232,9 +241,9 @@ function addon:CreateButton(parent, text, buttonColor, size, noBorder, fontNorma
 		b:SetBackdropBorderColor(1, 1, 1, 0)
 		b:SetPushedTextOffset(0, 0)
 	else
-		-- local bg = b:CreateTexture(nil, "BACKGROUND")
-		-- bg:SetAllPoints(b)
-		-- bg:SetColorTexture(0, 0, 0, 1)
+		local bg = parent:CreateTexture(nil, "BACKGROUND")
+		bg:SetAllPoints(b)
+		bg:SetColorTexture(.1, .1, .1, 1)
 
     	b:SetBackdropBorderColor(0, 0, 0, 1)
 		b:SetPushedTextOffset(0, -1)
@@ -494,346 +503,6 @@ function addon:CreateStatusBar(parent, width, height, maxValue, smooth, func, sh
 	end)
 
 	return bar
-end
-
-------------------------------------------------
--- dropdown menu 2020-08-25 02:49:53
-------------------------------------------------
-function addon:CreateDropdownMenu(parent, width)
-	local menu = CreateFrame("Frame", nil, parent)
-	menu:SetSize(width, 20)
-	menu:EnableMouse(true)
-	menu:SetFrameLevel(5)
-	addon:StylizeFrame(menu)
-	
-	-- button: open/close menu list
-	menu.button = addon:CreateButton(menu, "", "transparent-class", {18 ,20})
-	addon:StylizeFrame(menu.button)
-	menu.button:SetPoint("RIGHT")
-	menu.button:SetFrameLevel(6)
-	menu.button:SetNormalTexture([[Interface\AddOns\Cell\Media\dropdown]])
-	menu.button:SetPushedTexture([[Interface\AddOns\Cell\Media\dropdown-pushed]])
-	menu.button:SetDisabledTexture([[Interface\AddOns\Cell\Media\dropdown-disabled]])
-
-	-- selected item
-	menu.text = menu:CreateFontString(nil, "OVERLAY", font_name)
-	menu.text:SetJustifyV("MIDDLE")
-	menu.text:SetJustifyH("LEFT")
-	menu.text:SetWordWrap(false)
-	menu.text:SetPoint("TOPLEFT", 5, -1)
-	menu.text:SetPoint("BOTTOMRIGHT", -19, 1)
-	
-	-- item list
-	local list = CreateFrame("Frame", nil, menu)
-	addon:StylizeFrame(list, {.1, .1, .1, 1})
-	list:SetPoint("TOP", menu, "BOTTOM", 0, -2)
-	list:SetFrameLevel(7) -- top of its strata
-	list:SetSize(width, 5)
-	list:Hide()
-	
-	local hightlightTexture = CreateFrame("Frame", nil, list)
-	hightlightTexture:SetBackdrop({edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = 1})
-	hightlightTexture:SetBackdropBorderColor(unpack(classColor.t))
-
-	-- keep all menu item buttons
-	menu.items = {}
-
-	-- selected text -> SavedVariable
-	menu.selected = ""
-	
-	function menu:SetSelected(text)
-		menu.text:SetText(text ~= "" and text or "-")
-		menu.selected = text
-
-		if text ~= "" then
-			for _, b in pairs(menu.items) do
-				if b.text == text then
-					hightlightTexture:ClearAllPoints()
-					hightlightTexture:SetAllPoints(b)
-					break
-				end
-			end
-		end
-	end
-
-	function menu:SetSelectedItem(itemNum)
-		local b = menu.items[itemNum]
-		menu.text:SetText(b.text)
-		menu.selected = text
-
-		hightlightTexture:ClearAllPoints()
-		hightlightTexture:SetAllPoints(b)
-	end
-
-	function menu:ClearItems()
-		for _, b in pairs(menu.items) do
-			b:SetParent(nil)
-			b:ClearAllPoints()
-			b:Hide()
-		end
-		table.wipe(menu.items)
-		hightlightTexture:ClearAllPoints()
-		menu:SetSelected("")
-	end
-	
-	-- items = {{["text"] = (string), ["onClick"] = (function)}}
-	function menu:SetItems(items)
-		menu:ClearItems()
-		local last = nil
-		for _, item in pairs(items) do
-			local b = addon:CreateButton(list, item.text, "transparent-class", {width-2 ,18}, true)
-			table.insert(menu.items, b)
-			b.text = item.text
-
-			b:SetScript("OnClick", function()
-				PlaySound(SOUNDKIT.U_CHAT_SCROLL_BUTTON)
-				menu:SetSelected(item.text)
-				list:Hide()
-				if item.onClick then item.onClick(item.text) end
-			end)
-			
-			-- SetPoint
-			if last then
-				b:SetPoint("TOP", last, "BOTTOM", 0, 0)
-			else
-				b:SetPoint("TOPLEFT", 1, -1)
-			end
-			last = b
-		end
-
-		if #menu.items == 0 then
-			list:SetHeight(5)
-		else
-			list:SetHeight(2 + #menu.items*18)
-		end
-	end
-
-	function menu:AddItem(item)
-		local b = addon:CreateButton(list, item.text, "transparent-class", {width-2 ,18}, true)
-		table.insert(menu.items, b)
-		b.text = item.text
-
-		b:SetScript("OnClick", function()
-			PlaySound(SOUNDKIT.U_CHAT_SCROLL_BUTTON)
-			menu:SetSelected(item.text)
-			list:Hide()
-			if item.onClick then item.onClick(item.text) end
-		end)
-
-		if #menu.items ~= 0 then
-			b:SetPoint("TOP", menu.items[#menu.items-1], "BOTTOM", 0, 0)
-		else
-			b:SetPoint("TOPLEFT", 1, -1)
-		end
-		list:SetHeight(2 + #menu.items*18)
-	end
-
-	-- remove current selected item from list
-	function menu:RemoveCurrentItem()
-		for i = 1, #menu.items do
-			if menu.selected  == menu.items[i].text then
-				-- set next button position
-				if menu.items[i+1] then
-					menu.items[i+1]:SetPoint(menu.items[i]:GetPoint(1))
-				end
-				-- hide item
-				menu.items[i]:SetParent(nil)
-				menu.items[i]:ClearAllPoints()
-				menu.items[i]:Hide()
-				-- remove from table
-				table.remove(menu.items, i)
-				-- reset selected
-				menu.selected = ""
-				break
-			end
-		end
-
-		menu.text:SetText("-")
-		if #menu.items == 0 then
-			list:SetHeight(5)
-		else
-			list:SetHeight(2 + #menu.items*18)
-		end
-	end
-
-	-- set current item button 
-	function menu:SetCurrentItem(item)
-		for _, b in pairs(menu.items) do
-			if menu.selected == b.text then
-				b.text = item.text
-				b:SetText(item.text)
-				b:SetScript("OnClick", function()
-					PlaySound(SOUNDKIT.U_CHAT_SCROLL_BUTTON)
-					menu:SetSelected(item.text)
-					list:Hide()
-					if item.onClick then item.onClick(item.text) end
-				end)
-				break
-			end
-		end
-		-- update current selected text
-		menu:SetSelected(item.text)
-	end
-
-	function menu:Close()
-		list:Hide()
-	end
-	
-	function menu:SetEnabled(f)
-		menu.button:SetEnabled(f)
-	end
-	
-	-- scripts
-	menu.button:HookScript("OnClick", function()
-		if list:IsShown() then list:Hide() else list:Show() end
-	end)
-	
-	menu:SetScript("OnShow", function()
-		list:Hide()
-	end)
-
-	menu:SetScript("OnHide", function()
-		list:Hide()
-	end)
-	
-	return menu
-end
-
-------------------------------------------------
--- texture dropdown menu
-------------------------------------------------
-function addon:CreateTextureDropdown(parent, width)
-	local menu = CreateFrame("Frame", nil, parent)
-	menu:SetSize(width, 20)
-	menu:EnableMouse(true)
-	menu:SetFrameLevel(5)
-	addon:StylizeFrame(menu)
-	
-	-- button: open/close menu list
-	menu.button = addon:CreateButton(menu, "", "transparent-class", {18 ,20})
-	addon:StylizeFrame(menu.button)
-	menu.button:SetPoint("RIGHT")
-	menu.button:SetFrameLevel(6)
-	menu.button:SetNormalTexture([[Interface\AddOns\Cell\Media\dropdown]])
-	menu.button:SetPushedTexture([[Interface\AddOns\Cell\Media\dropdown-pushed]])
-	menu.button:SetDisabledTexture([[Interface\AddOns\Cell\Media\dropdown-disabled]])
-
-	-- selected item
-	menu.text = menu:CreateFontString(nil, "OVERLAY", font_name)
-	menu.text:SetJustifyV("MIDDLE")
-	menu.text:SetJustifyH("LEFT")
-	menu.text:SetWordWrap(false)
-	menu.text:SetPoint("TOPLEFT", 5, -1)
-	menu.text:SetPoint("BOTTOMRIGHT", -18, 1)
-
-	menu.texture = menu:CreateTexture(nil, "ARTWORK")
-	menu.texture:SetPoint("TOPLEFT", 1, -1)
-	menu.texture:SetPoint("BOTTOMRIGHT", -18, 1)
-	menu.texture:SetVertexColor(1, 1, 1, .7)
-	
-	-- item list
-	local list = CreateFrame("Frame", nil, menu)
-	addon:StylizeFrame(list, {.1, .1, .1, 1})
-	list:SetPoint("TOP", menu, "BOTTOM", 0, -2)
-	list:SetFrameLevel(7) -- top of its strata
-	list:SetSize(width, 5)
-	list:Hide()
-	
-	local hightlightTexture = CreateFrame("Frame", nil, list)
-	hightlightTexture:SetBackdrop({edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = 1})
-	hightlightTexture:SetBackdropBorderColor(unpack(classColor.t))
-
-	-- keep all menu item buttons
-	menu.items = {}
-
-	-- selected text -> SavedVariable
-	menu.selected = ""
-	
-	function menu:SetSelected(text, texture)
-		menu.text:SetText(text)
-		menu.texture:SetTexture(texture)
-		menu.selected = text
-
-		for _, b in pairs(menu.items) do
-			if b.text == text then
-				hightlightTexture:ClearAllPoints()
-				hightlightTexture:SetAllPoints(b)
-				break
-			end
-		end
-	end
-
-	function menu:ClearItems()
-		for _, b in pairs(menu.items) do
-			b:SetParent(nil)
-			b:ClearAllPoints()
-			b:Hide()
-		end
-		table.wipe(menu.items)
-		hightlightTexture:ClearAllPoints()
-		menu:SetSelected("Cell ".._G.DEFAULT, "Interface\\AddOns\\Cell\\Media\\statusbar.tga")
-	end
-	
-	-- items = {{["text"] = (string), ["texture"] = (string), ["onClick"] = (function)}}
-	function menu:SetItems(items)
-		menu:ClearItems()
-		local last = nil
-		for _, item in pairs(items) do
-			local b = addon:CreateButton(list, item.text, "transparent-class", {width-2 ,18}, true)
-			table.insert(menu.items, b)
-			b.text = item.text
-
-			b.texture = b:CreateTexture(nil, "ARTWORK")
-			b.texture:SetPoint("TOPLEFT", 1, -1)
-			b.texture:SetPoint("BOTTOMRIGHT", -1, 1)
-			b.texture:SetTexture(item.texture)
-			b.texture:SetVertexColor(1, 1, 1, .7)
-
-			b:SetScript("OnClick", function()
-				PlaySound(SOUNDKIT.U_CHAT_SCROLL_BUTTON)
-				menu:SetSelected(item.text, item.texture)
-				list:Hide()
-				if item.onClick then item.onClick(item.text) end
-			end)
-			
-			-- SetPoint
-			if last then
-				b:SetPoint("TOP", last, "BOTTOM", 0, 0)
-			else
-				b:SetPoint("TOPLEFT", 1, -1)
-			end
-			last = b
-		end
-
-		if #menu.items == 0 then
-			list:SetHeight(5)
-		else
-			list:SetHeight(2 + #menu.items*18)
-		end
-	end
-
-	function menu:Close()
-		list:Hide()
-	end
-	
-	function menu:SetEnabled(f)
-		menu.button:SetEnabled(f)
-	end
-	
-	-- scripts
-	menu.button:HookScript("OnClick", function()
-		if list:IsShown() then list:Hide() else list:Show() end
-	end)
-	
-	menu:SetScript("OnShow", function()
-		list:Hide()
-	end)
-
-	menu:SetScript("OnHide", function()
-		list:Hide()
-	end)
-	
-	return menu
 end
 
 -----------------------------------------
@@ -1237,7 +906,7 @@ function addon:CreateScrollFrame(parent, top, bottom, color, border)
 	
 	-- reset content height manually ==> content:GetBoundsRect() make it right @OnUpdate
 	function scrollFrame:ResetHeight()
-		content:SetHeight(20)
+		content:SetHeight(1)
 	end
 	
 	-- reset to top, useful when used with DropDownMenu (variable content height)
@@ -1374,6 +1043,239 @@ function addon:CreateScrollFrame(parent, top, bottom, color, border)
 	return scrollFrame
 end
 
+------------------------------------------------
+-- dropdown menu 2020-09-07
+------------------------------------------------
+local list = CreateFrame("Frame", addonName.."DropdownList")
+addon:StylizeFrame(list, {.1, .1, .1, 1})
+list:Hide()
+list:SetScript("OnHide", function() list:Hide() end)
+
+list.items = {}
+addon:CreateScrollFrame(list)
+list.scrollFrame:SetScrollStep(18)
+
+local hightlightTexture = CreateFrame("Frame", nil, list)
+hightlightTexture:SetBackdrop({edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = 1})
+hightlightTexture:SetBackdropBorderColor(unpack(classColor.t))
+hightlightTexture:Hide()
+
+local function SetHighlightItem(i)
+	if not i then
+		hightlightTexture:ClearAllPoints()
+		hightlightTexture:Hide()
+	else
+		hightlightTexture:SetParent(list.items[i]) -- buttons show/hide automatically when scroll, so let hightlightTexture to be the same
+		hightlightTexture:ClearAllPoints()
+		hightlightTexture:SetAllPoints(list.items[i])
+		hightlightTexture:Show()
+	end
+end
+
+function addon:CreateDropdown(parent, width, dropdownType)
+	local menu = CreateFrame("Frame", nil, parent)
+	menu:SetSize(width, 20)
+	menu:EnableMouse(true)
+	menu:SetFrameLevel(5)
+	addon:StylizeFrame(menu)
+	
+	-- button: open/close menu list
+	menu.button = addon:CreateButton(menu, "", "transparent-class", {18 ,20})
+	addon:StylizeFrame(menu.button)
+	menu.button:SetPoint("RIGHT")
+	menu.button:SetFrameLevel(6)
+	menu.button:SetNormalTexture([[Interface\AddOns\Cell\Media\dropdown]])
+	menu.button:SetPushedTexture([[Interface\AddOns\Cell\Media\dropdown-pushed]])
+	menu.button:SetDisabledTexture([[Interface\AddOns\Cell\Media\dropdown-disabled]])
+
+	-- selected item
+	menu.text = menu:CreateFontString(nil, "OVERLAY", font_name)
+	menu.text:SetJustifyV("MIDDLE")
+	menu.text:SetJustifyH("LEFT")
+	menu.text:SetWordWrap(false)
+	menu.text:SetPoint("TOPLEFT", 5, -1)
+	menu.text:SetPoint("BOTTOMRIGHT", -18, 1)
+
+	if dropdownType == "texture" then
+		menu.texture = menu:CreateTexture(nil, "ARTWORK")
+		menu.texture:SetPoint("TOPLEFT", 1, -1)
+		menu.texture:SetPoint("BOTTOMRIGHT", -18, 1)
+		menu.texture:SetVertexColor(1, 1, 1, .7)
+	end
+	
+	-- keep all menu item buttons
+	menu.items = {}
+
+	-- index in items
+	-- menu.selected
+	
+	function menu:SetSelected(text, value)
+		for i, item in pairs(menu.items) do
+			if item.text == text then
+				-- store index for list
+				menu.selected = i
+				menu.text:SetText(text)
+				if dropdownType == "texture" then
+					menu.texture:SetTexture(value)
+				elseif dropdownType == "font" then
+					menu.text:SetFont(value, 13)
+				end
+				break
+			end
+		end
+	end
+
+	function menu:SetSelectedItem(itemNum)
+		local item = menu.items[itemNum]
+		menu.text:SetText(item.text)
+		menu.selected = itemNum
+	end
+
+	-- items = {
+	-- 	{
+	-- 		["text"] = (string),
+	-- 		["texture"] = (string),
+	-- 		["font"] = (string),
+	-- 		["onClick"] = (function)
+	-- 	},
+	-- }
+	function menu:SetItems(items)
+		menu.items = items
+	end
+
+	function menu:AddItem(item)
+		tinsert(menu.items, item)
+		menu.reloadRequired = true
+	end
+
+	function menu:RemoveCurrentItem()
+		tremove(menu.items, menu.selected)
+		menu.reloadRequired = true
+	end
+
+	function menu:SetCurrentItem(item)
+		menu.items[menu.selected] = item
+		-- usually, update current item means to change its name (text) and func
+		menu.text:SetText(item["text"])
+		menu.reloadRequired = true
+	end
+
+	local function LoadItems()
+		-- hide highlight
+		SetHighlightItem()
+		-- hide all list items
+		list.scrollFrame:Reset()
+
+		-- load current dropdown
+		for i, item in pairs(menu.items) do
+			local b
+			if not list.items[i] then
+				-- init
+				b = addon:CreateButton(list.scrollFrame.content, item.text, "transparent-class", {18 ,18}, true) --! width is not important
+				table.insert(list.items, b)
+
+				-- texture
+				b.texture = b:CreateTexture(nil, "ARTWORK")
+				b.texture:SetPoint("TOPLEFT", 1, -1)
+				b.texture:SetPoint("BOTTOMRIGHT", -1, 1)
+				b.texture:SetVertexColor(1, 1, 1, .7)
+				b.texture:Hide()
+			else
+				b = list.items[i]
+				b:SetText(item.text)
+			end
+
+			-- texture
+			if item.texture then
+				b.texture:SetTexture(item.texture)
+				b.texture:Show()
+			else
+				b.texture:Hide()
+			end
+
+			-- font
+			local f, s = font:GetFont()
+			if item.font then
+				b:GetFontString():SetFont(item.font, s)
+			else
+				b:GetFontString():SetFont(f, s)
+			end
+
+			-- highlight
+			if menu.selected == i then
+				SetHighlightItem(i)
+			end
+
+			b:SetScript("OnClick", function()
+				PlaySound(SOUNDKIT.U_CHAT_SCROLL_BUTTON)
+				if dropdownType == "texture" then
+					menu:SetSelected(item.text, item.texture)
+				elseif dropdownType == "font" then
+					menu:SetSelected(item.text, item.font)
+				else
+					menu:SetSelected(item.text)
+				end
+				list:Hide()
+				if item.onClick then item.onClick(item.text) end
+			end)
+
+			-- update point
+			b:SetParent(list.scrollFrame.content)
+			b:Show()
+			b:SetPoint("LEFT", 1, 0)
+			b:SetPoint("RIGHT", -1, 0)
+			if i == 1 then
+				b:SetPoint("TOP", 0, -1)
+			else
+				b:SetPoint("TOP", list.items[i-1], "BOTTOM", 0, 0)
+			end
+		end
+
+		-- update list size
+		list:SetParent(menu)
+		list:SetFrameLevel(77) -- top of its strata
+		list:ClearAllPoints()
+		list:SetPoint("TOP", menu, "BOTTOM", 0, -2)
+		
+		if #menu.items == 0 then
+			list:SetSize(width, 5)
+		elseif #menu.items <= 10 then
+			list:SetSize(width, 2 + #menu.items*18)
+		else
+			list:SetSize(width, 182)
+		end
+	end
+
+	function menu:SetEnabled(f)
+		menu.button:SetEnabled(f)
+	end
+	
+	-- scripts
+	menu.button:HookScript("OnClick", function()
+		if list:GetParent() ~= menu then -- list shown by other dropdown
+			LoadItems()
+			list:Show()
+
+		elseif list:IsShown() then -- list showing by this, hide it
+			list:Hide()
+
+		else
+			if menu.reloadRequired then
+				LoadItems()
+				menu.reloadRequired = false
+			else
+				-- update highlight
+				if menu.selected then
+					SetHighlightItem(menu.selected)
+				end
+			end
+			list:Show()
+		end
+	end)
+	
+	return menu
+end
+
 -----------------------------------------
 -- binding button
 -----------------------------------------
@@ -1468,4 +1370,11 @@ function addon:CreateBindingButton(parent, modifier, bindKey, bindType, bindActi
 	end
 
 	return b
+end
+
+-----------------------------------------
+-- indicator list button
+-----------------------------------------
+function addon:CreateIndicatorListButton(parent, auras)
+
 end

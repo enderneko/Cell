@@ -16,6 +16,7 @@ local cellMainFrame = CreateFrame("Frame", "CellMainFrame", UIParent, "SecureFra
 Cell.frames.mainFrame = cellMainFrame
 cellMainFrame:SetFrameStrata("LOW")
 cellMainFrame:SetClampedToScreen(true)
+cellMainFrame:SetClampRectInsets(0, 0, 15, 0)
 
 local anchorFrame = CreateFrame("Frame", "CellAnchorFrame", cellMainFrame)
 Cell.frames.anchorFrame = anchorFrame
@@ -95,26 +96,13 @@ local function MainFrame_UpdateLayout(layout, which)
     
     --? cause SetSize in combat error? perhaps not
     cellMainFrame:SetSize(unpack(Cell.vars.currentLayoutTable["size"]))
-    cellMainFrame:SetClampRectInsets(0, 0, 15, 0)
 
-    if not which or which == "font" then
-        F:UpdateFont()
-        F:IterateAllUnitButtons(function(b)
-            b:GetScript("OnSizeChanged")(b)
-        end)
-    end
+    -- if which == "texture" then
+    --     local tex = F:GetBarTexture() -- tex == Cell.vars.texture
 
-    if not which or which == "scale" then
-        cellMainFrame:SetScale(CellDB["scale"])
-        CellTooltip:SetScale(LPP:GetPixelPerfectScale() * CellDB["scale"])
-    end
-
-    if which == "texture" then
-        local tex = F:GetBarTexture() -- tex == Cell.vars.texture
-
-        F:IterateAllUnitButtons(function(b)
-            b.func.SetTexture(tex)
-        end)
-    end
+    --     F:IterateAllUnitButtons(function(b)
+    --         b.func.SetTexture(tex)
+    --     end)
+    -- end
 end
 Cell:RegisterCallback("UpdateLayout", "MainFrame_UpdateLayout", MainFrame_UpdateLayout)

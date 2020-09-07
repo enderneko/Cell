@@ -1,6 +1,6 @@
 --------------------------------------------
 -- LibPixelPerfect
--- fyhcslb 2019-04-21 02:20:44
+-- fyhcslb 2020-09-05 07:21:47
 -- http://wow.gamepedia.com/UI_Scale
 -- http://www.wowinterface.com/forums/showthread.php?t=31813
 --------------------------------------------
@@ -36,7 +36,7 @@ function lib:PixelPerfectScale(frame)
 end
 
 -- position perfect!
-function lib:PixelPerfectPoint(frame)
+function lib:PixelPerfectPoint(frame, anchorTo)
 	local _, vRes = lib:GetResolution()
 	
 	local left, bottom, width, height = frame:GetRect()
@@ -44,8 +44,8 @@ function lib:PixelPerfectPoint(frame)
 	
 	frame:ClearAllPoints()
 	if frame.scaleFactor and vRes then
-		frame:SetPoint("TOPLEFT", math.floor(left + .5), -math.floor((vRes - top * frame.scaleFactor) / frame.scaleFactor + .5))
+		frame:SetPoint("TOPLEFT", anchorTo or UIParent, math.floor(left + .5), -math.floor((vRes - top * frame.scaleFactor) / frame.scaleFactor + .5))
 	else
-		frame:SetPoint("BOTTOMLEFT", math.floor(left + .5), math.floor(bottom + .5))
+		frame:SetPoint("BOTTOMLEFT", anchorTo or UIParent, math.floor(left + .5), math.floor(bottom + .5))
 	end
 end

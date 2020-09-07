@@ -2,10 +2,16 @@ local _, Cell = ...
 local L = Cell.L
 local F = Cell.funcs
 
+-------------------------------------------------
+-- string
+-------------------------------------------------
 function F:UpperFirst(str)
     return (str:gsub("^%l", string.upper))
 end
 
+-------------------------------------------------
+-- table
+-------------------------------------------------
 function F:Getn(t)
 	local count = 0
 	for k, v in pairs(t) do
@@ -80,6 +86,9 @@ function F:Sort(t, k1, order1, k2, order2, k3, order3)
 	end)
 end
 
+-------------------------------------------------
+-- general
+-------------------------------------------------
 function F:GetRealmName()
 	return string.gsub(GetRealmName(), " ", "")
 end
@@ -108,6 +117,9 @@ function F:FormatTime(s)
     return "%ds", floor(s)
 end
 
+-------------------------------------------------
+-- unit buttons
+-------------------------------------------------
 function F:IterateAllUnitButtons(func)
     -- solo
     for _, b in pairs(Cell.unitButtons.solo) do
@@ -126,6 +138,8 @@ function F:IterateAllUnitButtons(func)
 end
 
 function F:SetTextLimitWidth(fs, text, percent)
+    if not text then return end
+
     local width = fs:GetParent():GetWidth() - 2
 	for i = string.utf8len(text), 0, -1 do
 		fs:SetText(string.utf8sub(text, 1, i))
@@ -172,17 +186,28 @@ function F:GetPowerColor(unit)
     return r, g, b, t
 end
 
-local LSM = LibStub("LibSharedMedia-3.0")
-function F:GetBarTexture()
-    --! update Cell.vars.texture for further use in UnitButton_OnLoad
-    if LSM and LSM:IsValid("statusbar", CellDB["texture"]) then
-        Cell.vars.texture = LSM:Fetch("statusbar", CellDB["texture"])
+local scriptObjects = {}
+local frame = CreateFrame("Frame")
+frame:RegisterEvent("PLAYER_REGEN_DISABLED")
+frame:RegisterEvent("PLAYER_REGEN_ENABLED")
+frame:SetScript("OnEvent", function(self, event)
+    if event == "PLAYER_REGEN_ENABLED" then
+        for _, obj in pairs(scriptObjects) do
+            obj:Show()
+        end
     else
-        Cell.vars.texture = "Interface\\AddOns\\Cell\\Media\\statusbar.tga"
+        for _, obj in pairs(scriptObjects) do
+            obj:Hide()
+        end
     end
-    return Cell.vars.texture
+end)
+function F:SetHideInCombat(obj)
+    tinsert(scriptObjects, obj)
 end
 
+-------------------------------------------------
+-- units
+-------------------------------------------------
 function F:GetUnitsInSubGroup(group)
     local units = {}
     for i = 1, GetNumGroupMembers() do
@@ -205,21 +230,25 @@ function F:GetPetUnit(playerUnit)
     end
 end
 
-local scriptObjects = {}
-local frame = CreateFrame("Frame")
-frame:RegisterEvent("PLAYER_REGEN_DISABLED")
-frame:RegisterEvent("PLAYER_REGEN_ENABLED")
-frame:SetScript("OnEvent", function(self, event)
-    if event == "PLAYER_REGEN_ENABLED" then
-        for _, obj in pairs(scriptObjects) do
-            obj:Show()
-        end
+-------------------------------------------------
+-- LibSharedMedia
+-------------------------------------------------
+function F:GetBarTexture()
+    local LSM = LibStub("LibSharedMedia-3.0", true)
+    --! update Cell.vars.texture for further use in UnitButton_OnLoad
+    if LSM and LSM:IsValid("statusbar", CellDB["texture"]) then
+        Cell.vars.texture = LSM:Fetch("statusbar", CellDB["texture"])
     else
-        for _, obj in pairs(scriptObjects) do
-            obj:Hide()
-        end
+        Cell.vars.texture = "Interface\\AddOns\\Cell\\Media\\statusbar.tga"
     end
-end)
-function F:SetHideInCombat(obj)
-    tinsert(scriptObjects, obj)
+    return Cell.vars.texture
+end
+
+function F:GetFont()
+    local LSM = LibStub("LibSharedMedia-3.0", true)
+    if LSM and LSM:IsValid("font", CellDB["font"]) then
+        return LSM:Fetch("font", CellDB["font"])
+    else
+        return GameFontNormal:GetFont()
+    end
 end
