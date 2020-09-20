@@ -13,7 +13,7 @@ local debugMode = true
 function F:Debug(arg, ...)
 	if debugMode then
 		if type(arg) == "string" or type(arg) == "number" then
-			print("|cffbbbbbb" .. arg)
+			print(arg, ...)
 		elseif type(arg) == "function" then
 			arg(...)
 		elseif arg == nil then
@@ -165,94 +165,80 @@ function eventFrame:ADDON_LOADED(arg1)
                         ["name"] = 13,
                         ["status"] = 11,
                     },
-                    ["iconScaleFactor"] = 1,
                     ["groupFilter"] = {true, true, true, true, true, true, true, true},
                     ["indicators"] = {
-                        ["aggroBar"] = {
-                            ["frameName"] = "aggroBar",
+                        {
+                            ["name"] = L["Aggro Bar"],
+                            ["indicatorName"] = "aggroBar",
                             ["type"] = "built-in",
                             ["enabled"] = true,
                             ["position"] = {"BOTTOMLEFT", "TOPLEFT", 1, 0},
                             ["size"] = {18, 2},
                         },
-                        ["externalCooldown"] = {
+                        {
+                            ["name"] = L["External Cooldowns"],
+                            ["indicatorName"] = "externalCooldowns",
                             ["type"] = "built-in",
                             ["enabled"] = true,
                             ["position"] = {"RIGHT", "RIGHT", 0, 0},
                             ["size"] = {10, 20},
+                            ["num"] = 3,
                         },
-                        ["defensiveCooldown"] = {
+                        {
+                            ["name"] = L["Defensive Cooldowns"],
+                            ["indicatorName"] = "defensiveCooldowns",
                             ["type"] = "built-in",
                             ["enabled"] = true,
                             ["position"] = {"LEFT", "LEFT", 0, 0},
                             ["size"] = {18, 2},
+                            ["num"] = 3,
                         },
-                        ["tankActiveMitigation"] = {
+                        {
+                            ["name"] = L["Tank Active Mitigation"],
+                            ["indicatorName"] = "tankActiveMitigation",
                             ["type"] = "built-in",
                             ["enabled"] = true,
                             ["position"] = {"TOPLEFT", "TOPLEFT", 10, 0},
                             ["size"] = {18, 3},
+                        },
+                        {
+                            ["name"] = L["Debuffs"],
+                            ["indicatorName"] = "debuffs",
+                            ["type"] = "built-in",
+                            ["enabled"] = true,
+                            ["position"] = {"BOTTOMLEFT", "BOTTOMLEFT", 1, 4},
+                            ["size"] = {13, 13},
+                            ["num"] = 3,
+                            ["font"] = {"Cell ".._G.DEFAULT, 11, "Outline", 2},
+                        },
+                        {
+                            ["name"] = L["Central Debuff"],
+                            ["indicatorName"] = "centralDebuff",
+                            ["type"] = "built-in",
+                            ["enabled"] = true,
+                            ["position"] = {"CENTER", "CENTER", 0, 3},
+                            ["size"] = {18, 18},
+                            -- ["font"] = {"Cell ".._G.DEFAULT, 12, "Outline"},
                         },
                     },
                 },
             }
         end
 
-        -- indicators -----------------------------------------------------------------------------
-        -- if type(CellDB["indicators"]) ~= "table" then
-        --     CellDB["indicators"] = {
-        --         ["common"] = {
-        --             -- built-in indicators only have on/off option
-        --             ["aggroBar"] = true,
-        --             ["externalCooldown"] = true,
-        --             ["defensiveCooldown"] = true,
-        --             ["tankActiveMitigation"] = true,
-        --         },
-        --     }
-        -- end
-        -- if type(CellDB["indicators"][Cell.vars.playerClass]) ~= "table" then
-        --     CellDB["indicators"][Cell.vars.playerClass] = {
-        --         {
-        --             ["style"] = {
-        --                 -- icon
-        --                 ["type"] = "icon",
-        --                 ["cooldownType"] = "orignal/unique/hide",
-        --                 ["font"] = "",
-        --                 ["durationPosition"] = {
-        --                     "TOPLEFT",
-        --                     0,
-        --                     0,
-        --                 },
-        --                 ["stackPosition"] = {
-        --                     "TOPLEFT",
-        --                     0,
-        --                     0,
-        --                 },
-
-        --                 -- statusbar
-
-        --                 -- square
-
-        --                 -- text
-
-        --             },
-        --             ["position"] = {
-        --                 "TOPLEFT",
-        --                 0,
-        --                 0,
-        --             },
-        --             ["showIfMine"] = true,
-        --             ["showIfMissing"] = false,
-        --             ["auras"] = {
-
-        --             },
-        --         },
-        --     }
-            -- for sepcIndex = 1, GetNumSpecializationsForClassID(Cell.vars.playerClassID) do
-            --     local specID = GetSpecializationInfoForClassID(Cell.vars.playerClassID, sepcIndex)
-            --     CellDB["indicators"][Cell.vars.playerClass][specID] = {} 
-            -- end
-        -- end
+        -- debuffs --------------------------------------------------------------------------------
+        if type(CellDB["debuffBlacklist"]) ~= "table" then
+            CellDB["debuffBlacklist"] = {
+                8326, -- 鬼魂
+                57723, -- 筋疲力尽
+                57724, -- 心满意足
+                264689, -- 疲倦
+            }
+        end
+        
+        Cell.vars.debuffBlacklist = {}
+        for _, id in pairs(CellDB["debuffBlacklist"]) do
+            Cell.vars.debuffBlacklist[GetSpellInfo(id)] = true
+        end
 
         -- apply ----------------------------------------------------------------------------------
         if CellDB["hideBlizzard"] then F:HideBlizzard() end

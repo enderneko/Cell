@@ -12,10 +12,13 @@ Libs\LoadLibs.xml
 
 Core.lua
 Utils.lua
-HideBlizzard.lua
 Comm.lua
+Widgets\LoadWidgets.xml
+
+HideBlizzard.lua
 
 RaidFrame\MainFrame.lua
+RaidFrame\Elements\Auras.lua
 RaidFrame\UnitButton.lua
 RaidFrame\UnitButton.xml
 RaidFrame\Groups\SoloFrame.lua

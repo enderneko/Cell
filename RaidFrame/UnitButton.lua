@@ -40,6 +40,74 @@ local UnitInPhase = UnitInPhase
 local UnitIsWarModePhased = UnitIsWarModePhased
 
 -------------------------------------------------
+-- unit button init indicators
+-------------------------------------------------
+local UnitButton_UpdateAuras
+local enabledIndicators, indicatorNums = {}, {}
+local function UpdateIndicators(indicatorName, setting, value)
+	F:Debug("UpdateIndicators: ", indicatorName, setting, value)
+	if not indicatorName then -- init
+		for _, t in pairs(Cell.vars.currentLayoutTable["indicators"]) do
+			-- update enabled
+			if t["enabled"] then
+				enabledIndicators[t["indicatorName"]] = true
+			end
+			-- update num
+			if t["num"] then
+				indicatorNums[t["indicatorName"]] = t["num"]
+			end
+			-- update indicators
+			F:IterateAllUnitButtons(function(b)
+				local indicator = b.indicators[t["indicatorName"]]
+				if indicator then -- TODO: remove
+					-- update position
+					indicator:ClearAllPoints()
+					indicator:SetPoint(t["position"][1], b, t["position"][2], t["position"][3], t["position"][4])
+					-- update size
+					indicator:SetSize(unpack(t["size"]))
+					-- update font
+					if t["font"] then
+						indicator:SetFont(unpack(t["font"]))
+					end
+				end
+			end)
+		end
+	else
+		-- changed in IndicatorsTab
+		if setting == "enabled" then
+			enabledIndicators[indicatorName] = value
+			-- refresh
+			F:IterateAllUnitButtons(function(b)
+				UnitButton_UpdateAuras(b)
+			end)
+		elseif setting == "position" then
+			F:IterateAllUnitButtons(function(b)
+				local indicator = b.indicators[indicatorName]
+				indicator:ClearAllPoints()
+				indicator:SetPoint(value[1], b, value[2], value[3], value[4])
+			end)
+		elseif setting == "size" then
+			F:IterateAllUnitButtons(function(b)
+				local indicator = b.indicators[indicatorName]
+				indicator:SetSize(unpack(value))
+			end)
+		elseif setting == "font" then
+			F:IterateAllUnitButtons(function(b)
+				local indicator = b.indicators[indicatorName]
+				indicator:SetFont(unpack(value))
+			end)
+		elseif setting == "num" then
+			indicatorNums[indicatorName] = value
+			-- refresh
+			F:IterateAllUnitButtons(function(b)
+				UnitButton_UpdateAuras(b)
+			end)
+		end
+	end
+end
+Cell:RegisterCallback("UpdateIndicators", "UnitButton_UpdateIndicators", UpdateIndicators)
+
+-------------------------------------------------
 -- unit button
 -------------------------------------------------
 --[[
@@ -52,13 +120,15 @@ unitButton = {
 		background, mouseoverHighlight, targetHighlight, readyCheckHighlight,
 		healthBar, healthBarBackground, absorbsBar, shieldBar, incomingHeal, damageFlashTex, overShieldGlow,
 		powerBar, powerBarBackground,
-		overlayFrame, nameText, statusText, timerText, vehicleText,
+		statusTextFrame, statusText, timerText
+		overlayFrame, nameText, vehicleText,
 		aggroIndicator, leaderIcon, phaseIcon, raidIcon, readyCheckIcon, roleIcon,
 	},
 	func = {
 		ShowFlash, HideFlash,
 		ShowTimer, HideTimer, TimerTextOnUpdate,
 	},
+	indicators = {},
 	updateRequired,
 	__updateElapsed,
 }
@@ -317,8 +387,33 @@ local function UnitButton_UpdateHealthAbsorbs(self)
 	end
 end
 
-local function UnitButton_UpdateAuras(self)
+local function UnitButton_UpdateDebuffs(self)
+	if not enabledIndicators["debuffs"] then 
+		self.indicators.debuffs:Hide()
+		return
+	else
+		self.indicators.debuffs:Show()
+	end
 
+	local debuffs = F:UnitDebuffs(self.state.displayedUnit, "BLACKLIST", Cell.vars.debuffBlacklist) -- debuffs[found] = {expirationTime - duration, duration, debuffType, icon, count}
+	for i = 1, 5 do
+		if i > indicatorNums["debuffs"] then
+			self.indicators.debuffs[i]:Hide()
+		else
+			if debuffs[i] then -- debuff i exists
+				self.indicators.debuffs[i]:SetCooldown(unpack(debuffs[i]))
+			else
+				self.indicators.debuffs[i]:Hide()
+			end
+		end
+	end
+end
+
+UnitButton_UpdateAuras = function(self)
+	local unit = self.state.displayedUnit
+	if not unit then return end
+
+	UnitButton_UpdateDebuffs(self)
 end
 
 local function UnitButton_UpdateThreat(self)
@@ -336,17 +431,22 @@ local function UnitButton_UpdateThreat(self)
 end
 
 local function UnitButton_UpdateThreatBar(self)
+	if not enabledIndicators["aggroBar"] then 
+		self.indicators.aggroBar:Hide()
+		return
+	end
+
 	local unit = self.state.displayedUnit
 	if not unit then return end
 
 	-- isTanking, status, scaledPercentage, rawPercentage, threatValue = UnitDetailedThreatSituation(unit, mobUnit)
 	local _, status, scaledPercentage, rawPercentage = UnitDetailedThreatSituation(unit, "target")
 	if status then
-		self.widget.aggroBar:Show()
-		self.widget.aggroBar:SetValue(scaledPercentage)
-		self.widget.aggroBar:SetStatusBarColor(GetThreatStatusColor(status))
+		self.indicators.aggroBar:Show()
+		self.indicators.aggroBar:SetValue(scaledPercentage)
+		self.indicators.aggroBar:SetStatusBarColor(GetThreatStatusColor(status))
 	else
-		self.widget.aggroBar:Hide()
+		self.indicators.aggroBar:Hide()
 	end
 end
 
@@ -406,16 +506,20 @@ local function UnitButton_UpdateStatusText(self)
 	local unit = self.state.unit
 	if not unit then return end
 
+	local statusTextFrame = self.widget.statusTextFrame
 	local statusText = self.widget.statusText
 	self.state.guid = UnitGUID(unit) -- update!
 
 	if not UnitIsConnected(unit) and UnitIsPlayer(unit) then
+		statusTextFrame:Show()
 		statusText:SetText(L["OFFLINE"])
 		self.func.ShowTimer()
 	elseif UnitIsAFK(unit) then
+		statusTextFrame:Show()
 		statusText:SetText(L["AFK"])
 		self.func.ShowTimer()
 	elseif UnitIsDeadOrGhost(unit) then
+		statusTextFrame:Show()
 		self.func.HideTimer()
 		if UnitIsGhost(unit) then
 			statusText:SetText(L["GHOST"])
@@ -423,6 +527,7 @@ local function UnitButton_UpdateStatusText(self)
 			statusText:SetText(L["DEAD"])
 		end
 	elseif C_IncomingSummon.HasIncomingSummon(unit) then
+		statusTextFrame:Show()
 		self.func.HideTimer()
 		local status = C_IncomingSummon.IncomingSummonStatus(unit)
 		if status == Enum.SummonStatus.Pending then
@@ -435,6 +540,7 @@ local function UnitButton_UpdateStatusText(self)
 			C_Timer.After(6, function() UnitButton_UpdateStatusText(self) end)
         end
 	else
+		statusTextFrame:Hide()
 		self.func.HideTimer()
 		statusText:SetText("")
 	end
@@ -502,7 +608,7 @@ local function UnitButton_UpdateAll(self)
 	UnitButton_UpdateThreat(self)
 	UnitButton_UpdateThreatBar(self)
 	UnitButton_UpdatePhase(self)
-	-- UnitButton_UpdateAuras(self)
+	UnitButton_UpdateAuras(self)
 end
 
 -------------------------------------------------
@@ -511,21 +617,21 @@ end
 local function UnitButton_RegisterEvents(self)
 	self:RegisterEvent("PLAYER_ENTERING_WORLD")
 	self:RegisterEvent("GROUP_ROSTER_UPDATE")
-
+	
 	self:RegisterEvent("UNIT_HEALTH")
 	self:RegisterEvent("UNIT_HEALTH_FREQUENT")
 	self:RegisterEvent("UNIT_MAXHEALTH")
-
+	
 	self:RegisterEvent("UNIT_POWER_FREQUENT")
 	self:RegisterEvent("UNIT_MAXPOWER")
 	self:RegisterEvent("UNIT_DISPLAYPOWER")
 	
 	self:RegisterEvent("UNIT_AURA")
-
+	
 	self:RegisterEvent("UNIT_HEAL_PREDICTION")
 	self:RegisterEvent("UNIT_ABSORB_AMOUNT_CHANGED")
 	self:RegisterEvent("UNIT_HEAL_ABSORB_AMOUNT_CHANGED")
-
+	
 	self:RegisterEvent("UNIT_THREAT_SITUATION_UPDATE")
 	self:RegisterEvent("UNIT_THREAT_LIST_UPDATE")
 	self:RegisterEvent("UNIT_ENTERED_VEHICLE")
@@ -534,9 +640,10 @@ local function UnitButton_RegisterEvents(self)
 	self:RegisterEvent("INCOMING_SUMMON_CHANGED")
 	self:RegisterEvent("UNIT_FLAGS") -- afk
 	self:RegisterEvent("UNIT_FACTION") -- mind control
-
+	
 	self:RegisterEvent("UNIT_CONNECTION") -- offline
 	self:RegisterEvent("PLAYER_FLAGS_CHANGED") -- afk
+	self:RegisterEvent("PARTY_LEADER_CHANGED")
 	self:RegisterEvent("UNIT_NAME_UPDATE") -- unknown target
 	self:RegisterEvent("ZONE_CHANGED_NEW_AREA") --? update status text
 
@@ -644,6 +751,9 @@ local function UnitButton_OnEvent(self, event, unit)
 	else
 		if event == "PLAYER_ENTERING_WORLD" or event == "GROUP_ROSTER_UPDATE" then
 			self.updateRequired = 1
+
+		elseif event == "PARTY_LEADER_CHANGED" then
+			UnitButton_UpdateRole(self)
 	
 		elseif event == "PLAYER_TARGET_CHANGED" then
 			UnitButton_UpdateTarget(self)
@@ -724,17 +834,17 @@ local function UnitButton_OnSizeChanged(self)
 end
 
 local function UnitButton_OnTick(self)
-	-- local e = (self.__tickCount or 0) + 1
-	-- if e >= 4 then
-	-- 	e = 0
-	-- 	local guid = UnitGUID(self.state.displayedUnit or "")
-	-- 	if guid ~= self.__origGuid then
-	-- 		print(self.state.unit)
-	-- 		self.__origGuid = guid
-	-- 		self.updateRequired = 1
-	-- 	end
-	-- end
-	-- self.__tickCount = e
+	-- REVIEW: necessary?
+	local e = (self.__tickCount or 0) + 1
+	if e >= 4 then
+		e = 0
+		local guid = UnitGUID(self.state.displayedUnit or "")
+		if guid ~= self.__displayedGuid then
+			self.__displayedGuid = guid
+			self.updateRequired = 1
+		end
+	end
+	self.__tickCount = e
 
 	UnitButton_UpdateInRange(self)
 	
@@ -760,8 +870,12 @@ end
 -------------------------------------------------
 Cell.vars.texture = "Interface\\AddOns\\Cell\\Media\\statusbar.tga"
 local startTimeCache = {}
+-- Layer(statusTextFrame) -- frameLevel:27 ----------
+-- ARTWORK 
+--	statusText, timerText
+-------------------------------------------------
 -- Layer(overlayFrame) -- frameLevel:7 ----------
--- OVERLAY 
+-- OVERLAY
 --	-7 readyCheckIcon, phaseIcon
 -- ARTWORK 
 --	top nameText, statusText, timerText, vehicleText
@@ -966,13 +1080,24 @@ function F:UnitButton_OnLoad(button)
 	vehicleText:SetTextColor(.8, .8, .8, 1)
 
 	-- status text
-	local statusText = overlayFrame:CreateFontString(name.."StatusText", "ARTWORK", "CELL_FONT_STATUS")
+	local statusTextFrame = CreateFrame("Frame", name.."StatusTextFrame", overlayFrame)
+	button.widget.statusTextFrame = statusTextFrame
+	statusTextFrame:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8x8"})
+	statusTextFrame:SetBackdropColor(.1, .1, .1, .6)
+	statusTextFrame:SetFrameLevel(27)
+	statusTextFrame:Hide()
+
+	local statusText = statusTextFrame:CreateFontString(name.."StatusText", "ARTWORK", "CELL_FONT_STATUS")
 	button.widget.statusText = statusText
 	statusText:SetPoint("BOTTOMLEFT", healthBar)
 	statusText:SetTextColor(1, .19, .19)
 
+	statusTextFrame:SetPoint("BOTTOMLEFT", healthBar)
+	statusTextFrame:SetPoint("BOTTOMRIGHT", healthBar)
+	statusTextFrame:SetPoint("TOP", statusText, 0, 2)
+
 	-- afk/offline timer
-	local timerText = overlayFrame:CreateFontString(name.."TimerText", "ARTWORK", "CELL_FONT_STATUS")
+	local timerText = statusTextFrame:CreateFontString(name.."TimerText", "ARTWORK", "CELL_FONT_STATUS")
 	button.widget.timerText = timerText
 	timerText:SetPoint("BOTTOMRIGHT", healthBar)
 	timerText:SetTextColor(1, .19, .19)
@@ -1058,7 +1183,7 @@ function F:UnitButton_OnLoad(button)
 	end)
 
 	local aggroBar = Cell:CreateStatusBar(overlayFrame, 18, 2, 100, true)
-	button.widget.aggroBar = aggroBar
+	button.indicators.aggroBar = aggroBar
 	-- aggroBar:SetPoint("TOPLEFT", roleIcon, "TOPRIGHT", -1, -1)
 	aggroBar:SetPoint("BOTTOMLEFT", overlayFrame, "TOPLEFT", 1, 0)
 	aggroBar:Hide()
@@ -1069,6 +1194,8 @@ function F:UnitButton_OnLoad(button)
 	phaseIcon:SetSize(16, 16)
 	phaseIcon:SetPoint("TOP", healthBar)
 	phaseIcon:Hide()
+
+	F:CreateDebuffs(button)
 
 	-- events
 	button:SetScript("OnAttributeChanged", UnitButton_OnAttributeChanged) -- init

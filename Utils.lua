@@ -233,8 +233,8 @@ end
 -------------------------------------------------
 -- LibSharedMedia
 -------------------------------------------------
+local LSM = LibStub("LibSharedMedia-3.0", true)
 function F:GetBarTexture()
-    local LSM = LibStub("LibSharedMedia-3.0", true)
     --! update Cell.vars.texture for further use in UnitButton_OnLoad
     if LSM and LSM:IsValid("statusbar", CellDB["texture"]) then
         Cell.vars.texture = LSM:Fetch("statusbar", CellDB["texture"])
@@ -244,11 +244,48 @@ function F:GetBarTexture()
     return Cell.vars.texture
 end
 
-function F:GetFont()
-    local LSM = LibStub("LibSharedMedia-3.0", true)
-    if LSM and LSM:IsValid("font", CellDB["font"]) then
-        return LSM:Fetch("font", CellDB["font"])
+function F:GetFont(font)
+    if not font then font = CellDB["font"] end
+    if LSM and LSM:IsValid("font", font) then
+        return LSM:Fetch("font", font)
     else
         return GameFontNormal:GetFont()
     end
+end
+
+local defaultFont, defaultFontName = GameFontNormal:GetFont(), "Cell ".._G.DEFAULT
+function F:GetFontItems()
+    local items = {}
+    local fonts, fontNames
+    
+    if LSM then
+        fonts, fontNames = F:Copy(LSM:HashTable("font")), F:Copy(LSM:List("font"))
+        -- insert default texture
+        tinsert(fontNames, 1, defaultFontName)
+        fonts[defaultFontName] = defaultFont
+
+        for _, name in pairs(fontNames) do
+            tinsert(items, {
+                ["text"] = name,
+                ["font"] = fonts[name],
+                -- ["onClick"] = function()
+                --     CellDB["font"] = name
+                --     Cell:Fire("UpdateAppearance", "font")
+                -- end,
+            })
+        end
+    else
+        fontNames = {defaultFontName}
+        fonts = {[defaultFontName] = defaultFont}
+
+        tinsert(items, {
+            ["text"] = defaultFontName,
+            ["font"] = defaultFont,
+            -- ["onClick"] = function()
+            --     CellDB["font"] = defaultFontName
+            --     Cell:Fire("UpdateAppearance", "font")
+            -- end,
+        })
+    end
+    return items, fonts, defaultFontName, defaultFont 
 end

@@ -106,40 +106,15 @@ local fontDropdown = Cell:CreateDropdown(appearanceTab, 150, "font")
 fontDropdown:SetPoint("TOPLEFT", fontText, "BOTTOMLEFT", 5, -12)
 
 local function CheckFonts()
-    local items = {}
-    local fonts, fontNames
-    local defaultFont, defaultFontName = GameFontNormal:GetFont(), "Cell ".._G.DEFAULT
-    
-    local LSM = LibStub("LibSharedMedia-3.0", true)
-    if LSM then
-        fonts, fontNames = F:Copy(LSM:HashTable("font")), F:Copy(LSM:List("font"))
-        -- insert default texture
-        tinsert(fontNames, 1, defaultFontName)
-        fonts[defaultFontName] = defaultFont
+    local items, fonts, defaultFontName, defaultFont = F:GetFontItems()
 
-        for _, name in pairs(fontNames) do
-            tinsert(items, {
-                ["text"] = name,
-                ["font"] = fonts[name],
-                ["onClick"] = function()
-                    CellDB["font"] = name
-                    Cell:Fire("UpdateAppearance", "font")
-                end,
-            })
+    for _, item in pairs(items) do
+        item["onClick"] = function()
+            CellDB["font"] = item["text"]
+            Cell:Fire("UpdateAppearance", "font")
         end
-    else
-        fontNames = {defaultFontName}
-        fonts = {[defaultFontName] = defaultFont}
-
-        tinsert(items, {
-            ["text"] = defaultFontName,
-            ["font"] = defaultFont,
-            ["onClick"] = function()
-                CellDB["font"] = defaultFontName
-                Cell:Fire("UpdateAppearance", "font")
-            end,
-        })
     end
+
     fontDropdown:SetItems(items)
     
     -- validation

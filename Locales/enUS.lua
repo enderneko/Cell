@@ -11,6 +11,16 @@ select(2, ...).L = setmetatable({
 	["togglemenu"] = "Menu",
 	["T"] = "Talent",
 	["P"] = "PvP Talent",
+
+	["BOTTOM"] = "Bottom",
+	["BOTTOMLEFT"] = "Bottom Left",
+	["BOTTOMRIGHT"] = "Bottom Right",
+	["CENTER"] = "Center",
+	["LEFT"] = "Left",
+	["RIGHT"] = "Right",
+	["TOP"] = "Top",
+	["TOPLEFT"] = "Top Left",
+	["TOPRIGHT"] = "Top Right",
 }, {
 	__index = function(self, Key)
 		if (Key ~= nil) then

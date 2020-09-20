@@ -39,14 +39,14 @@ end
 -------------------------------------------------
 -- buttons
 -------------------------------------------------
-local options = Cell:CreateButton(cellMainFrame, "", "red", {20, 10}, false, nil, nil, L["Options"])
+local options = Cell:CreateButton(cellMainFrame, "", "red", {20, 10}, false, true, nil, nil, L["Options"])
 options:SetPoint("BOTTOMLEFT", cellMainFrame, "TOPLEFT", 0, 4)
 RegisterDragForMainFrame(options)
 options:SetScript("OnClick", function()
     F:ShowOptionsFrame()
 end)
 
-local tools = Cell:CreateButton(cellMainFrame, "", "blue", {20, 10}, false, nil, nil, L["Tools"])
+local tools = Cell:CreateButton(cellMainFrame, "", "blue", {20, 10}, false, true, nil, nil, L["Tools"])
 tools:SetPoint("LEFT", options, "RIGHT", 1, 0)
 RegisterDragForMainFrame(tools)
 
