@@ -114,7 +114,7 @@ eventFrame:RegisterEvent("ADDON_LOADED")
 eventFrame:RegisterEvent("GROUP_ROSTER_UPDATE")
 eventFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
 eventFrame:RegisterEvent("PLAYER_LOGIN")
-eventFrame:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
+eventFrame:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
 
 function eventFrame:ADDON_LOADED(arg1)
     if arg1 == addonName then
@@ -155,12 +155,11 @@ function eventFrame:ADDON_LOADED(arg1)
         Cell.vars.clickCastingTable = CellDB["clickCastings"][Cell.vars.playerClass]
 
         -- layouts --------------------------------------------------------------------------------
-        if type(CellCharacterDB["layout"]) ~= "string" then CellCharacterDB["layout"] = "default" end
         if type(CellDB["layouts"]) ~= "table" then
             CellDB["layouts"] = {
                 ["default"] = {
                     ["size"] = {66, 46},
-                    ["spacing"] = 3,
+                    ["spacing"] = 4,
                     ["font"] = {
                         ["name"] = 13,
                         ["status"] = 11,
@@ -224,6 +223,8 @@ function eventFrame:ADDON_LOADED(arg1)
                 },
             }
         end
+        if type(CellCharacterDB["layout"]) ~= "string" then CellCharacterDB["layout"] = "default" end
+        if not CellDB["layouts"][CellCharacterDB["layout"]] then CellCharacterDB["layout"] = "default" end
 
         -- debuffs --------------------------------------------------------------------------------
         if type(CellDB["debuffBlacklist"]) ~= "table" then
@@ -273,21 +274,27 @@ function eventFrame:PLAYER_ENTERING_WORLD()
     eventFrame:GROUP_ROSTER_UPDATE()
 end
 
+local prevSpec
 function eventFrame:PLAYER_LOGIN()
+    if not prevSpec then prevSpec = GetSpecialization() end
     -- update spec vars
-    Cell.vars.playerSpecID, Cell.vars.playerSpecName, _, Cell.vars.playerSpecIcon = GetSpecializationInfo(GetSpecialization())
+    Cell.vars.playerSpecID, Cell.vars.playerSpecName, _, Cell.vars.playerSpecIcon = GetSpecializationInfo(prevSpec)
     Cell:Fire("UpdateClickCastings")
     Cell:Fire("UpdateIndicators")
     -- update texture and font
     Cell:Fire("UpdateAppearance")
 end
 
-function eventFrame:PLAYER_SPECIALIZATION_CHANGED(unit) --! ACTIVE_TALENT_GROUP_CHANGED always fire TWICE!
-    if unit == "player" then
+-- PLAYER_SPECIALIZATION_CHANGED fires when level up, ACTIVE_TALENT_GROUP_CHANGED usually fire twice.
+-- NOTE: ACTIVE_TALENT_GROUP_CHANGED fires before PLAYER_LOGIN, but can't GetSpecializationInfo before PLAYER_LOGIN
+function eventFrame:ACTIVE_TALENT_GROUP_CHANGED()
+    -- not in combat & spec CHANGED
+    if not InCombatLockdown() and prevSpec and prevSpec ~= GetSpecialization() then
+        prevSpec = GetSpecialization()
         -- update spec vars
-        Cell.vars.playerSpecID, Cell.vars.playerSpecName, _, Cell.vars.playerSpecIcon = GetSpecializationInfo(GetSpecialization())
+        Cell.vars.playerSpecID, Cell.vars.playerSpecName, _, Cell.vars.playerSpecIcon = GetSpecializationInfo(prevSpec)
         
-        if CellDB["clickCastings"][Cell.vars.playerClass]["useCommon"] then
+        if not CellDB["clickCastings"][Cell.vars.playerClass]["useCommon"] then
             Cell:Fire("UpdateClickCastings")
         end
     end

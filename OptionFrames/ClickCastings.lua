@@ -218,7 +218,7 @@ local function SetDBAttribute(b, t)
 end
 
 local function UpdateClickCastings(noLoad)
-    F:Debug("|cff77ff77UpdateClickCastings:|r"..tostring(Cell.vars.clickCastingTable["useCommon"]))
+    F:Debug("|cff77ff77UpdateClickCastings|r useCommon: "..tostring(Cell.vars.clickCastingTable["useCommon"]))
     clickCastingTable = Cell.vars.clickCastingTable["useCommon"] and Cell.vars.clickCastingTable["common"] or Cell.vars.clickCastingTable[Cell.vars.playerSpecID]
     
     if not noLoad then
