@@ -2,57 +2,6 @@ local _, Cell = ...
 local L = Cell.L
 local F = Cell.funcs
 
-local unitDebuffs = {}
-function F:UnitDebuffs(unit, filterMode, filterList)
-    local debuffs, currentDebuffs = {}, {}
-    if not unitDebuffs[unit] then unitDebuffs[unit] = {} end
-
-    for i = 1, 40 do
-        -- name, icon, count, debuffType, duration, expirationTime, source, isStealable, nameplateShowPersonal, spellId, canApplyAura, isBossDebuff, castByPlayer, nameplateShowAll, timeMod, ...
-        local name, icon, count, debuffType, duration, expirationTime = UnitDebuff(unit, i)
-		if not name then
-			break
-        end
-        
-        local isValid
-        if filterMode == "BLACKLIST" then
-            if filterList[name] then
-                isValid = false
-            else
-                isValid = true
-            end
-        else -- WHITELIST
-            if filterList[name] then
-                isValid = true
-            else
-                isValid = false
-            end
-        end
-
-		if isValid and duration and duration <= 600 then
-            if unitDebuffs[unit][name] and expirationTime > unitDebuffs[unit][name] then
-                -- start, duration, debuffType, texture, count, refreshing
-                debuffs[i] = {expirationTime - duration, duration, debuffType or "", icon, count, true}
-            else
-                -- start, duration, debuffType, texture, count
-                debuffs[i] = {expirationTime - duration, duration, debuffType or "", icon, count}
-            end
-            unitDebuffs[unit][name] = expirationTime
-            currentDebuffs[name] = i
-		end
-    end
-    
-    local t = GetTime()
-    for name, expirationTime in pairs(unitDebuffs[unit]) do
-        -- lost or expired
-        if not currentDebuffs[name] or t > expirationTime then
-            unitDebuffs[unit][name] = nil
-        end
-    end
-
-    return debuffs
-end
-
 local DebuffTypeColor = DebuffTypeColor
 -------------------------------------------------
 -- icon builder
@@ -154,8 +103,14 @@ local function CreateAura_BarIcon(name, parent)
     maskIcon:SetDesaturated(true)
     maskIcon:SetAllPoints(icon)
     -- maskIcon:SetDrawLayer("ARTWORK", 0)
-    maskIcon:SetVertexColor(.5, .5, .5, 1)
+    maskIcon:SetVertexColor(.4, .4, .4, 1)
     maskIcon:AddMaskTexture(mask)
+
+    frame:SetScript("OnSizeChanged", function(self, width, height)
+        -- keep aspect ratio
+        icon:SetTexCoord(unpack(F:GetTexCoord(width, height)))
+        maskIcon:SetTexCoord(unpack(F:GetTexCoord(width, height)))
+    end)
 
     local stack = cooldown:CreateFontString(nil, "OVERLAY", "CELL_FONT_STATUS")
     frame.stack = stack
@@ -194,13 +149,6 @@ local function CreateAura_BarIcon(name, parent)
     t2:SetSmoothing("IN")
 
     function frame:SetCooldown(start, duration, debuffType, texture, count, refreshing)
-        local r, g, b
-        if debuffType then
-            r, g, b = DebuffTypeColor[debuffType].r, DebuffTypeColor[debuffType].g, DebuffTypeColor[debuffType].b
-        else
-            r, g, b = 0, 0, 0
-        end
-
         if duration == 0 then
             cooldown:Hide()
         else
@@ -209,9 +157,17 @@ local function CreateAura_BarIcon(name, parent)
             cooldown:SetValue(GetTime()-start)
             cooldown:Show()
         end
-        
+
+        local r, g, b
+        if debuffType then
+            r, g, b = DebuffTypeColor[debuffType].r, DebuffTypeColor[debuffType].g, DebuffTypeColor[debuffType].b
+            spark:SetColorTexture(r, g, b, 1)
+        else
+            r, g, b = 0, 0, 0
+            spark:SetColorTexture(.5, .5, .5, 1)
+        end
+
         frame:SetBackdropColor(r, g, b, 1)
-        spark:SetColorTexture(r, g, b, 1)
         icon:SetTexture(texture)
         maskIcon:SetTexture(texture)
         stack:SetText((count == 0 or count == 1) and "" or count)
@@ -223,6 +179,45 @@ local function CreateAura_BarIcon(name, parent)
     end
 
     return frame
+end
+
+-------------------------------------------------
+-- CreateExternalCooldowns
+-------------------------------------------------
+function F:CreateExternalCooldowns(parent)
+    local externalCooldowns = CreateFrame("Frame", parent:GetName().."ExternalCooldownParent", parent.widget.overlayFrame)
+    parent.indicators.externalCooldowns = externalCooldowns
+    externalCooldowns:SetSize(20, 10)
+    externalCooldowns:SetFrameLevel(11)
+    externalCooldowns:Hide()
+
+    externalCooldowns.OriginalSetSize = externalCooldowns.SetSize
+
+    function externalCooldowns:SetSize(width, height)
+        externalCooldowns:OriginalSetSize(width, height)
+        for i = 1, 5 do
+            externalCooldowns[i]:SetSize(width, height)
+        end
+    end
+
+    function externalCooldowns:SetFont(font, ...)
+        font = F:GetFont(font)
+        for i = 1, 5 do
+            externalCooldowns[i]:SetFont(font, ...)
+        end
+    end
+
+    for i = 1, 5 do
+        local name = parent:GetName().."ExternalCooldown"..i
+        local frame = CreateAura_BarIcon(name, externalCooldowns)
+        tinsert(externalCooldowns, frame)
+
+        if i == 1 then
+            frame:SetPoint("TOPLEFT")
+        else
+            frame:SetPoint("RIGHT", externalCooldowns[i-1], "LEFT", 1, 0)
+        end
+	end
 end
 
 -------------------------------------------------

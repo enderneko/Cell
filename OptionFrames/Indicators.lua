@@ -36,8 +36,8 @@ previewButton:SetScript("OnLeave", nil)
 previewButton:SetScript("OnShow", nil)
 previewButton:SetScript("OnHide", nil)
 previewButton:SetScript("OnUpdate", nil)
--- debuffs
 F:CreateDebuffs(previewButton)
+F:CreateExternalCooldowns(previewButton)
 previewButton:Show()
 
 local function UpdatePreviewButton()
@@ -110,6 +110,22 @@ local function InitIndicator(indicatorName)
             --     indicator[i].cooldown:Hide()
             --     indicator[i].cooldown:SetScript("OnCooldownDone", nil)
             -- end)
+        end
+    elseif indicatorName == "externalCooldowns" then
+        local icons = {135936, 572025, 135966, 627485, 237542}
+        for i = 1, 5 do
+            indicator[i]:SetScript("OnShow", function()
+                indicator[i]:SetCooldown(GetTime(), 7, nil, icons[i], 0)
+                indicator[i].cooldown.value = 0
+                indicator[i].cooldown:SetScript("OnUpdate", function(self, elapsed)
+                    if self.value >= 7 then
+                        self.value = 0
+                    else
+                        self.value = self.value + elapsed
+                    end
+                    self:SetValue(self.value)
+                end)
+            end)
         end
     end
     indicator.init = true

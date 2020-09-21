@@ -38,15 +38,20 @@ local UnitIsGroupAssistant = UnitIsGroupAssistant
 local InCombatLockdown = InCombatLockdown
 local UnitInPhase = UnitInPhase
 local UnitIsWarModePhased = UnitIsWarModePhased
+local UnitBuff = UnitBuff
+local UnitDebuff = UnitDebuff
 
 -------------------------------------------------
 -- unit button init indicators
 -------------------------------------------------
 local UnitButton_UpdateAuras
+local indicatorsInitialized
 local enabledIndicators, indicatorNums = {}, {}
 local function UpdateIndicators(indicatorName, setting, value)
 	F:Debug("UpdateIndicators: ", indicatorName, setting, value)
 	if not indicatorName then -- init
+		wipe(enabledIndicators)
+		wipe(indicatorNums)
 		for _, t in pairs(Cell.vars.currentLayoutTable["indicators"]) do
 			-- update enabled
 			if t["enabled"] then
@@ -72,6 +77,7 @@ local function UpdateIndicators(indicatorName, setting, value)
 				end
 			end)
 		end
+		indicatorsInitialized = true
 	else
 		-- changed in IndicatorsTab
 		if setting == "enabled" then
@@ -133,6 +139,121 @@ unitButton = {
 	__updateElapsed,
 }
 ]]
+
+-------------------------------------------------
+-- auras
+-------------------------------------------------
+local debuffs_cache = {}
+local debuffs_current = {}
+local function UnitButton_UpdateDebuffs(self)
+	if not enabledIndicators["debuffs"] then 
+		self.indicators.debuffs:Hide()
+	else
+		self.indicators.debuffs:Show()
+	end
+	
+	local filterList = Cell.vars.debuffBlacklist
+	-- if not (enabledIndicators["debuffs"] and enabledIndicators["centralDebuff"]) then return end -- TODO:
+
+	local unit = self.state.displayedUnit
+	if not debuffs_cache[unit] then debuffs_cache[unit] = {} end
+    if not debuffs_current[unit] then debuffs_current[unit] = {} end
+
+	local found = 1
+    for i = 1, 40 do
+        -- name, icon, count, debuffType, duration, expirationTime, source, isStealable, nameplateShowPersonal, spellId, canApplyAura, isBossDebuff, castByPlayer, nameplateShowAll, timeMod, ...
+        local name, icon, count, debuffType, duration, expirationTime, source, isStealable, nameplateShowPersonal, spellId = UnitDebuff(unit, i)
+		if not name then
+			break
+        end
+		
+        if debuffType then
+            -- debuffs_dispell[unit][debuffType] = true
+        end
+		
+		if filterList[name] then
+			isValid = false
+		else
+			isValid = true
+		end
+
+        if isValid and duration and duration <= 600 then
+			if indicatorNums["debuffs"] and found <= indicatorNums["debuffs"] then
+				-- start, duration, debuffType, texture, count, refreshing
+				self.indicators.debuffs[found]:SetCooldown(expirationTime - duration, duration, debuffType or "", icon, count, debuffs_cache[unit][name] and expirationTime > debuffs_cache[unit][name])
+				found = found + 1
+			end
+
+            debuffs_cache[unit][name] = expirationTime
+            debuffs_current[unit][name] = i
+		end
+	end
+	
+	-- hide other debuff indicators
+	for i = found, 5 do
+		self.indicators.debuffs[i]:Hide()
+	end
+	
+	-- update debuffs_cache
+    local t = GetTime()
+    for name, expirationTime in pairs(debuffs_cache[unit]) do
+        -- lost or expired
+        if not debuffs_current[unit][name] or t > expirationTime then
+            debuffs_cache[unit][name] = nil
+        end
+	end
+	wipe(debuffs_current[unit])
+end
+
+local buffs_cache = {}
+local buffs_current = {}
+local function UnitButton_UpdateBuffs(self)
+	if not enabledIndicators["externalCooldowns"] then 
+		self.indicators.externalCooldowns:Hide()
+	else
+		self.indicators.externalCooldowns:Show()
+	end
+	
+	local unit = self.state.displayedUnit
+	if not buffs_cache[unit] then buffs_cache[unit] = {} end
+    if not buffs_current[unit] then buffs_current[unit] = {} end
+
+	local externalFound = 1
+    for i = 1, 40 do
+        -- name, icon, count, debuffType, duration, expirationTime, source, isStealable, nameplateShowPersonal, spellId, canApplyAura, isBossDebuff, castByPlayer, nameplateShowAll, timeMod, ...
+        local name, icon, count, debuffType, duration, expirationTime, source, isStealable, nameplateShowPersonal, spellId = UnitBuff(unit, i)
+		if not name then
+			break
+        end
+		
+		if duration then
+			-- externalCooldowns
+			if F:IsExternalCooldown(name) and indicatorNums["externalCooldowns"] and externalFound <= indicatorNums["externalCooldowns"] then
+				-- start, duration, debuffType, texture, count, refreshing
+				self.indicators.externalCooldowns[externalFound]:SetCooldown(expirationTime - duration, duration, nil, icon, count, buffs_cache[unit][name] and expirationTime > buffs_cache[unit][name])
+				externalFound = externalFound + 1
+			end
+
+            buffs_cache[unit][name] = expirationTime
+            buffs_current[unit][name] = i
+		end
+	end
+	
+	-- hide other externalCooldowns
+	for i = externalFound, 5 do
+		self.indicators.externalCooldowns[i]:Hide()
+	end
+	
+	-- update buffs_cache
+    local t = GetTime()
+    for name, expirationTime in pairs(buffs_cache[unit]) do
+        -- lost or expired
+        if not buffs_current[unit][name] or t > expirationTime then
+            buffs_cache[unit][name] = nil
+        end
+	end
+	wipe(buffs_current[unit])
+end
 
 -------------------------------------------------
 -- functions
@@ -387,33 +508,14 @@ local function UnitButton_UpdateHealthAbsorbs(self)
 	end
 end
 
-local function UnitButton_UpdateDebuffs(self)
-	if not enabledIndicators["debuffs"] then 
-		self.indicators.debuffs:Hide()
-		return
-	else
-		self.indicators.debuffs:Show()
-	end
-
-	local debuffs = F:UnitDebuffs(self.state.displayedUnit, "BLACKLIST", Cell.vars.debuffBlacklist) -- debuffs[found] = {expirationTime - duration, duration, debuffType, icon, count}
-	for i = 1, 5 do
-		if i > indicatorNums["debuffs"] then
-			self.indicators.debuffs[i]:Hide()
-		else
-			if debuffs[i] then -- debuff i exists
-				self.indicators.debuffs[i]:SetCooldown(unpack(debuffs[i]))
-			else
-				self.indicators.debuffs[i]:Hide()
-			end
-		end
-	end
-end
-
 UnitButton_UpdateAuras = function(self)
+	if not indicatorsInitialized then return end
+
 	local unit = self.state.displayedUnit
 	if not unit then return end
 
 	UnitButton_UpdateDebuffs(self)
+	UnitButton_UpdateBuffs(self)
 end
 
 local function UnitButton_UpdateThreat(self)
@@ -1082,8 +1184,8 @@ function F:UnitButton_OnLoad(button)
 	-- status text
 	local statusTextFrame = CreateFrame("Frame", name.."StatusTextFrame", overlayFrame)
 	button.widget.statusTextFrame = statusTextFrame
-	statusTextFrame:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8x8"})
-	statusTextFrame:SetBackdropColor(.1, .1, .1, .6)
+	-- statusTextFrame:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8x8"})
+	-- statusTextFrame:SetBackdropColor(.1, .1, .1, .6)
 	statusTextFrame:SetFrameLevel(27)
 	statusTextFrame:Hide()
 
@@ -1196,6 +1298,7 @@ function F:UnitButton_OnLoad(button)
 	phaseIcon:Hide()
 
 	F:CreateDebuffs(button)
+	F:CreateExternalCooldowns(button)
 
 	-- events
 	button:SetScript("OnAttributeChanged", UnitButton_OnAttributeChanged) -- init

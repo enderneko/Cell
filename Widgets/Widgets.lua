@@ -464,6 +464,9 @@ function addon:CreateSlider(name, parent, low, high, width, step, onValueChanged
 	slider:SetScript("OnMouseWheel", function(self, delta)
 		if not IsShiftKeyDown() then return end
 
+		-- NOTE: OnValueChanged may not be called: value == low
+		oldValue = oldValue and oldValue or low
+
 		local value
 		if delta == 1 then -- scroll up
 			value = oldValue + step

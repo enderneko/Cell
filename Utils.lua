@@ -289,3 +289,22 @@ function F:GetFontItems()
     end
     return items, fonts, defaultFontName, defaultFont 
 end
+
+-------------------------------------------------
+-- texture
+-------------------------------------------------
+function F:GetTexCoord(width, height)
+    -- ULx,ULy, LLx,LLy, URx,URy, LRx,LRy
+    local texCoord = {.12, .12, .12, .88, .88, .12, .88, .88}
+    local aspectRatio = width / height
+
+    local xRatio = aspectRatio < 1 and aspectRatio or 1
+    local yRatio = aspectRatio > 1 and 1 / aspectRatio or 1
+
+    for i, coord in ipairs(texCoord) do
+        local aspectRatio = (i % 2 == 1) and xRatio or yRatio
+        texCoord[i] = (coord - 0.5) * aspectRatio + 0.5
+    end
+  
+    return texCoord
+  end
