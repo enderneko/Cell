@@ -68,6 +68,9 @@ local defensiveCooldowns = {
     -- hunter
     186265, -- 灵龟守护
 
+    -- mage
+    45438, -- 寒冰屏障
+
     -- monk
     115176, -- 禅悟冥想
     115203, -- 壮胆酒
@@ -148,4 +151,82 @@ end
 
 function F:IsTankActiveMitigation(name)
     return tankActiveMitigations[name]
+end
+
+-------------------------------------------------
+-- dispels
+-------------------------------------------------
+local dispellable = {
+    -- DRUID ----------------
+        -- 102 - Balance
+        [102] = {["Curse"] = true, ["Poison"] = true},
+        -- 103 - Feral
+        [103] = {["Curse"] = true, ["Poison"] = true},
+        -- 104 - Guardian
+        [104] = {["Curse"] = true, ["Poison"] = true},
+        -- Restoration
+        [105] = {["Curse"] = true, ["Magic"] = true, ["Poison"] = true},
+        -------------------------
+        
+        -- MAGE -----------------
+        -- 62 - Arcane
+        [62] = {["Curse"] = true},
+        -- 63 - Fire
+        [63] = {["Curse"] = true},
+        -- 64 - Frost
+        [64] = {["Curse"] = true},
+        -------------------------
+        
+        -- MONK -----------------
+        -- 268 - Brewmaster
+        [268] = {["Disease"] = true, ["Poison"] = true},
+        -- 269 - Windwalker
+        [269] = {["Disease"] = true, ["Poison"] = true},
+        -- 270 - Mistweaver
+        [270] = {["Disease"] = true, ["Magic"] = true, ["Poison"] = true},
+    -------------------------
+
+    -- PALADIN --------------
+        -- 65 - Holy
+        [65] = {["Disease"] = true, ["Magic"] = true, ["Poison"] = true},
+        -- 66 - Protection
+        [66] = {["Disease"] = true, ["Poison"] = true},
+        -- 70 - Retribution
+        [70] = {["Disease"] = true, ["Poison"] = true},
+    -------------------------
+    
+    -- PRIEST ---------------
+        -- 256 - Discipline
+        [256] = {["Disease"] = true, ["Magic"] = true},
+        -- 257 - Holy
+        [257] = {["Disease"] = true, ["Magic"] = true},
+        -- 258 - Shadow
+        [258] = {["Disease"] = true, ["Magic"] = true},
+    -------------------------
+
+    -- SHAMAN ---------------
+        -- 262 - Elemental
+        [262] = {["Curse"] = true},
+        -- 263 - Enhancement
+        [263] = {["Curse"] = true},
+        -- 264 - Restoration
+        [264] = {["Curse"] = true, ["Magic"] = true},
+    -------------------------
+
+    -- WARLOCK --------------
+        -- 265 - Affliction
+        [265] = {["Magic"] = true},
+        -- 266 - Demonology
+        [266] = {["Magic"] = true},
+        -- 267 - Destruction
+        [267] = {["Magic"] = true},
+    -------------------------
+}
+
+function F:CanDispel(dispelType)
+    if dispellable[Cell.vars.playerSpecID] then
+        return dispellable[Cell.vars.playerSpecID][dispelType]
+    else
+        return
+    end
 end

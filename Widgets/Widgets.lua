@@ -1447,7 +1447,7 @@ end
 -----------------------------------------
 local settingWidgets = {} -- store all created widgets
 
-local function CreateEnabled(parent)
+local function CreateSetting_Enabled(parent)
 	local widget
 
 	if not settingWidgets["enabled"] then
@@ -1474,7 +1474,7 @@ local function CreateEnabled(parent)
 end
 
 local points = {"BOTTOM", "BOTTOMLEFT", "BOTTOMRIGHT", "CENTER", "LEFT", "RIGHT", "TOP", "TOPLEFT", "TOPRIGHT"}
-local function CreatePosition(parent)
+local function CreateSetting_Position(parent)
 	local widget
 
 	if not settingWidgets["position"] then
@@ -1549,7 +1549,7 @@ local function CreatePosition(parent)
 	return widget
 end
 
-local function CreateSize(parent)
+local function CreateSetting_Size(parent)
 	local widget
 
 	if not settingWidgets["size"] then
@@ -1586,7 +1586,7 @@ local function CreateSize(parent)
 	return widget
 end
 
-local function CreateSizeSquare(parent)
+local function CreateSetting_SizeSquare(parent)
 	local widget
 
 	if not settingWidgets["size-square"] then
@@ -1616,7 +1616,7 @@ local function CreateSizeSquare(parent)
 	return widget
 end
 
-local function CreateNum(parent)
+local function CreateSetting_Num(parent)
 	local widget
 
 	if not settingWidgets["num"] then
@@ -1646,7 +1646,7 @@ local function CreateNum(parent)
 	return widget
 end
 
-local function CreateFonts(parent)
+local function CreateSetting_Font(parent)
 	local widget
 
 	if not settingWidgets["font"] then
@@ -1726,6 +1726,37 @@ local function CreateFonts(parent)
 	return widget
 end
 
+local function CreateSetting_CheckButton(parent)
+	local widget
+
+	if not settingWidgets["checkbutton"] then
+		widget = addon:CreateFrame("CellIndicatorSettings_CheckButton", parent, 240, 30)
+		settingWidgets["checkbutton"] = widget
+
+		widget.cb = addon:CreateCheckButton(widget, L["checkbutton"])
+		widget.cb:SetPoint("LEFT", 5, 0)
+
+		-- associate db
+		function widget:SetFunc(func)
+			widget.cb.onClick = function(checked)
+				func({widget.settingName, checked})
+			end
+		end
+
+		-- show db value
+		function widget:SetDBValue(t)
+			widget.cb:SetChecked(t[2])
+			widget.settingName = t[1]
+			widget.cb.label:SetText(L[t[1]])
+		end
+	else
+		widget = settingWidgets["checkbutton"]
+	end
+
+	widget:Show()
+	return widget
+end
+
 function addon:CreateIndicatorSettings(parent, settingsTable)
 	local widgetsTable = {}
 
@@ -1738,17 +1769,19 @@ function addon:CreateIndicatorSettings(parent, settingsTable)
 	-- return and show
 	for _, setting in pairs(settingsTable) do
 		if setting == "enabled" then
-			tinsert(widgetsTable, CreateEnabled(parent))
+			tinsert(widgetsTable, CreateSetting_Enabled(parent))
 		elseif setting == "position" then
-			tinsert(widgetsTable, CreatePosition(parent))
+			tinsert(widgetsTable, CreateSetting_Position(parent))
 		elseif setting == "size" then
-			tinsert(widgetsTable, CreateSize(parent))
+			tinsert(widgetsTable, CreateSetting_Size(parent))
 		elseif setting == "size-square" then
-			tinsert(widgetsTable, CreateSizeSquare(parent))
+			tinsert(widgetsTable, CreateSetting_SizeSquare(parent))
 		elseif setting == "num" then
-			tinsert(widgetsTable, CreateNum(parent))
+			tinsert(widgetsTable, CreateSetting_Num(parent))
 		elseif setting == "font" then
-			tinsert(widgetsTable, CreateFonts(parent))
+			tinsert(widgetsTable, CreateSetting_Font(parent))
+		elseif setting == "checkbutton" then
+			tinsert(widgetsTable, CreateSetting_CheckButton(parent))
 		end
 	end
 	

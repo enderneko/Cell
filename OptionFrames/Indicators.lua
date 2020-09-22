@@ -36,8 +36,6 @@ previewButton:SetScript("OnLeave", nil)
 previewButton:SetScript("OnShow", nil)
 previewButton:SetScript("OnHide", nil)
 previewButton:SetScript("OnUpdate", nil)
-F:CreateDebuffs(previewButton)
-F:CreateExternalCooldowns(previewButton)
 previewButton:Show()
 
 local function UpdatePreviewButton()
@@ -54,6 +52,10 @@ local function UpdatePreviewButton()
         previewButton:SetScript("OnSizeChanged", function(self)
             F:SetTextLimitWidth(self.widget.nameText, name, 0.75)
         end)
+
+        previewButton.widget.roleIcon:SetTexture("Interface\\AddOns\\Cell\\Media\\UI-LFG-ICON-PORTRAITROLES.blp")
+		previewButton.widget.roleIcon:SetTexCoord(GetTexCoordsForRoleSmallCircle("DAMAGER"))
+		previewButton.widget.roleIcon:Show()
     end
 
     previewButton:SetSize(unpack(Cell.vars.currentLayoutTable["size"]))
@@ -69,6 +71,18 @@ local function InitIndicator(indicatorName)
     if indicatorName == "aggroBar" then
         indicator:SetStatusBarColor(1, 0, 0)
         indicator.value = 0
+        indicator:SetScript("OnUpdate", function(self, elapsed)
+            if self.value >= 100 then
+                self.value = 0
+            else
+                self.value = self.value + 1
+            end
+            self:SetValue(self.value)
+        end)
+
+    elseif indicatorName == "tankActiveMitigation" then
+        indicator.value = 0
+        indicator:SetMinMaxValues(0, 100)
         indicator:SetScript("OnUpdate", function(self, elapsed)
             if self.value >= 100 then
                 self.value = 0
@@ -111,8 +125,29 @@ local function InitIndicator(indicatorName)
             --     indicator[i].cooldown:SetScript("OnCooldownDone", nil)
             -- end)
         end
+
+    elseif indicatorName == "dispels" then
+        local types = {["Curse"]=true, ["Disease"]=true, ["Magic"]=true, ["Poison"]=true}
+        indicator:SetDispels(types)
+
     elseif indicatorName == "externalCooldowns" then
         local icons = {135936, 572025, 135966, 627485, 237542}
+        for i = 1, 5 do
+            indicator[i]:SetScript("OnShow", function()
+                indicator[i]:SetCooldown(GetTime(), 7, nil, icons[i], 0)
+                indicator[i].cooldown.value = 0
+                indicator[i].cooldown:SetScript("OnUpdate", function(self, elapsed)
+                    if self.value >= 7 then
+                        self.value = 0
+                    else
+                        self.value = self.value + elapsed
+                    end
+                    self:SetValue(self.value)
+                end)
+            end)
+        end
+    elseif indicatorName == "defensiveCooldowns" then
+        local icons = {135919, 136120, 538565, 132362, 132199}
         for i = 1, 5 do
             indicator[i]:SetScript("OnShow", function()
                 indicator[i]:SetCooldown(GetTime(), 7, nil, icons[i], 0)
@@ -147,11 +182,13 @@ local function UpdateIndicators(indicatorName, setting, value)
                 -- update size
                 indicator:SetSize(unpack(t["size"]))
                 -- update debuffs num
-                for i, frame in ipairs(indicator) do
-                    if i <= t["num"] then
-                        frame:Show()
-                    else
-                        frame:Hide()
+                if t["num"] then
+                    for i, frame in ipairs(indicator) do
+                        if i <= t["num"] then
+                            frame:Show()
+                        else
+                            frame:Hide()
+                        end
                     end
                 end
                 -- update font
@@ -209,14 +246,24 @@ listText:SetPoint("TOPLEFT", 5, -5)
 listText:SetJustifyH("LEFT")
 
 local listFrame = Cell:CreateFrame("IndicatorsTab_ListFrame", indicatorsTab)
-listFrame:SetPoint("TOPLEFT", 5, -32)
-listFrame:SetPoint("BOTTOMRIGHT", indicatorsTab, "BOTTOMLEFT", 127, 7)
+listFrame:SetPoint("TOPLEFT", 5, -29)
+listFrame:SetPoint("BOTTOMRIGHT", indicatorsTab, "BOTTOMLEFT", 127, 29)
 listFrame:Show()
 
 Cell:CreateScrollFrame(listFrame)
 listFrame.scrollFrame:SetScrollStep(19)
 
 local listButtons = {}
+
+-------------------------------------------------
+-- indicator create/delete
+-------------------------------------------------
+local createBtn = Cell:CreateButton(indicatorsTab, L["Create"], "blue-hover", {62, 20})
+createBtn:SetPoint("BOTTOMLEFT", 5, 5)
+
+local deleteBtn = Cell:CreateButton(indicatorsTab, L["Delete"], "red-hover", {61, 20})
+deleteBtn:SetPoint("LEFT", createBtn, "RIGHT", -1, 0)
+deleteBtn:SetEnabled(false)
 
 -------------------------------------------------
 -- indicator settings
@@ -230,7 +277,7 @@ settingsText:SetJustifyH("LEFT")
 -------------------------------------------------
 local settingsFrame = Cell:CreateFrame("IndicatorsTab_SettingsFrame", indicatorsTab, 10, 10, true)
 settingsFrame:SetPoint("TOPLEFT", settingsText, "BOTTOMLEFT", 0, -10)
-settingsFrame:SetPoint("BOTTOMRIGHT", indicatorsTab, -5, 7)
+settingsFrame:SetPoint("BOTTOMRIGHT", indicatorsTab, -5, 5)
 settingsFrame:Show()
 
 Cell:CreateScrollFrame(settingsFrame)
@@ -241,6 +288,7 @@ local indicatorSettings = {
     ["externalCooldowns"] = {"enabled", "position", "size", "num"},
     ["defensiveCooldowns"] = {"enabled", "position", "size", "num"},
     ["tankActiveMitigation"] = {"enabled", "position", "size"},
+    ["dispels"] = {"enabled", "position", "size-square", "checkbutton"},
     ["debuffs"] = {"enabled", "position", "size-square", "num", "font"},
     ["centralDebuff"] = {"enabled", "position", "size-square", "font"},
 }
@@ -275,7 +323,7 @@ local function ShowIndicatorSettings(id)
             Cell.vars.currentLayoutTable["indicators"][id][currentSetting] = value
             Cell:Fire("UpdateIndicators", indicatorName, currentSetting, value)
             -- show enabled/disabled status
-            if type(value) == "boolean" then
+            if currentSetting == "enabled" then
                 if value then
                     listButtons[id]:SetTextColor(1, 1, 1, 1)
                 else

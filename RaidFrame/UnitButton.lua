@@ -46,9 +46,22 @@ local UnitDebuff = UnitDebuff
 -------------------------------------------------
 local UnitButton_UpdateAuras
 local indicatorsInitialized
-local enabledIndicators, indicatorNums = {}, {}
+local enabledIndicators, indicatorNums, indicatorCustoms = {}, {}, {}
+
+local function UpdateIndicatorParentVisibility(b, indicatorName, enabled)
+	if not (indicatorName == "debuffs" or indicatorName == "defensiveCooldowns" or indicatorName == "externalCooldowns" or indicatorName == "dispels") then
+		return
+	end
+
+	if enabled then
+		b.indicators[indicatorName]:Show()
+	else
+		b.indicators[indicatorName]:Hide()
+	end
+end
+
 local function UpdateIndicators(indicatorName, setting, value)
-	F:Debug("UpdateIndicators: ", indicatorName, setting, value)
+	F:Debug("|cffff7777UUpdateIndicators:|r ", indicatorName, setting, value)
 	if not indicatorName then -- init
 		wipe(enabledIndicators)
 		wipe(indicatorNums)
@@ -60,6 +73,10 @@ local function UpdateIndicators(indicatorName, setting, value)
 			-- update num
 			if t["num"] then
 				indicatorNums[t["indicatorName"]] = t["num"]
+			end
+			-- update custom
+			if t["checkbutton"] then
+				indicatorCustoms[t["indicatorName"]] = t["checkbutton"][2]
 			end
 			-- update indicators
 			F:IterateAllUnitButtons(function(b)
@@ -74,6 +91,7 @@ local function UpdateIndicators(indicatorName, setting, value)
 					if t["font"] then
 						indicator:SetFont(unpack(t["font"]))
 					end
+					UpdateIndicatorParentVisibility(b, t["indicatorName"], t["enabled"])
 				end
 			end)
 		end
@@ -84,6 +102,7 @@ local function UpdateIndicators(indicatorName, setting, value)
 			enabledIndicators[indicatorName] = value
 			-- refresh
 			F:IterateAllUnitButtons(function(b)
+				UpdateIndicatorParentVisibility(b, indicatorName, value)
 				UnitButton_UpdateAuras(b)
 			end)
 		elseif setting == "position" then
@@ -105,6 +124,11 @@ local function UpdateIndicators(indicatorName, setting, value)
 		elseif setting == "num" then
 			indicatorNums[indicatorName] = value
 			-- refresh
+			F:IterateAllUnitButtons(function(b)
+				UnitButton_UpdateAuras(b)
+			end)
+		elseif setting == "checkbutton" then
+			indicatorCustoms[indicatorName] = value[2]
 			F:IterateAllUnitButtons(function(b)
 				UnitButton_UpdateAuras(b)
 			end)
@@ -145,19 +169,15 @@ unitButton = {
 -------------------------------------------------
 local debuffs_cache = {}
 local debuffs_current = {}
+local debuffs_dispel = {}
 local function UnitButton_UpdateDebuffs(self)
-	if not enabledIndicators["debuffs"] then 
-		self.indicators.debuffs:Hide()
-	else
-		self.indicators.debuffs:Show()
-	end
-	
 	local filterList = Cell.vars.debuffBlacklist
 	-- if not (enabledIndicators["debuffs"] and enabledIndicators["centralDebuff"]) then return end -- TODO:
 
 	local unit = self.state.displayedUnit
 	if not debuffs_cache[unit] then debuffs_cache[unit] = {} end
     if not debuffs_current[unit] then debuffs_current[unit] = {} end
+    if not debuffs_dispel[unit] then debuffs_dispel[unit] = {} end
 
 	local found = 1
     for i = 1, 40 do
@@ -167,25 +187,31 @@ local function UnitButton_UpdateDebuffs(self)
 			break
         end
 		
-        if debuffType then
-            -- debuffs_dispell[unit][debuffType] = true
-        end
-		
 		if filterList[name] then
 			isValid = false
 		else
 			isValid = true
 		end
 
-        if isValid and duration and duration <= 600 then
-			if indicatorNums["debuffs"] and found <= indicatorNums["debuffs"] then
-				-- start, duration, debuffType, texture, count, refreshing
-				self.indicators.debuffs[found]:SetCooldown(expirationTime - duration, duration, debuffType or "", icon, count, debuffs_cache[unit][name] and expirationTime > debuffs_cache[unit][name])
-				found = found + 1
+		if duration and duration <= 600 then
+			if isValid then
+				if enabledIndicators["debuffs"] and found <= indicatorNums["debuffs"] then
+					-- start, duration, debuffType, texture, count, refreshing
+					self.indicators.debuffs[found]:SetCooldown(expirationTime - duration, duration, debuffType or "", icon, count, debuffs_cache[unit][name] and expirationTime > debuffs_cache[unit][name])
+					found = found + 1
+				end
+
+				debuffs_cache[unit][name] = expirationTime
+				debuffs_current[unit][name] = i
 			end
 
-            debuffs_cache[unit][name] = expirationTime
-            debuffs_current[unit][name] = i
+			if enabledIndicators["dispels"] and debuffType and debuffType ~= "" then
+				if indicatorCustoms["dispels"] then
+					if F:CanDispel(debuffType) then debuffs_dispel[unit][debuffType] = true end
+				else
+					debuffs_dispel[unit][debuffType] = true
+				end
+			end
 		end
 	end
 	
@@ -193,6 +219,9 @@ local function UnitButton_UpdateDebuffs(self)
 	for i = found, 5 do
 		self.indicators.debuffs[i]:Hide()
 	end
+
+	-- update dispels
+	self.indicators.dispels:SetDispels(debuffs_dispel[unit])
 	
 	-- update debuffs_cache
     local t = GetTime()
@@ -202,23 +231,19 @@ local function UnitButton_UpdateDebuffs(self)
             debuffs_cache[unit][name] = nil
         end
 	end
+
 	wipe(debuffs_current[unit])
+	wipe(debuffs_dispel[unit])
 end
 
 local buffs_cache = {}
 local buffs_current = {}
 local function UnitButton_UpdateBuffs(self)
-	if not enabledIndicators["externalCooldowns"] then 
-		self.indicators.externalCooldowns:Hide()
-	else
-		self.indicators.externalCooldowns:Show()
-	end
-	
 	local unit = self.state.displayedUnit
 	if not buffs_cache[unit] then buffs_cache[unit] = {} end
     if not buffs_current[unit] then buffs_current[unit] = {} end
 
-	local externalFound = 1
+	local defensiveFound, externalFound, tankActiveMitigationFound = 1, 1, false
     for i = 1, 40 do
         -- name, icon, count, debuffType, duration, expirationTime, source, isStealable, nameplateShowPersonal, spellId, canApplyAura, isBossDebuff, castByPlayer, nameplateShowAll, timeMod, ...
         local name, icon, count, debuffType, duration, expirationTime, source, isStealable, nameplateShowPersonal, spellId = UnitBuff(unit, i)
@@ -227,11 +252,23 @@ local function UnitButton_UpdateBuffs(self)
         end
 		
 		if duration then
+			-- defensiveCooldowns
+			if enabledIndicators["defensiveCooldowns"] and F:IsDefensiveCooldown(name) and defensiveFound <= indicatorNums["defensiveCooldowns"] then
+				-- start, duration, debuffType, texture, count, refreshing
+				self.indicators.defensiveCooldowns[defensiveFound]:SetCooldown(expirationTime - duration, duration, nil, icon, count, buffs_cache[unit][name] and expirationTime > buffs_cache[unit][name])
+				defensiveFound = defensiveFound + 1
+			end
+
 			-- externalCooldowns
-			if F:IsExternalCooldown(name) and indicatorNums["externalCooldowns"] and externalFound <= indicatorNums["externalCooldowns"] then
+			if enabledIndicators["externalCooldowns"] and F:IsExternalCooldown(name) and externalFound <= indicatorNums["externalCooldowns"] then
 				-- start, duration, debuffType, texture, count, refreshing
 				self.indicators.externalCooldowns[externalFound]:SetCooldown(expirationTime - duration, duration, nil, icon, count, buffs_cache[unit][name] and expirationTime > buffs_cache[unit][name])
 				externalFound = externalFound + 1
+			end
+
+			if enabledIndicators["tankActiveMitigation"] and F:IsTankActiveMitigation(name) then
+				self.indicators.tankActiveMitigation:SetCooldown(expirationTime - duration, duration)
+				tankActiveMitigationFound = true
 			end
 
             buffs_cache[unit][name] = expirationTime
@@ -239,9 +276,19 @@ local function UnitButton_UpdateBuffs(self)
 		end
 	end
 	
+	-- hide other defensiveCooldowns
+	for i = defensiveFound, 5 do
+		self.indicators.defensiveCooldowns[i]:Hide()
+	end
+
 	-- hide other externalCooldowns
 	for i = externalFound, 5 do
 		self.indicators.externalCooldowns[i]:Hide()
+	end
+
+	-- hide tankActiveMitigation
+	if not tankActiveMitigationFound then
+		self.indicators.tankActiveMitigation:Hide()
 	end
 	
 	-- update buffs_cache
@@ -1255,6 +1302,13 @@ function F:UnitButton_OnLoad(button)
 	readyCheckIcon:SetPoint("CENTER", healthBar)
 	readyCheckIcon:Hide()
 
+	-- phase icon
+	local phaseIcon = overlayFrame:CreateTexture(name.."PhaseIcon", "OVERLAY", nil, -7)
+	button.widget.phaseIcon = phaseIcon
+	phaseIcon:SetSize(16, 16)
+	phaseIcon:SetPoint("TOP", healthBar)
+	phaseIcon:Hide()
+
 	-- aggro indicator
 	local aggroIndicator = CreateFrame("Frame", name.."AggroIndicator", overlayFrame) -- framelevel 8
 	button.widget.aggroIndicator = aggroIndicator
@@ -1286,19 +1340,21 @@ function F:UnitButton_OnLoad(button)
 
 	local aggroBar = Cell:CreateStatusBar(overlayFrame, 18, 2, 100, true)
 	button.indicators.aggroBar = aggroBar
-	-- aggroBar:SetPoint("TOPLEFT", roleIcon, "TOPRIGHT", -1, -1)
-	aggroBar:SetPoint("BOTTOMLEFT", overlayFrame, "TOPLEFT", 1, 0)
+	-- aggroBar:SetPoint("BOTTOMLEFT", overlayFrame, "TOPLEFT", 1, 0)
 	aggroBar:Hide()
 
-	-- phase icon
-	local phaseIcon = overlayFrame:CreateTexture(name.."PhaseIcon", "OVERLAY", nil, -7)
-	button.widget.phaseIcon = phaseIcon
-	phaseIcon:SetSize(16, 16)
-	phaseIcon:SetPoint("TOP", healthBar)
-	phaseIcon:Hide()
+	-- tankActiveMitigation
+	-- local tankActiveMitigation = Cell:CreateStatusBar(overlayFrame, 18, 5, 100, true)
+	-- button.indicators.tankActiveMitigation = tankActiveMitigation
+	-- tankActiveMitigation:SetStatusBarColor(.7, .7, .7)
+	-- tankActiveMitigation:Hide()
 
-	F:CreateDebuffs(button)
+	-- indicators
+	F:CreateDefensiveCooldowns(button)
 	F:CreateExternalCooldowns(button)
+	F:CreateTankActiveMitigation(button)
+	F:CreateDebuffs(button)
+	F:CreateDispels(button)
 
 	-- events
 	button:SetScript("OnAttributeChanged", UnitButton_OnAttributeChanged) -- init

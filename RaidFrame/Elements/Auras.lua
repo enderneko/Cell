@@ -182,6 +182,45 @@ local function CreateAura_BarIcon(name, parent)
 end
 
 -------------------------------------------------
+-- CreateDefensiveCooldowns
+-------------------------------------------------
+function F:CreateDefensiveCooldowns(parent)
+    local defensiveCooldowns = CreateFrame("Frame", parent:GetName().."ExternalCooldownParent", parent.widget.overlayFrame)
+    parent.indicators.defensiveCooldowns = defensiveCooldowns
+    defensiveCooldowns:SetSize(20, 10)
+    defensiveCooldowns:SetFrameLevel(11)
+    defensiveCooldowns:Hide()
+
+    defensiveCooldowns.OriginalSetSize = defensiveCooldowns.SetSize
+
+    function defensiveCooldowns:SetSize(width, height)
+        defensiveCooldowns:OriginalSetSize(width, height)
+        for i = 1, 5 do
+            defensiveCooldowns[i]:SetSize(width, height)
+        end
+    end
+
+    function defensiveCooldowns:SetFont(font, ...)
+        font = F:GetFont(font)
+        for i = 1, 5 do
+            defensiveCooldowns[i]:SetFont(font, ...)
+        end
+    end
+
+    for i = 1, 5 do
+        local name = parent:GetName().."DefensiveCooldown"..i
+        local frame = CreateAura_BarIcon(name, defensiveCooldowns)
+        tinsert(defensiveCooldowns, frame)
+
+        if i == 1 then
+            frame:SetPoint("TOPLEFT")
+        else
+            frame:SetPoint("LEFT", defensiveCooldowns[i-1], "RIGHT", -1, 0)
+        end
+	end
+end
+
+-------------------------------------------------
 -- CreateExternalCooldowns
 -------------------------------------------------
 function F:CreateExternalCooldowns(parent)
@@ -218,6 +257,39 @@ function F:CreateExternalCooldowns(parent)
             frame:SetPoint("RIGHT", externalCooldowns[i-1], "LEFT", 1, 0)
         end
 	end
+end
+
+-------------------------------------------------
+-- CreateTankActiveMitigation
+-------------------------------------------------
+function F:CreateTankActiveMitigation(parent)
+    local bar = Cell:CreateStatusBar(parent.widget.overlayFrame, 18, 4, 100)
+    parent.indicators.tankActiveMitigation = bar
+    bar:Hide()
+    
+    bar:SetStatusBarTexture("Interface\\Buttons\\WHITE8x8")
+    bar:GetStatusBarTexture():SetAlpha(0)
+    bar:SetReverseFill(true)
+
+    local tex = bar:CreateTexture(nil, "ARTWORK")
+    tex:SetColorTexture(.7, .7, .7)
+    tex:SetPoint("TOPLEFT")
+    tex:SetPoint("BOTTOMRIGHT", bar:GetStatusBarTexture(), "BOTTOMLEFT")
+
+    local elapsedTime = 0
+    bar:SetScript("OnUpdate", function(self, elapsed)
+        if elapsedTime >= 0.1 then
+            bar:SetValue(bar:GetValue() + elapsedTime)
+            elapsedTime = 0
+        end
+        elapsedTime = elapsedTime + elapsed
+    end)
+
+    function bar:SetCooldown(start, duration)
+        bar:SetMinMaxValues(0, duration)
+        bar:SetValue(GetTime()-start)
+        bar:Show()
+    end
 end
 
 -------------------------------------------------
@@ -262,61 +334,60 @@ end
 -- CreateDispels
 -------------------------------------------------
 function F:CreateDispels(parent)
+    local dispels = CreateFrame("Frame", parent:GetName().."DispelParent", parent.widget.overlayFrame)
+    parent.indicators.dispels = dispels
+    dispels:SetFrameLevel(77)
+    dispels:Hide()
 
+    dispels.OriginalSetSize = dispels.SetSize
+
+    function dispels:SetSize(width, height)
+        dispels:OriginalSetSize(width, height)
+        for i = 1, 4 do
+            dispels[i]:SetSize(width, height)
+        end
+    end
+
+    function dispels:SetDispels(dispelTypes)
+        local i = 1
+        for dispelType, _ in pairs(dispelTypes) do
+            dispels[i]:SetDispel(dispelType)
+            i = i + 1
+        end
+        -- hide unused
+        for j = i, 4 do
+            dispels[i]:Hide()
+        end
+    end
+
+    for i = 1, 4 do
+        local icon = dispels:CreateTexture(parent:GetName().."Dispel"..i, "ARTWORK")
+        tinsert(dispels, icon)
+        icon:Hide()
+
+        if i == 1 then
+            icon:SetPoint("TOPLEFT")
+        else
+            icon:SetPoint("RIGHT", dispels[i-1], "LEFT", 7, 0)
+        end
+
+        icon:SetTexCoord(.15, .85, .15, .85)
+        icon:SetDrawLayer("ARTWORK", i)
+
+        function icon:SetDispel(dispelType)
+            icon:SetTexture("Interface\\RaidFrame\\Raid-Icon-Debuff"..dispelType)
+            icon:Show()
+        end
+    end
 end
 
 -------------------------------------------------
 -- CreateCentralDebuff
 -------------------------------------------------
 function F:CreateCentralDebuff(parent)
-    local name = parent:GetName().."Debuff"..i
-    local frame = CreateFrame("Frame", name, debuffs)
-    tinsert(debuffs, frame)
-    -- frame:Hide()
-    frame:SetSize(11, 11)
-    frame:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8x8"})
-    frame:SetBackdropColor(0, 0, 0, .7)
-    
-    if i == 1 then
-        frame:SetPoint("TOPLEFT")
-    else
-        frame:SetPoint("LEFT", debuffs[i-1], "RIGHT", 1, 0)
-    end
-    
-    local border = CreateFrame("Frame", name.."Border", frame)
-    frame.border = border
-    border:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8x8"})
-    border:SetAllPoints(frame)
-    border:Hide()
-
-    local cooldown = CreateFrame("Cooldown", name.."Cooldown", frame)
-    frame.cooldown = cooldown
-    cooldown:SetAllPoints(frame)
-    cooldown:SetSwipeTexture("")
-    cooldown:SetSwipeColor(1, 1, 1)
-    
-    local iconFrame = CreateFrame("Frame", name.."IconFrame", frame)
-    iconFrame:SetPoint("TOPLEFT", 1, -1)
-    iconFrame:SetPoint("BOTTOMRIGHT", -1, 1)
-
-    local icon = iconFrame:CreateTexture(name.."Icon", "OVERLAY")
-    frame.icon = icon
-    icon:SetTexCoord(0.08, 0.92, 0.08, 0.92)
-    icon:SetAllPoints(iconFrame)
-
-    function frame:SetCooldown(start, duration, debuffType, texture)
-        local r, g, b = DebuffTypeColor[debuffType].r, DebuffTypeColor[debuffType].g, DebuffTypeColor[debuffType].b
-        if duration == 0 then
-            border:Show()
-            border:SetBackdropColor(r, g, b)
-        else
-            border:Hide()
-            cooldown:SetSwipeTexture("")
-            cooldown:SetSwipeColor(r, g, b)
-            cooldown:SetCooldown(start, duration)
-        end
-        icon:SetTexture(texture)
-    end
+    local frame = CreateAura_BorderIcon(parent:GetName().."CentralDebuff", parent.widget.overlayFrame, 2)
+    parent.indicators.centralDebuff = frame
+    frame:SetFrameLevel(77)
 end
 
 -------------------------------------------------
