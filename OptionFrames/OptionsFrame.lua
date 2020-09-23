@@ -66,7 +66,7 @@ local function ShowTab(tab)
     end
 end
 
-local buttonGroup = Cell:CreateButtonGroup(ShowTab, {appearanceBtn, clickCastingsBtn, layoutsBtn, indicatorsBtn, debuffsBtn, aboutBtn})
+local buttonGroup = Cell:CreateButtonGroup({appearanceBtn, clickCastingsBtn, layoutsBtn, indicatorsBtn, debuffsBtn, aboutBtn}, ShowTab)
 
 -------------------------------------------------
 -- show & hide

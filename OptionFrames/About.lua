@@ -18,13 +18,13 @@ introduceText:SetPoint("TOPLEFT", nameText, "BOTTOMLEFT", 5, -12)
 introduceText:SetPoint("RIGHT", -10, 0)
 introduceText:SetJustifyH("LEFT")
 introduceText:SetSpacing(5)
-introduceText:SetText("Cell is a improved and rewritten version of CompactRaid (by Abin).\nSome ideas are stolen from other great raid frame addons, such as Aptechka, Grid2.")
+introduceText:SetText(L["ABOUT"])
 
 -------------------------------------------------
 -- author
 -------------------------------------------------
 local authorText = Cell:CreateSeparator(L["Author"], aboutTab, 387)
-authorText:SetPoint("TOPLEFT", 5, -110)
+authorText:SetPoint("TOPLEFT", 5, -150)
 
 local authorNameText = aboutTab:CreateFontString(nil, "OVERLAY")
 authorNameText:SetPoint("TOPLEFT", authorText, "BOTTOMLEFT", 5, -12)
@@ -37,7 +37,7 @@ authorNameText:SetText("篠崎-影之哀伤(CN)")
 -- bugreport
 -------------------------------------------------
 local bugReportText = Cell:CreateSeparator(L["Bug Report & Suggestion"], aboutTab, 387)
-bugReportText:SetPoint("TOPLEFT", 5, -190)
+bugReportText:SetPoint("TOPLEFT", 5, -230)
 
 -- local bugReportText2 = aboutTab:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
 -- bugReportText2:SetPoint("TOPLEFT", bugReportText, 5, -22)

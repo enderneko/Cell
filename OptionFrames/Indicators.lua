@@ -1,24 +1,13 @@
 local _, Cell = ...
 local L = Cell.L
 local F = Cell.funcs
+local LCG = LibStub("LibCustomGlow-1.0")
 
 local indicatorsTab = Cell:CreateFrame("CellOptionsFrame_IndicatorsTab", Cell.frames.optionsFrame, nil, nil, true)
 Cell.frames.indicatorsTab = indicatorsTab
 indicatorsTab:SetAllPoints(Cell.frames.optionsFrame)
 
-local loaded, currentLayout, currentLayoutTable
-
-local function CreateIndicator(name)
-
-end
-
-local function Incators_OnUpdate()
-
-end
-
-local function UpdateIndicators()
-
-end
+local selected, currentLayout, currentLayoutTable
 
 -------------------------------------------------
 -- preview
@@ -66,7 +55,7 @@ end
 -- init preview button indicator animation
 local function InitIndicator(indicatorName)
     local indicator = previewButton.indicators[indicatorName]
-    if indicator.init == true then return end
+    if indicator.init then return end
 
     if indicatorName == "aggroBar" then
         indicator:SetStatusBarColor(1, 0, 0)
@@ -162,39 +151,65 @@ local function InitIndicator(indicatorName)
                 end)
             end)
         end
+    elseif string.find(indicatorName, "indicator") then
+        indicator:SetScript("OnShow", function()
+            indicator:SetCooldown(GetTime(), 7, nil, 134400, 0)
+            indicator.cooldown.value = 0
+            indicator.cooldown:SetScript("OnUpdate", function(self, elapsed)
+                if self.value >= 7 then
+                    self.value = 0
+                else
+                    self.value = self.value + elapsed
+                end
+                self:SetValue(self.value)
+            end)
+        end)
     end
     indicator.init = true
 end
 
 local function UpdateIndicators(indicatorName, setting, value)
 	if not indicatorName then -- init
-		for _, t in pairs(Cell.vars.currentLayoutTable["indicators"]) do
-            local indicator = previewButton.indicators[t["indicatorName"]]
-            if indicator then -- TODO: remove
-                if t["enabled"] then
-                    indicator:Show()
-                    InitIndicator(t["indicatorName"])
-                end
-
-                -- update position
+        for _, t in pairs(Cell.vars.currentLayoutTable["indicators"]) do
+            local indicator = previewButton.indicators[t["indicatorName"]] or F:CreateIndicator(previewButton, t)
+            if t["enabled"] then
+                InitIndicator(t["indicatorName"])
+                indicator:Show()
+            end
+            -- update position
+            if t["position"] then
                 indicator:ClearAllPoints()
                 indicator:SetPoint(t["position"][1], previewButton, t["position"][2], t["position"][3], t["position"][4])
-                -- update size
+            end
+            -- update size
+            if t["size"] then
                 indicator:SetSize(unpack(t["size"]))
-                -- update debuffs num
-                if t["num"] then
-                    for i, frame in ipairs(indicator) do
-                        if i <= t["num"] then
-                            frame:Show()
-                        else
-                            frame:Hide()
-                        end
+            end
+            -- update height
+            if t["height"] then
+                indicator:SetHeight(t["height"])
+            end
+            -- update debuffs num
+            if t["num"] then
+                for i, frame in ipairs(indicator) do
+                    if i <= t["num"] then
+                        frame:Show()
+                    else
+                        frame:Hide()
                     end
                 end
-                -- update font
-                if t["font"] then
-                    indicator:SetFont(unpack(t["font"]))
-                end
+            end
+            -- update font
+            if t["font"] then
+                indicator:SetFont(unpack(t["font"]))
+            end
+            -- update color
+            if t["color"] then
+                indicator:SetColor(unpack(t["color"]))
+            end
+            -- update aoehealing
+            if t["indicatorName"] == "aoeHealing" then
+                F:EnableAoEHealing(t["enabled"])
             end
 		end
 	else
@@ -207,11 +222,17 @@ local function UpdateIndicators(indicatorName, setting, value)
             else
                 indicator:Hide()
             end
+            -- update aoehealing
+            if indicatorName == "aoeHealing" then
+                F:EnableAoEHealing(value)
+            end
 		elseif setting == "position" then
 			indicator:ClearAllPoints()
 			indicator:SetPoint(value[1], previewButton, value[2], value[3], value[4])
 		elseif setting == "size" then
             indicator:SetSize(unpack(value))
+		elseif setting == "height" then
+            indicator:SetHeight(value)
         elseif setting == "num" then
             for i, frame in ipairs(indicator) do
                 if i <= value then
@@ -222,6 +243,14 @@ local function UpdateIndicators(indicatorName, setting, value)
             end
         elseif setting == "font" then
             indicator:SetFont(unpack(value))
+        elseif setting == "color" then
+            indicator:SetColor(unpack(value))
+        elseif setting == "create" then
+            indicator = F:CreateIndicator(previewButton, value)
+            indicator:Show()
+            InitIndicator(indicatorName)
+        elseif setting == "remove" then
+            F:RemoveIndicator(previewButton, indicatorName, value)
         end
 	end
 end
@@ -254,16 +283,101 @@ Cell:CreateScrollFrame(listFrame)
 listFrame.scrollFrame:SetScrollStep(19)
 
 local listButtons = {}
+local LoadIndicatorList
 
 -------------------------------------------------
 -- indicator create/delete
 -------------------------------------------------
+-- mask
+Cell:CreateMask(indicatorsTab, nil, {1, -1, -1, 1})
+indicatorsTab.mask:Hide()
+
+local typeItems = {
+    {
+        ["text"] = L["Icon"],
+        ["value"] = "icon",
+    },
+    {
+        ["text"] = L["Rectangle"],
+        ["value"] = "rectangle",
+    },
+    {
+        ["text"] = L["Bar"],
+        ["value"] = "bar",
+    },
+    {
+        ["text"] = L["Text"],
+        ["value"] = "text",
+    },
+}
+
+local auraTypeItems = {
+    {
+        ["text"] = L["Buff"],
+        ["value"] = "buff",
+    },
+    {
+        ["text"] = L["Debuff"],
+        ["value"] = "debuff",
+    },
+}
+
 local createBtn = Cell:CreateButton(indicatorsTab, L["Create"], "blue-hover", {62, 20})
 createBtn:SetPoint("BOTTOMLEFT", 5, 5)
+createBtn:SetScript("OnClick", function()
+    local popup = Cell:CreateConfirmPopup(indicatorsTab, 200, L["Create new indicator"], function(self)
+        local name = strtrim(self.editBox:GetText())
+        local indicatorName
+        local indicatorType, indicatorAuraType = self.dropdown1:GetSelected(), self.dropdown2:GetSelected()
+        
+        local last = #currentLayoutTable["indicators"]
+        if currentLayoutTable["indicators"][last]["type"] == "built-in" then
+            indicatorName = "indicator"..(last+1)
+        else
+            indicatorName = "indicator"..(tonumber(strmatch(currentLayoutTable["indicators"][last]["indicatorName"], "%d+"))+1)
+        end
+
+        if indicatorType == "icon" then
+            tinsert(currentLayoutTable["indicators"], {
+                ["name"] = name,
+                ["indicatorName"] = indicatorName,
+                ["type"] = indicatorType,
+                ["enabled"] = true,
+                ["position"] = {"TOPRIGHT", "TOPRIGHT", 0, 3},
+                ["size"] = {13, 13},
+                ["font"] = {"Cell ".._G.DEFAULT, 12, "Outline", 2},
+                ["auraType"] = indicatorAuraType,
+                ["auras"] = {},
+            })
+        end
+        Cell:Fire("UpdateIndicators")
+        LoadIndicatorList()
+        listButtons[last+1]:Click()
+
+    end, true, true, 2)
+    popup:SetPoint("TOPLEFT", 100, -100)
+    popup.dropdown1:SetItems(typeItems)
+    popup.dropdown1:SetSelectedItem(1)
+    popup.dropdown2:SetItems(auraTypeItems)
+    popup.dropdown2:SetSelectedItem(1)
+end)
 
 local deleteBtn = Cell:CreateButton(indicatorsTab, L["Delete"], "red-hover", {61, 20})
 deleteBtn:SetPoint("LEFT", createBtn, "RIGHT", -1, 0)
 deleteBtn:SetEnabled(false)
+deleteBtn:SetScript("OnClick", function()
+    local name = currentLayoutTable["indicators"][selected]["name"]
+    local indicatorName = currentLayoutTable["indicators"][selected]["indicatorName"]
+    local auraType = currentLayoutTable["indicators"][selected]["auraType"]
+
+    local popup = Cell:CreateConfirmPopup(indicatorsTab, 200, L["Delete indicator"].." "..name.."?", function(self)
+        Cell:Fire("UpdateIndicators", indicatorName, "remove", auraType)
+        tremove(currentLayoutTable["indicators"], selected)
+        LoadIndicatorList()
+        listButtons[1]:Click()
+    end, true)
+    popup:SetPoint("TOPLEFT", 100, -120)
+end)
 
 -------------------------------------------------
 -- indicator settings
@@ -285,6 +399,7 @@ settingsFrame.scrollFrame:SetScrollStep(35)
 
 local indicatorSettings = {
     ["aggroBar"] = {"enabled", "position", "size"},
+    ["aoeHealing"] = {"enabled", "height", "color"},
     ["externalCooldowns"] = {"enabled", "position", "size", "num"},
     ["defensiveCooldowns"] = {"enabled", "position", "size", "num"},
     ["tankActiveMitigation"] = {"enabled", "position", "size"},
@@ -294,13 +409,25 @@ local indicatorSettings = {
 }
 
 local function ShowIndicatorSettings(id)
+    if selected == id then return end
+
     settingsFrame.scrollFrame:ResetScroll()
     settingsFrame.scrollFrame:ResetHeight()
 
     local indicatorName = currentLayoutTable["indicators"][id]["indicatorName"]
-    local widgets = Cell:CreateIndicatorSettings(settingsFrame.scrollFrame.content, indicatorSettings[indicatorName])
+    local indicatorType = currentLayoutTable["indicators"][id]["type"]
+
+    local settingsTable
+    if indicatorType == "built-in" then
+        settingsTable = indicatorSettings[indicatorName]
+    elseif indicatorType == "icon" then
+        settingsTable = {"enabled", "position", "size-square", "font", "auras"}
+    end
+
+    local widgets = Cell:CreateIndicatorSettings(settingsFrame.scrollFrame.content, settingsTable)
     
     local last
+    local height = 0
     for i, w in pairs(widgets) do
         if last then
             w:SetPoint("TOPLEFT", last, "BOTTOMLEFT", 0, -7)
@@ -310,17 +437,28 @@ local function ShowIndicatorSettings(id)
         w:SetPoint("RIGHT")
         last = w
 
-        -- "enabled", "position", "size", "num", "font"
-        local currentSetting = indicatorSettings[indicatorName][i]
-        if currentSetting == "size-square" then currentSetting = "size" end
+        height = height + w:GetHeight()
 
+        -- "enabled", "position", "size", "num", "font"
+        local currentSetting = settingsTable[i]
+        if currentSetting == "size-square" then currentSetting = "size" end
+        
         -- echo
-        w:SetDBValue(currentLayoutTable["indicators"][id][currentSetting])
+        if currentSetting == "auras" then
+            w:SetDBValue(currentLayoutTable["indicators"][id]["auraType"], currentLayoutTable["indicators"][id]["auras"])
+        else
+            w:SetDBValue(currentLayoutTable["indicators"][id][currentSetting])
+        end
+        
 
         -- update func
         w:SetFunc(function(value)
             -- texplore(value)
-            Cell.vars.currentLayoutTable["indicators"][id][currentSetting] = value
+            if currentSetting == "auras" then
+                Cell.vars.currentLayoutTable["indicators"][id][currentSetting] = value[2]
+            else
+                Cell.vars.currentLayoutTable["indicators"][id][currentSetting] = value
+            end
             Cell:Fire("UpdateIndicators", indicatorName, currentSetting, value)
             -- show enabled/disabled status
             if currentSetting == "enabled" then
@@ -332,10 +470,19 @@ local function ShowIndicatorSettings(id)
             end
         end)
     end
+
+    settingsFrame.scrollFrame:SetContentHeight(height + (#widgets-1)*7)
+
+    if string.find(indicatorName, "indicator") then
+        deleteBtn:SetEnabled(true)
+    else
+        deleteBtn:SetEnabled(false)
+    end
+    selected = id
 end
 
-local function LoadIndicatorList()
-    F:Debug("LoadIndicatorList: "..currentLayout)
+LoadIndicatorList = function()
+    F:Debug("|cffff7777LoadIndicatorList:|r "..currentLayout)
     listFrame.scrollFrame:Reset()
     wipe(listButtons)
 
@@ -360,8 +507,13 @@ local function LoadIndicatorList()
         end
         last = b
     end
+    listFrame.scrollFrame:SetContentHeight(20, #listButtons, -1)
 
-    Cell:CreateButtonGroup(ShowIndicatorSettings, listButtons)
+    Cell:CreateButtonGroup(listButtons, ShowIndicatorSettings, function(id)
+        LCG.PixelGlow_Start(previewButton.indicators[currentLayoutTable["indicators"][id]["indicatorName"]])
+    end, function(id)
+        LCG.PixelGlow_Stop(previewButton.indicators[currentLayoutTable["indicators"][id]["indicatorName"]])
+    end)
 end
 
 -------------------------------------------------
@@ -378,6 +530,7 @@ local function ShowTab(tab)
 
         UpdateCurrentLayoutText()
         LoadIndicatorList()
+        listButtons[1]:Click()
         -- texplore(previewButton)
     else
         indicatorsTab:Hide()

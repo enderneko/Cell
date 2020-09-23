@@ -282,7 +282,7 @@ end
 -----------------------------------------
 -- Button Group
 -----------------------------------------
-function addon:CreateButtonGroup(func, buttons)
+function addon:CreateButtonGroup(buttons, onClick, func1, func2)
 	local function HighlightButton(id)
 		for _, b in ipairs(buttons) do
 			if id == b.id then
@@ -293,6 +293,7 @@ function addon:CreateButtonGroup(func, buttons)
 				b:SetScript("OnLeave", function()
 					if b.HideTooltip then b.HideTooltip() end
 				end)
+				if func1 then func1(b.id) end
 			else
 				b:SetBackdropColor(unpack(b.color))
 				b:SetScript("OnEnter", function() 
@@ -303,6 +304,7 @@ function addon:CreateButtonGroup(func, buttons)
 					if b.HideTooltip then b.HideTooltip() end
 					b:SetBackdropColor(unpack(b.color))
 				end)
+				if func2 then func2(b.id) end
 			end
 		end
 	end
@@ -310,7 +312,7 @@ function addon:CreateButtonGroup(func, buttons)
 	for _, b in ipairs(buttons) do
 		b:SetScript("OnClick", function()
 			HighlightButton(b.id)
-			func(b.id)
+			onClick(b.id)
 		end)
 	end
 	
@@ -362,13 +364,11 @@ end
 -----------------------------------------
 -- editbox
 -----------------------------------------
-function addon:CreateEditBox(parent, width, height, isNumeric, font)
-	if not font then font = font_name end
-
+function addon:CreateEditBox(parent, width, height, isTransparent, isMultiLine, isNumeric, font)
 	local eb = CreateFrame("EditBox", nil, parent)
-	addon:StylizeFrame(eb, {.1, .1, .1, .9})
-	eb:SetFontObject(font)
-	eb:SetMultiLine(false)
+	if not isTransparent then addon:StylizeFrame(eb, {.1, .1, .1, .9}) end
+	eb:SetFontObject(font or font_name)
+	eb:SetMultiLine(isMultiLine)
 	eb:SetMaxLetters(0)
 	eb:SetJustifyH("LEFT")
 	eb:SetJustifyV("CENTER")
@@ -590,11 +590,11 @@ end
 -----------------------------------------
 -- create popup (delete/edit/... confirm) with mask
 -----------------------------------------
-function addon:CreateConfirmPopup(parent, width, text, onAccept, hasEditBox, mask)
+function addon:CreateConfirmPopup(parent, width, text, onAccept, mask, hasEditBox, dropdowns)
 	if not parent.confirmPopup then -- not init
 		parent.confirmPopup = CreateFrame("Frame", nil, parent)
 		parent.confirmPopup:SetSize(width, 100)
-		addon:StylizeFrame(parent.confirmPopup, {.07, .07, .07, .95}, {classColor.t[1], classColor.t[2], classColor.t[3], .7})
+		addon:StylizeFrame(parent.confirmPopup, {.1, .1, .1, .95}, {classColor.t[1], classColor.t[2], classColor.t[3], .7})
 		parent.confirmPopup:SetFrameStrata("DIALOG")
 		parent.confirmPopup:SetFrameLevel(2)
 		parent.confirmPopup:Hide()
@@ -637,11 +637,38 @@ function addon:CreateConfirmPopup(parent, width, text, onAccept, hasEditBox, mas
 			parent.confirmPopup.editBox:SetScript("OnHide", function()
 				parent.confirmPopup.editBox:SetText("")
 			end)
-		else
-			parent.confirmPopup.editBox:Show()
 		end
+		parent.confirmPopup.editBox:Show()
 	elseif parent.confirmPopup.editBox then
 		parent.confirmPopup.editBox:Hide()
+	end
+
+	if dropdowns then
+		if not parent.confirmPopup.dropdown1 then
+			parent.confirmPopup.dropdown1 = addon:CreateDropdown(parent.confirmPopup, width-40)
+			parent.confirmPopup.dropdown1:SetPoint("LEFT", 20, 0)
+			if hasEditBox then
+				parent.confirmPopup.dropdown1:SetPoint("TOP", parent.confirmPopup.editBox, "BOTTOM", 0, -5)
+			else
+				parent.confirmPopup.dropdown1:SetPoint("TOP", parent.confirmPopup.text, "BOTTOM", 0, -5)
+			end
+		end
+		if not parent.confirmPopup.dropdown2 then
+			parent.confirmPopup.dropdown2 = addon:CreateDropdown(parent.confirmPopup, (width-40)/2-3)
+			parent.confirmPopup.dropdown2:SetPoint("LEFT", parent.confirmPopup.dropdown1, "RIGHT", 5, 0)
+		end
+
+		if dropdowns == 1 then
+			parent.confirmPopup.dropdown1:Show()
+			parent.confirmPopup.dropdown2:Hide()
+		elseif dropdowns == 2 then
+			parent.confirmPopup.dropdown1:Show()
+			parent.confirmPopup.dropdown2:Show()
+			parent.confirmPopup.dropdown1:SetWidth((width-40)/2-2)
+		end
+	elseif parent.confirmPopup.dropdown1 then
+		parent.confirmPopup.dropdown1:Hide()
+		parent.confirmPopup.dropdown2:Hide()
 	end
 
 	if mask then -- show mask?
@@ -672,7 +699,14 @@ function addon:CreateConfirmPopup(parent, width, text, onAccept, hasEditBox, mas
 	parent.confirmPopup:SetScript("OnUpdate", function(self, elapsed)
 		local newHeight = parent.confirmPopup.text:GetStringHeight() + 30
 		if hasEditBox then newHeight = newHeight + 30 end
+		if dropdowns then newHeight = newHeight + 30 end
 		parent.confirmPopup:SetHeight(newHeight)
+	end)
+
+	parent.confirmPopup:SetScript("OnShow", function()
+		C_Timer.After(2, function()
+			parent.confirmPopup:SetScript("OnUpdate", nil)
+		end)
 	end)
 
 	parent.confirmPopup:ClearAllPoints() -- prepare for SetPoint()
@@ -844,6 +878,11 @@ local function CreateItemButtons(items, itemTable, itemParent, level)
 					b:Show()
 				end
 			end)
+
+			-- clear parent menuItem's onClick
+			b:SetScript("OnClick", function()
+				PlaySound(SOUNDKIT.U_CHAT_SCROLL_BUTTON)
+			end)
 		else
 			if b.childrenSymbol then b.childrenSymbol:Hide() end
 
@@ -872,7 +911,7 @@ function menu:SetItems(items)
 			b:Hide()
 		end
 	end
-	-- create buttons
+	-- create buttons -- items, itemTable, itemParent, level
 	CreateItemButtons(items, menu.items, menu, 0)
 end
 
@@ -907,7 +946,7 @@ end
 -----------------------------------------------------------------------------------
 function addon:CreateScrollFrame(parent, top, bottom, color, border)
 	-- create scrollFrame & scrollbar seperately (instead of UIPanelScrollFrameTemplate), in order to custom it
-	local scrollFrame = CreateFrame("ScrollFrame", parent:GetName().."ScrollFrame", parent)
+	local scrollFrame = CreateFrame("ScrollFrame", parent:GetName() and parent:GetName().."ScrollFrame" or nil, parent)
 	parent.scrollFrame = scrollFrame
 	top = top or 0
 	bottom = bottom or 0
@@ -927,7 +966,7 @@ function addon:CreateScrollFrame(parent, top, bottom, color, border)
 	
 	-- content
 	local content = CreateFrame("Frame", nil, scrollFrame)
-	content:SetSize(scrollFrame:GetWidth(), 20)
+	content:SetSize(scrollFrame:GetWidth(), 10)
 	scrollFrame:SetScrollChild(content)
 	scrollFrame.content = content
 	-- content:SetFrameLevel(2)
@@ -952,7 +991,7 @@ function addon:CreateScrollFrame(parent, top, bottom, color, border)
 	
 	-- reset content height manually ==> content:GetBoundsRect() make it right @OnUpdate
 	function scrollFrame:ResetHeight()
-		content:SetHeight(1)
+		content:SetHeight(10)
 	end
 	
 	-- reset to top, useful when used with DropDownMenu (variable content height)
@@ -974,11 +1013,30 @@ function addon:CreateScrollFrame(parent, top, bottom, color, border)
 		end
 	end
 
+	-- NOTE: this func should not be called before Show, or GetVerticalScrollRange will be incorrect.
+	function scrollFrame:ScrollToBottom()
+		scrollFrame:SetVerticalScroll(scrollFrame:GetVerticalScrollRange())
+	end
+
+	function scrollFrame:SetContentHeight(height, num, spacing)
+		if num and spacing then
+			content:SetHeight(num*height+(num-1)*spacing)
+		else
+			content:SetHeight(height)
+		end
+	end
+
+	--[[ BUG: not reliable
 	-- to remove/hide widgets "widget:SetParent(nil)" MUST be called!!!
 	scrollFrame:SetScript("OnUpdate", function()
 		-- set content height, check if it CAN SCROLL
-		content:SetHeight(select(4, content:GetBoundsRect()))
+		local x, y, w, h = content:GetBoundsRect()
+		-- NOTE: if content is not IN SCREEN -> x,y<0 -> h==-y!
+		if x > 0 and y > 0 then
+			content:SetHeight(h)
+		end
 	end)
+	]]
 	
 	-- stores all widgets on content frame
 	-- local autoWidthWidgets = {}
@@ -1297,16 +1355,17 @@ function addon:CreateDropdown(parent, width, dropdownType)
 		list.menu = menu -- menu's OnHide -> list:Hide
 		-- list:SetParent(menu)
 		list:SetScale(menu:GetEffectiveScale())
+		list:SetFrameStrata(menu:GetFrameStrata())
 		list:SetFrameLevel(77) -- top of its strata
 		list:ClearAllPoints()
 		list:SetPoint("TOP", menu, "BOTTOM", 0, -2)
 		
 		if #menu.items == 0 then
-			list:SetSize(width, 5)
+			list:SetSize(menu:GetWidth(), 5)
 		elseif #menu.items <= 10 then
-			list:SetSize(width, 2 + #menu.items*18)
+			list:SetSize(menu:GetWidth(), 2 + #menu.items*18)
 		else
-			list:SetSize(width, 182)
+			list:SetSize(menu:GetWidth(), 182)
 		end
 	end
 
@@ -1616,6 +1675,36 @@ local function CreateSetting_SizeSquare(parent)
 	return widget
 end
 
+local function CreateSetting_Height(parent)
+	local widget
+
+	if not settingWidgets["height"] then
+		widget = addon:CreateFrame("CellIndicatorSettings_Height", parent, 240, 50)
+		settingWidgets["height"] = widget
+
+		widget.height = addon:CreateSlider(L["Height"], widget, 10, 50, 100, 1)
+		widget.height:SetPoint("TOPLEFT", widget, 5, -20)
+		widget.height.afterValueChangedFn = function(value)
+			widget.func(value)
+		end
+		
+		-- associate db
+		function widget:SetFunc(func)
+			widget.func = func
+		end
+		
+		-- show db value
+		function widget:SetDBValue(height)
+			widget.height:SetValue(height)
+		end
+	else
+		widget = settingWidgets["height"]
+	end
+
+	widget:Show()
+	return widget
+end
+
 local function CreateSetting_Num(parent)
 	local widget
 
@@ -1726,6 +1815,72 @@ local function CreateSetting_Font(parent)
 	return widget
 end
 
+local function CreateSetting_Color(parent)
+	local widget
+
+	if not settingWidgets["color"] then
+		widget = addon:CreateFrame("CellIndicatorSettings_Color", parent, 240, 30)
+		settingWidgets["color"] = widget
+
+		local function ColorCallback(restore)
+			local newR, newG, newB
+			if restore then
+				newR, newG, newB = unpack(restore)
+			else
+				newR, newG, newB = ColorPickerFrame:GetColorRGB()
+			end
+			
+			widget.color[1], widget.color[2], widget.color[3] = newR, newG, newB
+			widget.b:SetBackdropColor(newR, newG, newB)
+			widget.func({newR, newG, newB})
+		end
+
+		local function ShowColorPicker()
+			ColorPickerFrame.hasOpacity = false
+			ColorPickerFrame.previousValues = {unpack(widget.color)}
+			ColorPickerFrame.func, ColorPickerFrame.cancelFunc = ColorCallback, ColorCallback
+			ColorPickerFrame:SetColorRGB(unpack(widget.color))
+			ColorPickerFrame:Hide()
+			ColorPickerFrame:Show()
+		end
+
+		widget.b = CreateFrame("Button", nil, widget)
+		widget.b:SetPoint("LEFT", 5, 0)
+		widget.b:SetSize(14, 14)
+		widget.b:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8x8", edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = 1})
+		widget.b:SetBackdropBorderColor(0, 0, 0, 1)
+		widget.b:SetScript("OnEnter", function()
+			widget.b:SetBackdropBorderColor(classColor.t[1], classColor.t[2], classColor.t[3], .7)
+		end)
+		widget.b:SetScript("OnLeave", function()
+			widget.b:SetBackdropBorderColor(0, 0, 0, 1)
+		end)
+		widget.b:SetScript("OnClick", function()
+			ShowColorPicker()
+		end)
+
+		widget.label = widget:CreateFontString(nil, "OVERLAY", font_name)
+		widget.label:SetPoint("LEFT", widget.b, "RIGHT", 5, 0)
+		widget.label:SetText(L["Color"])
+
+		-- associate db
+		function widget:SetFunc(func)
+			widget.func = func
+		end
+
+		-- show db value
+		function widget:SetDBValue(t)
+			widget.b:SetBackdropColor(unpack(t))
+			widget.color = t
+		end
+	else
+		widget = settingWidgets["color"]
+	end
+
+	widget:Show()
+	return widget
+end
+
 local function CreateSetting_CheckButton(parent)
 	local widget
 
@@ -1757,6 +1912,91 @@ local function CreateSetting_CheckButton(parent)
 	return widget
 end
 
+local function CreateSetting_Auras(parent)
+	local widget
+
+	if not settingWidgets["editbox"] then
+		widget = addon:CreateFrame("CellIndicatorSettings_EditBox", parent, 240, 128)
+		settingWidgets["editbox"] = widget
+
+		widget.frame = addon:CreateFrame(nil, widget, 225, 80, true)
+		widget.frame:SetPoint("TOPLEFT", 5, -20)
+		widget.frame:Show()
+
+		widget.text = widget:CreateFontString(nil, "OVERLAY", font_name)
+		widget.text:SetPoint("BOTTOMLEFT", widget.frame, "TOPLEFT", 0, 1)
+
+		addon:CreateScrollFrame(widget.frame)
+		addon:StylizeFrame(widget.frame.scrollFrame, {.15, .15, .15, .9})
+		
+		widget.eb = addon:CreateEditBox(widget.frame.scrollFrame.content, 10, 20, true, true)
+		widget.eb:SetPoint("TOPLEFT")
+		widget.eb:SetPoint("RIGHT")
+		widget.eb:SetTextInsets(2, 2, 1, 1)
+		widget.eb:SetScript("OnEditFocusGained", nil)
+		widget.eb:SetScript("OnEditFocusLost", nil)
+
+		widget.eb:SetScript("OnEnterPressed", function(self) self:Insert("\n") end)
+
+		-- https://wow.gamepedia.com/UIHANDLER_OnCursorChanged
+		widget.eb:SetScript("OnCursorChanged", function(self, x, y, arg, lineHeight)
+			widget.frame.scrollFrame:SetScrollStep(lineHeight)
+
+			local vs = widget.frame.scrollFrame:GetVerticalScroll()
+			local h  = widget.frame.scrollFrame:GetHeight()
+
+			local cursorHeight = lineHeight - y
+
+			if vs + y > 0 then -- cursor above current view
+				widget.frame.scrollFrame:SetVerticalScroll(-y)
+			elseif cursorHeight > h + vs then
+				widget.frame.scrollFrame:SetVerticalScroll(-y-h+lineHeight+arg)
+			end
+		end)
+
+		widget.eb:SetScript("OnTextChanged", function(self, userChanged)
+			widget.frame.scrollFrame:SetContentHeight(self:GetHeight())
+			if userChanged then
+				widget.b:SetEnabled(true)
+			end
+		end)
+
+		widget.frame.scrollFrame:SetScript("OnMouseDown", function()
+			widget.eb:SetFocus(true)
+		end)
+
+		widget.b = addon:CreateButton(widget, L["Save"], "class-hover", {60, 20})
+		widget.b:SetPoint("TOPLEFT", widget.frame, "BOTTOMLEFT", 0, -3)
+		widget.b:SetEnabled(false)
+		widget.b:SetScript("OnClick", function()
+			widget.b:SetEnabled(false)
+			widget.eb:ClearFocus()
+			widget.func({widget.auraType, F:StringToTable(widget.eb:GetText(), "\n")})
+		end)
+		
+		-- associate db
+		function widget:SetFunc(func)
+			widget.func = func
+		end
+
+		-- show db value
+		function widget:SetDBValue(auraType, auras)
+			widget.text:SetText(L[F:UpperFirst(auraType).." List"])
+			widget.eb:SetText(F:TableToString(auras, "\n"))
+			widget.auraType = auraType
+		end
+	else
+		widget = settingWidgets["editbox"]
+	end
+
+	-- widget.eb:SetText("1\n2\n3\n4\n5\n6\n7\n8\n9\n10")
+	widget.eb:SetCursorPosition(0)
+	-- widget.frame.scrollFrame:ResetHeight()
+	widget.frame.scrollFrame:ResetScroll()
+	widget:Show()
+	return widget
+end
+
 function addon:CreateIndicatorSettings(parent, settingsTable)
 	local widgetsTable = {}
 
@@ -1776,12 +2016,18 @@ function addon:CreateIndicatorSettings(parent, settingsTable)
 			tinsert(widgetsTable, CreateSetting_Size(parent))
 		elseif setting == "size-square" then
 			tinsert(widgetsTable, CreateSetting_SizeSquare(parent))
+		elseif setting == "height" then
+			tinsert(widgetsTable, CreateSetting_Height(parent))
 		elseif setting == "num" then
 			tinsert(widgetsTable, CreateSetting_Num(parent))
 		elseif setting == "font" then
 			tinsert(widgetsTable, CreateSetting_Font(parent))
+		elseif setting == "color" then
+			tinsert(widgetsTable, CreateSetting_Color(parent))
 		elseif setting == "checkbutton" then
 			tinsert(widgetsTable, CreateSetting_CheckButton(parent))
+		elseif setting == "auras" then
+			tinsert(widgetsTable, CreateSetting_Auras(parent))
 		end
 	end
 	

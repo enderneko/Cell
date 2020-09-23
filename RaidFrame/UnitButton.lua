@@ -61,7 +61,7 @@ local function UpdateIndicatorParentVisibility(b, indicatorName, enabled)
 end
 
 local function UpdateIndicators(indicatorName, setting, value)
-	F:Debug("|cffff7777UUpdateIndicators:|r ", indicatorName, setting, value)
+	F:Debug("|cffff7777UpdateIndicators:|r ", indicatorName, setting, value)
 	if not indicatorName then -- init
 		wipe(enabledIndicators)
 		wipe(indicatorNums)
@@ -80,19 +80,29 @@ local function UpdateIndicators(indicatorName, setting, value)
 			end
 			-- update indicators
 			F:IterateAllUnitButtons(function(b)
-				local indicator = b.indicators[t["indicatorName"]]
-				if indicator then -- TODO: remove
-					-- update position
+				local indicator = b.indicators[t["indicatorName"]] or F:CreateIndicator(b, t)
+				-- update position
+				if t["position"] then
 					indicator:ClearAllPoints()
 					indicator:SetPoint(t["position"][1], b, t["position"][2], t["position"][3], t["position"][4])
-					-- update size
-					indicator:SetSize(unpack(t["size"]))
-					-- update font
-					if t["font"] then
-						indicator:SetFont(unpack(t["font"]))
-					end
-					UpdateIndicatorParentVisibility(b, t["indicatorName"], t["enabled"])
 				end
+				-- update size
+				if t["size"] then
+					indicator:SetSize(unpack(t["size"]))
+				end
+				-- update height
+				if t["height"] then
+					indicator:SetHeight(t["height"])
+				end
+				-- update font
+				if t["font"] then
+					indicator:SetFont(unpack(t["font"]))
+				end
+				-- update color
+				if t["color"] then
+					indicator:SetColor(unpack(t["color"]))
+				end
+				UpdateIndicatorParentVisibility(b, t["indicatorName"], t["enabled"])
 			end)
 		end
 		indicatorsInitialized = true
@@ -116,10 +126,20 @@ local function UpdateIndicators(indicatorName, setting, value)
 				local indicator = b.indicators[indicatorName]
 				indicator:SetSize(unpack(value))
 			end)
+		elseif setting == "height" then
+			F:IterateAllUnitButtons(function(b)
+				local indicator = b.indicators[indicatorName]
+				indicator:SetHeight(value)
+			end)
 		elseif setting == "font" then
 			F:IterateAllUnitButtons(function(b)
 				local indicator = b.indicators[indicatorName]
 				indicator:SetFont(unpack(value))
+			end)
+		elseif setting == "color" then
+			F:IterateAllUnitButtons(function(b)
+				local indicator = b.indicators[indicatorName]
+				indicator:SetColor(unpack(value))
 			end)
 		elseif setting == "num" then
 			indicatorNums[indicatorName] = value
@@ -131,6 +151,14 @@ local function UpdateIndicators(indicatorName, setting, value)
 			indicatorCustoms[indicatorName] = value[2]
 			F:IterateAllUnitButtons(function(b)
 				UnitButton_UpdateAuras(b)
+			end)
+		elseif setting == "create" then
+			F:IterateAllUnitButtons(function(b)
+				F:CreateIndicator(b, value)
+			end)
+		elseif setting == "remove" then
+			F:IterateAllUnitButtons(function(b)
+				F:RemoveIndicator(b, indicatorName, value)
 			end)
 		end
 	end
@@ -172,7 +200,6 @@ local debuffs_current = {}
 local debuffs_dispel = {}
 local function UnitButton_UpdateDebuffs(self)
 	local filterList = Cell.vars.debuffBlacklist
-	-- if not (enabledIndicators["debuffs"] and enabledIndicators["centralDebuff"]) then return end -- TODO:
 
 	local unit = self.state.displayedUnit
 	if not debuffs_cache[unit] then debuffs_cache[unit] = {} end
@@ -203,6 +230,9 @@ local function UnitButton_UpdateDebuffs(self)
 
 				debuffs_cache[unit][name] = expirationTime
 				debuffs_current[unit][name] = i
+
+				-- user created indicators
+				F:ShowCustomIndicators(self, "debuff", name, expirationTime - duration, duration, debuffType, icon, count, debuffs_cache[unit][name] and expirationTime > debuffs_cache[unit][name])
 			end
 
 			if enabledIndicators["dispels"] and debuffType and debuffType ~= "" then
@@ -228,7 +258,9 @@ local function UnitButton_UpdateDebuffs(self)
     for name, expirationTime in pairs(debuffs_cache[unit]) do
         -- lost or expired
         if not debuffs_current[unit][name] or t > expirationTime then
-            debuffs_cache[unit][name] = nil
+			debuffs_cache[unit][name] = nil
+			-- user created indicators
+			F:HideCustomIndicators(self, "debuff", name)
         end
 	end
 
@@ -243,7 +275,7 @@ local function UnitButton_UpdateBuffs(self)
 	if not buffs_cache[unit] then buffs_cache[unit] = {} end
     if not buffs_current[unit] then buffs_current[unit] = {} end
 
-	local defensiveFound, externalFound, tankActiveMitigationFound = 1, 1, false
+	local defensiveFound, externalFound, tankActiveMitigationFound, drinkingFound = 1, 1, false, false
     for i = 1, 40 do
         -- name, icon, count, debuffType, duration, expirationTime, source, isStealable, nameplateShowPersonal, spellId, canApplyAura, isBossDebuff, castByPlayer, nameplateShowAll, timeMod, ...
         local name, icon, count, debuffType, duration, expirationTime, source, isStealable, nameplateShowPersonal, spellId = UnitBuff(unit, i)
@@ -266,11 +298,24 @@ local function UnitButton_UpdateBuffs(self)
 				externalFound = externalFound + 1
 			end
 
+			-- tankActiveMitigation
 			if enabledIndicators["tankActiveMitigation"] and F:IsTankActiveMitigation(name) then
 				self.indicators.tankActiveMitigation:SetCooldown(expirationTime - duration, duration)
 				tankActiveMitigationFound = true
 			end
 
+			-- drinking
+			if F:IsDrinking(name) then
+				if not self.widget.statusText:GetText() then
+					self.widget.statusText:SetText("|cff30BFFF"..L["DRINKING"])
+					self.widget.statusTextFrame:Show()
+				end
+				drinkingFound = true
+			end
+
+			-- user created indicators
+			F:ShowCustomIndicators(self, "buff", name, expirationTime - duration, duration, nil, icon, count, buffs_cache[unit][name] and expirationTime > buffs_cache[unit][name])
+			
             buffs_cache[unit][name] = expirationTime
             buffs_current[unit][name] = i
 		end
@@ -280,15 +325,21 @@ local function UnitButton_UpdateBuffs(self)
 	for i = defensiveFound, 5 do
 		self.indicators.defensiveCooldowns[i]:Hide()
 	end
-
+	
 	-- hide other externalCooldowns
 	for i = externalFound, 5 do
 		self.indicators.externalCooldowns[i]:Hide()
 	end
-
+	
 	-- hide tankActiveMitigation
 	if not tankActiveMitigationFound then
 		self.indicators.tankActiveMitigation:Hide()
+	end
+	
+	-- hide drinking
+	if not drinkingFound and self.widget.statusText:GetText() == "|cff30BFFF"..L["DRINKING"] then
+		self.widget.statusTextFrame:Hide()
+		self.widget.statusText:SetText("")
 	end
 	
 	-- update buffs_cache
@@ -296,7 +347,9 @@ local function UnitButton_UpdateBuffs(self)
     for name, expirationTime in pairs(buffs_cache[unit]) do
         -- lost or expired
         if not buffs_current[unit][name] or t > expirationTime then
-            buffs_cache[unit][name] = nil
+			buffs_cache[unit][name] = nil
+			-- user created indicators
+			F:HideCustomIndicators(self, "buff", name)
         end
 	end
 	wipe(buffs_current[unit])
@@ -1343,13 +1396,8 @@ function F:UnitButton_OnLoad(button)
 	-- aggroBar:SetPoint("BOTTOMLEFT", overlayFrame, "TOPLEFT", 1, 0)
 	aggroBar:Hide()
 
-	-- tankActiveMitigation
-	-- local tankActiveMitigation = Cell:CreateStatusBar(overlayFrame, 18, 5, 100, true)
-	-- button.indicators.tankActiveMitigation = tankActiveMitigation
-	-- tankActiveMitigation:SetStatusBarColor(.7, .7, .7)
-	-- tankActiveMitigation:Hide()
-
 	-- indicators
+	F:CreateAoEHealing(button)
 	F:CreateDefensiveCooldowns(button)
 	F:CreateExternalCooldowns(button)
 	F:CreateTankActiveMitigation(button)

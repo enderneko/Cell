@@ -182,6 +182,75 @@ local function CreateAura_BarIcon(name, parent)
 end
 
 -------------------------------------------------
+-- CreateAoEHealing
+-------------------------------------------------
+local CombatLogGetCurrentEventInfo = CombatLogGetCurrentEventInfo
+local eventFrame = CreateFrame("Frame")
+eventFrame:SetScript("OnEvent", function()
+    local timestamp, subevent, _, sourceGUID, sourceName, sourceFlags, sourceRaidFlags, destGUID, destName, destFlags, destRaidFlags, spellId, spellName = CombatLogGetCurrentEventInfo()
+    if (subevent == "SPELL_HEAL" or subevent == "SPELL_PERIODIC_HEAL") and F:IsAoEHealing(spellName) and sourceGUID == Cell.vars.playerGUID then
+        if Cell.vars.groupType and Cell.vars.guid[destGUID] then
+            Cell.unitButtons[Cell.vars.groupType][Cell.vars.guid[destGUID]].indicators.aoeHealing:ShowUp()
+        end
+    end
+end)
+
+function F:CreateAoEHealing(parent)
+    local aoeHealing = CreateFrame("Frame", nil, parent)
+	parent.indicators.aoeHealing = aoeHealing
+	aoeHealing:SetPoint("TOPLEFT", parent.widget.healthBar)
+    aoeHealing:SetPoint("TOPRIGHT", parent.widget.healthBar)
+    aoeHealing:SetFrameLevel(5)
+    -- aoeHealing:SetHeight(15)
+	aoeHealing:Hide()
+
+	aoeHealing.tex = aoeHealing:CreateTexture(nil, "ARTWORK")
+    aoeHealing.tex:SetAllPoints(aoeHealing)
+	aoeHealing.tex:SetTexture("Interface\\Buttons\\WHITE8x8")
+    
+    local ag = aoeHealing:CreateAnimationGroup()
+    local a1 = ag:CreateAnimation("Alpha")
+    a1:SetFromAlpha(0)
+    a1:SetToAlpha(1)
+    a1:SetDuration(0.5)
+    a1:SetOrder(1)
+    a1:SetSmoothing("OUT")
+    local a2 = ag:CreateAnimation("Alpha")
+    a2:SetFromAlpha(1)
+    a2:SetToAlpha(0)
+    a2:SetDuration(0.5)
+    a2:SetOrder(2)
+    a2:SetSmoothing("IN")
+
+    ag:SetScript("OnPlay", function()
+        aoeHealing:Show()
+    end)
+    ag:SetScript("OnFinished", function()
+        aoeHealing:Hide()
+    end)
+
+	function aoeHealing:SetColor(r, g, b)
+		aoeHealing.tex:SetGradientAlpha("VERTICAL", r, g, b, 0, r, g, b, .77)
+    end
+
+    function aoeHealing:ShowUp()
+        -- if ag:IsPlaying() then
+        --     ag:Restart()
+        -- else
+            ag:Play()
+        -- end
+    end
+end
+
+function F:EnableAoEHealing(enabled)
+    if enabled then
+        eventFrame:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
+    else
+        eventFrame:UnregisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
+    end
+end
+
+-------------------------------------------------
 -- CreateDefensiveCooldowns
 -------------------------------------------------
 function F:CreateDefensiveCooldowns(parent)
@@ -391,8 +460,83 @@ function F:CreateCentralDebuff(parent)
 end
 
 -------------------------------------------------
--- other indicators (aura)
+-- custom indicators
 -------------------------------------------------
-function F:CreateIndicator(parent, name)
+local enabledIndicators = {}
+local customIndicators = {
+    ["buff"] = {},
+    ["debuff"] = {},
+}
 
+function F:CreateIndicator(parent, indicatorTable)
+    local indicator
+    if indicatorTable["type"] == "icon" then
+        indicator = CreateAura_BarIcon(indicatorTable["indicatorName"], parent.widget.overlayFrame)
+    end
+    parent.indicators[indicatorTable["indicatorName"]] = indicator
+    
+    -- keep custom indicators in table
+    if indicatorTable["enabled"] then enabledIndicators[indicatorTable["indicatorName"]] = true end
+
+    local auraType = indicatorTable["auraType"]
+    customIndicators[auraType][indicatorTable["indicatorName"]] = {
+        ["found"] = {}, -- found cache
+        ["auras"] = F:ConvertTable(indicatorTable["auras"]), -- auras to match
+    }
+
+    return indicator
+end
+
+function F:RemoveIndicator(parent, indicatorName, auraType)
+    local indicator = parent.indicators[indicatorName]
+    indicator:ClearAllPoints()
+    indicator:Hide()
+    indicator:SetParent(nil)
+    parent.indicators[indicatorName] = nil
+    enabledIndicators[indicatorName] = nil
+    customIndicators[auraType][indicatorName] = nil
+end
+
+local function UpdateCustomIndicators(indicatorName, setting, value)
+    if not indicatorName or not string.find(indicatorName, "indicator") then return end
+
+    if setting == "enabled" then
+        if value then
+            enabledIndicators[indicatorName] = true
+        else
+            enabledIndicators[indicatorName] = nil
+        end
+    elseif setting == "auras" then
+        customIndicators[value[1]][indicatorName]["auras"] = F:ConvertTable(value[2])
+    end
+end
+Cell:RegisterCallback("UpdateIndicators", "UpdateCustomIndicators", UpdateCustomIndicators)
+
+function F:ShowCustomIndicators(unitButton, auraType, auraName, start, duration, debuffType, texture, count, refreshing)
+    for indicatorName, indicatorTable in pairs(customIndicators[auraType]) do
+        if enabledIndicators[indicatorName] then
+            if indicatorTable["auras"][auraName] then
+                unitButton.indicators[indicatorName]:SetCooldown(start, duration, debuffType, texture, count, refreshing)
+                -- update cache
+                customIndicators[auraType][indicatorName]["found"][auraName] = true
+            end
+        end
+    end
+end
+
+function F:HideCustomIndicators(unitButton, auraType, auraName)
+    for indicatorName, indicatorTable in pairs(customIndicators[auraType]) do
+        if enabledIndicators[indicatorName] then
+            if indicatorTable["auras"][auraName] then
+                -- update cache
+                customIndicators[auraType][indicatorName]["found"][auraName] = nil
+                if F:Getn(customIndicators[auraType][indicatorName]["found"]) == 0 then
+                    unitButton.indicators[indicatorName]:Hide()
+                end
+            end
+        else
+            wipe(customIndicators[auraType][indicatorName]["found"])
+            unitButton.indicators[indicatorName]:Hide()
+        end
+    end
 end

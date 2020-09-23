@@ -692,6 +692,7 @@ LoadProfile = function(isCommon)
 		last = b
     end
     -- F:Debug("-- Load clickCastings end ----------------")
+    bindingsFrame.scrollFrame:SetContentHeight(20, #clickCastingTable, 5)
     menu:Hide()
     wipe(deleted)
     wipe(changed)
@@ -782,19 +783,22 @@ end)
 local function ShowTab(tab)
     if tab == "clickCastings" then
         clickCastingsTab:Show()
-        if loaded then return end
-
-        loaded = true
-        
-        local isCommon = Cell.vars.clickCastingTable["useCommon"]
-        profileDropdown:SetSelectedItem(isCommon and 1 or 2)
-        UpdateCurrentText(isCommon)
-        LoadProfile(isCommon)
-
-        menu:SetMenuParent(clickCastingsTab)
-        -- texplore(changed)
     else
         clickCastingsTab:Hide()
     end
 end
 Cell:RegisterCallback("ShowOptionsTab", "ClickCastingsTab_ShowTab", ShowTab)
+
+clickCastingsTab:SetScript("OnShow", function()
+    if loaded then return end
+
+    loaded = true
+    
+    local isCommon = Cell.vars.clickCastingTable["useCommon"]
+    profileDropdown:SetSelectedItem(isCommon and 1 or 2)
+    UpdateCurrentText(isCommon)
+    LoadProfile(isCommon)
+
+    menu:SetMenuParent(clickCastingsTab)
+    -- texplore(changed)
+end)

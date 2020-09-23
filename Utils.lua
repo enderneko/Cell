@@ -86,6 +86,29 @@ function F:Sort(t, k1, order1, k2, order2, k3, order3)
 	end)
 end
 
+function F:StringToTable(s, sep)
+    local t = {}
+    for i, v in pairs({string.split(sep, s)}) do
+        v = strtrim(v)
+        if v ~= "" then
+            tinsert(t, v)
+        end
+    end
+    return t
+end
+
+function F:TableToString(t, sep)
+    return table.concat(t, sep)
+end
+
+function F:ConvertTable(t)
+    local temp = {}
+    for _, v in ipairs(t) do
+        temp[v] = true
+    end
+    return temp
+end
+
 -------------------------------------------------
 -- general
 -------------------------------------------------

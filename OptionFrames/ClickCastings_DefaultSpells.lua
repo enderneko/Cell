@@ -91,24 +91,20 @@ local defaultSpells = {
         ["common"] = {
             115450, -- Detox - 清创生血
             115178, -- Resuscitate - 轮回转世
+            116670, -- Vivify - 活血术
+            "115098T", -- Chi Wave - 真气波
         },
         -- 268 - Brewmaster
-        [268] = {
-            "115098T", -- Chi Wave - 真气波
-        },
         -- 269 - Windwalker
         [269] = {
-            "115098T", -- Chi Wave - 真气波
             "287771P", -- pvp - Reverse Harm - 反向伤害
         },
         -- 270 - Mistweaver
         [270] = {
             115151, -- Renewing Mist - 复苏之雾
             115175, -- Soothing Mist - 抚慰之雾
-            116670, -- Vivify - 活血术
             116849, -- Life Cocoon - 作茧缚命
             124682, -- Enveloping Mist - 氤氲之雾
-            "115098T", -- Chi Wave - 真气波
             212051, -- Reawaken - 死而复生
             "227344P", -- pvp - Surging Mist - 升腾之雾
         },

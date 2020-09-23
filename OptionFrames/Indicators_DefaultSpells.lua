@@ -2,6 +2,51 @@ local _, Cell = ...
 local L = Cell.L
 local F = Cell.funcs
 
+-- NOTE: these spellIds ~= realSpellIds, spells are matched by names
+-------------------------------------------------
+-- aoeHealings
+-------------------------------------------------
+local aoeHealings = {
+    -- druid
+    740, -- 宁静
+    145205, -- 百花齐放
+
+    -- monk
+    115098, -- 真气波
+    123986, -- 真气爆裂
+    115310, -- 还魂术
+
+    -- paladin
+    85222, -- 黎明之光
+    119952, -- 弧形圣光
+    114165, -- 神圣棱镜
+
+
+    -- priest
+    120517, -- 光晕
+    34861, -- 圣言术：灵
+    596, -- 治疗祷言
+    64843, -- 神圣赞美诗
+    110744, -- 神圣之星
+
+    -- shaman
+    1064, -- 治疗链
+    73920, -- 治疗之雨
+    114942, -- 治疗之潮
+}
+
+do
+    local temp = {}
+    for _, id in pairs(aoeHealings) do
+        temp[GetSpellInfo(id)] = true
+    end
+    aoeHealings = temp
+end
+
+function F:IsAoEHealing(name)
+    return aoeHealings[name]
+end
+
 -------------------------------------------------
 -- externalCooldowns
 -------------------------------------------------
@@ -229,4 +274,27 @@ function F:CanDispel(dispelType)
     else
         return
     end
+end
+
+-------------------------------------------------
+-- drinking
+-------------------------------------------------
+local drinks = {
+    170906, -- 食物和饮水
+    167152, -- 进食饮水
+    430, -- 喝水
+    43182, -- 饮水
+    172786, -- 饮料
+}
+
+do
+    local temp = {}
+    for _, id in pairs(drinks) do
+        temp[GetSpellInfo(id)] = true
+    end
+    drinks = temp
+end
+
+function F:IsDrinking(name)
+    return drinks[name]
 end

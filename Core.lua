@@ -67,10 +67,6 @@ font_status:SetJustifyH("CENTER")
 -------------------------------------------------
 -- functions
 -------------------------------------------------
-local IsInRaid = IsInRaid
-local IsInGroup = IsInGroup
-local GetNumGroupMembers = GetNumGroupMembers
-
 function F:UpdateLayout()
     Cell.vars.currentLayout = CellCharacterDB["layout"]
     Cell.vars.currentLayoutTable = CellDB["layouts"][CellCharacterDB["layout"]]
@@ -115,6 +111,7 @@ eventFrame:RegisterEvent("GROUP_ROSTER_UPDATE")
 eventFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
 eventFrame:RegisterEvent("PLAYER_LOGIN")
 eventFrame:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
+eventFrame:RegisterEvent("UNIT_PET")
 
 function eventFrame:ADDON_LOADED(arg1)
     if arg1 == addonName then
@@ -175,6 +172,14 @@ function eventFrame:ADDON_LOADED(arg1)
                             ["size"] = {18, 2},
                         },
                         {
+                            ["name"] = L["AoE Healing"],
+                            ["indicatorName"] = "aoeHealing",
+                            ["type"] = "built-in",
+                            ["enabled"] = true,
+                            ["height"] = 15,
+                            ["color"] = {0, 1, 0},
+                        },
+                        {
                             ["name"] = L["External Cooldowns"],
                             ["indicatorName"] = "externalCooldowns",
                             ["type"] = "built-in",
@@ -219,25 +224,47 @@ function eventFrame:ADDON_LOADED(arg1)
                             ["num"] = 3,
                             ["font"] = {"Cell ".._G.DEFAULT, 11, "Outline", 2},
                         },
-                        {
-                            ["name"] = L["Central Debuff"],
-                            ["indicatorName"] = "centralDebuff",
-                            ["type"] = "built-in",
-                            ["enabled"] = true,
-                            ["position"] = {"CENTER", "CENTER", 0, 3},
-                            ["size"] = {18, 18},
-                            ["font"] = {"Cell ".._G.DEFAULT, 12, "Outline", 2},
-                        },
                         -- {
-                        --     ["name"] = "",
+                        --     ["name"] = L["Central Debuff"],
+                        --     ["indicatorName"] = "centralDebuff",
+                        --     ["type"] = "built-in",
+                        --     ["enabled"] = true,
+                        --     ["position"] = {"CENTER", "CENTER", 0, 3},
+                        --     ["size"] = {18, 18},
+                        --     ["font"] = {"Cell ".._G.DEFAULT, 12, "Outline", 2},
+                        -- },
+                        -- {
+                        --     ["name"] = "233",
+                        --     ["indicatorName"] = "indicator8",
+                        --     ["type"] = "icon",
+                        --     ["enabled"] = true,
+                        --     ["position"] = {"TOPRIGHT", "TOPRIGHT", 0, 3},
+                        --     ["size"] = {13, 13},
+                        --     ["font"] = {"Cell ".._G.DEFAULT, 12, "Outline", 2},
+                        --     ["auraType"] = "buff",
+                        --     ["auras"] = {},
+                        -- },
+                        -- {
+                        --     ["name"] = "233",
+                        --     ["indicatorName"] = "indicator9",
+                        --     ["type"] = "icon",
+                        --     ["enabled"] = true,
+                        --     ["position"] = {"TOPRIGHT", "TOPRIGHT", 0, 3},
+                        --     ["size"] = {13, 13},
+                        --     ["font"] = {"Cell ".._G.DEFAULT, 12, "Outline", 2},
+                        --     ["auraType"] = "buff",
+                        --     ["auras"] = {},
+                        -- },
+                        -- {
+                        --     ["name"] = "233",
                         --     ["indicatorName"] = "indicator8",
                         --     ["type"] = "rectangle",
                         --     ["enabled"] = true,
                         --     ["position"] = {"CENTER", "CENTER", 0, 3},
                         --     ["size"] = {18, 18},
-                        --     ["font"] = {"Cell ".._G.DEFAULT, 12, "Outline", 2},
-                        --     ["aura"] = "buff",
                         --     ["colors"] = {{0,1,0}, {1,1,0}, {1,0,0}},
+                        --     ["auraType"] = "buff",
+                        --     ["auras"] = {},
                         -- },
                     },
                 },
@@ -252,7 +279,9 @@ function eventFrame:ADDON_LOADED(arg1)
                 8326, -- 鬼魂
                 57723, -- 筋疲力尽
                 57724, -- 心满意足
+                80354, -- 时空错位
                 264689, -- 疲倦
+                206151, -- 挑战者的负担
             }
         end
         
@@ -269,22 +298,66 @@ function eventFrame:ADDON_LOADED(arg1)
     end
 end
 
+local IsInRaid = IsInRaid
+local IsInGroup = IsInGroup
+local GetNumGroupMembers = GetNumGroupMembers
+local UnitGUID = UnitGUID
+Cell.vars.guid = {}
 function eventFrame:GROUP_ROSTER_UPDATE()
+    wipe(Cell.vars.guid)
     if IsInRaid() then
         if Cell.vars.groupType ~= "raid" then
             Cell.vars.groupType = "raid"
-            Cell:Fire("GroupTypeChanged", "raid")
+            -- Cell:Fire("GroupTypeChanged", "raid")
         end
+        -- update guid
+        for i = 1, GetNumGroupMembers() do
+            local playerGUID = UnitGUID("raid"..i)
+            if playerGUID then
+                Cell.vars.guid[playerGUID] = "raid"..i
+            end
+        end
+
     elseif IsInGroup() then
         if Cell.vars.groupType ~= "party" then
             Cell.vars.groupType = "party"
-            Cell:Fire("GroupTypeChanged", "party")
+            -- Cell:Fire("GroupTypeChanged", "party")
         end
+        -- update guid
+        Cell.vars.guid[UnitGUID("player")] = "player"
+        if UnitGUID("pet") then
+            Cell.vars.guid[UnitGUID("pet")] = "pet"
+        end
+        for i = 1, 4 do
+            local playerGUID = UnitGUID("party"..i)
+            if playerGUID then
+                Cell.vars.guid[playerGUID] = "party"..i
+            else
+                break
+            end
+
+            local petGUID = UnitGUID("partypet"..i)
+            if petGUID then
+                Cell.vars.guid[petGUID] = "partypet"..i
+            end
+        end
+
     else
         if Cell.vars.groupType ~= "solo" then
             Cell.vars.groupType = "solo"
-            Cell:Fire("GroupTypeChanged", "solo")
+            -- Cell:Fire("GroupTypeChanged", "solo")
         end
+        -- update guid
+        Cell.vars.guid[UnitGUID("player")] = "player"
+        if UnitGUID("pet") then
+            Cell.vars.guid[UnitGUID("pet")] = "pet"
+        end
+    end
+end
+
+function eventFrame:UNIT_PET()
+    if not IsInRaid() then
+        eventFrame:GROUP_ROSTER_UPDATE()
     end
 end
 
@@ -303,6 +376,7 @@ function eventFrame:PLAYER_LOGIN()
     Cell:Fire("UpdateIndicators")
     -- update texture and font
     Cell:Fire("UpdateAppearance")
+    Cell.vars.playerGUID = UnitGUID("player")
 end
 
 -- PLAYER_SPECIALIZATION_CHANGED fires when level up, ACTIVE_TALENT_GROUP_CHANGED usually fire twice.
