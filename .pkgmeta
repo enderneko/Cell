@@ -1,0 +1,5 @@
+package-as: Cell
+enable-nolib-creation: no
+
+ignore:
+    - Libs/LibStub/tests

@@ -33,7 +33,7 @@ end
 npcFrame:SetAttribute("_onstate-groupstate", [[
     self:SetAttribute("group", newstate)
 
-    print("groupstate", newstate)
+    -- print("groupstate", newstate)
 
     local spacing = self:GetAttribute("spacing") or 0
     local anchor = self:GetFrameRef(newstate)
@@ -62,7 +62,7 @@ RegisterStateDriver(npcFrame, "groupstate", "[group:raid] raid; [group:party] pa
 npcFrame:SetAttribute("_onstate-petstate", [[
     self:SetAttribute("pet", newstate)
     
-    print("petstate", newstate)
+    -- print("petstate", newstate)
 
     if self:GetAttribute("group") == "party" then
         -- self:CallMethod("UpdatePoint")
