@@ -44,6 +44,7 @@ do
 end
 
 function F:IsAoEHealing(name)
+    if not name then return false end
     return aoeHealings[name]
 end
 

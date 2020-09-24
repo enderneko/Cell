@@ -16,7 +16,7 @@ for i = 0, 4 do
 	local playerButton = CreateFrame("Button", partyFrame:GetName()..playerName, partyFrame, "CellUnitButtonTemplate")
 	playerButton:SetAttribute("unit", playerUnit)
 
-	local petButton = CreateFrame("Button", partyFrame:GetName()..petUnit, partyFrame, "CellUnitButtonTemplate")
+	local petButton = CreateFrame("Button", partyFrame:GetName()..petName, partyFrame, "CellUnitButtonTemplate")
     petButton:SetAttribute("unit", petUnit)
 
 	Cell.unitButtons.party[playerUnit] = playerButton
@@ -34,10 +34,6 @@ for i = 0, 4 do
 		RegisterAttributeDriver(petButton, "state-visibility", "[@"..petUnit..",noexists] hide; [@"..playerUnit..",unithasvehicleui] hide; show")
 	end
 end
-
--- function F:GetPartyFrameMatrix()
---     return 1, 1
--- end
 
 local function PartyFrame_UpdateLayout(layout, which)
 	if layout ~= Cell.vars.currentLayout then return end

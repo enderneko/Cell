@@ -207,7 +207,7 @@ Cell:RegisterCallback("ShowOptionsTab", "AppearanceTab_ShowTab", ShowTab)
 -- update appearance
 -------------------------------------------------
 local function UpdateAppearance(which)
-    F:Debug("UpdateAppearance: "..(which or "all"))
+    F:Debug("|cff7f7fffUpdateAppearance:|r "..(which or "all"))
     
     if not which or which == "font" or which == "texture" then
         F:UpdateFont()

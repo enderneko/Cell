@@ -184,6 +184,8 @@ local defaultSpells = {
         },
         -- 258 - Shadow
         [258] = {
+            17, -- Power Word: Shield - 真言术：盾
+            213634, -- Purify Disease - 净化疾病
             "108968P", -- pvp - Void Shift - 虚空转移
         },
     },

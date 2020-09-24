@@ -177,7 +177,7 @@ function eventFrame:ADDON_LOADED(arg1)
                             ["type"] = "built-in",
                             ["enabled"] = true,
                             ["height"] = 15,
-                            ["color"] = {0, 1, 0},
+                            ["color"] = {1, 1, 0},
                         },
                         {
                             ["name"] = L["External Cooldowns"],

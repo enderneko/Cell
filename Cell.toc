@@ -24,6 +24,7 @@ RaidFrame\UnitButton.xml
 RaidFrame\Groups\SoloFrame.lua
 RaidFrame\Groups\PartyFrame.lua
 RaidFrame\Groups\RaidFrame.lua
+RaidFrame\Groups\NPCFrame.lua
 
 ToolFrames\LoadToolFrames.xml
 OptionFrames\LoadOptionFrames.xml

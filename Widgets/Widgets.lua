@@ -288,7 +288,7 @@ function addon:CreateButtonGroup(buttons, onClick, func1, func2)
 			if id == b.id then
 				b:SetBackdropColor(unpack(b.hoverColor))
 				b:SetScript("OnEnter", function()
-					if b.ShowTooltip then b.ShowTooltip() end
+					if b.ShowTooltip then b.ShowTooltip(b) end
 				end)
 				b:SetScript("OnLeave", function()
 					if b.HideTooltip then b.HideTooltip() end
@@ -297,7 +297,7 @@ function addon:CreateButtonGroup(buttons, onClick, func1, func2)
 			else
 				b:SetBackdropColor(unpack(b.color))
 				b:SetScript("OnEnter", function() 
-					if b.ShowTooltip then b.ShowTooltip() end
+					if b.ShowTooltip then b.ShowTooltip(b) end
 					b:SetBackdropColor(unpack(b.hoverColor))
 				end)
 				b:SetScript("OnLeave", function() 
@@ -639,8 +639,18 @@ function addon:CreateConfirmPopup(parent, width, text, onAccept, mask, hasEditBo
 			end)
 		end
 		parent.confirmPopup.editBox:Show()
+		-- disable yes if editBox empty
+		parent.confirmPopup.editBox:SetScript("OnTextChanged", function()
+			if not parent.confirmPopup.editBox:GetText() or strtrim(parent.confirmPopup.editBox:GetText()) == "" then
+				parent.confirmPopup.button1:SetEnabled(false)
+			else
+				parent.confirmPopup.button1:SetEnabled(true)
+			end
+		end)
 	elseif parent.confirmPopup.editBox then
 		parent.confirmPopup.editBox:Hide()
+		parent.confirmPopup.editBox:SetScript("OnTextChanged", nil)
+		parent.confirmPopup.button1:SetEnabled(true)
 	end
 
 	if dropdowns then
@@ -1153,6 +1163,11 @@ end
 local list = CreateFrame("Frame", addonName.."DropdownList")
 addon:StylizeFrame(list, {.1, .1, .1, 1})
 list:Hide()
+list:SetScript("OnShow", function()
+	list:SetScale(list.menu:GetEffectiveScale())
+	list:SetFrameStrata(list.menu:GetFrameStrata())
+	list:SetFrameLevel(77) -- top of its strata
+end)
 list:SetScript("OnHide", function() list:Hide() end)
 
 -- close dropdown
@@ -1353,10 +1368,6 @@ function addon:CreateDropdown(parent, width, dropdownType)
 
 		-- update list size
 		list.menu = menu -- menu's OnHide -> list:Hide
-		-- list:SetParent(menu)
-		list:SetScale(menu:GetEffectiveScale())
-		list:SetFrameStrata(menu:GetFrameStrata())
-		list:SetFrameLevel(77) -- top of its strata
 		list:ClearAllPoints()
 		list:SetPoint("TOP", menu, "BOTTOM", 0, -2)
 		

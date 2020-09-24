@@ -358,8 +358,10 @@ createBtn:SetScript("OnClick", function()
     popup:SetPoint("TOPLEFT", 100, -100)
     popup.dropdown1:SetItems(typeItems)
     popup.dropdown1:SetSelectedItem(1)
+    popup.dropdown1:SetEnabled(false)
     popup.dropdown2:SetItems(auraTypeItems)
     popup.dropdown2:SetSelectedItem(1)
+    popup.dropdown2:SetEnabled(false)
 end)
 
 local deleteBtn = Cell:CreateButton(indicatorsTab, L["Delete"], "red-hover", {61, 20})
@@ -497,6 +499,19 @@ LoadIndicatorList = function()
             b:SetTextColor(1, 1, 1, 1)
         else
             b:SetTextColor(.466, .466, .466, 1)
+        end
+
+        b.ShowTooltip = function()
+            if b:GetFontString():IsTruncated() then
+                CellTooltip:SetOwner(b, "ANCHOR_NONE")
+                CellTooltip:SetPoint("RIGHT", b, "LEFT")
+                CellTooltip:AddLine(t["name"])
+                CellTooltip:Show()
+            end
+        end
+
+        b.HideTooltip = function()
+            CellTooltip:Hide()
         end
 
         b:SetPoint("RIGHT")

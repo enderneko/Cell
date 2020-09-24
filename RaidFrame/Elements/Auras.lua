@@ -112,11 +112,14 @@ local function CreateAura_BarIcon(name, parent)
         maskIcon:SetTexCoord(unpack(F:GetTexCoord(width, height)))
     end)
 
-    local stack = cooldown:CreateFontString(nil, "OVERLAY", "CELL_FONT_STATUS")
+    local stackFrame = CreateFrame("Frame", nil, frame)
+    stackFrame:SetAllPoints(frame)
+
+    local stack = stackFrame:CreateFontString(nil, "OVERLAY", "CELL_FONT_STATUS")
     frame.stack = stack
     stack:SetJustifyH("RIGHT")
     -- stack:SetJustifyV("TOP")
-    stack:SetPoint("TOPRIGHT", frame, 1, 0)
+    stack:SetPoint("TOPRIGHT", 2, 0)
     -- stack:SetPoint("CENTER", 1, 0)
 
     function frame:SetFont(font, size, flags, horizontalOffset)
@@ -133,7 +136,7 @@ local function CreateAura_BarIcon(name, parent)
             frame.stack:SetShadowColor(0, 0, 0, 0)
         end
         frame.stack:ClearAllPoints()
-        frame.stack:SetPoint("TOPRIGHT", frame, horizontalOffset, 0)
+        frame.stack:SetPoint("TOPRIGHT", horizontalOffset, 0)
     end
 
     local ag = frame:CreateAnimationGroup()
@@ -182,13 +185,13 @@ local function CreateAura_BarIcon(name, parent)
 end
 
 -------------------------------------------------
--- CreateAoEHealing
+-- CreateAoEHealing -- not support for npc
 -------------------------------------------------
 local CombatLogGetCurrentEventInfo = CombatLogGetCurrentEventInfo
 local eventFrame = CreateFrame("Frame")
 eventFrame:SetScript("OnEvent", function()
     local timestamp, subevent, _, sourceGUID, sourceName, sourceFlags, sourceRaidFlags, destGUID, destName, destFlags, destRaidFlags, spellId, spellName = CombatLogGetCurrentEventInfo()
-    if (subevent == "SPELL_HEAL" or subevent == "SPELL_PERIODIC_HEAL") and F:IsAoEHealing(spellName) and sourceGUID == Cell.vars.playerGUID then
+    if (subevent == "SPELL_HEAL" or subevent == "SPELL_PERIODIC_HEAL") and sourceGUID == Cell.vars.playerGUID and destGUID and F:IsAoEHealing(spellName) then
         if Cell.vars.groupType and Cell.vars.guid[destGUID] then
             Cell.unitButtons[Cell.vars.groupType][Cell.vars.guid[destGUID]].indicators.aoeHealing:ShowUp()
         end

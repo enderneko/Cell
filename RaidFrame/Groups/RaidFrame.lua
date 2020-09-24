@@ -1,9 +1,35 @@
 local _, Cell = ...
 local F = Cell.funcs
 
-local raidFrame = CreateFrame("Frame", "CellRaidFrame", Cell.frames.mainFrame, "SecureFrameTemplate")
+local raidFrame = CreateFrame("Frame", "CellRaidFrame", Cell.frames.mainFrame, "SecureHandlerAttributeTemplate")
 Cell.frames.raidFrame = raidFrame
 raidFrame:SetAllPoints(Cell.frames.mainFrame)
+
+local npcFrameAnchor = CreateFrame("Frame", "CellNPCFrameAnchor", raidFrame, "SecureFrameTemplate")
+npcFrameAnchor:Hide()
+raidFrame:SetFrameRef("npcanchor", npcFrameAnchor)
+
+raidFrame:SetAttribute("_onattributechanged", [[
+	if name ~= "visibility" then
+		return
+    end
+
+    local maxGroup
+	for i = 1, 8 do
+		if self:GetFrameRef("visibilityhelper"..i):IsVisible() then
+			maxGroup = i
+		end
+    end
+
+    if not maxGroup then return end -- NOTE: empty subgroup will cause maxGroup == nil
+    
+    local header = self:GetFrameRef("subgroup"..maxGroup)
+    local npcFrameAnchor = self:GetFrameRef("npcanchor")
+    local spacing = self:GetAttribute("spacing") or 0
+
+	npcFrameAnchor:ClearAllPoints()
+    npcFrameAnchor:SetPoint("TOPLEFT", header, "TOPRIGHT", spacing, 0)
+]])
 
 --[[ Interface\FrameXML\SecureGroupHeaders.lua
 List of the various configuration attributes
@@ -79,11 +105,16 @@ for i = 1, 8 do
     header:SetAttribute("startingIndex", -4)
 	header:Show()
     header:SetAttribute("startingIndex", 1)
-end
 
--- function F:GetRaidFrameMatrix()
---     return 1, 1
--- end
+    -- for npcFrame's point
+    raidFrame:SetFrameRef("subgroup"..i, header)
+    
+    local helper = CreateFrame("Frame", nil, header[1], "SecureHandlerShowHideTemplate")
+	helper:SetFrameRef("raidframe", raidFrame)
+	raidFrame:SetFrameRef("visibilityhelper"..i, helper)
+	helper:SetAttribute("_onshow", [[ self:GetFrameRef("raidframe"):SetAttribute("visibility", 1) ]])
+	helper:SetAttribute("_onhide", [[ self:GetFrameRef("raidframe"):SetAttribute("visibility", 0) ]])
+end
 
 local function RaidFrame_UpdateLayout(layout, which)
     if layout ~= Cell.vars.currentLayout then return end
@@ -101,6 +132,8 @@ local function RaidFrame_UpdateLayout(layout, which)
             --! important new button size depend on buttonWidth & buttonHeight
             header:SetAttribute("buttonWidth", width)
             header:SetAttribute("buttonHeight", height)
+
+            npcFrameAnchor:SetSize(width, height)
         end
 
         if not which or which == "spacing" then
@@ -112,6 +145,9 @@ local function RaidFrame_UpdateLayout(layout, which)
             end
             header:SetAttribute("point", "TOP")
             header:SetAttribute("yOffset", -layout["spacing"])
+
+            raidFrame:SetAttribute("spacing", layout["spacing"])
+            raidFrame:SetAttribute("visibility", 1) -- NOTE: trigger _onattributechanged to set npcFrameAnchor point!
         end
 
         if not which or which == "groupFilter" then

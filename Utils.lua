@@ -158,6 +158,10 @@ function F:IterateAllUnitButtons(func)
             func(b)
         end
     end
+    -- npc
+    for _, b in pairs(Cell.unitButtons.npc) do
+        func(b)
+    end
 end
 
 function F:SetTextLimitWidth(fs, text, percent)
@@ -251,6 +255,17 @@ function F:GetPetUnit(playerUnit)
     else
         return "pet"
     end
+end
+
+function F:GetGroupType()
+    if IsInRaid() then
+        Cell.vars.groupType = "raid"
+    elseif IsInGroup() then
+        Cell.vars.groupType = "party"
+    else
+        Cell.vars.groupType = "solo"
+    end
+    return Cell.vars.groupType
 end
 
 -------------------------------------------------
