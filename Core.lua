@@ -212,7 +212,7 @@ function eventFrame:ADDON_LOADED(arg1)
                             ["enabled"] = true,
                             ["position"] = {"BOTTOMRIGHT", "BOTTOMRIGHT", 0, 4},
                             ["size"] = {12, 12},
-                            ["checkbutton"] = {"Only show debuffs dispellable by me", true}
+                            ["checkbutton"] = {L["Only show debuffs dispellable by me"], true}
                         },
                         {
                             ["name"] = L["Debuffs"],

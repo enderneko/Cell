@@ -44,6 +44,7 @@ local keyIDs = {
     ["ScrollDown"]= 14,
 }
 
+-- shift-Left -> shift-type1
 local function GetAttributeKey(modifier, bindKey)
     local id
     if strfind(bindKey, "Scroll") then
@@ -110,19 +111,18 @@ local function UpdateInvalidCache()
     for i, t in pairs(changed) do
         local key = GetAttributeKey(t.modifier or t[1].modifier, t.bindKey or t[1].bindKey)
         -- update db with changed
-        local dbIndex = F:GetIndex(invalidCache, i)
-        if dbIndex then
-            invalidCache[dbIndex] = nil
+        local dbAttrKey = F:GetIndex(invalidCache, i)
+        if dbAttrKey then
+            invalidCache[dbAttrKey] = nil
         end
-        --? normally changed keys won't exist in invalidCache
         invalidCache[key] = i
     end
     -- deleted
     for i, _ in pairs(deleted) do
         -- update db with deleted
-        local dbIndex = F:GetIndex(invalidCache, i)
-        if dbIndex then
-            invalidCache[dbIndex] = nil
+        local dbAttrKey = F:GetIndex(invalidCache, i)
+        if dbAttrKey then
+            invalidCache[dbAttrKey] = nil
         end
     end
 end

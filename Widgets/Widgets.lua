@@ -1491,9 +1491,17 @@ function addon:CreateBindingButton(parent, modifier, bindKey, bindType, bindActi
 	actionGrid:SetPoint("LEFT", typeGrid, "RIGHT", -1, 0)
 	actionGrid:SetPoint("RIGHT")
 
-	if actionGrid:IsTruncated() then
-		SetTooltip(actionGrid, "ANCHOR_TOPLEFT", 1, 0, L["Action"], bindAction)
-	end
+	actionGrid:HookScript("OnEnter", function()
+		if actionGrid:IsTruncated() then
+			CellTooltip:SetOwner(actionGrid, "ANCHOR_TOPLEFT", 0, 1)
+			CellTooltip:AddLine(L["Action"])
+			CellTooltip:AddLine("|cffffffff" .. actionGrid:GetText())
+			CellTooltip:Show()
+		end
+	end)
+	actionGrid:HookScript("OnLeave", function()
+		CellTooltip:Hide()
+	end)
 
 	function b:SetBorderColor(...)
 		keyGrid:SetBackdropBorderColor(...)
@@ -1815,7 +1823,7 @@ local function CreateSetting_Font(parent)
 		function widget:SetDBValue(fontTable)
 			widget.font:SetSelected(fontTable[1])
 			widget.fontSize:SetValue(fontTable[2])
-			widget.outline:SetSelected(fontTable[3])
+			widget.outline:SetSelected(L[fontTable[3]])
 			widget.xOffset:SetValue(fontTable[4])
 		end
 	else
@@ -1899,7 +1907,7 @@ local function CreateSetting_CheckButton(parent)
 		widget = addon:CreateFrame("CellIndicatorSettings_CheckButton", parent, 240, 30)
 		settingWidgets["checkbutton"] = widget
 
-		widget.cb = addon:CreateCheckButton(widget, L["checkbutton"])
+		widget.cb = addon:CreateCheckButton(widget, "checkbutton")
 		widget.cb:SetPoint("LEFT", 5, 0)
 
 		-- associate db
@@ -1913,7 +1921,7 @@ local function CreateSetting_CheckButton(parent)
 		function widget:SetDBValue(t)
 			widget.cb:SetChecked(t[2])
 			widget.settingName = t[1]
-			widget.cb.label:SetText(L[t[1]])
+			widget.cb.label:SetText(t[1])
 		end
 	else
 		widget = settingWidgets["checkbutton"]

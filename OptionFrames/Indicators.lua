@@ -361,7 +361,6 @@ createBtn:SetScript("OnClick", function()
     popup.dropdown1:SetEnabled(false)
     popup.dropdown2:SetItems(auraTypeItems)
     popup.dropdown2:SetSelectedItem(1)
-    popup.dropdown2:SetEnabled(false)
 end)
 
 local deleteBtn = Cell:CreateButton(indicatorsTab, L["Delete"], "red-hover", {61, 20})

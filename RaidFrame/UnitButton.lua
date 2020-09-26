@@ -196,25 +196,25 @@ unitButton = {
 -- auras
 -------------------------------------------------
 local debuffs_cache = {}
+local debuffs_cache_count = {}
 local debuffs_current = {}
 local debuffs_dispel = {}
 local function UnitButton_UpdateDebuffs(self)
-	local filterList = Cell.vars.debuffBlacklist
-
 	local unit = self.state.displayedUnit
 	if not debuffs_cache[unit] then debuffs_cache[unit] = {} end
+	if not debuffs_cache_count[unit] then debuffs_cache_count[unit] = {} end
     if not debuffs_current[unit] then debuffs_current[unit] = {} end
     if not debuffs_dispel[unit] then debuffs_dispel[unit] = {} end
 
-	local found = 1
+	local found, refreshing = 1
     for i = 1, 40 do
         -- name, icon, count, debuffType, duration, expirationTime, source, isStealable, nameplateShowPersonal, spellId, canApplyAura, isBossDebuff, castByPlayer, nameplateShowAll, timeMod, ...
         local name, icon, count, debuffType, duration, expirationTime, source, isStealable, nameplateShowPersonal, spellId = UnitDebuff(unit, i)
 		if not name then
 			break
-        end
+		end
 		
-		if filterList[name] then
+		if Cell.vars.debuffBlacklist[name] then
 			isValid = false
 		else
 			isValid = true
@@ -222,17 +222,20 @@ local function UnitButton_UpdateDebuffs(self)
 
 		if duration and duration <= 600 then
 			if isValid then
+				refreshing = debuffs_cache[unit][name] and ((expirationTime == 0 and debuffs_cache_count[unit][name] and count > debuffs_cache_count[unit][name]) or expirationTime > debuffs_cache[unit][name])
+
 				if enabledIndicators["debuffs"] and found <= indicatorNums["debuffs"] then
 					-- start, duration, debuffType, texture, count, refreshing
-					self.indicators.debuffs[found]:SetCooldown(expirationTime - duration, duration, debuffType or "", icon, count, debuffs_cache[unit][name] and expirationTime > debuffs_cache[unit][name])
+					self.indicators.debuffs[found]:SetCooldown(expirationTime - duration, duration, debuffType or "", icon, count, refreshing)
 					found = found + 1
 				end
-
-				debuffs_cache[unit][name] = expirationTime
-				debuffs_current[unit][name] = i
-
+				
 				-- user created indicators
-				F:ShowCustomIndicators(self, "debuff", name, expirationTime - duration, duration, debuffType, icon, count, debuffs_cache[unit][name] and expirationTime > debuffs_cache[unit][name])
+				F:ShowCustomIndicators(self, "debuff", name, expirationTime - duration, duration, debuffType, icon, count, refreshing)
+				
+				debuffs_cache[unit][name] = expirationTime
+				debuffs_cache_count[unit][name] = count
+				debuffs_current[unit][name] = i
 			end
 
 			if enabledIndicators["dispels"] and debuffType and debuffType ~= "" then
@@ -257,8 +260,9 @@ local function UnitButton_UpdateDebuffs(self)
     local t = GetTime()
     for name, expirationTime in pairs(debuffs_cache[unit]) do
         -- lost or expired
-        if not debuffs_current[unit][name] or t > expirationTime then
+        if not debuffs_current[unit][name] or (expirationTime ~= 0 and t > expirationTime) then -- expirationTime == 0: no duration 
 			debuffs_cache[unit][name] = nil
+			debuffs_cache_count[unit][name] = nil
 			-- user created indicators
 			F:HideCustomIndicators(self, "debuff", name)
         end

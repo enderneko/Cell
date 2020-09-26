@@ -194,7 +194,7 @@ local function ShowTab(tab)
         CheckTextures()
         scaleDropdown:SetSelected(scales[CellDB["scale"]])
         CheckFonts()
-        fontOutlineDropdown:SetSelected(CellDB["outline"])
+        fontOutlineDropdown:SetSelected(L[CellDB["outline"]])
         hideBlizzardCB:SetChecked(CellDB["hideBlizzard"])
         disableTooltipsCB:SetChecked(CellDB["disableTooltips"])
     else
