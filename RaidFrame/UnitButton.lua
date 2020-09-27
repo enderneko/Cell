@@ -160,6 +160,16 @@ local function UpdateIndicators(indicatorName, setting, value)
 			F:IterateAllUnitButtons(function(b)
 				F:RemoveIndicator(b, indicatorName, value)
 			end)
+		elseif setting == "auras" then
+			-- indicator auras changed, hide them all, then recheck whether to show
+			F:IterateAllUnitButtons(function(b)
+				b.indicators[indicatorName]:Hide()
+				UnitButton_UpdateAuras(b)
+			end)
+		elseif setting == "blacklist" then
+			F:IterateAllUnitButtons(function(b)
+				UnitButton_UpdateAuras(b)
+			end)
 		end
 	end
 end

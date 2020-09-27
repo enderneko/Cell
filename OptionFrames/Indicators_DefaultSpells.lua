@@ -3,6 +3,23 @@ local L = Cell.L
 local F = Cell.funcs
 
 -- NOTE: these spellIds ~= realSpellIds, spells are matched by names
+local debuffBlacklist = {
+    8326, -- 鬼魂
+    57723, -- 筋疲力尽
+    57724, -- 心满意足
+    80354, -- 时空错位
+    264689, -- 疲倦
+    206151, -- 挑战者的负担
+}
+
+function F:GetDefaultDebuffBlacklist()
+    local temp = {}
+    for i, id in pairs(debuffBlacklist) do
+        temp[i] = GetSpellInfo(id)
+    end
+    return temp
+end
+
 -------------------------------------------------
 -- aoeHealings
 -------------------------------------------------

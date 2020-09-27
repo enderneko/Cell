@@ -275,20 +275,9 @@ function eventFrame:ADDON_LOADED(arg1)
 
         -- debuffs --------------------------------------------------------------------------------
         if type(CellDB["debuffBlacklist"]) ~= "table" then
-            CellDB["debuffBlacklist"] = {
-                8326, -- 鬼魂
-                57723, -- 筋疲力尽
-                57724, -- 心满意足
-                80354, -- 时空错位
-                264689, -- 疲倦
-                206151, -- 挑战者的负担
-            }
+            CellDB["debuffBlacklist"] = F:GetDefaultDebuffBlacklist()
         end
-        
-        Cell.vars.debuffBlacklist = {}
-        for _, id in pairs(CellDB["debuffBlacklist"]) do
-            Cell.vars.debuffBlacklist[GetSpellInfo(id)] = true
-        end
+        Cell.vars.debuffBlacklist = F:ConvertTable(CellDB["debuffBlacklist"])
 
         -- apply ----------------------------------------------------------------------------------
         if CellDB["hideBlizzard"] then F:HideBlizzard() end

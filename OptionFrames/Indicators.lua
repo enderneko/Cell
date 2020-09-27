@@ -352,7 +352,7 @@ createBtn:SetScript("OnClick", function()
         end
         Cell:Fire("UpdateIndicators")
         LoadIndicatorList()
-        listButtons[last+1]:Click()
+        listButtons[last+2]:Click()
 
     end, true, true, 2)
     popup:SetPoint("TOPLEFT", 100, -100)
@@ -410,11 +410,6 @@ local indicatorSettings = {
 }
 
 local function ShowIndicatorSettings(id)
-    if selected == id then return end
-
-    settingsFrame.scrollFrame:ResetScroll()
-    settingsFrame.scrollFrame:ResetHeight()
-
     local indicatorName = currentLayoutTable["indicators"][id]["indicatorName"]
     local indicatorType = currentLayoutTable["indicators"][id]["type"]
 
@@ -464,9 +459,9 @@ local function ShowIndicatorSettings(id)
             -- show enabled/disabled status
             if currentSetting == "enabled" then
                 if value then
-                    listButtons[id]:SetTextColor(1, 1, 1, 1)
+                    listButtons[id+1]:SetTextColor(1, 1, 1, 1)
                 else
-                    listButtons[id]:SetTextColor(.466, .466, .466, 1)
+                    listButtons[id+1]:SetTextColor(.466, .466, .466, 1)
                 end
             end
         end)
@@ -479,6 +474,48 @@ local function ShowIndicatorSettings(id)
     else
         deleteBtn:SetEnabled(false)
     end
+end
+
+local function ShowDebuffFilterSettings()
+    local widgets = Cell:CreateIndicatorSettings(settingsFrame.scrollFrame.content, {"auras"})
+    
+    local last
+    local height = 0
+    for i, w in pairs(widgets) do
+        if last then
+            w:SetPoint("TOPLEFT", last, "BOTTOMLEFT", 0, -7)
+        else
+            w:SetPoint("TOPLEFT")
+        end
+        w:SetPoint("RIGHT")
+        last = w
+
+        height = height + w:GetHeight()
+
+        w:SetDBValue("debuff", CellDB["debuffBlacklist"])
+
+        w:SetFunc(function(value)
+            CellDB["debuffBlacklist"] = value[2]
+            Cell.vars.debuffBlacklist = F:ConvertTable(CellDB["debuffBlacklist"])
+            Cell:Fire("UpdateIndicators", "", "blacklist")
+        end)
+    end
+
+    settingsFrame.scrollFrame:SetContentHeight(height + (#widgets-1)*7)
+    deleteBtn:SetEnabled(false)
+end
+
+local function ShowSettings(id)
+    if selected == id then return end
+
+    settingsFrame.scrollFrame:ResetScroll()
+    settingsFrame.scrollFrame:ResetHeight()
+
+    if id == 0 then
+        ShowDebuffFilterSettings()
+    else
+        ShowIndicatorSettings(id)
+    end
     selected = id
 end
 
@@ -488,23 +525,31 @@ LoadIndicatorList = function()
     wipe(listButtons)
 
     local last
-    for i, t in pairs(currentLayoutTable["indicators"]) do
-        local b = Cell:CreateButton(listFrame.scrollFrame.content, t["name"], "transparent-class", {20, 20})
+    -- for i, t in pairs(currentLayoutTable["indicators"]) do
+    for i = 0, #currentLayoutTable["indicators"] do
+        local b
+        if i == 0 then -- debuff filter
+            b = Cell:CreateButton(listFrame.scrollFrame.content, L["Global Debuff Filter"], "transparent-class", {20, 20})
+            
+        else -- normal indicators 
+            b = Cell:CreateButton(listFrame.scrollFrame.content, currentLayoutTable["indicators"][i]["name"], "transparent-class", {20, 20})
+            
+            -- show enabled/disabled status
+            if currentLayoutTable["indicators"][i]["enabled"] then
+                b:SetTextColor(1, 1, 1, 1)
+            else
+                b:SetTextColor(.466, .466, .466, 1)
+            end
+        end
+
         tinsert(listButtons, b)
         b.id = i
-
-        -- show enabled/disabled status
-        if t["enabled"] then
-            b:SetTextColor(1, 1, 1, 1)
-        else
-            b:SetTextColor(.466, .466, .466, 1)
-        end
 
         b.ShowTooltip = function()
             if b:GetFontString():IsTruncated() then
                 CellTooltip:SetOwner(b, "ANCHOR_NONE")
                 CellTooltip:SetPoint("RIGHT", b, "LEFT")
-                CellTooltip:AddLine(t["name"])
+                CellTooltip:AddLine(b:GetText())
                 CellTooltip:Show()
             end
         end
@@ -523,10 +568,14 @@ LoadIndicatorList = function()
     end
     listFrame.scrollFrame:SetContentHeight(20, #listButtons, -1)
 
-    Cell:CreateButtonGroup(listButtons, ShowIndicatorSettings, function(id)
-        LCG.PixelGlow_Start(previewButton.indicators[currentLayoutTable["indicators"][id]["indicatorName"]])
+    Cell:CreateButtonGroup(listButtons, ShowSettings, function(id)
+        if id ~= 0 then
+            LCG.PixelGlow_Start(previewButton.indicators[currentLayoutTable["indicators"][id]["indicatorName"]])
+        end
     end, function(id)
-        LCG.PixelGlow_Stop(previewButton.indicators[currentLayoutTable["indicators"][id]["indicatorName"]])
+        if id ~= 0 then
+            LCG.PixelGlow_Stop(previewButton.indicators[currentLayoutTable["indicators"][id]["indicatorName"]])
+        end
     end)
 end
 

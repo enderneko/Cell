@@ -109,6 +109,21 @@ function F:ConvertTable(t)
     return temp
 end
 
+function F:CheckTableRemoved(previous, after)
+    local aa = {}
+    local ret = {}
+
+    for k,v in pairs(previous) do aa[v] = true end
+    for k,v in pairs(after) do aa[v] = nil end
+
+    for k,v in pairs(previous) do
+        if aa[v] then
+            tinsert(ret, v)
+        end
+    end
+    return ret
+end
+
 -------------------------------------------------
 -- general
 -------------------------------------------------

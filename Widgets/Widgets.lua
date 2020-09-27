@@ -1097,6 +1097,7 @@ function addon:CreateScrollFrame(parent, top, bottom, color, border)
 		else
 			scrollFrame:SetPoint("BOTTOMRIGHT", parent, 0, bottom)
 			scrollbar:Hide()
+			if scrollFrame:GetVerticalScroll() > 0 then scrollFrame:SetVerticalScroll(0) end
 		end
 	end)
 
@@ -1134,9 +1135,11 @@ function addon:CreateScrollFrame(parent, top, bottom, color, border)
 	end)
 	
 	scrollFrame:SetScript("OnVerticalScroll", function(self, offset)
-		local scrollP = scrollFrame:GetVerticalScroll()/scrollFrame:GetVerticalScrollRange()
-		local yoffset = -((scrollbar:GetHeight()-scrollThumb:GetHeight())*scrollP)
-		scrollThumb:SetPoint("TOP", 0, yoffset)
+		if scrollFrame:GetVerticalScrollRange() ~= 0 then
+			local scrollP = scrollFrame:GetVerticalScroll()/scrollFrame:GetVerticalScrollRange()
+			local yoffset = -((scrollbar:GetHeight()-scrollThumb:GetHeight())*scrollP)
+			scrollThumb:SetPoint("TOP", 0, yoffset)
+		end
 	end)
 	
 	local step = 25
@@ -1971,6 +1974,8 @@ local function CreateSetting_Auras(parent)
 			elseif cursorHeight > h + vs then
 				widget.frame.scrollFrame:SetVerticalScroll(-y-h+lineHeight+arg)
 			end
+
+			if widget.frame.scrollFrame:GetVerticalScroll() > widget.frame.scrollFrame:GetVerticalScrollRange() then widget.frame.scrollFrame:ScrollToBottom() end
 		end)
 
 		widget.eb:SetScript("OnTextChanged", function(self, userChanged)
@@ -1990,19 +1995,19 @@ local function CreateSetting_Auras(parent)
 		widget.b:SetScript("OnClick", function()
 			widget.b:SetEnabled(false)
 			widget.eb:ClearFocus()
-			widget.func({widget.auraType, F:StringToTable(widget.eb:GetText(), "\n")})
+			widget.func({widget.title, F:StringToTable(widget.eb:GetText(), "\n")})
 		end)
-		
+
 		-- associate db
 		function widget:SetFunc(func)
 			widget.func = func
 		end
 
 		-- show db value
-		function widget:SetDBValue(auraType, auras)
-			widget.text:SetText(L[F:UpperFirst(auraType).." List"])
-			widget.eb:SetText(F:TableToString(auras, "\n"))
-			widget.auraType = auraType
+		function widget:SetDBValue(title, t)
+			widget.text:SetText(L[F:UpperFirst(title).." List"])
+			widget.eb:SetText(F:TableToString(t, "\n"))
+			widget.title = title
 		end
 	else
 		widget = settingWidgets["editbox"]
@@ -2011,6 +2016,7 @@ local function CreateSetting_Auras(parent)
 	-- widget.eb:SetText("1\n2\n3\n4\n5\n6\n7\n8\n9\n10")
 	widget.eb:SetCursorPosition(0)
 	-- widget.frame.scrollFrame:ResetHeight()
+	widget.b:SetEnabled(false)
 	widget.frame.scrollFrame:ResetScroll()
 	widget:Show()
 	return widget

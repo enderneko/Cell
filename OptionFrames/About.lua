@@ -47,6 +47,29 @@ bugReportText:SetPoint("TOPLEFT", 5, -280)
 local bugReportEB = Cell:CreateEditBox(aboutTab, 377, 20)
 bugReportEB:SetPoint("TOPLEFT", bugReportText, "BOTTOMLEFT", 5, -12)
 bugReportEB:SetText("https://github.com/enderneko/Cell/issues")
+bugReportEB:SetScript("OnTextChanged", function(self, userChanged)
+    if userChanged then
+        bugReportEB:SetText("https://github.com/enderneko/Cell/issues")
+        bugReportEB:HighlightText()
+    end
+end)
+
+if LOCALE_zhCN then
+    local cnbugReportText = aboutTab:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
+    cnbugReportText:SetPoint("TOPLEFT", bugReportEB, "BOTTOMLEFT", 0, -20)
+    cnbugReportText:SetText("也可以在NGA回帖反馈(但不一定能及时看到)")
+
+    local cnbugReportEB = Cell:CreateEditBox(aboutTab, 377, 20)
+    cnbugReportEB:SetPoint("TOPLEFT", cnbugReportText, "BOTTOMLEFT", 0, -5)
+    cnbugReportEB:SetText("https://bbs.nga.cn/read.php?tid=23488341")
+    cnbugReportEB:SetScript("OnTextChanged", function(self, userChanged)
+        if userChanged then
+            cnbugReportEB:SetText("https://bbs.nga.cn/read.php?tid=23488341")
+            cnbugReportEB:HighlightText()
+        end
+    end)
+    
+end
 
 local function ShowTab(tab)
     if tab == "about" then
