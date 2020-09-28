@@ -212,7 +212,7 @@ function eventFrame:ADDON_LOADED(arg1)
                             ["enabled"] = true,
                             ["position"] = {"BOTTOMRIGHT", "BOTTOMRIGHT", 0, 4},
                             ["size"] = {12, 12},
-                            ["checkbutton"] = {L["Only show debuffs dispellable by me"], true}
+                            ["dispellableByMe"] = true
                         },
                         {
                             ["name"] = L["Debuffs"],
@@ -242,6 +242,7 @@ function eventFrame:ADDON_LOADED(arg1)
                         --     ["size"] = {13, 13},
                         --     ["font"] = {"Cell ".._G.DEFAULT, 12, "Outline", 2},
                         --     ["auraType"] = "buff",
+                        --     ["castByMe"] = true,
                         --     ["auras"] = {},
                         -- },
                         -- {

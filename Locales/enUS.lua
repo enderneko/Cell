@@ -12,6 +12,9 @@ select(2, ...).L = setmetatable({
 	["T"] = "Talent",
 	["P"] = "PvP Talent",
 
+	["dispellableByMe"] = "Only show debuffs dispellable by me",
+	["castByMe"] = "Only show buffs cast by me",
+
 	["BOTTOM"] = "Bottom",
 	["BOTTOMLEFT"] = "Bottom Left",
 	["BOTTOMRIGHT"] = "Bottom Right",

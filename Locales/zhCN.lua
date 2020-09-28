@@ -164,7 +164,8 @@ L["Size"] = "尺寸"
 L["Max Icons"] = "最大显示数量"
 L["Color"] = "颜色"
 
-L["Only show debuffs dispellable by me"] = "只显示我能驱散的减益"
+L["dispellableByMe"] = "只显示我能驱散的减益"
+L["castByMe"] = "只显示我施放的增益"
 
 -------------------------------------------------
 -- about

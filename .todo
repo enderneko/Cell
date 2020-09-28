@@ -1,8 +1,9 @@
 General:
 
+
 UnitButton:
-    ☐ Auras
-    ☐ status-drinking
+
 
 Indicators:
     ☐ altpower
+    ☐ when debuffs with SAME NAME refreshed, unexpected icons play its animation.

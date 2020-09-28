@@ -363,6 +363,9 @@ createBtn:SetScript("OnClick", function()
                 ["auras"] = {},
             })
         end
+        if indicatorAuraType == "buff" then
+            currentLayoutTable["indicators"][last+1]["castByMe"] = true
+        end
         Cell:Fire("UpdateIndicators", indicatorName, "create", currentLayoutTable["indicators"][last+1])
         LoadIndicatorList()
         listButtons[last+1]:Click()
@@ -436,6 +439,9 @@ local function ShowIndicatorSettings(id)
         settingsTable = indicatorSettings[indicatorName]
     elseif indicatorType == "icon" then
         settingsTable = {"enabled", "position", "size-square", "font", "auras"}
+        if currentLayoutTable["indicators"][id]["auraType"] == "buff" then
+            tinsert(settingsTable, #settingsTable, "checkbutton") -- castByMe
+        end 
     end
 
     local widgets = Cell:CreateIndicatorSettings(settingsFrame.scrollFrame.content, settingsTable)
@@ -458,7 +464,13 @@ local function ShowIndicatorSettings(id)
         if currentSetting == "size-square" then currentSetting = "size" end
         
         -- echo
-        if currentSetting == "auras" then
+        if currentSetting == "checkbutton" then
+            if indicatorName == "dispels" then
+                w:SetDBValue("dispellableByMe", currentLayoutTable["indicators"][id]["dispellableByMe"])
+            else -- custom indicators
+                w:SetDBValue("castByMe", currentLayoutTable["indicators"][id]["castByMe"])
+            end
+        elseif currentSetting == "auras" then
             w:SetDBValue(L[F:UpperFirst(currentLayoutTable["indicators"][id]["auraType"]).." List"], currentLayoutTable["indicators"][id]["auras"])
         elseif currentSetting == "blacklist" then
             w:SetDBValue(L["Debuff Filter (blacklist)"], CellDB["debuffBlacklist"])
@@ -467,9 +479,12 @@ local function ShowIndicatorSettings(id)
         end
 
         -- update func
-        w:SetFunc(function(value)
+        w:SetFunc(function(value, value2)
             -- texplore(value)
-            if currentSetting == "auras" then
+            if currentSetting == "checkbutton" then
+                Cell.vars.currentLayoutTable["indicators"][id][value] = value2
+                Cell:Fire("UpdateIndicators", indicatorName, currentSetting, value2)
+            elseif currentSetting == "auras" then
                 Cell.vars.currentLayoutTable["indicators"][id][currentSetting] = value
                 Cell:Fire("UpdateIndicators", indicatorName, currentSetting, currentLayoutTable["indicators"][id]["auraType"], value)
             elseif currentSetting == "blacklist" then

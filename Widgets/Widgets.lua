@@ -1919,15 +1919,15 @@ local function CreateSetting_CheckButton(parent)
 		-- associate db
 		function widget:SetFunc(func)
 			widget.cb.onClick = function(checked)
-				func({widget.settingName, checked})
+				func(widget.settingName, checked)
 			end
 		end
 
 		-- show db value
-		function widget:SetDBValue(t)
-			widget.cb:SetChecked(t[2])
-			widget.settingName = t[1]
-			widget.cb.label:SetText(t[1])
+		function widget:SetDBValue(settingName, checked)
+			widget.cb:SetChecked(checked)
+			widget.settingName = settingName
+			widget.cb.label:SetText(L[settingName])
 		end
 	else
 		widget = settingWidgets["checkbutton"]

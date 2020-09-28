@@ -75,8 +75,10 @@ local function UpdateIndicators(indicatorName, setting, value)
 				indicatorNums[t["indicatorName"]] = t["num"]
 			end
 			-- update custom
-			if t["checkbutton"] then
-				indicatorCustoms[t["indicatorName"]] = t["checkbutton"][2]
+			if t["dispellableByMe"] ~= nil then
+				indicatorCustoms[t["indicatorName"]] = t["dispellableByMe"]
+			elseif t["castByMe"] ~= nil then
+				indicatorCustoms[t["indicatorName"]] = t["castByMe"]
 			end
 			-- update indicators
 			F:IterateAllUnitButtons(function(b)
@@ -148,7 +150,7 @@ local function UpdateIndicators(indicatorName, setting, value)
 				UnitButton_UpdateAuras(b)
 			end)
 		elseif setting == "checkbutton" then
-			indicatorCustoms[indicatorName] = value[2]
+			indicatorCustoms[indicatorName] = value
 			F:IterateAllUnitButtons(function(b)
 				UnitButton_UpdateAuras(b)
 			end)
@@ -243,6 +245,7 @@ local function UnitButton_UpdateDebuffs(self)
 			isValid = true
 		end
 
+		-- if duration and duration ~= 0 and duration <= 600 then
 		if duration and duration <= 600 then
 			if isValid then
 				refreshing = debuffs_cache[unit][name] and ((expirationTime == 0 and debuffs_cache_count[unit][name] and count > debuffs_cache_count[unit][name]) or expirationTime > debuffs_cache[unit][name])
@@ -296,7 +299,9 @@ local function UnitButton_UpdateDebuffs(self)
 end
 
 local buffs_cache = {}
+local buffs_cache_castByMe = {}
 local buffs_current = {}
+local buffs_current_castByMe = {}
 local function UnitButton_UpdateBuffs(self)
 	local unit = self.state.displayedUnit
 	if not buffs_cache[unit] then buffs_cache[unit] = {} end
@@ -308,7 +313,7 @@ local function UnitButton_UpdateBuffs(self)
         local name, icon, count, debuffType, duration, expirationTime, source, isStealable, nameplateShowPersonal, spellId = UnitBuff(unit, i)
 		if not name then
 			break
-        end
+		end
 		
 		if duration then
 			-- defensiveCooldowns
@@ -341,7 +346,7 @@ local function UnitButton_UpdateBuffs(self)
 			end
 
 			-- user created indicators
-			F:ShowCustomIndicators(self, "buff", name, expirationTime - duration, duration, nil, icon, count, buffs_cache[unit][name] and expirationTime > buffs_cache[unit][name])
+			F:ShowCustomIndicators(self, "buff", name, expirationTime - duration, duration, nil, icon, count, buffs_cache[unit][name] and expirationTime > buffs_cache[unit][name], false)
 			
             buffs_cache[unit][name] = expirationTime
             buffs_current[unit][name] = i
@@ -376,10 +381,40 @@ local function UnitButton_UpdateBuffs(self)
         if not buffs_current[unit][name] or t > expirationTime then
 			buffs_cache[unit][name] = nil
 			-- user created indicators
-			F:HideCustomIndicators(self, "buff", name)
+			F:HideCustomIndicators(self, "buff", name, false)
         end
 	end
 	wipe(buffs_current[unit])
+
+	-- cast by me ---------------------------------------------------------------------
+	if not buffs_cache_castByMe[unit] then buffs_cache_castByMe[unit] = {} end
+    if not buffs_current_castByMe[unit] then buffs_current_castByMe[unit] = {} end
+	for i = 1, 40 do
+        -- name, icon, count, debuffType, duration, expirationTime, source, isStealable, nameplateShowPersonal, spellId, canApplyAura, isBossDebuff, castByPlayer, nameplateShowAll, timeMod, ...
+        local name, icon, count, debuffType, duration, expirationTime, source, isStealable, nameplateShowPersonal, spellId = UnitBuff(unit, i, "PLAYER")
+		if not name then
+			break
+		end
+
+		if duration then
+			F:ShowCustomIndicators(self, "buff", name, expirationTime - duration, duration, nil, icon, count, buffs_cache_castByMe[unit][name] and expirationTime > buffs_cache_castByMe[unit][name], true)
+			
+            buffs_cache_castByMe[unit][name] = expirationTime
+            buffs_current_castByMe[unit][name] = i
+		end
+	end
+
+	-- update buffs_cache
+    t = GetTime()
+    for name, expirationTime in pairs(buffs_cache_castByMe[unit]) do
+        -- lost or expired
+        if not buffs_current_castByMe[unit][name] or t > expirationTime then
+			buffs_cache_castByMe[unit][name] = nil
+			-- user created indicators
+			F:HideCustomIndicators(self, "buff", name, true)
+        end
+	end
+	wipe(buffs_current_castByMe[unit])
 end
 
 -------------------------------------------------

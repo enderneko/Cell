@@ -1,6 +1,6 @@
 ## Interface: 80300
 ## Title: Cell
-## Version: r2-alpha
+## Version: r4-alpha
 ## Author: 篠崎
 ## SavedVariables: CellDB
 ## SavedVariablesPerCharacter: CellCharacterDB
@@ -12,6 +12,7 @@ Libs\LoadLibs.xml
 
 Core.lua
 Utils.lua
+Revise.lua
 Comm.lua
 Widgets\LoadWidgets.xml
 
