@@ -247,8 +247,21 @@ local function UpdateIndicators(indicatorName, setting, value)
             indicator:SetColor(unpack(value))
         elseif setting == "create" then
             indicator = F:CreateIndicator(previewButton, value)
-            indicator:Show()
+            -- update position
+            indicator:ClearAllPoints()
+            indicator:SetPoint(value["position"][1], previewButton, value["position"][2], value["position"][3], value["position"][4])
+            -- update size
+            indicator:SetSize(unpack(value["size"]))
+            -- update font
+            if value["font"] then
+                indicator:SetFont(unpack(value["font"]))
+            end
+            -- update color
+            if value["color"] then
+                indicator:SetColor(unpack(value["color"]))
+            end
             InitIndicator(indicatorName)
+            indicator:Show()
         elseif setting == "remove" then
             F:RemoveIndicator(previewButton, indicatorName, value)
         end
@@ -350,9 +363,9 @@ createBtn:SetScript("OnClick", function()
                 ["auras"] = {},
             })
         end
-        Cell:Fire("UpdateIndicators")
+        Cell:Fire("UpdateIndicators", indicatorName, "create", currentLayoutTable["indicators"][last+1])
         LoadIndicatorList()
-        listButtons[last+2]:Click()
+        listButtons[last+1]:Click()
 
     end, true, true, 2)
     popup:SetPoint("TOPLEFT", 100, -100)
@@ -405,11 +418,16 @@ local indicatorSettings = {
     ["defensiveCooldowns"] = {"enabled", "position", "size", "num"},
     ["tankActiveMitigation"] = {"enabled", "position", "size"},
     ["dispels"] = {"enabled", "position", "size-square", "checkbutton"},
-    ["debuffs"] = {"enabled", "position", "size-square", "num", "font"},
+    ["debuffs"] = {"enabled", "position", "size-square", "num", "font", "blacklist"},
     ["centralDebuff"] = {"enabled", "position", "size-square", "font"},
 }
 
 local function ShowIndicatorSettings(id)
+    if selected == id then return end
+
+    settingsFrame.scrollFrame:ResetScroll()
+    settingsFrame.scrollFrame:ResetHeight()
+
     local indicatorName = currentLayoutTable["indicators"][id]["indicatorName"]
     local indicatorType = currentLayoutTable["indicators"][id]["type"]
 
@@ -441,27 +459,33 @@ local function ShowIndicatorSettings(id)
         
         -- echo
         if currentSetting == "auras" then
-            w:SetDBValue(currentLayoutTable["indicators"][id]["auraType"], currentLayoutTable["indicators"][id]["auras"])
+            w:SetDBValue(L[F:UpperFirst(currentLayoutTable["indicators"][id]["auraType"]).." List"], currentLayoutTable["indicators"][id]["auras"])
+        elseif currentSetting == "blacklist" then
+            w:SetDBValue(L["Debuff Filter (blacklist)"], CellDB["debuffBlacklist"])
         else
             w:SetDBValue(currentLayoutTable["indicators"][id][currentSetting])
         end
-        
 
         -- update func
         w:SetFunc(function(value)
             -- texplore(value)
             if currentSetting == "auras" then
-                Cell.vars.currentLayoutTable["indicators"][id][currentSetting] = value[2]
+                Cell.vars.currentLayoutTable["indicators"][id][currentSetting] = value
+                Cell:Fire("UpdateIndicators", indicatorName, currentSetting, currentLayoutTable["indicators"][id]["auraType"], value)
+            elseif currentSetting == "blacklist" then
+                CellDB["debuffBlacklist"] = value
+                Cell.vars.debuffBlacklist = F:ConvertTable(CellDB["debuffBlacklist"])
+                Cell:Fire("UpdateIndicators", "", "blacklist")
             else
                 Cell.vars.currentLayoutTable["indicators"][id][currentSetting] = value
+                Cell:Fire("UpdateIndicators", indicatorName, currentSetting, value)
             end
-            Cell:Fire("UpdateIndicators", indicatorName, currentSetting, value)
             -- show enabled/disabled status
             if currentSetting == "enabled" then
                 if value then
-                    listButtons[id+1]:SetTextColor(1, 1, 1, 1)
+                    listButtons[id]:SetTextColor(1, 1, 1, 1)
                 else
-                    listButtons[id+1]:SetTextColor(.466, .466, .466, 1)
+                    listButtons[id]:SetTextColor(.466, .466, .466, 1)
                 end
             end
         end)
@@ -474,48 +498,6 @@ local function ShowIndicatorSettings(id)
     else
         deleteBtn:SetEnabled(false)
     end
-end
-
-local function ShowDebuffFilterSettings()
-    local widgets = Cell:CreateIndicatorSettings(settingsFrame.scrollFrame.content, {"auras"})
-    
-    local last
-    local height = 0
-    for i, w in pairs(widgets) do
-        if last then
-            w:SetPoint("TOPLEFT", last, "BOTTOMLEFT", 0, -7)
-        else
-            w:SetPoint("TOPLEFT")
-        end
-        w:SetPoint("RIGHT")
-        last = w
-
-        height = height + w:GetHeight()
-
-        w:SetDBValue("debuff", CellDB["debuffBlacklist"])
-
-        w:SetFunc(function(value)
-            CellDB["debuffBlacklist"] = value[2]
-            Cell.vars.debuffBlacklist = F:ConvertTable(CellDB["debuffBlacklist"])
-            Cell:Fire("UpdateIndicators", "", "blacklist")
-        end)
-    end
-
-    settingsFrame.scrollFrame:SetContentHeight(height + (#widgets-1)*7)
-    deleteBtn:SetEnabled(false)
-end
-
-local function ShowSettings(id)
-    if selected == id then return end
-
-    settingsFrame.scrollFrame:ResetScroll()
-    settingsFrame.scrollFrame:ResetHeight()
-
-    if id == 0 then
-        ShowDebuffFilterSettings()
-    else
-        ShowIndicatorSettings(id)
-    end
     selected = id
 end
 
@@ -525,25 +507,22 @@ LoadIndicatorList = function()
     wipe(listButtons)
 
     local last
-    -- for i, t in pairs(currentLayoutTable["indicators"]) do
-    for i = 0, #currentLayoutTable["indicators"] do
+    for i, t in pairs(currentLayoutTable["indicators"]) do
         local b
-        if i == 0 then -- debuff filter
-            b = Cell:CreateButton(listFrame.scrollFrame.content, L["Global Debuff Filter"], "transparent-class", {20, 20})
-            
-        else -- normal indicators 
-            b = Cell:CreateButton(listFrame.scrollFrame.content, currentLayoutTable["indicators"][i]["name"], "transparent-class", {20, 20})
-            
-            -- show enabled/disabled status
-            if currentLayoutTable["indicators"][i]["enabled"] then
-                b:SetTextColor(1, 1, 1, 1)
-            else
-                b:SetTextColor(.466, .466, .466, 1)
-            end
+        if t["type"] == "built-in" then
+            b = Cell:CreateButton(listFrame.scrollFrame.content, t["name"], "transparent-class", {20, 20})
+        else
+            b = Cell:CreateButton(listFrame.scrollFrame.content, t["name"].." |cFF777777("..L[t["auraType"]]..")", "transparent-class", {20, 20})
         end
-
         tinsert(listButtons, b)
         b.id = i
+            
+        -- show enabled/disabled status
+        if t["enabled"] then
+            b:SetTextColor(1, 1, 1, 1)
+        else
+            b:SetTextColor(.466, .466, .466, 1)
+        end
 
         b.ShowTooltip = function()
             if b:GetFontString():IsTruncated() then
@@ -568,14 +547,10 @@ LoadIndicatorList = function()
     end
     listFrame.scrollFrame:SetContentHeight(20, #listButtons, -1)
 
-    Cell:CreateButtonGroup(listButtons, ShowSettings, function(id)
-        if id ~= 0 then
-            LCG.PixelGlow_Start(previewButton.indicators[currentLayoutTable["indicators"][id]["indicatorName"]])
-        end
+    Cell:CreateButtonGroup(listButtons, ShowIndicatorSettings, function(id)
+        LCG.PixelGlow_Start(previewButton.indicators[currentLayoutTable["indicators"][id]["indicatorName"]])
     end, function(id)
-        if id ~= 0 then
-            LCG.PixelGlow_Stop(previewButton.indicators[currentLayoutTable["indicators"][id]["indicatorName"]])
-        end
+        LCG.PixelGlow_Stop(previewButton.indicators[currentLayoutTable["indicators"][id]["indicatorName"]])
     end)
 end
 

@@ -154,7 +154,20 @@ local function UpdateIndicators(indicatorName, setting, value)
 			end)
 		elseif setting == "create" then
 			F:IterateAllUnitButtons(function(b)
-				F:CreateIndicator(b, value)
+				local indicator = F:CreateIndicator(b, value)
+				-- update position
+				indicator:ClearAllPoints()
+				indicator:SetPoint(value["position"][1], b, value["position"][2], value["position"][3], value["position"][4])
+				-- update size
+				indicator:SetSize(unpack(value["size"]))
+				-- update font
+				if value["font"] then
+					indicator:SetFont(unpack(value["font"]))
+				end
+				-- update color
+				if value["color"] then
+					indicator:SetColor(unpack(value["color"]))
+				end
 			end)
 		elseif setting == "remove" then
 			F:IterateAllUnitButtons(function(b)

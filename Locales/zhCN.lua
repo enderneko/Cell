@@ -33,6 +33,8 @@ L["DRINKING"] = "喝水"
 -- options
 -------------------------------------------------
 L["Can't change options in combat."] = "无法在战斗中更改设置。"
+L["Yes"] = "是"
+L["No"] = "否"
 
 -------------------------------------------------
 -- appearance
@@ -47,6 +49,8 @@ L["Outline"] = "轮廓"
 L["Monochrome Outline"] = "单色轮廓"
 L["Blizzard Frames"] = "暴雪框体"
 L["Hide Blizzard Raid / Party"] = "隐藏暴雪团队/小队"
+L["Hide Blizzard Frames"] = "隐藏暴雪框体"
+L["Require reload of the UI"] = "需要重载界面"
 L["Tooltips"] = "鼠标提示"
 L["Disable tooltips"] = "禁用鼠标提示"
 
@@ -130,10 +134,12 @@ L["Debuffs"] = "减益"
 L["Central Debuff"] = "减益 (中间)"
 
 L["Create new indicator"] = "创建新指示器"
+L["Delete indicator"] = "删除指示器"
 L["Buff"] = "增益"
 L["Debuff"] = "减益"
 L["Buff List"] = "增益列表"
 L["Debuff List"] = "减益列表"
+L["Debuff Filter (blacklist)"] = "减益过滤器 (黑名单)"
 L["Icon"] = "图标"
 L["Rectangle"] = "矩形"
 L["Bar"] = "进度条"

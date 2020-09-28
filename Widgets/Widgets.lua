@@ -1783,18 +1783,21 @@ local function CreateSetting_Font(parent)
 		widget.outline:SetItems({
 			{
 				["text"] = L["Shadow"],
+				["value"] = "Shadow",
 				["onClick"] = function()
 					widget.func({widget.font:GetSelected(), widget.fontSize:GetValue(), widget.outline:GetSelected(), widget.xOffset:GetValue()})
 				end,
 			},
 			{
 				["text"] = L["Outline"],
+				["value"] = "Outline",
 				["onClick"] = function()
 					widget.func({widget.font:GetSelected(), widget.fontSize:GetValue(), widget.outline:GetSelected(), widget.xOffset:GetValue()})
 				end,
 			},
 			{
 				["text"] = L["Monochrome Outline"],
+				["value"] = "Monochrome Outline",
 				["onClick"] = function()
 					widget.func({widget.font:GetSelected(), widget.fontSize:GetValue(), widget.outline:GetSelected(), widget.xOffset:GetValue()})
 				end,
@@ -1995,7 +1998,7 @@ local function CreateSetting_Auras(parent)
 		widget.b:SetScript("OnClick", function()
 			widget.b:SetEnabled(false)
 			widget.eb:ClearFocus()
-			widget.func({widget.title, F:StringToTable(widget.eb:GetText(), "\n")})
+			widget.func(F:StringToTable(widget.eb:GetText(), "\n"))
 		end)
 
 		-- associate db
@@ -2005,9 +2008,9 @@ local function CreateSetting_Auras(parent)
 
 		-- show db value
 		function widget:SetDBValue(title, t)
-			widget.text:SetText(L[F:UpperFirst(title).." List"])
+			widget.text:SetText(title)
 			widget.eb:SetText(F:TableToString(t, "\n"))
-			widget.title = title
+			-- widget.title = title
 		end
 	else
 		widget = settingWidgets["editbox"]
@@ -2051,7 +2054,7 @@ function addon:CreateIndicatorSettings(parent, settingsTable)
 			tinsert(widgetsTable, CreateSetting_Color(parent))
 		elseif setting == "checkbutton" then
 			tinsert(widgetsTable, CreateSetting_CheckButton(parent))
-		elseif setting == "auras" then
+		elseif setting == "auras" or setting == "blacklist" then
 			tinsert(widgetsTable, CreateSetting_Auras(parent))
 		end
 	end

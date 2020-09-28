@@ -122,9 +122,12 @@ local function CreateAura_BarIcon(name, parent)
     stack:SetPoint("TOPRIGHT", 2, 0)
     -- stack:SetPoint("CENTER", 1, 0)
 
-    function frame:SetFont(font, size, flags, horizontalOffset)
+    function frame:SetFont(font, size, flags, horizontalOffset, isFontName)
+        if not string.find(font, ".ttf") then font = F:GetFont(font) end
+
         if flags == "Shadow" then
             frame.stack:SetFont(font, size)
+            frame.stack:SetShadowOffset(1, -1)
             frame.stack:SetShadowColor(0, 0, 0, 1)
         else
             if flags == "Outline" then
@@ -133,6 +136,7 @@ local function CreateAura_BarIcon(name, parent)
                 flags = "OUTLINE, MONOCHROME"
             end
             frame.stack:SetFont(font, size, flags)
+            frame.stack:SetShadowOffset(0, 0)
             frame.stack:SetShadowColor(0, 0, 0, 0)
         end
         frame.stack:ClearAllPoints()
@@ -500,7 +504,7 @@ function F:RemoveIndicator(parent, indicatorName, auraType)
     customIndicators[auraType][indicatorName] = nil
 end
 
-local function UpdateCustomIndicators(indicatorName, setting, value)
+local function UpdateCustomIndicators(indicatorName, setting, value, aurasTable)
     if not indicatorName or not string.find(indicatorName, "indicator") then return end
 
     if setting == "enabled" then
@@ -510,7 +514,7 @@ local function UpdateCustomIndicators(indicatorName, setting, value)
             enabledIndicators[indicatorName] = nil
         end
     elseif setting == "auras" then
-        customIndicators[value[1]][indicatorName]["auras"] = F:ConvertTable(value[2])
+        customIndicators[value][indicatorName]["auras"] = F:ConvertTable(aurasTable)
     end
 end
 Cell:RegisterCallback("UpdateIndicators", "UpdateCustomIndicators", UpdateCustomIndicators)
