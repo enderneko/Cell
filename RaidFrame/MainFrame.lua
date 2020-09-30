@@ -51,19 +51,40 @@ local tools = Cell:CreateButton(cellMainFrame, "", "blue", {20, 10}, false, true
 tools:SetPoint("LEFT", options, "RIGHT", 1, 0)
 RegisterDragForMainFrame(tools)
 
--- local layouts = Cell:CreateButton(cellMainFrame, "", "blue", {20, 10}, false, L["Layouts"])
--- layouts:SetPoint("LEFT", tools, "RIGHT", 1, 0)
--- layouts:Hide()
--- RegisterDragForMainFrame(layouts)
+-------------------------------------------------
+-- raid setup
+-------------------------------------------------
+local raidSetupFrame = CreateFrame("Frame", "CellRaidSetupFrame", cellMainFrame)
+Cell.frames.raidSetupFrame = raidSetupFrame
+raidSetupFrame:SetPoint("LEFT", tools, "RIGHT", 5, 0)
+raidSetupFrame:SetSize(50, 15)
+raidSetupFrame:Hide()
 
--- local function MainFrame_GroupTypeChanged(group)
---     if group == "raid" then
---         layouts:Show()
---     else
---         layouts:Hide()
---     end
--- end
--- Cell:RegisterCallback("GroupTypeChanged", "MainFrame_GroupTypeChanged", MainFrame_GroupTypeChanged)
+local raidSetupText = raidSetupFrame:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
+raidSetupText:SetFont(raidSetupText:GetFont(), 12, "OUTLINE")
+raidSetupText:SetShadowColor(0, 0, 0)
+raidSetupText:SetShadowOffset(0, 0)
+raidSetupText:SetPoint("LEFT")
+
+local tankIcon = "|TInterface\\AddOns\\Cell\\Media\\Roles\\TANK:10:10:0:0:10:10:1:9:1:9|t"
+local healerIcon = "|TInterface\\AddOns\\Cell\\Media\\Roles\\HEALER:10:10:0:0:10:10:1:9:1:9|t"
+local damagerIcon = "|TInterface\\AddOns\\Cell\\Media\\Roles\\DAMAGER:10:10:0:0:10:10:1:9:1:9|t"
+
+function F:UpdateRaidSetup()
+    raidSetupText:SetText(tankIcon..Cell.vars.role["TANK"]..healerIcon..Cell.vars.role["HEALER"]..damagerIcon..Cell.vars.role["DAMAGER"])
+end
+
+-------------------------------------------------
+-- group type changed
+-------------------------------------------------
+local function MainFrame_GroupTypeChanged(groupType)
+    if groupType == "raid" then
+        if CellDB["showRaidSetup"] then raidSetupFrame:Show() end
+    else
+        raidSetupFrame:Hide()
+    end
+end
+Cell:RegisterCallback("GroupTypeChanged", "MainFrame_GroupTypeChanged", MainFrame_GroupTypeChanged)
 
 -------------------------------------------------
 -- load & update

@@ -181,6 +181,24 @@ end)
 disableTooltipsCB:SetPoint("TOPLEFT", tooltipsText, "BOTTOMLEFT", 5, -15)
 
 -------------------------------------------------
+-- raid setup
+-------------------------------------------------
+local setupText = Cell:CreateSeparator(L["Raid Setup"], appearanceTab, 188)
+setupText:SetPoint("TOPLEFT", 5, -260)
+
+local setupCB = Cell:CreateCheckButton(appearanceTab, L["Show Raid Setup"], function(checked, self)
+    CellDB["showRaidSetup"] = checked
+    if IsInRaid() then
+        if checked then
+            Cell.frames.raidSetupFrame:Show()
+        else
+            Cell.frames.raidSetupFrame:Hide()
+        end
+    end
+end, L["Show Raid Setup"], L["Show the number of tanks/healers/damagers while in raid"])
+setupCB:SetPoint("TOPLEFT", setupText, "BOTTOMLEFT", 5, -15)
+
+-------------------------------------------------
 -- functions
 -------------------------------------------------
 local loaded
@@ -197,6 +215,7 @@ local function ShowTab(tab)
         fontOutlineDropdown:SetSelected(L[CellDB["outline"]])
         hideBlizzardCB:SetChecked(CellDB["hideBlizzard"])
         disableTooltipsCB:SetChecked(CellDB["disableTooltips"])
+        setupCB:SetChecked(CellDB["showRaidSetup"])
     else
         appearanceTab:Hide()
     end

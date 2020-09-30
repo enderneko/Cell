@@ -274,13 +274,12 @@ end
 
 function F:GetGroupType()
     if IsInRaid() then
-        Cell.vars.groupType = "raid"
+        return "raid"
     elseif IsInGroup() then
-        Cell.vars.groupType = "party"
+        return "party"
     else
-        Cell.vars.groupType = "solo"
+        return "solo"
     end
-    return Cell.vars.groupType
 end
 
 -------------------------------------------------

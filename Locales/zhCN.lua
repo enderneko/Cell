@@ -3,6 +3,11 @@ if not LOCALE_zhCN then return end
 local L = select( 2, ...).L
 
 -------------------------------------------------
+-- general
+-------------------------------------------------
+L["New version found (%s). Please visit %s to get the latest version."] = "发现新版本 (%s)。 请访问 %S 下载最新版本。"
+
+-------------------------------------------------
 -- slash command
 -------------------------------------------------
 L["Available slash commands"] = "可用的斜杠命令"
@@ -53,6 +58,9 @@ L["Hide Blizzard Frames"] = "隐藏暴雪框体"
 L["Require reload of the UI"] = "需要重载界面"
 L["Tooltips"] = "鼠标提示"
 L["Disable tooltips"] = "禁用鼠标提示"
+L["Raid Setup"] = "团队构成"
+L["Show Raid Setup"] = "显示团队构成"
+L["Show the number of tanks/healers/damagers while in raid"] = "当在团队时显示坦克、治疗、输出的个数"
 
 -------------------------------------------------
 -- click-castings
@@ -101,6 +109,7 @@ L["Action"] = "动作"
 -- layouts
 -------------------------------------------------
 L["Layouts"] = "布局"
+L["Layout"] = "布局"
 L["Currently Enabled"] = "当前启用"
 L["Enable"] = "启用"
 L["Rename"] = "重命名"

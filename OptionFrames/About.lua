@@ -13,6 +13,11 @@ aboutTab:Hide()
 local nameText = Cell:CreateSeparator("Cell", aboutTab, 387)
 nameText:SetPoint("TOPLEFT", 5, -5)
 
+local versionText = aboutTab:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET_TITLE")
+versionText:SetPoint("RIGHT", -5, 0)
+versionText:SetPoint("TOP", nameText)
+Cell:ColorFontStringByPlayerClass(versionText)
+
 local introduceText = aboutTab:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
 introduceText:SetPoint("TOPLEFT", nameText, "BOTTOMLEFT", 5, -12)
 introduceText:SetPoint("RIGHT", -10, 0)
@@ -74,6 +79,7 @@ end
 local function ShowTab(tab)
     if tab == "about" then
         aboutTab:Show()
+        versionText:SetText(Cell.version)
     else
         aboutTab:Hide()
     end

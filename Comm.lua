@@ -46,7 +46,6 @@ end
 -----------------------------------------
 -- Check Version
 -----------------------------------------
-local versionChecked = false
 eventFrame:RegisterEvent("GROUP_ROSTER_UPDATE")
 function eventFrame:GROUP_ROSTER_UPDATE()
     if IsInGroup() then
@@ -56,10 +55,17 @@ function eventFrame:GROUP_ROSTER_UPDATE()
     end
 end
 
+eventFrame:RegisterEvent("PLAYER_LOGIN")
+function eventFrame:PLAYER_LOGIN()
+    if IsInGuild() then
+        Comm:SendCommMessage("CELL_VERSION", Cell.version, "GUILD", nil, "BULK")
+    end
+end
+
 Comm:RegisterComm("CELL_VERSION", function(prefix, message, channel, sender)
     if sender == UnitName("player") then return end
-    if not versionChecked and Cell.version < message then
-        versionChecked = true
+    if (not CellDB["lastVersionCheck"] or time()-CellDB["lastVersionCheck"]>=86400) and Cell.version < message then
+        CellDB["lastVersionCheck"] = time()
         F:Print(L["New version found (%s). Please visit %s to get the latest version."]:format(message, "|cFF00CCFFhttps://www.curseforge.com/wow/addons/cell|r"))
     end
 end)

@@ -126,6 +126,7 @@ function eventFrame:ADDON_LOADED(arg1)
         if type(CellDB["outline"]) ~= "string" then CellDB["outline"] = "Shadow" end
         if type(CellDB["hideBlizzard"]) ~= "boolean" then CellDB["hideBlizzard"] = true end
         if type(CellDB["disableTooltips"]) ~= "boolean" then CellDB["disableTooltips"] = false end
+        if type(CellDB["showRaidSetup"]) ~= "boolean" then CellDB["showRaidSetup"] = true end
         -- if type(CellDB["clamped"]) ~= "boolean" then CellDB["clamped"] = false end
         
         -- click-casting --------------------------------------------------------------------------
@@ -280,27 +281,39 @@ end
 local IsInRaid = IsInRaid
 local IsInGroup = IsInGroup
 local GetNumGroupMembers = GetNumGroupMembers
+local GetRaidRosterInfo = GetRaidRosterInfo
 local UnitGUID = UnitGUID
 Cell.vars.guid = {}
+Cell.vars.role = {["TANK"]=0, ["HEALER"]=0, ["DAMAGER"]=0}
 function eventFrame:GROUP_ROSTER_UPDATE()
     wipe(Cell.vars.guid)
     if IsInRaid() then
         if Cell.vars.groupType ~= "raid" then
             Cell.vars.groupType = "raid"
-            -- Cell:Fire("GroupTypeChanged", "raid")
+            Cell:Fire("GroupTypeChanged", "raid")
         end
+        -- reset raid setup
+        Cell.vars.role["TANK"] = 0
+        Cell.vars.role["HEALER"] = 0
+        Cell.vars.role["DAMAGER"] = 0
         -- update guid
         for i = 1, GetNumGroupMembers() do
             local playerGUID = UnitGUID("raid"..i)
             if playerGUID then
                 Cell.vars.guid[playerGUID] = "raid"..i
             end
+            -- update raid setup
+            local role = select(12, GetRaidRosterInfo(i))
+            if role and Cell.vars.role[role] then
+                Cell.vars.role[role] = Cell.vars.role[role] + 1
+            end
         end
+        F:UpdateRaidSetup()
 
     elseif IsInGroup() then
         if Cell.vars.groupType ~= "party" then
             Cell.vars.groupType = "party"
-            -- Cell:Fire("GroupTypeChanged", "party")
+            Cell:Fire("GroupTypeChanged", "party")
         end
         -- update guid
         Cell.vars.guid[UnitGUID("player")] = "player"
@@ -324,7 +337,7 @@ function eventFrame:GROUP_ROSTER_UPDATE()
     else
         if Cell.vars.groupType ~= "solo" then
             Cell.vars.groupType = "solo"
-            -- Cell:Fire("GroupTypeChanged", "solo")
+            Cell:Fire("GroupTypeChanged", "solo")
         end
         -- update guid
         Cell.vars.guid[UnitGUID("player")] = "player"

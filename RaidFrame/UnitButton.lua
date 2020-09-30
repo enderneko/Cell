@@ -40,6 +40,7 @@ local UnitInPhase = UnitInPhase
 local UnitIsWarModePhased = UnitIsWarModePhased
 local UnitBuff = UnitBuff
 local UnitDebuff = UnitDebuff
+local IsInRaid = IsInRaid
 
 -------------------------------------------------
 -- unit button init indicators
@@ -466,7 +467,7 @@ local function UnitButton_UpdateRole(self)
 	local leaderIcon = self.widget.leaderIcon
 	local isLeader = UnitIsGroupLeader(unit)
 	self.state.isLeader = isLeader
-	local isAssistant = UnitIsGroupAssistant(unit)
+	local isAssistant = UnitIsGroupAssistant(unit) and IsInRaid()
 	self.state.isAssistant = isAssistant
 	
 	if isLeader then
