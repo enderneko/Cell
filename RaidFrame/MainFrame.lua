@@ -50,6 +50,9 @@ end)
 local tools = Cell:CreateButton(cellMainFrame, "", "blue", {20, 10}, false, true, nil, nil, L["Tools"])
 tools:SetPoint("LEFT", options, "RIGHT", 1, 0)
 RegisterDragForMainFrame(tools)
+tools:SetScript("OnClick", function()
+    F:ShowToolsFrame()
+end)
 
 -------------------------------------------------
 -- raid setup

@@ -219,7 +219,7 @@ unitButton = {
 ]]
 
 -------------------------------------------------
--- auras
+-- auras -- FIXME: refreshing animation bug, auras with the SAME NAME applied on one unit at the SAME TIME
 -------------------------------------------------
 local debuffs_cache = {}
 local debuffs_cache_count = {}
@@ -249,7 +249,9 @@ local function UnitButton_UpdateDebuffs(self)
 		-- if duration and duration ~= 0 and duration <= 600 then
 		if duration and duration <= 600 then
 			if isValid then
-				refreshing = debuffs_cache[unit][name] and ((expirationTime == 0 and debuffs_cache_count[unit][name] and count > debuffs_cache_count[unit][name]) or expirationTime > debuffs_cache[unit][name])
+				-- print(name, expirationTime-duration+.1>=GetTime()) -- NOTE: startTime ≈ now
+				refreshing = debuffs_cache[unit][name] and ((expirationTime == 0 and debuffs_cache_count[unit][name] and count > debuffs_cache_count[unit][name]) or expirationTime-duration+.1>=GetTime())
+				-- refreshing = debuffs_cache[unit][name] and ((expirationTime == 0 and debuffs_cache_count[unit][name] and count > debuffs_cache_count[unit][name]) or expirationTime > debuffs_cache[unit][name])
 
 				if enabledIndicators["debuffs"] and found <= indicatorNums["debuffs"] then
 					-- start, duration, debuffType, texture, count, refreshing
@@ -308,6 +310,7 @@ local function UnitButton_UpdateBuffs(self)
 	if not buffs_cache[unit] then buffs_cache[unit] = {} end
     if not buffs_current[unit] then buffs_current[unit] = {} end
 
+	local refreshing
 	local defensiveFound, externalFound, tankActiveMitigationFound, drinkingFound = 1, 1, false, false
     for i = 1, 40 do
         -- name, icon, count, debuffType, duration, expirationTime, source, isStealable, nameplateShowPersonal, spellId, canApplyAura, isBossDebuff, castByPlayer, nameplateShowAll, timeMod, ...
@@ -317,17 +320,18 @@ local function UnitButton_UpdateBuffs(self)
 		end
 		
 		if duration then
+			refreshing = buffs_cache[unit][name] and expirationTime-duration+.1>=GetTime()
 			-- defensiveCooldowns
 			if enabledIndicators["defensiveCooldowns"] and F:IsDefensiveCooldown(name) and defensiveFound <= indicatorNums["defensiveCooldowns"] then
 				-- start, duration, debuffType, texture, count, refreshing
-				self.indicators.defensiveCooldowns[defensiveFound]:SetCooldown(expirationTime - duration, duration, nil, icon, count, buffs_cache[unit][name] and expirationTime > buffs_cache[unit][name])
+				self.indicators.defensiveCooldowns[defensiveFound]:SetCooldown(expirationTime - duration, duration, nil, icon, count, refreshing)
 				defensiveFound = defensiveFound + 1
 			end
 
 			-- externalCooldowns
-			if enabledIndicators["externalCooldowns"] and F:IsExternalCooldown(name) and externalFound <= indicatorNums["externalCooldowns"] then
+			if enabledIndicators["externalCooldowns"] and F:IsExternalCooldown(name, source, unit) and externalFound <= indicatorNums["externalCooldowns"] then
 				-- start, duration, debuffType, texture, count, refreshing
-				self.indicators.externalCooldowns[externalFound]:SetCooldown(expirationTime - duration, duration, nil, icon, count, buffs_cache[unit][name] and expirationTime > buffs_cache[unit][name])
+				self.indicators.externalCooldowns[externalFound]:SetCooldown(expirationTime - duration, duration, nil, icon, count, refreshing)
 				externalFound = externalFound + 1
 			end
 
@@ -347,7 +351,7 @@ local function UnitButton_UpdateBuffs(self)
 			end
 
 			-- user created indicators
-			F:ShowCustomIndicators(self, "buff", name, expirationTime - duration, duration, nil, icon, count, buffs_cache[unit][name] and expirationTime > buffs_cache[unit][name], false)
+			F:ShowCustomIndicators(self, "buff", name, expirationTime - duration, duration, nil, icon, count, refreshing, false)
 			
             buffs_cache[unit][name] = expirationTime
             buffs_current[unit][name] = i
@@ -398,7 +402,8 @@ local function UnitButton_UpdateBuffs(self)
 		end
 
 		if duration then
-			F:ShowCustomIndicators(self, "buff", name, expirationTime - duration, duration, nil, icon, count, buffs_cache_castByMe[unit][name] and expirationTime > buffs_cache_castByMe[unit][name], true)
+			refreshing = buffs_cache_castByMe[unit][name] and expirationTime-duration+.1>=GetTime()
+			F:ShowCustomIndicators(self, "buff", name, expirationTime - duration, duration, nil, icon, count, refreshing, true)
 			
             buffs_cache_castByMe[unit][name] = expirationTime
             buffs_current_castByMe[unit][name] = i
@@ -409,7 +414,7 @@ local function UnitButton_UpdateBuffs(self)
     t = GetTime()
     for name, expirationTime in pairs(buffs_cache_castByMe[unit]) do
         -- lost or expired
-        if not buffs_current_castByMe[unit][name] or t > expirationTime then
+        if not buffs_current_castByMe[unit][name] or (expirationTime ~= 0 and t > expirationTime) then
 			buffs_cache_castByMe[unit][name] = nil
 			-- user created indicators
 			F:HideCustomIndicators(self, "buff", name, true)

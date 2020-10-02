@@ -105,8 +105,12 @@ do
     externalCooldowns = temp
 end
 
-function F:IsExternalCooldown(name)
-    return externalCooldowns[name]
+function F:IsExternalCooldown(name, source, target)
+    if name == GetSpellInfo(6940) then -- 牺牲祝福
+        return source ~= target
+    else
+        return externalCooldowns[name]
+    end
 end
 
 -------------------------------------------------
