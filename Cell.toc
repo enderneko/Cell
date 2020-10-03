@@ -1,6 +1,6 @@
 ## Interface: 80300
 ## Title: Cell
-## Version: r4-alpha
+## Version: r5-alpha
 ## Author: 篠崎
 ## SavedVariables: CellDB
 ## SavedVariablesPerCharacter: CellCharacterDB
