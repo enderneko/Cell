@@ -27,6 +27,7 @@ L["World Markers"] = "世界标记"
 -------------------------------------------------
 L["Pull Timer"] = "开怪倒数"
 L["You don't have permission to do this"] = "你没有权限这样做"
+L["TOOLSTIPS"] = "|cffff00ff开怪倒数|r\n|cffffff00左键单击:|r 开始倒计时\n|cffffff00右键单击:|r 取消倒计时\n\n|cffff00ff目标标记|r\n|cffffff00左键单击:|r 在目标上设置标记\n|cffffff00右键单击:|r 将标记锁定在目标上 (在队伍中)"
 
 -------------------------------------------------
 -- status text

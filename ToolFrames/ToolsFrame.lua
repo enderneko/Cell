@@ -8,15 +8,25 @@ Cell:StylizeFrame(toolsFrame, {.1, .1, .1, .5})
 toolsFrame:SetPoint("BOTTOMLEFT", Cell.frames.mainFrame, "TOPLEFT", 0, 18)
 toolsFrame:Hide()
 
--- Change this to whatever addon pull you want
--- For example
--- Dbm -   /dbm pull 10
--- BW  -   /pull 10
--- ERT -   /ert pull 10
--- aura_env.pulltimer = "/ert pull 7"
+-------------------------------------------------
+-- tips
+-------------------------------------------------
+local tips = Cell:CreateFrame("CellToolsFrame_Tips", toolsFrame, 202, 150)
+tips:SetPoint("BOTTOMLEFT", toolsFrame, "TOPLEFT", 0, 5)
 
--- change this to command that cancels pull timer (Exorsus cancels by using pull timer again by default)
--- aura_env.cancelpulltimer = "/ert pull 0"
+tips.close = Cell:CreateButton(tips, L["×"], "red", {17, 17}, false, false, "CELL_FONT_SPECIAL", "CELL_FONT_SPECIAL")
+tips.close:SetPoint("TOPRIGHT")
+tips.close:SetScript("OnClick", function()
+    CellDB["ToolsTipsViewed"] = true
+    tips:Hide()
+end)
+
+tips.text = tips:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
+tips.text:SetPoint("LEFT", 5, 0)
+tips.text:SetPoint("RIGHT", -5, 0)
+tips.text:SetJustifyH("LEFT")
+tips.text:SetText(L["TOOLSTIPS"])
+
 -------------------------------------------------
 -- buttons
 -------------------------------------------------
@@ -292,6 +302,9 @@ function F:ShowToolsFrame()
     else
         toolsFrame:Show()
         F:UpdatePullTimer()
+        if not CellDB["ToolsTipsViewed"] then
+            tips:Show()
+        end
     end
     Cell.frames.raidRosterFrame:Hide()
 end
