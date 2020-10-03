@@ -40,18 +40,25 @@ end
 -------------------------------------------------
 -- buttons
 -------------------------------------------------
-local options = Cell:CreateButton(cellMainFrame, "", "red", {20, 10}, false, true, nil, nil, L["Options"])
+local options = Cell:CreateButton(cellMainFrame, "", "red", {20, 10}, false, true, nil, nil, nil, L["Options"])
 options:SetPoint("BOTTOMLEFT", cellMainFrame, "TOPLEFT", 0, 4)
 RegisterDragForMainFrame(options)
 options:SetScript("OnClick", function()
     F:ShowOptionsFrame()
 end)
 
-local tools = Cell:CreateButton(cellMainFrame, "", "blue", {20, 10}, false, true, nil, nil, L["Tools"])
+local tools = Cell:CreateButton(cellMainFrame, "", "blue", {20, 10}, false, true, nil, nil, nil, L["Tools"])
 tools:SetPoint("LEFT", options, "RIGHT", 1, 0)
 RegisterDragForMainFrame(tools)
 tools:SetScript("OnClick", function()
     F:ShowToolsFrame()
+end)
+
+local raid = Cell:CreateButton(cellMainFrame, "", "green", {20, 10}, false, true, nil, nil, nil, L["Raid"])
+raid:SetPoint("LEFT", tools, "RIGHT", 1, 0)
+RegisterDragForMainFrame(raid)
+raid:SetScript("OnClick", function()
+    F:ShowRaidRosterFrame()
 end)
 
 -------------------------------------------------
@@ -59,7 +66,7 @@ end)
 -------------------------------------------------
 local raidSetupFrame = CreateFrame("Frame", "CellRaidSetupFrame", cellMainFrame)
 Cell.frames.raidSetupFrame = raidSetupFrame
-raidSetupFrame:SetPoint("LEFT", tools, "RIGHT", 5, 0)
+raidSetupFrame:SetPoint("LEFT", raid, "RIGHT", 5, 0)
 raidSetupFrame:SetSize(50, 15)
 raidSetupFrame:Hide()
 
@@ -83,8 +90,10 @@ end
 local function MainFrame_GroupTypeChanged(groupType)
     if groupType == "raid" then
         if CellDB["showRaidSetup"] then raidSetupFrame:Show() end
+        raid:Show()
     else
         raidSetupFrame:Hide()
+        raid:Hide()
     end
 end
 Cell:RegisterCallback("GroupTypeChanged", "MainFrame_GroupTypeChanged", MainFrame_GroupTypeChanged)

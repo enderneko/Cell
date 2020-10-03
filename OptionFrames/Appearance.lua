@@ -199,6 +199,92 @@ end, L["Show Raid Setup"], L["Show the number of tanks/healers/damagers while in
 setupCB:SetPoint("TOPLEFT", setupText, "BOTTOMLEFT", 5, -15)
 
 -------------------------------------------------
+-- pull timer
+-------------------------------------------------
+local pullText = Cell:CreateSeparator(L["Pull Timer"], appearanceTab, 188)
+pullText:SetPoint("TOPLEFT", 203, -260)
+
+local pullDropdown = Cell:CreateDropdown(appearanceTab, 75)
+pullDropdown:SetPoint("TOPLEFT", pullText, "BOTTOMLEFT", 5, -12)
+pullDropdown:SetItems({
+    {
+        ["text"] = "ERT",
+        ["onClick"] = function()
+            CellDB["pullTimer"][1] = "ERT"
+            F:UpdatePullTimer()
+        end,
+    },
+    {
+        ["text"] = "DBM",
+        ["onClick"] = function()
+            CellDB["pullTimer"][1] = "DBM"
+            F:UpdatePullTimer()
+        end,
+    },
+    {
+        ["text"] = "BW",
+        ["onClick"] = function()
+            CellDB["pullTimer"][1] = "BW"
+            F:UpdatePullTimer()
+        end,
+    },
+})
+
+local secDropdown = Cell:CreateDropdown(appearanceTab, 70)
+secDropdown:SetPoint("LEFT", pullDropdown, "RIGHT", 5, 0)
+secDropdown:SetItems({
+    {
+        ["text"] = 5,
+        ["onClick"] = function()
+            CellDB["pullTimer"][2] = 5
+            F:UpdatePullTimer()
+        end,
+    },
+    {
+        ["text"] = 7,
+        ["onClick"] = function()
+            CellDB["pullTimer"][2] = 7
+            F:UpdatePullTimer()
+        end,
+    },
+    {
+        ["text"] = 10,
+        ["onClick"] = function()
+            CellDB["pullTimer"][2] = 10
+            F:UpdatePullTimer()
+        end,
+    },
+    {
+        ["text"] = 15,
+        ["onClick"] = function()
+            CellDB["pullTimer"][2] = 15
+            F:UpdatePullTimer()
+        end,
+    },
+    {
+        ["text"] = 20,
+        ["onClick"] = function()
+            CellDB["pullTimer"][2] = 20
+            F:UpdatePullTimer()
+        end,
+    },
+    {
+        ["text"] = 25,
+        ["onClick"] = function()
+            CellDB["pullTimer"][2] = 25
+            F:UpdatePullTimer()
+        end,
+    },
+    {
+        ["text"] = 30,
+        ["onClick"] = function()
+            CellDB["pullTimer"][2] = 30
+            F:UpdatePullTimer()
+        end,
+    },
+})
+
+-------------------------------------------------
 -- functions
 -------------------------------------------------
 local loaded
@@ -216,6 +302,8 @@ local function ShowTab(tab)
         hideBlizzardCB:SetChecked(CellDB["hideBlizzard"])
         disableTooltipsCB:SetChecked(CellDB["disableTooltips"])
         setupCB:SetChecked(CellDB["showRaidSetup"])
+        pullDropdown:SetSelected(CellDB["pullTimer"][1])
+        secDropdown:SetSelected(CellDB["pullTimer"][2])
     else
         appearanceTab:Hide()
     end

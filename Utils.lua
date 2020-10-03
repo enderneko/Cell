@@ -282,6 +282,36 @@ function F:GetGroupType()
     end
 end
 
+function F:UnitInGroup(unit)
+    return UnitPlayerOrPetInParty(unit) or UnitPlayerOrPetInRaid(unit)
+end
+
+function F:GetTargetUnitId()
+    if UnitIsUnit("target", "player") then return "player" end
+    if UnitIsUnit("target", "pet") then return "pet" end
+    if not F:UnitInGroup("target") then return end
+
+    if IsInRaid() then
+        for i = 1, GetNumGroupMembers() do
+            if UnitIsUnit("target", "raid"..i) then
+                return "raid"..i
+            end
+            if UnitIsUnit("target", "raidpet"..i) then
+                return "raidpet"..i
+            end
+        end
+    elseif IsInGroup() then
+        for i = 1, GetNumGroupMembers()-1 do
+            if UnitIsUnit("target", "party"..i) then
+                return "party"..i
+            end
+            if UnitIsUnit("target", "partypet"..i) then
+                return "partypet"..i
+            end
+        end
+    end
+end
+
 -------------------------------------------------
 -- LibSharedMedia
 -------------------------------------------------

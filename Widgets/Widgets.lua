@@ -157,8 +157,8 @@ end
 -----------------------------------------
 -- Button
 -----------------------------------------
-function addon:CreateButton(parent, text, buttonColor, size, noBorder, noBackground, fontNormal, fontDisable, ...)
-	local b = CreateFrame("Button", nil, parent)
+function addon:CreateButton(parent, text, buttonColor, size, noBorder, noBackground, fontNormal, fontDisable, template, ...)
+	local b = CreateFrame("Button", nil, parent, template)
 	if parent then b:SetFrameLevel(parent:GetFrameLevel()+1) end
 	b:SetText(text)
 	b:SetSize(unpack(size))
@@ -256,6 +256,7 @@ function addon:CreateButton(parent, text, buttonColor, size, noBorder, noBackgro
 	else
 		if not noBackground then
 			local bg = parent:CreateTexture(nil, "BACKGROUND")
+			b.bg = bg
 			bg:SetAllPoints(b)
 			bg:SetColorTexture(.1, .1, .1, 1)
 		end
@@ -555,20 +556,72 @@ function addon:CreateStatusBar(parent, width, height, maxValue, smooth, func, sh
 	return bar
 end
 
+function addon:CreateStatusBarButton(parent, text, size, maxValue, template)
+	local b = Cell:CreateButton(parent, text, "class-hover", size, false, false, nil, nil, template)
+	b:SetFrameLevel(parent:GetFrameLevel()+2)
+	b:SetBackdropColor(0, 0, 0, 0)
+	b:SetScript("OnEnter", function()
+		b:SetBackdropBorderColor(unpack(classColor.t))
+	end)
+	b:SetScript("OnLeave", function()
+		b:SetBackdropBorderColor(0, 0, 0, 1)
+	end)
+
+	
+	local bar = CreateFrame("StatusBar", nil, parent)
+	b.bar = bar
+	bar:SetPoint("TOPLEFT", b)
+	bar:SetPoint("BOTTOMRIGHT", b)
+	bar:SetStatusBarTexture("Interface\\AddOns\\Cell\\Media\\statusbar.tga")
+	bar:SetStatusBarColor(classColor.t[1], classColor.t[2], classColor.t[3], .5)
+	bar:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8x8", edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = 1})
+	bar:SetBackdropColor(.1, .1, .1, 1)
+	bar:SetBackdropBorderColor(0, 0, 0, 0)
+	bar:SetSize(unpack(size))
+	bar:Hide()
+	bar:SetMinMaxValues(0, maxValue)
+	bar:SetValue(maxValue)
+	bar:SetFrameLevel(parent:GetFrameLevel()+1)
+
+	bar:SetScript("OnHide", function()
+		bar:SetValue(select(2, bar:GetMinMaxValues()))
+		b.bg:Show()
+	end)
+
+	bar:SetScript("OnShow", function()
+		b.bg:Hide()
+	end)
+	
+	bar:SetScript("OnUpdate", function(self, elapsed)
+		bar:SetValue(bar:GetValue()-elapsed)
+		if bar:GetValue() <= 0 then
+			bar:Hide()
+		end
+	end)
+
+	function b:SetMaxValue(value)
+		bar:SetMinMaxValues(0, value)
+		bar:SetValue(value)
+	end
+	
+	return b
+end
+
 -----------------------------------------
 -- mask
 -----------------------------------------
 function addon:CreateMask(parent, text, points) -- points = {topleftX, topleftY, bottomrightX, bottomrightY}
 	if not parent.mask then -- not init
 		parent.mask = CreateFrame("Frame", nil, parent)
-		addon:StylizeFrame(parent.mask, {.15, .15, .15, .6}, {0, 0, 0, 0})
+		addon:StylizeFrame(parent.mask, {.15, .15, .15, .7}, {0, 0, 0, 0})
 		parent.mask:SetFrameStrata("HIGH")
 		parent.mask:SetFrameLevel(100)
 		parent.mask:EnableMouse(true) -- can't click-through
 
 		parent.mask.text = parent.mask:CreateFontString(nil, "OVERLAY", font_title_name)
 		parent.mask.text:SetTextColor(1, .2, .2)
-		parent.mask.text:SetPoint("CENTER")
+		parent.mask.text:SetPoint("LEFT", 5, 0)
+		parent.mask.text:SetPoint("RIGHT", -5, 0)
 
 		-- parent.mask:SetScript("OnUpdate", function()
 		-- 	if not parent:IsVisible() then
