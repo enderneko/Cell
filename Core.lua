@@ -119,7 +119,7 @@ function eventFrame:ADDON_LOADED(arg1)
         if type(CellDB) ~= "table" then CellDB = {} end
         if type(CellCharacterDB) ~= "table" then CellCharacterDB = {} end
 
-        -- appearance -----------------------------------------------------------------------------
+        -- general -----------------------------------------------------------------------------
         if type(CellDB["texture"]) ~= "string" then CellDB["texture"] = "Cell ".._G.DEFAULT end
         if type(CellDB["scale"]) ~= "number" then CellDB["scale"] = 1 end
         if type(CellDB["font"]) ~= "string" then CellDB["font"] = "Cell ".._G.DEFAULT end

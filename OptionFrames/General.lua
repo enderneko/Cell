@@ -3,18 +3,18 @@ local L = Cell.L
 local F = Cell.funcs
 local LPP = LibStub:GetLibrary("LibPixelPerfect")
 
-local appearanceTab = Cell:CreateFrame("CellOptionsFrame_AppearanceTab", Cell.frames.optionsFrame, nil, nil, true)
-Cell.frames.appearanceTab = appearanceTab
-appearanceTab:SetAllPoints(Cell.frames.optionsFrame)
-appearanceTab:Hide()
+local generalTab = Cell:CreateFrame("CellOptionsFrame_GeneralTab", Cell.frames.optionsFrame, nil, nil, true)
+Cell.frames.generalTab = generalTab
+generalTab:SetAllPoints(Cell.frames.optionsFrame)
+generalTab:Hide()
 
 -------------------------------------------------
 -- texture
 -------------------------------------------------
-local textureText = Cell:CreateSeparator(L["Texture"], appearanceTab, 188)
+local textureText = Cell:CreateSeparator(L["Texture"], generalTab, 188)
 textureText:SetPoint("TOPLEFT", 5, -5)
 
-local textureDropdown = Cell:CreateDropdown(appearanceTab, 150, "texture")
+local textureDropdown = Cell:CreateDropdown(generalTab, 150, "texture")
 textureDropdown:SetPoint("TOPLEFT", textureText, "BOTTOMLEFT", 5, -12)
 
 local function CheckTextures()
@@ -66,10 +66,10 @@ end
 -------------------------------------------------
 -- scale
 -------------------------------------------------
-local scaleText = Cell:CreateSeparator(L["Scale"], appearanceTab, 188)
+local scaleText = Cell:CreateSeparator(L["Scale"], generalTab, 188)
 scaleText:SetPoint("TOPLEFT", 203, -5)
 
-local scaleDropdown = Cell:CreateDropdown(appearanceTab, 150)
+local scaleDropdown = Cell:CreateDropdown(generalTab, 150)
 scaleDropdown:SetPoint("TOPLEFT", scaleText, "BOTTOMLEFT", 5, -12)
 
 local scales = {
@@ -98,11 +98,11 @@ end
 -------------------------------------------------
 -- font
 -------------------------------------------------
-local fontText = Cell:CreateSeparator(L["Font"], appearanceTab, 188)
+local fontText = Cell:CreateSeparator(L["Font"], generalTab, 188)
 fontText:SetPoint("TOPLEFT", 5, -90)
 
 -- drop down
-local fontDropdown = Cell:CreateDropdown(appearanceTab, 150, "font")
+local fontDropdown = Cell:CreateDropdown(generalTab, 150, "font")
 fontDropdown:SetPoint("TOPLEFT", fontText, "BOTTOMLEFT", 5, -12)
 
 local function CheckFonts()
@@ -128,11 +128,11 @@ end
 -------------------------------------------------
 -- font outline
 -------------------------------------------------
-local fontOutlineText = Cell:CreateSeparator(L["Font Outline"], appearanceTab, 188)
+local fontOutlineText = Cell:CreateSeparator(L["Font Outline"], generalTab, 188)
 fontOutlineText:SetPoint("TOPLEFT", 203, -90)
 
 -- drop down
-local fontOutlineDropdown = Cell:CreateDropdown(appearanceTab, 150)
+local fontOutlineDropdown = Cell:CreateDropdown(generalTab, 150)
 fontOutlineDropdown:SetPoint("TOPLEFT", fontOutlineText, "BOTTOMLEFT", 5, -12)
 fontOutlineDropdown:SetItems({
     {
@@ -161,10 +161,10 @@ fontOutlineDropdown:SetItems({
 -------------------------------------------------
 -- hide blizzard
 -------------------------------------------------
-local blizzardText = Cell:CreateSeparator(L["Blizzard Frames"], appearanceTab, 188)
+local blizzardText = Cell:CreateSeparator(L["Blizzard Frames"], generalTab, 188)
 blizzardText:SetPoint("TOPLEFT", 5, -175)
 
-local hideBlizzardCB = Cell:CreateCheckButton(appearanceTab, L["Hide Blizzard Raid / Party"], function(checked, self)
+local hideBlizzardCB = Cell:CreateCheckButton(generalTab, L["Hide Blizzard Raid / Party"], function(checked, self)
     CellDB["hideBlizzard"] = checked
 end, L["Hide Blizzard Frames"], L["Require reload of the UI"])
 hideBlizzardCB:SetPoint("TOPLEFT", blizzardText, "BOTTOMLEFT", 5, -15)
@@ -172,10 +172,10 @@ hideBlizzardCB:SetPoint("TOPLEFT", blizzardText, "BOTTOMLEFT", 5, -15)
 -------------------------------------------------
 -- tooltip
 -------------------------------------------------
-local tooltipsText = Cell:CreateSeparator(L["Tooltips"], appearanceTab, 188)
+local tooltipsText = Cell:CreateSeparator(L["Tooltips"], generalTab, 188)
 tooltipsText:SetPoint("TOPLEFT", 203, -175)
 
-local disableTooltipsCB = Cell:CreateCheckButton(appearanceTab, L["Disable tooltips"], function(checked, self)
+local disableTooltipsCB = Cell:CreateCheckButton(generalTab, L["Disable tooltips"], function(checked, self)
     CellDB["disableTooltips"] = checked
 end)
 disableTooltipsCB:SetPoint("TOPLEFT", tooltipsText, "BOTTOMLEFT", 5, -15)
@@ -183,10 +183,10 @@ disableTooltipsCB:SetPoint("TOPLEFT", tooltipsText, "BOTTOMLEFT", 5, -15)
 -------------------------------------------------
 -- raid setup
 -------------------------------------------------
-local setupText = Cell:CreateSeparator(L["Raid Setup"], appearanceTab, 188)
+local setupText = Cell:CreateSeparator(L["Raid Setup"], generalTab, 188)
 setupText:SetPoint("TOPLEFT", 5, -260)
 
-local setupCB = Cell:CreateCheckButton(appearanceTab, L["Show Raid Setup"], function(checked, self)
+local setupCB = Cell:CreateCheckButton(generalTab, L["Show Raid Setup"], function(checked, self)
     CellDB["showRaidSetup"] = checked
     if IsInRaid() then
         if checked then
@@ -201,10 +201,10 @@ setupCB:SetPoint("TOPLEFT", setupText, "BOTTOMLEFT", 5, -15)
 -------------------------------------------------
 -- pull timer
 -------------------------------------------------
-local pullText = Cell:CreateSeparator(L["Pull Timer"], appearanceTab, 188)
+local pullText = Cell:CreateSeparator(L["Pull Timer"], generalTab, 188)
 pullText:SetPoint("TOPLEFT", 203, -260)
 
-local pullDropdown = Cell:CreateDropdown(appearanceTab, 75)
+local pullDropdown = Cell:CreateDropdown(generalTab, 75)
 pullDropdown:SetPoint("TOPLEFT", pullText, "BOTTOMLEFT", 5, -12)
 pullDropdown:SetItems({
     {
@@ -230,7 +230,7 @@ pullDropdown:SetItems({
     },
 })
 
-local secDropdown = Cell:CreateDropdown(appearanceTab, 70)
+local secDropdown = Cell:CreateDropdown(generalTab, 70)
 secDropdown:SetPoint("LEFT", pullDropdown, "RIGHT", 5, 0)
 secDropdown:SetItems({
     {
@@ -289,8 +289,8 @@ secDropdown:SetItems({
 -------------------------------------------------
 local loaded
 local function ShowTab(tab)
-    if tab == "appearance" then
-        appearanceTab:Show()
+    if tab == "general" then
+        generalTab:Show()
         if loaded then return end
         loaded = true
 
@@ -305,10 +305,10 @@ local function ShowTab(tab)
         pullDropdown:SetSelected(CellDB["pullTimer"][1])
         secDropdown:SetSelected(CellDB["pullTimer"][2])
     else
-        appearanceTab:Hide()
+        generalTab:Hide()
     end
 end
-Cell:RegisterCallback("ShowOptionsTab", "AppearanceTab_ShowTab", ShowTab)
+Cell:RegisterCallback("ShowOptionsTab", "GeneralTab_ShowTab", ShowTab)
 
 -------------------------------------------------
 -- update appearance

@@ -48,9 +48,10 @@ L["Yes"] = "是"
 L["No"] = "否"
 
 -------------------------------------------------
--- appearance
+-- general
 -------------------------------------------------
-L["Appearance"] = "外观"
+-- L["Appearance"] = "外观"
+L["General"] = "常规"
 L["Texture"] = "材质"
 L["Scale"] = "缩放"
 L["Font"] = "字体"
@@ -91,7 +92,6 @@ L["Button5"] = "侧键5"
 L["ScrollUp"] = "滚轮上"
 L["ScrollDown"] = "滚轮下"
 
-L["General"] = "常规"
 L["Macro"] = "宏"
 L["Spell"] = "法术"
 L["target"] = "目标"

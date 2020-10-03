@@ -25,7 +25,7 @@ end
 -------------------------------------------------
 -- button group
 -------------------------------------------------
-local appearanceBtn = Cell:CreateButton(optionsFrame, L["Appearance"], "class-hover", {133, 20}, false, false, "CELL_FONT_WIDGET_TITLE", "CELL_FONT_WIDGET_TITLE_DISABLE")
+local generalTab = Cell:CreateButton(optionsFrame, L["General"], "class-hover", {133, 20}, false, false, "CELL_FONT_WIDGET_TITLE", "CELL_FONT_WIDGET_TITLE_DISABLE")
 local clickCastingsBtn = Cell:CreateButton(optionsFrame, L["Click-Castings"], "class-hover", {133, 20}, false, false, "CELL_FONT_WIDGET_TITLE", "CELL_FONT_WIDGET_TITLE_DISABLE")
 local layoutsBtn = Cell:CreateButton(optionsFrame, L["Layouts"], "class-hover", {133, 20}, false, false, "CELL_FONT_WIDGET_TITLE", "CELL_FONT_WIDGET_TITLE_DISABLE")
 local indicatorsBtn = Cell:CreateButton(optionsFrame, L["Indicators"], "class-hover", {133, 20}, false, false, "CELL_FONT_WIDGET_TITLE", "CELL_FONT_WIDGET_TITLE_DISABLE")
@@ -39,19 +39,19 @@ end)
 layoutsBtn:SetPoint("BOTTOMLEFT", optionsFrame, "TOPLEFT", 0, -1)
 indicatorsBtn:SetPoint("LEFT", layoutsBtn, "RIGHT", -1, 0)
 debuffsBtn:SetPoint("LEFT", indicatorsBtn, "RIGHT", -1, 0)
-appearanceBtn:SetPoint("BOTTOMLEFT", layoutsBtn, "TOPLEFT", 0, -1)
-clickCastingsBtn:SetPoint("LEFT", appearanceBtn, "RIGHT", -1, 0)
+generalTab:SetPoint("BOTTOMLEFT", layoutsBtn, "TOPLEFT", 0, -1)
+clickCastingsBtn:SetPoint("LEFT", generalTab, "RIGHT", -1, 0)
 aboutBtn:SetPoint("LEFT", clickCastingsBtn, "RIGHT", -1, 0)
 closeBtn:SetPoint("LEFT", aboutBtn, "RIGHT", -1, 0)
 
-RegisterDragForOptionsFrame(appearanceBtn)
+RegisterDragForOptionsFrame(generalTab)
 RegisterDragForOptionsFrame(clickCastingsBtn)
 RegisterDragForOptionsFrame(indicatorsBtn)
 RegisterDragForOptionsFrame(debuffsBtn)
 RegisterDragForOptionsFrame(layoutsBtn)
 RegisterDragForOptionsFrame(aboutBtn)
 
-appearanceBtn.id = "appearance"
+generalTab.id = "general"
 clickCastingsBtn.id = "clickCastings"
 layoutsBtn.id = "layouts"
 indicatorsBtn.id = "indicators"
@@ -66,7 +66,7 @@ local function ShowTab(tab)
     end
 end
 
-local buttonGroup = Cell:CreateButtonGroup({appearanceBtn, clickCastingsBtn, layoutsBtn, indicatorsBtn, debuffsBtn, aboutBtn}, ShowTab)
+local buttonGroup = Cell:CreateButtonGroup({generalTab, clickCastingsBtn, layoutsBtn, indicatorsBtn, debuffsBtn, aboutBtn}, ShowTab)
 
 -------------------------------------------------
 -- show & hide
@@ -83,8 +83,7 @@ function F:ShowOptionsFrame()
     end
 
     if not lastShownTab then
-        ShowTab("appearance")
-        buttonGroup.HighlightButton("appearance")
+        generalTab:Click()
     end
     
     LPP:PixelPerfectPoint(optionsFrame)
