@@ -779,18 +779,19 @@ local function UnitButton_UpdateStatusText(self)
 	local statusTextFrame = self.widget.statusTextFrame
 	local statusText = self.widget.statusText
 	self.state.guid = UnitGUID(unit) -- update!
+	if not self.state.guid then return end
 
 	if not UnitIsConnected(unit) and UnitIsPlayer(unit) then
 		statusTextFrame:Show()
 		statusText:SetText(L["OFFLINE"])
-		self.func.ShowTimer()
+		self.func.ShowTimer("offline")
 	elseif UnitIsAFK(unit) then
 		statusTextFrame:Show()
 		statusText:SetText(L["AFK"])
-		self.func.ShowTimer()
+		self.func.ShowTimer("afk")
 	elseif UnitIsDeadOrGhost(unit) then
 		statusTextFrame:Show()
-		self.func.HideTimer()
+		self.func.HideTimer(true)
 		if UnitIsGhost(unit) then
 			statusText:SetText(L["GHOST"])
 		else
@@ -811,7 +812,7 @@ local function UnitButton_UpdateStatusText(self)
         end
 	else
 		statusTextFrame:Hide()
-		self.func.HideTimer()
+		self.func.HideTimer(true)
 		statusText:SetText("")
 	end
 end
@@ -1117,6 +1118,7 @@ local function UnitButton_OnTick(self)
 	self.__tickCount = e
 
 	UnitButton_UpdateInRange(self)
+	if self.func.TimerTextOnUpdate then self.func.TimerTextOnUpdate() end
 	
 	if self.updateRequired then
 		self.updateRequired = nil
@@ -1131,15 +1133,13 @@ local function UnitButton_OnUpdate(self, elapsed)
 		e = 0
 	end
 	self.__updateElapsed = e
-	
-	if self.func.TimerTextOnUpdate then self.func.TimerTextOnUpdate() end
 end
 
 -------------------------------------------------
 -- unit button init
 -------------------------------------------------
 Cell.vars.texture = "Interface\\AddOns\\Cell\\Media\\statusbar.tga"
-local startTimeCache = {}
+local startTimeCache, statusCache = {}, {}
 -- Layer(statusTextFrame) -- frameLevel:27 ----------
 -- ARTWORK 
 --	statusText, timerText
@@ -1373,9 +1373,12 @@ function F:UnitButton_OnLoad(button)
 	timerText:SetTextColor(1, .19, .19)
 	timerText:SetJustifyH("RIGHT")
 
-	button.func.ShowTimer = function()
+	button.func.ShowTimer = function(status)
 		timerText:Show()
-		startTimeCache[button.state.guid] = startTimeCache[button.state.guid] or GetTime()
+		if statusCache[button.state.guid] ~= status then
+			startTimeCache[button.state.guid] = GetTime()
+		end
+		statusCache[button.state.guid] = status
 		
 		button.func.TimerTextOnUpdate = function()
 			if not button.state.guid then return end
@@ -1387,10 +1390,13 @@ function F:UnitButton_OnLoad(button)
 		end
 	end
 
-	button.func.HideTimer = function()
+	button.func.HideTimer = function(reset)
 		timerText:Hide()
-		button.func.TimerTextOnUpdate = nil
-		if button.state.guid then startTimeCache[button.state.guid] = nil end
+		if reset then
+			button.func.TimerTextOnUpdate = nil
+			startTimeCache[button.state.guid] = nil
+			statusCache[button.state.guid] = nil
+		end
 	end
 	
 	-- raid icon
