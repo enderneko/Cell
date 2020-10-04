@@ -61,6 +61,7 @@ pullBtn:RegisterForClicks("LeftButtonUp", "RightButtonUp")
 pullBtn:SetAttribute("type1", "macro")
 pullBtn:SetAttribute("type2", "macro")
 
+local pullTicker
 pullBtn:RegisterEvent("CHAT_MSG_ADDON")
 pullBtn:SetScript("OnEvent", function(self, event, prefix, text)
     if prefix == "D4" then -- DBM
@@ -69,8 +70,31 @@ pullBtn:SetScript("OnEvent", function(self, event, prefix, text)
         if pre == "PT" and timer > 0 then -- start
             pullBtn:SetMaxValue(timer)
             pullBtn.bar:Show()
+            
+            -- update button text
+            pullBtn:SetText(timer)
+            if pullTicker then
+                pullTicker:Cancel()
+                pullTicker = nil
+            end
+            pullBtn.timer = timer
+            pullTicker = C_Timer.NewTicker(1, function()
+                pullBtn.timer = pullBtn.timer - 1
+                pullBtn:SetText(pullBtn.timer)
+                if pullBtn.timer == -1 then
+                    pullBtn:SetText(L["Pull Timer"])
+                end
+            end, timer+1)
+
         elseif pre == "PT" and timer  == 0 then -- cancel
             pullBtn.bar:Hide()
+           
+            -- update button text
+            pullBtn:SetText(L["Pull Timer"])
+            if pullTicker then
+                pullTicker:Cancel()
+                pullTicker = nil
+            end
         end
 
     -- elseif prefix == "BigWigs" then
