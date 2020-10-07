@@ -42,20 +42,15 @@ end
 -------------------------------------------------
 local options = Cell:CreateButton(cellMainFrame, "", "red", {20, 10}, false, true, nil, nil, nil, L["Options"])
 options:SetPoint("BOTTOMLEFT", cellMainFrame, "TOPLEFT", 0, 4)
+options:SetFrameStrata("HIGH")
 RegisterDragForMainFrame(options)
 options:SetScript("OnClick", function()
     F:ShowOptionsFrame()
 end)
 
--- local tools = Cell:CreateButton(cellMainFrame, "", "blue", {20, 10}, false, true, nil, nil, nil, L["Tools"])
--- tools:SetPoint("LEFT", options, "RIGHT", 1, 0)
--- RegisterDragForMainFrame(tools)
--- tools:SetScript("OnClick", function()
---     F:ShowToolsFrame()
--- end)
-
 local raid = Cell:CreateButton(cellMainFrame, "", "blue", {20, 10}, false, true, nil, nil, nil, L["Raid"])
 raid:SetPoint("LEFT", options, "RIGHT", 1, 0)
+raid:SetFrameStrata("HIGH")
 RegisterDragForMainFrame(raid)
 raid:SetScript("OnClick", function()
     F:ShowRaidRosterFrame()

@@ -216,8 +216,9 @@ end, L["Show Raid Setup"], L["Show the number of tanks/healers/damagers while in
 setupCB:SetPoint("TOPLEFT", toolsText, "BOTTOMLEFT", 5, -15)
 
 -- battle res
-local resCB = Cell:CreateCheckButton(generalTab, L["Show Battle Res"], function(checked, self)
-
+local resCB = Cell:CreateCheckButton(generalTab, L["Show Battle Res Timer"], function(checked, self)
+    CellDB["raidTools"]["showBattleRes"] = checked
+    Cell:Fire("UpdateRaidTools", "battleRes")
 end)
 resCB:SetPoint("LEFT", setupCB, "RIGHT", 110, 0)
 
@@ -378,6 +379,7 @@ local function ShowTab(tab)
 
         -- raid tools
         setupCB:SetChecked(CellDB["raidTools"]["showRaidSetup"])
+        resCB:SetChecked(CellDB["raidTools"]["showBattleRes"])
 
         readyPullCB:SetChecked(CellDB["raidTools"]["showButtons"])
         pullDropdown:SetSelected(CellDB["raidTools"]["pullTimer"][1])

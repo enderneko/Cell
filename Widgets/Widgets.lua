@@ -31,6 +31,10 @@ function addon:ColorFontStringByPlayerClass(fs)
 	fs:SetTextColor(classColor.t[1], classColor.t[2], classColor.t[3])
 end
 
+function addon:GetPlayerClassColor()
+	return classColor.t
+end
+
 -----------------------------------------
 -- Font
 -----------------------------------------

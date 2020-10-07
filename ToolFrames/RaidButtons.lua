@@ -78,9 +78,12 @@ pullBtn:SetScript("OnEvent", function(self, event, prefix, text)
             pullBtn.timer = timer
             pullTicker = C_Timer.NewTicker(1, function()
                 pullBtn.timer = pullBtn.timer - 1
-                pullBtn:SetText(pullBtn.timer)
-                if pullBtn.timer == -1 then
+                if pullBtn.timer == 0 then
+                    pullBtn:SetText(L["Go!"])
+                elseif pullBtn.timer == -1 then
                     pullBtn:SetText(L["Pull"])
+                else
+                    pullBtn:SetText(pullBtn.timer)
                 end
             end, timer+1)
 
