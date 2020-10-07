@@ -928,12 +928,12 @@ local function UnitButton_RegisterEvents(self)
 	self:RegisterEvent("UNIT_NAME_UPDATE") -- unknown target
 	self:RegisterEvent("ZONE_CHANGED_NEW_AREA") --? update status text
 
-	self:RegisterEvent("PARTY_LEADER_CHANGED")
+	-- self:RegisterEvent("PARTY_LEADER_CHANGED") -- GROUP_ROSTER_UPDATE
+	-- self:RegisterEvent("PLAYER_ROLES_ASSIGNED") -- GROUP_ROSTER_UPDATE
 	self:RegisterEvent("PLAYER_REGEN_ENABLED")
 	self:RegisterEvent("PLAYER_REGEN_DISABLED")
 
 	self:RegisterEvent("PLAYER_TARGET_CHANGED")
-	-- self:RegisterEvent("PLAYER_ROLES_ASSIGNED") -- GROUP_ROSTER_UPDATE
 	self:RegisterEvent("RAID_TARGET_UPDATE")
 	
 	self:RegisterEvent("READY_CHECK")
@@ -1037,7 +1037,7 @@ local function UnitButton_OnEvent(self, event, unit)
 		if event == "PLAYER_ENTERING_WORLD" or event == "GROUP_ROSTER_UPDATE" then
 			self.updateRequired = 1
 
-		elseif event == "PARTY_LEADER_CHANGED" or event == "PLAYER_REGEN_ENABLED" or event == "PLAYER_REGEN_DISABLED" then
+		elseif event == "PLAYER_REGEN_ENABLED" or event == "PLAYER_REGEN_DISABLED" then
 			UnitButton_UpdateLeader(self, event)
 	
 		elseif event == "PLAYER_TARGET_CHANGED" then
@@ -1046,9 +1046,6 @@ local function UnitButton_OnEvent(self, event, unit)
 		
 		elseif event == "UNIT_THREAT_LIST_UPDATE" then
 			UnitButton_UpdateThreatBar(self)
-	
-		-- // elseif event == "PLAYER_ROLES_ASSIGNED" then
-		-- // 	UnitButton_UpdateRole(self)
 	
 		elseif event == "RAID_TARGET_UPDATE" then
 			UnitButton_UpdateRaidIcon(self)
