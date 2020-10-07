@@ -126,8 +126,17 @@ function eventFrame:ADDON_LOADED(arg1)
         if type(CellDB["outline"]) ~= "string" then CellDB["outline"] = "Shadow" end
         if type(CellDB["hideBlizzard"]) ~= "boolean" then CellDB["hideBlizzard"] = true end
         if type(CellDB["disableTooltips"]) ~= "boolean" then CellDB["disableTooltips"] = false end
-        if type(CellDB["showRaidSetup"]) ~= "boolean" then CellDB["showRaidSetup"] = true end
-        if type(CellDB["pullTimer"]) ~= "table" then CellDB["pullTimer"] = {"ERT", 7} end
+        -- if type(CellDB["showRaidSetup"]) ~= "boolean" then CellDB["showRaidSetup"] = true end
+        -- if type(CellDB["pullTimer"]) ~= "table" then CellDB["pullTimer"] = {"ERT", 7} end
+        if type(CellDB["raidTools"]) ~= "table" then
+            CellDB["raidTools"] = {
+                ["showRaidSetup"] = true,
+                ["showButtons"] = false,
+                ["pullTimer"] = {"ERT", 7},
+                ["showMarks"] = false,
+                ["marks"] = "both",
+            }
+        end
         -- if type(CellDB["clamped"]) ~= "boolean" then CellDB["clamped"] = false end
         
         -- click-casting --------------------------------------------------------------------------
@@ -347,6 +356,13 @@ function eventFrame:GROUP_ROSTER_UPDATE()
             Cell.vars.guid[UnitGUID("pet")] = "pet"
         end
     end
+
+    if Cell.vars.hasPermission ~= F:HasPermission() or Cell.vars.hasPartyMarkPermission ~= F:HasPermission(true) then
+        Cell.vars.hasPermission = F:HasPermission()
+        Cell.vars.hasPartyMarkPermission = F:HasPermission(true)
+        Cell:Fire("PermissionChanged")
+        F:Debug("|cffbb00bbPermissionChanged")
+    end
 end
 
 function eventFrame:UNIT_PET()
@@ -370,6 +386,8 @@ function eventFrame:PLAYER_LOGIN()
     Cell:Fire("UpdateIndicators")
     -- update texture and font
     Cell:Fire("UpdateAppearance")
+    -- update raid tools
+    Cell:Fire("UpdateRaidTools")
     Cell.vars.playerGUID = UnitGUID("player")
 end
 
@@ -400,11 +418,19 @@ function SlashCmdList.CELL(msg, editbox)
     local command, rest = msg:match("^(%S*)%s*(.-)$")
     if command == "resetposition" then
         Cell.frames.anchorFrame:ClearAllPoints()
-        Cell.frames.anchorFrame:SetPoint("CENTER", UIParent)
-
+        Cell.frames.anchorFrame:SetPoint("TOPLEFT", UIParent, "CENTER")
+        Cell.frames.raidButtonsFrame:ClearAllPoints()
+        Cell.frames.raidButtonsFrame:SetPoint("TOPRIGHT", UIParent, "CENTER")
+        Cell.frames.raidMarksFrame:ClearAllPoints()
+        Cell.frames.raidMarksFrame:SetPoint("BOTTOMRIGHT", UIParent, "CENTER")
+        
     elseif command == "resetall" then
         Cell.frames.anchorFrame:ClearAllPoints()
-        Cell.frames.anchorFrame:SetPoint("CENTER", UIParent)
+        Cell.frames.anchorFrame:SetPoint("TOPLEFT", UIParent, "CENTER")
+        Cell.frames.raidButtonsFrame:ClearAllPoints()
+        Cell.frames.raidButtonsFrame:SetPoint("TOPRIGHT", UIParent, "CENTER")
+        Cell.frames.raidMarksFrame:ClearAllPoints()
+        Cell.frames.raidMarksFrame:SetPoint("BOTTOMRIGHT", UIParent, "CENTER")
         CellDB = nil
         CellCharacterDB = nil
         ReloadUI()

@@ -318,6 +318,11 @@ function F:GetTargetUnitId()
     end
 end
 
+function F:HasPermission(isPartyMarkPermission)
+    if isPartyMarkPermission and IsInGroup() and not IsInRaid() then return true end
+    return UnitIsGroupLeader("player") or (IsInRaid() and UnitIsGroupAssistant("player"))
+end
+
 -------------------------------------------------
 -- LibSharedMedia
 -------------------------------------------------

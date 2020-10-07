@@ -360,6 +360,16 @@ function addon:CreateCheckButton(parent, label, onClick, ...)
 	cb:SetCheckedTexture(checkedTexture)
 	-- cb:SetHighlightTexture([[Interface\AddOns\Cell\Media\CheckBox\CheckBox-Highlight-16x16]], "ADD")
 	-- cb:SetDisabledCheckedTexture([[Interface\AddOns\Cell\Media\CheckBox\CheckBox-DisabledChecked-16x16]])
+
+	cb:SetScript("OnEnable", function()
+		cb.label:SetTextColor(1, 1, 1)
+		checkedTexture:SetColorTexture(classColor.t[1], classColor.t[2], classColor.t[3], .7)
+	end)
+
+	cb:SetScript("OnDisable", function()
+		cb.label:SetTextColor(.4, .4, .4)
+		checkedTexture:SetColorTexture(.4, .4, .4)
+	end)
 	
 	SetTooltip(cb, "ANCHOR_TOPLEFT", 0, 1, ...)
 
@@ -557,7 +567,7 @@ function addon:CreateStatusBar(parent, width, height, maxValue, smooth, func, sh
 end
 
 function addon:CreateStatusBarButton(parent, text, size, maxValue, template)
-	local b = Cell:CreateButton(parent, text, "class-hover", size, false, false, nil, nil, template)
+	local b = Cell:CreateButton(parent, text, "class-hover", size, false, true, nil, nil, template)
 	b:SetFrameLevel(parent:GetFrameLevel()+2)
 	b:SetBackdropColor(0, 0, 0, 0)
 	b:SetScript("OnEnter", function()
@@ -569,6 +579,7 @@ function addon:CreateStatusBarButton(parent, text, size, maxValue, template)
 
 	
 	local bar = CreateFrame("StatusBar", nil, parent)
+	bar:SetParent(b)
 	b.bar = bar
 	bar:SetPoint("TOPLEFT", b)
 	bar:SetPoint("BOTTOMRIGHT", b)
@@ -578,26 +589,24 @@ function addon:CreateStatusBarButton(parent, text, size, maxValue, template)
 	bar:SetBackdropColor(.1, .1, .1, 1)
 	bar:SetBackdropBorderColor(0, 0, 0, 0)
 	bar:SetSize(unpack(size))
-	bar:Hide()
 	bar:SetMinMaxValues(0, maxValue)
-	bar:SetValue(maxValue)
+	bar:SetValue(0)
 	bar:SetFrameLevel(parent:GetFrameLevel()+1)
-
-	bar:SetScript("OnHide", function()
-		bar:SetValue(select(2, bar:GetMinMaxValues()))
-		b.bg:Show()
-	end)
-
-	bar:SetScript("OnShow", function()
-		b.bg:Hide()
-	end)
 	
-	bar:SetScript("OnUpdate", function(self, elapsed)
-		bar:SetValue(bar:GetValue()-elapsed)
-		if bar:GetValue() <= 0 then
-			bar:Hide()
-		end
-	end)
+	function b:Start()
+		bar:SetValue(select(2, bar:GetMinMaxValues()))
+		bar:SetScript("OnUpdate", function(self, elapsed)
+			bar:SetValue(bar:GetValue()-elapsed)
+			if bar:GetValue() <= 0 then
+				b:Stop()
+			end
+		end)
+	end
+
+	function b:Stop()
+		bar:SetValue(0)
+		bar:SetScript("OnUpdate", nil)
+	end
 
 	function b:SetMaxValue(value)
 		bar:SetMinMaxValues(0, value)
@@ -1437,11 +1446,18 @@ function addon:CreateDropdown(parent, width, dropdownType)
 			list:SetSize(menu:GetWidth(), 2 + #menu.items*18)
 		else
 			list:SetSize(menu:GetWidth(), 182)
+			-- update list scrollFrame
+			list.scrollFrame:SetContentHeight(2 + #menu.items*18)
 		end
 	end
 
 	function menu:SetEnabled(f)
 		menu.button:SetEnabled(f)
+		if f then
+			menu.text:SetTextColor(1, 1, 1)
+		else
+			menu.text:SetTextColor(.4, .4, .4)
+		end
 	end
 
 	menu:SetScript("OnHide", function()

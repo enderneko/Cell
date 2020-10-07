@@ -28,7 +28,7 @@ introduceText:SetText(L["ABOUT"])
 -------------------------------------------------
 -- author
 -------------------------------------------------
-local authorText = Cell:CreateSeparator(L["Author"], aboutTab, 387)
+local authorText = Cell:CreateSeparator(L["Author"], aboutTab, 188)
 authorText:SetPoint("TOPLEFT", 5, -190)
 
 local authorNameText = aboutTab:CreateFontString(nil, "OVERLAY")
@@ -37,6 +37,17 @@ authorNameText:SetJustifyH("LEFT")
 authorNameText:SetJustifyV("MIDDLE")
 authorNameText:SetFont("Interface\\AddOns\\Cell\\Media\\font.ttf", 12)
 authorNameText:SetText("篠崎-影之哀伤(CN)")
+
+-------------------------------------------------
+-- slash
+-------------------------------------------------
+local slashText = Cell:CreateSeparator(L["Slash Commands"], aboutTab, 188)
+slashText:SetPoint("TOPLEFT", 203, -190)
+
+local commandText = aboutTab:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
+commandText:SetPoint("TOPLEFT", slashText, "BOTTOMLEFT", 5, -12)
+commandText:SetJustifyH("LEFT")
+commandText:SetText("/cell")
 
 -------------------------------------------------
 -- bugreport

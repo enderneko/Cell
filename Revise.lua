@@ -25,14 +25,18 @@ frame:SetScript("OnEvent", function(self, event, arg1, ...)
 			end
 		end
 
-		-- r6-alpha add "textWidth"
+		-- r6-alpha
 		if not(CellDB["revise"]) or CellDB["revise"] < "r6-alpha" then
+			-- add "textWidth"
 			for _, layout in pairs(CellDB["layouts"]) do
 				if not layout["textWidth"] then
 					layout["textWidth"] = .75
 				end
 			end
+			-- remove old raid tools related
+			if CellDB["showRaidSetup"] then CellDB["showRaidSetup"] = nil end
+			if CellDB["pullTimer"] then CellDB["pullTimer"] = nil end
 		end
-		CellDB["revise"] = Cell.version
+		-- CellDB["revise"] = Cell.version
     end
 end)

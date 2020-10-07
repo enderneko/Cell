@@ -163,7 +163,7 @@ local function RaidFrame_UpdateLayout(layout, which)
                 header:Hide()
             end
         end
-        -- header:SetAttribute("unitsPerColumn", 5)
+        header:SetAttribute("unitsPerColumn", 5)
     end
 end
 Cell:RegisterCallback("UpdateLayout", "RaidFrame_UpdateLayout", RaidFrame_UpdateLayout)

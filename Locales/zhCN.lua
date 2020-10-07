@@ -26,7 +26,6 @@ L["Raid"] = "团队"
 -------------------------------------------------
 L["Pull Timer"] = "开怪倒数"
 L["You don't have permission to do this"] = "你没有权限这样做"
-L["TOOLSTIPS"] = "|cffff00ff开怪倒数|r\n|cffffff00左键单击:|r 开始倒计时\n|cffffff00右键单击:|r 取消倒计时\n\n|cffff00ff目标标记|r\n|cffffff00左键单击:|r 在目标上设置标记\n|cffffff00右键单击:|r 将标记锁定在目标上 (在队伍中)"
 L["Raid Sort"] = "团队排序"
 L["Raid Roster"] = "团队名单"
 
@@ -70,6 +69,19 @@ L["Disable tooltips"] = "禁用鼠标提示"
 L["Raid Setup"] = "团队构成"
 L["Show Raid Setup"] = "显示团队构成"
 L["Show the number of tanks/healers/damagers while in raid"] = "当在团队时显示坦克、治疗、输出的个数"
+L["Only show when you have permission to do this"] = "仅在你有权限这样做时显示"
+L["Show ReadyCheck and PullTimer buttons"] = "显示 就位确认 与 开怪倒数 按钮"
+L["pullTimerTips"] = "\n|r开怪倒数\n左键单击: |cffffffff开始倒计时|r\n右键单击: |cffffffff取消倒计时|r"
+L["Ready"] = "就位"
+L["Pull"] = "倒数"
+L["Show Marks Bar"] = "显示标记工具条"
+L["Target Marks"] = "目标标记"
+L["World Marks"] = "世界标记"
+L["Both"] = "全部"
+L["marksTips"] = "\n|r目标标记\n左键单击: |cffffffff在目标上设置标记|r\n右键单击: |cffffffff将标记锁定在目标上 (在你的队伍中)|r"
+L["Mover"] = "移动框"
+L["Unlock"] = "解锁"
+L["Lock"] = "锁定"
 
 -------------------------------------------------
 -- click-castings
@@ -194,4 +206,5 @@ L["castByMe"] = "只显示我施放的增益"
 -------------------------------------------------
 L["About"] = "关于"
 L["Author"] = "作者"
+L["Slash Commands"] = "斜杠命令"
 L["Bug Report & Suggestion"] = "问题报告与建议"

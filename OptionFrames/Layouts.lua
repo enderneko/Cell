@@ -423,7 +423,7 @@ textWidthDropdown:SetItems({
 })
 textWidthDropdown:HookScript("OnEnter", function()
     CellTooltip:SetOwner(textWidthDropdown, "ANCHOR_NONE")
-    CellTooltip:SetPoint("LEFT", textWidthDropdown, "RIGHT", 5, 0)
+    CellTooltip:SetPoint("LEFT", textWidthDropdown, "RIGHT", 1, 0)
     CellTooltip:AddLine(L["Set Text Width\n|cffffffffCompare with unitbutton's width"])
     CellTooltip:Show()
 end)

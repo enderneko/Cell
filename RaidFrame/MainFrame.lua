@@ -21,7 +21,7 @@ cellMainFrame:SetClampRectInsets(0, 0, 15, 0)
 
 local anchorFrame = CreateFrame("Frame", "CellAnchorFrame", cellMainFrame)
 Cell.frames.anchorFrame = anchorFrame
-anchorFrame:SetPoint("CENTER", UIParent)
+anchorFrame:SetPoint("TOPLEFT", UIParent, "CENTER")
 anchorFrame:SetSize(10, 10)
 anchorFrame:SetMovable(true)
 
@@ -47,15 +47,15 @@ options:SetScript("OnClick", function()
     F:ShowOptionsFrame()
 end)
 
-local tools = Cell:CreateButton(cellMainFrame, "", "blue", {20, 10}, false, true, nil, nil, nil, L["Tools"])
-tools:SetPoint("LEFT", options, "RIGHT", 1, 0)
-RegisterDragForMainFrame(tools)
-tools:SetScript("OnClick", function()
-    F:ShowToolsFrame()
-end)
+-- local tools = Cell:CreateButton(cellMainFrame, "", "blue", {20, 10}, false, true, nil, nil, nil, L["Tools"])
+-- tools:SetPoint("LEFT", options, "RIGHT", 1, 0)
+-- RegisterDragForMainFrame(tools)
+-- tools:SetScript("OnClick", function()
+--     F:ShowToolsFrame()
+-- end)
 
-local raid = Cell:CreateButton(cellMainFrame, "", "green", {20, 10}, false, true, nil, nil, nil, L["Raid"])
-raid:SetPoint("LEFT", tools, "RIGHT", 1, 0)
+local raid = Cell:CreateButton(cellMainFrame, "", "blue", {20, 10}, false, true, nil, nil, nil, L["Raid"])
+raid:SetPoint("LEFT", options, "RIGHT", 1, 0)
 RegisterDragForMainFrame(raid)
 raid:SetScript("OnClick", function()
     F:ShowRaidRosterFrame()
@@ -89,7 +89,7 @@ end
 -------------------------------------------------
 local function MainFrame_GroupTypeChanged(groupType)
     if groupType == "raid" then
-        if CellDB["showRaidSetup"] then raidSetupFrame:Show() end
+        if CellDB["raidTools"]["showRaidSetup"] then raidSetupFrame:Show() end
         raid:Show()
     else
         raidSetupFrame:Hide()
@@ -106,13 +106,5 @@ local function MainFrame_UpdateLayout(layout, which)
     
     --? cause SetSize in combat error? perhaps not
     cellMainFrame:SetSize(unpack(Cell.vars.currentLayoutTable["size"]))
-
-    -- if which == "texture" then
-    --     local tex = F:GetBarTexture() -- tex == Cell.vars.texture
-
-    --     F:IterateAllUnitButtons(function(b)
-    --         b.func.SetTexture(tex)
-    --     end)
-    -- end
 end
 Cell:RegisterCallback("UpdateLayout", "MainFrame_UpdateLayout", MainFrame_UpdateLayout)
