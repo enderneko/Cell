@@ -234,24 +234,24 @@ function F:GetPowerColor(unit)
     return r, g, b, t
 end
 
-local scriptObjects = {}
-local frame = CreateFrame("Frame")
-frame:RegisterEvent("PLAYER_REGEN_DISABLED")
-frame:RegisterEvent("PLAYER_REGEN_ENABLED")
-frame:SetScript("OnEvent", function(self, event)
-    if event == "PLAYER_REGEN_ENABLED" then
-        for _, obj in pairs(scriptObjects) do
-            obj:Show()
-        end
-    else
-        for _, obj in pairs(scriptObjects) do
-            obj:Hide()
-        end
-    end
-end)
-function F:SetHideInCombat(obj)
-    tinsert(scriptObjects, obj)
-end
+-- local scriptObjects = {}
+-- local frame = CreateFrame("Frame")
+-- frame:RegisterEvent("PLAYER_REGEN_DISABLED")
+-- frame:RegisterEvent("PLAYER_REGEN_ENABLED")
+-- frame:SetScript("OnEvent", function(self, event)
+--     if event == "PLAYER_REGEN_ENABLED" then
+--         for _, obj in pairs(scriptObjects) do
+--             obj:Show()
+--         end
+--     else
+--         for _, obj in pairs(scriptObjects) do
+--             obj:Hide()
+--         end
+--     end
+-- end)
+-- function F:SetHideInCombat(obj)
+--     tinsert(scriptObjects, obj)
+-- end
 
 -------------------------------------------------
 -- units

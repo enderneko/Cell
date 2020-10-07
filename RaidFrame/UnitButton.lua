@@ -468,8 +468,18 @@ local function UnitButton_UpdateRole(self)
 	else
 		roleIcon:Hide()
 	end
+end
 
+local function UnitButton_UpdateLeader(self, event)
+	local unit = self.state.unit
+	if not unit then return end
+	
 	local leaderIcon = self.widget.leaderIcon
+	if InCombatLockdown() or event == "PLAYER_REGEN_DISABLED" then
+		leaderIcon:Hide()
+		return
+	end
+
 	local isLeader = UnitIsGroupLeader(unit)
 	self.state.isLeader = isLeader
 	local isAssistant = UnitIsGroupAssistant(unit) and IsInRaid()
@@ -875,6 +885,7 @@ local function UnitButton_UpdateAll(self)
 	UnitButton_UpdateHealthAbsorbs(self)
 	UnitButton_UpdateInRange(self)
 	UnitButton_UpdateRole(self)
+	UnitButton_UpdateLeader(self)
 	UnitButton_UpdateReadyCheck(self)
 	UnitButton_UpdateThreat(self)
 	UnitButton_UpdateThreatBar(self)
@@ -914,9 +925,12 @@ local function UnitButton_RegisterEvents(self)
 	
 	self:RegisterEvent("UNIT_CONNECTION") -- offline
 	self:RegisterEvent("PLAYER_FLAGS_CHANGED") -- afk
-	self:RegisterEvent("PARTY_LEADER_CHANGED")
 	self:RegisterEvent("UNIT_NAME_UPDATE") -- unknown target
 	self:RegisterEvent("ZONE_CHANGED_NEW_AREA") --? update status text
+
+	self:RegisterEvent("PARTY_LEADER_CHANGED")
+	self:RegisterEvent("PLAYER_REGEN_ENABLED")
+	self:RegisterEvent("PLAYER_REGEN_DISABLED")
 
 	self:RegisterEvent("PLAYER_TARGET_CHANGED")
 	-- self:RegisterEvent("PLAYER_ROLES_ASSIGNED") -- GROUP_ROSTER_UPDATE
@@ -1023,8 +1037,8 @@ local function UnitButton_OnEvent(self, event, unit)
 		if event == "PLAYER_ENTERING_WORLD" or event == "GROUP_ROSTER_UPDATE" then
 			self.updateRequired = 1
 
-		elseif event == "PARTY_LEADER_CHANGED" then
-			UnitButton_UpdateRole(self)
+		elseif event == "PARTY_LEADER_CHANGED" or event == "PLAYER_REGEN_ENABLED" or event == "PLAYER_REGEN_DISABLED" then
+			UnitButton_UpdateLeader(self, event)
 	
 		elseif event == "PLAYER_TARGET_CHANGED" then
 			UnitButton_UpdateTarget(self)
@@ -1419,7 +1433,6 @@ function F:UnitButton_OnLoad(button)
 	leaderIcon:SetPoint("TOP", roleIcon, "BOTTOM")
 	leaderIcon:SetSize(11, 11)
 	leaderIcon:Hide()
-	F:SetHideInCombat(leaderIcon)
 
 	-- Ready check icon
 	local readyCheckIcon = overlayFrame:CreateTexture(name.."ReadyCheckIcon", "OVERLAY", nil, -7)
