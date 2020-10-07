@@ -13,9 +13,11 @@ buttonsFrame:SetMovable(true)
 buttonsFrame:RegisterForDrag("LeftButton")
 buttonsFrame:SetScript("OnDragStart", function()
     buttonsFrame:StartMoving()
+    buttonsFrame:SetUserPlaced(false)
 end)
 buttonsFrame:SetScript("OnDragStop", function()
     buttonsFrame:StopMovingOrSizing()
+    F:SavePosition(buttonsFrame, CellDB["raidTools"]["buttonsPosition"])
 end)
 
 -------------------------------------------------
@@ -182,6 +184,10 @@ local function UpdateRaidTools(which)
             pullBtn:SetAttribute("macrotext1", "/pull "..CellDB["raidTools"]["pullTimer"][2])
             pullBtn:SetAttribute("macrotext2", "/pull 0")
         end
+    end
+
+    if not which then -- position
+        F:RestorePosition(buttonsFrame, CellDB["raidTools"]["buttonsPosition"])
     end
 end
 Cell:RegisterCallback("UpdateRaidTools", "RaidButtons_UpdateRaidTools", UpdateRaidTools)
