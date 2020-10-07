@@ -86,7 +86,7 @@ function F:UpdateFont()
         if CellDB["outline"] == "Outline" then
             flags = "OUTLINE"
         else -- Monochrome Outline
-            flags = "OUTLINE, MONOCHROME"
+            flags = "OUTLINE,MONOCHROME"
         end
     end
 
@@ -163,6 +163,7 @@ function eventFrame:ADDON_LOADED(arg1)
                         ["name"] = 13,
                         ["status"] = 11,
                     },
+                    ["textWidth"] = .75,
                     ["groupFilter"] = {true, true, true, true, true, true, true, true},
                     ["indicators"] = {
                         {

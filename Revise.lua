@@ -24,6 +24,15 @@ frame:SetScript("OnEvent", function(self, event, arg1, ...)
 				end
 			end
 		end
+
+		-- r6-alpha add "textWidth"
+		if not(CellDB["revise"]) or CellDB["revise"] < "r6-alpha" then
+			for _, layout in pairs(CellDB["layouts"]) do
+				if not layout["textWidth"] then
+					layout["textWidth"] = .75
+				end
+			end
+		end
 		CellDB["revise"] = Cell.version
     end
 end)

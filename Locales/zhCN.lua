@@ -19,8 +19,7 @@ L["reset all Cell options and reload UI"] = "重置所有Cell设置并重载界�
 -------------------------------------------------
 L["Options"] = "选项"
 L["Tools"] = "工具"
-L["Raid Markers"] = "队伍标记"
-L["World Markers"] = "世界标记"
+L["Raid"] = "团队"
 
 -------------------------------------------------
 -- tools
@@ -28,6 +27,8 @@ L["World Markers"] = "世界标记"
 L["Pull Timer"] = "开怪倒数"
 L["You don't have permission to do this"] = "你没有权限这样做"
 L["TOOLSTIPS"] = "|cffff00ff开怪倒数|r\n|cffffff00左键单击:|r 开始倒计时\n|cffffff00右键单击:|r 取消倒计时\n\n|cffff00ff目标标记|r\n|cffffff00左键单击:|r 在目标上设置标记\n|cffffff00右键单击:|r 将标记锁定在目标上 (在队伍中)"
+L["Raid Sort"] = "团队排序"
+L["Raid Roster"] = "团队名单"
 
 -------------------------------------------------
 -- status text
@@ -128,7 +129,11 @@ L["Height"] = "高"
 L["Font Size"] = "字体尺寸"
 L["Name"] = "名字"
 L["Status"] = "状态"
+L["Misc"] = "其他"
 L["Spacing"] = "间距"
+L["Text Width"] = "文字宽度"
+L["Unlimited"] = "无限制"
+L["Set Text Width\n|cffffffffCompare with unitbutton's width"] = "设置文字宽度\n|cffffffff相对于单位按钮的宽度"
 L["Tips: You can use Shift+Scroll to change a slider's value."] = "提示: 可以用 Shift+滚轮 调整滑动条数值。"
 L["vehicle name"] = "载具名称"
 

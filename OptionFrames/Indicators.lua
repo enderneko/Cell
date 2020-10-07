@@ -39,7 +39,7 @@ local function UpdatePreviewButton()
         previewButton.widget.nameText:SetText(name)
 
         previewButton:SetScript("OnSizeChanged", function(self)
-            F:SetTextLimitWidth(self.widget.nameText, name, 0.75)
+            F:UpdateTextWidth(self.widget.nameText, name)
         end)
 
         previewButton.widget.roleIcon:SetTexture("Interface\\AddOns\\Cell\\Media\\UI-LFG-ICON-PORTRAITROLES.blp")
@@ -50,6 +50,7 @@ local function UpdatePreviewButton()
     previewButton:SetSize(unpack(Cell.vars.currentLayoutTable["size"]))
     previewButton.widget.healthBar:SetStatusBarTexture(Cell.vars.texture)
     previewButton.widget.powerBar:SetStatusBarTexture(Cell.vars.texture)
+    previewButton:GetScript("OnSizeChanged")(previewButton)
 end
 
 -- init preview button indicator animation

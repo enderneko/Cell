@@ -179,8 +179,14 @@ function F:IterateAllUnitButtons(func)
     end
 end
 
-function F:SetTextLimitWidth(fs, text, percent)
+function F:UpdateTextWidth(fs, text)
     if not text then return end
+
+    local percent = Cell.vars.currentLayoutTable and Cell.vars.currentLayoutTable["textWidth"] or .75
+    if percent == 0 then
+        fs:SetText(text)
+        return
+    end
 
     local width = fs:GetParent():GetWidth() - 2
 	for i = string.utf8len(text), 0, -1 do

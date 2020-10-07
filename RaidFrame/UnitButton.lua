@@ -745,7 +745,7 @@ local function UnitButton_UpdateVehicleStatus(self)
 			local prefix, id, suffix = strmatch(unit, "([^%d]+)([%d]*)(.*)")
 			self.state.displayedUnit = prefix.."pet"..id..suffix
 		end
-		F:SetTextLimitWidth(self.widget.vehicleText, UnitName(self.state.displayedUnit), 0.75)
+		F:UpdateTextWidth(self.widget.vehicleText, UnitName(self.state.displayedUnit))
 	else
 		self.state.inVehicle = nil
 		self.state.displayedUnit = self.state.unit
@@ -827,7 +827,7 @@ local function UnitButton_UpdateNameAndColor(self)
 
 	-- name
 	local nameText = self.widget.nameText
-	if self.state.name then F:SetTextLimitWidth(nameText, self.state.name, 0.75) end
+	if self.state.name then F:UpdateTextWidth(nameText, self.state.name) end
 	
 	-- color
 	nameText:SetTextColor(1, 1, 1, 1)
@@ -1096,18 +1096,17 @@ end
 
 local function UnitButton_OnSizeChanged(self)
 	if self.state.name then
-		F:SetTextLimitWidth(self.widget.nameText, self.state.name, 0.75)
+		F:UpdateTextWidth(self.widget.nameText, self.state.name)
 		
 		if self.state.inVehicle then
-			F:SetTextLimitWidth(self.widget.vehicleText, UnitName(self.state.displayedUnit), 0.75)
+			F:UpdateTextWidth(self.widget.vehicleText, UnitName(self.state.displayedUnit))
 		end
 	end
 end
 
 local function UnitButton_OnTick(self)
-	-- REVIEW: necessary?
 	local e = (self.__tickCount or 0) + 1
-	if e >= 4 then
+	if e >= 4 then -- every 1 second
 		e = 0
 		local guid = UnitGUID(self.state.displayedUnit or "")
 		if guid ~= self.__displayedGuid then

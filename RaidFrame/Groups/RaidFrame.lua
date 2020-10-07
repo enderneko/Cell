@@ -150,6 +150,12 @@ local function RaidFrame_UpdateLayout(layout, which)
             raidFrame:SetAttribute("visibility", 1) -- NOTE: trigger _onattributechanged to set npcFrameAnchor point!
         end
 
+        if which == "textWidth" then -- textWidth already initialized in UnitButton.lua
+            for j, b in ipairs({header:GetChildren()}) do
+                b:GetScript("OnSizeChanged")(b)
+            end
+        end
+
         if not which or which == "groupFilter" then
             if layout["groupFilter"][i] then
                 header:Show()

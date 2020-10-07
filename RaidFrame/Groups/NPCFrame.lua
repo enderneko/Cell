@@ -115,5 +115,11 @@ local function NPCFrame_UpdateLayout(layout, which)
             Cell.unitButtons.npc[i]:SetPoint("TOPLEFT", Cell.unitButtons.npc[i-1], "BOTTOMLEFT", 0, -layout["spacing"])
         end
     end
+
+    if which == "textWidth" then -- textWidth already initialized in UnitButton.lua
+        for _, b in pairs(Cell.unitButtons.npc) do
+            b:GetScript("OnSizeChanged")(b)
+        end
+    end
 end
 Cell:RegisterCallback("UpdateLayout", "NPCFrame_UpdateLayout", NPCFrame_UpdateLayout)

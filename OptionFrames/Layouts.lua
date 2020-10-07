@@ -55,8 +55,8 @@ local function UpdatePreviewButton(which, value)
         previewButton.widget.statusText:SetFont(CELL_FONT_STATUS:GetFont(), selectedLayoutTable["font"]["status"])
 
         previewButton:SetScript("OnSizeChanged", function(self)
-            F:SetTextLimitWidth(self.widget.nameText, name, 0.75)
-			F:SetTextLimitWidth(self.widget.vehicleText, vehicleName, 0.75)
+            F:UpdateTextWidth(self.widget.nameText, name)
+			F:UpdateTextWidth(self.widget.vehicleText, vehicleName)
         end)
     end
 
@@ -84,6 +84,10 @@ local function UpdatePreviewButton(which, value)
     if not which or which == "font" or which == "statusFont" then
         previewButton.widget.vehicleText:SetFont(CELL_FONT_NAME:GetFont(), value or selectedLayoutTable["font"]["status"], flags)
         previewButton.widget.statusText:SetFont(CELL_FONT_NAME:GetFont(), value or selectedLayoutTable["font"]["status"], flags)
+        previewButton:GetScript("OnSizeChanged")(previewButton)
+    end
+
+    if not which or which == "textWidth" then
         previewButton:GetScript("OnSizeChanged")(previewButton)
     end
 end
@@ -360,7 +364,7 @@ statusFontSlider:SetPoint("TOP", nameFontSlider, "BOTTOM", 0, -40)
 -------------------------------------------------
 -- spacing
 -------------------------------------------------
-local miscText = Cell:CreateSeparator(L["Spacing"], layoutsTab, 122)
+local miscText = Cell:CreateSeparator(L["Misc"], layoutsTab, 122)
 miscText:SetPoint("TOPLEFT", 269, -175)
 
 -- spacing
@@ -371,6 +375,65 @@ local spacingSlider = Cell:CreateSlider(L["Spacing"], layoutsTab, 3, 7, 100, 1, 
     end
 end)
 spacingSlider:SetPoint("TOPLEFT", miscText, "BOTTOMLEFT", 5, -25)
+
+-- textWidth
+local textWidthDropdown = Cell:CreateDropdown(layoutsTab, 100)
+textWidthDropdown:SetPoint("TOPLEFT", spacingSlider, "BOTTOMLEFT", 0, -40)
+textWidthDropdown:SetItems({
+    {
+        ["text"] = L["Unlimited"],
+        ["onClick"] = function()
+            selectedLayoutTable["textWidth"] = 0
+            if selectedLayout == Cell.vars.currentLayout then
+                Cell:Fire("UpdateLayout", selectedLayout, "textWidth")
+            end
+            UpdatePreviewButton("textWidth")
+        end,
+    },
+    {
+        ["text"] = "100%",
+        ["onClick"] = function()
+            selectedLayoutTable["textWidth"] = 1
+            if selectedLayout == Cell.vars.currentLayout then
+                Cell:Fire("UpdateLayout", selectedLayout, "textWidth")
+            end
+            UpdatePreviewButton("textWidth")
+        end,
+    },
+    {
+        ["text"] = "75%",
+        ["onClick"] = function()
+            selectedLayoutTable["textWidth"] = .75
+            if selectedLayout == Cell.vars.currentLayout then
+                Cell:Fire("UpdateLayout", selectedLayout, "textWidth")
+            end
+            UpdatePreviewButton("textWidth")
+        end,
+    },
+    {
+        ["text"] = "50%",
+        ["onClick"] = function()
+            selectedLayoutTable["textWidth"] = .5
+            if selectedLayout == Cell.vars.currentLayout then
+                Cell:Fire("UpdateLayout", selectedLayout, "textWidth")
+            end
+            UpdatePreviewButton("textWidth")
+        end,
+    },
+})
+textWidthDropdown:HookScript("OnEnter", function()
+    CellTooltip:SetOwner(textWidthDropdown, "ANCHOR_NONE")
+    CellTooltip:SetPoint("LEFT", textWidthDropdown, "RIGHT", 5, 0)
+    CellTooltip:AddLine(L["Set Text Width\n|cffffffffCompare with unitbutton's width"])
+    CellTooltip:Show()
+end)
+textWidthDropdown:HookScript("OnLeave", function()
+    CellTooltip:Hide()
+end)
+
+local widthText = textWidthDropdown:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
+widthText:SetText(L["Text Width"])
+widthText:SetPoint("BOTTOM", textWidthDropdown, "TOP", 0, 2)
 
 -------------------------------------------------
 -- tips
@@ -395,6 +458,15 @@ LoadLayoutDB = function(layout)
     statusFontSlider:SetValue(selectedLayoutTable["font"]["status"])
 
     spacingSlider:SetValue(selectedLayoutTable["spacing"])
+    if selectedLayoutTable["textWidth"] == 0 then
+        textWidthDropdown:SetSelectedItem(1)
+    elseif selectedLayoutTable["textWidth"] == 1 then
+        textWidthDropdown:SetSelectedItem(2)
+    elseif selectedLayoutTable["textWidth"] == .75 then
+        textWidthDropdown:SetSelectedItem(3)
+    elseif selectedLayoutTable["textWidth"] == .50 then
+        textWidthDropdown:SetSelectedItem(4)
+    end
 
     UpdateGroupFilter()
     UpdatePreviewButton()
