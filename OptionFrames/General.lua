@@ -219,7 +219,7 @@ setupCB:SetPoint("TOPLEFT", toolsText, "BOTTOMLEFT", 5, -15)
 local resCB = Cell:CreateCheckButton(generalTab, L["Show Battle Res Timer"], function(checked, self)
     CellDB["raidTools"]["showBattleRes"] = checked
     Cell:Fire("UpdateRaidTools", "battleRes")
-end)
+end, L["Show Battle Res Timer"], L["Only show during encounter or in mythic+"])
 resCB:SetPoint("LEFT", setupCB, "RIGHT", 110, 0)
 
 -- ready & pull

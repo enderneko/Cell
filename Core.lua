@@ -177,7 +177,7 @@ function eventFrame:ADDON_LOADED(arg1)
                     ["groupFilter"] = {true, true, true, true, true, true, true, true},
                     ["indicators"] = {
                         {
-                            ["name"] = L["Aggro Bar"],
+                            ["name"] = "Aggro Bar",
                             ["indicatorName"] = "aggroBar",
                             ["type"] = "built-in",
                             ["enabled"] = true,
@@ -185,7 +185,7 @@ function eventFrame:ADDON_LOADED(arg1)
                             ["size"] = {18, 2},
                         },
                         {
-                            ["name"] = L["AoE Healing"],
+                            ["name"] = "AoE Healing",
                             ["indicatorName"] = "aoeHealing",
                             ["type"] = "built-in",
                             ["enabled"] = true,
@@ -193,7 +193,7 @@ function eventFrame:ADDON_LOADED(arg1)
                             ["color"] = {1, 1, 0},
                         },
                         {
-                            ["name"] = L["External Cooldowns"],
+                            ["name"] = "External Cooldowns",
                             ["indicatorName"] = "externalCooldowns",
                             ["type"] = "built-in",
                             ["enabled"] = true,
@@ -202,7 +202,7 @@ function eventFrame:ADDON_LOADED(arg1)
                             ["num"] = 2,
                         },
                         {
-                            ["name"] = L["Defensive Cooldowns"],
+                            ["name"] = "Defensive Cooldowns",
                             ["indicatorName"] = "defensiveCooldowns",
                             ["type"] = "built-in",
                             ["enabled"] = true,
@@ -211,7 +211,7 @@ function eventFrame:ADDON_LOADED(arg1)
                             ["num"] = 2,
                         },
                         {
-                            ["name"] = L["Tank Active Mitigation"],
+                            ["name"] = "Tank Active Mitigation",
                             ["indicatorName"] = "tankActiveMitigation",
                             ["type"] = "built-in",
                             ["enabled"] = true,
@@ -219,7 +219,7 @@ function eventFrame:ADDON_LOADED(arg1)
                             ["size"] = {18, 4},
                         },
                         {
-                            ["name"] = L["Dispels"],
+                            ["name"] = "Dispels",
                             ["indicatorName"] = "dispels",
                             ["type"] = "built-in",
                             ["enabled"] = true,
@@ -228,7 +228,7 @@ function eventFrame:ADDON_LOADED(arg1)
                             ["dispellableByMe"] = true
                         },
                         {
-                            ["name"] = L["Debuffs"],
+                            ["name"] = "Debuffs",
                             ["indicatorName"] = "debuffs",
                             ["type"] = "built-in",
                             ["enabled"] = true,

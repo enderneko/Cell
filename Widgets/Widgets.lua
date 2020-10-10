@@ -31,8 +31,12 @@ function addon:ColorFontStringByPlayerClass(fs)
 	fs:SetTextColor(classColor.t[1], classColor.t[2], classColor.t[3])
 end
 
-function addon:GetPlayerClassColor()
-	return classColor.t
+function addon:GetPlayerClassColor(alpha)
+	if alpha then
+		return {classColor.t[1], classColor.t[2], classColor.t[3], alpha}
+	else
+		return classColor.t
+	end
 end
 
 -----------------------------------------
@@ -1021,8 +1025,98 @@ function menu:SetMenuParent(parent)
 	menu:SetFrameStrata("TOOLTIP")
 end
 
+-----------------------------------------
+-- scroll text frame
+-----------------------------------------
+function addon:CreateScrollTextFrame(parent, s, delayTime)
+	if not delayTime then delayTime = 3 end
+
+	local frame = CreateFrame("ScrollFrame", nil, parent)
+	-- frame:Hide() -- hide by default
+	frame:SetSize(20, 20)
+
+	local content = CreateFrame("Frame", nil, frame)
+	content:SetSize(20, 20)
+	frame:SetScrollChild(content)
+
+	local text = content:CreateFontString(nil, "OVERLAY", font_name)
+	text:SetWordWrap(false)
+	text:SetPoint("LEFT")
+	text:SetText(s)
+
+	-- alpha changing animation
+	local fadeIn = text:CreateAnimationGroup()
+	local alpha = fadeIn:CreateAnimation("Alpha")
+	alpha:SetFromAlpha(0)
+	alpha:SetToAlpha(1)
+	alpha:SetDuration(.5)
+	
+	local fadeOutIn = text:CreateAnimationGroup()
+	local alpha1 = fadeOutIn:CreateAnimation("Alpha")
+	alpha1:SetStartDelay(delayTime)
+	alpha1:SetFromAlpha(1)
+	alpha1:SetToAlpha(0)
+	alpha1:SetDuration(.5)
+	alpha1:SetOrder(1)
+	local alpha2 = fadeOutIn:CreateAnimation("Alpha")
+	alpha2:SetFromAlpha(0)
+	alpha2:SetToAlpha(1)
+	alpha2:SetDuration(.5)
+	alpha2:SetOrder(2)
+	alpha2:SetStartDelay(.1)
+
+	local maxHScrollRange
+	local elapsedTime, delay, scroll = 0, 0, 0
+	local nextRound
+	
+	alpha1:SetScript("OnFinished", function()
+		frame:SetHorizontalScroll(0)
+	end)
+
+	fadeOutIn:SetScript("OnFinished", function()
+		delay = 0
+		scroll = 0
+		nextRound = false
+		wait = false
+	end)
+
+	-- init frame
+	frame:SetScript("OnShow", function()
+		-- init
+		fadeIn:Play()
+		frame:SetHorizontalScroll(0)
+		elapsedTime, delay, scroll = 0, 0, 0
+
+		if text:GetStringWidth() <= frame:GetWidth() then
+			frame:SetScript("OnUpdate", nil)
+		else
+			maxHScrollRange = text:GetStringWidth() - frame:GetWidth()
+			frame:SetScript("OnUpdate", function(self, elapsed)
+				elapsedTime = elapsedTime + elapsed
+				delay = delay + elapsed
+				if elapsedTime >= 0.025 then
+					if not wait and delay >= delayTime then
+						if nextRound then
+							wait = true
+							fadeOutIn:Play()
+						elseif scroll >= maxHScrollRange then -- prepare for next round
+							nextRound = true
+						else
+							frame:SetHorizontalScroll(scroll)
+							scroll = scroll + .5
+						end
+					end
+					elapsedTime = 0
+				end
+			end)
+		end
+	end)
+
+	return frame
+end
+
 -----------------------------------------------------------------------------------
--- create scroll frame (with scrollbar & content frame) 2017-07-17 08:40:41
+-- create scroll frame (with scrollbar & content frame)
 -----------------------------------------------------------------------------------
 function addon:CreateScrollFrame(parent, top, bottom, color, border)
 	-- create scrollFrame & scrollbar seperately (instead of UIPanelScrollFrameTemplate), in order to custom it
@@ -1046,7 +1140,7 @@ function addon:CreateScrollFrame(parent, top, bottom, color, border)
 	
 	-- content
 	local content = CreateFrame("Frame", nil, scrollFrame)
-	content:SetSize(scrollFrame:GetWidth(), 10)
+	content:SetSize(scrollFrame:GetWidth(), 2)
 	scrollFrame:SetScrollChild(content)
 	scrollFrame.content = content
 	-- content:SetFrameLevel(2)
@@ -1071,7 +1165,7 @@ function addon:CreateScrollFrame(parent, top, bottom, color, border)
 	
 	-- reset content height manually ==> content:GetBoundsRect() make it right @OnUpdate
 	function scrollFrame:ResetHeight()
-		content:SetHeight(10)
+		content:SetHeight(2)
 	end
 	
 	-- reset to top, useful when used with DropDownMenu (variable content height)

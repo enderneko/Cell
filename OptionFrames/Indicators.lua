@@ -526,9 +526,9 @@ LoadIndicatorList = function()
     for i, t in pairs(currentLayoutTable["indicators"]) do
         local b
         if t["type"] == "built-in" then
-            b = Cell:CreateButton(listFrame.scrollFrame.content, t["name"], "transparent-class", {20, 20})
+            b = Cell:CreateButton(listFrame.scrollFrame.content, L[t["name"]], "transparent-class", {20, 20})
         else
-            b = Cell:CreateButton(listFrame.scrollFrame.content, t["name"].." |cFF777777("..L[t["auraType"]]..")", "transparent-class", {20, 20})
+            b = Cell:CreateButton(listFrame.scrollFrame.content, t["name"].." |cff7b7b7b("..L[t["auraType"]]..")", "transparent-class", {20, 20})
         end
         tinsert(listButtons, b)
         b.id = i
