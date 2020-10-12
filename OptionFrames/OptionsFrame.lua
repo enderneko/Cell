@@ -29,7 +29,7 @@ local generalTab = Cell:CreateButton(optionsFrame, L["General"], "class-hover", 
 local clickCastingsBtn = Cell:CreateButton(optionsFrame, L["Click-Castings"], "class-hover", {133, 20}, false, false, "CELL_FONT_WIDGET_TITLE", "CELL_FONT_WIDGET_TITLE_DISABLE")
 local layoutsBtn = Cell:CreateButton(optionsFrame, L["Layouts"], "class-hover", {133, 20}, false, false, "CELL_FONT_WIDGET_TITLE", "CELL_FONT_WIDGET_TITLE_DISABLE")
 local indicatorsBtn = Cell:CreateButton(optionsFrame, L["Indicators"], "class-hover", {133, 20}, false, false, "CELL_FONT_WIDGET_TITLE", "CELL_FONT_WIDGET_TITLE_DISABLE")
-local debuffsBtn = Cell:CreateButton(optionsFrame, L["Debuffs"], "class-hover", {133, 20}, false, false, "CELL_FONT_WIDGET_TITLE", "CELL_FONT_WIDGET_TITLE_DISABLE")
+local debuffsBtn = Cell:CreateButton(optionsFrame, L["Raid Debuffs"], "class-hover", {133, 20}, false, false, "CELL_FONT_WIDGET_TITLE", "CELL_FONT_WIDGET_TITLE_DISABLE")
 local aboutBtn = Cell:CreateButton(optionsFrame, L["About"], "class-hover", {114, 20}, false, false, "CELL_FONT_WIDGET_TITLE", "CELL_FONT_WIDGET_TITLE_DISABLE")
 local closeBtn = Cell:CreateButton(optionsFrame, L["×"], "red", {20, 20}, false, false, "CELL_FONT_SPECIAL", "CELL_FONT_SPECIAL")
 closeBtn:SetScript("OnClick", function()

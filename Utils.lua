@@ -414,3 +414,26 @@ function F:RestorePosition(frame, pTable)
     frame:ClearAllPoints()
     frame:SetPoint(pTable[1], UIParent, pTable[2], pTable[3], pTable[4])
 end
+
+-------------------------------------------------
+-- instance
+-------------------------------------------------
+function F:GetInstanceName()
+    if IsInInstance() then
+        local name = GetInstanceInfo()
+        if not name then name = GetRealZoneText() end
+        return name
+    else
+        local mapID = C_Map.GetBestMapForUnit("player")
+        if type(mapID) ~= "number" or mapID < 1 then
+            return ""
+        end
+
+        local info = MapUtil.GetMapParentInfo(mapID, Enum.UIMapType.Continent, true)
+        if info then
+            return info.name, info.mapID
+        end
+
+        return ""
+    end
+end

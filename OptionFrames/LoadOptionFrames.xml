@@ -7,5 +7,7 @@
 	<Script file="Layouts.lua"/>
 	<Script file="Indicators_DefaultSpells.lua"/>
 	<Script file="Indicators.lua"/>
+	<Script file="RaidDebuffs.lua"/>
+	<Script file="RaidDebuffs_Legion.lua"/>
 	<Script file="About.lua"/>
 </Ui>

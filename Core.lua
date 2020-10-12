@@ -381,15 +381,18 @@ end
 local prevSpec
 function eventFrame:PLAYER_LOGIN()
     if not prevSpec then prevSpec = GetSpecialization() end
+    Cell.vars.playerGUID = UnitGUID("player")
     -- update spec vars
     Cell.vars.playerSpecID, Cell.vars.playerSpecName, _, Cell.vars.playerSpecIcon = GetSpecializationInfo(prevSpec)
     Cell:Fire("UpdateClickCastings")
+    -- update indicators
     Cell:Fire("UpdateIndicators")
     -- update texture and font
     Cell:Fire("UpdateAppearance")
     -- update raid tools
     Cell:Fire("UpdateRaidTools")
-    Cell.vars.playerGUID = UnitGUID("player")
+    -- update raid debuff list
+    Cell:Fire("UpdateRaidDebuffs")
 end
 
 -- PLAYER_SPECIALIZATION_CHANGED fires when level up, ACTIVE_TALENT_GROUP_CHANGED usually fire twice.

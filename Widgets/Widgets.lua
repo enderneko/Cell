@@ -295,16 +295,18 @@ end
 -----------------------------------------
 -- Button Group
 -----------------------------------------
-function addon:CreateButtonGroup(buttons, onClick, func1, func2)
+function addon:CreateButtonGroup(buttons, onClick, func1, func2, onEnter, onLeave)
 	local function HighlightButton(id)
-		for _, b in ipairs(buttons) do
+		for _, b in pairs(buttons) do
 			if id == b.id then
 				b:SetBackdropColor(unpack(b.hoverColor))
 				b:SetScript("OnEnter", function()
 					if b.ShowTooltip then b.ShowTooltip(b) end
+					if onEnter then onEnter(b) end
 				end)
 				b:SetScript("OnLeave", function()
 					if b.HideTooltip then b.HideTooltip() end
+					if onLeave then onLeave() end
 				end)
 				if func1 then func1(b.id) end
 			else
@@ -312,26 +314,30 @@ function addon:CreateButtonGroup(buttons, onClick, func1, func2)
 				b:SetScript("OnEnter", function() 
 					if b.ShowTooltip then b.ShowTooltip(b) end
 					b:SetBackdropColor(unpack(b.hoverColor))
+					if onEnter then onEnter(b) end
 				end)
 				b:SetScript("OnLeave", function() 
 					if b.HideTooltip then b.HideTooltip() end
 					b:SetBackdropColor(unpack(b.color))
+					if onLeave then onLeave() end
 				end)
 				if func2 then func2(b.id) end
 			end
 		end
 	end
+
+	HighlightButton() -- REVIEW:
 	
-	for _, b in ipairs(buttons) do
+	for _, b in pairs(buttons) do
 		b:SetScript("OnClick", function()
 			HighlightButton(b.id)
 			onClick(b.id)
 		end)
 	end
 	
-	buttons.HighlightButton = HighlightButton
+	-- buttons.HighlightButton = HighlightButton
 
-	return buttons
+	return buttons, HighlightButton
 end
 
 -----------------------------------------
@@ -1028,8 +1034,10 @@ end
 -----------------------------------------
 -- scroll text frame
 -----------------------------------------
-function addon:CreateScrollTextFrame(parent, s, delayTime)
+function addon:CreateScrollTextFrame(parent, s, timePerScroll, scrollStep, delayTime)
 	if not delayTime then delayTime = 3 end
+	if not timePerScroll then timePerScroll = 0.025 end
+	if not scrollStep then scrollStep = 1 end
 
 	local frame = CreateFrame("ScrollFrame", nil, parent)
 	-- frame:Hide() -- hide by default
@@ -1094,7 +1102,7 @@ function addon:CreateScrollTextFrame(parent, s, delayTime)
 			frame:SetScript("OnUpdate", function(self, elapsed)
 				elapsedTime = elapsedTime + elapsed
 				delay = delay + elapsed
-				if elapsedTime >= 0.025 then
+				if elapsedTime >= timePerScroll then
 					if not wait and delay >= delayTime then
 						if nextRound then
 							wait = true
@@ -1103,7 +1111,7 @@ function addon:CreateScrollTextFrame(parent, s, delayTime)
 							nextRound = true
 						else
 							frame:SetHorizontalScroll(scroll)
-							scroll = scroll + .5
+							scroll = scroll + scrollStep
 						end
 					end
 					elapsedTime = 0
@@ -1162,6 +1170,7 @@ function addon:CreateScrollFrame(parent, top, bottom, color, border)
 	scrollThumb:EnableMouse(true)
 	scrollThumb:SetMovable(true)
 	scrollThumb:SetHitRectInsets(-5, -5, 0, 0) -- Frame:SetHitRectInsets(left, right, top, bottom)
+	scrollFrame.scrollThumb = scrollThumb
 	
 	-- reset content height manually ==> content:GetBoundsRect() make it right @OnUpdate
 	function scrollFrame:ResetHeight()
