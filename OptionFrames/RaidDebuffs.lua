@@ -8,7 +8,7 @@ debuffsTab:SetAllPoints(Cell.frames.optionsFrame)
 debuffsTab:Hide()
 
 -- vars
-local newestExpansion, loadedExpansion, loadedInstance, loadedBoss
+local newestExpansion, loadedExpansion, loadedInstance, loadedBoss, selectedSpellId, currentSpellTable
 -- functions
 local LoadExpansion, ShowInstances, ShowBosses, ShowDebuffs, ShowDetails, ShowImage, HideImage, OpenEncounterJournal
 -- buttons
@@ -154,7 +154,7 @@ local function LoadDebuffs()
             -- load
             for i, spellId in pairs(bTable) do
                 if not (CellDB["raidDebuffs"][instanceId] and CellDB["raidDebuffs"][instanceId][bossId] and CellDB["raidDebuffs"][instanceId][bossId][spellId]) then
-                    tinsert(loadedDebuffs[instanceId][bossId], {["id"]=spellId})
+                    tinsert(loadedDebuffs[instanceId][bossId], {["id"]=spellId, ["order"]=#loadedDebuffs[instanceId][bossId]+1})
                 end
             end
         end
@@ -425,117 +425,140 @@ end)
 dragged.text = dragged:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
 dragged.text:SetPoint("LEFT", 5, 0)
 
+local function RegisterForDrag(b)
+    -- dragging
+    b:SetMovable(true)
+    b:RegisterForDrag("LeftButton")
+    b:SetScript("OnDragStart", function(self)
+        self:SetAlpha(.5)
+        dragged:SetWidth(self:GetWidth())
+        dragged.text:SetText(self:GetText())
+        dragged:Show()
+    end)
+    b:SetScript("OnDragStop", function(self)
+        self:SetAlpha(1)
+        dragged:Hide()
+        local newB = GetMouseFocus()
+        if newB:GetParent() == debuffListFrame.scrollFrame.content and newB ~= self and currentSpellTable[newB.index]["order"] ~= 0 then
+            local temp, from, to = self, self.index, newB.index
+            local moved = currentSpellTable[from]
+
+            if self.index > newB.index then
+                -- move up (before newB)
+                -- update old next button's position
+                if debuffButtons[self.index+1] and debuffButtons[self.index+1]:IsShown() then
+                    debuffButtons[self.index+1]:ClearAllPoints()
+                    debuffButtons[self.index+1]:SetPoint(unpack(self.point1))
+                    debuffButtons[self.index+1]:SetPoint("RIGHT")
+                    debuffButtons[self.index+1].point1 = F:Copy(self.point1)
+                end
+                -- update new self position
+                self:ClearAllPoints()
+                self:SetPoint(unpack(newB.point1))
+                self:SetPoint("RIGHT")
+                self.point1 = F:Copy(newB.point1)
+                -- update new next's position
+                newB:ClearAllPoints()
+                newB:SetPoint("TOPLEFT", self, "BOTTOMLEFT", 0, 1)
+                newB:SetPoint("RIGHT")
+                newB.point1 = {"TOPLEFT", self, "BOTTOMLEFT", 0, 1}
+                -- update list
+                for j = from, to, -1 do
+                    if j == to then
+                        debuffButtons[j] = temp
+                        currentSpellTable[j] = moved
+                    else
+                        debuffButtons[j] = debuffButtons[j-1]
+                        currentSpellTable[j] = currentSpellTable[j-1]
+                    end
+                    debuffButtons[j].index = j
+                    currentSpellTable[j]["order"] = j
+                    -- debuffButtons[j].id = debuffButtons[j].spellId.."-"..j
+                end
+            else
+                -- move down (after newB)
+                -- update old next button's position
+                if debuffButtons[self.index+1] and debuffButtons[self.index+1]:IsShown() then
+                    debuffButtons[self.index+1]:ClearAllPoints()
+                    debuffButtons[self.index+1]:SetPoint(unpack(self.point1))
+                    debuffButtons[self.index+1]:SetPoint("RIGHT")
+                    debuffButtons[self.index+1].point1 = F:Copy(self.point1)
+                end
+                -- update new self position
+                self:ClearAllPoints()
+                self:SetPoint("TOPLEFT", newB, "BOTTOMLEFT", 0, 1)
+                self:SetPoint("RIGHT")
+                self.point1 = {"TOPLEFT", newB, "BOTTOMLEFT", 0, 1}
+                -- update new next button's position
+                if debuffButtons[newB.index+1] and debuffButtons[newB.index+1]:IsShown() then
+                    debuffButtons[newB.index+1]:ClearAllPoints()
+                    debuffButtons[newB.index+1]:SetPoint("TOPLEFT", self, "BOTTOMLEFT", 0, 1)
+                    debuffButtons[newB.index+1]:SetPoint("RIGHT")
+                    debuffButtons[newB.index+1].point1 = {"TOPLEFT", self, "BOTTOMLEFT", 0, 1}
+                end
+                -- update list
+                for j = from, to do
+                    if j == to then
+                        debuffButtons[j] = temp
+                        currentSpellTable[j] = moved
+                    else
+                        debuffButtons[j] = debuffButtons[j+1]
+                        currentSpellTable[j] = currentSpellTable[j+1]
+                    end
+                    debuffButtons[j].index = j
+                    currentSpellTable[j]["order"] = j
+                    -- debuffButtons[j].id = debuffButtons[j].spellId.."-"..j
+                end
+            end
+        end
+    end)
+end
+
+local function UnregisterForDrag(b)
+    b:SetMovable(false)
+    b:SetScript("OnDragStart", nil)
+    b:SetScript("OnDragStop", nil)
+end
+
 ShowDebuffs = function(bossId)
     local bId, bIndex = F:SplitToNumber("-", bossId)
+    -- hide debuffDetails
+    selectedSpellId = nil
+    RaidDebuffsTab_DebuffDetails:HideAll()
 
     if loadedBoss == bId then return end
     loadedBoss = bId
 
     debuffListFrame.scrollFrame:ResetScroll()
     
-    local t, debuffsFound
+    currentSpellTable = nil
     if loadedDebuffs[loadedInstance] then
         if bId == loadedInstance then -- General
-            t = loadedDebuffs[loadedInstance]["general"]
-            if t then debuffsFound = true end
+            currentSpellTable = loadedDebuffs[loadedInstance]["general"]
         else
-            t = loadedDebuffs[loadedInstance][bId]
-            if t then debuffsFound = true end
+            currentSpellTable = loadedDebuffs[loadedInstance][bId]
         end
     end
 
     local n = 0
-    if debuffsFound then
-        n = #t
-        for i, sTable in pairs(t) do
+    if currentSpellTable then
+        n = #currentSpellTable
+        for i, sTable in pairs(currentSpellTable) do
             if not debuffButtons[i] then
                 debuffButtons[i] = Cell:CreateButton(debuffListFrame.scrollFrame.content, sTable["id"], "transparent-class", {20, 20})
-                debuffButtons[i].spellId = sTable["id"]
                 debuffButtons[i].index = i
-
-                -- dragging
-                debuffButtons[i]:SetMovable(true)
-                debuffButtons[i]:RegisterForDrag("LeftButton")
-                debuffButtons[i]:SetScript("OnDragStart", function(self)
-                    self:SetAlpha(.5)
-                    dragged:SetWidth(self:GetWidth())
-                    dragged.text:SetText(self:GetText())
-                    dragged:Show()
-                end)
-                debuffButtons[i]:SetScript("OnDragStop", function(self)
-                    self:SetAlpha(1)
-                    dragged:Hide()
-                    local newB = GetMouseFocus()
-                    if newB:GetParent() == debuffListFrame.scrollFrame.content and newB ~= self then
-                        local temp, from, to = self, self.index, newB.index
-
-                        if self.index > newB.index then
-                            -- move up (before newB)
-                            -- update old next button's position
-                            if debuffButtons[self.index+1] and debuffButtons[self.index+1]:IsShown() then
-                                debuffButtons[self.index+1]:ClearAllPoints()
-                                debuffButtons[self.index+1]:SetPoint(unpack(self.point1))
-                                debuffButtons[self.index+1]:SetPoint("RIGHT")
-                                debuffButtons[self.index+1].point1 = F:Copy(self.point1)
-                            end
-                            -- update new self position
-                            self:ClearAllPoints()
-                            self:SetPoint(unpack(newB.point1))
-                            self:SetPoint("RIGHT")
-                            self.point1 = F:Copy(newB.point1)
-                            -- update new next's position
-                            newB:ClearAllPoints()
-                            newB:SetPoint("TOPLEFT", self, "BOTTOMLEFT", 0, 1)
-                            newB:SetPoint("RIGHT")
-                            newB.point1 = {"TOPLEFT", self, "BOTTOMLEFT", 0, 1}
-                            -- update buttonlist
-                            for j = from, to, -1 do
-                                if j == to then
-                                    debuffButtons[j] = temp
-                                else
-                                    debuffButtons[j] = debuffButtons[j-1]
-                                end
-                                debuffButtons[j].index = j
-                                -- debuffButtons[j].id = debuffButtons[j].spellId.."-"..j
-                            end
-                        else
-                            -- move down (after newB)
-                            -- update old next button's position
-                            if debuffButtons[self.index+1] and debuffButtons[self.index+1]:IsShown() then
-                                debuffButtons[self.index+1]:ClearAllPoints()
-                                debuffButtons[self.index+1]:SetPoint(unpack(self.point1))
-                                debuffButtons[self.index+1]:SetPoint("RIGHT")
-                                debuffButtons[self.index+1].point1 = F:Copy(self.point1)
-                            end
-                            -- update new self position
-                            self:ClearAllPoints()
-                            self:SetPoint("TOPLEFT", newB, "BOTTOMLEFT", 0, 1)
-                            self:SetPoint("RIGHT")
-                            self.point1 = {"TOPLEFT", newB, "BOTTOMLEFT", 0, 1}
-                            -- update new next button's position
-                            if debuffButtons[newB.index+1] and debuffButtons[newB.index+1]:IsShown() then
-                                debuffButtons[newB.index+1]:ClearAllPoints()
-                                debuffButtons[newB.index+1]:SetPoint("TOPLEFT", self, "BOTTOMLEFT", 0, 1)
-                                debuffButtons[newB.index+1]:SetPoint("RIGHT")
-                                debuffButtons[newB.index+1].point1 = {"TOPLEFT", self, "BOTTOMLEFT", 0, 1}
-                            end
-                            -- update buttonlist
-                            for j = from, to do
-                                if j == to then
-                                    debuffButtons[j] = temp
-                                else
-                                    debuffButtons[j] = debuffButtons[j+1]
-                                end
-                                debuffButtons[j].index = j
-                                -- debuffButtons[j].id = debuffButtons[j].spellId.."-"..j
-                            end
-                        end
-                    end
-                end)
             else
-                debuffButtons[i].spellId = sTable["id"]
                 debuffButtons[i]:SetText(sTable["id"])
                 debuffButtons[i]:Show()
+            end
+            
+            debuffButtons[i].spellId = sTable["id"]
+            if sTable["order"] == 0 then
+                debuffButtons[i]:SetTextColor(.4, .4, .4)
+                UnregisterForDrag(debuffButtons[i])
+            else
+                debuffButtons[i]:SetTextColor(1, 1, 1)
+                RegisterForDrag(debuffButtons[i])
             end
 
             -- debuffButtons[i].id = sTable["id"].."-"..i -- send spellId-spellIndex to ShowDetails
@@ -550,7 +573,6 @@ ShowDebuffs = function(bossId)
             end
             debuffButtons[i]:SetPoint("RIGHT")
             debuffButtons[i].point2 = "RIGHT"
-
         end
     end
     
@@ -570,7 +592,7 @@ ShowDebuffs = function(bossId)
         debuffListFrame:GetScript("OnLeave")()
     end)
 
-    if debuffButtons[1] then debuffButtons[1]:Click() end
+    if debuffButtons[1] and debuffButtons[1]:IsShown() then debuffButtons[1]:Click() end
 end
 
 -------------------------------------------------
@@ -583,8 +605,28 @@ detailsFrame:Show()
 Cell:CreateScrollFrame(detailsFrame)
 SetOnEnterLeave(detailsFrame)
 
-ShowDetails = function(spellId)
+local selectedIndex
+local enabled = Cell:CreateCheckButton(detailsFrame, L["Enabled"], function(checked)
+    print(selectedIndex, selectedSpellId)
+end)
+enabled:SetPoint("TOPLEFT", 5, -10)
 
+function detailsFrame:HideAll()
+    enabled:Hide()
+end
+
+ShowDetails = function(spellId)
+    selectedSpellId = spellId
+    
+    for i, b in pairs(debuffButtons) do
+        if spellId == b.spellId then
+            selectedIndex = i
+            break
+        end
+    end
+    
+    enabled:Show()
+    enabled:SetChecked(currentSpellTable[selectedIndex]["order"]~=0)
 end
 
 -------------------------------------------------
