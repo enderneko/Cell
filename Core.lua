@@ -276,11 +276,24 @@ function eventFrame:ADDON_LOADED(arg1)
         if type(CellCharacterDB["layout"]) ~= "string" then CellCharacterDB["layout"] = "default" end
         if not CellDB["layouts"][CellCharacterDB["layout"]] then CellCharacterDB["layout"] = "default" end
 
-        -- debuffs --------------------------------------------------------------------------------
+        -- debuffBlacklist ------------------------------------------------------------------------
         if type(CellDB["debuffBlacklist"]) ~= "table" then
             CellDB["debuffBlacklist"] = F:GetDefaultDebuffBlacklist()
         end
         Cell.vars.debuffBlacklist = F:ConvertTable(CellDB["debuffBlacklist"])
+        
+        -- raid debuffs ---------------------------------------------------------------------------
+        if type(CellDB["raidDebuffs"]) ~= "table" then CellDB["raidDebuffs"] = {} end
+        -- CellDB["raidDebuffs"] = {
+        --     [instanceId] = {
+        --         ["general"] = {
+        --             [spellId] = {order, trackById, glow, glowColor},
+        --         },
+        --         [bossId] = {
+        --             [spellId] = {order, trackById, glow, glowColor},
+        --         },
+        --     }
+        -- }
 
         -- apply ----------------------------------------------------------------------------------
         if CellDB["hideBlizzard"] then F:HideBlizzard() end

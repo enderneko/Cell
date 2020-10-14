@@ -32,4 +32,4 @@ local debuffs = {
         },
     },
 }
-F:LoadBuiltInDebuffs(7, debuffs)
+F:LoadBuiltInDebuffs(debuffs)

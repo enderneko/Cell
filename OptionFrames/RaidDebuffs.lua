@@ -17,39 +17,24 @@ local LoadExpansion, ShowInstances, ShowBosses, ShowDebuffs, ShowDetails, ShowIm
 -- instanceId = EJ_GetInstanceForMap(mapId)
 -- instanceName, ... = EJ_GetInstanceInfo(instanceId)
 
-local debuffList = {
+-- used for sort list buttons
+local encounterJournalList = {
     -- ["expansionName"] = {
-    --     [instanceId] = {
-    --         ["name"] = "instanceName",
-    --         ["general"] = { -- priority higher than bosses
-    --             [spellId] = {enabled, trackById, glow, glowColor},
+    --     {
+    --         ["name"] = instanceName,
+    --         ["id"] = instanceId,
+    --         ["bosses"] = {
+    --             {["name"]=name, ["id"]=id, ["image"]=image},
     --         },
-    --         [bossId] = {
-    --             ["name"] = "bossName",
-    --             ["image"] = image,
-    --             ["debuffs"] = {
-    --                 [spellId] = {enabled, trackById, glow, glowColor},
-    --             },
-    --         },
-    --     }
-    -- }
+    --     },
+    -- },
 }
 
 local instanceIds = { -- used for GetInstanceInfo/GetRealZoneText --> instanceId
-    -- [instanceName] = instanceId,
+    -- [instanceName] = expansionName:instanceId,
 }
 
-local instanceOrders = { -- used for sorting instance list buttons
-    -- [expansionName] = {instanceId1, instance2, ...}
-}
-
-local bossOders = { -- used for sorting boss list buttons
-    -- [instanceId] = {bossId1, bossId2, ...}
-}
-
-local debuffOrders = {} -- loaded from db
-
-local function LoadBossList(instanceId, list, orderTable)
+local function LoadBossList(instanceId, list)
     EJ_SelectInstance(instanceId)
     for index = 1, 77 do
 		local name, _, id = EJ_GetEncounterInfoByIndex(index)
@@ -57,15 +42,13 @@ local function LoadBossList(instanceId, list, orderTable)
 			break
         end
         
-        tinsert(orderTable, id) -- bossOrders
-
         -- id, name, description, displayInfo, iconImage, uiModelSceneID = EJ_GetCreatureInfo(index [, encounterID])
         local image = select(5, EJ_GetCreatureInfo(1, id))
-        list[id] = {["name"]=name, ["image"]=image, ["debuffs"]={}}
+        tinsert(list, {["name"]=name, ["id"]=id, ["image"]=image})
 	end
 end
 
-local function LoadInstanceList(tier, instanceType, list, orderTable)
+local function LoadInstanceList(tier, instanceType, list)
     local isRaid = instanceType == "raid"
     for index = 1, 77 do
         EJ_SelectTier(tier)
@@ -74,24 +57,22 @@ local function LoadInstanceList(tier, instanceType, list, orderTable)
             break
         end
 
-        instanceIds[name] = id
-        tinsert(orderTable, id) -- instanceOrders
-        bossOders[id] = {}
+        local eName = EJ_GetTierInfo(tier)
+        instanceIds[name] = eName..":"..id -- NOTE: used for searching current zone debuffs
+        local instanceTable = {["name"]=name, ["id"]=id, ["bosses"]={}}
+        tinsert(list, instanceTable)
 
-        list[id] = {["name"]=name, ["general"]={}}
-
-        LoadBossList(id, list[id], bossOders[id])
+        LoadBossList(id, instanceTable["bosses"])
     end
 end
 
 local function LoadList()
     for tier = 1, EJ_GetNumTiers() do
         local name = EJ_GetTierInfo(tier)
-        debuffList[name] = {}
-        instanceOrders[name] = {}
+        encounterJournalList[name] = {}
 
-        LoadInstanceList(tier, "raid", debuffList[name], instanceOrders[name])
-        LoadInstanceList(tier, "party", debuffList[name], instanceOrders[name])
+        LoadInstanceList(tier, "raid", encounterJournalList[name])
+        LoadInstanceList(tier, "party", encounterJournalList[name])
 
         newestExpansion = name
     end
@@ -105,34 +86,86 @@ LoadExpansion = function(eName)
 
 end
 
-local loadedDebuffs = {}
-function F:LoadBuiltInDebuffs(tier, debuffs)
-    local eName = EJ_GetTierInfo(tier)
-    loadedDebuffs[eName] = debuffs
+local unsortedDebuffs = {}
+function F:LoadBuiltInDebuffs(debuffs)
+    for instanceId, iTable in pairs(debuffs) do
+        unsortedDebuffs[instanceId] = iTable
+    end
 end
 
-local function LoadDBDebuffs()
+-- local function LoadBuiltInDebuffs()
+--     for eName, eTable in pairs(loadedDebuffs) do
+--         for instanceId, iTable in pairs(eTable) do
+--             if encounterJournalList[eName][instanceId] then -- valid instance
+--                 for encounterId, debuffTable in pairs(iTable) do
+--                     if encounterId == "general" then -- general debuffs
+                        
+--                     elseif encounterJournalList[eName][instanceId][encounterId] then -- valid boss
+--                         for _, spellId in pairs(debuffTable) do
+--                             encounterJournalList[eName][instanceId][encounterId][spellId] = {true}
+--                         end
+--                     end
+--                 end                 
+--             end
+--         end
+--     end
+-- end
 
+local loadedDebuffs = {
+    -- [instanceId] = {
+    --     ["general"] = {
+    --         {["id"]=spellId, ["trackById"]=trackById, ["glow"]=glow, ["glowColor"]=glowColor}
+    --     },
+    --     [bossId] = {
+    --         {["id"]=spellId, ["trackById"]=trackById, ["glow"]=glow, ["glowColor"]=glowColor}
+    --     },
+    -- },
+}
+
+local function LoadDebuffs()
+    -- check db
+    for instanceId, iTable in pairs(CellDB["raidDebuffs"]) do
+        if not loadedDebuffs[instanceId] then loadedDebuffs[instanceId] = {} end
+
+        for bossId, bTable in pairs(iTable) do
+            if not loadedDebuffs[instanceId][bossId] then loadedDebuffs[instanceId][bossId] = {} end
+            -- load from db and set its order
+            for spellId, sTable in pairs(bTable) do
+                local t = {["id"]=spellId, ["order"]=sTable[1], ["trackById"]=sTable[2], ["glow"]=sTable[3], ["glowColor"]=sTable[4]}
+                if sTable[1] == 0 then
+                    tinsert(loadedDebuffs[instanceId][bossId], 100, t) -- disabled
+                else
+                    tinsert(loadedDebuffs[instanceId][bossId], sTable[1], t)
+                end
+            end
+        end
+    end
+
+    -- check built-in
+    for instanceId, iTable in pairs(unsortedDebuffs) do
+        if not loadedDebuffs[instanceId] then loadedDebuffs[instanceId] = {} end
+
+        for bossId, bTable in pairs(iTable) do
+            if not loadedDebuffs[instanceId][bossId] then loadedDebuffs[instanceId][bossId] = {} end
+            -- load
+            for i, spellId in pairs(bTable) do
+                if not (CellDB["raidDebuffs"][instanceId] and CellDB["raidDebuffs"][instanceId][bossId] and CellDB["raidDebuffs"][instanceId][bossId][spellId]) then
+                    tinsert(loadedDebuffs[instanceId][bossId], {["id"]=spellId})
+                end
+            end
+        end
+    end
+
+    -- if unsortedDebuffs[instanceId] and unsortedDebuffs[instanceId][bossId] then -- exists in built-in
+    --     for i, spellId in pairs(unsortedDebuffs[instanceId][bossId]) do
+            
+    --     end
+    -- end
 end
 
 local function UpdateRaidDebuffs()
     LoadList()
-    -- update from built-in
-    for instanceId, iTable in pairs(loadedDebuffs[eName]) do
-        if debuffList[eName][instanceId] then -- valid instance
-            for encounterId, debuffTable in pairs(iTable) do
-                if encounterId == "general" then -- general debuffs
-
-                elseif debuffList[eName][instanceId][encounterId] then -- valid boss
-                    for _, spellId in pairs(debuffTable) do
-                        debuffList[eName][instanceId][encounterId][spellId] = {true}
-                    end
-                end
-            end                 
-        end
-    end
-
-    -- update from db
+    LoadDebuffs()
 end
 Cell:RegisterCallback("UpdateRaidDebuffs", "RaidDebuffsTab_UpdateRaidDebuffs", UpdateRaidDebuffs)
 
@@ -190,19 +223,19 @@ local instanceButtons = {}
 ShowInstances = function(eName)
     instancesFrame.scrollFrame:ResetScroll()
 
-    for i, instanceId in pairs(instanceOrders[eName]) do
+    for i, iTable in pairs(encounterJournalList[eName]) do
         if not instanceButtons[i] then
-            instanceButtons[i] = Cell:CreateButton(instancesFrame.scrollFrame.content, debuffList[eName][instanceId]["name"], "transparent-class", {20, 20})
+            instanceButtons[i] = Cell:CreateButton(instancesFrame.scrollFrame.content, iTable["name"], "transparent-class", {20, 20})
         else
-            instanceButtons[i]:SetText(debuffList[eName][instanceId]["name"])
+            instanceButtons[i]:SetText(iTable["name"])
             instanceButtons[i]:Show()
         end
 
-        instanceButtons[i].id = instanceId -- send instanceId to ShowBosses
+        instanceButtons[i].id = iTable["id"].."-"..i -- send instanceId-instanceIndex to ShowBosses
         
         -- open encounter journal
         instanceButtons[i]:SetScript("OnDoubleClick", function()
-            OpenEncounterJournal(instanceId)
+            OpenEncounterJournal(iTable["id"])
         end)
 
         if i == 1 then
@@ -213,11 +246,13 @@ ShowInstances = function(eName)
         instanceButtons[i]:SetPoint("RIGHT")
     end
 
+    local n = #encounterJournalList[eName]
+
     -- update scrollFrame content height
-    instancesFrame.scrollFrame:SetContentHeight(20, #instanceOrders[eName], -1)
+    instancesFrame.scrollFrame:SetContentHeight(20, n, -1)
 
     -- hide unused instance buttons
-    for i = #instanceOrders[eName]+1, #instanceButtons do
+    for i = n+1, #instanceButtons do
         instanceButtons[i]:Hide()
         instanceButtons[i]:ClearAllPoints()
     end
@@ -240,36 +275,37 @@ SetOnEnterLeave(bossesFrame)
 
 local bossButtons = {}
 ShowBosses = function(instanceId)
-    if loadedInstance == instanceId then return end
-    loadedInstance = instanceId
+    local iId, iIndex = F:SplitToNumber("-", instanceId)
+
+    if loadedInstance == iId then return end
+    loadedInstance = iId
 
     bossesFrame.scrollFrame:ResetScroll()
 
     -- instance general debuff
     if not bossButtons[0] then
         bossButtons[0] = Cell:CreateButton(bossesFrame.scrollFrame.content, L["General"], "transparent-class", {20, 20})
-        bossButtons[0].id = 0
         bossButtons[0]:SetPoint("TOPLEFT")
         bossButtons[0]:SetPoint("RIGHT")
     end
-
+    bossButtons[0].id = iId
+    
     -- bosses
-    local n
-    for i, bossId in pairs(bossOders[instanceId]) do
-        local bName = debuffList[loadedExpansion][instanceId][bossId]["name"]
+    for i, bTable in pairs(encounterJournalList[loadedExpansion][iIndex]["bosses"]) do
         if not bossButtons[i] then
-            bossButtons[i] = Cell:CreateButton(bossesFrame.scrollFrame.content, bName, "transparent-class", {20, 20})
+            bossButtons[i] = Cell:CreateButton(bossesFrame.scrollFrame.content, bTable["name"], "transparent-class", {20, 20})
         else
-            bossButtons[i]:SetText(bName)
+            bossButtons[i]:SetText(bTable["name"])
             bossButtons[i]:Show()
         end
 
-        bossButtons[i].id = bossId
-        n = i
+        bossButtons[i].id = bTable["id"].."-"..i -- send bossId-bossIndex to ShowDebuffs
 
         bossButtons[i]:SetPoint("TOPLEFT", bossButtons[i-1], "BOTTOMLEFT", 0, 1)
         bossButtons[i]:SetPoint("RIGHT")
     end
+
+    local n = #encounterJournalList[loadedExpansion][iIndex]["bosses"]
 
     -- update scrollFrame content height
     bossesFrame.scrollFrame:SetContentHeight(20, n+1, -1)
@@ -282,8 +318,9 @@ ShowBosses = function(instanceId)
 
     -- set onclick/onenter
     Cell:CreateButtonGroup(bossButtons, ShowDebuffs, nil, nil, function(b)
-        if b.id ~= 0 then
-            ShowImage(debuffList[loadedExpansion][instanceId][b.id]["image"], b)
+        if b.id ~= iId then -- not General
+            local _, bIndex = F:SplitToNumber("-", b.id)
+            ShowImage(encounterJournalList[loadedExpansion][iIndex]["bosses"][bIndex]["image"], b)
         end
         bossesFrame:GetScript("OnEnter")()
     end, function(b)
@@ -345,34 +382,79 @@ disableAll:SetPoint("LEFT", enableAll, "RIGHT", 5, 0)
 
 local debuffButtons = {}
 ShowDebuffs = function(bossId)
-    if loadedBoss == loadedInstance..bossId then return end
-    loadedBoss = loadedInstance..bossId
+    local bId, bIndex = F:SplitToNumber("-", bossId)
 
-    bossesFrame.scrollFrame:ResetScroll()
+    if loadedBoss == bId then return end
+    loadedBoss = bId
+
+    debuffListFrame.scrollFrame:ResetScroll()
     
-    local t
-    if bossId == 0 then
-        t = debuffList[loadedExpansion][loadedInstance]["general"]
-    else
-        t = debuffList[loadedExpansion][loadedInstance][bossId]["debuffs"]
+    local t, debuffsFound
+    if loadedDebuffs[loadedInstance] then
+        if bId == loadedInstance then -- General
+            t = loadedDebuffs[loadedInstance]["general"]
+            if t then debuffsFound = true end
+        else
+            t = loadedDebuffs[loadedInstance][bId]
+            if t then debuffsFound = true end
+        end
     end
 
-    for i, spellId in pairs(debuffOrders) do
-        -- if not debuffButtons[i] then
-        --     debuffButtons[i] = Cell:CreateButton(debuffListFrame.scrollFrame.content, t[i], "transparent-class", {20, 20})
-        -- else
-        --     debuffButtons[i]:SetText(t[i])
-        --     debuffButtons[i]:Show()
-        -- end
+    local n = 0
+    if debuffsFound then
+        for i, sTable in pairs(t) do
+            if not debuffButtons[i] then
+                debuffButtons[i] = Cell:CreateButton(debuffListFrame.scrollFrame.content, sTable["id"], "transparent-class", {20, 20})
 
-        -- debuffButtons[i].id = i -- send spellIndex to ShowDetails
+                debuffButtons[i]:SetMovable(true)
+                debuffButtons[i]:RegisterForDrag("LeftButton")
+                debuffButtons[i]:SetScript("OnDragStart", function(self)
+                    self:SetFrameLevel(9)
+                    self:StartMoving()
+                    self:SetUserPlaced(false)
+                    -- self:SetBackdropBorderColor(unpack(self.color))
+                    -- self:SetBackdropColor(.1, .1, .1, .9)
+                    self.isMoving = true
+                    -- movingGrid = self
+                end)
+                debuffButtons[i]:SetScript("OnDragStop", function(self)
+                    self:SetFrameLevel(7)
+                    self:StopMovingOrSizing()
+                    self:ClearAllPoints()
+                    self:SetPoint(unpack(self.point1))
+                    self:SetPoint(self.point2)
+                    -- self:SetBackdropBorderColor(0, 0, 0, 1)
+                    -- self:SetBackdropColor(.1, .1, .1, .5)
+                    self.isMoving = nil
+                end)
+            else
+                debuffButtons[i]:SetText(sTable["id"])
+                debuffButtons[i]:Show()
+            end
 
-        -- if i == 1 then
-        --     debuffButtons[i]:SetPoint("TOPLEFT")
-        -- else
-        --     debuffButtons[i]:SetPoint("TOPLEFT", debuffButtons[i-1], "BOTTOMLEFT", 0, 1)
-        -- end
-        -- debuffButtons[i]:SetPoint("RIGHT")
+            debuffButtons[i].id = sTable["id"].."-"..i -- send spellId-spellIndex to ShowDetails
+
+            if i == 1 then
+                debuffButtons[i]:SetPoint("TOPLEFT")
+                debuffButtons[i].point1 = {"TOPLEFT"}
+            else
+                debuffButtons[i]:SetPoint("TOPLEFT", debuffButtons[i-1], "BOTTOMLEFT", 0, 1)
+                debuffButtons[i].point1 = {"TOPLEFT", debuffButtons[i-1], "BOTTOMLEFT", 0, 1}
+            end
+            debuffButtons[i]:SetPoint("RIGHT")
+            debuffButtons[i].point2 = "RIGHT"
+
+        end
+        n = #t
+    end
+    
+    -- update scrollFrame content height
+    debuffListFrame.scrollFrame:SetContentHeight(20, n, -1)
+
+    -- hide unused instance buttons
+    for i = n+1, #debuffButtons do
+        debuffButtons[i]:Hide()
+        debuffButtons[i]:ClearAllPoints()
     end
 
     -- set onclick
@@ -380,7 +462,7 @@ ShowDebuffs = function(bossId)
     end, function(b)
     end)
 
-    -- if debuffButtons[1] then debuffButtons[1]:Click() end
+    if debuffButtons[1] then debuffButtons[1]:Click() end
 end
 
 -------------------------------------------------
@@ -393,7 +475,7 @@ detailsFrame:Show()
 Cell:CreateScrollFrame(detailsFrame)
 SetOnEnterLeave(detailsFrame)
 
-ShowDetails = function()
+ShowDetails = function(spellId)
 
 end
 
@@ -453,6 +535,20 @@ local function ShowTab(tab)
     if tab == "debuffs" then
         debuffsTab:Show()
         
+        -- local ei = instanceIds[F:GetInstanceName()]
+        -- if ei then
+        --     local expansionName, instanceId = strsplit(":", ei)
+        --     instanceId = tonumber(instanceId)
+        --     if loadedInstance ~= instanceId then -- current loaded instance is not where player is.
+        --         F:Debug("ShowDebuffs: "..expansionName..":"..instanceId)
+        --         LoadExpansion(expansionName)
+        --         for i, iTable in pairs(encounterJournalList[expansionName]) do
+        --             if iTable["id"] == instanceId then
+        --                 C_Timer.After(.5, function() instanceButtons[i]:Click() end)
+        --                 break
+        --             end
+        --         end
+        --     end
         if not loadedExpansion then
             LoadExpansion(newestExpansion)
         end

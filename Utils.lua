@@ -9,6 +9,14 @@ function F:UpperFirst(str)
     return (str:gsub("^%l", string.upper))
 end
 
+function F:SplitToNumber(sep, str)
+    local ret = {strsplit(sep, str)}
+    for i, v in ipairs(ret) do
+        ret[i] = tonumber(v)
+    end
+    return unpack(ret)
+end
+
 -------------------------------------------------
 -- table
 -------------------------------------------------
