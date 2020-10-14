@@ -7,8 +7,12 @@ Cell.frames.raidDebuffsTab = debuffsTab
 debuffsTab:SetAllPoints(Cell.frames.optionsFrame)
 debuffsTab:Hide()
 
+-- vars
 local newestExpansion, loadedExpansion, loadedInstance, loadedBoss
+-- functions
 local LoadExpansion, ShowInstances, ShowBosses, ShowDebuffs, ShowDetails, ShowImage, HideImage, OpenEncounterJournal
+-- buttons
+local instanceButtons, bossButtons, debuffButtons = {}, {}, {}
 -------------------------------------------------
 -- prepare debuff list
 -------------------------------------------------
@@ -31,7 +35,7 @@ local encounterJournalList = {
 }
 
 local instanceIds = { -- used for GetInstanceInfo/GetRealZoneText --> instanceId
-    -- [instanceName] = expansionName:instanceId,
+    -- [instanceName] = expansionName:instanceIndex:instanceId,
 }
 
 local function LoadBossList(instanceId, list)
@@ -58,9 +62,9 @@ local function LoadInstanceList(tier, instanceType, list)
         end
 
         local eName = EJ_GetTierInfo(tier)
-        instanceIds[name] = eName..":"..id -- NOTE: used for searching current zone debuffs
         local instanceTable = {["name"]=name, ["id"]=id, ["bosses"]={}}
         tinsert(list, instanceTable)
+        instanceIds[name] = eName..":"..#list..":"..id -- NOTE: used for searching current zone debuffs
 
         LoadBossList(id, instanceTable["bosses"])
     end
@@ -188,12 +192,42 @@ end
 expansionDropdown:SetItems(expansionItems)
 expansionDropdown:SetSelectedItem(#expansionItems)
 
+-------------------------------------------------
+-- current instance button
+-------------------------------------------------
+local showCurrentBtn = Cell:CreateButton(debuffsTab, "", "class-hover", {20, 20}, nil, nil, nil, nil, nil, L["Show Current Instance"])
+showCurrentBtn:SetPoint("LEFT", expansionDropdown, "RIGHT", 5, 0)
+showCurrentBtn.tex = showCurrentBtn:CreateTexture(nil, "ARTWORK")
+showCurrentBtn.tex:SetPoint("TOPLEFT", 1, -1)
+showCurrentBtn.tex:SetPoint("BOTTOMRIGHT", -1, 1)
+showCurrentBtn.tex:SetAtlas("DungeonSkull")
+
+showCurrentBtn:SetScript("OnClick", function()
+    if IsInInstance() then
+        local name = GetInstanceInfo()
+        if not name or not instanceIds[name] then return end
+
+        local eName, index, id = F:SplitToNumber(":", instanceIds[name])
+        if loadedInstance == id then return end
+        expansionDropdown:SetSelected(eName)
+        LoadExpansion(eName)
+        instanceButtons[index]:Click() -- REVIEW: C_Timer.After?
+        -- scroll
+        if index > 9 then
+            RaidDebuffsTab_Instances.scrollFrame:SetVerticalScroll((index-9)*19)
+        end
+    end
+end)
+
+-------------------------------------------------
+-- tips
+-------------------------------------------------
 local tips = Cell:CreateScrollTextFrame(debuffsTab, "|cff777777"..L["Tips: Double-click on instance name to open Encounter Journal. These debuffs will be displayed with the Central Debuff indicator. The priority of General Debuffs is higher than Boss Debuffs."], 0.02)
-tips:SetPoint("TOPLEFT", expansionDropdown, "TOPRIGHT", 5, 0)
+tips:SetPoint("TOPLEFT", showCurrentBtn, "TOPRIGHT", 5, 0)
 tips:SetPoint("RIGHT", -5, 0)
 
 -------------------------------------------------
--- onEnter, onLeave
+-- list button onEnter, onLeave
 -------------------------------------------------
 local function SetOnEnterLeave(frame)
     frame:SetScript("OnEnter", function()
@@ -219,7 +253,6 @@ Cell:CreateScrollFrame(instancesFrame)
 instancesFrame.scrollFrame:SetScrollStep(19)
 SetOnEnterLeave(instancesFrame)
 
-local instanceButtons = {}
 ShowInstances = function(eName)
     instancesFrame.scrollFrame:ResetScroll()
 
@@ -273,7 +306,6 @@ Cell:CreateScrollFrame(bossesFrame)
 bossesFrame.scrollFrame:SetScrollStep(19)
 SetOnEnterLeave(bossesFrame)
 
-local bossButtons = {}
 ShowBosses = function(instanceId)
     local iId, iIndex = F:SplitToNumber("-", instanceId)
 
@@ -380,7 +412,19 @@ enableAll:SetPoint("LEFT", delete, "RIGHT", 5, 0)
 local disableAll = Cell:CreateButton(debuffsTab, L["Disable All"], "class-hover", {66, 20})
 disableAll:SetPoint("LEFT", enableAll, "RIGHT", 5, 0)
 
-local debuffButtons = {}
+local dragged = Cell:CreateFrame("RaidDebuffsTab_Dragged", debuffsTab, 20, 20)
+Cell:StylizeFrame(dragged, nil, Cell:GetPlayerClassColor())
+dragged:SetFrameStrata("HIGH")
+dragged:EnableMouse(false)
+dragged:SetMovable(true)
+dragged:SetScript("OnUpdate", function()
+    local scale, x, y = dragged:GetEffectiveScale(), GetCursorPosition()
+    dragged:ClearAllPoints()
+    dragged:SetPoint("LEFT", nil, "BOTTOMLEFT", 5+x/scale, y/scale)
+end)
+dragged.text = dragged:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
+dragged.text:SetPoint("LEFT", 5, 0)
+
 ShowDebuffs = function(bossId)
     local bId, bIndex = F:SplitToNumber("-", bossId)
 
@@ -402,37 +446,100 @@ ShowDebuffs = function(bossId)
 
     local n = 0
     if debuffsFound then
+        n = #t
         for i, sTable in pairs(t) do
             if not debuffButtons[i] then
                 debuffButtons[i] = Cell:CreateButton(debuffListFrame.scrollFrame.content, sTable["id"], "transparent-class", {20, 20})
+                debuffButtons[i].spellId = sTable["id"]
+                debuffButtons[i].index = i
 
+                -- dragging
                 debuffButtons[i]:SetMovable(true)
                 debuffButtons[i]:RegisterForDrag("LeftButton")
                 debuffButtons[i]:SetScript("OnDragStart", function(self)
-                    self:SetFrameLevel(9)
-                    self:StartMoving()
-                    self:SetUserPlaced(false)
-                    -- self:SetBackdropBorderColor(unpack(self.color))
-                    -- self:SetBackdropColor(.1, .1, .1, .9)
-                    self.isMoving = true
-                    -- movingGrid = self
+                    self:SetAlpha(.5)
+                    dragged:SetWidth(self:GetWidth())
+                    dragged.text:SetText(self:GetText())
+                    dragged:Show()
                 end)
                 debuffButtons[i]:SetScript("OnDragStop", function(self)
-                    self:SetFrameLevel(7)
-                    self:StopMovingOrSizing()
-                    self:ClearAllPoints()
-                    self:SetPoint(unpack(self.point1))
-                    self:SetPoint(self.point2)
-                    -- self:SetBackdropBorderColor(0, 0, 0, 1)
-                    -- self:SetBackdropColor(.1, .1, .1, .5)
-                    self.isMoving = nil
+                    self:SetAlpha(1)
+                    dragged:Hide()
+                    local newB = GetMouseFocus()
+                    if newB:GetParent() == debuffListFrame.scrollFrame.content and newB ~= self then
+                        local temp, from, to = self, self.index, newB.index
+
+                        if self.index > newB.index then
+                            -- move up (before newB)
+                            -- update old next button's position
+                            if debuffButtons[self.index+1] and debuffButtons[self.index+1]:IsShown() then
+                                debuffButtons[self.index+1]:ClearAllPoints()
+                                debuffButtons[self.index+1]:SetPoint(unpack(self.point1))
+                                debuffButtons[self.index+1]:SetPoint("RIGHT")
+                                debuffButtons[self.index+1].point1 = F:Copy(self.point1)
+                            end
+                            -- update new self position
+                            self:ClearAllPoints()
+                            self:SetPoint(unpack(newB.point1))
+                            self:SetPoint("RIGHT")
+                            self.point1 = F:Copy(newB.point1)
+                            -- update new next's position
+                            newB:ClearAllPoints()
+                            newB:SetPoint("TOPLEFT", self, "BOTTOMLEFT", 0, 1)
+                            newB:SetPoint("RIGHT")
+                            newB.point1 = {"TOPLEFT", self, "BOTTOMLEFT", 0, 1}
+                            -- update buttonlist
+                            for j = from, to, -1 do
+                                if j == to then
+                                    debuffButtons[j] = temp
+                                else
+                                    debuffButtons[j] = debuffButtons[j-1]
+                                end
+                                debuffButtons[j].index = j
+                                -- debuffButtons[j].id = debuffButtons[j].spellId.."-"..j
+                            end
+                        else
+                            -- move down (after newB)
+                            -- update old next button's position
+                            if debuffButtons[self.index+1] and debuffButtons[self.index+1]:IsShown() then
+                                debuffButtons[self.index+1]:ClearAllPoints()
+                                debuffButtons[self.index+1]:SetPoint(unpack(self.point1))
+                                debuffButtons[self.index+1]:SetPoint("RIGHT")
+                                debuffButtons[self.index+1].point1 = F:Copy(self.point1)
+                            end
+                            -- update new self position
+                            self:ClearAllPoints()
+                            self:SetPoint("TOPLEFT", newB, "BOTTOMLEFT", 0, 1)
+                            self:SetPoint("RIGHT")
+                            self.point1 = {"TOPLEFT", newB, "BOTTOMLEFT", 0, 1}
+                            -- update new next button's position
+                            if debuffButtons[newB.index+1] and debuffButtons[newB.index+1]:IsShown() then
+                                debuffButtons[newB.index+1]:ClearAllPoints()
+                                debuffButtons[newB.index+1]:SetPoint("TOPLEFT", self, "BOTTOMLEFT", 0, 1)
+                                debuffButtons[newB.index+1]:SetPoint("RIGHT")
+                                debuffButtons[newB.index+1].point1 = {"TOPLEFT", self, "BOTTOMLEFT", 0, 1}
+                            end
+                            -- update buttonlist
+                            for j = from, to do
+                                if j == to then
+                                    debuffButtons[j] = temp
+                                else
+                                    debuffButtons[j] = debuffButtons[j+1]
+                                end
+                                debuffButtons[j].index = j
+                                -- debuffButtons[j].id = debuffButtons[j].spellId.."-"..j
+                            end
+                        end
+                    end
                 end)
             else
+                debuffButtons[i].spellId = sTable["id"]
                 debuffButtons[i]:SetText(sTable["id"])
                 debuffButtons[i]:Show()
             end
 
-            debuffButtons[i].id = sTable["id"].."-"..i -- send spellId-spellIndex to ShowDetails
+            -- debuffButtons[i].id = sTable["id"].."-"..i -- send spellId-spellIndex to ShowDetails
+            debuffButtons[i].id = sTable["id"] -- send spellId to ShowDetails
 
             if i == 1 then
                 debuffButtons[i]:SetPoint("TOPLEFT")
@@ -445,7 +552,6 @@ ShowDebuffs = function(bossId)
             debuffButtons[i].point2 = "RIGHT"
 
         end
-        n = #t
     end
     
     -- update scrollFrame content height
@@ -459,7 +565,9 @@ ShowDebuffs = function(bossId)
 
     -- set onclick
     Cell:CreateButtonGroup(debuffButtons, ShowDetails, nil, nil, function(b)
+        debuffListFrame:GetScript("OnEnter")()
     end, function(b)
+        debuffListFrame:GetScript("OnLeave")()
     end)
 
     if debuffButtons[1] then debuffButtons[1]:Click() end
