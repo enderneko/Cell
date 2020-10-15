@@ -4,7 +4,7 @@ local F = Cell.funcs
 
 local marks, worldMarks
 
-local marksFrame = CreateFrame("Frame", "CellRaidMarksFrame", Cell.frames.mainFrame)
+local marksFrame = CreateFrame("Frame", "CellRaidMarksFrame", Cell.frames.mainFrame, "BackdropTemplate")
 Cell.frames.raidMarksFrame = marksFrame
 marksFrame:SetSize(196, 40)
 marksFrame:SetPoint("BOTTOMRIGHT", UIParent, "CENTER")

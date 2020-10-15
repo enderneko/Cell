@@ -4,7 +4,7 @@ local F = Cell.funcs
 
 local readyBtn, pullBtn
 
-local buttonsFrame = CreateFrame("Frame", "CellRaidButtonsFrame", Cell.frames.mainFrame)
+local buttonsFrame = CreateFrame("Frame", "CellRaidButtonsFrame", Cell.frames.mainFrame, "BackdropTemplate")
 Cell.frames.raidButtonsFrame = buttonsFrame
 buttonsFrame:SetSize(60, 55)
 buttonsFrame:SetPoint("TOPRIGHT", UIParent, "CENTER")
