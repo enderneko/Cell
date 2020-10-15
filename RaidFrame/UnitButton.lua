@@ -36,8 +36,7 @@ local UnitExists = UnitExists
 local UnitIsGroupLeader = UnitIsGroupLeader
 local UnitIsGroupAssistant = UnitIsGroupAssistant
 local InCombatLockdown = InCombatLockdown
-local UnitInPhase = UnitInPhase
-local UnitIsWarModePhased = UnitIsWarModePhased
+local UnitPhaseReason = UnitPhaseReason
 local UnitBuff = UnitBuff
 local UnitDebuff = UnitDebuff
 local IsInRaid = IsInRaid
@@ -764,7 +763,6 @@ local function UnitButton_UpdateVehicleStatus(self)
 end
 
 local function UnitButton_UpdatePhase(self)
-	-- TODO: 9.0 UnitPhaseReason
 	local unit = self.state.unit
 	if not unit then return end
 
@@ -773,7 +771,8 @@ local function UnitButton_UpdatePhase(self)
         icon:SetTexture("Interface\\RaidFrame\\Raid-Icon-Rez")
         icon:SetTexCoord(0.08, 0.92, 0.08, 0.92)
 		icon:Show()
-	elseif (not UnitInPhase(unit) or UnitIsWarModePhased(unit)) then -- and not frame.state.isInVehicle then
+	elseif UnitPhaseReason(unit) then -- and not frame.state.isInVehicle then
+		-- https://wow.gamepedia.com/API_UnitPhaseReason
 		icon:SetTexture("Interface\\TargetingFrame\\UI-PhasingIcon")
 		icon:SetTexCoord(0.15625, 0.84375, 0.15625, 0.84375)
 		icon:Show()
@@ -901,7 +900,6 @@ local function UnitButton_RegisterEvents(self)
 	self:RegisterEvent("GROUP_ROSTER_UPDATE")
 	
 	self:RegisterEvent("UNIT_HEALTH")
-	self:RegisterEvent("UNIT_HEALTH_FREQUENT")
 	self:RegisterEvent("UNIT_MAXHEALTH")
 	
 	self:RegisterEvent("UNIT_POWER_FREQUENT")
@@ -982,7 +980,7 @@ local function UnitButton_OnEvent(self, event, unit)
 			UnitButton_UpdateShieldAbsorbs(self)
 			UnitButton_UpdateHealthAbsorbs(self)
 	
-		elseif event == "UNIT_HEALTH" or event == "UNIT_HEALTH_FREQUENT" then
+		elseif event == "UNIT_HEALTH" then
 			UnitButton_UpdateHealth(self)
 			UnitButton_UpdateHealthPrediction(self)
 			UnitButton_UpdateShieldAbsorbs(self)
@@ -1446,7 +1444,7 @@ function F:UnitButton_OnLoad(button)
 	phaseIcon:Hide()
 
 	-- aggro indicator
-	local aggroIndicator = CreateFrame("Frame", name.."AggroIndicator", overlayFrame) -- framelevel 8
+	local aggroIndicator = CreateFrame("Frame", name.."AggroIndicator", overlayFrame, "BackdropTemplate") -- framelevel 8
 	button.widget.aggroIndicator = aggroIndicator
 	aggroIndicator:SetPoint("TOPLEFT")
 	aggroIndicator:SetSize(10, 10)

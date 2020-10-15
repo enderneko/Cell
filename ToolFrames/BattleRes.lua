@@ -5,7 +5,7 @@ local F = Cell.funcs
 -------------------------------------------------
 -- battle res
 -------------------------------------------------
-local battleResFrame = CreateFrame("Frame", "CellBattleResFrame", Cell.frames.mainFrame)
+local battleResFrame = CreateFrame("Frame", "CellBattleResFrame", Cell.frames.mainFrame, "BackdropTemplate")
 Cell.frames.battleResFrame = battleResFrame
 battleResFrame:SetPoint("BOTTOMLEFT", Cell.frames.mainFrame, "TOPLEFT", 0, 17)
 battleResFrame:SetSize(70, 18)

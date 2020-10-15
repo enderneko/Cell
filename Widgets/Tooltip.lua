@@ -7,7 +7,7 @@ end
 -----------------------------------------
 -- Tooltip
 -----------------------------------------
-local tooltip = CreateFrame("GameTooltip", "CellTooltip", nil, "CellTooltipTemplate")
+local tooltip = CreateFrame("GameTooltip", "CellTooltip", nil, "CellTooltipTemplate,BackdropTemplate")
 tooltip:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8x8", edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = 1})
 tooltip:SetBackdropColor(.1, .1, .1, 1)
 tooltip:SetBackdropBorderColor(unpack(classColor))

@@ -564,9 +564,11 @@ LoadIndicatorList = function()
     listFrame.scrollFrame:SetContentHeight(20, #listButtons, -1)
 
     Cell:CreateButtonGroup(listButtons, ShowIndicatorSettings, function(id)
-        LCG.PixelGlow_Start(previewButton.indicators[currentLayoutTable["indicators"][id]["indicatorName"]])
+        local w = previewButton.indicators[currentLayoutTable["indicators"][id]["indicatorName"]]
+        LCG.PixelGlow_Start(w:IsObjectType("StatusBar") and w.border or w)
     end, function(id)
-        LCG.PixelGlow_Stop(previewButton.indicators[currentLayoutTable["indicators"][id]["indicatorName"]])
+        local w = previewButton.indicators[currentLayoutTable["indicators"][id]["indicatorName"]]
+        LCG.PixelGlow_Stop(w:IsObjectType("StatusBar") and w.border or w)
     end)
 end
 

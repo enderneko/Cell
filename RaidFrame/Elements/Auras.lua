@@ -7,13 +7,13 @@ local DebuffTypeColor = DebuffTypeColor
 -- icon builder
 -------------------------------------------------
 local function CreateAura_BorderIcon(name, parent, borderSize)
-    local frame = CreateFrame("Frame", name, parent)
+    local frame = CreateFrame("Frame", name, parent, "BackdropTemplate")
     frame:Hide()
     frame:SetSize(11, 11)
     frame:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8x8"})
     frame:SetBackdropColor(0, 0, 0, .7)
     
-    local border = CreateFrame("Frame", name.."Border", frame)
+    local border = CreateFrame("Frame", name.."Border", frame, "BackdropTemplate")
     frame.border = border
     border:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8x8"})
     border:SetAllPoints(frame)
@@ -54,7 +54,7 @@ end
 
 -- local LSSB = LibStub:GetLibrary("LibSmoothStatusBar-1.0")
 local function CreateAura_BarIcon(name, parent)
-    local frame = CreateFrame("Frame", name, parent)
+    local frame = CreateFrame("Frame", name, parent, "BackdropTemplate")
     frame:Hide()
     frame:SetSize(11, 11)
     frame:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8x8"})

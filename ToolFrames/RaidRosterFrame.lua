@@ -2,7 +2,7 @@ local _, Cell = ...
 local L = Cell.L
 local F = Cell.funcs
 
-local raidRosterFrame = CreateFrame("Frame", "CellRaidRosterFrame", Cell.frames.mainFrame)
+local raidRosterFrame = CreateFrame("Frame", "CellRaidRosterFrame", Cell.frames.mainFrame, "BackdropTemplate")
 Cell.frames.raidRosterFrame = raidRosterFrame
 raidRosterFrame:SetPoint("BOTTOMLEFT", Cell.frames.mainFrame, "TOPLEFT", 0, 18)
 Cell:StylizeFrame(raidRosterFrame, {.1, .1, .1, .7})
@@ -44,7 +44,7 @@ rosterContainer:SetPoint("TOPRIGHT", raidRosterFrame, "BOTTOMRIGHT", -5, 207)
 local groups, changed = {}, {}
 local movingGrid
 local function CreateRaidRosterGrid(parent, index)
-	local grid = CreateFrame("Frame", parent:GetName().."Unit"..index, parent)
+	local grid = CreateFrame("Frame", parent:GetName().."Unit"..index, parent, "BackdropTemplate")
 	grid:SetSize(100, 17)
 	Cell:StylizeFrame(grid, {.1, .1, .1, .5})
 	grid.color = {.5, .5, .5}
@@ -175,7 +175,7 @@ local function CreateRaidRosterGrid(parent, index)
 end
 
 local function CreateRaidRosterGroup(parent, groupIndex)
-	local group = CreateFrame("Frame", parent:GetName().."_Subgroup"..groupIndex, parent)
+	local group = CreateFrame("Frame", parent:GetName().."_Subgroup"..groupIndex, parent, "BackdropTemplate")
 	group:SetSize(95, 81)
 	Cell:StylizeFrame(group, {.1, .1, .1, .5})
 

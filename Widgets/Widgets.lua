@@ -136,7 +136,7 @@ function addon:StylizeFrame(frame, color, borderColor)
 end
 
 function addon:CreateFrame(name, parent, width, height, isTransparent)
-	local f = CreateFrame("Frame", name, parent)
+	local f = CreateFrame("Frame", name, parent, "BackdropTemplate")
 	f:Hide()
 	if not isTransparent then addon:StylizeFrame(f) end
 	f:EnableMouse(true)
@@ -166,7 +166,7 @@ end
 -- Button
 -----------------------------------------
 function addon:CreateButton(parent, text, buttonColor, size, noBorder, noBackground, fontNormal, fontDisable, template, ...)
-	local b = CreateFrame("Button", nil, parent, template)
+	local b = CreateFrame("Button", nil, parent, template and template..",BackdropTemplate" or "BackdropTemplate")
 	if parent then b:SetFrameLevel(parent:GetFrameLevel()+1) end
 	b:SetText(text)
 	b:SetSize(unpack(size))
@@ -347,7 +347,7 @@ function addon:CreateCheckButton(parent, label, onClick, ...)
 	-- InterfaceOptionsCheckButtonTemplate --> FrameXML\InterfaceOptionsPanels.xml line 19
 	-- OptionsBaseCheckButtonTemplate -->  FrameXML\OptionsPanelTemplates.xml line 10
 	
-	local cb = CreateFrame("CheckButton", nil, parent)
+	local cb = CreateFrame("CheckButton", nil, parent, "BackdropTemplate")
 	cb.onClick = onClick
 	cb:SetScript("OnClick", function(self)
 		PlaySound(self:GetChecked() and SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON or SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_OFF)
@@ -394,7 +394,7 @@ end
 -- editbox
 -----------------------------------------
 function addon:CreateEditBox(parent, width, height, isTransparent, isMultiLine, isNumeric, font)
-	local eb = CreateFrame("EditBox", nil, parent)
+	local eb = CreateFrame("EditBox", nil, parent, "BackdropTemplate")
 	if not isTransparent then addon:StylizeFrame(eb, {.1, .1, .1, .9}) end
 	eb:SetFontObject(font or font_name)
 	eb:SetMultiLine(isMultiLine)
@@ -421,7 +421,7 @@ end
 -----------------------------------------
 -- Interface\FrameXML\OptionsPanelTemplates.xml, line 76, OptionsSliderTemplate
 function addon:CreateSlider(name, parent, low, high, width, step, onValueChangedFn, afterValueChangedFn)
-    local slider = CreateFrame("Slider", nil, parent)
+    local slider = CreateFrame("Slider", nil, parent, "BackdropTemplate")
     slider:SetMinMaxValues(low, high)
 	slider:SetValue(low)
     slider:SetValueStep(step)
@@ -519,7 +519,7 @@ end
 -- status bar
 -----------------------------------------
 function addon:CreateStatusBar(parent, width, height, maxValue, smooth, func, showText, texture, color)
-	local bar = CreateFrame("StatusBar", nil, parent)
+	local bar = CreateFrame("StatusBar", nil, parent, "BackdropTemplate")
 
 	if not color then color = {classColor.t[1], classColor.t[2], classColor.t[3], 1} end
 	if not texture then
@@ -534,11 +534,19 @@ function addon:CreateStatusBar(parent, width, height, maxValue, smooth, func, sh
 	end
 	
 	-- bar:GetStatusBarTexture():SetHorizTile(false)
+	-- REVIEW: in 9.0, edgeSize = -1 will case a thicker outline
+	local border = CreateFrame("Frame", nil, bar, "BackdropTemplate")
+	bar.border = border
+	border:SetBackdrop({edgeFile="Interface\\Buttons\\WHITE8x8", edgeSize=1})
+	border:SetBackdropBorderColor(0, 0, 0, 1)
+	border:SetPoint("TOPLEFT", -1, 1)
+	border:SetPoint("BOTTOMRIGHT", 1, -1)
+
 	bar:SetWidth(width)
 	bar:SetHeight(height)
-	bar:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8x8", edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = -1})
+	bar:SetBackdrop({bgFile="Interface\\Buttons\\WHITE8x8"})
 	bar:SetBackdropColor(.07, .07, .07, .9)
-	bar:SetBackdropBorderColor(0, 0, 0, 1)
+	-- bar:SetBackdropBorderColor(0, 0, 0, 1)
 
 	if showText then
 		bar.text = bar:CreateFontString(nil, "OVERLAY", font_name)
@@ -592,7 +600,7 @@ function addon:CreateStatusBarButton(parent, text, size, maxValue, template)
 	end)
 
 	
-	local bar = CreateFrame("StatusBar", nil, parent)
+	local bar = CreateFrame("StatusBar", nil, parent, "BackdropTemplate")
 	bar:SetParent(b)
 	b.bar = bar
 	bar:SetPoint("TOPLEFT", b)
@@ -635,7 +643,7 @@ end
 -----------------------------------------
 function addon:CreateMask(parent, text, points) -- points = {topleftX, topleftY, bottomrightX, bottomrightY}
 	if not parent.mask then -- not init
-		parent.mask = CreateFrame("Frame", nil, parent)
+		parent.mask = CreateFrame("Frame", nil, parent, "BackdropTemplate")
 		addon:StylizeFrame(parent.mask, {.15, .15, .15, .7}, {0, 0, 0, 0})
 		parent.mask:SetFrameStrata("HIGH")
 		parent.mask:SetFrameLevel(100)
@@ -672,7 +680,7 @@ end
 -----------------------------------------
 function addon:CreateConfirmPopup(parent, width, text, onAccept, mask, hasEditBox, dropdowns)
 	if not parent.confirmPopup then -- not init
-		parent.confirmPopup = CreateFrame("Frame", nil, parent)
+		parent.confirmPopup = CreateFrame("Frame", nil, parent, "BackdropTemplate")
 		parent.confirmPopup:SetSize(width, 100)
 		addon:StylizeFrame(parent.confirmPopup, {.1, .1, .1, .95}, {classColor.t[1], classColor.t[2], classColor.t[3], .7})
 		parent.confirmPopup:SetFrameStrata("DIALOG")
@@ -810,7 +818,7 @@ end
 -----------------------------------------
 function addon:CreatePopupEditBox(parent, width, func, multiLine)
 	if not addon.popupEditBox then
-		local eb = CreateFrame("EditBox", addonName.."PopupEditBox")
+		local eb = CreateFrame("EditBox", addonName.."PopupEditBox", nil, "BackdropTemplate")
 		addon.popupEditBox = eb
 		eb:Hide()
 		eb:SetWidth(width)
@@ -847,7 +855,7 @@ function addon:CreatePopupEditBox(parent, width, func, multiLine)
 			tipsText:SetText(text)
 		end
 
-		local tipsBackground = CreateFrame("Frame", nil, eb)
+		local tipsBackground = CreateFrame("Frame", nil, eb, "BackdropTemplate")
 		tipsBackground:SetPoint("TOPLEFT", eb, "BOTTOMLEFT")
 		tipsBackground:SetPoint("TOPRIGHT", eb, "BOTTOMRIGHT")
 		tipsBackground:SetPoint("BOTTOM", tipsText, 0, -2)
@@ -1128,7 +1136,7 @@ end
 -----------------------------------------------------------------------------------
 function addon:CreateScrollFrame(parent, top, bottom, color, border)
 	-- create scrollFrame & scrollbar seperately (instead of UIPanelScrollFrameTemplate), in order to custom it
-	local scrollFrame = CreateFrame("ScrollFrame", parent:GetName() and parent:GetName().."ScrollFrame" or nil, parent)
+	local scrollFrame = CreateFrame("ScrollFrame", parent:GetName() and parent:GetName().."ScrollFrame" or nil, parent, "BackdropTemplate")
 	parent.scrollFrame = scrollFrame
 	top = top or 0
 	bottom = bottom or 0
@@ -1154,7 +1162,7 @@ function addon:CreateScrollFrame(parent, top, bottom, color, border)
 	-- content:SetFrameLevel(2)
 	
 	-- scrollbar
-	local scrollbar = CreateFrame("Frame", nil, scrollFrame)
+	local scrollbar = CreateFrame("Frame", nil, scrollFrame, "BackdropTemplate")
 	scrollbar:SetPoint("TOPLEFT", scrollFrame, "TOPRIGHT", 2, 0)
 	scrollbar:SetPoint("BOTTOMRIGHT", scrollFrame, 7, 0)
 	scrollbar:Hide()
@@ -1162,7 +1170,7 @@ function addon:CreateScrollFrame(parent, top, bottom, color, border)
 	scrollFrame.scrollbar = scrollbar
 	
 	-- scrollbar thumb
-	local scrollThumb = CreateFrame("Frame", nil, scrollbar)
+	local scrollThumb = CreateFrame("Frame", nil, scrollbar, "BackdropTemplate")
 	scrollThumb:SetWidth(5) -- scrollbar's width is 5
 	scrollThumb:SetHeight(scrollbar:GetHeight())
 	scrollThumb:SetPoint("TOP")
@@ -1336,7 +1344,7 @@ end
 ------------------------------------------------
 -- dropdown menu 2020-09-07
 ------------------------------------------------
-local list = CreateFrame("Frame", addonName.."DropdownList")
+local list = CreateFrame("Frame", addonName.."DropdownList", nil, "BackdropTemplate")
 addon:StylizeFrame(list, {.1, .1, .1, 1})
 list:Hide()
 list:SetScript("OnShow", function()
@@ -1359,7 +1367,7 @@ addon:CreateScrollFrame(list)
 list.scrollFrame:SetScrollStep(18)
 
 -- highlight
-local hightlightTexture = CreateFrame("Frame", nil, list)
+local hightlightTexture = CreateFrame("Frame", nil, list, "BackdropTemplate")
 hightlightTexture:SetBackdrop({edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = 1})
 hightlightTexture:SetBackdropBorderColor(unpack(classColor.t))
 hightlightTexture:Hide()
@@ -1377,7 +1385,7 @@ local function SetHighlightItem(i)
 end
 
 function addon:CreateDropdown(parent, width, dropdownType)
-	local menu = CreateFrame("Frame", nil, parent)
+	local menu = CreateFrame("Frame", nil, parent, "BackdropTemplate")
 	menu:SetSize(width, 20)
 	menu:EnableMouse(true)
 	-- menu:SetFrameLevel(5)
@@ -1603,7 +1611,7 @@ end
 -- binding button
 -----------------------------------------
 local function CreateGrid(parent, text, width)
-	local grid = CreateFrame("Button", nil, parent)
+	local grid = CreateFrame("Button", nil, parent, "BackdropTemplate")
 	grid:SetFrameLevel(6)
 	grid:SetSize(width, 20)
 	grid:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8x8", edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = 1})
@@ -1646,7 +1654,7 @@ local function CreateGrid(parent, text, width)
 end
 
 function addon:CreateBindingButton(parent, modifier, bindKey, bindType, bindAction)
-	local b = CreateFrame("Button", nil, parent)
+	local b = CreateFrame("Button", nil, parent, "BackdropTemplate")
 	b:SetFrameLevel(5)
 	b:SetSize(100, 20)
 	b:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8x8", edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = 1})
@@ -2049,7 +2057,7 @@ local function CreateSetting_Color(parent)
 			ColorPickerFrame:Show()
 		end
 
-		widget.b = CreateFrame("Button", nil, widget)
+		widget.b = CreateFrame("Button", nil, widget, "BackdropTemplate")
 		widget.b:SetPoint("LEFT", 5, 0)
 		widget.b:SetSize(14, 14)
 		widget.b:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8x8", edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = 1})
