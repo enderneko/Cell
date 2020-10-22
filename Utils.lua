@@ -56,6 +56,17 @@ function F:TContains(t, v)
 	return false
 end
 
+function F:TInsert(t, v)
+    local i, done = 1
+    repeat
+        if not t[i] then
+            t[i] = v
+            done = true
+        end
+        i = i + 1
+    until done
+end
+
 function F:RemoveElementsByKeys(tbl, keys, returnNewTable) -- keys is a table
 	local newTbl = {}
 	for k, v in pairs(tbl) do
