@@ -8,7 +8,7 @@ debuffsTab:SetAllPoints(Cell.frames.optionsFrame)
 debuffsTab:Hide()
 
 -- vars
-local newestExpansion, loadedExpansion, loadedInstance, loadedBoss, selectedSpellId, currentSpellTable, isGeneral
+local newestExpansion, loadedExpansion, loadedInstance, loadedBoss, selectedSpellId, selectedSpellIndex, currentSpellTable, isGeneral
 -- functions
 local LoadExpansion, ShowInstances, ShowBosses, ShowDebuffs, ShowDetails, ShowImage, HideImage, OpenEncounterJournal
 -- buttons
@@ -199,7 +199,7 @@ end)
 -------------------------------------------------
 -- tips
 -------------------------------------------------
-local tips = Cell:CreateScrollTextFrame(debuffsTab, "|cff777777"..L["Tips: Double-click on instance name to open Encounter Journal. These debuffs will be displayed with the Central Debuff indicator. The priority of General Debuffs is higher than Boss Debuffs."], 0.02)
+local tips = Cell:CreateScrollTextFrame(debuffsTab, "|cff777777"..L["Tips: Drag and drop to change debuff order. Double-click on instance name to open Encounter Journal. The priority of General Debuffs is higher than Boss Debuffs."], 0.02)
 tips:SetPoint("TOPLEFT", showCurrentBtn, "TOPRIGHT", 5, 0)
 tips:SetPoint("RIGHT", -5, 0)
 
@@ -375,7 +375,6 @@ Cell:CreateScrollFrame(debuffListFrame)
 debuffListFrame.scrollFrame:SetScrollStep(19)
 SetOnEnterLeave(debuffListFrame)
 
-
 local create = Cell:CreateButton(debuffsTab, L["Create"], "class-hover", {58, 20})
 create:SetPoint("TOPLEFT", debuffListFrame, "BOTTOMLEFT", 0, -5)
 create:SetScript("OnClick", function()
@@ -412,8 +411,17 @@ dragged:SetScript("OnUpdate", function()
     dragged:ClearAllPoints()
     dragged:SetPoint("LEFT", nil, "BOTTOMLEFT", 5+x/scale, y/scale)
 end)
+-- icon
+dragged.icon = dragged:CreateTexture(nil, "ARTWORK")
+dragged.icon:SetSize(16, 16)
+dragged.icon:SetPoint("LEFT", 2, 0)
+dragged.icon:SetTexCoord(.08, .92, .08, .92)
+-- text
 dragged.text = dragged:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
-dragged.text:SetPoint("LEFT", 5, 0)
+dragged.text:SetPoint("LEFT", dragged.icon, "RIGHT", 2, 0)
+dragged.text:SetPoint("RIGHT", -2, 0)
+dragged.text:SetJustifyH("LEFT")
+dragged.text:SetWordWrap(false)
 
 local function RegisterForDrag(b)
     -- dragging
@@ -422,6 +430,7 @@ local function RegisterForDrag(b)
     b:SetScript("OnDragStart", function(self)
         self:SetAlpha(.5)
         dragged:SetWidth(self:GetWidth())
+        dragged.icon:SetTexture(self.spellIcon)
         dragged.text:SetText(self:GetText())
         dragged:Show()
     end)
@@ -477,6 +486,10 @@ local function RegisterForDrag(b)
                     debuffButtons[j].index = j
                     currentSpellTable[j]["order"] = j
                     debuffButtons[j].id = debuffButtons[j].spellId.."-"..j
+                    -- update selectedSpellIndex
+                    if debuffButtons[j].spellId == selectedSpellId then
+                        selectedSpellIndex = j
+                    end
                 end
             else
                 -- move down (after newB)
@@ -523,6 +536,10 @@ local function RegisterForDrag(b)
                     debuffButtons[j].index = j
                     currentSpellTable[j]["order"] = j
                     debuffButtons[j].id = debuffButtons[j].spellId.."-"..j
+                    -- update selectedSpellIndex
+                    if debuffButtons[j].spellId == selectedSpellId then
+                        selectedSpellIndex = j
+                    end
                 end
             end
         end
@@ -538,13 +555,32 @@ end
 local last
 local function CreateDebuffButton(i, sTable)
     if not debuffButtons[i] then
-        debuffButtons[i] = Cell:CreateButton(debuffListFrame.scrollFrame.content, sTable["id"], "transparent-class", {20, 20})
+        debuffButtons[i] = Cell:CreateButton(debuffListFrame.scrollFrame.content, " ", "transparent-class", {20, 20})
         debuffButtons[i].index = i
-    else
-        debuffButtons[i]:SetText(sTable["id"])
-        debuffButtons[i]:Show()
+        -- icon
+        debuffButtons[i].icon = debuffButtons[i]:CreateTexture(nil, "ARTWORK")
+        debuffButtons[i].icon:SetSize(16, 16)
+        debuffButtons[i].icon:SetPoint("LEFT", 2, 0)
+        debuffButtons[i].icon:SetTexCoord(.08, .92, .08, .92)
+        -- update text position
+        debuffButtons[i]:GetFontString():ClearAllPoints()
+        debuffButtons[i]:GetFontString():SetPoint("LEFT", debuffButtons[i].icon, "RIGHT", 2, 0)
+        debuffButtons[i]:GetFontString():SetPoint("RIGHT", -2, 0)
     end
     
+    debuffButtons[i]:Show()
+
+    local name, _, icon = GetSpellInfo(sTable["id"])
+    if name then
+        debuffButtons[i].icon:SetTexture(icon)
+        debuffButtons[i].spellIcon = icon
+        debuffButtons[i]:SetText(name)
+    else
+        debuffButtons[i].icon:SetTexture(134400)
+        debuffButtons[i].spellIcon = 134400
+        debuffButtons[i]:SetText(sTable["id"])
+    end
+
     debuffButtons[i].spellId = sTable["id"]
     if sTable["order"] == 0 then
         debuffButtons[i]:SetTextColor(.4, .4, .4)
@@ -582,7 +618,8 @@ ShowDebuffs = function(bossId, buttonIndex)
     last = nil
     -- hide debuffDetails
     selectedSpellId = nil
-    RaidDebuffsTab_DebuffDetails:HideAll()
+    selectedSpellIndex = nil
+    RaidDebuffsTab_DebuffDetailsContent:Hide()
 
     debuffListFrame.scrollFrame:ResetScroll()
     
@@ -599,7 +636,7 @@ ShowDebuffs = function(bossId, buttonIndex)
 
     local n = 0
     if currentSpellTable then
-        texplore(currentSpellTable)
+        -- texplore(currentSpellTable)
         n = 0
         for i, sTable in ipairs(currentSpellTable) do
             n = n + 1
@@ -639,11 +676,45 @@ local detailsFrame = Cell:CreateFrame("RaidDebuffsTab_DebuffDetails", debuffsTab
 detailsFrame:SetPoint("TOPLEFT", debuffListFrame, "TOPRIGHT", 5, 0)
 detailsFrame:SetPoint("BOTTOMRIGHT", -5, 30)
 detailsFrame:Show()
-Cell:CreateScrollFrame(detailsFrame)
-SetOnEnterLeave(detailsFrame)
+-- Cell:CreateScrollFrame(detailsFrame)
+-- SetOnEnterLeave(detailsFrame)
+detailsFrame:SetScript("OnEnter", function()
+    detailsFrame:SetBackdropBorderColor(unpack(Cell:GetPlayerClassColor()))
+end)
+detailsFrame:SetScript("OnLeave", function()
+    detailsFrame:SetBackdropBorderColor(0, 0, 0, 1)
+end)
 
-local selectedIndex, disabledIndex
-local enabled = Cell:CreateCheckButton(detailsFrame, L["Enabled"], function(checked)
+local detailsContentFrame = CreateFrame("Frame", "RaidDebuffsTab_DebuffDetailsContent", detailsFrame)
+detailsContentFrame:SetAllPoints(detailsFrame)
+
+-- spell icon
+local spellIconBG = detailsContentFrame:CreateTexture(nil, "ARTWORK")
+spellIconBG:SetSize(27, 27)
+spellIconBG:SetDrawLayer("ARTWORK", 6)
+spellIconBG:SetPoint("TOPLEFT", 5, -5)
+spellIconBG:SetColorTexture(0, 0, 0, 1)
+
+local spellIcon = detailsContentFrame:CreateTexture(nil, "ARTWORK")
+spellIcon:SetDrawLayer("ARTWORK", 7)
+spellIcon:SetTexCoord(.08, .92, .08, .92)
+spellIcon:SetPoint("TOPLEFT", spellIconBG, 1, -1)
+spellIcon:SetPoint("BOTTOMRIGHT", spellIconBG, -1, 1)
+
+-- spell name & id
+local spellNameText = detailsContentFrame:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
+spellNameText:SetPoint("TOPLEFT", spellIconBG, "TOPRIGHT", 2, 0)
+spellNameText:SetPoint("RIGHT", -1, 0)
+spellNameText:SetJustifyH("LEFT")
+spellNameText:SetWordWrap(false)
+
+local spellIdText = detailsContentFrame:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
+spellIdText:SetPoint("BOTTOMLEFT", spellIconBG, "BOTTOMRIGHT", 2, 0)
+spellIdText:SetPoint("RIGHT")
+spellIdText:SetJustifyH("LEFT")
+
+-- enable
+local enabledCB = Cell:CreateCheckButton(detailsContentFrame, L["Enabled"], function(checked)
     local newOrder = checked and #currentSpellTable+1 or 0
     -- update db, on re-enabled set its order to the last
     if not CellDB["raidDebuffs"][loadedInstance] then CellDB["raidDebuffs"][loadedInstance] = {} end
@@ -655,7 +726,7 @@ local enabled = Cell:CreateCheckButton(detailsFrame, L["Enabled"], function(chec
         CellDB["raidDebuffs"][loadedInstance][tIndex][selectedSpellId][1] = newOrder
     end
     if not checked then -- enabled -> disabled
-        for i = selectedIndex+1, #currentSpellTable do
+        for i = selectedSpellIndex+1, #currentSpellTable do
             local id = currentSpellTable[i]["id"]
             -- print("update db order: ", id)
             if CellDB["raidDebuffs"][loadedInstance][tIndex][id] then
@@ -668,24 +739,26 @@ local enabled = Cell:CreateCheckButton(detailsFrame, L["Enabled"], function(chec
     -- update loadedDebuffs
     local buttonIndex
     if checked then -- disabled -> enabled
-        -- local disabledIndex = selectedIndex-#currentSpellTable -- index in ["disabled"]
+        local disabledIndex = selectedSpellIndex-#currentSpellTable -- index in ["disabled"]
         currentSpellTable[newOrder] = currentSpellTable["disabled"][disabledIndex]
         currentSpellTable[newOrder]["order"] = newOrder
         tremove(currentSpellTable["disabled"], disabledIndex) -- remove from ["disabled"]
         -- button to click
         buttonIndex = newOrder
     else -- enabled -> disabled
-        for i = selectedIndex+1, #currentSpellTable do
+        for i = selectedSpellIndex+1, #currentSpellTable do
             currentSpellTable[i]["order"] = currentSpellTable[i]["order"] - 1 -- update orders
         end
         if not currentSpellTable["disabled"] then currentSpellTable["disabled"] = {} end
-        tinsert(currentSpellTable["disabled"], currentSpellTable[selectedIndex])
+        tinsert(currentSpellTable["disabled"], currentSpellTable[selectedSpellIndex])
         currentSpellTable["disabled"][#currentSpellTable["disabled"]]["order"] = 0
-        tremove(currentSpellTable, selectedIndex)
+        tremove(currentSpellTable, selectedSpellIndex)
         -- button to click
         buttonIndex = #currentSpellTable + #currentSpellTable["disabled"]
     end
     
+    -- update selectedSpellIndex
+    selectedSpellIndex = buttonIndex
     -- reload
     if isGeneral then -- general
         ShowDebuffs(loadedInstance, buttonIndex)
@@ -693,27 +766,57 @@ local enabled = Cell:CreateCheckButton(detailsFrame, L["Enabled"], function(chec
         ShowDebuffs(loadedBoss, buttonIndex)
     end
 end)
-enabled:SetPoint("TOPLEFT", 5, -10)
+enabledCB:SetPoint("TOPLEFT", spellIconBG, "BOTTOMLEFT", 0, -10)
+enabledCB:SetScript("OnEnter", detailsFrame:GetScript("OnEnter"))
+enabledCB:SetScript("OnLeave", detailsFrame:GetScript("OnLeave"))
 
-function detailsFrame:HideAll()
-    enabled:Hide()
+-- track by id
+local trackByIdCB = Cell:CreateCheckButton(detailsContentFrame, L["Track By Id"], function(checked)
+
+end)
+trackByIdCB:SetPoint("TOPLEFT", enabledCB, "BOTTOMLEFT", 0, -10)
+
+-- glow type
+local glowDropdown = Cell:CreateDropdown(detailsContentFrame, 100)
+glowDropdown:SetPoint("TOPLEFT", trackByIdCB, "BOTTOMLEFT", 0, -10)
+
+-- spell description
+Cell:CreateScrollFrame(detailsContentFrame, -200, 0) -- spell description
+local descText = detailsContentFrame.scrollFrame.content:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
+descText:SetPoint("TOPLEFT", 5, -1)
+descText:SetPoint("RIGHT", -5, 0)
+descText:SetJustifyH("LEFT")
+descText:SetSpacing(2)
+
+local function SetSpellDesc(desc)
+    descText:SetText(desc)
+    detailsContentFrame.scrollFrame:SetContentHeight(descText:GetStringHeight()+2)
 end
 
+local timer
 ShowDetails = function(spell)
-    selectedSpellId, selectedIndex = F:SplitToNumber("-", spell)
-    print(selectedSpellId, selectedIndex)
-    if selectedIndex > #currentSpellTable then
-        disabledIndex = selectedIndex - #currentSpellTable
-    else
-        disabledIndex = nil
-    end
+    local spellId, spellIndex = F:SplitToNumber("-", spell)
+    
+    if selectedSpellId == spellId then return end
+    selectedSpellId, selectedSpellIndex = spellId, spellIndex
+    detailsContentFrame.scrollFrame:ResetScroll()
 
-    enabled:Show()
-    if disabledIndex then
-        enabled:SetChecked(false)
-    else
-        enabled:SetChecked(true)
-    end
+    local name, icon, desc = F:GetSpellInfo(spellId)
+    if not name then return end
+    
+    spellIcon:SetTexture(icon)
+    spellNameText:SetText(name)
+    spellIdText:SetText(spellId)
+    SetSpellDesc(desc)
+    -- to ensure desc
+    if timer then timer:Cancel() end
+    timer = C_Timer.NewTimer(1, function()
+        SetSpellDesc(select(3, F:GetSpellInfo(spellId)))
+    end)
+    
+    enabledCB:SetChecked(selectedSpellIndex <= #currentSpellTable)
+
+    detailsContentFrame:Show()
 end
 
 -------------------------------------------------

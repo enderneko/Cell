@@ -473,18 +473,18 @@ local debuffs = {
         },
     },
     [1176] = { -- Battle of Dazar'alor
-        [2344] = { -- Champion of the Light
+        [2333] = { -- Champion of the Light
             283572, -- Sacred Blade
             283651, -- Blinding Faith
             283579, -- Consecration
         },
-        [2323] = { -- Jadefire Masters
+        [2341] = { -- Jadefire Masters
             286988, -- Searing Embers
             282037, -- Rising Flames
             288151, -- Tested
             285632, -- Stalking
         },
-        [2340] = { -- Grong, the Revenant
+        [2325] = { -- Grong, the Revenant
             285875, -- Rending Bite
             283069, -- Megatomic Fire (Horde)
             286373, -- Chill of Death (Alliance)

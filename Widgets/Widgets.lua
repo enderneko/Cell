@@ -1128,6 +1128,10 @@ function addon:CreateScrollTextFrame(parent, s, timePerScroll, scrollStep, delay
 		end
 	end)
 
+	function frame:SetText(str)
+		text:SetText(str)
+	end
+
 	return frame
 end
 

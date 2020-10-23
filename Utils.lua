@@ -456,3 +456,34 @@ function F:GetInstanceName()
         return ""
     end
 end
+
+-------------------------------------------------
+-- spell description
+-------------------------------------------------
+-- https://wow.gamepedia.com/UIOBJECT_GameTooltip
+-- local function EnumerateTooltipLines_helper(...)
+--     for i = 1, select("#", ...) do
+--        local region = select(i, ...)
+--        if region and region:GetObjectType() == "FontString" then
+--           local text = region:GetText() -- string or nil
+--           print(region:GetName(), text)
+--        end
+--     end
+-- end
+
+local lines = {}
+function F:GetSpellInfo(spellId)
+	wipe(lines)
+
+	local name, _, icon = GetSpellInfo(spellId)
+	if not name then return end
+    
+    CellScanningTooltip:ClearLines()
+	CellScanningTooltip:SetHyperlink("spell:"..spellId)
+    for i = 2, min(5, CellScanningTooltip:NumLines()) do
+        tinsert(lines, _G["CellScanningTooltipTextLeft"..i]:GetText())
+    end
+    -- CellScanningTooltip:SetOwner(CellOptionsFrame_RaidDebuffsTab, "ANCHOR_RIGHT")
+    -- CellScanningTooltip:Show()
+    return name, icon, table.concat(lines, "\n")
+end

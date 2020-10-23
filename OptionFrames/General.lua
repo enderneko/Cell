@@ -435,6 +435,7 @@ local function UpdateAppearance(which)
     if not which or which == "scale" then
         Cell.frames.mainFrame:SetScale(CellDB["scale"])
         CellTooltip:SetScale(LPP:GetPixelPerfectScale() * CellDB["scale"])
+        CellScanningTooltip:SetScale(LPP:GetPixelPerfectScale() * CellDB["scale"])
     end
 end
 Cell:RegisterCallback("UpdateAppearance", "UpdateAppearance", UpdateAppearance)
