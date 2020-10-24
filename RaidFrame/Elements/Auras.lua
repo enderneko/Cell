@@ -125,7 +125,6 @@ local function CreateAura_BorderIcon(name, parent, borderSize)
         if refreshing then
             ag:Play()
         end
-
         
         if glowType == "Normal" then
             LCG.PixelGlow_Stop(parent)
