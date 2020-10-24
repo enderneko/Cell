@@ -10,6 +10,8 @@ function F:UpperFirst(str)
 end
 
 function F:SplitToNumber(sep, str)
+    if not str then return end
+    
     local ret = {strsplit(sep, str)}
     for i, v in ipairs(ret) do
         ret[i] = tonumber(v) or ret[i] -- keep non number

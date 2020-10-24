@@ -8,7 +8,8 @@ debuffsTab:SetAllPoints(Cell.frames.optionsFrame)
 debuffsTab:Hide()
 
 -- vars
-local newestExpansion, loadedExpansion, loadedInstance, loadedBoss, selectedSpellId, selectedSpellIndex, currentSpellTable, isGeneral
+local newestExpansion, loadedExpansion, loadedInstance, loadedBoss, isGeneral
+local currentSpellTable, selectedButtonIndex, selectedSpellId, selectedSpellName, selectedSpellIcon
 -- functions
 local LoadExpansion, ShowInstances, ShowBosses, ShowDebuffs, ShowDetails, ShowImage, HideImage, OpenEncounterJournal
 -- buttons
@@ -35,8 +36,7 @@ local encounterJournalList = {
 }
 
 local instanceIds = { -- used for GetInstanceInfo/GetRealZoneText --> instanceId
-    -- [instanceName] = instanceId,
-    --// [instanceName] = expansionName:instanceIndex:instanceId,
+    -- [instanceName] = expansionName:instanceIndex:instanceId,
 }
 
 local function LoadBossList(instanceId, list)
@@ -65,7 +65,7 @@ local function LoadInstanceList(tier, instanceType, list)
         local eName = EJ_GetTierInfo(tier)
         local instanceTable = {["name"]=name, ["id"]=id, ["bosses"]={}}
         tinsert(list, instanceTable)
-        instanceIds[name] = id -- NOTE: used for searching current zone debuffs
+        instanceIds[name] = eName..":"..#list..":"..id -- NOTE: used for searching current zone debuffs & switch to current instance
 
         LoadBossList(id, instanceTable["bosses"])
     end
@@ -141,7 +141,26 @@ local function LoadDebuffs()
             -- load
             for i, spellId in pairs(bTable) do
                 if not (CellDB["raidDebuffs"][instanceId] and CellDB["raidDebuffs"][instanceId][bossId] and CellDB["raidDebuffs"][instanceId][bossId][spellId]) then
-                    F:TInsert(loadedDebuffs[instanceId][bossId], {["id"]=spellId, ["order"]=#loadedDebuffs[instanceId][bossId]+1})
+                    F:TInsert(loadedDebuffs[instanceId][bossId], {["id"]=spellId, ["order"]=#loadedDebuffs[instanceId][bossId]+1, ["built-in"]=true})
+                else -- exists in both CellDB and built-in
+                    local found
+                    -- find in loadedDebuffs and mark it as built-in
+                    for k, sTable in pairs(loadedDebuffs[instanceId][bossId]) do
+                        if k ~= "disabled" and sTable["id"] == spellId then
+                            found = true
+                            sTable["built-in"] = true
+                            break
+                        end
+                    end
+                    -- check disabled if not found
+                    if not found and loadedDebuffs[instanceId][bossId]["disabled"] then
+                        for k, sTable in pairs(loadedDebuffs[instanceId][bossId]["disabled"]) do
+                            if sTable["id"] == spellId then
+                                sTable["built-in"] = true
+                                break
+                            end
+                        end
+                    end
                 end
             end
         end
@@ -382,20 +401,57 @@ SetOnEnterLeave(debuffListFrame)
 local create = Cell:CreateButton(debuffsTab, L["Create"], "class-hover", {58, 20})
 create:SetPoint("TOPLEFT", debuffListFrame, "BOTTOMLEFT", 0, -5)
 create:SetScript("OnClick", function()
-    local popup = Cell:CreateConfirmPopup(debuffsTab, 200, L["Create New Debuff (spellId)"], function()
+    local popup = Cell:CreateConfirmPopup(debuffsTab, 200, L["Create New Debuff (id)"], function()
         
     end, true, true)
-    popup:SetPoint("TOPLEFT", 100, -185)
+    popup:SetPoint("TOPLEFT", 100, -170)
 end)
 
 local delete = Cell:CreateButton(debuffsTab, L["Delete"], "class-hover", {57, 20})
 delete:SetPoint("LEFT", create, "RIGHT", 5, 0)
 delete:SetEnabled(false)
 delete:SetScript("OnClick", function()
-    local popup = Cell:CreateConfirmPopup(debuffsTab, 200, L["Delete Debuff: "]..selectedSpellId, function()
-        
+    local text = selectedSpellName.." ["..selectedSpellId.."]".."\n".."|T"..selectedSpellIcon..":12:12:0:0:12:12:1:11:1:11|t"
+    local popup = Cell:CreateConfirmPopup(debuffsTab, 200, L["Delete Debuff?"].."\n"..text, function()
+        -- update db
+        if isGeneral then
+            CellDB["raidDebuffs"][loadedInstance]["general"][selectedSpellId] = nil
+        else
+            CellDB["raidDebuffs"][loadedInstance][loadedBoss][selectedSpellId] = nil
+        end
+        -- update loadedDebuffs
+        local found
+        for k, sTable in pairs(currentSpellTable) do
+            if k ~= "disabled" and sTable["id"] == selectedSpellId then
+                found = true
+                tremove(currentSpellTable, k)
+                break
+            end
+        end
+        if found then -- is enabled, update orders
+            for i = selectedButtonIndex, #currentSpellTable do
+                currentSpellTable[i]["order"] = currentSpellTable[i]["order"] - 1 -- update orders
+            end
+        end
+        -- check disabled if not found
+        if not found and currentSpellTable["disabled"] then
+            for k, sTable in pairs(currentSpellTable["disabled"]) do
+                if sTable["id"] == spellId then
+                    tremove(currentSpellTable["disabled"], k)
+                    break
+                end
+            end
+        end
+        -- reload
+        if isGeneral then -- general
+            ShowDebuffs(loadedInstance, 1)
+        else
+            ShowDebuffs(loadedBoss, 1)
+        end
+        -- notify debuff list changed
+        Cell:Fire("RaidDebuffsChanged")
     end, true)
-    popup:SetPoint("TOPLEFT", 100, -185)
+    popup:SetPoint("TOPLEFT", 100, -170)
 end)
 
 local enableAll = Cell:CreateButton(debuffsTab, L["Enable All"], "class-hover", {66, 20})
@@ -490,9 +546,9 @@ local function RegisterForDrag(b)
                     debuffButtons[j].index = j
                     currentSpellTable[j]["order"] = j
                     debuffButtons[j].id = debuffButtons[j].spellId.."-"..j
-                    -- update selectedSpellIndex
+                    -- update selectedButtonIndex
                     if debuffButtons[j].spellId == selectedSpellId then
-                        selectedSpellIndex = j
+                        selectedButtonIndex = j
                     end
                 end
             else
@@ -540,9 +596,9 @@ local function RegisterForDrag(b)
                     debuffButtons[j].index = j
                     currentSpellTable[j]["order"] = j
                     debuffButtons[j].id = debuffButtons[j].spellId.."-"..j
-                    -- update selectedSpellIndex
+                    -- update selectedButtonIndex
                     if debuffButtons[j].spellId == selectedSpellId then
-                        selectedSpellIndex = j
+                        selectedButtonIndex = j
                     end
                 end
             end
@@ -598,8 +654,7 @@ local function CreateDebuffButton(i, sTable)
         debuffButtons[i].enabled = true
     end
 
-    debuffButtons[i].id = sTable["id"].."-"..i -- send spellId-spellIndex to ShowDetails
-    -- debuffButtons[i].id = sTable["id"] -- send spellId to ShowDetails
+    debuffButtons[i].id = sTable["id"].."-"..i -- send spellId-buttonIndex to ShowDetails
 
     debuffButtons[i]:ClearAllPoints()
     if last then
@@ -624,8 +679,9 @@ ShowDebuffs = function(bossId, buttonIndex)
     last = nil
     -- hide debuffDetails
     selectedSpellId = nil
-    selectedSpellIndex = nil
+    selectedButtonIndex = nil
     RaidDebuffsTab_DebuffDetailsContent:Hide()
+    delete:SetEnabled(false)
 
     debuffListFrame.scrollFrame:ResetScroll()
     
@@ -732,7 +788,7 @@ local enabledCB = Cell:CreateCheckButton(detailsContentFrame, L["Enabled"], func
         CellDB["raidDebuffs"][loadedInstance][tIndex][selectedSpellId][1] = newOrder
     end
     if not checked then -- enabled -> disabled
-        for i = selectedSpellIndex+1, #currentSpellTable do
+        for i = selectedButtonIndex+1, #currentSpellTable do
             local id = currentSpellTable[i]["id"]
             -- print("update db order: ", id)
             if CellDB["raidDebuffs"][loadedInstance][tIndex][id] then
@@ -745,26 +801,26 @@ local enabledCB = Cell:CreateCheckButton(detailsContentFrame, L["Enabled"], func
     -- update loadedDebuffs
     local buttonIndex
     if checked then -- disabled -> enabled
-        local disabledIndex = selectedSpellIndex-#currentSpellTable -- index in ["disabled"]
+        local disabledIndex = selectedButtonIndex-#currentSpellTable -- index in ["disabled"]
         currentSpellTable[newOrder] = currentSpellTable["disabled"][disabledIndex]
         currentSpellTable[newOrder]["order"] = newOrder
         tremove(currentSpellTable["disabled"], disabledIndex) -- remove from ["disabled"]
         -- button to click
         buttonIndex = newOrder
     else -- enabled -> disabled
-        for i = selectedSpellIndex+1, #currentSpellTable do
+        for i = selectedButtonIndex+1, #currentSpellTable do
             currentSpellTable[i]["order"] = currentSpellTable[i]["order"] - 1 -- update orders
         end
         if not currentSpellTable["disabled"] then currentSpellTable["disabled"] = {} end
-        tinsert(currentSpellTable["disabled"], currentSpellTable[selectedSpellIndex])
+        tinsert(currentSpellTable["disabled"], currentSpellTable[selectedButtonIndex])
         currentSpellTable["disabled"][#currentSpellTable["disabled"]]["order"] = 0
-        tremove(currentSpellTable, selectedSpellIndex)
+        tremove(currentSpellTable, selectedButtonIndex)
         -- button to click
         buttonIndex = #currentSpellTable + #currentSpellTable["disabled"]
     end
     
-    -- update selectedSpellIndex
-    selectedSpellIndex = buttonIndex
+    -- update selectedButtonIndex
+    -- selectedButtonIndex = buttonIndex
     -- reload
     if isGeneral then -- general
         ShowDebuffs(loadedInstance, buttonIndex)
@@ -803,15 +859,18 @@ end
 
 local timer
 ShowDetails = function(spell)
-    local spellId, spellIndex = F:SplitToNumber("-", spell)
+    local spellId, buttonIndex = F:SplitToNumber("-", spell)
     
     if selectedSpellId == spellId then return end
-    selectedSpellId, selectedSpellIndex = spellId, spellIndex
+    selectedSpellId, selectedButtonIndex = spellId, buttonIndex
     detailsContentFrame.scrollFrame:ResetScroll()
 
     local name, icon, desc = F:GetSpellInfo(spellId)
     if not name then return end
     
+    selectedSpellIcon = icon
+    selectedSpellName = name
+
     spellIcon:SetTexture(icon)
     spellNameText:SetText(name)
     spellIdText:SetText(spellId)
@@ -822,9 +881,16 @@ ShowDetails = function(spell)
         SetSpellDesc(select(3, F:GetSpellInfo(spellId)))
     end)
     
-    enabledCB:SetChecked(selectedSpellIndex <= #currentSpellTable)
+    enabledCB:SetChecked(selectedButtonIndex <= #currentSpellTable)
 
     detailsContentFrame:Show()
+
+    -- check deletion
+    if buttonIndex <= #currentSpellTable then
+        delete:SetEnabled(not currentSpellTable[buttonIndex]["built-in"])
+    else -- disabled
+        delete:SetEnabled(not currentSpellTable["disabled"][buttonIndex]["built-in"])
+    end
 end
 
 -------------------------------------------------
@@ -860,7 +926,7 @@ end
 -- functions
 -------------------------------------------------
 function F:GetDebuffList(instanceName)
-    local iId = instanceIds[instanceName]
+    local eName, iIndex, iId = F:SplitToNumber(":", instanceIds[instanceName])
     if not (iId and loadedDebuffs[iId])then return end
     
     local list = {}
@@ -876,8 +942,8 @@ function F:GetDebuffList(instanceName)
     -- check boss
     for bId, t in pairs(loadedDebuffs[iId]) do
         if bId ~= "general" then
-            for _, dt in ipairs(t) do -- ignore "disabled" table
-                list[dt["id"]] = {["order"]=dt["order"]+n, ["glowType"]=dt["glowType"], ["glowColor"]=dt["glowColor"]}
+            for _, st in ipairs(t) do -- ignore "disabled" table
+                list[st["id"]] = {["order"]=st["order"]+n, ["glowType"]=st["glowType"], ["glowColor"]=st["glowColor"]}
             end
         end
     end
