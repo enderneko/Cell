@@ -6,8 +6,8 @@ local F = Cell.funcs
 local debuffs = {
     [477] = {
         [971] = {
-            156151,
-            -- 156152,
+            -- 156151,
+            156152,
         },
     },
     [1030] = { -- Temple of Sethraliss

@@ -211,7 +211,7 @@ showCurrentBtn:SetScript("OnClick", function()
         if loadedInstance == id then return end
         expansionDropdown:SetSelected(eName)
         LoadExpansion(eName)
-        instanceButtons[index]:Click() -- REVIEW: C_Timer.After?
+        instanceButtons[index]:Click()
         -- scroll
         if index > 9 then
             RaidDebuffsTab_Instances.scrollFrame:SetVerticalScroll((index-9)*19)
@@ -331,7 +331,7 @@ ShowBosses = function(instanceId)
             bossButtons[i]:Show()
         end
 
-        bossButtons[i].id = bTable["id"].."-"..i -- send bossId-bossIndex to ShowDebuffs
+        bossButtons[i].id = bTable["id"].."-"..i -- send bossId-bossIndex to ShowDebuffs TODO: just pass bossId
 
         bossButtons[i]:SetPoint("TOPLEFT", bossButtons[i-1], "BOTTOMLEFT", 0, 1)
         bossButtons[i]:SetPoint("RIGHT")
@@ -401,8 +401,42 @@ SetOnEnterLeave(debuffListFrame)
 local create = Cell:CreateButton(debuffsTab, L["Create"], "class-hover", {58, 20})
 create:SetPoint("TOPLEFT", debuffListFrame, "BOTTOMLEFT", 0, -5)
 create:SetScript("OnClick", function()
-    local popup = Cell:CreateConfirmPopup(debuffsTab, 200, L["Create New Debuff (id)"], function()
-        
+    local popup = Cell:CreateConfirmPopup(debuffsTab, 200, L["Create New Debuff (id)"], function(self)
+        local id = tonumber(self.editBox:GetText()) or 0
+        local name = GetSpellInfo(id)
+        if not name then
+            F:Print(L["Invalid spell id."])
+            return
+        end
+        if currentSpellTable then
+            for _, st in ipairs(currentSpellTable) do
+                if st["id"] == id then
+                    F:Print(L["Debuff already exists."])
+                    return
+                end
+            end
+        end
+
+        -- update db
+        if not CellDB["raidDebuffs"][loadedInstance] then CellDB["raidDebuffs"][loadedInstance] = {} end
+        if isGeneral then
+            if not CellDB["raidDebuffs"][loadedInstance]["general"] then CellDB["raidDebuffs"][loadedInstance]["general"] = {} end
+            CellDB["raidDebuffs"][loadedInstance]["general"][id] = {currentSpellTable and #currentSpellTable+1 or 1}
+        else
+            if not CellDB["raidDebuffs"][loadedInstance][loadedBoss] then CellDB["raidDebuffs"][loadedInstance][loadedBoss] = {} end
+            CellDB["raidDebuffs"][loadedInstance][loadedBoss][id] = {currentSpellTable and #currentSpellTable+1 or 1}
+        end
+        -- update loadedDebuffs
+        if currentSpellTable then
+            tinsert(currentSpellTable, {["id"]=id, ["order"]=#currentSpellTable+1})
+            ShowDebuffs(isGeneral and loadedInstance or loadedBoss, #currentSpellTable)
+        else
+            if not loadedDebuffs[loadedInstance] then loadedDebuffs[loadedInstance] = {} end
+            loadedDebuffs[loadedInstance][isGeneral and "general" or loadedBoss] = {{["id"]=id, ["order"]=1}}
+            ShowDebuffs(isGeneral and loadedInstance or loadedBoss, 1)
+        end
+        -- notify debuff list changed
+        Cell:Fire("RaidDebuffsChanged")
     end, true, true)
     popup:SetPoint("TOPLEFT", 100, -170)
 end)
@@ -436,7 +470,7 @@ delete:SetScript("OnClick", function()
         -- check disabled if not found
         if not found and currentSpellTable["disabled"] then
             for k, sTable in pairs(currentSpellTable["disabled"]) do
-                if sTable["id"] == spellId then
+                if sTable["id"] == selectedSpellId then
                     tremove(currentSpellTable["disabled"], k)
                     break
                 end
@@ -685,13 +719,13 @@ ShowDebuffs = function(bossId, buttonIndex)
 
     debuffListFrame.scrollFrame:ResetScroll()
     
+    isGeneral = bId == loadedInstance
+
     currentSpellTable = nil
     if loadedDebuffs[loadedInstance] then
         if bId == loadedInstance then -- General
-            isGeneral = true
             currentSpellTable = loadedDebuffs[loadedInstance]["general"]
         else
-            isGeneral = false
             currentSpellTable = loadedDebuffs[loadedInstance][bId]
         end
     end
@@ -889,7 +923,7 @@ ShowDetails = function(spell)
     if buttonIndex <= #currentSpellTable then
         delete:SetEnabled(not currentSpellTable[buttonIndex]["built-in"])
     else -- disabled
-        delete:SetEnabled(not currentSpellTable["disabled"][buttonIndex]["built-in"])
+        delete:SetEnabled(not currentSpellTable["disabled"][buttonIndex-#currentSpellTable]["built-in"])
     end
 end
 

@@ -210,6 +210,8 @@ L["castByMe"] = "只显示我施放的增益"
 L["Raid Debuffs"] = "副本减益"
 L["Enable All"] = "全部启用"
 L["Disable All"] = "全部禁用"
+L["Invalid spell id."] = "无效的法术id。"
+L["Debuff already exists."] = "减益已存在。"
 
 -------------------------------------------------
 -- about
