@@ -232,6 +232,7 @@ local function UnitButton_UpdateDebuffs(self)
     if not debuffs_dispel[unit] then debuffs_dispel[unit] = {} end
 
 	local found, refreshing = 1
+	local topOrder, topId, topStart, topDuration, topType, topIcon, topCount, topRefreshing = 999
     for i = 1, 40 do
         -- name, icon, count, debuffType, duration, expirationTime, source, isStealable, nameplateShowPersonal, spellId, canApplyAura, isBossDebuff, castByPlayer, nameplateShowAll, timeMod, ...
         local name, icon, count, debuffType, duration, expirationTime, source, isStealable, nameplateShowPersonal, spellId = UnitDebuff(unit, i)
@@ -259,8 +260,13 @@ local function UnitButton_UpdateDebuffs(self)
 				end
 				
 				-- user created indicators
-				F:ShowCustomIndicators(self, "debuff", name, expirationTime - duration, duration, debuffType, icon, count, refreshing)
-				
+				F:ShowCustomIndicators(self, "debuff", name, expirationTime - duration, duration, debuffType or "", icon, count, refreshing)
+				-- check top debuff
+				if F:GetDebuffOrder(spellId) ~= 0 and F:GetDebuffOrder(spellId) < topOrder then
+					topOrder = F:GetDebuffOrder(spellId)
+					topId, topStart, topDuration, topType, topIcon, topCount, topRefreshing = spellId, expirationTime - duration, duration, debuffType or "", icon, count, refreshing
+				end
+
 				debuffs_cache[unit][name] = expirationTime
 				debuffs_cache_count[unit][name] = count
 				debuffs_current[unit][name] = i
@@ -283,6 +289,13 @@ local function UnitButton_UpdateDebuffs(self)
 
 	-- update dispels
 	self.indicators.dispels:SetDispels(debuffs_dispel[unit])
+
+	-- update central debuff
+	if topId then
+		self.indicators.centralDebuff:SetCooldown(topStart, topDuration, topType, topIcon, topCount, topRefreshing)
+	else
+		self.indicators.centralDebuff:Hide()
+	end
 	
 	-- update debuffs_cache
     local t = GetTime()
@@ -1484,6 +1497,7 @@ function F:UnitButton_OnLoad(button)
 	F:CreateTankActiveMitigation(button)
 	F:CreateDebuffs(button)
 	F:CreateDispels(button)
+	F:CreateCentralDebuff(button)
 
 	-- events
 	button:SetScript("OnAttributeChanged", UnitButton_OnAttributeChanged) -- init

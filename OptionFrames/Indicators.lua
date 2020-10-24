@@ -103,23 +103,24 @@ local function InitIndicator(indicatorName)
             --     indicator[i].cooldown:Hide()
             --     indicator[i].cooldown:SetScript("OnValueChanged", nil)
             -- end)
-            -- indicator[i]:SetScript("OnShow", function()
-            --     indicator[i]:SetCooldown(GetTime(), 10, types[i], "Interface\\Icons\\INV_Misc_QuestionMark")
-            --     indicator[i].cooldown:SetScript("OnCooldownDone", function()
-            --         indicator[i].cooldown:SetCooldownDuration(10)
-            --         -- indicator[i]:SetCooldown(0,0,types[i], "Interface\\Icons\\INV_Misc_QuestionMark")
-            --     end)
-            -- end)
-            -- indicator[i]:SetScript("OnHide", function()
-            --     indicator[i].cooldown:Hide()
-            --     indicator[i].cooldown:SetScript("OnCooldownDone", nil)
-            -- end)
         end
-
+        
     elseif indicatorName == "dispels" then
         local types = {["Curse"]=true, ["Disease"]=true, ["Magic"]=true, ["Poison"]=true}
         indicator:SetDispels(types)
 
+    elseif indicatorName == "centralDebuff" then
+        indicator:SetScript("OnShow", function()
+            indicator:SetCooldown(GetTime(), 10, "Magic", "Interface\\Icons\\INV_Misc_QuestionMark", 7)
+            indicator.cooldown:SetScript("OnCooldownDone", function()
+                indicator:SetCooldown(GetTime(), 10, "Magic", "Interface\\Icons\\INV_Misc_QuestionMark", 7)
+            end)
+        end)
+        indicator:SetScript("OnHide", function()
+            indicator.cooldown:Hide()
+            indicator.cooldown:SetScript("OnCooldownDone", nil)
+        end)
+        
     elseif indicatorName == "externalCooldowns" then
         local icons = {135936, 572025, 135966, 627485, 237542}
         for i = 1, 5 do

@@ -22,11 +22,11 @@ local function CreateAura_BorderIcon(name, parent, borderSize)
     local cooldown = CreateFrame("Cooldown", name.."Cooldown", frame)
     frame.cooldown = cooldown
     cooldown:SetAllPoints(frame)
-    cooldown:SetSwipeTexture("")
+    cooldown:SetSwipeTexture("Interface\\Buttons\\WHITE8x8")
     cooldown:SetSwipeColor(1, 1, 1)
     cooldown.noCooldownCount = true -- disable omnicc
 
-    local iconFrame = CreateFrame("Frame", name.."IconFrame", frame)
+    local iconFrame = CreateFrame("Frame", name.."IconFrame", cooldown)
     iconFrame:SetPoint("TOPLEFT", borderSize, -borderSize)
     iconFrame:SetPoint("BOTTOMRIGHT", -borderSize, borderSize)
 
@@ -35,18 +35,95 @@ local function CreateAura_BorderIcon(name, parent, borderSize)
     icon:SetTexCoord(0.08, 0.92, 0.08, 0.92)
     icon:SetAllPoints(iconFrame)
 
-    function frame:SetCooldown(start, duration, debuffType, texture)
-        local r, g, b = DebuffTypeColor[debuffType].r, DebuffTypeColor[debuffType].g, DebuffTypeColor[debuffType].b
+    local textFrame = CreateFrame("Frame", nil, iconFrame)
+    textFrame:SetAllPoints(frame)
+
+    local stack = textFrame:CreateFontString(nil, "OVERLAY", "CELL_FONT_STATUS")
+    frame.stack = stack
+    stack:SetJustifyH("RIGHT")
+    stack:SetPoint("TOPRIGHT", 2, 1)
+
+    local duration = textFrame:CreateFontString(nil, "OVERLAY", "CELL_FONT_STATUS")
+    frame.duration = duration
+    duration:SetJustifyH("RIGHT")
+    duration:SetPoint("BOTTOMRIGHT", 2, -1)
+
+    function frame:SetFont(font, size, flags, horizontalOffset)
+        if not string.find(font, ".ttf") then font = F:GetFont(font) end
+
+        if flags == "Shadow" then
+            frame.stack:SetFont(font, size)
+            frame.stack:SetShadowOffset(1, -1)
+            frame.stack:SetShadowColor(0, 0, 0, 1)
+            frame.duration:SetFont(font, size)
+            frame.duration:SetShadowOffset(1, -1)
+            frame.duration:SetShadowColor(0, 0, 0, 1)
+        else
+            if flags == "Outline" then
+                flags = "OUTLINE"
+            else
+                flags = "OUTLINE, MONOCHROME"
+            end
+            frame.stack:SetFont(font, size, flags)
+            frame.stack:SetShadowOffset(0, 0)
+            frame.stack:SetShadowColor(0, 0, 0, 0)
+            frame.duration:SetFont(font, size, flags)
+            frame.duration:SetShadowOffset(0, 0)
+            frame.duration:SetShadowColor(0, 0, 0, 0)
+        end
+        frame.stack:ClearAllPoints()
+        frame.stack:SetPoint("TOPRIGHT", horizontalOffset, 1)
+        frame.duration:ClearAllPoints()
+        frame.duration:SetPoint("BOTTOMRIGHT", horizontalOffset, -1)
+    end
+
+    local ag = frame:CreateAnimationGroup()
+    local t1 = ag:CreateAnimation("Translation")
+    t1:SetOffset(0, 5)
+    t1:SetDuration(0.1)
+    t1:SetOrder(1)
+    t1:SetSmoothing("OUT")
+    local t2 = ag:CreateAnimation("Translation")
+    t2:SetOffset(0, -5)
+    t2:SetDuration(0.1)
+    t2:SetOrder(2)
+    t2:SetSmoothing("IN")
+
+    function frame:SetCooldown(start, duration, debuffType, texture, count, refreshing)
+        local r, g, b
+        if debuffType then
+            r, g, b = DebuffTypeColor[debuffType].r, DebuffTypeColor[debuffType].g, DebuffTypeColor[debuffType].b
+        else
+            r, g, b = 0, 0, 0
+        end
+
         if duration == 0 then
             border:Show()
             border:SetBackdropColor(r, g, b)
+            frame:SetScript("OnUpdate", nil)
         else
             border:Hide()
-            cooldown:SetSwipeTexture("")
             cooldown:SetSwipeColor(r, g, b)
             cooldown:SetCooldown(start, duration)
+            frame:SetScript("OnUpdate", function()
+                local remain = duration-(GetTime()-start)
+                -- if remain <= 5 then
+                --     frame.duration:SetText(string.format("%.1f", remain))
+                if remain <= 30 then
+                    frame.duration:SetText(string.format("%d", remain))
+                else
+                    frame.duration:SetText("")
+                end
+            end)
         end
+
         icon:SetTexture(texture)
+        stack:SetText((count == 0 or count == 1) and "" or count)
+        frame:Show()
+
+        if refreshing then
+            ag:Play()
+        end
     end
 
     return frame
@@ -122,7 +199,7 @@ local function CreateAura_BarIcon(name, parent)
     stack:SetPoint("TOPRIGHT", 2, 0)
     -- stack:SetPoint("CENTER", 1, 0)
 
-    function frame:SetFont(font, size, flags, horizontalOffset, isFontName)
+    function frame:SetFont(font, size, flags, horizontalOffset)
         if not string.find(font, ".ttf") then font = F:GetFont(font) end
 
         if flags == "Shadow" then
@@ -460,10 +537,32 @@ end
 -------------------------------------------------
 -- CreateCentralDebuff
 -------------------------------------------------
+local currentAreaDebuffs = {}
+local eventFrame2 = CreateFrame("Frame")
+eventFrame2:RegisterEvent("PLAYER_ENTERING_WORLD")
+
+local function UpdateDebuffsForCurrentZone()
+    local iName = F:GetInstanceName()
+    if iName ~= "" then
+        currentAreaDebuffs = F:GetDebuffList(iName)
+    end
+end
+Cell:RegisterCallback("RaidDebuffsChanged", "UpdateDebuffsForCurrentZone", UpdateDebuffsForCurrentZone)
+eventFrame2:SetScript("OnEvent", UpdateDebuffsForCurrentZone)
+
+function F:GetDebuffOrder(spellId)
+    if currentAreaDebuffs[spellId] then
+        return currentAreaDebuffs[spellId]["order"]
+    else
+        return 0
+    end
+end
+
 function F:CreateCentralDebuff(parent)
-    local frame = CreateAura_BorderIcon(parent:GetName().."CentralDebuff", parent.widget.overlayFrame, 2)
+    local frame = CreateAura_BorderIcon(parent:GetName().."CentralDebuff", parent.widget.overlayFrame, 1)
     parent.indicators.centralDebuff = frame
     frame:SetFrameLevel(77)
+    frame:Hide()
 end
 
 -------------------------------------------------

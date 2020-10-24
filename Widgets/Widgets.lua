@@ -1194,6 +1194,12 @@ function addon:CreateScrollFrame(parent, top, bottom, color, border)
 		scrollFrame:SetVerticalScroll(0)
 	end
 	
+	-- FIXME: GetVerticalScrollRange goes wrong in 9.0.1
+	function scrollFrame:GetVerticalScrollRange()
+		local range = content:GetHeight() - scrollFrame:GetHeight()
+		return range > 0 and range or 0
+	end
+
 	-- local scrollRange -- ACCURATE scroll range, for SetVerticalScroll(), instead of scrollFrame:GetVerticalScrollRange()
 	function scrollFrame:VerticalScroll(step)
 		local scroll = scrollFrame:GetVerticalScroll() + step
@@ -1201,7 +1207,7 @@ function addon:CreateScrollFrame(parent, top, bottom, color, border)
 		-- then scrollFrame:SetVerticalScroll(0) and scrollFrame:SetVerticalScroll(scrollFrame:GetVerticalScrollRange()) ARE THE SAME
 		if scroll <= 0 then
 			scrollFrame:SetVerticalScroll(0)
-		elseif  scroll >= scrollFrame:GetVerticalScrollRange() then
+		elseif scroll >= scrollFrame:GetVerticalScrollRange() then
 			scrollFrame:SetVerticalScroll(scrollFrame:GetVerticalScrollRange())
 		else
 			scrollFrame:SetVerticalScroll(scroll)
@@ -1563,6 +1569,7 @@ function addon:CreateDropdown(parent, width, dropdownType)
 			list:SetSize(menu:GetWidth(), 5)
 		elseif #menu.items <= 10 then
 			list:SetSize(menu:GetWidth(), 2 + #menu.items*18)
+			list.scrollFrame:SetContentHeight(2 + #menu.items*18)
 		else
 			list:SetSize(menu:GetWidth(), 182)
 			-- update list scrollFrame

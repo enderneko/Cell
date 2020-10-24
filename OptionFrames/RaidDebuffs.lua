@@ -35,7 +35,8 @@ local encounterJournalList = {
 }
 
 local instanceIds = { -- used for GetInstanceInfo/GetRealZoneText --> instanceId
-    -- [instanceName] = expansionName:instanceIndex:instanceId,
+    -- [instanceName] = instanceId,
+    --// [instanceName] = expansionName:instanceIndex:instanceId,
 }
 
 local function LoadBossList(instanceId, list)
@@ -64,7 +65,7 @@ local function LoadInstanceList(tier, instanceType, list)
         local eName = EJ_GetTierInfo(tier)
         local instanceTable = {["name"]=name, ["id"]=id, ["bosses"]={}}
         tinsert(list, instanceTable)
-        instanceIds[name] = eName..":"..#list..":"..id -- NOTE: used for searching current zone debuffs
+        instanceIds[name] = id -- NOTE: used for searching current zone debuffs
 
         LoadBossList(id, instanceTable["bosses"])
     end
@@ -100,10 +101,13 @@ end
 local loadedDebuffs = {
     -- [instanceId] = {
     --     ["general"] = {
-    --         {["id"]=spellId, ["order"]=order, ["trackById"]=trackById, ["glow"]=glow, ["glowColor"]=glowColor}
+    --         {["id"]=spellId, ["order"]=order, ["glowType"]=glowType, ["glowColor"]=glowColor}
+    --//       {["id"]=spellId, ["order"]=order, ["trackById"]=trackById, ["glow"]=glow, ["glowColor"]=glowColor}
+    --         ["disabled"] = {},
     --     },
     --     [bossId] = {
-    --         {["id"]=spellId, ["order"]=order, ["trackById"]=trackById, ["glow"]=glow, ["glowColor"]=glowColor}
+    --         {["id"]=spellId, ["order"]=order, ["glowType"]=glowType, ["glowColor"]=glowColor}
+    --         ["disabled"] = {},
     --     },
     -- },
 }
@@ -117,7 +121,7 @@ local function LoadDebuffs()
             if not loadedDebuffs[instanceId][bossId] then loadedDebuffs[instanceId][bossId] = {} end
             -- load from db and set its order
             for spellId, sTable in pairs(bTable) do
-                local t = {["id"]=spellId, ["order"]=sTable[1], ["trackById"]=sTable[2], ["glow"]=sTable[3], ["glowColor"]=sTable[4]}
+                local t = {["id"]=spellId, ["order"]=sTable[1], ["glowType"]=sTable[2], ["glowColor"]=sTable[3]}
                 if sTable[1] == 0 then
                     if not loadedDebuffs[instanceId][bossId]["disabled"] then loadedDebuffs[instanceId][bossId]["disabled"] = {} end
                     tinsert(loadedDebuffs[instanceId][bossId]["disabled"], t)
@@ -542,6 +546,8 @@ local function RegisterForDrag(b)
                     end
                 end
             end
+            -- notify debuff list changed
+            Cell:Fire("RaidDebuffsChanged")
         end
     end)
 end
@@ -765,20 +771,22 @@ local enabledCB = Cell:CreateCheckButton(detailsContentFrame, L["Enabled"], func
     else
         ShowDebuffs(loadedBoss, buttonIndex)
     end
+    -- notify debuff list changed
+    Cell:Fire("RaidDebuffsChanged")
 end)
 enabledCB:SetPoint("TOPLEFT", spellIconBG, "BOTTOMLEFT", 0, -10)
 enabledCB:SetScript("OnEnter", detailsFrame:GetScript("OnEnter"))
 enabledCB:SetScript("OnLeave", detailsFrame:GetScript("OnLeave"))
 
 -- track by id
-local trackByIdCB = Cell:CreateCheckButton(detailsContentFrame, L["Track By Id"], function(checked)
+-- local trackByIdCB = Cell:CreateCheckButton(detailsContentFrame, L["Track By Id"], function(checked)
 
-end)
-trackByIdCB:SetPoint("TOPLEFT", enabledCB, "BOTTOMLEFT", 0, -10)
+-- end)
+-- trackByIdCB:SetPoint("TOPLEFT", enabledCB, "BOTTOMLEFT", 0, -10)
 
 -- glow type
 local glowDropdown = Cell:CreateDropdown(detailsContentFrame, 100)
-glowDropdown:SetPoint("TOPLEFT", trackByIdCB, "BOTTOMLEFT", 0, -10)
+glowDropdown:SetPoint("TOPLEFT", enabledCB, "BOTTOMLEFT", 0, -10)
 
 -- spell description
 Cell:CreateScrollFrame(detailsContentFrame, -200, 0) -- spell description
@@ -849,23 +857,33 @@ end
 
 
 -------------------------------------------------
--- register for current instance
+-- functions
 -------------------------------------------------
-local function GetInstanceDebuffs(mapId)
+function F:GetDebuffList(instanceName)
+    local iId = instanceIds[instanceName]
+    if not (iId and loadedDebuffs[iId])then return end
     
-end
+    local list = {}
+    local n = 0
+    -- check general
+    if loadedDebuffs[iId]["general"] then
+        n = #loadedDebuffs[iId]["general"]
+        for _, t in ipairs(loadedDebuffs[iId]["general"]) do -- ignore "disabled" table
+            -- list[spellId] = {order, glowType, glowColor}
+            list[t["id"]] = {["order"]=t["order"], ["glowType"]=t["glowType"], ["glowColor"]=t["glowColor"]}
+        end
+    end
+    -- check boss
+    for bId, t in pairs(loadedDebuffs[iId]) do
+        if bId ~= "general" then
+            for _, dt in ipairs(t) do -- ignore "disabled" table
+                list[dt["id"]] = {["order"]=dt["order"]+n, ["glowType"]=dt["glowType"], ["glowColor"]=dt["glowColor"]}
+            end
+        end
+    end
+    -- texplore(list)
 
-local function GetInstanceName(instanceId)
-
-end
-
-local list = {}
-local function GetList()
-
-end
-
-local function GetCurrentInstanceId()
-    
+    return list
 end
 
 -------------------------------------------------
@@ -875,20 +893,6 @@ local function ShowTab(tab)
     if tab == "debuffs" then
         debuffsTab:Show()
         
-        -- local ei = instanceIds[F:GetInstanceName()]
-        -- if ei then
-        --     local expansionName, instanceId = strsplit(":", ei)
-        --     instanceId = tonumber(instanceId)
-        --     if loadedInstance ~= instanceId then -- current loaded instance is not where player is.
-        --         F:Debug("ShowDebuffs: "..expansionName..":"..instanceId)
-        --         LoadExpansion(expansionName)
-        --         for i, iTable in pairs(encounterJournalList[expansionName]) do
-        --             if iTable["id"] == instanceId then
-        --                 C_Timer.After(.5, function() instanceButtons[i]:Click() end)
-        --                 break
-        --             end
-        --         end
-        --     end
         if not loadedExpansion then
             LoadExpansion(newestExpansion)
         end

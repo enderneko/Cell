@@ -237,15 +237,15 @@ function eventFrame:ADDON_LOADED(arg1)
                             ["num"] = 3,
                             ["font"] = {"Cell ".._G.DEFAULT, 11, "Outline", 2},
                         },
-                        -- {
-                        --     ["name"] = L["Central Debuff"],
-                        --     ["indicatorName"] = "centralDebuff",
-                        --     ["type"] = "built-in",
-                        --     ["enabled"] = true,
-                        --     ["position"] = {"CENTER", "CENTER", 0, 3},
-                        --     ["size"] = {18, 18},
-                        --     ["font"] = {"Cell ".._G.DEFAULT, 12, "Outline", 2},
-                        -- },
+                        {
+                            ["name"] = "Central Debuff",
+                            ["indicatorName"] = "centralDebuff",
+                            ["type"] = "built-in",
+                            ["enabled"] = true,
+                            ["position"] = {"CENTER", "CENTER", 0, 3},
+                            ["size"] = {20, 20},
+                            ["font"] = {"Cell ".._G.DEFAULT, 11, "Outline", 2},
+                        },
                         -- {
                         --     ["name"] = "233",
                         --     ["indicatorName"] = "indicator8",
@@ -287,10 +287,10 @@ function eventFrame:ADDON_LOADED(arg1)
         -- CellDB["raidDebuffs"] = {
         --     [instanceId] = {
         --         ["general"] = {
-        --             [spellId] = {order, trackById, glow, glowColor},
+        --             [spellId] = {order, glowType, glowColor},
         --         },
         --         [bossId] = {
-        --             [spellId] = {order, trackById, glow, glowColor},
+        --             [spellId] = {order, glowType, glowColor},
         --         },
         --     }
         -- }

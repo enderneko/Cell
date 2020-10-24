@@ -37,6 +37,25 @@ frame:SetScript("OnEvent", function(self, event, arg1, ...)
 			if CellDB["showRaidSetup"] then CellDB["showRaidSetup"] = nil end
 			if CellDB["pullTimer"] then CellDB["pullTimer"] = nil end
 		end
-		-- CellDB["revise"] = Cell.version
+		
+		-- r8-beta
+		if not(CellDB["revise"]) or CellDB["revise"] < "r8-beta" then
+			-- add "centralDebuff"
+			for _, layout in pairs(CellDB["layouts"]) do
+				if not layout["indicators"][8] or layout["indicators"][8]["indicatorName"] ~= "centralDebuff" then
+					tinsert(layout["indicators"], 8, {
+						["name"] = "Central Debuff",
+						["indicatorName"] = "centralDebuff",
+						["type"] = "built-in",
+						["enabled"] = true,
+						["position"] = {"CENTER", "CENTER", 0, 3},
+						["size"] = {20, 20},
+						["font"] = {"Cell ".._G.DEFAULT, 11, "Outline", 2},
+					})
+				end
+			end
+		end
+
+		CellDB["revise"] = Cell.version
     end
 end)
