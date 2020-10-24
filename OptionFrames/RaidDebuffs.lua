@@ -488,11 +488,11 @@ delete:SetScript("OnClick", function()
     popup:SetPoint("TOPLEFT", 100, -170)
 end)
 
-local enableAll = Cell:CreateButton(debuffsTab, L["Enable All"], "class-hover", {66, 20})
-enableAll:SetPoint("LEFT", delete, "RIGHT", 5, 0)
+-- local enableAll = Cell:CreateButton(debuffsTab, L["Enable All"], "class-hover", {66, 20})
+-- enableAll:SetPoint("LEFT", delete, "RIGHT", 5, 0)
 
-local disableAll = Cell:CreateButton(debuffsTab, L["Disable All"], "class-hover", {66, 20})
-disableAll:SetPoint("LEFT", enableAll, "RIGHT", 5, 0)
+-- local disableAll = Cell:CreateButton(debuffsTab, L["Disable All"], "class-hover", {66, 20})
+-- disableAll:SetPoint("LEFT", enableAll, "RIGHT", 5, 0)
 
 local dragged = Cell:CreateFrame("RaidDebuffsTab_Dragged", debuffsTab, 20, 20)
 Cell:StylizeFrame(dragged, nil, Cell:GetPlayerClassColor())
@@ -770,15 +770,22 @@ end
 -------------------------------------------------
 local detailsFrame = Cell:CreateFrame("RaidDebuffsTab_DebuffDetails", debuffsTab)
 detailsFrame:SetPoint("TOPLEFT", debuffListFrame, "TOPRIGHT", 5, 0)
-detailsFrame:SetPoint("BOTTOMRIGHT", -5, 30)
+detailsFrame:SetPoint("BOTTOMRIGHT", -5, 5)
 detailsFrame:Show()
--- Cell:CreateScrollFrame(detailsFrame)
--- SetOnEnterLeave(detailsFrame)
-detailsFrame:SetScript("OnEnter", function()
-    detailsFrame:SetBackdropBorderColor(unpack(Cell:GetPlayerClassColor()))
-end)
-detailsFrame:SetScript("OnLeave", function()
-    detailsFrame:SetBackdropBorderColor(0, 0, 0, 1)
+
+local isMouseOver
+detailsFrame:SetScript("OnUpdate", function()
+    if detailsFrame:IsMouseOver() then
+        if not isMouseOver or isMouseOver ~= 1 then
+            detailsFrame:SetBackdropBorderColor(unpack(Cell:GetPlayerClassColor()))
+            isMouseOver = 1
+        end
+    else
+        if not isMouseOver or isMouseOver ~= 2 then
+            detailsFrame:SetBackdropBorderColor(0, 0, 0, 1)
+            isMouseOver = 2
+        end
+    end
 end)
 
 local detailsContentFrame = CreateFrame("Frame", "RaidDebuffsTab_DebuffDetailsContent", detailsFrame)
@@ -865,21 +872,102 @@ local enabledCB = Cell:CreateCheckButton(detailsContentFrame, L["Enabled"], func
     Cell:Fire("RaidDebuffsChanged")
 end)
 enabledCB:SetPoint("TOPLEFT", spellIconBG, "BOTTOMLEFT", 0, -10)
-enabledCB:SetScript("OnEnter", detailsFrame:GetScript("OnEnter"))
-enabledCB:SetScript("OnLeave", detailsFrame:GetScript("OnLeave"))
-
--- track by id
--- local trackByIdCB = Cell:CreateCheckButton(detailsContentFrame, L["Track By Id"], function(checked)
-
--- end)
--- trackByIdCB:SetPoint("TOPLEFT", enabledCB, "BOTTOMLEFT", 0, -10)
 
 -- glow type
-local glowDropdown = Cell:CreateDropdown(detailsContentFrame, 100)
-glowDropdown:SetPoint("TOPLEFT", enabledCB, "BOTTOMLEFT", 0, -10)
+local glowTypeText = detailsContentFrame:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
+glowTypeText:SetText(L["Glow Type"])
+glowTypeText:SetPoint("TOPLEFT", enabledCB, "BOTTOMLEFT", 0, -10)
+
+local glowColorPicker
+
+local function UpdateGlowType(newType)
+    local t = selectedButtonIndex <= #currentSpellTable and currentSpellTable[selectedButtonIndex] or currentSpellTable["disabled"][selectedButtonIndex]
+    if t["glowType"] ~= newType then
+        -- update db
+        if not CellDB["raidDebuffs"][loadedInstance] then CellDB["raidDebuffs"][loadedInstance] = {} end
+        local tIndex = isGeneral and "general" or loadedBoss
+        if not CellDB["raidDebuffs"][loadedInstance][tIndex] then CellDB["raidDebuffs"][loadedInstance][tIndex] = {} end
+        if not CellDB["raidDebuffs"][loadedInstance][tIndex][selectedSpellId] then
+            CellDB["raidDebuffs"][loadedInstance][tIndex][selectedSpellId] = {t["order"], newType, {0.95,0.95,0.32,1}}
+        else
+            CellDB["raidDebuffs"][loadedInstance][tIndex][selectedSpellId][2] = newType
+            CellDB["raidDebuffs"][loadedInstance][tIndex][selectedSpellId][3] = CellDB["raidDebuffs"][loadedInstance][tIndex][selectedSpellId][3] or {0.95,0.95,0.32,1}
+        end
+        -- update loadedDebuffs
+        t["glowType"] = newType
+        t["glowColor"] = t["glowColor"] or {0.95,0.95,0.32,1}
+        glowColorPicker:SetColor(t["glowColor"])
+        glowColorPicker:Show()
+        -- notify debuff list changed
+        Cell:Fire("RaidDebuffsChanged")
+    end
+end
+
+local glowTypeDropdown = Cell:CreateDropdown(detailsContentFrame, 100)
+glowTypeDropdown:SetPoint("TOPLEFT", glowTypeText, "BOTTOMLEFT", 0, -1)
+glowTypeDropdown:SetItems({
+    {
+        ["text"] = L["None"],
+        ["value"] = "None",
+        ["onClick"] = function()
+            local t = selectedButtonIndex <= #currentSpellTable and currentSpellTable[selectedButtonIndex] or currentSpellTable["disabled"][selectedButtonIndex]
+            if t["glowType"] and t["glowType"] ~= "None" then -- exists in db
+                -- update db
+                local tIndex = isGeneral and "general" or loadedBoss
+                CellDB["raidDebuffs"][loadedInstance][tIndex][selectedSpellId][2] = "None"
+                -- update loadedDebuffs
+                t["glowType"] = nil
+                -- notify debuff list changed
+                Cell:Fire("RaidDebuffsChanged")
+                glowColorPicker:Hide()
+            end
+        end,
+    },
+    {
+        ["text"] = L["Normal"],
+        ["value"] = "Normal",
+        ["onClick"] = function()
+            UpdateGlowType("Normal")
+        end,
+    },
+    {
+        ["text"] = L["Pixel"],
+        ["value"] = "Pixel",
+        ["onClick"] = function()
+            UpdateGlowType("Pixel")
+        end,
+    },
+    {
+        ["text"] = L["Shine"],
+        ["value"] = "Shine",
+        ["onClick"] = function()
+            UpdateGlowType("Shine")
+        end,
+    },
+})
+
+-- glowColor
+glowColorPicker = Cell:CreateColorPicker(detailsContentFrame, L["Glow Color"], true, function(r, g, b, a)
+    local t = selectedButtonIndex <= #currentSpellTable and currentSpellTable[selectedButtonIndex] or currentSpellTable["disabled"][selectedButtonIndex]
+    -- update db
+    local tIndex = isGeneral and "general" or loadedBoss
+    CellDB["raidDebuffs"][loadedInstance][tIndex][selectedSpellId][3][1] = r
+    CellDB["raidDebuffs"][loadedInstance][tIndex][selectedSpellId][3][2] = g
+    CellDB["raidDebuffs"][loadedInstance][tIndex][selectedSpellId][3][3] = b
+    CellDB["raidDebuffs"][loadedInstance][tIndex][selectedSpellId][3][4] = a
+    -- update loadedDebuffs
+    t["glowColor"][1] = r
+    t["glowColor"][2] = g
+    t["glowColor"][3] = b
+    t["glowColor"][4] = a
+    -- notify debuff list changed
+    Cell:Fire("RaidDebuffsChanged")
+end)
+glowColorPicker:SetPoint("TOPLEFT", glowTypeDropdown, "BOTTOMLEFT", 0, -10)
+glowColorPicker:Hide()
 
 -- spell description
-Cell:CreateScrollFrame(detailsContentFrame, -200, 0) -- spell description
+Cell:CreateScrollFrame(detailsContentFrame, -170, 0) -- spell description
 local descText = detailsContentFrame.scrollFrame.content:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
 descText:SetPoint("TOPLEFT", 5, -1)
 descText:SetPoint("RIGHT", -5, 0)
@@ -915,7 +1003,26 @@ ShowDetails = function(spell)
         SetSpellDesc(select(3, F:GetSpellInfo(spellId)))
     end)
     
-    enabledCB:SetChecked(selectedButtonIndex <= #currentSpellTable)
+    local isEnabled = selectedButtonIndex <= #currentSpellTable
+    enabledCB:SetChecked(isEnabled)
+    
+    local glowType, glowColor
+    if isEnabled then
+        glowType = currentSpellTable[selectedButtonIndex]["glowType"]
+        glowColor = currentSpellTable[selectedButtonIndex]["glowColor"]
+    else
+        glowType = currentSpellTable["disabled"][selectedButtonIndex-#currentSpellTable]["glowType"]
+        glowColor = currentSpellTable["disabled"][selectedButtonIndex-#currentSpellTable]["glowColor"]
+    end
+    glowType = glowType or "None"
+    glowTypeDropdown:SetSelected(L[glowType])
+
+    if glowType == "None" then
+        glowColorPicker:Hide()
+    else
+        glowColorPicker:SetColor(glowColor)
+        glowColorPicker:Show()
+    end
 
     detailsContentFrame:Show()
 

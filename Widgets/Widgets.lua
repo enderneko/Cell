@@ -354,7 +354,7 @@ function addon:CreateCheckButton(parent, label, onClick, ...)
 		if cb.onClick then cb.onClick(self:GetChecked() and true or false, self) end
 	end)
 	
-	cb.label = cb:CreateFontString(nil, "ARTWORK", font_name)
+	cb.label = cb:CreateFontString(nil, "OVERLAY", font_name)
 	cb.label:SetText(label)
 	cb.label:SetPoint("LEFT", cb, "RIGHT", 5, 0)
 	-- cb.label:SetTextColor(classColor.t[1], classColor.t[2], classColor.t[3])
@@ -388,6 +388,62 @@ function addon:CreateCheckButton(parent, label, onClick, ...)
 	SetTooltip(cb, "ANCHOR_TOPLEFT", 0, 1, ...)
 
 	return cb
+end
+
+-----------------------------------------
+-- colorpicker
+-----------------------------------------
+function addon:CreateColorPicker(parent, label, hasOpacity, func)
+	local cp = CreateFrame("Button", nil, parent, "BackdropTemplate")
+	cp:SetPoint("LEFT", 5, 0)
+	cp:SetSize(14, 14)
+	cp:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8x8", edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = 1})
+	cp:SetBackdropBorderColor(0, 0, 0, 1)
+	cp:SetScript("OnEnter", function()
+		cp:SetBackdropBorderColor(classColor.t[1], classColor.t[2], classColor.t[3], .7)
+	end)
+	cp:SetScript("OnLeave", function()
+		cp:SetBackdropBorderColor(0, 0, 0, 1)
+	end)
+
+	cp.label = cp:CreateFontString(nil, "OVERLAY", font_name)
+	cp.label:SetText(label)
+	cp.label:SetPoint("LEFT", cp, "RIGHT", 5, 0)
+	
+	local function ColorCallback(restore)
+		local newR, newG, newB, newA
+		if restore then
+			newR, newG, newB, newA = unpack(restore)
+		else
+			newA, newR, newG, newB = OpacitySliderFrame:GetValue(), ColorPickerFrame:GetColorRGB()
+		end
+
+		newR, newG, newB, newA = tonumber(string.format("%.2f", newR)), tonumber(string.format("%.2f", newG)), tonumber(string.format("%.2f", newB)), tonumber(string.format("%.2f", newA))
+		
+		cp:SetBackdropColor(newR, newG, newB, newA)
+		if func then func(newR, newG, newB, newA) end
+	end
+	
+	local function ShowColorPicker()
+		ColorPickerFrame.hasOpacity = hasOpacity
+		ColorPickerFrame.opacity = cp.color[4]
+		ColorPickerFrame.previousValues = {unpack(cp.color)}
+		ColorPickerFrame.func, ColorPickerFrame.opacityFunc, ColorPickerFrame.cancelFunc = ColorCallback, ColorCallback, ColorCallback
+		ColorPickerFrame:SetColorRGB(unpack(cp.color))
+		ColorPickerFrame:Hide()
+		ColorPickerFrame:Show()
+	end
+	
+	cp:SetScript("OnClick", function()
+		ShowColorPicker()
+	end)
+
+	function cp:SetColor(t)
+		cp.color = t
+		cp:SetBackdropColor(unpack(t))
+	end
+
+	return cp
 end
 
 -----------------------------------------
@@ -1463,8 +1519,9 @@ function addon:CreateDropdown(parent, width, dropdownType)
 	-- items = {
 	-- 	{
 	-- 		["text"] = (string),
+	-- 		["value"] = (obj),
 	-- 		["texture"] = (string),
-	-- 		["font"] = (string),
+	-- 		["texture"] = (string),
 	-- 		["onClick"] = (function)
 	-- 	},
 	-- }

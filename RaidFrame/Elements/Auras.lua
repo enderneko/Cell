@@ -1,6 +1,7 @@
 local _, Cell = ...
 local L = Cell.L
 local F = Cell.funcs
+local LCG = LibStub("LibCustomGlow-1.0")
 
 local DebuffTypeColor = DebuffTypeColor
 -------------------------------------------------
@@ -89,7 +90,7 @@ local function CreateAura_BorderIcon(name, parent, borderSize)
     t2:SetOrder(2)
     t2:SetSmoothing("IN")
 
-    function frame:SetCooldown(start, duration, debuffType, texture, count, refreshing)
+    function frame:SetCooldown(start, duration, debuffType, texture, count, refreshing, glowType, glowColor)
         local r, g, b
         if debuffType then
             r, g, b = DebuffTypeColor[debuffType].r, DebuffTypeColor[debuffType].g, DebuffTypeColor[debuffType].b
@@ -124,7 +125,28 @@ local function CreateAura_BorderIcon(name, parent, borderSize)
         if refreshing then
             ag:Play()
         end
+
+        
+        if glowType == "Normal" then
+            LCG.PixelGlow_Stop(parent)
+            LCG.AutoCastGlow_Stop(parent)
+            LCG.ButtonGlow_Start(parent, glowColor)
+        elseif glowType == "Pixel" then
+            LCG.ButtonGlow_Stop(parent)
+            LCG.AutoCastGlow_Stop(parent)
+            LCG.PixelGlow_Start(parent, glowColor)
+        elseif glowType == "Shine" then
+            LCG.ButtonGlow_Stop(parent)
+            LCG.PixelGlow_Stop(parent)
+            LCG.AutoCastGlow_Start(parent, glowColor, 7, 0.5)
+        end
     end
+
+    frame:SetScript("OnHide", function()
+        LCG.ButtonGlow_Stop(parent)
+        LCG.PixelGlow_Stop(parent)
+        LCG.AutoCastGlow_Stop(parent)
+    end)
 
     return frame
 end
@@ -552,7 +574,7 @@ eventFrame2:SetScript("OnEvent", UpdateDebuffsForCurrentZone)
 
 function F:GetDebuffOrder(spellId)
     if currentAreaDebuffs[spellId] then
-        return currentAreaDebuffs[spellId]["order"]
+        return currentAreaDebuffs[spellId]["order"], currentAreaDebuffs[spellId]["glowType"], currentAreaDebuffs[spellId]["glowColor"]
     else
         return 0
     end

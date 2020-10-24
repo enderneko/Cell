@@ -232,7 +232,7 @@ local function UnitButton_UpdateDebuffs(self)
     if not debuffs_dispel[unit] then debuffs_dispel[unit] = {} end
 
 	local found, refreshing = 1
-	local topOrder, topId, topStart, topDuration, topType, topIcon, topCount, topRefreshing = 999
+	local topOrder, topGlowType, topGlowColor, topId, topStart, topDuration, topType, topIcon, topCount, topRefreshing = 999
     for i = 1, 40 do
         -- name, icon, count, debuffType, duration, expirationTime, source, isStealable, nameplateShowPersonal, spellId, canApplyAura, isBossDebuff, castByPlayer, nameplateShowAll, timeMod, ...
         local name, icon, count, debuffType, duration, expirationTime, source, isStealable, nameplateShowPersonal, spellId = UnitDebuff(unit, i)
@@ -263,7 +263,7 @@ local function UnitButton_UpdateDebuffs(self)
 				F:ShowCustomIndicators(self, "debuff", name, expirationTime - duration, duration, debuffType or "", icon, count, refreshing)
 				-- check top debuff
 				if F:GetDebuffOrder(spellId) ~= 0 and F:GetDebuffOrder(spellId) < topOrder then
-					topOrder = F:GetDebuffOrder(spellId)
+					topOrder, topGlowType, topGlowColor = F:GetDebuffOrder(spellId)
 					topId, topStart, topDuration, topType, topIcon, topCount, topRefreshing = spellId, expirationTime - duration, duration, debuffType or "", icon, count, refreshing
 				end
 
@@ -292,7 +292,7 @@ local function UnitButton_UpdateDebuffs(self)
 
 	-- update central debuff
 	if topId then
-		self.indicators.centralDebuff:SetCooldown(topStart, topDuration, topType, topIcon, topCount, topRefreshing)
+		self.indicators.centralDebuff:SetCooldown(topStart, topDuration, topType, topIcon, topCount, topRefreshing, topGlowType, topGlowColor)
 	else
 		self.indicators.centralDebuff:Hide()
 	end
