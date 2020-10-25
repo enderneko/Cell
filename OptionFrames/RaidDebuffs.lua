@@ -401,7 +401,7 @@ SetOnEnterLeave(debuffListFrame)
 local create = Cell:CreateButton(debuffsTab, L["Create"], "class-hover", {58, 20})
 create:SetPoint("TOPLEFT", debuffListFrame, "BOTTOMLEFT", 0, -5)
 create:SetScript("OnClick", function()
-    local popup = Cell:CreateConfirmPopup(debuffsTab, 200, L["Create New Debuff (id)"], function(self)
+    local popup = Cell:CreateConfirmPopup(debuffsTab, 200, L["Create new debuff (id)"], function(self)
         local id = tonumber(self.editBox:GetText()) or 0
         local name = GetSpellInfo(id)
         if not name then
@@ -446,7 +446,7 @@ delete:SetPoint("LEFT", create, "RIGHT", 5, 0)
 delete:SetEnabled(false)
 delete:SetScript("OnClick", function()
     local text = selectedSpellName.." ["..selectedSpellId.."]".."\n".."|T"..selectedSpellIcon..":12:12:0:0:12:12:1:11:1:11|t"
-    local popup = Cell:CreateConfirmPopup(debuffsTab, 200, L["Delete Debuff?"].."\n"..text, function()
+    local popup = Cell:CreateConfirmPopup(debuffsTab, 200, L["Delete debuff?"].."\n"..text, function()
         -- update db
         if isGeneral then
             CellDB["raidDebuffs"][loadedInstance]["general"][selectedSpellId] = nil
