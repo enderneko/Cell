@@ -881,7 +881,7 @@ glowTypeText:SetPoint("TOPLEFT", enabledCB, "BOTTOMLEFT", 0, -10)
 local glowColorPicker
 
 local function UpdateGlowType(newType)
-    local t = selectedButtonIndex <= #currentSpellTable and currentSpellTable[selectedButtonIndex] or currentSpellTable["disabled"][selectedButtonIndex]
+    local t = selectedButtonIndex <= #currentSpellTable and currentSpellTable[selectedButtonIndex] or currentSpellTable["disabled"][selectedButtonIndex-#currentSpellTable]
     if t["glowType"] ~= newType then
         -- update db
         if not CellDB["raidDebuffs"][loadedInstance] then CellDB["raidDebuffs"][loadedInstance] = {} end
@@ -910,7 +910,7 @@ glowTypeDropdown:SetItems({
         ["text"] = L["None"],
         ["value"] = "None",
         ["onClick"] = function()
-            local t = selectedButtonIndex <= #currentSpellTable and currentSpellTable[selectedButtonIndex] or currentSpellTable["disabled"][selectedButtonIndex]
+            local t = selectedButtonIndex <= #currentSpellTable and currentSpellTable[selectedButtonIndex] or currentSpellTable["disabled"][selectedButtonIndex-#currentSpellTable]
             if t["glowType"] and t["glowType"] ~= "None" then -- exists in db
                 -- update db
                 local tIndex = isGeneral and "general" or loadedBoss
@@ -948,7 +948,7 @@ glowTypeDropdown:SetItems({
 
 -- glowColor
 glowColorPicker = Cell:CreateColorPicker(detailsContentFrame, L["Glow Color"], true, function(r, g, b, a)
-    local t = selectedButtonIndex <= #currentSpellTable and currentSpellTable[selectedButtonIndex] or currentSpellTable["disabled"][selectedButtonIndex]
+    local t = selectedButtonIndex <= #currentSpellTable and currentSpellTable[selectedButtonIndex] or currentSpellTable["disabled"][selectedButtonIndex-#currentSpellTable]
     -- update db
     local tIndex = isGeneral and "general" or loadedBoss
     CellDB["raidDebuffs"][loadedInstance][tIndex][selectedSpellId][3][1] = r
@@ -1008,11 +1008,11 @@ ShowDetails = function(spell)
     
     local glowType, glowColor
     if isEnabled then
-        glowType = currentSpellTable[selectedButtonIndex]["glowType"]
-        glowColor = currentSpellTable[selectedButtonIndex]["glowColor"]
+        glowType = currentSpellTable[buttonIndex]["glowType"]
+        glowColor = currentSpellTable[buttonIndex]["glowColor"]
     else
-        glowType = currentSpellTable["disabled"][selectedButtonIndex-#currentSpellTable]["glowType"]
-        glowColor = currentSpellTable["disabled"][selectedButtonIndex-#currentSpellTable]["glowColor"]
+        glowType = currentSpellTable["disabled"][buttonIndex-#currentSpellTable]["glowType"]
+        glowColor = currentSpellTable["disabled"][buttonIndex-#currentSpellTable]["glowColor"]
     end
     glowType = glowType or "None"
     glowTypeDropdown:SetSelected(L[glowType])
