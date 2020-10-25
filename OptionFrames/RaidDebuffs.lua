@@ -999,7 +999,7 @@ ShowDetails = function(spell)
     SetSpellDesc(desc)
     -- to ensure desc
     if timer then timer:Cancel() end
-    timer = C_Timer.NewTimer(1, function()
+    timer = C_Timer.NewTimer(.7, function()
         SetSpellDesc(select(3, F:GetSpellInfo(spellId)))
     end)
     
