@@ -56,6 +56,13 @@ frame:SetScript("OnEvent", function(self, event, arg1, ...)
 			end
 		end
 
+		-- r9-beta: fix raidtool db
+		if not(CellDB["revise"]) or CellDB["revise"] < "r9-beta" then
+			if type(CellDB["raidTools"]["showBattleRes"]) ~= "boolean" then CellDB["raidTools"]["showBattleRes"] = true end
+			if not CellDB["raidTools"]["buttonsPosition"] then CellDB["raidTools"]["buttonsPosition"] = {"TOPRIGHT", "CENTER", 0, 0} end
+			if not CellDB["raidTools"]["marksPosition"] then CellDB["raidTools"]["marksPosition"] = {"BOTTOMRIGHT", "CENTER", 0, 0} end
+		end
+
 		CellDB["revise"] = Cell.version
     end
 end)

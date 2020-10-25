@@ -1,6 +1,6 @@
 ## Interface: 90001
 ## Title: Cell
-## Version: r8-beta
+## Version: r9-beta
 ## Author: 篠崎
 ## SavedVariables: CellDB
 ## SavedVariablesPerCharacter: CellCharacterDB

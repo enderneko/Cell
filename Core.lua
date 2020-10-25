@@ -296,7 +296,6 @@ function eventFrame:ADDON_LOADED(arg1)
         -- }
 
         -- apply ----------------------------------------------------------------------------------
-        if CellDB["hideBlizzard"] then F:HideBlizzard() end
         F:UpdateLayout()
         Cell.version = GetAddOnMetadata(addonName, "version")
         Cell.loaded = true
@@ -406,6 +405,8 @@ function eventFrame:PLAYER_LOGIN()
     Cell:Fire("UpdateRaidTools")
     -- update raid debuff list
     Cell:Fire("UpdateRaidDebuffs")
+    -- hide blizzard
+    if CellDB["hideBlizzard"] then F:HideBlizzard() end
 end
 
 -- PLAYER_SPECIALIZATION_CHANGED fires when level up, ACTIVE_TALENT_GROUP_CHANGED usually fire twice.
