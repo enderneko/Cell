@@ -29,7 +29,11 @@ local function SoloFrame_UpdateLayout(layout, which)
 
     if not which or which == "spacing" then
         petButton:ClearAllPoints()
-        petButton:SetPoint("TOP", playerButton, "BOTTOM", 0, -layout["spacing"])
+        if layout["orientation"] == "vertical" then
+            petButton:SetPoint("TOPLEFT", playerButton, "BOTTOMLEFT", 0, -layout["spacing"])
+        else
+            petButton:SetPoint("TOPLEFT", playerButton, "TOPRIGHT", layout["spacing"], 0)
+        end
     end
 
     if which == "textWidth" then -- textWidth already initialized in UnitButton.lua

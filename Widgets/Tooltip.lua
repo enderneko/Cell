@@ -10,7 +10,7 @@ end
 local function CreateTooltip(name)
 	local tooltip = CreateFrame("GameTooltip", name, nil, "CellTooltipTemplate,BackdropTemplate")
 	tooltip:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8x8", edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = 1})
-	tooltip:SetBackdropColor(.1, .1, .1, 1)
+	tooltip:SetBackdropColor(.1, .1, .1, .9)
 	tooltip:SetBackdropBorderColor(unpack(classColor))
 	tooltip:SetOwner(UIParent, "ANCHOR_NONE")
 	tooltip:SetScript("OnTooltipCleared", function()

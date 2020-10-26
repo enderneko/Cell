@@ -572,6 +572,83 @@ function addon:CreateSlider(name, parent, low, high, width, step, onValueChanged
 end
 
 -----------------------------------------
+-- switch
+-----------------------------------------
+function addon:CreateSwitch(parent, leftText, leftValue, rightText, rightValue, func)
+	local switch = CreateFrame("Frame", nil, parent, "BackdropTemplate")
+	switch:SetSize(36, 20)
+	addon:StylizeFrame(switch)
+	
+	local textLeft = switch:CreateFontString(nil, "OVERLAY", font_name)
+	textLeft:SetPoint("LEFT", 2, 0)
+	textLeft:SetPoint("RIGHT", switch, "CENTER", -1, 0)
+	textLeft:SetText(leftText)
+	
+	local textRight = switch:CreateFontString(nil, "OVERLAY", font_name)
+	textRight:SetPoint("LEFT", switch, "CENTER", 1, 0)
+	textRight:SetPoint("RIGHT", -2, 0)
+	textRight:SetText(rightText)
+
+	local highlight = switch:CreateTexture(nil, "ARTWORK")
+	highlight:SetColorTexture(classColor.t[1], classColor.t[2], classColor.t[3], .6)
+
+	local function UpdateHighlight(which)
+		highlight:ClearAllPoints()
+		if which == "LEFT" then
+			highlight:SetPoint("TOPLEFT", 1, -1)
+			highlight:SetPoint("RIGHT", switch, "CENTER")
+			highlight:SetPoint("BOTTOM", 0, 1)
+		else
+			highlight:SetPoint("TOPRIGHT", -1, -1)
+			highlight:SetPoint("LEFT", switch, "CENTER")
+			highlight:SetPoint("BOTTOM", 0, 1)
+		end
+	end
+
+	local ag = highlight:CreateAnimationGroup()
+    local t1 = ag:CreateAnimation("Translation")
+    t1:SetOffset(highlight:GetWidth(), 0)
+    t1:SetDuration(0.2)
+	t1:SetSmoothing("IN_OUT")
+	ag:SetScript("OnPlay", function()
+		switch.isPlaying = true -- prevent continuous clicking
+	end)
+	ag:SetScript("OnFinished", function()
+		switch.isPlaying = false
+		if switch.selected == "LEFT" then
+			switch:SetSelected("RIGHT")
+		elseif switch.selected == "RIGHT" then
+			switch:SetSelected("LEFT")
+		end
+	end)
+	
+	function switch:SetSelected(value)
+		if value == leftValue or value == "LEFT" then
+			switch.selected = "LEFT"
+			switch.selectedValue = leftValue
+			UpdateHighlight("LEFT")
+			t1:SetOffset(highlight:GetWidth(), 0)
+			
+		elseif value == rightValue or value == "RIGHT" then
+			switch.selected = "RIGHT"
+			switch.selectedValue = rightValue
+			UpdateHighlight("RIGHT")
+			t1:SetOffset(-highlight:GetWidth(), 0)
+		end
+
+		if func then func(switch.selectedValue) end
+	end
+
+	switch:SetScript("OnMouseDown", function()
+		if switch.selected and not switch.isPlaying then
+			ag:Play()
+		end
+	end)
+
+	return switch
+end
+
+-----------------------------------------
 -- status bar
 -----------------------------------------
 function addon:CreateStatusBar(parent, width, height, maxValue, smooth, func, showText, texture, color)

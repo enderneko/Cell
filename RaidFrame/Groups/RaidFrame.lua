@@ -26,9 +26,14 @@ raidFrame:SetAttribute("_onattributechanged", [[
     local header = self:GetFrameRef("subgroup"..maxGroup)
     local npcFrameAnchor = self:GetFrameRef("npcanchor")
     local spacing = self:GetAttribute("spacing") or 0
+    local orientation = self:GetAttribute("orientation") or "vertical"
 
-	npcFrameAnchor:ClearAllPoints()
-    npcFrameAnchor:SetPoint("TOPLEFT", header, "TOPRIGHT", spacing, 0)
+    npcFrameAnchor:ClearAllPoints()
+    if orientation == "vertical" then
+        npcFrameAnchor:SetPoint("TOPLEFT", header, "TOPRIGHT", spacing, 0)
+    else
+        npcFrameAnchor:SetPoint("TOPLEFT", header, "BOTTOMLEFT", 0, -spacing)
+    end
 ]])
 
 --[[ Interface\FrameXML\SecureGroupHeaders.lua
@@ -77,8 +82,8 @@ local function CreateGroupHeader(group)
     ]])
     
 	header:SetAttribute("template", "CellUnitButtonTemplate")
-	header:SetAttribute("point", "TOP")
 	header:SetAttribute("columnAnchorPoint", "LEFT")
+	header:SetAttribute("point", "TOP")
     header:SetAttribute("groupFilter", group)
 	header:SetAttribute("xOffset", 0)
 	header:SetAttribute("yOffset", -1)
@@ -138,15 +143,44 @@ local function RaidFrame_UpdateLayout(layout, which)
 
         if not which or which == "spacing" then
             header:ClearAllPoints()
-            if i == 1 then
-                header:SetPoint("TOPLEFT")
+            if layout["orientation"] == "vertical" then
+                header:SetAttribute("columnAnchorPoint", "LEFT")
+                header:SetAttribute("point", "TOP")
+                header:SetAttribute("xOffset", 0)
+                header:SetAttribute("yOffset", -layout["spacing"])
+
+                --! force update unitbutton's point
+                for i = 1, 5 do
+                    header[i]:ClearAllPoints()
+                end
+                header:SetAttribute("unitsPerColumn", 5)
+                
+                if i == 1 then
+                    header:SetPoint("TOPLEFT")
+                else
+                    header:SetPoint("TOPLEFT",  groupHeaders[i - 1], "TOPRIGHT", layout["spacing"], 0)
+                end
             else
-                header:SetPoint("TOPLEFT",  groupHeaders[i - 1], "TOPRIGHT", layout["spacing"], 0)
+                header:SetAttribute("columnAnchorPoint", "TOP")
+                header:SetAttribute("point", "LEFT")
+                header:SetAttribute("xOffset", layout["spacing"])
+                header:SetAttribute("yOffset", 0)
+               
+                --! force update unitbutton's point
+                for i = 1, 5 do
+                    header[i]:ClearAllPoints()
+                end
+                header:SetAttribute("unitsPerColumn", 5)
+               
+                if i == 1 then
+                    header:SetPoint("TOPLEFT")
+                else
+                    header:SetPoint("TOPLEFT",  groupHeaders[i - 1], "BOTTOMLEFT", 0, -layout["spacing"])
+                end
             end
-            header:SetAttribute("point", "TOP")
-            header:SetAttribute("yOffset", -layout["spacing"])
 
             raidFrame:SetAttribute("spacing", layout["spacing"])
+            raidFrame:SetAttribute("orientation", layout["orientation"])
             raidFrame:SetAttribute("visibility", 1) -- NOTE: trigger _onattributechanged to set npcFrameAnchor point!
         end
 
@@ -163,7 +197,6 @@ local function RaidFrame_UpdateLayout(layout, which)
                 header:Hide()
             end
         end
-        header:SetAttribute("unitsPerColumn", 5)
     end
 end
 Cell:RegisterCallback("UpdateLayout", "RaidFrame_UpdateLayout", RaidFrame_UpdateLayout)

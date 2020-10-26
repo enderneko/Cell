@@ -49,7 +49,11 @@ local function PartyFrame_UpdateLayout(layout, which)
 		if not which or which == "spacing" then
 			if i > 1 then
 				buttons[playerUnit]:ClearAllPoints()
-				buttons[playerUnit]:SetPoint("TOP", buttons[playerButtonUnits[i - 1]], "BOTTOM", 0, -layout["spacing"])
+				if layout["orientation"] == "vertical" then
+					buttons[playerUnit]:SetPoint("TOPLEFT", buttons[playerButtonUnits[i - 1]], "BOTTOMLEFT", 0, -layout["spacing"])
+				else
+					buttons[playerUnit]:SetPoint("TOPLEFT", buttons[playerButtonUnits[i - 1]], "TOPRIGHT", layout["spacing"], 0)
+				end
 			end
 		end
 
@@ -65,7 +69,11 @@ local function PartyFrame_UpdateLayout(layout, which)
 
 		if not which or which == "spacing" then
 			buttons[petUnit]:ClearAllPoints()
-			buttons[petUnit]:SetPoint("LEFT", buttons[playerButtonUnits[i]], "RIGHT", layout["spacing"], 0)
+			if layout["orientation"] == "vertical" then
+				buttons[petUnit]:SetPoint("TOPLEFT", buttons[playerButtonUnits[i]], "TOPRIGHT", layout["spacing"], 0)
+			else
+				buttons[petUnit]:SetPoint("TOPLEFT", buttons[playerButtonUnits[i]], "BOTTOMLEFT", 0, -layout["spacing"])
+			end
 		end
 
 		if which == "textWidth" then -- textWidth already initialized in UnitButton.lua

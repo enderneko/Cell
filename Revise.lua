@@ -63,6 +63,15 @@ frame:SetScript("OnEvent", function(self, event, arg1, ...)
 			if not CellDB["raidTools"]["marksPosition"] then CellDB["raidTools"]["marksPosition"] = {"BOTTOMRIGHT", "CENTER", 0, 0} end
 		end
 
+		-- r11-release: add horizontal layout
+		if not(CellDB["revise"]) or CellDB["revise"] < "r11-release" then
+			for _, layout in pairs(CellDB["layouts"]) do
+				if type(layout["orientation"]) ~= "string" then
+					layout["orientation"] = "vertical"
+				end
+			end
+		end
+
 		CellDB["revise"] = Cell.version
     end
 end)

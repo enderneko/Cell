@@ -271,7 +271,7 @@ end
 -------------------------------------------------
 -- group filter
 -------------------------------------------------
-local groupFilterText = Cell:CreateSeparator(L["Group Filter"], layoutsTab, 387)
+local groupFilterText = Cell:CreateSeparator(L["Group Filter"], layoutsTab, 188)
 groupFilterText:SetPoint("TOPLEFT", 5, -90)
 
 local function UpdateButtonBorderColor(flag, b)
@@ -308,6 +308,19 @@ local function UpdateGroupFilter()
         UpdateButtonBorderColor(selectedLayoutTable["groupFilter"][i], groupButtons[i])
     end
 end
+
+-------------------------------------------------
+-- group orientation
+-------------------------------------------------
+local orientationText = Cell:CreateSeparator(L["Group Orientation"], layoutsTab, 188)
+orientationText:SetPoint("TOPLEFT", 203, -90)
+
+local orientationSwitch = Cell:CreateSwitch(layoutsTab, L["Vertical"], "vertical", L["Horizontal"], "horizontal", function(value)
+    selectedLayoutTable["orientation"] = value
+    Cell:Fire("UpdateLayout", selectedLayout, "spacing")
+end)
+orientationSwitch:SetPoint("TOPLEFT", orientationText, "BOTTOMLEFT", 5, -12)
+orientationSwitch:SetWidth(165)
 
 -------------------------------------------------
 -- button size
@@ -467,6 +480,8 @@ LoadLayoutDB = function(layout)
     elseif selectedLayoutTable["textWidth"] == .50 then
         textWidthDropdown:SetSelectedItem(4)
     end
+
+    orientationSwitch:SetSelected(selectedLayoutTable["orientation"])
 
     UpdateGroupFilter()
     UpdatePreviewButton()

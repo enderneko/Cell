@@ -21,8 +21,11 @@ for i = 1, 5 do
     
 	button:SetAttribute("unit", "boss"..i)
     RegisterAttributeDriver(button, "state-visibility", "[@boss"..i..", help] show; hide")
+    
+    -- for testing ------------------------------
     -- button:SetAttribute("unit", "player")
     -- RegisterUnitWatch(button)
+    ---------------------------------------------
 
 	if i == 1 then
 		button:SetPoint("TOPLEFT")
@@ -36,6 +39,7 @@ npcFrame:SetAttribute("_onstate-groupstate", [[
     -- print("groupstate", newstate)
 
     local spacing = self:GetAttribute("spacing") or 0
+    local orientation = self:GetAttribute("orientation") or "vertical"
     local anchor = self:GetFrameRef(newstate)
     local petstate = self:GetAttribute("pet")
 
@@ -46,14 +50,26 @@ npcFrame:SetAttribute("_onstate-groupstate", [[
 
     elseif newstate == "party" then
         -- NOTE: at first time petstate == nil 
-        if petstate == "nopet" then
-            self:SetPoint("TOPLEFT", self:GetFrameRef("solo"), "TOPRIGHT", spacing, 0)
+        if orientation == "vertical" then
+            if petstate == "nopet" then
+                self:SetPoint("TOPLEFT", self:GetFrameRef("solo"), "TOPRIGHT", spacing, 0)
+            else
+                self:SetPoint("TOPLEFT", self:GetFrameRef("party"), "TOPRIGHT", spacing, 0)
+            end
         else
-            self:SetPoint("TOPLEFT", self:GetFrameRef("party"), "TOPRIGHT", spacing, 0)
+            if petstate == "nopet" then
+                self:SetPoint("TOPLEFT", self:GetFrameRef("solo"), "BOTTOMLEFT", 0, -spacing)
+            else
+                self:SetPoint("TOPLEFT", self:GetFrameRef("party"), "BOTTOMLEFT", 0, -spacing)
+            end
         end
 
     else -- solo
-        self:SetPoint("TOPLEFT", anchor, "TOPRIGHT", spacing, 0)
+        if orientation == "vertical" then
+            self:SetPoint("TOPLEFT", anchor, "TOPRIGHT", spacing, 0)
+        else
+            self:SetPoint("TOPLEFT", anchor, "BOTTOMLEFT", 0, -spacing)
+        end
     end
 ]])
 RegisterStateDriver(npcFrame, "groupstate", "[group:raid] raid; [group:party] party; solo")
@@ -68,13 +84,22 @@ npcFrame:SetAttribute("_onstate-petstate", [[
         -- self:CallMethod("UpdatePoint")
 
         local spacing = self:GetAttribute("spacing") or 0
+        local orientation = self:GetAttribute("orientation") or "vertical"
 
         self:ClearAllPoints()
 
-        if newstate == "nopet" then
-            self:SetPoint("TOPLEFT", self:GetFrameRef("solo"), "TOPRIGHT", spacing, 0)
+        if orientation == "vertical" then
+            if newstate == "nopet" then
+                self:SetPoint("TOPLEFT", self:GetFrameRef("solo"), "TOPRIGHT", spacing, 0)
+            else
+                self:SetPoint("TOPLEFT", self:GetFrameRef("party"), "TOPRIGHT", spacing, 0)
+            end
         else
-            self:SetPoint("TOPLEFT", self:GetFrameRef("party"), "TOPRIGHT", spacing, 0)
+            if newstate == "nopet" then
+                self:SetPoint("TOPLEFT", self:GetFrameRef("solo"), "BOTTOMLEFT", 0, -spacing)
+            else
+                self:SetPoint("TOPLEFT", self:GetFrameRef("party"), "BOTTOMLEFT", 0, -spacing)
+            end
         end
     end
 ]])
@@ -93,6 +118,7 @@ local function NPCFrame_UpdateLayout(layout, which)
 
     if not which or which == "spacing" then
         npcFrame:SetAttribute("spacing", layout["spacing"])
+        npcFrame:SetAttribute("orientation", layout["orientation"])
         
         local groupType = F:GetGroupType()
         npcFrame:ClearAllPoints()
@@ -100,19 +126,35 @@ local function NPCFrame_UpdateLayout(layout, which)
             npcFrame:SetPoint("TOPLEFT", anchors["raid"])
     
         elseif groupType == "party" then
-            if npcFrame:GetAttribute("pet") == "nopet" then
-                npcFrame:SetPoint("TOPLEFT", anchors["solo"], "TOPRIGHT", layout["spacing"], 0)
+            if layout["orientation"] == "vertical" then
+                if npcFrame:GetAttribute("pet") == "nopet" then
+                    npcFrame:SetPoint("TOPLEFT", anchors["solo"], "TOPRIGHT", layout["spacing"], 0)
+                else
+                    npcFrame:SetPoint("TOPLEFT", anchors["party"], "TOPRIGHT", layout["spacing"], 0)
+                end
             else
-                npcFrame:SetPoint("TOPLEFT", anchors["party"], "TOPRIGHT", layout["spacing"], 0)
+                if npcFrame:GetAttribute("pet") == "nopet" then
+                    npcFrame:SetPoint("TOPLEFT", anchors["solo"], "BOTTOMLEFT", 0, -layout["spacing"])
+                else
+                    npcFrame:SetPoint("TOPLEFT", anchors["party"], "BOTTOMLEFT", 0, -layout["spacing"])
+                end
             end
     
         else -- solo
-            npcFrame:SetPoint("TOPLEFT", anchors["solo"], "TOPRIGHT", layout["spacing"], 0)
+            if layout["orientation"] == "vertical" then
+                npcFrame:SetPoint("TOPLEFT", anchors["solo"], "TOPRIGHT", layout["spacing"], 0)
+            else
+                npcFrame:SetPoint("TOPLEFT", anchors["solo"], "BOTTOMLEFT", 0, -layout["spacing"])
+            end
         end
 
         for i = 2, 5 do
             Cell.unitButtons.npc[i]:ClearAllPoints()
-            Cell.unitButtons.npc[i]:SetPoint("TOPLEFT", Cell.unitButtons.npc[i-1], "BOTTOMLEFT", 0, -layout["spacing"])
+            if layout["orientation"] == "vertical" then
+                Cell.unitButtons.npc[i]:SetPoint("TOPLEFT", Cell.unitButtons.npc[i-1], "BOTTOMLEFT", 0, -layout["spacing"])
+            else
+                Cell.unitButtons.npc[i]:SetPoint("TOPLEFT", Cell.unitButtons.npc[i-1], "TOPRIGHT", layout["spacing"], 0)
+            end
         end
     end
 

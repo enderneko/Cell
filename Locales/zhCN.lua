@@ -2,10 +2,8 @@ if not LOCALE_zhCN then return end
 
 local L = select( 2, ...).L
 
--------------------------------------------------
--- general
--------------------------------------------------
 L["New version found (%s). Please visit %s to get the latest version."] = "发现新版本 (%s)。 请访问 %S 下载最新版本。"
+L["ABOUT"] = "Cell 是受启发于 CompactRaid 的团队框架，参考了其代码，重写并增强。\n我个人很喜欢 CompactRaid，并常年使用它，但其作者似乎已经不再更新了。因此我写了 Cell，希望你能喜欢。\n另外，我也参考了一些很棒的团队框架，比如 Aptechka 和 Grid2。\nCell 并不打算成为一个轻量或强大（如 VuhDo、Grid2）的团队框架插件。设置简单，功能足够，就行了。"
 
 -------------------------------------------------
 -- slash command
@@ -141,6 +139,9 @@ L["Rename layout"] = "重命名布局"
 L["Create new layout"] = "新建布局"
 L["Delete layout"] = "删除布局"
 L["Group Filter"] = "队伍过滤"
+L["Group Orientation"] = "队伍排列"
+L["Vertical"] = "纵向"
+L["Horizontal"] = "横向"
 L["Unit Button Size"] = "单位按钮尺寸"
 L["Width"] = "宽"
 L["Height"] = "高"
