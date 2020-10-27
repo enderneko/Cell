@@ -180,7 +180,7 @@ local expansionDropdown = Cell:CreateDropdown(debuffsTab, 120)
 expansionDropdown:SetPoint("TOPLEFT", 5, -5)
 
 local expansionItems = {}
-for i = 1, EJ_GetNumTiers() do
+for i = EJ_GetNumTiers(), 1, -1 do
     local eName = EJ_GetTierInfo(i)
     tinsert(expansionItems, {
         ["text"] = eName,
@@ -190,7 +190,6 @@ for i = 1, EJ_GetNumTiers() do
     })
 end
 expansionDropdown:SetItems(expansionItems)
-expansionDropdown:SetSelectedItem(#expansionItems)
 
 -------------------------------------------------
 -- current instance button
@@ -1101,6 +1100,7 @@ local function ShowTab(tab)
         debuffsTab:Show()
         
         if not loadedExpansion then
+            expansionDropdown:SetSelectedItem(1)
             LoadExpansion(newestExpansion)
         end
     else
