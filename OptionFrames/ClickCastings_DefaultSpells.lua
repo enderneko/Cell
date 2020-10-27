@@ -22,7 +22,7 @@ local defaultSpells = {
     ["DRUID"] = {
         ["common"] = {
             8936, -- Regrowth - 愈合
-            "102401T", -- talent - Wild Charge - 野性冲锋
+            "102401T", -- Wild Charge - 野性冲锋
             20484, -- Rebirth - 复生
             50769, -- Revive - 起死回生
         },
@@ -50,12 +50,12 @@ local defaultSpells = {
             18562, -- Swiftmend - 迅捷治愈
             33763, -- Lifebloom - 生命绽放
             48438, -- Wild Growth - 野性成长
-            102351, -- Cenarion Ward - 塞纳里奥结界
             102342, -- Ironbark - 铁木树皮
+            "289022T", -- Nourish - 滋养
+            "102351T", -- Cenarion Ward - 塞纳里奥结界
+            "203651T", -- Overgrowth - 过度生长
             212040, -- Revitalize - 新生
-            "289022P", -- pvp - Nourish - 滋养
             "305497P", -- pvp - Thorns - 荆棘术
-            "203651P", -- pvp - Overgrowth - 过度生长
             "289318P", -- pvp - Mark of the Wild - 野性印记
         },
     },
@@ -96,9 +96,6 @@ local defaultSpells = {
         },
         -- 268 - Brewmaster
         -- 269 - Windwalker
-        [269] = {
-            "287771P", -- pvp - Reverse Harm - 反向伤害
-        },
         -- 270 - Mistweaver
         [270] = {
             115151, -- Renewing Mist - 复苏之雾
@@ -112,10 +109,12 @@ local defaultSpells = {
 
     ["PALADIN"] = {
         ["common"] = {
+            19750, -- Flash of Light - 圣光闪现
+            85673, -- Word of Glory - 荣耀圣令
             633, -- Lay on Hands - 圣疗术
             1022, -- Blessing of Protection - 保护祝福
             1044, -- Blessing of Freedom - 自由祝福
-            19750, -- Flash of Light - 圣光闪现
+            6940, -- Blessing of Sacrifice - 牺牲祝福
             7328, -- Redemption - 救赎
         },
         -- 65 - Holy
@@ -124,24 +123,20 @@ local defaultSpells = {
             82326, -- Holy Light - 圣光术
             20473, -- Holy Shock - 神圣震击
             53563, -- Beacon of Light - 圣光道标
-            156910, -- Beacon of Faith - 信仰道标
-            223306, -- Bestow Faith -- 赋予信仰
-            6940, -- Blessing of Sacrifice - 牺牲祝福
+            "156910T", -- Beacon of Faith - 信仰道标
+            -- "200025T", -- Beacon of Virtue -- 美德道标
+            "223306T", -- Bestow Faith -- 赋予信仰
+            "114165T", -- Holy Prism - 神圣棱镜
             4987, -- Cleanse - 清洁术
             212056, -- Absolution - 宽恕
         },
         -- 66 - Protection
         [66] = {
-            213652, -- Hand of the Protector - 守护者之手
-            6940, -- Blessing of Sacrifice - 牺牲祝福
             213644, -- Cleanse Toxins - 清毒术
             "228049P", -- pvp - Guardian of the Forgotten Queen - 被遗忘的女王护卫
         },
         -- 70 - Retribution
         [70] = {
-            210191, -- Word of Glory - 荣耀圣令
-            203538, -- Greater Blessing of Kings - 强效王者祝福
-            203539, -- Greater Blessing of Wisdom - 强效智慧祝福
             213644, -- Cleanse Toxins - 清毒术
             "210256P", -- pvp - Blessing of Sanctuary - 庇护祝福
         },
@@ -149,19 +144,21 @@ local defaultSpells = {
 
     ["PRIEST"] = {
         ["common"] = {
+            21562, -- Power Word: Fortitude - 真言术：韧
+            17, -- Power Word: Shield - 真言术：盾
             1706, -- Levitate - 漂浮术
             73325, -- Leap of Faith - 信仰飞跃
-            21562, -- Power Word: Fortitude - 真言术：韧
             2006, -- Resurrection - 复活术
         },
         -- 256 - Discipline
         [256] = {
             47540, -- Penance - 苦修
-            17, -- Power Word: Shield - 真言术：盾
             186263, -- Shadow Mend - 暗影愈合
             194509, -- Power Word: Radiance - 真言术：耀
-            "204065T", -- Shadow Covenant - 暗影盟约
+            47536, -- Rapture - 全神贯注
             33206, -- Pain Suppression - 痛苦压制
+            "204263T", -- Shining Force - 闪光力场
+            "314867T", -- Shadow Covenant - 暗影盟约
             527, -- Purify - 纯净术
             212036, -- Mass Resurrection - 群体复活
         },
@@ -173,9 +170,10 @@ local defaultSpells = {
             2061, -- Flash Heal - 快速治疗
             2060, -- Heal - 治疗术
             596, -- Prayer of Healing - 治疗祷言
-            "204883T", -- Circle of Healing - 治疗之环
+            204883, -- Circle of Healing - 治疗之环
             "32546T", -- Binding Heal - 联结治疗
             47788, -- Guardian Spirit - 守护之魂
+            "204263T", -- Shining Force - 闪光力场
             527, -- Purify - 纯净术
             212036, -- Mass Resurrection - 群体复活
             "213610P", -- pvp - Holy Ward - 神圣守卫
@@ -184,7 +182,7 @@ local defaultSpells = {
         },
         -- 258 - Shadow
         [258] = {
-            17, -- Power Word: Shield - 真言术：盾
+            186263, -- Shadow Mend - 暗影愈合
             213634, -- Purify Disease - 净化疾病
             "108968P", -- pvp - Void Shift - 虚空转移
         },
@@ -207,20 +205,28 @@ local defaultSpells = {
 
     ["SHAMAN"] = {
         ["common"] = {
-            77130, -- Purify Spirit - 净化灵魂
             8004, -- Healing Surge - 治疗之涌
+            1064, -- Chain Heal - 治疗链
             546, -- Water Walking - 水上行走
             2008, -- Ancestral Spirit - 先祖之魂
         },
         -- 262 - Elemental
+        [262] = {
+            "974T", -- Earth Shield - 大地之盾
+            51886, -- Cleanse Spirit - 净化灵魂
+        },
         -- 263 - Enhancement
+        [263] = {
+            "974T", -- Earth Shield - 大地之盾
+            51886, -- Cleanse Spirit - 净化灵魂
+        },
         -- 264 - Restoration
         [264] = {
             77472, -- Healing Wave - 治疗波
-            1064, -- Chain Heal - 治疗链
             61295, -- Riptide - 激流
+            974, -- Earth Shield - 大地之盾
             "73685T", -- Unleash Life - 生命释放
-            "974T", -- Earth Shield - 大地之盾
+            77130, -- Purify Spirit - 净化灵魂
             212048, -- Ancestral Vision - 先祖视界
             "204293P", -- pvp - Spirit Link - 灵魂链接
         },
@@ -238,11 +244,13 @@ local defaultSpells = {
     },
 
     ["WARRIOR"] = {
+        ["common"] = {
+            3411, -- Intervene - 援护
+        },
         -- 71 - Arms
         -- 72 - Fury
         -- 73 - Protection
         [73] = {
-            198304, -- Intercept - 拦截
             "213871P", -- pvp - Bodyguard - 护卫
         },
     },
@@ -273,5 +281,6 @@ function F:GetSpellList(class, spec)
         spells[i] = {icon, name, spellType}
     end
 
+    -- texplore(spells)
     return spells
 end

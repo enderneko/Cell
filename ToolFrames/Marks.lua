@@ -207,7 +207,7 @@ end)
 -------------------------------------------------
 -- functions
 -------------------------------------------------
-local function CheckPermission(hasPermission)
+local function CheckPermission()
     if InCombatLockdown() then
         marksFrame:RegisterEvent("PLAYER_REGEN_ENABLED")
     else
@@ -219,7 +219,7 @@ local function CheckPermission(hasPermission)
                 marks:ClearAllPoints()
                 marks:SetPoint("BOTTOMLEFT")
 
-                if marksFrame.moverText:IsShown() or F:HasPermission(true) then
+                if marksFrame.moverText:IsShown() or Cell.vars.hasPartyMarkPermission then
                     marks:Show()
                 else
                     marks:Hide()
@@ -230,7 +230,7 @@ local function CheckPermission(hasPermission)
                 worldMarks:ClearAllPoints()
                 worldMarks:SetPoint("BOTTOMLEFT")
                 marksFrame:SetHeight(40)
-                if marksFrame.moverText:IsShown() or F:HasPermission(true) then
+                if marksFrame.moverText:IsShown() or Cell.vars.hasPartyMarkPermission then
                     worldMarks:Show()
                 else
                     worldMarks:Hide()
@@ -242,7 +242,7 @@ local function CheckPermission(hasPermission)
                 marks:ClearAllPoints()
                 marks:SetPoint("BOTTOMLEFT", worldMarks, "TOPLEFT", 0, 2)
                 marksFrame:SetHeight(60)
-                if marksFrame.moverText:IsShown() or F:HasPermission(true) then
+                if marksFrame.moverText:IsShown() or Cell.vars.hasPartyMarkPermission then
                     marks:Show()
                     worldMarks:Show()
                 else
