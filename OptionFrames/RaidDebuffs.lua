@@ -1066,24 +1066,25 @@ end
 -- functions
 -------------------------------------------------
 function F:GetDebuffList(instanceName)
-    local eName, iIndex, iId = F:SplitToNumber(":", instanceIds[instanceName])
-    if not (iId and loadedDebuffs[iId])then return end
-    
     local list = {}
-    local n = 0
-    -- check general
-    if loadedDebuffs[iId]["general"] then
-        n = #loadedDebuffs[iId]["general"]
-        for _, t in ipairs(loadedDebuffs[iId]["general"]) do -- ignore "disabled" table
-            -- list[spellId] = {order, glowType, glowColor}
-            list[t["id"]] = {["order"]=t["order"], ["glowType"]=t["glowType"], ["glowColor"]=t["glowColor"]}
+    local eName, iIndex, iId = F:SplitToNumber(":", instanceIds[instanceName])
+    
+    if iId and loadedDebuffs[iId] then
+        local n = 0
+        -- check general
+        if loadedDebuffs[iId]["general"] then
+            n = #loadedDebuffs[iId]["general"]
+            for _, t in ipairs(loadedDebuffs[iId]["general"]) do -- ignore "disabled" table
+                -- list[spellId] = {order, glowType, glowColor}
+                list[t["id"]] = {["order"]=t["order"], ["glowType"]=t["glowType"], ["glowColor"]=t["glowColor"]}
+            end
         end
-    end
-    -- check boss
-    for bId, t in pairs(loadedDebuffs[iId]) do
-        if bId ~= "general" then
-            for _, st in ipairs(t) do -- ignore "disabled" table
-                list[st["id"]] = {["order"]=st["order"]+n, ["glowType"]=st["glowType"], ["glowColor"]=st["glowColor"]}
+        -- check boss
+        for bId, t in pairs(loadedDebuffs[iId]) do
+            if bId ~= "general" then
+                for _, st in ipairs(t) do -- ignore "disabled" table
+                    list[st["id"]] = {["order"]=st["order"]+n, ["glowType"]=st["glowType"], ["glowColor"]=st["glowColor"]}
+                end
             end
         end
     end
