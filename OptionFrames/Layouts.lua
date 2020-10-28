@@ -70,9 +70,9 @@ local function UpdatePreviewButton(which, value)
     end
 
     local flags
-    if CellDB["outline"] == "Outline" then
+    if CellDB["appearance"]["outline"] == "Outline" then
         flags = "OUTLINE"
-    elseif CellDB["outline"] == "Monochrome Outline" then
+    elseif CellDB["appearance"]["outline"] == "Monochrome Outline" then
         flags = "OUTLINE, MONOCHROME"
     end    
 

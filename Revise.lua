@@ -64,6 +64,16 @@ local function Revise()
 				layout["orientation"] = "vertical"
 			end
 		end
+
+		-- r13 release: CellDB["appearance"]
+		if CellDB["texture"] then CellDB["appearance"]["texture"] = CellDB["texture"] end
+		if CellDB["scale"] then CellDB["appearance"]["scale"] = CellDB["scale"] end
+		if CellDB["font"] then CellDB["appearance"]["font"] = CellDB["font"] end
+		if CellDB["outline"] then CellDB["appearance"]["outline"] = CellDB["outline"] end
+		CellDB["texture"] = nil
+		CellDB["scale"] = nil
+		CellDB["font"] = nil
+		CellDB["outline"] = nil
 	end
 
 	CellDB["revise"] = Cell.version

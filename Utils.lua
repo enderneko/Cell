@@ -350,8 +350,8 @@ end
 local LSM = LibStub("LibSharedMedia-3.0", true)
 function F:GetBarTexture()
     --! update Cell.vars.texture for further use in UnitButton_OnLoad
-    if LSM and LSM:IsValid("statusbar", CellDB["texture"]) then
-        Cell.vars.texture = LSM:Fetch("statusbar", CellDB["texture"])
+    if LSM and LSM:IsValid("statusbar", CellDB["appearance"]["texture"]) then
+        Cell.vars.texture = LSM:Fetch("statusbar", CellDB["appearance"]["texture"])
     else
         Cell.vars.texture = "Interface\\AddOns\\Cell\\Media\\statusbar.tga"
     end
@@ -359,7 +359,7 @@ function F:GetBarTexture()
 end
 
 function F:GetFont(font)
-    if not font then font = CellDB["font"] end
+    if not font then font = CellDB["appearance"]["font"] end
     if LSM and LSM:IsValid("font", font) then
         return LSM:Fetch("font", font)
     else
@@ -383,7 +383,7 @@ function F:GetFontItems()
                 ["text"] = name,
                 ["font"] = fonts[name],
                 -- ["onClick"] = function()
-                --     CellDB["font"] = name
+                --     CellDB["appearance"]["font"] = name
                 --     Cell:Fire("UpdateAppearance", "font")
                 -- end,
             })
@@ -396,7 +396,7 @@ function F:GetFontItems()
             ["text"] = defaultFontName,
             ["font"] = defaultFont,
             -- ["onClick"] = function()
-            --     CellDB["font"] = defaultFontName
+            --     CellDB["appearance"]["font"] = defaultFontName
             --     Cell:Fire("UpdateAppearance", "font")
             -- end,
         })

@@ -34,7 +34,7 @@ local function CheckTextures()
                 ["text"] = name,
                 ["texture"] = textures[name],
                 ["onClick"] = function()
-                    CellDB["texture"] = name
+                    CellDB["appearance"]["texture"] = name
                     Cell:Fire("UpdateAppearance", "texture")
                 end,
             })
@@ -47,7 +47,7 @@ local function CheckTextures()
             ["text"] = defaultTextureName,
             ["texture"] = defaultTexture,
             ["onClick"] = function()
-                CellDB["texture"] = defaultTextureName
+                CellDB["appearance"]["texture"] = defaultTextureName
                 Cell:Fire("UpdateAppearance", "texture")
             end,
         })
@@ -55,8 +55,8 @@ local function CheckTextures()
     textureDropdown:SetItems(items)
 
     -- validation
-    if textures[CellDB["texture"]] then
-        textureDropdown:SetSelected(CellDB["texture"], textures[CellDB["texture"]])
+    if textures[CellDB["appearance"]["texture"]] then
+        textureDropdown:SetSelected(CellDB["appearance"]["texture"], textures[CellDB["appearance"]["texture"]])
     else
         textureDropdown:SetSelected(defaultTextureName, defaultTexture)
     end
@@ -87,7 +87,7 @@ do
         table.insert(items, {
             ["text"] = scales[value],
             ["onClick"] = function()
-                CellDB["scale"] = value
+                CellDB["appearance"]["scale"] = value
                 Cell:Fire("UpdateAppearance", "scale")
             end,
         })
@@ -110,7 +110,7 @@ local function CheckFonts()
 
     for _, item in pairs(items) do
         item["onClick"] = function()
-            CellDB["font"] = item["text"]
+            CellDB["appearance"]["font"] = item["text"]
             Cell:Fire("UpdateAppearance", "font")
         end
     end
@@ -118,8 +118,8 @@ local function CheckFonts()
     fontDropdown:SetItems(items)
     
     -- validation
-    if fonts[CellDB["font"]] then
-        fontDropdown:SetSelected(CellDB["font"], fonts[CellDB["font"]])
+    if fonts[CellDB["appearance"]["font"]] then
+        fontDropdown:SetSelected(CellDB["appearance"]["font"], fonts[CellDB["appearance"]["font"]])
     else
         fontDropdown:SetSelected(defaultFontName, defaultFont)
     end
@@ -138,21 +138,21 @@ fontOutlineDropdown:SetItems({
     {
         ["text"] = L["Shadow"],
         ["onClick"] = function()
-            CellDB["outline"] = "Shadow"
+            CellDB["appearance"]["outline"] = "Shadow"
             Cell:Fire("UpdateAppearance", "font")
         end,
     },
     {
         ["text"] = L["Outline"],
         ["onClick"] = function()
-            CellDB["outline"] = "Outline"
+            CellDB["appearance"]["outline"] = "Outline"
             Cell:Fire("UpdateAppearance", "font")
         end,
     },
     {
         ["text"] = L["Monochrome Outline"],
         ["onClick"] = function()
-            CellDB["outline"] = "Monochrome Outline"
+            CellDB["appearance"]["outline"] = "Monochrome Outline"
             Cell:Fire("UpdateAppearance", "font")
         end,
     },
@@ -170,9 +170,9 @@ local function ShowTab(tab)
 
         -- load data
         CheckTextures()
-        scaleDropdown:SetSelected(scales[CellDB["scale"]])
+        scaleDropdown:SetSelected(scales[CellDB["appearance"]["scale"]])
         CheckFonts()
-        fontOutlineDropdown:SetSelected(L[CellDB["outline"]])
+        fontOutlineDropdown:SetSelected(L[CellDB["appearance"]["outline"]])
     else
         appearanceTab:Hide()
     end
@@ -203,9 +203,9 @@ local function UpdateAppearance(which)
 
     -- scale
     if not which or which == "scale" then
-        Cell.frames.mainFrame:SetScale(CellDB["scale"])
-        CellTooltip:SetScale(LPP:GetPixelPerfectScale() * CellDB["scale"])
-        CellScanningTooltip:SetScale(LPP:GetPixelPerfectScale() * CellDB["scale"])
+        Cell.frames.mainFrame:SetScale(CellDB["appearance"]["scale"])
+        CellTooltip:SetScale(LPP:GetPixelPerfectScale() * CellDB["appearance"]["scale"])
+        CellScanningTooltip:SetScale(LPP:GetPixelPerfectScale() * CellDB["appearance"]["scale"])
     end
 end
 Cell:RegisterCallback("UpdateAppearance", "UpdateAppearance", UpdateAppearance)

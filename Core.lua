@@ -77,13 +77,13 @@ function F:UpdateFont()
     local layout = Cell.vars.currentLayoutTable
     local flags
 
-    if CellDB["outline"] == "Shadow" then
+    if CellDB["appearance"]["outline"] == "Shadow" then
         font_name:SetShadowColor(0, 0, 0, 1)
         font_status:SetShadowColor(0, 0, 0, 1)
     else
         font_name:SetShadowColor(0, 0, 0, 0)
         font_status:SetShadowColor(0, 0, 0, 0)
-        if CellDB["outline"] == "Outline" then
+        if CellDB["appearance"]["outline"] == "Outline" then
             flags = "OUTLINE"
         else -- Monochrome Outline
             flags = "OUTLINE,MONOCHROME"
@@ -91,7 +91,7 @@ function F:UpdateFont()
     end
 
     local font
-    if CellDB["font"] == "Cell".._G.DEFAULT then
+    if CellDB["appearance"]["font"] == "Cell".._G.DEFAULT then
         font = GameFontNormal:GetFont()
     else
         font = F:GetFont()
@@ -119,11 +119,7 @@ function eventFrame:ADDON_LOADED(arg1)
         if type(CellDB) ~= "table" then CellDB = {} end
         if type(CellCharacterDB) ~= "table" then CellCharacterDB = {} end
 
-        -- general -----------------------------------------------------------------------------
-        if type(CellDB["texture"]) ~= "string" then CellDB["texture"] = "Cell ".._G.DEFAULT end
-        if type(CellDB["scale"]) ~= "number" then CellDB["scale"] = 1 end
-        if type(CellDB["font"]) ~= "string" then CellDB["font"] = "Cell ".._G.DEFAULT end
-        if type(CellDB["outline"]) ~= "string" then CellDB["outline"] = "Shadow" end
+        -- general --------------------------------------------------------------------------------
         if type(CellDB["hideBlizzard"]) ~= "boolean" then CellDB["hideBlizzard"] = true end
         if type(CellDB["disableTooltips"]) ~= "boolean" then CellDB["disableTooltips"] = false end
         if type(CellDB["raidTools"]) ~= "table" then
@@ -139,6 +135,17 @@ function eventFrame:ADDON_LOADED(arg1)
             }
         end
         -- if type(CellDB["clamped"]) ~= "boolean" then CellDB["clamped"] = false end
+
+        -- appearance -----------------------------------------------------------------------------
+        if type(CellDB["appearance"]) ~= "table" then
+            CellDB["appearance"] = {
+                ["texture"] = "Cell ".._G.DEFAULT,
+                ["scale"] = 1,
+                ["font"] = "Cell ".._G.DEFAULT,
+                ["outline"] = "Shadow",
+            }
+        end
+
         
         -- click-casting --------------------------------------------------------------------------
         if type(CellDB["clickCastings"]) ~= "table" then CellDB["clickCastings"] = {} end

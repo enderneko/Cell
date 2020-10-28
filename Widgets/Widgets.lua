@@ -413,7 +413,7 @@ function addon:CreateColorPicker(parent, label, hasOpacity, func)
 	cp:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8x8", edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = 1})
 	cp:SetBackdropBorderColor(0, 0, 0, 1)
 	cp:SetScript("OnEnter", function()
-		cp:SetBackdropBorderColor(classColor.t[1], classColor.t[2], classColor.t[3], .7)
+		cp:SetBackdropBorderColor(classColor.t[1], classColor.t[2], classColor.t[3], .5)
 	end)
 	cp:SetScript("OnLeave", function()
 		cp:SetBackdropBorderColor(0, 0, 0, 1)
@@ -451,6 +451,7 @@ function addon:CreateColorPicker(parent, label, hasOpacity, func)
 		ShowColorPicker()
 	end)
 
+	cp.color = {1, 1, 1, 1}
 	function cp:SetColor(t)
 		cp.color = t
 		cp:SetBackdropColor(unpack(t))
@@ -603,7 +604,7 @@ function addon:CreateSwitch(parent, leftText, leftValue, rightText, rightValue, 
 	textRight:SetText(rightText)
 
 	local highlight = switch:CreateTexture(nil, "ARTWORK")
-	highlight:SetColorTexture(classColor.t[1], classColor.t[2], classColor.t[3], .6)
+	highlight:SetColorTexture(classColor.t[1], classColor.t[2], classColor.t[3], class=="PRIEST" and .5 or .6)
 
 	local function UpdateHighlight(which)
 		highlight:ClearAllPoints()
@@ -1610,7 +1611,6 @@ function addon:CreateDropdown(parent, width, dropdownType)
 	-- 	{
 	-- 		["text"] = (string),
 	-- 		["value"] = (obj),
-	-- 		["texture"] = (string),
 	-- 		["texture"] = (string),
 	-- 		["onClick"] = (function)
 	-- 	},
