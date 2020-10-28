@@ -200,11 +200,20 @@ function addon:CreateButton(parent, text, buttonColor, size, noBorder, noBackgro
 		color = {.1, .1, .1, 1}
 		hoverColor = {.7, .7, 0, 1}
 	elseif buttonColor == "class" then
-		color = {classColor.t[1], classColor.t[2], classColor.t[3], .3}
-		hoverColor = {classColor.t[1], classColor.t[2], classColor.t[3], .6}
+		if class == "PRIEST" then
+			color = {classColor.t[1], classColor.t[2], classColor.t[3], .25}
+			hoverColor = {classColor.t[1], classColor.t[2], classColor.t[3], .5}
+		else
+			color = {classColor.t[1], classColor.t[2], classColor.t[3], .3}
+			hoverColor = {classColor.t[1], classColor.t[2], classColor.t[3], .6}
+		end
 	elseif buttonColor == "class-hover" then
 		color = {.1, .1, .1, 1}
-		hoverColor = {classColor.t[1], classColor.t[2], classColor.t[3], .6}
+		if class == "PRIEST" then
+			hoverColor = {classColor.t[1], classColor.t[2], classColor.t[3], .5}
+		else
+			hoverColor = {classColor.t[1], classColor.t[2], classColor.t[3], .6}
+		end
 	elseif buttonColor == "chartreuse" then
 		color = {.5, 1, 0, .6}
 		hoverColor = {.5, 1, 0, .8}
@@ -222,7 +231,11 @@ function addon:CreateButton(parent, text, buttonColor, size, noBorder, noBackgro
 		hoverColor = {.5, 1, 0, .5}
 	elseif buttonColor == "transparent-class" then -- drop down item
 		color = {0, 0, 0, 0}
-		hoverColor = {classColor.t[1], classColor.t[2], classColor.t[3], .6}
+		if class == "PRIEST" then
+			hoverColor = {classColor.t[1], classColor.t[2], classColor.t[3], .4}
+		else
+			hoverColor = {classColor.t[1], classColor.t[2], classColor.t[3], .6}
+		end
 	elseif buttonColor == "none" then
 		color = {0, 0, 0, 0}
 	else

@@ -381,7 +381,7 @@ local miscText = Cell:CreateSeparator(L["Misc"], layoutsTab, 122)
 miscText:SetPoint("TOPLEFT", 269, -175)
 
 -- spacing
-local spacingSlider = Cell:CreateSlider(L["Spacing"], layoutsTab, 3, 7, 100, 1, function(value)
+local spacingSlider = Cell:CreateSlider(L["Spacing"], layoutsTab, 0, 7, 100, 1, function(value)
     selectedLayoutTable["spacing"] = value
     if selectedLayout == Cell.vars.currentLayout then
         Cell:Fire("UpdateLayout", selectedLayout, "spacing")
