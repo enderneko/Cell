@@ -839,7 +839,7 @@ local function UnitButton_UpdateStatusText(self)
 	end
 end
 
-local function UnitButton_UpdateNameAndColor(self)
+local function UnitButton_UpdateName(self)
 	local unit = self.state.unit
 	if not unit then return end
 
@@ -847,43 +847,106 @@ local function UnitButton_UpdateNameAndColor(self)
 	self.state.class = select(2, UnitClass(unit))
 	self.state.guid = UnitGUID(unit)
 
-	-- name
 	local nameText = self.widget.nameText
 	if self.state.name then F:UpdateTextWidth(nameText, self.state.name) end
+end
+
+local function GetColor(r, g, b)
+	local barR, barG, barB, bgR, bgG, bgB
+	-- bar
+	if CellDB["appearance"]["barColor"][1] == "Class Color" then
+		barR, barG, barB = r, g, b
+	elseif CellDB["appearance"]["barColor"][1] == "Class Color (dark)" then
+		barR, barG, barB = r*.2, g*.2, b*.2
+	else
+		barR, barG, barB = unpack(CellDB["appearance"]["barColor"][2])
+	end
+	-- bg
+	if CellDB["appearance"]["bgColor"][1] == "Class Color" then
+		bgR, bgG, bgB = r, g, b
+	elseif CellDB["appearance"]["bgColor"][1] == "Class Color (dark)" then
+		bgR, bgG, bgB = r*.2, g*.2, b*.2
+	else
+		bgR, bgG, bgB = unpack(CellDB["appearance"]["bgColor"][2])
+	end
+	return barR, barG, barB, bgR, bgG, bgB
+end
+
+local function UnitButton_UpdateColor(self)
+	local unit = self.state.unit
+	if not unit then return end
+
+	local nameText = self.widget.nameText
+
+	local barR, barG, barB
+	local bgR, bgG, bgB
 	
-	-- color
-	nameText:SetTextColor(1, 1, 1, 1)
+	if Cell.loaded then
+		if CellDB["appearance"]["nameColor"][1] == "Class Color" then
+			nameText:SetTextColor(F:GetClassColor(self.state.class))
+		else
+			nameText:SetTextColor(unpack(CellDB["appearance"]["nameColor"][2]))
+		end
+	else
+		nameText:SetTextColor(1, 1, 1)
+	end
 
 	if UnitIsPlayer(unit) then -- player
 		if not UnitIsConnected(unit) then
-			self.state.color = {.4, .4, .4}
+			barR, barG, barB = .4, .4, .4
+			bgR, bgG, bgB = .4, .4, .4
 			nameText:SetTextColor(F:GetClassColor(self.state.class))
 		elseif self.state.inVehicle then
-			self.state.color = {0, 1, .2}
+			if Cell.loaded then
+				barR, barG, barB, bgR, bgG, bgB = GetColor(0, 1, .2)
+			else
+				barR, barG, barB = 0, 1, .2
+				bgR, bgG, bgB = barR*.2, barG*.2, barB*.2
+			end
 		elseif UnitIsCharmed(unit) then
-			self.state.color = {.5, 0, 1}
+			if Cell.loaded then
+				barR, barG, barB, bgR, bgG, bgB = GetColor(.5, 0, 1)
+			else
+				barR, barG, barB = .5, 0, 1
+				bgR, bgG, bgB = barR*.2, barG*.2, barB*.2
+			end
 			nameText:SetTextColor(F:GetClassColor(self.state.class))
 		else
-			self.state.color = {F:GetClassColor(self.state.class)}
+			if Cell.loaded then
+				barR, barG, barB, bgR, bgG, bgB = GetColor(F:GetClassColor(self.state.class))
+			else
+				barR, barG, barB = F:GetClassColor(self.state.class)
+				bgR, bgG, bgB = barR*.2, barG*.2, barB*.2
+			end
 		end
 	elseif string.find(unit, "pet") then -- pet
-		self.state.color = {.5, .5, 1}
+		if Cell.loaded then
+			barR, barG, barB, bgR, bgG, bgB = GetColor(.5, .5, 1)
+		else
+			barR, barG, barB = .5, .5, 1
+			bgR, bgG, bgB = barR*.2, barG*.2, barB*.2
+		end
 	else -- npc
-		self.state.color = {0, 1, .2}
+		if Cell.loaded then
+			barR, barG, barB, bgR, bgG, bgB = GetColor(0, 1, .2)
+		else
+			barR, barG, barB =0, 1, .2
+			bgR, bgG, bgB = barR*.2, barG*.2, barB*.2
+		end
 	end
 
 	-- local r, g, b = RAID_CLASS_COLORS["DEATHKNIGHT"]:GetRGB()
-	local r, g, b = unpack(self.state.color)
-	self.widget.healthBar:SetStatusBarColor(r, g, b)
-	self.widget.healthBarBackground:SetVertexColor(r * .2, g * .2, b * .2)
-	self.widget.incomingHeal:SetVertexColor(r, g, b)
+	self.widget.healthBar:SetStatusBarColor(barR, barG, barB)
+	self.widget.healthBarBackground:SetVertexColor(bgR, bgG, bgB)
+	self.widget.incomingHeal:SetVertexColor(barR, barG, barB)
 end
 
 local function UnitButton_UpdateAll(self)
 	if not self:IsVisible() then return end
 
 	UnitButton_UpdateVehicleStatus(self)
-	UnitButton_UpdateNameAndColor(self)
+	UnitButton_UpdateName(self)
+	UnitButton_UpdateColor(self)
 	UnitButton_UpdateHealthMax(self)
 	UnitButton_UpdateHealth(self)
 	UnitButton_UpdateHealthPrediction(self)
@@ -981,7 +1044,7 @@ local function UnitButton_OnEvent(self, event, unit)
 			self.updateRequired = 1
 		
 		elseif event == "UNIT_NAME_UPDATE" then
-			UnitButton_UpdateNameAndColor(self)
+			UnitButton_UpdateName(self)
 		
 		elseif event == "PLAYER_FLAGS_CHANGED" then
 			UnitButton_UpdateStatusText(self)
@@ -1027,7 +1090,7 @@ local function UnitButton_OnEvent(self, event, unit)
 			UnitButton_UpdateStatusText(self)
 			
 		elseif event == "UNIT_FACTION" then
-			UnitButton_UpdateNameAndColor(self) -- mind control
+			UnitButton_UpdateColor(self) -- mind control
 			
 		elseif event == "UNIT_THREAT_SITUATION_UPDATE" then
 			UnitButton_UpdateThreat(self)
@@ -1259,6 +1322,8 @@ function F:UnitButton_OnLoad(button)
 		powerBarBackground:SetTexture(tex)
 		incomingHeal:SetTexture(tex)
 	end
+
+	button.func.UpdateColor = UnitButton_UpdateColor
 
 	-- shield bar
 	local shieldBar = healthBar:CreateTexture(name.."ShieldBar", "ARTWORK", nil, -7)

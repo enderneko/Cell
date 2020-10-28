@@ -143,10 +143,12 @@ function eventFrame:ADDON_LOADED(arg1)
                 ["scale"] = 1,
                 ["font"] = "Cell ".._G.DEFAULT,
                 ["outline"] = "Shadow",
+                ["barColor"] = {"Class Color", {.2, .2, .2}},
+                ["bgColor"] = {"Class Color (dark)", {.667, 0, 0}},
+                ["nameColor"] = {"Custom Color", {1, 1, 1}},
             }
         end
 
-        
         -- click-casting --------------------------------------------------------------------------
         if type(CellDB["clickCastings"]) ~= "table" then CellDB["clickCastings"] = {} end
         Cell.vars.playerClass, Cell.vars.playerClassID = select(2, UnitClass("player"))
@@ -307,6 +309,7 @@ function eventFrame:ADDON_LOADED(arg1)
         F:UpdateLayout()
         
         -- revise ---------------------------------------------------------------------------------
+        Cell.loaded = true
         Cell.version = GetAddOnMetadata(addonName, "version")
         Cell:Fire("Revise")
     end

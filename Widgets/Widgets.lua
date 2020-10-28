@@ -430,8 +430,9 @@ function addon:CreateColorPicker(parent, label, hasOpacity, func)
 		else
 			newA, newR, newG, newB = OpacitySliderFrame:GetValue(), ColorPickerFrame:GetColorRGB()
 		end
-
-		newR, newG, newB, newA = tonumber(string.format("%.2f", newR)), tonumber(string.format("%.2f", newG)), tonumber(string.format("%.2f", newB)), tonumber(string.format("%.2f", newA))
+		
+		newA = newA or 1 -- if not hasOpacity -> newA == nil
+		newR, newG, newB, newA = tonumber(string.format("%.3f", newR)), tonumber(string.format("%.3f", newG)), tonumber(string.format("%.3f", newB)), tonumber(string.format("%.3f", newA))
 		
 		cp:SetBackdropColor(newR, newG, newB, newA)
 		if func then func(newR, newG, newB, newA) end

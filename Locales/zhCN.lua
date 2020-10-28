@@ -49,15 +49,7 @@ L["No"] = "否"
 -------------------------------------------------
 -- general
 -------------------------------------------------
--- L["Appearance"] = "外观"
 L["General"] = "常规"
-L["Texture"] = "材质"
-L["Scale"] = "缩放"
-L["Font"] = "字体"
-L["Font Outline"] = "字体轮廓"
-L["Shadow"] = "阴影"
-L["Outline"] = "轮廓"
-L["Monochrome Outline"] = "单色轮廓"
 L["Blizzard Frames"] = "暴雪框体"
 L["Hide Blizzard Raid / Party"] = "隐藏暴雪团队/小队"
 L["Hide Blizzard Frames"] = "隐藏暴雪框体"
@@ -84,6 +76,18 @@ L["Lock"] = "锁定"
 L["Show Battle Res Timer"] = "显示战复计时器"
 L["Only show during encounter or in mythic+"] = "仅在首领战或者史诗钥石地下城中显示"
 L["BR"] = "战复"
+
+-------------------------------------------------
+-- appearance
+-------------------------------------------------
+L["Appearance"] = "外观"
+L["Texture"] = "材质"
+L["Scale"] = "缩放"
+L["Font"] = "字体"
+L["Font Outline"] = "字体轮廓"
+L["Shadow"] = "阴影"
+L["Outline"] = "轮廓"
+L["Monochrome Outline"] = "单色轮廓"
 
 -------------------------------------------------
 -- click-castings
