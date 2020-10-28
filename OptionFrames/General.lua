@@ -34,7 +34,7 @@ disableTooltipsCB:SetPoint("TOPLEFT", tooltipsText, "BOTTOMLEFT", 5, -15)
 -- raid tools
 -------------------------------------------------
 local toolsText = Cell:CreateSeparator(L["Raid Tools"].." |cFF777777"..L["Only In Group"], generalTab, 387)
-toolsText:SetPoint("TOPLEFT", 5, -90)
+toolsText:SetPoint("TOPLEFT", 5, -100)
 
 local unlockBtn = Cell:CreateButton(generalTab, L["Unlock"], "class-hover", {50, 17})
 unlockBtn:SetPoint("RIGHT", -5, 0)

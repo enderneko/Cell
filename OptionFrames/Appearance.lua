@@ -99,7 +99,7 @@ end
 -- font
 -------------------------------------------------
 local fontText = Cell:CreateSeparator(L["Font"], appearanceTab, 188)
-fontText:SetPoint("TOPLEFT", 5, -90)
+fontText:SetPoint("TOPLEFT", 5, -100)
 
 -- drop down
 local fontDropdown = Cell:CreateDropdown(appearanceTab, 150, "font")
@@ -129,7 +129,7 @@ end
 -- font outline
 -------------------------------------------------
 local fontOutlineText = Cell:CreateSeparator(L["Font Outline"], appearanceTab, 188)
-fontOutlineText:SetPoint("TOPLEFT", 203, -90)
+fontOutlineText:SetPoint("TOPLEFT", 203, -100)
 
 -- drop down
 local fontOutlineDropdown = Cell:CreateDropdown(appearanceTab, 150)
@@ -162,7 +162,7 @@ fontOutlineDropdown:SetItems({
 -- unitbutton color
 -------------------------------------------------
 local unitButtonColorText = Cell:CreateSeparator(L["UnitButton Color"], appearanceTab, 387)
-unitButtonColorText:SetPoint("TOPLEFT", 5, -175)
+unitButtonColorText:SetPoint("TOPLEFT", 5, -195)
 
 -- bar color
 local barColorDropdown = Cell:CreateDropdown(appearanceTab, 131)

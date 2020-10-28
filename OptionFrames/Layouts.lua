@@ -272,7 +272,7 @@ end
 -- group filter
 -------------------------------------------------
 local groupFilterText = Cell:CreateSeparator(L["Group Filter"], layoutsTab, 188)
-groupFilterText:SetPoint("TOPLEFT", 5, -90)
+groupFilterText:SetPoint("TOPLEFT", 5, -100)
 
 local function UpdateButtonBorderColor(flag, b)
     local borderColor 
@@ -313,7 +313,7 @@ end
 -- group orientation
 -------------------------------------------------
 local orientationText = Cell:CreateSeparator(L["Group Orientation"], layoutsTab, 188)
-orientationText:SetPoint("TOPLEFT", 203, -90)
+orientationText:SetPoint("TOPLEFT", 203, -100)
 
 local orientationSwitch = Cell:CreateSwitch(layoutsTab, L["Vertical"], "vertical", L["Horizontal"], "horizontal", function(value)
     selectedLayoutTable["orientation"] = value
@@ -326,7 +326,7 @@ orientationSwitch:SetWidth(165)
 -- button size
 -------------------------------------------------
 local buttonSizeText = Cell:CreateSeparator(L["Unit Button Size"], layoutsTab, 122)
-buttonSizeText:SetPoint("TOPLEFT", 5, -175)
+buttonSizeText:SetPoint("TOPLEFT", 5, -195)
 
 -- width
 local widthSlider = Cell:CreateSlider(L["Width"], layoutsTab, 40, 100, 100, 2, function(value)
@@ -352,7 +352,7 @@ heightSlider:SetPoint("TOP", widthSlider, "BOTTOM", 0, -40)
 -- font size
 -------------------------------------------------
 local fontSizeText = Cell:CreateSeparator(L["Font Size"], layoutsTab, 122)
-fontSizeText:SetPoint("TOPLEFT", 137, -175)
+fontSizeText:SetPoint("TOPLEFT", 137, -195)
 
 -- name text
 local nameFontSlider = Cell:CreateSlider(L["Name"], layoutsTab, 5, 20, 100, 1, function(value)
@@ -378,7 +378,7 @@ statusFontSlider:SetPoint("TOP", nameFontSlider, "BOTTOM", 0, -40)
 -- spacing
 -------------------------------------------------
 local miscText = Cell:CreateSeparator(L["Misc"], layoutsTab, 122)
-miscText:SetPoint("TOPLEFT", 269, -175)
+miscText:SetPoint("TOPLEFT", 269, -195)
 
 -- spacing
 local spacingSlider = Cell:CreateSlider(L["Spacing"], layoutsTab, 0, 7, 100, 1, function(value)

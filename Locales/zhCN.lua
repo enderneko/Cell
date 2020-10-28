@@ -88,6 +88,16 @@ L["Font Outline"] = "字体轮廓"
 L["Shadow"] = "阴影"
 L["Outline"] = "轮廓"
 L["Monochrome Outline"] = "单色轮廓"
+L["UnitButton Color"] = "单位按钮颜色"
+L["Power Color"] = "能量颜色"
+L["Class Color"] = "职业颜色"
+L["Class Color (dark)"] = "职业颜色 (暗)"
+L["Custom Color"] = "自定义颜色"
+L["Bar Color"] = "条颜色"
+L["Background Color"] = "背景颜色"
+L["Name Color"] = "名字颜色"
+L["Power Color"] = "能量颜色"
+L["Reset All"] = "全部重置"
 
 -------------------------------------------------
 -- click-castings
