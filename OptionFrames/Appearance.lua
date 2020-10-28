@@ -280,23 +280,68 @@ local nameColorPicker = Cell:CreateColorPicker(appearanceTab, "", false, functio
 end)
 nameColorPicker:SetPoint("LEFT", nameColorDropdown, "RIGHT", 5, 0)
 
+-- power color
+local powerColorDropdown = Cell:CreateDropdown(appearanceTab, 131)
+powerColorDropdown:SetPoint("TOPLEFT", bgColorDropdown, "BOTTOMLEFT", 0, -30)
+powerColorDropdown:SetItems({
+    {
+        ["text"] = L["Power Color"],
+        ["onClick"] = function()
+            CellDB["appearance"]["powerColor"][1] = "Power Color"
+            Cell:Fire("UpdateAppearance", "color")
+        end,
+    },
+    {
+        ["text"] = L["Class Color"],
+        ["onClick"] = function()
+            CellDB["appearance"]["powerColor"][1] = "Class Color"
+            Cell:Fire("UpdateAppearance", "color")
+        end,
+    },
+    {
+        ["text"] = L["Custom Color"],
+        ["onClick"] = function()
+            CellDB["appearance"]["powerColor"][1] = "Custom Color"
+            Cell:Fire("UpdateAppearance", "color")
+        end,
+    },
+})
+
+local powerColorText = appearanceTab:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
+powerColorText:SetPoint("BOTTOMLEFT", powerColorDropdown, "TOPLEFT", 0, 1)
+powerColorText:SetText(L["Power Color"])
+
+local powerColorPicker = Cell:CreateColorPicker(appearanceTab, "", false, function(r, g, b)
+    CellDB["appearance"]["powerColor"][2][1] = r
+    CellDB["appearance"]["powerColor"][2][2] = g
+    CellDB["appearance"]["powerColor"][2][3] = b
+    if CellDB["appearance"]["powerColor"][1] == "Custom Color" then
+        Cell:Fire("UpdateAppearance", "color")
+    end
+end)
+powerColorPicker:SetPoint("LEFT", powerColorDropdown, "RIGHT", 5, 0)
+
 -- reset
-local resetBtn = Cell:CreateButton(appearanceTab, L["Reset"], "class-hover", {50, 17})
+local resetBtn = Cell:CreateButton(appearanceTab, L["Reset All"], "class-hover", {70, 17})
 resetBtn:SetPoint("RIGHT", -5, 0)
 resetBtn:SetPoint("TOP", unitButtonColorText, 0, 1)
 resetBtn:SetScript("OnClick", function()
-    CellDB["appearance"]["barColor"] = {"Class Color", {.125, .125, .125}}
+    CellDB["appearance"]["barColor"] = {"Class Color", {.2, .2, .2}}
     CellDB["appearance"]["bgColor"] = {"Class Color (dark)", {.667, 0, 0}}
     CellDB["appearance"]["nameColor"] = {"Custom Color", {1, 1, 1}}
+    CellDB["appearance"]["powerColor"] = {"Power Color", {.7, .7, .7}}
 
     barColorDropdown:SetSelected(L["Class Color"])
-    barColorPicker:SetColor({.125, .125, .125})
+    barColorPicker:SetColor({.2, .2, .2})
 
     bgColorDropdown:SetSelected(L["Class Color (dark)"])
     bgColorPicker:SetColor({.667, 0, 0})
 
     nameColorDropdown:SetSelected(L["Custom Color"])
     nameColorPicker:SetColor({1, 1, 1})
+
+    powerColorDropdown:SetSelected(L["Power Color"])
+    powerColorPicker:SetColor({.7, .7, .7})
 
     Cell:Fire("UpdateAppearance", "color")
 end)
@@ -325,6 +370,9 @@ local function ShowTab(tab)
 
         nameColorDropdown:SetSelected(L[CellDB["appearance"]["nameColor"][1]])
         nameColorPicker:SetColor(CellDB["appearance"]["nameColor"][2])
+
+        powerColorDropdown:SetSelected(L[CellDB["appearance"]["powerColor"][1]])
+        powerColorPicker:SetColor(CellDB["appearance"]["powerColor"][2])
     else
         appearanceTab:Hide()
     end
@@ -352,7 +400,7 @@ local function UpdateAppearance(which)
             end
             -- color
             if not which or which == "color" then
-                b.func.UpdateColor(b)
+                b.func.UpdateColor()
             end
         end)
     end

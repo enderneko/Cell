@@ -586,7 +586,15 @@ local function UnitButton_UpdatePowerType(self)
 		r, g, b = 0.5, 0.5, 0.5
 	else
 		r, g, b, self.state.powerType = F:GetPowerColor(unit)
+		if Cell.loaded then
+			if CellDB["appearance"]["powerColor"][1] == "Class Color" then
+				r, g, b = F:GetClassColor(self.state.class)
+			elseif CellDB["appearance"]["powerColor"][1] == "Custom Color" then
+				r, g, b = unpack(CellDB["appearance"]["powerColor"][2])
+			end
+		end
 	end
+
 	self.widget.powerBar:SetStatusBarColor(r, g, b)
 	self.widget.powerBarBackground:SetVertexColor(r * .2, g * .2, b * .2)
 end
@@ -1323,7 +1331,10 @@ function F:UnitButton_OnLoad(button)
 		incomingHeal:SetTexture(tex)
 	end
 
-	button.func.UpdateColor = UnitButton_UpdateColor
+	button.func.UpdateColor = function()
+		UnitButton_UpdateColor(button)
+		UnitButton_UpdatePowerType(button)
+	end
 
 	-- shield bar
 	local shieldBar = healthBar:CreateTexture(name.."ShieldBar", "ARTWORK", nil, -7)

@@ -146,6 +146,7 @@ function eventFrame:ADDON_LOADED(arg1)
                 ["barColor"] = {"Class Color", {.2, .2, .2}},
                 ["bgColor"] = {"Class Color (dark)", {.667, 0, 0}},
                 ["nameColor"] = {"Custom Color", {1, 1, 1}},
+                ["powerColor"] = {"Power Color", {.7, .7, .7}},
             }
         end
 
