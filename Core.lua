@@ -298,9 +298,9 @@ function eventFrame:ADDON_LOADED(arg1)
 
         -- apply ----------------------------------------------------------------------------------
         F:UpdateLayout()
-        Cell.version = GetAddOnMetadata(addonName, "version")
         
         -- revise ---------------------------------------------------------------------------------
+        Cell.version = GetAddOnMetadata(addonName, "version")
         Cell:Fire("Revise")
     end
 end
