@@ -2,9 +2,10 @@
 ..\FrameXML\UI.xsd">
 	<Script file="OptionsFrame.lua"/>
 	<Script file="General.lua"/>
+	<Script file="Appearance.lua"/>
+	<Script file="Layouts.lua"/>
 	<Script file="ClickCastings_DefaultSpells.lua"/>
 	<Script file="ClickCastings.lua"/>
-	<Script file="Layouts.lua"/>
 	<Script file="Indicators_DefaultSpells.lua"/>
 	<Script file="Indicators.lua"/>
 	<Script file="RaidDebuffs.lua"/>

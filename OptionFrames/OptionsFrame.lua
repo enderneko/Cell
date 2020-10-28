@@ -25,35 +25,41 @@ end
 -------------------------------------------------
 -- button group
 -------------------------------------------------
-local generalTab = Cell:CreateButton(optionsFrame, L["General"], "class-hover", {133, 20}, false, false, "CELL_FONT_WIDGET_TITLE", "CELL_FONT_WIDGET_TITLE_DISABLE")
+local generalBtn = Cell:CreateButton(optionsFrame, L["General"], "class-hover", {105, 20}, false, false, "CELL_FONT_WIDGET_TITLE", "CELL_FONT_WIDGET_TITLE_DISABLE")
+local appearanceBtn = Cell:CreateButton(optionsFrame, L["Appearance"], "class-hover", {105, 20}, false, false, "CELL_FONT_WIDGET_TITLE", "CELL_FONT_WIDGET_TITLE_DISABLE")
+local layoutsBtn = Cell:CreateButton(optionsFrame, L["Layouts"], "class-hover", {105, 20}, false, false, "CELL_FONT_WIDGET_TITLE", "CELL_FONT_WIDGET_TITLE_DISABLE")
 local clickCastingsBtn = Cell:CreateButton(optionsFrame, L["Click-Castings"], "class-hover", {133, 20}, false, false, "CELL_FONT_WIDGET_TITLE", "CELL_FONT_WIDGET_TITLE_DISABLE")
-local layoutsBtn = Cell:CreateButton(optionsFrame, L["Layouts"], "class-hover", {133, 20}, false, false, "CELL_FONT_WIDGET_TITLE", "CELL_FONT_WIDGET_TITLE_DISABLE")
 local indicatorsBtn = Cell:CreateButton(optionsFrame, L["Indicators"], "class-hover", {133, 20}, false, false, "CELL_FONT_WIDGET_TITLE", "CELL_FONT_WIDGET_TITLE_DISABLE")
 local debuffsBtn = Cell:CreateButton(optionsFrame, L["Raid Debuffs"], "class-hover", {133, 20}, false, false, "CELL_FONT_WIDGET_TITLE", "CELL_FONT_WIDGET_TITLE_DISABLE")
-local aboutBtn = Cell:CreateButton(optionsFrame, L["About"], "class-hover", {114, 20}, false, false, "CELL_FONT_WIDGET_TITLE", "CELL_FONT_WIDGET_TITLE_DISABLE")
+local aboutBtn = Cell:CreateButton(optionsFrame, L["About"], "class-hover", {66, 20}, false, false, "CELL_FONT_WIDGET_TITLE", "CELL_FONT_WIDGET_TITLE_DISABLE")
 local closeBtn = Cell:CreateButton(optionsFrame, L["×"], "red", {20, 20}, false, false, "CELL_FONT_SPECIAL", "CELL_FONT_SPECIAL")
 closeBtn:SetScript("OnClick", function()
     optionsFrame:Hide()
 end)
 
-layoutsBtn:SetPoint("BOTTOMLEFT", optionsFrame, "TOPLEFT", 0, -1)
-indicatorsBtn:SetPoint("LEFT", layoutsBtn, "RIGHT", -1, 0)
+-- line 1
+clickCastingsBtn:SetPoint("BOTTOMLEFT", optionsFrame, "TOPLEFT", 0, -1)
+indicatorsBtn:SetPoint("LEFT", clickCastingsBtn, "RIGHT", -1, 0)
 debuffsBtn:SetPoint("LEFT", indicatorsBtn, "RIGHT", -1, 0)
-generalTab:SetPoint("BOTTOMLEFT", layoutsBtn, "TOPLEFT", 0, -1)
-clickCastingsBtn:SetPoint("LEFT", generalTab, "RIGHT", -1, 0)
-aboutBtn:SetPoint("LEFT", clickCastingsBtn, "RIGHT", -1, 0)
+-- line 2
+generalBtn:SetPoint("BOTTOMLEFT", clickCastingsBtn, "TOPLEFT", 0, -1)
+appearanceBtn:SetPoint("LEFT", generalBtn, "RIGHT", -1, 0)
+layoutsBtn:SetPoint("LEFT", appearanceBtn, "RIGHT", -1, 0)
+aboutBtn:SetPoint("LEFT", layoutsBtn, "RIGHT", -1, 0)
 closeBtn:SetPoint("LEFT", aboutBtn, "RIGHT", -1, 0)
 
-RegisterDragForOptionsFrame(generalTab)
+RegisterDragForOptionsFrame(generalBtn)
+RegisterDragForOptionsFrame(appearanceBtn)
+RegisterDragForOptionsFrame(layoutsBtn)
 RegisterDragForOptionsFrame(clickCastingsBtn)
 RegisterDragForOptionsFrame(indicatorsBtn)
 RegisterDragForOptionsFrame(debuffsBtn)
-RegisterDragForOptionsFrame(layoutsBtn)
 RegisterDragForOptionsFrame(aboutBtn)
 
-generalTab.id = "general"
-clickCastingsBtn.id = "clickCastings"
+generalBtn.id = "general"
+appearanceBtn.id = "appearance"
 layoutsBtn.id = "layouts"
+clickCastingsBtn.id = "clickCastings"
 indicatorsBtn.id = "indicators"
 debuffsBtn.id = "debuffs"
 aboutBtn.id = "about"
@@ -66,7 +72,7 @@ local function ShowTab(tab)
     end
 end
 
-local buttonGroup = Cell:CreateButtonGroup({generalTab, clickCastingsBtn, layoutsBtn, indicatorsBtn, debuffsBtn, aboutBtn}, ShowTab)
+local buttonGroup = Cell:CreateButtonGroup({generalBtn, appearanceBtn, layoutsBtn, clickCastingsBtn, indicatorsBtn, debuffsBtn, aboutBtn}, ShowTab)
 
 -------------------------------------------------
 -- show & hide
@@ -83,7 +89,7 @@ function F:ShowOptionsFrame()
     end
 
     if not lastShownTab then
-        generalTab:Click()
+        generalBtn:Click()
     end
     
     LPP:PixelPerfectPoint(optionsFrame)
