@@ -487,6 +487,57 @@ function addon:CreateEditBox(parent, width, height, isTransparent, isMultiLine, 
 	return eb
 end
 
+function addon:CreateScrollEditBox(parent, onTextChanged)
+	local frame = CreateFrame("Frame", nil, parent)
+	addon:CreateScrollFrame(frame)
+	addon:StylizeFrame(frame.scrollFrame, {.15, .15, .15, .9})
+	
+	frame.eb = addon:CreateEditBox(frame.scrollFrame.content, 10, 20, true, true)
+	frame.eb:SetPoint("TOPLEFT")
+	frame.eb:SetPoint("RIGHT")
+	frame.eb:SetTextInsets(2, 2, 1, 1)
+	frame.eb:SetScript("OnEditFocusGained", nil)
+	frame.eb:SetScript("OnEditFocusLost", nil)
+
+	frame.eb:SetScript("OnEnterPressed", function(self) self:Insert("\n") end)
+
+	-- https://wow.gamepedia.com/UIHANDLER_OnCursorChanged
+	frame.eb:SetScript("OnCursorChanged", function(self, x, y, arg, lineHeight)
+		frame.scrollFrame:SetScrollStep(lineHeight)
+
+		local vs = frame.scrollFrame:GetVerticalScroll()
+		local h  = frame.scrollFrame:GetHeight()
+
+		local cursorHeight = lineHeight - y
+
+		if vs + y > 0 then -- cursor above current view
+			frame.scrollFrame:SetVerticalScroll(-y)
+		elseif cursorHeight > h + vs then
+			frame.scrollFrame:SetVerticalScroll(-y-h+lineHeight+arg)
+		end
+
+		if frame.scrollFrame:GetVerticalScroll() > frame.scrollFrame:GetVerticalScrollRange() then frame.scrollFrame:ScrollToBottom() end
+	end)
+
+	frame.eb:SetScript("OnTextChanged", function(self, userChanged)
+		frame.scrollFrame:SetContentHeight(self:GetHeight())
+		if userChanged and onTextChanged then
+			onTextChanged(self)
+		end
+	end)
+
+	frame.scrollFrame:SetScript("OnMouseDown", function()
+		frame.eb:SetFocus(true)
+	end)
+
+	function frame:SetText(text)
+		frame.scrollFrame:ResetScroll()
+		frame.eb:SetText(text)
+	end
+
+	return frame
+end
+
 -----------------------------------------
 -- slider 2020-08-25 02:49:16
 -----------------------------------------
