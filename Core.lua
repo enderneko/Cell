@@ -122,6 +122,7 @@ function eventFrame:ADDON_LOADED(arg1)
         -- general --------------------------------------------------------------------------------
         if type(CellDB["hideBlizzard"]) ~= "boolean" then CellDB["hideBlizzard"] = true end
         if type(CellDB["disableTooltips"]) ~= "boolean" then CellDB["disableTooltips"] = false end
+        if type(CellDB["showSolo"]) ~= "boolean" then CellDB["showSolo"] = true end
         if type(CellDB["raidTools"]) ~= "table" then
             CellDB["raidTools"] = {
                 ["showRaidSetup"] = true,
@@ -410,6 +411,9 @@ function eventFrame:PLAYER_LOGIN()
     Cell.vars.playerGUID = UnitGUID("player")
     -- update spec vars
     Cell.vars.playerSpecID, Cell.vars.playerSpecName, _, Cell.vars.playerSpecIcon = GetSpecializationInfo(prevSpec)
+    -- update visibility
+    Cell:Fire("UpdateVisibility")
+    -- update click-castings
     Cell:Fire("UpdateClickCastings")
     -- update indicators
     Cell:Fire("UpdateIndicators")
@@ -448,7 +452,10 @@ end)
 SLASH_CELL1 = "/cell"
 function SlashCmdList.CELL(msg, editbox)
     local command, rest = msg:match("^(%S*)%s*(.-)$")
-    if command == "resetposition" then
+    if command == "options" then
+        F:ShowOptionsFrame()
+
+    elseif command == "resetposition" then
         Cell.frames.anchorFrame:ClearAllPoints()
         Cell.frames.anchorFrame:SetPoint("TOPLEFT", UIParent, "CENTER")
         Cell.frames.raidButtonsFrame:ClearAllPoints()
@@ -469,6 +476,7 @@ function SlashCmdList.CELL(msg, editbox)
 
     else
         F:Print(L["Available slash commands"]..":\n"..
+            "|cFFFFB5C5/cell options|r: "..L["show Cell options frame"]..".\n"..
             "|cFFFFB5C5/cell resetposition|r: "..L["reset Cell position"]..".\n"..
             "|cFFFFB5C5/cell resetall|r: "..L["reset all Cell options and reload UI"].."."
         )

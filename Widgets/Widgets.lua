@@ -398,7 +398,7 @@ function addon:CreateCheckButton(parent, label, onClick, ...)
 		checkedTexture:SetColorTexture(.4, .4, .4)
 	end)
 	
-	SetTooltip(cb, "ANCHOR_TOPLEFT", 0, 1, ...)
+	SetTooltip(cb, "ANCHOR_TOPLEFT", 0, 2, ...)
 
 	return cb
 end

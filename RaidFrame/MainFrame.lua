@@ -90,8 +90,42 @@ local function MainFrame_GroupTypeChanged(groupType)
         raidSetupFrame:Hide()
         raid:Hide()
     end
+
+    if groupType == "solo" then
+        if CellDB["showSolo"] then
+            options:Show()
+        else
+            options:Hide()
+        end
+    else
+        options:Show()
+    end
 end
 Cell:RegisterCallback("GroupTypeChanged", "MainFrame_GroupTypeChanged", MainFrame_GroupTypeChanged)
+
+local function MainFrame_UpdateVisibility()
+    if Cell.vars.groupType == "solo" then
+        if CellDB["showSolo"] then
+            options:Show()
+        else
+            options:Hide()
+        end
+    end
+end
+Cell:RegisterCallback("UpdateVisibility", "MainFrame_UpdateVisibility", MainFrame_UpdateVisibility)
+
+-------------------------------------------------
+-- event
+-------------------------------------------------
+cellMainFrame:RegisterEvent("PET_BATTLE_OPENING_START")
+cellMainFrame:RegisterEvent("PET_BATTLE_OVER")
+cellMainFrame:SetScript("OnEvent", function(self, event, ...)
+    if event == "PET_BATTLE_OPENING_START" then
+        cellMainFrame:Hide()
+    elseif event == "PET_BATTLE_OVER" then
+        cellMainFrame:Show()
+    end
+end)
 
 -------------------------------------------------
 -- load & update

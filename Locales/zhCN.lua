@@ -16,7 +16,6 @@ L["reset all Cell options and reload UI"] = "重置所有Cell设置并重载界�
 -- buttons
 -------------------------------------------------
 L["Options"] = "选项"
-L["Tools"] = "工具"
 L["Raid"] = "团队"
 
 -------------------------------------------------
@@ -24,8 +23,8 @@ L["Raid"] = "团队"
 -------------------------------------------------
 L["Pull Timer"] = "开怪倒数"
 L["You don't have permission to do this"] = "你没有权限这样做"
-L["Raid Sort"] = "团队排序"
-L["Raid Roster"] = "团队名单"
+-- L["Raid Sort"] = "团队排序"
+-- L["Raid Roster"] = "团队名单"
 
 -------------------------------------------------
 -- status text
@@ -56,6 +55,10 @@ L["Hide Blizzard Frames"] = "隐藏暴雪框体"
 L["Require reload of the UI"] = "需要重载界面"
 L["Tooltips"] = "鼠标提示"
 L["Disable tooltips"] = "禁用鼠标提示"
+L["Visibility"] = "可见性"
+L["Show Solo"] = "单人时显示"
+L["Show while not in a group"] = "当不在队伍时显示"
+L["To open options frame, use /cell options"] = "用 /cell options 来打开选项窗口"
 L["Raid Tools"] = "团队工具"
 L["Only In Group"] = "仅在队伍中"
 L["Show Raid Setup"] = "显示团队构成"

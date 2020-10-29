@@ -31,10 +31,22 @@ end)
 disableTooltipsCB:SetPoint("TOPLEFT", tooltipsText, "BOTTOMLEFT", 5, -15)
 
 -------------------------------------------------
+-- visibility
+-------------------------------------------------
+local visibilityText = Cell:CreateSeparator(L["Visibility"], generalTab, 188)
+visibilityText:SetPoint("TOPLEFT", 5, -100)
+
+local visibilityCB = Cell:CreateCheckButton(generalTab, L["Show Solo"], function(checked, self)
+    CellDB["showSolo"] = checked
+    Cell:Fire("UpdateVisibility")
+end, L["Show Solo"], L["Show while not in a group"], L["To open options frame, use /cell options"])
+visibilityCB:SetPoint("TOPLEFT", visibilityText, "BOTTOMLEFT", 5, -15)
+
+-------------------------------------------------
 -- raid tools
 -------------------------------------------------
 local toolsText = Cell:CreateSeparator(L["Raid Tools"].." |cFF777777"..L["Only In Group"], generalTab, 387)
-toolsText:SetPoint("TOPLEFT", 5, -100)
+toolsText:SetPoint("TOPLEFT", 5, -195)
 
 local unlockBtn = Cell:CreateButton(generalTab, L["Unlock"], "class-hover", {50, 17})
 unlockBtn:SetPoint("RIGHT", -5, 0)
@@ -222,6 +234,7 @@ local function ShowTab(tab)
         -- load data
         hideBlizzardCB:SetChecked(CellDB["hideBlizzard"])
         disableTooltipsCB:SetChecked(CellDB["disableTooltips"])
+        visibilityCB:SetChecked(CellDB["showSolo"])
 
         -- raid tools
         setupCB:SetChecked(CellDB["raidTools"]["showRaidSetup"])

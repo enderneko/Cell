@@ -4,7 +4,7 @@ local F = Cell.funcs
 local soloFrame = CreateFrame("Frame", "CellSoloFrame", Cell.frames.mainFrame, "SecureFrameTemplate")
 Cell.frames.soloFrame = soloFrame
 soloFrame:SetAllPoints(Cell.frames.mainFrame)
-RegisterAttributeDriver(soloFrame, "state-visibility", "[group] hide; show")
+-- RegisterAttributeDriver(soloFrame, "state-visibility", "[group] hide; show")
 
 local playerButton = CreateFrame("Button", soloFrame:GetName().."Player", soloFrame, "CellUnitButtonTemplate")
 playerButton:SetAttribute("unit", "player")
@@ -42,3 +42,12 @@ local function SoloFrame_UpdateLayout(layout, which)
     end
 end
 Cell:RegisterCallback("UpdateLayout", "SoloFrame_UpdateLayout", SoloFrame_UpdateLayout)
+
+local function SoloFrame_UpdateVisibility()
+    if CellDB["showSolo"] then
+        RegisterAttributeDriver(soloFrame, "state-visibility", "[group] hide; show")
+    else
+        RegisterAttributeDriver(soloFrame, "state-visibility", "hide")
+    end
+end
+Cell:RegisterCallback("UpdateVisibility", "SoloFrame_UpdateVisibility", SoloFrame_UpdateVisibility)
