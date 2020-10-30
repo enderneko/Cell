@@ -2206,7 +2206,7 @@ local function CreateSetting_Font(parent)
 		widget.outlineText:SetText(L["Font Outline"])
 		widget.outlineText:SetPoint("BOTTOMLEFT", widget.outline, "TOPLEFT", 0, 1)
 
-		widget.fontSize = addon:CreateSlider(L["Font Size"], widget, 7, 17, 100, 1)
+		widget.fontSize = addon:CreateSlider(L["Font Size"], widget, 7, 27, 100, 1)
 		widget.fontSize:SetPoint("TOPLEFT", widget.font, "BOTTOMLEFT", 0, -25)
 		widget.fontSize.afterValueChangedFn = function(value)
 			widget.func({widget.font:GetSelected(), value, widget.outline:GetSelected(), widget.xOffset:GetValue()})

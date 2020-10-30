@@ -154,16 +154,17 @@ local function InitIndicator(indicatorName)
             end)
         end
     elseif string.find(indicatorName, "indicator") then
+        indicator.preview = CreateFrame("Frame", nil, indicator)
         indicator:SetScript("OnShow", function()
             indicator:SetCooldown(GetTime(), 7, nil, 134400, 0)
-            indicator.cooldown.value = 0
-            indicator.cooldown:SetScript("OnUpdate", function(self, elapsed)
-                if self.value >= 7 then
-                    self.value = 0
+            indicator.preview.elapsedTime = 0
+            indicator.preview:HookScript("OnUpdate", function(self, elapsed)
+                if self.elapsedTime >= 7 then
+                    self.elapsedTime = 0
+                    indicator:SetCooldown(GetTime(), 7, nil, 134400, 0)
                 else
-                    self.value = self.value + elapsed
+                    self.elapsedTime = self.elapsedTime + elapsed
                 end
-                self:SetValue(self.value)
             end)
         end)
     end
@@ -253,7 +254,9 @@ local function UpdateIndicators(indicatorName, setting, value)
             indicator:ClearAllPoints()
             indicator:SetPoint(value["position"][1], previewButton, value["position"][2], value["position"][3], value["position"][4])
             -- update size
-            indicator:SetSize(unpack(value["size"]))
+            if value["size"] then
+                indicator:SetSize(unpack(value["size"]))
+            end
             -- update font
             if value["font"] then
                 indicator:SetFont(unpack(value["font"]))
@@ -364,6 +367,17 @@ createBtn:SetScript("OnClick", function()
                 ["auraType"] = indicatorAuraType,
                 ["auras"] = {},
             })
+        elseif indicatorType == "text" then
+            tinsert(currentLayoutTable["indicators"], {
+                ["name"] = name,
+                ["indicatorName"] = indicatorName,
+                ["type"] = indicatorType,
+                ["enabled"] = true,
+                ["position"] = {"TOPRIGHT", "TOPRIGHT", 0, 3},
+                ["font"] = {"Cell ".._G.DEFAULT, 12, "Outline", 1},
+                ["auraType"] = indicatorAuraType,
+                ["auras"] = {},
+            })
         end
         if indicatorAuraType == "buff" then
             currentLayoutTable["indicators"][last+1]["castByMe"] = true
@@ -376,7 +390,7 @@ createBtn:SetScript("OnClick", function()
     popup:SetPoint("TOPLEFT", 100, -100)
     popup.dropdown1:SetItems(typeItems)
     popup.dropdown1:SetSelectedItem(1)
-    popup.dropdown1:SetEnabled(false)
+    -- popup.dropdown1:SetEnabled(false)
     popup.dropdown2:SetItems(auraTypeItems)
     popup.dropdown2:SetSelectedItem(1)
 end)
@@ -423,7 +437,7 @@ local indicatorSettings = {
     ["defensiveCooldowns"] = {"enabled", "position", "size", "num"},
     ["tankActiveMitigation"] = {"enabled", "position", "size"},
     ["dispels"] = {"enabled", "position", "size-square", "checkbutton"},
-    ["debuffs"] = {"enabled", "position", "size-square", "num", "font", "blacklist"},
+    ["debuffs"] = {"enabled", "blacklist", "position", "size-square", "num", "font"},
     ["centralDebuff"] = {"enabled", "position", "size-square", "font"},
 }
 
@@ -439,8 +453,12 @@ local function ShowIndicatorSettings(id)
     local settingsTable
     if indicatorType == "built-in" then
         settingsTable = indicatorSettings[indicatorName]
-    elseif indicatorType == "icon" then
-        settingsTable = {"enabled", "position", "size-square", "font", "auras"}
+    else
+        if indicatorType == "icon" then
+            settingsTable = {"enabled", "position", "size-square", "font", "auras"}
+        elseif indicatorType == "text" then
+            settingsTable = {"enabled", "position", "font", "auras"}
+        end
         if currentLayoutTable["indicators"][id]["auraType"] == "buff" then
             tinsert(settingsTable, #settingsTable, "checkbutton") -- castByMe
         end 

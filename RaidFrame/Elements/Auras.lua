@@ -286,6 +286,59 @@ local function CreateAura_BarIcon(name, parent)
     return frame
 end
 
+local function CreateAura_Text(name, parent)
+    local frame = CreateFrame("Frame", name, parent)
+    frame:Hide()
+    frame:SetSize(11, 11)
+
+    local text = frame:CreateFontString(nil, "OVERLAY", "CELL_FONT_STATUS")
+    frame.text = text
+    -- stack:SetJustifyH("RIGHT")
+    text:SetPoint("CENTER", 1, 0)
+
+    function frame:SetFont(font, size, flags, horizontalOffset)
+        if not string.find(font, ".ttf") then font = F:GetFont(font) end
+
+        if flags == "Shadow" then
+            frame.text:SetFont(font, size)
+            frame.text:SetShadowOffset(1, -1)
+            frame.text:SetShadowColor(0, 0, 0, 1)
+        else
+            if flags == "Outline" then
+                flags = "OUTLINE"
+            else
+                flags = "OUTLINE, MONOCHROME"
+            end
+            frame.text:SetFont(font, size, flags)
+            frame.text:SetShadowOffset(0, 0)
+            frame.text:SetShadowColor(0, 0, 0, 0)
+        end
+        frame.text:ClearAllPoints()
+        frame.text:SetPoint("CENTER", horizontalOffset, 0)
+        frame:SetSize(size+5, size+5)
+    end
+
+    function frame:SetCooldown(start, duration, debuffType, texture, count)
+        count = (count == 0 or count == 1) and "" or (" "..count)
+        if duration == 0 then
+            text:SetText("∞ "..count)
+        else
+            frame:SetScript("OnUpdate", function()
+                local remain = duration-(GetTime()-start)
+                if remain > 60 then
+                    text:SetText(math.ceil(remain/60).."m"..count)
+                else
+                    text:SetText(string.format("%d", remain)..count)
+                end
+            end)
+        end
+
+        frame:Show()
+    end
+
+    return frame
+end
+
 -------------------------------------------------
 -- CreateAoEHealing -- not support for npc
 -------------------------------------------------
@@ -599,6 +652,8 @@ function F:CreateIndicator(parent, indicatorTable)
     local indicatorName, indicator = indicatorTable["indicatorName"]
     if indicatorTable["type"] == "icon" then
         indicator = CreateAura_BarIcon(indicatorName, parent.widget.overlayFrame)
+    elseif indicatorTable["type"] == "text" then
+        indicator = CreateAura_Text(indicatorName, parent.widget.overlayFrame)
     end
     parent.indicators[indicatorName] = indicator
     
