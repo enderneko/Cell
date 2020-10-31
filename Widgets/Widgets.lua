@@ -487,6 +487,7 @@ function addon:CreateEditBox(parent, width, height, isTransparent, isMultiLine, 
 	return eb
 end
 
+-- TODO: use this function
 function addon:CreateScrollEditBox(parent, onTextChanged)
 	local frame = CreateFrame("Frame", nil, parent)
 	addon:CreateScrollFrame(frame)
@@ -2304,6 +2305,40 @@ local function CreateSetting_Color(parent)
 	return widget
 end
 
+local function CreateSetting_Colors(parent)
+	local widget
+
+	if not settingWidgets["colors"] then
+		widget = addon:CreateFrame("CellIndicatorSettings_Colors", parent, 240, 30)
+		settingWidgets["colors"] = widget
+
+		local normalColor = addon:CreateColorPicker(widget, L["Normal"], true, function(r, g, b, a)
+		
+		end)
+		local percentColor = addon:CreateColorPicker(widget, L["Remaining Time <= "], true, function(r, g, b, a)
+		
+		end)
+		local secColor = addon:CreateColorPicker(widget, L["Remaining Time <= "], true, function(r, g, b, a)
+		
+		end)
+
+		-- associate db
+		function widget:SetFunc(func)
+
+		end
+
+		-- show db value
+		function widget:SetDBValue(colorsTable)
+			
+		end
+	else
+		widget = settingWidgets["colors"]
+	end
+
+	widget:Show()
+	return widget
+end
+
 local function CreateSetting_CheckButton(parent)
 	local widget
 
@@ -2450,6 +2485,8 @@ function addon:CreateIndicatorSettings(parent, settingsTable)
 			tinsert(widgetsTable, CreateSetting_Font(parent))
 		elseif setting == "color" then
 			tinsert(widgetsTable, CreateSetting_Color(parent))
+		elseif setting == "colors" then
+			tinsert(widgetsTable, CreateSetting_Colors(parent))
 		elseif setting == "checkbutton" then
 			tinsert(widgetsTable, CreateSetting_CheckButton(parent))
 		elseif setting == "auras" or setting == "blacklist" then

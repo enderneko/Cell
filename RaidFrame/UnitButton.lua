@@ -161,7 +161,9 @@ local function UpdateIndicators(indicatorName, setting, value)
 				indicator:ClearAllPoints()
 				indicator:SetPoint(value["position"][1], b, value["position"][2], value["position"][3], value["position"][4])
 				-- update size
-				indicator:SetSize(unpack(value["size"]))
+				if value["size"] then
+					indicator:SetSize(unpack(value["size"]))
+				end
 				-- update font
 				if value["font"] then
 					indicator:SetFont(unpack(value["font"]))

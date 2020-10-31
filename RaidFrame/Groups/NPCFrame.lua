@@ -19,12 +19,12 @@ for i = 1, 5 do
 	local button = CreateFrame("Button", npcFrame:GetName().."Button"..i, npcFrame, "CellUnitButtonTemplate")
 	tinsert(Cell.unitButtons.npc, button)
     
-	button:SetAttribute("unit", "boss"..i)
-    RegisterAttributeDriver(button, "state-visibility", "[@boss"..i..", help] show; hide")
+	-- button:SetAttribute("unit", "boss"..i)
+    -- RegisterAttributeDriver(button, "state-visibility", "[@boss"..i..", help] show; hide")
     
     -- for testing ------------------------------
-    -- button:SetAttribute("unit", "player")
-    -- RegisterUnitWatch(button)
+    button:SetAttribute("unit", "player")
+    RegisterUnitWatch(button)
     ---------------------------------------------
 
 	if i == 1 then

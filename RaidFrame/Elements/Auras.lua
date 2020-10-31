@@ -321,7 +321,8 @@ local function CreateAura_Text(name, parent)
     function frame:SetCooldown(start, duration, debuffType, texture, count)
         count = (count == 0 or count == 1) and "" or (" "..count)
         if duration == 0 then
-            text:SetText("∞ "..count)
+            text:SetText(count)
+            frame:SetScript("OnUpdate", nil)
         else
             frame:SetScript("OnUpdate", function()
                 local remain = duration-(GetTime()-start)

@@ -375,6 +375,7 @@ createBtn:SetScript("OnClick", function()
                 ["enabled"] = true,
                 ["position"] = {"TOPRIGHT", "TOPRIGHT", 0, 3},
                 ["font"] = {"Cell ".._G.DEFAULT, 12, "Outline", 1},
+                ["colors"] = {{0,1,0}, {percent,1,1,0}, {time,r,g,b}},
                 ["auraType"] = indicatorAuraType,
                 ["auras"] = {},
             })
@@ -455,9 +456,9 @@ local function ShowIndicatorSettings(id)
         settingsTable = indicatorSettings[indicatorName]
     else
         if indicatorType == "icon" then
-            settingsTable = {"enabled", "position", "size-square", "font", "auras"}
+            settingsTable = {"enabled", "auras", "position", "size-square", "font"}
         elseif indicatorType == "text" then
-            settingsTable = {"enabled", "position", "font", "auras"}
+            settingsTable = {"enabled", "auras", "position", "font", "colors"}
         end
         if currentLayoutTable["indicators"][id]["auraType"] == "buff" then
             tinsert(settingsTable, #settingsTable, "checkbutton") -- castByMe
@@ -547,7 +548,7 @@ LoadIndicatorList = function()
         if t["type"] == "built-in" then
             b = Cell:CreateButton(listFrame.scrollFrame.content, L[t["name"]], "transparent-class", {20, 20})
         else
-            b = Cell:CreateButton(listFrame.scrollFrame.content, t["name"].." |cff7b7b7b("..L[t["auraType"]]..")", "transparent-class", {20, 20})
+            b = Cell:CreateButton(listFrame.scrollFrame.content, t["name"].." |cffababab("..L[t["type"]]..")", "transparent-class", {20, 20})
         end
         tinsert(listButtons, b)
         b.id = i
