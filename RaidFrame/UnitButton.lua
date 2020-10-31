@@ -884,6 +884,7 @@ local function UnitButton_UpdateColor(self)
 	local unit = self.state.unit
 	if not unit then return end
 
+	self.state.class = select(2, UnitClass(unit)) --! update class or it may be nil
 	local nameText = self.widget.nameText
 
 	local barR, barG, barB
