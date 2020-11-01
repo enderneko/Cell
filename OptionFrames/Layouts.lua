@@ -348,6 +348,16 @@ local heightSlider = Cell:CreateSlider(L["Height"], layoutsTab, 20, 80, 100, 2, 
 end)
 heightSlider:SetPoint("TOP", widthSlider, "BOTTOM", 0, -40)
 
+-- power height
+local powerHeightSlider = Cell:CreateSlider(L["Power Height"], layoutsTab, 0, 10, 100, 1, function(value)
+    -- selectedLayoutTable["powerHeight"] = value
+    -- if selectedLayout == Cell.vars.currentLayout then
+    --     Cell:Fire("UpdateLayout", selectedLayout, "power")
+    -- end
+    -- UpdatePreviewButton("power")
+end)
+powerHeightSlider:SetPoint("TOP", heightSlider, "BOTTOM", 0, -40)
+
 -------------------------------------------------
 -- font size
 -------------------------------------------------

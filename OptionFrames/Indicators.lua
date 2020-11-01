@@ -461,7 +461,7 @@ local function ShowIndicatorSettings(id)
             settingsTable = {"enabled", "auras", "position", "font", "colors"}
         end
         if currentLayoutTable["indicators"][id]["auraType"] == "buff" then
-            tinsert(settingsTable, #settingsTable, "checkbutton") -- castByMe
+            tinsert(settingsTable, 3, "checkbutton") -- castByMe
         end 
     end
 
