@@ -504,6 +504,10 @@ function F:CreateTankActiveMitigation(parent)
     tex:SetPoint("TOPLEFT")
     tex:SetPoint("BOTTOMRIGHT", bar:GetStatusBarTexture(), "BOTTOMLEFT")
 
+    bar:SetScript("OnShow", function()
+        tex:SetColorTexture(F:GetClassColor(parent.state.class))
+    end)
+
     local elapsedTime = 0
     bar:SetScript("OnUpdate", function(self, elapsed)
         if elapsedTime >= 0.1 then
