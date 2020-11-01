@@ -19,12 +19,12 @@ for i = 1, 5 do
 	local button = CreateFrame("Button", npcFrame:GetName().."Button"..i, npcFrame, "CellUnitButtonTemplate")
 	tinsert(Cell.unitButtons.npc, button)
     
-	-- button:SetAttribute("unit", "boss"..i)
-    -- RegisterAttributeDriver(button, "state-visibility", "[@boss"..i..", help] show; hide")
+	button:SetAttribute("unit", "boss"..i)
+    RegisterAttributeDriver(button, "state-visibility", "[@boss"..i..", help] show; hide")
     
     -- for testing ------------------------------
-    button:SetAttribute("unit", "player")
-    RegisterUnitWatch(button)
+    -- button:SetAttribute("unit", "player")
+    -- RegisterUnitWatch(button)
     ---------------------------------------------
 
 	if i == 1 then
@@ -166,9 +166,25 @@ local function NPCFrame_UpdateLayout(layout, which)
 end
 Cell:RegisterCallback("UpdateLayout", "NPCFrame_UpdateLayout", NPCFrame_UpdateLayout)
 
-local function NPCFrame_UpdateVisibility()
-    local showSolo = CellDB["general"]["showSolo"] and "show" or "hide"
-    local showParty = CellDB["general"]["showParty"] and "show" or "hide"
-    RegisterAttributeDriver(npcFrame, "state-visibility", "[group:raid] show; [group:party] "..showParty.."; "..showSolo)
+local function NPCFrame_UpdateVisibility(which)
+    if not which or which == "solo" or which == "party" then
+        local showSolo = CellDB["general"]["showSolo"] and "show" or "hide"
+        local showParty = CellDB["general"]["showParty"] and "show" or "hide"
+        RegisterAttributeDriver(npcFrame, "state-visibility", "[group:raid] show; [group:party] "..showParty.."; "..showSolo)
+    end
+
+    if not which or which == "pets" then
+        if CellDB["general"]["showPets"] then
+            npcFrame:SetFrameRef("party", CellPartyFramePet)
+            anchors["party"] = CellPartyFramePet
+        else
+            npcFrame:SetFrameRef("party", CellPartyFramePlayer)
+            anchors["party"] = CellPartyFramePlayer
+        end
+        -- update now if current in a party
+        if Cell.vars.groupType == "party" then
+            NPCFrame_UpdateLayout(Cell.vars.currentLayout, "spacing")
+        end
+    end
 end
 Cell:RegisterCallback("UpdateVisibility", "NPCFrame_UpdateVisibility", NPCFrame_UpdateVisibility)

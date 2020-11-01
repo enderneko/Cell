@@ -38,20 +38,20 @@ visibilityText:SetPoint("TOPLEFT", 5, -100)
 
 local showSoloCB = Cell:CreateCheckButton(generalTab, L["Show Solo"], function(checked, self)
     CellDB["general"]["showSolo"] = checked
-    Cell:Fire("UpdateVisibility")
+    Cell:Fire("UpdateVisibility", "solo")
 end, L["Show Solo"], L["Show while not in a group"], L["To open options frame, use /cell options"])
 showSoloCB:SetPoint("TOPLEFT", visibilityText, "BOTTOMLEFT", 5, -15)
 
 local showPartyCB = Cell:CreateCheckButton(generalTab, L["Show Party"], function(checked, self)
     CellDB["general"]["showParty"] = checked
-    Cell:Fire("UpdateVisibility")
+    Cell:Fire("UpdateVisibility", "party")
 end, L["Show Party"], L["Show while in a party"], L["To open options frame, use /cell options"])
 showPartyCB:SetPoint("TOPLEFT", showSoloCB, "BOTTOMLEFT", 0, -7)
 
 local showPetsCB = Cell:CreateCheckButton(generalTab, L["Show Pets"], function(checked, self)
     CellDB["general"]["showPets"] = checked
-    Cell:Fire("UpdateVisibility")
-end, L["Show Pets"], L["Show pets while solo or in a party"], L["To open options frame, use /cell options"])
+    Cell:Fire("UpdateVisibility", "pets")
+end, L["Show Pets"], L["Show pets while solo or in a party"])
 showPetsCB:SetPoint("TOPLEFT", showPartyCB, "BOTTOMLEFT", 0, -7)
 
 -------------------------------------------------
