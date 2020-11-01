@@ -915,12 +915,12 @@ local function UnitButton_UpdateColor(self)
 				bgR, bgG, bgB = barR*.2, barG*.2, barB*.2
 			end
 		elseif UnitIsCharmed(unit) then
-			if Cell.loaded then
-				barR, barG, barB, bgR, bgG, bgB = GetColor(.5, 0, 1)
-			else
+			-- if Cell.loaded then
+			-- 	barR, barG, barB, bgR, bgG, bgB = GetColor(.5, 0, 1)
+			-- else
 				barR, barG, barB = .5, 0, 1
 				bgR, bgG, bgB = barR*.2, barG*.2, barB*.2
-			end
+			-- end
 			nameText:SetTextColor(F:GetClassColor(self.state.class))
 		else
 			if Cell.loaded then
