@@ -3,6 +3,9 @@ local L = Cell.L
 local F = Cell.funcs
 
 local function Revise()
+	local dbRevision = CellDB["revise"] and tonumber(string.match(CellDB["revise"], "%d+")) or 0
+	F:Debug("DBRevision:", dbRevision)
+
 	--[[
 	-- r4-alpha add "castByMe"
 	if not(CellDB["revise"]) or CellDB["revise"] < "r4-alpha" then
@@ -37,7 +40,7 @@ local function Revise()
 	]]
 
 	-- r13-release: fix all
-	if not(CellDB["revise"]) or CellDB["revise"] < "r13-release" then
+	if not(CellDB["revise"]) or dbRevision < 13 then
 		-- r8-beta: add "centralDebuff"
 		for _, layout in pairs(CellDB["layouts"]) do
 			if not layout["indicators"][8] or layout["indicators"][8]["indicatorName"] ~= "centralDebuff" then
@@ -74,6 +77,16 @@ local function Revise()
 		CellDB["scale"] = nil
 		CellDB["font"] = nil
 		CellDB["outline"] = nil
+	end
+
+	-- r14-release: CellDB["general"]
+	if not(CellDB["revise"]) or dbRevision < 14 then
+		if CellDB["hideBlizzard"] then CellDB["general"]["hideBlizzard"] = CellDB["hideBlizzard"] end
+		if CellDB["disableTooltips"] then CellDB["general"]["disableTooltips"] = CellDB["disableTooltips"] end
+		if CellDB["showSolo"] then CellDB["general"]["showSolo"] = CellDB["showSolo"] end
+		CellDB["hideBlizzard"] = nil
+		CellDB["disableTooltips"] = nil
+		CellDB["showSolo"] = nil
 	end
 
 	CellDB["revise"] = Cell.version
