@@ -92,12 +92,18 @@ local function MainFrame_GroupTypeChanged(groupType)
     end
 
     if groupType == "solo" then
-        if CellDB["showSolo"] then
+        if CellDB["general"]["showSolo"] then
             options:Show()
         else
             options:Hide()
         end
-    else
+    elseif groupType == "party" then
+        if CellDB["general"]["showParty"] then
+            options:Show()
+        else
+            options:Hide()
+        end
+    else -- raid
         options:Show()
     end
 end
@@ -105,7 +111,13 @@ Cell:RegisterCallback("GroupTypeChanged", "MainFrame_GroupTypeChanged", MainFram
 
 local function MainFrame_UpdateVisibility()
     if Cell.vars.groupType == "solo" then
-        if CellDB["showSolo"] then
+        if CellDB["general"]["showSolo"] then
+            options:Show()
+        else
+            options:Hide()
+        end
+    elseif Cell.vars.groupType == "party" then
+        if CellDB["general"]["showParty"] then
             options:Show()
         else
             options:Hide()

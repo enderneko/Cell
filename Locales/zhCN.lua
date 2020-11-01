@@ -207,7 +207,6 @@ L["icon"] = "图标"
 L["rectangle"] = "矩形"
 L["bar"] = "进度条"
 L["text"] = "文本"
-L["Global Debuff Filter"] = "全局减益过滤器"
 
 L["Enabled"] = "启用"
 L["Anchor Point"] = "锚点"

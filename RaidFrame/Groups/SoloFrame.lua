@@ -44,10 +44,11 @@ end
 Cell:RegisterCallback("UpdateLayout", "SoloFrame_UpdateLayout", SoloFrame_UpdateLayout)
 
 local function SoloFrame_UpdateVisibility()
-    if CellDB["showSolo"] then
+    if CellDB["general"]["showSolo"] then
         RegisterAttributeDriver(soloFrame, "state-visibility", "[group] hide; show")
     else
-        RegisterAttributeDriver(soloFrame, "state-visibility", "hide")
+        UnregisterAttributeDriver(soloFrame, "state-visibility")
+        soloFrame:Hide()
     end
 end
 Cell:RegisterCallback("UpdateVisibility", "SoloFrame_UpdateVisibility", SoloFrame_UpdateVisibility)

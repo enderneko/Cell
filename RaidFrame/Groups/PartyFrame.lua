@@ -4,7 +4,7 @@ local F = Cell.funcs
 local partyFrame = CreateFrame("Frame", "CellPartyFrame", Cell.frames.mainFrame, "SecureFrameTemplate")
 Cell.frames.partyFrame = partyFrame
 partyFrame:SetAllPoints(Cell.frames.mainFrame)
-RegisterAttributeDriver(partyFrame, "state-visibility", "[group:raid] hide; [group:party] show; hide")
+-- RegisterAttributeDriver(partyFrame, "state-visibility", "[group:raid] hide; [group:party] show; hide")
 
 local playerButtonUnits, petButtonUnits = {}, {}
 for i = 0, 4 do
@@ -82,3 +82,13 @@ local function PartyFrame_UpdateLayout(layout, which)
     end
 end
 Cell:RegisterCallback("UpdateLayout", "PartyFrame_UpdateLayout", PartyFrame_UpdateLayout)
+
+local function PartyFrame_UpdateVisibility()
+    if CellDB["general"]["showParty"] then
+        RegisterAttributeDriver(partyFrame, "state-visibility", "[group:raid] hide; [group:party] show; hide")
+    else
+        UnregisterAttributeDriver(partyFrame, "state-visibility")
+        partyFrame:Hide()
+    end
+end
+Cell:RegisterCallback("UpdateVisibility", "PartyFrame_UpdateVisibility", PartyFrame_UpdateVisibility)

@@ -165,3 +165,10 @@ local function NPCFrame_UpdateLayout(layout, which)
     end
 end
 Cell:RegisterCallback("UpdateLayout", "NPCFrame_UpdateLayout", NPCFrame_UpdateLayout)
+
+local function NPCFrame_UpdateVisibility()
+    local showSolo = CellDB["general"]["showSolo"] and "show" or "hide"
+    local showParty = CellDB["general"]["showParty"] and "show" or "hide"
+    RegisterAttributeDriver(npcFrame, "state-visibility", "[group:raid] show; [group:party] "..showParty.."; "..showSolo)
+end
+Cell:RegisterCallback("UpdateVisibility", "NPCFrame_UpdateVisibility", NPCFrame_UpdateVisibility)
