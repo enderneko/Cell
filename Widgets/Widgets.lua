@@ -683,13 +683,13 @@ function addon:CreateSwitch(parent, leftText, leftValue, rightText, rightValue, 
 	ag:SetScript("OnFinished", function()
 		switch.isPlaying = false
 		if switch.selected == "LEFT" then
-			switch:SetSelected("RIGHT")
+			switch:SetSelected("RIGHT", true)
 		elseif switch.selected == "RIGHT" then
-			switch:SetSelected("LEFT")
+			switch:SetSelected("LEFT", true)
 		end
 	end)
 	
-	function switch:SetSelected(value)
+	function switch:SetSelected(value, runFunc)
 		if value == leftValue or value == "LEFT" then
 			switch.selected = "LEFT"
 			switch.selectedValue = leftValue
@@ -703,7 +703,7 @@ function addon:CreateSwitch(parent, leftText, leftValue, rightText, rightValue, 
 			t1:SetOffset(-highlight:GetWidth(), 0)
 		end
 
-		if func then func(switch.selectedValue) end
+		if func and runFunc then func(switch.selectedValue) end
 	end
 
 	switch:SetScript("OnMouseDown", function()

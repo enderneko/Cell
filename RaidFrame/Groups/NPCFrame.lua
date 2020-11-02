@@ -109,10 +109,15 @@ local function NPCFrame_UpdateLayout(layout, which)
 	if layout ~= Cell.vars.currentLayout then return end
 	layout = Cell.vars.currentLayoutTable
 
-    if not which or which == "size" then
+    if not which or which == "size" or which == "power" then
         npcFrame:SetSize(unpack(layout["size"]))
         for _, b in pairs(Cell.unitButtons.npc) do
-            b:SetSize(unpack(layout["size"]))
+            if not which or which == "size" then
+                b:SetSize(unpack(layout["size"]))
+            end
+            if not which or which == "power" then
+                b.func.SetPowerHeight(layout["powerHeight"])
+            end
         end
     end
 

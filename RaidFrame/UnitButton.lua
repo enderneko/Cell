@@ -989,9 +989,17 @@ local function UnitButton_RegisterEvents(self)
 	self:RegisterEvent("UNIT_HEALTH")
 	self:RegisterEvent("UNIT_MAXHEALTH")
 	
-	self:RegisterEvent("UNIT_POWER_FREQUENT")
-	self:RegisterEvent("UNIT_MAXPOWER")
-	self:RegisterEvent("UNIT_DISPLAYPOWER")
+	if Cell.loaded then
+		if Cell.vars.currentLayoutTable["powerHeight"] ~= 0 then
+			self:RegisterEvent("UNIT_POWER_FREQUENT")
+			self:RegisterEvent("UNIT_MAXPOWER")
+			self:RegisterEvent("UNIT_DISPLAYPOWER")
+		end
+	else
+		self:RegisterEvent("UNIT_POWER_FREQUENT")
+		self:RegisterEvent("UNIT_MAXPOWER")
+		self:RegisterEvent("UNIT_DISPLAYPOWER")
+	end
 	
 	self:RegisterEvent("UNIT_AURA")
 	
@@ -1316,6 +1324,31 @@ function F:UnitButton_OnLoad(button)
 	button.widget.powerBarBackground = powerBarBackground
 	powerBarBackground:SetAllPoints(powerBar)
 	powerBarBackground:SetTexture(Cell.vars.texture)
+
+	button.func.SetPowerHeight = function(height)
+		healthBar:ClearAllPoints()
+		healthBar:SetPoint("TOPLEFT", 1, -1)
+		healthBar:SetPoint("BOTTOMRIGHT", -1, height==0 and 1 or height+2)
+		if height == 0 then
+			powerBar:Hide()
+			powerBarBackground:Hide()
+			button:UnregisterEvent("UNIT_POWER_FREQUENT")
+			button:UnregisterEvent("UNIT_MAXPOWER")
+			button:UnregisterEvent("UNIT_DISPLAYPOWER")
+		else
+			powerBar:Show()
+			powerBarBackground:Show()
+			if button:IsShown() and not button:IsEventRegistered("UNIT_DISPLAYPOWER") then
+				button:RegisterEvent("UNIT_POWER_FREQUENT")
+				button:RegisterEvent("UNIT_MAXPOWER")
+				button:RegisterEvent("UNIT_DISPLAYPOWER")
+				-- update now
+				UnitButton_UpdatePowerMax(button)
+				UnitButton_UpdatePower(button)
+				UnitButton_UpdatePowerType(button)
+			end
+		end
+	end
 	
 	-- incoming heal
 	local incomingHeal = healthBar:CreateTexture(name.."IncomingHealBar", "ARTWORK", nil, -6)

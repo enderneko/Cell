@@ -128,17 +128,25 @@ local function RaidFrame_UpdateLayout(layout, which)
     local width, height = unpack(layout["size"])
 
     for i, header in ipairs(groupHeaders) do
-        if not which or which == "size" then
+        if not which or which == "size" or which == "power" then
             for j, b in ipairs({header:GetChildren()}) do
-                b:SetWidth(width)
-                b:SetHeight(height)
-                b:ClearAllPoints()
+                if not which or which == "size" then
+                    b:SetWidth(width)
+                    b:SetHeight(height)
+                    b:ClearAllPoints()
+                end
+                if not which or which == "power" then
+                    b.func.SetPowerHeight(layout["powerHeight"])
+                end
             end
-            --! important new button size depend on buttonWidth & buttonHeight
-            header:SetAttribute("buttonWidth", width)
-            header:SetAttribute("buttonHeight", height)
 
-            npcFrameAnchor:SetSize(width, height)
+            if not which or which == "size" then
+                --! important new button size depend on buttonWidth & buttonHeight
+                header:SetAttribute("buttonWidth", width)
+                header:SetAttribute("buttonHeight", height)
+
+                npcFrameAnchor:SetSize(width, height)
+            end
         end
 
         if not which or which == "spacing" then

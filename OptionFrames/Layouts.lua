@@ -69,6 +69,10 @@ local function UpdatePreviewButton(which, value)
         previewButton:SetSize(unpack(selectedLayoutTable["size"]))
     end
 
+    if not which or which == "power" then
+        previewButton.func.SetPowerHeight(selectedLayoutTable["powerHeight"])
+    end
+
     local flags
     if CellDB["appearance"]["outline"] == "Outline" then
         flags = "OUTLINE"
@@ -350,11 +354,11 @@ heightSlider:SetPoint("TOP", widthSlider, "BOTTOM", 0, -40)
 
 -- power height
 local powerHeightSlider = Cell:CreateSlider(L["Power Height"], layoutsTab, 0, 10, 100, 1, function(value)
-    -- selectedLayoutTable["powerHeight"] = value
-    -- if selectedLayout == Cell.vars.currentLayout then
-    --     Cell:Fire("UpdateLayout", selectedLayout, "power")
-    -- end
-    -- UpdatePreviewButton("power")
+    selectedLayoutTable["powerHeight"] = value
+    if selectedLayout == Cell.vars.currentLayout then
+        Cell:Fire("UpdateLayout", selectedLayout, "power")
+    end
+    UpdatePreviewButton("power")
 end)
 powerHeightSlider:SetPoint("TOP", heightSlider, "BOTTOM", 0, -40)
 
@@ -476,6 +480,7 @@ LoadLayoutDB = function(layout)
 
     widthSlider:SetValue(selectedLayoutTable["size"][1])
     heightSlider:SetValue(selectedLayoutTable["size"][2])
+    powerHeightSlider:SetValue(selectedLayoutTable["powerHeight"])
 
     nameFontSlider:SetValue(selectedLayoutTable["font"]["name"])
     statusFontSlider:SetValue(selectedLayoutTable["font"]["status"])

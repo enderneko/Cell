@@ -46,6 +46,10 @@ local function PartyFrame_UpdateLayout(layout, which)
 			buttons[playerUnit]:SetSize(unpack(layout["size"]))
 		end
 
+		if not which or which == "power" then
+			buttons[playerUnit].func.SetPowerHeight(layout["powerHeight"])
+		end
+
 		if not which or which == "spacing" then
 			if i > 1 then
 				buttons[playerUnit]:ClearAllPoints()
@@ -65,6 +69,10 @@ local function PartyFrame_UpdateLayout(layout, which)
 	for i, petUnit in pairs(petButtonUnits) do
 		if not which or which == "size" then
 			buttons[petUnit]:SetSize(unpack(layout["size"]))
+		end
+
+		if not which or which == "power" then
+			buttons[petUnit].func.SetPowerHeight(layout["powerHeight"])
 		end
 
 		if not which or which == "spacing" then

@@ -26,6 +26,12 @@ local function SoloFrame_UpdateLayout(layout, which)
         playerButton:SetSize(width, height)
         petButton:SetSize(width, height)
     end
+    
+    if not which or which == "power" then
+        playerButton.func.SetPowerHeight(layout["powerHeight"])
+        petButton.func.SetPowerHeight(layout["powerHeight"])
+    end
+
 
     if not which or which == "spacing" then
         petButton:ClearAllPoints()

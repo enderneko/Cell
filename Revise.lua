@@ -88,6 +88,16 @@ local function Revise()
 		CellDB["disableTooltips"] = nil
 		CellDB["showSolo"] = nil
 	end
+	
+	-- r15-release
+	if not(CellDB["revise"]) or dbRevision < 15 then
+		-- add powerHeight
+		for _, layout in pairs(CellDB["layouts"]) do
+			if type(layout["powerHeight"]) ~= "number" then
+				layout["powerHeight"] = 2
+			end
+		end
+	end
 
 	CellDB["revise"] = Cell.version
 end

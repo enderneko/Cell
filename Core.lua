@@ -316,14 +316,14 @@ function eventFrame:ADDON_LOADED(arg1)
         --         },
         --     }
         -- }
-
-        -- apply ----------------------------------------------------------------------------------
-        F:UpdateLayout()
         
         -- revise ---------------------------------------------------------------------------------
         Cell.loaded = true
         Cell.version = GetAddOnMetadata(addonName, "version")
         Cell:Fire("Revise")
+
+        -- apply ----------------------------------------------------------------------------------
+        -- F:UpdateLayout()
     end
 end
 
@@ -417,6 +417,9 @@ end
 
 local prevSpec
 function eventFrame:PLAYER_LOGIN()
+    --! init Cell.vars.currentLayout and Cell.vars.currentLayoutTable 
+    F:UpdateLayout()
+
     if not prevSpec then prevSpec = GetSpecialization() end
     Cell.vars.playerGUID = UnitGUID("player")
     -- update spec vars
