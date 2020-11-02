@@ -274,7 +274,7 @@ function eventFrame:ADDON_LOADED(arg1)
                         --     ["enabled"] = true,
                         --     ["position"] = {"TOPRIGHT", "TOPRIGHT", 0, 3},
                         --     ["size"] = {13, 13},
-                        --     ["style"] = "Blizzard"/"Cell",
+                        --     ["style"] = "Blizzard"/"Cell", -- TODO:
                         --     ["font"] = {"Cell ".._G.DEFAULT, 12, "Outline", 2},
                         --     ["auraType"] = "buff",
                         --     ["castByMe"] = true,
@@ -287,7 +287,7 @@ function eventFrame:ADDON_LOADED(arg1)
                         --     ["enabled"] = true,
                         --     ["position"] = {"CENTER", "CENTER", 0, 3},
                         --     ["font"] = {"Cell ".._G.DEFAULT, 12, "Outline", 2},
-                        --     ["colors"] = {{0,1,0}, {percent,1,1,0}, {time,r,g,b}},
+                        --     ["colors"] = {{0,1,0}, {.5,1,1,0}, {5,1,0,0}},
                         --     ["auraType"] = "buff",
                         --     ["auras"] = {},
                         -- },

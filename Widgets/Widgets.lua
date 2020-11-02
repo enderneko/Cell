@@ -2309,18 +2309,29 @@ local function CreateSetting_Colors(parent)
 	local widget
 
 	if not settingWidgets["colors"] then
-		widget = addon:CreateFrame("CellIndicatorSettings_Colors", parent, 240, 30)
+		widget = addon:CreateFrame("CellIndicatorSettings_Colors", parent, 240, 70)
 		settingWidgets["colors"] = widget
 
 		local normalColor = addon:CreateColorPicker(widget, L["Normal"], true, function(r, g, b, a)
 		
 		end)
+		normalColor:SetPoint("TOPLEFT", 5, -7)
+		
 		local percentColor = addon:CreateColorPicker(widget, L["Remaining Time <= "], true, function(r, g, b, a)
-		
+			
 		end)
+		percentColor:SetPoint("TOPLEFT", normalColor, "BOTTOMLEFT", 0, -7)
+		
 		local secColor = addon:CreateColorPicker(widget, L["Remaining Time <= "], true, function(r, g, b, a)
-		
+			
 		end)
+		secColor:SetPoint("TOPLEFT", percentColor, "BOTTOMLEFT", 0, -7)
+
+		local percentDropdown = addon:CreateDropdown(widget, 70)
+		percentDropdown:SetPoint("LEFT", percentColor.label, "RIGHT", 5, 0)
+		
+		local secDropdown = addon:CreateDropdown(widget, 70)
+		secDropdown:SetPoint("LEFT", secColor.label, "RIGHT", 5, 0)
 
 		-- associate db
 		function widget:SetFunc(func)

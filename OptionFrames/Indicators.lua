@@ -376,7 +376,7 @@ createBtn:SetScript("OnClick", function()
                 ["enabled"] = true,
                 ["position"] = {"TOPRIGHT", "TOPRIGHT", 0, 3},
                 ["font"] = {"Cell ".._G.DEFAULT, 12, "Outline", 1},
-                ["colors"] = {{0,1,0}, {percent,1,1,0}, {time,r,g,b}},
+                ["colors"] = {{0,1,0}, {.5,1,1,0}, {5,1,0,0}},
                 ["auraType"] = indicatorAuraType,
                 ["auras"] = {},
             })
@@ -392,7 +392,7 @@ createBtn:SetScript("OnClick", function()
     popup:SetPoint("TOPLEFT", 100, -100)
     popup.dropdown1:SetItems(typeItems)
     popup.dropdown1:SetSelectedItem(1)
-    popup.dropdown1:SetEnabled(false)
+    -- popup.dropdown1:SetEnabled(false)
     popup.dropdown2:SetItems(auraTypeItems)
     popup.dropdown2:SetSelectedItem(1)
 end)
