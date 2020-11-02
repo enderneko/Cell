@@ -6,6 +6,9 @@ Cell.frames.partyFrame = partyFrame
 partyFrame:SetAllPoints(Cell.frames.mainFrame)
 -- RegisterAttributeDriver(partyFrame, "state-visibility", "[group:raid] hide; [group:party] show; hide")
 
+local petFrame = CreateFrame("Frame", "CellPartyFramePetFrame", partyFrame, "SecureFrameTemplate")
+partyFrame.petFrame = petFrame
+
 local playerButtonUnits, petButtonUnits = {}, {}
 for i = 0, 4 do
 	local playerName = (i == 0 and "Player" or "Party"..i)
@@ -16,7 +19,7 @@ for i = 0, 4 do
 	local playerButton = CreateFrame("Button", partyFrame:GetName()..playerName, partyFrame, "CellUnitButtonTemplate")
 	playerButton:SetAttribute("unit", playerUnit)
 
-	local petButton = CreateFrame("Button", partyFrame:GetName()..petName, partyFrame, "CellUnitButtonTemplate")
+	local petButton = CreateFrame("Button", partyFrame:GetName()..petName, petFrame, "CellUnitButtonTemplate")
     petButton:SetAttribute("unit", petUnit)
 
 	Cell.unitButtons.party[playerUnit] = playerButton
@@ -28,10 +31,10 @@ for i = 0, 4 do
 	if i == 0 then
 		playerButton:SetPoint("TOPLEFT")
 		playerButton:Show()
-		-- RegisterAttributeDriver(petButton, "state-visibility", "[nopet] hide; [vehicleui] hide; show")
+		RegisterAttributeDriver(petButton, "state-visibility", "[nopet] hide; [vehicleui] hide; show")
 	else
 		RegisterUnitWatch(playerButton)
-		-- RegisterAttributeDriver(petButton, "state-visibility", "[@"..petUnit..",noexists] hide; [@"..playerUnit..",unithasvehicleui] hide; show")
+		RegisterAttributeDriver(petButton, "state-visibility", "[@"..petUnit..",noexists] hide; [@"..playerUnit..",unithasvehicleui] hide; show")
 	end
 end
 
@@ -102,22 +105,10 @@ local function PartyFrame_UpdateVisibility(which)
 	end
 
 	if not which or which == "pets" then
-		for i = 0, 4 do
-			local playerUnit = strlower(i == 0 and "Player" or "Party"..i)
-			local petUnit = strlower(i == 0 and "Pet" or "PartyPet"..i)
-
-			local petButton = Cell.unitButtons.party[petUnit]
-
-			if CellDB["general"]["showPets"] then
-				if i == 0 then
-					RegisterAttributeDriver(petButton, "state-visibility", "[nopet] hide; [vehicleui] hide; show")
-				else
-					RegisterAttributeDriver(petButton, "state-visibility", "[@"..petUnit..",noexists] hide; [@"..playerUnit..",unithasvehicleui] hide; show")
-				end
-			else
-				UnregisterAttributeDriver(petButton, "state-visibility")
-				petButton:Hide()
-			end
+		if CellDB["general"]["showPartyPets"] then
+			petFrame:Show()
+		else
+			petFrame:Hide()
 		end
     end
 end

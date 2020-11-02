@@ -126,7 +126,7 @@ function eventFrame:ADDON_LOADED(arg1)
                 ["disableTooltips"] = true,
                 ["showSolo"] = true,
                 ["showParty"] = true,
-                ["showPets"] = true,
+                ["showPartyPets"] = true,
             }
         end
 

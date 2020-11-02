@@ -179,7 +179,7 @@ local function NPCFrame_UpdateVisibility(which)
     end
 
     if not which or which == "pets" then
-        if CellDB["general"]["showPets"] then
+        if CellDB["general"]["showPartyPets"] then
             npcFrame:SetFrameRef("party", CellPartyFramePet)
             anchors["party"] = CellPartyFramePet
         else

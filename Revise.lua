@@ -97,6 +97,11 @@ local function Revise()
 				layout["powerHeight"] = 2
 			end
 		end
+		-- change showPets to showPartyPets
+		if type(CellDB["general"]["showPartyPets"]) ~= "boolean" then
+			CellDB["general"]["showPartyPets"] = CellDB["general"]["showPets"]
+			CellDB["general"]["showPets"] = nil
+		end
 	end
 
 	CellDB["revise"] = Cell.version
