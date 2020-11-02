@@ -5,7 +5,7 @@ local LCG = LibStub("LibCustomGlow-1.0")
 
 local DebuffTypeColor = DebuffTypeColor
 -------------------------------------------------
--- icon builder
+-- CreateAura_BorderIcon
 -------------------------------------------------
 local function CreateAura_BorderIcon(name, parent, borderSize)
     local frame = CreateFrame("Frame", name, parent, "BackdropTemplate")
@@ -150,6 +150,9 @@ local function CreateAura_BorderIcon(name, parent, borderSize)
     return frame
 end
 
+-------------------------------------------------
+-- CreateAura_BarIcon
+-------------------------------------------------
 -- local LSSB = LibStub:GetLibrary("LibSmoothStatusBar-1.0")
 local function CreateAura_BarIcon(name, parent)
     local frame = CreateFrame("Frame", name, parent, "BackdropTemplate")
@@ -286,6 +289,9 @@ local function CreateAura_BarIcon(name, parent)
     return frame
 end
 
+-------------------------------------------------
+-- CreateAura_Text
+-------------------------------------------------
 local function CreateAura_Text(name, parent)
     local frame = CreateFrame("Frame", name, parent)
     frame:Hide()
@@ -698,6 +704,22 @@ function F:RemoveIndicator(parent, indicatorName, auraType)
     parent.indicators[indicatorName] = nil
     enabledIndicators[indicatorName] = nil
     customIndicators[auraType][indicatorName] = nil
+end
+
+-- used for switching to a new layout
+function F:RemoveAllCustomIndicators(parent)
+    for indicatorName, indicator in pairs(parent.indicators) do
+        if string.find(indicatorName, "indicator") then
+            indicator:ClearAllPoints()
+            indicator:Hide()
+            indicator:SetParent(nil)
+            parent.indicators[indicatorName] = nil
+        end
+    end
+
+    wipe(enabledIndicators)
+    wipe(customIndicators["buff"])
+    wipe(customIndicators["debuff"])
 end
 
 local function UpdateCustomIndicators(indicatorName, setting, value, aurasTable)

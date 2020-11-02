@@ -206,7 +206,7 @@ Cell:RegisterForCloseDropdown(renameBtn)
 local newBtn = Cell:CreateButton(layoutsTab, L["New"], "class-hover", {50, 20})
 newBtn:SetPoint("LEFT", renameBtn, "RIGHT", -1, 0)
 newBtn:SetScript("OnClick", function()
-    local popup = Cell:CreateConfirmPopup(layoutsTab, 200, L["Create new layout"], function(self)
+    local popup = Cell:CreateConfirmPopup(layoutsTab, 200, L["Create new layout"].."\n"..L["(based on current)"], function(self)
         local name = strtrim(self.editBox:GetText())
         if name ~= "" and not CellDB["layouts"][name] then
             -- update db copy current layout

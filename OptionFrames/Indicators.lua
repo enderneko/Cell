@@ -173,7 +173,8 @@ local function InitIndicator(indicatorName)
 end
 
 local function UpdateIndicators(indicatorName, setting, value)
-	if not indicatorName then -- init
+    if not indicatorName then -- init
+        F:RemoveAllCustomIndicators(previewButton)
         for _, t in pairs(Cell.vars.currentLayoutTable["indicators"]) do
             local indicator = previewButton.indicators[t["indicatorName"]] or F:CreateIndicator(previewButton, t)
             if t["enabled"] then

@@ -65,6 +65,10 @@ local function UpdateIndicators(indicatorName, setting, value)
 	if not indicatorName then -- init
 		wipe(enabledIndicators)
 		wipe(indicatorNums)
+		F:IterateAllUnitButtons(function(b)
+			F:RemoveAllCustomIndicators(b)
+		end)
+
 		for _, t in pairs(Cell.vars.currentLayoutTable["indicators"]) do
 			-- update enabled
 			if t["enabled"] then
