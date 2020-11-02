@@ -360,6 +360,49 @@ local function CreateAura_Text(name, parent)
 end
 
 -------------------------------------------------
+-- CreateAura_Bar
+-------------------------------------------------
+local function CreateAura_Bar(name, parent)
+    local frame = CreateFrame("Frame", name, parent)
+    frame:Hide()
+    frame:SetSize(11, 11)
+
+    function frame:SetCooldown(start, duration, debuffType, texture, count)
+        count = (count == 0 or count == 1) and "" or (" "..count)
+        if duration == 0 then
+            text:SetText(count)
+            frame:SetScript("OnUpdate", nil)
+        else
+            frame:SetScript("OnUpdate", function()
+                local remain = duration-(GetTime()-start)
+                -- update color
+                if remain <= frame.colors[3][4] then
+                    text:SetTextColor(frame.colors[3][1], frame.colors[3][2], frame.colors[3][3])
+                elseif remain <= duration * frame.colors[2][4] then
+                    text:SetTextColor(frame.colors[2][1], frame.colors[2][2], frame.colors[2][3])
+                else
+                    text:SetTextColor(unpack(frame.colors[1]))
+                end
+                -- update text
+                if remain > 60 then
+                    text:SetText(math.ceil(remain/60).."m"..count)
+                else
+                    text:SetText(string.format("%d", remain)..count)
+                end
+            end)
+        end
+
+        frame:Show()
+    end
+
+    function frame:SetColors(colors)
+        frame.colors = colors
+    end
+        
+    return frame
+end
+
+-------------------------------------------------
 -- CreateAoEHealing -- not support for npc
 -------------------------------------------------
 local CombatLogGetCurrentEventInfo = CombatLogGetCurrentEventInfo
