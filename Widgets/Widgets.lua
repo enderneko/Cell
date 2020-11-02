@@ -431,11 +431,16 @@ function addon:CreateColorPicker(parent, label, hasOpacity, func)
 			newA, newR, newG, newB = OpacitySliderFrame:GetValue(), ColorPickerFrame:GetColorRGB()
 		end
 		
-		newA = newA or 1 -- if not hasOpacity -> newA == nil
-		newR, newG, newB, newA = tonumber(string.format("%.3f", newR)), tonumber(string.format("%.3f", newG)), tonumber(string.format("%.3f", newB)), tonumber(string.format("%.3f", newA))
+		newR, newG, newB, newA = tonumber(string.format("%.3f", newR)), tonumber(string.format("%.3f", newG)), tonumber(string.format("%.3f", newB)), newA and tonumber(string.format("%.3f", newA))
 		
 		cp:SetBackdropColor(newR, newG, newB, newA)
-		if func then func(newR, newG, newB, newA) end
+		if func then
+			func(newR, newG, newB, newA)
+			cp.color[1] = newR
+			cp.color[2] = newG
+			cp.color[3] = newB
+			cp.color[4] = newA
+		end
 	end
 	
 	local function ShowColorPicker()
@@ -454,8 +459,15 @@ function addon:CreateColorPicker(parent, label, hasOpacity, func)
 
 	cp.color = {1, 1, 1, 1}
 	function cp:SetColor(t)
-		cp.color = t
+		cp.color[1] = t[1]
+		cp.color[2] = t[2]
+		cp.color[3] = t[3]
+		cp.color[4] = t[4]
 		cp:SetBackdropColor(unpack(t))
+	end
+
+	function cp:GetColor()
+		return cp.color
 	end
 
 	return cp
@@ -2309,38 +2321,112 @@ local function CreateSetting_Colors(parent)
 	local widget
 
 	if not settingWidgets["colors"] then
-		widget = addon:CreateFrame("CellIndicatorSettings_Colors", parent, 240, 70)
+		widget = addon:CreateFrame("CellIndicatorSettings_Colors", parent, 240, 72)
 		settingWidgets["colors"] = widget
 
-		local normalColor = addon:CreateColorPicker(widget, L["Normal"], true, function(r, g, b, a)
-		
+		local normalColor = addon:CreateColorPicker(widget, L["Normal"], false, function(r, g, b)
+			widget.colorsTable[1][1] = r
+			widget.colorsTable[1][2] = g 
+			widget.colorsTable[1][3] = b
+			widget.func(widget.colorsTable)
 		end)
 		normalColor:SetPoint("TOPLEFT", 5, -7)
 		
-		local percentColor = addon:CreateColorPicker(widget, L["Remaining Time <= "], true, function(r, g, b, a)
-			
+		local percentColor = addon:CreateColorPicker(widget, L["Remaining Time <"], false, function(r, g, b)
+			widget.colorsTable[2][1] = r
+			widget.colorsTable[2][2] = g 
+			widget.colorsTable[2][3] = b
+			widget.func(widget.colorsTable)
 		end)
-		percentColor:SetPoint("TOPLEFT", normalColor, "BOTTOMLEFT", 0, -7)
+		percentColor:SetPoint("TOPLEFT", normalColor, "BOTTOMLEFT", 0, -8)
 		
-		local secColor = addon:CreateColorPicker(widget, L["Remaining Time <= "], true, function(r, g, b, a)
-			
+		local secColor = addon:CreateColorPicker(widget, L["Remaining Time <"], false, function(r, g, b)
+			widget.colorsTable[3][1] = r
+			widget.colorsTable[3][2] = g 
+			widget.colorsTable[3][3] = b
+			widget.func(widget.colorsTable)
 		end)
-		secColor:SetPoint("TOPLEFT", percentColor, "BOTTOMLEFT", 0, -7)
+		secColor:SetPoint("TOPLEFT", percentColor, "BOTTOMLEFT", 0, -8)
 
 		local percentDropdown = addon:CreateDropdown(widget, 70)
 		percentDropdown:SetPoint("LEFT", percentColor.label, "RIGHT", 5, 0)
+		percentDropdown:SetItems({
+			{
+				["text"] = "75%",
+				["onClick"] = function()
+					widget.colorsTable[2][4] = .75
+				end,
+			},
+			{
+				["text"] = "50%",
+				["onClick"] = function()
+					widget.colorsTable[2][4] = .5
+				end,
+			},
+			{
+				["text"] = "25%",
+				["onClick"] = function()
+					widget.colorsTable[2][4] = .25
+				end,
+			},
+			{
+				["text"] = _G.NONE,
+				["onClick"] = function()
+					widget.colorsTable[2][4] = 0
+				end,
+			},
+		})
 		
 		local secDropdown = addon:CreateDropdown(widget, 70)
 		secDropdown:SetPoint("LEFT", secColor.label, "RIGHT", 5, 0)
+		secDropdown:SetItems({
+			{
+				["text"] = "10 "..L["sec"],
+				["onClick"] = function()
+					widget.colorsTable[3][4] = 10
+				end,
+			},
+			{
+				["text"] = "7 "..L["sec"],
+				["onClick"] = function()
+					widget.colorsTable[3][4] = 7
+				end,
+			},
+			{
+				["text"] = "5 "..L["sec"],
+				["onClick"] = function()
+					widget.colorsTable[3][4] = 5
+				end,
+			},
+			{
+				["text"] = "3 "..L["sec"],
+				["onClick"] = function()
+					widget.colorsTable[3][4] = 3
+				end,
+			},
+			{
+				["text"] = _G.NONE,
+				["onClick"] = function()
+					widget.colorsTable[3][4] = 0
+				end,
+			},
+		})
 
 		-- associate db
 		function widget:SetFunc(func)
-
+			widget.func = func
 		end
-
+		
 		-- show db value
 		function widget:SetDBValue(colorsTable)
-			
+			widget.colorsTable = colorsTable
+
+			normalColor:SetColor(colorsTable[1])
+			percentColor:SetColor({colorsTable[2][1],colorsTable[2][2],colorsTable[2][3]})
+			secColor:SetColor({colorsTable[3][1],colorsTable[3][2],colorsTable[3][3]})
+
+			percentDropdown:SetSelected(colorsTable[2][4]~=0 and ((colorsTable[2][4]*100).."%") or _G.NONE)
+			secDropdown:SetSelected(colorsTable[3][4]~=0 and (colorsTable[3][4].." "..L["sec"]) or _G.NONE)
 		end
 	else
 		widget = settingWidgets["colors"]

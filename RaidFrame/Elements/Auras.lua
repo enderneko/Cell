@@ -300,22 +300,22 @@ local function CreateAura_Text(name, parent)
         if not string.find(font, ".ttf") then font = F:GetFont(font) end
 
         if flags == "Shadow" then
-            frame.text:SetFont(font, size)
-            frame.text:SetShadowOffset(1, -1)
-            frame.text:SetShadowColor(0, 0, 0, 1)
+            text:SetFont(font, size)
+            text:SetShadowOffset(1, -1)
+            text:SetShadowColor(0, 0, 0, 1)
         else
             if flags == "Outline" then
                 flags = "OUTLINE"
             else
                 flags = "OUTLINE, MONOCHROME"
             end
-            frame.text:SetFont(font, size, flags)
-            frame.text:SetShadowOffset(0, 0)
-            frame.text:SetShadowColor(0, 0, 0, 0)
+            text:SetFont(font, size, flags)
+            text:SetShadowOffset(0, 0)
+            text:SetShadowColor(0, 0, 0, 0)
         end
-        frame.text:ClearAllPoints()
-        frame.text:SetPoint("CENTER", horizontalOffset, 0)
-        frame:SetSize(size+5, size+5)
+        text:ClearAllPoints()
+        text:SetPoint("CENTER", horizontalOffset, 0)
+        frame:SetSize(size+3, size+3)
     end
 
     function frame:SetCooldown(start, duration, debuffType, texture, count)
@@ -326,6 +326,15 @@ local function CreateAura_Text(name, parent)
         else
             frame:SetScript("OnUpdate", function()
                 local remain = duration-(GetTime()-start)
+                -- update color
+                if remain <= frame.colors[3][4] then
+                    text:SetTextColor(frame.colors[3][1], frame.colors[3][2], frame.colors[3][3])
+                elseif remain <= duration * frame.colors[2][4] then
+                    text:SetTextColor(frame.colors[2][1], frame.colors[2][2], frame.colors[2][3])
+                else
+                    text:SetTextColor(unpack(frame.colors[1]))
+                end
+                -- update text
                 if remain > 60 then
                     text:SetText(math.ceil(remain/60).."m"..count)
                 else
@@ -337,6 +346,10 @@ local function CreateAura_Text(name, parent)
         frame:Show()
     end
 
+    function frame:SetColors(colors)
+        frame.colors = colors
+    end
+        
     return frame
 end
 

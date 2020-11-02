@@ -211,6 +211,10 @@ local function UpdateIndicators(indicatorName, setting, value)
             if t["color"] then
                 indicator:SetColor(unpack(t["color"]))
             end
+            -- update colors
+            if t["colors"] then
+                indicator:SetColors(t["colors"])
+            end
             -- update aoehealing
             if t["indicatorName"] == "aoeHealing" then
                 F:EnableAoEHealing(t["enabled"])
@@ -249,6 +253,8 @@ local function UpdateIndicators(indicatorName, setting, value)
             indicator:SetFont(unpack(value))
         elseif setting == "color" then
             indicator:SetColor(unpack(value))
+        elseif setting == "colors" then
+            indicator:SetColors(value)
         elseif setting == "create" then
             indicator = F:CreateIndicator(previewButton, value)
             -- update position
@@ -265,6 +271,10 @@ local function UpdateIndicators(indicatorName, setting, value)
             -- update color
             if value["color"] then
                 indicator:SetColor(unpack(value["color"]))
+            end
+            -- update colors
+            if value["colors"] then
+                indicator:SetColors(value["colors"])
             end
             InitIndicator(indicatorName)
             indicator:Show()
@@ -376,7 +386,7 @@ createBtn:SetScript("OnClick", function()
                 ["enabled"] = true,
                 ["position"] = {"TOPRIGHT", "TOPRIGHT", 0, 3},
                 ["font"] = {"Cell ".._G.DEFAULT, 12, "Outline", 1},
-                ["colors"] = {{0,1,0}, {.5,1,1,0}, {5,1,0,0}},
+                ["colors"] = {{0,1,0}, {1,1,0,.5}, {1,0,0,5}},
                 ["auraType"] = indicatorAuraType,
                 ["auras"] = {},
             })
@@ -451,6 +461,7 @@ local function ShowIndicatorSettings(id)
 
     local indicatorName = currentLayoutTable["indicators"][id]["indicatorName"]
     local indicatorType = currentLayoutTable["indicators"][id]["type"]
+    -- texplore(currentLayoutTable["indicators"][id])
 
     local settingsTable
     if indicatorType == "built-in" then

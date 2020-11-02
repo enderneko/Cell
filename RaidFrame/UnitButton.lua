@@ -104,6 +104,10 @@ local function UpdateIndicators(indicatorName, setting, value)
 				if t["color"] then
 					indicator:SetColor(unpack(t["color"]))
 				end
+				-- update colors
+				if t["colors"] then
+					indicator:SetColors(t["colors"])
+				end
 				UpdateIndicatorParentVisibility(b, t["indicatorName"], t["enabled"])
 			end)
 		end
@@ -143,6 +147,11 @@ local function UpdateIndicators(indicatorName, setting, value)
 				local indicator = b.indicators[indicatorName]
 				indicator:SetColor(unpack(value))
 			end)
+		elseif setting == "colors" then
+			F:IterateAllUnitButtons(function(b)
+				local indicator = b.indicators[indicatorName]
+				indicator:SetColors(value)
+			end)
 		elseif setting == "num" then
 			indicatorNums[indicatorName] = value
 			-- refresh
@@ -171,6 +180,10 @@ local function UpdateIndicators(indicatorName, setting, value)
 				-- update color
 				if value["color"] then
 					indicator:SetColor(unpack(value["color"]))
+				end
+				-- update colors
+				if value["colors"] then
+					indicator:SetColors(value["colors"])
 				end
 			end)
 		elseif setting == "remove" then

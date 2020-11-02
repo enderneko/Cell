@@ -287,7 +287,7 @@ function eventFrame:ADDON_LOADED(arg1)
                         --     ["enabled"] = true,
                         --     ["position"] = {"CENTER", "CENTER", 0, 3},
                         --     ["font"] = {"Cell ".._G.DEFAULT, 12, "Outline", 2},
-                        --     ["colors"] = {{0,1,0}, {.5,1,1,0}, {5,1,0,0}},
+                        --     ["colors"] = {{0,1,0}, {1,1,0,.5}, {1,0,0,5}},
                         --     ["auraType"] = "buff",
                         --     ["auras"] = {},
                         -- },
