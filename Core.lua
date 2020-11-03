@@ -302,6 +302,17 @@ function eventFrame:ADDON_LOADED(arg1)
                         --     ["auraType"] = "buff",
                         --     ["auras"] = {},
                         -- },
+                        -- {
+                        --     ["name"] = "",
+                        --     ["indicatorName"] = "",
+                        --     ["type"] = "rect",
+                        --     ["enabled"] = true,
+                        --     ["position"] = {"TOPRIGHT", "TOPRIGHT", 0, 2},
+                        --     ["size"] = {11, 4},
+                        --     ["colors"] = {{0,1,0}, {1,1,0,.5}, {1,0,0,5}},
+                        --     ["auraType"] = "buff",
+                        --     ["auras"] = {},
+                        -- },
                     },
                 },
             }

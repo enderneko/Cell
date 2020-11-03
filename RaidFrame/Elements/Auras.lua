@@ -360,6 +360,48 @@ local function CreateAura_Text(name, parent)
 end
 
 -------------------------------------------------
+-- CreateAura_Rect
+-------------------------------------------------
+local function CreateAura_Rect(name, parent)
+    local frame = CreateFrame("Frame", name, parent, "BackdropTemplate")
+    frame:Hide()
+    frame:SetSize(11, 4)
+    frame:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8x8"})
+    frame:SetBackdropColor(0, 0, 0, 1)
+
+    local tex = frame:CreateTexture(nil, "ARTWORK")
+    tex:SetPoint("TOPLEFT", 1, -1)
+    tex:SetPoint("BOTTOMRIGHT", -1, 1)
+
+    function frame:SetCooldown(start, duration, debuffType, texture, count)
+        if duration == 0 then
+            tex:SetColorTexture(unpack(frame.colors[1]))
+            frame:SetScript("OnUpdate", nil)
+        else
+            frame:SetScript("OnUpdate", function()
+                local remain = duration-(GetTime()-start)
+                -- update color
+                if remain <= frame.colors[3][4] then
+                    tex:SetColorTexture(frame.colors[3][1], frame.colors[3][2], frame.colors[3][3])
+                elseif remain <= duration * frame.colors[2][4] then
+                    tex:SetColorTexture(frame.colors[2][1], frame.colors[2][2], frame.colors[2][3])
+                else
+                    tex:SetColorTexture(unpack(frame.colors[1]))
+                end
+            end)
+        end
+
+        frame:Show()
+    end
+
+    function frame:SetColors(colors)
+        frame.colors = colors
+    end
+        
+    return frame
+end
+
+-------------------------------------------------
 -- CreateAura_Bar
 -------------------------------------------------
 local function CreateAura_Bar(name, parent)
@@ -720,6 +762,8 @@ function F:CreateIndicator(parent, indicatorTable)
         indicator = CreateAura_Text(indicatorName, parent.widget.overlayFrame)
     elseif indicatorTable["type"] == "bar" then
         indicator = CreateAura_Bar(indicatorName, parent.widget.overlayFrame)
+    elseif indicatorTable["type"] == "rect" then
+        indicator = CreateAura_Rect(indicatorName, parent.widget.overlayFrame)
     end
     parent.indicators[indicatorName] = indicator
     

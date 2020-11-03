@@ -328,8 +328,8 @@ local typeItems = {
         ["value"] = "icon",
     },
     {
-        ["text"] = L["Rectangle"],
-        ["value"] = "rectangle",
+        ["text"] = L["Rect"],
+        ["value"] = "rect",
     },
     {
         ["text"] = L["Bar"],
@@ -399,6 +399,18 @@ createBtn:SetScript("OnClick", function()
                 ["enabled"] = true,
                 ["position"] = {"TOPRIGHT", "TOPRIGHT", -1, 2},
                 ["size"] = {18, 4},
+                ["colors"] = {{0,1,0}, {1,1,0,.5}, {1,0,0,5}},
+                ["auraType"] = indicatorAuraType,
+                ["auras"] = {},
+            })
+        elseif indicatorType == "rect" then
+            tinsert(currentLayoutTable["indicators"], {
+                ["name"] = name,
+                ["indicatorName"] = indicatorName,
+                ["type"] = indicatorType,
+                ["enabled"] = true,
+                ["position"] = {"TOPRIGHT", "TOPRIGHT", 0, 2},
+                ["size"] = {11, 4},
                 ["colors"] = {{0,1,0}, {1,1,0,.5}, {1,0,0,5}},
                 ["auraType"] = indicatorAuraType,
                 ["auras"] = {},
@@ -484,7 +496,7 @@ local function ShowIndicatorSettings(id)
             settingsTable = {"enabled", "auras", "position", "size-square", "font"}
         elseif indicatorType == "text" then
             settingsTable = {"enabled", "auras", "position", "font", "colors"}
-        elseif indicatorType == "bar" then
+        elseif indicatorType == "bar" or indicatorType == "rect" then
             settingsTable = {"enabled", "auras", "position", "size", "colors"}
         end
         if currentLayoutTable["indicators"][id]["auraType"] == "buff" then
