@@ -155,11 +155,11 @@ local function InitIndicator(indicatorName)
             end)
         end
     elseif string.find(indicatorName, "indicator") then
-        indicator.preview = CreateFrame("Frame", nil, indicator)
+        indicator.preview = indicator.preview or CreateFrame("Frame", nil, indicator)
         indicator:SetScript("OnShow", function()
             indicator:SetCooldown(GetTime(), 7, nil, 134400, 0)
             indicator.preview.elapsedTime = 0
-            indicator.preview:HookScript("OnUpdate", function(self, elapsed)
+            indicator.preview:SetScript("OnUpdate", function(self, elapsed)
                 if self.elapsedTime >= 7 then
                     self.elapsedTime = 0
                     indicator:SetCooldown(GetTime(), 7, nil, 134400, 0)
@@ -391,6 +391,18 @@ createBtn:SetScript("OnClick", function()
                 ["auraType"] = indicatorAuraType,
                 ["auras"] = {},
             })
+        elseif indicatorType == "bar" then
+            tinsert(currentLayoutTable["indicators"], {
+                ["name"] = name,
+                ["indicatorName"] = indicatorName,
+                ["type"] = indicatorType,
+                ["enabled"] = true,
+                ["position"] = {"TOPRIGHT", "TOPRIGHT", -1, 2},
+                ["size"] = {18, 4},
+                ["colors"] = {{0,1,0}, {1,1,0,.5}, {1,0,0,5}},
+                ["auraType"] = indicatorAuraType,
+                ["auras"] = {},
+            })
         end
         if indicatorAuraType == "buff" then
             currentLayoutTable["indicators"][last+1]["castByMe"] = true
@@ -472,6 +484,8 @@ local function ShowIndicatorSettings(id)
             settingsTable = {"enabled", "auras", "position", "size-square", "font"}
         elseif indicatorType == "text" then
             settingsTable = {"enabled", "auras", "position", "font", "colors"}
+        elseif indicatorType == "bar" then
+            settingsTable = {"enabled", "auras", "position", "size", "colors"}
         end
         if currentLayoutTable["indicators"][id]["auraType"] == "buff" then
             tinsert(settingsTable, 3, "checkbutton") -- castByMe
@@ -561,7 +575,7 @@ LoadIndicatorList = function()
         if t["type"] == "built-in" then
             b = Cell:CreateButton(listFrame.scrollFrame.content, L[t["name"]], "transparent-class", {20, 20})
         else
-            b = Cell:CreateButton(listFrame.scrollFrame.content, t["name"].." |cffababab("..L[t["type"]]..")", "transparent-class", {20, 20})
+            b = Cell:CreateButton(listFrame.scrollFrame.content, t["name"].." |cff7f7f7f("..L[t["auraType"]]..")", "transparent-class", {20, 20})
         end
         tinsert(listButtons, b)
         b.id = i

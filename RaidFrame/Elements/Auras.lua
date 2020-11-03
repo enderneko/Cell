@@ -363,43 +363,40 @@ end
 -- CreateAura_Bar
 -------------------------------------------------
 local function CreateAura_Bar(name, parent)
-    local frame = CreateFrame("Frame", name, parent)
-    frame:Hide()
-    frame:SetSize(11, 11)
+    local bar = Cell:CreateStatusBar(parent, 18, 4, 100)
+    bar:Hide()
 
-    function frame:SetCooldown(start, duration, debuffType, texture, count)
-        count = (count == 0 or count == 1) and "" or (" "..count)
+    function bar:SetCooldown(start, duration, debuffType, texture, count)
         if duration == 0 then
-            text:SetText(count)
-            frame:SetScript("OnUpdate", nil)
+            bar:SetScript("OnUpdate", nil)
+            bar:SetMinMaxValues(0, 1)
+            bar:SetValue(1)
+            bar:SetStatusBarColor(unpack(bar.colors[1]))
         else
-            frame:SetScript("OnUpdate", function()
+            bar:SetMinMaxValues(0, duration)
+            bar:SetValue(GetTime()-start)
+            bar:SetScript("OnUpdate", function()
                 local remain = duration-(GetTime()-start)
+                bar:SetValue(remain)
                 -- update color
-                if remain <= frame.colors[3][4] then
-                    text:SetTextColor(frame.colors[3][1], frame.colors[3][2], frame.colors[3][3])
-                elseif remain <= duration * frame.colors[2][4] then
-                    text:SetTextColor(frame.colors[2][1], frame.colors[2][2], frame.colors[2][3])
+                if remain <= bar.colors[3][4] then
+                    bar:SetStatusBarColor(bar.colors[3][1], bar.colors[3][2], bar.colors[3][3])
+                elseif remain <= duration * bar.colors[2][4] then
+                    bar:SetStatusBarColor(bar.colors[2][1], bar.colors[2][2], bar.colors[2][3])
                 else
-                    text:SetTextColor(unpack(frame.colors[1]))
-                end
-                -- update text
-                if remain > 60 then
-                    text:SetText(math.ceil(remain/60).."m"..count)
-                else
-                    text:SetText(string.format("%d", remain)..count)
+                    bar:SetStatusBarColor(unpack(bar.colors[1]))
                 end
             end)
         end
 
-        frame:Show()
+        bar:Show()
     end
 
-    function frame:SetColors(colors)
-        frame.colors = colors
+    function bar:SetColors(colors)
+        bar.colors = colors
     end
         
-    return frame
+    return bar
 end
 
 -------------------------------------------------
@@ -721,6 +718,8 @@ function F:CreateIndicator(parent, indicatorTable)
         indicator = CreateAura_BarIcon(indicatorName, parent.widget.overlayFrame)
     elseif indicatorTable["type"] == "text" then
         indicator = CreateAura_Text(indicatorName, parent.widget.overlayFrame)
+    elseif indicatorTable["type"] == "bar" then
+        indicator = CreateAura_Bar(indicatorName, parent.widget.overlayFrame)
     end
     parent.indicators[indicatorName] = indicator
     
