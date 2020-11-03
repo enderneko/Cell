@@ -36,19 +36,22 @@ disableTooltipsCB:SetPoint("TOPLEFT", tooltipsText, "BOTTOMLEFT", 5, -15)
 local visibilityText = Cell:CreateSeparator(L["Visibility"], generalTab, 188)
 visibilityText:SetPoint("TOPLEFT", 5, -100)
 
-local showSoloCB = Cell:CreateCheckButton(generalTab, L["Show Solo"], function(checked, self)
+local showSoloCB, showPartyCB, showPartyPetsCB
+
+showSoloCB = Cell:CreateCheckButton(generalTab, L["Show Solo"], function(checked, self)
     CellDB["general"]["showSolo"] = checked
     Cell:Fire("UpdateVisibility", "solo")
 end, L["Show Solo"], L["Show while not in a group"], L["To open options frame, use /cell options"])
 showSoloCB:SetPoint("TOPLEFT", visibilityText, "BOTTOMLEFT", 5, -15)
 
-local showPartyCB = Cell:CreateCheckButton(generalTab, L["Show Party"], function(checked, self)
+showPartyCB = Cell:CreateCheckButton(generalTab, L["Show Party"], function(checked, self)
     CellDB["general"]["showParty"] = checked
     Cell:Fire("UpdateVisibility", "party")
+    showPartyPetsCB:SetEnabled(checked)
 end, L["Show Party"], L["Show while in a party"], L["To open options frame, use /cell options"])
 showPartyCB:SetPoint("TOPLEFT", showSoloCB, "BOTTOMLEFT", 0, -7)
 
-local showPartyPetsCB = Cell:CreateCheckButton(generalTab, L["Show Party Pets"], function(checked, self)
+showPartyPetsCB = Cell:CreateCheckButton(generalTab, L["Show Party Pets"], function(checked, self)
     CellDB["general"]["showPartyPets"] = checked
     Cell:Fire("UpdateVisibility", "pets")
 end, L["Show Party Pets"], L["Show pets while in a party"])
@@ -249,6 +252,7 @@ local function ShowTab(tab)
         showSoloCB:SetChecked(CellDB["general"]["showSolo"])
         showPartyCB:SetChecked(CellDB["general"]["showParty"])
         showPartyPetsCB:SetChecked(CellDB["general"]["showPartyPets"])
+        showPartyPetsCB:SetEnabled(CellDB["general"]["showParty"])
 
         -- raid tools
         setupCB:SetChecked(CellDB["raidTools"]["showRaidSetup"])
