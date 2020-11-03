@@ -250,6 +250,9 @@ local function UnitButton_UpdateDebuffs(self)
     if not debuffs_current[unit] then debuffs_current[unit] = {} end
     if not debuffs_dispel[unit] then debuffs_dispel[unit] = {} end
 
+	-- user created indicators
+	F:ResetCustomIndicators(unit, "debuff")
+
 	local found, refreshing = 1
 	local topOrder, topGlowType, topGlowColor, topId, topStart, topDuration, topType, topIcon, topCount, topRefreshing = 999
     for i = 1, 40 do
@@ -279,7 +282,8 @@ local function UnitButton_UpdateDebuffs(self)
 				end
 				
 				-- user created indicators
-				F:ShowCustomIndicators(self, "debuff", name, expirationTime - duration, duration, debuffType or "", icon, count, refreshing)
+				F:CheckCustomIndicators(unit, "debuff", name, expirationTime - duration, duration, debuffType or "", icon, count, refreshing)
+
 				-- check top debuff
 				if F:GetDebuffOrder(spellId) ~= 0 and F:GetDebuffOrder(spellId) < topOrder then
 					topOrder, topGlowType, topGlowColor = F:GetDebuffOrder(spellId)
@@ -315,6 +319,9 @@ local function UnitButton_UpdateDebuffs(self)
 	else
 		self.indicators.centralDebuff:Hide()
 	end
+
+	-- user created indicators
+	F:ShowCustomIndicators(unit, self, "debuff")
 	
 	-- update debuffs_cache
     local t = GetTime()
@@ -323,8 +330,6 @@ local function UnitButton_UpdateDebuffs(self)
         if not debuffs_current[unit][name] or (expirationTime ~= 0 and t > expirationTime) then -- expirationTime == 0: no duration 
 			debuffs_cache[unit][name] = nil
 			debuffs_cache_count[unit][name] = nil
-			-- user created indicators
-			F:HideCustomIndicators(self, "debuff", name)
         end
 	end
 
@@ -340,6 +345,9 @@ local function UnitButton_UpdateBuffs(self)
 	local unit = self.state.displayedUnit
 	if not buffs_cache[unit] then buffs_cache[unit] = {} end
     if not buffs_current[unit] then buffs_current[unit] = {} end
+
+	-- user created indicators
+	F:ResetCustomIndicators(unit, "buff")
 
 	local refreshing
 	local defensiveFound, externalFound, tankActiveMitigationFound, drinkingFound = 1, 1, false, false
@@ -382,7 +390,7 @@ local function UnitButton_UpdateBuffs(self)
 			end
 
 			-- user created indicators
-			F:ShowCustomIndicators(self, "buff", name, expirationTime - duration, duration, nil, icon, count, refreshing, false)
+			F:CheckCustomIndicators(unit, "buff", name, expirationTime - duration, duration, nil, icon, count, refreshing, false)
 			
             buffs_cache[unit][name] = expirationTime
             buffs_current[unit][name] = i
@@ -416,8 +424,6 @@ local function UnitButton_UpdateBuffs(self)
         -- lost or expired
         if not buffs_current[unit][name] or t > expirationTime then
 			buffs_cache[unit][name] = nil
-			-- user created indicators
-			F:HideCustomIndicators(self, "buff", name, false)
         end
 	end
 	wipe(buffs_current[unit])
@@ -434,7 +440,7 @@ local function UnitButton_UpdateBuffs(self)
 
 		if duration then
 			refreshing = buffs_cache_castByMe[unit][name] and expirationTime-duration+.1>=GetTime()
-			F:ShowCustomIndicators(self, "buff", name, expirationTime - duration, duration, nil, icon, count, refreshing, true)
+			F:CheckCustomIndicators(unit, "buff", name, expirationTime - duration, duration, nil, icon, count, refreshing, true)
 			
             buffs_cache_castByMe[unit][name] = expirationTime
             buffs_current_castByMe[unit][name] = i
@@ -447,11 +453,12 @@ local function UnitButton_UpdateBuffs(self)
         -- lost or expired
         if not buffs_current_castByMe[unit][name] or (expirationTime ~= 0 and t > expirationTime) then
 			buffs_cache_castByMe[unit][name] = nil
-			-- user created indicators
-			F:HideCustomIndicators(self, "buff", name, true)
         end
 	end
 	wipe(buffs_current_castByMe[unit])
+	-----------------------------------------------------------------------------------
+
+	F:ShowCustomIndicators(unit, self, "buff")
 end
 
 -------------------------------------------------

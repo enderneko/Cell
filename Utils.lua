@@ -124,8 +124,8 @@ end
 
 function F:ConvertTable(t)
     local temp = {}
-    for _, v in ipairs(t) do
-        temp[v] = true
+    for k, v in ipairs(t) do
+        temp[v] = k
     end
     return temp
 end
