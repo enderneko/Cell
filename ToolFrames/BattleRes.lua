@@ -15,7 +15,7 @@ Cell:StylizeFrame(battleResFrame, {.1, .1, .1, .7}, {0, 0, 0, .5})
 ---------------------------------
 -- Bar
 ---------------------------------
-local bar = Cell:CreateStatusBar(battleResFrame, 10, 2, 100, false, nil, false, "Interface\\Buttons\\WHITE8x8", Cell:GetPlayerClassColor())
+local bar = Cell:CreateStatusBar(battleResFrame, 10, 2, 100, false, nil, false, "Interface\\Buttons\\WHITE8x8", Cell:GetPlayerClassColorTable())
 bar:SetPoint("BOTTOMLEFT", battleResFrame, 1, 1)
 bar:SetPoint("BOTTOMRIGHT", battleResFrame, -1, 1)
 bar:SetAlpha(.5)

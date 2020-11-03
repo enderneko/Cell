@@ -774,6 +774,7 @@ function F:CreateIndicator(parent, indicatorTable)
     customIndicators[auraType][indicatorName] = {
         ["found"] = {}, -- found cache
         ["auras"] = F:ConvertTable(indicatorTable["auras"]), -- auras to match
+        -- ["top"] = auraOrder,
     }
     if auraType == "buff" then
         customIndicators[auraType][indicatorName]["castByMe"] = indicatorTable["castByMe"]
@@ -808,7 +809,7 @@ function F:RemoveAllCustomIndicators(parent)
     wipe(customIndicators["debuff"])
 end
 
-local function UpdateCustomIndicators(indicatorName, setting, value, aurasTable)
+local function UpdateCustomIndicators(indicatorName, setting, value, value2)
     if not indicatorName or not string.find(indicatorName, "indicator") then return end
 
     if setting == "enabled" then
@@ -818,9 +819,9 @@ local function UpdateCustomIndicators(indicatorName, setting, value, aurasTable)
             enabledIndicators[indicatorName] = nil
         end
     elseif setting == "auras" then
-        customIndicators[value][indicatorName]["auras"] = F:ConvertTable(aurasTable)
+        customIndicators[value][indicatorName]["auras"] = F:ConvertTable(value2)
     elseif setting == "checkbutton" then
-        customIndicators["buff"][indicatorName]["castByMe"] = value
+        customIndicators["buff"][indicatorName][value] = value2
     end
 end
 Cell:RegisterCallback("UpdateIndicators", "UpdateCustomIndicators", UpdateCustomIndicators)
@@ -830,15 +831,15 @@ function F:ShowCustomIndicators(unitButton, auraType, auraName, start, duration,
         if enabledIndicators[indicatorName] then
             if auraType == "buff" then
                 -- check castByMe
-                if customIndicators["buff"][indicatorName]["castByMe"] == castByMe and indicatorTable["auras"][auraName] then
+                if indicatorTable["castByMe"] == castByMe and indicatorTable["auras"][auraName] then
                     unitButton.indicators[indicatorName]:SetCooldown(start, duration, debuffType, texture, count, refreshing)
                     -- update cache
-                    customIndicators[auraType][indicatorName]["found"][auraName] = true
+                    indicatorTable["found"][auraName] = true
                 end
             else
                 unitButton.indicators[indicatorName]:SetCooldown(start, duration, debuffType, texture, count, refreshing)
                 -- update cache
-                customIndicators[auraType][indicatorName]["found"][auraName] = true
+                indicatorTable["found"][auraName] = true
             end
         end
     end
@@ -849,23 +850,23 @@ function F:HideCustomIndicators(unitButton, auraType, auraName, castByMe)
         if enabledIndicators[indicatorName] then
             if indicatorTable["auras"][auraName] then
                 if auraType == "buff" then
-                    if customIndicators["buff"][indicatorName]["castByMe"] == castByMe then
+                    if indicatorTable["castByMe"] == castByMe then
                         -- update cache
-                        customIndicators[auraType][indicatorName]["found"][auraName] = nil
-                        if F:Getn(customIndicators[auraType][indicatorName]["found"]) == 0 then
+                        indicatorTable["found"][auraName] = nil
+                        if F:Getn(indicatorTable["found"]) == 0 then
                             unitButton.indicators[indicatorName]:Hide()
                         end
                     end
                 else
                     -- update cache
-                    customIndicators[auraType][indicatorName]["found"][auraName] = nil
-                    if F:Getn(customIndicators[auraType][indicatorName]["found"]) == 0 then
+                    indicatorTable["found"][auraName] = nil
+                    if F:Getn(indicatorTable["found"]) == 0 then
                         unitButton.indicators[indicatorName]:Hide()
                     end
                 end
             end
         else
-            wipe(customIndicators[auraType][indicatorName]["found"])
+            wipe(indicatorTable["found"])
             unitButton.indicators[indicatorName]:Hide()
         end
     end

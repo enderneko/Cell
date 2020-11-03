@@ -31,12 +31,16 @@ function addon:ColorFontStringByPlayerClass(fs)
 	fs:SetTextColor(classColor.t[1], classColor.t[2], classColor.t[3])
 end
 
-function addon:GetPlayerClassColor(alpha)
+function addon:GetPlayerClassColorTable(alpha)
 	if alpha then
 		return {classColor.t[1], classColor.t[2], classColor.t[3], alpha}
 	else
 		return classColor.t
 	end
+end
+
+function addon:GetPlayerClassColorString()
+	return classColor.s
 end
 
 -----------------------------------------
@@ -1254,14 +1258,14 @@ end
 -----------------------------------------
 -- scroll text frame
 -----------------------------------------
-function addon:CreateScrollTextFrame(parent, s, timePerScroll, scrollStep, delayTime)
+function addon:CreateScrollTextFrame(parent, s, timePerScroll, scrollStep, delayTime, noFadeIn)
 	if not delayTime then delayTime = 3 end
 	if not timePerScroll then timePerScroll = 0.025 end
 	if not scrollStep then scrollStep = 1 end
 
 	local frame = CreateFrame("ScrollFrame", nil, parent)
 	-- frame:Hide() -- hide by default
-	frame:SetSize(20, 20)
+	frame:SetHeight(20)
 
 	local content = CreateFrame("Frame", nil, frame)
 	content:SetSize(20, 20)
@@ -1311,11 +1315,11 @@ function addon:CreateScrollTextFrame(parent, s, timePerScroll, scrollStep, delay
 	-- init frame
 	frame:SetScript("OnShow", function()
 		-- init
-		fadeIn:Play()
+		if not noFadeIn then fadeIn:Play() end
 		frame:SetHorizontalScroll(0)
 		elapsedTime, delay, scroll = 0, 0, 0
 
-		if text:GetStringWidth() <= frame:GetWidth() then
+		if text:GetStringWidth() <= frame:GetWidth() then -- NOTE: frame in a scrollFrame will cause frame:GetWidth() == 0
 			frame:SetScript("OnUpdate", nil)
 		else
 			maxHScrollRange = text:GetStringWidth() - frame:GetWidth()
@@ -1342,6 +1346,9 @@ function addon:CreateScrollTextFrame(parent, s, timePerScroll, scrollStep, delay
 
 	function frame:SetText(str)
 		text:SetText(str)
+		if frame:IsVisible() then
+			frame:GetScript("OnShow")()
+		end
 	end
 
 	return frame
@@ -2449,14 +2456,13 @@ local function CreateSetting_CheckButton(parent)
 		-- associate db
 		function widget:SetFunc(func)
 			widget.cb.onClick = function(checked)
-				func(widget.settingName, checked)
+				func(checked)
 			end
 		end
 
 		-- show db value
 		function widget:SetDBValue(settingName, checked)
 			widget.cb:SetChecked(checked)
-			widget.settingName = settingName
 			widget.cb.label:SetText(L[settingName])
 		end
 	else
@@ -2555,6 +2561,35 @@ local function CreateSetting_Auras(parent)
 	return widget
 end
 
+local function CreateSetting_Tips(parent, text)
+	local widget
+
+	if not settingWidgets["tips"] then
+		widget = addon:CreateFrame("CellIndicatorSettings_Tips", parent, 240, 30)
+		settingWidgets["tips"] = widget
+
+		-- widget.text = widget:CreateFontString(nil, "OVERLAY", font_name)
+		-- widget.text:SetPoint("LEFT", 5, 0)
+		-- widget.text:SetPoint("RIGHT", -5, 0)
+		-- widget.text:SetJustifyH("LEFT")
+		widget.text = Cell:CreateScrollTextFrame(widget, "", 0.02, nil, nil, true)
+		widget.text:SetPoint("LEFT", 5, 0)
+		widget.text:SetWidth(240)
+		-- widget.text:SetPoint("RIGHT", -5, 0)
+
+		function widget:SetDBValue()
+		end
+		function widget:SetFunc()
+		end
+	else
+		widget = settingWidgets["tips"]
+	end
+
+	widget.text:SetText(text)
+	widget:Show()
+	return widget
+end
+
 function addon:CreateIndicatorSettings(parent, settingsTable)
 	local widgetsTable = {}
 
@@ -2584,10 +2619,12 @@ function addon:CreateIndicatorSettings(parent, settingsTable)
 			tinsert(widgetsTable, CreateSetting_Color(parent))
 		elseif setting == "colors" then
 			tinsert(widgetsTable, CreateSetting_Colors(parent))
-		elseif setting == "checkbutton" then
+		elseif string.find(setting, "checkbutton") then
 			tinsert(widgetsTable, CreateSetting_CheckButton(parent))
 		elseif setting == "auras" or setting == "blacklist" then
 			tinsert(widgetsTable, CreateSetting_Auras(parent))
+		else -- tips
+			tinsert(widgetsTable, CreateSetting_Tips(parent, setting))
 		end
 	end
 	

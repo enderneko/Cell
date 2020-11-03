@@ -226,8 +226,8 @@ local function UpdateIndicators(indicatorName, setting, value)
 		-- changed in IndicatorsTab
 		if setting == "enabled" then
             if value then
-                indicator:Show()
                 InitIndicator(indicatorName)
+                indicator:Show()
             else
                 indicator:Hide()
             end
@@ -473,9 +473,9 @@ local indicatorSettings = {
     ["externalCooldowns"] = {"enabled", "position", "size", "num"},
     ["defensiveCooldowns"] = {"enabled", "position", "size", "num"},
     ["tankActiveMitigation"] = {"enabled", "position", "size"},
-    ["dispels"] = {"enabled", "position", "size-square", "checkbutton"},
+    ["dispels"] = {"enabled", "position", "size-square", "checkbutton:dispellableByMe"},
     ["debuffs"] = {"enabled", "blacklist", "position", "size-square", "num", "font"},
-    ["centralDebuff"] = {"enabled", "position", "size-square", "font"},
+    ["centralDebuff"] = {"|cffb7b7b7"..L["You can config debuffs in %s"]:format(Cell:GetPlayerClassColorString()..L["Raid Debuffs"].."|r"), "enabled", "position", "size-square", "font"},
 }
 
 local function ShowIndicatorSettings(id)
@@ -500,8 +500,11 @@ local function ShowIndicatorSettings(id)
             settingsTable = {"enabled", "auras", "position", "size", "colors"}
         end
         if currentLayoutTable["indicators"][id]["auraType"] == "buff" then
-            tinsert(settingsTable, 3, "checkbutton") -- castByMe
-        end 
+            -- castByMe
+            tinsert(settingsTable, 3, "checkbutton:castByMe")
+            -- tips
+            tinsert(settingsTable, 1, "|cffb7b7b7"..L["The priority of spells decreases from top to bottom. Indicator settings are part of Layout settings which are account-wide."])
+        end
     end
 
     local widgets = Cell:CreateIndicatorSettings(settingsFrame.scrollFrame.content, settingsTable)
@@ -524,12 +527,9 @@ local function ShowIndicatorSettings(id)
         if currentSetting == "size-square" then currentSetting = "size" end
         
         -- echo
-        if currentSetting == "checkbutton" then
-            if indicatorName == "dispels" then
-                w:SetDBValue("dispellableByMe", currentLayoutTable["indicators"][id]["dispellableByMe"])
-            else -- custom indicators
-                w:SetDBValue("castByMe", currentLayoutTable["indicators"][id]["castByMe"])
-            end
+        if string.find(currentSetting, "checkbutton") then
+            local setting = select(2,string.split(":", currentSetting))
+            w:SetDBValue(setting, currentLayoutTable["indicators"][id][setting])
         elseif currentSetting == "auras" then
             w:SetDBValue(L[F:UpperFirst(currentLayoutTable["indicators"][id]["auraType"]).." List"].." |cFF777777("..L["spell name"]..")", currentLayoutTable["indicators"][id]["auras"])
         elseif currentSetting == "blacklist" then
@@ -539,11 +539,12 @@ local function ShowIndicatorSettings(id)
         end
 
         -- update func
-        w:SetFunc(function(value, value2)
+        w:SetFunc(function(value)
             -- texplore(value)
-            if currentSetting == "checkbutton" then
-                Cell.vars.currentLayoutTable["indicators"][id][value] = value2
-                Cell:Fire("UpdateIndicators", indicatorName, currentSetting, value2) -- TODO: change to value
+            if string.find(currentSetting, "checkbutton") then
+                local setting = select(2,string.split(":", currentSetting))
+                Cell.vars.currentLayoutTable["indicators"][id][setting] = value
+                Cell:Fire("UpdateIndicators", indicatorName, "checkbutton", setting, value) -- indicatorName, setting, value, value2
             elseif currentSetting == "auras" then
                 Cell.vars.currentLayoutTable["indicators"][id][currentSetting] = value
                 Cell:Fire("UpdateIndicators", indicatorName, currentSetting, currentLayoutTable["indicators"][id]["auraType"], value)
@@ -587,7 +588,18 @@ LoadIndicatorList = function()
         if t["type"] == "built-in" then
             b = Cell:CreateButton(listFrame.scrollFrame.content, L[t["name"]], "transparent-class", {20, 20})
         else
-            b = Cell:CreateButton(listFrame.scrollFrame.content, t["name"].." |cff7f7f7f("..L[t["auraType"]]..")", "transparent-class", {20, 20})
+            b = Cell:CreateButton(listFrame.scrollFrame.content, t["name"], "transparent-class", {20, 20})
+            -- b = Cell:CreateButton(listFrame.scrollFrame.content, t["name"].." |cff7f7f7f("..L[t["auraType"]]..")", "transparent-class", {20, 20})
+            b.typeIcon = b:CreateTexture(nil, "ARTWORK")
+            b.typeIcon:SetPoint("RIGHT", -2, 0)
+            b.typeIcon:SetSize(16, 16)
+            b.typeIcon:SetTexture("Interface\\AddOns\\Cell\\Media\\indicator-"..t["type"])
+            -- b.typeIcon:SetVertexColor(unpack(Cell:GetPlayerClassColorTable()))
+            b.typeIcon:SetAlpha(.5)
+
+            b:GetFontString():ClearAllPoints()
+            b:GetFontString():SetPoint("LEFT", 5, 0)
+            b:GetFontString():SetPoint("RIGHT", b.typeIcon, "LEFT", -2, 0)
         end
         tinsert(listButtons, b)
         b.id = i
@@ -625,9 +637,11 @@ LoadIndicatorList = function()
     Cell:CreateButtonGroup(listButtons, ShowIndicatorSettings, function(id)
         local w = previewButton.indicators[currentLayoutTable["indicators"][id]["indicatorName"]]
         LCG.PixelGlow_Start(w:IsObjectType("StatusBar") and w.border or w)
+        w:SetAlpha(1)
     end, function(id)
         local w = previewButton.indicators[currentLayoutTable["indicators"][id]["indicatorName"]]
         LCG.PixelGlow_Stop(w:IsObjectType("StatusBar") and w.border or w)
+        w:SetAlpha(.57)
     end)
 end
 

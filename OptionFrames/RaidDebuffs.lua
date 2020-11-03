@@ -221,7 +221,7 @@ end)
 -------------------------------------------------
 -- tips
 -------------------------------------------------
-local tips = Cell:CreateScrollTextFrame(debuffsTab, "|cff777777"..L["Tips: Drag and drop to change debuff order. Double-click on instance name to open Encounter Journal. The priority of General Debuffs is higher than Boss Debuffs."], 0.02)
+local tips = Cell:CreateScrollTextFrame(debuffsTab, "|cffb7b7b7"..L["Tips: Drag and drop to change debuff order. Double-click on instance name to open Encounter Journal. The priority of General Debuffs is higher than Boss Debuffs."], 0.02)
 tips:SetPoint("TOPLEFT", showCurrentBtn, "TOPRIGHT", 5, 0)
 tips:SetPoint("RIGHT", -5, 0)
 
@@ -230,8 +230,8 @@ tips:SetPoint("RIGHT", -5, 0)
 -------------------------------------------------
 local function SetOnEnterLeave(frame)
     frame:SetScript("OnEnter", function()
-        frame:SetBackdropBorderColor(unpack(Cell:GetPlayerClassColor()))
-        frame.scrollFrame.scrollbar:SetBackdropBorderColor(unpack(Cell:GetPlayerClassColor()))
+        frame:SetBackdropBorderColor(unpack(Cell:GetPlayerClassColorTable()))
+        frame.scrollFrame.scrollbar:SetBackdropBorderColor(unpack(Cell:GetPlayerClassColorTable()))
         -- frame.scrollFrame.scrollThumb:SetBackdropBorderColor(0, 0, 0, .5)
     end)
     frame:SetScript("OnLeave", function()
@@ -494,7 +494,7 @@ end)
 -- disableAll:SetPoint("LEFT", enableAll, "RIGHT", 5, 0)
 
 local dragged = Cell:CreateFrame("RaidDebuffsTab_Dragged", debuffsTab, 20, 20)
-Cell:StylizeFrame(dragged, nil, Cell:GetPlayerClassColor())
+Cell:StylizeFrame(dragged, nil, Cell:GetPlayerClassColorTable())
 dragged:SetFrameStrata("HIGH")
 dragged:EnableMouse(false)
 dragged:SetMovable(true)
@@ -776,7 +776,7 @@ local isMouseOver
 detailsFrame:SetScript("OnUpdate", function()
     if detailsFrame:IsMouseOver() then
         if not isMouseOver or isMouseOver ~= 1 then
-            detailsFrame:SetBackdropBorderColor(unpack(Cell:GetPlayerClassColor()))
+            detailsFrame:SetBackdropBorderColor(unpack(Cell:GetPlayerClassColorTable()))
             isMouseOver = 1
         end
     else

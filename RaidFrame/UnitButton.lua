@@ -60,8 +60,8 @@ local function UpdateIndicatorParentVisibility(b, indicatorName, enabled)
 	end
 end
 
-local function UpdateIndicators(indicatorName, setting, value)
-	F:Debug("|cffff7777UpdateIndicators:|r ", indicatorName, setting, value)
+local function UpdateIndicators(indicatorName, setting, value, value2)
+	F:Debug("|cffff7777UpdateIndicators:|r ", indicatorName, setting, value, value2)
 	if not indicatorName then -- init
 		wipe(enabledIndicators)
 		wipe(indicatorNums)
@@ -163,7 +163,7 @@ local function UpdateIndicators(indicatorName, setting, value)
 				UnitButton_UpdateAuras(b)
 			end)
 		elseif setting == "checkbutton" then
-			indicatorCustoms[indicatorName] = value
+			indicatorCustoms[indicatorName] = value2
 			F:IterateAllUnitButtons(function(b)
 				UnitButton_UpdateAuras(b)
 			end)
