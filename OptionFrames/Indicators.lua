@@ -543,7 +543,7 @@ local function ShowIndicatorSettings(id)
             -- texplore(value)
             if currentSetting == "checkbutton" then
                 Cell.vars.currentLayoutTable["indicators"][id][value] = value2
-                Cell:Fire("UpdateIndicators", indicatorName, currentSetting, value2)
+                Cell:Fire("UpdateIndicators", indicatorName, currentSetting, value2) -- TODO: change to value
             elseif currentSetting == "auras" then
                 Cell.vars.currentLayoutTable["indicators"][id][currentSetting] = value
                 Cell:Fire("UpdateIndicators", indicatorName, currentSetting, currentLayoutTable["indicators"][id]["auraType"], value)
