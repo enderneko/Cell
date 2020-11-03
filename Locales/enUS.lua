@@ -14,6 +14,7 @@ select(2, ...).L = setmetatable({
 
 	["dispellableByMe"] = "Only show debuffs dispellable by me",
 	["castByMe"] = "Only show buffs cast by me",
+	["enableHighlight"] = "Highlight unit button",
 
 	["BOTTOM"] = "Bottom",
 	["BOTTOMLEFT"] = "Bottom Left",

@@ -473,7 +473,7 @@ local indicatorSettings = {
     ["externalCooldowns"] = {"enabled", "position", "size", "num"},
     ["defensiveCooldowns"] = {"enabled", "position", "size", "num"},
     ["tankActiveMitigation"] = {"enabled", "position", "size"},
-    ["dispels"] = {"enabled", "position", "size-square", "checkbutton:dispellableByMe"},
+    ["dispels"] = {"enabled", "position", "size-square", "checkbutton:dispellableByMe", "checkbutton2:enableHighlight"},
     ["debuffs"] = {"enabled", "blacklist", "position", "size-square", "num", "font"},
     ["centralDebuff"] = {"|cffb7b7b7"..L["You can config debuffs in %s"]:format(Cell:GetPlayerClassColorString()..L["Raid Debuffs"].."|r"), "enabled", "position", "size-square", "font"},
 }

@@ -672,6 +672,11 @@ function F:CreateDispels(parent)
     dispels:SetFrameLevel(77)
     dispels:Hide()
 
+    dispels.highlight = parent.widget.healthBar:CreateTexture(parent:GetName().."DispelHighlight", "ARTWORK")
+    dispels.highlight:SetAllPoints(parent.widget.healthBar)
+    dispels.highlight:SetTexture("Interface\\Buttons\\WHITE8x8")
+    dispels.highlight:Hide()
+
     dispels.OriginalSetSize = dispels.SetSize
 
     function dispels:SetSize(width, height)
@@ -682,14 +687,31 @@ function F:CreateDispels(parent)
     end
 
     function dispels:SetDispels(dispelTypes)
+        local r, g, b, a = 0, 0, 0, 0
+
         local i = 1
         for dispelType, _ in pairs(dispelTypes) do
             dispels[i]:SetDispel(dispelType)
             i = i + 1
+            if dispelType then
+                r, g, b, a = DebuffTypeColor[dispelType].r, DebuffTypeColor[dispelType].g, DebuffTypeColor[dispelType].b, .5
+            end
         end
+
         -- hide unused
         for j = i, 4 do
             dispels[i]:Hide()
+        end
+
+        -- highlight
+        dispels.highlight:SetGradientAlpha("VERTICAL", r, g, b, a, r, g, b, 0)
+    end
+
+    function dispels:EnableHighlight(enabled)
+        if enabled then
+            dispels.highlight:Show()
+        else
+            dispels.highlight:Hide()
         end
     end
 

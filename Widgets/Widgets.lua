@@ -2473,6 +2473,36 @@ local function CreateSetting_CheckButton(parent)
 	return widget
 end
 
+local function CreateSetting_CheckButton2(parent)
+	local widget
+
+	if not settingWidgets["checkbutton2"] then
+		widget = addon:CreateFrame("CellIndicatorSettings_CheckButton", parent, 240, 30)
+		settingWidgets["checkbutton2"] = widget
+
+		widget.cb = addon:CreateCheckButton(widget, "checkbutton2")
+		widget.cb:SetPoint("LEFT", 5, 0)
+
+		-- associate db
+		function widget:SetFunc(func)
+			widget.cb.onClick = function(checked)
+				func(checked)
+			end
+		end
+
+		-- show db value
+		function widget:SetDBValue(settingName, checked)
+			widget.cb:SetChecked(checked)
+			widget.cb.label:SetText(L[settingName])
+		end
+	else
+		widget = settingWidgets["checkbutton2"]
+	end
+
+	widget:Show()
+	return widget
+end
+
 local function CreateSetting_Auras(parent)
 	local widget
 
@@ -2619,6 +2649,8 @@ function addon:CreateIndicatorSettings(parent, settingsTable)
 			tinsert(widgetsTable, CreateSetting_Color(parent))
 		elseif setting == "colors" then
 			tinsert(widgetsTable, CreateSetting_Colors(parent))
+		elseif string.find(setting, "checkbutton2") then
+			tinsert(widgetsTable, CreateSetting_CheckButton2(parent))
 		elseif string.find(setting, "checkbutton") then
 			tinsert(widgetsTable, CreateSetting_CheckButton(parent))
 		elseif setting == "auras" or setting == "blacklist" then

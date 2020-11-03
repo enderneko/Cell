@@ -236,6 +236,7 @@ L["sec"] = "秒"
 
 L["dispellableByMe"] = "只显示我能驱散的减益"
 L["castByMe"] = "只显示我施放的增益"
+L["enableHighlight"] = "高亮单位按钮"
 
 L["You can config debuffs in %s"] = "你可以在 %s 里设置减益"
 L["The priority of spells decreases from top to bottom. Indicator settings are part of Layout settings which are account-wide."] = "法术优先级从上到下递减。指示器设置是布局设置的一部分，它们是账号配置而非角色。"

@@ -91,10 +91,16 @@ local function Revise()
 	
 	-- r15-release
 	if not(CellDB["revise"]) or dbRevision < 15 then
-		-- add powerHeight
 		for _, layout in pairs(CellDB["layouts"]) do
+			-- add powerHeight
 			if type(layout["powerHeight"]) ~= "number" then
 				layout["powerHeight"] = 2
+			end
+			-- add dispel highlight
+			if layout["indicators"][6] and layout["indicators"][6]["indicatorName"] == "dispels" then
+				if type(layout["indicators"][6]["enableHighlight"]) ~= "boolean" then
+					layout["indicators"][6]["enableHighlight"] = true
+				end
 			end
 		end
 		-- change showPets to showPartyPets

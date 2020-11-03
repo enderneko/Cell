@@ -112,6 +112,10 @@ local function UpdateIndicators(indicatorName, setting, value, value2)
 				if t["colors"] then
 					indicator:SetColors(t["colors"])
 				end
+				-- update dispel highlight
+				if type(t["enableHighlight"]) == "boolean" then
+					indicator:EnableHighlight(t["enableHighlight"])
+				end
 				UpdateIndicatorParentVisibility(b, t["indicatorName"], t["enabled"])
 			end)
 		end
@@ -163,8 +167,14 @@ local function UpdateIndicators(indicatorName, setting, value, value2)
 				UnitButton_UpdateAuras(b)
 			end)
 		elseif setting == "checkbutton" then
-			indicatorCustoms[indicatorName] = value2
+			if value ~= "enableHighlight" then
+				indicatorCustoms[indicatorName] = value2
+			end
 			F:IterateAllUnitButtons(function(b)
+				if value == "enableHighlight" then
+					local indicator = b.indicators[indicatorName]
+					indicator:EnableHighlight(value2)
+				end
 				UnitButton_UpdateAuras(b)
 			end)
 		elseif setting == "create" then
@@ -931,6 +941,10 @@ local function UnitButton_UpdateColor(self)
 			barR, barG, barB = .4, .4, .4
 			bgR, bgG, bgB = .4, .4, .4
 			nameText:SetTextColor(F:GetClassColor(self.state.class))
+		elseif UnitIsCharmed(unit) then
+			barR, barG, barB = .5, 0, 1
+			bgR, bgG, bgB = barR*.2, barG*.2, barB*.2
+			nameText:SetTextColor(F:GetClassColor(self.state.class))
 		elseif self.state.inVehicle then
 			if Cell.loaded then
 				barR, barG, barB, bgR, bgG, bgB = GetColor(0, 1, .2)
@@ -938,14 +952,6 @@ local function UnitButton_UpdateColor(self)
 				barR, barG, barB = 0, 1, .2
 				bgR, bgG, bgB = barR*.2, barG*.2, barB*.2
 			end
-		elseif UnitIsCharmed(unit) then
-			-- if Cell.loaded then
-			-- 	barR, barG, barB, bgR, bgG, bgB = GetColor(.5, 0, 1)
-			-- else
-				barR, barG, barB = .5, 0, 1
-				bgR, bgG, bgB = barR*.2, barG*.2, barB*.2
-			-- end
-			nameText:SetTextColor(F:GetClassColor(self.state.class))
 		else
 			if Cell.loaded then
 				barR, barG, barB, bgR, bgG, bgB = GetColor(F:GetClassColor(self.state.class))
