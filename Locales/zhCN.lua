@@ -209,10 +209,7 @@ L["Icon"] = "图标"
 L["Rect"] = "矩形"
 L["Bar"] = "进度条"
 L["Text"] = "文本"
--- L["icon"] = "图标"
--- L["rect"] = "矩形"
--- L["bar"] = "进度条"
--- L["text"] = "文本"
+L["Icons"] = "图标组"
 
 L["Enabled"] = "启用"
 L["Anchor Point"] = "锚点"
@@ -238,8 +235,16 @@ L["dispellableByMe"] = "只显示我能驱散的减益"
 L["castByMe"] = "只显示我施放的增益"
 L["enableHighlight"] = "高亮单位按钮"
 
+L["Orientation"] = "方向"
+L["left-to-right"] = "从左到右"
+L["right-to-left"] = "从右到左"
+L["top-to-bottom"] = "从上到下"
+L["bottom-to-top"] = "从下到上"
+
 L["You can config debuffs in %s"] = "你可以在 %s 里设置减益"
-L["The priority of spells decreases from top to bottom. Indicator settings are part of Layout settings which are account-wide."] = "法术优先级从上到下递减。指示器设置是布局设置的一部分，它们是账号配置而非角色。"
+L["Indicator settings are part of Layout settings which are account-wide."] = "指示器设置是布局设置的一部分，它们是账号配置而非角色。"
+L["The spells list of a icons indicator is unordered (no priority)."] = "图标组指示器的法术列表是无序的（无优先级）。"
+L["The priority of spells decreases from top to bottom."] = "法术优先级从上到下递减。"
 
 -------------------------------------------------
 -- raid debuffs

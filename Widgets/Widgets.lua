@@ -2175,6 +2175,63 @@ local function CreateSetting_Num(parent)
 	return widget
 end
 
+local function CreateSetting_Orientation(parent)
+	local widget
+
+	if not settingWidgets["orientation"] then
+		widget = addon:CreateFrame("CellIndicatorSettings_Orientation", parent, 240, 50)
+		settingWidgets["orientation"] = widget
+
+		widget.orientation = addon:CreateDropdown(widget, 100)
+		widget.orientation:SetPoint("TOPLEFT", 5, -20)
+		widget.orientation:SetItems({
+			{
+				["text"] = L["left-to-right"],
+				["onClick"] = function()
+					widget.func("left-to-right")
+				end,
+			},
+			{
+				["text"] = L["right-to-left"],
+				["onClick"] = function()
+					widget.func("right-to-left")
+				end,
+			},
+			{
+				["text"] = L["top-to-bottom"],
+				["onClick"] = function()
+					widget.func("top-to-bottom")
+				end,
+			},
+			{
+				["text"] = L["bottom-to-top"],
+				["onClick"] = function()
+					widget.func("bottom-to-top")
+				end,
+			},
+		})
+
+		widget.orientationText = widget:CreateFontString(nil, "OVERLAY", font_name)
+		widget.orientationText:SetText(L["Orientation"])
+		widget.orientationText:SetPoint("BOTTOMLEFT", widget.orientation, "TOPLEFT", 0, 1)
+
+		-- associate db
+		function widget:SetFunc(func)
+			widget.func = func
+		end
+		
+		-- show db value
+		function widget:SetDBValue(orientation)
+			widget.orientation:SetSelected(L[orientation])
+		end
+	else
+		widget = settingWidgets["orientation"]
+	end
+
+	widget:Show()
+	return widget
+end
+
 local function CreateSetting_Font(parent)
 	local widget
 
@@ -2643,6 +2700,8 @@ function addon:CreateIndicatorSettings(parent, settingsTable)
 			tinsert(widgetsTable, CreateSetting_Height(parent))
 		elseif setting == "num" then
 			tinsert(widgetsTable, CreateSetting_Num(parent))
+		elseif setting == "orientation" then
+			tinsert(widgetsTable, CreateSetting_Orientation(parent))
 		elseif setting == "font" then
 			tinsert(widgetsTable, CreateSetting_Font(parent))
 		elseif setting == "color" then

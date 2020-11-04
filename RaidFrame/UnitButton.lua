@@ -100,6 +100,10 @@ local function UpdateIndicators(indicatorName, setting, value, value2)
 				if t["height"] then
 					indicator:SetHeight(t["height"])
 				end
+				-- update orientation
+				if t["orientation"] then
+					indicator:SetOrientation(t["orientation"])
+				end
 				-- update font
 				if t["font"] then
 					indicator:SetFont(unpack(t["font"]))
@@ -145,6 +149,11 @@ local function UpdateIndicators(indicatorName, setting, value, value2)
 				local indicator = b.indicators[indicatorName]
 				indicator:SetHeight(value)
 			end)
+		elseif setting == "orientation" then
+			F:IterateAllUnitButtons(function(b)
+				local indicator = b.indicators[indicatorName]
+				indicator:SetOrientation(value)
+			end)
 		elseif setting == "font" then
 			F:IterateAllUnitButtons(function(b)
 				local indicator = b.indicators[indicatorName]
@@ -186,6 +195,10 @@ local function UpdateIndicators(indicatorName, setting, value, value2)
 				-- update size
 				if value["size"] then
 					indicator:SetSize(unpack(value["size"]))
+				end
+				-- update orientation
+				if value["orientation"] then
+					indicator:SetOrientation(value["orientation"])
 				end
 				-- update font
 				if value["font"] then
@@ -292,7 +305,7 @@ local function UnitButton_UpdateDebuffs(self)
 				end
 				
 				-- user created indicators
-				F:CheckCustomIndicators(unit, "debuff", name, expirationTime - duration, duration, debuffType or "", icon, count, refreshing)
+				F:CheckCustomIndicators(unit, self, "debuff", name, expirationTime - duration, duration, debuffType or "", icon, count, refreshing)
 
 				-- check top debuff
 				if F:GetDebuffOrder(spellId) ~= 0 and F:GetDebuffOrder(spellId) < topOrder then
@@ -400,7 +413,7 @@ local function UnitButton_UpdateBuffs(self)
 			end
 
 			-- user created indicators
-			F:CheckCustomIndicators(unit, "buff", name, expirationTime - duration, duration, nil, icon, count, refreshing, false)
+			F:CheckCustomIndicators(unit, self, "buff", name, expirationTime - duration, duration, nil, icon, count, refreshing, false)
 			
             buffs_cache[unit][name] = expirationTime
             buffs_current[unit][name] = i
@@ -450,7 +463,7 @@ local function UnitButton_UpdateBuffs(self)
 
 		if duration then
 			refreshing = buffs_cache_castByMe[unit][name] and expirationTime-duration+.1>=GetTime()
-			F:CheckCustomIndicators(unit, "buff", name, expirationTime - duration, duration, nil, icon, count, refreshing, true)
+			F:CheckCustomIndicators(unit, self, "buff", name, expirationTime - duration, duration, nil, icon, count, refreshing, true)
 			
             buffs_cache_castByMe[unit][name] = expirationTime
             buffs_current_castByMe[unit][name] = i

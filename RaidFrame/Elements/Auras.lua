@@ -442,6 +442,67 @@ local function CreateAura_Bar(name, parent)
 end
 
 -------------------------------------------------
+-- CreateAura_Icons
+-------------------------------------------------
+local function CreateAura_Icons(name, parent)
+    local icons = CreateFrame("Frame", name, parent)
+    icons:SetSize(11, 11)
+    icons:Hide()
+
+    icons.OriginalSetSize = icons.SetSize
+
+    function icons:SetSize(width, height)
+        icons:OriginalSetSize(width, height)
+        for i = 1, 5 do
+            icons[i]:SetSize(width, height)
+        end
+    end
+
+    function icons:SetFont(font, ...)
+        font = F:GetFont(font)
+        for i = 1, 5 do
+            icons[i]:SetFont(font, ...)
+        end
+    end
+
+    function icons:SetOrientation(orientation)
+        local point1, point2
+        if orientation == "left-to-right" then
+            point1 = "LEFT"
+            point2 = "RIGHT"
+        elseif orientation == "right-to-left" then
+            point1 = "RIGHT"
+            point2 = "LEFT"
+        elseif orientation == "top-to-bottom" then
+            point1 = "TOP"
+            point2 = "BOTTOM"
+        elseif orientation == "bottom-to-top" then
+            point1 = "BOTTOM"
+            point2 = "TOP"
+        end
+        
+        for i = 2, 5 do
+            icons[i]:ClearAllPoints()
+            icons[i]:SetPoint(point1, icons[i-1], point2)
+        end
+    end
+
+    for i = 1, 5 do
+        local name = name.."Icons"..i
+        local frame = CreateAura_BarIcon(name, icons)
+        icons[i] = frame
+
+        if i == 1 then
+            frame:SetPoint("TOPLEFT")
+        else
+            frame:SetPoint("RIGHT", icons[i-1], "LEFT")
+        end
+    end
+    
+    return icons
+end
+
+-------------------------------------------------
 -- CreateAoEHealing -- not support for npc
 -------------------------------------------------
 local CombatLogGetCurrentEventInfo = CombatLogGetCurrentEventInfo
@@ -786,6 +847,8 @@ function F:CreateIndicator(parent, indicatorTable)
         indicator = CreateAura_Bar(indicatorName, parent.widget.overlayFrame)
     elseif indicatorTable["type"] == "rect" then
         indicator = CreateAura_Rect(indicatorName, parent.widget.overlayFrame)
+    elseif indicatorTable["type"] == "icons" then
+        indicator = CreateAura_Icons(indicatorName, parent.widget.overlayFrame)
     end
     parent.indicators[indicatorName] = indicator
     
@@ -793,11 +856,25 @@ function F:CreateIndicator(parent, indicatorTable)
     if indicatorTable["enabled"] then enabledIndicators[indicatorName] = true end
 
     local auraType = indicatorTable["auraType"]
-    customIndicators[auraType][indicatorName] = {
-        ["auras"] = F:ConvertTable(indicatorTable["auras"]), -- auras to match
-        ["top"] = {}, -- top aura details
-        ["topOrder"] = {}, -- top aura order
-    }
+
+    -- NOTE: icons is different from other custom indicators, more like the Debuffs indicator
+    if indicatorTable["type"] == "icons" then
+        customIndicators[auraType][indicatorName] = {
+            ["auras"] = F:ConvertTable(indicatorTable["auras"]), -- auras to match
+            ["isIcons"] = true,
+            ["found"] = {},
+            ["num"] = indicatorTable["num"],
+            -- ["castByMe"]
+        }
+    else
+        customIndicators[auraType][indicatorName] = {
+            ["auras"] = F:ConvertTable(indicatorTable["auras"]), -- auras to match
+            ["top"] = {}, -- top aura details
+            ["topOrder"] = {}, -- top aura order
+            -- ["castByMe"]
+        }
+    end
+
     if auraType == "buff" then
         customIndicators[auraType][indicatorName]["castByMe"] = indicatorTable["castByMe"]
     end
@@ -844,29 +921,65 @@ local function UpdateCustomIndicators(indicatorName, setting, value, value2)
         customIndicators[value][indicatorName]["auras"] = F:ConvertTable(value2)
     elseif setting == "checkbutton" then
         customIndicators["buff"][indicatorName][value] = value2
+    elseif setting == "num" then
+        if customIndicators["buff"][indicatorName] then
+            customIndicators["buff"][indicatorName]["num"] = value
+        elseif customIndicators["debuff"][indicatorName] then
+            customIndicators["debuff"][indicatorName]["num"] = value
+        end
     end
 end
 Cell:RegisterCallback("UpdateIndicators", "UpdateCustomIndicators", UpdateCustomIndicators)
 
 function F:ResetCustomIndicators(unit, auraType)
     for indicatorName, indicatorTable in pairs(customIndicators[auraType]) do
-        indicatorTable["topOrder"][unit] = 999
-        if not indicatorTable["top"][unit] then
-            indicatorTable["top"][unit] = {}
+        if indicatorTable["isIcons"] then
+            indicatorTable["found"][unit] = 1
         else
-            wipe(indicatorTable["top"][unit])
+            indicatorTable["topOrder"][unit] = 999
+            if not indicatorTable["top"][unit] then
+                indicatorTable["top"][unit] = {}
+            else
+                wipe(indicatorTable["top"][unit])
+            end
         end
     end
 end
 
-function F:CheckCustomIndicators(unit, auraType, auraName, start, duration, debuffType, texture, count, refreshing, castByMe)
+function F:CheckCustomIndicators(unit, unitButton, auraType, auraName, start, duration, debuffType, texture, count, refreshing, castByMe)
     for indicatorName, indicatorTable in pairs(customIndicators[auraType]) do
         if enabledIndicators[indicatorName] then
             if indicatorTable["auras"][auraName] then -- is in indicator spell list
                 if auraType == "buff" then
                     -- check castByMe
                     if indicatorTable["castByMe"] == castByMe then
-                        if indicatorTable["auras"][auraName] < indicatorTable["topOrder"][unit] then
+                        if indicatorTable["isIcons"] then
+                            if indicatorTable["auras"][auraName] and indicatorTable["found"][unit] <= indicatorTable["num"] then
+                                unitButton.indicators[indicatorName][indicatorTable["found"][unit]]:SetCooldown(start, duration, debuffType, texture, count, refreshing)
+                                indicatorTable["found"][unit] = indicatorTable["found"][unit] + 1
+                                unitButton.indicators[indicatorName]:Show()
+                            end
+                        else
+                            if indicatorTable["auras"][auraName] < indicatorTable["topOrder"][unit] then
+                                indicatorTable["topOrder"][unit] = indicatorTable["auras"][auraName]
+                                indicatorTable["top"][unit]["start"] = start
+                                indicatorTable["top"][unit]["duration"] = duration
+                                indicatorTable["top"][unit]["debuffType"] = debuffType
+                                indicatorTable["top"][unit]["texture"] = texture
+                                indicatorTable["top"][unit]["count"] = count
+                                indicatorTable["top"][unit]["refreshing"] = refreshing
+                            end
+                        end
+                    end
+                else -- debuff
+                    if indicatorTable["isIcons"] then
+                        if indicatorTable["auras"][auraName] and indicatorTable["found"][unit] <= indicatorTable["num"] then
+                            unitButton.indicators[indicatorName][indicatorTable["found"][unit]]:SetCooldown(start, duration, debuffType, texture, count, refreshing)
+                            indicatorTable["found"][unit] = indicatorTable["found"][unit] + 1
+                            unitButton.indicators[indicatorName]:Show()
+                        end
+                    else
+                        if  indicatorTable["auras"][auraName] < indicatorTable["topOrder"][unit] then
                             indicatorTable["topOrder"][unit] = indicatorTable["auras"][auraName]
                             indicatorTable["top"][unit]["start"] = start
                             indicatorTable["top"][unit]["duration"] = duration
@@ -875,16 +988,6 @@ function F:CheckCustomIndicators(unit, auraType, auraName, start, duration, debu
                             indicatorTable["top"][unit]["count"] = count
                             indicatorTable["top"][unit]["refreshing"] = refreshing
                         end
-                    end
-                else -- debuff
-                    if  indicatorTable["auras"][auraName] < indicatorTable["topOrder"][unit] then
-                        indicatorTable["topOrder"][unit] = indicatorTable["auras"][auraName]
-                        indicatorTable["top"][unit]["start"] = start
-                        indicatorTable["top"][unit]["duration"] = duration
-                        indicatorTable["top"][unit]["debuffType"] = debuffType
-                        indicatorTable["top"][unit]["texture"] = texture
-                        indicatorTable["top"][unit]["count"] = count
-                        indicatorTable["top"][unit]["refreshing"] = refreshing
                     end
                 end
             end
@@ -895,16 +998,25 @@ end
 function F:ShowCustomIndicators(unit, unitButton, auraType)
     for indicatorName, indicatorTable in pairs(customIndicators[auraType]) do
         if enabledIndicators[indicatorName] then
-            if indicatorTable["top"][unit]["start"] then
-                unitButton.indicators[indicatorName]:SetCooldown(
-                    indicatorTable["top"][unit]["start"], 
-                    indicatorTable["top"][unit]["duration"], 
-                    indicatorTable["top"][unit]["debuffType"], 
-                    indicatorTable["top"][unit]["texture"], 
-                    indicatorTable["top"][unit]["count"], 
-                    indicatorTable["top"][unit]["refreshing"])
+            if indicatorTable["isIcons"] then
+                for i = indicatorTable["found"][unit], 5 do
+                    unitButton.indicators[indicatorName][i]:Hide()
+                end
+                if indicatorTable["found"][unit] == 1 then
+                    unitButton.indicators[indicatorName]:Hide()
+                end
             else
-                unitButton.indicators[indicatorName]:Hide()
+                if indicatorTable["top"][unit]["start"] then
+                    unitButton.indicators[indicatorName]:SetCooldown(
+                        indicatorTable["top"][unit]["start"], 
+                        indicatorTable["top"][unit]["duration"], 
+                        indicatorTable["top"][unit]["debuffType"], 
+                        indicatorTable["top"][unit]["texture"], 
+                        indicatorTable["top"][unit]["count"], 
+                        indicatorTable["top"][unit]["refreshing"])
+                else
+                    unitButton.indicators[indicatorName]:Hide()
+                end
             end
         end
     end

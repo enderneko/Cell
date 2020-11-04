@@ -26,6 +26,11 @@ select(2, ...).L = setmetatable({
 	["TOPLEFT"] = "Top Left",
 	["TOPRIGHT"] = "Top Right",
 
+	["left-to-right"] = "Left-to-Right",
+	["right-to-left"] = "Right-to-Left",
+	["top-to-bottom"] = "Top-to-Bottom",
+	["bottom-to-top"] = "Bottom-to-Top",
+
 	["ABOUT"] = "Cell is a unique raid frame addon inspired by CompactRaid.\nI love CompactRaid so much, but it seems to be abandoned. And I made Cell, hope you enjoy.\nSome ideas are from other great raid frame addons, such as Aptechka, Grid2.\nCell is not meant to be a lightweight or powerful (like VuhDo, Grid2) raid frames addon. It's easy to use and good enough for you (hope so).",
 	
 	["pullTimerTips"] = "\n|rPull Timer\nLeft-Click: |cffffffffstart timer|r\nRight-Click: |cffffffffcancel timer|r",

@@ -155,19 +155,37 @@ local function InitIndicator(indicatorName)
             end)
         end
     elseif string.find(indicatorName, "indicator") then
-        indicator.preview = indicator.preview or CreateFrame("Frame", nil, indicator)
-        indicator:SetScript("OnShow", function()
-            indicator:SetCooldown(GetTime(), 7, nil, 134400, 0)
-            indicator.preview.elapsedTime = 0
-            indicator.preview:SetScript("OnUpdate", function(self, elapsed)
-                if self.elapsedTime >= 7 then
-                    self.elapsedTime = 0
-                    indicator:SetCooldown(GetTime(), 7, nil, 134400, 0)
-                else
-                    self.elapsedTime = self.elapsedTime + elapsed
-                end
+        if indicator.SetOrientation then -- icons
+            local stacks = {1, 2, 3, 4, 5}
+            for i = 1, 5 do
+                indicator[i]:SetScript("OnShow", function()
+                    indicator[i]:SetCooldown(GetTime(), 7, nil, 134400, stacks[i])
+                    indicator[i].cooldown.value = 0
+                    indicator[i].cooldown:SetScript("OnUpdate", function(self, elapsed)
+                        if self.value >= 7 then
+                            self.value = 0
+                        else
+                            self.value = self.value + elapsed
+                        end
+                        self:SetValue(self.value)
+                    end)
+                end)
+            end
+        else
+            indicator.preview = indicator.preview or CreateFrame("Frame", nil, indicator)
+            indicator:SetScript("OnShow", function()
+                indicator:SetCooldown(GetTime(), 7, nil, 134400, 0)
+                indicator.preview.elapsedTime = 0
+                indicator.preview:SetScript("OnUpdate", function(self, elapsed)
+                    if self.elapsedTime >= 7 then
+                        self.elapsedTime = 0
+                        indicator:SetCooldown(GetTime(), 7, nil, 134400, 0)
+                    else
+                        self.elapsedTime = self.elapsedTime + elapsed
+                    end
+                end)
             end)
-        end)
+        end
     end
     indicator.init = true
 end
@@ -194,7 +212,7 @@ local function UpdateIndicators(indicatorName, setting, value)
             if t["height"] then
                 indicator:SetHeight(t["height"])
             end
-            -- update debuffs num
+            -- update num
             if t["num"] then
                 for i, frame in ipairs(indicator) do
                     if i <= t["num"] then
@@ -203,6 +221,10 @@ local function UpdateIndicators(indicatorName, setting, value)
                         frame:Hide()
                     end
                 end
+            end
+            -- update orientation
+            if t["orientation"] then
+                indicator:SetOrientation(t["orientation"])
             end
             -- update font
             if t["font"] then
@@ -250,6 +272,8 @@ local function UpdateIndicators(indicatorName, setting, value)
                     frame:Hide()
                 end
             end
+        elseif setting == "orientation" then
+            indicator:SetOrientation(value)
         elseif setting == "font" then
             indicator:SetFont(unpack(value))
         elseif setting == "color" then
@@ -264,6 +288,20 @@ local function UpdateIndicators(indicatorName, setting, value)
             -- update size
             if value["size"] then
                 indicator:SetSize(unpack(value["size"]))
+            end
+            -- update num
+            if value["num"] then
+                for i, frame in ipairs(indicator) do
+                    if i <= value["num"] then
+                        frame:Show()
+                    else
+                        frame:Hide()
+                    end
+                end
+            end
+            -- update orientation
+            if value["orientation"] then
+                indicator:SetOrientation(value["orientation"])
             end
             -- update font
             if value["font"] then
@@ -339,6 +377,10 @@ local typeItems = {
         ["text"] = L["Text"],
         ["value"] = "text",
     },
+    {
+        ["text"] = L["Icons"],
+        ["value"] = "icons",
+    },
 }
 
 local auraTypeItems = {
@@ -375,7 +417,7 @@ createBtn:SetScript("OnClick", function()
                 ["enabled"] = true,
                 ["position"] = {"TOPRIGHT", "TOPRIGHT", 0, 3},
                 ["size"] = {13, 13},
-                ["font"] = {"Cell ".._G.DEFAULT, 12, "Outline", 2},
+                ["font"] = {"Cell ".._G.DEFAULT, 11, "Outline", 2},
                 ["auraType"] = indicatorAuraType,
                 ["auras"] = {},
             })
@@ -412,6 +454,20 @@ createBtn:SetScript("OnClick", function()
                 ["position"] = {"TOPRIGHT", "TOPRIGHT", 0, 2},
                 ["size"] = {11, 4},
                 ["colors"] = {{0,1,0}, {1,1,0,.5}, {1,0,0,5}},
+                ["auraType"] = indicatorAuraType,
+                ["auras"] = {},
+            })
+        elseif indicatorType == "icons" then
+            tinsert(currentLayoutTable["indicators"], {
+                ["name"] = name,
+                ["indicatorName"] = indicatorName,
+                ["type"] = indicatorType,
+                ["enabled"] = true,
+                ["position"] = {"TOPRIGHT", "TOPRIGHT", 0, 3},
+                ["size"] = {13, 13},
+                ["num"] = 3,
+                ["orientation"] = "right-to-left",
+                ["font"] = {"Cell ".._G.DEFAULT, 11, "Outline", 2},
                 ["auraType"] = indicatorAuraType,
                 ["auras"] = {},
             })
@@ -498,12 +554,18 @@ local function ShowIndicatorSettings(id)
             settingsTable = {"enabled", "auras", "position", "font", "colors"}
         elseif indicatorType == "bar" or indicatorType == "rect" then
             settingsTable = {"enabled", "auras", "position", "size", "colors"}
+        elseif indicatorType == "icons" then
+            settingsTable = {"enabled", "auras", "position", "size-square", "num", "orientation", "font"}
         end
+        -- castByMe
         if currentLayoutTable["indicators"][id]["auraType"] == "buff" then
-            -- castByMe
             tinsert(settingsTable, 3, "checkbutton:castByMe")
-            -- tips
-            tinsert(settingsTable, 1, "|cffb7b7b7"..L["The priority of spells decreases from top to bottom. Indicator settings are part of Layout settings which are account-wide."])
+        end
+        -- tips
+        if indicatorType == "icons" then
+            tinsert(settingsTable, 1, "|cffb7b7b7"..L["The spells list of a icons indicator is unordered (no priority)."].." "..L["Indicator settings are part of Layout settings which are account-wide."])
+        else
+            tinsert(settingsTable, 1, "|cffb7b7b7"..L["The priority of spells decreases from top to bottom."].." "..L["Indicator settings are part of Layout settings which are account-wide."])
         end
     end
 
