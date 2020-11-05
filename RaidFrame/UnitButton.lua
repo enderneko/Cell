@@ -1005,9 +1005,17 @@ local function UnitButton_UpdateAll(self)
 	UnitButton_UpdateHealth(self)
 	UnitButton_UpdateHealthPrediction(self)
 	UnitButton_UpdateStatusText(self)
-	UnitButton_UpdatePowerType(self)
-	UnitButton_UpdatePowerMax(self)
-	UnitButton_UpdatePower(self)
+	if Cell.loaded then
+		if Cell.vars.currentLayoutTable["powerHeight"] ~= 0 then
+			UnitButton_UpdatePowerType(self)
+			UnitButton_UpdatePowerMax(self)
+			UnitButton_UpdatePower(self)
+		end
+	else
+		UnitButton_UpdatePowerType(self)
+		UnitButton_UpdatePowerMax(self)
+		UnitButton_UpdatePower(self)
+	end
 	UnitButton_UpdateTarget(self)
 	UnitButton_UpdateRaidIcon(self)
 	UnitButton_UpdateShieldAbsorbs(self)
@@ -1373,14 +1381,12 @@ function F:UnitButton_OnLoad(button)
 		healthBar:SetPoint("TOPLEFT", 1, -1)
 		healthBar:SetPoint("BOTTOMRIGHT", -1, height==0 and 1 or height+2)
 		if height == 0 then
-			powerBar:Hide()
-			powerBarBackground:Hide()
 			button:UnregisterEvent("UNIT_POWER_FREQUENT")
 			button:UnregisterEvent("UNIT_MAXPOWER")
 			button:UnregisterEvent("UNIT_DISPLAYPOWER")
+			powerBar:Hide()
+			powerBarBackground:Hide()
 		else
-			powerBar:Show()
-			powerBarBackground:Show()
 			if button:IsShown() and not button:IsEventRegistered("UNIT_DISPLAYPOWER") then
 				button:RegisterEvent("UNIT_POWER_FREQUENT")
 				button:RegisterEvent("UNIT_MAXPOWER")
@@ -1390,6 +1396,8 @@ function F:UnitButton_OnLoad(button)
 				UnitButton_UpdatePower(button)
 				UnitButton_UpdatePowerType(button)
 			end
+			powerBar:Show()
+			powerBarBackground:Show()
 		end
 	end
 	
