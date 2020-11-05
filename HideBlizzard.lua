@@ -2,7 +2,7 @@ local _, Cell = ...
 local F = Cell.funcs
 
 local empty = function() end
-local hider = CreateFrame("Frame")
+local hider = CreateFrame("Frame", nil, nil, "SecureFrameTemplate")
 hider:Hide()
 
 local function HideBlizzardFrame(frame)
@@ -28,7 +28,7 @@ function F:HideBlizzard()
     HideBlizzardFrame(CompactRaidFrameContainer)
     UIParent:UnregisterEvent("GROUP_ROSTER_UPDATE")
 
-    -- if CompactUnitFrameProfiles then CompactUnitFrameProfiles:UnregisterAllEvents() end
+    if CompactUnitFrameProfiles then CompactUnitFrameProfiles:UnregisterAllEvents() end
 
     -- hide party frames
     for i = 1, 4 do

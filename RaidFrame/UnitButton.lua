@@ -817,7 +817,7 @@ local function UnitButton_UpdateVehicleStatus(self)
 	if not unit then return end
 
 	if UnitHasVehicleUI(unit) then -- or UnitInVehicle(unit) or UnitUsingVehicle(unit) then
-		self.state.inVehicle = 1
+		self.state.inVehicle = true
 		if unit == "player" then
 			self.state.displayedUnit = "vehicle"
 		else
@@ -841,7 +841,7 @@ local function UnitButton_UpdatePhase(self)
         icon:SetTexture("Interface\\RaidFrame\\Raid-Icon-Rez")
         icon:SetTexCoord(0.08, 0.92, 0.08, 0.92)
 		icon:Show()
-	elseif UnitPhaseReason(unit) then -- and not frame.state.isInVehicle then
+	elseif UnitIsPlayer(unit) and UnitPhaseReason(unit) and not self.state.inVehicle then
 		-- https://wow.gamepedia.com/API_UnitPhaseReason
 		icon:SetTexture("Interface\\TargetingFrame\\UI-PhasingIcon")
 		icon:SetTexCoord(0.15625, 0.84375, 0.15625, 0.84375)

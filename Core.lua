@@ -475,17 +475,28 @@ function eventFrame:PLAYER_LOGIN()
     if CellDB["general"]["hideBlizzard"] then F:HideBlizzard() end
 end
 
+local forceRecheck
+local checkSpecFrame = CreateFrame("Frame")
+checkSpecFrame:SetScript("OnEvent", function()
+    eventFrame:ACTIVE_TALENT_GROUP_CHANGED()
+end)
 -- PLAYER_SPECIALIZATION_CHANGED fires when level up, ACTIVE_TALENT_GROUP_CHANGED usually fire twice.
 -- NOTE: ACTIVE_TALENT_GROUP_CHANGED fires before PLAYER_LOGIN, but can't GetSpecializationInfo before PLAYER_LOGIN
 function eventFrame:ACTIVE_TALENT_GROUP_CHANGED()
     -- not in combat & spec CHANGED
-    if not InCombatLockdown() and prevSpec and prevSpec ~= GetSpecialization() then
+    if not InCombatLockdown() and (prevSpec and prevSpec ~= GetSpecialization() or forceRecheck) then
         prevSpec = GetSpecialization()
         -- update spec vars
         Cell.vars.playerSpecID, Cell.vars.playerSpecName, _, Cell.vars.playerSpecIcon = GetSpecializationInfo(prevSpec)
-        
-        if not CellDB["clickCastings"][Cell.vars.playerClass]["useCommon"] then
-            Cell:Fire("UpdateClickCastings")
+        if not Cell.vars.playerSpecID then -- NOTE: when join in battleground, spec auto switched, duiring loading, can't get info from GetSpecializationInfo, until PLAYER_ENTERING_WORLD
+            forceRecheck = true
+            checkSpecFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
+        else
+            forceRecheck = false
+            checkSpecFrame:UnregisterEvent("PLAYER_ENTERING_WORLD")
+            if not CellDB["clickCastings"][Cell.vars.playerClass]["useCommon"] then
+                Cell:Fire("UpdateClickCastings")
+            end
         end
     end
 end
