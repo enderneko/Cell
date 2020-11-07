@@ -980,6 +980,9 @@ local function UnitButton_UpdateColor(self)
 			barR, barG, barB = .5, .5, 1
 			bgR, bgG, bgB = barR*.2, barG*.2, barB*.2
 		end
+		if Cell.loaded and CellDB["appearance"]["nameColor"][1] == "Class Color" then
+			nameText:SetTextColor(.5, .5, 1)
+		end
 	else -- npc
 		if Cell.loaded then
 			barR, barG, barB, bgR, bgG, bgB = GetColor(0, 1, .2)
