@@ -5,7 +5,7 @@
 local addonName, addon = ...
 local L = addon.L
 local F = addon.funcs
--- local LPP = LibStub:GetLibrary("LibPixelPerfect")
+local LPP = LibStub:GetLibrary("LibPixelPerfect")
 local LSSB = LibStub:GetLibrary("LibSmoothStatusBar-1.0")
 
 -----------------------------------------
@@ -164,6 +164,49 @@ local function SetTooltip(widget, anchor, x, y, ...)
 			CellTooltip:Hide()
 		end)
 	end
+end
+
+-----------------------------------------
+-- change frame size with animation
+-----------------------------------------
+function addon:ChangeSizeWithAnimation(frame, targetWidth, targetHeight, startFunc, endFunc, repoint)
+    if startFunc then startFunc() end
+	
+	local currentHeight = frame:GetHeight()
+	local currentWidth = frame:GetWidth()
+	targetWidth = targetWidth or currentWidth
+	targetHeight = targetHeight or currentHeight
+
+	local diffH = (targetHeight - currentHeight) / 6
+	local diffW = (targetWidth - currentWidth) / 6
+	
+	local animationTimer
+	animationTimer = C_Timer.NewTicker(.025, function()
+		if diffW ~= 0 then
+			if diffW > 0 then
+				currentWidth = math.min(currentWidth + diffW, targetWidth)
+			else
+				currentWidth = math.max(currentWidth + diffW, targetWidth)
+			end
+			frame:SetWidth(currentWidth)
+		end
+
+		if diffH ~= 0 then
+			if diffH > 0 then
+				currentHeight = math.min(currentHeight + diffH, targetHeight)
+			else
+				currentHeight = math.max(currentHeight + diffH, targetHeight)
+			end
+			frame:SetHeight(currentHeight)
+		end
+
+        if currentWidth == targetWidth and currentHeight == targetHeight then
+            animationTimer:Cancel()
+            animationTimer = nil
+			if endFunc then endFunc() end
+			if repoint then LPP:PixelPerfectPoint(frame) end -- already point to another frame
+        end
+    end)
 end
 
 -----------------------------------------

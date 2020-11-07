@@ -101,7 +101,7 @@ end
 -------------------------------------------------
 local LoadLayoutDB, UpdateButtonStates
 
-local layoutText = Cell:CreateSeparator(L["Layout"], layoutsTab, 188)
+local layoutText = Cell:CreateSeparator(L["Layout"], layoutsTab, 387)
 layoutText:SetPoint("TOPLEFT", 5, -5)
 
 local enabledLayoutText = layoutsTab:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET_TITLE")
@@ -147,9 +147,8 @@ Cell:CreateMask(layoutsTab, nil, {1, -1, -1, 1})
 layoutsTab.mask:Hide()
 
 -- enable
-local enableBtn = Cell:CreateButton(layoutsTab, L["Enable"], "class-hover", {70, 20})
-enableBtn:SetTexture("Interface\\AddOns\\Cell\\Media\\icon-apply", {16, 16}, {"LEFT", 2, 0})
-enableBtn:SetPoint("TOPLEFT", layoutDropdown, "BOTTOMLEFT", 0, -7)
+local enableBtn = Cell:CreateButton(layoutsTab, L["Enable"], "class-hover", {50, 20})
+enableBtn:SetPoint("LEFT", layoutDropdown, "RIGHT", 10, 0)
 enableBtn:SetScript("OnClick", function()
     CellCharacterDB["layout"] = selectedLayout
     F:UpdateLayout()
@@ -161,9 +160,8 @@ end)
 Cell:RegisterForCloseDropdown(enableBtn)
 
 -- rename
-local renameBtn = Cell:CreateButton(layoutsTab, L["Rename"], "class-hover", {70, 20})
-renameBtn:SetTexture("Interface\\AddOns\\Cell\\Media\\icon-rename", {16, 16}, {"LEFT", 2, 0})
-renameBtn:SetPoint("LEFT", enableBtn, "RIGHT", 3, 0)
+local renameBtn = Cell:CreateButton(layoutsTab, L["Rename"], "class-hover", {50, 20})
+renameBtn:SetPoint("LEFT", enableBtn, "RIGHT", -1, 0)
 renameBtn:SetScript("OnClick", function()
     local popup = Cell:CreateConfirmPopup(layoutsTab, 200, L["Rename layout"].." "..selectedLayout, function(self)
         local name = strtrim(self.editBox:GetText())
@@ -205,9 +203,8 @@ end)
 Cell:RegisterForCloseDropdown(renameBtn)
 
 -- new
-local newBtn = Cell:CreateButton(layoutsTab, L["New"], "class-hover", {70, 20})
-newBtn:SetTexture("Interface\\AddOns\\Cell\\Media\\icon-create", {16, 16}, {"LEFT", 2, 0})
-newBtn:SetPoint("TOPLEFT", enableBtn, "BOTTOMLEFT", 0, -3)
+local newBtn = Cell:CreateButton(layoutsTab, L["New"], "class-hover", {50, 20})
+newBtn:SetPoint("LEFT", renameBtn, "RIGHT", -1, 0)
 newBtn:SetScript("OnClick", function()
     local popup = Cell:CreateConfirmPopup(layoutsTab, 200, L["Create new layout"].."\n"..L["(based on current)"], function(self)
         local name = strtrim(self.editBox:GetText())
@@ -235,9 +232,8 @@ end)
 Cell:RegisterForCloseDropdown(newBtn)
 
 -- delete
-local deleteBtn = Cell:CreateButton(layoutsTab, L["Delete"], "class-hover", {70, 20})
-deleteBtn:SetTexture("Interface\\AddOns\\Cell\\Media\\icon-delete", {16, 16}, {"LEFT", 2, 0})
-deleteBtn:SetPoint("LEFT", newBtn, "RIGHT", 3, 0)
+local deleteBtn = Cell:CreateButton(layoutsTab, L["Delete"], "class-hover", {50, 20})
+deleteBtn:SetPoint("LEFT", newBtn, "RIGHT", -1, 0)
 deleteBtn:SetScript("OnClick", function()
     local popup = Cell:CreateConfirmPopup(layoutsTab, 200, L["Delete layout"].." "..selectedLayout.."?", function(self)
         CellDB["layouts"][selectedLayout] = nil
@@ -279,8 +275,8 @@ end
 -------------------------------------------------
 -- layout auto switch
 -------------------------------------------------
-local autoSwitchText = Cell:CreateSeparator(L["Layout Auto Switch"], layoutsTab, 188)
-autoSwitchText:SetPoint("TOPLEFT", 203, -5)
+local autoSwitchText = Cell:CreateSeparator(L["Layout Auto Switch"], layoutsTab, 387)
+autoSwitchText:SetPoint("TOPLEFT", 5, -65)
 
 -- party
 local partyDropDown = Cell:CreateDropdown(layoutsTab, 85)
@@ -300,7 +296,7 @@ raidText:SetText(L["Raid"])
 
 -- battleground 15
 local bg15DropDown = Cell:CreateDropdown(layoutsTab, 85)
-bg15DropDown:SetPoint("TOPLEFT", partyDropDown, "BOTTOMLEFT", 0, -25)
+bg15DropDown:SetPoint("LEFT", raidDropDown, "RIGHT", 10, 0)
 
 local bg15Text = layoutsTab:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
 bg15Text:SetPoint("BOTTOMLEFT", bg15DropDown, "TOPLEFT", 0, 1)
@@ -318,7 +314,7 @@ bg40Text:SetText(L["BG 16-40"])
 -- group filter
 -------------------------------------------------
 local groupFilterText = Cell:CreateSeparator(L["Group Filter"], layoutsTab, 188)
-groupFilterText:SetPoint("TOPLEFT", 5, -135)
+groupFilterText:SetPoint("TOPLEFT", 5, -140)
 
 local function UpdateButtonBorderColor(flag, b)
     local borderColor 
@@ -359,7 +355,7 @@ end
 -- group orientation
 -------------------------------------------------
 local orientationText = Cell:CreateSeparator(L["Group Orientation"], layoutsTab, 188)
-orientationText:SetPoint("TOPLEFT", 203, -135)
+orientationText:SetPoint("TOPLEFT", 203, -140)
 
 local orientationSwitch = Cell:CreateSwitch(layoutsTab, L["Vertical"], "vertical", L["Horizontal"], "horizontal", function(value)
     selectedLayoutTable["orientation"] = value
@@ -375,7 +371,7 @@ local buttonSizeText = Cell:CreateSeparator(L["Unit Button Size"], layoutsTab, 1
 buttonSizeText:SetPoint("TOPLEFT", 5, -215)
 
 -- width
-local widthSlider = Cell:CreateSlider(L["Width"], layoutsTab, 40, 150, 100, 2, function(value)
+local widthSlider = Cell:CreateSlider(L["Width"], layoutsTab, 40, 300, 100, 2, function(value)
     selectedLayoutTable["size"][1] = value
     if selectedLayout == Cell.vars.currentLayout then
         Cell:Fire("UpdateLayout", selectedLayout, "size")
@@ -385,7 +381,7 @@ end)
 widthSlider:SetPoint("TOPLEFT", buttonSizeText, "BOTTOMLEFT", 5, -25)
 
 -- height
-local heightSlider = Cell:CreateSlider(L["Height"], layoutsTab, 20, 150, 100, 2, function(value)
+local heightSlider = Cell:CreateSlider(L["Height"], layoutsTab, 20, 300, 100, 2, function(value)
     selectedLayoutTable["size"][2] = value
     if selectedLayout == Cell.vars.currentLayout then
         Cell:Fire("UpdateLayout", selectedLayout, "size")
@@ -395,7 +391,7 @@ end)
 heightSlider:SetPoint("TOP", widthSlider, "BOTTOM", 0, -40)
 
 -- power height
-local powerHeightSlider = Cell:CreateSlider(L["Power Height"], layoutsTab, 0, 10, 100, 1, function(value)
+local powerHeightSlider = Cell:CreateSlider(L["Power Height"], layoutsTab, 0, 20, 100, 1, function(value)
     selectedLayoutTable["powerHeight"] = value
     if selectedLayout == Cell.vars.currentLayout then
         Cell:Fire("UpdateLayout", selectedLayout, "power")
@@ -411,7 +407,7 @@ local fontSizeText = Cell:CreateSeparator(L["Font Size"], layoutsTab, 122)
 fontSizeText:SetPoint("TOPLEFT", 137, -215)
 
 -- name text
-local nameFontSlider = Cell:CreateSlider(L["Name"], layoutsTab, 5, 20, 100, 1, function(value)
+local nameFontSlider = Cell:CreateSlider(L["Name"], layoutsTab, 5, 25, 100, 1, function(value)
     selectedLayoutTable["font"]["name"] = value
     if selectedLayout == Cell.vars.currentLayout then
         Cell:Fire("UpdateAppearance", "font")
@@ -421,7 +417,7 @@ end)
 nameFontSlider:SetPoint("TOPLEFT", fontSizeText, "BOTTOMLEFT", 5, -25)
 
 -- status text
-local statusFontSlider = Cell:CreateSlider(L["Status"], layoutsTab, 5, 20, 100, 1, function(value)
+local statusFontSlider = Cell:CreateSlider(L["Status"], layoutsTab, 5, 25, 100, 1, function(value)
     selectedLayoutTable["font"]["status"] = value
     if selectedLayout == Cell.vars.currentLayout then
         Cell:Fire("UpdateAppearance", "font")
@@ -437,7 +433,7 @@ local miscText = Cell:CreateSeparator(L["Misc"], layoutsTab, 122)
 miscText:SetPoint("TOPLEFT", 269, -215)
 
 -- spacing
-local spacingSlider = Cell:CreateSlider(L["Spacing"], layoutsTab, 0, 7, 100, 1, function(value)
+local spacingSlider = Cell:CreateSlider(L["Spacing"], layoutsTab, 0, 10, 100, 1, function(value)
     selectedLayoutTable["spacing"] = value
     if selectedLayout == Cell.vars.currentLayout then
         Cell:Fire("UpdateLayout", selectedLayout, "spacing")
