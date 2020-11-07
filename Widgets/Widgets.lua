@@ -306,6 +306,43 @@ function addon:CreateButton(parent, text, buttonColor, size, noBorder, noBackgro
 
 	SetTooltip(b, "ANCHOR_TOPLEFT", 0, 3, ...)
 
+	-- texture
+	function b:SetTexture(tex, size, point)
+		b.tex = b:CreateTexture(nil, "ARTWORK")
+		b.tex:SetPoint(unpack(point))
+		b.tex:SetSize(unpack(size))
+		b.tex:SetTexture(tex)
+		-- update fontstring point
+		if s then
+			s:ClearAllPoints()
+			s:SetPoint("LEFT", b.tex, "RIGHT", point[2], 0)
+			s:SetPoint("RIGHT", -point[2], 0)
+			b:SetPushedTextOffset(0, 0)
+		end
+		-- push effect
+		b.onMouseDown = function()
+			b.tex:ClearAllPoints()
+			b.tex:SetPoint(point[1], point[2], point[3]-1)
+		end
+		b.onMouseUp = function()
+			b.tex:ClearAllPoints()
+			b.tex:SetPoint(unpack(point))
+		end
+		b:SetScript("OnMouseDown", b.onMouseDown)
+		b:SetScript("OnMouseUp", b.onMouseUp)
+		-- enable / disable
+		b:HookScript("OnEnable", function()
+			b.tex:SetVertexColor(1, 1, 1)
+			b:SetScript("OnMouseDown", b.onMouseDown)
+			b:SetScript("OnMouseUp", b.onMouseUp)
+		end)
+		b:HookScript("OnDisable", function()
+			b.tex:SetVertexColor(.4, .4, .4)
+			b:SetScript("OnMouseDown", nil)
+			b:SetScript("OnMouseUp", nil)
+		end)
+	end
+
 	return b
 end
 
