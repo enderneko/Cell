@@ -51,20 +51,20 @@ function eventFrame:GROUP_ROSTER_UPDATE()
     if IsInGroup() then
         eventFrame:UnregisterEvent("GROUP_ROSTER_UPDATE")
         UpdateSendChannel()
-        Comm:SendCommMessage("CELL_VERSION", Cell.version, sendChannel, nil, "BULK")
+        Comm:SendCommMessage("CELL_VERSION", string.match(Cell.version, "%d+"), sendChannel, nil, "BULK")
     end
 end
 
 eventFrame:RegisterEvent("PLAYER_LOGIN")
 function eventFrame:PLAYER_LOGIN()
     if IsInGuild() then
-        Comm:SendCommMessage("CELL_VERSION", Cell.version, "GUILD", nil, "BULK")
+        Comm:SendCommMessage("CELL_VERSION", string.match(Cell.version, "%d+"), "GUILD", nil, "BULK")
     end
 end
 
 Comm:RegisterComm("CELL_VERSION", function(prefix, message, channel, sender)
     if sender == UnitName("player") then return end
-    if (not CellDB["lastVersionCheck"] or time()-CellDB["lastVersionCheck"]>=86400) and Cell.version < message then
+    if (not CellDB["lastVersionCheck"] or time()-CellDB["lastVersionCheck"]>=86400) and string.match(Cell.version, "%d+") < message then
         CellDB["lastVersionCheck"] = time()
         F:Print(L["New version found (%s). Please visit %s to get the latest version."]:format(message, "|cFF00CCFFhttps://www.curseforge.com/wow/addons/cell|r"))
     end
