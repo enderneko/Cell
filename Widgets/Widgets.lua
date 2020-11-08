@@ -323,7 +323,8 @@ function addon:CreateButton(parent, text, buttonColor, size, noBorder, noBackgro
 		b:SetPushedTextOffset(0, 0)
 	else
 		if not noBackground then
-			local bg = parent:CreateTexture(nil, "BACKGROUND")
+			local bg = b:CreateTexture()
+			bg:SetDrawLayer("BACKGROUND", -8)
 			b.bg = bg
 			bg:SetAllPoints(b)
 			bg:SetColorTexture(.1, .1, .1, 1)
@@ -2472,7 +2473,7 @@ local function CreateSetting_Colors(parent)
 			widget.colorsTable[1][1] = r
 			widget.colorsTable[1][2] = g 
 			widget.colorsTable[1][3] = b
-			widget.func(widget.colorsTable)
+			-- widget.func(widget.colorsTable)
 		end)
 		normalColor:SetPoint("TOPLEFT", 5, -7)
 		
@@ -2480,7 +2481,7 @@ local function CreateSetting_Colors(parent)
 			widget.colorsTable[2][1] = r
 			widget.colorsTable[2][2] = g 
 			widget.colorsTable[2][3] = b
-			widget.func(widget.colorsTable)
+			-- widget.func(widget.colorsTable)
 		end)
 		percentColor:SetPoint("TOPLEFT", normalColor, "BOTTOMLEFT", 0, -8)
 		
@@ -2488,11 +2489,11 @@ local function CreateSetting_Colors(parent)
 			widget.colorsTable[3][1] = r
 			widget.colorsTable[3][2] = g 
 			widget.colorsTable[3][3] = b
-			widget.func(widget.colorsTable)
+			-- widget.func(widget.colorsTable)
 		end)
 		secColor:SetPoint("TOPLEFT", percentColor, "BOTTOMLEFT", 0, -8)
 
-		local percentDropdown = addon:CreateDropdown(widget, 70)
+		local percentDropdown = addon:CreateDropdown(widget, 55)
 		percentDropdown:SetPoint("LEFT", percentColor.label, "RIGHT", 5, 0)
 		percentDropdown:SetItems({
 			{
@@ -2521,44 +2522,76 @@ local function CreateSetting_Colors(parent)
 			},
 		})
 		
-		local secDropdown = addon:CreateDropdown(widget, 70)
-		secDropdown:SetPoint("LEFT", secColor.label, "RIGHT", 5, 0)
-		secDropdown:SetItems({
-			{
-				["text"] = "10 "..L["sec"],
-				["onClick"] = function()
-					widget.colorsTable[3][4] = 10
-				end,
-			},
-			{
-				["text"] = "7 "..L["sec"],
-				["onClick"] = function()
-					widget.colorsTable[3][4] = 7
-				end,
-			},
-			{
-				["text"] = "5 "..L["sec"],
-				["onClick"] = function()
-					widget.colorsTable[3][4] = 5
-				end,
-			},
-			{
-				["text"] = "3 "..L["sec"],
-				["onClick"] = function()
-					widget.colorsTable[3][4] = 3
-				end,
-			},
-			{
-				["text"] = _G.NONE,
-				["onClick"] = function()
-					widget.colorsTable[3][4] = 0
-				end,
-			},
-		})
+		-- local secDropdown = addon:CreateDropdown(widget, 55)
+		-- secDropdown:SetPoint("LEFT", secColor.label, "RIGHT", 5, 0)
+		-- secDropdown:SetItems({
+		-- 	{
+		-- 		["text"] = "10 "..L["sec"],
+		-- 		["onClick"] = function()
+		-- 			widget.colorsTable[3][4] = 10
+		-- 		end,
+		-- 	},
+		-- 	{
+		-- 		["text"] = "7 "..L["sec"],
+		-- 		["onClick"] = function()
+		-- 			widget.colorsTable[3][4] = 7
+		-- 		end,
+		-- 	},
+		-- 	{
+		-- 		["text"] = "5 "..L["sec"],
+		-- 		["onClick"] = function()
+		-- 			widget.colorsTable[3][4] = 5
+		-- 		end,
+		-- 	},
+		-- 	{
+		-- 		["text"] = "3 "..L["sec"],
+		-- 		["onClick"] = function()
+		-- 			widget.colorsTable[3][4] = 3
+		-- 		end,
+		-- 	},
+		-- 	{
+		-- 		["text"] = _G.NONE,
+		-- 		["onClick"] = function()
+		-- 			widget.colorsTable[3][4] = 0
+		-- 		end,
+		-- 	},
+		-- })
+
+		local secEditBox = addon:CreateEditBox(widget, 38, 20, false, false, true)
+		secEditBox:SetPoint("LEFT", secColor.label, "RIGHT", 5, 0)
+		secEditBox:SetMaxLetters(4)
+ 
+		secEditBox.confirmBtn = addon:CreateButton(widget, "OK", "class", {27, 20})
+		secEditBox.confirmBtn:SetPoint("LEFT", secEditBox, "RIGHT", -1, 0)
+		secEditBox.confirmBtn:Hide()
+		secEditBox.confirmBtn:SetScript("OnHide", function()
+			secEditBox.confirmBtn:Hide()
+		end)
+		secEditBox.confirmBtn:SetScript("OnClick", function()
+			local newSec = tonumber(secEditBox:GetText())
+			widget.colorsTable[3][4] = newSec
+			secEditBox:SetText(newSec)
+			secEditBox.confirmBtn:Hide()
+		end)
+
+		secEditBox:SetScript("OnTextChanged", function(self, userChanged)
+			if userChanged then
+				local newSec = tonumber(self:GetText())
+				if newSec and newSec ~= widget.colorsTable[3][4] then
+					secEditBox.confirmBtn:Show()
+				else
+					secEditBox.confirmBtn:Hide()
+				end
+			end
+		end)
+
+		local secText = widget:CreateFontString(nil, "OVERLAY", font_name)
+		secText:SetPoint("LEFT", secEditBox, "RIGHT", 5, 0)
+		secText:SetText(L["sec"])
 
 		-- associate db
 		function widget:SetFunc(func)
-			widget.func = func
+			-- widget.func = func
 		end
 		
 		-- show db value
@@ -2570,7 +2603,8 @@ local function CreateSetting_Colors(parent)
 			secColor:SetColor({colorsTable[3][1],colorsTable[3][2],colorsTable[3][3]})
 
 			percentDropdown:SetSelected(colorsTable[2][4]~=0 and ((colorsTable[2][4]*100).."%") or _G.NONE)
-			secDropdown:SetSelected(colorsTable[3][4]~=0 and (colorsTable[3][4].." "..L["sec"]) or _G.NONE)
+			-- secDropdown:SetSelected(colorsTable[3][4]~=0 and (colorsTable[3][4].." "..L["sec"]) or _G.NONE)
+			secEditBox:SetText(colorsTable[3][4])
 		end
 	else
 		widget = settingWidgets["colors"]

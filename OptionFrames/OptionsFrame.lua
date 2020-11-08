@@ -7,7 +7,7 @@ local optionsFrame = Cell:CreateFrame("CellOptionsFrame", Cell.frames.mainFrame,
 Cell.frames.optionsFrame = optionsFrame
 -- optionsFrame:SetPoint("BOTTOMLEFT", Cell.frames.mainFrame, "TOPLEFT", 0, 16)
 optionsFrame:SetPoint("CENTER", UIParent)
-optionsFrame:SetFrameStrata("MEDIUM")
+optionsFrame:SetFrameStrata("HIGH")
 optionsFrame:SetClampedToScreen(true)
 optionsFrame:SetClampRectInsets(0, 0, 40, 0)
 optionsFrame:SetMovable(true)
