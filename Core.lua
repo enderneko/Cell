@@ -67,10 +67,13 @@ font_status:SetJustifyH("CENTER")
 -------------------------------------------------
 -- functions
 -------------------------------------------------
-function F:UpdateLayout()
-    Cell.vars.currentLayout = CellCharacterDB["layout"]
-    Cell.vars.currentLayoutTable = CellDB["layouts"][CellCharacterDB["layout"]]
-    Cell:Fire("UpdateLayout", Cell.vars.currentLayout)
+function F:UpdateLayout(groupType)
+    local layout = CellCharacterDB[groupType]
+    if Cell.vars.currentLayout ~= layout then
+        Cell.vars.currentLayout = layout
+        Cell.vars.currentLayoutTable = CellDB["layouts"][layout]
+        Cell:Fire("UpdateLayout", Cell.vars.currentLayout)
+    end
 end
 
 function F:UpdateFont()
@@ -330,8 +333,16 @@ function eventFrame:ADDON_LOADED(arg1)
                 },
             }
         end
-        if type(CellCharacterDB["layout"]) ~= "string" then CellCharacterDB["layout"] = "default" end
-        if not CellDB["layouts"][CellCharacterDB["layout"]] then CellCharacterDB["layout"] = "default" end
+        -- init enabled layout
+        if type(CellCharacterDB["party"]) ~= "string" then CellCharacterDB["party"] = "default" end
+        if type(CellCharacterDB["raid"]) ~= "string" then CellCharacterDB["raid"] = "default" end
+        if type(CellCharacterDB["battleground15"]) ~= "string" then CellCharacterDB["battleground15"] = "default" end
+        if type(CellCharacterDB["battleground40"]) ~= "string" then CellCharacterDB["battleground40"] = "default" end
+        -- validate layout
+        if not CellDB["layouts"][CellCharacterDB["party"]] then CellCharacterDB["party"] = "default" end
+        if not CellDB["layouts"][CellCharacterDB["raid"]] then CellCharacterDB["raid"] = "default" end
+        if not CellDB["layouts"][CellCharacterDB["battleground15"]] then CellCharacterDB["battleground15"] = "default" end
+        if not CellDB["layouts"][CellCharacterDB["battleground40"]] then CellCharacterDB["battleground40"] = "default" end
 
         -- debuffBlacklist ------------------------------------------------------------------------
         if type(CellDB["debuffBlacklist"]) ~= "table" then
@@ -356,9 +367,6 @@ function eventFrame:ADDON_LOADED(arg1)
         Cell.loaded = true
         Cell.version = GetAddOnMetadata(addonName, "version")
         Cell:Fire("Revise")
-
-        -- apply ----------------------------------------------------------------------------------
-        -- F:UpdateLayout()
     end
 end
 
@@ -430,6 +438,33 @@ function eventFrame:GROUP_ROSTER_UPDATE()
         end
     end
 
+    -- update layout
+    if C_PvP.IsBattleground() then
+        if not Cell.vars.inBattleground then -- not updated for battleground
+            local name, instanceType, _, _, _, _, _, id = GetInstanceInfo()
+            for i = 1, GetNumBattlegroundTypes() do
+                local bgName, _, _, _, _, _, bgId, maxPlayers = GetBattlegroundInfo(i)
+                if id == bgId or name == bgName then
+                    if maxPlayers <= 15 then
+                        F:UpdateLayout("battleground15")
+                        Cell.vars.inBattleground = 15
+                    else
+                        F:UpdateLayout("battleground40")
+                        Cell.vars.inBattleground = 40
+                    end
+                    break
+                end
+            end
+        end
+    else
+        if Cell.vars.groupType == "solo" or Cell.vars.groupType == "party" then
+            F:UpdateLayout("party")
+        else
+            F:UpdateLayout("raid")
+        end
+        Cell.vars.inBattleground = false
+    end
+
     if Cell.vars.hasPermission ~= F:HasPermission() or Cell.vars.hasPartyMarkPermission ~= F:HasPermission(true) then
         Cell.vars.hasPermission = F:HasPermission()
         Cell.vars.hasPartyMarkPermission = F:HasPermission(true)
@@ -447,13 +482,14 @@ end
 function eventFrame:PLAYER_ENTERING_WORLD()
     eventFrame:UnregisterEvent("PLAYER_ENTERING_WORLD")
     F:Debug("PLAYER_ENTERING_WORLD")
-    eventFrame:GROUP_ROSTER_UPDATE()
 end
 
 local prevSpec
 function eventFrame:PLAYER_LOGIN()
+    F:Debug("PLAYER_LOGIN")
     --! init Cell.vars.currentLayout and Cell.vars.currentLayoutTable 
-    F:UpdateLayout()
+    eventFrame:GROUP_ROSTER_UPDATE()
+    -- F:UpdateLayout()
 
     if not prevSpec then prevSpec = GetSpecialization() end
     Cell.vars.playerGUID = UnitGUID("player")

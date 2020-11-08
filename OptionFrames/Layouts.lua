@@ -99,6 +99,8 @@ end
 -------------------------------------------------
 -- layout
 -------------------------------------------------
+local layoutDropdown, partyDropdown, raidDropdown, bg15Dropdown, bg40Dropdown
+local LoadLayoutDropdown, LoadAutoSwitchDropdowns
 local LoadLayoutDB, UpdateButtonStates
 
 local layoutText = Cell:CreateSeparator(L["Layout"], layoutsTab, 387)
@@ -113,12 +115,10 @@ local function UpdateEnabledLayoutText()
 end
 
 -- drop down
-local layoutDropdown = Cell:CreateDropdown(layoutsTab, 160)
+layoutDropdown = Cell:CreateDropdown(layoutsTab, 160)
 layoutDropdown:SetPoint("TOPLEFT", layoutText, "BOTTOMLEFT", 5, -12)
 
-local function LoadLayoutDropdown()
-    local layout, layouts = CellCharacterDB["layout"], CellDB["layouts"]
-
+LoadLayoutDropdown = function()
     local indices = {}
     for name, _ in pairs(CellDB["layouts"]) do
         if name ~= "default" then
@@ -139,7 +139,6 @@ local function LoadLayoutDropdown()
         })
     end
     layoutDropdown:SetItems(items)
-    layoutDropdown:SetSelected(CellCharacterDB["layout"])
 end
 
 -- mask
@@ -147,64 +146,22 @@ Cell:CreateMask(layoutsTab, nil, {1, -1, -1, 1})
 layoutsTab.mask:Hide()
 
 -- enable
-local enableBtn = Cell:CreateButton(layoutsTab, L["Enable"], "class-hover", {50, 20})
-enableBtn:SetPoint("LEFT", layoutDropdown, "RIGHT", 10, 0)
-enableBtn:SetScript("OnClick", function()
-    CellCharacterDB["layout"] = selectedLayout
-    F:UpdateLayout()
-    Cell:Fire("UpdateAppearance", "font")
-    Cell:Fire("UpdateIndicators")
-    UpdateButtonStates()
-    UpdateEnabledLayoutText()
-end)
-Cell:RegisterForCloseDropdown(enableBtn)
-
--- rename
-local renameBtn = Cell:CreateButton(layoutsTab, L["Rename"], "class-hover", {50, 20})
-renameBtn:SetPoint("LEFT", enableBtn, "RIGHT", -1, 0)
-renameBtn:SetScript("OnClick", function()
-    local popup = Cell:CreateConfirmPopup(layoutsTab, 200, L["Rename layout"].." "..selectedLayout, function(self)
-        local name = strtrim(self.editBox:GetText())
-        if name ~= "" and not CellDB["layouts"][name] then
-            -- update db
-            CellDB["layouts"][name] = F:Copy(CellDB["layouts"][selectedLayout])
-            CellDB["layouts"][selectedLayout] = nil
-            
-            if selectedLayout == Cell.vars.currentLayout then
-                CellCharacterDB["layout"] = name
-                
-                -- update vars
-                Cell.vars.currentLayout = name
-                Cell.vars.currentLayoutTable = CellDB["layouts"][name]
-                
-                -- update text
-                UpdateEnabledLayoutText()
-            end
-            
-            -- update dropdown
-            layoutDropdown:SetCurrentItem({
-                ["text"] = name,
-                ["onClick"] = function()
-                    LoadLayoutDB(name)
-                    UpdateButtonStates()
-                end,
-            })
-            layoutDropdown:SetSelected(name)
-            
-            LoadLayoutDB(name)
-            UpdateButtonStates()
-            F:Print(L["Layout renamed: "].." "..selectedLayout.." "..L["to"].." "..name..".")
-        else
-            F:Print(L["Invalid layout name."])
-        end
-    end, true, true)
-    popup:SetPoint("TOPLEFT", 100, -185)
-end)
-Cell:RegisterForCloseDropdown(renameBtn)
+-- local enableBtn = Cell:CreateButton(layoutsTab, L["Enable"], "class-hover", {50, 20})
+-- enableBtn:SetPoint("LEFT", layoutDropdown, "RIGHT", 10, 0)
+-- enableBtn:SetScript("OnClick", function()
+--     CellCharacterDB["layout"] = selectedLayout
+--     F:UpdateLayout()
+--     Cell:Fire("UpdateAppearance", "font") -- update text size
+--     Cell:Fire("UpdateIndicators")
+--     UpdateButtonStates()
+--     UpdateEnabledLayoutText()
+-- end)
+-- Cell:RegisterForCloseDropdown(enableBtn)
 
 -- new
-local newBtn = Cell:CreateButton(layoutsTab, L["New"], "class-hover", {50, 20})
-newBtn:SetPoint("LEFT", renameBtn, "RIGHT", -1, 0)
+local newBtn = Cell:CreateButton(layoutsTab, L["New"], "class-hover", {66, 20})
+newBtn:SetTexture("Interface\\AddOns\\Cell\\Media\\icon-create", {16, 16}, {"LEFT", 2, 0})
+newBtn:SetPoint("LEFT", layoutDropdown, "RIGHT", 10, 0)
 newBtn:SetScript("OnClick", function()
     local popup = Cell:CreateConfirmPopup(layoutsTab, 200, L["Create new layout"].."\n"..L["(based on current)"], function(self)
         local name = strtrim(self.editBox:GetText())
@@ -231,90 +188,224 @@ newBtn:SetScript("OnClick", function()
 end)
 Cell:RegisterForCloseDropdown(newBtn)
 
+-- rename
+local renameBtn = Cell:CreateButton(layoutsTab, L["Rename"], "class-hover", {66, 20})
+renameBtn:SetTexture("Interface\\AddOns\\Cell\\Media\\icon-rename", {16, 16}, {"LEFT", 2, 0})
+renameBtn:SetPoint("LEFT", newBtn, "RIGHT", 3, 0)
+renameBtn:SetScript("OnClick", function()
+    local popup = Cell:CreateConfirmPopup(layoutsTab, 200, L["Rename layout"].." "..selectedLayout, function(self)
+        local name = strtrim(self.editBox:GetText())
+        if name ~= "" and not CellDB["layouts"][name] then
+            -- update db
+            CellDB["layouts"][name] = F:Copy(CellDB["layouts"][selectedLayout])
+            CellDB["layouts"][selectedLayout] = nil
+            
+            -- check current
+            if selectedLayout == Cell.vars.currentLayout then
+                -- update vars
+                Cell.vars.currentLayout = name
+                Cell.vars.currentLayoutTable = CellDB["layouts"][name]
+                -- update text
+                UpdateEnabledLayoutText()
+            end
+
+            -- check auto switch related
+            if CellCharacterDB["party"] == selectedLayout then CellCharacterDB["party"] = name end
+            if CellCharacterDB["raid"] == selectedLayout then CellCharacterDB["raid"] = name end
+            if CellCharacterDB["battleground15"] == selectedLayout then CellCharacterDB["battleground15"] = name end
+            if CellCharacterDB["battleground40"] == selectedLayout then CellCharacterDB["battleground40"] = name end
+            
+            -- update dropdown
+            layoutDropdown:SetCurrentItem({
+                ["text"] = name,
+                ["onClick"] = function()
+                    LoadLayoutDB(name)
+                    UpdateButtonStates()
+                end,
+            })
+            layoutDropdown:SetSelected(name)
+            
+            F:Print(L["Layout renamed: "].." "..selectedLayout.." "..L["to"].." "..name..".")
+
+            -- reload
+            LoadAutoSwitchDropdowns()
+            LoadLayoutDB(name)
+        else
+            F:Print(L["Invalid layout name."])
+        end
+    end, true, true)
+    popup:SetPoint("TOPLEFT", 100, -185)
+end)
+Cell:RegisterForCloseDropdown(renameBtn)
+
 -- delete
-local deleteBtn = Cell:CreateButton(layoutsTab, L["Delete"], "class-hover", {50, 20})
-deleteBtn:SetPoint("LEFT", newBtn, "RIGHT", -1, 0)
+local deleteBtn = Cell:CreateButton(layoutsTab, L["Delete"], "class-hover", {66, 20})
+deleteBtn:SetTexture("Interface\\AddOns\\Cell\\Media\\icon-delete", {16, 16}, {"LEFT", 2, 0})
+deleteBtn:SetPoint("LEFT", renameBtn, "RIGHT", 3, 0)
 deleteBtn:SetScript("OnClick", function()
     local popup = Cell:CreateConfirmPopup(layoutsTab, 200, L["Delete layout"].." "..selectedLayout.."?", function(self)
-        CellDB["layouts"][selectedLayout] = nil
-        F:Print(L["Layout deleted: "]..selectedLayout..".")
-        -- update dropdown
-        layoutDropdown:RemoveCurrentItem()
-        layoutDropdown:SetSelected(Cell.vars.currentLayout)
-        LoadLayoutDB(Cell.vars.currentLayout)
-        UpdateButtonStates()
+        -- -- update db
+        -- CellDB["layouts"][selectedLayout] = nil
+        -- F:Print(L["Layout deleted: "]..selectedLayout..".")
+
+        -- -- set current to default
+        -- if selectedLayout == Cell.vars.currentLayout then
+        --     -- update vars
+        --     Cell.vars.currentLayout = "default"
+        --     Cell.vars.currentLayoutTable = CellDB["layouts"]["default"]
+        --     Cell:Fire("UpdateLayout", "default")
+        --     -- update text
+        --     UpdateEnabledLayoutText()
+        -- end
+        -- layoutDropdown:RemoveCurrentItem()
+        -- layoutDropdown:SetSelected(Cell.vars.currentLayout)
+        -- LoadLayoutDB(Cell.vars.currentLayout)
+        -- UpdateButtonStates()
     end, true)
     popup:SetPoint("TOPLEFT", 100, -185)
 end)
 Cell:RegisterForCloseDropdown(deleteBtn)
 
 UpdateButtonStates = function()
-    if selectedLayout == Cell.vars.currentLayout then
-        enableBtn:SetEnabled(false)
+    if selectedLayout == "default" then
         deleteBtn:SetEnabled(false)
-        
-        if selectedLayout == "default" then
-            renameBtn:SetEnabled(false)
-        else
-            renameBtn:SetEnabled(true)
-        end
-
-    else -- selectedLayout ~= Cell.vars.currentLayout
-        enableBtn:SetEnabled(true)
-        
-        if selectedLayout == "default" then
-            deleteBtn:SetEnabled(false)
-            renameBtn:SetEnabled(false)
-        else
-            deleteBtn:SetEnabled(true)
-            renameBtn:SetEnabled(true)
-        end
+        renameBtn:SetEnabled(false)
+    else
+        deleteBtn:SetEnabled(true)
+        renameBtn:SetEnabled(true)
     end
 end
 
 -------------------------------------------------
 -- layout auto switch
 -------------------------------------------------
-local autoSwitchText = Cell:CreateSeparator(L["Layout Auto Switch"], layoutsTab, 387)
-autoSwitchText:SetPoint("TOPLEFT", 5, -65)
+-- local autoSwitchText = Cell:CreateSeparator(L["Layout Auto Switch"], layoutsTab, 387)
+-- autoSwitchText:SetPoint("TOPLEFT", 5, -65)
 
 -- party
-local partyDropDown = Cell:CreateDropdown(layoutsTab, 85)
-partyDropDown:SetPoint("TOPLEFT", autoSwitchText, "BOTTOMLEFT", 5, -23)
+partyDropdown = Cell:CreateDropdown(layoutsTab, 85)
+partyDropdown:SetPoint("TOPLEFT", layoutDropdown, "BOTTOMLEFT", 0, -27)
 
 local partyText = layoutsTab:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
-partyText:SetPoint("BOTTOMLEFT", partyDropDown, "TOPLEFT", 0, 1)
-partyText:SetText(L["Party"])
+partyText:SetPoint("BOTTOMLEFT", partyDropdown, "TOPLEFT", 0, 1)
+partyText:SetText(L["Solo/Party"])
 
 -- raid
-local raidDropDown = Cell:CreateDropdown(layoutsTab, 85)
-raidDropDown:SetPoint("LEFT", partyDropDown, "RIGHT", 10, 0)
+raidDropdown = Cell:CreateDropdown(layoutsTab, 85)
+raidDropdown:SetPoint("LEFT", partyDropdown, "RIGHT", 10, 0)
 
 local raidText = layoutsTab:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
-raidText:SetPoint("BOTTOMLEFT", raidDropDown, "TOPLEFT", 0, 1)
+raidText:SetPoint("BOTTOMLEFT", raidDropdown, "TOPLEFT", 0, 1)
 raidText:SetText(L["Raid"])
 
 -- battleground 15
-local bg15DropDown = Cell:CreateDropdown(layoutsTab, 85)
-bg15DropDown:SetPoint("LEFT", raidDropDown, "RIGHT", 10, 0)
+bg15Dropdown = Cell:CreateDropdown(layoutsTab, 85)
+bg15Dropdown:SetPoint("LEFT", raidDropdown, "RIGHT", 10, 0)
 
 local bg15Text = layoutsTab:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
-bg15Text:SetPoint("BOTTOMLEFT", bg15DropDown, "TOPLEFT", 0, 1)
+bg15Text:SetPoint("BOTTOMLEFT", bg15Dropdown, "TOPLEFT", 0, 1)
 bg15Text:SetText(L["BG 1-15"])
 
 -- battleground 40
-local bg40DropDown = Cell:CreateDropdown(layoutsTab, 85)
-bg40DropDown:SetPoint("LEFT", bg15DropDown, "RIGHT", 10, 0)
+bg40Dropdown = Cell:CreateDropdown(layoutsTab, 85)
+bg40Dropdown:SetPoint("LEFT", bg15Dropdown, "RIGHT", 10, 0)
 
 local bg40Text = layoutsTab:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
-bg40Text:SetPoint("BOTTOMLEFT", bg40DropDown, "TOPLEFT", 0, 1)
+bg40Text:SetPoint("BOTTOMLEFT", bg40Dropdown, "TOPLEFT", 0, 1)
 bg40Text:SetText(L["BG 16-40"])
+
+LoadAutoSwitchDropdowns = function()
+    local indices = {}
+    for name, _ in pairs(CellDB["layouts"]) do
+        if name ~= "default" then
+            tinsert(indices, name)
+        end
+    end
+    table.sort(indices)
+    tinsert(indices, 1, "default") -- make default first
+
+    -- partyDropdown
+    local partyItems = {}
+    for _, value in pairs(indices) do
+        table.insert(partyItems, {
+            ["text"] = value,
+            ["onClick"] = function()
+                CellCharacterDB["party"] = value
+                if not Cell.vars.inBattleground and Cell.vars.groupType == "solo" or Cell.vars.groupType == "party" then
+                    F:UpdateLayout("party")
+                    Cell:Fire("UpdateAppearance", "font") -- update text size
+                    Cell:Fire("UpdateIndicators")
+                    UpdateButtonStates()
+                    UpdateEnabledLayoutText()
+                end
+            end,
+        })
+    end
+    partyDropdown:SetItems(partyItems)
+
+    -- raidDropdown
+    local raidItems = {}
+    for _, value in pairs(indices) do
+        table.insert(raidItems, {
+            ["text"] = value,
+            ["onClick"] = function()
+                CellCharacterDB["raid"] = value
+                if not Cell.vars.inBattleground and Cell.vars.groupType == "raid" then
+                    F:UpdateLayout("raid")
+                    Cell:Fire("UpdateAppearance", "font") -- update text size
+                    Cell:Fire("UpdateIndicators")
+                    UpdateButtonStates()
+                    UpdateEnabledLayoutText()
+                end
+            end,
+        })
+    end
+    raidDropdown:SetItems(raidItems)
+
+    -- bg15Dropdown
+    local bg15Items = {}
+    for _, value in pairs(indices) do
+        table.insert(bg15Items, {
+            ["text"] = value,
+            ["onClick"] = function()
+                CellCharacterDB["battleground15"] = value
+                if Cell.vars.inBattleground == 15 then
+                    F:UpdateLayout("battleground15")
+                    Cell:Fire("UpdateAppearance", "font") -- update text size
+                    Cell:Fire("UpdateIndicators")
+                    UpdateButtonStates()
+                    UpdateEnabledLayoutText()
+                end
+            end,
+        })
+    end
+    bg15Dropdown:SetItems(bg15Items)
+
+    -- bg40Dropdown
+    local bg40Items = {}
+    for _, value in pairs(indices) do
+        table.insert(bg40Items, {
+            ["text"] = value,
+            ["onClick"] = function()
+                CellCharacterDB["battleground40"] = value
+                if Cell.vars.inBattleground == 40 then
+                    F:UpdateLayout("battleground40")
+                    Cell:Fire("UpdateAppearance", "font") -- update text size
+                    Cell:Fire("UpdateIndicators")
+                    UpdateButtonStates()
+                    UpdateEnabledLayoutText()
+                end
+            end,
+        })
+    end
+    bg40Dropdown:SetItems(bg40Items)
+end
 
 -------------------------------------------------
 -- group filter
 -------------------------------------------------
 local groupFilterText = Cell:CreateSeparator(L["Group Filter"], layoutsTab, 188)
-groupFilterText:SetPoint("TOPLEFT", 5, -140)
+groupFilterText:SetPoint("TOPLEFT", 5, -130)
 
 local function UpdateButtonBorderColor(flag, b)
     local borderColor 
@@ -355,7 +446,7 @@ end
 -- group orientation
 -------------------------------------------------
 local orientationText = Cell:CreateSeparator(L["Group Orientation"], layoutsTab, 188)
-orientationText:SetPoint("TOPLEFT", 203, -140)
+orientationText:SetPoint("TOPLEFT", 203, -130)
 
 local orientationSwitch = Cell:CreateSwitch(layoutsTab, L["Vertical"], "vertical", L["Horizontal"], "horizontal", function(value)
     selectedLayoutTable["orientation"] = value
@@ -516,6 +607,12 @@ LoadLayoutDB = function(layout)
     selectedLayout = layout
     selectedLayoutTable = CellDB["layouts"][layout]
 
+    layoutDropdown:SetSelected(selectedLayout)
+    partyDropdown:SetSelected(CellCharacterDB["party"])
+    raidDropdown:SetSelected(CellCharacterDB["raid"])
+    bg15Dropdown:SetSelected(CellCharacterDB["battleground15"])
+    bg40Dropdown:SetSelected(CellCharacterDB["battleground40"])
+
     widthSlider:SetValue(selectedLayoutTable["size"][1])
     heightSlider:SetValue(selectedLayoutTable["size"][2])
     powerHeightSlider:SetValue(selectedLayoutTable["powerHeight"])
@@ -540,18 +637,17 @@ LoadLayoutDB = function(layout)
     UpdatePreviewButton()
 end
 
+local loaded
 local function ShowTab(tab)
     if tab == "layouts" then
         layoutsTab:Show()
         
-        if selectedLayout then
-            UpdatePreviewButton()
-            return
+        if not loaded then
+            LoadLayoutDropdown()
+            LoadAutoSwitchDropdowns()
         end
         
-        -- layout related
         UpdateEnabledLayoutText()
-        LoadLayoutDropdown()
         LoadLayoutDB(Cell.vars.currentLayout)
         UpdateButtonStates()
     else
