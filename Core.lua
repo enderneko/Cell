@@ -123,9 +123,10 @@ function F:UpdateLayout(groupType)
     end
 end
 
-local function GroupTypeChanged(groupType, instanceType)
+local instanceType
+local function GroupTypeChanged()
     if instanceType == "pvp" then
-        local name, instanceType, _, _, _, _, _, id = GetInstanceInfo()
+        local name, _, _, _, _, _, _, id = GetInstanceInfo()
         for i = 1, GetNumBattlegroundTypes() do
             local bgName, _, _, _, _, _, bgId, maxPlayers = GetBattlegroundInfo(i)
             if id == bgId or name == bgName then
@@ -498,9 +499,10 @@ function eventFrame:PLAYER_ENTERING_WORLD()
     F:Debug("PLAYER_ENTERING_WORLD")
 
     local isIn, iType = IsInInstance()
+    instanceType = iType
     if isIn then
         F:Debug("|cffff1111Entered Instance:|r", iType)
-        GroupTypeChanged(nil, iType)
+        GroupTypeChanged()
         inInstance = true
     elseif inInstance then -- left insntance
         F:Debug("|cffff1111Left Instance|r")
