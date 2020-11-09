@@ -106,7 +106,7 @@ npcFrame:SetAttribute("_onstate-petstate", [[
 RegisterStateDriver(npcFrame, "petstate", "[@pet,exists] pet; [@partypet1,exists] pet1; [@partypet2,exists] pet2; [@partypet3,exists] pet3; [@partypet4,exists] pet4; nopet")
 
 local function NPCFrame_UpdateLayout(layout, which)
-	if layout ~= Cell.vars.currentLayout then return end
+	-- if layout ~= Cell.vars.currentLayout then return end
 	layout = Cell.vars.currentLayoutTable
 
     if not which or which == "size" or which == "power" then

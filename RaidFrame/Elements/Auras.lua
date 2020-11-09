@@ -319,13 +319,35 @@ local function CreateAura_Text(name, parent)
             text:SetShadowOffset(0, 0)
             text:SetShadowColor(0, 0, 0, 0)
         end
+
+        local point = frame:GetPoint(1)
         text:ClearAllPoints()
-        text:SetPoint("CENTER", horizontalOffset, 0)
+        if string.find(point, "LEFT") then
+            text:SetPoint("LEFT", horizontalOffset, 0)
+        elseif string.find(point, "RIGHT") then
+            text:SetPoint("RIGHT", horizontalOffset, 0)
+        else
+            text:SetPoint("CENTER", horizontalOffset, 0)
+        end
         frame:SetSize(size+3, size+3)
     end
 
+    frame.OriginalSetPoint = frame.SetPoint
+    function frame:SetPoint(point, relativeTo, relativePoint, x, y)
+        local horizontalOffset = select(4, text:GetPoint(1))
+        text:ClearAllPoints()
+        if string.find(point, "LEFT") then
+            text:SetPoint("LEFT", horizontalOffset, 0)
+        elseif string.find(point, "RIGHT") then
+            text:SetPoint("RIGHT", horizontalOffset, 0)
+        else
+            text:SetPoint("CENTER", horizontalOffset, 0)
+        end
+        frame:OriginalSetPoint(point, relativeTo, relativePoint, x, y)
+    end
+
     function frame:SetCooldown(start, duration, debuffType, texture, count)
-        count = (count == 0 or count == 1) and "" or (" "..count)
+        count = (count == 0 or count == 1) and "" or (count.." ")
         if duration == 0 then
             text:SetText(count)
             frame:SetScript("OnUpdate", nil)
@@ -342,9 +364,9 @@ local function CreateAura_Text(name, parent)
                 end
                 -- update text
                 if remain > 60 then
-                    text:SetText(math.ceil(remain/60).."m"..count)
+                    text:SetText(count..math.ceil(remain/60).."m")
                 else
-                    text:SetText(string.format("%d", remain)..count)
+                    text:SetText(count..string.format("%d", remain))
                 end
             end)
         end

@@ -38,9 +38,12 @@ for i = 0, 4 do
 	end
 end
 
+local init
 local function PartyFrame_UpdateLayout(layout, which)
-	if layout ~= Cell.vars.currentLayout then return end
-	layout = Cell.vars.currentLayoutTable
+	-- if layout ~= Cell.vars.currentLayout then return end
+	if Cell.vars.groupType ~= "party" and init then return end
+    init = true
+    layout = CellDB["layouts"][CellCharacterDB["party"]]
 
 	local buttons = Cell.unitButtons.party
 

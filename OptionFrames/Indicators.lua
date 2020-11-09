@@ -8,17 +8,14 @@ Cell.frames.indicatorsTab = indicatorsTab
 indicatorsTab:SetAllPoints(Cell.frames.optionsFrame)
 
 local selected, currentLayout, currentLayoutTable
+local LoadIndicatorList
+local listButtons = {}
 
 -------------------------------------------------
 -- preview
 -------------------------------------------------
-local previewText = Cell:CreateSeparator(L["Preview"], indicatorsTab, 255)
-previewText:SetPoint("TOPLEFT", 137, -5)
-previewText:SetJustifyH("LEFT")
-
-local previewButton = CreateFrame("Button", "IndicatorPreviewButton", indicatorsTab, "CellUnitButtonTemplate")
--- previewButton:SetPoint("TOPLEFT", indicatorsTab, 137, -32)
-previewButton:SetPoint("CENTER", indicatorsTab, "TOPLEFT", 265, -70)
+local previewButton = CreateFrame("Button", "IndicatorsPreviewButton", indicatorsTab, "CellUnitButtonTemplate")
+previewButton:SetPoint("TOPLEFT", indicatorsTab, "TOPRIGHT", 10, -25)
 previewButton:UnregisterAllEvents()
 previewButton:SetScript("OnEnter", nil)
 previewButton:SetScript("OnLeave", nil)
@@ -26,6 +23,17 @@ previewButton:SetScript("OnShow", nil)
 previewButton:SetScript("OnHide", nil)
 previewButton:SetScript("OnUpdate", nil)
 previewButton:Show()
+
+local previewButtonBG = Cell:CreateFrame("IndicatorsPreviewButtonBG", indicatorsTab)
+previewButtonBG:SetPoint("TOPLEFT", previewButton, -5, 25)
+previewButtonBG:SetPoint("BOTTOMRIGHT", previewButton, 5, -5)
+previewButtonBG:SetFrameStrata("BACKGROUND")
+Cell:StylizeFrame(previewButtonBG, {.1, .1, .1, .9}, {0, 0, 0, 0})
+previewButtonBG:Show()
+
+local previewText = previewButtonBG:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET_TITLE")
+previewText:SetPoint("TOP", 0, -3)
+previewText:SetText(Cell:GetPlayerClassColorString()..L["Preview"])
 
 local function UpdatePreviewButton()
     if not previewButton.loaded then
@@ -47,8 +55,8 @@ local function UpdatePreviewButton()
 		previewButton.widget.roleIcon:Show()
     end
 
-    previewButton:SetSize(unpack(Cell.vars.currentLayoutTable["size"]))
-    previewButton.func.SetPowerHeight(Cell.vars.currentLayoutTable["powerHeight"])
+    previewButton:SetSize(unpack(currentLayoutTable["size"]))
+    previewButton.func.SetPowerHeight(currentLayoutTable["powerHeight"])
     previewButton.widget.healthBar:SetStatusBarTexture(Cell.vars.texture)
     previewButton.widget.powerBar:SetStatusBarTexture(Cell.vars.texture)
     previewButton:GetScript("OnSizeChanged")(previewButton)
@@ -325,33 +333,56 @@ end
 Cell:RegisterCallback("UpdateIndicators", "PreviewButton_UpdateIndicators", UpdateIndicators)
 
 -------------------------------------------------
--- current layout
+-- layout
 -------------------------------------------------
-local currentLayoutText = indicatorsTab:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET_TITLE")
-currentLayoutText:SetJustifyH("LEFT")
-currentLayoutText:SetPoint("LEFT", previewText, "RIGHT", 5, 0)
+local layoutText = Cell:CreateSeparator(L["Layout"], indicatorsTab, 122)
+layoutText:SetPoint("TOPLEFT", 5, -5)
+layoutText:SetJustifyH("LEFT")
 
-local function UpdateCurrentLayoutText()
-    currentLayoutText:SetText("|cFF777777"..L["Current Layout"]..": "..currentLayout)
+local layoutDropdown = Cell:CreateDropdown(indicatorsTab, 122)
+layoutDropdown:SetPoint("TOPLEFT", layoutText, "BOTTOMLEFT", 0, -10)
+
+local function LoadLayoutDropdown()
+    local indices = {}
+    for name, _ in pairs(CellDB["layouts"]) do
+        if name ~= "default" then
+            tinsert(indices, name)
+        end
+    end
+    table.sort(indices)
+    tinsert(indices, 1, "default") -- make default first
+
+    local items = {}
+    for _, value in pairs(indices) do
+        table.insert(items, {
+            ["text"] = value == "default" and _G.DEFAULT or value,
+            ["onClick"] = function()
+                currentLayout = value
+                currentLayoutTable = CellDB["layouts"][value]
+
+                UpdatePreviewButton()
+                LoadIndicatorList()
+                listButtons[1]:Click()
+            end,
+        })
+    end
+    layoutDropdown:SetItems(items)
 end
 
 -------------------------------------------------
 -- indicator list
 -------------------------------------------------
 local listText = Cell:CreateSeparator(L["Indicators"], indicatorsTab, 122)
-listText:SetPoint("TOPLEFT", 5, -5)
+listText:SetPoint("TOPLEFT", 5, -62)
 listText:SetJustifyH("LEFT")
 
 local listFrame = Cell:CreateFrame("IndicatorsTab_ListFrame", indicatorsTab)
-listFrame:SetPoint("TOPLEFT", 5, -29)
+listFrame:SetPoint("TOPLEFT", 5, -86)
 listFrame:SetPoint("BOTTOMRIGHT", indicatorsTab, "BOTTOMLEFT", 127, 29)
 listFrame:Show()
 
 Cell:CreateScrollFrame(listFrame)
 listFrame.scrollFrame:SetScrollStep(19)
-
-local listButtons = {}
-local LoadIndicatorList
 
 -------------------------------------------------
 -- indicator create/delete
@@ -428,7 +459,7 @@ createBtn:SetScript("OnClick", function()
                 ["type"] = indicatorType,
                 ["enabled"] = true,
                 ["position"] = {"TOPRIGHT", "TOPRIGHT", 0, 3},
-                ["font"] = {"Cell ".._G.DEFAULT, 12, "Outline", 1},
+                ["font"] = {"Cell ".._G.DEFAULT, 12, "Outline", 0},
                 ["colors"] = {{0,1,0}, {1,1,0,.5}, {1,0,0,5}},
                 ["auraType"] = indicatorAuraType,
                 ["auras"] = {},
@@ -509,7 +540,7 @@ end)
 -- indicator settings
 -------------------------------------------------
 local settingsText = Cell:CreateSeparator(L["Indicator Settings"], indicatorsTab, 255)
-settingsText:SetPoint("TOPLEFT", 137, -129)
+settingsText:SetPoint("TOPLEFT", 137, -5)
 settingsText:SetJustifyH("LEFT")
 
 -------------------------------------------------
@@ -713,13 +744,14 @@ end
 local function ShowTab(tab)
     if tab == "indicators" then
         indicatorsTab:Show()
-        UpdatePreviewButton()
+        LoadLayoutDropdown()
         
         if currentLayout == Cell.vars.currentLayout then return end
         currentLayout = Cell.vars.currentLayout
         currentLayoutTable = Cell.vars.currentLayoutTable
-
-        UpdateCurrentLayoutText()
+        UpdatePreviewButton()
+        
+        layoutDropdown:SetSelected(currentLayout == "default" and _G.DEFAULT or currentLayout)
         LoadIndicatorList()
         listButtons[1]:Click()
         -- texplore(previewButton)

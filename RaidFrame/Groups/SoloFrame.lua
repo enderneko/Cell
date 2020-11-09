@@ -17,9 +17,12 @@ petButton:SetAttribute("unit", "pet")
 RegisterAttributeDriver(petButton, "state-visibility", "[nopet] hide; [vehicleui] hide; show")
 Cell.unitButtons.solo["pet"] = petButton
 
+local init
 local function SoloFrame_UpdateLayout(layout, which)
-    if layout ~= Cell.vars.currentLayout then return end
-    layout = Cell.vars.currentLayoutTable
+    -- if layout ~= Cell.vars.currentLayout then return end
+    if Cell.vars.groupType ~= "solo" and init then return end
+    init = true
+    layout = CellDB["layouts"][CellCharacterDB["party"]]
 
     if not which or which == "size" then
         local width, height = unpack(layout["size"])

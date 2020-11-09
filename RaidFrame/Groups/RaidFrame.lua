@@ -121,9 +121,16 @@ for i = 1, 8 do
 	helper:SetAttribute("_onhide", [[ self:GetFrameRef("raidframe"):SetAttribute("visibility", 0) ]])
 end
 
+local init
 local function RaidFrame_UpdateLayout(layout, which)
-    if layout ~= Cell.vars.currentLayout then return end
-    layout = Cell.vars.currentLayoutTable
+    -- if layout ~= Cell.vars.currentLayout then return end
+    if Cell.vars.groupType ~= "raid" and init then return end
+    init = true
+    if Cell.vars.inBattleground then
+        layout = CellDB["layouts"][CellCharacterDB["battleground"..Cell.vars.inBattleground]]
+    else
+        layout = CellDB["layouts"][CellCharacterDB["raid"]]
+    end
 
     local width, height = unpack(layout["size"])
 

@@ -26,6 +26,13 @@ function F:Print(msg)
 	print("|cFFFF3030[Cell]|r " .. msg)
 end
 
+local IsInRaid = IsInRaid
+local IsInGroup = IsInGroup
+local GetNumGroupMembers = GetNumGroupMembers
+local GetRaidRosterInfo = GetRaidRosterInfo
+local UnitGUID = UnitGUID
+-- local IsInBattleGround = C_PvP.IsBattleground -- NOTE: can't get valid value immediately after PLAYER_ENTERING_WORLD
+
 -------------------------------------------------
 -- fonts
 -------------------------------------------------
@@ -64,18 +71,6 @@ font_status:SetJustifyH("CENTER")
 -- font_icon_debuff:SetShadowOffset(1, -1)
 -- font_icon_debuff:SetJustifyH("CENTER")
 
--------------------------------------------------
--- functions
--------------------------------------------------
-function F:UpdateLayout(groupType)
-    local layout = CellCharacterDB[groupType]
-    if Cell.vars.currentLayout ~= layout then
-        Cell.vars.currentLayout = layout
-        Cell.vars.currentLayoutTable = CellDB["layouts"][layout]
-        Cell:Fire("UpdateLayout", Cell.vars.currentLayout)
-    end
-end
-
 function F:UpdateFont()
     local layout = Cell.vars.currentLayoutTable
     local flags
@@ -104,6 +99,56 @@ function F:UpdateFont()
     font_name:SetFont(font, layout["font"]["name"], flags)
     font_status:SetFont(font, layout["font"]["status"], flags)
 end
+
+-------------------------------------------------
+-- layout
+-------------------------------------------------
+local layoutGroupType
+local layoutDelayApplyFrame = CreateFrame("Frame")
+layoutDelayApplyFrame:SetScript("OnEvent", function()
+    layoutDelayApplyFrame:UnregisterEvent("PLAYER_REGEN_ENABLED")
+    F:UpdateLayout(layoutGroupType)
+end)
+
+function F:UpdateLayout(groupType)
+    F:Debug("|cffbbbbbbF:UpdateLayout(\""..groupType.."\")")
+    if InCombatLockdown() then
+        layoutGroupType = groupType
+        layoutDelayApplyFrame:RegisterEvent("PLAYER_REGEN_ENABLED")
+    else
+        local layout = CellCharacterDB[groupType]
+        Cell.vars.currentLayout = layout
+        Cell.vars.currentLayoutTable = CellDB["layouts"][layout]
+        Cell:Fire("UpdateLayout", Cell.vars.currentLayout)
+    end
+end
+
+local function GroupTypeChanged(groupType, instanceType)
+    if instanceType == "pvp" then
+        local name, instanceType, _, _, _, _, _, id = GetInstanceInfo()
+        for i = 1, GetNumBattlegroundTypes() do
+            local bgName, _, _, _, _, _, bgId, maxPlayers = GetBattlegroundInfo(i)
+            if id == bgId or name == bgName then
+                if maxPlayers <= 15 then
+                    Cell.vars.inBattleground = 15
+                    F:UpdateLayout("battleground15")
+                else
+                    Cell.vars.inBattleground = 40
+                    F:UpdateLayout("battleground40")
+                end
+                break
+            end
+        end
+    else
+        if Cell.vars.groupType == "solo" or Cell.vars.groupType == "party" then
+            F:UpdateLayout("party")
+        else
+            F:UpdateLayout("raid")
+        end
+        Cell.vars.inBattleground = false
+    end
+end
+Cell:RegisterCallback("GroupTypeChanged", "Core_GroupTypeChanged", GroupTypeChanged)
 
 -------------------------------------------------
 -- events
@@ -289,7 +334,7 @@ function eventFrame:ADDON_LOADED(arg1)
                         --     ["type"] = "text",
                         --     ["enabled"] = true,
                         --     ["position"] = {"TOPRIGHT", "TOPRIGHT", 0, 3},
-                        --     ["font"] = {"Cell ".._G.DEFAULT, 12, "Outline", 2},
+                        --     ["font"] = {"Cell ".._G.DEFAULT, 12, "Outline", 0},
                         --     ["colors"] = {{0,1,0}, {1,1,0,.5}, {1,0,0,5}},
                         --     ["auraType"] = "buff",
                         --     ["auras"] = {},
@@ -370,11 +415,6 @@ function eventFrame:ADDON_LOADED(arg1)
     end
 end
 
-local IsInRaid = IsInRaid
-local IsInGroup = IsInGroup
-local GetNumGroupMembers = GetNumGroupMembers
-local GetRaidRosterInfo = GetRaidRosterInfo
-local UnitGUID = UnitGUID
 Cell.vars.guid = {}
 Cell.vars.role = {["TANK"]=0, ["HEALER"]=0, ["DAMAGER"]=0}
 function eventFrame:GROUP_ROSTER_UPDATE()
@@ -438,33 +478,6 @@ function eventFrame:GROUP_ROSTER_UPDATE()
         end
     end
 
-    -- update layout
-    if C_PvP.IsBattleground() then
-        if not Cell.vars.inBattleground then -- not updated for battleground
-            local name, instanceType, _, _, _, _, _, id = GetInstanceInfo()
-            for i = 1, GetNumBattlegroundTypes() do
-                local bgName, _, _, _, _, _, bgId, maxPlayers = GetBattlegroundInfo(i)
-                if id == bgId or name == bgName then
-                    if maxPlayers <= 15 then
-                        F:UpdateLayout("battleground15")
-                        Cell.vars.inBattleground = 15
-                    else
-                        F:UpdateLayout("battleground40")
-                        Cell.vars.inBattleground = 40
-                    end
-                    break
-                end
-            end
-        end
-    else
-        if Cell.vars.groupType == "solo" or Cell.vars.groupType == "party" then
-            F:UpdateLayout("party")
-        else
-            F:UpdateLayout("raid")
-        end
-        Cell.vars.inBattleground = false
-    end
-
     if Cell.vars.hasPermission ~= F:HasPermission() or Cell.vars.hasPartyMarkPermission ~= F:HasPermission(true) then
         Cell.vars.hasPermission = F:HasPermission()
         Cell.vars.hasPartyMarkPermission = F:HasPermission(true)
@@ -479,9 +492,21 @@ function eventFrame:UNIT_PET()
     end
 end
 
+local inInstance
 function eventFrame:PLAYER_ENTERING_WORLD()
-    eventFrame:UnregisterEvent("PLAYER_ENTERING_WORLD")
+    -- eventFrame:UnregisterEvent("PLAYER_ENTERING_WORLD")
     F:Debug("PLAYER_ENTERING_WORLD")
+
+    local isIn, iType = IsInInstance()
+    if isIn then
+        F:Debug("|cffff1111Entered Instance:|r", iType)
+        GroupTypeChanged(nil, iType)
+        inInstance = true
+    elseif inInstance then -- left insntance
+        F:Debug("|cffff1111Left Instance|r")
+        GroupTypeChanged()
+        inInstance = false
+    end
 end
 
 local prevSpec

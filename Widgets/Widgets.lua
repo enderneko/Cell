@@ -1770,6 +1770,7 @@ function addon:CreateDropdown(parent, width, dropdownType)
 	-- }
 	function menu:SetItems(items)
 		menu.items = items
+		menu.reloadRequired = true
 	end
 
 	function menu:AddItem(item)
@@ -2097,13 +2098,13 @@ local function CreateSetting_Position(parent)
 		widget.relativeToText:SetText(L["To UnitButton's"])
 		widget.relativeToText:SetPoint("BOTTOMLEFT", widget.relativeTo, "TOPLEFT", 0, 1)
 
-		widget.x = addon:CreateSlider(L["X Offset"], widget, -50, 50, 100, 1)
+		widget.x = addon:CreateSlider(L["X Offset"], widget, -100, 100, 100, 1)
 		widget.x:SetPoint("TOPLEFT", widget.anchor, "BOTTOMLEFT", 0, -25)
 		widget.x.afterValueChangedFn = function(value)
 			widget.func({widget.anchor:GetSelected(), widget.relativeTo:GetSelected(), value, widget.y:GetValue()})
 		end
 		
-		widget.y = addon:CreateSlider(L["Y Offset"], widget, -50, 50, 100, 1)
+		widget.y = addon:CreateSlider(L["Y Offset"], widget, -100, 100, 100, 1)
 		widget.y:SetPoint("TOPLEFT", widget.relativeTo, "BOTTOMLEFT", 0, -25)
 		widget.y.afterValueChangedFn = function(value)
 			widget.func({widget.anchor:GetSelected(), widget.relativeTo:GetSelected(), widget.x:GetValue(), value})
