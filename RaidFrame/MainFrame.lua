@@ -15,6 +15,7 @@ Cell.unitButtons = {
 
 local cellMainFrame = CreateFrame("Frame", "CellMainFrame", UIParent, "SecureFrameTemplate")
 Cell.frames.mainFrame = cellMainFrame
+cellMainFrame:SetIgnoreParentScale(true)
 cellMainFrame:SetFrameStrata("LOW")
 cellMainFrame:SetClampedToScreen(true)
 cellMainFrame:SetClampRectInsets(0, 0, 15, 0)
