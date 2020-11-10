@@ -99,7 +99,7 @@ end
 -- font
 -------------------------------------------------
 local fontText = Cell:CreateSeparator(L["Font"], appearanceTab, 188)
-fontText:SetPoint("TOPLEFT", 5, -100)
+fontText:SetPoint("TOPLEFT", 5, -99)
 
 -- drop down
 local fontDropdown = Cell:CreateDropdown(appearanceTab, 150, "font")
@@ -129,7 +129,7 @@ end
 -- font outline
 -------------------------------------------------
 local fontOutlineText = Cell:CreateSeparator(L["Font Outline"], appearanceTab, 188)
-fontOutlineText:SetPoint("TOPLEFT", 203, -100)
+fontOutlineText:SetPoint("TOPLEFT", 203, -99)
 
 -- drop down
 local fontOutlineDropdown = Cell:CreateDropdown(appearanceTab, 150)

@@ -223,13 +223,13 @@ function addon:CreateButton(parent, text, buttonColor, size, noBorder, noBackgro
 		color = {.6, .1, .1, .6}
 		hoverColor = {.6, .1, .1, 1}
 	elseif buttonColor == "red-hover" then
-		color = {.1, .1, .1, 1}
+		color = {.117, .117, .117, 1}
 		hoverColor = {.6, .1, .1, 1}
 	elseif buttonColor == "green" then
 		color = {.1, .6, .1, .6}
 		hoverColor = {.1, .6, .1, 1}
 	elseif buttonColor == "green-hover" then
-		color = {.1, .1, .1, 1}
+		color = {.117, .117, .117, 1}
 		hoverColor = {.1, .6, .1, 1}
 	elseif buttonColor == "cyan" then
 		color = {0, .9, .9, .6}
@@ -238,13 +238,13 @@ function addon:CreateButton(parent, text, buttonColor, size, noBorder, noBackgro
 		color = {0, .5, .8, .6}
 		hoverColor = {0, .5, .8, 1}
 	elseif buttonColor == "blue-hover" then
-		color = {.1, .1, .1, 1}
+		color = {.117, .117, .117, 1}
 		hoverColor = {0, .5, .8, 1}
 	elseif buttonColor == "yellow" then
 		color = {.7, .7, 0, .6}
 		hoverColor = {.7, .7, 0, 1}
 	elseif buttonColor == "yellow-hover" then
-		color = {.1, .1, .1, 1}
+		color = {.117, .117, .117, 1}
 		hoverColor = {.7, .7, 0, 1}
 	elseif buttonColor == "class" then
 		if class == "PRIEST" then
@@ -255,7 +255,7 @@ function addon:CreateButton(parent, text, buttonColor, size, noBorder, noBackgro
 			hoverColor = {classColor.t[1], classColor.t[2], classColor.t[3], .6}
 		end
 	elseif buttonColor == "class-hover" then
-		color = {.1, .1, .1, 1}
+		color = {.117, .117, .117, 1}
 		if class == "PRIEST" then
 			hoverColor = {classColor.t[1], classColor.t[2], classColor.t[3], .5}
 		else
@@ -286,7 +286,7 @@ function addon:CreateButton(parent, text, buttonColor, size, noBorder, noBackgro
 	elseif buttonColor == "none" then
 		color = {0, 0, 0, 0}
 	else
-		color = {.1, .1, .1, .7}
+		color = {.117, .117, .117, .7}
 		hoverColor = {.5, 1, 0, .6}
 	end
 
@@ -327,7 +327,7 @@ function addon:CreateButton(parent, text, buttonColor, size, noBorder, noBackgro
 			bg:SetDrawLayer("BACKGROUND", -8)
 			b.bg = bg
 			bg:SetAllPoints(b)
-			bg:SetColorTexture(.1, .1, .1, 1)
+			bg:SetColorTexture(.117, .117, .117, 1)
 		end
 
     	b:SetBackdropBorderColor(0, 0, 0, 1)
@@ -461,7 +461,7 @@ function addon:CreateCheckButton(parent, label, onClick, ...)
 	cb:SetHitRectInsets(0, -cb.label:GetStringWidth(), 0, 0)
 
 	cb:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8x8", edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = 1})
-	cb:SetBackdropColor(.1, .1, .1, .9)
+	cb:SetBackdropColor(.117, .117, .117, .9)
 	cb:SetBackdropBorderColor(0, 0, 0, 1)
 
 	local checkedTexture = cb:CreateTexture(nil, "ARTWORK")
@@ -563,7 +563,7 @@ end
 -----------------------------------------
 function addon:CreateEditBox(parent, width, height, isTransparent, isMultiLine, isNumeric, font)
 	local eb = CreateFrame("EditBox", nil, parent, "BackdropTemplate")
-	if not isTransparent then addon:StylizeFrame(eb, {.1, .1, .1, .9}) end
+	if not isTransparent then addon:StylizeFrame(eb, {.117, .117, .117, .9}) end
 	eb:SetFontObject(font or font_name)
 	eb:SetMultiLine(isMultiLine)
 	eb:SetMaxLetters(0)
@@ -649,7 +649,7 @@ function addon:CreateSlider(name, parent, low, high, width, step, onValueChanged
 	slider:SetOrientation("HORIZONTAL")
 	slider:SetSize(width, 10)
 
-	addon:StylizeFrame(slider)
+	addon:StylizeFrame(slider, {.117, .117, .117, 1})
 	
 	local nameText = slider:CreateFontString(nil, "OVERLAY", font_name)
 	nameText:SetText(name)
@@ -769,7 +769,7 @@ end
 function addon:CreateSwitch(parent, leftText, leftValue, rightText, rightValue, func)
 	local switch = CreateFrame("Frame", nil, parent, "BackdropTemplate")
 	switch:SetSize(36, 20)
-	addon:StylizeFrame(switch)
+	addon:StylizeFrame(switch, {.117, .117, .117, 1})
 	
 	local textLeft = switch:CreateFontString(nil, "OVERLAY", font_name)
 	textLeft:SetPoint("LEFT", 2, 0)
@@ -933,7 +933,7 @@ function addon:CreateStatusBarButton(parent, text, size, maxValue, template)
 	bar:SetStatusBarTexture("Interface\\AddOns\\Cell\\Media\\statusbar.tga")
 	bar:SetStatusBarColor(classColor.t[1], classColor.t[2], classColor.t[3], .5)
 	bar:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8x8", edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = 1})
-	bar:SetBackdropColor(.1, .1, .1, 1)
+	bar:SetBackdropColor(.117, .117, .117, 1)
 	bar:SetBackdropBorderColor(0, 0, 0, 0)
 	bar:SetSize(unpack(size))
 	bar:SetMinMaxValues(0, maxValue)
@@ -1155,7 +1155,7 @@ function addon:CreatePopupEditBox(parent, width, func, multiLine)
 		eb:SetTextInsets(5, 5, 3, 4)
 		eb:SetPoint("TOPLEFT")
 		eb:SetPoint("TOPRIGHT")
-		addon:StylizeFrame(eb, {.1, .1, .1, 1}, {classColor.t[1], classColor.t[2], classColor.t[3], 1})
+		addon:StylizeFrame(eb, {.117, .117, .117, 1}, {classColor.t[1], classColor.t[2], classColor.t[3], 1})
 		
 		eb:SetScript("OnHide", function()
 			eb:Hide() -- hide self when parent hides
@@ -1186,7 +1186,7 @@ function addon:CreatePopupEditBox(parent, width, func, multiLine)
 		tipsBackground:SetPoint("BOTTOM", tipsText, 0, -2)
 		-- tipsBackground:SetHeight(41)
 		tipsBackground:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8x8"})
-		tipsBackground:SetBackdropColor(.1, .1, .1, .9)
+		tipsBackground:SetBackdropColor(.117, .117, .117, .9)
 		tipsBackground:SetFrameStrata("HIGH")
 	end
 	
@@ -1215,7 +1215,7 @@ end
 local menu = addon:CreateFrame(addonName.."CascadedMenu", UIParent, 100, 20)
 addon.menu = menu
 tinsert(UISpecialFrames, menu:GetName())
-menu:SetBackdropColor(.12, .12, .12, 1)
+menu:SetBackdropColor(.117, .117, .117, 1)
 menu:SetBackdropBorderColor(classColor.t[1], classColor.t[2], classColor.t[3], 1)
 menu:SetFrameStrata("TOOLTIP")
 menu.items = {}
@@ -1274,7 +1274,7 @@ local function CreateItemButtons(items, itemTable, itemParent, level)
 			if not menu[level+1] then
 				-- menu[level+1] parent == menu[level]
 				menu[level+1] = addon:CreateFrame(addonName.."CascadedSubMenu"..level, level == 0 and menu or menu[level], 100, 20)
-				menu[level+1]:SetBackdropColor(.12, .12, .12, 1)
+				menu[level+1]:SetBackdropColor(.117, .117, .117, 1)
 				menu[level+1]:SetBackdropBorderColor(classColor.t[1], classColor.t[2], classColor.t[3], 1)
 				-- menu[level+1]:SetScript("OnHide", function(self) self:Hide() end)
 			end
@@ -1683,7 +1683,7 @@ end
 -- dropdown menu 2020-09-07
 ------------------------------------------------
 local list = CreateFrame("Frame", addonName.."DropdownList", nil, "BackdropTemplate")
-addon:StylizeFrame(list, {.1, .1, .1, 1})
+addon:StylizeFrame(list, {.117, .117, .117, 1})
 list:Hide()
 list:SetScript("OnShow", function()
 	list:SetScale(list.menu:GetEffectiveScale())
@@ -1727,11 +1727,11 @@ function addon:CreateDropdown(parent, width, dropdownType)
 	menu:SetSize(width, 20)
 	menu:EnableMouse(true)
 	-- menu:SetFrameLevel(5)
-	addon:StylizeFrame(menu)
+	addon:StylizeFrame(menu, {.117, .117, .117, 1})
 	
 	-- button: open/close menu list
 	menu.button = addon:CreateButton(menu, "", "transparent-class", {18 ,20})
-	addon:StylizeFrame(menu.button)
+	addon:StylizeFrame(menu.button, {.117, .117, .117, 1})
 	menu.button:SetPoint("RIGHT")
 	menu.button:SetFrameLevel(menu:GetFrameLevel()+1)
 	menu.button:SetNormalTexture([[Interface\AddOns\Cell\Media\dropdown]])
@@ -1998,7 +1998,7 @@ function addon:CreateBindingButton(parent, modifier, bindKey, bindType, bindActi
 	b:SetFrameLevel(5)
 	b:SetSize(100, 20)
 	b:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8x8", edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = 1})
-	b:SetBackdropColor(.12, .12, .12, 1) 
+	b:SetBackdropColor(.117, .117, .117, 1) 
     b:SetBackdropBorderColor(0, 0, 0, 1)
 
 	function b:Highlight()
@@ -2006,7 +2006,7 @@ function addon:CreateBindingButton(parent, modifier, bindKey, bindType, bindActi
 	end
 
 	function b:Unhighlight()
-		b:SetBackdropColor(.12, .12, .12, 1)
+		b:SetBackdropColor(.117, .117, .117, 1)
 	end
 
 	local keyGrid = CreateGrid(b, modifier..bindKey, 127)
