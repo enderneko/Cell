@@ -684,11 +684,13 @@ function addon:CreateSlider(name, parent, low, high, width, step, onValueChanged
 
 	local lowText = slider:CreateFontString(nil, "OVERLAY", font_name)
 	lowText:SetText(colors.grey.s..low)
-	lowText:SetPoint("TOPLEFT", slider, "BOTTOMLEFT", 0, -2)
-
+	lowText:SetPoint("TOPLEFT", slider, "BOTTOMLEFT", 0, -1)
+	lowText:SetPoint("BOTTOM", currentEditBox)
+	
 	local hightText = slider:CreateFontString(nil, "OVERLAY", font_name)
 	hightText:SetText(colors.grey.s..high)
-	hightText:SetPoint("TOPRIGHT", slider, "BOTTOMRIGHT", 0, -2)
+	hightText:SetPoint("TOPRIGHT", slider, "BOTTOMRIGHT", 0, -1)
+	hightText:SetPoint("BOTTOM", currentEditBox)
 
 	local tex = slider:CreateTexture(nil, "ARTWORK")
 	tex:SetColorTexture(classColor.t[1], classColor.t[2], classColor.t[3], .7)
