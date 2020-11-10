@@ -568,7 +568,7 @@ function addon:CreateEditBox(parent, width, height, isTransparent, isMultiLine, 
 	eb:SetMultiLine(isMultiLine)
 	eb:SetMaxLetters(0)
 	eb:SetJustifyH("LEFT")
-	eb:SetJustifyV("CENTER")
+	eb:SetJustifyV("MIDDLE")
 	eb:SetWidth(width or 0)
 	eb:SetHeight(height or 0)
 	eb:SetTextInsets(5, 5, 0, 0)
@@ -657,15 +657,38 @@ function addon:CreateSlider(name, parent, low, high, width, step, onValueChanged
 
 	local currentText = slider:CreateFontString(nil, "OVERLAY", font_name)
 	currentText:SetText(slider:GetValue())
-	currentText:SetPoint("TOP", slider, "BOTTOM")
+	-- currentText:SetPoint("TOP", slider, "BOTTOM")
+
+	local currentEditBox = addon:CreateEditBox(slider, 50, 14, false, false, true)
+	currentEditBox:SetPoint("TOP", slider, "BOTTOM", 0, -1)
+	currentEditBox:SetJustifyH("CENTER")
+	currentEditBox:SetScript("OnEditFocusGained", function(self)
+		self:HighlightText()
+	end)
+	currentEditBox:SetScript("OnEnterPressed", function(self)
+		self:ClearFocus()
+		local value = tonumber(self:GetText())
+		if value then
+			if value < low then value = low end
+			if value > high then value = high end
+			self:SetText(value)
+			slider:SetValue(value)
+			if slider.onValueChangedFn then slider.onValueChangedFn(value) end
+		else
+			self:SetText(self.oldValue)
+		end
+	end)
+	currentEditBox:SetScript("OnShow", function(self)
+		if self.oldValue then self:SetText(self.oldValue) end
+	end)
 
 	local lowText = slider:CreateFontString(nil, "OVERLAY", font_name)
 	lowText:SetText(colors.grey.s..low)
-	lowText:SetPoint("TOPLEFT", slider, "BOTTOMLEFT")
+	lowText:SetPoint("TOPLEFT", slider, "BOTTOMLEFT", 0, -2)
 
 	local hightText = slider:CreateFontString(nil, "OVERLAY", font_name)
 	hightText:SetText(colors.grey.s..high)
-	hightText:SetPoint("TOPRIGHT", slider, "BOTTOMRIGHT")
+	hightText:SetPoint("TOPRIGHT", slider, "BOTTOMRIGHT", 0, -2)
 
 	local tex = slider:CreateTexture(nil, "ARTWORK")
 	tex:SetColorTexture(classColor.t[1], classColor.t[2], classColor.t[3], .7)
@@ -692,7 +715,8 @@ function addon:CreateSlider(name, parent, low, high, width, step, onValueChanged
 			value = tonumber(string.format("%.1f", value))
 		end
 
-		currentText:SetText(value)
+		currentEditBox:SetText(value)
+		currentEditBox.oldValue = value
         if userChanged and slider.onValueChangedFn then slider.onValueChangedFn(value) end
 	end)
 
@@ -709,6 +733,7 @@ function addon:CreateSlider(name, parent, low, high, width, step, onValueChanged
 		end
 	end)
 
+	--[[
 	slider:EnableMouseWheel(true)
 	slider:SetScript("OnMouseWheel", function(self, delta)
 		if not IsShiftKeyDown() then return end
@@ -731,6 +756,7 @@ function addon:CreateSlider(name, parent, low, high, width, step, onValueChanged
 			if slider.afterValueChangedFn then slider.afterValueChangedFn(value) end
 		end
 	end)
+	]]
 	
 	return slider
 end

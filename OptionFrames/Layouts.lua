@@ -623,13 +623,6 @@ widthText:SetText(L["Text Width"])
 widthText:SetPoint("BOTTOM", textWidthDropdown, "TOP", 0, 2)
 
 -------------------------------------------------
--- tips
--------------------------------------------------
-local tipsText = layoutsTab:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
-tipsText:SetPoint("BOTTOMLEFT", 5, 5)
-tipsText:SetText("|cff777777"..L["Tips: You can use Shift+Scroll to change a slider's value."])
-
--------------------------------------------------
 -- functions
 -------------------------------------------------
 LoadLayoutDB = function(layout)

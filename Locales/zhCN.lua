@@ -180,7 +180,6 @@ L["Spacing"] = "间距"
 L["Text Width"] = "文字宽度"
 L["Unlimited"] = "无限制"
 L["Set Text Width\n|cffffffffCompare with unitbutton's width"] = "设置文字宽度\n|cffffffff相对于单位按钮的宽度"
-L["Tips: You can use Shift+Scroll to change a slider's value."] = "提示: 可以用 Shift+滚轮 调整滑动条数值。"
 L["vehicle name"] = "载具名称"
 
 -------------------------------------------------
