@@ -163,7 +163,7 @@ local function InitIndicator(indicatorName)
             end)
         end
     elseif string.find(indicatorName, "indicator") then
-        if indicator.SetOrientation then -- icons
+        if indicator.indicatorType == "icons" then
             local stacks = {1, 2, 3, 4, 5}
             for i = 1, 5 do
                 indicator[i]:SetScript("OnShow", function()
@@ -198,10 +198,12 @@ local function InitIndicator(indicatorName)
     indicator.init = true
 end
 
-local function UpdateIndicators(indicatorName, setting, value)
+local function UpdateIndicators(layout, indicatorName, setting, value)
+    if not indicatorsTab:IsShown() then return end
+
     if not indicatorName then -- init
         F:RemoveAllCustomIndicators(previewButton)
-        for _, t in pairs(Cell.vars.currentLayoutTable["indicators"]) do
+        for _, t in pairs(currentLayoutTable["indicators"]) do
             local indicator = previewButton.indicators[t["indicatorName"]] or F:CreateIndicator(previewButton, t)
             if t["enabled"] then
                 InitIndicator(t["indicatorName"])
@@ -360,6 +362,7 @@ local function LoadLayoutDropdown()
                 currentLayout = value
                 currentLayoutTable = CellDB["layouts"][value]
 
+                UpdateIndicators()
                 UpdatePreviewButton()
                 LoadIndicatorList()
                 listButtons[1]:Click()
@@ -397,12 +400,12 @@ local typeItems = {
         ["value"] = "icon",
     },
     {
-        ["text"] = L["Rect"],
-        ["value"] = "rect",
-    },
-    {
         ["text"] = L["Bar"],
         ["value"] = "bar",
+    },
+    {
+        ["text"] = L["Rect"],
+        ["value"] = "rect",
     },
     {
         ["text"] = L["Text"],
@@ -411,6 +414,10 @@ local typeItems = {
     {
         ["text"] = L["Icons"],
         ["value"] = "icons",
+    },
+    {
+        ["text"] = "|cff777777"..L["Bars"], -- TODO:
+        ["value"] = "bars",
     },
 }
 
@@ -432,6 +439,7 @@ createBtn:SetScript("OnClick", function()
         local name = strtrim(self.editBox:GetText())
         local indicatorName
         local indicatorType, indicatorAuraType = self.dropdown1:GetSelected(), self.dropdown2:GetSelected()
+        if indicatorType == "bars" then return end -- TODO:
         
         local last = #currentLayoutTable["indicators"]
         if currentLayoutTable["indicators"][last]["type"] == "built-in" then
@@ -449,6 +457,7 @@ createBtn:SetScript("OnClick", function()
                 ["position"] = {"TOPRIGHT", "TOPRIGHT", 0, 3},
                 ["size"] = {13, 13},
                 ["font"] = {"Cell ".._G.DEFAULT, 11, "Outline", 2},
+                ["showDuration"] = false,
                 ["auraType"] = indicatorAuraType,
                 ["auras"] = {},
             })
@@ -499,6 +508,7 @@ createBtn:SetScript("OnClick", function()
                 ["num"] = 3,
                 ["orientation"] = "right-to-left",
                 ["font"] = {"Cell ".._G.DEFAULT, 11, "Outline", 2},
+                ["showDuration"] = false,
                 ["auraType"] = indicatorAuraType,
                 ["auras"] = {},
             })
@@ -506,7 +516,7 @@ createBtn:SetScript("OnClick", function()
         if indicatorAuraType == "buff" then
             currentLayoutTable["indicators"][last+1]["castByMe"] = true
         end
-        Cell:Fire("UpdateIndicators", indicatorName, "create", currentLayoutTable["indicators"][last+1])
+        Cell:Fire("UpdateIndicators", currentLayout, indicatorName, "create", currentLayoutTable["indicators"][last+1])
         LoadIndicatorList()
         listButtons[last+1]:Click()
 
@@ -528,7 +538,7 @@ deleteBtn:SetScript("OnClick", function()
     local auraType = currentLayoutTable["indicators"][selected]["auraType"]
 
     local popup = Cell:CreateConfirmPopup(indicatorsTab, 200, L["Delete indicator"].." "..name.."?", function(self)
-        Cell:Fire("UpdateIndicators", indicatorName, "remove", auraType)
+        Cell:Fire("UpdateIndicators", currentLayout, indicatorName, "remove", auraType)
         tremove(currentLayoutTable["indicators"], selected)
         LoadIndicatorList()
         listButtons[1]:Click()
@@ -566,7 +576,7 @@ local indicatorSettings = {
 }
 
 local function ShowIndicatorSettings(id)
-    if selected == id then return end
+    -- if selected == id then return end
 
     settingsFrame.scrollFrame:ResetScroll()
     settingsFrame.scrollFrame:ResetHeight()
@@ -580,13 +590,13 @@ local function ShowIndicatorSettings(id)
         settingsTable = indicatorSettings[indicatorName]
     else
         if indicatorType == "icon" then
-            settingsTable = {"enabled", "auras", "position", "size-square", "font"}
+            settingsTable = {"enabled", "auras", "position", "size-square", "font", "checkbutton2:showDuration"}
         elseif indicatorType == "text" then
             settingsTable = {"enabled", "auras", "position", "font", "colors"}
         elseif indicatorType == "bar" or indicatorType == "rect" then
             settingsTable = {"enabled", "auras", "position", "size", "colors"}
         elseif indicatorType == "icons" then
-            settingsTable = {"enabled", "auras", "position", "size-square", "num", "orientation", "font"}
+            settingsTable = {"enabled", "auras", "position", "size-square", "num", "orientation", "font", "checkbutton2:showDuration"}
         end
         -- castByMe
         if currentLayoutTable["indicators"][id]["auraType"] == "buff" then
@@ -636,18 +646,18 @@ local function ShowIndicatorSettings(id)
             -- texplore(value)
             if string.find(currentSetting, "checkbutton") then
                 local setting = select(2,string.split(":", currentSetting))
-                Cell.vars.currentLayoutTable["indicators"][id][setting] = value
-                Cell:Fire("UpdateIndicators", indicatorName, "checkbutton", setting, value) -- indicatorName, setting, value, value2
+                currentLayoutTable["indicators"][id][setting] = value
+                Cell:Fire("UpdateIndicators", currentLayout, indicatorName, "checkbutton", setting, value) -- indicatorName, setting, value, value2
             elseif currentSetting == "auras" then
-                Cell.vars.currentLayoutTable["indicators"][id][currentSetting] = value
-                Cell:Fire("UpdateIndicators", indicatorName, currentSetting, currentLayoutTable["indicators"][id]["auraType"], value)
+                currentLayoutTable["indicators"][id][currentSetting] = value
+                Cell:Fire("UpdateIndicators", currentLayout, indicatorName, currentSetting, currentLayoutTable["indicators"][id]["auraType"], value)
             elseif currentSetting == "blacklist" then
                 CellDB["debuffBlacklist"] = value
                 Cell.vars.debuffBlacklist = F:ConvertTable(CellDB["debuffBlacklist"])
-                Cell:Fire("UpdateIndicators", "", "blacklist")
+                Cell:Fire("UpdateIndicators", currentLayout, "", "blacklist")
             else
-                Cell.vars.currentLayoutTable["indicators"][id][currentSetting] = value
-                Cell:Fire("UpdateIndicators", indicatorName, currentSetting, value)
+                currentLayoutTable["indicators"][id][currentSetting] = value
+                Cell:Fire("UpdateIndicators", currentLayout, indicatorName, currentSetting, value)
             end
             -- show enabled/disabled status
             if currentSetting == "enabled" then
@@ -686,7 +696,7 @@ LoadIndicatorList = function()
             b.typeIcon = b:CreateTexture(nil, "ARTWORK")
             b.typeIcon:SetPoint("RIGHT", -2, 0)
             b.typeIcon:SetSize(16, 16)
-            b.typeIcon:SetTexture("Interface\\AddOns\\Cell\\Media\\indicator-"..t["type"])
+            b.typeIcon:SetTexture("Interface\\AddOns\\Cell\\Media\\indicators\\indicator-"..t["type"])
             -- b.typeIcon:SetVertexColor(unpack(Cell:GetPlayerClassColorTable()))
             b.typeIcon:SetAlpha(.5)
 
@@ -749,6 +759,7 @@ local function ShowTab(tab)
         if currentLayout == Cell.vars.currentLayout then return end
         currentLayout = Cell.vars.currentLayout
         currentLayoutTable = Cell.vars.currentLayoutTable
+        UpdateIndicators()
         UpdatePreviewButton()
         
         layoutDropdown:SetSelected(currentLayout == "default" and _G.DEFAULT or currentLayout)

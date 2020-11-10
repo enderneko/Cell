@@ -60,8 +60,10 @@ local function UpdateIndicatorParentVisibility(b, indicatorName, enabled)
 	end
 end
 
-local function UpdateIndicators(indicatorName, setting, value, value2)
-	F:Debug("|cffff7777UpdateIndicators:|r ", indicatorName, setting, value, value2)
+local function UpdateIndicators(layout, indicatorName, setting, value, value2)
+	if layout and layout ~= Cell.vars.currentLayout then return end
+
+	F:Debug("|cffff7777UpdateIndicators:|r ", layout, indicatorName, setting, value, value2)
 	if not indicatorName then -- init
 		wipe(enabledIndicators)
 		wipe(indicatorNums)
@@ -120,6 +122,10 @@ local function UpdateIndicators(indicatorName, setting, value, value2)
 				if type(t["enableHighlight"]) == "boolean" then
 					indicator:EnableHighlight(t["enableHighlight"])
 				end
+				-- update duration
+				if type(t["showDuration"]) == "boolean" then
+					indicator:ShowDuration(t["showDuration"])
+				end
 				UpdateIndicatorParentVisibility(b, t["indicatorName"], t["enabled"])
 			end)
 		end
@@ -131,6 +137,9 @@ local function UpdateIndicators(indicatorName, setting, value, value2)
 			-- refresh
 			F:IterateAllUnitButtons(function(b)
 				UpdateIndicatorParentVisibility(b, indicatorName, value)
+				if not value then
+					b.indicators[indicatorName]:Hide() -- hide indicators which is shown right now
+				end
 				UnitButton_UpdateAuras(b)
 			end)
 		elseif setting == "position" then
@@ -176,13 +185,16 @@ local function UpdateIndicators(indicatorName, setting, value, value2)
 				UnitButton_UpdateAuras(b)
 			end)
 		elseif setting == "checkbutton" then
-			if value ~= "enableHighlight" then
+			if value ~= "enableHighlight" and value ~= "showTimer" then
 				indicatorCustoms[indicatorName] = value2
 			end
 			F:IterateAllUnitButtons(function(b)
 				if value == "enableHighlight" then
 					local indicator = b.indicators[indicatorName]
 					indicator:EnableHighlight(value2)
+				elseif value == "showDuration" then
+					local indicator = b.indicators[indicatorName]
+					indicator:ShowDuration(value2)
 				end
 				UnitButton_UpdateAuras(b)
 			end)
@@ -211,6 +223,10 @@ local function UpdateIndicators(indicatorName, setting, value, value2)
 				-- update colors
 				if value["colors"] then
 					indicator:SetColors(value["colors"])
+				end
+				-- update showDuration
+				if value["showDuration"] then
+					indicator:ShowDuration(value["showDuration"])
 				end
 			end)
 		elseif setting == "remove" then
@@ -308,7 +324,7 @@ local function UnitButton_UpdateDebuffs(self)
 				F:CheckCustomIndicators(unit, self, "debuff", name, expirationTime - duration, duration, debuffType or "", icon, count, refreshing)
 
 				-- check top debuff
-				if F:GetDebuffOrder(spellId) ~= 0 and F:GetDebuffOrder(spellId) < topOrder then
+				if enabledIndicators["centralDebuff"] and F:GetDebuffOrder(spellId) ~= 0 and F:GetDebuffOrder(spellId) < topOrder then
 					topOrder, topGlowType, topGlowColor = F:GetDebuffOrder(spellId)
 					topId, topStart, topDuration, topType, topIcon, topCount, topRefreshing = spellId, expirationTime - duration, duration, debuffType or "", icon, count, refreshing
 				end

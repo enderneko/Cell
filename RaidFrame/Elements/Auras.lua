@@ -178,6 +178,12 @@ local function CreateAura_BarIcon(name, parent)
     cooldown:SetStatusBarTexture("Interface\\Buttons\\WHITE8x8")
     cooldown:GetStatusBarTexture():SetAlpha(0)
 
+    local duration = cooldown:CreateFontString(nil, "OVERLAY", "CELL_FONT_STATUS")
+    frame.duration = duration
+    duration:SetJustifyH("RIGHT")
+    duration:SetPoint("BOTTOMRIGHT", 2, 0)
+    duration:Hide()
+
     local elapsedTime = 0
     cooldown:SetScript("OnUpdate", function(self, elapsed)
         -- cooldown:SetValue(GetTime()-cooldown.start)
@@ -227,21 +233,29 @@ local function CreateAura_BarIcon(name, parent)
         if not string.find(font, ".ttf") then font = F:GetFont(font) end
 
         if flags == "Shadow" then
-            frame.stack:SetFont(font, size)
-            frame.stack:SetShadowOffset(1, -1)
-            frame.stack:SetShadowColor(0, 0, 0, 1)
+            stack:SetFont(font, size)
+            stack:SetShadowOffset(1, -1)
+            stack:SetShadowColor(0, 0, 0, 1)
+            duration:SetFont(font, size)
+            duration:SetShadowOffset(1, -1)
+            duration:SetShadowColor(0, 0, 0, 1)
         else
             if flags == "Outline" then
                 flags = "OUTLINE"
             else
                 flags = "OUTLINE, MONOCHROME"
             end
-            frame.stack:SetFont(font, size, flags)
-            frame.stack:SetShadowOffset(0, 0)
-            frame.stack:SetShadowColor(0, 0, 0, 0)
+            stack:SetFont(font, size, flags)
+            stack:SetShadowOffset(0, 0)
+            stack:SetShadowColor(0, 0, 0, 0)
+            duration:SetFont(font, size, flags)
+            duration:SetShadowOffset(0, 0)
+            duration:SetShadowColor(0, 0, 0, 0)
         end
-        frame.stack:ClearAllPoints()
-        frame.stack:SetPoint("TOPRIGHT", horizontalOffset, 0)
+        stack:ClearAllPoints()
+        stack:SetPoint("TOPRIGHT", horizontalOffset, 0)
+        duration:ClearAllPoints()
+        duration:SetPoint("BOTTOMRIGHT", horizontalOffset, 0)
     end
 
     local ag = frame:CreateAnimationGroup()
@@ -259,11 +273,22 @@ local function CreateAura_BarIcon(name, parent)
     function frame:SetCooldown(start, duration, debuffType, texture, count, refreshing)
         if duration == 0 then
             cooldown:Hide()
+            frame:SetScript("OnUpdate", nil)
         else
             -- init bar values
             cooldown:SetMinMaxValues(0, duration)
             cooldown:SetValue(GetTime()-start)
             cooldown:Show()
+            if frame.showDuration then
+                frame:SetScript("OnUpdate", function()
+                    local remain = duration-(GetTime()-start)
+                    if remain <= 30 then
+                        frame.duration:SetText(string.format("%d", remain))
+                    else
+                        frame.duration:SetText("")
+                    end
+                end)
+            end
         end
 
         local r, g, b
@@ -286,6 +311,15 @@ local function CreateAura_BarIcon(name, parent)
         end
     end
 
+    function frame:ShowDuration(show)
+        frame.showDuration = show
+        if show then
+            duration:Show()
+        else
+            duration:Hide()
+        end
+    end
+
     return frame
 end
 
@@ -294,8 +328,9 @@ end
 -------------------------------------------------
 local function CreateAura_Text(name, parent)
     local frame = CreateFrame("Frame", name, parent)
-    frame:Hide()
     frame:SetSize(11, 11)
+    frame:Hide()
+    frame.indicatorType = "text"
 
     local text = frame:CreateFontString(nil, "OVERLAY", "CELL_FONT_STATUS")
     frame.text = text
@@ -386,8 +421,9 @@ end
 -------------------------------------------------
 local function CreateAura_Rect(name, parent)
     local frame = CreateFrame("Frame", name, parent, "BackdropTemplate")
-    frame:Hide()
     frame:SetSize(11, 4)
+    frame:Hide()
+    frame.indicatorType = "rect"
     frame:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8x8"})
     frame:SetBackdropColor(0, 0, 0, 1)
 
@@ -429,6 +465,7 @@ end
 local function CreateAura_Bar(name, parent)
     local bar = Cell:CreateStatusBar(parent, 18, 4, 100)
     bar:Hide()
+    bar.indicatorType = "bar"
 
     function bar:SetCooldown(start, duration, debuffType, texture, count)
         if duration == 0 then
@@ -470,6 +507,7 @@ local function CreateAura_Icons(name, parent)
     local icons = CreateFrame("Frame", name, parent)
     icons:SetSize(11, 11)
     icons:Hide()
+    icons.indicatorType = "icons"
 
     icons.OriginalSetSize = icons.SetSize
 
@@ -520,7 +558,13 @@ local function CreateAura_Icons(name, parent)
             frame:SetPoint("RIGHT", icons[i-1], "LEFT")
         end
     end
-    
+
+    function icons:ShowDuration(show)
+        for i = 1, 5 do
+            icons[i]:ShowDuration(show)
+        end
+    end
+
     return icons
 end
 
@@ -874,31 +918,33 @@ function F:CreateIndicator(parent, indicatorTable)
     end
     parent.indicators[indicatorName] = indicator
     
-    -- keep custom indicators in table
-    if indicatorTable["enabled"] then enabledIndicators[indicatorName] = true end
+    if parent:GetName() ~= "IndicatorsPreviewButton" then
+        -- keep custom indicators in table
+        if indicatorTable["enabled"] then enabledIndicators[indicatorName] = true end
 
-    local auraType = indicatorTable["auraType"]
+        local auraType = indicatorTable["auraType"]
 
-    -- NOTE: icons is different from other custom indicators, more like the Debuffs indicator
-    if indicatorTable["type"] == "icons" then
-        customIndicators[auraType][indicatorName] = {
-            ["auras"] = F:ConvertTable(indicatorTable["auras"]), -- auras to match
-            ["isIcons"] = true,
-            ["found"] = {},
-            ["num"] = indicatorTable["num"],
-            -- ["castByMe"]
-        }
-    else
-        customIndicators[auraType][indicatorName] = {
-            ["auras"] = F:ConvertTable(indicatorTable["auras"]), -- auras to match
-            ["top"] = {}, -- top aura details
-            ["topOrder"] = {}, -- top aura order
-            -- ["castByMe"]
-        }
-    end
+        -- NOTE: icons is different from other custom indicators, more like the Debuffs indicator
+        if indicatorTable["type"] == "icons" then
+            customIndicators[auraType][indicatorName] = {
+                ["auras"] = F:ConvertTable(indicatorTable["auras"]), -- auras to match
+                ["isIcons"] = true,
+                ["found"] = {},
+                ["num"] = indicatorTable["num"],
+                -- ["castByMe"]
+            }
+        else
+            customIndicators[auraType][indicatorName] = {
+                ["auras"] = F:ConvertTable(indicatorTable["auras"]), -- auras to match
+                ["top"] = {}, -- top aura details
+                ["topOrder"] = {}, -- top aura order
+                -- ["castByMe"]
+            }
+        end
 
-    if auraType == "buff" then
-        customIndicators[auraType][indicatorName]["castByMe"] = indicatorTable["castByMe"]
+        if auraType == "buff" then
+            customIndicators[auraType][indicatorName]["castByMe"] = indicatorTable["castByMe"]
+        end
     end
 
     return indicator
@@ -925,12 +971,16 @@ function F:RemoveAllCustomIndicators(parent)
         end
     end
 
-    wipe(enabledIndicators)
-    wipe(customIndicators["buff"])
-    wipe(customIndicators["debuff"])
+    if parent:GetName() ~= "IndicatorsPreviewButton" then
+        wipe(enabledIndicators)
+        wipe(customIndicators["buff"])
+        wipe(customIndicators["debuff"])
+    end
 end
 
-local function UpdateCustomIndicators(indicatorName, setting, value, value2)
+local function UpdateCustomIndicators(layout, indicatorName, setting, value, value2)
+    if layout and layout ~= Cell.vars.currentLayout then return end
+
     if not indicatorName or not string.find(indicatorName, "indicator") then return end
 
     if setting == "enabled" then

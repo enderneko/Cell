@@ -213,6 +213,7 @@ L["Rect"] = "矩形"
 L["Bar"] = "进度条"
 L["Text"] = "文本"
 L["Icons"] = "图标组"
+L["Bars"] = "进度条组"
 
 L["Enabled"] = "启用"
 L["Anchor Point"] = "锚点"
@@ -236,6 +237,7 @@ L["sec"] = "秒"
 
 L["dispellableByMe"] = "只显示我能驱散的减益"
 L["castByMe"] = "只显示我施放的增益"
+L["showDuration"] = "显示持续时间文本"
 L["enableHighlight"] = "高亮单位按钮"
 
 L["Orientation"] = "方向"

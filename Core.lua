@@ -103,26 +103,32 @@ end
 -------------------------------------------------
 -- layout
 -------------------------------------------------
-local layoutGroupType
-local layoutDelayApplyFrame = CreateFrame("Frame")
-layoutDelayApplyFrame:SetScript("OnEvent", function()
-    layoutDelayApplyFrame:UnregisterEvent("PLAYER_REGEN_ENABLED")
-    F:UpdateLayout(layoutGroupType)
+local delayedGroupType, delayedIsAutoSwitch
+local delayedFrame = CreateFrame("Frame")
+delayedFrame:SetScript("OnEvent", function()
+    delayedFrame:UnregisterEvent("PLAYER_REGEN_ENABLED")
+    F:UpdateLayout(delayedGroupType, delayedIsAutoSwitch)
 end)
 
-function F:UpdateLayout(groupType)
-    F:Debug("|cffbbbbbbF:UpdateLayout(\""..groupType.."\")")
+function F:UpdateLayout(groupType, isAutoSwitch)
     if InCombatLockdown() then
-        layoutGroupType = groupType
-        layoutDelayApplyFrame:RegisterEvent("PLAYER_REGEN_ENABLED")
+        F:Debug("|cffbbbbbbF:UpdateLayout(\""..groupType.."\") DELAYED")
+        delayedGroupType, delayedIsAutoSwitch = groupType, isAutoSwitch
+        delayedFrame:RegisterEvent("PLAYER_REGEN_ENABLED")
     else
+        F:Debug("|cffbbbbbbF:UpdateLayout(\""..groupType.."\")")
         local layout = CellCharacterDB[groupType]
         Cell.vars.currentLayout = layout
         Cell.vars.currentLayoutTable = CellDB["layouts"][layout]
         Cell:Fire("UpdateLayout", Cell.vars.currentLayout)
+        if isAutoSwitch then
+            Cell:Fire("UpdateAppearance", "font") -- update text size
+            Cell:Fire("UpdateIndicators")
+        end
     end
 end
 
+-- layout auto switch
 local instanceType
 local function GroupTypeChanged()
     if instanceType == "pvp" then
@@ -132,19 +138,19 @@ local function GroupTypeChanged()
             if id == bgId or name == bgName then
                 if maxPlayers <= 15 then
                     Cell.vars.inBattleground = 15
-                    F:UpdateLayout("battleground15")
+                    F:UpdateLayout("battleground15", true)
                 else
                     Cell.vars.inBattleground = 40
-                    F:UpdateLayout("battleground40")
+                    F:UpdateLayout("battleground40", true)
                 end
                 break
             end
         end
     else
         if Cell.vars.groupType == "solo" or Cell.vars.groupType == "party" then
-            F:UpdateLayout("party")
+            F:UpdateLayout("party", true)
         else
-            F:UpdateLayout("raid")
+            F:UpdateLayout("raid", true)
         end
         Cell.vars.inBattleground = false
     end
@@ -316,65 +322,6 @@ function eventFrame:ADDON_LOADED(arg1)
                             ["size"] = {20, 20},
                             ["font"] = {"Cell ".._G.DEFAULT, 11, "Outline", 2},
                         },
-                        -- {
-                        --     ["name"] = "",
-                        --     ["indicatorName"] = "",
-                        --     ["type"] = "icon",
-                        --     ["enabled"] = true,
-                        --     ["position"] = {"TOPRIGHT", "TOPRIGHT", 0, 3},
-                        --     ["size"] = {13, 13},
-                        --     ["style"] = "Blizzard"/"Cell", -- TODO:
-                        --     ["font"] = {"Cell ".._G.DEFAULT, 11, "Outline", 2},
-                        --     ["auraType"] = "buff",
-                        --     ["castByMe"] = true,
-                        --     ["auras"] = {},
-                        -- },
-                        -- {
-                        --     ["name"] = "",
-                        --     ["indicatorName"] = "",
-                        --     ["type"] = "text",
-                        --     ["enabled"] = true,
-                        --     ["position"] = {"TOPRIGHT", "TOPRIGHT", 0, 3},
-                        --     ["font"] = {"Cell ".._G.DEFAULT, 12, "Outline", 0},
-                        --     ["colors"] = {{0,1,0}, {1,1,0,.5}, {1,0,0,5}},
-                        --     ["auraType"] = "buff",
-                        --     ["auras"] = {},
-                        -- },
-                        -- {
-                        --     ["name"] = "",
-                        --     ["indicatorName"] = "",
-                        --     ["type"] = "bar",
-                        --     ["enabled"] = true,
-                        --     ["position"] = {"TOPRIGHT", "TOPRIGHT", -1, 2},
-                        --     ["size"] = {18, 4},
-                        --     ["colors"] = {{0,1,0}, {1,1,0,.5}, {1,0,0,5}},
-                        --     ["auraType"] = "buff",
-                        --     ["auras"] = {},
-                        -- },
-                        -- {
-                        --     ["name"] = "",
-                        --     ["indicatorName"] = "",
-                        --     ["type"] = "rect",
-                        --     ["enabled"] = true,
-                        --     ["position"] = {"TOPRIGHT", "TOPRIGHT", 0, 2},
-                        --     ["size"] = {11, 4},
-                        --     ["colors"] = {{0,1,0}, {1,1,0,.5}, {1,0,0,5}},
-                        --     ["auraType"] = "buff",
-                        --     ["auras"] = {},
-                        -- },
-                        -- {
-                        --     ["name"] = "",
-                        --     ["indicatorName"] = "",
-                        --     ["type"] = "icons",
-                        --     ["enabled"] = true,
-                        --     ["position"] = {"TOPRIGHT", "TOPRIGHT", 0, 3},
-                        --     ["size"] = {13, 13},
-                        --     ["num"] = 3,
-                        --     ["orientation"] = "right-to-left",
-                        --     ["font"] = {"Cell ".._G.DEFAULT, 11, "Outline", 2},
-                        --     ["auraType"] = "buff",
-                        --     ["auras"] = {},
-                        -- },
                     },
                 },
             }

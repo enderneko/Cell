@@ -362,6 +362,7 @@ LoadAutoSwitchDropdowns = function()
                     F:UpdateLayout("party")
                     Cell:Fire("UpdateAppearance", "font") -- update text size
                     Cell:Fire("UpdateIndicators")
+                    LoadLayoutDB(Cell.vars.currentLayout)
                     UpdateButtonStates()
                     UpdateEnabledLayoutText()
                 end
@@ -381,6 +382,7 @@ LoadAutoSwitchDropdowns = function()
                     F:UpdateLayout("raid")
                     Cell:Fire("UpdateAppearance", "font") -- update text size
                     Cell:Fire("UpdateIndicators")
+                    LoadLayoutDB(Cell.vars.currentLayout)
                     UpdateButtonStates()
                     UpdateEnabledLayoutText()
                 end
@@ -400,6 +402,7 @@ LoadAutoSwitchDropdowns = function()
                     F:UpdateLayout("battleground15")
                     Cell:Fire("UpdateAppearance", "font") -- update text size
                     Cell:Fire("UpdateIndicators")
+                    LoadLayoutDB(Cell.vars.currentLayout)
                     UpdateButtonStates()
                     UpdateEnabledLayoutText()
                 end
@@ -419,6 +422,7 @@ LoadAutoSwitchDropdowns = function()
                     F:UpdateLayout("battleground40")
                     Cell:Fire("UpdateAppearance", "font") -- update text size
                     Cell:Fire("UpdateIndicators")
+                    LoadLayoutDB(Cell.vars.currentLayout)
                     UpdateButtonStates()
                     UpdateEnabledLayoutText()
                 end
@@ -685,3 +689,31 @@ local function ShowTab(tab)
     end
 end
 Cell:RegisterCallback("ShowOptionsTab", "LayoutsTab_ShowTab", ShowTab)
+
+layoutsTab:SetScript("OnShow", function()
+    if Cell.vars.inBattleground then
+        if Cell.vars.inBattleground == 15 then
+            partyText:SetText(L["Solo/Party"])
+            raidText:SetText(L["Raid"])
+            bg15Text:SetText(Cell:GetPlayerClassColorString()..L["BG 1-15"].."*")
+            bg40Text:SetText(L["BG 16-40"])
+        else -- 40
+            partyText:SetText(L["Solo/Party"])
+            raidText:SetText(L["Raid"])
+            bg15Text:SetText(L["BG 1-15"])
+            bg40Text:SetText(Cell:GetPlayerClassColorString()..L["BG 16-40"].."*")
+        end
+    else
+        if Cell.vars.groupType == "solo" or Cell.vars.groupType == "party" then
+            partyText:SetText(Cell:GetPlayerClassColorString()..L["Solo/Party"].."*")
+            raidText:SetText(L["Raid"])
+            bg15Text:SetText(L["BG 1-15"])
+            bg40Text:SetText(L["BG 16-40"])
+        else
+            partyText:SetText(L["Solo/Party"])
+            raidText:SetText(Cell:GetPlayerClassColorString()..L["Raid"].."*")
+            bg15Text:SetText(L["BG 1-15"])
+            bg40Text:SetText(L["BG 16-40"])
+        end
+    end
+end)
