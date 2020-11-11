@@ -668,12 +668,14 @@ function addon:CreateSlider(name, parent, low, high, width, step, onValueChanged
 	currentEditBox:SetScript("OnEnterPressed", function(self)
 		self:ClearFocus()
 		local value = tonumber(self:GetText())
+		if value == self.oldValue then return end
 		if value then
 			if value < low then value = low end
 			if value > high then value = high end
 			self:SetText(value)
 			slider:SetValue(value)
 			if slider.onValueChangedFn then slider.onValueChangedFn(value) end
+			if slider.afterValueChangedFn then slider.afterValueChangedFn(value) end
 		else
 			self:SetText(self.oldValue)
 		end

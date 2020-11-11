@@ -614,7 +614,6 @@ local debuffs = {
             298306, -- Incubation Fluid
             295779, -- Aqua Lance
             298156, -- Desensitizing Sting
-            298306, -- Incubation Fluid
         },
         [2359] = { -- The Queen's Court
             297586, -- Suffering
