@@ -732,10 +732,6 @@ function F:CreateTankActiveMitigation(parent)
     tex:SetPoint("TOPLEFT")
     tex:SetPoint("BOTTOMRIGHT", bar:GetStatusBarTexture(), "BOTTOMLEFT")
 
-    bar:SetScript("OnShow", function()
-        tex:SetColorTexture(F:GetClassColor(parent.state.class))
-    end)
-
     local elapsedTime = 0
     bar:SetScript("OnUpdate", function(self, elapsed)
         if elapsedTime >= 0.1 then
@@ -746,6 +742,7 @@ function F:CreateTankActiveMitigation(parent)
     end)
 
     function bar:SetCooldown(start, duration)
+        tex:SetColorTexture(F:GetClassColor(parent.state.class))
         bar:SetMinMaxValues(0, duration)
         bar:SetValue(GetTime()-start)
         bar:Show()
