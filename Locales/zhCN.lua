@@ -9,6 +9,7 @@ L["ABOUT"] = "Cell 是受启发于 CompactRaid 的团队框架，参考了其代
 -- slash command
 -------------------------------------------------
 L["Available slash commands"] = "可用的斜杠命令"
+L["show Cell options frame"] = "打开Cell选项界面"
 L["reset Cell position"] = "重置Cell位置"
 L["reset all Cell options and reload UI"] = "重置所有Cell设置并重载界面"
 
