@@ -771,3 +771,10 @@ local function ShowTab(tab)
     end
 end
 Cell:RegisterCallback("ShowOptionsTab", "IndicatorsTab_ShowTab", ShowTab)
+
+local function UpdateLayout()
+    if previewButton.loaded and currentLayout == Cell.vars.currentLayout then
+        UpdatePreviewButton()
+    end
+end
+Cell:RegisterCallback("UpdateLayout", "IndicatorsTab_UpdateLayout", UpdateLayout)
