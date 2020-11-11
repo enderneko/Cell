@@ -182,6 +182,7 @@ function eventFrame:ADDON_LOADED(arg1)
                 ["showSolo"] = true,
                 ["showParty"] = true,
                 ["showPartyPets"] = true,
+                ["locked"] = false,
             }
         end
 
@@ -463,7 +464,6 @@ function eventFrame:PLAYER_LOGIN()
     F:Debug("PLAYER_LOGIN")
     --! init Cell.vars.currentLayout and Cell.vars.currentLayoutTable 
     eventFrame:GROUP_ROSTER_UPDATE()
-    -- F:UpdateLayout()
 
     if not prevSpec then prevSpec = GetSpecialization() end
     Cell.vars.playerGUID = UnitGUID("player")
@@ -483,6 +483,8 @@ function eventFrame:PLAYER_LOGIN()
     Cell:Fire("UpdateRaidDebuffs")
     -- hide blizzard
     if CellDB["general"]["hideBlizzard"] then F:HideBlizzard() end
+    -- lock
+    F:UpdateFrameLock(CellDB["general"]["locked"])
 end
 
 local forceRecheck

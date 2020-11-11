@@ -29,7 +29,7 @@ anchorFrame:SetMovable(true)
 cellMainFrame:SetPoint("TOPLEFT", anchorFrame, "BOTTOMRIGHT")
 
 local function RegisterDragForMainFrame(frame)
-    frame:RegisterForDrag("LeftButton")
+    -- frame:RegisterForDrag("LeftButton")
     frame:SetScript("OnDragStart", function()
         anchorFrame:StartMoving()
     end)
@@ -56,6 +56,16 @@ RegisterDragForMainFrame(raid)
 raid:SetScript("OnClick", function()
     F:ShowRaidRosterFrame()
 end)
+
+function F:UpdateFrameLock(locked)
+    if locked then
+        options:RegisterForDrag()
+        raid:RegisterForDrag()
+    else
+        options:RegisterForDrag("LeftButton")
+        raid:RegisterForDrag("LeftButton")
+    end
+end
 
 -------------------------------------------------
 -- raid setup
