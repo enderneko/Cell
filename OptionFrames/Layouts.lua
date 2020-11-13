@@ -683,7 +683,7 @@ local function ShowTab(tab)
 end
 Cell:RegisterCallback("ShowOptionsTab", "LayoutsTab_ShowTab", ShowTab)
 
-layoutsTab:SetScript("OnShow", function()
+local function UpdateLayout()
     if Cell.vars.inBattleground then
         if Cell.vars.inBattleground == 15 then
             partyText:SetText(L["Solo/Party"])
@@ -709,4 +709,5 @@ layoutsTab:SetScript("OnShow", function()
             bg40Text:SetText(L["BG 16-40"])
         end
     end
-end)
+end
+Cell:RegisterCallback("UpdateLayout", "LayoutsTab_UpdateLayout", UpdateLayout)
