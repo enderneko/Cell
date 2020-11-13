@@ -65,7 +65,8 @@ end
 Comm:RegisterComm("CELL_VERSION", function(prefix, message, channel, sender)
     if sender == UnitName("player") then return end
     local version = tonumber(message)
-    if (not CellDB["lastVersionCheck"] or time()-CellDB["lastVersionCheck"]>=86400) and version and string.match(Cell.version, "%d+") < version then
+    local myVersion = tonumber(string.match(Cell.version, "%d+"))
+    if (not CellDB["lastVersionCheck"] or time()-CellDB["lastVersionCheck"]>=86400) and version and myVersion and myVersion < version then
         CellDB["lastVersionCheck"] = time()
         F:Print(L["New version found (%s). Please visit %s to get the latest version."]:format(message, "|cFF00CCFFhttps://www.curseforge.com/wow/addons/cell|r"))
     end
