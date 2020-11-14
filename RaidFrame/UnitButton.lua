@@ -267,7 +267,7 @@ unitButton = {
 	},
 	func = {
 		ShowFlash, HideFlash,
-		ShowTimer, HideTimer, TimerTextOnUpdate,
+		ShowTimer, HideTimer, UpdateTimer,
 	},
 	indicators = {},
 	updateRequired,
@@ -1135,9 +1135,6 @@ local function UnitButton_OnEvent(self, event, unit)
 		elseif event == "UNIT_NAME_UPDATE" then
 			UnitButton_UpdateName(self)
 		
-		elseif event == "PLAYER_FLAGS_CHANGED" then
-			UnitButton_UpdateStatusText(self)
-	
 		elseif event == "UNIT_MAXHEALTH" then
 			UnitButton_UpdateHealthMax(self)
 			UnitButton_UpdateHealth(self)
@@ -1175,7 +1172,7 @@ local function UnitButton_OnEvent(self, event, unit)
 		elseif event == "UNIT_AURA" then
 			UnitButton_UpdateAuras(self)
 	
-		elseif event == "UNIT_FLAGS" or event == "INCOMING_SUMMON_CHANGED" then
+		elseif event == "PLAYER_FLAGS_CHANGED" or event == "UNIT_FLAGS" or event == "INCOMING_SUMMON_CHANGED" then
 			UnitButton_UpdateStatusText(self)
 			
 		elseif event == "UNIT_FACTION" then
@@ -1291,7 +1288,6 @@ local function UnitButton_OnTick(self)
 	self.__tickCount = e
 
 	UnitButton_UpdateInRange(self)
-	if self.func.TimerTextOnUpdate then self.func.TimerTextOnUpdate() end
 	
 	if self.updateRequired then
 		self.updateRequired = nil
@@ -1312,7 +1308,9 @@ end
 -- unit button init
 -------------------------------------------------
 Cell.vars.texture = "Interface\\AddOns\\Cell\\Media\\statusbar.tga"
-local startTimeCache, statusCache = {}, {}
+-- local startTimeCache, statusCache = {}, {}
+local startTimeCache = {}
+
 -- Layer(statusTextFrame) -- frameLevel:27 ----------
 -- ARTWORK 
 --	statusText, timerText
@@ -1584,20 +1582,23 @@ function F:UnitButton_OnLoad(button)
 		-- statusCache[button.state.guid] = status
 		if not startTimeCache[button.state.guid] then startTimeCache[button.state.guid] = GetTime() end
 		
-		button.func.TimerTextOnUpdate = function()
-			if not button.state.guid then return end
-
-			local elapsed = GetTime() - startTimeCache[button.state.guid]
-			if elapsed >= 0 then
-				timerText:SetFormattedText(F:FormatTime(elapsed))
+		button.func.UpdateTimer = C_Timer.NewTicker(1, function()
+			if not button.state.guid and button.state.unit then -- ElvUI AFK mode
+				button.state.guid = UnitGUID(button.state.unit)
 			end
-		end
+			if button.state.guid and startTimeCache[button.state.guid] then
+				timerText:SetFormattedText(F:FormatTime(GetTime() - startTimeCache[button.state.guid]))
+			else
+				timerText:SetText("")
+			end
+		end)
 	end
 
 	button.func.HideTimer = function(reset)
 		timerText:Hide()
+		timerText:SetText("")
 		if reset then
-			button.func.TimerTextOnUpdate = nil
+			if button.func.UpdateTimer then button.func.UpdateTimer:Cancel() end
 			startTimeCache[button.state.guid] = nil
 			-- statusCache[button.state.guid] = nil
 		end
