@@ -1,6 +1,7 @@
 local _, Cell = ...
 local L = Cell.L
 local F = Cell.funcs
+local I = Cell.iFuncs
 local LCG = LibStub("LibCustomGlow-1.0")
 
 local indicatorsTab = Cell:CreateFrame("CellOptionsFrame_IndicatorsTab", Cell.frames.optionsFrame, nil, nil, true)
@@ -202,9 +203,9 @@ local function UpdateIndicators(layout, indicatorName, setting, value)
     if not indicatorsTab:IsShown() then return end
 
     if not indicatorName then -- init
-        F:RemoveAllCustomIndicators(previewButton)
+        I:RemoveAllCustomIndicators(previewButton)
         for _, t in pairs(currentLayoutTable["indicators"]) do
-            local indicator = previewButton.indicators[t["indicatorName"]] or F:CreateIndicator(previewButton, t)
+            local indicator = previewButton.indicators[t["indicatorName"]] or I:CreateIndicator(previewButton, t)
             if t["enabled"] then
                 InitIndicator(t["indicatorName"])
                 indicator:Show()
@@ -250,7 +251,7 @@ local function UpdateIndicators(layout, indicatorName, setting, value)
             end
             -- update aoehealing
             if t["indicatorName"] == "aoeHealing" then
-                F:EnableAoEHealing(t["enabled"])
+                I:EnableAoEHealing(t["enabled"])
             end
 		end
 	else
@@ -265,7 +266,7 @@ local function UpdateIndicators(layout, indicatorName, setting, value)
             end
             -- update aoehealing
             if indicatorName == "aoeHealing" then
-                F:EnableAoEHealing(value)
+                I:EnableAoEHealing(value)
             end
 		elseif setting == "position" then
 			indicator:ClearAllPoints()
@@ -291,7 +292,7 @@ local function UpdateIndicators(layout, indicatorName, setting, value)
         elseif setting == "colors" then
             indicator:SetColors(value)
         elseif setting == "create" then
-            indicator = F:CreateIndicator(previewButton, value)
+            indicator = I:CreateIndicator(previewButton, value)
             -- update position
             indicator:ClearAllPoints()
             indicator:SetPoint(value["position"][1], previewButton, value["position"][2], value["position"][3], value["position"][4])
@@ -328,7 +329,7 @@ local function UpdateIndicators(layout, indicatorName, setting, value)
             InitIndicator(indicatorName)
             indicator:Show()
         elseif setting == "remove" then
-            F:RemoveIndicator(previewButton, indicatorName, value)
+            I:RemoveIndicator(previewButton, indicatorName, value)
         end
 	end
 end

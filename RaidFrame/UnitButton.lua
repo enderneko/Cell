@@ -1,6 +1,7 @@
 local _, Cell = ...
 local L = Cell.L
 local F = Cell.funcs
+local I = Cell.iFuncs
 
 -- local LibCLHealth = LibStub("LibCombatLogHealth-1.0")
 
@@ -68,7 +69,7 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
 		wipe(enabledIndicators)
 		wipe(indicatorNums)
 		F:IterateAllUnitButtons(function(b)
-			F:RemoveAllCustomIndicators(b)
+			I:RemoveAllCustomIndicators(b)
 		end)
 
 		for _, t in pairs(Cell.vars.currentLayoutTable["indicators"]) do
@@ -88,7 +89,7 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
 			end
 			-- update indicators
 			F:IterateAllUnitButtons(function(b)
-				local indicator = b.indicators[t["indicatorName"]] or F:CreateIndicator(b, t)
+				local indicator = b.indicators[t["indicatorName"]] or I:CreateIndicator(b, t)
 				-- update position
 				if t["position"] then
 					indicator:ClearAllPoints()
@@ -200,7 +201,7 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
 			end)
 		elseif setting == "create" then
 			F:IterateAllUnitButtons(function(b)
-				local indicator = F:CreateIndicator(b, value)
+				local indicator = I:CreateIndicator(b, value)
 				-- update position
 				indicator:ClearAllPoints()
 				indicator:SetPoint(value["position"][1], b, value["position"][2], value["position"][3], value["position"][4])
@@ -231,7 +232,7 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
 			end)
 		elseif setting == "remove" then
 			F:IterateAllUnitButtons(function(b)
-				F:RemoveIndicator(b, indicatorName, value)
+				I:RemoveIndicator(b, indicatorName, value)
 			end)
 		elseif setting == "auras" then
 			-- indicator auras changed, hide them all, then recheck whether to show
@@ -290,7 +291,7 @@ local function UnitButton_UpdateDebuffs(self)
     if not debuffs_dispel[unit] then debuffs_dispel[unit] = {} end
 
 	-- user created indicators
-	F:ResetCustomIndicators(unit, "debuff")
+	I:ResetCustomIndicators(unit, "debuff")
 
 	local found, refreshing = 1
 	local topOrder, topGlowType, topGlowColor, topId, topStart, topDuration, topType, topIcon, topCount, topRefreshing = 999
@@ -321,11 +322,11 @@ local function UnitButton_UpdateDebuffs(self)
 				end
 				
 				-- user created indicators
-				F:CheckCustomIndicators(unit, self, "debuff", name, expirationTime - duration, duration, debuffType or "", icon, count, refreshing)
+				I:CheckCustomIndicators(unit, self, "debuff", name, expirationTime - duration, duration, debuffType or "", icon, count, refreshing)
 
 				-- check top debuff
-				if enabledIndicators["centralDebuff"] and F:GetDebuffOrder(spellId) ~= 0 and F:GetDebuffOrder(spellId) < topOrder then
-					topOrder, topGlowType, topGlowColor = F:GetDebuffOrder(spellId)
+				if enabledIndicators["centralDebuff"] and I:GetDebuffOrder(spellId) ~= 0 and I:GetDebuffOrder(spellId) < topOrder then
+					topOrder, topGlowType, topGlowColor = I:GetDebuffOrder(spellId)
 					topId, topStart, topDuration, topType, topIcon, topCount, topRefreshing = spellId, expirationTime - duration, duration, debuffType or "", icon, count, refreshing
 				end
 
@@ -360,7 +361,7 @@ local function UnitButton_UpdateDebuffs(self)
 	end
 
 	-- user created indicators
-	F:ShowCustomIndicators(unit, self, "debuff")
+	I:ShowCustomIndicators(unit, self, "debuff")
 	
 	-- update debuffs_cache
     local t = GetTime()
@@ -386,7 +387,7 @@ local function UnitButton_UpdateBuffs(self)
     if not buffs_current[unit] then buffs_current[unit] = {} end
 
 	-- user created indicators
-	F:ResetCustomIndicators(unit, "buff")
+	I:ResetCustomIndicators(unit, "buff")
 
 	local refreshing
 	local defensiveFound, externalFound, tankActiveMitigationFound, drinkingFound = 1, 1, false, false
@@ -429,7 +430,7 @@ local function UnitButton_UpdateBuffs(self)
 			end
 
 			-- user created indicators
-			F:CheckCustomIndicators(unit, self, "buff", name, expirationTime - duration, duration, nil, icon, count, refreshing, false)
+			I:CheckCustomIndicators(unit, self, "buff", name, expirationTime - duration, duration, nil, icon, count, refreshing, false)
 			
             buffs_cache[unit][name] = expirationTime
             buffs_current[unit][name] = i
@@ -479,7 +480,7 @@ local function UnitButton_UpdateBuffs(self)
 
 		if duration then
 			refreshing = buffs_cache_castByMe[unit][name] and expirationTime-duration+.1>=GetTime()
-			F:CheckCustomIndicators(unit, self, "buff", name, expirationTime - duration, duration, nil, icon, count, refreshing, true)
+			I:CheckCustomIndicators(unit, self, "buff", name, expirationTime - duration, duration, nil, icon, count, refreshing, true)
 			
             buffs_cache_castByMe[unit][name] = expirationTime
             buffs_current_castByMe[unit][name] = i
@@ -497,7 +498,7 @@ local function UnitButton_UpdateBuffs(self)
 	wipe(buffs_current_castByMe[unit])
 	-----------------------------------------------------------------------------------
 
-	F:ShowCustomIndicators(unit, self, "buff")
+	I:ShowCustomIndicators(unit, self, "buff")
 end
 
 -------------------------------------------------
@@ -1675,13 +1676,13 @@ function F:UnitButton_OnLoad(button)
 	aggroBar:Hide()
 
 	-- indicators
-	F:CreateAoEHealing(button)
-	F:CreateDefensiveCooldowns(button)
-	F:CreateExternalCooldowns(button)
-	F:CreateTankActiveMitigation(button)
-	F:CreateDebuffs(button)
-	F:CreateDispels(button)
-	F:CreateCentralDebuff(button)
+	I:CreateAoEHealing(button)
+	I:CreateDefensiveCooldowns(button)
+	I:CreateExternalCooldowns(button)
+	I:CreateTankActiveMitigation(button)
+	I:CreateDebuffs(button)
+	I:CreateDispels(button)
+	I:CreateCentralDebuff(button)
 
 	-- events
 	button:SetScript("OnAttributeChanged", UnitButton_OnAttributeChanged) -- init

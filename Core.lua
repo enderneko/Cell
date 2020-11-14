@@ -3,6 +3,7 @@ _G.Cell = Cell
 Cell.frames = {}
 Cell.vars = {}
 Cell.funcs = {}
+Cell.iFuncs = {}
 
 local F = Cell.funcs
 local L = Cell.L
