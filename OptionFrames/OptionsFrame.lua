@@ -32,7 +32,7 @@ local clickCastingsBtn = Cell:CreateButton(optionsFrame, L["Click-Castings"], "c
 local indicatorsBtn = Cell:CreateButton(optionsFrame, L["Indicators"], "class-hover", {133, 20}, false, false, "CELL_FONT_WIDGET_TITLE", "CELL_FONT_WIDGET_TITLE_DISABLE")
 local debuffsBtn = Cell:CreateButton(optionsFrame, L["Raid Debuffs"], "class-hover", {133, 20}, false, false, "CELL_FONT_WIDGET_TITLE", "CELL_FONT_WIDGET_TITLE_DISABLE")
 local aboutBtn = Cell:CreateButton(optionsFrame, L["About"], "class-hover", {66, 20}, false, false, "CELL_FONT_WIDGET_TITLE", "CELL_FONT_WIDGET_TITLE_DISABLE")
-local closeBtn = Cell:CreateButton(optionsFrame, L["×"], "red", {20, 20}, false, false, "CELL_FONT_SPECIAL", "CELL_FONT_SPECIAL")
+local closeBtn = Cell:CreateButton(optionsFrame, "×", "red", {20, 20}, false, false, "CELL_FONT_SPECIAL", "CELL_FONT_SPECIAL")
 closeBtn:SetScript("OnClick", function()
     optionsFrame:Hide()
 end)

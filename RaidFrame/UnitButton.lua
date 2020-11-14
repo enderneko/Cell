@@ -185,7 +185,7 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
 				UnitButton_UpdateAuras(b)
 			end)
 		elseif setting == "checkbutton" then
-			if value ~= "enableHighlight" and value ~= "showTimer" then
+			if value ~= "enableHighlight" and value ~= "showDuration" then
 				indicatorCustoms[indicatorName] = value2
 			end
 			F:IterateAllUnitButtons(function(b)
@@ -1578,10 +1578,11 @@ function F:UnitButton_OnLoad(button)
 
 	button.func.ShowTimer = function(status)
 		timerText:Show()
-		if statusCache[button.state.guid] ~= status then
-			startTimeCache[button.state.guid] = GetTime()
-		end
-		statusCache[button.state.guid] = status
+		-- if statusCache[button.state.guid] ~= status then
+		-- 	startTimeCache[button.state.guid] = GetTime()
+		-- end
+		-- statusCache[button.state.guid] = status
+		if not startTimeCache[button.state.guid] then startTimeCache[button.state.guid] = GetTime() end
 		
 		button.func.TimerTextOnUpdate = function()
 			if not button.state.guid then return end
@@ -1598,7 +1599,7 @@ function F:UnitButton_OnLoad(button)
 		if reset then
 			button.func.TimerTextOnUpdate = nil
 			startTimeCache[button.state.guid] = nil
-			statusCache[button.state.guid] = nil
+			-- statusCache[button.state.guid] = nil
 		end
 	end
 	
