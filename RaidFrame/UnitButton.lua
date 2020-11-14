@@ -81,6 +81,10 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
 			if t["num"] then
 				indicatorNums[t["indicatorName"]] = t["num"]
 			end
+			-- update aoehealing
+            if t["indicatorName"] == "aoeHealing" then
+                I:EnableAoEHealing(t["enabled"])
+            end
 			-- update custom
 			if t["dispellableByMe"] ~= nil then
 				indicatorCustoms[t["indicatorName"]] = t["dispellableByMe"]
@@ -1512,7 +1516,6 @@ function F:UnitButton_OnLoad(button)
 	targetHighlight:SetPoint("TOPLEFT", -1, 1)
 	targetHighlight:SetPoint("BOTTOMRIGHT", 1, -1)
 	targetHighlight:SetTexture("Interface\\Buttons\\WHITE8x8")
-	-- targetHighlight:SetVertexColor(1, 1, 1, .5)
 	targetHighlight:SetVertexColor(1, .19, .19, .5)
 	targetHighlight:Hide()
 	
@@ -1523,7 +1526,6 @@ function F:UnitButton_OnLoad(button)
 	mouseoverHighlight:SetPoint("BOTTOMRIGHT", 1, -1)
 	mouseoverHighlight:SetTexture("Interface\\Buttons\\WHITE8x8")
 	mouseoverHighlight:SetVertexColor(1, 1, 1, .5)
-	-- mouseoverHighlight:SetVertexColor(1, .19, .19, .5)
 	mouseoverHighlight:Hide()
 
 	-- readyCheck highlight

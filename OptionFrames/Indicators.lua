@@ -249,10 +249,6 @@ local function UpdateIndicators(layout, indicatorName, setting, value)
             if t["colors"] then
                 indicator:SetColors(t["colors"])
             end
-            -- update aoehealing
-            if t["indicatorName"] == "aoeHealing" then
-                I:EnableAoEHealing(t["enabled"])
-            end
 		end
 	else
         local indicator = previewButton.indicators[indicatorName]
