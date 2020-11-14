@@ -260,10 +260,6 @@ local function UpdateIndicators(layout, indicatorName, setting, value)
             else
                 indicator:Hide()
             end
-            -- update aoehealing
-            if indicatorName == "aoeHealing" then
-                I:EnableAoEHealing(value)
-            end
 		elseif setting == "position" then
 			indicator:ClearAllPoints()
 			indicator:SetPoint(value[1], previewButton, value[2], value[3], value[4])

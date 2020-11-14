@@ -139,14 +139,19 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
 		-- changed in IndicatorsTab
 		if setting == "enabled" then
 			enabledIndicators[indicatorName] = value
-			-- refresh
-			F:IterateAllUnitButtons(function(b)
-				UpdateIndicatorParentVisibility(b, indicatorName, value)
-				if not value then
-					b.indicators[indicatorName]:Hide() -- hide indicators which is shown right now
-				end
-				UnitButton_UpdateAuras(b)
-			end)
+			-- update aoehealing
+            if indicatorName == "aoeHealing" then
+				I:EnableAoEHealing(value)
+			else
+				-- refresh
+				F:IterateAllUnitButtons(function(b)
+					UpdateIndicatorParentVisibility(b, indicatorName, value)
+					if not value then
+						b.indicators[indicatorName]:Hide() -- hide indicators which is shown right now
+					end
+					UnitButton_UpdateAuras(b)
+				end)
+            end
 		elseif setting == "position" then
 			F:IterateAllUnitButtons(function(b)
 				local indicator = b.indicators[indicatorName]
