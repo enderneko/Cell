@@ -92,7 +92,7 @@ local function CreateRaidRosterGrid(parent, index)
 		grid:UnregisterEvent("GLOBAL_MOUSE_UP")
 	end)
 	grid:SetScript("OnEvent", function(self, event)
-		if movingGrid and movingGrid ~= self and self:IsMouseOver() then
+		if movingGrid and movingGrid ~= self and self:IsMouseOver() and not InCombatLockdown() then
 			-- immediate mode
 			if self.hasUnit then
 				-- print("SWAP "..self:GetName().." WITH "..movingGrid:GetName())

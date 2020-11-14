@@ -1,12 +1,13 @@
 ## Interface: 90001
 ## Title: Cell
-## Version: r20-release
+## Version: r21-release
 ## Author: 篠崎
 ## SavedVariables: CellDB
 ## SavedVariablesPerCharacter: CellCharacterDB
 
 Locales\enUS.lua
 Locales\zhCN.lua
+Locales\zhTW.lua
 
 Libs\LoadLibs.xml
 
