@@ -106,6 +106,8 @@ L["Bar Color"] = "条颜色"
 L["Background Color"] = "背景颜色"
 L["Name Color"] = "名字颜色"
 L["Power Color"] = "能量颜色"
+L["Target Highlight"] = "目标高亮"
+L["Mouseover Highlight"] = "鼠标指向高亮"
 L["Reset All"] = "全部重置"
 
 -------------------------------------------------

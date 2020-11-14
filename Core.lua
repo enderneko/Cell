@@ -213,6 +213,8 @@ function eventFrame:ADDON_LOADED(arg1)
                 ["bgColor"] = {"Class Color (dark)", {.667, 0, 0}},
                 ["nameColor"] = {"Custom Color", {1, 1, 1}},
                 ["powerColor"] = {"Power Color", {.7, .7, .7}},
+                ["targetColor"] = {1, .19, .19, .5},
+                ["mouseoverColor"] = {1, 1, 1, .5},
             }
         end
 
@@ -475,7 +477,7 @@ function eventFrame:PLAYER_LOGIN()
     -- update click-castings
     Cell:Fire("UpdateClickCastings")
     -- update indicators
-    Cell:Fire("UpdateIndicators")
+    -- Cell:Fire("UpdateIndicators") -- NOTE: already update in GROUP_ROSTER_UPDATE -> GroupTypeChanged -> F:UpdateLayout
     -- update texture and font
     Cell:Fire("UpdateAppearance")
     -- update raid tools

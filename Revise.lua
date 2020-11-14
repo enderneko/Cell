@@ -37,7 +37,6 @@ local function Revise()
 		if CellDB["showRaidSetup"] then CellDB["showRaidSetup"] = nil end
 		if CellDB["pullTimer"] then CellDB["pullTimer"] = nil end
 	end
-	]]
 
 	-- r13-release: fix all
 	if not(CellDB["revise"]) or dbRevision < 13 then
@@ -78,6 +77,7 @@ local function Revise()
 		CellDB["font"] = nil
 		CellDB["outline"] = nil
 	end
+	]]
 
 	-- r14-release: CellDB["general"]
 	if not(CellDB["revise"]) or dbRevision < 14 then
@@ -108,6 +108,12 @@ local function Revise()
 			CellDB["general"]["showPartyPets"] = CellDB["general"]["showPets"]
 			CellDB["general"]["showPets"] = nil
 		end
+	end
+
+	-- r22-release
+	if not(CellDB["revise"]) or dbRevision < 22 then
+		if not CellDB["appearance"]["targetColor"] then CellDB["appearance"]["targetColor"] = {1, .19, .19, .5} end
+		if not CellDB["appearance"]["mouseoverColor"] then CellDB["appearance"]["mouseoverColor"] = {1, 1, 1, .5} end
 	end
 
 	CellDB["revise"] = Cell.version

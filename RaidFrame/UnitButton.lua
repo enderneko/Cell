@@ -1533,6 +1533,11 @@ function F:UnitButton_OnLoad(button)
 	mouseoverHighlight:SetVertexColor(1, 1, 1, .5)
 	mouseoverHighlight:Hide()
 
+	button.func.UpdateHighlightColor = function()
+		targetHighlight:SetVertexColor(unpack(CellDB["appearance"]["targetColor"]))
+		mouseoverHighlight:SetVertexColor(unpack(CellDB["appearance"]["mouseoverColor"]))
+	end
+
 	-- readyCheck highlight
 	local readyCheckHighlight = button:CreateTexture(name.."ReadyCheckHighlight", "BACKGROUND")
 	button.widget.readyCheckHighlight = readyCheckHighlight
