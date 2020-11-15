@@ -134,8 +134,10 @@ readyBtn:SetScript("OnEvent", function(self, event, arg1, arg2)
         readyBtn:SetText(L["Ready"])
     else
         if arg2 then -- isReady
-            readyBtn.ready = readyBtn.ready + 1
-            readyBtn:SetText(readyBtn.ready.." / "..GetNumGroupMembers())
+            if readyBtn.ready then
+                readyBtn.ready = readyBtn.ready + 1
+                readyBtn:SetText(readyBtn.ready.." / "..GetNumGroupMembers())
+            end
         end
     end
 end)
