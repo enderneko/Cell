@@ -73,9 +73,9 @@ local scaleDropdown = Cell:CreateDropdown(appearanceTab, 150)
 scaleDropdown:SetPoint("TOPLEFT", scaleText, "BOTTOMLEFT", 5, -12)
 
 local scales = {
-    [1] = "100%",
+    [1] = "100% ("..L["Pixel Perfect"]..")",
     [1.5] = "150%",
-    [2] = "200%",
+    [2] = "200% ("..L["Pixel Perfect"]..")",
     [2.5] = "250%",
     [3] = "300%",
 }

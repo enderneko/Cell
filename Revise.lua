@@ -116,6 +116,10 @@ local function Revise()
 		if not CellDB["appearance"]["targetColor"] then CellDB["appearance"]["targetColor"] = {1, .19, .19, .5} end
 		if not CellDB["appearance"]["mouseoverColor"] then CellDB["appearance"]["mouseoverColor"] = {1, 1, 1, .5} end
 		for _, layout in pairs(CellDB["layouts"]) do
+			-- columns/rows
+			if type(layout["columns"]) ~= "number" then layout["columns"] = 8 end
+			if type(layout["rows"]) ~= "number" then layout["rows"] = 8 end
+			if type(layout["groupSpacing"]) ~= "number" then layout["groupSpacing"] = 0 end
 			-- targetMarker
 			if layout["indicators"][1] and layout["indicators"][1]["indicatorName"] ~= "targetMarker" then
 				tinsert(layout["indicators"], 1, {

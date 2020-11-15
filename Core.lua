@@ -247,8 +247,11 @@ function eventFrame:ADDON_LOADED(arg1)
                 ["default"] = {
                     ["size"] = {66, 46},
                     ["powerHeight"] = 2,
-                    ["spacing"] = 4,
+                    ["spacing"] = 3,
                     ["orientation"] = "vertical",
+                    ["columns"] = 8,
+                    ["rows"] = 8,
+                    ["groupSpacing"] = 0,
                     ["font"] = {
                         ["name"] = 13,
                         ["status"] = 11,

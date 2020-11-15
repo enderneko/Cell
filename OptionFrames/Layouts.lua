@@ -96,6 +96,139 @@ local function UpdatePreviewButton(which, value)
 end
 
 -------------------------------------------------
+-- raid preview
+-------------------------------------------------
+local raidPreview = Cell:CreateFrame("LayoutsRowsColumnsPreviewFrame", Cell.frames.mainFrame, nil, nil, true)
+raidPreview:SetFrameStrata("HIGH")
+raidPreview:SetAllPoints(Cell.frames.mainFrame)
+raidPreview:Hide()
+
+do
+    raidPreview.fadeIn = raidPreview:CreateAnimationGroup()
+    local fadeIn = raidPreview.fadeIn:CreateAnimation("alpha")
+    fadeIn:SetFromAlpha(0)
+    fadeIn:SetToAlpha(1)
+    fadeIn:SetDuration(.5)
+    fadeIn:SetSmoothing("OUT")
+    fadeIn:SetScript("OnPlay", function()
+        raidPreview:Show()
+    end)
+    
+    raidPreview.fadeOut = raidPreview:CreateAnimationGroup()
+    local fadeOut = raidPreview.fadeOut:CreateAnimation("alpha")
+    fadeOut:SetFromAlpha(1)
+    fadeOut:SetToAlpha(0)
+    fadeOut:SetDuration(0.5)
+    fadeOut:SetSmoothing("IN")
+    fadeOut:SetScript("OnFinished", function()
+        raidPreview:Hide()
+    end)
+
+    for i = 1, 40 do
+        raidPreview[i] = raidPreview:CreateTexture(nil, "ARTWORK")
+        raidPreview[i]:SetTexture("Interface\\Buttons\\WHITE8x8")
+
+        raidPreview[i].bg = raidPreview:CreateTexture(nil, "BACKGROUND")
+        raidPreview[i].bg:SetColorTexture(0, 0, 0, .555)
+        raidPreview[i].bg:SetSize(30, 20)
+
+        raidPreview[i]:SetPoint("TOPLEFT", raidPreview[i].bg, 1, -1)
+        raidPreview[i]:SetPoint("BOTTOMRIGHT", raidPreview[i].bg, -1, 1)
+        
+        if i <= 5 then
+            raidPreview[i]:SetVertexColor(F:ConvertRGB(255, 0, 0)) -- Red
+        elseif i <= 10 then
+            raidPreview[i]:SetVertexColor(F:ConvertRGB(255, 127, 0)) -- Orange
+        elseif i <= 15 then
+            raidPreview[i]:SetVertexColor(F:ConvertRGB(255, 255, 0)) -- Yellow
+        elseif i <= 20 then
+            raidPreview[i]:SetVertexColor(F:ConvertRGB(0, 255, 0)) -- Green
+        elseif i <= 25 then
+            raidPreview[i]:SetVertexColor(F:ConvertRGB(0, 127, 255)) -- Blue
+        elseif i <= 30 then
+            raidPreview[i]:SetVertexColor(F:ConvertRGB(127, 0, 255)) -- Indigo
+        elseif i <= 35 then
+            raidPreview[i]:SetVertexColor(F:ConvertRGB(238, 130, 238)) -- Violet
+        else
+            raidPreview[i]:SetVertexColor(F:ConvertRGB(255, 255, 255)) -- White
+        end
+        raidPreview[i]:SetAlpha(.555)
+    end
+end
+
+layoutsTab:SetScript("OnHide", function()
+    if raidPreview.timer then
+        raidPreview.timer:Cancel()
+        raidPreview.timer = nil
+    end
+    if raidPreview.fadeIn:IsPlaying() then
+        raidPreview.fadeIn:Stop()
+    end
+    if not raidPreview.fadeOut:IsPlaying() then
+        raidPreview.fadeOut:Play()
+    end
+end)
+
+local function UpdateRaidPreview()
+    for i = 1, 40 do
+        raidPreview[i].bg:SetSize(unpack(selectedLayoutTable["size"]))
+
+        local spacing = selectedLayoutTable["spacing"]
+        
+        if selectedLayoutTable["orientation"] == "vertical" then
+            if i == 1 then
+                raidPreview[i].bg:SetPoint("TOPLEFT")
+            elseif i % 5 == 1 then -- another party
+                local lastColumn = math.modf(i / 5)
+                local currentColumn = lastColumn + 1
+                if lastColumn % selectedLayoutTable["columns"] == 0 then
+                    local index = (currentColumn - selectedLayoutTable["columns"]) * 5 -- find anchor
+                    raidPreview[i].bg:SetPoint("TOPLEFT", raidPreview[index].bg, "BOTTOMLEFT", 0, -spacing-selectedLayoutTable["groupSpacing"])
+                else
+                    raidPreview[i].bg:SetPoint("TOPLEFT", raidPreview[i-5].bg, "TOPRIGHT", spacing, 0)
+                end
+            else
+                raidPreview[i].bg:SetPoint("TOPLEFT", raidPreview[i-1].bg, "BOTTOMLEFT", 0, -spacing)
+            end
+        else
+            if i == 1 then
+                raidPreview[i].bg:SetPoint("TOPLEFT")
+            elseif i % 5 == 1 then -- another party
+                local lastRow = math.modf(i / 5)
+                local currentRow = lastRow + 1
+                if lastRow % selectedLayoutTable["rows"] == 0 then
+                    local index = (currentRow - selectedLayoutTable["rows"]) * 5 -- find anchor
+                    raidPreview[i].bg:SetPoint("TOPLEFT", raidPreview[index].bg, "TOPRIGHT", spacing+selectedLayoutTable["groupSpacing"], 0)
+                else
+                    raidPreview[i].bg:SetPoint("TOPLEFT", raidPreview[i-5].bg, "BOTTOMLEFT", 0, -spacing)
+                end
+            else
+                raidPreview[i].bg:SetPoint("TOPLEFT", raidPreview[i-1].bg, "TOPRIGHT", spacing, 0)
+            end
+        end
+    end
+    
+    if raidPreview.fadeIn:IsPlaying() then
+        raidPreview.fadeIn:Restart()
+    else
+        raidPreview.fadeIn:Play()
+    end
+
+    if raidPreview.fadeOut:IsPlaying() then
+        raidPreview.fadeOut:Stop()
+    end
+
+    if raidPreview.timer then
+        raidPreview.timer:Cancel()
+    end
+   
+    raidPreview.timer = C_Timer.NewTimer(1, function()
+        raidPreview.fadeOut:Play()
+        raidPreview.timer = nil
+    end)
+end
+
+-------------------------------------------------
 -- layout
 -------------------------------------------------
 local layoutDropdown, partyDropdown, raidDropdown, bg15Dropdown, bg40Dropdown
@@ -479,9 +612,30 @@ end
 local orientationText = Cell:CreateSeparator(L["Group Orientation"], layoutsTab, 188)
 orientationText:SetPoint("TOPLEFT", 203, -130)
 
+local rcSlider, groupSpacingSlider
 local orientationSwitch = Cell:CreateSwitch(layoutsTab, L["Vertical"], "vertical", L["Horizontal"], "horizontal", function(value)
     selectedLayoutTable["orientation"] = value
     Cell:Fire("UpdateLayout", selectedLayout, "spacing")
+    -- rows/columns
+    if value == "vertical" then
+        rcSlider:SetName(L["Group Columns"])
+        rcSlider:SetValue(selectedLayoutTable["columns"])
+        if selectedLayoutTable["columns"] == 8 then
+            groupSpacingSlider:SetEnabled(false)
+        else
+            groupSpacingSlider:SetEnabled(true)
+        end
+    else
+        rcSlider:SetName(L["Group Rows"])
+        rcSlider:SetValue(selectedLayoutTable["rows"])
+        if selectedLayoutTable["rows"] == 8 then
+            groupSpacingSlider:SetEnabled(false)
+        else
+            groupSpacingSlider:SetEnabled(true)
+        end
+
+    end
+    UpdateRaidPreview()
 end)
 orientationSwitch:SetPoint("TOPLEFT", orientationText, "BOTTOMLEFT", 5, -12)
 orientationSwitch:SetWidth(165)
@@ -548,24 +702,9 @@ local statusFontSlider = Cell:CreateSlider(L["Status"], layoutsTab, 5, 25, 100, 
 end)
 statusFontSlider:SetPoint("TOP", nameFontSlider, "BOTTOM", 0, -40)
 
--------------------------------------------------
--- spacing
--------------------------------------------------
-local miscText = Cell:CreateSeparator(L["Misc"], layoutsTab, 122)
-miscText:SetPoint("TOPLEFT", 269, -215)
-
--- spacing
-local spacingSlider = Cell:CreateSlider(L["Spacing"], layoutsTab, 0, 10, 100, 1, function(value)
-    selectedLayoutTable["spacing"] = value
-    if selectedLayout == Cell.vars.currentLayout then
-        Cell:Fire("UpdateLayout", selectedLayout, "spacing")
-    end
-end)
-spacingSlider:SetPoint("TOPLEFT", miscText, "BOTTOMLEFT", 5, -25)
-
 -- textWidth
 local textWidthDropdown = Cell:CreateDropdown(layoutsTab, 100)
-textWidthDropdown:SetPoint("TOPLEFT", spacingSlider, "BOTTOMLEFT", 0, -40)
+textWidthDropdown:SetPoint("TOPLEFT", statusFontSlider, "BOTTOMLEFT", 0, -40)
 textWidthDropdown:SetItems({
     {
         ["text"] = L["Unlimited"],
@@ -623,6 +762,52 @@ widthText:SetText(L["Text Width"])
 widthText:SetPoint("BOTTOM", textWidthDropdown, "TOP", 0, 2)
 
 -------------------------------------------------
+-- misc
+-------------------------------------------------
+local miscText = Cell:CreateSeparator(L["Misc"], layoutsTab, 122)
+miscText:SetPoint("TOPLEFT", 269, -215)
+
+-- spacing
+local spacingSlider = Cell:CreateSlider(L["Spacing"], layoutsTab, 0, 10, 100, 1, function(value)
+    selectedLayoutTable["spacing"] = value
+    if selectedLayout == Cell.vars.currentLayout then
+        Cell:Fire("UpdateLayout", selectedLayout, "spacing")
+    end
+end)
+spacingSlider:SetPoint("TOPLEFT", miscText, "BOTTOMLEFT", 5, -25)
+
+-- rows/columns
+rcSlider = Cell:CreateSlider("", layoutsTab, 1, 8, 100, 1, function(value)
+    if selectedLayoutTable["orientation"] == "vertical" then
+        selectedLayoutTable["columns"] = value
+    else -- horizontal
+        selectedLayoutTable["rows"] = value
+    end
+    if value == 8 then
+        groupSpacingSlider:SetEnabled(false)
+    else
+        groupSpacingSlider:SetEnabled(true)
+    end
+    if selectedLayout == Cell.vars.currentLayout then
+        Cell:Fire("UpdateLayout", selectedLayout, "spacing")
+    end
+    -- preview
+    UpdateRaidPreview()
+end)
+rcSlider:SetPoint("TOPLEFT", spacingSlider, "BOTTOMLEFT", 0, -40)
+
+-- group spacing
+groupSpacingSlider = Cell:CreateSlider(L["Group Spacing"], layoutsTab, 0, 10, 100, 1, function(value)
+    selectedLayoutTable["groupSpacing"] = value
+    if selectedLayout == Cell.vars.currentLayout then
+        Cell:Fire("UpdateLayout", selectedLayout, "spacing")
+    end
+    -- preview
+    UpdateRaidPreview()
+end)
+groupSpacingSlider:SetPoint("TOPLEFT", rcSlider, "BOTTOMLEFT", 0, -40)
+
+-------------------------------------------------
 -- functions
 -------------------------------------------------
 LoadLayoutDB = function(layout)
@@ -643,8 +828,6 @@ LoadLayoutDB = function(layout)
 
     nameFontSlider:SetValue(selectedLayoutTable["font"]["name"])
     statusFontSlider:SetValue(selectedLayoutTable["font"]["status"])
-
-    spacingSlider:SetValue(selectedLayoutTable["spacing"])
     if selectedLayoutTable["textWidth"] == 0 then
         textWidthDropdown:SetSelectedItem(1)
     elseif selectedLayoutTable["textWidth"] == 1 then
@@ -654,11 +837,31 @@ LoadLayoutDB = function(layout)
     elseif selectedLayoutTable["textWidth"] == .50 then
         textWidthDropdown:SetSelectedItem(4)
     end
-
+    
+    spacingSlider:SetValue(selectedLayoutTable["spacing"])
     orientationSwitch:SetSelected(selectedLayoutTable["orientation"])
+    if selectedLayoutTable["orientation"] == "vertical" then
+        rcSlider:SetName(L["Group Columns"])
+        rcSlider:SetValue(selectedLayoutTable["columns"])
+        if selectedLayoutTable["columns"] == 8 then
+            groupSpacingSlider:SetEnabled(false)
+        else
+            groupSpacingSlider:SetEnabled(true)
+        end
+    else
+        rcSlider:SetName(L["Group Rows"])
+        rcSlider:SetValue(selectedLayoutTable["rows"])
+        if selectedLayoutTable["rows"] == 8 then
+            groupSpacingSlider:SetEnabled(false)
+        else
+            groupSpacingSlider:SetEnabled(true)
+        end
+    end
+    groupSpacingSlider:SetValue(selectedLayoutTable["groupSpacing"])
 
     UpdateGroupFilter()
     UpdatePreviewButton()
+    UpdateRaidPreview()
 end
 
 local loaded

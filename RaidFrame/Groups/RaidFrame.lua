@@ -173,7 +173,11 @@ local function RaidFrame_UpdateLayout(layout, which)
                 if i == 1 then
                     header:SetPoint("TOPLEFT")
                 else
-                    header:SetPoint("TOPLEFT",  groupHeaders[i - 1], "TOPRIGHT", layout["spacing"], 0)
+                    if i / layout["columns"] > 1 then -- not the first row
+                        header:SetPoint("TOPLEFT", groupHeaders[i-layout["columns"]], "BOTTOMLEFT", 0, -layout["spacing"]-layout["groupSpacing"])
+                    else
+                        header:SetPoint("TOPLEFT", groupHeaders[i-1], "TOPRIGHT", layout["spacing"], 0)
+                    end
                 end
             else
                 header:SetAttribute("columnAnchorPoint", "TOP")
@@ -190,7 +194,11 @@ local function RaidFrame_UpdateLayout(layout, which)
                 if i == 1 then
                     header:SetPoint("TOPLEFT")
                 else
-                    header:SetPoint("TOPLEFT",  groupHeaders[i - 1], "BOTTOMLEFT", 0, -layout["spacing"])
+                    if i / layout["rows"] > 1 then -- not the first column
+                        header:SetPoint("TOPLEFT", groupHeaders[i-layout["rows"]], "TOPRIGHT", layout["spacing"]+layout["groupSpacing"], 0)
+                    else
+                        header:SetPoint("TOPLEFT", groupHeaders[i-1], "BOTTOMLEFT", 0, -layout["spacing"])
+                    end
                 end
             end
 
