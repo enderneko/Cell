@@ -658,10 +658,6 @@ function addon:CreateSlider(name, parent, low, high, width, step, onValueChanged
 		nameText:SetText(n)
 	end
 
-	local currentText = slider:CreateFontString(nil, "OVERLAY", font_name)
-	currentText:SetText(slider:GetValue())
-	-- currentText:SetPoint("TOP", slider, "BOTTOM")
-
 	local currentEditBox = addon:CreateEditBox(slider, 50, 14)
 	currentEditBox:SetPoint("TOP", slider, "BOTTOM", 0, -1)
 	currentEditBox:SetJustifyH("CENTER")
@@ -701,12 +697,14 @@ function addon:CreateSlider(name, parent, low, high, width, step, onValueChanged
 	tex:SetColorTexture(classColor.t[1], classColor.t[2], classColor.t[3], .7)
 	tex:SetSize(8, 8)
 	slider:SetThumbTexture(tex)
-	slider:SetScript("OnEnter", function()
+	slider.onEnter = function()
 		tex:SetColorTexture(classColor.t[1], classColor.t[2], classColor.t[3], 1)
-	end)
-	slider:SetScript("OnLeave", function()
+	end
+	slider:SetScript("OnEnter", slider.onEnter)
+	slider.onLeave = function()
 		tex:SetColorTexture(classColor.t[1], classColor.t[2], classColor.t[3], .7)
-	end)
+	end
+	slider:SetScript("OnLeave", slider.onLeave)
 
 	slider.onValueChangedFn = onValueChangedFn
 	slider.afterValueChangedFn = afterValueChangedFn
@@ -770,6 +768,22 @@ function addon:CreateSlider(name, parent, low, high, width, step, onValueChanged
 	]]
 	
 	slider:SetValue(low) -- NOTE: needs to be after OnValueChanged
+
+	slider:SetScript("OnDisable", function()
+		nameText:SetTextColor(.4, .4, .4)
+		currentEditBox:SetEnabled(false)
+		slider:SetScript("OnEnter", nil)
+		slider:SetScript("OnLeave", nil)
+		tex:SetColorTexture(.4, .4, .4, .7)
+	end)
+	
+	slider:SetScript("OnEnable", function()
+		nameText:SetTextColor(1, 1, 1)
+		currentEditBox:SetEnabled(true)
+		slider:SetScript("OnEnter", slider.onEnter)
+		slider:SetScript("OnLeave", slider.onLeave)
+		tex:SetColorTexture(classColor.t[1], classColor.t[2], classColor.t[3], .7)
+	end)
 	
 	return slider
 end
