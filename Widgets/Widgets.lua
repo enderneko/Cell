@@ -736,7 +736,11 @@ function addon:CreateSlider(name, parent, low, high, width, step, onValueChanged
 		-- oldValue here == newValue, OnMouseUp called after OnValueChanged
 		if valueBeforeClick ~= oldValue and slider.afterValueChangedFn then
 			valueBeforeClick = oldValue
-			slider.afterValueChangedFn(slider:GetValue())
+			local value = slider:GetValue()
+			if math.floor(value) < value then -- decimal
+				value = tonumber(string.format("%.2f", value))
+			end
+			slider.afterValueChangedFn(value)
 		end
 	end)
 
