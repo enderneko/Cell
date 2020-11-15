@@ -257,6 +257,15 @@ function eventFrame:ADDON_LOADED(arg1)
                     ["groupFilter"] = {true, true, true, true, true, true, true, true},
                     ["indicators"] = {
                         {
+                            ["name"] = "Raid Icon",
+                            ["indicatorName"] = "raidIcon",
+                            ["type"] = "built-in",
+                            ["enabled"] = true,
+                            ["position"] = {"TOP", "TOP", 0, 3},
+                            ["size"] = {14, 14},
+                            ["alpha"] = .77,
+                        },
+                        {
                             ["name"] = "Aggro Bar",
                             ["indicatorName"] = "aggroBar",
                             ["type"] = "built-in",

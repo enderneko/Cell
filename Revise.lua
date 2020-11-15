@@ -112,8 +112,13 @@ local function Revise()
 
 	-- r22-release
 	if not(CellDB["revise"]) or dbRevision < 22 then
+		-- color
 		if not CellDB["appearance"]["targetColor"] then CellDB["appearance"]["targetColor"] = {1, .19, .19, .5} end
 		if not CellDB["appearance"]["mouseoverColor"] then CellDB["appearance"]["mouseoverColor"] = {1, 1, 1, .5} end
+		-- raidIcon
+		for _, layout in pairs(CellDB["layouts"]) do
+			
+		end
 	end
 
 	CellDB["revise"] = Cell.version

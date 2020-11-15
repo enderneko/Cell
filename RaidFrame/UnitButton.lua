@@ -273,7 +273,7 @@ unitButton = {
 		powerBar, powerBarBackground,
 		statusTextFrame, statusText, timerText
 		overlayFrame, nameText, vehicleText,
-		aggroIndicator, leaderIcon, phaseIcon, raidIcon, readyCheckIcon, roleIcon,
+		aggroIndicator, leaderIcon, phaseIcon, readyCheckIcon, roleIcon,
 	},
 	func = {
 		ShowFlash, HideFlash,
@@ -587,7 +587,7 @@ local function UnitButton_UpdateRaidIcon(self)
 	local unit = self.state.displayedUnit
 	if not unit then return end
 
-	local icon = self.widget.raidIcon
+	local icon = self.indicators.raidIcon
 
 	local index = GetRaidTargetIndex(unit)
 
@@ -1619,7 +1619,7 @@ function F:UnitButton_OnLoad(button)
 	
 	-- raid icon
 	local raidIcon = overlayFrame:CreateTexture(name.."RaidIcon", "ARTWORK", nil, -7)
-	button.widget.raidIcon = raidIcon
+	button.indicators.raidIcon = raidIcon
 	raidIcon:SetSize(14, 14)
 	raidIcon:SetPoint("TOP", 0, 3)
 	raidIcon:SetTexture("Interface\\TargetingFrame\\UI-RaidTargetingIcons")
