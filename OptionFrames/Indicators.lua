@@ -68,7 +68,12 @@ local function InitIndicator(indicatorName)
     local indicator = previewButton.indicators[indicatorName]
     if indicator.init then return end
 
-    if indicatorName == "aggroBar" then
+    if indicatorName == "targetMarker" then
+        SetRaidTargetIconTexture(indicator, 8)
+        -- NOTE: texture type cannot glow by LCG
+        indicator.preview = CreateFrame("Frame", nil, previewButton)
+        indicator.preview:SetAllPoints(indicator)
+    elseif indicatorName == "aggroBar" then
         indicator:SetStatusBarColor(1, 0, 0)
         indicator.value = 0
         indicator:SetScript("OnUpdate", function(self, elapsed)
@@ -223,6 +228,10 @@ local function UpdateIndicators(layout, indicatorName, setting, value)
             if t["height"] then
                 indicator:SetHeight(t["height"])
             end
+            -- update alpha
+            if t["alpha"] then
+                indicator:SetAlpha(t["alpha"])
+            end
             -- update num
             if t["num"] then
                 for i, frame in ipairs(indicator) do
@@ -267,6 +276,8 @@ local function UpdateIndicators(layout, indicatorName, setting, value)
             indicator:SetSize(unpack(value))
 		elseif setting == "height" then
             indicator:SetHeight(value)
+        elseif setting == "alpha" then
+            indicator:SetAlpha(value)
         elseif setting == "num" then
             for i, frame in ipairs(indicator) do
                 if i <= value then
@@ -558,6 +569,7 @@ Cell:CreateScrollFrame(settingsFrame)
 settingsFrame.scrollFrame:SetScrollStep(35)
 
 local indicatorSettings = {
+    ["targetMarker"] = {"position", "size-square", "alpha"},
     ["aggroBar"] = {"enabled", "position", "size"},
     ["aoeHealing"] = {"enabled", "height", "color"},
     ["externalCooldowns"] = {"enabled", "position", "size", "num"},
@@ -732,12 +744,26 @@ LoadIndicatorList = function()
 
     Cell:CreateButtonGroup(listButtons, ShowIndicatorSettings, function(id)
         local w = previewButton.indicators[currentLayoutTable["indicators"][id]["indicatorName"]]
-        LCG.PixelGlow_Start(w:IsObjectType("StatusBar") and w.border or w)
-        w:SetAlpha(1)
+        if w:IsObjectType("StatusBar") then
+            LCG.PixelGlow_Start(w.border)
+            w:SetAlpha(1)
+        elseif w:IsObjectType("Texture") then
+            LCG.PixelGlow_Start(w.preview)
+        else
+            LCG.PixelGlow_Start(w)
+            w:SetAlpha(1)
+        end
     end, function(id)
         local w = previewButton.indicators[currentLayoutTable["indicators"][id]["indicatorName"]]
-        LCG.PixelGlow_Stop(w:IsObjectType("StatusBar") and w.border or w)
-        w:SetAlpha(.57)
+        if w:IsObjectType("StatusBar") then
+            LCG.PixelGlow_Stop(w.border)
+            w:SetAlpha(.57)
+        elseif w:IsObjectType("Texture") then
+            LCG.PixelGlow_Stop(w.preview)
+        else
+            LCG.PixelGlow_Stop(w)
+            w:SetAlpha(.57)
+        end
     end)
 end
 

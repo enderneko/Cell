@@ -107,6 +107,10 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
 				if t["height"] then
 					indicator:SetHeight(t["height"])
 				end
+				-- update alpha
+				if t["alpha"] then
+					indicator:SetAlpha(t["alpha"])
+				end
 				-- update orientation
 				if t["orientation"] then
 					indicator:SetOrientation(t["orientation"])
@@ -167,6 +171,11 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
 			F:IterateAllUnitButtons(function(b)
 				local indicator = b.indicators[indicatorName]
 				indicator:SetHeight(value)
+			end)
+		elseif setting == "alpha" then
+			F:IterateAllUnitButtons(function(b)
+				local indicator = b.indicators[indicatorName]
+				indicator:SetAlpha(value)
 			end)
 		elseif setting == "orientation" then
 			F:IterateAllUnitButtons(function(b)
@@ -583,19 +592,19 @@ local function UnitButton_UpdateLeader(self, event)
 	end
 end
 
-local function UnitButton_UpdateRaidIcon(self)
+local function UnitButton_UpdateTargetMarker(self)
 	local unit = self.state.displayedUnit
 	if not unit then return end
 
-	local icon = self.indicators.raidIcon
+	local marker = self.indicators.targetMarker
 
 	local index = GetRaidTargetIndex(unit)
 
 	if index then
-		SetRaidTargetIconTexture(icon, index)
-		icon:Show()
+		SetRaidTargetIconTexture(marker, index)
+		marker:Show()
 	else
-		icon:Hide()
+		marker:Hide()
 	end
 end
 
@@ -1046,7 +1055,7 @@ local function UnitButton_UpdateAll(self)
 		UnitButton_UpdatePower(self)
 	end
 	UnitButton_UpdateTarget(self)
-	UnitButton_UpdateRaidIcon(self)
+	UnitButton_UpdateTargetMarker(self)
 	UnitButton_UpdateShieldAbsorbs(self)
 	UnitButton_UpdateHealthAbsorbs(self)
 	UnitButton_UpdateInRange(self)
@@ -1218,7 +1227,7 @@ local function UnitButton_OnEvent(self, event, unit)
 			UnitButton_UpdateThreatBar(self)
 	
 		elseif event == "RAID_TARGET_UPDATE" then
-			UnitButton_UpdateRaidIcon(self)
+			UnitButton_UpdateTargetMarker(self)
 	
 		elseif event == "READY_CHECK" then
 			UnitButton_UpdateReadyCheck(self)
@@ -1330,7 +1339,7 @@ local startTimeCache = {}
 --	-7 readyCheckIcon, phaseIcon
 -- ARTWORK 
 --	top nameText, statusText, timerText, vehicleText
---	-7 raidIcon, roleIcon, leaderIcon
+--	-7 targetMarker, roleIcon, leaderIcon
 -------------------------------------------------
 
 -- Layer(healthBar) -- frameLevel:5 -----------------
@@ -1617,14 +1626,14 @@ function F:UnitButton_OnLoad(button)
 		end
 	end
 	
-	-- raid icon
-	local raidIcon = overlayFrame:CreateTexture(name.."RaidIcon", "ARTWORK", nil, -7)
-	button.indicators.raidIcon = raidIcon
-	raidIcon:SetSize(14, 14)
-	raidIcon:SetPoint("TOP", 0, 3)
-	raidIcon:SetTexture("Interface\\TargetingFrame\\UI-RaidTargetingIcons")
-	raidIcon:SetAlpha(.77)
-	raidIcon:Hide()
+	-- target marker
+	local targetMarker = overlayFrame:CreateTexture(name.."TargetMarker", "ARTWORK", nil, -7)
+	button.indicators.targetMarker = targetMarker
+	targetMarker:SetSize(14, 14)
+	targetMarker:SetPoint("TOP", 0, 3)
+	targetMarker:SetTexture("Interface\\TargetingFrame\\UI-RaidTargetingIcons")
+	targetMarker:SetAlpha(.77)
+	targetMarker:Hide()
 
 	-- role icon
 	local roleIcon = overlayFrame:CreateTexture(name.."RoleIcon", "ARTWORK", nil, -7)

@@ -112,12 +112,22 @@ local function Revise()
 
 	-- r22-release
 	if not(CellDB["revise"]) or dbRevision < 22 then
-		-- color
+		-- highlight color
 		if not CellDB["appearance"]["targetColor"] then CellDB["appearance"]["targetColor"] = {1, .19, .19, .5} end
 		if not CellDB["appearance"]["mouseoverColor"] then CellDB["appearance"]["mouseoverColor"] = {1, 1, 1, .5} end
-		-- raidIcon
 		for _, layout in pairs(CellDB["layouts"]) do
-			
+			-- targetMarker
+			if layout["indicators"][1] and layout["indicators"][1]["indicatorName"] ~= "targetMarker" then
+				tinsert(layout["indicators"], 1, {
+					["name"] = "Target Marker",
+					["indicatorName"] = "targetMarker",
+					["type"] = "built-in",
+					["enabled"] = true,
+					["position"] = {"TOP", "TOP", 0, 3},
+					["size"] = {14, 14},
+					["alpha"] = .77,
+				})
+			end
 		end
 	end
 

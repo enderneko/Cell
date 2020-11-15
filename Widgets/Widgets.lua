@@ -643,7 +643,6 @@ end
 function addon:CreateSlider(name, parent, low, high, width, step, onValueChangedFn, afterValueChangedFn)
     local slider = CreateFrame("Slider", nil, parent, "BackdropTemplate")
     slider:SetMinMaxValues(low, high)
-	slider:SetValue(low)
     slider:SetValueStep(step)
 	slider:SetObeyStepOnDrag(true)
 	slider:SetOrientation("HORIZONTAL")
@@ -655,11 +654,15 @@ function addon:CreateSlider(name, parent, low, high, width, step, onValueChanged
 	nameText:SetText(name)
 	nameText:SetPoint("BOTTOM", slider, "TOP", 0, 2)
 
+	function slider:SetName(n)
+		nameText:SetText(n)
+	end
+
 	local currentText = slider:CreateFontString(nil, "OVERLAY", font_name)
 	currentText:SetText(slider:GetValue())
 	-- currentText:SetPoint("TOP", slider, "BOTTOM")
 
-	local currentEditBox = addon:CreateEditBox(slider, 50, 14, false, false, true)
+	local currentEditBox = addon:CreateEditBox(slider, 50, 14)
 	currentEditBox:SetPoint("TOP", slider, "BOTTOM", 0, -1)
 	currentEditBox:SetJustifyH("CENTER")
 	currentEditBox:SetScript("OnEditFocusGained", function(self)
@@ -716,7 +719,7 @@ function addon:CreateSlider(name, parent, low, high, width, step, onValueChanged
 		oldValue = value
 
 		if math.floor(value) < value then -- decimal
-			value = tonumber(string.format("%.1f", value))
+			value = tonumber(string.format("%.2f", value))
 		end
 
 		currentEditBox:SetText(value)
@@ -761,6 +764,8 @@ function addon:CreateSlider(name, parent, low, high, width, step, onValueChanged
 		end
 	end)
 	]]
+	
+	slider:SetValue(low) -- NOTE: needs to be after OnValueChanged
 	
 	return slider
 end
@@ -2257,6 +2262,36 @@ local function CreateSetting_Height(parent)
 	return widget
 end
 
+local function CreateSetting_Alpha(parent)
+	local widget
+
+	if not settingWidgets["alpha"] then
+		widget = addon:CreateFrame("CellIndicatorSettings_Alpha", parent, 240, 50)
+		settingWidgets["alpha"] = widget
+
+		widget.alpha = addon:CreateSlider(L["Alpha"], widget, 0, 1, 100, .01)
+		widget.alpha:SetPoint("TOPLEFT", widget, 5, -20)
+		widget.alpha.afterValueChangedFn = function(value)
+			widget.func(value)
+		end
+		
+		-- associate db
+		function widget:SetFunc(func)
+			widget.func = func
+		end
+		
+		-- show db value
+		function widget:SetDBValue(alpha)
+			widget.alpha:SetValue(alpha)
+		end
+	else
+		widget = settingWidgets["alpha"]
+	end
+
+	widget:Show()
+	return widget
+end
+
 local function CreateSetting_Num(parent)
 	local widget
 
@@ -2843,6 +2878,8 @@ function addon:CreateIndicatorSettings(parent, settingsTable)
 			tinsert(widgetsTable, CreateSetting_SizeSquare(parent))
 		elseif setting == "height" then
 			tinsert(widgetsTable, CreateSetting_Height(parent))
+		elseif setting == "alpha" then
+			tinsert(widgetsTable, CreateSetting_Alpha(parent))
 		elseif setting == "num" then
 			tinsert(widgetsTable, CreateSetting_Num(parent))
 		elseif setting == "orientation" then
