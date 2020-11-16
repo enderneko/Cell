@@ -322,7 +322,7 @@ end)
 powerColorPicker:SetPoint("LEFT", powerColorDropdown, "RIGHT", 5, 0)
 
 -- target highlight
-local targetColorPicker = Cell:CreateColorPicker(appearanceTab, L["Target Highlight"], true, function(r, g, b, a)
+local targetColorPicker = Cell:CreateColorPicker(appearanceTab, L["Target Highlight Color"], true, function(r, g, b, a)
     CellDB["appearance"]["targetColor"][1] = r
     CellDB["appearance"]["targetColor"][2] = g
     CellDB["appearance"]["targetColor"][3] = b
@@ -332,7 +332,7 @@ end)
 targetColorPicker:SetPoint("TOPLEFT", nameColorDropdown, "BOTTOMLEFT", 0, -20)
 
 -- mouseover highlight
-local mouseoverColorPicker = Cell:CreateColorPicker(appearanceTab, L["Mouseover Highlight"], true, function(r, g, b, a)
+local mouseoverColorPicker = Cell:CreateColorPicker(appearanceTab, L["Mouseover Highlight Color"], true, function(r, g, b, a)
     CellDB["appearance"]["mouseoverColor"][1] = r
     CellDB["appearance"]["mouseoverColor"][2] = g
     CellDB["appearance"]["mouseoverColor"][3] = b
