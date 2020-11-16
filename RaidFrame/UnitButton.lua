@@ -592,11 +592,11 @@ local function UnitButton_UpdateLeader(self, event)
 	end
 end
 
-local function UnitButton_UpdateTargetMarker(self)
+local function UnitButton_UpdatePlayerRaidIcon(self)
 	local unit = self.state.displayedUnit
 	if not unit then return end
 
-	local marker = self.indicators.targetMarker
+	local marker = self.indicators.playerRaidIcon
 
 	local index = GetRaidTargetIndex(unit)
 
@@ -1055,7 +1055,7 @@ local function UnitButton_UpdateAll(self)
 		UnitButton_UpdatePower(self)
 	end
 	UnitButton_UpdateTarget(self)
-	UnitButton_UpdateTargetMarker(self)
+	UnitButton_UpdatePlayerRaidIcon(self)
 	UnitButton_UpdateShieldAbsorbs(self)
 	UnitButton_UpdateHealthAbsorbs(self)
 	UnitButton_UpdateInRange(self)
@@ -1227,7 +1227,7 @@ local function UnitButton_OnEvent(self, event, unit)
 			UnitButton_UpdateThreatBar(self)
 	
 		elseif event == "RAID_TARGET_UPDATE" then
-			UnitButton_UpdateTargetMarker(self)
+			UnitButton_UpdatePlayerRaidIcon(self)
 	
 		elseif event == "READY_CHECK" then
 			UnitButton_UpdateReadyCheck(self)
@@ -1339,7 +1339,7 @@ local startTimeCache = {}
 --	-7 readyCheckIcon, phaseIcon
 -- ARTWORK 
 --	top nameText, statusText, timerText, vehicleText
---	-7 targetMarker, roleIcon, leaderIcon
+--	-7 playerRaidIcon, roleIcon, leaderIcon
 -------------------------------------------------
 
 -- Layer(healthBar) -- frameLevel:5 -----------------
@@ -1626,14 +1626,14 @@ function F:UnitButton_OnLoad(button)
 		end
 	end
 	
-	-- target marker
-	local targetMarker = overlayFrame:CreateTexture(name.."TargetMarker", "ARTWORK", nil, -7)
-	button.indicators.targetMarker = targetMarker
-	targetMarker:SetSize(14, 14)
-	targetMarker:SetPoint("TOP", 0, 3)
-	targetMarker:SetTexture("Interface\\TargetingFrame\\UI-RaidTargetingIcons")
-	targetMarker:SetAlpha(.77)
-	targetMarker:Hide()
+	-- player raid icon
+	local playerRaidIcon = overlayFrame:CreateTexture(name.."PlayerRaidIcon", "ARTWORK", nil, -7)
+	button.indicators.playerRaidIcon = playerRaidIcon
+	playerRaidIcon:SetSize(14, 14)
+	playerRaidIcon:SetPoint("TOP", 0, 3)
+	playerRaidIcon:SetTexture("Interface\\TargetingFrame\\UI-RaidTargetingIcons")
+	playerRaidIcon:SetAlpha(.77)
+	playerRaidIcon:Hide()
 
 	-- role icon
 	local roleIcon = overlayFrame:CreateTexture(name.."RoleIcon", "ARTWORK", nil, -7)

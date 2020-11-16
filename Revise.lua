@@ -135,6 +135,17 @@ local function Revise()
 		end
 	end
 
+	-- r23-release
+	if not(CellDB["revise"]) or dbRevision < 23 then
+		for _, layout in pairs(CellDB["layouts"]) do
+			-- rename targetMarker to playerRaidIcon
+			if layout["indicators"][1] and layout["indicators"][1]["indicatorName"] == "targetMarker" then
+				layout["indicators"][1]["name"] = "Raid Icon (Player)"
+				layout["indicators"][1]["indicatorName"] = "playerRaidIcon"
+			end
+		end
+	end
+
 	CellDB["revise"] = Cell.version
 end
 Cell:RegisterCallback("Revise", "Revise", Revise)

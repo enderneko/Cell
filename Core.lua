@@ -260,8 +260,8 @@ function eventFrame:ADDON_LOADED(arg1)
                     ["groupFilter"] = {true, true, true, true, true, true, true, true},
                     ["indicators"] = {
                         {
-                            ["name"] = "Target Marker",
-                            ["indicatorName"] = "targetMarker",
+                            ["name"] = "Raid Icon (Player)",
+                            ["indicatorName"] = "playerRaidIcon",
                             ["type"] = "built-in",
                             ["enabled"] = true,
                             ["position"] = {"TOP", "TOP", 0, 3},

@@ -68,7 +68,7 @@ local function InitIndicator(indicatorName)
     local indicator = previewButton.indicators[indicatorName]
     if indicator.init then return end
 
-    if indicatorName == "targetMarker" then
+    if indicatorName == "playerRaidIcon" then
         SetRaidTargetIconTexture(indicator, 8)
         -- NOTE: texture type cannot glow by LCG
         indicator.preview = CreateFrame("Frame", nil, previewButton)
@@ -569,7 +569,7 @@ Cell:CreateScrollFrame(settingsFrame)
 settingsFrame.scrollFrame:SetScrollStep(35)
 
 local indicatorSettings = {
-    ["targetMarker"] = {"position", "size-square", "alpha"},
+    ["playerRaidIcon"] = {"position", "size-square", "alpha"},
     ["aggroBar"] = {"enabled", "position", "size"},
     ["aoeHealing"] = {"enabled", "height", "color"},
     ["externalCooldowns"] = {"enabled", "position", "size", "num"},
