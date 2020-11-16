@@ -69,6 +69,11 @@ local function InitIndicator(indicatorName)
     if indicator.init then return end
 
     if indicatorName == "playerRaidIcon" then
+        SetRaidTargetIconTexture(indicator, 6)
+        -- NOTE: texture type cannot glow by LCG
+        indicator.preview = CreateFrame("Frame", nil, previewButton)
+        indicator.preview:SetAllPoints(indicator)
+    elseif indicatorName == "targetRaidIcon" then
         SetRaidTargetIconTexture(indicator, 8)
         -- NOTE: texture type cannot glow by LCG
         indicator.preview = CreateFrame("Frame", nil, previewButton)
@@ -211,9 +216,11 @@ local function UpdateIndicators(layout, indicatorName, setting, value)
         I:RemoveAllCustomIndicators(previewButton)
         for _, t in pairs(currentLayoutTable["indicators"]) do
             local indicator = previewButton.indicators[t["indicatorName"]] or I:CreateIndicator(previewButton, t)
+            InitIndicator(t["indicatorName"])
             if t["enabled"] then
-                InitIndicator(t["indicatorName"])
                 indicator:Show()
+            elseif indicator.preview then
+                indicator.preview:Hide()
             end
             -- update position
             if t["position"] then
@@ -264,10 +271,11 @@ local function UpdateIndicators(layout, indicatorName, setting, value)
 		-- changed in IndicatorsTab
 		if setting == "enabled" then
             if value then
-                InitIndicator(indicatorName)
                 indicator:Show()
+                if indicator.preview then indicator.preview:Show() end
             else
                 indicator:Hide()
+                if indicator.preview then indicator.preview:Hide() end
             end
 		elseif setting == "position" then
 			indicator:ClearAllPoints()
@@ -569,7 +577,8 @@ Cell:CreateScrollFrame(settingsFrame)
 settingsFrame.scrollFrame:SetScrollStep(35)
 
 local indicatorSettings = {
-    ["playerRaidIcon"] = {"position", "size-square", "alpha"},
+    ["playerRaidIcon"] = {"enabled", "position", "size-square", "alpha"},
+    ["targetRaidIcon"] = {"enabled", "position", "size-square", "alpha"},
     ["aggroBar"] = {"enabled", "position", "size"},
     ["aoeHealing"] = {"enabled", "height", "color"},
     ["externalCooldowns"] = {"enabled", "position", "size", "num"},

@@ -256,3 +256,26 @@ function I:CreateCentralDebuff(parent)
     frame:SetFrameLevel(77)
     frame:Hide()
 end
+
+-------------------------------------------------
+-- player raid icon
+-------------------------------------------------
+function I:CreatePlayerRaidIcon(parent)
+    local playerRaidIcon = parent.widget.overlayFrame:CreateTexture(parent:GetName().."PlayerRaidIcon", "ARTWORK", nil, -7)
+    parent.indicators.playerRaidIcon = playerRaidIcon
+    playerRaidIcon:SetTexture("Interface\\TargetingFrame\\UI-RaidTargetingIcons")
+    -- playerRaidIcon:SetSize(14, 14)
+    -- playerRaidIcon:SetPoint("TOP", 0, 3)
+    -- playerRaidIcon:SetAlpha(.77)
+    playerRaidIcon:Hide()
+end
+
+-------------------------------------------------
+-- target raid icon
+-------------------------------------------------
+function I:CreateTargetRaidIcon(parent)
+    local targetRaidIcon = parent.widget.overlayFrame:CreateTexture(parent:GetName().."TargetRaidIcon", "ARTWORK", nil, -7)
+    parent.indicators.targetRaidIcon = targetRaidIcon
+    targetRaidIcon:SetTexture("Interface\\TargetingFrame\\UI-RaidTargetingIcons")
+    targetRaidIcon:Hide()
+end

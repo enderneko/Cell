@@ -121,17 +121,17 @@ local function Revise()
 			if type(layout["rows"]) ~= "number" then layout["rows"] = 8 end
 			if type(layout["groupSpacing"]) ~= "number" then layout["groupSpacing"] = 0 end
 			-- targetMarker
-			if layout["indicators"][1] and layout["indicators"][1]["indicatorName"] ~= "targetMarker" then
-				tinsert(layout["indicators"], 1, {
-					["name"] = "Target Marker",
-					["indicatorName"] = "targetMarker",
-					["type"] = "built-in",
-					["enabled"] = true,
-					["position"] = {"TOP", "TOP", 0, 3},
-					["size"] = {14, 14},
-					["alpha"] = .77,
-				})
-			end
+			-- if layout["indicators"][1] and layout["indicators"][1]["indicatorName"] ~= "targetMarker" then
+			-- 	tinsert(layout["indicators"], 1, {
+			-- 		["name"] = "Target Marker",
+			-- 		["indicatorName"] = "targetMarker",
+			-- 		["type"] = "built-in",
+			-- 		["enabled"] = true,
+			-- 		["position"] = {"TOP", "TOP", 0, 3},
+			-- 		["size"] = {14, 14},
+			-- 		["alpha"] = .77,
+			-- 	})
+			-- end
 		end
 	end
 
@@ -139,9 +139,32 @@ local function Revise()
 	if not(CellDB["revise"]) or dbRevision < 23 then
 		for _, layout in pairs(CellDB["layouts"]) do
 			-- rename targetMarker to playerRaidIcon
-			if layout["indicators"][1] and layout["indicators"][1]["indicatorName"] == "targetMarker" then
-				layout["indicators"][1]["name"] = "Raid Icon (Player)"
-				layout["indicators"][1]["indicatorName"] = "playerRaidIcon"
+			if layout["indicators"][1] then
+				if layout["indicators"][1]["indicatorName"] == "targetMarker" then -- r22
+					layout["indicators"][1]["name"] = "Raid Icon (player)"
+					layout["indicators"][1]["indicatorName"] = "playerRaidIcon"
+				elseif layout["indicators"][1]["indicatorName"] == "aggroBar" then
+					tinsert(layout["indicators"], 1, {
+						["name"] = "Raid Icon (player)",
+						["indicatorName"] = "playerRaidIcon",
+						["type"] = "built-in",
+						["enabled"] = true,
+						["position"] = {"TOP", "TOP", 0, 3},
+						["size"] = {14, 14},
+						["alpha"] = .77,
+					})
+				end
+			end
+			if layout["indicators"][2] and layout["indicators"][2]["indicatorName"] ~= "targetRaidIcon" then
+				tinsert(layout["indicators"], 2, {
+					["name"] = "Raid Icon (target)",
+					["indicatorName"] = "targetRaidIcon",
+					["type"] = "built-in",
+					["enabled"] = false,
+					["position"] = {"TOP", "TOP", -14, 3},
+					["size"] = {14, 14},
+					["alpha"] = .77,
+				})
 			end
 		end
 	end

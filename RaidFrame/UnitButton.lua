@@ -135,7 +135,14 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
 				if type(t["showDuration"]) == "boolean" then
 					indicator:ShowDuration(t["showDuration"])
 				end
-				UpdateIndicatorParentVisibility(b, t["indicatorName"], t["enabled"])
+				-- init raid icons
+				if t["indicatorName"] == "playerRaidIcon" then
+					b.func.UpdatePlayerRaidIcon(t["enabled"])
+				elseif t["indicatorName"] == "targetRaidIcon" then
+					b.func.UpdateTargetRaidIcon(t["enabled"])
+				else
+					UpdateIndicatorParentVisibility(b, t["indicatorName"], t["enabled"])
+				end
 			end)
 		end
 		indicatorsInitialized = true
@@ -146,6 +153,14 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
 			-- update aoehealing
             if indicatorName == "aoeHealing" then
 				I:EnableAoEHealing(value)
+			elseif indicatorName == "playerRaidIcon" then
+				F:IterateAllUnitButtons(function(b)
+					b.func.UpdatePlayerRaidIcon(value)
+				end)
+			elseif indicatorName == "targetRaidIcon" then
+				F:IterateAllUnitButtons(function(b)
+					b.func.UpdateTargetRaidIcon(value)
+				end)
 			else
 				-- refresh
 				F:IterateAllUnitButtons(function(b)
@@ -596,15 +611,39 @@ local function UnitButton_UpdatePlayerRaidIcon(self)
 	local unit = self.state.displayedUnit
 	if not unit then return end
 
-	local marker = self.indicators.playerRaidIcon
+	local playerRaidIcon = self.indicators.playerRaidIcon
 
 	local index = GetRaidTargetIndex(unit)
 
-	if index then
-		SetRaidTargetIconTexture(marker, index)
-		marker:Show()
+	if enabledIndicators["playerRaidIcon"] then
+		if index then
+			SetRaidTargetIconTexture(playerRaidIcon, index)
+			playerRaidIcon:Show()
+		else
+			playerRaidIcon:Hide()
+		end
 	else
-		marker:Hide()
+		playerRaidIcon:Hide()
+	end
+end
+
+local function UnitButton_UpdateTargetRaidIcon(self)
+	local unit = self.state.displayedUnit
+	if not unit then return end
+
+	local targetRaidIcon = self.indicators.targetRaidIcon
+
+	local index = GetRaidTargetIndex(unit.."target")
+
+	if enabledIndicators["targetRaidIcon"] then
+		if index then
+			SetRaidTargetIconTexture(targetRaidIcon, index)
+			targetRaidIcon:Show()
+		else
+			targetRaidIcon:Hide()
+		end
+	else
+		targetRaidIcon:Hide()
 	end
 end
 
@@ -1043,6 +1082,7 @@ local function UnitButton_UpdateAll(self)
 	UnitButton_UpdateHealth(self)
 	UnitButton_UpdateHealthPrediction(self)
 	UnitButton_UpdateStatusText(self)
+
 	if Cell.loaded then
 		if Cell.vars.currentLayoutTable["powerHeight"] ~= 0 then
 			UnitButton_UpdatePowerType(self)
@@ -1054,8 +1094,10 @@ local function UnitButton_UpdateAll(self)
 		UnitButton_UpdatePowerMax(self)
 		UnitButton_UpdatePower(self)
 	end
+	
 	UnitButton_UpdateTarget(self)
 	UnitButton_UpdatePlayerRaidIcon(self)
+	UnitButton_UpdateTargetRaidIcon(self)
 	UnitButton_UpdateShieldAbsorbs(self)
 	UnitButton_UpdateHealthAbsorbs(self)
 	UnitButton_UpdateInRange(self)
@@ -1116,7 +1158,21 @@ local function UnitButton_RegisterEvents(self)
 	self:RegisterEvent("PLAYER_REGEN_DISABLED")
 
 	self:RegisterEvent("PLAYER_TARGET_CHANGED")
-	self:RegisterEvent("RAID_TARGET_UPDATE")
+
+	if Cell.loaded then
+		if enabledIndicators["playerRaidIcon"] then
+			self:RegisterEvent("RAID_TARGET_UPDATE")
+		end
+	else
+		self:RegisterEvent("RAID_TARGET_UPDATE")
+	end
+	if Cell.loaded then
+		if enabledIndicators["targetRaidIcon"] then
+			self:RegisterEvent("UNIT_TARGET")
+		end
+	else
+		self:RegisterEvent("UNIT_TARGET")
+	end
 	
 	self:RegisterEvent("READY_CHECK")
 	self:RegisterEvent("READY_CHECK_FINISHED")
@@ -1191,6 +1247,9 @@ local function UnitButton_OnEvent(self, event, unit)
 		elseif event == "UNIT_AURA" then
 			UnitButton_UpdateAuras(self)
 	
+		elseif event == "UNIT_TARGET" then
+			UnitButton_UpdateTargetRaidIcon(self)
+			
 		elseif event == "PLAYER_FLAGS_CHANGED" or event == "UNIT_FLAGS" or event == "INCOMING_SUMMON_CHANGED" then
 			UnitButton_UpdateStatusText(self)
 			
@@ -1228,6 +1287,7 @@ local function UnitButton_OnEvent(self, event, unit)
 	
 		elseif event == "RAID_TARGET_UPDATE" then
 			UnitButton_UpdatePlayerRaidIcon(self)
+			UnitButton_UpdateTargetRaidIcon(self)
 	
 		elseif event == "READY_CHECK" then
 			UnitButton_UpdateReadyCheck(self)
@@ -1626,15 +1686,6 @@ function F:UnitButton_OnLoad(button)
 		end
 	end
 	
-	-- player raid icon
-	local playerRaidIcon = overlayFrame:CreateTexture(name.."PlayerRaidIcon", "ARTWORK", nil, -7)
-	button.indicators.playerRaidIcon = playerRaidIcon
-	playerRaidIcon:SetSize(14, 14)
-	playerRaidIcon:SetPoint("TOP", 0, 3)
-	playerRaidIcon:SetTexture("Interface\\TargetingFrame\\UI-RaidTargetingIcons")
-	playerRaidIcon:SetAlpha(.77)
-	playerRaidIcon:Hide()
-
 	-- role icon
 	local roleIcon = overlayFrame:CreateTexture(name.."RoleIcon", "ARTWORK", nil, -7)
 	button.widget.roleIcon = roleIcon
@@ -1696,7 +1747,27 @@ function F:UnitButton_OnLoad(button)
 	-- aggroBar:SetPoint("BOTTOMLEFT", overlayFrame, "TOPLEFT", 1, 0)
 	aggroBar:Hide()
 
+	-- raidIcons
+	button.func.UpdatePlayerRaidIcon = function(enabled)
+		UnitButton_UpdatePlayerRaidIcon(button)
+		if enabled then
+			button:RegisterEvent("RAID_TARGET_UPDATE")
+		else
+			button:UnregisterEvent("RAID_TARGET_UPDATE")
+		end
+	end
+	button.func.UpdateTargetRaidIcon = function(enabled)
+		UnitButton_UpdateTargetRaidIcon(button)
+		if enabled then
+			button:RegisterEvent("UNIT_TARGET")
+		else
+			button:UnregisterEvent("UNIT_TARGET")
+		end
+	end
+
 	-- indicators
+	I:CreatePlayerRaidIcon(button)
+	I:CreateTargetRaidIcon(button)
 	I:CreateAoEHealing(button)
 	I:CreateDefensiveCooldowns(button)
 	I:CreateExternalCooldowns(button)
