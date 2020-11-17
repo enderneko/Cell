@@ -531,6 +531,10 @@ createBtn:SetScript("OnClick", function()
         Cell:Fire("UpdateIndicators", currentLayout, indicatorName, "create", currentLayoutTable["indicators"][last+1])
         LoadIndicatorList()
         listButtons[last+1]:Click()
+        -- check scroll
+        if last+1 > 15 then
+            listFrame.scrollFrame:ScrollToBottom()
+        end
 
     end, true, true, 2)
     popup:SetPoint("TOPLEFT", 100, -100)
