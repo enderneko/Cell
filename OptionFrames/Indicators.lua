@@ -238,6 +238,7 @@ local function UpdateIndicators(layout, indicatorName, setting, value)
             -- update alpha
             if t["alpha"] then
                 indicator:SetAlpha(t["alpha"])
+                indicator.alpha = t["alpha"]
             end
             -- update num
             if t["num"] then
@@ -286,6 +287,7 @@ local function UpdateIndicators(layout, indicatorName, setting, value)
             indicator:SetHeight(value)
         elseif setting == "alpha" then
             indicator:SetAlpha(value)
+            indicator.alpha = value
         elseif setting == "num" then
             for i, frame in ipairs(indicator) do
                 if i <= value then
@@ -569,6 +571,16 @@ local settingsText = Cell:CreateSeparator(L["Indicator Settings"], indicatorsTab
 settingsText:SetPoint("TOPLEFT", 137, -5)
 settingsText:SetJustifyH("LEFT")
 
+local othersAlpha = Cell:CreateSlider("", indicatorsTab, 0, 1, 50, .1, nil, function(value)
+    CellDB["indicatorPreviewAlpha"] = value
+    listButtons[selected]:Click()
+end)
+othersAlpha:SetPoint("RIGHT", -5, 0)
+othersAlpha:SetPoint("CENTER", settingsText)
+othersAlpha.currentEditBox:Hide()
+othersAlpha.lowText:Hide()
+othersAlpha.highText:Hide()
+
 -------------------------------------------------
 -- settings frame
 -------------------------------------------------
@@ -762,6 +774,7 @@ LoadIndicatorList = function()
             w:SetAlpha(1)
         elseif w:IsObjectType("Texture") then
             LCG.PixelGlow_Start(w.preview)
+            w:SetAlpha(w.alpha)
         else
             LCG.PixelGlow_Start(w)
             w:SetAlpha(1)
@@ -770,13 +783,12 @@ LoadIndicatorList = function()
         local w = previewButton.indicators[currentLayoutTable["indicators"][id]["indicatorName"]]
         if w:IsObjectType("StatusBar") then
             LCG.PixelGlow_Stop(w.border)
-            w:SetAlpha(.57)
         elseif w:IsObjectType("Texture") then
             LCG.PixelGlow_Stop(w.preview)
         else
             LCG.PixelGlow_Stop(w)
-            w:SetAlpha(.57)
         end
+        w:SetAlpha(CellDB["indicatorPreviewAlpha"])
     end)
 end
 
@@ -797,6 +809,7 @@ local function ShowTab(tab)
         layoutDropdown:SetSelected(currentLayout == "default" and _G.DEFAULT or currentLayout)
         LoadIndicatorList()
         listButtons[1]:Click()
+        othersAlpha:SetValue(CellDB["indicatorPreviewAlpha"])
         -- texplore(previewButton)
     else
         indicatorsTab:Hide()

@@ -659,6 +659,7 @@ function addon:CreateSlider(name, parent, low, high, width, step, onValueChanged
 	end
 
 	local currentEditBox = addon:CreateEditBox(slider, 50, 14)
+	slider.currentEditBox = currentEditBox
 	currentEditBox:SetPoint("TOP", slider, "BOTTOM", 0, -1)
 	currentEditBox:SetJustifyH("CENTER")
 	currentEditBox:SetScript("OnEditFocusGained", function(self)
@@ -684,14 +685,16 @@ function addon:CreateSlider(name, parent, low, high, width, step, onValueChanged
 	end)
 
 	local lowText = slider:CreateFontString(nil, "OVERLAY", font_name)
+	slider.lowText = lowText
 	lowText:SetText(colors.grey.s..low)
 	lowText:SetPoint("TOPLEFT", slider, "BOTTOMLEFT", 0, -1)
 	lowText:SetPoint("BOTTOM", currentEditBox)
 	
-	local hightText = slider:CreateFontString(nil, "OVERLAY", font_name)
-	hightText:SetText(colors.grey.s..high)
-	hightText:SetPoint("TOPRIGHT", slider, "BOTTOMRIGHT", 0, -1)
-	hightText:SetPoint("BOTTOM", currentEditBox)
+	local highText = slider:CreateFontString(nil, "OVERLAY", font_name)
+	slider.highText = highText
+	highText:SetText(colors.grey.s..high)
+	highText:SetPoint("TOPRIGHT", slider, "BOTTOMRIGHT", 0, -1)
+	highText:SetPoint("BOTTOM", currentEditBox)
 
 	local tex = slider:CreateTexture(nil, "ARTWORK")
 	tex:SetColorTexture(classColor.t[1], classColor.t[2], classColor.t[3], .7)

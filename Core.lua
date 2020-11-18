@@ -175,6 +175,8 @@ function eventFrame:ADDON_LOADED(arg1)
         if type(CellDB) ~= "table" then CellDB = {} end
         if type(CellCharacterDB) ~= "table" then CellCharacterDB = {} end
 
+        if type(CellDB["indicatorPreviewAlpha"]) ~= "number" then CellDB["indicatorPreviewAlpha"] = .5 end
+
         -- general --------------------------------------------------------------------------------
         if type(CellDB["general"]) ~= "table" then
             CellDB["general"] = {
