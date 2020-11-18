@@ -310,9 +310,10 @@ unitButton = {
 ]]
 
 -------------------------------------------------
--- auras -- FIXME: refreshing animation bug, auras with the SAME NAME applied on one unit at the SAME TIME
+-- auras
 -------------------------------------------------
 local debuffs_cache = {}
+-- local debuffs_cache_caster = {} -- FIXME: refreshing animation bug, auras with the SAME NAME applied on one unit at the SAME TIME: debuffs_cache --> debuffs_cache_caster --> expirationTime
 local debuffs_cache_count = {}
 local debuffs_current = {}
 local debuffs_dispel = {}
