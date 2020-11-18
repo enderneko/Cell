@@ -569,7 +569,7 @@ end
 -- group filter
 -------------------------------------------------
 local groupFilterText = Cell:CreateSeparator(L["Group Filter"], layoutsTab, 188)
-groupFilterText:SetPoint("TOPLEFT", 5, -130)
+groupFilterText:SetPoint("TOPLEFT", 5, -125)
 
 local function UpdateButtonBorderColor(flag, b)
     local borderColor 
@@ -610,7 +610,7 @@ end
 -- group orientation
 -------------------------------------------------
 local orientationText = Cell:CreateSeparator(L["Group Orientation"], layoutsTab, 188)
-orientationText:SetPoint("TOPLEFT", 203, -130)
+orientationText:SetPoint("TOPLEFT", 203, -125)
 
 local rcSlider, groupSpacingSlider
 local orientationSwitch = Cell:CreateSwitch(layoutsTab, L["Vertical"], "vertical", L["Horizontal"], "horizontal", function(value)
@@ -644,7 +644,7 @@ orientationSwitch:SetWidth(165)
 -- button size
 -------------------------------------------------
 local buttonSizeText = Cell:CreateSeparator(L["Unit Button Size"], layoutsTab, 122)
-buttonSizeText:SetPoint("TOPLEFT", 5, -215)
+buttonSizeText:SetPoint("TOPLEFT", 5, -210)
 
 -- width
 local widthSlider = Cell:CreateSlider(L["Width"], layoutsTab, 40, 300, 100, 2, function(value)
@@ -680,7 +680,7 @@ powerHeightSlider:SetPoint("TOP", heightSlider, "BOTTOM", 0, -40)
 -- font size
 -------------------------------------------------
 local fontSizeText = Cell:CreateSeparator(L["Font Size"], layoutsTab, 122)
-fontSizeText:SetPoint("TOPLEFT", 137, -215)
+fontSizeText:SetPoint("TOPLEFT", 137, -210)
 
 -- name text
 local nameFontSlider = Cell:CreateSlider(L["Name"], layoutsTab, 5, 25, 100, 1, function(value)
@@ -765,7 +765,7 @@ widthText:SetPoint("BOTTOM", textWidthDropdown, "TOP", 0, 2)
 -- misc
 -------------------------------------------------
 local miscText = Cell:CreateSeparator(L["Misc"], layoutsTab, 122)
-miscText:SetPoint("TOPLEFT", 269, -215)
+miscText:SetPoint("TOPLEFT", 269, -210)
 
 -- spacing
 local spacingSlider = Cell:CreateSlider(L["Spacing"], layoutsTab, 0, 10, 100, 1, function(value)
@@ -806,6 +806,13 @@ groupSpacingSlider = Cell:CreateSlider(L["Group Spacing"], layoutsTab, 0, 10, 10
     UpdateRaidPreview()
 end)
 groupSpacingSlider:SetPoint("TOPLEFT", rcSlider, "BOTTOMLEFT", 0, -40)
+
+-------------------------------------------------
+-- tips
+-------------------------------------------------
+local tipsText = layoutsTab:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
+tipsText:SetPoint("BOTTOMLEFT", 5, 5)
+tipsText:SetText("|cff777777"..L["Tips: Every layout has its own position setting."])
 
 -------------------------------------------------
 -- functions

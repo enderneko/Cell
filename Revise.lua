@@ -169,6 +169,21 @@ local function Revise()
 		end
 	end
 
+	-- r25-release
+	if not(CellDB["revise"]) or dbRevision < 25 then
+		-- position for layouts
+		local eventFrame = CreateFrame("Frame")
+		eventFrame:RegisterEvent("VARIABLES_LOADED")
+		eventFrame:SetScript("OnEvent", function()
+			local point, relativeTo, relativePoint, xOfs, yOfs = CellAnchorFrame:GetPoint(1)
+			for _, layout in pairs(CellDB["layouts"]) do
+				if type(layout["position"]) ~= "table" then
+					layout["position"] = {point, relativePoint, xOfs, yOfs}
+				end
+			end
+		end)
+	end
+
 	CellDB["revise"] = Cell.version
 end
 Cell:RegisterCallback("Revise", "Revise", Revise)

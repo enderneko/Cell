@@ -23,7 +23,7 @@ cellMainFrame:SetClampRectInsets(0, 0, 15, 0)
 local anchorFrame = CreateFrame("Frame", "CellAnchorFrame", cellMainFrame)
 Cell.frames.anchorFrame = anchorFrame
 anchorFrame:SetPoint("TOPLEFT", UIParent, "CENTER")
-anchorFrame:SetSize(10, 10)
+anchorFrame:SetSize(1, 1)
 anchorFrame:SetMovable(true)
 
 cellMainFrame:SetPoint("TOPLEFT", anchorFrame, "BOTTOMRIGHT")
@@ -32,9 +32,11 @@ local function RegisterDragForMainFrame(frame)
     -- frame:RegisterForDrag("LeftButton")
     frame:SetScript("OnDragStart", function()
         anchorFrame:StartMoving()
+        anchorFrame:SetUserPlaced(false)
     end)
     frame:SetScript("OnDragStop", function()
         anchorFrame:StopMovingOrSizing()
+        F:SavePosition(anchorFrame, Cell.vars.currentLayoutTable["position"])
     end)
 end
 
@@ -156,7 +158,8 @@ end)
 local function MainFrame_UpdateLayout(layout, which)
     F:Debug("|cffffff7fUpdateLayout:|r layout:" .. (layout or "nil") .. " which:" .. (which or "nil"))
     
-    --? cause SetSize in combat error? perhaps not
     cellMainFrame:SetSize(unpack(Cell.vars.currentLayoutTable["size"]))
+    -- load position
+    F:RestorePosition(anchorFrame, Cell.vars.currentLayoutTable["position"])
 end
 Cell:RegisterCallback("UpdateLayout", "MainFrame_UpdateLayout", MainFrame_UpdateLayout)

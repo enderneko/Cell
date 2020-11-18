@@ -248,6 +248,7 @@ function eventFrame:ADDON_LOADED(arg1)
             CellDB["layouts"] = {
                 ["default"] = {
                     ["size"] = {66, 46},
+                    ["position"] = {"TOPLEFT", "CENTER", 0, 0},
                     ["powerHeight"] = 2,
                     ["spacing"] = 3,
                     ["orientation"] = "vertical",
