@@ -13,11 +13,12 @@ local debuffBlacklist = {
 }
 
 function F:GetDefaultDebuffBlacklist()
-    local temp = {}
-    for i, id in pairs(debuffBlacklist) do
-        temp[i] = GetSpellInfo(id)
-    end
-    return temp
+    -- local temp = {}
+    -- for i, id in pairs(debuffBlacklist) do
+    --     temp[i] = GetSpellInfo(id)
+    -- end
+    -- return temp
+    return debuffBlacklist
 end
 
 -------------------------------------------------

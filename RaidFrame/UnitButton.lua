@@ -336,7 +336,7 @@ local function UnitButton_UpdateDebuffs(self)
 			break
 		end
 		
-		if Cell.vars.debuffBlacklist[name] then
+		if Cell.vars.debuffBlacklist[spellId] then
 			isValid = false
 		else
 			isValid = true
@@ -346,8 +346,7 @@ local function UnitButton_UpdateDebuffs(self)
 		if duration and duration <= 600 then
 			if isValid then
 				-- print(name, expirationTime-duration+.1>=GetTime()) -- NOTE: startTime ≈ now
-				refreshing = debuffs_cache[unit][name] and ((expirationTime == 0 and debuffs_cache_count[unit][name] and count > debuffs_cache_count[unit][name]) or expirationTime-duration+.1>=GetTime())
-				-- refreshing = debuffs_cache[unit][name] and ((expirationTime == 0 and debuffs_cache_count[unit][name] and count > debuffs_cache_count[unit][name]) or expirationTime > debuffs_cache[unit][name])
+				refreshing = debuffs_cache[unit][spellId] and ((expirationTime == 0 and debuffs_cache_count[unit][spellId] and count > debuffs_cache_count[unit][spellId]) or expirationTime-duration+.1>=GetTime())
 
 				if enabledIndicators["debuffs"] and found <= indicatorNums["debuffs"] then
 					-- start, duration, debuffType, texture, count, refreshing
@@ -356,7 +355,7 @@ local function UnitButton_UpdateDebuffs(self)
 				end
 				
 				-- user created indicators
-				I:CheckCustomIndicators(unit, self, "debuff", name, expirationTime - duration, duration, debuffType or "", icon, count, refreshing)
+				I:CheckCustomIndicators(unit, self, "debuff", spellId, expirationTime - duration, duration, debuffType or "", icon, count, refreshing)
 
 				-- check top debuff
 				if enabledIndicators["centralDebuff"] and I:GetDebuffOrder(spellId) ~= 0 and I:GetDebuffOrder(spellId) < topOrder then
@@ -364,9 +363,9 @@ local function UnitButton_UpdateDebuffs(self)
 					topId, topStart, topDuration, topType, topIcon, topCount, topRefreshing = spellId, expirationTime - duration, duration, debuffType or "", icon, count, refreshing
 				end
 
-				debuffs_cache[unit][name] = expirationTime
-				debuffs_cache_count[unit][name] = count
-				debuffs_current[unit][name] = i
+				debuffs_cache[unit][spellId] = expirationTime
+				debuffs_cache_count[unit][spellId] = count
+				debuffs_current[unit][spellId] = i
 			end
 
 			if enabledIndicators["dispels"] and debuffType and debuffType ~= "" then
@@ -399,11 +398,11 @@ local function UnitButton_UpdateDebuffs(self)
 	
 	-- update debuffs_cache
     local t = GetTime()
-    for name, expirationTime in pairs(debuffs_cache[unit]) do
+    for spellId, expirationTime in pairs(debuffs_cache[unit]) do
         -- lost or expired
-        if not debuffs_current[unit][name] or (expirationTime ~= 0 and t > expirationTime) then -- expirationTime == 0: no duration 
-			debuffs_cache[unit][name] = nil
-			debuffs_cache_count[unit][name] = nil
+        if not debuffs_current[unit][spellId] or (expirationTime ~= 0 and t > expirationTime) then -- expirationTime == 0: no duration 
+			debuffs_cache[unit][spellId] = nil
+			debuffs_cache_count[unit][spellId] = nil
         end
 	end
 
@@ -433,7 +432,7 @@ local function UnitButton_UpdateBuffs(self)
 		end
 		
 		if duration then
-			refreshing = buffs_cache[unit][name] and expirationTime-duration+.1>=GetTime()
+			refreshing = buffs_cache[unit][spellId] and expirationTime-duration+.1>=GetTime()
 			-- defensiveCooldowns
 			if enabledIndicators["defensiveCooldowns"] and F:IsDefensiveCooldown(name) and defensiveFound <= indicatorNums["defensiveCooldowns"] then
 				-- start, duration, debuffType, texture, count, refreshing
@@ -464,10 +463,10 @@ local function UnitButton_UpdateBuffs(self)
 			end
 
 			-- user created indicators
-			I:CheckCustomIndicators(unit, self, "buff", name, expirationTime - duration, duration, nil, icon, count, refreshing, false)
+			I:CheckCustomIndicators(unit, self, "buff", spellId, expirationTime - duration, duration, nil, icon, count, refreshing, false)
 			
-            buffs_cache[unit][name] = expirationTime
-            buffs_current[unit][name] = i
+            buffs_cache[unit][spellId] = expirationTime
+            buffs_current[unit][spellId] = i
 		end
 	end
 	
@@ -494,10 +493,10 @@ local function UnitButton_UpdateBuffs(self)
 	
 	-- update buffs_cache
     local t = GetTime()
-    for name, expirationTime in pairs(buffs_cache[unit]) do
+    for spellId, expirationTime in pairs(buffs_cache[unit]) do
         -- lost or expired
-        if not buffs_current[unit][name] or t > expirationTime then
-			buffs_cache[unit][name] = nil
+        if not buffs_current[unit][spellId] or t > expirationTime then
+			buffs_cache[unit][spellId] = nil
         end
 	end
 	wipe(buffs_current[unit])
@@ -513,20 +512,20 @@ local function UnitButton_UpdateBuffs(self)
 		end
 
 		if duration then
-			refreshing = buffs_cache_castByMe[unit][name] and expirationTime-duration+.1>=GetTime()
-			I:CheckCustomIndicators(unit, self, "buff", name, expirationTime - duration, duration, nil, icon, count, refreshing, true)
+			refreshing = buffs_cache_castByMe[unit][spellId] and expirationTime-duration+.1>=GetTime()
+			I:CheckCustomIndicators(unit, self, "buff", spellId, expirationTime - duration, duration, nil, icon, count, refreshing, true)
 			
-            buffs_cache_castByMe[unit][name] = expirationTime
-            buffs_current_castByMe[unit][name] = i
+            buffs_cache_castByMe[unit][spellId] = expirationTime
+            buffs_current_castByMe[unit][spellId] = i
 		end
 	end
 
 	-- update buffs_cache
     t = GetTime()
-    for name, expirationTime in pairs(buffs_cache_castByMe[unit]) do
+    for spellId, expirationTime in pairs(buffs_cache_castByMe[unit]) do
         -- lost or expired
-        if not buffs_current_castByMe[unit][name] or (expirationTime ~= 0 and t > expirationTime) then
-			buffs_cache_castByMe[unit][name] = nil
+        if not buffs_current_castByMe[unit][spellId] or (expirationTime ~= 0 and t > expirationTime) then
+			buffs_cache_castByMe[unit][spellId] = nil
         end
 	end
 	wipe(buffs_current_castByMe[unit])

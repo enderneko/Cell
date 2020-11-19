@@ -2763,38 +2763,240 @@ local function CreateSetting_CheckButton2(parent)
 end
 
 local auraButtons = {}
-local function CreateAuraButtons(parent, auraTable)
-	for i, spell in pairs(auraTable) do
+local function CreateAuraButtons(parent, auraTable, noUpDownButtons, updateHeightFunc)
+	local n = #auraTable
+
+	-- tooltip
+	if not parent.popupEditBox then
+		local popup = addon:CreatePopupEditBox(parent, 20)
+		popup:SetNumeric(true)
+
+		popup:SetScript("OnTextChanged", function()
+			local spellId = tonumber(popup:GetText())
+			if not spellId then
+				CellTooltip:Hide()
+				return
+			end
+
+			local name = GetSpellInfo(spellId)
+			if not name then
+				CellTooltip:Hide()
+				return
+			end
+			
+			CellTooltip:SetOwner(popup, "ANCHOR_NONE")
+			CellTooltip:SetPoint("TOPLEFT", popup, "BOTTOMLEFT", 0, -1)
+			CellTooltip:SetHyperlink("spell:"..spellId)
+			CellTooltip:Show()
+		end)
+		
+		popup:HookScript("OnHide", function()
+			CellTooltip:Hide()
+		end)
+	end
+
+	-- new
+	if not auraButtons[0] then
+		auraButtons[0] = addon:CreateButton(parent, "", "transparent-class", {20, 20})
+		auraButtons[0]:SetTexture("Interface\\AddOns\\Cell\\Media\\Icons\\new", {16, 16}, {"RIGHT", -1, 0})
+		auraButtons[0]:SetPoint("BOTTOMLEFT")
+		auraButtons[0]:SetPoint("RIGHT")
+	end
+	
+	auraButtons[0]:SetScript("OnClick", function(self)
+		local popup = addon:CreatePopupEditBox(parent, self:GetWidth(), function(text)
+			local spellId = tonumber(text)
+			local spellName = GetSpellInfo(spellId)
+			if spellId and spellName then
+				-- update db
+				tinsert(auraTable, spellId)
+				parent.func(auraTable)
+				CreateAuraButtons(parent, auraTable, noUpDownButtons, updateHeightFunc)
+				updateHeightFunc(19)
+			else
+				F:Print(L["Invalid spell id."])
+			end
+		end)
+		popup:SetPoint("TOPLEFT", self)
+		popup:ShowEditBox("")
+	end)
+
+
+	for i, spell in ipairs(auraTable) do
+		-- creation
 		if not auraButtons[i] then
-			auraButtons[i] = addon:CreateButton(parent, " ", "transparent-class", {20, 20})
+			auraButtons[i] = addon:CreateButton(parent, "", "transparent-class", {20, 20})
 
-			auraButtons[i].del = addon:CreateButton(b, "", "transparent-class", {20, 20})
-			auraButtons[i].del:SetTexture("Interface\\AddOns\\Cell\\Media\\icons\\delete", {16, 16}, "CENTER")
+			-- spellId text
+			auraButtons[i].spellIdText = auraButtons[i]:CreateFontString(nil, "OVERLAY", font_name)
+			auraButtons[i].spellIdText:SetPoint("LEFT", 5, 0)
+			auraButtons[i].spellIdText:SetPoint("RIGHT", auraButtons[i], "LEFT", 55, 0)
+			auraButtons[i].spellIdText:SetWordWrap(false)
+			auraButtons[i].spellIdText:SetJustifyH("LEFT")
+			
+			-- spellName text
+			auraButtons[i].spellNameText = auraButtons[i]:CreateFontString(nil, "OVERLAY", font_name)
+			auraButtons[i].spellNameText:SetPoint("LEFT", auraButtons[i].spellIdText, "RIGHT", 5, 0)
+			auraButtons[i].spellNameText:SetPoint("RIGHT", -70, 0)
+			auraButtons[i].spellNameText:SetWordWrap(false)
+			auraButtons[i].spellNameText:SetJustifyH("LEFT")
+
+			-- del
+			auraButtons[i].del = addon:CreateButton(auraButtons[i], "", "none", {18, 20}, true, true)
+			auraButtons[i].del:SetTexture("Interface\\AddOns\\Cell\\Media\\Icons\\delete", {16, 16}, {"CENTER", 0, 0})
 			auraButtons[i].del:SetPoint("RIGHT")
+			auraButtons[i].del.tex:SetVertexColor(.6, .6, .6, 1)
+			auraButtons[i].del:SetScript("OnEnter", function()
+				auraButtons[i]:GetScript("OnEnter")(auraButtons[i])
+				auraButtons[i].del.tex:SetVertexColor(1, 1, 1, 1)
+			end)
+			auraButtons[i].del:SetScript("OnLeave",  function()
+				auraButtons[i]:GetScript("OnLeave")(auraButtons[i])
+				auraButtons[i].del.tex:SetVertexColor(.6, .6, .6, 1)
+			end)
+			
+			-- edit
+			auraButtons[i].edit = addon:CreateButton(auraButtons[i], "", "none", {18, 20}, true, true)
+			auraButtons[i].edit:SetPoint("RIGHT", auraButtons[i].del, "LEFT", 1, 0)
+			auraButtons[i].edit:SetTexture("Interface\\AddOns\\Cell\\Media\\Icons\\info", {16, 16}, {"CENTER", 0, 0})
+			auraButtons[i].edit.tex:SetVertexColor(.6, .6, .6, 1)
+			auraButtons[i].edit:SetScript("OnEnter", function()
+				auraButtons[i]:GetScript("OnEnter")(auraButtons[i])
+				auraButtons[i].edit.tex:SetVertexColor(1, 1, 1, 1)
+			end)
+			auraButtons[i].edit:SetScript("OnLeave",  function()
+				auraButtons[i]:GetScript("OnLeave")(auraButtons[i])
+				auraButtons[i].edit.tex:SetVertexColor(.6, .6, .6, 1)
+			end)
 
-			auraButtons[i].down = addon:CreateButton(b, "", "transparent-class", {20, 20})
-			auraButtons[i].down:SetTexture("Interface\\AddOns\\Cell\\Media\\icons\\down", {16, 16}, "CENTER")
-			auraButtons[i].down:SetPoint("RIGHT", b.del, "LEFT", 1, 0)
-
-			auraButtons[i].up = addon:CreateButton(b, "", "transparent-class", {20, 20})
-			auraButtons[i].up:SetTexture("Interface\\AddOns\\Cell\\Media\\icons\\up", {16, 16}, "CENTER")
-			auraButtons[i].up:SetPoint("RIGHT", b.down, "LEFT", 1, 0)
+			-- down
+			auraButtons[i].down = addon:CreateButton(auraButtons[i], "", "none", {18, 20}, true, true)
+			auraButtons[i].down:SetPoint("RIGHT", auraButtons[i].edit, "LEFT", 1, 0)
+			auraButtons[i].down:SetTexture("Interface\\AddOns\\Cell\\Media\\Icons\\down", {16, 16}, {"CENTER", 0, 0})
+			auraButtons[i].down.tex:SetVertexColor(.6, .6, .6, 1)
+			auraButtons[i].down:SetScript("OnEnter", function()
+				auraButtons[i]:GetScript("OnEnter")(auraButtons[i])
+				auraButtons[i].down.tex:SetVertexColor(1, 1, 1, 1)
+			end)
+			auraButtons[i].down:SetScript("OnLeave",  function()
+				auraButtons[i]:GetScript("OnLeave")(auraButtons[i])
+				auraButtons[i].down.tex:SetVertexColor(.6, .6, .6, 1)
+			end)
+			
+			-- up
+			auraButtons[i].up = addon:CreateButton(auraButtons[i], "", "none", {18, 20}, true, true)
+			auraButtons[i].up:SetPoint("RIGHT", auraButtons[i].down, "LEFT", 1, 0)
+			auraButtons[i].up:SetTexture("Interface\\AddOns\\Cell\\Media\\Icons\\up", {16, 16}, {"CENTER", 0, 0})
+			auraButtons[i].up.tex:SetVertexColor(.6, .6, .6, 1)
+			auraButtons[i].up:SetScript("OnEnter", function()
+				auraButtons[i]:GetScript("OnEnter")(auraButtons[i])
+				auraButtons[i].up.tex:SetVertexColor(1, 1, 1, 1)
+			end)
+			auraButtons[i].up:SetScript("OnLeave",  function()
+				auraButtons[i]:GetScript("OnLeave")(auraButtons[i])
+				auraButtons[i].up.tex:SetVertexColor(.6, .6, .6, 1)
+			end)
 		end
-
-		auraButtons[i]:SetText(spell)
-		if i == 1 then
+		
+		-- TODO: for old versions, remove these in the future
+		if type(spell) == "string" then
+			auraButtons[i].spellIdText:SetText("")
+			auraButtons[i].spellId = nil
+			auraButtons[i].spellNameText:SetText("|cffff0000"..spell)
+		else
+			auraButtons[i].spellIdText:SetText(spell)
+			auraButtons[i].spellId = spell
+			auraButtons[i].spellNameText:SetText(GetSpellInfo(spell) or L["Invalid"])
+		end
+		
+		-- points
+		auraButtons[i]:ClearAllPoints()
+		if i == 1 then -- first
 			auraButtons[i]:SetPoint("TOPLEFT")
+			-- update buttons
+			if noUpDownButtons then
+				auraButtons[i].up:Hide()
+				auraButtons[i].down:Hide()
+			else
+				auraButtons[i].up:Hide()
+				auraButtons[i].down:Show()
+			end
+		elseif i == n then -- last
+			auraButtons[i]:SetPoint("TOPLEFT", auraButtons[i-1], "BOTTOMLEFT", 0, 1)
+			-- update buttons
+			if noUpDownButtons then
+				auraButtons[i].up:Hide()
+				auraButtons[i].down:Hide()
+			else
+				auraButtons[i].up:Show()
+				auraButtons[i].down:Hide()
+			end
 		else
 			auraButtons[i]:SetPoint("TOPLEFT", auraButtons[i-1], "BOTTOMLEFT", 0, 1)
+			-- update buttons
+			if noUpDownButtons then
+				auraButtons[i].down:Hide()
+				auraButtons[i].up:Hide()
+			else
+				auraButtons[i].down:Show()
+				auraButtons[i].up:Show()
+			end
 		end
 		auraButtons[i]:SetPoint("RIGHT")
 		auraButtons[i]:Show()
+
+		-- functions
+		auraButtons[i].edit:SetScript("OnClick", function()
+			local popup = addon:CreatePopupEditBox(parent, auraButtons[i]:GetWidth(), function(text)
+				local spellId = tonumber(text)
+				local spellName = GetSpellInfo(spellId)
+				if spellId and spellName then
+					-- update text
+					auraButtons[i].spellIdText:SetText(spellId)
+					auraButtons[i].spellId = spellId
+					auraButtons[i].spellNameText:SetText(spellName)
+					-- update db
+					auraTable[i] = spellId
+					parent.func(auraTable)
+				else
+					F:Print(L["Invalid spell id."])
+				end
+			end)
+			popup:SetPoint("TOPLEFT", auraButtons[i])
+			popup:ShowEditBox(auraButtons[i].spellId or "")
+		end)
+
+		auraButtons[i].del:SetScript("OnClick", function()
+			tremove(auraTable, i)
+			parent.func(auraTable)
+			CreateAuraButtons(parent, auraTable, noUpDownButtons, updateHeightFunc)
+			updateHeightFunc(-19)
+		end)
+
+		auraButtons[i].up:SetScript("OnClick", function()
+			local temp = auraTable[i-1]
+			auraTable[i-1] = auraTable[i]
+			auraTable[i] = temp
+			parent.func(auraTable)
+			CreateAuraButtons(parent, auraTable, noUpDownButtons, updateHeightFunc)
+		end)
+
+		auraButtons[i].down:SetScript("OnClick", function()
+			local temp = auraTable[i+1]
+			auraTable[i+1] = auraTable[i]
+			auraTable[i] = temp
+			parent.func(auraTable)
+			CreateAuraButtons(parent, auraTable, noUpDownButtons, updateHeightFunc)
+		end)
 	end
 
-	auraButtons[1].up:Hide()
-	auraButtons[#auraTable].down:Hide()
+	-- check up down
+	if n == 1 then
+		auraButtons[1].up:Hide()
+		auraButtons[1].down:Hide()
+	end
 
-	for i = #auraTable+1, #auraButtons do
+	for i = n+1, #auraButtons do
 		auraButtons[i]:Hide()
 		auraButtons[i]:ClearAllPoints()
 	end
@@ -2803,38 +3005,39 @@ end
 local function CreateSetting_Auras(parent)
 	local widget
 
-	if not settingWidgets["editbox"] then
-		widget = addon:CreateFrame("CellIndicatorSettings_EditBox", parent, 240, 128)
-		settingWidgets["editbox"] = widget
+	if not settingWidgets["auras"] then
+		widget = addon:CreateFrame("CellIndicatorSettings_Auras", parent, 240, 128)
+		settingWidgets["auras"] = widget
 
-		widget.frame = addon:CreateFrame(nil, widget, 225, 80, true)
+		widget.frame = addon:CreateFrame(nil, widget, 20, 20)
 		widget.frame:SetPoint("TOPLEFT", 5, -20)
+		widget.frame:SetPoint("RIGHT", -5, 0)
 		widget.frame:Show()
+		addon:StylizeFrame(widget.frame, {.15, .15, .15, 1})
 
 		widget.text = widget:CreateFontString(nil, "OVERLAY", font_name)
 		widget.text:SetPoint("BOTTOMLEFT", widget.frame, "TOPLEFT", 0, 1)
 
-
-
 		-- associate db
 		function widget:SetFunc(func)
-			widget.func = func
+			widget.frame.func = func
 		end
 
 		-- show db value
-		function widget:SetDBValue(title, t)
+		function widget:SetDBValue(title, t, noUpDownButtons)
 			widget.text:SetText(title)
-			CreateAuraButtons(widget.frame, t)
+			CreateAuraButtons(widget.frame, t, noUpDownButtons, function(diff)
+				widget.frame:SetHeight((#t+1)*19+1)
+				widget:SetHeight((#t+1)*19+1 + 20 + 5)
+				if diff then parent:SetHeight(parent:GetHeight()+diff) end
+			end)
+			widget.frame:SetHeight((#t+1)*19+1)
+			widget:SetHeight((#t+1)*19+1 + 20 + 5)
 		end
 	else
-		widget = settingWidgets["editbox"]
+		widget = settingWidgets["auras"]
 	end
 
-	-- widget.eb:SetText("1\n2\n3\n4\n5\n6\n7\n8\n9\n10")
-	widget.eb:SetCursorPosition(0)
-	-- widget.frame.scrollFrame:ResetHeight()
-	widget.b:SetEnabled(false)
-	widget.frame.scrollFrame:ResetScroll()
 	widget:Show()
 	return widget
 end

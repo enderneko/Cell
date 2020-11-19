@@ -653,8 +653,6 @@ local function ShowIndicatorSettings(id)
         w:SetPoint("RIGHT")
         last = w
 
-        height = height + w:GetHeight()
-
         -- "enabled", "position", "size", "num", "font"
         local currentSetting = settingsTable[i]
         if currentSetting == "size-square" then currentSetting = "size" end
@@ -664,12 +662,14 @@ local function ShowIndicatorSettings(id)
             local setting = select(2,string.split(":", currentSetting))
             w:SetDBValue(setting, currentLayoutTable["indicators"][id][setting])
         elseif currentSetting == "auras" then
-            w:SetDBValue(L[F:UpperFirst(currentLayoutTable["indicators"][id]["auraType"]).." List"], currentLayoutTable["indicators"][id]["auras"])
+            w:SetDBValue(L[F:UpperFirst(currentLayoutTable["indicators"][id]["auraType"]).." List"], currentLayoutTable["indicators"][id]["auras"], indicatorType == "icons" or indicatorType == "bars")
         elseif currentSetting == "blacklist" then
-            w:SetDBValue(L["Debuff Filter (blacklist)"], CellDB["debuffBlacklist"])
+            w:SetDBValue(L["Debuff Filter (blacklist)"], CellDB["debuffBlacklist"], true)
         else
             w:SetDBValue(currentLayoutTable["indicators"][id][currentSetting])
         end
+
+        height = height + w:GetHeight()
 
         -- update func
         w:SetFunc(function(value)
@@ -679,7 +679,7 @@ local function ShowIndicatorSettings(id)
                 currentLayoutTable["indicators"][id][setting] = value
                 Cell:Fire("UpdateIndicators", currentLayout, indicatorName, "checkbutton", setting, value) -- indicatorName, setting, value, value2
             elseif currentSetting == "auras" then
-                currentLayoutTable["indicators"][id][currentSetting] = value
+                -- currentLayoutTable["indicators"][id][currentSetting] = value -- NOTE: already changed in widget
                 Cell:Fire("UpdateIndicators", currentLayout, indicatorName, currentSetting, currentLayoutTable["indicators"][id]["auraType"], value)
             elseif currentSetting == "blacklist" then
                 CellDB["debuffBlacklist"] = value
@@ -726,7 +726,7 @@ LoadIndicatorList = function()
             b.typeIcon = b:CreateTexture(nil, "ARTWORK")
             b.typeIcon:SetPoint("RIGHT", -2, 0)
             b.typeIcon:SetSize(16, 16)
-            b.typeIcon:SetTexture("Interface\\AddOns\\Cell\\Media\\indicators\\indicator-"..t["type"])
+            b.typeIcon:SetTexture("Interface\\AddOns\\Cell\\Media\\Indicators\\indicator-"..t["type"])
             -- b.typeIcon:SetVertexColor(unpack(Cell:GetPlayerClassColorTable()))
             b.typeIcon:SetAlpha(.5)
 

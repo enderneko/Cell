@@ -182,6 +182,8 @@ local function Revise()
 				end
 			end
 		end)
+		-- reset CellDB["debuffBlacklist"]
+		CellDB["debuffBlacklist"] = F:GetDefaultDebuffBlacklist()
 	end
 
 	CellDB["revise"] = Cell.version

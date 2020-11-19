@@ -152,6 +152,8 @@ L["P"] = "PvP天赋"
 L["Edit"] = "编辑"
 L["Extra Action Button"] = "额外按键"
 L["Action"] = "动作"
+L["Shift+Enter: add a new line"] = "Shift+Enter：添加新行"
+L["Enter: apply\nESC: discard"] = "Enter：应用\nESC：取消"
 
 -------------------------------------------------
 -- layouts
@@ -216,7 +218,7 @@ L["Buff"] = "增益"
 L["Debuff"] = "减益"
 L["Buff List"] = "增益列表"
 L["Debuff List"] = "减益列表"
-L["spell name"] = "法术名称"
+L["Invalid"] = "无效"
 L["Debuff Filter (blacklist)"] = "减益过滤器 (黑名单)"
 L["Icon"] = "图标"
 L["Rect"] = "矩形"
