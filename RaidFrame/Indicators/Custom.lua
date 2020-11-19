@@ -127,22 +127,22 @@ function I:ResetCustomIndicators(unit, auraType)
     end
 end
 
-function I:CheckCustomIndicators(unit, unitButton, auraType, auraName, start, duration, debuffType, texture, count, refreshing, castByMe)
+function I:CheckCustomIndicators(unit, unitButton, auraType, spellId, start, duration, debuffType, texture, count, refreshing, castByMe)
     for indicatorName, indicatorTable in pairs(customIndicators[auraType]) do
         if enabledIndicators[indicatorName] then
-            if indicatorTable["auras"][auraName] then -- is in indicator spell list
+            if indicatorTable["auras"][spellId] then -- is in indicator spell list
                 if auraType == "buff" then
                     -- check castByMe
                     if indicatorTable["castByMe"] == castByMe then
                         if indicatorTable["isIcons"] then
-                            if indicatorTable["auras"][auraName] and indicatorTable["found"][unit] <= indicatorTable["num"] then
+                            if indicatorTable["auras"][spellId] and indicatorTable["found"][unit] <= indicatorTable["num"] then
                                 unitButton.indicators[indicatorName][indicatorTable["found"][unit]]:SetCooldown(start, duration, debuffType, texture, count, refreshing)
                                 indicatorTable["found"][unit] = indicatorTable["found"][unit] + 1
                                 unitButton.indicators[indicatorName]:Show()
                             end
                         else
-                            if indicatorTable["auras"][auraName] < indicatorTable["topOrder"][unit] then
-                                indicatorTable["topOrder"][unit] = indicatorTable["auras"][auraName]
+                            if indicatorTable["auras"][spellId] < indicatorTable["topOrder"][unit] then
+                                indicatorTable["topOrder"][unit] = indicatorTable["auras"][spellId]
                                 indicatorTable["top"][unit]["start"] = start
                                 indicatorTable["top"][unit]["duration"] = duration
                                 indicatorTable["top"][unit]["debuffType"] = debuffType
@@ -154,14 +154,14 @@ function I:CheckCustomIndicators(unit, unitButton, auraType, auraName, start, du
                     end
                 else -- debuff
                     if indicatorTable["isIcons"] then
-                        if indicatorTable["auras"][auraName] and indicatorTable["found"][unit] <= indicatorTable["num"] then
+                        if indicatorTable["auras"][spellId] and indicatorTable["found"][unit] <= indicatorTable["num"] then
                             unitButton.indicators[indicatorName][indicatorTable["found"][unit]]:SetCooldown(start, duration, debuffType, texture, count, refreshing)
                             indicatorTable["found"][unit] = indicatorTable["found"][unit] + 1
                             unitButton.indicators[indicatorName]:Show()
                         end
                     else
-                        if  indicatorTable["auras"][auraName] < indicatorTable["topOrder"][unit] then
-                            indicatorTable["topOrder"][unit] = indicatorTable["auras"][auraName]
+                        if  indicatorTable["auras"][spellId] < indicatorTable["topOrder"][unit] then
+                            indicatorTable["topOrder"][unit] = indicatorTable["auras"][spellId]
                             indicatorTable["top"][unit]["start"] = start
                             indicatorTable["top"][unit]["duration"] = duration
                             indicatorTable["top"][unit]["debuffType"] = debuffType

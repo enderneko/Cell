@@ -2819,6 +2819,7 @@ local function CreateAuraButtons(parent, auraTable, noUpDownButtons, updateHeigh
 		end)
 		popup:SetPoint("TOPLEFT", self)
 		popup:ShowEditBox("")
+		parent.popupEditBox:SetTips("|cff777777"..L["Enter spell id"])
 	end)
 
 
