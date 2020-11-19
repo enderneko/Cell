@@ -351,10 +351,10 @@ function addon:CreateButton(parent, text, buttonColor, size, noBorder, noBackgro
 	SetTooltip(b, "ANCHOR_TOPLEFT", 0, 3, ...)
 
 	-- texture
-	function b:SetTexture(tex, size, point)
+	function b:SetTexture(tex, texSize, point)
 		b.tex = b:CreateTexture(nil, "ARTWORK")
 		b.tex:SetPoint(unpack(point))
-		b.tex:SetSize(unpack(size))
+		b.tex:SetSize(unpack(texSize))
 		b.tex:SetTexture(tex)
 		-- update fontstring point
 		if s then
@@ -1170,9 +1170,9 @@ end
 -- popup edit box
 -----------------------------------------
 function addon:CreatePopupEditBox(parent, width, func, multiLine)
-	if not addon.popupEditBox then
-		local eb = CreateFrame("EditBox", addonName.."PopupEditBox", nil, "BackdropTemplate")
-		addon.popupEditBox = eb
+	if not parent.popupEditBox then
+		local eb = CreateFrame("EditBox", addonName.."PopupEditBox", parent, "BackdropTemplate")
+		parent.popupEditBox = eb
 		eb:Hide()
 		eb:SetWidth(width)
 		eb:SetAutoFocus(true)
@@ -1185,10 +1185,6 @@ function addon:CreatePopupEditBox(parent, width, func, multiLine)
 		eb:SetPoint("TOPRIGHT")
 		addon:StylizeFrame(eb, {.115, .115, .115, 1}, {classColor.t[1], classColor.t[2], classColor.t[3], 1})
 		
-		eb:SetScript("OnHide", function()
-			eb:Hide() -- hide self when parent hides
-		end)
-
 		eb:SetScript("OnEscapePressed", function()
 			eb:SetText("")
 			eb:Hide()
@@ -1202,23 +1198,29 @@ function addon:CreatePopupEditBox(parent, width, func, multiLine)
 		local tipsText = eb:CreateFontString(nil, "OVERLAY", font_name)
 		tipsText:SetPoint("TOPLEFT", eb, "BOTTOMLEFT", 2, -1)
 		tipsText:SetJustifyH("LEFT")
-		-- tipsText:SetText("|cff777777"..L["Shift+Enter: add a new line\nEnter: apply\nESC: discard"])
+		tipsText:Hide()
 
-		function eb:SetTips(text)
-			tipsText:SetText(text)
-		end
-
-		local tipsBackground = CreateFrame("Frame", nil, eb, "BackdropTemplate")
+		local tipsBackground = eb:CreateTexture(nil, "ARTWORK")
 		tipsBackground:SetPoint("TOPLEFT", eb, "BOTTOMLEFT")
 		tipsBackground:SetPoint("TOPRIGHT", eb, "BOTTOMRIGHT")
 		tipsBackground:SetPoint("BOTTOM", tipsText, 0, -2)
-		-- tipsBackground:SetHeight(41)
-		tipsBackground:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8x8"})
-		tipsBackground:SetBackdropColor(.115, .115, .115, .9)
-		tipsBackground:SetFrameStrata("HIGH")
+		tipsBackground:SetColorTexture(.115, .115, .115, .9)
+		tipsBackground:Hide()
+
+		function eb:SetTips(text)
+			tipsText:SetText(text)
+			tipsText:Show()
+			tipsBackground:Show()
+		end
+
+		eb:SetScript("OnHide", function()
+			eb:Hide() -- hide self when parent hides
+			tipsText:Hide()
+			tipsBackground:Hide()
+		end)
 	end
 	
-	addon.popupEditBox:SetScript("OnEnterPressed", function(self)
+	parent.popupEditBox:SetScript("OnEnterPressed", function(self)
 		if multiLine and IsShiftKeyDown() then -- new line
 			self:Insert("\n")
 		else
@@ -1229,12 +1231,11 @@ function addon:CreatePopupEditBox(parent, width, func, multiLine)
 	end)
 
 	-- set parent(for hiding) & size
-	addon.popupEditBox:ClearAllPoints()
-	addon.popupEditBox:SetParent(parent)
-	addon.popupEditBox:SetWidth(width)
-	addon.popupEditBox:SetFrameStrata("DIALOG")
+	parent.popupEditBox:ClearAllPoints()
+	parent.popupEditBox:SetWidth(width)
+	parent.popupEditBox:SetFrameStrata("DIALOG")
 
-	return addon.popupEditBox
+	return parent.popupEditBox
 end
 
 -----------------------------------------

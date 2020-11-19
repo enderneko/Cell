@@ -751,6 +751,7 @@ saveBtn:SetScript("OnClick", function()
     wipe(changed)
     CheckChanges()
     menu:Hide()
+    if clickCastingsTab.popupEditBox then clickCastingsTab.popupEditBox:Hide() end
 end)
 
 discardBtn = Cell:CreateButton(clickCastingsTab, L["Discard"], "red-hover", {130, 20})
@@ -775,6 +776,7 @@ discardBtn:SetScript("OnClick", function()
     wipe(changed)
     CheckChanges()
     menu:Hide()
+    if clickCastingsTab.popupEditBox then clickCastingsTab.popupEditBox:Hide() end
 end)
 
 -------------------------------------------------
