@@ -2761,6 +2761,44 @@ local function CreateSetting_CheckButton2(parent)
 	return widget
 end
 
+local auraButtons = {}
+local function CreateAuraButtons(parent, auraTable)
+	for i, spell in pairs(auraTable) do
+		if not auraButtons[i] then
+			auraButtons[i] = addon:CreateButton(parent, " ", "transparent-class", {20, 20})
+
+			auraButtons[i].del = addon:CreateButton(b, "", "transparent-class", {20, 20})
+			auraButtons[i].del:SetTexture("Interface\\AddOns\\Cell\\Media\\icons\\delete", {16, 16}, "CENTER")
+			auraButtons[i].del:SetPoint("RIGHT")
+
+			auraButtons[i].down = addon:CreateButton(b, "", "transparent-class", {20, 20})
+			auraButtons[i].down:SetTexture("Interface\\AddOns\\Cell\\Media\\icons\\down", {16, 16}, "CENTER")
+			auraButtons[i].down:SetPoint("RIGHT", b.del, "LEFT", 1, 0)
+
+			auraButtons[i].up = addon:CreateButton(b, "", "transparent-class", {20, 20})
+			auraButtons[i].up:SetTexture("Interface\\AddOns\\Cell\\Media\\icons\\up", {16, 16}, "CENTER")
+			auraButtons[i].up:SetPoint("RIGHT", b.down, "LEFT", 1, 0)
+		end
+
+		auraButtons[i]:SetText(spell)
+		if i == 1 then
+			auraButtons[i]:SetPoint("TOPLEFT")
+		else
+			auraButtons[i]:SetPoint("TOPLEFT", auraButtons[i-1], "BOTTOMLEFT", 0, 1)
+		end
+		auraButtons[i]:SetPoint("RIGHT")
+		auraButtons[i]:Show()
+	end
+
+	auraButtons[1].up:Hide()
+	auraButtons[#auraTable].down:Hide()
+
+	for i = #auraTable+1, #auraButtons do
+		auraButtons[i]:Hide()
+		auraButtons[i]:ClearAllPoints()
+	end
+end
+
 local function CreateSetting_Auras(parent)
 	local widget
 
@@ -2775,55 +2813,7 @@ local function CreateSetting_Auras(parent)
 		widget.text = widget:CreateFontString(nil, "OVERLAY", font_name)
 		widget.text:SetPoint("BOTTOMLEFT", widget.frame, "TOPLEFT", 0, 1)
 
-		addon:CreateScrollFrame(widget.frame)
-		addon:StylizeFrame(widget.frame.scrollFrame, {.15, .15, .15, .9})
-		
-		widget.eb = addon:CreateEditBox(widget.frame.scrollFrame.content, 10, 20, true, true)
-		widget.eb:SetPoint("TOPLEFT")
-		widget.eb:SetPoint("RIGHT")
-		widget.eb:SetTextInsets(2, 2, 1, 1)
-		widget.eb:SetScript("OnEditFocusGained", nil)
-		widget.eb:SetScript("OnEditFocusLost", nil)
 
-		widget.eb:SetScript("OnEnterPressed", function(self) self:Insert("\n") end)
-
-		-- https://wow.gamepedia.com/UIHANDLER_OnCursorChanged
-		widget.eb:SetScript("OnCursorChanged", function(self, x, y, arg, lineHeight)
-			widget.frame.scrollFrame:SetScrollStep(lineHeight)
-
-			local vs = widget.frame.scrollFrame:GetVerticalScroll()
-			local h  = widget.frame.scrollFrame:GetHeight()
-
-			local cursorHeight = lineHeight - y
-
-			if vs + y > 0 then -- cursor above current view
-				widget.frame.scrollFrame:SetVerticalScroll(-y)
-			elseif cursorHeight > h + vs then
-				widget.frame.scrollFrame:SetVerticalScroll(-y-h+lineHeight+arg)
-			end
-
-			if widget.frame.scrollFrame:GetVerticalScroll() > widget.frame.scrollFrame:GetVerticalScrollRange() then widget.frame.scrollFrame:ScrollToBottom() end
-		end)
-
-		widget.eb:SetScript("OnTextChanged", function(self, userChanged)
-			widget.frame.scrollFrame:SetContentHeight(self:GetHeight())
-			if userChanged then
-				widget.b:SetEnabled(true)
-			end
-		end)
-
-		widget.frame.scrollFrame:SetScript("OnMouseDown", function()
-			widget.eb:SetFocus(true)
-		end)
-
-		widget.b = addon:CreateButton(widget, L["Save"], "class-hover", {60, 20})
-		widget.b:SetPoint("TOPLEFT", widget.frame, "BOTTOMLEFT", 0, -3)
-		widget.b:SetEnabled(false)
-		widget.b:SetScript("OnClick", function()
-			widget.b:SetEnabled(false)
-			widget.eb:ClearFocus()
-			widget.func(F:StringToTable(widget.eb:GetText(), "\n"))
-		end)
 
 		-- associate db
 		function widget:SetFunc(func)
@@ -2833,8 +2823,7 @@ local function CreateSetting_Auras(parent)
 		-- show db value
 		function widget:SetDBValue(title, t)
 			widget.text:SetText(title)
-			widget.eb:SetText(F:TableToString(t, "\n"))
-			-- widget.title = title
+			CreateAuraButtons(widget.frame, t)
 		end
 	else
 		widget = settingWidgets["editbox"]

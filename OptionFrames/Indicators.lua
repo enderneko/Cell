@@ -664,7 +664,7 @@ local function ShowIndicatorSettings(id)
             local setting = select(2,string.split(":", currentSetting))
             w:SetDBValue(setting, currentLayoutTable["indicators"][id][setting])
         elseif currentSetting == "auras" then
-            w:SetDBValue(L[F:UpperFirst(currentLayoutTable["indicators"][id]["auraType"]).." List"].." |cFF777777("..L["spell name"]..")", currentLayoutTable["indicators"][id]["auras"])
+            w:SetDBValue(L[F:UpperFirst(currentLayoutTable["indicators"][id]["auraType"]).." List"], currentLayoutTable["indicators"][id]["auras"])
         elseif currentSetting == "blacklist" then
             w:SetDBValue(L["Debuff Filter (blacklist)"], CellDB["debuffBlacklist"])
         else
