@@ -165,6 +165,10 @@ end
 -------------------------------------------------
 -- mouse wheel
 -------------------------------------------------
+-- self:SetBindingClick(true, "A", self, "cellA")
+-- CellSoloFramePlayer:SetAttribute("type-cellA", "spell")
+-- CellSoloFramePlayer:SetAttribute("spell-cellA", "回春术")
+
 local function InitMouseWheel(b)
     b:SetAttribute("_onenter", [[
         self:ClearBindings()
