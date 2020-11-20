@@ -36,6 +36,24 @@ select(2, ...).L = setmetatable({
 	
 	["pullTimerTips"] = "\n|rPull Timer\nLeft-Click: |cffffffffstart timer|r\nRight-Click: |cffffffffcancel timer|r",
 	["marksTips"] = "\n|rTarget marker\nLeft-Click: |cffffffffset raid marker on target|r\nRight-Click: |cfffffffflock raid marker on target (in your group)|r",
+
+	["r24-release"] = [[
+		<h1>Click-Castings</h1>
+		<p>Keyboard support for Click-Castings comes.</p> 
+		<p>Due to code changes, you might have to reconfigure Key Bindings.</p>
+		<br/>
+		<h1>Indicators</h1>
+		<p>Aura List has been updated. Now all custom indicators will check spell IDs instead of NAMEs.</p>
+		<p>Custom Indicators won't work until the Buff/Debuff List has been reconfigured.</p>
+		<br/>
+		<h1>Indicator Preview Alpha</h1>
+		<p>Now you can set alpha of non-selected indicators. This might make it easier to arrange your indicators.</p>
+		<p>To adjust alpha, use the alpha slider in "Indicators", it can be found at the top right corner.</p>
+		<br/>
+		<h1>Misc</h1>
+		<p>Every layout has its own position setting now.</p>
+		<p>Party/Raid Preview Mode will help you adjust layouts.</p>
+	]],
 }, {
 	__index = function(self, Key)
 		if (Key ~= nil) then

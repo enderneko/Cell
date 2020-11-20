@@ -88,19 +88,19 @@ font_special:SetShadowOffset(1, -1)
 font_special:SetJustifyH("CENTER")
 font_special:SetJustifyV("MIDDLE")
 
--- local font_large = CreateFont(font_large_name)
--- font_large:SetFont(GameFontNormal:GetFont(), 14)
--- font_large:SetTextColor(1, 1, 1, 1)
--- font_large:SetShadowColor(0, 0, 0)
--- font_large:SetShadowOffset(1, -1)
--- font_large:SetJustifyH("CENTER")
+local font_class_title = CreateFont(font_class_title_name)
+font_class_title:SetFont(GameFontNormal:GetFont(), 14)
+font_class_title:SetTextColor(classColor.t[1], classColor.t[2], classColor.t[3], 1)
+font_class_title:SetShadowColor(0, 0, 0)
+font_class_title:SetShadowOffset(1, -1)
+font_class_title:SetJustifyH("CENTER")
 
--- local font_large_disable = CreateFont(font_large_disable_name)
--- font_large_disable:SetFont(GameFontNormal:GetFont(), 14)
--- font_large_disable:SetTextColor(.4, .4, .4, 1)
--- font_large_disable:SetShadowColor(0, 0, 0)
--- font_large_disable:SetShadowOffset(1, -1)
--- font_large_disable:SetJustifyH("CENTER")
+local font_class = CreateFont(font_class_name)
+font_class:SetFont(GameFontNormal:GetFont(), 13)
+font_class:SetTextColor(classColor.t[1], classColor.t[2], classColor.t[3], 1)
+font_class:SetShadowColor(0, 0, 0)
+font_class:SetShadowOffset(1, -1)
+font_class:SetJustifyH("CENTER")
 
 -----------------------------------------
 -- seperator
@@ -148,6 +148,50 @@ function addon:CreateFrame(name, parent, width, height, isTransparent)
 	return f
 end
 
+
+function addon:CreateMovableFrame(title, name, width, height, frameStrata, frameLevel)
+	local f = CreateFrame("Frame", name, UIParent, "BackdropTemplate")
+    f:EnableMouse(true)
+    f:SetIgnoreParentScale(true)
+	-- f:SetResizable(false)
+	f:SetMovable(true)
+	f:SetUserPlaced(true)
+	f:SetFrameStrata(frameStrata or "HIGH")
+	f:SetFrameLevel(frameLevel or 1)
+	f:SetClampedToScreen(true)
+	f:SetSize(width, height)
+	f:SetPoint("CENTER")
+	f:Hide()
+	addon:StylizeFrame(f)
+	
+	-- header
+	local header = CreateFrame("Frame", nil, f, "BackdropTemplate")
+	f.header = header
+	header:EnableMouse(true)
+	header:SetClampedToScreen(true)
+	header:RegisterForDrag("LeftButton")
+	header:SetScript("OnDragStart", function() f:StartMoving() end)
+	header:SetScript("OnDragStop", function() f:StopMovingOrSizing() end)
+	header:SetPoint("LEFT")
+	header:SetPoint("RIGHT")
+	header:SetPoint("BOTTOM", f, "TOP", 0, -1)
+	header:SetHeight(20)
+	addon:StylizeFrame(header, {.1, .1, .1, 1})
+	
+	header.text = header:CreateFontString(nil, "OVERLAY", font_class_title_name)
+	header.text:SetText(title)
+	header.text:SetPoint("CENTER", header)
+	
+	header.closeBtn = addon:CreateButton(header, "×", "red", {20, 20}, false, false, "CELL_FONT_SPECIAL", "CELL_FONT_SPECIAL")
+	header.closeBtn:SetPoint("RIGHT")
+	header.closeBtn:SetScript("OnClick", function() f:Hide() end)
+
+	return f
+end
+
+-----------------------------------------
+-- tooltip
+-----------------------------------------
 local function SetTooltip(widget, anchor, x, y, ...)
 	local tooltips = {...}
 

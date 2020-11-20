@@ -384,10 +384,11 @@ function eventFrame:ADDON_LOADED(arg1)
         --     }
         -- }
         
-        -- revise ---------------------------------------------------------------------------------
+        -- misc ---------------------------------------------------------------------------------
         Cell.loaded = true
         Cell.version = GetAddOnMetadata(addonName, "version")
         Cell:Fire("Revise")
+        F:CheckWhatsNew()
     end
 end
 
