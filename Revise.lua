@@ -184,6 +184,55 @@ local function Revise()
 		end)
 		-- reset CellDB["debuffBlacklist"]
 		CellDB["debuffBlacklist"] = F:GetDefaultDebuffBlacklist()
+		-- update click-castings
+		-- self:SetBindingClick(true, "MOUSEWHEELUP", self, "Button6")
+        -- self:SetBindingClick(true, "SHIFT-MOUSEWHEELUP", self, "Button7")
+        -- self:SetBindingClick(true, "CTRL-MOUSEWHEELUP", self, "Button8")
+        -- self:SetBindingClick(true, "ALT-MOUSEWHEELUP", self, "Button9")
+        -- self:SetBindingClick(true, "CTRL-SHIFT-MOUSEWHEELUP", self, "Button10")
+        -- self:SetBindingClick(true, "ALT-SHIFT-MOUSEWHEELUP", self, "Button11")
+        -- self:SetBindingClick(true, "ALT-CTRL-MOUSEWHEELUP", self, "Button12")
+        -- self:SetBindingClick(true, "ALT-CTRL-SHIFT-MOUSEWHEELUP", self, "Button13")
+
+        -- self:SetBindingClick(true, "MOUSEWHEELDOWN", self, "Button14")
+        -- self:SetBindingClick(true, "SHIFT-MOUSEWHEELDOWN", self, "Button15")
+        -- self:SetBindingClick(true, "CTRL-MOUSEWHEELDOWN", self, "Button16")
+        -- self:SetBindingClick(true, "ALT-MOUSEWHEELDOWN", self, "Button17")
+        -- self:SetBindingClick(true, "CTRL-SHIFT-MOUSEWHEELDOWN", self, "Button18")
+        -- self:SetBindingClick(true, "ALT-SHIFT-MOUSEWHEELDOWN", self, "Button19")
+        -- self:SetBindingClick(true, "ALT-CTRL-MOUSEWHEELDOWN", self, "Button20")
+		-- self:SetBindingClick(true, "ALT-CTRL-SHIFT-MOUSEWHEELDOWN", self, "Button21")
+		local replacements = {
+			[6] = "type-SCROLLUP",
+			[7] = "shift-type-SCROLLUP",
+			[8] = "ctrl-type-SCROLLUP",
+			[9] = "alt-type-SCROLLUP",
+			[10] = "ctrl-shift-type-SCROLLUP",
+			[11] = "alt-shift-type-SCROLLUP",
+			[12] = "alt-ctrl-type-SCROLLUP",
+			[13] = "alt-ctrl-shift-type-SCROLLUP",
+
+			[14] = "type-SCROLLDOWN",
+			[15] = "shift-type-SCROLLDOWN",
+			[16] = "ctrl-type-SCROLLDOWN",
+			[17] = "alt-type-SCROLLDOWN",
+			[18] = "ctrl-shift-type-SCROLLDOWN",
+			[19] = "alt-shift-type-SCROLLDOWN",
+			[20] = "alt-ctrl-type-SCROLLDOWN",
+			[21] = "alt-ctrl-shift-type-SCROLLDOWN",
+		}
+		for class, classTable in pairs(CellDB["clickCastings"]) do
+			for spec, specTable in pairs(classTable) do
+				if type(specTable) == "table" then -- not "useCommon"
+					for _, clickCastingTable in pairs(specTable) do
+						local keyID = tonumber(strmatch(clickCastingTable[1], "%d+"))
+						if keyID and keyID > 5 then
+							clickCastingTable[1] = replacements[keyID]
+						end
+					end
+				end
+			end
+		end
 	end
 
 	CellDB["revise"] = Cell.version

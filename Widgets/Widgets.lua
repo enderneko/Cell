@@ -51,6 +51,8 @@ local font_title_disable_name = strupper(addonName).."_FONT_WIDGET_TITLE_DISABLE
 local font_name = strupper(addonName).."_FONT_WIDGET"
 local font_disable_name = strupper(addonName).."_FONT_WIDGET_DISABLE"
 local font_special_name = strupper(addonName).."_FONT_SPECIAL"
+local font_class_title_name = strupper(addonName).."_FONT_CLASS_TITLE"
+local font_class_name = strupper(addonName).."_FONT_CLASS"
 
 local font_title = CreateFont(font_title_name)
 font_title:SetFont(GameFontNormal:GetFont(), 14)
@@ -2021,7 +2023,103 @@ function addon:CreateDropdown(parent, width, dropdownType)
 end
 
 -----------------------------------------
--- binding button
+-- binding frame
+-----------------------------------------
+local function GetModifier()
+    local modifier = "" -- "shift-", "ctrl-", "alt-", "ctrl-shift-", "alt-shift-", "alt-ctrl-", "alt-ctrl-shift-"
+    local alt, ctrl, shift = IsAltKeyDown(), IsControlKeyDown(), IsShiftKeyDown()
+    if alt and ctrl and shift then
+        modifier = "alt-ctrl-shift-"
+    elseif alt and ctrl then
+        modifier = "alt-ctrl-"
+    elseif alt and shift then
+        modifier = "alt-shift-"
+    elseif ctrl and shift then
+        modifier = "ctrl-shift-"
+    elseif alt then
+        modifier = "alt-"
+    elseif ctrl then
+        modifier = "ctrl-"
+    elseif shift then
+        modifier = "shift-"
+    end
+    return modifier
+end
+
+function addon:CreateBindingButton(parent, width)
+	if not parent.bindingButton then
+		parent.bindingButton = addon:CreateFrame(parent:GetName().."BindingButton", parent, 50, 20)
+		parent.bindingButton:SetFrameStrata("TOOLTIP")
+		parent.bindingButton:Hide()
+		tinsert(UISpecialFrames, parent.bindingButton:GetName())
+		addon:StylizeFrame(parent.bindingButton, nil, {classColor.t[1], classColor.t[2], classColor.t[3]})
+
+		parent.bindingButton.close = addon:CreateButton(parent.bindingButton, "×", "red", {18, 18}, true, true, "CELL_FONT_SPECIAL", "CELL_FONT_SPECIAL")
+		parent.bindingButton.close:SetPoint("TOPRIGHT", -1, -1)
+		parent.bindingButton.close:SetScript("OnClick", function()
+			parent.bindingButton:Hide()
+		end)
+        
+        parent.bindingButton.text = parent.bindingButton:CreateFontString(nil, "OVERLAY", font_name)
+        parent.bindingButton.text:SetPoint("LEFT")
+        parent.bindingButton.text:SetPoint("RIGHT", parent.bindingButton.close, "LEFT")
+        parent.bindingButton.text:SetText(L["Press Key to Bind"])
+
+		-- parent.bindingButton.bind = addon:CreateButton(parent.bindingButton, L["Press Key to Bind"], "none", {18, 18}, true, true, nil, nil, "SecureHandlerEnterLeaveTemplate")
+		-- parent.bindingButton.bind:SetPoint("TOPLEFT", 1, -1)
+		-- parent.bindingButton.bind:SetPoint("RIGHT", parent.bindingButton.close, "LEFT")
+		-- parent.bindingButton.bind:SetScript("OnClick", function(...)
+		-- 	print(...)
+        -- end)
+        
+        parent.bindingButton:SetScript("OnHide", function()
+            parent.bindingButton:Hide()
+        end)
+
+		parent.bindingButton:EnableMouse(true)
+		parent.bindingButton:EnableMouseWheel(true)
+		parent.bindingButton:EnableKeyboard(true)
+
+        -- mouse
+		parent.bindingButton:SetScript("OnMouseDown", function(self, key)
+            parent.bindingButton:Hide()
+            if key == "LeftButton" then
+                key = "Left"
+            elseif key == "RightButton" then
+                key = "Right"
+            elseif key == "MiddleButton" then
+                key = "Middle"
+            end
+
+            if parent.bindingButton.func then parent.bindingButton.func(GetModifier(), key) end
+        end)
+        
+        -- mouse wheel
+		parent.bindingButton:SetScript("OnMouseWheel", function(self, key)
+            parent.bindingButton:Hide()
+            if parent.bindingButton.func then parent.bindingButton.func(GetModifier(), (key==1) and "ScrollUp" or "ScrollDown") end
+        end)
+        
+        -- keyboard
+		parent.bindingButton:SetScript("OnKeyDown", function(self, key)
+            if key == "ESCAPE" or key == "LALT" or key == "RALT" or key == "LCTRL" or key == "RCTRL" or key == "LSHIFT" or key ==  "RSHIFT" then return end
+            parent.bindingButton:Hide()
+            if parent.bindingButton.func then parent.bindingButton.func(GetModifier(), key) end
+		end)
+        
+        function parent.bindingButton:SetFunc(func)
+            parent.bindingButton.func = func
+        end
+	end
+
+	parent.bindingButton:ClearAllPoints()
+	parent.bindingButton:SetWidth(width)
+
+	return parent.bindingButton
+end
+
+-----------------------------------------
+-- binding list button
 -----------------------------------------
 local function CreateGrid(parent, text, width)
 	local grid = CreateFrame("Button", nil, parent, "BackdropTemplate")
@@ -2066,7 +2164,7 @@ local function CreateGrid(parent, text, width)
 	return grid
 end
 
-function addon:CreateBindingButton(parent, modifier, bindKey, bindType, bindAction)
+function addon:CreateBindingListButton(parent, modifier, bindKey, bindType, bindAction)
 	local b = CreateFrame("Button", nil, parent, "BackdropTemplate")
 	b:SetFrameLevel(5)
 	b:SetSize(100, 20)
