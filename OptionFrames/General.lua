@@ -110,7 +110,7 @@ local resCB = Cell:CreateCheckButton(generalTab, L["Show Battle Res Timer"], fun
     CellDB["raidTools"]["showBattleRes"] = checked
     Cell:Fire("UpdateRaidTools", "battleRes")
 end, L["Show Battle Res Timer"], L["Only show during encounter or in mythic+"])
-resCB:SetPoint("LEFT", setupCB, "RIGHT", 110, 0)
+resCB:SetPoint("LEFT", setupCB, "RIGHT", 120, 0)
 
 -- ready & pull
 local pullText, pullDropdown, secDropdown
@@ -229,7 +229,7 @@ marksCB = Cell:CreateCheckButton(generalTab, L["Target Marks"], function(checked
     bothCB:SetChecked(false)
     Cell:Fire("UpdateRaidTools", "marks")
 end)
-marksCB:SetPoint("LEFT", marksBarCB, "RIGHT", 110, 0)
+marksCB:SetPoint("TOPLEFT", marksBarCB, "BOTTOMRIGHT", 5, -10)
 
 worldMarksCB = Cell:CreateCheckButton(generalTab, L["World Marks"], function(checked, self)
     CellDB["raidTools"]["marks"] = "world"
@@ -238,7 +238,7 @@ worldMarksCB = Cell:CreateCheckButton(generalTab, L["World Marks"], function(che
     bothCB:SetChecked(false)
     Cell:Fire("UpdateRaidTools", "marks")
 end)
-worldMarksCB:SetPoint("LEFT", marksCB, "RIGHT", 80, 0)
+worldMarksCB:SetPoint("LEFT", marksCB, "RIGHT", 101, 0)
 
 bothCB = Cell:CreateCheckButton(generalTab, L["Both"], function(checked, self)
     CellDB["raidTools"]["marks"] = "both"
@@ -247,7 +247,7 @@ bothCB = Cell:CreateCheckButton(generalTab, L["Both"], function(checked, self)
     bothCB:SetChecked(true)
     Cell:Fire("UpdateRaidTools", "marks")
 end)
-bothCB:SetPoint("LEFT", worldMarksCB, "RIGHT", 80, 0)
+bothCB:SetPoint("LEFT", worldMarksCB, "RIGHT", 101, 0)
 
 -------------------------------------------------
 -- functions
