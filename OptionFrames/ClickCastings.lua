@@ -7,6 +7,7 @@ Cell.frames.clickCastingsTab = clickCastingsTab
 clickCastingsTab:SetAllPoints(Cell.frames.optionsFrame)
 clickCastingsTab:Hide()
 
+local bindingsFrame
 local clickCastingTable
 local loaded
 local LoadProfile
@@ -259,7 +260,10 @@ local function UpdateClickCastings(noLoad)
     F:Debug("|cff77ff77UpdateClickCastings:|r useCommon: "..tostring(Cell.vars.clickCastingTable["useCommon"]))
     clickCastingTable = Cell.vars.clickCastingTable["useCommon"] and Cell.vars.clickCastingTable["common"] or Cell.vars.clickCastingTable[Cell.vars.playerSpecID]
     
-    if not noLoad then
+    if noLoad then -- create new
+        bindingsFrame.scrollFrame:SetContentHeight(20, #clickCastingTable, 5)
+        bindingsFrame.scrollFrame:ScrollToBottom()
+    else
         if clickCastingsTab:IsVisible() then
             LoadProfile(Cell.vars.clickCastingTable["useCommon"])
         else
@@ -637,7 +641,7 @@ end
 -------------------------------------------------
 -- bindings frame
 -------------------------------------------------
-local bindingsFrame = Cell:CreateFrame("ClickCastingsTab_BindingsFrame", clickCastingsTab)
+bindingsFrame = Cell:CreateFrame("ClickCastingsTab_BindingsFrame", clickCastingsTab)
 bindingsFrame:SetPoint("TOPLEFT", 5, -97)
 bindingsFrame:SetPoint("BOTTOMRIGHT", -5, 24)
 bindingsFrame:Show()
