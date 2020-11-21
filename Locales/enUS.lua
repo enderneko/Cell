@@ -38,9 +38,9 @@ select(2, ...).L = setmetatable({
 	["pullTimerTips"] = "\n|rPull Timer\nLeft-Click: |cffffffffstart timer|r\nRight-Click: |cffffffffcancel timer|r",
 	["marksTips"] = "\n|rTarget marker\nLeft-Click: |cffffffffset raid marker on target|r\nRight-Click: |cfffffffflock raid marker on target (in your group)|r",
 
-	["r24-release"] = [[
+	["r25-release"] = [[
 		<h1>Click-Castings</h1>
-		<p>Keyboard support for Click-Castings comes.</p> 
+		<p>Keyboard/multi-button mouse support for Click-Castings comes.</p> 
 		<p>Due to code changes, you might have to reconfigure Key Bindings.</p>
 		<br/>
 		<h1>Indicators</h1>
