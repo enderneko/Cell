@@ -98,6 +98,7 @@ end
 -------------------------------------------------
 -- raid preview
 -------------------------------------------------
+local previewMode = 0
 local raidPreview = Cell:CreateFrame("LayoutsRowsColumnsPreviewFrame", Cell.frames.mainFrame, nil, nil, true)
 raidPreview:SetFrameStrata("HIGH")
 raidPreview:SetAllPoints(Cell.frames.mainFrame)
@@ -568,8 +569,8 @@ end
 -------------------------------------------------
 -- group filter
 -------------------------------------------------
-local groupFilterText = Cell:CreateSeparator(L["Group Filter"], layoutsTab, 188)
-groupFilterText:SetPoint("TOPLEFT", 5, -125)
+local groupFilterText = Cell:CreateSeparator(L["Group Filter"], layoutsTab, 122)
+groupFilterText:SetPoint("TOPLEFT", 5, -120)
 
 local function UpdateButtonBorderColor(flag, b)
     local borderColor 
@@ -594,7 +595,9 @@ for i = 1, 8 do
     end)
     
     if i == 1 then
-        groupButtons[i]:SetPoint("TOPLEFT", groupFilterText, "BOTTOMLEFT", 5, -12)
+        groupButtons[i]:SetPoint("TOPLEFT", groupFilterText, "BOTTOMLEFT", 10, -12)
+    elseif i == 5 then
+        groupButtons[i]:SetPoint("TOPLEFT", groupButtons[1], "BOTTOMLEFT", 0, -3)
     else
         groupButtons[i]:SetPoint("LEFT", groupButtons[i-1], "RIGHT", 3, 0)
     end
@@ -607,10 +610,77 @@ local function UpdateGroupFilter()
 end
 
 -------------------------------------------------
--- group orientation
+-- group arrangement
 -------------------------------------------------
-local orientationText = Cell:CreateSeparator(L["Group Orientation"], layoutsTab, 188)
-orientationText:SetPoint("TOPLEFT", 203, -125)
+local arrangementText = Cell:CreateSeparator(L["Group Arrangement"], layoutsTab, 254)
+arrangementText:SetPoint("TOPLEFT", 137, -120)
+
+-- orientation
+local orientationDropdown = Cell:CreateDropdown(layoutsTab, 80)
+orientationDropdown:SetPoint("TOPLEFT", arrangementText, "BOTTOMLEFT", 5, -25)
+orientationDropdown:SetItems({
+    {
+        ["text"] = L["Vertical"],
+        ["value"] = "vertical",
+    },
+    {
+        ["text"] = L["Horizontal"],
+        ["value"] = "horizontal",
+    },
+})
+
+local orientationText = layoutsTab:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
+orientationText:SetPoint("BOTTOMLEFT", orientationDropdown, "TOPLEFT", 0, 1)
+orientationText:SetText(L["Orientation"])
+
+-- anchor
+local anchorDropdown = Cell:CreateDropdown(layoutsTab, 90)
+anchorDropdown:SetPoint("LEFT", orientationDropdown, "RIGHT", 10, 0)
+anchorDropdown:SetItems({
+    {
+        ["text"] = L["BOTTOMLEFT"],
+        ["value"] = "BOTTOMLEFT",
+    },
+    {
+        ["text"] = L["BOTTOMRIGHT"],
+        ["value"] = "BOTTOMRIGHT",
+    },
+    {
+        ["text"] = L["TOPLEFT"],
+        ["value"] = "TOPLEFT",
+    },
+    {
+        ["text"] = L["TOPRIGHT"],
+        ["value"] = "TOPRIGHT",
+    },
+})
+
+local anchorText = layoutsTab:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
+anchorText:SetPoint("BOTTOMLEFT", anchorDropdown, "TOPLEFT", 0, 1)
+anchorText:SetText(L["Anchor Point"])
+
+-- preview mode
+local previewModeBtn = Cell:CreateButton(layoutsTab, "|cff777777"..L["OFF"], "class-hover", {50, 20})
+previewModeBtn:SetPoint("LEFT", anchorDropdown, "RIGHT", 10, 0)
+previewModeBtn:SetScript("OnClick", function()
+    previewMode = (previewMode == 2) and 0 or (previewMode + 1)
+
+    if previewMode == 0 then
+        previewModeBtn:SetText("|cff777777"..L["OFF"])
+    elseif previewMode == 1 then
+        previewModeBtn:SetText(L["Party"])
+    else
+        previewModeBtn:SetText(L["Raid"])
+    end
+end)
+previewModeBtn:SetScript("OnHide", function()
+    previewMode = 0
+    previewModeBtn:SetText("|cff777777"..L["OFF"])
+end)
+
+local previewModeText = layoutsTab:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
+previewModeText:SetPoint("BOTTOMLEFT", previewModeBtn, "TOPLEFT", 0, 1)
+previewModeText:SetText(L["Preview"])
 
 local rcSlider, groupSpacingSlider
 local orientationSwitch = Cell:CreateSwitch(layoutsTab, L["Vertical"], "vertical", L["Horizontal"], "horizontal", function(value)
@@ -637,7 +707,7 @@ local orientationSwitch = Cell:CreateSwitch(layoutsTab, L["Vertical"], "vertical
     end
     UpdateRaidPreview()
 end)
-orientationSwitch:SetPoint("TOPLEFT", orientationText, "BOTTOMLEFT", 5, -12)
+-- orientationSwitch:SetPoint("TOPLEFT", orientationText, "BOTTOMLEFT", 5, -12)
 orientationSwitch:SetWidth(165)
 
 -------------------------------------------------
