@@ -23,10 +23,10 @@ cellMainFrame:SetClampRectInsets(0, 0, 15, 0)
 local anchorFrame = CreateFrame("Frame", "CellAnchorFrame", cellMainFrame)
 Cell.frames.anchorFrame = anchorFrame
 anchorFrame:SetPoint("TOPLEFT", UIParent, "CENTER")
-anchorFrame:SetSize(1, 1)
+anchorFrame:SetSize(20, 10)
 anchorFrame:SetMovable(true)
 
-cellMainFrame:SetPoint("TOPLEFT", anchorFrame, "BOTTOMRIGHT")
+cellMainFrame:SetPoint("TOPLEFT", anchorFrame, "BOTTOMLEFT", 0, -4)
 
 local function RegisterDragForMainFrame(frame)
     -- frame:RegisterForDrag("LeftButton")
@@ -44,7 +44,7 @@ end
 -- buttons
 -------------------------------------------------
 local options = Cell:CreateButton(cellMainFrame, "", "red", {20, 10}, false, true, nil, nil, nil, L["Options"])
-options:SetPoint("BOTTOMLEFT", cellMainFrame, "TOPLEFT", 0, 4)
+options:SetPoint("TOPLEFT", anchorFrame)
 options:SetFrameStrata("MEDIUM")
 RegisterDragForMainFrame(options)
 options:SetScript("OnClick", function()
