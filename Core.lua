@@ -129,23 +129,26 @@ function F:UpdateLayout(groupType, isAutoSwitch)
     end
 end
 
+local bgMaxPlayers = {
+    [2197] = 40, -- 科尔拉克的复仇
+}
+
 -- layout auto switch
 local instanceType
 local function GroupTypeChanged()
     if instanceType == "pvp" then
         local name, _, _, _, _, _, _, id = GetInstanceInfo()
-        for i = 1, GetNumBattlegroundTypes() do
-            local bgName, _, _, _, _, _, bgId, maxPlayers = GetBattlegroundInfo(i)
-            if id == bgId or name == bgName then
-                if maxPlayers <= 15 then
-                    Cell.vars.inBattleground = 15
-                    F:UpdateLayout("battleground15", true)
-                else
-                    Cell.vars.inBattleground = 40
-                    F:UpdateLayout("battleground40", true)
-                end
-                break
+        if bgMaxPlayers[id] then
+            if bgMaxPlayers[id] <= 15 then
+                Cell.vars.inBattleground = 15
+                F:UpdateLayout("battleground15", true)
+            else
+                Cell.vars.inBattleground = 40
+                F:UpdateLayout("battleground40", true)
             end
+        else
+            Cell.vars.inBattleground = 15
+            F:UpdateLayout("battleground15", true)
         end
     else
         if Cell.vars.groupType == "solo" or Cell.vars.groupType == "party" then
@@ -490,6 +493,13 @@ end
 local prevSpec
 function eventFrame:PLAYER_LOGIN()
     F:Debug("PLAYER_LOGIN")
+    
+    --! init bgMaxPlayers
+    for i = 1, GetNumBattlegroundTypes() do
+        local bgName, _, _, _, _, _, bgId, maxPlayers = GetBattlegroundInfo(i)
+        bgMaxPlayers[bgId] = maxPlayers
+    end
+
     --! init Cell.vars.currentLayout and Cell.vars.currentLayoutTable 
     eventFrame:GROUP_ROSTER_UPDATE()
 
