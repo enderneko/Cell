@@ -11,6 +11,7 @@ select(2, ...).L = setmetatable({
 	["togglemenu"] = "Menu",
 	["T"] = "Talent",
 	["P"] = "PvP Talent",
+	["notBound"] = "|cff777777".._G.NOT_BOUND,
 
 	["dispellableByMe"] = "Only show debuffs dispellable by me",
 	["castByMe"] = "Only show buffs cast by me",

@@ -46,9 +46,16 @@ local mouseKeyIDs = {
 
 -- shift-Left -> shift-type1
 local function GetAttributeKey(modifier, bindKey)
-    modifier = modifier or ""
-    bindKey = mouseKeyIDs[bindKey] or ("-"..bindKey) -- normal mouse button or wheel/keyboard
-    return modifier.."type"..bindKey
+    if mouseKeyIDs[bindKey] then -- normal mouse button
+        return modifier.."type"..mouseKeyIDs[bindKey]
+    elseif bindKey == "ScrollUp" or bindKey == "ScrollDown" then -- mouse wheel
+        return modifier.."type-"..strupper(bindKey)
+    else -- keyboard
+        modifier = string.gsub(modifier, "alt%-", "alt")
+        modifier = string.gsub(modifier, "ctrl%-", "ctrl")
+        modifier = string.gsub(modifier, "shift%-", "shift")
+        return "type-"..modifier..bindKey
+    end
 end
 
 local function EncodeDB(modifier, bindKey, bindType, bindAction)
@@ -73,6 +80,18 @@ local function EncodeDB(modifier, bindKey, bindType, bindAction)
     end
 end
 
+local function DecodeKeyboard(fullKey)
+    fullKey = string.gsub(fullKey, "alt", "alt-")
+    fullKey = string.gsub(fullKey, "ctrl", "ctrl-")
+    fullKey = string.gsub(fullKey, "shift", "shift-")
+    local modifier, key = strmatch(fullKey, "^(.*-)(.+)$")
+    if not modifier then -- no modifier
+        modifier = ""
+        key = fullKey
+    end
+    return modifier, key
+end
+
 local function DecodeDB(t)
     local modifier, _, key = strmatch(t[1], "^(.*)type(-*)(.+)$")
     
@@ -83,11 +102,11 @@ local function DecodeDB(t)
             bindKey = F:GetIndex(mouseKeyIDs, tonumber(key))
         else -- mouse wheel or keyboard
             if key == "SCROLLUP" then
-                bindKey = L["ScrollUp"]
+                bindKey = "ScrollUp"
             elseif key == "SCROLLDOWN" then
-                bindKey = L["ScrollDown"]
+                bindKey = "ScrollDown"
             else
-                bindKey = F:UpperFirst(key)
+                modifier, bindKey = DecodeKeyboard(key)
             end
         end
     else
@@ -170,12 +189,16 @@ end
 -------------------------------------------------
 -- mouse wheel & keyboard
 -------------------------------------------------
-local function InitMouseWheel(b)
+local function SetBindingClicks(b)
     b:SetAttribute("_onenter", [[
         self:ClearBindings()
 
         self:SetBindingClick(true, "MOUSEWHEELUP", self, "SCROLLUP")
         self:SetBindingClick(true, "MOUSEWHEELDOWN", self, "SCROLLDOWN")
+
+        self:Run(self:GetAttribute("snippet"))
+        -- self:SetBindingClick(true, "SHIFT-B", self, "shiftB")
+        -- self:SetBindingClick(true, "SHIFT-C", self, "shiftC")
     ]])
 
     b:SetAttribute("_onleave", [[
@@ -183,28 +206,52 @@ local function InitMouseWheel(b)
     ]])
 end
 
+local function GetBindingSnippet()
+    local bindingClicks = {}
+    for _, t in pairs(clickCastingTable) do
+        if t[1] ~= "notBound" then
+            local _, _, key = strmatch(t[1], "^(.*)type(-*)(.+)$")
+            if not tonumber(key) and key ~= "SCROLLUP" and key ~= "SCROLLDOWN" then -- keyboard
+                if not bindingClicks[key] then
+                    local m, k = DecodeKeyboard(key)
+                    -- override keyboard to click
+                    bindingClicks[key] = [[self:SetBindingClick(true, "]]..strupper(m..k)..[[", self, "]]..key..[[")]]
+                end
+            end
+        end
+    end
+
+    local snippet = ""
+    for _, bindingClick in pairs(bindingClicks) do
+        snippet = snippet..bindingClick.."\n"
+    end
+    return snippet
+end
+
 -------------------------------------------------
 -- update click-castings
 -------------------------------------------------
+local previousClickCastings
 local function ClearClickCastings(b)
-    print(b:GetAttribute("*", "type", "*"))
-    -- for i = 1, 21 do
-    --     if i <= 5 then
-    --         for _, modifier in pairs(modifiers) do
-    --             b:SetAttribute(modifier.."type"..i, nil)
-    --         end
-    --     else
-    --         b:SetAttribute("type"..i, nil)
-    --     end
-    -- end
+    if not previousClickCastings then return end
+    for _, t in pairs(previousClickCastings) do
+        b:SetAttribute(t[1], nil)
+        if t[2] == "spell" then
+            b:SetAttribute(string.gsub(t[1], "type", "spell"), nil)
+        elseif t[2] == "macro" then
+            b:SetAttribute(string.gsub(t[1], "type", "macrotext"), nil)
+        end
+    end
 end
 
-local function SetDBAttribute(b, t)
-    b:SetAttribute(t[1], t[2])
-    if t[2] == "spell" then
-        b:SetAttribute(string.gsub(t[1], "type", "spell"), t[3])
-    elseif t[2] == "macro" then
-        b:SetAttribute(string.gsub(t[1], "type", "macrotext"), t[3])
+local function ApplyClickCastings(b)
+    for _, t in pairs(clickCastingTable) do
+        b:SetAttribute(t[1], t[2])
+        if t[2] == "spell" then
+            b:SetAttribute(string.gsub(t[1], "type", "spell"), t[3])
+        elseif t[2] == "macro" then
+            b:SetAttribute(string.gsub(t[1], "type", "macrotext"), t[3])
+        end
     end
 end
 
@@ -219,18 +266,22 @@ local function UpdateClickCastings(noLoad)
             loaded = false
         end
     end
-
+    
+    local snippet = GetBindingSnippet()
+    F:Debug(snippet)
+    
     F:IterateAllUnitButtons(function(b)
-        -- init mouse wheel
-        InitMouseWheel(b)
         -- clear if attribute already set
         ClearClickCastings(b)
 
+        -- update bindingClicks
+        b:SetAttribute("snippet", snippet)
+        SetBindingClicks(b)
+        
         -- load db and set attribute
-        for _, t in pairs(clickCastingTable) do
-            SetDBAttribute(b, t)
-        end
+        ApplyClickCastings(b)
     end)
+    previousClickCastings = F:Copy(clickCastingTable)
 end
 Cell:RegisterCallback("UpdateClickCastings", "UpdateClickCastings", UpdateClickCastings)
 
@@ -309,7 +360,9 @@ local function ShowKeysMenu(index, b)
     menu:Hide()
     
     bindingButton:SetFunc(function(modifier, key)
-        print(modifier, key)
+        F:Debug(modifier, key)
+        local modifierDisplay = modifiersDisplay[F:GetIndex(modifiers, modifier)]
+        b.keyGrid:SetText(modifierDisplay..L[key])
 
         changed[index] = changed[index] or {b}
         -- check modifier
@@ -328,54 +381,6 @@ local function ShowKeysMenu(index, b)
         CheckChanged(index, b)
         CheckChanges()
     end)
-    
-    -- UpdateInvalidCache()
-    -- local items = {}
-    -- for i, key in pairs(keys) do
-    --     -- init topmenu
-    --     tinsert(items, {
-    --         ["text"] = L[key],
-    --         ["children"] = {},
-    --     })
-
-    --     for j, modifier in pairs(modifiers) do
-    --         local isValid, tIndex = IsBindKeyValid(modifier, key, true)
-    --         -- init submenu
-    --         tinsert(items[i]["children"], {
-    --             ["text"] = modifiersDisplay[j]..L[key],
-    --             ["textColor"] = (isValid or tIndex == index) and {1, 1, 1} or {.9, .1, .1},
-    --             ["onClick"] = function()
-    --                 if isValid or tIndex == index then
-    --                     b.keyGrid:SetText(modifiersDisplay[j]..L[key])
-
-    --                     changed[index] = changed[index] or {b}
-    --                     -- check modifier
-    --                     if modifier ~= b.modifier then
-    --                         changed[index]["modifier"] = modifier
-    --                     else
-    --                         changed[index]["modifier"] = nil
-    --                     end
-    --                     -- check bindKey
-    --                     if key ~= b.bindKey then
-    --                         changed[index]["bindKey"] = key
-    --                     else
-    --                         changed[index]["bindKey"] = nil
-    --                     end
-
-    --                     CheckChanged(index, b)
-    --                     CheckChanges()
-    --                 -- else
-    --                 --     F:Print(modifiersDisplay[j]..L[key].." "..L["already registered!"])
-    --                 end
-    --             end,
-    --         })
-    --     end
-    -- end
-    -- menu:SetItems(items)
-    -- menu:ClearAllPoints()
-    -- menu:SetPoint("TOPLEFT", b.keyGrid, "BOTTOMLEFT", 0, -1)
-    -- menu:SetWidths(95, 150)
-    -- menu:ShowMenu()
 end
 
 local function ShowTypesMenu(index, b)
@@ -725,20 +730,18 @@ end
 local newBtn = Cell:CreateButton(clickCastingsTab, L["New"], "blue-hover", {129, 20})
 newBtn:SetPoint("TOPLEFT", bindingsFrame, "BOTTOMLEFT", 0, 1)
 newBtn:SetScript("OnClick", function()
-    -- local validModifier, validKey = GetAValidBindKey()
-    -- if not validModifier or not validKey then return end
+    local b = CreateBindingListButton("", "notBound", "general", "target", #clickCastingTable+1)
+    tinsert(clickCastingTable, EncodeDB("", "notBound", "general", "target"))
 
-    -- local b = CreateBindingListButton(validModifier, validKey, "general", "target", #clickCastingTable+1)
-    -- tinsert(clickCastingTable, EncodeDB(validModifier, validKey, "general", "target"))
-
-    -- if last then
-    --     b:SetPoint("TOP", last, "BOTTOM", 0, -5)
-    -- else
-    --     b:SetPoint("TOP")
-    -- end
-    -- last = b
-    -- Cell:Fire("UpdateClickCastings", true)
-    -- menu:Hide()
+    if last then
+        b:SetPoint("TOP", last, "BOTTOM", 0, -5)
+    else
+        b:SetPoint("TOP")
+    end
+    last = b
+    Cell:Fire("UpdateClickCastings", true)
+    menu:Hide()
+    bindingButton:Hide()
 end)
 
 saveBtn = Cell:CreateButton(clickCastingsTab, L["Save"], "green-hover", {130, 20})
