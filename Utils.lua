@@ -438,15 +438,15 @@ end
 -------------------------------------------------
 -- frame position
 -------------------------------------------------
-function F:SavePosition(frame, pTable)
-    local point, relativeTo, relativePoint, xOfs, yOfs = frame:GetPoint(1)
-    pTable[1], pTable[2], pTable[3], pTable[4] = point, relativePoint, xOfs, yOfs
-end
+-- function F:SavePosition(frame, pTable)
+--     local point, relativeTo, relativePoint, xOfs, yOfs = frame:GetPoint(1)
+--     pTable[1], pTable[2], pTable[3], pTable[4] = point, relativePoint, xOfs, yOfs
+-- end
 
-function F:RestorePosition(frame, pTable)
-    frame:ClearAllPoints()
-    frame:SetPoint(pTable[1], UIParent, pTable[2], pTable[3], pTable[4])
-end
+-- function F:RestorePosition(frame, pTable)
+--     frame:ClearAllPoints()
+--     frame:SetPoint(pTable[1], UIParent, pTable[2], pTable[3], pTable[4])
+-- end
 
 -------------------------------------------------
 -- instance

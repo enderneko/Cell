@@ -201,8 +201,8 @@ function eventFrame:ADDON_LOADED(arg1)
                 ["pullTimer"] = {"ERT", 7},
                 ["showMarks"] = false,
                 ["marks"] = "both",
-                ["buttonsPosition"] = {"TOPRIGHT", "CENTER", 0, 0},
-                ["marksPosition"] = {"BOTTOMRIGHT", "CENTER", 0, 0},
+                ["buttonsPosition"] = {},
+                ["marksPosition"] = {},
             }
         end
         -- if type(CellDB["clamped"]) ~= "boolean" then CellDB["clamped"] = false end
@@ -251,7 +251,7 @@ function eventFrame:ADDON_LOADED(arg1)
             CellDB["layouts"] = {
                 ["default"] = {
                     ["size"] = {66, 46},
-                    ["position"] = {"TOPLEFT", "CENTER", 0, 0},
+                    ["position"] = {},
                     ["powerHeight"] = 2,
                     ["spacing"] = 3,
                     ["orientation"] = "vertical",

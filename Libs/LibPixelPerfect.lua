@@ -1,10 +1,10 @@
 --------------------------------------------
 -- LibPixelPerfect
--- fyhcslb 2020-09-05 07:21:47
+-- fyhcslb 2020-11-22 20:22:24
 -- http://wow.gamepedia.com/UI_Scale
 -- http://www.wowinterface.com/forums/showthread.php?t=31813
 --------------------------------------------
-local lib = LibStub:NewLibrary("LibPixelPerfect", "1.0")
+local lib = LibStub:NewLibrary("LibPixelPerfect", "2")
 if not lib then return end
 
 function lib:GetResolution()
@@ -36,16 +36,23 @@ function lib:PixelPerfectScale(frame)
 end
 
 -- position perfect!
-function lib:PixelPerfectPoint(frame, anchorTo)
-	local _, vRes = lib:GetResolution()
-	
-	local left, bottom, width, height = frame:GetRect()
+function lib:PixelPerfectPoint(frame)
+	local left = frame:GetLeft()
 	local top = frame:GetTop()
 	
 	frame:ClearAllPoints()
-	if frame.scaleFactor and vRes then
-		frame:SetPoint("TOPLEFT", anchorTo or UIParent, math.floor(left + .5), -math.floor((vRes - top * frame.scaleFactor) / frame.scaleFactor + .5))
-	else
-		frame:SetPoint("BOTTOMLEFT", anchorTo or UIParent, math.floor(left + .5), math.floor(bottom + .5))
-	end
+	frame:SetPoint("TOPLEFT", UIParent, "BOTTOMLEFT", math.floor(left + .5), math.floor(top + .5))
+end
+
+function lib:SavePixelPerfectPosition(frame, positionTable)
+	local left = math.floor(frame:GetLeft() + .5)
+	local top = math.floor(frame:GetTop() + .5)
+	positionTable[1], positionTable[2] = left, top
+end
+
+function lib:LoadPixelPerfectPosition(frame, positionTable)
+	if type(positionTable) ~= "table" or #positionTable ~= 2 then return end
+
+	frame:ClearAllPoints()
+	frame:SetPoint("TOPLEFT", UIParent, "BOTTOMLEFT", positionTable[1], positionTable[2])
 end

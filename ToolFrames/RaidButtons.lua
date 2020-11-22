@@ -1,6 +1,7 @@
 local _, Cell = ...
 local L = Cell.L
 local F = Cell.funcs
+local LPP = LibStub:GetLibrary("LibPixelPerfect")
 
 local readyBtn, pullBtn
 
@@ -17,7 +18,7 @@ buttonsFrame:SetScript("OnDragStart", function()
 end)
 buttonsFrame:SetScript("OnDragStop", function()
     buttonsFrame:StopMovingOrSizing()
-    F:SavePosition(buttonsFrame, CellDB["raidTools"]["buttonsPosition"])
+    LPP:SavePixelPerfectPosition(buttonsFrame, CellDB["raidTools"]["buttonsPosition"])
 end)
 
 -------------------------------------------------
@@ -189,7 +190,7 @@ local function UpdateRaidTools(which)
     end
 
     if not which then -- position
-        F:RestorePosition(buttonsFrame, CellDB["raidTools"]["buttonsPosition"])
+        LPP:LoadPixelPerfectPosition(buttonsFrame, CellDB["raidTools"]["buttonsPosition"])
     end
 end
 Cell:RegisterCallback("UpdateRaidTools", "RaidButtons_UpdateRaidTools", UpdateRaidTools)

@@ -171,17 +171,15 @@ local function Revise()
 
 	-- r25-release
 	if not(CellDB["revise"]) or dbRevision < 25 then
+		-- position for raidTools
+		if #CellDB["raidTools"]["marksPosition"] == 4 then CellDB["raidTools"]["marksPosition"] = {} end
+		if #CellDB["raidTools"]["buttonsPosition"] == 4 then CellDB["raidTools"]["buttonsPosition"] = {} end
 		-- position for layouts
-		local eventFrame = CreateFrame("Frame")
-		eventFrame:RegisterEvent("VARIABLES_LOADED")
-		eventFrame:SetScript("OnEvent", function()
-			local point, relativeTo, relativePoint, xOfs, yOfs = CellAnchorFrame:GetPoint(1)
-			for _, layout in pairs(CellDB["layouts"]) do
-				if type(layout["position"]) ~= "table" then
-					layout["position"] = {point, relativePoint, xOfs, yOfs}
-				end
+		for _, layout in pairs(CellDB["layouts"]) do
+			if type(layout["position"]) ~= "table" then
+				layout["position"] = {}
 			end
-		end)
+		end
 		-- reset CellDB["debuffBlacklist"]
 		CellDB["debuffBlacklist"] = F:GetDefaultDebuffBlacklist()
 		-- update click-castings

@@ -17,16 +17,15 @@ local cellMainFrame = CreateFrame("Frame", "CellMainFrame", UIParent, "SecureFra
 Cell.frames.mainFrame = cellMainFrame
 cellMainFrame:SetIgnoreParentScale(true)
 cellMainFrame:SetFrameStrata("LOW")
-cellMainFrame:SetClampedToScreen(true)
-cellMainFrame:SetClampRectInsets(0, 0, 15, 0)
+-- cellMainFrame:SetClampedToScreen(true)
+-- cellMainFrame:SetClampRectInsets(0, 0, 15, 0)
 
 local anchorFrame = CreateFrame("Frame", "CellAnchorFrame", cellMainFrame)
 Cell.frames.anchorFrame = anchorFrame
 anchorFrame:SetPoint("TOPLEFT", UIParent, "CENTER")
 anchorFrame:SetSize(20, 10)
 anchorFrame:SetMovable(true)
-
-cellMainFrame:SetPoint("TOPLEFT", anchorFrame, "BOTTOMLEFT", 0, -4)
+anchorFrame:SetClampedToScreen(true)
 
 local function RegisterDragForMainFrame(frame)
     -- frame:RegisterForDrag("LeftButton")
@@ -36,7 +35,7 @@ local function RegisterDragForMainFrame(frame)
     end)
     frame:SetScript("OnDragStop", function()
         anchorFrame:StopMovingOrSizing()
-        F:SavePosition(anchorFrame, Cell.vars.currentLayoutTable["position"])
+        LPP:SavePixelPerfectPosition(anchorFrame, Cell.vars.currentLayoutTable["position"])
     end)
 end
 
@@ -160,6 +159,6 @@ local function MainFrame_UpdateLayout(layout, which)
     
     cellMainFrame:SetSize(unpack(Cell.vars.currentLayoutTable["size"]))
     -- load position
-    F:RestorePosition(anchorFrame, Cell.vars.currentLayoutTable["position"])
+    LPP:LoadPixelPerfectPosition(anchorFrame, Cell.vars.currentLayoutTable["position"])
 end
 Cell:RegisterCallback("UpdateLayout", "MainFrame_UpdateLayout", MainFrame_UpdateLayout)
