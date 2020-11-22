@@ -131,9 +131,9 @@ local function InitIndicator(indicatorName)
 
     elseif indicatorName == "centralDebuff" then
         indicator:SetScript("OnShow", function()
-            indicator:SetCooldown(GetTime(), 10, "Magic", "Interface\\Icons\\INV_Misc_QuestionMark", 7)
+            indicator:SetCooldown(GetTime(), 10, "", "Interface\\Icons\\INV_Misc_QuestionMark", 7)
             indicator.cooldown:SetScript("OnCooldownDone", function()
-                indicator:SetCooldown(GetTime(), 10, "Magic", "Interface\\Icons\\INV_Misc_QuestionMark", 7)
+                indicator:SetCooldown(GetTime(), 10, "", "Interface\\Icons\\INV_Misc_QuestionMark", 7)
             end)
         end)
         indicator:SetScript("OnHide", function()

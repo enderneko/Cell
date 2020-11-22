@@ -15,9 +15,8 @@ function I:CreateAura_BorderIcon(name, parent, borderSize)
     frame:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8x8"})
     frame:SetBackdropColor(0, 0, 0, .7)
     
-    local border = CreateFrame("Frame", name.."Border", frame, "BackdropTemplate")
+    local border = frame:CreateTexture(name.."Border", "BORDER")
     frame.border = border
-    border:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8x8"})
     border:SetAllPoints(frame)
     border:Hide()
 
@@ -28,9 +27,10 @@ function I:CreateAura_BorderIcon(name, parent, borderSize)
     cooldown:SetSwipeColor(1, 1, 1)
     cooldown.noCooldownCount = true -- disable omnicc
 
-    local iconFrame = CreateFrame("Frame", name.."IconFrame", cooldown)
+    local iconFrame = CreateFrame("Frame", name.."IconFrame", frame)
     iconFrame:SetPoint("TOPLEFT", borderSize, -borderSize)
     iconFrame:SetPoint("BOTTOMRIGHT", -borderSize, borderSize)
+    iconFrame:SetFrameLevel(cooldown:GetFrameLevel()+1)
 
     local icon = iconFrame:CreateTexture(name.."Icon", "ARTWORK")
     frame.icon = icon
@@ -101,7 +101,7 @@ function I:CreateAura_BorderIcon(name, parent, borderSize)
 
         if duration == 0 then
             border:Show()
-            border:SetBackdropColor(r, g, b)
+            border:SetColorTexture(r, g, b)
             frame:SetScript("OnUpdate", nil)
         else
             border:Hide()
