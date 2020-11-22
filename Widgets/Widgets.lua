@@ -1850,6 +1850,16 @@ function addon:CreateDropdown(parent, width, dropdownType)
         end
     end
 
+    function menu:SetSelectedValue(value)
+        for i, item in pairs(menu.items) do
+            if item.value == value then
+                menu.selected = i
+                menu.text:SetText(item.text)
+                break
+            end
+        end
+    end
+
     function menu:GetSelected()
         if menu.selected then
             return menu.items[menu.selected].value or menu.items[menu.selected].text
