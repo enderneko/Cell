@@ -27,12 +27,43 @@ raidFrame:SetAttribute("_onattributechanged", [[
     local npcFrameAnchor = self:GetFrameRef("npcanchor")
     local spacing = self:GetAttribute("spacing") or 0
     local orientation = self:GetAttribute("orientation") or "vertical"
+    local anchor = self:GetAttribute("anchor") or "TOPLEFT"
 
     npcFrameAnchor:ClearAllPoints()
     if orientation == "vertical" then
-        npcFrameAnchor:SetPoint("TOPLEFT", header, "TOPRIGHT", spacing, 0)
+        local point, anchorPoint, unitSpacing
+        if anchor == "BOTTOMLEFT" then
+            point, anchorPoint = "BOTTOMLEFT", "BOTTOMRIGHT"
+            unitSpacing = spacing
+        elseif anchor == "BOTTOMRIGHT" then
+            point, anchorPoint = "BOTTOMRIGHT", "BOTTOMLEFT"
+            unitSpacing = -spacing
+        elseif anchor == "TOPLEFT" then
+            point, anchorPoint = "TOPLEFT", "TOPRIGHT"
+            unitSpacing = spacing
+        elseif anchor == "TOPRIGHT" then
+            point, anchorPoint = "TOPRIGHT", "TOPLEFT"
+            unitSpacing = -spacing
+        end
+
+        npcFrameAnchor:SetPoint(point, header, anchorPoint, unitSpacing, 0)
     else
-        npcFrameAnchor:SetPoint("TOPLEFT", header, "BOTTOMLEFT", 0, -spacing)
+        local point, anchorPoint, unitSpacing
+        if anchor == "BOTTOMLEFT" then
+            point, anchorPoint = "BOTTOMLEFT", "TOPLEFT"
+            unitSpacing = spacing
+        elseif anchor == "BOTTOMRIGHT" then
+            point, anchorPoint = "BOTTOMRIGHT", "TOPRIGHT"
+            unitSpacing = spacing
+        elseif anchor == "TOPLEFT" then
+            point, anchorPoint = "TOPLEFT", "BOTTOMLEFT"
+            unitSpacing = -spacing
+        elseif anchor == "TOPRIGHT" then
+            point, anchorPoint = "TOPRIGHT", "BOTTOMRIGHT"
+            unitSpacing = -spacing
+        end
+
+        npcFrameAnchor:SetPoint(point, header, anchorPoint, 0, unitSpacing)
     end
 ]])
 
@@ -156,13 +187,41 @@ local function RaidFrame_UpdateLayout(layout, which)
             end
         end
 
-        if not which or which == "spacing" then
+        if not which or which == "spacing" or which == "orientation" or which == "anchor" or which == "rows_columns" or which == "groupSpacing" then
             header:ClearAllPoints()
             if layout["orientation"] == "vertical" then
-                header:SetAttribute("columnAnchorPoint", "LEFT")
-                header:SetAttribute("point", "TOP")
+                -- anchor
+                local point, anchorPoint, groupAnchorPoint, unitSpacing, groupSpacing, verticalSpacing, headerPoint, headerColumnAnchorPoint
+                if layout["anchor"] == "BOTTOMLEFT" then
+                    point, anchorPoint, groupAnchorPoint = "BOTTOMLEFT", "TOPLEFT", "BOTTOMRIGHT"
+                    headerPoint, headerColumnAnchorPoint = "BOTTOM", "LEFT"
+                    unitSpacing = layout["spacing"]
+                    groupSpacing = layout["spacing"]
+                    verticalSpacing = layout["spacing"]+layout["groupSpacing"]
+                elseif layout["anchor"] == "BOTTOMRIGHT" then
+                    point, anchorPoint, groupAnchorPoint = "BOTTOMRIGHT", "TOPRIGHT", "BOTTOMLEFT"
+                    headerPoint, headerColumnAnchorPoint = "BOTTOM", "RIGHT"
+                    unitSpacing = layout["spacing"]
+                    groupSpacing = -layout["spacing"]
+                    verticalSpacing = layout["spacing"]+layout["groupSpacing"]
+                elseif layout["anchor"] == "TOPLEFT" then
+                    point, anchorPoint, groupAnchorPoint = "TOPLEFT", "BOTTOMLEFT", "TOPRIGHT"
+                    headerPoint, headerColumnAnchorPoint = "TOP", "LEFT"
+                    unitSpacing = -layout["spacing"]
+                    groupSpacing = layout["spacing"]
+                    verticalSpacing = -layout["spacing"]-layout["groupSpacing"]
+                elseif layout["anchor"] == "TOPRIGHT" then
+                    point, anchorPoint, groupAnchorPoint = "TOPRIGHT", "BOTTOMRIGHT", "TOPLEFT"
+                    headerPoint, headerColumnAnchorPoint = "TOP", "RIGHT"
+                    unitSpacing = -layout["spacing"]
+                    groupSpacing = -layout["spacing"]
+                    verticalSpacing = -layout["spacing"]-layout["groupSpacing"]
+                end
+
+                header:SetAttribute("columnAnchorPoint", headerColumnAnchorPoint)
+                header:SetAttribute("point", headerPoint)
                 header:SetAttribute("xOffset", 0)
-                header:SetAttribute("yOffset", -layout["spacing"])
+                header:SetAttribute("yOffset", unitSpacing)
 
                 --! force update unitbutton's point
                 for i = 1, 5 do
@@ -171,18 +230,46 @@ local function RaidFrame_UpdateLayout(layout, which)
                 header:SetAttribute("unitsPerColumn", 5)
                 
                 if i == 1 then
-                    header:SetPoint("TOPLEFT")
+                    header:SetPoint(point)
                 else
                     if i / layout["columns"] > 1 then -- not the first row
-                        header:SetPoint("TOPLEFT", groupHeaders[i-layout["columns"]], "BOTTOMLEFT", 0, -layout["spacing"]-layout["groupSpacing"])
+                        header:SetPoint(point, groupHeaders[i-layout["columns"]], anchorPoint, 0, verticalSpacing)
                     else
-                        header:SetPoint("TOPLEFT", groupHeaders[i-1], "TOPRIGHT", layout["spacing"], 0)
+                        header:SetPoint(point, groupHeaders[i-1], groupAnchorPoint, groupSpacing, 0)
                     end
                 end
             else
-                header:SetAttribute("columnAnchorPoint", "TOP")
-                header:SetAttribute("point", "LEFT")
-                header:SetAttribute("xOffset", layout["spacing"])
+                -- anchor
+                local point, anchorPoint, groupAnchorPoint, unitSpacing, groupSpacing, horizontalSpacing, headerPoint, headerColumnAnchorPoint
+                if layout["anchor"] == "BOTTOMLEFT" then
+                    point, anchorPoint, groupAnchorPoint = "BOTTOMLEFT", "BOTTOMRIGHT", "TOPLEFT"
+                    headerPoint, headerColumnAnchorPoint = "LEFT", "BOTTOM"
+                    unitSpacing = layout["spacing"]
+                    groupSpacing = layout["spacing"]
+                    horizontalSpacing = layout["spacing"]+layout["groupSpacing"]
+                elseif layout["anchor"] == "BOTTOMRIGHT" then
+                    point, anchorPoint, groupAnchorPoint = "BOTTOMRIGHT", "BOTTOMLEFT", "TOPRIGHT"
+                    headerPoint, headerColumnAnchorPoint = "RIGHT", "BOTTOM"
+                    unitSpacing = -layout["spacing"]
+                    groupSpacing = layout["spacing"]
+                    horizontalSpacing = -layout["spacing"]-layout["groupSpacing"]
+                elseif layout["anchor"] == "TOPLEFT" then
+                    point, anchorPoint, groupAnchorPoint = "TOPLEFT", "TOPRIGHT", "BOTTOMLEFT"
+                    headerPoint, headerColumnAnchorPoint = "LEFT", "TOP"
+                    unitSpacing = layout["spacing"]
+                    groupSpacing = -layout["spacing"]
+                    horizontalSpacing = layout["spacing"]+layout["groupSpacing"]
+                elseif layout["anchor"] == "TOPRIGHT" then
+                    point, anchorPoint, groupAnchorPoint = "TOPRIGHT", "TOPLEFT", "BOTTOMRIGHT"
+                    headerPoint, headerColumnAnchorPoint = "RIGHT", "TOP"
+                    unitSpacing = -layout["spacing"]
+                    groupSpacing = -layout["spacing"]
+                    horizontalSpacing = -layout["spacing"]-layout["groupSpacing"]
+                end
+
+                header:SetAttribute("columnAnchorPoint", headerColumnAnchorPoint)
+                header:SetAttribute("point", headerPoint)
+                header:SetAttribute("xOffset", unitSpacing)
                 header:SetAttribute("yOffset", 0)
                
                 --! force update unitbutton's point
@@ -192,18 +279,19 @@ local function RaidFrame_UpdateLayout(layout, which)
                 header:SetAttribute("unitsPerColumn", 5)
                
                 if i == 1 then
-                    header:SetPoint("TOPLEFT")
+                    header:SetPoint(point)
                 else
                     if i / layout["rows"] > 1 then -- not the first column
-                        header:SetPoint("TOPLEFT", groupHeaders[i-layout["rows"]], "TOPRIGHT", layout["spacing"]+layout["groupSpacing"], 0)
+                        header:SetPoint(point, groupHeaders[i-layout["rows"]], anchorPoint, horizontalSpacing, 0)
                     else
-                        header:SetPoint("TOPLEFT", groupHeaders[i-1], "BOTTOMLEFT", 0, -layout["spacing"])
+                        header:SetPoint(point, groupHeaders[i-1], groupAnchorPoint, 0, groupSpacing)
                     end
                 end
             end
 
             raidFrame:SetAttribute("spacing", layout["spacing"])
             raidFrame:SetAttribute("orientation", layout["orientation"])
+            raidFrame:SetAttribute("anchor", layout["anchor"])
             raidFrame:SetAttribute("visibility", 1) -- NOTE: trigger _onattributechanged to set npcFrameAnchor point!
         end
 

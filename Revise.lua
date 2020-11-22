@@ -77,7 +77,6 @@ local function Revise()
 		CellDB["font"] = nil
 		CellDB["outline"] = nil
 	end
-	]]
 
 	-- r14-release: CellDB["general"]
 	if not(CellDB["revise"]) or dbRevision < 14 then
@@ -109,6 +108,7 @@ local function Revise()
 			CellDB["general"]["showPets"] = nil
 		end
 	end
+	]]
 
 	-- r22-release
 	if not(CellDB["revise"]) or dbRevision < 22 then

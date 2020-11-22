@@ -51,9 +51,14 @@ select(2, ...).L = setmetatable({
 		<p>Now you can set alpha of non-selected indicators. This might make it easier to arrange your indicators.</p>
 		<p>To adjust alpha, use the alpha slider in "Indicators", it can be found at the top right corner.</p>
 		<br/>
-		<h1>Misc</h1>
+		<h1>Frame Position</h1>
 		<p>Every layout has its own position setting now.</p>
+		<p>The positions of Cell Main Frame, Marks, Ready &amp; Pull have been reset.</p>
+		<br/>
+		<h1>Misc</h1>
 		<p>Party/Raid Preview Mode will help you adjust layouts.</p>
+		<p>Group Anchor Point comes, go check it out in Layouts -&gt; Group Arrangement.</p>
+		<br/>
 	]],
 }, {
 	__index = function(self, Key)

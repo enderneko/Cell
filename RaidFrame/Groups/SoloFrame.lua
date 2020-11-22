@@ -36,12 +36,44 @@ local function SoloFrame_UpdateLayout(layout, which)
     end
 
 
-    if not which or which == "spacing" then
+    if not which or which == "spacing" or which == "orientation" or which == "anchor" then
         petButton:ClearAllPoints()
         if layout["orientation"] == "vertical" then
-            petButton:SetPoint("TOPLEFT", playerButton, "BOTTOMLEFT", 0, -layout["spacing"])
+            -- anchor
+            local point, anchorPoint, unitSpacing
+            if layout["anchor"] == "BOTTOMLEFT" then
+                point, anchorPoint = "BOTTOMLEFT", "TOPLEFT"
+                unitSpacing = layout["spacing"]
+            elseif layout["anchor"] == "BOTTOMRIGHT" then
+                point, anchorPoint = "BOTTOMRIGHT", "TOPRIGHT"
+                unitSpacing = layout["spacing"]
+            elseif layout["anchor"] == "TOPLEFT" then
+                point, anchorPoint = "TOPLEFT", "BOTTOMLEFT"
+                unitSpacing = -layout["spacing"]
+            elseif layout["anchor"] == "TOPRIGHT" then
+                point, anchorPoint = "TOPRIGHT", "BOTTOMRIGHT"
+                unitSpacing = -layout["spacing"]
+            end
+
+            petButton:SetPoint(point, playerButton, anchorPoint, 0, unitSpacing)
         else
-            petButton:SetPoint("TOPLEFT", playerButton, "TOPRIGHT", layout["spacing"], 0)
+            -- anchor
+            local point, anchorPoint, unitSpacing
+            if layout["anchor"] == "BOTTOMLEFT" then
+                point, anchorPoint = "BOTTOMLEFT", "BOTTOMRIGHT"
+                unitSpacing = layout["spacing"]
+            elseif layout["anchor"] == "BOTTOMRIGHT" then
+                point, anchorPoint = "BOTTOMRIGHT", "BOTTOMLEFT"
+                unitSpacing = -layout["spacing"]
+            elseif layout["anchor"] == "TOPLEFT" then
+                point, anchorPoint = "TOPLEFT", "TOPRIGHT"
+                unitSpacing = layout["spacing"]
+            elseif layout["anchor"] == "TOPRIGHT" then
+                point, anchorPoint = "TOPRIGHT", "TOPLEFT"
+                unitSpacing = -layout["spacing"]
+            end
+
+            petButton:SetPoint(point, playerButton, anchorPoint, unitSpacing, 0)
         end
     end
 

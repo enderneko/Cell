@@ -718,7 +718,7 @@ orientationDropdown:SetItems({
         ["onClick"] = function()
             selectedLayoutTable["orientation"] = "vertical"
             if selectedLayout == Cell.vars.currentLayout then
-                Cell:Fire("UpdateLayout", selectedLayout, "spacing")
+                Cell:Fire("UpdateLayout", selectedLayout, "orientation")
             end
             rcSlider:SetName(L["Group Columns"])
             rcSlider:SetValue(selectedLayoutTable["columns"])
@@ -736,7 +736,7 @@ orientationDropdown:SetItems({
         ["onClick"] = function()
             selectedLayoutTable["orientation"] = "horizontal"
             if selectedLayout == Cell.vars.currentLayout then
-                Cell:Fire("UpdateLayout", selectedLayout, "spacing")
+                Cell:Fire("UpdateLayout", selectedLayout, "orientation")
             end
             rcSlider:SetName(L["Group Rows"])
             rcSlider:SetValue(selectedLayoutTable["rows"])
@@ -764,7 +764,7 @@ anchorDropdown:SetItems({
         ["onClick"] = function()
             selectedLayoutTable["anchor"] = "BOTTOMLEFT"
             if selectedLayout == Cell.vars.currentLayout then
-                Cell:Fire("UpdateLayout", selectedLayout, "spacing")
+                Cell:Fire("UpdateLayout", selectedLayout, "anchor")
             end
             UpdateRaidPreview()
         end,
@@ -775,7 +775,7 @@ anchorDropdown:SetItems({
         ["onClick"] = function()
             selectedLayoutTable["anchor"] = "BOTTOMRIGHT"
             if selectedLayout == Cell.vars.currentLayout then
-                Cell:Fire("UpdateLayout", selectedLayout, "spacing")
+                Cell:Fire("UpdateLayout", selectedLayout, "anchor")
             end
             UpdateRaidPreview()
         end,
@@ -786,7 +786,7 @@ anchorDropdown:SetItems({
         ["onClick"] = function()
             selectedLayoutTable["anchor"] = "TOPLEFT"
             if selectedLayout == Cell.vars.currentLayout then
-                Cell:Fire("UpdateLayout", selectedLayout, "spacing")
+                Cell:Fire("UpdateLayout", selectedLayout, "anchor")
             end
             UpdateRaidPreview()
         end,
@@ -797,7 +797,7 @@ anchorDropdown:SetItems({
         ["onClick"] = function()
             selectedLayoutTable["anchor"] = "TOPRIGHT"
             if selectedLayout == Cell.vars.currentLayout then
-                Cell:Fire("UpdateLayout", selectedLayout, "spacing")
+                Cell:Fire("UpdateLayout", selectedLayout, "anchor")
             end
             UpdateRaidPreview()
         end,
@@ -985,7 +985,7 @@ rcSlider = Cell:CreateSlider("", layoutsTab, 1, 8, 100, 1, function(value)
         groupSpacingSlider:SetEnabled(true)
     end
     if selectedLayout == Cell.vars.currentLayout then
-        Cell:Fire("UpdateLayout", selectedLayout, "spacing")
+        Cell:Fire("UpdateLayout", selectedLayout, "rows_columns")
     end
     -- preview
     UpdateRaidPreview()
@@ -996,7 +996,7 @@ rcSlider:SetPoint("TOPLEFT", spacingSlider, "BOTTOMLEFT", 0, -40)
 groupSpacingSlider = Cell:CreateSlider(L["Group Spacing"], layoutsTab, 0, 10, 100, 1, function(value)
     selectedLayoutTable["groupSpacing"] = value
     if selectedLayout == Cell.vars.currentLayout then
-        Cell:Fire("UpdateLayout", selectedLayout, "spacing")
+        Cell:Fire("UpdateLayout", selectedLayout, "groupSpacing")
     end
     -- preview
     UpdateRaidPreview()

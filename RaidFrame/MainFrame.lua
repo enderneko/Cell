@@ -73,22 +73,24 @@ end
 -------------------------------------------------
 local raidSetupFrame = CreateFrame("Frame", "CellRaidSetupFrame", cellMainFrame)
 Cell.frames.raidSetupFrame = raidSetupFrame
-raidSetupFrame:SetPoint("LEFT", raid, "RIGHT", 5, 0)
-raidSetupFrame:SetSize(50, 15)
+-- raidSetupFrame:SetPoint("LEFT", raid, "RIGHT", 5, 0)
+raidSetupFrame:SetSize(70, 15)
 raidSetupFrame:Hide()
 
 local raidSetupText = raidSetupFrame:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
 raidSetupText:SetFont(raidSetupText:GetFont(), 12, "OUTLINE")
 raidSetupText:SetShadowColor(0, 0, 0)
 raidSetupText:SetShadowOffset(0, 0)
-raidSetupText:SetPoint("LEFT")
+raidSetupText:SetPoint("CENTER")
+raidSetupText:SetJustifyH("CENTER")
 
-local tankIcon = "|TInterface\\AddOns\\Cell\\Media\\Roles\\TANK:10:10:0:0:10:10:1:9:1:9|t"
-local healerIcon = "|TInterface\\AddOns\\Cell\\Media\\Roles\\HEALER:10:10:0:0:10:10:1:9:1:9|t"
-local damagerIcon = "|TInterface\\AddOns\\Cell\\Media\\Roles\\DAMAGER:10:10:0:0:10:10:1:9:1:9|t"
+local tankIcon = "|TInterface\\AddOns\\Cell\\Media\\Roles\\TANK:0|t"
+local healerIcon = "|TInterface\\AddOns\\Cell\\Media\\Roles\\HEALER:0|t"
+local damagerIcon = "|TInterface\\AddOns\\Cell\\Media\\Roles\\DAMAGER:0|t"
 
 function F:UpdateRaidSetup()
     raidSetupText:SetText(tankIcon..Cell.vars.role["TANK"]..healerIcon..Cell.vars.role["HEALER"]..damagerIcon..Cell.vars.role["DAMAGER"])
+    raidSetupFrame:SetWidth(raidSetupText:GetWidth()+20)
 end
 
 -------------------------------------------------
@@ -157,7 +159,39 @@ end)
 local function MainFrame_UpdateLayout(layout, which)
     F:Debug("|cffffff7fUpdateLayout:|r layout:" .. (layout or "nil") .. " which:" .. (which or "nil"))
     
-    cellMainFrame:SetSize(unpack(Cell.vars.currentLayoutTable["size"]))
+    layout = Cell.vars.currentLayoutTable
+    
+    if not which or which == "size" then
+        cellMainFrame:SetSize(unpack(layout["size"]))
+    end
+
+    if not which or which == "anchor" then
+        cellMainFrame:ClearAllPoints()
+        raid:ClearAllPoints()
+        raidSetupFrame:ClearAllPoints()
+
+        if layout["anchor"] == "BOTTOMLEFT" then
+            cellMainFrame:SetPoint("BOTTOMLEFT", anchorFrame, "TOPLEFT", 0, 4)
+            raid:SetPoint("BOTTOMLEFT", options, "BOTTOMRIGHT", 1, 0)
+            raidSetupFrame:SetPoint("LEFT", raid, "RIGHT", 5, 0)
+            
+        elseif layout["anchor"] == "BOTTOMRIGHT" then
+            cellMainFrame:SetPoint("BOTTOMRIGHT", anchorFrame, "TOPRIGHT", 0, 4)
+            raid:SetPoint("BOTTOMRIGHT", options, "BOTTOMLEFT", -1, 0)
+            raidSetupFrame:SetPoint("RIGHT", raid, "LEFT", -5, 0)
+            
+        elseif layout["anchor"] == "TOPLEFT" then
+            cellMainFrame:SetPoint("TOPLEFT", anchorFrame, "BOTTOMLEFT", 0, -4)
+            raid:SetPoint("TOPLEFT", options, "TOPRIGHT", 1, 0)
+            raidSetupFrame:SetPoint("LEFT", raid, "RIGHT", 5, 0)
+            
+        elseif layout["anchor"] == "TOPRIGHT" then
+            cellMainFrame:SetPoint("TOPRIGHT", anchorFrame, "BOTTOMRIGHT", 0, -4)
+            raid:SetPoint("TOPRIGHT", options, "TOPLEFT", -1, 0)
+            raidSetupFrame:SetPoint("RIGHT", raid, "LEFT", -5, 0)
+        end
+    end
+
     -- load position
     LPP:LoadPixelPerfectPosition(anchorFrame, Cell.vars.currentLayoutTable["position"])
 end

@@ -41,34 +41,70 @@ npcFrame:SetAttribute("_onstate-groupstate", [[
     local spacing = self:GetAttribute("spacing") or 0
     local orientation = self:GetAttribute("orientation") or "vertical"
     local anchor = self:GetFrameRef(newstate)
+    local layoutAnchor = self:GetAttribute("anchor") or "TOPLEFT"
     local petstate = self:GetAttribute("pet")
 
     self:ClearAllPoints()
 
-    if newstate == "raid" then
-        self:SetPoint("TOPLEFT", anchor)
-
-    elseif newstate == "party" then
-        -- NOTE: at first time petstate == nil 
-        if orientation == "vertical" then
-            if petstate == "nopet" then
-                self:SetPoint("TOPLEFT", self:GetFrameRef("solo"), "TOPRIGHT", spacing, 0)
-            else
-                self:SetPoint("TOPLEFT", self:GetFrameRef("party"), "TOPRIGHT", spacing, 0)
-            end
-        else
-            if petstate == "nopet" then
-                self:SetPoint("TOPLEFT", self:GetFrameRef("solo"), "BOTTOMLEFT", 0, -spacing)
-            else
-                self:SetPoint("TOPLEFT", self:GetFrameRef("party"), "BOTTOMLEFT", 0, -spacing)
-            end
+    if orientation == "vertical" then
+        local point, anchorPoint, unitSpacing
+        if layoutAnchor == "BOTTOMLEFT" then
+            point, anchorPoint = "BOTTOMLEFT", "BOTTOMRIGHT"
+            unitSpacing = spacing
+        elseif layoutAnchor == "BOTTOMRIGHT" then
+            point, anchorPoint = "BOTTOMRIGHT", "BOTTOMLEFT"
+            unitSpacing = -spacing
+        elseif layoutAnchor == "TOPLEFT" then
+            point, anchorPoint = "TOPLEFT", "TOPRIGHT"
+            unitSpacing = spacing
+        elseif layoutAnchor == "TOPRIGHT" then
+            point, anchorPoint = "TOPRIGHT", "TOPLEFT"
+            unitSpacing = -spacing
         end
 
-    else -- solo
-        if orientation == "vertical" then
-            self:SetPoint("TOPLEFT", anchor, "TOPRIGHT", spacing, 0)
-        else
-            self:SetPoint("TOPLEFT", anchor, "BOTTOMLEFT", 0, -spacing)
+        if newstate == "raid" then
+            self:SetPoint(point, anchor)
+    
+        elseif newstate == "party" then
+            -- NOTE: at first time petstate == nil 
+            if petstate == "nopet" then
+                self:SetPoint(point, self:GetFrameRef("solo"), anchorPoint, unitSpacing, 0)
+            else
+                self:SetPoint(point, self:GetFrameRef("party"), anchorPoint, unitSpacing, 0)
+            end
+    
+        else -- solo
+            self:SetPoint(point, anchor, anchorPoint, unitSpacing, 0)
+        end
+    else
+        local point, anchorPoint, unitSpacing
+        if layoutAnchor == "BOTTOMLEFT" then
+            point, anchorPoint = "BOTTOMLEFT", "TOPLEFT"
+            unitSpacing = spacing
+        elseif layoutAnchor == "BOTTOMRIGHT" then
+            point, anchorPoint = "BOTTOMRIGHT", "TOPRIGHT"
+            unitSpacing = spacing
+        elseif layoutAnchor == "TOPLEFT" then
+            point, anchorPoint = "TOPLEFT", "BOTTOMLEFT"
+            unitSpacing = -spacing
+        elseif layoutAnchor == "TOPRIGHT" then
+            point, anchorPoint = "TOPRIGHT", "BOTTOMRIGHT"
+            unitSpacing = -spacing
+        end
+        
+        if newstate == "raid" then
+            self:SetPoint(point, anchor)
+    
+        elseif newstate == "party" then
+            -- NOTE: at first time petstate == nil 
+            if petstate == "nopet" then
+                self:SetPoint(point, self:GetFrameRef("solo"), anchorPoint, 0, unitSpacing)
+            else
+                self:SetPoint(point, self:GetFrameRef("party"), anchorPoint, 0, unitSpacing)
+            end
+    
+        else -- solo
+            self:SetPoint(point, anchor, anchorPoint, 0, unitSpacing)
         end
     end
 ]])
@@ -81,24 +117,53 @@ npcFrame:SetAttribute("_onstate-petstate", [[
     -- print("petstate", newstate)
 
     if self:GetAttribute("group") == "party" then
-        -- self:CallMethod("UpdatePoint")
-
         local spacing = self:GetAttribute("spacing") or 0
         local orientation = self:GetAttribute("orientation") or "vertical"
+        local layoutAnchor = self:GetAttribute("anchor") or "TOPLEFT"
 
         self:ClearAllPoints()
 
         if orientation == "vertical" then
+            local point, anchorPoint, unitSpacing
+            if layoutAnchor == "BOTTOMLEFT" then
+                point, anchorPoint = "BOTTOMLEFT", "BOTTOMRIGHT"
+                unitSpacing = spacing
+            elseif layoutAnchor == "BOTTOMRIGHT" then
+                point, anchorPoint = "BOTTOMRIGHT", "BOTTOMLEFT"
+                unitSpacing = -spacing
+            elseif layoutAnchor == "TOPLEFT" then
+                point, anchorPoint = "TOPLEFT", "TOPRIGHT"
+                unitSpacing = spacing
+            elseif layoutAnchor == "TOPRIGHT" then
+                point, anchorPoint = "TOPRIGHT", "TOPLEFT"
+                unitSpacing = -spacing
+            end
+
             if newstate == "nopet" then
-                self:SetPoint("TOPLEFT", self:GetFrameRef("solo"), "TOPRIGHT", spacing, 0)
+                self:SetPoint(point, self:GetFrameRef("solo"), anchorPoint, unitSpacing, 0)
             else
-                self:SetPoint("TOPLEFT", self:GetFrameRef("party"), "TOPRIGHT", spacing, 0)
+                self:SetPoint(point, self:GetFrameRef("party"), anchorPoint, unitSpacing, 0)
             end
         else
+            local point, anchorPoint, unitSpacing
+            if layoutAnchor == "BOTTOMLEFT" then
+                point, anchorPoint = "BOTTOMLEFT", "TOPLEFT"
+                unitSpacing = spacing
+            elseif layoutAnchor == "BOTTOMRIGHT" then
+                point, anchorPoint = "BOTTOMRIGHT", "TOPRIGHT"
+                unitSpacing = spacing
+            elseif layoutAnchor == "TOPLEFT" then
+                point, anchorPoint = "TOPLEFT", "BOTTOMLEFT"
+                unitSpacing = -spacing
+            elseif layoutAnchor == "TOPRIGHT" then
+                point, anchorPoint = "TOPRIGHT", "BOTTOMRIGHT"
+                unitSpacing = -spacing
+            end
+
             if newstate == "nopet" then
-                self:SetPoint("TOPLEFT", self:GetFrameRef("solo"), "BOTTOMLEFT", 0, -spacing)
+                self:SetPoint(point, self:GetFrameRef("solo"), anchorPoint, 0, unitSpacing)
             else
-                self:SetPoint("TOPLEFT", self:GetFrameRef("party"), "BOTTOMLEFT", 0, -spacing)
+                self:SetPoint(point, self:GetFrameRef("party"), anchorPoint, 0, unitSpacing)
             end
         end
     end
@@ -121,44 +186,91 @@ local function NPCFrame_UpdateLayout(layout, which)
         end
     end
 
-    if not which or which == "spacing" then
+    if not which or which == "spacing" or which == "orientation" or which == "anchor" then
         npcFrame:SetAttribute("spacing", layout["spacing"])
         npcFrame:SetAttribute("orientation", layout["orientation"])
+        npcFrame:SetAttribute("anchor", layout["anchor"])
         
         local groupType = F:GetGroupType()
         npcFrame:ClearAllPoints()
-        if groupType == "raid" then
-            npcFrame:SetPoint("TOPLEFT", anchors["raid"])
-    
-        elseif groupType == "party" then
-            if layout["orientation"] == "vertical" then
-                if npcFrame:GetAttribute("pet") == "nopet" then
-                    npcFrame:SetPoint("TOPLEFT", anchors["solo"], "TOPRIGHT", layout["spacing"], 0)
-                else
-                    npcFrame:SetPoint("TOPLEFT", anchors["party"], "TOPRIGHT", layout["spacing"], 0)
-                end
-            else
-                if npcFrame:GetAttribute("pet") == "nopet" then
-                    npcFrame:SetPoint("TOPLEFT", anchors["solo"], "BOTTOMLEFT", 0, -layout["spacing"])
-                else
-                    npcFrame:SetPoint("TOPLEFT", anchors["party"], "BOTTOMLEFT", 0, -layout["spacing"])
-                end
-            end
-    
-        else -- solo
-            if layout["orientation"] == "vertical" then
-                npcFrame:SetPoint("TOPLEFT", anchors["solo"], "TOPRIGHT", layout["spacing"], 0)
-            else
-                npcFrame:SetPoint("TOPLEFT", anchors["solo"], "BOTTOMLEFT", 0, -layout["spacing"])
-            end
-        end
 
-        for i = 2, 5 do
-            Cell.unitButtons.npc[i]:ClearAllPoints()
-            if layout["orientation"] == "vertical" then
-                Cell.unitButtons.npc[i]:SetPoint("TOPLEFT", Cell.unitButtons.npc[i-1], "BOTTOMLEFT", 0, -layout["spacing"])
-            else
-                Cell.unitButtons.npc[i]:SetPoint("TOPLEFT", Cell.unitButtons.npc[i-1], "TOPRIGHT", layout["spacing"], 0)
+        if layout["orientation"] == "vertical" then
+            -- anchor
+            local point, anchorPoint, groupAnchorPoint, unitSpacing, groupSpacing
+            if layout["anchor"] == "BOTTOMLEFT" then
+                point, anchorPoint, groupAnchorPoint = "BOTTOMLEFT", "TOPLEFT", "BOTTOMRIGHT"
+                unitSpacing = layout["spacing"]
+                groupSpacing = layout["spacing"]
+            elseif layout["anchor"] == "BOTTOMRIGHT" then
+                point, anchorPoint, groupAnchorPoint = "BOTTOMRIGHT", "TOPRIGHT", "BOTTOMLEFT"
+                unitSpacing = layout["spacing"]
+                groupSpacing = -layout["spacing"]
+            elseif layout["anchor"] == "TOPLEFT" then
+                point, anchorPoint, groupAnchorPoint = "TOPLEFT", "BOTTOMLEFT", "TOPRIGHT"
+                unitSpacing = -layout["spacing"]
+                groupSpacing = layout["spacing"]
+            elseif layout["anchor"] == "TOPRIGHT" then
+                point, anchorPoint, groupAnchorPoint = "TOPRIGHT", "BOTTOMRIGHT", "TOPLEFT"
+                unitSpacing = -layout["spacing"]
+                groupSpacing = -layout["spacing"]
+            end
+
+            if groupType == "raid" then
+                npcFrame:SetPoint(point, anchors["raid"])
+
+            elseif groupType == "party" then
+                if npcFrame:GetAttribute("pet") == "nopet" then
+                    npcFrame:SetPoint(point, anchors["solo"], groupAnchorPoint, groupSpacing, 0)
+                else
+                    npcFrame:SetPoint(point, anchors["party"], groupAnchorPoint, groupSpacing, 0)
+                end
+        
+            else -- solo
+                npcFrame:SetPoint(point, anchors["solo"], groupAnchorPoint, groupSpacing, 0)
+            end
+
+            for i = 2, 5 do
+                Cell.unitButtons.npc[i]:ClearAllPoints()
+                Cell.unitButtons.npc[i]:SetPoint(point, Cell.unitButtons.npc[i-1], anchorPoint, 0, unitSpacing)
+            end
+        else
+            -- anchor
+            local point, anchorPoint, groupAnchorPoint, unitSpacing, groupSpacing
+            if layout["anchor"] == "BOTTOMLEFT" then
+                point, anchorPoint, groupAnchorPoint = "BOTTOMLEFT", "BOTTOMRIGHT", "TOPLEFT"
+                unitSpacing = layout["spacing"]
+                groupSpacing = layout["spacing"]
+            elseif layout["anchor"] == "BOTTOMRIGHT" then
+                point, anchorPoint, groupAnchorPoint = "BOTTOMRIGHT", "BOTTOMLEFT", "TOPRIGHT"
+                unitSpacing = -layout["spacing"]
+                groupSpacing = layout["spacing"]
+            elseif layout["anchor"] == "TOPLEFT" then
+                point, anchorPoint, groupAnchorPoint = "TOPLEFT", "TOPRIGHT", "BOTTOMLEFT"
+                unitSpacing = layout["spacing"]
+                groupSpacing = -layout["spacing"]
+            elseif layout["anchor"] == "TOPRIGHT" then
+                point, anchorPoint, groupAnchorPoint = "TOPRIGHT", "TOPLEFT", "BOTTOMRIGHT"
+                unitSpacing = -layout["spacing"]
+                groupSpacing = -layout["spacing"]
+            end
+
+            if groupType == "raid" then
+                npcFrame:SetPoint(point, anchors["raid"])
+
+            elseif groupType == "party" then
+                if npcFrame:GetAttribute("pet") == "nopet" then
+                    npcFrame:SetPoint(point, anchors["solo"], groupAnchorPoint, 0, groupSpacing)
+                else
+                    npcFrame:SetPoint(point, anchors["party"], groupAnchorPoint, 0, groupSpacing)
+                end
+        
+            else -- solo
+                npcFrame:SetPoint(point, anchors["solo"], groupAnchorPoint, 0, groupSpacing)
+            end
+
+            for i = 2, 5 do
+                Cell.unitButtons.npc[i]:ClearAllPoints()
+                Cell.unitButtons.npc[i]:SetPoint(point, Cell.unitButtons.npc[i-1], anchorPoint, unitSpacing, 0)
             end
         end
     end

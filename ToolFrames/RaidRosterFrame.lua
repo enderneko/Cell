@@ -4,7 +4,7 @@ local F = Cell.funcs
 
 local raidRosterFrame = CreateFrame("Frame", "CellRaidRosterFrame", Cell.frames.mainFrame, "BackdropTemplate")
 Cell.frames.raidRosterFrame = raidRosterFrame
-raidRosterFrame:SetPoint("BOTTOMLEFT", Cell.frames.mainFrame, "TOPLEFT", 0, 18)
+-- raidRosterFrame:SetPoint("BOTTOMLEFT", Cell.frames.mainFrame, "TOPLEFT", 0, 18)
 Cell:StylizeFrame(raidRosterFrame, {.1, .1, .1, .7})
 raidRosterFrame:SetSize(405, 210)
 raidRosterFrame:EnableMouse(true)
@@ -262,6 +262,15 @@ local function GroupTypeChanged(groupType)
     raidRosterFrame:Hide()
 end
 Cell:RegisterCallback("GroupTypeChanged", "RaidRosterFrame_GroupTypeChanged", GroupTypeChanged)
+
+local function UpdateLayout(layout, which)
+	layout = Cell.vars.currentLayoutTable
+	if not which or which == "anchor" then
+		raidRosterFrame:ClearAllPoints()
+		raidRosterFrame:SetPoint(layout["anchor"], Cell.frames.mainFrame)
+	end
+end
+Cell:RegisterCallback("UpdateLayout", "RaidRosterFrame_UpdateLayout", UpdateLayout)
 
 function F:ShowRaidRosterFrame()
     if raidRosterFrame:IsShown() then

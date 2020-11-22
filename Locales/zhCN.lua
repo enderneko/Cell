@@ -173,9 +173,12 @@ L["Solo/Party"] = "单人/小队"
 L["BG 1-15"] = "战场 1-15"
 L["BG 16-40"] = "战场 16-40"
 L["Group Filter"] = "队伍过滤"
-L["Group Orientation"] = "队伍排列"
+L["Group Arrangement"] = "队伍排列"
+L["Orientation"] = "方向"
 L["Vertical"] = "纵向"
 L["Horizontal"] = "横向"
+L["OFF"] = "关"
+L["Party"] = "小队"
 L["Unit Button Size"] = "单位按钮尺寸"
 L["Width"] = "宽"
 L["Height"] = "高"
@@ -255,7 +258,6 @@ L["castByMe"] = "只显示我施放的增益"
 L["showDuration"] = "显示持续时间文本"
 L["enableHighlight"] = "高亮单位按钮"
 
-L["Orientation"] = "方向"
 L["left-to-right"] = "从左到右"
 L["right-to-left"] = "从右到左"
 L["top-to-bottom"] = "从上到下"
@@ -309,7 +311,12 @@ L["r25-release"] = [[
     <p>你现在可以更改指示器预览中的非当前指示器的透明度了，这下调整指示器应该会比以前方便些。</p>
     <p>查看“指示器”页面的右上角的滑动条，你懂的。</p>
     <br/>
+    <h1>框体位置</h1>
+    <p>每个布局现在有独立的位置设置。</p>
+    <p>以下框体的位置已被重置：Cell主框体、标记、就位倒数。</p>
+    <br/>
     <h1>其他</h1>
-    <p>布局现在有独立的位置设置。</p>
     <p>新增的小队/团队预览模式可以帮你更方便地调整各种布局啦。</p>
+    <p>队伍锚点功能来啦，到 布局 -&gt; 队伍排列 那里看看吧。</p>
+    <br/>
 ]]

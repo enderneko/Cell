@@ -255,6 +255,7 @@ function eventFrame:ADDON_LOADED(arg1)
                     ["powerHeight"] = 2,
                     ["spacing"] = 3,
                     ["orientation"] = "vertical",
+                    ["anchor"] = "TOPLEFT",
                     ["columns"] = 8,
                     ["rows"] = 8,
                     ["groupSpacing"] = 0,

@@ -29,7 +29,6 @@ for i = 0, 4 do
 	tinsert(petButtonUnits, petUnit)
 
 	if i == 0 then
-		playerButton:SetPoint("TOPLEFT")
 		playerButton:Show()
 		RegisterAttributeDriver(petButton, "state-visibility", "[nopet] hide; [vehicleui] hide; show")
 	else
@@ -47,6 +46,49 @@ local function PartyFrame_UpdateLayout(layout, which)
 
 	local buttons = Cell.unitButtons.party
 
+	-- anchor
+	local point, playerAnchorPoint, petAnchorPoint, playerSpacing, petSpacing
+	if not which or which == "spacing" or which == "orientation" or which == "anchor" then
+		if layout["orientation"] == "vertical" then
+			if layout["anchor"] == "BOTTOMLEFT" then
+				point, playerAnchorPoint, petAnchorPoint = "BOTTOMLEFT", "TOPLEFT", "BOTTOMRIGHT"
+				playerSpacing = layout["spacing"]
+				petSpacing = layout["spacing"]
+			elseif layout["anchor"] == "BOTTOMRIGHT" then
+				point, playerAnchorPoint, petAnchorPoint = "BOTTOMRIGHT", "TOPRIGHT", "BOTTOMLEFT"
+				playerSpacing = layout["spacing"]
+				petSpacing = -layout["spacing"]
+			elseif layout["anchor"] == "TOPLEFT" then
+				point, playerAnchorPoint, petAnchorPoint = "TOPLEFT", "BOTTOMLEFT", "TOPRIGHT"
+				playerSpacing = -layout["spacing"]
+				petSpacing = layout["spacing"]
+			elseif layout["anchor"] == "TOPRIGHT" then
+				point, playerAnchorPoint, petAnchorPoint = "TOPRIGHT", "BOTTOMRIGHT", "TOPLEFT"
+				playerSpacing = -layout["spacing"]
+				petSpacing = -layout["spacing"]
+			end
+		else
+			-- anchor
+            if layout["anchor"] == "BOTTOMLEFT" then
+                point, playerAnchorPoint, petAnchorPoint = "BOTTOMLEFT", "BOTTOMRIGHT", "TOPLEFT"
+				playerSpacing = layout["spacing"]
+				petSpacing = layout["spacing"]
+            elseif layout["anchor"] == "BOTTOMRIGHT" then
+                point, playerAnchorPoint, petAnchorPoint = "BOTTOMRIGHT", "BOTTOMLEFT", "TOPRIGHT"
+                playerSpacing = -layout["spacing"]
+				petSpacing = layout["spacing"]
+            elseif layout["anchor"] == "TOPLEFT" then
+                point, playerAnchorPoint, petAnchorPoint = "TOPLEFT", "TOPRIGHT", "BOTTOMLEFT"
+                playerSpacing = layout["spacing"]
+				petSpacing = -layout["spacing"]
+            elseif layout["anchor"] == "TOPRIGHT" then
+                point, playerAnchorPoint, petAnchorPoint = "TOPRIGHT", "TOPLEFT", "BOTTOMRIGHT"
+                playerSpacing = -layout["spacing"]
+				petSpacing = -layout["spacing"]
+            end
+		end
+	end
+
 	for i, playerUnit in pairs(playerButtonUnits) do
 		if not which or which == "size" then
 			buttons[playerUnit]:SetSize(unpack(layout["size"]))
@@ -56,13 +98,15 @@ local function PartyFrame_UpdateLayout(layout, which)
 			buttons[playerUnit].func.SetPowerHeight(layout["powerHeight"])
 		end
 
-		if not which or which == "spacing" then
-			if i > 1 then
-				buttons[playerUnit]:ClearAllPoints()
+		if not which or which == "spacing" or which == "orientation" or which == "anchor" then
+			buttons[playerUnit]:ClearAllPoints()
+			if i == 1 then
+				buttons[playerUnit]:SetPoint(point)
+			else
 				if layout["orientation"] == "vertical" then
-					buttons[playerUnit]:SetPoint("TOPLEFT", buttons[playerButtonUnits[i - 1]], "BOTTOMLEFT", 0, -layout["spacing"])
+					buttons[playerUnit]:SetPoint(point, buttons[playerButtonUnits[i - 1]], playerAnchorPoint, 0, playerSpacing)
 				else
-					buttons[playerUnit]:SetPoint("TOPLEFT", buttons[playerButtonUnits[i - 1]], "TOPRIGHT", layout["spacing"], 0)
+					buttons[playerUnit]:SetPoint(point, buttons[playerButtonUnits[i - 1]], playerAnchorPoint, playerSpacing, 0)
 				end
 			end
 		end
@@ -81,12 +125,12 @@ local function PartyFrame_UpdateLayout(layout, which)
 			buttons[petUnit].func.SetPowerHeight(layout["powerHeight"])
 		end
 
-		if not which or which == "spacing" then
+		if not which or which == "spacing" or which == "orientation" or which == "anchor" then
 			buttons[petUnit]:ClearAllPoints()
 			if layout["orientation"] == "vertical" then
-				buttons[petUnit]:SetPoint("TOPLEFT", buttons[playerButtonUnits[i]], "TOPRIGHT", layout["spacing"], 0)
+				buttons[petUnit]:SetPoint(point, buttons[playerButtonUnits[i]], petAnchorPoint, petSpacing, 0)
 			else
-				buttons[petUnit]:SetPoint("TOPLEFT", buttons[playerButtonUnits[i]], "BOTTOMLEFT", 0, -layout["spacing"])
+				buttons[petUnit]:SetPoint(point, buttons[playerButtonUnits[i]], petAnchorPoint, 0, petSpacing)
 			end
 		end
 
