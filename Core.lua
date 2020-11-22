@@ -568,13 +568,13 @@ function SlashCmdList.CELL(msg, editbox)
     elseif command == "resetposition" then
         Cell.frames.anchorFrame:ClearAllPoints()
         Cell.frames.anchorFrame:SetPoint("TOPLEFT", UIParent, "CENTER")
-        Cell.vars.currentLayoutTable["position"] = {"TOPLEFT", "CENTER", 0, 0}
+        Cell.vars.currentLayoutTable["position"] = {}
         Cell.frames.raidButtonsFrame:ClearAllPoints()
         Cell.frames.raidButtonsFrame:SetPoint("TOPRIGHT", UIParent, "CENTER")
-        CellDB["raidTools"]["buttonsPosition"] = {"TOPRIGHT", "CENTER", 0, 0}
+        CellDB["raidTools"]["buttonsPosition"] = {}
         Cell.frames.raidMarksFrame:ClearAllPoints()
         Cell.frames.raidMarksFrame:SetPoint("BOTTOMRIGHT", UIParent, "CENTER")
-        CellDB["raidTools"]["marksPosition"] = {"BOTTOMRIGHT", "CENTER", 0, 0}
+        CellDB["raidTools"]["marksPosition"] = {}
         
     elseif command == "resetall" then
         Cell.frames.anchorFrame:ClearAllPoints()
