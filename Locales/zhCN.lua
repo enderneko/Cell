@@ -192,7 +192,7 @@ L["Group Columns"] = "队伍列数"
 L["Group Rows"] = "队伍行数"
 L["Group Spacing"] = "队伍间距"
 L["vehicle name"] = "载具名称"
-L["Tips: Every layout has its own position setting."] = "提示：每个布局都有其单独的位置设置。"
+L["Tip: Every layout has its own position setting."] = "提示：每个布局都有其单独的位置设置。"
 
 -------------------------------------------------
 -- indicators

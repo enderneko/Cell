@@ -233,6 +233,12 @@ local function Revise()
 				end
 			end
 		end
+		-- add anchor for layouts 
+		for _, layout in pairs(CellDB["layouts"]) do
+			if type(layout["anchor"]) ~= "string" then
+				layout["anchor"] = "TOPLEFT"
+			end
+		end
 	end
 
 	CellDB["revise"] = Cell.version
