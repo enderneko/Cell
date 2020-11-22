@@ -73,6 +73,8 @@ L["Edit"] = "編輯"
 L["Enable"] = "啟用"
 L["Enabled"] = "啟用"
 L["enableHighlight"] = "顯著標示單位按鈕"
+L["Enter spell id"] = "請輸入法術 ID"
+L["Enter: apply\nESC: discard"] = "Enter: 套用\nESC: 取消"
 L["External Cooldowns"] = "減傷 (來自他人)"
 L["Extra Action Button"] = "使用額外快捷鍵"
 L["Focus"] = "專注"
@@ -84,9 +86,9 @@ L["General"] = "一般"
 L["GHOST"] = "鬼魂"
 L["Glow Color"] = "發光顏色"
 L["Glow Type"] = "發光類型"
+L["Group Arrangement"] = "隊伍排列"
 L["Group Columns"] = "隊伍直行數"
 L["Group Filter"] = "過濾隊伍"
-L["Group Orientation"] = "隊伍排列方向"
 L["Group Rows"] = "隊伍橫列數"
 L["Group Spacing"] = "隊伍間距"
 L["Height"] = "高度"
@@ -98,11 +100,12 @@ L["Icons"] = "圖示"
 L["Indicator Settings"] = "指示器設定"
 L["Indicator settings are part of Layout settings which are account-wide."] = "指示器設定是版面配置設定的一部分，是帳號共用的。"
 L["Indicators"] = "指示器"
+L["Invalid"] = "無效"
 L["Invalid spell id."] = "無效的法術 ID。"
 L["Layout"] = "版面配置"
 L["Layouts"] = "版面配置"
-L["LEFT"] = "左"
 L["Left"] = "左"
+L["LEFT"] = "左"
 L["left-click: edit"] = "左鍵: 編輯"
 L["left-to-right"] = "從左到右"
 L["Lock"] = "鎖定"
@@ -123,6 +126,7 @@ L["New version found (%s). Please visit %s to get the latest version."] = "已�
 L["No"] = "否"
 L["None"] = "無"
 L["Normal"] = "普通"
+L["OFF"] = "關閉"
 L["OFFLINE"] = "離線"
 L["Only In Group"] = "只有在隊伍中時"
 L["Only show during encounter or in mythic+"] = "只在首領戰或 M+ 顯示"
@@ -131,16 +135,40 @@ L["Options"] = "選項"
 L["Orientation"] = "方向"
 L["Outline"] = "外框"
 L["P"] = "PvP 天賦"
+L["Party"] = "隊伍"
 L["PENDING"] = "等候"
 L["Pixel"] = "像素"
 L["Pixel Perfect"] = "完美細緻模式"
 L["Power Color"] = "能量顏色"
 L["Power Height"] = "能量條高度"
+L["Press Key to Bind"] = "按下要綁定的按鍵"
 L["Preview"] = "預覽"
 L["Profiles"] = "設定檔"
 L["Pull"] = "倒數"
 L["Pull Timer"] = "開怪倒數"
 L["pullTimerTips"] = "\n|r開怪倒數\n左鍵: |cffffffff開始倒數計時|r\n右鍵: |cffffffff取消倒數計時|r"
+L["r25-release"] = [[
+    <h1>滑鼠點擊施法</h1>
+    <p>滑鼠點擊施法現在支援鍵盤按鍵和多按鍵滑鼠。</p> 
+    <p>由於程式碼的變動，你會需要重新設定滑鼠點擊施法。</p>
+    <br/>
+    <h1>指示器</h1>
+    <p>指示器的法術清單更新了，現在所有自訂指示器都將檢查法術 ID 而不是法術名稱。</p>
+    <p>因此，需要重新設定自訂指示器的增/減益清單，才能使其正常顯示。</p>
+    <br/>
+    <h1>指示器預覽透明度</h1>
+    <p>現在可以更改指示器預覽中的非當前指示器透明度，如此一來調整指示器會更方便。</p>
+    <p>查看“指示器”页面的右上角的滑动条，你懂的。</p>
+    <br/>
+    <h1>框架位置</h1>
+    <p>每個版面配置都有各自獨立的位置設定。</p>
+    <p>這些框架的位置已經重置：Cell 主要框架、標記、團隊倒數。</p>
+    <br/>
+    <h1>其他</h1>
+    <p>新增的隊伍/團隊預覽模次可以幫助你更方便的調整各種版面配置。</p>
+    <p>隊伍對齊點的功能來啦！到 版面配置 -&gt; 隊伍排列 那邊看看吧。</p>
+    <br/>
+]]
 L["Raid"] = "團隊"
 L["Raid Debuffs"] = "副本減益"
 L["Raid Icon (player)"] = "團隊圖示 (玩家)"
@@ -166,6 +194,7 @@ L["ScrollUp"] = "滾輪往上"
 L["sec"] = "秒"
 L["Set Text Width\n|cffffffffCompare with unitbutton's width"] = "設定文字寬度\n|cffffffff相對於單位按鈕的寬度"
 L["Shadow"] = "陰影"
+L["Shift+Enter: add a new line"] = "Shift+Enter: 增加一行"
 L["Shine"] = "閃耀"
 L["Show Battle Res Timer"] = "顯示戰復計時器"
 L["show Cell options frame"] = "打開 Cell 設定選項"
@@ -198,6 +227,7 @@ L["Text Width"] = "文字寬度"
 L["Texture"] = "材質"
 L["The priority of spells decreases from top to bottom."] = "法術的優先順序是從上到下降低。"
 L["The spells list of a icons indicator is unordered (no priority)."] = "圖示指示器的法術清單是不排序的 (無優先順序)。"
+L["Tip: Every layout has its own position setting."] = "小提示: 每個版面配置都有各自獨立的位置設定。"
 L["Tips: Drag and drop to change debuff order. Double-click on instance name to open Encounter Journal. The priority of General Debuffs is higher than Boss Debuffs."] = "小提示: 拖曳減益可以調整順序，點兩下副本名稱可以打開冒險指南。一般減益的優先順序會高於首領減益。"
 L["To open options frame, use /cell options"] = "輸入 /cell options 打開設定選項"
 L["To UnitButton's"] = "對齊到單位按鈕的"
