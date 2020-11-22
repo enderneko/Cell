@@ -174,10 +174,13 @@ local function Revise()
 		-- position for raidTools
 		if #CellDB["raidTools"]["marksPosition"] == 4 then CellDB["raidTools"]["marksPosition"] = {} end
 		if #CellDB["raidTools"]["buttonsPosition"] == 4 then CellDB["raidTools"]["buttonsPosition"] = {} end
-		-- position for layouts
+		-- position & anchor for layouts
 		for _, layout in pairs(CellDB["layouts"]) do
 			if type(layout["position"]) ~= "table" then
 				layout["position"] = {}
+			end
+			if type(layout["anchor"]) ~= "string" then
+				layout["anchor"] = "TOPLEFT"
 			end
 		end
 		-- reset CellDB["debuffBlacklist"]
@@ -229,12 +232,6 @@ local function Revise()
 						end
 					end
 				end
-			end
-		end
-		-- add anchor for layouts 
-		for _, layout in pairs(CellDB["layouts"]) do
-			if type(layout["anchor"]) ~= "string" then
-				layout["anchor"] = "TOPLEFT"
 			end
 		end
 	end
