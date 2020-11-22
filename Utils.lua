@@ -5,10 +5,11 @@ local F = Cell.funcs
 -------------------------------------------------
 -- color
 -------------------------------------------------
-function F:ConvertRGB(r, g, b, a)
-    r = r / 255
-    g = g / 255
-    b = b / 255
+function F:ConvertRGB(r, g, b, a, desaturation)
+    if not desaturation then desaturation = 1 end
+    r = r / 255 * desaturation
+    g = g / 255 * desaturation
+    b = b / 255 * desaturation
     a = a and (a / 255) or 1
     return r, g, b, a
 end
