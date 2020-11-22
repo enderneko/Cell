@@ -6,6 +6,10 @@ local whatsNewFrame = Cell:CreateMovableFrame(L["What's New"], "CellWhatsNewFram
 Cell.frames.whatsNewFrame = whatsNewFrame
 whatsNewFrame:SetToplevel(true)
 
+whatsNewFrame.header.closeBtn:HookScript("OnClick", function()
+    CellDB["whatsNewViewed"] = Cell.version
+end)
+
 Cell:CreateScrollFrame(whatsNewFrame)
 whatsNewFrame.scrollFrame:SetScrollStep(27)
 
@@ -26,7 +30,6 @@ end)
 
 function F:CheckWhatsNew()
     if CellDB["whatsNewViewed"] ~= Cell.version then
-        -- CellDB["whatsNewViewed"] = Cell.version
     
         -- current version has whatsNew content
         if L[Cell.version] ~= Cell.version then
