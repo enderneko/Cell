@@ -1,6 +1,7 @@
 local _, Cell = ...
 local L = Cell.L
 local F = Cell.funcs
+local LPP = LibStub:GetLibrary("LibPixelPerfect")
 
 local layoutsTab = Cell:CreateFrame("CellOptionsFrame_LayoutsTab", Cell.frames.optionsFrame, nil, nil, true)
 Cell.frames.layoutsTab = layoutsTab
@@ -96,34 +97,58 @@ local function UpdatePreviewButton(which, value)
 end
 
 -------------------------------------------------
--- raid preview
+-- layout preview
 -------------------------------------------------
 local previewMode = 0
-local raidPreview = Cell:CreateFrame("LayoutsRaidPreviewFrame", Cell.frames.mainFrame, nil, nil, true)
-raidPreview:SetFrameStrata("MEDIUM")
-raidPreview:SetToplevel(true)
-raidPreview:Hide()
+local layoutPreview = Cell:CreateFrame("CellLayoutPreviewFrame", Cell.frames.mainFrame, nil, nil, true)
+layoutPreview:EnableMouse(false)
+layoutPreview:SetFrameStrata("MEDIUM")
+layoutPreview:SetToplevel(true)
+layoutPreview:Hide()
+
+local layoutPreviewAnchor = CreateFrame("Frame", "CellLayoutPreviewAnchorFrame", layoutPreview, "BackdropTemplate")
+-- layoutPreviewAnchor:SetPoint("TOPLEFT", UIParent, "CENTER")
+layoutPreviewAnchor:SetSize(20, 10)
+layoutPreviewAnchor:SetMovable(true)
+layoutPreviewAnchor:EnableMouse(true)
+layoutPreviewAnchor:RegisterForDrag("LeftButton")
+layoutPreviewAnchor:SetClampedToScreen(true)
+Cell:StylizeFrame(layoutPreviewAnchor, {0, 1, 0, .4})
+layoutPreviewAnchor:Hide()
+layoutPreviewAnchor:SetScript("OnDragStart", function()
+    layoutPreviewAnchor:StartMoving()
+    layoutPreviewAnchor:SetUserPlaced(false)
+end)
+layoutPreviewAnchor:SetScript("OnDragStop", function()
+    layoutPreviewAnchor:StopMovingOrSizing()
+    LPP:SavePixelPerfectPosition(layoutPreviewAnchor, selectedLayoutTable["position"])
+end)
+
+local layoutPreviewName = layoutPreviewAnchor:CreateFontString(nil, "OVERLAY")
+layoutPreviewName:SetFont(GameFontNormal:GetFont(), 14, "OUTLINE")
+layoutPreviewName:SetShadowOffset(0, 0)
+Cell:ColorFontStringByPlayerClass(layoutPreviewName)
 
 -- init raid preview
 do
-    raidPreview.fadeIn = raidPreview:CreateAnimationGroup()
-    local fadeIn = raidPreview.fadeIn:CreateAnimation("alpha")
+    layoutPreview.fadeIn = layoutPreview:CreateAnimationGroup()
+    local fadeIn = layoutPreview.fadeIn:CreateAnimation("alpha")
     fadeIn:SetFromAlpha(0)
     fadeIn:SetToAlpha(1)
     fadeIn:SetDuration(.5)
     fadeIn:SetSmoothing("OUT")
     fadeIn:SetScript("OnPlay", function()
-        raidPreview:Show()
+        layoutPreview:Show()
     end)
     
-    raidPreview.fadeOut = raidPreview:CreateAnimationGroup()
-    local fadeOut = raidPreview.fadeOut:CreateAnimation("alpha")
+    layoutPreview.fadeOut = layoutPreview:CreateAnimationGroup()
+    local fadeOut = layoutPreview.fadeOut:CreateAnimation("alpha")
     fadeOut:SetFromAlpha(1)
     fadeOut:SetToAlpha(0)
     fadeOut:SetDuration(0.5)
     fadeOut:SetSmoothing("IN")
     fadeOut:SetScript("OnFinished", function()
-        raidPreview:Hide()
+        layoutPreview:Hide()
     end)
 
     local desaturation = {
@@ -135,51 +160,51 @@ do
     }
 
     for i = 1, 40 do
-        raidPreview[i] = raidPreview:CreateTexture(nil, "ARTWORK")
-        raidPreview[i]:SetTexture("Interface\\Buttons\\WHITE8x8")
+        layoutPreview[i] = layoutPreview:CreateTexture(nil, "ARTWORK")
+        layoutPreview[i]:SetTexture("Interface\\Buttons\\WHITE8x8")
 
-        raidPreview[i].bg = raidPreview:CreateTexture(nil, "BACKGROUND")
-        raidPreview[i].bg:SetColorTexture(0, 0, 0, .555)
-        raidPreview[i].bg:SetSize(30, 20)
+        layoutPreview[i].bg = layoutPreview:CreateTexture(nil, "BACKGROUND")
+        layoutPreview[i].bg:SetColorTexture(0, 0, 0, .555)
+        layoutPreview[i].bg:SetSize(30, 20)
 
-        raidPreview[i]:SetPoint("TOPLEFT", raidPreview[i].bg, 1, -1)
-        raidPreview[i]:SetPoint("BOTTOMRIGHT", raidPreview[i].bg, -1, 1)
+        layoutPreview[i]:SetPoint("TOPLEFT", layoutPreview[i].bg, 1, -1)
+        layoutPreview[i]:SetPoint("BOTTOMRIGHT", layoutPreview[i].bg, -1, 1)
         
         if i <= 5 then
-            raidPreview[i]:SetVertexColor(F:ConvertRGB(255, 0, 0, 1, desaturation[i])) -- Red
+            layoutPreview[i]:SetVertexColor(F:ConvertRGB(255, 0, 0, 1, desaturation[i])) -- Red
         elseif i <= 10 then
-            raidPreview[i]:SetVertexColor(F:ConvertRGB(255, 127, 0, 1, desaturation[i-5])) -- Orange
+            layoutPreview[i]:SetVertexColor(F:ConvertRGB(255, 127, 0, 1, desaturation[i-5])) -- Orange
         elseif i <= 15 then
-            raidPreview[i]:SetVertexColor(F:ConvertRGB(255, 255, 0, 1, desaturation[i-10])) -- Yellow
+            layoutPreview[i]:SetVertexColor(F:ConvertRGB(255, 255, 0, 1, desaturation[i-10])) -- Yellow
         elseif i <= 20 then
-            raidPreview[i]:SetVertexColor(F:ConvertRGB(0, 255, 0, 1, desaturation[i-15])) -- Green
+            layoutPreview[i]:SetVertexColor(F:ConvertRGB(0, 255, 0, 1, desaturation[i-15])) -- Green
         elseif i <= 25 then
-            raidPreview[i]:SetVertexColor(F:ConvertRGB(0, 127, 255, 1, desaturation[i-20])) -- Blue
+            layoutPreview[i]:SetVertexColor(F:ConvertRGB(0, 127, 255, 1, desaturation[i-20])) -- Blue
         elseif i <= 30 then
-            raidPreview[i]:SetVertexColor(F:ConvertRGB(127, 0, 255, 1, desaturation[i-25])) -- Indigo
+            layoutPreview[i]:SetVertexColor(F:ConvertRGB(127, 0, 255, 1, desaturation[i-25])) -- Indigo
         elseif i <= 35 then
-            raidPreview[i]:SetVertexColor(F:ConvertRGB(238, 130, 238, 1, desaturation[i-30])) -- Violet
+            layoutPreview[i]:SetVertexColor(F:ConvertRGB(238, 130, 238, 1, desaturation[i-30])) -- Violet
         else
-            raidPreview[i]:SetVertexColor(F:ConvertRGB(255, 255, 255, 1, desaturation[i-35])) -- White
+            layoutPreview[i]:SetVertexColor(F:ConvertRGB(255, 255, 255, 1, desaturation[i-35])) -- White
         end
-        raidPreview[i]:SetAlpha(.555)
+        layoutPreview[i]:SetAlpha(.555)
     end
 end
 
 layoutsTab:SetScript("OnHide", function()
-    if raidPreview.timer then
-        raidPreview.timer:Cancel()
-        raidPreview.timer = nil
+    if layoutPreview.timer then
+        layoutPreview.timer:Cancel()
+        layoutPreview.timer = nil
     end
-    if raidPreview.fadeIn:IsPlaying() then
-        raidPreview.fadeIn:Stop()
+    if layoutPreview.fadeIn:IsPlaying() then
+        layoutPreview.fadeIn:Stop()
     end
-    if not raidPreview.fadeOut:IsPlaying() then
-        raidPreview.fadeOut:Play()
+    if not layoutPreview.fadeOut:IsPlaying() then
+        layoutPreview.fadeOut:Play()
     end
 end)
 
-local function UpdateRaidPreview()
+local function UpdateLayoutPreview()
     local n
     if previewMode == 1 then
         n = 5
@@ -187,23 +212,45 @@ local function UpdateRaidPreview()
         n = 40
     end
 
-    -- update raidPreview main point
-    raidPreview:SetSize(unpack(selectedLayoutTable["size"]))
-    raidPreview:ClearAllPoints()
+    -- update layoutPreview point
+    layoutPreview:SetSize(unpack(selectedLayoutTable["size"]))
+    layoutPreview:ClearAllPoints()
+    layoutPreviewName:ClearAllPoints()
     if selectedLayoutTable["anchor"] == "BOTTOMLEFT" then
-        raidPreview:SetPoint("BOTTOMLEFT", Cell.frames.anchorFrame, "TOPLEFT", 0, 4)
+        layoutPreview:SetPoint("BOTTOMLEFT", layoutPreviewAnchor, "TOPLEFT", 0, 4)
+        layoutPreviewName:SetPoint("LEFT", layoutPreviewAnchor, "RIGHT", 5, 0)
     elseif selectedLayoutTable["anchor"] == "BOTTOMRIGHT" then
-        raidPreview:SetPoint("BOTTOMRIGHT", Cell.frames.anchorFrame, "TOPRIGHT", 0, 4)
+        layoutPreview:SetPoint("BOTTOMRIGHT", layoutPreviewAnchor, "TOPRIGHT", 0, 4)
+        layoutPreviewName:SetPoint("RIGHT", layoutPreviewAnchor, "LEFT", -5, 0)
     elseif selectedLayoutTable["anchor"] == "TOPLEFT" then
-        raidPreview:SetPoint("TOPLEFT", Cell.frames.anchorFrame, "BOTTOMLEFT", 0, -4)
+        layoutPreview:SetPoint("TOPLEFT", layoutPreviewAnchor, "BOTTOMLEFT", 0, -4)
+        layoutPreviewName:SetPoint("LEFT", layoutPreviewAnchor, "RIGHT", 5, 0)
     elseif selectedLayoutTable["anchor"] == "TOPRIGHT" then
-        raidPreview:SetPoint("TOPRIGHT", Cell.frames.anchorFrame, "BOTTOMRIGHT", 0, -4)
+        layoutPreview:SetPoint("TOPRIGHT", layoutPreviewAnchor, "BOTTOMRIGHT", 0, -4)
+        layoutPreviewName:SetPoint("RIGHT", layoutPreviewAnchor, "LEFT", -5, 0)
+    end
+
+    -- update layoutPreviewAnchor point
+    if selectedLayout == Cell.vars.currentLayout then
+        layoutPreviewAnchor:SetAllPoints(Cell.frames.anchorFrame)
+        layoutPreviewAnchor:Hide()
+        layoutPreviewName:Hide()
+    else
+        if #selectedLayoutTable["position"] == 2 then
+            LPP:LoadPixelPerfectPosition(layoutPreviewAnchor, selectedLayoutTable["position"])
+        else
+            layoutPreviewAnchor:ClearAllPoints()
+            layoutPreviewAnchor:SetPoint("TOPLEFT", UIParent, "CENTER")
+        end
+        layoutPreviewAnchor:Show()
+        layoutPreviewName:SetText(L["Layout"]..": "..selectedLayout)
+        layoutPreviewName:Show()
     end
 
     -- re-arrange
     for i = 1, n do
-        raidPreview[i].bg:SetSize(unpack(selectedLayoutTable["size"]))
-        raidPreview[i].bg:ClearAllPoints()
+        layoutPreview[i].bg:SetSize(unpack(selectedLayoutTable["size"]))
+        layoutPreview[i].bg:ClearAllPoints()
 
         local spacing = selectedLayoutTable["spacing"]
         
@@ -233,18 +280,18 @@ local function UpdateRaidPreview()
             end
 
             if i == 1 then
-                raidPreview[i].bg:SetPoint(point)
+                layoutPreview[i].bg:SetPoint(point)
             elseif i % 5 == 1 then -- another party
                 local lastColumn = math.modf(i / 5)
                 local currentColumn = lastColumn + 1
                 if lastColumn % selectedLayoutTable["columns"] == 0 then
                     local index = (currentColumn - selectedLayoutTable["columns"]) * 5 -- find anchor
-                    raidPreview[i].bg:SetPoint(point, raidPreview[index].bg, anchorPoint, 0, verticalSpacing)
+                    layoutPreview[i].bg:SetPoint(point, layoutPreview[index].bg, anchorPoint, 0, verticalSpacing)
                 else
-                    raidPreview[i].bg:SetPoint(point, raidPreview[i-5].bg, groupAnchorPoint, groupSpacing, 0)
+                    layoutPreview[i].bg:SetPoint(point, layoutPreview[i-5].bg, groupAnchorPoint, groupSpacing, 0)
                 end
             else
-                raidPreview[i].bg:SetPoint(point, raidPreview[i-1].bg, anchorPoint, 0, unitSpacing)
+                layoutPreview[i].bg:SetPoint(point, layoutPreview[i-1].bg, anchorPoint, 0, unitSpacing)
             end
         else
             -- anchor
@@ -272,49 +319,49 @@ local function UpdateRaidPreview()
             end
 
             if i == 1 then
-                raidPreview[i].bg:SetPoint(point)
+                layoutPreview[i].bg:SetPoint(point)
             elseif i % 5 == 1 then -- another party
                 local lastRow = math.modf(i / 5)
                 local currentRow = lastRow + 1
                 if lastRow % selectedLayoutTable["rows"] == 0 then
                     local index = (currentRow - selectedLayoutTable["rows"]) * 5 -- find anchor
-                    raidPreview[i].bg:SetPoint(point, raidPreview[index].bg, anchorPoint, horizontalSpacing, 0)
+                    layoutPreview[i].bg:SetPoint(point, layoutPreview[index].bg, anchorPoint, horizontalSpacing, 0)
                 else
-                    raidPreview[i].bg:SetPoint(point, raidPreview[i-5].bg, groupAnchorPoint, 0, groupSpacing)
+                    layoutPreview[i].bg:SetPoint(point, layoutPreview[i-5].bg, groupAnchorPoint, 0, groupSpacing)
                 end
             else
-                raidPreview[i].bg:SetPoint(point, raidPreview[i-1].bg, anchorPoint, unitSpacing, 0)
+                layoutPreview[i].bg:SetPoint(point, layoutPreview[i-1].bg, anchorPoint, unitSpacing, 0)
             end
         end
 
-        raidPreview[i]:Show()
-        raidPreview[i].bg:Show()
+        layoutPreview[i]:Show()
+        layoutPreview[i].bg:Show()
     end
 
     -- hide others
     for i = n+1, 40 do
-        raidPreview[i]:Hide()
-        raidPreview[i].bg:Hide()
+        layoutPreview[i]:Hide()
+        layoutPreview[i].bg:Hide()
     end
 
-    if raidPreview.fadeIn:IsPlaying() then
-        raidPreview.fadeIn:Restart()
+    if layoutPreview.fadeIn:IsPlaying() then
+        layoutPreview.fadeIn:Restart()
     else
-        raidPreview.fadeIn:Play()
+        layoutPreview.fadeIn:Play()
     end
     
-    if raidPreview.fadeOut:IsPlaying() then
-        raidPreview.fadeOut:Stop()
+    if layoutPreview.fadeOut:IsPlaying() then
+        layoutPreview.fadeOut:Stop()
     end
 
-    if raidPreview.timer then
-        raidPreview.timer:Cancel()
+    if layoutPreview.timer then
+        layoutPreview.timer:Cancel()
     end
 
     if previewMode == 0 then
-        raidPreview.timer = C_Timer.NewTimer(1, function()
-            raidPreview.fadeOut:Play()
-            raidPreview.timer = nil
+        layoutPreview.timer = C_Timer.NewTimer(1, function()
+            layoutPreview.fadeOut:Play()
+            layoutPreview.timer = nil
         end)
     else
 
@@ -727,7 +774,7 @@ orientationDropdown:SetItems({
             else
                 groupSpacingSlider:SetEnabled(true)
             end
-            UpdateRaidPreview()
+            UpdateLayoutPreview()
         end,
     },
     {
@@ -745,7 +792,7 @@ orientationDropdown:SetItems({
             else
                 groupSpacingSlider:SetEnabled(true)
             end
-            UpdateRaidPreview()
+            UpdateLayoutPreview()
         end,
     },
 })
@@ -766,7 +813,7 @@ anchorDropdown:SetItems({
             if selectedLayout == Cell.vars.currentLayout then
                 Cell:Fire("UpdateLayout", selectedLayout, "anchor")
             end
-            UpdateRaidPreview()
+            UpdateLayoutPreview()
         end,
     },
     {
@@ -777,7 +824,7 @@ anchorDropdown:SetItems({
             if selectedLayout == Cell.vars.currentLayout then
                 Cell:Fire("UpdateLayout", selectedLayout, "anchor")
             end
-            UpdateRaidPreview()
+            UpdateLayoutPreview()
         end,
     },
     {
@@ -788,7 +835,7 @@ anchorDropdown:SetItems({
             if selectedLayout == Cell.vars.currentLayout then
                 Cell:Fire("UpdateLayout", selectedLayout, "anchor")
             end
-            UpdateRaidPreview()
+            UpdateLayoutPreview()
         end,
     },
     {
@@ -799,7 +846,7 @@ anchorDropdown:SetItems({
             if selectedLayout == Cell.vars.currentLayout then
                 Cell:Fire("UpdateLayout", selectedLayout, "anchor")
             end
-            UpdateRaidPreview()
+            UpdateLayoutPreview()
         end,
     },
 })
@@ -816,13 +863,13 @@ previewModeBtn:SetScript("OnClick", function()
 
     if previewMode == 0 then
         previewModeBtn:SetText("|cff777777"..L["OFF"])
-        raidPreview.fadeOut:Play()
+        layoutPreview.fadeOut:Play()
     elseif previewMode == 1 then
         previewModeBtn:SetText(L["Party"])
-        UpdateRaidPreview()
+        UpdateLayoutPreview()
     else
         previewModeBtn:SetText(L["Raid"])
-        UpdateRaidPreview()
+        UpdateLayoutPreview()
     end
 end)
 previewModeBtn:SetScript("OnHide", function()
@@ -968,7 +1015,7 @@ local spacingSlider = Cell:CreateSlider(L["Spacing"], layoutsTab, 0, 10, 100, 1,
         Cell:Fire("UpdateLayout", selectedLayout, "spacing")
     end
     -- preview
-    UpdateRaidPreview()
+    UpdateLayoutPreview()
 end)
 spacingSlider:SetPoint("TOPLEFT", miscText, "BOTTOMLEFT", 5, -25)
 
@@ -988,7 +1035,7 @@ rcSlider = Cell:CreateSlider("", layoutsTab, 1, 8, 100, 1, function(value)
         Cell:Fire("UpdateLayout", selectedLayout, "rows_columns")
     end
     -- preview
-    UpdateRaidPreview()
+    UpdateLayoutPreview()
 end)
 rcSlider:SetPoint("TOPLEFT", spacingSlider, "BOTTOMLEFT", 0, -40)
 
@@ -999,7 +1046,7 @@ groupSpacingSlider = Cell:CreateSlider(L["Group Spacing"], layoutsTab, 0, 10, 10
         Cell:Fire("UpdateLayout", selectedLayout, "groupSpacing")
     end
     -- preview
-    UpdateRaidPreview()
+    UpdateLayoutPreview()
 end)
 groupSpacingSlider:SetPoint("TOPLEFT", rcSlider, "BOTTOMLEFT", 0, -40)
 
@@ -1068,7 +1115,7 @@ LoadLayoutDB = function(layout)
 
     UpdateGroupFilter()
     UpdatePreviewButton()
-    UpdateRaidPreview()
+    UpdateLayoutPreview()
 end
 
 local loaded
