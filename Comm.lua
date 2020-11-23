@@ -51,20 +51,20 @@ function eventFrame:GROUP_ROSTER_UPDATE()
     if IsInGroup() then
         eventFrame:UnregisterEvent("GROUP_ROSTER_UPDATE")
         UpdateSendChannel()
-        Comm:SendCommMessage("CELL_VERSION", string.match(Cell.version, "%d+"), sendChannel, nil, "BULK")
+        Comm:SendCommMessage("CELL_VERSION", Cell.version, sendChannel, nil, "BULK")
     end
 end
 
 eventFrame:RegisterEvent("PLAYER_LOGIN")
 function eventFrame:PLAYER_LOGIN()
     if IsInGuild() then
-        Comm:SendCommMessage("CELL_VERSION", string.match(Cell.version, "%d+"), "GUILD", nil, "BULK")
+        Comm:SendCommMessage("CELL_VERSION", Cell.version, "GUILD", nil, "BULK")
     end
 end
 
 Comm:RegisterComm("CELL_VERSION", function(prefix, message, channel, sender)
     if sender == UnitName("player") then return end
-    local version = tonumber(message)
+    local version = tonumber(string.match(message, "%d+"))
     local myVersion = tonumber(string.match(Cell.version, "%d+"))
     if (not CellDB["lastVersionCheck"] or time()-CellDB["lastVersionCheck"]>=86400) and version and myVersion and myVersion < version then
         CellDB["lastVersionCheck"] = time()
