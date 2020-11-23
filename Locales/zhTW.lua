@@ -147,7 +147,7 @@ L["Profiles"] = "設定檔"
 L["Pull"] = "倒數"
 L["Pull Timer"] = "開怪倒數"
 L["pullTimerTips"] = "\n|r開怪倒數\n左鍵: |cffffffff開始倒數計時|r\n右鍵: |cffffffff取消倒數計時|r"
-L["r25-release"] = [[
+L["r26-release"] = [[
     <h1>滑鼠點擊施法</h1>
     <p>滑鼠點擊施法現在支援鍵盤按鍵和多按鍵滑鼠。</p> 
     <p>由於程式碼的變動，你會需要重新設定滑鼠點擊施法。</p>
