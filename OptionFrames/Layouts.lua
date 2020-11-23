@@ -164,9 +164,10 @@ do
         layoutPreview[i]:SetTexture("Interface\\Buttons\\WHITE8x8")
 
         layoutPreview[i].bg = layoutPreview:CreateTexture(nil, "BACKGROUND")
-        layoutPreview[i].bg:SetColorTexture(0, 0, 0, .555)
+        layoutPreview[i].bg:SetColorTexture(0, 0, 0)
+        layoutPreview[i].bg:SetAlpha(.555)
         layoutPreview[i].bg:SetSize(30, 20)
-
+        
         layoutPreview[i]:SetPoint("TOPLEFT", layoutPreview[i].bg, 1, -1)
         layoutPreview[i]:SetPoint("BOTTOMRIGHT", layoutPreview[i].bg, -1, 1)
         
@@ -338,10 +339,56 @@ local function UpdateLayoutPreview()
         layoutPreview[i].bg:Show()
     end
 
-    -- hide others
-    for i = n+1, 40 do
-        layoutPreview[i]:Hide()
-        layoutPreview[i].bg:Hide()
+    -- update group filter
+    if previewMode ~= 1 then
+        for i = 1, 40 do
+            if i / 5 <= 1 then -- party1
+                if not selectedLayoutTable["groupFilter"][1] then
+                    layoutPreview[i]:Hide()
+                    layoutPreview[i].bg:Hide()
+                end
+            elseif i / 5 <= 2 then -- party2
+                if not selectedLayoutTable["groupFilter"][2] then
+                    layoutPreview[i]:Hide()
+                    layoutPreview[i].bg:Hide()
+                end
+            elseif i / 5 <= 3 then -- party3
+                if not selectedLayoutTable["groupFilter"][3] then
+                    layoutPreview[i]:Hide()
+                    layoutPreview[i].bg:Hide()
+                end
+            elseif i / 5 <= 4 then -- party4
+                if not selectedLayoutTable["groupFilter"][4] then
+                    layoutPreview[i]:Hide()
+                    layoutPreview[i].bg:Hide()
+                end
+            elseif i / 5 <= 5 then -- party5
+                if not selectedLayoutTable["groupFilter"][5] then
+                    layoutPreview[i]:Hide()
+                    layoutPreview[i].bg:Hide()
+                end
+            elseif i / 5 <= 6 then -- party6
+                if not selectedLayoutTable["groupFilter"][6] then
+                    layoutPreview[i]:Hide()
+                    layoutPreview[i].bg:Hide()
+                end
+            elseif i / 5 <= 7 then -- party7
+                if not selectedLayoutTable["groupFilter"][7] then
+                    layoutPreview[i]:Hide()
+                    layoutPreview[i].bg:Hide()
+                end
+            else -- party8
+                if not selectedLayoutTable["groupFilter"][8] then
+                    layoutPreview[i]:Hide()
+                    layoutPreview[i].bg:Hide()
+                end
+            end
+        end
+    else -- party preview
+        for i = 6, 40 do
+            layoutPreview[i]:Hide()
+            layoutPreview[i].bg:Hide()
+        end
     end
 
     if layoutPreview.fadeIn:IsPlaying() then
@@ -731,6 +778,7 @@ for i = 1, 8 do
         if selectedLayout == Cell.vars.currentLayout then
             Cell:Fire("UpdateLayout", selectedLayout, "groupFilter")
         end
+        UpdateLayoutPreview()
     end)
     
     if i == 1 then
@@ -1009,7 +1057,7 @@ local miscText = Cell:CreateSeparator(L["Misc"], layoutsTab, 122)
 miscText:SetPoint("TOPLEFT", 269, -210)
 
 -- spacing
-local spacingSlider = Cell:CreateSlider(L["Spacing"], layoutsTab, 0, 10, 100, 1, function(value)
+local spacingSlider = Cell:CreateSlider(L["Unit Spacing"], layoutsTab, 0, 10, 100, 1, function(value)
     selectedLayoutTable["spacing"] = value
     if selectedLayout == Cell.vars.currentLayout then
         Cell:Fire("UpdateLayout", selectedLayout, "spacing")
