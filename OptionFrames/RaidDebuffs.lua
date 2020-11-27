@@ -102,7 +102,6 @@ local loadedDebuffs = {
     -- [instanceId] = {
     --     ["general"] = {
     --         {["id"]=spellId, ["order"]=order, ["glowType"]=glowType, ["glowColor"]=glowColor}
-    --//       {["id"]=spellId, ["order"]=order, ["trackById"]=trackById, ["glow"]=glow, ["glowColor"]=glowColor}
     --         ["disabled"] = {},
     --     },
     --     [bossId] = {

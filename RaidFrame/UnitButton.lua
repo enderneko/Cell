@@ -400,7 +400,7 @@ local function UnitButton_UpdateDebuffs(self)
     local t = GetTime()
     for spellId, expirationTime in pairs(debuffs_cache[unit]) do
         -- lost or expired
-        if not debuffs_current[unit][spellId] or (expirationTime ~= 0 and t > expirationTime) then -- expirationTime == 0: no duration 
+        if not debuffs_current[unit][spellId] or (expirationTime ~= 0 and t >= expirationTime) then -- expirationTime == 0: no duration 
 			debuffs_cache[unit][spellId] = nil
 			debuffs_cache_count[unit][spellId] = nil
         end
@@ -495,7 +495,7 @@ local function UnitButton_UpdateBuffs(self)
     local t = GetTime()
     for spellId, expirationTime in pairs(buffs_cache[unit]) do
         -- lost or expired
-        if not buffs_current[unit][spellId] or t > expirationTime then
+        if not buffs_current[unit][spellId] or (expirationTime ~= 0 and t >= expirationTime) then
 			buffs_cache[unit][spellId] = nil
         end
 	end
@@ -524,7 +524,7 @@ local function UnitButton_UpdateBuffs(self)
     t = GetTime()
     for spellId, expirationTime in pairs(buffs_cache_castByMe[unit]) do
         -- lost or expired
-        if not buffs_current_castByMe[unit][spellId] or (expirationTime ~= 0 and t > expirationTime) then
+        if not buffs_current_castByMe[unit][spellId] or (expirationTime ~= 0 and t >= expirationTime) then
 			buffs_cache_castByMe[unit][spellId] = nil
         end
 	end

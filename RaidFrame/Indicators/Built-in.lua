@@ -190,7 +190,7 @@ function I:CreateDispels(parent)
 
         -- hide unused
         for j = i, 4 do
-            dispels[i]:Hide()
+            dispels[j]:Hide()
         end
 
         -- highlight
