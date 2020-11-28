@@ -94,14 +94,13 @@ local function DecodeKeyboard(fullKey)
 end
 
 local function DecodeDB(t)
-    local modifier, _, key = strmatch(t[1], "^(.*)type(-*)(.+)$")
+    local modifier, bindKey, bindType, bindAction
     
-    local bindKey, bindType, bindAction
-
     if t[1] ~= "notBound" then
-        if tonumber(key) then -- normal mouse button
-            bindKey = F:GetIndex(mouseKeyIDs, tonumber(key))
-        else -- mouse wheel or keyboard
+        local dash, key
+        modifier, dash, key = strmatch(t[1], "^(.*)type(-*)(.+)$")
+
+        if dash == "-" then
             if key == "SCROLLUP" then
                 bindKey = "ScrollUp"
             elseif key == "SCROLLDOWN" then
@@ -109,6 +108,8 @@ local function DecodeDB(t)
             else
                 modifier, bindKey = DecodeKeyboard(key)
             end
+        else -- normal mouse button
+            bindKey = F:GetIndex(mouseKeyIDs, tonumber(key))
         end
     else
         modifier, bindKey = "", "notBound"
@@ -211,8 +212,8 @@ local function GetBindingSnippet()
     local bindingClicks = {}
     for _, t in pairs(clickCastingTable) do
         if t[1] ~= "notBound" then
-            local _, _, key = strmatch(t[1], "^(.*)type(-*)(.+)$")
-            if not tonumber(key) and key ~= "SCROLLUP" and key ~= "SCROLLDOWN" then -- keyboard
+            local _, key = strmatch(t[1], "^(.*)type%-(.+)$")
+            if key and key ~= "SCROLLUP" and key ~= "SCROLLDOWN" then -- keyboard
                 if not bindingClicks[key] then
                     local m, k = DecodeKeyboard(key)
                     -- override keyboard to click
@@ -354,7 +355,7 @@ local function CheckChanged(index, b)
     end
 end
 
-local function ShowKeysMenu(index, b)
+local function ShowBindingMenu(index, b)
     -- if already in deleted, do nothing
     if deleted[index] then return end
     
@@ -679,7 +680,7 @@ local function CreateBindingListButton(modifier, bindKey, bindType, bindAction, 
         if button == "RightButton" then
             b:GetScript("OnClick")(b, button, down)
         else
-            ShowKeysMenu(i, b)
+            ShowBindingMenu(i, b)
         end
     end)
     
