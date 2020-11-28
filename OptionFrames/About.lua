@@ -13,10 +13,21 @@ aboutTab:Hide()
 local nameText = Cell:CreateSeparator("Cell", aboutTab, 387)
 nameText:SetPoint("TOPLEFT", 5, -5)
 
-local versionText = aboutTab:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET_TITLE")
-versionText:SetPoint("RIGHT", -5, 0)
-versionText:SetPoint("TOP", nameText)
-Cell:ColorFontStringByPlayerClass(versionText)
+local whatsNewBtn = Cell:CreateButton(aboutTab, "What's New", "class-hover", {77, 17})
+whatsNewBtn:SetPoint("RIGHT", -5, 0)
+whatsNewBtn:SetPoint("TOP", nameText, 0, 1)
+whatsNewBtn:SetScript("OnClick", function()
+    if Cell.frames.whatsNewFrame:IsVisible() then
+        Cell.frames.whatsNewFrame:Hide()
+    else
+        Cell.frames.whatsNewFrame:Show()
+    end
+end)
+
+-- local versionText = aboutTab:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET_TITLE")
+-- versionText:SetPoint("TOP", nameText)
+-- versionText:SetPoint("RIGHT", whatsNewBtn, "LEFT", -5, 0)
+-- Cell:ColorFontStringByPlayerClass(versionText)
 
 local introduceText = aboutTab:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
 introduceText:SetPoint("TOPLEFT", nameText, "BOTTOMLEFT", 5, -12)
@@ -90,7 +101,7 @@ end
 local function ShowTab(tab)
     if tab == "about" then
         aboutTab:Show()
-        versionText:SetText(Cell.version)
+        nameText:SetText("Cell "..Cell.version)
     else
         aboutTab:Hide()
     end
