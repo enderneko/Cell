@@ -6,7 +6,9 @@ local LPP = LibStub:GetLibrary("LibPixelPerfect")
 Cell.unitButtons = {
     ["solo"] = {},
     ["party"] = {},
-    ["raid"] = {},
+    ["raid"] = {
+        ["units"] = {}, -- NOTE: update in UnitButton_OnAttributeChanged
+    },
     ["npc"] = {},
 }
 -------------------------------------------------

@@ -357,6 +357,27 @@ function F:HasPermission(isPartyMarkPermission)
 end
 
 -------------------------------------------------
+-- unit buttons
+-------------------------------------------------
+function F:GetUnitButtonByGUID(guid)
+    if not Cell.vars.guid[guid] then return end
+
+    if Cell.vars.groupType == "raid" then
+        -- for _, header in pairs(Cell.unitButtons.raid) do
+        --     for i = 1, 5 do
+        --         print(header[i].state.unit, Cell.vars.guid[guid])
+        --         if header[i].state.unit == Cell.vars.guid[guid] then
+        --             return header[i]
+        --         end
+        --     end
+        -- end
+        return Cell.unitButtons.raid.units[Cell.vars.guid[guid]]
+    else
+        return Cell.unitButtons[Cell.vars.groupType][Cell.vars.guid[guid]]
+    end
+end
+
+-------------------------------------------------
 -- LibSharedMedia
 -------------------------------------------------
 local LSM = LibStub("LibSharedMedia-3.0", true)

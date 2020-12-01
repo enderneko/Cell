@@ -11,9 +11,8 @@ local eventFrame = CreateFrame("Frame")
 eventFrame:SetScript("OnEvent", function()
     local timestamp, subevent, _, sourceGUID, sourceName, sourceFlags, sourceRaidFlags, destGUID, destName, destFlags, destRaidFlags, spellId, spellName = CombatLogGetCurrentEventInfo()
     if (subevent == "SPELL_HEAL" or subevent == "SPELL_PERIODIC_HEAL") and sourceGUID == Cell.vars.playerGUID and destGUID and F:IsAoEHealing(spellName) then
-        if Cell.vars.groupType and Cell.vars.guid[destGUID] then
-            Cell.unitButtons[Cell.vars.groupType][Cell.vars.guid[destGUID]].indicators.aoeHealing:ShowUp()
-        end
+        local b = F:GetUnitButtonByGUID(destGUID)
+        if b then b.indicators.aoeHealing:ShowUp() end
     end
 end)
 
@@ -22,7 +21,7 @@ function I:CreateAoEHealing(parent)
 	parent.indicators.aoeHealing = aoeHealing
 	aoeHealing:SetPoint("TOPLEFT", parent.widget.healthBar)
     aoeHealing:SetPoint("TOPRIGHT", parent.widget.healthBar)
-    aoeHealing:SetFrameLevel(5)
+    aoeHealing:SetFrameLevel(parent.widget.healthBar:GetFrameLevel()+1)
     -- aoeHealing:SetHeight(15)
 	aoeHealing:Hide()
 

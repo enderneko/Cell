@@ -1310,6 +1310,7 @@ local function UnitButton_OnAttributeChanged(self, name, value)
 		if type(value) == "string" then
 			self.state.unit = value
 			self.state.displayedUnit = value
+			if string.find(value, "raid") then Cell.unitButtons.raid.units[value] = self end
 		end
 	end
 end

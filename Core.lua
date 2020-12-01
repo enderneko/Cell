@@ -409,8 +409,9 @@ function eventFrame:GROUP_ROSTER_UPDATE()
         Cell.vars.role["TANK"] = 0
         Cell.vars.role["HEALER"] = 0
         Cell.vars.role["DAMAGER"] = 0
-        -- update guid
+        -- update guid & raid setup
         for i = 1, GetNumGroupMembers() do
+            -- update guid
             local playerGUID = UnitGUID("raid"..i)
             if playerGUID then
                 Cell.vars.guid[playerGUID] = "raid"..i
@@ -420,6 +421,10 @@ function eventFrame:GROUP_ROSTER_UPDATE()
             if role and Cell.vars.role[role] then
                 Cell.vars.role[role] = Cell.vars.role[role] + 1
             end
+        end
+        -- update Cell.unitButtons.raid.units
+        for i = GetNumGroupMembers()+1, 40 do
+            Cell.unitButtons.raid.units["raid"..i] = nil
         end
         F:UpdateRaidSetup()
 
@@ -446,6 +451,10 @@ function eventFrame:GROUP_ROSTER_UPDATE()
                 Cell.vars.guid[petGUID] = "partypet"..i
             end
         end
+        -- update Cell.unitButtons.raid.units
+        for i = 1, 40 do
+            Cell.unitButtons.raid.units["raid"..i] = nil
+        end
 
     else
         if Cell.vars.groupType ~= "solo" then
@@ -456,6 +465,10 @@ function eventFrame:GROUP_ROSTER_UPDATE()
         Cell.vars.guid[UnitGUID("player")] = "player"
         if UnitGUID("pet") then
             Cell.vars.guid[UnitGUID("pet")] = "pet"
+        end
+        -- update Cell.unitButtons.raid.units
+        for i = 1, 40 do
+            Cell.unitButtons.raid.units["raid"..i] = nil
         end
     end
 

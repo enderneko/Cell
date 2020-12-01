@@ -618,6 +618,9 @@ local function ShowIndicatorSettings(id)
     local settingsTable
     if indicatorType == "built-in" then
         settingsTable = indicatorSettings[indicatorName]
+        if indicatorName == "tankActiveMitigation" then
+            tinsert(settingsTable, 1, "|cffb7b7b7"..L["Tank Active Mitigation refers to a single, specific ability that a Tank must use as a counter to specific Boss abilities. These Boss abilities are designated as Mitigation Checks. But "])
+        end
     else
         if indicatorType == "icon" then
             settingsTable = {"enabled", "auras", "position", "size-square", "font", "checkbutton2:showDuration"}
