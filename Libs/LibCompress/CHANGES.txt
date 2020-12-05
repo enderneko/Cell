@@ -1,0 +1,10 @@
+------------------------------------------------------------------------
+r83 | galmok | 2018-07-03 14:33:48 +0000 (Tue, 03 Jul 2018) | 2 lines
+Changed paths:
+   M /trunk/LibCompress.lua
+   M /trunk/LibCompress.toc
+
+Bad checks when preparing the encode/decode functions are now fixed (thanks to safetee).
+License version in .TOC was wrong (should be GPL v2 like everywhere else).
+------------------------------------------------------------------------
+
