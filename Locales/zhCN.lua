@@ -24,6 +24,9 @@ L["Raid"] = "团队"
 -------------------------------------------------
 L["Pull Timer"] = "开怪倒数"
 L["You don't have permission to do this"] = "你没有权限这样做"
+L["You"] = "你"
+L["%s lock %s on %s."] = "%s 将 %s 锁定在 %s。"
+L["%s unlock %s from %s."] = "%s 将 %s 从 %s 解锁。"
 -- L["Raid Sort"] = "团队排序"
 -- L["Raid Roster"] = "团队名单"
 

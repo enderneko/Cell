@@ -132,9 +132,9 @@ for i = 1, 9 do
                         SetRaidTarget(unit, i)
                         markButtons[i]:SetBackdropBorderColor(markColors[i][1], markColors[i][2], markColors[i][3], 1)
                         markButtons[i].locked = unit
-                        markButtons[i].ticker = C_Timer.NewTicker(1, function()
+                        markButtons[i].ticker = C_Timer.NewTicker(1.5, function()
                             if UnitName(unit) == name then
-                                if GetRaidTargetIndex("unit") ~= i then
+                                if GetRaidTargetIndex(unit) ~= i then
                                     SetRaidTarget(unit, i)
                                 end
                             else
