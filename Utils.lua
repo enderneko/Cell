@@ -232,10 +232,18 @@ end
 
 local RAID_CLASS_COLORS = RAID_CLASS_COLORS
 function F:GetClassColor(class)
-    if class then
+    if class and class ~= "" then
         return RAID_CLASS_COLORS[class]:GetRGB()
     else
         return 1, 1, 1
+    end
+end
+
+function F:GetClassColorStr(class)
+    if class and class ~= "" then
+        return "|c"..RAID_CLASS_COLORS[class].colorStr
+    else
+        return "|cffffffff"
     end
 end
 
@@ -265,6 +273,17 @@ function F:GetPowerColor(unit)
         end
     end
     return r, g, b, t
+end
+
+function F:GetMarkEscapeSequence(index)
+    index = index - 1
+    local left, right, top, bottom
+    local coordIncrement = 64 / 256
+    left = mod(index , 4) * coordIncrement
+    right = left + coordIncrement
+    top = floor(index / 4) * coordIncrement
+    bottom = top + coordIncrement
+    return string.format("|TInterface\\TargetingFrame\\UI-RaidTargetingIcons:0:0:0:0:64:64:%d:%d:%d:%d|t", left*64, right*64, top*64, bottom*64)
 end
 
 -- local scriptObjects = {}
@@ -325,27 +344,30 @@ function F:UnitInGroup(unit)
     return UnitPlayerOrPetInParty(unit) or UnitPlayerOrPetInRaid(unit)
 end
 
-function F:GetTargetUnitId()
-    if UnitIsUnit("target", "player") then return "player" end
-    if UnitIsUnit("target", "pet") then return "pet" end
+function F:GetTargetUnitInfo()
+    if UnitIsUnit("target", "player") then
+        return "player", UnitName("player"), select(2, UnitClass("player"))
+    elseif UnitIsUnit("target", "pet") then
+        return "pet", UnitName("pet")
+    end
     if not F:UnitInGroup("target") then return end
 
     if IsInRaid() then
         for i = 1, GetNumGroupMembers() do
             if UnitIsUnit("target", "raid"..i) then
-                return "raid"..i
+                return "raid"..i, UnitName("raid"..i), select(2, UnitClass("raid"..i))
             end
             if UnitIsUnit("target", "raidpet"..i) then
-                return "raidpet"..i
+                return "raidpet"..i, UnitName("raidpet"..i)
             end
         end
     elseif IsInGroup() then
         for i = 1, GetNumGroupMembers()-1 do
             if UnitIsUnit("target", "party"..i) then
-                return "party"..i
+                return "party"..i, UnitName("party"..i), select(2, UnitClass("party"..i))
             end
             if UnitIsUnit("target", "partypet"..i) then
-                return "partypet"..i
+                return "partypet"..i, UnitName("partypet"..i)
             end
         end
     end

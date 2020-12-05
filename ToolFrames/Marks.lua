@@ -114,11 +114,12 @@ for i = 1, 9 do
                 else
                     SetRaidTarget("target", i)
                 end
-            elseif button == "RightButton" then
+            elseif button == "RightButton" then -- TODO:
                 -- lock raid target icon
-                local target = F:GetTargetUnitId()
-                if target then
+                local unit, name, class = F:GetTargetUnitInfo()
+                if unit and name then
                     if markButtons[i].locked then
+                        F:NotifyMarkUnlock(i, name, class)
                         SetRaidTarget(markButtons[i].locked, 0)
                         markButtons[i]:SetBackdropBorderColor(0, 0, 0, 1)
                         markButtons[i].locked = nil
@@ -127,12 +128,20 @@ for i = 1, 9 do
                             markButtons[i].ticker = nil
                         end
                     else
-                        SetRaidTarget(target, i)
+                        F:NotifyMarkLock(i, name, class)
+                        SetRaidTarget(unit, i)
                         markButtons[i]:SetBackdropBorderColor(markColors[i][1], markColors[i][2], markColors[i][3], 1)
-                        markButtons[i].locked = target
+                        markButtons[i].locked = unit
                         markButtons[i].ticker = C_Timer.NewTicker(1, function()
-                            if GetRaidTargetIndex("target") ~= i then
-                                SetRaidTarget(target, i)
+                            if UnitName(unit) == name then
+                                if GetRaidTargetIndex("unit") ~= i then
+                                    SetRaidTarget(unit, i)
+                                end
+                            else
+                                markButtons[i].locked = nil
+                                markButtons[i].ticker:Cancel()
+                                markButtons[i].ticker = nil
+                                markButtons[i]:SetBackdropBorderColor(0, 0, 0, 1)
                             end
                         end)
                     end
@@ -152,6 +161,17 @@ for i = 1, 9 do
         markButtons[i]:SetPoint("LEFT", markButtons[i-1], "RIGHT", 2, 0)
     end
 end
+
+marks:SetScript("OnHide", function()
+    for i = 1, 8 do
+        markButtons[i].locked = nil
+        if markButtons[i].ticker then
+            markButtons[i].ticker:Cancel()
+            markButtons[i].ticker = nil
+        end
+        markButtons[i]:SetBackdropBorderColor(0, 0, 0, 1)
+    end
+end)
 
 -------------------------------------------------
 -- world marks
@@ -195,13 +215,22 @@ for i = 1, 9 do
     end
 end
 
-worldMarks:SetScript("OnUpdate", function()
-    for i = 1, 8 do
-        if IsRaidMarkerActive(worldMarkIndices[i]) then
-            worldMarkButtons[i]:SetBackdropBorderColor(markColors[i][1], markColors[i][2], markColors[i][3], 1)
-        else
-            worldMarkButtons[i]:SetBackdropBorderColor(0, 0, 0, 1)
+local worldMarksTimer
+worldMarks:SetScript("OnShow", function()
+    worldMarksTimer = C_Timer.NewTicker(.25, function()
+        for i = 1, 8 do
+            if IsRaidMarkerActive(worldMarkIndices[i]) then
+                worldMarkButtons[i]:SetBackdropBorderColor(markColors[i][1], markColors[i][2], markColors[i][3], 1)
+            else
+                worldMarkButtons[i]:SetBackdropBorderColor(0, 0, 0, 1)
+            end
         end
+    end)
+end)
+worldMarks:SetScript("OnHide", function()
+    if worldMarksTimer then
+        worldMarksTimer:Cancel()
+        worldMarksTimer = nil
     end
 end)
 
