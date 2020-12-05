@@ -1336,7 +1336,10 @@ local function UnitButton_OnEnter(self)
 	local unit = self.state.displayedUnit
 	if not unit then return end
 	
-	GameTooltip:SetOwner(Cell.frames.mainFrame, "ANCHOR_TOPLEFT", 0, 15) -- TODO: user defined
+	-- TODO: user defined
+	-- GameTooltip:SetOwner(Cell.frames.mainFrame, "ANCHOR_TOPLEFT", 0, 15)
+	-- GameTooltip:SetUnit(unit)
+	GameTooltip:SetOwner(self, "ANCHOR_TOP", 0, 15)
 	GameTooltip:SetUnit(unit)
 end
 

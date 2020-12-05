@@ -22,12 +22,12 @@ hideBlizzardCB:SetPoint("TOPLEFT", blizzardText, "BOTTOMLEFT", 5, -15)
 -------------------------------------------------
 -- tooltip
 -------------------------------------------------
-local tooltipsText = Cell:CreateSeparator(L["Tooltips"], generalTab, 188)
+local tooltipsText = Cell:CreateSeparator(L["Unit Tooltips"], generalTab, 188)
 tooltipsText:SetPoint("TOPLEFT", 203, -5)
 
-local disableTooltipsCB = Cell:CreateCheckButton(generalTab, L["Disable tooltips"], function(checked, self)
+local disableTooltipsCB = Cell:CreateCheckButton(generalTab, L["Disable Unit Tooltips"], function(checked, self)
     CellDB["general"]["disableTooltips"] = checked
-end)
+end, L["Disable Unit Tooltips"], L["Hide unit tooltips even out of combat"])
 disableTooltipsCB:SetPoint("TOPLEFT", tooltipsText, "BOTTOMLEFT", 5, -15)
 
 -------------------------------------------------
