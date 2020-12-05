@@ -83,9 +83,8 @@ end)
 -----------------------------------------
 Comm:RegisterComm("CELL_MARKS", function(prefix, message, channel, sender)
     if sender == UnitName("player") then return end
-    print(sender)
     local data = Deserialize(message)
-    if data then
+    if Cell.vars.hasPartyMarkPermission and CellDB["raidTools"]["showMarks"] and (CellDB["raidTools"]["marks"] == "target" or CellDB["raidTools"]["marks"] == "both") and data then
         sender = F:GetClassColorStr(select(2, UnitClass(sender)))..sender.."|r"
 
         if data[1] then -- lock
