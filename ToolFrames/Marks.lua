@@ -217,7 +217,7 @@ end
 
 local worldMarksTimer
 worldMarks:SetScript("OnShow", function()
-    worldMarksTimer = C_Timer.NewTicker(.25, function()
+    worldMarksTimer = C_Timer.NewTicker(.5, function()
         for i = 1, 8 do
             if IsRaidMarkerActive(worldMarkIndices[i]) then
                 worldMarkButtons[i]:SetBackdropBorderColor(markColors[i][1], markColors[i][2], markColors[i][3], 1)
