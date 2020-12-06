@@ -261,12 +261,14 @@ end
 -- player raid icon
 -------------------------------------------------
 function I:CreatePlayerRaidIcon(parent)
-    local playerRaidIcon = parent.widget.overlayFrame:CreateTexture(parent:GetName().."PlayerRaidIcon", "ARTWORK", nil, -7)
+    -- local playerRaidIcon = parent.widget.overlayFrame:CreateTexture(parent:GetName().."PlayerRaidIcon", "ARTWORK", nil, -7)
+    -- parent.indicators.playerRaidIcon = playerRaidIcon
+    -- playerRaidIcon:SetTexture("Interface\\TargetingFrame\\UI-RaidTargetingIcons")
+    local playerRaidIcon = CreateFrame("Frame", parent:GetName().."PlayerRaidIcon", parent.widget.overlayFrame)
     parent.indicators.playerRaidIcon = playerRaidIcon
-    playerRaidIcon:SetTexture("Interface\\TargetingFrame\\UI-RaidTargetingIcons")
-    -- playerRaidIcon:SetSize(14, 14)
-    -- playerRaidIcon:SetPoint("TOP", 0, 3)
-    -- playerRaidIcon:SetAlpha(.77)
+    playerRaidIcon.tex = playerRaidIcon:CreateTexture(nil, "ARTWORK")
+    playerRaidIcon.tex:SetTexture("Interface\\TargetingFrame\\UI-RaidTargetingIcons")
+    playerRaidIcon.tex:SetAllPoints(playerRaidIcon)
     playerRaidIcon:Hide()
 end
 
@@ -274,8 +276,10 @@ end
 -- target raid icon
 -------------------------------------------------
 function I:CreateTargetRaidIcon(parent)
-    local targetRaidIcon = parent.widget.overlayFrame:CreateTexture(parent:GetName().."TargetRaidIcon", "ARTWORK", nil, -7)
+    local targetRaidIcon = CreateFrame("Frame", parent:GetName().."TargetRaidIcon", parent.widget.overlayFrame)
     parent.indicators.targetRaidIcon = targetRaidIcon
-    targetRaidIcon:SetTexture("Interface\\TargetingFrame\\UI-RaidTargetingIcons")
+    targetRaidIcon.tex = targetRaidIcon:CreateTexture(nil, "ARTWORK")
+    targetRaidIcon.tex:SetTexture("Interface\\TargetingFrame\\UI-RaidTargetingIcons")
+    targetRaidIcon.tex:SetAllPoints(targetRaidIcon)
     targetRaidIcon:Hide()
 end

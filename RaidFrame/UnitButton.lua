@@ -99,6 +99,10 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
 					indicator:ClearAllPoints()
 					indicator:SetPoint(t["position"][1], b, t["position"][2], t["position"][3], t["position"][4])
 				end
+				-- update frameLevel
+				if t["frameLevel"] then
+					indicator:SetFrameLevel(b.widget.overlayFrame:GetFrameLevel()+t["frameLevel"])
+				end
 				-- update size
 				if t["size"] then
 					indicator:SetSize(unpack(t["size"]))
@@ -176,6 +180,11 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
 				local indicator = b.indicators[indicatorName]
 				indicator:ClearAllPoints()
 				indicator:SetPoint(value[1], b, value[2], value[3], value[4])
+			end)
+		elseif setting == "frameLevel" then
+			F:IterateAllUnitButtons(function(b)
+				local indicator = b.indicators[indicatorName]
+				indicator:SetFrameLevel(b.widget.overlayFrame:GetFrameLevel()+value)
 			end)
 		elseif setting == "size" then
 			F:IterateAllUnitButtons(function(b)
@@ -617,7 +626,7 @@ local function UnitButton_UpdatePlayerRaidIcon(self)
 
 	if enabledIndicators["playerRaidIcon"] then
 		if index then
-			SetRaidTargetIconTexture(playerRaidIcon, index)
+			SetRaidTargetIconTexture(playerRaidIcon.tex, index)
 			playerRaidIcon:Show()
 		else
 			playerRaidIcon:Hide()
@@ -637,7 +646,7 @@ local function UnitButton_UpdateTargetRaidIcon(self)
 
 	if enabledIndicators["targetRaidIcon"] then
 		if index then
-			SetRaidTargetIconTexture(targetRaidIcon, index)
+			SetRaidTargetIconTexture(targetRaidIcon.tex, index)
 			targetRaidIcon:Show()
 		else
 			targetRaidIcon:Hide()

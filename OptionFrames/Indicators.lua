@@ -69,15 +69,12 @@ local function InitIndicator(indicatorName)
     if indicator.init then return end
 
     if indicatorName == "playerRaidIcon" then
-        SetRaidTargetIconTexture(indicator, 6)
-        -- NOTE: texture type cannot glow by LCG
-        indicator.preview = CreateFrame("Frame", nil, previewButton)
-        indicator.preview:SetAllPoints(indicator)
+        SetRaidTargetIconTexture(indicator.tex, 6)
+        -- texture type cannot glow by LCG
+        -- indicator.preview = CreateFrame("Frame", nil, previewButton)
+        -- indicator.preview:SetAllPoints(indicator)
     elseif indicatorName == "targetRaidIcon" then
-        SetRaidTargetIconTexture(indicator, 8)
-        -- NOTE: texture type cannot glow by LCG
-        indicator.preview = CreateFrame("Frame", nil, previewButton)
-        indicator.preview:SetAllPoints(indicator)
+        SetRaidTargetIconTexture(indicator.tex, 8)
     elseif indicatorName == "aggroBar" then
         indicator:SetStatusBarColor(1, 0, 0)
         indicator.value = 0
@@ -227,6 +224,10 @@ local function UpdateIndicators(layout, indicatorName, setting, value)
                 indicator:ClearAllPoints()
                 indicator:SetPoint(t["position"][1], previewButton, t["position"][2], t["position"][3], t["position"][4])
             end
+            -- update frameLevel
+            if t["frameLevel"] then
+                indicator:SetFrameLevel(previewButton.widget.overlayFrame:GetFrameLevel()+t["frameLevel"])
+            end
             -- update size
             if t["size"] then
                 indicator:SetSize(unpack(t["size"]))
@@ -280,7 +281,9 @@ local function UpdateIndicators(layout, indicatorName, setting, value)
             end
 		elseif setting == "position" then
 			indicator:ClearAllPoints()
-			indicator:SetPoint(value[1], previewButton, value[2], value[3], value[4])
+            indicator:SetPoint(value[1], previewButton, value[2], value[3], value[4])
+        elseif setting == "frameLevel" then
+            indicator:SetFrameLevel(previewButton.widget.overlayFrame:GetFrameLevel()+value)
 		elseif setting == "size" then
             indicator:SetSize(unpack(value))
 		elseif setting == "height" then
@@ -469,6 +472,7 @@ createBtn:SetScript("OnClick", function()
                 ["type"] = indicatorType,
                 ["enabled"] = true,
                 ["position"] = {"TOPRIGHT", "TOPRIGHT", 0, 3},
+                ["frameLevel"] = 5,
                 ["size"] = {13, 13},
                 ["font"] = {"Cell ".._G.DEFAULT, 11, "Outline", 2},
                 ["showDuration"] = false,
@@ -482,6 +486,7 @@ createBtn:SetScript("OnClick", function()
                 ["type"] = indicatorType,
                 ["enabled"] = true,
                 ["position"] = {"TOPRIGHT", "TOPRIGHT", 0, 3},
+                ["frameLevel"] = 5,
                 ["font"] = {"Cell ".._G.DEFAULT, 12, "Outline", 0},
                 ["colors"] = {{0,1,0}, {1,1,0,.5}, {1,0,0,5}},
                 ["auraType"] = indicatorAuraType,
@@ -494,6 +499,7 @@ createBtn:SetScript("OnClick", function()
                 ["type"] = indicatorType,
                 ["enabled"] = true,
                 ["position"] = {"TOPRIGHT", "TOPRIGHT", -1, 2},
+                ["frameLevel"] = 5,
                 ["size"] = {18, 4},
                 ["colors"] = {{0,1,0}, {1,1,0,.5}, {1,0,0,5}},
                 ["auraType"] = indicatorAuraType,
@@ -506,6 +512,7 @@ createBtn:SetScript("OnClick", function()
                 ["type"] = indicatorType,
                 ["enabled"] = true,
                 ["position"] = {"TOPRIGHT", "TOPRIGHT", 0, 2},
+                ["frameLevel"] = 5,
                 ["size"] = {11, 4},
                 ["colors"] = {{0,1,0}, {1,1,0,.5}, {1,0,0,5}},
                 ["auraType"] = indicatorAuraType,
@@ -518,6 +525,7 @@ createBtn:SetScript("OnClick", function()
                 ["type"] = indicatorType,
                 ["enabled"] = true,
                 ["position"] = {"TOPRIGHT", "TOPRIGHT", 0, 3},
+                ["frameLevel"] = 5,
                 ["size"] = {13, 13},
                 ["num"] = 3,
                 ["orientation"] = "right-to-left",
@@ -593,16 +601,16 @@ Cell:CreateScrollFrame(settingsFrame)
 settingsFrame.scrollFrame:SetScrollStep(35)
 
 local indicatorSettings = {
-    ["playerRaidIcon"] = {"enabled", "position", "size-square", "alpha"},
-    ["targetRaidIcon"] = {"enabled", "position", "size-square", "alpha"},
-    ["aggroBar"] = {"enabled", "position", "size"},
+    ["playerRaidIcon"] = {"enabled", "position", "frameLevel", "size-square", "alpha"},
+    ["targetRaidIcon"] = {"enabled", "position", "frameLevel", "size-square", "alpha"},
+    ["aggroBar"] = {"enabled", "position", "frameLevel", "size"},
     ["aoeHealing"] = {"enabled", "height", "color"},
-    ["externalCooldowns"] = {"enabled", "position", "size", "num"},
-    ["defensiveCooldowns"] = {"enabled", "position", "size", "num"},
-    ["tankActiveMitigation"] = {"enabled", "position", "size"},
-    ["dispels"] = {"enabled", "position", "size-square", "checkbutton:dispellableByMe", "checkbutton2:enableHighlight"},
-    ["debuffs"] = {"enabled", "blacklist", "position", "size-square", "num", "font"},
-    ["centralDebuff"] = {"|cffb7b7b7"..L["You can config debuffs in %s"]:format(Cell:GetPlayerClassColorString()..L["Raid Debuffs"].."|r"), "enabled", "position", "size-square", "font"},
+    ["externalCooldowns"] = {"enabled", "position", "frameLevel", "size", "num"},
+    ["defensiveCooldowns"] = {"enabled", "position", "frameLevel", "size", "num"},
+    ["tankActiveMitigation"] = {"enabled", "position", "frameLevel", "size"},
+    ["dispels"] = {"enabled", "position", "frameLevel", "size-square", "checkbutton:dispellableByMe", "checkbutton2:enableHighlight"},
+    ["debuffs"] = {"enabled", "blacklist", "frameLevel", "position", "size-square", "num", "font"},
+    ["centralDebuff"] = {"|cffb7b7b7"..L["You can config debuffs in %s"]:format(Cell:GetPlayerClassColorString()..L["Raid Debuffs"].."|r"), "enabled", "position", "frameLevel", "size-square", "font"},
 }
 
 local function ShowIndicatorSettings(id)
@@ -623,13 +631,13 @@ local function ShowIndicatorSettings(id)
         -- end
     else
         if indicatorType == "icon" then
-            settingsTable = {"enabled", "auras", "position", "size-square", "font", "checkbutton2:showDuration"}
+            settingsTable = {"enabled", "auras", "position", "frameLevel", "size-square", "font", "checkbutton2:showDuration"}
         elseif indicatorType == "text" then
-            settingsTable = {"enabled", "auras", "position", "font", "colors"}
+            settingsTable = {"enabled", "auras", "position", "frameLevel", "font", "colors"}
         elseif indicatorType == "bar" or indicatorType == "rect" then
-            settingsTable = {"enabled", "auras", "position", "size", "colors"}
+            settingsTable = {"enabled", "auras", "position", "frameLevel", "size", "colors"}
         elseif indicatorType == "icons" then
-            settingsTable = {"enabled", "auras", "position", "size-square", "num", "orientation", "font", "checkbutton2:showDuration"}
+            settingsTable = {"enabled", "auras", "position", "frameLevel", "size-square", "num", "orientation", "font", "checkbutton2:showDuration"}
         end
         -- castByMe
         if currentLayoutTable["indicators"][id]["auraType"] == "buff" then
@@ -724,8 +732,8 @@ LoadIndicatorList = function()
         if t["type"] == "built-in" then
             b = Cell:CreateButton(listFrame.scrollFrame.content, L[t["name"]], "transparent-class", {20, 20})
         else
-            -- b = Cell:CreateButton(listFrame.scrollFrame.content, t["name"], "transparent-class", {20, 20})
-            b = Cell:CreateButton(listFrame.scrollFrame.content, t["name"].." |cff7f7f7f("..L[t["auraType"]]..")", "transparent-class", {20, 20})
+            b = Cell:CreateButton(listFrame.scrollFrame.content, t["name"], "transparent-class", {20, 20})
+            -- b = Cell:CreateButton(listFrame.scrollFrame.content, t["name"].." |cff7f7f7f("..L[t["auraType"]]..")", "transparent-class", {20, 20})
             b.typeIcon = b:CreateTexture(nil, "ARTWORK")
             b.typeIcon:SetPoint("RIGHT", -2, 0)
             b.typeIcon:SetSize(16, 16)
@@ -771,27 +779,27 @@ LoadIndicatorList = function()
     listFrame.scrollFrame:SetContentHeight(20, #listButtons, -1)
 
     Cell:CreateButtonGroup(listButtons, ShowIndicatorSettings, function(id)
-        local w = previewButton.indicators[currentLayoutTable["indicators"][id]["indicatorName"]]
-        if w:IsObjectType("StatusBar") then
-            LCG.PixelGlow_Start(w.border)
-            w:SetAlpha(1)
-        elseif w:IsObjectType("Texture") then
-            LCG.PixelGlow_Start(w.preview)
-            w:SetAlpha(w.alpha)
+        local i = previewButton.indicators[currentLayoutTable["indicators"][id]["indicatorName"]]
+        if i:IsObjectType("StatusBar") then
+            LCG.PixelGlow_Start(i.border)
+            i:SetAlpha(1)
+        elseif i:IsObjectType("Texture") then
+            LCG.PixelGlow_Start(i.preview)
+            i:SetAlpha(i.alpha)
         else
-            LCG.PixelGlow_Start(w)
-            w:SetAlpha(1)
+            LCG.PixelGlow_Start(i)
+            i:SetAlpha(i.alpha or 1)
         end
     end, function(id)
-        local w = previewButton.indicators[currentLayoutTable["indicators"][id]["indicatorName"]]
-        if w:IsObjectType("StatusBar") then
-            LCG.PixelGlow_Stop(w.border)
-        elseif w:IsObjectType("Texture") then
-            LCG.PixelGlow_Stop(w.preview)
+        local i = previewButton.indicators[currentLayoutTable["indicators"][id]["indicatorName"]]
+        if i:IsObjectType("StatusBar") then
+            LCG.PixelGlow_Stop(i.border)
+        elseif i:IsObjectType("Texture") then
+            LCG.PixelGlow_Stop(i.preview)
         else
-            LCG.PixelGlow_Stop(w)
+            LCG.PixelGlow_Stop(i)
         end
-        w:SetAlpha(CellDB["indicatorPreviewAlpha"])
+        i:SetAlpha(CellDB["indicatorPreviewAlpha"])
     end)
 end
 

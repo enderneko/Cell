@@ -108,7 +108,6 @@ local function Revise()
 			CellDB["general"]["showPets"] = nil
 		end
 	end
-	]]
 
 	-- r22-release
 	if not(CellDB["revise"]) or dbRevision < 22 then
@@ -168,6 +167,7 @@ local function Revise()
 			end
 		end
 	end
+	]]
 
 	-- r25-release
 	if not(CellDB["revise"]) or dbRevision < 25 then
@@ -231,6 +231,37 @@ local function Revise()
 							clickCastingTable[1] = replacements[keyID]
 						end
 					end
+				end
+			end
+		end
+	end
+
+	-- r29-release
+	if not(CellDB["revise"]) or dbRevision < 29 then
+		for _, layout in pairs(CellDB["layouts"]) do
+			for _, indicator in pairs(layout["indicators"]) do
+				if indicator["type"] == "built-in" then
+					if indicator["indicatorName"] == "playerRaidIcon" then
+						indicator["frameLevel"] = 1
+					elseif indicator["indicatorName"] == "targetRaidIcon" then
+						indicator["frameLevel"] = 1
+					elseif indicator["indicatorName"] == "aggroBar" then
+						indicator["frameLevel"] = 1
+					elseif indicator["indicatorName"] == "externalCooldowns" then
+						indicator["frameLevel"] = 10
+					elseif indicator["indicatorName"] == "defensiveCooldowns" then
+						indicator["frameLevel"] = 10
+					elseif indicator["indicatorName"] == "tankActiveMitigation" then
+						indicator["frameLevel"] = 1
+					elseif indicator["indicatorName"] == "dispels" then
+						indicator["frameLevel"] = 15
+					elseif indicator["indicatorName"] == "debuffs" then
+						indicator["frameLevel"] = 1
+					elseif indicator["indicatorName"] == "centralDebuff" then
+						indicator["frameLevel"] = 20
+					end
+				else
+					indicator["frameLevel"] = 5
 				end
 			end
 		end

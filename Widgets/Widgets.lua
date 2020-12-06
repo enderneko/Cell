@@ -2332,6 +2332,36 @@ local function CreateSetting_Position(parent)
     return widget
 end
 
+local function CreateSetting_FrameLevel(parent)
+    local widget
+
+    if not settingWidgets["frameLevel"] then
+        widget = addon:CreateFrame("CellIndicatorSettings_FrameLevel", parent, 240, 50)
+        settingWidgets["frameLevel"] = widget
+
+        widget.frameLevel = addon:CreateSlider(L["Frame Level"], widget, 1, 100, 100, 1)
+        widget.frameLevel:SetPoint("TOPLEFT", widget, 5, -20)
+        widget.frameLevel.afterValueChangedFn = function(value)
+            widget.func(value)
+        end
+        
+        -- associate db
+        function widget:SetFunc(func)
+            widget.func = func
+        end
+        
+        -- show db value
+        function widget:SetDBValue(frameLevel)
+            widget.frameLevel:SetValue(frameLevel)
+        end
+    else
+        widget = settingWidgets["frameLevel"]
+    end
+
+    widget:Show()
+    return widget
+end
+
 local function CreateSetting_Size(parent)
     local widget
 
@@ -3232,6 +3262,8 @@ function addon:CreateIndicatorSettings(parent, settingsTable)
             tinsert(widgetsTable, CreateSetting_Enabled(parent))
         elseif setting == "position" then
             tinsert(widgetsTable, CreateSetting_Position(parent))
+        elseif setting == "frameLevel" then
+            tinsert(widgetsTable, CreateSetting_FrameLevel(parent))
         elseif setting == "size" then
             tinsert(widgetsTable, CreateSetting_Size(parent))
         elseif setting == "size-square" then
