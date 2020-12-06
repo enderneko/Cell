@@ -283,3 +283,84 @@ function I:CreateTargetRaidIcon(parent)
     targetRaidIcon.tex:SetAllPoints(targetRaidIcon)
     targetRaidIcon:Hide()
 end
+
+-------------------------------------------------
+-- health text
+-------------------------------------------------
+function I:CreateHealthText(parent)
+    local healthText = CreateFrame("Frame", parent:GetName().."HealthText", parent.widget.overlayFrame)
+    parent.indicators.healthText = healthText
+    healthText:Hide()
+
+    local text = healthText:CreateFontString(nil, "OVERLAY", "CELL_FONT_STATUS")
+    healthText.text = text
+
+    function healthText:SetFont(font, size, flags, horizontalOffset)
+        if not string.find(font, ".ttf") then font = F:GetFont(font) end
+
+        if flags == "Shadow" then
+            text:SetFont(font, size)
+            text:SetShadowOffset(1, -1)
+            text:SetShadowColor(0, 0, 0, 1)
+        else
+            if flags == "Outline" then
+                flags = "OUTLINE"
+            else
+                flags = "OUTLINE, MONOCHROME"
+            end
+            text:SetFont(font, size, flags)
+            text:SetShadowOffset(0, 0)
+            text:SetShadowColor(0, 0, 0, 0)
+        end
+
+        local point = healthText:GetPoint(1)
+        text:ClearAllPoints()
+        if string.find(point, "LEFT") then
+            text:SetPoint("LEFT", horizontalOffset, 0)
+        elseif string.find(point, "RIGHT") then
+            text:SetPoint("RIGHT", horizontalOffset, 0)
+        else
+            text:SetPoint("CENTER", horizontalOffset, 0)
+        end
+        healthText:SetSize(text:GetStringWidth()+3, size+3)
+    end
+
+    healthText.OriginalSetPoint = healthText.SetPoint
+    function healthText:SetPoint(point, relativeTo, relativePoint, x, y)
+        local horizontalOffset = select(4, text:GetPoint(1))
+        text:ClearAllPoints()
+        if string.find(point, "LEFT") then
+            text:SetPoint("LEFT", horizontalOffset, 0)
+        elseif string.find(point, "RIGHT") then
+            text:SetPoint("RIGHT", horizontalOffset, 0)
+        else
+            text:SetPoint("CENTER", horizontalOffset, 0)
+        end
+        healthText:OriginalSetPoint(point, relativeTo, relativePoint, x, y)
+    end
+
+    function healthText:SetFormat(format)
+        healthText.format = format
+    end
+
+    function healthText:SetColor(r, g, b)
+        text:SetTextColor(r, g, b)
+    end
+
+    function healthText:SetHealth(current, max)
+        if healthText.format == "percentage" then
+            text:SetText(string.format("%d%%", current/max*100))
+        elseif healthText.format == "percentage-deficit" then
+            text:SetText(string.format("%d%%", (current-max)/max*100))
+        elseif healthText.format == "number" then
+            text:SetText(current)
+        elseif healthText.format == "number-short" then
+            text:SetText(F:FormatNumer(current))
+        elseif healthText.format == "number-deficit" then
+            text:SetText(current-max)
+        elseif healthText.format == "number-deficit-short" then
+            text:SetText(F:FormatNumer(current-max))
+        end
+        healthText:SetWidth(text:GetStringWidth()+3)
+    end
+end

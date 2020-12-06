@@ -90,6 +90,8 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
 				indicatorCustoms[t["indicatorName"]] = t["dispellableByMe"]
 			elseif t["castByMe"] ~= nil then
 				indicatorCustoms[t["indicatorName"]] = t["castByMe"]
+			elseif t["hideFull"] ~= nil then
+				indicatorCustoms[t["indicatorName"]] = t["hideFull"]
 			end
 			-- update indicators
 			F:IterateAllUnitButtons(function(b)
@@ -122,6 +124,11 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
 				-- update font
 				if t["font"] then
 					indicator:SetFont(unpack(t["font"]))
+				end
+				-- update format
+				if t["format"] then
+					indicator:SetFormat(t["format"])
+					b.func.UpdateHealthText()
 				end
 				-- update color
 				if t["color"] then
@@ -164,6 +171,10 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
 			elseif indicatorName == "targetRaidIcon" then
 				F:IterateAllUnitButtons(function(b)
 					b.func.UpdateTargetRaidIcon(value)
+				end)
+			elseif indicatorName == "healthText" then
+				F:IterateAllUnitButtons(function(b)
+					b.func.UpdateHealthText()
 				end)
 			else
 				-- refresh
@@ -211,6 +222,12 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
 				local indicator = b.indicators[indicatorName]
 				indicator:SetFont(unpack(value))
 			end)
+		elseif setting == "format" then
+			F:IterateAllUnitButtons(function(b)
+				local indicator = b.indicators[indicatorName]
+				indicator:SetFormat(value)
+				b.func.UpdateHealthText()
+			end)
 		elseif setting == "color" then
 			F:IterateAllUnitButtons(function(b)
 				local indicator = b.indicators[indicatorName]
@@ -231,16 +248,22 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
 			if value ~= "enableHighlight" and value ~= "showDuration" then
 				indicatorCustoms[indicatorName] = value2
 			end
-			F:IterateAllUnitButtons(function(b)
-				if value == "enableHighlight" then
-					local indicator = b.indicators[indicatorName]
-					indicator:EnableHighlight(value2)
-				elseif value == "showDuration" then
-					local indicator = b.indicators[indicatorName]
-					indicator:ShowDuration(value2)
-				end
-				UnitButton_UpdateAuras(b)
-			end)
+			if value == "hideFull" then
+				F:IterateAllUnitButtons(function(b)
+					b.func.UpdateHealthText()
+				end)
+			else
+				F:IterateAllUnitButtons(function(b)
+					if value == "enableHighlight" then
+						local indicator = b.indicators[indicatorName]
+						indicator:EnableHighlight(value2)
+					elseif value == "showDuration" then
+						local indicator = b.indicators[indicatorName]
+						indicator:ShowDuration(value2)
+					end
+					UnitButton_UpdateAuras(b)
+				end)
+			end
 		elseif setting == "create" then
 			F:IterateAllUnitButtons(function(b)
 				local indicator = I:CreateIndicator(b, value)
@@ -555,6 +578,22 @@ local function UpdateUnitHealthState(button)
 	button.state.health = health
 	button.state.healthMax = healthMax
 	button.state.healthPercent = health / healthMax
+
+	if enabledIndicators["healthText"] and healthMax ~= 0 and health ~= 0 then
+		if health == healthMax then
+			if not indicatorCustoms["healthText"] then
+				button.indicators.healthText:SetHealth(health, healthMax)
+				button.indicators.healthText:Show()
+			else
+				button.indicators.healthText:Hide()
+			end
+		else
+			button.indicators.healthText:SetHealth(health, healthMax)
+			button.indicators.healthText:Show()
+		end
+	else
+		button.indicators.healthText:Hide()
+	end
 end
 
 -------------------------------------------------
@@ -1778,6 +1817,13 @@ function F:UnitButton_OnLoad(button)
 		end
 	end
 
+	-- healthText
+	button.func.UpdateHealthText = function()
+		if button.state.displayedUnit then
+			UpdateUnitHealthState(button)
+		end
+	end
+
 	-- indicators
 	I:CreatePlayerRaidIcon(button)
 	I:CreateTargetRaidIcon(button)
@@ -1788,6 +1834,7 @@ function F:UnitButton_OnLoad(button)
 	I:CreateDebuffs(button)
 	I:CreateDispels(button)
 	I:CreateCentralDebuff(button)
+	I:CreateHealthText(button)
 
 	-- events
 	button:SetScript("OnAttributeChanged", UnitButton_OnAttributeChanged) -- init

@@ -17,6 +17,7 @@ select(2, ...).L = setmetatable({
 	["castByMe"] = "Only show buffs cast by me",
 	["showDuration"] = "Show duration text",
 	["enableHighlight"] = "Highlight unit button",
+	["hideFull"] = "Hide while HP is full",
 
 	["BOTTOM"] = "Bottom",
 	["BOTTOMLEFT"] = "Bottom Left",
@@ -59,6 +60,19 @@ select(2, ...).L = setmetatable({
 		<p>Party/Raid Preview Mode will help you adjust layouts.</p>
 		<p>Group Anchor Point comes, go check it out in Layouts -&gt; Group Arrangement.</p>
 		<br/>
+	]],
+
+	["r29-release"] = [[
+		<h1>Indicators</h1>
+		<p>New indicator: Health Text.</p>
+		<p>New option: Frame Level.</p>
+		<br/>
+		<h1>Raid Debuffs</h1>
+		<p>Instance debuffs added.</p>
+		<p>All debuffs are enabled by default, you might want to disable some less important debuffs.</p>
+		<br/>
+		<h1>Misc</h1>
+		<p>Fixed: Marks Bar.</p>
 	]],
 }, {
 	__index = function(self, Key)

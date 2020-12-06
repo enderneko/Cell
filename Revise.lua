@@ -264,6 +264,20 @@ local function Revise()
 					indicator["frameLevel"] = 5
 				end
 			end
+			if not layout["indicators"][11] or layout["indicators"][11]["indicatorName"] ~= "healthText" then
+				tinsert(layout["indicators"], 11, {
+					["name"] = "Health Text",
+					["indicatorName"] = "healthText",
+					["type"] = "built-in",
+					["enabled"] = false,
+					["position"] = {"TOP", "CENTER", 0, -5},
+					["frameLevel"] = 1,
+					["font"] = {"Cell ".._G.DEFAULT, 10, "Shadow", 0},
+					["color"] = {1, 1, 1},
+					["format"] = "percentage",
+					["hideFull"] = true,
+				})
+			end
 		end
 	end
 

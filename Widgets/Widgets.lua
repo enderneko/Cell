@@ -2519,6 +2519,81 @@ local function CreateSetting_Num(parent)
     return widget
 end
 
+local function CreateSetting_Format(parent)
+    local widget
+
+    if not settingWidgets["format"] then
+        widget = addon:CreateFrame("CellIndicatorSettings_Format", parent, 240, 50)
+        settingWidgets["format"] = widget
+
+        widget.format = addon:CreateDropdown(widget, 100)
+        widget.format:SetPoint("TOPLEFT", 5, -20)
+        widget.format:SetItems({
+            {
+                ["text"] = "32%",
+                ["value"] = "percentage",
+                ["onClick"] = function()
+                    widget.func("percentage")
+                end,
+            },
+            {
+                ["text"] = "-67%",
+                ["value"] = "percentage-deficit",
+                ["onClick"] = function()
+                    widget.func("percentage-deficit")
+                end,
+            },
+            {
+                ["text"] = "21377",
+                ["value"] = "number",
+                ["onClick"] = function()
+                    widget.func("number")
+                end,
+            },
+            {
+                ["text"] = "21.4K",
+                ["value"] = "number-short",
+                ["onClick"] = function()
+                    widget.func("number-short")
+                end,
+            },
+            {
+                ["text"] = "-44158",
+                ["value"] = "number-deficit",
+                ["onClick"] = function()
+                    widget.func("number-deficit")
+                end,
+            },
+            {
+                ["text"] = "-44.2K",
+                ["value"] = "number-deficit-short",
+                ["onClick"] = function()
+                    widget.func("number-deficit-short")
+                end,
+            },
+        })
+
+        widget.formatText = widget:CreateFontString(nil, "OVERLAY", font_name)
+        widget.formatText:SetText(L["Format"])
+        widget.formatText:SetPoint("BOTTOMLEFT", widget.format, "TOPLEFT", 0, 1)
+
+        -- associate db
+        function widget:SetFunc(func)
+            widget.func = func
+        end
+        
+        -- show db value
+        function widget:SetDBValue(format)
+            widget.format:SetSelectedValue(format)
+        end
+    else
+        widget = settingWidgets["format"]
+    end
+
+    widget:Show()
+    return widget
+end
+
 local function CreateSetting_Orientation(parent)
     local widget
 
@@ -3274,6 +3349,8 @@ function addon:CreateIndicatorSettings(parent, settingsTable)
             tinsert(widgetsTable, CreateSetting_Alpha(parent))
         elseif setting == "num" then
             tinsert(widgetsTable, CreateSetting_Num(parent))
+        elseif setting == "format" then
+            tinsert(widgetsTable, CreateSetting_Format(parent))
         elseif setting == "orientation" then
             tinsert(widgetsTable, CreateSetting_Orientation(parent))
         elseif setting == "font" then

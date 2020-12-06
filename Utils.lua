@@ -15,6 +15,21 @@ function F:ConvertRGB(r, g, b, a, desaturation)
 end
 
 -------------------------------------------------
+-- number
+-------------------------------------------------
+function F:FormatNumer(n)
+    if abs(n) >= 1000000000 then
+        return string.format("%.3fB", n/1000000000)
+    elseif abs(n) >= 1000000 then
+        return string.format("%.2fM", n/1000000)
+    elseif abs(n) >= 1000 then
+        return string.format("%.1fK", n/1000)
+    else
+        return n
+    end
+end
+
+-------------------------------------------------
 -- string
 -------------------------------------------------
 function F:UpperFirst(str)

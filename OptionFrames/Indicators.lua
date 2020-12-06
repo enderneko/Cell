@@ -251,6 +251,11 @@ local function UpdateIndicators(layout, indicatorName, setting, value)
                     end
                 end
             end
+            -- update format
+            if t["format"] then -- healthText
+                indicator:SetFormat(t["format"])
+                indicator:SetHealth(21377, 65535)
+            end
             -- update orientation
             if t["orientation"] then
                 indicator:SetOrientation(t["orientation"])
@@ -299,6 +304,9 @@ local function UpdateIndicators(layout, indicatorName, setting, value)
                     frame:Hide()
                 end
             end
+        elseif setting == "format" then
+            indicator:SetFormat(value)
+            indicator:SetHealth(21377, 65535)
         elseif setting == "orientation" then
             indicator:SetOrientation(value)
         elseif setting == "font" then
@@ -611,6 +619,7 @@ local indicatorSettings = {
     ["dispels"] = {"enabled", "position", "frameLevel", "size-square", "checkbutton:dispellableByMe", "checkbutton2:enableHighlight"},
     ["debuffs"] = {"enabled", "blacklist", "frameLevel", "position", "size-square", "num", "font"},
     ["centralDebuff"] = {"|cffb7b7b7"..L["You can config debuffs in %s"]:format(Cell:GetPlayerClassColorString()..L["Raid Debuffs"].."|r"), "enabled", "position", "frameLevel", "size-square", "font"},
+    ["healthText"] = {"enabled", "position", "frameLevel", "font", "format", "checkbutton:hideFull", "color"},
 }
 
 local function ShowIndicatorSettings(id)

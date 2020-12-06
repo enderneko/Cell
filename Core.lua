@@ -363,6 +363,18 @@ function eventFrame:ADDON_LOADED(arg1)
                             ["size"] = {20, 20},
                             ["font"] = {"Cell ".._G.DEFAULT, 11, "Outline", 2},
                         },
+                        {
+                            ["name"] = "Health Text",
+                            ["indicatorName"] = "healthText",
+                            ["type"] = "built-in",
+                            ["enabled"] = false,
+                            ["position"] = {"TOP", "CENTER", 0, -5},
+                            ["frameLevel"] = 1,
+                            ["font"] = {"Cell ".._G.DEFAULT, 10, "Shadow", 0},
+                            ["color"] = {1, 1, 1},
+                            ["format"] = "percentage",
+                            ["hideFull"] = true,
+                        },
                     },
                 },
             }
