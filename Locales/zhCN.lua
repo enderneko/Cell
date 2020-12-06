@@ -300,6 +300,7 @@ L["Debuff already exists."] = "减益已存在。"
 -------------------------------------------------
 L["About"] = "关于"
 L["Author"] = "作者"
+L["Translators"] = "翻译人员"
 L["Slash Commands"] = "斜杠命令"
 L["Bug Report & Suggestion"] = "问题报告与建议"
 

@@ -39,7 +39,7 @@ introduceText:SetText(L["ABOUT"])
 -------------------------------------------------
 -- author
 -------------------------------------------------
-local authorText = Cell:CreateSeparator(L["Author"], aboutTab, 188)
+local authorText = Cell:CreateSeparator(L["Author"], aboutTab, 122)
 authorText:SetPoint("TOPLEFT", 5, -190)
 
 local authorNameText = aboutTab:CreateFontString(nil, "OVERLAY")
@@ -50,10 +50,23 @@ authorNameText:SetFont("Interface\\AddOns\\Cell\\Media\\font.ttf", 12)
 authorNameText:SetText("篠崎-影之哀伤(CN)")
 
 -------------------------------------------------
+-- translator
+-------------------------------------------------
+local translatorText = Cell:CreateSeparator(L["Translators"], aboutTab, 122)
+translatorText:SetPoint("TOPLEFT", 137, -190)
+
+local translatorsText = aboutTab:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
+translatorsText:SetPoint("TOPLEFT", translatorText, "BOTTOMLEFT", 5, -12)
+translatorsText:SetJustifyH("LEFT")
+translatorsText:SetJustifyV("MIDDLE")
+translatorsText:SetText("RainbowUI (zhTW)")
+
+
+-------------------------------------------------
 -- slash
 -------------------------------------------------
-local slashText = Cell:CreateSeparator(L["Slash Commands"], aboutTab, 188)
-slashText:SetPoint("TOPLEFT", 203, -190)
+local slashText = Cell:CreateSeparator(L["Slash Commands"], aboutTab, 122)
+slashText:SetPoint("TOPLEFT", 269, -190)
 
 local commandText = aboutTab:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
 commandText:SetPoint("TOPLEFT", slashText, "BOTTOMLEFT", 5, -12)
@@ -64,7 +77,7 @@ commandText:SetText("/cell")
 -- bugreport
 -------------------------------------------------
 local bugReportText = Cell:CreateSeparator(L["Bug Report & Suggestion"], aboutTab, 387)
-bugReportText:SetPoint("TOPLEFT", 5, -280)
+bugReportText:SetPoint("TOPLEFT", 5, -290)
 
 -- local bugReportText2 = aboutTab:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
 -- bugReportText2:SetPoint("TOPLEFT", bugReportText, 5, -22)
