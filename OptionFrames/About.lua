@@ -13,7 +13,7 @@ aboutTab:Hide()
 local nameText = Cell:CreateSeparator("Cell", aboutTab, 387)
 nameText:SetPoint("TOPLEFT", 5, -5)
 
-local whatsNewBtn = Cell:CreateButton(aboutTab, "What's New", "class-hover", {77, 17})
+local whatsNewBtn = Cell:CreateButton(aboutTab, "What's New", "class-hover", {85, 17})
 whatsNewBtn:SetPoint("RIGHT", -5, 0)
 whatsNewBtn:SetPoint("TOP", nameText, 0, 1)
 whatsNewBtn:SetScript("OnClick", function()

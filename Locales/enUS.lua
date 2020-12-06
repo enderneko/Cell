@@ -72,7 +72,7 @@ select(2, ...).L = setmetatable({
 		<p>All debuffs are enabled by default, you might want to disable some less important debuffs.</p>
 		<br/>
 		<h1>Misc</h1>
-		<p>Fixed: Marks Bar.</p>
+		<p>Fixed: Marks Bar, Click-Castings.</p>
 	]],
 }, {
 	__index = function(self, Key)

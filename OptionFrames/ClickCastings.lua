@@ -191,19 +191,49 @@ end
 -------------------------------------------------
 -- mouse wheel & keyboard
 -------------------------------------------------
+local wrapFrame = CreateFrame("Frame", "CellWrapFrame", nil, "SecureHandlerStateTemplate")
+wrapFrame:SetAttribute("_onstate-mouseoverstate", [[
+    -- print(newstate)
+    if newstate == "false" and mouseoverbutton then
+        if not mouseoverbutton:IsUnderMouse() then
+            mouseoverbutton:ClearBindings()
+            mouseoverbutton = nil
+        end
+    end
+]])
+--! NOTE: not available for unit far away (different map)
+RegisterStateDriver(wrapFrame, "mouseoverstate", "[@mouseover, exists] true; false")
+
 local function SetBindingClicks(b)
     b:SetAttribute("_onenter", [[
+        -- print("_onenter")
         self:ClearBindings()
-
-        self:SetBindingClick(true, "MOUSEWHEELUP", self, "SCROLLUP")
-        self:SetBindingClick(true, "MOUSEWHEELDOWN", self, "SCROLLDOWN")
-
         self:Run(self:GetAttribute("snippet"))
+
+        -- self:SetBindingClick(true, "MOUSEWHEELUP", self, "SCROLLUP")
+        -- self:SetBindingClick(true, "MOUSEWHEELDOWN", self, "SCROLLDOWN")
         -- self:SetBindingClick(true, "SHIFT-B", self, "shiftB")
         -- self:SetBindingClick(true, "SHIFT-C", self, "shiftC")
     ]])
 
+    wrapFrame:WrapScript(b, "OnEnter", [[
+        -- print("OnEnter")
+        if mouseoverbutton then mouseoverbutton:ClearBindings() end --! NOTE: 鼠标放在过远单位上->被挡住->移走->移至可用单位再移出，会发现之前的不可用单位的按键绑定仍未取消
+        mouseoverbutton = self
+    ]])
+    
+    --! NOTE: if another frame shows in front of b, _onleave will NOT trigger. Use WrapScript to solve this issue.
     b:SetAttribute("_onleave", [[
+        -- print("_onleave")
+        self:ClearBindings()
+    ]])
+
+    -- wrapFrame:WrapScript(b, "OnLeave", [[
+    --     -- print("OnLeave")
+    --     mouseoverbutton = nil
+    -- ]])
+
+    b:SetAttribute("_onhide", [[
         self:ClearBindings()
     ]])
 end
@@ -213,8 +243,12 @@ local function GetBindingSnippet()
     for _, t in pairs(clickCastingTable) do
         if t[1] ~= "notBound" then
             local _, key = strmatch(t[1], "^(.*)type%-(.+)$")
-            if key and key ~= "SCROLLUP" and key ~= "SCROLLDOWN" then -- keyboard
-                if not bindingClicks[key] then
+            if key and not bindingClicks[key] then -- keyboard
+                if key == "SCROLLUP" then
+                    bindingClicks[key] = [[self:SetBindingClick(true, "MOUSEWHEELUP", self, "SCROLLUP")]]
+                elseif key == "SCROLLDOWN" then
+                    bindingClicks[key] = [[self:SetBindingClick(true, "MOUSEWHEELDOWN", self, "SCROLLDOWN")]]
+                else
                     local m, k = DecodeKeyboard(key)
                     -- override keyboard to click
                     bindingClicks[key] = [[self:SetBindingClick(true, "]]..strupper(m..k)..[[", self, "]]..key..[[")]]

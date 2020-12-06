@@ -1838,8 +1838,8 @@ function F:UnitButton_OnLoad(button)
 
 	-- events
 	button:SetScript("OnAttributeChanged", UnitButton_OnAttributeChanged) -- init
-	button:SetScript("OnShow", UnitButton_OnShow)
-	button:SetScript("OnHide", UnitButton_OnHide)
+	button:HookScript("OnShow", UnitButton_OnShow)
+	button:HookScript("OnHide", UnitButton_OnHide)
 	button:HookScript("OnEnter", UnitButton_OnEnter) -- SecureHandlerEnterLeaveTemplate
 	button:HookScript("OnLeave", UnitButton_OnLeave) -- SecureHandlerEnterLeaveTemplate
 	button:SetScript("OnUpdate", UnitButton_OnUpdate)
