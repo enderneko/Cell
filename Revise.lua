@@ -184,7 +184,7 @@ local function Revise()
 			end
 		end
 		-- reset CellDB["debuffBlacklist"]
-		CellDB["debuffBlacklist"] = F:GetDefaultDebuffBlacklist()
+		CellDB["debuffBlacklist"] = I:GetDefaultDebuffBlacklist()
 		-- update click-castings
 		-- self:SetBindingClick(true, "MOUSEWHEELUP", self, "Button6")
         -- self:SetBindingClick(true, "SHIFT-MOUSEWHEELUP", self, "Button7")

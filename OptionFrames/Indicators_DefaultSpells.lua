@@ -1,6 +1,6 @@
 local _, Cell = ...
 local L = Cell.L
-local F = Cell.funcs
+local I = Cell.iFuncs
 
 -- NOTE: these spellIds ~= realSpellIds, spells are matched by names
 local debuffBlacklist = {
@@ -12,7 +12,7 @@ local debuffBlacklist = {
     206151, -- 挑战者的负担
 }
 
-function F:GetDefaultDebuffBlacklist()
+function I:GetDefaultDebuffBlacklist()
     -- local temp = {}
     -- for i, id in pairs(debuffBlacklist) do
     --     temp[i] = GetSpellInfo(id)
@@ -33,6 +33,7 @@ local aoeHealings = {
     115098, -- 真气波
     123986, -- 真气爆裂
     115310, -- 还魂术
+    322118, -- 青龙下凡 (SUMMON)
 
     -- paladin
     85222, -- 黎明之光
@@ -62,9 +63,26 @@ do
     aoeHealings = temp
 end
 
-function F:IsAoEHealing(name)
+function I:IsAoEHealing(name)
     if not name then return false end
     return aoeHealings[name]
+end
+
+local summonDuration = {
+    -- monk
+    [322118] = 25, -- 青龙下凡
+}
+
+do
+    local temp = {}
+    for id, duration in pairs(summonDuration) do
+        temp[GetSpellInfo(id)] = duration
+    end
+    summonDuration = temp
+end
+
+function I:GetSummonDuration(spellName)
+    return summonDuration[spellName]
 end
 
 -------------------------------------------------
@@ -107,7 +125,7 @@ do
     externalCooldowns = temp
 end
 
-function F:IsExternalCooldown(name, source, target)
+function I:IsExternalCooldown(name, source, target)
     if name == GetSpellInfo(6940) then -- 牺牲祝福
         return source ~= target
     else
@@ -182,7 +200,7 @@ do
     defensiveCooldowns = temp
 end
 
-function F:IsDefensiveCooldown(name)
+function I:IsDefensiveCooldown(name)
     return defensiveCooldowns[name]
 end
 
@@ -218,7 +236,7 @@ do
     tankActiveMitigations = temp
 end
 
-function F:IsTankActiveMitigation(name)
+function I:IsTankActiveMitigation(name)
     return tankActiveMitigations[name]
 end
 
@@ -292,7 +310,7 @@ local dispellable = {
     -------------------------
 }
 
-function F:CanDispel(dispelType)
+function I:CanDispel(dispelType)
     if dispellable[Cell.vars.playerSpecID] then
         return dispellable[Cell.vars.playerSpecID][dispelType]
     else
@@ -320,6 +338,6 @@ do
     drinks = temp
 end
 
-function F:IsDrinking(name)
+function I:IsDrinking(name)
     return drinks[name]
 end

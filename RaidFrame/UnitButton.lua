@@ -402,7 +402,7 @@ local function UnitButton_UpdateDebuffs(self)
 
 			if enabledIndicators["dispels"] and debuffType and debuffType ~= "" then
 				if indicatorCustoms["dispels"] then
-					if F:CanDispel(debuffType) then debuffs_dispel[unit][debuffType] = true end
+					if I:CanDispel(debuffType) then debuffs_dispel[unit][debuffType] = true end
 				else
 					debuffs_dispel[unit][debuffType] = true
 				end
@@ -466,27 +466,27 @@ local function UnitButton_UpdateBuffs(self)
 		if duration then
 			refreshing = buffs_cache[unit][spellId] and expirationTime-duration+.1>=GetTime()
 			-- defensiveCooldowns
-			if enabledIndicators["defensiveCooldowns"] and F:IsDefensiveCooldown(name) and defensiveFound <= indicatorNums["defensiveCooldowns"] then
+			if enabledIndicators["defensiveCooldowns"] and I:IsDefensiveCooldown(name) and defensiveFound <= indicatorNums["defensiveCooldowns"] then
 				-- start, duration, debuffType, texture, count, refreshing
 				self.indicators.defensiveCooldowns[defensiveFound]:SetCooldown(expirationTime - duration, duration, nil, icon, count, refreshing)
 				defensiveFound = defensiveFound + 1
 			end
 
 			-- externalCooldowns
-			if enabledIndicators["externalCooldowns"] and F:IsExternalCooldown(name, source, unit) and externalFound <= indicatorNums["externalCooldowns"] then
+			if enabledIndicators["externalCooldowns"] and I:IsExternalCooldown(name, source, unit) and externalFound <= indicatorNums["externalCooldowns"] then
 				-- start, duration, debuffType, texture, count, refreshing
 				self.indicators.externalCooldowns[externalFound]:SetCooldown(expirationTime - duration, duration, nil, icon, count, refreshing)
 				externalFound = externalFound + 1
 			end
 
 			-- tankActiveMitigation
-			if enabledIndicators["tankActiveMitigation"] and F:IsTankActiveMitigation(name) then
+			if enabledIndicators["tankActiveMitigation"] and I:IsTankActiveMitigation(name) then
 				self.indicators.tankActiveMitigation:SetCooldown(expirationTime - duration, duration)
 				tankActiveMitigationFound = true
 			end
 
 			-- drinking
-			if F:IsDrinking(name) then
+			if I:IsDrinking(name) then
 				if not self.widget.statusText:GetText() then
 					self.widget.statusText:SetText("|cff30BFFF"..L["DRINKING"])
 					self.widget.statusTextFrame:Show()
