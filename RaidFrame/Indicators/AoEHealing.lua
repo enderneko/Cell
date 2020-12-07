@@ -25,7 +25,7 @@ eventFrame:SetScript("OnEvent", function()
                 playerSummoned[destGUID] = GetTime() + I:GetSummonDuration(spellName) -- expirationTime
             end
         end
-        texplore(playerSummoned)
+        -- texplore(playerSummoned)
     end
     -- if (subevent == "SPELL_HEAL" or subevent == "SPELL_PERIODIC_HEAL") then print(subevent, sourceName, sourceGUID, destName, spellId, spellName) end
     if subevent == "SPELL_HEAL" or subevent == "SPELL_PERIODIC_HEAL" then

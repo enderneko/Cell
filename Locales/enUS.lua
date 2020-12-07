@@ -73,6 +73,8 @@ select(2, ...).L = setmetatable({
 		<br/>
 		<h1>Misc</h1>
 		<p>Fixed: Marks Bar, Click-Castings.</p>
+		<p>Moved "Raid Setup" text to the tooltips of "Raid" button.</p>
+		<p>Added Fade Out Menu option.</p>
 	]],
 }, {
 	__index = function(self, Key)

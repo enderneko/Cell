@@ -44,15 +44,19 @@ end
 -------------------------------------------------
 -- buttons
 -------------------------------------------------
-local options = Cell:CreateButton(cellMainFrame, "", "red", {20, 10}, false, true, nil, nil, nil, L["Options"])
-options:SetPoint("TOPLEFT", anchorFrame)
+local menuFrame = CreateFrame("Frame", "CellMenuFrame", cellMainFrame)
+Cell.frames.menuFrame = menuFrame
+menuFrame:SetAllPoints(anchorFrame)
+
+local options = Cell:CreateButton(menuFrame, "", "red", {20, 10}, false, true, nil, nil, nil, L["Options"])
+options:SetPoint("TOPLEFT", menuFrame)
 options:SetFrameStrata("MEDIUM")
 RegisterDragForMainFrame(options)
 options:SetScript("OnClick", function()
     F:ShowOptionsFrame()
 end)
 
-local raid = Cell:CreateButton(cellMainFrame, "", "blue", {20, 10}, false, true, nil, nil, nil, L["Raid"])
+local raid = Cell:CreateButton(menuFrame, "", "blue", {20, 10}, false, true)
 raid:SetPoint("LEFT", options, "RIGHT", 1, 0)
 raid:SetFrameStrata("MEDIUM")
 RegisterDragForMainFrame(raid)
@@ -70,29 +74,89 @@ function F:UpdateFrameLock(locked)
     end
 end
 
+local fadingIn, fadedIn, fadingOut, fadedOut
+menuFrame.fadeIn = menuFrame:CreateAnimationGroup()
+menuFrame.fadeIn.alpha = menuFrame.fadeIn:CreateAnimation("alpha")
+menuFrame.fadeIn.alpha:SetFromAlpha(0)
+menuFrame.fadeIn.alpha:SetToAlpha(1)
+menuFrame.fadeIn.alpha:SetDuration(.5)
+menuFrame.fadeIn.alpha:SetSmoothing("OUT")
+menuFrame.fadeIn:SetScript("OnPlay", function()
+    menuFrame.fadeOut:Stop()
+    fadingIn = true
+end)
+menuFrame.fadeIn:SetScript("OnFinished", function()
+    fadingIn = false
+    fadedIn = true
+    fadedOut = false
+    menuFrame:SetAlpha(1)
+end)
+
+menuFrame.fadeOut = menuFrame:CreateAnimationGroup()
+menuFrame.fadeOut.alpha = menuFrame.fadeOut:CreateAnimation("alpha")
+menuFrame.fadeOut.alpha:SetFromAlpha(1)
+menuFrame.fadeOut.alpha:SetToAlpha(0)
+menuFrame.fadeOut.alpha:SetDuration(.5)
+menuFrame.fadeOut.alpha:SetSmoothing("OUT")
+menuFrame.fadeOut:SetScript("OnPlay", function()
+    menuFrame.fadeIn:Stop()
+    fadingOut = true
+end)
+menuFrame.fadeOut:SetScript("OnFinished", function()
+    fadingOut = false
+    fadedOut = true
+    fadedIn = false
+    menuFrame:SetAlpha(0)
+end)
+
+
+function F:UpdateMenuFadeOut(fadeOut)
+    if fadeOut then
+        menuFrame.fadeOut:Play()
+        menuFrame:SetScript("OnUpdate", function()
+            if (options:IsShown() and options:IsMouseOver(20, -5, -20, 20)) or (raid:IsShown() and raid:IsMouseOver(20, -5, -20, 20)) then -- mouseover
+                if not (fadingIn or fadedIn) then
+                    menuFrame.fadeIn:Play()
+                end
+            else -- mouseout
+                if not (fadingOut or fadedOut) then
+                    menuFrame.fadeOut:Play()
+                end
+            end
+        end)
+    else
+        menuFrame.fadeIn:Play()
+        menuFrame:SetScript("OnUpdate", nil)
+    end
+end
+
 -------------------------------------------------
 -- raid setup
 -------------------------------------------------
-local raidSetupFrame = CreateFrame("Frame", "CellRaidSetupFrame", cellMainFrame)
-Cell.frames.raidSetupFrame = raidSetupFrame
--- raidSetupFrame:SetPoint("LEFT", raid, "RIGHT", 5, 0)
-raidSetupFrame:SetSize(70, 15)
-raidSetupFrame:Hide()
-
-local raidSetupText = raidSetupFrame:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
-raidSetupText:SetFont(raidSetupText:GetFont(), 12, "OUTLINE")
-raidSetupText:SetShadowColor(0, 0, 0)
-raidSetupText:SetShadowOffset(0, 0)
-raidSetupText:SetPoint("CENTER")
-raidSetupText:SetJustifyH("CENTER")
-
 local tankIcon = "|TInterface\\AddOns\\Cell\\Media\\Roles\\TANK:0|t"
 local healerIcon = "|TInterface\\AddOns\\Cell\\Media\\Roles\\HEALER:0|t"
 local damagerIcon = "|TInterface\\AddOns\\Cell\\Media\\Roles\\DAMAGER:0|t"
+raid:HookScript("OnEnter", function()
+    CellTooltip:SetOwner(raid, "ANCHOR_TOPLEFT", 0, 3)
+    CellTooltip:AddLine(L["Raid"])
+    CellTooltip:AddLine(tankIcon.." |cffffffff"..Cell.vars.role["TANK"])
+    CellTooltip:AddLine(healerIcon.." |cffffffff"..Cell.vars.role["HEALER"])
+    CellTooltip:AddLine(damagerIcon.." |cffffffff"..Cell.vars.role["DAMAGER"])
+    CellTooltip:Show()
+end)
+raid:HookScript("OnLeave", function()
+    CellTooltip:Hide()
+end)
 
 function F:UpdateRaidSetup()
-    raidSetupText:SetText(tankIcon..Cell.vars.role["TANK"]..healerIcon..Cell.vars.role["HEALER"]..damagerIcon..Cell.vars.role["DAMAGER"])
-    raidSetupFrame:SetWidth(raidSetupText:GetWidth()+20)
+    if CellTooltip:GetOwner() == raid then
+        CellTooltip:ClearLines()
+        CellTooltip:AddLine(L["Raid"])
+        CellTooltip:AddLine(tankIcon.." |cffffffff"..Cell.vars.role["TANK"])
+        CellTooltip:AddLine(healerIcon.." |cffffffff"..Cell.vars.role["HEALER"])
+        CellTooltip:AddLine(damagerIcon.." |cffffffff"..Cell.vars.role["DAMAGER"])
+        CellTooltip:Show() -- resize
+    end
 end
 
 -------------------------------------------------
@@ -100,10 +164,8 @@ end
 -------------------------------------------------
 local function MainFrame_GroupTypeChanged(groupType)
     if groupType == "raid" then
-        if CellDB["raidTools"]["showRaidSetup"] then raidSetupFrame:Show() end
         raid:Show()
     else
-        raidSetupFrame:Hide()
         raid:Hide()
     end
 
@@ -170,27 +232,22 @@ local function MainFrame_UpdateLayout(layout, which)
     if not which or which == "anchor" then
         cellMainFrame:ClearAllPoints()
         raid:ClearAllPoints()
-        raidSetupFrame:ClearAllPoints()
 
         if layout["anchor"] == "BOTTOMLEFT" then
             cellMainFrame:SetPoint("BOTTOMLEFT", anchorFrame, "TOPLEFT", 0, 4)
             raid:SetPoint("BOTTOMLEFT", options, "BOTTOMRIGHT", 1, 0)
-            raidSetupFrame:SetPoint("LEFT", raid, "RIGHT", 5, 0)
             
         elseif layout["anchor"] == "BOTTOMRIGHT" then
             cellMainFrame:SetPoint("BOTTOMRIGHT", anchorFrame, "TOPRIGHT", 0, 4)
             raid:SetPoint("BOTTOMRIGHT", options, "BOTTOMLEFT", -1, 0)
-            raidSetupFrame:SetPoint("RIGHT", raid, "LEFT", -5, 0)
             
         elseif layout["anchor"] == "TOPLEFT" then
             cellMainFrame:SetPoint("TOPLEFT", anchorFrame, "BOTTOMLEFT", 0, -4)
             raid:SetPoint("TOPLEFT", options, "TOPRIGHT", 1, 0)
-            raidSetupFrame:SetPoint("LEFT", raid, "RIGHT", 5, 0)
             
         elseif layout["anchor"] == "TOPRIGHT" then
             cellMainFrame:SetPoint("TOPRIGHT", anchorFrame, "BOTTOMRIGHT", 0, -4)
             raid:SetPoint("TOPRIGHT", options, "TOPLEFT", -1, 0)
-            raidSetupFrame:SetPoint("RIGHT", raid, "LEFT", -5, 0)
         end
     end
 

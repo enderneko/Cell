@@ -69,6 +69,12 @@ local lockCB = Cell:CreateCheckButton(generalTab, L["Lock Cell Frame"], function
 end)
 lockCB:SetPoint("TOPLEFT", miscText, "BOTTOMLEFT", 5, -15)
 
+local fadeoutCB = Cell:CreateCheckButton(generalTab, L["Fade Out Menu"], function(checked, self)
+    CellDB["general"]["fadeOut"] = checked
+    F:UpdateMenuFadeOut(checked)
+end, L["Fade Out Menu"], L["Fade out menu buttons on mouseout"])
+fadeoutCB:SetPoint("TOPLEFT", lockCB, "BOTTOMLEFT", 0, -7)
+
 
 -------------------------------------------------
 -- raid tools
@@ -92,25 +98,19 @@ unlockBtn:SetScript("OnClick", function(self)
     end
 end)
 
--- raid setup
-local setupCB = Cell:CreateCheckButton(generalTab, L["Show Raid Setup"], function(checked, self)
-    CellDB["raidTools"]["showRaidSetup"] = checked
-    if IsInRaid() then
-        if checked then
-            Cell.frames.raidSetupFrame:Show()
-        else
-            Cell.frames.raidSetupFrame:Hide()
-        end
-    end
-end, L["Show Raid Setup"], L["Show the number of tanks/healers/damagers while in raid"])
-setupCB:SetPoint("TOPLEFT", toolsText, "BOTTOMLEFT", 5, -15)
+-- reBuff checks
+local reBuffCB = Cell:CreateCheckButton(generalTab, L["Show ReBuff Checks"], function(checked, self)
+    CellDB["raidTools"]["showReBuffChecks"] = checked
+end, L["Show ReBuff Checks"], L["Check if your group members need some raid buffs"])
+reBuffCB:SetPoint("TOPLEFT", toolsText, "BOTTOMLEFT", 5, -15)
+reBuffCB:SetEnabled(false)
 
 -- battle res
 local resCB = Cell:CreateCheckButton(generalTab, L["Show Battle Res Timer"], function(checked, self)
     CellDB["raidTools"]["showBattleRes"] = checked
     Cell:Fire("UpdateRaidTools", "battleRes")
 end, L["Show Battle Res Timer"], L["Only show during encounter or in mythic+"])
-resCB:SetPoint("LEFT", setupCB, "RIGHT", 120, 0)
+resCB:SetPoint("LEFT", reBuffCB, "RIGHT", 150, 0)
 
 -- ready & pull
 local pullText, pullDropdown, secDropdown
@@ -125,7 +125,7 @@ local readyPullCB = Cell:CreateCheckButton(generalTab, L["Show ReadyCheck and Pu
     end
     Cell:Fire("UpdateRaidTools", "buttons")
 end, L["Show ReadyCheck and PullTimer buttons"], L["Only show when you have permission to do this"], L["pullTimerTips"])
-readyPullCB:SetPoint("TOPLEFT", setupCB, "BOTTOMLEFT", 0, -15)
+readyPullCB:SetPoint("TOPLEFT", reBuffCB, "BOTTOMLEFT", 0, -15)
 
 pullText = generalTab:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
 pullText:SetText(L["Pull Timer"])
@@ -267,9 +267,10 @@ local function ShowTab(tab)
         showPartyPetsCB:SetChecked(CellDB["general"]["showPartyPets"])
         showPartyPetsCB:SetEnabled(CellDB["general"]["showParty"])
         lockCB:SetChecked(CellDB["general"]["locked"])
+        fadeoutCB:SetChecked(CellDB["general"]["fadeOut"])
 
         -- raid tools
-        setupCB:SetChecked(CellDB["raidTools"]["showRaidSetup"])
+        reBuffCB:SetChecked(CellDB["raidTools"]["showReBuffChecks"])
         resCB:SetChecked(CellDB["raidTools"]["showBattleRes"])
 
         readyPullCB:SetChecked(CellDB["raidTools"]["showButtons"])

@@ -189,13 +189,14 @@ function eventFrame:ADDON_LOADED(arg1)
                 ["showParty"] = true,
                 ["showPartyPets"] = true,
                 ["locked"] = false,
+                ["fadeOut"] = false,
             }
         end
 
         -- raidTools --------------------------------------------------------------------------------
         if type(CellDB["raidTools"]) ~= "table" then
             CellDB["raidTools"] = {
-                ["showRaidSetup"] = true,
+                -- ["showReBuffChecks"] = true, -- TODO:
                 ["showBattleRes"] = true,
                 ["showButtons"] = false,
                 ["pullTimer"] = {"ERT", 7},
@@ -392,7 +393,7 @@ function eventFrame:ADDON_LOADED(arg1)
 
         -- debuffBlacklist ------------------------------------------------------------------------
         if type(CellDB["debuffBlacklist"]) ~= "table" then
-            CellDB["debuffBlacklist"] = F:GetDefaultDebuffBlacklist()
+            CellDB["debuffBlacklist"] = I:GetDefaultDebuffBlacklist()
         end
         Cell.vars.debuffBlacklist = F:ConvertTable(CellDB["debuffBlacklist"])
         
@@ -558,6 +559,8 @@ function eventFrame:PLAYER_LOGIN()
     if CellDB["general"]["hideBlizzard"] then F:HideBlizzard() end
     -- lock
     F:UpdateFrameLock(CellDB["general"]["locked"])
+    -- fade out
+    F:UpdateMenuFadeOut(CellDB["general"]["fadeOut"])
 end
 
 local forceRecheck

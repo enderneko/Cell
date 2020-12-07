@@ -5,7 +5,7 @@ local F = Cell.funcs
 local raidRosterFrame = CreateFrame("Frame", "CellRaidRosterFrame", Cell.frames.mainFrame, "BackdropTemplate")
 Cell.frames.raidRosterFrame = raidRosterFrame
 -- raidRosterFrame:SetPoint("BOTTOMLEFT", Cell.frames.mainFrame, "TOPLEFT", 0, 18)
-Cell:StylizeFrame(raidRosterFrame, {.1, .1, .1, .7})
+Cell:StylizeFrame(raidRosterFrame, {.1, .1, .1, .9})
 raidRosterFrame:SetSize(405, 210)
 raidRosterFrame:EnableMouse(true)
 raidRosterFrame:SetFrameStrata("HIGH")
