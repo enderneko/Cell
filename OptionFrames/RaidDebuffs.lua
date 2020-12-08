@@ -9,7 +9,7 @@ debuffsTab:Hide()
 
 -- vars
 local newestExpansion, loadedExpansion, loadedInstance, loadedBoss, isGeneral
-local currentSpellTable, selectedButtonIndex, selectedSpellId, selectedSpellName, selectedSpellIcon
+local currentBossTable, selectedButtonIndex, selectedSpellId, selectedSpellName, selectedSpellIcon
 -- functions
 local LoadExpansion, ShowInstances, ShowBosses, ShowDebuffs, ShowDetails, ShowImage, HideImage, OpenEncounterJournal
 -- buttons
@@ -101,11 +101,15 @@ end
 local loadedDebuffs = {
     -- [instanceId] = {
     --     ["general"] = {
-    --         {["id"]=spellId, ["order"]=order, ["glowType"]=glowType, ["glowColor"]=glowColor}
+    --         ["enabled"]= {
+    --             {["id"]=spellId, ["order"]=order, ["glowType"]=glowType, ["glowColor"]=glowColor}
+    --         },
     --         ["disabled"] = {},
     --     },
     --     [bossId] = {
-    --         {["id"]=spellId, ["order"]=order, ["glowType"]=glowType, ["glowColor"]=glowColor}
+    --         ["enabled"]= {
+    --             {["id"]=spellId, ["order"]=order, ["glowType"]=glowType, ["glowColor"]=glowColor}
+    --         },
     --         ["disabled"] = {},
     --     },
     -- },
@@ -117,15 +121,14 @@ local function LoadDebuffs()
         if not loadedDebuffs[instanceId] then loadedDebuffs[instanceId] = {} end
 
         for bossId, bTable in pairs(iTable) do
-            if not loadedDebuffs[instanceId][bossId] then loadedDebuffs[instanceId][bossId] = {} end
+            if not loadedDebuffs[instanceId][bossId] then loadedDebuffs[instanceId][bossId] = {["enabled"]={}, ["disabled"]={}} end
             -- load from db and set its order
             for spellId, sTable in pairs(bTable) do
                 local t = {["id"]=spellId, ["order"]=sTable[1], ["glowType"]=sTable[2], ["glowColor"]=sTable[3]}
                 if sTable[1] == 0 then
-                    if not loadedDebuffs[instanceId][bossId]["disabled"] then loadedDebuffs[instanceId][bossId]["disabled"] = {} end
                     tinsert(loadedDebuffs[instanceId][bossId]["disabled"], t)
                 else
-                    loadedDebuffs[instanceId][bossId][sTable[1]] = t
+                    loadedDebuffs[instanceId][bossId]["enabled"][sTable[1]] = t
                 end
             end
         end
@@ -136,24 +139,24 @@ local function LoadDebuffs()
         if not loadedDebuffs[instanceId] then loadedDebuffs[instanceId] = {} end
 
         for bossId, bTable in pairs(iTable) do
-            if not loadedDebuffs[instanceId][bossId] then loadedDebuffs[instanceId][bossId] = {} end
+            if not loadedDebuffs[instanceId][bossId] then loadedDebuffs[instanceId][bossId] = {["enabled"]={}, ["disabled"]={}} end
             -- load
             for i, spellId in pairs(bTable) do
                 if not (CellDB["raidDebuffs"][instanceId] and CellDB["raidDebuffs"][instanceId][bossId] and CellDB["raidDebuffs"][instanceId][bossId][spellId]) then
-                    F:TInsert(loadedDebuffs[instanceId][bossId], {["id"]=spellId, ["order"]=#loadedDebuffs[instanceId][bossId]+1, ["built-in"]=true})
+                    F:TInsert(loadedDebuffs[instanceId][bossId]["enabled"], {["id"]=spellId, ["order"]=#loadedDebuffs[instanceId][bossId]["enabled"]+1, ["built-in"]=true})
                 else -- exists in both CellDB and built-in
                     local found
                     -- find in loadedDebuffs and mark it as built-in
-                    for k, sTable in pairs(loadedDebuffs[instanceId][bossId]) do
-                        if k ~= "disabled" and sTable["id"] == spellId then
+                    for _, sTable in pairs(loadedDebuffs[instanceId][bossId]["enabled"]) do
+                        if sTable["id"] == spellId then
                             found = true
                             sTable["built-in"] = true
                             break
                         end
                     end
                     -- check disabled if not found
-                    if not found and loadedDebuffs[instanceId][bossId]["disabled"] then
-                        for k, sTable in pairs(loadedDebuffs[instanceId][bossId]["disabled"]) do
+                    if not found then
+                        for _, sTable in pairs(loadedDebuffs[instanceId][bossId]["disabled"]) do
                             if sTable["id"] == spellId then
                                 sTable["built-in"] = true
                                 break
@@ -164,10 +167,38 @@ local function LoadDebuffs()
             end
         end
     end
+
+    -- check orders
+    for iId, iTable in pairs(loadedDebuffs) do
+        for bId, bTable in pairs(iTable) do
+            local currentN, correctN = #bTable["enabled"], F:Getn(bTable["enabled"])
+            if currentN ~= correctN then -- missing some debuffs, maybe deleted from .lua
+                -- texplore(bTable)
+                F:Debug("|cffff2222FIX MISSING DEBUFFS|r", iId, bId)
+                local temp = {}
+                for _, sTable in pairs(bTable["enabled"]) do
+                    tinsert(temp, sTable)
+                end
+                for k, sTable in ipairs(temp) do
+                    if sTable["order"] ~= k then
+                        -- fix loadedDebuffs
+                        sTable["order"] = k
+                        -- fix db
+                        if CellDB["raidDebuffs"][iId] and CellDB["raidDebuffs"][iId][bId] and CellDB["raidDebuffs"][iId][bId][sTable["id"]] then
+                            CellDB["raidDebuffs"][iId][bId][sTable["id"]][1] = k
+                        end
+                    end
+                end
+                bTable["enabled"] = temp
+            end
+        end
+    end
+    -- texplore(loadedDebuffs)
 end
 
 local function UpdateRaidDebuffs()
     LoadList()
+    -- DevInstanceList = F:Copy(encounterJournalList["暗影国度"])
     LoadDebuffs()
 end
 Cell:RegisterCallback("UpdateRaidDebuffs", "RaidDebuffsTab_UpdateRaidDebuffs", UpdateRaidDebuffs)
@@ -406,9 +437,16 @@ create:SetScript("OnClick", function()
             F:Print(L["Invalid spell id."])
             return
         end
-        if currentSpellTable then
-            for _, st in ipairs(currentSpellTable) do
-                if st["id"] == id then
+        -- check whether already exists
+        if currentBossTable then
+            for _, sTable in pairs(currentBossTable["enabled"]) do
+                if sTable["id"] == id then
+                    F:Print(L["Debuff already exists."])
+                    return
+                end
+            end
+            for _, sTable in pairs(currentBossTable["disabled"]) do
+                if sTable["id"] == id then
                     F:Print(L["Debuff already exists."])
                     return
                 end
@@ -418,19 +456,19 @@ create:SetScript("OnClick", function()
         -- update db
         if not CellDB["raidDebuffs"][loadedInstance] then CellDB["raidDebuffs"][loadedInstance] = {} end
         if isGeneral then
-            if not CellDB["raidDebuffs"][loadedInstance]["general"] then CellDB["raidDebuffs"][loadedInstance]["general"] = {} end
-            CellDB["raidDebuffs"][loadedInstance]["general"][id] = {currentSpellTable and #currentSpellTable+1 or 1}
+            if not CellDB["raidDebuffs"][loadedInstance]["general"] then CellDB["raidDebuffs"][loadedInstance]["general"] = {["enabled"]={}, ["disabled"]={}} end
+            CellDB["raidDebuffs"][loadedInstance]["general"][id] = {currentBossTable and #currentBossTable["enabled"]+1 or 1}
         else
-            if not CellDB["raidDebuffs"][loadedInstance][loadedBoss] then CellDB["raidDebuffs"][loadedInstance][loadedBoss] = {} end
-            CellDB["raidDebuffs"][loadedInstance][loadedBoss][id] = {currentSpellTable and #currentSpellTable+1 or 1}
+            if not CellDB["raidDebuffs"][loadedInstance][loadedBoss] then CellDB["raidDebuffs"][loadedInstance][loadedBoss] = {["enabled"]={}, ["disabled"]={}} end
+            CellDB["raidDebuffs"][loadedInstance][loadedBoss][id] = {currentBossTable and #currentBossTable["enabled"]+1 or 1}
         end
         -- update loadedDebuffs
-        if currentSpellTable then
-            tinsert(currentSpellTable, {["id"]=id, ["order"]=#currentSpellTable+1})
-            ShowDebuffs(isGeneral and loadedInstance or loadedBoss, #currentSpellTable)
-        else
+        if currentBossTable then
+            tinsert(currentBossTable["enabled"], {["id"]=id, ["order"]=#currentBossTable["enabled"]+1})
+            ShowDebuffs(isGeneral and loadedInstance or loadedBoss, #currentBossTable["enabled"])
+        else -- no boss table
             if not loadedDebuffs[loadedInstance] then loadedDebuffs[loadedInstance] = {} end
-            loadedDebuffs[loadedInstance][isGeneral and "general" or loadedBoss] = {{["id"]=id, ["order"]=1}}
+            loadedDebuffs[loadedInstance][isGeneral and "general" or loadedBoss] = {["enabled"]={{["id"]=id, ["order"]=1}}, ["disabled"]={}}
             ShowDebuffs(isGeneral and loadedInstance or loadedBoss, 1)
         end
         -- notify debuff list changed
@@ -446,30 +484,33 @@ delete:SetScript("OnClick", function()
     local text = selectedSpellName.." ["..selectedSpellId.."]".."\n".."|T"..selectedSpellIcon..":12:12:0:0:12:12:1:11:1:11|t"
     local popup = Cell:CreateConfirmPopup(debuffsTab, 200, L["Delete debuff?"].."\n"..text, function()
         -- update db
-        if isGeneral then
-            CellDB["raidDebuffs"][loadedInstance]["general"][selectedSpellId] = nil
-        else
-            CellDB["raidDebuffs"][loadedInstance][loadedBoss][selectedSpellId] = nil
+        local index = isGeneral and "general" or loadedBoss
+        local order = CellDB["raidDebuffs"][loadedInstance][index][selectedSpellId][1]
+        CellDB["raidDebuffs"][loadedInstance][index][selectedSpellId] = nil
+        for sId, sTable in pairs(CellDB["raidDebuffs"][loadedInstance][index]) do
+            if sTable[1] > order then
+                sTable[1] = sTable[1] - 1 -- update orders
+            end
         end
         -- update loadedDebuffs
         local found
-        for k, sTable in pairs(currentSpellTable) do
-            if k ~= "disabled" and sTable["id"] == selectedSpellId then
+        for k, sTable in ipairs(currentBossTable["enabled"]) do
+            if sTable["id"] == selectedSpellId then
                 found = true
-                tremove(currentSpellTable, k)
+                tremove(currentBossTable["enabled"], k)
                 break
             end
         end
         if found then -- is enabled, update orders
-            for i = selectedButtonIndex, #currentSpellTable do
-                currentSpellTable[i]["order"] = currentSpellTable[i]["order"] - 1 -- update orders
+            for i = selectedButtonIndex, #currentBossTable["enabled"] do
+                currentBossTable["enabled"][i]["order"] = currentBossTable["enabled"][i]["order"] - 1 -- update orders
             end
         end
         -- check disabled if not found
-        if not found and currentSpellTable["disabled"] then
-            for k, sTable in pairs(currentSpellTable["disabled"]) do
+        if not found then
+            for k, sTable in pairs(currentBossTable["disabled"]) do
                 if sTable["id"] == selectedSpellId then
-                    tremove(currentSpellTable["disabled"], k)
+                    tremove(currentBossTable["disabled"], k)
                     break
                 end
             end
@@ -533,7 +574,7 @@ local function RegisterForDrag(b)
         -- move on a debuff button & not on currently moving button & not disabled
         if newB:GetParent() == debuffListFrame.scrollFrame.content and newB ~= self and newB.enabled then
             local temp, from, to = self, self.index, newB.index
-            local moved = currentSpellTable[from]
+            local moved = currentBossTable["enabled"][from]
 
             if self.index > newB.index then
                 -- move up -> before newB
@@ -560,7 +601,7 @@ local function RegisterForDrag(b)
                 for j = from, to, -1 do
                     if j == to then
                         debuffButtons[j] = temp
-                        currentSpellTable[j] = moved
+                        currentBossTable["enabled"][j] = moved
                         -- update db
                         if not CellDB["raidDebuffs"][loadedInstance][isGeneral and "general" or loadedBoss][debuffButtons[j].spellId] then
                             CellDB["raidDebuffs"][loadedInstance][isGeneral and "general" or loadedBoss][debuffButtons[j].spellId] = {j}
@@ -569,14 +610,14 @@ local function RegisterForDrag(b)
                         end
                     else
                         debuffButtons[j] = debuffButtons[j-1]
-                        currentSpellTable[j] = currentSpellTable[j-1]
+                        currentBossTable["enabled"][j] = currentBossTable["enabled"][j-1]
                         -- update db
                         if CellDB["raidDebuffs"][loadedInstance][isGeneral and "general" or loadedBoss][debuffButtons[j].spellId] then
                             CellDB["raidDebuffs"][loadedInstance][isGeneral and "general" or loadedBoss][debuffButtons[j].spellId][1] = j
                         end
                     end
                     debuffButtons[j].index = j
-                    currentSpellTable[j]["order"] = j
+                    currentBossTable["enabled"][j]["order"] = j
                     debuffButtons[j].id = debuffButtons[j].spellId.."-"..j
                     -- update selectedButtonIndex
                     if debuffButtons[j].spellId == selectedSpellId then
@@ -610,7 +651,7 @@ local function RegisterForDrag(b)
                 for j = from, to do
                     if j == to then
                         debuffButtons[j] = temp
-                        currentSpellTable[j] = moved
+                        currentBossTable["enabled"][j] = moved
                         -- update db
                         if not CellDB["raidDebuffs"][loadedInstance][isGeneral and "general" or loadedBoss][debuffButtons[j].spellId] then
                             CellDB["raidDebuffs"][loadedInstance][isGeneral and "general" or loadedBoss][debuffButtons[j].spellId] = {j}
@@ -619,14 +660,14 @@ local function RegisterForDrag(b)
                         end
                     else
                         debuffButtons[j] = debuffButtons[j+1]
-                        currentSpellTable[j] = currentSpellTable[j+1]
+                        currentBossTable["enabled"][j] = currentBossTable["enabled"][j+1]
                         -- update db
                         if CellDB["raidDebuffs"][loadedInstance][isGeneral and "general" or loadedBoss][debuffButtons[j].spellId] then
                             CellDB["raidDebuffs"][loadedInstance][isGeneral and "general" or loadedBoss][debuffButtons[j].spellId][1] = j
                         end
                     end
                     debuffButtons[j].index = j
-                    currentSpellTable[j]["order"] = j
+                    currentBossTable["enabled"][j]["order"] = j
                     debuffButtons[j].id = debuffButtons[j].spellId.."-"..j
                     -- update selectedButtonIndex
                     if debuffButtons[j].spellId == selectedSpellId then
@@ -719,28 +760,26 @@ ShowDebuffs = function(bossId, buttonIndex)
     
     isGeneral = bId == loadedInstance
 
-    currentSpellTable = nil
+    currentBossTable = nil
     if loadedDebuffs[loadedInstance] then
         if bId == loadedInstance then -- General
-            currentSpellTable = loadedDebuffs[loadedInstance]["general"]
+            currentBossTable = loadedDebuffs[loadedInstance]["general"]
         else
-            currentSpellTable = loadedDebuffs[loadedInstance][bId]
+            currentBossTable = loadedDebuffs[loadedInstance][bId]
         end
     end
 
     local n = 0
-    if currentSpellTable then
-        -- texplore(currentSpellTable)
+    if currentBossTable then
+        -- texplore(currentBossTable)
         n = 0
-        for i, sTable in ipairs(currentSpellTable) do
+        for i, sTable in ipairs(currentBossTable["enabled"]) do
             n = n + 1
             CreateDebuffButton(i, sTable)
         end
-        if currentSpellTable["disabled"] then
-            for j, sTable in pairs(currentSpellTable["disabled"]) do
-                n = n + 1
-                CreateDebuffButton(n, sTable)
-            end
+        for _, sTable in pairs(currentBossTable["disabled"]) do
+            n = n + 1
+            CreateDebuffButton(n, sTable)
         end
     end
     
@@ -816,7 +855,7 @@ spellIdText:SetJustifyH("LEFT")
 
 -- enable
 local enabledCB = Cell:CreateCheckButton(detailsContentFrame, L["Enabled"], function(checked)
-    local newOrder = checked and #currentSpellTable+1 or 0
+    local newOrder = checked and #currentBossTable["enabled"]+1 or 0
     -- update db, on re-enabled set its order to the last
     if not CellDB["raidDebuffs"][loadedInstance] then CellDB["raidDebuffs"][loadedInstance] = {} end
     local tIndex = isGeneral and "general" or loadedBoss
@@ -827,8 +866,8 @@ local enabledCB = Cell:CreateCheckButton(detailsContentFrame, L["Enabled"], func
         CellDB["raidDebuffs"][loadedInstance][tIndex][selectedSpellId][1] = newOrder
     end
     if not checked then -- enabled -> disabled
-        for i = selectedButtonIndex+1, #currentSpellTable do
-            local id = currentSpellTable[i]["id"]
+        for i = selectedButtonIndex+1, #currentBossTable["enabled"] do
+            local id = currentBossTable["enabled"][i]["id"]
             -- print("update db order: ", id)
             if CellDB["raidDebuffs"][loadedInstance][tIndex][id] then
                 -- update db order
@@ -840,22 +879,21 @@ local enabledCB = Cell:CreateCheckButton(detailsContentFrame, L["Enabled"], func
     -- update loadedDebuffs
     local buttonIndex
     if checked then -- disabled -> enabled
-        local disabledIndex = selectedButtonIndex-#currentSpellTable -- index in ["disabled"]
-        currentSpellTable[newOrder] = currentSpellTable["disabled"][disabledIndex]
-        currentSpellTable[newOrder]["order"] = newOrder
-        tremove(currentSpellTable["disabled"], disabledIndex) -- remove from ["disabled"]
+        local disabledIndex = selectedButtonIndex-#currentBossTable["enabled"] -- index in ["disabled"]
+        currentBossTable["enabled"][newOrder] = currentBossTable["disabled"][disabledIndex]
+        currentBossTable["enabled"][newOrder]["order"] = newOrder
+        tremove(currentBossTable["disabled"], disabledIndex) -- remove from ["disabled"]
         -- button to click
         buttonIndex = newOrder
     else -- enabled -> disabled
-        for i = selectedButtonIndex+1, #currentSpellTable do
-            currentSpellTable[i]["order"] = currentSpellTable[i]["order"] - 1 -- update orders
+        for i = selectedButtonIndex+1, #currentBossTable["enabled"] do
+            currentBossTable[i]["order"] = currentBossTable[i]["order"] - 1 -- update orders
         end
-        if not currentSpellTable["disabled"] then currentSpellTable["disabled"] = {} end
-        tinsert(currentSpellTable["disabled"], currentSpellTable[selectedButtonIndex])
-        currentSpellTable["disabled"][#currentSpellTable["disabled"]]["order"] = 0
-        tremove(currentSpellTable, selectedButtonIndex)
+        currentBossTable["enabled"][selectedButtonIndex]["order"] = 0
+        tinsert(currentBossTable["disabled"], currentBossTable["enabled"][selectedButtonIndex])
+        tremove(currentBossTable["enabled"], selectedButtonIndex)
         -- button to click
-        buttonIndex = #currentSpellTable + #currentSpellTable["disabled"]
+        buttonIndex = #currentBossTable["enabled"] + #currentBossTable["disabled"]
     end
     
     -- update selectedButtonIndex
@@ -879,7 +917,7 @@ glowTypeText:SetPoint("TOPLEFT", enabledCB, "BOTTOMLEFT", 0, -10)
 local glowColorPicker
 
 local function UpdateGlowType(newType)
-    local t = selectedButtonIndex <= #currentSpellTable and currentSpellTable[selectedButtonIndex] or currentSpellTable["disabled"][selectedButtonIndex-#currentSpellTable]
+    local t = selectedButtonIndex <= #currentBossTable["enabled"] and currentBossTable["enabled"][selectedButtonIndex] or currentBossTable["disabled"][selectedButtonIndex-#currentBossTable["enabled"]]
     if t["glowType"] ~= newType then
         -- update db
         if not CellDB["raidDebuffs"][loadedInstance] then CellDB["raidDebuffs"][loadedInstance] = {} end
@@ -908,7 +946,7 @@ glowTypeDropdown:SetItems({
         ["text"] = L["None"],
         ["value"] = "None",
         ["onClick"] = function()
-            local t = selectedButtonIndex <= #currentSpellTable and currentSpellTable[selectedButtonIndex] or currentSpellTable["disabled"][selectedButtonIndex-#currentSpellTable]
+            local t = selectedButtonIndex <= #currentBossTable["enabled"] and currentBossTable["enabled"][selectedButtonIndex] or currentBossTable["disabled"][selectedButtonIndex-#currentBossTable["enabled"]]
             if t["glowType"] and t["glowType"] ~= "None" then -- exists in db
                 -- update db
                 local tIndex = isGeneral and "general" or loadedBoss
@@ -946,7 +984,7 @@ glowTypeDropdown:SetItems({
 
 -- glowColor
 glowColorPicker = Cell:CreateColorPicker(detailsContentFrame, L["Glow Color"], true, function(r, g, b, a)
-    local t = selectedButtonIndex <= #currentSpellTable and currentSpellTable[selectedButtonIndex] or currentSpellTable["disabled"][selectedButtonIndex-#currentSpellTable]
+    local t = selectedButtonIndex <= #currentBossTable["enabled"] and currentBossTable["enabled"][selectedButtonIndex] or currentBossTable["disabled"][selectedButtonIndex-#currentBossTable["enabled"]]
     -- update db
     local tIndex = isGeneral and "general" or loadedBoss
     CellDB["raidDebuffs"][loadedInstance][tIndex][selectedSpellId][3][1] = r
@@ -1001,16 +1039,16 @@ ShowDetails = function(spell)
         SetSpellDesc(select(3, F:GetSpellInfo(spellId)))
     end)
     
-    local isEnabled = selectedButtonIndex <= #currentSpellTable
+    local isEnabled = selectedButtonIndex <= #currentBossTable["enabled"]
     enabledCB:SetChecked(isEnabled)
     
     local glowType, glowColor
     if isEnabled then
-        glowType = currentSpellTable[buttonIndex]["glowType"]
-        glowColor = currentSpellTable[buttonIndex]["glowColor"]
+        glowType = currentBossTable["enabled"][buttonIndex]["glowType"]
+        glowColor = currentBossTable["enabled"][buttonIndex]["glowColor"]
     else
-        glowType = currentSpellTable["disabled"][buttonIndex-#currentSpellTable]["glowType"]
-        glowColor = currentSpellTable["disabled"][buttonIndex-#currentSpellTable]["glowColor"]
+        glowType = currentBossTable["disabled"][buttonIndex-#currentBossTable["enabled"]]["glowType"]
+        glowColor = currentBossTable["disabled"][buttonIndex-#currentBossTable["enabled"]]["glowColor"]
     end
     glowType = glowType or "None"
     glowTypeDropdown:SetSelected(L[glowType])
@@ -1025,10 +1063,10 @@ ShowDetails = function(spell)
     detailsContentFrame:Show()
 
     -- check deletion
-    if buttonIndex <= #currentSpellTable then
-        delete:SetEnabled(not currentSpellTable[buttonIndex]["built-in"])
+    if isEnabled then
+        delete:SetEnabled(not currentBossTable["enabled"][buttonIndex]["built-in"])
     else -- disabled
-        delete:SetEnabled(not currentSpellTable["disabled"][buttonIndex-#currentSpellTable]["built-in"])
+        delete:SetEnabled(not currentBossTable["disabled"][buttonIndex-#currentBossTable["enabled"]]["built-in"])
     end
 end
 
