@@ -62,7 +62,7 @@ select(2, ...).L = setmetatable({
         <br/>
     ]],
 
-    ["r29-release"] = [[
+    ["r30-release"] = [[
         <h1>Indicators</h1>
         <p>New indicator: Health Text.</p>
         <p>New option: Frame Level.</p>

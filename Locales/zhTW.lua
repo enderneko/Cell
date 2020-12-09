@@ -64,7 +64,7 @@ L["Delete"] = "刪除"
 L["Delete debuff?"] = "是否確定要刪除減益?"
 L["Delete indicator"] = "是否確定要刪除指示器"
 L["Delete layout"] = "是否確定要刪除版面配置"
-L["Disable tooltips"] = "停用滑鼠提示"
+L["Disable Unit Tooltips"] = "停用單位滑鼠提示"
 L["Discard"] = "取消"
 L["dispellableByMe"] = "只顯示我能驅散的減益"
 L["Dispels"] = "驅散"
@@ -77,11 +77,14 @@ L["Enter spell id"] = "請輸入法術 ID"
 L["Enter: apply\nESC: discard"] = "Enter: 套用\nESC: 取消"
 L["External Cooldowns"] = "減傷 (來自他人)"
 L["Extra Action Button"] = "使用額外快捷鍵"
+L["Fade Out Menu"] = "淡出選單"
+L["Fade out menu buttons on mouseout"] = "滑鼠移開時淡出選單按鈕"
 L["Focus"] = "專注"
 L["focus"] = "專注目標"
 L["Font"] = "字體"
 L["Font Outline"] = "文字樣式"
 L["Font Size"] = "文字大小"
+L["Frame Level"] = "框架層級"
 L["General"] = "一般"
 L["GHOST"] = "鬼魂"
 L["Glow Color"] = "發光顏色"
@@ -91,9 +94,13 @@ L["Group Columns"] = "隊伍直行數"
 L["Group Filter"] = "過濾隊伍"
 L["Group Rows"] = "隊伍橫列數"
 L["Group Spacing"] = "隊伍間距"
+L["Health Text"] = "血量文字"
+L["Format"] = "格式"
+L["hideFull"] = "滿血時不顯示"
 L["Height"] = "高度"
 L["Hide Blizzard Frames"] = "隱藏遊戲內建框架"
 L["Hide Blizzard Raid / Party"] = "隱藏遊戲內建團隊/隊伍框架"
+L["Hide unit tooltips even out of combat"] = "非戰鬥中也要隱藏單位的滑鼠提示"
 L["Horizontal"] = "水平"
 L["Icon"] = "圖示"
 L["Icons"] = "圖示"
@@ -169,6 +176,20 @@ L["r26-release"] = [[
     <p>隊伍對齊點的功能來啦！到 版面配置 -&gt; 隊伍排列 那邊看看吧。</p>
     <br/>
 ]]
+L["r30-release"] = [[
+    <h1>指示器</h1>
+    <p>新增指示器：血量文字。</p>
+    <p>新增選項：框架層級。</p>
+    <br/>
+    <h1>副本減益 (Beta)</h1>
+    <p>新增了暗影之境的副本減益，透過法術ID 來追蹤。</p>
+    <p>預設啟用所有的減益，你可能會想要停用一些不是那麼重要的減益。</p>
+    <br/>
+    <h1>其他</h1>
+    <p>修正：標記工具列、滑鼠點擊施法。</p>
+    <p>將 "團隊構成" 文字移到 "團隊" 按鈕的滑鼠提示中。</p>
+    <p>新增 "淡出選單" 的選項。</p>
+]]
 L["Raid"] = "團隊"
 L["Raid Debuffs"] = "副本減益"
 L["Raid Icon (player)"] = "團隊圖示 (玩家)"
@@ -203,7 +224,6 @@ L["Show Marks Bar"] = "顯示標記列"
 L["Show Party"] = "有隊伍時顯示"
 L["Show Party Pets"] = "顯示隊伍寵物"
 L["Show pets while in a party"] = "在隊伍中時顯示寵物"
-L["Show Raid Setup"] = "顯示團隊組成"
 L["Show ReadyCheck and PullTimer buttons"] = "顯示準備確認和開怪倒數按鈕"
 L["Show Solo"] = "單人時顯示"
 L["Show the number of tanks/healers/damagers while in raid"] = "在團隊時顯示坦克、治療、輸出的數量"
@@ -232,12 +252,13 @@ L["Tips: Drag and drop to change debuff order. Double-click on instance name to 
 L["To open options frame, use /cell options"] = "輸入 /cell options 打開設定選項"
 L["To UnitButton's"] = "對齊到單位按鈕的"
 L["togglemenu"] = "選單"
-L["Tooltips"] = "滑鼠提示"
 L["TOP"] = "上"
 L["TOPLEFT"] = "左上"
 L["TOPRIGHT"] = "右上"
 L["top-to-bottom"] = "從上到下"
+L["Translators"] = "翻譯"
 L["Unit Button Size"] = "單位按鈕大小"
+L["Unit Tooltips"] = "單位滑鼠提示"
 L["UnitButton Color"] = "單位按鈕顏色"
 L["Unlimited"] = "無限制"
 L["Unlock"] = "解鎖"
@@ -251,5 +272,8 @@ L["World Marks"] = "世界標記"
 L["X Offset"] = "水平位置偏移"
 L["Y Offset"] = "垂直位置偏移"
 L["Yes"] = "是"
+L["You"] = "你"
+L["%s lock %s on %s."] = "%s將%s鎖定在%s。"
+L["%s unlock %s from %s."] = "%s將%s從%s解鎖。"
 L["You can config debuffs in %s"] = "你可以在 %s 中設定減益法術"
 L["You don't have permission to do this"] = "你沒有權限這樣做"

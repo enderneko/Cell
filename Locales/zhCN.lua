@@ -25,8 +25,8 @@ L["Raid"] = "团队"
 L["Pull Timer"] = "开怪倒数"
 L["You don't have permission to do this"] = "你没有权限这样做"
 L["You"] = "你"
-L["%s lock %s on %s."] = "%s 将 %s 锁定在 %s。"
-L["%s unlock %s from %s."] = "%s 将 %s 从 %s 解锁。"
+L["%s lock %s on %s."] = "%s将%s锁定在%s。"
+L["%s unlock %s from %s."] = "%s将%s从%s解锁。"
 -- L["Raid Sort"] = "团队排序"
 -- L["Raid Roster"] = "团队名单"
 
@@ -301,7 +301,7 @@ L["Debuff already exists."] = "减益已存在。"
 -------------------------------------------------
 L["About"] = "关于"
 L["Author"] = "作者"
-L["Translators"] = "翻译人员"
+L["Translators"] = "翻译"
 L["Slash Commands"] = "斜杠命令"
 L["Bug Report & Suggestion"] = "问题报告与建议"
 
@@ -330,7 +330,7 @@ L["r26-release"] = [[
     <p>队伍锚点功能来啦，到 布局 -&gt; 队伍排列 那里看看吧。</p>
     <br/>
 ]]
-L["r29-release"] = [[
+L["r30-release"] = [[
     <h1>指示器</h1>
     <p>新指示器：血量文字。</p>
     <p>新选项：层级。</p>
