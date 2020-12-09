@@ -1110,16 +1110,16 @@ function F:GetDebuffList(instanceName)
         local n = 0
         -- check general
         if loadedDebuffs[iId]["general"] then
-            n = #loadedDebuffs[iId]["general"]
-            for _, t in ipairs(loadedDebuffs[iId]["general"]) do -- ignore "disabled" table
+            n = #loadedDebuffs[iId]["general"]["enabled"]
+            for _, t in ipairs(loadedDebuffs[iId]["general"]["enabled"]) do -- ignore "disabled" table
                 -- list[spellId] = {order, glowType, glowColor}
                 list[t["id"]] = {["order"]=t["order"], ["glowType"]=t["glowType"], ["glowColor"]=t["glowColor"]}
             end
         end
         -- check boss
-        for bId, t in pairs(loadedDebuffs[iId]) do
+        for bId, bTable in pairs(loadedDebuffs[iId]) do
             if bId ~= "general" then
-                for _, st in ipairs(t) do -- ignore "disabled" table
+                for _, st in pairs(bTable["enabled"]) do
                     list[st["id"]] = {["order"]=st["order"]+n, ["glowType"]=st["glowType"], ["glowColor"]=st["glowColor"]}
                 end
             end

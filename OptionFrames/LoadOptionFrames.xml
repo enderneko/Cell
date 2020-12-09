@@ -10,5 +10,6 @@
 	<Script file="Indicators.lua"/>
 	<Script file="RaidDebuffs.lua"/>
 	<Script file="RaidDebuffs_BfA.lua"/>
+	<Script file="RaidDebuffs_SL.lua"/>
 	<Script file="About.lua"/>
 </Ui>
