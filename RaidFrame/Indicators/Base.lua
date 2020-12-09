@@ -102,16 +102,20 @@ function I:CreateAura_BorderIcon(name, parent, borderSize)
         if duration == 0 then
             border:Show()
             border:SetColorTexture(r, g, b)
+            cooldown:Hide()
+            frame.duration:Hide()
             frame:SetScript("OnUpdate", nil)
         else
             border:Hide()
+            cooldown:Show()
             cooldown:SetSwipeColor(r, g, b)
             cooldown:SetCooldown(start, duration)
+            frame.duration:Show()
             frame:SetScript("OnUpdate", function()
                 local remain = duration-(GetTime()-start)
                 -- if remain <= 5 then
                 --     frame.duration:SetText(string.format("%.1f", remain))
-                if remain <= 30 then
+                if remain <= 15 then
                     frame.duration:SetText(string.format("%d", remain))
                 else
                     frame.duration:SetText("")
