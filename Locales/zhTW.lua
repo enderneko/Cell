@@ -176,13 +176,13 @@ L["r26-release"] = [[
     <p>隊伍對齊點的功能來啦！到 版面配置 -&gt; 隊伍排列 那邊看看吧。</p>
     <br/>
 ]]
-L["r31-release"] = [[
+L["r32-release"] = [[
     <h1>指示器</h1>
     <p>新增指示器：血量文字。</p>
     <p>新增選項：框架層級。</p>
     <br/>
     <h1>副本減益 (Beta)</h1>
-    <p>新增了暗影之境的副本減益，透過法術ID 來追蹤。</p>
+    <p>新增了暗影之境的副本減益。For now, these debuffs are tracked by NAME. "Track By ID" option will be added later.</p>
     <p>預設啟用所有的減益，你可能會想要停用一些不是那麼重要的減益。</p>
     <br/>
     <h1>其他</h1>

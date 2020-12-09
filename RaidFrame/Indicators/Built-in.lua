@@ -234,6 +234,7 @@ local eventFrame2 = CreateFrame("Frame")
 eventFrame2:RegisterEvent("PLAYER_ENTERING_WORLD")
 
 local function UpdateDebuffsForCurrentZone()
+    wipe(currentAreaDebuffs)
     local iName = F:GetInstanceName()
     if iName ~= "" then
         currentAreaDebuffs = F:GetDebuffList(iName)
@@ -242,11 +243,12 @@ end
 Cell:RegisterCallback("RaidDebuffsChanged", "UpdateDebuffsForCurrentZone", UpdateDebuffsForCurrentZone)
 eventFrame2:SetScript("OnEvent", UpdateDebuffsForCurrentZone)
 
-function I:GetDebuffOrder(spellId)
+function I:GetDebuffOrder(spellName, spellId)
+    if currentAreaDebuffs[spellName] then
+        return currentAreaDebuffs[spellName]["order"], currentAreaDebuffs[spellName]["glowType"], currentAreaDebuffs[spellName]["glowColor"]
+    end
     if currentAreaDebuffs[spellId] then
         return currentAreaDebuffs[spellId]["order"], currentAreaDebuffs[spellId]["glowType"], currentAreaDebuffs[spellId]["glowColor"]
-    else
-        return 0
     end
 end
 

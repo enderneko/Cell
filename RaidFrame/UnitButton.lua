@@ -390,8 +390,8 @@ local function UnitButton_UpdateDebuffs(self)
 				I:CheckCustomIndicators(unit, self, "debuff", spellId, expirationTime - duration, duration, debuffType or "", icon, count, refreshing)
 
 				-- check top debuff
-				if enabledIndicators["centralDebuff"] and I:GetDebuffOrder(spellId) ~= 0 and I:GetDebuffOrder(spellId) < topOrder then
-					topOrder, topGlowType, topGlowColor = I:GetDebuffOrder(spellId)
+				if enabledIndicators["centralDebuff"] and I:GetDebuffOrder(name, spellId) and I:GetDebuffOrder(name, spellId) < topOrder then
+					topOrder, topGlowType, topGlowColor = I:GetDebuffOrder(name, spellId)
 					topId, topStart, topDuration, topType, topIcon, topCount, topRefreshing = spellId, expirationTime - duration, duration, debuffType or "", icon, count, refreshing
 				end
 

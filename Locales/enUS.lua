@@ -62,13 +62,13 @@ select(2, ...).L = setmetatable({
         <br/>
     ]],
 
-    ["r31-release"] = [[
+    ["r32-release"] = [[
         <h1>Indicators</h1>
         <p>New indicator: Health Text.</p>
         <p>New option: Frame Level.</p>
         <br/>
         <h1>Raid Debuffs (Beta)</h1>
-        <p>Added instance debuffs for Shadowlands. These debuffs are tracked by ID.</p>
+        <p>Added instance debuffs for Shadowlands. For now, these debuffs are tracked by NAME. "Track By ID" option will be added later.</p>
         <p>All debuffs are enabled by default, you might want to disable some less important debuffs.</p>
         <br/>
         <h1>Misc</h1>

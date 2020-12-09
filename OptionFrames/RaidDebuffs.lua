@@ -1113,16 +1113,23 @@ function F:GetDebuffList(instanceName)
         -- check general
         if loadedDebuffs[iId]["general"] then
             n = #loadedDebuffs[iId]["general"]["enabled"]
-            for _, t in ipairs(loadedDebuffs[iId]["general"]["enabled"]) do -- ignore "disabled" table
-                -- list[spellId] = {order, glowType, glowColor}
-                list[t["id"]] = {["order"]=t["order"], ["glowType"]=t["glowType"], ["glowColor"]=t["glowColor"]}
+            for _, t in ipairs(loadedDebuffs[iId]["general"]["enabled"]) do
+                -- TODO: track by id
+                local spellName = GetSpellInfo(t["id"])
+                if spellName then -- check again
+                    -- list[spellName] = {order, glowType, glowColor}
+                    list[spellName] = {["order"]=t["order"], ["glowType"]=t["glowType"], ["glowColor"]=t["glowColor"]}
+                end
             end
         end
         -- check boss
         for bId, bTable in pairs(loadedDebuffs[iId]) do
             if bId ~= "general" then
                 for _, st in pairs(bTable["enabled"]) do
-                    list[st["id"]] = {["order"]=st["order"]+n, ["glowType"]=st["glowType"], ["glowColor"]=st["glowColor"]}
+                    local spellName = GetSpellInfo(st["id"])
+                    if spellName then -- check again
+                        list[spellName] = {["order"]=st["order"]+n, ["glowType"]=st["glowType"], ["glowColor"]=st["glowColor"]}
+                    end
                 end
             end
         end
