@@ -456,10 +456,10 @@ create:SetScript("OnClick", function()
         -- update db
         if not CellDB["raidDebuffs"][loadedInstance] then CellDB["raidDebuffs"][loadedInstance] = {} end
         if isGeneral then
-            if not CellDB["raidDebuffs"][loadedInstance]["general"] then CellDB["raidDebuffs"][loadedInstance]["general"] = {["enabled"]={}, ["disabled"]={}} end
+            if not CellDB["raidDebuffs"][loadedInstance]["general"] then CellDB["raidDebuffs"][loadedInstance]["general"] = {} end
             CellDB["raidDebuffs"][loadedInstance]["general"][id] = {currentBossTable and #currentBossTable["enabled"]+1 or 1}
         else
-            if not CellDB["raidDebuffs"][loadedInstance][loadedBoss] then CellDB["raidDebuffs"][loadedInstance][loadedBoss] = {["enabled"]={}, ["disabled"]={}} end
+            if not CellDB["raidDebuffs"][loadedInstance][loadedBoss] then CellDB["raidDebuffs"][loadedInstance][loadedBoss] = {} end
             CellDB["raidDebuffs"][loadedInstance][loadedBoss][id] = {currentBossTable and #currentBossTable["enabled"]+1 or 1}
         end
         -- update loadedDebuffs
@@ -474,6 +474,7 @@ create:SetScript("OnClick", function()
         -- notify debuff list changed
         Cell:Fire("RaidDebuffsChanged")
     end, true, true)
+    popup.editBox:SetNumeric(true)
     popup:SetPoint("TOPLEFT", 100, -170)
 end)
 
@@ -538,6 +539,7 @@ Cell:StylizeFrame(dragged, nil, Cell:GetPlayerClassColorTable())
 dragged:SetFrameStrata("HIGH")
 dragged:EnableMouse(false)
 dragged:SetMovable(true)
+dragged:SetToplevel(true)
 -- stick dragged to mouse
 dragged:SetScript("OnUpdate", function()
     local scale, x, y = dragged:GetEffectiveScale(), GetCursorPosition()

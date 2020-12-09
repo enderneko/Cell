@@ -151,13 +151,13 @@ function addon:CreateFrame(name, parent, width, height, isTransparent)
 end
 
 
-function addon:CreateMovableFrame(title, name, width, height, frameStrata, frameLevel)
+function addon:CreateMovableFrame(title, name, width, height, frameStrata, frameLevel, notUserPlaced)
     local f = CreateFrame("Frame", name, UIParent, "BackdropTemplate")
     f:EnableMouse(true)
     f:SetIgnoreParentScale(true)
     -- f:SetResizable(false)
     f:SetMovable(true)
-    f:SetUserPlaced(true)
+    f:SetUserPlaced(not notUserPlaced)
     f:SetFrameStrata(frameStrata or "HIGH")
     f:SetFrameLevel(frameLevel or 1)
     f:SetClampedToScreen(true)
@@ -172,7 +172,10 @@ function addon:CreateMovableFrame(title, name, width, height, frameStrata, frame
     header:EnableMouse(true)
     header:SetClampedToScreen(true)
     header:RegisterForDrag("LeftButton")
-    header:SetScript("OnDragStart", function() f:StartMoving() end)
+    header:SetScript("OnDragStart", function()
+        f:StartMoving()
+        if notUserPlaced then f:SetUserPlaced(false) end
+    end)
     header:SetScript("OnDragStop", function() f:StopMovingOrSizing() end)
     header:SetPoint("LEFT")
     header:SetPoint("RIGHT")
