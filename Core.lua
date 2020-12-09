@@ -6,6 +6,7 @@ Cell.funcs = {}
 Cell.iFuncs = {}
 
 local F = Cell.funcs
+local I = Cell.iFuncs
 local L = Cell.L
 
 --@debug@

@@ -887,7 +887,7 @@ local enabledCB = Cell:CreateCheckButton(detailsContentFrame, L["Enabled"], func
         buttonIndex = newOrder
     else -- enabled -> disabled
         for i = selectedButtonIndex+1, #currentBossTable["enabled"] do
-            currentBossTable[i]["order"] = currentBossTable[i]["order"] - 1 -- update orders
+            currentBossTable["enabled"][i]["order"] = currentBossTable["enabled"][i]["order"] - 1 -- update orders
         end
         currentBossTable["enabled"][selectedButtonIndex]["order"] = 0
         tinsert(currentBossTable["disabled"], currentBossTable["enabled"][selectedButtonIndex])
