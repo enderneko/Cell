@@ -58,9 +58,39 @@ local function UpdatePreviewButton()
 
     previewButton:SetSize(unpack(currentLayoutTable["size"]))
     previewButton.func.SetPowerHeight(currentLayoutTable["powerHeight"])
+    previewButton:GetScript("OnSizeChanged")(previewButton)
+    
     previewButton.widget.healthBar:SetStatusBarTexture(Cell.vars.texture)
     previewButton.widget.powerBar:SetStatusBarTexture(Cell.vars.texture)
-    previewButton:GetScript("OnSizeChanged")(previewButton)
+
+    local r, g, b
+    -- health color
+    if CellDB["appearance"]["barColor"][1] == "Class Color" then
+        r, g, b = F:GetClassColor(Cell.vars.playerClass)
+    elseif CellDB["appearance"]["barColor"][1] == "Class Color (dark)" then
+        r, g, b = F:GetClassColor(Cell.vars.playerClass)
+        r, g, b = r*.2, g*.2, b*.2
+    else
+        r, g, b = unpack(CellDB["appearance"]["barColor"][2])
+    end
+    previewButton.widget.healthBar:SetStatusBarColor(r, g, b)
+    
+    -- power color
+    if CellDB["appearance"]["powerColor"][1] == "Class Color" then
+        r, g, b = F:GetClassColor(Cell.vars.playerClass)
+    elseif CellDB["appearance"]["powerColor"][1] == "Custom Color" then
+        r, g, b = unpack(CellDB["appearance"]["powerColor"][2])
+    else
+        r, g, b = F:GetPowerColor("player")
+    end
+    previewButton.widget.powerBar:SetStatusBarColor(r, g, b)
+
+    -- nameColor
+    if CellDB["appearance"]["nameColor"][1] == "Class Color" then
+        previewButton.widget.nameText:SetTextColor(F:GetClassColor(Cell.vars.playerClass))
+    else
+        previewButton.widget.nameText:SetTextColor(unpack(CellDB["appearance"]["nameColor"][2]))
+    end
 end
 
 -- init preview button indicator animation
@@ -843,3 +873,10 @@ local function UpdateLayout()
     end
 end
 Cell:RegisterCallback("UpdateLayout", "IndicatorsTab_UpdateLayout", UpdateLayout)
+
+local function UpdateAppearance()
+    if previewButton.loaded and currentLayout == Cell.vars.currentLayout then
+        UpdatePreviewButton()
+    end
+end
+Cell:RegisterCallback("UpdateAppearance", "IndicatorsTab_UpdateAppearance", UpdateAppearance)
