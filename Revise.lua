@@ -265,8 +265,50 @@ local function Revise()
 					indicator["frameLevel"] = 5
 				end
 			end
-			if not layout["indicators"][11] or layout["indicators"][11]["indicatorName"] ~= "healthText" then
-				tinsert(layout["indicators"], 11, {
+		end
+	end
+
+	-- r33-release
+	if not(CellDB["revise"]) or dbRevision < 33 then
+		for _, layout in pairs(CellDB["layouts"]) do
+			if layout["indicators"][1]["indicatorName"] ~= "roleIcon" then
+				tinsert(layout["indicators"], 1, {
+					["name"] = "Role Icon",
+					["indicatorName"] = "roleIcon",
+					["type"] = "built-in",
+					["enabled"] = true,
+					["position"] = {"TOPLEFT", "TOPLEFT", 0, 0},
+					["size"] = {11, 11},
+				})
+				tinsert(layout["indicators"], 2, {
+					["name"] = "Leader Icon",
+					["indicatorName"] = "leaderIcon",
+					["type"] = "built-in",
+					["enabled"] = true,
+					["position"] = {"TOPLEFT", "TOPLEFT", 0, -11},
+					["size"] = {11, 11},
+				})
+				tinsert(layout["indicators"], 3, {
+					["name"] = "Ready Check Icon",
+					["indicatorName"] = "readyCheckIcon",
+					["type"] = "built-in",
+					["enabled"] = true,
+					["frameLevel"] = 100,
+					["size"] = {16, 16},
+				})
+				tinsert(layout["indicators"], 6, {
+					["name"] = "Aggro Indicator",
+					["indicatorName"] = "aggroIndicator",
+					["type"] = "built-in",
+					["enabled"] = true,
+					["position"] = {"TOPLEFT", "TOPLEFT", 0, 0},
+					["frameLevel"] = 2,
+					["size"] = {10, 10},
+				})
+			end
+
+			if layout["indicators"][15] and layout["indicators"][15]["indicatorName"] ~= "healthText" then
+				tinsert(layout["indicators"], 15, {
 					["name"] = "Health Text",
 					["indicatorName"] = "healthText",
 					["type"] = "built-in",

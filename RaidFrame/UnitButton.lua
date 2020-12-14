@@ -45,7 +45,8 @@ local IsInRaid = IsInRaid
 -------------------------------------------------
 -- unit button init indicators
 -------------------------------------------------
-local UnitButton_UpdateAuras
+local UnitButton_UpdateAuras, UnitButton_UpdateRole, UnitButton_UpdateLeader
+
 local indicatorsInitialized
 local enabledIndicators, indicatorNums, indicatorCustoms = {}, {}, {}
 
@@ -164,6 +165,14 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
 			-- update aoehealing
             if indicatorName == "aoeHealing" then
 				I:EnableAoEHealing(value)
+			elseif indicatorName == "roleIcon" then
+				F:IterateAllUnitButtons(function(b)
+					UnitButton_UpdateRole(b)
+				end)
+			elseif indicatorName == "leaderIcon" then
+				F:IterateAllUnitButtons(function(b)
+					UnitButton_UpdateLeader(b)
+				end)
 			elseif indicatorName == "playerRaidIcon" then
 				F:IterateAllUnitButtons(function(b)
 					b.func.UpdatePlayerRaidIcon(value)
@@ -610,46 +619,40 @@ local function UnitButton_UpdateTarget(self)
 	end
 end
 
-local function UnitButton_UpdateRole(self)
+UnitButton_UpdateRole = function(self)
 	local unit = self.state.unit
 	if not unit then return end
 
-	local roleIcon = self.widget.roleIcon
-	local role = UnitGroupRolesAssigned(unit)
-	self.state.role = role
+	local roleIcon = self.indicators.roleIcon
 
-	if role == "TANK" or role == "HEALER" or role == "DAMAGER" then
-		roleIcon:SetTexture("Interface\\AddOns\\Cell\\Media\\UI-LFG-ICON-PORTRAITROLES.blp")
-		roleIcon:SetTexCoord(GetTexCoordsForRoleSmallCircle(role))
-		-- roleIcon:SetTexture("Interface\\AddOns\\Cell\\Media\\UI-LFG-ICON-ROLES.blp")
-		-- roleIcon:SetTexCoord(GetTexCoordsForRole(role))
-		roleIcon:Show()
+	if enabledIndicators["roleIcon"] then
+		local role = UnitGroupRolesAssigned(unit)
+		self.state.role = role
+
+		roleIcon:SetRole(role)
 	else
 		roleIcon:Hide()
 	end
 end
 
-local function UnitButton_UpdateLeader(self, event)
+UnitButton_UpdateLeader = function(self, event)
 	local unit = self.state.unit
 	if not unit then return end
 	
-	local leaderIcon = self.widget.leaderIcon
-	if InCombatLockdown() or event == "PLAYER_REGEN_DISABLED" then
-		leaderIcon:Hide()
-		return
-	end
+	local leaderIcon = self.indicators.leaderIcon
 
-	local isLeader = UnitIsGroupLeader(unit)
-	self.state.isLeader = isLeader
-	local isAssistant = UnitIsGroupAssistant(unit) and IsInRaid()
-	self.state.isAssistant = isAssistant
-	
-	if isLeader then
-		leaderIcon:SetTexture("Interface\\GroupFrame\\UI-Group-LeaderIcon")
-		leaderIcon:Show()
-	elseif isAssistant then
-		leaderIcon:SetTexture("Interface\\GroupFrame\\UI-Group-AssistantIcon")
-		leaderIcon:Show()
+	if enabledIndicators["leaderIcon"] then
+		if InCombatLockdown() or event == "PLAYER_REGEN_DISABLED" then
+			leaderIcon:Hide()
+			return
+		end
+
+		local isLeader = UnitIsGroupLeader(unit)
+		self.state.isLeader = isLeader
+		local isAssistant = UnitIsGroupAssistant(unit) and IsInRaid()
+		self.state.isAssistant = isAssistant
+		
+		leaderIcon:SetIcon(isLeader, isAssistant)
 	else
 		leaderIcon:Hide()
 	end
@@ -710,19 +713,19 @@ local function UnitButton_UpdateReadyCheck(self)
 	if status ~= nil then
 		self.widget.readyCheckHighlight:SetVertexColor(unpack(READYCHECK_STATUS[status].c))
 		self.widget.readyCheckHighlight:Show()
-		self.widget.readyCheckIcon:SetTexture(READYCHECK_STATUS[status].t)
-		self.widget.readyCheckIcon:Show()
+		self.indicators.readyCheckIcon:SetTexture(READYCHECK_STATUS[status].t)
+		self.indicators.readyCheckIcon:Show()
 	end
 end
 
 local function UnitButton_FinishReadyCheck(self)
 	if self.state.readyCheckStatus == "waiting" then
 		self.widget.readyCheckHighlight:SetVertexColor(unpack(READYCHECK_STATUS.notready.c))
-		self.widget.readyCheckIcon:SetTexture(READYCHECK_STATUS.notready.t)
+		self.indicators.readyCheckIcon:SetTexture(READYCHECK_STATUS.notready.t)
 	end
 	C_Timer.After(6, function()
 		self.widget.readyCheckHighlight:Hide()
-		self.widget.readyCheckIcon:Hide()
+		self.indicators.readyCheckIcon:Hide()
 	end)
 end
 
@@ -888,16 +891,21 @@ UnitButton_UpdateAuras = function(self)
 end
 
 local function UnitButton_UpdateThreat(self)
+	if not enabledIndicators["aggroIndicator"] then 
+		self.indicators.aggroIndicator:Hide()
+		return
+	end
+
 	local unit = self.state.displayedUnit
 	if not unit then return end
 	-- if not unit or not UnitExists(unit) then return end
 
 	local status = UnitThreatSituation(unit)
 	if status and status >= 2 then
-		self.widget.aggroIndicator:SetBackdropColor(GetThreatStatusColor(status))
-		self.widget.aggroIndicator:Show()
+		self.indicators.aggroIndicator:SetBackdropColor(GetThreatStatusColor(status))
+		self.indicators.aggroIndicator:Show()
 	else
-		self.widget.aggroIndicator:Hide()
+		self.indicators.aggroIndicator:Hide()
 	end
 end
 
@@ -1083,6 +1091,9 @@ local function UnitButton_UpdateColor(self)
 		elseif self.state.inVehicle then
 			if Cell.loaded then
 				barR, barG, barB, bgR, bgG, bgB = GetColor(0, 1, .2)
+				-- if CellDB["appearance"]["nameColor"][1] ~= "Class Color" then
+				-- 	nameText:SetTextColor(F:GetClassColor(self.state.class))
+				-- end
 			else
 				barR, barG, barB = 0, 1, .2
 				bgR, bgG, bgB = barR*.2, barG*.2, barB*.2
@@ -1264,11 +1275,12 @@ local function UnitButton_OnEvent(self, event, unit)
 			UnitButton_UpdateHealthPrediction(self)
 			UnitButton_UpdateShieldAbsorbs(self)
 			UnitButton_UpdateHealthAbsorbs(self)
-	
+			
 		elseif event == "UNIT_HEALTH" then
 			UnitButton_UpdateHealth(self)
 			UnitButton_UpdateHealthPrediction(self)
 			UnitButton_UpdateShieldAbsorbs(self)
+			UnitButton_UpdateHealthAbsorbs(self)
 			-- UnitButton_UpdateStatusText(self)
 	
 		elseif event == "UNIT_HEAL_PREDICTION" then
@@ -1600,7 +1612,7 @@ function F:UnitButton_OnLoad(button)
 	absorbsBar:SetTexture("Interface\\AddOns\\Cell\\Media\\shield.tga", "REPEAT", "REPEAT")
 	absorbsBar:SetHorizTile(true)
     absorbsBar:SetVertTile(true)
-	absorbsBar:SetVertexColor(.5, .1, .1, .7)
+	absorbsBar:SetVertexColor(.5, .1, .1, .8)
 	absorbsBar:SetBlendMode("ADD")
 	absorbsBar:Hide()
 
@@ -1738,61 +1750,12 @@ function F:UnitButton_OnLoad(button)
 		end
 	end
 	
-	-- role icon
-	local roleIcon = overlayFrame:CreateTexture(name.."RoleIcon", "ARTWORK", nil, -7)
-	button.widget.roleIcon = roleIcon
-	roleIcon:SetPoint("TOPLEFT", overlayFrame)
-	roleIcon:SetSize(11, 11)
-
-	-- leader icon
-	local leaderIcon = overlayFrame:CreateTexture(name.."LeaderIcon", "ARTWORK", nil, -7)
-	button.widget.leaderIcon = leaderIcon
-	leaderIcon:SetPoint("TOP", roleIcon, "BOTTOM")
-	leaderIcon:SetSize(11, 11)
-	leaderIcon:Hide()
-
-	-- Ready check icon
-	local readyCheckIcon = overlayFrame:CreateTexture(name.."ReadyCheckIcon", "OVERLAY", nil, -7)
-	button.widget.readyCheckIcon = readyCheckIcon
-	readyCheckIcon:SetSize(16, 16)
-	readyCheckIcon:SetPoint("CENTER", healthBar)
-	readyCheckIcon:Hide()
-
 	-- phase icon
 	local phaseIcon = overlayFrame:CreateTexture(name.."PhaseIcon", "OVERLAY", nil, -7)
 	button.widget.phaseIcon = phaseIcon
 	phaseIcon:SetSize(16, 16)
 	phaseIcon:SetPoint("TOP", healthBar)
 	phaseIcon:Hide()
-
-	-- aggro indicator
-	local aggroIndicator = CreateFrame("Frame", name.."AggroIndicator", overlayFrame, "BackdropTemplate") -- framelevel 8
-	button.widget.aggroIndicator = aggroIndicator
-	aggroIndicator:SetPoint("TOPLEFT")
-	aggroIndicator:SetSize(10, 10)
-	aggroIndicator:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8x8", edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = 1})
-	aggroIndicator:SetBackdropColor(1, 0, 0, 1)
-	aggroIndicator:SetBackdropBorderColor(0, 0, 0, 1)
-	aggroIndicator:Hide()
-
-	do
-		local blink = aggroIndicator:CreateAnimationGroup()
-		aggroIndicator.blink = blink
-		blink:SetLooping("REPEAT")
-
-		local alpha = blink:CreateAnimation("Alpha")
-		alpha:SetFromAlpha(1)
-		alpha:SetToAlpha(0)
-		alpha:SetDuration(0.5)
-	end
-	
-	aggroIndicator:SetScript("OnShow", function(self)
-		self.blink:Play()
-	end)
-	
-	aggroIndicator:SetScript("OnHide", function(self)
-		self.blink:Stop()
-	end)
 
 	local aggroBar = Cell:CreateStatusBar(overlayFrame, 18, 2, 100, true)
 	button.indicators.aggroBar = aggroBar
@@ -1825,6 +1788,10 @@ function F:UnitButton_OnLoad(button)
 	end
 
 	-- indicators
+	I:CreateRoleIcon(button)
+	I:CreateLeaderIcon(button)
+	I:CreateReadyCheckIcon(button)
+	I:CreateAggroIndicator(button)
 	I:CreatePlayerRaidIcon(button)
 	I:CreateTargetRaidIcon(button)
 	I:CreateAoEHealing(button)

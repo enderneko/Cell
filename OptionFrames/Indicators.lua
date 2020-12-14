@@ -50,10 +50,6 @@ local function UpdatePreviewButton()
         previewButton:SetScript("OnSizeChanged", function(self)
             F:UpdateTextWidth(self.widget.nameText, name)
         end)
-
-        previewButton.widget.roleIcon:SetTexture("Interface\\AddOns\\Cell\\Media\\UI-LFG-ICON-PORTRAITROLES.blp")
-		previewButton.widget.roleIcon:SetTexCoord(GetTexCoordsForRoleSmallCircle("DAMAGER"))
-		previewButton.widget.roleIcon:Show()
     end
 
     previewButton:SetSize(unpack(currentLayoutTable["size"]))
@@ -98,13 +94,28 @@ local function InitIndicator(indicatorName)
     local indicator = previewButton.indicators[indicatorName]
     if indicator.init then return end
 
-    if indicatorName == "playerRaidIcon" then
-        SetRaidTargetIconTexture(indicator.tex, 6)
+    if indicatorName == "roleIcon" then
+        indicator:SetTexture("Interface\\AddOns\\Cell\\Media\\UI-LFG-ICON-PORTRAITROLES.blp")
+        indicator:SetTexCoord(GetTexCoordsForRoleSmallCircle("DAMAGER"))
         -- texture type cannot glow by LCG
-        -- indicator.preview = CreateFrame("Frame", nil, previewButton)
-        -- indicator.preview:SetAllPoints(indicator)
+        indicator.preview = CreateFrame("Frame", nil, previewButton)
+        indicator.preview:SetAllPoints(indicator)
+
+    elseif indicatorName == "leaderIcon" then
+        indicator:SetTexture("Interface\\GroupFrame\\UI-Group-LeaderIcon")
+        
+    elseif indicatorName == "readyCheckIcon" then
+        indicator:SetTexture(READY_CHECK_READY_TEXTURE)
+
+    elseif indicatorName == "aggroIndicator" then
+        indicator.isAggroIndicator = true
+
+    elseif indicatorName == "playerRaidIcon" then
+        SetRaidTargetIconTexture(indicator.tex, 6)
+
     elseif indicatorName == "targetRaidIcon" then
         SetRaidTargetIconTexture(indicator.tex, 8)
+
     elseif indicatorName == "aggroBar" then
         indicator:SetStatusBarColor(1, 0, 0)
         indicator.value = 0
@@ -639,6 +650,10 @@ Cell:CreateScrollFrame(settingsFrame)
 settingsFrame.scrollFrame:SetScrollStep(35)
 
 local indicatorSettings = {
+    ["roleIcon"] = {"enabled", "position", "size-square"},
+    ["leaderIcon"] = {"enabled", "position", "size-square"},
+    ["readyCheckIcon"] = {"frameLevel", "size-square"},
+    ["aggroIndicator"] = {"enabled", "position", "frameLevel", "size"},
     ["playerRaidIcon"] = {"enabled", "position", "frameLevel", "size-square", "alpha"},
     ["targetRaidIcon"] = {"enabled", "position", "frameLevel", "size-square", "alpha"},
     ["aggroBar"] = {"enabled", "position", "frameLevel", "size"},
@@ -824,10 +839,14 @@ LoadIndicatorList = function()
             i:SetAlpha(1)
         elseif i:IsObjectType("Texture") then
             LCG.PixelGlow_Start(i.preview)
-            i:SetAlpha(i.alpha)
+            i:SetAlpha(i.alpha or 1)
         else
             LCG.PixelGlow_Start(i)
-            i:SetAlpha(i.alpha or 1)
+            if i.isAggroIndicator then
+                i.blink.alpha:SetFromAlpha(1)
+            else
+                i:SetAlpha(i.alpha or 1)
+            end
         end
     end, function(id)
         local i = previewButton.indicators[currentLayoutTable["indicators"][id]["indicatorName"]]
@@ -838,7 +857,12 @@ LoadIndicatorList = function()
         else
             LCG.PixelGlow_Stop(i)
         end
-        i:SetAlpha(CellDB["indicatorPreviewAlpha"])
+
+        if i.isAggroIndicator then
+            i.blink.alpha:SetFromAlpha(CellDB["indicatorPreviewAlpha"])
+        else
+            i:SetAlpha(CellDB["indicatorPreviewAlpha"])
+        end
     end)
 end
 

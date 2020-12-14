@@ -269,6 +269,30 @@ function eventFrame:ADDON_LOADED(arg1)
                     ["groupFilter"] = {true, true, true, true, true, true, true, true},
                     ["indicators"] = {
                         {
+                            ["name"] = "Role Icon",
+                            ["indicatorName"] = "roleIcon",
+                            ["type"] = "built-in",
+                            ["enabled"] = true,
+                            ["position"] = {"TOPLEFT", "TOPLEFT", 0, 0},
+                            ["size"] = {11, 11},
+                        },
+                        {
+                            ["name"] = "Leader Icon",
+                            ["indicatorName"] = "leaderIcon",
+                            ["type"] = "built-in",
+                            ["enabled"] = true,
+                            ["position"] = {"TOPLEFT", "TOPLEFT", 0, -11},
+                            ["size"] = {11, 11},
+                        },
+                        {
+                            ["name"] = "Ready Check Icon",
+                            ["indicatorName"] = "readyCheckIcon",
+                            ["type"] = "built-in",
+                            ["enabled"] = true,
+                            ["frameLevel"] = 100,
+                            ["size"] = {16, 16},
+                        },
+                        {
                             ["name"] = "Raid Icon (player)",
                             ["indicatorName"] = "playerRaidIcon",
                             ["type"] = "built-in",
@@ -287,6 +311,15 @@ function eventFrame:ADDON_LOADED(arg1)
                             ["frameLevel"] = 1,
                             ["size"] = {14, 14},
                             ["alpha"] = .77,
+                        },
+                        {
+                            ["name"] = "Aggro Indicator",
+                            ["indicatorName"] = "aggroIndicator",
+                            ["type"] = "built-in",
+                            ["enabled"] = true,
+                            ["position"] = {"TOPLEFT", "TOPLEFT", 0, 0},
+                            ["frameLevel"] = 2,
+                            ["size"] = {10, 10},
                         },
                         {
                             ["name"] = "Aggro Bar",

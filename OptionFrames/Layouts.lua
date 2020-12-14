@@ -1001,7 +1001,7 @@ local fontSizeText = Cell:CreateSeparator(L["Font Size"], layoutsTab, 122)
 fontSizeText:SetPoint("TOPLEFT", 137, -210)
 
 -- name text
-local nameFontSlider = Cell:CreateSlider(L["Name"], layoutsTab, 5, 25, 100, 1, function(value)
+local nameFontSlider = Cell:CreateSlider(L["Name"], layoutsTab, 5, 35, 100, 1, function(value)
     selectedLayoutTable["font"]["name"] = value
     if selectedLayout == Cell.vars.currentLayout then
         Cell:Fire("UpdateAppearance", "font")
@@ -1011,7 +1011,7 @@ end)
 nameFontSlider:SetPoint("TOPLEFT", fontSizeText, "BOTTOMLEFT", 5, -25)
 
 -- status text
-local statusFontSlider = Cell:CreateSlider(L["Status"], layoutsTab, 5, 25, 100, 1, function(value)
+local statusFontSlider = Cell:CreateSlider(L["Status"], layoutsTab, 5, 35, 100, 1, function(value)
     selectedLayoutTable["font"]["status"] = value
     if selectedLayout == Cell.vars.currentLayout then
         Cell:Fire("UpdateAppearance", "font")

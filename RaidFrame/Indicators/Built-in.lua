@@ -108,6 +108,7 @@ function I:CreateTankActiveMitigation(parent)
     end)
 
     function bar:SetCooldown(start, duration)
+        print("TankActiveMitigation", parent.state.class)
         tex:SetColorTexture(F:GetClassColor(parent.state.class))
         bar:SetMinMaxValues(0, duration)
         bar:SetValue(GetTime()-start)
@@ -365,4 +366,100 @@ function I:CreateHealthText(parent)
         end
         healthText:SetWidth(text:GetStringWidth()+3)
     end
+end
+
+-------------------------------------------------
+-- role icon
+-------------------------------------------------
+function I:CreateRoleIcon(parent)
+    local roleIcon = parent.widget.overlayFrame:CreateTexture(parent:GetName().."RoleIcon", "ARTWORK", nil, -7)
+	parent.indicators.roleIcon = roleIcon
+	-- roleIcon:SetPoint("TOPLEFT", overlayFrame)
+    -- roleIcon:SetSize(11, 11)
+    
+    function roleIcon:SetRole(role)
+        if role == "TANK" or role == "HEALER" or role == "DAMAGER" then
+			roleIcon:SetTexture("Interface\\AddOns\\Cell\\Media\\UI-LFG-ICON-PORTRAITROLES.blp")
+			roleIcon:SetTexCoord(GetTexCoordsForRoleSmallCircle(role))
+			-- roleIcon:SetTexture("Interface\\AddOns\\Cell\\Media\\UI-LFG-ICON-ROLES.blp")
+			-- roleIcon:SetTexCoord(GetTexCoordsForRole(role))
+			roleIcon:Show()
+		else
+			roleIcon:Hide()
+		end
+    end
+end
+
+-------------------------------------------------
+-- leader icon
+-------------------------------------------------
+function I:CreateLeaderIcon(parent)
+    local leaderIcon = parent.widget.overlayFrame:CreateTexture(parent:GetName().."LeaderIcon", "ARTWORK", nil, -7)
+	parent.indicators.leaderIcon = leaderIcon
+	-- leaderIcon:SetPoint("TOPLEFT", roleIcon, "BOTTOM")
+	-- leaderIcon:SetPoint("TOPLEFT", 0, -11)
+	-- leaderIcon:SetSize(11, 11)
+    leaderIcon:Hide()
+    
+    function leaderIcon:SetIcon(isLeader, isAssistant)
+        if isLeader then
+            leaderIcon:SetTexture("Interface\\GroupFrame\\UI-Group-LeaderIcon")
+            leaderIcon:Show()
+        elseif isAssistant then
+            leaderIcon:SetTexture("Interface\\GroupFrame\\UI-Group-AssistantIcon")
+            leaderIcon:Show()
+        else
+            leaderIcon:Hide()
+        end
+    end
+end
+
+-------------------------------------------------
+-- ready check icon
+-------------------------------------------------
+function I:CreateReadyCheckIcon(parent)
+    local readyCheckIcon = CreateFrame("Frame", parent:GetName().."ReadyCheckIcon", parent.widget.overlayFrame)
+    parent.indicators.readyCheckIcon = readyCheckIcon
+	-- readyCheckIcon:SetSize(16, 16)
+	readyCheckIcon:SetPoint("CENTER", parent.widget.healthBar)
+    readyCheckIcon:Hide()
+    
+    readyCheckIcon.tex = readyCheckIcon:CreateTexture(nil, "ARTWORK")
+    readyCheckIcon.tex:SetAllPoints(readyCheckIcon)
+    
+    function readyCheckIcon:SetTexture(tex)
+        readyCheckIcon.tex:SetTexture(tex)
+    end
+end
+
+-------------------------------------------------
+-- aggro indicator
+-------------------------------------------------
+function I:CreateAggroIndicator(parent)
+    local aggroIndicator = CreateFrame("Frame", parent:GetName().."AggroIndicator", parent.widget.overlayFrame, "BackdropTemplate")
+	parent.indicators.aggroIndicator = aggroIndicator
+	-- aggroIndicator:SetPoint("TOPLEFT")
+	-- aggroIndicator:SetSize(10, 10)
+	aggroIndicator:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8x8", edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = 1})
+	aggroIndicator:SetBackdropColor(1, 0, 0, 1)
+	aggroIndicator:SetBackdropBorderColor(0, 0, 0, 1)
+	aggroIndicator:Hide()
+
+    local blink = aggroIndicator:CreateAnimationGroup()
+    aggroIndicator.blink = blink
+    blink:SetLooping("REPEAT")
+
+    local alpha = blink:CreateAnimation("Alpha")
+    blink.alpha = alpha
+    alpha:SetFromAlpha(1)
+    alpha:SetToAlpha(0)
+    alpha:SetDuration(0.5)
+	
+	aggroIndicator:SetScript("OnShow", function(self)
+		self.blink:Play()
+	end)
+	
+	aggroIndicator:SetScript("OnHide", function(self)
+		self.blink:Stop()
+	end)
 end
