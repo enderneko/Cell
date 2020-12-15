@@ -108,7 +108,7 @@ function I:CreateTankActiveMitigation(parent)
     end)
 
     function bar:SetCooldown(start, duration)
-        print("TankActiveMitigation", parent.state.class)
+        if not parent.state.class then parent.state.class = select(2, UnitClass(parent.state.unit)) end --? why sometimes parent.state.class == nil ???
         tex:SetColorTexture(F:GetClassColor(parent.state.class))
         bar:SetMinMaxValues(0, duration)
         bar:SetValue(GetTime()-start)
