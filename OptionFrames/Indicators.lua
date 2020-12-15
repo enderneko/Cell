@@ -273,6 +273,10 @@ local function UpdateIndicators(layout, indicatorName, setting, value)
             if t["size"] then
                 indicator:SetSize(unpack(t["size"]))
             end
+            -- update border
+            if t["border"] then
+                indicator:SetBorder(t["border"])
+            end
             -- update height
             if t["height"] then
                 indicator:SetHeight(t["height"])
@@ -332,6 +336,9 @@ local function UpdateIndicators(layout, indicatorName, setting, value)
             indicator:SetFrameLevel(previewButton.widget.overlayFrame:GetFrameLevel()+value)
 		elseif setting == "size" then
             indicator:SetSize(unpack(value))
+		elseif setting == "size-border" then
+            indicator:SetSize(value[1], value[2])
+            indicator:SetBorder(value[3])
 		elseif setting == "height" then
             indicator:SetHeight(value)
         elseif setting == "alpha" then
@@ -651,7 +658,7 @@ settingsFrame.scrollFrame:SetScrollStep(35)
 
 local indicatorSettings = {
     ["roleIcon"] = {"enabled", "position", "size-square"},
-    ["leaderIcon"] = {"enabled", "position", "size-square"},
+    ["leaderIcon"] = {"|cffb7b7b7"..L["Leader Icons will hide while in combat"], "enabled", "position", "size-square"},
     ["readyCheckIcon"] = {"frameLevel", "size-square"},
     ["aggroIndicator"] = {"enabled", "position", "frameLevel", "size"},
     ["playerRaidIcon"] = {"enabled", "position", "frameLevel", "size-square", "alpha"},
@@ -663,7 +670,7 @@ local indicatorSettings = {
     ["tankActiveMitigation"] = {"enabled", "position", "frameLevel", "size"},
     ["dispels"] = {"enabled", "position", "frameLevel", "size-square", "checkbutton:dispellableByMe", "checkbutton2:enableHighlight"},
     ["debuffs"] = {"enabled", "blacklist", "frameLevel", "position", "size-square", "num", "font"},
-    ["centralDebuff"] = {"|cffb7b7b7"..L["You can config debuffs in %s"]:format(Cell:GetPlayerClassColorString()..L["Raid Debuffs"].."|r"), "enabled", "position", "frameLevel", "size-square", "font"},
+    ["centralDebuff"] = {"|cffb7b7b7"..L["You can config debuffs in %s"]:format(Cell:GetPlayerClassColorString()..L["Raid Debuffs"].."|r"), "enabled", "position", "frameLevel", "size-border", "font"},
     ["healthText"] = {"enabled", "position", "frameLevel", "font", "format", "checkbutton:hideFull", "color"},
 }
 
@@ -730,6 +737,8 @@ local function ShowIndicatorSettings(id)
             w:SetDBValue(L[F:UpperFirst(currentLayoutTable["indicators"][id]["auraType"]).." List"], currentLayoutTable["indicators"][id]["auras"], indicatorType == "icons" or indicatorType == "bars")
         elseif currentSetting == "blacklist" then
             w:SetDBValue(L["Debuff Filter (blacklist)"], CellDB["debuffBlacklist"], true)
+        elseif currentSetting == "size-border" then
+            w:SetDBValue(currentLayoutTable["indicators"][id]["size"], currentLayoutTable["indicators"][id]["border"])
         else
             w:SetDBValue(currentLayoutTable["indicators"][id][currentSetting])
         end
@@ -750,6 +759,11 @@ local function ShowIndicatorSettings(id)
                 CellDB["debuffBlacklist"] = value
                 Cell.vars.debuffBlacklist = F:ConvertTable(CellDB["debuffBlacklist"])
                 Cell:Fire("UpdateIndicators", currentLayout, "", "blacklist")
+            elseif currentSetting == "size-border" then
+                currentLayoutTable["indicators"][id]["size"][1] = value[1]
+                currentLayoutTable["indicators"][id]["size"][2] = value[2]
+                currentLayoutTable["indicators"][id]["border"] = value[3]
+                Cell:Fire("UpdateIndicators", currentLayout, indicatorName, currentSetting, value)
             else
                 currentLayoutTable["indicators"][id][currentSetting] = value
                 Cell:Fire("UpdateIndicators", currentLayout, indicatorName, currentSetting, value)

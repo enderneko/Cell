@@ -13,7 +13,7 @@ function I:CreateAura_BorderIcon(name, parent, borderSize)
     frame:Hide()
     frame:SetSize(11, 11)
     frame:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8x8"})
-    frame:SetBackdropColor(0, 0, 0, .7)
+    frame:SetBackdropColor(0, 0, 0, .75)
     
     local border = frame:CreateTexture(name.."Border", "BORDER")
     frame.border = border
@@ -34,7 +34,7 @@ function I:CreateAura_BorderIcon(name, parent, borderSize)
 
     local icon = iconFrame:CreateTexture(name.."Icon", "ARTWORK")
     frame.icon = icon
-    icon:SetTexCoord(0.08, 0.92, 0.08, 0.92)
+    icon:SetTexCoord(.12, .88, .12, .88)
     icon:SetAllPoints(iconFrame)
 
     local textFrame = CreateFrame("Frame", nil, iconFrame)
@@ -49,6 +49,12 @@ function I:CreateAura_BorderIcon(name, parent, borderSize)
     frame.duration = duration
     duration:SetJustifyH("RIGHT")
     duration:SetPoint("BOTTOMRIGHT", 2, -1)
+
+    function frame:SetBorder(thickness)
+        iconFrame:ClearAllPoints()
+        iconFrame:SetPoint("TOPLEFT", thickness, -thickness)
+        iconFrame:SetPoint("BOTTOMRIGHT", -thickness, thickness)
+    end
 
     function frame:SetFont(font, size, flags, horizontalOffset)
         if not string.find(font, ".ttf") then font = F:GetFont(font) end
@@ -115,7 +121,7 @@ function I:CreateAura_BorderIcon(name, parent, borderSize)
                 local remain = duration-(GetTime()-start)
                 -- if remain <= 5 then
                 --     frame.duration:SetText(string.format("%.1f", remain))
-                if remain <= 15 then
+                if remain <= 30 then
                     frame.duration:SetText(string.format("%d", remain))
                 else
                     frame.duration:SetText("")

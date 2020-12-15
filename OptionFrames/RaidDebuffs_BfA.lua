@@ -4,12 +4,13 @@ local F = Cell.funcs
 
 -- taken from Grid2
 local debuffs = {
-    -- [477] = {
-    --     [971] = {
-    --         -- 156151,
-    --         156152,
-    --     },
-    -- },
+    [477] = {
+        [971] = {
+            156151,
+            156152,
+            156147,
+        },
+    },
     [1030] = { -- Temple of Sethraliss
         [2142] = { -- Adderis and Aspix
             263371, -- Conduction

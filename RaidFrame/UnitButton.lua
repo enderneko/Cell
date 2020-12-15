@@ -110,6 +110,10 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
 				if t["size"] then
 					indicator:SetSize(unpack(t["size"]))
 				end
+				-- update border
+				if t["border"] then
+					indicator:SetBorder(t["border"])
+				end
 				-- update height
 				if t["height"] then
 					indicator:SetHeight(t["height"])
@@ -210,6 +214,12 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
 			F:IterateAllUnitButtons(function(b)
 				local indicator = b.indicators[indicatorName]
 				indicator:SetSize(unpack(value))
+			end)
+		elseif setting == "size-border" then
+			F:IterateAllUnitButtons(function(b)
+				local indicator = b.indicators[indicatorName]
+				indicator:SetSize(value[1], value[2])
+            	indicator:SetBorder(value[3])
 			end)
 		elseif setting == "height" then
 			F:IterateAllUnitButtons(function(b)

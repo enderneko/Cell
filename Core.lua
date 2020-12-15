@@ -395,7 +395,8 @@ function eventFrame:ADDON_LOADED(arg1)
                             ["enabled"] = true,
                             ["position"] = {"CENTER", "CENTER", 0, 3},
                             ["frameLevel"] = 20,
-                            ["size"] = {20, 20},
+                            ["size"] = {22, 22},
+                            ["border"] = 2,
                             ["font"] = {"Cell ".._G.DEFAULT, 11, "Outline", 2},
                         },
                         {

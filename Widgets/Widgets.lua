@@ -2432,6 +2432,43 @@ local function CreateSetting_SizeSquare(parent)
     return widget
 end
 
+local function CreateSetting_SizeAndBorder(parent)
+    local widget
+
+    if not settingWidgets["size-border"] then
+        widget = addon:CreateFrame("CellIndicatorSettings_SizeAndBorder", parent, 240, 50)
+        settingWidgets["size-border"] = widget
+
+        widget.size = addon:CreateSlider(L["Size"], widget, 10, 50, 100, 1)
+        widget.size:SetPoint("TOPLEFT", widget, 5, -20)
+        widget.size.afterValueChangedFn = function(value)
+            widget.func({value, value, widget.border:GetValue()})
+        end
+
+        widget.border = addon:CreateSlider(L["Border"], widget, 1, 10, 100, 1)
+        widget.border:SetPoint("LEFT", widget.size, "RIGHT", 25, 0)
+        widget.border.afterValueChangedFn = function(value)
+            widget.func({widget.size:GetValue(), widget.size:GetValue(), value})
+        end
+        
+        -- associate db
+        function widget:SetFunc(func)
+            widget.func = func
+        end
+        
+        -- show db value
+        function widget:SetDBValue(sizeTable, border)
+            widget.size:SetValue(sizeTable[1])
+            widget.border:SetValue(border or 1) -- before r33 there's no border value
+        end
+    else
+        widget = settingWidgets["size-border"]
+    end
+
+    widget:Show()
+    return widget
+end
+
 local function CreateSetting_Height(parent)
     local widget
 
@@ -3346,6 +3383,8 @@ function addon:CreateIndicatorSettings(parent, settingsTable)
             tinsert(widgetsTable, CreateSetting_Size(parent))
         elseif setting == "size-square" then
             tinsert(widgetsTable, CreateSetting_SizeSquare(parent))
+        elseif setting == "size-border" then
+            tinsert(widgetsTable, CreateSetting_SizeAndBorder(parent))
         elseif setting == "height" then
             tinsert(widgetsTable, CreateSetting_Height(parent))
         elseif setting == "alpha" then

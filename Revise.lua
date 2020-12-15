@@ -307,6 +307,12 @@ local function Revise()
 				})
 			end
 
+			if layout["indicators"][14] and layout["indicators"][14]["indicatorName"] == "centralDebuff" then
+				if not layout["indicators"][14]["border"] then
+					layout["indicators"][14]["border"] = 2
+				end
+			end
+
 			if layout["indicators"][15] and layout["indicators"][15]["indicatorName"] ~= "healthText" then
 				tinsert(layout["indicators"], 15, {
 					["name"] = "Health Text",
