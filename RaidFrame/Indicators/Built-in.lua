@@ -185,7 +185,7 @@ function I:CreateDispels(parent)
             dispels[i]:SetDispel(dispelType)
             i = i + 1
             if dispelType then
-                r, g, b, a = DebuffTypeColor[dispelType].r, DebuffTypeColor[dispelType].g, DebuffTypeColor[dispelType].b, .5
+                r, g, b, a = DebuffTypeColor[dispelType].r, DebuffTypeColor[dispelType].g, DebuffTypeColor[dispelType].b, 1
             end
         end
 
