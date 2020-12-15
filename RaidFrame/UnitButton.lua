@@ -378,7 +378,7 @@ local function UnitButton_UpdateDebuffs(self)
 	-- user created indicators
 	I:ResetCustomIndicators(unit, "debuff")
 
-	local found, refreshing = 1
+	local found, refreshing, resurrectionFound = 1
 	local topOrder, topGlowType, topGlowColor, topId, topStart, topDuration, topType, topIcon, topCount, topRefreshing = 999
     for i = 1, 40 do
         -- name, icon, count, debuffType, duration, expirationTime, source, isStealable, nameplateShowPersonal, spellId, canApplyAura, isBossDebuff, castByPlayer, nameplateShowAll, timeMod, ...
@@ -426,9 +426,18 @@ local function UnitButton_UpdateDebuffs(self)
 					debuffs_dispel[unit][debuffType] = true
 				end
 			end
+
+			if spellId == 160029 then
+				resurrectionFound = true
+				self.widget.resurrectionIcon:SetTimer(expirationTime - duration, duration)
+			end
 		end
 	end
 	
+	if not resurrectionFound then
+		self.widget.resurrectionIcon:Hide()
+	end
+
 	-- hide other debuff indicators
 	for i = found, 5 do
 		self.indicators.debuffs[i]:Hide()
@@ -1767,6 +1776,55 @@ function F:UnitButton_OnLoad(button)
 	phaseIcon:SetPoint("TOP", healthBar)
 	phaseIcon:Hide()
 
+	-- resurrection icon
+	local resurrectionIcon = CreateFrame("Frame", name.."ResurrectionIcon", overlayFrame)
+	button.widget.resurrectionIcon = resurrectionIcon
+	resurrectionIcon:SetSize(16, 16)
+	resurrectionIcon:SetAllPoints(phaseIcon)
+	resurrectionIcon:Hide()
+	resurrectionIcon.icon = resurrectionIcon:CreateTexture(nil, "ARTWORK")
+	resurrectionIcon.icon:SetAllPoints(resurrectionIcon)
+	resurrectionIcon.icon:SetTexCoord(0.08, 0.92, 0.08, 0.92)
+	resurrectionIcon.icon:SetDesaturated(true)
+	resurrectionIcon.icon:SetVertexColor(.4, .4, .4, .5)
+	resurrectionIcon.icon:SetTexture("Interface\\RaidFrame\\Raid-Icon-Rez")
+
+	function resurrectionIcon:SetTimer(start, duration)
+		resurrectionIcon.bar:SetMinMaxValues(0, duration)
+		resurrectionIcon.bar:SetValue(GetTime()-start)
+		resurrectionIcon:Show()
+	end
+
+	do
+		local bar = CreateFrame("StatusBar", nil, resurrectionIcon)
+		resurrectionIcon.bar = bar
+		bar:SetAllPoints(resurrectionIcon)
+		bar:SetOrientation("VERTICAL")
+		bar:SetReverseFill(true)
+		bar:SetStatusBarTexture("Interface\\Buttons\\WHITE8x8")
+		bar:GetStatusBarTexture():SetAlpha(0)
+		bar.elapsedTime = 0
+		bar:SetScript("OnUpdate", function(self, elapsed)
+			if bar.elapsedTime >= 0.1 then
+				bar:SetValue(bar:GetValue() + bar.elapsedTime)
+				bar.elapsedTime = 0
+			end
+			bar.elapsedTime = bar.elapsedTime + elapsed
+		end)
+
+		local mask = resurrectionIcon:CreateMaskTexture()
+		mask:SetTexture("Interface\\Buttons\\WHITE8x8", "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
+		mask:SetPoint("TOPLEFT", bar:GetStatusBarTexture(), "BOTTOMLEFT")
+		mask:SetPoint("BOTTOMRIGHT")
+
+		local maskIcon = bar:CreateTexture(nil, "ARTWORK")
+		maskIcon:SetAllPoints(resurrectionIcon)
+		maskIcon:SetTexCoord(0.08, 0.92, 0.08, 0.92)
+		maskIcon:SetTexture("Interface\\RaidFrame\\Raid-Icon-Rez")
+		maskIcon:AddMaskTexture(mask)
+	end
+
+	-- aggro bar
 	local aggroBar = Cell:CreateStatusBar(overlayFrame, 18, 2, 100, true)
 	button.indicators.aggroBar = aggroBar
 	-- aggroBar:SetPoint("BOTTOMLEFT", overlayFrame, "TOPLEFT", 1, 0)

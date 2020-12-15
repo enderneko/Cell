@@ -328,6 +328,10 @@ local function Revise()
 				})
 			end
 		end
+
+		if not F:TContains(CellDB["debuffBlacklist"], 160029) then
+			tinsert(CellDB["debuffBlacklist"], 2, 160029)
+		end
 	end
 
 	CellDB["revise"] = Cell.version

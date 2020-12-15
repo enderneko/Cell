@@ -5,6 +5,7 @@ local I = Cell.iFuncs
 -- NOTE: these spellIds ~= realSpellIds, spells are matched by names
 local debuffBlacklist = {
     8326, -- 鬼魂
+    160029, -- 正在复活
     57723, -- 筋疲力尽
     57724, -- 心满意足
     80354, -- 时空错位
