@@ -102,13 +102,13 @@ local loadedDebuffs = {
     -- [instanceId] = {
     --     ["general"] = {
     --         ["enabled"]= {
-    --             {["id"]=spellId, ["order"]=order, ["glowType"]=glowType, ["glowColor"]=glowColor}
+    --             {["id"]=spellId, ["order"]=order, ["trackByID"]=trackByID, ["glowType"]=glowType, ["glowColor"]=glowColor}
     --         },
     --         ["disabled"] = {},
     --     },
     --     [bossId] = {
     --         ["enabled"]= {
-    --             {["id"]=spellId, ["order"]=order, ["glowType"]=glowType, ["glowColor"]=glowColor}
+    --             {["id"]=spellId, ["order"]=order, ["trackByID"]=trackByID, ["glowType"]=glowType, ["glowColor"]=glowColor}
     --         },
     --         ["disabled"] = {},
     --     },
@@ -124,7 +124,7 @@ local function LoadDebuffs()
             if not loadedDebuffs[instanceId][bossId] then loadedDebuffs[instanceId][bossId] = {["enabled"]={}, ["disabled"]={}} end
             -- load from db and set its order
             for spellId, sTable in pairs(bTable) do
-                local t = {["id"]=spellId, ["order"]=sTable[1], ["glowType"]=sTable[2], ["glowColor"]=sTable[3]}
+                local t = {["id"]=spellId, ["order"]=sTable[1], ["trackByID"]=sTable[2], ["glowType"]=sTable[3], ["glowColor"]=sTable[4]}
                 if sTable[1] == 0 then
                     tinsert(loadedDebuffs[instanceId][bossId]["disabled"], t)
                 else
@@ -457,10 +457,10 @@ create:SetScript("OnClick", function()
         if not CellDB["raidDebuffs"][loadedInstance] then CellDB["raidDebuffs"][loadedInstance] = {} end
         if isGeneral then
             if not CellDB["raidDebuffs"][loadedInstance]["general"] then CellDB["raidDebuffs"][loadedInstance]["general"] = {} end
-            CellDB["raidDebuffs"][loadedInstance]["general"][id] = {currentBossTable and #currentBossTable["enabled"]+1 or 1}
+            CellDB["raidDebuffs"][loadedInstance]["general"][id] = {currentBossTable and #currentBossTable["enabled"]+1 or 1, false}
         else
             if not CellDB["raidDebuffs"][loadedInstance][loadedBoss] then CellDB["raidDebuffs"][loadedInstance][loadedBoss] = {} end
-            CellDB["raidDebuffs"][loadedInstance][loadedBoss][id] = {currentBossTable and #currentBossTable["enabled"]+1 or 1}
+            CellDB["raidDebuffs"][loadedInstance][loadedBoss][id] = {currentBossTable and #currentBossTable["enabled"]+1 or 1, false}
         end
         -- update loadedDebuffs
         if currentBossTable then
@@ -606,7 +606,7 @@ local function RegisterForDrag(b)
                         currentBossTable["enabled"][j] = moved
                         -- update db
                         if not CellDB["raidDebuffs"][loadedInstance][isGeneral and "general" or loadedBoss][debuffButtons[j].spellId] then
-                            CellDB["raidDebuffs"][loadedInstance][isGeneral and "general" or loadedBoss][debuffButtons[j].spellId] = {j}
+                            CellDB["raidDebuffs"][loadedInstance][isGeneral and "general" or loadedBoss][debuffButtons[j].spellId] = {j, false}
                         else
                             CellDB["raidDebuffs"][loadedInstance][isGeneral and "general" or loadedBoss][debuffButtons[j].spellId][1] = j
                         end
@@ -656,7 +656,7 @@ local function RegisterForDrag(b)
                         currentBossTable["enabled"][j] = moved
                         -- update db
                         if not CellDB["raidDebuffs"][loadedInstance][isGeneral and "general" or loadedBoss][debuffButtons[j].spellId] then
-                            CellDB["raidDebuffs"][loadedInstance][isGeneral and "general" or loadedBoss][debuffButtons[j].spellId] = {j}
+                            CellDB["raidDebuffs"][loadedInstance][isGeneral and "general" or loadedBoss][debuffButtons[j].spellId] = {j, false}
                         else
                             CellDB["raidDebuffs"][loadedInstance][isGeneral and "general" or loadedBoss][debuffButtons[j].spellId][1] = j
                         end
@@ -863,7 +863,7 @@ local enabledCB = Cell:CreateCheckButton(detailsContentFrame, L["Enabled"], func
     local tIndex = isGeneral and "general" or loadedBoss
     if not CellDB["raidDebuffs"][loadedInstance][tIndex] then CellDB["raidDebuffs"][loadedInstance][tIndex] = {} end
     if not CellDB["raidDebuffs"][loadedInstance][tIndex][selectedSpellId] then
-        CellDB["raidDebuffs"][loadedInstance][tIndex][selectedSpellId] = {newOrder}
+        CellDB["raidDebuffs"][loadedInstance][tIndex][selectedSpellId] = {newOrder, false}
     else
         CellDB["raidDebuffs"][loadedInstance][tIndex][selectedSpellId][1] = newOrder
     end
@@ -911,10 +911,31 @@ local enabledCB = Cell:CreateCheckButton(detailsContentFrame, L["Enabled"], func
 end)
 enabledCB:SetPoint("TOPLEFT", spellIconBG, "BOTTOMLEFT", 0, -10)
 
+-- track by id
+local trackByIdCB = Cell:CreateCheckButton(detailsContentFrame, L["Track by ID"], function(checked)
+    -- update db
+    if not CellDB["raidDebuffs"][loadedInstance] then CellDB["raidDebuffs"][loadedInstance] = {} end
+    local tIndex = isGeneral and "general" or loadedBoss
+    if not CellDB["raidDebuffs"][loadedInstance][tIndex] then CellDB["raidDebuffs"][loadedInstance][tIndex] = {} end
+    if not CellDB["raidDebuffs"][loadedInstance][tIndex][selectedSpellId] then
+        CellDB["raidDebuffs"][loadedInstance][tIndex][selectedSpellId] = {selectedButtonIndex <= #currentBossTable["enabled"] and selectedButtonIndex or 0, checked}
+    else
+        CellDB["raidDebuffs"][loadedInstance][tIndex][selectedSpellId][2] = checked
+    end
+
+    -- update loadedDebuffs
+    local t = selectedButtonIndex <= #currentBossTable["enabled"] and currentBossTable["enabled"][selectedButtonIndex] or currentBossTable["disabled"][selectedButtonIndex-#currentBossTable["enabled"]]
+    t["trackByID"] = checked
+
+    -- notify debuff list changed
+    Cell:Fire("RaidDebuffsChanged")
+end)
+trackByIdCB:SetPoint("TOPLEFT", enabledCB, "BOTTOMLEFT", 0, -10)
+
 -- glow type
 local glowTypeText = detailsContentFrame:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
 glowTypeText:SetText(L["Glow Type"])
-glowTypeText:SetPoint("TOPLEFT", enabledCB, "BOTTOMLEFT", 0, -10)
+glowTypeText:SetPoint("TOPLEFT", trackByIdCB, "BOTTOMLEFT", 0, -10)
 
 local glowColorPicker
 
@@ -926,10 +947,10 @@ local function UpdateGlowType(newType)
         local tIndex = isGeneral and "general" or loadedBoss
         if not CellDB["raidDebuffs"][loadedInstance][tIndex] then CellDB["raidDebuffs"][loadedInstance][tIndex] = {} end
         if not CellDB["raidDebuffs"][loadedInstance][tIndex][selectedSpellId] then
-            CellDB["raidDebuffs"][loadedInstance][tIndex][selectedSpellId] = {t["order"], newType, {0.95,0.95,0.32,1}}
+            CellDB["raidDebuffs"][loadedInstance][tIndex][selectedSpellId] = {t["order"], false, newType, {0.95,0.95,0.32,1}}
         else
-            CellDB["raidDebuffs"][loadedInstance][tIndex][selectedSpellId][2] = newType
-            CellDB["raidDebuffs"][loadedInstance][tIndex][selectedSpellId][3] = CellDB["raidDebuffs"][loadedInstance][tIndex][selectedSpellId][3] or {0.95,0.95,0.32,1}
+            CellDB["raidDebuffs"][loadedInstance][tIndex][selectedSpellId][3] = newType
+            CellDB["raidDebuffs"][loadedInstance][tIndex][selectedSpellId][4] = CellDB["raidDebuffs"][loadedInstance][tIndex][selectedSpellId][4] or {0.95,0.95,0.32,1}
         end
         -- update loadedDebuffs
         t["glowType"] = newType
@@ -952,7 +973,7 @@ glowTypeDropdown:SetItems({
             if t["glowType"] and t["glowType"] ~= "None" then -- exists in db
                 -- update db
                 local tIndex = isGeneral and "general" or loadedBoss
-                CellDB["raidDebuffs"][loadedInstance][tIndex][selectedSpellId][2] = "None"
+                CellDB["raidDebuffs"][loadedInstance][tIndex][selectedSpellId][3] = "None"
                 -- update loadedDebuffs
                 t["glowType"] = nil
                 -- notify debuff list changed
@@ -989,10 +1010,10 @@ glowColorPicker = Cell:CreateColorPicker(detailsContentFrame, L["Glow Color"], t
     local t = selectedButtonIndex <= #currentBossTable["enabled"] and currentBossTable["enabled"][selectedButtonIndex] or currentBossTable["disabled"][selectedButtonIndex-#currentBossTable["enabled"]]
     -- update db
     local tIndex = isGeneral and "general" or loadedBoss
-    CellDB["raidDebuffs"][loadedInstance][tIndex][selectedSpellId][3][1] = r
-    CellDB["raidDebuffs"][loadedInstance][tIndex][selectedSpellId][3][2] = g
-    CellDB["raidDebuffs"][loadedInstance][tIndex][selectedSpellId][3][3] = b
-    CellDB["raidDebuffs"][loadedInstance][tIndex][selectedSpellId][3][4] = a
+    CellDB["raidDebuffs"][loadedInstance][tIndex][selectedSpellId][4][1] = r
+    CellDB["raidDebuffs"][loadedInstance][tIndex][selectedSpellId][4][2] = g
+    CellDB["raidDebuffs"][loadedInstance][tIndex][selectedSpellId][4][3] = b
+    CellDB["raidDebuffs"][loadedInstance][tIndex][selectedSpellId][4][4] = a
     -- update loadedDebuffs
     t["glowColor"][1] = r
     t["glowColor"][2] = g
@@ -1046,11 +1067,14 @@ ShowDetails = function(spell)
     
     local glowType, glowColor
     if isEnabled then
+        trackByIdCB:SetChecked(currentBossTable["enabled"][buttonIndex]["trackByID"])
         glowType = currentBossTable["enabled"][buttonIndex]["glowType"]
         glowColor = currentBossTable["enabled"][buttonIndex]["glowColor"]
     else
-        glowType = currentBossTable["disabled"][buttonIndex-#currentBossTable["enabled"]]["glowType"]
-        glowColor = currentBossTable["disabled"][buttonIndex-#currentBossTable["enabled"]]["glowColor"]
+        local index = buttonIndex-#currentBossTable["enabled"]
+        trackByIdCB:SetChecked(currentBossTable["disabled"][index]["trackByID"])
+        glowType = currentBossTable["disabled"][index]["glowType"]
+        glowColor = currentBossTable["disabled"][index]["glowColor"]
     end
     glowType = glowType or "None"
     glowTypeDropdown:SetSelected(L[glowType])
@@ -1114,11 +1138,14 @@ function F:GetDebuffList(instanceName)
         if loadedDebuffs[iId]["general"] then
             n = #loadedDebuffs[iId]["general"]["enabled"]
             for _, t in ipairs(loadedDebuffs[iId]["general"]["enabled"]) do
-                -- TODO: track by id
                 local spellName = GetSpellInfo(t["id"])
-                if spellName then -- check again
-                    -- list[spellName] = {order, glowType, glowColor}
-                    list[spellName] = {["order"]=t["order"], ["glowType"]=t["glowType"], ["glowColor"]=t["glowColor"]}
+                if spellName then
+                    -- list[spellName/spellId] = {order, glowType, glowColor}
+                    if t["trackByID"] then
+                        list[t["id"]] = {["order"]=t["order"], ["glowType"]=t["glowType"], ["glowColor"]=t["glowColor"]}
+                    else
+                        list[spellName] = {["order"]=t["order"], ["glowType"]=t["glowType"], ["glowColor"]=t["glowColor"]}
+                    end
                 end
             end
         end
@@ -1128,13 +1155,17 @@ function F:GetDebuffList(instanceName)
                 for _, st in pairs(bTable["enabled"]) do
                     local spellName = GetSpellInfo(st["id"])
                     if spellName then -- check again
-                        list[spellName] = {["order"]=st["order"]+n, ["glowType"]=st["glowType"], ["glowColor"]=st["glowColor"]}
+                        if st["trackByID"] then
+                            list[st["id"]] = {["order"]=st["order"], ["glowType"]=st["glowType"], ["glowColor"]=st["glowColor"]}
+                        else
+                            list[spellName] = {["order"]=st["order"]+n, ["glowType"]=st["glowType"], ["glowColor"]=st["glowColor"]}
+                        end
                     end
                 end
             end
         end
     end
-    -- texplore(list)
+    texplore(list)
 
     return list
 end
