@@ -18,6 +18,7 @@ select(2, ...).L = setmetatable({
     ["showDuration"] = "Show duration text",
     ["enableHighlight"] = "Highlight unit button",
     ["hideFull"] = "Hide while HP is full",
+    ["glowIgnorePriority"] = "Show glow ignoring debuffs priority",
 
     ["BOTTOM"] = "Bottom",
     ["BOTTOMLEFT"] = "Bottom Left",

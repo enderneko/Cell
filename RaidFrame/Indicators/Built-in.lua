@@ -2,6 +2,7 @@ local _, Cell = ...
 local L = Cell.L
 local F = Cell.funcs
 local I = Cell.iFuncs
+local LCG = LibStub("LibCustomGlow-1.0")
 
 -------------------------------------------------
 -- CreateDefensiveCooldowns
@@ -258,6 +259,48 @@ function I:CreateCentralDebuff(parent)
     parent.indicators.centralDebuff = frame
     frame:SetFrameLevel(77)
     frame:Hide()
+
+    function frame:ShowGlow(glowType, glowColor, noHiding)
+        if glowType == "Normal" then
+            if not noHiding then
+                LCG.PixelGlow_Stop(parent)
+                LCG.AutoCastGlow_Stop(parent)
+            end
+            LCG.ButtonGlow_Start(parent, glowColor)
+        elseif glowType == "Pixel" then
+            if not noHiding then
+                LCG.ButtonGlow_Stop(parent)
+                LCG.AutoCastGlow_Stop(parent)
+            end
+            LCG.PixelGlow_Start(parent, glowColor)
+        elseif glowType == "Shine" then
+            if not noHiding then
+                LCG.ButtonGlow_Stop(parent)
+                LCG.PixelGlow_Stop(parent)
+            end
+            LCG.AutoCastGlow_Start(parent, glowColor, 7, 0.5)
+        else
+            LCG.ButtonGlow_Stop(parent)
+            LCG.PixelGlow_Stop(parent)
+            LCG.AutoCastGlow_Stop(parent)
+        end
+    end
+
+    function frame:HideGlow(glowType)
+        if glowType == "Normal" then
+            LCG.ButtonGlow_Stop(parent)
+        elseif glowType == "Pixel" then
+            LCG.PixelGlow_Stop(parent)
+        elseif glowType == "Shine" then
+            LCG.AutoCastGlow_Stop(parent)
+        end
+    end
+
+    frame:SetScript("OnHide", function()
+        LCG.ButtonGlow_Stop(parent)
+        LCG.PixelGlow_Stop(parent)
+        LCG.AutoCastGlow_Stop(parent)
+    end)
 end
 
 -------------------------------------------------

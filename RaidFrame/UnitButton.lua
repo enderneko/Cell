@@ -93,6 +93,8 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
 				indicatorCustoms[t["indicatorName"]] = t["castByMe"]
 			elseif t["hideFull"] ~= nil then
 				indicatorCustoms[t["indicatorName"]] = t["hideFull"]
+			elseif t["glowIgnorePriority"] ~= nil then
+				indicatorCustoms[t["indicatorName"]] = t["glowIgnorePriority"]
 			end
 			-- update indicators
 			F:IterateAllUnitButtons(function(b)
@@ -368,17 +370,22 @@ local debuffs_cache = {}
 local debuffs_cache_count = {}
 local debuffs_current = {}
 local debuffs_dispel = {}
+local debuffs_glowing_current = {}
+local debuffs_glowing_cache = {}
 local function UnitButton_UpdateDebuffs(self)
 	local unit = self.state.displayedUnit
 	if not debuffs_cache[unit] then debuffs_cache[unit] = {} end
 	if not debuffs_cache_count[unit] then debuffs_cache_count[unit] = {} end
     if not debuffs_current[unit] then debuffs_current[unit] = {} end
     if not debuffs_dispel[unit] then debuffs_dispel[unit] = {} end
+    if not debuffs_glowing_current[unit] then debuffs_glowing_current[unit] = {} end
+    if not debuffs_glowing_cache[unit] then debuffs_glowing_cache[unit] = {} end
 
 	-- user created indicators
 	I:ResetCustomIndicators(unit, "debuff")
 
 	local found, refreshing, resurrectionFound = 1
+	local glowType, glowColor
 	local topOrder, topGlowType, topGlowColor, topId, topStart, topDuration, topType, topIcon, topCount, topRefreshing = 999
     for i = 1, 40 do
         -- name, icon, count, debuffType, duration, expirationTime, source, isStealable, nameplateShowPersonal, spellId, canApplyAura, isBossDebuff, castByPlayer, nameplateShowAll, timeMod, ...
@@ -409,9 +416,18 @@ local function UnitButton_UpdateDebuffs(self)
 				I:CheckCustomIndicators(unit, self, "debuff", spellId, expirationTime - duration, duration, debuffType or "", icon, count, refreshing)
 
 				-- check top debuff
-				if enabledIndicators["centralDebuff"] and I:GetDebuffOrder(name, spellId) and I:GetDebuffOrder(name, spellId) < topOrder then
-					topOrder, topGlowType, topGlowColor = I:GetDebuffOrder(name, spellId)
-					topId, topStart, topDuration, topType, topIcon, topCount, topRefreshing = spellId, expirationTime - duration, duration, debuffType or "", icon, count, refreshing
+				if enabledIndicators["centralDebuff"] and I:GetDebuffOrder(name, spellId) then
+					if indicatorCustoms["centralDebuff"] then
+						glowType, glowColor = select(2, I:GetDebuffOrder(name, spellId))
+						if glowType and glowType ~= "None" then
+							debuffs_glowing_current[unit][glowType] = glowColor
+							debuffs_glowing_cache[unit][glowType] = true
+						end
+					end
+					if I:GetDebuffOrder(name, spellId) < topOrder then
+						topOrder, topGlowType, topGlowColor = I:GetDebuffOrder(name, spellId)
+						topId, topStart, topDuration, topType, topIcon, topCount, topRefreshing = spellId, expirationTime - duration, duration, debuffType or "", icon, count, refreshing
+					end
 				end
 
 				debuffs_cache[unit][spellId] = expirationTime
@@ -448,7 +464,25 @@ local function UnitButton_UpdateDebuffs(self)
 
 	-- update central debuff
 	if topId then
-		self.indicators.centralDebuff:SetCooldown(topStart, topDuration, topType, topIcon, topCount, topRefreshing, topGlowType, topGlowColor)
+		self.indicators.centralDebuff:SetCooldown(topStart, topDuration, topType, topIcon, topCount, topRefreshing)
+		if indicatorCustoms["centralDebuff"] then
+			if topGlowType and topGlowType ~= "None" then
+				-- to make sure top glow has highest priority
+				debuffs_glowing_current[unit][topGlowType] = topGlowColor
+			end
+			for t, c in pairs(debuffs_glowing_current[unit]) do
+				self.indicators.centralDebuff:ShowGlow(t, c, true)
+			end
+			for t, _ in pairs(debuffs_glowing_cache[unit]) do
+				if not debuffs_glowing_current[unit][t] then
+					self.indicators.centralDebuff:HideGlow(t)
+					debuffs_glowing_cache[unit][t] = nil
+				end
+			end
+			wipe(debuffs_glowing_current[unit])
+		else
+			self.indicators.centralDebuff:ShowGlow(topGlowType, topGlowColor)
+		end
 	else
 		self.indicators.centralDebuff:Hide()
 	end
@@ -1393,6 +1427,19 @@ local function UnitButton_OnAttributeChanged(self, name, value)
 			self.state.unit = value
 			self.state.displayedUnit = value
 			if string.find(value, "raid") then Cell.unitButtons.raid.units[value] = self end
+
+			-- reset debuffs
+			if debuffs_cache[self.state.unit] then wipe(debuffs_cache[self.state.unit]) end
+			if debuffs_cache_count[self.state.unit] then wipe(debuffs_cache_count[self.state.unit]) end
+			if debuffs_current[self.state.unit] then wipe(debuffs_current[self.state.unit]) end
+			if debuffs_dispel[self.state.unit] then wipe(debuffs_dispel[self.state.unit]) end
+			if debuffs_glowing_current[self.state.unit] then wipe(debuffs_glowing_current[self.state.unit]) end
+			if debuffs_glowing_cache[self.state.unit] then wipe(debuffs_glowing_cache[self.state.unit]) end
+			-- reset buffs
+			if buffs_cache[self.state.unit] then wipe(buffs_cache[self.state.unit]) end
+			if buffs_cache_castByMe[self.state.unit] then wipe(buffs_cache_castByMe[self.state.unit]) end
+			if buffs_current[self.state.unit] then wipe(buffs_current[self.state.unit]) end
+			if buffs_current_castByMe[self.state.unit] then wipe(buffs_current_castByMe[self.state.unit]) end
 		end
 	end
 end
@@ -1409,6 +1456,20 @@ end
 local function UnitButton_OnHide(self)
 	UnitButton_UnregisterEvents(self)
 	-- Cell:Fire("UpdateClampRectInsets")
+	if self.state.unit then
+		-- reset debuffs
+		if debuffs_cache[self.state.unit] then wipe(debuffs_cache[self.state.unit]) end
+		if debuffs_cache_count[self.state.unit] then wipe(debuffs_cache_count[self.state.unit]) end
+		if debuffs_current[self.state.unit] then wipe(debuffs_current[self.state.unit]) end
+		if debuffs_dispel[self.state.unit] then wipe(debuffs_dispel[self.state.unit]) end
+		if debuffs_glowing_current[self.state.unit] then wipe(debuffs_glowing_current[self.state.unit]) end
+		if debuffs_glowing_cache[self.state.unit] then wipe(debuffs_glowing_cache[self.state.unit]) end
+		-- reset buffs
+		if buffs_cache[self.state.unit] then wipe(buffs_cache[self.state.unit]) end
+		if buffs_cache_castByMe[self.state.unit] then wipe(buffs_cache_castByMe[self.state.unit]) end
+		if buffs_current[self.state.unit] then wipe(buffs_current[self.state.unit]) end
+		if buffs_current_castByMe[self.state.unit] then wipe(buffs_current_castByMe[self.state.unit]) end
+	end
 end
 
 local function UnitButton_OnEnter(self)

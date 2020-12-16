@@ -1165,7 +1165,7 @@ function F:GetDebuffList(instanceName)
             end
         end
     end
-    texplore(list)
+    -- texplore(list)
 
     return list
 end

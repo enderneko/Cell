@@ -664,14 +664,14 @@ local indicatorSettings = {
     ["playerRaidIcon"] = {"enabled", "position", "frameLevel", "size-square", "alpha"},
     ["targetRaidIcon"] = {"enabled", "position", "frameLevel", "size-square", "alpha"},
     ["aggroBar"] = {"enabled", "position", "frameLevel", "size"},
-    ["aoeHealing"] = {"enabled", "height", "color"},
+    ["aoeHealing"] = {"enabled", "color", "height"},
     ["externalCooldowns"] = {"enabled", "position", "frameLevel", "size", "num"},
     ["defensiveCooldowns"] = {"enabled", "position", "frameLevel", "size", "num"},
     ["tankActiveMitigation"] = {"enabled", "position", "frameLevel", "size"},
-    ["dispels"] = {"enabled", "position", "frameLevel", "size-square", "checkbutton:dispellableByMe", "checkbutton2:enableHighlight"},
+    ["dispels"] = {"enabled", "checkbutton:dispellableByMe", "checkbutton2:enableHighlight", "position", "frameLevel", "size-square"},
     ["debuffs"] = {"enabled", "blacklist", "frameLevel", "position", "size-square", "num", "font"},
-    ["centralDebuff"] = {"|cffb7b7b7"..L["You can config debuffs in %s"]:format(Cell:GetPlayerClassColorString()..L["Raid Debuffs"].."|r"), "enabled", "position", "frameLevel", "size-border", "font"},
-    ["healthText"] = {"enabled", "position", "frameLevel", "font", "format", "checkbutton:hideFull", "color"},
+    ["centralDebuff"] = {"|cffb7b7b7"..L["You can config debuffs in %s"]:format(Cell:GetPlayerClassColorString()..L["Raid Debuffs"].."|r"), "enabled", "checkbutton:glowIgnorePriority", "position", "frameLevel", "size-border", "font"},
+    ["healthText"] = {"enabled", "format", "checkbutton:hideFull", "color", "position", "frameLevel", "font"},
 }
 
 local function ShowIndicatorSettings(id)
@@ -692,13 +692,13 @@ local function ShowIndicatorSettings(id)
         -- end
     else
         if indicatorType == "icon" then
-            settingsTable = {"enabled", "auras", "position", "frameLevel", "size-square", "font", "checkbutton2:showDuration"}
+            settingsTable = {"enabled", "auras", "checkbutton2:showDuration", "position", "frameLevel", "size-square", "font"}
         elseif indicatorType == "text" then
-            settingsTable = {"enabled", "auras", "position", "frameLevel", "font", "colors"}
+            settingsTable = {"enabled", "auras", "colors", "position", "frameLevel", "font"}
         elseif indicatorType == "bar" or indicatorType == "rect" then
-            settingsTable = {"enabled", "auras", "position", "frameLevel", "size", "colors"}
+            settingsTable = {"enabled", "auras", "colors", "position", "frameLevel", "size"}
         elseif indicatorType == "icons" then
-            settingsTable = {"enabled", "auras", "position", "frameLevel", "size-square", "num", "orientation", "font", "checkbutton2:showDuration"}
+            settingsTable = {"enabled", "auras", "checkbutton2:showDuration", "position", "frameLevel", "size-square", "num", "orientation", "font"}
         end
         -- castByMe
         if currentLayoutTable["indicators"][id]["auraType"] == "buff" then

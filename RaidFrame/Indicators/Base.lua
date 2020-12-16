@@ -2,7 +2,6 @@ local _, Cell = ...
 local L = Cell.L
 local F = Cell.funcs
 local I = Cell.iFuncs
-local LCG = LibStub("LibCustomGlow-1.0")
 
 local DebuffTypeColor = DebuffTypeColor
 -------------------------------------------------
@@ -97,7 +96,7 @@ function I:CreateAura_BorderIcon(name, parent, borderSize)
     t2:SetOrder(2)
     t2:SetSmoothing("IN")
 
-    function frame:SetCooldown(start, duration, debuffType, texture, count, refreshing, glowType, glowColor)
+    function frame:SetCooldown(start, duration, debuffType, texture, count, refreshing)
         local r, g, b
         if debuffType then
             r, g, b = DebuffTypeColor[debuffType].r, DebuffTypeColor[debuffType].g, DebuffTypeColor[debuffType].b
@@ -136,27 +135,7 @@ function I:CreateAura_BorderIcon(name, parent, borderSize)
         if refreshing then
             ag:Play()
         end
-        
-        if glowType == "Normal" then
-            LCG.PixelGlow_Stop(parent)
-            LCG.AutoCastGlow_Stop(parent)
-            LCG.ButtonGlow_Start(parent, glowColor)
-        elseif glowType == "Pixel" then
-            LCG.ButtonGlow_Stop(parent)
-            LCG.AutoCastGlow_Stop(parent)
-            LCG.PixelGlow_Start(parent, glowColor)
-        elseif glowType == "Shine" then
-            LCG.ButtonGlow_Stop(parent)
-            LCG.PixelGlow_Stop(parent)
-            LCG.AutoCastGlow_Start(parent, glowColor, 7, 0.5)
-        end
     end
-
-    frame:SetScript("OnHide", function()
-        LCG.ButtonGlow_Stop(parent)
-        LCG.PixelGlow_Stop(parent)
-        LCG.AutoCastGlow_Stop(parent)
-    end)
 
     return frame
 end
