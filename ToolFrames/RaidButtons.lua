@@ -124,21 +124,26 @@ end)
 readyBtn:RegisterEvent("READY_CHECK")
 readyBtn:RegisterEvent("READY_CHECK_FINISHED")
 readyBtn:RegisterEvent("READY_CHECK_CONFIRM")
+
+local ready = {}
 readyBtn:SetScript("OnEvent", function(self, event, arg1, arg2)
     if event == "READY_CHECK" then
         readyBtn:SetMaxValue(arg2)
         readyBtn:Start()
-        readyBtn.ready = 1
-        readyBtn:SetText(readyBtn.ready.." / "..GetNumGroupMembers())
+        wipe(ready)
+        tinsert(ready, "player")
+        readyBtn:SetText("1 / "..GetNumGroupMembers())
     elseif event == "READY_CHECK_FINISHED" then
         readyBtn:Stop()
         readyBtn:SetText(L["Ready"])
     else
         if arg2 then -- isReady
-            if readyBtn.ready then
-                readyBtn.ready = readyBtn.ready + 1
-                readyBtn:SetText(readyBtn.ready.." / "..GetNumGroupMembers())
+            if IsInRaid() then
+                if string.find(arg1, "raid") then tinsert(ready, arg1) end
+            else
+                tinsert(ready, arg1)
             end
+            readyBtn:SetText(#ready.." / "..GetNumGroupMembers())
         end
     end
 end)
