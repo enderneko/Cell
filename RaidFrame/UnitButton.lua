@@ -729,11 +729,14 @@ local function UnitButton_UpdateReadyCheck(self)
 	local status = GetReadyCheckStatus(unit)
 	self.state.readyCheckStatus = status
 
-	if status ~= nil then
+	if status then
 		self.widget.readyCheckHighlight:SetVertexColor(unpack(READYCHECK_STATUS[status].c))
 		self.widget.readyCheckHighlight:Show()
 		self.indicators.readyCheckIcon:SetTexture(READYCHECK_STATUS[status].t)
 		self.indicators.readyCheckIcon:Show()
+	else
+		self.widget.readyCheckHighlight:Hide()
+		self.indicators.readyCheckIcon:Hide()
 	end
 end
 
