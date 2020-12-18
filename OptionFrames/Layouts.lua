@@ -1064,6 +1064,26 @@ textWidthDropdown:SetItems({
             UpdatePreviewButton("textWidth")
         end,
     },
+    {
+        ["text"] = "25%",
+        ["onClick"] = function()
+            selectedLayoutTable["textWidth"] = .25
+            if selectedLayout == Cell.vars.currentLayout then
+                Cell:Fire("UpdateLayout", selectedLayout, "textWidth")
+            end
+            UpdatePreviewButton("textWidth")
+        end,
+    },
+    {
+        ["text"] = L["Hide"],
+        ["onClick"] = function()
+            selectedLayoutTable["textWidth"] = -1
+            if selectedLayout == Cell.vars.currentLayout then
+                Cell:Fire("UpdateLayout", selectedLayout, "textWidth")
+            end
+            UpdatePreviewButton("textWidth")
+        end,
+    },
 })
 textWidthDropdown:HookScript("OnEnter", function()
     CellTooltip:SetOwner(textWidthDropdown, "ANCHOR_NONE")
@@ -1161,8 +1181,12 @@ LoadLayoutDB = function(layout)
         textWidthDropdown:SetSelectedItem(2)
     elseif selectedLayoutTable["textWidth"] == .75 then
         textWidthDropdown:SetSelectedItem(3)
-    elseif selectedLayoutTable["textWidth"] == .50 then
+    elseif selectedLayoutTable["textWidth"] == .5 then
         textWidthDropdown:SetSelectedItem(4)
+    elseif selectedLayoutTable["textWidth"] == .25 then
+        textWidthDropdown:SetSelectedItem(5)
+    elseif selectedLayoutTable["textWidth"] == -1 then
+        textWidthDropdown:SetSelectedItem(6)
     end
     
     spacingSlider:SetValue(selectedLayoutTable["spacing"])

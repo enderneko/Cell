@@ -234,6 +234,9 @@ function F:UpdateTextWidth(fs, text)
     if percent == 0 then
         fs:SetText(text)
         return
+    elseif percent == -1 then
+        fs:SetText("")
+        return
     end
 
     local width = fs:GetParent():GetWidth() - 2
