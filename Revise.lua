@@ -271,50 +271,13 @@ local function Revise()
     -- r33-release
     if not(CellDB["revise"]) or dbRevision < 33 then
         for _, layout in pairs(CellDB["layouts"]) do
-            if layout["indicators"][1]["indicatorName"] ~= "roleIcon" then
-                tinsert(layout["indicators"], 1, {
-                    ["name"] = "Role Icon",
-                    ["indicatorName"] = "roleIcon",
-                    ["type"] = "built-in",
-                    ["enabled"] = true,
-                    ["position"] = {"TOPLEFT", "TOPLEFT", 0, 0},
-                    ["size"] = {11, 11},
-                })
-                tinsert(layout["indicators"], 2, {
-                    ["name"] = "Leader Icon",
-                    ["indicatorName"] = "leaderIcon",
-                    ["type"] = "built-in",
-                    ["enabled"] = true,
-                    ["position"] = {"TOPLEFT", "TOPLEFT", 0, -11},
-                    ["size"] = {11, 11},
-                })
-                tinsert(layout["indicators"], 3, {
-                    ["name"] = "Ready Check Icon",
-                    ["indicatorName"] = "readyCheckIcon",
-                    ["type"] = "built-in",
-                    ["enabled"] = true,
-                    ["frameLevel"] = 100,
-                    ["size"] = {16, 16},
-                })
-                tinsert(layout["indicators"], 6, {
-                    ["name"] = "Aggro Indicator",
-                    ["indicatorName"] = "aggroIndicator",
-                    ["type"] = "built-in",
-                    ["enabled"] = true,
-                    ["position"] = {"TOPLEFT", "TOPLEFT", 0, 0},
-                    ["frameLevel"] = 2,
-                    ["size"] = {10, 10},
-                })
-            end
-
-            if layout["indicators"][14] and layout["indicators"][14]["indicatorName"] == "centralDebuff" then
-                if not layout["indicators"][14]["border"] then
-                    layout["indicators"][14]["border"] = 2
-                end
-            end
-
-            if layout["indicators"][15] and layout["indicators"][15]["indicatorName"] ~= "healthText" then
-                tinsert(layout["indicators"], 15, {
+            -- move health text
+            local healthTextIndicator
+            if layout["indicators"][11] and layout["indicators"][11]["indicatorName"] == "healthText" then
+                healthTextIndicator = F:Copy(layout["indicators"][11])
+                layout["indicators"][11] = nil
+            else
+                healthTextIndicator = {
                     ["name"] = "Health Text",
                     ["indicatorName"] = "healthText",
                     ["type"] = "built-in",
@@ -325,7 +288,52 @@ local function Revise()
                     ["color"] = {1, 1, 1},
                     ["format"] = "percentage",
                     ["hideFull"] = true,
+                }
+            end
+
+            -- add new
+            if layout["indicators"][1]["indicatorName"] ~= "healthText" then
+                tinsert(layout["indicators"], 1, healthTextIndicator)
+                tinsert(layout["indicators"], 2, {
+                    ["name"] = "Role Icon",
+                    ["indicatorName"] = "roleIcon",
+                    ["type"] = "built-in",
+                    ["enabled"] = true,
+                    ["position"] = {"TOPLEFT", "TOPLEFT", 0, 0},
+                    ["size"] = {11, 11},
                 })
+                tinsert(layout["indicators"], 3, {
+                    ["name"] = "Leader Icon",
+                    ["indicatorName"] = "leaderIcon",
+                    ["type"] = "built-in",
+                    ["enabled"] = true,
+                    ["position"] = {"TOPLEFT", "TOPLEFT", 0, -11},
+                    ["size"] = {11, 11},
+                })
+                tinsert(layout["indicators"], 4, {
+                    ["name"] = "Ready Check Icon",
+                    ["indicatorName"] = "readyCheckIcon",
+                    ["type"] = "built-in",
+                    ["enabled"] = true,
+                    ["frameLevel"] = 100,
+                    ["size"] = {16, 16},
+                })
+                tinsert(layout["indicators"], 7, {
+                    ["name"] = "Aggro Indicator",
+                    ["indicatorName"] = "aggroIndicator",
+                    ["type"] = "built-in",
+                    ["enabled"] = true,
+                    ["position"] = {"TOPLEFT", "TOPLEFT", 0, 0},
+                    ["frameLevel"] = 2,
+                    ["size"] = {10, 10},
+                })
+            end
+
+            -- update centralDebuff border
+            if layout["indicators"][15] and layout["indicators"][15]["indicatorName"] == "centralDebuff" then
+                if not layout["indicators"][15]["border"] then
+                    layout["indicators"][15]["border"] = 2
+                end
             end
         end
 
