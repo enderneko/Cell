@@ -77,6 +77,17 @@ select(2, ...).L = setmetatable({
         <p>Moved "Raid Setup" text to the tooltips of "Raid" button.</p>
         <p>Added Fade Out Menu option.</p>
     ]],
+
+    ["r33-release"] = [[
+        <h1>Indicators</h1>
+        <p>Some built-in indicators are now configurable: Role Icon, Leader Icon, Ready Check Icon, Aggro Indicator.</p>
+        <p>Added "Border" and "Show glow ignoring debuffs priority" options for Central Debuff indicator.</p>
+        <br/>
+        <h1>Raid Debuffs (Beta)</h1>
+        <p>Added "Track by ID" option.</p>
+        <p>All debuffs are enabled by default, you might want to disable some less important debuffs.</p>
+        <br/>
+    ]],
 }, {
     __index = function(self, Key)
         if (Key ~= nil) then
