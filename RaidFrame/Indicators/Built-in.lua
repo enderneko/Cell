@@ -272,7 +272,7 @@ function I:CreateCentralDebuff(parent)
                 LCG.ButtonGlow_Stop(parent)
                 LCG.AutoCastGlow_Stop(parent)
             end
-            LCG.PixelGlow_Start(parent, glowColor)
+            LCG.PixelGlow_Start(parent, glowColor, 9, nil, 8, 2)
         elseif glowType == "Shine" then
             if not noHiding then
                 LCG.ButtonGlow_Stop(parent)
