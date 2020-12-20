@@ -334,6 +334,9 @@ local function Revise()
                 if not layout["indicators"][15]["border"] then
                     layout["indicators"][15]["border"] = 2
                 end
+                if layout["indicators"][15]["size"][1] == 20 then
+                    layout["indicators"][15]["size"] = {22, 22}
+                end
             end
         end
 
