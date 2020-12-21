@@ -215,6 +215,7 @@ function eventFrame:ADDON_LOADED(arg1)
                 ["texture"] = "Cell ".._G.DEFAULT,
                 ["scale"] = 1,
                 ["font"] = "Cell ".._G.DEFAULT,
+                ["optionsFontSizeOffset"] = 0,
                 ["outline"] = "Shadow",
                 ["barColor"] = {"Class Color", {.2, .2, .2}},
                 ["bgColor"] = {"Class Color (dark)", {.667, 0, 0}},
@@ -587,6 +588,7 @@ function eventFrame:PLAYER_LOGIN()
     -- Cell:Fire("UpdateIndicators") -- NOTE: already update in GROUP_ROSTER_UPDATE -> GroupTypeChanged -> F:UpdateLayout
     -- update texture and font
     Cell:Fire("UpdateAppearance")
+    Cell:UpdateOptionsFont(CellDB["appearance"]["optionsFontSizeOffset"])
     -- update raid tools
     Cell:Fire("UpdateRaidTools")
     -- update raid debuff list

@@ -104,6 +104,17 @@ font_class:SetShadowColor(0, 0, 0)
 font_class:SetShadowOffset(1, -1)
 font_class:SetJustifyH("CENTER")
 
+local fontSizeOffset = 0
+function addon:UpdateOptionsFont(offset)
+    fontSizeOffset = offset
+    font_title:SetFont(GameFontNormal:GetFont(), 14+offset)
+    font_title_disable:SetFont(GameFontNormal:GetFont(), 14+offset)
+    font:SetFont(GameFontNormal:GetFont(), 13+offset)
+    font_disable:SetFont(GameFontNormal:GetFont(), 13+offset)
+    font_class_title:SetFont(GameFontNormal:GetFont(), 14+offset)
+    font_class:SetFont(GameFontNormal:GetFont(), 13+offset)
+end
+
 -----------------------------------------
 -- seperator
 -----------------------------------------
@@ -757,8 +768,11 @@ function addon:CreateSlider(name, parent, low, high, width, step, onValueChanged
     tex:SetColorTexture(classColor.t[1], classColor.t[2], classColor.t[3], .7)
     tex:SetSize(8, 8)
     slider:SetThumbTexture(tex)
+
+    local valueBeforeClick
     slider.onEnter = function()
         tex:SetColorTexture(classColor.t[1], classColor.t[2], classColor.t[3], 1)
+        valueBeforeClick = slider:GetValue()
     end
     slider:SetScript("OnEnter", slider.onEnter)
     slider.onLeave = function()
@@ -785,10 +799,10 @@ function addon:CreateSlider(name, parent, low, high, width, step, onValueChanged
         if userChanged and slider.onValueChangedFn then slider.onValueChangedFn(value) end
     end)
 
-    local valueBeforeClick
-    slider:HookScript("OnEnter", function(self, button, isMouseOver)
-        valueBeforeClick = slider:GetValue()
-    end)
+    -- local valueBeforeClick
+    -- slider:HookScript("OnEnter", function(self, button, isMouseOver)
+    --     valueBeforeClick = slider:GetValue()
+    -- end)
 
     slider:SetScript("OnMouseUp", function(self, button, isMouseOver)
         -- oldValue here == newValue, OnMouseUp called after OnValueChanged
@@ -1854,7 +1868,7 @@ function addon:CreateDropdown(parent, width, dropdownType)
                 if dropdownType == "texture" then
                     menu.texture:SetTexture(value)
                 elseif dropdownType == "font" then
-                    menu.text:SetFont(value, 13)
+                    menu.text:SetFont(value, 13+fontSizeOffset)
                 end
                 break
             end
@@ -1950,9 +1964,9 @@ function addon:CreateDropdown(parent, width, dropdownType)
             -- font
             local f, s = font:GetFont()
             if item.font then
-                b:GetFontString():SetFont(item.font, s)
+                b:GetFontString():SetFont(item.font, s+fontSizeOffset)
             else
-                b:GetFontString():SetFont(f, s)
+                b:GetFontString():SetFont(f, s+fontSizeOffset)
             end
 
             -- highlight

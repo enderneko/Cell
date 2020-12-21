@@ -365,6 +365,10 @@ local function Revise()
                 end
             end
         end
+
+        if not CellDB["appearance"]["optionsFontSizeOffset"] then
+            CellDB["appearance"]["optionsFontSizeOffset"] = 0
+        end
     end
 
     CellDB["revise"] = Cell.version

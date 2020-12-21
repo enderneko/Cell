@@ -84,7 +84,7 @@ toolsText:SetPoint("TOPLEFT", 5, -233)
 
 local unlockBtn = Cell:CreateButton(generalTab, L["Unlock"], "class-hover", {50, 17})
 unlockBtn:SetPoint("RIGHT", -5, 0)
-unlockBtn:SetPoint("TOP", toolsText, 0, 1)
+unlockBtn:SetPoint("BOTTOM", toolsText)
 unlockBtn.locked = true
 unlockBtn:SetScript("OnClick", function(self)
     if self.locked then

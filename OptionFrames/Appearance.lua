@@ -101,6 +101,16 @@ end
 local fontText = Cell:CreateSeparator(L["Font"], appearanceTab, 188)
 fontText:SetPoint("TOPLEFT", 5, -99)
 
+local optionsFontSizeOffset = Cell:CreateSlider("", appearanceTab, -5, 5, 50, 1, nil, function(value)
+    CellDB["appearance"]["optionsFontSizeOffset"] = value
+    Cell:UpdateOptionsFont(value)
+end)
+optionsFontSizeOffset:SetPoint("RIGHT", appearanceTab, "LEFT", 193, 0)
+optionsFontSizeOffset:SetPoint("CENTER", fontText)
+optionsFontSizeOffset.currentEditBox:Hide()
+optionsFontSizeOffset.lowText:Hide()
+optionsFontSizeOffset.highText:Hide()
+
 -- drop down
 local fontDropdown = Cell:CreateDropdown(appearanceTab, 150, "font")
 fontDropdown:SetPoint("TOPLEFT", fontText, "BOTTOMLEFT", 5, -12)
@@ -344,7 +354,7 @@ mouseoverColorPicker:SetPoint("TOPLEFT", targetColorPicker, "BOTTOMLEFT", 0, -10
 -- reset
 local resetBtn = Cell:CreateButton(appearanceTab, L["Reset All"], "class-hover", {70, 17})
 resetBtn:SetPoint("RIGHT", -5, 0)
-resetBtn:SetPoint("TOP", unitButtonColorText, 0, 1)
+resetBtn:SetPoint("BOTTOM", unitButtonColorText)
 resetBtn:SetScript("OnClick", function()
     CellDB["appearance"]["barColor"] = {"Class Color", {.2, .2, .2}}
     CellDB["appearance"]["bgColor"] = {"Class Color (dark)", {.667, 0, 0}}
@@ -386,6 +396,7 @@ local function ShowTab(tab)
         scaleDropdown:SetSelected(scales[CellDB["appearance"]["scale"]])
         CheckFonts()
         fontOutlineDropdown:SetSelected(L[CellDB["appearance"]["outline"]])
+        optionsFontSizeOffset:SetValue(CellDB["appearance"]["optionsFontSizeOffset"])
 
         barColorDropdown:SetSelected(L[CellDB["appearance"]["barColor"][1]])
         barColorPicker:SetColor(CellDB["appearance"]["barColor"][2])
