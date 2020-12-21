@@ -1076,7 +1076,7 @@ glowTypeDropdown:SetItems({
 
 -- preview
 local previewButton = CreateFrame("Button", "RaidDebuffsPreviewButton", debuffsTab, "CellUnitButtonTemplate")
-previewButton:SetPoint("LEFT", debuffsTab, "RIGHT", 5, 0)
+previewButton:SetPoint("TOPLEFT", debuffsTab, "TOPRIGHT", 5, -137)
 previewButton:UnregisterAllEvents()
 previewButton:SetScript("OnEnter", nil)
 previewButton:SetScript("OnLeave", nil)
@@ -1171,7 +1171,7 @@ previewButton.fadeOut:SetScript("OnFinished", function()
     previewButton:Hide()
 end)
 
-ShowGlowPreview = function(glowType, glowOptions)
+ShowGlowPreview = function(glowType, glowOptions, refresh)
     if not glowType or glowType == "None" then
         LCG.ButtonGlow_Stop(previewButton)
         LCG.PixelGlow_Stop(previewButton)
@@ -1196,6 +1196,7 @@ ShowGlowPreview = function(glowType, glowOptions)
         elseif glowType == "Shine" then
             LCG.ButtonGlow_Stop(previewButton)
             LCG.PixelGlow_Stop(previewButton)
+            if refresh then LCG.AutoCastGlow_Stop(previewButton) end
             -- color, N, frequency, scale
             LCG.AutoCastGlow_Start(previewButton, glowOptions[1], glowOptions[2], glowOptions[3], glowOptions[4])
         end
@@ -1249,7 +1250,7 @@ local glowColor = Cell:CreateColorPicker(glowOptionsFrame, L["Glow Color"], fals
 end)
 glowColor:SetPoint("TOPLEFT", glowOptionsFrame, 5, 0)
 
-local function SliderValueChanged(index, value)
+local function SliderValueChanged(index, value, refresh)
     local t = selectedButtonIndex <= #currentBossTable["enabled"] and currentBossTable["enabled"][selectedButtonIndex] or currentBossTable["disabled"][selectedButtonIndex-#currentBossTable["enabled"]]
     -- update db
     local tIndex = isGeneral and "general" or loadedBoss
@@ -1259,20 +1260,25 @@ local function SliderValueChanged(index, value)
     -- notify debuff list changed
     Cell:Fire("RaidDebuffsChanged")
     -- update preview
-    ShowGlowPreview(t["glowType"], t["glowOptions"])
+    ShowGlowPreview(t["glowType"], t["glowOptions"], refresh)
 end
 
 -- glowNumber
-local glowNumber = Cell:CreateSlider(L["Lines & Particles"], glowOptionsFrame, 1, 30, 100, 1, function(value)
+local glowLines = Cell:CreateSlider(L["Lines"], glowOptionsFrame, 1, 30, 100, 1, function(value)
     SliderValueChanged(2, value)
 end)
-glowNumber:SetPoint("TOPLEFT", glowColor, "BOTTOMLEFT", 0, -25)
+glowLines:SetPoint("TOPLEFT", glowColor, "BOTTOMLEFT", 0, -25)
+
+local glowParticles = Cell:CreateSlider(L["Particles"], glowOptionsFrame, 1, 30, 100, 1, function(value)
+    SliderValueChanged(2, value, true)
+end)
+glowParticles:SetPoint("TOPLEFT", glowColor, "BOTTOMLEFT", 0, -25)
 
 -- glowFrequency
 local glowFrequency = Cell:CreateSlider(L["Frequency"], glowOptionsFrame, -2, 2, 100, .05, function(value)
     SliderValueChanged(3, value)
 end)
-glowFrequency:SetPoint("TOPLEFT", glowNumber, "BOTTOMLEFT", 0, -40)
+glowFrequency:SetPoint("TOPLEFT", glowLines, "BOTTOMLEFT", 0, -40)
 
 -- glowLength
 local glowLength = Cell:CreateSlider(L["Length"], glowOptionsFrame, 1, 20, 100, 1, function(value)
@@ -1287,7 +1293,7 @@ end)
 glowThickness:SetPoint("TOPLEFT", glowLength, "BOTTOMLEFT", 0, -40)
 
 -- glowScale
-local glowScale = Cell:CreateSlider(L["Scale"], glowOptionsFrame, 100, 900, 100, 1, function(value)
+local glowScale = Cell:CreateSlider(L["Scale"], glowOptionsFrame, 50, 500, 100, 1, function(value)
     SliderValueChanged(4, value/100)
 end, nil, true)
 glowScale:SetPoint("TOPLEFT", glowFrequency, "BOTTOMLEFT", 0, -40)
@@ -1303,28 +1309,31 @@ LoadGlowOptions = function(glowType, glowOptions)
     glowColor:SetColor(glowOptions[1])
 
     if glowType == "Normal" then
-        glowNumber:Hide()
+        glowLines:Hide()
+        glowParticles:Hide()
         glowFrequency:Hide()
         glowLength:Hide()
         glowThickness:Hide()
         glowScale:Hide()
     elseif glowType == "Pixel" then
-        glowNumber:Show()
+        glowLines:Show()
         glowFrequency:Show()
         glowLength:Show()
         glowThickness:Show()
+        glowParticles:Hide()
         glowScale:Hide()
-        glowNumber:SetValue(glowOptions[2])
+        glowLines:SetValue(glowOptions[2])
         glowFrequency:SetValue(glowOptions[3])
         glowLength:SetValue(glowOptions[4])
         glowThickness:SetValue(glowOptions[5])
     elseif glowType == "Shine" then
-        glowNumber:Show()
+        glowParticles:Show()
         glowFrequency:Show()
         glowScale:Show()
+        glowLines:Hide()
         glowLength:Hide()
         glowThickness:Hide()
-        glowNumber:SetValue(glowOptions[2])
+        glowParticles:SetValue(glowOptions[2])
         glowFrequency:SetValue(glowOptions[3])
         glowScale:SetValue(glowOptions[4]*100)
     end
