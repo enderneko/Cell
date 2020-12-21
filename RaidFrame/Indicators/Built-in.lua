@@ -247,10 +247,10 @@ eventFrame2:SetScript("OnEvent", UpdateDebuffsForCurrentZone)
 
 function I:GetDebuffOrder(spellName, spellId)
     if currentAreaDebuffs[spellName] then
-        return currentAreaDebuffs[spellName]["order"], currentAreaDebuffs[spellName]["glowType"], currentAreaDebuffs[spellName]["glowColor"]
+        return currentAreaDebuffs[spellName]["order"], currentAreaDebuffs[spellName]["glowType"], currentAreaDebuffs[spellName]["glowOptions"]
     end
     if currentAreaDebuffs[spellId] then
-        return currentAreaDebuffs[spellId]["order"], currentAreaDebuffs[spellId]["glowType"], currentAreaDebuffs[spellId]["glowColor"]
+        return currentAreaDebuffs[spellId]["order"], currentAreaDebuffs[spellId]["glowType"], currentAreaDebuffs[spellId]["glowOptions"]
     end
 end
 
@@ -260,25 +260,27 @@ function I:CreateCentralDebuff(parent)
     frame:SetFrameLevel(77)
     frame:Hide()
 
-    function frame:ShowGlow(glowType, glowColor, noHiding)
+    function frame:ShowGlow(glowType, glowOptions, noHiding)
         if glowType == "Normal" then
             if not noHiding then
                 LCG.PixelGlow_Stop(parent)
                 LCG.AutoCastGlow_Stop(parent)
             end
-            LCG.ButtonGlow_Start(parent, glowColor)
+            LCG.ButtonGlow_Start(parent, glowOptions[1])
         elseif glowType == "Pixel" then
             if not noHiding then
                 LCG.ButtonGlow_Stop(parent)
                 LCG.AutoCastGlow_Stop(parent)
             end
-            LCG.PixelGlow_Start(parent, glowColor, 9, nil, 8, 2)
+            -- color, N, frequency, length, thickness
+            LCG.PixelGlow_Start(parent, glowOptions[1], glowOptions[2], glowOptions[3], glowOptions[4], glowOptions[5])
         elseif glowType == "Shine" then
             if not noHiding then
                 LCG.ButtonGlow_Stop(parent)
                 LCG.PixelGlow_Stop(parent)
             end
-            LCG.AutoCastGlow_Start(parent, glowColor, 7, 0.5)
+            -- color, N, frequency, scale
+            LCG.AutoCastGlow_Start(parent, glowOptions[1], glowOptions[2], glowOptions[3], glowOptions[4])
         else
             LCG.ButtonGlow_Stop(parent)
             LCG.PixelGlow_Stop(parent)

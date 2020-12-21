@@ -689,13 +689,14 @@ end
 -- slider 2020-08-25 02:49:16
 -----------------------------------------
 -- Interface\FrameXML\OptionsPanelTemplates.xml, line 76, OptionsSliderTemplate
-function addon:CreateSlider(name, parent, low, high, width, step, onValueChangedFn, afterValueChangedFn)
+function addon:CreateSlider(name, parent, low, high, width, step, onValueChangedFn, afterValueChangedFn, isPercentage)
     local slider = CreateFrame("Slider", nil, parent, "BackdropTemplate")
     slider:SetMinMaxValues(low, high)
     slider:SetValueStep(step)
     slider:SetObeyStepOnDrag(true)
     slider:SetOrientation("HORIZONTAL")
     slider:SetSize(width, 10)
+    local unit = isPercentage and "%" or ""
 
     addon:StylizeFrame(slider, {.115, .115, .115, 1})
     
@@ -707,7 +708,7 @@ function addon:CreateSlider(name, parent, low, high, width, step, onValueChanged
         nameText:SetText(n)
     end
 
-    local currentEditBox = addon:CreateEditBox(slider, 50, 14)
+    local currentEditBox = addon:CreateEditBox(slider, 45, 14)
     slider.currentEditBox = currentEditBox
     currentEditBox:SetPoint("TOP", slider, "BOTTOM", 0, -1)
     currentEditBox:SetJustifyH("CENTER")
@@ -716,32 +717,39 @@ function addon:CreateSlider(name, parent, low, high, width, step, onValueChanged
     end)
     currentEditBox:SetScript("OnEnterPressed", function(self)
         self:ClearFocus()
-        local value = tonumber(self:GetText())
+        local value
+        if isPercentage then
+            value = string.gsub(self:GetText(), "%%", "")
+            value = tonumber(value)
+        else
+            value = tonumber(self:GetText())
+        end
+
         if value == self.oldValue then return end
         if value then
             if value < low then value = low end
             if value > high then value = high end
-            self:SetText(value)
+            self:SetText(value..unit)
             slider:SetValue(value)
             if slider.onValueChangedFn then slider.onValueChangedFn(value) end
             if slider.afterValueChangedFn then slider.afterValueChangedFn(value) end
         else
-            self:SetText(self.oldValue)
+            self:SetText(self.oldValue..unit)
         end
     end)
     currentEditBox:SetScript("OnShow", function(self)
-        if self.oldValue then self:SetText(self.oldValue) end
+        if self.oldValue then self:SetText(self.oldValue..unit) end
     end)
 
     local lowText = slider:CreateFontString(nil, "OVERLAY", font_name)
     slider.lowText = lowText
-    lowText:SetText(colors.grey.s..low)
+    lowText:SetText(colors.grey.s..low..unit)
     lowText:SetPoint("TOPLEFT", slider, "BOTTOMLEFT", 0, -1)
     lowText:SetPoint("BOTTOM", currentEditBox)
     
     local highText = slider:CreateFontString(nil, "OVERLAY", font_name)
     slider.highText = highText
-    highText:SetText(colors.grey.s..high)
+    highText:SetText(colors.grey.s..high..unit)
     highText:SetPoint("TOPRIGHT", slider, "BOTTOMRIGHT", 0, -1)
     highText:SetPoint("BOTTOM", currentEditBox)
 
@@ -772,7 +780,7 @@ function addon:CreateSlider(name, parent, low, high, width, step, onValueChanged
             value = tonumber(string.format("%.2f", value))
         end
 
-        currentEditBox:SetText(value)
+        currentEditBox:SetText(value..unit)
         currentEditBox.oldValue = value
         if userChanged and slider.onValueChangedFn then slider.onValueChangedFn(value) end
     end)

@@ -350,6 +350,18 @@ local function Revise()
                     if type(sTable[2]) ~= "boolean" then
                         tinsert(sTable, 2, false)
                     end
+                    if sTable[3] and sTable[4] and type(sTable[4][1]) == "number" then
+                        local color = {sTable[4][1], sTable[4][2], sTable[4][3], 1}
+                        if sTable[3] == "None" or sTable[3] == "Normal" then
+                            sTable[4] = {color}
+                        elseif sTable[3] == "Pixel" then
+                            sTable[4] = {color, 9, .25, 8, 2}
+                        elseif sTable[3] == "Shine" then
+                            sTable[4] = {color, 7, 0.5, 1}
+                        else
+
+                        end
+                    end
                 end
             end
         end

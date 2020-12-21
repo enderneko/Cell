@@ -1,6 +1,7 @@
 local _, Cell = ...
 local L = Cell.L
 local F = Cell.funcs
+local LCG = LibStub("LibCustomGlow-1.0")
 
 local debuffsTab = Cell:CreateFrame("CellOptionsFrame_RaidDebuffsTab", Cell.frames.optionsFrame, nil, nil, true)
 Cell.frames.raidDebuffsTab = debuffsTab
@@ -102,13 +103,13 @@ local loadedDebuffs = {
     -- [instanceId] = {
     --     ["general"] = {
     --         ["enabled"]= {
-    --             {["id"]=spellId, ["order"]=order, ["trackByID"]=trackByID, ["glowType"]=glowType, ["glowColor"]=glowColor}
+    --             {["id"]=spellId, ["order"]=order, ["trackByID"]=trackByID, ["glowType"]=glowType, ["glowOptions"]={...}}
     --         },
     --         ["disabled"] = {},
     --     },
     --     [bossId] = {
     --         ["enabled"]= {
-    --             {["id"]=spellId, ["order"]=order, ["trackByID"]=trackByID, ["glowType"]=glowType, ["glowColor"]=glowColor}
+    --             {["id"]=spellId, ["order"]=order, ["trackByID"]=trackByID, ["glowType"]=glowType, ["glowOptions"]={...}}
     --         },
     --         ["disabled"] = {},
     --     },
@@ -124,7 +125,7 @@ local function LoadDebuffs()
             if not loadedDebuffs[instanceId][bossId] then loadedDebuffs[instanceId][bossId] = {["enabled"]={}, ["disabled"]={}} end
             -- load from db and set its order
             for spellId, sTable in pairs(bTable) do
-                local t = {["id"]=spellId, ["order"]=sTable[1], ["trackByID"]=sTable[2], ["glowType"]=sTable[3], ["glowColor"]=sTable[4]}
+                local t = {["id"]=spellId, ["order"]=sTable[1], ["trackByID"]=sTable[2], ["glowType"]=sTable[3], ["glowOptions"]=sTable[4]}
                 if sTable[1] == 0 then
                     tinsert(loadedDebuffs[instanceId][bossId]["disabled"], t)
                 else
@@ -193,7 +194,7 @@ local function LoadDebuffs()
             end
         end
     end
-    -- texplore(loadedDebuffs)
+    -- texplore(loadedDebuffs[226])
 end
 
 local function UpdateRaidDebuffs()
@@ -797,11 +798,20 @@ ShowDebuffs = function(bossId, buttonIndex)
     -- set onclick
     Cell:CreateButtonGroup(debuffButtons, ShowDetails, nil, nil, function(b)
         debuffListFrame:GetScript("OnEnter")()
+        CellTooltip:SetOwner(b, "ANCHOR_NONE")
+        CellTooltip:SetPoint("TOPRIGHT", b, "TOPLEFT", 1, 0)
+        CellTooltip:SetHyperlink("spell:"..b.spellId)
+        CellTooltip:Show()
     end, function(b)
         debuffListFrame:GetScript("OnLeave")()
+        CellTooltip:Hide()
     end)
 
-    if debuffButtons[buttonIndex or 1] and debuffButtons[buttonIndex or 1]:IsShown() then debuffButtons[buttonIndex or 1]:Click() end
+    if debuffButtons[buttonIndex or 1] and debuffButtons[buttonIndex or 1]:IsShown() then
+        debuffButtons[buttonIndex or 1]:Click()
+    else
+        if RaidDebuffsPreviewButton:IsShown() then RaidDebuffsPreviewButton.fadeOut:Play() end
+    end
 end
 
 -------------------------------------------------
@@ -937,8 +947,8 @@ local glowTypeText = detailsContentFrame:CreateFontString(nil, "OVERLAY", "CELL_
 glowTypeText:SetText(L["Glow Type"])
 glowTypeText:SetPoint("TOPLEFT", trackByIdCB, "BOTTOMLEFT", 0, -10)
 
-local glowColorPicker
-
+-- glow
+local LoadGlowOptions, ShowGlowPreview
 local function UpdateGlowType(newType)
     local t = selectedButtonIndex <= #currentBossTable["enabled"] and currentBossTable["enabled"][selectedButtonIndex] or currentBossTable["disabled"][selectedButtonIndex-#currentBossTable["enabled"]]
     if t["glowType"] ~= newType then
@@ -947,16 +957,75 @@ local function UpdateGlowType(newType)
         local tIndex = isGeneral and "general" or loadedBoss
         if not CellDB["raidDebuffs"][loadedInstance][tIndex] then CellDB["raidDebuffs"][loadedInstance][tIndex] = {} end
         if not CellDB["raidDebuffs"][loadedInstance][tIndex][selectedSpellId] then
-            CellDB["raidDebuffs"][loadedInstance][tIndex][selectedSpellId] = {t["order"], false, newType, {0.95,0.95,0.32,1}}
+            if newType == "Normal" then
+                CellDB["raidDebuffs"][loadedInstance][tIndex][selectedSpellId] = {t["order"], false, newType, {{0.95,0.95,0.32,1}}}
+            elseif newType == "Pixel" then
+                CellDB["raidDebuffs"][loadedInstance][tIndex][selectedSpellId] = {t["order"], false, newType, {{0.95,0.95,0.32,1}, 9, .25, 8, 2}}
+            elseif newType == "Shine" then
+                CellDB["raidDebuffs"][loadedInstance][tIndex][selectedSpellId] = {t["order"], false, newType, {{0.95,0.95,0.32,1}, 7, 0.5, 1}}
+            end
         else
             CellDB["raidDebuffs"][loadedInstance][tIndex][selectedSpellId][3] = newType
-            CellDB["raidDebuffs"][loadedInstance][tIndex][selectedSpellId][4] = CellDB["raidDebuffs"][loadedInstance][tIndex][selectedSpellId][4] or {0.95,0.95,0.32,1}
+            if newType == "Normal" then
+                if CellDB["raidDebuffs"][loadedInstance][tIndex][selectedSpellId][4] then
+                    CellDB["raidDebuffs"][loadedInstance][tIndex][selectedSpellId][4][2] = nil
+                    CellDB["raidDebuffs"][loadedInstance][tIndex][selectedSpellId][4][3] = nil
+                    CellDB["raidDebuffs"][loadedInstance][tIndex][selectedSpellId][4][4] = nil
+                    CellDB["raidDebuffs"][loadedInstance][tIndex][selectedSpellId][4][5] = nil
+                else
+                    CellDB["raidDebuffs"][loadedInstance][tIndex][selectedSpellId][4] = {{0.95,0.95,0.32,1}}
+                end
+            elseif newType == "Pixel" then
+                if CellDB["raidDebuffs"][loadedInstance][tIndex][selectedSpellId][4] then
+                    CellDB["raidDebuffs"][loadedInstance][tIndex][selectedSpellId][4][2] = 9
+                    CellDB["raidDebuffs"][loadedInstance][tIndex][selectedSpellId][4][3] = .25
+                    CellDB["raidDebuffs"][loadedInstance][tIndex][selectedSpellId][4][4] = 8
+                    CellDB["raidDebuffs"][loadedInstance][tIndex][selectedSpellId][4][5] = 2
+                else
+                    CellDB["raidDebuffs"][loadedInstance][tIndex][selectedSpellId][4] = {{0.95,0.95,0.32,1}, 9, .25, 8, 2}
+                end
+            elseif newType == "Shine" then
+                if CellDB["raidDebuffs"][loadedInstance][tIndex][selectedSpellId][4] then
+                    CellDB["raidDebuffs"][loadedInstance][tIndex][selectedSpellId][4][2] = 7
+                    CellDB["raidDebuffs"][loadedInstance][tIndex][selectedSpellId][4][3] = .5
+                    CellDB["raidDebuffs"][loadedInstance][tIndex][selectedSpellId][4][4] = 1
+                    CellDB["raidDebuffs"][loadedInstance][tIndex][selectedSpellId][4][5] = nil
+                else
+                    CellDB["raidDebuffs"][loadedInstance][tIndex][selectedSpellId][4] = {{0.95,0.95,0.32,1}, 7, 0.5, 1}
+                end
+            end
         end
         -- update loadedDebuffs
         t["glowType"] = newType
-        t["glowColor"] = t["glowColor"] or {0.95,0.95,0.32,1}
-        glowColorPicker:SetColor(t["glowColor"])
-        glowColorPicker:Show()
+        if newType == "Normal" then
+            if t["glowOptions"] then
+                t["glowOptions"][2] = nil
+                t["glowOptions"][3] = nil
+                t["glowOptions"][4] = nil
+                t["glowOptions"][5] = nil
+            else
+                t["glowOptions"] = {{0.95,0.95,0.32,1}}
+            end
+        elseif newType == "Pixel" then
+            if t["glowOptions"] then
+                t["glowOptions"][2] = 9
+                t["glowOptions"][3] = .25
+                t["glowOptions"][4] = 8
+                t["glowOptions"][5] = 2
+            else
+                t["glowOptions"] = {{0.95,0.95,0.32,1}, 9, .25, 8, 2}
+            end
+        elseif newType == "Shine" then
+            if t["glowOptions"] then
+                t["glowOptions"][2] = 7
+                t["glowOptions"][3] = .5
+                t["glowOptions"][4] = 1
+                t["glowOptions"][5] = nil
+            else
+                t["glowOptions"] = {{0.95,0.95,0.32,1}, 7, 0.5, 1}
+            end
+        end
+        LoadGlowOptions(newType, t["glowOptions"])
         -- notify debuff list changed
         Cell:Fire("RaidDebuffsChanged")
     end
@@ -975,10 +1044,10 @@ glowTypeDropdown:SetItems({
                 local tIndex = isGeneral and "general" or loadedBoss
                 CellDB["raidDebuffs"][loadedInstance][tIndex][selectedSpellId][3] = "None"
                 -- update loadedDebuffs
-                t["glowType"] = nil
+                t["glowType"] = "None"
                 -- notify debuff list changed
                 Cell:Fire("RaidDebuffsChanged")
-                glowColorPicker:Hide()
+                LoadGlowOptions()
             end
         end,
     },
@@ -1005,38 +1074,276 @@ glowTypeDropdown:SetItems({
     },
 })
 
+-- preview
+local previewButton = CreateFrame("Button", "RaidDebuffsPreviewButton", debuffsTab, "CellUnitButtonTemplate")
+previewButton:SetPoint("LEFT", debuffsTab, "RIGHT", 5, 0)
+previewButton:UnregisterAllEvents()
+previewButton:SetScript("OnEnter", nil)
+previewButton:SetScript("OnLeave", nil)
+previewButton:SetScript("OnShow", nil)
+previewButton:SetScript("OnHide", nil)
+previewButton:SetScript("OnUpdate", nil)
+previewButton:Hide()
+
+local previewButtonBG = Cell:CreateFrame("RaidDebuffsPreviewButtonBG", previewButton)
+previewButtonBG:SetPoint("TOPLEFT", previewButton, 0, 20)
+previewButtonBG:SetPoint("BOTTOMRIGHT", previewButton, "TOPRIGHT")
+previewButtonBG:SetFrameStrata("BACKGROUND")
+Cell:StylizeFrame(previewButtonBG, {.1, .1, .1, .77}, {0, 0, 0, 0})
+previewButtonBG:Show()
+
+local previewText = previewButtonBG:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET_TITLE")
+previewText:SetPoint("TOP", 0, -3)
+previewText:SetText(Cell:GetPlayerClassColorString()..L["Preview"])
+
+local function UpdatePreviewButton()
+    if not previewButton.loaded then
+        previewButton.loaded = true
+        
+        previewButton.widget.healthBar:SetStatusBarColor(F:GetClassColor(Cell.vars.playerClass))
+        local r, g, b = F:GetPowerColor("player")
+        previewButton.widget.powerBar:SetStatusBarColor(r, g, b)
+        
+        local name = UnitName("player")
+        previewButton.widget.nameText:SetText(name)
+
+        previewButton:SetScript("OnSizeChanged", function(self)
+            F:UpdateTextWidth(self.widget.nameText, name)
+        end)
+    end
+
+    previewButton:SetSize(unpack(Cell.vars.currentLayoutTable["size"]))
+    previewButton.func.SetPowerHeight(Cell.vars.currentLayoutTable["powerHeight"])
+    previewButton:GetScript("OnSizeChanged")(previewButton)
+    
+    previewButton.widget.healthBar:SetStatusBarTexture(Cell.vars.texture)
+    previewButton.widget.powerBar:SetStatusBarTexture(Cell.vars.texture)
+
+    local r, g, b
+    -- health color
+    if CellDB["appearance"]["barColor"][1] == "Class Color" then
+        r, g, b = F:GetClassColor(Cell.vars.playerClass)
+    elseif CellDB["appearance"]["barColor"][1] == "Class Color (dark)" then
+        r, g, b = F:GetClassColor(Cell.vars.playerClass)
+        r, g, b = r*.2, g*.2, b*.2
+    else
+        r, g, b = unpack(CellDB["appearance"]["barColor"][2])
+    end
+    previewButton.widget.healthBar:SetStatusBarColor(r, g, b)
+    
+    -- power color
+    if CellDB["appearance"]["powerColor"][1] == "Class Color" then
+        r, g, b = F:GetClassColor(Cell.vars.playerClass)
+    elseif CellDB["appearance"]["powerColor"][1] == "Custom Color" then
+        r, g, b = unpack(CellDB["appearance"]["powerColor"][2])
+    else
+        r, g, b = F:GetPowerColor("player")
+    end
+    previewButton.widget.powerBar:SetStatusBarColor(r, g, b)
+
+    -- nameColor
+    if CellDB["appearance"]["nameColor"][1] == "Class Color" then
+        previewButton.widget.nameText:SetTextColor(F:GetClassColor(Cell.vars.playerClass))
+    else
+        previewButton.widget.nameText:SetTextColor(unpack(CellDB["appearance"]["nameColor"][2]))
+    end
+end
+
+previewButton.fadeIn = previewButton:CreateAnimationGroup()
+local fadeIn = previewButton.fadeIn:CreateAnimation("alpha")
+fadeIn:SetFromAlpha(0)
+fadeIn:SetToAlpha(1)
+fadeIn:SetDuration(.25)
+fadeIn:SetSmoothing("OUT")
+
+previewButton.fadeOut = previewButton:CreateAnimationGroup()
+local fadeOut = previewButton.fadeOut:CreateAnimation("alpha")
+fadeOut:SetFromAlpha(1)
+fadeOut:SetToAlpha(0)
+fadeOut:SetDuration(0.25)
+fadeOut:SetSmoothing("IN")
+fadeOut:SetScript("OnPlay", function()
+    if previewButton.fadeIn:IsPlaying() then
+        previewButton.fadeIn:Stop()
+    end        
+end)
+previewButton.fadeOut:SetScript("OnFinished", function()
+    previewButton:Hide()
+end)
+
+ShowGlowPreview = function(glowType, glowOptions)
+    if not glowType or glowType == "None" then
+        LCG.ButtonGlow_Stop(previewButton)
+        LCG.PixelGlow_Stop(previewButton)
+        LCG.AutoCastGlow_Stop(previewButton)
+        if previewButton:IsShown() then previewButton.fadeOut:Play() end
+        return
+    end
+
+    if previewButton.fadeOut:IsPlaying() then
+        previewButton.fadeOut:Stop()
+    end
+    if previewButton:IsShown() then
+        if glowType == "Normal" then
+            LCG.PixelGlow_Stop(previewButton)
+            LCG.AutoCastGlow_Stop(previewButton)
+            LCG.ButtonGlow_Start(previewButton, glowOptions[1])
+        elseif glowType == "Pixel" then
+            LCG.ButtonGlow_Stop(previewButton)
+            LCG.AutoCastGlow_Stop(previewButton)
+            -- color, N, frequency, length, thickness
+            LCG.PixelGlow_Start(previewButton, glowOptions[1], glowOptions[2], glowOptions[3], glowOptions[4], glowOptions[5])
+        elseif glowType == "Shine" then
+            LCG.ButtonGlow_Stop(previewButton)
+            LCG.PixelGlow_Stop(previewButton)
+            -- color, N, frequency, scale
+            LCG.AutoCastGlow_Start(previewButton, glowOptions[1], glowOptions[2], glowOptions[3], glowOptions[4])
+        end
+    else
+        previewButton.fadeIn:SetScript("OnFinished", function()
+            if glowType == "Normal" then
+                LCG.PixelGlow_Stop(previewButton)
+                LCG.AutoCastGlow_Stop(previewButton)
+                LCG.ButtonGlow_Start(previewButton, glowOptions[1])
+            elseif glowType == "Pixel" then
+                LCG.ButtonGlow_Stop(previewButton)
+                LCG.AutoCastGlow_Stop(previewButton)
+                -- color, N, frequency, length, thickness
+                LCG.PixelGlow_Start(previewButton, glowOptions[1], glowOptions[2], glowOptions[3], glowOptions[4], glowOptions[5])
+            elseif glowType == "Shine" then
+                LCG.ButtonGlow_Stop(previewButton)
+                LCG.PixelGlow_Stop(previewButton)
+                -- color, N, frequency, scale
+                LCG.AutoCastGlow_Start(previewButton, glowOptions[1], glowOptions[2], glowOptions[3], glowOptions[4])
+            end
+        end)
+        previewButton:Show()
+        previewButton.fadeIn:Play()
+    end
+end
+
+-- glow options
+local glowOptionsFrame = CreateFrame("Frame", nil, detailsContentFrame, "BackdropTemplate")
+glowOptionsFrame:SetPoint("LEFT", detailsContentFrame)
+glowOptionsFrame:SetPoint("TOP", glowTypeDropdown, "BOTTOM", 0, -10)
+glowOptionsFrame:SetPoint("BOTTOMRIGHT", detailsContentFrame)
+
 -- glowColor
-glowColorPicker = Cell:CreateColorPicker(detailsContentFrame, L["Glow Color"], true, function(r, g, b, a)
+local glowColor = Cell:CreateColorPicker(glowOptionsFrame, L["Glow Color"], false, function(r, g, b)
     local t = selectedButtonIndex <= #currentBossTable["enabled"] and currentBossTable["enabled"][selectedButtonIndex] or currentBossTable["disabled"][selectedButtonIndex-#currentBossTable["enabled"]]
     -- update db
     local tIndex = isGeneral and "general" or loadedBoss
-    CellDB["raidDebuffs"][loadedInstance][tIndex][selectedSpellId][4][1] = r
-    CellDB["raidDebuffs"][loadedInstance][tIndex][selectedSpellId][4][2] = g
-    CellDB["raidDebuffs"][loadedInstance][tIndex][selectedSpellId][4][3] = b
-    CellDB["raidDebuffs"][loadedInstance][tIndex][selectedSpellId][4][4] = a
+    CellDB["raidDebuffs"][loadedInstance][tIndex][selectedSpellId][4][1][1] = r
+    CellDB["raidDebuffs"][loadedInstance][tIndex][selectedSpellId][4][1][2] = g
+    CellDB["raidDebuffs"][loadedInstance][tIndex][selectedSpellId][4][1][3] = b
+    CellDB["raidDebuffs"][loadedInstance][tIndex][selectedSpellId][4][1][4] = 1
     -- update loadedDebuffs
-    t["glowColor"][1] = r
-    t["glowColor"][2] = g
-    t["glowColor"][3] = b
-    t["glowColor"][4] = a
+    t["glowOptions"][1][1] = r
+    t["glowOptions"][1][2] = g
+    t["glowOptions"][1][3] = b
+    t["glowOptions"][1][4] = 1
     -- notify debuff list changed
     Cell:Fire("RaidDebuffsChanged")
+    -- update preview
+    ShowGlowPreview(t["glowType"], t["glowOptions"])
 end)
-glowColorPicker:SetPoint("TOPLEFT", glowTypeDropdown, "BOTTOMLEFT", 0, -10)
-glowColorPicker:Hide()
+glowColor:SetPoint("TOPLEFT", glowOptionsFrame, 5, 0)
+
+local function SliderValueChanged(index, value)
+    local t = selectedButtonIndex <= #currentBossTable["enabled"] and currentBossTable["enabled"][selectedButtonIndex] or currentBossTable["disabled"][selectedButtonIndex-#currentBossTable["enabled"]]
+    -- update db
+    local tIndex = isGeneral and "general" or loadedBoss
+    CellDB["raidDebuffs"][loadedInstance][tIndex][selectedSpellId][4][index] = value
+    -- update loadedDebuffs
+    t["glowOptions"][index] = value
+    -- notify debuff list changed
+    Cell:Fire("RaidDebuffsChanged")
+    -- update preview
+    ShowGlowPreview(t["glowType"], t["glowOptions"])
+end
+
+-- glowNumber
+local glowNumber = Cell:CreateSlider(L["Lines & Particles"], glowOptionsFrame, 1, 30, 100, 1, function(value)
+    SliderValueChanged(2, value)
+end)
+glowNumber:SetPoint("TOPLEFT", glowColor, "BOTTOMLEFT", 0, -25)
+
+-- glowFrequency
+local glowFrequency = Cell:CreateSlider(L["Frequency"], glowOptionsFrame, -2, 2, 100, .05, function(value)
+    SliderValueChanged(3, value)
+end)
+glowFrequency:SetPoint("TOPLEFT", glowNumber, "BOTTOMLEFT", 0, -40)
+
+-- glowLength
+local glowLength = Cell:CreateSlider(L["Length"], glowOptionsFrame, 1, 20, 100, 1, function(value)
+    SliderValueChanged(4, value)
+end)
+glowLength:SetPoint("TOPLEFT", glowFrequency, "BOTTOMLEFT", 0, -40)
+
+-- glowThickness
+local glowThickness = Cell:CreateSlider(L["Thickness"], glowOptionsFrame, 1, 20, 100, 1, function(value)
+    SliderValueChanged(5, value)
+end)
+glowThickness:SetPoint("TOPLEFT", glowLength, "BOTTOMLEFT", 0, -40)
+
+-- glowScale
+local glowScale = Cell:CreateSlider(L["Scale"], glowOptionsFrame, 100, 900, 100, 1, function(value)
+    SliderValueChanged(4, value/100)
+end, nil, true)
+glowScale:SetPoint("TOPLEFT", glowFrequency, "BOTTOMLEFT", 0, -40)
+
+LoadGlowOptions = function(glowType, glowOptions)
+    if not glowType or glowType == "None" then
+        glowOptionsFrame:Hide()
+        ShowGlowPreview("None")
+        return
+    end
+
+    ShowGlowPreview(glowType, glowOptions)
+    glowColor:SetColor(glowOptions[1])
+
+    if glowType == "Normal" then
+        glowNumber:Hide()
+        glowFrequency:Hide()
+        glowLength:Hide()
+        glowThickness:Hide()
+        glowScale:Hide()
+    elseif glowType == "Pixel" then
+        glowNumber:Show()
+        glowFrequency:Show()
+        glowLength:Show()
+        glowThickness:Show()
+        glowScale:Hide()
+        glowNumber:SetValue(glowOptions[2])
+        glowFrequency:SetValue(glowOptions[3])
+        glowLength:SetValue(glowOptions[4])
+        glowThickness:SetValue(glowOptions[5])
+    elseif glowType == "Shine" then
+        glowNumber:Show()
+        glowFrequency:Show()
+        glowScale:Show()
+        glowLength:Hide()
+        glowThickness:Hide()
+        glowNumber:SetValue(glowOptions[2])
+        glowFrequency:SetValue(glowOptions[3])
+        glowScale:SetValue(glowOptions[4]*100)
+    end
+
+    glowOptionsFrame:Show()
+end
 
 -- spell description
-Cell:CreateScrollFrame(detailsContentFrame, -170, 0) -- spell description
-local descText = detailsContentFrame.scrollFrame.content:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
-descText:SetPoint("TOPLEFT", 5, -1)
-descText:SetPoint("RIGHT", -5, 0)
-descText:SetJustifyH("LEFT")
-descText:SetSpacing(2)
+-- Cell:CreateScrollFrame(detailsContentFrame, -270, 0) -- spell description
+-- local descText = detailsContentFrame.scrollFrame.content:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
+-- descText:SetPoint("TOPLEFT", 5, -1)
+-- descText:SetPoint("RIGHT", -5, 0)
+-- descText:SetJustifyH("LEFT")
+-- descText:SetSpacing(2)
 
-local function SetSpellDesc(desc)
-    descText:SetText(desc)
-    detailsContentFrame.scrollFrame:SetContentHeight(descText:GetStringHeight()+2)
-end
+-- local function SetSpellDesc(desc)
+--     descText:SetText(desc)
+--     detailsContentFrame.scrollFrame:SetContentHeight(descText:GetStringHeight()+2)
+-- end
 
 local timer
 ShowDetails = function(spell)
@@ -1044,9 +1351,10 @@ ShowDetails = function(spell)
     
     if selectedSpellId == spellId then return end
     selectedSpellId, selectedButtonIndex = spellId, buttonIndex
-    detailsContentFrame.scrollFrame:ResetScroll()
+    -- detailsContentFrame.scrollFrame:ResetScroll()
 
-    local name, icon, desc = F:GetSpellInfo(spellId)
+    -- local name, icon, desc = F:GetSpellInfo(spellId)
+    local name, _, icon = GetSpellInfo(spellId)
     if not name then return end
     
     selectedSpellIcon = icon
@@ -1055,35 +1363,32 @@ ShowDetails = function(spell)
     spellIcon:SetTexture(icon)
     spellNameText:SetText(name)
     spellIdText:SetText(spellId)
-    SetSpellDesc(desc)
-    -- to ensure desc
-    if timer then timer:Cancel() end
-    timer = C_Timer.NewTimer(.7, function()
-        SetSpellDesc(select(3, F:GetSpellInfo(spellId)))
-    end)
+    -- SetSpellDesc(desc)
+    -- -- to ensure desc
+    -- if timer then timer:Cancel() end
+    -- timer = C_Timer.NewTimer(.7, function()
+    --     SetSpellDesc(select(3, F:GetSpellInfo(spellId)))
+    -- end)
     
     local isEnabled = selectedButtonIndex <= #currentBossTable["enabled"]
     enabledCB:SetChecked(isEnabled)
     
-    local glowType, glowColor
+    local spellTable
     if isEnabled then
-        trackByIdCB:SetChecked(currentBossTable["enabled"][buttonIndex]["trackByID"])
-        glowType = currentBossTable["enabled"][buttonIndex]["glowType"]
-        glowColor = currentBossTable["enabled"][buttonIndex]["glowColor"]
+        spellTable = currentBossTable["enabled"][buttonIndex]
     else
-        local index = buttonIndex-#currentBossTable["enabled"]
-        trackByIdCB:SetChecked(currentBossTable["disabled"][index]["trackByID"])
-        glowType = currentBossTable["disabled"][index]["glowType"]
-        glowColor = currentBossTable["disabled"][index]["glowColor"]
+        spellTable = currentBossTable["disabled"][buttonIndex-#currentBossTable["enabled"]]
     end
-    glowType = glowType or "None"
+    trackByIdCB:SetChecked(spellTable["trackByID"])
+    glowType = currentBossTable["enabled"][buttonIndex]["glowType"]
+    
+    local glowType = glowType or "None"
     glowTypeDropdown:SetSelected(L[glowType])
 
     if glowType == "None" then
-        glowColorPicker:Hide()
+        LoadGlowOptions()
     else
-        glowColorPicker:SetColor(glowColor)
-        glowColorPicker:Show()
+        LoadGlowOptions(glowType, spellTable["glowOptions"])
     end
 
     detailsContentFrame:Show()
@@ -1140,11 +1445,11 @@ function F:GetDebuffList(instanceName)
             for _, t in ipairs(loadedDebuffs[iId]["general"]["enabled"]) do
                 local spellName = GetSpellInfo(t["id"])
                 if spellName then
-                    -- list[spellName/spellId] = {order, glowType, glowColor}
+                    -- list[spellName/spellId] = {order, glowType, glowOptions}
                     if t["trackByID"] then
-                        list[t["id"]] = {["order"]=t["order"], ["glowType"]=t["glowType"], ["glowColor"]=t["glowColor"]}
+                        list[t["id"]] = {["order"]=t["order"], ["glowType"]=t["glowType"], ["glowOptions"]=t["glowOptions"]}
                     else
-                        list[spellName] = {["order"]=t["order"], ["glowType"]=t["glowType"], ["glowColor"]=t["glowColor"]}
+                        list[spellName] = {["order"]=t["order"], ["glowType"]=t["glowType"], ["glowOptions"]=t["glowOptions"]}
                     end
                 end
             end
@@ -1156,9 +1461,9 @@ function F:GetDebuffList(instanceName)
                     local spellName = GetSpellInfo(st["id"])
                     if spellName then -- check again
                         if st["trackByID"] then
-                            list[st["id"]] = {["order"]=st["order"], ["glowType"]=st["glowType"], ["glowColor"]=st["glowColor"]}
+                            list[st["id"]] = {["order"]=st["order"], ["glowType"]=st["glowType"], ["glowOptions"]=st["glowOptions"]}
                         else
-                            list[spellName] = {["order"]=st["order"]+n, ["glowType"]=st["glowType"], ["glowColor"]=st["glowColor"]}
+                            list[spellName] = {["order"]=st["order"]+n, ["glowType"]=st["glowType"], ["glowOptions"]=st["glowOptions"]}
                         end
                     end
                 end
@@ -1176,6 +1481,7 @@ end
 local function ShowTab(tab)
     if tab == "debuffs" then
         debuffsTab:Show()
+        UpdatePreviewButton()
         
         if not loadedExpansion then
             expansionDropdown:SetSelectedItem(1)
@@ -1186,3 +1492,17 @@ local function ShowTab(tab)
     end
 end
 Cell:RegisterCallback("ShowOptionsTab", "RaidDebuffsTab_ShowTab", ShowTab)
+
+local function UpdateLayout()
+    if previewButton.loaded then
+        UpdatePreviewButton()
+    end
+end
+Cell:RegisterCallback("UpdateLayout", "RaidDebuffsTab_UpdateLayout", UpdateLayout)
+
+local function UpdateAppearance()
+    if previewButton.loaded then
+        UpdatePreviewButton()
+    end
+end
+Cell:RegisterCallback("UpdateAppearance", "RaidDebuffsTab_UpdateAppearance", UpdateAppearance)

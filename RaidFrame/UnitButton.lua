@@ -386,7 +386,7 @@ local function UnitButton_UpdateDebuffs(self)
 
 	local found, refreshing, resurrectionFound = 1
 	local glowType, glowColor
-	local topOrder, topGlowType, topGlowColor, topId, topStart, topDuration, topType, topIcon, topCount, topRefreshing = 999
+	local topOrder, topGlowType, topGlowOptions, topId, topStart, topDuration, topType, topIcon, topCount, topRefreshing = 999
     for i = 1, 40 do
         -- name, icon, count, debuffType, duration, expirationTime, source, isStealable, nameplateShowPersonal, spellId, canApplyAura, isBossDebuff, castByPlayer, nameplateShowAll, timeMod, ...
         local name, icon, count, debuffType, duration, expirationTime, source, isStealable, nameplateShowPersonal, spellId = UnitDebuff(unit, i)
@@ -418,14 +418,14 @@ local function UnitButton_UpdateDebuffs(self)
 				-- check top debuff
 				if enabledIndicators["centralDebuff"] and I:GetDebuffOrder(name, spellId) then
 					if indicatorCustoms["centralDebuff"] then
-						glowType, glowColor = select(2, I:GetDebuffOrder(name, spellId))
+						glowType, glowOptions = select(2, I:GetDebuffOrder(name, spellId))
 						if glowType and glowType ~= "None" then
-							debuffs_glowing_current[unit][glowType] = glowColor
+							debuffs_glowing_current[unit][glowType] = glowOptions
 							debuffs_glowing_cache[unit][glowType] = true
 						end
 					end
 					if I:GetDebuffOrder(name, spellId) < topOrder then
-						topOrder, topGlowType, topGlowColor = I:GetDebuffOrder(name, spellId)
+						topOrder, topGlowType, topGlowOptions = I:GetDebuffOrder(name, spellId)
 						topId, topStart, topDuration, topType, topIcon, topCount, topRefreshing = spellId, expirationTime - duration, duration, debuffType or "", icon, count, refreshing
 					end
 				end
@@ -468,10 +468,10 @@ local function UnitButton_UpdateDebuffs(self)
 		if indicatorCustoms["centralDebuff"] then
 			if topGlowType and topGlowType ~= "None" then
 				-- to make sure top glow has highest priority
-				debuffs_glowing_current[unit][topGlowType] = topGlowColor
+				debuffs_glowing_current[unit][topGlowType] = topGlowOptions
 			end
-			for t, c in pairs(debuffs_glowing_current[unit]) do
-				self.indicators.centralDebuff:ShowGlow(t, c, true)
+			for t, o in pairs(debuffs_glowing_current[unit]) do
+				self.indicators.centralDebuff:ShowGlow(t, o, true)
 			end
 			for t, _ in pairs(debuffs_glowing_cache[unit]) do
 				if not debuffs_glowing_current[unit][t] then
@@ -481,7 +481,7 @@ local function UnitButton_UpdateDebuffs(self)
 			end
 			wipe(debuffs_glowing_current[unit])
 		else
-			self.indicators.centralDebuff:ShowGlow(topGlowType, topGlowColor)
+			self.indicators.centralDebuff:ShowGlow(topGlowType, topGlowOptions)
 		end
 	else
 		self.indicators.centralDebuff:Hide()
