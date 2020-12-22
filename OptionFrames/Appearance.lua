@@ -78,10 +78,12 @@ local scales = {
     [2] = "200% ("..L["Pixel Perfect"]..")",
     [2.5] = "250%",
     [3] = "300%",
+    [3.5] = "350%",
+    [4] = "400% ("..L["Pixel Perfect"]..")",
 }
 
 do
-    local indices = {1, 1.5, 2, 2.5, 3}
+    local indices = {1, 1.5, 2, 2.5, 3, 3.5, 4}
     local items = {}
     for _, value in pairs(indices) do
         table.insert(items, {

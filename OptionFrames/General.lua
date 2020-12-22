@@ -25,10 +25,18 @@ hideBlizzardCB:SetPoint("TOPLEFT", blizzardText, "BOTTOMLEFT", 5, -15)
 local tooltipsText = Cell:CreateSeparator(L["Unit Tooltips"], generalTab, 188)
 tooltipsText:SetPoint("TOPLEFT", 203, -5)
 
-local disableTooltipsCB = Cell:CreateCheckButton(generalTab, L["Disable Unit Tooltips"], function(checked, self)
-    CellDB["general"]["disableTooltips"] = checked
-end, L["Disable Unit Tooltips"], L["Hide unit tooltips even out of combat"])
-disableTooltipsCB:SetPoint("TOPLEFT", tooltipsText, "BOTTOMLEFT", 5, -15)
+local enableTooltipsCB, hideTooltipsInCombatCB
+
+enableTooltipsCB = Cell:CreateCheckButton(generalTab, L["Enabled"], function(checked, self)
+    CellDB["general"]["enableTooltips"] = checked
+    hideTooltipsInCombatCB:SetEnabled(checked)
+end)
+enableTooltipsCB:SetPoint("TOPLEFT", tooltipsText, "BOTTOMLEFT", 5, -15)
+
+hideTooltipsInCombatCB = Cell:CreateCheckButton(generalTab, L["Hide in Combat"], function(checked, self)
+    CellDB["general"]["hideTooltipsInCombat"] = checked
+end)
+hideTooltipsInCombatCB:SetPoint("TOPLEFT", enableTooltipsCB, "BOTTOMLEFT", 0, -7)
 
 -------------------------------------------------
 -- visibility
@@ -79,7 +87,7 @@ fadeoutCB:SetPoint("TOPLEFT", lockCB, "BOTTOMLEFT", 0, -7)
 -------------------------------------------------
 -- raid tools
 -------------------------------------------------
-local toolsText = Cell:CreateSeparator(L["Raid Tools"].." |cFF777777"..L["Only In Group"], generalTab, 387)
+local toolsText = Cell:CreateSeparator(L["Raid Tools"].." |cFF777777"..L["Only in Group"], generalTab, 387)
 toolsText:SetPoint("TOPLEFT", 5, -233)
 
 local unlockBtn = Cell:CreateButton(generalTab, L["Unlock"], "class-hover", {50, 17})
@@ -261,7 +269,9 @@ local function ShowTab(tab)
 
         -- general
         hideBlizzardCB:SetChecked(CellDB["general"]["hideBlizzard"])
-        disableTooltipsCB:SetChecked(CellDB["general"]["disableTooltips"])
+        enableTooltipsCB:SetChecked(CellDB["general"]["enableTooltips"])
+        hideTooltipsInCombatCB:SetEnabled(CellDB["general"]["enableTooltips"])
+        hideTooltipsInCombatCB:SetChecked(CellDB["general"]["hideTooltipsInCombat"])
         showSoloCB:SetChecked(CellDB["general"]["showSolo"])
         showPartyCB:SetChecked(CellDB["general"]["showParty"])
         showPartyPetsCB:SetChecked(CellDB["general"]["showPartyPets"])

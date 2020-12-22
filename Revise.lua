@@ -344,6 +344,7 @@ local function Revise()
             tinsert(CellDB["debuffBlacklist"], 2, 160029)
         end
 
+        -- glow options for raidDebuffs
         for instance, iTable in pairs(CellDB["raidDebuffs"]) do
             for boss, bTable in pairs(iTable) do
                 for spell, sTable in pairs(bTable) do
@@ -366,8 +367,15 @@ local function Revise()
             end
         end
 
+        -- options ui font size
         if not CellDB["appearance"]["optionsFontSizeOffset"] then
             CellDB["appearance"]["optionsFontSizeOffset"] = 0
+        end
+
+        -- tooltips
+        if type(CellDB["general"]["disableTooltips"]) == "boolean" then
+            CellDB["general"]["enableTooltips"] = not CellDB["general"]["disableTooltips"]
+            CellDB["general"]["disableTooltips"] = nil
         end
     end
 

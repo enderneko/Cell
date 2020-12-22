@@ -1475,7 +1475,7 @@ end
 local function UnitButton_OnEnter(self)
 	self.widget.mouseoverHighlight:Show()
 	
-	if CellDB["general"]["disableTooltips"] or InCombatLockdown() then return end
+	if not CellDB["general"]["enableTooltips"] or (CellDB["general"]["hideTooltipsInCombat"] and InCombatLockdown()) then return end
 	local unit = self.state.displayedUnit
 	if not unit then return end
 	

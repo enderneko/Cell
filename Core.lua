@@ -185,7 +185,8 @@ function eventFrame:ADDON_LOADED(arg1)
         if type(CellDB["general"]) ~= "table" then
             CellDB["general"] = {
                 ["hideBlizzard"] = true,
-                ["disableTooltips"] = true,
+                ["enableTooltips"] = false,
+                ["hideTooltipsInCombat"] = false,
                 ["showSolo"] = true,
                 ["showParty"] = true,
                 ["showPartyPets"] = true,
