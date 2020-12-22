@@ -76,9 +76,10 @@ select(2, ...).L = setmetatable({
         <p>Fixed: Marks Bar, Click-Castings.</p>
         <p>Moved "Raid Setup" text to the tooltips of "Raid" button.</p>
         <p>Added Fade Out Menu option.</p>
+        <br/>
     ]],
 
-    ["r33-release"] = [[
+    ["r34-release"] = [[
         <h1>Indicators</h1>
         <p>Some built-in indicators are now configurable: Role Icon, Leader Icon, Ready Check Icon, Aggro Indicator.</p>
         <p>Added "Border" and "Only show glow for top debuffs" options for Central Debuff indicator.</p>

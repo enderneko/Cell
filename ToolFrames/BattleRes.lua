@@ -32,7 +32,9 @@ battleResFrame.onMenuShow:SetScript("OnFinished", function()
 end)
 
 function battleResFrame:OnMenuShow()
-	local currentY = math.floor(select(5, battleResFrame:GetPoint(1))+.5)
+	local currentY = select(5, battleResFrame:GetPoint(1))
+	if not currentY then return end
+	currentY = math.floor(currentY+.5)
 	battleResFrame.onMenuShow.trans:SetOffset(0, onShow-currentY)
 	battleResFrame.onMenuShow:Play()
 end
@@ -52,7 +54,9 @@ battleResFrame.onMenuHide:SetScript("OnFinished", function()
 end)
 
 function battleResFrame:OnMenuHide()
-	local currentY = math.floor(select(5, battleResFrame:GetPoint(1))+.5)
+	local currentY = select(5, battleResFrame:GetPoint(1))
+	if not currentY then return end
+	currentY = math.floor(currentY+.5)
 	battleResFrame.onMenuHide.trans:SetOffset(0, onHide-currentY)
 	battleResFrame.onMenuHide:Play()
 end

@@ -2,6 +2,9 @@ if not LOCALE_zhTW then return end
 
 local L = select( 2, ...).L
 
+L = L or {}
+L["%s lock %s on %s."] = "%s將%s鎖定在%s。"
+L["%s unlock %s from %s."] = "%s將%s從%s解鎖。"
 L["(based on current)"] = "(以目前的為基礎)"
 L["About"] = "關於"
 L["ABOUT"] = "Cell 是受 CompactRaid 啟發的團隊框架，參考了其程式碼，重寫並增強。\n我個人很喜歡 CompactRaid，並常年使用它，但其作者似乎已經不再更新了。因此我寫了 Cell，希望你能喜歡。\n另外，我也參考了一些很棒的團隊框架，比如 Aptechka 和 Grid2。\nCell 並不打算成為一個輕量或強大 (如 VuhDo、Grid2) 的團隊框架插件。設定簡單，功能足夠，就行了。"
@@ -9,6 +12,7 @@ L["ACCEPTED"] = "已接受"
 L["Action"] = "動作"
 L["AFK"] = "暫離"
 L["Aggro Bar"] = "仇恨值條"
+L["Aggro Indicator"] = "仇恨指示器"
 L["Alpha"] = "透明度"
 L["Anchor Point"] = "自己的"
 L["AoE Healing"] = "範圍治療 (團補)"
@@ -24,6 +28,7 @@ L["Bars"] = "進度條"
 L["BG 1-15"] = "戰場 1-15"
 L["BG 16-40"] = "戰場 16-40"
 L["Blizzard Frames"] = "遊戲內建框架"
+L["Border"] = "邊框"
 L["Both"] = "全部"
 L["BOTTOM"] = "下"
 L["BOTTOMLEFT"] = "左下"
@@ -64,7 +69,6 @@ L["Delete"] = "刪除"
 L["Delete debuff?"] = "是否確定要刪除減益?"
 L["Delete indicator"] = "是否確定要刪除指示器"
 L["Delete layout"] = "是否確定要刪除版面配置"
-L["Disable Unit Tooltips"] = "停用單位滑鼠提示"
 L["Discard"] = "取消"
 L["dispellableByMe"] = "只顯示我能驅散的減益"
 L["Dispels"] = "驅散"
@@ -84,7 +88,9 @@ L["focus"] = "專注目標"
 L["Font"] = "字體"
 L["Font Outline"] = "文字樣式"
 L["Font Size"] = "文字大小"
+L["Format"] = "格式"
 L["Frame Level"] = "框架層級"
+L["Frequency"] = "速度"
 L["General"] = "一般"
 L["GHOST"] = "鬼魂"
 L["Glow Color"] = "發光顏色"
@@ -95,12 +101,11 @@ L["Group Filter"] = "過濾隊伍"
 L["Group Rows"] = "隊伍橫列數"
 L["Group Spacing"] = "隊伍間距"
 L["Health Text"] = "血量文字"
-L["Format"] = "格式"
-L["hideFull"] = "滿血時不顯示"
 L["Height"] = "高度"
+L["Hide"] = "隱藏"
 L["Hide Blizzard Frames"] = "隱藏遊戲內建框架"
 L["Hide Blizzard Raid / Party"] = "隱藏遊戲內建團隊/隊伍框架"
-L["Hide unit tooltips even out of combat"] = "非戰鬥中也要隱藏單位的滑鼠提示"
+L["hideFull"] = "滿血時不顯示"
 L["Horizontal"] = "水平"
 L["Icon"] = "圖示"
 L["Icons"] = "圖示"
@@ -111,10 +116,14 @@ L["Invalid"] = "無效"
 L["Invalid spell id."] = "無效的法術 ID。"
 L["Layout"] = "版面配置"
 L["Layouts"] = "版面配置"
-L["Left"] = "左"
+L["Leader Icon"] = "隊長圖示"
+L["Leader Icons will hide while in combat"] = "戰鬥中會隱藏隊長圖示"
 L["LEFT"] = "左"
+L["Left"] = "左"
 L["left-click: edit"] = "左鍵: 編輯"
 L["left-to-right"] = "從左到右"
+L["Length"] = "長度"
+L["Lines"] = "線條數"
 L["Lock"] = "鎖定"
 L["Lock Cell Frame"] = "鎖定 Cell 團隊框架的位置"
 L["Macro"] = "巨集"
@@ -138,10 +147,12 @@ L["OFFLINE"] = "離線"
 L["Only in Group"] = "只有在隊伍中時"
 L["Only show during encounter or in mythic+"] = "只在首領戰或 M+ 顯示"
 L["Only show when you have permission to do this"] = "只在你有權限這樣做時才會顯示"
+L["onlyShowTopGlow"] = "只顯著標示當前減益"
 L["Options"] = "選項"
 L["Orientation"] = "方向"
 L["Outline"] = "外框"
 L["P"] = "PvP 天賦"
+L["Particles"] = "粒子數"
 L["Party"] = "隊伍"
 L["PENDING"] = "等候"
 L["Pixel"] = "像素"
@@ -154,7 +165,7 @@ L["Profiles"] = "設定檔"
 L["Pull"] = "倒數"
 L["Pull Timer"] = "開怪倒數"
 L["pullTimerTips"] = "\n|r開怪倒數\n左鍵: |cffffffff開始倒數計時|r\n右鍵: |cffffffff取消倒數計時|r"
-L["r26-release"] = [[
+L["r25-release"] = [[
     <h1>滑鼠點擊施法</h1>
     <p>滑鼠點擊施法現在支援鍵盤按鍵和多按鍵滑鼠。</p> 
     <p>由於程式碼的變動，你會需要重新設定滑鼠點擊施法。</p>
@@ -164,8 +175,8 @@ L["r26-release"] = [[
     <p>因此，需要重新設定自訂指示器的增/減益清單，才能使其正常顯示。</p>
     <br/>
     <h1>指示器預覽透明度</h1>
-    <p>現在可以更改指示器預覽中的非當前指示器透明度，如此一來調整指示器會更方便。</p>
-    <p>查看“指示器”页面的右上角的滑动条，你懂的。</p>
+    <p>現在可以更改指示器預覽中的非當前指示器透明度，如此一來調整指示器會更加方便。</p>
+    <p>查看 "指示器" 頁面右上角的滑桿，你懂的。</p>
     <br/>
     <h1>框架位置</h1>
     <p>每個版面配置都有各自獨立的位置設定。</p>
@@ -182,13 +193,31 @@ L["r32-release"] = [[
     <p>新增選項：框架層級。</p>
     <br/>
     <h1>副本減益 (Beta)</h1>
-    <p>新增了暗影之境的副本減益。For now, these debuffs are tracked by NAME. "Track By ID" option will be added later.</p>
+    <p>新增暗影之境的副本減益。目前是使用名稱來追蹤減益，之後會加入 "用 ID 追蹤" 的選項。</p>
     <p>預設啟用所有的減益，你可能會想要停用一些不是那麼重要的減益。</p>
     <br/>
     <h1>其他</h1>
     <p>修正：標記工具列、滑鼠點擊施法。</p>
     <p>將 "團隊構成" 文字移到 "團隊" 按鈕的滑鼠提示中。</p>
     <p>新增 "淡出選單" 的選項。</p>
+    <br/>
+]]
+L["r34-release"] = [[
+    <h1>指示器</h1>
+    <p>部分內建的指示器現在有了選項：角色職責圖示，隊長圖示，準備確認圖示，仇恨指示器。</p>
+    <p> "減益 (中間)"  新增了 "邊框" 和 "只顯著標示當前減益" 的選項。</p>
+    <br/>
+    <h1>副本減益 (Beta)</h1>
+    <p>所有減益預設都是啟用的，你可能會想要停用一些不是那麼重要的減益。</p>
+    <p>新增 "符合法術 ID" 選項。</p>
+    <p>新增發光效果的詳細設定選項。</p>
+    <br/>
+    <h1>一般</h1>
+    <p>更新了滑鼠提示相關選項。</p>
+    <br/>
+    <h1>版面配置</h1>
+    <p>"文字寬度" 新增 "隱藏" 選項。</p>
+    <br/>
 ]]
 L["Raid"] = "團隊"
 L["Raid Debuffs"] = "副本減益"
@@ -196,6 +225,7 @@ L["Raid Icon (player)"] = "團隊圖示 (玩家)"
 L["Raid Icon (target)"] = "團隊圖示 (目標)"
 L["Raid Tools"] = "團隊工具"
 L["Ready"] = "團確"
+L["Ready Check Icon"] = "準備確認圖示"
 L["Rect"] = "矩形"
 L["Remaining Time <"] = "剩餘時間 <"
 L["Rename"] = "更名"
@@ -208,6 +238,7 @@ L["Right"] = "右"
 L["RIGHT"] = "右"
 L["right-click: delete"] = "右鍵: 刪除"
 L["right-to-left"] = "從右到左"
+L["Role Icon"] = "角色職責圖示"
 L["Save"] = "儲存"
 L["Scale"] = "縮放大小"
 L["ScrollDown"] = "滾輪往下"
@@ -233,7 +264,6 @@ L["showDuration"] = "顯示持續時間文字"
 L["Size"] = "大小"
 L["Slash Commands"] = "聊天指令"
 L["Solo/Party"] = "單人/5人隊伍"
-L["Unit Spacing"] = "單位間距"
 L["Spell"] = "法術"
 L["Status"] = "狀態"
 L["T"] = "天賦"
@@ -247,6 +277,7 @@ L["Text Width"] = "文字寬度"
 L["Texture"] = "材質"
 L["The priority of spells decreases from top to bottom."] = "法術的優先順序是從上到下降低。"
 L["The spells list of a icons indicator is unordered (no priority)."] = "圖示指示器的法術清單是不排序的 (無優先順序)。"
+L["Thickness"] = "粗細"
 L["Tip: Every layout has its own position setting."] = "小提示: 每個版面配置都有各自獨立的位置設定。"
 L["Tips: Drag and drop to change debuff order. Double-click on instance name to open Encounter Journal. The priority of General Debuffs is higher than Boss Debuffs."] = "小提示: 拖曳減益可以調整順序，點兩下副本名稱可以打開冒險指南。一般減益的優先順序會高於首領減益。"
 L["To open options frame, use /cell options"] = "輸入 /cell options 打開設定選項"
@@ -256,8 +287,10 @@ L["TOP"] = "上"
 L["TOPLEFT"] = "左上"
 L["TOPRIGHT"] = "右上"
 L["top-to-bottom"] = "從上到下"
+L["Track by ID"] = "符合法術 ID"
 L["Translators"] = "翻譯"
 L["Unit Button Size"] = "單位按鈕大小"
+L["Unit Spacing"] = "單位間距"
 L["Unit Tooltips"] = "單位滑鼠提示"
 L["UnitButton Color"] = "單位按鈕顏色"
 L["Unlimited"] = "無限制"
@@ -273,7 +306,5 @@ L["X Offset"] = "水平位置偏移"
 L["Y Offset"] = "垂直位置偏移"
 L["Yes"] = "是"
 L["You"] = "你"
-L["%s lock %s on %s."] = "%s將%s鎖定在%s。"
-L["%s unlock %s from %s."] = "%s將%s從%s解鎖。"
 L["You can config debuffs in %s"] = "你可以在 %s 中設定減益法術"
 L["You don't have permission to do this"] = "你沒有權限這樣做"

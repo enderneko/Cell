@@ -144,6 +144,7 @@ local defaultSpells = {
 
     ["PRIEST"] = {
         ["common"] = {
+            10060, -- 能量灌注
             21562, -- Power Word: Fortitude - 真言术：韧
             17, -- Power Word: Shield - 真言术：盾
             1706, -- Levitate - 漂浮术

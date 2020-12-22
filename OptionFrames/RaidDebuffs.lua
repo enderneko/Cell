@@ -1299,7 +1299,7 @@ end, nil, true)
 glowScale:SetPoint("TOPLEFT", glowFrequency, "BOTTOMLEFT", 0, -40)
 
 LoadGlowOptions = function(glowType, glowOptions)
-    if not glowType or glowType == "None" then
+    if not glowType or glowType == "None" or not glowOptions then
         glowOptionsFrame:Hide()
         ShowGlowPreview("None")
         return
@@ -1389,9 +1389,8 @@ ShowDetails = function(spell)
         spellTable = currentBossTable["disabled"][buttonIndex-#currentBossTable["enabled"]]
     end
     trackByIdCB:SetChecked(spellTable["trackByID"])
-    glowType = currentBossTable["enabled"][buttonIndex]["glowType"]
     
-    local glowType = glowType or "None"
+    local glowType = spellTable["glowType"] or "None"
     glowTypeDropdown:SetSelected(L[glowType])
 
     if glowType == "None" then
