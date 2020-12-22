@@ -100,9 +100,12 @@ local function InitIndicator(indicatorName)
         -- texture type cannot glow by LCG
         indicator.preview = CreateFrame("Frame", nil, previewButton)
         indicator.preview:SetAllPoints(indicator)
-
+        
     elseif indicatorName == "leaderIcon" then
         indicator:SetTexture("Interface\\GroupFrame\\UI-Group-LeaderIcon")
+        -- texture type cannot glow by LCG
+        indicator.preview = CreateFrame("Frame", nil, previewButton)
+        indicator.preview:SetAllPoints(indicator)
         
     elseif indicatorName == "readyCheckIcon" then
         indicator:SetTexture(READY_CHECK_READY_TEXTURE)
@@ -663,7 +666,7 @@ local indicatorSettings = {
     ["aggroIndicator"] = {"enabled", "position", "frameLevel", "size"},
     ["playerRaidIcon"] = {"enabled", "position", "frameLevel", "size-square", "alpha"},
     ["targetRaidIcon"] = {"enabled", "position", "frameLevel", "size-square", "alpha"},
-    ["aggroBar"] = {"enabled", "position", "frameLevel", "size"},
+    ["aggroBar"] = {"enabled", "position", "frameLevel", "size-bar"},
     ["aoeHealing"] = {"enabled", "color", "height"},
     ["externalCooldowns"] = {"enabled", "position", "frameLevel", "size", "num"},
     ["defensiveCooldowns"] = {"enabled", "position", "frameLevel", "size", "num"},
@@ -695,7 +698,9 @@ local function ShowIndicatorSettings(id)
             settingsTable = {"enabled", "auras", "checkbutton2:showDuration", "position", "frameLevel", "size-square", "font"}
         elseif indicatorType == "text" then
             settingsTable = {"enabled", "auras", "colors", "position", "frameLevel", "font"}
-        elseif indicatorType == "bar" or indicatorType == "rect" then
+        elseif indicatorType == "bar" then
+            settingsTable = {"enabled", "auras", "colors", "position", "frameLevel", "size-bar"}
+        elseif indicatorType == "rect" then
             settingsTable = {"enabled", "auras", "colors", "position", "frameLevel", "size"}
         elseif indicatorType == "icons" then
             settingsTable = {"enabled", "auras", "checkbutton2:showDuration", "position", "frameLevel", "size-square", "num", "orientation", "font"}
@@ -727,7 +732,7 @@ local function ShowIndicatorSettings(id)
 
         -- "enabled", "position", "size", "num", "font"
         local currentSetting = settingsTable[i]
-        if currentSetting == "size-square" then currentSetting = "size" end
+        if currentSetting == "size-square" or currentSetting == "size-bar" then currentSetting = "size" end
         
         -- echo
         if string.find(currentSetting, "checkbutton") then
