@@ -962,7 +962,7 @@ local function UpdateGlowType(newType)
             elseif newType == "Pixel" then
                 CellDB["raidDebuffs"][loadedInstance][tIndex][selectedSpellId] = {t["order"], false, newType, {{0.95,0.95,0.32,1}, 9, .25, 8, 2}}
             elseif newType == "Shine" then
-                CellDB["raidDebuffs"][loadedInstance][tIndex][selectedSpellId] = {t["order"], false, newType, {{0.95,0.95,0.32,1}, 7, 0.5, 1}}
+                CellDB["raidDebuffs"][loadedInstance][tIndex][selectedSpellId] = {t["order"], false, newType, {{0.95,0.95,0.32,1}, 9, 0.5, 1}}
             end
         else
             CellDB["raidDebuffs"][loadedInstance][tIndex][selectedSpellId][3] = newType
@@ -986,12 +986,12 @@ local function UpdateGlowType(newType)
                 end
             elseif newType == "Shine" then
                 if CellDB["raidDebuffs"][loadedInstance][tIndex][selectedSpellId][4] then
-                    CellDB["raidDebuffs"][loadedInstance][tIndex][selectedSpellId][4][2] = 7
+                    CellDB["raidDebuffs"][loadedInstance][tIndex][selectedSpellId][4][2] = 9
                     CellDB["raidDebuffs"][loadedInstance][tIndex][selectedSpellId][4][3] = .5
                     CellDB["raidDebuffs"][loadedInstance][tIndex][selectedSpellId][4][4] = 1
                     CellDB["raidDebuffs"][loadedInstance][tIndex][selectedSpellId][4][5] = nil
                 else
-                    CellDB["raidDebuffs"][loadedInstance][tIndex][selectedSpellId][4] = {{0.95,0.95,0.32,1}, 7, 0.5, 1}
+                    CellDB["raidDebuffs"][loadedInstance][tIndex][selectedSpellId][4] = {{0.95,0.95,0.32,1}, 9, 0.5, 1}
                 end
             end
         end
@@ -1017,12 +1017,12 @@ local function UpdateGlowType(newType)
             end
         elseif newType == "Shine" then
             if t["glowOptions"] then
-                t["glowOptions"][2] = 7
+                t["glowOptions"][2] = 9
                 t["glowOptions"][3] = .5
                 t["glowOptions"][4] = 1
                 t["glowOptions"][5] = nil
             else
-                t["glowOptions"] = {{0.95,0.95,0.32,1}, 7, 0.5, 1}
+                t["glowOptions"] = {{0.95,0.95,0.32,1}, 9, 0.5, 1}
             end
         end
         LoadGlowOptions(newType, t["glowOptions"])

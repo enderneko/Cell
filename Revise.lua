@@ -358,7 +358,7 @@ local function Revise()
                         elseif sTable[3] == "Pixel" then
                             sTable[4] = {color, 9, .25, 8, 2}
                         elseif sTable[3] == "Shine" then
-                            sTable[4] = {color, 7, 0.5, 1}
+                            sTable[4] = {color, 9, 0.5, 1}
                         else
 
                         end
