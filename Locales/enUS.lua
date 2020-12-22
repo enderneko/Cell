@@ -79,7 +79,7 @@ select(2, ...).L = setmetatable({
         <br/>
     ]],
 
-    ["r34-release"] = [[
+    ["r35-release"] = [[
         <h1>Indicators</h1>
         <p>Some built-in indicators are now configurable: Role Icon, Leader Icon, Ready Check Icon, Aggro Indicator.</p>
         <p>Added "Border" and "Only show glow for top debuffs" options for Central Debuff indicator.</p>
