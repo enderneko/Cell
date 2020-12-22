@@ -719,7 +719,7 @@ function addon:CreateSlider(name, parent, low, high, width, step, onValueChanged
         nameText:SetText(n)
     end
 
-    local currentEditBox = addon:CreateEditBox(slider, 45, 14)
+    local currentEditBox = addon:CreateEditBox(slider, 44, 14)
     slider.currentEditBox = currentEditBox
     currentEditBox:SetPoint("TOP", slider, "BOTTOM", 0, -1)
     currentEditBox:SetJustifyH("CENTER")
@@ -3277,6 +3277,7 @@ local function CreateAuraButtons(parent, auraTable, noUpDownButtons, updateHeigh
             end)
             popup:SetPoint("TOPLEFT", auraButtons[i])
             popup:ShowEditBox(auraButtons[i].spellId or "")
+            parent.popupEditBox:SetTips("|cff777777"..L["Enter spell id"])
         end)
 
         auraButtons[i].del:SetScript("OnClick", function()

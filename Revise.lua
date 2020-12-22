@@ -337,6 +337,9 @@ local function Revise()
                 if layout["indicators"][15]["size"][1] == 20 then
                     layout["indicators"][15]["size"] = {22, 22}
                 end
+                if type(layout["indicators"][15]["onlyShowTopGlow"]) ~= "boolean" then
+                    layout["indicators"][15]["onlyShowTopGlow"] = true
+                end
             end
         end
 

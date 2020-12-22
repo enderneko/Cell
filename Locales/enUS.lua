@@ -18,7 +18,7 @@ select(2, ...).L = setmetatable({
     ["showDuration"] = "Show duration text",
     ["enableHighlight"] = "Highlight unit button",
     ["hideFull"] = "Hide while HP is full",
-    ["glowIgnorePriority"] = "Show glow ignoring debuffs priority",
+    ["onlyShowTopGlow"] = "Only show glow for top debuffs",
 
     ["BOTTOM"] = "Bottom",
     ["BOTTOMLEFT"] = "Bottom Left",
@@ -81,11 +81,18 @@ select(2, ...).L = setmetatable({
     ["r33-release"] = [[
         <h1>Indicators</h1>
         <p>Some built-in indicators are now configurable: Role Icon, Leader Icon, Ready Check Icon, Aggro Indicator.</p>
-        <p>Added "Border" and "Show glow ignoring debuffs priority" options for Central Debuff indicator.</p>
+        <p>Added "Border" and "Only show glow for top debuffs" options for Central Debuff indicator.</p>
         <br/>
         <h1>Raid Debuffs (Beta)</h1>
-        <p>Added "Track by ID" option.</p>
         <p>All debuffs are enabled by default, you might want to disable some less important debuffs.</p>
+        <p>Added "Track by ID" option.</p>
+        <p>Updated glow options for Raid Debuffs.</p>
+        <br/>
+        <h1>General</h1>
+        <p>Updated tooltips options.</p>
+        <br/>
+        <h1>Layouts</h1>
+        <p>Added "Hide" option for "Text Width".</p>
         <br/>
     ]],
 }, {

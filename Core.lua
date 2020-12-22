@@ -412,7 +412,7 @@ function eventFrame:ADDON_LOADED(arg1)
                             ["size"] = {22, 22},
                             ["border"] = 2,
                             ["font"] = {"Cell ".._G.DEFAULT, 11, "Outline", 2},
-                            ["glowIgnorePriority"] = false,
+                            ["onlyShowTopGlow"] = true,
                         },
                     },
                 },

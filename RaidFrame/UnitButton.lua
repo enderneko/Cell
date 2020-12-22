@@ -93,8 +93,8 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
 				indicatorCustoms[t["indicatorName"]] = t["castByMe"]
 			elseif t["hideFull"] ~= nil then
 				indicatorCustoms[t["indicatorName"]] = t["hideFull"]
-			elseif t["glowIgnorePriority"] ~= nil then
-				indicatorCustoms[t["indicatorName"]] = t["glowIgnorePriority"]
+			elseif t["onlyShowTopGLow"] ~= nil then
+				indicatorCustoms[t["indicatorName"]] = t["onlyShowTopGLow"]
 			end
 			-- update indicators
 			F:IterateAllUnitButtons(function(b)
@@ -417,7 +417,7 @@ local function UnitButton_UpdateDebuffs(self)
 
 				-- check top debuff
 				if enabledIndicators["centralDebuff"] and I:GetDebuffOrder(name, spellId) then
-					if indicatorCustoms["centralDebuff"] then
+					if not indicatorCustoms["centralDebuff"] then
 						glowType, glowOptions = select(2, I:GetDebuffOrder(name, spellId))
 						if glowType and glowType ~= "None" then
 							debuffs_glowing_current[unit][glowType] = glowOptions
@@ -465,7 +465,7 @@ local function UnitButton_UpdateDebuffs(self)
 	-- update central debuff
 	if topId then
 		self.indicators.centralDebuff:SetCooldown(topStart, topDuration, topType, topIcon, topCount, topRefreshing)
-		if indicatorCustoms["centralDebuff"] then
+		if not indicatorCustoms["centralDebuff"] then
 			if topGlowType and topGlowType ~= "None" then
 				-- to make sure top glow has highest priority
 				debuffs_glowing_current[unit][topGlowType] = topGlowOptions
