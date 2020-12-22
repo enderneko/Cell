@@ -421,7 +421,7 @@ end
 -------------------------------------------------
 -- debuff list frame
 -------------------------------------------------
-local debuffListFrame = Cell:CreateFrame("RaidDebuffsTab_Debuffs", debuffsTab, 120, 341)
+local debuffListFrame = Cell:CreateFrame("RaidDebuffsTab_Debuffs", debuffsTab, 120, 343)
 debuffListFrame:SetPoint("TOPLEFT", instancesFrame, "TOPRIGHT", 5, 0)
 debuffListFrame:Show()
 Cell:CreateScrollFrame(debuffListFrame)
@@ -429,7 +429,7 @@ debuffListFrame.scrollFrame:SetScrollStep(19)
 SetOnEnterLeave(debuffListFrame)
 
 local create = Cell:CreateButton(debuffsTab, L["Create"], "class-hover", {58, 20})
-create:SetPoint("TOPLEFT", debuffListFrame, "BOTTOMLEFT", 0, -5)
+create:SetPoint("TOPLEFT", debuffListFrame, "BOTTOMLEFT", 0, -3)
 create:SetScript("OnClick", function()
     local popup = Cell:CreateConfirmPopup(debuffsTab, 200, L["Create new debuff (id)"], function(self)
         local id = tonumber(self.editBox:GetText()) or 0
@@ -799,7 +799,7 @@ ShowDebuffs = function(bossId, buttonIndex)
     Cell:CreateButtonGroup(debuffButtons, ShowDetails, nil, nil, function(b)
         debuffListFrame:GetScript("OnEnter")()
         CellTooltip:SetOwner(b, "ANCHOR_NONE")
-        CellTooltip:SetPoint("TOPRIGHT", b, "TOPLEFT", 1, 0)
+        CellTooltip:SetPoint("TOPRIGHT", b, "TOPLEFT", -1, 0)
         CellTooltip:SetHyperlink("spell:"..b.spellId)
         CellTooltip:Show()
     end, function(b)
