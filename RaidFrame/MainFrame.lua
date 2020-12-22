@@ -84,6 +84,7 @@ menuFrame.fadeIn.alpha:SetSmoothing("OUT")
 menuFrame.fadeIn:SetScript("OnPlay", function()
     menuFrame.fadeOut:Stop()
     fadingIn = true
+    Cell.frames.battleResFrame:OnMenuShow()
 end)
 menuFrame.fadeIn:SetScript("OnFinished", function()
     fadingIn = false
@@ -101,6 +102,7 @@ menuFrame.fadeOut.alpha:SetSmoothing("OUT")
 menuFrame.fadeOut:SetScript("OnPlay", function()
     menuFrame.fadeIn:Stop()
     fadingOut = true
+    Cell.frames.battleResFrame:OnMenuHide()
 end)
 menuFrame.fadeOut:SetScript("OnFinished", function()
     fadingOut = false
