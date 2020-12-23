@@ -64,10 +64,11 @@ end
 ---------------------------------
 -- Bar
 ---------------------------------
-local bar = Cell:CreateStatusBar(battleResFrame, 10, 2, 100, false, nil, false, "Interface\\Buttons\\WHITE8x8", Cell:GetPlayerClassColorTable())
+local bar = Cell:CreateStatusBar(battleResFrame, 10, 2, 100, false, nil, false, "Interface\\AddOns\\Cell\\Media\\statusbar", Cell:GetPlayerClassColorTable())
 bar:SetPoint("BOTTOMLEFT", battleResFrame, 1, 1)
 bar:SetPoint("BOTTOMRIGHT", battleResFrame, -1, 1)
-bar:SetAlpha(.5)
+-- bar:SetMinMaxValues(0, 100)
+-- bar:SetValue(50)
 
 ---------------------------------
 -- String
@@ -90,17 +91,26 @@ title:SetJustifyH("LEFT")
 stack:SetJustifyH("LEFT")
 rTime:SetJustifyH("RIGHT")
 
-title:SetPoint("BOTTOMLEFT", bar, "TOPLEFT", 0, 1)
+title:SetPoint("BOTTOMLEFT", bar, "TOPLEFT", 0, 2)
 stack:SetPoint("LEFT", title, "RIGHT")
 -- stack:SetPoint("BOTTOM", bar, "TOP", 0, 1)
-rTime:SetPoint("BOTTOMRIGHT", bar, "TOPRIGHT", 0, 1)
+rTime:SetPoint("LEFT", stack, "RIGHT", 4, 0)
 
 title:SetTextColor(.66, .66, .66)
 rTime:SetTextColor(.66, .66, .66)
 
 title:SetText(L["BR"]..": ")
 stack:SetText("|cffff00000|r")
-rTime:SetText("")
+rTime:SetText("00:00")
+
+battleResFrame:SetScript("OnShow", function()
+	if rTime:GetRight() and title:GetLeft() then
+		battleResFrame:SetWidth(math.floor(rTime:GetRight()-title:GetLeft()+2.5))
+	end
+	rTime:SetText("")
+	rTime:ClearAllPoints()
+	rTime:SetPoint("BOTTOMRIGHT", bar, "TOPRIGHT", -1, 2)
+end)
 
 ---------------------------------
 -- Update
