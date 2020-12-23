@@ -468,6 +468,7 @@ function I:CreateReadyCheckIcon(parent)
 	-- readyCheckIcon:SetSize(16, 16)
 	readyCheckIcon:SetPoint("CENTER", parent.widget.healthBar)
     readyCheckIcon:Hide()
+    readyCheckIcon:SetIgnoreParentAlpha(true)
     
     readyCheckIcon.tex = readyCheckIcon:CreateTexture(nil, "ARTWORK")
     readyCheckIcon.tex:SetAllPoints(readyCheckIcon)
