@@ -125,6 +125,8 @@ battleResFrame:SetScript("OnUpdate", function(self, elapsed)
 	if total >= 0.25 then
 		total = 0
 		
+		-- Upon engaging a boss, all combat resurrection spells will have their cooldowns reset and begin with 1 charge.
+		-- Charges will accumulate at a rate of 1 per (90/RaidSize) minutes.
 		local charges, _, started, duration = GetSpellCharges(20484)
 		if not charges then
 			-- hide out of encounter
