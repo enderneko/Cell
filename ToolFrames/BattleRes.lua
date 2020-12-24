@@ -8,7 +8,7 @@ local F = Cell.funcs
 local battleResFrame = CreateFrame("Frame", "CellBattleResFrame", Cell.frames.mainFrame, "BackdropTemplate")
 Cell.frames.battleResFrame = battleResFrame
 -- battleResFrame:SetPoint("BOTTOMLEFT", Cell.frames.mainFrame, "TOPLEFT", 0, 17)
-battleResFrame:SetSize(72, 20)
+battleResFrame:SetSize(75, 20)
 battleResFrame:Hide()
 Cell:StylizeFrame(battleResFrame, {.1, .1, .1, .7}, {0, 0, 0, .5})
 
@@ -105,6 +105,9 @@ rTime:SetText("00:00")
 
 battleResFrame:SetScript("OnShow", function()
 	if rTime:GetRight() and title:GetLeft() then
+		rTime:ClearAllPoints()
+		rTime:SetPoint("LEFT", stack, "RIGHT", 4, 0)
+		rTime:SetText("00:00")
 		battleResFrame:SetWidth(math.floor(rTime:GetRight()-title:GetLeft()+2.5))
 	end
 	rTime:SetText("")
