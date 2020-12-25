@@ -333,6 +333,59 @@ function I:CreateTargetRaidIcon(parent)
 end
 
 -------------------------------------------------
+-- name text
+-------------------------------------------------
+function I:CreateNameText(parent)
+    local nameText = overlayFrame:CreateFontString(name.."NameText", "ARTWORK", "CELL_FONT_NAME")
+	parent.indicators.nameText = nameText
+    -- nameText:SetPoint("CENTER", healthBar)
+    
+    function nameText:SetFont(font, size, flags, horizontalOffset)
+        if not string.find(font, ".ttf") then font = F:GetFont(font) end
+
+        if flags == "Shadow" then
+            text:SetFont(font, size)
+            text:SetShadowOffset(1, -1)
+            text:SetShadowColor(0, 0, 0, 1)
+        else
+            if flags == "Outline" then
+                flags = "OUTLINE"
+            else
+                flags = "OUTLINE, MONOCHROME"
+            end
+            text:SetFont(font, size, flags)
+            text:SetShadowOffset(0, 0)
+            text:SetShadowColor(0, 0, 0, 0)
+        end
+
+        local point = nameText:GetPoint(1)
+        text:ClearAllPoints()
+        if string.find(point, "LEFT") then
+            text:SetPoint("LEFT", horizontalOffset, 0)
+        elseif string.find(point, "RIGHT") then
+            text:SetPoint("RIGHT", horizontalOffset, 0)
+        else
+            text:SetPoint("CENTER", horizontalOffset, 0)
+        end
+        nameText:SetSize(text:GetStringWidth()+3, size+3)
+    end
+
+    healthText.OriginalSetPoint = healthText.SetPoint
+    function healthText:SetPoint(point, relativeTo, relativePoint, x, y)
+        local horizontalOffset = select(4, text:GetPoint(1))
+        text:ClearAllPoints()
+        if string.find(point, "LEFT") then
+            text:SetPoint("LEFT", horizontalOffset, 0)
+        elseif string.find(point, "RIGHT") then
+            text:SetPoint("RIGHT", horizontalOffset, 0)
+        else
+            text:SetPoint("CENTER", horizontalOffset, 0)
+        end
+        healthText:OriginalSetPoint(point, relativeTo, relativePoint, x, y)
+    end
+end
+
+-------------------------------------------------
 -- health text
 -------------------------------------------------
 function I:CreateHealthText(parent)
