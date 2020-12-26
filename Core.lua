@@ -403,8 +403,8 @@ function eventFrame:ADDON_LOADED(arg1)
                             ["font"] = {"Cell ".._G.DEFAULT, 11, "Outline", 2},
                         },
                         {
-                            ["name"] = "Central Debuff",
-                            ["indicatorName"] = "centralDebuff",
+                            ["name"] = "Raid Debuffs",
+                            ["indicatorName"] = "raidDebuffs",
                             ["type"] = "built-in",
                             ["enabled"] = true,
                             ["position"] = {"CENTER", "CENTER", 0, 3},

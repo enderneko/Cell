@@ -170,7 +170,7 @@ local function InitIndicator(indicatorName)
         local types = {["Curse"]=true, ["Disease"]=true, ["Magic"]=true, ["Poison"]=true}
         indicator:SetDispels(types)
 
-    elseif indicatorName == "centralDebuff" then
+    elseif indicatorName == "raidDebuffs" then
         indicator:SetScript("OnShow", function()
             indicator:SetCooldown(GetTime(), 10, "", "Interface\\Icons\\INV_Misc_QuestionMark", 7)
             indicator.cooldown:SetScript("OnCooldownDone", function()
@@ -660,6 +660,7 @@ Cell:CreateScrollFrame(settingsFrame)
 settingsFrame.scrollFrame:SetScrollStep(35)
 
 local indicatorSettings = {
+    ["healthText"] = {"enabled", "format", "checkbutton:hideFull", "color", "position", "frameLevel", "font"},
     ["roleIcon"] = {"enabled", "position", "size-square"},
     ["leaderIcon"] = {"|cffb7b7b7"..L["Leader Icons will hide while in combat"], "enabled", "position", "size-square"},
     ["readyCheckIcon"] = {"frameLevel", "size-square"},
@@ -673,8 +674,7 @@ local indicatorSettings = {
     ["tankActiveMitigation"] = {"enabled", "position", "frameLevel", "size"},
     ["dispels"] = {"enabled", "checkbutton:dispellableByMe", "checkbutton2:enableHighlight", "position", "frameLevel", "size-square"},
     ["debuffs"] = {"enabled", "blacklist", "frameLevel", "position", "size-square", "num", "font"},
-    ["centralDebuff"] = {"|cffb7b7b7"..L["You can config debuffs in %s"]:format(Cell:GetPlayerClassColorString()..L["Raid Debuffs"].."|r"), "enabled", "checkbutton:onlyShowTopGlow", "position", "frameLevel", "size-border", "font"},
-    ["healthText"] = {"enabled", "format", "checkbutton:hideFull", "color", "position", "frameLevel", "font"},
+    ["raidDebuffs"] = {"|cffb7b7b7"..L["You can config debuffs in %s"]:format(Cell:GetPlayerClassColorString()..L["Raid Debuffs"].."|r"), "enabled", "checkbutton:onlyShowTopGlow", "position", "frameLevel", "size-border", "font"},
 }
 
 local function ShowIndicatorSettings(id)

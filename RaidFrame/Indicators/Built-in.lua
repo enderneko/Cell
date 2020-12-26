@@ -229,7 +229,7 @@ function I:CreateDispels(parent)
 end
 
 -------------------------------------------------
--- CreateCentralDebuff
+-- CreateRaidDebuffs
 -------------------------------------------------
 local currentAreaDebuffs = {}
 local eventFrame2 = CreateFrame("Frame")
@@ -254,9 +254,9 @@ function I:GetDebuffOrder(spellName, spellId)
     end
 end
 
-function I:CreateCentralDebuff(parent)
-    local frame = I:CreateAura_BorderIcon(parent:GetName().."CentralDebuff", parent.widget.overlayFrame, 1)
-    parent.indicators.centralDebuff = frame
+function I:CreateRaidDebuffs(parent)
+    local frame = I:CreateAura_BorderIcon(parent:GetName().."RaidDebuffs", parent.widget.overlayFrame, 1)
+    parent.indicators.raidDebuffs = frame
     frame:SetFrameLevel(77)
     frame:Hide()
 

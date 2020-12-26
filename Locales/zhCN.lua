@@ -223,7 +223,6 @@ L["Defensive Cooldowns"] = "减伤 (自身)"
 L["Tank Active Mitigation"] = "坦克主动减伤"
 L["Dispels"] = "驱散"
 L["Debuffs"] = "减益"
-L["Central Debuff"] = "减益 (中间)"
 L["Health Text"] = "血量文字"
 
 L["Create new indicator"] = "创建新指示器"

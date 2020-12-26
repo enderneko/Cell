@@ -416,8 +416,8 @@ local function UnitButton_UpdateDebuffs(self)
 				I:CheckCustomIndicators(unit, self, "debuff", spellId, expirationTime - duration, duration, debuffType or "", icon, count, refreshing)
 
 				-- check top debuff
-				if enabledIndicators["centralDebuff"] and I:GetDebuffOrder(name, spellId) then
-					if not indicatorCustoms["centralDebuff"] then
+				if enabledIndicators["raidDebuffs"] and I:GetDebuffOrder(name, spellId) then
+					if not indicatorCustoms["raidDebuffs"] then
 						glowType, glowOptions = select(2, I:GetDebuffOrder(name, spellId))
 						if glowType and glowType ~= "None" then
 							debuffs_glowing_current[unit][glowType] = glowOptions
@@ -464,27 +464,27 @@ local function UnitButton_UpdateDebuffs(self)
 
 	-- update central debuff
 	if topId then
-		self.indicators.centralDebuff:SetCooldown(topStart, topDuration, topType, topIcon, topCount, topRefreshing)
-		if not indicatorCustoms["centralDebuff"] then
+		self.indicators.raidDebuffs:SetCooldown(topStart, topDuration, topType, topIcon, topCount, topRefreshing)
+		if not indicatorCustoms["raidDebuffs"] then
 			if topGlowType and topGlowType ~= "None" then
 				-- to make sure top glow has highest priority
 				debuffs_glowing_current[unit][topGlowType] = topGlowOptions
 			end
 			for t, o in pairs(debuffs_glowing_current[unit]) do
-				self.indicators.centralDebuff:ShowGlow(t, o, true)
+				self.indicators.raidDebuffs:ShowGlow(t, o, true)
 			end
 			for t, _ in pairs(debuffs_glowing_cache[unit]) do
 				if not debuffs_glowing_current[unit][t] then
-					self.indicators.centralDebuff:HideGlow(t)
+					self.indicators.raidDebuffs:HideGlow(t)
 					debuffs_glowing_cache[unit][t] = nil
 				end
 			end
 			wipe(debuffs_glowing_current[unit])
 		else
-			self.indicators.centralDebuff:ShowGlow(topGlowType, topGlowOptions)
+			self.indicators.raidDebuffs:ShowGlow(topGlowType, topGlowOptions)
 		end
 	else
-		self.indicators.centralDebuff:Hide()
+		self.indicators.raidDebuffs:Hide()
 	end
 
 	-- user created indicators
@@ -1932,7 +1932,7 @@ function F:UnitButton_OnLoad(button)
 	I:CreateTankActiveMitigation(button)
 	I:CreateDebuffs(button)
 	I:CreateDispels(button)
-	I:CreateCentralDebuff(button)
+	I:CreateRaidDebuffs(button)
 	I:CreateHealthText(button)
 
 	-- events

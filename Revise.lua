@@ -333,9 +333,9 @@ local function Revise()
             if layout["indicators"][15] and layout["indicators"][15]["indicatorName"] == "centralDebuff" then
                 if not layout["indicators"][15]["border"] then
                     layout["indicators"][15]["border"] = 2
-                end
-                if layout["indicators"][15]["size"][1] == 20 then
-                    layout["indicators"][15]["size"] = {22, 22}
+                    if layout["indicators"][15]["size"][1] == 20 then
+                        layout["indicators"][15]["size"] = {22, 22}
+                    end
                 end
                 if type(layout["indicators"][15]["onlyShowTopGlow"]) ~= "boolean" then
                     layout["indicators"][15]["onlyShowTopGlow"] = true
@@ -362,8 +362,6 @@ local function Revise()
                             sTable[4] = {color, 9, .25, 8, 2}
                         elseif sTable[3] == "Shine" then
                             sTable[4] = {color, 9, 0.5, 1}
-                        else
-
                         end
                     end
                 end
@@ -379,6 +377,17 @@ local function Revise()
         if type(CellDB["general"]["disableTooltips"]) == "boolean" then
             CellDB["general"]["enableTooltips"] = not CellDB["general"]["disableTooltips"]
             CellDB["general"]["disableTooltips"] = nil
+        end
+    end
+
+    -- r36-release
+    if not(CellDB["revise"]) or dbRevision < 36 then
+        for _, layout in pairs(CellDB["layouts"]) do
+            -- rename Central Debuff
+            if layout["indicators"][15] and layout["indicators"][15]["indicatorName"] == "centralDebuff" then
+                layout["indicators"][15]["indicatorName"] = "raidDebuffs"
+                layout["indicators"][15]["name"] = "Raid Debuffs"
+            end
         end
     end
 
