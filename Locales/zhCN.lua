@@ -11,7 +11,11 @@ L["ABOUT"] = "Cell 是受启发于 CompactRaid 的团队框架，参考了其代
 L["Available slash commands"] = "可用的斜杠命令"
 L["show Cell options frame"] = "打开Cell选项界面"
 L["reset Cell position"] = "重置Cell位置"
-L["reset all Cell options and reload UI"] = "重置所有Cell设置并重载界面"
+L["These \"reset\" commands below affect all your characters in this account"] = "以下这些“重置”命令会影响该账号下的所有角色"
+L["reset all Layouts and Indicators"] = "重置所有布局与指示器"
+L["reset all Click-Castings"] = "重置所有点击施法"
+L["reset all Raid Debuffs"] = "重置所有副本减益"
+L["reset all Cell settings"] = "重置所有Cell设置"
 
 -------------------------------------------------
 -- buttons

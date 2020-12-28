@@ -641,33 +641,51 @@ function SlashCmdList.CELL(msg, editbox)
     if command == "options" then
         F:ShowOptionsFrame()
 
-    elseif command == "resetposition" then
-        Cell.frames.anchorFrame:ClearAllPoints()
-        Cell.frames.anchorFrame:SetPoint("TOPLEFT", UIParent, "CENTER")
-        Cell.vars.currentLayoutTable["position"] = {}
-        Cell.frames.raidButtonsFrame:ClearAllPoints()
-        Cell.frames.raidButtonsFrame:SetPoint("TOPRIGHT", UIParent, "CENTER")
-        CellDB["raidTools"]["buttonsPosition"] = {}
-        Cell.frames.raidMarksFrame:ClearAllPoints()
-        Cell.frames.raidMarksFrame:SetPoint("BOTTOMRIGHT", UIParent, "CENTER")
-        CellDB["raidTools"]["marksPosition"] = {}
-        
-    elseif command == "resetall" then
-        Cell.frames.anchorFrame:ClearAllPoints()
-        Cell.frames.anchorFrame:SetPoint("TOPLEFT", UIParent, "CENTER")
-        Cell.frames.raidButtonsFrame:ClearAllPoints()
-        Cell.frames.raidButtonsFrame:SetPoint("TOPRIGHT", UIParent, "CENTER")
-        Cell.frames.raidMarksFrame:ClearAllPoints()
-        Cell.frames.raidMarksFrame:SetPoint("BOTTOMRIGHT", UIParent, "CENTER")
-        CellDB = nil
-        CellCharacterDB = nil
-        ReloadUI()
+    elseif command == "reset" then
+        if rest == "position" then
+            Cell.frames.anchorFrame:ClearAllPoints()
+            Cell.frames.anchorFrame:SetPoint("TOPLEFT", UIParent, "CENTER")
+            Cell.vars.currentLayoutTable["position"] = {}
+            Cell.frames.raidButtonsFrame:ClearAllPoints()
+            Cell.frames.raidButtonsFrame:SetPoint("TOPRIGHT", UIParent, "CENTER")
+            CellDB["raidTools"]["buttonsPosition"] = {}
+            Cell.frames.raidMarksFrame:ClearAllPoints()
+            Cell.frames.raidMarksFrame:SetPoint("BOTTOMRIGHT", UIParent, "CENTER")
+            CellDB["raidTools"]["marksPosition"] = {}
+
+        elseif rest == "all" then
+            Cell.frames.anchorFrame:ClearAllPoints()
+            Cell.frames.anchorFrame:SetPoint("TOPLEFT", UIParent, "CENTER")
+            Cell.frames.raidButtonsFrame:ClearAllPoints()
+            Cell.frames.raidButtonsFrame:SetPoint("TOPRIGHT", UIParent, "CENTER")
+            Cell.frames.raidMarksFrame:ClearAllPoints()
+            Cell.frames.raidMarksFrame:SetPoint("BOTTOMRIGHT", UIParent, "CENTER")
+            CellDB = nil
+            CellCharacterDB = nil
+            ReloadUI()
+
+        elseif rest == "layouts" then
+            CellDB["layouts"] = nil
+            ReloadUI()
+
+        elseif rest == "raidDebuffs" then
+            CellDB["raidDebuffs"] = nil
+            ReloadUI()
+            
+        elseif rest == "clickCastings" then
+            CellDB["clickCastings"] = nil
+            ReloadUI()
+        end
 
     else
         F:Print(L["Available slash commands"]..":\n"..
             "|cFFFFB5C5/cell options|r: "..L["show Cell options frame"]..".\n"..
-            "|cFFFFB5C5/cell resetposition|r: "..L["reset Cell position"]..".\n"..
-            "|cFFFFB5C5/cell resetall|r: "..L["reset all Cell options and reload UI"].."."
+            "|cFFFFB5C5/cell reset position|r: "..L["reset Cell position"]..".\n"..
+            "|cFFFF7777"..L["These \"reset\" commands below affect all your characters in this account"]..".|r\n"..
+            "|cFFFFB5C5/cell reset layouts|r: "..L["reset all Layouts and Indicators"]..".\n"..
+            "|cFFFFB5C5/cell reset clickCastings|r: "..L["reset all Click-Castings"]..".\n"..
+            "|cFFFFB5C5/cell reset raidDebuffs|r: "..L["reset all Raid Debuffs"]..".\n"..
+            "|cFFFFB5C5/cell reset all|r: "..L["reset all Cell settings"].."."
         )
     end
 end
