@@ -35,6 +35,10 @@ for i = 0, 4 do
 		RegisterUnitWatch(playerButton)
 		RegisterAttributeDriver(petButton, "state-visibility", "[@"..petUnit..",noexists] hide; [@"..playerUnit..",unithasvehicleui] hide; show")
 	end
+
+	-- OmniCD
+	_G["CellPartyFrameMember"..(i+1)] = playerButton
+	playerButton.unitid = playerUnit
 end
 
 local init
