@@ -133,6 +133,9 @@ local function InitIndicator(indicatorName)
             self:SetValue(self.value)
         end)
 
+    elseif indicatorName == "shieldBar" then
+        indicator:SetValue(.5)
+
     elseif indicatorName == "tankActiveMitigation" then
         indicator.value = 0
         indicator:SetMinMaxValues(0, 100)
@@ -692,6 +695,7 @@ local indicatorSettings = {
     ["playerRaidIcon"] = {"enabled", "position", "frameLevel", "size-square", "alpha"},
     ["targetRaidIcon"] = {"enabled", "position", "frameLevel", "size-square", "alpha"},
     ["aggroBar"] = {"enabled", "position", "frameLevel", "size-bar"},
+    ["shieldBar"] = {"|cffb7b7b7"..L["With this indicator enabled, shield / overshield textures are disabled"], "enabled", "color-alpha", "position", "frameLevel", "height"},
     ["aoeHealing"] = {"enabled", "color", "height"},
     ["externalCooldowns"] = {"enabled", "num", "position", "frameLevel", "size"},
     ["defensiveCooldowns"] = {"enabled", "num", "position", "frameLevel", "size"},
@@ -756,6 +760,7 @@ local function ShowIndicatorSettings(id)
 
         -- "enabled", "position", "size", "num", "font"
         local currentSetting = settingsTable[i]
+        if currentSetting == "color-alpha" then currentSetting = "color" end
         if currentSetting == "size-square" or currentSetting == "size-bar" then currentSetting = "size" end
         if currentSetting == "font-noOffset" then currentSetting = "font" end
         if currentSetting == "namePosition" or currentSetting == "statusPosition" then currentSetting = "position" end

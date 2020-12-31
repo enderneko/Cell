@@ -416,6 +416,20 @@ local function Revise()
                     ["font"] = {"Cell ".._G.DEFAULT, 11, "Shadow"},
                 })
             end
+
+            -- add Shiled Bar
+            if layout["indicators"][11]["indicatorName"] ~= "shieldBar" then
+                tinsert(layout["indicators"], 11, {
+                    ["name"] = "Shield Bar",
+                    ["indicatorName"] = "shieldBar",
+                    ["type"] = "built-in",
+                    ["enabled"] = false,
+                    ["position"] = {"BOTTOMLEFT", "BOTTOMLEFT", 0, 0},
+                    ["frameLevel"] = 1,
+                    ["height"] = 4,
+                    ["color"] = {1, 1, 0, 1},
+                })
+            end
         end
     end
 

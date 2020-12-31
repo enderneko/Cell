@@ -298,6 +298,16 @@ function eventFrame:ADDON_LOADED(arg1)
                             ["size"] = {18, 2},
                         },
                         {
+                            ["name"] = "Shield Bar",
+                            ["indicatorName"] = "shieldBar",
+                            ["type"] = "built-in",
+                            ["enabled"] = false,
+                            ["position"] = {"BOTTOMLEFT", "BOTTOMLEFT", 0, 0},
+                            ["frameLevel"] = 1,
+                            ["height"] = 4,
+                            ["color"] = {1, 1, 0, 1},
+                        },
+                        {
                             ["name"] = "AoE Healing",
                             ["indicatorName"] = "aoeHealing",
                             ["type"] = "built-in",

@@ -218,6 +218,10 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
 				F:IterateAllUnitButtons(function(b)
 					b.func.UpdateHealthText()
 				end)
+			elseif indicatorName == "shieldBar" then
+				F:IterateAllUnitButtons(function(b)
+					b.func.UpdateShield()
+				end)
 			else
 				-- refresh
 				F:IterateAllUnitButtons(function(b)
@@ -942,24 +946,33 @@ local function UnitButton_UpdateShieldAbsorbs(self)
 	local value = UnitGetTotalAbsorbs(unit)
 	if value > 0 then
 		UpdateUnitHealthState(self)
-
 		local barWidth = self.widget.healthBar:GetWidth()
 		local shieldPercent = value / self.state.healthMax
-		if shieldPercent + self.state.healthPercent > 1 then -- overshield
-			local p = 1 - self.state.healthPercent
-			if p ~= 0 then
-				self.widget.shieldBar:SetWidth(p * barWidth)
-				self.widget.shieldBar:Show()
-			else
-				self.widget.shieldBar:Hide()
-			end
-			self.widget.overShieldGlow:Show()
-		else
-			self.widget.shieldBar:SetWidth(shieldPercent * barWidth)
-			self.widget.shieldBar:Show()
+
+		if enabledIndicators["shieldBar"] then
+			self.indicators.shieldBar:Show()
+			self.indicators.shieldBar:SetValue(shieldPercent)
+			self.widget.shieldBar:Hide()
 			self.widget.overShieldGlow:Hide()
+		else
+			self.indicators.shieldBar:Hide()
+			if shieldPercent + self.state.healthPercent > 1 then -- overshield
+				local p = 1 - self.state.healthPercent
+				if p ~= 0 then
+					self.widget.shieldBar:SetWidth(p * barWidth)
+					self.widget.shieldBar:Show()
+				else
+					self.widget.shieldBar:Hide()
+				end
+				self.widget.overShieldGlow:Show()
+			else
+				self.widget.shieldBar:SetWidth(shieldPercent * barWidth)
+				self.widget.shieldBar:Show()
+				self.widget.overShieldGlow:Hide()
+			end
 		end
 	else
+		self.indicators.shieldBar:Hide()
 		self.widget.shieldBar:Hide()
 		self.widget.overShieldGlow:Hide()
 	end
@@ -1200,7 +1213,7 @@ local function UnitButton_UpdateColor(self)
 		elseif self.state.inVehicle then
 			if Cell.loaded then
 				barR, barG, barB, bgR, bgG, bgB = GetColor(0, 1, .2)
-				-- if CellDB["appearance"]["nameColor"][1] ~= "Class Color" then
+				-- if Cell.vars.currentLayoutTable["indicators"][1]["nameColor"][1] ~= "Class Color" then
 				-- 	nameText:SetTextColor(F:GetClassColor(self.state.class))
 				-- end
 			else
@@ -1222,7 +1235,7 @@ local function UnitButton_UpdateColor(self)
 			barR, barG, barB = .5, .5, 1
 			bgR, bgG, bgB = barR*.2, barG*.2, barB*.2
 		end
-		if Cell.loaded and CellDB["appearance"]["nameColor"][1] == "Class Color" then
+		if Cell.loaded and Cell.vars.currentLayoutTable["indicators"][1]["nameColor"][1] == "Class Color" then
 			nameText:SetTextColor(.5, .5, 1)
 		end
 	else -- npc
@@ -1912,6 +1925,11 @@ function F:UnitButton_OnLoad(button)
 		UnitButton_UpdateStatusText(button)
 	end
 
+	-- statusText
+	button.func.UpdateShield = function()
+		UnitButton_UpdateShieldAbsorbs(button)
+	end
+
 	-- indicators
 	I:CreateNameText(button)
 	I:CreateStatusText(button)
@@ -1922,6 +1940,7 @@ function F:UnitButton_OnLoad(button)
 	I:CreateAggroIndicator(button)
 	I:CreatePlayerRaidIcon(button)
 	I:CreateTargetRaidIcon(button)
+	I:CreateShieldBar(button)
 	I:CreateAoEHealing(button)
 	I:CreateDefensiveCooldowns(button)
 	I:CreateExternalCooldowns(button)

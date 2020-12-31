@@ -96,6 +96,18 @@ select(2, ...).L = setmetatable({
         <p>Added "Hide" option for "Text Width".</p>
         <br/>
     ]],
+
+    ["r36-release"] = [[
+        <h1>Indicators</h1>
+        <p>Some built-in indicators are now configurable: Name Text, Status Text.</p>
+        <p>New indicator: Shield Bar</p>
+        <p>Added "Only show debuffs dispellable by me" option for Debuffs indicator.</p>
+        <br/>
+        <h1>Misc</h1>
+        <p>Due to indicator changes, some font related options have been removed.</p>
+        <p>Fixed frame width of BattleResTimer.</p>
+        <br/>
+    ]],
 }, {
     __index = function(self, Key)
         if (Key ~= nil) then

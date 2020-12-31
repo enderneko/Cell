@@ -746,3 +746,35 @@ function I:CreateAggroIndicator(parent)
 		self.blink:Stop()
 	end)
 end
+
+-------------------------------------------------
+-- shield bar
+-------------------------------------------------
+function I:CreateShieldBar(parent)
+    local shieldBar = CreateFrame("Frame", parent:GetName().."ShieldBar", parent.widget.overlayFrame, "BackdropTemplate")
+    parent.indicators.shieldBar = shieldBar
+    shieldBar:SetSize(4, 4)
+    shieldBar:Hide()
+    shieldBar:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8x8"})
+    shieldBar:SetBackdropColor(0, 0, 0, 1)
+
+    local tex = shieldBar:CreateTexture(nil, "ARTWORK")
+    tex:SetPoint("TOPLEFT", 1, -1)
+    tex:SetPoint("BOTTOMRIGHT", -1, 1)
+
+    function shieldBar:SetColor(r, g, b, a)
+        tex:SetColorTexture(r, g, b)
+        shieldBar:SetAlpha(a)
+    end
+
+    function shieldBar:SetValue(percent)
+        local maxWidth = parent.widget.healthBar:GetWidth()
+        local barWidth
+        if percent >= 1 then
+            barWidth = maxWidth
+        else
+            barWidth = maxWidth * percent
+        end
+        shieldBar:SetWidth(barWidth)
+    end
+end

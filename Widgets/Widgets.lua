@@ -2536,7 +2536,7 @@ local function CreateSetting_Height(parent)
         widget = addon:CreateFrame("CellIndicatorSettings_Height", parent, 240, 50)
         settingWidgets["height"] = widget
 
-        widget.height = addon:CreateSlider(L["Height"], widget, 10, 50, 100, 1)
+        widget.height = addon:CreateSlider(L["Height"], widget, 1, 70, 100, 1)
         widget.height:SetPoint("TOPLEFT", widget, 5, -20)
         widget.height.afterValueChangedFn = function(value)
             widget.func(value)
@@ -3160,6 +3160,40 @@ local function CreateSetting_Color(parent)
         end
     else
         widget = settingWidgets["color"]
+    end
+
+    widget:Show()
+    return widget
+end
+
+local function CreateSetting_ColorAlpha(parent)
+    local widget
+
+    if not settingWidgets["color-alpha"] then
+        widget = addon:CreateFrame("CellIndicatorSettings_ColorAlpha", parent, 240, 30)
+        settingWidgets["color-alpha"] = widget
+
+        local colorPicker = addon:CreateColorPicker(widget, L["Color"], true, function(r, g, b, a)
+            widget.colorTable[1] = r
+            widget.colorTable[2] = g 
+            widget.colorTable[3] = b
+            widget.colorTable[4] = a
+            widget.func(widget.colorTable)
+        end)
+        colorPicker:SetPoint("TOPLEFT", 5, -7)
+
+        -- associate db
+        function widget:SetFunc(func)
+            widget.func = func
+        end
+        
+        -- show db value
+        function widget:SetDBValue(colorTable)
+            widget.colorTable = colorTable
+            colorPicker:SetColor(colorTable)
+        end
+    else
+        widget = settingWidgets["color-alpha"]
     end
 
     widget:Show()
@@ -3791,6 +3825,8 @@ function addon:CreateIndicatorSettings(parent, settingsTable)
             tinsert(widgetsTable, CreateSetting_FontNoOffset(parent))
         elseif setting == "color" then
             tinsert(widgetsTable, CreateSetting_Color(parent))
+        elseif setting == "color-alpha" then
+            tinsert(widgetsTable, CreateSetting_ColorAlpha(parent))
         elseif setting == "colors" then
             tinsert(widgetsTable, CreateSetting_Colors(parent))
         elseif setting == "nameColor" then
