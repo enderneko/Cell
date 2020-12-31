@@ -394,6 +394,24 @@ function I:CreateNameText(parent)
     function nameText:SetPoint(point, relativeTo, relativePoint, x, y)
         -- override relativeTo
         nameText:OriginalSetPoint(point, parent.widget.healthBar, relativePoint, x, y)
+
+        local vp, _, vrp, _, vy = vehicleText:GetPoint(1)
+        if vp and vrp and vy then
+            if string.find(vp, "TOP") then
+                vp, vrp = "TOP", "BOTTOM"
+            else -- BOTTOM
+                vp, vrp = "BOTTOM", "TOP"
+            end
+
+            vehicleText:ClearAllPoints()
+            if string.find(point, "LEFT") then
+                vehicleText:SetPoint(vp.."LEFT", nameText, vrp.."LEFT", 0, vy)
+            elseif string.find(point, "RIGHT") then
+                vehicleText:SetPoint(vp.."RIGHT", nameText, vrp.."RIGHT", 0, vy)
+            else -- "CENTER"
+                vehicleText:SetPoint(vp, nameText, vrp, 0, vy)
+            end
+        end
     end
 
     function nameText:UpdateName()
@@ -405,14 +423,23 @@ function I:CreateNameText(parent)
     end
 
     function nameText:UpdateVehicleNamePosition(pTable)
+        local p = nameText:GetPoint(1) or ""
+        if string.find(p, "LEFT") then
+            p = "LEFT"
+        elseif string.find(p, "RIGHT") then
+            p = "RIGHT"
+        else -- "CENTER"
+            p = ""
+        end
+
         vehicleText:ClearAllPoints()
         if pTable[1] == "TOP" then
             vehicleText:Show()
-            vehicleText:SetPoint("BOTTOM", nameText, "TOP", 0, pTable[2])
+            vehicleText:SetPoint("BOTTOM"..p, nameText, "TOP"..p, 0, pTable[2])
             vehicleText.enabled = true
         elseif pTable[1] == "BOTTOM" then
             vehicleText:Show()
-            vehicleText:SetPoint("TOP", nameText, "BOTTOM", 0, pTable[2])
+            vehicleText:SetPoint("TOP"..p, nameText, "BOTTOM"..p, 0, pTable[2])
             vehicleText.enabled = true
         else -- Hide
             vehicleText:Hide()
