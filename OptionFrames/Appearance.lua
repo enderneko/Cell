@@ -100,75 +100,17 @@ end
 -------------------------------------------------
 -- font
 -------------------------------------------------
-local fontText = Cell:CreateSeparator(L["Font"], appearanceTab, 188)
+local fontText = Cell:CreateSeparator(L["Options UI Font Size"], appearanceTab, 188)
 fontText:SetPoint("TOPLEFT", 5, -99)
 
-local optionsFontSizeOffset = Cell:CreateSlider("", appearanceTab, -5, 5, 50, 1, nil, function(value)
+local optionsFontSizeOffset = Cell:CreateSlider("", appearanceTab, -5, 5, 131, 1, nil, function(value)
     CellDB["appearance"]["optionsFontSizeOffset"] = value
     Cell:UpdateOptionsFont(value)
 end)
-optionsFontSizeOffset:SetPoint("RIGHT", appearanceTab, "LEFT", 193, 0)
-optionsFontSizeOffset:SetPoint("CENTER", fontText)
-optionsFontSizeOffset.currentEditBox:Hide()
-optionsFontSizeOffset.lowText:Hide()
-optionsFontSizeOffset.highText:Hide()
-
--- drop down
-local fontDropdown = Cell:CreateDropdown(appearanceTab, 150, "font")
-fontDropdown:SetPoint("TOPLEFT", fontText, "BOTTOMLEFT", 5, -12)
-
-local function CheckFonts()
-    local items, fonts, defaultFontName, defaultFont = F:GetFontItems()
-
-    for _, item in pairs(items) do
-        item["onClick"] = function()
-            CellDB["appearance"]["font"] = item["text"]
-            Cell:Fire("UpdateAppearance", "font")
-        end
-    end
-
-    fontDropdown:SetItems(items)
-    
-    -- validation
-    if fonts[CellDB["appearance"]["font"]] then
-        fontDropdown:SetSelected(CellDB["appearance"]["font"], fonts[CellDB["appearance"]["font"]])
-    else
-        fontDropdown:SetSelected(defaultFontName, defaultFont)
-    end
-end
-
--------------------------------------------------
--- font outline
--------------------------------------------------
-local fontOutlineText = Cell:CreateSeparator(L["Font Outline"], appearanceTab, 188)
-fontOutlineText:SetPoint("TOPLEFT", 203, -99)
-
--- drop down
-local fontOutlineDropdown = Cell:CreateDropdown(appearanceTab, 150)
-fontOutlineDropdown:SetPoint("TOPLEFT", fontOutlineText, "BOTTOMLEFT", 5, -12)
-fontOutlineDropdown:SetItems({
-    {
-        ["text"] = L["Shadow"],
-        ["onClick"] = function()
-            CellDB["appearance"]["outline"] = "Shadow"
-            Cell:Fire("UpdateAppearance", "font")
-        end,
-    },
-    {
-        ["text"] = L["Outline"],
-        ["onClick"] = function()
-            CellDB["appearance"]["outline"] = "Outline"
-            Cell:Fire("UpdateAppearance", "font")
-        end,
-    },
-    {
-        ["text"] = L["Monochrome Outline"],
-        ["onClick"] = function()
-            CellDB["appearance"]["outline"] = "Monochrome Outline"
-            Cell:Fire("UpdateAppearance", "font")
-        end,
-    },
-})
+optionsFontSizeOffset:SetPoint("TOPLEFT", fontText, "BOTTOMLEFT", 5, -12)
+-- optionsFontSizeOffset.currentEditBox:Hide()
+-- optionsFontSizeOffset.lowText:Hide()
+-- optionsFontSizeOffset.highText:Hide()
 
 -------------------------------------------------
 -- unitbutton color
@@ -258,43 +200,9 @@ local bgColorPicker = Cell:CreateColorPicker(appearanceTab, "", false, function(
 end)
 bgColorPicker:SetPoint("LEFT", bgColorDropdown, "RIGHT", 5, 0)
 
--- name color
-local nameColorDropdown = Cell:CreateDropdown(appearanceTab, 131)
-nameColorDropdown:SetPoint("TOPLEFT", barColorDropdown, "BOTTOMLEFT", 0, -30)
-nameColorDropdown:SetItems({
-    {
-        ["text"] = L["Class Color"],
-        ["onClick"] = function()
-            CellDB["appearance"]["nameColor"][1] = "Class Color"
-            Cell:Fire("UpdateAppearance", "color")
-        end,
-    },
-    {
-        ["text"] = L["Custom Color"],
-        ["onClick"] = function()
-            CellDB["appearance"]["nameColor"][1] = "Custom Color"
-            Cell:Fire("UpdateAppearance", "color")
-        end,
-    },
-})
-
-local nameColorText = appearanceTab:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
-nameColorText:SetPoint("BOTTOMLEFT", nameColorDropdown, "TOPLEFT", 0, 1)
-nameColorText:SetText(L["Name Color"])
-
-local nameColorPicker = Cell:CreateColorPicker(appearanceTab, "", false, function(r, g, b)
-    CellDB["appearance"]["nameColor"][2][1] = r
-    CellDB["appearance"]["nameColor"][2][2] = g
-    CellDB["appearance"]["nameColor"][2][3] = b
-    if CellDB["appearance"]["nameColor"][1] == "Custom Color" then
-        Cell:Fire("UpdateAppearance", "color")
-    end
-end)
-nameColorPicker:SetPoint("LEFT", nameColorDropdown, "RIGHT", 5, 0)
-
 -- power color
 local powerColorDropdown = Cell:CreateDropdown(appearanceTab, 131)
-powerColorDropdown:SetPoint("TOPLEFT", bgColorDropdown, "BOTTOMLEFT", 0, -30)
+powerColorDropdown:SetPoint("TOPLEFT", barColorDropdown, "BOTTOMLEFT", 0, -30)
 powerColorDropdown:SetItems({
     {
         ["text"] = L["Power Color"],
@@ -341,7 +249,7 @@ local targetColorPicker = Cell:CreateColorPicker(appearanceTab, L["Target Highli
     CellDB["appearance"]["targetColor"][4] = a
     Cell:Fire("UpdateAppearance", "highlightColor")
 end)
-targetColorPicker:SetPoint("TOPLEFT", nameColorDropdown, "BOTTOMLEFT", 0, -20)
+targetColorPicker:SetPoint("TOPLEFT", powerColorDropdown, "BOTTOMLEFT", 0, -20)
 
 -- mouseover highlight
 local mouseoverColorPicker = Cell:CreateColorPicker(appearanceTab, L["Mouseover Highlight Color"], true, function(r, g, b, a)
@@ -360,7 +268,6 @@ resetBtn:SetPoint("BOTTOM", unitButtonColorText)
 resetBtn:SetScript("OnClick", function()
     CellDB["appearance"]["barColor"] = {"Class Color", {.2, .2, .2}}
     CellDB["appearance"]["bgColor"] = {"Class Color (dark)", {.667, 0, 0}}
-    CellDB["appearance"]["nameColor"] = {"Custom Color", {1, 1, 1}}
     CellDB["appearance"]["powerColor"] = {"Power Color", {.7, .7, .7}}
     CellDB["appearance"]["targetColor"] = {1, .19, .19, .5}
     CellDB["appearance"]["mouseoverColor"] = {1, 1, 1, .5}
@@ -370,9 +277,6 @@ resetBtn:SetScript("OnClick", function()
 
     bgColorDropdown:SetSelected(L["Class Color (dark)"])
     bgColorPicker:SetColor({.667, 0, 0})
-
-    nameColorDropdown:SetSelected(L["Custom Color"])
-    nameColorPicker:SetColor({1, 1, 1})
 
     powerColorDropdown:SetSelected(L["Power Color"])
     powerColorPicker:SetColor({.7, .7, .7})
@@ -396,8 +300,6 @@ local function ShowTab(tab)
         -- load data
         CheckTextures()
         scaleDropdown:SetSelected(scales[CellDB["appearance"]["scale"]])
-        CheckFonts()
-        fontOutlineDropdown:SetSelected(L[CellDB["appearance"]["outline"]])
         optionsFontSizeOffset:SetValue(CellDB["appearance"]["optionsFontSizeOffset"])
 
         barColorDropdown:SetSelected(L[CellDB["appearance"]["barColor"][1]])
@@ -405,9 +307,6 @@ local function ShowTab(tab)
 
         bgColorDropdown:SetSelected(L[CellDB["appearance"]["bgColor"][1]])
         bgColorPicker:SetColor(CellDB["appearance"]["bgColor"][2])
-
-        nameColorDropdown:SetSelected(L[CellDB["appearance"]["nameColor"][1]])
-        nameColorPicker:SetColor(CellDB["appearance"]["nameColor"][2])
 
         powerColorDropdown:SetSelected(L[CellDB["appearance"]["powerColor"][1]])
         powerColorPicker:SetColor(CellDB["appearance"]["powerColor"][2])

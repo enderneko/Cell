@@ -36,71 +36,13 @@ local UnitGUID = UnitGUID
 -- local IsInBattleGround = C_PvP.IsBattleground -- NOTE: can't get valid value immediately after PLAYER_ENTERING_WORLD
 
 -------------------------------------------------
--- fonts
+-- fonts -- used by old versions only
 -------------------------------------------------
 local font_name = CreateFont("CELL_FONT_NAME")
 font_name:SetFont(GameFontNormal:GetFont(), 13)
-font_name:SetTextColor(1, 1, 1, 1)
-font_name:SetShadowColor(0, 0, 0, 1)
-font_name:SetShadowOffset(1, -1)
-font_name:SetJustifyH("CENTER")
 
 local font_status = CreateFont("CELL_FONT_STATUS")
 font_status:SetFont(GameFontNormal:GetFont(), 11)
-font_status:SetTextColor(1, 1, 1, 1)
-font_status:SetShadowColor(0, 0, 0, 1)
-font_status:SetShadowOffset(1, -1)
-font_status:SetJustifyH("CENTER")
-
--- local font_icon_center = CreateFont("CELL_FONT_ICON_CENTER")
--- font_icon_center:SetFont(GameFontNormal:GetFont(), 11)
--- font_icon_center:SetTextColor(1, 1, 1, 1)
--- font_icon_center:SetShadowColor(0, 0, 0)
--- font_icon_center:SetShadowOffset(1, -1)
--- font_icon_center:SetJustifyH("CENTER")
-
--- local font_icon_buff = CreateFont("CELL_FONT_ICON_BUFF")
--- font_icon_buff:SetFont(GameFontNormal:GetFont(), 11)
--- font_icon_buff:SetTextColor(1, 1, 1, 1)
--- font_icon_buff:SetShadowColor(0, 0, 0)
--- font_icon_buff:SetShadowOffset(1, -1)
--- font_icon_buff:SetJustifyH("CENTER")
-
--- local font_icon_debuff = CreateFont("CELL_FONT_ICON_DEBUFF")
--- font_icon_debuff:SetFont(GameFontNormal:GetFont(), 11)
--- font_icon_debuff:SetTextColor(1, 1, 1, 1)
--- font_icon_debuff:SetShadowColor(0, 0, 0)
--- font_icon_debuff:SetShadowOffset(1, -1)
--- font_icon_debuff:SetJustifyH("CENTER")
-
-function F:UpdateFont()
-    local layout = Cell.vars.currentLayoutTable
-    local flags
-
-    if CellDB["appearance"]["outline"] == "Shadow" then
-        font_name:SetShadowColor(0, 0, 0, 1)
-        font_status:SetShadowColor(0, 0, 0, 1)
-    else
-        font_name:SetShadowColor(0, 0, 0, 0)
-        font_status:SetShadowColor(0, 0, 0, 0)
-        if CellDB["appearance"]["outline"] == "Outline" then
-            flags = "OUTLINE"
-        else -- Monochrome Outline
-            flags = "OUTLINE,MONOCHROME"
-        end
-    end
-
-    local font
-    if CellDB["appearance"]["font"] == "Cell".._G.DEFAULT then
-        font = GameFontNormal:GetFont()
-    else
-        font = F:GetFont()
-    end
-
-
-    -- font_name:SetFont(font, layout["font"]["name"], flags)
-    font_status:SetFont(font, layout["font"]["status"], flags)
-end
 
 -------------------------------------------------
 -- layout
@@ -124,7 +66,6 @@ function F:UpdateLayout(groupType, isAutoSwitch)
         Cell.vars.currentLayoutTable = CellDB["layouts"][layout]
         Cell:Fire("UpdateLayout", Cell.vars.currentLayout)
         if isAutoSwitch then
-            -- Cell:Fire("UpdateAppearance", "font") -- update text size
             Cell:Fire("UpdateIndicators")
         end
     end
