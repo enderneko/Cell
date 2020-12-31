@@ -120,6 +120,10 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
 				if t["height"] then
 					indicator:SetHeight(t["height"])
 				end
+				-- update height
+				if t["textWidth"] then
+					indicator:UpdateTextWidth(t["textWidth"])
+				end
 				-- update alpha
 				if t["alpha"] then
 					indicator:SetAlpha(t["alpha"])
@@ -153,8 +157,19 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
 				if type(t["showDuration"]) == "boolean" then
 					indicator:ShowDuration(t["showDuration"])
 				end
-				-- init raid icons
-				if t["indicatorName"] == "playerRaidIcon" then
+				-- update vehicleNamePosition
+				if t["vehicleNamePosition"] then
+					indicator:UpdateVehicleNamePosition(t["vehicleNamePosition"])
+				end
+				-- init
+				-- update name visibility
+				if t["indicatorName"] == "nameText" then
+					if t["enabled"] then
+						indicator:Show()
+					else
+						indicator:Hide()
+					end
+				elseif t["indicatorName"] == "playerRaidIcon" then
 					b.func.UpdatePlayerRaidIcon(t["enabled"])
 				elseif t["indicatorName"] == "targetRaidIcon" then
 					b.func.UpdateTargetRaidIcon(t["enabled"])
@@ -168,7 +183,7 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
 		-- changed in IndicatorsTab
 		if setting == "enabled" then
 			enabledIndicators[indicatorName] = value
-			-- update aoehealing
+
             if indicatorName == "aoeHealing" then
 				I:EnableAoEHealing(value)
 			elseif indicatorName == "roleIcon" then
@@ -186,6 +201,14 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
 			elseif indicatorName == "targetRaidIcon" then
 				F:IterateAllUnitButtons(function(b)
 					b.func.UpdateTargetRaidIcon(value)
+				end)
+			elseif indicatorName == "nameText" then
+				F:IterateAllUnitButtons(function(b)
+					if value then
+						b.indicators[indicatorName]:Show()
+					else
+						b.indicators[indicatorName]:Hide()
+					end
 				end)
 			elseif indicatorName == "healthText" then
 				F:IterateAllUnitButtons(function(b)
@@ -228,6 +251,11 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
 				local indicator = b.indicators[indicatorName]
 				indicator:SetHeight(value)
 			end)
+		elseif setting == "textWidth" then
+			F:IterateAllUnitButtons(function(b)
+				local indicator = b.indicators[indicatorName]
+				indicator:UpdateTextWidth(value)
+			end)
 		elseif setting == "alpha" then
 			F:IterateAllUnitButtons(function(b)
 				local indicator = b.indicators[indicatorName]
@@ -258,6 +286,15 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
 			F:IterateAllUnitButtons(function(b)
 				local indicator = b.indicators[indicatorName]
 				indicator:SetColors(value)
+			end)
+		elseif setting == "nameColor" then
+			F:IterateAllUnitButtons(function(b)
+				b.func.UpdateColor()
+			end)
+		elseif setting == "vehicleNamePosition" then
+			F:IterateAllUnitButtons(function(b)
+				local indicator = b.indicators[indicatorName]
+                indicator:UpdateVehicleNamePosition(value)
 			end)
 		elseif setting == "num" then
 			indicatorNums[indicatorName] = value
@@ -1010,11 +1047,11 @@ local function UnitButton_UpdateVehicleStatus(self)
 			local prefix, id, suffix = strmatch(unit, "([^%d]+)([%d]*)(.*)")
 			self.state.displayedUnit = prefix.."pet"..id..suffix
 		end
-		F:UpdateTextWidth(self.widget.vehicleText, UnitName(self.state.displayedUnit))
+		self.indicators.nameText:UpdateVehicleName()
 	else
 		self.state.inVehicle = nil
 		self.state.displayedUnit = self.state.unit
-		self.widget.vehicleText:SetText("")
+		self.indicators.vehicleText:SetText("")
 	end
 end
 
@@ -1090,8 +1127,7 @@ local function UnitButton_UpdateName(self)
 	self.state.class = select(2, UnitClass(unit))
 	self.state.guid = UnitGUID(unit)
 
-	local nameText = self.widget.nameText
-	if self.state.name then F:UpdateTextWidth(nameText, self.state.name) end
+	self.indicators.nameText:UpdateName()
 end
 
 local function GetColor(r, g, b)
@@ -1120,16 +1156,16 @@ local function UnitButton_UpdateColor(self)
 	if not unit then return end
 
 	self.state.class = select(2, UnitClass(unit)) --! update class or it may be nil
-	local nameText = self.widget.nameText
+	local nameText = self.indicators.nameText
 
 	local barR, barG, barB
 	local bgR, bgG, bgB
 	
 	if Cell.loaded then
-		if CellDB["appearance"]["nameColor"][1] == "Class Color" then
+		if Cell.vars.currentLayoutTable["indicators"][1]["nameColor"][1] == "Class Color" then
 			nameText:SetTextColor(F:GetClassColor(self.state.class))
 		else
-			nameText:SetTextColor(unpack(CellDB["appearance"]["nameColor"][2]))
+			nameText:SetTextColor(unpack(Cell.vars.currentLayoutTable["indicators"][1]["nameColor"][2]))
 		end
 	else
 		nameText:SetTextColor(1, 1, 1)
@@ -1491,15 +1527,15 @@ local function UnitButton_OnLeave(self)
 	GameTooltip:Hide()
 end
 
-local function UnitButton_OnSizeChanged(self)
-	if self.state.name then
-		F:UpdateTextWidth(self.widget.nameText, self.state.name)
+-- local function UnitButton_OnSizeChanged(self)
+-- 	if self.state.name then
+-- 		F:UpdateTextWidth(self.widget.nameText, self.state.name)
 		
-		if self.state.inVehicle then
-			F:UpdateTextWidth(self.widget.vehicleText, UnitName(self.state.displayedUnit))
-		end
-	end
-end
+-- 		if self.state.inVehicle then
+-- 			F:UpdateTextWidth(self.widget.vehicleText, UnitName(self.state.displayedUnit))
+-- 		end
+-- 	end
+-- end
 
 local function UnitButton_OnTick(self)
 	local e = (self.__tickCount or 0) + 1
@@ -1768,17 +1804,6 @@ function F:UnitButton_OnLoad(button)
 	overlayFrame:SetFrameLevel(7) -- button:GetFrameLevel() == 3
 	overlayFrame:SetAllPoints(button)
 
-	-- name text
-	local nameText = overlayFrame:CreateFontString(name.."NameText", "ARTWORK", "CELL_FONT_NAME")
-	button.widget.nameText = nameText
-	nameText:SetPoint("CENTER", healthBar)
-
-	-- vehicle text
-	local vehicleText = overlayFrame:CreateFontString(name.."VehicleText", "ARTWORK", "CELL_FONT_STATUS")
-	button.widget.vehicleText = vehicleText
-	vehicleText:SetPoint("TOP", healthBar, 0, -1)
-	vehicleText:SetTextColor(.8, .8, .8, 1)
-
 	-- status text
 	local statusTextFrame = CreateFrame("Frame", name.."StatusTextFrame", overlayFrame)
 	button.widget.statusTextFrame = statusTextFrame
@@ -1920,6 +1945,8 @@ function F:UnitButton_OnLoad(button)
 	end
 
 	-- indicators
+	I:CreateNameText(button)
+	I:CreateHealthText(button)
 	I:CreateRoleIcon(button)
 	I:CreateLeaderIcon(button)
 	I:CreateReadyCheckIcon(button)
@@ -1933,7 +1960,6 @@ function F:UnitButton_OnLoad(button)
 	I:CreateDebuffs(button)
 	I:CreateDispels(button)
 	I:CreateRaidDebuffs(button)
-	I:CreateHealthText(button)
 
 	-- events
 	button:SetScript("OnAttributeChanged", UnitButton_OnAttributeChanged) -- init
@@ -1943,6 +1969,6 @@ function F:UnitButton_OnLoad(button)
 	button:HookScript("OnLeave", UnitButton_OnLeave) -- SecureHandlerEnterLeaveTemplate
 	button:SetScript("OnUpdate", UnitButton_OnUpdate)
 	button:SetScript("OnEvent", UnitButton_OnEvent)
-	button:SetScript("OnSizeChanged", UnitButton_OnSizeChanged)
+	-- button:SetScript("OnSizeChanged", UnitButton_OnSizeChanged)
 	button:RegisterForClicks("AnyDown")
 end

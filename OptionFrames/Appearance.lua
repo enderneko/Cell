@@ -426,17 +426,11 @@ Cell:RegisterCallback("ShowOptionsTab", "AppearanceTab_ShowTab", ShowTab)
 local function UpdateAppearance(which)
     F:Debug("|cff7f7fffUpdateAppearance:|r "..(which or "all"))
     
-    if not which or which == "font" or which == "texture" or which == "color" or which == "highlightColor" or which == "colors" then
-        if not which or which == "font" then F:UpdateFont() end
-
+    if not which or which == "texture" or which == "color" or which == "highlightColor" or which == "colors" then
         local tex
         if not which or which == "texture" then tex = F:GetBarTexture() end
 
         F:IterateAllUnitButtons(function(b)
-            -- font width
-            if not which or which == "font" then
-                b:GetScript("OnSizeChanged")(b)
-            end
             -- texture
             if not which or which == "texture" then
                 b.func.SetTexture(tex)

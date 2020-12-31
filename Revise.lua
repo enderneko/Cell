@@ -168,7 +168,6 @@ local function Revise()
             end
         end
     end
-    ]]
 
     -- r25-release
     if not(CellDB["revise"]) or dbRevision < 25 then
@@ -267,9 +266,10 @@ local function Revise()
             end
         end
     end
+    ]]
 
     -- r33-release
-    if not(CellDB["revise"]) or dbRevision < 33 then
+    if CellDB["revise"] and dbRevision < 33 then
         for _, layout in pairs(CellDB["layouts"]) do
             -- move health text
             local healthTextIndicator
@@ -381,12 +381,27 @@ local function Revise()
     end
 
     -- r36-release
-    if not(CellDB["revise"]) or dbRevision < 36 then
+    if CellDB["revise"] and dbRevision < 36 then
         for _, layout in pairs(CellDB["layouts"]) do
             -- rename Central Debuff
             if layout["indicators"][15] and layout["indicators"][15]["indicatorName"] == "centralDebuff" then
                 layout["indicators"][15]["indicatorName"] = "raidDebuffs"
                 layout["indicators"][15]["name"] = "Raid Debuffs"
+            end
+
+            -- add Name Text
+            if layout["indicators"][1]["indicatorName"] ~= "nameText" then
+                tinsert(layout["indicators"], 1, {
+                    ["name"] = "Name Text",
+                    ["indicatorName"] = "nameText",
+                    ["type"] = "built-in",
+                    ["enabled"] = true,
+                    ["position"] = {"CENTER", "CENTER", 0, 0},
+                    ["font"] = {"Cell ".._G.DEFAULT, 13, "Shadow"},
+                    ["nameColor"] = {"Custom Color", {1, 1, 1}},
+                    ["vehicleNamePosition"] = "TOP",
+                    ["textWidth"] = .75,
+                })
             end
         end
     end

@@ -227,10 +227,10 @@ function F:IterateAllUnitButtons(func)
     end
 end
 
-function F:UpdateTextWidth(fs, text)
+function F:UpdateTextWidth(fs, text, percent)
     if not text then return end
 
-    local percent = Cell.vars.currentLayoutTable and Cell.vars.currentLayoutTable["textWidth"] or .75
+    percent = percent or .75
     if percent == 0 then
         fs:SetText(text)
         return

@@ -43,13 +43,6 @@ local function UpdatePreviewButton()
         previewButton.widget.healthBar:SetStatusBarColor(F:GetClassColor(Cell.vars.playerClass))
         local r, g, b = F:GetPowerColor("player")
         previewButton.widget.powerBar:SetStatusBarColor(r, g, b)
-        
-        local name = UnitName("player")
-        previewButton.widget.nameText:SetText(name)
-
-        previewButton:SetScript("OnSizeChanged", function(self)
-            F:UpdateTextWidth(self.widget.nameText, name)
-        end)
     end
 
     previewButton:SetSize(unpack(currentLayoutTable["size"]))
@@ -80,13 +73,6 @@ local function UpdatePreviewButton()
         r, g, b = F:GetPowerColor("player")
     end
     previewButton.widget.powerBar:SetStatusBarColor(r, g, b)
-
-    -- nameColor
-    if CellDB["appearance"]["nameColor"][1] == "Class Color" then
-        previewButton.widget.nameText:SetTextColor(F:GetClassColor(Cell.vars.playerClass))
-    else
-        previewButton.widget.nameText:SetTextColor(unpack(CellDB["appearance"]["nameColor"][2]))
-    end
 end
 
 -- init preview button indicator animation
@@ -94,7 +80,16 @@ local function InitIndicator(indicatorName)
     local indicator = previewButton.indicators[indicatorName]
     if indicator.init then return end
 
-    if indicatorName == "roleIcon" then
+    if indicatorName == "nameText" then
+        previewButton.state.name = UnitName("player")
+        indicator.isPreview = true
+        indicator:UpdateName()
+        indicator:UpdateVehicleName()
+        -- texture type cannot glow by LCG
+        indicator.preview = CreateFrame("Frame", nil, previewButton)
+        indicator.preview:SetAllPoints(indicator)
+
+    elseif indicatorName == "roleIcon" then
         indicator:SetTexture("Interface\\AddOns\\Cell\\Media\\UI-LFG-ICON-PORTRAITROLES.blp")
         indicator:SetTexCoord(GetTexCoordsForRoleSmallCircle("DAMAGER"))
         -- texture type cannot glow by LCG
@@ -260,8 +255,10 @@ local function UpdateIndicators(layout, indicatorName, setting, value)
             InitIndicator(t["indicatorName"])
             if t["enabled"] then
                 indicator:Show()
-            elseif indicator.preview then
-                indicator.preview:Hide()
+                if indicator.preview then indicator.preview:Show() end
+            else
+                indicator:Hide()
+                if indicator.preview then indicator.preview:Hide() end
             end
             -- update position
             if t["position"] then
@@ -275,6 +272,10 @@ local function UpdateIndicators(layout, indicatorName, setting, value)
             -- update size
             if t["size"] then
                 indicator:SetSize(unpack(t["size"]))
+            end
+            -- update textWidth
+            if t["textWidth"] then
+                indicator:UpdateTextWidth(t["textWidth"])
             end
             -- update border
             if t["border"] then
@@ -320,6 +321,14 @@ local function UpdateIndicators(layout, indicatorName, setting, value)
             if t["colors"] then
                 indicator:SetColors(t["colors"])
             end
+            -- update nameColor
+            if t["nameColor"] then
+                indicator:UpdatePreviewColor(t["nameColor"])
+            end
+            -- update vehicleNamePosition
+            if t["vehicleNamePosition"] then
+                indicator:UpdateVehicleNamePosition(t["vehicleNamePosition"])
+            end
 		end
 	else
         local indicator = previewButton.indicators[indicatorName]
@@ -344,6 +353,8 @@ local function UpdateIndicators(layout, indicatorName, setting, value)
             indicator:SetBorder(value[3])
 		elseif setting == "height" then
             indicator:SetHeight(value)
+        elseif setting == "textWidth" then
+            indicator:UpdateTextWidth(value)
         elseif setting == "alpha" then
             indicator:SetAlpha(value)
             indicator.alpha = value
@@ -366,6 +377,10 @@ local function UpdateIndicators(layout, indicatorName, setting, value)
             indicator:SetColor(unpack(value))
         elseif setting == "colors" then
             indicator:SetColors(value)
+        elseif setting == "nameColor" then
+            indicator:UpdatePreviewColor(value)
+        elseif setting == "vehicleNamePosition" then
+            indicator:UpdateVehicleNamePosition(value)
         elseif setting == "create" then
             indicator = I:CreateIndicator(previewButton, value)
             -- update position
@@ -660,6 +675,7 @@ Cell:CreateScrollFrame(settingsFrame)
 settingsFrame.scrollFrame:SetScrollStep(35)
 
 local indicatorSettings = {
+    ["nameText"] = {"enabled", "nameColor", "textWidth", "vehicleNamePosition", "namePosition", "font-noOffset"},
     ["healthText"] = {"enabled", "format", "checkbutton:hideFull", "color", "position", "frameLevel", "font"},
     ["roleIcon"] = {"enabled", "position", "size-square"},
     ["leaderIcon"] = {"|cffb7b7b7"..L["Leader Icons will hide while in combat"], "enabled", "position", "size-square"},
@@ -733,6 +749,8 @@ local function ShowIndicatorSettings(id)
         -- "enabled", "position", "size", "num", "font"
         local currentSetting = settingsTable[i]
         if currentSetting == "size-square" or currentSetting == "size-bar" then currentSetting = "size" end
+        if currentSetting == "font-noOffset" then currentSetting = "font" end
+        if currentSetting == "namePosition" then currentSetting = "position" end
         
         -- echo
         if string.find(currentSetting, "checkbutton") then
@@ -856,7 +874,7 @@ LoadIndicatorList = function()
         if i:IsObjectType("StatusBar") then
             LCG.PixelGlow_Start(i.border)
             i:SetAlpha(1)
-        elseif i:IsObjectType("Texture") then
+        elseif i:IsObjectType("Texture") or i:IsObjectType("FontString") then
             LCG.PixelGlow_Start(i.preview)
             i:SetAlpha(i.alpha or 1)
         else
@@ -871,7 +889,7 @@ LoadIndicatorList = function()
         local i = previewButton.indicators[currentLayoutTable["indicators"][id]["indicatorName"]]
         if i:IsObjectType("StatusBar") then
             LCG.PixelGlow_Stop(i.border)
-        elseif i:IsObjectType("Texture") then
+        elseif i:IsObjectType("Texture") or i:IsObjectType("FontString") then
             LCG.PixelGlow_Stop(i.preview)
         else
             LCG.PixelGlow_Stop(i)
@@ -896,8 +914,8 @@ local function ShowTab(tab)
         if currentLayout == Cell.vars.currentLayout then return end
         currentLayout = Cell.vars.currentLayout
         currentLayoutTable = Cell.vars.currentLayoutTable
-        UpdateIndicators()
         UpdatePreviewButton()
+        UpdateIndicators()
         
         layoutDropdown:SetSelected(currentLayout == "default" and _G.DEFAULT or currentLayout)
         LoadIndicatorList()

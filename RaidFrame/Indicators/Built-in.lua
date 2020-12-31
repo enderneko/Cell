@@ -336,53 +336,115 @@ end
 -- name text
 -------------------------------------------------
 function I:CreateNameText(parent)
-    local nameText = overlayFrame:CreateFontString(name.."NameText", "ARTWORK", "CELL_FONT_NAME")
-	parent.indicators.nameText = nameText
+    local nameText = parent.widget.overlayFrame:CreateFontString(parent:GetName().."NameText", "ARTWORK", "CELL_FONT_NAME")
+    parent.indicators.nameText = nameText
+    nameText:Hide()
     -- nameText:SetPoint("CENTER", healthBar)
     
-    function nameText:SetFont(font, size, flags, horizontalOffset)
+    local vehicleText = parent.widget.overlayFrame:CreateFontString(parent:GetName().."VehicleText", "ARTWORK", "CELL_FONT_STATUS")
+	parent.indicators.vehicleText = vehicleText
+    vehicleText:SetTextColor(.8, .8, .8, 1)
+    vehicleText:Hide()
+	-- vehicleText:SetPoint("TOP", healthBar, 0, -1)
+
+    hooksecurefunc(nameText, "Show", function()
+        if vehicleText.enabled then
+            vehicleText:Show()
+        end
+    end)
+    hooksecurefunc(nameText, "Hide", function()
+        vehicleText:Hide()
+    end)
+    hooksecurefunc(nameText, "SetAlpha", function(self, alpha)
+        vehicleText:SetAlpha(alpha)
+    end)
+
+
+    nameText.OriginalSetFont = nameText.SetFont
+    function nameText:SetFont(font, size, flags)
         if not string.find(font, ".ttf") then font = F:GetFont(font) end
 
         if flags == "Shadow" then
-            text:SetFont(font, size)
-            text:SetShadowOffset(1, -1)
-            text:SetShadowColor(0, 0, 0, 1)
+            nameText:OriginalSetFont(font, size)
+            nameText:SetShadowOffset(1, -1)
+            nameText:SetShadowColor(0, 0, 0, 1)
+            vehicleText:SetFont(font, size-2)
+            vehicleText:SetShadowOffset(1, -1)
+            vehicleText:SetShadowColor(0, 0, 0, 1)
         else
             if flags == "Outline" then
                 flags = "OUTLINE"
             else
                 flags = "OUTLINE, MONOCHROME"
             end
-            text:SetFont(font, size, flags)
-            text:SetShadowOffset(0, 0)
-            text:SetShadowColor(0, 0, 0, 0)
+            nameText:OriginalSetFont(font, size, flags)
+            nameText:SetShadowOffset(0, 0)
+            nameText:SetShadowColor(0, 0, 0, 0)
+            vehicleText:SetFont(font, size-2, flags)
+            vehicleText:SetShadowOffset(0, 0)
+            vehicleText:SetShadowColor(0, 0, 0, 0)
         end
-
-        local point = nameText:GetPoint(1)
-        text:ClearAllPoints()
-        if string.find(point, "LEFT") then
-            text:SetPoint("LEFT", horizontalOffset, 0)
-        elseif string.find(point, "RIGHT") then
-            text:SetPoint("RIGHT", horizontalOffset, 0)
-        else
-            text:SetPoint("CENTER", horizontalOffset, 0)
+        nameText:UpdateName()
+        if parent.state.inVehicle or nameText.isPreview then
+            nameText:UpdateVehicleName()
         end
-        nameText:SetSize(text:GetStringWidth()+3, size+3)
     end
 
-    healthText.OriginalSetPoint = healthText.SetPoint
-    function healthText:SetPoint(point, relativeTo, relativePoint, x, y)
-        local horizontalOffset = select(4, text:GetPoint(1))
-        text:ClearAllPoints()
-        if string.find(point, "LEFT") then
-            text:SetPoint("LEFT", horizontalOffset, 0)
-        elseif string.find(point, "RIGHT") then
-            text:SetPoint("RIGHT", horizontalOffset, 0)
-        else
-            text:SetPoint("CENTER", horizontalOffset, 0)
-        end
-        healthText:OriginalSetPoint(point, relativeTo, relativePoint, x, y)
+    nameText.OriginalSetPoint = nameText.SetPoint
+    function nameText:SetPoint(point, relativeTo, relativePoint, x, y)
+        -- override relativeTo
+        nameText:OriginalSetPoint(point, parent.widget.healthBar, relativePoint, x, y)
     end
+
+    function nameText:UpdateName()
+        F:UpdateTextWidth(nameText, parent.state.name, nameText.width)
+    end
+
+    function nameText:UpdateVehicleName()
+        F:UpdateTextWidth(vehicleText, nameText.isPreview and L["Vehicle Name"] or UnitName(parent.state.displayedUnit), nameText.width)
+    end
+
+    function nameText:UpdateVehicleNamePosition(pTable)
+        vehicleText:ClearAllPoints()
+        if pTable[1] == "TOP" then
+            vehicleText:Show()
+            vehicleText:SetPoint("BOTTOM", nameText, "TOP", 0, pTable[2])
+            vehicleText.enabled = true
+        elseif pTable[1] == "BOTTOM" then
+            vehicleText:Show()
+            vehicleText:SetPoint("TOP", nameText, "BOTTOM", 0, pTable[2])
+            vehicleText.enabled = true
+        else -- Hide
+            vehicleText:Hide()
+            vehicleText.enabled = false
+        end
+    end
+
+    function nameText:UpdateTextWidth(width)
+        nameText.width = width
+        F:UpdateTextWidth(nameText, parent.state.name, width)
+        if parent.state.inVehicle or nameText.isPreview then
+            F:UpdateTextWidth(vehicleText, nameText.isPreview and L["Vehicle Name"] or UnitName(parent.state.displayedUnit), width)
+        end
+    end
+
+    function nameText:UpdatePreviewColor(color)
+        if color[1] == "Class Color" then
+            nameText:SetTextColor(F:GetClassColor(Cell.vars.playerClass))
+        else
+            nameText:SetTextColor(unpack(color[2]))
+        end
+    end
+
+    parent:SetScript("OnSizeChanged", function()
+        if parent.state.name then
+            nameText:UpdateName()
+            
+            if parent.state.inVehicle or nameText.isPreview then
+                nameText:UpdateVehicleName()
+            end
+        end
+    end)
 end
 
 -------------------------------------------------

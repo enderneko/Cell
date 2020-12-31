@@ -37,27 +37,33 @@ local function UpdatePreviewButton(which, value)
     if not previewButton.loaded then
         previewButton.loaded = true
         
-        -- bar
-        previewButton.widget.healthBar:SetStatusBarColor(F:GetClassColor(Cell.vars.playerClass))
-        local r, g, b = F:GetPowerColor("player")
-        previewButton.widget.powerBar:SetStatusBarColor(r, g, b)
-        
         -- text
         local name, vehicleName, status = UnitName("player"), L["vehicle name"], L["DEAD"]
         
-        previewButton.widget.nameText:SetText(name)
-        previewButton.widget.vehicleText:SetText(vehicleName)
         previewButton.widget.statusText:SetText(status)
         previewButton.widget.statusTextFrame:Show()
 
-        previewButton.widget.nameText:SetFont(CELL_FONT_NAME:GetFont(), selectedLayoutTable["font"]["name"])
-        previewButton.widget.vehicleText:SetFont(CELL_FONT_STATUS:GetFont(), selectedLayoutTable["font"]["status"])
         previewButton.widget.statusText:SetFont(CELL_FONT_STATUS:GetFont(), selectedLayoutTable["font"]["status"])
+    end
 
-        previewButton:SetScript("OnSizeChanged", function(self)
-            F:UpdateTextWidth(self.widget.nameText, name)
-			F:UpdateTextWidth(self.widget.vehicleText, vehicleName)
-        end)
+    if not which or which == "nameText" then
+        local iTable = selectedLayoutTable["indicators"][1]
+        if iTable["enabled"] then
+            previewButton.indicators.nameText:Show()
+            previewButton.indicators.nameText.isPreview = true
+            previewButton.state.name = UnitName("player")
+            previewButton.indicators.nameText:UpdateName()
+            previewButton.indicators.nameText:UpdatePreviewColor(iTable["nameColor"])
+            previewButton.indicators.nameText:UpdateTextWidth(iTable["textWidth"])
+            previewButton.indicators.nameText:SetFont(unpack(iTable["font"]))
+            previewButton.indicators.nameText:ClearAllPoints()
+            previewButton.indicators.nameText:SetPoint(unpack(iTable["position"]))
+
+            previewButton.indicators.nameText:UpdateVehicleName()
+            previewButton.indicators.nameText:UpdateVehicleNamePosition(iTable["vehicleNamePosition"])
+        else
+            previewButton.indicators.nameText:Hide()
+        end
     end
 
     if not which or which == "appearance" then
@@ -85,13 +91,6 @@ local function UpdatePreviewButton(which, value)
             r, g, b = F:GetPowerColor("player")
         end
         previewButton.widget.powerBar:SetStatusBarColor(r, g, b)
-
-        -- nameColor
-        if CellDB["appearance"]["nameColor"][1] == "Class Color" then
-            previewButton.widget.nameText:SetTextColor(F:GetClassColor(Cell.vars.playerClass))
-        else
-            previewButton.widget.nameText:SetTextColor(unpack(CellDB["appearance"]["nameColor"][2]))
-        end
     end
     
     if not which or which == "size" then
@@ -100,28 +99,6 @@ local function UpdatePreviewButton(which, value)
 
     if not which or which == "power" then
         previewButton.func.SetPowerHeight(selectedLayoutTable["powerHeight"])
-    end
-
-    local flags
-    if CellDB["appearance"]["outline"] == "Outline" then
-        flags = "OUTLINE"
-    elseif CellDB["appearance"]["outline"] == "Monochrome Outline" then
-        flags = "OUTLINE, MONOCHROME"
-    end    
-
-    if not which or which == "font" or which == "nameFont" then
-        previewButton.widget.nameText:SetFont(CELL_FONT_NAME:GetFont(), value or selectedLayoutTable["font"]["name"], flags)
-        previewButton:GetScript("OnSizeChanged")(previewButton)
-    end
-    
-    if not which or which == "font" or which == "statusFont" then
-        previewButton.widget.vehicleText:SetFont(CELL_FONT_NAME:GetFont(), value or selectedLayoutTable["font"]["status"], flags)
-        previewButton.widget.statusText:SetFont(CELL_FONT_NAME:GetFont(), value or selectedLayoutTable["font"]["status"], flags)
-        previewButton:GetScript("OnSizeChanged")(previewButton)
-    end
-
-    if not which or which == "textWidth" then
-        previewButton:GetScript("OnSizeChanged")(previewButton)
     end
 end
 
@@ -1276,3 +1253,12 @@ local function UpdateAppearance()
     end
 end
 Cell:RegisterCallback("UpdateAppearance", "LayoutsTab_UpdateAppearance", UpdateAppearance)
+
+local function UpdateIndicators(layout, indicatorName, setting, value)
+    if previewButton.loaded and selectedLayout == Cell.vars.currentLayout then
+        if not layout or indicatorName == "nameText" then
+            UpdatePreviewButton("nameText")
+        end
+    end
+end
+Cell:RegisterCallback("UpdateIndicators", "LayoutsTab_UpdateIndicators", UpdateIndicators)

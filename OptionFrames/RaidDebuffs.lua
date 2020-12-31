@@ -1099,23 +1099,25 @@ previewText:SetText(Cell:GetPlayerClassColorString()..L["Preview"])
 local function UpdatePreviewButton()
     if not previewButton.loaded then
         previewButton.loaded = true
-        
-        previewButton.widget.healthBar:SetStatusBarColor(F:GetClassColor(Cell.vars.playerClass))
-        local r, g, b = F:GetPowerColor("player")
-        previewButton.widget.powerBar:SetStatusBarColor(r, g, b)
-        
-        local name = UnitName("player")
-        previewButton.widget.nameText:SetText(name)
+    end
 
-        previewButton:SetScript("OnSizeChanged", function(self)
-            F:UpdateTextWidth(self.widget.nameText, name)
-        end)
+    local iTable = Cell.vars.currentLayoutTable["indicators"][1]
+    if iTable["enabled"] then
+        previewButton.indicators.nameText:Show()
+        previewButton.state.name = UnitName("player")
+        previewButton.indicators.nameText:UpdateName()
+        previewButton.indicators.nameText:UpdatePreviewColor(iTable["nameColor"])
+        previewButton.indicators.nameText:UpdateTextWidth(iTable["textWidth"])
+        previewButton.indicators.nameText:SetFont(unpack(iTable["font"]))
+        previewButton.indicators.nameText:ClearAllPoints()
+        previewButton.indicators.nameText:SetPoint(unpack(iTable["position"]))
+    else
+        previewButton.indicators.nameText:Hide()
     end
 
     previewButton:SetSize(unpack(Cell.vars.currentLayoutTable["size"]))
     previewButton.func.SetPowerHeight(Cell.vars.currentLayoutTable["powerHeight"])
-    previewButton:GetScript("OnSizeChanged")(previewButton)
-    
+
     previewButton.widget.healthBar:SetStatusBarTexture(Cell.vars.texture)
     previewButton.widget.powerBar:SetStatusBarTexture(Cell.vars.texture)
 
@@ -1140,13 +1142,6 @@ local function UpdatePreviewButton()
         r, g, b = F:GetPowerColor("player")
     end
     previewButton.widget.powerBar:SetStatusBarColor(r, g, b)
-
-    -- nameColor
-    if CellDB["appearance"]["nameColor"][1] == "Class Color" then
-        previewButton.widget.nameText:SetTextColor(F:GetClassColor(Cell.vars.playerClass))
-    else
-        previewButton.widget.nameText:SetTextColor(unpack(CellDB["appearance"]["nameColor"][2]))
-    end
 end
 
 previewButton.fadeIn = previewButton:CreateAnimationGroup()
@@ -1514,3 +1509,12 @@ local function UpdateAppearance()
     end
 end
 Cell:RegisterCallback("UpdateAppearance", "RaidDebuffsTab_UpdateAppearance", UpdateAppearance)
+
+local function UpdateIndicators(layout, indicatorName, setting, value)
+    if previewButton.loaded then
+        if not layout or indicatorName == "nameText" then
+            UpdatePreviewButton()
+        end
+    end
+end
+Cell:RegisterCallback("UpdateIndicators", "RaidDebuffsTab_UpdateIndicators", UpdateIndicators)

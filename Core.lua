@@ -98,7 +98,7 @@ function F:UpdateFont()
     end
 
 
-    font_name:SetFont(font, layout["font"]["name"], flags)
+    -- font_name:SetFont(font, layout["font"]["name"], flags)
     font_status:SetFont(font, layout["font"]["status"], flags)
 end
 
@@ -124,7 +124,7 @@ function F:UpdateLayout(groupType, isAutoSwitch)
         Cell.vars.currentLayoutTable = CellDB["layouts"][layout]
         Cell:Fire("UpdateLayout", Cell.vars.currentLayout)
         if isAutoSwitch then
-            Cell:Fire("UpdateAppearance", "font") -- update text size
+            -- Cell:Fire("UpdateAppearance", "font") -- update text size
             Cell:Fire("UpdateIndicators")
         end
     end
@@ -267,9 +267,19 @@ function eventFrame:ADDON_LOADED(arg1)
                         ["name"] = 13,
                         ["status"] = 11,
                     },
-                    ["textWidth"] = .75,
                     ["groupFilter"] = {true, true, true, true, true, true, true, true},
                     ["indicators"] = {
+                        {
+                            ["name"] = "Name Text",
+                            ["indicatorName"] = "nameText",
+                            ["type"] = "built-in",
+                            ["enabled"] = true,
+                            ["position"] = {"CENTER", "CENTER", 0, 0},
+                            ["font"] = {"Cell ".._G.DEFAULT, 13, "Shadow"},
+                            ["nameColor"] = {"Custom Color", {1, 1, 1}},
+                            ["vehicleNamePosition"] = {"TOP", 0},
+                            ["textWidth"] = .75,
+                        },
                         {
                             ["name"] = "Health Text",
                             ["indicatorName"] = "healthText",
