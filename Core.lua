@@ -361,6 +361,7 @@ function eventFrame:ADDON_LOADED(arg1)
                             ["size"] = {13, 13},
                             ["num"] = 3,
                             ["font"] = {"Cell ".._G.DEFAULT, 11, "Outline", 2},
+                            ["dispellableByMe"] = false,
                         },
                         {
                             ["name"] = "Raid Debuffs",

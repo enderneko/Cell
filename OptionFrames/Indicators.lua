@@ -693,11 +693,11 @@ local indicatorSettings = {
     ["targetRaidIcon"] = {"enabled", "position", "frameLevel", "size-square", "alpha"},
     ["aggroBar"] = {"enabled", "position", "frameLevel", "size-bar"},
     ["aoeHealing"] = {"enabled", "color", "height"},
-    ["externalCooldowns"] = {"enabled", "position", "frameLevel", "size", "num"},
-    ["defensiveCooldowns"] = {"enabled", "position", "frameLevel", "size", "num"},
+    ["externalCooldowns"] = {"enabled", "num", "position", "frameLevel", "size"},
+    ["defensiveCooldowns"] = {"enabled", "num", "position", "frameLevel", "size"},
     ["tankActiveMitigation"] = {"enabled", "position", "frameLevel", "size"},
     ["dispels"] = {"enabled", "checkbutton:dispellableByMe", "checkbutton2:enableHighlight", "position", "frameLevel", "size-square"},
-    ["debuffs"] = {"enabled", "blacklist", "frameLevel", "position", "size-square", "num", "font"},
+    ["debuffs"] = {"enabled", "blacklist", "checkbutton:dispellableByMe", "num", "position", "frameLevel", "size-square", "font"},
     ["raidDebuffs"] = {"|cffb7b7b7"..L["You can config debuffs in %s"]:format(Cell:GetPlayerClassColorString()..L["Raid Debuffs"].."|r"), "enabled", "checkbutton:onlyShowTopGlow", "position", "frameLevel", "size-border", "font"},
 }
 

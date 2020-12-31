@@ -448,9 +448,17 @@ local function UnitButton_UpdateDebuffs(self)
 				refreshing = debuffs_cache[unit][spellId] and ((expirationTime == 0 and debuffs_cache_count[unit][spellId] and count > debuffs_cache_count[unit][spellId]) or expirationTime-duration+.1>=GetTime())
 
 				if enabledIndicators["debuffs"] and found <= indicatorNums["debuffs"] then
-					-- start, duration, debuffType, texture, count, refreshing
-					self.indicators.debuffs[found]:SetCooldown(expirationTime - duration, duration, debuffType or "", icon, count, refreshing)
-					found = found + 1
+					if indicatorCustoms["debuffs"] then -- dispellableByMe
+						if I:CanDispel(debuffType) then
+							-- start, duration, debuffType, texture, count, refreshing
+							self.indicators.debuffs[found]:SetCooldown(expirationTime - duration, duration, debuffType or "", icon, count, refreshing)
+							found = found + 1
+						end
+					else
+						-- start, duration, debuffType, texture, count, refreshing
+						self.indicators.debuffs[found]:SetCooldown(expirationTime - duration, duration, debuffType or "", icon, count, refreshing)
+						found = found + 1
+					end
 				end
 				
 				-- user created indicators
@@ -477,7 +485,7 @@ local function UnitButton_UpdateDebuffs(self)
 			end
 
 			if enabledIndicators["dispels"] and debuffType and debuffType ~= "" then
-				if indicatorCustoms["dispels"] then
+				if indicatorCustoms["dispels"] then -- dispellableByMe
 					if I:CanDispel(debuffType) then debuffs_dispel[unit][debuffType] = true end
 				else
 					debuffs_dispel[unit][debuffType] = true
