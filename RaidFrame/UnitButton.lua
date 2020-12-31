@@ -210,6 +210,10 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
 						b.indicators[indicatorName]:Hide()
 					end
 				end)
+			elseif indicatorName == "statusText" then
+				F:IterateAllUnitButtons(function(b)
+					b.func.UpdateStatusText()
+				end)
 			elseif indicatorName == "healthText" then
 				F:IterateAllUnitButtons(function(b)
 					b.func.UpdateHealthText()
@@ -585,10 +589,10 @@ local function UnitButton_UpdateBuffs(self)
 			end
 
 			-- drinking
-			if I:IsDrinking(name) then
-				if not self.widget.statusText:GetText() then
-					self.widget.statusText:SetText("|cff30BFFF"..L["DRINKING"])
-					self.widget.statusTextFrame:Show()
+			if enabledIndicators["statusText"] and I:IsDrinking(name) then
+				if not self.indicators.statusText:GetText() then
+					self.indicators.statusText:SetText("|cff30BFFF"..L["DRINKING"])
+					self.indicators.statusText:Show()
 				end
 				drinkingFound = true
 			end
@@ -617,9 +621,9 @@ local function UnitButton_UpdateBuffs(self)
 	end
 	
 	-- hide drinking
-	if not drinkingFound and self.widget.statusText:GetText() == "|cff30BFFF"..L["DRINKING"] then
-		self.widget.statusTextFrame:Hide()
-		self.widget.statusText:SetText("")
+	if not drinkingFound and self.indicators.statusText:GetText() == "|cff30BFFF"..L["DRINKING"] then
+		self.indicators.statusText:Hide()
+		self.indicators.statusText:SetText("")
 	end
 	
 	-- update buffs_cache
@@ -1075,33 +1079,38 @@ local function UnitButton_UpdatePhase(self)
 end
 
 local function UnitButton_UpdateStatusText(self)
+	local statusText = self.indicators.statusText
+	if not enabledIndicators["statusText"] then
+		statusText:Hide()
+		statusText:SetText("")
+		return
+	end
+
 	local unit = self.state.unit
 	if not unit then return end
 
-	local statusTextFrame = self.widget.statusTextFrame
-	local statusText = self.widget.statusText
 	self.state.guid = UnitGUID(unit) -- update!
 	if not self.state.guid then return end
 
 	if not UnitIsConnected(unit) and UnitIsPlayer(unit) then
-		statusTextFrame:Show()
+		statusText:Show()
 		statusText:SetText(L["OFFLINE"])
-		self.func.ShowTimer("offline")
+		statusText:ShowTimer()
 	elseif UnitIsAFK(unit) then
-		statusTextFrame:Show()
+		statusText:Show()
 		statusText:SetText(L["AFK"])
-		self.func.ShowTimer("afk")
+		statusText:ShowTimer()
 	elseif UnitIsDeadOrGhost(unit) then
-		statusTextFrame:Show()
-		self.func.HideTimer(true)
+		statusText:Show()
+		statusText:HideTimer(true)
 		if UnitIsGhost(unit) then
 			statusText:SetText(L["GHOST"])
 		else
 			statusText:SetText(L["DEAD"])
 		end
 	elseif C_IncomingSummon.HasIncomingSummon(unit) then
-		statusTextFrame:Show()
-		self.func.HideTimer()
+		statusText:Show()
+		statusText:HideTimer()
 		local status = C_IncomingSummon.IncomingSummonStatus(unit)
 		if status == Enum.SummonStatus.Pending then
             statusText:SetText("|cffFFFF30"..L["PENDING"])
@@ -1113,8 +1122,8 @@ local function UnitButton_UpdateStatusText(self)
 			C_Timer.After(6, function() UnitButton_UpdateStatusText(self) end)
         end
 	else
-		statusTextFrame:Hide()
-		self.func.HideTimer(true)
+		statusText:Hide()
+		statusText:HideTimer(true)
 		statusText:SetText("")
 	end
 end
@@ -1804,60 +1813,6 @@ function F:UnitButton_OnLoad(button)
 	overlayFrame:SetFrameLevel(7) -- button:GetFrameLevel() == 3
 	overlayFrame:SetAllPoints(button)
 
-	-- status text
-	local statusTextFrame = CreateFrame("Frame", name.."StatusTextFrame", overlayFrame)
-	button.widget.statusTextFrame = statusTextFrame
-	-- statusTextFrame:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8x8"})
-	-- statusTextFrame:SetBackdropColor(.1, .1, .1, .6)
-	statusTextFrame:SetFrameLevel(27)
-	statusTextFrame:Hide()
-
-	local statusText = statusTextFrame:CreateFontString(name.."StatusText", "ARTWORK", "CELL_FONT_STATUS")
-	button.widget.statusText = statusText
-	statusText:SetPoint("BOTTOMLEFT", healthBar)
-	statusText:SetTextColor(1, .19, .19)
-
-	statusTextFrame:SetPoint("BOTTOMLEFT", healthBar)
-	statusTextFrame:SetPoint("BOTTOMRIGHT", healthBar)
-	statusTextFrame:SetPoint("TOP", statusText, 0, 2)
-
-	-- afk/offline timer
-	local timerText = statusTextFrame:CreateFontString(name.."TimerText", "ARTWORK", "CELL_FONT_STATUS")
-	button.widget.timerText = timerText
-	timerText:SetPoint("BOTTOMRIGHT", healthBar)
-	timerText:SetTextColor(1, .19, .19)
-	timerText:SetJustifyH("RIGHT")
-
-	button.func.ShowTimer = function(status)
-		timerText:Show()
-		-- if statusCache[button.state.guid] ~= status then
-		-- 	startTimeCache[button.state.guid] = GetTime()
-		-- end
-		-- statusCache[button.state.guid] = status
-		if not startTimeCache[button.state.guid] then startTimeCache[button.state.guid] = GetTime() end
-		
-		button.func.UpdateTimer = C_Timer.NewTicker(1, function()
-			if not button.state.guid and button.state.unit then -- ElvUI AFK mode
-				button.state.guid = UnitGUID(button.state.unit)
-			end
-			if button.state.guid and startTimeCache[button.state.guid] then
-				timerText:SetFormattedText(F:FormatTime(GetTime() - startTimeCache[button.state.guid]))
-			else
-				timerText:SetText("")
-			end
-		end)
-	end
-
-	button.func.HideTimer = function(reset)
-		timerText:Hide()
-		timerText:SetText("")
-		if reset then
-			if button.func.UpdateTimer then button.func.UpdateTimer:Cancel() end
-			startTimeCache[button.state.guid] = nil
-			-- statusCache[button.state.guid] = nil
-		end
-	end
-	
 	-- phase icon
 	local phaseIcon = overlayFrame:CreateTexture(name.."PhaseIcon", "OVERLAY", nil, -7)
 	button.widget.phaseIcon = phaseIcon
@@ -1944,8 +1899,14 @@ function F:UnitButton_OnLoad(button)
 		end
 	end
 
+	-- statusText
+	button.func.UpdateStatusText = function()
+		UnitButton_UpdateStatusText(button)
+	end
+
 	-- indicators
 	I:CreateNameText(button)
+	I:CreateStatusText(button)
 	I:CreateHealthText(button)
 	I:CreateRoleIcon(button)
 	I:CreateLeaderIcon(button)

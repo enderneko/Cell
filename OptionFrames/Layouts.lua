@@ -36,14 +36,6 @@ previewText:SetText(Cell:GetPlayerClassColorString()..L["Preview"])
 local function UpdatePreviewButton(which, value)
     if not previewButton.loaded then
         previewButton.loaded = true
-        
-        -- text
-        local name, vehicleName, status = UnitName("player"), L["vehicle name"], L["DEAD"]
-        
-        previewButton.widget.statusText:SetText(status)
-        previewButton.widget.statusTextFrame:Show()
-
-        previewButton.widget.statusText:SetFont(CELL_FONT_STATUS:GetFont(), selectedLayoutTable["font"]["status"])
     end
 
     if not which or which == "nameText" then
@@ -63,6 +55,20 @@ local function UpdatePreviewButton(which, value)
             previewButton.indicators.nameText:UpdateVehicleNamePosition(iTable["vehicleNamePosition"])
         else
             previewButton.indicators.nameText:Hide()
+        end
+    end
+
+    if not which or which == "statusText" then
+        local iTable = selectedLayoutTable["indicators"][2]
+        if iTable["enabled"] then
+            previewButton.indicators.statusText:Show()
+            previewButton.indicators.statusText:SetFont(unpack(iTable["font"]))
+            previewButton.indicators.statusText:ClearAllPoints()
+            previewButton.indicators.statusText:SetPoint(iTable["position"][1], nil, iTable["position"][2])
+            previewButton.indicators.statusText.text:SetText(L["OFFLINE"])
+            previewButton.indicators.statusText.timer:SetText("13m")
+        else
+            previewButton.indicators.statusText:Hide()
         end
     end
 
@@ -1258,6 +1264,9 @@ local function UpdateIndicators(layout, indicatorName, setting, value)
     if previewButton.loaded and selectedLayout == Cell.vars.currentLayout then
         if not layout or indicatorName == "nameText" then
             UpdatePreviewButton("nameText")
+        end
+        if not layout or indicatorName == "statusText" then
+            UpdatePreviewButton("statusText")
         end
     end
 end

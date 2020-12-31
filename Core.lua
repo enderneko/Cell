@@ -281,6 +281,15 @@ function eventFrame:ADDON_LOADED(arg1)
                             ["textWidth"] = .75,
                         },
                         {
+                            ["name"] = "Status Text",
+                            ["indicatorName"] = "statusText",
+                            ["type"] = "built-in",
+                            ["enabled"] = true,
+                            ["position"] = {"BOTTOM", 0},
+                            ["frameLevel"] = 30,
+                            ["font"] = {"Cell ".._G.DEFAULT, 11, "Shadow"},
+                        },
+                        {
                             ["name"] = "Health Text",
                             ["indicatorName"] = "healthText",
                             ["type"] = "built-in",

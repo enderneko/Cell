@@ -89,6 +89,13 @@ local function InitIndicator(indicatorName)
         indicator.preview = CreateFrame("Frame", nil, previewButton)
         indicator.preview:SetAllPoints(indicator)
 
+    elseif indicatorName == "statusText" then
+        indicator.text:SetText(L["OFFLINE"])
+        indicator.timer:SetText("13m")
+        -- texture type cannot glow by LCG
+        indicator.preview = CreateFrame("Frame", nil, previewButton)
+        indicator.preview:SetAllPoints(indicator)
+
     elseif indicatorName == "roleIcon" then
         indicator:SetTexture("Interface\\AddOns\\Cell\\Media\\UI-LFG-ICON-PORTRAITROLES.blp")
         indicator:SetTexCoord(GetTexCoordsForRoleSmallCircle("DAMAGER"))
@@ -676,6 +683,7 @@ settingsFrame.scrollFrame:SetScrollStep(35)
 
 local indicatorSettings = {
     ["nameText"] = {"enabled", "nameColor", "textWidth", "vehicleNamePosition", "namePosition", "font-noOffset"},
+    ["statusText"] = {"enabled", "statusPosition", "frameLevel", "font-noOffset"},
     ["healthText"] = {"enabled", "format", "checkbutton:hideFull", "color", "position", "frameLevel", "font"},
     ["roleIcon"] = {"enabled", "position", "size-square"},
     ["leaderIcon"] = {"|cffb7b7b7"..L["Leader Icons will hide while in combat"], "enabled", "position", "size-square"},
@@ -750,7 +758,7 @@ local function ShowIndicatorSettings(id)
         local currentSetting = settingsTable[i]
         if currentSetting == "size-square" or currentSetting == "size-bar" then currentSetting = "size" end
         if currentSetting == "font-noOffset" then currentSetting = "font" end
-        if currentSetting == "namePosition" then currentSetting = "position" end
+        if currentSetting == "namePosition" or currentSetting == "statusPosition" then currentSetting = "position" end
         
         -- echo
         if string.find(currentSetting, "checkbutton") then

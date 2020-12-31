@@ -403,6 +403,19 @@ local function Revise()
                     ["textWidth"] = .75,
                 })
             end
+
+            -- add Status Text
+            if layout["indicators"][2]["indicatorName"] ~= "statusText" then
+                tinsert(layout["indicators"], 2, {
+                    ["name"] = "Status Text",
+                    ["indicatorName"] = "statusText",
+                    ["type"] = "built-in",
+                    ["enabled"] = true,
+                    ["position"] = {"BOTTOM", 0},
+                    ["frameLevel"] = 30,
+                    ["font"] = {"Cell ".._G.DEFAULT, 11, "Shadow"},
+                })
+            end
         end
     end
 

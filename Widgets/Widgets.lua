@@ -2887,6 +2887,60 @@ local function CreateSetting_VehicleNamePosition(parent)
     return widget
 end
 
+local function CreateSetting_StatusPosition(parent)
+    local widget
+
+    if not settingWidgets["statusPosition"] then
+        widget = addon:CreateFrame("CellIndicatorSettings_StatusPosition", parent, 240, 50)
+        settingWidgets["statusPosition"] = widget
+
+        widget.position = addon:CreateDropdown(widget, 100)
+        widget.position:SetPoint("TOPLEFT", 5, -20)
+        widget.position:SetItems({
+            {
+                ["text"] = L["TOP"],
+                ["value"] = "TOP",
+                ["onClick"] = function()
+                    widget.func({"TOP", widget.yOffset:GetValue()})
+                end,
+            },
+            {
+                ["text"] = L["BOTTOM"],
+                ["value"] = "BOTTOM",
+                ["onClick"] = function()
+                    widget.func({"BOTTOM", widget.yOffset:GetValue()})
+                end,
+            },
+        })
+
+        widget.positionText = widget:CreateFontString(nil, "OVERLAY", font_name)
+        widget.positionText:SetText(L["Status Text Position"])
+        widget.positionText:SetPoint("BOTTOMLEFT", widget.position, "TOPLEFT", 0, 1)
+
+        widget.yOffset = addon:CreateSlider(L["Y Offset"], widget, -50, 50, 100, 1)
+        widget.yOffset:SetPoint("TOPLEFT", widget.position, "TOPRIGHT", 25, 0)
+        widget.yOffset.afterValueChangedFn = function(value)
+            widget.func({widget.position:GetSelected(), value})
+        end
+
+        -- associate db
+        function widget:SetFunc(func)
+            widget.func = func
+        end
+        
+        -- show db value
+        function widget:SetDBValue(pTable)
+            widget.position:SetSelected(L[pTable[1]])
+            widget.yOffset:SetValue(pTable[2])
+        end
+    else
+        widget = settingWidgets["statusPosition"]
+    end
+
+    widget:Show()
+    return widget
+end
+
 local function CreateSetting_Font(parent)
     local widget
 
@@ -3721,6 +3775,8 @@ function addon:CreateIndicatorSettings(parent, settingsTable)
             tinsert(widgetsTable, CreateSetting_TextWidth(parent))
         elseif setting == "vehicleNamePosition" then
             tinsert(widgetsTable, CreateSetting_VehicleNamePosition(parent))
+        elseif setting == "statusPosition" then
+            tinsert(widgetsTable, CreateSetting_StatusPosition(parent))
         elseif setting == "alpha" then
             tinsert(widgetsTable, CreateSetting_Alpha(parent))
         elseif setting == "num" then

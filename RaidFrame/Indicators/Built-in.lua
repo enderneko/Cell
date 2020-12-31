@@ -475,6 +475,101 @@ function I:CreateNameText(parent)
 end
 
 -------------------------------------------------
+-- status text
+-------------------------------------------------
+local startTimeCache = {}
+function I:CreateStatusText(parent)
+    local statusText = CreateFrame("Frame", parent:GetName().."StatusText", parent.widget.overlayFrame)
+	parent.indicators.statusText = statusText
+	statusText:Hide()
+
+	local text = statusText:CreateFontString(nil, "ARTWORK", "CELL_FONT_STATUS")
+	statusText.text = text
+    text:SetTextColor(1, .19, .19)
+
+    local timer = statusText:CreateFontString(nil, "ARTWORK", "CELL_FONT_STATUS")
+	statusText.timer = timer
+	timer:SetTextColor(1, .19, .19)
+    
+    function statusText:GetText()
+        return text:GetText()
+    end
+
+    function statusText:SetText(s)
+        text:SetText(s)
+    end
+    
+    statusText.OriginalSetPoint = statusText.SetPoint
+    function statusText:SetPoint(point, _, yOffset)
+        statusText:ClearAllPoints()
+        statusText:OriginalSetPoint("LEFT", parent.widget.healthBar)
+        statusText:OriginalSetPoint("RIGHT", parent.widget.healthBar)
+        statusText:OriginalSetPoint(point, parent.widget.healthBar, 0, yOffset)
+
+        text:ClearAllPoints()
+        text:SetPoint(point.."LEFT")
+        timer:ClearAllPoints()
+        timer:SetPoint(point.."RIGHT")
+
+        statusText:SetHeight(text:GetHeight())
+    end
+    
+    hooksecurefunc(text, "SetText", function()
+        statusText:SetHeight(text:GetHeight())
+    end)
+
+    function statusText:SetFont(font, size, flags)
+        if not string.find(font, ".ttf") then font = F:GetFont(font) end
+
+        if flags == "Shadow" then
+            text:SetFont(font, size)
+            text:SetShadowOffset(1, -1)
+            text:SetShadowColor(0, 0, 0, 1)
+            timer:SetFont(font, size)
+            timer:SetShadowOffset(1, -1)
+            timer:SetShadowColor(0, 0, 0, 1)
+        else
+            if flags == "Outline" then
+                flags = "OUTLINE"
+            else
+                flags = "OUTLINE, MONOCHROME"
+            end
+            text:SetFont(font, size, flags)
+            text:SetShadowOffset(0, 0)
+            text:SetShadowColor(0, 0, 0, 0)
+            timer:SetFont(font, size, flags)
+            timer:SetShadowOffset(0, 0)
+            timer:SetShadowColor(0, 0, 0, 0)
+        end
+    end
+
+    function statusText:ShowTimer()
+		timer:Show()
+		if not startTimeCache[parent.state.guid] then startTimeCache[parent.state.guid] = GetTime() end
+		
+		statusText.ticker = C_Timer.NewTicker(1, function()
+			if not parent.state.guid and parent.state.unit then -- ElvUI AFK mode
+				parent.state.guid = UnitGUID(parent.state.unit)
+			end
+			if parent.state.guid and startTimeCache[parent.state.guid] then
+				timer:SetFormattedText(F:FormatTime(GetTime() - startTimeCache[parent.state.guid]))
+			else
+				timer:SetText("")
+			end
+		end)
+	end
+
+	function statusText:HideTimer(reset)
+		timer:Hide()
+		timer:SetText("")
+		if reset then
+			if statusText.ticker then statusText.ticker:Cancel() end
+			startTimeCache[parent.state.guid] = nil
+		end
+	end
+end
+
+-------------------------------------------------
 -- health text
 -------------------------------------------------
 function I:CreateHealthText(parent)
