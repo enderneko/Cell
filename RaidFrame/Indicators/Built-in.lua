@@ -511,11 +511,11 @@ function I:CreateStatusText(parent)
         timer:ClearAllPoints()
         timer:SetPoint(point.."RIGHT")
 
-        statusText:SetHeight(text:GetHeight())
+        statusText:SetHeight(text:GetHeight()+1)
     end
     
     hooksecurefunc(text, "SetText", function()
-        statusText:SetHeight(text:GetHeight())
+        statusText:SetHeight(text:GetHeight()+1)
     end)
 
     function statusText:SetFont(font, size, flags)

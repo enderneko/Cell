@@ -399,7 +399,7 @@ local function Revise()
                     ["position"] = {"CENTER", "CENTER", 0, 0},
                     ["font"] = {"Cell ".._G.DEFAULT, 13, "Shadow"},
                     ["nameColor"] = {"Custom Color", {1, 1, 1}},
-                    ["vehicleNamePosition"] = "TOP",
+                    ["vehicleNamePosition"] = {"TOP", 0},
                     ["textWidth"] = .75,
                 })
             end
