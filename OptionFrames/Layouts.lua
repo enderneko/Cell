@@ -978,115 +978,11 @@ end)
 powerHeightSlider:SetPoint("TOP", heightSlider, "BOTTOM", 0, -40)
 
 -------------------------------------------------
--- font size
--------------------------------------------------
-local fontSizeText = Cell:CreateSeparator(L["Font Size"], layoutsTab, 122)
-fontSizeText:SetPoint("TOPLEFT", 137, -210)
-
--- name text
-local nameFontSlider = Cell:CreateSlider(L["Name"], layoutsTab, 5, 35, 100, 1, function(value)
-    selectedLayoutTable["font"]["name"] = value
-    if selectedLayout == Cell.vars.currentLayout then
-        Cell:Fire("UpdateAppearance", "font")
-    end
-    UpdatePreviewButton("nameFont", value)
-end)
-nameFontSlider:SetPoint("TOPLEFT", fontSizeText, "BOTTOMLEFT", 5, -25)
-
--- status text
-local statusFontSlider = Cell:CreateSlider(L["Status"], layoutsTab, 5, 35, 100, 1, function(value)
-    selectedLayoutTable["font"]["status"] = value
-    if selectedLayout == Cell.vars.currentLayout then
-        Cell:Fire("UpdateAppearance", "font")
-    end
-    UpdatePreviewButton("statusFont", value)
-end)
-statusFontSlider:SetPoint("TOP", nameFontSlider, "BOTTOM", 0, -40)
-
--- textWidth
-local textWidthDropdown = Cell:CreateDropdown(layoutsTab, 100)
-textWidthDropdown:SetPoint("TOPLEFT", statusFontSlider, "BOTTOMLEFT", 0, -40)
-textWidthDropdown:SetItems({
-    {
-        ["text"] = L["Unlimited"],
-        ["onClick"] = function()
-            selectedLayoutTable["textWidth"] = 0
-            if selectedLayout == Cell.vars.currentLayout then
-                Cell:Fire("UpdateLayout", selectedLayout, "textWidth")
-            end
-            UpdatePreviewButton("textWidth")
-        end,
-    },
-    {
-        ["text"] = "100%",
-        ["onClick"] = function()
-            selectedLayoutTable["textWidth"] = 1
-            if selectedLayout == Cell.vars.currentLayout then
-                Cell:Fire("UpdateLayout", selectedLayout, "textWidth")
-            end
-            UpdatePreviewButton("textWidth")
-        end,
-    },
-    {
-        ["text"] = "75%",
-        ["onClick"] = function()
-            selectedLayoutTable["textWidth"] = .75
-            if selectedLayout == Cell.vars.currentLayout then
-                Cell:Fire("UpdateLayout", selectedLayout, "textWidth")
-            end
-            UpdatePreviewButton("textWidth")
-        end,
-    },
-    {
-        ["text"] = "50%",
-        ["onClick"] = function()
-            selectedLayoutTable["textWidth"] = .5
-            if selectedLayout == Cell.vars.currentLayout then
-                Cell:Fire("UpdateLayout", selectedLayout, "textWidth")
-            end
-            UpdatePreviewButton("textWidth")
-        end,
-    },
-    {
-        ["text"] = "25%",
-        ["onClick"] = function()
-            selectedLayoutTable["textWidth"] = .25
-            if selectedLayout == Cell.vars.currentLayout then
-                Cell:Fire("UpdateLayout", selectedLayout, "textWidth")
-            end
-            UpdatePreviewButton("textWidth")
-        end,
-    },
-    {
-        ["text"] = L["Hide"],
-        ["onClick"] = function()
-            selectedLayoutTable["textWidth"] = -1
-            if selectedLayout == Cell.vars.currentLayout then
-                Cell:Fire("UpdateLayout", selectedLayout, "textWidth")
-            end
-            UpdatePreviewButton("textWidth")
-        end,
-    },
-})
-textWidthDropdown:HookScript("OnEnter", function()
-    CellTooltip:SetOwner(textWidthDropdown, "ANCHOR_NONE")
-    CellTooltip:SetPoint("LEFT", textWidthDropdown, "RIGHT", 1, 0)
-    CellTooltip:AddLine(L["Set Text Width\n|cffffffffCompare with unitbutton's width"])
-    CellTooltip:Show()
-end)
-textWidthDropdown:HookScript("OnLeave", function()
-    CellTooltip:Hide()
-end)
-
-local widthText = textWidthDropdown:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
-widthText:SetText(L["Text Width"])
-widthText:SetPoint("BOTTOM", textWidthDropdown, "TOP", 0, 2)
-
--------------------------------------------------
 -- misc
 -------------------------------------------------
 local miscText = Cell:CreateSeparator(L["Misc"], layoutsTab, 122)
-miscText:SetPoint("TOPLEFT", 269, -210)
+miscText:SetPoint("TOPLEFT", 137, -210)
+-- miscText:SetPoint("TOPLEFT", 269, -210)
 
 -- spacing
 local spacingSlider = Cell:CreateSlider(L["Unit Spacing"], layoutsTab, 0, 10, 100, 1, function(value)
@@ -1156,22 +1052,6 @@ LoadLayoutDB = function(layout)
     heightSlider:SetValue(selectedLayoutTable["size"][2])
     powerHeightSlider:SetValue(selectedLayoutTable["powerHeight"])
 
-    nameFontSlider:SetValue(selectedLayoutTable["font"]["name"])
-    statusFontSlider:SetValue(selectedLayoutTable["font"]["status"])
-    if selectedLayoutTable["textWidth"] == 0 then
-        textWidthDropdown:SetSelectedItem(1)
-    elseif selectedLayoutTable["textWidth"] == 1 then
-        textWidthDropdown:SetSelectedItem(2)
-    elseif selectedLayoutTable["textWidth"] == .75 then
-        textWidthDropdown:SetSelectedItem(3)
-    elseif selectedLayoutTable["textWidth"] == .5 then
-        textWidthDropdown:SetSelectedItem(4)
-    elseif selectedLayoutTable["textWidth"] == .25 then
-        textWidthDropdown:SetSelectedItem(5)
-    elseif selectedLayoutTable["textWidth"] == -1 then
-        textWidthDropdown:SetSelectedItem(6)
-    end
-    
     spacingSlider:SetValue(selectedLayoutTable["spacing"])
     
     if selectedLayoutTable["orientation"] == "vertical" then

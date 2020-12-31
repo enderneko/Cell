@@ -156,12 +156,9 @@ function eventFrame:ADDON_LOADED(arg1)
             CellDB["appearance"] = {
                 ["texture"] = "Cell ".._G.DEFAULT,
                 ["scale"] = 1,
-                ["font"] = "Cell ".._G.DEFAULT,
                 ["optionsFontSizeOffset"] = 0,
-                ["outline"] = "Shadow",
                 ["barColor"] = {"Class Color", {.2, .2, .2}},
                 ["bgColor"] = {"Class Color (dark)", {.667, 0, 0}},
-                ["nameColor"] = {"Custom Color", {1, 1, 1}},
                 ["powerColor"] = {"Power Color", {.7, .7, .7}},
                 ["targetColor"] = {1, .19, .19, .5},
                 ["mouseoverColor"] = {1, 1, 1, .5},
@@ -204,10 +201,6 @@ function eventFrame:ADDON_LOADED(arg1)
                     ["columns"] = 8,
                     ["rows"] = 8,
                     ["groupSpacing"] = 0,
-                    ["font"] = {
-                        ["name"] = 13,
-                        ["status"] = 11,
-                    },
                     ["groupFilter"] = {true, true, true, true, true, true, true, true},
                     ["indicators"] = {
                         {
