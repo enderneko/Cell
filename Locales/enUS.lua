@@ -106,6 +106,7 @@ select(2, ...).L = setmetatable({
         <h1>Misc</h1>
         <p>Due to indicator changes, some font related options have been removed.</p>
         <p>Fixed frame width of BattleResTimer.</p>
+        <p>Added support for OmniCD (party frame).</p>
         <br/>
     ]],
 }, {
