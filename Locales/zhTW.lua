@@ -2,7 +2,6 @@ if not LOCALE_zhTW then return end
 
 local L = select( 2, ...).L
 
-L = L or {}
 L["%s lock %s on %s."] = "%s將%s鎖定在%s。"
 L["%s unlock %s from %s."] = "%s將%s從%s解鎖。"
 L["(based on current)"] = "(以目前的為基礎)"
@@ -43,7 +42,6 @@ L["Button5"] = "按鍵 5"
 L["Can't change options in combat."] = "無法在戰鬥中更改設定。"
 L["castByMe"] = "只顯示我施放的增益"
 L["CENTER"] = "中"
-L["Central Debuff"] = "減益 (中間)"
 L["Class Color"] = "職業顏色"
 L["Class Color (dark)"] = "職業顏色 (暗)"
 L["Click-Castings"] = "滑鼠點擊施法"
@@ -108,7 +106,7 @@ L["Hide Blizzard Raid / Party"] = "隱藏遊戲內建團隊/隊伍框架"
 L["hideFull"] = "滿血時不顯示"
 L["Horizontal"] = "水平"
 L["Icon"] = "圖示"
-L["Icons"] = "圖示"
+L["Icons"] = "圖示群組"
 L["Indicator Settings"] = "指示器設定"
 L["Indicator settings are part of Layout settings which are account-wide."] = "指示器設定是版面配置設定的一部分，是帳號共用的。"
 L["Indicators"] = "指示器"
@@ -135,8 +133,8 @@ L["Misc"] = "其他"
 L["Monochrome Outline"] = "無消除鋸齒外框"
 L["Mouseover Highlight Color"] = "滑鼠指向顯著標示顏色"
 L["Mover"] = "拖曳我"
-L["Name"] = "名字"
 L["Name Color"] = "名字顏色"
+L["Name Text"] = "名字"
 L["New"] = "新增"
 L["New version found (%s). Please visit %s to get the latest version."] = "已有新版本 (%s)。 請到 %s 下載最新版本。"
 L["No"] = "否"
@@ -149,6 +147,7 @@ L["Only show during encounter or in mythic+"] = "只在首領戰或 M+ 顯示"
 L["Only show when you have permission to do this"] = "只在你有權限這樣做時才會顯示"
 L["onlyShowTopGlow"] = "只顯著標示當前減益"
 L["Options"] = "選項"
+L["Options UI Font Size"] = "設定選項介面文字大小"
 L["Orientation"] = "方向"
 L["Outline"] = "外框"
 L["P"] = "PvP 天賦"
@@ -200,9 +199,8 @@ L["r32-release"] = [[
     <p>修正：標記工具列、滑鼠點擊施法。</p>
     <p>將 "團隊構成" 文字移到 "團隊" 按鈕的滑鼠提示中。</p>
     <p>新增 "淡出選單" 的選項。</p>
-    <br/>
 ]]
-L["r35-release"] = [[
+L["r34-release"] = [[
     <h1>指示器</h1>
     <p>部分內建的指示器現在有了選項：角色職責圖示，隊長圖示，準備確認圖示，仇恨指示器。</p>
     <p> "減益 (中間)"  新增了 "邊框" 和 "只顯著標示當前減益" 的選項。</p>
@@ -219,6 +217,17 @@ L["r35-release"] = [[
     <p>"文字寬度" 新增 "隱藏" 選項。</p>
     <br/>
 ]]
+L["r36-release"] = [[
+    <h1>指示器</h1>
+    <p>新指示器：名稱、狀態文字、護盾條。</p>
+    <p>"減益" 指示器新增 "只顯示我能驅散的的減益" 選項。</p>
+    <br/>
+    <h1>其他</h1>
+    <p>由於指示器的變動，一些字體相關選項被移除了。</p>
+    <p>修正 "戰復計時器" 的框架寬度。</p>
+    <p>新增支援【隊友技能冷卻監控】OmniCD 插件（只有 5 人隊伍）。</p>
+    <br/>
+]]
 L["Raid"] = "團隊"
 L["Raid Debuffs"] = "副本減益"
 L["Raid Icon (player)"] = "團隊圖示 (玩家)"
@@ -232,7 +241,10 @@ L["Rename"] = "更名"
 L["Rename layout"] = "重新名命版面配置"
 L["Require reload of the UI"] = "需要重新載入介面"
 L["Reset All"] = "全部重置"
-L["reset all Cell options and reload UI"] = "重置 Cell 所有設定並且重新載入介面"
+L["reset all Cell settings"] = "重置 Cell 的全部設定"
+L["reset all Click-Castings"] = "重置滑鼠點擊施法的全部設定"
+L["reset all Layouts and Indicators"] = "重置版面配置和指示器的全部設定"
+L["reset all Raid Debuffs"] = "重置全部的團隊減益"
 L["reset Cell position"] = "重置 Cell 的位置"
 L["Right"] = "右"
 L["RIGHT"] = "右"
@@ -244,8 +256,8 @@ L["Scale"] = "縮放大小"
 L["ScrollDown"] = "滾輪往下"
 L["ScrollUp"] = "滾輪往上"
 L["sec"] = "秒"
-L["Set Text Width\n|cffffffffCompare with unitbutton's width"] = "設定文字寬度\n|cffffffff相對於單位按鈕的寬度"
 L["Shadow"] = "陰影"
+L["Shield Bar"] = "護盾條"
 L["Shift+Enter: add a new line"] = "Shift+Enter: 增加一行"
 L["Shine"] = "閃耀"
 L["Show Battle Res Timer"] = "顯示戰復計時器"
@@ -265,7 +277,8 @@ L["Size"] = "大小"
 L["Slash Commands"] = "聊天指令"
 L["Solo/Party"] = "單人/5人隊伍"
 L["Spell"] = "法術"
-L["Status"] = "狀態"
+L["Status Text"] = "狀態文字"
+L["Status Text Position"] = "狀態文字位置"
 L["T"] = "天賦"
 L["Tank Active Mitigation"] = "坦克主動減傷"
 L["Target"] = "目標"
@@ -277,9 +290,11 @@ L["Text Width"] = "文字寬度"
 L["Texture"] = "材質"
 L["The priority of spells decreases from top to bottom."] = "法術的優先順序是從上到下降低。"
 L["The spells list of a icons indicator is unordered (no priority)."] = "圖示指示器的法術清單是不排序的 (無優先順序)。"
+L["These \"reset\" commands below affect all your characters in this account"] = "以下的 \"重置\" 指令會影響此帳號中的所有角色"
 L["Thickness"] = "粗細"
 L["Tip: Every layout has its own position setting."] = "小提示: 每個版面配置都有各自獨立的位置設定。"
 L["Tips: Drag and drop to change debuff order. Double-click on instance name to open Encounter Journal. The priority of General Debuffs is higher than Boss Debuffs."] = "小提示: 拖曳減益可以調整順序，點兩下副本名稱可以打開冒險指南。一般減益的優先順序會高於首領減益。"
+L["To HealthBar's"] = "對齊到血條的"
 L["To open options frame, use /cell options"] = "輸入 /cell options 打開設定選項"
 L["To UnitButton's"] = "對齊到單位按鈕的"
 L["togglemenu"] = "選單"
@@ -298,9 +313,11 @@ L["Unlock"] = "解鎖"
 L["Use common profile"] = "使用共用設定檔"
 L["Use separate profile for each spec"] = "每個專精使用不同的設定檔"
 L["vehicle name"] = "載具名稱"
+L["Vehicle Name Position"] = "載具名稱位置"
 L["Vertical"] = "垂直"
 L["Visibility"] = "顯示"
 L["Width"] = "寬度"
+L["With this indicator enabled, shield / overshield textures are disabled"] = "啟用此指示器會停用血條上面的護盾材質"
 L["World Marks"] = "世界標記"
 L["X Offset"] = "水平位置偏移"
 L["Y Offset"] = "垂直位置偏移"
