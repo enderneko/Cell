@@ -1016,7 +1016,7 @@ end)
 rcSlider:SetPoint("TOPLEFT", spacingSlider, "BOTTOMLEFT", 0, -40)
 
 -- group spacing
-groupSpacingSlider = Cell:CreateSlider(L["Group Spacing"], layoutsTab, 0, 10, 100, 1, function(value)
+groupSpacingSlider = Cell:CreateSlider(L["Group Spacing"], layoutsTab, 0, 20, 100, 1, function(value)
     selectedLayoutTable["groupSpacing"] = value
     if selectedLayout == Cell.vars.currentLayout then
         Cell:Fire("UpdateLayout", selectedLayout, "groupSpacing")

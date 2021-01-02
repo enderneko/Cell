@@ -92,6 +92,8 @@ local function GroupTypeChanged()
             Cell.vars.inBattleground = 15
             F:UpdateLayout("battleground15", true)
         end
+    elseif instanceType == "arena" then
+        F:UpdateLayout("arena", true)
     else
         if Cell.vars.groupType == "solo" or Cell.vars.groupType == "party" then
             F:UpdateLayout("party", true)
@@ -385,11 +387,13 @@ function eventFrame:ADDON_LOADED(arg1)
         -- init enabled layout
         if type(CellCharacterDB["party"]) ~= "string" then CellCharacterDB["party"] = "default" end
         if type(CellCharacterDB["raid"]) ~= "string" then CellCharacterDB["raid"] = "default" end
+        if type(CellCharacterDB["arena"]) ~= "string" then CellCharacterDB["arena"] = "default" end
         if type(CellCharacterDB["battleground15"]) ~= "string" then CellCharacterDB["battleground15"] = "default" end
         if type(CellCharacterDB["battleground40"]) ~= "string" then CellCharacterDB["battleground40"] = "default" end
         -- validate layout
         if not CellDB["layouts"][CellCharacterDB["party"]] then CellCharacterDB["party"] = "default" end
         if not CellDB["layouts"][CellCharacterDB["raid"]] then CellCharacterDB["raid"] = "default" end
+        if not CellDB["layouts"][CellCharacterDB["arena"]] then CellCharacterDB["arena"] = "default" end
         if not CellDB["layouts"][CellCharacterDB["battleground15"]] then CellCharacterDB["battleground15"] = "default" end
         if not CellDB["layouts"][CellCharacterDB["battleground40"]] then CellCharacterDB["battleground40"] = "default" end
 
