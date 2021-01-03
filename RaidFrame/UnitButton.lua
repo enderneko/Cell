@@ -161,6 +161,11 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                 if t["vehicleNamePosition"] then
                     indicator:UpdateVehicleNamePosition(t["vehicleNamePosition"])
                 end
+                -- update custom texture
+                if t["customTextures"] then
+                    indicator:SetCustomTexture(t["customTextures"])
+                    UnitButton_UpdateRole(b)
+                end
                 -- init
                 -- update name visibility
                 if t["indicatorName"] == "nameText" then
@@ -309,6 +314,12 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
             -- refresh
             F:IterateAllUnitButtons(function(b)
                 UnitButton_UpdateAuras(b)
+            end)
+        elseif setting == "customTextures" then
+            F:IterateAllUnitButtons(function(b)
+                local indicator = b.indicators[indicatorName]
+                indicator:SetCustomTexture(value)
+                UnitButton_UpdateRole(b)
             end)
         elseif setting == "checkbutton" then
             if value ~= "enableHighlight" and value ~= "showDuration" then

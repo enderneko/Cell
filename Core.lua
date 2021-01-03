@@ -244,6 +244,7 @@ function eventFrame:ADDON_LOADED(arg1)
                             ["enabled"] = true,
                             ["position"] = {"TOPLEFT", "TOPLEFT", 0, 0},
                             ["size"] = {11, 11},
+                            ["customTextures"] = {false, "Interface\\AddOns\\ElvUI\\Media\\Textures\\Tank.tga", "Interface\\AddOns\\ElvUI\\Media\\Textures\\Healer.tga", "Interface\\AddOns\\ElvUI\\Media\\Textures\\DPS.tga"},
                         },
                         {
                             ["name"] = "Leader Icon",

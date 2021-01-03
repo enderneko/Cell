@@ -102,6 +102,17 @@ local function InitIndicator(indicatorName)
         -- texture type cannot glow by LCG
         indicator.preview = CreateFrame("Frame", nil, previewButton)
         indicator.preview:SetAllPoints(indicator)
+        indicator.roles = {"TANK", "HEALER", "DAMAGER"}
+        indicator.role = 1
+        indicator.elapsed = 0
+        indicator.preview:SetScript("OnUpdate", function(self, elapsed)
+            indicator.elapsed = indicator.elapsed + elapsed
+            if indicator.elapsed >= 2 then
+                indicator.elapsed = 0
+                indicator.role = (indicator.role + 1 > 3) and 1 or indicator.role + 1
+                indicator:SetRole(indicator.roles[indicator.role])
+            end
+        end)
         
     elseif indicatorName == "leaderIcon" then
         indicator:SetTexture("Interface\\GroupFrame\\UI-Group-LeaderIcon")
@@ -339,6 +350,11 @@ local function UpdateIndicators(layout, indicatorName, setting, value)
             if t["vehicleNamePosition"] then
                 indicator:UpdateVehicleNamePosition(t["vehicleNamePosition"])
             end
+            -- update custom texture
+            if t["customTextures"] then
+                indicator:SetCustomTexture(t["customTextures"])
+                indicator:SetRole(indicator.roles[indicator.role])
+            end
 		end
 	else
         local indicator = previewButton.indicators[indicatorName]
@@ -391,6 +407,9 @@ local function UpdateIndicators(layout, indicatorName, setting, value)
             indicator:UpdatePreviewColor(value)
         elseif setting == "vehicleNamePosition" then
             indicator:UpdateVehicleNamePosition(value)
+        elseif setting == "customTextures" then
+            indicator:SetCustomTexture(value)
+            indicator:SetRole(indicator.roles[indicator.role])
         elseif setting == "create" then
             indicator = I:CreateIndicator(previewButton, value)
             -- update position
@@ -688,7 +707,7 @@ local indicatorSettings = {
     ["nameText"] = {"enabled", "nameColor", "textWidth", "vehicleNamePosition", "namePosition", "font-noOffset"},
     ["statusText"] = {"enabled", "statusPosition", "frameLevel", "font-noOffset"},
     ["healthText"] = {"enabled", "format", "checkbutton:hideFull", "color", "position", "frameLevel", "font"},
-    ["roleIcon"] = {"enabled", "position", "size-square"},
+    ["roleIcon"] = {"enabled", "position", "size-square", "customTextures"},
     ["leaderIcon"] = {"|cffb7b7b7"..L["Leader Icons will hide while in combat"], "enabled", "position", "size-square"},
     ["readyCheckIcon"] = {"frameLevel", "size-square"},
     ["aggroIndicator"] = {"enabled", "position", "frameLevel", "size"},

@@ -433,6 +433,18 @@ local function Revise()
         end
     end
 
+    -- r37-release
+    if CellDB["revise"] and dbRevision < 37 then
+        for _, layout in pairs(CellDB["layouts"]) do
+            -- useCustomTexture
+            if layout["indicators"][4] and layout["indicators"][4]["indicatorName"] == "roleIcon" then
+                if type(layout["indicators"][4]["customTextures"]) ~= "table" then
+                    layout["indicators"][4]["customTextures"] = {false, "Interface\\AddOns\\ElvUI\\Media\\Textures\\Tank.tga", "Interface\\AddOns\\ElvUI\\Media\\Textures\\Healer.tga", "Interface\\AddOns\\ElvUI\\Media\\Textures\\DPS.tga"}
+                end
+            end
+        end
+    end
+
     CellDB["revise"] = Cell.version
 end
 Cell:RegisterCallback("Revise", "Revise", Revise)

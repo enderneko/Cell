@@ -3465,6 +3465,98 @@ local function CreateSetting_CheckButton2(parent)
     return widget
 end
 
+local function CreateSetting_CustomTextures(parent)
+    local widget
+
+    if not settingWidgets["customTextures"] then
+        widget = addon:CreateFrame("CellIndicatorSettings_CustomTextures", parent, 240, 165)
+        settingWidgets["customTextures"] = widget
+
+        widget.cb = addon:CreateCheckButton(widget, L["Use Custom Textures"], function(checked)
+            widget.func({widget.cb:GetChecked(), widget.eb1:GetText(), widget.eb2:GetText(), widget.eb3:GetText()})
+            widget.eb1:SetEnabled(checked)
+            widget.eb2:SetEnabled(checked)
+            widget.eb3:SetEnabled(checked)
+        end)
+        widget.cb:SetPoint("TOPLEFT", 5, -8)
+
+        widget.eb1 = addon:CreateEditBox(widget, 245, 20)
+        widget.eb1:SetPoint("TOPLEFT", widget.cb, "BOTTOMLEFT", 0, -25)
+        widget.eb1:SetScript("OnEnterPressed", function(self)
+            self:ClearFocus()
+            widget.func({widget.cb:GetChecked(), self:GetText(), widget.eb2:GetText(), widget.eb3:GetText()})
+            widget.texture1:SetTexture(self:GetText())
+        end)
+
+        local text1 = widget:CreateFontString(nil, "OVERLAY", font_name)
+        text1:SetPoint("BOTTOMLEFT", widget.eb1, "TOPLEFT", 0, 1)
+        text1:SetText(_G["TANK"])
+
+        widget.texture1 = widget:CreateTexture(nil, "ARTWORK")
+        widget.texture1:SetPoint("BOTTOMLEFT", text1, "BOTTOMRIGHT", 3, 0)
+        widget.texture1:SetSize(16, 16)
+        
+        widget.eb2 = addon:CreateEditBox(widget, 245, 20)
+        widget.eb2:SetPoint("TOPLEFT", widget.eb1, "BOTTOMLEFT", 0, -25)
+        widget.eb2:SetScript("OnEnterPressed", function(self)
+            self:ClearFocus()
+            widget.func({widget.cb:GetChecked(), widget.eb1:GetText(), self:GetText(), widget.eb3:GetText()})
+            widget.texture2:SetTexture(self:GetText())
+        end)
+        
+        local text2 = widget:CreateFontString(nil, "OVERLAY", font_name)
+        text2:SetPoint("BOTTOMLEFT", widget.eb2, "TOPLEFT", 0, 1)
+        text2:SetText(_G["HEALER"])
+
+        widget.texture2 = widget:CreateTexture(nil, "ARTWORK")
+        widget.texture2:SetPoint("BOTTOMLEFT", text2, "BOTTOMRIGHT", 3, 0)
+        widget.texture2:SetSize(16, 16)
+
+        widget.eb3 = addon:CreateEditBox(widget, 245, 20)
+        widget.eb3:SetPoint("TOPLEFT", widget.eb2, "BOTTOMLEFT", 0, -25)
+        widget.eb3:SetScript("OnEnterPressed", function(self)
+            self:ClearFocus()
+            widget.func({widget.cb:GetChecked(), widget.eb1:GetText(), widget.eb2:GetText(), self:GetText()})
+            widget.texture3:SetTexture(self:GetText())
+        end)
+
+        local text3 = widget:CreateFontString(nil, "OVERLAY", font_name)
+        text3:SetPoint("BOTTOMLEFT", widget.eb3, "TOPLEFT", 0, 1)
+        text3:SetText(_G["DAMAGER"])
+
+        widget.texture3 = widget:CreateTexture(nil, "ARTWORK")
+        widget.texture3:SetPoint("BOTTOMLEFT", text3, "BOTTOMRIGHT", 3, 0)
+        widget.texture3:SetSize(16, 16)
+
+        -- associate db
+        function widget:SetFunc(func)
+            widget.func = func
+        end
+
+        -- show db value
+        function widget:SetDBValue(t)
+            widget.cb:SetChecked(t[1])
+            widget.eb1:SetEnabled(t[1])
+            widget.eb2:SetEnabled(t[1])
+            widget.eb3:SetEnabled(t[1])
+            widget.eb1:SetText(t[2])
+            widget.eb2:SetText(t[3])
+            widget.eb3:SetText(t[4])
+            widget.eb1:SetCursorPosition(0)
+            widget.eb2:SetCursorPosition(0)
+            widget.eb3:SetCursorPosition(0)
+            widget.texture1:SetTexture(t[2])
+            widget.texture2:SetTexture(t[3])
+            widget.texture3:SetTexture(t[4])
+        end
+    else
+        widget = settingWidgets["customTextures"]
+    end
+
+    widget:Show()
+    return widget
+end
+
 local auraButtons = {}
 local function CreateAuraButtons(parent, auraTable, noUpDownButtons, updateHeightFunc)
     local n = #auraTable
@@ -3835,6 +3927,8 @@ function addon:CreateIndicatorSettings(parent, settingsTable)
             tinsert(widgetsTable, CreateSetting_CheckButton2(parent))
         elseif string.find(setting, "checkbutton") then
             tinsert(widgetsTable, CreateSetting_CheckButton(parent))
+        elseif setting == "customTextures" then
+            tinsert(widgetsTable, CreateSetting_CustomTextures(parent))
         elseif setting == "auras" or setting == "blacklist" then
             tinsert(widgetsTable, CreateSetting_Auras(parent))
         else -- tips

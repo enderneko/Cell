@@ -661,14 +661,26 @@ function I:CreateRoleIcon(parent)
     
     function roleIcon:SetRole(role)
         if role == "TANK" or role == "HEALER" or role == "DAMAGER" then
-			roleIcon:SetTexture("Interface\\AddOns\\Cell\\Media\\UI-LFG-ICON-PORTRAITROLES.blp")
-			roleIcon:SetTexCoord(GetTexCoordsForRoleSmallCircle(role))
-			-- roleIcon:SetTexture("Interface\\AddOns\\Cell\\Media\\UI-LFG-ICON-ROLES.blp")
-			-- roleIcon:SetTexCoord(GetTexCoordsForRole(role))
-			roleIcon:Show()
+            if roleIcon.useCustomTexture then
+                roleIcon:SetTexture(roleIcon[role])
+                roleIcon:SetTexCoord(0, 1, 0, 1)
+            else
+                roleIcon:SetTexture("Interface\\AddOns\\Cell\\Media\\UI-LFG-ICON-PORTRAITROLES.blp")
+                roleIcon:SetTexCoord(GetTexCoordsForRoleSmallCircle(role))
+                -- roleIcon:SetTexture("Interface\\AddOns\\Cell\\Media\\UI-LFG-ICON-ROLES.blp")
+                -- roleIcon:SetTexCoord(GetTexCoordsForRole(role))
+            end
+            roleIcon:Show()
 		else
 			roleIcon:Hide()
 		end
+    end
+
+    function roleIcon:SetCustomTexture(t)
+        roleIcon.useCustomTexture = t[1]
+        roleIcon.TANK = t[2]
+        roleIcon.HEALER = t[3]
+        roleIcon.DAMAGER = t[4]
     end
 end
 
