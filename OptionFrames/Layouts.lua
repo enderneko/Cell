@@ -430,15 +430,17 @@ end
 -------------------------------------------------
 -- layout
 -------------------------------------------------
-local layoutDropdown, partyDropdown, raidDropdown, bg15Dropdown, bg40Dropdown
+local layoutDropdown, partyDropdown, raidDropdown, arenaDropdown, bg15Dropdown, bg40Dropdown
 local LoadLayoutDropdown, LoadAutoSwitchDropdowns
 local LoadLayoutDB, UpdateButtonStates
 
-local layoutText = Cell:CreateSeparator(L["Layout"], layoutsTab, 387)
+local layoutText = Cell:CreateSeparator(L["Layout"], layoutsTab, 188)
 layoutText:SetPoint("TOPLEFT", 5, -5)
 
 local enabledLayoutText = layoutsTab:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET_TITLE")
 enabledLayoutText:SetPoint("LEFT", layoutText, "RIGHT", 5, 0)
+enabledLayoutText:SetPoint("RIGHT", layoutText, "LEFT", 188, 0)
+enabledLayoutText:SetWordWrap(false)
 enabledLayoutText:SetJustifyH("LEFT")
 
 local function UpdateEnabledLayoutText()
@@ -446,7 +448,7 @@ local function UpdateEnabledLayoutText()
 end
 
 -- drop down
-layoutDropdown = Cell:CreateDropdown(layoutsTab, 160)
+layoutDropdown = Cell:CreateDropdown(layoutsTab, 163)
 layoutDropdown:SetPoint("TOPLEFT", layoutText, "BOTTOMLEFT", 5, -12)
 
 LoadLayoutDropdown = function()
@@ -503,7 +505,7 @@ layoutsTab.mask:Hide()
 
 -- new
 local newBtn = Cell:CreateButton(layoutsTab, L["New"], "class-hover", {55, 20})
-newBtn:SetPoint("LEFT", layoutDropdown, "RIGHT", 10, 0)
+newBtn:SetPoint("TOPLEFT", layoutDropdown, "BOTTOMLEFT", 0, -10)
 newBtn:SetScript("OnClick", function()
     local popup = Cell:CreateConfirmPopup(layoutsTab, 200, L["Create new layout"].."\n"..L["(based on current)"], function(self)
         local name = strtrim(self.editBox:GetText())
@@ -638,12 +640,12 @@ end
 -------------------------------------------------
 -- layout auto switch
 -------------------------------------------------
--- local autoSwitchText = Cell:CreateSeparator(L["Layout Auto Switch"], layoutsTab, 387)
--- autoSwitchText:SetPoint("TOPLEFT", 5, -65)
+local autoSwitchText = Cell:CreateSeparator(L["Layout Auto Switch"], layoutsTab, 188)
+autoSwitchText:SetPoint("TOPLEFT", 203, -5)
 
 -- party
 partyDropdown = Cell:CreateDropdown(layoutsTab, 85)
-partyDropdown:SetPoint("TOPLEFT", layoutDropdown, "BOTTOMLEFT", 0, -27)
+partyDropdown:SetPoint("TOPLEFT", autoSwitchText, "BOTTOMLEFT", 5, -30)
 
 local partyText = layoutsTab:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
 partyText:SetPoint("BOTTOMLEFT", partyDropdown, "TOPLEFT", 0, 1)
@@ -651,15 +653,23 @@ partyText:SetText(L["Solo/Party"])
 
 -- raid
 raidDropdown = Cell:CreateDropdown(layoutsTab, 85)
-raidDropdown:SetPoint("LEFT", partyDropdown, "RIGHT", 10, 0)
+raidDropdown:SetPoint("TOPLEFT", partyDropdown, "BOTTOMLEFT", 0, -30)
 
 local raidText = layoutsTab:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
 raidText:SetPoint("BOTTOMLEFT", raidDropdown, "TOPLEFT", 0, 1)
 raidText:SetText(L["Raid"])
 
+-- arena
+arenaDropdown = Cell:CreateDropdown(layoutsTab, 85)
+arenaDropdown:SetPoint("TOPLEFT", partyDropdown, "TOPRIGHT", 10, 0)
+
+local arenaText = layoutsTab:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
+arenaText:SetPoint("BOTTOMLEFT", arenaDropdown, "TOPLEFT", 0, 1)
+arenaText:SetText(L["Arena"])
+
 -- battleground 15
 bg15Dropdown = Cell:CreateDropdown(layoutsTab, 85)
-bg15Dropdown:SetPoint("LEFT", raidDropdown, "RIGHT", 10, 0)
+bg15Dropdown:SetPoint("TOPLEFT", arenaDropdown, "BOTTOMLEFT", 0, -30)
 
 local bg15Text = layoutsTab:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
 bg15Text:SetPoint("BOTTOMLEFT", bg15Dropdown, "TOPLEFT", 0, 1)
@@ -667,7 +677,7 @@ bg15Text:SetText(L["BG 1-15"])
 
 -- battleground 40
 bg40Dropdown = Cell:CreateDropdown(layoutsTab, 85)
-bg40Dropdown:SetPoint("LEFT", bg15Dropdown, "RIGHT", 10, 0)
+bg40Dropdown:SetPoint("TOPLEFT", bg15Dropdown, "BOTTOMLEFT", 0, -30)
 
 local bg40Text = layoutsTab:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
 bg40Text:SetPoint("BOTTOMLEFT", bg40Dropdown, "TOPLEFT", 0, 1)
@@ -692,7 +702,6 @@ LoadAutoSwitchDropdowns = function()
                 CellCharacterDB["party"] = value
                 if not Cell.vars.inBattleground and Cell.vars.groupType == "solo" or Cell.vars.groupType == "party" then
                     F:UpdateLayout("party")
-                    Cell:Fire("UpdateAppearance", "font") -- update text size
                     Cell:Fire("UpdateIndicators")
                     LoadLayoutDB(Cell.vars.currentLayout)
                     UpdateButtonStates()
@@ -712,7 +721,6 @@ LoadAutoSwitchDropdowns = function()
                 CellCharacterDB["raid"] = value
                 if not Cell.vars.inBattleground and Cell.vars.groupType == "raid" then
                     F:UpdateLayout("raid")
-                    Cell:Fire("UpdateAppearance", "font") -- update text size
                     Cell:Fire("UpdateIndicators")
                     LoadLayoutDB(Cell.vars.currentLayout)
                     UpdateButtonStates()
@@ -723,6 +731,25 @@ LoadAutoSwitchDropdowns = function()
     end
     raidDropdown:SetItems(raidItems)
 
+    -- arenaDropdown
+    local arenaItems = {}
+    for _, value in pairs(indices) do
+        table.insert(arenaItems, {
+            ["text"] = value == "default" and _G.DEFAULT or value,
+            ["onClick"] = function()
+                CellCharacterDB["arena"] = value
+                if Cell.vars.inBattleground == 5 then
+                    F:UpdateLayout("arena")
+                    Cell:Fire("UpdateIndicators")
+                    LoadLayoutDB(Cell.vars.currentLayout)
+                    UpdateButtonStates()
+                    UpdateEnabledLayoutText()
+                end
+            end,
+        })
+    end
+    arenaDropdown:SetItems(arenaItems)
+
     -- bg15Dropdown
     local bg15Items = {}
     for _, value in pairs(indices) do
@@ -732,7 +759,6 @@ LoadAutoSwitchDropdowns = function()
                 CellCharacterDB["battleground15"] = value
                 if Cell.vars.inBattleground == 15 then
                     F:UpdateLayout("battleground15")
-                    Cell:Fire("UpdateAppearance", "font") -- update text size
                     Cell:Fire("UpdateIndicators")
                     LoadLayoutDB(Cell.vars.currentLayout)
                     UpdateButtonStates()
@@ -752,7 +778,6 @@ LoadAutoSwitchDropdowns = function()
                 CellCharacterDB["battleground40"] = value
                 if Cell.vars.inBattleground == 40 then
                     F:UpdateLayout("battleground40")
-                    Cell:Fire("UpdateAppearance", "font") -- update text size
                     Cell:Fire("UpdateIndicators")
                     LoadLayoutDB(Cell.vars.currentLayout)
                     UpdateButtonStates()
@@ -767,8 +792,8 @@ end
 -------------------------------------------------
 -- group filter
 -------------------------------------------------
-local groupFilterText = Cell:CreateSeparator(L["Group Filter"], layoutsTab, 122)
-groupFilterText:SetPoint("TOPLEFT", 5, -120)
+local groupFilterText = Cell:CreateSeparator(L["Group Filter"], layoutsTab, 188)
+groupFilterText:SetPoint("TOPLEFT", 5, -123)
 
 local function UpdateButtonBorderColor(flag, b)
     local borderColor 
@@ -794,9 +819,9 @@ for i = 1, 8 do
     end)
     
     if i == 1 then
-        groupButtons[i]:SetPoint("TOPLEFT", groupFilterText, "BOTTOMLEFT", 10, -12)
-    elseif i == 5 then
-        groupButtons[i]:SetPoint("TOPLEFT", groupButtons[1], "BOTTOMLEFT", 0, -3)
+        groupButtons[i]:SetPoint("TOPLEFT", groupFilterText, "BOTTOMLEFT", 5, -12)
+    -- elseif i == 5 then
+    --     groupButtons[i]:SetPoint("TOPLEFT", groupButtons[1], "BOTTOMLEFT", 0, -3)
     else
         groupButtons[i]:SetPoint("LEFT", groupButtons[i-1], "RIGHT", 3, 0)
     end
@@ -812,11 +837,11 @@ end
 -- group arrangement
 -------------------------------------------------
 local arrangementText = Cell:CreateSeparator(L["Group Arrangement"], layoutsTab, 254)
-arrangementText:SetPoint("TOPLEFT", 137, -120)
+arrangementText:SetPoint("TOPLEFT", 137, -210)
 
 -- orientation
 local rcSlider, groupSpacingSlider
-local orientationDropdown = Cell:CreateDropdown(layoutsTab, 80)
+local orientationDropdown = Cell:CreateDropdown(layoutsTab, 100)
 orientationDropdown:SetPoint("TOPLEFT", arrangementText, "BOTTOMLEFT", 5, -25)
 orientationDropdown:SetItems({
     {
@@ -862,8 +887,8 @@ orientationText:SetPoint("BOTTOMLEFT", orientationDropdown, "TOPLEFT", 0, 1)
 orientationText:SetText(L["Orientation"])
 
 -- anchor
-local anchorDropdown = Cell:CreateDropdown(layoutsTab, 90)
-anchorDropdown:SetPoint("LEFT", orientationDropdown, "RIGHT", 10, 0)
+local anchorDropdown = Cell:CreateDropdown(layoutsTab, 100)
+anchorDropdown:SetPoint("TOPLEFT", orientationDropdown, "BOTTOMLEFT", 0, -30)
 anchorDropdown:SetItems({
     {
         ["text"] = L["BOTTOMLEFT"],
@@ -916,8 +941,8 @@ anchorText:SetPoint("BOTTOMLEFT", anchorDropdown, "TOPLEFT", 0, 1)
 anchorText:SetText(L["Anchor Point"])
 
 -- preview mode
-local previewModeBtn = Cell:CreateButton(layoutsTab, "|cff777777"..L["OFF"], "class-hover", {50, 20})
-previewModeBtn:SetPoint("LEFT", anchorDropdown, "RIGHT", 10, 0)
+local previewModeBtn = Cell:CreateButton(layoutsTab, "|cff777777"..L["OFF"], "class-hover", {100, 20})
+previewModeBtn:SetPoint("TOPLEFT", anchorDropdown, "BOTTOMLEFT", 0, -30)
 previewModeBtn:SetScript("OnClick", function()
     previewMode = (previewMode == 2) and 0 or (previewMode + 1)
 
@@ -980,8 +1005,7 @@ powerHeightSlider:SetPoint("TOP", heightSlider, "BOTTOM", 0, -40)
 -------------------------------------------------
 -- misc
 -------------------------------------------------
-local miscText = Cell:CreateSeparator(L["Misc"], layoutsTab, 122)
-miscText:SetPoint("TOPLEFT", 137, -210)
+-- local miscText = Cell:CreateSeparator(L["Misc"], layoutsTab, 122)
 -- miscText:SetPoint("TOPLEFT", 269, -210)
 
 -- spacing
@@ -993,7 +1017,7 @@ local spacingSlider = Cell:CreateSlider(L["Unit Spacing"], layoutsTab, 0, 10, 10
     -- preview
     UpdateLayoutPreview()
 end)
-spacingSlider:SetPoint("TOPLEFT", miscText, "BOTTOMLEFT", 5, -25)
+spacingSlider:SetPoint("TOPLEFT", orientationDropdown, "TOPRIGHT", 32, 0)
 
 -- rows/columns
 rcSlider = Cell:CreateSlider("", layoutsTab, 1, 8, 100, 1, function(value)
@@ -1045,6 +1069,7 @@ LoadLayoutDB = function(layout)
     layoutDropdown:SetSelected(selectedLayout == "default" and _G.DEFAULT or selectedLayout)
     partyDropdown:SetSelected(CellCharacterDB["party"] == "default" and _G.DEFAULT or CellCharacterDB["party"])
     raidDropdown:SetSelected(CellCharacterDB["raid"] == "default" and _G.DEFAULT or CellCharacterDB["raid"])
+    arenaDropdown:SetSelected(CellCharacterDB["arena"] == "default" and _G.DEFAULT or CellCharacterDB["arena"])
     bg15Dropdown:SetSelected(CellCharacterDB["battleground15"] == "default" and _G.DEFAULT or CellCharacterDB["battleground15"])
     bg40Dropdown:SetSelected(CellCharacterDB["battleground40"] == "default" and _G.DEFAULT or CellCharacterDB["battleground40"])
 
@@ -1109,23 +1134,33 @@ local function UpdateLayout()
         if Cell.vars.inBattleground == 15 then
             partyText:SetText(L["Solo/Party"])
             raidText:SetText(L["Raid"])
+            arenaText:SetText(L["Arena"])
             bg15Text:SetText(Cell:GetPlayerClassColorString()..L["BG 1-15"].."*")
             bg40Text:SetText(L["BG 16-40"])
-        else -- 40
+        elseif Cell.vars.inBattleground == 40 then
             partyText:SetText(L["Solo/Party"])
             raidText:SetText(L["Raid"])
+            arenaText:SetText(L["Arena"])
             bg15Text:SetText(L["BG 1-15"])
             bg40Text:SetText(Cell:GetPlayerClassColorString()..L["BG 16-40"].."*")
+        else -- 5 arena
+            partyText:SetText(L["Solo/Party"])
+            raidText:SetText(L["Raid"])
+            arenaText:SetText(Cell:GetPlayerClassColorString()..L["Arena"].."*")
+            bg15Text:SetText(L["BG 1-15"])
+            bg40Text:SetText(L["BG 16-40"])
         end
     else
         if Cell.vars.groupType == "solo" or Cell.vars.groupType == "party" then
             partyText:SetText(Cell:GetPlayerClassColorString()..L["Solo/Party"].."*")
             raidText:SetText(L["Raid"])
+            arenaText:SetText(L["Arena"])
             bg15Text:SetText(L["BG 1-15"])
             bg40Text:SetText(L["BG 16-40"])
         else
             partyText:SetText(L["Solo/Party"])
             raidText:SetText(Cell:GetPlayerClassColorString()..L["Raid"].."*")
+            arenaText:SetText(L["Arena"])
             bg15Text:SetText(L["BG 1-15"])
             bg40Text:SetText(L["BG 16-40"])
         end

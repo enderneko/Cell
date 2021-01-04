@@ -97,11 +97,12 @@ select(2, ...).L = setmetatable({
         <br/>
     ]],
 
-    ["r36-release"] = [[
+    ["r37-release"] = [[
         <h1>Indicators</h1>
         <p>Some built-in indicators are now configurable: Name Text, Status Text.</p>
         <p>New indicator: Shield Bar</p>
         <p>Added "Only show debuffs dispellable by me" option for Debuffs indicator.</p>
+        <p>Added "Use Custom Textures" options for Role Icon indicator.</p>
         <br/>
         <h1>Misc</h1>
         <p>Due to indicator changes, some font related options have been removed.</p>

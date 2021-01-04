@@ -217,10 +217,11 @@ L["r34-release"] = [[
     <p>"文字寬度" 新增 "隱藏" 選項。</p>
     <br/>
 ]]
-L["r36-release"] = [[
+L["r37-release"] = [[
     <h1>指示器</h1>
     <p>新指示器：名稱、狀態文字、護盾條。</p>
     <p>"減益" 指示器新增 "只顯示我能驅散的的減益" 選項。</p>
+    <p>Added "Use Custom Textures" options for Role Icon indicator.</p>
     <br/>
     <h1>其他</h1>
     <p>由於指示器的變動，一些字體相關選項被移除了。</p>

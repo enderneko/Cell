@@ -93,6 +93,7 @@ local function GroupTypeChanged()
             F:UpdateLayout("battleground15", true)
         end
     elseif instanceType == "arena" then
+        Cell.vars.inBattleground = 5 -- treat as bg 5
         F:UpdateLayout("arena", true)
     else
         if Cell.vars.groupType == "solo" or Cell.vars.groupType == "party" then

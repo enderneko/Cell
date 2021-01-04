@@ -161,7 +161,10 @@ local function RaidFrame_UpdateLayout(layout, which)
     -- if layout ~= Cell.vars.currentLayout then return end
     if Cell.vars.groupType ~= "raid" and init then return end
     init = true
-    if Cell.vars.inBattleground then
+    
+    if Cell.vars.inBattleground == 5 then
+        layout = CellDB["layouts"][CellCharacterDB["arena"]]
+    elseif Cell.vars.inBattleground == 15 or Cell.vars.inBattleground == 40 then
         layout = CellDB["layouts"][CellCharacterDB["battleground"..Cell.vars.inBattleground]]
     else
         layout = CellDB["layouts"][CellCharacterDB["raid"]]
