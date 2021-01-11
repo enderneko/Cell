@@ -145,7 +145,7 @@ function eventFrame:ADDON_LOADED(arg1)
                 -- ["showReBuffChecks"] = true, -- TODO:
                 ["showBattleRes"] = true,
                 ["showButtons"] = false,
-                ["pullTimer"] = {"ERT", 7},
+                ["pullTimer"] = {"ExRT", 7},
                 ["showMarks"] = false,
                 ["marks"] = "both",
                 ["buttonsPosition"] = {},

@@ -182,7 +182,7 @@ local function UpdateRaidTools(which)
     end
 
     if not which or which == "pullTimer" then
-        if CellDB["raidTools"]["pullTimer"][1] == "ERT" then
+        if CellDB["raidTools"]["pullTimer"][1] == "ExRT" then
             pullBtn:SetAttribute("macrotext1", "/ert pull "..CellDB["raidTools"]["pullTimer"][2])
             pullBtn:SetAttribute("macrotext2", "/ert pull 0")
         elseif CellDB["raidTools"]["pullTimer"][1] == "DBM" then

@@ -143,9 +143,9 @@ pullDropdown = Cell:CreateDropdown(generalTab, 75)
 pullDropdown:SetPoint("LEFT", pullText, "RIGHT", 10, 0)
 pullDropdown:SetItems({
     {
-        ["text"] = "ERT",
+        ["text"] = "ExRT",
         ["onClick"] = function()
-            CellDB["raidTools"]["pullTimer"][1] = "ERT"
+            CellDB["raidTools"]["pullTimer"][1] = "ExRT"
             Cell:Fire("UpdateRaidTools", "pullTimer")
         end,
     },

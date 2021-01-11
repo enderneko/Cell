@@ -444,6 +444,12 @@ local function Revise()
             end
         end
     end
+    
+    if CellDB["revise"] and dbRevision < 38 then
+        if CellDB["raidTools"]["pullTimer"][1] == "ERT" then
+            CellDB["raidTools"]["pullTimer"][1] = "ExRT"
+        end
+    end
 
     CellDB["revise"] = Cell.version
 end
