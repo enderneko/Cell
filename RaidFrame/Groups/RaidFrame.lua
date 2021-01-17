@@ -172,7 +172,16 @@ local function RaidFrame_UpdateLayout(layout, which)
 
     local width, height = unpack(layout["size"])
 
-    for i, header in ipairs(groupHeaders) do
+    local shownGroups = {}
+    for i, isShown in ipairs(layout["groupFilter"]) do
+        if isShown then
+            tinsert(shownGroups, i)
+        end
+    end
+
+    for i, group in ipairs(shownGroups) do
+        local header = groupHeaders[group]
+
         if not which or which == "size" or which == "power" then
             for j, b in ipairs({header:GetChildren()}) do
                 if not which or which == "size" then
@@ -194,7 +203,7 @@ local function RaidFrame_UpdateLayout(layout, which)
             end
         end
 
-        if not which or which == "spacing" or which == "orientation" or which == "anchor" or which == "rows_columns" or which == "groupSpacing" then
+        if not which or which == "spacing" or which == "orientation" or which == "anchor" or which == "rows_columns" or which == "groupSpacing" or which == "groupFilter" then
             header:ClearAllPoints()
             if layout["orientation"] == "vertical" then
                 -- anchor
@@ -231,8 +240,8 @@ local function RaidFrame_UpdateLayout(layout, which)
                 header:SetAttribute("yOffset", unitSpacing)
 
                 --! force update unitbutton's point
-                for i = 1, 5 do
-                    header[i]:ClearAllPoints()
+                for j = 1, 5 do
+                    header[j]:ClearAllPoints()
                 end
                 header:SetAttribute("unitsPerColumn", 5)
                 
@@ -240,9 +249,9 @@ local function RaidFrame_UpdateLayout(layout, which)
                     header:SetPoint(point)
                 else
                     if i / layout["columns"] > 1 then -- not the first row
-                        header:SetPoint(point, groupHeaders[i-layout["columns"]], anchorPoint, 0, verticalSpacing)
+                        header:SetPoint(point, groupHeaders[shownGroups[i-layout["columns"]]], anchorPoint, 0, verticalSpacing)
                     else
-                        header:SetPoint(point, groupHeaders[i-1], groupAnchorPoint, groupSpacing, 0)
+                        header:SetPoint(point, groupHeaders[shownGroups[i-1]], groupAnchorPoint, groupSpacing, 0)
                     end
                 end
             else
@@ -280,8 +289,8 @@ local function RaidFrame_UpdateLayout(layout, which)
                 header:SetAttribute("yOffset", 0)
                
                 --! force update unitbutton's point
-                for i = 1, 5 do
-                    header[i]:ClearAllPoints()
+                for j = 1, 5 do
+                    header[j]:ClearAllPoints()
                 end
                 header:SetAttribute("unitsPerColumn", 5)
                
@@ -289,9 +298,9 @@ local function RaidFrame_UpdateLayout(layout, which)
                     header:SetPoint(point)
                 else
                     if i / layout["rows"] > 1 then -- not the first column
-                        header:SetPoint(point, groupHeaders[i-layout["rows"]], anchorPoint, horizontalSpacing, 0)
+                        header:SetPoint(point, groupHeaders[shownGroups[i-layout["rows"]]], anchorPoint, horizontalSpacing, 0)
                     else
-                        header:SetPoint(point, groupHeaders[i-1], groupAnchorPoint, 0, groupSpacing)
+                        header:SetPoint(point, groupHeaders[shownGroups[i-1]], groupAnchorPoint, 0, groupSpacing)
                     end
                 end
             end
@@ -307,12 +316,15 @@ local function RaidFrame_UpdateLayout(layout, which)
                 b:GetScript("OnSizeChanged")(b)
             end
         end
+    end
 
-        if not which or which == "groupFilter" then
+    -- show/hide groups
+    if not which or which == "groupFilter" then
+        for i = 1, 8 do
             if layout["groupFilter"][i] then
-                header:Show()
+                groupHeaders[i]:Show()
             else
-                header:Hide()
+                groupHeaders[i]:Hide()
             end
         end
     end

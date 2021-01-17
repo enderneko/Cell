@@ -165,42 +165,49 @@ do
 
     local desaturation = {
         [1] = 1,
-        [2] = .9,
-        [3] = .8,
-        [4] = .7,
-        [5] = .6,
+        [2] = .85,
+        [3] = .7,
+        [4] = .55,
+        [5] = .4,
     }
 
-    for i = 1, 40 do
-        layoutPreview[i] = layoutPreview:CreateTexture(nil, "ARTWORK")
-        layoutPreview[i]:SetTexture("Interface\\Buttons\\WHITE8x8")
+    -- headers
+    layoutPreview.headers = {}
+    for i = 1, 8 do
+        local header = CreateFrame("Frame", "CellLayoutPreviewFrameHeader"..i, layoutPreview)
+        layoutPreview.headers[i] = header
 
-        layoutPreview[i].bg = layoutPreview:CreateTexture(nil, "BACKGROUND")
-        layoutPreview[i].bg:SetColorTexture(0, 0, 0)
-        layoutPreview[i].bg:SetAlpha(.555)
-        layoutPreview[i].bg:SetSize(30, 20)
-        
-        layoutPreview[i]:SetPoint("TOPLEFT", layoutPreview[i].bg, 1, -1)
-        layoutPreview[i]:SetPoint("BOTTOMRIGHT", layoutPreview[i].bg, -1, 1)
-        
-        if i <= 5 then
-            layoutPreview[i]:SetVertexColor(F:ConvertRGB(255, 0, 0, 1, desaturation[i])) -- Red
-        elseif i <= 10 then
-            layoutPreview[i]:SetVertexColor(F:ConvertRGB(255, 127, 0, 1, desaturation[i-5])) -- Orange
-        elseif i <= 15 then
-            layoutPreview[i]:SetVertexColor(F:ConvertRGB(255, 255, 0, 1, desaturation[i-10])) -- Yellow
-        elseif i <= 20 then
-            layoutPreview[i]:SetVertexColor(F:ConvertRGB(0, 255, 0, 1, desaturation[i-15])) -- Green
-        elseif i <= 25 then
-            layoutPreview[i]:SetVertexColor(F:ConvertRGB(0, 127, 255, 1, desaturation[i-20])) -- Blue
-        elseif i <= 30 then
-            layoutPreview[i]:SetVertexColor(F:ConvertRGB(127, 0, 255, 1, desaturation[i-25])) -- Indigo
-        elseif i <= 35 then
-            layoutPreview[i]:SetVertexColor(F:ConvertRGB(238, 130, 238, 1, desaturation[i-30])) -- Violet
-        else
-            layoutPreview[i]:SetVertexColor(F:ConvertRGB(255, 255, 255, 1, desaturation[i-35])) -- White
+        for j = 1, 5 do
+            header[j] = header:CreateTexture(nil, "BACKGROUND")
+            header[j]:SetColorTexture(0, 0, 0)
+            header[j]:SetAlpha(.555)
+            header[j]:SetSize(30, 20)
+
+            header[j].tex = header:CreateTexture(nil, "ARTWORK")
+            header[j].tex:SetTexture("Interface\\Buttons\\WHITE8x8")
+    
+            header[j].tex:SetPoint("TOPLEFT", header[j], 1, -1)
+            header[j].tex:SetPoint("BOTTOMRIGHT", header[j], -1, 1)
+
+            if i == 1 then
+                header[j].tex:SetVertexColor(F:ConvertRGB(255, 0, 0, 1, desaturation[j])) -- Red
+            elseif i == 2 then
+                header[j].tex:SetVertexColor(F:ConvertRGB(255, 127, 0, 1, desaturation[j])) -- Orange
+            elseif i == 3 then
+                header[j].tex:SetVertexColor(F:ConvertRGB(255, 255, 0, 1, desaturation[j])) -- Yellow
+            elseif i == 4 then
+                header[j].tex:SetVertexColor(F:ConvertRGB(0, 255, 0, 1, desaturation[j])) -- Green
+            elseif i == 5 then
+                header[j].tex:SetVertexColor(F:ConvertRGB(0, 127, 255, 1, desaturation[j])) -- Blue
+            elseif i == 6 then
+                header[j].tex:SetVertexColor(F:ConvertRGB(127, 0, 255, 1, desaturation[j])) -- Indigo
+            elseif i == 7 then
+                header[j].tex:SetVertexColor(F:ConvertRGB(238, 130, 238, 1, desaturation[j])) -- Violet
+            elseif i == 8 then
+                header[j].tex:SetVertexColor(F:ConvertRGB(255, 255, 255, 1, desaturation[j])) -- White
+            end
+            header[j].tex:SetAlpha(.555)
         end
-        layoutPreview[i]:SetAlpha(.555)
     end
 end
 
@@ -218,13 +225,6 @@ layoutsTab:SetScript("OnHide", function()
 end)
 
 local function UpdateLayoutPreview()
-    local n
-    if previewMode == 1 then
-        n = 5
-    else
-        n = 40
-    end
-
     -- update layoutPreview point
     layoutPreview:SetSize(unpack(selectedLayoutTable["size"]))
     layoutPreview:ClearAllPoints()
@@ -261,12 +261,19 @@ local function UpdateLayoutPreview()
     end
 
     -- re-arrange
-    for i = 1, n do
-        layoutPreview[i].bg:SetSize(unpack(selectedLayoutTable["size"]))
-        layoutPreview[i].bg:ClearAllPoints()
+    local shownGroups = {}
+    for i, isShown in ipairs(selectedLayoutTable["groupFilter"]) do
+        if isShown then
+            tinsert(shownGroups, i)
+        end
+    end
 
+    for i, group in ipairs(shownGroups) do
+        local header = layoutPreview.headers[group]
         local spacing = selectedLayoutTable["spacing"]
         
+        header:ClearAllPoints()
+
         if selectedLayoutTable["orientation"] == "vertical" then
             -- anchor
             local point, anchorPoint, groupAnchorPoint, unitSpacing, groupSpacing, verticalSpacing
@@ -292,19 +299,26 @@ local function UpdateLayoutPreview()
                 verticalSpacing = -spacing-selectedLayoutTable["groupSpacing"]
             end
 
-            if i == 1 then
-                layoutPreview[i].bg:SetPoint(point)
-            elseif i % 5 == 1 then -- another party
-                local lastColumn = math.modf(i / 5)
-                local currentColumn = lastColumn + 1
-                if lastColumn % selectedLayoutTable["columns"] == 0 then
-                    local index = (currentColumn - selectedLayoutTable["columns"]) * 5 -- find anchor
-                    layoutPreview[i].bg:SetPoint(point, layoutPreview[index].bg, anchorPoint, 0, verticalSpacing)
+            header:SetSize(selectedLayoutTable["size"][1], selectedLayoutTable["size"][2]*5+abs(unitSpacing)*4)
+            for j = 1, 5 do
+                header[j]:SetSize(unpack(selectedLayoutTable["size"]))
+                header[j]:ClearAllPoints()
+
+                if j == 1 then
+                    header[j]:SetPoint(point)
                 else
-                    layoutPreview[i].bg:SetPoint(point, layoutPreview[i-5].bg, groupAnchorPoint, groupSpacing, 0)
+                    header[j]:SetPoint(point, header[j-1], anchorPoint, 0, unitSpacing)
                 end
+            end
+
+            if i == 1 then
+                header:SetPoint(point)
             else
-                layoutPreview[i].bg:SetPoint(point, layoutPreview[i-1].bg, anchorPoint, 0, unitSpacing)
+                if i / selectedLayoutTable["columns"] > 1 then -- not the first row
+                    header:SetPoint(point, layoutPreview.headers[shownGroups[i-selectedLayoutTable["columns"]]], anchorPoint, 0, verticalSpacing)
+                else
+                    header:SetPoint(point, layoutPreview.headers[shownGroups[i-1]], groupAnchorPoint, groupSpacing, 0)
+                end
             end
         else
             -- anchor
@@ -331,75 +345,134 @@ local function UpdateLayoutPreview()
                 horizontalSpacing = -spacing-selectedLayoutTable["groupSpacing"]
             end
 
-            if i == 1 then
-                layoutPreview[i].bg:SetPoint(point)
-            elseif i % 5 == 1 then -- another party
-                local lastRow = math.modf(i / 5)
-                local currentRow = lastRow + 1
-                if lastRow % selectedLayoutTable["rows"] == 0 then
-                    local index = (currentRow - selectedLayoutTable["rows"]) * 5 -- find anchor
-                    layoutPreview[i].bg:SetPoint(point, layoutPreview[index].bg, anchorPoint, horizontalSpacing, 0)
+            header:SetSize(selectedLayoutTable["size"][1]*5+abs(unitSpacing)*4, selectedLayoutTable["size"][2])
+            for j = 1, 5 do
+                header[j]:SetSize(unpack(selectedLayoutTable["size"]))
+                header[j]:ClearAllPoints()
+
+                if j == 1 then
+                    header[j]:SetPoint(point)
                 else
-                    layoutPreview[i].bg:SetPoint(point, layoutPreview[i-5].bg, groupAnchorPoint, 0, groupSpacing)
+                    header[j]:SetPoint(point, header[j-1], anchorPoint, unitSpacing, 0)
                 end
+            end
+
+            if i == 1 then
+                header:SetPoint(point)
             else
-                layoutPreview[i].bg:SetPoint(point, layoutPreview[i-1].bg, anchorPoint, unitSpacing, 0)
+                if i / selectedLayoutTable["rows"] > 1 then -- not the first column
+                    header:SetPoint(point, layoutPreview.headers[shownGroups[i-selectedLayoutTable["rows"]]], anchorPoint, horizontalSpacing, 0)
+                else
+                    header:SetPoint(point, layoutPreview.headers[shownGroups[i-1]], groupAnchorPoint, 0, groupSpacing)
+                end
             end
         end
-
-        layoutPreview[i]:Show()
-        layoutPreview[i].bg:Show()
     end
+
+    -- re-arrange
+    -- for i = 1, n do
+    --     layoutPreview[i].bg:SetSize(unpack(selectedLayoutTable["size"]))
+    --     layoutPreview[i].bg:ClearAllPoints()
+
+    --     local spacing = selectedLayoutTable["spacing"]
+        
+    --     if selectedLayoutTable["orientation"] == "vertical" then
+    --         -- anchor
+    --         local point, anchorPoint, groupAnchorPoint, unitSpacing, groupSpacing, verticalSpacing
+    --         if selectedLayoutTable["anchor"] == "BOTTOMLEFT" then
+    --             point, anchorPoint, groupAnchorPoint = "BOTTOMLEFT", "TOPLEFT", "BOTTOMRIGHT"
+    --             unitSpacing = spacing
+    --             groupSpacing = spacing
+    --             verticalSpacing = spacing+selectedLayoutTable["groupSpacing"]
+    --         elseif selectedLayoutTable["anchor"] == "BOTTOMRIGHT" then
+    --             point, anchorPoint, groupAnchorPoint = "BOTTOMRIGHT", "TOPRIGHT", "BOTTOMLEFT"
+    --             unitSpacing = spacing
+    --             groupSpacing = -spacing
+    --             verticalSpacing = spacing+selectedLayoutTable["groupSpacing"]
+    --         elseif selectedLayoutTable["anchor"] == "TOPLEFT" then
+    --             point, anchorPoint, groupAnchorPoint = "TOPLEFT", "BOTTOMLEFT", "TOPRIGHT"
+    --             unitSpacing = -spacing
+    --             groupSpacing = spacing
+    --             verticalSpacing = -spacing-selectedLayoutTable["groupSpacing"]
+    --         elseif selectedLayoutTable["anchor"] == "TOPRIGHT" then
+    --             point, anchorPoint, groupAnchorPoint = "TOPRIGHT", "BOTTOMRIGHT", "TOPLEFT"
+    --             unitSpacing = -spacing
+    --             groupSpacing = -spacing
+    --             verticalSpacing = -spacing-selectedLayoutTable["groupSpacing"]
+    --         end
+
+    --         if i == 1 then
+    --             layoutPreview[i].bg:SetPoint(point)
+    --         elseif i % 5 == 1 then -- another party
+    --             local lastColumn = math.modf(i / 5)
+    --             local currentColumn = lastColumn + 1
+    --             if lastColumn % selectedLayoutTable["columns"] == 0 then -- new row
+    --                 local index = (currentColumn - selectedLayoutTable["columns"]) * 5 -- find anchor
+    --                 layoutPreview[i].bg:SetPoint(point, layoutPreview[index].bg, anchorPoint, 0, verticalSpacing)
+    --             else
+    --                 layoutPreview[i].bg:SetPoint(point, layoutPreview[i-5].bg, groupAnchorPoint, groupSpacing, 0)
+    --             end
+    --         else
+    --             layoutPreview[i].bg:SetPoint(point, layoutPreview[i-1].bg, anchorPoint, 0, unitSpacing)
+    --         end
+    --     else
+    --         -- anchor
+    --         local point, anchorPoint, groupAnchorPoint, unitSpacing, groupSpacing, horizontalSpacing
+    --         if selectedLayoutTable["anchor"] == "BOTTOMLEFT" then
+    --             point, anchorPoint, groupAnchorPoint = "BOTTOMLEFT", "BOTTOMRIGHT", "TOPLEFT"
+    --             unitSpacing = spacing
+    --             groupSpacing = spacing
+    --             horizontalSpacing = spacing+selectedLayoutTable["groupSpacing"]
+    --         elseif selectedLayoutTable["anchor"] == "BOTTOMRIGHT" then
+    --             point, anchorPoint, groupAnchorPoint = "BOTTOMRIGHT", "BOTTOMLEFT", "TOPRIGHT"
+    --             unitSpacing = -spacing
+    --             groupSpacing = spacing
+    --             horizontalSpacing = -spacing-selectedLayoutTable["groupSpacing"]
+    --         elseif selectedLayoutTable["anchor"] == "TOPLEFT" then
+    --             point, anchorPoint, groupAnchorPoint = "TOPLEFT", "TOPRIGHT", "BOTTOMLEFT"
+    --             unitSpacing = spacing
+    --             groupSpacing = -spacing
+    --             horizontalSpacing = spacing+selectedLayoutTable["groupSpacing"]
+    --         elseif selectedLayoutTable["anchor"] == "TOPRIGHT" then
+    --             point, anchorPoint, groupAnchorPoint = "TOPRIGHT", "TOPLEFT", "BOTTOMRIGHT"
+    --             unitSpacing = -spacing
+    --             groupSpacing = -spacing
+    --             horizontalSpacing = -spacing-selectedLayoutTable["groupSpacing"]
+    --         end
+
+    --         if i == 1 then
+    --             layoutPreview[i].bg:SetPoint(point)
+    --         elseif i % 5 == 1 then -- another party
+    --             local lastRow = math.modf(i / 5)
+    --             local currentRow = lastRow + 1
+    --             if lastRow % selectedLayoutTable["rows"] == 0 then -- new column
+    --                 local index = (currentRow - selectedLayoutTable["rows"]) * 5 -- find anchor
+    --                 layoutPreview[i].bg:SetPoint(point, layoutPreview[index].bg, anchorPoint, horizontalSpacing, 0)
+    --             else
+    --                 layoutPreview[i].bg:SetPoint(point, layoutPreview[i-5].bg, groupAnchorPoint, 0, groupSpacing)
+    --             end
+    --         else
+    --             layoutPreview[i].bg:SetPoint(point, layoutPreview[i-1].bg, anchorPoint, unitSpacing, 0)
+    --         end
+    --     end
+
+    --     layoutPreview[i]:Show()
+    --     layoutPreview[i].bg:Show()
+    -- end
 
     -- update group filter
     if previewMode ~= 1 then
-        for i = 1, 40 do
-            if i / 5 <= 1 then -- party1
-                if not selectedLayoutTable["groupFilter"][1] then
-                    layoutPreview[i]:Hide()
-                    layoutPreview[i].bg:Hide()
-                end
-            elseif i / 5 <= 2 then -- party2
-                if not selectedLayoutTable["groupFilter"][2] then
-                    layoutPreview[i]:Hide()
-                    layoutPreview[i].bg:Hide()
-                end
-            elseif i / 5 <= 3 then -- party3
-                if not selectedLayoutTable["groupFilter"][3] then
-                    layoutPreview[i]:Hide()
-                    layoutPreview[i].bg:Hide()
-                end
-            elseif i / 5 <= 4 then -- party4
-                if not selectedLayoutTable["groupFilter"][4] then
-                    layoutPreview[i]:Hide()
-                    layoutPreview[i].bg:Hide()
-                end
-            elseif i / 5 <= 5 then -- party5
-                if not selectedLayoutTable["groupFilter"][5] then
-                    layoutPreview[i]:Hide()
-                    layoutPreview[i].bg:Hide()
-                end
-            elseif i / 5 <= 6 then -- party6
-                if not selectedLayoutTable["groupFilter"][6] then
-                    layoutPreview[i]:Hide()
-                    layoutPreview[i].bg:Hide()
-                end
-            elseif i / 5 <= 7 then -- party7
-                if not selectedLayoutTable["groupFilter"][7] then
-                    layoutPreview[i]:Hide()
-                    layoutPreview[i].bg:Hide()
-                end
-            else -- party8
-                if not selectedLayoutTable["groupFilter"][8] then
-                    layoutPreview[i]:Hide()
-                    layoutPreview[i].bg:Hide()
-                end
+        for i = 1, 8 do
+            if selectedLayoutTable["groupFilter"][i] then
+                layoutPreview.headers[i]:Show()
+            else
+                layoutPreview.headers[i]:Hide()
             end
         end
-    else -- party preview
-        for i = 6, 40 do
-            layoutPreview[i]:Hide()
-            layoutPreview[i].bg:Hide()
+    else -- party
+        layoutPreview.headers[1]:Show()
+        for i = 2, 8 do
+            layoutPreview.headers[i]:Hide()
         end
     end
 
