@@ -225,6 +225,10 @@ function F:IterateAllUnitButtons(func)
     for _, b in pairs(Cell.unitButtons.npc) do
         func(b)
     end
+    -- arena pet
+    for _, b in pairs(Cell.unitButtons.arena) do
+        func(b)
+    end
 end
 
 function F:UpdateTextWidth(fs, text, percent)

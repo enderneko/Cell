@@ -156,6 +156,15 @@ for i = 1, 8 do
 	helper:SetAttribute("_onhide", [[ self:GetFrameRef("raidframe"):SetAttribute("visibility", 0) ]])
 end
 
+-- arena pet
+local arenaPetButtons = {}
+for i = 1, 3 do
+    arenaPetButtons[i] = CreateFrame("Button", "CellArenaPet"..i, raidFrame, "CellUnitButtonTemplate")
+    arenaPetButtons[i]:SetAttribute("unit", "raidpet"..i)
+
+    Cell.unitButtons.arena["raidpet"..i] = arenaPetButtons[i]
+end
+
 local init
 local function RaidFrame_UpdateLayout(layout, which)
     -- if layout ~= Cell.vars.currentLayout then return end
@@ -164,10 +173,21 @@ local function RaidFrame_UpdateLayout(layout, which)
     
     if Cell.vars.inBattleground == 5 then
         layout = CellDB["layouts"][CellCharacterDB["arena"]]
+        for i = 1, 3 do
+            RegisterAttributeDriver(arenaPetButtons[i], "state-visibility", "[@raidpet"..i..", exists] show; hide")
+        end
     elseif Cell.vars.inBattleground == 15 or Cell.vars.inBattleground == 40 then
         layout = CellDB["layouts"][CellCharacterDB["battleground"..Cell.vars.inBattleground]]
+        for i = 1, 3 do
+            UnregisterAttributeDriver(arenaPetButtons[i], "state-visibility")
+            arenaPetButtons[i]:Hide()
+        end
     else
         layout = CellDB["layouts"][CellCharacterDB["raid"]]
+        for i = 1, 3 do
+            UnregisterAttributeDriver(arenaPetButtons[i], "state-visibility")
+            arenaPetButtons[i]:Hide()
+        end
     end
 
     local width, height = unpack(layout["size"])
@@ -200,6 +220,11 @@ local function RaidFrame_UpdateLayout(layout, which)
                 header:SetAttribute("buttonHeight", height)
 
                 npcFrameAnchor:SetSize(width, height)
+            end
+
+            for i = 1, 3 do
+                arenaPetButtons[i]:SetSize(width, height)
+                arenaPetButtons[i].func.SetPowerHeight(layout["powerHeight"])
             end
         end
 
@@ -254,6 +279,16 @@ local function RaidFrame_UpdateLayout(layout, which)
                         header:SetPoint(point, groupHeaders[shownGroups[i-1]], groupAnchorPoint, groupSpacing, 0)
                     end
                 end
+
+                -- arena pets
+                for i = 1, 3 do
+                    arenaPetButtons[i]:ClearAllPoints()
+                    if i == 1 then
+                        arenaPetButtons[i]:SetPoint(point, npcFrameAnchor)
+                    else
+                        arenaPetButtons[i]:SetPoint(point, arenaPetButtons[i-1], anchorPoint, 0, unitSpacing)
+                    end
+                end
             else
                 -- anchor
                 local point, anchorPoint, groupAnchorPoint, unitSpacing, groupSpacing, horizontalSpacing, headerPoint, headerColumnAnchorPoint
@@ -303,6 +338,16 @@ local function RaidFrame_UpdateLayout(layout, which)
                         header:SetPoint(point, groupHeaders[shownGroups[i-1]], groupAnchorPoint, 0, groupSpacing)
                     end
                 end
+
+                -- arena pets
+                for i = 1, 3 do
+                    arenaPetButtons[i]:ClearAllPoints()
+                    if i == 1 then
+                        arenaPetButtons[i]:SetPoint(point, npcFrameAnchor)
+                    else
+                        arenaPetButtons[i]:SetPoint(point, arenaPetButtons[i-1], anchorPoint, unitSpacing, 0)
+                    end
+                end
             end
 
             raidFrame:SetAttribute("spacing", layout["spacing"])
@@ -314,6 +359,9 @@ local function RaidFrame_UpdateLayout(layout, which)
         if which == "textWidth" then -- textWidth already initialized in UnitButton.lua
             for j, b in ipairs({header:GetChildren()}) do
                 b:GetScript("OnSizeChanged")(b)
+            end
+            for i = 1, 3 do
+                arenaPetButtons[i]:GetScript("OnSizeChanged")(arenaPetButtons[i])
             end
         end
     end

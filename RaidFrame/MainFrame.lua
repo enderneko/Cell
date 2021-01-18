@@ -10,6 +10,7 @@ Cell.unitButtons = {
         ["units"] = {}, -- NOTE: update in UnitButton_OnAttributeChanged
     },
     ["npc"] = {},
+    ["arena"] = {},
 }
 -------------------------------------------------
 -- CellMainFrame
