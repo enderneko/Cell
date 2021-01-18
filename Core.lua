@@ -117,9 +117,11 @@ eventFrame:RegisterEvent("PLAYER_LOGIN")
 eventFrame:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
 eventFrame:RegisterEvent("UNIT_PET")
 
+local cellLoaded, omnicdLoaded
 function eventFrame:ADDON_LOADED(arg1)
     if arg1 == addonName then
-		eventFrame:UnregisterEvent("ADDON_LOADED")
+        cellLoaded = true
+        
         if type(CellDB) ~= "table" then CellDB = {} end
         if type(CellCharacterDB) ~= "table" then CellCharacterDB = {} end
 
@@ -423,6 +425,45 @@ function eventFrame:ADDON_LOADED(arg1)
         Cell.version = GetAddOnMetadata(addonName, "version")
         Cell:Fire("Revise")
         F:CheckWhatsNew()
+
+    end
+
+    -- omnicd ---------------------------------------------------------------------------------
+    if arg1 == "OmniCD" then
+        omnicdLoaded = true
+
+        local E = OmniCD[1]
+        tinsert(E.unitFrameData, 1, {
+            [1] = "Cell",
+            [2] = "CellPartyFrameMember",
+            [3] = "unitid",
+            [4] = 1,
+        })
+
+        -- local function SetActiveUnitFrameData()
+        --     E.customUF.enabled = "Cell"
+        --     E.customUF.frame = "CellPartyFrameMember"
+        --     E.customUF.unit = "unitid"
+        --     E.customUF.delay = 1
+        --     E.customUF.active = "Cell"
+        -- end
+        -- hooksecurefunc(E, "SetActiveUnitFrameData", SetActiveUnitFrameData)
+
+        local function UnitFrames()
+            if not E.customUF.optionTable.Cell then
+                E.customUF.optionTable.Cell = "Cell"
+                E.customUF.optionTable.enabled.Cell = {
+                    ["delay"] = 1,
+                    ["frame"] = "CellPartyFrameMember",
+                    ["unit"] = "unitid",
+                }
+            end
+        end
+        hooksecurefunc(E, "UnitFrames", UnitFrames)
+    end
+
+    if cellLoaded and omnicdLoaded then
+        eventFrame:UnregisterEvent("ADDON_LOADED")
     end
 end
 
