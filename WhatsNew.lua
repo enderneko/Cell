@@ -2,7 +2,7 @@ local _, Cell = ...
 local L = Cell.L
 local F = Cell.funcs
 
-local whatsNewFrame = Cell:CreateMovableFrame(L["What's New"], "CellWhatsNewFrame", 350, 400, "DIALOG", 1, true)
+local whatsNewFrame = Cell:CreateMovableFrame("What's New", "CellWhatsNewFrame", 350, 400, "DIALOG", 1, true)
 Cell.frames.whatsNewFrame = whatsNewFrame
 whatsNewFrame:SetToplevel(true)
 
@@ -36,7 +36,7 @@ function F:CheckWhatsNew()
             whatsNewFrame:Show()
             whatsNewFrame:ClearAllPoints()
             whatsNewFrame:SetPoint("CENTER")
-            whatsNewFrame.header.text:SetText(L["What's New in"] .. " " .. Cell.version)
+            whatsNewFrame.header.text:SetText(L["What's new in"] .. " " .. Cell.version)
         end
     end
 end

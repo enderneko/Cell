@@ -86,6 +86,10 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
             if t["indicatorName"] == "aoeHealing" then
                 I:EnableAoEHealing(t["enabled"])
             end
+            -- update targetedSpells
+            if t["indicatorName"] == "targetedSpells" then
+                I:EnableTargetedSpells(t["enabled"])
+            end
             -- update custom
             if t["dispellableByMe"] ~= nil then
                 indicatorCustoms[t["indicatorName"]] = t["dispellableByMe"]
@@ -191,6 +195,8 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
 
             if indicatorName == "aoeHealing" then
                 I:EnableAoEHealing(value)
+            elseif indicatorName == "targetedSpells" then
+                I:EnableTargetedSpells(value)
             elseif indicatorName == "roleIcon" then
                 F:IterateAllUnitButtons(function(b)
                     UnitButton_UpdateRole(b)
@@ -1959,6 +1965,7 @@ function F:UnitButton_OnLoad(button)
     I:CreateDebuffs(button)
     I:CreateDispels(button)
     I:CreateRaidDebuffs(button)
+    I:CreateTargetedSpells(button)
 
     -- events
     button:SetScript("OnAttributeChanged", UnitButton_OnAttributeChanged) -- init

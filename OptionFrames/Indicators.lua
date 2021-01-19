@@ -197,6 +197,18 @@ local function InitIndicator(indicatorName)
             indicator.cooldown:Hide()
             indicator.cooldown:SetScript("OnCooldownDone", nil)
         end)
+
+    elseif indicatorName == "targetedSpells" then
+        indicator:SetScript("OnShow", function()
+            indicator:SetCooldown(GetTime(), 3, "", "Interface\\Icons\\spell_nature_polymorph", 7)
+            indicator.cooldown:SetScript("OnCooldownDone", function()
+                indicator:SetCooldown(GetTime(), 3, "", "Interface\\Icons\\spell_nature_polymorph", 7)
+            end)
+        end)
+        indicator:SetScript("OnHide", function()
+            indicator.cooldown:Hide()
+            indicator.cooldown:SetScript("OnCooldownDone", nil)
+        end)
         
     elseif indicatorName == "externalCooldowns" then
         local icons = {135936, 572025, 135966, 627485, 237542}
@@ -722,6 +734,7 @@ local indicatorSettings = {
     ["dispels"] = {"enabled", "checkbutton:dispellableByMe", "checkbutton2:enableHighlight", "position", "frameLevel", "size-square"},
     ["debuffs"] = {"enabled", "blacklist", "checkbutton:dispellableByMe", "num", "position", "frameLevel", "size-square", "font"},
     ["raidDebuffs"] = {"|cffb7b7b7"..L["You can config debuffs in %s"]:format(Cell:GetPlayerClassColorString()..L["Raid Debuffs"].."|r"), "enabled", "checkbutton:onlyShowTopGlow", "position", "frameLevel", "size-border", "font"},
+    ["targetedSpells"] = {"enabled", "spells", "position", "frameLevel", "size-border"},
 }
 
 local function ShowIndicatorSettings(id)

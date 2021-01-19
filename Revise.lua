@@ -445,9 +445,27 @@ local function Revise()
         end
     end
     
+    -- r38-release
     if CellDB["revise"] and dbRevision < 38 then
         if CellDB["raidTools"]["pullTimer"][1] == "ERT" then
             CellDB["raidTools"]["pullTimer"][1] = "ExRT"
+        end
+
+        for _, layout in pairs(CellDB["layouts"]) do
+            if not layout["indicators"][19] or layout["indicators"][19]["indicatorName"] ~= "targetedSpells" then
+                tinsert(layout["indicators"], 19, {
+                    ["name"] = "Targeted Spells",
+                    ["indicatorName"] = "targetedSpells",
+                    ["type"] = "built-in",
+                    ["enabled"] = true,
+                    ["position"] = {"CENTER", "TOPLEFT", 5, -5},
+                    ["frameLevel"] = 50,
+                    ["size"] = {20, 20},
+                    ["border"] = 2,
+                    ["spells"] = {},
+                    ["glow"] = {"Pixel", {{0.95,0.95,0.32,1}, 9, .25, 8, 2}},
+                })
+            end
         end
     end
 

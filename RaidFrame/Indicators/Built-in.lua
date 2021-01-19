@@ -11,7 +11,6 @@ function I:CreateDefensiveCooldowns(parent)
     local defensiveCooldowns = CreateFrame("Frame", parent:GetName().."ExternalCooldownParent", parent.widget.overlayFrame)
     parent.indicators.defensiveCooldowns = defensiveCooldowns
     defensiveCooldowns:SetSize(20, 10)
-    defensiveCooldowns:SetFrameLevel(11)
     defensiveCooldowns:Hide()
 
     defensiveCooldowns.OriginalSetSize = defensiveCooldowns.SetSize
@@ -50,7 +49,6 @@ function I:CreateExternalCooldowns(parent)
     local externalCooldowns = CreateFrame("Frame", parent:GetName().."ExternalCooldownParent", parent.widget.overlayFrame)
     parent.indicators.externalCooldowns = externalCooldowns
     externalCooldowns:SetSize(20, 10)
-    externalCooldowns:SetFrameLevel(11)
     externalCooldowns:Hide()
 
     externalCooldowns.OriginalSetSize = externalCooldowns.SetSize
@@ -161,7 +159,6 @@ end
 function I:CreateDispels(parent)
     local dispels = CreateFrame("Frame", parent:GetName().."DispelParent", parent.widget.overlayFrame)
     parent.indicators.dispels = dispels
-    dispels:SetFrameLevel(77)
     dispels:Hide()
 
     dispels.highlight = parent.widget.healthBar:CreateTexture(parent:GetName().."DispelHighlight", "ARTWORK")
@@ -255,9 +252,8 @@ function I:GetDebuffOrder(spellName, spellId)
 end
 
 function I:CreateRaidDebuffs(parent)
-    local frame = I:CreateAura_BorderIcon(parent:GetName().."RaidDebuffs", parent.widget.overlayFrame, 1)
+    local frame = I:CreateAura_BorderIcon(parent:GetName().."RaidDebuffs", parent.widget.overlayFrame, 2)
     parent.indicators.raidDebuffs = frame
-    frame:SetFrameLevel(77)
     frame:Hide()
 
     function frame:ShowGlow(glowType, glowOptions, noHiding)
