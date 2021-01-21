@@ -458,7 +458,7 @@ local function Revise()
                     ["indicatorName"] = "targetedSpells",
                     ["type"] = "built-in",
                     ["enabled"] = false,
-                    ["position"] = {"CENTER", "TOPLEFT", 5, -5},
+                    ["position"] = {"CENTER", "TOPLEFT", 7, -7},
                     ["frameLevel"] = 50,
                     ["size"] = {20, 20},
                     ["border"] = 2,
