@@ -3557,6 +3557,215 @@ local function CreateSetting_CustomTextures(parent)
     return widget
 end
 
+local function CreateSetting_Glow(parent)
+    local widget
+
+    if not settingWidgets["glow"] then
+        widget = addon:CreateFrame("CellIndicatorSettings_Glow", parent, 240, 145)
+        settingWidgets["glow"] = widget
+
+        widget.glowType = addon:CreateDropdown(widget, 100)
+        widget.glowType:SetPoint("TOPLEFT", 5, -20)
+        widget.glowType:SetItems({
+            {
+                ["text"] = L["None"],
+                ["value"] = "None",
+                ["onClick"] = function()
+                    widget:SetHeight(50)
+                    widget.glowColor:SetColor({0.95,0.95,0.32,1})
+                    widget.glowLines:Hide()
+                    widget.glowParticles:Hide()
+                    widget.glowFrequency:Hide()
+                    widget.glowLength:Hide()
+                    widget.glowThickness:Hide()
+                    widget.glowScale:Hide()
+                    widget.glow[1] = "None"
+                    widget.glow[2] = {0.95,0.95,0.32,1}
+                    widget.glow[3] = nil
+                    widget.glow[4] = nil
+                    widget.glow[5] = nil
+                    widget.glow[6] = nil
+                    widget.func(widget.glow)
+                end,
+            },
+            {
+                ["text"] = L["Normal"],
+                ["value"] = "Normal",
+                ["onClick"] = function()
+                    widget:SetHeight(50)
+                    widget.glowColor:SetColor({0.95,0.95,0.32,1})
+                    widget.glowLines:Hide()
+                    widget.glowParticles:Hide()
+                    widget.glowFrequency:Hide()
+                    widget.glowLength:Hide()
+                    widget.glowThickness:Hide()
+                    widget.glowScale:Hide()
+                    widget.glow[1] = "Normal"
+                    widget.glow[2] = {0.95,0.95,0.32,1}
+                    widget.glow[3] = nil
+                    widget.glow[4] = nil
+                    widget.glow[5] = nil
+                    widget.glow[6] = nil
+                    widget.func(widget.glow)
+                end,
+            },
+            {
+                ["text"] = L["Pixel"],
+                ["value"] = "Pixel",
+                ["onClick"] = function()
+                    widget:SetHeight(145)
+                    widget.glowColor:SetColor({0.95,0.95,0.32,1})
+                    widget.glowLines:Show()
+                    widget.glowLines:SetValue(9)
+                    widget.glowFrequency:Show()
+                    widget.glowFrequency:SetValue(.25)
+                    widget.glowLength:Show()
+                    widget.glowLength:SetValue(8)
+                    widget.glowThickness:Show()
+                    widget.glowThickness:SetValue(2)
+                    widget.glowParticles:Hide()
+                    widget.glowScale:Hide()
+                    widget.glow[1] = "Pixel"
+                    widget.glow[2] = {0.95,0.95,0.32,1}
+                    widget.glow[3] = 9
+                    widget.glow[4] = .25
+                    widget.glow[5] = 8
+                    widget.glow[6] = 2
+                    widget.func(widget.glow)
+                end,
+            },
+            {
+                ["text"] = L["Shine"],
+                ["value"] = "Shine",
+                ["onClick"] = function()
+                    widget:SetHeight(145)
+                    widget.glowColor:SetColor({0.95,0.95,0.32,1})
+                    widget.glowParticles:Show()
+                    widget.glowParticles:SetValue(9)
+                    widget.glowFrequency:Show()
+                    widget.glowFrequency:SetValue(.5)
+                    widget.glowScale:Show()
+                    widget.glowScale:SetValue(100)
+                    widget.glowLines:Hide()
+                    widget.glowLength:Hide()
+                    widget.glowThickness:Hide()
+                    widget.glow[1] = "Shine"
+                    widget.glow[2] = {0.95,0.95,0.32,1}
+                    widget.glow[3] = 9
+                    widget.glow[4] = .5
+                    widget.glow[5] = 1
+                    widget.glow[6] = nil
+                    widget.func(widget.glow)
+                end,
+            },
+        })
+
+        widget.glowTypeText = widget:CreateFontString(nil, "OVERLAY", font_name)
+        widget.glowTypeText:SetText(L["Glow Type"])
+        widget.glowTypeText:SetPoint("BOTTOMLEFT", widget.glowType, "TOPLEFT", 0, 1)
+
+        widget.glowColor = Cell:CreateColorPicker(widget, L["Glow Color"], false, function(r, g, b)
+            widget.glow[2] = {r, g, b, 1}
+            widget.func(widget.glow)
+        end)
+        widget.glowColor:SetPoint("LEFT", widget.glowType, "RIGHT", 25, 0)
+
+        -- glowNumber
+        widget.glowLines = Cell:CreateSlider(L["Lines"], widget, 1, 30, 100, 1, function(value)
+            widget.glow[3] = value
+            widget.func(widget.glow)
+        end)
+        widget.glowLines:SetPoint("TOPLEFT", widget.glowType, "BOTTOMLEFT", 0, -25)
+
+        widget.glowParticles = Cell:CreateSlider(L["Particles"], widget, 1, 30, 100, 1, function(value)
+            widget.glow[3] = value
+            widget.func(widget.glow)
+        end)
+        widget.glowParticles:SetPoint("TOPLEFT", widget.glowType, "BOTTOMLEFT", 0, -25)
+
+        -- glowFrequency
+        widget.glowFrequency = Cell:CreateSlider(L["Frequency"], widget, -2, 2, 100, .05, function(value)
+            widget.glow[4] = value
+            widget.func(widget.glow)
+        end)
+        widget.glowFrequency:SetPoint("TOPLEFT", widget.glowLines, "TOPRIGHT", 25, 0)
+
+        -- glowLength
+        widget.glowLength = Cell:CreateSlider(L["Length"], widget, 1, 20, 100, 1, function(value)
+            widget.glow[5] = value
+            widget.func(widget.glow)
+        end)
+        widget.glowLength:SetPoint("TOPLEFT", widget.glowLines, "BOTTOMLEFT", 0, -40)
+
+        -- glowThickness
+        widget.glowThickness = Cell:CreateSlider(L["Thickness"], widget, 1, 20, 100, 1, function(value)
+            widget.glow[6] = value
+            widget.func(widget.glow)
+        end)
+        widget.glowThickness:SetPoint("TOPLEFT", widget.glowLength, "TOPRIGHT", 25, 0)
+
+        -- glowScale
+        widget.glowScale = Cell:CreateSlider(L["Scale"], widget, 50, 500, 100, 1, function(value)
+            widget.glow[5] = value
+            widget.func(widget.glow)
+        end, nil, true)
+        widget.glowScale:SetPoint("TOPLEFT", widget.glowLines, "BOTTOMLEFT", 0, -40)
+
+        -- associate db
+        function widget:SetFunc(func)
+            widget.func = func
+        end
+
+        -- show db value
+        function widget:SetDBValue(t)
+            -- {"Pixel", {0.95,0.95,0.32,1}, 9, .25, 8, 2},
+            widget.glow = t
+            widget.glowType:SetSelectedValue(t[1])
+            widget.glowColor:SetColor(t[2])
+
+            if t[1] == "None" or t[1] == "Normal" then
+                widget.glowLines:Hide()
+                widget.glowParticles:Hide()
+                widget.glowFrequency:Hide()
+                widget.glowLength:Hide()
+                widget.glowThickness:Hide()
+                widget.glowScale:Hide()
+                widget:SetHeight(50)
+            else
+                widget:SetHeight(145)
+                if t[1] == "Pixel" then
+                    widget.glowLines:Show()
+                    widget.glowLines:SetValue(t[3])
+                    widget.glowFrequency:Show()
+                    widget.glowFrequency:SetValue(t[4])
+                    widget.glowLength:Show()
+                    widget.glowLength:SetValue(t[5])
+                    widget.glowThickness:Show()
+                    widget.glowThickness:SetValue(t[6])
+                    widget.glowParticles:Hide()
+                    widget.glowScale:Hide()
+
+                elseif t[1] == "Shine" then
+                    widget.glowParticles:Show()
+                    widget.glowParticles:SetValue(t[3])
+                    widget.glowFrequency:Show()
+                    widget.glowFrequency:SetValue(t[4])
+                    widget.glowScale:Show()
+                    widget.glowScale:SetValue(t[5]*100)
+                    widget.glowLines:Hide()
+                    widget.glowLength:Hide()
+                    widget.glowThickness:Hide()
+                end
+            end
+        end
+    else
+        widget = settingWidgets["glow"]
+    end
+
+    widget:Show()
+    return widget
+end
+
 local auraButtons = {}
 local function CreateAuraButtons(parent, auraTable, noUpDownButtons, updateHeightFunc)
     local n = #auraTable
@@ -3929,7 +4138,9 @@ function addon:CreateIndicatorSettings(parent, settingsTable)
             tinsert(widgetsTable, CreateSetting_CheckButton(parent))
         elseif setting == "customTextures" then
             tinsert(widgetsTable, CreateSetting_CustomTextures(parent))
-        elseif setting == "auras" or setting == "blacklist" then
+        elseif setting == "glow" then
+            tinsert(widgetsTable, CreateSetting_Glow(parent))
+        elseif setting == "auras" or setting == "blacklist" or setting == "spells" then
             tinsert(widgetsTable, CreateSetting_Auras(parent))
         else -- tips
             tinsert(widgetsTable, CreateSetting_Tips(parent, setting))

@@ -457,13 +457,14 @@ local function Revise()
                     ["name"] = "Targeted Spells",
                     ["indicatorName"] = "targetedSpells",
                     ["type"] = "built-in",
-                    ["enabled"] = true,
+                    ["enabled"] = false,
                     ["position"] = {"CENTER", "TOPLEFT", 5, -5},
                     ["frameLevel"] = 50,
                     ["size"] = {20, 20},
                     ["border"] = 2,
                     ["spells"] = {},
-                    ["glow"] = {"Pixel", {{0.95,0.95,0.32,1}, 9, .25, 8, 2}},
+                    ["glow"] = {"Pixel", {0.95,0.95,0.32,1}, 9, .25, 8, 2},
+                    ["font"] = {"Cell ".._G.DEFAULT, 11, "Outline", 2},
                 })
             end
         end

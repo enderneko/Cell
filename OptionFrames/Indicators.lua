@@ -187,6 +187,7 @@ local function InitIndicator(indicatorName)
         indicator:SetDispels(types)
 
     elseif indicatorName == "raidDebuffs" then
+        indicator.isRaidDebuffs = true
         indicator:SetScript("OnShow", function()
             indicator:SetCooldown(GetTime(), 10, "", "Interface\\Icons\\INV_Misc_QuestionMark", 7)
             indicator.cooldown:SetScript("OnCooldownDone", function()
@@ -199,10 +200,11 @@ local function InitIndicator(indicatorName)
         end)
 
     elseif indicatorName == "targetedSpells" then
+        indicator.isTargetedSpells = true
         indicator:SetScript("OnShow", function()
-            indicator:SetCooldown(GetTime(), 3, "", "Interface\\Icons\\spell_nature_polymorph", 7)
+            indicator:SetCooldown(GetTime(), 3, "Interface\\Icons\\spell_nature_polymorph", 7)
             indicator.cooldown:SetScript("OnCooldownDone", function()
-                indicator:SetCooldown(GetTime(), 3, "", "Interface\\Icons\\spell_nature_polymorph", 7)
+                indicator:SetCooldown(GetTime(), 3, "Interface\\Icons\\spell_nature_polymorph", 7)
             end)
         end)
         indicator:SetScript("OnHide", function()
@@ -375,9 +377,11 @@ local function UpdateIndicators(layout, indicatorName, setting, value)
             if value then
                 indicator:Show()
                 if indicator.preview then indicator.preview:Show() end
+                if indicator.isTargetedSpells then indicator:ShowGlowPreview() end
             else
                 indicator:Hide()
                 if indicator.preview then indicator.preview:Hide() end
+                if indicator.isTargetedSpells then indicator:HideGlowPreview() end
             end
 		elseif setting == "position" then
 			indicator:ClearAllPoints()
@@ -465,6 +469,11 @@ local function UpdateIndicators(layout, indicatorName, setting, value)
 	end
 end
 Cell:RegisterCallback("UpdateIndicators", "PreviewButton_UpdateIndicators", UpdateIndicators)
+
+local function UpdateTargetedSpellsPreview()
+    previewButton.indicators.targetedSpells:ShowGlowPreview()
+end
+Cell:RegisterCallback("UpdateTargetedSpells", "UpdateTargetedSpellsPreview", UpdateTargetedSpellsPreview)
 
 -------------------------------------------------
 -- layout
@@ -734,7 +743,7 @@ local indicatorSettings = {
     ["dispels"] = {"enabled", "checkbutton:dispellableByMe", "checkbutton2:enableHighlight", "position", "frameLevel", "size-square"},
     ["debuffs"] = {"enabled", "blacklist", "checkbutton:dispellableByMe", "num", "position", "frameLevel", "size-square", "font"},
     ["raidDebuffs"] = {"|cffb7b7b7"..L["You can config debuffs in %s"]:format(Cell:GetPlayerClassColorString()..L["Raid Debuffs"].."|r"), "enabled", "checkbutton:onlyShowTopGlow", "position", "frameLevel", "size-border", "font"},
-    ["targetedSpells"] = {"enabled", "spells", "position", "frameLevel", "size-border"},
+    ["targetedSpells"] = {"enabled", "spells", "glow", "position", "frameLevel", "size-border", "font"},
 }
 
 local function ShowIndicatorSettings(id)
@@ -805,6 +814,8 @@ local function ShowIndicatorSettings(id)
             w:SetDBValue(L[F:UpperFirst(currentLayoutTable["indicators"][id]["auraType"]).." List"], currentLayoutTable["indicators"][id]["auras"], indicatorType == "icons" or indicatorType == "bars")
         elseif currentSetting == "blacklist" then
             w:SetDBValue(L["Debuff Filter (blacklist)"], CellDB["debuffBlacklist"], true)
+        elseif currentSetting == "spells" then
+            w:SetDBValue(L["Spell List"], currentLayoutTable["indicators"][id]["spells"], true)
         elseif currentSetting == "size-border" then
             w:SetDBValue(currentLayoutTable["indicators"][id]["size"], currentLayoutTable["indicators"][id]["border"])
         else
@@ -827,6 +838,12 @@ local function ShowIndicatorSettings(id)
                 CellDB["debuffBlacklist"] = value
                 Cell.vars.debuffBlacklist = F:ConvertTable(CellDB["debuffBlacklist"])
                 Cell:Fire("UpdateIndicators", currentLayout, "", "blacklist")
+            elseif currentSetting == "spells" then
+                -- currentLayoutTable["indicators"][id][currentSetting] = value -- NOTE: already changed in widget
+                Cell:Fire("UpdateTargetedSpells", "spells", value)
+            elseif currentSetting == "glow" then
+                -- NOTE: already changed in widget
+                Cell:Fire("UpdateTargetedSpells", "glow", value)
             elseif currentSetting == "size-border" then
                 currentLayoutTable["indicators"][id]["size"][1] = value[1]
                 currentLayoutTable["indicators"][id]["size"][2] = value[2]
@@ -923,7 +940,15 @@ LoadIndicatorList = function()
             LCG.PixelGlow_Start(i.preview)
             i:SetAlpha(i.alpha or 1)
         else
-            LCG.PixelGlow_Start(i)
+            if i.isRaidDebuffs then
+                LCG.PixelGlow_Start(i, nil, nil, nil, nil, nil, 2, 2)
+            elseif i.isTargetedSpells then
+                LCG.PixelGlow_Start(i, nil, nil, nil, nil, nil, 2, 2)
+                if currentLayoutTable["indicators"][id]["enabled"] then i:ShowGlowPreview() end
+            else
+                LCG.PixelGlow_Start(i)
+            end
+
             if i.isAggroIndicator then
                 i.blink.alpha:SetFromAlpha(1)
             else
@@ -938,6 +963,9 @@ LoadIndicatorList = function()
             LCG.PixelGlow_Stop(i.preview)
         else
             LCG.PixelGlow_Stop(i)
+            if i.isTargetedSpells then
+                i:HideGlowPreview()
+            end
         end
 
         if i.isAggroIndicator then

@@ -231,6 +231,24 @@ function F:IterateAllUnitButtons(func)
     end
 end
 
+function F:GetUnitButtonByGUID(guid)
+    if not Cell.vars.guid[guid] then return end
+
+    if Cell.vars.groupType == "raid" then
+        -- for _, header in pairs(Cell.unitButtons.raid) do
+        --     for i = 1, 5 do
+        --         print(header[i].state.unit, Cell.vars.guid[guid])
+        --         if header[i].state.unit == Cell.vars.guid[guid] then
+        --             return header[i]
+        --         end
+        --     end
+        -- end
+        return Cell.unitButtons.raid.units[Cell.vars.guid[guid]]
+    else
+        return Cell.unitButtons[Cell.vars.groupType][Cell.vars.guid[guid]]
+    end
+end
+
 function F:UpdateTextWidth(fs, text, percent)
     if not text then return end
 
@@ -352,6 +370,23 @@ function F:GetPetUnit(playerUnit)
     end
 end
 
+function F:IterateGroupMembers()
+    local groupType = IsInRaid() and "raid" or "party"
+    local numGroupMembers = GetNumGroupMembers()
+    local i = groupType == "party" and 0 or 1
+
+    return function()
+        local ret
+        if i == 0 and groupType == "party" then
+            ret = "player"
+        elseif i <= numGroupMembers and i > 0 then
+            ret = groupType .. i
+        end
+        i = i + 1
+        return ret
+    end
+end
+
 function F:GetGroupType()
     if IsInRaid() then
         return "raid"
@@ -398,27 +433,6 @@ end
 function F:HasPermission(isPartyMarkPermission)
     if isPartyMarkPermission and IsInGroup() and not IsInRaid() then return true end
     return UnitIsGroupLeader("player") or (IsInRaid() and UnitIsGroupAssistant("player"))
-end
-
--------------------------------------------------
--- unit buttons
--------------------------------------------------
-function F:GetUnitButtonByGUID(guid)
-    if not Cell.vars.guid[guid] then return end
-
-    if Cell.vars.groupType == "raid" then
-        -- for _, header in pairs(Cell.unitButtons.raid) do
-        --     for i = 1, 5 do
-        --         print(header[i].state.unit, Cell.vars.guid[guid])
-        --         if header[i].state.unit == Cell.vars.guid[guid] then
-        --             return header[i]
-        --         end
-        --     end
-        -- end
-        return Cell.unitButtons.raid.units[Cell.vars.guid[guid]]
-    else
-        return Cell.unitButtons[Cell.vars.groupType][Cell.vars.guid[guid]]
-    end
 end
 
 -------------------------------------------------
