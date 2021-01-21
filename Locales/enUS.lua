@@ -110,6 +110,19 @@ select(2, ...).L = setmetatable({
         <p>Added support for OmniCD (party frame).</p>
         <br/>
     ]],
+
+    ["r38-release"] = [[
+        <h1>Indicators</h1>
+        <p>New indicator: Targeted Spells.</p>
+        <br/>
+        <h1>Layouts</h1>
+        <p>Added pets for arena layout.</p>
+        <br/>
+        <h1>Misc</h1>
+        <p>OmniCD should work well, even though the author of OmniCD doesn't add support for Cell.</p>
+        <p>Use /cell to reset Cell. It can be useful when Cell goes wrong.</p>
+        <br/>
+    ]],
 }, {
     __index = function(self, Key)
         if (Key ~= nil) then

@@ -221,6 +221,7 @@ L["Defensive Cooldowns"] = "减伤 (自身)"
 L["Tank Active Mitigation"] = "坦克主动减伤"
 L["Dispels"] = "驱散"
 L["Debuffs"] = "减益"
+L["Targeted Spells"] = "被法术选中"
 
 L["Create new indicator"] = "创建新指示器"
 L["Delete indicator"] = "删除指示器"
@@ -397,5 +398,17 @@ L["r37-release"] = [[
     <p>由于指示器的变动，一些字体相关选项被移除了。</p>
     <p>修复了“战复计时器”的框体宽度。</p>
     <p>添加了对OmniCD的支持（仅小队）。</p>
+    <br/>
+]]
+L["r38-release"] = [[
+    <h1>指示器</h1>
+    <p>新指示器：被法术选中。</p>
+    <br/>
+    <h1>布局</h1>
+    <p>为竞技场布局添加了宠物框体。</p>
+    <br/>
+    <h1>其他</h1>
+    <p>OmniCD作者即使不添加对Cell的支持，现在也应该能正常工作了。</p>
+    <p>用 /cell 可以重置Cell。当Cell出现错误时，这多少能有些用。</p>
     <br/>
 ]]

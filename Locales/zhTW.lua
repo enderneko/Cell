@@ -16,6 +16,7 @@ L["Alpha"] = "透明度"
 L["Anchor Point"] = "自己的"
 L["AoE Healing"] = "範圍治療 (團補)"
 L["Appearance"] = "外觀"
+L["Arena"] = "競技場"
 L["assist"] = "協助"
 L["Assist"] = "協助"
 L["Author"] = "作者"
@@ -113,6 +114,7 @@ L["Indicators"] = "指示器"
 L["Invalid"] = "無效"
 L["Invalid spell id."] = "無效的法術 ID。"
 L["Layout"] = "版面配置"
+L["Layout Auto Switch"] = "自動切換版面配置"
 L["Layouts"] = "版面配置"
 L["Leader Icon"] = "隊長圖示"
 L["Leader Icons will hide while in combat"] = "戰鬥中會隱藏隊長圖示"
@@ -221,7 +223,7 @@ L["r37-release"] = [[
     <h1>指示器</h1>
     <p>新指示器：名稱、狀態文字、護盾條。</p>
     <p>"減益" 指示器新增 "只顯示我能驅散的的減益" 選項。</p>
-    <p>Added "Use Custom Textures" options for Role Icon indicator.</p>
+    <p>團隊圖示指示器新增 "使用自訂材質" 選項。</p>
     <br/>
     <h1>其他</h1>
     <p>由於指示器的變動，一些字體相關選項被移除了。</p>
@@ -229,6 +231,17 @@ L["r37-release"] = [[
     <p>新增支援【隊友技能冷卻監控】OmniCD 插件（只有 5 人隊伍）。</p>
     <br/>
 ]]
+--[[Translation missing --]]
+--[[ L["r38-release"] = [=[<h1>Indicators</h1>
+<p>New indicator: Targeted Spells.</p>
+<br/>
+<h1>Layouts</h1>
+<p>Added pets for arena layout.</p>
+<br/>
+<h1>Misc</h1>
+<p>OmniCD should work well, even though the author of OmniCD doesn't add support for Cell.</p>
+<p>Use /cell to reset Cell. It can be useful when Cell goes wrong.</p>
+<br/>]=]--]] 
 L["Raid"] = "團隊"
 L["Raid Debuffs"] = "副本減益"
 L["Raid Icon (player)"] = "團隊圖示 (玩家)"
@@ -278,6 +291,8 @@ L["Size"] = "大小"
 L["Slash Commands"] = "聊天指令"
 L["Solo/Party"] = "單人/5人隊伍"
 L["Spell"] = "法術"
+--[[Translation missing --]]
+--[[ L["Spell List"] = "Spell List"--]] 
 L["Status Text"] = "狀態文字"
 L["Status Text Position"] = "狀態文字位置"
 L["T"] = "天賦"
@@ -286,6 +301,8 @@ L["Target"] = "目標"
 L["target"] = "選為目標"
 L["Target Highlight Color"] = "選取目標顯著標示顏色"
 L["Target Marks"] = "目標標記"
+--[[Translation missing --]]
+--[[ L["Targeted Spells"] = "Targeted Spells"--]] 
 L["Text"] = "文字"
 L["Text Width"] = "文字寬度"
 L["Texture"] = "材質"
