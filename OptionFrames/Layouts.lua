@@ -1052,6 +1052,7 @@ local widthSlider = Cell:CreateSlider(L["Width"], layoutsTab, 40, 300, 100, 2, f
         Cell:Fire("UpdateLayout", selectedLayout, "size")
     end
     UpdatePreviewButton("size")
+    UpdateLayoutPreview()
 end)
 widthSlider:SetPoint("TOPLEFT", buttonSizeText, "BOTTOMLEFT", 5, -25)
 
@@ -1062,6 +1063,7 @@ local heightSlider = Cell:CreateSlider(L["Height"], layoutsTab, 20, 300, 100, 2,
         Cell:Fire("UpdateLayout", selectedLayout, "size")
     end
     UpdatePreviewButton("size")
+    UpdateLayoutPreview()
 end)
 heightSlider:SetPoint("TOP", widthSlider, "BOTTOM", 0, -40)
 
