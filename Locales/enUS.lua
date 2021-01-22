@@ -111,7 +111,7 @@ select(2, ...).L = setmetatable({
         <br/>
     ]],
 
-    ["r38-release"] = [[
+    ["r39-release"] = [[
         <h1>Indicators</h1>
         <p>New indicator: Targeted Spells.</p>
         <br/>

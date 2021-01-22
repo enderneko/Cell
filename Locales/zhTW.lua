@@ -231,17 +231,18 @@ L["r37-release"] = [[
     <p>新增支援【隊友技能冷卻監控】OmniCD 插件（只有 5 人隊伍）。</p>
     <br/>
 ]]
---[[Translation missing --]]
---[[ L["r38-release"] = [=[<h1>Indicators</h1>
-<p>New indicator: Targeted Spells.</p>
-<br/>
-<h1>Layouts</h1>
-<p>Added pets for arena layout.</p>
-<br/>
-<h1>Misc</h1>
-<p>OmniCD should work well, even though the author of OmniCD doesn't add support for Cell.</p>
-<p>Use /cell to reset Cell. It can be useful when Cell goes wrong.</p>
-<br/>]=]--]] 
+L["r39-release"] = [[
+    <h1>指示器</h1>
+    <p>新增指示器：被法術選中。</p>
+    <br/>
+    <h1>版面配置</h1>
+    <p>競技場版面配置新增寵物框架。</p>
+    <br/>
+    <h1>其他</h1>
+    <p>OmniCD 作者即使不加入對 Cell 的支援性，現在應該也能正常運作了。</p>
+    <p>輸入 /cell 可以重置 Cell。當 Cell 出現錯誤時，這多少能有點幫助。</p>
+    <br/>
+]]
 L["Raid"] = "團隊"
 L["Raid Debuffs"] = "副本減益"
 L["Raid Icon (player)"] = "團隊圖示 (玩家)"
@@ -291,8 +292,7 @@ L["Size"] = "大小"
 L["Slash Commands"] = "聊天指令"
 L["Solo/Party"] = "單人/5人隊伍"
 L["Spell"] = "法術"
---[[Translation missing --]]
---[[ L["Spell List"] = "Spell List"--]] 
+L["Spell List"] = "法術清單"
 L["Status Text"] = "狀態文字"
 L["Status Text Position"] = "狀態文字位置"
 L["T"] = "天賦"
@@ -301,8 +301,7 @@ L["Target"] = "目標"
 L["target"] = "選為目標"
 L["Target Highlight Color"] = "選取目標顯著標示顏色"
 L["Target Marks"] = "目標標記"
---[[Translation missing --]]
---[[ L["Targeted Spells"] = "Targeted Spells"--]] 
+L["Targeted Spells"] = "被法術選中"
 L["Text"] = "文字"
 L["Text Width"] = "文字寬度"
 L["Texture"] = "材質"
