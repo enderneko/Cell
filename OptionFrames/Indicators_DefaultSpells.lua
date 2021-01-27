@@ -126,8 +126,9 @@ do
     externalCooldowns = temp
 end
 
+local bos = GetSpellInfo(6940) -- 牺牲祝福
 function I:IsExternalCooldown(name, source, target)
-    if name == GetSpellInfo(6940) then -- 牺牲祝福
+    if name == bos then
         return source ~= target
     else
         return externalCooldowns[name]

@@ -120,7 +120,7 @@ function I:CreateAura_BorderIcon(name, parent, borderSize)
                 local remain = duration-(GetTime()-start)
                 -- if remain <= 5 then
                 --     frame.duration:SetText(string.format("%.1f", remain))
-                if remain <= 30 then
+                if remain <= 60 then
                     frame.duration:SetText(string.format("%d", remain))
                 else
                     frame.duration:SetText("")
