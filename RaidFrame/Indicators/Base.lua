@@ -200,7 +200,7 @@ function I:CreateAura_BarIcon(name, parent)
     maskIcon:SetDesaturated(true)
     maskIcon:SetAllPoints(icon)
     -- maskIcon:SetDrawLayer("ARTWORK", 0)
-    maskIcon:SetVertexColor(.4, .4, .4, 1)
+    maskIcon:SetVertexColor(.5, .5, .5, 1)
     maskIcon:AddMaskTexture(mask)
 
     frame:SetScript("OnSizeChanged", function(self, width, height)
