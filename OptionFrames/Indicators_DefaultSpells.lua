@@ -148,6 +148,7 @@ local defensiveCooldowns = {
     -- demon hunter
     196555, -- 虚空行走
     198589, -- 疾影
+    187827, -- 恶魔变形
 
     -- druid
     22812, -- 树皮术
