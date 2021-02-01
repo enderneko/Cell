@@ -790,7 +790,7 @@ saveBtn:SetScript("OnClick", function()
     -- deleted
     local deletedIndices = {}
     for index, b in pairs(deleted) do
-        if changed[index] then chenged[index] = nil end -- if duplicated in changed, remove it
+        if changed[index] then changed[index] = nil end -- if duplicated in changed, remove it
         -- clickCastingTable[index] = nil -- update db
         tinsert(deletedIndices, index)
     end
