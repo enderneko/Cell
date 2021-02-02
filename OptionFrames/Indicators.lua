@@ -369,7 +369,8 @@ local function UpdateIndicators(layout, indicatorName, setting, value)
                 indicator:SetCustomTexture(t["customTextures"])
                 indicator:SetRole(indicator.roles[indicator.role])
             end
-		end
+        end
+        if selected and listButtons[selected] then listButtons[selected]:Click() end
 	else
         local indicator = previewButton.indicators[indicatorName]
 		-- changed in IndicatorsTab
@@ -471,7 +472,9 @@ end
 Cell:RegisterCallback("UpdateIndicators", "PreviewButton_UpdateIndicators", UpdateIndicators)
 
 local function UpdateTargetedSpellsPreview()
-    previewButton.indicators.targetedSpells:ShowGlowPreview()
+    if currentLayoutTable and selected and currentLayoutTable["indicators"][selected]["indicatorName"] == "targetedSpells" then
+        previewButton.indicators.targetedSpells:ShowGlowPreview()
+    end
 end
 Cell:RegisterCallback("UpdateTargetedSpells", "UpdateTargetedSpellsPreview", UpdateTargetedSpellsPreview)
 
