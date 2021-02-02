@@ -272,7 +272,7 @@ function I:CreateAura_BarIcon(name, parent)
             if frame.showDuration then
                 frame:SetScript("OnUpdate", function()
                     local remain = duration-(GetTime()-start)
-                    if remain <= 30 then
+                    if remain <= 60 then
                         frame.duration:SetText(string.format("%d", remain))
                     else
                         frame.duration:SetText("")
