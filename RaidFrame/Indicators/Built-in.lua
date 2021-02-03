@@ -242,12 +242,33 @@ end
 Cell:RegisterCallback("RaidDebuffsChanged", "UpdateDebuffsForCurrentZone", UpdateDebuffsForCurrentZone)
 eventFrame2:SetScript("OnEvent", UpdateDebuffsForCurrentZone)
 
-function I:GetDebuffOrder(spellName, spellId)
-    if currentAreaDebuffs[spellName] then
-        return currentAreaDebuffs[spellName]["order"], currentAreaDebuffs[spellName]["glowType"], currentAreaDebuffs[spellName]["glowOptions"]
+function I:GetDebuffOrder(spellName, spellId, count)
+    local t = currentAreaDebuffs[spellId] or currentAreaDebuffs[spellName]
+    if not t then return end
+
+    local showGlow
+    if t["glowCondition"] then
+        if t["glowCondition"][1] == "stack" then
+            if t["glowCondition"][2] == "=" then
+                if count == t["glowCondition"][3] then showGlow = true end
+            elseif t["glowCondition"][2] == ">" then
+                if count > t["glowCondition"][3] then showGlow = true end
+            elseif t["glowCondition"][2] == ">=" then
+                if count >= t["glowCondition"][3] then showGlow = true end
+            elseif t["glowCondition"][2] == "<" then
+                if count < t["glowCondition"][3] then showGlow = true end
+            elseif t["glowCondition"][2] == "<=" then
+                if count <= t["glowCondition"][3] then showGlow = true end
+            end
+        end
+    else
+        showGlow = true
     end
-    if currentAreaDebuffs[spellId] then
-        return currentAreaDebuffs[spellId]["order"], currentAreaDebuffs[spellId]["glowType"], currentAreaDebuffs[spellId]["glowOptions"]
+
+    if showGlow then
+        return t["order"], t["glowType"], t["glowOptions"]
+    else
+        return t["order"], "None", nil
     end
 end
 
