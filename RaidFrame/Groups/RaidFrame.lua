@@ -202,19 +202,19 @@ local function RaidFrame_UpdateLayout(layout, which)
     for i, group in ipairs(shownGroups) do
         local header = groupHeaders[group]
 
-        if not which or which == "size" or which == "power" then
+        if not which or which == "size" or which == "power" or which == "groupFilter" then
             for j, b in ipairs({header:GetChildren()}) do
                 if not which or which == "size" then
                     b:SetWidth(width)
                     b:SetHeight(height)
                     b:ClearAllPoints()
                 end
-                if not which or which == "power" then
+                if not which or which == "power" or which == "groupFilter" then
                     b.func.SetPowerHeight(layout["powerHeight"])
                 end
             end
 
-            if not which or which == "size" then
+            if not which or which == "size" or which == "groupFilter" then
                 --! important new button size depend on buttonWidth & buttonHeight
                 header:SetAttribute("buttonWidth", width)
                 header:SetAttribute("buttonHeight", height)
@@ -356,7 +356,7 @@ local function RaidFrame_UpdateLayout(layout, which)
             raidFrame:SetAttribute("visibility", 1) -- NOTE: trigger _onattributechanged to set npcFrameAnchor point!
         end
 
-        if which == "textWidth" then -- textWidth already initialized in UnitButton.lua
+        if which == "textWidth" or which == "groupFilter" then -- textWidth already initialized in UnitButton.lua
             for j, b in ipairs({header:GetChildren()}) do
                 b:GetScript("OnSizeChanged")(b)
             end
