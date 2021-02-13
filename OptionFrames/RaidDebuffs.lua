@@ -1222,7 +1222,50 @@ end
 local glowOptionsFrame = CreateFrame("Frame", nil, detailsContentFrame, "BackdropTemplate")
 glowOptionsFrame:SetPoint("LEFT", detailsContentFrame)
 glowOptionsFrame:SetPoint("TOP", glowTypeDropdown, "BOTTOM", 0, -10)
-glowOptionsFrame:SetPoint("BOTTOMRIGHT", detailsContentFrame)
+
+-- glowCondition
+local glowConditionText = glowOptionsFrame:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
+glowConditionText:SetText(L["Glow Condition"])
+glowConditionText:SetPoint("TOPLEFT", glowOptionsFrame, 5, 0)
+
+local glowConditionType = Cell:CreateDropdown(glowOptionsFrame, 60)
+glowConditionType:SetPoint("TOPLEFT", glowConditionText, "BOTTOMLEFT", 0, -1)
+glowConditionType:SetItems({
+    {
+        ["text"] = "None",
+        ["value"] = "None",
+    },
+    {
+        ["text"] = "Stack",
+        ["value"] = "Stack",
+    },
+})
+
+local glowConditionOperator = Cell:CreateDropdown(glowOptionsFrame, 40)
+glowConditionOperator:SetPoint("LEFT", glowConditionType, "RIGHT", 3, 0)
+glowConditionOperator:SetItems({
+    {
+        ["text"] = "=",
+    },
+    {
+        ["text"] = ">",
+    },
+    {
+        ["text"] = ">=",
+    },
+    {
+        ["text"] = "<",
+    },
+    {
+        ["text"] = "<=",
+    },
+    {
+        ["text"] = "!=",
+    },
+})
+
+local glowConditionValue = Cell:CreateEditBox(glowOptionsFrame, 20, 20, nil, nil, true)
+glowConditionValue:SetPoint("LEFT", glowConditionOperator, "RIGHT", 3, 0)
 
 -- glowColor
 local glowColor = Cell:CreateColorPicker(glowOptionsFrame, L["Glow Color"], false, function(r, g, b)
@@ -1243,7 +1286,8 @@ local glowColor = Cell:CreateColorPicker(glowOptionsFrame, L["Glow Color"], fals
     -- update preview
     ShowGlowPreview(t["glowType"], t["glowOptions"])
 end)
-glowColor:SetPoint("TOPLEFT", glowOptionsFrame, 5, 0)
+-- glowColor:SetPoint("TOPLEFT", glowOptionsFrame, 5, 0)
+glowColor:SetPoint("TOPLEFT", glowConditionType, "BOTTOMLEFT", 0, -10)
 
 local function SliderValueChanged(index, value, refresh)
     local t = selectedButtonIndex <= #currentBossTable["enabled"] and currentBossTable["enabled"][selectedButtonIndex] or currentBossTable["disabled"][selectedButtonIndex-#currentBossTable["enabled"]]
