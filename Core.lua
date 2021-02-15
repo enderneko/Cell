@@ -360,6 +360,7 @@ function eventFrame:ADDON_LOADED(arg1)
                             ["frameLevel"] = 15,
                             ["size"] = {12, 12},
                             ["dispellableByMe"] = true,
+                            ["enableHighlight"] = false,
                         },
                         {
                             ["name"] = "Debuffs",
@@ -372,7 +373,6 @@ function eventFrame:ADDON_LOADED(arg1)
                             ["num"] = 3,
                             ["font"] = {"Cell ".._G.DEFAULT, 11, "Outline", 2},
                             ["dispellableByMe"] = false,
-                            ["enableHighlight"] = false,
                         },
                         {
                             ["name"] = "Raid Debuffs",
