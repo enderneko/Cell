@@ -494,16 +494,16 @@ local function UnitButton_UpdateDebuffs(self)
                 I:CheckCustomIndicators(unit, self, "debuff", spellId, expirationTime - duration, duration, debuffType or "", icon, count, refreshing)
 
                 -- check top debuff
-                if enabledIndicators["raidDebuffs"] and I:GetDebuffOrder(name, spellId) then
+                if enabledIndicators["raidDebuffs"] and I:GetDebuffOrder(name, spellId, count) then
                     if not indicatorCustoms["raidDebuffs"] then
-                        glowType, glowOptions = select(2, I:GetDebuffOrder(name, spellId))
+                        glowType, glowOptions = select(2, I:GetDebuffOrder(name, spellId, count))
                         if glowType and glowType ~= "None" then
                             debuffs_glowing_current[unit][glowType] = glowOptions
                             debuffs_glowing_cache[unit][glowType] = true
                         end
                     end
-                    if I:GetDebuffOrder(name, spellId) < topOrder then
-                        topOrder, topGlowType, topGlowOptions = I:GetDebuffOrder(name, spellId)
+                    if I:GetDebuffOrder(name, spellId, count) < topOrder then
+                        topOrder, topGlowType, topGlowOptions = I:GetDebuffOrder(name, spellId, count)
                         topId, topStart, topDuration, topType, topIcon, topCount, topRefreshing = spellId, expirationTime - duration, duration, debuffType or "", icon, count, refreshing
                         topIndex = i
                     end

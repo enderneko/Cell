@@ -233,6 +233,8 @@ local eventFrame2 = CreateFrame("Frame")
 eventFrame2:RegisterEvent("PLAYER_ENTERING_WORLD")
 
 local function UpdateDebuffsForCurrentZone()
+    F:Debug("|cffff77AARaidDebuffsChanged")
+
     wipe(currentAreaDebuffs)
     local iName = F:GetInstanceName()
     if iName ~= "" then
@@ -248,7 +250,7 @@ function I:GetDebuffOrder(spellName, spellId, count)
 
     local showGlow
     if t["glowCondition"] then
-        if t["glowCondition"][1] == "stack" then
+        if t["glowCondition"][1] == "Stack" then
             if t["glowCondition"][2] == "=" then
                 if count == t["glowCondition"][3] then showGlow = true end
             elseif t["glowCondition"][2] == ">" then
@@ -259,6 +261,8 @@ function I:GetDebuffOrder(spellName, spellId, count)
                 if count < t["glowCondition"][3] then showGlow = true end
             elseif t["glowCondition"][2] == "<=" then
                 if count <= t["glowCondition"][3] then showGlow = true end
+            else -- ~=
+                if count ~= t["glowCondition"][3] then showGlow = true end
             end
         end
     else

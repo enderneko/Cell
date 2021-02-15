@@ -1620,6 +1620,7 @@ function addon:CreateScrollFrame(parent, top, bottom, color, border)
     -- reset to top, useful when used with DropDownMenu (variable content height)
     function scrollFrame:ResetScroll()
         scrollFrame:SetVerticalScroll(0)
+        scrollThumb:SetPoint("TOP")
     end
     
     -- FIXME: GetVerticalScrollRange goes wrong in 9.0.1

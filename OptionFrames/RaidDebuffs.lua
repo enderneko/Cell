@@ -103,13 +103,13 @@ local loadedDebuffs = {
     -- [instanceId] = {
     --     ["general"] = {
     --         ["enabled"]= {
-    --             {["id"]=spellId, ["order"]=order, ["trackByID"]=trackByID, ["glowType"]=glowType, ["glowOptions"]={...}}
+    --             {["id"]=spellId, ["order"]=order, ["trackByID"]=trackByID, ["glowType"]=glowType, ["glowOptions"]={...}, ["glowCondition"]={...}}
     --         },
     --         ["disabled"] = {},
     --     },
     --     [bossId] = {
     --         ["enabled"]= {
-    --             {["id"]=spellId, ["order"]=order, ["trackByID"]=trackByID, ["glowType"]=glowType, ["glowOptions"]={...}}
+    --             {["id"]=spellId, ["order"]=order, ["trackByID"]=trackByID, ["glowType"]=glowType, ["glowOptions"]={...}, ["glowCondition"]={...}}
     --         },
     --         ["disabled"] = {},
     --     },
@@ -125,7 +125,7 @@ local function LoadDebuffs()
             if not loadedDebuffs[instanceId][bossId] then loadedDebuffs[instanceId][bossId] = {["enabled"]={}, ["disabled"]={}} end
             -- load from db and set its order
             for spellId, sTable in pairs(bTable) do
-                local t = {["id"]=spellId, ["order"]=sTable[1], ["trackByID"]=sTable[2], ["glowType"]=sTable[3], ["glowOptions"]=sTable[4]}
+                local t = {["id"]=spellId, ["order"]=sTable[1], ["trackByID"]=sTable[2], ["glowType"]=sTable[3], ["glowOptions"]=sTable[4], ["glowCondition"]=sTable[5]}
                 if sTable[1] == 0 then
                     tinsert(loadedDebuffs[instanceId][bossId]["disabled"], t)
                 else
@@ -756,7 +756,7 @@ ShowDebuffs = function(bossId, buttonIndex)
     -- hide debuffDetails
     selectedSpellId = nil
     selectedButtonIndex = nil
-    RaidDebuffsTab_DebuffDetailsContent:Hide()
+    RaidDebuffsTab_DebuffDetails.scrollFrame:Hide()
     delete:SetEnabled(false)
 
     debuffListFrame.scrollFrame:ResetScroll()
@@ -837,8 +837,11 @@ detailsFrame:SetScript("OnUpdate", function()
     end
 end)
 
-local detailsContentFrame = CreateFrame("Frame", "RaidDebuffsTab_DebuffDetailsContent", detailsFrame)
-detailsContentFrame:SetAllPoints(detailsFrame)
+Cell:CreateScrollFrame(detailsFrame)
+
+local detailsContentFrame = detailsFrame.scrollFrame.content
+-- local detailsContentFrame = CreateFrame("Frame", "RaidDebuffsTab_DebuffDetailsContent", detailsFrame)
+-- detailsContentFrame:SetAllPoints(detailsFrame)
 
 -- spell icon
 local spellIconBG = detailsContentFrame:CreateTexture(nil, "ARTWORK")
@@ -948,7 +951,7 @@ glowTypeText:SetText(L["Glow Type"])
 glowTypeText:SetPoint("TOPLEFT", trackByIdCB, "BOTTOMLEFT", 0, -10)
 
 -- glow
-local LoadGlowOptions, ShowGlowPreview
+local LoadGlowOptions, LoadGlowCondition, ShowGlowPreview
 local function UpdateGlowType(newType)
     local t = selectedButtonIndex <= #currentBossTable["enabled"] and currentBossTable["enabled"][selectedButtonIndex] or currentBossTable["disabled"][selectedButtonIndex-#currentBossTable["enabled"]]
     if t["glowType"] ~= newType then
@@ -1219,53 +1222,91 @@ ShowGlowPreview = function(glowType, glowOptions, refresh)
 end
 
 -- glow options
-local glowOptionsFrame = CreateFrame("Frame", nil, detailsContentFrame, "BackdropTemplate")
-glowOptionsFrame:SetPoint("LEFT", detailsContentFrame)
-glowOptionsFrame:SetPoint("TOP", glowTypeDropdown, "BOTTOM", 0, -10)
+local glowOptionsFrame = CreateFrame("Frame", nil, detailsContentFrame)
+glowOptionsFrame:SetPoint("TOPLEFT", glowTypeDropdown, "BOTTOMLEFT", -5, -10)
+glowOptionsFrame:SetPoint("BOTTOMRIGHT")
 
 -- glowCondition
 local glowConditionText = glowOptionsFrame:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
 glowConditionText:SetText(L["Glow Condition"])
 glowConditionText:SetPoint("TOPLEFT", glowOptionsFrame, 5, 0)
 
-local glowConditionType = Cell:CreateDropdown(glowOptionsFrame, 60)
+local glowConditionType = Cell:CreateDropdown(glowOptionsFrame, 100)
 glowConditionType:SetPoint("TOPLEFT", glowConditionText, "BOTTOMLEFT", 0, -1)
 glowConditionType:SetItems({
     {
-        ["text"] = "None",
+        ["text"] = L["None"],
         ["value"] = "None",
+        ["onClick"] = function()
+            LoadGlowCondition()
+            -- update db
+            local tIndex = isGeneral and "general" or loadedBoss
+            CellDB["raidDebuffs"][loadedInstance][tIndex][selectedSpellId][5] = nil
+            -- update loadedDebuffs
+            local t = selectedButtonIndex <= #currentBossTable["enabled"] and currentBossTable["enabled"][selectedButtonIndex] or currentBossTable["disabled"][selectedButtonIndex-#currentBossTable["enabled"]]
+            t["glowCondition"] = nil
+            -- notify debuff list changed
+            Cell:Fire("RaidDebuffsChanged")
+        end,
     },
     {
-        ["text"] = "Stack",
+        ["text"] = L["Stack"],
         ["value"] = "Stack",
+        ["onClick"] = function()
+            LoadGlowCondition({"Stack", ">=", 0})
+            -- update db
+            local tIndex = isGeneral and "general" or loadedBoss
+            CellDB["raidDebuffs"][loadedInstance][tIndex][selectedSpellId][5] = {"Stack", ">=", 0}
+            -- update loadedDebuffs
+            local t = selectedButtonIndex <= #currentBossTable["enabled"] and currentBossTable["enabled"][selectedButtonIndex] or currentBossTable["disabled"][selectedButtonIndex-#currentBossTable["enabled"]]
+            t["glowCondition"] = {"Stack", ">=", 0}
+            -- notify debuff list changed
+            Cell:Fire("RaidDebuffsChanged")
+        end,
     },
 })
 
-local glowConditionOperator = Cell:CreateDropdown(glowOptionsFrame, 40)
-glowConditionOperator:SetPoint("LEFT", glowConditionType, "RIGHT", 3, 0)
-glowConditionOperator:SetItems({
-    {
-        ["text"] = "=",
-    },
-    {
-        ["text"] = ">",
-    },
-    {
-        ["text"] = ">=",
-    },
-    {
-        ["text"] = "<",
-    },
-    {
-        ["text"] = "<=",
-    },
-    {
-        ["text"] = "!=",
-    },
-})
+local glowConditionOperator = Cell:CreateDropdown(glowOptionsFrame, 50)
+glowConditionOperator:SetPoint("TOPLEFT", glowConditionType, "BOTTOMLEFT", 0, -5)
 
-local glowConditionValue = Cell:CreateEditBox(glowOptionsFrame, 20, 20, nil, nil, true)
-glowConditionValue:SetPoint("LEFT", glowConditionOperator, "RIGHT", 3, 0)
+do
+    local operators = {"=", ">", ">=", "<", "<=", "!="}
+    local items = {}
+    for _, opr in pairs(operators) do
+        tinsert(items, {
+            ["text"] = opr,
+            ["onClick"] = function()
+                -- update db
+                local tIndex = isGeneral and "general" or loadedBoss
+                CellDB["raidDebuffs"][loadedInstance][tIndex][selectedSpellId][5][2] = opr
+                -- update loadedDebuffs
+                local t = selectedButtonIndex <= #currentBossTable["enabled"] and currentBossTable["enabled"][selectedButtonIndex] or currentBossTable["disabled"][selectedButtonIndex-#currentBossTable["enabled"]]
+                t["glowCondition"][2] = opr
+                -- notify debuff list changed
+                Cell:Fire("RaidDebuffsChanged")
+            end,
+        })
+    end
+    glowConditionOperator:SetItems(items)
+end
+
+local glowConditionValue = Cell:CreateEditBox(glowOptionsFrame, 45, 20, nil, nil, true)
+glowConditionValue:SetPoint("LEFT", glowConditionOperator, "RIGHT", 5, 0)
+glowConditionValue:SetMaxLetters(3)
+glowConditionValue:SetJustifyH("RIGHT")
+glowConditionValue:SetScript("OnTextChanged", function(self, userChanged)
+    if userChanged then
+        local value = tonumber(self:GetText()) or 0
+        -- update db
+        local tIndex = isGeneral and "general" or loadedBoss
+        CellDB["raidDebuffs"][loadedInstance][tIndex][selectedSpellId][5][3] = value
+        -- update loadedDebuffs
+        local t = selectedButtonIndex <= #currentBossTable["enabled"] and currentBossTable["enabled"][selectedButtonIndex] or currentBossTable["disabled"][selectedButtonIndex-#currentBossTable["enabled"]]
+        t["glowCondition"][3] = value
+        -- notify debuff list changed
+        Cell:Fire("RaidDebuffsChanged")
+    end
+end)
 
 -- glowColor
 local glowColor = Cell:CreateColorPicker(glowOptionsFrame, L["Glow Color"], false, function(r, g, b)
@@ -1287,7 +1328,7 @@ local glowColor = Cell:CreateColorPicker(glowOptionsFrame, L["Glow Color"], fals
     ShowGlowPreview(t["glowType"], t["glowOptions"])
 end)
 -- glowColor:SetPoint("TOPLEFT", glowOptionsFrame, 5, 0)
-glowColor:SetPoint("TOPLEFT", glowConditionType, "BOTTOMLEFT", 0, -10)
+glowColor:SetPoint("TOPLEFT", glowConditionOperator, "BOTTOMLEFT", 0, -10)
 
 local function SliderValueChanged(index, value, refresh)
     local t = selectedButtonIndex <= #currentBossTable["enabled"] and currentBossTable["enabled"][selectedButtonIndex] or currentBossTable["disabled"][selectedButtonIndex-#currentBossTable["enabled"]]
@@ -1337,10 +1378,13 @@ local glowScale = Cell:CreateSlider(L["Scale"], glowOptionsFrame, 50, 500, 100, 
 end, nil, true)
 glowScale:SetPoint("TOPLEFT", glowFrequency, "BOTTOMLEFT", 0, -40)
 
+local glowOptionsHeight, glowConditionHeight = 0, 0
 LoadGlowOptions = function(glowType, glowOptions)
     if not glowType or glowType == "None" or not glowOptions then
         glowOptionsFrame:Hide()
         ShowGlowPreview("None")
+        detailsFrame.scrollFrame:SetContentHeight(133)
+        detailsFrame.scrollFrame:ResetScroll()
         return
     end
 
@@ -1354,6 +1398,7 @@ LoadGlowOptions = function(glowType, glowOptions)
         glowLength:Hide()
         glowThickness:Hide()
         glowScale:Hide()
+        glowOptionsHeight = 30
     elseif glowType == "Pixel" then
         glowLines:Show()
         glowFrequency:Show()
@@ -1365,6 +1410,7 @@ LoadGlowOptions = function(glowType, glowOptions)
         glowFrequency:SetValue(glowOptions[3])
         glowLength:SetValue(glowOptions[4])
         glowThickness:SetValue(glowOptions[5])
+        glowOptionsHeight = 235
     elseif glowType == "Shine" then
         glowParticles:Show()
         glowFrequency:Show()
@@ -1375,9 +1421,35 @@ LoadGlowOptions = function(glowType, glowOptions)
         glowParticles:SetValue(glowOptions[2])
         glowFrequency:SetValue(glowOptions[3])
         glowScale:SetValue(glowOptions[4]*100)
+        glowOptionsHeight = 175
     end
 
     glowOptionsFrame:Show()
+
+    detailsFrame.scrollFrame:SetContentHeight(133+glowOptionsHeight+glowConditionHeight)
+    detailsFrame.scrollFrame:ResetScroll()
+end
+
+LoadGlowCondition = function(glowCondition)
+    if type(glowCondition) == "table" then
+        glowConditionOperator:Show()
+        glowConditionValue:Show()
+        glowConditionType:SetSelected(L[glowCondition[1]])
+        glowConditionOperator:SetSelected(glowCondition[2])
+        glowConditionValue:SetText(glowCondition[3])
+        glowColor:ClearAllPoints()
+        glowColor:SetPoint("TOPLEFT", glowConditionOperator, "BOTTOMLEFT", 0, -10)
+        glowConditionHeight = 65
+    else
+        glowConditionType:SetSelected(L["None"])
+        glowConditionOperator:Hide()
+        glowConditionValue:Hide()
+        glowColor:ClearAllPoints()
+        glowColor:SetPoint("TOPLEFT", glowConditionType, "BOTTOMLEFT", 0, -10)
+        glowConditionHeight = 40
+    end
+    detailsFrame.scrollFrame:SetContentHeight(133+glowOptionsHeight+glowConditionHeight)
+    detailsFrame.scrollFrame:ResetScroll()
 end
 
 -- spell description
@@ -1399,11 +1471,13 @@ ShowDetails = function(spell)
     
     if selectedSpellId == spellId then return end
     selectedSpellId, selectedButtonIndex = spellId, buttonIndex
-    -- detailsContentFrame.scrollFrame:ResetScroll()
-
+    
     -- local name, icon, desc = F:GetSpellInfo(spellId)
     local name, _, icon = GetSpellInfo(spellId)
     if not name then return end
+
+    detailsFrame.scrollFrame:ResetScroll()
+    detailsFrame.scrollFrame:Show()
     
     selectedSpellIcon = icon
     selectedSpellName = name
@@ -1434,11 +1508,11 @@ ShowDetails = function(spell)
 
     if glowType == "None" then
         LoadGlowOptions()
+        LoadGlowCondition()
     else
         LoadGlowOptions(glowType, spellTable["glowOptions"])
+        LoadGlowCondition(spellTable["glowCondition"])
     end
-
-    detailsContentFrame:Show()
 
     -- check deletion
     if isEnabled then
@@ -1494,9 +1568,9 @@ function F:GetDebuffList(instanceName)
                 if spellName then
                     -- list[spellName/spellId] = {order, glowType, glowOptions}
                     if t["trackByID"] then
-                        list[t["id"]] = {["order"]=t["order"], ["glowType"]=t["glowType"], ["glowOptions"]=t["glowOptions"]}
+                        list[t["id"]] = {["order"]=t["order"], ["glowType"]=t["glowType"], ["glowOptions"]=t["glowOptions"], ["glowCondition"]=t["glowCondition"]}
                     else
-                        list[spellName] = {["order"]=t["order"], ["glowType"]=t["glowType"], ["glowOptions"]=t["glowOptions"]}
+                        list[spellName] = {["order"]=t["order"], ["glowType"]=t["glowType"], ["glowOptions"]=t["glowOptions"], ["glowCondition"]=t["glowCondition"]}
                     end
                 end
             end
@@ -1508,9 +1582,9 @@ function F:GetDebuffList(instanceName)
                     local spellName = GetSpellInfo(st["id"])
                     if spellName then -- check again
                         if st["trackByID"] then
-                            list[st["id"]] = {["order"]=st["order"], ["glowType"]=st["glowType"], ["glowOptions"]=st["glowOptions"]}
+                            list[st["id"]] = {["order"]=st["order"], ["glowType"]=st["glowType"], ["glowOptions"]=st["glowOptions"], ["glowCondition"]=st["glowCondition"]}
                         else
-                            list[spellName] = {["order"]=st["order"]+n, ["glowType"]=st["glowType"], ["glowOptions"]=st["glowOptions"]}
+                            list[spellName] = {["order"]=st["order"]+n, ["glowType"]=st["glowType"], ["glowOptions"]=st["glowOptions"], ["glowCondition"]=st["glowCondition"]}
                         end
                     end
                 end
