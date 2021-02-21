@@ -212,13 +212,17 @@ function F:IterateAllUnitButtons(func)
         func(b)
     end
     -- party
-    for _, b in pairs(Cell.unitButtons.party) do
-        func(b)
+    for index, b in pairs(Cell.unitButtons.party) do
+        if index ~= "units" then
+            func(b)
+        end
     end
     -- raid
-    for _, header in pairs(Cell.unitButtons.raid) do
-        for _, b in ipairs(header) do
-            func(b)
+    for index, header in pairs(Cell.unitButtons.raid) do
+        if index ~= "units" then
+            for _, b in ipairs(header) do
+                func(b)
+            end
         end
     end
     -- npc
@@ -235,17 +239,11 @@ function F:GetUnitButtonByGUID(guid)
     if not Cell.vars.guid[guid] then return end
 
     if Cell.vars.groupType == "raid" then
-        -- for _, header in pairs(Cell.unitButtons.raid) do
-        --     for i = 1, 5 do
-        --         print(header[i].state.unit, Cell.vars.guid[guid])
-        --         if header[i].state.unit == Cell.vars.guid[guid] then
-        --             return header[i]
-        --         end
-        --     end
-        -- end
         return Cell.unitButtons.raid.units[Cell.vars.guid[guid]]
-    else
-        return Cell.unitButtons[Cell.vars.groupType][Cell.vars.guid[guid]]
+    elseif Cell.vars.groupType == "party" then
+        return Cell.unitButtons.party.units[Cell.vars.guid[guid]]
+    else -- solo
+        return Cell.unitButtons.solo[Cell.vars.guid[guid]]
     end
 end
 

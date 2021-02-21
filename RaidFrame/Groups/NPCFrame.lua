@@ -7,7 +7,7 @@ Cell.frames.npcFrame = npcFrame
 
 local anchors = {
 	["solo"] = CellSoloFramePlayer,
-	["party"] = CellPartyFramePet,
+	["party"] = CellPartyFrameHeaderUnitButton1Pet,
 	["raid"] = CellNPCFrameAnchor,
 }
 
@@ -292,11 +292,11 @@ local function NPCFrame_UpdateVisibility(which)
 
     if not which or which == "pets" then
         if CellDB["general"]["showPartyPets"] then
-            npcFrame:SetFrameRef("party", CellPartyFramePet)
-            anchors["party"] = CellPartyFramePet
+            npcFrame:SetFrameRef("party", CellPartyFrameHeaderUnitButton1Pet)
+            anchors["party"] = CellPartyFrameHeaderUnitButton1Pet
         else
-            npcFrame:SetFrameRef("party", CellPartyFramePlayer)
-            anchors["party"] = CellPartyFramePlayer
+            npcFrame:SetFrameRef("party", CellPartyFrameHeaderUnitButton1)
+            anchors["party"] = CellPartyFrameHeaderUnitButton1
         end
         -- update now if current in a party
         if Cell.vars.groupType == "party" then

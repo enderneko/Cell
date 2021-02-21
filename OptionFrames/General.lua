@@ -83,6 +83,12 @@ local fadeoutCB = Cell:CreateCheckButton(generalTab, L["Fade Out Menu"], functio
 end, L["Fade Out Menu"], L["Fade out menu buttons on mouseout"])
 fadeoutCB:SetPoint("TOPLEFT", lockCB, "BOTTOMLEFT", 0, -7)
 
+local sortByRoleCB = Cell:CreateCheckButton(generalTab, L["Sort Party By Role"], function(checked, self)
+    CellDB["general"]["sortPartyByRole"] = checked
+    Cell:Fire("UpdateSortMethod")
+end)
+sortByRoleCB:SetPoint("TOPLEFT", fadeoutCB, "BOTTOMLEFT", 0, -7)
+
 
 -------------------------------------------------
 -- raid tools
@@ -278,6 +284,7 @@ local function ShowTab(tab)
         showPartyPetsCB:SetEnabled(CellDB["general"]["showParty"])
         lockCB:SetChecked(CellDB["general"]["locked"])
         fadeoutCB:SetChecked(CellDB["general"]["fadeOut"])
+        sortByRoleCB:SetChecked(CellDB["general"]["sortPartyByRole"])
 
         -- raid tools
         reBuffCB:SetChecked(CellDB["raidTools"]["showReBuffChecks"])

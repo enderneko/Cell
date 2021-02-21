@@ -1527,7 +1527,6 @@ end
 
 local function UnitButton_OnAttributeChanged(self, name, value)
     if name == "unit" then
-        wipe(self.state)
         if type(value) == "string" then
             self.state.unit = value
             self.state.displayedUnit = value
@@ -1575,6 +1574,7 @@ local function UnitButton_OnHide(self)
         if buffs_current[self.state.unit] then wipe(buffs_current[self.state.unit]) end
         if buffs_current_castByMe[self.state.unit] then wipe(buffs_current_castByMe[self.state.unit]) end
     end
+    wipe(self.state)
 end
 
 local function UnitButton_OnEnter(self)

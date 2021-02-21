@@ -133,12 +133,13 @@ function eventFrame:ADDON_LOADED(arg1)
             CellDB["general"] = {
                 ["hideBlizzard"] = true,
                 ["enableTooltips"] = false,
-                ["hideTooltipsInCombat"] = false,
+                ["hideTooltipsInCombat"] = true,
                 ["showSolo"] = true,
                 ["showParty"] = true,
                 ["showPartyPets"] = true,
                 ["locked"] = false,
                 ["fadeOut"] = false,
+                ["sortPartyByRole"] = false,
             }
         end
 
@@ -395,7 +396,10 @@ function eventFrame:ADDON_LOADED(arg1)
                             ["frameLevel"] = 50,
                             ["size"] = {20, 20},
                             ["border"] = 2,
-                            ["spells"] = {},
+                            ["spells"] = {
+                                320788, -- 冻结之缚
+                                344496, -- 震荡爆发
+                            },
                             ["glow"] = {"Pixel", {0.95,0.95,0.32,1}, 9, .25, 8, 2},
                             ["font"] = {"Cell ".._G.DEFAULT, 12, "Outline", 2},
                         },
@@ -600,6 +604,8 @@ function eventFrame:PLAYER_LOGIN()
     Cell.vars.playerSpecID, Cell.vars.playerSpecName, _, Cell.vars.playerSpecIcon = GetSpecializationInfo(prevSpec)
     -- update visibility
     Cell:Fire("UpdateVisibility")
+    -- update sortMethod
+    Cell:Fire("UpdateSortMethod")
     -- update click-castings
     Cell:Fire("UpdateClickCastings")
     -- update indicators
