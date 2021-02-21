@@ -470,12 +470,13 @@ local function Revise()
         end
     end
 
-    -- r40-release
-    if CellDB["revise"] and dbRevision < 40 then
+    -- r41-release
+    if CellDB["revise"] and dbRevision < 41 then
         for _, layout in pairs(CellDB["layouts"]) do
             if layout["indicators"][19] and layout["indicators"][19]["indicatorName"] == "targetedSpells" then
                 if #layout["indicators"][19]["spells"] == 0 then
-                    layout["indicators"][19]["spells"] = {320788, 344496}
+                    layout["indicators"][19]["enabled"] = true
+                    layout["indicators"][19]["spells"] = {320788, 344496, 319941}
                 end
             end
         end
