@@ -59,7 +59,8 @@ local translatorsText = aboutTab:CreateFontString(nil, "OVERLAY", "CELL_FONT_WID
 translatorsText:SetPoint("TOPLEFT", translatorText, "BOTTOMLEFT", 5, -12)
 translatorsText:SetJustifyH("LEFT")
 translatorsText:SetJustifyV("MIDDLE")
-translatorsText:SetText("RainbowUI (zhTW)")
+translatorsText:SetSpacing(5)
+translatorsText:SetText("RainbowUI (zhTW)\nnaragok79 (koKR)")
 
 
 -------------------------------------------------
