@@ -90,6 +90,9 @@ end
 -- externalCooldowns
 -------------------------------------------------
 local externalCooldowns = {
+    -- death knight
+    51052, -- 反魔法领域
+
     -- demon hunter
     196718, -- 黑暗
 
