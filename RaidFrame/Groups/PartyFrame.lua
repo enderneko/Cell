@@ -34,7 +34,7 @@ header:SetAttribute("_initialAttribute-refreshUnitChange", [[
         if unit == "player" then
             petUnit = "pet"
         else
-            petUnit = string.gsub("party1", "party", "partypet")
+            petUnit = string.gsub(unit, "party", "partypet")
         end
         petButton:SetAttribute("unit", petUnit)
         RegisterUnitWatch(petButton)

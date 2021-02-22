@@ -76,11 +76,6 @@ local function SoloFrame_UpdateLayout(layout, which)
             petButton:SetPoint(point, playerButton, anchorPoint, unitSpacing, 0)
         end
     end
-
-    if which == "textWidth" then -- textWidth already initialized in UnitButton.lua
-        playerButton:GetScript("OnSizeChanged")(playerButton)
-        petButton:GetScript("OnSizeChanged")(petButton)
-    end
 end
 Cell:RegisterCallback("UpdateLayout", "SoloFrame_UpdateLayout", SoloFrame_UpdateLayout)
 
