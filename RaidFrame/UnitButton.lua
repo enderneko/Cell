@@ -1803,7 +1803,7 @@ function F:UnitButton_OnLoad(button)
     absorbsBar:SetTexture("Interface\\AddOns\\Cell\\Media\\shield.tga", "REPEAT", "REPEAT")
     absorbsBar:SetHorizTile(true)
     absorbsBar:SetVertTile(true)
-    absorbsBar:SetVertexColor(.5, .1, .1, .8)
+    absorbsBar:SetVertexColor(.6, .1, .1, .9)
     absorbsBar:SetBlendMode("ADD")
     absorbsBar:Hide()
 

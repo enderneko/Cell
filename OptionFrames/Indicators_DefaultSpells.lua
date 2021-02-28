@@ -11,6 +11,7 @@ local debuffBlacklist = {
     80354, -- 时空错位
     264689, -- 疲倦
     206151, -- 挑战者的负担
+    195776, -- 月羽疫病
 }
 
 function I:GetDefaultDebuffBlacklist()
