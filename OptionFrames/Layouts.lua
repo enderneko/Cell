@@ -2,6 +2,9 @@ local _, Cell = ...
 local L = Cell.L
 local F = Cell.funcs
 local LPP = LibStub:GetLibrary("LibPixelPerfect")
+local LibDeflate = LibStub:GetLibrary("LibDeflate")
+-- local compress_deflate = LibDeflate:CompressDeflate(s)
+-- LibDeflate:EncodeForPrint(compress_deflate)
 
 local layoutsTab = Cell:CreateFrame("CellOptionsFrame_LayoutsTab", Cell.frames.optionsFrame, nil, nil, true)
 Cell.frames.layoutsTab = layoutsTab

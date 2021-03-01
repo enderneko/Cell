@@ -8,6 +8,7 @@
     <Include file="AceComm-3.0\AceComm-3.0.xml"/>
     <Include file="LibSerialize-1.1.0\lib.xml"/>
     <Include file="LibCompress\lib.xml"/>
+    <Include file="LibDeflate\lib.xml"/>
     <Script file="utf8.lua"/>
 	<Script file="CallbackHandler.lua"/>
     <Script file="LibPixelPerfect.lua"/>
