@@ -5,6 +5,10 @@ local L = select( 2, ...).L
 L["%s lock %s on %s."] = "%s將%s鎖定在%s。"
 L["%s unlock %s from %s."] = "%s將%s從%s解鎖。"
 L["(based on current)"] = "(以目前的為基礎)"
+--[[Translation missing --]]
+--[[ L["|cff1Aff1AYes|r - Overwrite"] = "|cff1Aff1AYes|r - Overwrite"--]] 
+--[[Translation missing --]]
+--[[ L["|cffff1A1ANo|r - Create New"] = "|cffff1A1ANo|r - Create New"--]] 
 L["About"] = "關於"
 L["ABOUT"] = "Cell 是受 CompactRaid 啟發的團隊框架，參考了其程式碼，重寫並增強。\n我個人很喜歡 CompactRaid，並常年使用它，但其作者似乎已經不再更新了。因此我寫了 Cell，希望你能喜歡。\n另外，我也參考了一些很棒的團隊框架，比如 Aptechka 和 Grid2。\nCell 並不打算成為一個輕量或強大 (如 VuhDo、Grid2) 的團隊框架插件。設定簡單，功能足夠，就行了。"
 L["ACCEPTED"] = "已接受"
@@ -78,6 +82,10 @@ L["Enabled"] = "啟用"
 L["enableHighlight"] = "顯著標示單位按鈕"
 L["Enter spell id"] = "請輸入法術 ID"
 L["Enter: apply\nESC: discard"] = "Enter: 套用\nESC: 取消"
+--[[Translation missing --]]
+--[[ L["Error"] = "Error"--]] 
+--[[Translation missing --]]
+--[[ L["Export"] = "Export"--]] 
 L["External Cooldowns"] = "減傷 (來自他人)"
 L["Extra Action Button"] = "使用額外快捷鍵"
 L["Fade Out Menu"] = "淡出選單"
@@ -108,6 +116,10 @@ L["hideFull"] = "滿血時不顯示"
 L["Horizontal"] = "水平"
 L["Icon"] = "圖示"
 L["Icons"] = "圖示群組"
+--[[Translation missing --]]
+--[[ L["Import"] = "Import"--]] 
+--[[Translation missing --]]
+--[[ L["Incompatible Version"] = "Incompatible Version"--]] 
 L["Indicator Settings"] = "指示器設定"
 L["Indicator settings are part of Layout settings which are account-wide."] = "指示器設定是版面配置設定的一部分，是帳號共用的。"
 L["Indicators"] = "指示器"
@@ -152,6 +164,8 @@ L["Options"] = "選項"
 L["Options UI Font Size"] = "設定選項介面文字大小"
 L["Orientation"] = "方向"
 L["Outline"] = "外框"
+--[[Translation missing --]]
+--[[ L["Overwrite Layout"] = "Overwrite Layout"--]] 
 L["P"] = "PvP 天賦"
 L["Particles"] = "粒子數"
 L["Party"] = "隊伍"
@@ -202,11 +216,11 @@ L["Show Battle Res Timer"] = "顯示戰復計時器"
 L["show Cell options frame"] = "打開 Cell 設定選項"
 L["Show Current Instance"] = "顯示當前副本"
 L["Show Marks Bar"] = "顯示標記列"
-L["Show Party"] = "有隊伍時顯示"
+L["Show Party"] = "5人隊伍時要顯示"
 L["Show Party Pets"] = "顯示隊伍寵物"
 L["Show pets while in a party"] = "在隊伍中時顯示寵物"
 L["Show ReadyCheck and PullTimer buttons"] = "顯示準備確認和開怪倒數按鈕"
-L["Show Solo"] = "單人時顯示"
+L["Show Solo"] = "單人時要顯示"
 L["Show the number of tanks/healers/damagers while in raid"] = "在團隊時顯示坦克、治療、輸出的數量"
 L["Show while in a party"] = "在隊伍中時顯示"
 L["Show while not in a group"] = "不在隊伍中時顯示"

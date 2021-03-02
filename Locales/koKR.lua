@@ -7,15 +7,14 @@ local L = select( 2, ...).L
 --[[Translation missing --]]
 --[[ L["%s unlock %s from %s."] = "%s unlock %s from %s."--]] 
 L["(based on current)"] = "(현재 기준)"
+--[[Translation missing --]]
+--[[ L["|cff1Aff1AYes|r - Overwrite"] = "|cff1Aff1AYes|r - Overwrite"--]] 
+--[[Translation missing --]]
+--[[ L["|cffff1A1ANo|r - Create New"] = "|cffff1A1ANo|r - Create New"--]] 
 L["About"] = "정보"
---[[Translation missing --]]
---[[ L["ABOUT"] = [=[Cell is a unique raid frame addon inspired by CompactRaid.
-I love CompactRaid so much, but it seems to be abandoned. And I made Cell, hope you enjoy.
-Some ideas are from other great raid frame addons, such as Aptechka, Grid2.
-Cell is not meant to be a lightweight or powerful (like VuhDo, Grid2) raid frames addon. It's easy to use and good enough for you (hope so).]=]--]] 
+L["ABOUT"] = "Cell은 CompactRaid에서 영감을 받은 공격대 프레임 애드온입니다. CompactRaid을 좋아하지만 업데이트가 되지 않습니다. 그래서 나는 Cell 만들었습니다. 일부 아이디어는 Aptechka, Grid2와 같은 다른 훌륭한 공격대 프레임 애드온에서 나왔습니다. Cell은 가볍거나 강력한 (예 : VuhDo, Grid2) 공격대 프레임 애드온이 아니지만 사용하기 쉽도록 제작되었습니다."
 L["ACCEPTED"] = "수락"
---[[Translation missing --]]
---[[ L["Action"] = "Action"--]] 
+L["Action"] = "행동"
 L["AFK"] = "AFK"
 L["Aggro Bar"] = "위협 수준 바"
 L["Aggro Indicator"] = "위협 수준 지시기"
@@ -85,6 +84,10 @@ L["Enabled"] = "사용"
 L["enableHighlight"] = "강조 사용"
 L["Enter spell id"] = "주문 ID 입력"
 L["Enter: apply\nESC: discard"] = "Enter: 적용\nESC: 취소"
+--[[Translation missing --]]
+--[[ L["Error"] = "Error"--]] 
+--[[Translation missing --]]
+--[[ L["Export"] = "Export"--]] 
 L["External Cooldowns"] = "외부 재사용 시간"
 L["Extra Action Button"] = "추가 행동 버튼"
 L["Fade Out Menu"] = "메뉴 옵션 사라짐"
@@ -115,6 +118,10 @@ L["hideFull"] = "전체 숨김"
 L["Horizontal"] = "가로"
 L["Icon"] = "아이콘"
 L["Icons"] = "아이콘들"
+--[[Translation missing --]]
+--[[ L["Import"] = "Import"--]] 
+--[[Translation missing --]]
+--[[ L["Incompatible Version"] = "Incompatible Version"--]] 
 L["Indicator Settings"] = "지시기 설정"
 L["Indicator settings are part of Layout settings which are account-wide."] = "지시기 설정은 계정 전체에 적용되는 배치 설정의 일부입니다."
 L["Indicators"] = "지시기"
@@ -134,7 +141,7 @@ L["Lines"] = "라인"
 L["Lock"] = "잠금"
 L["Lock Cell Frame"] = "Cell 창 잠금"
 L["Macro"] = "매크로"
-L["marksTips"] = "|r대상 표시기 왼쪽 클릭: |cffffffff대상에 공격대 표시기 설정|r 오른쪽 클릭: |cffffffff대상의 공격대 표시기 잠금 (나의 그룹)|r"
+L["marksTips"] = "\n|r대상 표시기\n왼쪽 클릭: |cffffffff대상에 공격대 표시기 설정|r\n오른쪽 클릭: |cffffffff대상의 공격대 표시기 잠금 (나의 그룹)|r"
 L["Max Icons"] = "최대 아이콘"
 L["Menu"] = "메뉴"
 L["Middle"] = "가운데 버튼"
@@ -152,14 +159,15 @@ L["Normal"] = "Normal"
 L["OFF"] = "끄기"
 L["OFFLINE"] = "오프"
 L["Only in Group"] = "그룹에서 만"
---[[Translation missing --]]
---[[ L["Only show during encounter or in mythic+"] = "Only show during encounter or in mythic+"--]] 
+L["Only show during encounter or in mythic+"] = "신화+ 에서만 표시"
 L["Only show when you have permission to do this"] = "이 작업을 수행 할 권한이 있을경우에만 표시"
 L["onlyShowTopGlow"] = "Glow만 표시"
 L["Options"] = "옵션"
 L["Options UI Font Size"] = "UI 글자 크기 옵션"
 L["Orientation"] = "방향"
 L["Outline"] = "테두리"
+--[[Translation missing --]]
+--[[ L["Overwrite Layout"] = "Overwrite Layout"--]] 
 L["P"] = "PvP 특성"
 L["Particles"] = "입자"
 L["Party"] = "파티"
@@ -173,7 +181,7 @@ L["Preview"] = "미리보기"
 L["Profiles"] = "프로필"
 L["Pull"] = "풀링"
 L["Pull Timer"] = "풀링 타이머"
-L["pullTimerTips"] = "|r풀링 타이머 왼쪽 클릭: |cffffffff타이머 시작|r 오른쪽 클릭: |cffffffff타이머 취소|r"
+L["pullTimerTips"] = "\n|r풀링 타이머\n왼쪽 클릭: |cffffffff타이머 시작|r\n오른쪽 클릭: |cffffffff타이머 취소|r"
 L["Raid"] = "공격대"
 L["Raid Debuffs"] = "공격대 디버프"
 L["Raid Icon (player)"] = "공격대 아이콘 (플레이어)"
@@ -222,8 +230,7 @@ L["showDuration"] = "지속시간 표시"
 L["Size"] = "크기"
 L["Slash Commands"] = "슬래시 명령어"
 L["Solo/Party"] = "솔로잉/파티"
---[[Translation missing --]]
---[[ L["Sort Party By Role"] = "Sort Party By Role"--]] 
+L["Sort Party By Role"] = "역할별로 파티 정렬"
 L["Spell"] = "주문"
 L["Spell List"] = "주문 목록"
 L["Status Text"] = "상태 문자"
@@ -272,7 +279,6 @@ L["World Marks"] = "위치 표시기"
 L["X Offset"] = "X 간격"
 L["Y Offset"] = "Y 간격"
 L["Yes"] = "예"
---[[Translation missing --]]
---[[ L["You"] = "You"--]] 
+L["You"] = "당신"
 L["You can config debuffs in %s"] = "%s에서 약화 효과를 설정할 수 있습니다."
 L["You don't have permission to do this"] = "이 작업을 수행 할 권한이 없습니다."
