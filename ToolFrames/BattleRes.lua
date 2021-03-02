@@ -104,12 +104,14 @@ stack:SetText("|cffff00000|r")
 rTime:SetText("00:00")
 
 battleResFrame:SetScript("OnShow", function()
+	rTime:ClearAllPoints()
+	rTime:SetPoint("LEFT", stack, "RIGHT", 4, 0)
+	rTime:SetText("00:00")
+
 	if rTime:GetRight() and title:GetLeft() then
-		rTime:ClearAllPoints()
-		rTime:SetPoint("LEFT", stack, "RIGHT", 4, 0)
-		rTime:SetText("00:00")
 		battleResFrame:SetWidth(math.floor(rTime:GetRight()-title:GetLeft()+2.5))
 	end
+
 	rTime:SetText("")
 	rTime:ClearAllPoints()
 	rTime:SetPoint("BOTTOMRIGHT", bar, "TOPRIGHT", -1, 2)
