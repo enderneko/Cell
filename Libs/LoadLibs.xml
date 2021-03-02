@@ -10,8 +10,8 @@
     <Include file="LibCompress\lib.xml"/>
     <Include file="LibDeflate\lib.xml"/>
     <Script file="utf8.lua"/>
-	<Script file="CallbackHandler.lua"/>
+    <Script file="CallbackHandler.lua"/>
     <Script file="LibPixelPerfect.lua"/>
-	<!-- <Script file="LibCombatLogHealth-1.0\LibCombatLogHealth-1.0.lua"/> -->
-	<Script file="LibSmoothStatusBar-1.0\LibSmoothStatusBar-1.0.lua"/>
+    <!-- <Script file="LibCombatLogHealth-1.0\LibCombatLogHealth-1.0.lua"/> -->
+    <Script file="LibSmoothStatusBar-1.0\LibSmoothStatusBar-1.0.lua"/>
 </Ui>
