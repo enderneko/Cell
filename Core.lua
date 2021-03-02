@@ -391,7 +391,7 @@ function eventFrame:ADDON_LOADED(arg1)
                             ["name"] = "Targeted Spells",
                             ["indicatorName"] = "targetedSpells",
                             ["type"] = "built-in",
-                            ["enabled"] = false,
+                            ["enabled"] = true,
                             ["position"] = {"CENTER", "TOPLEFT", 7, -7},
                             ["frameLevel"] = 50,
                             ["size"] = {20, 20},
@@ -400,6 +400,7 @@ function eventFrame:ADDON_LOADED(arg1)
                                 320788, -- 冻结之缚
                                 344496, -- 震荡爆发
                                 319941, -- 碎石之跃
+                                322614, -- 心灵连接
                             },
                             ["glow"] = {"Pixel", {0.95,0.95,0.32,1}, 9, .25, 8, 2},
                             ["font"] = {"Cell ".._G.DEFAULT, 12, "Outline", 2},
