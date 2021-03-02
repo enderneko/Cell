@@ -474,7 +474,7 @@ create:SetScript("OnClick", function()
         end
         -- notify debuff list changed
         Cell:Fire("RaidDebuffsChanged")
-    end, true, true)
+    end, nil, true, true)
     popup.editBox:SetNumeric(true)
     popup:SetPoint("TOPLEFT", 100, -170)
 end)
@@ -525,7 +525,7 @@ delete:SetScript("OnClick", function()
         end
         -- notify debuff list changed
         Cell:Fire("RaidDebuffsChanged")
-    end, true)
+    end, nil, true)
     popup:SetPoint("TOPLEFT", 100, -170)
 end)
 

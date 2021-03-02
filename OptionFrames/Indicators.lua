@@ -673,7 +673,7 @@ createBtn:SetScript("OnClick", function()
             listFrame.scrollFrame:ScrollToBottom()
         end
 
-    end, true, true, 2)
+    end, nil, true, true, 2)
     popup:SetPoint("TOPLEFT", 100, -100)
     popup.dropdown1:SetItems(typeItems)
     popup.dropdown1:SetSelectedItem(1)
@@ -695,7 +695,7 @@ deleteBtn:SetScript("OnClick", function()
         tremove(currentLayoutTable["indicators"], selected)
         LoadIndicatorList()
         listButtons[1]:Click()
-    end, true)
+    end, nil, true)
     popup:SetPoint("TOPLEFT", 100, -120)
 end)
 

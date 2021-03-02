@@ -644,7 +644,6 @@ function addon:CreateEditBox(parent, width, height, isTransparent, isMultiLine, 
     return eb
 end
 
--- TODO: use this function
 function addon:CreateScrollEditBox(parent, onTextChanged)
     local frame = CreateFrame("Frame", nil, parent)
     addon:CreateScrollFrame(frame)
@@ -653,7 +652,7 @@ function addon:CreateScrollEditBox(parent, onTextChanged)
     frame.eb = addon:CreateEditBox(frame.scrollFrame.content, 10, 20, true, true)
     frame.eb:SetPoint("TOPLEFT")
     frame.eb:SetPoint("RIGHT")
-    frame.eb:SetTextInsets(2, 2, 1, 1)
+    frame.eb:SetTextInsets(2, 2, 2, 2)
     frame.eb:SetScript("OnEditFocusGained", nil)
     frame.eb:SetScript("OnEditFocusLost", nil)
 
@@ -679,8 +678,8 @@ function addon:CreateScrollEditBox(parent, onTextChanged)
 
     frame.eb:SetScript("OnTextChanged", function(self, userChanged)
         frame.scrollFrame:SetContentHeight(self:GetHeight())
-        if userChanged and onTextChanged then
-            onTextChanged(self)
+        if onTextChanged then
+            onTextChanged(self, userChanged)
         end
     end)
 
@@ -689,8 +688,9 @@ function addon:CreateScrollEditBox(parent, onTextChanged)
     end)
 
     function frame:SetText(text)
-        frame.scrollFrame:ResetScroll()
         frame.eb:SetText(text)
+        frame.scrollFrame:ResetScroll()
+        frame.eb:SetCursorPosition(0)
     end
 
     return frame
@@ -1102,7 +1102,7 @@ end
 -----------------------------------------
 -- create popup (delete/edit/... confirm) with mask
 -----------------------------------------
-function addon:CreateConfirmPopup(parent, width, text, onAccept, mask, hasEditBox, dropdowns)
+function addon:CreateConfirmPopup(parent, width, text, onAccept, onReject, mask, hasEditBox, dropdowns)
     if not parent.confirmPopup then -- not init
         parent.confirmPopup = CreateFrame("Frame", nil, parent, "BackdropTemplate")
         parent.confirmPopup:SetSize(width, 100)
@@ -1209,6 +1209,7 @@ function addon:CreateConfirmPopup(parent, width, text, onAccept, mask, hasEditBo
     end)
 
     parent.confirmPopup.button2:SetScript("OnClick", function()
+        if onReject then onReject(parent.confirmPopup) end
         -- hide mask
         if mask and parent.mask then parent.mask:Hide() end
         parent.confirmPopup:Hide()

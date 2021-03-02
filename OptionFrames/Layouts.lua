@@ -2,9 +2,6 @@ local _, Cell = ...
 local L = Cell.L
 local F = Cell.funcs
 local LPP = LibStub:GetLibrary("LibPixelPerfect")
-local LibDeflate = LibStub:GetLibrary("LibDeflate")
--- local compress_deflate = LibDeflate:CompressDeflate(s)
--- LibDeflate:EncodeForPrint(compress_deflate)
 
 local layoutsTab = Cell:CreateFrame("CellOptionsFrame_LayoutsTab", Cell.frames.optionsFrame, nil, nil, true)
 Cell.frames.layoutsTab = layoutsTab
@@ -604,7 +601,7 @@ newBtn:SetScript("OnClick", function()
         else
             F:Print(L["Invalid layout name."])
         end
-    end, true, true)
+    end, nil, true, true)
     popup:SetPoint("TOPLEFT", 100, -70)
 end)
 Cell:RegisterForCloseDropdown(newBtn)
@@ -652,7 +649,7 @@ renameBtn:SetScript("OnClick", function()
         else
             F:Print(L["Invalid layout name."])
         end
-    end, true, true)
+    end, nil, true, true)
     popup:SetPoint("TOPLEFT", 100, -185)
 end)
 Cell:RegisterForCloseDropdown(renameBtn)
@@ -689,10 +686,24 @@ deleteBtn:SetScript("OnClick", function()
         LoadAutoSwitchDropdowns()
         LoadLayoutDB("default")
         UpdateButtonStates()
-    end, true)
+    end, nil, true)
     popup:SetPoint("TOPLEFT", 100, -185)
 end)
 Cell:RegisterForCloseDropdown(deleteBtn)
+
+-- import
+local importBtn = Cell:CreateButton(layoutsTab, L["Import"], "class-hover", {55, 20})
+importBtn:SetPoint("TOPLEFT", newBtn, "BOTTOMLEFT", 0, 1)
+importBtn:SetScript("OnClick", function()
+    F:ShowLayoutImportFrame()
+end)
+
+-- export
+local exportBtn = Cell:CreateButton(layoutsTab, L["Export"], "class-hover", {55, 20})
+exportBtn:SetPoint("LEFT", importBtn, "RIGHT", -1, 0)
+exportBtn:SetScript("OnClick", function()
+    F:ShowLayoutExportFrame(selectedLayout, selectedLayoutTable)
+end)
 
 UpdateButtonStates = function()
     -- if selectedLayout == CellCharacterDB["party"]
@@ -1264,3 +1275,40 @@ local function UpdateIndicators(layout, indicatorName, setting, value)
     end
 end
 Cell:RegisterCallback("UpdateIndicators", "LayoutsTab_UpdateIndicators", UpdateIndicators)
+
+local function LayoutImported(name)
+    if Cell.vars.currentLayout == name then -- update overwrite
+        if Cell.vars.inBattleground then 
+            if Cell.vars.inBattleground == 5 then
+                F:UpdateLayout("arena")
+            elseif Cell.vars.inBattleground == 15 then
+                F:UpdateLayout("battleground15")
+            elseif Cell.vars.inBattleground == 40 then
+                F:UpdateLayout("battleground40")
+            end
+        else 
+            if Cell.vars.groupType == "solo" or Cell.vars.groupType == "party" then
+                F:UpdateLayout("party")
+            elseif Cell.vars.groupType == "raid" then
+                F:UpdateLayout("raid")
+            end
+        end
+        Cell:Fire("UpdateIndicators")
+        LoadLayoutDB(name)
+        UpdateButtonStates()
+
+    else -- load new
+        -- update dropdown
+        layoutDropdown:AddItem({
+            ["text"] = name,
+            ["onClick"] = function()
+                LoadLayoutDB(name)
+                UpdateButtonStates()
+            end,
+        })
+        LoadAutoSwitchDropdowns()
+        LoadLayoutDB(name)
+        UpdateButtonStates()
+    end
+end
+Cell:RegisterCallback("LayoutImported", "LayoutsTab_LayoutImported", LayoutImported)
