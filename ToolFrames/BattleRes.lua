@@ -76,16 +76,13 @@ bar:SetPoint("BOTTOMRIGHT", battleResFrame, -1, 1)
 local title = battleResFrame:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
 local stack = battleResFrame:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
 local rTime = battleResFrame:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
+local dummy = battleResFrame:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET") -- used for updating width of battleResFrame
+dummy:Hide()
 
 title:SetFont(title:GetFont(), 13)
--- title:SetShadowColor(0, 0, 0)
--- title:SetShadowOffset(0, 0)
 stack:SetFont(stack:GetFont(), 13)
--- stack:SetShadowColor(0, 0, 0)
--- stack:SetShadowOffset(0, 0)
 rTime:SetFont(rTime:GetFont(), 13)
--- rTime:SetShadowColor(0, 0, 0)
--- rTime:SetShadowOffset(0, 0)
+dummy:SetFont(dummy:GetFont(), 13)
 
 title:SetJustifyH("LEFT")
 stack:SetJustifyH("LEFT")
@@ -93,28 +90,24 @@ rTime:SetJustifyH("RIGHT")
 
 title:SetPoint("BOTTOMLEFT", bar, "TOPLEFT", 0, 2)
 stack:SetPoint("LEFT", title, "RIGHT")
--- stack:SetPoint("BOTTOM", bar, "TOP", 0, 1)
-rTime:SetPoint("LEFT", stack, "RIGHT", 4, 0)
+rTime:SetPoint("BOTTOMRIGHT", bar, "TOPRIGHT", -1, 2)
+dummy:SetPoint("BOTTOMLEFT", bar, "TOPLEFT", 0, 22)
 
 title:SetTextColor(.66, .66, .66)
 rTime:SetTextColor(.66, .66, .66)
 
 title:SetText(L["BR"]..": ")
-stack:SetText("|cffff00000|r")
-rTime:SetText("00:00")
+stack:SetText("")
+rTime:SetText("")
+dummy:SetText(L["BR"]..": |cffff00000|r  00:00 ")
 
 battleResFrame:SetScript("OnShow", function()
-	rTime:ClearAllPoints()
-	rTime:SetPoint("LEFT", stack, "RIGHT", 4, 0)
-	rTime:SetText("00:00")
+	battleResFrame:SetWidth(math.floor(dummy:GetWidth()+.5))
+end)
 
-	if rTime:GetRight() and title:GetLeft() then
-		battleResFrame:SetWidth(math.floor(rTime:GetRight()-title:GetLeft()+2.5))
-	end
-
+battleResFrame:SetScript("OnHide", function()
+	stack:SetText("")
 	rTime:SetText("")
-	rTime:ClearAllPoints()
-	rTime:SetPoint("BOTTOMRIGHT", bar, "TOPRIGHT", -1, 2)
 end)
 
 ---------------------------------
@@ -147,6 +140,7 @@ battleResFrame:SetScript("OnUpdate", function(self, elapsed)
 
 		rTime:SetText(("%d:%02d"):format(m, s))
 		stack:SetText(("%s%d|r"):format(color, charges))
+		
 		bar:SetMinMaxValues(0, duration)
 		bar:SetValue(duration - remaining)
 	end
@@ -166,16 +160,15 @@ function battleResFrame:PLAYER_ENTERING_WORLD()
     self:Hide()
     
 	local _, instanceType, difficulty = GetInstanceInfo()
-	-- raid
-	if instanceType == "raid" then
+
+	if instanceType == "raid" then -- raid
 		if IsEncounterInProgress() then --如果 上线时/重载界面后 已在boss战中
 			self:Show()
 		else
 			self:RegisterEvent("SPELL_UPDATE_CHARGES")
 		end
-	end
-	-- challenge mode
-	if difficulty == 8 then
+	
+	elseif difficulty == 8 then -- challenge mode
 		self:Show()
 	end
 end
