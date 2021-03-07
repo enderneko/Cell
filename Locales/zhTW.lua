@@ -5,10 +5,8 @@ local L = select( 2, ...).L
 L["%s lock %s on %s."] = "%s將%s鎖定在%s。"
 L["%s unlock %s from %s."] = "%s將%s從%s解鎖。"
 L["(based on current)"] = "(以目前的為基礎)"
---[[Translation missing --]]
---[[ L["|cff1Aff1AYes|r - Overwrite"] = "|cff1Aff1AYes|r - Overwrite"--]] 
---[[Translation missing --]]
---[[ L["|cffff1A1ANo|r - Create New"] = "|cffff1A1ANo|r - Create New"--]] 
+L["|cff1Aff1AYes|r - Overwrite"] = "|cff1Aff1A是|r - 取代原有的"
+L["|cffff1A1ANo|r - Create New"] = "|cffff1A1A否|r - 建立新的"
 L["About"] = "關於"
 L["ABOUT"] = "Cell 是受 CompactRaid 啟發的團隊框架，參考了其程式碼，重寫並增強。\n我個人很喜歡 CompactRaid，並常年使用它，但其作者似乎已經不再更新了。因此我寫了 Cell，希望你能喜歡。\n另外，我也參考了一些很棒的團隊框架，比如 Aptechka 和 Grid2。\nCell 並不打算成為一個輕量或強大 (如 VuhDo、Grid2) 的團隊框架插件。設定簡單，功能足夠，就行了。"
 L["ACCEPTED"] = "已接受"
@@ -82,10 +80,8 @@ L["Enabled"] = "啟用"
 L["enableHighlight"] = "顯著標示單位按鈕"
 L["Enter spell id"] = "請輸入法術 ID"
 L["Enter: apply\nESC: discard"] = "Enter: 套用\nESC: 取消"
---[[Translation missing --]]
---[[ L["Error"] = "Error"--]] 
---[[Translation missing --]]
---[[ L["Export"] = "Export"--]] 
+L["Error"] = "錯誤"
+L["Export"] = "匯出"
 L["External Cooldowns"] = "減傷 (來自他人)"
 L["Extra Action Button"] = "使用額外快捷鍵"
 L["Fade Out Menu"] = "淡出選單"
@@ -116,10 +112,8 @@ L["hideFull"] = "滿血時不顯示"
 L["Horizontal"] = "水平"
 L["Icon"] = "圖示"
 L["Icons"] = "圖示群組"
---[[Translation missing --]]
---[[ L["Import"] = "Import"--]] 
---[[Translation missing --]]
---[[ L["Incompatible Version"] = "Incompatible Version"--]] 
+L["Import"] = "匯入"
+L["Incompatible Version"] = "不相容的版本"
 L["Indicator Settings"] = "指示器設定"
 L["Indicator settings are part of Layout settings which are account-wide."] = "指示器設定是版面配置設定的一部分，是帳號共用的。"
 L["Indicators"] = "指示器"
@@ -164,8 +158,7 @@ L["Options"] = "選項"
 L["Options UI Font Size"] = "設定選項介面文字大小"
 L["Orientation"] = "方向"
 L["Outline"] = "外框"
---[[Translation missing --]]
---[[ L["Overwrite Layout"] = "Overwrite Layout"--]] 
+L["Overwrite Layout"] = "取代版面配置"
 L["P"] = "PvP 天賦"
 L["Particles"] = "粒子數"
 L["Party"] = "隊伍"
