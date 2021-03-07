@@ -401,6 +401,7 @@ function eventFrame:ADDON_LOADED(arg1)
                                 344496, -- 震荡爆发
                                 319941, -- 碎石之跃
                                 322614, -- 心灵连接
+                                320132, -- 暗影之怒
                             },
                             ["glow"] = {"Pixel", {0.95,0.95,0.32,1}, 9, .25, 8, 2},
                             ["font"] = {"Cell ".._G.DEFAULT, 12, "Outline", 2},
