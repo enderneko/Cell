@@ -4,7 +4,7 @@ local F = Cell.funcs
 local Serializer = LibStub:GetLibrary("LibSerialize")
 local LibDeflate = LibStub:GetLibrary("LibDeflate")
 
-local MINIMUM_VERSION = 43
+local MINIMUM_VERSION = 44
 local isImport, imported, exported = false, {}, ""
 
 local importExportFrame = CreateFrame("Frame", "CellOptionsFrame_ImportExport", Cell.frames.layoutsTab, "BackdropTemplate")
@@ -68,7 +68,7 @@ local textArea = Cell:CreateScrollEditBox(importExportFrame, function(eb, userCh
             wipe(imported)
             local text = eb:GetText()
             -- check
-            local name, version, data = string.match(text, "^!CELL:(.+):(%d+)!(.+)$")
+            local version, name, data = string.match(text, "^!CELL:(%d+):(.+)!(.+)$")
             version = tonumber(version)
 
             if name and version and data then
@@ -140,7 +140,7 @@ function F:ShowLayoutExportFrame(layoutName, layoutTable)
 
     title:SetText(L["Export"]..": "..(layoutName == "default" and _G.DEFAULT or layoutName))
 
-    local prefix = "!CELL:"..layoutName..":"..(tonumber(string.match(Cell.version, "%d+")) or 0).."!"
+    local prefix = "!CELL:"..(tonumber(string.match(Cell.version, "%d+")) or 0)..":"..layoutName.."!"
 
     exported = Serializer:Serialize(layoutTable) -- serialize
     exported = LibDeflate:CompressDeflate(exported) -- compress
