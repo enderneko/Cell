@@ -41,6 +41,13 @@ select(2, ...).L = setmetatable({
     ["marksTips"] = "\n|rTarget marker\nLeft-Click: |cffffffffset raid marker on target|r\nRight-Click: |cfffffffflock raid marker on target (in your group)|r",
 
     ["WHAT'S NEW"] = [[
+        <h1>r44-release (Mar 8, 2021, 12:07 GMT+8)</h1>
+        <p>* Fixed BattleRes text not showing up.</p>
+        <p>* Updated default spell list of Targeted Spells.</p>
+        <p>* Updated Import&amp;Export.</p>
+        <p>* Updated zhTW.</p>
+        <br/>
+
         <h1>r43-release (Mar 3, 2021, 2:18 GMT+8)</h1>
         <p>+ New Feature: Layout Import/Export.</p>
         <br/>
