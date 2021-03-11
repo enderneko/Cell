@@ -210,8 +210,11 @@ local function SetBindingClicks(b)
         self:ClearBindings()
         self:Run(self:GetAttribute("snippet"))
 
+        -- self:SetBindingClick(true, "CTRL-MOUSEWHEELDOWN", self, "ctrlSCROLLDOWN")
+        -- FIXME: --! 如果游戏按键设置（比如“视角”“载具控制”）中绑定了滚轮，那么 self:SetBindingClick(true, "MOUSEWHEELUP", self, "SCROLLUP") 会失效
         -- self:SetBindingClick(true, "MOUSEWHEELUP", self, "SCROLLUP")
         -- self:SetBindingClick(true, "MOUSEWHEELDOWN", self, "SCROLLDOWN")
+
         -- self:SetBindingClick(true, "SHIFT-B", self, "shiftB")
         -- self:SetBindingClick(true, "SHIFT-C", self, "shiftC")
     ]])
@@ -238,16 +241,33 @@ local function SetBindingClicks(b)
     ]])
 end
 
+-- FIXME: hope BLZ fix this bug
+local function GetMouseWheelBindKey(fullKey, noTypePrefix)
+    local modifier, key = strmatch(fullKey, "^(.*)type%-(.+)$")
+    modifier = string.gsub(modifier, "-", "")
+
+    if noTypePrefix then
+        return modifier..key
+    else
+        return "type-"..modifier..key -- type-ctrlSCROLLUP
+    end
+end
+
 local function GetBindingSnippet()
     local bindingClicks = {}
     for _, t in pairs(clickCastingTable) do
         if t[1] ~= "notBound" then
-            local _, key = strmatch(t[1], "^(.*)type%-(.+)$")
-            if key and not bindingClicks[key] then -- keyboard
-                if key == "SCROLLUP" then
-                    bindingClicks[key] = [[self:SetBindingClick(true, "MOUSEWHEELUP", self, "SCROLLUP")]]
-                elseif key == "SCROLLDOWN" then
-                    bindingClicks[key] = [[self:SetBindingClick(true, "MOUSEWHEELDOWN", self, "SCROLLDOWN")]]
+            local modifier, key = strmatch(t[1], "^(.*)type%-(.+)$")
+            if key and not bindingClicks[key] then -- keyboard/mousewheel
+                -- if key == "SCROLLUP" then
+                --     bindingClicks[key] = [[self:SetBindingClick(true, "MOUSEWHEELUP", self, "SCROLLUP")]]
+                -- elseif key == "SCROLLDOWN" then
+                --     bindingClicks[key] = [[self:SetBindingClick(true, "MOUSEWHEELDOWN", self, "SCROLLDOWN")]]
+                if key == "SCROLLUP" or key == "SCROLLDOWN" then
+                    key = GetMouseWheelBindKey(t[1], true)
+                    local m, k = DecodeKeyboard(key)
+                    k = k == "SCROLLUP" and "MOUSEWHEELUP" or "MOUSEWHEELDOWN"
+                    bindingClicks[key] = [[self:SetBindingClick(true, "]]..strupper(m..k)..[[", self, "]]..key..[[")]]
                 else
                     local m, k = DecodeKeyboard(key)
                     -- override keyboard to click
@@ -271,22 +291,32 @@ local previousClickCastings
 local function ClearClickCastings(b)
     if not previousClickCastings then return end
     for _, t in pairs(previousClickCastings) do
-        b:SetAttribute(t[1], nil)
+        local bindKey = t[1]
+        if strfind(bindKey, "SCROLL") then
+            bindKey = GetMouseWheelBindKey(bindKey)
+        end
+
+        b:SetAttribute(bindKey, nil)
         if t[2] == "spell" then
-            b:SetAttribute(string.gsub(t[1], "type", "spell"), nil)
+            b:SetAttribute(string.gsub(bindKey, "type", "spell"), nil)
         elseif t[2] == "macro" then
-            b:SetAttribute(string.gsub(t[1], "type", "macrotext"), nil)
+            b:SetAttribute(string.gsub(bindKey, "type", "macrotext"), nil)
         end
     end
 end
 
 local function ApplyClickCastings(b)
     for _, t in pairs(clickCastingTable) do
-        b:SetAttribute(t[1], t[2])
+        local bindKey = t[1]
+        if strfind(bindKey, "SCROLL") then
+            bindKey = GetMouseWheelBindKey(bindKey)
+        end
+
+        b:SetAttribute(bindKey, t[2])
         if t[2] == "spell" then
-            b:SetAttribute(string.gsub(t[1], "type", "spell"), t[3])
+            b:SetAttribute(string.gsub(bindKey, "type", "spell"), t[3])
         elseif t[2] == "macro" then
-            b:SetAttribute(string.gsub(t[1], "type", "macrotext"), t[3])
+            b:SetAttribute(string.gsub(bindKey, "type", "macrotext"), t[3])
         end
     end
 end
@@ -305,7 +335,7 @@ local function UpdateClickCastings(noLoad)
             loaded = false
         end
     end
-    
+
     local snippet = GetBindingSnippet()
     F:Debug(snippet)
     
@@ -794,10 +824,6 @@ saveBtn:SetScript("OnClick", function()
         -- clickCastingTable[index] = nil -- update db
         tinsert(deletedIndices, index)
     end
-    table.sort(deletedIndices)
-    for i, index in pairs(deletedIndices) do
-        tremove(clickCastingTable, index-i+1) -- continuous table index
-    end
 
     -- changed
     for index, t in pairs(changed) do
@@ -808,7 +834,14 @@ saveBtn:SetScript("OnClick", function()
         local bindAction = t["bindAction"] or b.bindAction
         clickCastingTable[index] = EncodeDB(modifier, bindKey, bindType, bindAction)
     end
-    -- -- reload
+
+    -- delete!
+    table.sort(deletedIndices)
+    for i, index in pairs(deletedIndices) do
+        tremove(clickCastingTable, index-i+1) -- continuous table index
+    end
+
+    -- reload
     Cell:Fire("UpdateClickCastings")
     wipe(deleted)
     wipe(changed)
