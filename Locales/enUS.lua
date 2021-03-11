@@ -41,6 +41,10 @@ select(2, ...).L = setmetatable({
     ["marksTips"] = "\n|rTarget marker\nLeft-Click: |cffffffffset raid marker on target|r\nRight-Click: |cfffffffflock raid marker on target (in your group)|r",
 
     ["WHAT'S NEW"] = [[
+        <h1>r45-release (Mar 11, 2021, 13:00 GMT+8)</h1>
+        <p>* Fixed Click-Castings (mouse wheel).</p>
+        <br/>
+
         <h1>r44-release (Mar 8, 2021, 12:07 GMT+8)</h1>
         <p>* Fixed BattleRes text not showing up.</p>
         <p>* Updated default spell list of Targeted Spells.</p>
