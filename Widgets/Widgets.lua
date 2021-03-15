@@ -528,9 +528,14 @@ function addon:CreateCheckButton(parent, label, onClick, ...)
     checkedTexture:SetColorTexture(classColor.t[1], classColor.t[2], classColor.t[3], .7)
     checkedTexture:SetPoint("CENTER")
     checkedTexture:SetSize(12, 12)
+
+    local highlightTexture = cb:CreateTexture(nil, "ARTWORK")
+    highlightTexture:SetColorTexture(classColor.t[1], classColor.t[2], classColor.t[3], .1)
+    highlightTexture:SetPoint("CENTER")
+    highlightTexture:SetSize(12, 12)
     
     cb:SetCheckedTexture(checkedTexture)
-    -- cb:SetHighlightTexture([[Interface\AddOns\Cell\Media\CheckBox\CheckBox-Highlight-16x16]], "ADD")
+    cb:SetHighlightTexture(highlightTexture, "ADD")
     -- cb:SetDisabledCheckedTexture([[Interface\AddOns\Cell\Media\CheckBox\CheckBox-DisabledChecked-16x16]])
 
     cb:SetScript("OnEnable", function()
@@ -542,7 +547,7 @@ function addon:CreateCheckButton(parent, label, onClick, ...)
         cb.label:SetTextColor(.4, .4, .4)
         checkedTexture:SetColorTexture(.4, .4, .4)
     end)
-    
+
     SetTooltip(cb, "ANCHOR_TOPLEFT", 0, 2, ...)
 
     return cb
@@ -1807,20 +1812,20 @@ addon:CreateScrollFrame(list)
 list.scrollFrame:SetScrollStep(18)
 
 -- highlight
-local hightlightTexture = CreateFrame("Frame", nil, list, "BackdropTemplate")
-hightlightTexture:SetBackdrop({edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = 1})
-hightlightTexture:SetBackdropBorderColor(unpack(classColor.t))
-hightlightTexture:Hide()
+local highlightTexture = CreateFrame("Frame", nil, list, "BackdropTemplate")
+highlightTexture:SetBackdrop({edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = 1})
+highlightTexture:SetBackdropBorderColor(unpack(classColor.t))
+highlightTexture:Hide()
 
 local function SetHighlightItem(i)
     if not i then
-        hightlightTexture:ClearAllPoints()
-        hightlightTexture:Hide()
+        highlightTexture:ClearAllPoints()
+        highlightTexture:Hide()
     else
-        hightlightTexture:SetParent(list.items[i]) -- buttons show/hide automatically when scroll, so let hightlightTexture to be the same
-        hightlightTexture:ClearAllPoints()
-        hightlightTexture:SetAllPoints(list.items[i])
-        hightlightTexture:Show()
+        highlightTexture:SetParent(list.items[i]) -- buttons show/hide automatically when scroll, so let highlightTexture to be the same
+        highlightTexture:ClearAllPoints()
+        highlightTexture:SetAllPoints(list.items[i])
+        highlightTexture:Show()
     end
 end
 
