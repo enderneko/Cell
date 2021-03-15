@@ -484,7 +484,7 @@ function addon:CreateButtonGroup(buttons, onClick, func1, func2, onEnter, onLeav
         end
     end
 
-    HighlightButton() -- REVIEW:
+    -- HighlightButton() -- REVIEW:
     
     for _, b in pairs(buttons) do
         b:SetScript("OnClick", function()
