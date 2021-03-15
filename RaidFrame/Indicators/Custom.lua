@@ -129,7 +129,7 @@ end
 
 function I:CheckCustomIndicators(unit, unitButton, auraType, spellId, start, duration, debuffType, texture, count, refreshing, castByMe)
     for indicatorName, indicatorTable in pairs(customIndicators[auraType]) do
-        if enabledIndicators[indicatorName] then
+        if enabledIndicators[indicatorName] and unitButton.indicators[indicatorName] then
             if indicatorTable["auras"][spellId] then -- is in indicator spell list
                 if auraType == "buff" then
                     -- check castByMe
@@ -178,7 +178,7 @@ end
 
 function I:ShowCustomIndicators(unit, unitButton, auraType)
     for indicatorName, indicatorTable in pairs(customIndicators[auraType]) do
-        if enabledIndicators[indicatorName] then
+        if enabledIndicators[indicatorName] and unitButton.indicators[indicatorName] then
             if indicatorTable["isIcons"] then
                 for i = indicatorTable["found"][unit], 5 do
                     unitButton.indicators[indicatorName][i]:Hide()
