@@ -496,6 +496,21 @@ local function Revise()
         end
     end
 
+    -- r46-release
+    if CellDB["revise"] and dbRevision < 46 then
+        for _, layout in pairs(CellDB["layouts"]) do
+            if layout["indicators"][13] and layout["indicators"][13]["indicatorName"] == "externalCooldowns" then
+                layout["indicators"][13]["orientation"] = "right-to-left"
+            end
+            if layout["indicators"][14] and layout["indicators"][14]["indicatorName"] == "defensiveCooldowns" then
+                layout["indicators"][14]["orientation"] = "left-to-right"
+            end
+            if layout["indicators"][17] and layout["indicators"][17]["indicatorName"] == "debuffs" then
+                layout["indicators"][17]["orientation"] = "left-to-right"
+            end
+        end
+    end
+
     CellDB["revise"] = Cell.version
 end
 Cell:RegisterCallback("Revise", "Revise", Revise)

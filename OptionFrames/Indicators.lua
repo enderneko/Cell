@@ -741,11 +741,11 @@ local indicatorSettings = {
     ["aggroBar"] = {"enabled", "position", "frameLevel", "size-bar"},
     ["shieldBar"] = {"|cffb7b7b7"..L["With this indicator enabled, shield / overshield textures are disabled"], "enabled", "color-alpha", "position", "frameLevel", "height"},
     ["aoeHealing"] = {"enabled", "color", "height"},
-    ["externalCooldowns"] = {"enabled", "num", "position", "frameLevel", "size"},
-    ["defensiveCooldowns"] = {"enabled", "num", "position", "frameLevel", "size"},
+    ["externalCooldowns"] = {"enabled", "num", "orientation", "position", "frameLevel", "size"},
+    ["defensiveCooldowns"] = {"enabled", "num", "orientation", "position", "frameLevel", "size"},
     ["tankActiveMitigation"] = {"enabled", "position", "frameLevel", "size"},
     ["dispels"] = {"enabled", "checkbutton:dispellableByMe", "checkbutton2:enableHighlight", "position", "frameLevel", "size-square"},
-    ["debuffs"] = {"enabled", "blacklist", "checkbutton:dispellableByMe", "num", "position", "frameLevel", "size-square", "font"},
+    ["debuffs"] = {"enabled", "blacklist", "checkbutton:dispellableByMe", "num", "orientation", "position", "frameLevel", "size-square", "font"},
     ["raidDebuffs"] = {"|cffb7b7b7"..L["You can config debuffs in %s"]:format(Cell:GetPlayerClassColorString()..L["Raid Debuffs"].."|r"), "enabled", "checkbutton:onlyShowTopGlow", "position", "frameLevel", "size-border", "font"},
     ["targetedSpells"] = {"enabled", "spells", "glow", "position", "frameLevel", "size-border", "font"},
 }
@@ -776,7 +776,7 @@ local function ShowIndicatorSettings(id)
         elseif indicatorType == "rect" then
             settingsTable = {"enabled", "auras", "colors", "position", "frameLevel", "size"}
         elseif indicatorType == "icons" then
-            settingsTable = {"enabled", "auras", "checkbutton2:showDuration", "position", "frameLevel", "size-square", "num", "orientation", "font"}
+            settingsTable = {"enabled", "auras", "checkbutton2:showDuration", "num", "orientation", "position", "frameLevel", "size-square", "font"}
         end
         -- castByMe
         if currentLayoutTable["indicators"][id]["auraType"] == "buff" then

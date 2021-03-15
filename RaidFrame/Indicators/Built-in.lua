@@ -29,6 +29,36 @@ function I:CreateDefensiveCooldowns(parent)
         end
     end
 
+    function defensiveCooldowns:SetOrientation(orientation)
+        local point1, point2, x, y
+        if orientation == "left-to-right" then
+            point1 = "LEFT"
+            point2 = "RIGHT"
+            x = -1
+            y = 0
+        elseif orientation == "right-to-left" then
+            point1 = "RIGHT"
+            point2 = "LEFT"
+            x = 1
+            y = 0
+        elseif orientation == "top-to-bottom" then
+            point1 = "TOP"
+            point2 = "BOTTOM"
+            x = 0
+            y = 1
+        elseif orientation == "bottom-to-top" then
+            point1 = "BOTTOM"
+            point2 = "TOP"
+            x = 0
+            y = -1
+        end
+        
+        for i = 2, 5 do
+            defensiveCooldowns[i]:ClearAllPoints()
+            defensiveCooldowns[i]:SetPoint(point1, defensiveCooldowns[i-1], point2, x, y)
+        end
+    end
+
     for i = 1, 5 do
         local name = parent:GetName().."DefensiveCooldown"..i
         local frame = I:CreateAura_BarIcon(name, defensiveCooldowns)
@@ -64,6 +94,36 @@ function I:CreateExternalCooldowns(parent)
         font = F:GetFont(font)
         for i = 1, 5 do
             externalCooldowns[i]:SetFont(font, ...)
+        end
+    end
+
+    function externalCooldowns:SetOrientation(orientation)
+        local point1, point2, x, y
+        if orientation == "left-to-right" then
+            point1 = "LEFT"
+            point2 = "RIGHT"
+            x = -1
+            y = 0
+        elseif orientation == "right-to-left" then
+            point1 = "RIGHT"
+            point2 = "LEFT"
+            x = 1
+            y = 0
+        elseif orientation == "top-to-bottom" then
+            point1 = "TOP"
+            point2 = "BOTTOM"
+            x = 0
+            y = 1
+        elseif orientation == "bottom-to-top" then
+            point1 = "BOTTOM"
+            point2 = "TOP"
+            x = 0
+            y = -1
+        end
+        
+        for i = 2, 5 do
+            externalCooldowns[i]:ClearAllPoints()
+            externalCooldowns[i]:SetPoint(point1, externalCooldowns[i-1], point2, x, y)
         end
     end
 
@@ -137,6 +197,28 @@ function I:CreateDebuffs(parent)
         font = F:GetFont(font)
         for i = 1, 5 do
             debuffs[i]:SetFont(font, ...)
+        end
+    end
+
+    function debuffs:SetOrientation(orientation)
+        local point1, point2
+        if orientation == "left-to-right" then
+            point1 = "LEFT"
+            point2 = "RIGHT"
+        elseif orientation == "right-to-left" then
+            point1 = "RIGHT"
+            point2 = "LEFT"
+        elseif orientation == "top-to-bottom" then
+            point1 = "TOP"
+            point2 = "BOTTOM"
+        elseif orientation == "bottom-to-top" then
+            point1 = "BOTTOM"
+            point2 = "TOP"
+        end
+        
+        for i = 2, 5 do
+            debuffs[i]:ClearAllPoints()
+            debuffs[i]:SetPoint(point1, debuffs[i-1], point2)
         end
     end
 

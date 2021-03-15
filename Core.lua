@@ -220,7 +220,7 @@ function eventFrame:ADDON_LOADED(arg1)
                             ["nameColor"] = {"Custom Color", {1, 1, 1}},
                             ["vehicleNamePosition"] = {"TOP", 0},
                             ["textWidth"] = .75,
-                        },
+                        }, -- 1
                         {
                             ["name"] = "Status Text",
                             ["indicatorName"] = "statusText",
@@ -229,7 +229,7 @@ function eventFrame:ADDON_LOADED(arg1)
                             ["position"] = {"BOTTOM", 0},
                             ["frameLevel"] = 30,
                             ["font"] = {"Cell ".._G.DEFAULT, 11, "Shadow"},
-                        },
+                        }, -- 2
                         {
                             ["name"] = "Health Text",
                             ["indicatorName"] = "healthText",
@@ -241,7 +241,7 @@ function eventFrame:ADDON_LOADED(arg1)
                             ["color"] = {1, 1, 1},
                             ["format"] = "percentage",
                             ["hideFull"] = true,
-                        },
+                        }, -- 3
                         {
                             ["name"] = "Role Icon",
                             ["indicatorName"] = "roleIcon",
@@ -250,7 +250,7 @@ function eventFrame:ADDON_LOADED(arg1)
                             ["position"] = {"TOPLEFT", "TOPLEFT", 0, 0},
                             ["size"] = {11, 11},
                             ["customTextures"] = {false, "Interface\\AddOns\\ElvUI\\Media\\Textures\\Tank.tga", "Interface\\AddOns\\ElvUI\\Media\\Textures\\Healer.tga", "Interface\\AddOns\\ElvUI\\Media\\Textures\\DPS.tga"},
-                        },
+                        }, -- 4
                         {
                             ["name"] = "Leader Icon",
                             ["indicatorName"] = "leaderIcon",
@@ -258,7 +258,7 @@ function eventFrame:ADDON_LOADED(arg1)
                             ["enabled"] = true,
                             ["position"] = {"TOPLEFT", "TOPLEFT", 0, -11},
                             ["size"] = {11, 11},
-                        },
+                        }, -- 5
                         {
                             ["name"] = "Ready Check Icon",
                             ["indicatorName"] = "readyCheckIcon",
@@ -266,7 +266,7 @@ function eventFrame:ADDON_LOADED(arg1)
                             ["enabled"] = true,
                             ["frameLevel"] = 100,
                             ["size"] = {16, 16},
-                        },
+                        }, -- 6
                         {
                             ["name"] = "Raid Icon (player)",
                             ["indicatorName"] = "playerRaidIcon",
@@ -276,7 +276,7 @@ function eventFrame:ADDON_LOADED(arg1)
                             ["frameLevel"] = 1,
                             ["size"] = {14, 14},
                             ["alpha"] = .77,
-                        },
+                        }, -- 7
                         {
                             ["name"] = "Raid Icon (target)",
                             ["indicatorName"] = "targetRaidIcon",
@@ -286,7 +286,7 @@ function eventFrame:ADDON_LOADED(arg1)
                             ["frameLevel"] = 1,
                             ["size"] = {14, 14},
                             ["alpha"] = .77,
-                        },
+                        }, -- 8
                         {
                             ["name"] = "Aggro Indicator",
                             ["indicatorName"] = "aggroIndicator",
@@ -295,7 +295,7 @@ function eventFrame:ADDON_LOADED(arg1)
                             ["position"] = {"TOPLEFT", "TOPLEFT", 0, 0},
                             ["frameLevel"] = 2,
                             ["size"] = {10, 10},
-                        },
+                        }, -- 9
                         {
                             ["name"] = "Aggro Bar",
                             ["indicatorName"] = "aggroBar",
@@ -304,7 +304,7 @@ function eventFrame:ADDON_LOADED(arg1)
                             ["position"] = {"BOTTOMLEFT", "TOPLEFT", 1, 0},
                             ["frameLevel"] = 1,
                             ["size"] = {18, 2},
-                        },
+                        }, -- 10
                         {
                             ["name"] = "Shield Bar",
                             ["indicatorName"] = "shieldBar",
@@ -314,7 +314,7 @@ function eventFrame:ADDON_LOADED(arg1)
                             ["frameLevel"] = 1,
                             ["height"] = 4,
                             ["color"] = {1, 1, 0, 1},
-                        },
+                        }, -- 11
                         {
                             ["name"] = "AoE Healing",
                             ["indicatorName"] = "aoeHealing",
@@ -322,7 +322,7 @@ function eventFrame:ADDON_LOADED(arg1)
                             ["enabled"] = true,
                             ["height"] = 15,
                             ["color"] = {1, 1, 0},
-                        },
+                        }, -- 12
                         {
                             ["name"] = "External Cooldowns",
                             ["indicatorName"] = "externalCooldowns",
@@ -332,7 +332,8 @@ function eventFrame:ADDON_LOADED(arg1)
                             ["frameLevel"] = 10,
                             ["size"] = {12, 20},
                             ["num"] = 2,
-                        },
+                            ["orientation"] = "right-to-left",
+                        }, -- 13
                         {
                             ["name"] = "Defensive Cooldowns",
                             ["indicatorName"] = "defensiveCooldowns",
@@ -342,7 +343,8 @@ function eventFrame:ADDON_LOADED(arg1)
                             ["frameLevel"] = 10,
                             ["size"] = {12, 20},
                             ["num"] = 2,
-                        },
+                            ["orientation"] = "left-to-right",
+                        }, -- 14
                         {
                             ["name"] = "Tank Active Mitigation",
                             ["indicatorName"] = "tankActiveMitigation",
@@ -351,7 +353,7 @@ function eventFrame:ADDON_LOADED(arg1)
                             ["position"] = {"TOPLEFT", "TOPLEFT", 10, -1},
                             ["frameLevel"] = 1,
                             ["size"] = {18, 4},
-                        },
+                        }, -- 15
                         {
                             ["name"] = "Dispels",
                             ["indicatorName"] = "dispels",
@@ -362,7 +364,7 @@ function eventFrame:ADDON_LOADED(arg1)
                             ["size"] = {12, 12},
                             ["dispellableByMe"] = true,
                             ["enableHighlight"] = false,
-                        },
+                        }, -- 16
                         {
                             ["name"] = "Debuffs",
                             ["indicatorName"] = "debuffs",
@@ -374,7 +376,8 @@ function eventFrame:ADDON_LOADED(arg1)
                             ["num"] = 3,
                             ["font"] = {"Cell ".._G.DEFAULT, 11, "Outline", 2},
                             ["dispellableByMe"] = false,
-                        },
+                            ["orientation"] = "left-to-right",
+                        }, -- 17
                         {
                             ["name"] = "Raid Debuffs",
                             ["indicatorName"] = "raidDebuffs",
@@ -386,7 +389,7 @@ function eventFrame:ADDON_LOADED(arg1)
                             ["border"] = 2,
                             ["font"] = {"Cell ".._G.DEFAULT, 11, "Outline", 2},
                             ["onlyShowTopGlow"] = true,
-                        },
+                        }, -- 18
                         {
                             ["name"] = "Targeted Spells",
                             ["indicatorName"] = "targetedSpells",
@@ -405,7 +408,7 @@ function eventFrame:ADDON_LOADED(arg1)
                             },
                             ["glow"] = {"Pixel", {0.95,0.95,0.32,1}, 9, .25, 8, 2},
                             ["font"] = {"Cell ".._G.DEFAULT, 12, "Outline", 2},
-                        },
+                        }, -- 19
                     },
                 },
             }

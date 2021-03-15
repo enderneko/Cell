@@ -1862,8 +1862,10 @@ function addon:CreateDropdown(parent, width, dropdownType)
     -- menu.selected
     
     function menu:SetSelected(text, value)
+        local valid
         for i, item in pairs(menu.items) do
             if item.text == text then
+                valid = true
                 -- store index for list
                 menu.selected = i
                 menu.text:SetText(text)
@@ -1874,6 +1876,10 @@ function addon:CreateDropdown(parent, width, dropdownType)
                 end
                 break
             end
+        end
+        if not valid then
+            menu.selected = nil
+            menu.text:SetText("")
         end
     end
 
