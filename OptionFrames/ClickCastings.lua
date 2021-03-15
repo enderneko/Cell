@@ -210,7 +210,7 @@ local function SetBindingClicks(b)
         self:ClearBindings()
         self:Run(self:GetAttribute("snippet"))
 
-        -- self:SetBindingClick(true, "CTRL-MOUSEWHEELDOWN", self, "ctrlSCROLLDOWN")
+        -- self:SetBindingClick(true, "SHIFT-MOUSEWHEELUP", self, "shiftSCROLLUP")
         -- FIXME: --! 如果游戏按键设置（比如“视角”“载具控制”）中绑定了滚轮，那么 self:SetBindingClick(true, "MOUSEWHEELUP", self, "SCROLLUP") 会失效
         -- self:SetBindingClick(true, "MOUSEWHEELUP", self, "SCROLLUP")
         -- self:SetBindingClick(true, "MOUSEWHEELDOWN", self, "SCROLLDOWN")
@@ -258,17 +258,19 @@ local function GetBindingSnippet()
     for _, t in pairs(clickCastingTable) do
         if t[1] ~= "notBound" then
             local modifier, key = strmatch(t[1], "^(.*)type%-(.+)$")
-            if key and not bindingClicks[key] then -- keyboard/mousewheel
+            if key then
                 -- if key == "SCROLLUP" then
                 --     bindingClicks[key] = [[self:SetBindingClick(true, "MOUSEWHEELUP", self, "SCROLLUP")]]
                 -- elseif key == "SCROLLDOWN" then
                 --     bindingClicks[key] = [[self:SetBindingClick(true, "MOUSEWHEELDOWN", self, "SCROLLDOWN")]]
                 if key == "SCROLLUP" or key == "SCROLLDOWN" then
-                    key = GetMouseWheelBindKey(t[1], true)
-                    local m, k = DecodeKeyboard(key)
-                    k = k == "SCROLLUP" and "MOUSEWHEELUP" or "MOUSEWHEELDOWN"
-                    bindingClicks[key] = [[self:SetBindingClick(true, "]]..strupper(m..k)..[[", self, "]]..key..[[")]]
-                else
+                    key = GetMouseWheelBindKey(t[1], true) -- ctrlSCROLLUP
+                    if not bindingClicks[key] then
+                        local m, k = DecodeKeyboard(key)
+                        k = k == "SCROLLUP" and "MOUSEWHEELUP" or "MOUSEWHEELDOWN"
+                        bindingClicks[key] = [[self:SetBindingClick(true, "]]..strupper(m..k)..[[", self, "]]..key..[[")]]
+                    end
+                elseif not bindingClicks[key] then
                     local m, k = DecodeKeyboard(key)
                     -- override keyboard to click
                     bindingClicks[key] = [[self:SetBindingClick(true, "]]..strupper(m..k)..[[", self, "]]..key..[[")]]
@@ -293,14 +295,16 @@ local function ClearClickCastings(b)
     for _, t in pairs(previousClickCastings) do
         local bindKey = t[1]
         if strfind(bindKey, "SCROLL") then
-            bindKey = GetMouseWheelBindKey(bindKey)
+            bindKey = GetMouseWheelBindKey(t[1])
         end
 
         b:SetAttribute(bindKey, nil)
         if t[2] == "spell" then
-            b:SetAttribute(string.gsub(bindKey, "type", "spell"), nil)
+            local attr = string.gsub(bindKey, "type", "spell")
+            b:SetAttribute(attr, nil)
         elseif t[2] == "macro" then
-            b:SetAttribute(string.gsub(bindKey, "type", "macrotext"), nil)
+            local attr = string.gsub(bindKey, "type", "macrotext")
+            b:SetAttribute(attr, nil)
         end
     end
 end
@@ -309,14 +313,16 @@ local function ApplyClickCastings(b)
     for _, t in pairs(clickCastingTable) do
         local bindKey = t[1]
         if strfind(bindKey, "SCROLL") then
-            bindKey = GetMouseWheelBindKey(bindKey)
+            bindKey = GetMouseWheelBindKey(t[1])
         end
 
         b:SetAttribute(bindKey, t[2])
         if t[2] == "spell" then
-            b:SetAttribute(string.gsub(bindKey, "type", "spell"), t[3])
+            local attr = string.gsub(bindKey, "type", "spell")
+            b:SetAttribute(attr, t[3])
         elseif t[2] == "macro" then
-            b:SetAttribute(string.gsub(bindKey, "type", "macrotext"), t[3])
+            local attr = string.gsub(bindKey, "type", "macrotext")
+            b:SetAttribute(attr, t[3])
         end
     end
 end
