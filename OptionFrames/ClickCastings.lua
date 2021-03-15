@@ -723,7 +723,7 @@ bindingsFrame.scrollFrame:SetScrollStep(25)
 local function CreateBindingListButton(modifier, bindKey, bindType, bindAction, i)
     local modifierDisplay = modifiersDisplay[F:GetIndex(modifiers, modifier)]
 
-    local b = Cell:CreateBindingListButton(bindingsFrame.scrollFrame.content, modifierDisplay, L[bindKey], L[F:UpperFirst(bindType)], bindType == "general" and L[bindAction] or bindAction)
+    local b = Cell:CreateBindingListButton(bindingsFrame.scrollFrame.content, modifierDisplay, (bindKey=="P" or bindKey=="T") and bindKey or L[bindKey], L[F:UpperFirst(bindType)], bindType == "general" and L[bindAction] or bindAction)
     b.modifier, b.bindKey, b.bindType, b.bindAction = modifier, bindKey, bindType, bindAction
 
     b:SetPoint("LEFT", 5, 0)
