@@ -284,93 +284,94 @@ local function UpdateIndicators(layout, indicatorName, setting, value)
     if not indicatorsTab:IsShown() then return end
 
     if not indicatorName then -- init
-        I:RemoveAllCustomIndicators(previewButton)
-        for _, t in pairs(currentLayoutTable["indicators"]) do
-            local indicator = previewButton.indicators[t["indicatorName"]] or I:CreateIndicator(previewButton, t)
-            InitIndicator(t["indicatorName"])
-            if t["enabled"] then
-                indicator:Show()
-                if indicator.preview then indicator.preview:Show() end
-            else
-                indicator:Hide()
-                if indicator.preview then indicator.preview:Hide() end
-            end
-            -- update position
-            if t["position"] then
-                indicator:ClearAllPoints()
-                indicator:SetPoint(t["position"][1], previewButton, t["position"][2], t["position"][3], t["position"][4])
-            end
-            -- update frameLevel
-            if t["frameLevel"] then
-                indicator:SetFrameLevel(previewButton.widget.overlayFrame:GetFrameLevel()+t["frameLevel"])
-            end
-            -- update size
-            if t["size"] then
-                indicator:SetSize(unpack(t["size"]))
-            end
-            -- update textWidth
-            if t["textWidth"] then
-                indicator:UpdateTextWidth(t["textWidth"])
-            end
-            -- update border
-            if t["border"] then
-                indicator:SetBorder(t["border"])
-            end
-            -- update height
-            if t["height"] then
-                indicator:SetHeight(t["height"])
-            end
-            -- update alpha
-            if t["alpha"] then
-                indicator:SetAlpha(t["alpha"])
-                indicator.alpha = t["alpha"]
-            end
-            -- update num
-            if t["num"] then
-                for i, frame in ipairs(indicator) do
-                    if i <= t["num"] then
-                        frame:Show()
-                    else
-                        frame:Hide()
+        if not layout then -- call from UpdateIndicators() not from Cell:Fire("UpdateIndicators", ...)
+            I:RemoveAllCustomIndicators(previewButton)
+            for _, t in pairs(currentLayoutTable["indicators"]) do
+                local indicator = previewButton.indicators[t["indicatorName"]] or I:CreateIndicator(previewButton, t)
+                InitIndicator(t["indicatorName"])
+                if t["enabled"] then
+                    indicator:Show()
+                    if indicator.preview then indicator.preview:Show() end
+                else
+                    indicator:Hide()
+                    if indicator.preview then indicator.preview:Hide() end
+                end
+                -- update position
+                if t["position"] then
+                    indicator:ClearAllPoints()
+                    indicator:SetPoint(t["position"][1], previewButton, t["position"][2], t["position"][3], t["position"][4])
+                end
+                -- update frameLevel
+                if t["frameLevel"] then
+                    indicator:SetFrameLevel(previewButton.widget.overlayFrame:GetFrameLevel()+t["frameLevel"])
+                end
+                -- update size
+                if t["size"] then
+                    indicator:SetSize(unpack(t["size"]))
+                end
+                -- update textWidth
+                if t["textWidth"] then
+                    indicator:UpdateTextWidth(t["textWidth"])
+                end
+                -- update border
+                if t["border"] then
+                    indicator:SetBorder(t["border"])
+                end
+                -- update height
+                if t["height"] then
+                    indicator:SetHeight(t["height"])
+                end
+                -- update alpha
+                if t["alpha"] then
+                    indicator:SetAlpha(t["alpha"])
+                    indicator.alpha = t["alpha"]
+                end
+                -- update num
+                if t["num"] then
+                    for i, frame in ipairs(indicator) do
+                        if i <= t["num"] then
+                            frame:Show()
+                        else
+                            frame:Hide()
+                        end
                     end
                 end
-            end
-            -- update format
-            if t["format"] then -- healthText
-                indicator:SetFormat(t["format"])
-                indicator:SetHealth(21377, 65535)
-            end
-            -- update orientation
-            if t["orientation"] then
-                indicator:SetOrientation(t["orientation"])
-            end
-            -- update font
-            if t["font"] then
-                indicator:SetFont(unpack(t["font"]))
-            end
-            -- update color
-            if t["color"] then
-                indicator:SetColor(unpack(t["color"]))
-            end
-            -- update colors
-            if t["colors"] then
-                indicator:SetColors(t["colors"])
-            end
-            -- update nameColor
-            if t["nameColor"] then
-                indicator:UpdatePreviewColor(t["nameColor"])
-            end
-            -- update vehicleNamePosition
-            if t["vehicleNamePosition"] then
-                indicator:UpdateVehicleNamePosition(t["vehicleNamePosition"])
-            end
-            -- update custom texture
-            if t["customTextures"] then
-                indicator:SetCustomTexture(t["customTextures"])
-                indicator:SetRole(indicator.roles[indicator.role])
+                -- update format
+                if t["format"] then -- healthText
+                    indicator:SetFormat(t["format"])
+                    indicator:SetHealth(21377, 65535)
+                end
+                -- update orientation
+                if t["orientation"] then
+                    indicator:SetOrientation(t["orientation"])
+                end
+                -- update font
+                if t["font"] then
+                    indicator:SetFont(unpack(t["font"]))
+                end
+                -- update color
+                if t["color"] then
+                    indicator:SetColor(unpack(t["color"]))
+                end
+                -- update colors
+                if t["colors"] then
+                    indicator:SetColors(t["colors"])
+                end
+                -- update nameColor
+                if t["nameColor"] then
+                    indicator:UpdatePreviewColor(t["nameColor"])
+                end
+                -- update vehicleNamePosition
+                if t["vehicleNamePosition"] then
+                    indicator:UpdateVehicleNamePosition(t["vehicleNamePosition"])
+                end
+                -- update custom texture
+                if t["customTextures"] then
+                    indicator:SetCustomTexture(t["customTextures"])
+                    indicator:SetRole(indicator.roles[indicator.role])
+                end
             end
         end
-        if selected and listButtons[selected] then listButtons[selected]:Click() end
 	else
         local indicator = previewButton.indicators[indicatorName]
 		-- changed in IndicatorsTab
@@ -1004,12 +1005,12 @@ local function ShowTab(tab)
 end
 Cell:RegisterCallback("ShowOptionsTab", "IndicatorsTab_ShowTab", ShowTab)
 
-local function UpdateLayout()
-    if previewButton.loaded and currentLayout == Cell.vars.currentLayout then
-        UpdatePreviewButton()
-    end
-end
-Cell:RegisterCallback("UpdateLayout", "IndicatorsTab_UpdateLayout", UpdateLayout)
+-- local function UpdateLayout()
+--     if previewButton.loaded and currentLayout == Cell.vars.currentLayout then
+--         UpdatePreviewButton()
+--     end
+-- end
+-- Cell:RegisterCallback("UpdateLayout", "IndicatorsTab_UpdateLayout", UpdateLayout)
 
 local function UpdateAppearance()
     if previewButton.loaded and currentLayout == Cell.vars.currentLayout then
