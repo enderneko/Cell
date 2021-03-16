@@ -41,6 +41,12 @@ select(2, ...).L = setmetatable({
     ["marksTips"] = "\n|rTarget marker\nLeft-Click: |cffffffffset raid marker on target|r\nRight-Click: |cfffffffflock raid marker on target (in your group)|r",
 
     ["WHAT'S NEW"] = [[
+        <h1>r46-release (Mar 16, 2021, 9:25 GMT+8)</h1>
+        <p>* Fixed Click-Castings (mouse wheel) AGAIN.</p>
+        <p>+ Added Orientation options for Defensive/External Cooldowns and Debuffs indicators.</p>
+        <p>* Updated Tooltips options.</p>
+        <br/>
+
         <h1>r45-release (Mar 11, 2021, 13:00 GMT+8)</h1>
         <p>* Fixed Click-Castings (mouse wheel).</p>
         <br/>
