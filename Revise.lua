@@ -509,6 +509,8 @@ local function Revise()
                 layout["indicators"][17]["orientation"] = "left-to-right"
             end
         end
+
+        CellDB["general"]["tooltipsPosition"] = {"BOTTOMLEFT", "Unit Button", "TOPLEFT", 0, 15}
     end
 
     CellDB["revise"] = Cell.version

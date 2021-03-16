@@ -643,7 +643,7 @@ function addon:CreateEditBox(parent, width, height, isTransparent, isMultiLine, 
     eb:SetScript("OnEnterPressed", function() eb:ClearFocus() end)
     eb:SetScript("OnEditFocusGained", function() eb:HighlightText() end)
     eb:SetScript("OnEditFocusLost", function() eb:HighlightText(0, 0) end)
-    eb:SetScript("OnDisable", function() eb:SetTextColor(.7, .7, .7, 1) end)
+    eb:SetScript("OnDisable", function() eb:SetTextColor(.4, .4, .4, 1) end)
     eb:SetScript("OnEnable", function() eb:SetTextColor(1, 1, 1, 1) end)
 
     return eb
@@ -759,13 +759,15 @@ function addon:CreateSlider(name, parent, low, high, width, step, onValueChanged
 
     local lowText = slider:CreateFontString(nil, "OVERLAY", font_name)
     slider.lowText = lowText
-    lowText:SetText(colors.grey.s..low..unit)
+    lowText:SetText(low..unit)
+    lowText:SetTextColor(unpack(colors.grey.t))
     lowText:SetPoint("TOPLEFT", slider, "BOTTOMLEFT", 0, -1)
     lowText:SetPoint("BOTTOM", currentEditBox)
     
     local highText = slider:CreateFontString(nil, "OVERLAY", font_name)
     slider.highText = highText
-    highText:SetText(colors.grey.s..high..unit)
+    highText:SetText(high..unit)
+    highText:SetTextColor(unpack(colors.grey.t))
     highText:SetPoint("TOPRIGHT", slider, "BOTTOMRIGHT", 0, -1)
     highText:SetPoint("BOTTOM", currentEditBox)
 
@@ -854,6 +856,8 @@ function addon:CreateSlider(name, parent, low, high, width, step, onValueChanged
         slider:SetScript("OnEnter", nil)
         slider:SetScript("OnLeave", nil)
         tex:SetColorTexture(.4, .4, .4, .7)
+        lowText:SetTextColor(.4, .4, .4)
+        highText:SetTextColor(.4, .4, .4)
     end)
     
     slider:SetScript("OnEnable", function()
@@ -862,6 +866,8 @@ function addon:CreateSlider(name, parent, low, high, width, step, onValueChanged
         slider:SetScript("OnEnter", slider.onEnter)
         slider:SetScript("OnLeave", slider.onLeave)
         tex:SetColorTexture(classColor.t[1], classColor.t[2], classColor.t[3], .7)
+        lowText:SetTextColor(unpack(colors.grey.t))
+        highText:SetTextColor(unpack(colors.grey.t))
     end)
     
     return slider

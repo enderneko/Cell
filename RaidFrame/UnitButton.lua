@@ -1583,15 +1583,10 @@ end
 local function UnitButton_OnEnter(self)
     self.widget.mouseoverHighlight:Show()
     
-    if not CellDB["general"]["enableTooltips"] or (CellDB["general"]["hideTooltipsInCombat"] and InCombatLockdown()) then return end
     local unit = self.state.displayedUnit
     if not unit then return end
     
-    -- TODO: user defined
-    -- GameTooltip:SetOwner(Cell.frames.mainFrame, "ANCHOR_TOPLEFT", 0, 15)
-    -- GameTooltip:SetUnit(unit)
-    GameTooltip:SetOwner(self, "ANCHOR_TOP", 0, 15)
-    GameTooltip:SetUnit(unit)
+    F:ShowTooltips(self, "unit", unit)
 end
 
 local function UnitButton_OnLeave(self)

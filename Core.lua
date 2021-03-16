@@ -131,12 +131,14 @@ function eventFrame:ADDON_LOADED(arg1)
         -- general --------------------------------------------------------------------------------
         if type(CellDB["general"]) ~= "table" then
             CellDB["general"] = {
-                ["hideBlizzard"] = true,
                 ["enableTooltips"] = false,
                 ["hideTooltipsInCombat"] = true,
+                -- ["enableAurasTooltips"] = false,
+                ["tooltipsPosition"] = {"BOTTOMLEFT", "Unit Button", "TOPLEFT", 0, 15},
                 ["showSolo"] = true,
                 ["showParty"] = true,
                 ["showPartyPets"] = true,
+                ["hideBlizzard"] = true,
                 ["locked"] = false,
                 ["fadeOut"] = false,
                 ["sortPartyByRole"] = false,
