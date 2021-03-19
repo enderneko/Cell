@@ -856,8 +856,8 @@ local function UnitButton_UpdateReadyCheck(self)
     self.state.readyCheckStatus = status
 
     if status then
-        self.widget.readyCheckHighlight:SetVertexColor(unpack(READYCHECK_STATUS[status].c))
-        self.widget.readyCheckHighlight:Show()
+        -- self.widget.readyCheckHighlight:SetVertexColor(unpack(READYCHECK_STATUS[status].c))
+        -- self.widget.readyCheckHighlight:Show()
         self.indicators.readyCheckIcon:SetTexture(READYCHECK_STATUS[status].t)
         self.indicators.readyCheckIcon:Show()
     else
@@ -1705,7 +1705,8 @@ function F:UnitButton_OnLoad(button)
     -- healthbar background 
     local healthBarBackground = button:CreateTexture(name.."HealthBarBackground", "ARTWORK", nil , -7)
     button.widget.healthBarBackground = healthBarBackground
-    healthBarBackground:SetAllPoints(healthBar)
+    healthBarBackground:SetPoint("TOPRIGHT", healthBar)
+    healthBarBackground:SetPoint("BOTTOMLEFT", healthBar:GetStatusBarTexture(), "BOTTOMRIGHT")
     healthBarBackground:SetTexture(Cell.vars.texture)
 
     -- powerbar
@@ -1719,7 +1720,8 @@ function F:UnitButton_OnLoad(button)
     -- powerbar background
     local powerBarBackground = button:CreateTexture(name.."PowerBarBackground", "ARTWORK", nil , -7)
     button.widget.powerBarBackground = powerBarBackground
-    powerBarBackground:SetAllPoints(powerBar)
+    powerBarBackground:SetPoint("TOPRIGHT", powerBar)
+    powerBarBackground:SetPoint("BOTTOMLEFT", powerBar:GetStatusBarTexture(), "BOTTOMRIGHT")
     powerBarBackground:SetTexture(Cell.vars.texture)
 
     button.func.SetPowerHeight = function(height)
@@ -1835,26 +1837,47 @@ function F:UnitButton_OnLoad(button)
     end
 
     -- target highlight
-    local targetHighlight = button:CreateTexture(name.."TargetHighlight", "BACKGROUND", nil, -2)
+    local targetHighlight = CreateFrame("Frame", name.."TargetHighlight", button, "BackdropTemplate")
     button.widget.targetHighlight = targetHighlight
+    targetHighlight:SetFrameLevel(3)
+    targetHighlight:SetBackdrop({edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = 1})
     targetHighlight:SetPoint("TOPLEFT", -1, 1)
     targetHighlight:SetPoint("BOTTOMRIGHT", 1, -1)
-    targetHighlight:SetTexture("Interface\\Buttons\\WHITE8x8")
-    targetHighlight:SetVertexColor(1, .19, .19, .5)
     targetHighlight:Hide()
     
     -- mouseover highlight
-    local mouseoverHighlight = button:CreateTexture(name.."MouseoverHighlight", "BACKGROUND", nil, -1)
+    local mouseoverHighlight = CreateFrame("Frame", name.."MouseoverHighlight", button, "BackdropTemplate")
     button.widget.mouseoverHighlight = mouseoverHighlight
+    mouseoverHighlight:SetFrameLevel(4)
+    mouseoverHighlight:SetBackdrop({edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = 1})
     mouseoverHighlight:SetPoint("TOPLEFT", -1, 1)
     mouseoverHighlight:SetPoint("BOTTOMRIGHT", 1, -1)
-    mouseoverHighlight:SetTexture("Interface\\Buttons\\WHITE8x8")
-    mouseoverHighlight:SetVertexColor(1, 1, 1, .5)
     mouseoverHighlight:Hide()
 
     button.func.UpdateHighlightColor = function()
-        targetHighlight:SetVertexColor(unpack(CellDB["appearance"]["targetColor"]))
-        mouseoverHighlight:SetVertexColor(unpack(CellDB["appearance"]["mouseoverColor"]))
+        targetHighlight:SetBackdropBorderColor(unpack(CellDB["appearance"]["targetColor"]))
+        mouseoverHighlight:SetBackdropBorderColor(unpack(CellDB["appearance"]["mouseoverColor"]))
+    end
+    
+    button.func.UpdateHighlightSize = function()
+        local size = CellDB["appearance"]["highlightSize"]
+        
+        targetHighlight:ClearAllPoints()
+        mouseoverHighlight:ClearAllPoints()
+        
+        if size ~= 0 then
+            targetHighlight:SetPoint("TOPLEFT", -size, size)
+            targetHighlight:SetPoint("BOTTOMRIGHT", size, -size)
+            targetHighlight:SetBackdrop({edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = size})
+        
+            mouseoverHighlight:SetPoint("TOPLEFT", -size, size)
+            mouseoverHighlight:SetPoint("BOTTOMRIGHT", size, -size)
+            mouseoverHighlight:SetBackdrop({edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = size})
+
+            -- update color
+            targetHighlight:SetBackdropBorderColor(unpack(CellDB["appearance"]["targetColor"]))
+            mouseoverHighlight:SetBackdropBorderColor(unpack(CellDB["appearance"]["mouseoverColor"]))
+        end
     end
 
     -- readyCheck highlight

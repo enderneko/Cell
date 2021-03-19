@@ -513,6 +513,21 @@ local function Revise()
         CellDB["general"]["tooltipsPosition"] = {"BOTTOMLEFT", "Unit Button", "TOPLEFT", 0, 15}
     end
 
+    -- r47-release
+    if CellDB["revise"] and dbRevision < 47 then
+        for _, layout in pairs(CellDB["layouts"]) do
+            if layout["indicators"][19] and layout["indicators"][19]["indicatorName"] == "targetedSpells" then
+                if not tContains(layout["indicators"][19]["spells"], 334053) then -- 净化冲击波
+                    tinsert(layout["indicators"][19]["spells"], 334053)
+                end
+            end
+        end
+
+        if type(CellDB["appearance"]["highlightSize"]) ~= "number" then
+            CellDB["appearance"]["highlightSize"] = 1
+        end
+    end
+
     CellDB["revise"] = Cell.version
 end
 Cell:RegisterCallback("Revise", "Revise", Revise)

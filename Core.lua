@@ -169,8 +169,9 @@ function eventFrame:ADDON_LOADED(arg1)
                 ["barColor"] = {"Class Color", {.2, .2, .2}},
                 ["bgColor"] = {"Class Color (dark)", {.667, 0, 0}},
                 ["powerColor"] = {"Power Color", {.7, .7, .7}},
-                ["targetColor"] = {1, .19, .19, .5},
-                ["mouseoverColor"] = {1, 1, 1, .5},
+                ["targetColor"] = {1, .31, .31, 1},
+                ["mouseoverColor"] = {1, 1, 1, .6},
+                ["highlightSize"] = 1,
             }
         end
 
@@ -407,6 +408,7 @@ function eventFrame:ADDON_LOADED(arg1)
                                 319941, -- 碎石之跃
                                 322614, -- 心灵连接
                                 320132, -- 暗影之怒
+                                334053, -- 净化冲击波
                             },
                             ["glow"] = {"Pixel", {0.95,0.95,0.32,1}, 9, .25, 8, 2},
                             ["font"] = {"Cell ".._G.DEFAULT, 12, "Outline", 2},

@@ -103,7 +103,7 @@ end
 local fontText = Cell:CreateSeparator(L["Options UI Font Size"], appearanceTab, 188)
 fontText:SetPoint("TOPLEFT", 5, -99)
 
-local optionsFontSizeOffset = Cell:CreateSlider("", appearanceTab, -5, 5, 131, 1, nil, function(value)
+local optionsFontSizeOffset = Cell:CreateSlider("", appearanceTab, -5, 5, 100, 1, nil, function(value)
     CellDB["appearance"]["optionsFontSizeOffset"] = value
     Cell:UpdateOptionsFont(value)
 end)
@@ -115,7 +115,7 @@ optionsFontSizeOffset:SetPoint("TOPLEFT", fontText, "BOTTOMLEFT", 5, -12)
 -------------------------------------------------
 -- unitbutton color
 -------------------------------------------------
-local unitButtonColorText = Cell:CreateSeparator(L["UnitButton Color"], appearanceTab, 387)
+local unitButtonColorText = Cell:CreateSeparator(L["Unit Button"], appearanceTab, 387)
 unitButtonColorText:SetPoint("TOPLEFT", 5, -195)
 
 -- bar color
@@ -161,7 +161,8 @@ barColorPicker:SetPoint("LEFT", barColorDropdown, "RIGHT", 5, 0)
 
 -- bg color
 local bgColorDropdown = Cell:CreateDropdown(appearanceTab, 131)
-bgColorDropdown:SetPoint("TOPLEFT", unitButtonColorText, "BOTTOMLEFT", 203, -27)
+-- bgColorDropdown:SetPoint("TOPLEFT", unitButtonColorText, "BOTTOMLEFT", 203, -27)
+bgColorDropdown:SetPoint("TOPLEFT", barColorDropdown, "BOTTOMLEFT", 0, -30)
 bgColorDropdown:SetItems({
     {
         ["text"] = L["Class Color"],
@@ -202,7 +203,7 @@ bgColorPicker:SetPoint("LEFT", bgColorDropdown, "RIGHT", 5, 0)
 
 -- power color
 local powerColorDropdown = Cell:CreateDropdown(appearanceTab, 131)
-powerColorDropdown:SetPoint("TOPLEFT", barColorDropdown, "BOTTOMLEFT", 0, -30)
+powerColorDropdown:SetPoint("TOPLEFT", bgColorDropdown, "BOTTOMLEFT", 0, -30)
 powerColorDropdown:SetItems({
     {
         ["text"] = L["Power Color"],
@@ -249,7 +250,7 @@ local targetColorPicker = Cell:CreateColorPicker(appearanceTab, L["Target Highli
     CellDB["appearance"]["targetColor"][4] = a
     Cell:Fire("UpdateAppearance", "highlightColor")
 end)
-targetColorPicker:SetPoint("TOPLEFT", powerColorDropdown, "BOTTOMLEFT", 0, -20)
+targetColorPicker:SetPoint("TOPLEFT", barColorDropdown, 203, 0)
 
 -- mouseover highlight
 local mouseoverColorPicker = Cell:CreateColorPicker(appearanceTab, L["Mouseover Highlight Color"], true, function(r, g, b, a)
@@ -261,6 +262,14 @@ local mouseoverColorPicker = Cell:CreateColorPicker(appearanceTab, L["Mouseover 
 end)
 mouseoverColorPicker:SetPoint("TOPLEFT", targetColorPicker, "BOTTOMLEFT", 0, -10)
 
+-- highlight size
+local highlightSize = Cell:CreateSlider(L["Highlight Size"], appearanceTab, 0, 5, 100, 1)
+highlightSize:SetPoint("TOPLEFT", mouseoverColorPicker, "BOTTOMLEFT", 0, -25)
+highlightSize.afterValueChangedFn = function(value)
+    CellDB["appearance"]["highlightSize"] = value
+    Cell:Fire("UpdateAppearance", "highlightSize")
+end
+
 -- reset
 local resetBtn = Cell:CreateButton(appearanceTab, L["Reset All"], "class-hover", {70, 17})
 resetBtn:SetPoint("RIGHT", -5, 0)
@@ -269,8 +278,9 @@ resetBtn:SetScript("OnClick", function()
     CellDB["appearance"]["barColor"] = {"Class Color", {.2, .2, .2}}
     CellDB["appearance"]["bgColor"] = {"Class Color (dark)", {.667, 0, 0}}
     CellDB["appearance"]["powerColor"] = {"Power Color", {.7, .7, .7}}
-    CellDB["appearance"]["targetColor"] = {1, .19, .19, .5}
-    CellDB["appearance"]["mouseoverColor"] = {1, 1, 1, .5}
+    CellDB["appearance"]["targetColor"] = {1, .31, .31, 1}
+    CellDB["appearance"]["mouseoverColor"] = {1, 1, 1, .6}
+    CellDB["appearance"]["highlightSize"] = 1
 
     barColorDropdown:SetSelected(L["Class Color"])
     barColorPicker:SetColor({.2, .2, .2})
@@ -281,8 +291,9 @@ resetBtn:SetScript("OnClick", function()
     powerColorDropdown:SetSelected(L["Power Color"])
     powerColorPicker:SetColor({.7, .7, .7})
 
-    targetColorPicker:SetColor({1, .19, .19, .5})
-    mouseoverColorPicker:SetColor({1, 1, 1, .5})
+    targetColorPicker:SetColor({1, .31, .31, 1})
+    mouseoverColorPicker:SetColor({1, 1, 1, .6})
+    highlightSize:SetValue(1)
 
     Cell:Fire("UpdateAppearance", "colors")
 end)
@@ -313,6 +324,7 @@ local function ShowTab(tab)
 
         targetColorPicker:SetColor(CellDB["appearance"]["targetColor"])
         mouseoverColorPicker:SetColor(CellDB["appearance"]["mouseoverColor"])
+        highlightSize:SetValue(CellDB["appearance"]["highlightSize"])
     else
         appearanceTab:Hide()
     end
@@ -325,7 +337,7 @@ Cell:RegisterCallback("ShowOptionsTab", "AppearanceTab_ShowTab", ShowTab)
 local function UpdateAppearance(which)
     F:Debug("|cff7f7fffUpdateAppearance:|r "..(which or "all"))
     
-    if not which or which == "texture" or which == "color" or which == "highlightColor" or which == "colors" then
+    if not which or which == "texture" or which == "color" or which == "highlightColor" or which == "highlightSize" or which == "colors" then
         local tex
         if not which or which == "texture" then tex = F:GetBarTexture() end
 
@@ -341,6 +353,10 @@ local function UpdateAppearance(which)
             -- highlightColor
             if not which or which == "highlightColor" or which == "colors" then
                 b.func.UpdateHighlightColor()
+            end
+            -- highlightColor
+            if not which or which == "highlightSize" or which == "colors" then
+                b.func.UpdateHighlightSize()
             end
         end)
     end
