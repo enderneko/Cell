@@ -27,16 +27,20 @@ end)
 battleResFrame.onMenuShow:SetScript("OnFinished", function()
 	local p, rt, rp, x, y = battleResFrame:GetPoint(1)
 	battleResFrame:ClearAllPoints()
-	local yofs = select(2, battleResFrame.onMenuShow.trans:GetOffset())
-	battleResFrame:SetPoint(p, rt, rp, x, y+yofs)
+	battleResFrame:SetPoint(p, rt, rp, x, y+battleResFrame.onMenuShow.offset)
 end)
 
 function battleResFrame:OnMenuShow()
 	local currentY = select(5, battleResFrame:GetPoint(1))
-	if not currentY then return end
+	if type(currentY) ~= "number" then return end
 	currentY = math.floor(currentY+.5)
-	battleResFrame.onMenuShow.trans:SetOffset(0, onShow-currentY)
-	battleResFrame.onMenuShow:Play()
+
+	local offset = onShow-currentY
+	if offset ~= 0 then
+		battleResFrame.onMenuShow.trans:SetOffset(0, offset)
+		battleResFrame.onMenuShow.offset = offset
+		battleResFrame.onMenuShow:Play()
+	end
 end
 
 battleResFrame.onMenuHide = battleResFrame:CreateAnimationGroup()
@@ -49,16 +53,20 @@ end)
 battleResFrame.onMenuHide:SetScript("OnFinished", function()
 	local p, rt, rp, x, y = battleResFrame:GetPoint(1)
 	battleResFrame:ClearAllPoints()
-	local yofs = select(2, battleResFrame.onMenuHide.trans:GetOffset())
-	battleResFrame:SetPoint(p, rt, rp, x, y+yofs)
+	battleResFrame:SetPoint(p, rt, rp, x, y+battleResFrame.onMenuHide.offset)
 end)
 
 function battleResFrame:OnMenuHide()
 	local currentY = select(5, battleResFrame:GetPoint(1))
-	if not currentY then return end
+	if type(currentY) ~= "number" then return end
 	currentY = math.floor(currentY+.5)
-	battleResFrame.onMenuHide.trans:SetOffset(0, onHide-currentY)
-	battleResFrame.onMenuHide:Play()
+
+	local offset = onHide-currentY
+	if offset ~= 0 then
+		battleResFrame.onMenuHide.trans:SetOffset(0, offset)
+		battleResFrame.onMenuHide.offset = offset
+		battleResFrame.onMenuHide:Play()
+	end
 end
 
 ---------------------------------
