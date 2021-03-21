@@ -301,7 +301,7 @@ resetBtn:SetScript("OnClick", function()
     targetColorPicker:SetColor({1, .31, .31, 1})
     mouseoverColorPicker:SetColor({1, 1, 1, .6})
     highlightSize:SetValue(1)
-    oorAlpha:SetValue(.4)
+    oorAlpha:SetValue(40)
 
     Cell:Fire("UpdateAppearance", "colors")
 end)
