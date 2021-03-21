@@ -287,6 +287,7 @@ resetBtn:SetScript("OnClick", function()
     CellDB["appearance"]["targetColor"] = {1, .31, .31, 1}
     CellDB["appearance"]["mouseoverColor"] = {1, 1, 1, .6}
     CellDB["appearance"]["highlightSize"] = 1
+    CellDB["appearance"]["outOfRangeAlpha"] = .4
 
     barColorDropdown:SetSelected(L["Class Color"])
     barColorPicker:SetColor({.2, .2, .2})
@@ -300,6 +301,7 @@ resetBtn:SetScript("OnClick", function()
     targetColorPicker:SetColor({1, .31, .31, 1})
     mouseoverColorPicker:SetColor({1, 1, 1, .6})
     highlightSize:SetValue(1)
+    oorAlpha:SetValue(.4)
 
     Cell:Fire("UpdateAppearance", "colors")
 end)

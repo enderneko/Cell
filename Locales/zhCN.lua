@@ -118,6 +118,7 @@ L["Power Color"] = "能量颜色"
 L["Target Highlight Color"] = "目标高亮颜色"
 L["Mouseover Highlight Color"] = "鼠标指向高亮颜色"
 L["Highlight Size"] = "高亮尺寸"
+L["Out of Range Alpha"] = "超出距离透明度"
 L["Reset All"] = "全部重置"
 
 -------------------------------------------------
