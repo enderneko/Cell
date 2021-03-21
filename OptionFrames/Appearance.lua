@@ -103,7 +103,7 @@ end
 local fontText = Cell:CreateSeparator(L["Options UI Font Size"], appearanceTab, 188)
 fontText:SetPoint("TOPLEFT", 5, -99)
 
-local optionsFontSizeOffset = Cell:CreateSlider("", appearanceTab, -5, 5, 100, 1, nil, function(value)
+local optionsFontSizeOffset = Cell:CreateSlider("", appearanceTab, -5, 5, 120, 1, nil, function(value)
     CellDB["appearance"]["optionsFontSizeOffset"] = value
     Cell:UpdateOptionsFont(value)
 end)
@@ -263,12 +263,18 @@ end)
 mouseoverColorPicker:SetPoint("TOPLEFT", targetColorPicker, "BOTTOMLEFT", 0, -10)
 
 -- highlight size
-local highlightSize = Cell:CreateSlider(L["Highlight Size"], appearanceTab, 0, 5, 100, 1)
+local highlightSize = Cell:CreateSlider(L["Highlight Size"], appearanceTab, 0, 5, 120, 1)
 highlightSize:SetPoint("TOPLEFT", mouseoverColorPicker, "BOTTOMLEFT", 0, -25)
 highlightSize.afterValueChangedFn = function(value)
     CellDB["appearance"]["highlightSize"] = value
     Cell:Fire("UpdateAppearance", "highlightSize")
 end
+
+-- out of range alpha
+local oorAlpha = Cell:CreateSlider(L["Out of Range Alpha"], appearanceTab, 0, 100, 120, 5, function(value)
+    CellDB["appearance"]["outOfRangeAlpha"] = value/100
+end, nil, true)
+oorAlpha:SetPoint("TOPLEFT", highlightSize, "BOTTOMLEFT", 0, -40)
 
 -- reset
 local resetBtn = Cell:CreateButton(appearanceTab, L["Reset All"], "class-hover", {70, 17})
@@ -325,6 +331,7 @@ local function ShowTab(tab)
         targetColorPicker:SetColor(CellDB["appearance"]["targetColor"])
         mouseoverColorPicker:SetColor(CellDB["appearance"]["mouseoverColor"])
         highlightSize:SetValue(CellDB["appearance"]["highlightSize"])
+        oorAlpha:SetValue(CellDB["appearance"]["outOfRangeAlpha"]*100)
     else
         appearanceTab:Hide()
     end

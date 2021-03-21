@@ -526,6 +526,9 @@ local function Revise()
         if type(CellDB["appearance"]["highlightSize"]) ~= "number" then
             CellDB["appearance"]["highlightSize"] = 1
         end
+        if type(CellDB["appearance"]["outOfRangeAlpha"]) ~= "number" then
+            CellDB["appearance"]["outOfRangeAlpha"] = .4
+        end
     end
 
     CellDB["revise"] = Cell.version

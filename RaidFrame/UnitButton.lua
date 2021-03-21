@@ -1096,7 +1096,9 @@ local function UnitButton_UpdateInRange(self)
     end
 
     self.state.inRange = inRange
-    self:SetAlpha(inRange and 1 or .4)
+    if Cell.loaded then
+        self:SetAlpha(inRange and 1 or CellDB["appearance"]["outOfRangeAlpha"])
+    end
 end
 
 local function UnitButton_UpdateVehicleStatus(self)
