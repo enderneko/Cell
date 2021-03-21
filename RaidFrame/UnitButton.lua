@@ -856,8 +856,8 @@ local function UnitButton_UpdateReadyCheck(self)
     self.state.readyCheckStatus = status
 
     if status then
-        self.widget.readyCheckHighlight:SetVertexColor(unpack(READYCHECK_STATUS[status].c))
-        self.widget.readyCheckHighlight:Show()
+        -- self.widget.readyCheckHighlight:SetVertexColor(unpack(READYCHECK_STATUS[status].c))
+        -- self.widget.readyCheckHighlight:Show()
         self.indicators.readyCheckIcon:SetTexture(READYCHECK_STATUS[status].t)
         self.indicators.readyCheckIcon:Show()
     else
