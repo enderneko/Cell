@@ -885,10 +885,10 @@ local function UnitButton_UpdatePowerMax(self)
     if value > 0 then
         self.widget.powerBar:SetMinMaxValues(0, value)
         self.widget.powerBar:Show()
-        self.widget.powerBarBackground:Show()
+        self.widget.powerBarLoss:Show()
     else
         self.widget.powerBar:Hide()
-        self.widget.powerBarBackground:Hide()
+        self.widget.powerBarLoss:Hide()
     end
 end
 
@@ -918,7 +918,7 @@ local function UnitButton_UpdatePowerType(self)
     end
 
     self.widget.powerBar:SetStatusBarColor(r, g, b)
-    self.widget.powerBarBackground:SetVertexColor(r * .2, g * .2, b * .2)
+    self.widget.powerBarLoss:SetVertexColor(r * .2, g * .2, b * .2)
 end
 
 local function UnitButton_UpdateHealthMax(self)
@@ -1098,6 +1098,7 @@ local function UnitButton_UpdateInRange(self)
     self.state.inRange = inRange
     if Cell.loaded then
         self:SetAlpha(inRange and 1 or CellDB["appearance"]["outOfRangeAlpha"])
+        self.widget.background:SetAlpha(inRange and 1 or CellDB["appearance"]["outOfRangeAlpha"]*1.25)
     end
 end
 
@@ -1290,7 +1291,7 @@ local function UnitButton_UpdateColor(self)
 
     -- local r, g, b = RAID_CLASS_COLORS["DEATHKNIGHT"]:GetRGB()
     self.widget.healthBar:SetStatusBarColor(barR, barG, barB)
-    self.widget.healthBarBackground:SetVertexColor(bgR, bgG, bgB)
+    self.widget.healthBarLoss:SetVertexColor(bgR, bgG, bgB)
     self.widget.incomingHeal:SetVertexColor(barR, barG, barB)
 end
 
@@ -1689,6 +1690,7 @@ function F:UnitButton_OnLoad(button)
     background:SetAllPoints(button)
     background:SetTexture("Interface\\BUTTONS\\WHITE8X8.BLP")
     background:SetVertexColor(0, 0, 0, 1)
+    background:SetIgnoreParentAlpha(true) -- background needs to be darker
 
     -- border
     -- button:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8x8", edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = 1})
@@ -1704,12 +1706,19 @@ function F:UnitButton_OnLoad(button)
     healthBar:GetStatusBarTexture():SetDrawLayer("ARTWORK", -6)
     healthBar:SetFrameLevel(5)
     
-    -- healthbar background 
-    local healthBarBackground = button:CreateTexture(name.."HealthBarBackground", "ARTWORK", nil , -7)
-    button.widget.healthBarBackground = healthBarBackground
-    healthBarBackground:SetPoint("TOPRIGHT", healthBar)
-    healthBarBackground:SetPoint("BOTTOMLEFT", healthBar:GetStatusBarTexture(), "BOTTOMRIGHT")
-    healthBarBackground:SetTexture(Cell.vars.texture)
+    -- hp loss
+    local healthBarLoss = button:CreateTexture(name.."HealthBarLoss", "ARTWORK", nil , -7)
+    button.widget.healthBarLoss = healthBarLoss
+    healthBarLoss:SetPoint("TOPRIGHT", healthBar)
+    healthBarLoss:SetPoint("BOTTOMLEFT", healthBar:GetStatusBarTexture(), "BOTTOMRIGHT")
+    healthBarLoss:SetTexture(Cell.vars.texture)
+
+    -- healthbar background
+    -- local healthBarBackground = button:CreateTexture(name.."HealthBarBackground", "ARTWORK", nil , -7)
+    -- button.widget.healthBarBackground = healthBarBackground
+    -- healthBarBackground:SetPoint("TOPRIGHT", healthBar)
+    -- healthBarBackground:SetPoint("BOTTOMLEFT", healthBar:GetStatusBarTexture(), "BOTTOMRIGHT")
+    -- healthBarBackground:SetTexture(Cell.vars.texture)
 
     -- powerbar
     local powerBar = CreateFrame("StatusBar", name.."PowerBar", button)
@@ -1719,12 +1728,19 @@ function F:UnitButton_OnLoad(button)
     powerBar:SetStatusBarTexture(Cell.vars.texture)
     powerBar:GetStatusBarTexture():SetDrawLayer("ARTWORK", -6)
 
-    -- powerbar background
-    local powerBarBackground = button:CreateTexture(name.."PowerBarBackground", "ARTWORK", nil , -7)
-    button.widget.powerBarBackground = powerBarBackground
-    powerBarBackground:SetPoint("TOPRIGHT", powerBar)
-    powerBarBackground:SetPoint("BOTTOMLEFT", powerBar:GetStatusBarTexture(), "BOTTOMRIGHT")
-    powerBarBackground:SetTexture(Cell.vars.texture)
+    -- power loss
+    local powerBarLoss = button:CreateTexture(name.."PowerBarLoss", "ARTWORK", nil , -7)
+    button.widget.powerBarLoss = powerBarLoss
+    powerBarLoss:SetPoint("TOPRIGHT", powerBar)
+    powerBarLoss:SetPoint("BOTTOMLEFT", powerBar:GetStatusBarTexture(), "BOTTOMRIGHT")
+    powerBarLoss:SetTexture(Cell.vars.texture)
+
+    -- -- powerbar background
+    -- local powerBarBackground = button:CreateTexture(name.."PowerBarBackground", "ARTWORK", nil , -7)
+    -- button.widget.powerBarBackground = powerBarBackground
+    -- powerBarBackground:SetPoint("TOPRIGHT", powerBar)
+    -- powerBarBackground:SetPoint("BOTTOMLEFT", powerBar:GetStatusBarTexture(), "BOTTOMRIGHT")
+    -- powerBarBackground:SetTexture(Cell.vars.texture)
 
     button.func.SetPowerHeight = function(height)
         healthBar:ClearAllPoints()
@@ -1735,7 +1751,7 @@ function F:UnitButton_OnLoad(button)
             button:UnregisterEvent("UNIT_MAXPOWER")
             button:UnregisterEvent("UNIT_DISPLAYPOWER")
             powerBar:Hide()
-            powerBarBackground:Hide()
+            powerBarLoss:Hide()
         else
             if button:IsShown() and not button:IsEventRegistered("UNIT_DISPLAYPOWER") then
                 button:RegisterEvent("UNIT_POWER_FREQUENT")
@@ -1747,7 +1763,7 @@ function F:UnitButton_OnLoad(button)
                 UnitButton_UpdatePowerType(button)
             end
             powerBar:Show()
-            powerBarBackground:Show()
+            powerBarLoss:Show()
         end
     end
     
@@ -1762,9 +1778,9 @@ function F:UnitButton_OnLoad(button)
 
     button.func.SetTexture = function(tex)
         healthBar:SetStatusBarTexture(tex)
-        healthBarBackground:SetTexture(tex)
+        healthBarLoss:SetTexture(tex)
         powerBar:SetStatusBarTexture(tex)
-        powerBarBackground:SetTexture(tex)
+        powerBarLoss:SetTexture(tex)
         incomingHeal:SetTexture(tex)
     end
 
