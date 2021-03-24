@@ -235,6 +235,27 @@ local tankActiveMitigations = {
     2565, -- 盾牌格挡
 }
 
+local tankActiveMitigationNames = {
+    -- death knight
+    "|c"..select(4, GetClassColor("DEATHKNIGHT"))..GetSpellInfo(77535).."|r", -- 鲜血护盾
+    "|c"..select(4, GetClassColor("DEATHKNIGHT"))..GetSpellInfo(195181).."|r", -- 白骨之盾
+
+    -- demon hunter
+    "|c"..select(4, GetClassColor("DEMONHUNTER"))..GetSpellInfo(203720).."|r", -- 恶魔尖刺
+
+    -- druid
+    "|c"..select(4, GetClassColor("DRUID"))..GetSpellInfo(192081).."|r", -- 铁鬃
+
+    -- monk
+    "|c"..select(4, GetClassColor("MONK"))..GetSpellInfo(215479).."|r", -- 铁骨酒
+
+    -- paladin
+    "|c"..select(4, GetClassColor("PALADIN"))..GetSpellInfo(132403).."|r", -- 正义盾击
+
+    -- warrior
+    "|c"..select(4, GetClassColor("WARRIOR"))..GetSpellInfo(2565).."|r", -- 盾牌格挡
+}
+
 do
     local temp = {}
     for _, id in pairs(tankActiveMitigations) do
@@ -245,6 +266,10 @@ end
 
 function I:IsTankActiveMitigation(name)
     return tankActiveMitigations[name]
+end
+
+function I:GetTankActiveMitigationString()
+    return table.concat(tankActiveMitigationNames, ", ").."."
 end
 
 -------------------------------------------------
