@@ -518,7 +518,7 @@ function addon:CreateCheckButton(parent, label, onClick, ...)
     -- cb.label:SetTextColor(classColor.t[1], classColor.t[2], classColor.t[3])
     
     cb:SetSize(14, 14)
-    cb:SetHitRectInsets(0, -cb.label:GetStringWidth(), 0, 0)
+    cb:SetHitRectInsets(0, -cb.label:GetStringWidth()-5, 0, 0)
 
     cb:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8x8", edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = 1})
     cb:SetBackdropColor(.115, .115, .115, .9)
@@ -547,6 +547,11 @@ function addon:CreateCheckButton(parent, label, onClick, ...)
         cb.label:SetTextColor(.4, .4, .4)
         checkedTexture:SetColorTexture(.4, .4, .4)
     end)
+
+    function cb:SetText(text)
+        cb.label:SetText(text)
+        cb:SetHitRectInsets(0, -cb.label:GetStringWidth()-5, 0, 0)
+    end
 
     SetTooltip(cb, "ANCHOR_TOPLEFT", 0, 2, ...)
 
@@ -3444,7 +3449,7 @@ local function CreateSetting_CheckButton(parent)
         -- show db value
         function widget:SetDBValue(settingName, checked)
             widget.cb:SetChecked(checked)
-            widget.cb.label:SetText(L[settingName])
+            widget.cb:SetText(L[settingName])
         end
     else
         widget = settingWidgets["checkbutton"]
@@ -3474,7 +3479,7 @@ local function CreateSetting_CheckButton2(parent)
         -- show db value
         function widget:SetDBValue(settingName, checked)
             widget.cb:SetChecked(checked)
-            widget.cb.label:SetText(L[settingName])
+            widget.cb:SetText(L[settingName])
         end
     else
         widget = settingWidgets["checkbutton2"]
