@@ -672,7 +672,7 @@ end)
 SLASH_CELL1 = "/cell"
 function SlashCmdList.CELL(msg, editbox)
     local command, rest = msg:match("^(%S*)%s*(.-)$")
-    if command == "options" then
+    if command == "options" or command == "opt" then
         F:ShowOptionsFrame()
 
     elseif command == "reset" then
@@ -713,9 +713,9 @@ function SlashCmdList.CELL(msg, editbox)
 
     else
         F:Print(L["Available slash commands"]..":\n"..
-            "|cFFFFB5C5/cell options|r: "..L["show Cell options frame"]..".\n"..
-            "|cFFFFB5C5/cell reset position|r: "..L["reset Cell position"]..".\n"..
+            "|cFFFFB5C5/cell options|r, |cFFFFB5C5/cell opt|r: "..L["show Cell options frame"]..".\n"..
             "|cFFFF7777"..L["These \"reset\" commands below affect all your characters in this account"]..".|r\n"..
+            "|cFFFFB5C5/cell reset position|r: "..L["reset Cell position"]..".\n"..
             "|cFFFFB5C5/cell reset layouts|r: "..L["reset all Layouts and Indicators"]..".\n"..
             "|cFFFFB5C5/cell reset clickCastings|r: "..L["reset all Click-Castings"]..".\n"..
             "|cFFFFB5C5/cell reset raidDebuffs|r: "..L["reset all Raid Debuffs"]..".\n"..
