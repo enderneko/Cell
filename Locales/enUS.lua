@@ -41,6 +41,12 @@ select(2, ...).L = setmetatable({
     ["marksTips"] = "\n|rTarget marker\nLeft-Click: |cffffffffset raid marker on target|r\nRight-Click: |cfffffffflock raid marker on target (in your group)|r",
 
     ["WHAT'S NEW"] = [[
+        <h1>r47-release (Mar 24, 2021, 18:30 GMT+8)</h1>
+        <p>+ Added "Highlight Size" and "Out of Range Alpha" options.</p>
+        <p>- Removed ready check highlight.</p>
+        <p>* Cooldown animation will be disabled when "Show duration text" is checked.</p>
+        <br/>
+
         <h1>r46-release (Mar 16, 2021, 9:25 GMT+8)</h1>
         <p>* Fixed Click-Castings (mouse wheel) AGAIN.</p>
         <p>+ Added Orientation options for Defensive/External Cooldowns and Debuffs indicators.</p>
