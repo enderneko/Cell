@@ -168,12 +168,6 @@ function I:CreateAura_BarIcon(name, parent)
     cooldown:SetStatusBarTexture("Interface\\Buttons\\WHITE8x8")
     cooldown:GetStatusBarTexture():SetAlpha(0)
 
-    local duration = cooldown:CreateFontString(nil, "OVERLAY", "CELL_FONT_STATUS")
-    frame.duration = duration
-    duration:SetJustifyH("RIGHT")
-    duration:SetPoint("BOTTOMRIGHT", 2, 0)
-    duration:Hide()
-
     local elapsedTime = 0
     cooldown:SetScript("OnUpdate", function(self, elapsed)
         -- cooldown:SetValue(GetTime()-cooldown.start)
@@ -209,15 +203,20 @@ function I:CreateAura_BarIcon(name, parent)
         maskIcon:SetTexCoord(unpack(F:GetTexCoord(width, height)))
     end)
 
-    local stackFrame = CreateFrame("Frame", nil, frame)
-    stackFrame:SetAllPoints(frame)
+    local textFrame = CreateFrame("Frame", nil, frame)
+    textFrame:SetAllPoints(frame)
+    textFrame:SetFrameLevel(cooldown:GetFrameLevel()+1)
 
-    local stack = stackFrame:CreateFontString(nil, "OVERLAY", "CELL_FONT_STATUS")
+    local stack = textFrame:CreateFontString(nil, "OVERLAY", "CELL_FONT_STATUS")
     frame.stack = stack
     stack:SetJustifyH("RIGHT")
-    -- stack:SetJustifyV("TOP")
     stack:SetPoint("TOPRIGHT", 2, 0)
-    -- stack:SetPoint("CENTER", 1, 0)
+
+    local duration = textFrame:CreateFontString(nil, "OVERLAY", "CELL_FONT_STATUS")
+    frame.duration = duration
+    duration:SetJustifyH("RIGHT")
+    duration:SetPoint("BOTTOMRIGHT", 2, 0)
+    duration:Hide()
 
     function frame:SetFont(font, size, flags, horizontalOffset)
         if not string.find(font, ".ttf") then font = F:GetFont(font) end
@@ -265,11 +264,8 @@ function I:CreateAura_BarIcon(name, parent)
             cooldown:Hide()
             frame:SetScript("OnUpdate", nil)
         else
-            -- init bar values
-            cooldown:SetMinMaxValues(0, duration)
-            cooldown:SetValue(GetTime()-start)
-            cooldown:Show()
             if frame.showDuration then
+                cooldown:Hide()
                 frame:SetScript("OnUpdate", function()
                     local remain = duration-(GetTime()-start)
                     if remain <= 60 then
@@ -278,6 +274,11 @@ function I:CreateAura_BarIcon(name, parent)
                         frame.duration:SetText("")
                     end
                 end)
+            else
+                -- init bar values
+                cooldown:SetMinMaxValues(0, duration)
+                cooldown:SetValue(GetTime()-start)
+                cooldown:Show()
             end
         end
 
@@ -305,8 +306,10 @@ function I:CreateAura_BarIcon(name, parent)
         frame.showDuration = show
         if show then
             duration:Show()
+            cooldown:Hide()
         else
             duration:Hide()
+            cooldown:Show()
         end
     end
 
