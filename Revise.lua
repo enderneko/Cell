@@ -527,7 +527,7 @@ local function Revise()
             CellDB["appearance"]["highlightSize"] = 1
         end
         if type(CellDB["appearance"]["outOfRangeAlpha"]) ~= "number" then
-            CellDB["appearance"]["outOfRangeAlpha"] = .4
+            CellDB["appearance"]["outOfRangeAlpha"] = .45
         end
     end
 

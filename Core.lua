@@ -172,7 +172,7 @@ function eventFrame:ADDON_LOADED(arg1)
                 ["targetColor"] = {1, .31, .31, 1},
                 ["mouseoverColor"] = {1, 1, 1, .6},
                 ["highlightSize"] = 1,
-                ["outOfRangeAlpha"] = .4,
+                ["outOfRangeAlpha"] = .45,
             }
         end
 
