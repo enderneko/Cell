@@ -1857,6 +1857,7 @@ function F:UnitButton_OnLoad(button)
     -- target highlight
     local targetHighlight = CreateFrame("Frame", name.."TargetHighlight", button, "BackdropTemplate")
     button.widget.targetHighlight = targetHighlight
+    targetHighlight:EnableMouse(false)
     targetHighlight:SetFrameLevel(3)
     targetHighlight:SetBackdrop({edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = 1})
     targetHighlight:SetPoint("TOPLEFT", -1, 1)
@@ -1866,6 +1867,7 @@ function F:UnitButton_OnLoad(button)
     -- mouseover highlight
     local mouseoverHighlight = CreateFrame("Frame", name.."MouseoverHighlight", button, "BackdropTemplate")
     button.widget.mouseoverHighlight = mouseoverHighlight
+    mouseoverHighlight:EnableMouse(false)
     mouseoverHighlight:SetFrameLevel(4)
     mouseoverHighlight:SetBackdrop({edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = 1})
     mouseoverHighlight:SetPoint("TOPLEFT", -1, 1)
