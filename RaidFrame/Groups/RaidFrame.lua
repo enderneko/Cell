@@ -204,7 +204,7 @@ local function RaidFrame_UpdateLayout(layout, which)
 
         if not which or which == "size" or which == "power" or which == "groupFilter" then
             for j, b in ipairs({header:GetChildren()}) do
-                if not which or which == "size" then
+                if not which or which == "size" or which == "groupFilter" then
                     b:SetWidth(width)
                     b:SetHeight(height)
                     b:ClearAllPoints()
