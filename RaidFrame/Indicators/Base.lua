@@ -25,6 +25,7 @@ function I:CreateAura_BorderIcon(name, parent, borderSize)
     cooldown:SetSwipeTexture("Interface\\Buttons\\WHITE8x8")
     cooldown:SetSwipeColor(1, 1, 1)
     cooldown.noCooldownCount = true -- disable omnicc
+    cooldown:SetHideCountdownNumbers(true)
 
     local iconFrame = CreateFrame("Frame", name.."IconFrame", frame)
     iconFrame:SetPoint("TOPLEFT", borderSize, -borderSize)
