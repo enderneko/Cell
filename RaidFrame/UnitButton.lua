@@ -1098,7 +1098,6 @@ local function UnitButton_UpdateInRange(self)
     self.state.inRange = inRange
     if Cell.loaded then
         self:SetAlpha(inRange and 1 or CellDB["appearance"]["outOfRangeAlpha"])
-        self.widget.background:SetAlpha(inRange and 1 or CellDB["appearance"]["outOfRangeAlpha"]*1.25)
     end
 end
 
@@ -1685,17 +1684,16 @@ function F:UnitButton_OnLoad(button)
     button.indicators = {}
 
     -- background
-    local background = button:CreateTexture(name.."Background", "BORDER")
-    button.widget.background = background
-    background:SetAllPoints(button)
-    background:SetTexture("Interface\\BUTTONS\\WHITE8X8.BLP")
-    background:SetVertexColor(0, 0, 0, 1)
-    background:SetIgnoreParentAlpha(true) -- background needs to be darker
+    -- local background = button:CreateTexture(name.."Background", "BORDER")
+    -- button.widget.background = background
+    -- background:SetAllPoints(button)
+    -- background:SetTexture("Interface\\BUTTONS\\WHITE8X8.BLP")
+    -- background:SetVertexColor(0, 0, 0, 1)
 
-    -- border
-    -- button:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8x8", edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = 1})
-    -- button:SetBackdropColor(0, 0, 0, 1)
-    -- button:SetBackdropBorderColor(0, 0, 0, 1)
+    -- backdrop
+    button:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8x8", edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = 1})
+    button:SetBackdropColor(0, 0, 0, 1)
+    button:SetBackdropBorderColor(0, 0, 0, 1)
     
     -- healthbar
     local healthBar = CreateFrame("StatusBar", name.."HealthBar", button)
@@ -1728,6 +1726,12 @@ function F:UnitButton_OnLoad(button)
     powerBar:SetStatusBarTexture(Cell.vars.texture)
     powerBar:GetStatusBarTexture():SetDrawLayer("ARTWORK", -6)
 
+    local gapTexture = button:CreateTexture(nil, "BORDER")
+    gapTexture:SetPoint("BOTTOMLEFT", powerBar, "TOPLEFT")
+    gapTexture:SetPoint("BOTTOMRIGHT", powerBar, "TOPRIGHT")
+    gapTexture:SetHeight(1)
+    gapTexture:SetColorTexture(0, 0, 0, 1)
+
     -- power loss
     local powerBarLoss = button:CreateTexture(name.."PowerBarLoss", "ARTWORK", nil , -7)
     button.widget.powerBarLoss = powerBarLoss
@@ -1752,6 +1756,7 @@ function F:UnitButton_OnLoad(button)
             button:UnregisterEvent("UNIT_DISPLAYPOWER")
             powerBar:Hide()
             powerBarLoss:Hide()
+            gapTexture:Hide()
         else
             if button:IsShown() and not button:IsEventRegistered("UNIT_DISPLAYPOWER") then
                 button:RegisterEvent("UNIT_POWER_FREQUENT")
@@ -1764,6 +1769,7 @@ function F:UnitButton_OnLoad(button)
             end
             powerBar:Show()
             powerBarLoss:Show()
+            gapTexture:Show()
         end
     end
     
