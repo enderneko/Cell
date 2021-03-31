@@ -136,8 +136,8 @@ battleResFrame:SetScript("OnUpdate", function(self, elapsed)
 		local charges, _, started, duration = GetSpellCharges(20484)
 		if not charges then
 			-- hide out of encounter
-			self:Hide()
-			self:RegisterEvent("SPELL_UPDATE_CHARGES")
+			battleResFrame:Hide()
+			battleResFrame:RegisterEvent("SPELL_UPDATE_CHARGES")
 			return
 		end
 		
@@ -157,36 +157,36 @@ end)
 function battleResFrame:SPELL_UPDATE_CHARGES()
 	local charges = GetSpellCharges(20484)
 	if charges then
-		self:UnregisterEvent("SPELL_UPDATE_CHARGES")
+		battleResFrame:UnregisterEvent("SPELL_UPDATE_CHARGES")
 		-- isMovable = false
-		self:Show()
+		battleResFrame:Show()
 	end
 end
 
 function battleResFrame:PLAYER_ENTERING_WORLD()
-	self:UnregisterEvent("SPELL_UPDATE_CHARGES")
-    self:Hide()
+	battleResFrame:UnregisterEvent("SPELL_UPDATE_CHARGES")
+    battleResFrame:Hide()
     
 	local _, instanceType, difficulty = GetInstanceInfo()
 
 	if instanceType == "raid" then -- raid
 		if IsEncounterInProgress() then --如果 上线时/重载界面后 已在boss战中
-			self:Show()
+			battleResFrame:Show()
 		else
-			self:RegisterEvent("SPELL_UPDATE_CHARGES")
+			battleResFrame:RegisterEvent("SPELL_UPDATE_CHARGES")
 		end
 	
 	elseif difficulty == 8 then -- challenge mode
-		self:Show()
+		battleResFrame:Show()
 	end
 end
 
 function battleResFrame:CHALLENGE_MODE_START()
-	self:Show()
+	battleResFrame:Show()
 end
 
 battleResFrame:SetScript("OnEvent", function(self, event, ...)
-	self[event](self, ...)
+	battleResFrame[event](self, ...)
 end)
 
 local function UpdateRaidTools(which)
