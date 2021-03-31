@@ -33,6 +33,7 @@ L["%s lock %s on %s."] = "%s将%s锁定在%s。"
 L["%s unlock %s from %s."] = "%s将%s从%s解锁。"
 -- L["Raid Sort"] = "团队排序"
 -- L["Raid Roster"] = "团队名单"
+L["Alt+Right-Click to remove a player"] = "用 Alt+右键 将玩家从团队中移出"
 
 -------------------------------------------------
 -- status text

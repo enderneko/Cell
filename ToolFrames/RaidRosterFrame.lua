@@ -6,10 +6,14 @@ local raidRosterFrame = CreateFrame("Frame", "CellRaidRosterFrame", Cell.frames.
 Cell.frames.raidRosterFrame = raidRosterFrame
 -- raidRosterFrame:SetPoint("BOTTOMLEFT", Cell.frames.mainFrame, "TOPLEFT", 0, 18)
 Cell:StylizeFrame(raidRosterFrame, {.1, .1, .1, .9})
-raidRosterFrame:SetSize(405, 210)
+raidRosterFrame:SetSize(405, 230)
 raidRosterFrame:EnableMouse(true)
 raidRosterFrame:SetFrameStrata("HIGH")
 raidRosterFrame:Hide()
+
+local tips = raidRosterFrame:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
+tips:SetPoint("BOTTOMLEFT", raidRosterFrame, 5, 5)
+tips:SetText("|cff777777"..L["Alt+Right-Click to remove a player"])
 
 -------------------------------------------------
 -- sort TODO:
@@ -35,16 +39,14 @@ raidRosterFrame:Hide()
 -------------------------------------------------
 local rosterContainer = CreateFrame("Frame", "CellRaidRosterFrame_Container", raidRosterFrame)
 -- Cell:StylizeFrame(rosterContainer, {.1, .1, .1, .5})
-rosterContainer:SetPoint("BOTTOMLEFT", 5, 5)
-rosterContainer:SetPoint("TOPRIGHT", raidRosterFrame, "BOTTOMRIGHT", -5, 207)
-
--- local rosterText = Cell:CreateSeparator(L["Raid Roster"], raidRosterFrame, raidRosterFrame:GetWidth()-10)
--- rosterText:SetPoint("BOTTOMLEFT", rosterContainer, "TOPLEFT", 0, 5)
+-- rosterContainer:SetPoint("BOTTOMLEFT", 5, 5)
+rosterContainer:SetPoint("TOPLEFT", 5, -5)
+rosterContainer:SetPoint("BOTTOMRIGHT", raidRosterFrame, "TOPRIGHT", -5, -207)
 
 local groups, changed = {}, {}
 local movingGrid
 local function CreateRaidRosterGrid(parent, index)
-    local grid = CreateFrame("Frame", parent:GetName().."Unit"..index, parent, "BackdropTemplate")
+    local grid = CreateFrame("Button", parent:GetName().."Unit"..index, parent, "BackdropTemplate")
     grid:SetSize(100, 17)
     Cell:StylizeFrame(grid, {.1, .1, .1, .5})
     grid.color = {.5, .5, .5}
@@ -60,6 +62,14 @@ local function CreateRaidRosterGrid(parent, index)
     nameText:SetPoint("RIGHT", -2, 0)
     nameText:SetWordWrap(false)
     nameText:SetJustifyH("LEFT")
+
+    -- click
+    grid:RegisterForClicks("RightButtonUp")
+    grid:SetScript("OnClick", function()
+        if IsAltKeyDown() then
+            UninviteUnit(grid.name)
+        end
+    end)
 
     -- drag
     grid:SetMovable(true)
@@ -146,6 +156,10 @@ local function CreateRaidRosterGrid(parent, index)
         roleIcon:Hide()
 
         grid:EnableMouse(false)
+
+        -- reset click
+        -- grid:SetAttribute("unit", nil)
+        -- grid:SetAttribute("type1", nil)
     end
 
     function grid:SetInfo(name, classFileName, combatRole, raidIndex)
@@ -169,6 +183,10 @@ local function CreateRaidRosterGrid(parent, index)
         grid:Set(name, grid.color, combatRole)
 
         grid:EnableMouse(true)
+
+        -- click
+        -- grid:SetAttribute("unit", "raid"..raidIndex)
+        -- grid:SetAttribute("type1", "target")
     end
 
     return grid
