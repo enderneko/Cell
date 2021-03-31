@@ -113,8 +113,7 @@ L["Hide"] = "隱藏"
 L["Hide Blizzard Frames"] = "隱藏遊戲內建框架"
 L["Hide Blizzard Raid / Party"] = "隱藏遊戲內建團隊/隊伍框架"
 L["hideFull"] = "滿血時不顯示"
---[[Translation missing --]]
---[[ L["Highlight Size"] = "Highlight Size"--]] 
+L["Highlight Size"] = "顯著標示大小"
 L["Horizontal"] = "水平"
 L["Icon"] = "圖示"
 L["Icons"] = "圖示群組"
@@ -163,8 +162,7 @@ L["onlyShowTopGlow"] = "只顯著標示當前減益"
 L["Options"] = "選項"
 L["Options UI Font Size"] = "設定選項介面文字大小"
 L["Orientation"] = "方向"
---[[Translation missing --]]
---[[ L["Out of Range Alpha"] = "Out of Range Alpha"--]] 
+L["Out of Range Alpha"] = "超出範圍透明度"
 L["Outline"] = "外框"
 L["Overwrite Layout"] = "取代版面配置"
 L["P"] = "PvP 天賦"
