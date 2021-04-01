@@ -531,6 +531,20 @@ local function Revise()
         end
     end
 
+    -- r48-release
+    if CellDB["revise"] and dbRevision < 48 then
+        for _, layout in pairs(CellDB["layouts"]) do
+            if layout["indicators"][19] and layout["indicators"][19]["indicatorName"] == "targetedSpells" then
+                if not tContains(layout["indicators"][19]["spells"], 343556) then -- 病态凝视
+                    tinsert(layout["indicators"][19]["spells"], 343556)
+                end
+                if not tContains(layout["indicators"][19]["spells"], 320596) then -- 深重呕吐
+                    tinsert(layout["indicators"][19]["spells"], 320596)
+                end
+            end
+        end
+    end
+
     CellDB["revise"] = Cell.version
 end
 Cell:RegisterCallback("Revise", "Revise", Revise)
