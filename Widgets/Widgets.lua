@@ -2750,7 +2750,7 @@ local function CreateSetting_Format(parent)
                 end,
             },
             {
-                ["text"] = "21.4K",
+                ["text"] = F:FormatNumer(21377),
                 ["value"] = "number-short",
                 ["onClick"] = function()
                     widget.func("number-short")
@@ -2764,7 +2764,7 @@ local function CreateSetting_Format(parent)
                 end,
             },
             {
-                ["text"] = "-44.2K",
+                ["text"] = F:FormatNumer(-44158),
                 ["value"] = "number-deficit-short",
                 ["onClick"] = function()
                     widget.func("number-deficit-short")
