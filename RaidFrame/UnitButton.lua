@@ -42,6 +42,8 @@ local UnitBuff = UnitBuff
 local UnitDebuff = UnitDebuff
 local IsInRaid = IsInRaid
 
+local barAnimationType
+
 -------------------------------------------------
 -- unit button init indicators
 -------------------------------------------------
@@ -883,7 +885,11 @@ local function UnitButton_UpdatePowerMax(self)
 
     local value = UnitPowerMax(unit)
     if value > 0 then
-        self.widget.powerBar:SetMinMaxValues(0, value)
+        if barAnimationType == "Smooth" then
+            self.widget.powerBar:SetMinMaxSmoothedValue(0, value)
+        else
+            self.widget.powerBar:SetMinMaxValues(0, value)
+        end
         self.widget.powerBar:Show()
         self.widget.powerBarLoss:Show()
     else
@@ -896,7 +902,11 @@ local function UnitButton_UpdatePower(self)
     local unit = self.state.displayedUnit
     if not unit then return end
 
-    self.widget.powerBar:SetValue(UnitPower(unit))
+    if barAnimationType == "Smooth" then
+        self.widget.powerBar:SetSmoothedValue(UnitPower(unit))
+    else
+        self.widget.powerBar:SetValue(UnitPower(unit))
+    end
 end
 
 local function UnitButton_UpdatePowerType(self)
@@ -927,7 +937,11 @@ local function UnitButton_UpdateHealthMax(self)
 
     UpdateUnitHealthState(self)
 
-    self.widget.healthBar:SetMinMaxValues(0, self.state.healthMax)
+    if barAnimationType == "Smooth" then
+        self.widget.healthBar:SetMinMaxSmoothedValue(0, self.state.healthMax)
+    else
+        self.widget.healthBar:SetMinMaxValues(0, self.state.healthMax)
+    end
 end
 
 local function UnitButton_UpdateHealth(self)
@@ -937,17 +951,21 @@ local function UnitButton_UpdateHealth(self)
     UpdateUnitHealthState(self)
     local healthPercent = self.state.healthPercent
     
-    self.widget.healthBar:SetValue(self.state.health)
-
-    local diff = healthPercent - (self.state.healthPercentOld or healthPercent)
-    if diff >= 0 then
-        self.func.HideFlash()
-    elseif diff <= -0.02 and diff >= -1 then --! player (just joined) UnitHealthMax(unit) may be 1 ====> diff == -maxHealth
-        self.func.ShowFlash(abs(diff), healthPercent)
+    if barAnimationType == "Flash" then
+        self.widget.healthBar:SetValue(self.state.health)
+        local diff = healthPercent - (self.state.healthPercentOld or healthPercent)
+        if diff >= 0 then
+            self.func.HideFlash()
+        elseif diff <= -0.05 and diff >= -1 then --! player (just joined) UnitHealthMax(unit) may be 1 ====> diff == -maxHealth
+            self.func.ShowFlash(abs(diff), healthPercent)
+        end
+    elseif barAnimationType == "Smooth" then
+        self.widget.healthBar:SetSmoothedValue(self.state.health)
+    else
+        self.widget.healthBar:SetValue(self.state.health)
     end
 
     self.state.healthPercentOld = healthPercent
-
 end
 
 local function UnitButton_UpdateHealthPrediction(self)
@@ -1079,7 +1097,7 @@ local function UnitButton_UpdateThreatBar(self)
     local _, status, scaledPercentage, rawPercentage = UnitDetailedThreatSituation(unit, "target")
     if status then
         self.indicators.aggroBar:Show()
-        self.indicators.aggroBar:SetValue(scaledPercentage)
+        self.indicators.aggroBar:SetSmoothedValue(scaledPercentage)
         self.indicators.aggroBar:SetStatusBarColor(GetThreatStatusColor(status))
     else
         self.indicators.aggroBar:Hide()
@@ -1782,19 +1800,6 @@ function F:UnitButton_OnLoad(button)
     incomingHeal:SetAlpha(.4)
     incomingHeal:Hide()
 
-    button.func.SetTexture = function(tex)
-        healthBar:SetStatusBarTexture(tex)
-        healthBarLoss:SetTexture(tex)
-        powerBar:SetStatusBarTexture(tex)
-        powerBarLoss:SetTexture(tex)
-        incomingHeal:SetTexture(tex)
-    end
-
-    button.func.UpdateColor = function()
-        UnitButton_UpdateColor(button)
-        UnitButton_UpdatePowerType(button)
-    end
-
     -- shield bar
     local shieldBar = healthBar:CreateTexture(name.."ShieldBar", "ARTWORK", nil, -7)
     button.widget.shieldBar = shieldBar
@@ -1828,36 +1833,60 @@ function F:UnitButton_OnLoad(button)
     absorbsBar:SetBlendMode("ADD")
     absorbsBar:Hide()
 
-    -- damage flash tex
-    do
-        local damageFlashTex = healthBar:CreateTexture(name.."DamageFlash", "ARTWORK", nil, -6)
-        button.widget.damageFlashTex = damageFlashTex
-        damageFlashTex:SetTexture("Interface\\BUTTONS\\WHITE8X8")
-        damageFlashTex:SetVertexColor(1, 1, 1)
-        damageFlashTex:SetPoint("TOPLEFT", healthBar:GetStatusBarTexture(), "TOPRIGHT")
-        damageFlashTex:SetPoint("BOTTOMLEFT", healthBar:GetStatusBarTexture(), "BOTTOMRIGHT")
+    -- bar animation
+    -- flash
+    local damageFlashTex = healthBar:CreateTexture(name.."DamageFlash", "ARTWORK", nil, -6)
+    button.widget.damageFlashTex = damageFlashTex
+    damageFlashTex:SetTexture("Interface\\BUTTONS\\WHITE8X8")
+    damageFlashTex:SetVertexColor(1, 1, 1)
+    damageFlashTex:SetPoint("TOPLEFT", healthBar:GetStatusBarTexture(), "TOPRIGHT")
+    damageFlashTex:SetPoint("BOTTOMLEFT", healthBar:GetStatusBarTexture(), "BOTTOMRIGHT")
+    damageFlashTex:Hide()
+
+    -- damage flash animation group
+    local damageFlashAG = damageFlashTex:CreateAnimationGroup()
+    local alpha = damageFlashAG:CreateAnimation("Alpha")
+    alpha:SetFromAlpha(.9)
+    alpha:SetToAlpha(0)
+    alpha:SetDuration(0.2)
+    damageFlashAG:SetScript("OnFinished", function(self)
         damageFlashTex:Hide()
+    end)
 
-        -- damage flash animation group
-        local damageFlashAG = damageFlashTex:CreateAnimationGroup()
-        local alpha = damageFlashAG:CreateAnimation("Alpha")
-        alpha:SetFromAlpha(.725)
-        alpha:SetToAlpha(0)
-        alpha:SetDuration(0.2)
-        damageFlashAG:SetScript("OnFinished", function(self)
-            damageFlashTex:Hide()
-        end)
+    button.func.ShowFlash = function(lostPercent, currentPercent)
+        local barWidth = healthBar:GetWidth()
+        damageFlashTex:SetWidth(barWidth * lostPercent)
+        damageFlashTex:Show()
+        damageFlashAG:Play()
+    end
 
-        button.func.ShowFlash = function(lostPercent, currentPercent)
-            local barWidth = healthBar:GetWidth()
-            damageFlashTex:SetWidth(barWidth * lostPercent)
-            damageFlashTex:Show()
-            damageFlashAG:Play()
-        end
+    button.func.HideFlash = function()
+        damageFlashAG:Finish()
+    end
 
-        button.func.HideFlash = function()
+    -- smooth
+    Mixin(healthBar, SmoothStatusBarMixin)
+    Mixin(powerBar, SmoothStatusBarMixin)
+
+    button.func.UpdateAnimation = function()
+        barAnimationType = CellDB["appearance"]["barAnimation"]
+        if aType ~= "Flash" then
             damageFlashAG:Finish()
         end
+    end
+
+    button.func.SetTexture = function(tex)
+        healthBar:SetStatusBarTexture(tex)
+        healthBarLoss:SetTexture(tex)
+        powerBar:SetStatusBarTexture(tex)
+        powerBarLoss:SetTexture(tex)
+        incomingHeal:SetTexture(tex)
+        damageFlashTex:SetTexture(tex)
+    end
+
+    button.func.UpdateColor = function()
+        UnitButton_UpdateColor(button)
+        UnitButton_UpdatePowerType(button)
     end
 
     -- target highlight
@@ -1956,7 +1985,7 @@ function F:UnitButton_OnLoad(button)
         bar:GetStatusBarTexture():SetAlpha(0)
         bar.elapsedTime = 0
         bar:SetScript("OnUpdate", function(self, elapsed)
-            if bar.elapsedTime >= 0.1 then
+            if bar.elapsedTime >= 0.25 then
                 bar:SetValue(bar:GetValue() + bar.elapsedTime)
                 bar.elapsedTime = 0
             end

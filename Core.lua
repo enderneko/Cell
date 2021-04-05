@@ -163,12 +163,13 @@ function eventFrame:ADDON_LOADED(arg1)
         -- appearance -----------------------------------------------------------------------------
         if type(CellDB["appearance"]) ~= "table" then
             CellDB["appearance"] = {
-                ["texture"] = "Cell ".._G.DEFAULT,
                 ["scale"] = 1,
                 ["optionsFontSizeOffset"] = 0,
+                ["texture"] = "Cell ".._G.DEFAULT,
                 ["barColor"] = {"Class Color", {.2, .2, .2}},
                 ["bgColor"] = {"Class Color (dark)", {.667, 0, 0}},
                 ["powerColor"] = {"Power Color", {.7, .7, .7}},
+                ["barAnimation"] = "Flash",
                 ["targetColor"] = {1, .31, .31, 1},
                 ["mouseoverColor"] = {1, 1, 1, .6},
                 ["highlightSize"] = 1,

@@ -545,6 +545,13 @@ local function Revise()
         end
     end
 
+    -- r49-release
+    if CellDB["revise"] and dbRevision < 49 then
+        if type(CellDB["appearance"]["barAnimation"]) ~= "string" then
+            CellDB["appearance"]["barAnimation"] = "Flash"
+        end
+    end
+
     CellDB["revise"] = Cell.version
 end
 Cell:RegisterCallback("Revise", "Revise", Revise)
