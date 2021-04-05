@@ -17,15 +17,38 @@ end
 -------------------------------------------------
 -- number
 -------------------------------------------------
-function F:FormatNumer(n)
-    if abs(n) >= 1000000000 then
-        return string.format("%.3fB", n/1000000000)
-    elseif abs(n) >= 1000000 then
-        return string.format("%.2fM", n/1000000)
-    elseif abs(n) >= 1000 then
-        return string.format("%.1fK", n/1000)
-    else
-        return n
+local symbol_1K, symbol_10K, symbol_1B
+if LOCALE_zhCN then
+    symbol_1K, symbol_10K, symbol_1B = "千", "万", "亿"
+elseif LOCALE_zhTW then
+    symbol_1K, symbol_10K, symbol_1B = "千", "萬", "億"
+elseif LOCALE_koKR then
+    symbol_1K, symbol_10K, symbol_1B = "천", "만", "억"
+end
+
+if LOCALE_zhCN or LOCALE_zhTW or LOCALE_koKR then
+    function F:FormatNumer(n)
+        if abs(n) >= 100000000 then
+            return string.format("%.3f"..symbol_1B, n/100000000)
+        elseif abs(n) >= 10000 then
+            return string.format("%.2f"..symbol_10K, n/10000)
+        elseif abs(n) >= 1000 then
+            return string.format("%.1f"..symbol_1K, n/1000)
+        else
+            return n
+        end
+    end
+else
+    function F:FormatNumer(n)
+        if abs(n) >= 1000000000 then
+            return string.format("%.3fB", n/1000000000)
+        elseif abs(n) >= 1000000 then
+            return string.format("%.2fM", n/1000000)
+        elseif abs(n) >= 1000 then
+            return string.format("%.1fK", n/1000)
+        else
+            return n
+        end
     end
 end
 
