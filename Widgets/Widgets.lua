@@ -6,7 +6,6 @@ local addonName, addon = ...
 local L = addon.L
 local F = addon.funcs
 local LPP = LibStub:GetLibrary("LibPixelPerfect")
-local LSSB = LibStub:GetLibrary("LibSmoothStatusBar-1.0")
 
 -----------------------------------------
 -- Color
@@ -998,17 +997,23 @@ function addon:CreateStatusBar(parent, width, height, maxValue, smooth, func, sh
 
     bar:SetMinMaxValues(0, maxValue)
     bar:SetValue(0)
-    if smooth then LSSB:SmoothBar(bar) end -- smooth progress bar
+    if smooth then Mixin(bar, SmoothStatusBarMixin) end -- Interface\SharedXML\SmoothStatusBar.lua
 
     function bar:SetMaxValue(m)
         maxValue = m
-        bar:SetMinMaxValues(0, m)
+        if smooth then
+            bar:SetMinMaxSmoothedValue(0, m)
+        else
+            bar:SetMinMaxValues(0, m)
+        end
     end
     
     function bar:Reset()
-        LSSB:ResetBar(bar) -- disable smooth
-        bar:SetValue(0)
-        LSSB:SmoothBar(bar) -- re-enable smooth
+        if smooth then
+            bar:SetSmoothedValue(0)
+        else
+            bar:SetValue(0)
+        end
     end
 
     bar:SetScript("OnValueChanged", function(self, value)
@@ -1020,9 +1025,7 @@ function addon:CreateStatusBar(parent, width, height, maxValue, smooth, func, sh
     end)
 
     bar:SetScript("OnHide", function()
-        if smooth then
-            bar:Reset()
-        end
+        bar:SetValue(0)
     end)
 
     return bar

@@ -144,7 +144,6 @@ end
 -------------------------------------------------
 -- CreateAura_BarIcon
 -------------------------------------------------
--- local LSSB = LibStub:GetLibrary("LibSmoothStatusBar-1.0")
 function I:CreateAura_BarIcon(name, parent)
     local frame = CreateFrame("Frame", name, parent, "BackdropTemplate")
     frame:Hide()

@@ -13,5 +13,4 @@
     <Script file="CallbackHandler.lua"/>
     <Script file="LibPixelPerfect.lua"/>
     <!-- <Script file="LibCombatLogHealth-1.0\LibCombatLogHealth-1.0.lua"/> -->
-    <Script file="LibSmoothStatusBar-1.0\LibSmoothStatusBar-1.0.lua"/>
 </Ui>
