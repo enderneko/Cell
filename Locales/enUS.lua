@@ -41,6 +41,11 @@ select(2, ...).L = setmetatable({
     ["marksTips"] = "\n|rTarget marker\nLeft-Click: |cffffffffset raid marker on target|r\nRight-Click: |cfffffffflock raid marker on target (in your group)|r",
 
     ["WHAT'S NEW"] = [[
+        <h1>r49-release (Apr 5, 2021, 16:10 GMT+8)</h1>
+        <p>+ Added "Bar Animation" option in Appearance.</p>
+        <p>* Updated "Health Text" (zhCN, zhTW and koKR numeral system).</p>
+        <br/>
+
         <h1>r48-release (Apr 1, 2021, 16:03 GMT+8)</h1>
         <p>* Updated "Targeted Spells" and "Battle Res Timer".</p>
         <p>* Fixed some bugs (unit button backdrop and size).</p>
