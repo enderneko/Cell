@@ -15,7 +15,9 @@ Cell:StylizeFrame(battleResFrame, {.1, .1, .1, .7}, {0, 0, 0, .5})
 ---------------------------------
 -- Animation
 ---------------------------------
-local onShow, onHide
+local point, relativePoint, onShow, onHide
+local relativeTo = Cell.frames.anchorFrame
+local loaded = false
 
 battleResFrame.onMenuShow = battleResFrame:CreateAnimationGroup()
 battleResFrame.onMenuShow.trans = battleResFrame.onMenuShow:CreateAnimation("translation")
@@ -25,20 +27,25 @@ battleResFrame.onMenuShow:SetScript("OnPlay", function()
 	battleResFrame.onMenuHide:Stop()
 end)
 battleResFrame.onMenuShow:SetScript("OnFinished", function()
-	local p, rt, rp, x, y = battleResFrame:GetPoint(1)
 	battleResFrame:ClearAllPoints()
-	battleResFrame:SetPoint(p, rt, rp, x, y+battleResFrame.onMenuShow.offset)
+	battleResFrame:SetPoint(point, relativeTo, relativePoint, 0, onShow)
 end)
 
 function battleResFrame:OnMenuShow()
+	if not loaded then return end
+
+	if not battleResFrame:IsShown() then
+		battleResFrame.onMenuShow:GetScript("OnFinished")()
+		return
+	end
+
 	local currentY = select(5, battleResFrame:GetPoint(1))
 	if type(currentY) ~= "number" then return end
 	currentY = math.floor(currentY+.5)
 
-	local offset = onShow-currentY
-	if offset ~= 0 then
+	if onShow ~= currentY then
+		local offset = onShow-currentY
 		battleResFrame.onMenuShow.trans:SetOffset(0, offset)
-		battleResFrame.onMenuShow.offset = offset
 		battleResFrame.onMenuShow:Play()
 	end
 end
@@ -51,20 +58,25 @@ battleResFrame.onMenuHide:SetScript("OnPlay", function()
 	battleResFrame.onMenuShow:Stop()
 end)
 battleResFrame.onMenuHide:SetScript("OnFinished", function()
-	local p, rt, rp, x, y = battleResFrame:GetPoint(1)
 	battleResFrame:ClearAllPoints()
-	battleResFrame:SetPoint(p, rt, rp, x, y+battleResFrame.onMenuHide.offset)
+	battleResFrame:SetPoint(point, relativeTo, relativePoint, 0, onHide)
 end)
 
 function battleResFrame:OnMenuHide()
+	if not loaded then return end
+
+	if not battleResFrame:IsShown() then
+		battleResFrame.onMenuHide:GetScript("OnFinished")()
+		return
+	end
+
 	local currentY = select(5, battleResFrame:GetPoint(1))
 	if type(currentY) ~= "number" then return end
 	currentY = math.floor(currentY+.5)
 
-	local offset = onHide-currentY
-	if offset ~= 0 then
+	if onHide ~= currentY then
+		local offset = onHide-currentY
 		battleResFrame.onMenuHide.trans:SetOffset(0, offset)
-		battleResFrame.onMenuHide.offset = offset
 		battleResFrame.onMenuHide:Play()
 	end
 end
@@ -207,25 +219,32 @@ Cell:RegisterCallback("UpdateRaidTools", "BattleRes_UpdateRaidTools", UpdateRaid
 local function UpdateLayout(layout, which)
     layout = Cell.vars.currentLayoutTable
 
-	battleResFrame:ClearAllPoints()
+    if not loaded or which == "anchor" then
+		battleResFrame:ClearAllPoints()
 
-    if not which or which == "anchor" then
         if layout["anchor"] == "BOTTOMLEFT" then
-            battleResFrame:SetPoint("TOPLEFT", Cell.frames.anchorFrame, "BOTTOMLEFT", 0, -4)
+			point, relativePoint = "TOPLEFT", "BOTTOMLEFT"
 			onShow, onHide = -4, 10
             
         elseif layout["anchor"] == "BOTTOMRIGHT" then
-            battleResFrame:SetPoint("TOPRIGHT", Cell.frames.anchorFrame, "BOTTOMRIGHT", 0, -4)
+			point, relativePoint = "TOPRIGHT", "BOTTOMRIGHT"
 			onShow, onHide = -4, 10
             
         elseif layout["anchor"] == "TOPLEFT" then
-			battleResFrame:SetPoint("BOTTOMLEFT", Cell.frames.anchorFrame, "TOPLEFT", 0, 4)
+			point, relativePoint = "BOTTOMLEFT", "TOPLEFT"
 			onShow, onHide = 4, -10
             
         elseif layout["anchor"] == "TOPRIGHT" then
-            battleResFrame:SetPoint("BOTTOMRIGHT", Cell.frames.anchorFrame, "TOPRIGHT", 0, 4)
+			point, relativePoint = "BOTTOMRIGHT", "TOPRIGHT"
 			onShow, onHide = 4, -10
         end
+
+		if CellDB["general"]["fadeOut"] then
+			battleResFrame:SetPoint(point, relativeTo, relativePoint, 0, onHide)
+		else
+			battleResFrame:SetPoint(point, relativeTo, relativePoint, 0, onShow)
+		end
+		loaded = true
     end
 end
 Cell:RegisterCallback("UpdateLayout", "BattleRes_UpdateLayout", UpdateLayout)
