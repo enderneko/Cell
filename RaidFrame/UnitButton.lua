@@ -550,7 +550,7 @@ local function UnitButton_UpdateDebuffs(self)
     end
 
     -- hide other debuff indicators
-    for i = found, 5 do
+    for i = found, 10 do
         self.indicators.debuffs[i]:Hide()
     end
 

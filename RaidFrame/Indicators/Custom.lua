@@ -180,7 +180,7 @@ function I:ShowCustomIndicators(unit, unitButton, auraType)
     for indicatorName, indicatorTable in pairs(customIndicators[auraType]) do
         if enabledIndicators[indicatorName] and unitButton.indicators[indicatorName] then
             if indicatorTable["isIcons"] then
-                for i = indicatorTable["found"][unit], 5 do
+                for i = indicatorTable["found"][unit], 10 do
                     unitButton.indicators[indicatorName][i]:Hide()
                 end
                 if indicatorTable["found"][unit] == 1 then
