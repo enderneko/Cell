@@ -430,8 +430,9 @@ unitButton = {
 -------------------------------------------------
 -- auras
 -------------------------------------------------
+-- FIXME: refreshing animation bug, auras with the SAME NAME applied on one unit at the SAME TIME: debuffs_cache --> debuffs_cache_caster --> expirationTime
+-- expirationTime-GetTime()≈duration --> applied just now 
 local debuffs_cache = {}
--- local debuffs_cache_caster = {} -- FIXME: refreshing animation bug, auras with the SAME NAME applied on one unit at the SAME TIME: debuffs_cache --> debuffs_cache_caster --> expirationTime
 local debuffs_cache_count = {}
 local debuffs_current = {}
 local debuffs_found = {}
@@ -451,7 +452,7 @@ local function UnitButton_UpdateDebuffs(self)
     -- user created indicators
     I:ResetCustomIndicators(unit, "debuff")
 
-    local found, isValid, refreshing, resurrectionFound = 1
+    local found, isValid, refreshing, justApplied, resurrectionFound = 1
     local glowType, glowColor
     local topOrder, topGlowType, topGlowOptions, topId, topStart, topDuration, topType, topIcon, topCount, topRefreshing, topIndex = 999
     for i = 1, 40 do
@@ -471,7 +472,8 @@ local function UnitButton_UpdateDebuffs(self)
         if duration and duration <= 600 then
             if isValid then
                 -- print(name, expirationTime-duration+.1>=GetTime()) -- NOTE: startTime ≈ now
-                refreshing = debuffs_cache[unit][spellId] and ((expirationTime == 0 and debuffs_cache_count[unit][spellId] and count > debuffs_cache_count[unit][spellId]) or expirationTime-duration+.1>=GetTime())
+                justApplied = abs(expirationTime-GetTime()-duration) <= 0.1
+                refreshing = debuffs_cache[unit][spellId] and ((expirationTime == 0 and debuffs_cache_count[unit][spellId] and count > debuffs_cache_count[unit][spellId]) or justApplied)
 
                 if enabledIndicators["debuffs"] and found <= indicatorNums["debuffs"]+1 then -- may contain topDebuff
                     if indicatorCustoms["debuffs"] then -- dispellableByMe
@@ -610,7 +612,7 @@ local function UnitButton_UpdateBuffs(self)
     -- user created indicators
     I:ResetCustomIndicators(unit, "buff")
 
-    local refreshing
+    local refreshing, justApplied
     local defensiveFound, externalFound, tankActiveMitigationFound, drinkingFound = 1, 1, false, false
     for i = 1, 40 do
         -- name, icon, count, debuffType, duration, expirationTime, source, isStealable, nameplateShowPersonal, spellId, canApplyAura, isBossDebuff, castByPlayer, nameplateShowAll, timeMod, ...
@@ -620,7 +622,8 @@ local function UnitButton_UpdateBuffs(self)
         end
         
         if duration then
-            refreshing = buffs_cache[unit][spellId] and expirationTime-duration+.1>=GetTime()
+            justApplied = abs(expirationTime-GetTime()-duration) <= 0.1
+            refreshing = buffs_cache[unit][spellId] and justApplied
             -- defensiveCooldowns
             if enabledIndicators["defensiveCooldowns"] and I:IsDefensiveCooldown(name) and defensiveFound <= indicatorNums["defensiveCooldowns"] then
                 -- start, duration, debuffType, texture, count, refreshing
@@ -700,7 +703,8 @@ local function UnitButton_UpdateBuffs(self)
         end
 
         if duration then
-            refreshing = buffs_cache_castByMe[unit][spellId] and expirationTime-duration+.1>=GetTime()
+            justApplied = abs(expirationTime-GetTime()-duration) <= 0.1
+            refreshing = buffs_cache_castByMe[unit][spellId] and justApplied
             I:CheckCustomIndicators(unit, self, "buff", spellId, expirationTime - duration, duration, nil, icon, count, refreshing, true)
             
             buffs_cache_castByMe[unit][spellId] = expirationTime
