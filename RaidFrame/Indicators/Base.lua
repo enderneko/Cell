@@ -496,7 +496,7 @@ end
 -------------------------------------------------
 -- CreateAura_Icons
 -------------------------------------------------
-function I:CreateAura_Icons(name, parent)
+function I:CreateAura_Icons(name, parent, num)
     local icons = CreateFrame("Frame", name, parent)
     icons:SetSize(11, 11)
     icons:Hide()
@@ -506,14 +506,14 @@ function I:CreateAura_Icons(name, parent)
 
     function icons:SetSize(width, height)
         icons:OriginalSetSize(width, height)
-        for i = 1, 5 do
+        for i = 1, num do
             icons[i]:SetSize(width, height)
         end
     end
 
     function icons:SetFont(font, ...)
         font = F:GetFont(font)
-        for i = 1, 5 do
+        for i = 1, num do
             icons[i]:SetFont(font, ...)
         end
     end
@@ -534,13 +534,13 @@ function I:CreateAura_Icons(name, parent)
             point2 = "TOP"
         end
         
-        for i = 2, 5 do
+        for i = 2, num do
             icons[i]:ClearAllPoints()
             icons[i]:SetPoint(point1, icons[i-1], point2)
         end
     end
 
-    for i = 1, 5 do
+    for i = 1, num do
         local name = name.."Icons"..i
         local frame = I:CreateAura_BarIcon(name, icons)
         icons[i] = frame
@@ -553,7 +553,7 @@ function I:CreateAura_Icons(name, parent)
     end
 
     function icons:ShowDuration(show)
-        for i = 1, 5 do
+        for i = 1, num do
             icons[i]:ShowDuration(show)
         end
     end

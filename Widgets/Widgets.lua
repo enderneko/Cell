@@ -711,7 +711,6 @@ end
 -- Interface\FrameXML\OptionsPanelTemplates.xml, line 76, OptionsSliderTemplate
 function addon:CreateSlider(name, parent, low, high, width, step, onValueChangedFn, afterValueChangedFn, isPercentage)
     local slider = CreateFrame("Slider", nil, parent, "BackdropTemplate")
-    slider:SetMinMaxValues(low, high)
     slider:SetValueStep(step)
     slider:SetObeyStepOnDrag(true)
     slider:SetOrientation("HORIZONTAL")
@@ -747,8 +746,8 @@ function addon:CreateSlider(name, parent, low, high, width, step, onValueChanged
 
         if value == self.oldValue then return end
         if value then
-            if value < low then value = low end
-            if value > high then value = high end
+            if value < slider.low then value = slider.low end
+            if value > slider.high then value = slider.high end
             self:SetText(value..unit)
             slider:SetValue(value)
             if slider.onValueChangedFn then slider.onValueChangedFn(value) end
@@ -763,14 +762,12 @@ function addon:CreateSlider(name, parent, low, high, width, step, onValueChanged
 
     local lowText = slider:CreateFontString(nil, "OVERLAY", font_name)
     slider.lowText = lowText
-    lowText:SetText(low..unit)
     lowText:SetTextColor(unpack(colors.grey.t))
     lowText:SetPoint("TOPLEFT", slider, "BOTTOMLEFT", 0, -1)
     lowText:SetPoint("BOTTOM", currentEditBox)
     
     local highText = slider:CreateFontString(nil, "OVERLAY", font_name)
     slider.highText = highText
-    highText:SetText(high..unit)
     highText:SetTextColor(unpack(colors.grey.t))
     highText:SetPoint("TOPRIGHT", slider, "BOTTOMRIGHT", 0, -1)
     highText:SetPoint("BOTTOM", currentEditBox)
@@ -873,6 +870,15 @@ function addon:CreateSlider(name, parent, low, high, width, step, onValueChanged
         lowText:SetTextColor(unpack(colors.grey.t))
         highText:SetTextColor(unpack(colors.grey.t))
     end)
+
+    function slider:UpdateMinMaxValues(minV, maxV)
+        slider:SetMinMaxValues(minV, maxV)
+        slider.low = minV
+        slider.high = maxV
+        lowText:SetText(minV..unit)
+        highText:SetText(maxV..unit)
+    end
+    slider:UpdateMinMaxValues(low, high)
     
     return slider
 end
@@ -2710,7 +2716,8 @@ local function CreateSetting_Num(parent)
         end
         
         -- show db value
-        function widget:SetDBValue(num)
+        function widget:SetDBValue(num, maxN)
+            widget.num:UpdateMinMaxValues(1, maxN)
             widget.num:SetValue(num)
         end
     else
@@ -4141,7 +4148,7 @@ function addon:CreateIndicatorSettings(parent, settingsTable)
             tinsert(widgetsTable, CreateSetting_StatusPosition(parent))
         elseif setting == "alpha" then
             tinsert(widgetsTable, CreateSetting_Alpha(parent))
-        elseif setting == "num" then
+        elseif string.find(setting, "num") then
             tinsert(widgetsTable, CreateSetting_Num(parent))
         elseif setting == "format" then
             tinsert(widgetsTable, CreateSetting_Format(parent))

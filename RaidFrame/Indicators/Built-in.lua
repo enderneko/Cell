@@ -188,14 +188,14 @@ function I:CreateDebuffs(parent)
 
     function debuffs:SetSize(width, height)
         debuffs:OriginalSetSize(width, height)
-        for i = 1, 5 do
+        for i = 1, 10 do
             debuffs[i]:SetSize(width, height)
         end
     end
 
     function debuffs:SetFont(font, ...)
         font = F:GetFont(font)
-        for i = 1, 5 do
+        for i = 1, 10 do
             debuffs[i]:SetFont(font, ...)
         end
     end
@@ -216,13 +216,13 @@ function I:CreateDebuffs(parent)
             point2 = "TOP"
         end
         
-        for i = 2, 5 do
+        for i = 2, 10 do
             debuffs[i]:ClearAllPoints()
             debuffs[i]:SetPoint(point1, debuffs[i-1], point2)
         end
     end
 
-    for i = 1, 5 do
+    for i = 1, 10 do
         local name = parent:GetName().."Debuff"..i
         local frame = I:CreateAura_BarIcon(name, debuffs)
         tinsert(debuffs, frame)

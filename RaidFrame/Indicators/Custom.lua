@@ -23,7 +23,7 @@ function I:CreateIndicator(parent, indicatorTable)
     elseif indicatorTable["type"] == "rect" then
         indicator = I:CreateAura_Rect(indicatorName, parent.widget.overlayFrame)
     elseif indicatorTable["type"] == "icons" then
-        indicator = I:CreateAura_Icons(indicatorName, parent.widget.overlayFrame)
+        indicator = I:CreateAura_Icons(indicatorName, parent.widget.overlayFrame, 10)
     end
     parent.indicators[indicatorName] = indicator
     
