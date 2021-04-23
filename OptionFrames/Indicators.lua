@@ -160,12 +160,11 @@ local function InitIndicator(indicatorName)
         end)
 
     elseif indicatorName == "debuffs" then
-        local types = {"", "Curse", "Disease", "Magic", "Poison"}
-        local icons = {132155, 136139, 136128, 136071, 136182}
-        local stacks = {7, 10, 0, 0, 2}
-        for i = 1, 5 do
+        local types = {"", "Curse", "Disease", "Magic", "Poison", "", "Curse", "Disease", "Magic", "Poison"}
+        local icons = {132155, 136139, 136128, 240443, 136182, 132155, 136139, 136128, 240443, 136182}
+        for i = 1, 10 do
             indicator[i]:SetScript("OnShow", function()
-                indicator[i]:SetCooldown(GetTime(), 7, types[i], icons[i], stacks[i])
+                indicator[i]:SetCooldown(GetTime(), 7, types[i], icons[i], i)
                 indicator[i].cooldown.value = 0
                 indicator[i].cooldown:SetScript("OnUpdate", function(self, elapsed)
                     if self.value >= 7 then
@@ -246,10 +245,9 @@ local function InitIndicator(indicatorName)
         end
     elseif string.find(indicatorName, "indicator") then
         if indicator.indicatorType == "icons" then
-            local stacks = {1, 2, 3, 4, 5}
-            for i = 1, 5 do
+            for i = 1, 10 do
                 indicator[i]:SetScript("OnShow", function()
-                    indicator[i]:SetCooldown(GetTime(), 7, nil, 134400, stacks[i])
+                    indicator[i]:SetCooldown(GetTime(), 7, nil, 134400, i)
                     indicator[i].cooldown.value = 0
                     indicator[i].cooldown:SetScript("OnUpdate", function(self, elapsed)
                         if self.value >= 7 then
@@ -741,11 +739,11 @@ local indicatorSettings = {
     ["aggroBar"] = {"enabled", "position", "frameLevel", "size-bar"},
     ["shieldBar"] = {"|cffb7b7b7"..L["With this indicator enabled, shield / overshield textures are disabled"], "enabled", "color-alpha", "position", "frameLevel", "height"},
     ["aoeHealing"] = {"enabled", "color", "height"},
-    ["externalCooldowns"] = {"enabled", "num", "orientation", "position", "frameLevel", "size"},
-    ["defensiveCooldowns"] = {"enabled", "num", "orientation", "position", "frameLevel", "size"},
+    ["externalCooldowns"] = {"enabled", "num:5", "orientation", "position", "frameLevel", "size"},
+    ["defensiveCooldowns"] = {"enabled", "num:5", "orientation", "position", "frameLevel", "size"},
     ["tankActiveMitigation"] = {"|cffb7b7b7"..I:GetTankActiveMitigationString(), "enabled", "position", "frameLevel", "size"},
     ["dispels"] = {"enabled", "checkbutton:dispellableByMe", "checkbutton2:enableHighlight", "position", "frameLevel", "size-square"},
-    ["debuffs"] = {"enabled", "blacklist", "checkbutton:dispellableByMe", "num", "orientation", "position", "frameLevel", "size-square", "font"},
+    ["debuffs"] = {"enabled", "blacklist", "checkbutton:dispellableByMe", "num:10", "orientation", "position", "frameLevel", "size-square", "font"},
     ["raidDebuffs"] = {"|cffb7b7b7"..L["You can config debuffs in %s"]:format(Cell:GetPlayerClassColorString()..L["Raid Debuffs"].."|r"), "enabled", "checkbutton:onlyShowTopGlow", "position", "frameLevel", "size-border", "font"},
     ["targetedSpells"] = {"enabled", "spells", "glow", "position", "frameLevel", "size-border", "font"},
 }
@@ -776,7 +774,7 @@ local function ShowIndicatorSettings(id)
         elseif indicatorType == "rect" then
             settingsTable = {"enabled", "auras", "colors", "position", "frameLevel", "size"}
         elseif indicatorType == "icons" then
-            settingsTable = {"enabled", "auras", "checkbutton2:showDuration", "num", "orientation", "position", "frameLevel", "size-square", "font"}
+            settingsTable = {"enabled", "auras", "checkbutton2:showDuration", "num:10", "orientation", "position", "frameLevel", "size-square", "font"}
         end
         -- castByMe
         if currentLayoutTable["indicators"][id]["auraType"] == "buff" then
@@ -822,6 +820,9 @@ local function ShowIndicatorSettings(id)
             w:SetDBValue(L["Spell List"], currentLayoutTable["indicators"][id]["spells"], true)
         elseif currentSetting == "size-border" then
             w:SetDBValue(currentLayoutTable["indicators"][id]["size"], currentLayoutTable["indicators"][id]["border"])
+        elseif string.find(currentSetting, "num") then
+            w:SetDBValue(currentLayoutTable["indicators"][id]["num"], tonumber(select(2,string.split(":", currentSetting))))
+            currentSetting = "num"
         else
             w:SetDBValue(currentLayoutTable["indicators"][id][currentSetting])
         end
