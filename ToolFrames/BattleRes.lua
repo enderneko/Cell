@@ -110,7 +110,8 @@ rTime:SetJustifyH("RIGHT")
 
 title:SetPoint("BOTTOMLEFT", bar, "TOPLEFT", 0, 2)
 stack:SetPoint("LEFT", title, "RIGHT")
-rTime:SetPoint("BOTTOMRIGHT", bar, "TOPRIGHT", -1, 2)
+-- rTime:SetPoint("BOTTOMRIGHT", bar, "TOPRIGHT", -1, 2)
+rTime:SetPoint("LEFT", stack, "RIGHT")
 dummy:SetPoint("BOTTOMLEFT", bar, "TOPLEFT", 0, 22)
 
 title:SetTextColor(.66, .66, .66)
@@ -158,8 +159,8 @@ battleResFrame:SetScript("OnUpdate", function(self, elapsed)
         local m = floor(remaining / 60)
         local s = mod(remaining, 60)
 
+        stack:SetText(("%s%d|r  "):format(color, charges))
         rTime:SetText(("%d:%02d"):format(m, s))
-        stack:SetText(("%s%d|r"):format(color, charges))
         
         bar:SetMinMaxValues(0, duration)
         bar:SetValue(duration - remaining)
