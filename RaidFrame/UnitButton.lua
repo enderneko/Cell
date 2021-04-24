@@ -42,7 +42,7 @@ local UnitBuff = UnitBuff
 local UnitDebuff = UnitDebuff
 local IsInRaid = IsInRaid
 
-local barAnimationType
+local barAnimationType, highlightEnabled
 
 -------------------------------------------------
 -- unit button init indicators
@@ -764,7 +764,7 @@ local function UnitButton_UpdateTarget(self)
     if not unit then return end
 
     if UnitIsUnit(unit, "target") then
-        self.widget.targetHighlight:Show()
+        if highlightEnabled then self.widget.targetHighlight:Show() end
     else
         self.widget.targetHighlight:Hide()
     end
@@ -867,18 +867,18 @@ local function UnitButton_UpdateReadyCheck(self)
         self.indicators.readyCheckIcon:SetTexture(READYCHECK_STATUS[status].t)
         self.indicators.readyCheckIcon:Show()
     else
-        self.widget.readyCheckHighlight:Hide()
+        -- self.widget.readyCheckHighlight:Hide()
         self.indicators.readyCheckIcon:Hide()
     end
 end
 
 local function UnitButton_FinishReadyCheck(self)
     if self.state.readyCheckStatus == "waiting" then
-        self.widget.readyCheckHighlight:SetVertexColor(unpack(READYCHECK_STATUS.notready.c))
+        -- self.widget.readyCheckHighlight:SetVertexColor(unpack(READYCHECK_STATUS.notready.c))
         self.indicators.readyCheckIcon:SetTexture(READYCHECK_STATUS.notready.t)
     end
     C_Timer.After(6, function()
-        self.widget.readyCheckHighlight:Hide()
+        -- self.widget.readyCheckHighlight:Hide()
         self.indicators.readyCheckIcon:Hide()
     end)
 end
@@ -1605,7 +1605,7 @@ local function UnitButton_OnHide(self)
 end
 
 local function UnitButton_OnEnter(self)
-    self.widget.mouseoverHighlight:Show()
+    if highlightEnabled then self.widget.mouseoverHighlight:Show() end
     
     local unit = self.state.displayedUnit
     if not unit then return end
@@ -1925,6 +1925,7 @@ function F:UnitButton_OnLoad(button)
         mouseoverHighlight:ClearAllPoints()
         
         if size ~= 0 then
+            highlightEnabled = true
             targetHighlight:SetPoint("TOPLEFT", -size, size)
             targetHighlight:SetPoint("BOTTOMRIGHT", size, -size)
             targetHighlight:SetBackdrop({edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = size})
@@ -1936,16 +1937,22 @@ function F:UnitButton_OnLoad(button)
             -- update color
             targetHighlight:SetBackdropBorderColor(unpack(CellDB["appearance"]["targetColor"]))
             mouseoverHighlight:SetBackdropBorderColor(unpack(CellDB["appearance"]["mouseoverColor"]))
+
+            UnitButton_UpdateTarget(button) -- 0->!0 show highlight again
+        else
+            highlightEnabled = false
+            targetHighlight:Hide()
+            mouseoverHighlight:Hide()
         end
     end
 
     -- readyCheck highlight
-    local readyCheckHighlight = button:CreateTexture(name.."ReadyCheckHighlight", "BACKGROUND")
-    button.widget.readyCheckHighlight = readyCheckHighlight
-    readyCheckHighlight:SetPoint("TOPLEFT", -1, 1)
-    readyCheckHighlight:SetPoint("BOTTOMRIGHT", 1, -1)
-    readyCheckHighlight:SetTexture("Interface\\Buttons\\WHITE8x8")
-    readyCheckHighlight:Hide()
+    -- local readyCheckHighlight = button:CreateTexture(name.."ReadyCheckHighlight", "BACKGROUND")
+    -- button.widget.readyCheckHighlight = readyCheckHighlight
+    -- readyCheckHighlight:SetPoint("TOPLEFT", -1, 1)
+    -- readyCheckHighlight:SetPoint("BOTTOMRIGHT", 1, -1)
+    -- readyCheckHighlight:SetTexture("Interface\\Buttons\\WHITE8x8")
+    -- readyCheckHighlight:Hide()
 
     --* overlayFrame
     local overlayFrame = CreateFrame("Frame", name.."OverlayFrame", button)
