@@ -586,10 +586,9 @@ local function UnitButton_UpdateDebuffs(self)
     I:ShowCustomIndicators(unit, self, "debuff")
     
     -- update debuffs_cache
-    local t = GetTime()
     for spellId, expirationTime in pairs(debuffs_cache[unit]) do
         -- lost or expired
-        if not debuffs_current[unit][spellId] or (expirationTime ~= 0 and t >= expirationTime) then -- expirationTime == 0: no duration 
+        if not debuffs_current[unit][spellId] or (expirationTime ~= 0 and GetTime() >= expirationTime) then -- expirationTime == 0: no duration 
             debuffs_cache[unit][spellId] = nil
             debuffs_cache_count[unit][spellId] = nil
         end
@@ -683,10 +682,9 @@ local function UnitButton_UpdateBuffs(self)
     end
     
     -- update buffs_cache
-    local t = GetTime()
     for spellId, expirationTime in pairs(buffs_cache[unit]) do
         -- lost or expired
-        if not buffs_current[unit][spellId] or (expirationTime ~= 0 and t >= expirationTime) then
+        if not buffs_current[unit][spellId] or (expirationTime ~= 0 and GetTime() >= expirationTime) then
             buffs_cache[unit][spellId] = nil
         end
     end
@@ -705,6 +703,7 @@ local function UnitButton_UpdateBuffs(self)
         if duration then
             justApplied = abs(expirationTime-GetTime()-duration) <= 0.1
             refreshing = buffs_cache_castByMe[unit][spellId] and justApplied
+            
             I:CheckCustomIndicators(unit, self, "buff", spellId, expirationTime - duration, duration, nil, icon, count, refreshing, true)
             
             buffs_cache_castByMe[unit][spellId] = expirationTime
@@ -713,10 +712,9 @@ local function UnitButton_UpdateBuffs(self)
     end
 
     -- update buffs_cache
-    t = GetTime()
     for spellId, expirationTime in pairs(buffs_cache_castByMe[unit]) do
         -- lost or expired
-        if not buffs_current_castByMe[unit][spellId] or (expirationTime ~= 0 and t >= expirationTime) then
+        if not buffs_current_castByMe[unit][spellId] or (expirationTime ~= 0 and GetTime() >= expirationTime) then
             buffs_cache_castByMe[unit][spellId] = nil
         end
     end
