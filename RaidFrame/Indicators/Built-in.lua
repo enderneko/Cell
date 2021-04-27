@@ -244,7 +244,10 @@ function I:CreateDispels(parent)
     dispels:Hide()
 
     dispels.highlight = parent.widget.healthBar:CreateTexture(parent:GetName().."DispelHighlight", "ARTWORK")
-    dispels.highlight:SetAllPoints(parent.widget.healthBar)
+    -- dispels.highlight:SetAllPoints(parent.widget.healthBar)
+    dispels.highlight:SetPoint("BOTTOMLEFT", parent.widget.healthBar)
+    dispels.highlight:SetPoint("BOTTOMRIGHT", parent.widget.healthBar)
+    dispels.highlight:SetPoint("TOP", parent.widget.healthBar, "CENTER")
     dispels.highlight:SetTexture("Interface\\Buttons\\WHITE8x8")
     dispels.highlight:Hide()
 
