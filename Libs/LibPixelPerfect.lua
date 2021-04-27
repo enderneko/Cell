@@ -1,10 +1,10 @@
 --------------------------------------------
 -- LibPixelPerfect
--- fyhcslb 2020-11-22 20:22:24
+-- fyhcslb 2021-04-27 23:54:19
 -- http://wow.gamepedia.com/UI_Scale
 -- http://www.wowinterface.com/forums/showthread.php?t=31813
 --------------------------------------------
-local lib = LibStub:NewLibrary("LibPixelPerfect", "3")
+local lib = LibStub:NewLibrary("LibPixelPerfect", 4)
 if not lib then return end
 
 function lib:GetResolution()
