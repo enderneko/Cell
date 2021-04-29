@@ -480,6 +480,8 @@ function I:CreateNameText(parent)
         else
             if flags == "Outline" then
                 flags = "OUTLINE"
+            elseif flags == "None" then
+                flags = ""
             else
                 flags = "OUTLINE, MONOCHROME"
             end
@@ -637,6 +639,8 @@ function I:CreateStatusText(parent)
         else
             if flags == "Outline" then
                 flags = "OUTLINE"
+            elseif flags == "None" then
+                flags = ""
             else
                 flags = "OUTLINE, MONOCHROME"
             end
@@ -696,6 +700,8 @@ function I:CreateHealthText(parent)
         else
             if flags == "Outline" then
                 flags = "OUTLINE"
+            elseif flags == "None" then
+                flags = ""
             else
                 flags = "OUTLINE, MONOCHROME"
             end

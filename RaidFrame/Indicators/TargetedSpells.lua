@@ -159,6 +159,8 @@ function I:CreateTargetedSpells(parent)
         else
             if flags == "Outline" then
                 flags = "OUTLINE"
+            elseif flags == "None" then
+                flags = ""
             else
                 flags = "OUTLINE, MONOCHROME"
             end

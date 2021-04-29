@@ -3000,6 +3000,13 @@ local function CreateSetting_Font(parent)
         widget.outline:SetPoint("LEFT", widget.font, "RIGHT", 25, 0)
         widget.outline:SetItems({
             {
+                ["text"] = L["None"],
+                ["value"] = "None",
+                ["onClick"] = function()
+                    widget.func({widget.font:GetSelected(), widget.fontSize:GetValue(), widget.outline:GetSelected(), widget.xOffset:GetValue()})
+                end,
+            },
+            {
                 ["text"] = L["Shadow"],
                 ["value"] = "Shadow",
                 ["onClick"] = function()
@@ -3082,6 +3089,13 @@ local function CreateSetting_FontNoOffset(parent)
         widget.outline = addon:CreateDropdown(widget, 100)
         widget.outline:SetPoint("LEFT", widget.font, "RIGHT", 25, 0)
         widget.outline:SetItems({
+            {
+                ["text"] = L["None"],
+                ["value"] = "None",
+                ["onClick"] = function()
+                    widget.func({widget.font:GetSelected(), widget.fontSize:GetValue(), widget.outline:GetSelected()})
+                end,
+            },
             {
                 ["text"] = L["Shadow"],
                 ["value"] = "Shadow",
