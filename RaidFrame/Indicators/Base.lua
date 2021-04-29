@@ -69,6 +69,8 @@ function I:CreateAura_BorderIcon(name, parent, borderSize)
         else
             if flags == "Outline" then
                 flags = "OUTLINE"
+            elseif flags == "None" then
+                flags = ""
             else
                 flags = "OUTLINE, MONOCHROME"
             end
@@ -231,6 +233,8 @@ function I:CreateAura_BarIcon(name, parent)
         else
             if flags == "Outline" then
                 flags = "OUTLINE"
+            elseif flags == "None" then
+                flags = ""
             else
                 flags = "OUTLINE, MONOCHROME"
             end
@@ -340,6 +344,8 @@ function I:CreateAura_Text(name, parent)
         else
             if flags == "Outline" then
                 flags = "OUTLINE"
+            elseif flags == "None" then
+                flags = ""
             else
                 flags = "OUTLINE, MONOCHROME"
             end
