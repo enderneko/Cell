@@ -527,10 +527,10 @@ function I:CreateNameText(parent)
             vehicleText:SetShadowOffset(1, -1)
             vehicleText:SetShadowColor(0, 0, 0, 1)
         else
-            if flags == "Outline" then
-                flags = "OUTLINE"
-            elseif flags == "None" then
+            if flags == "None" then
                 flags = ""
+            elseif flags == "Outline" then
+                flags = "OUTLINE"
             else
                 flags = "OUTLINE, MONOCHROME"
             end
@@ -686,10 +686,10 @@ function I:CreateStatusText(parent)
             timer:SetShadowOffset(1, -1)
             timer:SetShadowColor(0, 0, 0, 1)
         else
-            if flags == "Outline" then
-                flags = "OUTLINE"
-            elseif flags == "None" then
+            if flags == "None" then
                 flags = ""
+            elseif flags == "Outline" then
+                flags = "OUTLINE"
             else
                 flags = "OUTLINE, MONOCHROME"
             end
@@ -747,10 +747,10 @@ function I:CreateHealthText(parent)
             text:SetShadowOffset(1, -1)
             text:SetShadowColor(0, 0, 0, 1)
         else
-            if flags == "Outline" then
-                flags = "OUTLINE"
-            elseif flags == "None" then
+            if flags == "None" then
                 flags = ""
+            elseif flags == "Outline" then
+                flags = "OUTLINE"
             else
                 flags = "OUTLINE, MONOCHROME"
             end

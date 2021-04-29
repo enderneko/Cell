@@ -157,10 +157,10 @@ function I:CreateTargetedSpells(parent)
             frame.stack:SetShadowOffset(1, -1)
             frame.stack:SetShadowColor(0, 0, 0, 1)
         else
-            if flags == "Outline" then
-                flags = "OUTLINE"
-            elseif flags == "None" then
+            if flags == "None" then
                 flags = ""
+            elseif flags == "Outline" then
+                flags = "OUTLINE"
             else
                 flags = "OUTLINE, MONOCHROME"
             end

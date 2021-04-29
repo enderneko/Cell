@@ -67,10 +67,10 @@ function I:CreateAura_BorderIcon(name, parent, borderSize)
             frame.duration:SetShadowOffset(1, -1)
             frame.duration:SetShadowColor(0, 0, 0, 1)
         else
-            if flags == "Outline" then
-                flags = "OUTLINE"
-            elseif flags == "None" then
+            if flags == "None" then
                 flags = ""
+            elseif flags == "Outline" then
+                flags = "OUTLINE"
             else
                 flags = "OUTLINE, MONOCHROME"
             end
@@ -231,10 +231,10 @@ function I:CreateAura_BarIcon(name, parent)
             duration:SetShadowOffset(1, -1)
             duration:SetShadowColor(0, 0, 0, 1)
         else
-            if flags == "Outline" then
-                flags = "OUTLINE"
-            elseif flags == "None" then
+            if flags == "None" then
                 flags = ""
+            elseif flags == "Outline" then
+                flags = "OUTLINE"
             else
                 flags = "OUTLINE, MONOCHROME"
             end
@@ -342,10 +342,10 @@ function I:CreateAura_Text(name, parent)
             text:SetShadowOffset(1, -1)
             text:SetShadowColor(0, 0, 0, 1)
         else
-            if flags == "Outline" then
-                flags = "OUTLINE"
-            elseif flags == "None" then
+            if flags == "None" then
                 flags = ""
+            elseif flags == "Outline" then
+                flags = "OUTLINE"
             else
                 flags = "OUTLINE, MONOCHROME"
             end

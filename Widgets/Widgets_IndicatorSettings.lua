@@ -879,7 +879,7 @@ local function CreateSetting_FontNoOffset(parent)
                 ["text"] = L["None"],
                 ["value"] = "None",
                 ["onClick"] = function()
-                    widget.func({widget.font:GetSelected(), widget.fontSize:GetValue(), widget.outline:GetSelected(), widget.xOffset:GetValue()})
+                    widget.func({widget.font:GetSelected(), widget.fontSize:GetValue(), widget.outline:GetSelected()})
                 end,
             },
             {
