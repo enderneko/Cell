@@ -4,7 +4,7 @@ local F = Cell.funcs
 local Serializer = LibStub:GetLibrary("LibSerialize")
 local LibDeflate = LibStub:GetLibrary("LibDeflate")
 
-local MINIMUM_VERSION = 44
+local MINIMUM_VERSION = 50
 local isImport, imported, exported = false, {}, ""
 
 local importExportFrame = CreateFrame("Frame", "CellOptionsFrame_ImportExport", Cell.frames.layoutsTab, "BackdropTemplate")

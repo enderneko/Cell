@@ -184,13 +184,47 @@ function I:CreateDebuffs(parent)
     debuffs:SetSize(11, 11)
     debuffs:Hide()
 
-    debuffs.OriginalSetSize = debuffs.SetSize
+    debuffs.hAlignment = ""
+    debuffs.vAlignment = ""
+    debuffs.OriginalSetPoint = debuffs.SetPoint
+    function debuffs:SetPoint(point, relativeTo, relativePoint, x, y)
+        debuffs:OriginalSetPoint(point, relativeTo, relativePoint, x, y)
 
-    function debuffs:SetSize(width, height)
-        debuffs:OriginalSetSize(width, height)
-        for i = 1, 10 do
-            debuffs[i]:SetSize(width, height)
+        if string.find(point, "LEFT") then
+            debuffs.hAlignment = "LEFT"
+        elseif string.find(point, "RIGHT") then
+            debuffs.hAlignment = "RIGHT"
+        else
+            debuffs.hAlignment = ""
         end
+
+        if string.find(point, "TOP") then
+            debuffs.vAlignment = "TOP"
+        elseif string.find(point, "BOTTOM") then
+            debuffs.vAlignment = "BOTTOM"
+        else
+            debuffs.vAlignment = ""
+        end
+
+        if debuffs.vAlignment == "" and debuffs.hAlignment == "" then
+            debuffs.vAlignment = "CENTER"
+        end
+
+        debuffs[1]:ClearAllPoints()
+        debuffs[1]:SetPoint(debuffs.vAlignment..debuffs.hAlignment)
+        --! update others' position
+        debuffs:SetOrientation(debuffs.orientation or "left-to-right")
+    end
+
+    debuffs.OriginalSetSize = debuffs.SetSize
+    function debuffs:SetSize(normalSize, bigSize)
+        debuffs:OriginalSetSize(unpack(normalSize))
+        for i = 1, 10 do
+            debuffs[i]:SetSize(unpack(normalSize))
+        end
+        -- store sizes for SetCooldown
+        debuffs.normalSize = normalSize
+        debuffs.bigSize = bigSize
     end
 
     function debuffs:SetFont(font, ...)
@@ -201,19 +235,24 @@ function I:CreateDebuffs(parent)
     end
 
     function debuffs:SetOrientation(orientation)
-        local point1, point2
+        debuffs.orientation = orientation
+
+        local point1, point2, v, h
+        v = debuffs.vAlignment == "CENTER" and "" or debuffs.vAlignment
+        h = debuffs.hAlignment
+
         if orientation == "left-to-right" then
-            point1 = "LEFT"
-            point2 = "RIGHT"
+            point1 = v.."LEFT"
+            point2 = v.."RIGHT"
         elseif orientation == "right-to-left" then
-            point1 = "RIGHT"
-            point2 = "LEFT"
+            point1 = v.."RIGHT"
+            point2 = v.."LEFT"
         elseif orientation == "top-to-bottom" then
-            point1 = "TOP"
-            point2 = "BOTTOM"
+            point1 = "TOP"..h
+            point2 = "BOTTOM"..h
         elseif orientation == "bottom-to-top" then
-            point1 = "BOTTOM"
-            point2 = "TOP"
+            point1 = "BOTTOM"..h
+            point2 = "TOP"..h
         end
         
         for i = 2, 10 do
@@ -227,11 +266,21 @@ function I:CreateDebuffs(parent)
         local frame = I:CreateAura_BarIcon(name, debuffs)
         tinsert(debuffs, frame)
 
-        if i == 1 then
-            frame:SetPoint("TOPLEFT")
-        else
-            frame:SetPoint("LEFT", debuffs[i-1], "RIGHT")
+        frame.OriginalSetCooldown = frame.SetCooldown
+        function frame:SetCooldown(start, duration, debuffType, texture, count, refreshing, isBigDebuff)
+            frame:OriginalSetCooldown(start, duration, debuffType, texture, count, refreshing)
+            if isBigDebuff then
+                frame:SetSize(unpack(debuffs.bigSize))
+            else
+                frame:SetSize(unpack(debuffs.normalSize))
+            end
         end
+
+        -- if i == 1 then
+        --     frame:SetPoint("TOPLEFT")
+        -- else
+        --     frame:SetPoint("LEFT", debuffs[i-1], "RIGHT")
+        -- end
 	end
 end
 
