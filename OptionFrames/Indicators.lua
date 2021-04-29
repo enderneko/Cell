@@ -743,7 +743,7 @@ local indicatorSettings = {
     ["defensiveCooldowns"] = {"enabled", "num:5", "orientation", "position", "frameLevel", "size"},
     ["tankActiveMitigation"] = {"|cffb7b7b7"..I:GetTankActiveMitigationString(), "enabled", "position", "frameLevel", "size"},
     ["dispels"] = {"enabled", "checkbutton:dispellableByMe", "checkbutton2:enableHighlight", "position", "frameLevel", "size-square"},
-    ["debuffs"] = {"enabled", "blacklist", "checkbutton:dispellableByMe", "num:10", "orientation", "position", "frameLevel", "size-square", "font"},
+    ["debuffs"] = {"enabled", "checkbutton:dispellableByMe", "blacklist", "bigDebuffs", "num:10", "orientation", "position", "frameLevel", "size-normal-big", "font"},
     ["raidDebuffs"] = {"|cffb7b7b7"..L["You can config debuffs in %s"]:format(Cell:GetPlayerClassColorString()..L["Raid Debuffs"].."|r"), "enabled", "checkbutton:onlyShowTopGlow", "position", "frameLevel", "size-border", "font"},
     ["targetedSpells"] = {"enabled", "spells", "glow", "position", "frameLevel", "size-border", "font"},
 }
@@ -804,7 +804,7 @@ local function ShowIndicatorSettings(id)
         -- "enabled", "position", "size", "num", "font"
         local currentSetting = settingsTable[i]
         if currentSetting == "color-alpha" then currentSetting = "color" end
-        if currentSetting == "size-square" or currentSetting == "size-bar" then currentSetting = "size" end
+        if currentSetting == "size-square" or currentSetting == "size-bar" or currentSetting == "size-normal-big" then currentSetting = "size" end
         if currentSetting == "font-noOffset" then currentSetting = "font" end
         if currentSetting == "namePosition" or currentSetting == "statusPosition" then currentSetting = "position" end
         
@@ -816,6 +816,8 @@ local function ShowIndicatorSettings(id)
             w:SetDBValue(L[F:UpperFirst(currentLayoutTable["indicators"][id]["auraType"]).." List"], currentLayoutTable["indicators"][id]["auras"], indicatorType == "icons" or indicatorType == "bars")
         elseif currentSetting == "blacklist" then
             w:SetDBValue(L["Debuff Filter (blacklist)"], CellDB["debuffBlacklist"], true)
+        elseif currentSetting == "bigDebuffs" then
+            w:SetDBValue(L["Big Debuffs"], currentLayoutTable["indicators"][id]["bigDebuffs"], true)
         elseif currentSetting == "spells" then
             w:SetDBValue(L["Spell List"], currentLayoutTable["indicators"][id]["spells"], true)
         elseif currentSetting == "size-border" then

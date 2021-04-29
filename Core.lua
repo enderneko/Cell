@@ -377,11 +377,12 @@ function eventFrame:ADDON_LOADED(arg1)
                             ["enabled"] = true,
                             ["position"] = {"BOTTOMLEFT", "BOTTOMLEFT", 1, 4},
                             ["frameLevel"] = 1,
-                            ["size"] = {13, 13},
+                            ["size"] = {{13, 13}, {17, 17}},
                             ["num"] = 3,
                             ["font"] = {"Cell ".._G.DEFAULT, 11, "Outline", 2},
                             ["dispellableByMe"] = false,
                             ["orientation"] = "left-to-right",
+                            ["bigDebuffs"] = {},
                         }, -- 17
                         {
                             ["name"] = "Raid Debuffs",

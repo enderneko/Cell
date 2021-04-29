@@ -552,6 +552,18 @@ local function Revise()
         end
     end
 
+    -- r50-release
+    if CellDB["revise"] and dbRevision < 50 then
+        for _, layout in pairs(CellDB["layouts"]) do
+            if layout["indicators"][17] and layout["indicators"][17]["indicatorName"] == "debuffs" then
+                if type(layout["indicators"][17]["bigDebuffs"]) ~= "table" then
+                    layout["indicators"][17]["bigDebuffs"] = {}
+                    layout["indicators"][17]["size"] = {layout["indicators"][17]["size"], {17, 17}} -- normalSize, bigSize
+                end
+            end
+        end
+    end
+
     CellDB["revise"] = Cell.version
 end
 Cell:RegisterCallback("Revise", "Revise", Revise)
