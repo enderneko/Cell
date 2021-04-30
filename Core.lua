@@ -248,6 +248,15 @@ function eventFrame:ADDON_LOADED(arg1)
                             ["hideFull"] = true,
                         }, -- 3
                         {
+                            ["name"] = "Status Icon",
+                            ["indicatorName"] = "statusIcon",
+                            ["type"] = "built-in",
+                            ["enabled"] = true,
+                            ["position"] = {"TOP", "TOP", 0, -3},
+                            ["frameLevel"] = 10,
+                            ["size"] = {18, 18},
+                        }, -- 4
+                        {
                             ["name"] = "Role Icon",
                             ["indicatorName"] = "roleIcon",
                             ["type"] = "built-in",
@@ -255,7 +264,7 @@ function eventFrame:ADDON_LOADED(arg1)
                             ["position"] = {"TOPLEFT", "TOPLEFT", 0, 0},
                             ["size"] = {11, 11},
                             ["customTextures"] = {false, "Interface\\AddOns\\ElvUI\\Media\\Textures\\Tank.tga", "Interface\\AddOns\\ElvUI\\Media\\Textures\\Healer.tga", "Interface\\AddOns\\ElvUI\\Media\\Textures\\DPS.tga"},
-                        }, -- 4
+                        }, -- 5
                         {
                             ["name"] = "Leader Icon",
                             ["indicatorName"] = "leaderIcon",
@@ -263,7 +272,7 @@ function eventFrame:ADDON_LOADED(arg1)
                             ["enabled"] = true,
                             ["position"] = {"TOPLEFT", "TOPLEFT", 0, -11},
                             ["size"] = {11, 11},
-                        }, -- 5
+                        }, -- 6
                         {
                             ["name"] = "Ready Check Icon",
                             ["indicatorName"] = "readyCheckIcon",
@@ -271,7 +280,7 @@ function eventFrame:ADDON_LOADED(arg1)
                             ["enabled"] = true,
                             ["frameLevel"] = 100,
                             ["size"] = {16, 16},
-                        }, -- 6
+                        }, -- 7
                         {
                             ["name"] = "Raid Icon (player)",
                             ["indicatorName"] = "playerRaidIcon",
@@ -281,7 +290,7 @@ function eventFrame:ADDON_LOADED(arg1)
                             ["frameLevel"] = 1,
                             ["size"] = {14, 14},
                             ["alpha"] = .77,
-                        }, -- 7
+                        }, -- 8
                         {
                             ["name"] = "Raid Icon (target)",
                             ["indicatorName"] = "targetRaidIcon",
@@ -291,7 +300,7 @@ function eventFrame:ADDON_LOADED(arg1)
                             ["frameLevel"] = 1,
                             ["size"] = {14, 14},
                             ["alpha"] = .77,
-                        }, -- 8
+                        }, -- 9
                         {
                             ["name"] = "Aggro Indicator",
                             ["indicatorName"] = "aggroIndicator",
@@ -300,7 +309,7 @@ function eventFrame:ADDON_LOADED(arg1)
                             ["position"] = {"TOPLEFT", "TOPLEFT", 0, 0},
                             ["frameLevel"] = 2,
                             ["size"] = {10, 10},
-                        }, -- 9
+                        }, -- 10
                         {
                             ["name"] = "Aggro Bar",
                             ["indicatorName"] = "aggroBar",
@@ -309,7 +318,7 @@ function eventFrame:ADDON_LOADED(arg1)
                             ["position"] = {"BOTTOMLEFT", "TOPLEFT", 1, 0},
                             ["frameLevel"] = 1,
                             ["size"] = {18, 2},
-                        }, -- 10
+                        }, -- 11
                         {
                             ["name"] = "Shield Bar",
                             ["indicatorName"] = "shieldBar",
@@ -319,7 +328,7 @@ function eventFrame:ADDON_LOADED(arg1)
                             ["frameLevel"] = 1,
                             ["height"] = 4,
                             ["color"] = {1, 1, 0, 1},
-                        }, -- 11
+                        }, -- 12
                         {
                             ["name"] = "AoE Healing",
                             ["indicatorName"] = "aoeHealing",
@@ -327,7 +336,7 @@ function eventFrame:ADDON_LOADED(arg1)
                             ["enabled"] = true,
                             ["height"] = 15,
                             ["color"] = {1, 1, 0},
-                        }, -- 12
+                        }, -- 13
                         {
                             ["name"] = "External Cooldowns",
                             ["indicatorName"] = "externalCooldowns",
@@ -338,7 +347,7 @@ function eventFrame:ADDON_LOADED(arg1)
                             ["size"] = {12, 20},
                             ["num"] = 2,
                             ["orientation"] = "right-to-left",
-                        }, -- 13
+                        }, -- 14
                         {
                             ["name"] = "Defensive Cooldowns",
                             ["indicatorName"] = "defensiveCooldowns",
@@ -349,7 +358,7 @@ function eventFrame:ADDON_LOADED(arg1)
                             ["size"] = {12, 20},
                             ["num"] = 2,
                             ["orientation"] = "left-to-right",
-                        }, -- 14
+                        }, -- 15
                         {
                             ["name"] = "Tank Active Mitigation",
                             ["indicatorName"] = "tankActiveMitigation",
@@ -358,7 +367,7 @@ function eventFrame:ADDON_LOADED(arg1)
                             ["position"] = {"TOPLEFT", "TOPLEFT", 10, -1},
                             ["frameLevel"] = 1,
                             ["size"] = {18, 4},
-                        }, -- 15
+                        }, -- 16
                         {
                             ["name"] = "Dispels",
                             ["indicatorName"] = "dispels",
@@ -369,7 +378,7 @@ function eventFrame:ADDON_LOADED(arg1)
                             ["size"] = {12, 12},
                             ["dispellableByMe"] = true,
                             ["enableHighlight"] = false,
-                        }, -- 16
+                        }, -- 17
                         {
                             ["name"] = "Debuffs",
                             ["indicatorName"] = "debuffs",
@@ -383,11 +392,10 @@ function eventFrame:ADDON_LOADED(arg1)
                             ["dispellableByMe"] = false,
                             ["orientation"] = "left-to-right",
                             ["bigDebuffs"] = {
-                                121164, 121175, 121176, 121177, -- 能量宝珠
                                 209858, -- 死疽溃烂
                                 46392, -- 专注打击
                             },
-                        }, -- 17
+                        }, -- 18
                         {
                             ["name"] = "Raid Debuffs",
                             ["indicatorName"] = "raidDebuffs",
@@ -399,7 +407,7 @@ function eventFrame:ADDON_LOADED(arg1)
                             ["border"] = 2,
                             ["font"] = {"Cell ".._G.DEFAULT, 11, "Outline", 2},
                             ["onlyShowTopGlow"] = true,
-                        }, -- 18
+                        }, -- 19
                         {
                             ["name"] = "Targeted Spells",
                             ["indicatorName"] = "targetedSpells",
@@ -421,7 +429,17 @@ function eventFrame:ADDON_LOADED(arg1)
                             },
                             ["glow"] = {"Pixel", {0.95,0.95,0.32,1}, 9, .25, 8, 2},
                             ["font"] = {"Cell ".._G.DEFAULT, 12, "Outline", 2},
-                        }, -- 19
+                        }, -- 20
+                        {
+                            ["name"] = "Target Counter",
+                            ["indicatorName"] = "targetCounter",
+                            ["type"] = "built-in",
+                            ["enabled"] = false,
+                            ["position"] = {"TOP", "TOP", 0, 5},
+                            ["frameLevel"] = 15,
+                            ["font"] = {"Cell ".._G.DEFAULT, 15, "Outline", 0},
+                            ["color"] = {1, .1, .1},
+                        }, -- 21
                     },
                 },
             }

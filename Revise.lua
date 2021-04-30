@@ -555,24 +555,38 @@ local function Revise()
     -- r50-release
     if CellDB["revise"] and dbRevision < 50 then
         for _, layout in pairs(CellDB["layouts"]) do
-            if layout["indicators"][17] and layout["indicators"][17]["indicatorName"] == "debuffs" then
-                if type(layout["indicators"][17]["bigDebuffs"]) ~= "table" then
-                    layout["indicators"][17]["bigDebuffs"] = {
-                        121164, 121175, 121176, 121177, -- 能量宝珠
+            -- add statusIcon
+            if layout["indicators"][4] and layout["indicators"][4]["indicatorName"] ~= "statusIcon" then
+                tinsert(layout["indicators"], 4, {
+                    ["name"] = "Status Icon",
+                    ["indicatorName"] = "statusIcon",
+                    ["type"] = "built-in",
+                    ["enabled"] = true,
+                    ["position"] = {"TOP", "TOP", 0, -3},
+                    ["frameLevel"] = 10,
+                    ["size"] = {18, 18},
+                })
+            end
+
+            -- update debuffs
+            if layout["indicators"][18] and layout["indicators"][18]["indicatorName"] == "debuffs" then
+                if type(layout["indicators"][18]["bigDebuffs"]) ~= "table" then
+                    layout["indicators"][18]["bigDebuffs"] = {
                         209858, -- 死疽溃烂
                         46392, -- 专注打击
                     }
-                    layout["indicators"][17]["size"] = {layout["indicators"][17]["size"], {17, 17}} -- normalSize, bigSize
+                    layout["indicators"][18]["size"] = {layout["indicators"][18]["size"], {17, 17}} -- normalSize, bigSize
                 end
             end
 
-            if (not layout["indicators"][20]) or (layout["indicators"][20] and layout["indicators"][20]["indicatorName"] ~= "targetCounter") then
-                tinsert(layout["indicators"], 20, {
+            -- add targetCounter
+            if (not layout["indicators"][21]) or (layout["indicators"][21] and layout["indicators"][21]["indicatorName"] ~= "targetCounter") then
+                tinsert(layout["indicators"], 21, {
                     ["name"] = "Target Counter",
                     ["indicatorName"] = "targetCounter",
                     ["type"] = "built-in",
                     ["enabled"] = false,
-                    ["position"] = {"TOPLEFT", "TOPLEFT", 9, 3},
+                    ["position"] = {"TOP", "TOP", 0, 5},
                     ["frameLevel"] = 15,
                     ["font"] = {"Cell ".._G.DEFAULT, 15, "Outline", 0},
                     ["color"] = {1, .1, .1},

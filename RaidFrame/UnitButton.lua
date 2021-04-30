@@ -47,7 +47,7 @@ local barAnimationType, highlightEnabled
 -------------------------------------------------
 -- unit button init indicators
 -------------------------------------------------
-local UnitButton_UpdateAuras, UnitButton_UpdateRole, UnitButton_UpdateLeader
+local UnitButton_UpdateAuras, UnitButton_UpdateRole, UnitButton_UpdateLeader, UnitButton_UpdateStatusIcon
 
 local indicatorsInitialized
 local enabledIndicators, indicatorNums, indicatorCustoms = {}, {}, {}
@@ -435,7 +435,7 @@ unitButton = {
         powerBar, powerBarBackground,
         statusTextFrame, statusText, timerText
         overlayFrame, nameText, vehicleText,
-        aggroIndicator, leaderIcon, phaseIcon, readyCheckIcon, roleIcon,
+        aggroIndicator, leaderIcon, statusIcon, readyCheckIcon, roleIcon,
     },
     func = {
         ShowFlash, HideFlash,
@@ -470,6 +470,7 @@ local function UnitButton_UpdateDebuffs(self)
     if not debuffs_dispel[unit] then debuffs_dispel[unit] = {} end
     if not debuffs_glowing_current[unit] then debuffs_glowing_current[unit] = {} end
     if not debuffs_glowing_cache[unit] then debuffs_glowing_cache[unit] = {} end
+    self.state.BGOrb = nil
 
     -- user created indicators
     I:ResetCustomIndicators(unit, "debuff")
@@ -547,15 +548,33 @@ local function UnitButton_UpdateDebuffs(self)
                 end
             end
 
+            -- resurrectionIcon
             if spellId == 160029 then
                 resurrectionFound = true
-                self.widget.resurrectionIcon:SetTimer(expirationTime - duration, duration)
+                self.indicators.resurrectionIcon:SetTimer(expirationTime - duration, duration)
+            end
+
+            -- BG orbs
+            if spellId == 121164 then
+                self.state.BGOrb = "blue"
+            end
+            if spellId == 121175 then
+                self.state.BGOrb = "purple"
+            end
+            if spellId == 121176 then
+                self.state.BGOrb = "green"
+            end
+            if spellId == 121177 then
+                self.state.BGOrb = "orange"
             end
         end
     end
     
+    -- update statusIcon
+    UnitButton_UpdateStatusIcon(self)
+
     if not resurrectionFound then
-        self.widget.resurrectionIcon:Hide()
+        self.indicators.resurrectionIcon:Hide()
     end
 
     found = 1
@@ -640,6 +659,7 @@ local function UnitButton_UpdateBuffs(self)
     local unit = self.state.displayedUnit
     if not buffs_cache[unit] then buffs_cache[unit] = {} end
     if not buffs_current[unit] then buffs_current[unit] = {} end
+    self.state.BGFlag = nil
 
     -- user created indicators
     I:ResetCustomIndicators(unit, "buff")
@@ -689,11 +709,22 @@ local function UnitButton_UpdateBuffs(self)
 
             -- user created indicators
             I:CheckCustomIndicators(unit, self, "buff", spellId, expirationTime - duration, duration, nil, icon, count, refreshing, false)
+
+            -- check BG flags for statusIcon
+            if spellId == 156621 then
+                self.state.BGFlag = "alliance"
+            end
+            if spellId == 156618 then
+                self.state.BGFlag = "horde"
+            end
             
             buffs_cache[unit][spellId] = expirationTime
             buffs_current[unit][spellId] = i
         end
     end
+
+    -- update statusIcon
+    UnitButton_UpdateStatusIcon(self)
     
     -- hide other defensiveCooldowns
     for i = defensiveFound, 5 do
@@ -1177,19 +1208,24 @@ local function UnitButton_UpdateVehicleStatus(self)
     end
 end
 
-local function UnitButton_UpdatePhase(self)
+UnitButton_UpdateStatusIcon = function(self)
     local unit = self.state.unit
     if not unit then return end
 
-    local icon = self.widget.phaseIcon
+    local icon = self.indicators.statusIcon
     if UnitHasIncomingResurrection(unit) then
         icon:SetTexture("Interface\\RaidFrame\\Raid-Icon-Rez")
-        icon:SetTexCoord(0.08, 0.92, 0.08, 0.92)
         icon:Show()
     elseif UnitIsPlayer(unit) and UnitPhaseReason(unit) and not self.state.inVehicle then
         -- https://wow.gamepedia.com/API_UnitPhaseReason
         icon:SetTexture("Interface\\TargetingFrame\\UI-PhasingIcon")
-        icon:SetTexCoord(0.15625, 0.84375, 0.15625, 0.84375)
+        icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
+        icon:Show()
+    elseif self.state.BGFlag then
+        icon:SetAtlas("nameplates-icon-flag-"..self.state.BGFlag)
+        icon:Show()
+    elseif self.state.BGOrb then
+        icon:SetAtlas("nameplates-icon-orb-"..self.state.BGOrb)
         icon:Show()
     else
         icon:Hide()
@@ -1384,7 +1420,7 @@ local function UnitButton_UpdateAll(self)
     UnitButton_UpdateReadyCheck(self)
     UnitButton_UpdateThreat(self)
     UnitButton_UpdateThreatBar(self)
-    UnitButton_UpdatePhase(self)
+    UnitButton_UpdateStatusIcon(self)
     UnitButton_UpdateAuras(self)
 end
 
@@ -1539,7 +1575,7 @@ local function UnitButton_OnEvent(self, event, unit)
             UnitButton_UpdateThreat(self)
 
         elseif event == "INCOMING_RESURRECT_CHANGED" or event == "UNIT_PHASE" or event == "PARTY_MEMBER_DISABLE" or event == "PARTY_MEMBER_ENABLE" then
-            UnitButton_UpdatePhase(self)
+            UnitButton_UpdateStatusIcon(self)
     
         elseif event == "READY_CHECK_CONFIRM" then
             UnitButton_UpdateReadyCheck(self)
@@ -1708,7 +1744,7 @@ local startTimeCache = {}
 -------------------------------------------------
 -- Layer(overlayFrame) -- frameLevel:7 ----------
 -- OVERLAY
---	-7 readyCheckIcon, phaseIcon
+--	-7 readyCheckIcon, statusIcon
 -- ARTWORK 
 --	top nameText, statusText, timerText, vehicleText
 --	-7 playerRaidIcon, roleIcon, leaderIcon
@@ -1998,61 +2034,6 @@ function F:UnitButton_OnLoad(button)
     overlayFrame:SetFrameLevel(7) -- button:GetFrameLevel() == 3
     overlayFrame:SetAllPoints(button)
 
-    -- phase icon
-    local phaseIcon = overlayFrame:CreateTexture(name.."PhaseIcon", "OVERLAY", nil, -7)
-    button.widget.phaseIcon = phaseIcon
-    phaseIcon:SetSize(16, 16)
-    phaseIcon:SetPoint("TOP", healthBar)
-    phaseIcon:Hide()
-
-    -- resurrection icon
-    local resurrectionIcon = CreateFrame("Frame", name.."ResurrectionIcon", overlayFrame)
-    button.widget.resurrectionIcon = resurrectionIcon
-    resurrectionIcon:SetSize(16, 16)
-    resurrectionIcon:SetAllPoints(phaseIcon)
-    resurrectionIcon:Hide()
-    resurrectionIcon.icon = resurrectionIcon:CreateTexture(nil, "ARTWORK")
-    resurrectionIcon.icon:SetAllPoints(resurrectionIcon)
-    resurrectionIcon.icon:SetTexCoord(0.08, 0.92, 0.08, 0.92)
-    resurrectionIcon.icon:SetDesaturated(true)
-    resurrectionIcon.icon:SetVertexColor(.4, .4, .4, .5)
-    resurrectionIcon.icon:SetTexture("Interface\\RaidFrame\\Raid-Icon-Rez")
-
-    function resurrectionIcon:SetTimer(start, duration)
-        resurrectionIcon.bar:SetMinMaxValues(0, duration)
-        resurrectionIcon.bar:SetValue(GetTime()-start)
-        resurrectionIcon:Show()
-    end
-
-    do
-        local bar = CreateFrame("StatusBar", nil, resurrectionIcon)
-        resurrectionIcon.bar = bar
-        bar:SetAllPoints(resurrectionIcon)
-        bar:SetOrientation("VERTICAL")
-        bar:SetReverseFill(true)
-        bar:SetStatusBarTexture("Interface\\Buttons\\WHITE8x8")
-        bar:GetStatusBarTexture():SetAlpha(0)
-        bar.elapsedTime = 0
-        bar:SetScript("OnUpdate", function(self, elapsed)
-            if bar.elapsedTime >= 0.25 then
-                bar:SetValue(bar:GetValue() + bar.elapsedTime)
-                bar.elapsedTime = 0
-            end
-            bar.elapsedTime = bar.elapsedTime + elapsed
-        end)
-
-        local mask = resurrectionIcon:CreateMaskTexture()
-        mask:SetTexture("Interface\\Buttons\\WHITE8x8", "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
-        mask:SetPoint("TOPLEFT", bar:GetStatusBarTexture(), "BOTTOMLEFT")
-        mask:SetPoint("BOTTOMRIGHT")
-
-        local maskIcon = bar:CreateTexture(nil, "ARTWORK")
-        maskIcon:SetAllPoints(resurrectionIcon)
-        maskIcon:SetTexCoord(0.08, 0.92, 0.08, 0.92)
-        maskIcon:SetTexture("Interface\\RaidFrame\\Raid-Icon-Rez")
-        maskIcon:AddMaskTexture(mask)
-    end
-
     -- aggro bar
     local aggroBar = Cell:CreateStatusBar(overlayFrame, 18, 2, 100, true)
     button.indicators.aggroBar = aggroBar
@@ -2098,6 +2079,7 @@ function F:UnitButton_OnLoad(button)
     I:CreateNameText(button)
     I:CreateStatusText(button)
     I:CreateHealthText(button)
+    I:CreateStatusIcon(button)
     I:CreateRoleIcon(button)
     I:CreateLeaderIcon(button)
     I:CreateReadyCheckIcon(button)

@@ -96,6 +96,9 @@ local function InitIndicator(indicatorName)
         indicator.preview = CreateFrame("Frame", nil, previewButton)
         indicator.preview:SetAllPoints(indicator)
 
+    elseif indicatorName == "statusIcon" then
+        indicator:SetTexture("Interface\\RaidFrame\\Raid-Icon-Rez")
+
     elseif indicatorName == "roleIcon" then
         indicator:SetTexture("Interface\\AddOns\\Cell\\Media\\UI-LFG-ICON-PORTRAITROLES.blp")
         indicator:SetTexCoord(GetTexCoordsForRoleSmallCircle("DAMAGER"))
@@ -733,6 +736,14 @@ local indicatorSettings = {
     ["nameText"] = {"enabled", "nameColor", "textWidth", "vehicleNamePosition", "namePosition", "font-noOffset"},
     ["statusText"] = {"enabled", "statusPosition", "frameLevel", "font-noOffset"},
     ["healthText"] = {"enabled", "format", "checkbutton:hideFull", "color", "position", "frameLevel", "font"},
+    ["statusIcon"] = {"|TInterface\\RaidFrame\\Raid-Icon-Rez:18:18|t "..
+        "|TInterface\\TargetingFrame\\UI-PhasingIcon:18:18|t "..
+        "|A:nameplates-icon-flag-horde:18:18|a "..
+        "|A:nameplates-icon-flag-alliance:18:18|a "..
+        "|A:nameplates-icon-orb-blue:18:18|a "..
+        "|A:nameplates-icon-orb-green:18:18|a "..
+        "|A:nameplates-icon-orb-orange:18:18|a "..
+        "|A:nameplates-icon-orb-purple:18:18|a ", "enabled", "position", "frameLevel", "size-square"},
     ["roleIcon"] = {"enabled", "position", "size-square", "customTextures"},
     ["leaderIcon"] = {"|cffb7b7b7"..L["Leader Icons will hide while in combat"], "enabled", "position", "size-square"},
     ["readyCheckIcon"] = {"frameLevel", "size-square"},
