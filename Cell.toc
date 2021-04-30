@@ -19,7 +19,7 @@ Comm.lua
 Widgets\LoadWidgets.xml
 
 HideBlizzard.lua
-WhatsNew.lua
+ChangeLogs.lua
 
 RaidFrame\Indicators\Base.lua
 RaidFrame\Indicators\Built-in.lua

@@ -40,7 +40,7 @@ select(2, ...).L = setmetatable({
     ["pullTimerTips"] = "\n|rPull Timer\nLeft-Click: |cffffffffstart timer|r\nRight-Click: |cffffffffcancel timer|r",
     ["marksTips"] = "\n|rTarget marker\nLeft-Click: |cffffffffset raid marker on target|r\nRight-Click: |cfffffffflock raid marker on target (in your group)|r",
 
-    ["WHAT'S NEW"] = [[
+    ["CHANGE LOGS"] = [[
         <h1>r49-release (Apr 5, 2021, 16:10 GMT+8)</h1>
         <p>+ Added "Bar Animation" option in Appearance.</p>
         <p>* Updated "Health Text" (zhCN, zhTW and koKR numeral system).</p>

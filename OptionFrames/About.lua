@@ -13,20 +13,20 @@ aboutTab:Hide()
 local nameText = Cell:CreateSeparator("Cell", aboutTab, 387)
 nameText:SetPoint("TOPLEFT", 5, -5)
 
-local whatsNewBtn = Cell:CreateButton(aboutTab, "What's New", "class-hover", {85, 17})
-whatsNewBtn:SetPoint("RIGHT", -5, 0)
-whatsNewBtn:SetPoint("TOP", nameText, 0, 1)
-whatsNewBtn:SetScript("OnClick", function()
-    if Cell.frames.whatsNewFrame:IsVisible() then
-        Cell.frames.whatsNewFrame:Hide()
+local changeLogsBtn = Cell:CreateButton(aboutTab, L["Change Logs"], "class-hover", {90, 17})
+changeLogsBtn:SetPoint("RIGHT", -5, 0)
+changeLogsBtn:SetPoint("TOP", nameText, 0, 1)
+changeLogsBtn:SetScript("OnClick", function()
+    if Cell.frames.changeLogsFrame:IsVisible() then
+        Cell.frames.changeLogsFrame:Hide()
     else
-        Cell.frames.whatsNewFrame:Show()
+        Cell.frames.changeLogsFrame:Show()
     end
 end)
 
 -- local versionText = aboutTab:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET_TITLE")
 -- versionText:SetPoint("TOP", nameText)
--- versionText:SetPoint("RIGHT", whatsNewBtn, "LEFT", -5, 0)
+-- versionText:SetPoint("RIGHT", changeLogsBtn, "LEFT", -5, 0)
 -- Cell:ColorFontStringByPlayerClass(versionText)
 
 local introduceText = aboutTab:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
