@@ -557,7 +557,11 @@ local function Revise()
         for _, layout in pairs(CellDB["layouts"]) do
             if layout["indicators"][17] and layout["indicators"][17]["indicatorName"] == "debuffs" then
                 if type(layout["indicators"][17]["bigDebuffs"]) ~= "table" then
-                    layout["indicators"][17]["bigDebuffs"] = {}
+                    layout["indicators"][17]["bigDebuffs"] = {
+                        121164, 121175, 121176, 121177, -- 能量宝珠
+                        209858, -- 死疽溃烂
+                        46392, -- 专注打击
+                    }
                     layout["indicators"][17]["size"] = {layout["indicators"][17]["size"], {17, 17}} -- normalSize, bigSize
                 end
             end

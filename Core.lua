@@ -382,7 +382,11 @@ function eventFrame:ADDON_LOADED(arg1)
                             ["font"] = {"Cell ".._G.DEFAULT, 11, "Outline", 2},
                             ["dispellableByMe"] = false,
                             ["orientation"] = "left-to-right",
-                            ["bigDebuffs"] = {},
+                            ["bigDebuffs"] = {
+                                121164, 121175, 121176, 121177, -- 能量宝珠
+                                209858, -- 死疽溃烂
+                                46392, -- 专注打击
+                            },
                         }, -- 17
                         {
                             ["name"] = "Raid Debuffs",
