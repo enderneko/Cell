@@ -41,6 +41,18 @@ select(2, ...).L = setmetatable({
     ["marksTips"] = "\n|rTarget marker\nLeft-Click: |cffffffffset raid marker on target|r\nRight-Click: |cfffffffflock raid marker on target (in your group)|r",
 
     ["CHANGE LOGS"] = [[
+        <h1>r50-release (May 1, 2021, 03:20 GMT+8)</h1>
+        <h2>Indicators</h2>
+        <P>+ New indicators: Status Icon, Target Counter (BG &amp; Arena only).</P>
+        <P>+ New indicator feature: Big Debuffs (Debuffs indicator).</P>
+        <p>* Increased indicator max icons: Debuffs, custom indicators.</p>
+        <p>* Changed dispel highlight to a smaller size.</p>
+        <h2>Misc</h2>
+        <p>* Fixed a Cell scaling issue.</p>
+        <p>* Fixed the position of BattleRes again.</p>
+        <p>+ Added a "None" option for font outline.</p>
+        <br/>
+
         <h1>r49-release (Apr 5, 2021, 16:10 GMT+8)</h1>
         <p>+ Added "Bar Animation" option in Appearance.</p>
         <p>* Updated "Health Text" (zhCN, zhTW and koKR numeral system).</p>
