@@ -565,6 +565,19 @@ local function Revise()
                     layout["indicators"][17]["size"] = {layout["indicators"][17]["size"], {17, 17}} -- normalSize, bigSize
                 end
             end
+
+            if (not layout["indicators"][20]) or (layout["indicators"][20] and layout["indicators"][20]["indicatorName"] ~= "targetCounter") then
+                tinsert(layout["indicators"], 20, {
+                    ["name"] = "Target Counter",
+                    ["indicatorName"] = "targetCounter",
+                    ["type"] = "built-in",
+                    ["enabled"] = false,
+                    ["position"] = {"TOPLEFT", "TOPLEFT", 9, 3},
+                    ["frameLevel"] = 15,
+                    ["font"] = {"Cell ".._G.DEFAULT, 15, "Outline", 0},
+                    ["color"] = {1, .1, .1},
+                })
+            end
         end
     end
 

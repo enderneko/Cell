@@ -24,6 +24,7 @@ WhatsNew.lua
 RaidFrame\Indicators\Base.lua
 RaidFrame\Indicators\Built-in.lua
 RaidFrame\Indicators\AoEHealing.lua
+RaidFrame\Indicators\TargetCounter.lua
 RaidFrame\Indicators\TargetedSpells.lua
 RaidFrame\Indicators\Custom.lua
 

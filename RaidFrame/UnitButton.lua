@@ -89,6 +89,10 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
             if t["indicatorName"] == "aoeHealing" then
                 I:EnableAoEHealing(t["enabled"])
             end
+            -- update targetCounter
+            if t["indicatorName"] == "targetCounter" then
+                I:EnableTargetCounter(t["enabled"])
+            end
             -- update targetedSpells
             if t["indicatorName"] == "targetedSpells" then
                 I:EnableTargetedSpells(t["enabled"])
@@ -203,6 +207,8 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
 
             if indicatorName == "aoeHealing" then
                 I:EnableAoEHealing(value)
+            elseif indicatorName == "targetCounter" then
+                I:EnableTargetCounter(value)
             elseif indicatorName == "targetedSpells" then
                 I:EnableTargetedSpells(value)
             elseif indicatorName == "roleIcon" then
@@ -2107,6 +2113,7 @@ function F:UnitButton_OnLoad(button)
     I:CreateDispels(button)
     I:CreateRaidDebuffs(button)
     I:CreateTargetedSpells(button)
+    I:CreateTargetCounter(button)
 
     -- events
     button:SetScript("OnAttributeChanged", UnitButton_OnAttributeChanged) -- init

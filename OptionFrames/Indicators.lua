@@ -210,7 +210,10 @@ local function InitIndicator(indicatorName)
             indicator.cooldown:Hide()
             indicator.cooldown:SetScript("OnCooldownDone", nil)
         end)
-        
+
+    elseif indicatorName == "targetCounter" then
+        indicator:SetCount(3)
+
     elseif indicatorName == "externalCooldowns" then
         local icons = {135936, 572025, 135966, 627485, 237542}
         for i = 1, 5 do
@@ -746,6 +749,7 @@ local indicatorSettings = {
     ["debuffs"] = {"enabled", "checkbutton:dispellableByMe", "blacklist", "bigDebuffs", "num:10", "orientation", "position", "frameLevel", "size-normal-big", "font"},
     ["raidDebuffs"] = {"|cffb7b7b7"..L["You can config debuffs in %s"]:format(Cell:GetPlayerClassColorString()..L["Raid Debuffs"].."|r"), "enabled", "checkbutton:onlyShowTopGlow", "position", "frameLevel", "size-border", "font"},
     ["targetedSpells"] = {"enabled", "spells", "glow", "position", "frameLevel", "size-border", "font"},
+    ["targetCounter"] = {"|cffb7b7b7"..L["HIGH CPU USAGE! Check all visible enemy nameplates. Battleground/Arena only."], "enabled", "color", "position", "frameLevel", "font"},
 }
 
 local function ShowIndicatorSettings(id)
