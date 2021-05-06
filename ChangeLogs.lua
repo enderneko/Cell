@@ -2,7 +2,7 @@ local _, Cell = ...
 local L = Cell.L
 local F = Cell.funcs
 
-local changeLogsFrame = Cell:CreateMovableFrame(L["Change Logs"], "CellChangeLogsFrame", 370, 400, "DIALOG", 1, true)
+local changeLogsFrame = Cell:CreateMovableFrame("Cell "..L["Change Logs"], "CellChangeLogsFrame", 370, 400, "DIALOG", 1, true)
 Cell.frames.changeLogsFrame = changeLogsFrame
 changeLogsFrame:SetToplevel(true)
 
