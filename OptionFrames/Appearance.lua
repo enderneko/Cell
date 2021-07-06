@@ -1,7 +1,7 @@
 local _, Cell = ...
 local L = Cell.L
 local F = Cell.funcs
-local LPP = LibStub:GetLibrary("LibPixelPerfect")
+local P = Cell.pixelPerfectFuncs
 
 local appearanceTab = Cell:CreateFrame("CellOptionsFrame_AppearanceTab", Cell.frames.optionsFrame, nil, nil, true)
 Cell.frames.appearanceTab = appearanceTab
@@ -14,33 +14,13 @@ appearanceTab:Hide()
 local scaleText = Cell:CreateSeparator(L["Scale"], appearanceTab, 188)
 scaleText:SetPoint("TOPLEFT", 5, -5)
 
-local scaleDropdown = Cell:CreateDropdown(appearanceTab, 150)
-scaleDropdown:SetPoint("TOPLEFT", scaleText, "BOTTOMLEFT", 5, -12)
-
-local scales = {
-    [1] = "100% ("..L["Pixel Perfect"]..")",
-    [1.5] = "150%",
-    [2] = "200% ("..L["Pixel Perfect"]..")",
-    [2.5] = "250%",
-    [3] = "300%",
-    [3.5] = "350%",
-    [4] = "400% ("..L["Pixel Perfect"]..")",
-}
-
-do
-    local indices = {1, 1.5, 2, 2.5, 3, 3.5, 4}
-    local items = {}
-    for _, value in pairs(indices) do
-        table.insert(items, {
-            ["text"] = scales[value],
-            ["onClick"] = function()
-                CellDB["appearance"]["scale"] = value
-                Cell:Fire("UpdateAppearance", "scale")
-            end,
-        })
-    end
-    scaleDropdown:SetItems(items)
+local scaleSlider = Cell:CreateSlider("", appearanceTab, 0.5, 2, 150, 0.1)
+scaleSlider:SetPoint("TOPLEFT", scaleText, "BOTTOMLEFT", 5, -12)
+scaleSlider.afterValueChangedFn = function(value)
+    CellDB["appearance"]["scale"] = value
+    Cell:Fire("UpdateAppearance", "scale")
 end
+Cell:RegisterForCloseDropdown(scaleSlider)
 
 -------------------------------------------------
 -- font
@@ -48,32 +28,12 @@ end
 local fontText = Cell:CreateSeparator(L["Options UI Font Size"], appearanceTab, 188)
 fontText:SetPoint("TOPLEFT", 203, -5)
 
-local optionsFontSizeOffset = Cell:CreateDropdown(appearanceTab, 150)
+local optionsFontSizeOffset = Cell:CreateSlider("", appearanceTab, -5, 5, 150, 1)
 optionsFontSizeOffset:SetPoint("TOPLEFT", fontText, "BOTTOMLEFT", 5, -12)
 
-do
-    local items = {}
-    for i = -5, 5 do
-        local text
-        if i > 0 then
-            text = "+"..i
-        elseif i == 0 then
-            text = _G.DEFAULT
-        else
-            text = i
-        end
-
-        tinsert(items, {
-            ["text"] = text,
-            ["value"] = i,
-            ["onClick"] = function()
-                CellDB["appearance"]["optionsFontSizeOffset"] = i
-                Cell:UpdateOptionsFont(i)
-                optionsFontSizeOffset.reloadRequired = true
-            end,
-        })
-    end
-    optionsFontSizeOffset:SetItems(items)
+optionsFontSizeOffset.afterValueChangedFn = function(value)
+    CellDB["appearance"]["optionsFontSizeOffset"] = value
+    Cell:UpdateOptionsFont(value)
 end
 
 -------------------------------------------------
@@ -330,7 +290,7 @@ oorAlpha:SetPoint("TOPLEFT", highlightSize, "BOTTOMLEFT", 0, -40)
 -- reset
 local resetBtn = Cell:CreateButton(appearanceTab, L["Reset All"], "class-hover", {70, 17})
 resetBtn:SetPoint("RIGHT", -5, 0)
-resetBtn:SetPoint("BOTTOM", unitButtonText)
+resetBtn:SetPoint("BOTTOM", unitButtonText, 0, -1)
 resetBtn:SetScript("OnClick", function()
     CellDB["appearance"]["texture"] = "Cell ".._G.DEFAULT
     CellDB["appearance"]["barColor"] = {"Class Color", {.2, .2, .2}}
@@ -375,8 +335,8 @@ local function ShowTab(tab)
         loaded = true
 
         -- load data
-        scaleDropdown:SetSelected(scales[CellDB["appearance"]["scale"]])
-        optionsFontSizeOffset:SetSelectedValue(CellDB["appearance"]["optionsFontSizeOffset"])
+        scaleSlider:SetValue(CellDB["appearance"]["scale"])
+        optionsFontSizeOffset:SetValue(CellDB["appearance"]["optionsFontSizeOffset"])
         
         CheckTextures()
         barColorDropdown:SetSelected(L[CellDB["appearance"]["barColor"][1]])
@@ -437,10 +397,11 @@ local function UpdateAppearance(which)
 
     -- scale
     if not which or which == "scale" then
-        Cell.frames.mainFrame:SetScale(LPP:GetPixelPerfectScale() * CellDB["appearance"]["scale"])
-        Cell.frames.changeLogsFrame:SetScale(LPP:GetPixelPerfectScale() * CellDB["appearance"]["scale"])
-        CellTooltip:SetScale(LPP:GetPixelPerfectScale() * CellDB["appearance"]["scale"])
-        CellScanningTooltip:SetScale(LPP:GetPixelPerfectScale() * CellDB["appearance"]["scale"])
+        P:SetRelativeScale(CellDB["appearance"]["scale"])
+        P:SetEffectiveScale(Cell.frames.mainFrame)
+        P:SetEffectiveScale(Cell.frames.changeLogsFrame)
+        P:SetEffectiveScale(CellTooltip)
+        P:SetEffectiveScale(CellScanningTooltip)
     end
 end
 Cell:RegisterCallback("UpdateAppearance", "UpdateAppearance", UpdateAppearance)

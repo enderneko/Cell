@@ -7,6 +7,7 @@ Cell.iFuncs = {}
 
 local F = Cell.funcs
 local I = Cell.iFuncs
+local P = Cell.pixelPerfectFuncs
 local L = Cell.L
 
 --@debug@
@@ -176,6 +177,7 @@ function eventFrame:ADDON_LOADED(arg1)
                 ["outOfRangeAlpha"] = .45,
             }
         end
+        P:SetRelativeScale(CellDB["appearance"]["scale"])
 
         -- click-casting --------------------------------------------------------------------------
         if type(CellDB["clickCastings"]) ~= "table" then CellDB["clickCastings"] = {} end

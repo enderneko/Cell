@@ -1,7 +1,7 @@
 local _, Cell = ...
 local L = Cell.L
 local F = Cell.funcs
-local LPP = LibStub:GetLibrary("LibPixelPerfect")
+local P = Cell.pixelPerfectFuncs
 
 local marks, worldMarks
 
@@ -18,7 +18,7 @@ marksFrame:SetScript("OnDragStart", function()
 end)
 marksFrame:SetScript("OnDragStop", function()
     marksFrame:StopMovingOrSizing()
-    LPP:SavePixelPerfectPosition(marksFrame, CellDB["raidTools"]["marksPosition"])
+    P:SavePosition(marksFrame, CellDB["raidTools"]["marksPosition"])
 end)
 
 -------------------------------------------------
@@ -299,7 +299,7 @@ local function UpdateRaidTools(which)
     end
 
     if not which then -- position
-        LPP:LoadPixelPerfectPosition(marksFrame, CellDB["raidTools"]["marksPosition"])
+        P:LoadPosition(marksFrame, CellDB["raidTools"]["marksPosition"])
     end
 end
 Cell:RegisterCallback("UpdateRaidTools", "RaidMarks_UpdateRaidTools", UpdateRaidTools)

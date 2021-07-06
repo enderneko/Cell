@@ -1,7 +1,7 @@
 local _, Cell = ...
 local L = Cell.L
 local F = Cell.funcs
-local LPP = LibStub:GetLibrary("LibPixelPerfect")
+local P = Cell.pixelPerfectFuncs
 
 local optionsFrame = Cell:CreateFrame("CellOptionsFrame", Cell.frames.mainFrame, 397, 401)
 Cell.frames.optionsFrame = optionsFrame
@@ -92,7 +92,7 @@ function F:ShowOptionsFrame()
         generalBtn:Click()
     end
     
-    LPP:PixelPerfectPoint(optionsFrame)
+    P:PixelPerfectPoint(optionsFrame)
     optionsFrame:Show()
 end
 

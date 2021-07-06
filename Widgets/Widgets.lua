@@ -5,7 +5,7 @@
 local addonName, addon = ...
 local L = addon.L
 local F = addon.funcs
-local LPP = LibStub:GetLibrary("LibPixelPerfect")
+local P = Cell.pixelPerfectFuncs
 
 -----------------------------------------
 -- Color
@@ -263,7 +263,7 @@ function addon:ChangeSizeWithAnimation(frame, targetWidth, targetHeight, startFu
             animationTimer:Cancel()
             animationTimer = nil
             if endFunc then endFunc() end
-            if repoint then LPP:PixelPerfectPoint(frame) end -- already point to another frame
+            if repoint then P:PixelPerfectPoint(frame) end -- already point to another frame
         end
     end)
 end
@@ -1820,10 +1820,16 @@ end)
 list:SetScript("OnHide", function() list:Hide() end)
 
 -- close dropdown
-function addon:RegisterForCloseDropdown(button)
-    button:HookScript("OnClick", function()
-        list:Hide()
-    end)
+function addon:RegisterForCloseDropdown(f)
+    if f:GetObjectType() == "Button" then
+        f:HookScript("OnClick", function()
+            list:Hide()
+        end)
+    elseif f:GetObjectType() == "Slider" then
+        f:HookScript("OnValueChanged", function()
+            list:Hide()
+        end)
+    end
 end
 
 -- store created buttons

@@ -1,7 +1,7 @@
 local _, Cell = ...
 local L = Cell.L
 local F = Cell.funcs
-local LPP = LibStub:GetLibrary("LibPixelPerfect")
+local P = Cell.pixelPerfectFuncs
 
 local layoutsTab = Cell:CreateFrame("CellOptionsFrame_LayoutsTab", Cell.frames.optionsFrame, nil, nil, true)
 Cell.frames.layoutsTab = layoutsTab
@@ -133,7 +133,7 @@ layoutPreviewAnchor:SetScript("OnDragStart", function()
 end)
 layoutPreviewAnchor:SetScript("OnDragStop", function()
     layoutPreviewAnchor:StopMovingOrSizing()
-    LPP:SavePixelPerfectPosition(layoutPreviewAnchor, selectedLayoutTable["position"])
+    P:SavePosition(layoutPreviewAnchor, selectedLayoutTable["position"])
 end)
 
 local layoutPreviewName = layoutPreviewAnchor:CreateFontString(nil, "OVERLAY")
@@ -250,7 +250,7 @@ local function UpdateLayoutPreview()
         layoutPreviewName:Hide()
     else
         if #selectedLayoutTable["position"] == 2 then
-            LPP:LoadPixelPerfectPosition(layoutPreviewAnchor, selectedLayoutTable["position"])
+            P:LoadPosition(layoutPreviewAnchor, selectedLayoutTable["position"])
         else
             layoutPreviewAnchor:ClearAllPoints()
             layoutPreviewAnchor:SetPoint("TOPLEFT", UIParent, "CENTER")
@@ -368,97 +368,6 @@ local function UpdateLayoutPreview()
             end
         end
     end
-
-    -- re-arrange
-    -- for i = 1, n do
-    --     layoutPreview[i].bg:SetSize(unpack(selectedLayoutTable["size"]))
-    --     layoutPreview[i].bg:ClearAllPoints()
-
-    --     local spacing = selectedLayoutTable["spacing"]
-        
-    --     if selectedLayoutTable["orientation"] == "vertical" then
-    --         -- anchor
-    --         local point, anchorPoint, groupAnchorPoint, unitSpacing, groupSpacing, verticalSpacing
-    --         if selectedLayoutTable["anchor"] == "BOTTOMLEFT" then
-    --             point, anchorPoint, groupAnchorPoint = "BOTTOMLEFT", "TOPLEFT", "BOTTOMRIGHT"
-    --             unitSpacing = spacing
-    --             groupSpacing = spacing
-    --             verticalSpacing = spacing+selectedLayoutTable["groupSpacing"]
-    --         elseif selectedLayoutTable["anchor"] == "BOTTOMRIGHT" then
-    --             point, anchorPoint, groupAnchorPoint = "BOTTOMRIGHT", "TOPRIGHT", "BOTTOMLEFT"
-    --             unitSpacing = spacing
-    --             groupSpacing = -spacing
-    --             verticalSpacing = spacing+selectedLayoutTable["groupSpacing"]
-    --         elseif selectedLayoutTable["anchor"] == "TOPLEFT" then
-    --             point, anchorPoint, groupAnchorPoint = "TOPLEFT", "BOTTOMLEFT", "TOPRIGHT"
-    --             unitSpacing = -spacing
-    --             groupSpacing = spacing
-    --             verticalSpacing = -spacing-selectedLayoutTable["groupSpacing"]
-    --         elseif selectedLayoutTable["anchor"] == "TOPRIGHT" then
-    --             point, anchorPoint, groupAnchorPoint = "TOPRIGHT", "BOTTOMRIGHT", "TOPLEFT"
-    --             unitSpacing = -spacing
-    --             groupSpacing = -spacing
-    --             verticalSpacing = -spacing-selectedLayoutTable["groupSpacing"]
-    --         end
-
-    --         if i == 1 then
-    --             layoutPreview[i].bg:SetPoint(point)
-    --         elseif i % 5 == 1 then -- another party
-    --             local lastColumn = math.modf(i / 5)
-    --             local currentColumn = lastColumn + 1
-    --             if lastColumn % selectedLayoutTable["columns"] == 0 then -- new row
-    --                 local index = (currentColumn - selectedLayoutTable["columns"]) * 5 -- find anchor
-    --                 layoutPreview[i].bg:SetPoint(point, layoutPreview[index].bg, anchorPoint, 0, verticalSpacing)
-    --             else
-    --                 layoutPreview[i].bg:SetPoint(point, layoutPreview[i-5].bg, groupAnchorPoint, groupSpacing, 0)
-    --             end
-    --         else
-    --             layoutPreview[i].bg:SetPoint(point, layoutPreview[i-1].bg, anchorPoint, 0, unitSpacing)
-    --         end
-    --     else
-    --         -- anchor
-    --         local point, anchorPoint, groupAnchorPoint, unitSpacing, groupSpacing, horizontalSpacing
-    --         if selectedLayoutTable["anchor"] == "BOTTOMLEFT" then
-    --             point, anchorPoint, groupAnchorPoint = "BOTTOMLEFT", "BOTTOMRIGHT", "TOPLEFT"
-    --             unitSpacing = spacing
-    --             groupSpacing = spacing
-    --             horizontalSpacing = spacing+selectedLayoutTable["groupSpacing"]
-    --         elseif selectedLayoutTable["anchor"] == "BOTTOMRIGHT" then
-    --             point, anchorPoint, groupAnchorPoint = "BOTTOMRIGHT", "BOTTOMLEFT", "TOPRIGHT"
-    --             unitSpacing = -spacing
-    --             groupSpacing = spacing
-    --             horizontalSpacing = -spacing-selectedLayoutTable["groupSpacing"]
-    --         elseif selectedLayoutTable["anchor"] == "TOPLEFT" then
-    --             point, anchorPoint, groupAnchorPoint = "TOPLEFT", "TOPRIGHT", "BOTTOMLEFT"
-    --             unitSpacing = spacing
-    --             groupSpacing = -spacing
-    --             horizontalSpacing = spacing+selectedLayoutTable["groupSpacing"]
-    --         elseif selectedLayoutTable["anchor"] == "TOPRIGHT" then
-    --             point, anchorPoint, groupAnchorPoint = "TOPRIGHT", "TOPLEFT", "BOTTOMRIGHT"
-    --             unitSpacing = -spacing
-    --             groupSpacing = -spacing
-    --             horizontalSpacing = -spacing-selectedLayoutTable["groupSpacing"]
-    --         end
-
-    --         if i == 1 then
-    --             layoutPreview[i].bg:SetPoint(point)
-    --         elseif i % 5 == 1 then -- another party
-    --             local lastRow = math.modf(i / 5)
-    --             local currentRow = lastRow + 1
-    --             if lastRow % selectedLayoutTable["rows"] == 0 then -- new column
-    --                 local index = (currentRow - selectedLayoutTable["rows"]) * 5 -- find anchor
-    --                 layoutPreview[i].bg:SetPoint(point, layoutPreview[index].bg, anchorPoint, horizontalSpacing, 0)
-    --             else
-    --                 layoutPreview[i].bg:SetPoint(point, layoutPreview[i-5].bg, groupAnchorPoint, 0, groupSpacing)
-    --             end
-    --         else
-    --             layoutPreview[i].bg:SetPoint(point, layoutPreview[i-1].bg, anchorPoint, unitSpacing, 0)
-    --         end
-    --     end
-
-    --     layoutPreview[i]:Show()
-    --     layoutPreview[i].bg:Show()
-    -- end
 
     -- update group filter
     if previewMode ~= 1 then

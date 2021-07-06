@@ -1,7 +1,7 @@
 local _, Cell = ...
 local L = Cell.L
 local F = Cell.funcs
-local LPP = LibStub:GetLibrary("LibPixelPerfect")
+local P = Cell.pixelPerfectFuncs
 
 Cell.unitButtons = {
     ["solo"] = {},
@@ -40,7 +40,7 @@ local function RegisterDragForMainFrame(frame)
     end)
     frame:SetScript("OnDragStop", function()
         anchorFrame:StopMovingOrSizing()
-        LPP:SavePixelPerfectPosition(anchorFrame, Cell.vars.currentLayoutTable["position"])
+        P:SavePosition(anchorFrame, Cell.vars.currentLayoutTable["position"])
     end)
 end
 
@@ -257,6 +257,6 @@ local function MainFrame_UpdateLayout(layout, which)
     end
 
     -- load position
-    LPP:LoadPixelPerfectPosition(anchorFrame, Cell.vars.currentLayoutTable["position"])
+    P:LoadPosition(anchorFrame, Cell.vars.currentLayoutTable["position"])
 end
 Cell:RegisterCallback("UpdateLayout", "MainFrame_UpdateLayout", MainFrame_UpdateLayout)
