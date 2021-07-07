@@ -229,7 +229,6 @@ local defaultSpells = {
             "73685T", -- Unleash Life - 生命释放
             77130, -- Purify Spirit - 净化灵魂
             212048, -- Ancestral Vision - 先祖视界
-            "204293P", -- pvp - Spirit Link - 灵魂链接
         },
     },
 
