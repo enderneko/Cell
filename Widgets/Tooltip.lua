@@ -1,3 +1,5 @@
+local P = Cell.pixelPerfectFuncs
+
 local class = select(2, UnitClass("player"))
 local classColor = {.7, .7, .7, 1}
 if class then
@@ -27,6 +29,12 @@ local function CreateTooltip(name)
 		-- SetX with invalid data may or may not clear the tooltip's contents.
 		tooltip:ClearLines()
 	end)
+
+	function tooltip:UpdatePixelPerfect()
+		tooltip:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8x8", edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = P:Scale(1)})
+		tooltip:SetBackdropColor(.1, .1, .1, .9)
+		tooltip:SetBackdropBorderColor(unpack(classColor))
+	end
 end
 
 

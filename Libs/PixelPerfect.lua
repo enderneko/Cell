@@ -91,8 +91,12 @@ end
 -- scale changed
 --------------------------------------------
 function P:Resize(frame)
-    if not (frame.width and frame.height) then return end
-    frame:SetSize(P:Scale(frame.width), P:Scale(frame.height))
+    if frame.width then
+        frame:SetWidth(P:Scale(frame.width))
+    end 
+    if frame.height then
+        frame:SetHeight(P:Scale(frame.height))
+    end
 end
 
 function P:Repoint(frame)

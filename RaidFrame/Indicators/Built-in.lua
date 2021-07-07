@@ -3,6 +3,7 @@ local L = Cell.L
 local F = Cell.funcs
 local I = Cell.iFuncs
 local LCG = LibStub("LibCustomGlow-1.0")
+local P = Cell.pixelPerfectFuncs
 
 -------------------------------------------------
 -- CreateDefensiveCooldowns
@@ -10,7 +11,7 @@ local LCG = LibStub("LibCustomGlow-1.0")
 function I:CreateDefensiveCooldowns(parent)
     local defensiveCooldowns = CreateFrame("Frame", parent:GetName().."ExternalCooldownParent", parent.widget.overlayFrame)
     parent.indicators.defensiveCooldowns = defensiveCooldowns
-    defensiveCooldowns:SetSize(20, 10)
+    -- defensiveCooldowns:SetSize(20, 10)
     defensiveCooldowns:Hide()
 
     defensiveCooldowns.OriginalSetSize = defensiveCooldowns.SetSize
@@ -18,7 +19,7 @@ function I:CreateDefensiveCooldowns(parent)
     function defensiveCooldowns:SetSize(width, height)
         defensiveCooldowns:OriginalSetSize(width, height)
         for i = 1, 5 do
-            defensiveCooldowns[i]:SetSize(width, height)
+            P:Size(defensiveCooldowns[i], width, height)
         end
     end
 
@@ -54,8 +55,8 @@ function I:CreateDefensiveCooldowns(parent)
         end
         
         for i = 2, 5 do
-            defensiveCooldowns[i]:ClearAllPoints()
-            defensiveCooldowns[i]:SetPoint(point1, defensiveCooldowns[i-1], point2, x, y)
+            P:ClearPoints(defensiveCooldowns[i])
+            P:Point(defensiveCooldowns[i], point1, defensiveCooldowns[i-1], point2, x, y)
         end
     end
 
@@ -65,11 +66,19 @@ function I:CreateDefensiveCooldowns(parent)
         tinsert(defensiveCooldowns, frame)
 
         if i == 1 then
-            frame:SetPoint("TOPLEFT")
+            P:Point(frame, "TOPLEFT")
         else
-            frame:SetPoint("LEFT", defensiveCooldowns[i-1], "RIGHT", -1, 0)
+            P:Point(frame, "LEFT", defensiveCooldowns[i-1], "RIGHT", -1, 0)
         end
 	end
+
+    function defensiveCooldowns:UpdatePixelPerfect()
+        P:Resize(defensiveCooldowns)
+        P:Repoint(defensiveCooldowns)
+        for i = 1, 5 do
+            defensiveCooldowns[i]:UpdatePixelPerfect()
+        end
+    end
 end
 
 -------------------------------------------------
@@ -78,7 +87,7 @@ end
 function I:CreateExternalCooldowns(parent)
     local externalCooldowns = CreateFrame("Frame", parent:GetName().."ExternalCooldownParent", parent.widget.overlayFrame)
     parent.indicators.externalCooldowns = externalCooldowns
-    externalCooldowns:SetSize(20, 10)
+    -- externalCooldowns:SetSize(20, 10)
     externalCooldowns:Hide()
 
     externalCooldowns.OriginalSetSize = externalCooldowns.SetSize
@@ -86,7 +95,7 @@ function I:CreateExternalCooldowns(parent)
     function externalCooldowns:SetSize(width, height)
         externalCooldowns:OriginalSetSize(width, height)
         for i = 1, 5 do
-            externalCooldowns[i]:SetSize(width, height)
+            P:Size(externalCooldowns[i], width, height)
         end
     end
 
@@ -122,8 +131,8 @@ function I:CreateExternalCooldowns(parent)
         end
         
         for i = 2, 5 do
-            externalCooldowns[i]:ClearAllPoints()
-            externalCooldowns[i]:SetPoint(point1, externalCooldowns[i-1], point2, x, y)
+            P:ClearPoints(externalCooldowns[i])
+            P:Point(externalCooldowns[i], point1, externalCooldowns[i-1], point2, x, y)
         end
     end
 
@@ -133,11 +142,19 @@ function I:CreateExternalCooldowns(parent)
         tinsert(externalCooldowns, frame)
 
         if i == 1 then
-            frame:SetPoint("TOPLEFT")
+            P:Point(frame, "TOPLEFT")
         else
-            frame:SetPoint("RIGHT", externalCooldowns[i-1], "LEFT", 1, 0)
+            P:Point(frame, "RIGHT", externalCooldowns[i-1], "LEFT", 1, 0)
         end
 	end
+
+    function externalCooldowns:UpdatePixelPerfect()
+        P:Resize(externalCooldowns)
+        P:Repoint(externalCooldowns)
+        for i = 1, 5 do
+            externalCooldowns[i]:UpdatePixelPerfect()
+        end
+    end
 end
 
 -------------------------------------------------
@@ -181,7 +198,7 @@ end
 function I:CreateDebuffs(parent)
     local debuffs = CreateFrame("Frame", parent:GetName().."DebuffParent", parent.widget.overlayFrame)
     parent.indicators.debuffs = debuffs
-    debuffs:SetSize(11, 11)
+    -- debuffs:SetSize(11, 11)
     debuffs:Hide()
 
     debuffs.hAlignment = ""
@@ -225,6 +242,9 @@ function I:CreateDebuffs(parent)
         -- store sizes for SetCooldown
         debuffs.normalSize = normalSize
         debuffs.bigSize = bigSize
+        -- remove wrong data from UnitButton.lua (UpdateIndicators)
+        debuffs.width = nil
+        debuffs.height = nil
     end
 
     function debuffs:SetFont(font, ...)
@@ -270,9 +290,9 @@ function I:CreateDebuffs(parent)
         function frame:SetCooldown(start, duration, debuffType, texture, count, refreshing, isBigDebuff)
             frame:OriginalSetCooldown(start, duration, debuffType, texture, count, refreshing)
             if isBigDebuff then
-                frame:SetSize(unpack(debuffs.bigSize))
+                P:Size(frame, debuffs.bigSize[1], debuffs.bigSize[2])
             else
-                frame:SetSize(unpack(debuffs.normalSize))
+                P:Size(frame, debuffs.normalSize[1], debuffs.normalSize[2])
             end
         end
 
@@ -282,6 +302,11 @@ function I:CreateDebuffs(parent)
         --     frame:SetPoint("LEFT", debuffs[i-1], "RIGHT")
         -- end
 	end
+
+    function debuffs:UpdatePixelPerfect()
+        debuffs:OriginalSetSize(P:Scale(debuffs.normalSize[1]), P:Scale(debuffs.normalSize[2]))
+        P:Repoint(debuffs)
+    end
 end
 
 -------------------------------------------------
@@ -926,14 +951,14 @@ end
 function I:CreateShieldBar(parent)
     local shieldBar = CreateFrame("Frame", parent:GetName().."ShieldBar", parent.widget.overlayFrame, "BackdropTemplate")
     parent.indicators.shieldBar = shieldBar
-    shieldBar:SetSize(4, 4)
+    -- shieldBar:SetSize(4, 4)
     shieldBar:Hide()
     shieldBar:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8x8"})
     shieldBar:SetBackdropColor(0, 0, 0, 1)
 
     local tex = shieldBar:CreateTexture(nil, "ARTWORK")
-    tex:SetPoint("TOPLEFT", 1, -1)
-    tex:SetPoint("BOTTOMRIGHT", -1, 1)
+    P:Point(tex, "TOPLEFT", shieldBar, "TOPLEFT", 1, -1)
+    P:Point(tex, "BOTTOMRIGHT", shieldBar, "BOTTOMRIGHT", -1, 1)
 
     function shieldBar:SetColor(r, g, b, a)
         tex:SetColorTexture(r, g, b)
@@ -948,7 +973,13 @@ function I:CreateShieldBar(parent)
         else
             barWidth = maxWidth * percent
         end
-        shieldBar:SetWidth(barWidth)
+        P:Width(shieldBar, barWidth)
+    end
+
+    function shieldBar:UpdatePixelPerfect()
+        P:Resize(shieldBar)
+        P:Repoint(shieldBar)
+        P:Repoint(tex)
     end
 end
 

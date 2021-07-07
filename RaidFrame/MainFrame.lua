@@ -28,7 +28,7 @@ cellMainFrame:SetFrameStrata("LOW")
 local anchorFrame = CreateFrame("Frame", "CellAnchorFrame", cellMainFrame)
 Cell.frames.anchorFrame = anchorFrame
 anchorFrame:SetPoint("TOPLEFT", UIParent, "CENTER")
-anchorFrame:SetSize(20, 10)
+P:Size(anchorFrame, 20, 10)
 anchorFrame:SetMovable(true)
 anchorFrame:SetClampedToScreen(true)
 
@@ -52,7 +52,7 @@ Cell.frames.menuFrame = menuFrame
 menuFrame:SetAllPoints(anchorFrame)
 
 local options = Cell:CreateButton(menuFrame, "", "red", {20, 10}, false, true, nil, nil, nil, L["Options"])
-options:SetPoint("TOPLEFT", menuFrame)
+P:Point(options, "TOPLEFT", menuFrame)
 options:SetFrameStrata("MEDIUM")
 RegisterDragForMainFrame(options)
 options:SetScript("OnClick", function()
@@ -60,7 +60,7 @@ options:SetScript("OnClick", function()
 end)
 
 local raid = Cell:CreateButton(menuFrame, "", "blue", {20, 10}, false, true)
-raid:SetPoint("LEFT", options, "RIGHT", 1, 0)
+P:Point(raid, "LEFT", options, "RIGHT", 1, 0)
 raid:SetFrameStrata("MEDIUM")
 RegisterDragForMainFrame(raid)
 raid:SetScript("OnClick", function()
@@ -231,28 +231,28 @@ local function MainFrame_UpdateLayout(layout, which)
     layout = Cell.vars.currentLayoutTable
     
     if not which or which == "size" then
-        cellMainFrame:SetSize(unpack(layout["size"]))
+        P:Size(cellMainFrame, unpack(layout["size"]))
     end
 
     if not which or which == "anchor" then
-        cellMainFrame:ClearAllPoints()
-        raid:ClearAllPoints()
+        P:ClearPoints(cellMainFrame)
+        P:ClearPoints(raid)
 
         if layout["anchor"] == "BOTTOMLEFT" then
-            cellMainFrame:SetPoint("BOTTOMLEFT", anchorFrame, "TOPLEFT", 0, 4)
-            raid:SetPoint("BOTTOMLEFT", options, "BOTTOMRIGHT", 1, 0)
+            P:Point(cellMainFrame, "BOTTOMLEFT", anchorFrame, "TOPLEFT", 0, 4)
+            P:Point(raid, "BOTTOMLEFT", options, "BOTTOMRIGHT", 1, 0)
             
         elseif layout["anchor"] == "BOTTOMRIGHT" then
-            cellMainFrame:SetPoint("BOTTOMRIGHT", anchorFrame, "TOPRIGHT", 0, 4)
-            raid:SetPoint("BOTTOMRIGHT", options, "BOTTOMLEFT", -1, 0)
+            P:Point(cellMainFrame, "BOTTOMRIGHT", anchorFrame, "TOPRIGHT", 0, 4)
+            P:Point(raid, "BOTTOMRIGHT", options, "BOTTOMLEFT", -1, 0)
             
         elseif layout["anchor"] == "TOPLEFT" then
-            cellMainFrame:SetPoint("TOPLEFT", anchorFrame, "BOTTOMLEFT", 0, -4)
-            raid:SetPoint("TOPLEFT", options, "TOPRIGHT", 1, 0)
+            P:Point(cellMainFrame, "TOPLEFT", anchorFrame, "BOTTOMLEFT", 0, -4)
+            P:Point(raid, "TOPLEFT", options, "TOPRIGHT", 1, 0)
             
         elseif layout["anchor"] == "TOPRIGHT" then
-            cellMainFrame:SetPoint("TOPRIGHT", anchorFrame, "BOTTOMRIGHT", 0, -4)
-            raid:SetPoint("TOPRIGHT", options, "TOPLEFT", -1, 0)
+            P:Point(cellMainFrame, "TOPRIGHT", anchorFrame, "BOTTOMRIGHT", 0, -4)
+            P:Point(raid, "TOPRIGHT", options, "TOPLEFT", -1, 0)
         end
     end
 
@@ -260,3 +260,16 @@ local function MainFrame_UpdateLayout(layout, which)
     P:LoadPosition(anchorFrame, Cell.vars.currentLayoutTable["position"])
 end
 Cell:RegisterCallback("UpdateLayout", "MainFrame_UpdateLayout", MainFrame_UpdateLayout)
+
+local function UpdatePixelPerfect()
+    P:Resize(cellMainFrame)
+    P:Repoint(cellMainFrame)
+    P:Resize(anchorFrame)
+    options:UpdatePixelPerfect()
+    raid:UpdatePixelPerfect()
+
+    F:IterateAllUnitButtons(function(b)
+        b.func.UpdatePixelPerfect()
+    end)
+end
+Cell:RegisterCallback("UpdatePixelPerfect", "UpdatePixelPerfect", UpdatePixelPerfect)

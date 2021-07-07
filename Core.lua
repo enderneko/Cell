@@ -652,6 +652,7 @@ function eventFrame:PLAYER_LOGIN()
     -- update texture and font
     Cell:Fire("UpdateAppearance")
     Cell:UpdateOptionsFont(CellDB["appearance"]["optionsFontSizeOffset"])
+    Cell:Fire("UpdatePixelPerfect")
     -- update raid tools
     Cell:Fire("UpdateRaidTools")
     -- update raid debuff list

@@ -19,6 +19,12 @@ scaleSlider:SetPoint("TOPLEFT", scaleText, "BOTTOMLEFT", 5, -12)
 scaleSlider.afterValueChangedFn = function(value)
     CellDB["appearance"]["scale"] = value
     Cell:Fire("UpdateAppearance", "scale")
+    Cell:Fire("UpdatePixelPerfect")
+
+    local popup = Cell:CreateConfirmPopup(appearanceTab, 200, L["A UI reload is required.\nDo it now?"], function()
+        ReloadUI()
+    end, nil, true)
+    popup:SetPoint("TOPLEFT", 100, -70)
 end
 Cell:RegisterForCloseDropdown(scaleSlider)
 
@@ -402,6 +408,8 @@ local function UpdateAppearance(which)
         P:SetEffectiveScale(Cell.frames.changeLogsFrame)
         P:SetEffectiveScale(CellTooltip)
         P:SetEffectiveScale(CellScanningTooltip)
+        CellTooltip:UpdatePixelPerfect()
+        CellScanningTooltip:UpdatePixelPerfect()
     end
 end
 Cell:RegisterCallback("UpdateAppearance", "UpdateAppearance", UpdateAppearance)

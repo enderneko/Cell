@@ -2,6 +2,7 @@ local _, Cell = ...
 local L = Cell.L
 local F = Cell.funcs
 local I = Cell.iFuncs
+local P = Cell.pixelPerfectFuncs
 
 local DebuffTypeColor = DebuffTypeColor
 -------------------------------------------------
@@ -10,7 +11,7 @@ local DebuffTypeColor = DebuffTypeColor
 function I:CreateAura_BorderIcon(name, parent, borderSize)
     local frame = CreateFrame("Frame", name, parent, "BackdropTemplate")
     frame:Hide()
-    frame:SetSize(11, 11)
+    -- frame:SetSize(11, 11)
     frame:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8x8"})
     frame:SetBackdropColor(0, 0, 0, .75)
     
@@ -28,8 +29,8 @@ function I:CreateAura_BorderIcon(name, parent, borderSize)
     cooldown:SetHideCountdownNumbers(true)
 
     local iconFrame = CreateFrame("Frame", name.."IconFrame", frame)
-    iconFrame:SetPoint("TOPLEFT", borderSize, -borderSize)
-    iconFrame:SetPoint("BOTTOMRIGHT", -borderSize, borderSize)
+    P:Point(iconFrame, "TOPLEFT", frame, "TOPLEFT", borderSize, -borderSize)
+    P:Point(iconFrame, "BOTTOMRIGHT", frame, "BOTTOMRIGHT", -borderSize, borderSize)
     iconFrame:SetFrameLevel(cooldown:GetFrameLevel()+1)
 
     local icon = iconFrame:CreateTexture(name.."Icon", "ARTWORK")
@@ -43,17 +44,17 @@ function I:CreateAura_BorderIcon(name, parent, borderSize)
     local stack = textFrame:CreateFontString(nil, "OVERLAY", "CELL_FONT_STATUS")
     frame.stack = stack
     stack:SetJustifyH("RIGHT")
-    stack:SetPoint("TOPRIGHT", 2, 1)
+    P:Point(stack, "TOPRIGHT", textFrame, "TOPRIGHT", 2, 1)
 
     local duration = textFrame:CreateFontString(nil, "OVERLAY", "CELL_FONT_STATUS")
     frame.duration = duration
     duration:SetJustifyH("RIGHT")
-    duration:SetPoint("BOTTOMRIGHT", 2, -1)
+    P:Point(duration, "BOTTOMRIGHT", textFrame, "BOTTOMRIGHT", 2, -1)
 
     function frame:SetBorder(thickness)
-        iconFrame:ClearAllPoints()
-        iconFrame:SetPoint("TOPLEFT", thickness, -thickness)
-        iconFrame:SetPoint("BOTTOMRIGHT", -thickness, thickness)
+        P:ClearPoints(iconFrame)
+        P:Point(iconFrame, "TOPLEFT", frame, "TOPLEFT", thickness, -thickness)
+        P:Point(iconFrame, "BOTTOMRIGHT", frame, "BOTTOMRIGHT", -thickness, thickness)
     end
 
     function frame:SetFont(font, size, flags, horizontalOffset)
@@ -81,10 +82,10 @@ function I:CreateAura_BorderIcon(name, parent, borderSize)
             frame.duration:SetShadowOffset(0, 0)
             frame.duration:SetShadowColor(0, 0, 0, 0)
         end
-        frame.stack:ClearAllPoints()
-        frame.stack:SetPoint("TOPRIGHT", horizontalOffset, 1)
-        frame.duration:ClearAllPoints()
-        frame.duration:SetPoint("BOTTOMRIGHT", horizontalOffset, -1)
+        P:ClearPoints(frame.stack)
+        P:Point(frame.stack, "TOPRIGHT", textFrame, "TOPRIGHT", horizontalOffset, 1)
+        P:ClearPoints(frame.duration)
+        P:Point(frame.duration, "BOTTOMRIGHT", textFrame, "BOTTOMRIGHT", horizontalOffset, -1)
     end
 
     local ag = frame:CreateAnimationGroup()
@@ -140,6 +141,14 @@ function I:CreateAura_BorderIcon(name, parent, borderSize)
         end
     end
 
+    function frame:UpdatePixelPerfect()
+        P:Resize(frame)
+        P:Repoint(frame)
+        P:Repoint(iconFrame)
+        P:Repoint(stack)
+        P:Repoint(duration)
+    end
+
     return frame
 end
 
@@ -149,21 +158,21 @@ end
 function I:CreateAura_BarIcon(name, parent)
     local frame = CreateFrame("Frame", name, parent, "BackdropTemplate")
     frame:Hide()
-    frame:SetSize(11, 11)
+    -- frame:SetSize(11, 11)
     frame:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8x8"})
     frame:SetBackdropColor(0, 0, 0, 1)
 
     local icon = frame:CreateTexture(name.."Icon", "ARTWORK")
     frame.icon = icon
     icon:SetTexCoord(.12, .88, .12, .88)
-    icon:SetPoint("TOPLEFT", 1, -1)
-    icon:SetPoint("BOTTOMRIGHT", -1, 1)
+    P:Point(icon, "TOPLEFT", frame, "TOPLEFT", 1, -1)
+    P:Point(icon, "BOTTOMRIGHT", frame, "BOTTOMRIGHT", -1, 1)
     -- icon:SetDrawLayer("ARTWORK", 1)
 
     local cooldown = CreateFrame("StatusBar", name.."CooldownBar", frame)
     frame.cooldown = cooldown
-    cooldown:SetPoint("TOPLEFT", 1, -1)
-    cooldown:SetPoint("BOTTOMRIGHT", -1, 1)
+    cooldown:SetPoint("TOPLEFT", icon)
+    cooldown:SetPoint("BOTTOMRIGHT", icon)
     cooldown:SetOrientation("VERTICAL")
     cooldown:SetReverseFill(true)
     -- cooldown:SetFillStyle("REVERSE")
@@ -181,7 +190,7 @@ function I:CreateAura_BarIcon(name, parent)
     end)
 
     local spark = cooldown:CreateTexture(nil, "OVERLAY")
-    spark:SetHeight(1)
+    P:Height(spark, 1)
     spark:SetBlendMode("ADD")
     spark:SetPoint("TOPLEFT", cooldown:GetStatusBarTexture(), "BOTTOMLEFT")
     spark:SetPoint("TOPRIGHT", cooldown:GetStatusBarTexture(), "BOTTOMRIGHT")
@@ -212,12 +221,12 @@ function I:CreateAura_BarIcon(name, parent)
     local stack = textFrame:CreateFontString(nil, "OVERLAY", "CELL_FONT_STATUS")
     frame.stack = stack
     stack:SetJustifyH("RIGHT")
-    stack:SetPoint("TOPRIGHT", 2, 0)
+    P:Point(stack, "TOPRIGHT", textFrame, "TOPRIGHT", 2, 0)
 
     local duration = textFrame:CreateFontString(nil, "OVERLAY", "CELL_FONT_STATUS")
     frame.duration = duration
     duration:SetJustifyH("RIGHT")
-    duration:SetPoint("BOTTOMRIGHT", 2, 0)
+    P:Point(duration, "BOTTOMRIGHT", textFrame, "BOTTOMRIGHT", 2, 0)
     duration:Hide()
 
     function frame:SetFont(font, size, flags, horizontalOffset)
@@ -245,10 +254,10 @@ function I:CreateAura_BarIcon(name, parent)
             duration:SetShadowOffset(0, 0)
             duration:SetShadowColor(0, 0, 0, 0)
         end
-        stack:ClearAllPoints()
-        stack:SetPoint("TOPRIGHT", horizontalOffset, 0)
-        duration:ClearAllPoints()
-        duration:SetPoint("BOTTOMRIGHT", horizontalOffset, 0)
+        P:ClearPoints(stack)
+        P:Point(stack, "TOPRIGHT", textFrame, "TOPRIGHT", horizontalOffset, 0)
+        P:ClearPoints(duration)
+        P:Point(duration, "BOTTOMRIGHT", textFrame, "BOTTOMRIGHT", horizontalOffset, 0)
     end
 
     local ag = frame:CreateAnimationGroup()
@@ -315,6 +324,16 @@ function I:CreateAura_BarIcon(name, parent)
             duration:Hide()
             cooldown:Show()
         end
+    end
+
+    function frame:UpdatePixelPerfect()
+        P:Resize(frame)
+        P:Repoint(frame)
+        P:Repoint(icon)
+        P:Repoint(cooldown)
+        P:Resize(spark)
+        P:Repoint(stack)
+        P:Repoint(duration)
     end
 
     return frame
@@ -420,15 +439,15 @@ end
 -------------------------------------------------
 function I:CreateAura_Rect(name, parent)
     local frame = CreateFrame("Frame", name, parent, "BackdropTemplate")
-    frame:SetSize(11, 4)
+    -- frame:SetSize(11, 4)
     frame:Hide()
     frame.indicatorType = "rect"
     frame:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8x8"})
     frame:SetBackdropColor(0, 0, 0, 1)
 
     local tex = frame:CreateTexture(nil, "ARTWORK")
-    tex:SetPoint("TOPLEFT", 1, -1)
-    tex:SetPoint("BOTTOMRIGHT", -1, 1)
+    P:Point(tex, "TOPLEFT", frame, "TOPLEFT", 1, -1)
+    P:Point(tex, "BOTTOMRIGHT", frame, "BOTTOMRIGHT", -1, 1)
 
     function frame:SetCooldown(start, duration, debuffType, texture, count)
         if duration == 0 then
@@ -453,6 +472,12 @@ function I:CreateAura_Rect(name, parent)
 
     function frame:SetColors(colors)
         frame.colors = colors
+    end
+
+    function frame:UpdatePixelPerfect()
+        P:Resize(frame)
+        P:Repoint(frame)
+        P:Repoint(tex)
     end
         
     return frame
@@ -504,7 +529,7 @@ end
 -------------------------------------------------
 function I:CreateAura_Icons(name, parent, num)
     local icons = CreateFrame("Frame", name, parent)
-    icons:SetSize(11, 11)
+    -- icons:SetSize(11, 11)
     icons:Hide()
     icons.indicatorType = "icons"
 
@@ -513,7 +538,7 @@ function I:CreateAura_Icons(name, parent, num)
     function icons:SetSize(width, height)
         icons:OriginalSetSize(width, height)
         for i = 1, num do
-            icons[i]:SetSize(width, height)
+            P:Size(icons[i], width, height)
         end
     end
 
@@ -541,8 +566,8 @@ function I:CreateAura_Icons(name, parent, num)
         end
         
         for i = 2, num do
-            icons[i]:ClearAllPoints()
-            icons[i]:SetPoint(point1, icons[i-1], point2)
+            P:ClearPoints(icons[i])
+            P:Point(icons[i], point1, icons[i-1], point2)
         end
     end
 
@@ -552,15 +577,23 @@ function I:CreateAura_Icons(name, parent, num)
         icons[i] = frame
 
         if i == 1 then
-            frame:SetPoint("TOPLEFT")
+            P:Point(frame, "TOPLEFT")
         else
-            frame:SetPoint("RIGHT", icons[i-1], "LEFT")
+            P:Point(frame, "RIGHT", icons[i-1], "LEFT")
         end
     end
 
     function icons:ShowDuration(show)
         for i = 1, num do
             icons[i]:ShowDuration(show)
+        end
+    end
+
+    function icons:UpdatePixelPerfect()
+        P:Resize(icons)
+        P:Repoint(icons)
+        for i = 1, num do
+            icons[i]:UpdatePixelPerfect()
         end
     end
 

@@ -2,6 +2,7 @@ local _, Cell = ...
 local L = Cell.L
 local F = Cell.funcs
 local I = Cell.iFuncs
+local P = Cell.pixelPerfectFuncs
 
 -- local LibCLHealth = LibStub("LibCombatLogHealth-1.0")
 
@@ -117,8 +118,8 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                 local indicator = b.indicators[t["indicatorName"]] or I:CreateIndicator(b, t)
                 -- update position
                 if t["position"] then
-                    indicator:ClearAllPoints()
-                    indicator:SetPoint(t["position"][1], b, t["position"][2], t["position"][3], t["position"][4])
+                    P:ClearPoints(indicator)
+                    P:Point(indicator, t["position"][1], b, t["position"][2], t["position"][3], t["position"][4])
                 end
                 -- update frameLevel
                 if t["frameLevel"] then
@@ -127,6 +128,9 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                 -- update size
                 if t["size"] then
                     indicator:SetSize(unpack(t["size"]))
+                    -- for pixel perfect
+                    indicator.width = t["size"][1]
+                    indicator.height = t["size"][2]
                 end
                 -- update border
                 if t["border"] then
@@ -134,7 +138,7 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                 end
                 -- update height
                 if t["height"] then
-                    indicator:SetHeight(t["height"])
+                    P:Height(indicator, t["height"])
                 end
                 -- update height
                 if t["textWidth"] then
@@ -260,8 +264,8 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
         elseif setting == "position" then
             F:IterateAllUnitButtons(function(b)
                 local indicator = b.indicators[indicatorName]
-                indicator:ClearAllPoints()
-                indicator:SetPoint(value[1], b, value[2], value[3], value[4])
+                P:ClearPoints(indicator)
+                P:Point(indicator, value[1], b, value[2], value[3], value[4])
             end)
         elseif setting == "frameLevel" then
             F:IterateAllUnitButtons(function(b)
@@ -272,6 +276,9 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
             F:IterateAllUnitButtons(function(b)
                 local indicator = b.indicators[indicatorName]
                 indicator:SetSize(unpack(value))
+                -- for pixel perfect
+                indicator.width = value[1]
+                indicator.height = value[2]
                 if indicatorName == "debuffs" then
                     -- update debuffs' normal/big icon sizes
                     UnitButton_UpdateAuras(b)
@@ -286,7 +293,7 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
         elseif setting == "height" then
             F:IterateAllUnitButtons(function(b)
                 local indicator = b.indicators[indicatorName]
-                indicator:SetHeight(value)
+                P:Height(indicator, value)
             end)
         elseif setting == "textWidth" then
             F:IterateAllUnitButtons(function(b)
@@ -369,11 +376,14 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
             F:IterateAllUnitButtons(function(b)
                 local indicator = I:CreateIndicator(b, value)
                 -- update position
-                indicator:ClearAllPoints()
-                indicator:SetPoint(value["position"][1], b, value["position"][2], value["position"][3], value["position"][4])
+                P:ClearPoints(indicator)
+                P:Point(indicator, value["position"][1], b, value["position"][2], value["position"][3], value["position"][4])
                 -- update size
                 if value["size"] then
                     indicator:SetSize(unpack(value["size"]))
+                    -- for pixel perfect
+                    indicator.width = value["size"][1]
+                    indicator.height = value["size"][2]
                 end
                 -- update orientation
                 if value["orientation"] then
@@ -1787,15 +1797,17 @@ function F:UnitButton_OnLoad(button)
     -- background:SetVertexColor(0, 0, 0, 1)
 
     -- backdrop
-    button:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8x8", edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = 1})
+    button:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8x8", edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = P:Scale(1)})
     button:SetBackdropColor(0, 0, 0, 1)
     button:SetBackdropBorderColor(0, 0, 0, 1)
     
     -- healthbar
     local healthBar = CreateFrame("StatusBar", name.."HealthBar", button)
     button.widget.healthBar = healthBar
-    healthBar:SetPoint("TOPLEFT", 1, -1)
-    healthBar:SetPoint("BOTTOMRIGHT", -1, 4)
+    -- healthBar:SetPoint("TOPLEFT", 1, -1)
+    -- healthBar:SetPoint("BOTTOMRIGHT", -1, 4)
+    P:Point(healthBar, "TOPLEFT", button, "TOPLEFT", 1, -1)
+    P:Point(healthBar, "BOTTOMRIGHT", button, "BOTTOMRIGHT", -1, 4)
     healthBar:SetStatusBarTexture(Cell.vars.texture)
     healthBar:GetStatusBarTexture():SetDrawLayer("ARTWORK", -6)
     healthBar:SetFrameLevel(5)
@@ -1803,49 +1815,44 @@ function F:UnitButton_OnLoad(button)
     -- hp loss
     local healthBarLoss = button:CreateTexture(name.."HealthBarLoss", "ARTWORK", nil , -7)
     button.widget.healthBarLoss = healthBarLoss
-    healthBarLoss:SetPoint("TOPRIGHT", healthBar)
-    healthBarLoss:SetPoint("BOTTOMLEFT", healthBar:GetStatusBarTexture(), "BOTTOMRIGHT")
+    -- healthBarLoss:SetPoint("TOPRIGHT", healthBar)
+    -- healthBarLoss:SetPoint("BOTTOMLEFT", healthBar:GetStatusBarTexture(), "BOTTOMRIGHT")
+    P:Point(healthBarLoss, "TOPRIGHT", healthBar)
+    P:Point(healthBarLoss, "BOTTOMLEFT", healthBar:GetStatusBarTexture(), "BOTTOMRIGHT")
     healthBarLoss:SetTexture(Cell.vars.texture)
-
-    -- healthbar background
-    -- local healthBarBackground = button:CreateTexture(name.."HealthBarBackground", "ARTWORK", nil , -7)
-    -- button.widget.healthBarBackground = healthBarBackground
-    -- healthBarBackground:SetPoint("TOPRIGHT", healthBar)
-    -- healthBarBackground:SetPoint("BOTTOMLEFT", healthBar:GetStatusBarTexture(), "BOTTOMRIGHT")
-    -- healthBarBackground:SetTexture(Cell.vars.texture)
 
     -- powerbar
     local powerBar = CreateFrame("StatusBar", name.."PowerBar", button)
     button.widget.powerBar = powerBar
-    powerBar:SetPoint("TOPLEFT", healthBar, "BOTTOMLEFT", 0, -1)
-    powerBar:SetPoint("BOTTOMRIGHT", -1, 1)
+    -- powerBar:SetPoint("TOPLEFT", healthBar, "BOTTOMLEFT", 0, -1)
+    -- powerBar:SetPoint("BOTTOMRIGHT", -1, 1)
+    P:Point(powerBar, "TOPLEFT", healthBar, "BOTTOMLEFT", 0, -1)
+    P:Point(powerBar, "BOTTOMRIGHT", button, "BOTTOMRIGHT", -1, 1)
     powerBar:SetStatusBarTexture(Cell.vars.texture)
     powerBar:GetStatusBarTexture():SetDrawLayer("ARTWORK", -6)
 
     local gapTexture = button:CreateTexture(nil, "BORDER")
-    gapTexture:SetPoint("BOTTOMLEFT", powerBar, "TOPLEFT")
-    gapTexture:SetPoint("BOTTOMRIGHT", powerBar, "TOPRIGHT")
-    gapTexture:SetHeight(1)
+    -- gapTexture:SetPoint("BOTTOMLEFT", powerBar, "TOPLEFT")
+    -- gapTexture:SetPoint("BOTTOMRIGHT", powerBar, "TOPRIGHT")
+    -- gapTexture:SetHeight(1)
+    P:Point(gapTexture, "BOTTOMLEFT", powerBar, "TOPLEFT")
+    P:Point(gapTexture, "BOTTOMRIGHT", powerBar, "TOPRIGHT")
+    P:Height(gapTexture, 1)
     gapTexture:SetColorTexture(0, 0, 0, 1)
 
     -- power loss
     local powerBarLoss = button:CreateTexture(name.."PowerBarLoss", "ARTWORK", nil , -7)
     button.widget.powerBarLoss = powerBarLoss
-    powerBarLoss:SetPoint("TOPRIGHT", powerBar)
-    powerBarLoss:SetPoint("BOTTOMLEFT", powerBar:GetStatusBarTexture(), "BOTTOMRIGHT")
+    -- powerBarLoss:SetPoint("TOPRIGHT", powerBar)
+    -- powerBarLoss:SetPoint("BOTTOMLEFT", powerBar:GetStatusBarTexture(), "BOTTOMRIGHT")
+    P:Point(powerBarLoss, "TOPRIGHT", powerBar)
+    P:Point(powerBarLoss, "BOTTOMLEFT", powerBar:GetStatusBarTexture(), "BOTTOMRIGHT")
     powerBarLoss:SetTexture(Cell.vars.texture)
 
-    -- -- powerbar background
-    -- local powerBarBackground = button:CreateTexture(name.."PowerBarBackground", "ARTWORK", nil , -7)
-    -- button.widget.powerBarBackground = powerBarBackground
-    -- powerBarBackground:SetPoint("TOPRIGHT", powerBar)
-    -- powerBarBackground:SetPoint("BOTTOMLEFT", powerBar:GetStatusBarTexture(), "BOTTOMRIGHT")
-    -- powerBarBackground:SetTexture(Cell.vars.texture)
-
     button.func.SetPowerHeight = function(height)
-        healthBar:ClearAllPoints()
-        healthBar:SetPoint("TOPLEFT", 1, -1)
-        healthBar:SetPoint("BOTTOMRIGHT", -1, height==0 and 1 or height+2)
+        P:ClearPoints(healthBar)
+        P:Point(healthBar, "TOPLEFT", button, "TOPLEFT", 1, -1)
+        P:Point(healthBar, "BOTTOMRIGHT", button, "BOTTOMRIGHT", -1, height==0 and 1 or height+2)
         if height == 0 then
             button:UnregisterEvent("UNIT_POWER_FREQUENT")
             button:UnregisterEvent("UNIT_MAXPOWER")
@@ -1872,8 +1879,8 @@ function F:UnitButton_OnLoad(button)
     -- incoming heal
     local incomingHeal = healthBar:CreateTexture(name.."IncomingHealBar", "ARTWORK", nil, -6)
     button.widget.incomingHeal = incomingHeal
-    incomingHeal:SetPoint("TOPLEFT", healthBar:GetStatusBarTexture(), "TOPRIGHT")
-    incomingHeal:SetPoint("BOTTOMLEFT", healthBar:GetStatusBarTexture(), "BOTTOMRIGHT")
+    P:Point(incomingHeal, "TOPLEFT", healthBar:GetStatusBarTexture(), "TOPRIGHT")
+    P:Point(incomingHeal, "BOTTOMLEFT", healthBar:GetStatusBarTexture(), "BOTTOMRIGHT")
     incomingHeal:SetTexture(Cell.vars.texture)
     incomingHeal:SetAlpha(.4)
     incomingHeal:Hide()
@@ -1881,8 +1888,8 @@ function F:UnitButton_OnLoad(button)
     -- shield bar
     local shieldBar = healthBar:CreateTexture(name.."ShieldBar", "ARTWORK", nil, -7)
     button.widget.shieldBar = shieldBar
-    shieldBar:SetPoint("TOPLEFT", healthBar:GetStatusBarTexture(), "TOPRIGHT")
-    shieldBar:SetPoint("BOTTOMLEFT", healthBar:GetStatusBarTexture(), "BOTTOMRIGHT")
+    P:Point(shieldBar, "TOPLEFT", healthBar:GetStatusBarTexture(), "TOPRIGHT")
+    P:Point(shieldBar, "BOTTOMLEFT", healthBar:GetStatusBarTexture(), "BOTTOMRIGHT")
     shieldBar:SetTexture("Interface\\AddOns\\Cell\\Media\\shield.tga", "REPEAT", "REPEAT")
     shieldBar:SetHorizTile(true)
     shieldBar:SetVertTile(true)
@@ -1894,16 +1901,16 @@ function F:UnitButton_OnLoad(button)
     button.widget.overShieldGlow = overShieldGlow
     overShieldGlow:SetTexture("Interface\\RaidFrame\\Shield-Overshield")
     overShieldGlow:SetBlendMode("ADD")
-    overShieldGlow:SetPoint("BOTTOMLEFT", healthBar, "BOTTOMRIGHT", -4, 0)
-    overShieldGlow:SetPoint("TOPLEFT", healthBar, "TOPRIGHT", -4, 0)
+    P:Point(overShieldGlow, "BOTTOMLEFT", healthBar, "BOTTOMRIGHT", -4, 0)
+    P:Point(overShieldGlow, "TOPLEFT", healthBar, "TOPRIGHT", -4, 0)
     overShieldGlow:SetWidth(8)
     overShieldGlow:Hide()
 
     -- absorbs bar
     local absorbsBar = healthBar:CreateTexture(name.."AbsorbsBar", "ARTWORK", nil, -6)
     button.widget.absorbsBar = absorbsBar
-    absorbsBar:SetPoint("TOPRIGHT", healthBar:GetStatusBarTexture())
-    absorbsBar:SetPoint("BOTTOMRIGHT", healthBar:GetStatusBarTexture())
+    P:Point(absorbsBar, "TOPRIGHT", healthBar:GetStatusBarTexture())
+    P:Point(absorbsBar, "BOTTOMRIGHT", healthBar:GetStatusBarTexture())
     absorbsBar:SetTexture("Interface\\AddOns\\Cell\\Media\\shield.tga", "REPEAT", "REPEAT")
     absorbsBar:SetHorizTile(true)
     absorbsBar:SetVertTile(true)
@@ -1917,8 +1924,8 @@ function F:UnitButton_OnLoad(button)
     button.widget.damageFlashTex = damageFlashTex
     damageFlashTex:SetTexture("Interface\\BUTTONS\\WHITE8X8")
     damageFlashTex:SetVertexColor(1, 1, 1)
-    damageFlashTex:SetPoint("TOPLEFT", healthBar:GetStatusBarTexture(), "TOPRIGHT")
-    damageFlashTex:SetPoint("BOTTOMLEFT", healthBar:GetStatusBarTexture(), "BOTTOMRIGHT")
+    P:Point(damageFlashTex, "TOPLEFT", healthBar:GetStatusBarTexture(), "TOPRIGHT")
+    P:Point(damageFlashTex, "BOTTOMLEFT", healthBar:GetStatusBarTexture(), "BOTTOMRIGHT")
     damageFlashTex:Hide()
 
     -- damage flash animation group
@@ -1972,9 +1979,9 @@ function F:UnitButton_OnLoad(button)
     button.widget.targetHighlight = targetHighlight
     targetHighlight:EnableMouse(false)
     targetHighlight:SetFrameLevel(3)
-    targetHighlight:SetBackdrop({edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = 1})
-    targetHighlight:SetPoint("TOPLEFT", -1, 1)
-    targetHighlight:SetPoint("BOTTOMRIGHT", 1, -1)
+    targetHighlight:SetBackdrop({edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = P:Scale(1)})
+    P:Point(targetHighlight, "TOPLEFT", button, "TOPLEFT", -1, 1)
+    P:Point(targetHighlight, "BOTTOMRIGHT", button, "BOTTOMRIGHT", 1, -1)
     targetHighlight:Hide()
     
     -- mouseover highlight
@@ -1982,9 +1989,9 @@ function F:UnitButton_OnLoad(button)
     button.widget.mouseoverHighlight = mouseoverHighlight
     mouseoverHighlight:EnableMouse(false)
     mouseoverHighlight:SetFrameLevel(4)
-    mouseoverHighlight:SetBackdrop({edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = 1})
-    mouseoverHighlight:SetPoint("TOPLEFT", -1, 1)
-    mouseoverHighlight:SetPoint("BOTTOMRIGHT", 1, -1)
+    mouseoverHighlight:SetBackdrop({edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = P:Scale(1)})
+    P:Point(mouseoverHighlight, "TOPLEFT", button, "TOPLEFT", -1, 1)
+    P:Point(mouseoverHighlight, "BOTTOMRIGHT", button, "BOTTOMRIGHT", 1, -1)
     mouseoverHighlight:Hide()
 
     button.func.UpdateHighlightColor = function()
@@ -1995,18 +2002,18 @@ function F:UnitButton_OnLoad(button)
     button.func.UpdateHighlightSize = function()
         local size = CellDB["appearance"]["highlightSize"]
         
-        targetHighlight:ClearAllPoints()
-        mouseoverHighlight:ClearAllPoints()
+        P:ClearPoints(targetHighlight)
+        P:ClearPoints(mouseoverHighlight)
         
         if size ~= 0 then
             highlightEnabled = true
-            targetHighlight:SetPoint("TOPLEFT", -size, size)
-            targetHighlight:SetPoint("BOTTOMRIGHT", size, -size)
-            targetHighlight:SetBackdrop({edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = size})
+            P:Point(targetHighlight, "TOPLEFT", button, "TOPLEFT", -size, size)
+            P:Point(targetHighlight, "BOTTOMRIGHT", button, "BOTTOMRIGHT", size, -size)
+            targetHighlight:SetBackdrop({edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = P:Scale(size)})
         
-            mouseoverHighlight:SetPoint("TOPLEFT", -size, size)
-            mouseoverHighlight:SetPoint("BOTTOMRIGHT", size, -size)
-            mouseoverHighlight:SetBackdrop({edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = size})
+            P:Point(mouseoverHighlight, "TOPLEFT", button, "TOPLEFT", -size, size)
+            P:Point(mouseoverHighlight, "BOTTOMRIGHT", button, "BOTTOMRIGHT", size, -size)
+            mouseoverHighlight:SetBackdrop({edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = P:Scale(size)})
 
             -- update color
             targetHighlight:SetBackdropBorderColor(unpack(CellDB["appearance"]["targetColor"]))
@@ -2107,4 +2114,38 @@ function F:UnitButton_OnLoad(button)
     button:SetScript("OnEvent", UnitButton_OnEvent)
     -- button:SetScript("OnSizeChanged", UnitButton_OnSizeChanged)
     button:RegisterForClicks("AnyDown")
+
+    -- pixel perfect
+    button.func.UpdatePixelPerfect = function()
+        button:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8x8", edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = P:Scale(1)})
+        button:SetBackdropColor(0, 0, 0, 1)
+        button:SetBackdropBorderColor(0, 0, 0, 1)
+        P:Resize(button)
+
+        P:Repoint(healthBar)
+        P:Repoint(healthBarLoss)
+        P:Repoint(powerBar)
+        P:Repoint(powerBarLoss)
+        P:Repoint(gapTexture)
+        P:Resize(gapTexture)
+
+        P:Repoint(incomingHeal)
+        P:Repoint(shieldBar)
+        P:Repoint(overShieldGlow)
+        P:Repoint(absorbsBar)
+        P:Repoint(damageFlashTex)
+        
+        P:Repoint(targetHighlight)
+        targetHighlight:SetBackdrop({edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = P:Scale(1)})
+        P:Repoint(mouseoverHighlight)
+        mouseoverHighlight:SetBackdrop({edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = P:Scale(1)})
+        button.func.UpdateHighlightColor()
+
+        -- indicators
+        for _, i in pairs(button.indicators) do
+            if i.UpdatePixelPerfect then
+               i:UpdatePixelPerfect() 
+            end
+        end
+    end
 end
