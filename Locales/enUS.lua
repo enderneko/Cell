@@ -41,6 +41,11 @@ select(2, ...).L = setmetatable({
     ["marksTips"] = "\n|rTarget marker\nLeft-Click: |cffffffffset raid marker on target|r\nRight-Click: |cfffffffflock raid marker on target (in your group)|r",
 
     ["CHANGE LOGS"] = [[
+        <h1>r51-release (Jul 7, 2021, 13:50 GMT+8)</h1>
+        <p>* Updated Cell scaling. Cell main frame is now pixel perfect.</p>
+        <p>* Updated RaidDebuffs.</p>
+        <br/>
+
         <h1>r50-release (May 1, 2021, 03:20 GMT+8)</h1>
         <h2>Indicators</h2>
         <P>+ New indicators: Status Icon, Target Counter (BG &amp; Arena only).</P>
