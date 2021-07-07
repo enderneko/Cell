@@ -781,7 +781,7 @@ local function ShowIndicatorSettings(id)
         -- end
     else
         if indicatorType == "icon" then
-            settingsTable = {"enabled", "auras", "checkbutton2:showDuration", "position", "frameLevel", "size-square", "font"}
+            settingsTable = {"enabled", "auras", "checkbutton2:showDuration:"..L["Show duration text instead of icon animation"], "position", "frameLevel", "size-square", "font"}
         elseif indicatorType == "text" then
             settingsTable = {"enabled", "auras", "colors", "position", "frameLevel", "font"}
         elseif indicatorType == "bar" then
@@ -789,7 +789,7 @@ local function ShowIndicatorSettings(id)
         elseif indicatorType == "rect" then
             settingsTable = {"enabled", "auras", "colors", "position", "frameLevel", "size"}
         elseif indicatorType == "icons" then
-            settingsTable = {"enabled", "auras", "checkbutton2:showDuration", "num:10", "orientation", "position", "frameLevel", "size-square", "font"}
+            settingsTable = {"enabled", "auras", "checkbutton2:showDuration:"..L["Show duration text instead of icon animation"], "num:10", "orientation", "position", "frameLevel", "size-square", "font"}
         end
         -- castByMe
         if currentLayoutTable["indicators"][id]["auraType"] == "buff" then
@@ -825,8 +825,8 @@ local function ShowIndicatorSettings(id)
         
         -- echo
         if string.find(currentSetting, "checkbutton") then
-            local setting = select(2,string.split(":", currentSetting))
-            w:SetDBValue(setting, currentLayoutTable["indicators"][id][setting])
+            local _, setting, tooltip = string.split(":", currentSetting)
+            w:SetDBValue(setting, currentLayoutTable["indicators"][id][setting], tooltip)
         elseif currentSetting == "auras" then
             w:SetDBValue(L[F:UpperFirst(currentLayoutTable["indicators"][id]["auraType"]).." List"], currentLayoutTable["indicators"][id]["auras"], indicatorType == "icons" or indicatorType == "bars")
         elseif currentSetting == "blacklist" then

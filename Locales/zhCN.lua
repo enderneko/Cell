@@ -309,6 +309,7 @@ L["sec"] = "秒"
 L["dispellableByMe"] = "只显示我能驱散的减益"
 L["castByMe"] = "只显示我施放的增益"
 L["showDuration"] = "显示持续时间文本"
+L["Show duration text instead of icon animation"] = "用持续时间文本取代图标动画"
 L["enableHighlight"] = "高亮单位按钮"
 L["onlyShowTopGlow"] = "仅为当前减益显示高亮效果"
 

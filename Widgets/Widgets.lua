@@ -207,7 +207,7 @@ end
 -----------------------------------------
 -- tooltip
 -----------------------------------------
-local function SetTooltip(widget, anchor, x, y, ...)
+function addon:SetTooltip(widget, anchor, x, y, ...)
     local tooltips = {...}
 
     if #tooltips ~= 0 then
@@ -407,7 +407,7 @@ function addon:CreateButton(parent, text, buttonColor, size, noBorder, noBackgro
     -- click sound
     b:SetScript("PostClick", function() PlaySound(SOUNDKIT.U_CHAT_SCROLL_BUTTON) end)
 
-    SetTooltip(b, "ANCHOR_TOPLEFT", 0, 3, ...)
+    addon:SetTooltip(b, "ANCHOR_TOPLEFT", 0, 3, ...)
 
     -- texture
     function b:SetTexture(tex, texSize, point)
@@ -570,7 +570,7 @@ function addon:CreateCheckButton(parent, label, onClick, ...)
         cb:SetHitRectInsets(0, -cb.label:GetStringWidth()-5, 0, 0)
     end
 
-    SetTooltip(cb, "ANCHOR_TOPLEFT", 0, 2, ...)
+    addon:SetTooltip(cb, "ANCHOR_TOPLEFT", 0, 2, ...)
 
     return cb
 end

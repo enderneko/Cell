@@ -1257,9 +1257,12 @@ local function CreateSetting_CheckButton(parent)
         end
 
         -- show db value
-        function widget:SetDBValue(settingName, checked)
+        function widget:SetDBValue(settingName, checked, tooltip)
             widget.cb:SetChecked(checked)
             widget.cb:SetText(L[settingName])
+            if tooltip then
+                addon:SetTooltip(widget.cb, "ANCHOR_TOPLEFT", 0, 2, L[settingName], string.split("|", tooltip))
+            end
         end
     else
         widget = settingWidgets["checkbutton"]
@@ -1287,9 +1290,12 @@ local function CreateSetting_CheckButton2(parent)
         end
 
         -- show db value
-        function widget:SetDBValue(settingName, checked)
+        function widget:SetDBValue(settingName, checked, tooltip)
             widget.cb:SetChecked(checked)
             widget.cb:SetText(L[settingName])
+            if tooltip then
+                addon:SetTooltip(widget.cb, "ANCHOR_TOPLEFT", 0, 2, L[settingName], string.split("|", tooltip))
+            end
         end
     else
         widget = settingWidgets["checkbutton2"]
