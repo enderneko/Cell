@@ -41,6 +41,10 @@ select(2, ...).L = setmetatable({
     ["marksTips"] = "\n|rTarget marker\nLeft-Click: |cffffffffset raid marker on target|r\nRight-Click: |cfffffffflock raid marker on target (in your group)|r",
 
     ["CHANGE LOGS"] = [[
+        <h1>r53-release (Jul 8, 2021, 16:48 GMT+8)</h1>
+        <p>* Updated RaidDebuffs (SoD).</p>
+        <br/>
+
         <h1>r52-release (Jul 8, 2021, 5:50 GMT+8)</h1>
         <p>- Removed an invalid spell from Click-Castings: 204293 "Spirit Link" (restoration shaman pvp talent).</p>
         <p>* Updated zhTW.</p>

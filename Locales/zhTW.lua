@@ -219,8 +219,7 @@ L["Shine"] = "閃耀"
 L["Show Battle Res Timer"] = "顯示戰復計時器"
 L["show Cell options frame"] = "打開 Cell 設定選項"
 L["Show Current Instance"] = "顯示當前副本"
---[[Translation missing --]]
---[[ L["Show duration text instead of icon animation"] = "Show duration text instead of icon animation"--]] 
+L["Show duration text instead of icon animation"] = "顯示持續時間數字而不是圖示動畫效果"
 L["Show Marks Bar"] = "顯示標記列"
 L["Show Party"] = "5人隊伍時要顯示"
 L["Show Party Pets"] = "顯示隊伍寵物"
