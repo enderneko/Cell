@@ -146,7 +146,7 @@ function addon:StylizeFrame(frame, color, borderColor)
     if not color then color = {.1, .1, .1, .9} end
     if not borderColor then borderColor = {0, 0, 0, 1} end
 
-    frame:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8x8", edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = 1})
+    frame:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8x8", edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = P:Scale(1)})
     frame:SetBackdropColor(unpack(color))
     frame:SetBackdropBorderColor(unpack(borderColor))
 end
@@ -1006,7 +1006,7 @@ function addon:CreateStatusBar(parent, width, height, maxValue, smooth, func, sh
     P:Point(border, "BOTTOMRIGHT", bar, "BOTTOMRIGHT", 1, -1)
 
     P:Width(bar, width)
-    P:Width(bar, height)
+    P:Height(bar, height)
     bar:SetBackdrop({bgFile="Interface\\Buttons\\WHITE8x8"})
     bar:SetBackdropColor(.07, .07, .07, .9)
     -- bar:SetBackdropBorderColor(0, 0, 0, 1)
