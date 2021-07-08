@@ -1,6 +1,7 @@
 local _, Cell = ...
 local L = Cell.L
 local F = Cell.funcs
+local P = Cell.pixelPerfectFuncs
 
 -------------------------------------------------
 -- battle res
@@ -8,7 +9,7 @@ local F = Cell.funcs
 local battleResFrame = CreateFrame("Frame", "CellBattleResFrame", Cell.frames.mainFrame, "BackdropTemplate")
 Cell.frames.battleResFrame = battleResFrame
 -- battleResFrame:SetPoint("BOTTOMLEFT", Cell.frames.mainFrame, "TOPLEFT", 0, 17)
-battleResFrame:SetSize(75, 20)
+P:Size(battleResFrame, 75, 20)
 battleResFrame:Hide()
 Cell:StylizeFrame(battleResFrame, {.1, .1, .1, .7}, {0, 0, 0, .5})
 
@@ -27,8 +28,8 @@ battleResFrame.onMenuShow:SetScript("OnPlay", function()
     battleResFrame.onMenuHide:Stop()
 end)
 battleResFrame.onMenuShow:SetScript("OnFinished", function()
-    battleResFrame:ClearAllPoints()
-    battleResFrame:SetPoint(point, relativeTo, relativePoint, 0, onShow)
+    P:ClearPoints(battleResFrame)
+    P:Point(battleResFrame, point, relativeTo, relativePoint, 0, onShow)
 end)
 
 function battleResFrame:OnMenuShow()
@@ -58,8 +59,8 @@ battleResFrame.onMenuHide:SetScript("OnPlay", function()
     battleResFrame.onMenuShow:Stop()
 end)
 battleResFrame.onMenuHide:SetScript("OnFinished", function()
-    battleResFrame:ClearAllPoints()
-    battleResFrame:SetPoint(point, relativeTo, relativePoint, 0, onHide)
+    P:ClearPoints(battleResFrame)
+    P:Point(battleResFrame, point, relativeTo, relativePoint, 0, onHide)
 end)
 
 function battleResFrame:OnMenuHide()
@@ -85,8 +86,8 @@ end
 -- Bar
 ---------------------------------
 local bar = Cell:CreateStatusBar(battleResFrame, 10, 2, 100, false, nil, false, "Interface\\AddOns\\Cell\\Media\\statusbar", Cell:GetPlayerClassColorTable())
-bar:SetPoint("BOTTOMLEFT", battleResFrame, 1, 1)
-bar:SetPoint("BOTTOMRIGHT", battleResFrame, -1, 1)
+P:Point(bar, "BOTTOMLEFT", battleResFrame, "BOTTOMLEFT", 1, 1)
+P:Point(bar, "BOTTOMRIGHT", battleResFrame, "BOTTOMRIGHT", -1, 1)
 -- bar:SetMinMaxValues(0, 100)
 -- bar:SetValue(50)
 
@@ -108,9 +109,8 @@ title:SetJustifyH("LEFT")
 stack:SetJustifyH("LEFT")
 rTime:SetJustifyH("RIGHT")
 
-title:SetPoint("BOTTOMLEFT", bar, "TOPLEFT", 0, 2)
+P:Point(title, "BOTTOMLEFT", bar, "TOPLEFT", 0, 2)
 stack:SetPoint("LEFT", title, "RIGHT")
--- rTime:SetPoint("BOTTOMRIGHT", bar, "TOPRIGHT", -1, 2)
 rTime:SetPoint("LEFT", stack, "RIGHT")
 dummy:SetPoint("BOTTOMLEFT", bar, "TOPLEFT", 0, 22)
 
@@ -123,7 +123,7 @@ rTime:SetText("")
 dummy:SetText(L["BR"]..": |cffff00000|r  00:00 ")
 
 battleResFrame:SetScript("OnShow", function()
-    battleResFrame:SetWidth(math.floor(dummy:GetWidth()+.5))
+    P:Width(battleResFrame, math.floor(dummy:GetWidth()+.5))
 end)
 
 battleResFrame:SetScript("OnHide", function()
@@ -221,7 +221,7 @@ local function UpdateLayout(layout, which)
     layout = Cell.vars.currentLayoutTable
 
     if not loaded or which == "anchor" then
-        battleResFrame:ClearAllPoints()
+        P:ClearPoints(battleResFrame)
 
         if layout["anchor"] == "BOTTOMLEFT" then
             point, relativePoint = "TOPLEFT", "BOTTOMLEFT"
@@ -241,11 +241,20 @@ local function UpdateLayout(layout, which)
         end
 
         if CellDB["general"]["fadeOut"] then
-            battleResFrame:SetPoint(point, relativeTo, relativePoint, 0, onHide)
+            P:Point(battleResFrame, point, relativeTo, relativePoint, 0, onHide)
         else
-            battleResFrame:SetPoint(point, relativeTo, relativePoint, 0, onShow)
+            P:Point(battleResFrame, point, relativeTo, relativePoint, 0, onShow)
         end
         loaded = true
     end
 end
 Cell:RegisterCallback("UpdateLayout", "BattleRes_UpdateLayout", UpdateLayout)
+
+local function UpdatePixelPerfect()
+    P:Resize(battleResFrame)
+    P:Repoint(battleResFrame)
+    Cell:StylizeFrame(battleResFrame, {.1, .1, .1, .7}, {0, 0, 0, .5})
+    bar:UpdatePixelPerfect()
+    P:Repoint(title)
+end
+Cell:RegisterCallback("UpdatePixelPerfect", "BattleRes_UpdatePixelPerfect", UpdatePixelPerfect)

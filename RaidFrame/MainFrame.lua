@@ -272,4 +272,4 @@ local function UpdatePixelPerfect()
         b.func.UpdatePixelPerfect()
     end)
 end
-Cell:RegisterCallback("UpdatePixelPerfect", "UpdatePixelPerfect", UpdatePixelPerfect)
+Cell:RegisterCallback("UpdatePixelPerfect", "MainFrame_UpdatePixelPerfect", UpdatePixelPerfect)

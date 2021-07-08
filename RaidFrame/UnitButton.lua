@@ -287,7 +287,7 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
         elseif setting == "size-border" then
             F:IterateAllUnitButtons(function(b)
                 local indicator = b.indicators[indicatorName]
-                indicator:SetSize(value[1], value[2])
+                P:Size(indicator, value[1], value[2])
                 indicator:SetBorder(value[3])
             end)
         elseif setting == "height" then

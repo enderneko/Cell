@@ -921,7 +921,7 @@ function I:CreateAggroIndicator(parent)
 	parent.indicators.aggroIndicator = aggroIndicator
 	-- aggroIndicator:SetPoint("TOPLEFT")
 	-- aggroIndicator:SetSize(10, 10)
-	aggroIndicator:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8x8", edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = 1})
+	aggroIndicator:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8x8", edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = P:Scale(1)})
 	aggroIndicator:SetBackdropColor(1, 0, 0, 1)
 	aggroIndicator:SetBackdropBorderColor(0, 0, 0, 1)
 	aggroIndicator:Hide()
@@ -943,6 +943,14 @@ function I:CreateAggroIndicator(parent)
 	aggroIndicator:SetScript("OnHide", function(self)
 		self.blink:Stop()
 	end)
+
+    function aggroIndicator:UpdatePixelPerfect()
+        P:Resize(aggroIndicator)
+        P:Repoint(aggroIndicator)
+        aggroIndicator:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8x8", edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = P:Scale(1)})
+        aggroIndicator:SetBackdropColor(1, 0, 0, 1)
+        aggroIndicator:SetBackdropBorderColor(0, 0, 0, 1)
+    end
 end
 
 -------------------------------------------------
