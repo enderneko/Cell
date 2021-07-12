@@ -609,6 +609,43 @@ local function Revise()
         end
     end
 
+    -- r55-release
+    if CellDB["revise"] and dbRevision < 55 then
+        for _, layout in pairs(CellDB["layouts"]) do
+            -- update debuffs
+            if layout["indicators"][18] and layout["indicators"][18]["indicatorName"] == "debuffs" then
+                --- 焚化者阿寇拉斯
+                if not F:TContains(layout["indicators"][18]["bigDebuffs"], 355732) then
+                    tinsert(layout["indicators"][18]["bigDebuffs"], 355732) -- 融化灵魂
+                end
+                if not F:TContains(layout["indicators"][18]["bigDebuffs"], 355738) then
+                    tinsert(layout["indicators"][18]["bigDebuffs"], 355738) -- 灼热爆破
+                end
+                -- 凇心之欧罗斯
+                if not F:TContains(layout["indicators"][18]["bigDebuffs"], 356667) then
+                    tinsert(layout["indicators"][18]["bigDebuffs"], 356667) -- 刺骨之寒
+                end
+                -- 刽子手瓦卢斯
+                if not F:TContains(layout["indicators"][18]["bigDebuffs"], 356925) then
+                    tinsert(layout["indicators"][18]["bigDebuffs"], 356925) -- 屠戮
+                end
+                if not F:TContains(layout["indicators"][18]["bigDebuffs"], 356923) then
+                    tinsert(layout["indicators"][18]["bigDebuffs"], 356923) -- 撕裂
+                end
+                if not F:TContains(layout["indicators"][18]["bigDebuffs"], 358973) then
+                    tinsert(layout["indicators"][18]["bigDebuffs"], 358973) -- 恐惧浪潮
+                end
+                -- 粉碎者索苟冬
+                if not F:TContains(layout["indicators"][18]["bigDebuffs"], 355806) then
+                    tinsert(layout["indicators"][18]["bigDebuffs"], 355806) -- 重压
+                end
+                if not F:TContains(layout["indicators"][18]["bigDebuffs"], 358777) then
+                    tinsert(layout["indicators"][18]["bigDebuffs"], 358777) -- 痛苦之链
+                end
+            end
+        end
+    end
+
     CellDB["revise"] = Cell.version
 end
 Cell:RegisterCallback("Revise", "Revise", Revise)
