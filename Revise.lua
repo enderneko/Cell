@@ -7,6 +7,20 @@ local function Revise()
     local dbRevision = CellDB["revise"] and tonumber(string.match(CellDB["revise"], "%d+")) or 0
     F:Debug("DBRevision:", dbRevision)
 
+    if CellDB["revise"] and dbRevision < 46 then -- update from an extremely version
+        local f = CreateFrame("Frame")
+        f:RegisterEvent("PLAYER_ENTERING_WORLD")
+        f:SetScript("OnEvent", function()
+            f:UnregisterAllEvents()
+            local popup = Cell:CreateConfirmPopup(CellMainFrame, 260, L["RESET"], function()
+                CellDB = nil
+                ReloadUI()
+            end)
+            popup:SetPoint("TOPLEFT")
+        end)
+        return
+    end
+
     --[[
     -- r4-alpha add "castByMe"
     if not(CellDB["revise"]) or CellDB["revise"] < "r4-alpha" then
@@ -266,7 +280,6 @@ local function Revise()
             end
         end
     end
-    ]]
 
     -- r33-release
     if CellDB["revise"] and dbRevision < 33 then
@@ -512,6 +525,7 @@ local function Revise()
 
         CellDB["general"]["tooltipsPosition"] = {"BOTTOMLEFT", "Unit Button", "TOPLEFT", 0, 15}
     end
+    ]]
 
     -- r47-release
     if CellDB["revise"] and dbRevision < 47 then
