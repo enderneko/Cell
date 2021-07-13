@@ -440,6 +440,7 @@ function eventFrame:ADDON_LOADED(arg1)
                                 334053, -- 净化冲击波
                                 343556, -- 病态凝视
                                 320596, -- 深重呕吐
+                                356924, -- 屠戮
                             },
                             ["glow"] = {"Pixel", {0.95,0.95,0.32,1}, 9, .25, 8, 2},
                             ["font"] = {"Cell ".._G.DEFAULT, 12, "Outline", 2},
