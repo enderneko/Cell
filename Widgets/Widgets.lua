@@ -368,7 +368,8 @@ function addon:CreateButton(parent, text, buttonColor, size, noBorder, noBackgro
     if noBorder then
         b:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8x8"})
     else
-        b:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8x8", edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = P:Scale(1)})
+        local n = P:Scale(1)
+        b:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8x8", edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = P:Scale(n), insets = {left=n, right=n, top=n, bottom=n}})
     end
     
     if buttonColor and string.find(buttonColor, "transparent") then -- drop down item
