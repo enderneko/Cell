@@ -1754,6 +1754,26 @@ local function CreateAuraButtons(parent, auraButtons, auraTable, noUpDownButtons
             auraButtons[i].spellIdText:SetText(spell)
             auraButtons[i].spellId = spell
             auraButtons[i].spellNameText:SetText(GetSpellInfo(spell) or L["Invalid"])
+            -- spell tooltip -- FIXME: debuffBlacklist & bigDebuffs
+            auraButtons[i]:HookScript("OnEnter", function()
+                if not parent.popupEditBox:IsShown() then
+                    local name = GetSpellInfo(spell)
+                    if not name then
+                        CellTooltip:Hide()
+                        return
+                    end
+                    
+                    CellTooltip:SetOwner(auraButtons[i], "ANCHOR_NONE")
+                    CellTooltip:SetPoint("TOPRIGHT", auraButtons[i], "TOPLEFT", -1, 0)
+                    CellTooltip:SetHyperlink("spell:"..spell)
+                    CellTooltip:Show()
+                end
+            end)
+            auraButtons[i]:HookScript("OnLeave", function()
+                if not parent.popupEditBox:IsShown() then
+                    CellTooltip:Hide()
+                end
+            end)
         end
         
         -- points
