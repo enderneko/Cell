@@ -48,7 +48,7 @@ local barAnimationType, highlightEnabled
 -------------------------------------------------
 -- unit button init indicators
 -------------------------------------------------
-local UnitButton_UpdateAuras, UnitButton_UpdateRole, UnitButton_UpdateLeader, UnitButton_UpdateStatusIcon
+local UnitButton_UpdateAuras, UnitButton_UpdateRole, UnitButton_UpdateLeader, UnitButton_UpdateStatusIcon, UnitButton_UpdateStatusText
 
 local indicatorsInitialized
 local enabledIndicators, indicatorNums, indicatorCustoms = {}, {}, {}
@@ -804,30 +804,36 @@ end
 -------------------------------------------------
 -- functions
 -------------------------------------------------
-local function UpdateUnitHealthState(button)
-    local unit = button.state.displayedUnit
+local function UpdateUnitHealthState(self)
+    local unit = self.state.displayedUnit
 
     local health = UnitHealth(unit)
     local healthMax = UnitHealthMax(unit)
 
-    button.state.health = health
-    button.state.healthMax = healthMax
-    button.state.healthPercent = health / healthMax
+    self.state.health = health
+    self.state.healthMax = healthMax
+    self.state.healthPercent = health / healthMax
+
+    self.state.wasDead = self.state.isDead
+    self.state.isDead = health == 0
+    if self.state.wasDead ~= self.state.isDead then
+        UnitButton_UpdateStatusText(self)
+    end
 
     if enabledIndicators["healthText"] and healthMax ~= 0 and health ~= 0 then
         if health == healthMax then
             if not indicatorCustoms["healthText"] then
-                button.indicators.healthText:SetHealth(health, healthMax)
-                button.indicators.healthText:Show()
+                self.indicators.healthText:SetHealth(health, healthMax)
+                self.indicators.healthText:Show()
             else
-                button.indicators.healthText:Hide()
+                self.indicators.healthText:Hide()
             end
         else
-            button.indicators.healthText:SetHealth(health, healthMax)
-            button.indicators.healthText:Show()
+            self.indicators.healthText:SetHealth(health, healthMax)
+            self.indicators.healthText:Show()
         end
     else
-        button.indicators.healthText:Hide()
+        self.indicators.healthText:Hide()
     end
 end
 
@@ -1242,7 +1248,7 @@ UnitButton_UpdateStatusIcon = function(self)
     end
 end
 
-local function UnitButton_UpdateStatusText(self)
+UnitButton_UpdateStatusText = function(self)
     local statusText = self.indicators.statusText
     if not enabledIndicators["statusText"] then
         statusText:Hide()
