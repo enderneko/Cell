@@ -2141,11 +2141,7 @@ function F:UnitButton_OnLoad(button)
         P:Repoint(absorbsBar)
         P:Repoint(damageFlashTex)
         
-        P:Repoint(targetHighlight)
-        targetHighlight:SetBackdrop({edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = P:Scale(1)})
-        P:Repoint(mouseoverHighlight)
-        mouseoverHighlight:SetBackdrop({edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = P:Scale(1)})
-        button.func.UpdateHighlightColor()
+        button.func.UpdateHighlightSize()
 
         -- indicators
         for _, i in pairs(button.indicators) do
