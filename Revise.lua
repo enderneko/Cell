@@ -650,8 +650,13 @@ local function Revise()
     if CellDB["revise"] and dbRevision < 56 then
         for _, layout in pairs(CellDB["layouts"]) do
             if layout["indicators"][20] and layout["indicators"][20]["indicatorName"] == "targetedSpells" then
-                if not F:TContains(layout["indicators"][20]["spells"], 356924) then -- 屠戮
-                    tinsert(layout["indicators"][20]["spells"], 356924)
+                if not F:TContains(layout["indicators"][20]["spells"], 356924) then
+                    tinsert(layout["indicators"][20]["spells"], 356924)  -- 屠戮
+                end
+            end
+            if layout["indicators"][18] and layout["indicators"][18]["indicatorName"] == "debuffs" then
+                if not F:TContains(layout["indicators"][18]["bigDebuffs"], 240559) then
+                    tinsert(layout["indicators"][18]["bigDebuffs"], 240559)  -- 重伤
                 end
             end
         end
