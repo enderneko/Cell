@@ -499,10 +499,10 @@ local function Revise()
     if CellDB["revise"] and dbRevision < 44 then
         for _, layout in pairs(CellDB["layouts"]) do
             if layout["indicators"][19] and layout["indicators"][19]["indicatorName"] == "targetedSpells" then
-                if not tContains(layout["indicators"][19]["spells"], 320132) then -- 暗影之怒
+                if not F:TContains(layout["indicators"][19]["spells"], 320132) then -- 暗影之怒
                     tinsert(layout["indicators"][19]["spells"], 320132)
                 end
-                if not tContains(layout["indicators"][19]["spells"], 322614) then -- 心灵连接
+                if not F:TContains(layout["indicators"][19]["spells"], 322614) then -- 心灵连接
                     tinsert(layout["indicators"][19]["spells"], 322614)
                 end
             end
@@ -531,7 +531,7 @@ local function Revise()
     if CellDB["revise"] and dbRevision < 47 then
         for _, layout in pairs(CellDB["layouts"]) do
             if layout["indicators"][19] and layout["indicators"][19]["indicatorName"] == "targetedSpells" then
-                if not tContains(layout["indicators"][19]["spells"], 334053) then -- 净化冲击波
+                if not F:TContains(layout["indicators"][19]["spells"], 334053) then -- 净化冲击波
                     tinsert(layout["indicators"][19]["spells"], 334053)
                 end
             end
@@ -549,10 +549,10 @@ local function Revise()
     if CellDB["revise"] and dbRevision < 48 then
         for _, layout in pairs(CellDB["layouts"]) do
             if layout["indicators"][19] and layout["indicators"][19]["indicatorName"] == "targetedSpells" then
-                if not tContains(layout["indicators"][19]["spells"], 343556) then -- 病态凝视
+                if not F:TContains(layout["indicators"][19]["spells"], 343556) then -- 病态凝视
                     tinsert(layout["indicators"][19]["spells"], 343556)
                 end
-                if not tContains(layout["indicators"][19]["spells"], 320596) then -- 深重呕吐
+                if not F:TContains(layout["indicators"][19]["spells"], 320596) then -- 深重呕吐
                     tinsert(layout["indicators"][19]["spells"], 320596)
                 end
             end
@@ -652,6 +652,12 @@ local function Revise()
             if layout["indicators"][20] and layout["indicators"][20]["indicatorName"] == "targetedSpells" then
                 if not F:TContains(layout["indicators"][20]["spells"], 356924) then
                     tinsert(layout["indicators"][20]["spells"], 356924)  -- 屠戮
+                end
+                if not F:TContains(layout["indicators"][20]["spells"], 356666) then -- 刺骨之寒
+                    tinsert(layout["indicators"][20]["spells"], 356666)
+                end
+                if not F:TContains(layout["indicators"][20]["spells"], 319713) then -- 巨兽奔袭
+                    tinsert(layout["indicators"][20]["spells"], 319713)
                 end
             end
             if layout["indicators"][18] and layout["indicators"][18]["indicatorName"] == "debuffs" then
