@@ -42,6 +42,12 @@ select(2, ...).L = setmetatable({
     ["marksTips"] = "\n|rTarget marker\nLeft-Click: |cffffffffset raid marker on target|r\nRight-Click: |cfffffffflock raid marker on target (in your group)|r",
 
     ["CHANGE LOGS"] = [[
+        <h1>r56-release (Jul 16, 2021, 01:20 GMT+8)</h1>
+        <p>* Updated TargetedSpells and BigDebuffs.</p>
+        <p>* Fixed unit button border.</p>
+        <p>* Fixed status text "DEAD".</p>
+        <br/>
+
         <h1>r55-release (Jul 13, 2021, 17:35 GMT+8)</h1>
         <p>* Updated RaidDebuffs (Tazavesh).</p>
         <p>* Updated BigDebuffs (tormented affix related).</p>
