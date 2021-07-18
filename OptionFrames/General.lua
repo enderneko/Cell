@@ -221,23 +221,23 @@ unlockBtn:SetScript("OnClick", function(self)
     end
 end)
 
--- reBuff checks
-local reBuffCB = Cell:CreateCheckButton(generalTab, L["Show ReBuff Checks"], function(checked, self)
-    CellDB["raidTools"]["showReBuffChecks"] = checked
-end, L["Show ReBuff Checks"], L["Check if your group members need some raid buffs"])
-reBuffCB:SetPoint("TOPLEFT", toolsText, "BOTTOMLEFT", 5, -15)
-reBuffCB:SetEnabled(false)
-
 -- battle res
-local resCB = Cell:CreateCheckButton(generalTab, L["Show Battle Res Timer"], function(checked, self)
+local resCB = Cell:CreateCheckButton(generalTab, L["Battle Res Timer"], function(checked, self)
     CellDB["raidTools"]["showBattleRes"] = checked
     Cell:Fire("UpdateRaidTools", "battleRes")
-end, L["Show Battle Res Timer"], L["Only show during encounter or in mythic+"])
-resCB:SetPoint("LEFT", reBuffCB, "RIGHT", 150, 0)
+end, L["Battle Res Timer"], L["Only show during encounter or in mythic+"])
+resCB:SetPoint("TOPLEFT", toolsText, "BOTTOMLEFT", 5, -15)
+
+-- reBuff checks
+local reBuffCB = Cell:CreateCheckButton(generalTab, L["ReBuff Checks"], function(checked, self)
+    CellDB["raidTools"]["showReBuffChecks"] = checked
+end, L["eBuff Checks"], L["Check if your group members need some raid buffs"])
+reBuffCB:SetPoint("LEFT", resCB, "RIGHT", 150, 0)
+reBuffCB:SetEnabled(false)
 
 -- ready & pull
 local pullText, pullDropdown, secDropdown
-local readyPullCB = Cell:CreateCheckButton(generalTab, L["Show ReadyCheck and PullTimer buttons"], function(checked, self)
+local readyPullCB = Cell:CreateCheckButton(generalTab, L["ReadyCheck and PullTimer buttons"], function(checked, self)
     CellDB["raidTools"]["showButtons"] = checked
     pullDropdown:SetEnabled(checked)
     secDropdown:SetEnabled(checked)
@@ -247,8 +247,8 @@ local readyPullCB = Cell:CreateCheckButton(generalTab, L["Show ReadyCheck and Pu
         pullText:SetTextColor(.4, .4, .4)
     end
     Cell:Fire("UpdateRaidTools", "buttons")
-end, L["Show ReadyCheck and PullTimer buttons"], L["Only show when you have permission to do this"], L["pullTimerTips"])
-readyPullCB:SetPoint("TOPLEFT", reBuffCB, "BOTTOMLEFT", 0, -15)
+end, L["ReadyCheck and PullTimer buttons"], L["Only show when you have permission to do this"], L["pullTimerTips"])
+readyPullCB:SetPoint("TOPLEFT", resCB, "BOTTOMLEFT", 0, -15)
 
 pullText = generalTab:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
 pullText:SetText(L["Pull Timer"])
@@ -336,13 +336,13 @@ secDropdown:SetItems({
 
 -- marks bar
 local marksCB, worldMarksCB, bothCB
-local marksBarCB = Cell:CreateCheckButton(generalTab, L["Show Marks Bar"], function(checked, self)
+local marksBarCB = Cell:CreateCheckButton(generalTab, L["Marks Bar"], function(checked, self)
     CellDB["raidTools"]["showMarks"] = checked
     marksCB:SetEnabled(checked)
     worldMarksCB:SetEnabled(checked)
     bothCB:SetEnabled(checked)
     Cell:Fire("UpdateRaidTools", "marks")
-end, L["Show Marks Bar"], L["Only show when you have permission to do this"], L["marksTips"])
+end, L["Marks Bar"], L["Only show when you have permission to do this"], L["marksTips"])
 marksBarCB:SetPoint("TOPLEFT", readyPullCB, "BOTTOMLEFT", 0, -40)
 
 marksCB = Cell:CreateCheckButton(generalTab, L["Target Marks"], function(checked, self)
