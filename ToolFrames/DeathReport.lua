@@ -39,6 +39,8 @@ local function UpdateDeathLog(guid, ...)
     deathLogs[guid]["time"], deathLogs[guid]["type"], deathLogs[guid]["name"], deathLogs[guid]["ability"], 
     deathLogs[guid]["school"], deathLogs[guid]["amount"], deathLogs[guid]["overkill"], deathLogs[guid]["resisted"], 
     deathLogs[guid]["blocked"], deathLogs[guid]["absorbed"], deathLogs[guid]["critical"], deathLogs[guid]["sourceName"] = ...
+
+    deathLogs[guid]["reported"] = false
 end
 
 local function Send(msg)
@@ -54,6 +56,9 @@ local function Send(msg)
 end
 
 local function Report(guid)
+    if deathLogs[guid]["reported"] then return end
+    deathLogs[guid]["reported"] = true
+
     if instanceType == "raid" and IsEncounterInProgress() then
         count = count + 1
         if count > limit then
@@ -61,7 +66,7 @@ local function Report(guid)
         end
     end
 
-    if not deathLogs[guid]["type"] or time()-deathLogs[guid]["time"]<=0.5 then -- unkown
+    if not deathLogs[guid]["type"] or time()-deathLogs[guid]["time"]>0.4 then -- unkown
         Send(deathLogs[guid]["name"].." > "..strlower(_G.UNKNOWN))
 
     elseif deathLogs[guid]["type"] == "INSTAKILL" then
@@ -70,7 +75,7 @@ local function Report(guid)
     elseif deathLogs[guid]["type"] == "ENVIRONMENTAL" then
         Send(deathLogs[guid]["name"].." > "..F:FormatNumer(deathLogs[guid]["amount"]).." ("..deathLogs[guid]["ability"]..")")
 
-    else -- SWING
+    else -- SPELL & RANGE & SWING
         local damageDetails = {}
         
         if deathLogs[guid]["overkill"] > 0 then
@@ -92,16 +97,18 @@ local function Report(guid)
         -- damageDetails = table.concat(damageDetails, ", ")
 
         local sourceName = (deathLogs[guid]["sourceName"] and deathLogs[guid]["name"]~=deathLogs[guid]["sourceName"]) and (" ["..deathLogs[guid]["sourceName"].."]") or ""
+        local ability
     
         if deathLogs[guid]["type"] == "SPELL" then -- including RANGE
             tinsert(damageDetails, strlower(CombatLog_String_SchoolString(deathLogs[guid]["school"])))
-            damageDetails = table.concat(damageDetails, ", ")
-            Send(deathLogs[guid]["name"].." > "..deathLogs[guid]["ability"].." "..F:FormatNumer(deathLogs[guid]["amount"]).." ("..damageDetails..") "..sourceName)
-
+            ability = deathLogs[guid]["ability"]
         else -- SWING
-            damageDetails = table.concat(damageDetails, ", ")
-            Send(deathLogs[guid]["name"].." > ".._G.MELEE..F:FormatNumer(deathLogs[guid]["amount"]).." ("..damageDetails..") "..sourceName)
+            ability = strlower(_G.MELEE)
         end
+
+        damageDetails = table.concat(damageDetails, ", ")
+        if damageDetails ~= "" then damageDetails = " ("..damageDetails..") " end
+        Send(deathLogs[guid]["name"].." > "..ability.." "..F:FormatNumer(deathLogs[guid]["amount"])..damageDetails..sourceName)
     end
 
     -- wipe(deathLogs[guid])
@@ -111,7 +118,7 @@ end
 -- event
 ----------------------------------------------------
 local frame = CreateFrame("Frame")
-frame:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
+-- frame:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
 
 function frame:PLAYER_ENTERING_WORLD()
     if not init then
@@ -162,8 +169,8 @@ function frame:COMBAT_LOG_EVENT_UNFILTERED(...)
     -- ENVIRONMENTAL: environmentalType
     -- SPELL/RANGE: spellId, spellName, spellSchool
 
-    if string.find(destGUID, "^Player") then -- debug
-    -- if string.find(destGUID, "^Player") and (UnitInParty(destName) or UnitInRaid(destName)) then
+    -- if string.find(destGUID, "^Player") then -- debug
+    if string.find(destGUID, "^Player") and (UnitInParty(destName) or UnitInRaid(destName)) then
         if event == "SPELL_INSTAKILL" then
             UpdateDeathLog(destGUID, timestamp, "INSTAKILL", destName)
         end
@@ -188,14 +195,14 @@ function frame:COMBAT_LOG_EVENT_UNFILTERED(...)
 
         if event == "SPELL_AURA_APPLIED" then -- 变天使啦！
             if arg12 == 27827 then
-                C_Timer.After(.5, function()
+                C_Timer.After(.3, function()
                     Report(destGUID)
                 end)
             end
         end
 
         if event == "UNIT_DIED" then
-            C_Timer.After(.5, function()
+            C_Timer.After(.3, function()
                 if not deathLogs[destGUID] then deathLogs[destGUID] = {["name"]=destName} end
                 Report(destGUID)
             end)
