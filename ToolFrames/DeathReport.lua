@@ -96,7 +96,7 @@ local function Report(guid)
 
         -- damageDetails = table.concat(damageDetails, ", ")
 
-        local sourceName = (deathLogs[guid]["sourceName"] and deathLogs[guid]["name"]~=deathLogs[guid]["sourceName"]) and (" ["..deathLogs[guid]["sourceName"].."]") or ""
+        -- local sourceName = (deathLogs[guid]["sourceName"] and deathLogs[guid]["name"]~=deathLogs[guid]["sourceName"]) and (" ["..deathLogs[guid]["sourceName"].."]") or ""
         local ability
     
         if deathLogs[guid]["type"] == "SPELL" then -- including RANGE
@@ -108,7 +108,7 @@ local function Report(guid)
 
         damageDetails = table.concat(damageDetails, ", ")
         if damageDetails ~= "" then damageDetails = " ("..damageDetails..") " end
-        Send(deathLogs[guid]["name"].." > "..ability.." "..F:FormatNumer(deathLogs[guid]["amount"])..damageDetails..sourceName)
+        Send(deathLogs[guid]["name"].." > "..ability.." "..F:FormatNumer(deathLogs[guid]["amount"])..damageDetails)
     end
 
     -- wipe(deathLogs[guid])
