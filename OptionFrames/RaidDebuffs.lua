@@ -143,13 +143,17 @@ local function LoadDebuffs()
             if not loadedDebuffs[instanceId][bossId] then loadedDebuffs[instanceId][bossId] = {["enabled"]={}, ["disabled"]={}} end
             -- load
             for i, spellId in pairs(bTable) do
-                if not (CellDB["raidDebuffs"][instanceId] and CellDB["raidDebuffs"][instanceId][bossId] and CellDB["raidDebuffs"][instanceId][bossId][spellId]) then
-                    F:TInsert(loadedDebuffs[instanceId][bossId]["enabled"], {["id"]=spellId, ["order"]=#loadedDebuffs[instanceId][bossId]["enabled"]+1, ["built-in"]=true})
+                if not (CellDB["raidDebuffs"][instanceId] and CellDB["raidDebuffs"][instanceId][bossId] and CellDB["raidDebuffs"][instanceId][bossId][tonumber(spellId)]) then
+                    if type(spellId) == "string" then -- track by id
+                        F:TInsert(loadedDebuffs[instanceId][bossId]["enabled"], {["id"]=tonumber(spellId), ["order"]=#loadedDebuffs[instanceId][bossId]["enabled"]+1, ["trackByID"]=true, ["built-in"]=true})
+                    else
+                        F:TInsert(loadedDebuffs[instanceId][bossId]["enabled"], {["id"]=spellId, ["order"]=#loadedDebuffs[instanceId][bossId]["enabled"]+1, ["built-in"]=true})
+                    end
                 else -- exists in both CellDB and built-in
                     local found
                     -- find in loadedDebuffs and mark it as built-in
                     for _, sTable in pairs(loadedDebuffs[instanceId][bossId]["enabled"]) do
-                        if sTable["id"] == spellId then
+                        if sTable["id"] == tonumber(spellId) then
                             found = true
                             sTable["built-in"] = true
                             break
@@ -158,7 +162,7 @@ local function LoadDebuffs()
                     -- check disabled if not found
                     if not found then
                         for _, sTable in pairs(loadedDebuffs[instanceId][bossId]["disabled"]) do
-                            if sTable["id"] == spellId then
+                            if sTable["id"] == tonumber(spellId) then
                                 sTable["built-in"] = true
                                 break
                             end
