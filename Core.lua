@@ -151,6 +151,7 @@ function eventFrame:ADDON_LOADED(arg1)
             CellDB["raidTools"] = {
                 -- ["showReBuffChecks"] = true, -- TODO:
                 ["showBattleRes"] = true,
+                ["deathReport"] = {false, 10},
                 ["showButtons"] = false,
                 ["pullTimer"] = {"ExRT", 7},
                 ["showMarks"] = false,
@@ -691,7 +692,7 @@ function eventFrame:ACTIVE_TALENT_GROUP_CHANGED()
         prevSpec = GetSpecialization()
         -- update spec vars
         Cell.vars.playerSpecID, Cell.vars.playerSpecName, _, Cell.vars.playerSpecIcon = GetSpecializationInfo(prevSpec)
-        if not Cell.vars.playerSpecID then -- NOTE: when join in battleground, spec auto switched, duiring loading, can't get info from GetSpecializationInfo, until PLAYER_ENTERING_WORLD
+        if not Cell.vars.playerSpecID then -- NOTE: when join in battleground, spec auto switched, during loading, can't get info from GetSpecializationInfo, until PLAYER_ENTERING_WORLD
             forceRecheck = true
             checkSpecFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
         else
@@ -751,6 +752,20 @@ function SlashCmdList.CELL(msg, editbox)
         elseif rest == "clickCastings" then
             CellDB["clickCastings"] = nil
             ReloadUI()
+        end
+
+    elseif command == "report" then
+        rest = tonumber(rest:format("%d"))
+        if rest and rest>=0 and rest<=40 then
+            if rest == 0 then
+                F:Print(L["Cell will report all deaths during a raid encounter."])
+            else
+                F:Print(string.format(L["Cell will report first %d deaths during a raid encounter."], rest))
+            end
+            CellDB["raidTools"]["deathReport"][2] = rest
+            Cell:Fire("UpdateRaidTools", "deathReport")
+        else
+            F:Print(L["A 0-40 integer is required."])
         end
 
     else

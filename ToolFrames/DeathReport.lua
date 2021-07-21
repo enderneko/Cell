@@ -1,0 +1,236 @@
+local _, Cell = ...
+local L = Cell.L
+local F = Cell.funcs
+
+local UnitInParty = UnitInParty
+local UnitInRaid = UnitInRaid
+----------------------------------------------------
+-- vars
+----------------------------------------------------
+local init, isPromoted, instanceType, inInstance
+local deathLogs = {
+    -- time, type, name, ability, school, amount, overkill, resisted, blocked, absorbed, critical, sourceName
+}
+local limit, count
+
+local overkillFormat, resistedFormat, blockedFormat, absorbedFormat, criticalText
+if LOCALE_zhCN or LOCALE_zhTW or LOCALE_koKR then
+    overkillFormat = string.sub(_G.TEXT_MODE_A_STRING_RESULT_OVERKILLING, 4, string.len(_G.TEXT_MODE_A_STRING_RESULT_OVERKILLING)-3)
+    resistedFormat = string.sub(_G.TEXT_MODE_A_STRING_RESULT_RESIST, 4, string.len(_G.TEXT_MODE_A_STRING_RESULT_RESIST)-3)
+    blockedFormat = string.sub(_G.TEXT_MODE_A_STRING_RESULT_BLOCK, 4, string.len(_G.TEXT_MODE_A_STRING_RESULT_BLOCK)-3)
+    absorbedFormat = string.sub(_G.TEXT_MODE_A_STRING_RESULT_ABSORB, 4, string.len(_G.TEXT_MODE_A_STRING_RESULT_ABSORB)-3)
+    criticalText = string.sub(_G.TEXT_MODE_A_STRING_RESULT_CRITICAL, 4, string.len(_G.TEXT_MODE_A_STRING_RESULT_CRITICAL)-3)
+else
+    overkillFormat = string.gsub(_G.TEXT_MODE_A_STRING_RESULT_OVERKILLING, "[()]", "")
+    resistedFormat = string.gsub(_G.TEXT_MODE_A_STRING_RESULT_RESIST, "[()]", "")
+    blockedFormat = string.gsub(_G.TEXT_MODE_A_STRING_RESULT_BLOCK, "[()]", "")
+    absorbedFormat = string.gsub(_G.TEXT_MODE_A_STRING_RESULT_ABSORB, "[()]", "")
+    criticalText = string.gsub(_G.TEXT_MODE_A_STRING_RESULT_CRITICAL, "[()]", "")
+end
+
+----------------------------------------------------
+-- functions
+----------------------------------------------------
+local function UpdateDeathLog(guid, ...)
+    if not deathLogs[guid] then
+        deathLogs[guid] = {}
+    end
+
+    deathLogs[guid]["time"], deathLogs[guid]["type"], deathLogs[guid]["name"], deathLogs[guid]["ability"], 
+    deathLogs[guid]["school"], deathLogs[guid]["amount"], deathLogs[guid]["overkill"], deathLogs[guid]["resisted"], 
+    deathLogs[guid]["blocked"], deathLogs[guid]["absorbed"], deathLogs[guid]["critical"], deathLogs[guid]["sourceName"] = ...
+end
+
+local function Send(msg)
+    if isPromoted then
+        if IsInGroup(LE_PARTY_CATEGORY_INSTANCE) then
+            SendChatMessage(ACTION_UNIT_DIED..": "..msg, "INSTANCE_CHAT")
+        else
+            SendChatMessage(ACTION_UNIT_DIED..": "..msg, IsInRaid() and "RAID" or "PARTY")
+        end
+    else
+        F:Print(ACTION_UNIT_DIED..": "..msg)
+    end
+end
+
+local function Report(guid)
+    if not (deathLogs[guid] and deathLogs[guid]["time"]) then return end
+
+    if instanceType == "raid" and IsEncounterInProgress() then
+        count = count + 1
+        if count > limit then
+            return
+        end
+    end
+
+    if not deathLogs[guid]["type"] then -- unkown
+        Send(deathLogs[guid]["name"].." > ".._G.UNKNOWN)  
+
+    elseif deathLogs[guid]["type"] == "INSTAKILL" then
+        Send(deathLogs[guid]["name"].." > ".."秒杀")
+        
+    elseif deathLogs[guid]["type"] == "ENVIRONMENTAL" then
+        Send(deathLogs[guid]["name"].." > "..F:FormatNumer(deathLogs[guid]["amount"]).." ("..deathLogs[guid]["ability"]..")")
+
+    else -- SWING
+        local damageDetails = {}
+        
+        if deathLogs[guid]["overkill"] > 0 then
+            tinsert(damageDetails, string.format(overkillFormat, F:FormatNumer(deathLogs[guid]["overkill"])))
+        end
+        -- if deathLogs[guid]["critical"] == 1 then
+        --     tinsert(damageDetails, criticalText)
+        -- end
+        -- if deathLogs[guid]["resisted"] then
+        --     tinsert(damageDetails, string.format(resistedFormat, F:FormatNumer(deathLogs[guid]["resisted"])))
+        -- end
+        -- if deathLogs[guid]["blocked"] then
+        --     tinsert(damageDetails, string.format(blockedFormat, F:FormatNumer(deathLogs[guid]["blocked"])))
+        -- end
+        -- if deathLogs[guid]["absorbed"] then
+        --     tinsert(damageDetails, string.format(absorbedFormat, F:FormatNumer(deathLogs[guid]["absorbed"])))
+        -- end
+
+        -- damageDetails = table.concat(damageDetails, ", ")
+
+        local sourceName = (deathLogs[guid]["sourceName"] and deathLogs[guid]["name"]~=deathLogs[guid]["sourceName"]) and (" ["..deathLogs[guid]["sourceName"].."]") or ""
+    
+        if deathLogs[guid]["type"] == "SPELL" then -- including RANGE
+            tinsert(damageDetails, CombatLog_String_SchoolString(deathLogs[guid]["school"]))
+            damageDetails = table.concat(damageDetails, ", ")
+            Send(deathLogs[guid]["name"].." > "..deathLogs[guid]["ability"].." "..F:FormatNumer(deathLogs[guid]["amount"]).." ("..damageDetails..") "..sourceName)
+
+        else -- SWING
+            damageDetails = table.concat(damageDetails, ", ")
+            Send(deathLogs[guid]["name"].." > ".._G.MELEE..F:FormatNumer(deathLogs[guid]["amount"]).." ("..damageDetails..") "..sourceName)
+        end
+    end
+
+    -- wipe(deathLogs[guid])
+end
+
+----------------------------------------------------
+-- event
+----------------------------------------------------
+local frame = CreateFrame("Frame")
+
+function frame:PLAYER_ENTERING_WORLD()
+    if not init then
+        isPromoted = IsInGroup() and (UnitIsGroupLeader("player") or UnitIsGroupAssistant("player"))
+        if IsInGroup() then
+            frame:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
+        end
+    end
+
+    local isIn, iType = IsInInstance()
+    instanceType = iType
+
+    if isIn then
+        inInstance = true
+        if instanceType == "raid" then
+            frame:RegisterEvent("ENCOUNTER_START")
+            count = 0
+        else
+            frame:UnregisterEvent("ENCOUNTER_START")
+        end
+    elseif inInstance then -- left insntance
+        inInstance = false
+        wipe(deathLogs)
+        frame:UnregisterEvent("ENCOUNTER_START")
+    end
+    -- texplore(deathLogs)
+end
+
+function frame:GROUP_ROSTER_UPDATE()
+    isPromoted = IsInGroup() and (UnitIsGroupLeader("player") or UnitIsGroupAssistant("player"))
+    if IsInGroup() then
+        frame:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")    
+    else
+        frame:UnregisterEvent("COMBAT_LOG_EVENT_UNFILTERED")    
+    end
+end
+
+function frame:ENCOUNTER_START()
+    count = 0
+end
+
+function frame:COMBAT_LOG_EVENT_UNFILTERED(...)
+    local timestamp, event, hideCaster, sourceGUID, sourceName, sourceFlags, sourceRaidFlags, destGUID, destName, destFlags, destRaidFlags, arg12, arg13, arg14 = ...
+    local amount, overkill, school, resisted, blocked, absorbed, critical -- glancing, crushing
+
+    -- arg12, arg13, arg14,
+    -- UNIT_DIED: recapID, unconsciousOnDeath
+    -- ENVIRONMENTAL: environmentalType
+    -- SPELL/RANGE: spellId, spellName, spellSchool
+
+    if string.find(destGUID, "^Player") and (UnitInParty(destName) or UnitInRaid(destName)) then
+        if event == "SPELL_INSTAKILL" then
+            UpdateDeathLog(destGUID, timestamp, "INSTAKILL", destName)
+        end
+
+        if event == "ENVIRONMENTAL_DAMAGE" then
+            amount, overkill, school, resisted, blocked, absorbed, critical = select(13, ...)
+            amount = amount == 0 and absorbed or amount
+            -- _G.ENVIRONMENTAL_DAMAGE.." "..
+            UpdateDeathLog(destGUID, timestamp, "ENVIRONMENTAL", destName, _G["ACTION_ENVIRONMENTAL_DAMAGE_" .. string.upper(arg12)], nil, amount)
+        end
+
+        if event == "SWING_DAMAGE" then
+            amount, overkill, school, resisted, blocked, absorbed, critical = select(12, ...)
+            UpdateDeathLog(destGUID, timestamp, "SWING", destName, nil, school, amount, overkill or -1, resisted, blocked, absorbed, critical, sourceName)
+        end
+        
+        if event == "SPELL_DAMAGE" or event == "SPELL_PERIODIC_DAMAGE" or event == "RANGE_DAMAGE" or event == "DAMAGE_SHIELD" then
+            amount, overkill, school, resisted, blocked, absorbed, critical = select(15, ...)
+            local spellLink = GetSpellLink(arg12)
+            UpdateDeathLog(destGUID, timestamp, "SPELL", destName, spellLink, school, amount, overkill or -1, resisted, blocked, absorbed, critical, sourceName)
+        end
+
+        if event == "SPELL_AURA_APPLIED" then -- 变天使啦！
+            if arg12 == 27827 then
+                C_Timer.After(.5, function()
+                    Report(destGUID)
+                end)
+            end
+        end
+
+        if event == "UNIT_DIED" then
+            C_Timer.After(.5, function()
+                Report(destGUID)
+            end)
+        end
+    end
+end
+
+frame:SetScript("OnEvent", function(self, event, ...)
+    if event == "COMBAT_LOG_EVENT_UNFILTERED" then
+        self:COMBAT_LOG_EVENT_UNFILTERED(CombatLogGetCurrentEventInfo())
+    else
+        self[event](self, ...)
+    end
+end)
+
+----------------------------------------------------
+-- UpdateRaidTools
+----------------------------------------------------
+local enabled
+local function UpdateRaidTools(which)
+    if not which or which == "deathReport" then
+        if CellDB["raidTools"]["deathReport"][1] then
+            frame:RegisterEvent("PLAYER_ENTERING_WORLD")
+            frame:RegisterEvent("GROUP_ROSTER_UPDATE")
+
+            limit = CellDB["raidTools"]["deathReport"][2]
+            count = 0
+            if not enabled and which == "deathReport" then -- already in world, manually enabled
+                frame:PLAYER_ENTERING_WORLD()
+            end
+            enabled = true
+        else
+            frame:UnregisterAllEvents()
+            wipe(deathLogs)
+            enabled = false
+        end
+    end
+end
+Cell:RegisterCallback("UpdateRaidTools", "DeathReport_UpdateRaidTools", UpdateRaidTools)
