@@ -109,6 +109,7 @@ L["first %d"] = "前 %d 个"
 L["Cell will report all deaths during a raid encounter."] = "Cell 将会通报团队战中的全部死亡信息。"
 L["Cell will report first %d deaths during a raid encounter."] = "Cell 将会通报团队战中的前 %d 个死亡信息。"
 L["A 0-40 integer is required."] = "需要一个0到40的整数。"
+L["instakill"] = "秒杀"
 
 -------------------------------------------------
 -- appearance
