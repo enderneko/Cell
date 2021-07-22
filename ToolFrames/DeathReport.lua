@@ -66,8 +66,9 @@ local function Report(guid)
         end
     end
 
-    if not deathLogs[guid]["type"] or time()-deathLogs[guid]["time"]>0.4 then -- unkown
-        Send(deathLogs[guid]["name"].." > "..strlower(_G.UNKNOWN))
+    if not deathLogs[guid]["type"] or time()-deathLogs[guid]["time"]>=0.5 then -- unkown
+        -- Send(deathLogs[guid]["name"].." > "..strlower(_G.UNKNOWN))
+        Send(deathLogs[guid]["name"])
 
     elseif deathLogs[guid]["type"] == "INSTAKILL" then
         Send(deathLogs[guid]["name"].." > "..L["instakill"])
