@@ -100,6 +100,8 @@ L["Lock"] = "锁定"
 L["Battle Res Timer"] = "战复计时器"
 L["Only show during encounter or in mythic+"] = "仅在首领战或者史诗钥石地下城中显示"
 L["BR"] = "战复"
+L["HIGH CPU USAGE"] = "高CPU占用"
+L["MODERATE CPU USAGE"] = "中等CPU占用"
 L["Death Report"] = "死亡通报"
 L["Report deaths to party/raid if promoted"] = "在有权限的情况下向团队/小队通报死亡信息"
 L["Use |cFFFFB5C5/cell report X|r to set the number of reports during a raid encounter"] = "用 |cFFFFB5C5/cell report X|r 来设定团队战中的通报个数"
@@ -334,7 +336,6 @@ L["Indicator settings are part of Layout settings which are account-wide."] = "�
 L["The spells list of a icons indicator is unordered (no priority)."] = "图标组指示器的法术列表是无序的（无优先级）。"
 L["The priority of spells decreases from top to bottom."] = "法术优先级从上到下递减。"
 L["With this indicator enabled, shield / overshield textures are disabled"] = "启用该指示器将会禁用血条上的护盾材质"
-L["HIGH CPU USAGE"] = "高CPU占用"
 L["Check all visible enemy nameplates. Battleground/Arena only."] = "检查所有可见的敌方姓名板。仅在战场、竞技场有效。"
 
 -------------------------------------------------
