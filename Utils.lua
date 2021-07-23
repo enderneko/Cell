@@ -451,8 +451,12 @@ function F:GetGroupType()
     end
 end
 
-function F:UnitInGroup(unit)
-    return UnitPlayerOrPetInParty(unit) or UnitPlayerOrPetInRaid(unit)
+function F:UnitInGroup(unit, ignorePets)
+    if ignorePets then
+        return UnitInParty(unit) or UnitInRaid(unit)
+    else
+        return UnitPlayerOrPetInParty(unit) or UnitPlayerOrPetInRaid(unit)
+    end
 end
 
 function F:GetTargetUnitInfo()
