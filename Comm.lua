@@ -178,7 +178,6 @@ end)
 
 Comm:RegisterComm("CELL_PRIO", function(prefix, message, channel, sender)
     if not myPriority then return end -- receive CELL_PRIO just after GOURP_JOINED
-    if sender == UnitName("player") then return end
 
     local p = tonumber(message)
     if p then
@@ -186,7 +185,7 @@ Comm:RegisterComm("CELL_PRIO", function(prefix, message, channel, sender)
 
         if t_update then t_update:Cancel() end
         t_update = C_Timer.NewTimer(2, function()
-            Cell.hasHighestPriority = myPriority < highestPriority
+            Cell.hasHighestPriority = myPriority <= highestPriority
             Cell:Fire("UpdatePriority", Cell.hasHighestPriority)
             F:Debug("|cff00ff00UpdatePriority:|r", Cell.hasHighestPriority)
         end)
