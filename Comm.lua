@@ -110,3 +110,85 @@ function F:NotifyMarkUnlock(mark, name, class)
     UpdateSendChannel()
     Comm:SendCommMessage("CELL_MARKS", Serialize({false, mark, name}), sendChannel, nil, "BULK")
 end
+
+-----------------------------------------
+-- Priority Check
+-----------------------------------------
+local myPriority
+local highestPriority = 99
+Cell.hasHighestPriority = false
+
+local function UpdatePriority()
+    myPriority = 99
+    if UnitIsGroupLeader("player") then
+        myPriority = 0
+    else
+        if IsInRaid() then
+            for i = 1, GetNumGroupMembers() do
+                if UnitIsUnit("player", "raid"..i) then
+                    myPriority = i
+                    break
+                end
+            end
+        elseif IsInGroup() then -- party
+            local players = {}
+            local pName, pRealm = UnitFullName("player")
+            pName = pName.."-"..pRealm
+            tinsert(players, pName)
+            
+            for i = 1, GetNumGroupMembers()-1 do
+                local name, realm = UnitFullName("party"..i)
+                tinsert(players, name.."-"..(realm or pRealm))
+            end
+            table.sort(players)
+            
+            for i, p in pairs(players) do
+                if p == pName then
+                    myPriority = i
+                    break
+                end
+            end
+        end
+    end
+
+end
+
+local t_check, t_send, t_update
+function F:CheckPriority()
+    UpdatePriority()
+    -- NOTE: needs time to calc myPriority
+    if t_check then t_check:Cancel() end
+    t_check = C_Timer.NewTimer(2, function()
+        UpdateSendChannel()
+        Comm:SendCommMessage("CELL_CPRIO", "chk", sendChannel, nil, "BULK")
+    end)
+end
+
+Comm:RegisterComm("CELL_CPRIO", function(prefix, message, channel, sender)
+    if not myPriority then return end -- receive CELL_CPRIO just after GOURP_JOINED 
+    highestPriority = 99
+    
+    -- NOTE: wait for check requests
+    if t_send then t_send:Cancel() end
+    t_send = C_Timer.NewTimer(2, function()
+        UpdateSendChannel()
+        Comm:SendCommMessage("CELL_PRIO", tostring(myPriority), sendChannel, nil, "BULK")
+    end)
+end)
+
+Comm:RegisterComm("CELL_PRIO", function(prefix, message, channel, sender)
+    if not myPriority then return end -- receive CELL_PRIO just after GOURP_JOINED
+    if sender == UnitName("player") then return end
+
+    local p = tonumber(message)
+    if p then
+        highestPriority = highestPriority < p and highestPriority or p
+
+        if t_update then t_update:Cancel() end
+        t_update = C_Timer.NewTimer(2, function()
+            Cell.hasHighestPriority = myPriority < highestPriority
+            Cell:Fire("UpdatePriority", Cell.hasHighestPriority)
+            F:Debug("|cff00ff00UpdatePriority:|r", Cell.hasHighestPriority)
+        end)
+    end
+end)

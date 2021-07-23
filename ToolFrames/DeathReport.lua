@@ -7,7 +7,7 @@ local UnitInRaid = UnitInRaid
 ----------------------------------------------------
 -- vars
 ----------------------------------------------------
-local init, isPromoted, instanceType, inInstance
+local init, instanceType, inInstance
 local deathLogs = {
     -- time, type, name, ability, school, amount, overkill, resisted, blocked, absorbed, critical, sourceName
 }
@@ -44,14 +44,14 @@ local function UpdateDeathLog(guid, ...)
 end
 
 local function Send(msg)
-    if isPromoted then
+    if Cell.hasHighestPriority then
         if IsInGroup(LE_PARTY_CATEGORY_INSTANCE) then
             SendChatMessage(strupper(ACTION_UNIT_DIED)..": "..msg, "INSTANCE_CHAT")
         else
             SendChatMessage(strupper(ACTION_UNIT_DIED)..": "..msg, IsInRaid() and "RAID" or "PARTY")
         end
-    else
-        F:Print(strupper(ACTION_UNIT_DIED)..": "..msg)
+    -- else
+    --     F:Print(strupper(ACTION_UNIT_DIED)..": "..msg)
     end
 end
 
@@ -66,7 +66,7 @@ local function Report(guid)
         end
     end
 
-    if not deathLogs[guid]["type"] or time()-deathLogs[guid]["time"]>=0.5 then -- unkown
+    if not deathLogs[guid]["type"] or time()-deathLogs[guid]["time"]>=1 then -- unkown
         -- Send(deathLogs[guid]["name"].." > "..strlower(_G.UNKNOWN))
         Send(deathLogs[guid]["name"])
 
@@ -122,12 +122,7 @@ local frame = CreateFrame("Frame")
 -- frame:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
 
 function frame:PLAYER_ENTERING_WORLD()
-    if not init then
-        isPromoted = IsInGroup() and (UnitIsGroupLeader("player") or UnitIsGroupAssistant("player"))
-        if IsInGroup() then
-            frame:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
-        end
-    end
+    if not init then frame:GROUP_ROSTER_UPDATE() end
 
     local isIn, iType = IsInInstance()
     instanceType = iType
@@ -149,9 +144,9 @@ function frame:PLAYER_ENTERING_WORLD()
 end
 
 function frame:GROUP_ROSTER_UPDATE()
-    isPromoted = IsInGroup() and (UnitIsGroupLeader("player") or UnitIsGroupAssistant("player"))
     if IsInGroup() then
-        frame:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")    
+        F:CheckPriority()
+        -- frame:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
     else
         frame:UnregisterEvent("COMBAT_LOG_EVENT_UNFILTERED")    
     end
@@ -218,6 +213,18 @@ frame:SetScript("OnEvent", function(self, event, ...)
         self[event](self, ...)
     end
 end)
+
+----------------------------------------------------
+-- priority
+----------------------------------------------------
+local function UpdatePriority(hasHighestPriority)
+    if hasHighestPriority and CellDB["raidTools"]["deathReport"][1] then
+        frame:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
+    else
+        frame:UnregisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
+    end
+end
+Cell:RegisterCallback("UpdatePriority", "DeathReport_UpdatePriority", UpdatePriority)
 
 ----------------------------------------------------
 -- UpdateRaidTools
