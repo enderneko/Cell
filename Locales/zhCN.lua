@@ -334,7 +334,8 @@ L["Indicator settings are part of Layout settings which are account-wide."] = "�
 L["The spells list of a icons indicator is unordered (no priority)."] = "图标组指示器的法术列表是无序的（无优先级）。"
 L["The priority of spells decreases from top to bottom."] = "法术优先级从上到下递减。"
 L["With this indicator enabled, shield / overshield textures are disabled"] = "启用该指示器将会禁用血条上的护盾材质"
-L["|cffc72727HIGH CPU USAGE!|r Check all visible enemy nameplates. Battleground/Arena only."] = "|cffc72727高CPU占用！|r检查所有可见的敌方姓名板。仅在战场、竞技场有效。"
+L["HIGH CPU USAGE"] = "高CPU占用"
+L["Check all visible enemy nameplates. Battleground/Arena only."] = "检查所有可见的敌方姓名板。仅在战场、竞技场有效。"
 
 -------------------------------------------------
 -- raid debuffs
