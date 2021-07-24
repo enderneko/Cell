@@ -112,6 +112,8 @@ L["Cell will report all deaths during a raid encounter."] = "Cell 将会通报�
 L["Cell will report first %d deaths during a raid encounter."] = "Cell 将会通报团队战中的前 %d 个死亡信息。"
 L["A 0-40 integer is required."] = "需要一个0到40的整数。"
 L["instakill"] = "秒杀"
+L["Buff Tracker"] = "补Buff提示"
+L["Check if your group members need some raid buffs"] = "检查队伍是否需要补耐力、智力、攻强"
 
 -------------------------------------------------
 -- appearance
