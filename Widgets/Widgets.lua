@@ -6,10 +6,13 @@ local addonName, addon = ...
 local L = addon.L
 local F = addon.funcs
 local P = addon.pixelPerfectFuncs
+local LCG = LibStub("LibCustomGlow-1.0")
 
 -----------------------------------------
 -- Color
 -----------------------------------------
+local RAID_CLASS_COLORS = RAID_CLASS_COLORS
+
 local colors = {
     grey = {s="|cFFB2B2B2", t={.7, .7, .7}},
     yellow = {s="|cFFFFD100", t= {1, .82, 0}},
@@ -463,6 +466,96 @@ function addon:CreateButton(parent, text, buttonColor, size, noBorder, noBackgro
             wipe(currentBackdropColor)
             wipe(currentBackdropBorderColor)
         end
+    end
+
+    return b
+end
+
+function addon:CreateBuffButton(parent, size, spellId)
+    local spellName, _, spellIcon = GetSpellInfo(spellId)
+
+    local b = CreateFrame("Button", nil, parent, "SecureActionButtonTemplate,BackdropTemplate")
+    if parent then b:SetFrameLevel(parent:GetFrameLevel()+1) end
+    P:Size(b, size[1], size[2])
+    
+    b:SetBackdrop({edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = P:Scale(1)})
+    b:SetBackdropBorderColor(0, 0, 0, 1)
+
+    b:RegisterForClicks("LeftButtonDown")
+    b:SetAttribute("type1", "spell")
+    b:SetAttribute("spell", spellName)
+
+    b.texture = b:CreateTexture(nil, "OVERLAY")
+    P:Point(b.texture, "TOPLEFT", b, "TOPLEFT", 1, -1)
+    P:Point(b.texture, "BOTTOMRIGHT", b, "BOTTOMRIGHT", -1, 1)
+    b.texture:SetTexture(spellIcon)
+    b.texture:SetTexCoord(.08, .92, .08, .92)
+
+    b.count = b:CreateFontString(nil, "OVERLAY")
+    P:Point(b.count, "TOPLEFT", b.texture, "TOPLEFT", 2, -2)
+    b.count:SetFont(GameFontNormal:GetFont(), 14, "OUTLINE")
+    b.count:SetShadowColor(0, 0, 0)
+    b.count:SetShadowOffset(0, 0)
+    b.count:SetTextColor(1, 0, 0)
+
+    b:SetScript("OnLeave", function()
+        CellTooltip:Hide()
+    end)
+
+    function b:SetTooltip(list)
+        b:SetScript("OnEnter", function()
+            if F:Getn(list) ~= 0 then
+                CellTooltip:SetOwner(b, "ANCHOR_TOPLEFT", 0, 3)
+                CellTooltip:AddLine("Unaffected")
+                for unit in pairs(list) do
+                    CellTooltip:AddLine(RAID_CLASS_COLORS[select(2, UnitClass(unit))]:WrapTextInColorCode(UnitName(unit)))
+                end
+                CellTooltip:Show()
+            -- else
+            --     CellTooltip:Hide() -- for PostClick
+            end
+        end)
+    end
+
+    -- update tooltip after click
+    -- b:SetScript("PostClick", function()
+    --     b:GetScript("OnEnter")()
+    -- end)
+
+    function b:SetDesaturated(flag)
+        b.texture:SetDesaturated(flag)
+    end
+
+    function b:StartGlow(glowType, ...)
+        if glowType == "Normal" then
+            LCG.PixelGlow_Stop(b)
+            LCG.AutoCastGlow_Stop(b)
+            LCG.ButtonGlow_Start(b, ...)
+        elseif glowType == "Pixel" then
+            LCG.ButtonGlow_Stop(b)
+            LCG.AutoCastGlow_Stop(b)
+            -- color, N, frequency, length, thickness
+            LCG.PixelGlow_Start(b, ...)
+        elseif glowType == "Shine" then
+            LCG.ButtonGlow_Stop(b)
+            LCG.PixelGlow_Stop(b)
+            LCG.AutoCastGlow_Stop(b)
+            -- color, N, frequency, scale
+            LCG.AutoCastGlow_Start(b, ...)
+        end
+    end
+
+    function b:StopGlow()
+        LCG.ButtonGlow_Stop(b)
+        LCG.PixelGlow_Stop(b)
+        LCG.AutoCastGlow_Stop(b)
+    end
+
+    function b:Reset()
+        b.texture:SetDesaturated(false)
+        b.count:SetText("")
+        b:SetAlpha(1)
+        b:StopGlow()
     end
 
     return b

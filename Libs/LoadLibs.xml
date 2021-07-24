@@ -12,5 +12,6 @@
     <Script file="utf8.lua"/>
     <Script file="CallbackHandler.lua"/>
     <Script file="PixelPerfect.lua"/>
+    <Script file="LibGroupInSpecT-1.1.lua"/>
     <!-- <Script file="LibCombatLogHealth-1.0\LibCombatLogHealth-1.0.lua"/> -->
 </Ui>

@@ -237,21 +237,21 @@ reportCB:SetPoint("LEFT", resCB, "RIGHT", 115, 0)
 reportCB:HookScript("OnEnter", function()
     CellTooltip:SetOwner(reportCB, "ANCHOR_TOPLEFT", 0, 2)
     CellTooltip:AddLine(L["Death Report"].." |cffff2727"..L["HIGH CPU USAGE"])
-    CellTooltip:AddLine("|cffffffff" .. L["Report deaths to party/raid if promoted"])
+    CellTooltip:AddLine("|cffffffff" .. L["Report deaths to group"])
     CellTooltip:AddLine("|cffffffff" .. L["Use |cFFFFB5C5/cell report X|r to set the number of reports during a raid encounter"])
-    CellTooltip:AddLine("|cffffffff" .. L["Current: "].."|cFFFFB5C5"..(CellDB["raidTools"]["deathReport"][2]==0 and L["all"] or string.format(L["first %d"], CellDB["raidTools"]["deathReport"][2])))
+    CellTooltip:AddLine("|cffffffff" .. L["Current"]..": |cFFFFB5C5"..(CellDB["raidTools"]["deathReport"][2]==0 and L["all"] or string.format(L["first %d"], CellDB["raidTools"]["deathReport"][2])))
     CellTooltip:Show()
 end)
 reportCB:HookScript("OnLeave", function()
     CellTooltip:Hide()
 end)
 
--- reBuff checks
-local reBuffCB = Cell:CreateCheckButton(generalTab, L["ReBuff Checks"], function(checked, self)
-    CellDB["raidTools"]["showReBuffChecks"] = checked
-end, L["eBuff Checks"], L["Check if your group members need some raid buffs"])
-reBuffCB:SetPoint("LEFT", reportCB, "RIGHT", 115, 0)
-reBuffCB:SetEnabled(false)
+-- buff tracker
+local buffCB = Cell:CreateCheckButton(generalTab, L["Buff Tracker"], function(checked, self)
+    CellDB["raidTools"]["showBuffTracker"] = checked
+    Cell:Fire("UpdateRaidTools", "buffTracker")
+end, L["Buff Tracker"].." |cffff7727"..L["MODERATE CPU USAGE"], L["Check if your group members need some raid buffs"])
+buffCB:SetPoint("LEFT", reportCB, "RIGHT", 115, 0)
 
 -- ready & pull
 local pullText, pullDropdown, secDropdown
@@ -438,7 +438,7 @@ local function ShowTab(tab)
         -- raid tools
         resCB:SetChecked(CellDB["raidTools"]["showBattleRes"])
         reportCB:SetChecked(CellDB["raidTools"]["deathReport"][1])
-        reBuffCB:SetChecked(CellDB["raidTools"]["showReBuffChecks"])
+        buffCB:SetChecked(CellDB["raidTools"]["showBuffTracker"])
 
         readyPullCB:SetChecked(CellDB["raidTools"]["showButtons"])
         pullDropdown:SetSelected(CellDB["raidTools"]["pullTimer"][1])

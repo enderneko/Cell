@@ -5,4 +5,5 @@
 	<Script file="RaidButtons.lua"/>
 	<Script file="RaidRosterFrame.lua"/>
 	<Script file="DeathReport.lua"/>
+	<Script file="BuffTracker.lua"/>
 </Ui>

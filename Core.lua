@@ -149,7 +149,7 @@ function eventFrame:ADDON_LOADED(arg1)
         -- raidTools --------------------------------------------------------------------------------
         if type(CellDB["raidTools"]) ~= "table" then
             CellDB["raidTools"] = {
-                -- ["showReBuffChecks"] = true, -- TODO:
+                ["showBuffTracker"] = false,
                 ["showBattleRes"] = true,
                 ["deathReport"] = {false, 10},
                 ["showButtons"] = false,
@@ -158,6 +158,7 @@ function eventFrame:ADDON_LOADED(arg1)
                 ["marks"] = "both",
                 ["buttonsPosition"] = {},
                 ["marksPosition"] = {},
+                ["buffTrackerPosition"] = {},
             }
         end
         -- if type(CellDB["clamped"]) ~= "boolean" then CellDB["clamped"] = false end

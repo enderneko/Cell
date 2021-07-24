@@ -673,6 +673,12 @@ local function Revise()
         if type(CellDB["raidTools"]["deathReport"]) ~= "table" then
             CellDB["raidTools"]["deathReport"] = {false, 10}
         end
+        if type(CellDB["raidTools"]["showBuffTracker"]) ~= "boolean" then
+            CellDB["raidTools"]["showBuffTracker"] = false
+        end
+        if type(CellDB["raidTools"]["buffTrackerPosition"]) ~= "table" then
+            CellDB["raidTools"]["buffTrackerPosition"] = {}
+        end
     end
 
     CellDB["revise"] = Cell.version
