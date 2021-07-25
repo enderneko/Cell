@@ -8,6 +8,8 @@ local RAID_CLASS_COLORS = RAID_CLASS_COLORS
 local UnitIsConnected = UnitIsConnected
 local UnitIsVisible = UnitIsVisible
 local UnitIsDeadOrGhost = UnitIsDeadOrGhost
+local UnitIsUnit = UnitIsUnit
+local UnitIsPlayer = UnitIsPlayer
 local UnitGUID = UnitGUID
 local UnitClass = UnitClass
 local IsInGroup = IsInGroup
@@ -17,10 +19,15 @@ local AuraUtil_FindAura = AuraUtil.FindAura
 -- 21562: Power Word: Fortitude
 -- 1459: Arcane Brilliance
 -- 6673: Battle Shout
+-------------------------------------------------
+-- vars
+-------------------------------------------------
 local enabled
 local buttons = {}
 local available = {}
+local order = {"PWF", "AB", "BS"}
 local myUnit = ""
+
 -------------------------------------------------
 -- required buffs
 -------------------------------------------------
@@ -80,7 +87,7 @@ local unaffected = {
     ["AB"] = {},
     ["BS"] = {},
 }
-CELL_UNAFFECTED = unaffected
+-- CELL_UNAFFECTED = unaffected
 
 -------------------------------------------------
 -- frame
@@ -109,29 +116,48 @@ buffTrackerFrame.moverText:SetPoint("TOP", 0, -3)
 buffTrackerFrame.moverText:SetText(L["Mover"])
 buffTrackerFrame.moverText:Hide()
 
+local fakeButtonFrame = CreateFrame("Frame", nil, buffTrackerFrame)
+fakeButtonFrame:SetPoint("BOTTOMLEFT", buffTrackerFrame)
+fakeButtonFrame:SetPoint("TOPRIGHT", buffTrackerFrame, "BOTTOMRIGHT", 0, 32)
+fakeButtonFrame:EnableMouse(true)
+fakeButtonFrame:SetFrameLevel(buffTrackerFrame:GetFrameLevel()+10)
+fakeButtonFrame:Hide()
+
+local fakeIcons = {}
+local function CreateFakeIcon(spellId)
+    local spellName, _, spellIcon = GetSpellInfo(spellId)
+    local bg = fakeButtonFrame:CreateTexture(nil, "BORDER")
+    bg:SetColorTexture(0, 0, 0, 1)
+    P:Size(bg, 32, 32)
+    
+    local icon = fakeButtonFrame:CreateTexture(nil, "ARTWORK")
+    icon:SetTexture(spellIcon)
+    icon:SetTexCoord(.08, .92, .08, .92)
+    P:Point(icon, "TOPLEFT", bg, "TOPLEFT", 1, -1)
+    P:Point(icon, "BOTTOMRIGHT", bg, "BOTTOMRIGHT", -1, 1)
+
+    return bg
+end
+
+local fakePWF = CreateFakeIcon(21562)
+fakePWF:SetPoint("BOTTOMLEFT")
+local fakeAB = CreateFakeIcon(1459)
+fakeAB:SetPoint("BOTTOMLEFT",fakePWF, "BOTTOMRIGHT", 3, 0)
+local fakeBS = CreateFakeIcon(6673)
+fakeBS:SetPoint("BOTTOMLEFT", fakeAB, "BOTTOMRIGHT", 3, 0)
+
 local function ShowMover(show)
     if show then
         if not CellDB["raidTools"]["showBuffTracker"] then return end
         buffTrackerFrame:EnableMouse(true)
         buffTrackerFrame.moverText:Show()
         Cell:StylizeFrame(buffTrackerFrame, {0, 1, 0, .4}, {0, 0, 0, 0})
-        if not IsInGroup() then
-            buttons["PWF"]:Reset()
-            buttons["AB"]:Reset()
-            buttons["BS"]:Reset()
-            buttons["PWF"]:Show()
-            buttons["AB"]:Show()
-            buttons["BS"]:Show()
-        end
+        fakeButtonFrame:Show()
     else
         buffTrackerFrame:EnableMouse(false)
         buffTrackerFrame.moverText:Hide()
         Cell:StylizeFrame(buffTrackerFrame, {0, 0, 0, 0}, {0, 0, 0, 0})
-        if not (enabled and IsInGroup()) then
-            buttons["PWF"]:Hide()
-            buttons["AB"]:Hide()
-            buttons["BS"]:Hide()
-        end
+        fakeButtonFrame:Hide()
     end
 end
 Cell:RegisterCallback("ShowMover", "BuffTracker_ShowMover", ShowMover)
@@ -157,28 +183,47 @@ buttons["BS"]:Hide()
 buttons["BS"]:SetTooltip(unaffected["BS"])
 buttons["BS"].glowColor = {.78, .61, .43}
 
-local function UpdateButton(name)
-    if not available[name] then
-        buttons[name]:SetDesaturated(true)
-        buttons[name]:SetAlpha(.5)
-        return
+local function UpdateButtons()
+    for _, name in pairs(order) do
+        if available[name] then
+            local n = F:Getn(unaffected[name])
+            if n == 0 then
+                buttons[name].count:SetText("")
+                buttons[name]:SetAlpha(.5)
+                buttons[name]:StopGlow()
+            else
+                buttons[name].count:SetText(n)
+                buttons[name]:SetAlpha(1)
+                if unaffected[name][myUnit] then
+                    -- color, N, frequency, length, thickness
+                    buttons[name]:StartGlow("Pixel", buttons[name].glowColor, 8, 0.25, 8, 2)
+                else
+                    buttons[name]:StopGlow()
+                end
+            end
+        end
     end
+end
 
-    buttons[name]:SetDesaturated(false)
-
-    local n = F:Getn(unaffected[name])
-    if n == 0 then
-        buttons[name].count:SetText("")
-        buttons[name]:SetAlpha(.7)
-        buttons[name]:StopGlow()
+local function AnchorButtons()
+    if InCombatLockdown() then
+        buffTrackerFrame:RegisterEvent("PLAYER_REGEN_ENABLED")
     else
-        buttons[name].count:SetText(n)
-        buttons[name]:SetAlpha(1)
-        if unaffected[name][myUnit] then
-            -- color, N, frequency, length, thickness
-            buttons[name]:StartGlow("Pixel", buttons[name].glowColor, 8, 0.25, 8, 2)
-        else
-            buttons[name]:StopGlow()
+        local last
+        for _, name in pairs(order) do
+            buttons[name]:ClearAllPoints()
+            if available[name] then
+                buttons[name]:Show()
+                if last then
+                    buttons[name]:SetPoint("BOTTOMLEFT", last, "BOTTOMRIGHT", 3, 0)
+                else
+                    buttons[name]:SetPoint("BOTTOMLEFT")
+                end
+                last = buttons[name]
+            else
+                buttons[name]:Hide()
+                buttons[name]:Reset()
+            end
         end
     end
 end
@@ -186,8 +231,10 @@ end
 -------------------------------------------------
 -- check
 -------------------------------------------------
-local unitSpecs = {}
-
+-- name, icon, count, debuffType, duration, expirationTime, source, isStealable, nameplateShowPersonal, spellId, canApplyAura, isBossDebuff, castByPlayer, nameplateShowAll, timeMod = UnitAura
+-- NOTE: FrameXML/AuraUtil.lua
+-- AuraUtil.FindAura(predicate, unit, filter, predicateArg1, predicateArg2, predicateArg3)
+-- predicate(predicateArg1, predicateArg2, predicateArg3, ...)
 local function predicate(...)
     local idToFind = ...
     local id = select(13, ...)
@@ -195,19 +242,14 @@ local function predicate(...)
 end
 
 local function CheckUnit(unit, updateBtn)
+    -- print("CheckUnit", unit)
     if not (available["PWF"] or available["AB"] or available["BS"]) then return end
 
     if UnitIsConnected(unit) and UnitIsVisible(unit) and not UnitIsDeadOrGhost(unit) then
-        local guid = UnitGUID(unit)
-        local required = unitSpecs[unit] and requiredBuffs[unitSpecs[unit]] or ""
+        local info = LGIST:GetCachedInfo(UnitGUID(unit))
+        local spec = info and info.global_spec_id or ""
+        local required = requiredBuffs[spec]
         if available["PWF"] then
-            -- if class then
-            --     name = RAID_CLASS_COLORS[class]:WrapTextInColorCode(Ambiguate(i, "short"))
-            -- end
-            -- name, icon, count, debuffType, duration, expirationTime, source, isStealable, nameplateShowPersonal, spellId, canApplyAura, isBossDebuff, castByPlayer, nameplateShowAll, timeMod = UnitAura
-            -- NOTE: FrameXML/AuraUtil.lua
-            -- AuraUtil.FindAura(predicate, unit, filter, predicateArg1, predicateArg2, predicateArg3)
-            -- predicate(predicateArg1, predicateArg2, predicateArg3, ...)
             if not AuraUtil_FindAura(predicate, unit, "HELPFUL", 21562) then
                 unaffected["PWF"][unit] = true
             else
@@ -215,14 +257,14 @@ local function CheckUnit(unit, updateBtn)
             end
         end
         if available["AB"] then
-            if not AuraUtil_FindAura(predicate, unit, "HELPFUL", 1459) then
+            if required == "AB" and not AuraUtil_FindAura(predicate, unit, "HELPFUL", 1459) then
                 unaffected["AB"][unit] = true
             else
                 unaffected["AB"][unit] = nil
             end
         end
         if available["BS"] then
-            if not AuraUtil_FindAura(predicate, unit, "HELPFUL", 6673) then
+            if required == "BS" and not AuraUtil_FindAura(predicate, unit, "HELPFUL", 6673) then
                 unaffected["BS"][unit] = true
             else
                 unaffected["BS"][unit] = nil
@@ -234,11 +276,7 @@ local function CheckUnit(unit, updateBtn)
         unaffected["BS"][unit] = nil
     end
     
-    if updateBtn then
-        UpdateButton("PWF")
-        UpdateButton("AB")
-        UpdateButton("BS")
-    end
+    if updateBtn then UpdateButtons() end
 end
 
 local function IterateAllUnits()
@@ -262,6 +300,8 @@ local function IterateAllUnits()
             end
         end
     end
+
+    AnchorButtons()
     
     wipe(unaffected["PWF"])
     wipe(unaffected["AB"])
@@ -270,9 +310,7 @@ local function IterateAllUnits()
         CheckUnit(unit)
     end
 
-    UpdateButton("PWF")
-    UpdateButton("AB")
-    UpdateButton("BS")
+    UpdateButtons()
 end
 
 -------------------------------------------------
@@ -280,11 +318,10 @@ end
 -------------------------------------------------
 function buffTrackerFrame:UnitUpdated(event, guid, unit, info)
     --    print(event, guid, unit, info.global_spec_id)
-    if unitSpecs[unit] ~= info.global_spec_id then
-        unitSpecs[unit] = info.global_spec_id
-        if unit == "player" and UnitIsUnit("player", myUnit) then
-            CheckUnit(myUnit, true)
-        end
+    if unit == "player" then 
+        if UnitIsUnit("player", myUnit) then CheckUnit(myUnit, true) end
+    elseif UnitIsPlayer(unit) then -- ignore pets
+        CheckUnit(unit, true)
     end
 end
 
@@ -306,6 +343,12 @@ function buffTrackerFrame:GROUP_ROSTER_UPDATE(immediate)
         buffTrackerFrame:UnregisterEvent("UNIT_FLAGS")
         buffTrackerFrame:UnregisterEvent("PLAYER_UNGHOST")
         buffTrackerFrame:UnregisterEvent("UNIT_AURA")
+
+        available["PWF"], available["AB"], available["BS"] = false, false, false
+        wipe(unaffected["PWF"])
+        wipe(unaffected["AB"])
+        wipe(unaffected["BS"])
+        AnchorButtons()
         return
     end
 
@@ -330,14 +373,19 @@ end
 
 function buffTrackerFrame:UNIT_AURA(unit)
     if IsInRaid() then
-        if string.find(unit, "raid") then
+        if string.match(unit, "raid%d") then
             CheckUnit(unit, true)
         end
     else
-        if string.find(unit, "party") or unit=="player" then
+        if string.match(unit, "party%d") or unit=="player" then
             CheckUnit(unit, true)
         end
     end
+end
+
+function buffTrackerFrame:PLAYER_REGEN_ENABLED()
+    buffTrackerFrame:UnregisterEvent("PLAYER_REGEN_ENABLED")
+    AnchorButtons()
 end
 
 buffTrackerFrame:SetScript("OnEvent", function(self, event, ...)
@@ -354,11 +402,6 @@ local function UpdateRaidTools(which)
             buffTrackerFrame:RegisterEvent("GROUP_ROSTER_UPDATE")
             LGIST.RegisterCallback(buffTrackerFrame, "GroupInSpecT_Update", "UnitUpdated") 
 
-            for _, b in pairs(buttons) do
-                b:SetEnabled(true)
-                RegisterAttributeDriver(b, "state-visibility", "[group] show; hide")
-            end
-            
             if not enabled and which == "buffTracker" then -- already in world, manually enabled
                 buffTrackerFrame:GROUP_ROSTER_UPDATE(true)
             end
@@ -367,16 +410,11 @@ local function UpdateRaidTools(which)
             buffTrackerFrame:UnregisterAllEvents()
             LGIST.UnregisterCallback(buffTrackerFrame, "GroupInSpecT_Update")
             
-            for _, b in pairs(buttons) do
-                UnregisterAttributeDriver(b, "state-visibility")
-                b:SetEnabled(false)
-                b:Hide()
-                b:Reset()
-            end
-
             wipe(unaffected["PWF"])
             wipe(unaffected["AB"])
             wipe(unaffected["BS"])
+            available["PWF"], available["AB"], available["BS"] = false, false, false
+            myUnit = ""
 
             enabled = false
         end

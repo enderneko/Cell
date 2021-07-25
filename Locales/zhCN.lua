@@ -112,8 +112,9 @@ L["Cell will report all deaths during a raid encounter."] = "Cell 将会通报�
 L["Cell will report first %d deaths during a raid encounter."] = "Cell 将会通报团队战中的前 %d 个死亡信息。"
 L["A 0-40 integer is required."] = "需要一个0到40的整数。"
 L["instakill"] = "秒杀"
-L["Buff Tracker"] = "补Buff提示"
+L["Buff Tracker"] = "补buff提示"
 L["Check if your group members need some raid buffs"] = "检查队伍是否需要补耐力、智力、攻强"
+L["Unaffected"] = "未获得此增益"
 
 -------------------------------------------------
 -- appearance
@@ -381,6 +382,11 @@ L["Bug Report & Suggestion"] = "问题报告与建议"
 -------------------------------------------------
 L["Change Logs"] = "更新记录"
 L["CHANGE LOGS"] = [[
+    <h1>r57-release (Jul 26, 2021, 00:52 GMT+8)</h1>
+    <p>+ 新功能：死亡通报 &amp; 补buff提示。</p>
+    <p>* 更新了副本减益。</p>
+    <br/>
+
     <h1>r56-release (Jul 16, 2021, 01:20 GMT+8)</h1>
     <p>* 更新了“被法术选中”和“放大显示的减益”。</p>
     <p>* 修复了单位按钮的边框。</p>

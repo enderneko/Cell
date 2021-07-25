@@ -42,6 +42,11 @@ select(2, ...).L = setmetatable({
     ["marksTips"] = "\n|rTarget marker\nLeft-Click: |cffffffffset raid marker on target|r\nRight-Click: |cfffffffflock raid marker on target (in your group)|r",
 
     ["CHANGE LOGS"] = [[
+        <h1>r57-release (Jul 26, 2021, 00:52 GMT+8)</h1>
+        <p>+ New features: Death Report &amp; Buff Tracker.</p>
+        <p>* Updated RaidDebuffs.</p>
+        <br/>
+
         <h1>r56-release (Jul 16, 2021, 01:20 GMT+8)</h1>
         <p>* Updated TargetedSpells and BigDebuffs.</p>
         <p>* Fixed unit button border.</p>
@@ -118,7 +123,7 @@ select(2, ...).L = setmetatable({
         <br/>
 
         <h1>r43-release (Mar 3, 2021, 2:18 GMT+8)</h1>
-        <p>+ New Feature: Layout Import/Export.</p>
+        <p>+ New feature: Layout Import/Export.</p>
         <br/>
 
         <h1>r42-release (Feb 22, 2021, 17:43 GMT+8)</h1>

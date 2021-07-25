@@ -506,21 +506,18 @@ function addon:CreateBuffButton(parent, size, spellId)
         b:SetScript("OnEnter", function()
             if F:Getn(list) ~= 0 then
                 CellTooltip:SetOwner(b, "ANCHOR_TOPLEFT", 0, 3)
-                CellTooltip:AddLine("Unaffected")
+                CellTooltip:AddLine(L["Unaffected"])
                 for unit in pairs(list) do
-                    CellTooltip:AddLine(RAID_CLASS_COLORS[select(2, UnitClass(unit))]:WrapTextInColorCode(UnitName(unit)))
+                    local class = select(2, UnitClass(unit))
+                    local name = UnitName(unit)
+                    if class and name then
+                        CellTooltip:AddLine(RAID_CLASS_COLORS[class]:WrapTextInColorCode(name))
+                    end
                 end
                 CellTooltip:Show()
-            -- else
-            --     CellTooltip:Hide() -- for PostClick
             end
         end)
     end
-
-    -- update tooltip after click
-    -- b:SetScript("PostClick", function()
-    --     b:GetScript("OnEnter")()
-    -- end)
 
     function b:SetDesaturated(flag)
         b.texture:SetDesaturated(flag)
