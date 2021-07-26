@@ -560,6 +560,7 @@ function eventFrame:GROUP_ROSTER_UPDATE()
         -- update Cell.unitButtons.raid.units
         for i = GetNumGroupMembers()+1, 40 do
             Cell.unitButtons.raid.units["raid"..i] = nil
+            _G["CellRaidFrameMember"..i] = nil
         end
         F:UpdateRaidSetup()
 
@@ -589,6 +590,7 @@ function eventFrame:GROUP_ROSTER_UPDATE()
         -- update Cell.unitButtons.raid.units
         for i = 1, 40 do
             Cell.unitButtons.raid.units["raid"..i] = nil
+            _G["CellRaidFrameMember"..i] = nil
         end
 
     else
@@ -604,6 +606,7 @@ function eventFrame:GROUP_ROSTER_UPDATE()
         -- update Cell.unitButtons.raid.units
         for i = 1, 40 do
             Cell.unitButtons.raid.units["raid"..i] = nil
+            _G["CellRaidFrameMember"..i] = nil
         end
     end
 

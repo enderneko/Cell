@@ -1645,6 +1645,12 @@ local function UnitButton_OnAttributeChanged(self, name, value)
             self.state.unit = value
             self.state.displayedUnit = value
             if string.find(value, "raid") then Cell.unitButtons.raid.units[value] = self end
+            -- for omnicd
+            if string.match(value, "raid%d") then
+                local i = tonumber(string.match(value, "%d"))
+                _G["CellRaidFrameMember"..i] = self
+                self.unitid = value
+            end
 
             -- reset debuffs
             if debuffs_cache[self.state.unit] then wipe(debuffs_cache[self.state.unit]) end
