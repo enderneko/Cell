@@ -11,6 +11,11 @@ L["(based on current)"] = "(현재 기준)"
 --[[ L["|cff1Aff1AYes|r - Overwrite"] = "|cff1Aff1AYes|r - Overwrite"--]] 
 --[[Translation missing --]]
 --[[ L["|cffff1A1ANo|r - Create New"] = "|cffff1A1ANo|r - Create New"--]] 
+--[[Translation missing --]]
+--[[ L["A 0-40 integer is required."] = "A 0-40 integer is required."--]] 
+--[[Translation missing --]]
+--[[ L[ [=[A UI reload is required.
+Do it now?]=] ] = "A UI reload is required.\\nDo it now?"--]] 
 L["About"] = "정보"
 L["ABOUT"] = "Cell은 CompactRaid에서 영감을 받은 공격대 프레임 애드온입니다. CompactRaid을 좋아하지만 업데이트가 되지 않습니다. 그래서 나는 Cell 만들었습니다. 일부 아이디어는 Aptechka, Grid2와 같은 다른 훌륭한 공격대 프레임 애드온에서 나왔습니다. Cell은 가볍거나 강력한 (예 : VuhDo, Grid2) 공격대 프레임 애드온이 아니지만 사용하기 쉽도록 제작되었습니다."
 L["ACCEPTED"] = "수락"
@@ -18,8 +23,14 @@ L["Action"] = "행동"
 L["AFK"] = "AFK"
 L["Aggro Bar"] = "위협 수준 바"
 L["Aggro Indicator"] = "위협 수준 지시기"
+--[[Translation missing --]]
+--[[ L["all"] = "all"--]] 
 L["Alpha"] = "투명도"
+--[[Translation missing --]]
+--[[ L["Alt+Right-Click to remove a player"] = "Alt+Right-Click to remove a player"--]] 
 L["Anchor Point"] = "고정 위치에서"
+--[[Translation missing --]]
+--[[ L["Anchored To"] = "Anchored To"--]] 
 L["AoE Healing"] = "광역 치유"
 L["Appearance"] = "외형"
 L["Arena"] = "전장"
@@ -31,8 +42,11 @@ L["Background Color"] = "배경 색상"
 L["Bar"] = "바"
 L["Bar Color"] = "바 색상"
 L["Bars"] = "바들"
+L["Battle Res Timer"] = "전투 준비 타이머 표시"
 L["BG 1-15"] = "전장 1-15"
 L["BG 16-40"] = "전장 16-40"
+--[[Translation missing --]]
+--[[ L["Big Debuffs"] = "Big Debuffs"--]] 
 L["Blizzard Frames"] = "블리자드 기본 창"
 L["Border"] = "외곽선"
 L["Both"] = "둘다"
@@ -43,12 +57,24 @@ L["bottom-to-top"] = "하단에서 상단으로"
 L["BR"] = "BR"
 L["Buff"] = "강화 효과"
 L["Buff List"] = "강화 효과 목록"
+--[[Translation missing --]]
+--[[ L["Buff Tracker"] = "Buff Tracker"--]] 
 L["Bug Report & Suggestion"] = "버그 신고 및 제안"
 L["Button4"] = "4번 버튼"
 L["Button5"] = "5번 버튼"
 L["Can't change options in combat."] = "전투중에는 옵션을 변경할 수 없습니다."
 L["castByMe"] = "자신이 시전한 강화 효과만"
+--[[Translation missing --]]
+--[[ L["Cell will report all deaths during a raid encounter."] = "Cell will report all deaths during a raid encounter."--]] 
+--[[Translation missing --]]
+--[[ L["Cell will report first %d deaths during a raid encounter."] = "Cell will report first %d deaths during a raid encounter."--]] 
 L["CENTER"] = "중앙"
+--[[Translation missing --]]
+--[[ L["Change Logs"] = "Change Logs"--]] 
+--[[Translation missing --]]
+--[[ L["Check all visible enemy nameplates. Battleground/Arena only."] = "Check all visible enemy nameplates. Battleground/Arena only."--]] 
+--[[Translation missing --]]
+--[[ L["Check if your group members need some raid buffs"] = "Check if your group members need some raid buffs"--]] 
 L["Class Color"] = "직업 색상"
 L["Class Color (dark)"] = "직업 색상 (어둡게)"
 L["Click-Castings"] = "클릭-주문 시전"
@@ -58,11 +84,21 @@ L["Create"] = "생성"
 L["Create new debuff (id)"] = "새로운 약화 효과 생성 (ID)"
 L["Create new indicator"] = "새로운 지시기 생성"
 L["Create new layout"] = "새로운 배치 생성"
+--[[Translation missing --]]
+--[[ L["Current"] = " Current"--]] 
 L["Current Layout"] = "현재 배치"
 L["Current Profile"] = "현재 프로필"
 L["Currently Enabled"] = "현재 사용"
+--[[Translation missing --]]
+--[[ L["Cursor"] = "Cursor"--]] 
+--[[Translation missing --]]
+--[[ L["Cursor Left"] = "Cursor Left"--]] 
+--[[Translation missing --]]
+--[[ L["Cursor Right"] = "Cursor Right"--]] 
 L["Custom Color"] = "사용자 색상"
 L["DEAD"] = "죽음"
+--[[Translation missing --]]
+--[[ L["Death Report"] = "Death Report"--]] 
 L["Debuff"] = "약화 효과"
 L["Debuff already exists."] = "약화 효과가 이미 존재합니다."
 L["Debuff Filter (blacklist)"] = "약화 효과 필터 (블랙 리스트)"
@@ -92,6 +128,8 @@ L["External Cooldowns"] = "외부 재사용 시간"
 L["Extra Action Button"] = "추가 행동 버튼"
 L["Fade Out Menu"] = "메뉴 옵션 사라짐"
 L["Fade out menu buttons on mouseout"] = "마우스가 벗어날때 메뉴 옵션 버튼이 점점 사라집니다."
+--[[Translation missing --]]
+--[[ L["first %d"] = "first %d"--]] 
 L["Focus"] = "주시"
 L["focus"] = "주시 대상"
 L["Font"] = "글자"
@@ -115,6 +153,8 @@ L["Hide"] = "숨김"
 L["Hide Blizzard Frames"] = "기본 창 숨김"
 L["Hide Blizzard Raid / Party"] = "기본 공격대/파티 숨김"
 L["hideFull"] = "전체 숨김"
+--[[Translation missing --]]
+--[[ L["Highlight Size"] = "Highlight Size"--]] 
 L["Horizontal"] = "가로"
 L["Icon"] = "아이콘"
 L["Icons"] = "아이콘들"
@@ -125,6 +165,8 @@ L["Icons"] = "아이콘들"
 L["Indicator Settings"] = "지시기 설정"
 L["Indicator settings are part of Layout settings which are account-wide."] = "지시기 설정은 계정 전체에 적용되는 배치 설정의 일부입니다."
 L["Indicators"] = "지시기"
+--[[Translation missing --]]
+--[[ L["instakill"] = "instakill"--]] 
 L["Invalid"] = "유효하지 않음"
 L["Invalid spell id."] = "잘못된 주문 ID입니다."
 L["Layout"] = "배치"
@@ -141,11 +183,14 @@ L["Lines"] = "라인"
 L["Lock"] = "잠금"
 L["Lock Cell Frame"] = "Cell 창 잠금"
 L["Macro"] = "매크로"
+L["Marks Bar"] = "표시기 바"
 L["marksTips"] = "\n|r대상 표시기\n왼쪽 클릭: |cffffffff대상에 공격대 표시기 설정|r\n오른쪽 클릭: |cffffffff대상의 공격대 표시기 잠금 (나의 그룹)|r"
 L["Max Icons"] = "최대 아이콘"
 L["Menu"] = "메뉴"
 L["Middle"] = "가운데 버튼"
 L["Misc"] = "기타"
+--[[Translation missing --]]
+--[[ L["MODERATE CPU USAGE"] = "MODERATE CPU USAGE"--]] 
 L["Monochrome Outline"] = "단색 테두리"
 L["Mouseover Highlight Color"] = "마우스오버 강조 색상"
 L["Mover"] = "이동"
@@ -165,6 +210,8 @@ L["onlyShowTopGlow"] = "Glow만 표시"
 L["Options"] = "옵션"
 L["Options UI Font Size"] = "UI 글자 크기 옵션"
 L["Orientation"] = "방향"
+--[[Translation missing --]]
+--[[ L["Out of Range Alpha"] = "Out of Range Alpha"--]] 
 L["Outline"] = "테두리"
 --[[Translation missing --]]
 --[[ L["Overwrite Layout"] = "Overwrite Layout"--]] 
@@ -189,11 +236,16 @@ L["Raid Icon (target)"] = "공격대 아이콘 (대상)"
 L["Raid Tools"] = "공격대 도구"
 L["Ready"] = "준비"
 L["Ready Check Icon"] = "준비 확인 아이콘"
+L["ReadyCheck and PullTimer buttons"] = "전투준비 및 풀링 타이머 버튼 표시"
 L["Rect"] = "모서리"
 L["Remaining Time <"] = "남은 시간 <"
 L["Rename"] = "이름 변경"
 L["Rename layout"] = "배치 이름 변경"
+--[[Translation missing --]]
+--[[ L["Report deaths to group"] = "Report deaths to group"--]] 
 L["Require reload of the UI"] = "UI 재시작 필요"
+--[[Translation missing --]]
+--[[ L["RESET"] = "Cell requires a full reset after updating from a very old version.\\n|cff22ff22Yes|r - Reset Cell\\n|cffff2222No|r - I'll fix it myself"--]] 
 L["Reset All"] = "모두 초기화"
 L["reset all Cell settings"] = "모든 Cell 설정 초기화"
 L["reset all Click-Castings"] = "모든 클릭 주문 시전 초기화"
@@ -214,31 +266,35 @@ L["Shadow"] = "그림자"
 L["Shield Bar"] = "보호막 바"
 L["Shift+Enter: add a new line"] = "Shift+Enter: 새로운 라인 추가"
 L["Shine"] = "Shine"
-L["Show Battle Res Timer"] = "전투 준비 타이머 표시"
 L["show Cell options frame"] = "Cell 옵션 창"
 L["Show Current Instance"] = "현재 인스턴스만 표시"
-L["Show Marks Bar"] = "표시기 바"
+--[[Translation missing --]]
+--[[ L["Show duration text instead of icon animation"] = "Show duration text instead of icon animation"--]] 
 L["Show Party"] = "파티시 표시"
 L["Show Party Pets"] = "파티원 소환수 표시"
 L["Show pets while in a party"] = "파티원의 소환수를 표시합니다."
-L["Show ReadyCheck and PullTimer buttons"] = "전투준비 및 풀링 타이머 버튼 표시"
 L["Show Solo"] = "솔로잉시 표시"
-L["Show the number of tanks/healers/damagers while in raid"] = "공격대원의 방어 전담/치유 전담/공격 전담 숫자 표시"
 L["Show while in a party"] = "파티시에만 표시합니다."
 L["Show while not in a group"] = "솔로잉시 표시합니다."
 L["showDuration"] = "지속시간 표시"
 L["Size"] = "크기"
+--[[Translation missing --]]
+--[[ L["Size (Big)"] = "Size (Big)"--]] 
 L["Slash Commands"] = "슬래시 명령어"
 L["Solo/Party"] = "솔로잉/파티"
 L["Sort Party By Role"] = "역할별로 파티 정렬"
 L["Spell"] = "주문"
 L["Spell List"] = "주문 목록"
+--[[Translation missing --]]
+--[[ L["Status Icon"] = "Status Icon"--]] 
 L["Status Text"] = "상태 문자"
 L["Status Text Position"] = "상태 문자 위치"
 L["T"] = "특성"
 L["Tank Active Mitigation"] = "탱커 완화 스킬"
 L["Target"] = "대상"
 L["target"] = "대상"
+--[[Translation missing --]]
+--[[ L["Target Counter"] = "Target Counter"--]] 
 L["Target Highlight Color"] = "대상 강조 색상"
 L["Target Marks"] = "대상 표시기"
 L["Targeted Spells"] = "대상의 주문들"
@@ -255,18 +311,23 @@ L["To HealthBar's"] = "생명력 바에서"
 L["To open options frame, use /cell options"] = "옵션 창을 열려면 /cell options을 사용하세요."
 L["To UnitButton's"] = "유닛 버튼에서"
 L["togglemenu"] = "토글 메뉴"
+L["Tooltips"] = "유닛 툴팁"
 L["TOP"] = "상단"
 L["TOPLEFT"] = "좌측 상단"
 L["TOPRIGHT"] = "우측 상단"
 L["top-to-bottom"] = "상단에서 하단으로"
 L["Track by ID"] = "ID 추적"
 L["Translators"] = "번역"
+--[[Translation missing --]]
+--[[ L["Unaffected"] = "Unaffected"--]] 
+--[[Translation missing --]]
+--[[ L["Unit Button"] = "Unit Button"--]] 
 L["Unit Button Size"] = "유닛 버튼 크기"
 L["Unit Spacing"] = "유닛 간격"
-L["Unit Tooltips"] = "유닛 툴팁"
-L["UnitButton Color"] = "유닛 버튼 색상"
 L["Unlimited"] = "제한 없음"
 L["Unlock"] = "해제"
+--[[Translation missing --]]
+--[[ L["Use |cFFFFB5C5/cell report X|r to set the number of reports during a raid encounter"] = "Use |cFFFFB5C5/cell report X|r to set the number of reports during a raid encounter"--]] 
 L["Use common profile"] = "공용 프로필 사용"
 L["Use separate profile for each spec"] = "각 특성별 프로필 사용"
 L["vehicle name"] = "탈것 이름"
