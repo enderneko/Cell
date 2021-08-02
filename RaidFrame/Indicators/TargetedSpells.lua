@@ -4,11 +4,17 @@ local F = Cell.funcs
 local I = Cell.iFuncs
 local LCG = LibStub("LibCustomGlow-1.0")
 
+local UnitExists = UnitExists
+local UnitGUID = UnitGUID
+local UnitIsUnit = UnitIsUnit
+local UnitIsEnemy = UnitIsEnemy
+local UnitCastingInfo = UnitCastingInfo
+local UnitChannelInfo = UnitChannelInfo
+
 -------------------------------------------------
 -- targeted spells
 -------------------------------------------------
 local casts, expiredCasts, spells, glow = {}, {}, {}
--- spells[32011] = true
 local castsOnUnit = {}
 
 local function UpdateTargetedSpells(setting, value, value2)
@@ -21,27 +27,28 @@ local function UpdateTargetedSpells(setting, value, value2)
         spells = F:ConvertTable(value)
         glow = value2
     end
+    -- spells[69068] = true
 end
 Cell:RegisterCallback("UpdateTargetedSpells", "UpdateTargetedSpells", UpdateTargetedSpells)
 
 local function GetCastsOnUnit(guid)
-    wipe(castsOnUnit)
+    if castsOnUnit[guid] then
+        wipe(castsOnUnit[guid])
+    else
+        castsOnUnit[guid] = {}
+    end
+
     for sourceGUID, castInfo in pairs(casts) do
         if guid == castInfo["targetGUID"] then
             if castInfo["endTime"] > GetTime() then -- not expired
-                tinsert(castsOnUnit, castInfo)
+                tinsert(castsOnUnit[guid], castInfo)
             else
-                tinsert(expiredCasts, sourceGUID)
+                casts[sourceGUID] = nil
             end
         end
     end
 
-    for _, source in pairs(expiredCasts) do
-        casts[source] = nil
-    end
-    wipe(expiredCasts)
-
-    return castsOnUnit
+    return castsOnUnit[guid]
 end
 
 local function UpdateCastsOnUnit(guid)
@@ -71,7 +78,7 @@ local eventFrame = CreateFrame("Frame")
 eventFrame:SetScript("OnEvent", function(_, event, sourceUnit)
     if event == "ENCOUNTER_END" then
         wipe(casts)
-        wipe(expiredCasts)
+        wipe(castsOnUnit)
         F:IterateAllUnitButtons(function(b)
             b.indicators.targetedSpells:Hide()
         end)
@@ -81,6 +88,14 @@ eventFrame:SetScript("OnEvent", function(_, event, sourceUnit)
     if sourceUnit and UnitIsEnemy(sourceUnit, "player") then
         local sourceGUID = UnitGUID(sourceUnit)
         local cast = casts[sourceGUID]
+        local previousTarget
+
+        -- check if expired
+        if cast and cast["endTime"] <= GetTime() then
+            previousTarget = cast["targetGUID"]
+            casts[sourceGUID] = nil
+            UpdateCastsOnUnit(previousTarget)
+        end
 
         if event == "UNIT_SPELLCAST_START" or event == "UNIT_SPELLCAST_DELAYED"  or event == "UNIT_SPELLCAST_CHANNEL_START" or event == "UNIT_SPELLCAST_CHANNEL_UPDATE" or event == "UNIT_TARGET" or event == "NAME_PLATE_UNIT_ADDED" then
             -- name, text, texture, startTimeMS, endTimeMS, isTradeSkill, castID, notInterruptible, spellId
@@ -90,7 +105,6 @@ eventFrame:SetScript("OnEvent", function(_, event, sourceUnit)
                 name, _, texture, startTimeMS, endTimeMS, _, notInterruptible, spellId = UnitChannelInfo(sourceUnit)
             end
 
-            local previousTarget
             if cast then previousTarget = cast["targetGUID"] end
 
             if spellId and spells[spellId] then
@@ -116,8 +130,9 @@ eventFrame:SetScript("OnEvent", function(_, event, sourceUnit)
 
         elseif event == "UNIT_SPELLCAST_STOP" or event == "UNIT_SPELLCAST_INTERRUPTED" or event == "UNIT_SPELLCAST_FAILED" or event == "UNIT_SPELLCAST_FAILED_QUIET" or event == "UNIT_SPELLCAST_CHANNEL_STOP" or event == "NAME_PLATE_UNIT_REMOVED" then
             if cast then
+                previousTarget = cast["targetGUID"]
                 casts[sourceGUID] = nil
-                UpdateCastsOnUnit(cast["targetGUID"])
+                UpdateCastsOnUnit(previousTarget)
             end
         end
     end
