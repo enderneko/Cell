@@ -4,6 +4,7 @@ local F = Cell.funcs
 
 local UnitInParty = UnitInParty
 local UnitInRaid = UnitInRaid
+local UnitIsFeignDeath = UnitIsFeignDeath
 ----------------------------------------------------
 -- vars
 ----------------------------------------------------
@@ -197,7 +198,7 @@ function frame:COMBAT_LOG_EVENT_UNFILTERED(...)
             end
         end
 
-        if event == "UNIT_DIED" then
+        if event == "UNIT_DIED" and not UnitIsFeignDeath(destName) then
             C_Timer.After(.3, function()
                 if not deathLogs[destGUID] then deathLogs[destGUID] = {["name"]=destName} end
                 Report(destGUID)
