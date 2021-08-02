@@ -1647,7 +1647,7 @@ local function UnitButton_OnAttributeChanged(self, name, value)
             if string.find(value, "raid") then Cell.unitButtons.raid.units[value] = self end
             -- for omnicd
             if string.match(value, "raid%d") then
-                local i = tonumber(string.match(value, "%d"))
+                local i = string.match(value, "%d")
                 _G["CellRaidFrameMember"..i] = self
                 self.unitid = value
             end
