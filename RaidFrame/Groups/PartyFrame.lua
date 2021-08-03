@@ -100,7 +100,7 @@ local function PartyFrame_UpdateLayout(layout, which)
     -- if layout ~= Cell.vars.currentLayout then return end
     if Cell.vars.groupType ~= "party" and init then return end
     init = true
-    layout = CellDB["layouts"][CellCharacterDB["party"]]
+    layout = Cell.vars.currentLayoutTable
 
     local buttons = Cell.unitButtons.party
 

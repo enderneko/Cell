@@ -8,7 +8,7 @@ Cell.frames.layoutsTab = layoutsTab
 layoutsTab:SetAllPoints(Cell.frames.optionsFrame)
 layoutsTab:Hide()
 
-local selectedLayout, selectedLayoutTable
+local selectedRole, selectedLayout, selectedLayoutTable
 -------------------------------------------------
 -- preview frame
 -------------------------------------------------
@@ -412,9 +412,9 @@ end
 -------------------------------------------------
 -- layout
 -------------------------------------------------
-local layoutDropdown, partyDropdown, raidDropdown, arenaDropdown, bg15Dropdown, bg40Dropdown
+local layoutDropdown, roleDropdown, partyDropdown, raidDropdown, arenaDropdown, bg15Dropdown, bg40Dropdown
 local LoadLayoutDropdown, LoadAutoSwitchDropdowns
-local LoadLayoutDB, UpdateButtonStates
+local LoadLayoutDB, UpdateButtonStates, LoadLayoutAutoSwitchDB
 
 local layoutText = Cell:CreateSeparator(L["Layout"], layoutsTab, 188)
 layoutText:SetPoint("TOPLEFT", 5, -5)
@@ -460,31 +460,6 @@ end
 Cell:CreateMask(layoutsTab, nil, {1, -1, -1, 1})
 layoutsTab.mask:Hide()
 
--- applyToAll
--- local applyToAllBtn = Cell:CreateButton(layoutsTab, L["Apply to All"], "class-hover", {70, 20})
--- applyToAllBtn:SetPoint("LEFT", layoutDropdown, "RIGHT", 10, 0)
--- applyToAllBtn:SetScript("OnClick", function()
---     -- update db
---     CellCharacterDB["party"] = selectedLayout
---     CellCharacterDB["raid"] = selectedLayout
---     CellCharacterDB["battleground15"] = selectedLayout
---     CellCharacterDB["battleground40"] = selectedLayout
-
---     -- update dropdown
---     partyDropdown:SetSelected(selectedLayout)
---     raidDropdown:SetSelected(selectedLayout)
---     bg15Dropdown:SetSelected(selectedLayout)
---     bg40Dropdown:SetSelected(selectedLayout)
-
---     -- apply
---     F:UpdateLayout("party")
---     Cell:Fire("UpdateAppearance", "font") -- update text size
---     Cell:Fire("UpdateIndicators")
---     UpdateButtonStates()
---     UpdateEnabledLayoutText()
--- end)
--- Cell:RegisterForCloseDropdown(applyToAllBtn)
-
 -- new
 local newBtn = Cell:CreateButton(layoutsTab, L["New"], "class-hover", {55, 20})
 newBtn:SetPoint("TOPLEFT", layoutDropdown, "BOTTOMLEFT", 0, -10)
@@ -526,10 +501,13 @@ renameBtn:SetScript("OnClick", function()
             CellDB["layouts"][name] = F:Copy(CellDB["layouts"][selectedLayout])
             CellDB["layouts"][selectedLayout] = nil
             -- check auto switch related
-            if CellCharacterDB["party"] == selectedLayout then CellCharacterDB["party"] = name end
-            if CellCharacterDB["raid"] == selectedLayout then CellCharacterDB["raid"] = name end
-            if CellCharacterDB["battleground15"] == selectedLayout then CellCharacterDB["battleground15"] = name end
-            if CellCharacterDB["battleground40"] == selectedLayout then CellCharacterDB["battleground40"] = name end
+            for role, t in pairs(CellDB["layoutAutoSwitch"]) do
+                for groupType, layout in pairs(t) do
+                    if layout == selectedLayout then
+                        CellDB["layoutAutoSwitch"][role][groupType] = name
+                    end
+                end
+            end
             
             -- check current
             if selectedLayout == Cell.vars.currentLayout then
@@ -572,10 +550,13 @@ deleteBtn:SetScript("OnClick", function()
         CellDB["layouts"][selectedLayout] = nil
         F:Print(L["Layout deleted: "]..selectedLayout..".")
         -- check auto switch related
-        if CellCharacterDB["party"] == selectedLayout then CellCharacterDB["party"] = "default" end
-        if CellCharacterDB["raid"] == selectedLayout then CellCharacterDB["raid"] = "default" end
-        if CellCharacterDB["battleground15"] == selectedLayout then CellCharacterDB["battleground15"] = "default" end
-        if CellCharacterDB["battleground40"] == selectedLayout then CellCharacterDB["battleground40"] = "default" end
+        for role, t in pairs(CellDB["layoutAutoSwitch"]) do
+            for groupType, layout in pairs(t) do
+                if layout == selectedLayout then
+                    CellDB["layoutAutoSwitch"][role][groupType] = "default"
+                end
+            end
+        end
 
         -- set current to default
         if selectedLayout == Cell.vars.currentLayout then
@@ -615,15 +596,6 @@ exportBtn:SetScript("OnClick", function()
 end)
 
 UpdateButtonStates = function()
-    -- if selectedLayout == CellCharacterDB["party"]
-    -- and selectedLayout == CellCharacterDB["raid"]
-    -- and selectedLayout == CellCharacterDB["battleground15"]
-    -- and selectedLayout == CellCharacterDB["battleground40"] then
-    --     applyToAllBtn:SetEnabled(false)
-    -- else
-    --     applyToAllBtn:SetEnabled(true)
-    -- end
-
     if selectedLayout == "default" then
         deleteBtn:SetEnabled(false)
         renameBtn:SetEnabled(false)
@@ -639,9 +611,39 @@ end
 local autoSwitchText = Cell:CreateSeparator(L["Layout Auto Switch"], layoutsTab, 188)
 autoSwitchText:SetPoint("TOPLEFT", 203, -5)
 
+-- role
+roleDropdown = Cell:CreateDropdown(layoutsTab, 163)
+roleDropdown:SetPoint("TOPLEFT", autoSwitchText, "BOTTOMLEFT", 5, -12)
+roleDropdown:SetItems({
+    {
+        ["text"] = "|TInterface\\AddOns\\Cell\\Media\\Roles\\TANK:11|t "..TANK,
+        ["value"] = "TANK",
+        ["onClick"] = function()
+            selectedRole = "TANK"
+            LoadLayoutAutoSwitchDB(selectedRole)
+        end,
+    },
+    {
+        ["text"] = "|TInterface\\AddOns\\Cell\\Media\\Roles\\HEALER:11|t "..HEALER,
+        ["value"] = "HEALER",
+        ["onClick"] = function()
+            selectedRole = "HEALER"
+            LoadLayoutAutoSwitchDB(selectedRole)
+        end,
+    },
+    {
+        ["text"] = "|TInterface\\AddOns\\Cell\\Media\\Roles\\DAMAGER:11|t "..DAMAGER,
+        ["value"] = "DAMAGER",
+        ["onClick"] = function()
+            selectedRole = "DAMAGER"
+            LoadLayoutAutoSwitchDB(selectedRole)
+        end,
+    },
+})
+
 -- party
 partyDropdown = Cell:CreateDropdown(layoutsTab, 85)
-partyDropdown:SetPoint("TOPLEFT", autoSwitchText, "BOTTOMLEFT", 5, -30)
+partyDropdown:SetPoint("TOPLEFT", roleDropdown, "BOTTOMLEFT", 0, -25)
 
 local partyText = layoutsTab:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
 partyText:SetPoint("BOTTOMLEFT", partyDropdown, "TOPLEFT", 0, 1)
@@ -695,8 +697,8 @@ LoadAutoSwitchDropdowns = function()
         table.insert(partyItems, {
             ["text"] = value == "default" and _G.DEFAULT or value,
             ["onClick"] = function()
-                CellCharacterDB["party"] = value
-                if not Cell.vars.inBattleground and Cell.vars.groupType == "solo" or Cell.vars.groupType == "party" then
+                CellDB["layoutAutoSwitch"][selectedRole]["party"] = value
+                if not Cell.vars.inBattleground and (Cell.vars.groupType == "solo" or Cell.vars.groupType == "party") and (selectedRole == Cell.vars.playerSpecRole) then
                     F:UpdateLayout("party")
                     Cell:Fire("UpdateIndicators")
                     LoadLayoutDB(Cell.vars.currentLayout)
@@ -714,8 +716,8 @@ LoadAutoSwitchDropdowns = function()
         table.insert(raidItems, {
             ["text"] = value == "default" and _G.DEFAULT or value,
             ["onClick"] = function()
-                CellCharacterDB["raid"] = value
-                if not Cell.vars.inBattleground and Cell.vars.groupType == "raid" then
+                CellDB["layoutAutoSwitch"][selectedRole]["raid"] = value
+                if not Cell.vars.inBattleground and Cell.vars.groupType == "raid" and selectedRole == Cell.vars.playerSpecRole then
                     F:UpdateLayout("raid")
                     Cell:Fire("UpdateIndicators")
                     LoadLayoutDB(Cell.vars.currentLayout)
@@ -733,8 +735,8 @@ LoadAutoSwitchDropdowns = function()
         table.insert(arenaItems, {
             ["text"] = value == "default" and _G.DEFAULT or value,
             ["onClick"] = function()
-                CellCharacterDB["arena"] = value
-                if Cell.vars.inBattleground == 5 then
+                CellDB["layoutAutoSwitch"][selectedRole]["arena"] = value
+                if Cell.vars.inBattleground == 5 and selectedRole == Cell.vars.playerSpecRole then
                     F:UpdateLayout("arena")
                     Cell:Fire("UpdateIndicators")
                     LoadLayoutDB(Cell.vars.currentLayout)
@@ -752,8 +754,8 @@ LoadAutoSwitchDropdowns = function()
         table.insert(bg15Items, {
             ["text"] = value == "default" and _G.DEFAULT or value,
             ["onClick"] = function()
-                CellCharacterDB["battleground15"] = value
-                if Cell.vars.inBattleground == 15 then
+                CellDB["layoutAutoSwitch"][selectedRole]["battleground15"] = value
+                if Cell.vars.inBattleground == 15 and selectedRole == Cell.vars.playerSpecRole then
                     F:UpdateLayout("battleground15")
                     Cell:Fire("UpdateIndicators")
                     LoadLayoutDB(Cell.vars.currentLayout)
@@ -771,8 +773,8 @@ LoadAutoSwitchDropdowns = function()
         table.insert(bg40Items, {
             ["text"] = value == "default" and _G.DEFAULT or value,
             ["onClick"] = function()
-                CellCharacterDB["battleground40"] = value
-                if Cell.vars.inBattleground == 40 then
+                CellDB["layoutAutoSwitch"][selectedRole]["battleground40"] = value
+                if Cell.vars.inBattleground == 40 and selectedRole == Cell.vars.playerSpecRole then
                     F:UpdateLayout("battleground40")
                     Cell:Fire("UpdateIndicators")
                     LoadLayoutDB(Cell.vars.currentLayout)
@@ -1065,11 +1067,6 @@ LoadLayoutDB = function(layout)
     selectedLayoutTable = CellDB["layouts"][layout]
 
     layoutDropdown:SetSelected(selectedLayout == "default" and _G.DEFAULT or selectedLayout)
-    partyDropdown:SetSelected(CellCharacterDB["party"] == "default" and _G.DEFAULT or CellCharacterDB["party"])
-    raidDropdown:SetSelected(CellCharacterDB["raid"] == "default" and _G.DEFAULT or CellCharacterDB["raid"])
-    arenaDropdown:SetSelected(CellCharacterDB["arena"] == "default" and _G.DEFAULT or CellCharacterDB["arena"])
-    bg15Dropdown:SetSelected(CellCharacterDB["battleground15"] == "default" and _G.DEFAULT or CellCharacterDB["battleground15"])
-    bg40Dropdown:SetSelected(CellCharacterDB["battleground40"] == "default" and _G.DEFAULT or CellCharacterDB["battleground40"])
 
     widthSlider:SetValue(selectedLayoutTable["size"][1])
     heightSlider:SetValue(selectedLayoutTable["size"][2])
@@ -1105,6 +1102,17 @@ LoadLayoutDB = function(layout)
     UpdateLayoutPreview()
 end
 
+LoadLayoutAutoSwitchDB = function(role)
+    selectedRole = role
+
+    roleDropdown:SetSelectedValue(role)
+    partyDropdown:SetSelected(CellDB["layoutAutoSwitch"][role]["party"] == "default" and _G.DEFAULT or CellDB["layoutAutoSwitch"][role]["party"])
+    raidDropdown:SetSelected(CellDB["layoutAutoSwitch"][role]["raid"] == "default" and _G.DEFAULT or CellDB["layoutAutoSwitch"][role]["raid"])
+    arenaDropdown:SetSelected(CellDB["layoutAutoSwitch"][role]["arena"] == "default" and _G.DEFAULT or CellDB["layoutAutoSwitch"][role]["arena"])
+    bg15Dropdown:SetSelected(CellDB["layoutAutoSwitch"][role]["battleground15"] == "default" and _G.DEFAULT or CellDB["layoutAutoSwitch"][role]["battleground15"])
+    bg40Dropdown:SetSelected(CellDB["layoutAutoSwitch"][role]["battleground40"] == "default" and _G.DEFAULT or CellDB["layoutAutoSwitch"][role]["battleground40"])
+end
+
 local loaded
 local function ShowTab(tab)
     if tab == "layouts" then
@@ -1119,6 +1127,9 @@ local function ShowTab(tab)
 
         if selectedLayout ~= Cell.vars.currentLayout then
             LoadLayoutDB(Cell.vars.currentLayout)
+        end
+        if selectedRole ~= Cell.vars.playerSpecRole then
+            LoadLayoutAutoSwitchDB(Cell.vars.playerSpecRole)
         end
         UpdateButtonStates()
     else

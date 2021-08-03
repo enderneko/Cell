@@ -48,25 +48,26 @@ font_status:SetFont(GameFontNormal:GetFont(), 11)
 -------------------------------------------------
 -- layout
 -------------------------------------------------
-local delayedGroupType, delayedIsAutoSwitch
+local delayedGroupType, delayedGroupChanged, delayedRoleChanged
 local delayedFrame = CreateFrame("Frame")
 delayedFrame:SetScript("OnEvent", function()
     delayedFrame:UnregisterEvent("PLAYER_REGEN_ENABLED")
-    F:UpdateLayout(delayedGroupType, delayedIsAutoSwitch)
+    F:UpdateLayout(delayedGroupType, delayedGroupChanged, delayedRoleChanged)
 end)
 
-function F:UpdateLayout(groupType, isAutoSwitch)
+function F:UpdateLayout(groupType, groupChanged, roleChanged)
     if InCombatLockdown() then
         F:Debug("|cffbbbbbbF:UpdateLayout(\""..groupType.."\") DELAYED")
-        delayedGroupType, delayedIsAutoSwitch = groupType, isAutoSwitch
+        delayedGroupType, delayedGroupChanged, delayedRoleChanged = groupType, groupChanged, roleChanged
         delayedFrame:RegisterEvent("PLAYER_REGEN_ENABLED")
     else
         F:Debug("|cffbbbbbbF:UpdateLayout(\""..groupType.."\")")
-        local layout = CellCharacterDB[groupType]
+        Cell.vars.layoutGroupType = groupType
+        local layout = CellDB["layoutAutoSwitch"][Cell.vars.playerSpecRole][groupType]
         Cell.vars.currentLayout = layout
         Cell.vars.currentLayoutTable = CellDB["layouts"][layout]
         Cell:Fire("UpdateLayout", Cell.vars.currentLayout)
-        if isAutoSwitch then
+        if groupChanged or roleChanged then
             Cell:Fire("UpdateIndicators")
         end
     end
@@ -125,7 +126,6 @@ function eventFrame:ADDON_LOADED(arg1)
         eventFrame:UnregisterEvent("ADDON_LOADED")
         
         if type(CellDB) ~= "table" then CellDB = {} end
-        if type(CellCharacterDB) ~= "table" then CellCharacterDB = {} end
 
         if type(CellDB["indicatorPreviewAlpha"]) ~= "number" then CellDB["indicatorPreviewAlpha"] = .5 end
 
@@ -461,18 +461,42 @@ function eventFrame:ADDON_LOADED(arg1)
                 },
             }
         end
+
         -- init enabled layout
-        if type(CellCharacterDB["party"]) ~= "string" then CellCharacterDB["party"] = "default" end
-        if type(CellCharacterDB["raid"]) ~= "string" then CellCharacterDB["raid"] = "default" end
-        if type(CellCharacterDB["arena"]) ~= "string" then CellCharacterDB["arena"] = "default" end
-        if type(CellCharacterDB["battleground15"]) ~= "string" then CellCharacterDB["battleground15"] = "default" end
-        if type(CellCharacterDB["battleground40"]) ~= "string" then CellCharacterDB["battleground40"] = "default" end
+        if type(CellDB["layoutAutoSwitch"]) ~= "table" then
+            CellDB["layoutAutoSwitch"] = {
+                ["TANK"] = {
+                    ["party"] = "default",
+                    ["raid"] = "default",
+                    ["arena"] = "default",
+                    ["battleground15"] = "default",
+                    ["battleground40"] = "default",
+                },
+                ["HEALER"] = {
+                    ["party"] = "default",
+                    ["raid"] = "default",
+                    ["arena"] = "default",
+                    ["battleground15"] = "default",
+                    ["battleground40"] = "default",
+                },
+                ["DAMAGER"] = {
+                    ["party"] = "default",
+                    ["raid"] = "default",
+                    ["arena"] = "default",
+                    ["battleground15"] = "default",
+                    ["battleground40"] = "default",
+                },
+            }
+        end
+
         -- validate layout
-        if not CellDB["layouts"][CellCharacterDB["party"]] then CellCharacterDB["party"] = "default" end
-        if not CellDB["layouts"][CellCharacterDB["raid"]] then CellCharacterDB["raid"] = "default" end
-        if not CellDB["layouts"][CellCharacterDB["arena"]] then CellCharacterDB["arena"] = "default" end
-        if not CellDB["layouts"][CellCharacterDB["battleground15"]] then CellCharacterDB["battleground15"] = "default" end
-        if not CellDB["layouts"][CellCharacterDB["battleground40"]] then CellCharacterDB["battleground40"] = "default" end
+        for role, t in pairs(CellDB["layoutAutoSwitch"]) do
+            for groupType, layout in pairs(t) do
+                if not CellDB["layouts"][layout] then
+                    CellDB["layoutAutoSwitch"][role][groupType] = "default"
+                end
+            end
+        end
 
         -- debuffBlacklist ------------------------------------------------------------------------
         if type(CellDB["debuffBlacklist"]) ~= "table" then
@@ -652,13 +676,12 @@ function eventFrame:PLAYER_LOGIN()
         bgMaxPlayers[bgId] = maxPlayers
     end
 
-    --! init Cell.vars.currentLayout and Cell.vars.currentLayoutTable 
-    eventFrame:GROUP_ROSTER_UPDATE()
-
     if not prevSpec then prevSpec = GetSpecialization() end
     Cell.vars.playerGUID = UnitGUID("player")
     -- update spec vars
-    Cell.vars.playerSpecID, Cell.vars.playerSpecName, _, Cell.vars.playerSpecIcon = GetSpecializationInfo(prevSpec)
+    Cell.vars.playerSpecID, Cell.vars.playerSpecName, _, Cell.vars.playerSpecIcon, Cell.vars.playerSpecRole = GetSpecializationInfo(prevSpec)
+    --! init Cell.vars.currentLayout and Cell.vars.currentLayoutTable 
+    eventFrame:GROUP_ROSTER_UPDATE()
     -- update visibility
     Cell:Fire("UpdateVisibility")
     -- update sortMethod
@@ -695,7 +718,7 @@ function eventFrame:ACTIVE_TALENT_GROUP_CHANGED()
     if not InCombatLockdown() and (prevSpec and prevSpec ~= GetSpecialization() or forceRecheck) then
         prevSpec = GetSpecialization()
         -- update spec vars
-        Cell.vars.playerSpecID, Cell.vars.playerSpecName, _, Cell.vars.playerSpecIcon = GetSpecializationInfo(prevSpec)
+        Cell.vars.playerSpecID, Cell.vars.playerSpecName, _, Cell.vars.playerSpecIcon, Cell.vars.playerSpecRole = GetSpecializationInfo(prevSpec)
         if not Cell.vars.playerSpecID then -- NOTE: when join in battleground, spec auto switched, during loading, can't get info from GetSpecializationInfo, until PLAYER_ENTERING_WORLD
             forceRecheck = true
             checkSpecFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
@@ -705,6 +728,9 @@ function eventFrame:ACTIVE_TALENT_GROUP_CHANGED()
             if not CellDB["clickCastings"][Cell.vars.playerClass]["useCommon"] then
                 Cell:Fire("UpdateClickCastings")
             end
+            F:Debug("|cffbbbbbbRoleChanged:", Cell.vars.playerSpecRole)
+            F:UpdateLayout(Cell.vars.layoutGroupType, false, true)
+            -- Cell:Fire("RoleChanged", Cell.vars.playerSpecRole)
         end
     end
 end
@@ -742,7 +768,6 @@ function SlashCmdList.CELL(msg, editbox)
             Cell.frames.raidMarksFrame:ClearAllPoints()
             Cell.frames.raidMarksFrame:SetPoint("BOTTOMRIGHT", UIParent, "CENTER")
             CellDB = nil
-            CellCharacterDB = nil
             ReloadUI()
 
         elseif rest == "layouts" then

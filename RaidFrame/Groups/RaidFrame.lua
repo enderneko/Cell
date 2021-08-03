@@ -170,20 +170,18 @@ local function RaidFrame_UpdateLayout(layout, which)
     -- if layout ~= Cell.vars.currentLayout then return end
     if Cell.vars.groupType ~= "raid" and init then return end
     init = true
+    layout = Cell.vars.currentLayoutTable
     
     if Cell.vars.inBattleground == 5 then
-        layout = CellDB["layouts"][CellCharacterDB["arena"]]
         for i = 1, 3 do
             RegisterAttributeDriver(arenaPetButtons[i], "state-visibility", "[@raidpet"..i..", exists] show; hide")
         end
     elseif Cell.vars.inBattleground == 15 or Cell.vars.inBattleground == 40 then
-        layout = CellDB["layouts"][CellCharacterDB["battleground"..Cell.vars.inBattleground]]
         for i = 1, 3 do
             UnregisterAttributeDriver(arenaPetButtons[i], "state-visibility")
             arenaPetButtons[i]:Hide()
         end
     else
-        layout = CellDB["layouts"][CellCharacterDB["raid"]]
         for i = 1, 3 do
             UnregisterAttributeDriver(arenaPetButtons[i], "state-visibility")
             arenaPetButtons[i]:Hide()

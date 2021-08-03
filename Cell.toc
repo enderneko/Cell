@@ -3,7 +3,6 @@
 ## Version: r58-release
 ## Author: 篠崎
 ## SavedVariables: CellDB
-## SavedVariablesPerCharacter: CellCharacterDB
 
 Locales\enUS.lua
 Locales\zhCN.lua
