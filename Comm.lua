@@ -157,11 +157,15 @@ local t_check, t_send, t_update
 function F:CheckPriority()
     UpdatePriority()
     -- NOTE: needs time to calc myPriority
-    if t_check then t_check:Cancel() end
-    t_check = C_Timer.NewTimer(2, function()
+    C_Timer.After(1, function()
         UpdateSendChannel()
         Comm:SendCommMessage("CELL_CPRIO", "chk", sendChannel, nil, "BULK")
     end)
+    -- if t_check then t_check:Cancel() end
+    -- t_check = C_Timer.NewTimer(2, function()
+    --     UpdateSendChannel()
+    --     Comm:SendCommMessage("CELL_CPRIO", "chk", sendChannel, nil, "BULK")
+    -- end)
 end
 
 Comm:RegisterComm("CELL_CPRIO", function(prefix, message, channel, sender)

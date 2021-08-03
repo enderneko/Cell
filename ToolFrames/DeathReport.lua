@@ -5,6 +5,8 @@ local F = Cell.funcs
 local UnitInParty = UnitInParty
 local UnitInRaid = UnitInRaid
 local UnitIsFeignDeath = UnitIsFeignDeath
+local IsInGroup = IsInGroup
+local IsEncounterInProgress = IsEncounterInProgress
 ----------------------------------------------------
 -- vars
 ----------------------------------------------------
@@ -144,13 +146,25 @@ function frame:PLAYER_ENTERING_WORLD()
     -- texplore(deathLogs)
 end
 
+local timer
 function frame:GROUP_ROSTER_UPDATE()
     if IsInGroup() then
-        F:CheckPriority()
-        -- frame:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
+        if IsEncounterInProgress() then
+            frame:RegisterEvent("ENCOUNTER_END")
+        else
+            if timer then timer:Cancel() end
+            timer = C_Timer.NewTimer(5, function()
+                F:CheckPriority()
+            end)
+        end
     else
         frame:UnregisterEvent("COMBAT_LOG_EVENT_UNFILTERED")    
     end
+end
+
+function frame:ENCOUNTER_END()
+    frame:UnregisterEvent("ENCOUNTER_END")
+    frame:GROUP_ROSTER_UPDATE()
 end
 
 function frame:ENCOUNTER_START()
