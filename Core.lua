@@ -113,11 +113,7 @@ Cell:RegisterCallback("GroupTypeChanged", "Core_GroupTypeChanged", GroupTypeChan
 -------------------------------------------------
 local eventFrame = CreateFrame("Frame")
 eventFrame:RegisterEvent("ADDON_LOADED")
-eventFrame:RegisterEvent("GROUP_ROSTER_UPDATE")
-eventFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
 eventFrame:RegisterEvent("PLAYER_LOGIN")
-eventFrame:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
-eventFrame:RegisterEvent("UNIT_PET")
 
 -- local cellLoaded, omnicdLoaded
 function eventFrame:ADDON_LOADED(arg1)
@@ -669,6 +665,10 @@ end
 local prevSpec
 function eventFrame:PLAYER_LOGIN()
     F:Debug("PLAYER_LOGIN")
+    eventFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
+    eventFrame:RegisterEvent("UNIT_PET")
+    eventFrame:RegisterEvent("GROUP_ROSTER_UPDATE")
+    eventFrame:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
     
     --! init bgMaxPlayers
     for i = 1, GetNumBattlegroundTypes() do
