@@ -605,6 +605,14 @@ UpdateButtonStates = function()
     end
 end
 
+-- copy & paste
+local cpBtn = Cell:CreateButton(layoutsTab, L["Copy"], "class-hover", {55, 20}, nil, nil, nil, nil, nil, 
+    L["Copy Indicators"], L["Copy selected indicators to another layout"])
+cpBtn:SetPoint("LEFT", exportBtn, "RIGHT", -1, 0)
+cpBtn:SetScript("OnClick", function()
+    F:ShowCopyFrame()
+end)
+
 -------------------------------------------------
 -- layout auto switch
 -------------------------------------------------

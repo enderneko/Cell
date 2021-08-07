@@ -4,6 +4,7 @@
 	<Script file="General.lua"/>
 	<Script file="Appearance.lua"/>
 	<Script file="Layouts.lua"/>
+	<Script file="CopyIndicators.lua"/>
 	<Script file="ImportExport.lua"/>
 	<Script file="ClickCastings_DefaultSpells.lua"/>
 	<Script file="ClickCastings.lua"/>
