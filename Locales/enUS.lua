@@ -42,6 +42,12 @@ select(2, ...).L = setmetatable({
     ["marksTips"] = "\n|rTarget marker\nLeft-Click: |cffffffffset raid marker on target|r\nRight-Click: |cfffffffflock raid marker on target (in your group)|r",
 
     ["CHANGE LOGS"] = [[
+        <h1>r59-release (Aug 7, 2021, 18:23 GMT+8)</h1>
+        <p>* Implemented Copy Indicators.</p>
+        <p>* Updated Layout Auto Switch.</p>
+        <p>* Updated Raid Debuffs, Targeted Spells, Death Report.</p>
+        <br/>
+
         <h1>r58-release (Jul 26, 2021, 18:25 GMT+8)</h1>
         <p>* Updated support for OmniCD (raid frame).</p>
         <p>* Updated zhTW, koKR.</p>
