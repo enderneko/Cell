@@ -415,6 +415,7 @@ local function UpdateRaidTools(which)
             wipe(unaffected["BS"])
             available["PWF"], available["AB"], available["BS"] = false, false, false
             myUnit = ""
+            AnchorButtons()
 
             enabled = false
         end
