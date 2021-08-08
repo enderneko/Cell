@@ -583,6 +583,13 @@ function eventFrame:GROUP_ROSTER_UPDATE()
             _G["CellRaidFrameMember"..i] = nil
         end
         F:UpdateRaidSetup()
+        -- update Cell.unitButtons.party.units
+        Cell.unitButtons.party.units["player"] = nil
+        Cell.unitButtons.party.units["pet"] = nil
+        for i = 1, 4 do
+            Cell.unitButtons.party.units["party"..i] = nil
+            Cell.unitButtons.party.units["partypet"..i] = nil
+        end
 
     elseif IsInGroup() then
         if Cell.vars.groupType ~= "party" then
@@ -612,6 +619,11 @@ function eventFrame:GROUP_ROSTER_UPDATE()
             Cell.unitButtons.raid.units["raid"..i] = nil
             _G["CellRaidFrameMember"..i] = nil
         end
+        -- update Cell.unitButtons.party.units
+        for i = GetNumGroupMembers(), 4 do
+            Cell.unitButtons.party.units["party"..i] = nil
+            Cell.unitButtons.party.units["partypet"..i] = nil
+        end
 
     else
         if Cell.vars.groupType ~= "solo" then
@@ -627,6 +639,13 @@ function eventFrame:GROUP_ROSTER_UPDATE()
         for i = 1, 40 do
             Cell.unitButtons.raid.units["raid"..i] = nil
             _G["CellRaidFrameMember"..i] = nil
+        end
+        -- update Cell.unitButtons.party.units
+        Cell.unitButtons.party.units["player"] = nil
+        Cell.unitButtons.party.units["pet"] = nil
+        for i = 1, 4 do
+            Cell.unitButtons.party.units["party"..i] = nil
+            Cell.unitButtons.party.units["partypet"..i] = nil
         end
     end
 
