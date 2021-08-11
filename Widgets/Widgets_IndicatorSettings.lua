@@ -1753,7 +1753,7 @@ local function CreateAuraButtons(parent, auraButtons, auraTable, noUpDownButtons
         elseif spell == 0 then
             auraButtons[i].spellIdText:SetText("0")
             auraButtons[i].spellId = nil
-            auraButtons[i].spellNameText:SetText("|cff22ff22"..L["ALL"])
+            auraButtons[i].spellNameText:SetText("|cff22ff22"..L["all"])
         else
             auraButtons[i].spellIdText:SetText(spell)
             auraButtons[i].spellId = spell
