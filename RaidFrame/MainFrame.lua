@@ -41,6 +41,7 @@ local function RegisterDragForMainFrame(frame)
     frame:SetScript("OnDragStop", function()
         anchorFrame:StopMovingOrSizing()
         P:SavePosition(anchorFrame, Cell.vars.currentLayoutTable["position"])
+        P:PixelPerfectPoint(anchorFrame)
     end)
 end
 

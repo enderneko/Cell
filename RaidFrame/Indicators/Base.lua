@@ -552,17 +552,17 @@ function I:CreateAura_Icons(name, parent, num)
     function icons:SetOrientation(orientation)
         local point1, point2
         if orientation == "left-to-right" then
-            point1 = "LEFT"
-            point2 = "RIGHT"
+            point1 = "TOPLEFT"
+            point2 = "TOPRIGHT"
         elseif orientation == "right-to-left" then
-            point1 = "RIGHT"
-            point2 = "LEFT"
+            point1 = "TOPRIGHT"
+            point2 = "TOPLEFT"
         elseif orientation == "top-to-bottom" then
-            point1 = "TOP"
-            point2 = "BOTTOM"
+            point1 = "TOPLEFT"
+            point2 = "BOTTOMLEFT"
         elseif orientation == "bottom-to-top" then
-            point1 = "BOTTOM"
-            point2 = "TOP"
+            point1 = "BOTTOMLEFT"
+            point2 = "TOPLEFT"
         end
         
         for i = 2, num do
