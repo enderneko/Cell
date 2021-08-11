@@ -133,6 +133,7 @@ local function UpdatePriority()
         elseif IsInGroup() then -- party
             local players = {}
             local pName, pRealm = UnitFullName("player")
+            pRealm = pRealm or GetRealmName()
             pName = pName.."-"..pRealm
             tinsert(players, pName)
             
