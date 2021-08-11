@@ -1609,7 +1609,7 @@ end
 local auraButtons1 = {}
 local auraButtons2 = {}
 
-local function CreateAuraButtons(parent, auraButtons, auraTable, noUpDownButtons, updateHeightFunc)
+local function CreateAuraButtons(parent, auraButtons, auraTable, noUpDownButtons, isZeroValid, updateHeightFunc)
     local n = #auraTable
 
     -- tooltip
@@ -1653,11 +1653,11 @@ local function CreateAuraButtons(parent, auraButtons, auraTable, noUpDownButtons
         local popup = addon:CreatePopupEditBox(parent, self:GetWidth(), function(text)
             local spellId = tonumber(text)
             local spellName = GetSpellInfo(spellId)
-            if spellId and spellName then
+            if (spellId and spellName) or (spellId == 0 and isZeroValid) then
                 -- update db
                 tinsert(auraTable, spellId)
                 parent.func(auraTable)
-                CreateAuraButtons(parent, auraButtons, auraTable, noUpDownButtons, updateHeightFunc)
+                CreateAuraButtons(parent, auraButtons, auraTable, noUpDownButtons, isZeroValid, updateHeightFunc)
                 updateHeightFunc(19)
             else
                 F:Print(L["Invalid spell id."])
@@ -1750,14 +1750,18 @@ local function CreateAuraButtons(parent, auraButtons, auraTable, noUpDownButtons
             auraButtons[i].spellIdText:SetText("")
             auraButtons[i].spellId = nil
             auraButtons[i].spellNameText:SetText("|cffff0000"..spell)
+        elseif spell == 0 then
+            auraButtons[i].spellIdText:SetText("0")
+            auraButtons[i].spellId = nil
+            auraButtons[i].spellNameText:SetText("|cff22ff22"..L["ALL"])
         else
             auraButtons[i].spellIdText:SetText(spell)
             auraButtons[i].spellId = spell
             auraButtons[i].spellNameText:SetText(GetSpellInfo(spell) or L["Invalid"])
-            -- spell tooltip -- FIXME: debuffBlacklist & bigDebuffs
-            auraButtons[i]:HookScript("OnEnter", function()
+            -- spell tooltip
+            auraButtons[i]:HookScript("OnEnter", function(self)
                 if not parent.popupEditBox:IsShown() then
-                    local name = GetSpellInfo(spell)
+                    local name = GetSpellInfo(self.spellId)
                     if not name then
                         CellTooltip:Hide()
                         return
@@ -1765,7 +1769,7 @@ local function CreateAuraButtons(parent, auraButtons, auraTable, noUpDownButtons
                     
                     CellTooltip:SetOwner(auraButtons[i], "ANCHOR_NONE")
                     CellTooltip:SetPoint("TOPRIGHT", auraButtons[i], "TOPLEFT", -1, 0)
-                    CellTooltip:SetHyperlink("spell:"..spell)
+                    CellTooltip:SetHyperlink("spell:"..self.spellId)
                     CellTooltip:Show()
                 end
             end)
@@ -1837,7 +1841,7 @@ local function CreateAuraButtons(parent, auraButtons, auraTable, noUpDownButtons
         auraButtons[i].del:SetScript("OnClick", function()
             tremove(auraTable, i)
             parent.func(auraTable)
-            CreateAuraButtons(parent, auraButtons, auraTable, noUpDownButtons, updateHeightFunc)
+            CreateAuraButtons(parent, auraButtons, auraTable, noUpDownButtons, isZeroValid, updateHeightFunc)
             updateHeightFunc(-19)
         end)
 
@@ -1846,7 +1850,7 @@ local function CreateAuraButtons(parent, auraButtons, auraTable, noUpDownButtons
             auraTable[i-1] = auraTable[i]
             auraTable[i] = temp
             parent.func(auraTable)
-            CreateAuraButtons(parent, auraButtons, auraTable, noUpDownButtons, updateHeightFunc)
+            CreateAuraButtons(parent, auraButtons, auraTable, noUpDownButtons, isZeroValid, updateHeightFunc)
         end)
 
         auraButtons[i].down:SetScript("OnClick", function()
@@ -1854,7 +1858,7 @@ local function CreateAuraButtons(parent, auraButtons, auraTable, noUpDownButtons
             auraTable[i+1] = auraTable[i]
             auraTable[i] = temp
             parent.func(auraTable)
-            CreateAuraButtons(parent, auraButtons, auraTable, noUpDownButtons, updateHeightFunc)
+            CreateAuraButtons(parent, auraButtons, auraTable, noUpDownButtons, isZeroValid, updateHeightFunc)
         end)
     end
 
@@ -1892,9 +1896,9 @@ local function CreateSetting_Auras(parent)
         end
 
         -- show db value
-        function widget:SetDBValue(title, t, noUpDownButtons)
+        function widget:SetDBValue(title, t, noUpDownButtons, isZeroValid)
             widget.text:SetText(title)
-            CreateAuraButtons(widget.frame, auraButtons1, t, noUpDownButtons, function(diff)
+            CreateAuraButtons(widget.frame, auraButtons1, t, noUpDownButtons, isZeroValid, function(diff)
                 widget.frame:SetHeight((#t+1)*19+1)
                 widget:SetHeight((#t+1)*19+1 + 20 + 5)
                 if diff then parent:SetHeight(parent:GetHeight()+diff) end
@@ -1934,7 +1938,7 @@ local function CreateSetting_Auras2(parent)
         -- show db value
         function widget:SetDBValue(title, t, noUpDownButtons)
             widget.text:SetText(title)
-            CreateAuraButtons(widget.frame, auraButtons2, t, noUpDownButtons, function(diff)
+            CreateAuraButtons(widget.frame, auraButtons2, t, noUpDownButtons, nil, function(diff)
                 widget.frame:SetHeight((#t+1)*19+1)
                 widget:SetHeight((#t+1)*19+1 + 20 + 5)
                 if diff then parent:SetHeight(parent:GetHeight()+diff) end

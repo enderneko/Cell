@@ -828,7 +828,7 @@ local function ShowIndicatorSettings(id)
             local _, setting, tooltip = string.split(":", currentSetting)
             w:SetDBValue(setting, currentLayoutTable["indicators"][id][setting], tooltip)
         elseif currentSetting == "auras" then
-            w:SetDBValue(L[F:UpperFirst(currentLayoutTable["indicators"][id]["auraType"]).." List"], currentLayoutTable["indicators"][id]["auras"], indicatorType == "icons" or indicatorType == "bars")
+            w:SetDBValue(L[F:UpperFirst(currentLayoutTable["indicators"][id]["auraType"]).." List"], currentLayoutTable["indicators"][id]["auras"], indicatorType == "icons" or indicatorType == "bars", indicatorType == "icons")
         elseif currentSetting == "blacklist" then
             w:SetDBValue(L["Debuff Filter (blacklist)"], CellDB["debuffBlacklist"], true)
         elseif currentSetting == "bigDebuffs" then

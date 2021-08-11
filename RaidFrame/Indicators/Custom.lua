@@ -130,12 +130,12 @@ end
 function I:CheckCustomIndicators(unit, unitButton, auraType, spellId, start, duration, debuffType, texture, count, refreshing, castByMe)
     for indicatorName, indicatorTable in pairs(customIndicators[auraType]) do
         if enabledIndicators[indicatorName] and unitButton.indicators[indicatorName] then
-            if indicatorTable["auras"][spellId] then -- is in indicator spell list
+            if indicatorTable["auras"][spellId] or indicatorTable["auras"][0] then -- is in indicator spell list
                 if auraType == "buff" then
                     -- check castByMe
                     if indicatorTable["castByMe"] == castByMe then
                         if indicatorTable["isIcons"] then
-                            if indicatorTable["auras"][spellId] and indicatorTable["found"][unit] <= indicatorTable["num"] then
+                            if indicatorTable["found"][unit] <= indicatorTable["num"] then
                                 unitButton.indicators[indicatorName][indicatorTable["found"][unit]]:SetCooldown(start, duration, debuffType, texture, count, refreshing)
                                 indicatorTable["found"][unit] = indicatorTable["found"][unit] + 1
                                 unitButton.indicators[indicatorName]:Show()
@@ -154,7 +154,7 @@ function I:CheckCustomIndicators(unit, unitButton, auraType, spellId, start, dur
                     end
                 else -- debuff
                     if indicatorTable["isIcons"] then
-                        if indicatorTable["auras"][spellId] and indicatorTable["found"][unit] <= indicatorTable["num"] then
+                        if indicatorTable["found"][unit] <= indicatorTable["num"] then
                             unitButton.indicators[indicatorName][indicatorTable["found"][unit]]:SetCooldown(start, duration, debuffType, texture, count, refreshing)
                             indicatorTable["found"][unit] = indicatorTable["found"][unit] + 1
                             unitButton.indicators[indicatorName]:Show()
