@@ -104,7 +104,7 @@ local function Report(guid)
         local ability
     
         if deathLogs[guid]["type"] == "SPELL" then -- including RANGE
-            tinsert(damageDetails, strlower(CombatLog_String_SchoolString(deathLogs[guid]["school"])))
+            -- tinsert(damageDetails, strlower(CombatLog_String_SchoolString(deathLogs[guid]["school"])))
             ability = deathLogs[guid]["ability"]
         else -- SWING
             ability = strlower(_G.MELEE)
