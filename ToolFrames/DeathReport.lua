@@ -80,10 +80,12 @@ local function Report(guid)
         Send(deathLogs[guid]["name"].." > "..F:FormatNumer(deathLogs[guid]["amount"]).." ("..deathLogs[guid]["ability"]..")")
 
     else -- SPELL & RANGE & SWING
-        local damageDetails = {}
+        -- local damageDetails = {}
+        local damageDetails = ""
         
         if deathLogs[guid]["overkill"] > 0 then
-            tinsert(damageDetails, string.format(overkillFormat, F:FormatNumer(deathLogs[guid]["overkill"])))
+            -- tinsert(damageDetails, string.format(overkillFormat, F:FormatNumer(deathLogs[guid]["overkill"])))
+            damageDetails = string.format(overkillFormat, F:FormatNumer(deathLogs[guid]["overkill"]))
         end
         -- if deathLogs[guid]["critical"] == 1 then
         --     tinsert(damageDetails, criticalText)
@@ -110,8 +112,8 @@ local function Report(guid)
             ability = strlower(_G.MELEE)
         end
 
-        damageDetails = table.concat(damageDetails, ", ")
-        if damageDetails ~= "" then damageDetails = " ("..damageDetails..") " end
+        -- damageDetails = table.concat(damageDetails, ", ")
+        -- if damageDetails ~= "" then damageDetails = " ("..damageDetails..") " end
         Send(deathLogs[guid]["name"].." > "..ability.." "..F:FormatNumer(deathLogs[guid]["amount"])..damageDetails..sourceName)
     end
 
