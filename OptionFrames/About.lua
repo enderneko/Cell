@@ -13,7 +13,7 @@ aboutTab:Hide()
 local nameText = Cell:CreateSeparator("Cell", aboutTab, 387)
 nameText:SetPoint("TOPLEFT", 5, -5)
 
-local changeLogsBtn = Cell:CreateButton(aboutTab, L["Change Logs"], "class-hover", {90, 17})
+local changeLogsBtn = Cell:CreateButton(aboutTab, L["Change Logs"], "class", {90, 17})
 changeLogsBtn:SetPoint("RIGHT", -5, 0)
 changeLogsBtn:SetPoint("TOP", nameText, 0, 1)
 changeLogsBtn:SetScript("OnClick", function()

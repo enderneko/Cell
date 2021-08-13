@@ -205,7 +205,7 @@ sortByRoleCB:SetPoint("TOPLEFT", fadeoutCB, "BOTTOMLEFT", 0, -7)
 local toolsText = Cell:CreateSeparator(L["Raid Tools"].." |cFF777777"..L["Only in Group"], generalTab, 387)
 toolsText:SetPoint("TOPLEFT", 5, -240)
 
-local unlockBtn = Cell:CreateButton(generalTab, L["Unlock"], "class-hover", {50, 17})
+local unlockBtn = Cell:CreateButton(generalTab, L["Unlock"], "class", {50, 17})
 unlockBtn:SetPoint("RIGHT", -5, 0)
 unlockBtn:SetPoint("BOTTOM", toolsText)
 unlockBtn.locked = true
