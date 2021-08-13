@@ -85,7 +85,7 @@ local function Report(guid)
         
         if deathLogs[guid]["overkill"] > 0 then
             -- tinsert(damageDetails, string.format(overkillFormat, F:FormatNumer(deathLogs[guid]["overkill"])))
-            damageDetails = string.format(overkillFormat, F:FormatNumer(deathLogs[guid]["overkill"]))
+            damageDetails = " ("..string.format(overkillFormat, F:FormatNumer(deathLogs[guid]["overkill"]))..") "
         end
         -- if deathLogs[guid]["critical"] == 1 then
         --     tinsert(damageDetails, criticalText)
