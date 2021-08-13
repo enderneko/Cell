@@ -35,12 +35,7 @@ end)
 
 local sendChannel
 local function UpdateSendChannel()
-    local isLFG
-    if IsInInstance() then
-        isLFG = select(10, GetInstanceInfo())
-    end
-
-    if isLFG then
+    if IsInGroup(LE_PARTY_CATEGORY_INSTANCE) then
         sendChannel = "INSTANCE_CHAT"
     elseif IsInRaid() then
         sendChannel = "RAID"
