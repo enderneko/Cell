@@ -200,7 +200,7 @@ local function RaidFrame_UpdateLayout(layout, which)
     for i, group in ipairs(shownGroups) do
         local header = groupHeaders[group]
 
-        if not which or which == "size" or which == "power" or which == "groupFilter" then
+        if not which or which == "size" or which == "petSize" or which == "power" or which == "groupFilter" then
             for j, b in ipairs({header:GetChildren()}) do
                 if not which or which == "size" or which == "groupFilter" then
                     b:SetWidth(width)
@@ -221,7 +221,11 @@ local function RaidFrame_UpdateLayout(layout, which)
             end
 
             for i = 1, 3 do
-                arenaPetButtons[i]:SetSize(width, height)
+                if layout["petSize"][1] then
+                    arenaPetButtons[i]:SetSize(layout["petSize"][2], layout["petSize"][3])
+                else
+                    arenaPetButtons[i]:SetSize(width, height)
+                end
                 arenaPetButtons[i].func.SetPowerHeight(layout["powerHeight"])
             end
         end

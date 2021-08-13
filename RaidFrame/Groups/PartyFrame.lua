@@ -166,16 +166,29 @@ local function PartyFrame_UpdateLayout(layout, which)
         header:SetAttribute("unitsPerColumn", 5)
     end
 
-    if not which or which == "size" or which == "power" then
+    if not which or which == "size" or which == "petSize" or which == "power" then
         for i, playerButton in ipairs({header:GetChildren()}) do
             local petButton = playerButton.petButton
 
             if not which or which == "size" then
                 local width, height = unpack(layout["size"])
                 playerButton:SetSize(width, height)
-                petButton:SetSize(width, height)
                 header:SetAttribute("buttonWidth", width)
                 header:SetAttribute("buttonHeight", height)
+                petButton:SetSize(width, height)
+                if layout["petSize"][1] then
+                    petButton:SetSize(layout["petSize"][2], layout["petSize"][3])
+                else
+                    petButton:SetSize(width, height)
+                end
+            end
+
+            if which == "petSize" then
+                if layout["petSize"][1] then
+                    petButton:SetSize(layout["petSize"][2], layout["petSize"][3])
+                else
+                    petButton:SetSize(unpack(layout["size"]))
+                end
             end
 
             if not which or which == "power" then

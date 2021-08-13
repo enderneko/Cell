@@ -692,6 +692,9 @@ local function Revise()
                     tinsert(layout["indicators"][20]["spells"], 343556) -- 病态凝视
                 end
             end
+            if type(layout["petSize"]) ~= "table" then
+                layout["petSize"] = {false, 66, 46}
+            end
         end
     end
 

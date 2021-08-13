@@ -1010,6 +1010,63 @@ local powerHeightSlider = Cell:CreateSlider(L["Power Height"], layoutsTab, 0, 20
 end)
 powerHeightSlider:SetPoint("TOP", heightSlider, "BOTTOM", 0, -40)
 
+-- petSize
+local petSizeCB, petWidthSlider, petHeightSlider
+petSizeCB = Cell:CreateCheckButton(layoutsTab, L["Pet Button Size"], function(checked, self)
+    if checked then
+        petWidthSlider:SetEnabled(true)
+        petHeightSlider:SetEnabled(true)
+    else
+        petWidthSlider:SetEnabled(false)
+        petHeightSlider:SetEnabled(false)
+    end
+    selectedLayoutTable["petSize"][1] = checked
+    if selectedLayout == Cell.vars.currentLayout then
+        Cell:Fire("UpdateLayout", selectedLayout, "petSize")
+    end
+end)
+petSizeCB:SetPoint("TOPLEFT", buttonSizeText, "BOTTOMLEFT", 5, -25)
+
+-- petWidth
+petWidthSlider = Cell:CreateSlider(L["Width"].." ("..PET..")", layoutsTab, 40, 300, 100, 2, function(value)
+    selectedLayoutTable["petSize"][2] = value
+    if selectedLayout == Cell.vars.currentLayout then
+        Cell:Fire("UpdateLayout", selectedLayout, "petSize")
+    end
+end)
+petWidthSlider:SetPoint("TOPLEFT", petSizeCB, "BOTTOMLEFT", 0, -36)
+
+-- petHeight
+petHeightSlider = Cell:CreateSlider(L["Height"].." ("..PET..")", layoutsTab, 20, 300, 100, 2, function(value)
+    selectedLayoutTable["petSize"][3] = value
+    if selectedLayout == Cell.vars.currentLayout then
+        Cell:Fire("UpdateLayout", selectedLayout, "petSize")
+    end
+end)
+petHeightSlider:SetPoint("TOP", petWidthSlider, "BOTTOM", 0, -40)
+
+-- player/pet switch
+local switch = Cell:CreateSwitch(layoutsTab, {33, 10}, "", "player", "", "pet", function(which)
+    if which == "player" then
+        widthSlider:Show()
+        heightSlider:Show()
+        powerHeightSlider:Show()
+        petSizeCB:Hide()
+        petWidthSlider:Hide()
+        petHeightSlider:Hide()
+    else
+        widthSlider:Hide()
+        heightSlider:Hide()
+        powerHeightSlider:Hide()
+        petSizeCB:Show()
+        petWidthSlider:Show()
+        petHeightSlider:Show()
+    end
+end)
+switch:SetPoint("RIGHT", layoutsTab, "LEFT", 127, 0)
+switch:SetPoint("BOTTOM", buttonSizeText)
+switch:SetSelected("player", true)
+
 -------------------------------------------------
 -- misc
 -------------------------------------------------
@@ -1079,6 +1136,17 @@ LoadLayoutDB = function(layout)
     widthSlider:SetValue(selectedLayoutTable["size"][1])
     heightSlider:SetValue(selectedLayoutTable["size"][2])
     powerHeightSlider:SetValue(selectedLayoutTable["powerHeight"])
+
+    petSizeCB:SetChecked(selectedLayoutTable["petSize"][1])
+    petWidthSlider:SetValue(selectedLayoutTable["petSize"][2])
+    petHeightSlider:SetValue(selectedLayoutTable["petSize"][3])
+    if selectedLayoutTable["petSize"][1] then
+        petWidthSlider:SetEnabled(true)
+        petHeightSlider:SetEnabled(true)
+    else
+        petWidthSlider:SetEnabled(false)
+        petHeightSlider:SetEnabled(false)
+    end
 
     spacingSlider:SetValue(selectedLayoutTable["spacing"])
     

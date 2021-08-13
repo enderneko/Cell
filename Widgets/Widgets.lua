@@ -995,9 +995,9 @@ end
 -----------------------------------------
 -- switch
 -----------------------------------------
-function addon:CreateSwitch(parent, leftText, leftValue, rightText, rightValue, func)
+function addon:CreateSwitch(parent, size, leftText, leftValue, rightText, rightValue, func)
     local switch = CreateFrame("Frame", nil, parent, "BackdropTemplate")
-    switch:SetSize(36, 20)
+    P:Size(switch, size[1], size[2])
     addon:StylizeFrame(switch, {.115, .115, .115, 1})
     
     local textLeft = switch:CreateFontString(nil, "OVERLAY", font_name)
@@ -1064,6 +1064,14 @@ function addon:CreateSwitch(parent, leftText, leftValue, rightText, rightValue, 
         if switch.selected and not switch.isPlaying then
             ag:Play()
         end
+    end)
+
+    switch:SetScript("OnEnter", function()
+        highlight:SetColorTexture(classColor.t[1], classColor.t[2], classColor.t[3])
+    end)
+
+    switch:SetScript("OnLeave", function()
+        highlight:SetColorTexture(classColor.t[1], classColor.t[2], classColor.t[3], class=="PRIEST" and .5 or .6)
     end)
 
     return switch

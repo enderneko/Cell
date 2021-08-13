@@ -27,7 +27,19 @@ local function SoloFrame_UpdateLayout(layout, which)
     if not which or which == "size" then
         local width, height = unpack(layout["size"])
         playerButton:SetSize(width, height)
-        petButton:SetSize(width, height)
+        if layout["petSize"][1] then
+            petButton:SetSize(layout["petSize"][2], layout["petSize"][3])
+        else
+            petButton:SetSize(width, height)
+        end
+    end
+
+    if which == "petSize" then
+        if layout["petSize"][1] then
+            petButton:SetSize(layout["petSize"][2], layout["petSize"][3])
+        else
+            petButton:SetSize(unpack(layout["size"]))
+        end
     end
     
     if not which or which == "power" then

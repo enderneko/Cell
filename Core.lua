@@ -205,6 +205,7 @@ function eventFrame:ADDON_LOADED(arg1)
             CellDB["layouts"] = {
                 ["default"] = {
                     ["size"] = {66, 46},
+                    ["petSize"] = {false, 66, 46},
                     ["position"] = {},
                     ["powerHeight"] = 2,
                     ["spacing"] = 3,
