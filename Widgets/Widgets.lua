@@ -471,6 +471,17 @@ function addon:CreateButton(parent, text, buttonColor, size, noBorder, noBackgro
     return b
 end
 
+local sendChannel
+local function UpdateSendChannel()
+    if IsInGroup(LE_PARTY_CATEGORY_INSTANCE) then
+        sendChannel = "INSTANCE_CHAT"
+    elseif IsInRaid() then
+        sendChannel = "RAID"
+    else
+        sendChannel = "PARTY"
+    end
+end
+
 function addon:CreateBuffButton(parent, size, spellId)
     local spellName, _, spellIcon = GetSpellInfo(spellId)
 
@@ -481,9 +492,24 @@ function addon:CreateBuffButton(parent, size, spellId)
     b:SetBackdrop({edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = P:Scale(1)})
     b:SetBackdropBorderColor(0, 0, 0, 1)
 
-    b:RegisterForClicks("LeftButtonDown")
+    b:RegisterForClicks("LeftButtonDown", "RightButtonDown")
     b:SetAttribute("type1", "spell")
     b:SetAttribute("spell", spellName)
+    b:HookScript("OnClick", function(self, button, down)
+        -- if button == "MiddleButton" then
+        --     if CellDB["raidTools"]["buffTrackerMsg"][spellId] then
+        --         UpdateSendChannel()
+        --         SendChatMessage(CellDB["raidTools"]["buffTrackerMsg"][spellId], sendChannel)
+        --     end
+
+        if button == "RightButton" then
+            local msg = F:GetUnaffectedString(spellId)
+            if msg then
+                UpdateSendChannel()
+                SendChatMessage(msg, sendChannel)
+            end
+        end
+    end)
 
     b.texture = b:CreateTexture(nil, "OVERLAY")
     P:Point(b.texture, "TOPLEFT", b, "TOPLEFT", 1, -1)

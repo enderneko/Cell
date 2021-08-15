@@ -114,7 +114,11 @@ L["A 0-40 integer is required."] = "需要一个0到40的整数。"
 L["instakill"] = "秒杀"
 L["Buff Tracker"] = "补buff提示"
 L["Check if your group members need some raid buffs"] = "检查队伍是否需要补耐力、智力、攻强"
+L["|cffffb5c5Left-Click:|r cast the spell"] = "|cffffb5c5左键：|r施放技能"
+L["|cffffb5c5Right-Click:|r report unaffected"] = "|cffffb5c5右键：|r报告缺少该增益的玩家"
 L["Unaffected"] = "未获得此增益"
+L["Missing Buff"] = "缺少增益"
+L["many"] = "很多"
 
 -------------------------------------------------
 -- appearance

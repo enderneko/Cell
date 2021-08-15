@@ -250,7 +250,7 @@ end)
 local buffCB = Cell:CreateCheckButton(generalTab, L["Buff Tracker"], function(checked, self)
     CellDB["raidTools"]["showBuffTracker"] = checked
     Cell:Fire("UpdateRaidTools", "buffTracker")
-end, L["Buff Tracker"].." |cffff7727"..L["MODERATE CPU USAGE"], L["Check if your group members need some raid buffs"])
+end, L["Buff Tracker"].." |cffff7727"..L["MODERATE CPU USAGE"], L["Check if your group members need some raid buffs"], L["|cffffb5c5Left-Click:|r cast the spell"], L["|cffffb5c5Right-Click:|r report unaffected"]) -- L["|cffffb5c5Middle-Click:|r send custom message"]
 buffCB:SetPoint("LEFT", reportCB, "RIGHT", 115, 0)
 
 -- ready & pull

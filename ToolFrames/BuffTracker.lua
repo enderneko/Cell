@@ -89,6 +89,32 @@ local unaffected = {
 }
 -- CELL_UNAFFECTED = unaffected
 
+function F:GetUnaffectedString(spellId)
+    local list, buff
+    local ret = {}
+    if spellId == 21562 then
+        list = unaffected["PWF"]
+        buff = ITEM_MOD_STAMINA_SHORT
+    elseif spellId == 1459 then
+        list = unaffected["AB"]
+        buff = ITEM_MOD_INTELLECT_SHORT
+    elseif spellId == 6673 then
+        list = unaffected["BS"]
+        buff = ITEM_MOD_ATTACK_POWER_SHORT
+    end
+    for unit in pairs(list) do
+        local name = UnitName(unit)
+        tinsert(ret, name)
+    end
+    if #ret == 0 then
+        return
+    elseif #ret <= 10 then
+        return L["Missing Buff"].." ("..buff.."): "..table.concat(ret, ", ")
+    else
+        return L["Missing Buff"].." ("..buff.."): "..L["many"]
+    end
+end
+
 -------------------------------------------------
 -- frame
 -------------------------------------------------
