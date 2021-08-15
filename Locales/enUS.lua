@@ -43,9 +43,9 @@ select(2, ...).L = setmetatable({
 
     ["CHANGE LOGS"] = [[
         <h1>r60-release (Aug 16, 2021, 03:50 GMT+8)</h1>
-        <p>* Added spellId 0 for ICONS indicator to match all auras.</p>
+        <p>+ Added spellId 0 for ICONS indicator to match all auras.</p>
+        <p>+ Added pet button size options.</p>
         <p>* Updated party frame UnitIds, made them more reliable.</p>
-        <p>* Added pet button size options.</p>
         <p>* Updated anchors of indicators.</p>
         <p>* Updated Death Report, Buff Tracker and Targeted Spells.</p>
         <br/>
