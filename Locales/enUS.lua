@@ -42,6 +42,14 @@ select(2, ...).L = setmetatable({
     ["marksTips"] = "\n|rTarget marker\nLeft-Click: |cffffffffset raid marker on target|r\nRight-Click: |cfffffffflock raid marker on target (in your group)|r",
 
     ["CHANGE LOGS"] = [[
+        <h1>r60-release (Aug 16, 2021, 03:50 GMT+8)</h1>
+        <p>* Added spellId 0 for ICONS indicator to match all auras.</p>
+        <p>* Updated party frame UnitIds, made them more reliable.</p>
+        <p>* Added pet button size options.</p>
+        <p>* Updated anchors of indicators.</p>
+        <p>* Updated Death Report, Buff Tracker and Targeted Spells.</p>
+        <br/>
+        
         <h1>r59-release (Aug 7, 2021, 18:23 GMT+8)</h1>
         <p>* Implemented Copy Indicators.</p>
         <p>* Updated Layout Auto Switch.</p>
