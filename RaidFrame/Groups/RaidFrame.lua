@@ -99,7 +99,7 @@ columnAnchorPoint = [STRING] - the anchor point of each new column (ie. use LEFT
 --]]
 local groupHeaders = {}
 local function CreateGroupHeader(group)
-    local headerName = "CellGroupHeaderSubGroup"..group
+    local headerName = "CellRaidFrameHeader"..group
 	local header = CreateFrame("Frame", headerName, raidFrame, "SecureGroupHeaderTemplate")
     groupHeaders[group] = header
     Cell.unitButtons.raid[headerName] = header
@@ -170,7 +170,8 @@ local function RaidFrame_UpdateLayout(layout, which)
     -- if layout ~= Cell.vars.currentLayout then return end
     if Cell.vars.groupType ~= "raid" and init then return end
     init = true
-    layout = Cell.vars.currentLayoutTable
+    layout = CellDB["layoutAutoSwitch"][Cell.vars.playerSpecRole]["raid"]
+    layout = CellDB["layouts"][layout]
     
     if Cell.vars.inBattleground == 5 then
         for i = 1, 3 do

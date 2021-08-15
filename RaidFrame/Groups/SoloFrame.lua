@@ -22,7 +22,8 @@ local function SoloFrame_UpdateLayout(layout, which)
     -- if layout ~= Cell.vars.currentLayout then return end
     if Cell.vars.groupType ~= "solo" and init then return end
     init = true
-    layout = Cell.vars.currentLayoutTable
+    layout = CellDB["layoutAutoSwitch"][Cell.vars.playerSpecRole]["party"]
+    layout = CellDB["layouts"][layout]
 
     if not which or which == "size" then
         local width, height = unpack(layout["size"])
