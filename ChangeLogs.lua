@@ -13,7 +13,7 @@ end)
 Cell:CreateScrollFrame(changeLogsFrame)
 changeLogsFrame.scrollFrame:SetScrollStep(37)
 
-local content = CreateFrame("SimpleHTML", nil, changeLogsFrame.scrollFrame.content)
+local content = CreateFrame("SimpleHTML", "CellChangeLogsContent", changeLogsFrame.scrollFrame.content)
 content:SetSpacing("h1", 9)
 content:SetSpacing("h2", 7)
 content:SetSpacing("p", 5)

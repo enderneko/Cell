@@ -42,7 +42,7 @@ select(2, ...).L = setmetatable({
     ["marksTips"] = "\n|rTarget marker\nLeft-Click: |cffffffffset raid marker on target|r\nRight-Click: |cfffffffflock raid marker on target (in your group)|r",
 
     ["CHANGE LOGS"] = [[
-        <h1>r60-release (Aug 16, 2021, 03:50 GMT+8)</h1>
+        <h1>r60-release (Aug 16, 2021, 04:08 GMT+8)</h1>
         <p>+ Added spellId 0 for ICONS indicator to match all auras.</p>
         <p>+ Added pet button size options.</p>
         <p>* Updated party frame UnitIds, made them more reliable.</p>
@@ -232,6 +232,8 @@ select(2, ...).L = setmetatable({
         <h2>Misc</h2>
         <p>+ Party/Raid Preview Mode will help you adjust layouts.</p>
         <p>+ Group Anchor Point comes, go check it out in Layouts -&gt; Group Arrangement.</p>
+        <br/>
+        <br/>
         <br/>
     ]],
 }, {
