@@ -129,6 +129,9 @@ local function InitIndicator(indicatorName)
     elseif indicatorName == "aggroBlink" then
         indicator.isAggroBlink = true
 
+    elseif indicatorName == "aggroBorder" then
+        indicator.isAggroBorder = true
+
     elseif indicatorName == "playerRaidIcon" then
         SetRaidTargetIconTexture(indicator.tex, 6)
 
@@ -313,6 +316,10 @@ local function UpdateIndicators(layout, indicatorName, setting, value)
                 if t["size"] then
                     indicator:SetSize(unpack(t["size"]))
                 end
+                -- update thickness
+                if t["thickness"] then
+                    indicator:SetThickness(t["thickness"])
+                end
                 -- update textWidth
                 if t["textWidth"] then
                     indicator:UpdateTextWidth(t["textWidth"])
@@ -399,6 +406,8 @@ local function UpdateIndicators(layout, indicatorName, setting, value)
 		elseif setting == "size-border" then
             indicator:SetSize(value[1], value[2])
             indicator:SetBorder(value[3])
+		elseif setting == "thickness" then
+            indicator:SetThickness(value)
 		elseif setting == "height" then
             indicator:SetHeight(value)
         elseif setting == "textWidth" then
@@ -750,6 +759,7 @@ local indicatorSettings = {
     ["playerRaidIcon"] = {"enabled", "position", "frameLevel", "size-square", "alpha"},
     ["targetRaidIcon"] = {"enabled", "position", "frameLevel", "size-square", "alpha"},
     ["aggroBlink"] = {"enabled", "position", "frameLevel", "size"},
+    ["aggroBorder"] = {"enabled", "frameLevel", "thickness"},
     ["aggroBar"] = {"enabled", "position", "frameLevel", "size-bar"},
     ["shieldBar"] = {"|cffb7b7b7"..L["With this indicator enabled, shield / overshield textures are disabled"], "enabled", "color-alpha", "position", "frameLevel", "height"},
     ["aoeHealing"] = {"enabled", "color", "height"},
@@ -967,6 +977,8 @@ LoadIndicatorList = function()
             elseif i.isTargetedSpells then
                 LCG.PixelGlow_Start(i, nil, nil, nil, nil, nil, 2, 2)
                 if currentLayoutTable["indicators"][id]["enabled"] then i:ShowGlowPreview() end
+            elseif i.isAggroBorder then
+                LCG.PixelGlow_Start(i, nil, nil, nil, nil, nil, 2, 2)
             else
                 LCG.PixelGlow_Start(i)
             end

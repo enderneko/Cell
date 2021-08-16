@@ -710,6 +710,35 @@ local function Revise()
             if layout["indicators"][11] and layout["indicators"][11]["indicatorName"] == "aggroBar" then
                 layout["indicators"][11]["name"] = "Aggro (bar)"
             end
+            -- add aggroBorder
+            if layout["indicators"][12] and layout["indicators"][12]["indicatorName"] ~= "aggroBorder" then
+                tinsert(layout["indicators"], 12, {
+                    ["name"] = "Aggro (border)",
+                    ["indicatorName"] = "aggroBorder",
+                    ["type"] = "built-in",
+                    ["enabled"] = false,
+                    ["frameLevel"] = 1,
+                    ["thickness"] = 3,
+                })
+            end
+            -- update frameLevel
+            for _, indicator in pairs(layout["indicators"]) do
+                if indicator["indicatorName"] == "healthText" then
+                    indicator["frameLevel"] = 2
+                elseif indicator["indicatorName"] == "playerRaidIcon" then
+                    indicator["frameLevel"] = 2
+                elseif indicator["indicatorName"] == "targetRaidIcon" then
+                    indicator["frameLevel"] = 2
+                elseif indicator["indicatorName"] == "aggroBlink" then
+                    indicator["frameLevel"] = 3
+                elseif indicator["indicatorName"] == "shieldBar" then
+                    indicator["frameLevel"] = 2
+                elseif indicator["indicatorName"] == "tankActiveMitigation" then
+                    indicator["frameLevel"] = 2
+                elseif indicator["indicatorName"] == "debuffs" then
+                    indicator["frameLevel"] = 2
+                end
+            end
         end
     end
 

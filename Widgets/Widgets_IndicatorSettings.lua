@@ -274,6 +274,36 @@ local function CreateSetting_SizeSquare(parent)
     return widget
 end
 
+local function CreateSetting_Thickness(parent)
+    local widget
+
+    if not settingWidgets["thickness"] then
+        widget = addon:CreateFrame("CellIndicatorSettings_Thickness", parent, 240, 50)
+        settingWidgets["thickness"] = widget
+
+        widget.size = addon:CreateSlider(L["Size"], widget, 2, 12, 100, 1)
+        widget.size:SetPoint("TOPLEFT", widget, 5, -20)
+        widget.size.afterValueChangedFn = function(value)
+            widget.func(value)
+        end
+        
+        -- associate db
+        function widget:SetFunc(func)
+            widget.func = func
+        end
+        
+        -- show db value
+        function widget:SetDBValue(n)
+            widget.size:SetValue(n)
+        end
+    else
+        widget = settingWidgets["thickness"]
+    end
+
+    widget:Show()
+    return widget
+end
+
 local function CreateSetting_SizeNormalBig(parent)
     local widget
 
@@ -2012,6 +2042,8 @@ function addon:CreateIndicatorSettings(parent, settingsTable)
             tinsert(widgetsTable, CreateSetting_SizeBar(parent))
         elseif setting == "size-border" then
             tinsert(widgetsTable, CreateSetting_SizeAndBorder(parent))
+        elseif setting == "thickness" then
+            tinsert(widgetsTable, CreateSetting_Thickness(parent))
         elseif setting == "height" then
             tinsert(widgetsTable, CreateSetting_Height(parent))
         elseif setting == "textWidth" then

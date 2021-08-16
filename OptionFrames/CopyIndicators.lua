@@ -51,7 +51,7 @@ copyBtn:SetScript("OnClick", function()
     last = tonumber(string.match(CellDB["layouts"][to]["indicators"][last]["indicatorName"], "%d+")) or last
 
     for i in pairs(selectedIndicators) do
-        if i <= 21 then -- built-in
+        if i <= 22 then -- built-in
             CellDB["layouts"][to]["indicators"][i] = F:Copy(CellDB["layouts"][from]["indicators"][i])
         else -- user-created
             last = last + 1

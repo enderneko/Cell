@@ -133,6 +133,10 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                     indicator.width = t["size"][1]
                     indicator.height = t["size"][2]
                 end
+                -- update thickness
+                if t["thickness"] then
+                    indicator:SetThickness(t["thickness"])
+                end
                 -- update border
                 if t["border"] then
                     indicator:SetBorder(t["border"])
@@ -290,6 +294,11 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                 local indicator = b.indicators[indicatorName]
                 P:Size(indicator, value[1], value[2])
                 indicator:SetBorder(value[3])
+            end)
+        elseif setting == "thickness" then
+            F:IterateAllUnitButtons(function(b)
+                local indicator = b.indicators[indicatorName]
+                indicator:SetThickness(value)
             end)
         elseif setting == "height" then
             F:IterateAllUnitButtons(function(b)
@@ -1159,10 +1168,14 @@ local function UnitButton_UpdateThreat(self)
     local status = UnitThreatSituation(unit)
     if status and status >= 2 then
         if enabledIndicators["aggroBlink"] then
-            self.indicators.aggroBlink:SetAggro(GetThreatStatusColor(status))
+            self.indicators.aggroBlink:ShowAggro(GetThreatStatusColor(status))
+        end
+        if enabledIndicators["aggroBorder"] then
+            self.indicators.aggroBorder:ShowAggro(GetThreatStatusColor(status))
         end
     else
         self.indicators.aggroBlink:Hide()
+        self.indicators.aggroBorder:Hide()
     end
 end
 
@@ -2100,6 +2113,7 @@ function F:UnitButton_OnLoad(button)
     I:CreateLeaderIcon(button)
     I:CreateReadyCheckIcon(button)
     I:CreateAggroBlink(button)
+    I:CreateAggroBorder(button)
     I:CreatePlayerRaidIcon(button)
     I:CreateTargetRaidIcon(button)
     I:CreateShieldBar(button)

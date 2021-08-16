@@ -914,7 +914,62 @@ function I:CreateReadyCheckIcon(parent)
 end
 
 -------------------------------------------------
--- aggro indicator
+-- aggro border
+-------------------------------------------------
+function I:CreateAggroBorder(parent)
+    local aggroBorder = CreateFrame("Frame", parent:GetName().."AggroBorder", parent.widget.overlayFrame, "BackdropTemplate")
+	parent.indicators.aggroBorder = aggroBorder
+    P:Point(aggroBorder, "TOPLEFT", parent.widget.overlayFrame, "TOPLEFT", 1, -1)
+    P:Point(aggroBorder, "BOTTOMRIGHT", parent.widget.overlayFrame, "BOTTOMRIGHT", -1, 1)
+    aggroBorder:Hide()
+
+    local top = aggroBorder:CreateTexture(nil, "OVERLAY")
+    local bottom = aggroBorder:CreateTexture(nil, "OVERLAY")
+    local left = aggroBorder:CreateTexture(nil, "OVERLAY")
+    local right = aggroBorder:CreateTexture(nil, "OVERLAY")
+
+    top:SetTexture("Interface\\Buttons\\WHITE8x8")
+    top:SetGradientAlpha("VERTICAL", 1, 0.1, 0.1, 0, 1, 0.1, 0.1, 1)
+    top:SetPoint("TOPLEFT")
+    top:SetPoint("TOPRIGHT")
+    top:SetHeight(5)
+
+    bottom:SetTexture("Interface\\Buttons\\WHITE8x8")
+    bottom:SetGradientAlpha("VERTICAL", 1, 0.1, 0.1, 1, 1, 0.1, 0.1, 0)
+    bottom:SetPoint("BOTTOMLEFT")
+    bottom:SetPoint("BOTTOMRIGHT")
+    bottom:SetHeight(5)
+
+    left:SetTexture("Interface\\Buttons\\WHITE8x8")
+    left:SetGradientAlpha("HORIZONTAL", 1, 0.1, 0.1, 1, 1, 0.1, 0.1, 0)
+    left:SetPoint("TOPLEFT")
+    left:SetPoint("BOTTOMLEFT")
+    left:SetWidth(5)
+
+    right:SetTexture("Interface\\Buttons\\WHITE8x8")
+    right:SetGradientAlpha("HORIZONTAL", 1, 0.1, 0.1, 0, 1, 0.1, 0.1, 1)
+    right:SetPoint("TOPRIGHT")
+    right:SetPoint("BOTTOMRIGHT")
+    right:SetWidth(5)
+
+    function aggroBorder:ShowAggro(r, g, b)
+        top:SetGradientAlpha("VERTICAL", r, g, b, 0, r, g, b, 1)
+        bottom:SetGradientAlpha("VERTICAL", r, g, b, 1, r, g, b, 0)
+        left:SetGradientAlpha("HORIZONTAL", r, g, b, 1, r, g, b, 0)
+        right:SetGradientAlpha("HORIZONTAL", r, g, b, 0, r, g, b, 1)
+        aggroBorder:Show()
+    end
+
+    function aggroBorder:SetThickness(n)
+        top:SetHeight(n)
+        bottom:SetHeight(n)
+        left:SetWidth(n)
+        right:SetWidth(n)
+    end
+end
+
+-------------------------------------------------
+-- aggro blink
 -------------------------------------------------
 function I:CreateAggroBlink(parent)
     local aggroBlink = CreateFrame("Frame", parent:GetName().."AggroBlink", parent.widget.overlayFrame, "BackdropTemplate")

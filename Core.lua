@@ -242,7 +242,7 @@ function eventFrame:ADDON_LOADED(arg1)
                             ["type"] = "built-in",
                             ["enabled"] = false,
                             ["position"] = {"TOP", "CENTER", 0, -5},
-                            ["frameLevel"] = 1,
+                            ["frameLevel"] = 2,
                             ["font"] = {"Cell ".._G.DEFAULT, 10, "Shadow", 0},
                             ["color"] = {1, 1, 1},
                             ["format"] = "percentage",
@@ -288,7 +288,7 @@ function eventFrame:ADDON_LOADED(arg1)
                             ["type"] = "built-in",
                             ["enabled"] = true,
                             ["position"] = {"TOP", "TOP", 0, 3},
-                            ["frameLevel"] = 1,
+                            ["frameLevel"] = 2,
                             ["size"] = {14, 14},
                             ["alpha"] = .77,
                         }, -- 8
@@ -298,7 +298,7 @@ function eventFrame:ADDON_LOADED(arg1)
                             ["type"] = "built-in",
                             ["enabled"] = false,
                             ["position"] = {"TOP", "TOP", -14, 3},
-                            ["frameLevel"] = 1,
+                            ["frameLevel"] = 2,
                             ["size"] = {14, 14},
                             ["alpha"] = .77,
                         }, -- 9
@@ -308,7 +308,7 @@ function eventFrame:ADDON_LOADED(arg1)
                             ["type"] = "built-in",
                             ["enabled"] = true,
                             ["position"] = {"TOPLEFT", "TOPLEFT", 0, 0},
-                            ["frameLevel"] = 2,
+                            ["frameLevel"] = 3,
                             ["size"] = {10, 10},
                         }, -- 10
                         {
@@ -321,15 +321,23 @@ function eventFrame:ADDON_LOADED(arg1)
                             ["size"] = {18, 2},
                         }, -- 11
                         {
+                            ["name"] = "Aggro (border)",
+                            ["indicatorName"] = "aggroBorder",
+                            ["type"] = "built-in",
+                            ["enabled"] = false,
+                            ["frameLevel"] = 1,
+                            ["thickness"] = 3,
+                        }, -- 12
+                        {
                             ["name"] = "Shield Bar",
                             ["indicatorName"] = "shieldBar",
                             ["type"] = "built-in",
                             ["enabled"] = false,
                             ["position"] = {"BOTTOMLEFT", "BOTTOMLEFT", 0, 0},
-                            ["frameLevel"] = 1,
+                            ["frameLevel"] = 2,
                             ["height"] = 4,
                             ["color"] = {1, 1, 0, 1},
-                        }, -- 12
+                        }, -- 13
                         {
                             ["name"] = "AoE Healing",
                             ["indicatorName"] = "aoeHealing",
@@ -337,7 +345,7 @@ function eventFrame:ADDON_LOADED(arg1)
                             ["enabled"] = true,
                             ["height"] = 15,
                             ["color"] = {1, 1, 0},
-                        }, -- 13
+                        }, -- 14
                         {
                             ["name"] = "External Cooldowns",
                             ["indicatorName"] = "externalCooldowns",
@@ -348,7 +356,7 @@ function eventFrame:ADDON_LOADED(arg1)
                             ["size"] = {12, 20},
                             ["num"] = 2,
                             ["orientation"] = "right-to-left",
-                        }, -- 14
+                        }, -- 15
                         {
                             ["name"] = "Defensive Cooldowns",
                             ["indicatorName"] = "defensiveCooldowns",
@@ -359,16 +367,16 @@ function eventFrame:ADDON_LOADED(arg1)
                             ["size"] = {12, 20},
                             ["num"] = 2,
                             ["orientation"] = "left-to-right",
-                        }, -- 15
+                        }, -- 16
                         {
                             ["name"] = "Tank Active Mitigation",
                             ["indicatorName"] = "tankActiveMitigation",
                             ["type"] = "built-in",
                             ["enabled"] = true,
                             ["position"] = {"TOPLEFT", "TOPLEFT", 10, -1},
-                            ["frameLevel"] = 1,
+                            ["frameLevel"] = 2,
                             ["size"] = {18, 4},
-                        }, -- 16
+                        }, -- 17
                         {
                             ["name"] = "Dispels",
                             ["indicatorName"] = "dispels",
@@ -379,14 +387,14 @@ function eventFrame:ADDON_LOADED(arg1)
                             ["size"] = {12, 12},
                             ["dispellableByMe"] = true,
                             ["enableHighlight"] = false,
-                        }, -- 17
+                        }, -- 18
                         {
                             ["name"] = "Debuffs",
                             ["indicatorName"] = "debuffs",
                             ["type"] = "built-in",
                             ["enabled"] = true,
                             ["position"] = {"BOTTOMLEFT", "BOTTOMLEFT", 1, 4},
-                            ["frameLevel"] = 1,
+                            ["frameLevel"] = 2,
                             ["size"] = {{13, 13}, {17, 17}},
                             ["num"] = 3,
                             ["font"] = {"Cell ".._G.DEFAULT, 11, "Outline", 2},
@@ -408,7 +416,7 @@ function eventFrame:ADDON_LOADED(arg1)
                                 355806, -- 重压
                                 358777, -- 痛苦之链
                             },
-                        }, -- 18
+                        }, -- 19
                         {
                             ["name"] = "Raid Debuffs",
                             ["indicatorName"] = "raidDebuffs",
@@ -420,7 +428,7 @@ function eventFrame:ADDON_LOADED(arg1)
                             ["border"] = 2,
                             ["font"] = {"Cell ".._G.DEFAULT, 11, "Outline", 2},
                             ["onlyShowTopGlow"] = true,
-                        }, -- 19
+                        }, -- 20
                         {
                             ["name"] = "Targeted Spells",
                             ["indicatorName"] = "targetedSpells",
@@ -446,7 +454,7 @@ function eventFrame:ADDON_LOADED(arg1)
                             },
                             ["glow"] = {"Pixel", {0.95,0.95,0.32,1}, 9, .25, 8, 2},
                             ["font"] = {"Cell ".._G.DEFAULT, 12, "Outline", 2},
-                        }, -- 20
+                        }, -- 21
                         {
                             ["name"] = "Target Counter",
                             ["indicatorName"] = "targetCounter",
@@ -456,7 +464,7 @@ function eventFrame:ADDON_LOADED(arg1)
                             ["frameLevel"] = 15,
                             ["font"] = {"Cell ".._G.DEFAULT, 15, "Outline", 0},
                             ["color"] = {1, .1, .1},
-                        }, -- 21
+                        }, -- 22
                     },
                 },
             }
