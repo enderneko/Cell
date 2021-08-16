@@ -42,6 +42,7 @@ local UnitPhaseReason = UnitPhaseReason
 local UnitBuff = UnitBuff
 local UnitDebuff = UnitDebuff
 local IsInRaid = IsInRaid
+local UnitDetailedThreatSituation = UnitDetailedThreatSituation
 
 local barAnimationType, highlightEnabled
 
@@ -445,7 +446,7 @@ unitButton = {
         powerBar, powerBarBackground,
         statusTextFrame, statusText, timerText
         overlayFrame, nameText, vehicleText,
-        aggroIndicator, leaderIcon, statusIcon, readyCheckIcon, roleIcon,
+        aggroBlink, leaderIcon, statusIcon, readyCheckIcon, roleIcon,
     },
     func = {
         ShowFlash, HideFlash,
@@ -1151,21 +1152,17 @@ UnitButton_UpdateAuras = function(self)
 end
 
 local function UnitButton_UpdateThreat(self)
-    if not enabledIndicators["aggroIndicator"] then 
-        self.indicators.aggroIndicator:Hide()
-        return
-    end
-
     local unit = self.state.displayedUnit
     if not unit then return end
     -- if not unit or not UnitExists(unit) then return end
 
     local status = UnitThreatSituation(unit)
     if status and status >= 2 then
-        self.indicators.aggroIndicator:SetBackdropColor(GetThreatStatusColor(status))
-        self.indicators.aggroIndicator:Show()
+        if enabledIndicators["aggroBlink"] then
+            self.indicators.aggroBlink:SetAggro(GetThreatStatusColor(status))
+        end
     else
-        self.indicators.aggroIndicator:Hide()
+        self.indicators.aggroBlink:Hide()
     end
 end
 
@@ -2102,7 +2099,7 @@ function F:UnitButton_OnLoad(button)
     I:CreateRoleIcon(button)
     I:CreateLeaderIcon(button)
     I:CreateReadyCheckIcon(button)
-    I:CreateAggroIndicator(button)
+    I:CreateAggroBlink(button)
     I:CreatePlayerRaidIcon(button)
     I:CreateTargetRaidIcon(button)
     I:CreateShieldBar(button)

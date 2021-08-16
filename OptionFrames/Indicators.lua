@@ -126,8 +126,8 @@ local function InitIndicator(indicatorName)
     elseif indicatorName == "readyCheckIcon" then
         indicator:SetTexture(READY_CHECK_READY_TEXTURE)
 
-    elseif indicatorName == "aggroIndicator" then
-        indicator.isAggroIndicator = true
+    elseif indicatorName == "aggroBlink" then
+        indicator.isAggroBlink = true
 
     elseif indicatorName == "playerRaidIcon" then
         SetRaidTargetIconTexture(indicator.tex, 6)
@@ -747,9 +747,9 @@ local indicatorSettings = {
     ["roleIcon"] = {"enabled", "position", "size-square", "customTextures"},
     ["leaderIcon"] = {"|cffb7b7b7"..L["Leader Icons will hide while in combat"], "enabled", "position", "size-square"},
     ["readyCheckIcon"] = {"frameLevel", "size-square"},
-    ["aggroIndicator"] = {"enabled", "position", "frameLevel", "size"},
     ["playerRaidIcon"] = {"enabled", "position", "frameLevel", "size-square", "alpha"},
     ["targetRaidIcon"] = {"enabled", "position", "frameLevel", "size-square", "alpha"},
+    ["aggroBlink"] = {"enabled", "position", "frameLevel", "size"},
     ["aggroBar"] = {"enabled", "position", "frameLevel", "size-bar"},
     ["shieldBar"] = {"|cffb7b7b7"..L["With this indicator enabled, shield / overshield textures are disabled"], "enabled", "color-alpha", "position", "frameLevel", "height"},
     ["aoeHealing"] = {"enabled", "color", "height"},
@@ -971,7 +971,7 @@ LoadIndicatorList = function()
                 LCG.PixelGlow_Start(i)
             end
 
-            if i.isAggroIndicator then
+            if i.isAggroBlink then
                 i.blink.alpha:SetFromAlpha(1)
             else
                 i:SetAlpha(i.alpha or 1)
@@ -990,7 +990,7 @@ LoadIndicatorList = function()
             end
         end
 
-        if i.isAggroIndicator then
+        if i.isAggroBlink then
             i.blink.alpha:SetFromAlpha(CellDB["indicatorPreviewAlpha"])
         else
             i:SetAlpha(CellDB["indicatorPreviewAlpha"])

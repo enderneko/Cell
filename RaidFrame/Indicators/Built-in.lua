@@ -916,18 +916,18 @@ end
 -------------------------------------------------
 -- aggro indicator
 -------------------------------------------------
-function I:CreateAggroIndicator(parent)
-    local aggroIndicator = CreateFrame("Frame", parent:GetName().."AggroIndicator", parent.widget.overlayFrame, "BackdropTemplate")
-	parent.indicators.aggroIndicator = aggroIndicator
-	-- aggroIndicator:SetPoint("TOPLEFT")
-	-- aggroIndicator:SetSize(10, 10)
-	aggroIndicator:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8x8", edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = P:Scale(1)})
-	aggroIndicator:SetBackdropColor(1, 0, 0, 1)
-	aggroIndicator:SetBackdropBorderColor(0, 0, 0, 1)
-	aggroIndicator:Hide()
+function I:CreateAggroBlink(parent)
+    local aggroBlink = CreateFrame("Frame", parent:GetName().."AggroBlink", parent.widget.overlayFrame, "BackdropTemplate")
+	parent.indicators.aggroBlink = aggroBlink
+	-- aggroBlink:SetPoint("TOPLEFT")
+	-- aggroBlink:SetSize(10, 10)
+	aggroBlink:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8x8", edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = P:Scale(1)})
+	aggroBlink:SetBackdropColor(1, 0, 0, 1)
+	aggroBlink:SetBackdropBorderColor(0, 0, 0, 1)
+	aggroBlink:Hide()
 
-    local blink = aggroIndicator:CreateAnimationGroup()
-    aggroIndicator.blink = blink
+    local blink = aggroBlink:CreateAnimationGroup()
+    aggroBlink.blink = blink
     blink:SetLooping("REPEAT")
 
     local alpha = blink:CreateAnimation("Alpha")
@@ -936,20 +936,25 @@ function I:CreateAggroIndicator(parent)
     alpha:SetToAlpha(0)
     alpha:SetDuration(0.5)
 	
-	aggroIndicator:SetScript("OnShow", function(self)
+	aggroBlink:SetScript("OnShow", function(self)
 		self.blink:Play()
 	end)
 	
-	aggroIndicator:SetScript("OnHide", function(self)
+	aggroBlink:SetScript("OnHide", function(self)
 		self.blink:Stop()
 	end)
 
-    function aggroIndicator:UpdatePixelPerfect()
-        P:Resize(aggroIndicator)
-        P:Repoint(aggroIndicator)
-        aggroIndicator:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8x8", edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = P:Scale(1)})
-        aggroIndicator:SetBackdropColor(1, 0, 0, 1)
-        aggroIndicator:SetBackdropBorderColor(0, 0, 0, 1)
+    function aggroBlink:ShowAggro(r, g, b)
+        aggroBlink:SetBackdropColor(r, g, b)
+        aggroBlink:Show()
+    end
+
+    function aggroBlink:UpdatePixelPerfect()
+        P:Resize(aggroBlink)
+        P:Repoint(aggroBlink)
+        aggroBlink:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8x8", edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = P:Scale(1)})
+        aggroBlink:SetBackdropColor(1, 0, 0, 1)
+        aggroBlink:SetBackdropBorderColor(0, 0, 0, 1)
     end
 end
 

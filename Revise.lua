@@ -7,7 +7,7 @@ local function Revise()
     local dbRevision = CellDB["revise"] and tonumber(string.match(CellDB["revise"], "%d+")) or 0
     F:Debug("DBRevision:", dbRevision)
 
-    if CellDB["revise"] and dbRevision < 46 then -- update from an extremely version
+    if CellDB["revise"] and dbRevision < 54 then -- update from an extremely version
         local f = CreateFrame("Frame")
         f:RegisterEvent("PLAYER_ENTERING_WORLD")
         f:SetScript("OnEvent", function()
@@ -525,7 +525,6 @@ local function Revise()
 
         CellDB["general"]["tooltipsPosition"] = {"BOTTOMLEFT", "Unit Button", "TOPLEFT", 0, 15}
     end
-    ]]
 
     -- r47-release
     if CellDB["revise"] and dbRevision < 47 then
@@ -608,6 +607,7 @@ local function Revise()
             end
         end
     end
+    ]]
 
     -- r55-release
     if CellDB["revise"] and dbRevision < 55 then
@@ -694,6 +694,21 @@ local function Revise()
             end
             if type(layout["petSize"]) ~= "table" then
                 layout["petSize"] = {false, 66, 46}
+            end
+        end
+    end
+
+    -- r61-release
+    if CellDB["revise"] and dbRevision < 61 then
+        for _, layout in pairs(CellDB["layouts"]) do
+            -- rename aggroIndicator
+            if layout["indicators"][10] and layout["indicators"][10]["indicatorName"] == "aggroIndicator" then
+                layout["indicators"][10]["name"] = "Aggro (blink)"
+                layout["indicators"][10]["indicatorName"] = "aggroBlink"
+            end
+            -- rename aggroBar
+            if layout["indicators"][11] and layout["indicators"][11]["indicatorName"] == "aggroBar" then
+                layout["indicators"][11]["name"] = "Aggro (bar)"
             end
         end
     end

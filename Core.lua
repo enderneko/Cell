@@ -303,8 +303,8 @@ function eventFrame:ADDON_LOADED(arg1)
                             ["alpha"] = .77,
                         }, -- 9
                         {
-                            ["name"] = "Aggro Indicator",
-                            ["indicatorName"] = "aggroIndicator",
+                            ["name"] = "Aggro (blink)",
+                            ["indicatorName"] = "aggroBlink",
                             ["type"] = "built-in",
                             ["enabled"] = true,
                             ["position"] = {"TOPLEFT", "TOPLEFT", 0, 0},
@@ -312,7 +312,7 @@ function eventFrame:ADDON_LOADED(arg1)
                             ["size"] = {10, 10},
                         }, -- 10
                         {
-                            ["name"] = "Aggro Bar",
+                            ["name"] = "Aggro (bar)",
                             ["indicatorName"] = "aggroBar",
                             ["type"] = "built-in",
                             ["enabled"] = true,
