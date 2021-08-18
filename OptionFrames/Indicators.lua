@@ -590,8 +590,9 @@ local auraTypeItems = {
     },
 }
 
-local createBtn = Cell:CreateButton(indicatorsTab, L["Create"], "blue-hover", {62, 20})
+local createBtn = Cell:CreateButton(indicatorsTab, nil, "green-hover", {42, 20}, nil, nil, nil, nil, nil, L["Create"])
 createBtn:SetPoint("BOTTOMLEFT", 5, 5)
+createBtn:SetTexture("Interface\\AddOns\\Cell\\Media\\Icons\\create.blp", {16, 16}, {"TOPLEFT", 12, 0})
 createBtn:SetScript("OnClick", function()
     local popup = Cell:CreateConfirmPopup(indicatorsTab, 200, L["Create new indicator"], function(self)
         local name = strtrim(self.editBox:GetText())
@@ -696,8 +697,23 @@ createBtn:SetScript("OnClick", function()
     popup.dropdown2:SetSelectedItem(1)
 end)
 
-local deleteBtn = Cell:CreateButton(indicatorsTab, L["Delete"], "red-hover", {61, 20})
-deleteBtn:SetPoint("LEFT", createBtn, "RIGHT", -1, 0)
+local renameBtn = Cell:CreateButton(indicatorsTab, nil, "blue-hover", {41, 20}, nil, nil, nil, nil, nil, L["Rename"])
+renameBtn:SetPoint("LEFT", createBtn, "RIGHT", -1, 0)
+renameBtn:SetTexture("Interface\\AddOns\\Cell\\Media\\Icons\\rename.blp", {16, 16}, {"TOPLEFT", 12, -2})
+renameBtn:SetEnabled(false)
+renameBtn:SetScript("OnClick", function()
+    local name = currentLayoutTable["indicators"][selected]["name"]
+    local popup = Cell:CreateConfirmPopup(indicatorsTab, 200, L["Rename indicator"].." "..name, function(self)
+        local newName = strtrim(self.editBox:GetText())
+        currentLayoutTable["indicators"][selected]["name"] = newName
+        listButtons[selected]:SetText(newName)
+    end, nil, true, true)
+    popup:SetPoint("TOPLEFT", 100, -120)
+end)
+
+local deleteBtn = Cell:CreateButton(indicatorsTab, nil, "red-hover", {41, 20}, nil, nil, nil, nil, nil, L["Delete"])
+deleteBtn:SetPoint("LEFT", renameBtn, "RIGHT", -1, 0)
+deleteBtn:SetTexture("Interface\\AddOns\\Cell\\Media\\Icons\\trash.blp", {16, 16}, {"TOPLEFT", 12, -2})
 deleteBtn:SetEnabled(false)
 deleteBtn:SetScript("OnClick", function()
     local name = currentLayoutTable["indicators"][selected]["name"]
@@ -899,8 +915,10 @@ local function ShowIndicatorSettings(id)
     settingsFrame.scrollFrame:SetContentHeight(height + (#widgets-1)*7)
 
     if string.find(indicatorName, "indicator") then
+        renameBtn:SetEnabled(true)
         deleteBtn:SetEnabled(true)
     else
+        renameBtn:SetEnabled(false)
         deleteBtn:SetEnabled(false)
     end
     selected = id
