@@ -67,6 +67,7 @@ local defaultSpells = {
         },
         -- 253 - Beast Mastery
         [253] = {
+            90361, -- Spirit Mend - 灵魂治愈
             "248518P", -- pvp - Interlope - 干涉
         },
         -- 254 - Marksmanship
