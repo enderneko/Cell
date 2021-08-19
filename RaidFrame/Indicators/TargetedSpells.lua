@@ -14,8 +14,8 @@ local UnitChannelInfo = UnitChannelInfo
 -------------------------------------------------
 -- targeted spells
 -------------------------------------------------
-local casts, expiredCasts, spells, glow = {}, {}, {}
-local castsOnUnit = {}
+local spells, glow = {}, {}
+local casts, castsOnUnit = {}, {}
 
 local function UpdateTargetedSpells(setting, value, value2)
     F:Debug("UpdateTargetedSpells: ", setting, value, value2)
