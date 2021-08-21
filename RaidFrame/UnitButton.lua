@@ -506,59 +506,57 @@ local function UnitButton_UpdateDebuffs(self)
         end
         
         -- if duration and duration ~= 0 and duration <= 600 then
-        if duration and duration <= 600 then
-            if not Cell.vars.debuffBlacklist[spellId] then
-                -- print(name, expirationTime-duration+.1>=GetTime()) -- NOTE: startTime ≈ now
-                justApplied = abs(expirationTime-GetTime()-duration) <= 0.1
-                refreshing = debuffs_cache[unit][spellId] and ((expirationTime == 0 and debuffs_cache_count[unit][spellId] and count > debuffs_cache_count[unit][spellId]) or justApplied)
-                refreshing = refreshing and true or false
+        if duration then
+            -- print(name, expirationTime-duration+.1>=GetTime()) -- NOTE: startTime ≈ now
+            justApplied = abs(expirationTime-GetTime()-duration) <= 0.1
+            refreshing = debuffs_cache[unit][spellId] and ((expirationTime == 0 and debuffs_cache_count[unit][spellId] and count > debuffs_cache_count[unit][spellId]) or justApplied)
+            refreshing = refreshing and true or false
 
-                if enabledIndicators["debuffs"] then
-                    if not indicatorCustoms["debuffs"] then -- all debuffs
-                        if bigDebuffs[spellId] then  -- isBigDebuff
-                            debuffs_big[unit][i] = refreshing
-                            found = found + 1
-                        elseif found <= indicatorNums["debuffs"]+1 then -- normal debuffs, may contain topDebuff
+            if enabledIndicators["debuffs"] and duration <= 600 and not Cell.vars.debuffBlacklist[spellId] then
+                if not indicatorCustoms["debuffs"] then -- all debuffs
+                    if bigDebuffs[spellId] then  -- isBigDebuff
+                        debuffs_big[unit][i] = refreshing
+                        found = found + 1
+                    elseif found <= indicatorNums["debuffs"]+1 then -- normal debuffs, may contain topDebuff
+                        debuffs_found[unit][i] = refreshing
+                        found = found + 1
+                    end
+
+                elseif I:CanDispel(debuffType) then -- only dispellableByMe
+                    if bigDebuffs[spellId] then  -- isBigDebuff
+                        debuffs_big[unit][i] = refreshing
+                        found = found + 1
+                    elseif found <= indicatorNums["debuffs"]+1 then -- normal debuffs, may contain topDebuff
+                        if I:CanDispel(debuffType) then
                             debuffs_found[unit][i] = refreshing
                             found = found + 1
                         end
-
-                    elseif I:CanDispel(debuffType) then -- only dispellableByMe
-                        if bigDebuffs[spellId] then  -- isBigDebuff
-                            debuffs_big[unit][i] = refreshing
-                            found = found + 1
-                        elseif found <= indicatorNums["debuffs"]+1 then -- normal debuffs, may contain topDebuff
-                            if I:CanDispel(debuffType) then
-                                debuffs_found[unit][i] = refreshing
-                                found = found + 1
-                            end
-                        end
                     end
                 end
-                
-                -- user created indicators
-                I:CheckCustomIndicators(unit, self, "debuff", spellId, expirationTime - duration, duration, debuffType or "", icon, count, refreshing)
-
-                -- check top debuff
-                if enabledIndicators["raidDebuffs"] and I:GetDebuffOrder(name, spellId, count) then
-                    if not indicatorCustoms["raidDebuffs"] then
-                        glowType, glowOptions = select(2, I:GetDebuffOrder(name, spellId, count))
-                        if glowType and glowType ~= "None" then
-                            debuffs_glowing_current[unit][glowType] = glowOptions
-                            debuffs_glowing_cache[unit][glowType] = true
-                        end
-                    end
-                    if I:GetDebuffOrder(name, spellId, count) < topOrder then
-                        topOrder, topGlowType, topGlowOptions = I:GetDebuffOrder(name, spellId, count)
-                        topId, topStart, topDuration, topType, topIcon, topCount, topRefreshing = spellId, expirationTime - duration, duration, debuffType or "", icon, count, refreshing
-                        topIndex = i
-                    end
-                end
-
-                debuffs_cache[unit][spellId] = expirationTime
-                debuffs_cache_count[unit][spellId] = count
-                debuffs_current[unit][spellId] = i
             end
+            
+            -- user created indicators
+            I:CheckCustomIndicators(unit, self, "debuff", spellId, expirationTime - duration, duration, debuffType or "", icon, count, refreshing)
+
+            -- check top debuff
+            if enabledIndicators["raidDebuffs"] and I:GetDebuffOrder(name, spellId, count) then
+                if not indicatorCustoms["raidDebuffs"] then
+                    glowType, glowOptions = select(2, I:GetDebuffOrder(name, spellId, count))
+                    if glowType and glowType ~= "None" then
+                        debuffs_glowing_current[unit][glowType] = glowOptions
+                        debuffs_glowing_cache[unit][glowType] = true
+                    end
+                end
+                if I:GetDebuffOrder(name, spellId, count) < topOrder then
+                    topOrder, topGlowType, topGlowOptions = I:GetDebuffOrder(name, spellId, count)
+                    topId, topStart, topDuration, topType, topIcon, topCount, topRefreshing = spellId, expirationTime - duration, duration, debuffType or "", icon, count, refreshing
+                    topIndex = i
+                end
+            end
+
+            debuffs_cache[unit][spellId] = expirationTime
+            debuffs_cache_count[unit][spellId] = count
+            debuffs_current[unit][spellId] = i
 
             if enabledIndicators["dispels"] and debuffType and debuffType ~= "" then
                 if indicatorCustoms["dispels"] then -- dispellableByMe
