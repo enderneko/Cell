@@ -401,6 +401,7 @@ function eventFrame:ADDON_LOADED(arg1)
                             ["dispellableByMe"] = false,
                             ["orientation"] = "left-to-right",
                             ["bigDebuffs"] = {
+                                243237, -- 爆裂
                                 209858, -- 死疽溃烂
                                 46392, -- 专注打击
                                 -- 焚化者阿寇拉斯

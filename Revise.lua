@@ -749,6 +749,14 @@ local function Revise()
             tinsert(CellDB["debuffBlacklist"], 352562)
             Cell.vars.debuffBlacklist = F:ConvertTable(CellDB["debuffBlacklist"])
         end
+
+        for _, layout in pairs(CellDB["layouts"]) do
+            if layout["indicators"][19] and layout["indicators"][19]["indicatorName"] == "debuffs" then
+                if not F:TContains(layout["indicators"][19]["bigDebuffs"], 243237) then
+                    tinsert(layout["indicators"][19]["bigDebuffs"], 243237) -- 爆裂
+                end
+            end
+        end
     end
 
     CellDB["revise"] = Cell.version
