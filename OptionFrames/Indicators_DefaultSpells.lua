@@ -12,6 +12,7 @@ local debuffBlacklist = {
     264689, -- 疲倦
     206151, -- 挑战者的负担
     195776, -- 月羽疫病
+    352562, -- 起伏机动
 }
 
 function I:GetDefaultDebuffBlacklist()

@@ -742,6 +742,15 @@ local function Revise()
         end
     end
 
+    -- r63-release
+    if CellDB["revise"] and dbRevision < 63 then
+        -- 起伏机动
+        if not F:TContains(CellDB["debuffBlacklist"], 352562) then
+            tinsert(CellDB["debuffBlacklist"], 352562)
+            Cell.vars.debuffBlacklist = F:ConvertTable(CellDB["debuffBlacklist"])
+        end
+    end
+
     CellDB["revise"] = Cell.version
 end
 Cell:RegisterCallback("Revise", "Revise", Revise)
