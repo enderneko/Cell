@@ -42,6 +42,11 @@ select(2, ...).L = setmetatable({
     ["marksTips"] = "\n|rTarget marker\nLeft-Click: |cffffffffset raid marker on target|r\nRight-Click: |cfffffffflock raid marker on target (in your group)|r",
 
     ["CHANGE LOGS"] = [[
+        <h1>r63-release (Aug 24, 2021, 03:06 GMT+8)</h1>
+        <p>* Debuff blacklist will not affect other indicators any more.</p>
+        <p>* Updated Big Debuffs and Raid Debuffs.</p>
+        <br/>
+
         <h1>r62-release (Aug 20, 2021, 06:05 GMT+8)</h1>
         <p>+ Added a Rename button for indicators.</p>
         <p>* Fixed Layout Auto Switch (battleground &amp; arena).</p>
