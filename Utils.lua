@@ -152,6 +152,14 @@ function F:TInsert(t, v)
     until done
 end
 
+function F:TRemove(t, v)
+    for i = #t, 1, -1 do
+        if t[i] == v then
+            table.remove(t, i)
+        end
+    end
+end
+
 function F:RemoveElementsByKeys(tbl, keys, returnNewTable) -- keys is a table
 	local newTbl = {}
 	for k, v in pairs(tbl) do
