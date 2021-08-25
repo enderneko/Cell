@@ -4,7 +4,7 @@ local F = Cell.funcs
 local I = Cell.iFuncs
 local LCG = LibStub("LibCustomGlow-1.0")
 
-local UnitExists = UnitExists
+local UnitIsVisible = UnitIsVisible
 local UnitGUID = UnitGUID
 local UnitIsUnit = UnitIsUnit
 local UnitIsEnemy = UnitIsEnemy
@@ -109,7 +109,7 @@ eventFrame:SetScript("OnEvent", function(_, event, sourceUnit)
 
             if spellId and spells[spellId] then
                 local targetUnit = sourceUnit.."target"
-                if UnitExists(targetUnit) then
+                if UnitIsVisible(targetUnit) then
                     for member in F:IterateGroupMembers() do
                         if UnitIsUnit(targetUnit, member) then
                             local targetGUID = UnitGUID(member)
