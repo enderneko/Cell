@@ -401,7 +401,7 @@ function eventFrame:ADDON_LOADED(arg1)
                             ["dispellableByMe"] = false,
                             ["orientation"] = "left-to-right",
                             ["bigDebuffs"] = {
-                                243237, -- 爆裂
+                                240443, -- 爆裂
                                 209858, -- 死疽溃烂
                                 46392, -- 专注打击
                                 -- 焚化者阿寇拉斯
@@ -451,6 +451,7 @@ function eventFrame:ADDON_LOADED(arg1)
                                 356924, -- 屠戮
                                 338606, -- 病态凝视
                                 343556, -- 病态凝视
+                                324079, -- 收割之镰
                                 -- 328429, -- 窒息勒压
                             },
                             ["glow"] = {"Pixel", {0.95,0.95,0.32,1}, 9, .25, 8, 2},

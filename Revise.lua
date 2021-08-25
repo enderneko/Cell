@@ -749,11 +749,22 @@ local function Revise()
             tinsert(CellDB["debuffBlacklist"], 352562)
             Cell.vars.debuffBlacklist = F:ConvertTable(CellDB["debuffBlacklist"])
         end
-
+    end
+    
+    -- r64-release
+    if CellDB["revise"] and dbRevision < 64 then
         for _, layout in pairs(CellDB["layouts"]) do
+            if layout["indicators"][21] and layout["indicators"][21]["indicatorName"] == "targetedSpells" then
+                if not F:TContains(layout["indicators"][21]["spells"], 324079) then
+                    tinsert(layout["indicators"][21]["spells"], 324079) -- 收割之镰
+                end
+            end
             if layout["indicators"][19] and layout["indicators"][19]["indicatorName"] == "debuffs" then
-                if not F:TContains(layout["indicators"][19]["bigDebuffs"], 243237) then
-                    tinsert(layout["indicators"][19]["bigDebuffs"], 243237) -- 爆裂
+                if not F:TContains(layout["indicators"][19]["bigDebuffs"], 240443) then
+                    tinsert(layout["indicators"][19]["bigDebuffs"], 240443) -- 爆裂
+                end
+                if F:TContains(layout["indicators"][19]["bigDebuffs"], 243237) then
+                    F:TRemove(layout["indicators"][19]["bigDebuffs"], 243237)
                 end
             end
         end
