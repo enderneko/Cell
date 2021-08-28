@@ -13,6 +13,7 @@ local debuffBlacklist = {
     206151, -- 挑战者的负担
     195776, -- 月羽疫病
     352562, -- 起伏机动
+    356419, -- 审判灵魂
 }
 
 function I:GetDefaultDebuffBlacklist()

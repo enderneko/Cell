@@ -768,6 +768,11 @@ local function Revise()
                 end
             end
         end
+        -- 审判灵魂
+        if not F:TContains(CellDB["debuffBlacklist"], 356419) then
+            tinsert(CellDB["debuffBlacklist"], 356419)
+            Cell.vars.debuffBlacklist = F:ConvertTable(CellDB["debuffBlacklist"])
+        end
     end
 
     CellDB["revise"] = Cell.version
