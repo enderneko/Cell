@@ -1586,7 +1586,7 @@ function F:GetDebuffList(instanceName)
                     local spellName = GetSpellInfo(st["id"])
                     if spellName then -- check again
                         if st["trackByID"] then
-                            list[st["id"]] = {["order"]=st["order"], ["glowType"]=st["glowType"], ["glowOptions"]=st["glowOptions"], ["glowCondition"]=st["glowCondition"]}
+                            list[st["id"]] = {["order"]=st["order"]+n, ["glowType"]=st["glowType"], ["glowOptions"]=st["glowOptions"], ["glowCondition"]=st["glowCondition"]}
                         else
                             list[spellName] = {["order"]=st["order"]+n, ["glowType"]=st["glowType"], ["glowOptions"]=st["glowOptions"], ["glowCondition"]=st["glowCondition"]}
                         end
