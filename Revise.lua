@@ -758,6 +758,9 @@ local function Revise()
                 if not F:TContains(layout["indicators"][21]["spells"], 324079) then
                     tinsert(layout["indicators"][21]["spells"], 324079) -- 收割之镰
                 end
+                if not F:TContains(layout["indicators"][21]["spells"], 317963) then
+                    tinsert(layout["indicators"][21]["spells"], 317963) -- 知识烦扰
+                end
             end
             if layout["indicators"][19] and layout["indicators"][19]["indicatorName"] == "debuffs" then
                 if not F:TContains(layout["indicators"][19]["bigDebuffs"], 240443) then
