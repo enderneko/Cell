@@ -129,13 +129,13 @@ tooltipsAnchoredToText = generalTab:CreateFontString(nil, "OVERLAY", "CELL_FONT_
 tooltipsAnchoredToText:SetText(L["Anchored To"])
 tooltipsAnchoredToText:SetPoint("BOTTOMLEFT", tooltipsAnchoredTo, "TOPLEFT", 0, 1)
 
-tooltipsX = Cell:CreateSlider(L["X Offset"], generalTab, -50, 50, 89, 1)
+tooltipsX = Cell:CreateSlider(L["X Offset"], generalTab, -99, 99, 89, 1)
 tooltipsX:SetPoint("TOPLEFT", tooltipsAnchor, "BOTTOMLEFT", 0, -25)
 tooltipsX.afterValueChangedFn = function(value)
     CellDB["general"]["tooltipsPosition"][4] = value
 end
 
-tooltipsY = Cell:CreateSlider(L["Y Offset"], generalTab, -50, 50, 89, 1)
+tooltipsY = Cell:CreateSlider(L["Y Offset"], generalTab, -99, 99, 89, 1)
 tooltipsY:SetPoint("TOPLEFT", tooltipsAnchoredTo, "BOTTOMLEFT", 0, -25)
 tooltipsY.afterValueChangedFn = function(value)
     CellDB["general"]["tooltipsPosition"][5] = value
