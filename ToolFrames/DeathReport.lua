@@ -2,8 +2,6 @@ local _, Cell = ...
 local L = Cell.L
 local F = Cell.funcs
 
-local UnitInParty = UnitInParty
-local UnitInRaid = UnitInRaid
 local UnitIsFeignDeath = UnitIsFeignDeath
 local IsInGroup = IsInGroup
 local IsEncounterInProgress = IsEncounterInProgress
@@ -160,7 +158,7 @@ function frame:GROUP_ROSTER_UPDATE()
             end)
         end
     else
-        frame:UnregisterEvent("COMBAT_LOG_EVENT_UNFILTERED")    
+        frame:UnregisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
     end
 end
 
@@ -183,7 +181,7 @@ function frame:COMBAT_LOG_EVENT_UNFILTERED(...)
     -- SPELL/RANGE: spellId, spellName, spellSchool
 
     -- if string.find(destGUID, "^Player") then -- debug
-    if string.find(destGUID, "^Player") and (UnitInParty(destName) or UnitInRaid(destName)) then
+    if string.find(destGUID, "^Player") and F:IsFriend(destFlags) then
         if event == "SPELL_INSTAKILL" then
             UpdateDeathLog(destGUID, timestamp, "INSTAKILL", destName)
         end
@@ -200,7 +198,7 @@ function frame:COMBAT_LOG_EVENT_UNFILTERED(...)
             UpdateDeathLog(destGUID, timestamp, "SWING", destName, nil, school, amount, overkill or -1, resisted, blocked, absorbed, critical, sourceName)
         end
         
-        if event == "SPELL_DAMAGE" or event == "SPELL_PERIODIC_DAMAGE" or event == "RANGE_DAMAGE" or event == "DAMAGE_SHIELD" then
+        if event == "SPELL_DAMAGE" or event == "SPELL_PERIODIC_DAMAGE" or event == "RANGE_DAMAGE" then
             amount, overkill, school, resisted, blocked, absorbed, critical = select(15, ...)
             local spellLink = GetSpellLink(arg12)
             UpdateDeathLog(destGUID, timestamp, "SPELL", destName, spellLink, school, amount, overkill or -1, resisted, blocked, absorbed, critical, sourceName)
@@ -208,14 +206,14 @@ function frame:COMBAT_LOG_EVENT_UNFILTERED(...)
 
         if event == "SPELL_AURA_APPLIED" then -- 变天使啦！
             if arg12 == 27827 then
-                C_Timer.After(.3, function()
+                C_Timer.After(.5, function()
                     Report(destGUID)
                 end)
             end
         end
 
         if event == "UNIT_DIED" and not UnitIsFeignDeath(destName) then
-            C_Timer.After(.3, function()
+            C_Timer.After(.5, function()
                 if not deathLogs[destGUID] then deathLogs[destGUID] = {["name"]=destName} end
                 Report(destGUID)
             end)

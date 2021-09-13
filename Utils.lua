@@ -467,6 +467,16 @@ function F:UnitInGroup(unit, ignorePets)
     end
 end
 
+-- https://wowpedia.fandom.com/wiki/UnitFlag
+local OBJECT_AFFILIATION_MINE = 0x00000001
+local OBJECT_AFFILIATION_PARTY = 0x00000002
+local OBJECT_AFFILIATION_RAID = 0x00000004
+
+function F:IsFriend(unitFlags)
+    if not unitFlags then return false end
+    return (bit.band(unitFlags, OBJECT_AFFILIATION_MINE) ~= 0) or (bit.band(unitFlags, OBJECT_AFFILIATION_RAID) ~= 0) or (bit.band(unitFlags, OBJECT_AFFILIATION_PARTY) ~= 0)
+end
+
 function F:GetTargetUnitInfo()
     if UnitIsUnit("target", "player") then
         return "player", UnitName("player"), select(2, UnitClass("player"))
