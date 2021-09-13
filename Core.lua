@@ -386,7 +386,7 @@ function eventFrame:ADDON_LOADED(arg1)
                             ["frameLevel"] = 15,
                             ["size"] = {12, 12},
                             ["dispellableByMe"] = true,
-                            ["enableHighlight"] = false,
+                            ["enableHighlight"] = true,
                         }, -- 18
                         {
                             ["name"] = "Debuffs",
