@@ -77,27 +77,27 @@ local function Report(guid)
         Send(deathLogs[guid]["name"].." > "..L["instakill"])
         
     elseif deathLogs[guid]["type"] == "ENVIRONMENTAL" then
-        Send(deathLogs[guid]["name"].." > "..F:FormatNumer(deathLogs[guid]["amount"]).." ("..deathLogs[guid]["ability"]..")")
+        Send(deathLogs[guid]["name"].." > "..F:FormatNumber(deathLogs[guid]["amount"]).." ("..deathLogs[guid]["ability"]..")")
 
     else -- SPELL & RANGE & SWING
         -- local damageDetails = {}
         local damageDetails = ""
         
         if deathLogs[guid]["overkill"] > 0 then
-            -- tinsert(damageDetails, string.format(overkillFormat, F:FormatNumer(deathLogs[guid]["overkill"])))
-            damageDetails = " ("..string.format(overkillFormat, F:FormatNumer(deathLogs[guid]["overkill"]))..") "
+            -- tinsert(damageDetails, string.format(overkillFormat, F:FormatNumber(deathLogs[guid]["overkill"])))
+            damageDetails = " ("..string.format(overkillFormat, F:FormatNumber(deathLogs[guid]["overkill"]))..") "
         end
         -- if deathLogs[guid]["critical"] == 1 then
         --     tinsert(damageDetails, criticalText)
         -- end
         -- if deathLogs[guid]["resisted"] then
-        --     tinsert(damageDetails, string.format(resistedFormat, F:FormatNumer(deathLogs[guid]["resisted"])))
+        --     tinsert(damageDetails, string.format(resistedFormat, F:FormatNumber(deathLogs[guid]["resisted"])))
         -- end
         -- if deathLogs[guid]["blocked"] then
-        --     tinsert(damageDetails, string.format(blockedFormat, F:FormatNumer(deathLogs[guid]["blocked"])))
+        --     tinsert(damageDetails, string.format(blockedFormat, F:FormatNumber(deathLogs[guid]["blocked"])))
         -- end
         -- if deathLogs[guid]["absorbed"] then
-        --     tinsert(damageDetails, string.format(absorbedFormat, F:FormatNumer(deathLogs[guid]["absorbed"])))
+        --     tinsert(damageDetails, string.format(absorbedFormat, F:FormatNumber(deathLogs[guid]["absorbed"])))
         -- end
 
         -- damageDetails = table.concat(damageDetails, ", ")
@@ -114,7 +114,7 @@ local function Report(guid)
 
         -- damageDetails = table.concat(damageDetails, ", ")
         -- if damageDetails ~= "" then damageDetails = " ("..damageDetails..") " end
-        Send(deathLogs[guid]["name"].." > "..ability.." "..F:FormatNumer(deathLogs[guid]["amount"])..damageDetails..sourceName)
+        Send(deathLogs[guid]["name"].." > "..ability.." "..F:FormatNumber(deathLogs[guid]["amount"])..damageDetails..sourceName)
     end
 
     -- wipe(deathLogs[guid])

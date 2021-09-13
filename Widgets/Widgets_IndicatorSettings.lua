@@ -576,7 +576,7 @@ local function CreateSetting_Format(parent)
                 end,
             },
             {
-                ["text"] = F:FormatNumer(21377),
+                ["text"] = F:FormatNumber(21377),
                 ["value"] = "number-short",
                 ["onClick"] = function()
                     widget.func("number-short")
@@ -590,7 +590,7 @@ local function CreateSetting_Format(parent)
                 end,
             },
             {
-                ["text"] = F:FormatNumer(-44158),
+                ["text"] = F:FormatNumber(-44158),
                 ["value"] = "number-deficit-short",
                 ["onClick"] = function()
                     widget.func("number-deficit-short")

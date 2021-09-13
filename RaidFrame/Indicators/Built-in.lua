@@ -826,11 +826,11 @@ function I:CreateHealthText(parent)
         elseif healthText.format == "number" then
             text:SetText(current)
         elseif healthText.format == "number-short" then
-            text:SetText(F:FormatNumer(current))
+            text:SetText(F:FormatNumber(current))
         elseif healthText.format == "number-deficit" then
             text:SetText(current-max)
         elseif healthText.format == "number-deficit-short" then
-            text:SetText(F:FormatNumer(current-max))
+            text:SetText(F:FormatNumber(current-max))
         end
         healthText:SetWidth(text:GetStringWidth()+3)
     end

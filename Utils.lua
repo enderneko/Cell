@@ -27,7 +27,7 @@ elseif LOCALE_koKR then
 end
 
 if LOCALE_zhCN or LOCALE_zhTW or LOCALE_koKR then
-    function F:FormatNumer(n)
+    function F:FormatNumber(n)
         if abs(n) >= 100000000 then
             return string.format("%.3f"..symbol_1B, n/100000000)
         elseif abs(n) >= 10000 then
@@ -39,7 +39,7 @@ if LOCALE_zhCN or LOCALE_zhTW or LOCALE_koKR then
         end
     end
 else
-    function F:FormatNumer(n)
+    function F:FormatNumber(n)
         if abs(n) >= 1000000000 then
             return string.format("%.3fB", n/1000000000)
         elseif abs(n) >= 1000000 then
