@@ -106,39 +106,39 @@ end
 -- table
 -------------------------------------------------
 function F:Getn(t)
-	local count = 0
-	for k, v in pairs(t) do
-		count = count + 1
-	end
-	return count
+    local count = 0
+    for k, v in pairs(t) do
+        count = count + 1
+    end
+    return count
 end
 
 function F:GetIndex(t, e)
-	for i, v in pairs(t) do
-		if e == v then
-			return i
-		end
-	end
-	return nil
+    for i, v in pairs(t) do
+        if e == v then
+            return i
+        end
+    end
+    return nil
 end
 
 function F:Copy(t)
-	local newTbl = {}
-	for k, v in pairs(t) do
+    local newTbl = {}
+    for k, v in pairs(t) do
         if type(v) == "table" then  
             newTbl[k] = F:Copy(v)
         else  
             newTbl[k] = v  
         end  
-	end
-	return newTbl
+    end
+    return newTbl
 end
 
 function F:TContains(t, v)
-	for _, value in pairs(t) do
-		if value == v then return true end
-	end
-	return false
+    for _, value in pairs(t) do
+        if value == v then return true end
+    end
+    return false
 end
 
 function F:TInsert(t, v)
@@ -161,11 +161,11 @@ function F:TRemove(t, v)
 end
 
 function F:RemoveElementsByKeys(tbl, keys, returnNewTable) -- keys is a table
-	local newTbl = {}
-	for k, v in pairs(tbl) do
-		if not F:TContains(keys, k) then
-			newTbl[k] = tbl[k]
-		end
+    local newTbl = {}
+    for k, v in pairs(tbl) do
+        if not F:TContains(keys, k) then
+            newTbl[k] = tbl[k]
+        end
     end
     if returnNewTable then
         return newTbl
@@ -175,27 +175,27 @@ function F:RemoveElementsByKeys(tbl, keys, returnNewTable) -- keys is a table
 end
 
 function F:Sort(t, k1, order1, k2, order2, k3, order3)
-	table.sort(t, function(a, b)
-		if a[k1] ~= b[k1] then
-			if order1 == "ascending" then
-				return a[k1] < b[k1]
-			else -- "descending"
-				return a[k1] > b[k1]
-			end
-		elseif k2 and order2 and a[k2] ~= b[k2] then
-			if order2 == "ascending" then
-				return a[k2] < b[k2]
-			else -- "descending"
-				return a[k2] > b[k2]
-			end
-		elseif k3 and order3 and a[k3] ~= b[k3] then
-			if order3 == "ascending" then
-				return a[k3] < b[k3]
-			else -- "descending"
-				return a[k3] > b[k3]
-			end
-		end
-	end)
+    table.sort(t, function(a, b)
+        if a[k1] ~= b[k1] then
+            if order1 == "ascending" then
+                return a[k1] < b[k1]
+            else -- "descending"
+                return a[k1] > b[k1]
+            end
+        elseif k2 and order2 and a[k2] ~= b[k2] then
+            if order2 == "ascending" then
+                return a[k2] < b[k2]
+            else -- "descending"
+                return a[k2] > b[k2]
+            end
+        elseif k3 and order3 and a[k3] ~= b[k3] then
+            if order3 == "ascending" then
+                return a[k3] < b[k3]
+            else -- "descending"
+                return a[k3] > b[k3]
+            end
+        end
+    end)
 end
 
 function F:StringToTable(s, sep)
@@ -240,7 +240,7 @@ end
 -- general
 -------------------------------------------------
 function F:GetRealmName()
-	return string.gsub(GetRealmName(), " ", "")
+    return string.gsub(GetRealmName(), " ", "")
 end
 
 function F:UnitName(unit)
@@ -254,8 +254,8 @@ end
 function F:GetShortName(fullName)
     if not fullName then return "" end
 
-	local shortName = strsplit("-", fullName)
-	return shortName
+    local shortName = strsplit("-", fullName)
+    return shortName
 end
 
 function F:FormatTime(s)
@@ -324,12 +324,12 @@ function F:UpdateTextWidth(fs, text, percent)
     end
 
     local width = fs:GetParent():GetWidth() - 2
-	for i = string.utf8len(text), 0, -1 do
-		fs:SetText(string.utf8sub(text, 1, i))
-		if fs:GetWidth() / width <= percent then
-			break
-		end
-	end
+    for i = string.utf8len(text), 0, -1 do
+        fs:SetText(string.utf8sub(text, 1, i))
+        if fs:GetWidth() / width <= percent then
+            break
+        end
+    end
 end
 
 local RAID_CLASS_COLORS = RAID_CLASS_COLORS
@@ -642,13 +642,13 @@ end
 
 local lines = {}
 function F:GetSpellInfo(spellId)
-	wipe(lines)
+    wipe(lines)
 
-	local name, _, icon = GetSpellInfo(spellId)
-	if not name then return end
+    local name, _, icon = GetSpellInfo(spellId)
+    if not name then return end
     
     CellScanningTooltip:ClearLines()
-	CellScanningTooltip:SetHyperlink("spell:"..spellId)
+    CellScanningTooltip:SetHyperlink("spell:"..spellId)
     for i = 2, min(5, CellScanningTooltip:NumLines()) do
         tinsert(lines, _G["CellScanningTooltipTextLeft"..i]:GetText())
     end
