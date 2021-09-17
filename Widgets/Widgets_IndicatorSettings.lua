@@ -1638,7 +1638,7 @@ end
 
 local auraButtons1 = {}
 local auraButtons2 = {}
-
+local GetSpellInfo = GetSpellInfo
 local function CreateAuraButtons(parent, auraButtons, auraTable, noUpDownButtons, isZeroValid, updateHeightFunc)
     local n = #auraTable
 
@@ -1704,10 +1704,23 @@ local function CreateAuraButtons(parent, auraButtons, auraTable, noUpDownButtons
         if not auraButtons[i] then
             auraButtons[i] = addon:CreateButton(parent, "", "transparent-class", {20, 20})
 
+            -- spellIcon
+            auraButtons[i].spellIconBg = auraButtons[i]:CreateTexture(nil, "BORDER")
+            auraButtons[i].spellIconBg:SetSize(16, 16)
+            auraButtons[i].spellIconBg:SetPoint("TOPLEFT", 2, -2)
+            auraButtons[i].spellIconBg:SetColorTexture(0, 0, 0, 1)
+            auraButtons[i].spellIconBg:Hide()
+
+            auraButtons[i].spellIcon = auraButtons[i]:CreateTexture(nil, "OVERLAY")
+            auraButtons[i].spellIcon:SetPoint("TOPLEFT", auraButtons[i].spellIconBg, 1, -1)
+            auraButtons[i].spellIcon:SetPoint("BOTTOMRIGHT", auraButtons[i].spellIconBg, -1, 1)
+            auraButtons[i].spellIcon:SetTexCoord(0.08, 0.92, 0.08, 0.92)
+            auraButtons[i].spellIcon:Hide()
+
             -- spellId text
             auraButtons[i].spellIdText = auraButtons[i]:CreateFontString(nil, "OVERLAY", font_name)
-            auraButtons[i].spellIdText:SetPoint("LEFT", 5, 0)
-            auraButtons[i].spellIdText:SetPoint("RIGHT", auraButtons[i], "LEFT", 55, 0)
+            auraButtons[i].spellIdText:SetPoint("LEFT", auraButtons[i].spellIconBg, "RIGHT", 5, 0)
+            auraButtons[i].spellIdText:SetPoint("RIGHT", auraButtons[i], "LEFT", 80, 0)
             auraButtons[i].spellIdText:SetWordWrap(false)
             auraButtons[i].spellIdText:SetJustifyH("LEFT")
             
@@ -1780,14 +1793,27 @@ local function CreateAuraButtons(parent, auraButtons, auraTable, noUpDownButtons
             auraButtons[i].spellIdText:SetText("")
             auraButtons[i].spellId = nil
             auraButtons[i].spellNameText:SetText("|cffff0000"..spell)
+            auraButtons[i].spellIconBg:Hide()
+            auraButtons[i].spellIcon:Hide()
         elseif spell == 0 then
             auraButtons[i].spellIdText:SetText("0")
             auraButtons[i].spellId = nil
             auraButtons[i].spellNameText:SetText("|cff22ff22"..L["all"])
+            auraButtons[i].spellIconBg:Hide()
+            auraButtons[i].spellIcon:Hide()
         else
+            local name, _, icon = GetSpellInfo(spell)
             auraButtons[i].spellIdText:SetText(spell)
             auraButtons[i].spellId = spell
-            auraButtons[i].spellNameText:SetText(GetSpellInfo(spell) or L["Invalid"])
+            auraButtons[i].spellNameText:SetText(name or L["Invalid"])
+            if icon then
+                auraButtons[i].spellIcon:SetTexture(icon)
+                auraButtons[i].spellIconBg:Show()
+                auraButtons[i].spellIcon:Show()
+            else
+                auraButtons[i].spellIconBg:Hide()
+                auraButtons[i].spellIcon:Hide()
+            end
             -- spell tooltip
             auraButtons[i]:HookScript("OnEnter", function(self)
                 if not parent.popupEditBox:IsShown() then
