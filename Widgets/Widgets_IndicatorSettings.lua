@@ -1876,18 +1876,39 @@ local function CreateAuraButtons(parent, auraButtons, auraTable, noUpDownButtons
         auraButtons[i].edit:SetScript("OnClick", function()
             local popup = addon:CreatePopupEditBox(parent, auraButtons[i]:GetWidth(), function(text)
                 local spellId = tonumber(text)
-                local spellName = GetSpellInfo(spellId)
-                if spellId and spellName then
-                    -- update text
-                    auraButtons[i].spellIdText:SetText(spellId)
-                    auraButtons[i].spellId = spellId
-                    auraButtons[i].spellNameText:SetText(spellName)
-                    -- update db
-                    auraTable[i] = spellId
-                    parent.func(auraTable)
+                if spellId == 0 then
+                    if isZeroValid then
+                        auraButtons[i].spellIdText:SetText("0")
+                        auraButtons[i].spellId = nil
+                        auraButtons[i].spellNameText:SetText("|cff22ff22"..L["all"])
+                        auraButtons[i].spellIconBg:Hide()
+                        auraButtons[i].spellIcon:Hide()
+                    else
+                        F:Print(L["Invalid spell id."])
+                    end
                 else
-                    F:Print(L["Invalid spell id."])
+                    local spellName, _, spellIcon = GetSpellInfo(spellId)
+                    if spellId and spellName then
+                        -- update text
+                        auraButtons[i].spellIdText:SetText(spellId)
+                        auraButtons[i].spellId = spellId
+                        auraButtons[i].spellNameText:SetText(spellName)
+                        -- update db
+                        auraTable[i] = spellId
+                        parent.func(auraTable)
+                        if spellIcon then
+                            auraButtons[i].spellIcon:SetTexture(spellIcon)
+                            auraButtons[i].spellIconBg:Show()
+                            auraButtons[i].spellIcon:Show()
+                        else
+                            auraButtons[i].spellIconBg:Hide()
+                            auraButtons[i].spellIcon:Hide()
+                        end
+                    else
+                        F:Print(L["Invalid spell id."])
+                    end
                 end
+
             end)
             popup:SetPoint("TOPLEFT", auraButtons[i])
             popup:ShowEditBox(auraButtons[i].spellId or "")
