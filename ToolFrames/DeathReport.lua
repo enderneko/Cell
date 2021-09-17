@@ -45,14 +45,13 @@ local function UpdateDeathLog(guid, ...)
 end
 
 local function Send(msg)
+    -- F:Print(strupper(ACTION_UNIT_DIED)..": "..msg)
     if Cell.hasHighestPriority then
         if IsInGroup(LE_PARTY_CATEGORY_INSTANCE) then
             SendChatMessage(strupper(ACTION_UNIT_DIED)..": "..msg, "INSTANCE_CHAT")
         else
             SendChatMessage(strupper(ACTION_UNIT_DIED)..": "..msg, IsInRaid() and "RAID" or "PARTY")
         end
-    -- else
-    --     F:Print(strupper(ACTION_UNIT_DIED)..": "..msg)
     end
 end
 
