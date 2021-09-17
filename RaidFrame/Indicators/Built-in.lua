@@ -601,7 +601,7 @@ function I:CreateNameText(parent)
     end
 
     function nameText:UpdateVehicleName()
-        F:UpdateTextWidth(vehicleText, nameText.isPreview and L["Vehicle Name"] or UnitName(parent.state.displayedUnit), nameText.width)
+        F:UpdateTextWidth(vehicleText, nameText.isPreview and L["vehicle name"] or UnitName(parent.state.displayedUnit), nameText.width)
     end
 
     function nameText:UpdateVehicleNamePosition(pTable)
