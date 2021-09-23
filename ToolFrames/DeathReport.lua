@@ -13,6 +13,9 @@ local deathLogs = {
     -- time, type, name, ability, school, amount, overkill, resisted, blocked, absorbed, critical, sourceName
 }
 local limit, count
+local blacklist = {
+    [124255] = true
+}
 
 local overkillFormat, resistedFormat, blockedFormat, absorbedFormat, criticalText
 if LOCALE_zhCN or LOCALE_zhTW or LOCALE_koKR then
@@ -198,21 +201,24 @@ function frame:COMBAT_LOG_EVENT_UNFILTERED(...)
         end
         
         if event == "SPELL_DAMAGE" or event == "SPELL_PERIODIC_DAMAGE" or event == "RANGE_DAMAGE" then
-            amount, overkill, school, resisted, blocked, absorbed, critical = select(15, ...)
-            local spellLink = GetSpellLink(arg12)
-            UpdateDeathLog(destGUID, timestamp, "SPELL", destName, spellLink, school, amount, overkill or -1, resisted, blocked, absorbed, critical, sourceName)
+            if not blacklist[arg12] then
+                amount, overkill, school, resisted, blocked, absorbed, critical = select(15, ...)
+                local spellLink = GetSpellLink(arg12)
+                UpdateDeathLog(destGUID, timestamp, "SPELL", destName, spellLink, school, amount, overkill or -1, resisted, blocked, absorbed, critical, sourceName)
+            end
         end
 
-        if event == "SPELL_AURA_APPLIED" then -- 变天使啦！
-            if arg12 == 27827 then
-                C_Timer.After(.5, function()
+        if event == "SPELL_AURA_APPLIED" then
+            -- print(arg12, arg13, arg14)
+            if arg12 == 27827 or arg12 == 358164 then -- 救赎之魂 or 灵魂疲惫
+                C_Timer.After(0.25, function()
                     Report(destGUID)
                 end)
             end
         end
 
         if event == "UNIT_DIED" and not UnitIsFeignDeath(destName) then
-            C_Timer.After(.5, function()
+            C_Timer.After(0.5, function()
                 if not deathLogs[destGUID] then deathLogs[destGUID] = {["name"]=destName} end
                 Report(destGUID)
             end)
