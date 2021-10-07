@@ -4,7 +4,6 @@ local F = Cell.funcs
 local P = Cell.pixelPerfectFuncs
 local LGIST = LibStub:GetLibrary("LibGroupInSpecT-1.1")
 
-local RAID_CLASS_COLORS = RAID_CLASS_COLORS
 local UnitIsConnected = UnitIsConnected
 local UnitIsVisible = UnitIsVisible
 local UnitIsDeadOrGhost = UnitIsDeadOrGhost

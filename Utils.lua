@@ -332,10 +332,14 @@ function F:UpdateTextWidth(fs, text, percent)
     end
 end
 
-local RAID_CLASS_COLORS = RAID_CLASS_COLORS
+local RAID_CLASS_COLORS = CUSTOM_CLASS_COLORS or RAID_CLASS_COLORS
 function F:GetClassColor(class)
     if class and class ~= "" then
-        return RAID_CLASS_COLORS[class]:GetRGB()
+        if CUSTOM_CLASS_COLORS then
+            return CUSTOM_CLASS_COLORS[class].r, CUSTOM_CLASS_COLORS[class].g, CUSTOM_CLASS_COLORS[class].b
+        else
+            return RAID_CLASS_COLORS[class]:GetRGB()
+        end
     else
         return 1, 1, 1
     end

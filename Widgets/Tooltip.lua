@@ -1,10 +1,8 @@
+local _, Cell = ...
 local P = Cell.pixelPerfectFuncs
+local F = Cell.funcs
 
 local class = select(2, UnitClass("player"))
-local classColor = {.7, .7, .7, 1}
-if class then
-	classColor[1], classColor[2], classColor[3] = GetClassColor(class)
-end
 
 -----------------------------------------
 -- Tooltip
@@ -13,11 +11,11 @@ local function CreateTooltip(name)
 	local tooltip = CreateFrame("GameTooltip", name, nil, "CellTooltipTemplate,BackdropTemplate")
 	tooltip:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8x8", edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = 1})
 	tooltip:SetBackdropColor(.1, .1, .1, .9)
-	tooltip:SetBackdropBorderColor(unpack(classColor))
+	tooltip:SetBackdropBorderColor(F:GetClassColor(class))
 	tooltip:SetOwner(UIParent, "ANCHOR_NONE")
 	tooltip:SetScript("OnTooltipCleared", function()
 		-- reset border color
-		tooltip:SetBackdropBorderColor(unpack(classColor))
+		tooltip:SetBackdropBorderColor(F:GetClassColor(class))
 	end)
 
 	tooltip:SetScript("OnTooltipSetItem", function()
@@ -33,7 +31,7 @@ local function CreateTooltip(name)
 	function tooltip:UpdatePixelPerfect()
 		tooltip:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8x8", edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = P:Scale(1)})
 		tooltip:SetBackdropColor(.1, .1, .1, .9)
-		tooltip:SetBackdropBorderColor(unpack(classColor))
+		tooltip:SetBackdropBorderColor(F:GetClassColor(class))
 	end
 end
 

@@ -11,7 +11,7 @@ local LCG = LibStub("LibCustomGlow-1.0")
 -----------------------------------------
 -- Color
 -----------------------------------------
-local RAID_CLASS_COLORS = RAID_CLASS_COLORS
+local RAID_CLASS_COLORS = CUSTOM_CLASS_COLORS or RAID_CLASS_COLORS
 
 local colors = {
     grey = {s="|cFFB2B2B2", t={.7, .7, .7}},
@@ -25,7 +25,7 @@ local colors = {
 local class = select(2, UnitClass("player"))
 local classColor = {s="|cCCB2B2B2", t={.7, .7, .7}}
 if class then
-    classColor.t[1], classColor.t[2], classColor.t[3], classColor.s = GetClassColor(class)
+    classColor.t[1], classColor.t[2], classColor.t[3], classColor.s = RAID_CLASS_COLORS[class].r, RAID_CLASS_COLORS[class].g, RAID_CLASS_COLORS[class].b, RAID_CLASS_COLORS[class].colorStr
     classColor.s = "|c"..classColor.s
 end
 
@@ -537,7 +537,8 @@ function addon:CreateBuffButton(parent, size, spellId)
                     local class = select(2, UnitClass(unit))
                     local name = UnitName(unit)
                     if class and name then
-                        CellTooltip:AddLine(RAID_CLASS_COLORS[class]:WrapTextInColorCode(name))
+                        -- CellTooltip:AddLine(RAID_CLASS_COLORS[class]:WrapTextInColorCode(name))
+                        CellTooltip:AddLine("|c"..RAID_CLASS_COLORS[class].colorStr..name.."|r")
                     end
                 end
                 CellTooltip:Show()
