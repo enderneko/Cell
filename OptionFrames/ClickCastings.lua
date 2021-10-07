@@ -342,7 +342,12 @@ end
 local function UpdateClickCastings(noLoad)
     F:Debug("|cff77ff77UpdateClickCastings:|r useCommon: "..tostring(Cell.vars.clickCastingTable["useCommon"]))
     clickCastingTable = Cell.vars.clickCastingTable["useCommon"] and Cell.vars.clickCastingTable["common"] or Cell.vars.clickCastingTable[Cell.vars.playerSpecID]
-    alwaysTargeting = Cell.vars.clickCastingTable["alwaysTargeting"][Cell.vars.clickCastingTable["useCommon"] and "common" or Cell.vars.playerSpecID]
+    -- FIXME: remove this determine statement
+    if Cell.vars.clickCastingTable["alwaysTargeting"] then
+        alwaysTargeting = Cell.vars.clickCastingTable["alwaysTargeting"][Cell.vars.clickCastingTable["useCommon"] and "common" or Cell.vars.playerSpecID]
+    else
+        alwaysTargeting = "disabled"
+    end
     
     if noLoad then -- create new
         bindingsFrame.scrollFrame:SetContentHeight(20, #clickCastingTable, 5)

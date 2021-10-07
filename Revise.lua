@@ -3,7 +3,7 @@ local L = Cell.L
 local F = Cell.funcs
 local I = Cell.iFuncs
 
-local function Revise()
+function F:Revise()
     local dbRevision = CellDB["revise"] and tonumber(string.match(CellDB["revise"], "%d+")) or 0
     F:Debug("DBRevision:", dbRevision)
 
@@ -805,4 +805,3 @@ local function Revise()
 
     CellDB["revise"] = Cell.version
 end
-Cell:RegisterCallback("Revise", "Revise", Revise)

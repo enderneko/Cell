@@ -537,9 +537,8 @@ function eventFrame:ADDON_LOADED(arg1)
         -- misc ---------------------------------------------------------------------------------
         Cell.loaded = true
         Cell.version = GetAddOnMetadata(addonName, "version")
-        Cell:Fire("Revise")
+        F:Revise()
         F:CheckWhatsNew()
-
     end
 
     -- omnicd ---------------------------------------------------------------------------------

@@ -42,6 +42,10 @@ select(2, ...).L = setmetatable({
     ["marksTips"] = "\n|rTarget marker\nLeft-Click: |cffffffffset raid marker on target|r\nRight-Click: |cfffffffflock raid marker on target (in your group)|r",
 
     ["CHANGE LOGS"] = [[
+        <h1>r67-release (Oct 8, 2021, 02:55 GMT+8)</h1>
+        <p>* Bug fixes.</p>
+        <br/>
+
         <h1>r66-release (Oct 7, 2021, 23:30 GMT+8)</h1>
         <p>+ Added support for Class Colors addon.</p>
         <p>+ Implemented Always Targeting (Click-Castings).</p>

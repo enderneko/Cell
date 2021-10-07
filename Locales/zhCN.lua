@@ -400,6 +400,10 @@ L["Bug Report & Suggestion"] = "问题报告与建议"
 -------------------------------------------------
 L["Change Logs"] = "更新记录"
 L["CHANGE LOGS"] = [[
+    <h1>r67-release (Oct 8, 2021, 02:55 GMT+8)</h1>
+    <p>* 修复了些小问题。</p>
+    <br/>
+
     <h1>r66-release (Oct 7, 2021, 23:30 GMT+8)</h1>
     <p>+ 添加了对 Class Colors 插件的支持。</p>
     <p>+ 实现了“总是选中目标”（点击施法）。</p>
