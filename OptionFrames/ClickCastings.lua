@@ -11,6 +11,7 @@ local bindingsFrame
 local clickCastingTable
 local loaded
 local LoadProfile
+local alwaysTargeting
 -------------------------------------------------
 -- changes
 -------------------------------------------------
@@ -299,13 +300,17 @@ local function ClearClickCastings(b)
         end
 
         b:SetAttribute(bindKey, nil)
-        if t[2] == "spell" then
-            local attr = string.gsub(bindKey, "type", "spell")
-            b:SetAttribute(attr, nil)
-        elseif t[2] == "macro" then
-            local attr = string.gsub(bindKey, "type", "macrotext")
-            b:SetAttribute(attr, nil)
-        end
+        local attr = string.gsub(bindKey, "type", "spell")
+        b:SetAttribute(attr, nil)
+        attr = string.gsub(bindKey, "type", "macrotext")
+        b:SetAttribute(attr, nil)
+        -- if t[2] == "spell" then
+        --     local attr = string.gsub(bindKey, "type", "spell")
+        --     b:SetAttribute(attr, nil)
+        -- elseif t[2] == "macro" then
+        --     local attr = string.gsub(bindKey, "type", "macrotext")
+        --     b:SetAttribute(attr, nil)
+        -- end
     end
 end
 
@@ -318,8 +323,15 @@ local function ApplyClickCastings(b)
 
         b:SetAttribute(bindKey, t[2])
         if t[2] == "spell" then
-            local attr = string.gsub(bindKey, "type", "spell")
-            b:SetAttribute(attr, t[3])
+            if (alwaysTargeting == "left" and bindKey == "type1") or alwaysTargeting == "any" then
+                --NOTE: as macro
+                b:SetAttribute(bindKey, "macro")
+                local attr = string.gsub(bindKey, "type", "macrotext")
+                b:SetAttribute(attr, "/cast [@mouseover] ".. t[3].."\n/target [@mouseover]")
+            else
+                local attr = string.gsub(bindKey, "type", "spell")
+                b:SetAttribute(attr, t[3])
+            end
         elseif t[2] == "macro" then
             local attr = string.gsub(bindKey, "type", "macrotext")
             b:SetAttribute(attr, t[3])
@@ -330,6 +342,7 @@ end
 local function UpdateClickCastings(noLoad)
     F:Debug("|cff77ff77UpdateClickCastings:|r useCommon: "..tostring(Cell.vars.clickCastingTable["useCommon"]))
     clickCastingTable = Cell.vars.clickCastingTable["useCommon"] and Cell.vars.clickCastingTable["common"] or Cell.vars.clickCastingTable[Cell.vars.playerSpecID]
+    alwaysTargeting = Cell.vars.clickCastingTable["alwaysTargeting"][Cell.vars.clickCastingTable["useCommon"] and "common" or Cell.vars.playerSpecID]
     
     if noLoad then -- create new
         bindingsFrame.scrollFrame:SetContentHeight(20, #clickCastingTable, 5)
@@ -363,10 +376,10 @@ Cell:RegisterCallback("UpdateClickCastings", "UpdateClickCastings", UpdateClickC
 -------------------------------------------------
 -- profiles dropdown
 -------------------------------------------------
-local profileText = Cell:CreateSeparator(L["Profiles"], clickCastingsTab, 387)
+local profileText = Cell:CreateSeparator(L["Profiles"], clickCastingsTab, 250)
 profileText:SetPoint("TOPLEFT", 5, -5)
 
-local profileDropdown = Cell:CreateDropdown(clickCastingsTab, 250)
+local profileDropdown = Cell:CreateDropdown(clickCastingsTab, 240)
 profileDropdown:SetPoint("TOPLEFT", profileText, "BOTTOMLEFT", 5, -12)
 
 profileDropdown:SetItems({
@@ -387,6 +400,49 @@ profileDropdown:SetItems({
         end,
     }
 })
+
+-------------------------------------------------
+-- always targeting
+-------------------------------------------------
+local targetingText = Cell:CreateSeparator(L["Always Targeting"], clickCastingsTab, 132)
+targetingText:SetPoint("TOPLEFT", 260, -5)
+
+local targetingDropdown = Cell:CreateDropdown(clickCastingsTab, 112)
+targetingDropdown:SetPoint("TOPLEFT", targetingText, "BOTTOMLEFT", 5, -12)
+
+targetingDropdown:SetItems({
+    {
+        ["text"] = L["Disabled"],
+        ["value"] = "disabled",
+        ["onClick"] = function()
+            local spec = Cell.vars.clickCastingTable["useCommon"] and "common" or Cell.vars.playerSpecID
+            CellDB["clickCastings"][Cell.vars.playerClass]["alwaysTargeting"][spec] = "disabled"
+            alwaysTargeting = "disabled"
+            Cell:Fire("UpdateClickCastings", true)
+        end,
+    },
+    {
+        ["text"] = L["Left Spell"],
+        ["value"] = "left",
+        ["onClick"] = function()
+            local spec = Cell.vars.clickCastingTable["useCommon"] and "common" or Cell.vars.playerSpecID
+            CellDB["clickCastings"][Cell.vars.playerClass]["alwaysTargeting"][spec] = "left"
+            alwaysTargeting = "left"
+            Cell:Fire("UpdateClickCastings", true)
+        end,
+    },
+    {
+        ["text"] = L["Any Spells"],
+        ["value"] = "any",
+        ["onClick"] = function()
+            local spec = Cell.vars.clickCastingTable["useCommon"] and "common" or Cell.vars.playerSpecID
+            CellDB["clickCastings"][Cell.vars.playerClass]["alwaysTargeting"][spec] = "any"
+            alwaysTargeting = "any"
+            Cell:Fire("UpdateClickCastings", true)
+        end,
+    },
+})
+Cell:SetTooltip(targetingDropdown, "ANCHOR_TOPLEFT", 0, 2, L["Always Targeting"], L["Only available for Spells"])
 
 -------------------------------------------------
 -- current profile text
@@ -775,6 +831,7 @@ end
 
 local last
 LoadProfile = function(isCommon)
+    targetingDropdown:SetSelectedValue(alwaysTargeting)
     UpdateCurrentText(isCommon)
 
     last = nil

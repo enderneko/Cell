@@ -789,6 +789,20 @@ local function Revise()
         end
     end
 
+    -- r66-release
+    if CellDB["revise"] and dbRevision < 66 then
+        -- always targeting
+        if not CellDB["clickCastings"][Cell.vars.playerClass]["alwaysTargeting"] then
+            CellDB["clickCastings"][Cell.vars.playerClass]["alwaysTargeting"] = {
+                ["common"] = "disabled",
+            }
+            for sepcIndex = 1, GetNumSpecializationsForClassID(Cell.vars.playerClassID) do
+                local specID = GetSpecializationInfoForClassID(Cell.vars.playerClassID, sepcIndex)
+                CellDB["clickCastings"][Cell.vars.playerClass]["alwaysTargeting"][specID] = "disabled"
+            end
+        end
+    end
+
     CellDB["revise"] = Cell.version
 end
 Cell:RegisterCallback("Revise", "Revise", Revise)

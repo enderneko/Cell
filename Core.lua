@@ -184,6 +184,9 @@ function eventFrame:ADDON_LOADED(arg1)
         if type(CellDB["clickCastings"][Cell.vars.playerClass]) ~= "table" then
             CellDB["clickCastings"][Cell.vars.playerClass] = {
                 ["useCommon"] = true,
+                ["alwaysTargeting"] = {
+                    ["common"] = "disabled",
+                },
                 ["common"] = {
                     {"type1", "target"},
                     {"type2", "togglemenu"},
@@ -192,6 +195,7 @@ function eventFrame:ADDON_LOADED(arg1)
             -- https://wow.gamepedia.com/SpecializationID
             for sepcIndex = 1, GetNumSpecializationsForClassID(Cell.vars.playerClassID) do
                 local specID = GetSpecializationInfoForClassID(Cell.vars.playerClassID, sepcIndex)
+                CellDB["clickCastings"][Cell.vars.playerClass]["alwaysTargeting"][specID] = "disabled"
                 CellDB["clickCastings"][Cell.vars.playerClass][specID] = {
                     {"type1", "target"},
                     {"type2", "togglemenu"},

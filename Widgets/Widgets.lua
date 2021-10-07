@@ -1093,7 +1093,7 @@ function addon:CreateSwitch(parent, size, leftText, leftValue, rightText, rightV
     end)
 
     switch:SetScript("OnEnter", function()
-        highlight:SetColorTexture(classColor.t[1], classColor.t[2], classColor.t[3])
+        highlight:SetColorTexture(classColor.t[1], classColor.t[2], classColor.t[3], .8)
     end)
 
     switch:SetScript("OnLeave", function()
