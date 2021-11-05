@@ -146,6 +146,10 @@ L["Target Highlight Color"] = "目标高亮颜色"
 L["Mouseover Highlight Color"] = "鼠标指向高亮颜色"
 L["Highlight Size"] = "高亮尺寸"
 L["Out of Range Alpha"] = "超出距离透明度"
+L["Play Icon Animation When"] = "播放图标动画于"
+L["+ Stack & Duration"] = "层数与持续时间增加时"
+L["+ Stack"] = "层数增加时"
+L["Never"] = "从不"
 L["Reset All"] = "全部重置"
 
 -------------------------------------------------
@@ -400,6 +404,11 @@ L["Bug Report & Suggestion"] = "问题报告与建议"
 -------------------------------------------------
 L["Change Logs"] = "更新记录"
 L["CHANGE LOGS"] = [[
+    <h1>r68-release (Nov 5, 2021, 22:40 GMT+8)</h1>
+    <p>+ 在“外观”中添加了一个“图标动画”的选项。</p>
+    <p>* 更新繁中。</p>
+    <br/>
+
     <h1>r67-release (Oct 8, 2021, 02:55 GMT+8)</h1>
     <p>* 修复了些小问题。</p>
     <br/>

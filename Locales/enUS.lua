@@ -42,6 +42,11 @@ select(2, ...).L = setmetatable({
     ["marksTips"] = "\n|rTarget marker\nLeft-Click: |cffffffffset raid marker on target|r\nRight-Click: |cfffffffflock raid marker on target (in your group)|r",
 
     ["CHANGE LOGS"] = [[
+        <h1>r68-release (Nov 5, 2021, 22:40 GMT+8)</h1>
+        <p>+ Added an Icon Animation option in Appearance.</p>
+        <p>* Updated zhTW.</p>
+        <br/>
+
         <h1>r67-release (Oct 8, 2021, 02:55 GMT+8)</h1>
         <p>* Bug fixes.</p>
         <br/>

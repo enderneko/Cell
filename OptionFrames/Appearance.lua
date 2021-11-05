@@ -255,9 +255,37 @@ local barAnimationText = appearanceTab:CreateFontString(nil, "OVERLAY", "CELL_FO
 barAnimationText:SetPoint("BOTTOMLEFT", barAnimationDropdown, "TOPLEFT", 0, 1)
 barAnimationText:SetText(L["Bar Animation"])
 
--- local barAnimationPicker = Cell:CreateColorPicker(appearanceTab, "", true, function(r, g, b)
--- end)
--- barAnimationPicker:SetPoint("LEFT", barAnimationDropdown, "RIGHT", 5, 0)
+-- icon animation
+local iconAnimationDropdown = Cell:CreateDropdown(appearanceTab, 150)
+iconAnimationDropdown:SetPoint("TOPLEFT", barAnimationDropdown, 203, 0)
+iconAnimationDropdown:SetItems({
+    {
+        ["text"] = L["+ Stack & Duration"],
+        ["value"] = "duration",
+        ["onClick"] = function()
+            CellDB["appearance"]["iconAnimation"] = "duration"
+
+        end,
+    },
+    {
+        ["text"] = L["+ Stack"],
+        ["value"] = "stack",
+        ["onClick"] = function()
+            CellDB["appearance"]["iconAnimation"] = "stack"
+        end,
+    },
+    {
+        ["text"] = L["Never"],
+        ["value"] = "never",
+        ["onClick"] = function()
+            CellDB["appearance"]["iconAnimation"] = "never"
+        end,
+    },
+})
+
+local iconAnimationText = appearanceTab:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
+iconAnimationText:SetPoint("BOTTOMLEFT", iconAnimationDropdown, "TOPLEFT", 0, 1)
+iconAnimationText:SetText(L["Play Icon Animation When"])
 
 -- target highlight
 local targetColorPicker = Cell:CreateColorPicker(appearanceTab, L["Target Highlight Color"], true, function(r, g, b, a)
@@ -303,6 +331,7 @@ resetBtn:SetScript("OnClick", function()
     CellDB["appearance"]["bgColor"] = {"Class Color (dark)", {.667, 0, 0}}
     CellDB["appearance"]["powerColor"] = {"Power Color", {.7, .7, .7}}
     CellDB["appearance"]["barAnimation"] = "Flash"
+    CellDB["appearance"]["iconAnimation"] = "duration"
     CellDB["appearance"]["targetColor"] = {1, .31, .31, 1}
     CellDB["appearance"]["mouseoverColor"] = {1, 1, 1, .6}
     CellDB["appearance"]["highlightSize"] = 1
@@ -320,6 +349,7 @@ resetBtn:SetScript("OnClick", function()
     powerColorPicker:SetColor({.7, .7, .7})
 
     barAnimationDropdown:SetSelected(L["Flash"])
+    iconAnimationDropdown:SetSelectedValue("duration")
 
     targetColorPicker:SetColor({1, .31, .31, 1})
     mouseoverColorPicker:SetColor({1, 1, 1, .6})
@@ -355,7 +385,7 @@ local function ShowTab(tab)
         powerColorPicker:SetColor(CellDB["appearance"]["powerColor"][2])
 
         barAnimationDropdown:SetSelected(L[CellDB["appearance"]["barAnimation"]])
-        -- barAnimationPicker:SetColor(CellDB["appearance"]["barAnimation"][2])
+        iconAnimationDropdown:SetSelectedValue(CellDB["appearance"]["iconAnimation"])
 
         targetColorPicker:SetColor(CellDB["appearance"]["targetColor"])
         mouseoverColorPicker:SetColor(CellDB["appearance"]["mouseoverColor"])

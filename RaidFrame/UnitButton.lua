@@ -507,9 +507,13 @@ local function UnitButton_UpdateDebuffs(self)
         
         -- if duration and duration ~= 0 and duration <= 600 then
         if duration then
-            -- print(name, expirationTime-duration+.1>=GetTime()) -- NOTE: startTime ≈ now
-            justApplied = abs(expirationTime-GetTime()-duration) <= 0.1
-            refreshing = debuffs_cache[unit][spellId] and ((expirationTime == 0 and debuffs_cache_count[unit][spellId] and count > debuffs_cache_count[unit][spellId]) or justApplied)
+            if CellDB["appearance"]["iconAnimation"] == "duration" then
+                -- print(name, expirationTime-duration+.1>=GetTime()) -- NOTE: startTime ≈ now
+                justApplied = abs(expirationTime-GetTime()-duration) <= 0.1
+                refreshing = debuffs_cache[unit][spellId] and ((debuffs_cache_count[unit][spellId] and count > debuffs_cache_count[unit][spellId]) or justApplied)
+            elseif CellDB["appearance"]["iconAnimation"] == "stack" then
+                refreshing = debuffs_cache[unit][spellId] and debuffs_cache_count[unit][spellId] and count > debuffs_cache_count[unit][spellId]
+            end
             refreshing = refreshing and true or false
 
             if enabledIndicators["debuffs"] and duration <= 600 and not Cell.vars.debuffBlacklist[spellId] then
@@ -692,8 +696,10 @@ local function UnitButton_UpdateBuffs(self)
         end
         
         if duration then
-            justApplied = abs(expirationTime-GetTime()-duration) <= 0.1
-            refreshing = buffs_cache[unit][spellId] and justApplied
+            if CellDB["appearance"]["iconAnimation"] == "duration" then
+                justApplied = abs(expirationTime-GetTime()-duration) <= 0.1
+                refreshing = buffs_cache[unit][spellId] and justApplied
+            end
             refreshing = refreshing and true or false
 
             -- defensiveCooldowns
@@ -785,8 +791,10 @@ local function UnitButton_UpdateBuffs(self)
         end
 
         if duration then
-            justApplied = abs(expirationTime-GetTime()-duration) <= 0.1
-            refreshing = buffs_cache_castByMe[unit][spellId] and justApplied
+            if CellDB["appearance"]["iconAnimation"] == "duration" then
+                justApplied = abs(expirationTime-GetTime()-duration) <= 0.1
+                refreshing = buffs_cache_castByMe[unit][spellId] and justApplied
+            end
             refreshing = refreshing and true or false
             
             I:CheckCustomIndicators(unit, self, "buff", spellId, expirationTime - duration, duration, nil, icon, count, refreshing, true)

@@ -803,5 +803,12 @@ function F:Revise()
         end
     end
 
+    -- r68-release
+    if CellDB["revise"] and dbRevision < 68 then
+        if type(CellDB["appearance"]["iconAnimation"]) ~= "string" then
+            CellDB["appearance"]["iconAnimation"] = "duration"
+        end
+    end
+
     CellDB["revise"] = Cell.version
 end
