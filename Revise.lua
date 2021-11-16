@@ -809,6 +809,16 @@ function F:Revise()
             CellDB["appearance"]["iconAnimation"] = "duration"
         end
     end
+    
+    -- r69-release
+    if CellDB["revise"] and dbRevision < 69 then
+        for _, layout in pairs(CellDB["layouts"]) do
+            if layout["indicators"][20] and layout["indicators"][20]["indicatorName"] == "raidDebuffs" then
+                layout["indicators"][20]["num"] = 1
+                layout["indicators"][20]["orientation"] = "left-to-right"
+            end
+        end
+    end
 
     CellDB["revise"] = Cell.version
 end

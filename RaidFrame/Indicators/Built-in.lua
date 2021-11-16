@@ -388,8 +388,8 @@ end
 -- CreateRaidDebuffs
 -------------------------------------------------
 local currentAreaDebuffs = {}
-local eventFrame2 = CreateFrame("Frame")
-eventFrame2:RegisterEvent("PLAYER_ENTERING_WORLD")
+local eventFrame = CreateFrame("Frame")
+eventFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
 
 local function UpdateDebuffsForCurrentZone()
     F:Debug("|cffff77AARaidDebuffsChanged")
@@ -401,9 +401,15 @@ local function UpdateDebuffsForCurrentZone()
     end
 end
 Cell:RegisterCallback("RaidDebuffsChanged", "UpdateDebuffsForCurrentZone", UpdateDebuffsForCurrentZone)
-eventFrame2:SetScript("OnEvent", UpdateDebuffsForCurrentZone)
+eventFrame:SetScript("OnEvent", UpdateDebuffsForCurrentZone)
 
-function I:GetDebuffOrder(spellName, spellId, count)
+function I:GetDebuffOrder(spellName, spellId)
+    local t = currentAreaDebuffs[spellId] or currentAreaDebuffs[spellName]
+    if not t then return end
+    return t["order"]
+end
+
+function I:GetDebuffGlow(spellName, spellId, count)
     local t = currentAreaDebuffs[spellId] or currentAreaDebuffs[spellName]
     if not t then return end
 
@@ -429,18 +435,50 @@ function I:GetDebuffOrder(spellName, spellId, count)
     end
 
     if showGlow then
-        return t["order"], t["glowType"], t["glowOptions"]
+        return t["glowType"], t["glowOptions"]
     else
-        return t["order"], "None", nil
+        return "None", nil
     end
 end
 
-function I:CreateRaidDebuffs(parent)
-    local frame = I:CreateAura_BorderIcon(parent:GetName().."RaidDebuffs", parent.widget.overlayFrame, 2)
-    parent.indicators.raidDebuffs = frame
-    frame:Hide()
+-- function I:GetDebuffOrder(spellName, spellId, count)
+--     local t = currentAreaDebuffs[spellId] or currentAreaDebuffs[spellName]
+--     if not t then return end
 
-    function frame:ShowGlow(glowType, glowOptions, noHiding)
+--     local showGlow
+--     if t["glowCondition"] then
+--         if t["glowCondition"][1] == "Stack" then
+--             if t["glowCondition"][2] == "=" then
+--                 if count == t["glowCondition"][3] then showGlow = true end
+--             elseif t["glowCondition"][2] == ">" then
+--                 if count > t["glowCondition"][3] then showGlow = true end
+--             elseif t["glowCondition"][2] == ">=" then
+--                 if count >= t["glowCondition"][3] then showGlow = true end
+--             elseif t["glowCondition"][2] == "<" then
+--                 if count < t["glowCondition"][3] then showGlow = true end
+--             elseif t["glowCondition"][2] == "<=" then
+--                 if count <= t["glowCondition"][3] then showGlow = true end
+--             else -- ~=
+--                 if count ~= t["glowCondition"][3] then showGlow = true end
+--             end
+--         end
+--     else
+--         showGlow = true
+--     end
+
+--     if showGlow then
+--         return t["order"], t["glowType"], t["glowOptions"]
+--     else
+--         return t["order"], "None", nil
+--     end
+-- end
+
+function I:CreateRaidDebuffs(parent)
+    local raidDebuffs = CreateFrame("Frame", parent:GetName().."RaidDebuffParent", parent.widget.overlayFrame)
+    parent.indicators.raidDebuffs = raidDebuffs
+    raidDebuffs:Hide()
+
+    function raidDebuffs:ShowGlow(glowType, glowOptions, noHiding)
         if glowType == "Normal" then
             if not noHiding then
                 LCG.PixelGlow_Stop(parent)
@@ -468,7 +506,7 @@ function I:CreateRaidDebuffs(parent)
         end
     end
 
-    function frame:HideGlow(glowType)
+    function raidDebuffs:HideGlow(glowType)
         if glowType == "Normal" then
             LCG.ButtonGlow_Stop(parent)
         elseif glowType == "Pixel" then
@@ -478,11 +516,140 @@ function I:CreateRaidDebuffs(parent)
         end
     end
 
-    frame:SetScript("OnHide", function()
+    raidDebuffs:SetScript("OnHide", function()
         LCG.ButtonGlow_Stop(parent)
         LCG.PixelGlow_Stop(parent)
         LCG.AutoCastGlow_Stop(parent)
     end)
+
+    function raidDebuffs:SetBorder(border)
+        for i = 1, 3 do
+            raidDebuffs[i]:SetBorder(border)
+        end
+    end
+
+    raidDebuffs.hAlignment = ""
+    raidDebuffs.vAlignment = ""
+    raidDebuffs.isCentered = false
+    raidDebuffs.OriginalSetPoint = raidDebuffs.SetPoint
+    function raidDebuffs:SetPoint(point, relativeTo, relativePoint, x, y)
+        raidDebuffs:OriginalSetPoint(point, relativeTo, relativePoint, x, y)
+
+        if string.find(point, "LEFT") then
+            raidDebuffs.hAlignment = "LEFT"
+        elseif string.find(point, "RIGHT") then
+            raidDebuffs.hAlignment = "RIGHT"
+        else
+            raidDebuffs.hAlignment = ""
+        end
+
+        if string.find(point, "TOP") then
+            raidDebuffs.vAlignment = "TOP"
+        elseif string.find(point, "BOTTOM") then
+            raidDebuffs.vAlignment = "BOTTOM"
+        else
+            raidDebuffs.vAlignment = ""
+        end
+
+        if raidDebuffs.vAlignment == "" and raidDebuffs.hAlignment == "" then
+            raidDebuffs.isCentered = true
+        else
+            raidDebuffs.isCentered = false
+        end
+
+        raidDebuffs:SetOrientation(raidDebuffs.orientation or "left-to-right")
+    end
+
+    -- update parent size to make position right
+    function raidDebuffs:UpdateSize()
+        if not (raidDebuffs.orientation and raidDebuffs.width and raidDebuffs.height) then return end
+        
+        local shows = 1
+        for i = 2, 3 do
+            if raidDebuffs[i]:IsShown() then
+                shows = shows + 1
+            end
+        end
+
+        -- gap = 1
+        if raidDebuffs.orientation == "left-to-right" or raidDebuffs.orientation == "right-to-left"  then
+            raidDebuffs:OriginalSetSize(P:Scale(raidDebuffs.width * shows + shows - 1), P:Scale(raidDebuffs.height))
+        elseif raidDebuffs.orientation == "top-to-bottom" or raidDebuffs.orientation == "bottom-to-top" then
+            raidDebuffs:OriginalSetSize(P:Scale(raidDebuffs.width), P:Scale(raidDebuffs.height * shows + shows - 1))
+        end
+    end
+
+    raidDebuffs.OriginalSetSize = raidDebuffs.SetSize
+    function raidDebuffs:SetSize(width, height)
+        raidDebuffs.width = width
+        raidDebuffs.height = height
+
+        raidDebuffs:OriginalSetSize(width, height)
+        for i = 1, 3 do
+            raidDebuffs[i]:SetSize(width, height)
+        end
+
+        raidDebuffs:UpdateSize()
+    end
+
+    function raidDebuffs:SetOrientation(orientation)
+        raidDebuffs.orientation = orientation
+
+        local point1, point2, v, h, xOff, yOff
+        v = raidDebuffs.vAlignment
+        h = raidDebuffs.hAlignment
+
+        if orientation == "left-to-right" then
+            point1 = v.."LEFT"
+            point2 = v.."RIGHT"
+            xOff = 1
+            yOff = 0
+        elseif orientation == "right-to-left" then
+            point1 = v.."RIGHT"
+            point2 = v.."LEFT"
+            xOff = -1
+            yOff = 0
+        elseif orientation == "top-to-bottom" then
+            point1 = "TOP"..h
+            point2 = "BOTTOM"..h
+            xOff = 0
+            yOff = -1
+        elseif orientation == "bottom-to-top" then
+            point1 = "BOTTOM"..h
+            point2 = "TOP"..h
+            xOff = 0
+            yOff = 1
+        end
+        
+        for i = 1, 3 do
+            raidDebuffs[i]:ClearAllPoints()
+            raidDebuffs[i]:SetPoint(point1, raidDebuffs[i-1], point2, P:Scale(xOff), P:Scale(yOff))
+        end
+
+        raidDebuffs:UpdateSize()
+    end
+
+    function raidDebuffs:SetFont(font, ...)
+        font = F:GetFont(font)
+        for i = 1, 3 do
+            raidDebuffs[i]:SetFont(font, ...)
+        end
+    end
+
+    for i = 1, 3 do
+        local frame = I:CreateAura_BorderIcon(parent:GetName().."RaidDebuff"..i, raidDebuffs, 2)
+        tinsert(raidDebuffs, frame)
+        frame:SetScript("OnShow", raidDebuffs.UpdateSize)
+        frame:SetScript("OnHide", raidDebuffs.UpdateSize)
+	end
+
+    function raidDebuffs:UpdatePixelPerfect()
+        raidDebuffs:OriginalSetSize(P:Scale(raidDebuffs.width), P:Scale(raidDebuffs.height))
+        P:Repoint(raidDebuffs)
+        for i = 1, 3 do
+            raidDebuffs[i]:UpdatePixelPerfect()
+        end
+    end
 end
 
 -------------------------------------------------

@@ -41,9 +41,9 @@ local function RegisterDragForMainFrame(frame)
     frame:SetScript("OnDragStop", function()
         anchorFrame:StopMovingOrSizing()
         P:SavePosition(anchorFrame, Cell.vars.currentLayoutTable["position"])
-        if not InCombatLockdown() then
-            P:PixelPerfectPoint(anchorFrame)
-        end
+        -- if not InCombatLockdown() then
+            -- P:PixelPerfectPoint(anchorFrame)
+        -- end
     end)
 end
 

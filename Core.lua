@@ -432,8 +432,10 @@ function eventFrame:ADDON_LOADED(arg1)
                             ["frameLevel"] = 20,
                             ["size"] = {22, 22},
                             ["border"] = 2,
+                            ["num"] = 1,
                             ["font"] = {"Cell ".._G.DEFAULT, 11, "Outline", 2},
                             ["onlyShowTopGlow"] = true,
+                            ["orientation"] = "left-to-right",
                         }, -- 20
                         {
                             ["name"] = "Targeted Spells",

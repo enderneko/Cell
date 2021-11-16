@@ -193,16 +193,18 @@ local function InitIndicator(indicatorName)
 
     elseif indicatorName == "raidDebuffs" then
         indicator.isRaidDebuffs = true
-        indicator:SetScript("OnShow", function()
-            indicator:SetCooldown(GetTime(), 10, "", "Interface\\Icons\\INV_Misc_QuestionMark", 7)
-            indicator.cooldown:SetScript("OnCooldownDone", function()
-                indicator:SetCooldown(GetTime(), 10, "", "Interface\\Icons\\INV_Misc_QuestionMark", 7)
+        for i = 1, 3 do
+            indicator[i]:HookScript("OnShow", function()
+                indicator[i]:SetCooldown(GetTime(), 10, "", "Interface\\Icons\\INV_Misc_QuestionMark", 7)
+                indicator[i].cooldown:SetScript("OnCooldownDone", function()
+                    indicator[i]:SetCooldown(GetTime(), 10, "", "Interface\\Icons\\INV_Misc_QuestionMark", 7)
+                end)
             end)
-        end)
-        indicator:SetScript("OnHide", function()
-            indicator.cooldown:Hide()
-            indicator.cooldown:SetScript("OnCooldownDone", nil)
-        end)
+            indicator[i]:HookScript("OnHide", function()
+                indicator[i].cooldown:Hide()
+                indicator[i].cooldown:SetScript("OnCooldownDone", nil)
+            end)
+        end
 
     elseif indicatorName == "targetedSpells" then
         indicator.isTargetedSpells = true
@@ -784,7 +786,7 @@ local indicatorSettings = {
     ["tankActiveMitigation"] = {"|cffb7b7b7"..I:GetTankActiveMitigationString(), "enabled", "position", "frameLevel", "size"},
     ["dispels"] = {"enabled", "checkbutton:dispellableByMe", "checkbutton2:enableHighlight", "position", "frameLevel", "size-square"},
     ["debuffs"] = {"enabled", "checkbutton:dispellableByMe", "blacklist", "bigDebuffs", "num:10", "orientation", "position", "frameLevel", "size-normal-big", "font"},
-    ["raidDebuffs"] = {"|cffb7b7b7"..L["You can config debuffs in %s"]:format(Cell:GetPlayerClassColorString()..L["Raid Debuffs"].."|r"), "enabled", "checkbutton:onlyShowTopGlow", "position", "frameLevel", "size-border", "font"},
+    ["raidDebuffs"] = {"|cffb7b7b7"..L["You can config debuffs in %s"]:format(Cell:GetPlayerClassColorString()..L["Raid Debuffs"].."|r"), "enabled", "checkbutton:onlyShowTopGlow", "num:3", "orientation", "position", "frameLevel", "size-border", "font"},
     ["targetedSpells"] = {"enabled", "spells", "glow", "position", "frameLevel", "size-border", "font"},
     ["targetCounter"] = {"|cffff2727"..L["HIGH CPU USAGE"].."!|r |cffb7b7b7"..L["Check all visible enemy nameplates. Battleground/Arena only."], "enabled", "color", "position", "frameLevel", "font"},
 }

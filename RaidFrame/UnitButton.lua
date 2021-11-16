@@ -107,12 +107,15 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
             -- update custom
             if t["dispellableByMe"] ~= nil then
                 indicatorCustoms[t["indicatorName"]] = t["dispellableByMe"]
-            elseif t["castByMe"] ~= nil then
+            end
+            if t["castByMe"] ~= nil then
                 indicatorCustoms[t["indicatorName"]] = t["castByMe"]
-            elseif t["hideFull"] ~= nil then
+            end
+            if t["hideFull"] ~= nil then
                 indicatorCustoms[t["indicatorName"]] = t["hideFull"]
-            elseif t["onlyShowTopGLow"] ~= nil then
-                indicatorCustoms[t["indicatorName"]] = t["onlyShowTopGLow"]
+            end
+            if t["onlyShowTopGlow"] ~= nil then
+                indicatorCustoms[t["indicatorName"]] = t["onlyShowTopGlow"]
             end
             -- update indicators
             F:IterateAllUnitButtons(function(b)
@@ -478,6 +481,9 @@ local debuffs_current = {}
 local debuffs_found = {}
 local debuffs_big = {}
 local debuffs_dispel = {}
+local debuffs_raid_indices = {} -- store matching raid debuffs indices
+local debuffs_raid_refreshing = {} -- store matching raid debuffs refreshing status ([index] = refreshing)
+local debuffs_raid_orders = {} -- store matching raid debuffs orders ([index] = order)
 local debuffs_glowing_current = {}
 local debuffs_glowing_cache = {}
 local function UnitButton_UpdateDebuffs(self)
@@ -488,6 +494,9 @@ local function UnitButton_UpdateDebuffs(self)
     if not debuffs_found[unit] then debuffs_found[unit] = {} end
     if not debuffs_big[unit] then debuffs_big[unit] = {} end
     if not debuffs_dispel[unit] then debuffs_dispel[unit] = {} end
+    if not debuffs_raid_indices[unit] then debuffs_raid_indices[unit] = {} end
+    if not debuffs_raid_refreshing[unit] then debuffs_raid_refreshing[unit] = {} end
+    if not debuffs_raid_orders[unit] then debuffs_raid_orders[unit] = {} end
     if not debuffs_glowing_current[unit] then debuffs_glowing_current[unit] = {} end
     if not debuffs_glowing_cache[unit] then debuffs_glowing_cache[unit] = {} end
     self.state.BGOrb = nil
@@ -495,9 +504,8 @@ local function UnitButton_UpdateDebuffs(self)
     -- user created indicators
     I:ResetCustomIndicators(unit, "debuff")
 
-    local found, refreshing, justApplied, resurrectionFound = 1
-    local glowType, glowColor
-    local topOrder, topGlowType, topGlowOptions, topId, topStart, topDuration, topType, topIcon, topCount, topRefreshing, topIndex = 999
+    local found, refreshing, justApplied, resurrectionFound, raidDebuffsFound = 1, false
+    local glowType, glowOptions
     for i = 1, 40 do
         -- name, icon, count, debuffType, duration, expirationTime, source, isStealable, nameplateShowPersonal, spellId, canApplyAura, isBossDebuff, castByPlayer, nameplateShowAll, timeMod, ...
         local name, icon, count, debuffType, duration, expirationTime, source, isStealable, nameplateShowPersonal, spellId = UnitDebuff(unit, i)
@@ -514,7 +522,6 @@ local function UnitButton_UpdateDebuffs(self)
             elseif CellDB["appearance"]["iconAnimation"] == "stack" then
                 refreshing = debuffs_cache[unit][spellId] and debuffs_cache_count[unit][spellId] and count > debuffs_cache_count[unit][spellId]
             end
-            refreshing = refreshing and true or false
 
             if enabledIndicators["debuffs"] and duration <= 600 and not Cell.vars.debuffBlacklist[spellId] then
                 if not indicatorCustoms["debuffs"] then -- all debuffs
@@ -542,19 +549,19 @@ local function UnitButton_UpdateDebuffs(self)
             -- user created indicators
             I:CheckCustomIndicators(unit, self, "debuff", spellId, expirationTime - duration, duration, debuffType or "", icon, count, refreshing)
 
-            -- check top debuff
-            if enabledIndicators["raidDebuffs"] and I:GetDebuffOrder(name, spellId, count) then
-                if not indicatorCustoms["raidDebuffs"] then
-                    glowType, glowOptions = select(2, I:GetDebuffOrder(name, spellId, count))
+            -- prepare raidDebuffs
+            if enabledIndicators["raidDebuffs"] and I:GetDebuffOrder(name, spellId) then
+                raidDebuffsFound = true
+                tinsert(debuffs_raid_indices[unit], i)
+                debuffs_raid_refreshing[unit][i] = refreshing -- store all raidDebuffs
+                debuffs_raid_orders[unit][i] = I:GetDebuffOrder(name, spellId)
+
+                if not indicatorCustoms["raidDebuffs"] then -- glow all matching debuffs
+                    glowType, glowOptions = I:GetDebuffGlow(name, spellId, count)
                     if glowType and glowType ~= "None" then
                         debuffs_glowing_current[unit][glowType] = glowOptions
                         debuffs_glowing_cache[unit][glowType] = true
                     end
-                end
-                if I:GetDebuffOrder(name, spellId, count) < topOrder then
-                    topOrder, topGlowType, topGlowOptions = I:GetDebuffOrder(name, spellId, count)
-                    topId, topStart, topDuration, topType, topIcon, topCount, topRefreshing = spellId, expirationTime - duration, duration, debuffType or "", icon, count, refreshing
-                    topIndex = i
                 end
             end
 
@@ -599,39 +606,43 @@ local function UnitButton_UpdateDebuffs(self)
         self.indicators.resurrectionIcon:Hide()
     end
 
-    found = 1
-    if enabledIndicators["debuffs"] then
-        -- bigDebuffs first
-        for i, refreshing in pairs(debuffs_big[unit]) do
-            local name, icon, count, debuffType, duration, expirationTime, source, isStealable, nameplateShowPersonal, spellId = UnitDebuff(unit, i)
-            if topIndex ~= i and found <= indicatorNums["debuffs"] then
-                -- start, duration, debuffType, texture, count, refreshing
-                self.indicators.debuffs[found]:SetCooldown(expirationTime - duration, duration, debuffType or "", icon, count, refreshing, true)
+    -- update raid debuffs
+    if raidDebuffsFound then
+        found = 1
+        self.indicators.raidDebuffs:Show()
+
+        -- sort indices
+        table.sort(debuffs_raid_indices[unit], function(a, b)
+            return debuffs_raid_orders[unit][a] < debuffs_raid_orders[unit][b]
+        end)
+        wipe(debuffs_raid_orders[unit])
+        
+        -- show
+        local topGlowType, topGlowOptions
+        for i = 1, indicatorNums["raidDebuffs"] do
+            if debuffs_raid_indices[unit][i] then -- debuffs_raid_indices[unit][i] -> index
+                local name, icon, count, debuffType, duration, expirationTime, source, isStealable, nameplateShowPersonal, spellId = UnitDebuff(unit, debuffs_raid_indices[unit][i])
+                self.indicators.raidDebuffs[i]:SetCooldown(expirationTime - duration, duration, debuffType or "", icon, count, debuffs_raid_refreshing[unit][debuffs_raid_indices[unit][i]])
+                
                 found = found + 1
+                debuffs_raid_orders[unit][debuffs_raid_indices[unit][i]] = true -- changed to store debuffs shown by raidDebuffs indicator
+
+                if i == 1 then -- top
+                    topGlowType, topGlowOptions = I:GetDebuffGlow(name, spellId, count)
+                end
             end
         end
-        -- then normal debuffs
-        for i, refreshing in pairs(debuffs_found[unit]) do
-            local name, icon, count, debuffType, duration, expirationTime, source, isStealable, nameplateShowPersonal, spellId = UnitDebuff(unit, i)
-            if topIndex ~= i and found <= indicatorNums["debuffs"] then
-                -- start, duration, debuffType, texture, count, refreshing
-                self.indicators.debuffs[found]:SetCooldown(expirationTime - duration, duration, debuffType or "", icon, count, refreshing)
-                found = found + 1
-            end
+
+        for i = found, #debuffs_raid_indices[unit] do
+            table.remove(debuffs_raid_indices[unit], found)
         end
-    end
 
-    -- hide other debuff indicators
-    for i = found, 10 do
-        self.indicators.debuffs[i]:Hide()
-    end
+        -- hide other raid debuff indicators
+        for i = found, 3 do
+            self.indicators.raidDebuffs[i]:Hide()
+        end
 
-    -- update dispels
-    self.indicators.dispels:SetDispels(debuffs_dispel[unit])
-
-    -- update central debuff
-    if topId then
-        self.indicators.raidDebuffs:SetCooldown(topStart, topDuration, topType, topIcon, topCount, topRefreshing)
+        -- update glow
         if not indicatorCustoms["raidDebuffs"] then
             if topGlowType and topGlowType ~= "None" then
                 -- to make sure top glow has highest priority
@@ -654,6 +665,37 @@ local function UnitButton_UpdateDebuffs(self)
         self.indicators.raidDebuffs:Hide()
     end
 
+    -- update debuffs
+    found = 1
+    if enabledIndicators["debuffs"] then
+        -- bigDebuffs first
+        for i, refreshing in pairs(debuffs_big[unit]) do
+            local _, icon, count, debuffType, duration, expirationTime = UnitDebuff(unit, i)
+            if not debuffs_raid_orders[unit][i] and found <= indicatorNums["debuffs"] then
+                -- start, duration, debuffType, texture, count, refreshing
+                self.indicators.debuffs[found]:SetCooldown(expirationTime - duration, duration, debuffType or "", icon, count, refreshing, true)
+                found = found + 1
+            end
+        end
+        -- then normal debuffs
+        for i, refreshing in pairs(debuffs_found[unit]) do
+            local _, icon, count, debuffType, duration, expirationTime = UnitDebuff(unit, i)
+            if not debuffs_raid_orders[unit][i] and found <= indicatorNums["debuffs"] then
+                -- start, duration, debuffType, texture, count, refreshing
+                self.indicators.debuffs[found]:SetCooldown(expirationTime - duration, duration, debuffType or "", icon, count, refreshing)
+                found = found + 1
+            end
+        end
+    end
+
+    -- hide other debuff indicators
+    for i = found, 10 do
+        self.indicators.debuffs[i]:Hide()
+    end
+
+    -- update dispels
+    self.indicators.dispels:SetDispels(debuffs_dispel[unit])
+    
     -- user created indicators
     I:ShowCustomIndicators(unit, self, "debuff")
     
@@ -670,6 +712,9 @@ local function UnitButton_UpdateDebuffs(self)
     wipe(debuffs_found[unit])
     wipe(debuffs_big[unit])
     wipe(debuffs_dispel[unit])
+    wipe(debuffs_raid_indices[unit])
+    wipe(debuffs_raid_refreshing[unit])
+    wipe(debuffs_raid_orders[unit])
 end
 
 local buffs_cache = {}
@@ -686,7 +731,7 @@ local function UnitButton_UpdateBuffs(self)
     -- user created indicators
     I:ResetCustomIndicators(unit, "buff")
 
-    local refreshing, justApplied
+    local refreshing, justApplied = false
     local defensiveFound, externalFound, tankActiveMitigationFound, drinkingFound = 1, 1, false, false
     for i = 1, 40 do
         -- name, icon, count, debuffType, duration, expirationTime, source, isStealable, nameplateShowPersonal, spellId, canApplyAura, isBossDebuff, castByPlayer, nameplateShowAll, timeMod, ...
@@ -700,7 +745,6 @@ local function UnitButton_UpdateBuffs(self)
                 justApplied = abs(expirationTime-GetTime()-duration) <= 0.1
                 refreshing = buffs_cache[unit][spellId] and justApplied
             end
-            refreshing = refreshing and true or false
 
             -- defensiveCooldowns
             if enabledIndicators["defensiveCooldowns"] and I:IsDefensiveCooldown(name) and defensiveFound <= indicatorNums["defensiveCooldowns"] then
@@ -781,6 +825,7 @@ local function UnitButton_UpdateBuffs(self)
     wipe(buffs_current[unit])
 
     -- cast by me ---------------------------------------------------------------------
+    refreshing = false
     if not buffs_cache_castByMe[unit] then buffs_cache_castByMe[unit] = {} end
     if not buffs_current_castByMe[unit] then buffs_current_castByMe[unit] = {} end
     for i = 1, 40 do
@@ -795,7 +840,6 @@ local function UnitButton_UpdateBuffs(self)
                 justApplied = abs(expirationTime-GetTime()-duration) <= 0.1
                 refreshing = buffs_cache_castByMe[unit][spellId] and justApplied
             end
-            refreshing = refreshing and true or false
             
             I:CheckCustomIndicators(unit, self, "buff", spellId, expirationTime - duration, duration, nil, icon, count, refreshing, true)
             
