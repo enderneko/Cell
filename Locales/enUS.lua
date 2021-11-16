@@ -42,6 +42,11 @@ select(2, ...).L = setmetatable({
     ["marksTips"] = "\n|rTarget marker\nLeft-Click: |cffffffffset raid marker on target|r\nRight-Click: |cfffffffflock raid marker on target (in your group)|r",
 
     ["CHANGE LOGS"] = [[
+        <h1>r69-release (Nov 16, 2021, 09:10 GMT+8)</h1>
+        <p>+ Added "Background Alpha" in Appearance.</p>
+        <p>* Updated Raid Debuffs indicator, it can show up to 3 debuffs now.</p>
+        <br/>
+
         <h1>r68-release (Nov 5, 2021, 22:40 GMT+8)</h1>
         <p>+ Added an Icon Animation option in Appearance.</p>
         <p>* Updated zhTW.</p>
