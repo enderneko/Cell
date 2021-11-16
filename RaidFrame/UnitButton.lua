@@ -49,7 +49,7 @@ local barAnimationType, highlightEnabled
 -------------------------------------------------
 -- unit button init indicators
 -------------------------------------------------
-local UnitButton_UpdateAuras, UnitButton_UpdateRole, UnitButton_UpdateLeader, UnitButton_UpdateStatusIcon, UnitButton_UpdateStatusText
+local UnitButton_UpdateAuras, UnitButton_UpdateRole, UnitButton_UpdateLeader, UnitButton_UpdateStatusIcon, UnitButton_UpdateStatusText, UnitButton_UpdateColor
 
 local indicatorsInitialized
 local enabledIndicators, indicatorNums, indicatorCustoms = {}, {}, {}
@@ -1087,6 +1087,10 @@ local function UnitButton_UpdateHealthMax(self)
     else
         self.widget.healthBar:SetMinMaxValues(0, self.state.healthMax)
     end
+
+    if Cell.loaded and (CellDB["appearance"]["barColor"][1] == "Gradient" or CellDB["appearance"]["lossColor"][1] == "Gradient") then
+        UnitButton_UpdateColor(self)
+    end
 end
 
 local function UnitButton_UpdateHealth(self)
@@ -1108,6 +1112,10 @@ local function UnitButton_UpdateHealth(self)
         self.widget.healthBar:SetSmoothedValue(self.state.health)
     else
         self.widget.healthBar:SetValue(self.state.health)
+    end
+
+    if Cell.loaded and (CellDB["appearance"]["barColor"][1] == "Gradient" or CellDB["appearance"]["lossColor"][1] == "Gradient") then
+        UnitButton_UpdateColor(self)
     end
 
     self.state.healthPercentOld = healthPercent
@@ -1369,13 +1377,15 @@ local function UnitButton_UpdateName(self)
     self.indicators.nameText:UpdateName()
 end
 
-local function GetColor(r, g, b)
+local function GetColor(self, r, g, b)
     local barR, barG, barB, bgR, bgG, bgB
     -- bar
     if CellDB["appearance"]["barColor"][1] == "Class Color" then
         barR, barG, barB = r, g, b
     elseif CellDB["appearance"]["barColor"][1] == "Class Color (dark)" then
         barR, barG, barB = r*.2, g*.2, b*.2
+    elseif CellDB["appearance"]["barColor"][1] == "Gradient" then
+        barR, barG, barB = F:ColorGradient(self.state.healthPercent, 1,0,0, 1,0.5,0, 0.5,1,0)
     else
         barR, barG, barB = unpack(CellDB["appearance"]["barColor"][2])
     end
@@ -1384,13 +1394,15 @@ local function GetColor(r, g, b)
         bgR, bgG, bgB = r, g, b
     elseif CellDB["appearance"]["lossColor"][1] == "Class Color (dark)" then
         bgR, bgG, bgB = r*.2, g*.2, b*.2
+    elseif CellDB["appearance"]["barColor"][1] == "Gradient" then
+        bgR, bgG, bgB = F:ColorGradient(self.state.healthPercent, 1,0,0, 1,0.5,0, 0.5,1,0)
     else
         bgR, bgG, bgB = unpack(CellDB["appearance"]["lossColor"][2])
     end
     return barR, barG, barB, bgR, bgG, bgB
 end
 
-local function UnitButton_UpdateColor(self)
+UnitButton_UpdateColor = function(self)
     local unit = self.state.unit
     if not unit then return end
 
@@ -1424,7 +1436,7 @@ local function UnitButton_UpdateColor(self)
             nameText:SetTextColor(F:GetClassColor(self.state.class))
         elseif self.state.inVehicle then
             if Cell.loaded then
-                barR, barG, barB, bgR, bgG, bgB = GetColor(0, 1, .2)
+                barR, barG, barB, bgR, bgG, bgB = GetColor(self, 0, 1, .2)
                 -- if Cell.vars.currentLayoutTable["indicators"][1]["nameColor"][1] ~= "Class Color" then
                 -- 	nameText:SetTextColor(F:GetClassColor(self.state.class))
                 -- end
@@ -1434,7 +1446,7 @@ local function UnitButton_UpdateColor(self)
             end
         else
             if Cell.loaded then
-                barR, barG, barB, bgR, bgG, bgB = GetColor(F:GetClassColor(self.state.class))
+                barR, barG, barB, bgR, bgG, bgB = GetColor(self, F:GetClassColor(self.state.class))
             else
                 barR, barG, barB = F:GetClassColor(self.state.class)
                 bgR, bgG, bgB = barR*.2, barG*.2, barB*.2
@@ -1442,7 +1454,7 @@ local function UnitButton_UpdateColor(self)
         end
     elseif string.find(unit, "pet") then -- pet
         if Cell.loaded then
-            barR, barG, barB, bgR, bgG, bgB = GetColor(.5, .5, 1)
+            barR, barG, barB, bgR, bgG, bgB = GetColor(self, .5, .5, 1)
         else
             barR, barG, barB = .5, .5, 1
             bgR, bgG, bgB = barR*.2, barG*.2, barB*.2
@@ -1452,7 +1464,7 @@ local function UnitButton_UpdateColor(self)
         end
     else -- npc
         if Cell.loaded then
-            barR, barG, barB, bgR, bgG, bgB = GetColor(0, 1, .2)
+            barR, barG, barB, bgR, bgG, bgB = GetColor(self, 0, 1, .2)
         else
             barR, barG, barB =0, 1, .2
             bgR, bgG, bgB = barR*.2, barG*.2, barB*.2
@@ -1470,11 +1482,11 @@ local function UnitButton_UpdateAll(self)
 
     UnitButton_UpdateVehicleStatus(self)
     UnitButton_UpdateName(self)
-    UnitButton_UpdateColor(self)
     UnitButton_UpdateHealthMax(self)
     UnitButton_UpdateHealth(self)
     UnitButton_UpdateHealPrediction(self)
     UnitButton_UpdateStatusText(self)
+    UnitButton_UpdateColor(self)
 
     if Cell.loaded then
         if Cell.vars.currentLayoutTable["powerHeight"] ~= 0 then

@@ -120,6 +120,13 @@ barColorDropdown:SetItems({
         end,
     },
     {
+        ["text"] = L["Gradient"],
+        ["onClick"] = function()
+            CellDB["appearance"]["barColor"][1] = "Gradient"
+            Cell:Fire("UpdateAppearance", "color")
+        end,
+    },
+    {
         ["text"] = L["Custom Color"],
         ["onClick"] = function()
             CellDB["appearance"]["barColor"][1] = "Custom Color"
@@ -157,6 +164,13 @@ lossColorDropdown:SetItems({
         ["text"] = L["Class Color (dark)"],
         ["onClick"] = function()
             CellDB["appearance"]["lossColor"][1] = "Class Color (dark)"
+            Cell:Fire("UpdateAppearance", "color")
+        end,
+    },
+    {
+        ["text"] = L["Gradient"],
+        ["onClick"] = function()
+            CellDB["appearance"]["lossColor"][1] = "Gradient"
             Cell:Fire("UpdateAppearance", "color")
         end,
     },

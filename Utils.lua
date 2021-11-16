@@ -14,6 +14,20 @@ function F:ConvertRGB(r, g, b, a, desaturation)
     return r, g, b, a
 end
 
+-- https://wowpedia.fandom.com/wiki/ColorGradient
+function F:ColorGradient(perc, r1,g1,b1, r2,g2,b2, r3,g3,b3)
+    if perc >= 1 then
+        return r3, g3, b3
+    elseif perc <= 0 then
+        return r1, g1, b1
+    end
+ 
+    local segment, relperc = math.modf(perc * 2)
+    local rr1, rg1, rb1, rr2, rg2, rb2 = select((segment * 3) + 1, r1,g1,b1, r2,g2,b2, r3,g3,b3)
+ 
+    return rr1 + (rr2 - rr1) * relperc, rg1 + (rg2 - rg1) * relperc, rb1 + (rb2 - rb1) * relperc
+end
+
 -------------------------------------------------
 -- number
 -------------------------------------------------
