@@ -167,6 +167,7 @@ function eventFrame:ADDON_LOADED(arg1)
                 ["texture"] = "Cell ".._G.DEFAULT,
                 ["barColor"] = {"Class Color", {.2, .2, .2}},
                 ["bgColor"] = {"Class Color (dark)", {.667, 0, 0}},
+                ["bgAlpha"] = 1,
                 ["powerColor"] = {"Power Color", {.7, .7, .7}},
                 ["barAnimation"] = "Flash",
                 ["iconAnimation"] = "duration",

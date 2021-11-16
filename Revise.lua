@@ -818,6 +818,10 @@ function F:Revise()
                 layout["indicators"][20]["orientation"] = "left-to-right"
             end
         end
+
+        if type(CellDB["appearance"]["bgAlpha"]) ~= "number" then
+            CellDB["appearance"]["bgAlpha"] = 1
+        end
     end
 
     CellDB["revise"] = Cell.version

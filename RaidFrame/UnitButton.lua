@@ -1059,6 +1059,8 @@ local function UnitButton_UpdatePowerType(self)
     if not unit then return end
 
     local r, g, b
+    local a = Cell.loaded and CellDB["appearance"]["bgAlpha"] or 1
+
     if not UnitIsConnected(unit) then
         r, g, b = 0.5, 0.5, 0.5
     else
@@ -1073,7 +1075,7 @@ local function UnitButton_UpdatePowerType(self)
     end
 
     self.widget.powerBar:SetStatusBarColor(r, g, b)
-    self.widget.powerBarLoss:SetVertexColor(r * .2, g * .2, b * .2)
+    self.widget.powerBarLoss:SetVertexColor(r * .2, g * .2, b * .2, a)
 end
 
 local function UnitButton_UpdateHealthMax(self)
@@ -1399,6 +1401,7 @@ local function UnitButton_UpdateColor(self)
 
     local barR, barG, barB
     local bgR, bgG, bgB
+    local bgA = 1
     
     if Cell.loaded then
         if Cell.vars.currentLayoutTable["indicators"][1]["nameColor"][1] == "Class Color" then
@@ -1406,6 +1409,7 @@ local function UnitButton_UpdateColor(self)
         else
             nameText:SetTextColor(unpack(Cell.vars.currentLayoutTable["indicators"][1]["nameColor"][2]))
         end
+        bgA =  CellDB["appearance"]["bgAlpha"]
     else
         nameText:SetTextColor(1, 1, 1)
     end
@@ -1458,7 +1462,7 @@ local function UnitButton_UpdateColor(self)
 
     -- local r, g, b = RAID_CLASS_COLORS["DEATHKNIGHT"]:GetRGB()
     self.widget.healthBar:SetStatusBarColor(barR, barG, barB)
-    self.widget.healthBarLoss:SetVertexColor(bgR, bgG, bgB)
+    self.widget.healthBarLoss:SetVertexColor(bgR, bgG, bgB, bgA)
     self.widget.incomingHeal:SetVertexColor(barR, barG, barB)
 end
 
@@ -2044,6 +2048,7 @@ function F:UnitButton_OnLoad(button)
     button.func.UpdateColor = function()
         UnitButton_UpdateColor(button)
         UnitButton_UpdatePowerType(button)
+        button:SetBackdropColor(0, 0, 0, CellDB["appearance"]["bgAlpha"])
     end
 
     -- target highlight
@@ -2191,7 +2196,7 @@ function F:UnitButton_OnLoad(button)
     -- pixel perfect
     button.func.UpdatePixelPerfect = function()
         button:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8x8", edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = P:Scale(1)})
-        button:SetBackdropColor(0, 0, 0, 1)
+        button:SetBackdropColor(0, 0, 0, CellDB["appearance"]["bgAlpha"])
         button:SetBackdropBorderColor(0, 0, 0, 1)
         P:Resize(button)
 

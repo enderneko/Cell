@@ -46,7 +46,7 @@ end
 -- unitbutton
 -------------------------------------------------
 local unitButtonText = Cell:CreateSeparator(L["Unit Button"], appearanceTab, 387)
-unitButtonText:SetPoint("TOPLEFT", 5, -100)
+unitButtonText:SetPoint("TOPLEFT", 5, -80)
 
 -- texture
 local textureDropdown = Cell:CreateDropdown(appearanceTab, 150, "texture")
@@ -257,7 +257,8 @@ barAnimationText:SetText(L["Bar Animation"])
 
 -- icon animation
 local iconAnimationDropdown = Cell:CreateDropdown(appearanceTab, 150)
-iconAnimationDropdown:SetPoint("TOPLEFT", barAnimationDropdown, 203, 0)
+-- iconAnimationDropdown:SetPoint("TOPLEFT", barAnimationDropdown, 203, 0)
+iconAnimationDropdown:SetPoint("TOPLEFT", barAnimationDropdown, "BOTTOMLEFT", 0, -30)
 iconAnimationDropdown:SetItems({
     {
         ["text"] = L["+ Stack & Duration"],
@@ -319,7 +320,14 @@ end
 local oorAlpha = Cell:CreateSlider(L["Out of Range Alpha"], appearanceTab, 0, 100, 120, 5, function(value)
     CellDB["appearance"]["outOfRangeAlpha"] = value/100
 end, nil, true)
-oorAlpha:SetPoint("TOPLEFT", highlightSize, "BOTTOMLEFT", 0, -40)
+oorAlpha:SetPoint("TOPLEFT", highlightSize, "BOTTOMLEFT", 0, -45)
+
+-- bg alpha
+local bgAlpha = Cell:CreateSlider(L["Background Alpha"], appearanceTab, 0, 100, 120, 5, function(value)
+    CellDB["appearance"]["bgAlpha"] = value/100
+    Cell:Fire("UpdateAppearance", "alpha")
+end, nil, true)
+bgAlpha:SetPoint("TOPLEFT", oorAlpha, "BOTTOMLEFT", 0, -45)
 
 -- reset
 local resetBtn = Cell:CreateButton(appearanceTab, L["Reset All"], "class-hover", {70, 17})
@@ -329,6 +337,7 @@ resetBtn:SetScript("OnClick", function()
     CellDB["appearance"]["texture"] = "Cell ".._G.DEFAULT
     CellDB["appearance"]["barColor"] = {"Class Color", {.2, .2, .2}}
     CellDB["appearance"]["bgColor"] = {"Class Color (dark)", {.667, 0, 0}}
+    CellDB["appearance"]["bgAlpha"] = 1
     CellDB["appearance"]["powerColor"] = {"Power Color", {.7, .7, .7}}
     CellDB["appearance"]["barAnimation"] = "Flash"
     CellDB["appearance"]["iconAnimation"] = "duration"
@@ -355,6 +364,7 @@ resetBtn:SetScript("OnClick", function()
     mouseoverColorPicker:SetColor({1, 1, 1, .6})
     highlightSize:SetValue(1)
     oorAlpha:SetValue(45)
+    bgAlpha:SetValue(100)
 
     Cell:Fire("UpdateAppearance")
 end)
@@ -391,6 +401,7 @@ local function ShowTab(tab)
         mouseoverColorPicker:SetColor(CellDB["appearance"]["mouseoverColor"])
         highlightSize:SetValue(CellDB["appearance"]["highlightSize"])
         oorAlpha:SetValue(CellDB["appearance"]["outOfRangeAlpha"]*100)
+        bgAlpha:SetValue(CellDB["appearance"]["bgAlpha"]*100)
     else
         appearanceTab:Hide()
     end
@@ -403,7 +414,7 @@ Cell:RegisterCallback("ShowOptionsTab", "AppearanceTab_ShowTab", ShowTab)
 local function UpdateAppearance(which)
     F:Debug("|cff7f7fffUpdateAppearance:|r "..(which or "all"))
     
-    if not which or which == "texture" or which == "color" or which == "animation" or which == "highlightColor" or which == "highlightSize" then
+    if not which or which == "texture" or which == "color" or which == "alpha" or which == "animation" or which == "highlightColor" or which == "highlightSize" then
         local tex
         if not which or which == "texture" then tex = F:GetBarTexture() end
 
@@ -413,7 +424,7 @@ local function UpdateAppearance(which)
                 b.func.SetTexture(tex)
             end
             -- color
-            if not which or which == "color" then
+            if not which or which == "color" or which == "alpha" then
                 b.func.UpdateColor()
             end
             -- animation
