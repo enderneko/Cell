@@ -1113,7 +1113,7 @@ local function UnitButton_UpdateHealth(self)
     self.state.healthPercentOld = healthPercent
 end
 
-local function UnitButton_UpdateHealthPrediction(self)
+local function UnitButton_UpdateHealPrediction(self)
     local unit = self.state.displayedUnit
     if not unit then return end
 
@@ -1473,7 +1473,7 @@ local function UnitButton_UpdateAll(self)
     UnitButton_UpdateColor(self)
     UnitButton_UpdateHealthMax(self)
     UnitButton_UpdateHealth(self)
-    UnitButton_UpdateHealthPrediction(self)
+    UnitButton_UpdateHealPrediction(self)
     UnitButton_UpdateStatusText(self)
 
     if Cell.loaded then
@@ -1606,19 +1606,19 @@ local function UnitButton_OnEvent(self, event, unit)
         elseif event == "UNIT_MAXHEALTH" then
             UnitButton_UpdateHealthMax(self)
             UnitButton_UpdateHealth(self)
-            UnitButton_UpdateHealthPrediction(self)
+            UnitButton_UpdateHealPrediction(self)
             UnitButton_UpdateShieldAbsorbs(self)
             UnitButton_UpdateHealthAbsorbs(self)
             
         elseif event == "UNIT_HEALTH" then
             UnitButton_UpdateHealth(self)
-            UnitButton_UpdateHealthPrediction(self)
+            UnitButton_UpdateHealPrediction(self)
             UnitButton_UpdateShieldAbsorbs(self)
             UnitButton_UpdateHealthAbsorbs(self)
             -- UnitButton_UpdateStatusText(self)
     
         elseif event == "UNIT_HEAL_PREDICTION" then
-            UnitButton_UpdateHealthPrediction(self)
+            UnitButton_UpdateHealPrediction(self)
     
         elseif event == "UNIT_ABSORB_AMOUNT_CHANGED" then
             UnitButton_UpdateShieldAbsorbs(self)
