@@ -108,9 +108,9 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
             if t["dispellableByMe"] ~= nil then
                 indicatorCustoms[t["indicatorName"]] = t["dispellableByMe"]
             end
-            if t["castByMe"] ~= nil then
-                indicatorCustoms[t["indicatorName"]] = t["castByMe"]
-            end
+            -- if t["castByMe"] ~= nil then
+            --     indicatorCustoms[t["indicatorName"]] = t["castByMe"]
+            -- end
             if t["hideFull"] ~= nil then
                 indicatorCustoms[t["indicatorName"]] = t["hideFull"]
             end
@@ -366,24 +366,22 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                 UnitButton_UpdateRole(b)
             end)
         elseif setting == "checkbutton" then
-            if value ~= "enableHighlight" and value ~= "showDuration" then
-                indicatorCustoms[indicatorName] = value2
-            end
             if value == "hideFull" then
                 F:IterateAllUnitButtons(function(b)
                     b.func.UpdateHealthText()
                 end)
-            else
+            elseif value == "enableHighlight" then
                 F:IterateAllUnitButtons(function(b)
-                    if value == "enableHighlight" then
-                        local indicator = b.indicators[indicatorName]
-                        indicator:EnableHighlight(value2)
-                    elseif value == "showDuration" then
-                        local indicator = b.indicators[indicatorName]
-                        indicator:ShowDuration(value2)
-                    end
+                    b.indicators[indicatorName]:EnableHighlight(value2)
                     UnitButton_UpdateAuras(b)
                 end)
+            elseif value == "showDuration" then
+                F:IterateAllUnitButtons(function(b)
+                    b.indicators[indicatorName]:ShowDuration(value2)
+                    UnitButton_UpdateAuras(b)
+                end)
+            else
+                indicatorCustoms[indicatorName] = value2
             end
         elseif setting == "create" then
             F:IterateAllUnitButtons(function(b)

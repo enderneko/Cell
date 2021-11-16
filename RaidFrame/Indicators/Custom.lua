@@ -101,7 +101,11 @@ local function UpdateCustomIndicators(layout, indicatorName, setting, value, val
     elseif setting == "auras" then
         customIndicators[value][indicatorName]["auras"] = F:ConvertTable(value2)
     elseif setting == "checkbutton" then
-        customIndicators["buff"][indicatorName][value] = value2
+        if customIndicators["buff"][indicatorName] then
+            customIndicators["buff"][indicatorName][value] = value2
+        elseif customIndicators["debuff"][indicatorName] then
+            customIndicators["debuff"][indicatorName][value] = value2
+        end
     elseif setting == "num" then
         if customIndicators["buff"][indicatorName] then
             customIndicators["buff"][indicatorName]["num"] = value

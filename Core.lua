@@ -11,7 +11,7 @@ local P = Cell.pixelPerfectFuncs
 local L = Cell.L
 
 --@debug@
-local debugMode = false
+local debugMode = true
 --@end-debug@
 function F:Debug(arg, ...)
 	if debugMode then

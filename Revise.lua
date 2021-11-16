@@ -824,5 +824,17 @@ function F:Revise()
         end
     end
 
+    -- r70-release
+    if CellDB["revise"] and dbRevision < 70 then
+        for _, layout in pairs(CellDB["layouts"]) do
+            -- check custom indicator
+            for i = 23, #layout["indicators"] do
+                if layout["indicators"][i]["type"] == "text" then
+                    layout["indicators"][i]["showDuration"] = true
+                end
+            end
+        end
+    end
+
     CellDB["revise"] = Cell.version
 end

@@ -635,6 +635,7 @@ createBtn:SetScript("OnClick", function()
                 ["colors"] = {{0,1,0}, {1,1,0,.5}, {1,0,0,5}},
                 ["auraType"] = indicatorAuraType,
                 ["auras"] = {},
+                ["showDuration"] = true,
             })
         elseif indicatorType == "bar" then
             tinsert(currentLayoutTable["indicators"], {
@@ -811,7 +812,7 @@ local function ShowIndicatorSettings(id)
         if indicatorType == "icon" then
             settingsTable = {"enabled", "auras", "checkbutton2:showDuration:"..L["Show duration text instead of icon animation"], "position", "frameLevel", "size-square", "font"}
         elseif indicatorType == "text" then
-            settingsTable = {"enabled", "auras", "colors", "position", "frameLevel", "font"}
+            settingsTable = {"enabled", "auras", "checkbutton2:showDuration", "colors", "position", "frameLevel", "font"}
         elseif indicatorType == "bar" then
             settingsTable = {"enabled", "auras", "colors", "position", "frameLevel", "size-bar"}
         elseif indicatorType == "rect" then
