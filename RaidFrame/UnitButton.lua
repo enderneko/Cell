@@ -1057,7 +1057,7 @@ local function UnitButton_UpdatePowerType(self)
     if not unit then return end
 
     local r, g, b
-    local a = Cell.loaded and CellDB["appearance"]["bgAlpha"] or 1
+    local a = Cell.loaded and CellDB["appearance"]["lossAlpha"] or 1
 
     if not UnitIsConnected(unit) then
         r, g, b = 0.5, 0.5, 0.5
@@ -1380,12 +1380,12 @@ local function GetColor(r, g, b)
         barR, barG, barB = unpack(CellDB["appearance"]["barColor"][2])
     end
     -- bg
-    if CellDB["appearance"]["bgColor"][1] == "Class Color" then
+    if CellDB["appearance"]["lossColor"][1] == "Class Color" then
         bgR, bgG, bgB = r, g, b
-    elseif CellDB["appearance"]["bgColor"][1] == "Class Color (dark)" then
+    elseif CellDB["appearance"]["lossColor"][1] == "Class Color (dark)" then
         bgR, bgG, bgB = r*.2, g*.2, b*.2
     else
-        bgR, bgG, bgB = unpack(CellDB["appearance"]["bgColor"][2])
+        bgR, bgG, bgB = unpack(CellDB["appearance"]["lossColor"][2])
     end
     return barR, barG, barB, bgR, bgG, bgB
 end
@@ -1399,7 +1399,7 @@ local function UnitButton_UpdateColor(self)
 
     local barR, barG, barB
     local bgR, bgG, bgB
-    local bgA = 1
+    local barA, lossA = 1, 1
     
     if Cell.loaded then
         if Cell.vars.currentLayoutTable["indicators"][1]["nameColor"][1] == "Class Color" then
@@ -1407,7 +1407,8 @@ local function UnitButton_UpdateColor(self)
         else
             nameText:SetTextColor(unpack(Cell.vars.currentLayoutTable["indicators"][1]["nameColor"][2]))
         end
-        bgA =  CellDB["appearance"]["bgAlpha"]
+        barA =  CellDB["appearance"]["barAlpha"]
+        lossA =  CellDB["appearance"]["lossAlpha"]
     else
         nameText:SetTextColor(1, 1, 1)
     end
@@ -1459,8 +1460,8 @@ local function UnitButton_UpdateColor(self)
     end
 
     -- local r, g, b = RAID_CLASS_COLORS["DEATHKNIGHT"]:GetRGB()
-    self.widget.healthBar:SetStatusBarColor(barR, barG, barB)
-    self.widget.healthBarLoss:SetVertexColor(bgR, bgG, bgB, bgA)
+    self.widget.healthBar:SetStatusBarColor(barR, barG, barB, barA)
+    self.widget.healthBarLoss:SetVertexColor(bgR, bgG, bgB, lossA)
     self.widget.incomingHeal:SetVertexColor(barR, barG, barB)
 end
 

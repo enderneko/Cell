@@ -130,7 +130,7 @@ barColorDropdown:SetItems({
 
 local barColorText = appearanceTab:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
 barColorText:SetPoint("BOTTOMLEFT", barColorDropdown, "TOPLEFT", 0, 1)
-barColorText:SetText(L["Bar Color"])
+barColorText:SetText(L["Health Bar Color"])
 
 local barColorPicker = Cell:CreateColorPicker(appearanceTab, "", false, function(r, g, b)
     CellDB["appearance"]["barColor"][2][1] = r
@@ -142,50 +142,50 @@ local barColorPicker = Cell:CreateColorPicker(appearanceTab, "", false, function
 end)
 barColorPicker:SetPoint("LEFT", barColorDropdown, "RIGHT", 5, 0)
 
--- bg color
-local bgColorDropdown = Cell:CreateDropdown(appearanceTab, 131)
-bgColorDropdown:SetPoint("TOPLEFT", barColorDropdown, "BOTTOMLEFT", 0, -30)
-bgColorDropdown:SetItems({
+-- loss color
+local lossColorDropdown = Cell:CreateDropdown(appearanceTab, 131)
+lossColorDropdown:SetPoint("TOPLEFT", barColorDropdown, "BOTTOMLEFT", 0, -30)
+lossColorDropdown:SetItems({
     {
         ["text"] = L["Class Color"],
         ["onClick"] = function()
-            CellDB["appearance"]["bgColor"][1] = "Class Color"
+            CellDB["appearance"]["lossColor"][1] = "Class Color"
             Cell:Fire("UpdateAppearance", "color")
         end,
     },
     {
         ["text"] = L["Class Color (dark)"],
         ["onClick"] = function()
-            CellDB["appearance"]["bgColor"][1] = "Class Color (dark)"
+            CellDB["appearance"]["lossColor"][1] = "Class Color (dark)"
             Cell:Fire("UpdateAppearance", "color")
         end,
     },
     {
         ["text"] = L["Custom Color"],
         ["onClick"] = function()
-            CellDB["appearance"]["bgColor"][1] = "Custom Color"
+            CellDB["appearance"]["lossColor"][1] = "Custom Color"
             Cell:Fire("UpdateAppearance", "color")
         end,
     },
 })
 
-local bgColorText = appearanceTab:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
-bgColorText:SetPoint("BOTTOMLEFT", bgColorDropdown, "TOPLEFT", 0, 1)
-bgColorText:SetText(L["Background Color"])
+local lossColorText = appearanceTab:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
+lossColorText:SetPoint("BOTTOMLEFT", lossColorDropdown, "TOPLEFT", 0, 1)
+lossColorText:SetText(L["Health Loss Color"])
 
-local bgColorPicker = Cell:CreateColorPicker(appearanceTab, "", false, function(r, g, b)
-    CellDB["appearance"]["bgColor"][2][1] = r
-    CellDB["appearance"]["bgColor"][2][2] = g
-    CellDB["appearance"]["bgColor"][2][3] = b
-    if CellDB["appearance"]["bgColor"][1] == "Custom Color" then
+local lossColorPicker = Cell:CreateColorPicker(appearanceTab, "", false, function(r, g, b)
+    CellDB["appearance"]["lossColor"][2][1] = r
+    CellDB["appearance"]["lossColor"][2][2] = g
+    CellDB["appearance"]["lossColor"][2][3] = b
+    if CellDB["appearance"]["lossColor"][1] == "Custom Color" then
         Cell:Fire("UpdateAppearance", "color")
     end
 end)
-bgColorPicker:SetPoint("LEFT", bgColorDropdown, "RIGHT", 5, 0)
+lossColorPicker:SetPoint("LEFT", lossColorDropdown, "RIGHT", 5, 0)
 
 -- power color
 local powerColorDropdown = Cell:CreateDropdown(appearanceTab, 131)
-powerColorDropdown:SetPoint("TOPLEFT", bgColorDropdown, "BOTTOMLEFT", 0, -30)
+powerColorDropdown:SetPoint("TOPLEFT", lossColorDropdown, "BOTTOMLEFT", 0, -30)
 powerColorDropdown:SetItems({
     {
         ["text"] = L["Power Color"],
@@ -257,8 +257,8 @@ barAnimationText:SetText(L["Bar Animation"])
 
 -- icon animation
 local iconAnimationDropdown = Cell:CreateDropdown(appearanceTab, 150)
--- iconAnimationDropdown:SetPoint("TOPLEFT", barAnimationDropdown, 203, 0)
-iconAnimationDropdown:SetPoint("TOPLEFT", barAnimationDropdown, "BOTTOMLEFT", 0, -30)
+iconAnimationDropdown:SetPoint("TOPLEFT", textureDropdown, 203, 0)
+-- iconAnimationDropdown:SetPoint("TOPLEFT", barAnimationDropdown, "BOTTOMLEFT", 0, -30)
 iconAnimationDropdown:SetItems({
     {
         ["text"] = L["+ Stack & Duration"],
@@ -296,7 +296,7 @@ local targetColorPicker = Cell:CreateColorPicker(appearanceTab, L["Target Highli
     CellDB["appearance"]["targetColor"][4] = a
     Cell:Fire("UpdateAppearance", "highlightColor")
 end)
-targetColorPicker:SetPoint("TOPLEFT", textureDropdown, 203, 0)
+targetColorPicker:SetPoint("TOPLEFT", barAnimationDropdown, "BOTTOMLEFT", 0, -15)
 
 -- mouseover highlight
 local mouseoverColorPicker = Cell:CreateColorPicker(appearanceTab, L["Mouseover Highlight Color"], true, function(r, g, b, a)
@@ -310,24 +310,38 @@ mouseoverColorPicker:SetPoint("TOPLEFT", targetColorPicker, "BOTTOMLEFT", 0, -10
 
 -- highlight size
 local highlightSize = Cell:CreateSlider(L["Highlight Size"], appearanceTab, 0, 5, 120, 1)
-highlightSize:SetPoint("TOPLEFT", mouseoverColorPicker, "BOTTOMLEFT", 0, -25)
+highlightSize:SetPoint("TOPLEFT", barAnimationDropdown, 203, -50)
 highlightSize.afterValueChangedFn = function(value)
     CellDB["appearance"]["highlightSize"] = value
     Cell:Fire("UpdateAppearance", "highlightSize")
 end
 
--- out of range alpha
-local oorAlpha = Cell:CreateSlider(L["Out of Range Alpha"], appearanceTab, 0, 100, 120, 5, function(value)
-    CellDB["appearance"]["outOfRangeAlpha"] = value/100
+-- bar alpha
+local barAlpha = Cell:CreateSlider(L["Health Bar Alpha"], appearanceTab, 0, 100, 120, 5, function(value)
+    CellDB["appearance"]["barAlpha"] = value/100
+    Cell:Fire("UpdateAppearance", "alpha")
 end, nil, true)
-oorAlpha:SetPoint("TOPLEFT", highlightSize, "BOTTOMLEFT", 0, -45)
+barAlpha:SetPoint("TOPLEFT", barColorDropdown, 203, 0)
+
+-- loss alpha
+local lossAlpha = Cell:CreateSlider(L["Health Loss Alpha"], appearanceTab, 0, 100, 120, 5, function(value)
+    CellDB["appearance"]["lossAlpha"] = value/100
+    Cell:Fire("UpdateAppearance", "alpha")
+end, nil, true)
+lossAlpha:SetPoint("TOPLEFT", lossColorDropdown, 203, 0)
 
 -- bg alpha
 local bgAlpha = Cell:CreateSlider(L["Background Alpha"], appearanceTab, 0, 100, 120, 5, function(value)
     CellDB["appearance"]["bgAlpha"] = value/100
     Cell:Fire("UpdateAppearance", "alpha")
 end, nil, true)
-bgAlpha:SetPoint("TOPLEFT", oorAlpha, "BOTTOMLEFT", 0, -45)
+bgAlpha:SetPoint("TOPLEFT", powerColorDropdown, 203, 0)
+
+-- out of range alpha
+local oorAlpha = Cell:CreateSlider(L["Out of Range Alpha"], appearanceTab, 0, 100, 120, 5, function(value)
+    CellDB["appearance"]["outOfRangeAlpha"] = value/100
+end, nil, true)
+oorAlpha:SetPoint("TOPLEFT", barAnimationDropdown, 203, 0)
 
 -- reset
 local resetBtn = Cell:CreateButton(appearanceTab, L["Reset All"], "class-hover", {70, 17})
@@ -336,7 +350,9 @@ resetBtn:SetPoint("BOTTOM", unitButtonText, 0, -1)
 resetBtn:SetScript("OnClick", function()
     CellDB["appearance"]["texture"] = "Cell ".._G.DEFAULT
     CellDB["appearance"]["barColor"] = {"Class Color", {.2, .2, .2}}
-    CellDB["appearance"]["bgColor"] = {"Class Color (dark)", {.667, 0, 0}}
+    CellDB["appearance"]["lossColor"] = {"Class Color (dark)", {.667, 0, 0}}
+    CellDB["appearance"]["barAlpha"] = 1
+    CellDB["appearance"]["lossAlpha"] = 1
     CellDB["appearance"]["bgAlpha"] = 1
     CellDB["appearance"]["powerColor"] = {"Power Color", {.7, .7, .7}}
     CellDB["appearance"]["barAnimation"] = "Flash"
@@ -351,8 +367,8 @@ resetBtn:SetScript("OnClick", function()
     barColorDropdown:SetSelected(L["Class Color"])
     barColorPicker:SetColor({.2, .2, .2})
 
-    bgColorDropdown:SetSelected(L["Class Color (dark)"])
-    bgColorPicker:SetColor({.667, 0, 0})
+    lossColorDropdown:SetSelected(L["Class Color (dark)"])
+    lossColorPicker:SetColor({.667, 0, 0})
 
     powerColorDropdown:SetSelected(L["Power Color"])
     powerColorPicker:SetColor({.7, .7, .7})
@@ -364,6 +380,8 @@ resetBtn:SetScript("OnClick", function()
     mouseoverColorPicker:SetColor({1, 1, 1, .6})
     highlightSize:SetValue(1)
     oorAlpha:SetValue(45)
+    barAlpha:SetValue(100)
+    lossAlpha:SetValue(100)
     bgAlpha:SetValue(100)
 
     Cell:Fire("UpdateAppearance")
@@ -388,8 +406,8 @@ local function ShowTab(tab)
         barColorDropdown:SetSelected(L[CellDB["appearance"]["barColor"][1]])
         barColorPicker:SetColor(CellDB["appearance"]["barColor"][2])
 
-        bgColorDropdown:SetSelected(L[CellDB["appearance"]["bgColor"][1]])
-        bgColorPicker:SetColor(CellDB["appearance"]["bgColor"][2])
+        lossColorDropdown:SetSelected(L[CellDB["appearance"]["lossColor"][1]])
+        lossColorPicker:SetColor(CellDB["appearance"]["lossColor"][2])
 
         powerColorDropdown:SetSelected(L[CellDB["appearance"]["powerColor"][1]])
         powerColorPicker:SetColor(CellDB["appearance"]["powerColor"][2])
@@ -401,6 +419,8 @@ local function ShowTab(tab)
         mouseoverColorPicker:SetColor(CellDB["appearance"]["mouseoverColor"])
         highlightSize:SetValue(CellDB["appearance"]["highlightSize"])
         oorAlpha:SetValue(CellDB["appearance"]["outOfRangeAlpha"]*100)
+        barAlpha:SetValue(CellDB["appearance"]["barAlpha"]*100)
+        lossAlpha:SetValue(CellDB["appearance"]["lossAlpha"]*100)
         bgAlpha:SetValue(CellDB["appearance"]["bgAlpha"]*100)
     else
         appearanceTab:Hide()

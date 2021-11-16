@@ -834,6 +834,19 @@ function F:Revise()
                 end
             end
         end
+
+        if type(CellDB["appearance"]["barAlpha"]) ~= "number" then
+            CellDB["appearance"]["barAlpha"] = 1
+        end
+        
+        if type(CellDB["appearance"]["lossAlpha"]) ~= "number" then
+            CellDB["appearance"]["lossAlpha"] = 1
+        end
+
+        if type(CellDB["appearance"]["lossColor"]) ~= "table" then
+            CellDB["appearance"]["lossColor"] = CellDB["appearance"]["bgColor"]
+            CellDB["appearance"]["bgColor"] = nil
+        end 
     end
 
     CellDB["revise"] = Cell.version
