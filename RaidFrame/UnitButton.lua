@@ -16,6 +16,7 @@ local UnitGetTotalHealAbsorbs = UnitGetTotalHealAbsorbs
 local UnitIsUnit = UnitIsUnit
 local UnitIsConnected = UnitIsConnected
 local UnitIsAFK = UnitIsAFK
+local UnitIsFeignDeath = UnitIsFeignDeath
 local UnitIsDeadOrGhost = UnitIsDeadOrGhost
 local UnitIsGhost = UnitIsGhost
 local UnitPowerType = UnitPowerType
@@ -1338,6 +1339,10 @@ UnitButton_UpdateStatusText = function(self)
         statusText:Show()
         statusText:SetText(L["AFK"])
         statusText:ShowTimer()
+    elseif UnitIsFeignDeath(unit) then
+        statusText:Show()
+        statusText:SetText("|cffFFFF30"..L["FEIGN"])
+        statusText:HideTimer(true)
     elseif UnitIsDeadOrGhost(unit) then
         statusText:Show()
         statusText:HideTimer(true)
