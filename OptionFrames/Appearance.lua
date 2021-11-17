@@ -43,6 +43,133 @@ optionsFontSizeOffset.afterValueChangedFn = function(value)
 end
 
 -------------------------------------------------
+-- preview button
+-------------------------------------------------
+local previewButton = CreateFrame("Button", "AppearancePreviewButton", appearanceTab, "CellUnitButtonTemplate")
+previewButton:SetPoint("TOPLEFT", appearanceTab, "TOPRIGHT", 5, -200)
+previewButton:UnregisterAllEvents()
+previewButton:SetScript("OnEnter", nil)
+previewButton:SetScript("OnLeave", nil)
+previewButton:SetScript("OnUpdate", nil)
+previewButton:Show()
+
+local previewButtonBG = Cell:CreateFrame("AppearancePreviewButtonBG", appearanceTab)
+previewButtonBG:SetPoint("TOPLEFT", previewButton, 0, 20)
+previewButtonBG:SetPoint("BOTTOMRIGHT", previewButton, "TOPRIGHT")
+previewButtonBG:SetFrameStrata("BACKGROUND")
+Cell:StylizeFrame(previewButtonBG, {.1, .1, .1, .77}, {0, 0, 0, 0})
+previewButtonBG:Show()
+
+local previewText = previewButtonBG:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET_TITLE")
+previewText:SetPoint("TOP", 0, -3)
+previewText:SetText(Cell:GetPlayerClassColorString()..L["Preview"])
+
+local function UpdatePreviewColor(perc)
+    local r, g, b
+    -- health color
+    if CellDB["appearance"]["barColor"][1] == "Class Color" then
+        r, g, b = F:GetClassColor(Cell.vars.playerClass)
+    elseif CellDB["appearance"]["barColor"][1] == "Class Color (dark)" then
+        r, g, b = F:GetClassColor(Cell.vars.playerClass)
+        r, g, b = r*.2, g*.2, b*.2
+    elseif CellDB["appearance"]["barColor"][1] == "Gradient" then
+        r, g, b = F:ColorGradient(perc, 1,0,0, 1,0.5,0, 0.5,1,0)
+    else
+        r, g, b = unpack(CellDB["appearance"]["barColor"][2])
+    end
+    previewButton.widget.healthBar:SetStatusBarColor(r, g, b, CellDB["appearance"]["barAlpha"])
+    
+    -- loss color
+    if CellDB["appearance"]["lossColor"][1] == "Class Color" then
+        r, g, b = F:GetClassColor(Cell.vars.playerClass)
+    elseif CellDB["appearance"]["lossColor"][1] == "Class Color (dark)" then
+        r, g, b = F:GetClassColor(Cell.vars.playerClass)
+        r, g, b = r*.2, g*.2, b*.2
+    elseif CellDB["appearance"]["lossColor"][1] == "Gradient" then
+        r, g, b = F:ColorGradient(perc, 1,0,0, 1,0.5,0, 0.5,1,0)
+    else
+        r, g, b = unpack(CellDB["appearance"]["lossColor"][2])
+    end
+    previewButton.widget.healthBarLoss:SetVertexColor(r, g, b, CellDB["appearance"]["lossAlpha"])
+end
+
+local function UpdatePreviewButton()
+    previewButton.widget.healthBar:SetStatusBarTexture(Cell.vars.texture)
+    previewButton.widget.powerBar:SetStatusBarTexture(Cell.vars.texture)
+
+    UpdatePreviewColor(1)
+
+    local r, g, b
+    -- power color
+    if CellDB["appearance"]["powerColor"][1] == "Class Color" then
+        r, g, b = F:GetClassColor(Cell.vars.playerClass)
+    elseif CellDB["appearance"]["powerColor"][1] == "Custom Color" then
+        r, g, b = unpack(CellDB["appearance"]["powerColor"][2])
+    else
+        r, g, b = F:GetPowerColor("player")
+    end
+    previewButton.widget.powerBar:SetStatusBarColor(r, g, b)
+
+    -- alpha
+    previewButton:SetBackdropColor(0, 0, 0, CellDB["appearance"]["bgAlpha"])
+    
+    -- size
+    previewButton:SetSize(unpack(Cell.vars.currentLayoutTable["size"]))
+    previewButton.func.SetPowerHeight(Cell.vars.currentLayoutTable["powerHeight"])
+
+    -- value
+    if CellDB["appearance"]["barAnimation"] == "Smooth" then
+        previewButton.widget.healthBar:SetMinMaxSmoothedValue(0, 100)
+    else
+        previewButton.widget.healthBar:SetMinMaxValues(0, 100)
+    end
+    previewButton.widget.healthBar:SetValue(100)
+end
+
+local states = {-30, -60, 50, -40, 80}
+local ticker
+previewButton:SetScript("OnShow", function()
+    previewButton.widget.healthBar:SetValue(100)
+    local health, healthPercent, healthPercentOld, currentState = 100, 1, 1, 1
+
+    ticker = C_Timer.NewTicker(1, function()
+        health = health + states[currentState]
+        healthPercent = health / 100
+
+        if CellDB["appearance"]["barAnimation"] == "Flash" then
+            previewButton.widget.healthBar:SetValue(health)
+
+            local diff = healthPercent - (healthPercentOld or healthPercent)
+            if diff >= 0 then
+                previewButton.func.HideFlash()
+                -- previewButton.widget.damageFlashTex:Hide()
+            elseif diff <= -0.05 and diff >= -1 then
+                previewButton.func.ShowFlash(abs(diff))
+                -- print(abs(diff))
+                -- previewButton.widget.damageFlashTex:SetWidth((Cell.vars.currentLayoutTable["size"][1] - 2) * abs(diff))
+                -- previewButton.widget.damageFlashTex:Show()
+            end
+        elseif CellDB["appearance"]["barAnimation"] == "Smooth" then
+            previewButton.widget.healthBar:SetSmoothedValue(health)
+        else
+            previewButton.widget.healthBar:SetValue(health)
+        end
+
+        if CellDB["appearance"]["barColor"][1] == "Gradient" or CellDB["appearance"]["lossColor"][1] == "Gradient" then
+            UpdatePreviewColor(healthPercent)
+        end
+
+        healthPercentOld = healthPercent
+        currentState = currentState == 5 and 1 or (currentState + 1)
+    end)
+end)
+
+previewButton:SetScript("OnHide", function()
+    ticker:Cancel()
+    ticker = nil
+end)
+
+-------------------------------------------------
 -- unitbutton
 -------------------------------------------------
 local unitButtonText = Cell:CreateSeparator(L["Unit Button"], appearanceTab, 387)
@@ -412,6 +539,8 @@ local function ShowTab(tab)
         if loaded then return end
         loaded = true
 
+        UpdatePreviewButton()
+
         -- load data
         scaleSlider:SetValue(CellDB["appearance"]["scale"])
         optionsFontSizeOffset:SetValue(CellDB["appearance"]["optionsFontSizeOffset"])
@@ -486,6 +615,11 @@ local function UpdateAppearance(which)
         P:SetEffectiveScale(CellScanningTooltip)
         CellTooltip:UpdatePixelPerfect()
         CellScanningTooltip:UpdatePixelPerfect()
+    end
+
+    -- preview
+    if previewButton:IsVisible() then
+        UpdatePreviewButton("appearance")
     end
 end
 Cell:RegisterCallback("UpdateAppearance", "UpdateAppearance", UpdateAppearance)
