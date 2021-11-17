@@ -1378,7 +1378,7 @@ local function UnitButton_UpdateName(self)
 end
 
 local function GetColor(self, r, g, b)
-    local barR, barG, barB, bgR, bgG, bgB
+    local barR, barG, barB, lossR, lossG, lossB
     -- bar
     if CellDB["appearance"]["barColor"][1] == "Class Color" then
         barR, barG, barB = r, g, b
@@ -1389,17 +1389,17 @@ local function GetColor(self, r, g, b)
     else
         barR, barG, barB = unpack(CellDB["appearance"]["barColor"][2])
     end
-    -- bg
+    -- loss
     if CellDB["appearance"]["lossColor"][1] == "Class Color" then
-        bgR, bgG, bgB = r, g, b
+        lossR, lossG, lossB = r, g, b
     elseif CellDB["appearance"]["lossColor"][1] == "Class Color (dark)" then
-        bgR, bgG, bgB = r*.2, g*.2, b*.2
-    elseif CellDB["appearance"]["barColor"][1] == "Gradient" then
-        bgR, bgG, bgB = F:ColorGradient(self.state.healthPercent, 1,0,0, 1,0.5,0, 0.5,1,0)
+        lossR, lossG, lossB = r*.2, g*.2, b*.2
+    elseif CellDB["appearance"]["lossColor"][1] == "Gradient" then
+        lossR, lossG, lossB = F:ColorGradient(self.state.healthPercent, 1,0,0, 1,0.5,0, 0.5,1,0)
     else
-        bgR, bgG, bgB = unpack(CellDB["appearance"]["lossColor"][2])
+        lossR, lossG, lossB = unpack(CellDB["appearance"]["lossColor"][2])
     end
-    return barR, barG, barB, bgR, bgG, bgB
+    return barR, barG, barB, lossR, lossG, lossB
 end
 
 UnitButton_UpdateColor = function(self)
@@ -1410,7 +1410,7 @@ UnitButton_UpdateColor = function(self)
     local nameText = self.indicators.nameText
 
     local barR, barG, barB
-    local bgR, bgG, bgB
+    local lossR, lossG, lossB
     local barA, lossA = 1, 1
     
     if Cell.loaded then
@@ -1428,52 +1428,52 @@ UnitButton_UpdateColor = function(self)
     if UnitIsPlayer(unit) then -- player
         if not UnitIsConnected(unit) then
             barR, barG, barB = .4, .4, .4
-            bgR, bgG, bgB = .4, .4, .4
+            lossR, lossG, lossB = .4, .4, .4
             nameText:SetTextColor(F:GetClassColor(self.state.class))
         elseif UnitIsCharmed(unit) then
             barR, barG, barB = .5, 0, 1
-            bgR, bgG, bgB = barR*.2, barG*.2, barB*.2
+            lossR, lossG, lossB = barR*.2, barG*.2, barB*.2
             nameText:SetTextColor(F:GetClassColor(self.state.class))
         elseif self.state.inVehicle then
             if Cell.loaded then
-                barR, barG, barB, bgR, bgG, bgB = GetColor(self, 0, 1, .2)
+                barR, barG, barB, lossR, lossG, lossB = GetColor(self, 0, 1, .2)
                 -- if Cell.vars.currentLayoutTable["indicators"][1]["nameColor"][1] ~= "Class Color" then
                 -- 	nameText:SetTextColor(F:GetClassColor(self.state.class))
                 -- end
             else
                 barR, barG, barB = 0, 1, .2
-                bgR, bgG, bgB = barR*.2, barG*.2, barB*.2
+                lossR, lossG, lossB = barR*.2, barG*.2, barB*.2
             end
         else
             if Cell.loaded then
-                barR, barG, barB, bgR, bgG, bgB = GetColor(self, F:GetClassColor(self.state.class))
+                barR, barG, barB, lossR, lossG, lossB = GetColor(self, F:GetClassColor(self.state.class))
             else
                 barR, barG, barB = F:GetClassColor(self.state.class)
-                bgR, bgG, bgB = barR*.2, barG*.2, barB*.2
+                lossR, lossG, lossB = barR*.2, barG*.2, barB*.2
             end
         end
     elseif string.find(unit, "pet") then -- pet
         if Cell.loaded then
-            barR, barG, barB, bgR, bgG, bgB = GetColor(self, .5, .5, 1)
+            barR, barG, barB, lossR, lossG, lossB = GetColor(self, .5, .5, 1)
         else
             barR, barG, barB = .5, .5, 1
-            bgR, bgG, bgB = barR*.2, barG*.2, barB*.2
+            lossR, lossG, lossB = barR*.2, barG*.2, barB*.2
         end
         if Cell.loaded and Cell.vars.currentLayoutTable["indicators"][1]["nameColor"][1] == "Class Color" then
             nameText:SetTextColor(.5, .5, 1)
         end
     else -- npc
         if Cell.loaded then
-            barR, barG, barB, bgR, bgG, bgB = GetColor(self, 0, 1, .2)
+            barR, barG, barB, lossR, lossG, lossB = GetColor(self, 0, 1, .2)
         else
             barR, barG, barB =0, 1, .2
-            bgR, bgG, bgB = barR*.2, barG*.2, barB*.2
+            lossR, lossG, lossB = barR*.2, barG*.2, barB*.2
         end
     end
 
     -- local r, g, b = RAID_CLASS_COLORS["DEATHKNIGHT"]:GetRGB()
     self.widget.healthBar:SetStatusBarColor(barR, barG, barB, barA)
-    self.widget.healthBarLoss:SetVertexColor(bgR, bgG, bgB, lossA)
+    self.widget.healthBarLoss:SetVertexColor(lossR, lossG, lossB, lossA)
     self.widget.incomingHeal:SetVertexColor(barR, barG, barB)
 end
 
@@ -2010,7 +2010,7 @@ function F:UnitButton_OnLoad(button)
     local damageFlashTex = healthBar:CreateTexture(name.."DamageFlash", "ARTWORK", nil, -6)
     button.widget.damageFlashTex = damageFlashTex
     damageFlashTex:SetTexture("Interface\\BUTTONS\\WHITE8X8")
-    damageFlashTex:SetVertexColor(1, 1, 1)
+    damageFlashTex:SetVertexColor(1, 1, 1, 0.8)
     P:Point(damageFlashTex, "TOPLEFT", healthBar:GetStatusBarTexture(), "TOPRIGHT")
     P:Point(damageFlashTex, "BOTTOMLEFT", healthBar:GetStatusBarTexture(), "BOTTOMRIGHT")
     damageFlashTex:Hide()
@@ -2018,9 +2018,12 @@ function F:UnitButton_OnLoad(button)
     -- damage flash animation group
     local damageFlashAG = damageFlashTex:CreateAnimationGroup()
     local alpha = damageFlashAG:CreateAnimation("Alpha")
-    alpha:SetFromAlpha(.9)
+    alpha:SetFromAlpha(0.8)
     alpha:SetToAlpha(0)
     alpha:SetDuration(0.2)
+    damageFlashAG:SetScript("OnPlay", function(self)
+        damageFlashTex:Show()
+    end)
     damageFlashAG:SetScript("OnFinished", function(self)
         damageFlashTex:Hide()
     end)
@@ -2028,7 +2031,7 @@ function F:UnitButton_OnLoad(button)
     button.func.ShowFlash = function(lostPercent, currentPercent)
         local barWidth = healthBar:GetWidth()
         damageFlashTex:SetWidth(barWidth * lostPercent)
-        damageFlashTex:Show()
+        -- damageFlashTex:Show()
         damageFlashAG:Play()
     end
 
