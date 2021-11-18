@@ -847,6 +847,19 @@ function F:Revise()
             CellDB["appearance"]["lossColor"] = CellDB["appearance"]["bgColor"]
             CellDB["appearance"]["bgColor"] = nil
         end 
+
+        if type(CellDB["appearance"]["healPrediction"]) ~= "boolean" then
+            CellDB["appearance"]["healPrediction"] = true
+        end
+        if type(CellDB["appearance"]["healAbsorb"]) ~= "boolean" then
+            CellDB["appearance"]["healAbsorb"] = true
+        end
+        if type(CellDB["appearance"]["shield"]) ~= "boolean" then
+            CellDB["appearance"]["shield"] = true
+        end
+        if type(CellDB["appearance"]["overshield"]) ~= "boolean" then
+            CellDB["appearance"]["overshield"] = true
+        end
     end
 
     CellDB["revise"] = Cell.version

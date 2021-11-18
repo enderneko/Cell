@@ -65,9 +65,20 @@ indicatorsBtn.id = "indicators"
 debuffsBtn.id = "debuffs"
 aboutBtn.id = "about"
 
+local tabHeight = {
+    ["general"] = 401,
+    ["appearance"] = 451,
+    ["layouts"] = 401,
+    ["clickCastings"] = 401,
+    ["indicators"] = 401,
+    ["debuffs"] = 401,
+    ["about"] = 401,
+}
+
 local lastShownTab
 local function ShowTab(tab)
     if lastShownTab ~= tab then
+        optionsFrame:SetHeight(tabHeight[tab])
         Cell:Fire("ShowOptionsTab", tab)
         lastShownTab = tab
     end

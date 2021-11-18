@@ -45,7 +45,7 @@ local UnitDebuff = UnitDebuff
 local IsInRaid = IsInRaid
 local UnitDetailedThreatSituation = UnitDetailedThreatSituation
 
-local barAnimationType, highlightEnabled
+local barAnimationType, highlightEnabled, predictionEnabled, absorbEnabled, shieldEnabled, overshieldEnabled
 
 -------------------------------------------------
 -- unit button init indicators
@@ -1123,6 +1123,11 @@ local function UnitButton_UpdateHealth(self)
 end
 
 local function UnitButton_UpdateHealPrediction(self)
+    if not predictionEnabled then
+        self.widget.incomingHeal:Hide()
+        return
+    end
+
     local unit = self.state.displayedUnit
     if not unit then return end
 
@@ -1170,15 +1175,27 @@ local function UnitButton_UpdateShieldAbsorbs(self)
             if shieldPercent + self.state.healthPercent > 1 then -- overshield
                 local p = 1 - self.state.healthPercent
                 if p ~= 0 then
-                    self.widget.shieldBar:SetWidth(p * barWidth)
+                    if shieldEnabled then
+                        self.widget.shieldBar:SetWidth(p * barWidth)
+                        self.widget.shieldBar:Show()
+                    else
+                        self.widget.shieldBar:Hide()
+                    end
+                else
+                    self.widget.shieldBar:Hide()
+                end
+                if overshieldEnabled then
+                    self.widget.overShieldGlow:Show()
+                else
+                    self.widget.overShieldGlow:Hide()
+                end
+            else
+                if shieldEnabled then
+                    self.widget.shieldBar:SetWidth(shieldPercent * barWidth)
                     self.widget.shieldBar:Show()
                 else
                     self.widget.shieldBar:Hide()
                 end
-                self.widget.overShieldGlow:Show()
-            else
-                self.widget.shieldBar:SetWidth(shieldPercent * barWidth)
-                self.widget.shieldBar:Show()
                 self.widget.overShieldGlow:Hide()
             end
         end
@@ -1189,7 +1206,12 @@ local function UnitButton_UpdateShieldAbsorbs(self)
     end
 end
 
-local function UnitButton_UpdateHealthAbsorbs(self)
+local function UnitButton_UpdateHealAbsorbs(self)
+    if not absorbEnabled then
+        self.widget.absorbsBar:Hide()
+        return
+    end
+
     local unit = self.state.displayedUnit
     if not unit then return end
     
@@ -1390,7 +1412,7 @@ local function GetColor(self, r, g, b)
     elseif CellDB["appearance"]["barColor"][1] == "Class Color (dark)" then
         barR, barG, barB = r*.2, g*.2, b*.2
     elseif CellDB["appearance"]["barColor"][1] == "Gradient" then
-        barR, barG, barB = F:ColorGradient(self.state.healthPercent, 1,0,0, 1,0.5,0, 0.5,1,0)
+        barR, barG, barB = F:ColorGradient(self.state.healthPercent, 1,0,0, 1,0.7,0, 0.7,1,0)
     else
         barR, barG, barB = unpack(CellDB["appearance"]["barColor"][2])
     end
@@ -1400,7 +1422,7 @@ local function GetColor(self, r, g, b)
     elseif CellDB["appearance"]["lossColor"][1] == "Class Color (dark)" then
         lossR, lossG, lossB = r*.2, g*.2, b*.2
     elseif CellDB["appearance"]["lossColor"][1] == "Gradient" then
-        lossR, lossG, lossB = F:ColorGradient(self.state.healthPercent, 1,0,0, 1,0.5,0, 0.5,1,0)
+        lossR, lossG, lossB = F:ColorGradient(self.state.healthPercent, 1,0,0, 1,0.7,0, 0.7,1,0)
     else
         lossR, lossG, lossB = unpack(CellDB["appearance"]["lossColor"][2])
     end
@@ -1509,7 +1531,7 @@ local function UnitButton_UpdateAll(self)
     UnitButton_UpdatePlayerRaidIcon(self)
     UnitButton_UpdateTargetRaidIcon(self)
     UnitButton_UpdateShieldAbsorbs(self)
-    UnitButton_UpdateHealthAbsorbs(self)
+    UnitButton_UpdateHealAbsorbs(self)
     UnitButton_UpdateInRange(self)
     UnitButton_UpdateRole(self)
     UnitButton_UpdateLeader(self)
@@ -1625,13 +1647,13 @@ local function UnitButton_OnEvent(self, event, unit)
             UnitButton_UpdateHealth(self)
             UnitButton_UpdateHealPrediction(self)
             UnitButton_UpdateShieldAbsorbs(self)
-            UnitButton_UpdateHealthAbsorbs(self)
+            UnitButton_UpdateHealAbsorbs(self)
             
         elseif event == "UNIT_HEALTH" then
             UnitButton_UpdateHealth(self)
             UnitButton_UpdateHealPrediction(self)
             UnitButton_UpdateShieldAbsorbs(self)
-            UnitButton_UpdateHealthAbsorbs(self)
+            UnitButton_UpdateHealAbsorbs(self)
             -- UnitButton_UpdateStatusText(self)
     
         elseif event == "UNIT_HEAL_PREDICTION" then
@@ -1641,7 +1663,7 @@ local function UnitButton_OnEvent(self, event, unit)
             UnitButton_UpdateShieldAbsorbs(self)
     
         elseif event == "UNIT_HEAL_ABSORB_AMOUNT_CHANGED" then
-            UnitButton_UpdateHealthAbsorbs(self)
+            UnitButton_UpdateHealAbsorbs(self)
     
         elseif event == "UNIT_MAXPOWER" then
             UnitButton_UpdatePowerMax(self)
@@ -2009,6 +2031,17 @@ function F:UnitButton_OnLoad(button)
     absorbsBar:SetVertexColor(.6, .1, .1, .9)
     absorbsBar:SetBlendMode("ADD")
     absorbsBar:Hide()
+
+    button.func.UpdateShields = function()
+        predictionEnabled = CellDB["appearance"]["healPrediction"]
+        absorbEnabled = CellDB["appearance"]["healAbsorb"]
+        shieldEnabled = CellDB["appearance"]["shield"]
+        overshieldEnabled = CellDB["appearance"]["overshield"]
+
+        UnitButton_UpdateHealPrediction(button)
+        UnitButton_UpdateHealAbsorbs(button)
+        UnitButton_UpdateShieldAbsorbs(button)
+    end
 
     -- bar animation
     -- flash
