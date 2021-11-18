@@ -53,14 +53,6 @@ previewButton:SetScript("OnLeave", nil)
 previewButton:SetScript("OnUpdate", nil)
 previewButton:Show()
 
-local previewButton2 = CreateFrame("Button", "AppearancePreviewButton2", appearanceTab, "CellUnitButtonTemplate")
-previewButton2:SetPoint("TOPLEFT", previewButton, "BOTTOMLEFT", 0, -5)
-previewButton2:UnregisterAllEvents()
-previewButton2:SetScript("OnEnter", nil)
-previewButton2:SetScript("OnLeave", nil)
-previewButton2:SetScript("OnUpdate", nil)
-previewButton2:Show()
-
 local previewButtonBG = Cell:CreateFrame("AppearancePreviewButtonBG", appearanceTab)
 previewButtonBG:SetPoint("TOPLEFT", previewButton, 0, 20)
 previewButtonBG:SetPoint("BOTTOMRIGHT", previewButton, "TOPRIGHT")
@@ -70,7 +62,26 @@ previewButtonBG:Show()
 
 local previewText = previewButtonBG:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET_TITLE")
 previewText:SetPoint("TOP", 0, -3)
-previewText:SetText(Cell:GetPlayerClassColorString()..L["Preview"])
+previewText:SetText(Cell:GetPlayerClassColorString()..L["Preview"].." 1")
+
+local previewButton2 = CreateFrame("Button", "AppearancePreviewButton2", appearanceTab, "CellUnitButtonTemplate")
+previewButton2:SetPoint("BOTTOMLEFT", appearanceTab, "BOTTOMRIGHT", 5, 20)
+previewButton2:UnregisterAllEvents()
+previewButton2:SetScript("OnEnter", nil)
+previewButton2:SetScript("OnLeave", nil)
+previewButton2:SetScript("OnUpdate", nil)
+previewButton2:Show()
+
+local previewButtonBG2 = Cell:CreateFrame("AppearancePreviewButtonBG", appearanceTab)
+previewButtonBG2:SetPoint("TOPLEFT", previewButton2, 0, 20)
+previewButtonBG2:SetPoint("BOTTOMRIGHT", previewButton2, "TOPRIGHT")
+previewButtonBG2:SetFrameStrata("BACKGROUND")
+Cell:StylizeFrame(previewButtonBG2, {.1, .1, .1, .77}, {0, 0, 0, 0})
+previewButtonBG2:Show()
+
+local previewText2 = previewButtonBG2:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET_TITLE")
+previewText2:SetPoint("TOP", 0, -3)
+previewText2:SetText(Cell:GetPlayerClassColorString()..L["Preview"].." 2")
 
 local function GetColor(perc)
     local r, g, b, lossR, lossG, lossB
@@ -245,7 +256,7 @@ end)
 -------------------------------------------------
 -- unitbutton
 -------------------------------------------------
-local unitButtonText = Cell:CreateSeparator(L["Unit Button"], appearanceTab, 387)
+local unitButtonText = Cell:CreateSeparator(L["Unit Button Style"], appearanceTab, 387)
 unitButtonText:SetPoint("TOPLEFT", 5, -80)
 
 -- texture
@@ -604,6 +615,10 @@ resetBtn:SetScript("OnClick", function()
     CellDB["appearance"]["mouseoverColor"] = {1, 1, 1, .6}
     CellDB["appearance"]["highlightSize"] = 1
     CellDB["appearance"]["outOfRangeAlpha"] = .45
+    CellDB["appearance"]["healPrediction"] = true
+    CellDB["appearance"]["healAbsorb"] = true
+    CellDB["appearance"]["shield"] = true
+    CellDB["appearance"]["overshield"] = true
 
     textureDropdown:SetSelected("Cell ".._G.DEFAULT, "Interface\\AddOns\\Cell\\Media\\statusbar.tga")
 
@@ -626,6 +641,11 @@ resetBtn:SetScript("OnClick", function()
     barAlpha:SetValue(100)
     lossAlpha:SetValue(100)
     bgAlpha:SetValue(100)
+
+    predCB:SetChecked(true)
+    absorbCB:SetChecked(true)
+    shieldCB:SetChecked(true)
+    oversCB:SetChecked(true)
 
     Cell:Fire("UpdateAppearance")
 end)
