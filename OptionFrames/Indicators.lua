@@ -147,10 +147,9 @@ local function InitIndicator(indicatorName)
         indicator:SetStatusBarColor(1, 0, 0)
         indicator.value = 0
         indicator:SetScript("OnUpdate", function(self, elapsed)
+            self.value = self.value + 1
             if self.value >= 100 then
                 self.value = 0
-            else
-                self.value = self.value + 1
             end
             self:SetValue(self.value)
         end)
@@ -162,10 +161,9 @@ local function InitIndicator(indicatorName)
         indicator.value = 0
         indicator:SetMinMaxValues(0, 100)
         indicator:SetScript("OnUpdate", function(self, elapsed)
+            self.value = self.value + 1
             if self.value >= 100 then
                 self.value = 0
-            else
-                self.value = self.value + 1
             end
             self:SetValue(self.value)
         end)
@@ -178,10 +176,9 @@ local function InitIndicator(indicatorName)
                 indicator[i]:SetCooldown(GetTime(), 7, types[i], icons[i], i)
                 indicator[i].cooldown.value = 0
                 indicator[i].cooldown:SetScript("OnUpdate", function(self, elapsed)
+                    self.value = self.value + elapsed
                     if self.value >= 7 then
                         self.value = 0
-                    else
-                        self.value = self.value + elapsed
                     end
                     self:SetValue(self.value)
                 end)
@@ -234,10 +231,9 @@ local function InitIndicator(indicatorName)
                 indicator[i]:SetCooldown(GetTime(), 7, nil, icons[i], 0)
                 indicator[i].cooldown.value = 0
                 indicator[i].cooldown:SetScript("OnUpdate", function(self, elapsed)
+                    self.value = self.value + elapsed
                     if self.value >= 7 then
                         self.value = 0
-                    else
-                        self.value = self.value + elapsed
                     end
                     self:SetValue(self.value)
                 end)
@@ -250,10 +246,9 @@ local function InitIndicator(indicatorName)
                 indicator[i]:SetCooldown(GetTime(), 7, nil, icons[i], 0)
                 indicator[i].cooldown.value = 0
                 indicator[i].cooldown:SetScript("OnUpdate", function(self, elapsed)
+                    self.value = self.value + elapsed
                     if self.value >= 7 then
                         self.value = 0
-                    else
-                        self.value = self.value + elapsed
                     end
                     self:SetValue(self.value)
                 end)
@@ -266,26 +261,41 @@ local function InitIndicator(indicatorName)
                     indicator[i]:SetCooldown(GetTime(), 7, nil, 134400, i)
                     indicator[i].cooldown.value = 0
                     indicator[i].cooldown:SetScript("OnUpdate", function(self, elapsed)
+                        self.value = self.value + elapsed
                         if self.value >= 7 then
                             self.value = 0
-                        else
-                            self.value = self.value + elapsed
                         end
                         self:SetValue(self.value)
                     end)
                 end)
             end
+        elseif indicator.indicatorType == "text" then
+            indicator.isCustomText = true -- mark for custom glow
+            indicator.onUpdate = indicator.onUpdate or CreateFrame("Frame", nil, indicator)
+            indicator:SetScript("OnShow", function()
+                indicator:SetCooldown(GetTime(), 7, nil, 134400, 5)
+                indicator.onUpdate.elapsedTime = 0
+                indicator.onUpdate:SetScript("OnUpdate", function(self, elapsed)
+                    self.elapsedTime = self.elapsedTime + elapsed
+                    if self.elapsedTime >= 7 then
+                        self.elapsedTime = 0
+                        indicator:SetCooldown(GetTime(), 7, nil, 134400, 5)
+                    end
+                end)
+                C_Timer.After(.2, function()
+                    indicator:SetWidth(indicator.text:GetStringWidth() + 6)
+                end)
+            end)
         else
-            indicator.preview = indicator.preview or CreateFrame("Frame", nil, indicator)
+            indicator.onUpdate = indicator.onUpdate or CreateFrame("Frame", nil, indicator)
             indicator:SetScript("OnShow", function()
                 indicator:SetCooldown(GetTime(), 7, nil, 134400, 0)
-                indicator.preview.elapsedTime = 0
-                indicator.preview:SetScript("OnUpdate", function(self, elapsed)
+                indicator.onUpdate.elapsedTime = 0
+                indicator.onUpdate:SetScript("OnUpdate", function(self, elapsed)
+                    self.elapsedTime = self.elapsedTime + elapsed
                     if self.elapsedTime >= 7 then
                         self.elapsedTime = 0
                         indicator:SetCooldown(GetTime(), 7, nil, 134400, 0)
-                    else
-                        self.elapsedTime = self.elapsedTime + elapsed
                     end
                 end)
             end)
@@ -294,7 +304,7 @@ local function InitIndicator(indicatorName)
     indicator.init = true
 end
 
-local function UpdateIndicators(layout, indicatorName, setting, value)
+local function UpdateIndicators(layout, indicatorName, setting, value, value2)
     if not indicatorsTab:IsShown() then return end
 
     if not indicatorName then -- init
@@ -303,13 +313,6 @@ local function UpdateIndicators(layout, indicatorName, setting, value)
             for _, t in pairs(currentLayoutTable["indicators"]) do
                 local indicator = previewButton.indicators[t["indicatorName"]] or I:CreateIndicator(previewButton, t)
                 InitIndicator(t["indicatorName"])
-                if t["enabled"] then
-                    indicator:Show()
-                    if indicator.preview then indicator.preview:Show() end
-                else
-                    indicator:Hide()
-                    if indicator.preview then indicator.preview:Hide() end
-                end
                 -- update position
                 if t["position"] then
                     indicator:ClearAllPoints()
@@ -388,6 +391,18 @@ local function UpdateIndicators(layout, indicatorName, setting, value)
                     indicator:SetCustomTexture(t["customTextures"])
                     indicator:SetRole(indicator.roles[indicator.role])
                 end
+                -- update duration
+                if type(t["showDuration"]) == "boolean" then
+                    indicator:ShowDuration(t["showDuration"])
+                end
+                -- after init
+                if t["enabled"] then
+                    indicator:Show()
+                    if indicator.preview then indicator.preview:Show() end
+                else
+                    indicator:Hide()
+                    if indicator.preview then indicator.preview:Hide() end
+                end
             end
         end
 	else
@@ -437,6 +452,10 @@ local function UpdateIndicators(layout, indicatorName, setting, value)
             indicator:SetOrientation(value)
         elseif setting == "font" then
             indicator:SetFont(unpack(value))
+            if indicator.isCustomText then
+                indicator:Hide()
+                indicator:Show()
+            end
         elseif setting == "color" then
             indicator:SetColor(unpack(value))
         elseif setting == "colors" then
@@ -448,6 +467,13 @@ local function UpdateIndicators(layout, indicatorName, setting, value)
         elseif setting == "customTextures" then
             indicator:SetCustomTexture(value)
             indicator:SetRole(indicator.roles[indicator.role])
+        elseif setting == "checkbutton" then
+            if value == "showDuration" then
+                indicator:ShowDuration(value2)
+                -- update through OnShow
+                indicator:Hide()
+                indicator:Show()
+            end
         elseif setting == "create" then
             indicator = I:CreateIndicator(previewButton, value)
             -- update position

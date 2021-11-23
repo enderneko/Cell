@@ -13,7 +13,8 @@ local customIndicators = {
 }
 
 function I:CreateIndicator(parent, indicatorTable)
-    local indicatorName, indicator = indicatorTable["indicatorName"]
+    local indicatorName = indicatorTable["indicatorName"]
+    local indicator
     if indicatorTable["type"] == "icon" then
         indicator = I:CreateAura_BarIcon(indicatorName, parent.widget.overlayFrame)
     elseif indicatorTable["type"] == "text" then
