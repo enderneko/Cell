@@ -1306,7 +1306,7 @@ local function CreateSetting_CheckButton2(parent)
     local widget
 
     if not settingWidgets["checkbutton2"] then
-        widget = addon:CreateFrame("CellIndicatorSettings_CheckButton", parent, 240, 30)
+        widget = addon:CreateFrame("CellIndicatorSettings_CheckButton2", parent, 240, 30)
         settingWidgets["checkbutton2"] = widget
 
         widget.cb = addon:CreateCheckButton(widget, "checkbutton2")
@@ -1329,6 +1329,39 @@ local function CreateSetting_CheckButton2(parent)
         end
     else
         widget = settingWidgets["checkbutton2"]
+    end
+
+    widget:Show()
+    return widget
+end
+
+local function CreateSetting_CheckButton3(parent)
+    local widget
+
+    if not settingWidgets["checkbutton3"] then
+        widget = addon:CreateFrame("CellIndicatorSettings_CheckButton3", parent, 240, 30)
+        settingWidgets["checkbutton3"] = widget
+
+        widget.cb = addon:CreateCheckButton(widget, "checkbutton3")
+        widget.cb:SetPoint("LEFT", 5, 0)
+
+        -- associate db
+        function widget:SetFunc(func)
+            widget.cb.onClick = function(checked)
+                func(checked)
+            end
+        end
+
+        -- show db value
+        function widget:SetDBValue(settingName, checked, tooltip)
+            widget.cb:SetChecked(checked)
+            widget.cb:SetText(L[settingName])
+            if tooltip then
+                addon:SetTooltip(widget.cb, "ANCHOR_TOPLEFT", 0, 2, L[settingName], string.split("|", tooltip))
+            end
+        end
+    else
+        widget = settingWidgets["checkbutton3"]
     end
 
     widget:Show()
@@ -2119,6 +2152,8 @@ function addon:CreateIndicatorSettings(parent, settingsTable)
             tinsert(widgetsTable, CreateSetting_Colors(parent))
         elseif setting == "nameColor" then
             tinsert(widgetsTable, CreateSetting_NameColor(parent))
+        elseif string.find(setting, "checkbutton3") then
+            tinsert(widgetsTable, CreateSetting_CheckButton3(parent))
         elseif string.find(setting, "checkbutton2") then
             tinsert(widgetsTable, CreateSetting_CheckButton2(parent))
         elseif string.find(setting, "checkbutton") then

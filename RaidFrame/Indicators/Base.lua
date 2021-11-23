@@ -342,6 +342,7 @@ end
 -------------------------------------------------
 -- CreateAura_Text
 -------------------------------------------------
+local circled = {"①","②","③","④","⑤","⑥","⑦","⑧","⑨","⑩","⑪","⑫","⑬","⑭","⑮","⑯","⑰","⑱","⑲","⑳","㉑","㉒","㉓","㉔","㉕","㉖","㉗","㉘","㉙","㉚","㉛","㉜","㉝","㉞","㉟","㊱","㊲","㊳","㊴","㊵","㊶","㊷","㊸","㊹","㊺","㊻","㊼","㊽","㊾","㊿"}
 function I:CreateAura_Text(name, parent)
     local frame = CreateFrame("Frame", name, parent)
     frame:SetSize(11, 11)
@@ -402,11 +403,18 @@ function I:CreateAura_Text(name, parent)
     function frame:SetCooldown(start, duration, debuffType, texture, count)
         if duration == 0 then
             count = count == 0 and 1 or count
+            count = frame.circledStackNums and circled[count] or count
             text:SetText(count)
             frame:SetScript("OnUpdate", nil)
         else
             if frame.showDuration then
-                count = (count == 0 or count == 1) and "" or (count.." ")
+                if count == 0 then
+                    count = ""
+                elseif frame.circledStackNums then
+                    count = circled[count] .. " "
+                else
+                    count = count .. " "
+                end
                 frame:SetScript("OnUpdate", function()
                     local remain = duration-(GetTime()-start)
                     -- update color
@@ -426,6 +434,7 @@ function I:CreateAura_Text(name, parent)
                 end)
             else
                 count = count == 0 and 1 or count
+                count = frame.circledStackNums and circled[count] or count
                 frame:SetScript("OnUpdate", function()
                     local remain = duration-(GetTime()-start)
                     -- update color
@@ -448,6 +457,10 @@ function I:CreateAura_Text(name, parent)
 
     function frame:ShowDuration(show)
         frame.showDuration = show
+    end
+
+    function frame:SetCircledStackNums(circled)
+        frame.circledStackNums = circled
     end
 
     function frame:SetColors(colors)

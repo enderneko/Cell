@@ -19,6 +19,7 @@ select(2, ...).L = setmetatable({
     ["enableHighlight"] = "Highlight unit button",
     ["hideFull"] = "Hide while HP is full",
     ["onlyShowTopGlow"] = "Only show glow for the first debuff",
+    ["circledStackNums"] = "Circled Stack Numbers",
 
     ["BOTTOM"] = "Bottom",
     ["BOTTOMLEFT"] = "Bottom Left",

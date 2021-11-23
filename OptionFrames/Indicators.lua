@@ -395,6 +395,10 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                 if type(t["showDuration"]) == "boolean" then
                     indicator:ShowDuration(t["showDuration"])
                 end
+                 -- update circled nums
+                 if type(t["circledStackNums"]) == "boolean" then
+                    indicator:SetCircledStackNums(t["circledStackNums"])
+                end
                 -- after init
                 if t["enabled"] then
                     indicator:Show()
@@ -473,6 +477,11 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                 -- update through OnShow
                 indicator:Hide()
                 indicator:Show()
+            elseif value == "circledStackNums" then
+                indicator:SetCircledStackNums(value2)
+                -- update through OnShow
+                indicator:Hide()
+                indicator:Show()
             end
         elseif setting == "create" then
             indicator = I:CreateIndicator(previewButton, value)
@@ -508,6 +517,14 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
             -- update colors
             if value["colors"] then
                 indicator:SetColors(value["colors"])
+            end
+            -- update duration
+            if type(value["showDuration"]) == "boolean" then
+                indicator:ShowDuration(value["showDuration"])
+            end
+            -- update circled nums
+            if type(value["circledStackNums"]) == "boolean" then
+                indicator:SetCircledStackNums(value["circledStackNums"])
             end
             InitIndicator(indicatorName)
             indicator:Show()
@@ -667,6 +684,7 @@ createBtn:SetScript("OnClick", function()
                 ["auraType"] = indicatorAuraType,
                 ["auras"] = {},
                 ["showDuration"] = true,
+                ["circledStackNums"] = false,
             })
         elseif indicatorType == "bar" then
             tinsert(currentLayoutTable["indicators"], {
@@ -843,7 +861,7 @@ local function ShowIndicatorSettings(id)
         if indicatorType == "icon" then
             settingsTable = {"enabled", "auras", "checkbutton2:showDuration:"..L["Show duration text instead of icon animation"], "position", "frameLevel", "size-square", "font"}
         elseif indicatorType == "text" then
-            settingsTable = {"enabled", "auras", "checkbutton2:showDuration", "colors", "position", "frameLevel", "font"}
+            settingsTable = {"enabled", "auras", "checkbutton2:showDuration", "checkbutton3:circledStackNums:"..L["Require font support"], "colors", "position", "frameLevel", "font"}
         elseif indicatorType == "bar" then
             settingsTable = {"enabled", "auras", "colors", "position", "frameLevel", "size-bar"}
         elseif indicatorType == "rect" then

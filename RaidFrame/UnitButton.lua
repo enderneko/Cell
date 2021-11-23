@@ -186,6 +186,10 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                 if type(t["showDuration"]) == "boolean" then
                     indicator:ShowDuration(t["showDuration"])
                 end
+                -- update circled nums
+                if type(t["circledStackNums"]) == "boolean" then
+                    indicator:SetCircledStackNums(t["circledStackNums"])
+                end
                 -- update vehicleNamePosition
                 if t["vehicleNamePosition"] then
                     indicator:UpdateVehicleNamePosition(t["vehicleNamePosition"])
@@ -379,6 +383,11 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
             elseif value == "showDuration" then
                 F:IterateAllUnitButtons(function(b)
                     b.indicators[indicatorName]:ShowDuration(value2)
+                    UnitButton_UpdateAuras(b)
+                end)
+            elseif value == "circledStackNums" then
+                F:IterateAllUnitButtons(function(b)
+                    b.indicators[indicatorName]:SetCircledStackNums(value2)
                     UnitButton_UpdateAuras(b)
                 end)
             else
