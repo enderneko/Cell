@@ -271,11 +271,11 @@ local function InitIndicator(indicatorName)
             end
         elseif indicator.indicatorType == "text" then
             indicator.isCustomText = true -- mark for custom glow
-            indicator.onUpdate = indicator.onUpdate or CreateFrame("Frame", nil, indicator)
+            indicator.preview = indicator.preview or CreateFrame("Frame", nil, indicator)
             indicator:SetScript("OnShow", function()
                 indicator:SetCooldown(GetTime(), 12, nil, 134400, 5)
-                indicator.onUpdate.elapsedTime = 0
-                indicator.onUpdate:SetScript("OnUpdate", function(self, elapsed)
+                indicator.preview.elapsedTime = 0
+                indicator.preview:SetScript("OnUpdate", function(self, elapsed)
                     self.elapsedTime = self.elapsedTime + elapsed
                     if self.elapsedTime >= 12 then
                         self.elapsedTime = 0
@@ -287,11 +287,11 @@ local function InitIndicator(indicatorName)
                 end)
             end)
         else
-            indicator.onUpdate = indicator.onUpdate or CreateFrame("Frame", nil, indicator)
+            indicator.preview = indicator.preview or CreateFrame("Frame", nil, indicator)
             indicator:SetScript("OnShow", function()
                 indicator:SetCooldown(GetTime(), 12, nil, 134400, 0)
-                indicator.onUpdate.elapsedTime = 0
-                indicator.onUpdate:SetScript("OnUpdate", function(self, elapsed)
+                indicator.preview.elapsedTime = 0
+                indicator.preview:SetScript("OnUpdate", function(self, elapsed)
                     self.elapsedTime = self.elapsedTime + elapsed
                     if self.elapsedTime >= 12 then
                         self.elapsedTime = 0
