@@ -165,6 +165,7 @@ local defensiveCooldowns = {
 
     -- hunter
     186265, -- 灵龟守护
+    264735, -- 优胜劣汰
 
     -- mage
     45438, -- 寒冰屏障
@@ -183,6 +184,7 @@ local defensiveCooldowns = {
 
     -- priest
     47585, -- 消散
+    19236, -- 绝望祷言
 
     -- rogue
     1966, -- 佯攻
