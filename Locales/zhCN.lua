@@ -296,6 +296,7 @@ L["Targeted Spells"] = "被法术选中"
 L["Target Counter"] = "目标计数"
 
 L["Create new indicator"] = "创建新指示器"
+L["Rename indicator"] = "重命名指示器"
 L["Delete indicator"] = "删除指示器"
 L["Buff"] = "增益"
 L["Debuff"] = "减益"
