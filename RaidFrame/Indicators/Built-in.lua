@@ -834,18 +834,27 @@ function I:CreateStatusText(parent)
 
 	local text = statusText:CreateFontString(nil, "ARTWORK", "CELL_FONT_STATUS")
 	statusText.text = text
-    text:SetTextColor(1, .19, .19)
 
     local timer = statusText:CreateFontString(nil, "ARTWORK", "CELL_FONT_STATUS")
 	statusText.timer = timer
-	timer:SetTextColor(1, .19, .19)
     
-    function statusText:GetText()
-        return text:GetText()
+    function statusText:GetStatus()
+        return statusText.status
     end
 
-    function statusText:SetText(s)
-        text:SetText(s)
+    function statusText:SetStatus(status)
+        -- print("status: " .. (status or "nil"))
+        statusText.status = status
+        text:SetText(L[status])
+        if status then
+            text:SetTextColor(unpack(statusText.colors[status]))
+            timer:SetTextColor(unpack(statusText.colors[status]))
+            statusText:SetHeight(text:GetHeight()+1)
+        end
+    end
+
+    function statusText:SetColors(colors)
+        statusText.colors = colors
     end
     
     statusText.OriginalSetPoint = statusText.SetPoint
@@ -863,10 +872,6 @@ function I:CreateStatusText(parent)
         statusText:SetHeight(text:GetHeight()+1)
     end
     
-    hooksecurefunc(text, "SetText", function()
-        statusText:SetHeight(text:GetHeight()+1)
-    end)
-
     function statusText:SetFont(font, size, flags)
         if not string.find(font, ".ttf") then font = F:GetFont(font) end
 

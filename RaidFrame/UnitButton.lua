@@ -344,11 +344,11 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                 local indicator = b.indicators[indicatorName]
                 indicator:SetColor(unpack(value))
             end)
-        elseif setting == "colors" then
-            F:IterateAllUnitButtons(function(b)
-                local indicator = b.indicators[indicatorName]
-                indicator:SetColors(value)
-            end)
+        -- elseif setting == "colors" then --! NOTE: 实际上不会执行，更改colors不调用widget.func，不发出通知，因为这些指示器都使用OnUpdate更新颜色。
+        --     F:IterateAllUnitButtons(function(b)
+        --         local indicator = b.indicators[indicatorName]
+        --         indicator:SetColors(value)
+        --     end)
         elseif setting == "nameColor" then
             F:IterateAllUnitButtons(function(b)
                 b.func.UpdateColor()
@@ -357,6 +357,10 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
             F:IterateAllUnitButtons(function(b)
                 local indicator = b.indicators[indicatorName]
                 indicator:UpdateVehicleNamePosition(value)
+            end)
+        elseif setting == "statusColors" then
+            F:IterateAllUnitButtons(function(b)
+                UnitButton_UpdateStatusText(b)
             end)
         elseif setting == "num" then
             indicatorNums[indicatorName] = value
@@ -776,8 +780,8 @@ local function UnitButton_UpdateBuffs(self)
 
             -- drinking
             if enabledIndicators["statusText"] and I:IsDrinking(name) then
-                if not self.indicators.statusText:GetText() then
-                    self.indicators.statusText:SetText("|cff30BFFF"..L["DRINKING"])
+                if not self.indicators.statusText:GetStatus() then
+                    self.indicators.statusText:SetStatus("DRINKING")
                     self.indicators.statusText:Show()
                 end
                 drinkingFound = true
@@ -818,9 +822,9 @@ local function UnitButton_UpdateBuffs(self)
     end
     
     -- hide drinking
-    if not drinkingFound and self.indicators.statusText:GetText() == "|cff30BFFF"..L["DRINKING"] then
+    if not drinkingFound and self.indicators.statusText:GetStatus() == "DRINKING" then
         self.indicators.statusText:Hide()
-        self.indicators.statusText:SetText("")
+        self.indicators.statusText:SetStatus()
     end
     
     -- update buffs_cache
@@ -1352,7 +1356,7 @@ UnitButton_UpdateStatusText = function(self)
     local statusText = self.indicators.statusText
     if not enabledIndicators["statusText"] then
         statusText:Hide()
-        statusText:SetText("")
+        statusText:SetStatus()
         return
     end
 
@@ -1364,41 +1368,45 @@ UnitButton_UpdateStatusText = function(self)
 
     if not UnitIsConnected(unit) and UnitIsPlayer(unit) then
         statusText:Show()
-        statusText:SetText(L["OFFLINE"])
+        statusText:SetStatus("OFFLINE")
         statusText:ShowTimer()
     elseif UnitIsAFK(unit) then
         statusText:Show()
-        statusText:SetText(L["AFK"])
+        statusText:SetStatus("AFK")
         statusText:ShowTimer()
     elseif UnitIsFeignDeath(unit) then
         statusText:Show()
-        statusText:SetText("|cffFFFF30"..L["FEIGN"])
+        statusText:SetStatus("FEIGN")
         statusText:HideTimer(true)
     elseif UnitIsDeadOrGhost(unit) then
         statusText:Show()
         statusText:HideTimer(true)
         if UnitIsGhost(unit) then
-            statusText:SetText(L["GHOST"])
+            statusText:SetStatus("GHOST")
         else
-            statusText:SetText(L["DEAD"])
+            statusText:SetStatus("DEAD")
         end
     elseif C_IncomingSummon.HasIncomingSummon(unit) then
         statusText:Show()
         statusText:HideTimer()
         local status = C_IncomingSummon.IncomingSummonStatus(unit)
         if status == Enum.SummonStatus.Pending then
-            statusText:SetText("|cffFFFF30"..L["PENDING"])
+            statusText:SetStatus("PENDING")
         elseif status == Enum.SummonStatus.Accepted then
-            statusText:SetText("|cff30FF30"..L["ACCEPTED"])
+            statusText:SetStatus("ACCEPTED")
             C_Timer.After(6, function() UnitButton_UpdateStatusText(self) end)
         elseif status == Enum.SummonStatus.Declined then
-            statusText:SetText(L["DECLINED"])
+            statusText:SetStatus("DECLINED")
             C_Timer.After(6, function() UnitButton_UpdateStatusText(self) end)
         end
+    elseif statusText:GetStatus() == "DRINKING" then
+        -- update colors
+        statusText:Show()
+        statusText:SetStatus("DRINKING")
     else
         statusText:Hide()
         statusText:HideTimer(true)
-        statusText:SetText("")
+        statusText:SetStatus()
     end
 end
 

@@ -862,5 +862,24 @@ function F:Revise()
         end
     end
 
+    -- r71-release
+    if CellDB["revise"] and dbRevision < 71 then
+        for _, layout in pairs(CellDB["layouts"]) do
+            if layout["indicators"][2] and layout["indicators"][2]["indicatorName"] == "statusText" and not layout["indicators"][2]["colors"] then
+                layout["indicators"][2]["colors"] = {
+                    ["GHOST"] = {1, 0.19, 0.19},
+                    ["DEAD"] = {1, 0.19, 0.19},
+                    ["AFK"] = {1, 0.19, 0.19},
+                    ["OFFLINE"] = {1, 0.19, 0.19},
+                    ["FEIGN"] = {1, 1, 0.12},
+                    ["DRINKING"] = {0.12, 0.75, 1},
+                    ["PENDING"] = {1, 1, 0.12},
+                    ["ACCEPTED"] = {0.12, 1, 0.12},
+                    ["DECLINED"] = {1, 0.19, 0.19},
+                }
+            end
+        end
+    end
+
     CellDB["revise"] = Cell.version
 end

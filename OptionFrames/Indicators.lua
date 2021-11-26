@@ -95,11 +95,57 @@ local function InitIndicator(indicatorName)
         indicator.preview:SetAllPoints(indicator)
 
     elseif indicatorName == "statusText" then
-        indicator.text:SetText(L["OFFLINE"])
-        indicator.timer:SetText("13m")
-        -- texture type cannot glow by LCG
-        indicator.preview = CreateFrame("Frame", nil, previewButton)
-        indicator.preview:SetAllPoints(indicator)
+        local count = 2
+        local ticker
+        indicator:SetScript("OnShow", function()
+            indicator:SetStatus("AFK")
+            indicator.timer:SetText("13m")
+
+            ticker = C_Timer.NewTicker(1, function()
+                if count == 1 then
+                    indicator:SetStatus("AFK")
+                    indicator.timer:SetText("13m")
+                elseif count == 2 then
+                    indicator:SetStatus("OFFLINE")
+                    indicator.timer:SetText("13m")
+                elseif count == 3 then
+                    indicator:SetStatus("DEAD")
+                    indicator.timer:SetText()
+                elseif count == 4 then
+                    indicator:SetStatus("GHOST")
+                    indicator.timer:SetText()
+                elseif count == 5 then
+                    indicator:SetStatus("FEIGN")
+                    indicator.timer:SetText()
+                elseif count == 6 then
+                    indicator:SetStatus("DRINKING")
+                    indicator.timer:SetText()
+                elseif count == 7 then
+                    indicator:SetStatus("PENDING")
+                    indicator.timer:SetText()
+                elseif count == 8 then
+                    indicator:SetStatus("ACCEPTED")
+                    indicator.timer:SetText()
+                elseif count == 9 then
+                    indicator:SetStatus("DECLINED")
+                    indicator.timer:SetText()
+                end
+
+                if count < 9 then
+                    count = count + 1
+                else
+                    count = 1
+                end
+            end)
+        end)
+
+        indicator:SetScript("OnHide", function()
+            if ticker then
+                ticker:Cancel()
+                ticker = nil
+                count = 2
+            end
+        end)
 
     elseif indicatorName == "statusIcon" then
         indicator:SetTexture("Interface\\RaidFrame\\Raid-Icon-Rez")
@@ -462,12 +508,15 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
             end
         elseif setting == "color" then
             indicator:SetColor(unpack(value))
-        elseif setting == "colors" then
-            indicator:SetColors(value)
+        -- elseif setting == "colors" then
+        --     indicator:SetColors(value)
         elseif setting == "nameColor" then
             indicator:UpdatePreviewColor(value)
         elseif setting == "vehicleNamePosition" then
             indicator:UpdateVehicleNamePosition(value)
+        elseif setting == "statusColors" then
+            indicator:Hide()
+            indicator:Show()
         elseif setting == "customTextures" then
             indicator:SetCustomTexture(value)
             indicator:SetRole(indicator.roles[indicator.role])
@@ -811,7 +860,7 @@ settingsFrame.scrollFrame:SetScrollStep(35)
 
 local indicatorSettings = {
     ["nameText"] = {"enabled", "nameColor", "textWidth", "vehicleNamePosition", "namePosition", "font-noOffset"},
-    ["statusText"] = {"enabled", "statusPosition", "frameLevel", "font-noOffset"},
+    ["statusText"] = {"enabled", "statusColors", "statusPosition", "frameLevel", "font-noOffset"},
     ["healthText"] = {"enabled", "format", "checkbutton:hideFull", "color", "position", "frameLevel", "font"},
     ["statusIcon"] = {"|TInterface\\RaidFrame\\Raid-Icon-Rez:18:18|t "..
         "|TInterface\\TargetingFrame\\UI-PhasingIcon:18:18|t "..
@@ -897,6 +946,7 @@ local function ShowIndicatorSettings(id)
         -- "enabled", "position", "size", "num", "font"
         local currentSetting = settingsTable[i]
         if currentSetting == "color-alpha" then currentSetting = "color" end
+        if currentSetting == "statusColors" then currentSetting = "colors" end
         if currentSetting == "size-square" or currentSetting == "size-bar" or currentSetting == "size-normal-big" then currentSetting = "size" end
         if currentSetting == "font-noOffset" then currentSetting = "font" end
         if currentSetting == "namePosition" or currentSetting == "statusPosition" then currentSetting = "position" end
@@ -925,40 +975,44 @@ local function ShowIndicatorSettings(id)
         height = height + w:GetHeight()
 
         -- update func
-        w:SetFunc(function(value)
-            -- texplore(value)
-            if string.find(currentSetting, "checkbutton") then
-                local setting = select(2,string.split(":", currentSetting))
-                currentLayoutTable["indicators"][id][setting] = value
-                Cell:Fire("UpdateIndicators", currentLayout, indicatorName, "checkbutton", setting, value) -- indicatorName, setting, value, value2
-            elseif currentSetting == "auras" then
-                -- currentLayoutTable["indicators"][id][currentSetting] = value -- NOTE: already changed in widget
-                Cell:Fire("UpdateIndicators", currentLayout, indicatorName, currentSetting, currentLayoutTable["indicators"][id]["auraType"], value)
-            elseif currentSetting == "blacklist" then
-                CellDB["debuffBlacklist"] = value
-                Cell.vars.debuffBlacklist = F:ConvertTable(CellDB["debuffBlacklist"])
-                Cell:Fire("UpdateIndicators", currentLayout, "", "blacklist")
-            elseif currentSetting == "spells" then
-                -- currentLayoutTable["indicators"][id][currentSetting] = value -- NOTE: already changed in widget
-                Cell:Fire("UpdateTargetedSpells", "spells", value)
-            elseif currentSetting == "glow" then
-                -- NOTE: already changed in widget
-                Cell:Fire("UpdateTargetedSpells", "glow", value)
-            elseif currentSetting == "size-border" then
-                currentLayoutTable["indicators"][id]["size"][1] = value[1]
-                currentLayoutTable["indicators"][id]["size"][2] = value[2]
-                currentLayoutTable["indicators"][id]["border"] = value[3]
-                Cell:Fire("UpdateIndicators", currentLayout, indicatorName, currentSetting, value)
+        w:SetFunc(function(value, customSetting)
+            if value == nil and customSetting then --* NOTE: just Fire("UpdateIndicators") with customSetting
+                F:Debug("|cff77ff77SetFunc(Custom):|r ", currentLayout, indicatorName, customSetting)
+                Cell:Fire("UpdateIndicators", currentLayout, indicatorName, customSetting)
             else
-                currentLayoutTable["indicators"][id][currentSetting] = value
-                Cell:Fire("UpdateIndicators", currentLayout, indicatorName, currentSetting, value)
-            end
-            -- show enabled/disabled status
-            if currentSetting == "enabled" then
-                if value then
-                    listButtons[id]:SetTextColor(1, 1, 1, 1)
+                if string.find(currentSetting, "checkbutton") then
+                    local setting = select(2,string.split(":", currentSetting))
+                    currentLayoutTable["indicators"][id][setting] = value
+                    Cell:Fire("UpdateIndicators", currentLayout, indicatorName, "checkbutton", setting, value) -- indicatorName, setting, value, value2
+                elseif currentSetting == "auras" then
+                    -- currentLayoutTable["indicators"][id][currentSetting] = value -- NOTE: already changed in widget
+                    Cell:Fire("UpdateIndicators", currentLayout, indicatorName, currentSetting, currentLayoutTable["indicators"][id]["auraType"], value)
+                elseif currentSetting == "blacklist" then
+                    CellDB["debuffBlacklist"] = value
+                    Cell.vars.debuffBlacklist = F:ConvertTable(CellDB["debuffBlacklist"])
+                    Cell:Fire("UpdateIndicators", currentLayout, "", "blacklist")
+                elseif currentSetting == "spells" then
+                    -- currentLayoutTable["indicators"][id][currentSetting] = value -- NOTE: already changed in widget
+                    Cell:Fire("UpdateTargetedSpells", "spells", value)
+                elseif currentSetting == "glow" then
+                    -- NOTE: already changed in widget
+                    Cell:Fire("UpdateTargetedSpells", "glow", value)
+                elseif currentSetting == "size-border" then
+                    currentLayoutTable["indicators"][id]["size"][1] = value[1]
+                    currentLayoutTable["indicators"][id]["size"][2] = value[2]
+                    currentLayoutTable["indicators"][id]["border"] = value[3]
+                    Cell:Fire("UpdateIndicators", currentLayout, indicatorName, currentSetting, value)
                 else
-                    listButtons[id]:SetTextColor(.466, .466, .466, 1)
+                    currentLayoutTable["indicators"][id][currentSetting] = value
+                    Cell:Fire("UpdateIndicators", currentLayout, indicatorName, currentSetting, value)
+                end
+                -- show enabled/disabled status
+                if currentSetting == "enabled" then
+                    if value then
+                        listButtons[id]:SetTextColor(1, 1, 1, 1)
+                    else
+                        listButtons[id]:SetTextColor(.466, .466, .466, 1)
+                    end
                 end
             end
         end)

@@ -247,6 +247,17 @@ function eventFrame:ADDON_LOADED(arg1)
                             ["position"] = {"BOTTOM", 0},
                             ["frameLevel"] = 30,
                             ["font"] = {"Cell ".._G.DEFAULT, 11, "Shadow"},
+                            ["colors"] = {
+                                ["AFK"] = {1, 0.19, 0.19},
+                                ["OFFLINE"] = {1, 0.19, 0.19},
+                                ["DEAD"] = {1, 0.19, 0.19},
+                                ["GHOST"] = {1, 0.19, 0.19},
+                                ["FEIGN"] = {1, 1, 0.12},
+                                ["DRINKING"] = {0.12, 0.75, 1},
+                                ["PENDING"] = {1, 1, 0.12},
+                                ["ACCEPTED"] = {0.12, 1, 0.12},
+                                ["DECLINED"] = {1, 0.19, 0.19},
+                            },
                         }, -- 2
                         {
                             ["name"] = "Health Text",
