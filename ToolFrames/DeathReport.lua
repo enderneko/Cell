@@ -59,7 +59,7 @@ local function Send(msg)
 end
 
 local function Report(guid)
-    if deathLogs[guid]["reported"] then return end
+    if not deathLogs[guid] or deathLogs[guid]["reported"] then return end
     deathLogs[guid]["reported"] = true
 
     if instanceType == "raid" and IsEncounterInProgress() then
