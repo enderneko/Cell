@@ -878,6 +878,25 @@ function F:Revise()
                     ["DECLINED"] = {1, 0.19, 0.19},
                 }
             end
+            
+            if not layout["powerFilters"] then
+                layout["powerFilters"] = {
+                    ["DEATHKNIGHT"] = {["TANK"] = true, ["DAMAGER"] = true},
+                    ["DEMONHUNTER"] = {["TANK"] = true, ["DAMAGER"] = true},
+                    ["DRUID"] = {["TANK"] = true, ["DAMAGER"] = true, ["HEALER"] = true},
+                    ["HUNTER"] = true,
+                    ["MAGE"] = true,
+                    ["MONK"] = {["TANK"] = true, ["DAMAGER"] = true, ["HEALER"] = true},
+                    ["PALADIN"] = {["TANK"] = true, ["DAMAGER"] = true, ["HEALER"] = true},
+                    ["PRIEST"] = {["DAMAGER"] = true, ["HEALER"] = true},
+                    ["ROGUE"] = true,
+                    ["SHAMAN"] = {["DAMAGER"] = true, ["HEALER"] = true},
+                    ["WARLOCK"] = true,
+                    ["WARRIOR"] = {["TANK"] = true, ["DAMAGER"] = true},
+                    ["PET"] = true,
+                    ["VEHICLE"] = true,
+                }
+            end
         end
     end
 

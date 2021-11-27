@@ -586,6 +586,86 @@ function addon:CreateBuffButton(parent, size, spellId)
 end
 
 -----------------------------------------
+-- Power Filter
+-----------------------------------------
+local function UpdateButtonSelection(b, selected)
+    b.tex:SetDesaturated(not selected)
+    -- if selected then
+    --     b:SetBackdropColor(unpack(b.hoverColor))
+    --     b:SetScript("OnEnter", nil)
+    --     b:SetScript("OnLeave", nil)
+    -- else
+    --     b:SetBackdropColor(unpack(b.color))
+    --     b:SetScript("OnEnter", function() 
+    --         b:SetBackdropColor(unpack(b.hoverColor))
+    --     end)
+    --     b:SetScript("OnLeave", function() 
+    --         b:SetBackdropColor(unpack(b.color))
+    --     end)
+    -- end
+end
+
+function addon:CreatePowerFilter(parent, classFileName, buttons, width, height, bWidth, color, bgColor)
+    local filter = CreateFrame("Frame", nil, parent, "BackdropTemplate")
+    Cell:StylizeFrame(filter, color, bgColor)
+    filter:SetSize(width, height)
+
+    filter.text = filter:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
+    filter.text:SetPoint("LEFT", 5, 0)
+    if classFileName == "PET" or classFileName == "VEHICLE" then
+        filter.text:SetText("|cff00ff33"..classFileName)
+    else
+        filter.text:SetText("|c"..RAID_CLASS_COLORS[classFileName].colorStr..classFileName)
+    end
+    filter:SetPoint("TOPLEFT", 5, -5)
+
+    filter.buttons = {}
+    local last
+    for i = #buttons, 1, -1 do
+        local b = Cell:CreateButton(filter, nil, "class-hover", {height, height})
+        filter.buttons[buttons[i]] = b
+        b:SetTexture("Interface\\AddOns\\Cell\\Media\\Roles\\"..buttons[i]..".blp", {height-4, height-4}, {"CENTER", 0, 0})
+
+        if last then
+            b:SetPoint("BOTTOMRIGHT", last, "BOTTOMLEFT", 1, 0)
+        else
+            b:SetPoint("BOTTOMRIGHT", filter)
+        end
+        last = b
+
+        b:SetScript("OnClick", function()
+            local selected
+            if type(filter.selectedLayoutTable["powerFilters"][classFileName]) == "boolean" then
+                filter.selectedLayoutTable["powerFilters"][classFileName] = not filter.selectedLayoutTable["powerFilters"][classFileName]
+                selected = filter.selectedLayoutTable["powerFilters"][classFileName]
+            else
+                filter.selectedLayoutTable["powerFilters"][classFileName][buttons[i]] = not filter.selectedLayoutTable["powerFilters"][classFileName][buttons[i]]
+                selected = filter.selectedLayoutTable["powerFilters"][classFileName][buttons[i]]
+            end
+            UpdateButtonSelection(b, selected)
+            if filter.selectedLayout == Cell.vars.currentLayout then
+                Cell:Fire("UpdateLayout", filter.selectedLayout, "power")
+            end
+        end) 
+    end
+
+    function filter:LoadConfig(selectedLayout, selectedLayoutTable)
+        filter.selectedLayout = selectedLayout
+        filter.selectedLayoutTable = selectedLayoutTable
+
+        if type(selectedLayoutTable["powerFilters"][classFileName]) == "boolean" then
+            UpdateButtonSelection(filter.buttons["DAMAGER"], selectedLayoutTable["powerFilters"][classFileName])
+        else
+            for role, b in pairs(filter.buttons) do
+                UpdateButtonSelection(b, selectedLayoutTable["powerFilters"][classFileName][role])
+            end
+        end
+    end
+
+    return filter
+end
+
+-----------------------------------------
 -- Button Group
 -----------------------------------------
 function addon:CreateButtonGroup(buttons, onClick, func1, func2, onEnter, onLeave)

@@ -48,10 +48,14 @@ local UnitDetailedThreatSituation = UnitDetailedThreatSituation
 local barAnimationType, highlightEnabled, predictionEnabled, absorbEnabled, shieldEnabled, overshieldEnabled
 
 -------------------------------------------------
--- unit button init indicators
+-- unit button func declarations
 -------------------------------------------------
 local UnitButton_UpdateAuras, UnitButton_UpdateRole, UnitButton_UpdateLeader, UnitButton_UpdateStatusIcon, UnitButton_UpdateStatusText, UnitButton_UpdateColor
+local UnitButton_UpdatePowerMax, UnitButton_UpdatePower, UnitButton_UpdatePowerType
 
+-------------------------------------------------
+-- unit button init indicators
+-------------------------------------------------
 local indicatorsInitialized
 local enabledIndicators, indicatorNums, indicatorCustoms = {}, {}, {}
 local bigDebuffs = {}
@@ -910,6 +914,98 @@ local function UpdateUnitHealthState(self)
 end
 
 -------------------------------------------------
+-- power funcs LibGroupInSpecT
+-------------------------------------------------
+local LGIST = LibStub:GetLibrary("LibGroupInSpecT-1.1")
+local function GetRole(b)
+    if b.state.role and b.state.role ~= "NONE" then
+        return b.state.role
+    end
+
+    local info = LGIST:GetCachedInfo(b.state.guid)
+    if not info then return end
+    return info.spec_role
+end
+
+local function ShouldShowPowerBar(b)
+    if not b.state.guid then
+        return true
+    end
+
+    local class, role
+    if b.state.inVehicle then
+        class = "VEHICLE"
+    elseif string.find(b.state.guid, "^Player") then
+        class = b.state.class
+        role = GetRole(b)
+    elseif string.find(b.state.guid, "^Pet") then
+        class = "PET"
+    end
+    
+    if class then
+        if type(Cell.vars.currentLayoutTable["powerFilters"][class]) == "boolean" then
+            return Cell.vars.currentLayoutTable["powerFilters"][class]
+        else
+            if role then
+                return Cell.vars.currentLayoutTable["powerFilters"][class][role]
+            else
+                return true -- show power if role not found
+            end
+        end
+    end
+
+    return true
+end
+
+local function ShowPowerBar(b, h)
+    b:RegisterEvent("UNIT_POWER_FREQUENT")
+    b:RegisterEvent("UNIT_MAXPOWER")
+    b:RegisterEvent("UNIT_DISPLAYPOWER")
+    b.widget.powerBar:Show()
+    b.widget.powerBarLoss:Show()
+    b.widget.gapTexture:Show()
+
+    P:ClearPoints(b.widget.healthBar)
+    P:Point(b.widget.healthBar, "TOPLEFT", b, "TOPLEFT", 1, -1)
+    P:Point(b.widget.healthBar, "BOTTOMRIGHT", b, "BOTTOMRIGHT", -1, h + 2)
+
+    if b:IsShown() then
+        -- update now
+        UnitButton_UpdatePowerMax(b)
+        UnitButton_UpdatePower(b)
+        UnitButton_UpdatePowerType(b)
+    end
+end
+
+local function HidePowerBar(b)
+    b:UnregisterEvent("UNIT_POWER_FREQUENT")
+    b:UnregisterEvent("UNIT_MAXPOWER")
+    b:UnregisterEvent("UNIT_DISPLAYPOWER")
+    b.widget.powerBar:Hide()
+    b.widget.powerBarLoss:Hide()
+    b.widget.gapTexture:Hide()
+
+    P:ClearPoints(b.widget.healthBar)
+    P:Point(b.widget.healthBar, "TOPLEFT", b, "TOPLEFT", 1, -1)
+    P:Point(b.widget.healthBar, "BOTTOMRIGHT", b, "BOTTOMRIGHT", -1, 1)
+end
+
+-- local roleUpdater = CreateFrame("Frame")
+-- function roleUpdater:UnitUpdated(event, guid, unit, info)
+--     if Cell.vars.currentLayoutTable and Cell.vars.currentLayoutTable["powerHeight"] ~= 0 then
+--         local b = F:GetUnitButtonByGUID(guid)
+--         if not b then return end
+
+--         if ShouldShowPowerBar(b) then
+--             ShowPowerBar(b, Cell.vars.currentLayoutTable["powerHeight"])
+--         else
+--             HidePowerBar(b)
+--         end
+--     end
+-- end
+-- LGIST.RegisterCallback(roleUpdater, "GroupInSpecT_Update", "UnitUpdated")
+
+-------------------------------------------------
 -- unit button functions
 -------------------------------------------------
 local function UnitButton_UpdateTarget(self)
@@ -1036,7 +1132,7 @@ local function UnitButton_FinishReadyCheck(self)
     end)
 end
 
-local function UnitButton_UpdatePowerMax(self)
+UnitButton_UpdatePowerMax = function(self)
     local unit = self.state.displayedUnit
     if not unit then return end
 
@@ -1055,7 +1151,7 @@ local function UnitButton_UpdatePowerMax(self)
     end
 end
 
-local function UnitButton_UpdatePower(self)
+UnitButton_UpdatePower = function(self)
     local unit = self.state.displayedUnit
     if not unit then return end
 
@@ -1066,7 +1162,7 @@ local function UnitButton_UpdatePower(self)
     end
 end
 
-local function UnitButton_UpdatePowerType(self)
+UnitButton_UpdatePowerType = function(self)
     local unit = self.state.displayedUnit
     if not unit then return end
 
@@ -1326,6 +1422,14 @@ local function UnitButton_UpdateVehicleStatus(self)
         self.state.displayedUnit = self.state.unit
         self.indicators.vehicleText:SetText("")
     end
+    
+    if Cell.loaded and Cell.vars.currentLayoutTable["powerHeight"] ~= 0 then
+        if ShouldShowPowerBar(self) then
+            ShowPowerBar(self, Cell.vars.currentLayoutTable["powerHeight"])
+        else
+            HidePowerBar(self)
+        end
+    end
 end
 
 UnitButton_UpdateStatusIcon = function(self)
@@ -1531,19 +1635,6 @@ local function UnitButton_UpdateAll(self)
     UnitButton_UpdateHealPrediction(self)
     UnitButton_UpdateStatusText(self)
     UnitButton_UpdateColor(self)
-
-    if Cell.loaded then
-        if Cell.vars.currentLayoutTable["powerHeight"] ~= 0 then
-            UnitButton_UpdatePowerType(self)
-            UnitButton_UpdatePowerMax(self)
-            UnitButton_UpdatePower(self)
-        end
-    else
-        UnitButton_UpdatePowerType(self)
-        UnitButton_UpdatePowerMax(self)
-        UnitButton_UpdatePower(self)
-    end
-    
     UnitButton_UpdateTarget(self)
     UnitButton_UpdatePlayerRaidIcon(self)
     UnitButton_UpdateTargetRaidIcon(self)
@@ -1557,6 +1648,21 @@ local function UnitButton_UpdateAll(self)
     UnitButton_UpdateThreatBar(self)
     UnitButton_UpdateStatusIcon(self)
     UnitButton_UpdateAuras(self)
+
+    if Cell.loaded then
+        if Cell.vars.currentLayoutTable["powerHeight"] ~= 0 then
+            -- 单位按钮显示、专精、载具发生变化时
+            if ShouldShowPowerBar(self) then
+                ShowPowerBar(self, Cell.vars.currentLayoutTable["powerHeight"])
+            else
+                HidePowerBar(self)
+            end
+        end
+    else
+        UnitButton_UpdatePowerType(self)
+        UnitButton_UpdatePowerMax(self)
+        UnitButton_UpdatePower(self)
+    end
 end
 
 -------------------------------------------------
@@ -1569,17 +1675,9 @@ local function UnitButton_RegisterEvents(self)
     self:RegisterEvent("UNIT_HEALTH")
     self:RegisterEvent("UNIT_MAXHEALTH")
     
-    if Cell.loaded then
-        if Cell.vars.currentLayoutTable["powerHeight"] ~= 0 then
-            self:RegisterEvent("UNIT_POWER_FREQUENT")
-            self:RegisterEvent("UNIT_MAXPOWER")
-            self:RegisterEvent("UNIT_DISPLAYPOWER")
-        end
-    else
-        self:RegisterEvent("UNIT_POWER_FREQUENT")
-        self:RegisterEvent("UNIT_MAXPOWER")
-        self:RegisterEvent("UNIT_DISPLAYPOWER")
-    end
+    self:RegisterEvent("UNIT_POWER_FREQUENT")
+    self:RegisterEvent("UNIT_MAXPOWER")
+    self:RegisterEvent("UNIT_DISPLAYPOWER")
     
     self:RegisterEvent("UNIT_AURA")
     
@@ -1963,6 +2061,7 @@ function F:UnitButton_OnLoad(button)
     powerBar:GetStatusBarTexture():SetDrawLayer("ARTWORK", -6)
 
     local gapTexture = button:CreateTexture(nil, "BORDER")
+    button.widget.gapTexture = gapTexture
     -- gapTexture:SetPoint("BOTTOMLEFT", powerBar, "TOPLEFT")
     -- gapTexture:SetPoint("BOTTOMRIGHT", powerBar, "TOPRIGHT")
     -- gapTexture:SetHeight(1)
@@ -1981,29 +2080,15 @@ function F:UnitButton_OnLoad(button)
     powerBarLoss:SetTexture(Cell.vars.texture)
 
     button.func.SetPowerHeight = function(height)
-        P:ClearPoints(healthBar)
-        P:Point(healthBar, "TOPLEFT", button, "TOPLEFT", 1, -1)
-        P:Point(healthBar, "BOTTOMRIGHT", button, "BOTTOMRIGHT", -1, height==0 and 1 or height+2)
         if height == 0 then
-            button:UnregisterEvent("UNIT_POWER_FREQUENT")
-            button:UnregisterEvent("UNIT_MAXPOWER")
-            button:UnregisterEvent("UNIT_DISPLAYPOWER")
-            powerBar:Hide()
-            powerBarLoss:Hide()
-            gapTexture:Hide()
+            HidePowerBar(button)
         else
-            if button:IsShown() and not button:IsEventRegistered("UNIT_DISPLAYPOWER") then
-                button:RegisterEvent("UNIT_POWER_FREQUENT")
-                button:RegisterEvent("UNIT_MAXPOWER")
-                button:RegisterEvent("UNIT_DISPLAYPOWER")
-                -- update now
-                UnitButton_UpdatePowerMax(button)
-                UnitButton_UpdatePower(button)
-                UnitButton_UpdatePowerType(button)
+            if ShouldShowPowerBar(button) then
+                ShowPowerBar(button, height)
+            else
+                HidePowerBar(button)
+                height = 0
             end
-            powerBar:Show()
-            powerBarLoss:Show()
-            gapTexture:Show()
         end
     end
     

@@ -1003,7 +1003,7 @@ local heightSlider = Cell:CreateSlider(L["Height"], layoutsTab, 20, 300, 100, 2,
     UpdatePreviewButton("size")
     UpdateLayoutPreview()
 end)
-heightSlider:SetPoint("TOP", widthSlider, "BOTTOM", 0, -40)
+heightSlider:SetPoint("TOPLEFT", widthSlider, "BOTTOMLEFT", 0, -40)
 
 -- power height
 local powerHeightSlider = Cell:CreateSlider(L["Power Height"], layoutsTab, 0, 20, 100, 1, function(value)
@@ -1013,7 +1013,7 @@ local powerHeightSlider = Cell:CreateSlider(L["Power Height"], layoutsTab, 0, 20
     end
     UpdatePreviewButton("power")
 end)
-powerHeightSlider:SetPoint("TOP", heightSlider, "BOTTOM", 0, -40)
+powerHeightSlider:SetPoint("TOPLEFT", heightSlider, "BOTTOMLEFT", 0, -40)
 
 -- petSize
 local petSizeCB, petWidthSlider, petHeightSlider
@@ -1048,7 +1048,7 @@ petHeightSlider = Cell:CreateSlider(L["Height"].." ("..PET..")", layoutsTab, 20,
         Cell:Fire("UpdateLayout", selectedLayout, "petSize")
     end
 end)
-petHeightSlider:SetPoint("TOP", petWidthSlider, "BOTTOM", 0, -40)
+petHeightSlider:SetPoint("TOPLEFT", petWidthSlider, "BOTTOMLEFT", 0, -40)
 
 -- player/pet switch
 local switch = Cell:CreateSwitch(layoutsTab, {33, 10}, "", "player", "", "pet", function(which)
@@ -1119,6 +1119,16 @@ groupSpacingSlider = Cell:CreateSlider(L["Group Spacing"], layoutsTab, 0, 20, 10
     UpdateLayoutPreview()
 end)
 groupSpacingSlider:SetPoint("TOPLEFT", rcSlider, "BOTTOMLEFT", 0, -40)
+
+-------------------------------------------------
+-- powerFilters
+-------------------------------------------------
+local powerFilterBtn = Cell:CreateButton(layoutsTab, L["Power Bar Filters"], "class-hover", {100, 20})
+Cell.frames.layoutsTab.powerFilterBtn = powerFilterBtn
+powerFilterBtn:SetPoint("TOPLEFT", powerHeightSlider, "BOTTOMLEFT", 0, -27)
+powerFilterBtn:SetScript("OnClick", function ()
+    F:ShowPowerFilters(selectedLayout, selectedLayoutTable)
+end)
 
 -------------------------------------------------
 -- tips
