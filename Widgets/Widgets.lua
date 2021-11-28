@@ -612,7 +612,7 @@ function addon:CreatePowerFilter(parent, classFileName, buttons, width, height, 
 
     filter.text = filter:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
     filter.text:SetPoint("LEFT", 5, 0)
-    if classFileName == "PET" or classFileName == "VEHICLE" then
+    if classFileName == "VEHICLE" or classFileName == "PET" or classFileName == "NPC" then
         filter.text:SetText("|cff00ff33"..classFileName)
     else
         filter.text:SetText("|c"..RAID_CLASS_COLORS[classFileName].colorStr..classFileName)

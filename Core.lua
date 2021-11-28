@@ -242,6 +242,7 @@ function eventFrame:ADDON_LOADED(arg1)
                         ["WARRIOR"] = {["TANK"] = true, ["DAMAGER"] = true},
                         ["PET"] = true,
                         ["VEHICLE"] = true,
+                        ["NPC"] = true,
                     },
                     ["indicators"] = {
                         {

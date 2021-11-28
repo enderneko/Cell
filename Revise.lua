@@ -895,6 +895,7 @@ function F:Revise()
                     ["WARRIOR"] = {["TANK"] = true, ["DAMAGER"] = true},
                     ["PET"] = true,
                     ["VEHICLE"] = true,
+                    ["NPC"] = true,
                 }
             end
         end

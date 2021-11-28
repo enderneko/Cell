@@ -914,7 +914,7 @@ local function UpdateUnitHealthState(self)
 end
 
 -------------------------------------------------
--- power funcs LibGroupInSpecT
+-- power filter funcs
 -------------------------------------------------
 local LGIST = LibStub:GetLibrary("LibGroupInSpecT-1.1")
 local function GetRole(b)
@@ -940,6 +940,8 @@ local function ShouldShowPowerBar(b)
         role = GetRole(b)
     elseif string.find(b.state.guid, "^Pet") then
         class = "PET"
+    elseif string.find(b.state.guid, "^Creature") then
+        class = "NPC"
     end
     
     if class then

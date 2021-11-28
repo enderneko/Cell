@@ -2,7 +2,7 @@ local _, Cell = ...
 local L = Cell.L
 local F = Cell.funcs
 
-local powerFilters = Cell:CreateFrame("CellOptionsFrame_PowerFilters", Cell.frames.layoutsTab, 270, 180)
+local powerFilters = Cell:CreateFrame("CellOptionsFrame_PowerFilters", Cell.frames.layoutsTab, 270, 205)
 Cell.frames.powerFilters = powerFilters
 powerFilters:SetFrameStrata("DIALOG")
 powerFilters:SetPoint("BOTTOMLEFT", 115, 20)
@@ -53,6 +53,9 @@ petF:SetPoint("TOPLEFT", warlockF, "BOTTOMLEFT", 0, -5)
 local vehicleF = Cell:CreatePowerFilter(powerFilters, "VEHICLE", {"DAMAGER"}, 125, 20, 20)
 vehicleF:SetPoint("TOPLEFT", warriorF, "BOTTOMLEFT", 0, -5)
 
+local npcF = Cell:CreatePowerFilter(powerFilters, "NPC", {"DAMAGER"}, 125, 20, 20)
+npcF:SetPoint("TOPLEFT", petF, "BOTTOMLEFT", 0, -5)
+
 -------------------------------------------------
 -- scripts
 -------------------------------------------------
@@ -84,6 +87,6 @@ function F:ShowPowerFilters(selectedLayout, selectedLayoutTable)
         warriorF:LoadConfig(selectedLayout, selectedLayoutTable)
         petF:LoadConfig(selectedLayout, selectedLayoutTable)
         vehicleF:LoadConfig(selectedLayout, selectedLayoutTable)
-        
+        npcF:LoadConfig(selectedLayout, selectedLayoutTable)
     end
 end
