@@ -605,6 +605,9 @@ local function UpdateButtonSelection(b, selected)
     -- end
 end
 
+local localizedClass = {}
+FillLocalizedClassList(localizedClass)
+
 function addon:CreatePowerFilter(parent, classFileName, buttons, width, height, bWidth, color, bgColor)
     local filter = CreateFrame("Frame", nil, parent, "BackdropTemplate")
     Cell:StylizeFrame(filter, color, bgColor)
@@ -613,9 +616,9 @@ function addon:CreatePowerFilter(parent, classFileName, buttons, width, height, 
     filter.text = filter:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
     filter.text:SetPoint("LEFT", 5, 0)
     if classFileName == "VEHICLE" or classFileName == "PET" or classFileName == "NPC" then
-        filter.text:SetText("|cff00ff33"..classFileName)
+        filter.text:SetText("|cff00ff33"..L[classFileName])
     else
-        filter.text:SetText("|c"..RAID_CLASS_COLORS[classFileName].colorStr..classFileName)
+        filter.text:SetText("|c"..RAID_CLASS_COLORS[classFileName].colorStr..localizedClass[classFileName])
     end
     filter:SetPoint("TOPLEFT", 5, -5)
 

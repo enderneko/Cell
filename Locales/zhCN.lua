@@ -252,6 +252,9 @@ L["Group Columns"] = "队伍列数"
 L["Group Rows"] = "队伍行数"
 L["Group Spacing"] = "队伍间距"
 L["vehicle name"] = "载具名称"
+L["Power Bar Filters"] = "能量条过滤"
+L["PET"] = "宠物"
+L["VEHICLE"] = "载具"
 L["Tip: Every layout has its own position setting."] = "提示：每个布局都有其单独的位置设置。"
 
 -------------------------------------------------
