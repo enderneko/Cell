@@ -67,8 +67,7 @@ translatorsText:SetPoint("TOPLEFT", translatorText, "BOTTOMLEFT", 5, -12)
 translatorsText:SetJustifyH("LEFT")
 translatorsText:SetJustifyV("MIDDLE")
 translatorsText:SetSpacing(5)
-translatorsText:SetText("RainbowUI (zhTW)\nnaragok79 (koKR)")
-
+translatorsText:SetText("RainbowUI (zhTW)\nnaragok79 (koKR)\nBNS333 (zhTW)")
 
 -------------------------------------------------
 -- slash
