@@ -46,9 +46,19 @@ select(2, ...).L = setmetatable({
     ["marksTips"] = "\n|rTarget marker\nLeft-Click: |cffffffffset raid marker on target|r\nRight-Click: |cfffffffflock raid marker on target (in your group)|r",
 
     ["CHANGE LOGS"] = [[
+        <h1>r71-release (Nov 30, 2021, 04:15 GMT+8)</h1>
+        <p>+ Added "Circled Stack Numbers" option to custom text indicator.</p>
+        <p>+ Added status color options to Status Text indicator.</p>
+        <p>+ Implemented power bar filters (Layouts).</p>
+        <p>* Bug fixes (indicator preview).</p>
+        <p>* Updated the default spell list of Defensive Cooldowns indicator.</p>
+        <p>* Updated zhTW.</p>
+        <p>+ Cell can provide a "Healers" indicator on first run.</p>
+        <br/>
+
         <h1>r70-release (Nov 18, 2021, 09:20 GMT+8)</h1>
         <p>+ Added several new options in Appearance.</p>
-        <p>* Added "Show Duration" option to custom TEXT indicator.</p>
+        <p>+ Added "Show Duration" option to custom TEXT indicator.</p>
         <br/>
 
         <h1>r69-release (Nov 16, 2021, 09:10 GMT+8)</h1>
