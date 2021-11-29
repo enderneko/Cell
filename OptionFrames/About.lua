@@ -13,20 +13,21 @@ aboutTab:Hide()
 local nameText = Cell:CreateSeparator("Cell", aboutTab, 387)
 nameText:SetPoint("TOPLEFT", 5, -5)
 
-local helpBtn = Cell:CreateButton(aboutTab, GAMEMENU_HELP, "class", {90, 17})
-helpBtn:SetEnabled(false)
-helpBtn:SetPoint("RIGHT", -5, 0)
-helpBtn:SetPoint("TOP", nameText, 0, 1)
-helpBtn:SetScript("OnClick", function()
-    if Cell.frames.helpFrame:IsVisible() then
-        Cell.frames.helpFrame:Hide()
-    else
-        Cell.frames.helpFrame:Show()
-    end
-end)
+-- local helpBtn = Cell:CreateButton(aboutTab, GAMEMENU_HELP, "class", {90, 17})
+-- helpBtn:SetPoint("RIGHT", -5, 0)
+-- helpBtn:SetPoint("TOP", nameText, 0, 1)
+-- helpBtn:SetScript("OnClick", function()
+--     if Cell.frames.helpFrame:IsVisible() then
+--         Cell.frames.helpFrame:Hide()
+--     else
+--         Cell.frames.helpFrame:Show()
+--     end
+-- end)
 
 local changeLogsBtn = Cell:CreateButton(aboutTab, L["Change Logs"], "class", {90, 17})
-changeLogsBtn:SetPoint("TOPRIGHT", helpBtn, "TOPLEFT", 1, 0)
+-- changeLogsBtn:SetPoint("TOPRIGHT", helpBtn, "TOPLEFT", 1, 0)
+changeLogsBtn:SetPoint("RIGHT", -5, 0)
+changeLogsBtn:SetPoint("TOP", nameText, 0, 1)
 changeLogsBtn:SetScript("OnClick", function()
     if Cell.frames.changeLogsFrame:IsVisible() then
         Cell.frames.changeLogsFrame:Hide()

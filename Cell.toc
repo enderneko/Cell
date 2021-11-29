@@ -19,7 +19,6 @@ Widgets\LoadWidgets.xml
 
 HideBlizzard.lua
 ChangeLogs.lua
-Help.lua
 
 RaidFrame\Indicators\Base.lua
 RaidFrame\Indicators\Built-in.lua
