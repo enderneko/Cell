@@ -379,3 +379,81 @@ end
 function I:IsDrinking(name)
     return drinks[name]
 end
+
+-------------------------------------------------
+-- healer 
+-------------------------------------------------
+local spells =  {
+    -- druid
+    774, -- 回春术
+    155777, -- 回春术（萌芽）
+    8936, -- 愈合
+    33763, -- 生命绽放
+    188550, -- 生命绽放
+    48438, -- 野性成长
+    102351, -- 塞纳里奥结界
+    102352, -- 塞纳里奥结界
+    -- monk
+    119611, -- 复苏之雾
+    124682, -- 氤氲之雾
+    191840, -- 精华之泉
+    -- paladin
+    53563, -- 圣光道标
+    156910, -- 信仰道标
+    223306, -- 赋予信仰
+    325966, -- 圣光闪烁
+    200025, -- 美德道标
+    -- priest
+    139, -- 恢复
+    41635, -- 愈合祷言
+    17, -- 真言术：盾
+    194384, -- 救赎
+    -- shaman
+    974, -- 大地之盾
+    61295, -- 激流
+}
+
+function F:FirstRun()
+    local icons = "\n\n"
+    for i, id in pairs(spells) do
+        local icon = select(3, GetSpellInfo(id))
+        icons = icons .. "|T"..icon..":0|t"
+        if i % 11 == 0 then
+            icons = icons .. "\n"    
+        end
+    end
+
+    local popup = Cell:CreateConfirmPopup(Cell.frames.anchorFrame, 200, L["Would you like Cell to create a \"Healers\" indicator (icons)?"]..icons, function(self)
+        local currentLayoutTable = Cell.vars.currentLayoutTable
+
+        local last = #currentLayoutTable["indicators"]
+        if currentLayoutTable["indicators"][last]["type"] == "built-in" then
+            indicatorName = "indicator"..(last+1)
+        else
+            indicatorName = "indicator"..(tonumber(strmatch(currentLayoutTable["indicators"][last]["indicatorName"], "%d+"))+1)
+        end
+        
+        tinsert(currentLayoutTable["indicators"], {
+            ["name"] = "Healers",
+            ["indicatorName"] = indicatorName,
+            ["type"] = "icons",
+            ["enabled"] = true,
+            ["position"] = {"TOPRIGHT", "TOPRIGHT", 0, 3},
+            ["frameLevel"] = 5,
+            ["size"] = {13, 13},
+            ["num"] = 5,
+            ["orientation"] = "right-to-left",
+            ["font"] = {"Cell ".._G.DEFAULT, 11, "Outline", 2},
+            ["showDuration"] = false,
+            ["auraType"] = "buff",
+            ["castByMe"] = true,
+            ["auras"] = spells,
+        })
+        Cell:Fire("UpdateIndicators", Cell.vars.currentLayout, indicatorName, "create", currentLayoutTable["indicators"][last+1])
+        CellDB["firstRun"] = false
+    end, function()
+        CellDB["firstRun"] = false
+    end)
+    popup:SetPoint("TOPLEFT")
+    popup:Show()
+end

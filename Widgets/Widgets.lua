@@ -1330,6 +1330,7 @@ function addon:CreateMask(parent, text, points) -- points = {topleftX, topleftY,
         parent.mask:SetFrameStrata("HIGH")
         parent.mask:SetFrameLevel(100)
         parent.mask:EnableMouse(true) -- can't click-through
+        parent.mask:EnableMouseWheel(true) -- can't scroll-through
 
         parent.mask.text = parent.mask:CreateFontString(nil, "OVERLAY", font_title_name)
         parent.mask.text:SetTextColor(1, .2, .2)
@@ -1365,6 +1366,7 @@ function addon:CreateConfirmPopup(parent, width, text, onAccept, onReject, mask,
         parent.confirmPopup = CreateFrame("Frame", nil, parent, "BackdropTemplate")
         parent.confirmPopup:SetSize(width, 100)
         addon:StylizeFrame(parent.confirmPopup, {.1, .1, .1, .95}, {classColor.t[1], classColor.t[2], classColor.t[3], .7})
+        parent.confirmPopup:EnableMouse(true)
         parent.confirmPopup:SetFrameStrata("DIALOG")
         parent.confirmPopup:SetFrameLevel(2)
         parent.confirmPopup:Hide()

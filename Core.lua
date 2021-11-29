@@ -573,10 +573,11 @@ function eventFrame:ADDON_LOADED(arg1)
         -- }
         
         -- misc ---------------------------------------------------------------------------------
-        Cell.loaded = true
         Cell.version = GetAddOnMetadata(addonName, "version")
+        if not CellDB["revise"] then CellDB["firstRun"] = true end
         F:Revise()
         F:CheckWhatsNew()
+        Cell.loaded = true
     end
 
     -- omnicd ---------------------------------------------------------------------------------
@@ -736,6 +737,10 @@ function eventFrame:PLAYER_ENTERING_WORLD()
         F:Debug("|cffff1111Left Instance|r")
         GroupTypeChanged()
         inInstance = false
+    end
+
+    if CellDB["firstRun"] then
+        F:FirstRun()
     end
 end
 
