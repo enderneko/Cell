@@ -643,6 +643,7 @@ function addon:CreatePowerFilter(parent, classFileName, buttons, width, height, 
                 selected = filter.selectedLayoutTable["powerFilters"][classFileName][buttons[i]]
             end
             UpdateButtonSelection(b, selected)
+            -- update now, if selectedLayout == currentLayout
             if filter.selectedLayout == Cell.vars.currentLayout then
                 Cell:Fire("UpdateLayout", filter.selectedLayout, "power")
             end

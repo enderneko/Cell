@@ -1125,7 +1125,7 @@ groupSpacingSlider:SetPoint("TOPLEFT", rcSlider, "BOTTOMLEFT", 0, -40)
 -------------------------------------------------
 local powerFilterBtn = Cell:CreateButton(layoutsTab, L["Power Bar Filters"], "class-hover", {100, 20})
 Cell.frames.layoutsTab.powerFilterBtn = powerFilterBtn
-powerFilterBtn:SetPoint("TOPLEFT", powerHeightSlider, "BOTTOMLEFT", 0, -27)
+powerFilterBtn:SetPoint("BOTTOMLEFT", 10, 5)
 powerFilterBtn:SetScript("OnClick", function ()
     F:ShowPowerFilters(selectedLayout, selectedLayoutTable)
 end)
@@ -1133,9 +1133,11 @@ end)
 -------------------------------------------------
 -- tips
 -------------------------------------------------
-local tipsText = layoutsTab:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
-tipsText:SetPoint("BOTTOMLEFT", 5, 5)
-tipsText:SetText("|cff777777"..L["Tip: Every layout has its own position setting."])
+local tips = layoutsTab:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
+tips:SetPoint("BOTTOMRIGHT", -5, 7)
+tips:SetPoint("LEFT", powerFilterBtn, "RIGHT", 5, 0)
+tips:SetJustifyH("RIGHT")
+tips:SetText("|cff777777"..L["Tip: Every layout has its own position setting."])
 
 -------------------------------------------------
 -- functions

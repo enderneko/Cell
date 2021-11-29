@@ -5,7 +5,7 @@ local F = Cell.funcs
 local powerFilters = Cell:CreateFrame("CellOptionsFrame_PowerFilters", Cell.frames.layoutsTab, 270, 205)
 Cell.frames.powerFilters = powerFilters
 powerFilters:SetFrameStrata("DIALOG")
-powerFilters:SetPoint("BOTTOMLEFT", 115, 20)
+powerFilters:SetPoint("BOTTOMLEFT", Cell.frames.layoutsTab.powerFilterBtn, "TOPLEFT", -5, 5)
 powerFilters:SetFrameLevel(50)
 
 -------------------------------------------------
