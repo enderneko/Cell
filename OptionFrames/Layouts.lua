@@ -51,26 +51,26 @@ local function UpdatePreviewButton(which, value)
             previewButton.indicators.nameText:ClearAllPoints()
             previewButton.indicators.nameText:SetPoint(unpack(iTable["position"]))
 
-            previewButton.indicators.nameText:UpdateVehicleName()
-            previewButton.indicators.nameText:UpdateVehicleNamePosition(iTable["vehicleNamePosition"])
+            -- previewButton.indicators.nameText:UpdateVehicleName()
+            -- previewButton.indicators.nameText:UpdateVehicleNamePosition(iTable["vehicleNamePosition"])
         else
             previewButton.indicators.nameText:Hide()
         end
     end
 
-    if not which or which == "statusText" then
-        local iTable = selectedLayoutTable["indicators"][2]
-        if iTable["enabled"] then
-            previewButton.indicators.statusText:Show()
-            previewButton.indicators.statusText:SetFont(unpack(iTable["font"]))
-            previewButton.indicators.statusText:ClearAllPoints()
-            previewButton.indicators.statusText:SetPoint(iTable["position"][1], nil, iTable["position"][2])
-            previewButton.indicators.statusText.text:SetText(L["OFFLINE"])
-            previewButton.indicators.statusText.timer:SetText("13m")
-        else
-            previewButton.indicators.statusText:Hide()
-        end
-    end
+    -- if not which or which == "statusText" then
+    --     local iTable = selectedLayoutTable["indicators"][2]
+    --     if iTable["enabled"] then
+    --         previewButton.indicators.statusText:Show()
+    --         previewButton.indicators.statusText:SetFont(unpack(iTable["font"]))
+    --         previewButton.indicators.statusText:ClearAllPoints()
+    --         previewButton.indicators.statusText:SetPoint(iTable["position"][1], nil, iTable["position"][2])
+    --         previewButton.indicators.statusText.text:SetText(L["OFFLINE"])
+    --         previewButton.indicators.statusText.timer:SetText("13m")
+    --     else
+    --         previewButton.indicators.statusText:Hide()
+    --     end
+    -- end
 
     if not which or which == "appearance" then
         previewButton.widget.healthBar:SetStatusBarTexture(Cell.vars.texture)
