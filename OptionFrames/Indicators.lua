@@ -847,6 +847,11 @@ othersAlpha.currentEditBox:Hide()
 othersAlpha.lowText:Hide()
 othersAlpha.highText:Hide()
 
+local alphaText = indicatorsTab:CreateFontString(nil, "OVERLAY", "CELL_FONT_CLASS")
+alphaText:SetPoint("BOTTOM", settingsText)
+alphaText:SetPoint("RIGHT", othersAlpha, "LEFT", -5, 0)
+alphaText:SetText(L["Alpha"])
+
 -------------------------------------------------
 -- settings frame
 -------------------------------------------------
