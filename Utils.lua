@@ -16,6 +16,7 @@ end
 
 -- https://wowpedia.fandom.com/wiki/ColorGradient
 function F:ColorGradient(perc, r1,g1,b1, r2,g2,b2, r3,g3,b3)
+    perc = perc or 1
     if perc >= 1 then
         return r3, g3, b3
     elseif perc <= 0 then
