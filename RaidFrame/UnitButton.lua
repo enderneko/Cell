@@ -492,7 +492,7 @@ unitButton = {
 local debuffs_cache = {}
 local debuffs_cache_count = {}
 local debuffs_current = {}
-local debuffs_found = {}
+local debuffs_normal = {}
 local debuffs_big = {}
 local debuffs_dispel = {}
 local debuffs_raid_indices = {} -- store matching raid debuffs indices
@@ -505,7 +505,7 @@ local function UnitButton_UpdateDebuffs(self)
     if not debuffs_cache[unit] then debuffs_cache[unit] = {} end
     if not debuffs_cache_count[unit] then debuffs_cache_count[unit] = {} end
     if not debuffs_current[unit] then debuffs_current[unit] = {} end
-    if not debuffs_found[unit] then debuffs_found[unit] = {} end
+    if not debuffs_normal[unit] then debuffs_normal[unit] = {} end
     if not debuffs_big[unit] then debuffs_big[unit] = {} end
     if not debuffs_dispel[unit] then debuffs_dispel[unit] = {} end
     if not debuffs_raid_indices[unit] then debuffs_raid_indices[unit] = {} end
@@ -548,7 +548,7 @@ local function UnitButton_UpdateDebuffs(self)
                         debuffs_big[unit][i] = refreshing
                         startIndex = startIndex + 1
                     elseif startIndex <= indicatorNums["debuffs"]+indicatorNums["raidDebuffs"] then -- normal debuffs, may contain topDebuff
-                        debuffs_found[unit][i] = refreshing
+                        debuffs_normal[unit][i] = refreshing
                         startIndex = startIndex + 1
                     end
 
@@ -558,7 +558,7 @@ local function UnitButton_UpdateDebuffs(self)
                         startIndex = startIndex + 1
                     elseif startIndex <= indicatorNums["debuffs"]+indicatorNums["raidDebuffs"] then -- normal debuffs, may contain topDebuff
                         if I:CanDispel(debuffType) then
-                            debuffs_found[unit][i] = refreshing
+                            debuffs_normal[unit][i] = refreshing
                             startIndex = startIndex + 1
                         end
                     end
@@ -700,7 +700,7 @@ local function UnitButton_UpdateDebuffs(self)
             end
         end
         -- then normal debuffs
-        for debuffIndex, refreshing in pairs(debuffs_found[unit]) do
+        for debuffIndex, refreshing in pairs(debuffs_normal[unit]) do
             local _, icon, count, debuffType, duration, expirationTime = UnitDebuff(unit, debuffIndex)
             if not debuffs_raid_orders[unit][debuffIndex] and startIndex <= indicatorNums["debuffs"] then
                 -- start, duration, debuffType, texture, count, refreshing
@@ -731,7 +731,7 @@ local function UnitButton_UpdateDebuffs(self)
     end
 
     wipe(debuffs_current[unit])
-    wipe(debuffs_found[unit])
+    wipe(debuffs_normal[unit])
     wipe(debuffs_big[unit])
     wipe(debuffs_dispel[unit])
     wipe(debuffs_raid_indices[unit])
@@ -1897,7 +1897,7 @@ local function UnitButton_OnAttributeChanged(self, name, value)
             if debuffs_cache[self.state.unit] then wipe(debuffs_cache[self.state.unit]) end
             if debuffs_cache_count[self.state.unit] then wipe(debuffs_cache_count[self.state.unit]) end
             if debuffs_current[self.state.unit] then wipe(debuffs_current[self.state.unit]) end
-            if debuffs_found[self.state.unit] then wipe(debuffs_found[self.state.unit]) end
+            if debuffs_normal[self.state.unit] then wipe(debuffs_normal[self.state.unit]) end
             if debuffs_big[self.state.unit] then wipe(debuffs_big[self.state.unit]) end
             if debuffs_dispel[self.state.unit] then wipe(debuffs_dispel[self.state.unit]) end
             if debuffs_glowing_current[self.state.unit] then wipe(debuffs_glowing_current[self.state.unit]) end
@@ -1905,6 +1905,8 @@ local function UnitButton_OnAttributeChanged(self, name, value)
             -- reset buffs
             if buffs_cache[self.state.unit] then wipe(buffs_cache[self.state.unit]) end
             if buffs_cache_castByMe[self.state.unit] then wipe(buffs_cache_castByMe[self.state.unit]) end
+            if buffs_cache_count[self.state.unit] then wipe(buffs_cache_count[self.state.unit]) end
+            if buffs_cache_count_castByMe[self.state.unit] then wipe(buffs_cache_count_castByMe[self.state.unit]) end
             if buffs_current[self.state.unit] then wipe(buffs_current[self.state.unit]) end
             if buffs_current_castByMe[self.state.unit] then wipe(buffs_current_castByMe[self.state.unit]) end
         end
@@ -1928,7 +1930,7 @@ local function UnitButton_OnHide(self)
         if debuffs_cache[self.state.unit] then wipe(debuffs_cache[self.state.unit]) end
         if debuffs_cache_count[self.state.unit] then wipe(debuffs_cache_count[self.state.unit]) end
         if debuffs_current[self.state.unit] then wipe(debuffs_current[self.state.unit]) end
-        if debuffs_found[self.state.unit] then wipe(debuffs_found[self.state.unit]) end
+        if debuffs_normal[self.state.unit] then wipe(debuffs_normal[self.state.unit]) end
         if debuffs_big[self.state.unit] then wipe(debuffs_big[self.state.unit]) end
         if debuffs_dispel[self.state.unit] then wipe(debuffs_dispel[self.state.unit]) end
         if debuffs_glowing_current[self.state.unit] then wipe(debuffs_glowing_current[self.state.unit]) end
