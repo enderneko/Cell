@@ -7,7 +7,7 @@ function F:Revise()
     local dbRevision = CellDB["revise"] and tonumber(string.match(CellDB["revise"], "%d+")) or 0
     F:Debug("DBRevision:", dbRevision)
 
-    if CellDB["revise"] and dbRevision < 54 then -- update from an extremely version
+    if CellDB["revise"] and dbRevision < 62 then -- update from an unsupported version
         local f = CreateFrame("Frame")
         f:RegisterEvent("PLAYER_ENTERING_WORLD")
         f:SetScript("OnEvent", function()
@@ -607,7 +607,6 @@ function F:Revise()
             end
         end
     end
-    ]]
 
     -- r55-release
     if CellDB["revise"] and dbRevision < 55 then
@@ -741,6 +740,7 @@ function F:Revise()
             end
         end
     end
+    ]]
 
     -- r63-release
     if CellDB["revise"] and dbRevision < 63 then
