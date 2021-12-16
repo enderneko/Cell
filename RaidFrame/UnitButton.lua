@@ -380,6 +380,8 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
             end)
         elseif setting == "checkbutton" then
             if value == "hideFull" then
+                --! 血量文字指示器需要立即被刷新
+                indicatorCustoms[indicatorName] = value2
                 F:IterateAllUnitButtons(function(b)
                     b.func.UpdateHealthText()
                 end)
