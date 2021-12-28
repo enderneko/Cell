@@ -48,26 +48,26 @@ font_status:SetFont(GameFontNormal:GetFont(), 11)
 -------------------------------------------------
 -- layout
 -------------------------------------------------
-local delayedGroupType, delayedGroupChanged, delayedRoleChanged
+local delayedLayoutGroupType, delayedUpdateIndicators
 local delayedFrame = CreateFrame("Frame")
 delayedFrame:SetScript("OnEvent", function()
     delayedFrame:UnregisterEvent("PLAYER_REGEN_ENABLED")
-    F:UpdateLayout(delayedGroupType, delayedGroupChanged, delayedRoleChanged)
+    F:UpdateLayout(delayedLayoutGroupType, delayedUpdateIndicators)
 end)
 
-function F:UpdateLayout(groupType, groupChanged, roleChanged)
+function F:UpdateLayout(layoutGroupType, updateIndicators)
     if InCombatLockdown() then
-        F:Debug("|cffbbbbbbF:UpdateLayout(\""..groupType.."\") DELAYED")
-        delayedGroupType, delayedGroupChanged, delayedRoleChanged = groupType, groupChanged, roleChanged
+        F:Debug("|cffbbbbbbF:UpdateLayout(\""..layoutGroupType.."\") DELAYED")
+        delayedLayoutGroupType, delayedUpdateIndicators = layoutGroupType, updateIndicators
         delayedFrame:RegisterEvent("PLAYER_REGEN_ENABLED")
     else
-        F:Debug("|cffbbbbbbF:UpdateLayout(\""..groupType.."\")")
-        Cell.vars.layoutGroupType = groupType
-        local layout = CellDB["layoutAutoSwitch"][Cell.vars.playerSpecRole][groupType]
+        F:Debug("|cffbbbbbbF:UpdateLayout(\""..layoutGroupType.."\")")
+        -- Cell.vars.layoutGroupType = layoutGroupType
+        local layout = CellDB["layoutAutoSwitch"][Cell.vars.playerSpecRole][layoutGroupType]
         Cell.vars.currentLayout = layout
         Cell.vars.currentLayoutTable = CellDB["layouts"][layout]
         Cell:Fire("UpdateLayout", Cell.vars.currentLayout)
-        if groupChanged or roleChanged then
+        if updateIndicators then
             Cell:Fire("UpdateIndicators")
         end
     end
@@ -79,7 +79,9 @@ local bgMaxPlayers = {
 
 -- layout auto switch
 local instanceType
-local function GroupTypeChanged()
+local function PreUpdateLayout()
+    if not Cell.vars.playerSpecRole then return end
+
     if instanceType == "pvp" then
         local name, _, _, _, _, _, _, id = GetInstanceInfo()
         if bgMaxPlayers[id] then
@@ -98,15 +100,16 @@ local function GroupTypeChanged()
         Cell.vars.inBattleground = 5 -- treat as bg 5
         F:UpdateLayout("arena", true)
     else
+        Cell.vars.inBattleground = false
         if Cell.vars.groupType == "solo" or Cell.vars.groupType == "party" then
             F:UpdateLayout("party", true)
         else
             F:UpdateLayout("raid", true)
         end
-        Cell.vars.inBattleground = false
     end
 end
-Cell:RegisterCallback("GroupTypeChanged", "Core_GroupTypeChanged", GroupTypeChanged)
+Cell:RegisterCallback("GroupTypeChanged", "Core_GroupTypeChanged", PreUpdateLayout)
+Cell:RegisterCallback("RoleChanged", "Core_RoleChanged", PreUpdateLayout)
 
 -------------------------------------------------
 -- events
@@ -617,6 +620,7 @@ function eventFrame:GROUP_ROSTER_UPDATE()
     if IsInRaid() then
         if Cell.vars.groupType ~= "raid" then
             Cell.vars.groupType = "raid"
+            F:Debug("|cffffbb77GroupTypeChanged:|r raid")
             Cell:Fire("GroupTypeChanged", "raid")
         end
         -- reset raid setup
@@ -653,6 +657,7 @@ function eventFrame:GROUP_ROSTER_UPDATE()
     elseif IsInGroup() then
         if Cell.vars.groupType ~= "party" then
             Cell.vars.groupType = "party"
+            F:Debug("|cffffbb77GroupTypeChanged:|r party")
             Cell:Fire("GroupTypeChanged", "party")
         end
         -- update guid
@@ -687,6 +692,7 @@ function eventFrame:GROUP_ROSTER_UPDATE()
     else
         if Cell.vars.groupType ~= "solo" then
             Cell.vars.groupType = "solo"
+            F:Debug("|cffffbb77GroupTypeChanged:|r solo")
             Cell:Fire("GroupTypeChanged", "solo")
         end
         -- update guid
@@ -731,11 +737,11 @@ function eventFrame:PLAYER_ENTERING_WORLD()
     instanceType = iType
     if isIn then
         F:Debug("|cffff1111Entered Instance:|r", iType)
-        GroupTypeChanged()
+        PreUpdateLayout()
         inInstance = true
     elseif inInstance then -- left insntance
         F:Debug("|cffff1111Left Instance|r")
-        GroupTypeChanged()
+        PreUpdateLayout()
         inInstance = false
     end
 
@@ -796,6 +802,7 @@ end)
 -- PLAYER_SPECIALIZATION_CHANGED fires when level up, ACTIVE_TALENT_GROUP_CHANGED usually fire twice.
 -- NOTE: ACTIVE_TALENT_GROUP_CHANGED fires before PLAYER_LOGIN, but can't GetSpecializationInfo before PLAYER_LOGIN
 function eventFrame:ACTIVE_TALENT_GROUP_CHANGED()
+    F:Debug("ACTIVE_TALENT_GROUP_CHANGED")
     -- not in combat & spec CHANGED
     if not InCombatLockdown() and (prevSpec and prevSpec ~= GetSpecialization() or forceRecheck) then
         prevSpec = GetSpecialization()
@@ -804,15 +811,15 @@ function eventFrame:ACTIVE_TALENT_GROUP_CHANGED()
         if not Cell.vars.playerSpecID then -- NOTE: when join in battleground, spec auto switched, during loading, can't get info from GetSpecializationInfo, until PLAYER_ENTERING_WORLD
             forceRecheck = true
             checkSpecFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
+            F:Debug("|cffffbb77RoleChanged:|r FAILED")
         else
             forceRecheck = false
             checkSpecFrame:UnregisterEvent("PLAYER_ENTERING_WORLD")
             if not CellDB["clickCastings"][Cell.vars.playerClass]["useCommon"] then
                 Cell:Fire("UpdateClickCastings")
             end
-            F:Debug("|cffbbbbbbRoleChanged:", Cell.vars.playerSpecRole)
-            F:UpdateLayout(Cell.vars.layoutGroupType, false, true)
-            -- Cell:Fire("RoleChanged", Cell.vars.playerSpecRole)
+            F:Debug("|cffffbb77RoleChanged:|r", Cell.vars.playerSpecRole)
+            Cell:Fire("RoleChanged", Cell.vars.playerSpecRole)
         end
     end
 end

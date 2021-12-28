@@ -18,7 +18,7 @@ local spells, glow = {}, {}
 local casts, castsOnUnit = {}, {}
 
 local function UpdateTargetedSpells(setting, value, value2)
-    F:Debug("UpdateTargetedSpells: ", setting, value, value2)
+    F:Debug("|cffff7777UpdateTargetedSpells:|r", setting, value, value2)
     if setting == "spells" then
         spells = F:ConvertTable(value)
     elseif setting == "glow" then
