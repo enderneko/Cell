@@ -208,7 +208,7 @@ local function LoadDebuffs()
             end
         end
     end
-    -- texplore(loadedDebuffs[226])
+    -- texplore(loadedDebuffs[477]) -- 悬槌堡
 end
 
 local function UpdateRaidDebuffs()
@@ -1024,14 +1024,14 @@ do
         tinsert(items, {
             ["text"] = opr,
             ["onClick"] = function()
-                -- -- update db
-                -- local tIndex = isGeneral and "general" or loadedBoss
-                -- CellDB["raidDebuffs"][loadedInstance][tIndex][selectedSpellId][6][2] = opr
-                -- -- update loadedDebuffs
-                -- local t = selectedButtonIndex <= #currentBossTable["enabled"] and currentBossTable["enabled"][selectedButtonIndex] or currentBossTable["disabled"][selectedButtonIndex-#currentBossTable["enabled"]]
-                -- t["glowCondition"][2] = opr
-                -- -- notify debuff list changed
-                -- Cell:Fire("RaidDebuffsChanged")
+                -- update db
+                local tIndex = isGeneral and "general" or loadedBoss
+                CellDB["raidDebuffs"][loadedInstance][tIndex][selectedSpellId][3][2] = opr
+                -- update loadedDebuffs
+                local t = selectedButtonIndex <= #currentBossTable["enabled"] and currentBossTable["enabled"][selectedButtonIndex] or currentBossTable["disabled"][selectedButtonIndex-#currentBossTable["enabled"]]
+                t["condition"][2] = opr
+                -- notify debuff list changed
+                Cell:Fire("RaidDebuffsChanged")
             end,
         })
     end
@@ -1044,15 +1044,15 @@ conditionValue:SetMaxLetters(3)
 conditionValue:SetJustifyH("RIGHT")
 conditionValue:SetScript("OnTextChanged", function(self, userChanged)
     if userChanged then
-        -- local value = tonumber(self:GetText()) or 0
-        -- -- update db
-        -- local tIndex = isGeneral and "general" or loadedBoss
-        -- CellDB["raidDebuffs"][loadedInstance][tIndex][selectedSpellId][6][3] = value
-        -- -- update loadedDebuffs
-        -- local t = selectedButtonIndex <= #currentBossTable["enabled"] and currentBossTable["enabled"][selectedButtonIndex] or currentBossTable["disabled"][selectedButtonIndex-#currentBossTable["enabled"]]
-        -- t["glowCondition"][3] = value
-        -- -- notify debuff list changed
-        -- Cell:Fire("RaidDebuffsChanged")
+        local value = tonumber(self:GetText()) or 0
+        -- update db
+        local tIndex = isGeneral and "general" or loadedBoss
+        CellDB["raidDebuffs"][loadedInstance][tIndex][selectedSpellId][3][3] = value
+        -- update loadedDebuffs
+        local t = selectedButtonIndex <= #currentBossTable["enabled"] and currentBossTable["enabled"][selectedButtonIndex] or currentBossTable["disabled"][selectedButtonIndex-#currentBossTable["enabled"]]
+        t["condition"][3] = value
+        -- notify debuff list changed
+        Cell:Fire("RaidDebuffsChanged")
     end
 end)
 
@@ -1061,7 +1061,6 @@ local glowTypeText = detailsContentFrame:CreateFontString(nil, "OVERLAY", "CELL_
 glowTypeText:SetText(L["Glow Type"])
 
 LoadCondition = function(condition)
-    print("LoadCondition", conditionHeight, glowOptionsHeight, glowConditionHeight)
     if condition[1] == "None" then
         conditionDropDown:SetSelectedValue("None")
         conditionHeight = 0
@@ -1518,7 +1517,6 @@ end, nil, true)
 glowScale:SetPoint("TOPLEFT", glowFrequency, "BOTTOMLEFT", 0, -40)
 
 LoadGlowOptions = function(glowType, glowOptions)
-    print("LoadGlowOptions", conditionHeight, glowOptionsHeight, glowConditionHeight)
     if not glowType or glowType == "None" or not glowOptions then
         glowOptionsFrame:Hide()
         ShowGlowPreview("None")
@@ -1571,7 +1569,6 @@ LoadGlowOptions = function(glowType, glowOptions)
 end
 
 LoadGlowCondition = function(glowCondition)
-    print("LoadGlowCondition", conditionHeight, glowOptionsHeight, glowConditionHeight)
     if type(glowCondition) == "table" then
         glowConditionOperator:Show()
         glowConditionValue:Show()
@@ -1711,9 +1708,9 @@ function F:GetDebuffList(instanceName)
                 if spellName then
                     -- list[spellName/spellId] = {order, glowType, glowOptions}
                     if t["trackByID"] then
-                        list[t["id"]] = {["order"]=t["order"], ["glowType"]=t["glowType"], ["glowOptions"]=t["glowOptions"], ["glowCondition"]=t["glowCondition"]}
+                        list[t["id"]] = {["order"]=t["order"], ["condition"]=t["condition"], ["glowType"]=t["glowType"], ["glowOptions"]=t["glowOptions"], ["glowCondition"]=t["glowCondition"]}
                     else
-                        list[spellName] = {["order"]=t["order"], ["glowType"]=t["glowType"], ["glowOptions"]=t["glowOptions"], ["glowCondition"]=t["glowCondition"]}
+                        list[spellName] = {["order"]=t["order"], ["condition"]=t["condition"], ["glowType"]=t["glowType"], ["glowOptions"]=t["glowOptions"], ["glowCondition"]=t["glowCondition"]}
                     end
                 end
             end
@@ -1725,9 +1722,9 @@ function F:GetDebuffList(instanceName)
                     local spellName = GetSpellInfo(st["id"])
                     if spellName then -- check again
                         if st["trackByID"] then
-                            list[st["id"]] = {["order"]=st["order"]+n, ["glowType"]=st["glowType"], ["glowOptions"]=st["glowOptions"], ["glowCondition"]=st["glowCondition"]}
+                            list[st["id"]] = {["order"]=st["order"]+n, ["condition"]=st["condition"], ["glowType"]=st["glowType"], ["glowOptions"]=st["glowOptions"], ["glowCondition"]=st["glowCondition"]}
                         else
-                            list[spellName] = {["order"]=st["order"]+n, ["glowType"]=st["glowType"], ["glowOptions"]=st["glowOptions"], ["glowCondition"]=st["glowCondition"]}
+                            list[spellName] = {["order"]=st["order"]+n, ["condition"]=st["condition"], ["glowType"]=st["glowType"], ["glowOptions"]=st["glowOptions"], ["glowCondition"]=st["glowCondition"]}
                         end
                     end
                 end

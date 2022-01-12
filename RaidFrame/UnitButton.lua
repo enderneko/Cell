@@ -571,11 +571,11 @@ local function UnitButton_UpdateDebuffs(self)
             I:CheckCustomIndicators(unit, self, "debuff", spellId, expirationTime - duration, duration, debuffType or "", icon, count, refreshing)
 
             -- prepare raidDebuffs
-            if enabledIndicators["raidDebuffs"] and I:GetDebuffOrder(name, spellId) then
+            if enabledIndicators["raidDebuffs"] and I:GetDebuffOrder(name, spellId, count) then
                 raidDebuffsFound = true
                 tinsert(debuffs_raid_indices[unit], i)
                 debuffs_raid_refreshing[unit][i] = refreshing -- store all raidDebuffs
-                debuffs_raid_orders[unit][i] = I:GetDebuffOrder(name, spellId)
+                debuffs_raid_orders[unit][i] = I:GetDebuffOrder(name, spellId, count)
 
                 if not indicatorCustoms["raidDebuffs"] then -- glow all matching debuffs
                     glowType, glowOptions = I:GetDebuffGlow(name, spellId, count)

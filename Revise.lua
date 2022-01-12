@@ -901,5 +901,19 @@ function F:Revise()
         end
     end
 
+    -- r74-release
+    if CellDB["revise"] and dbRevision < 74 then
+        --! add "Condition"
+        for instance, iTable in pairs(CellDB["raidDebuffs"]) do
+            for boss, bTable in pairs(iTable) do
+                for spell, sTable in pairs(bTable) do
+                    if type(sTable[3]) ~= "table" then
+                        tinsert(sTable, 3, {"None"})
+                    end
+                end
+            end
+        end
+    end
+
     CellDB["revise"] = Cell.version
 end

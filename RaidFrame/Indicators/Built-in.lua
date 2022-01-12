@@ -403,10 +403,35 @@ end
 Cell:RegisterCallback("RaidDebuffsChanged", "UpdateDebuffsForCurrentZone", UpdateDebuffsForCurrentZone)
 eventFrame:SetScript("OnEvent", UpdateDebuffsForCurrentZone)
 
-function I:GetDebuffOrder(spellName, spellId)
+local function CheckCondition(operator, checkedValue, currentValue)
+    if operator == "=" then
+        if currentValue == checkedValue then return true end
+    elseif operator == ">" then
+        if currentValue > checkedValue then return true end
+    elseif operator == ">=" then
+        if currentValue >= checkedValue then return true end
+    elseif operator == "<" then
+        if currentValue < checkedValue then return true end
+    elseif operator == "<=" then
+        if currentValue <= checkedValue then return true end
+    else -- ~=
+        if currentValue ~= checkedValue then return true end
+    end
+end
+
+function I:GetDebuffOrder(spellName, spellId, count)
     local t = currentAreaDebuffs[spellId] or currentAreaDebuffs[spellName]
     if not t then return end
-    return t["order"]
+
+    -- check condition
+    local show
+    if t["condition"][1] == "Stack" then
+        show = CheckCondition(t["condition"][2], t["condition"][3], count)
+    else -- no condition
+        show = true
+    end
+
+    if show then return t["order"] end
 end
 
 function I:GetDebuffGlow(spellName, spellId, count)
@@ -416,19 +441,7 @@ function I:GetDebuffGlow(spellName, spellId, count)
     local showGlow
     if t["glowCondition"] then
         if t["glowCondition"][1] == "Stack" then
-            if t["glowCondition"][2] == "=" then
-                if count == t["glowCondition"][3] then showGlow = true end
-            elseif t["glowCondition"][2] == ">" then
-                if count > t["glowCondition"][3] then showGlow = true end
-            elseif t["glowCondition"][2] == ">=" then
-                if count >= t["glowCondition"][3] then showGlow = true end
-            elseif t["glowCondition"][2] == "<" then
-                if count < t["glowCondition"][3] then showGlow = true end
-            elseif t["glowCondition"][2] == "<=" then
-                if count <= t["glowCondition"][3] then showGlow = true end
-            else -- ~=
-                if count ~= t["glowCondition"][3] then showGlow = true end
-            end
+            showGlow = CheckCondition(t["glowCondition"][2], t["glowCondition"][3], count)
         end
     else
         showGlow = true
