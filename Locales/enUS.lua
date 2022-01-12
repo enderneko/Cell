@@ -46,6 +46,11 @@ select(2, ...).L = setmetatable({
     ["marksTips"] = "\n|rTarget marker\nLeft-Click: |cffffffffset raid marker on target|r\nRight-Click: |cfffffffflock raid marker on target (in your group)|r",
 
     ["CHANGE LOGS"] = [[
+        <h1>r74-release (Jan 12, 2022, 22:20 GMT+8)</h1>
+        <p>* Bugs fix: layout auto switch, health text indicator.</p>
+        <p>+ New "Condition" option in Raid Debuffs.</p>
+        <br/>
+
         <h1>r73-release (Dec 8, 2021, 22:22 GMT+8)</h1>
         <p>* Defect fixes.</p>
         <br/>

@@ -390,6 +390,7 @@ L["Tips: Drag and drop to change debuff order. Double-click on instance name to 
 -- L["Enable All"] = "全部启用"
 -- L["Disable All"] = "全部禁用"
 L["Track by ID"] = "匹配法术ID"
+L["Condition"] = "条件"
 L["Glow Type"] = "发光类型"
 L["Glow Color"] = "发光颜色"
 L["None"] = "无"
@@ -422,6 +423,11 @@ L["Bug Report & Suggestion"] = "问题报告与建议"
 -------------------------------------------------
 L["Change Logs"] = "更新记录"
 L["CHANGE LOGS"] = [[
+    <h1>r74-release (Jan 12, 2022, 22:20 GMT+8)</h1>
+    <p>* Bug 修复：布局自动切换，血量文字。</p>
+    <p>+ 副本减益中新增了“条件”选项。</p>
+    <br/>
+
     <h1>r73-release (Dec 8, 2021, 22:22 GMT+8)</h1>
     <p>* 小修复一下。</p>
     <br/>
