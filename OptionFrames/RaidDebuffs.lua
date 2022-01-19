@@ -1257,18 +1257,8 @@ local function UpdatePreviewButton()
     previewButton.widget.healthBar:SetStatusBarTexture(Cell.vars.texture)
     previewButton.widget.powerBar:SetStatusBarTexture(Cell.vars.texture)
 
-    local r, g, b
     -- health color
-    if CellDB["appearance"]["barColor"][1] == "Class Color" then
-        r, g, b = F:GetClassColor(Cell.vars.playerClass)
-    elseif CellDB["appearance"]["barColor"][1] == "Class Color (dark)" then
-        r, g, b = F:GetClassColor(Cell.vars.playerClass)
-        r, g, b = r*.2, g*.2, b*.2
-    elseif CellDB["appearance"]["barColor"][1] == "Gradient" then
-        r, g, b = F:ColorGradient(1, 1,0,0, 1,0.5,0, 0.5,1,0)
-    else
-        r, g, b = unpack(CellDB["appearance"]["barColor"][2])
-    end
+    local r, g, b = F:GetHealthColor(1, F:GetClassColor(Cell.vars.playerClass))
     previewButton.widget.healthBar:SetStatusBarColor(r, g, b, CellDB["appearance"]["barAlpha"])
     
     -- power color

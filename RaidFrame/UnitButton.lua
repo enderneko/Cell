@@ -1545,31 +1545,6 @@ local function UnitButton_UpdateName(self)
     self.indicators.nameText:UpdateName()
 end
 
-local function GetColor(self, r, g, b)
-    local barR, barG, barB, lossR, lossG, lossB
-    -- bar
-    if CellDB["appearance"]["barColor"][1] == "Class Color" then
-        barR, barG, barB = r, g, b
-    elseif CellDB["appearance"]["barColor"][1] == "Class Color (dark)" then
-        barR, barG, barB = r*.2, g*.2, b*.2
-    elseif CellDB["appearance"]["barColor"][1] == "Gradient" then
-        barR, barG, barB = F:ColorGradient(self.state.healthPercent, 1,0,0, 1,0.7,0, 0.7,1,0)
-    else
-        barR, barG, barB = unpack(CellDB["appearance"]["barColor"][2])
-    end
-    -- loss
-    if CellDB["appearance"]["lossColor"][1] == "Class Color" then
-        lossR, lossG, lossB = r, g, b
-    elseif CellDB["appearance"]["lossColor"][1] == "Class Color (dark)" then
-        lossR, lossG, lossB = r*.2, g*.2, b*.2
-    elseif CellDB["appearance"]["lossColor"][1] == "Gradient" then
-        lossR, lossG, lossB = F:ColorGradient(self.state.healthPercent, 1,0,0, 1,0.7,0, 0.7,1,0)
-    else
-        lossR, lossG, lossB = unpack(CellDB["appearance"]["lossColor"][2])
-    end
-    return barR, barG, barB, lossR, lossG, lossB
-end
-
 UnitButton_UpdateColor = function(self)
     local unit = self.state.unit
     if not unit then return end
@@ -1603,40 +1578,17 @@ UnitButton_UpdateColor = function(self)
             lossR, lossG, lossB = barR*.2, barG*.2, barB*.2
             nameText:SetTextColor(F:GetClassColor(self.state.class))
         elseif self.state.inVehicle then
-            if Cell.loaded then
-                barR, barG, barB, lossR, lossG, lossB = GetColor(self, 0, 1, .2)
-                -- if Cell.vars.currentLayoutTable["indicators"][1]["nameColor"][1] ~= "Class Color" then
-                -- 	nameText:SetTextColor(F:GetClassColor(self.state.class))
-                -- end
-            else
-                barR, barG, barB = 0, 1, .2
-                lossR, lossG, lossB = barR*.2, barG*.2, barB*.2
-            end
+            barR, barG, barB, lossR, lossG, lossB = F:GetHealthColor(self.state.healthPercent, 0, 1, 0.2)
         else
-            if Cell.loaded then
-                barR, barG, barB, lossR, lossG, lossB = GetColor(self, F:GetClassColor(self.state.class))
-            else
-                barR, barG, barB = F:GetClassColor(self.state.class)
-                lossR, lossG, lossB = barR*.2, barG*.2, barB*.2
-            end
+            barR, barG, barB, lossR, lossG, lossB = F:GetHealthColor(self.state.healthPercent, F:GetClassColor(self.state.class))
         end
     elseif string.find(unit, "pet") then -- pet
-        if Cell.loaded then
-            barR, barG, barB, lossR, lossG, lossB = GetColor(self, .5, .5, 1)
-        else
-            barR, barG, barB = .5, .5, 1
-            lossR, lossG, lossB = barR*.2, barG*.2, barB*.2
-        end
+        barR, barG, barB, lossR, lossG, lossB = F:GetHealthColor(self.state.healthPercent, 0.5, 0.5, 1)
         if Cell.loaded and Cell.vars.currentLayoutTable["indicators"][1]["nameColor"][1] == "Class Color" then
             nameText:SetTextColor(.5, .5, 1)
         end
     else -- npc
-        if Cell.loaded then
-            barR, barG, barB, lossR, lossG, lossB = GetColor(self, 0, 1, .2)
-        else
-            barR, barG, barB =0, 1, .2
-            lossR, lossG, lossB = barR*.2, barG*.2, barB*.2
-        end
+        barR, barG, barB, lossR, lossG, lossB = F:GetHealthColor(self.state.healthPercent, 0, 1, 0.2)
     end
 
     -- local r, g, b = RAID_CLASS_COLORS["DEATHKNIGHT"]:GetRGB()

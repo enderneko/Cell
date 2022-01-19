@@ -83,47 +83,6 @@ local previewText2 = previewButtonBG2:CreateFontString(nil, "OVERLAY", "CELL_FON
 previewText2:SetPoint("TOP", 0, -3)
 previewText2:SetText(Cell:GetPlayerClassColorString()..L["Preview"].." 2")
 
-local function GetColor(perc)
-    local r, g, b, lossR, lossG, lossB
-    -- health color
-    if CellDB["appearance"]["barColor"][1] == "Class Color" then
-        r, g, b = F:GetClassColor(Cell.vars.playerClass)
-    elseif CellDB["appearance"]["barColor"][1] == "Class Color (dark)" then
-        r, g, b = F:GetClassColor(Cell.vars.playerClass)
-        r, g, b = r*.2, g*.2, b*.2
-    elseif CellDB["appearance"]["barColor"][1] == "Gradient" then
-        r, g, b = F:ColorGradient(perc, 1,0,0, 1,0.7,0, 0.7,1,0)
-    else
-        r, g, b = unpack(CellDB["appearance"]["barColor"][2])
-    end
-    
-    -- loss color
-    if CellDB["appearance"]["lossColor"][1] == "Class Color" then
-        lossR, lossG, lossB = F:GetClassColor(Cell.vars.playerClass)
-    elseif CellDB["appearance"]["lossColor"][1] == "Class Color (dark)" then
-        lossR, lossG, lossB = F:GetClassColor(Cell.vars.playerClass)
-        lossR, lossG, lossB = lossR*.2, lossG*.2, lossB*.2
-    elseif CellDB["appearance"]["lossColor"][1] == "Gradient" then
-        lossR, lossG, lossB = F:ColorGradient(perc, 1,0,0, 1,0.7,0, 0.7,1,0)
-    else
-        lossR, lossG, lossB = unpack(CellDB["appearance"]["lossColor"][2])
-    end
-
-    return r, g, b, lossR, lossG, lossB
-end
-
-local function UpdatePreviewColor(perc)
-    local r, g, b, lossR, lossG, lossB = GetColor(perc)
-    previewButton.widget.healthBar:SetStatusBarColor(r, g, b, CellDB["appearance"]["barAlpha"])
-    previewButton.widget.healthBarLoss:SetVertexColor(lossR, lossG, lossB, CellDB["appearance"]["lossAlpha"])
-end
-
-local function UpdatePreviewColor2(perc)
-    local r, g, b, lossR, lossG, lossB = GetColor(perc)
-    previewButton2.widget.healthBar:SetStatusBarColor(r, g, b, CellDB["appearance"]["barAlpha"])
-    previewButton2.widget.healthBarLoss:SetVertexColor(lossR, lossG, lossB, CellDB["appearance"]["lossAlpha"])
-end
-
 local function UpdatePreviewShields()
     local width = previewButton2.widget.healthBar:GetWidth()
 
@@ -195,8 +154,16 @@ local function UpdatePreviewButton()
     previewButton2.widget.healthBar:SetMinMaxValues(0, 100)
     previewButton2.widget.healthBar:SetValue(60)
 
-    UpdatePreviewColor(previewButton.perc or 1)
-    UpdatePreviewColor2(0.6)
+    -- health color
+    local r, g, b, lossR, lossG, lossB 
+    r, g, b, lossR, lossG, lossB = F:GetHealthColor(previewButton.perc or 1, F:GetClassColor(Cell.vars.playerClass))
+    previewButton.widget.healthBar:SetStatusBarColor(r, g, b, CellDB["appearance"]["barAlpha"])
+    previewButton.widget.healthBarLoss:SetVertexColor(lossR, lossG, lossB, CellDB["appearance"]["lossAlpha"])
+
+    r, g, b, lossR, lossG, lossB = F:GetHealthColor(0.6, F:GetClassColor(Cell.vars.playerClass))
+    previewButton2.widget.healthBar:SetStatusBarColor(r, g, b, CellDB["appearance"]["barAlpha"])
+    previewButton2.widget.healthBarLoss:SetVertexColor(lossR, lossG, lossB, CellDB["appearance"]["lossAlpha"])
+
     UpdatePreviewShields()
 end
 
