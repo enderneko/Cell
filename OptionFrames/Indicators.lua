@@ -37,14 +37,6 @@ previewText:SetPoint("TOP", 0, -3)
 previewText:SetText(Cell:GetPlayerClassColorString()..L["Preview"])
 
 local function UpdatePreviewButton()
-    if not previewButton.loaded then
-        previewButton.loaded = true
-        
-        previewButton.widget.healthBar:SetStatusBarColor(F:GetClassColor(Cell.vars.playerClass))
-        local r, g, b = F:GetPowerColor("player")
-        previewButton.widget.powerBar:SetStatusBarColor(r, g, b)
-    end
-
     previewButton:SetSize(unpack(currentLayoutTable["size"]))
     previewButton.func.SetPowerHeight(currentLayoutTable["powerHeight"])
     previewButton:GetScript("OnSizeChanged")(previewButton)
@@ -67,17 +59,13 @@ local function UpdatePreviewButton()
     previewButton.widget.healthBar:SetStatusBarColor(r, g, b, CellDB["appearance"]["barAlpha"])
     
     -- power color
-    if CellDB["appearance"]["powerColor"][1] == "Class Color" then
-        r, g, b = F:GetClassColor(Cell.vars.playerClass)
-    elseif CellDB["appearance"]["powerColor"][1] == "Custom Color" then
-        r, g, b = unpack(CellDB["appearance"]["powerColor"][2])
-    else
-        r, g, b = F:GetPowerColor("player")
-    end
+    r, g, b = F:GetPowerColor("player", Cell.vars.playerClass)
     previewButton.widget.powerBar:SetStatusBarColor(r, g, b)
 
     -- alpha
     previewButton:SetBackdropColor(0, 0, 0, CellDB["appearance"]["bgAlpha"])
+
+    previewButton.loaded = true
 end
 
 -- init preview button indicator animation

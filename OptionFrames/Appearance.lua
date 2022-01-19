@@ -170,15 +170,8 @@ local function UpdatePreviewButton()
     previewButton2.widget.incomingHeal:SetTexture(Cell.vars.texture)
     previewButton2.widget.damageFlashTex:SetTexture(Cell.vars.texture)
 
-    local r, g, b
     -- power color
-    if CellDB["appearance"]["powerColor"][1] == "Class Color" then
-        r, g, b = F:GetClassColor(Cell.vars.playerClass)
-    elseif CellDB["appearance"]["powerColor"][1] == "Custom Color" then
-        r, g, b = unpack(CellDB["appearance"]["powerColor"][2])
-    else
-        r, g, b = F:GetPowerColor("player")
-    end
+    local r, g, b = F:GetPowerColor("player", Cell.vars.playerClass)
     previewButton.widget.powerBar:SetStatusBarColor(r, g, b)
     previewButton2.widget.powerBar:SetStatusBarColor(r, g, b)
 
@@ -416,6 +409,13 @@ powerColorDropdown:SetItems({
         ["text"] = L["Power Color"],
         ["onClick"] = function()
             CellDB["appearance"]["powerColor"][1] = "Power Color"
+            Cell:Fire("UpdateAppearance", "color")
+        end,
+    },
+    {
+        ["text"] = L["Power Color (dark)"],
+        ["onClick"] = function()
+            CellDB["appearance"]["powerColor"][1] = "Power Color (dark)"
             Cell:Fire("UpdateAppearance", "color")
         end,
     },

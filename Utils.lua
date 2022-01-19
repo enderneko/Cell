@@ -347,55 +347,6 @@ function F:UpdateTextWidth(fs, text, percent)
     end
 end
 
-local RAID_CLASS_COLORS = CUSTOM_CLASS_COLORS or RAID_CLASS_COLORS
-function F:GetClassColor(class)
-    if class and class ~= "" then
-        if CUSTOM_CLASS_COLORS then
-            return CUSTOM_CLASS_COLORS[class].r, CUSTOM_CLASS_COLORS[class].g, CUSTOM_CLASS_COLORS[class].b
-        else
-            return RAID_CLASS_COLORS[class]:GetRGB()
-        end
-    else
-        return 1, 1, 1
-    end
-end
-
-function F:GetClassColorStr(class)
-    if class and class ~= "" then
-        return "|c"..RAID_CLASS_COLORS[class].colorStr
-    else
-        return "|cffffffff"
-    end
-end
-
-function F:GetPowerColor(unit)
-    local r, g, b, t
-    -- https://wow.gamepedia.com/API_UnitPowerType
-    local powerType, powerToken, altR, altG, altB = UnitPowerType(unit)
-    t = powerType
-
-    local info = PowerBarColor[powerToken]
-    if powerType == 0 then -- MANA
-        info = {r=0, g=.5, b=1} -- default mana color is too dark!
-    elseif powerType == 13 then -- INSANITY
-        info = {r=.6, g=.2, b=1}
-    end
-
-    if info then
-        --The PowerBarColor takes priority
-        r, g, b = info.r, info.g, info.b
-    else
-        if not altR then
-            -- Couldn't find a power token entry. Default to indexing by power type or just mana if  we don't have that either.
-            info = PowerBarColor[powerType] or PowerBarColor["MANA"]
-            r, g, b = info.r, info.g, info.b
-        else
-            r, g, b = altR, altG, altB
-        end
-    end
-    return r, g, b, t
-end
-
 function F:GetMarkEscapeSequence(index)
     index = index - 1
     local left, right, top, bottom
@@ -425,6 +376,76 @@ end
 -- function F:SetHideInCombat(obj)
 --     tinsert(scriptObjects, obj)
 -- end
+
+-------------------------------------------------
+-- frame colors
+-------------------------------------------------
+local RAID_CLASS_COLORS = CUSTOM_CLASS_COLORS or RAID_CLASS_COLORS
+function F:GetClassColor(class)
+    if class and class ~= "" then
+        if CUSTOM_CLASS_COLORS then
+            return CUSTOM_CLASS_COLORS[class].r, CUSTOM_CLASS_COLORS[class].g, CUSTOM_CLASS_COLORS[class].b
+        else
+            return RAID_CLASS_COLORS[class]:GetRGB()
+        end
+    else
+        return 1, 1, 1
+    end
+end
+
+function F:GetClassColorStr(class)
+    if class and class ~= "" then
+        return "|c"..RAID_CLASS_COLORS[class].colorStr
+    else
+        return "|cffffffff"
+    end
+end
+
+local function GetPowerColor(unit)
+    local r, g, b, t
+    -- https://wow.gamepedia.com/API_UnitPowerType
+    local powerType, powerToken, altR, altG, altB = UnitPowerType(unit)
+    t = powerType
+
+    local info = PowerBarColor[powerToken]
+    if powerType == 0 then -- MANA
+        info = {r=0, g=.5, b=1} -- default mana color is too dark!
+    elseif powerType == 13 then -- INSANITY
+        info = {r=.6, g=.2, b=1}
+    end
+
+    if info then
+        --The PowerBarColor takes priority
+        r, g, b = info.r, info.g, info.b
+    else
+        if not altR then
+            -- Couldn't find a power token entry. Default to indexing by power type or just mana if  we don't have that either.
+            info = PowerBarColor[powerType] or PowerBarColor["MANA"]
+            r, g, b = info.r, info.g, info.b
+        else
+            r, g, b = altR, altG, altB
+        end
+    end
+    return r, g, b, t
+end
+
+function F:GetPowerColor(unit, class)
+    local r, g, b, t = GetPowerColor(unit)
+    if Cell.loaded then
+        if CellDB["appearance"]["powerColor"][1] == "Power Color (dark)" then
+            lossR, lossG, lossB = r, g, b
+            r, g, b = r*0.2, g*0.2, b*0.2
+        elseif CellDB["appearance"]["powerColor"][1] == "Class Color" then
+            r, g, b = F:GetClassColor(class)
+            lossR, lossG, lossB = r*0.2, g*0.2, b*0.2
+        elseif CellDB["appearance"]["powerColor"][1] == "Custom Color" then
+            r, g, b = unpack(CellDB["appearance"]["powerColor"][2])
+            lossR, lossG, lossB = r*0.2, g*0.2, b*0.2
+        end
+    end
+    return r, g, b, lossR, lossG, lossB, t
+end
+
 
 -------------------------------------------------
 -- units

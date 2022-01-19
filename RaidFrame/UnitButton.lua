@@ -1192,24 +1192,18 @@ UnitButton_UpdatePowerType = function(self)
     local unit = self.state.displayedUnit
     if not unit then return end
 
-    local r, g, b
+    local r, g, b, lossR, lossG, lossB
     local a = Cell.loaded and CellDB["appearance"]["lossAlpha"] or 1
 
     if not UnitIsConnected(unit) then
         r, g, b = 0.5, 0.5, 0.5
+        lossR, lossG, lossB = r*0.2, g*0.2, b*0.2
     else
-        r, g, b, self.state.powerType = F:GetPowerColor(unit)
-        if Cell.loaded then
-            if CellDB["appearance"]["powerColor"][1] == "Class Color" then
-                r, g, b = F:GetClassColor(self.state.class)
-            elseif CellDB["appearance"]["powerColor"][1] == "Custom Color" then
-                r, g, b = unpack(CellDB["appearance"]["powerColor"][2])
-            end
-        end
+        r, g, b, lossR, lossG, lossB, self.state.powerType = F:GetPowerColor(unit, self.state.class)
     end
 
     self.widget.powerBar:SetStatusBarColor(r, g, b)
-    self.widget.powerBarLoss:SetVertexColor(r * .2, g * .2, b * .2, a)
+    self.widget.powerBarLoss:SetVertexColor(lossR, lossG, lossB)
 end
 
 local function UnitButton_UpdateHealthMax(self)

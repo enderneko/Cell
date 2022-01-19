@@ -1272,13 +1272,7 @@ local function UpdatePreviewButton()
     previewButton.widget.healthBar:SetStatusBarColor(r, g, b, CellDB["appearance"]["barAlpha"])
     
     -- power color
-    if CellDB["appearance"]["powerColor"][1] == "Class Color" then
-        r, g, b = F:GetClassColor(Cell.vars.playerClass)
-    elseif CellDB["appearance"]["powerColor"][1] == "Custom Color" then
-        r, g, b = unpack(CellDB["appearance"]["powerColor"][2])
-    else
-        r, g, b = F:GetPowerColor("player")
-    end
+    r, g, b = F:GetPowerColor("player", Cell.vars.playerClass)
     previewButton.widget.powerBar:SetStatusBarColor(r, g, b)
 
     -- alpha
