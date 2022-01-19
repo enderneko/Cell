@@ -7,7 +7,7 @@ local readyBtn, pullBtn
 
 local buttonsFrame = CreateFrame("Frame", "CellRaidButtonsFrame", Cell.frames.mainFrame, "BackdropTemplate")
 Cell.frames.raidButtonsFrame = buttonsFrame
-buttonsFrame:SetSize(60, 55)
+P:Size(buttonsFrame, 60, 55)
 buttonsFrame:SetPoint("TOPRIGHT", UIParent, "CENTER")
 buttonsFrame:SetClampedToScreen(true)
 buttonsFrame:SetMovable(true)
@@ -54,9 +54,9 @@ Cell:RegisterCallback("ShowMover", "RaidButtons_ShowMover", ShowMover)
 -------------------------------------------------
 -- buttons
 -------------------------------------------------
-pullBtn = Cell:CreateStatusBarButton(buttonsFrame, L["Pull"], {17, 17}, 7, "SecureActionButtonTemplate")
+pullBtn = Cell:CreateStatusBarButton(buttonsFrame, L["Pull"], {60, 17}, 7, "SecureActionButtonTemplate")
 pullBtn:SetPoint("BOTTOMLEFT")
-pullBtn:SetPoint("BOTTOMRIGHT")
+-- pullBtn:SetPoint("BOTTOMRIGHT")
 pullBtn:RegisterForClicks("LeftButtonUp", "RightButtonUp")
 pullBtn:SetAttribute("type1", "macro")
 pullBtn:SetAttribute("type2", "macro")
@@ -113,9 +113,9 @@ pullBtn:SetScript("OnEvent", function(self, event, prefix, text)
     end
 end)
 
-readyBtn = Cell:CreateStatusBarButton(buttonsFrame, L["Ready"], {17, 17}, 35)
-readyBtn:SetPoint("BOTTOMLEFT", pullBtn, "TOPLEFT", 0, 3)
-readyBtn:SetPoint("BOTTOMRIGHT", pullBtn, "TOPRIGHT", 0, 3)
+readyBtn = Cell:CreateStatusBarButton(buttonsFrame, L["Ready"], {60, 17}, 35)
+P:Point(readyBtn, "BOTTOMLEFT", pullBtn, "TOPLEFT", 0, 3)
+-- P:Point(readyBtn, "BOTTOMRIGHT", pullBtn, "TOPRIGHT", 0, 3)
 readyBtn:Hide()
 
 readyBtn:SetScript("OnClick", function()
@@ -199,3 +199,10 @@ local function UpdateRaidTools(which)
     end
 end
 Cell:RegisterCallback("UpdateRaidTools", "RaidButtons_UpdateRaidTools", UpdateRaidTools)
+
+local function UpdatePixelPerfect()
+    P:Resize(buttonsFrame)
+    readyBtn:UpdatePixelPerfect()
+    pullBtn:UpdatePixelPerfect()
+end
+Cell:RegisterCallback("UpdatePixelPerfect", "RaidButtons_UpdatePixelPerfect", UpdatePixelPerfect)

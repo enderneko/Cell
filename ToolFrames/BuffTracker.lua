@@ -119,7 +119,7 @@ end
 -------------------------------------------------
 local buffTrackerFrame = CreateFrame("Frame", "CellBuffTrackerFrame", Cell.frames.mainFrame, "BackdropTemplate")
 Cell.frames.buffTrackerFrame = buffTrackerFrame
-buffTrackerFrame:SetSize(102, 50)
+P:Size(buffTrackerFrame, 102, 50)
 buffTrackerFrame:SetPoint("BOTTOMLEFT", UIParent, "CENTER")
 buffTrackerFrame:SetClampedToScreen(true)
 buffTrackerFrame:SetMovable(true)
@@ -142,8 +142,8 @@ buffTrackerFrame.moverText:SetText(L["Mover"])
 buffTrackerFrame.moverText:Hide()
 
 local fakeButtonFrame = CreateFrame("Frame", nil, buffTrackerFrame)
-fakeButtonFrame:SetPoint("BOTTOMLEFT", buffTrackerFrame)
-fakeButtonFrame:SetPoint("TOPRIGHT", buffTrackerFrame, "BOTTOMRIGHT", 0, 32)
+P:Point(fakeButtonFrame, "BOTTOMLEFT", buffTrackerFrame)
+P:Point(fakeButtonFrame, "TOPRIGHT", buffTrackerFrame, "BOTTOMRIGHT", 0, 32)
 fakeButtonFrame:EnableMouse(true)
 fakeButtonFrame:SetFrameLevel(buffTrackerFrame:GetFrameLevel()+10)
 fakeButtonFrame:Hide()
@@ -161,15 +161,21 @@ local function CreateFakeIcon(spellId)
     P:Point(icon, "TOPLEFT", bg, "TOPLEFT", 1, -1)
     P:Point(icon, "BOTTOMRIGHT", bg, "BOTTOMRIGHT", -1, 1)
 
+    function bg:UpdatePixelPerfect()
+        P:Resize(bg)
+        P:Repoint(bg)
+        P:Repoint(icon)
+    end
+
     return bg
 end
 
 local fakePWF = CreateFakeIcon(21562)
-fakePWF:SetPoint("BOTTOMLEFT")
+P:Point(fakePWF, "BOTTOMLEFT")
 local fakeAB = CreateFakeIcon(1459)
-fakeAB:SetPoint("BOTTOMLEFT",fakePWF, "BOTTOMRIGHT", 3, 0)
+P:Point(fakeAB, "BOTTOMLEFT",fakePWF, "BOTTOMRIGHT", 3, 0)
 local fakeBS = CreateFakeIcon(6673)
-fakeBS:SetPoint("BOTTOMLEFT", fakeAB, "BOTTOMRIGHT", 3, 0)
+P:Point(fakeBS, "BOTTOMLEFT", fakeAB, "BOTTOMRIGHT", 3, 0)
 
 local function ShowMover(show)
     if show then
@@ -191,19 +197,19 @@ Cell:RegisterCallback("ShowMover", "BuffTracker_ShowMover", ShowMover)
 -- buttons
 -------------------------------------------------
 buttons["PWF"] = Cell:CreateBuffButton(buffTrackerFrame, {32, 32}, 21562)
-buttons["PWF"]:SetPoint("BOTTOMLEFT")
+P:Point(buttons["PWF"], "BOTTOMLEFT")
 buttons["PWF"]:Hide()
 buttons["PWF"]:SetTooltip(unaffected["PWF"])
 buttons["PWF"].glowColor = {1, 1, 1}
 
 buttons["AB"] = Cell:CreateBuffButton(buffTrackerFrame, {32, 32}, 1459)
-buttons["AB"]:SetPoint("BOTTOMLEFT", buttons["PWF"], "BOTTOMRIGHT", 3, 0)
+P:Point(buttons["AB"], "BOTTOMLEFT", buttons["PWF"], "BOTTOMRIGHT", 3, 0)
 buttons["AB"]:Hide()
 buttons["AB"]:SetTooltip(unaffected["AB"])
 buttons["AB"].glowColor = {.25, .78, .92}
 
 buttons["BS"] = Cell:CreateBuffButton(buffTrackerFrame, {32, 32}, 6673)
-buttons["BS"]:SetPoint("BOTTOMLEFT", buttons["AB"], "BOTTOMRIGHT", 3, 0)
+P:Point(buttons["BS"], "BOTTOMLEFT", buttons["AB"], "BOTTOMRIGHT", 3, 0)
 buttons["BS"]:Hide()
 buttons["BS"]:SetTooltip(unaffected["BS"])
 buttons["BS"].glowColor = {.78, .61, .43}
@@ -214,14 +220,14 @@ local function UpdateButtons()
             local n = F:Getn(unaffected[name])
             if n == 0 then
                 buttons[name].count:SetText("")
-                buttons[name]:SetAlpha(.5)
+                buttons[name]:SetAlpha(0.5)
                 buttons[name]:StopGlow()
             else
                 buttons[name].count:SetText(n)
                 buttons[name]:SetAlpha(1)
                 if unaffected[name][myUnit] then
                     -- color, N, frequency, length, thickness
-                    buttons[name]:StartGlow("Pixel", buttons[name].glowColor, 8, 0.25, 8, 2)
+                    buttons[name]:StartGlow("Pixel", buttons[name].glowColor, 8, 0.25, P:Scale(8), P:Scale(2))
                 else
                     buttons[name]:StopGlow()
                 end
@@ -451,3 +457,15 @@ local function UpdateRaidTools(which)
     end
 end
 Cell:RegisterCallback("UpdateRaidTools", "BuffTracker_UpdateRaidTools", UpdateRaidTools)
+
+local function UpdatePixelPerfect()
+    P:Resize(buffTrackerFrame)
+    fakePWF:UpdatePixelPerfect()
+    fakeAB:UpdatePixelPerfect()
+    fakeBS:UpdatePixelPerfect()
+
+    for _, b in pairs(buttons) do
+        b:UpdatePixelPerfect()
+    end
+end
+Cell:RegisterCallback("UpdatePixelPerfect", "BuffTracker_UpdatePixelPerfect", UpdatePixelPerfect)

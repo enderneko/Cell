@@ -159,7 +159,7 @@ function addon:CreateFrame(name, parent, width, height, isTransparent)
     f:Hide()
     if not isTransparent then addon:StylizeFrame(f) end
     f:EnableMouse(true)
-    if width and height then f:SetSize(width, height) end
+    if width and height then P:Size(f, width, height) end
     return f
 end
 
@@ -463,8 +463,8 @@ function addon:CreateButton(parent, text, buttonColor, size, noBorder, noBackgro
             -- restore colors
             b:SetBackdropColor(unpack(currentBackdropColor))
             b:SetBackdropBorderColor(unpack(currentBackdropBorderColor))
-            wipe(currentBackdropColor)
-            wipe(currentBackdropBorderColor)
+            currentBackdropColor = nil
+            currentBackdropBorderColor = nil
         end
     end
 
@@ -580,6 +580,16 @@ function addon:CreateBuffButton(parent, size, spellId)
         b.count:SetText("")
         b:SetAlpha(1)
         b:StopGlow()
+    end
+
+    function b:UpdatePixelPerfect()
+        P:Resize(b)
+        P:Repoint(b)
+        b:SetBackdrop({edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = P:Scale(1)})
+        b:SetBackdropBorderColor(0, 0, 0, 1)
+
+        P:Repoint(b.texture)
+        P:Repoint(b.count)
     end
 
     return b
@@ -1283,10 +1293,8 @@ function addon:CreateStatusBarButton(parent, text, size, maxValue, template)
     b:SetScript("OnLeave", function()
         b:SetBackdropBorderColor(0, 0, 0, 1)
     end)
-
     
-    local bar = CreateFrame("StatusBar", nil, parent, "BackdropTemplate")
-    bar:SetParent(b)
+    local bar = CreateFrame("StatusBar", nil, b, "BackdropTemplate")
     b.bar = bar
     bar:SetPoint("TOPLEFT", b)
     bar:SetPoint("BOTTOMRIGHT", b)
@@ -1295,7 +1303,7 @@ function addon:CreateStatusBarButton(parent, text, size, maxValue, template)
     bar:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8x8", edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = 1})
     bar:SetBackdropColor(.115, .115, .115, 1)
     bar:SetBackdropBorderColor(0, 0, 0, 0)
-    bar:SetSize(unpack(size))
+    P:Size(bar, size[1], size[2])
     bar:SetMinMaxValues(0, maxValue)
     bar:SetValue(0)
     bar:SetFrameLevel(parent:GetFrameLevel()+1)
@@ -1318,6 +1326,26 @@ function addon:CreateStatusBarButton(parent, text, size, maxValue, template)
     function b:SetMaxValue(value)
         bar:SetMinMaxValues(0, value)
         bar:SetValue(value)
+    end
+
+    b._UpdatePixelPerfect = b.UpdatePixelPerfect -- store UpdatePixelPerfect in CreateButton
+    function b:UpdatePixelPerfect()
+        b:_UpdatePixelPerfect()
+
+        P:Resize(bar)
+        P:Repoint(bar)
+
+        -- update bar
+        -- backup colors
+        local currentBackdropColor = {bar:GetBackdropColor()}
+        local currentBackdropBorderColor = {bar:GetBackdropBorderColor()}
+        -- update backdrop
+        bar:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8x8", edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = P:Scale(1)})
+        -- restore colors
+        bar:SetBackdropColor(unpack(currentBackdropColor))
+        bar:SetBackdropBorderColor(unpack(currentBackdropBorderColor))
+        currentBackdropColor = nil
+        currentBackdropBorderColor = nil
     end
     
     return b

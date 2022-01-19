@@ -7,7 +7,7 @@ local marks, worldMarks
 
 local marksFrame = CreateFrame("Frame", "CellRaidMarksFrame", Cell.frames.mainFrame, "BackdropTemplate")
 Cell.frames.raidMarksFrame = marksFrame
-marksFrame:SetSize(196, 40)
+P:Size(marksFrame, 196, 40)
 marksFrame:SetPoint("BOTTOMRIGHT", UIParent, "CENTER")
 marksFrame:SetClampedToScreen(true)
 marksFrame:SetMovable(true)
@@ -34,7 +34,7 @@ local function ShowMover(show)
         if not CellDB["raidTools"]["showMarks"] then return end
         marksFrame:EnableMouse(true)
         marksFrame.moverText:Show()
-        Cell:StylizeFrame(marksFrame, {0, 1, 0, .4}, {0, 0, 0, 0})
+        Cell:StylizeFrame(marksFrame, {0, 1, 0, 0.4}, {0, 0, 0, 0})
         if not F:HasPermission(true) then -- button not shown
             if CellDB["raidTools"]["marks"] == "target" then
                 marks:Show()
@@ -150,15 +150,15 @@ for i = 1, 9 do
         end)
     end
 
-    markButtons[i].bg:SetColorTexture(.1, .1, .1, .7)
+    markButtons[i].bg:SetColorTexture(0.1, 0.1, 0.1, 0.7)
     markButtons[i]:SetBackdropColor(0, 0, 0, 0)
     markButtons[i].color = {0, 0, 0, 0}
-    markButtons[i].hoverColor = {markColors[i][1], markColors[i][2], markColors[i][3], .35}
+    markButtons[i].hoverColor = {markColors[i][1], markColors[i][2], markColors[i][3], 0.35}
 
     if i == 1 then
-        markButtons[i]:SetPoint("TOPLEFT")
+        P:Point(markButtons[i], "TOPLEFT")
     else
-        markButtons[i]:SetPoint("LEFT", markButtons[i-1], "RIGHT", 2, 0)
+        P:Point(markButtons[i], "LEFT", markButtons[i-1], "RIGHT", 2, 0)
     end
 end
 
@@ -203,15 +203,15 @@ for i = 1, 9 do
         -- worldMarkButtons[i]:SetAttribute("macrotext", "/wm "..worldMarkIndices[i])
     end
 
-    worldMarkButtons[i].bg:SetColorTexture(.1, .1, .1, .7)
+    worldMarkButtons[i].bg:SetColorTexture(0.1, 0.1, 0.1, 0.7)
     worldMarkButtons[i]:SetBackdropColor(0, 0, 0, 0)
     worldMarkButtons[i].color = {0, 0, 0, 0}
-    worldMarkButtons[i].hoverColor = {markColors[i][1], markColors[i][2], markColors[i][3], .35}
+    worldMarkButtons[i].hoverColor = {markColors[i][1], markColors[i][2], markColors[i][3], 0.35}
 
     if i == 1 then
-        worldMarkButtons[i]:SetPoint("TOPLEFT")
+        P:Point(worldMarkButtons[i], "TOPLEFT")
     else
-        worldMarkButtons[i]:SetPoint("LEFT", worldMarkButtons[i-1], "RIGHT", 2, 0)
+        P:Point(worldMarkButtons[i], "LEFT", worldMarkButtons[i-1], "RIGHT", 2, 0)
     end
 end
 
@@ -245,7 +245,7 @@ local function CheckPermission()
         if CellDB["raidTools"]["showMarks"] then
             if CellDB["raidTools"]["marks"] == "target" then
                 worldMarks:Hide()
-                marksFrame:SetHeight(40)
+                P:Height(marksFrame, 40)
                 marks:ClearAllPoints()
                 marks:SetPoint("BOTTOMLEFT")
 
@@ -259,7 +259,7 @@ local function CheckPermission()
                 marks:Hide()
                 worldMarks:ClearAllPoints()
                 worldMarks:SetPoint("BOTTOMLEFT")
-                marksFrame:SetHeight(40)
+                P:Height(marksFrame, 40)
                 if marksFrame.moverText:IsShown() or Cell.vars.hasPartyMarkPermission then
                     worldMarks:Show()
                 else
@@ -270,8 +270,8 @@ local function CheckPermission()
                 worldMarks:ClearAllPoints()
                 worldMarks:SetPoint("BOTTOMLEFT")
                 marks:ClearAllPoints()
-                marks:SetPoint("BOTTOMLEFT", worldMarks, "TOPLEFT", 0, 2)
-                marksFrame:SetHeight(60)
+                P:Point(marks, "BOTTOMLEFT", worldMarks, "TOPLEFT", 0, 2)
+                P:Height(marksFrame, 60)
                 if marksFrame.moverText:IsShown() or Cell.vars.hasPartyMarkPermission then
                     marks:Show()
                     worldMarks:Show()
@@ -303,3 +303,16 @@ local function UpdateRaidTools(which)
     end
 end
 Cell:RegisterCallback("UpdateRaidTools", "RaidMarks_UpdateRaidTools", UpdateRaidTools)
+
+local function UpdatePixelPerfect()
+    P:Resize(marksFrame)
+    P:Resize(marks)
+    P:Repoint(marks) -- only marks needs to repoint
+    P:Resize(worldMarks)
+
+    for i = 1, 9 do
+        markButtons[i]:UpdatePixelPerfect()
+        worldMarkButtons[i]:UpdatePixelPerfect()
+    end
+end
+Cell:RegisterCallback("UpdatePixelPerfect", "Marks_UpdatePixelPerfect", UpdatePixelPerfect)
