@@ -127,11 +127,20 @@ local frame = CreateFrame("Frame")
 -- frame:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
 
 function frame:PLAYER_ENTERING_WORLD()
-    if not init then frame:GROUP_ROSTER_UPDATE() end
-
     local isIn, iType = IsInInstance()
     instanceType = iType
+    
+    if instanceType == "pvp" or instanceType == "arena" then
+        frame:UnregisterEvent("ENCOUNTER_START")
+        frame:UnregisterEvent("ENCOUNTER_END")
+        frame:UnregisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
+        frame:UnregisterEvent("GROUP_ROSTER_UPDATE")
+        return
+    else
+        frame:RegisterEvent("GROUP_ROSTER_UPDATE")
+    end
 
+    if not init then frame:GROUP_ROSTER_UPDATE() end
     if isIn then
         inInstance = true
         if instanceType == "raid" then
@@ -162,6 +171,7 @@ function frame:GROUP_ROSTER_UPDATE()
     else
         frame:UnregisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
     end
+    init = true
 end
 
 function frame:ENCOUNTER_END()
