@@ -194,8 +194,8 @@ for i = 1, 9 do
         worldMarkButtons[i]:SetAttribute("type", "worldmarker")
         worldMarkButtons[i]:SetAttribute("action", "clear")
     else
-        worldMarkButtons[i].texture:SetPoint("TOPLEFT", 1, -1)
-        worldMarkButtons[i].texture:SetPoint("BOTTOMRIGHT", -1, 1)
+        P:Point(worldMarkButtons[i].texture, "TOPLEFT", worldMarkButtons[i], "TOPLEFT", 1, -1)
+        P:Point(worldMarkButtons[i].texture, "BOTTOMRIGHT", worldMarkButtons[i], "BOTTOMRIGHT", -1, 1)
         worldMarkButtons[i].texture:SetColorTexture(markColors[i][1], markColors[i][2], markColors[i][3], .4)
         worldMarkButtons[i]:SetAttribute("type", "worldmarker")
         worldMarkButtons[i]:SetAttribute("marker", worldMarkIndices[i])
@@ -313,6 +313,7 @@ local function UpdatePixelPerfect()
     for i = 1, 9 do
         markButtons[i]:UpdatePixelPerfect()
         worldMarkButtons[i]:UpdatePixelPerfect()
+        P:Repoint(worldMarkButtons[i].texture)
     end
 end
 Cell:RegisterCallback("UpdatePixelPerfect", "Marks_UpdatePixelPerfect", UpdatePixelPerfect)
