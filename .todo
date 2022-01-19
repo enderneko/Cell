@@ -1,10 +1,6 @@
-General:
-
-
-UnitButton:
-
+Appearance:
+    ☐ 4K pixel perfect and border size
 
 Indicators:
     ☐ altpower
-    ☐ when debuffs with SAME NAME refreshed, unexpected icons play its animation.
-    ☐ icon cooldown style
+    ✘ icon cooldown style @cancelled(22-01-19 23:15)
