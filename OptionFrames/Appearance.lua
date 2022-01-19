@@ -534,7 +534,7 @@ end)
 mouseoverColorPicker:SetPoint("TOPLEFT", targetColorPicker, "BOTTOMLEFT", 0, -10)
 
 -- highlight size
-local highlightSize = Cell:CreateSlider(L["Highlight Size"], appearanceTab, 0, 5, 120, 1)
+local highlightSize = Cell:CreateSlider(L["Highlight Size"], appearanceTab, -5, 5, 120, 1)
 highlightSize:SetPoint("TOPLEFT", mouseoverColorPicker, "BOTTOMLEFT", 0, -25)
 highlightSize.afterValueChangedFn = function(value)
     CellDB["appearance"]["highlightSize"] = value

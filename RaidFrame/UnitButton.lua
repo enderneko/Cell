@@ -2239,20 +2239,20 @@ function F:UnitButton_OnLoad(button)
     local targetHighlight = CreateFrame("Frame", name.."TargetHighlight", button, "BackdropTemplate")
     button.widget.targetHighlight = targetHighlight
     targetHighlight:EnableMouse(false)
-    targetHighlight:SetFrameLevel(3)
-    targetHighlight:SetBackdrop({edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = P:Scale(1)})
-    P:Point(targetHighlight, "TOPLEFT", button, "TOPLEFT", -1, 1)
-    P:Point(targetHighlight, "BOTTOMRIGHT", button, "BOTTOMRIGHT", 1, -1)
+    targetHighlight:SetFrameLevel(6)
+    -- targetHighlight:SetBackdrop({edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = P:Scale(1)})
+    -- P:Point(targetHighlight, "TOPLEFT", button, "TOPLEFT", -1, 1)
+    -- P:Point(targetHighlight, "BOTTOMRIGHT", button, "BOTTOMRIGHT", 1, -1)
     targetHighlight:Hide()
     
     -- mouseover highlight
     local mouseoverHighlight = CreateFrame("Frame", name.."MouseoverHighlight", button, "BackdropTemplate")
     button.widget.mouseoverHighlight = mouseoverHighlight
     mouseoverHighlight:EnableMouse(false)
-    mouseoverHighlight:SetFrameLevel(4)
-    mouseoverHighlight:SetBackdrop({edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = P:Scale(1)})
-    P:Point(mouseoverHighlight, "TOPLEFT", button, "TOPLEFT", -1, 1)
-    P:Point(mouseoverHighlight, "BOTTOMRIGHT", button, "BOTTOMRIGHT", 1, -1)
+    mouseoverHighlight:SetFrameLevel(7)
+    -- mouseoverHighlight:SetBackdrop({edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = P:Scale(1)})
+    -- P:Point(mouseoverHighlight, "TOPLEFT", button, "TOPLEFT", -1, 1)
+    -- P:Point(mouseoverHighlight, "BOTTOMRIGHT", button, "BOTTOMRIGHT", 1, -1)
     mouseoverHighlight:Hide()
 
     button.func.UpdateHighlightColor = function()
@@ -2263,17 +2263,28 @@ function F:UnitButton_OnLoad(button)
     button.func.UpdateHighlightSize = function()
         local size = CellDB["appearance"]["highlightSize"]
         
-        P:ClearPoints(targetHighlight)
-        P:ClearPoints(mouseoverHighlight)
-        
         if size ~= 0 then
             highlightEnabled = true
-            P:Point(targetHighlight, "TOPLEFT", button, "TOPLEFT", -size, size)
-            P:Point(targetHighlight, "BOTTOMRIGHT", button, "BOTTOMRIGHT", size, -size)
+            
+            P:ClearPoints(targetHighlight)
+            P:ClearPoints(mouseoverHighlight)
+
+            -- update point
+            if size < 0 then
+                size = abs(size)
+                P:Point(targetHighlight, "TOPLEFT", button, "TOPLEFT")
+                P:Point(targetHighlight, "BOTTOMRIGHT", button, "BOTTOMRIGHT")
+                P:Point(mouseoverHighlight, "TOPLEFT", button, "TOPLEFT")
+                P:Point(mouseoverHighlight, "BOTTOMRIGHT", button, "BOTTOMRIGHT")
+            else
+                P:Point(targetHighlight, "TOPLEFT", button, "TOPLEFT", -size, size)
+                P:Point(targetHighlight, "BOTTOMRIGHT", button, "BOTTOMRIGHT", size, -size)
+                P:Point(mouseoverHighlight, "TOPLEFT", button, "TOPLEFT", -size, size)
+                P:Point(mouseoverHighlight, "BOTTOMRIGHT", button, "BOTTOMRIGHT", size, -size)
+            end
+
+            -- update thickness
             targetHighlight:SetBackdrop({edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = P:Scale(size)})
-        
-            P:Point(mouseoverHighlight, "TOPLEFT", button, "TOPLEFT", -size, size)
-            P:Point(mouseoverHighlight, "BOTTOMRIGHT", button, "BOTTOMRIGHT", size, -size)
             mouseoverHighlight:SetBackdrop({edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = P:Scale(size)})
 
             -- update color
@@ -2299,7 +2310,7 @@ function F:UnitButton_OnLoad(button)
     --* overlayFrame
     local overlayFrame = CreateFrame("Frame", name.."OverlayFrame", button)
     button.widget.overlayFrame = overlayFrame
-    overlayFrame:SetFrameLevel(7) -- button:GetFrameLevel() == 3
+    overlayFrame:SetFrameLevel(8) -- button:GetFrameLevel() == 4
     overlayFrame:SetAllPoints(button)
 
     -- aggro bar
