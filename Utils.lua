@@ -446,6 +446,8 @@ function F:GetPowerColor(unit, class)
     elseif CellDB["appearance"]["powerColor"][1] == "Custom Color" then
         r, g, b = unpack(CellDB["appearance"]["powerColor"][2])
         lossR, lossG, lossB = r*0.2, g*0.2, b*0.2
+    else
+        lossR, lossG, lossB = r*0.2, g*0.2, b*0.2
     end
     return r, g, b, lossR, lossG, lossB, t
 end
