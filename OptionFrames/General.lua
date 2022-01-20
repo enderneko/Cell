@@ -172,7 +172,7 @@ showPartyPetsCB:SetPoint("TOPLEFT", showPartyCB, "BOTTOMLEFT", 0, -7)
 -- misc
 -------------------------------------------------
 local miscText = Cell:CreateSeparator(L["Misc"], generalTab, 188)
-miscText:SetPoint("TOPLEFT", 5, -110)
+miscText:SetPoint("TOPLEFT", 5, -130)
 
 -- local blizzardText = Cell:CreateSeparator(L["Blizzard Frames"], generalTab, 188)
 -- blizzardText:SetPoint("TOPLEFT", 5, -5)
@@ -203,7 +203,7 @@ sortByRoleCB:SetPoint("TOPLEFT", fadeoutCB, "BOTTOMLEFT", 0, -7)
 -- raid tools
 -------------------------------------------------
 local toolsText = Cell:CreateSeparator(L["Raid Tools"].." |cFF777777"..L["Only in Group"], generalTab, 387)
-toolsText:SetPoint("TOPLEFT", 5, -240)
+toolsText:SetPoint("TOPLEFT", 5, -275)
 
 local unlockBtn = Cell:CreateButton(generalTab, L["Unlock"], "class", {50, 17})
 unlockBtn:SetPoint("RIGHT", -5, 0)
@@ -233,10 +233,11 @@ local reportCB = Cell:CreateCheckButton(generalTab, L["Death Report"], function(
     CellDB["raidTools"]["deathReport"][1] = checked
     Cell:Fire("UpdateRaidTools", "deathReport")
 end)
-reportCB:SetPoint("LEFT", resCB, "RIGHT", 115, 0)
+reportCB:SetPoint("TOPLEFT", resCB, "TOPRIGHT", 115, 0)
 reportCB:HookScript("OnEnter", function()
     CellTooltip:SetOwner(reportCB, "ANCHOR_TOPLEFT", 0, 2)
     CellTooltip:AddLine(L["Death Report"].." |cffff2727"..L["HIGH CPU USAGE"])
+    CellTooltip:AddLine("|cffff2727" .. L["Disabled in battlegrounds and arenas"])
     CellTooltip:AddLine("|cffffffff" .. L["Report deaths to group"])
     CellTooltip:AddLine("|cffffffff" .. L["Use |cFFFFB5C5/cell report X|r to set the number of reports during a raid encounter"])
     CellTooltip:AddLine("|cffffffff" .. L["Current"]..": |cFFFFB5C5"..(CellDB["raidTools"]["deathReport"][2]==0 and L["all"] or string.format(L["first %d"], CellDB["raidTools"]["deathReport"][2])))
@@ -251,7 +252,7 @@ local buffCB = Cell:CreateCheckButton(generalTab, L["Buff Tracker"], function(ch
     CellDB["raidTools"]["showBuffTracker"] = checked
     Cell:Fire("UpdateRaidTools", "buffTracker")
 end, L["Buff Tracker"].." |cffff7727"..L["MODERATE CPU USAGE"], L["Check if your group members need some raid buffs"], L["|cffffb5c5Left-Click:|r cast the spell"], L["|cffffb5c5Right-Click:|r report unaffected"]) -- L["|cffffb5c5Middle-Click:|r send custom message"]
-buffCB:SetPoint("LEFT", reportCB, "RIGHT", 115, 0)
+buffCB:SetPoint("TOPLEFT", reportCB, "TOPRIGHT", 115, 0)
 
 -- ready & pull
 local pullText, pullDropdown, secDropdown
@@ -270,10 +271,10 @@ readyPullCB:SetPoint("TOPLEFT", resCB, "BOTTOMLEFT", 0, -15)
 
 pullText = generalTab:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
 pullText:SetText(L["Pull Timer"])
-pullText:SetPoint("TOPLEFT", readyPullCB, "BOTTOMRIGHT", 5, -10)
+pullText:SetPoint("TOPLEFT", readyPullCB, "BOTTOMRIGHT", 5, -9)
 
 pullDropdown = Cell:CreateDropdown(generalTab, 75)
-pullDropdown:SetPoint("LEFT", pullText, "RIGHT", 10, 0)
+pullDropdown:SetPoint("LEFT", pullText, "RIGHT", 7, 0)
 pullDropdown:SetItems({
     {
         ["text"] = "ExRT",
@@ -353,42 +354,43 @@ secDropdown:SetItems({
 })
 
 -- marks bar
-local marksCB, worldMarksCB, bothCB
+local marksDropdown
 local marksBarCB = Cell:CreateCheckButton(generalTab, L["Marks Bar"], function(checked, self)
     CellDB["raidTools"]["showMarks"] = checked
-    marksCB:SetEnabled(checked)
-    worldMarksCB:SetEnabled(checked)
-    bothCB:SetEnabled(checked)
+    marksDropdown:SetEnabled(checked)
     Cell:Fire("UpdateRaidTools", "marks")
 end, L["Marks Bar"], L["Only show when you have permission to do this"], L["marksTips"])
-marksBarCB:SetPoint("TOPLEFT", readyPullCB, "BOTTOMLEFT", 0, -40)
+marksBarCB:SetPoint("TOPLEFT", readyPullCB, "TOPRIGHT", 244, 0)
 
-marksCB = Cell:CreateCheckButton(generalTab, L["Target Marks"], function(checked, self)
-    CellDB["raidTools"]["marks"] = "target"
-    marksCB:SetChecked(true)
-    worldMarksCB:SetChecked(false)
-    bothCB:SetChecked(false)
-    Cell:Fire("UpdateRaidTools", "marks")
-end)
-marksCB:SetPoint("TOPLEFT", marksBarCB, "BOTTOMRIGHT", 5, -10)
+marksDropdown = Cell:CreateDropdown(generalTab, 100)
+marksDropdown:SetPoint("TOPLEFT", marksBarCB, "BOTTOMRIGHT", 5, -5)
+marksDropdown:SetItems({
+    {
+        ["text"] = L["Target Marks"],
+        ["value"] = "target",
+        ["onClick"] = function()
+            CellDB["raidTools"]["marks"] = "target"
+            Cell:Fire("UpdateRaidTools", "marks")
+        end,
+    },
+    {
+        ["text"] = L["World Marks"],
+        ["value"] = "world",
+        ["onClick"] = function()
+            CellDB["raidTools"]["marks"] = "world"
+            Cell:Fire("UpdateRaidTools", "marks")
+        end,
+    },
+    {
+        ["text"] = L["Both"],
+        ["value"] = "both",
+        ["onClick"] = function()
+            CellDB["raidTools"]["marks"] = "both"
+            Cell:Fire("UpdateRaidTools", "marks")
+        end,
+    }
+})
 
-worldMarksCB = Cell:CreateCheckButton(generalTab, L["World Marks"], function(checked, self)
-    CellDB["raidTools"]["marks"] = "world"
-    marksCB:SetChecked(false)
-    worldMarksCB:SetChecked(true)
-    bothCB:SetChecked(false)
-    Cell:Fire("UpdateRaidTools", "marks")
-end)
-worldMarksCB:SetPoint("LEFT", marksCB, "RIGHT", 101, 0)
-
-bothCB = Cell:CreateCheckButton(generalTab, L["Both"], function(checked, self)
-    CellDB["raidTools"]["marks"] = "both"
-    marksCB:SetChecked(false)
-    worldMarksCB:SetChecked(false)
-    bothCB:SetChecked(true)
-    Cell:Fire("UpdateRaidTools", "marks")
-end)
-bothCB:SetPoint("LEFT", worldMarksCB, "RIGHT", 101, 0)
 
 -------------------------------------------------
 -- functions
@@ -452,16 +454,7 @@ local function ShowTab(tab)
         end
 
         marksBarCB:SetChecked(CellDB["raidTools"]["showMarks"])
-        marksCB:SetEnabled(CellDB["raidTools"]["showMarks"])
-        worldMarksCB:SetEnabled(CellDB["raidTools"]["showMarks"])
-        bothCB:SetEnabled(CellDB["raidTools"]["showMarks"])
-        if CellDB["raidTools"]["marks"] == "target" then
-            marksCB:SetChecked(true)
-        elseif CellDB["raidTools"]["marks"] == "world" then
-            worldMarksCB:SetChecked(true)
-        else
-            bothCB:SetChecked(true)
-        end
+        marksDropdown:SetSelectedValue(CellDB["raidTools"]["marks"])
     else
         generalTab:Hide()
     end

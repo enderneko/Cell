@@ -454,38 +454,6 @@ function I:GetDebuffGlow(spellName, spellId, count)
     end
 end
 
--- function I:GetDebuffOrder(spellName, spellId, count)
---     local t = currentAreaDebuffs[spellId] or currentAreaDebuffs[spellName]
---     if not t then return end
-
---     local showGlow
---     if t["glowCondition"] then
---         if t["glowCondition"][1] == "Stack" then
---             if t["glowCondition"][2] == "=" then
---                 if count == t["glowCondition"][3] then showGlow = true end
---             elseif t["glowCondition"][2] == ">" then
---                 if count > t["glowCondition"][3] then showGlow = true end
---             elseif t["glowCondition"][2] == ">=" then
---                 if count >= t["glowCondition"][3] then showGlow = true end
---             elseif t["glowCondition"][2] == "<" then
---                 if count < t["glowCondition"][3] then showGlow = true end
---             elseif t["glowCondition"][2] == "<=" then
---                 if count <= t["glowCondition"][3] then showGlow = true end
---             else -- ~=
---                 if count ~= t["glowCondition"][3] then showGlow = true end
---             end
---         end
---     else
---         showGlow = true
---     end
-
---     if showGlow then
---         return t["order"], t["glowType"], t["glowOptions"]
---     else
---         return t["order"], "None", nil
---     end
--- end
-
 function I:CreateRaidDebuffs(parent)
     local raidDebuffs = CreateFrame("Frame", parent:GetName().."RaidDebuffParent", parent.widget.overlayFrame)
     parent.indicators.raidDebuffs = raidDebuffs
