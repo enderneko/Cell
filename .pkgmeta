@@ -3,4 +3,3 @@ enable-nolib-creation: no
 
 ignore:
     - Libs/LibStub/tests
-    - README.md
