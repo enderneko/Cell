@@ -36,7 +36,7 @@ local encounterJournalList = {
     -- },
 }
 
-local instanceIds = { -- used for GetInstanceInfo/GetRealZoneText --> instanceId
+local instanceNameMapping = { -- used for GetInstanceInfo/GetRealZoneText --> instanceId
     -- [instanceName] = expansionName:instanceIndex:instanceId,
 }
 
@@ -66,7 +66,7 @@ local function LoadInstanceList(tier, instanceType, list)
         local eName = EJ_GetTierInfo(tier)
         local instanceTable = {["name"]=name, ["id"]=id, ["bosses"]={}}
         tinsert(list, instanceTable)
-        instanceIds[name] = eName..":"..#list..":"..id -- NOTE: used for searching current zone debuffs & switch to current instance
+        instanceNameMapping[name] = eName..":"..#list..":"..id -- NOTE: used for searching current zone debuffs & switch to current instance
 
         LoadBossList(id, instanceTable["bosses"])
     end
@@ -249,9 +249,9 @@ showCurrentBtn.tex:SetAtlas("DungeonSkull")
 showCurrentBtn:SetScript("OnClick", function()
     if IsInInstance() then
         local name = GetInstanceInfo()
-        if not name or not instanceIds[name] then return end
+        if not name or not instanceNameMapping[name] then return end
 
-        local eName, index, id = F:SplitToNumber(":", instanceIds[name])
+        local eName, index, id = F:SplitToNumber(":", instanceNameMapping[name])
         if loadedInstance == id then return end
         expansionDropdown:SetSelected(eName)
         LoadExpansion(eName)
@@ -1680,7 +1680,7 @@ end
 -------------------------------------------------
 function F:GetDebuffList(instanceName)
     local list = {}
-    local eName, iIndex, iId = F:SplitToNumber(":", instanceIds[instanceName])
+    local eName, iIndex, iId = F:SplitToNumber(":", instanceNameMapping[instanceName])
     
     if iId and loadedDebuffs[iId] then
         local n = 0
