@@ -2,28 +2,28 @@ local _, Cell = ...
 local L = Cell.L
 local F = Cell.funcs
 
-local Compresser = LibStub:GetLibrary("LibCompress")
-local Encoder = Compresser:GetAddonEncodeTable()
+local LibDeflate = LibStub:GetLibrary("LibDeflate")
+local deflateConfig = {level = 9}
 local Serializer = LibStub:GetLibrary("LibSerialize")
 local Comm = LibStub:GetLibrary("AceComm-3.0")
 
 local function Serialize(data)
-    local serialized = Serializer:Serialize(data)
-    local compressed = Compresser:CompressHuffman(serialized)
-    return Encoder:Encode(compressed)
+    local serialized = Serializer:Serialize(data) -- serialize
+    local compressed = LibDeflate:CompressDeflate(serialized, deflateConfig) -- compress
+    return LibDeflate:EncodeForWoWAddonChannel(compressed) -- encode
 end
 
 local function Deserialize(encoded)
-    local decoded = Encoder:Decode(encoded)
-    local decompressed, errorMsg = Compresser:Decompress(decoded)
+    local decoded = LibDeflate:DecodeForWoWAddonChannel(encoded) -- decode
+    local decompressed = LibDeflate:DecompressDeflate(decoded) -- decompress
     if not decompressed then
         F:Debug("Error decompressing: " .. errorMsg)
-        return nil
+        return
     end
-    local success, data = Serializer:Deserialize(decompressed)
+    local success, data = Serializer:Deserialize(decompressed) -- deserialize
     if not success then
         F:Debug("Error deserializing: " .. data)
-        return nil
+        return
     end
     return data
 end
