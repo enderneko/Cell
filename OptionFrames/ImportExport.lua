@@ -3,6 +3,7 @@ local L = Cell.L
 local F = Cell.funcs
 local Serializer = LibStub:GetLibrary("LibSerialize")
 local LibDeflate = LibStub:GetLibrary("LibDeflate")
+local deflateConfig = {level = 9}
 
 local MINIMUM_VERSION = 71
 local isImport, imported, exported = false, {}, ""
@@ -143,7 +144,7 @@ function F:ShowLayoutExportFrame(layoutName, layoutTable)
     local prefix = "!CELL:"..(tonumber(string.match(Cell.version, "%d+")) or 0)..":"..layoutName.."!"
 
     exported = Serializer:Serialize(layoutTable) -- serialize
-    exported = LibDeflate:CompressDeflate(exported) -- compress
+    exported = LibDeflate:CompressDeflate(exported, deflateConfig) -- compress
     exported = LibDeflate:EncodeForPrint(exported) -- encode
     exported = prefix..exported
 
