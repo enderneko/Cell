@@ -23,7 +23,7 @@ local instanceButtons, bossButtons, debuffButtons = {}, {}, {}
 -- instanceId = EJ_GetInstanceForMap(mapId)
 -- instanceName, ... = EJ_GetInstanceInfo(instanceId)
 
--- used for sort list buttons
+-- used to sort list buttons
 local encounterJournalList = {
     -- ["expansionName"] = {
     --     {
@@ -36,8 +36,17 @@ local encounterJournalList = {
     -- },
 }
 
-local instanceNameMapping = { -- used for GetInstanceInfo/GetRealZoneText --> instanceId
+-- used to GetInstanceInfo/GetRealZoneText --> instanceId
+local instanceNameMapping = {
     -- [instanceName] = expansionName:instanceIndex:instanceId,
+}
+
+-- used for mapping instanceId --> instanceName
+local instanceIdToName = {}
+
+-- used for mapping bossId --> bossName
+local bossIdToName = {
+    [0] = L["General"]
 }
 
 local function LoadBossList(instanceId, list)
@@ -51,6 +60,7 @@ local function LoadBossList(instanceId, list)
         -- id, name, description, displayInfo, iconImage, uiModelSceneID = EJ_GetCreatureInfo(index [, encounterID])
         local image = select(5, EJ_GetCreatureInfo(1, id))
         tinsert(list, {["name"]=name, ["id"]=id, ["image"]=image})
+        bossIdToName[id] = name
 	end
 end
 
@@ -67,6 +77,7 @@ local function LoadInstanceList(tier, instanceType, list)
         local instanceTable = {["name"]=name, ["id"]=id, ["bosses"]={}}
         tinsert(list, instanceTable)
         instanceNameMapping[name] = eName..":"..#list..":"..id -- NOTE: used for searching current zone debuffs & switch to current instance
+        instanceIdToName[id] = name
 
         LoadBossList(id, instanceTable["bosses"])
     end
@@ -103,13 +114,13 @@ local loadedDebuffs = {
     -- [instanceId] = {
     --     ["general"] = {
     --         ["enabled"]= {
-    --             {["id"]=spellId, ["order"]=order, ["trackByID"]=trackByID, ["glowType"]=glowType, ["glowOptions"]={...}, ["glowCondition"]={...}}
+    --             {["id"]=spellId, ["order"]=order, ["trackByID"]=trackByID, ["condition"]={type,operator,value}, ["glowType"]=glowType, ["glowOptions"]={...}, ["glowCondition"]={...}}
     --         },
     --         ["disabled"] = {},
     --     },
     --     [bossId] = {
     --         ["enabled"]= {
-    --             {["id"]=spellId, ["order"]=order, ["trackByID"]=trackByID, ["glowType"]=glowType, ["glowOptions"]={...}, ["glowCondition"]={...}}
+    --             {["id"]=spellId, ["order"]=order, ["trackByID"]=trackByID, ["condition"]={type,operator,value}, ["glowType"]=glowType, ["glowOptions"]={...}, ["glowCondition"]={...}}
     --         },
     --         ["disabled"] = {},
     --     },
@@ -126,22 +137,82 @@ local loadedDebuffs = {
 --     glowCondition(table) -- 6
 -- }
 
+local function LoadDB(instanceId, bossId, bossTable)
+    if not loadedDebuffs[instanceId][bossId] then loadedDebuffs[instanceId][bossId] = {["enabled"]={}, ["disabled"]={}} end
+    -- load from db and set its order
+    for spellId, sTable in pairs(bossTable) do
+        local t = {["id"]=spellId, ["order"]=sTable[1], ["trackByID"]=sTable[2], ["condition"]=sTable[3], ["glowType"]=sTable[4], ["glowOptions"]=sTable[5], ["glowCondition"]=sTable[6]}
+        if sTable[1] == 0 then
+            tinsert(loadedDebuffs[instanceId][bossId]["disabled"], t)
+        else
+            loadedDebuffs[instanceId][bossId]["enabled"][sTable[1]] = t
+        end
+    end
+end
+
+local function LoadBuiltIn(instanceId, bossId, bossTable)
+    if not loadedDebuffs[instanceId][bossId] then loadedDebuffs[instanceId][bossId] = {["enabled"]={}, ["disabled"]={}} end
+    -- load
+    for i, spellId in pairs(bossTable) do
+        if not (CellDB["raidDebuffs"][instanceId] and CellDB["raidDebuffs"][instanceId][bossId] and CellDB["raidDebuffs"][instanceId][bossId][tonumber(spellId)]) then
+            if type(spellId) == "string" then -- track by id
+                F:TInsert(loadedDebuffs[instanceId][bossId]["enabled"], {["id"]=tonumber(spellId), ["order"]=#loadedDebuffs[instanceId][bossId]["enabled"]+1, ["trackByID"]=true, ["condition"]={"None"}, ["built-in"]=true})
+            else
+                F:TInsert(loadedDebuffs[instanceId][bossId]["enabled"], {["id"]=spellId, ["order"]=#loadedDebuffs[instanceId][bossId]["enabled"]+1, ["condition"]={"None"}, ["built-in"]=true})
+            end
+        else -- exists in both CellDB and built-in
+            local found
+            -- find in loadedDebuffs and mark it as built-in
+            for _, sTable in pairs(loadedDebuffs[instanceId][bossId]["enabled"]) do
+                if sTable["id"] == tonumber(spellId) then
+                    found = true
+                    sTable["built-in"] = true
+                    break
+                end
+            end
+            -- check disabled if not found
+            if not found then
+                for _, sTable in pairs(loadedDebuffs[instanceId][bossId]["disabled"]) do
+                    if sTable["id"] == tonumber(spellId) then
+                        sTable["built-in"] = true
+                        break
+                    end
+                end
+            end
+        end
+    end
+end
+
+local function CheckOrders(instanceId, bossId, bossTable)
+    local currentN, correctN = #bossTable["enabled"], F:Getn(bossTable["enabled"])
+    if currentN ~= correctN then -- missing some debuffs, maybe deleted from .lua
+        -- texplore(bossTable)
+        F:Debug("|cffff2222FIX MISSING DEBUFFS|r", instanceId, bossId)
+        local temp = {}
+        for _, sTable in pairs(bossTable["enabled"]) do
+            tinsert(temp, sTable)
+        end
+        for k, sTable in ipairs(temp) do
+            if sTable["order"] ~= k then
+                -- fix loadedDebuffs
+                sTable["order"] = k
+                -- fix db
+                if CellDB["raidDebuffs"][instanceId] and CellDB["raidDebuffs"][instanceId][bossId] and CellDB["raidDebuffs"][instanceId][bossId][sTable["id"]] then
+                    CellDB["raidDebuffs"][instanceId][bossId][sTable["id"]][1] = k
+                end
+            end
+        end
+        bossTable["enabled"] = temp
+    end
+end
+
 local function LoadDebuffs()
     -- check db
     for instanceId, iTable in pairs(CellDB["raidDebuffs"]) do
         if not loadedDebuffs[instanceId] then loadedDebuffs[instanceId] = {} end
 
         for bossId, bTable in pairs(iTable) do
-            if not loadedDebuffs[instanceId][bossId] then loadedDebuffs[instanceId][bossId] = {["enabled"]={}, ["disabled"]={}} end
-            -- load from db and set its order
-            for spellId, sTable in pairs(bTable) do
-                local t = {["id"]=spellId, ["order"]=sTable[1], ["trackByID"]=sTable[2], ["condition"]=sTable[3], ["glowType"]=sTable[4], ["glowOptions"]=sTable[5], ["glowCondition"]=sTable[6]}
-                if sTable[1] == 0 then
-                    tinsert(loadedDebuffs[instanceId][bossId]["disabled"], t)
-                else
-                    loadedDebuffs[instanceId][bossId]["enabled"][sTable[1]] = t
-                end
-            end
+            LoadDB(instanceId, bossId, bTable)
         end
     end
 
@@ -150,64 +221,17 @@ local function LoadDebuffs()
         if not loadedDebuffs[instanceId] then loadedDebuffs[instanceId] = {} end
 
         for bossId, bTable in pairs(iTable) do
-            if not loadedDebuffs[instanceId][bossId] then loadedDebuffs[instanceId][bossId] = {["enabled"]={}, ["disabled"]={}} end
-            -- load
-            for i, spellId in pairs(bTable) do
-                if not (CellDB["raidDebuffs"][instanceId] and CellDB["raidDebuffs"][instanceId][bossId] and CellDB["raidDebuffs"][instanceId][bossId][tonumber(spellId)]) then
-                    if type(spellId) == "string" then -- track by id
-                        F:TInsert(loadedDebuffs[instanceId][bossId]["enabled"], {["id"]=tonumber(spellId), ["order"]=#loadedDebuffs[instanceId][bossId]["enabled"]+1, ["trackByID"]=true, ["condition"]={"None"}, ["built-in"]=true})
-                    else
-                        F:TInsert(loadedDebuffs[instanceId][bossId]["enabled"], {["id"]=spellId, ["order"]=#loadedDebuffs[instanceId][bossId]["enabled"]+1, ["condition"]={"None"}, ["built-in"]=true})
-                    end
-                else -- exists in both CellDB and built-in
-                    local found
-                    -- find in loadedDebuffs and mark it as built-in
-                    for _, sTable in pairs(loadedDebuffs[instanceId][bossId]["enabled"]) do
-                        if sTable["id"] == tonumber(spellId) then
-                            found = true
-                            sTable["built-in"] = true
-                            break
-                        end
-                    end
-                    -- check disabled if not found
-                    if not found then
-                        for _, sTable in pairs(loadedDebuffs[instanceId][bossId]["disabled"]) do
-                            if sTable["id"] == tonumber(spellId) then
-                                sTable["built-in"] = true
-                                break
-                            end
-                        end
-                    end
-                end
-            end
+            LoadBuiltIn(instanceId, bossId, bTable)
         end
     end
 
     -- check orders
-    for iId, iTable in pairs(loadedDebuffs) do
-        for bId, bTable in pairs(iTable) do
-            local currentN, correctN = #bTable["enabled"], F:Getn(bTable["enabled"])
-            if currentN ~= correctN then -- missing some debuffs, maybe deleted from .lua
-                -- texplore(bTable)
-                F:Debug("|cffff2222FIX MISSING DEBUFFS|r", iId, bId)
-                local temp = {}
-                for _, sTable in pairs(bTable["enabled"]) do
-                    tinsert(temp, sTable)
-                end
-                for k, sTable in ipairs(temp) do
-                    if sTable["order"] ~= k then
-                        -- fix loadedDebuffs
-                        sTable["order"] = k
-                        -- fix db
-                        if CellDB["raidDebuffs"][iId] and CellDB["raidDebuffs"][iId][bId] and CellDB["raidDebuffs"][iId][bId][sTable["id"]] then
-                            CellDB["raidDebuffs"][iId][bId][sTable["id"]][1] = k
-                        end
-                    end
-                end
-                bTable["enabled"] = temp
-            end
+    for instanceId, iTable in pairs(loadedDebuffs) do
+        for bossId, bTable in pairs(iTable) do
+            CheckOrders(instanceId, bossId, bTable)
         end
     end
+
     -- texplore(loadedDebuffs[477]) -- 悬槌堡
 end
 
@@ -246,20 +270,49 @@ showCurrentBtn.tex:SetPoint("TOPLEFT", 1, -1)
 showCurrentBtn.tex:SetPoint("BOTTOMRIGHT", -1, 1)
 showCurrentBtn.tex:SetAtlas("DungeonSkull")
 
+local function OpenInstanceBoss(instanceName, bossName)
+    if not instanceName or not instanceNameMapping[instanceName] then return end
+
+    local eName, iIndex, iId = F:SplitToNumber(":", instanceNameMapping[instanceName])
+    -- if loadedInstance == iId then return end
+    expansionDropdown:SetSelected(eName)
+    LoadExpansion(eName)
+    instanceButtons[iIndex]:Click()
+    -- scroll
+    if iIndex > 9 then
+        RaidDebuffsTab_Instances.scrollFrame:SetVerticalScroll((iIndex-9)*19)
+    end
+
+    if bossName then
+        local bIndex
+
+        if bossName == "general" then
+            bIndex = 0
+        else
+            for i, boss in pairs(encounterJournalList[eName][iIndex]["bosses"]) do
+                if bossName == boss["name"] then
+                    -- boss found
+                    bIndex = i
+                    break
+                end
+            end
+        end
+
+        if bIndex then
+            C_Timer.After(0.25, function()
+                bossButtons[bIndex]:Click()
+                -- scroll
+                if bIndex > 10 then
+                    RaidDebuffsTab_Bosses.scrollFrame:SetVerticalScroll((bIndex-10)*19)
+                end
+            end)
+        end
+    end
+end
+
 showCurrentBtn:SetScript("OnClick", function()
     if IsInInstance() then
-        local name = GetInstanceInfo()
-        if not name or not instanceNameMapping[name] then return end
-
-        local eName, index, id = F:SplitToNumber(":", instanceNameMapping[name])
-        if loadedInstance == id then return end
-        expansionDropdown:SetSelected(eName)
-        LoadExpansion(eName)
-        instanceButtons[index]:Click()
-        -- scroll
-        if index > 9 then
-            RaidDebuffsTab_Instances.scrollFrame:SetVerticalScroll((index-9)*19)
-        end
+        OpenInstanceBoss(GetInstanceInfo())
     end
 end)
 
@@ -335,7 +388,18 @@ ShowInstances = function(eName)
     end
 
     -- set onclick
-    Cell:CreateButtonGroup(instanceButtons, ShowBosses, nil, nil, instancesFrame:GetScript("OnEnter"), instancesFrame:GetScript("OnLeave"))
+    Cell:CreateButtonGroup(instanceButtons, function(id, b)
+        -- NOTE: sharing
+        if IsShiftKeyDown() and b:IsMouseOver() then
+            -- print("instance:"..iId, "bossId:"..id)
+            local editbox = GetCurrentKeyBoardFocus()
+            if editbox then
+                local iId, iIndex = F:SplitToNumber("-", id)
+                editbox:SetText("[Cell:Debuffs: "..instanceIdToName[iId].." - "..Cell.vars.myName.."]")
+            end
+        end
+        ShowBosses(id)
+    end, nil, nil, instancesFrame:GetScript("OnEnter"), instancesFrame:GetScript("OnLeave"))
     instanceButtons[1]:Click()
 end
 
@@ -393,7 +457,22 @@ ShowBosses = function(instanceId)
     end
 
     -- set onclick/onenter
-    Cell:CreateButtonGroup(bossButtons, ShowDebuffs, nil, nil, function(b)
+    Cell:CreateButtonGroup(bossButtons, function(id, b)
+        -- NOTE: sharing
+        if IsShiftKeyDown() and b:IsMouseOver() then
+            -- print("instance:"..iId, "bossId:"..id)
+            local editbox = GetCurrentKeyBoardFocus()
+            if editbox then
+                if id == iId then -- general
+                    editbox:SetText("[Cell:Debuffs: "..bossIdToName[0].." ("..instanceIdToName[iId]..") - "..Cell.vars.myName.."]")
+                else
+                    local bId = F:SplitToNumber("-", id)
+                    editbox:SetText("[Cell:Debuffs: "..bossIdToName[bId].." ("..instanceIdToName[iId]..") - "..Cell.vars.myName.."]")
+                end
+            end
+        end
+        ShowDebuffs(id)
+    end, nil, nil, function(b)
         if b.id ~= iId then -- not General
             local _, bIndex = F:SplitToNumber("-", b.id)
             ShowImage(encounterJournalList[loadedExpansion][iIndex]["bosses"][bIndex]["image"], b)
@@ -487,7 +566,7 @@ create:SetScript("OnClick", function()
             ShowDebuffs(isGeneral and loadedInstance or loadedBoss, 1)
         end
         -- notify debuff list changed
-        Cell:Fire("RaidDebuffsChanged")
+        Cell:Fire("RaidDebuffsChanged", instanceIdToName[loadedInstance])
     end, nil, true, true)
     popup.editBox:SetNumeric(true)
     popup:SetPoint("TOPLEFT", 100, -170)
@@ -538,7 +617,7 @@ delete:SetScript("OnClick", function()
             ShowDebuffs(loadedBoss, 1)
         end
         -- notify debuff list changed
-        Cell:Fire("RaidDebuffsChanged")
+        Cell:Fire("RaidDebuffsChanged", instanceIdToName[loadedInstance])
     end, nil, true)
     popup:SetPoint("TOPLEFT", 100, -170)
 end)
@@ -693,7 +772,7 @@ local function RegisterForDrag(b)
                 end
             end
             -- notify debuff list changed
-            Cell:Fire("RaidDebuffsChanged")
+            Cell:Fire("RaidDebuffsChanged", instanceIdToName[loadedInstance])
         end
     end)
 end
@@ -936,7 +1015,7 @@ local enabledCB = Cell:CreateCheckButton(detailsContentFrame, L["Enabled"], func
         ShowDebuffs(loadedBoss, buttonIndex)
     end
     -- notify debuff list changed
-    Cell:Fire("RaidDebuffsChanged")
+    Cell:Fire("RaidDebuffsChanged", instanceIdToName[loadedInstance])
 end)
 enabledCB:SetPoint("TOPLEFT", spellIconBG, "BOTTOMLEFT", 0, -10)
 
@@ -957,7 +1036,7 @@ local trackByIdCB = Cell:CreateCheckButton(detailsContentFrame, L["Track by ID"]
     t["trackByID"] = checked
 
     -- notify debuff list changed
-    Cell:Fire("RaidDebuffsChanged")
+    Cell:Fire("RaidDebuffsChanged", instanceIdToName[loadedInstance])
 end)
 trackByIdCB:SetPoint("TOPLEFT", enabledCB, "BOTTOMLEFT", 0, -10)
 
@@ -995,7 +1074,7 @@ conditionDropDown:SetItems({
         ["onClick"] = function()
             UpdateCondition({"None"})
             -- notify debuff list changed
-            Cell:Fire("RaidDebuffsChanged")
+            Cell:Fire("RaidDebuffsChanged", instanceIdToName[loadedInstance])
         end,
     },
     {
@@ -1004,7 +1083,7 @@ conditionDropDown:SetItems({
         ["onClick"] = function()
             UpdateCondition({"Stack", ">=", 0})
             -- notify debuff list changed
-            Cell:Fire("RaidDebuffsChanged")
+            Cell:Fire("RaidDebuffsChanged", instanceIdToName[loadedInstance])
         end,
     }
 })
@@ -1031,7 +1110,7 @@ do
                 local t = selectedButtonIndex <= #currentBossTable["enabled"] and currentBossTable["enabled"][selectedButtonIndex] or currentBossTable["disabled"][selectedButtonIndex-#currentBossTable["enabled"]]
                 t["condition"][2] = opr
                 -- notify debuff list changed
-                Cell:Fire("RaidDebuffsChanged")
+                Cell:Fire("RaidDebuffsChanged", instanceIdToName[loadedInstance])
             end,
         })
     end
@@ -1052,7 +1131,7 @@ conditionValue:SetScript("OnTextChanged", function(self, userChanged)
         local t = selectedButtonIndex <= #currentBossTable["enabled"] and currentBossTable["enabled"][selectedButtonIndex] or currentBossTable["disabled"][selectedButtonIndex-#currentBossTable["enabled"]]
         t["condition"][3] = value
         -- notify debuff list changed
-        Cell:Fire("RaidDebuffsChanged")
+        Cell:Fire("RaidDebuffsChanged", instanceIdToName[loadedInstance])
     end
 end)
 
@@ -1163,7 +1242,7 @@ local function UpdateGlowType(newType)
         end
         LoadGlowOptions(newType, t["glowOptions"])
         -- notify debuff list changed
-        Cell:Fire("RaidDebuffsChanged")
+        Cell:Fire("RaidDebuffsChanged", instanceIdToName[loadedInstance])
     end
 end
 
@@ -1182,7 +1261,7 @@ glowTypeDropdown:SetItems({
                 -- update loadedDebuffs
                 t["glowType"] = "None"
                 -- notify debuff list changed
-                Cell:Fire("RaidDebuffsChanged")
+                Cell:Fire("RaidDebuffsChanged", instanceIdToName[loadedInstance])
                 LoadGlowOptions()
             end
         end,
@@ -1368,7 +1447,7 @@ glowConditionType:SetItems({
             local t = selectedButtonIndex <= #currentBossTable["enabled"] and currentBossTable["enabled"][selectedButtonIndex] or currentBossTable["disabled"][selectedButtonIndex-#currentBossTable["enabled"]]
             t["glowCondition"] = nil
             -- notify debuff list changed
-            Cell:Fire("RaidDebuffsChanged")
+            Cell:Fire("RaidDebuffsChanged", instanceIdToName[loadedInstance])
         end,
     },
     {
@@ -1383,7 +1462,7 @@ glowConditionType:SetItems({
             local t = selectedButtonIndex <= #currentBossTable["enabled"] and currentBossTable["enabled"][selectedButtonIndex] or currentBossTable["disabled"][selectedButtonIndex-#currentBossTable["enabled"]]
             t["glowCondition"] = {"Stack", ">=", 0}
             -- notify debuff list changed
-            Cell:Fire("RaidDebuffsChanged")
+            Cell:Fire("RaidDebuffsChanged", instanceIdToName[loadedInstance])
         end,
     },
 })
@@ -1405,7 +1484,7 @@ do
                 local t = selectedButtonIndex <= #currentBossTable["enabled"] and currentBossTable["enabled"][selectedButtonIndex] or currentBossTable["disabled"][selectedButtonIndex-#currentBossTable["enabled"]]
                 t["glowCondition"][2] = opr
                 -- notify debuff list changed
-                Cell:Fire("RaidDebuffsChanged")
+                Cell:Fire("RaidDebuffsChanged", instanceIdToName[loadedInstance])
             end,
         })
     end
@@ -1426,7 +1505,7 @@ glowConditionValue:SetScript("OnTextChanged", function(self, userChanged)
         local t = selectedButtonIndex <= #currentBossTable["enabled"] and currentBossTable["enabled"][selectedButtonIndex] or currentBossTable["disabled"][selectedButtonIndex-#currentBossTable["enabled"]]
         t["glowCondition"][3] = value
         -- notify debuff list changed
-        Cell:Fire("RaidDebuffsChanged")
+        Cell:Fire("RaidDebuffsChanged", instanceIdToName[loadedInstance])
     end
 end)
 
@@ -1445,7 +1524,7 @@ local glowColor = Cell:CreateColorPicker(glowOptionsFrame, L["Glow Color"], fals
     t["glowOptions"][1][3] = b
     t["glowOptions"][1][4] = 1
     -- notify debuff list changed
-    Cell:Fire("RaidDebuffsChanged")
+    Cell:Fire("RaidDebuffsChanged", instanceIdToName[loadedInstance])
     -- update preview
     ShowGlowPreview(t["glowType"], t["glowOptions"])
 end)
@@ -1460,7 +1539,7 @@ local function SliderValueChanged(index, value, refresh)
     -- update loadedDebuffs
     t["glowOptions"][index] = value
     -- notify debuff list changed
-    Cell:Fire("RaidDebuffsChanged")
+    Cell:Fire("RaidDebuffsChanged", instanceIdToName[loadedInstance])
     -- update preview
     ShowGlowPreview(t["glowType"], t["glowOptions"], refresh)
 end
@@ -1718,6 +1797,142 @@ function F:GetDebuffList(instanceName)
     -- texplore(list)
 
     return list
+end
+
+-------------------------------------------------
+-- sharing functions
+-------------------------------------------------
+function F:GetInstanceAndBossIds(instanceName, bossName)
+    local result = instanceNameMapping[instanceName]
+    if not result then return end
+
+    -- instance found
+    local expansionName, instanceIndex, instanceId = strsplit(":", result)
+    instanceIndex = tonumber(instanceIndex)
+    instanceId = tonumber(instanceId)
+
+    local bossId
+
+    if bossName == bossIdToName[0] then
+        bossId = "general"
+    elseif bossName then
+        for _, boss in pairs(encounterJournalList[expansionName][instanceIndex]["bosses"]) do
+            if bossName == boss["name"] then
+                -- boss found
+                bossId = boss["id"]
+                break
+            end
+        end
+    end
+
+    return instanceId, bossId
+end
+
+function F:CalcRaidDebuffs(instanceId, bossId, data)
+    local builtIn = 0
+
+    local customs = {}
+    if data then
+        if bossId then
+            -- 1 boss
+            for spellId in pairs(data) do
+                customs[spellId] = true
+            end
+        else
+            -- several bosses
+            for bId, bTable in pairs(data) do
+                for spellId in pairs(bTable) do
+                    customs[spellId] = true
+                end
+            end
+        end
+    end
+
+    if unsortedDebuffs[instanceId] then
+        if not bossId then
+            -- calc all bosses
+            for bId, bTable in pairs(unsortedDebuffs[instanceId]) do
+                for _, spellId in pairs(bTable) do
+                    if not customs[spellId] then
+                        builtIn = builtIn + 1
+                    end
+                end
+            end
+        elseif unsortedDebuffs[instanceId][bossId] then
+            -- calc by bossId
+            for _, spellId in pairs(unsortedDebuffs[instanceId][bossId]) do
+                if not customs[spellId] then
+                    builtIn = builtIn + 1
+                end
+            end
+        end
+    end
+
+    return builtIn, F:Getn(customs)
+end
+
+function F:ShowInstanceDebuffs(instanceId, bossId)
+    if not InCombatLockdown() then
+        F:ShowRaidDebuffsTab()
+        C_Timer.After(0.25, function()
+            if bossId == "general" or bossId == nil then
+                OpenInstanceBoss(instanceIdToName[instanceId], "general")
+            else -- numeric bossId / no bossId
+                OpenInstanceBoss(instanceIdToName[instanceId], bossIdToName[bossId])
+            end
+        end)
+    end
+end
+
+function F:UpdateRaidDebuffs(instanceId, bossId, data, which)
+    -- update db
+    if not bossId then
+        -- instance debuffs received
+        -- replace current db
+        CellDB["raidDebuffs"][instanceId] = data
+    else
+        -- boss debuffs received
+        if data then
+            if not CellDB["raidDebuffs"][instanceId] then
+                CellDB["raidDebuffs"][instanceId] = {}
+            end
+            CellDB["raidDebuffs"][instanceId][bossId] = data
+        else -- no custom debuffs, just built-in
+            if CellDB["raidDebuffs"][instanceId] then
+                CellDB["raidDebuffs"][instanceId][bossId] = nil
+            end
+        end
+    end
+
+    -- update loadedDebuffs
+    if not bossId then -- all bosses
+        -- clear old
+        loadedDebuffs[instanceId] = {}
+        -- load new db
+        if data then
+            for bid, bTable in pairs(data) do
+                LoadDB(instanceId, bid, bTable)
+            end
+        end
+        -- load built-in
+        for bid, bTable in pairs(unsortedDebuffs[instanceId]) do
+            LoadBuiltIn(instanceId, bid, bTable)
+        end
+    else
+        -- clear old
+        loadedDebuffs[instanceId][bossId] = nil
+        -- load new db
+        if data then
+            LoadDB(instanceId, bossId, data)
+        end
+        -- load built-in
+        LoadBuiltIn(instanceId, bossId, unsortedDebuffs[instanceId][bossId])
+    end
+
+    -- update current region
+    Cell:Fire("RaidDebuffsChanged", instanceIdToName[instanceId])
+
+    F:Print(L["Raid Debuffs imported: %s."]:format(which))
 end
 
 -------------------------------------------------

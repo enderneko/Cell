@@ -391,17 +391,20 @@ local currentAreaDebuffs = {}
 local eventFrame = CreateFrame("Frame")
 eventFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
 
-local function UpdateDebuffsForCurrentZone()
-    F:Debug("|cffff77AARaidDebuffsChanged")
-
+local function UpdateDebuffsForCurrentZone(instanceName)
     wipe(currentAreaDebuffs)
     local iName = F:GetInstanceName()
-    if iName ~= "" then
+    if iName == "" then return end
+    
+    if iName == instanceName or instanceName == nil then
         currentAreaDebuffs = F:GetDebuffList(iName)
+        F:Debug("|cffff77AARaidDebuffsChanged:|r", iName)
     end
 end
 Cell:RegisterCallback("RaidDebuffsChanged", "UpdateDebuffsForCurrentZone", UpdateDebuffsForCurrentZone)
-eventFrame:SetScript("OnEvent", UpdateDebuffsForCurrentZone)
+eventFrame:SetScript("OnEvent", function()
+    UpdateDebuffsForCurrentZone()
+end)
 
 local function CheckCondition(operator, checkedValue, currentValue)
     if operator == "=" then

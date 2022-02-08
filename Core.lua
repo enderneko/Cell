@@ -757,6 +757,8 @@ function eventFrame:PLAYER_LOGIN()
     eventFrame:RegisterEvent("UNIT_PET")
     eventFrame:RegisterEvent("GROUP_ROSTER_UPDATE")
     eventFrame:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
+
+    Cell.vars.myName = F:UnitName("player")
     
     --! init bgMaxPlayers
     for i = 1, GetNumBattlegroundTypes() do

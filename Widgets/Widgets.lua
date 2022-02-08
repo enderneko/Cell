@@ -231,7 +231,7 @@ end
 -----------------------------------------
 -- change frame size with animation
 -----------------------------------------
-function addon:ChangeSizeWithAnimation(frame, targetWidth, targetHeight, startFunc, endFunc, repoint)
+function addon:ChangeSizeWithAnimation(frame, targetWidth, targetHeight, step, startFunc, endFunc, repoint)
     if startFunc then startFunc() end
     
     local currentHeight = frame:GetHeight()
@@ -239,8 +239,9 @@ function addon:ChangeSizeWithAnimation(frame, targetWidth, targetHeight, startFu
     targetWidth = targetWidth or currentWidth
     targetHeight = targetHeight or currentHeight
 
-    local diffH = (targetHeight - currentHeight) / 6
-    local diffW = (targetWidth - currentWidth) / 6
+    step = step or 6
+    local diffH = (targetHeight - currentHeight) / step
+    local diffW = (targetWidth - currentWidth) / step
     
     local animationTimer
     animationTimer = C_Timer.NewTicker(.025, function()
@@ -250,7 +251,7 @@ function addon:ChangeSizeWithAnimation(frame, targetWidth, targetHeight, startFu
             else
                 currentWidth = math.max(currentWidth + diffW, targetWidth)
             end
-            frame:SetWidth(currentWidth)
+            P:Width(frame, currentWidth)
         end
 
         if diffH ~= 0 then
@@ -259,7 +260,7 @@ function addon:ChangeSizeWithAnimation(frame, targetWidth, targetHeight, startFu
             else
                 currentHeight = math.max(currentHeight + diffH, targetHeight)
             end
-            frame:SetHeight(currentHeight)
+            P:Height(frame, currentHeight)
         end
 
         if currentWidth == targetWidth and currentHeight == targetHeight then
@@ -718,7 +719,7 @@ function addon:CreateButtonGroup(buttons, onClick, func1, func2, onEnter, onLeav
     for _, b in pairs(buttons) do
         b:SetScript("OnClick", function()
             HighlightButton(b.id)
-            onClick(b.id)
+            onClick(b.id, b)
         end)
     end
     
@@ -2553,4 +2554,214 @@ function addon:CreateBindingListButton(parent, modifier, bindKey, bindType, bind
     end
 
     return b
+end
+
+-----------------------------------------
+-- receiving frame
+-----------------------------------------
+function addon:CreateReceivingFrame(parent)
+    local f = CreateFrame("Frame", name, parent, "BackdropTemplate")
+    f:EnableMouse(true)
+    f:SetMovable(true)
+    f:SetUserPlaced(true)
+    f:RegisterForDrag("LeftButton")
+    f:SetFrameStrata("DIALOG")
+    f:SetFrameLevel(1)
+    f:SetClampedToScreen(true)
+    P:Size(f, 249, 135)
+    f:SetPoint("TOPRIGHT", UIParent, "CENTER")
+    addon:StylizeFrame(f)
+
+    f:SetScript("OnDragStart", function() f:StartMoving() end)
+    f:SetScript("OnDragStop", function() f:StopMovingOrSizing() end)
+
+    -- labels
+    local typeLabel = f:CreateFontString(nil, "OVERLAY", "CELL_FONT_CLASS")
+    typeLabel:SetPoint("TOPLEFT", 10, -10)
+    typeLabel:SetText(L["Type: "])
+
+    local nameLabel = f:CreateFontString(nil, "OVERLAY", "CELL_FONT_CLASS")
+    nameLabel:SetPoint("LEFT", 10, 0)
+    nameLabel:SetText(L["Name: "])
+
+    local fromLabel = f:CreateFontString(nil, "OVERLAY", "CELL_FONT_CLASS")
+    fromLabel:SetPoint("LEFT", 10, 0)
+    fromLabel:SetText(L["From: "])
+
+    local dataLabel = f:CreateFontString(nil, "OVERLAY", "CELL_FONT_CLASS")
+    dataLabel:SetPoint("LEFT", 10, 0)
+    dataLabel:Hide()
+
+    -- texts
+    local typeText = f:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
+    typeText:SetPoint("TOPLEFT", typeLabel, "TOPRIGHT")
+    typeText:SetPoint("RIGHT", -10, 0)
+    typeText:SetJustifyH("LEFT")
+
+    nameLabel:SetPoint("TOP", typeText, "BOTTOM", 0, -10)
+
+    local nameText = f:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
+    nameText:SetPoint("TOPLEFT", nameLabel, "TOPRIGHT")
+    nameText:SetPoint("RIGHT", -10, 0)
+    nameText:SetJustifyH("LEFT")
+    nameText:SetWordWrap(true)
+
+    fromLabel:SetPoint("TOP", nameText, "BOTTOM", 0, -10)
+    
+    local fromText = f:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
+    fromText:SetPoint("TOPLEFT", fromLabel, "TOPRIGHT")
+    fromText:SetPoint("RIGHT", -10, 0)
+    fromText:SetJustifyH("LEFT")
+
+    dataLabel:SetPoint("TOP", fromText, "BOTTOM", 0, -10)
+
+    local dataText = f:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
+    dataText:SetPoint("TOPLEFT", dataLabel, "TOPRIGHT")
+    dataText:SetPoint("RIGHT", -10, 0)
+    dataText:SetJustifyH("LEFT")
+    dataText:Hide()
+
+    -- error
+    local errorMsg = f:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
+    errorMsg:SetPoint("LEFT", 10, 0)
+    errorMsg:SetPoint("RIGHT", -10, 0)
+    errorMsg:SetPoint("TOP", fromText, "BOTTOM", 0, -10)
+    errorMsg:SetJustifyH("LEFT")
+    errorMsg:SetTextColor(unpack(colors.firebrick.t))
+    errorMsg:Hide()
+
+    -- buttons
+    local requestBtn = addon:CreateButton(f, L["Request"], "green", {125, 20})
+    requestBtn:SetPoint("BOTTOMLEFT")
+
+    local importBtn = addon:CreateButton(f, L["Import"], "green", {125, 20})
+    importBtn:SetPoint("BOTTOMLEFT")
+    
+    local cancelBtn = addon:CreateButton(f, L["Cancel"], "red", {125, 20})
+    cancelBtn:SetPoint("BOTTOMLEFT", importBtn, "BOTTOMRIGHT", -1, 0)
+    cancelBtn:SetPoint("BOTTOMRIGHT")
+
+    -- bar
+    local progressBar = addon:CreateStatusBar(f, 198, 18, 0, true, nil, true, "Interface\\AddOns\\Cell\\Media\\statusbar.tga", {0.7, 0.7, 0, 1})
+    progressBar:SetPoint("BOTTOMLEFT", 1, 1)
+    progressBar:SetPoint("BOTTOMRIGHT", cancelBtn, "BOTTOMLEFT")
+    progressBar:Hide()
+
+    function f:ShowFrame(type, playerName, name1, name2)
+        P:Size(f, 249, 20) -- reset size
+        typeLabel:Hide()
+        nameLabel:Hide()
+        fromLabel:Hide()
+        typeText:Hide()
+        nameText:Hide()
+        fromText:Hide()
+
+        typeText:SetText(type)
+        if name2 then
+            nameText:SetText(name1.." ("..name2..")")
+        else
+            nameText:SetText(name1)
+        end
+        fromText:SetText(playerName)
+
+        local lines = typeText:GetNumLines() + nameText:GetNumLines() + fromText:GetNumLines()
+        addon:ChangeSizeWithAnimation(f, 249, 40 + lines*math.ceil(typeLabel:GetStringHeight()*1.4), 7, nil, function()
+            typeLabel:Show()
+            nameLabel:Show()
+            fromLabel:Show()
+            typeText:Show()
+            nameText:Show()
+            fromText:Show()
+        end)
+
+        -- NOTE: you cannot send to yourself
+        -- requestBtn:SetEnabled(playerName ~= Cell.vars.myName)
+        importBtn:Hide()
+        dataLabel:Hide()
+        dataText:Hide()
+        errorMsg:Hide()
+        requestBtn:Show()
+
+        f:Show()
+    end
+
+    local timeout
+    function f:SetOnRequest(func)
+        requestBtn:SetScript("OnClick", function(self)
+            requestBtn:Hide()
+            progressBar:SetValue(0)
+            progressBar:Show()
+            addon:ChangeSizeWithAnimation(importBtn, 200, 20, 7)
+            func(self)
+            
+            errorMsg:Hide()
+            -- timeout
+            timeout = C_Timer.NewTimer(10, function()
+                if progressBar:GetValue() == 0 then
+                    errorMsg:SetText("To transfer across realm, you need to be in the same group.")
+                    addon:ChangeSizeWithAnimation(f, 249, f.height+10+math.ceil(errorMsg:GetStringHeight()*1.4), 7, nil, function()
+                        errorMsg:Show()
+                    end)
+                end
+            end)
+        end)
+    end
+
+    function f:SetOnCancel(func)
+        cancelBtn:SetScript("OnClick", function(self)
+            f:Hide()
+            progressBar:Hide()
+            importBtn:SetWidth(125)
+            func(self)
+        end)
+    end
+    
+    function f:ShowProgress(done, total)
+        progressBar:SetMaxValue(total)
+        progressBar:SetSmoothedValue(done)
+    end
+
+    function f:ShowImport(status, received, func)
+        if timeout then
+            timeout:Cancel()
+            timeout = nil
+        end
+        addon:ChangeSizeWithAnimation(importBtn, 125, 20, 7)
+        progressBar:Hide()
+        importBtn:Show()
+        importBtn:SetEnabled(false)
+
+        if status then
+            if received["type"] == "Debuffs" then
+                F:Debug("|cffFFDAB9RECEIVED DEBUFFS:|r ", received["instanceId"], received["bossId"], received["data"])
+                local builtIn, custom = F:CalcRaidDebuffs(received["instanceId"], received["bossId"], received["data"])
+
+                dataLabel:SetText(L["Debuffs"] .. ": ")
+                dataText:SetText("|cff90EE90"..builtIn.." "..L["built-in(s)"].."|r, |cffFFB5C5"..custom.." "..L["custom(s)"].."|r")
+
+                importBtn:SetScript("OnClick", function()
+                    F:UpdateRaidDebuffs(received["instanceId"], received["bossId"], received["data"], nameText:GetText())
+                    F:ShowInstanceDebuffs(received["instanceId"], received["bossId"])
+                    f:Hide()
+                end)
+                
+                C_Timer.After(0.5, function()
+                    addon:ChangeSizeWithAnimation(f, 249, f.height+10+math.ceil(typeLabel:GetStringHeight()*1.4), 7, nil, function()
+                        dataLabel:Show()
+                        dataText:Show()
+                        importBtn:SetEnabled(true)
+                        if func then func() end
+                    end)
+                end)
+            end
+        else
+            errorMsg:SetText(L["Data Transfer Failed..."])
+            addon:ChangeSizeWithAnimation(f, 249, f.height+10+math.ceil(errorMsg:GetStringHeight()*1.4), 7, nil, function()
+                errorMsg:Show()
+                if func then func() end
+            end)
+        end
+    end
+
+    return f
 end
