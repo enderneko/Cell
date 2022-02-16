@@ -264,7 +264,7 @@ expansionDropdown:SetItems(expansionItems)
 -- current instance button
 -------------------------------------------------
 local showCurrentBtn = Cell:CreateButton(debuffsTab, "", "class-hover", {20, 20}, nil, nil, nil, nil, nil, L["Show Current Instance"])
-showCurrentBtn:SetPoint("LEFT", expansionDropdown, "RIGHT", 5, 0)
+showCurrentBtn:SetPoint("TOPLEFT", expansionDropdown, "TOPRIGHT", 5, 0)
 showCurrentBtn.tex = showCurrentBtn:CreateTexture(nil, "ARTWORK")
 showCurrentBtn.tex:SetPoint("TOPLEFT", 1, -1)
 showCurrentBtn.tex:SetPoint("BOTTOMRIGHT", -1, 1)
@@ -317,10 +317,23 @@ showCurrentBtn:SetScript("OnClick", function()
 end)
 
 -------------------------------------------------
+-- import/export button
+-------------------------------------------------
+local importBtn = Cell:CreateButton(debuffsTab, "", "class-hover", {20, 20}, nil, nil, nil, nil, nil, L["Import"])
+importBtn:SetPoint("TOPLEFT", showCurrentBtn, "TOPRIGHT", -1, 0)
+importBtn:SetTexture("Interface\\AddOns\\Cell\\Media\\Icons\\import.blp", {16, 16}, {"TOPLEFT", 2, -2})
+importBtn:SetEnabled(false)
+
+local exportBtn = Cell:CreateButton(debuffsTab, "", "class-hover", {20, 20}, nil, nil, nil, nil, nil, L["Export"])
+exportBtn:SetPoint("TOPLEFT", importBtn, "TOPRIGHT", -1, 0)
+exportBtn:SetTexture("Interface\\AddOns\\Cell\\Media\\Icons\\export.blp", {16, 16}, {"TOPLEFT", 2, -2})
+exportBtn:SetEnabled(false)
+
+-------------------------------------------------
 -- tips
 -------------------------------------------------
 local tips = Cell:CreateScrollTextFrame(debuffsTab, "|cffb7b7b7"..L["RAID_DEBUFFS_TIPS"], 0.02, nil, 2)
-tips:SetPoint("TOPLEFT", showCurrentBtn, "TOPRIGHT", 5, 0)
+tips:SetPoint("TOPLEFT", exportBtn, "TOPRIGHT", 5, 0)
 tips:SetPoint("RIGHT", -5, 0)
 
 -------------------------------------------------
