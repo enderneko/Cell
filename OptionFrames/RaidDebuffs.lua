@@ -1915,18 +1915,26 @@ function F:UpdateRaidDebuffs(instanceId, bossId, data, which)
             end
         end
         -- load built-in
-        for bid, bTable in pairs(unsortedDebuffs[instanceId]) do
-            LoadBuiltIn(instanceId, bid, bTable)
+        if unsortedDebuffs[instanceId] then -- has built-in
+            for bid, bTable in pairs(unsortedDebuffs[instanceId]) do
+                LoadBuiltIn(instanceId, bid, bTable)
+            end
         end
     else
         -- clear old
-        loadedDebuffs[instanceId][bossId] = nil
+        if not loadedDebuffs[instanceId] then
+            loadedDebuffs[instanceId] = {}
+        else
+            loadedDebuffs[instanceId][bossId] = nil
+        end
         -- load new db
         if data then
             LoadDB(instanceId, bossId, data)
         end
         -- load built-in
-        LoadBuiltIn(instanceId, bossId, unsortedDebuffs[instanceId][bossId])
+        if unsortedDebuffs[instanceId] and unsortedDebuffs[instanceId][bossId] then -- has built-in
+            LoadBuiltIn(instanceId, bossId, unsortedDebuffs[instanceId][bossId])
+        end
     end
 
     -- update current region

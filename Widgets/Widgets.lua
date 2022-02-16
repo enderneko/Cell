@@ -2622,13 +2622,19 @@ function addon:CreateReceivingFrame(parent)
     dataText:Hide()
 
     -- error
-    local errorMsg = f:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
-    errorMsg:SetPoint("LEFT", 10, 0)
-    errorMsg:SetPoint("RIGHT", -10, 0)
-    errorMsg:SetPoint("TOP", fromText, "BOTTOM", 0, -10)
-    errorMsg:SetJustifyH("LEFT")
-    errorMsg:SetTextColor(unpack(colors.firebrick.t))
-    errorMsg:Hide()
+    local infoMsg = f:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
+    infoMsg:SetJustifyH("LEFT")
+    infoMsg:SetTextColor(unpack(colors.firebrick.t))
+    infoMsg:Hide()
+
+    function infoMsg:ShowMsg(msg, anchorTo)
+        infoMsg:SetText(msg)
+        infoMsg:ClearAllPoints()
+        infoMsg:SetPoint("LEFT", 10, 0)
+        infoMsg:SetPoint("RIGHT", -10, 0)
+        infoMsg:SetPoint("TOP", anchorTo, "BOTTOM", 0, -10)
+        infoMsg:Show()
+    end
 
     -- buttons
     local requestBtn = addon:CreateButton(f, L["Request"], "green", {125, 20})
@@ -2679,7 +2685,7 @@ function addon:CreateReceivingFrame(parent)
         importBtn:Hide()
         dataLabel:Hide()
         dataText:Hide()
-        errorMsg:Hide()
+        infoMsg:Hide()
         requestBtn:Show()
 
         f:Show()
@@ -2694,13 +2700,12 @@ function addon:CreateReceivingFrame(parent)
             addon:ChangeSizeWithAnimation(importBtn, 200, 20, 7)
             func(self)
             
-            errorMsg:Hide()
+            infoMsg:Hide()
             -- timeout
             timeout = C_Timer.NewTimer(10, function()
                 if progressBar:GetValue() == 0 then
-                    errorMsg:SetText(L["To transfer across realm, you need to be in the same group."])
-                    addon:ChangeSizeWithAnimation(f, 249, f.height+10+math.ceil(errorMsg:GetStringHeight()*1.4), 7, nil, function()
-                        errorMsg:Show()
+                    addon:ChangeSizeWithAnimation(f, 249, f.height+15+math.ceil(infoMsg:GetStringHeight()*1.4), 7, nil, function()
+                        infoMsg:ShowMsg(L["To transfer across realm, you need to be in the same group."], fromText)
                     end)
                 end
             end)
@@ -2746,18 +2751,18 @@ function addon:CreateReceivingFrame(parent)
                 end)
                 
                 C_Timer.After(0.5, function()
-                    addon:ChangeSizeWithAnimation(f, 249, f.height+10+math.ceil(typeLabel:GetStringHeight()*1.4), 7, nil, function()
+                    addon:ChangeSizeWithAnimation(f, 249, f.height+15+2*math.ceil(typeLabel:GetStringHeight()*1.4), 7, nil, function()
                         dataLabel:Show()
                         dataText:Show()
+                        infoMsg:ShowMsg(L["This will overwrite your debuffs."], dataText)
                         importBtn:SetEnabled(true)
                         if func then func() end
                     end)
                 end)
             end
         else
-            errorMsg:SetText(L["Data Transfer Failed..."])
-            addon:ChangeSizeWithAnimation(f, 249, f.height+10+math.ceil(errorMsg:GetStringHeight()*1.4), 7, nil, function()
-                errorMsg:Show()
+            addon:ChangeSizeWithAnimation(f, 249, f.height+15+math.ceil(infoMsg:GetStringHeight()*1.4), 7, nil, function()
+                infoMsg:ShowMsg(L["Data Transfer Failed..."], fromText)
                 if func then func() end
             end)
         end

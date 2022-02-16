@@ -267,6 +267,7 @@ L["To transfer across realm, you need to be in the same group."] = "跨服传输
 L["built-in(s)"] = "内置"
 L["custom(s)"] = "自定义"
 L["Data Transfer Failed..."] = "数据传输失败……"
+L["This will overwrite your debuffs."] = "这将覆盖你的副本减益。"
 L["Type: "] = "类型："
 L["Name: "] = "名称："
 L["From: "] = "来自："
