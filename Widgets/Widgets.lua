@@ -2705,7 +2705,7 @@ function addon:CreateReceivingFrame(parent)
             timeout = C_Timer.NewTimer(10, function()
                 if progressBar:GetValue() == 0 then
                     addon:ChangeSizeWithAnimation(f, 249, f.height+15+math.ceil(infoMsg:GetStringHeight()*1.4), 7, nil, function()
-                        infoMsg:ShowMsg(L["To transfer across realm, you need to be in the same group."], fromText)
+                        infoMsg:ShowMsg(L["To transfer across realm, you need to be in the same group"], fromText)
                     end)
                 end
             end)
@@ -2754,7 +2754,7 @@ function addon:CreateReceivingFrame(parent)
                     addon:ChangeSizeWithAnimation(f, 249, f.height+15+2*math.ceil(typeLabel:GetStringHeight()*1.4), 7, nil, function()
                         dataLabel:Show()
                         dataText:Show()
-                        infoMsg:ShowMsg(L["This will overwrite your debuffs."], dataText)
+                        infoMsg:ShowMsg(L["This will overwrite your debuffs"], dataText)
                         importBtn:SetEnabled(true)
                         if func then func() end
                     end)
@@ -2762,7 +2762,7 @@ function addon:CreateReceivingFrame(parent)
             end
         else
             addon:ChangeSizeWithAnimation(f, 249, f.height+15+math.ceil(infoMsg:GetStringHeight()*1.4), 7, nil, function()
-                infoMsg:ShowMsg(L["Data Transfer Failed..."], fromText)
+                infoMsg:ShowMsg(L["Data transfer failed..."], fromText)
                 if func then func() end
             end)
         end

@@ -258,16 +258,16 @@ L["vehicle name"] = "载具名称"
 L["Power Bar Filters"] = "能量条过滤"
 L["PET"] = "宠物"
 L["VEHICLE"] = "载具"
-L["Tip: Every layout has its own position setting."] = "提示：每个布局都有其单独的位置设置。"
+L["Tip: Every layout has its own position setting"] = "提示：每个布局都有其单独的位置设置"
 
 -------------------------------------------------
 -- send/receive
 -------------------------------------------------
-L["To transfer across realm, you need to be in the same group."] = "跨服传输数据需要在同一个队伍里。"
+L["To transfer across realm, you need to be in the same group"] = "跨服传输数据需要在同一个队伍里"
 L["built-in(s)"] = "内置"
 L["custom(s)"] = "自定义"
-L["Data Transfer Failed..."] = "数据传输失败……"
-L["This will overwrite your debuffs."] = "这将覆盖你的副本减益。"
+L["Data transfer failed..."] = "数据传输失败……"
+L["This will overwrite your debuffs"] = "这将覆盖你的副本减益"
 L["Type: "] = "类型："
 L["Name: "] = "名称："
 L["From: "] = "来自："
