@@ -12,6 +12,7 @@ Locales\koKR.lua
 Libs\LoadLibs.xml
 
 Core.lua
+Defaults.lua
 Utils.lua
 Revise.lua
 Comm.lua

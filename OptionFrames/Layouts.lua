@@ -453,11 +453,17 @@ layoutsTab.mask:Hide()
 local newBtn = Cell:CreateButton(layoutsTab, L["New"], "class-hover", {55, 20})
 newBtn:SetPoint("TOPLEFT", layoutDropdown, "BOTTOMLEFT", 0, -10)
 newBtn:SetScript("OnClick", function()
-    local popup = Cell:CreateConfirmPopup(layoutsTab, 200, L["Create new layout"].."\n"..L["(based on current)"], function(self)
+    local popup = Cell:CreateConfirmPopup(layoutsTab, 200, L["Create new layout"], function(self)
         local name = strtrim(self.editBox:GetText())
+        local inherit = self.dropdown1:GetSelected()
+
         if name ~= "" and not CellDB["layouts"][name] then
             -- update db copy current layout
-            CellDB["layouts"][name] = F:Copy(CellDB["layouts"][Cell.vars.currentLayout])
+            if inherit == "cell-default-layout" then
+                CellDB["layouts"][name] = F:Copy(Cell.defaults.layout)
+            else
+                CellDB["layouts"][name] = F:Copy(CellDB["layouts"][inherit])
+            end
             -- update dropdown
             layoutDropdown:AddItem({
                 ["text"] = name,
@@ -474,8 +480,26 @@ newBtn:SetScript("OnClick", function()
         else
             F:Print(L["Invalid layout name."])
         end
-    end, nil, true, true)
+    end, nil, true, true, 1)
     popup:SetPoint("TOPLEFT", 100, -70)
+
+    -- layout inherits
+    local inherits = {
+        {
+            ["text"] = L["Default layout"],
+            ["value"] = "cell-default-layout",
+        }
+    }
+
+    for name in pairs(CellDB["layouts"]) do
+        tinsert(inherits, {
+            ["text"] = L["Inherit: "] .. name,
+            ["value"] = name, 
+        })
+    end
+
+    popup.dropdown1:SetItems(inherits)
+    popup.dropdown1:SetSelectedItem(1)
 end)
 Cell:RegisterForCloseDropdown(newBtn)
 

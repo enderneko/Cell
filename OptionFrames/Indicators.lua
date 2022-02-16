@@ -650,10 +650,11 @@ local typeItems = {
         ["text"] = L["Icons"],
         ["value"] = "icons",
     },
-    {
-        ["text"] = "|cff777777"..L["Bars"], -- TODO:
-        ["value"] = "bars",
-    },
+    -- TODO:
+    -- {
+    --     ["text"] = "|cff777777"..L["Bars"],
+    --     ["value"] = "bars",
+    -- },
 }
 
 local auraTypeItems = {
@@ -675,7 +676,7 @@ createBtn:SetScript("OnClick", function()
         local name = strtrim(self.editBox:GetText())
         local indicatorName
         local indicatorType, indicatorAuraType = self.dropdown1:GetSelected(), self.dropdown2:GetSelected()
-        if indicatorType == "bars" then return end -- TODO:
+        -- TODO: if indicatorType == "bars" then return end
         
         local last = #currentLayoutTable["indicators"]
         if currentLayoutTable["indicators"][last]["type"] == "built-in" then
