@@ -48,6 +48,19 @@ select(2, ...).L = setmetatable({
     ["RAID_DEBUFFS_TIPS"] = "Tips: [Drag & Drop] to change debuff order. [Double-Click] on instance name to open Encounter Journal. [Shift+Left Click] on instance/boss name to share debuffs. The priority of General Debuffs is higher than Boss Debuffs.",
 
     ["CHANGE LOGS"] = [[
+        <h1>r75-release (Feb 17, 2022, 00:22 GMT+8)</h1>
+        <h2>Appearance</h2>
+        <p>* Updated button highlight size option: negative size.</p>
+        <p>+ New power color: Power Color (dark).</p>
+        <h2>General</h2>
+        <p>* Updated pixel perfect: raid tools.</p>
+        <p>* Disabled Death Report in battlegrounds and arenas.</p>
+        <h2>Layouts</h2>
+        <p>* Updated layout creation.</p>
+        <h2>Raid Debuffs</h2>
+        <p>+ New raid debuffs sharing feature (beta): shift + left click on instance/boss to share debuffs via chat link.</p>
+        <br/>
+
         <h1>r74-release (Jan 12, 2022, 22:20 GMT+8)</h1>
         <p>* Bugs fix: layout auto switch, health text indicator.</p>
         <p>+ New "Condition" option in Raid Debuffs.</p>
