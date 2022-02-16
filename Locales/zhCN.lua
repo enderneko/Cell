@@ -260,6 +260,19 @@ L["VEHICLE"] = "载具"
 L["Tip: Every layout has its own position setting."] = "提示：每个布局都有其单独的位置设置。"
 
 -------------------------------------------------
+-- send/receive
+-------------------------------------------------
+L["To transfer across realm, you need to be in the same group."] = "跨服传输数据需要在同一个队伍里。"
+L["built-in(s)"] = "内置"
+L["custom(s)"] = "自定义"
+L["Data Transfer Failed..."] = "数据传输失败……"
+L["Type: "] = "类型："
+L["Name: "] = "名称："
+L["From: "] = "来自："
+L["Request"] = "请求"
+L["Cancel"] = "取消"
+
+-------------------------------------------------
 -- import/export
 -------------------------------------------------
 L["Import"] = "导入"
@@ -388,7 +401,7 @@ L["Would you like Cell to create a \"Healers\" indicator (icons)?"] = "需要 Ce
 -------------------------------------------------
 L["Raid Debuffs"] = "副本减益"
 L["Show Current Instance"] = "显示当前副本"
-L["Tips: Drag and drop to change debuff order. Double-click on instance name to open Encounter Journal. The priority of General Debuffs is higher than Boss Debuffs."] = "提示：拖动减益可以调整顺序，双击副本名称可以打开地下城手册。常规减益的优先级比首领减益的优先级更高。"
+L["RAID_DEBUFFS_TIPS"] = "提示：[拖动]减益可以调整顺序，[双击]副本名可以打开地下城手册，[Shift+左键]副本名或首领名可以分享减益列表。常规减益的优先级比首领减益的优先级更高。"
 -- L["Enable All"] = "全部启用"
 -- L["Disable All"] = "全部禁用"
 L["Track by ID"] = "匹配法术ID"

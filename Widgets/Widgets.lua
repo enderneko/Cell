@@ -2656,7 +2656,7 @@ function addon:CreateReceivingFrame(parent)
         nameText:Hide()
         fromText:Hide()
 
-        typeText:SetText(type)
+        typeText:SetText(L[type])
         if name2 then
             nameText:SetText(name1.." ("..name2..")")
         else
@@ -2675,7 +2675,7 @@ function addon:CreateReceivingFrame(parent)
         end)
 
         -- NOTE: you cannot send to yourself
-        -- requestBtn:SetEnabled(playerName ~= Cell.vars.myName)
+        requestBtn:SetEnabled(playerName ~= Cell.vars.myName)
         importBtn:Hide()
         dataLabel:Hide()
         dataText:Hide()
@@ -2698,7 +2698,7 @@ function addon:CreateReceivingFrame(parent)
             -- timeout
             timeout = C_Timer.NewTimer(10, function()
                 if progressBar:GetValue() == 0 then
-                    errorMsg:SetText("To transfer across realm, you need to be in the same group.")
+                    errorMsg:SetText(L["To transfer across realm, you need to be in the same group."])
                     addon:ChangeSizeWithAnimation(f, 249, f.height+10+math.ceil(errorMsg:GetStringHeight()*1.4), 7, nil, function()
                         errorMsg:Show()
                     end)

@@ -319,7 +319,7 @@ end)
 -------------------------------------------------
 -- tips
 -------------------------------------------------
-local tips = Cell:CreateScrollTextFrame(debuffsTab, "|cffb7b7b7"..L["Tips: Drag and drop to change debuff order. Double-click on instance name to open Encounter Journal. The priority of General Debuffs is higher than Boss Debuffs."], 0.02)
+local tips = Cell:CreateScrollTextFrame(debuffsTab, "|cffb7b7b7"..L["RAID_DEBUFFS_TIPS"], 0.02, nil, 2)
 tips:SetPoint("TOPLEFT", showCurrentBtn, "TOPRIGHT", 5, 0)
 tips:SetPoint("RIGHT", -5, 0)
 
