@@ -93,7 +93,7 @@ local textArea = Cell:CreateScrollEditBox(importExportFrame, function(eb, userCh
                     importBtn:SetEnabled(false)
                 end
             else
-                title:SetText(L["Import"])
+                title:SetText(L["Import"]..": |cffff2222"..L["Error"])
                 importBtn:SetEnabled(false)
             end
         else
