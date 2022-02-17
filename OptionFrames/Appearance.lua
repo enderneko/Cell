@@ -198,9 +198,9 @@ previewButton:SetScript("OnShow", function()
             previewButton.widget.healthBar:SetValue(health)
         end
 
-        local r, g, b, lossR, lossG, lossB = F:GetHealthColor(healthPercent, F:GetClassColor(Cell.vars.playerClass))
-        previewButton.widget.healthBar:SetStatusBarColor(r, g, b, CellDB["appearance"]["barAlpha"])
-        previewButton.widget.healthBarLoss:SetVertexColor(lossR, lossG, lossB, CellDB["appearance"]["lossAlpha"])
+        if CellDB["appearance"]["barColor"][1] == "Gradient" or CellDB["appearance"]["lossColor"][1] == "Gradient" then
+            UpdatePreviewColor(healthPercent)
+        end
 
         healthPercentOld = healthPercent
         currentState = currentState == 5 and 1 or (currentState + 1)
