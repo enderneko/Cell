@@ -237,8 +237,8 @@ end
 
 local function UpdateRaidDebuffs()
     LoadList()
-    -- DevInstanceList = F:Copy(encounterJournalList["暗影国度"])
     LoadDebuffs()
+    -- DevInstanceList = F:Copy(encounterJournalList["暗影国度"])
 end
 Cell:RegisterCallback("UpdateRaidDebuffs", "RaidDebuffsTab_UpdateRaidDebuffs", UpdateRaidDebuffs)
 

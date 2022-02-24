@@ -615,7 +615,7 @@ function F:GetFontItems()
     
     if LSM then
         fonts, fontNames = F:Copy(LSM:HashTable("font")), F:Copy(LSM:List("font"))
-        -- insert default texture
+        -- insert default font
         tinsert(fontNames, 1, defaultFontName)
         fonts[defaultFontName] = defaultFont
 

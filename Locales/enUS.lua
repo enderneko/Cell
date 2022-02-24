@@ -48,6 +48,11 @@ select(2, ...).L = setmetatable({
     ["RAID_DEBUFFS_TIPS"] = "Tips: [Drag & Drop] to change debuff order. [Double-Click] on instance name to open Encounter Journal. [Shift+Left Click] on instance/boss name to share debuffs. The priority of General Debuffs is higher than Boss Debuffs.",
 
     ["CHANGE LOGS"] = [[
+        <h1>r76-release (Feb 24, 2022, 11:20 GMT+8)</h1>
+        <p>+ Updated raid debuffs: Sepulcher of the First Ones.</p>
+        <p>* Bug fixes: appearance preview.</p>
+        <br/>
+
         <h1>r75-release (Feb 17, 2022, 00:22 GMT+8)</h1>
         <h2>Appearance</h2>
         <p>* Updated button highlight size option: negative size.</p>
