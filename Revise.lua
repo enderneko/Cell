@@ -915,5 +915,12 @@ function F:Revise()
         end
     end
 
+    -- r77-release
+    if CellDB["revise"] and dbRevision < 77 then
+        if type(CellDB["appearance"]["useGameFont"]) ~= "boolean" then
+            CellDB["appearance"]["useGameFont"] = true
+        end
+    end
+
     CellDB["revise"] = Cell.version
 end

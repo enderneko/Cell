@@ -600,16 +600,26 @@ function F:GetBarTexture()
 end
 
 function F:GetFont(font)
-    if not font then font = CellDB["appearance"]["font"] end
-    if LSM and LSM:IsValid("font", font) then
+    if font and LSM and LSM:IsValid("font", font) then
         return LSM:Fetch("font", font)
     else
-        return GameFontNormal:GetFont()
+        if CellDB["appearance"]["useGameFont"] then
+            return GameFontNormal:GetFont()
+        else
+            return "Interface\\AddOns\\Cell\\Media\\Accidental_Presidency.ttf"
+        end
     end
 end
 
-local defaultFont, defaultFontName = GameFontNormal:GetFont(), "Cell ".._G.DEFAULT
+local defaultFontName = "Cell ".._G.DEFAULT
+local defaultFont
 function F:GetFontItems()
+    if CellDB["appearance"]["useGameFont"] then
+        defaultFont = GameFontNormal:GetFont()
+    else
+        defaultFont = "Interface\\AddOns\\Cell\\Media\\Accidental_Presidency.ttf"
+    end
+
     local items = {}
     local fonts, fontNames
     

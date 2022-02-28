@@ -39,7 +39,17 @@ optionsFontSizeOffset:SetPoint("TOPLEFT", fontText, "BOTTOMLEFT", 5, -12)
 
 optionsFontSizeOffset.afterValueChangedFn = function(value)
     CellDB["appearance"]["optionsFontSizeOffset"] = value
-    Cell:UpdateOptionsFont(value)
+    Cell:UpdateOptionsFont(value, CellDB["appearance"]["useGameFont"])
+end
+
+local useGameFontCB = Cell:CreateCheckButton(appearanceTab, "", function(checked)
+    CellDB["appearance"]["useGameFont"] = checked
+    Cell:UpdateOptionsFont(CellDB["appearance"]["optionsFontSizeOffset"], checked)
+end, "Use Game Font")
+useGameFontCB:SetPoint("RIGHT", -5, 0)
+useGameFontCB:SetPoint("BOTTOM", fontText)
+if LOCALE_zhCN or LOCALE_zhTW or LOCALE_koKR then
+    useGameFontCB:Hide()
 end
 
 -------------------------------------------------
@@ -635,6 +645,7 @@ local function ShowTab(tab)
         -- load data
         scaleSlider:SetValue(CellDB["appearance"]["scale"])
         optionsFontSizeOffset:SetValue(CellDB["appearance"]["optionsFontSizeOffset"])
+        useGameFontCB:SetChecked(CellDB["appearance"]["useGameFont"])
         
         CheckTextures()
         barColorDropdown:SetSelected(L[CellDB["appearance"]["barColor"][1]])

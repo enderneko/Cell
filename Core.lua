@@ -168,6 +168,7 @@ function eventFrame:ADDON_LOADED(arg1)
             CellDB["appearance"] = {
                 ["scale"] = 1,
                 ["optionsFontSizeOffset"] = 0,
+                ["useGameFont"] = true,
                 ["texture"] = "Cell ".._G.DEFAULT,
                 ["barColor"] = {"Class Color", {.2, .2, .2}},
                 ["lossColor"] = {"Class Color (dark)", {.667, 0, 0}},
@@ -485,7 +486,7 @@ function eventFrame:PLAYER_LOGIN()
     -- Cell:Fire("UpdateIndicators") -- NOTE: already update in GROUP_ROSTER_UPDATE -> GroupTypeChanged -> F:UpdateLayout
     -- update texture and font
     Cell:Fire("UpdateAppearance")
-    Cell:UpdateOptionsFont(CellDB["appearance"]["optionsFontSizeOffset"])
+    Cell:UpdateOptionsFont(CellDB["appearance"]["optionsFontSizeOffset"], CellDB["appearance"]["useGameFont"])
     Cell:Fire("UpdatePixelPerfect")
     -- update raid tools
     Cell:Fire("UpdateRaidTools")

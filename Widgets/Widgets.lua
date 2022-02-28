@@ -48,6 +48,18 @@ end
 -----------------------------------------
 -- Font
 -----------------------------------------
+-- local fonts = {}
+-- local function SetFont(obj, font, size, flags)
+--     -- store in fonts for resizing
+--     tinsert(fonts, {
+--         ["obj"] = obj,
+--         ["font"] = font,
+--         ["size"] = size,
+--         ["flags"] = flags
+--     })
+--     obj:SetFont()
+-- end
+
 local font_title_name = strupper(addonName).."_FONT_WIDGET_TITLE"
 local font_title_disable_name = strupper(addonName).."_FONT_WIDGET_TITLE_DISABLE"
 local font_name = strupper(addonName).."_FONT_WIDGET"
@@ -106,15 +118,21 @@ font_class:SetShadowColor(0, 0, 0)
 font_class:SetShadowOffset(1, -1)
 font_class:SetJustifyH("CENTER")
 
-local fontSizeOffset = 0
-function addon:UpdateOptionsFont(offset)
+local defaultFont, fontSizeOffset = 0
+function addon:UpdateOptionsFont(offset, useGameFont)
+    if useGameFont then
+        defaultFont = GameFontNormal:GetFont()
+    else
+        defaultFont = "Interface\\AddOns\\Cell\\Media\\Accidental_Presidency.ttf"
+    end
     fontSizeOffset = offset
-    font_title:SetFont(GameFontNormal:GetFont(), 14+offset)
-    font_title_disable:SetFont(GameFontNormal:GetFont(), 14+offset)
-    font:SetFont(GameFontNormal:GetFont(), 13+offset)
-    font_disable:SetFont(GameFontNormal:GetFont(), 13+offset)
-    font_class_title:SetFont(GameFontNormal:GetFont(), 14+offset)
-    font_class:SetFont(GameFontNormal:GetFont(), 13+offset)
+
+    font_title:SetFont(defaultFont, 14+offset)
+    font_title_disable:SetFont(defaultFont, 14+offset)
+    font:SetFont(defaultFont, 13+offset)
+    font_disable:SetFont(defaultFont, 13+offset)
+    font_class_title:SetFont(defaultFont, 14+offset)
+    font_class:SetFont(defaultFont, 13+offset)
 end
 
 -----------------------------------------
