@@ -1,5 +1,10 @@
 package-as: Cell
 enable-nolib-creation: no
+enable-toc-creation: yes
 
 ignore:
-    - Libs/LibStub/tests
+  - Libs/LibStub/tests
+
+manual-changelog:
+  filename: CHANGELOG.md
+  markup-type: markdown
