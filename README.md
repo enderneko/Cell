@@ -1,5 +1,6 @@
 # Cell
 
+[![Package and release](https://img.shields.io/github/workflow/status/enderneko/Cell/Package%20and%20release?label=release&logo=github)](https://github.com/enderneko/Cell/actions/workflows/release.yml)
 [![Average time to resolve an issue](http://isitmaintained.com/badge/resolution/enderneko/Cell.svg)](http://isitmaintained.com/project/enderneko/Cell "Average time to resolve an issue")
 [![Percentage of issues still open](http://isitmaintained.com/badge/open/enderneko/Cell.svg)](http://isitmaintained.com/project/enderneko/Cell "Percentage of issues still open")
 [![cell on curseforge](https://img.shields.io/badge/dynamic/json?color=f16436&label=CurseForge&query=%24.downloads.total&url=https%3A%2F%2Fapi.cfwidget.com%2F409666&style=flat&logo=curseforge)](https://www.curseforge.com/wow/addons/cell)
