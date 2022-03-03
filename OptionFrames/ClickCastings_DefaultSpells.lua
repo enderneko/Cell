@@ -173,7 +173,6 @@ local defaultSpells = {
             2060, -- Heal - 治疗术
             596, -- Prayer of Healing - 治疗祷言
             204883, -- Circle of Healing - 治疗之环
-            "32546T", -- Binding Heal - 联结治疗
             47788, -- Guardian Spirit - 守护之魂
             "204263T", -- Shining Force - 闪光力场
             527, -- Purify - 纯净术
