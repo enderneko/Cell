@@ -8,7 +8,7 @@ local deflateConfig = {level = 9}
 local MINIMUM_VERSION = 71
 local isImport, imported, exported = false, {}, ""
 
-local importExportFrame = CreateFrame("Frame", "CellOptionsFrame_ImportExport", Cell.frames.layoutsTab, "BackdropTemplate")
+local importExportFrame = CreateFrame("Frame", "CellOptionsFrame_LayoutsImportExport", Cell.frames.layoutsTab, "BackdropTemplate")
 importExportFrame:Hide()
 Cell:StylizeFrame(importExportFrame, nil, Cell:GetPlayerClassColorTable())
 importExportFrame:EnableMouse(true)
@@ -134,7 +134,7 @@ function F:ShowLayoutImportFrame()
     textArea.eb:SetFocus(true)
 end
 
-function F:ShowLayoutExportFrame(layoutName, layoutTable)
+function F:ShowLayoutImportExport(layoutName, layoutTable)
     importExportFrame:Show()
     isImport = false
     importBtn:Hide()

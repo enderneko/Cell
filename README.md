@@ -1,7 +1,8 @@
 # Cell
 
-[![Package and release](https://img.shields.io/github/workflow/status/enderneko/Cell/Package%20and%20release?label=release)](https://github.com/enderneko/Cell/actions/workflows/release.yml)
-![last commit](https://img.shields.io/github/last-commit/enderneko/Cell)
+[![Package and release](https://img.shields.io/github/workflow/status/enderneko/Cell/Package%20and%20release)](https://github.com/enderneko/Cell/actions/workflows/release.yml)
+[![version](https://img.shields.io/github/v/release/enderneko/Cell)](https://github.com/enderneko/Cell/releases)
+[![last commit](https://img.shields.io/github/last-commit/enderneko/Cell)](https://github.com/enderneko/Cell/commits/master)
 [![Average time to resolve an issue](http://isitmaintained.com/badge/resolution/enderneko/Cell.svg)](http://isitmaintained.com/project/enderneko/Cell "Average time to resolve an issue")
 [![Percentage of issues still open](http://isitmaintained.com/badge/open/enderneko/Cell.svg)](http://isitmaintained.com/project/enderneko/Cell "Percentage of issues still open")
 
@@ -23,7 +24,7 @@ It's easy to use and good enough for you (hope so).
 - __Raid Debuffs:__ debuffs priority and glow.
 - __Useful Raid Tools:__ ready check, countdown, rebuff, death report, marks, battleres.
 - __Sexy Options UI:__ I mean yes it's pretty darn good!
-- __Compatible Addons:__ [Class Colors](https://www.curseforge.com/wow/addons/classcolors), [OmniCD](https://www.curseforge.com/wow/addons/omnicd) and of course, WAs.
+- __Compatibility:__ [Class Colors](https://www.curseforge.com/wow/addons/classcolors), [OmniCD](https://www.curseforge.com/wow/addons/omnicd) and of course, [WAs](https://wago.io/weakauras).
 
 ## Not supported and probably won't be included in the future
 
