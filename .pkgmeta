@@ -4,6 +4,7 @@ enable-nolib-creation: no
 
 ignore:
   - Libs/LibStub/tests
+  - generate_changelog.sh
 
 manual-changelog:
   filename: CHANGELOG.md
