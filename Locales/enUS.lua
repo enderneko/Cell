@@ -48,6 +48,12 @@ select(2, ...).L = setmetatable({
     ["RAID_DEBUFFS_TIPS"] = "Tips: [Drag & Drop] to change debuff order. [Double-Click] on instance name to open Encounter Journal. [Shift+Left Click] on instance/boss name to share debuffs. The priority of General Debuffs is higher than Boss Debuffs.",
 
     ["CHANGE LOGS"] = [[
+        <h1>r77-release (Mar 3, 2022, 8:21 GMT+8)</h1>
+        <p>* Bug fixes: click-castings (priest).</p>
+        <p>+ Added "Use Game Font" option in Appearance.</p>
+        <p>* Updated zhTW.</p>
+        <br/>
+
         <h1>r76-release (Feb 24, 2022, 11:20 GMT+8)</h1>
         <p>+ Updated raid debuffs: Sepulcher of the First Ones.</p>
         <p>* Bug fixes: appearance preview.</p>
