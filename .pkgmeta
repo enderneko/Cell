@@ -1,6 +1,6 @@
 package-as: Cell
 enable-nolib-creation: no
-enable-toc-creation: yes
+# enable-toc-creation: yes
 
 ignore:
   - Libs/LibStub/tests
