@@ -605,7 +605,7 @@ end)
 local exportBtn = Cell:CreateButton(layoutsTab, L["Export"], "class-hover", {55, 20})
 exportBtn:SetPoint("LEFT", importBtn, "RIGHT", -1, 0)
 exportBtn:SetScript("OnClick", function()
-    F:ShowLayoutImportExport(selectedLayout, selectedLayoutTable)
+    F:ShowLayoutExportFrame(selectedLayout, selectedLayoutTable)
 end)
 
 UpdateButtonStates = function()

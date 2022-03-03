@@ -134,7 +134,7 @@ function F:ShowLayoutImportFrame()
     textArea.eb:SetFocus(true)
 end
 
-function F:ShowLayoutImportExport(layoutName, layoutTable)
+function F:ShowLayoutExportFrame(layoutName, layoutTable)
     importExportFrame:Show()
     isImport = false
     importBtn:Hide()
