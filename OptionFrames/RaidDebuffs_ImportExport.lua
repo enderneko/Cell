@@ -72,7 +72,7 @@ importBtn:SetScript("OnClick", function()
         local instanceName, bossName = F:GetInstanceAndBossName(imported["instanceId"], imported["bossId"])
         local which
         if bossName then
-            which = instanceName.." ("..bossName..")"
+            which = bossName.." ("..instanceName..")"
         else
             which = instanceName
         end

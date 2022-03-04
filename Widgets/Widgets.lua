@@ -2682,7 +2682,7 @@ function addon:CreateReceivingFrame(parent)
 
         typeText:SetText(L[type])
         if name2 then
-            nameText:SetText(name1.." ("..name2..")")
+            nameText:SetText(name2.." ("..name1..")")
         else
             nameText:SetText(name1)
         end

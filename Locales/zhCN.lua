@@ -402,7 +402,7 @@ L["Would you like Cell to create a \"Healers\" indicator (icons)?"] = "需要 Ce
 -------------------------------------------------
 L["Raid Debuffs"] = "副本减益"
 L["Show Current Instance"] = "显示当前副本"
-L["RAID_DEBUFFS_TIPS"] = "提示：[拖动]减益可以调整顺序，[双击]副本名可以打开地下城手册，[Shift+左键]副本名或首领名可以分享减益列表。常规减益的优先级比首领减益的优先级更高。"
+L["RAID_DEBUFFS_TIPS"] = "提示：[拖动]减益可以调整顺序，[双击]副本名可以打开地下城手册，[Shift+左键]副本名或首领名可以分享减益，[Alt+左键]副本名或首领名可以重置减益。常规减益的优先级比首领减益的优先级更高。"
 -- L["Enable All"] = "全部启用"
 -- L["Disable All"] = "全部禁用"
 L["Track by ID"] = "匹配法术ID"
@@ -431,6 +431,7 @@ L["All Bosses"] = "全部首领"
 L["No custom debuffs to export!"] = "没有能够导出的减益！"
 L["This will overwrite your debuffs"] = "这将覆盖你的副本减益"
 L["Raid Debuffs updated: %s."] = "已更新副本减益：%s"
+L["Reset debuffs?"] = "重置减益？"
 
 -------------------------------------------------
 -- about

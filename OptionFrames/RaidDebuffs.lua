@@ -274,10 +274,14 @@ local function OpenInstanceBoss(instanceName, bossName)
     if not instanceName or not instanceNameMapping[instanceName] then return end
 
     local eName, iIndex, iId = F:SplitToNumber(":", instanceNameMapping[instanceName])
-    -- if loadedInstance == iId then return end
     expansionDropdown:SetSelected(eName)
     LoadExpansion(eName)
-    instanceButtons[iIndex]:Click()
+    if loadedInstance == iId and not bossName then
+        -- current instance already shown, but instance debuffs updated, force refresh
+        ShowBosses(instanceButtons[iIndex].id, true)
+    else
+        instanceButtons[iIndex]:Click()
+    end
     -- scroll
     if iIndex > 9 then
         RaidDebuffsTab_Instances.scrollFrame:SetVerticalScroll((iIndex-9)*19)
@@ -300,7 +304,20 @@ local function OpenInstanceBoss(instanceName, bossName)
 
         if bIndex then
             C_Timer.After(0.25, function()
-                bossButtons[bIndex]:Click()
+                if bIndex == 0 then
+                    if loadedBoss == iId then -- general already shown, just reload
+                        ShowDebuffs(bossButtons[bIndex].id, 1)
+                    else
+                        bossButtons[bIndex]:Click()
+                    end
+                else
+                    local bId, _ = F:SplitToNumber("-", bossButtons[bIndex].id)
+                    if loadedBoss == bId then
+                        ShowDebuffs(bossButtons[bIndex].id, 1)
+                    else
+                        bossButtons[bIndex]:Click()
+                    end
+                end
                 -- scroll
                 if bIndex > 10 then
                     RaidDebuffsTab_Bosses.scrollFrame:SetVerticalScroll((bIndex-10)*19)
@@ -406,17 +423,29 @@ ShowInstances = function(eName)
 
     -- set onclick
     Cell:CreateButtonGroup(instanceButtons, function(id, b)
-        -- NOTE: sharing
-        if IsShiftKeyDown() and b:IsMouseOver() then
+        if IsShiftKeyDown() and b:IsMouseOver() then -- NOTE: sharing
             -- print("instance:"..iId, "bossId:"..id)
             local editbox = GetCurrentKeyBoardFocus()
             if editbox then
                 local iId, iIndex = F:SplitToNumber("-", id)
                 editbox:SetText("[Cell:Debuffs: "..instanceIdToName[iId].." - "..Cell.vars.myName.."]")
             end
+        elseif IsAltKeyDown() and b:IsMouseOver() then -- NOTE: reset
+            local iId, iIndex = F:SplitToNumber("-", id)
+            local popup = Cell:CreateConfirmPopup(Cell.frames.raidDebuffsTab, 200, L["Reset debuffs?"].."\n"..instanceIdToName[iId], function(self)
+                -- update
+                F:UpdateRaidDebuffs(iId, nil, nil, instanceIdToName[iId])
+                -- reload
+                C_Timer.After(0.25, function()
+                    ShowBosses(id, true)
+                end)
+            end, nil, true)
+            popup:SetPoint("TOPLEFT", 100, -170)
         end
         ShowBosses(id)
     end, nil, nil, instancesFrame:GetScript("OnEnter"), instancesFrame:GetScript("OnLeave"))
+
+    -- show the first boss
     instanceButtons[1]:Click()
 end
 
@@ -431,10 +460,10 @@ Cell:CreateScrollFrame(bossesFrame)
 bossesFrame.scrollFrame:SetScrollStep(19)
 SetOnEnterLeave(bossesFrame)
 
-ShowBosses = function(instanceId)
+ShowBosses = function(instanceId, forceRefresh)
     local iId, iIndex = F:SplitToNumber("-", instanceId)
 
-    if loadedInstance == iId then return end
+    if loadedInstance == iId and not forceRefresh then return end
     loadedInstance = iId
 
     bossesFrame.scrollFrame:ResetScroll()
@@ -477,8 +506,7 @@ ShowBosses = function(instanceId)
 
     -- set onclick/onenter
     Cell:CreateButtonGroup(bossButtons, function(id, b)
-        -- NOTE: sharing
-        if IsShiftKeyDown() and b:IsMouseOver() then
+        if IsShiftKeyDown() and b:IsMouseOver() then -- NOTE: sharing
             -- print("instance:"..iId, "bossId:"..id)
             local editbox = GetCurrentKeyBoardFocus()
             if editbox then
@@ -489,6 +517,37 @@ ShowBosses = function(instanceId)
                     editbox:SetText("[Cell:Debuffs: "..bossIdToName[bId].." ("..instanceIdToName[iId]..") - "..Cell.vars.myName.."]")
                 end
             end
+        elseif IsAltKeyDown() and b:IsMouseOver() then -- NOTE: reset
+            local text
+            if id == iId then -- general
+                text = bossIdToName[0]
+            else
+                local bId = F:SplitToNumber("-", id)
+                text = bossIdToName[bId]
+            end
+
+            local popup = Cell:CreateConfirmPopup(Cell.frames.raidDebuffsTab, 200, L["Reset debuffs?"].."\n"..text, function(self)
+                local which
+                if id == iId then -- general
+                    which = bossIdToName[0].." ("..instanceIdToName[iId]..")"
+                    -- update
+                    F:UpdateRaidDebuffs(iId, "general", nil, which)
+                    -- reload
+                    C_Timer.After(0.25, function()
+                        ShowDebuffs(id, 1)
+                    end)
+                else
+                    local bId, index = F:SplitToNumber("-", id)
+                    which = bossIdToName[bId].." ("..instanceIdToName[iId]..")"
+                    -- update
+                    F:UpdateRaidDebuffs(iId, bId, nil, which)
+                    -- reload
+                    C_Timer.After(0.25, function()
+                        ShowDebuffs(id, 1)
+                    end)
+                end
+            end, nil, true)
+            popup:SetPoint("TOPLEFT", 100, -170)
         end
         ShowDebuffs(id)
     end, nil, nil, function(b)
@@ -503,7 +562,16 @@ ShowBosses = function(instanceId)
     end)
 
     -- show General by default
-    bossButtons[0]:Click()
+    if forceRefresh then
+        -- if general is already shown        
+        if loadedBoss == iId then
+            ShowDebuffs(iId, 1)
+        else
+            bossButtons[0]:Click()
+        end
+    else
+        bossButtons[0]:Click()
+    end
 end
 
 -------------------------------------------------
@@ -1969,7 +2037,7 @@ function F:UpdateRaidDebuffs(instanceId, bossId, data, which)
     -- update current region
     Cell:Fire("RaidDebuffsChanged", instanceIdToName[instanceId])
 
-    F:Print(L["Raid Debuffs imported: %s."]:format(which))
+    F:Print(L["Raid Debuffs updated: %s."]:format(which))
 end
 
 -------------------------------------------------
