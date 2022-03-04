@@ -1417,8 +1417,6 @@ function addon:CreateConfirmPopup(parent, width, text, onAccept, onReject, mask,
         parent.confirmPopup:SetSize(width, 100)
         addon:StylizeFrame(parent.confirmPopup, {.1, .1, .1, .95}, {classColor.t[1], classColor.t[2], classColor.t[3], .7})
         parent.confirmPopup:EnableMouse(true)
-        parent.confirmPopup:SetFrameStrata("DIALOG")
-        parent.confirmPopup:SetFrameLevel(2)
         parent.confirmPopup:Hide()
         
         parent.confirmPopup:SetScript("OnHide", function()
@@ -1542,6 +1540,8 @@ function addon:CreateConfirmPopup(parent, width, text, onAccept, onReject, mask,
         end)
     end)
 
+    parent.confirmPopup:SetFrameStrata("DIALOG")
+    parent.confirmPopup:SetFrameLevel(2)
     parent.confirmPopup:ClearAllPoints() -- prepare for SetPoint()
     parent.confirmPopup:Show()
 

@@ -12,9 +12,14 @@ local importExportFrame = CreateFrame("Frame", "CellOptionsFrame_LayoutsImportEx
 importExportFrame:Hide()
 Cell:StylizeFrame(importExportFrame, nil, Cell:GetPlayerClassColorTable())
 importExportFrame:EnableMouse(true)
+importExportFrame:SetFrameStrata("DIALOG")
 importExportFrame:SetFrameLevel(Cell.frames.layoutsTab:GetFrameLevel()+20)
 importExportFrame:SetSize(397, 170)
 importExportFrame:SetPoint("TOPLEFT", 0, -100)
+if not Cell.frames.layoutsTab.mask then
+    Cell:CreateMask(Cell.frames.layoutsTab)
+    Cell.frames.layoutsTab.mask:Hide()
+end
 
 -- close
 local closeBtn = Cell:CreateButton(importExportFrame, "×", "red", {18, 18}, false, false, "CELL_FONT_SPECIAL", "CELL_FONT_SPECIAL")
@@ -26,10 +31,13 @@ local importBtn = Cell:CreateButton(importExportFrame, L["Import"], "green", {50
 importBtn:Hide()
 importBtn:SetPoint("TOPRIGHT", closeBtn, "TOPLEFT", 1, 0)
 importBtn:SetScript("OnClick", function()
+    -- lower frame level
+    importExportFrame:SetFrameStrata("HIGH")
+
     if CellDB["layouts"][imported["name"]] then
         local text = L["Overwrite Layout"]..": "..(imported["name"] == "default" and _G.DEFAULT or imported["name"]).."?\n"..
             L["|cff1Aff1AYes|r - Overwrite"].."\n"..L["|cffff1A1ANo|r - Create New"]
-        local popup = Cell:CreateConfirmPopup(importExportFrame, 200, text, function(self)
+        local popup = Cell:CreateConfirmPopup(Cell.frames.layoutsTab, 200, text, function(self)
             -- !overwrite
             local name = imported["name"]
             CellDB["layouts"][name] = imported["data"]
@@ -48,7 +56,7 @@ importBtn:SetScript("OnClick", function()
             Cell:Fire("LayoutImported", name)
             importExportFrame:Hide()
         end, true)
-        popup:SetPoint("TOPLEFT", 100, -50)
+        popup:SetPoint("TOPLEFT", importExportFrame, 100, -50)
     else
         -- !new
         local name = imported["name"]
@@ -74,9 +82,9 @@ local textArea = Cell:CreateScrollEditBox(importExportFrame, function(eb, userCh
 
             if name and version and data then
                 if version >= MINIMUM_VERSION then
-                    data = LibDeflate:DecodeForPrint(data) -- decode
-                    data = LibDeflate:DecompressDeflate(data) -- decompress
                     local success
+                    data = LibDeflate:DecodeForPrint(data) -- decode
+                    success, data = pcall(LibDeflate.DecompressDeflate, LibDeflate, data) -- decompress
                     success, data = Serializer:Deserialize(data) -- deserialize
                     
                     if success and data then
@@ -120,6 +128,14 @@ importExportFrame:SetScript("OnHide", function()
     isImport = false
     exported = ""
     wipe(imported)
+    -- hide mask
+    Cell.frames.layoutsTab.mask:Hide()
+end)
+
+importExportFrame:SetScript("OnShow", function()
+    -- raise frame level
+    importExportFrame:SetFrameStrata("DIALOG")
+    Cell.frames.layoutsTab.mask:Show()
 end)
 
 function F:ShowLayoutImportFrame()

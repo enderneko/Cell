@@ -322,12 +322,16 @@ end)
 local importBtn = Cell:CreateButton(debuffsTab, "", "class-hover", {20, 20}, nil, nil, nil, nil, nil, L["Import"])
 importBtn:SetPoint("TOPLEFT", showCurrentBtn, "TOPRIGHT", -1, 0)
 importBtn:SetTexture("Interface\\AddOns\\Cell\\Media\\Icons\\import.blp", {16, 16}, {"TOPLEFT", 2, -2})
-importBtn:SetEnabled(false)
+importBtn:SetScript("OnClick", function()
+    F:ShowRaidDebuffsImportFrame()
+end)
 
 local exportBtn = Cell:CreateButton(debuffsTab, "", "class-hover", {20, 20}, nil, nil, nil, nil, nil, L["Export"])
 exportBtn:SetPoint("TOPLEFT", importBtn, "TOPRIGHT", -1, 0)
 exportBtn:SetTexture("Interface\\AddOns\\Cell\\Media\\Icons\\export.blp", {16, 16}, {"TOPLEFT", 2, -2})
-exportBtn:SetEnabled(false)
+exportBtn:SetScript("OnClick", function()
+    F:ShowRaidDebuffsExportFrame(loadedInstance, loadedInstance == loadedBoss and "general" or loadedBoss)
+end)
 
 -------------------------------------------------
 -- tips
@@ -452,7 +456,9 @@ ShowBosses = function(instanceId)
             bossButtons[i]:Show()
         end
 
-        bossButtons[i].id = bTable["id"].."-"..i -- send bossId-bossIndex to ShowDebuffs TODO: just pass bossId
+        -- send bossId-bossIndex to ShowDebuffs
+        -- bossIndex is used to show boss image when hover on boss button
+        bossButtons[i].id = bTable["id"].."-"..i
 
         bossButtons[i]:SetPoint("TOPLEFT", bossButtons[i-1], "BOTTOMLEFT", 0, 1)
         bossButtons[i]:SetPoint("RIGHT")
@@ -871,7 +877,7 @@ ShowDebuffs = function(bossId, buttonIndex)
 
     currentBossTable = nil
     if loadedDebuffs[loadedInstance] then
-        if bId == loadedInstance then -- General
+        if isGeneral then -- General
             currentBossTable = loadedDebuffs[loadedInstance]["general"]
         else
             currentBossTable = loadedDebuffs[loadedInstance][bId]
@@ -1078,6 +1084,7 @@ local function UpdateCondition(condition)
     LoadCondition(condition)
 end
 
+-- TODO: 同时持有另一个debuff
 local conditionDropDown = Cell:CreateDropdown(detailsContentFrame, 100)
 conditionDropDown:SetPoint("TOPLEFT", conditionText, "BOTTOMLEFT", 0, -1)
 conditionDropDown:SetItems({
@@ -1815,7 +1822,7 @@ end
 -------------------------------------------------
 -- sharing functions
 -------------------------------------------------
-function F:GetInstanceAndBossIds(instanceName, bossName)
+function F:GetInstanceAndBossId(instanceName, bossName)
     local result = instanceNameMapping[instanceName]
     if not result then return end
 
@@ -1841,6 +1848,15 @@ function F:GetInstanceAndBossIds(instanceName, bossName)
     return instanceId, bossId
 end
 
+function F:GetInstanceAndBossName(instanceId, bossId)
+    if bossId == "general" then
+        return instanceIdToName[instanceId], bossIdToName[0]
+    else
+        return instanceIdToName[instanceId], bossIdToName[bossId]
+    end
+end
+
+-- calculate built-ins and customs
 function F:CalcRaidDebuffs(instanceId, bossId, data)
     local builtIn = 0
 

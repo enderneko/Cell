@@ -312,7 +312,7 @@ Comm:RegisterComm("CELL_REQ", function(prefix, message, channel, requester)
     local requestData
 
     if type == "Debuffs" then
-        local instanceId, bossId = F:GetInstanceAndBossIds(name1, name2)
+        local instanceId, bossId = F:GetInstanceAndBossId(name1, name2)
         if not instanceId then return end -- invalid instanceName
 
         requestData = {
