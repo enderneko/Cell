@@ -430,7 +430,7 @@ L["Current Boss"] = "当前首领"
 L["All Bosses"] = "全部首领"
 L["No custom debuffs to export!"] = "没有能够导出的减益！"
 L["This will overwrite your debuffs"] = "这将覆盖你的副本减益"
-L["Raid Debuffs imported: %s."] = "已导入副本减益：%s"
+L["Raid Debuffs updated: %s."] = "已更新副本减益：%s"
 
 -------------------------------------------------
 -- about
