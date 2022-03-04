@@ -267,7 +267,6 @@ L["To transfer across realm, you need to be in the same group"] = "跨服传输�
 L["built-in(s)"] = "内置"
 L["custom(s)"] = "自定义"
 L["Data transfer failed..."] = "数据传输失败……"
-L["This will overwrite your debuffs"] = "这将覆盖你的副本减益"
 L["Type: "] = "类型："
 L["Name: "] = "名称："
 L["From: "] = "来自："
@@ -425,6 +424,13 @@ L["Create new debuff (id)"] = "创建新减益 (id)"
 L["Delete debuff?"] = "删除减益？"
 L["Invalid spell id."] = "无效的法术id。"
 L["Debuff already exists."] = "减益已存在。"
+L["Instance Name"] = "副本名称"
+L["Boss Name"] = "首领名称"
+L["Current Boss"] = "当前首领"
+L["All Bosses"] = "全部首领"
+L["No custom debuffs to export!"] = "没有能够导出的减益！"
+L["This will overwrite your debuffs"] = "这将覆盖你的副本减益"
+L["Raid Debuffs imported: %s."] = "已导入副本减益：%s"
 
 -------------------------------------------------
 -- about
