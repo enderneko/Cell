@@ -17,6 +17,9 @@ ignore:
   - Libs/LibDeflate/examples
   - Libs/LibDeflate/CONTRIBUTING.md
   - Libs/LibStub/tests
+  - Libs/LibGroupInSpecT/CallbackHandler-1.0
+  - Libs/LibGroupInSpecT/LibStub
+  - Libs/LibGroupInSpecT/embeds.xml
   - generate_changelog.sh
 
 manual-changelog:
