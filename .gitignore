@@ -1,9 +1,12 @@
-.vscode
+.vscode/
+.release/
+.resources/
+unused/
 
 #external libraries
-LibCombatLogHealth-1.0/
-LibPlayerSpells-1.0/
-/Libs/LibStub/tests
+Libs/*
 
-#unused
-unused/
+!Libs/CallbackHandler.lua
+!Libs/PixelPerfect.lua
+!Libs/utf8.lua
+!Libs/LoadLibs.xml
