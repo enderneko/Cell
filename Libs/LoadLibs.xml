@@ -2,7 +2,6 @@
 ..\FrameXML\UI.xsd">
     <Script file="LibStub\LibStub.lua"/>
     <Include file="CallbackHandler-1.0\CallbackHandler-1.0.xml"/>
-    <!-- <Include file="LibPlayerSpells-1.0\lib.xml"/> -->
     <Include file="LibSharedMedia-3.0\lib.xml"/>
     <Include file="LibCustomGlow-1.0\LibCustomGlow-1.0.xml"/>
     <Include file="AceComm-3.0\AceComm-3.0.xml"/>
@@ -13,5 +12,4 @@
     <Script file="CallbackHandler.lua"/>
     <Script file="PixelPerfect.lua"/>
     <Script file="LibGroupInSpecT-1.1.lua"/>
-    <!-- <Script file="LibCombatLogHealth-1.0\LibCombatLogHealth-1.0.lua"/> -->
 </Ui>
