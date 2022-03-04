@@ -4,3 +4,6 @@ Appearance:
 Indicators:
     ☐ altpower
     ✘ icon cooldown style @cancelled(22-01-19 23:15)
+
+Libs:
+    ☐ rewrite LibGroupInspectT

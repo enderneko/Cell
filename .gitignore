@@ -1,7 +1,6 @@
 .vscode/
 .release/
 .resources/
-unused/
 
 #external libraries
 Libs/*
