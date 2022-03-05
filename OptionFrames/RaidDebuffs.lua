@@ -656,6 +656,24 @@ create:SetScript("OnClick", function()
         Cell:Fire("RaidDebuffsChanged", instanceIdToName[loadedInstance])
     end, nil, true, true)
     popup.editBox:SetNumeric(true)
+    popup.editBox:SetScript("OnTextChanged", function()
+        local spellId = tonumber(popup.editBox:GetText())
+        if not spellId then
+            CellTooltip:Hide()
+            return
+        end
+
+        local name = GetSpellInfo(spellId)
+        if not name then
+            CellTooltip:Hide()
+            return
+        end
+        
+        CellTooltip:SetOwner(popup, "ANCHOR_NONE")
+        CellTooltip:SetPoint("TOPLEFT", popup, "BOTTOMLEFT", 0, -1)
+        CellTooltip:SetHyperlink("spell:"..spellId)
+        CellTooltip:Show()
+    end)
     popup:SetPoint("TOPLEFT", 100, -170)
 end)
 
