@@ -569,11 +569,11 @@ function SlashCmdList.CELL(msg, editbox)
             CellDB["layouts"] = nil
             ReloadUI()
 
-        elseif rest == "raidDebuffs" then
+        elseif rest == "raiddebuffs" then
             CellDB["raidDebuffs"] = nil
             ReloadUI()
             
-        elseif rest == "clickCastings" then
+        elseif rest == "clickcastings" then
             CellDB["clickCastings"] = nil
             ReloadUI()
         end
@@ -598,8 +598,8 @@ function SlashCmdList.CELL(msg, editbox)
             "|cFFFF7777"..L["These \"reset\" commands below affect all your characters in this account"]..".|r\n"..
             "|cFFFFB5C5/cell reset position|r: "..L["reset Cell position"]..".\n"..
             "|cFFFFB5C5/cell reset layouts|r: "..L["reset all Layouts and Indicators"]..".\n"..
-            "|cFFFFB5C5/cell reset clickCastings|r: "..L["reset all Click-Castings"]..".\n"..
-            "|cFFFFB5C5/cell reset raidDebuffs|r: "..L["reset all Raid Debuffs"]..".\n"..
+            "|cFFFFB5C5/cell reset clickcastings|r: "..L["reset all Click-Castings"]..".\n"..
+            "|cFFFFB5C5/cell reset raiddebuffs|r: "..L["reset all Raid Debuffs"]..".\n"..
             "|cFFFFB5C5/cell reset all|r: "..L["reset all Cell settings"].."."
         )
     end
