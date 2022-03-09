@@ -508,9 +508,10 @@ local function CreateSetting_TextWidth(parent)
             local length = tonumber(widget.length:GetText())
             widget.length:SetText(length)
             widget.length.confirmBtn:Hide()
+            widget.lengthValue = length
             
             if F:IsAsian() then
-                widget.func({"length", length, tonumber(widget.length2:GetText()) or length})
+                widget.func({"length", length, tonumber(widget.length2:GetText()) or widget.lengthValue2})
             else
                 widget.func({"length", length})
             end
@@ -549,7 +550,8 @@ local function CreateSetting_TextWidth(parent)
                 local length = tonumber(widget.length2:GetText())
                 widget.length2:SetText(length)
                 widget.length2.confirmBtn:Hide()
-                widget.func({"length", tonumber(widget.length:GetText()) or length, length})
+                widget.func({"length", tonumber(widget.length:GetText()) or widget.lengthValue, length})
+                widget.lengthValue2 = length
             end)
 
             widget.length2:SetScript("OnTextChanged", function(self, userChanged)
