@@ -15,7 +15,7 @@ for k, v in pairs(anchors) do
     npcFrame:SetFrameRef(k, v)
 end
 
-for i = 1, 5 do
+for i = 1, 8 do
 	local button = CreateFrame("Button", npcFrame:GetName().."Button"..i, npcFrame, "CellUnitButtonTemplate")
 	tinsert(Cell.unitButtons.npc, button)
     
@@ -229,7 +229,7 @@ local function NPCFrame_UpdateLayout(layout, which)
                 npcFrame:SetPoint(point, anchors["solo"], groupAnchorPoint, groupSpacing, 0)
             end
 
-            for i = 2, 5 do
+            for i = 2, 8 do
                 Cell.unitButtons.npc[i]:ClearAllPoints()
                 Cell.unitButtons.npc[i]:SetPoint(point, Cell.unitButtons.npc[i-1], anchorPoint, 0, unitSpacing)
             end
@@ -268,7 +268,7 @@ local function NPCFrame_UpdateLayout(layout, which)
                 npcFrame:SetPoint(point, anchors["solo"], groupAnchorPoint, 0, groupSpacing)
             end
 
-            for i = 2, 5 do
+            for i = 2, 8 do
                 Cell.unitButtons.npc[i]:ClearAllPoints()
                 Cell.unitButtons.npc[i]:SetPoint(point, Cell.unitButtons.npc[i-1], anchorPoint, unitSpacing, 0)
             end

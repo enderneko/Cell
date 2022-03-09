@@ -192,7 +192,7 @@ function addon:CreateMovableFrame(title, name, width, height, frameStrata, frame
     f:SetFrameStrata(frameStrata or "HIGH")
     f:SetFrameLevel(frameLevel or 1)
     f:SetClampedToScreen(true)
-    f:SetSize(width, height)
+    P:Size(f, width, height)
     f:SetPoint("CENTER")
     f:Hide()
     addon:StylizeFrame(f)
@@ -211,7 +211,7 @@ function addon:CreateMovableFrame(title, name, width, height, frameStrata, frame
     header:SetPoint("LEFT")
     header:SetPoint("RIGHT")
     header:SetPoint("BOTTOM", f, "TOP", 0, -1)
-    header:SetHeight(20)
+    P:Height(header, 20)
     addon:StylizeFrame(header, {.1, .1, .1, 1})
     
     header.text = header:CreateFontString(nil, "OVERLAY", font_class_title_name)
