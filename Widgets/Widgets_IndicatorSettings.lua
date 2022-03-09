@@ -421,34 +421,94 @@ local function CreateSetting_TextWidth(parent)
             {
                 ["text"] = L["Unlimited"],
                 ["onClick"] = function()
-                    widget.func(0)
+                    widget.func("unlimited")
+                    widget.percent:Hide()
+                    widget.length:Hide()
+                    widget.lengthValue = nil
                 end,
             },
             {
-                ["text"] = "100%",
+                ["text"] = L["Percentage"],
                 ["onClick"] = function()
-                    widget.func(1)
+                    widget.func({"percentage", 0.75})
+                    widget.percent:SetSelectedValue(0.75)
+                    widget.percent:Show()
+                    widget.length:Hide()
+                    widget.lengthValue = nil
+                end,
+            },
+            {
+                ["text"] = L["Length"],
+                ["onClick"] = function()
+                    widget.func({"length", 5})
+                    widget.length:SetText(5)
+                    widget.length:Show()
+                    widget.percent:Hide()
+                    widget.lengthValue = 5
+                end,
+            },
+        })
+
+        widget.percent = addon:CreateDropdown(widget, 75)
+        widget.percent:SetPoint("TOPLEFT", widget.textWidth, "TOPRIGHT", 25, 0)
+        addon:SetTooltip(widget.percent.button, "ANCHOR_TOP", 0, 3, L["Name Width / UnitButton Width"])
+        widget.percent:SetItems({
+            {
+                ["text"] = "100%",
+                ["value"] = 1,
+                ["onClick"] = function()
+                    widget.func({"percentage", 1})
                 end,
             },
             {
                 ["text"] = "75%",
+                ["value"] = 0.75,
                 ["onClick"] = function()
-                    widget.func(.75)
+                    widget.func({"percentage", 0.75})
                 end,
             },
             {
                 ["text"] = "50%",
+                ["value"] = 0.5,
                 ["onClick"] = function()
-                    widget.func(.5)
+                    widget.func({"percentage", 0.5})
                 end,
             },
             {
                 ["text"] = "25%",
+                ["value"] = 0.25,
                 ["onClick"] = function()
-                    widget.func(.25)
+                    widget.func({"percentage", 0.25})
                 end,
             },
         })
+
+        widget.length = addon:CreateEditBox(widget, 38, 20, false, false, true)
+        widget.length:SetPoint("TOPLEFT", widget.textWidth, "TOPRIGHT", 25, 0)
+
+        widget.length.confirmBtn = addon:CreateButton(widget, "OK", "class", {27, 20})
+        widget.length.confirmBtn:SetPoint("TOPLEFT", widget.length, "TOPRIGHT", -1, 0)
+        widget.length.confirmBtn:Hide()
+        widget.length.confirmBtn:SetScript("OnHide", function()
+            widget.length.confirmBtn:Hide()
+        end)
+        widget.length.confirmBtn:SetScript("OnClick", function()
+            local length = tonumber(widget.length:GetText())
+            widget.length:SetText(length)
+            widget.length.confirmBtn:Hide()
+            widget.func({"length", length})
+        end)
+
+        widget.length:SetScript("OnTextChanged", function(self, userChanged)
+            if userChanged then
+                local length = tonumber(self:GetText())
+                if length and length ~= widget.lengthValue and length ~= 0 then
+                    widget.length.confirmBtn:Show()
+                else
+                    widget.length.confirmBtn:Hide()
+                end
+            end
+        end)
 
         widget.widthText = widget:CreateFontString(nil, "OVERLAY", font_name)
         widget.widthText:SetText(L["Text Width"])
@@ -460,17 +520,22 @@ local function CreateSetting_TextWidth(parent)
         end
         
         -- show db value
-        function widget:SetDBValue(textWidth)
-            if textWidth == 0 then
+        function widget:SetDBValue(width)
+            if width == "unlimited" then
                 widget.textWidth:SetSelectedItem(1)
-            elseif textWidth == 1 then
+                widget.percent:Hide()
+                widget.length:Hide()
+            elseif width[1] == "percentage" then
                 widget.textWidth:SetSelectedItem(2)
-            elseif textWidth == .75 then
+                widget.percent:SetSelectedValue(width[2])
+                widget.percent:Show()
+                widget.length:Hide()
+            elseif width[1] == "length" then
                 widget.textWidth:SetSelectedItem(3)
-            elseif textWidth == .5 then
-                widget.textWidth:SetSelectedItem(4)
-            elseif textWidth == .25 then
-                widget.textWidth:SetSelectedItem(5)
+                widget.length:SetText(width[2])
+                widget.lengthValue = width[2]
+                widget.length:Show()
+                widget.percent:Hide()
             end
         end
     else

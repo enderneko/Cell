@@ -921,6 +921,23 @@ function F:Revise()
             CellDB["appearance"]["useGameFont"] = true
         end
     end
+    
+    -- r79-release
+    if CellDB["revise"] and dbRevision < 79 then
+        -- update name text width
+        for _, layout in pairs(CellDB["layouts"]) do
+            if layout["indicators"][1] and layout["indicators"][1]["indicatorName"] == "nameText" then
+                if type(layout["indicators"][1]["textWidth"]) == "number" then
+                    local oldWidth = layout["indicators"][1]["textWidth"]
+                    if oldWidth == 0 then -- unlimited
+                        layout["indicators"][1]["textWidth"] = "unlimited"
+                    else
+                        layout["indicators"][1]["textWidth"] = {"percentage", oldWidth}
+                    end
+                end
+            end
+        end
+    end
 
     CellDB["revise"] = Cell.version
 end

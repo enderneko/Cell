@@ -5,7 +5,7 @@ local Serializer = LibStub:GetLibrary("LibSerialize")
 local LibDeflate = LibStub:GetLibrary("LibDeflate")
 local deflateConfig = {level = 9}
 
-local MINIMUM_VERSION = 71
+local MINIMUM_VERSION = 79
 local isImport, imported, exported = false, {}, ""
 
 local importExportFrame = CreateFrame("Frame", "CellOptionsFrame_LayoutsImportExport", Cell.frames.layoutsTab, "BackdropTemplate")

@@ -326,24 +326,22 @@ function F:GetUnitButtonByGUID(guid)
     end
 end
 
-function F:UpdateTextWidth(fs, text, percent)
-    if not text then return end
+function F:UpdateTextWidth(fs, text, width)
+    if not text or not width then return end
 
-    percent = percent or .75
-    if percent == 0 then
+    if width == "unlimited" then
         fs:SetText(text)
-        return
-    elseif percent == -1 then
-        fs:SetText("")
-        return
-    end
-
-    local width = fs:GetParent():GetWidth() - 2
-    for i = string.utf8len(text), 0, -1 do
-        fs:SetText(string.utf8sub(text, 1, i))
-        if fs:GetWidth() / width <= percent then
-            break
+    elseif width[1] == "percentage" then
+        local percent = width[2] or 0.75
+        local width = fs:GetParent():GetWidth() - 2
+        for i = string.utf8len(text), 0, -1 do
+            fs:SetText(string.utf8sub(text, 1, i))
+            if fs:GetWidth() / width <= percent then
+                break
+            end
         end
+    elseif width[1] == "length" then
+        fs:SetText(string.utf8sub(text, 1, width[2]))
     end
 end
 
