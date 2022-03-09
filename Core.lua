@@ -165,8 +165,19 @@ function eventFrame:ADDON_LOADED(arg1)
 
         -- appearance -----------------------------------------------------------------------------
         if type(CellDB["appearance"]) ~= "table" then
+            -- get recommended scale
+            local pScale = P:GetPixelPerfectScale()
+            local scale
+            if pScale >= 0.7 then
+                scale = 1
+            elseif pScale >= 0.5 then
+                scale = 1.4
+            else
+                scale = 2
+            end
+
             CellDB["appearance"] = {
-                ["scale"] = 1,
+                ["scale"] = scale,
                 ["optionsFontSizeOffset"] = 0,
                 ["useGameFont"] = true,
                 ["texture"] = "Cell ".._G.DEFAULT,

@@ -14,7 +14,7 @@ appearanceTab:Hide()
 local scaleText = Cell:CreateSeparator(L["Scale"], appearanceTab, 188)
 scaleText:SetPoint("TOPLEFT", 5, -5)
 
-local scaleSlider = Cell:CreateSlider("", appearanceTab, 0.5, 2, 150, 0.1)
+local scaleSlider = Cell:CreateSlider("", appearanceTab, 0.5, 4, 150, 0.1)
 scaleSlider:SetPoint("TOPLEFT", scaleText, "BOTTOMLEFT", 5, -12)
 scaleSlider.afterValueChangedFn = function(value)
     CellDB["appearance"]["scale"] = value
