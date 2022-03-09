@@ -48,7 +48,7 @@ local useGameFontCB = Cell:CreateCheckButton(appearanceTab, "", function(checked
 end, "Use Game Font")
 useGameFontCB:SetPoint("RIGHT", -5, 0)
 useGameFontCB:SetPoint("BOTTOM", fontText)
-if LOCALE_zhCN or LOCALE_zhTW or LOCALE_koKR then
+if F:IsAsian() then
     useGameFontCB:Hide()
 end
 

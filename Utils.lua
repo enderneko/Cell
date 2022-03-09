@@ -3,6 +3,25 @@ local L = Cell.L
 local F = Cell.funcs
 
 -------------------------------------------------
+-- game version
+-------------------------------------------------
+function F:IsAsian()
+    return LOCALE_zhCN or LOCALE_zhTW or LOCALE_koKR
+end
+
+function F:IsClassic()
+    return WOW_PROJECT_ID == WOW_PROJECT_CLASSIC
+end
+
+function F:IsBCC()
+    return WOW_PROJECT_ID == WOW_PROJECT_BURNING_CRUSADE_CLASSIC
+end
+
+function F:IsRetail()
+    return WOW_PROJECT_ID == WOW_PROJECT_MAINLINE
+end
+
+-------------------------------------------------
 -- color
 -------------------------------------------------
 function F:ConvertRGB(r, g, b, a, desaturation)
@@ -41,7 +60,7 @@ elseif LOCALE_koKR then
     symbol_1K, symbol_10K, symbol_1B = "천", "만", "억"
 end
 
-if LOCALE_zhCN or LOCALE_zhTW or LOCALE_koKR then
+if F:IsAsian() then
     function F:FormatNumber(n)
         if abs(n) >= 100000000 then
             return string.format("%.3f"..symbol_1B, n/100000000)
@@ -341,7 +360,15 @@ function F:UpdateTextWidth(fs, text, width)
             end
         end
     elseif width[1] == "length" then
-        fs:SetText(string.utf8sub(text, 1, width[2]))
+        if LOCALE_zhCN then
+            if string.len(text) == string.utf8len(text) then -- en
+                fs:SetText(string.utf8sub(text, 1, width[3] or width[2]))
+            else
+                fs:SetText(string.utf8sub(text, 1, width[2]))
+            end
+        else
+            fs:SetText(string.utf8sub(text, 1, width[2]))
+        end
     end
 end
 
