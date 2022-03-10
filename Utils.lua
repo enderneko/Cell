@@ -194,17 +194,29 @@ function F:TRemove(t, v)
     end
 end
 
-function F:RemoveElementsByKeys(tbl, keys, returnNewTable) -- keys is a table
-    local newTbl = {}
-    for k, v in pairs(tbl) do
-        if not F:TContains(keys, k) then
-            newTbl[k] = tbl[k]
+function F:RemoveElementsExceptKeys(tbl, ...)
+    local keys = {}
+    for _, v in ipairs({...}) do
+        keys[v] = true
+    end
+
+    for k in pairs(tbl) do
+        if not keys[k] then
+            tbl[k] = nil
         end
     end
-    if returnNewTable then
-        return newTbl
-    else
-        tbl = newTbl
+end
+
+function F:RemoveElementsByKeys(tbl, ...)
+    local keys = {}
+    for _, v in ipairs({...}) do
+        keys[v] = true
+    end
+
+    for k in pairs(tbl) do
+        if keys[k] then
+            tbl[k] = nil
+        end
     end
 end
 

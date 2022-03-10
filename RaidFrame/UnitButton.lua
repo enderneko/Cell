@@ -1891,6 +1891,7 @@ local function UnitButton_OnHide(self)
         if buffs_current[self.state.unit] then wipe(buffs_current[self.state.unit]) end
         if buffs_current_castByMe[self.state.unit] then wipe(buffs_current_castByMe[self.state.unit]) end
     end
+    F:RemoveElementsExceptKeys(self.state, "unit", "displayedUnit")
 end
 
 local function UnitButton_OnEnter(self)
@@ -2326,7 +2327,7 @@ function F:UnitButton_OnLoad(button)
     -- events
     button:SetScript("OnAttributeChanged", UnitButton_OnAttributeChanged) -- init
     button:HookScript("OnShow", UnitButton_OnShow)
-    button:HookScript("OnHide", UnitButton_OnHide)
+    button:HookScript("OnHide", UnitButton_OnHide) -- use _onhide for click-castings
     button:HookScript("OnEnter", UnitButton_OnEnter) -- SecureHandlerEnterLeaveTemplate
     button:HookScript("OnLeave", UnitButton_OnLeave) -- SecureHandlerEnterLeaveTemplate
     button:SetScript("OnUpdate", UnitButton_OnUpdate)
