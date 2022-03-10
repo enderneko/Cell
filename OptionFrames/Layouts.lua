@@ -109,12 +109,12 @@ layoutPreview:Hide()
 
 local layoutPreviewAnchor = CreateFrame("Frame", "CellLayoutPreviewAnchorFrame", layoutPreview, "BackdropTemplate")
 -- layoutPreviewAnchor:SetPoint("TOPLEFT", UIParent, "CENTER")
-layoutPreviewAnchor:SetSize(20, 10)
+P:Size(layoutPreviewAnchor, 20, 10)
 layoutPreviewAnchor:SetMovable(true)
 layoutPreviewAnchor:EnableMouse(true)
 layoutPreviewAnchor:RegisterForDrag("LeftButton")
 layoutPreviewAnchor:SetClampedToScreen(true)
-Cell:StylizeFrame(layoutPreviewAnchor, {0, 1, 0, .4})
+Cell:StylizeFrame(layoutPreviewAnchor, {0, 1, 0, 0.4})
 layoutPreviewAnchor:Hide()
 layoutPreviewAnchor:SetScript("OnDragStart", function()
     layoutPreviewAnchor:StartMoving()
@@ -125,10 +125,10 @@ layoutPreviewAnchor:SetScript("OnDragStop", function()
     P:SavePosition(layoutPreviewAnchor, selectedLayoutTable["position"])
 end)
 
-local layoutPreviewName = layoutPreviewAnchor:CreateFontString(nil, "OVERLAY")
-layoutPreviewName:SetFont(GameFontNormal:GetFont(), 14, "OUTLINE")
-layoutPreviewName:SetShadowOffset(0, 0)
-Cell:ColorFontStringByPlayerClass(layoutPreviewName)
+local layoutPreviewName = layoutPreviewAnchor:CreateFontString(nil, "OVERLAY", "CELL_FONT_CLASS_TITLE")
+-- layoutPreviewName:SetFont(GameFontNormal:GetFont(), 14, "OUTLINE")
+-- layoutPreviewName:SetShadowOffset(0, 0)
+-- Cell:ColorFontStringByPlayerClass(layoutPreviewName)
 
 -- init raid preview
 do
@@ -169,14 +169,14 @@ do
         for j = 1, 5 do
             header[j] = header:CreateTexture(nil, "BACKGROUND")
             header[j]:SetColorTexture(0, 0, 0)
-            header[j]:SetAlpha(.555)
-            header[j]:SetSize(30, 20)
+            header[j]:SetAlpha(0.555)
+            -- header[j]:SetSize(30, 20)
 
             header[j].tex = header:CreateTexture(nil, "ARTWORK")
             header[j].tex:SetTexture("Interface\\Buttons\\WHITE8x8")
     
-            header[j].tex:SetPoint("TOPLEFT", header[j], 1, -1)
-            header[j].tex:SetPoint("BOTTOMRIGHT", header[j], -1, 1)
+            P:Point(header[j].tex, "TOPLEFT", header[j], "TOPLEFT", 1, -1)
+            P:Point(header[j].tex, "BOTTOMRIGHT", header[j], "BOTTOMRIGHT", -1, 1)
 
             if i == 1 then
                 header[j].tex:SetVertexColor(F:ConvertRGB(255, 0, 0, 1, desaturation[j])) -- Red
@@ -195,40 +195,27 @@ do
             elseif i == 8 then
                 header[j].tex:SetVertexColor(F:ConvertRGB(255, 255, 255, 1, desaturation[j])) -- White
             end
-            header[j].tex:SetAlpha(.555)
+            header[j].tex:SetAlpha(0.555)
         end
     end
 end
 
-layoutsTab:SetScript("OnHide", function()
-    if layoutPreview.timer then
-        layoutPreview.timer:Cancel()
-        layoutPreview.timer = nil
-    end
-    if layoutPreview.fadeIn:IsPlaying() then
-        layoutPreview.fadeIn:Stop()
-    end
-    if not layoutPreview.fadeOut:IsPlaying() then
-        layoutPreview.fadeOut:Play()
-    end
-end)
-
 local function UpdateLayoutPreview()
     -- update layoutPreview point
-    layoutPreview:SetSize(unpack(selectedLayoutTable["size"]))
-    layoutPreview:ClearAllPoints()
+    P:Size(layoutPreview, selectedLayoutTable["size"][1], selectedLayoutTable["size"][2])
+    P:ClearPoints(layoutPreview)
     layoutPreviewName:ClearAllPoints()
     if selectedLayoutTable["anchor"] == "BOTTOMLEFT" then
-        layoutPreview:SetPoint("BOTTOMLEFT", layoutPreviewAnchor, "TOPLEFT", 0, 4)
+        P:Point(layoutPreview, "BOTTOMLEFT", layoutPreviewAnchor, "TOPLEFT", 0, 4)
         layoutPreviewName:SetPoint("LEFT", layoutPreviewAnchor, "RIGHT", 5, 0)
     elseif selectedLayoutTable["anchor"] == "BOTTOMRIGHT" then
-        layoutPreview:SetPoint("BOTTOMRIGHT", layoutPreviewAnchor, "TOPRIGHT", 0, 4)
+        P:Point(layoutPreview, "BOTTOMRIGHT", layoutPreviewAnchor, "TOPRIGHT", 0, 4)
         layoutPreviewName:SetPoint("RIGHT", layoutPreviewAnchor, "LEFT", -5, 0)
     elseif selectedLayoutTable["anchor"] == "TOPLEFT" then
-        layoutPreview:SetPoint("TOPLEFT", layoutPreviewAnchor, "BOTTOMLEFT", 0, -4)
+        P:Point(layoutPreview, "TOPLEFT", layoutPreviewAnchor, "BOTTOMLEFT", 0, -4)
         layoutPreviewName:SetPoint("LEFT", layoutPreviewAnchor, "RIGHT", 5, 0)
     elseif selectedLayoutTable["anchor"] == "TOPRIGHT" then
-        layoutPreview:SetPoint("TOPRIGHT", layoutPreviewAnchor, "BOTTOMRIGHT", 0, -4)
+        P:Point(layoutPreview, "TOPRIGHT", layoutPreviewAnchor, "BOTTOMRIGHT", 0, -4)
         layoutPreviewName:SetPoint("RIGHT", layoutPreviewAnchor, "LEFT", -5, 0)
     end
 
@@ -288,9 +275,9 @@ local function UpdateLayoutPreview()
                 verticalSpacing = -spacing-selectedLayoutTable["groupSpacing"]
             end
 
-            header:SetSize(selectedLayoutTable["size"][1], selectedLayoutTable["size"][2]*5+abs(unitSpacing)*4)
+            P:Size(header, selectedLayoutTable["size"][1], selectedLayoutTable["size"][2]*5+abs(unitSpacing)*4)
             for j = 1, 5 do
-                header[j]:SetSize(unpack(selectedLayoutTable["size"]))
+                P:Size(header[j], selectedLayoutTable["size"][1], selectedLayoutTable["size"][2])
                 header[j]:ClearAllPoints()
 
                 if j == 1 then
@@ -334,9 +321,9 @@ local function UpdateLayoutPreview()
                 horizontalSpacing = -spacing-selectedLayoutTable["groupSpacing"]
             end
 
-            header:SetSize(selectedLayoutTable["size"][1]*5+abs(unitSpacing)*4, selectedLayoutTable["size"][2])
+            P:Size(header, selectedLayoutTable["size"][1]*5+abs(unitSpacing)*4, selectedLayoutTable["size"][2])
             for j = 1, 5 do
-                header[j]:SetSize(unpack(selectedLayoutTable["size"]))
+                P:Size(header[j], selectedLayoutTable["size"][1], selectedLayoutTable["size"][2])
                 header[j]:ClearAllPoints()
 
                 if j == 1 then
@@ -393,10 +380,252 @@ local function UpdateLayoutPreview()
             layoutPreview.fadeOut:Play()
             layoutPreview.timer = nil
         end)
-    else
-
     end
 end
+
+-------------------------------------------------
+-- npc preview
+-------------------------------------------------
+local npcPreview = Cell:CreateFrame("CellNPCPreviewFrame", Cell.frames.mainFrame, nil, nil, true)
+npcPreview:EnableMouse(false)
+npcPreview:SetFrameStrata("MEDIUM")
+npcPreview:SetToplevel(true)
+npcPreview:Hide()
+
+local npcPreviewAnchor = CreateFrame("Frame", "CellNPCPreviewAnchorFrame", npcPreview, "BackdropTemplate")
+P:Size(npcPreviewAnchor, 20, 10)
+npcPreviewAnchor:SetMovable(true)
+npcPreviewAnchor:EnableMouse(true)
+npcPreviewAnchor:RegisterForDrag("LeftButton")
+npcPreviewAnchor:SetClampedToScreen(true)
+Cell:StylizeFrame(npcPreviewAnchor, {0, 1, 0, 0.4})
+npcPreviewAnchor:Hide()
+npcPreviewAnchor:SetScript("OnDragStart", function()
+    npcPreviewAnchor:StartMoving()
+    npcPreviewAnchor:SetUserPlaced(false)
+end)
+npcPreviewAnchor:SetScript("OnDragStop", function()
+    npcPreviewAnchor:StopMovingOrSizing()
+    P:SavePosition(npcPreviewAnchor, selectedLayoutTable["npcAnchor"][2])
+end)
+
+local npcPreviewName = npcPreviewAnchor:CreateFontString(nil, "OVERLAY", "CELL_FONT_CLASS_TITLE")
+
+do
+    npcPreview.fadeIn = npcPreview:CreateAnimationGroup()
+    local fadeIn = npcPreview.fadeIn:CreateAnimation("alpha")
+    fadeIn:SetFromAlpha(0)
+    fadeIn:SetToAlpha(1)
+    fadeIn:SetDuration(.5)
+    fadeIn:SetSmoothing("OUT")
+    fadeIn:SetScript("OnPlay", function()
+        npcPreview:Show()
+    end)
+    
+    npcPreview.fadeOut = npcPreview:CreateAnimationGroup()
+    local fadeOut = npcPreview.fadeOut:CreateAnimation("alpha")
+    fadeOut:SetFromAlpha(1)
+    fadeOut:SetToAlpha(0)
+    fadeOut:SetDuration(0.5)
+    fadeOut:SetSmoothing("IN")
+    fadeOut:SetScript("OnFinished", function()
+        npcPreview:Hide()
+    end)
+
+    local desaturation = {
+        [1] = 1,
+        [2] = .85,
+        [3] = .7,
+        [4] = .55,
+        [5] = .4,
+    }
+
+
+    npcPreview.header = CreateFrame("Frame", "CellNPCPreviewFrameHeader", npcPreview)
+    for i = 1, 5 do
+        npcPreview.header[i] = npcPreview.header:CreateTexture(nil, "BACKGROUND")
+        npcPreview.header[i]:SetColorTexture(0, 0, 0)
+        npcPreview.header[i]:SetAlpha(0.555)
+
+        npcPreview.header[i].tex = npcPreview.header:CreateTexture(nil, "ARTWORK")
+        npcPreview.header[i].tex:SetTexture("Interface\\Buttons\\WHITE8x8")
+
+        P:Point(npcPreview.header[i].tex, "TOPLEFT", npcPreview.header[i], "TOPLEFT", 1, -1)
+        P:Point(npcPreview.header[i].tex, "BOTTOMRIGHT", npcPreview.header[i], "BOTTOMRIGHT", -1, 1)
+
+        npcPreview.header[i].tex:SetVertexColor(F:ConvertRGB(0, 255, 255, 1, desaturation[i])) -- cyan
+        npcPreview.header[i].tex:SetAlpha(0.555)
+    end
+end
+
+local function UpdateNPCPreview()
+    if not selectedLayoutTable["npcAnchor"][1] then
+        if npcPreview.timer then
+            npcPreview.timer:Cancel()
+            npcPreview.timer = nil
+        end
+        if npcPreview.fadeIn:IsPlaying() then
+            npcPreview.fadeIn:Stop()
+        end
+        if not npcPreview.fadeOut:IsPlaying() then
+            npcPreview.fadeOut:Play()
+        end
+        return
+    end
+
+    -- update npcPreview point
+    P:Size(npcPreview, selectedLayoutTable["size"][1], selectedLayoutTable["size"][2])
+    P:ClearPoints(npcPreview)
+    npcPreviewName:ClearAllPoints()
+    
+    if selectedLayoutTable["anchor"] == "BOTTOMLEFT" then
+        P:Point(npcPreview, "BOTTOMLEFT", npcPreviewAnchor, "TOPLEFT", 0, 4)
+        npcPreviewName:SetPoint("LEFT", npcPreviewAnchor, "RIGHT", 5, 0)
+    elseif selectedLayoutTable["anchor"] == "BOTTOMRIGHT" then
+        P:Point(npcPreview, "BOTTOMRIGHT", npcPreviewAnchor, "TOPRIGHT", 0, 4)
+        npcPreviewName:SetPoint("RIGHT", npcPreviewAnchor, "LEFT", -5, 0)
+    elseif selectedLayoutTable["anchor"] == "TOPLEFT" then
+        P:Point(npcPreview, "TOPLEFT", npcPreviewAnchor, "BOTTOMLEFT", 0, -4)
+        npcPreviewName:SetPoint("LEFT", npcPreviewAnchor, "RIGHT", 5, 0)
+    elseif selectedLayoutTable["anchor"] == "TOPRIGHT" then
+        P:Point(npcPreview, "TOPRIGHT", npcPreviewAnchor, "BOTTOMRIGHT", 0, -4)
+        npcPreviewName:SetPoint("RIGHT", npcPreviewAnchor, "LEFT", -5, 0)
+    end
+
+    -- update npcAnchor point
+    if selectedLayout == Cell.vars.currentLayout then
+        -- NOTE: move separate npc anchor with preview
+        Cell.frames.separateNpcFrameAnchor:SetAllPoints(npcPreviewAnchor)
+    else
+        P:LoadPosition(Cell.frames.separateNpcFrameAnchor, Cell.vars.currentLayoutTable["npcAnchor"][2])
+    end
+
+    if #selectedLayoutTable["npcAnchor"][2] == 2 then
+        P:LoadPosition(npcPreviewAnchor, selectedLayoutTable["npcAnchor"][2])
+    else
+        npcPreviewAnchor:ClearAllPoints()
+        npcPreviewAnchor:SetPoint("TOPLEFT", UIParent, "CENTER")
+    end
+    npcPreviewAnchor:Show()
+    npcPreviewName:SetText(L["Layout"]..": "..selectedLayout.." (NPC)")
+    npcPreviewName:Show()
+
+    -- re-arrange
+    local header = npcPreview.header
+    header:ClearAllPoints()
+
+    local spacing = selectedLayoutTable["spacing"]
+
+    if selectedLayoutTable["orientation"] == "vertical" then
+        -- anchor
+        local point, anchorPoint, unitSpacing
+        if selectedLayoutTable["anchor"] == "BOTTOMLEFT" then
+            point, anchorPoint = "BOTTOMLEFT", "TOPLEFT"
+            unitSpacing = spacing
+        elseif selectedLayoutTable["anchor"] == "BOTTOMRIGHT" then
+            point, anchorPoint = "BOTTOMRIGHT", "TOPRIGHT"
+            unitSpacing = spacing
+        elseif selectedLayoutTable["anchor"] == "TOPLEFT" then
+            point, anchorPoint = "TOPLEFT", "BOTTOMLEFT"
+            unitSpacing = -spacing
+        elseif selectedLayoutTable["anchor"] == "TOPRIGHT" then
+            point, anchorPoint = "TOPRIGHT", "BOTTOMRIGHT"
+            unitSpacing = -spacing
+        end
+
+        P:Size(header, selectedLayoutTable["size"][1], selectedLayoutTable["size"][2]*5+abs(unitSpacing)*4)
+        header:SetPoint(point)
+        
+        for i = 1, 5 do
+            P:Size(header[i], selectedLayoutTable["size"][1], selectedLayoutTable["size"][2])
+            header[i]:ClearAllPoints()
+
+            if i == 1 then
+                header[i]:SetPoint(point)
+            else
+                header[i]:SetPoint(point, header[i-1], anchorPoint, 0, unitSpacing)
+            end
+        end
+    else
+        -- anchor
+        local point, anchorPoint, unitSpacing
+        if selectedLayoutTable["anchor"] == "BOTTOMLEFT" then
+            point, anchorPoint = "BOTTOMLEFT", "BOTTOMRIGHT"
+            unitSpacing = spacing
+        elseif selectedLayoutTable["anchor"] == "BOTTOMRIGHT" then
+            point, anchorPoint = "BOTTOMRIGHT", "BOTTOMLEFT"
+            unitSpacing = -spacing
+        elseif selectedLayoutTable["anchor"] == "TOPLEFT" then
+            point, anchorPoint = "TOPLEFT", "TOPRIGHT"
+            unitSpacing = spacing
+        elseif selectedLayoutTable["anchor"] == "TOPRIGHT" then
+            point, anchorPoint = "TOPRIGHT", "TOPLEFT"
+            unitSpacing = -spacing
+        end
+
+        P:Size(header, selectedLayoutTable["size"][1]*5+abs(unitSpacing)*4, selectedLayoutTable["size"][2])
+        header:SetPoint(point)
+
+        for i = 1, 5 do
+            P:Size(header[i], selectedLayoutTable["size"][1], selectedLayoutTable["size"][2])
+            header[i]:ClearAllPoints()
+
+            if i == 1 then
+                header[i]:SetPoint(point)
+            else
+                header[i]:SetPoint(point, header[i-1], anchorPoint, unitSpacing, 0)
+            end
+        end
+    end
+
+    if npcPreview.fadeIn:IsPlaying() then
+        npcPreview.fadeIn:Restart()
+    else
+        npcPreview.fadeIn:Play()
+    end
+    
+    if npcPreview.fadeOut:IsPlaying() then
+        npcPreview.fadeOut:Stop()
+    end
+
+    if npcPreview.timer then
+        npcPreview.timer:Cancel()
+    end
+
+    if previewMode == 0 then
+        npcPreview.timer = C_Timer.NewTimer(1, function()
+            npcPreview.fadeOut:Play()
+            npcPreview.timer = nil
+        end)
+    end
+end
+
+-------------------------------------------------
+-- OnHide
+-------------------------------------------------
+layoutsTab:SetScript("OnHide", function()
+    if layoutPreview.timer then
+        layoutPreview.timer:Cancel()
+        layoutPreview.timer = nil
+    end
+    if layoutPreview.fadeIn:IsPlaying() then
+        layoutPreview.fadeIn:Stop()
+    end
+    if not layoutPreview.fadeOut:IsPlaying() then
+        layoutPreview.fadeOut:Play()
+    end
+   
+    if npcPreview.timer then
+        npcPreview.timer:Cancel()
+        npcPreview.timer = nil
+    end
+    if npcPreview.fadeIn:IsPlaying() then
+        npcPreview.fadeIn:Stop()
+    end
+    if not npcPreview.fadeOut:IsPlaying() then
+        npcPreview.fadeOut:Play()
+    end
+end)
 
 -------------------------------------------------
 -- layout
@@ -415,7 +644,7 @@ enabledLayoutText:SetWordWrap(false)
 enabledLayoutText:SetJustifyH("LEFT")
 
 local function UpdateEnabledLayoutText()
-    enabledLayoutText:SetText("|cFF777777"..L["Currently Enabled"]..": "..(Cell.vars.currentLayout == "default" and _G.DEFAULT or Cell.vars.currentLayout))
+    enabledLayoutText:SetText("|cFF777777"..L["Current"]..": "..(Cell.vars.currentLayout == "default" and _G.DEFAULT or Cell.vars.currentLayout))
 end
 
 -- drop down
@@ -879,6 +1108,7 @@ orientationDropdown:SetItems({
                 groupSpacingSlider:SetEnabled(true)
             end
             UpdateLayoutPreview()
+            UpdateNPCPreview()
         end,
     },
     {
@@ -897,6 +1127,7 @@ orientationDropdown:SetItems({
                 groupSpacingSlider:SetEnabled(true)
             end
             UpdateLayoutPreview()
+            UpdateNPCPreview()
         end,
     },
 })
@@ -918,6 +1149,7 @@ anchorDropdown:SetItems({
                 Cell:Fire("UpdateLayout", selectedLayout, "anchor")
             end
             UpdateLayoutPreview()
+            UpdateNPCPreview()
         end,
     },
     {
@@ -929,6 +1161,7 @@ anchorDropdown:SetItems({
                 Cell:Fire("UpdateLayout", selectedLayout, "anchor")
             end
             UpdateLayoutPreview()
+            UpdateNPCPreview()
         end,
     },
     {
@@ -940,6 +1173,7 @@ anchorDropdown:SetItems({
                 Cell:Fire("UpdateLayout", selectedLayout, "anchor")
             end
             UpdateLayoutPreview()
+            UpdateNPCPreview()
         end,
     },
     {
@@ -951,6 +1185,7 @@ anchorDropdown:SetItems({
                 Cell:Fire("UpdateLayout", selectedLayout, "anchor")
             end
             UpdateLayoutPreview()
+            UpdateNPCPreview()
         end,
     },
 })
@@ -960,7 +1195,7 @@ anchorText:SetPoint("BOTTOMLEFT", anchorDropdown, "TOPLEFT", 0, 1)
 anchorText:SetText(L["Anchor Point"])
 
 -- preview mode
-local previewModeBtn = Cell:CreateButton(layoutsTab, "|cff777777"..L["OFF"], "class-hover", {100, 20})
+local previewModeBtn = Cell:CreateButton(layoutsTab, "|cff777777"..L["OFF"], "class", {100, 20})
 previewModeBtn:SetPoint("TOPLEFT", anchorDropdown, "BOTTOMLEFT", 0, -30)
 previewModeBtn:SetScript("OnClick", function()
     previewMode = (previewMode == 2) and 0 or (previewMode + 1)
@@ -968,12 +1203,17 @@ previewModeBtn:SetScript("OnClick", function()
     if previewMode == 0 then
         previewModeBtn:SetText("|cff777777"..L["OFF"])
         layoutPreview.fadeOut:Play()
+        if npcPreview:IsShown() then
+            npcPreview.fadeOut:Play()
+        end
     elseif previewMode == 1 then
         previewModeBtn:SetText(L["Party"])
         UpdateLayoutPreview()
+        UpdateNPCPreview()
     else
         previewModeBtn:SetText(L["Raid"])
         UpdateLayoutPreview()
+        UpdateNPCPreview()
     end
 end)
 previewModeBtn:SetScript("OnHide", function()
@@ -999,6 +1239,7 @@ local widthSlider = Cell:CreateSlider(L["Width"], layoutsTab, 40, 300, 100, 2, f
     end
     UpdatePreviewButton("size")
     UpdateLayoutPreview()
+    UpdateNPCPreview()
 end)
 widthSlider:SetPoint("TOPLEFT", buttonSizeText, "BOTTOMLEFT", 5, -25)
 
@@ -1010,6 +1251,7 @@ local heightSlider = Cell:CreateSlider(L["Height"], layoutsTab, 20, 300, 100, 2,
     end
     UpdatePreviewButton("size")
     UpdateLayoutPreview()
+    UpdateNPCPreview()
 end)
 heightSlider:SetPoint("TOPLEFT", widthSlider, "BOTTOMLEFT", 0, -40)
 
@@ -1059,7 +1301,7 @@ end)
 petHeightSlider:SetPoint("TOPLEFT", petWidthSlider, "BOTTOMLEFT", 0, -40)
 
 -- player/pet switch
-local switch = Cell:CreateSwitch(layoutsTab, {33, 10}, "", "player", "", "pet", function(which)
+local switch = Cell:CreateSwitch(layoutsTab, {22, 10}, "", "player", "", "pet", function(which)
     if which == "player" then
         widthSlider:Show()
         heightSlider:Show()
@@ -1094,6 +1336,7 @@ local spacingSlider = Cell:CreateSlider(L["Unit Spacing"], layoutsTab, 0, 10, 10
     end
     -- preview
     UpdateLayoutPreview()
+    UpdateNPCPreview()
 end)
 spacingSlider:SetPoint("TOPLEFT", orientationDropdown, "TOPRIGHT", 32, 0)
 
@@ -1129,11 +1372,35 @@ end)
 groupSpacingSlider:SetPoint("TOPLEFT", rcSlider, "BOTTOMLEFT", 0, -40)
 
 -------------------------------------------------
--- powerFilters
+-- npc frame
 -------------------------------------------------
-local powerFilterBtn = Cell:CreateButton(layoutsTab, L["Power Bar Filters"], "class-hover", {100, 20})
+local npcFrameText = Cell:CreateSeparator(L["Friendly NPC Frame"], layoutsTab, 188)
+npcFrameText:SetPoint("TOPLEFT", 5, -400)
+
+local separateCB = Cell:CreateCheckButton(layoutsTab, L["Separate NPC Frame"], function(checked)
+    selectedLayoutTable["npcAnchor"][1] = checked
+    if checked then
+        if previewMode ~= 0 then
+            UpdateNPCPreview()
+        end
+    else
+        if npcPreview:IsShown() then
+            UpdateNPCPreview()
+        end
+    end
+    Cell:Fire("UpdateLayout", selectedLayout, "npc")
+end, L["Separate NPC Frame"], L["Show friendly NPCs in a separate frame"], L["You can move it in Preview mode"])
+separateCB:SetPoint("TOPLEFT", npcFrameText, "BOTTOMLEFT", 5, -15)
+
+-------------------------------------------------
+-- misc
+-------------------------------------------------
+local miscText = Cell:CreateSeparator(L["Misc"], layoutsTab, 188)
+miscText:SetPoint("TOPLEFT", 203, -400)
+
+local powerFilterBtn = Cell:CreateButton(layoutsTab, L["Power Bar Filters"], "class-hover", {163, 20})
 Cell.frames.layoutsTab.powerFilterBtn = powerFilterBtn
-powerFilterBtn:SetPoint("BOTTOMLEFT", 10, 5)
+powerFilterBtn:SetPoint("TOPLEFT", miscText, "BOTTOMLEFT", 5, -13)
 powerFilterBtn:SetScript("OnClick", function ()
     F:ShowPowerFilters(selectedLayout, selectedLayoutTable)
 end)
@@ -1142,9 +1409,8 @@ end)
 -- tips
 -------------------------------------------------
 local tips = layoutsTab:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
-tips:SetPoint("BOTTOMRIGHT", -5, 7)
-tips:SetPoint("LEFT", powerFilterBtn, "RIGHT", 5, 0)
-tips:SetJustifyH("RIGHT")
+tips:SetPoint("BOTTOMLEFT", 5, 5)
+tips:SetJustifyH("LEFT")
 tips:SetText("|cff777777"..L["Tip: Every layout has its own position setting"])
 
 -------------------------------------------------
@@ -1198,9 +1464,13 @@ LoadLayoutDB = function(layout)
     orientationDropdown:SetSelectedValue(selectedLayoutTable["orientation"])
     anchorDropdown:SetSelectedValue(selectedLayoutTable["anchor"])
 
+    -- npc frame
+    separateCB:SetChecked(selectedLayoutTable["npcAnchor"][1])
+
     UpdateGroupFilter()
     UpdatePreviewButton()
     UpdateLayoutPreview()
+    UpdateNPCPreview()
 end
 
 LoadLayoutAutoSwitchDB = function(role)

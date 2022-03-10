@@ -131,6 +131,7 @@ end
 function P:LoadPosition(frame, positionTable)
     if type(positionTable) ~= "table" or #positionTable ~= 2 then return end
 
-    frame:ClearAllPoints()
+    P:ClearPoints(frame)
     P:Point(frame, "TOPLEFT", UIParent, "BOTTOMLEFT", positionTable[1], positionTable[2])
+    return true
 end

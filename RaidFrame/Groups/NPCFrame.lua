@@ -1,5 +1,6 @@
 local _, Cell = ...
 local F = Cell.funcs
+local P = Cell.pixelPerfectFuncs
 
 local npcFrame = CreateFrame("Frame", "CellNPCFrame", Cell.frames.mainFrame, "SecureHandlerStateTemplate")
 Cell.frames.npcFrame = npcFrame
@@ -44,20 +45,20 @@ for i = 1, 8 do
     local button = CreateFrame("Button", npcFrame:GetName().."Button"..i, npcFrame, "CellUnitButtonTemplate")
     tinsert(Cell.unitButtons.npc, button)
 
-    -- button:SetAttribute("unit", "boss"..i)
-    -- RegisterAttributeDriver(button, "state-visibility", "[@boss"..i..", help] show; hide")
+    button:SetAttribute("unit", "boss"..i)
+    RegisterAttributeDriver(button, "state-visibility", "[@boss"..i..", help] show; hide")
     
     -- for testing ------------------------------
-    if i == 1 or i == 7 then
-        button:SetAttribute("unit", "player")
-        RegisterUnitWatch(button)
-    elseif i == 3 then
-        button:SetAttribute("unit", "target")
-        RegisterUnitWatch(button)
-    else
-        button:SetAttribute("unit", "boss"..i)
-        RegisterAttributeDriver(button, "state-visibility", "[@boss"..i..", help] show; hide")
-    end
+    -- if i == 1 or i == 7 then
+    --     button:SetAttribute("unit", "player")
+    --     RegisterUnitWatch(button)
+    -- elseif i == 3 then
+    --     button:SetAttribute("unit", "target")
+    --     RegisterUnitWatch(button)
+    -- else
+    --     button:SetAttribute("unit", "boss"..i)
+    --     RegisterAttributeDriver(button, "state-visibility", "[@boss"..i..", help] show; hide")
+    -- end
     ---------------------------------------------
 
     -- NOTE: save reference for re-point
@@ -164,7 +165,12 @@ npcFrame:SetAttribute("_onstate-petstate", [[
 ]])
 -- RegisterStateDriver(npcFrame, "petstate", "[@pet,exists] pet; [@partypet1,exists] pet1; [@partypet2,exists] pet2; [@partypet3,exists] pet3; [@partypet4,exists] pet4; nopet")
 
-local init
+local separateAnchor = CreateFrame("Frame", nil, Cell.frames.mainFrame, "BackdropTemplate")
+Cell.frames.separateNpcFrameAnchor = separateAnchor
+P:Size(separateAnchor, 20, 10)
+separateAnchor:SetPoint("TOPLEFT", UIParent, "CENTER")
+-- Cell:StylizeFrame(separateAnchor, {0, 1, 0, 0.4})
+
 local function NPCFrame_UpdateLayout(layout, which)
     -- if layout ~= Cell.vars.currentLayout then return end
     layout = Cell.vars.currentLayoutTable
@@ -181,7 +187,7 @@ local function NPCFrame_UpdateLayout(layout, which)
         end
     end
 
-    if not which or which == "spacing" or which == "orientation" or which == "anchor" then
+    if not which or which == "spacing" or which == "orientation" or which == "anchor" or which == "npc" then
         local groupType = F:GetGroupType()
         npcFrame:ClearAllPoints()
 
@@ -207,19 +213,21 @@ local function NPCFrame_UpdateLayout(layout, which)
                 groupSpacing = -layout["spacing"]
             end
 
-            -- update whole NPCFrame point
-            if groupType == "raid" then
-                npcFrame:SetPoint(point, anchors["raid"])
-
-            elseif groupType == "party" then
-                if npcFrame:GetAttribute("pet") == "nopet" then
+            if not Cell.vars.currentLayoutTable["npcAnchor"][1] then
+                -- update whole NPCFrame point
+                if groupType == "raid" then
+                    npcFrame:SetPoint(point, anchors["raid"])
+    
+                elseif groupType == "party" then
+                    if npcFrame:GetAttribute("pet") == "nopet" then
+                        npcFrame:SetPoint(point, anchors["solo"], groupAnchorPoint, groupSpacing, 0)
+                    else
+                        npcFrame:SetPoint(point, anchors["party"], groupAnchorPoint, groupSpacing, 0)
+                    end
+            
+                else -- solo
                     npcFrame:SetPoint(point, anchors["solo"], groupAnchorPoint, groupSpacing, 0)
-                else
-                    npcFrame:SetPoint(point, anchors["party"], groupAnchorPoint, groupSpacing, 0)
                 end
-        
-            else -- solo
-                npcFrame:SetPoint(point, anchors["solo"], groupAnchorPoint, groupSpacing, 0)
             end
         else
             if layout["anchor"] == "BOTTOMLEFT" then
@@ -240,19 +248,21 @@ local function NPCFrame_UpdateLayout(layout, which)
                 groupSpacing = -layout["spacing"]
             end
 
-            -- update whole NPCFrame point
-            if groupType == "raid" then
-                npcFrame:SetPoint(point, anchors["raid"])
-
-            elseif groupType == "party" then
-                if npcFrame:GetAttribute("pet") == "nopet" then
+            if not Cell.vars.currentLayoutTable["npcAnchor"][1] then
+                -- update whole NPCFrame point
+                if groupType == "raid" then
+                    npcFrame:SetPoint(point, anchors["raid"])
+    
+                elseif groupType == "party" then
+                    if npcFrame:GetAttribute("pet") == "nopet" then
+                        npcFrame:SetPoint(point, anchors["solo"], groupAnchorPoint, 0, groupSpacing)
+                    else
+                        npcFrame:SetPoint(point, anchors["party"], groupAnchorPoint, 0, groupSpacing)
+                    end
+            
+                else -- solo
                     npcFrame:SetPoint(point, anchors["solo"], groupAnchorPoint, 0, groupSpacing)
-                else
-                    npcFrame:SetPoint(point, anchors["party"], groupAnchorPoint, 0, groupSpacing)
                 end
-        
-            else -- solo
-                npcFrame:SetPoint(point, anchors["solo"], groupAnchorPoint, 0, groupSpacing)
             end
         end
 
@@ -272,29 +282,46 @@ local function NPCFrame_UpdateLayout(layout, which)
             button.helper:SetAttribute("anchorPoint", anchorPoint)
             button.helper:SetAttribute("unitSpacing", unitSpacing)
             
-            if init then
-                if button:IsVisible() then
-                    button:ClearAllPoints()
-                    if last then
-                        if layout["orientation"] == "vertical" then
-                            button:SetPoint(point, last, anchorPoint, 0, unitSpacing)
-                        else
-                            button:SetPoint(point, last, anchorPoint, unitSpacing, 0)
-                        end
+            -- update each npc button now
+            if button:IsVisible() then
+                button:ClearAllPoints()
+                if last then
+                    if layout["orientation"] == "vertical" then
+                        button:SetPoint(point, last, anchorPoint, 0, unitSpacing)
                     else
-                        button:SetPoint("TOPLEFT", npcFrame)
+                        button:SetPoint(point, last, anchorPoint, unitSpacing, 0)
                     end
-                    last = button
+                else
+                    button:SetPoint("TOPLEFT", npcFrame)
                 end
+                last = button
+            end
+        end
+
+        -- update npcFrame anchor if separate from main 
+        if Cell.vars.currentLayoutTable["npcAnchor"][1] then
+            if layout["anchor"] == "BOTTOMLEFT" then
+                npcFrame:SetPoint("BOTTOMLEFT", separateAnchor, "TOPLEFT", 0, 4)
+            elseif layout["anchor"] == "BOTTOMRIGHT" then
+                npcFrame:SetPoint("BOTTOMRIGHT", separateAnchor, "TOPRIGHT", 0, 4)
+            elseif layout["anchor"] == "TOPLEFT" then
+                npcFrame:SetPoint("TOPLEFT", separateAnchor, "BOTTOMLEFT", 0, -4)
+            elseif layout["anchor"] == "TOPRIGHT" then
+                npcFrame:SetPoint("TOPRIGHT", separateAnchor, "BOTTOMRIGHT", 0, -4)
             end
         end
     end
 
-    -- after all vars inited
-    if not init then
-        init = true
-        RegisterStateDriver(npcFrame, "groupstate", "[group:raid] raid; [group:party] party; solo")
-        RegisterStateDriver(npcFrame, "petstate", "[@pet,exists] pet; [@partypet1,exists] pet1; [@partypet2,exists] pet2; [@partypet3,exists] pet3; [@partypet4,exists] pet4; nopet")
+    if not which or which == "npc" then
+        if Cell.vars.currentLayoutTable["npcAnchor"][1] then
+            UnregisterStateDriver(npcFrame, "groupstate")
+            UnregisterStateDriver(npcFrame, "petstate")
+            -- load separate npc frame position
+            P:LoadPosition(separateAnchor, Cell.vars.currentLayoutTable["npcAnchor"][2])
+        else
+            RegisterStateDriver(npcFrame, "groupstate", "[group:raid] raid; [group:party] party; solo")
+            RegisterStateDriver(npcFrame, "petstate", "[@pet,exists] pet; [@partypet1,exists] pet1; [@partypet2,exists] pet2; [@partypet3,exists] pet3; [@partypet4,exists] pet4; nopet")
+        end
     end
 end
 Cell:RegisterCallback("UpdateLayout", "NPCFrame_UpdateLayout", NPCFrame_UpdateLayout)

@@ -939,5 +939,15 @@ function F:Revise()
         end
     end
 
+    -- r80-release
+    if CellDB["revise"] and dbRevision < 80 then
+        -- update name text width
+        for _, layout in pairs(CellDB["layouts"]) do
+            if type(layout["npcAnchor"]) ~= "table" then
+                layout["npcAnchor"] = {false, {}}
+            end
+        end
+    end
+
     CellDB["revise"] = Cell.version
 end

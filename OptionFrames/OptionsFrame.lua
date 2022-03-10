@@ -19,7 +19,7 @@ local function RegisterDragForOptionsFrame(frame)
     end)
     frame:SetScript("OnDragStop", function()
         optionsFrame:StopMovingOrSizing()
-        -- P:PixelPerfectPoint(optionsFrame)
+        P:PixelPerfectPoint(optionsFrame)
     end)
 end
 
@@ -68,7 +68,7 @@ aboutBtn.id = "about"
 local tabHeight = {
     ["general"] = 401,
     ["appearance"] = 451,
-    ["layouts"] = 411,
+    ["layouts"] = 480,
     ["clickCastings"] = 401,
     ["indicators"] = 401,
     ["debuffs"] = 401,
@@ -117,6 +117,10 @@ optionsFrame:SetScript("OnHide", function()
     end
 end)
 
+optionsFrame:SetScript("OnShow", function()
+    P:PixelPerfectPoint(optionsFrame)
+end)
+
 optionsFrame:RegisterEvent("PLAYER_REGEN_DISABLED")
 optionsFrame:SetScript("OnEvent", function()
     optionsFrame:Hide()
@@ -124,7 +128,6 @@ end)
 
 -- for Raid Debuffs import
 function F:ShowRaidDebuffsTab()
-    P:PixelPerfectPoint(optionsFrame)
     optionsFrame:Show()
     ShowTab("debuffs")
 end

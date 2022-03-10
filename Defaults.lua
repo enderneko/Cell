@@ -12,6 +12,7 @@ Cell.defaults.layout = {
     ["rows"] = 8,
     ["groupSpacing"] = 0,
     ["groupFilter"] = {true, true, true, true, true, true, true, true},
+    ["npcAnchor"] = {false, {}},
     ["powerFilters"] = {
         ["DEATHKNIGHT"] = {["TANK"] = true, ["DAMAGER"] = true},
         ["DEMONHUNTER"] = {["TANK"] = true, ["DAMAGER"] = true},

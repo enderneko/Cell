@@ -24,7 +24,7 @@ nameText:SetPoint("TOPLEFT", 5, -5)
 --     end
 -- end)
 
-local changeLogsBtn = Cell:CreateButton(aboutTab, L["Change Logs"], "class", {90, 17})
+local changeLogsBtn = Cell:CreateButton(aboutTab, L["Change Logs"], "class", {100, 17})
 -- changeLogsBtn:SetPoint("TOPRIGHT", helpBtn, "TOPLEFT", 1, 0)
 changeLogsBtn:SetPoint("RIGHT", -5, 0)
 changeLogsBtn:SetPoint("TOP", nameText, 0, 1)

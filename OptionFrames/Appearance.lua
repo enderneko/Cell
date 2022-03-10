@@ -577,7 +577,7 @@ oversCB:SetPoint("TOPLEFT", shieldCB, "BOTTOMLEFT", 0, -7)
 
 
 -- reset
-local resetBtn = Cell:CreateButton(appearanceTab, L["Reset All"], "class", {70, 17})
+local resetBtn = Cell:CreateButton(appearanceTab, L["Reset All"], "class", {77, 17})
 resetBtn:SetPoint("RIGHT", -5, 0)
 resetBtn:SetPoint("BOTTOM", unitButtonText, 0, -1)
 resetBtn:SetScript("OnClick", function()
