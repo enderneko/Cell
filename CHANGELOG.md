@@ -1,4 +1,4 @@
-[Full Changelog](https://github.com/enderneko/Cell/compare/r78-release...da698872e085fdb08e5bc5c49aa48cf5a8f377a2)
+[Full Changelog](https://github.com/enderneko/Cell/compare/r79-release...480def8ef1ff120ccc079db15157ab66de5ee70d)
 
-- Update NPC frame (5 -> 8 bosses)
-- Update name text width options
+- Add separate NPC frame option
+- Fix NPC buttons position in horizontal layout

@@ -48,6 +48,11 @@ select(2, ...).L = setmetatable({
     ["RAID_DEBUFFS_TIPS"] = "Tips: [Drag & Drop] to change debuff order. [Double-Click] on instance name to open Encounter Journal. [Shift+Left Click] on instance/boss name to share debuffs. [Alt+Left Click] on instance/boss name to reset debuffs. The priority of General Debuffs is higher than Boss Debuffs.",
 
     ["CHANGE LOGS"] = [[
+        <h1>r80-release (Mar 10, 2022, 17:00 GMT+8)</h1>
+        <p>* Fixed NPC frame (horizontal layout).</p>
+        <p>+ Implemented separate NPC frame.</p>
+        <br/>
+
         <h1>r79-release (Mar 10, 2022, 10:35 GMT+8)</h1>
         <p>* Updated NPC frame (5 -> 8).</p>
         <p>* Updated name text width options.</p>
