@@ -48,13 +48,18 @@ select(2, ...).L = setmetatable({
     ["RAID_DEBUFFS_TIPS"] = "Tips: [Drag & Drop] to change debuff order. [Double-Click] on instance name to open Encounter Journal. [Shift+Left Click] on instance/boss name to share debuffs. [Alt+Left Click] on instance/boss name to reset debuffs. The priority of General Debuffs is higher than Boss Debuffs.",
 
     ["CHANGE LOGS"] = [[
+        <h1>r79-release (Mar 10, 2022, 10:35 GMT+8)</h1>
+        <p>* Updated NPC frame (5 -> 8).</p>
+        <p>* Updated name text width options.</p>
+        <br/>
+
         <h1>r78-release (Mar 9, 2022, 00:45 GMT+8)</h1>
         <p>+ Implemented Raid Debuffs import/export/reset, check out the tips in Raid Debuffs.</p>
         <p>* Updated SotFO debuffs.</p>
         <p>* Updated zhCN.</p>
         <br/>
 
-        <h1>r77-release (Mar 3, 2022, 8:21 GMT+8)</h1>
+        <h1>r77-release (Mar 3, 2022, 08:21 GMT+8)</h1>
         <p>* Bug fixes: click-castings (priest).</p>
         <p>+ Added "Use Game Font" option in Appearance.</p>
         <p>* Updated zhTW.</p>

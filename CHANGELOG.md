@@ -1,5 +1,4 @@
-[Full Changelog](https://github.com/enderneko/Cell/compare/r77-release...ded4a2c877c845058eacd2183f91c3704562f43c)
+[Full Changelog](https://github.com/enderneko/Cell/compare/r78-release...da698872e085fdb08e5bc5c49aa48cf5a8f377a2)
 
-- Implemented raid debuffs import/export/reset.
-- Updated SotFO debuffs.
-- Updated zhCN.
+- Update NPC frame (5 -> 8 bosses)
+- Update name text width options
