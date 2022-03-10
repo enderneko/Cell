@@ -17,7 +17,7 @@ end
 
 -- NOTE: update each npc unit button
 local pointUpdater = [[
-    local point, anchorPoint, unitSpacing = ...
+    local orientation, point, anchorPoint, unitSpacing = ...
     -- print(point, anchorPoint, unitSpacing)
     local last
     for i = 1, 8 do
@@ -26,7 +26,11 @@ local pointUpdater = [[
             button:ClearAllPoints()
             if last then
                 -- NOTE: anchor to last
-                button:SetPoint(point, last, anchorPoint, 0, unitSpacing)
+                if orientation == "vertical" then
+                    button:SetPoint(point, last, anchorPoint, 0, unitSpacing)
+                else
+                    button:SetPoint(point, last, anchorPoint, unitSpacing, 0)
+                end
             else
                 button:SetPoint("TOPLEFT", self)
             end
@@ -40,20 +44,20 @@ for i = 1, 8 do
     local button = CreateFrame("Button", npcFrame:GetName().."Button"..i, npcFrame, "CellUnitButtonTemplate")
     tinsert(Cell.unitButtons.npc, button)
 
-    button:SetAttribute("unit", "boss"..i)
-    RegisterAttributeDriver(button, "state-visibility", "[@boss"..i..", help] show; hide")
+    -- button:SetAttribute("unit", "boss"..i)
+    -- RegisterAttributeDriver(button, "state-visibility", "[@boss"..i..", help] show; hide")
     
     -- for testing ------------------------------
-    -- if i == 1 or i == 7 then
-    --     button:SetAttribute("unit", "player")
-    --     RegisterUnitWatch(button)
-    -- elseif i == 3 then
-    --     button:SetAttribute("unit", "target")
-    --     RegisterUnitWatch(button)
-    -- else
-    --     button:SetAttribute("unit", "boss"..i)
-    --     RegisterAttributeDriver(button, "state-visibility", "[@boss"..i..", help] show; hide")
-    -- end
+    if i == 1 or i == 7 then
+        button:SetAttribute("unit", "player")
+        RegisterUnitWatch(button)
+    elseif i == 3 then
+        button:SetAttribute("unit", "target")
+        RegisterUnitWatch(button)
+    else
+        button:SetAttribute("unit", "boss"..i)
+        RegisterAttributeDriver(button, "state-visibility", "[@boss"..i..", help] show; hide")
+    end
     ---------------------------------------------
 
     -- NOTE: save reference for re-point
@@ -63,12 +67,13 @@ for i = 1, 8 do
     button.helper = CreateFrame("Frame", nil, button, "SecureHandlerShowHideTemplate")
 	button.helper:SetFrameRef("npcFrame", npcFrame)
     button.helper:SetAttribute("pointUpdater", [[
+        local orientation = self:GetAttribute("orientation")
         local point = self:GetAttribute("point")
         local anchorPoint = self:GetAttribute("anchorPoint")
         local unitSpacing = self:GetAttribute("unitSpacing")
         
         local npcFrame = self:GetFrameRef("npcFrame")
-        self:RunFor(npcFrame, npcFrame:GetAttribute("pointUpdater"), point, anchorPoint, unitSpacing)
+        self:RunFor(npcFrame, npcFrame:GetAttribute("pointUpdater"), orientation, point, anchorPoint, unitSpacing)
     ]])
 	button.helper:SetAttribute("_onshow", [[ self:RunAttribute("pointUpdater") ]])
 	button.helper:SetAttribute("_onhide", [[ self:RunAttribute("pointUpdater") ]])
@@ -123,7 +128,7 @@ npcFrame:SetAttribute("_onstate-groupstate", [[
     end
 
     -- NOTE: update each npc button
-    self:RunAttribute("pointUpdater", point, anchorPoint, unitSpacing)
+    self:RunAttribute("pointUpdater", orientation, point, anchorPoint, unitSpacing)
 ]])
 -- RegisterStateDriver(npcFrame, "groupstate", "[group:raid] raid; [group:party] party; solo")
 
@@ -259,10 +264,29 @@ local function NPCFrame_UpdateLayout(layout, which)
         npcFrame:SetAttribute("unitSpacing", unitSpacing)
         npcFrame:SetAttribute("groupSpacing", groupSpacing)
     
+        local last
         for i = 1, 8 do
-            Cell.unitButtons.npc[i].helper:SetAttribute("point", point)
-            Cell.unitButtons.npc[i].helper:SetAttribute("anchorPoint", anchorPoint)
-            Cell.unitButtons.npc[i].helper:SetAttribute("unitSpacing", unitSpacing)
+            local button = Cell.unitButtons.npc[i]
+            button.helper:SetAttribute("orientation", layout["orientation"])
+            button.helper:SetAttribute("point", point)
+            button.helper:SetAttribute("anchorPoint", anchorPoint)
+            button.helper:SetAttribute("unitSpacing", unitSpacing)
+            
+            if init then
+                if button:IsVisible() then
+                    button:ClearAllPoints()
+                    if last then
+                        if layout["orientation"] == "vertical" then
+                            button:SetPoint(point, last, anchorPoint, 0, unitSpacing)
+                        else
+                            button:SetPoint(point, last, anchorPoint, unitSpacing, 0)
+                        end
+                    else
+                        button:SetPoint("TOPLEFT", npcFrame)
+                    end
+                    last = button
+                end
+            end
         end
     end
 
