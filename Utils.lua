@@ -625,6 +625,7 @@ end
 -------------------------------------------------
 -- LibSharedMedia
 -------------------------------------------------
+Cell.vars.texture = "Interface\\AddOns\\Cell\\Media\\statusbar.tga"
 local LSM = LibStub("LibSharedMedia-3.0", true)
 function F:GetBarTexture()
     --! update Cell.vars.texture for further use in UnitButton_OnLoad

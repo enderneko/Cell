@@ -1920,10 +1920,12 @@ end
 
 local function UnitButton_OnTick(self)
     local e = (self.__tickCount or 0) + 1
-    if e >= 4 then -- every 1 second
+    if e >= 2 then -- every 0.5 second
         e = 0
         local guid = UnitGUID(self.state.displayedUnit or "")
         if guid ~= self.__displayedGuid then
+            -- unit entity changed
+            F:RemoveElementsExceptKeys(self.state, "unit", "displayedUnit")
             self.__displayedGuid = guid
             self.updateRequired = 1
         end
@@ -1950,7 +1952,6 @@ end
 -------------------------------------------------
 -- unit button init
 -------------------------------------------------
-Cell.vars.texture = "Interface\\AddOns\\Cell\\Media\\statusbar.tga"
 -- local startTimeCache, statusCache = {}, {}
 local startTimeCache = {}
 
