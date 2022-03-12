@@ -66,7 +66,7 @@ debuffsBtn.id = "debuffs"
 aboutBtn.id = "about"
 
 local tabHeight = {
-    ["general"] = 401,
+    ["general"] = 411,
     ["appearance"] = 451,
     ["layouts"] = 480,
     ["clickCastings"] = 401,

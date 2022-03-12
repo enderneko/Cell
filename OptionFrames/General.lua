@@ -172,7 +172,7 @@ showPartyPetsCB:SetPoint("TOPLEFT", showPartyCB, "BOTTOMLEFT", 0, -7)
 -- misc
 -------------------------------------------------
 local miscText = Cell:CreateSeparator(L["Misc"], generalTab, 188)
-miscText:SetPoint("TOPLEFT", 5, -130)
+miscText:SetPoint("TOPLEFT", 5, -120)
 
 -- local blizzardText = Cell:CreateSeparator(L["Blizzard Frames"], generalTab, 188)
 -- blizzardText:SetPoint("TOPLEFT", 5, -5)
@@ -203,7 +203,7 @@ sortByRoleCB:SetPoint("TOPLEFT", fadeoutCB, "BOTTOMLEFT", 0, -7)
 -- raid tools
 -------------------------------------------------
 local toolsText = Cell:CreateSeparator(L["Raid Tools"].." |cFF777777"..L["Only in Group"], generalTab, 387)
-toolsText:SetPoint("TOPLEFT", 5, -275)
+toolsText:SetPoint("TOPLEFT", 5, -255)
 
 local unlockBtn = Cell:CreateButton(generalTab, L["Unlock"], "class", {60, 17})
 unlockBtn:SetPoint("RIGHT", -5, 0)
@@ -360,9 +360,9 @@ local marksBarCB = Cell:CreateCheckButton(generalTab, L["Marks Bar"], function(c
     marksDropdown:SetEnabled(checked)
     Cell:Fire("UpdateRaidTools", "marks")
 end, L["Marks Bar"], L["Only show when you have permission to do this"], L["marksTips"])
-marksBarCB:SetPoint("TOPLEFT", readyPullCB, "TOPRIGHT", 244, 0)
+marksBarCB:SetPoint("TOPLEFT", readyPullCB, "BOTTOMLEFT", 0, -38)
 
-marksDropdown = Cell:CreateDropdown(generalTab, 100)
+marksDropdown = Cell:CreateDropdown(generalTab, 150)
 marksDropdown:SetPoint("TOPLEFT", marksBarCB, "BOTTOMRIGHT", 5, -5)
 marksDropdown:SetItems({
     {
