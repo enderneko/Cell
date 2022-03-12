@@ -19,12 +19,12 @@ end
 -- NOTE: update each npc unit button
 local pointUpdater = [[
     local orientation, point, anchorPoint, unitSpacing = ...
-    -- print(point, anchorPoint, unitSpacing)
+    -- print(orientation, point, anchorPoint, unitSpacing)
     local last
     for i = 1, 8 do
         local button = self:GetFrameRef("button"..i)
+        button:ClearAllPoints()
         if button:IsVisible() then
-            button:ClearAllPoints()
             if last then
                 -- NOTE: anchor to last
                 if orientation == "vertical" then
@@ -49,15 +49,18 @@ for i = 1, 8 do
     RegisterAttributeDriver(button, "state-visibility", "[@boss"..i..", help] show; hide")
     
     -- for testing ------------------------------
-    -- if i == 1 or i == 7 then
+    -- if i == 7 then
     --     button:SetAttribute("unit", "player")
     --     RegisterUnitWatch(button)
-    -- elseif i == 3 then
+    -- elseif i == 2 then
     --     button:SetAttribute("unit", "target")
-    --     RegisterUnitWatch(button)
-    -- else
-    --     button:SetAttribute("unit", "boss"..i)
-    --     RegisterAttributeDriver(button, "state-visibility", "[@boss"..i..", help] show; hide")
+    --     RegisterAttributeDriver(button, "state-visibility", "[@target, exists] show; hide")
+    -- elseif i == 4 then
+    --     button:SetAttribute("unit", "target")
+    --     RegisterAttributeDriver(button, "state-visibility", "[@target, help] show; hide")
+    -- elseif i == 6 then
+    --     button:SetAttribute("unit", "target")
+    --     RegisterAttributeDriver(button, "state-visibility", "[@target, harm] show; hide")
     -- end
     ---------------------------------------------
 
