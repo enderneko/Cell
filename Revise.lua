@@ -960,13 +960,22 @@ function F:Revise()
             CellDB["raidTools"]["showMarks"] = nil
             CellDB["raidTools"]["marksPosition"] = nil
         end
-        
+
         -- update buffTracker
         if type(CellDB["raidTools"]["buffTracker"]) ~= "table" then
             CellDB["raidTools"]["buffTracker"] = {CellDB["raidTools"]["showBuffTracker"], CellDB["raidTools"]["buffTrackerPosition"]}
             -- remove old
             CellDB["raidTools"]["showBuffTracker"] = nil
             CellDB["raidTools"]["buffTrackerPosition"] = nil
+        end
+        
+        -- update readyAndPull
+        if type(CellDB["raidTools"]["readyAndPull"]) ~= "table" then
+            CellDB["raidTools"]["readyAndPull"] = {CellDB["raidTools"]["showButtons"], CellDB["raidTools"]["pullTimer"], CellDB["raidTools"]["buttonsPosition"]}
+            -- remove old
+            CellDB["raidTools"]["showButtons"] = nil
+            CellDB["raidTools"]["pullTimer"] = nil
+            CellDB["raidTools"]["buttonsPosition"] = nil
         end
     end
 

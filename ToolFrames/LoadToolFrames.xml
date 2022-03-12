@@ -2,7 +2,7 @@
 ..\FrameXML\UI.xsd">
 	<Script file="BattleRes.lua"/>
 	<Script file="Marks.lua"/>
-	<Script file="RaidButtons.lua"/>
+	<Script file="ReadyAndPull.lua"/>
 	<Script file="RaidRosterFrame.lua"/>
 	<Script file="DeathReport.lua"/>
 	<Script file="BuffTracker.lua"/>

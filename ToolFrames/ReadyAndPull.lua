@@ -5,8 +5,8 @@ local P = Cell.pixelPerfectFuncs
 
 local readyBtn, pullBtn
 
-local buttonsFrame = CreateFrame("Frame", "CellRaidButtonsFrame", Cell.frames.mainFrame, "BackdropTemplate")
-Cell.frames.raidButtonsFrame = buttonsFrame
+local buttonsFrame = CreateFrame("Frame", "CellReadyAndPullFrame", Cell.frames.mainFrame, "BackdropTemplate")
+Cell.frames.readyAndPullFrame = buttonsFrame
 P:Size(buttonsFrame, 60, 55)
 buttonsFrame:SetPoint("TOPRIGHT", UIParent, "CENTER")
 buttonsFrame:SetClampedToScreen(true)
@@ -18,7 +18,7 @@ buttonsFrame:SetScript("OnDragStart", function()
 end)
 buttonsFrame:SetScript("OnDragStop", function()
     buttonsFrame:StopMovingOrSizing()
-    P:SavePosition(buttonsFrame, CellDB["raidTools"]["buttonsPosition"])
+    P:SavePosition(buttonsFrame, CellDB["raidTools"]["readyAndPull"][3])
 end)
 
 -------------------------------------------------
@@ -31,7 +31,7 @@ buttonsFrame.moverText:Hide()
 
 local function ShowMover(show)
     if show then
-        if not CellDB["raidTools"]["showButtons"] then return end
+        if not CellDB["raidTools"]["readyAndPull"][1] then return end
         buttonsFrame:EnableMouse(true)
         buttonsFrame.moverText:Show()
         Cell:StylizeFrame(buttonsFrame, {0, 1, 0, .4}, {0, 0, 0, 0})
@@ -156,7 +156,7 @@ local function CheckPermission()
         buttonsFrame:RegisterEvent("PLAYER_REGEN_ENABLED")
     else
         buttonsFrame:UnregisterEvent("PLAYER_REGEN_ENABLED")
-        if F:HasPermission() and CellDB["raidTools"]["showButtons"] then
+        if F:HasPermission() and CellDB["raidTools"]["readyAndPull"][1] then
             readyBtn:Show()
             readyBtn:SetEnabled(true)
             pullBtn:Show()
@@ -182,20 +182,20 @@ local function UpdateRaidTools(which)
     end
 
     if not which or which == "pullTimer" then
-        if CellDB["raidTools"]["pullTimer"][1] == "ExRT" then
-            pullBtn:SetAttribute("macrotext1", "/ert pull "..CellDB["raidTools"]["pullTimer"][2])
+        if CellDB["raidTools"]["readyAndPull"][2][1] == "ExRT" then
+            pullBtn:SetAttribute("macrotext1", "/ert pull "..CellDB["raidTools"]["readyAndPull"][2][2])
             pullBtn:SetAttribute("macrotext2", "/ert pull 0")
-        elseif CellDB["raidTools"]["pullTimer"][1] == "DBM" then
-            pullBtn:SetAttribute("macrotext1", "/dbm pull "..CellDB["raidTools"]["pullTimer"][2])
+        elseif CellDB["raidTools"]["readyAndPull"][2][1] == "DBM" then
+            pullBtn:SetAttribute("macrotext1", "/dbm pull "..CellDB["raidTools"]["readyAndPull"][2][2])
             pullBtn:SetAttribute("macrotext2", "/dbm pull 0")
         else -- BW
-            pullBtn:SetAttribute("macrotext1", "/pull "..CellDB["raidTools"]["pullTimer"][2])
+            pullBtn:SetAttribute("macrotext1", "/pull "..CellDB["raidTools"]["readyAndPull"][2][2])
             pullBtn:SetAttribute("macrotext2", "/pull 0")
         end
     end
 
     if not which then -- position
-        P:LoadPosition(buttonsFrame, CellDB["raidTools"]["buttonsPosition"])
+        P:LoadPosition(buttonsFrame, CellDB["raidTools"]["readyAndPull"][3])
     end
 end
 Cell:RegisterCallback("UpdateRaidTools", "RaidButtons_UpdateRaidTools", UpdateRaidTools)

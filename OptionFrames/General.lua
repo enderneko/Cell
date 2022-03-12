@@ -257,7 +257,7 @@ buffCB:SetPoint("TOPLEFT", reportCB, "TOPRIGHT", 115, 0)
 -- ready & pull
 local pullText, pullDropdown, secDropdown
 local readyPullCB = Cell:CreateCheckButton(generalTab, L["ReadyCheck and PullTimer buttons"], function(checked, self)
-    CellDB["raidTools"]["showButtons"] = checked
+    CellDB["raidTools"]["readyAndPull"][1] = checked
     pullDropdown:SetEnabled(checked)
     secDropdown:SetEnabled(checked)
     if checked then
@@ -279,21 +279,21 @@ pullDropdown:SetItems({
     {
         ["text"] = "ExRT",
         ["onClick"] = function()
-            CellDB["raidTools"]["pullTimer"][1] = "ExRT"
+            CellDB["raidTools"]["readyAndPull"][2][1] = "ExRT"
             Cell:Fire("UpdateRaidTools", "pullTimer")
         end,
     },
     {
         ["text"] = "DBM",
         ["onClick"] = function()
-            CellDB["raidTools"]["pullTimer"][1] = "DBM"
+            CellDB["raidTools"]["readyAndPull"][2][1] = "DBM"
             Cell:Fire("UpdateRaidTools", "pullTimer")
         end,
     },
     {
         ["text"] = "BW",
         ["onClick"] = function()
-            CellDB["raidTools"]["pullTimer"][1] = "BW"
+            CellDB["raidTools"]["readyAndPull"][2][1] = "BW"
             Cell:Fire("UpdateRaidTools", "pullTimer")
         end,
     },
@@ -305,49 +305,49 @@ secDropdown:SetItems({
     {
         ["text"] = 5,
         ["onClick"] = function()
-            CellDB["raidTools"]["pullTimer"][2] = 5
+            CellDB["raidTools"]["readyAndPull"][2][2] = 5
             Cell:Fire("UpdateRaidTools", "pullTimer")
         end,
     },
     {
         ["text"] = 7,
         ["onClick"] = function()
-            CellDB["raidTools"]["pullTimer"][2] = 7
+            CellDB["raidTools"]["readyAndPull"][2][2] = 7
             Cell:Fire("UpdateRaidTools", "pullTimer")
         end,
     },
     {
         ["text"] = 10,
         ["onClick"] = function()
-            CellDB["raidTools"]["pullTimer"][2] = 10
+            CellDB["raidTools"]["readyAndPull"][2][2] = 10
             Cell:Fire("UpdateRaidTools", "pullTimer")
         end,
     },
     {
         ["text"] = 15,
         ["onClick"] = function()
-            CellDB["raidTools"]["pullTimer"][2] = 15
+            CellDB["raidTools"]["readyAndPull"][2][2] = 15
             Cell:Fire("UpdateRaidTools", "pullTimer")
         end,
     },
     {
         ["text"] = 20,
         ["onClick"] = function()
-            CellDB["raidTools"]["pullTimer"][2] = 20
+            CellDB["raidTools"]["readyAndPull"][2][2] = 20
             Cell:Fire("UpdateRaidTools", "pullTimer")
         end,
     },
     {
         ["text"] = 25,
         ["onClick"] = function()
-            CellDB["raidTools"]["pullTimer"][2] = 25
+            CellDB["raidTools"]["readyAndPull"][2][2] = 25
             Cell:Fire("UpdateRaidTools", "pullTimer")
         end,
     },
     {
         ["text"] = 30,
         ["onClick"] = function()
-            CellDB["raidTools"]["pullTimer"][2] = 30
+            CellDB["raidTools"]["readyAndPull"][2][2] = 30
             Cell:Fire("UpdateRaidTools", "pullTimer")
         end,
     },
@@ -466,12 +466,12 @@ local function ShowTab(tab)
         reportCB:SetChecked(CellDB["raidTools"]["deathReport"][1])
         buffCB:SetChecked(CellDB["raidTools"]["buffTracker"][1])
 
-        readyPullCB:SetChecked(CellDB["raidTools"]["showButtons"])
-        pullDropdown:SetSelected(CellDB["raidTools"]["pullTimer"][1])
-        secDropdown:SetSelected(CellDB["raidTools"]["pullTimer"][2])
-        pullDropdown:SetEnabled(CellDB["raidTools"]["showButtons"])
-        secDropdown:SetEnabled(CellDB["raidTools"]["showButtons"])
-        if CellDB["raidTools"]["showButtons"] then
+        readyPullCB:SetChecked(CellDB["raidTools"]["readyAndPull"][1])
+        pullDropdown:SetSelected(CellDB["raidTools"]["readyAndPull"][2][1])
+        secDropdown:SetSelected(CellDB["raidTools"]["readyAndPull"][2][2])
+        pullDropdown:SetEnabled(CellDB["raidTools"]["readyAndPull"][1])
+        secDropdown:SetEnabled(CellDB["raidTools"]["readyAndPull"][1])
+        if CellDB["raidTools"]["readyAndPull"][1] then
             pullText:SetTextColor(1, 1, 1)
         else
             pullText:SetTextColor(.4, .4, .4)

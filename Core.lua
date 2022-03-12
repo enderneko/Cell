@@ -149,13 +149,11 @@ function eventFrame:ADDON_LOADED(arg1)
         -- raidTools --------------------------------------------------------------------------------
         if type(CellDB["raidTools"]) ~= "table" then
             CellDB["raidTools"] = {
-                ["buffTracker"] = {false, {}},
                 ["showBattleRes"] = true,
+                ["buffTracker"] = {false, {}},
                 ["deathReport"] = {false, 10},
-                ["showButtons"] = false,
-                ["pullTimer"] = {"ExRT", 7},
+                ["readyAndPull"] = {false, {"ExRT", 7}, {}},
                 ["marks"] = {false, "both_h", {}},
-                ["buttonsPosition"] = {},
             }
         end
         -- if type(CellDB["clamped"]) ~= "boolean" then CellDB["clamped"] = false end
@@ -556,9 +554,9 @@ function SlashCmdList.CELL(msg, editbox)
             Cell.frames.anchorFrame:ClearAllPoints()
             Cell.frames.anchorFrame:SetPoint("TOPLEFT", UIParent, "CENTER")
             Cell.vars.currentLayoutTable["position"] = {}
-            Cell.frames.raidButtonsFrame:ClearAllPoints()
-            Cell.frames.raidButtonsFrame:SetPoint("TOPRIGHT", UIParent, "CENTER")
-            CellDB["raidTools"]["buttonsPosition"] = {}
+            Cell.frames.readyAndPullFrame:ClearAllPoints()
+            Cell.frames.readyAndPullFrame:SetPoint("TOPRIGHT", UIParent, "CENTER")
+            CellDB["raidTools"]["readyAndPull"][3] = {}
             Cell.frames.raidMarksFrame:ClearAllPoints()
             Cell.frames.raidMarksFrame:SetPoint("BOTTOMRIGHT", UIParent, "CENTER")
             CellDB["raidTools"]["marks"][3] = {}
@@ -566,8 +564,8 @@ function SlashCmdList.CELL(msg, editbox)
         elseif rest == "all" then
             Cell.frames.anchorFrame:ClearAllPoints()
             Cell.frames.anchorFrame:SetPoint("TOPLEFT", UIParent, "CENTER")
-            Cell.frames.raidButtonsFrame:ClearAllPoints()
-            Cell.frames.raidButtonsFrame:SetPoint("TOPRIGHT", UIParent, "CENTER")
+            Cell.frames.readyAndPullFrame:ClearAllPoints()
+            Cell.frames.readyAndPullFrame:SetPoint("TOPRIGHT", UIParent, "CENTER")
             Cell.frames.raidMarksFrame:ClearAllPoints()
             Cell.frames.raidMarksFrame:SetPoint("BOTTOMRIGHT", UIParent, "CENTER")
             CellDB = nil
