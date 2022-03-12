@@ -447,6 +447,7 @@ L["Reset debuffs?"] = "重置减益？"
 -------------------------------------------------
 L["About"] = "关于"
 L["Author"] = "作者"
+L["Special Thanks"] = "蟹蟹"
 L["Translators"] = "翻译"
 L["Slash Commands"] = "斜杠命令"
 L["Bug Report & Suggestion"] = "问题报告与建议"

@@ -72,7 +72,7 @@ local tabHeight = {
     ["clickCastings"] = 401,
     ["indicators"] = 421,
     ["debuffs"] = 401,
-    ["about"] = 401,
+    ["about"] = 431,
 }
 
 local lastShownTab
