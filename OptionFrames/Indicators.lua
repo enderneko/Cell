@@ -616,7 +616,7 @@ listText:SetJustifyH("LEFT")
 
 local listFrame = Cell:CreateFrame("IndicatorsTab_ListFrame", indicatorsTab)
 listFrame:SetPoint("TOPLEFT", 5, -86)
-listFrame:SetPoint("BOTTOMRIGHT", indicatorsTab, "BOTTOMLEFT", 127, 29)
+listFrame:SetPoint("BOTTOMRIGHT", indicatorsTab, "BOTTOMLEFT", 127, 49)
 listFrame:Show()
 
 Cell:CreateScrollFrame(listFrame)
@@ -669,7 +669,7 @@ local auraTypeItems = {
 }
 
 local createBtn = Cell:CreateButton(indicatorsTab, nil, "green-hover", {42, 20}, nil, nil, nil, nil, nil, L["Create"])
-createBtn:SetPoint("BOTTOMLEFT", 5, 5)
+createBtn:SetPoint("TOPLEFT", listFrame, "BOTTOMLEFT", 0, -5)
 createBtn:SetTexture("Interface\\AddOns\\Cell\\Media\\Icons\\create.blp", {16, 16}, {"TOPLEFT", 12, 0})
 createBtn:SetScript("OnClick", function()
     local popup = Cell:CreateConfirmPopup(indicatorsTab, 200, L["Create new indicator"], function(self)
@@ -778,7 +778,7 @@ createBtn:SetScript("OnClick", function()
 end)
 
 local renameBtn = Cell:CreateButton(indicatorsTab, nil, "blue-hover", {41, 20}, nil, nil, nil, nil, nil, L["Rename"])
-renameBtn:SetPoint("LEFT", createBtn, "RIGHT", -1, 0)
+renameBtn:SetPoint("TOPLEFT", createBtn, "TOPRIGHT", -1, 0)
 renameBtn:SetTexture("Interface\\AddOns\\Cell\\Media\\Icons\\rename.blp", {16, 16}, {"TOPLEFT", 12, -2})
 renameBtn:SetEnabled(false)
 renameBtn:SetScript("OnClick", function()
@@ -792,7 +792,7 @@ renameBtn:SetScript("OnClick", function()
 end)
 
 local deleteBtn = Cell:CreateButton(indicatorsTab, nil, "red-hover", {41, 20}, nil, nil, nil, nil, nil, L["Delete"])
-deleteBtn:SetPoint("LEFT", renameBtn, "RIGHT", -1, 0)
+deleteBtn:SetPoint("TOPLEFT", renameBtn, "TOPRIGHT", -1, 0)
 deleteBtn:SetTexture("Interface\\AddOns\\Cell\\Media\\Icons\\trash.blp", {16, 16}, {"TOPLEFT", 12, -2})
 deleteBtn:SetEnabled(false)
 deleteBtn:SetScript("OnClick", function()
@@ -807,6 +807,23 @@ deleteBtn:SetScript("OnClick", function()
         listButtons[1]:Click()
     end, nil, true)
     popup:SetPoint("TOPLEFT", 100, -120)
+end)
+
+local importBtn = Cell:CreateButton(indicatorsTab, nil, "class-hover", {42, 20}, nil, nil, nil, nil, nil, L["Import"])
+importBtn:SetPoint("TOPLEFT", createBtn, "BOTTOMLEFT", 0, 1)
+importBtn:SetTexture("Interface\\AddOns\\Cell\\Media\\Icons\\import.blp", {16, 16}, {"TOPLEFT", 12, -2})
+importBtn:SetEnabled(false)
+
+local exportBtn = Cell:CreateButton(indicatorsTab, nil, "class-hover", {41, 20}, nil, nil, nil, nil, nil, L["Export"])
+exportBtn:SetPoint("TOPLEFT", importBtn, "TOPRIGHT", -1, 0)
+exportBtn:SetTexture("Interface\\AddOns\\Cell\\Media\\Icons\\export.blp", {16, 16}, {"TOPLEFT", 12, -2})
+exportBtn:SetEnabled(false)
+
+local copyBtn = Cell:CreateButton(indicatorsTab, nil, "class-hover", {41, 20}, nil, nil, nil, nil, nil, L["Copy"], L["Copy indicators from one layout to another"])
+copyBtn:SetPoint("TOPLEFT", exportBtn, "TOPRIGHT", -1, 0)
+copyBtn:SetTexture("Interface\\AddOns\\Cell\\Media\\Icons\\copy.blp", {16, 16}, {"TOPLEFT", 12, -2})
+copyBtn:SetScript("OnClick", function()
+    F:ShowCopyFrame()
 end)
 
 -------------------------------------------------
@@ -1156,3 +1173,16 @@ local function UpdateAppearance()
     end
 end
 Cell:RegisterCallback("UpdateAppearance", "IndicatorsTab_UpdateAppearance", UpdateAppearance)
+
+local function IndicatorsCopied(layout)
+    -- reload after indicator copy
+    if currentLayout == layout then
+        F:Debug("Reload Indicator List:", layout)
+        -- update indicators for preview button
+        UpdateIndicators()
+        -- reload list
+        LoadIndicatorList()
+        listButtons[1]:Click()
+    end
+end
+Cell:RegisterCallback("IndicatorsCopied", "IndicatorsTab_IndicatorsCopied", IndicatorsCopied)

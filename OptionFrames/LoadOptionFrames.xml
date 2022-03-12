@@ -5,12 +5,12 @@
 	<Script file="Appearance.lua"/>
 	<Script file="Layouts.lua"/>
 	<Script file="Layouts_PowerFilters.lua"/>
-	<Script file="Layouts_CopyIndicators.lua"/>
 	<Script file="Layouts_ImportExport.lua"/>
 	<Script file="ClickCastings_DefaultSpells.lua"/>
 	<Script file="ClickCastings.lua"/>
 	<Script file="Indicators_DefaultSpells.lua"/>
 	<Script file="Indicators.lua"/>
+	<Script file="Indicators_Copy.lua"/>
 	<Script file="RaidDebuffs.lua"/>
 	<Script file="RaidDebuffs_ImportExport.lua"/>
 	<Script file="RaidDebuffs_BfA.lua"/>

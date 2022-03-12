@@ -848,12 +848,13 @@ UpdateButtonStates = function()
 end
 
 -- copy & paste
-local cpBtn = Cell:CreateButton(layoutsTab, L["Copy"], "class-hover", {55, 20}, nil, nil, nil, nil, nil, 
+local shareBtn = Cell:CreateButton(layoutsTab, L["Share"], "class-hover", {55, 20}, nil, nil, nil, nil, nil, 
     L["Copy Indicators"], L["Copy selected indicators to another layout"])
-cpBtn:SetPoint("LEFT", exportBtn, "RIGHT", -1, 0)
-cpBtn:SetScript("OnClick", function()
-    F:ShowCopyFrame()
+shareBtn:SetPoint("LEFT", exportBtn, "RIGHT", -1, 0)
+shareBtn:SetScript("OnClick", function()
+    
 end)
+shareBtn:SetEnabled(false)
 
 -------------------------------------------------
 -- layout auto switch

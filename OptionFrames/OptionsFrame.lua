@@ -70,7 +70,7 @@ local tabHeight = {
     ["appearance"] = 451,
     ["layouts"] = 480,
     ["clickCastings"] = 401,
-    ["indicators"] = 401,
+    ["indicators"] = 421,
     ["debuffs"] = 401,
     ["about"] = 401,
 }

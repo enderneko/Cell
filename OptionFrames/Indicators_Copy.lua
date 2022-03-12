@@ -2,22 +2,27 @@ local _, Cell = ...
 local L = Cell.L
 local F = Cell.funcs
 
-local copyFrame = Cell:CreateFrame("CellOptionsFrame_CopyFrame", Cell.frames.layoutsTab, 134, 356)
-Cell.frames.copyFrame = copyFrame
+local copyFrame = Cell:CreateFrame("CellOptionsFrame_IndicatorsCopy", Cell.frames.indicatorsTab, 129, 368)
+Cell.frames.indicatorsCopyFrame = copyFrame
 copyFrame:SetFrameStrata("DIALOG")
-copyFrame:SetPoint("TOPLEFT", 179, -22)
+copyFrame:SetPoint("BOTTOMLEFT", 5, 24)
 copyFrame:Hide()
 
-local fromDropdown, toDropdown, fromList, copyBtn, closeBtn
+-- title
+-- L["Copy selected indicators to another layout"]
+
+local fromDropdown, toDropdown, fromList, copyBtn, closeBtn, allBtn, invertBtn
+local Toggle, Validate
 local from, to
+local indicatorButtons = {}
 local selectedIndicators = {}
 -------------------------------------------------
 -- dropdowns
 -------------------------------------------------
-fromDropdown = Cell:CreateDropdown(copyFrame, 120)
-fromDropdown:SetPoint("TOPLEFT", 7, -24)
+fromDropdown = Cell:CreateDropdown(copyFrame, 119)
+fromDropdown:SetPoint("TOPLEFT", 5, -24)
 
-toDropdown = Cell:CreateDropdown(copyFrame, 120)
+toDropdown = Cell:CreateDropdown(copyFrame, 119)
 toDropdown:SetPoint("TOPLEFT", fromDropdown, "BOTTOMLEFT", 0, -22)
 
 local fromText = copyFrame:CreateFontString(nil, "OVERLAY", "CELL_FONT_CLASS")
@@ -33,9 +38,10 @@ toText:SetText(L["To"])
 -------------------------------------------------
 fromList = CreateFrame("Frame", nil, copyFrame, "BackdropTemplate")
 Cell:StylizeFrame(fromList)
-fromList:SetPoint("TOPLEFT", toDropdown, "BOTTOMLEFT", 0, -7)
-fromList:SetPoint("TOPRIGHT", toDropdown, "BOTTOMRIGHT", 0, -7)
-fromList:SetPoint("BOTTOM", 0, 34)
+fromList:SetPoint("TOPLEFT", toDropdown, "BOTTOMLEFT", 0, -5)
+fromList:SetPoint("TOPRIGHT", toDropdown, "BOTTOMRIGHT", 0, -5)
+-- fromList:SetPoint("BOTTOM", 0, 34)
+fromList:SetHeight(229)
 
 Cell:CreateScrollFrame(fromList)
 fromList.scrollFrame:SetScrollStep(19)
@@ -44,7 +50,7 @@ fromList.scrollFrame:SetScrollStep(19)
 -- buttons
 -------------------------------------------------
 copyBtn = Cell:CreateButton(copyFrame, L["Copy"], "green", {60, 20})
-copyBtn:SetPoint("BOTTOMLEFT", 7, 7)
+copyBtn:SetPoint("BOTTOMLEFT", 5, 5)
 copyBtn:SetEnabled(false)
 copyBtn:SetScript("OnClick", function()
     local last = #CellDB["layouts"][to]["indicators"]
@@ -61,19 +67,42 @@ copyBtn:SetScript("OnClick", function()
         end
     end
     Cell:Fire("UpdateIndicators", to)
+    Cell:Fire("IndicatorsCopied", to)
     copyFrame:Hide()
 end)
 
 closeBtn = Cell:CreateButton(copyFrame, L["Close"], "red", {60, 20})
-closeBtn:SetPoint("LEFT", copyBtn, "RIGHT", -1, 0)
+closeBtn:SetPoint("BOTTOMLEFT", copyBtn, "BOTTOMRIGHT", -1, 0)
 closeBtn:SetScript("OnClick", function()
     copyFrame:Hide()
+end)
+
+allBtn = Cell:CreateButton(copyFrame, L["ALL"], "class-hover", {60, 20})
+allBtn:SetPoint("BOTTOMLEFT", copyBtn, "TOPLEFT", 0, -1)
+allBtn:SetScript("OnClick", function()
+    for i = 1, #indicatorButtons do
+        Toggle(i, true)
+    end
+    Validate()
+end)
+
+invertBtn = Cell:CreateButton(copyFrame, L["INVERT"], "class-hover", {60, 20})
+invertBtn:SetPoint("BOTTOMLEFT", closeBtn, "TOPLEFT", 0, -1)
+invertBtn:SetScript("OnClick", function()
+    for i = 1, #indicatorButtons do
+        if selectedIndicators[i] then
+            Toggle(i, false, true)
+        else
+            Toggle(i, true)
+        end
+    end
+    Validate()
 end)
 
 -------------------------------------------------
 -- functions
 -------------------------------------------------
-local function Validate()
+Validate = function()
     from, to = fromDropdown:GetSelected(), toDropdown:GetSelected()
     if from and to and from ~= to and F:Getn(selectedIndicators) ~= 0 then
         copyBtn:SetEnabled(true)
@@ -82,38 +111,47 @@ local function Validate()
     end
 end
 
-local fromIdicators = {}
-local function LoadIndicators(layout, frame, buttons)
+Toggle = function(index, isSelect, unhighlight)
+    b = indicatorButtons[index]
+    if isSelect then
+        selectedIndicators[index] = true
+        b:SetBackdropColor(unpack(b.hoverColor))
+        b:SetScript("OnEnter", nil)
+        b:SetScript("OnLeave", nil)
+        b:SetTextColor(0, 1, 0)
+        b.selected = true
+    else
+        selectedIndicators[index] = nil
+        b:SetScript("OnEnter", function(self) self:SetBackdropColor(unpack(self.hoverColor)) end)
+        b:SetScript("OnLeave", function(self) self:SetBackdropColor(unpack(self.color)) end)
+        b:SetTextColor(1, 1, 1)
+        b.selected = false
+        if unhighlight then
+            b:SetBackdropColor(0, 0, 0, 0)
+        end
+    end
+end
+
+local function LoadIndicators(layout)
     wipe(selectedIndicators)
-    frame.scrollFrame:Reset()
+    fromList.scrollFrame:Reset()
 
     local last, n
     for i, t in pairs(CellDB["layouts"][layout]["indicators"]) do
-        local b = buttons[i]
+        local b = indicatorButtons[i]
         if not b then
-            b = Cell:CreateButton(frame.scrollFrame.content, " ", "transparent-class", {20, 20})
-            buttons[i] = b
+            b = Cell:CreateButton(fromList.scrollFrame.content, " ", "transparent-class", {20, 20})
+            indicatorButtons[i] = b
             b.selected = false
             b:SetScript("OnClick", function()
                 b.selected = not b.selected
-                if b.selected then
-                    selectedIndicators[i] = true
-                    b:SetBackdropColor(unpack(b.hoverColor))
-                    b:SetScript("OnEnter", nil)
-                    b:SetScript("OnLeave", nil)
-                    b:SetTextColor(0, 1, 0)
-                else
-                    selectedIndicators[i] = nil
-                    b:SetScript("OnEnter", function(self) self:SetBackdropColor(unpack(self.hoverColor)) end)
-                    b:SetScript("OnLeave", function(self) self:SetBackdropColor(unpack(self.color)) end)
-                    b:SetTextColor(1, 1, 1)
-                end
+                Toggle(i, b.selected)
                 Validate()
             end)
         else
             -- reset
             b:Show()
-            b:SetParent(frame.scrollFrame.content)
+            b:SetParent(fromList.scrollFrame.content)
             b.selected = false
             b:SetScript("OnEnter", function(self) self:SetBackdropColor(unpack(self.hoverColor)) end)
             b:SetScript("OnLeave", function(self) self:SetBackdropColor(unpack(self.color)) end)
@@ -147,7 +185,7 @@ local function LoadIndicators(layout, frame, buttons)
         n = i
     end
 
-    frame.scrollFrame:SetContentHeight(20, n, -1)
+    fromList.scrollFrame:SetContentHeight(20, n, -1)
 end
 
 local function LoadDropdowns()
@@ -157,7 +195,7 @@ local function LoadDropdowns()
         ["text"] = _G.DEFAULT,
         ["value"] = "default",
         ["onClick"] = function()
-            LoadIndicators("default", fromList, fromIdicators)
+            LoadIndicators("default")
             Validate()
         end,
     })
@@ -175,7 +213,7 @@ local function LoadDropdowns()
             tinsert(fromItems, {
                 ["text"] = l,
                 ["onClick"] = function()
-                    LoadIndicators(l, fromList, fromIdicators)
+                    LoadIndicators(l)
                     Validate()
                 end,
             })
@@ -197,12 +235,12 @@ end
 -- scripts
 -------------------------------------------------
 copyFrame:SetScript("OnShow", function()
-    Cell:CreateMask(Cell.frames.layoutsTab)
+    Cell:CreateMask(Cell.frames.indicatorsTab)
 end)
 
 copyFrame:SetScript("OnHide", function()
     copyFrame:Hide()
-    Cell.frames.layoutsTab.mask:Hide()
+    Cell.frames.indicatorsTab.mask:Hide()
     fromList.scrollFrame:Reset()
     fromDropdown:SetSelected()
     toDropdown:SetSelected()
@@ -212,6 +250,7 @@ copyFrame:SetScript("OnHide", function()
 end)
 
 function F:ShowCopyFrame()
+    -- texplore(selectedIndicators)
     LoadDropdowns()
     copyFrame:Show()
 end
