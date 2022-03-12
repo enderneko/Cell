@@ -154,10 +154,8 @@ function eventFrame:ADDON_LOADED(arg1)
                 ["deathReport"] = {false, 10},
                 ["showButtons"] = false,
                 ["pullTimer"] = {"ExRT", 7},
-                ["showMarks"] = false,
-                ["marks"] = "both",
+                ["marks"] = {false, "both_h", {}},
                 ["buttonsPosition"] = {},
-                ["marksPosition"] = {},
                 ["buffTrackerPosition"] = {},
             }
         end
@@ -564,7 +562,7 @@ function SlashCmdList.CELL(msg, editbox)
             CellDB["raidTools"]["buttonsPosition"] = {}
             Cell.frames.raidMarksFrame:ClearAllPoints()
             Cell.frames.raidMarksFrame:SetPoint("BOTTOMRIGHT", UIParent, "CENTER")
-            CellDB["raidTools"]["marksPosition"] = {}
+            CellDB["raidTools"]["marks"][3] = {}
 
         elseif rest == "all" then
             Cell.frames.anchorFrame:ClearAllPoints()

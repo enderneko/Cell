@@ -948,6 +948,19 @@ function F:Revise()
             end
         end
     end
+    
+    -- r81-release
+    if CellDB["revise"] and dbRevision < 81 then
+        if type(CellDB["raidTools"]["marks"]) ~= "table" then
+            local oldShowMarks = CellDB["raidTools"]["showMarks"]
+            local oldMarks = CellDB["raidTools"]["marks"]
+            -- update marks
+            CellDB["raidTools"]["marks"] = {oldShowMarks, oldMarks.."_h", CellDB["raidTools"]["marksPosition"]}
+            CellDB["raidTools"]["showMarks"] = nil
+            -- remove xxxPosition
+            CellDB["raidTools"]["marksPosition"] = nil
+        end
+    end
 
     CellDB["revise"] = Cell.version
 end

@@ -18,7 +18,7 @@ marksFrame:SetScript("OnDragStart", function()
 end)
 marksFrame:SetScript("OnDragStop", function()
     marksFrame:StopMovingOrSizing()
-    P:SavePosition(marksFrame, CellDB["raidTools"]["marksPosition"])
+    P:SavePosition(marksFrame, CellDB["raidTools"]["marks"][3])
 end)
 
 -------------------------------------------------
@@ -31,14 +31,14 @@ marksFrame.moverText:Hide()
 
 local function ShowMover(show)
     if show then
-        if not CellDB["raidTools"]["showMarks"] then return end
+        if not CellDB["raidTools"]["marks"][1] then return end
         marksFrame:EnableMouse(true)
         marksFrame.moverText:Show()
         Cell:StylizeFrame(marksFrame, {0, 1, 0, 0.4}, {0, 0, 0, 0})
         if not F:HasPermission(true) then -- button not shown
-            if CellDB["raidTools"]["marks"] == "target" then
+            if strfind(CellDB["raidTools"]["marks"][2], "^target") then
                 marks:Show()
-            elseif CellDB["raidTools"]["marks"] == "world" then
+            elseif strfind(CellDB["raidTools"]["marks"][2], "^world") then
                 worldMarks:Show()
             else
                 marks:Show()
@@ -84,8 +84,8 @@ local markButtons = {}
 for i = 1, 9 do
     markButtons[i] = Cell:CreateButton(marks, "", "class-hover", {20, 20})
     markButtons[i].texture = markButtons[i]:CreateTexture(nil, "ARTWORK")
-    markButtons[i].texture:SetPoint("TOPLEFT", 2, -2)
-    markButtons[i].texture:SetPoint("BOTTOMRIGHT", -2, 2)
+    P:Point(markButtons[i].texture, "TOPLEFT", markButtons[i], "TOPLEFT", 2, -2)
+    P:Point(markButtons[i].texture, "BOTTOMRIGHT", markButtons[i], "BOTTOMRIGHT", -2, 2)
     
     if i == 9 then
         -- clear all marks
@@ -114,7 +114,7 @@ for i = 1, 9 do
                 else
                     SetRaidTarget("target", i)
                 end
-            elseif button == "RightButton" then -- TODO:
+            elseif button == "RightButton" then
                 -- lock raid target icon
                 local unit, name, class = F:GetTargetUnitInfo()
                 if unit and name then
@@ -155,11 +155,11 @@ for i = 1, 9 do
     markButtons[i].color = {0, 0, 0, 0}
     markButtons[i].hoverColor = {markColors[i][1], markColors[i][2], markColors[i][3], 0.35}
 
-    if i == 1 then
-        P:Point(markButtons[i], "TOPLEFT")
-    else
-        P:Point(markButtons[i], "LEFT", markButtons[i-1], "RIGHT", 2, 0)
-    end
+    -- if i == 1 then
+    --     P:Point(markButtons[i], "TOPLEFT")
+    -- else
+    --     P:Point(markButtons[i], "LEFT", markButtons[i-1], "RIGHT", 2, 0)
+    -- end
 end
 
 marks:SetScript("OnHide", function()
@@ -188,8 +188,8 @@ for i = 1, 9 do
     
     if i == 9 then
         -- clear all marks
-        worldMarkButtons[i].texture:SetPoint("TOPLEFT", 2, -2)
-        worldMarkButtons[i].texture:SetPoint("BOTTOMRIGHT", -2, 2)
+        P:Point(worldMarkButtons[i].texture, "TOPLEFT", worldMarkButtons[i], "TOPLEFT", 2, -2)
+        P:Point(worldMarkButtons[i].texture, "BOTTOMRIGHT", worldMarkButtons[i], "BOTTOMRIGHT", -2, 2)
         worldMarkButtons[i].texture:SetTexture("Interface\\Buttons\\UI-GroupLoot-Pass-Up")
         worldMarkButtons[i]:SetAttribute("type", "worldmarker")
         worldMarkButtons[i]:SetAttribute("action", "clear")
@@ -208,11 +208,11 @@ for i = 1, 9 do
     worldMarkButtons[i].color = {0, 0, 0, 0}
     worldMarkButtons[i].hoverColor = {markColors[i][1], markColors[i][2], markColors[i][3], 0.35}
 
-    if i == 1 then
-        P:Point(worldMarkButtons[i], "TOPLEFT")
-    else
-        P:Point(worldMarkButtons[i], "LEFT", worldMarkButtons[i-1], "RIGHT", 2, 0)
-    end
+    -- if i == 1 then
+    --     P:Point(worldMarkButtons[i], "TOPLEFT")
+    -- else
+    --     P:Point(worldMarkButtons[i], "LEFT", worldMarkButtons[i-1], "RIGHT", 2, 0)
+    -- end
 end
 
 local worldMarksTimer
@@ -237,29 +237,92 @@ end)
 -------------------------------------------------
 -- functions
 -------------------------------------------------
+local function Rearrange(marksConfig)
+    if strfind(marksConfig, "_h$") then
+        P:Size(marks, 196, 20)
+        P:Size(worldMarks, 196, 20)
+
+        if strfind(marksConfig, "^target") then
+            P:Size(marksFrame, 196, 40)
+            worldMarks:Hide()
+            P:ClearPoints(marks)
+            P:Point(marks, "BOTTOMLEFT")
+        elseif strfind(marksConfig, "^world") then
+            P:Size(marksFrame, 196, 40)
+            marks:Hide()
+            P:ClearPoints(worldMarks)
+            P:Point(worldMarks, "BOTTOMLEFT")
+        else -- both
+            P:Size(marksFrame, 196, 60)
+            P:ClearPoints(worldMarks)
+            P:Point(worldMarks, "BOTTOMLEFT")
+            P:ClearPoints(marks)
+            P:Point(marks, "BOTTOMLEFT", worldMarks, "TOPLEFT", 0, 2)
+        end
+
+        -- repoint each button
+        for i = 1, 9 do
+            P:ClearPoints(markButtons[i])
+            P:ClearPoints(worldMarkButtons[i])
+            if i == 1 then
+                P:Point(markButtons[i], "TOPLEFT")
+                P:Point(worldMarkButtons[i], "TOPLEFT")
+            else
+                P:Point(markButtons[i], "TOPLEFT", markButtons[i-1], "TOPRIGHT", 2, 0)
+                P:Point(worldMarkButtons[i], "TOPLEFT", worldMarkButtons[i-1], "TOPRIGHT", 2, 0)
+            end
+        end
+    elseif strfind(marksConfig, "_v$") then
+        P:Size(marks, 20, 196)
+        P:Size(worldMarks, 20, 196)
+
+        if strfind(marksConfig, "^target") then
+            P:Size(marksFrame, 20, 216)
+            worldMarks:Hide()
+            P:ClearPoints(marks)
+            P:Point(marks, "BOTTOMLEFT")
+        elseif strfind(marksConfig, "^world") then
+            P:Size(marksFrame, 20, 216)
+            marks:Hide()
+            P:ClearPoints(worldMarks)
+            P:Point(worldMarks, "BOTTOMLEFT")
+        else -- both
+            P:Size(marksFrame, 42, 216)
+            P:ClearPoints(worldMarks)
+            P:Point(worldMarks, "BOTTOMLEFT")
+            P:ClearPoints(marks)
+            P:Point(marks, "BOTTOMLEFT", worldMarks, "BOTTOMRIGHT", 2, 0)
+        end
+        
+        -- repoint each button
+        for i = 1, 9 do
+            P:ClearPoints(markButtons[i])
+            P:ClearPoints(worldMarkButtons[i])
+            if i == 1 then
+                P:Point(markButtons[i], "TOPLEFT")
+                P:Point(worldMarkButtons[i], "TOPLEFT")
+            else
+                P:Point(markButtons[i], "TOPLEFT", markButtons[i-1], "BOTTOMLEFT", 0, -2)
+                P:Point(worldMarkButtons[i], "TOPLEFT", worldMarkButtons[i-1], "BOTTOMLEFT", 0, -2)
+            end
+        end
+    end
+end
+
 local function CheckPermission()
     if InCombatLockdown() then
         marksFrame:RegisterEvent("PLAYER_REGEN_ENABLED")
     else
         marksFrame:UnregisterEvent("PLAYER_REGEN_ENABLED")
-        if CellDB["raidTools"]["showMarks"] then
-            if CellDB["raidTools"]["marks"] == "target" then
-                worldMarks:Hide()
-                P:Height(marksFrame, 40)
-                marks:ClearAllPoints()
-                marks:SetPoint("BOTTOMLEFT")
-
+        if CellDB["raidTools"]["marks"][1] then
+            if strfind(CellDB["raidTools"]["marks"][2], "^target") then
                 if marksFrame.moverText:IsShown() or Cell.vars.hasPartyMarkPermission then
                     marks:Show()
                 else
                     marks:Hide()
                 end
                 
-            elseif CellDB["raidTools"]["marks"] == "world" then
-                marks:Hide()
-                worldMarks:ClearAllPoints()
-                worldMarks:SetPoint("BOTTOMLEFT")
-                P:Height(marksFrame, 40)
+            elseif strfind(CellDB["raidTools"]["marks"][2], "^world") then
                 if marksFrame.moverText:IsShown() or Cell.vars.hasPartyMarkPermission then
                     worldMarks:Show()
                 else
@@ -267,11 +330,6 @@ local function CheckPermission()
                 end
 
             else -- both
-                worldMarks:ClearAllPoints()
-                worldMarks:SetPoint("BOTTOMLEFT")
-                marks:ClearAllPoints()
-                P:Point(marks, "BOTTOMLEFT", worldMarks, "TOPLEFT", 0, 2)
-                P:Height(marksFrame, 60)
                 if marksFrame.moverText:IsShown() or Cell.vars.hasPartyMarkPermission then
                     marks:Show()
                     worldMarks:Show()
@@ -280,6 +338,7 @@ local function CheckPermission()
                     worldMarks:Hide()
                 end
             end
+            Rearrange(CellDB["raidTools"]["marks"][2])
         else
             marks:Hide()
             worldMarks:Hide()
@@ -294,12 +353,13 @@ end)
 Cell:RegisterCallback("PermissionChanged", "RaidMarks_PermissionChanged", CheckPermission)
 
 local function UpdateRaidTools(which)
+    F:Debug("|cffBBFFFFUpdateRaidTools:|r", which)
     if not which or which == "marks" then
         CheckPermission()
     end
 
     if not which then -- position
-        P:LoadPosition(marksFrame, CellDB["raidTools"]["marksPosition"])
+        P:LoadPosition(marksFrame, CellDB["raidTools"]["marks"][3])
     end
 end
 Cell:RegisterCallback("UpdateRaidTools", "RaidMarks_UpdateRaidTools", UpdateRaidTools)

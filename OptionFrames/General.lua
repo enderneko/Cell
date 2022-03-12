@@ -356,7 +356,7 @@ secDropdown:SetItems({
 -- marks bar
 local marksDropdown
 local marksBarCB = Cell:CreateCheckButton(generalTab, L["Marks Bar"], function(checked, self)
-    CellDB["raidTools"]["showMarks"] = checked
+    CellDB["raidTools"]["marks"][1] = checked
     marksDropdown:SetEnabled(checked)
     Cell:Fire("UpdateRaidTools", "marks")
 end, L["Marks Bar"], L["Only show when you have permission to do this"], L["marksTips"])
@@ -366,26 +366,50 @@ marksDropdown = Cell:CreateDropdown(generalTab, 100)
 marksDropdown:SetPoint("TOPLEFT", marksBarCB, "BOTTOMRIGHT", 5, -5)
 marksDropdown:SetItems({
     {
-        ["text"] = L["Target Marks"],
-        ["value"] = "target",
+        ["text"] = L["Target Marks"].." (H)",
+        ["value"] = "target_h",
         ["onClick"] = function()
-            CellDB["raidTools"]["marks"] = "target"
+            CellDB["raidTools"]["marks"][2] = "target_h"
             Cell:Fire("UpdateRaidTools", "marks")
         end,
     },
     {
-        ["text"] = L["World Marks"],
-        ["value"] = "world",
+        ["text"] = L["Target Marks"].." (V)",
+        ["value"] = "target_v",
         ["onClick"] = function()
-            CellDB["raidTools"]["marks"] = "world"
+            CellDB["raidTools"]["marks"][2] = "target_v"
             Cell:Fire("UpdateRaidTools", "marks")
         end,
     },
     {
-        ["text"] = L["Both"],
-        ["value"] = "both",
+        ["text"] = L["World Marks"].." (H)",
+        ["value"] = "world_h",
         ["onClick"] = function()
-            CellDB["raidTools"]["marks"] = "both"
+            CellDB["raidTools"]["marks"][2] = "world_h"
+            Cell:Fire("UpdateRaidTools", "marks")
+        end,
+    },
+    {
+        ["text"] = L["World Marks"].." (V)",
+        ["value"] = "world_v",
+        ["onClick"] = function()
+            CellDB["raidTools"]["marks"][2] = "world_v"
+            Cell:Fire("UpdateRaidTools", "marks")
+        end,
+    },
+    {
+        ["text"] = L["Both"].." (H)",
+        ["value"] = "both_h",
+        ["onClick"] = function()
+            CellDB["raidTools"]["marks"][2] = "both_h"
+            Cell:Fire("UpdateRaidTools", "marks")
+        end,
+    },
+    {
+        ["text"] = L["Both"].." (V)",
+        ["value"] = "both_v",
+        ["onClick"] = function()
+            CellDB["raidTools"]["marks"][2] = "both_v"
             Cell:Fire("UpdateRaidTools", "marks")
         end,
     }
@@ -453,8 +477,9 @@ local function ShowTab(tab)
             pullText:SetTextColor(.4, .4, .4)
         end
 
-        marksBarCB:SetChecked(CellDB["raidTools"]["showMarks"])
-        marksDropdown:SetSelectedValue(CellDB["raidTools"]["marks"])
+        marksDropdown:SetEnabled(CellDB["raidTools"]["marks"][1])
+        marksBarCB:SetChecked(CellDB["raidTools"]["marks"][1])
+        marksDropdown:SetSelectedValue(CellDB["raidTools"]["marks"][2])
     else
         generalTab:Hide()
     end
