@@ -951,14 +951,22 @@ function F:Revise()
     
     -- r81-release
     if CellDB["revise"] and dbRevision < 81 then
+        -- update marks
         if type(CellDB["raidTools"]["marks"]) ~= "table" then
             local oldShowMarks = CellDB["raidTools"]["showMarks"]
             local oldMarks = CellDB["raidTools"]["marks"]
-            -- update marks
             CellDB["raidTools"]["marks"] = {oldShowMarks, oldMarks.."_h", CellDB["raidTools"]["marksPosition"]}
+            -- remove old
             CellDB["raidTools"]["showMarks"] = nil
-            -- remove xxxPosition
             CellDB["raidTools"]["marksPosition"] = nil
+        end
+        
+        -- update buffTracker
+        if type(CellDB["raidTools"]["buffTracker"]) ~= "table" then
+            CellDB["raidTools"]["buffTracker"] = {CellDB["raidTools"]["showBuffTracker"], CellDB["raidTools"]["buffTrackerPosition"]}
+            -- remove old
+            CellDB["raidTools"]["showBuffTracker"] = nil
+            CellDB["raidTools"]["buffTrackerPosition"] = nil
         end
     end
 

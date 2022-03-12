@@ -130,7 +130,7 @@ buffTrackerFrame:SetScript("OnDragStart", function()
 end)
 buffTrackerFrame:SetScript("OnDragStop", function()
     buffTrackerFrame:StopMovingOrSizing()
-    P:SavePosition(buffTrackerFrame, CellDB["raidTools"]["buffTrackerPosition"])
+    P:SavePosition(buffTrackerFrame, CellDB["raidTools"]["buffTracker"][2])
 end)
 
 -------------------------------------------------
@@ -179,7 +179,7 @@ P:Point(fakeBS, "BOTTOMLEFT", fakeAB, "BOTTOMRIGHT", 3, 0)
 
 local function ShowMover(show)
     if show then
-        if not CellDB["raidTools"]["showBuffTracker"] then return end
+        if not CellDB["raidTools"]["buffTracker"][1] then return end
         buffTrackerFrame:EnableMouse(true)
         buffTrackerFrame.moverText:Show()
         Cell:StylizeFrame(buffTrackerFrame, {0, 1, 0, .4}, {0, 0, 0, 0})
@@ -428,7 +428,7 @@ end)
 -------------------------------------------------
 local function UpdateRaidTools(which)
     if not which or which == "buffTracker" then
-        if CellDB["raidTools"]["showBuffTracker"] then
+        if CellDB["raidTools"]["buffTracker"][1] then
             buffTrackerFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
             buffTrackerFrame:RegisterEvent("GROUP_ROSTER_UPDATE")
             LGIST.RegisterCallback(buffTrackerFrame, "GroupInSpecT_Update", "UnitUpdated") 
@@ -453,7 +453,7 @@ local function UpdateRaidTools(which)
     end
 
     if not which then -- position
-        P:LoadPosition(buffTrackerFrame, CellDB["raidTools"]["buffTrackerPosition"])
+        P:LoadPosition(buffTrackerFrame, CellDB["raidTools"]["buffTracker"][2])
     end
 end
 Cell:RegisterCallback("UpdateRaidTools", "BuffTracker_UpdateRaidTools", UpdateRaidTools)
