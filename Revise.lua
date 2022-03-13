@@ -978,6 +978,20 @@ function F:Revise()
             CellDB["raidTools"]["buttonsPosition"] = nil
         end
     end
+    
+    -- r82-release
+    if CellDB["revise"] and dbRevision < 82 then
+        for _, layout in pairs(CellDB["layouts"]) do
+            if layout["indicators"][19] and layout["indicators"][19]["indicatorName"] == "debuffs" then
+                if not F:TContains(layout["indicators"][19]["bigDebuffs"], 366297) then
+                    tinsert(layout["indicators"][19]["bigDebuffs"], 366297) -- 解构
+                end
+                if not F:TContains(layout["indicators"][19]["bigDebuffs"], 366288) then
+                    tinsert(layout["indicators"][19]["bigDebuffs"], 366288) -- 猛力砸击
+                end
+            end
+        end
+    end
 
     CellDB["revise"] = Cell.version
 end
