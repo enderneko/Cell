@@ -8,6 +8,78 @@ local DebuffTypeColor = DebuffTypeColor
 -------------------------------------------------
 -- CreateAura_BorderIcon
 -------------------------------------------------
+local function BorderIcon_SetFont(frame, font, size, flags, horizontalOffset)
+    if not string.find(font, ".ttf") then font = F:GetFont(font) end
+
+    if flags == "Shadow" then
+        frame.stack:SetFont(font, size)
+        frame.stack:SetShadowOffset(1, -1)
+        frame.stack:SetShadowColor(0, 0, 0, 1)
+        frame.duration:SetFont(font, size)
+        frame.duration:SetShadowOffset(1, -1)
+        frame.duration:SetShadowColor(0, 0, 0, 1)
+    else
+        if flags == "None" then
+            flags = ""
+        elseif flags == "Outline" then
+            flags = "OUTLINE"
+        else
+            flags = "OUTLINE, MONOCHROME"
+        end
+        frame.stack:SetFont(font, size, flags)
+        frame.stack:SetShadowOffset(0, 0)
+        frame.stack:SetShadowColor(0, 0, 0, 0)
+        frame.duration:SetFont(font, size, flags)
+        frame.duration:SetShadowOffset(0, 0)
+        frame.duration:SetShadowColor(0, 0, 0, 0)
+    end
+    P:ClearPoints(frame.stack)
+    P:Point(frame.stack, "TOPRIGHT", frame.textFrame, "TOPRIGHT", horizontalOffset, 1)
+    P:ClearPoints(frame.duration)
+    P:Point(frame.duration, "BOTTOMRIGHT", frame.textFrame, "BOTTOMRIGHT", horizontalOffset, -1)
+end
+
+local function BorderIcon_SetCooldown(frame, start, duration, debuffType, texture, count, refreshing)
+    local r, g, b
+    if debuffType then
+        r, g, b = DebuffTypeColor[debuffType].r, DebuffTypeColor[debuffType].g, DebuffTypeColor[debuffType].b
+    else
+        r, g, b = 0, 0, 0
+    end
+
+    if duration == 0 then
+        frame.border:Show()
+        frame.border:SetColorTexture(r, g, b)
+        frame.cooldown:Hide()
+        frame.duration:Hide()
+        frame:SetScript("OnUpdate", nil)
+    else
+        frame.border:Hide()
+        frame.cooldown:Show()
+        frame.cooldown:SetSwipeColor(r, g, b)
+        frame.cooldown:SetCooldown(start, duration)
+        frame.duration:Show()
+        frame:SetScript("OnUpdate", function()
+            local remain = duration-(GetTime()-start)
+            -- if remain <= 5 then
+            --     frame.duration:SetText(string.format("%.1f", remain))
+            if remain <= 60 then
+                frame.duration:SetText(string.format("%d", remain))
+            else
+                frame.duration:SetText("")
+            end
+        end)
+    end
+
+    frame.icon:SetTexture(texture)
+    frame.stack:SetText((count == 0 or count == 1) and "" or count)
+    frame:Show()
+
+    if refreshing then
+        frame.ag:Play()
+    end
+end
+
 function I:CreateAura_BorderIcon(name, parent, borderSize)
     local frame = CreateFrame("Frame", name, parent, "BackdropTemplate")
     frame:Hide()
@@ -40,6 +112,7 @@ function I:CreateAura_BorderIcon(name, parent, borderSize)
 
     local textFrame = CreateFrame("Frame", nil, iconFrame)
     textFrame:SetAllPoints(frame)
+    frame.textFrame = textFrame
 
     local stack = textFrame:CreateFontString(nil, "OVERLAY", "CELL_FONT_STATUS")
     frame.stack = stack
@@ -57,38 +130,10 @@ function I:CreateAura_BorderIcon(name, parent, borderSize)
         P:Point(iconFrame, "BOTTOMRIGHT", frame, "BOTTOMRIGHT", -thickness, thickness)
     end
 
-    function frame:SetFont(font, size, flags, horizontalOffset)
-        if not string.find(font, ".ttf") then font = F:GetFont(font) end
-
-        if flags == "Shadow" then
-            frame.stack:SetFont(font, size)
-            frame.stack:SetShadowOffset(1, -1)
-            frame.stack:SetShadowColor(0, 0, 0, 1)
-            frame.duration:SetFont(font, size)
-            frame.duration:SetShadowOffset(1, -1)
-            frame.duration:SetShadowColor(0, 0, 0, 1)
-        else
-            if flags == "None" then
-                flags = ""
-            elseif flags == "Outline" then
-                flags = "OUTLINE"
-            else
-                flags = "OUTLINE, MONOCHROME"
-            end
-            frame.stack:SetFont(font, size, flags)
-            frame.stack:SetShadowOffset(0, 0)
-            frame.stack:SetShadowColor(0, 0, 0, 0)
-            frame.duration:SetFont(font, size, flags)
-            frame.duration:SetShadowOffset(0, 0)
-            frame.duration:SetShadowColor(0, 0, 0, 0)
-        end
-        P:ClearPoints(frame.stack)
-        P:Point(frame.stack, "TOPRIGHT", textFrame, "TOPRIGHT", horizontalOffset, 1)
-        P:ClearPoints(frame.duration)
-        P:Point(frame.duration, "BOTTOMRIGHT", textFrame, "BOTTOMRIGHT", horizontalOffset, -1)
-    end
+    frame.SetFont = BorderIcon_SetFont
 
     local ag = frame:CreateAnimationGroup()
+    frame.ag = ag
     local t1 = ag:CreateAnimation("Translation")
     t1:SetOffset(0, 5)
     t1:SetDuration(0.1)
@@ -100,46 +145,7 @@ function I:CreateAura_BorderIcon(name, parent, borderSize)
     t2:SetOrder(2)
     t2:SetSmoothing("IN")
 
-    function frame:SetCooldown(start, duration, debuffType, texture, count, refreshing)
-        local r, g, b
-        if debuffType then
-            r, g, b = DebuffTypeColor[debuffType].r, DebuffTypeColor[debuffType].g, DebuffTypeColor[debuffType].b
-        else
-            r, g, b = 0, 0, 0
-        end
-
-        if duration == 0 then
-            border:Show()
-            border:SetColorTexture(r, g, b)
-            cooldown:Hide()
-            frame.duration:Hide()
-            frame:SetScript("OnUpdate", nil)
-        else
-            border:Hide()
-            cooldown:Show()
-            cooldown:SetSwipeColor(r, g, b)
-            cooldown:SetCooldown(start, duration)
-            frame.duration:Show()
-            frame:SetScript("OnUpdate", function()
-                local remain = duration-(GetTime()-start)
-                -- if remain <= 5 then
-                --     frame.duration:SetText(string.format("%.1f", remain))
-                if remain <= 60 then
-                    frame.duration:SetText(string.format("%d", remain))
-                else
-                    frame.duration:SetText("")
-                end
-            end)
-        end
-
-        icon:SetTexture(texture)
-        stack:SetText((count == 0 or count == 1) and "" or count)
-        frame:Show()
-
-        if refreshing then
-            ag:Play()
-        end
-    end
+    frame.SetCooldown = BorderIcon_SetCooldown
 
     function frame:UpdatePixelPerfect()
         P:Resize(frame)
@@ -155,6 +161,80 @@ end
 -------------------------------------------------
 -- CreateAura_BarIcon
 -------------------------------------------------
+local function BarIcon_SetFont(frame, font, size, flags, horizontalOffset)
+    if not string.find(font, ".ttf") then font = F:GetFont(font) end
+
+    if flags == "Shadow" then
+        frame.stack:SetFont(font, size)
+        frame.stack:SetShadowOffset(1, -1)
+        frame.stack:SetShadowColor(0, 0, 0, 1)
+        frame.duration:SetFont(font, size)
+        frame.duration:SetShadowOffset(1, -1)
+        frame.duration:SetShadowColor(0, 0, 0, 1)
+    else
+        if flags == "None" then
+            flags = ""
+        elseif flags == "Outline" then
+            flags = "OUTLINE"
+        else
+            flags = "OUTLINE, MONOCHROME"
+        end
+        frame.stack:SetFont(font, size, flags)
+        frame.stack:SetShadowOffset(0, 0)
+        frame.stack:SetShadowColor(0, 0, 0, 0)
+        frame.duration:SetFont(font, size, flags)
+        frame.duration:SetShadowOffset(0, 0)
+        frame.duration:SetShadowColor(0, 0, 0, 0)
+    end
+    P:ClearPoints(frame.stack)
+    P:Point(frame.stack, "TOPRIGHT", frame.textFrame, "TOPRIGHT", horizontalOffset, 0)
+    P:ClearPoints(frame.duration)
+    P:Point(frame.duration, "BOTTOMRIGHT", frame.textFrame, "BOTTOMRIGHT", horizontalOffset, 0)
+end
+
+local function BarIcon_SetCooldown(frame, start, duration, debuffType, texture, count, refreshing)
+    if duration == 0 then
+        frame.cooldown:Hide()
+        frame:SetScript("OnUpdate", nil)
+    else
+        if frame.showDuration then
+            frame.cooldown:Hide()
+            frame:SetScript("OnUpdate", function()
+                local remain = duration-(GetTime()-start)
+                if remain <= 60 then
+                    frame.duration:SetText(string.format("%d", remain))
+                else
+                    frame.duration:SetText("")
+                end
+            end)
+        else
+            -- init bar values
+            frame.cooldown:SetMinMaxValues(0, duration)
+            frame.cooldown:SetValue(GetTime()-start)
+            frame.cooldown:Show()
+        end
+    end
+
+    local r, g, b
+    if debuffType then
+        r, g, b = DebuffTypeColor[debuffType].r, DebuffTypeColor[debuffType].g, DebuffTypeColor[debuffType].b
+        frame.spark:SetColorTexture(r, g, b, 1)
+    else
+        r, g, b = 0, 0, 0
+        frame.spark:SetColorTexture(.5, .5, .5, 1)
+    end
+
+    frame:SetBackdropColor(r, g, b, 1)
+    frame.icon:SetTexture(texture)
+    frame.maskIcon:SetTexture(texture)
+    frame.stack:SetText((count == 0 or count == 1) and "" or count)
+    frame:Show()
+
+    if refreshing then
+        frame.ag:Play()
+    end
+end
+
 function I:CreateAura_BarIcon(name, parent)
     local frame = CreateFrame("Frame", name, parent, "BackdropTemplate")
     frame:Hide()
@@ -190,6 +270,7 @@ function I:CreateAura_BarIcon(name, parent)
     end)
 
     local spark = cooldown:CreateTexture(nil, "OVERLAY")
+    frame.spark = spark
     P:Height(spark, 1)
     spark:SetBlendMode("ADD")
     spark:SetPoint("TOPLEFT", cooldown:GetStatusBarTexture(), "BOTTOMLEFT")
@@ -201,6 +282,7 @@ function I:CreateAura_BarIcon(name, parent)
     mask:SetPoint("BOTTOMRIGHT", cooldown:GetStatusBarTexture())
 
     local maskIcon = cooldown:CreateTexture(name.."MaskIcon", "ARTWORK")
+    frame.maskIcon = maskIcon
     maskIcon:SetTexCoord(.12, .88, .12, .88)
     maskIcon:SetDesaturated(true)
     maskIcon:SetAllPoints(icon)
@@ -215,6 +297,7 @@ function I:CreateAura_BarIcon(name, parent)
     end)
 
     local textFrame = CreateFrame("Frame", nil, frame)
+    frame.textFrame = textFrame
     textFrame:SetAllPoints(frame)
     textFrame:SetFrameLevel(cooldown:GetFrameLevel()+1)
 
@@ -229,38 +312,10 @@ function I:CreateAura_BarIcon(name, parent)
     P:Point(duration, "BOTTOMRIGHT", textFrame, "BOTTOMRIGHT", 2, 0)
     duration:Hide()
 
-    function frame:SetFont(font, size, flags, horizontalOffset)
-        if not string.find(font, ".ttf") then font = F:GetFont(font) end
-
-        if flags == "Shadow" then
-            stack:SetFont(font, size)
-            stack:SetShadowOffset(1, -1)
-            stack:SetShadowColor(0, 0, 0, 1)
-            duration:SetFont(font, size)
-            duration:SetShadowOffset(1, -1)
-            duration:SetShadowColor(0, 0, 0, 1)
-        else
-            if flags == "None" then
-                flags = ""
-            elseif flags == "Outline" then
-                flags = "OUTLINE"
-            else
-                flags = "OUTLINE, MONOCHROME"
-            end
-            stack:SetFont(font, size, flags)
-            stack:SetShadowOffset(0, 0)
-            stack:SetShadowColor(0, 0, 0, 0)
-            duration:SetFont(font, size, flags)
-            duration:SetShadowOffset(0, 0)
-            duration:SetShadowColor(0, 0, 0, 0)
-        end
-        P:ClearPoints(stack)
-        P:Point(stack, "TOPRIGHT", textFrame, "TOPRIGHT", horizontalOffset, 0)
-        P:ClearPoints(duration)
-        P:Point(duration, "BOTTOMRIGHT", textFrame, "BOTTOMRIGHT", horizontalOffset, 0)
-    end
+    frame.SetFont = BarIcon_SetFont
 
     local ag = frame:CreateAnimationGroup()
+    frame.ag = ag
     local t1 = ag:CreateAnimation("Translation")
     t1:SetOffset(0, 5)
     t1:SetDuration(0.1)
@@ -272,48 +327,7 @@ function I:CreateAura_BarIcon(name, parent)
     t2:SetOrder(2)
     t2:SetSmoothing("IN")
 
-    function frame:SetCooldown(start, duration, debuffType, texture, count, refreshing)
-        if duration == 0 then
-            cooldown:Hide()
-            frame:SetScript("OnUpdate", nil)
-        else
-            if frame.showDuration then
-                cooldown:Hide()
-                frame:SetScript("OnUpdate", function()
-                    local remain = duration-(GetTime()-start)
-                    if remain <= 60 then
-                        frame.duration:SetText(string.format("%d", remain))
-                    else
-                        frame.duration:SetText("")
-                    end
-                end)
-            else
-                -- init bar values
-                cooldown:SetMinMaxValues(0, duration)
-                cooldown:SetValue(GetTime()-start)
-                cooldown:Show()
-            end
-        end
-
-        local r, g, b
-        if debuffType then
-            r, g, b = DebuffTypeColor[debuffType].r, DebuffTypeColor[debuffType].g, DebuffTypeColor[debuffType].b
-            spark:SetColorTexture(r, g, b, 1)
-        else
-            r, g, b = 0, 0, 0
-            spark:SetColorTexture(.5, .5, .5, 1)
-        end
-
-        frame:SetBackdropColor(r, g, b, 1)
-        icon:SetTexture(texture)
-        maskIcon:SetTexture(texture)
-        stack:SetText((count == 0 or count == 1) and "" or count)
-        frame:Show()
-
-        if refreshing then
-            ag:Play()
-        end
-    end
+    frame.SetCooldown = BarIcon_SetCooldown
 
     function frame:ShowDuration(show)
         frame.showDuration = show
@@ -342,7 +356,94 @@ end
 -------------------------------------------------
 -- CreateAura_Text
 -------------------------------------------------
+local function Text_SetFont(frame, font, size, flags, horizontalOffset)
+    if not string.find(font, ".ttf") then font = F:GetFont(font) end
+
+    if flags == "Shadow" then
+        frame.text:SetFont(font, size)
+        frame.text:SetShadowOffset(1, -1)
+        frame.text:SetShadowColor(0, 0, 0, 1)
+    else
+        if flags == "None" then
+            flags = ""
+        elseif flags == "Outline" then
+            flags = "OUTLINE"
+        else
+            flags = "OUTLINE, MONOCHROME"
+        end
+        frame.text:SetFont(font, size, flags)
+        frame.text:SetShadowOffset(0, 0)
+        frame.text:SetShadowColor(0, 0, 0, 0)
+    end
+
+    local point = frame:GetPoint(1)
+    frame.text:ClearAllPoints()
+    if string.find(point, "LEFT") then
+        frame.text:SetPoint("LEFT", horizontalOffset, 0)
+    elseif string.find(point, "RIGHT") then
+        frame.text:SetPoint("RIGHT", horizontalOffset, 0)
+    else
+        frame.text:SetPoint("CENTER", horizontalOffset, 0)
+    end
+    frame:SetSize(size+3, size+3)
+end
+
 local circled = {"①","②","③","④","⑤","⑥","⑦","⑧","⑨","⑩","⑪","⑫","⑬","⑭","⑮","⑯","⑰","⑱","⑲","⑳","㉑","㉒","㉓","㉔","㉕","㉖","㉗","㉘","㉙","㉚","㉛","㉜","㉝","㉞","㉟","㊱","㊲","㊳","㊴","㊵","㊶","㊷","㊸","㊹","㊺","㊻","㊼","㊽","㊾","㊿"}
+local function Text_SetCooldown(frame, start, duration, debuffType, texture, count)
+    if duration == 0 then
+        count = count == 0 and 1 or count
+        count = frame.circledStackNums and circled[count] or count
+        frame.text:SetText(count)
+        frame:SetScript("OnUpdate", nil)
+    else
+        if frame.showDuration then
+            if count == 0 then
+                count = ""
+            elseif frame.circledStackNums then
+                count = circled[count] .. " "
+            else
+                count = count .. " "
+            end
+            frame:SetScript("OnUpdate", function()
+                local remain = duration-(GetTime()-start)
+                -- update color
+                if remain <= frame.colors[3][4] then
+                    frame.text:SetTextColor(frame.colors[3][1], frame.colors[3][2], frame.colors[3][3])
+                elseif remain <= duration * frame.colors[2][4] then
+                    frame.text:SetTextColor(frame.colors[2][1], frame.colors[2][2], frame.colors[2][3])
+                else
+                    frame.text:SetTextColor(unpack(frame.colors[1]))
+                end
+                -- update text
+                if remain > 60 then
+                    frame.text:SetText(count..math.ceil(remain/60).."m")
+                else
+                    frame.text:SetText(count..string.format("%d", remain))
+                end
+            end)
+        else
+            count = count == 0 and 1 or count
+            count = frame.circledStackNums and circled[count] or count
+            frame:SetScript("OnUpdate", function()
+                local remain = duration-(GetTime()-start)
+                -- update color
+                if remain <= frame.colors[3][4] then
+                    frame.text:SetTextColor(frame.colors[3][1], frame.colors[3][2], frame.colors[3][3])
+                elseif remain <= duration * frame.colors[2][4] then
+                    frame.text:SetTextColor(frame.colors[2][1], frame.colors[2][2], frame.colors[2][3])
+                else
+                    frame.text:SetTextColor(unpack(frame.colors[1]))
+                end
+                -- update text
+                frame.text:SetText(count)
+            end)
+
+        end
+    end
+
+    frame:Show()
+end
+
 function I:CreateAura_Text(name, parent)
     local frame = CreateFrame("Frame", name, parent)
     frame:SetSize(11, 11)
@@ -354,37 +455,7 @@ function I:CreateAura_Text(name, parent)
     -- stack:SetJustifyH("RIGHT")
     text:SetPoint("CENTER", 1, 0)
 
-    function frame:SetFont(font, size, flags, horizontalOffset)
-        if not string.find(font, ".ttf") then font = F:GetFont(font) end
-
-        if flags == "Shadow" then
-            text:SetFont(font, size)
-            text:SetShadowOffset(1, -1)
-            text:SetShadowColor(0, 0, 0, 1)
-        else
-            if flags == "None" then
-                flags = ""
-            elseif flags == "Outline" then
-                flags = "OUTLINE"
-            else
-                flags = "OUTLINE, MONOCHROME"
-            end
-            text:SetFont(font, size, flags)
-            text:SetShadowOffset(0, 0)
-            text:SetShadowColor(0, 0, 0, 0)
-        end
-
-        local point = frame:GetPoint(1)
-        text:ClearAllPoints()
-        if string.find(point, "LEFT") then
-            text:SetPoint("LEFT", horizontalOffset, 0)
-        elseif string.find(point, "RIGHT") then
-            text:SetPoint("RIGHT", horizontalOffset, 0)
-        else
-            text:SetPoint("CENTER", horizontalOffset, 0)
-        end
-        frame:SetSize(size+3, size+3)
-    end
+    frame.SetFont = Text_SetFont
 
     frame.OriginalSetPoint = frame.SetPoint
     function frame:SetPoint(point, relativeTo, relativePoint, x, y)
@@ -400,60 +471,7 @@ function I:CreateAura_Text(name, parent)
         frame:OriginalSetPoint(point, relativeTo, relativePoint, x, y)
     end
 
-    function frame:SetCooldown(start, duration, debuffType, texture, count)
-        if duration == 0 then
-            count = count == 0 and 1 or count
-            count = frame.circledStackNums and circled[count] or count
-            text:SetText(count)
-            frame:SetScript("OnUpdate", nil)
-        else
-            if frame.showDuration then
-                if count == 0 then
-                    count = ""
-                elseif frame.circledStackNums then
-                    count = circled[count] .. " "
-                else
-                    count = count .. " "
-                end
-                frame:SetScript("OnUpdate", function()
-                    local remain = duration-(GetTime()-start)
-                    -- update color
-                    if remain <= frame.colors[3][4] then
-                        text:SetTextColor(frame.colors[3][1], frame.colors[3][2], frame.colors[3][3])
-                    elseif remain <= duration * frame.colors[2][4] then
-                        text:SetTextColor(frame.colors[2][1], frame.colors[2][2], frame.colors[2][3])
-                    else
-                        text:SetTextColor(unpack(frame.colors[1]))
-                    end
-                    -- update text
-                    if remain > 60 then
-                        text:SetText(count..math.ceil(remain/60).."m")
-                    else
-                        text:SetText(count..string.format("%d", remain))
-                    end
-                end)
-            else
-                count = count == 0 and 1 or count
-                count = frame.circledStackNums and circled[count] or count
-                frame:SetScript("OnUpdate", function()
-                    local remain = duration-(GetTime()-start)
-                    -- update color
-                    if remain <= frame.colors[3][4] then
-                        text:SetTextColor(frame.colors[3][1], frame.colors[3][2], frame.colors[3][3])
-                    elseif remain <= duration * frame.colors[2][4] then
-                        text:SetTextColor(frame.colors[2][1], frame.colors[2][2], frame.colors[2][3])
-                    else
-                        text:SetTextColor(unpack(frame.colors[1]))
-                    end
-                    -- update text
-                    text:SetText(count)
-                end)
-
-            end
-        end
-
-        frame:Show()
-    end
+    frame.SetCooldown = Text_SetCooldown
 
     function frame:ShowDuration(show)
         frame.showDuration = show
@@ -473,6 +491,27 @@ end
 -------------------------------------------------
 -- CreateAura_Rect
 -------------------------------------------------
+local function Rect_SetCooldown(frame, start, duration, debuffType, texture, count)
+    if duration == 0 then
+        frame.tex:SetColorTexture(unpack(frame.colors[1]))
+        frame:SetScript("OnUpdate", nil)
+    else
+        frame:SetScript("OnUpdate", function()
+            local remain = duration-(GetTime()-start)
+            -- update color
+            if remain <= frame.colors[3][4] then
+                frame.tex:SetColorTexture(frame.colors[3][1], frame.colors[3][2], frame.colors[3][3])
+            elseif remain <= duration * frame.colors[2][4] then
+                frame.tex:SetColorTexture(frame.colors[2][1], frame.colors[2][2], frame.colors[2][3])
+            else
+                frame.tex:SetColorTexture(unpack(frame.colors[1]))
+            end
+        end)
+    end
+
+    frame:Show()
+end
+
 function I:CreateAura_Rect(name, parent)
     local frame = CreateFrame("Frame", name, parent, "BackdropTemplate")
     -- frame:SetSize(11, 4)
@@ -482,29 +521,11 @@ function I:CreateAura_Rect(name, parent)
     frame:SetBackdropColor(0, 0, 0, 1)
 
     local tex = frame:CreateTexture(nil, "ARTWORK")
+    frame.tex = tex
     P:Point(tex, "TOPLEFT", frame, "TOPLEFT", 1, -1)
     P:Point(tex, "BOTTOMRIGHT", frame, "BOTTOMRIGHT", -1, 1)
 
-    function frame:SetCooldown(start, duration, debuffType, texture, count)
-        if duration == 0 then
-            tex:SetColorTexture(unpack(frame.colors[1]))
-            frame:SetScript("OnUpdate", nil)
-        else
-            frame:SetScript("OnUpdate", function()
-                local remain = duration-(GetTime()-start)
-                -- update color
-                if remain <= frame.colors[3][4] then
-                    tex:SetColorTexture(frame.colors[3][1], frame.colors[3][2], frame.colors[3][3])
-                elseif remain <= duration * frame.colors[2][4] then
-                    tex:SetColorTexture(frame.colors[2][1], frame.colors[2][2], frame.colors[2][3])
-                else
-                    tex:SetColorTexture(unpack(frame.colors[1]))
-                end
-            end)
-        end
-
-        frame:Show()
-    end
+    frame.SetCooldown = Rect_SetCooldown
 
     function frame:SetColors(colors)
         frame.colors = colors
@@ -522,36 +543,38 @@ end
 -------------------------------------------------
 -- CreateAura_Bar
 -------------------------------------------------
+local function Bar_SetCooldown(bar, start, duration, debuffType, texture, count)
+    if duration == 0 then
+        bar:SetScript("OnUpdate", nil)
+        bar:SetMinMaxValues(0, 1)
+        bar:SetValue(1)
+        bar:SetStatusBarColor(unpack(bar.colors[1]))
+    else
+        bar:SetMinMaxValues(0, duration)
+        bar:SetValue(GetTime()-start)
+        bar:SetScript("OnUpdate", function()
+            local remain = duration-(GetTime()-start)
+            bar:SetValue(remain)
+            -- update color
+            if remain <= bar.colors[3][4] then
+                bar:SetStatusBarColor(bar.colors[3][1], bar.colors[3][2], bar.colors[3][3])
+            elseif remain <= duration * bar.colors[2][4] then
+                bar:SetStatusBarColor(bar.colors[2][1], bar.colors[2][2], bar.colors[2][3])
+            else
+                bar:SetStatusBarColor(unpack(bar.colors[1]))
+            end
+        end)
+    end
+
+    bar:Show()
+end
+
 function I:CreateAura_Bar(name, parent)
     local bar = Cell:CreateStatusBar(parent, 18, 4, 100)
     bar:Hide()
     bar.indicatorType = "bar"
 
-    function bar:SetCooldown(start, duration, debuffType, texture, count)
-        if duration == 0 then
-            bar:SetScript("OnUpdate", nil)
-            bar:SetMinMaxValues(0, 1)
-            bar:SetValue(1)
-            bar:SetStatusBarColor(unpack(bar.colors[1]))
-        else
-            bar:SetMinMaxValues(0, duration)
-            bar:SetValue(GetTime()-start)
-            bar:SetScript("OnUpdate", function()
-                local remain = duration-(GetTime()-start)
-                bar:SetValue(remain)
-                -- update color
-                if remain <= bar.colors[3][4] then
-                    bar:SetStatusBarColor(bar.colors[3][1], bar.colors[3][2], bar.colors[3][3])
-                elseif remain <= duration * bar.colors[2][4] then
-                    bar:SetStatusBarColor(bar.colors[2][1], bar.colors[2][2], bar.colors[2][3])
-                else
-                    bar:SetStatusBarColor(unpack(bar.colors[1]))
-                end
-            end)
-        end
-
-        bar:Show()
-    end
+    bar.SetCooldown = Bar_SetCooldown
 
     function bar:SetColors(colors)
         bar.colors = colors

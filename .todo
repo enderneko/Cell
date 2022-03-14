@@ -4,6 +4,7 @@ Appearance:
 Indicators:
     ☐ altpower
     ✘ icon cooldown style @cancelled(22-01-19 23:15)
+    ✘ "durationFont" & "stackFont" settings @started(22-03-14 11:07) @cancelled(22-03-14 13:10) @wasted(2h3m38s)
 
 Libs:
     ☐ rewrite LibGroupInspectT

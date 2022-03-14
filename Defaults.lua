@@ -69,7 +69,7 @@ Cell.defaults.layout = {
             ["enabled"] = false,
             ["position"] = {"TOP", "CENTER", 0, -5},
             ["frameLevel"] = 2,
-            ["font"] = {"Cell ".._G.DEFAULT, 10, "Shadow", 0},
+            ["font"] = {"Cell ".._G.DEFAULT, 10, "Shadow"},
             ["color"] = {1, 1, 1},
             ["format"] = "percentage",
             ["hideFull"] = true,
@@ -264,6 +264,8 @@ Cell.defaults.layout = {
             ["border"] = 2,
             ["num"] = 1,
             ["font"] = {"Cell ".._G.DEFAULT, 11, "Outline", 2},
+            -- ["durationFont"] = {true, "Cell ".._G.DEFAULT, 11, "Outline", "RIGHT", 2, 0},
+            -- ["stackFont"] = {"Cell ".._G.DEFAULT, 11, "Outline", "RIGHT", 2, 0},
             ["onlyShowTopGlow"] = true,
             ["orientation"] = "left-to-right",
         }, -- 20
