@@ -3,6 +3,7 @@ local L = Cell.L
 local F = Cell.funcs
 local I = Cell.iFuncs
 local P = Cell.pixelPerfectFuncs
+local A = Cell.animations
 
 -- local LibCLHealth = LibStub("LibCombatLogHealth-1.0")
 
@@ -1420,7 +1421,15 @@ local function UnitButton_UpdateInRange(self)
 
     self.state.inRange = inRange
     if Cell.loaded then
-        self:SetAlpha(inRange and 1 or CellDB["appearance"]["outOfRangeAlpha"])
+        if self.state.inRange ~= self.state.wasInRange then
+            if inRange then
+                A:FrameFadeIn(self, 0.25, self:GetAlpha(), 1)
+            else
+                A:FrameFadeOut(self, 0.25, self:GetAlpha(), CellDB["appearance"]["outOfRangeAlpha"])
+            end
+        end
+        self.state.wasInRange = inRange
+        -- self:SetAlpha(inRange and 1 or CellDB["appearance"]["outOfRangeAlpha"])
     end
 end
 

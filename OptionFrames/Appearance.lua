@@ -544,6 +544,7 @@ bgAlpha:SetPoint("TOPLEFT", powerColorDropdown, 203, 0)
 -- out of range alpha
 local oorAlpha = Cell:CreateSlider(L["Out of Range Alpha"], appearanceTab, 0, 100, 120, 5, function(value)
     CellDB["appearance"]["outOfRangeAlpha"] = value/100
+    Cell:Fire("UpdateAppearance", "outOfRangeAlpha")
 end, nil, true)
 oorAlpha:SetPoint("TOPLEFT", barAnimationDropdown, 203, 0)
 
@@ -684,7 +685,7 @@ Cell:RegisterCallback("ShowOptionsTab", "AppearanceTab_ShowTab", ShowTab)
 local function UpdateAppearance(which)
     F:Debug("|cff7f7fffUpdateAppearance:|r "..(which or "all"))
     
-    if not which or which == "texture" or which == "color" or which == "alpha" or which == "shields" or which == "animation" or which == "highlightColor" or which == "highlightSize" then
+    if not which or which == "texture" or which == "color" or which == "alpha" or which == "outOfRangeAlpha" or which == "shields" or which == "animation" or which == "highlightColor" or which == "highlightSize" then
         local tex
         if not which or which == "texture" then tex = F:GetBarTexture() end
 
@@ -696,6 +697,10 @@ local function UpdateAppearance(which)
             -- color
             if not which or which == "color" or which == "alpha" then
                 b.func.UpdateColor()
+            end
+            -- outOfRangeAlpha
+            if which == "outOfRangeAlpha" then
+                b.state.wasInRange = nil
             end
             -- shields
             if not which or which == "shields" then

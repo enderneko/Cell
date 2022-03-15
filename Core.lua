@@ -5,6 +5,7 @@ Cell.frames = {}
 Cell.vars = {}
 Cell.funcs = {}
 Cell.iFuncs = {}
+Cell.animations = {}
 
 local F = Cell.funcs
 local I = Cell.iFuncs
