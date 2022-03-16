@@ -178,6 +178,11 @@ miscText:SetPoint("TOPLEFT", 5, -120)
 -- blizzardText:SetPoint("TOPLEFT", 5, -5)
 local hideBlizzardCB = Cell:CreateCheckButton(generalTab, L["Hide Blizzard Raid / Party"], function(checked, self)
     CellDB["general"]["hideBlizzard"] = checked
+
+    local popup = Cell:CreateConfirmPopup(generalTab, 200, L["A UI reload is required.\nDo it now?"], function()
+        ReloadUI()
+    end, nil, true)
+    popup:SetPoint("TOPLEFT", 100, -170)
 end, L["Hide Blizzard Frames"], L["Require reload of the UI"])
 hideBlizzardCB:SetPoint("TOPLEFT", miscText, "BOTTOMLEFT", 5, -15)
 
