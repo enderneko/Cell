@@ -1,6 +1,6 @@
 ## Interface: 90200
 ## Title: Cell
-## Version: r81-release
+## Version: r82-release
 ## Author: 篠崎
 ## SavedVariables: CellDB
 

@@ -1,10 +1,7 @@
-[Full Changelog](https://github.com/enderneko/Cell/compare/r80-release...c196ec0746f2517c5a9ae53240c169b3ae1c3b64)
+[Full Changelog](https://github.com/enderneko/Cell/compare/r81-release...ed5e944d12981c833fe927a358ad3522c0e660ea)
 
-- Update SotFO debuffs
-- Move indicator copy to indicators tab
-- Update About tab
-- Update General tab
-- Optimize CellDB (readyAndPull)
-- Optimize CellDB (buffTracker)
-- Add vertical layout for marks
-- Increase unitbutton update frequency
+- Use CLEU to fix boss678 health update
+- Fix default position
+- Implement fadeIn & fadeOut animation
+- Optimize base indicator functions
+- Update BigDebuffs (Encrypted affix related)
