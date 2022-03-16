@@ -260,7 +260,11 @@ local function MainFrame_UpdateLayout(layout, which)
     end
 
     -- load position
-    P:LoadPosition(anchorFrame, Cell.vars.currentLayoutTable["position"])
+    if not P:LoadPosition(anchorFrame, Cell.vars.currentLayoutTable["position"]) then
+        P:ClearPoints(anchorFrame)
+        -- no position, use default
+        anchorFrame:SetPoint("TOPLEFT", UIParent, "CENTER")
+    end
 end
 Cell:RegisterCallback("UpdateLayout", "MainFrame_UpdateLayout", MainFrame_UpdateLayout)
 
