@@ -16,7 +16,9 @@ for k, v in pairs(anchors) do
     npcFrame:SetFrameRef(k, v)
 end
 
+-------------------------------------------------
 -- NOTE: update each npc unit button
+-------------------------------------------------
 local pointUpdater = [[
     local orientation, point, anchorPoint, unitSpacing = ...
     -- print(orientation, point, anchorPoint, unitSpacing)
@@ -41,6 +43,9 @@ local pointUpdater = [[
 ]]
 npcFrame:SetAttribute("pointUpdater", pointUpdater)
 
+-------------------------------------------------
+-- create buttons
+-------------------------------------------------
 for i = 1, 8 do
     local button = CreateFrame("Button", npcFrame:GetName().."Button"..i, npcFrame, "CellUnitButtonTemplate")
     tinsert(Cell.unitButtons.npc, button)
@@ -61,6 +66,24 @@ for i = 1, 8 do
     -- elseif i == 6 then
     --     button:SetAttribute("unit", "target")
     --     RegisterAttributeDriver(button, "state-visibility", "[@target, harm] show; hide")
+    -- end
+
+    -- if i >= 6 then
+    --     UnregisterAttributeDriver(button, "state-visibility")
+    --     button:SetAttribute("unit", "target")
+    --     RegisterUnitWatch(button)
+
+    --     local bar = Cell:CreateStatusBar(button, 10, 5, 1, false, nil, nil, "Interface\\Buttons\\WHITE8x8", {1, 1, 1, 1})
+    --     bar:SetFrameLevel(button.widget.healthBar:GetFrameLevel() + 1)
+    --     bar.border:Hide()
+
+    --     bar:SetPoint("BOTTOMLEFT", button.widget.healthBar)
+    --     bar:SetPoint("BOTTOMRIGHT", button.widget.healthBar)
+    --     bar:SetScript("OnUpdate", function()
+    --         local health = UnitHealth("boss"..i)
+    --         local healthMax = UnitHealthMax("boss"..i)
+    --         bar:SetValue(health / healthMax)
+    --     end)
     -- end
     ---------------------------------------------
 
@@ -83,7 +106,80 @@ for i = 1, 8 do
 	button.helper:SetAttribute("_onhide", [[ self:RunAttribute("pointUpdater") ]])
 end
 
+-------------------------------------------------
+-- FIXME: fix health updating boss678
+-- ! BLIZZARD, FIX IT! 
+-------------------------------------------------
+local validEvents = {
+    ["SPELL_HEAL"] = true,
+    ["SPELL_PERIODIC_HEAL"] = true,
+    ["SPELL_DAMAGE"] = true,
+    ["SPELL_PERIODIC_DAMAGE"] = true
+}
+
+local boss678_guidToButton = {}
+local boss678_buttonToGuid = {}
+
+local cleu = CreateFrame("Frame")
+cleu:SetScript("OnEvent", function()
+    local timestamp, subEvent, _, sourceGUID, sourceName, sourceFlags, sourceRaidFlags, destGUID, destName, destFlags, destRaidFlags = CombatLogGetCurrentEventInfo()
+    if validEvents[subEvent] then
+        if boss678_guidToButton[destGUID] then
+            -- print("UpdateHealth:", boss678_guidToButton[destGUID]:GetName())
+            boss678_guidToButton[destGUID].func.UpdateHealth(boss678_guidToButton[destGUID])
+        end
+    end
+end)
+
+for i = 6, 8 do
+    local button = Cell.unitButtons.npc[i]
+    button.helper:HookScript("OnShow", function()
+        local guid = UnitGUID(button.state.unit)
+        if not guid then return end
+
+        boss678_buttonToGuid[i] = guid
+        boss678_guidToButton[guid] = button
+        
+        if not cleu:IsEventRegistered("COMBAT_LOG_EVENT_UNFILTERED") then
+            cleu:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
+            -- update now
+            button.func.UpdateHealthMax(button)
+            button.func.UpdateHealth(button)
+            -- texplore(boss678_guidToButton)
+            -- texplore(boss678_buttonToGuid)
+        end
+    end)
+    
+    button.helper:HookScript("OnHide", function()
+        boss678_guidToButton[boss678_buttonToGuid[i] or ""] = nil
+        boss678_buttonToGuid[i] = nil
+        if F:Getn(boss678_buttonToGuid) == 0 then
+            if cleu:IsEventRegistered("COMBAT_LOG_EVENT_UNFILTERED") then
+                cleu:UnregisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
+            end
+        end
+    end)
+
+    button.helper:HookScript("OnUpdate", function(self, elapsed)
+        button.helper.elapsed = (button.helper.elapsed or 0) + elapsed
+        if button.helper.elapsed >= 0.25 then
+            local guid = UnitGUID(button.state.unit)
+            -- check old guid
+            if guid and boss678_buttonToGuid[i] ~= guid then -- changed
+                -- remove old
+                boss678_guidToButton[boss678_buttonToGuid[i] or ""] = nil
+                -- add new
+                boss678_buttonToGuid[i] = guid
+                boss678_guidToButton[guid] = button
+            end
+            button.helper.elapsed = 0
+        end
+    end)
+end
+
+-------------------------------------------------
 -- update point when group type changed
+-------------------------------------------------
 npcFrame:SetAttribute("_onstate-groupstate", [[
     -- print("groupstate", newstate)
     self:SetAttribute("group", newstate)
@@ -136,7 +232,9 @@ npcFrame:SetAttribute("_onstate-groupstate", [[
 ]])
 -- RegisterStateDriver(npcFrame, "groupstate", "[group:raid] raid; [group:party] party; solo")
 
+-------------------------------------------------
 -- update point when pet state changed
+-------------------------------------------------
 npcFrame:SetAttribute("_onstate-petstate", [[
     -- print("petstate", newstate)
     self:SetAttribute("pet", newstate)
@@ -168,12 +266,18 @@ npcFrame:SetAttribute("_onstate-petstate", [[
 ]])
 -- RegisterStateDriver(npcFrame, "petstate", "[@pet,exists] pet; [@partypet1,exists] pet1; [@partypet2,exists] pet2; [@partypet3,exists] pet3; [@partypet4,exists] pet4; nopet")
 
+-------------------------------------------------
+-- separateAnchor
+-------------------------------------------------
 local separateAnchor = CreateFrame("Frame", nil, Cell.frames.mainFrame, "BackdropTemplate")
 Cell.frames.separateNpcFrameAnchor = separateAnchor
 P:Size(separateAnchor, 20, 10)
 separateAnchor:SetPoint("TOPLEFT", UIParent, "CENTER")
 -- Cell:StylizeFrame(separateAnchor, {0, 1, 0, 0.4})
 
+-------------------------------------------------
+-- functions
+-------------------------------------------------
 local function NPCFrame_UpdateLayout(layout, which)
     -- if layout ~= Cell.vars.currentLayout then return end
     layout = Cell.vars.currentLayoutTable
