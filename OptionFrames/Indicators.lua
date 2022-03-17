@@ -817,13 +817,15 @@ importBtn:SetEnabled(false)
 local exportBtn = Cell:CreateButton(indicatorsTab, nil, "class-hover", {41, 20}, nil, nil, nil, nil, nil, L["Export"])
 exportBtn:SetPoint("TOPLEFT", importBtn, "TOPRIGHT", -1, 0)
 exportBtn:SetTexture("Interface\\AddOns\\Cell\\Media\\Icons\\export.blp", {16, 16}, {"TOPLEFT", 12, -2})
-exportBtn:SetEnabled(false)
+exportBtn:SetScript("OnClick", function()
+    F:ShowIndicatorsExportFrame(currentLayout)
+end)
 
 local copyBtn = Cell:CreateButton(indicatorsTab, nil, "class-hover", {41, 20}, nil, nil, nil, nil, nil, L["Copy"], L["Copy indicators from one layout to another"])
 copyBtn:SetPoint("TOPLEFT", exportBtn, "TOPRIGHT", -1, 0)
 copyBtn:SetTexture("Interface\\AddOns\\Cell\\Media\\Icons\\copy.blp", {16, 16}, {"TOPLEFT", 12, -2})
 copyBtn:SetScript("OnClick", function()
-    F:ShowCopyFrame()
+    F:ShowIndicatorsCopyFrame()
 end)
 
 -------------------------------------------------

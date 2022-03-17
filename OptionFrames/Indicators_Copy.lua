@@ -3,7 +3,7 @@ local L = Cell.L
 local F = Cell.funcs
 
 local copyFrame = Cell:CreateFrame("CellOptionsFrame_IndicatorsCopy", Cell.frames.indicatorsTab, 129, 368)
-Cell.frames.indicatorsCopyFrame = copyFrame
+-- Cell.frames.indicatorsCopyFrame = copyFrame
 copyFrame:SetFrameStrata("DIALOG")
 copyFrame:SetPoint("BOTTOMLEFT", 5, 24)
 copyFrame:Hide()
@@ -249,7 +249,7 @@ copyFrame:SetScript("OnHide", function()
     from, to = nil, nil
 end)
 
-function F:ShowCopyFrame()
+function F:ShowIndicatorsCopyFrame()
     -- texplore(selectedIndicators)
     LoadDropdowns()
     copyFrame:Show()
