@@ -920,7 +920,7 @@ function I:CreateHealthText(parent)
     local text = healthText:CreateFontString(nil, "OVERLAY", "CELL_FONT_STATUS")
     healthText.text = text
 
-    function healthText:SetFont(font, size, flags, horizontalOffset)
+    function healthText:SetFont(font, size, flags)
         if not string.find(font, ".ttf") then font = F:GetFont(font) end
 
         if flags == "Shadow" then
@@ -939,29 +939,18 @@ function I:CreateHealthText(parent)
             text:SetShadowOffset(0, 0)
             text:SetShadowColor(0, 0, 0, 0)
         end
-
-        local point = healthText:GetPoint(1)
-        text:ClearAllPoints()
-        if string.find(point, "LEFT") then
-            text:SetPoint("LEFT", horizontalOffset, 0)
-        elseif string.find(point, "RIGHT") then
-            text:SetPoint("RIGHT", horizontalOffset, 0)
-        else
-            text:SetPoint("CENTER", horizontalOffset, 0)
-        end
         healthText:SetSize(text:GetStringWidth()+3, size+3)
     end
 
     healthText.OriginalSetPoint = healthText.SetPoint
     function healthText:SetPoint(point, relativeTo, relativePoint, x, y)
-        local horizontalOffset = select(4, text:GetPoint(1))
         text:ClearAllPoints()
         if string.find(point, "LEFT") then
-            text:SetPoint("LEFT", horizontalOffset, 0)
+            text:SetPoint("LEFT")
         elseif string.find(point, "RIGHT") then
-            text:SetPoint("RIGHT", horizontalOffset, 0)
+            text:SetPoint("RIGHT")
         else
-            text:SetPoint("CENTER", horizontalOffset, 0)
+            text:SetPoint("CENTER")
         end
         healthText:OriginalSetPoint(point, relativeTo, relativePoint, x, y)
     end
