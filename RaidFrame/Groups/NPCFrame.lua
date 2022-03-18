@@ -110,23 +110,19 @@ end
 -- FIXME: fix health updating boss678
 -- ! BLIZZARD, FIX IT! 
 -------------------------------------------------
-local validEvents = {
-    ["SPELL_HEAL"] = true,
-    ["SPELL_PERIODIC_HEAL"] = true,
-    ["SPELL_DAMAGE"] = true,
-    ["SPELL_PERIODIC_DAMAGE"] = true
-}
-
 local boss678_guidToButton = {}
 local boss678_buttonToGuid = {}
 
 local cleu = CreateFrame("Frame")
 cleu:SetScript("OnEvent", function()
     local timestamp, subEvent, _, sourceGUID, sourceName, sourceFlags, sourceRaidFlags, destGUID, destName, destFlags, destRaidFlags = CombatLogGetCurrentEventInfo()
-    if validEvents[subEvent] then
-        if boss678_guidToButton[destGUID] then
+    if boss678_guidToButton[destGUID] then
+        if subEvent == "SPELL_HEAL" or subEvent == "SPELL_PERIODIC_HEAL" or subEvent == "SPELL_DAMAGE" or subEvent == "SPELL_PERIODIC_DAMAGE" then
             -- print("UpdateHealth:", boss678_guidToButton[destGUID]:GetName())
             boss678_guidToButton[destGUID].func.UpdateHealth(boss678_guidToButton[destGUID])
+        end
+        if subEvent == "SPELL_AURA_REFRESH" or subEvent == "SPELL_AURA_APPLIED" or subEvent == "SPELL_AURA_REMOVED" or subEvent == "SPELL_AURA_APPLIED_DOSE" or subEvent == "SPELL_AURA_REMOVED_DOSE" then
+            boss678_guidToButton[destGUID].func.UpdateAuras(boss678_guidToButton[destGUID])
         end
     end
 end)

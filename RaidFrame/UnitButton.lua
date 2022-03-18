@@ -2378,4 +2378,5 @@ function F:UnitButton_OnLoad(button)
     -- FIXME: fix boss 678
     button.func.UpdateHealth = UnitButton_UpdateHealth
     button.func.UpdateHealthMax = UnitButton_UpdateHealthMax
+    button.func.UpdateAuras = UnitButton_UpdateAuras
 end
