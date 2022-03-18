@@ -1,5 +1,8 @@
 local addonName, Cell = ...
 
+-- number of built-in indicators
+Cell.defaults.builtIns = 22
+
 Cell.defaults.layout = {
     ["size"] = {66, 46},
     ["petSize"] = {false, 66, 46},

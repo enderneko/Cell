@@ -77,7 +77,7 @@ local textArea = Cell:CreateScrollEditBox(importExportFrame, function(eb, userCh
             wipe(imported)
             local text = eb:GetText()
             -- check
-            local version, name, data = string.match(text, "^!CELL:(%d+):(.+)!(.+)$")
+            local version, name, data = string.match(text, "^!CELL:(%d+):([^:]+)!(.+)$")
             version = tonumber(version)
 
             if name and version and data then

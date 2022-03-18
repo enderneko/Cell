@@ -4,6 +4,7 @@ local F = Cell.funcs
 
 local copyFrame = Cell:CreateFrame("CellOptionsFrame_IndicatorsCopy", Cell.frames.indicatorsTab, 129, 368)
 -- Cell.frames.indicatorsCopyFrame = copyFrame
+Cell:StylizeFrame(copyFrame, nil, Cell:GetPlayerClassColorTable())
 copyFrame:SetFrameStrata("DIALOG")
 copyFrame:SetPoint("BOTTOMLEFT", 5, 24)
 copyFrame:Hide()
@@ -67,7 +68,7 @@ copyBtn:SetScript("OnClick", function()
         end
     end
     Cell:Fire("UpdateIndicators", to)
-    Cell:Fire("IndicatorsCopied", to)
+    Cell:Fire("IndicatorsChanged", to)
     copyFrame:Hide()
 end)
 

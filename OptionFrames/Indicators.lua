@@ -783,7 +783,7 @@ renameBtn:SetTexture("Interface\\AddOns\\Cell\\Media\\Icons\\rename.blp", {16, 1
 renameBtn:SetEnabled(false)
 renameBtn:SetScript("OnClick", function()
     local name = currentLayoutTable["indicators"][selected]["name"]
-    local popup = Cell:CreateConfirmPopup(indicatorsTab, 200, L["Rename indicator"].." "..name, function(self)
+    local popup = Cell:CreateConfirmPopup(indicatorsTab, 200, L["Rename indicator"].."\n"..name, function(self)
         local newName = strtrim(self.editBox:GetText())
         currentLayoutTable["indicators"][selected]["name"] = newName
         listButtons[selected]:SetText(newName)
@@ -800,7 +800,7 @@ deleteBtn:SetScript("OnClick", function()
     local indicatorName = currentLayoutTable["indicators"][selected]["indicatorName"]
     local auraType = currentLayoutTable["indicators"][selected]["auraType"]
 
-    local popup = Cell:CreateConfirmPopup(indicatorsTab, 200, L["Delete indicator"].." "..name.."?", function(self)
+    local popup = Cell:CreateConfirmPopup(indicatorsTab, 200, L["Delete indicator"].."?\n"..name, function(self)
         Cell:Fire("UpdateIndicators", currentLayout, indicatorName, "remove", auraType)
         tremove(currentLayoutTable["indicators"], selected)
         LoadIndicatorList()
@@ -812,7 +812,9 @@ end)
 local importBtn = Cell:CreateButton(indicatorsTab, nil, "class-hover", {42, 20}, nil, nil, nil, nil, nil, L["Import"])
 importBtn:SetPoint("TOPLEFT", createBtn, "BOTTOMLEFT", 0, 1)
 importBtn:SetTexture("Interface\\AddOns\\Cell\\Media\\Icons\\import.blp", {16, 16}, {"TOPLEFT", 12, -2})
-importBtn:SetEnabled(false)
+importBtn:SetScript("OnClick", function()
+    F:ShowIndicatorsImportFrame(currentLayout)
+end)
 
 local exportBtn = Cell:CreateButton(indicatorsTab, nil, "class-hover", {41, 20}, nil, nil, nil, nil, nil, L["Export"])
 exportBtn:SetPoint("TOPLEFT", importBtn, "TOPRIGHT", -1, 0)
@@ -1176,7 +1178,7 @@ local function UpdateAppearance()
 end
 Cell:RegisterCallback("UpdateAppearance", "IndicatorsTab_UpdateAppearance", UpdateAppearance)
 
-local function IndicatorsCopied(layout)
+local function IndicatorsChanged(layout)
     -- reload after indicator copy
     if currentLayout == layout then
         F:Debug("Reload Indicator List:", layout)
@@ -1187,4 +1189,4 @@ local function IndicatorsCopied(layout)
         listButtons[1]:Click()
     end
 end
-Cell:RegisterCallback("IndicatorsCopied", "IndicatorsTab_IndicatorsCopied", IndicatorsCopied)
+Cell:RegisterCallback("IndicatorsChanged", "IndicatorsTab_IndicatorsChanged", IndicatorsChanged)

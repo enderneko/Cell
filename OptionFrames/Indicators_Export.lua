@@ -28,6 +28,7 @@ end
 -- list
 -------------------------------------------------
 local listParent = Cell:CreateFrame(nil, exportParent, 127, 373)
+Cell:StylizeFrame(listParent, nil, Cell:GetPlayerClassColorTable())
 listParent:SetFrameStrata("DIALOG")
 listParent:SetPoint("BOTTOMLEFT", 5, 24)
 listParent:Show()

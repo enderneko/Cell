@@ -12,6 +12,7 @@
 	<Script file="Indicators.lua"/>
 	<Script file="Indicators_Copy.lua"/>
 	<Script file="Indicators_Export.lua"/>
+	<Script file="Indicators_Import.lua"/>
 	<Script file="RaidDebuffs.lua"/>
 	<Script file="RaidDebuffs_ImportExport.lua"/>
 	<Script file="RaidDebuffs_BfA.lua"/>
