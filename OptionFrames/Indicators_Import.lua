@@ -43,7 +43,7 @@ importBtn:SetScript("OnClick", function()
     importFrame:SetFrameStrata("HIGH")
 
     local text = L["Import"].." > "..Cell:GetPlayerClassColorString()..(toLayout == "default" and _G.DEFAULT or toLayout).."|r\n"
-        ..L["This may overwrite your indicators"].."\n"
+        ..L["This may overwrite built-in indicators"].."\n"
         ..L["|cff1Aff1AYes|r - Overwrite"].."\n|cffff1A1A"..L["No"].."|r - "..L["Cancel"]
 
     local popup = Cell:CreateConfirmPopup(Cell.frames.indicatorsTab, 250, text, function(self)
