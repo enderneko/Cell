@@ -6,7 +6,7 @@ local LibDeflate = LibStub:GetLibrary("LibDeflate")
 local deflateConfig = {level = 9}
 
 local MINIMUM_VERSION = 83
-local toLayout
+local toLayout, toLayoutName
 local imported
 
 -------------------------------------------------
@@ -42,7 +42,7 @@ importBtn:SetScript("OnClick", function()
     -- lower frame level
     importFrame:SetFrameStrata("HIGH")
 
-    local text = L["Import"].." > "..Cell:GetPlayerClassColorString()..(toLayout == "default" and _G.DEFAULT or toLayout).."|r\n"
+    local text = L["Import"].." > "..Cell:GetPlayerClassColorString()..toLayoutName.."|r\n"
         ..L["This may overwrite built-in indicators"].."\n"
         ..L["|cff1Aff1AYes|r - Overwrite"].."\n|cffff1A1A"..L["No"].."|r - "..L["Cancel"]
 
@@ -91,7 +91,7 @@ end)
 -- content
 -------------------------------------------------
 local function Failed(reason)
-    title:SetText(L["Import"].." > "..toLayout..": |cffff2222"..reason)
+    title:SetText(L["Import"].." > "..toLayoutName..": |cffff2222"..reason)
     importBtn:SetEnabled(false)
     listFrame.scrollFrame:Reset()
 end
@@ -124,7 +124,7 @@ local textArea = Cell:CreateScrollEditBox(importFrame, function(eb, userChanged)
                     end
                     
                     if builtIn + custom == count then
-                        title:SetText(L["Import"].." > "..toLayout..": |cff90EE90"..builtIn.." "..L["built-in(s)"].."|r, |cffFFB5C5"..custom.." "..L["custom(s)"].."|r")
+                        title:SetText(L["Import"].." > "..toLayoutName..": |cff90EE90"..builtIn.." "..L["built-in(s)"].."|r, |cffFFB5C5"..custom.." "..L["custom(s)"].."|r")
                         importBtn:SetEnabled(true)
                         imported = data
                         
@@ -215,6 +215,7 @@ end)
 
 function F:ShowIndicatorsImportFrame(layout)
     importFrame:Show()
-    title:SetText(L["Import"]..": "..(layout == "default" and _G.DEFAULT or layout))
     toLayout = layout
+    toLayoutName = toLayout == "default" and _G.DEFAULT or toLayout
+    title:SetText(L["Import"].." > "..toLayoutName)
 end
