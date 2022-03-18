@@ -1,7 +1,7 @@
-[Full Changelog](https://github.com/enderneko/Cell/compare/r81-release...ed5e944d12981c833fe927a358ad3522c0e660ea)
+[Full Changelog](https://github.com/enderneko/Cell/compare/r82-release...ca7eeedfe09519120cca4515e7297e2bab5ad40a)
 
-- Use CLEU to fix boss678 health update
-- Fix default position
-- Implement fadeIn & fadeOut animation
-- Optimize base indicator functions
-- Update BigDebuffs (Encrypted affix related)
+- Fix boss678 auras
+- Implement indicators import
+- Implement indicators export
+- Fix HealthText indicator
+- Add ReloadUI popup for hideBlizzardCB
