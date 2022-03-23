@@ -120,8 +120,7 @@ cleu:SetScript("OnEvent", function()
         if subEvent == "SPELL_HEAL" or subEvent == "SPELL_PERIODIC_HEAL" or subEvent == "SPELL_DAMAGE" or subEvent == "SPELL_PERIODIC_DAMAGE" then
             -- print("UpdateHealth:", boss678_guidToButton[destGUID]:GetName())
             boss678_guidToButton[destGUID].func.UpdateHealth(boss678_guidToButton[destGUID])
-        end
-        if subEvent == "SPELL_AURA_REFRESH" or subEvent == "SPELL_AURA_APPLIED" or subEvent == "SPELL_AURA_REMOVED" or subEvent == "SPELL_AURA_APPLIED_DOSE" or subEvent == "SPELL_AURA_REMOVED_DOSE" then
+        elseif subEvent == "SPELL_AURA_REFRESH" or subEvent == "SPELL_AURA_APPLIED" or subEvent == "SPELL_AURA_REMOVED" or subEvent == "SPELL_AURA_APPLIED_DOSE" or subEvent == "SPELL_AURA_REMOVED_DOSE" then
             boss678_guidToButton[destGUID].func.UpdateAuras(boss678_guidToButton[destGUID])
         end
     end
@@ -136,11 +135,12 @@ for i = 6, 8 do
         boss678_buttonToGuid[i] = guid
         boss678_guidToButton[guid] = button
         
+        -- update now
+        button.func.UpdateHealthMax(button)
+        button.func.UpdateHealth(button)
+
         if not cleu:IsEventRegistered("COMBAT_LOG_EVENT_UNFILTERED") then
             cleu:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
-            -- update now
-            button.func.UpdateHealthMax(button)
-            button.func.UpdateHealth(button)
             -- texplore(boss678_guidToButton)
             -- texplore(boss678_buttonToGuid)
         end
