@@ -667,12 +667,12 @@ end
 -- name text
 -------------------------------------------------
 function I:CreateNameText(parent)
-    local nameText = parent.widget.overlayFrame:CreateFontString(parent:GetName().."NameText", "ARTWORK", "CELL_FONT_NAME")
+    local nameText = parent.widget.overlayFrame:CreateFontString(parent:GetName().."NameText", "OVERLAY", "CELL_FONT_NAME")
     parent.indicators.nameText = nameText
     nameText:Hide()
     -- nameText:SetPoint("CENTER", healthBar)
     
-    local vehicleText = parent.widget.overlayFrame:CreateFontString(parent:GetName().."VehicleText", "ARTWORK", "CELL_FONT_STATUS")
+    local vehicleText = parent.widget.overlayFrame:CreateFontString(parent:GetName().."VehicleText", "OVERLAY", "CELL_FONT_STATUS")
 	parent.indicators.vehicleText = vehicleText
     vehicleText:SetTextColor(.8, .8, .8, 1)
     vehicleText:Hide()

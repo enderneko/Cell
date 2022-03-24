@@ -811,7 +811,6 @@ end
 -----------------------------------------
 function addon:CreateColorPicker(parent, label, hasOpacity, func)
     local cp = CreateFrame("Button", nil, parent, "BackdropTemplate")
-    cp:SetPoint("LEFT", 5, 0)
     cp:SetSize(14, 14)
     cp:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8x8", edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = 1})
     cp:SetBackdropBorderColor(0, 0, 0, 1)

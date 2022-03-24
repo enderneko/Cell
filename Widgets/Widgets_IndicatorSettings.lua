@@ -140,6 +140,61 @@ local function CreateSetting_Position(parent, relativeToText)
     return widget
 end
 
+local function CreateSetting_Anchor(parent)
+    local widget
+
+    if not settingWidgets["anchor"] then
+        widget = addon:CreateFrame("CellIndicatorSettings_Anchor", parent, 240, 50)
+        settingWidgets["anchor"] = widget
+
+        widget.anchor = addon:CreateDropdown(widget, 170)
+        widget.anchor:SetPoint("TOPLEFT", 5, -20)
+        
+        widget.anchor:SetItems({
+            {
+                ["text"] = L["Health Bar"].." ("..L["Current"]..")",
+                ["value"] = "healthbar-current",
+                ["onClick"] = function()
+                    widget.func("healthbar-current")
+                end
+            },
+            {
+                ["text"] = L["Health Bar"].." ("..L["Entire"]..")",
+                ["value"] = "healthbar-entire",
+                ["onClick"] = function()
+                    widget.func("healthbar-entire")
+                end
+            },
+            {
+                ["text"] = L["Unit Button"],
+                ["value"] = "unitButton",
+                ["onClick"] = function()
+                    widget.func("unitButton")
+                end
+            },
+        })
+
+        widget.anchorText = widget:CreateFontString(nil, "OVERLAY", font_name)
+        widget.anchorText:SetText(L["Anchor To"])
+        widget.anchorText:SetPoint("BOTTOMLEFT", widget.anchor, "TOPLEFT", 0, 1)
+
+        -- associate db
+        function widget:SetFunc(func)
+            widget.func = func
+        end
+        
+        -- show db value
+        function widget:SetDBValue(anchor)
+            widget.anchor:SetSelectedValue(anchor)
+        end
+    else
+        widget = settingWidgets["anchor"]
+    end
+    
+    widget:Show()
+    return widget
+end
+
 local function CreateSetting_FrameLevel(parent)
     local widget
 
@@ -1316,46 +1371,13 @@ local function CreateSetting_Color(parent)
         widget = addon:CreateFrame("CellIndicatorSettings_Color", parent, 240, 30)
         settingWidgets["color"] = widget
 
-        local function ColorCallback(restore)
-            local newR, newG, newB
-            if restore then
-                newR, newG, newB = unpack(restore)
-            else
-                newR, newG, newB = ColorPickerFrame:GetColorRGB()
-            end
-            
-            widget.color[1], widget.color[2], widget.color[3] = newR, newG, newB
-            widget.b:SetBackdropColor(newR, newG, newB)
-            widget.func({newR, newG, newB})
-        end
-
-        local function ShowColorPicker()
-            ColorPickerFrame.hasOpacity = false
-            ColorPickerFrame.previousValues = {unpack(widget.color)}
-            ColorPickerFrame.func, ColorPickerFrame.cancelFunc = ColorCallback, ColorCallback
-            ColorPickerFrame:SetColorRGB(unpack(widget.color))
-            ColorPickerFrame:Hide()
-            ColorPickerFrame:Show()
-        end
-
-        widget.b = CreateFrame("Button", nil, widget, "BackdropTemplate")
-        widget.b:SetPoint("LEFT", 5, 0)
-        widget.b:SetSize(14, 14)
-        widget.b:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8x8", edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = 1})
-        widget.b:SetBackdropBorderColor(0, 0, 0, 1)
-        widget.b:SetScript("OnEnter", function()
-            widget.b:SetBackdropBorderColor(classColor.t[1], classColor.t[2], classColor.t[3], .7)
+        local colorPicker = addon:CreateColorPicker(widget, L["Color"], false, function(r, g, b, a)
+            widget.colorTable[1] = r
+            widget.colorTable[2] = g 
+            widget.colorTable[3] = b
+            widget.func(widget.colorTable)
         end)
-        widget.b:SetScript("OnLeave", function()
-            widget.b:SetBackdropBorderColor(0, 0, 0, 1)
-        end)
-        widget.b:SetScript("OnClick", function()
-            ShowColorPicker()
-        end)
-
-        widget.label = widget:CreateFontString(nil, "OVERLAY", font_name)
-        widget.label:SetPoint("LEFT", widget.b, "RIGHT", 5, 0)
-        widget.label:SetText(L["Color"])
+        colorPicker:SetPoint("TOPLEFT", 5, -7)
 
         -- associate db
         function widget:SetFunc(func)
@@ -1363,9 +1385,9 @@ local function CreateSetting_Color(parent)
         end
 
         -- show db value
-        function widget:SetDBValue(t)
-            widget.b:SetBackdropColor(unpack(t))
-            widget.color = t
+        function widget:SetDBValue(colorTable)
+            widget.colorTable = colorTable
+            colorPicker:SetColor(colorTable)
         end
     else
         widget = settingWidgets["color"]
@@ -1555,6 +1577,147 @@ local function CreateSetting_Colors(parent)
         end
     else
         widget = settingWidgets["colors"]
+    end
+
+    widget:Show()
+    return widget
+end
+
+local function CreateSetting_CustomColors(parent)
+    local widget
+
+    if not settingWidgets["customColors"] then
+        widget = addon:CreateFrame("CellIndicatorSettings_CustomColors", parent, 240, 50)
+        settingWidgets["customColors"] = widget
+
+        -- dropdown
+        widget.color = addon:CreateDropdown(widget, 170)
+        widget.color:SetPoint("TOPLEFT", 5, -20)
+        
+        widget.buffItems = {
+            {
+                ["text"] = L["Solid"],
+                ["value"] = "solid",
+                ["onClick"] = function()
+                    -- widget.colorPicker1:Show()
+                    widget.colorPicker2:Hide()
+                    widget.func({"solid", widget.colorTable1, widget.colorTable2})
+                end
+            },
+            {
+                ["text"] = L["Vertical Gradient"],
+                ["value"] = "gradient-vertical",
+                ["onClick"] = function()
+                    -- widget.colorPicker1:Show()
+                    widget.colorPicker2:Show()
+                    widget.func({"gradient-vertical", widget.colorTable1, widget.colorTable2})
+                end
+            },
+            {
+                ["text"] = L["Horizontal Gradient"],
+                ["value"] = "gradient-horizontal",
+                ["onClick"] = function()
+                    -- widget.colorPicker1:Show()
+                    widget.colorPicker2:Show()
+                    widget.func({"gradient-horizontal", widget.colorTable1, widget.colorTable2})
+                end
+            },
+        }
+        
+        widget.debuffItems = {
+            {
+                ["text"] = L["Solid"],
+                ["value"] = "solid",
+                ["onClick"] = function()
+                    -- widget.colorPicker1:Show()
+                    widget.colorPicker2:Hide()
+                    widget.func({"solid", widget.colorTable1, widget.colorTable2})
+                end
+            },
+            {
+                ["text"] = L["Vertical Gradient"],
+                ["value"] = "gradient-vertical",
+                ["onClick"] = function()
+                    -- widget.colorPicker1:Show()
+                    widget.colorPicker2:Show()
+                    widget.func({"gradient-vertical", widget.colorTable1, widget.colorTable2})
+                end
+            },
+            {
+                ["text"] = L["Horizontal Gradient"],
+                ["value"] = "gradient-horizontal",
+                ["onClick"] = function()
+                    -- widget.colorPicker1:Show()
+                    widget.colorPicker2:Show()
+                    widget.func({"gradient-horizontal", widget.colorTable1, widget.colorTable2})
+                end
+            },
+            {
+                ["text"] = L["Debuff Type"],
+                ["value"] = "debuff-type",
+                ["onClick"] = function()
+                    -- widget.colorPicker1:Show()
+                    widget.colorPicker2:Hide()
+                    widget.func({"debuff-type", widget.colorTable1, widget.colorTable2})
+                end
+            },
+        }
+
+        widget.colorText = widget:CreateFontString(nil, "OVERLAY", font_name)
+        widget.colorText:SetText(L["Color"])
+        widget.colorText:SetPoint("BOTTOMLEFT", widget.color, "TOPLEFT", 0, 1)
+
+        widget.colorPicker1 = addon:CreateColorPicker(widget, "", true, function(r, g, b, a)
+            widget.colorTable1[1] = r
+            widget.colorTable1[2] = g 
+            widget.colorTable1[3] = b
+            widget.colorTable1[4] = a
+            widget.func({widget.color:GetSelected(), widget.colorTable1, widget.colorTable2})
+        end)
+        widget.colorPicker1:SetPoint("LEFT", widget.color, "RIGHT", 5, 0)
+
+        widget.colorPicker2 = addon:CreateColorPicker(widget, "", true, function(r, g, b, a)
+            widget.colorTable2[1] = r
+            widget.colorTable2[2] = g 
+            widget.colorTable2[3] = b
+            widget.colorTable2[4] = a
+            widget.func({widget.color:GetSelected(), widget.colorTable1, widget.colorTable2})
+        end)
+        widget.colorPicker2:SetPoint("LEFT", widget.colorPicker1, "RIGHT", 5, 0)
+
+        -- associate db
+        function widget:SetFunc(func)
+            widget.func = func
+        end
+        
+        -- show db value
+        function widget:SetDBValue(auraType, colorTable)
+            if auraType == "buff" then
+                widget.color:SetItems(widget.buffItems)
+            else -- debuff
+                widget.color:SetItems(widget.debuffItems)
+            end
+            widget.color:SetSelectedValue(colorTable[1])
+
+            if colorTable[1] == "solid" then
+                -- widget.colorPicker1:Show()
+                widget.colorPicker2:Hide()
+            elseif colorTable[1] == "debuff-type" then
+                -- widget.colorPicker1:Show()
+                widget.colorPicker2:Hide()
+            else -- gradient
+                -- widget.colorPicker1:Show()
+                widget.colorPicker2:Show()
+            end
+            
+            widget.colorTable1 = colorTable[2]
+            widget.colorPicker1:SetColor(widget.colorTable1)
+            
+            widget.colorTable2 = colorTable[3]
+            widget.colorPicker2:SetColor(widget.colorTable2)
+        end
+    else
+        widget = settingWidgets["customColors"]
     end
 
     widget:Show()
@@ -2205,7 +2368,11 @@ local function CreateAuraButtons(parent, auraButtons, auraTable, noUpDownButtons
         end)
         popup:SetPoint("TOPLEFT", self)
         popup:ShowEditBox("")
-        parent.popupEditBox:SetTips("|cff777777"..L["Enter spell id"])
+        if isZeroValid then
+            parent.popupEditBox:SetTips("|cff777777"..L["Enter spell id"]..", 0 = ".. L["all"])
+        else
+            parent.popupEditBox:SetTips("|cff777777"..L["Enter spell id"])
+        end
     end)
 
 
@@ -2590,6 +2757,8 @@ function addon:CreateIndicatorSettings(parent, settingsTable)
             tinsert(widgetsTable, CreateSetting_Position(parent, L["To UnitButton's"]))
         elseif setting == "namePosition" then
             tinsert(widgetsTable, CreateSetting_Position(parent, L["To HealthBar's"]))
+        elseif setting == "anchor" then
+            tinsert(widgetsTable, CreateSetting_Anchor(parent))
         elseif setting == "frameLevel" then
             tinsert(widgetsTable, CreateSetting_FrameLevel(parent))
         elseif setting == "size" then
@@ -2634,6 +2803,8 @@ function addon:CreateIndicatorSettings(parent, settingsTable)
             tinsert(widgetsTable, CreateSetting_ColorAlpha(parent))
         elseif setting == "colors" then
             tinsert(widgetsTable, CreateSetting_Colors(parent))
+        elseif setting == "customColors" then
+            tinsert(widgetsTable, CreateSetting_CustomColors(parent))
         elseif setting == "nameColor" then
             tinsert(widgetsTable, CreateSetting_NameColor(parent))
         elseif setting == "statusColors" then

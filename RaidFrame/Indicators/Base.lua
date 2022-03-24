@@ -584,6 +584,74 @@ function I:CreateAura_Bar(name, parent)
 end
 
 -------------------------------------------------
+-- CreateAura_Color
+-------------------------------------------------
+function I:CreateAura_Color(name, parent)
+    local color = CreateFrame("Frame", name, parent)
+    color:SetFrameLevel(8)
+    color:Hide()
+    color.indicatorType = "color"
+
+    local solidTex = color:CreateTexture(nil, "ARTWORK")
+    solidTex:SetTexture(Cell.vars.texture)
+    solidTex:SetAllPoints(color)
+    solidTex:Hide()
+   
+    local gradientTex = color:CreateTexture(nil, "ARTWORK")
+    gradientTex:SetTexture("Interface\\Buttons\\WHITE8x8")
+    gradientTex:SetAllPoints(color)
+    gradientTex:Hide()
+
+    function color:SetCooldown(start, duration, debuffType, texture, count, refreshing)
+        if color.type == "debuff-type" and debuffType then
+            solidTex:SetVertexColor(DebuffTypeColor[debuffType]["r"], DebuffTypeColor[debuffType]["g"], DebuffTypeColor[debuffType]["b"], color.alpha)
+        end
+        color:Show()
+    end
+
+    function color:SetAnchor(anchorTo)
+        color:ClearAllPoints()
+        if anchorTo == "healthbar-current" then
+            -- current hp texture
+            color:SetAllPoints(parent.widget.healthBar:GetStatusBarTexture())
+        elseif anchorTo == "healthbar-entire" then
+            -- entire hp bar
+            color:SetAllPoints(parent.widget.healthBar)
+        else -- unitbutton
+            P:Point(color, "TOPLEFT", parent.widget.overlayFrame, "TOPLEFT", 1, -1)
+            P:Point(color, "BOTTOMRIGHT", parent.widget.overlayFrame, "BOTTOMRIGHT", -1, 1)
+        end
+    end
+
+    function color:SetColors(colors)
+        color.type = colors[1]
+
+        if colors[1] == "solid" then
+            solidTex:SetVertexColor(colors[2][1], colors[2][2], colors[2][3], colors[2][4])
+            solidTex:SetTexture(Cell.vars.texture)
+            solidTex:Show()
+            gradientTex:Hide()
+        elseif colors[1] == "gradient-vertical" then
+            gradientTex:SetGradientAlpha("VERTICAL", colors[2][1], colors[2][2], colors[2][3], colors[2][4], colors[3][1], colors[3][2], colors[3][3], colors[3][4])
+            gradientTex:Show()
+            solidTex:Hide()
+        elseif colors[1] == "gradient-horizontal" then
+            gradientTex:SetGradientAlpha("HORIZONTAL", colors[2][1], colors[2][2], colors[2][3], colors[2][4], colors[3][1], colors[3][2], colors[3][3], colors[3][4])
+            gradientTex:Show()
+            solidTex:Hide()
+        elseif colors[1] == "debuff-type" then
+            solidTex:SetVertexColor(colors[2][1], colors[2][2], colors[2][3], colors[2][4])
+            solidTex:SetTexture(Cell.vars.texture)
+            solidTex:Show()
+            gradientTex:Hide()
+            color.alpha = colors[2][4]
+        end
+    end
+        
+    return color
+end
+
+-------------------------------------------------
 -- CreateAura_Icons
 -------------------------------------------------
 function I:CreateAura_Icons(name, parent, num)

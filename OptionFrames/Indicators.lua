@@ -2,6 +2,7 @@ local _, Cell = ...
 local L = Cell.L
 local F = Cell.funcs
 local I = Cell.iFuncs
+local P = Cell.pixelPerfectFuncs
 local LCG = LibStub("LibCustomGlow-1.0")
 
 local indicatorsTab = Cell:CreateFrame("CellOptionsFrame_IndicatorsTab", Cell.frames.optionsFrame, nil, nil, true)
@@ -37,7 +38,7 @@ previewText:SetPoint("TOP", 0, -3)
 previewText:SetText(Cell:GetPlayerClassColorString()..L["Preview"])
 
 local function UpdatePreviewButton()
-    previewButton:SetSize(unpack(currentLayoutTable["size"]))
+    P:Size(previewButton, currentLayoutTable["size"][1], currentLayoutTable["size"][2])
     previewButton.func.SetPowerHeight(currentLayoutTable["powerHeight"])
     previewButton:GetScript("OnSizeChanged")(previewButton)
     
@@ -310,6 +311,11 @@ local function InitIndicator(indicatorName)
                     indicator:SetWidth(indicator.text:GetStringWidth() + 6)
                 end)
             end)
+        elseif indicator.indicatorType == "color" then
+            -- texture type cannot glow by LCG
+            indicator.preview = CreateFrame("Frame", nil, previewButton)
+            indicator.preview:SetAllPoints(indicator)
+            indicator:SetCooldown(nil, nil, "Curse")
         else
             indicator.preview = indicator.preview or CreateFrame("Frame", nil, indicator)
             indicator:SetScript("OnShow", function()
@@ -339,8 +345,12 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                 InitIndicator(t["indicatorName"])
                 -- update position
                 if t["position"] then
-                    indicator:ClearAllPoints()
-                    indicator:SetPoint(t["position"][1], previewButton, t["position"][2], t["position"][3], t["position"][4])
+                    P:ClearPoints(indicator)
+                    P:Point(indicator, t["position"][1], previewButton, t["position"][2], t["position"][3], t["position"][4])
+                end
+                -- update anchor
+                if t["anchor"] then
+                    indicator:SetAnchor(t["anchor"])
                 end
                 -- update frameLevel
                 if t["frameLevel"] then
@@ -348,7 +358,7 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                 end
                 -- update size
                 if t["size"] then
-                    indicator:SetSize(unpack(t["size"]))
+                    P:Size(indicator, t["size"][1], t["size"][2])
                 end
                 -- update thickness
                 if t["thickness"] then
@@ -364,7 +374,7 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                 end
                 -- update height
                 if t["height"] then
-                    indicator:SetHeight(t["height"])
+                    P:Height(indicator, t["height"])
                 end
                 -- update alpha
                 if t["alpha"] then
@@ -433,10 +443,10 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                 end
             end
         end
-	else
+    else
         local indicator = previewButton.indicators[indicatorName]
-		-- changed in IndicatorsTab
-		if setting == "enabled" then
+        -- changed in IndicatorsTab
+        if setting == "enabled" then
             if value then
                 indicator:Show()
                 if indicator.preview then indicator.preview:Show() end
@@ -446,20 +456,22 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                 if indicator.preview then indicator.preview:Hide() end
                 if indicator.isTargetedSpells then indicator:HideGlowPreview() end
             end
-		elseif setting == "position" then
-			indicator:ClearAllPoints()
-            indicator:SetPoint(value[1], previewButton, value[2], value[3], value[4])
+        elseif setting == "position" then
+            P:ClearPoints(indicator)
+            P:Point(indicator, value[1], previewButton, value[2], value[3], value[4])
+        elseif setting == "anchor" then
+            indicator:SetAnchor(value)
         elseif setting == "frameLevel" then
             indicator:SetFrameLevel(previewButton.widget.overlayFrame:GetFrameLevel()+value)
-		elseif setting == "size" then
-            indicator:SetSize(unpack(value))
-		elseif setting == "size-border" then
-            indicator:SetSize(value[1], value[2])
+        elseif setting == "size" then
+            P:Size(indicator, value[1], value[2])
+        elseif setting == "size-border" then
+            P:Size(indicator, value[1], value[2])
             indicator:SetBorder(value[3])
-		elseif setting == "thickness" then
+        elseif setting == "thickness" then
             indicator:SetThickness(value)
-		elseif setting == "height" then
-            indicator:SetHeight(value)
+        elseif setting == "height" then
+            P:Height(indicator, value)
         elseif setting == "textWidth" then
             indicator:UpdateTextWidth(value)
         elseif setting == "alpha" then
@@ -486,8 +498,8 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
             end
         elseif setting == "color" then
             indicator:SetColor(unpack(value))
-        -- elseif setting == "colors" then
-        --     indicator:SetColors(value)
+        elseif setting == "colors" then
+            indicator:SetColors(value)
         elseif setting == "nameColor" then
             indicator:UpdatePreviewColor(value)
         elseif setting == "vehicleNamePosition" then
@@ -513,11 +525,17 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
         elseif setting == "create" then
             indicator = I:CreateIndicator(previewButton, value)
             -- update position
-            indicator:ClearAllPoints()
-            indicator:SetPoint(value["position"][1], previewButton, value["position"][2], value["position"][3], value["position"][4])
+            if value["position"] then
+                P:ClearPoints(indicator)
+                P:Point(indicator, value["position"][1], previewButton, value["position"][2], value["position"][3], value["position"][4])
+            end
+            -- update anchor
+            if value["anchor"] then
+                indicator:SetAnchor(value["anchor"])
+            end
             -- update size
             if value["size"] then
-                indicator:SetSize(unpack(value["size"]))
+                P:Size(indicator, value["size"][1], value["size"][2])
             end
             -- update num
             if value["num"] then
@@ -558,7 +576,7 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
         elseif setting == "remove" then
             I:RemoveIndicator(previewButton, indicatorName, value)
         end
-	end
+    end
 end
 Cell:RegisterCallback("UpdateIndicators", "PreviewButton_UpdateIndicators", UpdateIndicators)
 
@@ -635,6 +653,10 @@ local typeItems = {
         ["value"] = "icon",
     },
     {
+        ["text"] = L["Icons"],
+        ["value"] = "icons",
+    },
+    {
         ["text"] = L["Bar"],
         ["value"] = "bar",
     },
@@ -647,8 +669,8 @@ local typeItems = {
         ["value"] = "text",
     },
     {
-        ["text"] = L["Icons"],
-        ["value"] = "icons",
+        ["text"] = L["Color"],
+        ["value"] = "color",
     },
     -- TODO:
     -- {
@@ -753,6 +775,17 @@ createBtn:SetScript("OnClick", function()
                 ["orientation"] = "right-to-left",
                 ["font"] = {"Cell ".._G.DEFAULT, 11, "Outline", 2},
                 ["showDuration"] = false,
+                ["auraType"] = indicatorAuraType,
+                ["auras"] = {},
+            })
+        elseif indicatorType == "color" then
+            tinsert(currentLayoutTable["indicators"], {
+                ["name"] = name,
+                ["indicatorName"] = indicatorName,
+                ["type"] = indicatorType,
+                ["enabled"] = true,
+                ["anchor"] = "healthbar-current",
+                ["colors"] = {"gradient-vertical", {1, 0, 0.4, 1}, {0, 0, 0, 1}},
                 ["auraType"] = indicatorAuraType,
                 ["auras"] = {},
             })
@@ -922,6 +955,8 @@ local function ShowIndicatorSettings(id)
             settingsTable = {"enabled", "auras", "colors", "position", "frameLevel", "size"}
         elseif indicatorType == "icons" then
             settingsTable = {"enabled", "auras", "checkbutton2:showDuration:"..L["Show duration text instead of icon animation"], "num:10", "orientation", "position", "frameLevel", "size-square", "font"}
+        elseif indicatorType == "color" then
+            settingsTable = {"enabled", "auras", "customColors", "anchor"}
         end
         -- castByMe
         if currentLayoutTable["indicators"][id]["auraType"] == "buff" then
@@ -948,7 +983,7 @@ local function ShowIndicatorSettings(id)
         w:SetPoint("RIGHT")
         last = w
 
-        -- "enabled", "position", "size", "num", "font"
+        -- NOTE: convert currentSetting to ACTUAL TABLE INDEX
         local currentSetting = settingsTable[i]
         if currentSetting == "color-alpha" then currentSetting = "color" end
         if currentSetting == "statusColors" then currentSetting = "colors" end
@@ -961,7 +996,8 @@ local function ShowIndicatorSettings(id)
             local _, setting, tooltip = string.split(":", currentSetting)
             w:SetDBValue(setting, currentLayoutTable["indicators"][id][setting], tooltip)
         elseif currentSetting == "auras" then
-            w:SetDBValue(L[F:UpperFirst(currentLayoutTable["indicators"][id]["auraType"]).." List"], currentLayoutTable["indicators"][id]["auras"], indicatorType == "icons" or indicatorType == "bars", indicatorType == "icons")
+            -- TODO: indicatorType == "bars"
+            w:SetDBValue(L[F:UpperFirst(currentLayoutTable["indicators"][id]["auraType"]).." List"], currentLayoutTable["indicators"][id]["auras"], indicatorType == "icons", indicatorType == "icons")
         elseif currentSetting == "blacklist" then
             w:SetDBValue(L["Debuff Filter (blacklist)"], CellDB["debuffBlacklist"], true)
         elseif currentSetting == "bigDebuffs" then
@@ -970,6 +1006,8 @@ local function ShowIndicatorSettings(id)
             w:SetDBValue(L["Spell List"], currentLayoutTable["indicators"][id]["spells"], true)
         elseif currentSetting == "size-border" then
             w:SetDBValue(currentLayoutTable["indicators"][id]["size"], currentLayoutTable["indicators"][id]["border"])
+        elseif currentSetting == "customColors" then
+            w:SetDBValue(currentLayoutTable["indicators"][id]["auraType"], currentLayoutTable["indicators"][id]["colors"])
         elseif string.find(currentSetting, "num") then
             w:SetDBValue(currentLayoutTable["indicators"][id]["num"], tonumber(select(2,string.split(":", currentSetting))))
             currentSetting = "num"
@@ -1007,6 +1045,9 @@ local function ShowIndicatorSettings(id)
                     currentLayoutTable["indicators"][id]["size"][2] = value[2]
                     currentLayoutTable["indicators"][id]["border"] = value[3]
                     Cell:Fire("UpdateIndicators", currentLayout, indicatorName, currentSetting, value)
+                elseif currentSetting == "customColors" then
+                    currentLayoutTable["indicators"][id]["colors"] = value
+                    Cell:Fire("UpdateIndicators", currentLayout, indicatorName, "colors", value)
                 else
                     currentLayoutTable["indicators"][id][currentSetting] = value
                     Cell:Fire("UpdateIndicators", currentLayout, indicatorName, currentSetting, value)
@@ -1052,8 +1093,12 @@ LoadIndicatorList = function()
             b.typeIcon:SetPoint("RIGHT", -2, 0)
             b.typeIcon:SetSize(16, 16)
             b.typeIcon:SetTexture("Interface\\AddOns\\Cell\\Media\\Indicators\\indicator-"..t["type"])
-            -- b.typeIcon:SetVertexColor(unpack(Cell:GetPlayerClassColorTable()))
-            b.typeIcon:SetAlpha(.5)
+            -- b.typeIcon:SetAlpha(0.5)
+            if t["auraType"] == "buff" then
+                b.typeIcon:SetVertexColor(0.9, 1, 0.9, 0.5)
+            else -- debuff
+                b.typeIcon:SetVertexColor(1, 0.9, 0.9, 0.5)
+            end
 
             b:GetFontString():ClearAllPoints()
             b:GetFontString():SetPoint("LEFT", 5, 0)

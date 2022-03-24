@@ -131,16 +131,17 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                     P:ClearPoints(indicator)
                     P:Point(indicator, t["position"][1], b, t["position"][2], t["position"][3], t["position"][4])
                 end
+                -- update anchor
+                if t["anchor"] then
+                    indicator:SetAnchor(t["anchor"])
+                end
                 -- update frameLevel
                 if t["frameLevel"] then
                     indicator:SetFrameLevel(b.widget.overlayFrame:GetFrameLevel()+t["frameLevel"])
                 end
                 -- update size
                 if t["size"] then
-                    indicator:SetSize(unpack(t["size"]))
-                    -- for pixel perfect
-                    indicator.width = t["size"][1]
-                    indicator.height = t["size"][2]
+                    P:Size(indicator, t["size"][1], t["size"][2])
                 end
                 -- update thickness
                 if t["thickness"] then
@@ -285,6 +286,11 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                 P:ClearPoints(indicator)
                 P:Point(indicator, value[1], b, value[2], value[3], value[4])
             end)
+        elseif setting == "anchor" then
+            F:IterateAllUnitButtons(function(b)
+                local indicator = b.indicators[indicatorName]
+                indicator:SetAnchor(value)
+            end)
         elseif setting == "frameLevel" then
             F:IterateAllUnitButtons(function(b)
                 local indicator = b.indicators[indicatorName]
@@ -293,10 +299,7 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
         elseif setting == "size" then
             F:IterateAllUnitButtons(function(b)
                 local indicator = b.indicators[indicatorName]
-                indicator:SetSize(unpack(value))
-                -- for pixel perfect
-                indicator.width = value[1]
-                indicator.height = value[2]
+                P:Size(indicator, value[1], value[2])
                 if indicatorName == "debuffs" then
                     -- update debuffs' normal/big icon sizes
                     UnitButton_UpdateAuras(b)
@@ -349,11 +352,11 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                 local indicator = b.indicators[indicatorName]
                 indicator:SetColor(unpack(value))
             end)
-        -- elseif setting == "colors" then --! NOTE: 实际上不会执行，更改colors不调用widget.func，不发出通知，因为这些指示器都使用OnUpdate更新颜色。
-        --     F:IterateAllUnitButtons(function(b)
-        --         local indicator = b.indicators[indicatorName]
-        --         indicator:SetColors(value)
-        --     end)
+        elseif setting == "colors" then --! NOTE: for customColors。 其他的colors不调用widget.func，不发出通知，因为这些指示器都使用OnUpdate更新颜色。
+            F:IterateAllUnitButtons(function(b)
+                local indicator = b.indicators[indicatorName]
+                indicator:SetColors(value)
+            end)
         elseif setting == "nameColor" then
             F:IterateAllUnitButtons(function(b)
                 b.func.UpdateColor()
@@ -408,14 +411,17 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
             F:IterateAllUnitButtons(function(b)
                 local indicator = I:CreateIndicator(b, value)
                 -- update position
-                P:ClearPoints(indicator)
-                P:Point(indicator, value["position"][1], b, value["position"][2], value["position"][3], value["position"][4])
+                if value["position"] then
+                    P:ClearPoints(indicator)
+                    P:Point(indicator, value["position"][1], b, value["position"][2], value["position"][3], value["position"][4])
+                end
+                -- update anchor
+                if value["anchor"] then
+                    indicator:SetAnchor(value["anchor"])
+                end
                 -- update size
                 if value["size"] then
-                    indicator:SetSize(unpack(value["size"]))
-                    -- for pixel perfect
-                    indicator.width = value["size"][1]
-                    indicator.height = value["size"][2]
+                    P:Size(indicator, value["size"][1], value["size"][2])
                 end
                 -- update orientation
                 if value["orientation"] then
