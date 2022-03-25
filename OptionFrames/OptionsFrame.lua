@@ -129,5 +129,11 @@ end)
 -- for Raid Debuffs import
 function F:ShowRaidDebuffsTab()
     optionsFrame:Show()
-    ShowTab("debuffs")
+    debuffsBtn:Click()
+end
+
+-- for layout import
+function F:ShowLayousTab()
+    optionsFrame:Show()
+    layoutsBtn:Click()
 end

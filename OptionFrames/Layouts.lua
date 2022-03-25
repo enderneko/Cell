@@ -686,7 +686,7 @@ newBtn:SetScript("OnClick", function()
         local name = strtrim(self.editBox:GetText())
         local inherit = self.dropdown1:GetSelected()
 
-        if name ~= "" and not CellDB["layouts"][name] then
+        if name ~= "" and strlower(name) ~= "default" and name ~= _G.DEFAULT and not CellDB["layouts"][name] then
             -- update db copy current layout
             if inherit == "cell-default-layout" then
                 CellDB["layouts"][name] = F:Copy(Cell.defaults.layout)
@@ -738,7 +738,7 @@ renameBtn:SetPoint("LEFT", newBtn, "RIGHT", -1, 0)
 renameBtn:SetScript("OnClick", function()
     local popup = Cell:CreateConfirmPopup(layoutsTab, 200, L["Rename layout"].." "..selectedLayout, function(self)
         local name = strtrim(self.editBox:GetText())
-        if name ~= "" and not CellDB["layouts"][name] then
+        if name ~= "" and strlower(name) ~= "default" and name ~= _G.DEFAULT and not CellDB["layouts"][name] then
             -- update db
             CellDB["layouts"][name] = F:Copy(CellDB["layouts"][selectedLayout])
             CellDB["layouts"][selectedLayout] = nil
@@ -848,13 +848,13 @@ UpdateButtonStates = function()
 end
 
 -- copy & paste
-local shareBtn = Cell:CreateButton(layoutsTab, L["Share"], "class-hover", {55, 20}, nil, nil, nil, nil, nil, 
-    L["Copy Indicators"], L["Copy selected indicators to another layout"])
+local shareBtn = Cell:CreateButton(layoutsTab, L["Share"], "class-hover", {55, 20})
 shareBtn:SetPoint("LEFT", exportBtn, "RIGHT", -1, 0)
 shareBtn:SetScript("OnClick", function()
-    
+    local editbox = ChatEdit_ChooseBoxForSend()
+    ChatEdit_ActivateChat(editbox)
+    editbox:SetText("[Cell:Layout: "..selectedLayout.." - "..Cell.vars.myName.."]")
 end)
-shareBtn:SetEnabled(false)
 
 -------------------------------------------------
 -- layout auto switch
@@ -1491,6 +1491,7 @@ local function ShowTab(tab)
         layoutsTab:Show()
         
         if not loaded then
+            loaded = true
             LoadLayoutDropdown()
             LoadAutoSwitchDropdowns()
         end
@@ -1604,3 +1605,15 @@ local function LayoutImported(name)
     end
 end
 Cell:RegisterCallback("LayoutImported", "LayoutsTab_LayoutImported", LayoutImported)
+
+-------------------------------------------------
+-- sharing functions
+-------------------------------------------------
+function F:ShowLayout(name)
+    F:Print(L["Layout imported: %s."]:format(name))
+    F:ShowLayousTab()
+    LoadLayoutDropdown()
+    LoadAutoSwitchDropdowns()
+    LoadLayoutDB(name)
+    UpdateButtonStates()
+end

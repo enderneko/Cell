@@ -219,6 +219,7 @@ L["Press Key to Bind"] = "点击按键以绑定"
 L["Layouts"] = "布局"
 L["Layout"] = "布局"
 -- L["Currently Enabled"] = "当前启用"
+L["Share"] = "分享"
 L["Enable"] = "启用"
 L["Rename"] = "重命名"
 L["Delete"] = "删除"
@@ -261,6 +262,7 @@ L["Tip: Every layout has its own position setting"] = "提示：每个布局都�
 -- send/receive
 -------------------------------------------------
 L["To transfer across realm, you need to be in the same group"] = "跨服传输数据需要在同一个队伍里"
+L["It will be renamed if this layout name already exists"] = "如果该布局名已存在，将自动重命名"
 L["built-in(s)"] = "内置"
 L["custom(s)"] = "自定义"
 L["Data transfer failed..."] = "数据传输失败……"
@@ -280,6 +282,7 @@ L["|cff1Aff1AYes|r - Overwrite"] = "|cff1Aff1A是|r - 覆盖"
 L["|cffff1A1ANo|r - Create New"] = "|cffff1A1A否|r - 新建"
 L["Error"] = "错误"
 L["Incompatible Version"] = "版本不兼容"
+L["Layout imported: %s."] = "已导入布局：%s。"
 
 -------------------------------------------------
 -- indicators
@@ -447,7 +450,7 @@ L["Current Boss"] = "当前首领"
 L["All Bosses"] = "全部首领"
 L["No custom debuffs to export!"] = "没有能够导出的减益！"
 L["This will overwrite your debuffs"] = "这将覆盖你的副本减益"
-L["Raid Debuffs updated: %s."] = "已更新副本减益：%s"
+L["Raid Debuffs updated: %s."] = "已更新副本减益：%s。"
 L["Reset debuffs?"] = "重置减益？"
 
 -------------------------------------------------

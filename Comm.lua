@@ -218,15 +218,22 @@ local function filterFunc(self, event, msg, player, arg1, arg2, arg3, flag, chan
     if type == "Debuffs" then
         local bossName, instanceName, playerName = msg:match("%[Cell:Debuffs: (.+) %((.+)%) %- ([^%s]+%-[^%s]+)%]")
         if bossName and instanceName and playerName then
-            newMsg = "|Hgarrmission:cell-debuffs|h|cFFEE1289["..L[type]..": "..bossName.." ("..instanceName..") - "..playerName.."]|h|r"
+            newMsg = "|Hgarrmission:cell-debuffs|h|cFFFF0066["..L[type]..": "..bossName.." ("..instanceName..") - "..playerName.."]|h|r"
         else
             instanceName, playerName = msg:match("%[Cell:Debuffs: (.+) %- ([^%s]+%-[^%s]+)%]")
             if instanceName and playerName then
-                newMsg = "|Hgarrmission:cell-debuffs|h|cFFEE1289["..L[type]..": "..instanceName.." - "..playerName.."]|h|r"
+                newMsg = "|Hgarrmission:cell-debuffs|h|cFFFF0066["..L[type]..": "..instanceName.." - "..playerName.."]|h|r"
             end
         end
-    elseif type == "Layouts" then
-        -- TODO: later
+    elseif type == "Layout" then
+        local layoutName, playerName = msg:match("%[Cell:Layout: (.+) %- ([^%s]+%-[^%s]+)%]")
+        if layoutName and playerName then
+            if layoutName == "default" then
+                -- NOTE: convert "default"
+                layoutName = _G.DEFAULT
+            end
+            newMsg = "|Hgarrmission:cell-layout|h|cFFFF0066["..L[type]..": "..layoutName.." - "..playerName.."]|h|r"
+        end
     end
 
     if newMsg ~= "" then
@@ -311,6 +318,7 @@ Comm:RegisterComm("CELL_REQ", function(prefix, message, channel, requester)
     local type, name1, name2 = strsplit(":", message)
     local requestData
 
+    -- print(type, name1, name2)
     if type == "Debuffs" then
         local instanceId, bossId = F:GetInstanceAndBossId(name1, name2)
         if not instanceId then return end -- invalid instanceName
@@ -332,9 +340,21 @@ Comm:RegisterComm("CELL_REQ", function(prefix, message, channel, requester)
                 requestData["data"] = CellDB["raidDebuffs"][instanceId][bossId]
             end
         end
-    elseif type == "Layouts" then 
-
+    elseif type == "Layout" then
+        if name1 == _G.DEFAULT then
+            -- NOTE: convert "DEFAULT"
+            name1 = "default"
+        end
+        if name1 and CellDB["layouts"][name1] then
+            requestData = {
+                ["type"] = "Layout",
+                ["name"] = name1,
+                ["data"] = CellDB["layouts"][name1]
+            }
+        end
     end
+
+    -- texplore(requestData)
 
     if not requestData then return end
     CrossRealmSendCommMessage("CELL_SEND", Serialize(requestData), requester, "BULK", function(arg, done, total)
@@ -362,13 +382,16 @@ end
 
 hooksecurefunc("SetItemRef", function(link, text)
     if isRequesting then return end
-    if(link == "garrmission:cell-debuffs") then
-        local bossName, instanceName, playerName = text:match("|Hgarrmission:cell%-debuffs|h|cFFEE1289%[.+: (.+) %((.+)%) %- ([^%s]+%-[^%s]+)%]|h|r")
+    if link == "garrmission:cell-debuffs" then
+        local bossName, instanceName, playerName = text:match("|Hgarrmission:cell%-debuffs|h|cFFFF0066%[.+: (.+) %((.+)%) %- ([^%s]+%-[^%s]+)%]|h|r")
         if bossName and instanceName and playerName then
             ShowReceivingFrame("Debuffs", playerName, instanceName, bossName)
         else
-            instanceName, playerName = text:match("|Hgarrmission:cell%-debuffs|h|cFFEE1289%[.+: (.+) %- ([^%s]+%-[^%s]+)%]|h|r")
+            instanceName, playerName = text:match("|Hgarrmission:cell%-debuffs|h|cFFFF0066%[.+: (.+) %- ([^%s]+%-[^%s]+)%]|h|r")
             ShowReceivingFrame("Debuffs", playerName, instanceName)
         end
+    elseif link == "garrmission:cell-layout" then
+        local layoutName, playerName = text:match("|Hgarrmission:cell%-layout|h|cFFFF0066%[.+: (.+) %- ([^%s]+%-[^%s]+)%]|h|r")
+        ShowReceivingFrame("Layout", playerName, layoutName)
     end
 end)

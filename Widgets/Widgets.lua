@@ -2629,6 +2629,7 @@ function addon:CreateReceivingFrame(parent)
     fromText:SetPoint("TOPLEFT", fromLabel, "TOPRIGHT")
     fromText:SetPoint("RIGHT", -10, 0)
     fromText:SetJustifyH("LEFT")
+    fromText:SetWordWrap(true)
 
     dataLabel:SetPoint("TOP", fromText, "BOTTOM", 0, -10)
 
@@ -2636,21 +2637,22 @@ function addon:CreateReceivingFrame(parent)
     dataText:SetPoint("TOPLEFT", dataLabel, "TOPRIGHT")
     dataText:SetPoint("RIGHT", -10, 0)
     dataText:SetJustifyH("LEFT")
+    dataText:SetWordWrap(true)
     dataText:Hide()
 
     -- error
     local infoMsg = f:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
     infoMsg:SetJustifyH("LEFT")
     infoMsg:SetTextColor(unpack(colors.firebrick.t))
+    infoMsg:SetWordWrap(true)
     infoMsg:Hide()
 
-    function infoMsg:ShowMsg(msg, anchorTo)
+    function infoMsg:SetMsg(msg, anchorTo)
         infoMsg:SetText(msg)
         infoMsg:ClearAllPoints()
         infoMsg:SetPoint("LEFT", 10, 0)
         infoMsg:SetPoint("RIGHT", -10, 0)
         infoMsg:SetPoint("TOP", anchorTo, "BOTTOM", 0, -10)
-        infoMsg:Show()
     end
 
     -- buttons
@@ -2698,7 +2700,7 @@ function addon:CreateReceivingFrame(parent)
         end)
 
         -- NOTE: you cannot send to yourself
-        requestBtn:SetEnabled(playerName ~= Cell.vars.myName)
+        -- requestBtn:SetEnabled(playerName ~= Cell.vars.myName)
         importBtn:Hide()
         dataLabel:Hide()
         dataText:Hide()
@@ -2718,11 +2720,12 @@ function addon:CreateReceivingFrame(parent)
             func(self)
             
             infoMsg:Hide()
-            -- timeout
+            -- NOTE: timeout in 10 sec if can't receive any data
             timeout = C_Timer.NewTimer(10, function()
-                if progressBar:GetValue() == 0 then
-                    addon:ChangeSizeWithAnimation(f, 249, f.height+15+math.ceil(infoMsg:GetStringHeight()*1.4), 7, nil, function()
-                        infoMsg:ShowMsg(L["To transfer across realm, you need to be in the same group"], fromText)
+                if f:IsShown() and progressBar:GetValue() == 0 then
+                    infoMsg:SetMsg(L["To transfer across realm, you need to be in the same group"], fromText)
+                    addon:ChangeSizeWithAnimation(f, 249, f.height+15+math.ceil(infoMsg:GetStringHeight()), 7, nil, function()
+                        infoMsg:Show()
                     end)
                 end
             end)
@@ -2768,18 +2771,53 @@ function addon:CreateReceivingFrame(parent)
                 end)
                 
                 C_Timer.After(0.5, function()
-                    addon:ChangeSizeWithAnimation(f, 249, f.height+15+2*math.ceil(typeLabel:GetStringHeight()*1.4), 7, nil, function()
+                    infoMsg:SetMsg(L["This will overwrite your debuffs"], dataText)
+                    addon:ChangeSizeWithAnimation(f, 249, f.height+15+math.ceil(dataText:GetStringHeight()+infoMsg:GetStringHeight()), 7, nil, function()
                         dataLabel:Show()
                         dataText:Show()
-                        infoMsg:ShowMsg(L["This will overwrite your debuffs"], dataText)
+                        infoMsg:Show()
+                        importBtn:SetEnabled(true)
+                        if func then func() end
+                    end)
+                end)
+
+            elseif received["type"] == "Layout" then
+                F:Debug("|cffFFDAB9RECEIVED LAYOUT:|r ", received["name"], received["data"])
+
+                importBtn:SetScript("OnClick", function()
+                    -- check layout name
+                    local layoutName = received["name"]
+                    if CellDB["layouts"][layoutName] then
+                        local i = 1
+                        while true do
+                            if not CellDB["layouts"][layoutName.." "..i] then
+                                layoutName = layoutName.." "..i
+                                break
+                            end
+                            i = i + 1
+                        end
+                    end
+                    -- save
+                    CellDB["layouts"][layoutName] = received["data"]
+                    F:ShowLayout(layoutName)
+                    f:Hide()
+                end)
+
+                C_Timer.After(0.5, function()
+                    infoMsg:SetMsg(L["It will be renamed if this layout name already exists"], fromText)
+                    addon:ChangeSizeWithAnimation(f, 249, f.height+15+math.ceil(infoMsg:GetStringHeight()), 7, nil, function()
+                        dataLabel:Show()
+                        dataText:Show()
+                        infoMsg:Show()
                         importBtn:SetEnabled(true)
                         if func then func() end
                     end)
                 end)
             end
         else
-            addon:ChangeSizeWithAnimation(f, 249, f.height+15+math.ceil(infoMsg:GetStringHeight()*1.4), 7, nil, function()
-                infoMsg:ShowMsg(L["Data transfer failed..."], fromText)
+            infoMsg:SetMsg(L["Data transfer failed..."], fromText)
+            addon:ChangeSizeWithAnimation(f, 249, f.height+15+math.ceil(infoMsg:GetStringHeight()), 7, nil, function()
+                infoMsg:Show()
                 if func then func() end
             end)
         end
