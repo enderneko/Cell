@@ -70,13 +70,59 @@ raid:SetScript("OnClick", function()
     F:ShowRaidRosterFrame()
 end)
 
+-- REVIEW: raid tool button
+--[===[
+local frame = CreateFrame("Frame", nil, cellMainFrame, "BackdropTemplate")
+Cell:StylizeFrame(frame)
+frame:SetSize(100, 100)
+frame:SetPoint("BOTTOMLEFT", cellMainFrame, "TOPLEFT", 0, 30)
+frame:Hide()
+
+local mark = Cell:CreateButton(frame, "", "class-hover", {20, 20}, false, false, nil, nil, "SecureActionButtonTemplate")
+mark:SetPoint("CENTER")
+mark:SetSize(20, 20)
+mark.texture = mark:CreateTexture(nil, "ARTWORK")
+mark.texture:SetColorTexture(1, 0, 0, 0.4)
+mark.texture:SetAllPoints(mark)
+mark:SetAttribute("type", "worldmarker")
+mark:SetAttribute("marker", 1)
+
+-- local tools = Cell:CreateButton(menuFrame, "", "chartreuse", {20, 10}, false, true, nil, nil, "SecureHandlerAttributeTemplate,SecureHandlerClickTemplate")
+local tools = CreateFrame("Frame", nil, menuFrame, "BackdropTemplate,SecureHandlerMouseUpDownTemplate")
+Cell:StylizeFrame(tools)
+tools:SetSize(20, 10)
+tools:EnableMouse(true)
+P:Point(tools, "LEFT", raid, "RIGHT", 1, 0)
+tools:SetFrameStrata("MEDIUM")
+RegisterDragForMainFrame(tools)
+-- tools:SetScript("_onclick", function()
+--     print(frame:IsShown())
+-- end)
+tools:SetFrameRef("frame", frame)
+
+tools:SetAttribute("_onmousedown", [=[
+    -- self, button
+    local frame = self:GetFrameRef("frame")
+    local raidMarksFrame = self:GetFrameRef("raidMarksFrame")
+    if frame:IsShown() then
+        frame:Hide()
+        raidMarksFrame:Hide()
+    else
+        frame:Show()
+        raidMarksFrame:Show()
+    end
+]=])
+]===]
+
 function F:UpdateFrameLock(locked)
     if locked then
         options:RegisterForDrag()
         raid:RegisterForDrag()
+        -- tools:RegisterForDrag()
     else
         options:RegisterForDrag("LeftButton")
         raid:RegisterForDrag("LeftButton")
+        -- tools:RegisterForDrag("LeftButton")
     end
 end
 
@@ -217,11 +263,14 @@ Cell:RegisterCallback("UpdateVisibility", "MainFrame_UpdateVisibility", MainFram
 -------------------------------------------------
 cellMainFrame:RegisterEvent("PET_BATTLE_OPENING_START")
 cellMainFrame:RegisterEvent("PET_BATTLE_OVER")
+-- cellMainFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
 cellMainFrame:SetScript("OnEvent", function(self, event, ...)
     if event == "PET_BATTLE_OPENING_START" then
         cellMainFrame:Hide()
     elseif event == "PET_BATTLE_OVER" then
         cellMainFrame:Show()
+    -- elseif event == "PLAYER_ENTERING_WORLD" then
+    --     tools:SetFrameRef("raidMarksFrame", Cell.frames.raidMarksFrame)
     end
 end)
 
