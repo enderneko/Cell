@@ -141,7 +141,12 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                 end
                 -- update size
                 if t["size"] then
-                    P:Size(indicator, t["size"][1], t["size"][2])
+                    -- NOTE: debuffs: ["size"] = {{normalSize}, {bigSize}}
+                    if t["indicatorName"] == "debuffs" then
+                        indicator:SetSize(t["size"][1], t["size"][2])
+                    else
+                        P:Size(indicator, t["size"][1], t["size"][2])
+                    end
                 end
                 -- update thickness
                 if t["thickness"] then
@@ -299,10 +304,12 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
         elseif setting == "size" then
             F:IterateAllUnitButtons(function(b)
                 local indicator = b.indicators[indicatorName]
-                P:Size(indicator, value[1], value[2])
                 if indicatorName == "debuffs" then
+                    indicator:SetSize(value[1], value[2])
                     -- update debuffs' normal/big icon sizes
                     UnitButton_UpdateAuras(b)
+                else
+                    P:Size(indicator, value[1], value[2])
                 end
             end)
         elseif setting == "size-border" then
@@ -919,7 +926,12 @@ local function UpdateUnitHealthState(self)
 
     self.state.health = health
     self.state.healthMax = healthMax
-    self.state.healthPercent = health / healthMax
+
+    if healthMax == 0 then
+        self.state.healthPercent = 0
+    else
+        self.state.healthPercent = health / healthMax
+    end
 
     self.state.wasDead = self.state.isDead
     self.state.isDead = health == 0

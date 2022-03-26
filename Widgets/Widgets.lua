@@ -118,7 +118,8 @@ font_class:SetShadowColor(0, 0, 0)
 font_class:SetShadowOffset(1, -1)
 font_class:SetJustifyH("CENTER")
 
-local defaultFont, fontSizeOffset = 0
+local defaultFont = GameFontNormal:GetFont()
+local fontSizeOffset = 0
 function addon:UpdateOptionsFont(offset, useGameFont)
     if useGameFont then
         defaultFont = GameFontNormal:GetFont()

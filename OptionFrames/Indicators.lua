@@ -358,7 +358,12 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                 end
                 -- update size
                 if t["size"] then
-                    P:Size(indicator, t["size"][1], t["size"][2])
+                    -- NOTE: debuffs: ["size"] = {{normalSize}, {bigSize}}
+                    if t["indicatorName"] == "debuffs" then
+                        indicator:SetSize(t["size"][1], t["size"][2])
+                    else
+                        P:Size(indicator, t["size"][1], t["size"][2])
+                    end
                 end
                 -- update thickness
                 if t["thickness"] then
@@ -464,7 +469,11 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
         elseif setting == "frameLevel" then
             indicator:SetFrameLevel(previewButton.widget.overlayFrame:GetFrameLevel()+value)
         elseif setting == "size" then
-            P:Size(indicator, value[1], value[2])
+            if indicatorName == "debuffs" then
+                indicator:SetSize(value[1], value[2])
+            else
+                P:Size(indicator, value[1], value[2])
+            end
         elseif setting == "size-border" then
             P:Size(indicator, value[1], value[2])
             indicator:SetBorder(value[3])

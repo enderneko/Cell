@@ -19,7 +19,7 @@ local function RegisterDragForOptionsFrame(frame)
     end)
     frame:SetScript("OnDragStop", function()
         optionsFrame:StopMovingOrSizing()
-        P:PixelPerfectPoint(optionsFrame)
+        -- P:PixelPerfectPoint(optionsFrame)
     end)
 end
 
