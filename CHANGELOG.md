@@ -1,7 +1,5 @@
-[Full Changelog](https://github.com/enderneko/Cell/compare/r82-release...ca7eeedfe09519120cca4515e7297e2bab5ad40a)
+[Full Changelog](https://github.com/enderneko/Cell/compare/r83-release...b4ac39b53806d4b2882d0dedcf42533978b02f4f)
 
-- Fix boss678 auras
-- Implement indicators import
-- Implement indicators export
-- Fix HealthText indicator
-- Add ReloadUI popup for hideBlizzardCB
+- Update SotFO debuffs
+- Implement Layout Sharing
+- Add new custom indicator "Color"

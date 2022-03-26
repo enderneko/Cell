@@ -51,6 +51,12 @@ select(2, ...).L = setmetatable({
     ["RAID_DEBUFFS_TIPS"] = "Tips: [Drag & Drop] to change debuff order. [Double-Click] on instance name to open Encounter Journal. [Shift+Left Click] on instance/boss name to share debuffs. [Alt+Left Click] on instance/boss name to reset debuffs. The priority of General Debuffs is higher than Boss Debuffs.",
 
     ["CHANGE LOGS"] = [[
+        <h1>r84-release (Mar 26, 2022, 15:45 GMT+8)</h1>
+        <p>+ Implemented layout sharing.</p>
+        <p>+ Added new custom indicator type: Color.</p>
+        <p>* Updated SotFO debuffs.</p>
+        <br/>
+
         <h1>r83-release (Mar 18, 2022, 13:50 GMT+8)</h1>
         <p>+ Implemented indicators import/export.</p>
         <p>* Fixed Health Text indicator.</p>
