@@ -469,7 +469,7 @@ L["Bug Report & Suggestion"] = "问题报告与建议"
 L["Change Logs"] = "更新记录"
 L["CHANGE LOGS"] = [[
     <h1>r85-release (Mar 26, 2022, 18:00 GMT+8)</h1>
-    <p>+ 修复当缩放不为1时出现的bug.</p>
+    <p>* 修复当缩放不为1时出现的bug。</p>
     <br/>
 
     <h1>r84-release (Mar 26, 2022, 15:45 GMT+8)</h1>

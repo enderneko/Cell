@@ -52,7 +52,7 @@ select(2, ...).L = setmetatable({
 
     ["CHANGE LOGS"] = [[
         <h1>r85-release (Mar 26, 2022, 18:00 GMT+8)</h1>
-        <p>+ Fixed bugs (occured when scale ≠ 1).</p>
+        <p>* Fixed bugs (occured when scale ≠ 1).</p>
         <br/>
 
         <h1>r84-release (Mar 26, 2022, 15:45 GMT+8)</h1>
