@@ -63,7 +63,7 @@ select(2, ...).L = setmetatable({
         <br/>
 
         <h1>r82-release (Mar 16, 2022, 13:20 GMT+8)</h1>
-        <p>+ Implemented unitbutton fadeIn & fadeOut.</p>
+        <p>+ Implemented unitbutton fadeIn &amp; fadeOut.</p>
         <p>* Updated BigDebuffs.</p>
         <p>* Try to fix boss6/7/8 health updating issues with CLEU.</p>
         <br/>
