@@ -1,5 +1,4 @@
-[Full Changelog](https://github.com/enderneko/Cell/compare/r83-release...b4ac39b53806d4b2882d0dedcf42533978b02f4f)
+[Full Changelog](https://github.com/enderneko/Cell/compare/r84-release...20d11bb5286a48fb14f87d73800c6f0b861fc689)
 
-- Update SotFO debuffs
-- Implement Layout Sharing
-- Add new custom indicator "Color"
+- Update enUS
+- Fix bugs (when scale ~= 1)
