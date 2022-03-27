@@ -136,7 +136,7 @@ function eventFrame:ADDON_LOADED(arg1)
                 ["enableTooltips"] = false,
                 ["hideTooltipsInCombat"] = true,
                 -- ["enableAurasTooltips"] = false,
-                ["tooltipsPosition"] = {"BOTTOMLEFT", "Unit Button", "TOPLEFT", 0, 15},
+                ["tooltipsPosition"] = {"BOTTOMLEFT", "Default", "TOPLEFT", 0, 15},
                 ["showSolo"] = true,
                 ["showParty"] = true,
                 ["showPartyPets"] = true,
