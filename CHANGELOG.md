@@ -1,4 +1,4 @@
-[Full Changelog](https://github.com/enderneko/Cell/compare/r84-release...20d11bb5286a48fb14f87d73800c6f0b861fc689)
+[Full Changelog](https://github.com/enderneko/Cell/compare/r85-release...6036de118f67552c9e78eb90789df7a03ab01bb1)
 
-- Update enUS
-- Fix bugs (when scale ~= 1)
+- Add "Default" tooltip anchor
+- Update default GameTooltip anchor
