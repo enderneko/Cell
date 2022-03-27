@@ -16,7 +16,7 @@ tooltipsText:SetPoint("TOPLEFT", 203, -5)
 local enableTooltipsCB, hideTooltipsInCombatCB, tooltipsAnchor, tooltipsAnchorText, tooltipsAnchoredTo, tooltipsAnchoredToText, tooltipsX, tooltipsY
 
 local function UpdateTooltipsOptions()
-    if strfind(CellDB["general"]["tooltipsPosition"][2], "Cursor") then
+    if strfind(CellDB["general"]["tooltipsPosition"][2], "Cursor") or CellDB["general"]["tooltipsPosition"][2] == "Default" then
         tooltipsAnchor:SetEnabled(false)
         tooltipsAnchorText:SetTextColor(.4, .4, .4)
     else
@@ -24,7 +24,7 @@ local function UpdateTooltipsOptions()
         tooltipsAnchorText:SetTextColor(1, 1, 1)
     end
 
-    if CellDB["general"]["tooltipsPosition"][2] == "Cursor" then
+    if CellDB["general"]["tooltipsPosition"][2] == "Cursor" or CellDB["general"]["tooltipsPosition"][2] == "Default" then
         tooltipsX:SetEnabled(false)
         tooltipsY:SetEnabled(false)
     else
@@ -36,7 +36,9 @@ end
 function F:ShowTooltips(anchor, tooltipType, value)
     if not CellDB["general"]["enableTooltips"] or (CellDB["general"]["hideTooltipsInCombat"] and InCombatLockdown()) then return end
     
-    if CellDB["general"]["tooltipsPosition"][2] == "Cell" then
+    if CellDB["general"]["tooltipsPosition"][2] == "Default" then
+        GameTooltip_SetDefaultAnchor(GameTooltip, anchor)
+    elseif CellDB["general"]["tooltipsPosition"][2] == "Cell" then
         GameTooltip:SetOwner(Cell.frames.mainFrame, "ANCHOR_NONE")
         GameTooltip:SetPoint(CellDB["general"]["tooltipsPosition"][1], Cell.frames.mainFrame, CellDB["general"]["tooltipsPosition"][3], CellDB["general"]["tooltipsPosition"][4], CellDB["general"]["tooltipsPosition"][5])
     elseif CellDB["general"]["tooltipsPosition"][2] == "Unit Button" then
@@ -111,7 +113,7 @@ tooltipsAnchorText:SetPoint("BOTTOMLEFT", tooltipsAnchor, "TOPLEFT", 0, 1)
 
 tooltipsAnchoredTo = Cell:CreateDropdown(generalTab, 89)
 tooltipsAnchoredTo:SetPoint("TOPLEFT", tooltipsAnchor, "TOPRIGHT", 5, 0)
-local relatives = {"Cell", "Unit Button", "Cursor", "Cursor Left", "Cursor Right"}
+local relatives = {"Default", "Cell", "Unit Button", "Cursor", "Cursor Left", "Cursor Right"}
 local relativeToItems = {}
 for _, relative in pairs(relatives) do
     tinsert(relativeToItems, {
