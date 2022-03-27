@@ -36,5 +36,5 @@ jobs:
                                    # file naming for non-tagged builds will not work properly
 
       # once cloned, we just run the GitHub Action for the packager project
-      - name: WoW Packager
-        uses: BigWigsMods/packager@v2
+      - name: Create Retail Package
+        uses: BigWigsMods/packager@master
