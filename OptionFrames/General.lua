@@ -262,11 +262,11 @@ end, L["Buff Tracker"].." |cffff7727"..L["MODERATE CPU USAGE"], L["Check if your
 buffCB:SetPoint("TOPLEFT", reportCB, "TOPRIGHT", 115, 0)
 
 -- ready & pull
-local pullText, pullDropdown, secDropdown
+local pullText, pullDropdown, secEditBox
 local readyPullCB = Cell:CreateCheckButton(generalTab, L["ReadyCheck and PullTimer buttons"], function(checked, self)
     CellDB["raidTools"]["readyAndPull"][1] = checked
     pullDropdown:SetEnabled(checked)
-    secDropdown:SetEnabled(checked)
+    secEditBox:SetEnabled(checked)
     if checked then
         pullText:SetTextColor(1, 1, 1)
     else
@@ -280,85 +280,69 @@ pullText = generalTab:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
 pullText:SetText(L["Pull Timer"])
 pullText:SetPoint("TOPLEFT", readyPullCB, "BOTTOMRIGHT", 5, -9)
 
-pullDropdown = Cell:CreateDropdown(generalTab, 75)
+pullDropdown = Cell:CreateDropdown(generalTab, 90)
 pullDropdown:SetPoint("LEFT", pullText, "RIGHT", 7, 0)
 pullDropdown:SetItems({
     {
-        ["text"] = "ExRT",
+        ["text"] = L["Default"],
+        ["value"] = "default",
         ["onClick"] = function()
-            CellDB["raidTools"]["readyAndPull"][2][1] = "ExRT"
+            CellDB["raidTools"]["readyAndPull"][2][1] = "default"
+            Cell:Fire("UpdateRaidTools", "pullTimer")
+        end,
+    },
+    {
+        ["text"] = "MRT",
+        ["value"] = "mrt",
+        ["onClick"] = function()
+            CellDB["raidTools"]["readyAndPull"][2][1] = "mrt"
             Cell:Fire("UpdateRaidTools", "pullTimer")
         end,
     },
     {
         ["text"] = "DBM",
+        ["value"] = "dbm",
         ["onClick"] = function()
-            CellDB["raidTools"]["readyAndPull"][2][1] = "DBM"
+            CellDB["raidTools"]["readyAndPull"][2][1] = "dbm"
             Cell:Fire("UpdateRaidTools", "pullTimer")
         end,
     },
     {
-        ["text"] = "BW",
+        ["text"] = "BigWigs",
+        ["value"] = "bw",
         ["onClick"] = function()
-            CellDB["raidTools"]["readyAndPull"][2][1] = "BW"
+            CellDB["raidTools"]["readyAndPull"][2][1] = "bw"
             Cell:Fire("UpdateRaidTools", "pullTimer")
         end,
     },
 })
 
-secDropdown = Cell:CreateDropdown(generalTab, 70)
-secDropdown:SetPoint("LEFT", pullDropdown, "RIGHT", 5, 0)
-secDropdown:SetItems({
-    {
-        ["text"] = 5,
-        ["onClick"] = function()
-            CellDB["raidTools"]["readyAndPull"][2][2] = 5
-            Cell:Fire("UpdateRaidTools", "pullTimer")
-        end,
-    },
-    {
-        ["text"] = 7,
-        ["onClick"] = function()
-            CellDB["raidTools"]["readyAndPull"][2][2] = 7
-            Cell:Fire("UpdateRaidTools", "pullTimer")
-        end,
-    },
-    {
-        ["text"] = 10,
-        ["onClick"] = function()
-            CellDB["raidTools"]["readyAndPull"][2][2] = 10
-            Cell:Fire("UpdateRaidTools", "pullTimer")
-        end,
-    },
-    {
-        ["text"] = 15,
-        ["onClick"] = function()
-            CellDB["raidTools"]["readyAndPull"][2][2] = 15
-            Cell:Fire("UpdateRaidTools", "pullTimer")
-        end,
-    },
-    {
-        ["text"] = 20,
-        ["onClick"] = function()
-            CellDB["raidTools"]["readyAndPull"][2][2] = 20
-            Cell:Fire("UpdateRaidTools", "pullTimer")
-        end,
-    },
-    {
-        ["text"] = 25,
-        ["onClick"] = function()
-            CellDB["raidTools"]["readyAndPull"][2][2] = 25
-            Cell:Fire("UpdateRaidTools", "pullTimer")
-        end,
-    },
-    {
-        ["text"] = 30,
-        ["onClick"] = function()
-            CellDB["raidTools"]["readyAndPull"][2][2] = 30
-            Cell:Fire("UpdateRaidTools", "pullTimer")
-        end,
-    },
-})
+secEditBox = Cell:CreateEditBox(generalTab, 38, 20, false, false, true)
+secEditBox:SetPoint("TOPLEFT", pullDropdown, "TOPRIGHT", 5, 0)
+secEditBox:SetMaxLetters(3)
+
+secEditBox.confirmBtn = Cell:CreateButton(generalTab, "OK", "class", {27, 20})
+secEditBox.confirmBtn:SetPoint("TOPLEFT", secEditBox, "TOPRIGHT", -1, 0)
+secEditBox.confirmBtn:Hide()
+secEditBox.confirmBtn:SetScript("OnHide", function()
+    secEditBox.confirmBtn:Hide()
+end)
+secEditBox.confirmBtn:SetScript("OnClick", function()
+    CellDB["raidTools"]["readyAndPull"][2][2] = tonumber(secEditBox:GetText())
+    Cell:Fire("UpdateRaidTools", "pullTimer")
+    secEditBox.confirmBtn:Hide()
+end)
+
+secEditBox:SetScript("OnTextChanged", function(self, userChanged)
+    if userChanged then
+        local newSec = tonumber(self:GetText())
+        if newSec and newSec > 0 and newSec ~= CellDB["raidTools"]["readyAndPull"][2][2] then
+            secEditBox.confirmBtn:Show()
+        else
+            secEditBox.confirmBtn:Hide()
+        end
+    end
+end)
 
 -- marks bar
 local marksDropdown
@@ -369,11 +353,11 @@ local marksBarCB = Cell:CreateCheckButton(generalTab, L["Marks Bar"], function(c
 end, L["Marks Bar"], L["Only show when you have permission to do this"], L["marksTips"])
 marksBarCB:SetPoint("TOPLEFT", readyPullCB, "BOTTOMLEFT", 0, -38)
 
-marksDropdown = Cell:CreateDropdown(generalTab, 150)
+marksDropdown = Cell:CreateDropdown(generalTab, 200)
 marksDropdown:SetPoint("TOPLEFT", marksBarCB, "BOTTOMRIGHT", 5, -5)
 marksDropdown:SetItems({
     {
-        ["text"] = L["Target Marks"].." (H)",
+        ["text"] = L["Target Marks"].." ("..L["Horizontal"]..")",
         ["value"] = "target_h",
         ["onClick"] = function()
             CellDB["raidTools"]["marks"][2] = "target_h"
@@ -381,7 +365,7 @@ marksDropdown:SetItems({
         end,
     },
     {
-        ["text"] = L["Target Marks"].." (V)",
+        ["text"] = L["Target Marks"].." ("..L["Vertical"]..")",
         ["value"] = "target_v",
         ["onClick"] = function()
             CellDB["raidTools"]["marks"][2] = "target_v"
@@ -389,7 +373,7 @@ marksDropdown:SetItems({
         end,
     },
     {
-        ["text"] = L["World Marks"].." (H)",
+        ["text"] = L["World Marks"].." ("..L["Horizontal"]..")",
         ["value"] = "world_h",
         ["onClick"] = function()
             CellDB["raidTools"]["marks"][2] = "world_h"
@@ -397,7 +381,7 @@ marksDropdown:SetItems({
         end,
     },
     {
-        ["text"] = L["World Marks"].." (V)",
+        ["text"] = L["World Marks"].." ("..L["Vertical"]..")",
         ["value"] = "world_v",
         ["onClick"] = function()
             CellDB["raidTools"]["marks"][2] = "world_v"
@@ -405,7 +389,7 @@ marksDropdown:SetItems({
         end,
     },
     {
-        ["text"] = L["Both"].." (H)",
+        ["text"] = L["Both"].." ("..L["Horizontal"]..")",
         ["value"] = "both_h",
         ["onClick"] = function()
             CellDB["raidTools"]["marks"][2] = "both_h"
@@ -413,7 +397,7 @@ marksDropdown:SetItems({
         end,
     },
     {
-        ["text"] = L["Both"].." (V)",
+        ["text"] = L["Both"].." ("..L["Vertical"]..")",
         ["value"] = "both_v",
         ["onClick"] = function()
             CellDB["raidTools"]["marks"][2] = "both_v"
@@ -474,10 +458,10 @@ local function ShowTab(tab)
         buffCB:SetChecked(CellDB["raidTools"]["buffTracker"][1])
 
         readyPullCB:SetChecked(CellDB["raidTools"]["readyAndPull"][1])
-        pullDropdown:SetSelected(CellDB["raidTools"]["readyAndPull"][2][1])
-        secDropdown:SetSelected(CellDB["raidTools"]["readyAndPull"][2][2])
+        pullDropdown:SetSelectedValue(CellDB["raidTools"]["readyAndPull"][2][1])
+        secEditBox:SetText(CellDB["raidTools"]["readyAndPull"][2][2])
         pullDropdown:SetEnabled(CellDB["raidTools"]["readyAndPull"][1])
-        secDropdown:SetEnabled(CellDB["raidTools"]["readyAndPull"][1])
+        secEditBox:SetEnabled(CellDB["raidTools"]["readyAndPull"][1])
         if CellDB["raidTools"]["readyAndPull"][1] then
             pullText:SetTextColor(1, 1, 1)
         else

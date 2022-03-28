@@ -52,7 +52,7 @@ end
 Cell:RegisterCallback("ShowMover", "RaidButtons_ShowMover", ShowMover)
 
 -------------------------------------------------
--- buttons
+-- pull
 -------------------------------------------------
 pullBtn = Cell:CreateStatusBarButton(buttonsFrame, L["Pull"], {60, 17}, 7, "SecureActionButtonTemplate")
 pullBtn:SetPoint("BOTTOMLEFT")
@@ -62,57 +62,78 @@ pullBtn:SetAttribute("type1", "macro")
 pullBtn:SetAttribute("type2", "macro")
 pullBtn:Hide()
 
-local pullTicker
-pullBtn:RegisterEvent("CHAT_MSG_ADDON")
-pullBtn:SetScript("OnEvent", function(self, event, prefix, text)
-    if prefix == "D4" then -- DBM
-        local pre, timer = strsplit("\t", text)
-        timer = tonumber(timer)
-        if pre == "PT" and timer > 0 then -- start
-            pullBtn:SetMaxValue(timer)
-            pullBtn:Start()
-            
-            -- update button text
-            pullBtn:SetText(timer)
-            if pullTicker then
-                pullTicker:Cancel()
-                pullTicker = nil
-            end
-            pullBtn.timer = timer
-            pullTicker = C_Timer.NewTicker(1, function()
-                pullBtn.timer = pullBtn.timer - 1
-                if pullBtn.timer == 0 then
-                    pullBtn:SetText(L["Go!"])
-                elseif pullBtn.timer == -1 then
-                    pullBtn:SetText(L["Pull"])
-                else
-                    pullBtn:SetText(pullBtn.timer)
-                end
-            end, timer+1)
+-------------------------------------------------
+-- pull bar
+-------------------------------------------------
+pullBtn:SetScript("OnEvent", function(self, event, ...)
+    self[event](self, ...)
+end)
 
-        elseif pre == "PT" and timer  == 0 then -- cancel
-            pullBtn:Stop()
-           
-            -- update button text
+local pullTicker
+local function Start(sec)
+    pullBtn:SetMaxValue(sec)
+    pullBtn:Start()
+    
+    -- update button text
+    pullBtn:SetText(sec)
+    if pullTicker then
+        pullTicker:Cancel()
+        pullTicker = nil
+    end
+    pullBtn.sec = sec
+    pullTicker = C_Timer.NewTicker(1, function()
+        pullBtn.sec = pullBtn.sec - 1
+        if pullBtn.sec == 0 then
+            pullBtn:SetText(L["Go!"])
+        elseif pullBtn.sec == -1 then
             pullBtn:SetText(L["Pull"])
-            if pullTicker then
-                pullTicker:Cancel()
-                pullTicker = nil
-            end
+        else
+            pullBtn:SetText(pullBtn.sec)
+        end
+    end, sec+1)
+end
+
+local function Stop()
+    pullBtn:Stop()
+           
+    -- update button text
+    pullBtn:SetText(L["Pull"])
+    if pullTicker then
+        pullTicker:Cancel()
+        pullTicker = nil
+    end
+end
+
+function pullBtn:CHAT_MSG_ADDON(prefix, text)
+    if prefix == "D4" then -- DBM
+        local pre, sec = strsplit("\t", text)
+        sec = tonumber(sec)
+        if pre == "PT" and sec > 0 then -- start
+            Start(sec)
+        elseif pre == "PT" and sec  == 0 then -- cancel
+            Stop()
         end
 
     -- elseif prefix == "BigWigs" then
-    --     local _, pre, timer = strsplit("^", text)
-    --     timer = tonumber(timer)
-    --     if pre == "Pull" and timer > 0 then -- start
-    --         pullBtn:SetMaxValue(timer)
-    --         pullBtn.bar:Show()
-    --     elseif pre == "Pull" and timer  == 0 then -- cancel
-    --         pullBtn.bar:Hide()
+    --     local _, pre, sec = strsplit("^", text)
+    --     sec = tonumber(sec)
+    --     if pre == "Pull" and sec > 0 then -- start
+    --     elseif pre == "Pull" and sec  == 0 then -- cancel
     --     end
     end
-end)
+end
 
+function pullBtn:START_TIMER(timerType, timeRemaining, totalTime)
+    if totalTime > 0 then
+        Start(totalTime)
+    else
+        Stop()
+    end
+end
+
+-------------------------------------------------
+-- ready
+-------------------------------------------------
 readyBtn = Cell:CreateStatusBarButton(buttonsFrame, L["Ready"], {60, 17}, 35)
 P:Point(readyBtn, "BOTTOMLEFT", pullBtn, "TOPLEFT", 0, 3)
 -- P:Point(readyBtn, "BOTTOMRIGHT", pullBtn, "TOPRIGHT", 0, 3)
@@ -182,15 +203,24 @@ local function UpdateRaidTools(which)
     end
 
     if not which or which == "pullTimer" then
-        if CellDB["raidTools"]["readyAndPull"][2][1] == "ExRT" then
+        pullBtn:UnregisterAllEvents()
+        if CellDB["raidTools"]["readyAndPull"][2][1] == "mrt" then
+            pullBtn:RegisterEvent("CHAT_MSG_ADDON")
             pullBtn:SetAttribute("macrotext1", "/ert pull "..CellDB["raidTools"]["readyAndPull"][2][2])
             pullBtn:SetAttribute("macrotext2", "/ert pull 0")
-        elseif CellDB["raidTools"]["readyAndPull"][2][1] == "DBM" then
+        elseif CellDB["raidTools"]["readyAndPull"][2][1] == "dbm" then
+            pullBtn:RegisterEvent("CHAT_MSG_ADDON")
             pullBtn:SetAttribute("macrotext1", "/dbm pull "..CellDB["raidTools"]["readyAndPull"][2][2])
             pullBtn:SetAttribute("macrotext2", "/dbm pull 0")
-        else -- BW
+        elseif CellDB["raidTools"]["readyAndPull"][2][1] == "bw" then
+            pullBtn:RegisterEvent("CHAT_MSG_ADDON")
             pullBtn:SetAttribute("macrotext1", "/pull "..CellDB["raidTools"]["readyAndPull"][2][2])
             pullBtn:SetAttribute("macrotext2", "/pull 0")
+        else -- default
+            -- C_PartyInfo.DoCountdown(CellDB["raidTools"]["readyAndPull"][2][2])
+            pullBtn:RegisterEvent("START_TIMER")
+            pullBtn:SetAttribute("macrotext1", "/cd "..CellDB["raidTools"]["readyAndPull"][2][2])
+            pullBtn:SetAttribute("macrotext2", "/cd 0")
         end
     end
 

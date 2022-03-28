@@ -153,7 +153,7 @@ function eventFrame:ADDON_LOADED(arg1)
                 ["showBattleRes"] = true,
                 ["buffTracker"] = {false, {}},
                 ["deathReport"] = {false, 10},
-                ["readyAndPull"] = {false, {"ExRT", 7}, {}},
+                ["readyAndPull"] = {false, {"default", 7}, {}},
                 ["marks"] = {false, "both_h", {}},
             }
         end
