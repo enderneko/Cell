@@ -1229,7 +1229,7 @@ previewModeText:SetText(L["Preview"])
 -------------------------------------------------
 -- button size
 -------------------------------------------------
-local buttonSizeText = Cell:CreateSeparator(L["Unit Button Size"], layoutsTab, 122)
+local buttonSizeText = Cell:CreateSeparator(L["Unit Button"], layoutsTab, 122)
 buttonSizeText:SetPoint("TOPLEFT", 5, -210)
 
 -- width
