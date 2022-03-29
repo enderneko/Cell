@@ -30,7 +30,7 @@ end
 
 local eventFrame = CreateFrame("Frame")
 eventFrame:SetScript("OnEvent", function(self, event, ...)
-	self[event](self, ...)
+    self[event](self, ...)
 end)
 
 local sendChannel
@@ -327,7 +327,7 @@ Comm:RegisterComm("CELL_REQ", function(prefix, message, channel, requester)
             ["type"] = "Debuffs",
             ["instanceId"] = instanceId,
             ["bossId"] = bossId,
-            -- ["data"] = CellDB["raidDebuffs"][instanceId][bossId]
+            ["version"] = Cell.versionNum
         }
 
         -- check db
@@ -349,6 +349,7 @@ Comm:RegisterComm("CELL_REQ", function(prefix, message, channel, requester)
             requestData = {
                 ["type"] = "Layout",
                 ["name"] = name1,
+                ["version"] = Cell.versionNum,
                 ["data"] = CellDB["layouts"][name1]
             }
         end

@@ -5,7 +5,6 @@ local Serializer = LibStub:GetLibrary("LibSerialize")
 local LibDeflate = LibStub:GetLibrary("LibDeflate")
 local deflateConfig = {level = 9}
 
-local MINIMUM_VERSION = 83
 local toLayout, toLayoutName
 local imported
 
@@ -106,7 +105,7 @@ local textArea = Cell:CreateScrollEditBox(importFrame, function(eb, userChanged)
         count = tonumber(count)
 
         if version and count and data then
-            if version >= MINIMUM_VERSION then
+            if version >= Cell.MIN_INDICATORS_VERSION then
                 local success
                 data = LibDeflate:DecodeForPrint(data) -- decode
                 success, data = pcall(LibDeflate.DecompressDeflate, LibDeflate, data) -- decompress

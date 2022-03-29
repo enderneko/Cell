@@ -5,7 +5,6 @@ local Serializer = LibStub:GetLibrary("LibSerialize")
 local LibDeflate = LibStub:GetLibrary("LibDeflate")
 local deflateConfig = {level = 9}
 
-local MINIMUM_VERSION = 80
 local isImport, imported, exported = false, {}, ""
 
 local importExportFrame = CreateFrame("Frame", "CellOptionsFrame_LayoutsImportExport", Cell.frames.layoutsTab, "BackdropTemplate")
@@ -81,7 +80,7 @@ local textArea = Cell:CreateScrollEditBox(importExportFrame, function(eb, userCh
             version = tonumber(version)
 
             if name and version and data then
-                if version >= MINIMUM_VERSION then
+                if version >= Cell.MIN_LAYOUTS_VERSION then
                     local success
                     data = LibDeflate:DecodeForPrint(data) -- decode
                     success, data = pcall(LibDeflate.DecompressDeflate, LibDeflate, data) -- decompress

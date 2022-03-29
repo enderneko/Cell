@@ -12,6 +12,11 @@ local I = Cell.iFuncs
 local P = Cell.pixelPerfectFuncs
 local L = Cell.L
 
+-- sharing version check
+Cell.MIN_LAYOUTS_VERSION = 87
+Cell.MIN_INDICATORS_VERSION = 83
+Cell.MIN_DEBUFFS_VERSION = 78
+
 --@debug@
 local debugMode = true
 --@end-debug@
@@ -288,6 +293,7 @@ function eventFrame:ADDON_LOADED(arg1)
         
         -- misc ---------------------------------------------------------------------------------
         Cell.version = GetAddOnMetadata(addonName, "version")
+        Cell.versionNum = tonumber(string.match(Cell.version, "%d+")) 
         if not CellDB["revise"] then CellDB["firstRun"] = true end
         F:Revise()
         F:CheckWhatsNew()

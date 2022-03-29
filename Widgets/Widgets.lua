@@ -2759,6 +2759,8 @@ function addon:CreateReceivingFrame(parent)
 
         if status then
             if received["type"] == "Debuffs" then
+                local isCompatible = type(received["version"]) == "number" and received["version"] >= Cell.MIN_DEBUFFS_VERSION
+                
                 F:Debug("|cffFFDAB9RECEIVED DEBUFFS:|r ", received["instanceId"], received["bossId"], received["data"])
                 local builtIn, custom = F:CalcRaidDebuffs(received["instanceId"], received["bossId"], received["data"])
 
@@ -2772,17 +2774,23 @@ function addon:CreateReceivingFrame(parent)
                 end)
                 
                 C_Timer.After(0.5, function()
-                    infoMsg:SetMsg(L["This will overwrite your debuffs"], dataText)
+                    if isCompatible then
+                        infoMsg:SetMsg(L["This will overwrite your debuffs"], dataText)
+                    else
+                        infoMsg:SetMsg(L["Incompatible Version"], dataText)
+                    end
                     addon:ChangeSizeWithAnimation(f, 249, f.height+15+math.ceil(dataText:GetStringHeight()+infoMsg:GetStringHeight()), 7, nil, function()
                         dataLabel:Show()
                         dataText:Show()
                         infoMsg:Show()
-                        importBtn:SetEnabled(true)
+                        importBtn:SetEnabled(isCompatible)
                         if func then func() end
                     end)
                 end)
 
             elseif received["type"] == "Layout" then
+                local isCompatible = type(received["version"]) == "number" and received["version"] >= Cell.MIN_LAYOUTS_VERSION
+
                 F:Debug("|cffFFDAB9RECEIVED LAYOUT:|r ", received["name"], received["data"])
 
                 importBtn:SetScript("OnClick", function()
@@ -2805,12 +2813,16 @@ function addon:CreateReceivingFrame(parent)
                 end)
 
                 C_Timer.After(0.5, function()
-                    infoMsg:SetMsg(L["It will be renamed if this layout name already exists"], fromText)
+                    if isCompatible then
+                        infoMsg:SetMsg(L["It will be renamed if this layout name already exists"], fromText)
+                    else
+                        infoMsg:SetMsg(L["Incompatible Version"], fromText)
+                    end
                     addon:ChangeSizeWithAnimation(f, 249, f.height+15+math.ceil(infoMsg:GetStringHeight()), 7, nil, function()
                         dataLabel:Show()
                         dataText:Show()
                         infoMsg:Show()
-                        importBtn:SetEnabled(true)
+                        importBtn:SetEnabled(isCompatible)
                         if func then func() end
                     end)
                 end)

@@ -5,7 +5,6 @@ local Serializer = LibStub:GetLibrary("LibSerialize")
 local LibDeflate = LibStub:GetLibrary("LibDeflate")
 local deflateConfig = {level = 9}
 
-local MINIMUM_VERSION = 78
 local isImport, imported = false, {}
 local exportedAllBosses, exported = false, ""
 local currentInstanceId, currentBossId, currentBossName
@@ -113,7 +112,7 @@ local textArea = Cell:CreateScrollEditBox(importExportFrame, function(eb, userCh
                 local instanceName, bossName = F:GetInstanceAndBossName(instanceId, bossId)
                 
                 if isValidBossId and instanceName then
-                    if version >= MINIMUM_VERSION then
+                    if version >= Cell.MIN_DEBUFFS_VERSION then
                         local success
                         data = LibDeflate:DecodeForPrint(data) -- decode
                         success, data = pcall(LibDeflate.DecompressDeflate, LibDeflate, data) -- decompress
