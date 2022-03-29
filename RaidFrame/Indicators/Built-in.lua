@@ -748,11 +748,11 @@ function I:CreateNameText(parent)
     end
 
     function nameText:UpdateName()
-        F:UpdateTextWidth(nameText, parent.state.name, nameText.width)
+        F:UpdateTextWidth(nameText, parent.state.name, nameText.width, parent.widget.healthBar)
     end
 
     function nameText:UpdateVehicleName()
-        F:UpdateTextWidth(vehicleText, nameText.isPreview and L["vehicle name"] or UnitName(parent.state.displayedUnit), nameText.width)
+        F:UpdateTextWidth(vehicleText, nameText.isPreview and L["vehicle name"] or UnitName(parent.state.displayedUnit), nameText.width, parent.widget.healthBar)
     end
 
     function nameText:UpdateVehicleNamePosition(pTable)
@@ -782,9 +782,9 @@ function I:CreateNameText(parent)
 
     function nameText:UpdateTextWidth(width)
         nameText.width = width
-        F:UpdateTextWidth(nameText, parent.state.name, width)
+        F:UpdateTextWidth(nameText, parent.state.name, width, parent.widget.healthBar)
         if parent.state.inVehicle or nameText.isPreview then
-            F:UpdateTextWidth(vehicleText, nameText.isPreview and L["Vehicle Name"] or UnitName(parent.state.displayedUnit), width)
+            F:UpdateTextWidth(vehicleText, nameText.isPreview and L["Vehicle Name"] or UnitName(parent.state.displayedUnit), width, parent.widget.healthBar)
         end
     end
 
@@ -796,7 +796,7 @@ function I:CreateNameText(parent)
         end
     end
 
-    parent:SetScript("OnSizeChanged", function()
+    parent.widget.healthBar:SetScript("OnSizeChanged", function()
         if parent.state.name then
             nameText:UpdateName()
             

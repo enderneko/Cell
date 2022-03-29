@@ -39,7 +39,8 @@ previewText:SetText(Cell:GetPlayerClassColorString()..L["Preview"])
 
 local function UpdatePreviewButton()
     P:Size(previewButton, currentLayoutTable["size"][1], currentLayoutTable["size"][2])
-    previewButton.func.SetPowerHeight(currentLayoutTable["powerHeight"])
+    previewButton.func.SetOrientation(unpack(currentLayoutTable["barOrientation"]))
+    previewButton.func.SetPowerSize(currentLayoutTable["powerSize"])
     previewButton:GetScript("OnSizeChanged")(previewButton)
     
     previewButton.widget.healthBar:SetStatusBarTexture(Cell.vars.texture)

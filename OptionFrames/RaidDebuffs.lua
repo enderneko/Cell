@@ -1437,7 +1437,8 @@ local function UpdatePreviewButton()
     end
 
     previewButton:SetSize(unpack(Cell.vars.currentLayoutTable["size"]))
-    previewButton.func.SetPowerHeight(Cell.vars.currentLayoutTable["powerHeight"])
+    previewButton.func.SetOrientation(unpack(Cell.vars.currentLayoutTable["barOrientation"]))
+    previewButton.func.SetPowerSize(Cell.vars.currentLayoutTable["powerSize"])
 
     previewButton.widget.healthBar:SetStatusBarTexture(Cell.vars.texture)
     previewButton.widget.powerBar:SetStatusBarTexture(Cell.vars.texture)

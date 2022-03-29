@@ -94,24 +94,22 @@ previewText2:SetPoint("TOP", 0, -3)
 previewText2:SetText(Cell:GetPlayerClassColorString()..L["Preview"].." 2")
 
 local function UpdatePreviewShields()
-    local width = previewButton2.widget.healthBar:GetWidth()
-
     if CellDB["appearance"]["healPrediction"] then
-        previewButton2.widget.incomingHeal:SetWidth(width * 0.2)
+        previewButton2.widget.incomingHeal:SetValue(0.2)
         previewButton2.widget.incomingHeal:Show()
     else
         previewButton2.widget.incomingHeal:Hide()
     end
 
     if CellDB["appearance"]["healAbsorb"] then
-        previewButton2.widget.absorbsBar:SetWidth(width * 0.3)
+        previewButton2.widget.absorbsBar:SetValue(0.3)
         previewButton2.widget.absorbsBar:Show()
     else
         previewButton2.widget.absorbsBar:Hide()
     end
 
     if CellDB["appearance"]["shield"] then
-        previewButton2.widget.shieldBar:SetWidth(width * 0.4)
+        previewButton2.widget.shieldBar:SetValue(0.4)
         previewButton2.widget.shieldBar:Show()
     else
         previewButton2.widget.shieldBar:Hide()
@@ -148,11 +146,15 @@ local function UpdatePreviewButton()
     previewButton:SetBackdropColor(0, 0, 0, CellDB["appearance"]["bgAlpha"])
     previewButton2:SetBackdropColor(0, 0, 0, CellDB["appearance"]["bgAlpha"])
     
+    -- barOrientation
+    previewButton.func.SetOrientation(unpack(Cell.vars.currentLayoutTable["barOrientation"]))
+    previewButton2.func.SetOrientation(unpack(Cell.vars.currentLayoutTable["barOrientation"]))
+
     -- size
     previewButton:SetSize(unpack(Cell.vars.currentLayoutTable["size"]))
-    previewButton.func.SetPowerHeight(Cell.vars.currentLayoutTable["powerHeight"])
+    previewButton.func.SetPowerSize(Cell.vars.currentLayoutTable["powerSize"])
     previewButton2:SetSize(unpack(Cell.vars.currentLayoutTable["size"]))
-    previewButton2.func.SetPowerHeight(Cell.vars.currentLayoutTable["powerHeight"])
+    previewButton2.func.SetPowerSize(Cell.vars.currentLayoutTable["powerSize"])
 
     -- value
     if CellDB["appearance"]["barAnimation"] == "Smooth" then
@@ -163,6 +165,9 @@ local function UpdatePreviewButton()
     
     previewButton2.widget.healthBar:SetMinMaxValues(0, 100)
     previewButton2.widget.healthBar:SetValue(60)
+    previewButton2.state.healthMax = 100
+    previewButton2.state.healthPercent = 0.6
+
 
     -- health color
     local r, g, b, lossR, lossG, lossB 
@@ -175,6 +180,8 @@ local function UpdatePreviewButton()
     previewButton2.widget.healthBarLoss:SetVertexColor(lossR, lossG, lossB, CellDB["appearance"]["lossAlpha"])
 
     UpdatePreviewShields()
+
+    previewButton.loaded = true
 end
 
 local states = {-30, -60, 50, -40, 80}
@@ -253,6 +260,7 @@ local function CheckTextures()
                 ["texture"] = textures[name],
                 ["onClick"] = function()
                     CellDB["appearance"]["texture"] = name
+                    F:GetBarTexture() -- update Cell.vars.texture NOW
                     Cell:Fire("UpdateAppearance", "texture")
                 end,
             })
@@ -266,6 +274,7 @@ local function CheckTextures()
             ["texture"] = defaultTexture,
             ["onClick"] = function()
                 CellDB["appearance"]["texture"] = defaultTextureName
+                F:GetBarTexture() -- update Cell.vars.texture NOW
                 Cell:Fire("UpdateAppearance", "texture")
             end,
         })
@@ -678,6 +687,13 @@ local function ShowTab(tab)
     end
 end
 Cell:RegisterCallback("ShowOptionsTab", "AppearanceTab_ShowTab", ShowTab)
+
+local function UpdateLayout()
+    if previewButton.loaded then
+        UpdatePreviewButton()
+    end
+end
+Cell:RegisterCallback("UpdateLayout", "AppearanceTab_UpdateLayout", UpdateLayout)
 
 -------------------------------------------------
 -- update appearance

@@ -278,14 +278,18 @@ local function NPCFrame_UpdateLayout(layout, which)
     -- if layout ~= Cell.vars.currentLayout then return end
     layout = Cell.vars.currentLayoutTable
 
-    if not which or which == "size" or which == "power" then
+    if not which or which == "size" or which == "power" or which == "barOrientation" then
         npcFrame:SetSize(unpack(layout["size"]))
         for _, b in pairs(Cell.unitButtons.npc) do
             if not which or which == "size" then
                 b:SetSize(unpack(layout["size"]))
             end
-            if not which or which == "power" then
-                b.func.SetPowerHeight(layout["powerHeight"])
+            -- NOTE: SetOrientation BEFORE SetPowerSize
+            if not which or which == "barOrientation" then
+                b.func.SetOrientation(unpack(layout["barOrientation"]))
+            end
+            if not which or which == "power" or which == "barOrientation" then
+                b.func.SetPowerSize(layout["powerSize"])
             end
         end
     end

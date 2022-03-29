@@ -167,7 +167,7 @@ local function PartyFrame_UpdateLayout(layout, which)
         header:SetAttribute("unitsPerColumn", 5)
     end
 
-    if not which or which == "size" or which == "petSize" or which == "power" then
+    if not which or which == "size" or which == "petSize" or which == "power" or which == "barOrientation" then
         for i, playerButton in ipairs({header:GetChildren()}) do
             local petButton = playerButton.petButton
 
@@ -192,9 +192,15 @@ local function PartyFrame_UpdateLayout(layout, which)
                 end
             end
 
-            if not which or which == "power" then
-                playerButton.func.SetPowerHeight(layout["powerHeight"])
-                petButton.func.SetPowerHeight(layout["powerHeight"])
+            -- NOTE: SetOrientation BEFORE SetPowerSize
+            if not which or which == "barOrientation" then
+                playerButton.func.SetOrientation(unpack(layout["barOrientation"]))
+                petButton.func.SetOrientation(unpack(layout["barOrientation"]))
+            end
+           
+            if not which or which == "power" or which == "barOrientation" then
+                playerButton.func.SetPowerSize(layout["powerSize"])
+                petButton.func.SetPowerSize(layout["powerSize"])
             end
         end
     end

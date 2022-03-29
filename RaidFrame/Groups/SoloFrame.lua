@@ -42,10 +42,16 @@ local function SoloFrame_UpdateLayout(layout, which)
             petButton:SetSize(unpack(layout["size"]))
         end
     end
+
+    -- NOTE: SetOrientation BEFORE SetPowerSize
+    if not which or which == "barOrientation" then
+        playerButton.func.SetOrientation(unpack(layout["barOrientation"]))
+        petButton.func.SetOrientation(unpack(layout["barOrientation"]))
+    end
     
-    if not which or which == "power" then
-        playerButton.func.SetPowerHeight(layout["powerHeight"])
-        petButton.func.SetPowerHeight(layout["powerHeight"])
+    if not which or which == "power" or which == "barOrientation" then
+        playerButton.func.SetPowerSize(layout["powerSize"])
+        petButton.func.SetPowerSize(layout["powerSize"])
     end
 
 

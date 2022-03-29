@@ -1151,7 +1151,7 @@ function addon:CreateSwitch(parent, size, leftText, leftValue, rightText, rightV
     textRight:SetText(rightText)
 
     local highlight = switch:CreateTexture(nil, "ARTWORK")
-    highlight:SetColorTexture(classColor.t[1], classColor.t[2], classColor.t[3], class=="PRIEST" and .5 or .6)
+    highlight:SetColorTexture(classColor.t[1], classColor.t[2], classColor.t[3], class=="PRIEST" and 0.35 or 0.45)
 
     local function UpdateHighlight(which)
         highlight:ClearAllPoints()
@@ -1207,11 +1207,11 @@ function addon:CreateSwitch(parent, size, leftText, leftValue, rightText, rightV
     end)
 
     switch:SetScript("OnEnter", function()
-        highlight:SetColorTexture(classColor.t[1], classColor.t[2], classColor.t[3], .8)
+        highlight:SetColorTexture(classColor.t[1], classColor.t[2], classColor.t[3], class=="PRIEST" and 0.55 or 0.65)
     end)
 
     switch:SetScript("OnLeave", function()
-        highlight:SetColorTexture(classColor.t[1], classColor.t[2], classColor.t[3], class=="PRIEST" and .5 or .6)
+        highlight:SetColorTexture(classColor.t[1], classColor.t[2], classColor.t[3], class=="PRIEST" and 0.35 or 0.45)
     end)
 
     return switch

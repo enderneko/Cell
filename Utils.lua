@@ -357,14 +357,14 @@ function F:GetUnitButtonByGUID(guid)
     end
 end
 
-function F:UpdateTextWidth(fs, text, width)
+function F:UpdateTextWidth(fs, text, width, relativeTo)
     if not text or not width then return end
 
     if width == "unlimited" then
         fs:SetText(text)
     elseif width[1] == "percentage" then
         local percent = width[2] or 0.75
-        local width = fs:GetParent():GetWidth() - 2
+        local width = relativeTo:GetWidth() - 2
         for i = string.utf8len(text), 0, -1 do
             fs:SetText(string.utf8sub(text, 1, i))
             if fs:GetWidth() / width <= percent then
@@ -698,7 +698,7 @@ end
 -------------------------------------------------
 function F:GetTexCoord(width, height)
     -- ULx,ULy, LLx,LLy, URx,URy, LRx,LRy
-    local texCoord = {.12, .12, .12, .88, .88, .12, .88, .88}
+    local texCoord = {0.12, 0.12, 0.12, 0.88, 0.88, 0.12, 0.88, 0.88}
     local aspectRatio = width / height
 
     local xRatio = aspectRatio < 1 and aspectRatio or 1
@@ -710,6 +710,27 @@ function F:GetTexCoord(width, height)
     end
     
     return texCoord
+end
+
+-- function F:RotateTexture(tex, degrees)
+--     local angle = math.rad(degrees)
+--     local cos, sin = math.cos(angle), math.sin(angle)
+--     tex:SetTexCoord((sin - cos), -(cos + sin), -cos, -sin, sin, -cos, 0, 0)
+-- end
+
+-- https://wowpedia.fandom.com/wiki/Applying_affine_transformations_using_SetTexCoord
+local s2 = sqrt(2)
+local function CalculateCorner(degrees)
+    local r = math.rad(degrees)
+    return 0.5 + math.cos(r) / s2, 0.5 + math.sin(r) / s2
+end
+function F:RotateTexture(texture, degrees)
+    local LRx, LRy = CalculateCorner(degrees + 45)
+    local LLx, LLy = CalculateCorner(degrees + 135)
+    local ULx, ULy = CalculateCorner(degrees + 225)
+    local URx, URy = CalculateCorner(degrees - 45)
+    
+    texture:SetTexCoord(ULx, ULy, LLx, LLy, URx, URy, LRx, LRy)
 end
 
 -------------------------------------------------

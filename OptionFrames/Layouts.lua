@@ -92,8 +92,12 @@ local function UpdatePreviewButton(which, value)
         previewButton:SetSize(unpack(selectedLayoutTable["size"]))
     end
 
-    if not which or which == "power" then
-        previewButton.func.SetPowerHeight(selectedLayoutTable["powerHeight"])
+    if not which or which == "barOrientation" then
+        previewButton.func.SetOrientation(unpack(selectedLayoutTable["barOrientation"]))
+    end
+
+    if not which or which == "power" or which == "barOrientation" then
+        previewButton.func.SetPowerSize(selectedLayoutTable["powerSize"])
     end
 end
 
@@ -1083,6 +1087,103 @@ local function UpdateGroupFilter()
 end
 
 -------------------------------------------------
+-- button size
+-------------------------------------------------
+local buttonSizeText = Cell:CreateSeparator(L["Unit Button"], layoutsTab, 122)
+buttonSizeText:SetPoint("TOPLEFT", 5, -210)
+
+-- width
+local widthSlider = Cell:CreateSlider(L["Width"], layoutsTab, 20, 300, 100, 2, function(value)
+    selectedLayoutTable["size"][1] = value
+    if selectedLayout == Cell.vars.currentLayout then
+        Cell:Fire("UpdateLayout", selectedLayout, "size")
+    end
+    UpdatePreviewButton("size")
+    UpdateLayoutPreview()
+    UpdateNPCPreview()
+end)
+widthSlider:SetPoint("TOPLEFT", buttonSizeText, "BOTTOMLEFT", 5, -25)
+
+-- height
+local heightSlider = Cell:CreateSlider(L["Height"], layoutsTab, 20, 300, 100, 2, function(value)
+    selectedLayoutTable["size"][2] = value
+    if selectedLayout == Cell.vars.currentLayout then
+        Cell:Fire("UpdateLayout", selectedLayout, "size")
+    end
+    UpdatePreviewButton("size")
+    UpdateLayoutPreview()
+    UpdateNPCPreview()
+end)
+heightSlider:SetPoint("TOPLEFT", widthSlider, "BOTTOMLEFT", 0, -40)
+
+-- power height
+local powerSizeSlider = Cell:CreateSlider(L["Power Size"], layoutsTab, 0, 20, 100, 1, function(value)
+    selectedLayoutTable["powerSize"] = value
+    if selectedLayout == Cell.vars.currentLayout then
+        Cell:Fire("UpdateLayout", selectedLayout, "power")
+    end
+    UpdatePreviewButton("power")
+end)
+powerSizeSlider:SetPoint("TOPLEFT", heightSlider, "BOTTOMLEFT", 0, -40)
+
+-- petSize
+local petSizeCB, petWidthSlider, petHeightSlider
+petSizeCB = Cell:CreateCheckButton(layoutsTab, L["Pet Button Size"], function(checked, self)
+    if checked then
+        petWidthSlider:SetEnabled(true)
+        petHeightSlider:SetEnabled(true)
+    else
+        petWidthSlider:SetEnabled(false)
+        petHeightSlider:SetEnabled(false)
+    end
+    selectedLayoutTable["petSize"][1] = checked
+    if selectedLayout == Cell.vars.currentLayout then
+        Cell:Fire("UpdateLayout", selectedLayout, "petSize")
+    end
+end)
+petSizeCB:SetPoint("TOPLEFT", buttonSizeText, "BOTTOMLEFT", 5, -25)
+
+-- petWidth
+petWidthSlider = Cell:CreateSlider(L["Width"].." ("..PET..")", layoutsTab, 40, 300, 100, 2, function(value)
+    selectedLayoutTable["petSize"][2] = value
+    if selectedLayout == Cell.vars.currentLayout then
+        Cell:Fire("UpdateLayout", selectedLayout, "petSize")
+    end
+end)
+petWidthSlider:SetPoint("TOPLEFT", petSizeCB, "BOTTOMLEFT", 0, -36)
+
+-- petHeight
+petHeightSlider = Cell:CreateSlider(L["Height"].." ("..PET..")", layoutsTab, 20, 300, 100, 2, function(value)
+    selectedLayoutTable["petSize"][3] = value
+    if selectedLayout == Cell.vars.currentLayout then
+        Cell:Fire("UpdateLayout", selectedLayout, "petSize")
+    end
+end)
+petHeightSlider:SetPoint("TOPLEFT", petWidthSlider, "BOTTOMLEFT", 0, -40)
+
+-- player/pet switch
+local switch = Cell:CreateSwitch(layoutsTab, {22, 10}, "", "player", "", "pet", function(which)
+    if which == "player" then
+        widthSlider:Show()
+        heightSlider:Show()
+        powerSizeSlider:Show()
+        petSizeCB:Hide()
+        petWidthSlider:Hide()
+        petHeightSlider:Hide()
+    else
+        widthSlider:Hide()
+        heightSlider:Hide()
+        powerSizeSlider:Hide()
+        petSizeCB:Show()
+        petWidthSlider:Show()
+        petHeightSlider:Show()
+    end
+end)
+switch:SetPoint("RIGHT", layoutsTab, "LEFT", 127, 0)
+switch:SetPoint("BOTTOM", buttonSizeText)
+switch:SetSelected("player", true)
+
+-------------------------------------------------
 -- group arrangement
 -------------------------------------------------
 local arrangementText = Cell:CreateSeparator(L["Group Arrangement"], layoutsTab, 254)
@@ -1226,109 +1327,6 @@ local previewModeText = layoutsTab:CreateFontString(nil, "OVERLAY", "CELL_FONT_W
 previewModeText:SetPoint("BOTTOMLEFT", previewModeBtn, "TOPLEFT", 0, 1)
 previewModeText:SetText(L["Preview"])
 
--------------------------------------------------
--- button size
--------------------------------------------------
-local buttonSizeText = Cell:CreateSeparator(L["Unit Button"], layoutsTab, 122)
-buttonSizeText:SetPoint("TOPLEFT", 5, -210)
-
--- width
-local widthSlider = Cell:CreateSlider(L["Width"], layoutsTab, 40, 300, 100, 2, function(value)
-    selectedLayoutTable["size"][1] = value
-    if selectedLayout == Cell.vars.currentLayout then
-        Cell:Fire("UpdateLayout", selectedLayout, "size")
-    end
-    UpdatePreviewButton("size")
-    UpdateLayoutPreview()
-    UpdateNPCPreview()
-end)
-widthSlider:SetPoint("TOPLEFT", buttonSizeText, "BOTTOMLEFT", 5, -25)
-
--- height
-local heightSlider = Cell:CreateSlider(L["Height"], layoutsTab, 20, 300, 100, 2, function(value)
-    selectedLayoutTable["size"][2] = value
-    if selectedLayout == Cell.vars.currentLayout then
-        Cell:Fire("UpdateLayout", selectedLayout, "size")
-    end
-    UpdatePreviewButton("size")
-    UpdateLayoutPreview()
-    UpdateNPCPreview()
-end)
-heightSlider:SetPoint("TOPLEFT", widthSlider, "BOTTOMLEFT", 0, -40)
-
--- power height
-local powerHeightSlider = Cell:CreateSlider(L["Power Height"], layoutsTab, 0, 20, 100, 1, function(value)
-    selectedLayoutTable["powerHeight"] = value
-    if selectedLayout == Cell.vars.currentLayout then
-        Cell:Fire("UpdateLayout", selectedLayout, "power")
-    end
-    UpdatePreviewButton("power")
-end)
-powerHeightSlider:SetPoint("TOPLEFT", heightSlider, "BOTTOMLEFT", 0, -40)
-
--- petSize
-local petSizeCB, petWidthSlider, petHeightSlider
-petSizeCB = Cell:CreateCheckButton(layoutsTab, L["Pet Button Size"], function(checked, self)
-    if checked then
-        petWidthSlider:SetEnabled(true)
-        petHeightSlider:SetEnabled(true)
-    else
-        petWidthSlider:SetEnabled(false)
-        petHeightSlider:SetEnabled(false)
-    end
-    selectedLayoutTable["petSize"][1] = checked
-    if selectedLayout == Cell.vars.currentLayout then
-        Cell:Fire("UpdateLayout", selectedLayout, "petSize")
-    end
-end)
-petSizeCB:SetPoint("TOPLEFT", buttonSizeText, "BOTTOMLEFT", 5, -25)
-
--- petWidth
-petWidthSlider = Cell:CreateSlider(L["Width"].." ("..PET..")", layoutsTab, 40, 300, 100, 2, function(value)
-    selectedLayoutTable["petSize"][2] = value
-    if selectedLayout == Cell.vars.currentLayout then
-        Cell:Fire("UpdateLayout", selectedLayout, "petSize")
-    end
-end)
-petWidthSlider:SetPoint("TOPLEFT", petSizeCB, "BOTTOMLEFT", 0, -36)
-
--- petHeight
-petHeightSlider = Cell:CreateSlider(L["Height"].." ("..PET..")", layoutsTab, 20, 300, 100, 2, function(value)
-    selectedLayoutTable["petSize"][3] = value
-    if selectedLayout == Cell.vars.currentLayout then
-        Cell:Fire("UpdateLayout", selectedLayout, "petSize")
-    end
-end)
-petHeightSlider:SetPoint("TOPLEFT", petWidthSlider, "BOTTOMLEFT", 0, -40)
-
--- player/pet switch
-local switch = Cell:CreateSwitch(layoutsTab, {22, 10}, "", "player", "", "pet", function(which)
-    if which == "player" then
-        widthSlider:Show()
-        heightSlider:Show()
-        powerHeightSlider:Show()
-        petSizeCB:Hide()
-        petWidthSlider:Hide()
-        petHeightSlider:Hide()
-    else
-        widthSlider:Hide()
-        heightSlider:Hide()
-        powerHeightSlider:Hide()
-        petSizeCB:Show()
-        petWidthSlider:Show()
-        petHeightSlider:Show()
-    end
-end)
-switch:SetPoint("RIGHT", layoutsTab, "LEFT", 127, 0)
-switch:SetPoint("BOTTOM", buttonSizeText)
-switch:SetSelected("player", true)
-
--------------------------------------------------
--- misc
--------------------------------------------------
--- local miscText = Cell:CreateSeparator(L["Misc"], layoutsTab, 122)
--- miscText:SetPoint("TOPLEFT", 269, -210)
-
 -- spacing
 local spacingSlider = Cell:CreateSlider(L["Unit Spacing"], layoutsTab, 0, 10, 100, 1, function(value)
     selectedLayoutTable["spacing"] = value
@@ -1373,10 +1371,34 @@ end)
 groupSpacingSlider:SetPoint("TOPLEFT", rcSlider, "BOTTOMLEFT", 0, -40)
 
 -------------------------------------------------
+-- bar orientation
+-------------------------------------------------
+local barOrientationText = Cell:CreateSeparator(L["Bar Orientation"], layoutsTab, 188)
+barOrientationText:SetPoint("TOPLEFT", 5, -400)
+
+local orientationSwitch = Cell:CreateSwitch(layoutsTab, {163, 20}, L["Horizontal"], "horizontal", L["Vertical"], "vertical", function(which)
+    selectedLayoutTable["barOrientation"][1] = which
+    if selectedLayout == Cell.vars.currentLayout then
+        Cell:Fire("UpdateLayout", selectedLayout, "barOrientation")
+    end
+    UpdatePreviewButton("barOrientation")
+end)
+orientationSwitch:SetPoint("TOPLEFT", barOrientationText, "BOTTOMLEFT", 5, -13)
+
+local rotateTexCB = Cell:CreateCheckButton(layoutsTab, L["Rotate Texture"], function(checked)
+    selectedLayoutTable["barOrientation"][2] = checked
+    if selectedLayout == Cell.vars.currentLayout then
+        Cell:Fire("UpdateLayout", selectedLayout, "barOrientation")
+    end
+    UpdatePreviewButton("barOrientation")
+end)
+rotateTexCB:SetPoint("TOPLEFT", orientationSwitch, "BOTTOMLEFT", 0, -10)
+
+-------------------------------------------------
 -- npc frame
 -------------------------------------------------
 local npcFrameText = Cell:CreateSeparator(L["Friendly NPC Frame"], layoutsTab, 188)
-npcFrameText:SetPoint("TOPLEFT", 5, -400)
+npcFrameText:SetPoint("TOPLEFT", 203, -400)
 
 local separateCB = Cell:CreateCheckButton(layoutsTab, L["Separate NPC Frame"], function(checked)
     selectedLayoutTable["npcAnchor"][1] = checked
@@ -1397,7 +1419,7 @@ separateCB:SetPoint("TOPLEFT", npcFrameText, "BOTTOMLEFT", 5, -15)
 -- misc
 -------------------------------------------------
 local miscText = Cell:CreateSeparator(L["Misc"], layoutsTab, 188)
-miscText:SetPoint("TOPLEFT", 203, -400)
+miscText:SetPoint("TOPLEFT", 203, -460)
 
 local powerFilterBtn = Cell:CreateButton(layoutsTab, L["Power Bar Filters"], "class-hover", {163, 20})
 Cell.frames.layoutsTab.powerFilterBtn = powerFilterBtn
@@ -1427,7 +1449,7 @@ LoadLayoutDB = function(layout)
 
     widthSlider:SetValue(selectedLayoutTable["size"][1])
     heightSlider:SetValue(selectedLayoutTable["size"][2])
-    powerHeightSlider:SetValue(selectedLayoutTable["powerHeight"])
+    powerSizeSlider:SetValue(selectedLayoutTable["powerSize"])
 
     petSizeCB:SetChecked(selectedLayoutTable["petSize"][1])
     petWidthSlider:SetValue(selectedLayoutTable["petSize"][2])
@@ -1464,6 +1486,10 @@ LoadLayoutDB = function(layout)
     -- group arrangement
     orientationDropdown:SetSelectedValue(selectedLayoutTable["orientation"])
     anchorDropdown:SetSelectedValue(selectedLayoutTable["anchor"])
+
+    -- bar orientation
+    orientationSwitch:SetSelected(selectedLayoutTable["barOrientation"][1])
+    rotateTexCB:SetChecked(selectedLayoutTable["barOrientation"][2])
 
     -- npc frame
     separateCB:SetChecked(selectedLayoutTable["npcAnchor"][1])

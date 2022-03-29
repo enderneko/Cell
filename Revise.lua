@@ -1005,6 +1005,18 @@ function F:Revise()
                 CellDB["raidTools"]["readyAndPull"][2][1] = "bw"
             end
         end
+
+        for _, layout in pairs(CellDB["layouts"]) do
+            -- add barOrientation to layout
+            if type(layout["barOrientation"]) ~= "table" then
+                layout["barOrientation"] = {"horizontal", false}
+            end
+            -- rename powerHeight to powerSize
+            if type(layout["powerSize"]) ~= "number" then
+                layout["powerSize"] = layout["powerHeight"]
+                layout["powerHeight"] = nil
+            end
+        end
     end
 
     CellDB["revise"] = Cell.version
