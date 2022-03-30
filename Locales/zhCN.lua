@@ -163,6 +163,7 @@ L["Heal Absorb"] = "治疗吸收"
 L["Shield Texture"] = "护盾材质"
 L["Overshield Texture"] = "超过血量上限的护盾材质"
 L["Reset All"] = "全部重置"
+L["[Ctrl+LeftClick] to reset these settings"] = "[Ctrl+左键] 点击此按钮来重置这些设置"
 
 -------------------------------------------------
 -- click-castings

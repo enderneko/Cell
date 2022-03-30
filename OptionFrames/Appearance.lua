@@ -587,56 +587,58 @@ oversCB:SetPoint("TOPLEFT", shieldCB, "BOTTOMLEFT", 0, -7)
 
 
 -- reset
-local resetBtn = Cell:CreateButton(appearanceTab, L["Reset All"], "class", {77, 17})
+local resetBtn = Cell:CreateButton(appearanceTab, L["Reset All"], "class", {77, 17}, nil, nil, nil, nil, nil, L["Reset All"], L["[Ctrl+LeftClick] to reset these settings"])
 resetBtn:SetPoint("RIGHT", -5, 0)
 resetBtn:SetPoint("BOTTOM", unitButtonText, 0, -1)
 resetBtn:SetScript("OnClick", function()
-    CellDB["appearance"]["texture"] = "Cell ".._G.DEFAULT
-    CellDB["appearance"]["barColor"] = {"Class Color", {.2, .2, .2}}
-    CellDB["appearance"]["lossColor"] = {"Class Color (dark)", {.667, 0, 0}}
-    CellDB["appearance"]["barAlpha"] = 1
-    CellDB["appearance"]["lossAlpha"] = 1
-    CellDB["appearance"]["bgAlpha"] = 1
-    CellDB["appearance"]["powerColor"] = {"Power Color", {.7, .7, .7}}
-    CellDB["appearance"]["barAnimation"] = "Flash"
-    CellDB["appearance"]["iconAnimation"] = "duration"
-    CellDB["appearance"]["targetColor"] = {1, .31, .31, 1}
-    CellDB["appearance"]["mouseoverColor"] = {1, 1, 1, .6}
-    CellDB["appearance"]["highlightSize"] = 1
-    CellDB["appearance"]["outOfRangeAlpha"] = .45
-    CellDB["appearance"]["healPrediction"] = true
-    CellDB["appearance"]["healAbsorb"] = true
-    CellDB["appearance"]["shield"] = true
-    CellDB["appearance"]["overshield"] = true
+    if IsControlKeyDown() then
+        CellDB["appearance"]["texture"] = "Cell ".._G.DEFAULT
+        CellDB["appearance"]["barColor"] = {"Class Color", {.2, .2, .2}}
+        CellDB["appearance"]["lossColor"] = {"Class Color (dark)", {.667, 0, 0}}
+        CellDB["appearance"]["barAlpha"] = 1
+        CellDB["appearance"]["lossAlpha"] = 1
+        CellDB["appearance"]["bgAlpha"] = 1
+        CellDB["appearance"]["powerColor"] = {"Power Color", {.7, .7, .7}}
+        CellDB["appearance"]["barAnimation"] = "Flash"
+        CellDB["appearance"]["iconAnimation"] = "duration"
+        CellDB["appearance"]["targetColor"] = {1, .31, .31, 1}
+        CellDB["appearance"]["mouseoverColor"] = {1, 1, 1, .6}
+        CellDB["appearance"]["highlightSize"] = 1
+        CellDB["appearance"]["outOfRangeAlpha"] = .45
+        CellDB["appearance"]["healPrediction"] = true
+        CellDB["appearance"]["healAbsorb"] = true
+        CellDB["appearance"]["shield"] = true
+        CellDB["appearance"]["overshield"] = true
 
-    textureDropdown:SetSelected("Cell ".._G.DEFAULT, "Interface\\AddOns\\Cell\\Media\\statusbar.tga")
+        textureDropdown:SetSelected("Cell ".._G.DEFAULT, "Interface\\AddOns\\Cell\\Media\\statusbar.tga")
 
-    barColorDropdown:SetSelected(L["Class Color"])
-    barColorPicker:SetColor({.2, .2, .2})
+        barColorDropdown:SetSelected(L["Class Color"])
+        barColorPicker:SetColor({.2, .2, .2})
 
-    lossColorDropdown:SetSelected(L["Class Color (dark)"])
-    lossColorPicker:SetColor({.667, 0, 0})
+        lossColorDropdown:SetSelected(L["Class Color (dark)"])
+        lossColorPicker:SetColor({.667, 0, 0})
 
-    powerColorDropdown:SetSelected(L["Power Color"])
-    powerColorPicker:SetColor({.7, .7, .7})
+        powerColorDropdown:SetSelected(L["Power Color"])
+        powerColorPicker:SetColor({.7, .7, .7})
 
-    barAnimationDropdown:SetSelected(L["Flash"])
-    iconAnimationDropdown:SetSelectedValue("duration")
+        barAnimationDropdown:SetSelected(L["Flash"])
+        iconAnimationDropdown:SetSelectedValue("duration")
 
-    targetColorPicker:SetColor({1, .31, .31, 1})
-    mouseoverColorPicker:SetColor({1, 1, 1, .6})
-    highlightSize:SetValue(1)
-    oorAlpha:SetValue(45)
-    barAlpha:SetValue(100)
-    lossAlpha:SetValue(100)
-    bgAlpha:SetValue(100)
+        targetColorPicker:SetColor({1, .31, .31, 1})
+        mouseoverColorPicker:SetColor({1, 1, 1, .6})
+        highlightSize:SetValue(1)
+        oorAlpha:SetValue(45)
+        barAlpha:SetValue(100)
+        lossAlpha:SetValue(100)
+        bgAlpha:SetValue(100)
 
-    predCB:SetChecked(true)
-    absorbCB:SetChecked(true)
-    shieldCB:SetChecked(true)
-    oversCB:SetChecked(true)
+        predCB:SetChecked(true)
+        absorbCB:SetChecked(true)
+        shieldCB:SetChecked(true)
+        oversCB:SetChecked(true)
 
-    Cell:Fire("UpdateAppearance")
+        Cell:Fire("UpdateAppearance")
+    end
 end)
 Cell:RegisterForCloseDropdown(resetBtn) -- close dropdown
 
