@@ -1,5 +1,6 @@
 local _, Cell = ...
 local F = Cell.funcs
+local P = Cell.pixelPerfectFuncs
 
 local raidFrame = CreateFrame("Frame", "CellRaidFrame", Cell.frames.mainFrame, "SecureHandlerAttributeTemplate")
 Cell.frames.raidFrame = raidFrame
@@ -207,8 +208,7 @@ local function RaidFrame_UpdateLayout(layout, which)
         if not which or which == "size" or which == "petSize" or which == "power" or which == "groupFilter" or which == "barOrientation" then
             for j, b in ipairs({header:GetChildren()}) do
                 if not which or which == "size" or which == "groupFilter" then
-                    b:SetWidth(width)
-                    b:SetHeight(height)
+                    P:Size(b, width, height)
                     b:ClearAllPoints()
                 end
                 -- NOTE: SetOrientation BEFORE SetPowerSize
@@ -222,17 +222,17 @@ local function RaidFrame_UpdateLayout(layout, which)
 
             if not which or which == "size" or which == "groupFilter" then
                 --! important new button size depend on buttonWidth & buttonHeight
-                header:SetAttribute("buttonWidth", width)
-                header:SetAttribute("buttonHeight", height)
+                header:SetAttribute("buttonWidth", P:Scale(width))
+                header:SetAttribute("buttonHeight", P:Scale(height))
 
-                npcFrameAnchor:SetSize(width, height)
+                P:Size(npcFrameAnchor, width, height)
             end
 
             for i = 1, 3 do
                 if layout["petSize"][1] then
-                    arenaPetButtons[i]:SetSize(layout["petSize"][2], layout["petSize"][3])
+                    P:Size(arenaPetButtons[i], layout["petSize"][2], layout["petSize"][3])
                 else
-                    arenaPetButtons[i]:SetSize(width, height)
+                    P:Size(arenaPetButtons[i], width, height)
                 end
                 -- NOTE: SetOrientation BEFORE SetPowerSize
                 arenaPetButtons[i].func.SetOrientation(unpack(layout["barOrientation"]))
@@ -368,6 +368,7 @@ local function RaidFrame_UpdateLayout(layout, which)
             raidFrame:SetAttribute("visibility", 1) -- NOTE: trigger _onattributechanged to set npcFrameAnchor point!
         end
 
+        -- REVIEW: fix name width
         if which == "groupFilter" then
             for j, b in ipairs({header:GetChildren()}) do
                 b:GetScript("OnSizeChanged")(b)

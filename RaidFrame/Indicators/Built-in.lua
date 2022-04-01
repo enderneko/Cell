@@ -235,9 +235,9 @@ function I:CreateDebuffs(parent)
 
     debuffs.OriginalSetSize = debuffs.SetSize
     function debuffs:SetSize(normalSize, bigSize)
-        debuffs:OriginalSetSize(unpack(normalSize))
+        debuffs:OriginalSetSize(P:Scale(normalSize[1]), P:Scale(normalSize[2]))
         for i = 1, 10 do
-            debuffs[i]:SetSize(unpack(normalSize))
+            debuffs[i]:SetSize(P:Scale(normalSize[1]), P:Scale(normalSize[2]))
         end
         -- store sizes for SetCooldown
         debuffs.normalSize = normalSize

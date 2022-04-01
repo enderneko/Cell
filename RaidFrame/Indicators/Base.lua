@@ -244,7 +244,7 @@ function I:CreateAura_BarIcon(name, parent)
 
     local icon = frame:CreateTexture(name.."Icon", "ARTWORK")
     frame.icon = icon
-    icon:SetTexCoord(.12, .88, .12, .88)
+    icon:SetTexCoord(0.12, 0.88, 0.12, 0.88)
     P:Point(icon, "TOPLEFT", frame, "TOPLEFT", 1, -1)
     P:Point(icon, "BOTTOMRIGHT", frame, "BOTTOMRIGHT", -1, 1)
     -- icon:SetDrawLayer("ARTWORK", 1)
@@ -283,11 +283,11 @@ function I:CreateAura_BarIcon(name, parent)
 
     local maskIcon = cooldown:CreateTexture(name.."MaskIcon", "ARTWORK")
     frame.maskIcon = maskIcon
-    maskIcon:SetTexCoord(.12, .88, .12, .88)
+    maskIcon:SetTexCoord(0.12, 0.88, 0.12, 0.88)
     maskIcon:SetDesaturated(true)
     maskIcon:SetAllPoints(icon)
     -- maskIcon:SetDrawLayer("ARTWORK", 0)
-    maskIcon:SetVertexColor(.5, .5, .5, 1)
+    maskIcon:SetVertexColor(0.5, 0.5, 0.5, 1)
     maskIcon:AddMaskTexture(mask)
 
     frame:SetScript("OnSizeChanged", function(self, width, height)

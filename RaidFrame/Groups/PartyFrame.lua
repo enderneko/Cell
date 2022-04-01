@@ -1,5 +1,6 @@
 local _, Cell = ...
 local F = Cell.funcs
+local P = Cell.pixelPerfectFuncs
 
 local partyFrame = CreateFrame("Frame", "CellPartyFrame", Cell.frames.mainFrame, "SecureFrameTemplate")
 Cell.frames.partyFrame = partyFrame
@@ -173,22 +174,22 @@ local function PartyFrame_UpdateLayout(layout, which)
 
             if not which or which == "size" then
                 local width, height = unpack(layout["size"])
-                playerButton:SetSize(width, height)
-                header:SetAttribute("buttonWidth", width)
-                header:SetAttribute("buttonHeight", height)
-                petButton:SetSize(width, height)
+                P:Size(playerButton, width, height)
+                header:SetAttribute("buttonWidth", P:Scale(width))
+                header:SetAttribute("buttonHeight", P:Scale(height))
+                P:Size(petButton, width, height)
                 if layout["petSize"][1] then
-                    petButton:SetSize(layout["petSize"][2], layout["petSize"][3])
+                    P:Size(petButton, layout["petSize"][2], layout["petSize"][3])
                 else
-                    petButton:SetSize(width, height)
+                    P:Size(petButton, width, height)
                 end
             end
 
             if which == "petSize" then
                 if layout["petSize"][1] then
-                    petButton:SetSize(layout["petSize"][2], layout["petSize"][3])
+                    P:Size(petButton, layout["petSize"][2], layout["petSize"][3])
                 else
-                    petButton:SetSize(unpack(layout["size"]))
+                    P:Size(petButton, layout["size"][1], layout["size"][2])
                 end
             end
 

@@ -199,20 +199,17 @@ local function InitIndicator(indicatorName)
         local icons = {132155, 136139, 136128, 240443, 136182, 132155, 136139, 136128, 240443, 136182}
         for i = 1, 10 do
             indicator[i]:SetScript("OnShow", function()
-                indicator[i]:SetCooldown(GetTime(), 7, types[i], icons[i], i)
-                indicator[i].cooldown.value = 0
-                indicator[i].cooldown:SetScript("OnUpdate", function(self, elapsed)
-                    self.value = self.value + elapsed
-                    if self.value >= 7 then
+                indicator[i]:SetCooldown(GetTime(), 8, types[i], icons[i], i)
+                indicator[i].cooldown:SetScript("OnUpdate", nil)
+                indicator[i]:SetScript("OnUpdate", function(self, elapsed)
+                    self.value = (self.value or 0) + elapsed
+                    if self.value >= 8 then
                         self.value = 0
                     end
-                    self:SetValue(self.value)
+                    self.duration:SetText(string.format("%d", 8-self.value))
+                    self.cooldown:SetValue(self.value)
                 end)
             end)
-            -- indicator[i]:SetScript("OnHide", function()
-            --     indicator[i].cooldown:Hide()
-            --     indicator[i].cooldown:SetScript("OnValueChanged", nil)
-            -- end)
         end
         
     elseif indicatorName == "dispels" then
@@ -284,14 +281,15 @@ local function InitIndicator(indicatorName)
         if indicator.indicatorType == "icons" then
             for i = 1, 10 do
                 indicator[i]:SetScript("OnShow", function()
-                    indicator[i]:SetCooldown(GetTime(), 7, nil, 134400, i)
-                    indicator[i].cooldown.value = 0
-                    indicator[i].cooldown:SetScript("OnUpdate", function(self, elapsed)
-                        self.value = self.value + elapsed
-                        if self.value >= 7 then
+                    indicator[i]:SetCooldown(GetTime(), 8, nil, 134400, i)
+                    indicator[i].cooldown:SetScript("OnUpdate", nil)
+                    indicator[i]:SetScript("OnUpdate", function(self, elapsed)
+                        self.value = (self.value or 0) + elapsed
+                        if self.value >= 8 then
                             self.value = 0
                         end
-                        self:SetValue(self.value)
+                        self.duration:SetText(string.format("%d", 8-self.value))
+                        self.cooldown:SetValue(self.value)
                     end)
                 end)
             end
@@ -448,6 +446,8 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                     if indicator.preview then indicator.preview:Hide() end
                 end
             end
+            -- pixel perfect
+            previewButton.func.UpdatePixelPerfect()
         end
     else
         local indicator = previewButton.indicators[indicatorName]
