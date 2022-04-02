@@ -1,12 +1,14 @@
 local _, Cell = ...
 local L = Cell.L
 local F = Cell.funcs
+local P = Cell.pixelPerfectFuncs
 
 local clickCastingsTab = Cell:CreateFrame("CellOptionsFrame_ClickCastingsTab", Cell.frames.optionsFrame, nil, nil, true)
 Cell.frames.clickCastingsTab = clickCastingsTab
 clickCastingsTab:SetAllPoints(Cell.frames.optionsFrame)
 clickCastingsTab:Hide()
 
+local listPane
 local bindingsFrame
 local clickCastingTable
 local loaded
@@ -381,101 +383,88 @@ Cell:RegisterCallback("UpdateClickCastings", "UpdateClickCastings", UpdateClickC
 -------------------------------------------------
 -- profiles dropdown
 -------------------------------------------------
-local profileText = Cell:CreateSeparator(L["Profiles"], clickCastingsTab, 250)
-profileText:SetPoint("TOPLEFT", 5, -5)
+local profileDropdown
 
-local profileDropdown = Cell:CreateDropdown(clickCastingsTab, 240)
-profileDropdown:SetPoint("TOPLEFT", profileText, "BOTTOMLEFT", 5, -12)
+local function CreateProfilePane()
+    local profilePane = Cell:CreateTitledPane(clickCastingsTab, L["Profiles"], 250, 50)
+    profilePane:SetPoint("TOPLEFT", 5, -5)
+    
+    profileDropdown = Cell:CreateDropdown(profilePane, 240)
+    profileDropdown:SetPoint("TOPLEFT", profilePane, "TOPLEFT", 5, -27)
+    
+    profileDropdown:SetItems({
+        {
+            ["text"] = L["Use common profile"],
+            ["onClick"] = function()
+                Cell.vars.clickCastingTable["useCommon"] = true
+                Cell:Fire("UpdateClickCastings")
+                LoadProfile(true)
+            end,
+        },
+        {
+            ["text"] = L["Use separate profile for each spec"],
+            ["onClick"] = function()
+                Cell.vars.clickCastingTable["useCommon"] = false
+                Cell:Fire("UpdateClickCastings")
+                LoadProfile(false)
+            end,
+        }
+    })
+end
 
-profileDropdown:SetItems({
-    {
-        ["text"] = L["Use common profile"],
-        ["onClick"] = function()
-            Cell.vars.clickCastingTable["useCommon"] = true
-            Cell:Fire("UpdateClickCastings")
-            LoadProfile(true)
-        end,
-    },
-    {
-        ["text"] = L["Use separate profile for each spec"],
-        ["onClick"] = function()
-            Cell.vars.clickCastingTable["useCommon"] = false
-            Cell:Fire("UpdateClickCastings")
-            LoadProfile(false)
-        end,
-    }
-})
 
 -------------------------------------------------
 -- always targeting
 -------------------------------------------------
-local targetingText = Cell:CreateSeparator(L["Always Targeting"], clickCastingsTab, 132)
-targetingText:SetPoint("TOPLEFT", 260, -5)
+local targetingDropdown
 
-local targetingDropdown = Cell:CreateDropdown(clickCastingsTab, 112)
-targetingDropdown:SetPoint("TOPLEFT", targetingText, "BOTTOMLEFT", 5, -12)
+local function CreateTargetingPane()
+    local targetingPane = Cell:CreateTitledPane(clickCastingsTab, L["Always Targeting"], 160, 50)
+    targetingPane:SetPoint("TOPLEFT", clickCastingsTab, "TOPLEFT", 267, -5)
 
-targetingDropdown:SetItems({
-    {
-        ["text"] = L["Disabled"],
-        ["value"] = "disabled",
-        ["onClick"] = function()
-            local spec = Cell.vars.clickCastingTable["useCommon"] and "common" or Cell.vars.playerSpecID
-            CellDB["clickCastings"][Cell.vars.playerClass]["alwaysTargeting"][spec] = "disabled"
-            alwaysTargeting = "disabled"
-            Cell:Fire("UpdateClickCastings", true)
-        end,
-    },
-    {
-        ["text"] = L["Left Spell"],
-        ["value"] = "left",
-        ["onClick"] = function()
-            local spec = Cell.vars.clickCastingTable["useCommon"] and "common" or Cell.vars.playerSpecID
-            CellDB["clickCastings"][Cell.vars.playerClass]["alwaysTargeting"][spec] = "left"
-            alwaysTargeting = "left"
-            Cell:Fire("UpdateClickCastings", true)
-        end,
-    },
-    {
-        ["text"] = L["Any Spells"],
-        ["value"] = "any",
-        ["onClick"] = function()
-            local spec = Cell.vars.clickCastingTable["useCommon"] and "common" or Cell.vars.playerSpecID
-            CellDB["clickCastings"][Cell.vars.playerClass]["alwaysTargeting"][spec] = "any"
-            alwaysTargeting = "any"
-            Cell:Fire("UpdateClickCastings", true)
-        end,
-    },
-})
-Cell:SetTooltip(targetingDropdown, "ANCHOR_TOPLEFT", 0, 2, L["Always Targeting"], L["Only available for Spells"])
+    targetingDropdown = Cell:CreateDropdown(targetingPane, 150)
+    targetingDropdown:SetPoint("TOPLEFT", targetingPane, "TOPLEFT", 5, -27)
 
--------------------------------------------------
--- current profile text
--------------------------------------------------
-local profileText = Cell:CreateSeparator(L["Current Profile"], clickCastingsTab, 387)
-profileText:SetPoint("TOPLEFT", 5, -70)
-profileText:SetJustifyH("LEFT")
-
-local function UpdateCurrentText(isCommon)
-    if isCommon then
-        profileText:SetText(L["Current Profile"]..": "..L["Common"])
-    else
-        profileText:SetText(L["Current Profile"]..": ".."|T"..Cell.vars.playerSpecIcon..":12:12:0:0:12:12:1:11:1:11|t "..Cell.vars.playerSpecName)
-    end
+    targetingDropdown:SetItems({
+        {
+            ["text"] = L["Disabled"],
+            ["value"] = "disabled",
+            ["onClick"] = function()
+                local spec = Cell.vars.clickCastingTable["useCommon"] and "common" or Cell.vars.playerSpecID
+                CellDB["clickCastings"][Cell.vars.playerClass]["alwaysTargeting"][spec] = "disabled"
+                alwaysTargeting = "disabled"
+                Cell:Fire("UpdateClickCastings", true)
+            end,
+        },
+        {
+            ["text"] = L["Left Spell"],
+            ["value"] = "left",
+            ["onClick"] = function()
+                local spec = Cell.vars.clickCastingTable["useCommon"] and "common" or Cell.vars.playerSpecID
+                CellDB["clickCastings"][Cell.vars.playerClass]["alwaysTargeting"][spec] = "left"
+                alwaysTargeting = "left"
+                Cell:Fire("UpdateClickCastings", true)
+            end,
+        },
+        {
+            ["text"] = L["Any Spells"],
+            ["value"] = "any",
+            ["onClick"] = function()
+                local spec = Cell.vars.clickCastingTable["useCommon"] and "common" or Cell.vars.playerSpecID
+                CellDB["clickCastings"][Cell.vars.playerClass]["alwaysTargeting"][spec] = "any"
+                alwaysTargeting = "any"
+                Cell:Fire("UpdateClickCastings", true)
+            end,
+        },
+    })
+    Cell:SetTooltips(targetingDropdown, "ANCHOR_TOPLEFT", 0, 2, L["Always Targeting"], L["Only available for Spells"])
 end
-
-local hintText = clickCastingsTab:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET_TITLE")
-hintText:SetPoint("TOP", profileText)
-hintText:SetPoint("RIGHT", -5, 0)
-hintText:SetJustifyH("RIGHT")
-hintText:SetText("|cFF777777"..L["left-click: edit"].."    "..L["right-click: delete"])
 
 -------------------------------------------------
 -- menu
 -------------------------------------------------
 local menu = Cell.menu
-local bindingButton = Cell:CreateBindingButton(clickCastingsTab, 127)
-
+local bindingButton
 
 local function CheckChanged(index, b)
     if F:Getn(changed[index]) == 1 then -- nothing changed
@@ -490,8 +479,8 @@ local function ShowBindingMenu(index, b)
     -- if already in deleted, do nothing
     if deleted[index] then return end
     
-    bindingButton:ClearAllPoints()
-    bindingButton:SetPoint("TOPLEFT", b.keyGrid)
+    P:ClearPoints(bindingButton)
+    P:Point(bindingButton, "TOPLEFT", b.keyGrid)
     bindingButton:Show()
     menu:Hide()
     
@@ -542,6 +531,7 @@ local function ShowTypesMenu(index, b)
                 end
                 CheckChanged(index, b)
                 CheckChanges()
+                b:HideSpellIcon()
             end,
         },
         {
@@ -562,6 +552,7 @@ local function ShowTypesMenu(index, b)
                 end
                 CheckChanged(index, b)
                 CheckChanges()
+                b:HideSpellIcon()
             end,
         },
         {
@@ -575,21 +566,23 @@ local function ShowTypesMenu(index, b)
                     changed[index]["bindType"] = "spell"
                     changed[index]["bindAction"] = ""
                     b.actionGrid:SetText("")
+                    b:HideSpellIcon()
                 else
                     changed[index]["bindType"] = nil
                     changed[index]["bindAction"] = nil
                     b.actionGrid:SetText(b.bindAction)
+                    b:ShowSpellIcon(b.bindAction)
                 end
                 CheckChanged(index, b)
-                CheckChanges()   
+                CheckChanges()
             end,
         },
     }
 
     menu:SetItems(items)
-    menu:ClearAllPoints()
-    menu:SetPoint("TOPLEFT", b.typeGrid, "BOTTOMLEFT", 0, -1)
-    menu:SetWidths(65)
+    P:ClearPoints(menu)
+    P:Point(menu, "TOPLEFT", b.typeGrid, "BOTTOMLEFT", 0, -1)
+    menu:SetWidths(70)
     menu:ShowMenu()
     bindingButton:Hide()
 end
@@ -608,7 +601,6 @@ local function ShowActionsMenu(index, b)
     end
 
     if bindType == "general" then
-        menu:SetWidths(65)
         items = {
             {
                 ["text"] = L["Target"],
@@ -673,7 +665,6 @@ local function ShowActionsMenu(index, b)
         }
 
     elseif bindType == "macro" then
-        menu:SetWidths(127)
         items = {
             {
                 ["text"] = L["Edit"],
@@ -715,7 +706,6 @@ local function ShowActionsMenu(index, b)
         }
 
     else -- spell
-        menu:SetWidths(187)
         items = {
             {
                 ["text"] = L["Edit"],
@@ -725,15 +715,17 @@ local function ShowActionsMenu(index, b)
                         if b.bindAction ~= text then
                             changed[index]["bindAction"] = text
                             b.actionGrid:SetText(text)
+                            b:ShowSpellIcon(text)
                         else
                             changed[index]["bindAction"] = nil
                             b.actionGrid:SetText(b.bindAction)
+                            b:ShowSpellIcon(b.bindAction)
                         end
                         CheckChanged(index, b)
                         CheckChanges()
                     end)
-                    peb:SetPoint("TOPLEFT", b.actionGrid)
-                    peb:SetPoint("TOPRIGHT", b.actionGrid)
+                    P:Point(peb, "TOPLEFT", b.actionGrid)
+                    P:Point(peb, "TOPRIGHT", b.actionGrid)
                     peb:SetTips("|cff777777"..L["Enter: apply\nESC: discard"])
                     peb:ShowEditBox(b.bindType == "spell" and b.bindAction or "")
                 end,
@@ -752,9 +744,11 @@ local function ShowActionsMenu(index, b)
                     if b.bindAction ~= t[2] then
                         changed[index]["bindAction"] = t[2]
                         b.actionGrid:SetText(t[2])
+                        b:ShowSpellIcon(t[2])
                     else
                         changed[index]["bindAction"] = nil
                         b.actionGrid:SetText(b.bindAction)
+                        b:ShowSpellIcon(b.bindAction)
                     end
                     CheckChanged(index, b)
                     CheckChanges()
@@ -763,25 +757,132 @@ local function ShowActionsMenu(index, b)
         end
     end
 
+    menu:SetWidths(b.actionGrid:GetWidth())
     menu:SetItems(items)
-    menu:ClearAllPoints()
-    menu:SetPoint("TOPLEFT", b.actionGrid, "BOTTOMLEFT", 0, -1)
+    P:ClearPoints(menu)
+    P:Point(menu, "TOPLEFT", b.actionGrid, "BOTTOMLEFT", 0, -1)
     menu:ShowMenu()
     bindingButton:Hide()
 end
 
 -------------------------------------------------
+-- list pane
+-------------------------------------------------
+local CreateBindingListButton
+local last
+
+local function UpdateCurrentText(isCommon)
+    if isCommon then
+        listPane:SetTitle(L["Current Profile"]..": "..L["Common"])
+    else
+        listPane:SetTitle(L["Current Profile"]..": ".."|T"..Cell.vars.playerSpecIcon..":12:12:0:0:12:12:1:11:1:11|t "..Cell.vars.playerSpecName)
+    end
+end
+
+local function CreateListPane()
+    listPane = Cell:CreateTitledPane(clickCastingsTab, L["Current Profile"], 422, 351)
+    listPane:SetPoint("TOPLEFT", clickCastingsTab, "TOPLEFT", 5, -70)
+    
+    local hintText = listPane:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET_TITLE")
+    hintText:SetPoint("BOTTOMRIGHT", listPane.line, "TOPRIGHT", 0, P:Scale(2))
+    hintText:SetText("|cFF777777"..L["left-click: edit"].."    "..L["right-click: delete"])
+    
+    bindingButton = Cell:CreateBindingButton(listPane, 130)
+
+    -- bindings frame
+    bindingsFrame = Cell:CreateFrame("ClickCastingsTab_BindingsFrame", listPane)
+    bindingsFrame:SetPoint("TOPLEFT", 0, -27)
+    bindingsFrame:SetPoint("BOTTOMRIGHT", 0, 19)
+    bindingsFrame:Show()
+
+    Cell:CreateScrollFrame(bindingsFrame, -5, 5)
+    bindingsFrame.scrollFrame:SetScrollStep(25)
+
+    -- new & save & discard
+    local newBtn = Cell:CreateButton(listPane, L["New"], "blue-hover", {141, 20})
+    newBtn:SetPoint("TOPLEFT", bindingsFrame, "BOTTOMLEFT", 0, P:Scale(1))
+    newBtn:SetScript("OnClick", function()
+        local b = CreateBindingListButton("", "notBound", "general", "target", #clickCastingTable+1)
+        tinsert(clickCastingTable, EncodeDB("", "notBound", "general", "target"))
+
+        if last then
+            b:SetPoint("TOP", last, "BOTTOM", 0, -5)
+        else
+            b:SetPoint("TOP")
+        end
+        last = b
+        Cell:Fire("UpdateClickCastings", true)
+        menu:Hide()
+        bindingButton:Hide()
+    end)
+
+    saveBtn = Cell:CreateButton(listPane, L["Save"], "green-hover", {142, 20})
+    saveBtn:SetPoint("TOPLEFT", newBtn, "TOPRIGHT", P:Scale(-1), 0)
+    saveBtn:SetEnabled(false)
+    saveBtn:SetScript("OnClick", function()
+        -- deleted
+        local deletedIndices = {}
+        for index, b in pairs(deleted) do
+            if changed[index] then changed[index] = nil end -- if duplicated in changed, remove it
+            -- clickCastingTable[index] = nil -- update db
+            tinsert(deletedIndices, index)
+        end
+
+        -- changed
+        for index, t in pairs(changed) do
+            local b = t[1]
+            local modifier = t["modifier"] or b.modifier
+            local bindKey = t["bindKey"] or b.bindKey
+            local bindType = t["bindType"] or b.bindType
+            local bindAction = t["bindAction"] or b.bindAction
+            clickCastingTable[index] = EncodeDB(modifier, bindKey, bindType, bindAction)
+        end
+
+        -- delete!
+        table.sort(deletedIndices)
+        for i, index in pairs(deletedIndices) do
+            tremove(clickCastingTable, index-i+1) -- continuous table index
+        end
+
+        -- reload
+        Cell:Fire("UpdateClickCastings")
+        wipe(deleted)
+        wipe(changed)
+        CheckChanges()
+        menu:Hide()
+        if clickCastingsTab.popupEditBox then clickCastingsTab.popupEditBox:Hide() end
+    end)
+
+    discardBtn = Cell:CreateButton(listPane, L["Discard"], "red-hover", {141, 20})
+    discardBtn:SetPoint("TOPLEFT", saveBtn, "TOPRIGHT", P:Scale(-1), 0)
+    discardBtn:SetEnabled(false)
+    discardBtn:SetScript("OnClick", function()
+        -- deleted
+        for index, b in pairs(deleted) do
+            b:SetAlpha(1)
+            b:SetChanged(false)
+        end
+        -- changed
+        for index, t in pairs(changed) do
+            t[1]:SetChanged(false)
+
+            local modifierDisplay = modifiersDisplay[F:GetIndex(modifiers, t[1].modifier)]
+            t[1].keyGrid:SetText(modifierDisplay..L[t[1].bindKey])
+            t[1].typeGrid:SetText(L[F:UpperFirst(t[1].bindType)])
+            t[1].actionGrid:SetText(t[1].bindType == "general" and L[t[1].bindAction] or t[1].bindAction)
+        end
+        wipe(deleted)
+        wipe(changed)
+        CheckChanges()
+        menu:Hide()
+        if clickCastingsTab.popupEditBox then clickCastingsTab.popupEditBox:Hide() end
+    end)
+end
+
+-------------------------------------------------
 -- bindings frame
 -------------------------------------------------
-bindingsFrame = Cell:CreateFrame("ClickCastingsTab_BindingsFrame", clickCastingsTab)
-bindingsFrame:SetPoint("TOPLEFT", 5, -97)
-bindingsFrame:SetPoint("BOTTOMRIGHT", -5, 24)
-bindingsFrame:Show()
-
-Cell:CreateScrollFrame(bindingsFrame, -5, 5)
-bindingsFrame.scrollFrame:SetScrollStep(25)
-
-local function CreateBindingListButton(modifier, bindKey, bindType, bindAction, i)
+CreateBindingListButton = function(modifier, bindKey, bindType, bindAction, i)
     local modifierDisplay = modifiersDisplay[F:GetIndex(modifiers, modifier)]
 
     local b = Cell:CreateBindingListButton(bindingsFrame.scrollFrame.content, modifierDisplay, (bindKey=="P" or bindKey=="T") and bindKey or L[bindKey], L[F:UpperFirst(bindType)], bindType == "general" and L[bindAction] or bindAction)
@@ -801,7 +902,7 @@ local function CreateBindingListButton(modifier, bindKey, bindType, bindAction, 
             else
                 deleted[i] = b
                 b:SetChanged(true)
-                b:SetAlpha(.3)
+                b:SetAlpha(0.3)
             end
             CheckChanges()
         end
@@ -831,10 +932,16 @@ local function CreateBindingListButton(modifier, bindKey, bindType, bindAction, 
         end
     end)
 
+    -- spell icon
+    if bindType == "spell" then
+        b:ShowSpellIcon(bindAction)
+    else
+        b:HideSpellIcon()
+    end
+
     return b
 end
 
-local last
 LoadProfile = function(isCommon)
     targetingDropdown:SetSelectedValue(alwaysTargeting)
     UpdateCurrentText(isCommon)
@@ -862,92 +969,17 @@ LoadProfile = function(isCommon)
 end
 
 -------------------------------------------------
--- new & save & discard
--------------------------------------------------
-local newBtn = Cell:CreateButton(clickCastingsTab, L["New"], "blue-hover", {129, 20})
-newBtn:SetPoint("TOPLEFT", bindingsFrame, "BOTTOMLEFT", 0, 1)
-newBtn:SetScript("OnClick", function()
-    local b = CreateBindingListButton("", "notBound", "general", "target", #clickCastingTable+1)
-    tinsert(clickCastingTable, EncodeDB("", "notBound", "general", "target"))
-
-    if last then
-        b:SetPoint("TOP", last, "BOTTOM", 0, -5)
-    else
-        b:SetPoint("TOP")
-    end
-    last = b
-    Cell:Fire("UpdateClickCastings", true)
-    menu:Hide()
-    bindingButton:Hide()
-end)
-
-saveBtn = Cell:CreateButton(clickCastingsTab, L["Save"], "green-hover", {130, 20})
-saveBtn:SetPoint("LEFT", newBtn, "RIGHT", -1, 0)
-saveBtn:SetEnabled(false)
-saveBtn:SetScript("OnClick", function()
-    -- deleted
-    local deletedIndices = {}
-    for index, b in pairs(deleted) do
-        if changed[index] then changed[index] = nil end -- if duplicated in changed, remove it
-        -- clickCastingTable[index] = nil -- update db
-        tinsert(deletedIndices, index)
-    end
-
-    -- changed
-    for index, t in pairs(changed) do
-        local b = t[1]
-        local modifier = t["modifier"] or b.modifier
-        local bindKey = t["bindKey"] or b.bindKey
-        local bindType = t["bindType"] or b.bindType
-        local bindAction = t["bindAction"] or b.bindAction
-        clickCastingTable[index] = EncodeDB(modifier, bindKey, bindType, bindAction)
-    end
-
-    -- delete!
-    table.sort(deletedIndices)
-    for i, index in pairs(deletedIndices) do
-        tremove(clickCastingTable, index-i+1) -- continuous table index
-    end
-
-    -- reload
-    Cell:Fire("UpdateClickCastings")
-    wipe(deleted)
-    wipe(changed)
-    CheckChanges()
-    menu:Hide()
-    if clickCastingsTab.popupEditBox then clickCastingsTab.popupEditBox:Hide() end
-end)
-
-discardBtn = Cell:CreateButton(clickCastingsTab, L["Discard"], "red-hover", {130, 20})
-discardBtn:SetPoint("LEFT", saveBtn, "RIGHT", -1, 0)
-discardBtn:SetEnabled(false)
-discardBtn:SetScript("OnClick", function()
-    -- deleted
-    for index, b in pairs(deleted) do
-        b:SetAlpha(1)
-        b:SetChanged(false)
-    end
-    -- changed
-    for index, t in pairs(changed) do
-        t[1]:SetChanged(false)
-
-        local modifierDisplay = modifiersDisplay[F:GetIndex(modifiers, t[1].modifier)]
-        t[1].keyGrid:SetText(modifierDisplay..L[t[1].bindKey])
-        t[1].typeGrid:SetText(L[F:UpperFirst(t[1].bindType)])
-        t[1].actionGrid:SetText(t[1].bindType == "general" and L[t[1].bindAction] or t[1].bindAction)
-    end
-    wipe(deleted)
-    wipe(changed)
-    CheckChanges()
-    menu:Hide()
-    if clickCastingsTab.popupEditBox then clickCastingsTab.popupEditBox:Hide() end
-end)
-
--------------------------------------------------
 -- functions
 -------------------------------------------------
+local init
 local function ShowTab(tab)
     if tab == "clickCastings" then
+        if not init then
+            init = true
+            CreateProfilePane()
+            CreateTargetingPane()
+            CreateListPane()
+        end
         clickCastingsTab:Show()
     else
         clickCastingsTab:Hide()

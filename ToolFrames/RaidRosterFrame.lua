@@ -1,15 +1,11 @@
 local _, Cell = ...
 local L = Cell.L
 local F = Cell.funcs
+local P = Cell.pixelPerfectFuncs
 
-local raidRosterFrame = CreateFrame("Frame", "CellRaidRosterFrame", Cell.frames.mainFrame, "BackdropTemplate")
+local raidRosterFrame = Cell:CreateFrame("CellRaidRosterFrame", Cell.frames.mainFrame, 405, 230)
 Cell.frames.raidRosterFrame = raidRosterFrame
--- raidRosterFrame:SetPoint("BOTTOMLEFT", Cell.frames.mainFrame, "TOPLEFT", 0, 18)
-Cell:StylizeFrame(raidRosterFrame, {.1, .1, .1, .9})
-raidRosterFrame:SetSize(405, 230)
-raidRosterFrame:EnableMouse(true)
 raidRosterFrame:SetFrameStrata("HIGH")
-raidRosterFrame:Hide()
 
 local tips = raidRosterFrame:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
 tips:SetPoint("BOTTOMLEFT", raidRosterFrame, 5, 5)
@@ -37,24 +33,18 @@ tips:SetText("|cff777777"..L["Alt+Right-Click to remove a player"])
 -------------------------------------------------
 -- roster
 -------------------------------------------------
-local rosterContainer = CreateFrame("Frame", "CellRaidRosterFrame_Container", raidRosterFrame)
--- Cell:StylizeFrame(rosterContainer, {.1, .1, .1, .5})
--- rosterContainer:SetPoint("BOTTOMLEFT", 5, 5)
-rosterContainer:SetPoint("TOPLEFT", 5, -5)
-rosterContainer:SetPoint("BOTTOMRIGHT", raidRosterFrame, "TOPRIGHT", -5, -207)
-
 local groups, changed = {}, {}
 local movingGrid
 local function CreateRaidRosterGrid(parent, index)
     local grid = CreateFrame("Button", parent:GetName().."Unit"..index, parent, "BackdropTemplate")
-    grid:SetSize(100, 17)
-    Cell:StylizeFrame(grid, {.1, .1, .1, .5})
-    grid.color = {.5, .5, .5}
+    P:Size(grid, 100, 17)
+    Cell:StylizeFrame(grid, {0.1, 0.1, 0.1, 0.5})
+    grid.color = {0.5, 0.5, 0.5}
 
     grid:SetFrameLevel(7)
     
     local roleIcon = grid:CreateTexture(nil, "ARTWORK")
-    roleIcon:SetPoint("LEFT", 2, 0)
+    roleIcon:SetPoint("TOPLEFT", 2, -2)
     roleIcon:SetSize(13, 13)
 
     local nameText = grid:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
@@ -126,9 +116,9 @@ local function CreateRaidRosterGrid(parent, index)
     grid:SetScript("OnUpdate", function()
         if not grid.isMoving then
             if grid:IsMouseOver() then
-                grid:SetBackdropColor(grid.color[1], grid.color[2], grid.color[3], .2)
+                grid:SetBackdropColor(grid.color[1], grid.color[2], grid.color[3], 0.2)
             else
-                grid:SetBackdropColor(.1, .1, .1, .5)
+                grid:SetBackdropColor(0.1, 0.1, 0.1, 0.5)
             end
         end
     end)
@@ -149,7 +139,7 @@ local function CreateRaidRosterGrid(parent, index)
         grid.hasUnit = nil
         grid.raidIndex = nil
         grid.name = nil
-        grid.color[1], grid.color[2], grid.color[3] = .5, .5, .5
+        grid.color[1], grid.color[2], grid.color[3] = 0.5, 0.5, 0.5
 
         nameText:SetText("")
         nameText:SetTextColor(1, 1, 1)
@@ -165,7 +155,7 @@ local function CreateRaidRosterGrid(parent, index)
     function grid:SetInfo(name, classFileName, combatRole, raidIndex)
         if not name then
             -- unknown target, retry
-            C_Timer.After(.5, function()
+            C_Timer.After(0.5, function()
                 local name, _, subgroup, _, _, classFileName, _, _, _, _, _, combatRole = GetRaidRosterInfo(raidIndex)
                 grid:SetInfo(name, classFileName, combatRole, raidIndex)
             end)
@@ -194,8 +184,8 @@ end
 
 local function CreateRaidRosterGroup(parent, groupIndex)
     local group = CreateFrame("Frame", parent:GetName().."_Subgroup"..groupIndex, parent, "BackdropTemplate")
-    group:SetSize(95, 81)
-    Cell:StylizeFrame(group, {.1, .1, .1, .5})
+    P:Size(group, 95, 81)
+    Cell:StylizeFrame(group, {0.1, 0.1, 0.1, 0.5})
 
     local headerText = group:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
     headerText:SetPoint("BOTTOM", group, "TOP", 0, 1)
@@ -227,22 +217,25 @@ local function CreateRaidRosterGroup(parent, groupIndex)
     return group
 end
 
-for i = 1, 8 do
-    groups[i] = CreateRaidRosterGroup(rosterContainer, i)
+local function CreateRosterContainer()
+    local rosterContainer = CreateFrame("Frame", "CellRaidRosterFrame_Container", raidRosterFrame)
+    rosterContainer:SetPoint("TOPLEFT", 5, -5)
+    rosterContainer:SetPoint("BOTTOMRIGHT", raidRosterFrame, "TOPRIGHT", -5, -207)
 
-    if i % 4 == 1 then
-        groups[i]:SetPoint("TOPLEFT", 0, -20-(math.modf(i/4)*(groups[i]:GetHeight()+20)))
-    else
-        groups[i]:SetPoint("LEFT", groups[i-1], "RIGHT", 5, 0)
+    for i = 1, 8 do
+        groups[i] = CreateRaidRosterGroup(rosterContainer, i)
+    
+        if i % 4 == 1 then
+            groups[i]:SetPoint("TOPLEFT", 0, -20-(math.modf(i/4)*(groups[i]:GetHeight()+20)))
+        else
+            groups[i]:SetPoint("TOPLEFT", groups[i-1], "TOPRIGHT", 5, 0)
+        end
     end
 end
 
 -------------------------------------------------
 -- functions
 -------------------------------------------------
-Cell:CreateMask(raidRosterFrame, L["You don't have permission to do this"])
-raidRosterFrame.mask:Hide()
-
 local function UpdateRoster()
     if movingGrid then
         movingGrid:GetScript("OnDragStop")()
@@ -260,9 +253,9 @@ end
 
 local function CheckPermission()
     if UnitIsGroupLeader("player") or UnitIsGroupAssistant("player") then
-        raidRosterFrame.mask:Hide()
+        if raidRosterFrame.mask then raidRosterFrame.mask:Hide() end
     else
-        raidRosterFrame.mask:Show()
+        Cell:CreateMask(raidRosterFrame, L["You don't have permission to do this"], {1, -1, -1, 1})
     end
 end
 
@@ -294,7 +287,14 @@ local function UpdateLayout(layout, which)
 end
 Cell:RegisterCallback("UpdateLayout", "RaidRosterFrame_UpdateLayout", UpdateLayout)
 
+local init
 function F:ShowRaidRosterFrame()
+    if not init then
+        init = true
+        raidRosterFrame:UpdatePixelPerfect()
+        CreateRosterContainer()
+    end
+
     if raidRosterFrame:IsShown() then
         raidRosterFrame:Hide()
     else

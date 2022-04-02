@@ -8,134 +8,129 @@ aboutTab:SetAllPoints(Cell.frames.optionsFrame)
 aboutTab:Hide()
 
 -------------------------------------------------
--- introduce
+-- description
 -------------------------------------------------
-local nameText = Cell:CreateSeparator("Cell", aboutTab, 387)
-nameText:SetPoint("TOPLEFT", 5, -5)
+local descriptionPane
+local function CreateDescriptionPane()
+    descriptionPane = Cell:CreateTitledPane(aboutTab, "Cell", 422, 170)
+    descriptionPane:SetPoint("TOPLEFT", aboutTab, "TOPLEFT", 5, -5)
 
--- local helpBtn = Cell:CreateButton(aboutTab, GAMEMENU_HELP, "class", {90, 17})
--- helpBtn:SetPoint("RIGHT", -5, 0)
--- helpBtn:SetPoint("TOP", nameText, 0, 1)
--- helpBtn:SetScript("OnClick", function()
---     if Cell.frames.helpFrame:IsVisible() then
---         Cell.frames.helpFrame:Hide()
---     else
---         Cell.frames.helpFrame:Show()
---     end
--- end)
+    local changeLogsBtn = Cell:CreateButton(descriptionPane, L["Change Logs"], "class", {100, 17})
+    changeLogsBtn:SetPoint("TOPRIGHT")
+    changeLogsBtn:SetScript("OnClick", function()
+        if Cell.frames.changeLogsFrame:IsVisible() then
+            Cell.frames.changeLogsFrame:Hide()
+        else
+            Cell.frames.changeLogsFrame:Show()
+        end
+    end)
 
-local changeLogsBtn = Cell:CreateButton(aboutTab, L["Change Logs"], "class", {100, 17})
--- changeLogsBtn:SetPoint("TOPRIGHT", helpBtn, "TOPLEFT", 1, 0)
-changeLogsBtn:SetPoint("RIGHT", -5, 0)
-changeLogsBtn:SetPoint("TOP", nameText, 0, 1)
-changeLogsBtn:SetScript("OnClick", function()
-    if Cell.frames.changeLogsFrame:IsVisible() then
-        Cell.frames.changeLogsFrame:Hide()
-    else
-        Cell.frames.changeLogsFrame:Show()
-    end
-end)
+    local descText = descriptionPane:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
+    descText:SetPoint("TOPLEFT", 5, -27)
+    descText:SetPoint("RIGHT", -10, 0)
+    descText:SetJustifyH("LEFT")
+    descText:SetSpacing(5)
+    descText:SetText(L["ABOUT"])
+end
 
-local introduceText = aboutTab:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
-introduceText:SetPoint("TOPLEFT", nameText, "BOTTOMLEFT", 5, -12)
-introduceText:SetPoint("RIGHT", -10, 0)
-introduceText:SetJustifyH("LEFT")
-introduceText:SetSpacing(5)
-introduceText:SetText(L["ABOUT"])
+
 
 -------------------------------------------------
 -- author
 -------------------------------------------------
-local authorText = Cell:CreateSeparator(L["Author"], aboutTab, 188)
-authorText:SetPoint("TOPLEFT", 5, -190)
-
-local authorNameText = aboutTab:CreateFontString(nil, "OVERLAY")
-authorNameText:SetPoint("TOPLEFT", authorText, "BOTTOMLEFT", 5, -12)
-authorNameText:SetJustifyH("LEFT")
-authorNameText:SetJustifyV("MIDDLE")
-authorNameText:SetFont("Interface\\AddOns\\Cell\\Media\\font.ttf", 12)
-authorNameText:SetText("篠崎-影之哀伤(CN)")
+local function CreateAuthorPane()
+    local authorPane = Cell:CreateTitledPane(aboutTab, L["Author"], 205, 50)
+    authorPane:SetPoint("TOPLEFT", aboutTab, "TOPLEFT", 5, -190)
+    
+    local authorNameText = authorPane:CreateFontString(nil, "OVERLAY")
+    authorNameText:SetPoint("TOPLEFT", 5, -27)
+    authorNameText:SetFont("Interface\\AddOns\\Cell\\Media\\font.ttf", 12)
+    authorNameText:SetText("篠崎-影之哀伤(CN)")
+end
 
 -------------------------------------------------
 -- slash
 -------------------------------------------------
-local slashText = Cell:CreateSeparator(L["Slash Commands"], aboutTab, 188)
-slashText:SetPoint("TOPLEFT", 203, -190)
-
-local commandText = aboutTab:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
-commandText:SetPoint("TOPLEFT", slashText, "BOTTOMLEFT", 5, -12)
-commandText:SetJustifyH("LEFT")
-commandText:SetText("/cell")
+local function CreateSlashPane()
+    local slashPane = Cell:CreateTitledPane(aboutTab, L["Slash Commands"], 205, 50)
+    slashPane:SetPoint("TOPLEFT", aboutTab, "TOPLEFT", 222, -190)
+    
+    local commandText = slashPane:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
+    commandText:SetPoint("TOPLEFT", 5, -27)
+    commandText:SetText("/cell")
+end
 
 -------------------------------------------------
 -- special thanks
 -------------------------------------------------
-local specialThanksText = Cell:CreateSeparator(L["Special Thanks"], aboutTab, 188)
-specialThanksText:SetPoint("TOPLEFT", 5, -255)
+local function CreateSpecialThanksPane()
+    local specialThanksPane = Cell:CreateTitledPane(aboutTab, L["Special Thanks"], 205, 80)
+    specialThanksPane:SetPoint("TOPLEFT", aboutTab, "TOPLEFT", 5, -255)
 
-local thanksText = aboutTab:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
-thanksText:SetPoint("TOPLEFT", specialThanksText, "BOTTOMLEFT", 5, -12)
-thanksText:SetJustifyH("LEFT")
-thanksText:SetJustifyV("MIDDLE")
-thanksText:SetSpacing(5)
-thanksText:SetText("夕曦 (NGA)")
+    local thanksText = specialThanksPane:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
+    thanksText:SetPoint("TOPLEFT", 5, -27)
+    thanksText:SetSpacing(5)
+    thanksText:SetText("夕曦 (NGA)")
+end
 
 -------------------------------------------------
--- translator
+-- translators
 -------------------------------------------------
-local translatorText = Cell:CreateSeparator(L["Translators"], aboutTab, 188)
-translatorText:SetPoint("TOPLEFT", 203, -255)
+local function CreateTranslatorsPane()
+    local translatorsPane = Cell:CreateTitledPane(aboutTab, L["Translators"], 205, 80)
+    translatorsPane:SetPoint("TOPLEFT", aboutTab, "TOPLEFT", 222, -255)
 
-local translatorsText = aboutTab:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
-translatorsText:SetPoint("TOPLEFT", translatorText, "BOTTOMLEFT", 5, -12)
-translatorsText:SetJustifyH("LEFT")
-translatorsText:SetJustifyV("MIDDLE")
-translatorsText:SetSpacing(5)
-translatorsText:SetText("RainbowUI (zhTW)\nnaragok79 (koKR)\nBNS333 (zhTW)")
+    local translatorsText = translatorsPane:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
+    translatorsText:SetPoint("TOPLEFT", 5, -27)
+    translatorsText:SetSpacing(5)
+    translatorsText:SetText("RainbowUI (zhTW)\nnaragok79 (koKR)\nBNS333 (zhTW)")
+end
 
 -------------------------------------------------
 -- bugreport
 -------------------------------------------------
-local bugReportText = Cell:CreateSeparator(L["Bug Report & Suggestion"], aboutTab, 387)
-bugReportText:SetPoint("TOPLEFT", 5, -355)
+local function CreateBugReportPane()
+    local bugReportPane = Cell:CreateTitledPane(aboutTab, L["Bug Report & Suggestion"], 422, 73)
+    bugReportPane:SetPoint("TOPLEFT", aboutTab, "TOPLEFT", 5, -355)
 
--- local bugReportText2 = aboutTab:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
--- bugReportText2:SetPoint("TOPLEFT", bugReportText, 5, -22)
--- bugReportText2:SetPoint("RIGHT", -10, 0)
--- bugReportText2:SetJustifyH("LEFT")
-
-local bugReportEB = Cell:CreateEditBox(aboutTab, 377, 20)
-bugReportEB:SetPoint("TOPLEFT", bugReportText, "BOTTOMLEFT", 5, -12)
-bugReportEB:SetText("https://github.com/enderneko/Cell/issues")
-bugReportEB:SetScript("OnTextChanged", function(self, userChanged)
-    if userChanged then
-        bugReportEB:SetText("https://github.com/enderneko/Cell/issues")
-        bugReportEB:HighlightText()
-    end
-end)
-
-if LOCALE_zhCN then
-    -- local cnbugReportText = aboutTab:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
-    -- cnbugReportText:SetPoint("TOPLEFT", bugReportEB, "BOTTOMLEFT", 0, -20)
-    -- cnbugReportText:SetText("也可以在NGA回帖反馈(但不一定能及时看到)")
-
-    local cnbugReportEB = Cell:CreateEditBox(aboutTab, 377, 20)
-    -- cnbugReportEB:SetPoint("TOPLEFT", cnbugReportText, "BOTTOMLEFT", 0, -5)
-    cnbugReportEB:SetPoint("TOPLEFT", bugReportEB, "BOTTOMLEFT", 0, -5)
-    cnbugReportEB:SetText("https://bbs.nga.cn/read.php?tid=23488341")
-    cnbugReportEB:SetScript("OnTextChanged", function(self, userChanged)
+    local bugReportEB = Cell:CreateEditBox(bugReportPane, 377, 20)
+    bugReportEB:SetPoint("TOPLEFT", 5, -27)
+    bugReportEB:SetText("https://github.com/enderneko/Cell/issues")
+    bugReportEB:SetScript("OnTextChanged", function(self, userChanged)
         if userChanged then
-            cnbugReportEB:SetText("https://bbs.nga.cn/read.php?tid=23488341")
-            cnbugReportEB:HighlightText()
+            bugReportEB:SetText("https://github.com/enderneko/Cell/issues")
+            bugReportEB:HighlightText()
         end
     end)
     
+    if LOCALE_zhCN then
+        local cnbugReportEB = Cell:CreateEditBox(bugReportPane, 377, 20)
+        cnbugReportEB:SetPoint("TOPLEFT", bugReportEB, "BOTTOMLEFT", 0, -5)
+        cnbugReportEB:SetText("https://bbs.nga.cn/read.php?tid=23488341")
+        cnbugReportEB:SetScript("OnTextChanged", function(self, userChanged)
+            if userChanged then
+                cnbugReportEB:SetText("https://bbs.nga.cn/read.php?tid=23488341")
+                cnbugReportEB:HighlightText()
+            end
+        end)
+        
+    end
 end
 
+local init
 local function ShowTab(tab)
     if tab == "about" then
+        if not init then
+            init = true
+            CreateDescriptionPane()
+            CreateAuthorPane()
+            CreateSlashPane()
+            CreateSpecialThanksPane()
+            CreateTranslatorsPane()
+            CreateBugReportPane()
+        end
         aboutTab:Show()
-        nameText:SetText("Cell "..Cell.version)
+        descriptionPane:SetTitle("Cell "..Cell.version)
     else
         aboutTab:Hide()
     end

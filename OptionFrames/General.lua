@@ -1,6 +1,7 @@
 local _, Cell = ...
 local L = Cell.L
 local F = Cell.funcs
+local P = Cell.pixelPerfectFuncs
 
 local generalTab = Cell:CreateFrame("CellOptionsFrame_GeneralTab", Cell.frames.optionsFrame, nil, nil, true)
 Cell.frames.generalTab = generalTab
@@ -8,17 +9,43 @@ generalTab:SetAllPoints(Cell.frames.optionsFrame)
 generalTab:Hide()
 
 -------------------------------------------------
+-- visibility
+-------------------------------------------------
+local showSoloCB, showPartyCB, showPartyPetsCB
+
+local function CreateVisibilityPane()
+    local visibilityPane = Cell:CreateTitledPane(generalTab, L["Visibility"], 205, 100)
+    visibilityPane:SetPoint("TOPLEFT", generalTab, "TOPLEFT", 5, -5)
+    
+    showSoloCB = Cell:CreateCheckButton(visibilityPane, L["Show Solo"], function(checked, self)
+        CellDB["general"]["showSolo"] = checked
+        Cell:Fire("UpdateVisibility", "solo")
+    end, L["Show Solo"], L["Show while not in a group"], L["To open options frame, use /cell options"])
+    showSoloCB:SetPoint("TOPLEFT", visibilityPane, "TOPLEFT", 5, -27)
+    
+    showPartyCB = Cell:CreateCheckButton(visibilityPane, L["Show Party"], function(checked, self)
+        CellDB["general"]["showParty"] = checked
+        Cell:Fire("UpdateVisibility", "party")
+        showPartyPetsCB:SetEnabled(checked)
+    end, L["Show Party"], L["Show while in a party"], L["To open options frame, use /cell options"])
+    showPartyCB:SetPoint("TOPLEFT", showSoloCB, "BOTTOMLEFT", 0, -7)
+    
+    showPartyPetsCB = Cell:CreateCheckButton(visibilityPane, L["Show Party Pets"], function(checked, self)
+        CellDB["general"]["showPartyPets"] = checked
+        Cell:Fire("UpdateVisibility", "pets")
+    end, L["Show Party Pets"], L["Show pets while in a party"])
+    showPartyPetsCB:SetPoint("TOPLEFT", showPartyCB, "BOTTOMLEFT", 0, -7)
+end
+
+-------------------------------------------------
 -- tooltip
 -------------------------------------------------
-local tooltipsText = Cell:CreateSeparator(L["Tooltips"], generalTab, 188)
-tooltipsText:SetPoint("TOPLEFT", 203, -5)
-
 local enableTooltipsCB, hideTooltipsInCombatCB, tooltipsAnchor, tooltipsAnchorText, tooltipsAnchoredTo, tooltipsAnchoredToText, tooltipsX, tooltipsY
 
 local function UpdateTooltipsOptions()
     if strfind(CellDB["general"]["tooltipsPosition"][2], "Cursor") or CellDB["general"]["tooltipsPosition"][2] == "Default" then
         tooltipsAnchor:SetEnabled(false)
-        tooltipsAnchorText:SetTextColor(.4, .4, .4)
+        tooltipsAnchorText:SetTextColor(0.4, 0.4, 0.4)
     else
         tooltipsAnchor:SetEnabled(true)
         tooltipsAnchorText:SetTextColor(1, 1, 1)
@@ -59,363 +86,353 @@ function F:ShowTooltips(anchor, tooltipType, value)
     end
 end
 
-enableTooltipsCB = Cell:CreateCheckButton(generalTab, L["Enabled"], function(checked, self)
-    CellDB["general"]["enableTooltips"] = checked
-    hideTooltipsInCombatCB:SetEnabled(checked)
-    -- enableAuraTooltipsCB:SetEnabled(checked)
-    tooltipsAnchor:SetEnabled(checked)
-    tooltipsAnchoredTo:SetEnabled(checked)
-    tooltipsX:SetEnabled(checked)
-    tooltipsY:SetEnabled(checked)
-    if checked then
-        tooltipsAnchorText:SetTextColor(1, 1, 1)
-        tooltipsAnchoredToText:SetTextColor(1, 1, 1)
-        UpdateTooltipsOptions()
-    else
-        tooltipsAnchorText:SetTextColor(.4, .4, .4)
-        tooltipsAnchoredToText:SetTextColor(.4, .4, .4)
-    end
-end)
-enableTooltipsCB:SetPoint("TOPLEFT", tooltipsText, "BOTTOMLEFT", 5, -15)
+local function CreateTooltipsPane()
+    local tooltipsPane = Cell:CreateTitledPane(generalTab, L["Tooltips"], 205, 200)
+    tooltipsPane:SetPoint("TOPLEFT", generalTab, "TOPLEFT", 222, -5)
 
-hideTooltipsInCombatCB = Cell:CreateCheckButton(generalTab, L["Hide in Combat"], function(checked, self)
-    CellDB["general"]["hideTooltipsInCombat"] = checked
-end)
-hideTooltipsInCombatCB:SetPoint("TOPLEFT", enableTooltipsCB, "BOTTOMLEFT", 0, -7)
-
--- auras tooltips
-enableAuraTooltipsCB = Cell:CreateCheckButton(generalTab, L["Enable Auras Tooltips"], function(checked, self)
-end)
-enableAuraTooltipsCB:SetPoint("TOPLEFT", hideTooltipsInCombatCB, "BOTTOMLEFT", 0, -7)
-enableAuraTooltipsCB:SetEnabled(false)
-
--- position
-tooltipsAnchor = Cell:CreateDropdown(generalTab, 89)
-tooltipsAnchor:SetPoint("TOPLEFT", enableAuraTooltipsCB, "BOTTOMLEFT", 0, -30)
-local points = {"BOTTOM", "BOTTOMLEFT", "BOTTOMRIGHT", "LEFT", "RIGHT", "TOP", "TOPLEFT", "TOPRIGHT"}
-local relativePoints = {"TOP", "TOPLEFT", "TOPRIGHT", "RIGHT", "LEFT", "BOTTOM", "BOTTOMLEFT", "BOTTOMRIGHT"}
-local anchorItems = {}
-for i, point in pairs(points) do
-    tinsert(anchorItems, {
-        ["text"] = L[point],
-        ["value"] = point,
-        ["onClick"] = function()
-            CellDB["general"]["tooltipsPosition"][1] = point
-            CellDB["general"]["tooltipsPosition"][3] = relativePoints[i]
-        end,
-    })
-end
-tooltipsAnchor:SetItems(anchorItems)
-
-tooltipsAnchorText = generalTab:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
-tooltipsAnchorText:SetText(L["Anchor Point"])
-tooltipsAnchorText:SetPoint("BOTTOMLEFT", tooltipsAnchor, "TOPLEFT", 0, 1)
-
-tooltipsAnchoredTo = Cell:CreateDropdown(generalTab, 89)
-tooltipsAnchoredTo:SetPoint("TOPLEFT", tooltipsAnchor, "TOPRIGHT", 5, 0)
-local relatives = {"Default", "Cell", "Unit Button", "Cursor", "Cursor Left", "Cursor Right"}
-local relativeToItems = {}
-for _, relative in pairs(relatives) do
-    tinsert(relativeToItems, {
-        ["text"] = L[relative],
-        ["value"] = relative,
-        ["onClick"] = function()
-            CellDB["general"]["tooltipsPosition"][2] = relative
+    enableTooltipsCB = Cell:CreateCheckButton(tooltipsPane, L["Enabled"], function(checked, self)
+        CellDB["general"]["enableTooltips"] = checked
+        hideTooltipsInCombatCB:SetEnabled(checked)
+        -- enableAuraTooltipsCB:SetEnabled(checked)
+        tooltipsAnchor:SetEnabled(checked)
+        tooltipsAnchoredTo:SetEnabled(checked)
+        tooltipsX:SetEnabled(checked)
+        tooltipsY:SetEnabled(checked)
+        if checked then
+            tooltipsAnchorText:SetTextColor(1, 1, 1)
+            tooltipsAnchoredToText:SetTextColor(1, 1, 1)
             UpdateTooltipsOptions()
-        end,
-    })
+        else
+            tooltipsAnchorText:SetTextColor(.4, .4, .4)
+            tooltipsAnchoredToText:SetTextColor(.4, .4, .4)
+        end
+    end)
+    enableTooltipsCB:SetPoint("TOPLEFT", tooltipsPane, "TOPLEFT", 5, -27)
+
+    hideTooltipsInCombatCB = Cell:CreateCheckButton(tooltipsPane, L["Hide in Combat"], function(checked, self)
+        CellDB["general"]["hideTooltipsInCombat"] = checked
+    end)
+    hideTooltipsInCombatCB:SetPoint("TOPLEFT", enableTooltipsCB, "BOTTOMLEFT", 0, -7)
+
+    -- auras tooltips
+    enableAuraTooltipsCB = Cell:CreateCheckButton(tooltipsPane, L["Enable Auras Tooltips"], function(checked, self)
+    end)
+    enableAuraTooltipsCB:SetPoint("TOPLEFT", hideTooltipsInCombatCB, "BOTTOMLEFT", 0, -7)
+    enableAuraTooltipsCB:SetEnabled(false)
+
+    -- position
+    tooltipsAnchor = Cell:CreateDropdown(tooltipsPane, 97)
+    tooltipsAnchor:SetPoint("TOPLEFT", enableAuraTooltipsCB, "BOTTOMLEFT", 0, -30)
+    local points = {"BOTTOM", "BOTTOMLEFT", "BOTTOMRIGHT", "LEFT", "RIGHT", "TOP", "TOPLEFT", "TOPRIGHT"}
+    local relativePoints = {"TOP", "TOPLEFT", "TOPRIGHT", "RIGHT", "LEFT", "BOTTOM", "BOTTOMLEFT", "BOTTOMRIGHT"}
+    local anchorItems = {}
+    for i, point in pairs(points) do
+        tinsert(anchorItems, {
+            ["text"] = L[point],
+            ["value"] = point,
+            ["onClick"] = function()
+                CellDB["general"]["tooltipsPosition"][1] = point
+                CellDB["general"]["tooltipsPosition"][3] = relativePoints[i]
+            end,
+        })
+    end
+    tooltipsAnchor:SetItems(anchorItems)
+
+    tooltipsAnchorText = tooltipsPane:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
+    tooltipsAnchorText:SetText(L["Anchor Point"])
+    tooltipsAnchorText:SetPoint("BOTTOMLEFT", tooltipsAnchor, "TOPLEFT", 0, 1)
+
+    tooltipsAnchoredTo = Cell:CreateDropdown(tooltipsPane, 97)
+    tooltipsAnchoredTo:SetPoint("TOPLEFT", tooltipsAnchor, "TOPRIGHT", 5, 0)
+    local relatives = {"Default", "Cell", "Unit Button", "Cursor", "Cursor Left", "Cursor Right"}
+    local relativeToItems = {}
+    for _, relative in pairs(relatives) do
+        tinsert(relativeToItems, {
+            ["text"] = L[relative],
+            ["value"] = relative,
+            ["onClick"] = function()
+                CellDB["general"]["tooltipsPosition"][2] = relative
+                UpdateTooltipsOptions()
+            end,
+        })
+    end
+    tooltipsAnchoredTo:SetItems(relativeToItems)
+
+    tooltipsAnchoredToText = tooltipsPane:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
+    tooltipsAnchoredToText:SetText(L["Anchored To"])
+    tooltipsAnchoredToText:SetPoint("BOTTOMLEFT", tooltipsAnchoredTo, "TOPLEFT", 0, 1)
+
+    tooltipsX = Cell:CreateSlider(L["X Offset"], tooltipsPane, -99, 99, 97, 1)
+    tooltipsX:SetPoint("TOPLEFT", tooltipsAnchor, "BOTTOMLEFT", 0, -25)
+    tooltipsX.afterValueChangedFn = function(value)
+        CellDB["general"]["tooltipsPosition"][4] = value
+    end
+
+    tooltipsY = Cell:CreateSlider(L["Y Offset"], tooltipsPane, -99, 99, 97, 1)
+    tooltipsY:SetPoint("TOPLEFT", tooltipsAnchoredTo, "BOTTOMLEFT", 0, -25)
+    tooltipsY.afterValueChangedFn = function(value)
+        CellDB["general"]["tooltipsPosition"][5] = value
+    end
 end
-tooltipsAnchoredTo:SetItems(relativeToItems)
-
-tooltipsAnchoredToText = generalTab:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
-tooltipsAnchoredToText:SetText(L["Anchored To"])
-tooltipsAnchoredToText:SetPoint("BOTTOMLEFT", tooltipsAnchoredTo, "TOPLEFT", 0, 1)
-
-tooltipsX = Cell:CreateSlider(L["X Offset"], generalTab, -99, 99, 89, 1)
-tooltipsX:SetPoint("TOPLEFT", tooltipsAnchor, "BOTTOMLEFT", 0, -25)
-tooltipsX.afterValueChangedFn = function(value)
-    CellDB["general"]["tooltipsPosition"][4] = value
-end
-
-tooltipsY = Cell:CreateSlider(L["Y Offset"], generalTab, -99, 99, 89, 1)
-tooltipsY:SetPoint("TOPLEFT", tooltipsAnchoredTo, "BOTTOMLEFT", 0, -25)
-tooltipsY.afterValueChangedFn = function(value)
-    CellDB["general"]["tooltipsPosition"][5] = value
-end
-
--------------------------------------------------
--- visibility
--------------------------------------------------
-local visibilityText = Cell:CreateSeparator(L["Visibility"], generalTab, 188)
-visibilityText:SetPoint("TOPLEFT", 5, -5)
-
-local showSoloCB, showPartyCB, showPartyPetsCB
-
-showSoloCB = Cell:CreateCheckButton(generalTab, L["Show Solo"], function(checked, self)
-    CellDB["general"]["showSolo"] = checked
-    Cell:Fire("UpdateVisibility", "solo")
-end, L["Show Solo"], L["Show while not in a group"], L["To open options frame, use /cell options"])
-showSoloCB:SetPoint("TOPLEFT", visibilityText, "BOTTOMLEFT", 5, -15)
-
-showPartyCB = Cell:CreateCheckButton(generalTab, L["Show Party"], function(checked, self)
-    CellDB["general"]["showParty"] = checked
-    Cell:Fire("UpdateVisibility", "party")
-    showPartyPetsCB:SetEnabled(checked)
-end, L["Show Party"], L["Show while in a party"], L["To open options frame, use /cell options"])
-showPartyCB:SetPoint("TOPLEFT", showSoloCB, "BOTTOMLEFT", 0, -7)
-
-showPartyPetsCB = Cell:CreateCheckButton(generalTab, L["Show Party Pets"], function(checked, self)
-    CellDB["general"]["showPartyPets"] = checked
-    Cell:Fire("UpdateVisibility", "pets")
-end, L["Show Party Pets"], L["Show pets while in a party"])
-showPartyPetsCB:SetPoint("TOPLEFT", showPartyCB, "BOTTOMLEFT", 0, -7)
 
 -------------------------------------------------
 -- misc
 -------------------------------------------------
-local miscText = Cell:CreateSeparator(L["Misc"], generalTab, 188)
-miscText:SetPoint("TOPLEFT", 5, -120)
+local hideBlizzardCB, lockCB, fadeoutCB, sortByRoleCB
 
--- local blizzardText = Cell:CreateSeparator(L["Blizzard Frames"], generalTab, 188)
--- blizzardText:SetPoint("TOPLEFT", 5, -5)
-local hideBlizzardCB = Cell:CreateCheckButton(generalTab, L["Hide Blizzard Raid / Party"], function(checked, self)
-    CellDB["general"]["hideBlizzard"] = checked
-
-    local popup = Cell:CreateConfirmPopup(generalTab, 200, L["A UI reload is required.\nDo it now?"], function()
-        ReloadUI()
-    end, nil, true)
-    popup:SetPoint("TOPLEFT", 100, -170)
-end, L["Hide Blizzard Frames"], L["Require reload of the UI"])
-hideBlizzardCB:SetPoint("TOPLEFT", miscText, "BOTTOMLEFT", 5, -15)
-
-local lockCB = Cell:CreateCheckButton(generalTab, L["Lock Cell Frame"], function(checked, self)
-    CellDB["general"]["locked"] = checked
-    F:UpdateFrameLock(checked)
-end)
-lockCB:SetPoint("TOPLEFT", hideBlizzardCB, "BOTTOMLEFT", 0, -7)
-
-local fadeoutCB = Cell:CreateCheckButton(generalTab, L["Fade Out Menu"], function(checked, self)
-    CellDB["general"]["fadeOut"] = checked
-    F:UpdateMenuFadeOut(checked)
-end, L["Fade Out Menu"], L["Fade out menu buttons on mouseout"])
-fadeoutCB:SetPoint("TOPLEFT", lockCB, "BOTTOMLEFT", 0, -7)
-
-local sortByRoleCB = Cell:CreateCheckButton(generalTab, L["Sort Party By Role"], function(checked, self)
-    CellDB["general"]["sortPartyByRole"] = checked
-    Cell:Fire("UpdateSortMethod")
-end)
-sortByRoleCB:SetPoint("TOPLEFT", fadeoutCB, "BOTTOMLEFT", 0, -7)
+local function CreateMiscPane()
+    local miscPane = Cell:CreateTitledPane(generalTab, L["Misc"], 205, 120)
+    miscPane:SetPoint("TOPLEFT", generalTab, "TOPLEFT", 5, -120)
+    
+    -- local blizzardText = Cell:CreateSeparator(L["Blizzard Frames"], generalTab, 205)
+    -- blizzardText:SetPoint("TOPLEFT", 5, -5)
+    hideBlizzardCB = Cell:CreateCheckButton(miscPane, L["Hide Blizzard Raid / Party"], function(checked, self)
+        CellDB["general"]["hideBlizzard"] = checked
+    
+        local popup = Cell:CreateConfirmPopup(generalTab, 200, L["A UI reload is required.\nDo it now?"], function()
+            ReloadUI()
+        end, nil, true)
+        popup:SetPoint("TOPLEFT", generalTab, "TOPLEFT", 117, -170)
+    end, L["Hide Blizzard Frames"], L["Require reload of the UI"])
+    hideBlizzardCB:SetPoint("TOPLEFT", miscPane, "TOPLEFT", 5, -27)
+    
+    lockCB = Cell:CreateCheckButton(miscPane, L["Lock Cell Frame"], function(checked, self)
+        CellDB["general"]["locked"] = checked
+        F:UpdateFrameLock(checked)
+    end)
+    lockCB:SetPoint("TOPLEFT", hideBlizzardCB, "BOTTOMLEFT", 0, -7)
+    
+    fadeoutCB = Cell:CreateCheckButton(miscPane, L["Fade Out Menu"], function(checked, self)
+        CellDB["general"]["fadeOut"] = checked
+        F:UpdateMenuFadeOut(checked)
+    end, L["Fade Out Menu"], L["Fade out menu buttons on mouseout"])
+    fadeoutCB:SetPoint("TOPLEFT", lockCB, "BOTTOMLEFT", 0, -7)
+    
+    sortByRoleCB = Cell:CreateCheckButton(miscPane, L["Sort Party By Role"], function(checked, self)
+        CellDB["general"]["sortPartyByRole"] = checked
+        Cell:Fire("UpdateSortMethod")
+    end)
+    sortByRoleCB:SetPoint("TOPLEFT", fadeoutCB, "BOTTOMLEFT", 0, -7)
+end
 
 -------------------------------------------------
 -- raid tools
 -------------------------------------------------
-local toolsText = Cell:CreateSeparator(L["Raid Tools"].." |cFF777777"..L["Only in Group"], generalTab, 387)
-toolsText:SetPoint("TOPLEFT", 5, -255)
+local unlockBtn, resCB, reportCB, buffCB, readyPullCB, pullText, pullDropdown, secEditBox, marksBarCB, marksDropdown
 
-local unlockBtn = Cell:CreateButton(generalTab, L["Unlock"], "class", {60, 17})
-unlockBtn:SetPoint("RIGHT", -5, 0)
-unlockBtn:SetPoint("BOTTOM", toolsText)
-unlockBtn.locked = true
-unlockBtn:SetScript("OnClick", function(self)
-    if self.locked then
-        unlockBtn:SetText(L["Lock"])
-        self.locked = false
-        Cell:Fire("ShowMover", true)
-    else
-        unlockBtn:SetText(L["Unlock"])
-        self.locked = true
-        Cell:Fire("ShowMover", false)
-    end
-end)
+local function CreateToolsPane()
+    local toolsPane = Cell:CreateTitledPane(generalTab, L["Raid Tools"].." |cFF777777"..L["only in group"], 422, 150)
+    toolsPane:SetPoint("TOPLEFT", generalTab, "TOPLEFT", 5, -255)
 
--- battle res
-local resCB = Cell:CreateCheckButton(generalTab, L["Battle Res Timer"], function(checked, self)
-    CellDB["raidTools"]["showBattleRes"] = checked
-    Cell:Fire("UpdateRaidTools", "battleRes")
-end, L["Battle Res Timer"], L["Only show during encounter or in mythic+"])
-resCB:SetPoint("TOPLEFT", toolsText, "BOTTOMLEFT", 5, -15)
-
--- death report
-local reportCB = Cell:CreateCheckButton(generalTab, L["Death Report"], function(checked, self)
-    CellDB["raidTools"]["deathReport"][1] = checked
-    Cell:Fire("UpdateRaidTools", "deathReport")
-end)
-reportCB:SetPoint("TOPLEFT", resCB, "TOPRIGHT", 115, 0)
-reportCB:HookScript("OnEnter", function()
-    CellTooltip:SetOwner(reportCB, "ANCHOR_TOPLEFT", 0, 2)
-    CellTooltip:AddLine(L["Death Report"].." |cffff2727"..L["HIGH CPU USAGE"])
-    CellTooltip:AddLine("|cffff2727" .. L["Disabled in battlegrounds and arenas"])
-    CellTooltip:AddLine("|cffffffff" .. L["Report deaths to group"])
-    CellTooltip:AddLine("|cffffffff" .. L["Use |cFFFFB5C5/cell report X|r to set the number of reports during a raid encounter"])
-    CellTooltip:AddLine("|cffffffff" .. L["Current"]..": |cFFFFB5C5"..(CellDB["raidTools"]["deathReport"][2]==0 and L["all"] or string.format(L["first %d"], CellDB["raidTools"]["deathReport"][2])))
-    CellTooltip:Show()
-end)
-reportCB:HookScript("OnLeave", function()
-    CellTooltip:Hide()
-end)
-
--- buff tracker
-local buffCB = Cell:CreateCheckButton(generalTab, L["Buff Tracker"], function(checked, self)
-    CellDB["raidTools"]["buffTracker"][1] = checked
-    Cell:Fire("UpdateRaidTools", "buffTracker")
-end, L["Buff Tracker"].." |cffff7727"..L["MODERATE CPU USAGE"], L["Check if your group members need some raid buffs"], L["|cffffb5c5Left-Click:|r cast the spell"], L["|cffffb5c5Right-Click:|r report unaffected"]) -- L["|cffffb5c5Middle-Click:|r send custom message"]
-buffCB:SetPoint("TOPLEFT", reportCB, "TOPRIGHT", 115, 0)
-
--- ready & pull
-local pullText, pullDropdown, secEditBox
-local readyPullCB = Cell:CreateCheckButton(generalTab, L["ReadyCheck and PullTimer buttons"], function(checked, self)
-    CellDB["raidTools"]["readyAndPull"][1] = checked
-    pullDropdown:SetEnabled(checked)
-    secEditBox:SetEnabled(checked)
-    if checked then
-        pullText:SetTextColor(1, 1, 1)
-    else
-        pullText:SetTextColor(.4, .4, .4)
-    end
-    Cell:Fire("UpdateRaidTools", "buttons")
-end, L["ReadyCheck and PullTimer buttons"], L["Only show when you have permission to do this"], L["pullTimerTips"])
-readyPullCB:SetPoint("TOPLEFT", resCB, "BOTTOMLEFT", 0, -15)
-
-pullText = generalTab:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
-pullText:SetText(L["Pull Timer"])
-pullText:SetPoint("TOPLEFT", readyPullCB, "BOTTOMRIGHT", 5, -9)
-
-pullDropdown = Cell:CreateDropdown(generalTab, 90)
-pullDropdown:SetPoint("LEFT", pullText, "RIGHT", 7, 0)
-pullDropdown:SetItems({
-    {
-        ["text"] = L["Default"],
-        ["value"] = "default",
-        ["onClick"] = function()
-            CellDB["raidTools"]["readyAndPull"][2][1] = "default"
-            Cell:Fire("UpdateRaidTools", "pullTimer")
-        end,
-    },
-    {
-        ["text"] = "MRT",
-        ["value"] = "mrt",
-        ["onClick"] = function()
-            CellDB["raidTools"]["readyAndPull"][2][1] = "mrt"
-            Cell:Fire("UpdateRaidTools", "pullTimer")
-        end,
-    },
-    {
-        ["text"] = "DBM",
-        ["value"] = "dbm",
-        ["onClick"] = function()
-            CellDB["raidTools"]["readyAndPull"][2][1] = "dbm"
-            Cell:Fire("UpdateRaidTools", "pullTimer")
-        end,
-    },
-    {
-        ["text"] = "BigWigs",
-        ["value"] = "bw",
-        ["onClick"] = function()
-            CellDB["raidTools"]["readyAndPull"][2][1] = "bw"
-            Cell:Fire("UpdateRaidTools", "pullTimer")
-        end,
-    },
-})
-
-secEditBox = Cell:CreateEditBox(generalTab, 38, 20, false, false, true)
-secEditBox:SetPoint("TOPLEFT", pullDropdown, "TOPRIGHT", 5, 0)
-secEditBox:SetMaxLetters(3)
-
-secEditBox.confirmBtn = Cell:CreateButton(generalTab, "OK", "class", {27, 20})
-secEditBox.confirmBtn:SetPoint("TOPLEFT", secEditBox, "TOPRIGHT", -1, 0)
-secEditBox.confirmBtn:Hide()
-secEditBox.confirmBtn:SetScript("OnHide", function()
-    secEditBox.confirmBtn:Hide()
-end)
-secEditBox.confirmBtn:SetScript("OnClick", function()
-    CellDB["raidTools"]["readyAndPull"][2][2] = tonumber(secEditBox:GetText())
-    Cell:Fire("UpdateRaidTools", "pullTimer")
-    secEditBox.confirmBtn:Hide()
-end)
-
-secEditBox:SetScript("OnTextChanged", function(self, userChanged)
-    if userChanged then
-        local newSec = tonumber(self:GetText())
-        if newSec and newSec > 0 and newSec ~= CellDB["raidTools"]["readyAndPull"][2][2] then
-            secEditBox.confirmBtn:Show()
+    unlockBtn = Cell:CreateButton(toolsPane, L["Unlock"], "class", {60, 17})
+    unlockBtn:SetPoint("TOPRIGHT", toolsPane)
+    unlockBtn.locked = true
+    unlockBtn:SetScript("OnClick", function(self)
+        if self.locked then
+            unlockBtn:SetText(L["Lock"])
+            self.locked = false
+            Cell:Fire("ShowMover", true)
         else
-            secEditBox.confirmBtn:Hide()
+            unlockBtn:SetText(L["Unlock"])
+            self.locked = true
+            Cell:Fire("ShowMover", false)
         end
-    end
-end)
+    end)
 
--- marks bar
-local marksDropdown
-local marksBarCB = Cell:CreateCheckButton(generalTab, L["Marks Bar"], function(checked, self)
-    CellDB["raidTools"]["marks"][1] = checked
-    marksDropdown:SetEnabled(checked)
-    Cell:Fire("UpdateRaidTools", "marks")
-end, L["Marks Bar"], L["Only show when you have permission to do this"], L["marksTips"])
-marksBarCB:SetPoint("TOPLEFT", readyPullCB, "BOTTOMLEFT", 0, -38)
+    -- battle res
+    resCB = Cell:CreateCheckButton(toolsPane, L["Battle Res Timer"], function(checked, self)
+        CellDB["raidTools"]["showBattleRes"] = checked
+        Cell:Fire("UpdateRaidTools", "battleRes")
+    end, L["Battle Res Timer"], L["Only show during encounter or in mythic+"])
+    resCB:SetPoint("TOPLEFT", toolsPane, "TOPLEFT", 5, -27)
 
-marksDropdown = Cell:CreateDropdown(generalTab, 200)
-marksDropdown:SetPoint("TOPLEFT", marksBarCB, "BOTTOMRIGHT", 5, -5)
-marksDropdown:SetItems({
-    {
-        ["text"] = L["Target Marks"].." ("..L["Horizontal"]..")",
-        ["value"] = "target_h",
-        ["onClick"] = function()
-            CellDB["raidTools"]["marks"][2] = "target_h"
-            Cell:Fire("UpdateRaidTools", "marks")
-        end,
-    },
-    {
-        ["text"] = L["Target Marks"].." ("..L["Vertical"]..")",
-        ["value"] = "target_v",
-        ["onClick"] = function()
-            CellDB["raidTools"]["marks"][2] = "target_v"
-            Cell:Fire("UpdateRaidTools", "marks")
-        end,
-    },
-    {
-        ["text"] = L["World Marks"].." ("..L["Horizontal"]..")",
-        ["value"] = "world_h",
-        ["onClick"] = function()
-            CellDB["raidTools"]["marks"][2] = "world_h"
-            Cell:Fire("UpdateRaidTools", "marks")
-        end,
-    },
-    {
-        ["text"] = L["World Marks"].." ("..L["Vertical"]..")",
-        ["value"] = "world_v",
-        ["onClick"] = function()
-            CellDB["raidTools"]["marks"][2] = "world_v"
-            Cell:Fire("UpdateRaidTools", "marks")
-        end,
-    },
-    {
-        ["text"] = L["Both"].." ("..L["Horizontal"]..")",
-        ["value"] = "both_h",
-        ["onClick"] = function()
-            CellDB["raidTools"]["marks"][2] = "both_h"
-            Cell:Fire("UpdateRaidTools", "marks")
-        end,
-    },
-    {
-        ["text"] = L["Both"].." ("..L["Vertical"]..")",
-        ["value"] = "both_v",
-        ["onClick"] = function()
-            CellDB["raidTools"]["marks"][2] = "both_v"
-            Cell:Fire("UpdateRaidTools", "marks")
-        end,
-    }
-})
+    -- death report
+    reportCB = Cell:CreateCheckButton(toolsPane, L["Death Report"], function(checked, self)
+        CellDB["raidTools"]["deathReport"][1] = checked
+        Cell:Fire("UpdateRaidTools", "deathReport")
+    end)
+    reportCB:SetPoint("TOPLEFT", resCB, "TOPLEFT", 139, 0)
+    reportCB:HookScript("OnEnter", function()
+        CellTooltip:SetOwner(reportCB, "ANCHOR_TOPLEFT", 0, 2)
+        CellTooltip:AddLine(L["Death Report"].." |cffff2727"..L["HIGH CPU USAGE"])
+        CellTooltip:AddLine("|cffff2727" .. L["Disabled in battlegrounds and arenas"])
+        CellTooltip:AddLine("|cffffffff" .. L["Report deaths to group"])
+        CellTooltip:AddLine("|cffffffff" .. L["Use |cFFFFB5C5/cell report X|r to set the number of reports during a raid encounter"])
+        CellTooltip:AddLine("|cffffffff" .. L["Current"]..": |cFFFFB5C5"..(CellDB["raidTools"]["deathReport"][2]==0 and L["all"] or string.format(L["first %d"], CellDB["raidTools"]["deathReport"][2])))
+        CellTooltip:Show()
+    end)
+    reportCB:HookScript("OnLeave", function()
+        CellTooltip:Hide()
+    end)
 
+    -- buff tracker
+    buffCB = Cell:CreateCheckButton(toolsPane, L["Buff Tracker"], function(checked, self)
+        CellDB["raidTools"]["buffTracker"][1] = checked
+        Cell:Fire("UpdateRaidTools", "buffTracker")
+    end, L["Buff Tracker"].." |cffff7727"..L["MODERATE CPU USAGE"], L["Check if your group members need some raid buffs"], L["|cffffb5c5Left-Click:|r cast the spell"], L["|cffffb5c5Right-Click:|r report unaffected"]) -- L["|cffffb5c5Middle-Click:|r send custom message"]
+    buffCB:SetPoint("TOPLEFT", reportCB, "TOPLEFT", 139, 0)
+
+    -- ready & pull
+    readyPullCB = Cell:CreateCheckButton(toolsPane, L["ReadyCheck and PullTimer buttons"], function(checked, self)
+        CellDB["raidTools"]["readyAndPull"][1] = checked
+        pullDropdown:SetEnabled(checked)
+        secEditBox:SetEnabled(checked)
+        if checked then
+            pullText:SetTextColor(1, 1, 1)
+        else
+            pullText:SetTextColor(0.4, 0.4, 0.4)
+        end
+        Cell:Fire("UpdateRaidTools", "buttons")
+    end, L["ReadyCheck and PullTimer buttons"], L["Only show when you have permission to do this"], L["pullTimerTips"])
+    readyPullCB:SetPoint("TOPLEFT", resCB, "BOTTOMLEFT", 0, -15)
+
+    pullText = toolsPane:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
+    pullText:SetText(L["Pull Timer"])
+    pullText:SetPoint("TOPLEFT", readyPullCB, "BOTTOMRIGHT", 5, -9)
+
+    pullDropdown = Cell:CreateDropdown(toolsPane, 90)
+    pullDropdown:SetPoint("LEFT", pullText, "RIGHT", 7, 0)
+    pullDropdown:SetItems({
+        {
+            ["text"] = L["Default"],
+            ["value"] = "default",
+            ["onClick"] = function()
+                CellDB["raidTools"]["readyAndPull"][2][1] = "default"
+                Cell:Fire("UpdateRaidTools", "pullTimer")
+            end,
+        },
+        {
+            ["text"] = "MRT",
+            ["value"] = "mrt",
+            ["onClick"] = function()
+                CellDB["raidTools"]["readyAndPull"][2][1] = "mrt"
+                Cell:Fire("UpdateRaidTools", "pullTimer")
+            end,
+        },
+        {
+            ["text"] = "DBM",
+            ["value"] = "dbm",
+            ["onClick"] = function()
+                CellDB["raidTools"]["readyAndPull"][2][1] = "dbm"
+                Cell:Fire("UpdateRaidTools", "pullTimer")
+            end,
+        },
+        {
+            ["text"] = "BigWigs",
+            ["value"] = "bw",
+            ["onClick"] = function()
+                CellDB["raidTools"]["readyAndPull"][2][1] = "bw"
+                Cell:Fire("UpdateRaidTools", "pullTimer")
+            end,
+        },
+    })
+
+    secEditBox = Cell:CreateEditBox(toolsPane, 38, 20, false, false, true)
+    secEditBox:SetPoint("TOPLEFT", pullDropdown, "TOPRIGHT", 5, 0)
+    secEditBox:SetMaxLetters(3)
+
+    secEditBox.confirmBtn = Cell:CreateButton(toolsPane, "OK", "class", {27, 20})
+    secEditBox.confirmBtn:SetPoint("TOPLEFT", secEditBox, "TOPRIGHT", P:Scale(-1), 0)
+    secEditBox.confirmBtn:Hide()
+    secEditBox.confirmBtn:SetScript("OnHide", function()
+        secEditBox.confirmBtn:Hide()
+    end)
+    secEditBox.confirmBtn:SetScript("OnClick", function()
+        CellDB["raidTools"]["readyAndPull"][2][2] = tonumber(secEditBox:GetText())
+        Cell:Fire("UpdateRaidTools", "pullTimer")
+        secEditBox.confirmBtn:Hide()
+    end)
+
+    secEditBox:SetScript("OnTextChanged", function(self, userChanged)
+        if userChanged then
+            local newSec = tonumber(self:GetText())
+            if newSec and newSec > 0 and newSec ~= CellDB["raidTools"]["readyAndPull"][2][2] then
+                secEditBox.confirmBtn:Show()
+            else
+                secEditBox.confirmBtn:Hide()
+            end
+        end
+    end)
+
+    -- marks bar
+    marksBarCB = Cell:CreateCheckButton(toolsPane, L["Marks Bar"], function(checked, self)
+        CellDB["raidTools"]["marks"][1] = checked
+        marksDropdown:SetEnabled(checked)
+        Cell:Fire("UpdateRaidTools", "marks")
+    end, L["Marks Bar"], L["Only show when you have permission to do this"], L["marksTips"])
+    marksBarCB:SetPoint("TOPLEFT", readyPullCB, "BOTTOMLEFT", 0, -38)
+
+    marksDropdown = Cell:CreateDropdown(toolsPane, 200)
+    marksDropdown:SetPoint("TOPLEFT", marksBarCB, "BOTTOMRIGHT", 5, -5)
+    marksDropdown:SetItems({
+        {
+            ["text"] = L["Target Marks"].." ("..L["Horizontal"]..")",
+            ["value"] = "target_h",
+            ["onClick"] = function()
+                CellDB["raidTools"]["marks"][2] = "target_h"
+                Cell:Fire("UpdateRaidTools", "marks")
+            end,
+        },
+        {
+            ["text"] = L["Target Marks"].." ("..L["Vertical"]..")",
+            ["value"] = "target_v",
+            ["onClick"] = function()
+                CellDB["raidTools"]["marks"][2] = "target_v"
+                Cell:Fire("UpdateRaidTools", "marks")
+            end,
+        },
+        {
+            ["text"] = L["World Marks"].." ("..L["Horizontal"]..")",
+            ["value"] = "world_h",
+            ["onClick"] = function()
+                CellDB["raidTools"]["marks"][2] = "world_h"
+                Cell:Fire("UpdateRaidTools", "marks")
+            end,
+        },
+        {
+            ["text"] = L["World Marks"].." ("..L["Vertical"]..")",
+            ["value"] = "world_v",
+            ["onClick"] = function()
+                CellDB["raidTools"]["marks"][2] = "world_v"
+                Cell:Fire("UpdateRaidTools", "marks")
+            end,
+        },
+        {
+            ["text"] = L["Both"].." ("..L["Horizontal"]..")",
+            ["value"] = "both_h",
+            ["onClick"] = function()
+                CellDB["raidTools"]["marks"][2] = "both_h"
+                Cell:Fire("UpdateRaidTools", "marks")
+            end,
+        },
+        {
+            ["text"] = L["Both"].." ("..L["Vertical"]..")",
+            ["value"] = "both_v",
+            ["onClick"] = function()
+                CellDB["raidTools"]["marks"][2] = "both_v"
+                Cell:Fire("UpdateRaidTools", "marks")
+            end,
+        }
+    })
+end
 
 -------------------------------------------------
 -- functions
 -------------------------------------------------
-local loaded
+local init
 local function ShowTab(tab)
     if tab == "general" then
+        if not init then
+            CreateVisibilityPane()
+            CreateTooltipsPane()
+            CreateMiscPane()
+            CreateToolsPane()
+        end 
+
         generalTab:Show()
-        if loaded then return end
-        loaded = true
+
+        if init then return end
+        init = true
 
         -- tooltips
         enableTooltipsCB:SetChecked(CellDB["general"]["enableTooltips"])

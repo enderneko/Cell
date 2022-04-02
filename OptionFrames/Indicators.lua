@@ -600,12 +600,15 @@ Cell:RegisterCallback("UpdateTargetedSpells", "UpdateTargetedSpellsPreview", Upd
 -------------------------------------------------
 -- layout
 -------------------------------------------------
-local layoutText = Cell:CreateSeparator(L["Layout"], indicatorsTab, 122)
-layoutText:SetPoint("TOPLEFT", 5, -5)
-layoutText:SetJustifyH("LEFT")
+local layoutDropdown
+local function CreateLayoutPane()
+    local layoutPane = Cell:CreateTitledPane(indicatorsTab, L["Layout"], 136, 50)
+    layoutPane:SetPoint("TOPLEFT", indicatorsTab, "TOPLEFT", 5, -5)
 
-local layoutDropdown = Cell:CreateDropdown(indicatorsTab, 122)
-layoutDropdown:SetPoint("TOPLEFT", layoutText, "BOTTOMLEFT", 0, -10)
+    layoutDropdown = Cell:CreateDropdown(layoutPane, 136)
+    layoutDropdown:SetPoint("TOPLEFT", 0, -25)
+end
+
 
 local function LoadLayoutDropdown()
     local indices = {}
@@ -638,24 +641,7 @@ end
 -------------------------------------------------
 -- indicator list
 -------------------------------------------------
-local listText = Cell:CreateSeparator(L["Indicators"], indicatorsTab, 122)
-listText:SetPoint("TOPLEFT", 5, -62)
-listText:SetJustifyH("LEFT")
-
-local listFrame = Cell:CreateFrame("IndicatorsTab_ListFrame", indicatorsTab)
-listFrame:SetPoint("TOPLEFT", 5, -86)
-listFrame:SetPoint("BOTTOMRIGHT", indicatorsTab, "BOTTOMLEFT", 127, 49)
-listFrame:Show()
-
-Cell:CreateScrollFrame(listFrame)
-listFrame.scrollFrame:SetScrollStep(19)
-
--------------------------------------------------
--- indicator create/delete
--------------------------------------------------
--- mask
-Cell:CreateMask(indicatorsTab, nil, {1, -1, -1, 1})
-indicatorsTab.mask:Hide()
+local listFrame, renameBtn, deleteBtn
 
 local typeItems = {
     {
@@ -700,211 +686,225 @@ local auraTypeItems = {
     },
 }
 
-local createBtn = Cell:CreateButton(indicatorsTab, nil, "green-hover", {42, 20}, nil, nil, nil, nil, nil, L["Create"])
-createBtn:SetPoint("TOPLEFT", listFrame, "BOTTOMLEFT", 0, -5)
-createBtn:SetTexture("Interface\\AddOns\\Cell\\Media\\Icons\\create.blp", {16, 16}, {"TOPLEFT", 12, 0})
-createBtn:SetScript("OnClick", function()
-    local popup = Cell:CreateConfirmPopup(indicatorsTab, 200, L["Create new indicator"], function(self)
-        local name = strtrim(self.editBox:GetText())
-        local indicatorName
-        local indicatorType, indicatorAuraType = self.dropdown1:GetSelected(), self.dropdown2:GetSelected()
-        -- TODO: if indicatorType == "bars" then return end
-        
-        local last = #currentLayoutTable["indicators"]
-        if currentLayoutTable["indicators"][last]["type"] == "built-in" then
-            indicatorName = "indicator"..(last+1)
-        else
-            indicatorName = "indicator"..(tonumber(strmatch(currentLayoutTable["indicators"][last]["indicatorName"], "%d+"))+1)
-        end
+local function CreateListPane()
+    local listPane = Cell:CreateTitledPane(indicatorsTab, L["Indicators"], 136, 374)
+    listPane:SetPoint("TOPLEFT", 5, -62)
 
-        if indicatorType == "icon" then
-            tinsert(currentLayoutTable["indicators"], {
-                ["name"] = name,
-                ["indicatorName"] = indicatorName,
-                ["type"] = indicatorType,
-                ["enabled"] = true,
-                ["position"] = {"TOPRIGHT", "TOPRIGHT", 0, 3},
-                ["frameLevel"] = 5,
-                ["size"] = {13, 13},
-                ["font"] = {"Cell ".._G.DEFAULT, 11, "Outline", 2},
-                ["showDuration"] = false,
-                ["auraType"] = indicatorAuraType,
-                ["auras"] = {},
-            })
-        elseif indicatorType == "text" then
-            tinsert(currentLayoutTable["indicators"], {
-                ["name"] = name,
-                ["indicatorName"] = indicatorName,
-                ["type"] = indicatorType,
-                ["enabled"] = true,
-                ["position"] = {"TOPRIGHT", "TOPRIGHT", 0, 3},
-                ["frameLevel"] = 5,
-                ["font"] = {"Cell ".._G.DEFAULT, 12, "Outline", 0},
-                ["colors"] = {{0,1,0}, {1,1,0,.5}, {1,0,0,3}},
-                ["auraType"] = indicatorAuraType,
-                ["auras"] = {},
-                ["showDuration"] = true,
-                ["circledStackNums"] = false,
-            })
-        elseif indicatorType == "bar" then
-            tinsert(currentLayoutTable["indicators"], {
-                ["name"] = name,
-                ["indicatorName"] = indicatorName,
-                ["type"] = indicatorType,
-                ["enabled"] = true,
-                ["position"] = {"TOPRIGHT", "TOPRIGHT", -1, 2},
-                ["frameLevel"] = 5,
-                ["size"] = {18, 4},
-                ["colors"] = {{0,1,0}, {1,1,0,.5}, {1,0,0,3}},
-                ["auraType"] = indicatorAuraType,
-                ["auras"] = {},
-            })
-        elseif indicatorType == "rect" then
-            tinsert(currentLayoutTable["indicators"], {
-                ["name"] = name,
-                ["indicatorName"] = indicatorName,
-                ["type"] = indicatorType,
-                ["enabled"] = true,
-                ["position"] = {"TOPRIGHT", "TOPRIGHT", 0, 2},
-                ["frameLevel"] = 5,
-                ["size"] = {11, 4},
-                ["colors"] = {{0,1,0}, {1,1,0,.5}, {1,0,0,3}},
-                ["auraType"] = indicatorAuraType,
-                ["auras"] = {},
-            })
-        elseif indicatorType == "icons" then
-            tinsert(currentLayoutTable["indicators"], {
-                ["name"] = name,
-                ["indicatorName"] = indicatorName,
-                ["type"] = indicatorType,
-                ["enabled"] = true,
-                ["position"] = {"TOPRIGHT", "TOPRIGHT", 0, 3},
-                ["frameLevel"] = 5,
-                ["size"] = {13, 13},
-                ["num"] = 3,
-                ["orientation"] = "right-to-left",
-                ["font"] = {"Cell ".._G.DEFAULT, 11, "Outline", 2},
-                ["showDuration"] = false,
-                ["auraType"] = indicatorAuraType,
-                ["auras"] = {},
-            })
-        elseif indicatorType == "color" then
-            tinsert(currentLayoutTable["indicators"], {
-                ["name"] = name,
-                ["indicatorName"] = indicatorName,
-                ["type"] = indicatorType,
-                ["enabled"] = true,
-                ["anchor"] = "healthbar-current",
-                ["colors"] = {"gradient-vertical", {1, 0, 0.4, 1}, {0, 0, 0, 1}},
-                ["auraType"] = indicatorAuraType,
-                ["auras"] = {},
-            })
-        end
-        if indicatorAuraType == "buff" then
-            currentLayoutTable["indicators"][last+1]["castByMe"] = true
-        end
-        Cell:Fire("UpdateIndicators", currentLayout, indicatorName, "create", currentLayoutTable["indicators"][last+1])
-        LoadIndicatorList()
-        listButtons[last+1]:Click()
-        -- check scroll
-        if last+1 > 15 then
-            listFrame.scrollFrame:ScrollToBottom()
-        end
+    listFrame = Cell:CreateFrame("IndicatorsTab_ListFrame", listPane)
+    listFrame:SetPoint("TOPLEFT", 0, -25)
+    listFrame:SetPoint("BOTTOMRIGHT", 0, 44)
+    listFrame:Show()
+    
+    Cell:CreateScrollFrame(listFrame)
+    listFrame.scrollFrame:SetScrollStep(19)
 
-    end, nil, true, true, 2)
-    popup:SetPoint("TOPLEFT", 100, -100)
-    popup.dropdown1:SetItems(typeItems)
-    popup.dropdown1:SetSelectedItem(1)
-    -- popup.dropdown1:SetEnabled(false)
-    popup.dropdown2:SetItems(auraTypeItems)
-    popup.dropdown2:SetSelectedItem(1)
-end)
+    -- buttons
+    local createBtn = Cell:CreateButton(listPane, nil, "green-hover", {46, 20}, nil, nil, nil, nil, nil, L["Create"])
+    createBtn:SetPoint("TOPLEFT", listFrame, "BOTTOMLEFT", 0, -5)
+    createBtn:SetTexture("Interface\\AddOns\\Cell\\Media\\Icons\\create.blp", {16, 16}, {"TOPLEFT", 14, 0})
+    createBtn:SetScript("OnClick", function()
+        local popup = Cell:CreateConfirmPopup(indicatorsTab, 200, L["Create new indicator"], function(self)
+            local name = strtrim(self.editBox:GetText())
+            local indicatorName
+            local indicatorType, indicatorAuraType = self.dropdown1:GetSelected(), self.dropdown2:GetSelected()
+            -- TODO: if indicatorType == "bars" then return end
+            
+            local last = #currentLayoutTable["indicators"]
+            if currentLayoutTable["indicators"][last]["type"] == "built-in" then
+                indicatorName = "indicator"..(last+1)
+            else
+                indicatorName = "indicator"..(tonumber(strmatch(currentLayoutTable["indicators"][last]["indicatorName"], "%d+"))+1)
+            end
 
-local renameBtn = Cell:CreateButton(indicatorsTab, nil, "blue-hover", {41, 20}, nil, nil, nil, nil, nil, L["Rename"])
-renameBtn:SetPoint("TOPLEFT", createBtn, "TOPRIGHT", -1, 0)
-renameBtn:SetTexture("Interface\\AddOns\\Cell\\Media\\Icons\\rename.blp", {16, 16}, {"TOPLEFT", 12, -2})
-renameBtn:SetEnabled(false)
-renameBtn:SetScript("OnClick", function()
-    local name = currentLayoutTable["indicators"][selected]["name"]
-    local popup = Cell:CreateConfirmPopup(indicatorsTab, 200, L["Rename indicator"].."\n"..name, function(self)
-        local newName = strtrim(self.editBox:GetText())
-        currentLayoutTable["indicators"][selected]["name"] = newName
-        listButtons[selected]:SetText(newName)
-    end, nil, true, true)
-    popup:SetPoint("TOPLEFT", 100, -120)
-end)
+            if indicatorType == "icon" then
+                tinsert(currentLayoutTable["indicators"], {
+                    ["name"] = name,
+                    ["indicatorName"] = indicatorName,
+                    ["type"] = indicatorType,
+                    ["enabled"] = true,
+                    ["position"] = {"TOPRIGHT", "TOPRIGHT", 0, 3},
+                    ["frameLevel"] = 5,
+                    ["size"] = {13, 13},
+                    ["font"] = {"Cell ".._G.DEFAULT, 11, "Outline", 2},
+                    ["showDuration"] = false,
+                    ["auraType"] = indicatorAuraType,
+                    ["auras"] = {},
+                })
+            elseif indicatorType == "text" then
+                tinsert(currentLayoutTable["indicators"], {
+                    ["name"] = name,
+                    ["indicatorName"] = indicatorName,
+                    ["type"] = indicatorType,
+                    ["enabled"] = true,
+                    ["position"] = {"TOPRIGHT", "TOPRIGHT", 0, 3},
+                    ["frameLevel"] = 5,
+                    ["font"] = {"Cell ".._G.DEFAULT, 12, "Outline", 0},
+                    ["colors"] = {{0,1,0}, {1,1,0,.5}, {1,0,0,3}},
+                    ["auraType"] = indicatorAuraType,
+                    ["auras"] = {},
+                    ["showDuration"] = true,
+                    ["circledStackNums"] = false,
+                })
+            elseif indicatorType == "bar" then
+                tinsert(currentLayoutTable["indicators"], {
+                    ["name"] = name,
+                    ["indicatorName"] = indicatorName,
+                    ["type"] = indicatorType,
+                    ["enabled"] = true,
+                    ["position"] = {"TOPRIGHT", "TOPRIGHT", -1, 2},
+                    ["frameLevel"] = 5,
+                    ["size"] = {18, 4},
+                    ["colors"] = {{0,1,0}, {1,1,0,.5}, {1,0,0,3}},
+                    ["auraType"] = indicatorAuraType,
+                    ["auras"] = {},
+                })
+            elseif indicatorType == "rect" then
+                tinsert(currentLayoutTable["indicators"], {
+                    ["name"] = name,
+                    ["indicatorName"] = indicatorName,
+                    ["type"] = indicatorType,
+                    ["enabled"] = true,
+                    ["position"] = {"TOPRIGHT", "TOPRIGHT", 0, 2},
+                    ["frameLevel"] = 5,
+                    ["size"] = {11, 4},
+                    ["colors"] = {{0,1,0}, {1,1,0,.5}, {1,0,0,3}},
+                    ["auraType"] = indicatorAuraType,
+                    ["auras"] = {},
+                })
+            elseif indicatorType == "icons" then
+                tinsert(currentLayoutTable["indicators"], {
+                    ["name"] = name,
+                    ["indicatorName"] = indicatorName,
+                    ["type"] = indicatorType,
+                    ["enabled"] = true,
+                    ["position"] = {"TOPRIGHT", "TOPRIGHT", 0, 3},
+                    ["frameLevel"] = 5,
+                    ["size"] = {13, 13},
+                    ["num"] = 3,
+                    ["orientation"] = "right-to-left",
+                    ["font"] = {"Cell ".._G.DEFAULT, 11, "Outline", 2},
+                    ["showDuration"] = false,
+                    ["auraType"] = indicatorAuraType,
+                    ["auras"] = {},
+                })
+            elseif indicatorType == "color" then
+                tinsert(currentLayoutTable["indicators"], {
+                    ["name"] = name,
+                    ["indicatorName"] = indicatorName,
+                    ["type"] = indicatorType,
+                    ["enabled"] = true,
+                    ["anchor"] = "healthbar-current",
+                    ["colors"] = {"gradient-vertical", {1, 0, 0.4, 1}, {0, 0, 0, 1}},
+                    ["auraType"] = indicatorAuraType,
+                    ["auras"] = {},
+                })
+            end
+            if indicatorAuraType == "buff" then
+                currentLayoutTable["indicators"][last+1]["castByMe"] = true
+            end
+            Cell:Fire("UpdateIndicators", currentLayout, indicatorName, "create", currentLayoutTable["indicators"][last+1])
+            LoadIndicatorList()
+            listButtons[last+1]:Click()
+            -- check scroll
+            if last+1 > 15 then
+                listFrame.scrollFrame:ScrollToBottom()
+            end
 
-local deleteBtn = Cell:CreateButton(indicatorsTab, nil, "red-hover", {41, 20}, nil, nil, nil, nil, nil, L["Delete"])
-deleteBtn:SetPoint("TOPLEFT", renameBtn, "TOPRIGHT", -1, 0)
-deleteBtn:SetTexture("Interface\\AddOns\\Cell\\Media\\Icons\\trash.blp", {16, 16}, {"TOPLEFT", 12, -2})
-deleteBtn:SetEnabled(false)
-deleteBtn:SetScript("OnClick", function()
-    local name = currentLayoutTable["indicators"][selected]["name"]
-    local indicatorName = currentLayoutTable["indicators"][selected]["indicatorName"]
-    local auraType = currentLayoutTable["indicators"][selected]["auraType"]
+        end, nil, true, true, 2)
+        popup:SetPoint("TOPLEFT", 117, -100)
+        popup.dropdown1:SetItems(typeItems)
+        popup.dropdown1:SetSelectedItem(1)
+        -- popup.dropdown1:SetEnabled(false)
+        popup.dropdown2:SetItems(auraTypeItems)
+        popup.dropdown2:SetSelectedItem(1)
+    end)
 
-    local popup = Cell:CreateConfirmPopup(indicatorsTab, 200, L["Delete indicator"].."?\n"..name, function(self)
-        Cell:Fire("UpdateIndicators", currentLayout, indicatorName, "remove", auraType)
-        tremove(currentLayoutTable["indicators"], selected)
-        LoadIndicatorList()
-        listButtons[1]:Click()
-    end, nil, true)
-    popup:SetPoint("TOPLEFT", 100, -120)
-end)
+    renameBtn = Cell:CreateButton(listPane, nil, "blue-hover", {46, 20}, nil, nil, nil, nil, nil, L["Rename"])
+    renameBtn:SetPoint("TOPLEFT", createBtn, "TOPRIGHT", P:Scale(-1), 0)
+    renameBtn:SetTexture("Interface\\AddOns\\Cell\\Media\\Icons\\rename.blp", {16, 16}, {"TOPLEFT", 14, -2})
+    renameBtn:SetEnabled(false)
+    renameBtn:SetScript("OnClick", function()
+        local name = currentLayoutTable["indicators"][selected]["name"]
+        local popup = Cell:CreateConfirmPopup(indicatorsTab, 200, L["Rename indicator"].."\n"..name, function(self)
+            local newName = strtrim(self.editBox:GetText())
+            currentLayoutTable["indicators"][selected]["name"] = newName
+            listButtons[selected]:SetText(newName)
+        end, nil, true, true)
+        popup:SetPoint("TOPLEFT", 117, -120)
+    end)
 
-local importBtn = Cell:CreateButton(indicatorsTab, nil, "class-hover", {42, 20}, nil, nil, nil, nil, nil, L["Import"])
-importBtn:SetPoint("TOPLEFT", createBtn, "BOTTOMLEFT", 0, 1)
-importBtn:SetTexture("Interface\\AddOns\\Cell\\Media\\Icons\\import.blp", {16, 16}, {"TOPLEFT", 12, -2})
-importBtn:SetScript("OnClick", function()
-    F:ShowIndicatorsImportFrame(currentLayout)
-end)
+    deleteBtn = Cell:CreateButton(listPane, nil, "red-hover", {46, 20}, nil, nil, nil, nil, nil, L["Delete"])
+    deleteBtn:SetPoint("TOPLEFT", renameBtn, "TOPRIGHT", P:Scale(-1), 0)
+    deleteBtn:SetTexture("Interface\\AddOns\\Cell\\Media\\Icons\\trash.blp", {16, 16}, {"TOPLEFT", 14, -2})
+    deleteBtn:SetEnabled(false)
+    deleteBtn:SetScript("OnClick", function()
+        local name = currentLayoutTable["indicators"][selected]["name"]
+        local indicatorName = currentLayoutTable["indicators"][selected]["indicatorName"]
+        local auraType = currentLayoutTable["indicators"][selected]["auraType"]
 
-local exportBtn = Cell:CreateButton(indicatorsTab, nil, "class-hover", {41, 20}, nil, nil, nil, nil, nil, L["Export"])
-exportBtn:SetPoint("TOPLEFT", importBtn, "TOPRIGHT", -1, 0)
-exportBtn:SetTexture("Interface\\AddOns\\Cell\\Media\\Icons\\export.blp", {16, 16}, {"TOPLEFT", 12, -2})
-exportBtn:SetScript("OnClick", function()
-    F:ShowIndicatorsExportFrame(currentLayout)
-end)
+        local popup = Cell:CreateConfirmPopup(indicatorsTab, 200, L["Delete indicator"].."?\n"..name, function(self)
+            Cell:Fire("UpdateIndicators", currentLayout, indicatorName, "remove", auraType)
+            tremove(currentLayoutTable["indicators"], selected)
+            LoadIndicatorList()
+            listButtons[1]:Click()
+        end, nil, true)
+        popup:SetPoint("TOPLEFT", 117, -120)
+    end)
 
-local copyBtn = Cell:CreateButton(indicatorsTab, nil, "class-hover", {41, 20}, nil, nil, nil, nil, nil, L["Copy"], L["Copy indicators from one layout to another"])
-copyBtn:SetPoint("TOPLEFT", exportBtn, "TOPRIGHT", -1, 0)
-copyBtn:SetTexture("Interface\\AddOns\\Cell\\Media\\Icons\\copy.blp", {16, 16}, {"TOPLEFT", 12, -2})
-copyBtn:SetScript("OnClick", function()
-    F:ShowIndicatorsCopyFrame()
-end)
+    local importBtn = Cell:CreateButton(listPane, nil, "class-hover", {46, 20}, nil, nil, nil, nil, nil, L["Import"])
+    importBtn:SetPoint("TOPLEFT", createBtn, "BOTTOMLEFT", 0, P:Scale(1))
+    importBtn:SetTexture("Interface\\AddOns\\Cell\\Media\\Icons\\import.blp", {16, 16}, {"TOPLEFT", 14, -2})
+    importBtn:SetScript("OnClick", function()
+        F:ShowIndicatorsImportFrame(currentLayout)
+    end)
+
+    local exportBtn = Cell:CreateButton(listPane, nil, "class-hover", {46, 20}, nil, nil, nil, nil, nil, L["Export"])
+    exportBtn:SetPoint("TOPLEFT", importBtn, "TOPRIGHT", P:Scale(-1), 0)
+    exportBtn:SetTexture("Interface\\AddOns\\Cell\\Media\\Icons\\export.blp", {16, 16}, {"TOPLEFT", 14, -2})
+    exportBtn:SetScript("OnClick", function()
+        F:ShowIndicatorsExportFrame(currentLayout)
+    end)
+
+    local copyBtn = Cell:CreateButton(listPane, nil, "class-hover", {46, 20}, nil, nil, nil, nil, nil, L["Copy"], L["Copy indicators from one layout to another"])
+    copyBtn:SetPoint("TOPLEFT", exportBtn, "TOPRIGHT", P:Scale(-1), 0)
+    copyBtn:SetTexture("Interface\\AddOns\\Cell\\Media\\Icons\\copy.blp", {16, 16}, {"TOPLEFT", 14, -2})
+    copyBtn:SetScript("OnClick", function()
+        F:ShowIndicatorsCopyFrame()
+    end)
+end
 
 -------------------------------------------------
 -- indicator settings
 -------------------------------------------------
-local settingsText = Cell:CreateSeparator(L["Indicator Settings"], indicatorsTab, 255)
-settingsText:SetPoint("TOPLEFT", 137, -5)
-settingsText:SetJustifyH("LEFT")
+local othersAlpha, settingsFrame
 
-local othersAlpha = Cell:CreateSlider("", indicatorsTab, 0, 1, 50, .1, nil, function(value)
-    CellDB["indicatorPreviewAlpha"] = value
-    listButtons[selected]:Click()
-end)
-othersAlpha:SetPoint("RIGHT", -5, 0)
-othersAlpha:SetPoint("CENTER", settingsText)
-othersAlpha.currentEditBox:Hide()
-othersAlpha.lowText:Hide()
-othersAlpha.highText:Hide()
+local function CreateSettingsPane()
+    local settingsPane = Cell:CreateTitledPane(indicatorsTab, L["Indicator Settings"], 274, 431)
+    settingsPane:SetPoint("TOPLEFT", 153, -5)
 
-local alphaText = indicatorsTab:CreateFontString(nil, "OVERLAY", "CELL_FONT_CLASS")
-alphaText:SetPoint("BOTTOM", settingsText)
-alphaText:SetPoint("RIGHT", othersAlpha, "LEFT", -5, 0)
-alphaText:SetText(L["Alpha"])
+    othersAlpha = Cell:CreateSlider("", settingsPane, 0, 1, 50, .1, nil, function(value)
+        CellDB["indicatorPreviewAlpha"] = value
+        listButtons[selected]:Click()
+    end)
+    othersAlpha:SetPoint("TOPRIGHT", 0, -4)
+    othersAlpha.currentEditBox:Hide()
+    othersAlpha.lowText:Hide()
+    othersAlpha.highText:Hide()
+    
+    local alphaText = settingsPane:CreateFontString(nil, "OVERLAY", "CELL_FONT_CLASS")
+    alphaText:SetPoint("BOTTOM", settingsPane.line, "TOP", 0, P:Scale(2))
+    alphaText:SetPoint("RIGHT", othersAlpha, "LEFT", -5, 0)
+    alphaText:SetText(L["Alpha"])
 
--------------------------------------------------
--- settings frame
--------------------------------------------------
-local settingsFrame = Cell:CreateFrame("IndicatorsTab_SettingsFrame", indicatorsTab, 10, 10, true)
-settingsFrame:SetPoint("TOPLEFT", settingsText, "BOTTOMLEFT", 0, -10)
-settingsFrame:SetPoint("BOTTOMRIGHT", indicatorsTab, -5, 5)
-settingsFrame:Show()
-
-Cell:CreateScrollFrame(settingsFrame)
-settingsFrame.scrollFrame:SetScrollStep(35)
+    -- settings frame
+    settingsFrame = Cell:CreateFrame("IndicatorsTab_SettingsFrame", settingsPane, 10, 10, true)
+    settingsFrame:SetPoint("TOPLEFT", 0, -25)
+    settingsFrame:SetPoint("BOTTOMRIGHT")
+    settingsFrame:Show()
+    
+    Cell:CreateScrollFrame(settingsFrame)
+    settingsFrame.scrollFrame:SetScrollStep(35)
+end
 
 local indicatorSettings = {
     ["nameText"] = {"enabled", "nameColor", "textWidth", "vehicleNamePosition", "namePosition", "font-noOffset"},
@@ -986,7 +986,7 @@ local function ShowIndicatorSettings(id)
     local height = 0
     for i, w in pairs(widgets) do
         if last then
-            w:SetPoint("TOPLEFT", last, "BOTTOMLEFT", 0, -7)
+            w:SetPoint("TOPLEFT", last, "BOTTOMLEFT", 0, P:Scale(-7))
         else
             w:SetPoint("TOPLEFT")
         end
@@ -1197,8 +1197,16 @@ end
 -------------------------------------------------
 -- functions
 -------------------------------------------------
+local init
 local function ShowTab(tab)
     if tab == "indicators" then
+        if not init then
+            init = true
+            CreateLayoutPane()
+            CreateListPane()     
+            CreateSettingsPane()  
+        end
+
         indicatorsTab:Show()
         LoadLayoutDropdown()
         

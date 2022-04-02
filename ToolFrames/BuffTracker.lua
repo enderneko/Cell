@@ -199,19 +199,19 @@ Cell:RegisterCallback("ShowMover", "BuffTracker_ShowMover", ShowMover)
 buttons["PWF"] = Cell:CreateBuffButton(buffTrackerFrame, {32, 32}, 21562)
 P:Point(buttons["PWF"], "BOTTOMLEFT")
 buttons["PWF"]:Hide()
-buttons["PWF"]:SetTooltip(unaffected["PWF"])
+buttons["PWF"]:SetTooltips(unaffected["PWF"])
 buttons["PWF"].glowColor = {1, 1, 1}
 
 buttons["AB"] = Cell:CreateBuffButton(buffTrackerFrame, {32, 32}, 1459)
 P:Point(buttons["AB"], "BOTTOMLEFT", buttons["PWF"], "BOTTOMRIGHT", 3, 0)
 buttons["AB"]:Hide()
-buttons["AB"]:SetTooltip(unaffected["AB"])
+buttons["AB"]:SetTooltips(unaffected["AB"])
 buttons["AB"].glowColor = {.25, .78, .92}
 
 buttons["BS"] = Cell:CreateBuffButton(buffTrackerFrame, {32, 32}, 6673)
 P:Point(buttons["BS"], "BOTTOMLEFT", buttons["AB"], "BOTTOMRIGHT", 3, 0)
 buttons["BS"]:Hide()
-buttons["BS"]:SetTooltip(unaffected["BS"])
+buttons["BS"]:SetTooltips(unaffected["BS"])
 buttons["BS"].glowColor = {.78, .61, .43}
 
 local function UpdateButtons()
