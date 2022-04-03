@@ -40,5 +40,5 @@ RaidFrame\Groups\PartyFrame.lua
 RaidFrame\Groups\RaidFrame.lua
 RaidFrame\Groups\NPCFrame.lua
 
-ToolFrames\LoadToolFrames.xml
+Tools\LoadTools.xml
 OptionFrames\LoadOptionFrames.xml
