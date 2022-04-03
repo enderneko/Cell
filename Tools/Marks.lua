@@ -18,7 +18,7 @@ marksFrame:SetScript("OnDragStart", function()
 end)
 marksFrame:SetScript("OnDragStop", function()
     marksFrame:StopMovingOrSizing()
-    P:SavePosition(marksFrame, CellDB["raidTools"]["marks"][3])
+    P:SavePosition(marksFrame, CellDB["tools"]["marks"][3])
 end)
 
 -------------------------------------------------
@@ -31,14 +31,14 @@ marksFrame.moverText:Hide()
 
 local function ShowMover(show)
     if show then
-        if not CellDB["raidTools"]["marks"][1] then return end
+        if not CellDB["tools"]["marks"][1] then return end
         marksFrame:EnableMouse(true)
         marksFrame.moverText:Show()
         Cell:StylizeFrame(marksFrame, {0, 1, 0, 0.4}, {0, 0, 0, 0})
         if not F:HasPermission(true) then -- button not shown
-            if strfind(CellDB["raidTools"]["marks"][2], "^target") then
+            if strfind(CellDB["tools"]["marks"][2], "^target") then
                 marks:Show()
-            elseif strfind(CellDB["raidTools"]["marks"][2], "^world") then
+            elseif strfind(CellDB["tools"]["marks"][2], "^world") then
                 worldMarks:Show()
             else
                 marks:Show()
@@ -314,15 +314,15 @@ local function CheckPermission()
         marksFrame:RegisterEvent("PLAYER_REGEN_ENABLED")
     else
         marksFrame:UnregisterEvent("PLAYER_REGEN_ENABLED")
-        if CellDB["raidTools"]["marks"][1] then
-            if strfind(CellDB["raidTools"]["marks"][2], "^target") then
+        if CellDB["tools"]["marks"][1] then
+            if strfind(CellDB["tools"]["marks"][2], "^target") then
                 if marksFrame.moverText:IsShown() or Cell.vars.hasPartyMarkPermission then
                     marks:Show()
                 else
                     marks:Hide()
                 end
                 
-            elseif strfind(CellDB["raidTools"]["marks"][2], "^world") then
+            elseif strfind(CellDB["tools"]["marks"][2], "^world") then
                 if marksFrame.moverText:IsShown() or Cell.vars.hasPartyMarkPermission then
                     worldMarks:Show()
                 else
@@ -338,7 +338,7 @@ local function CheckPermission()
                     worldMarks:Hide()
                 end
             end
-            Rearrange(CellDB["raidTools"]["marks"][2])
+            Rearrange(CellDB["tools"]["marks"][2])
         else
             marks:Hide()
             worldMarks:Hide()
@@ -352,17 +352,17 @@ end)
 
 Cell:RegisterCallback("PermissionChanged", "RaidMarks_PermissionChanged", CheckPermission)
 
-local function UpdateRaidTools(which)
-    F:Debug("|cffBBFFFFUpdateRaidTools:|r", which)
+local function UpdateTools(which)
+    F:Debug("|cffBBFFFFUpdateTools:|r", which)
     if not which or which == "marks" then
         CheckPermission()
     end
 
     if not which then -- position
-        P:LoadPosition(marksFrame, CellDB["raidTools"]["marks"][3])
+        P:LoadPosition(marksFrame, CellDB["tools"]["marks"][3])
     end
 end
-Cell:RegisterCallback("UpdateRaidTools", "RaidMarks_UpdateRaidTools", UpdateRaidTools)
+Cell:RegisterCallback("UpdateTools", "RaidMarks_UpdateTools", UpdateTools)
 
 local function UpdatePixelPerfect()
     P:Resize(marksFrame)

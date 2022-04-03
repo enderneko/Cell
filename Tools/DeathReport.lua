@@ -248,7 +248,7 @@ end)
 -- priority
 ----------------------------------------------------
 local function UpdatePriority(hasHighestPriority)
-    if hasHighestPriority and CellDB["raidTools"]["deathReport"][1] then
+    if hasHighestPriority and CellDB["tools"]["deathReport"][1] then
         frame:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
     else
         frame:UnregisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
@@ -257,16 +257,16 @@ end
 Cell:RegisterCallback("UpdatePriority", "DeathReport_UpdatePriority", UpdatePriority)
 
 ----------------------------------------------------
--- UpdateRaidTools
+-- UpdateTools
 ----------------------------------------------------
 local enabled
-local function UpdateRaidTools(which)
+local function UpdateTools(which)
     if not which or which == "deathReport" then
-        if CellDB["raidTools"]["deathReport"][1] then
+        if CellDB["tools"]["deathReport"][1] then
             frame:RegisterEvent("PLAYER_ENTERING_WORLD")
             frame:RegisterEvent("GROUP_ROSTER_UPDATE")
 
-            limit = CellDB["raidTools"]["deathReport"][2]
+            limit = CellDB["tools"]["deathReport"][2]
             count = 0
             if not enabled and which == "deathReport" then -- already in world, manually enabled
                 frame:PLAYER_ENTERING_WORLD()
@@ -279,4 +279,4 @@ local function UpdateRaidTools(which)
         end
     end
 end
-Cell:RegisterCallback("UpdateRaidTools", "DeathReport_UpdateRaidTools", UpdateRaidTools)
+Cell:RegisterCallback("UpdateTools", "DeathReport_UpdateTools", UpdateTools)

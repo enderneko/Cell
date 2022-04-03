@@ -152,9 +152,9 @@ function eventFrame:ADDON_LOADED(arg1)
             }
         end
 
-        -- raidTools --------------------------------------------------------------------------------
-        if type(CellDB["raidTools"]) ~= "table" then
-            CellDB["raidTools"] = {
+        -- tools --------------------------------------------------------------------------------
+        if type(CellDB["tools"]) ~= "table" then
+            CellDB["tools"] = {
                 ["showBattleRes"] = true,
                 ["buffTracker"] = {false, {}},
                 ["deathReport"] = {false, 10},
@@ -501,8 +501,8 @@ function eventFrame:PLAYER_LOGIN()
     Cell:Fire("UpdateAppearance")
     Cell:UpdateOptionsFont(CellDB["appearance"]["optionsFontSizeOffset"], CellDB["appearance"]["useGameFont"])
     Cell:Fire("UpdatePixelPerfect")
-    -- update raid tools
-    Cell:Fire("UpdateRaidTools")
+    -- update tools
+    Cell:Fire("UpdateTools")
     -- update raid debuff list
     Cell:Fire("UpdateRaidDebuffs")
     -- hide blizzard
@@ -563,10 +563,10 @@ function SlashCmdList.CELL(msg, editbox)
             Cell.vars.currentLayoutTable["position"] = {}
             Cell.frames.readyAndPullFrame:ClearAllPoints()
             Cell.frames.readyAndPullFrame:SetPoint("TOPRIGHT", UIParent, "CENTER")
-            CellDB["raidTools"]["readyAndPull"][3] = {}
+            CellDB["tools"]["readyAndPull"][3] = {}
             Cell.frames.raidMarksFrame:ClearAllPoints()
             Cell.frames.raidMarksFrame:SetPoint("BOTTOMRIGHT", UIParent, "CENTER")
-            CellDB["raidTools"]["marks"][3] = {}
+            CellDB["tools"]["marks"][3] = {}
 
         elseif rest == "all" then
             Cell.frames.anchorFrame:ClearAllPoints()
@@ -599,8 +599,8 @@ function SlashCmdList.CELL(msg, editbox)
             else
                 F:Print(string.format(L["Cell will report first %d deaths during a raid encounter."], rest))
             end
-            CellDB["raidTools"]["deathReport"][2] = rest
-            Cell:Fire("UpdateRaidTools", "deathReport")
+            CellDB["tools"]["deathReport"][2] = rest
+            Cell:Fire("UpdateTools", "deathReport")
         else
             F:Print(L["A 0-40 integer is required."])
         end

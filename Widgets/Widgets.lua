@@ -565,12 +565,6 @@ function addon:CreateBuffButton(parent, size, spellId)
     b:SetAttribute("type1", "spell")
     b:SetAttribute("spell", spellName)
     b:HookScript("OnClick", function(self, button, down)
-        -- if button == "MiddleButton" then
-        --     if CellDB["raidTools"]["buffTrackerMsg"][spellId] then
-        --         UpdateSendChannel()
-        --         SendChatMessage(CellDB["raidTools"]["buffTrackerMsg"][spellId], sendChannel)
-        --     end
-
         if button == "RightButton" then
             local msg = F:GetUnaffectedString(spellId)
             if msg then

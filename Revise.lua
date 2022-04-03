@@ -995,15 +995,21 @@ function F:Revise()
     
     -- r87-release
     if CellDB["revise"] and dbRevision < 87 then
-        -- update readyAndPull
-        if CellDB["raidTools"]["readyAndPull"] and type(CellDB["raidTools"]["readyAndPull"][2]) == "table" then
-            if CellDB["raidTools"]["readyAndPull"][2][1] == "ExRT" then
-                CellDB["raidTools"]["readyAndPull"][2][1] = "mrt"
-            elseif CellDB["raidTools"]["readyAndPull"][2][1] == "DBM" then
-                CellDB["raidTools"]["readyAndPull"][2][1] = "dbm"
-            elseif CellDB["raidTools"]["readyAndPull"][2][1] == "BW" then
-                CellDB["raidTools"]["readyAndPull"][2][1] = "bw"
+        -- rename raid tools
+        if CellDB["raidTools"] then
+            -- update readyAndPull
+            if CellDB["raidTools"]["readyAndPull"] and type(CellDB["raidTools"]["readyAndPull"][2]) == "table" then
+                if CellDB["raidTools"]["readyAndPull"][2][1] == "ExRT" then
+                    CellDB["raidTools"]["readyAndPull"][2][1] = "mrt"
+                elseif CellDB["raidTools"]["readyAndPull"][2][1] == "DBM" then
+                    CellDB["raidTools"]["readyAndPull"][2][1] = "dbm"
+                elseif CellDB["raidTools"]["readyAndPull"][2][1] == "BW" then
+                    CellDB["raidTools"]["readyAndPull"][2][1] = "bw"
+                end
             end
+
+            CellDB["tools"] = CellDB["raidTools"]
+            CellDB["raidTools"] = nil
         end
 
         for _, layout in pairs(CellDB["layouts"]) do

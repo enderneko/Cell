@@ -202,9 +202,9 @@ battleResFrame:SetScript("OnEvent", function(self, event, ...)
     battleResFrame[event](self, ...)
 end)
 
-local function UpdateRaidTools(which)
+local function UpdateTools(which)
     if not which or which == "battleRes" then
-        if CellDB["raidTools"]["showBattleRes"] then
+        if CellDB["tools"]["showBattleRes"] then
             battleResFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
             battleResFrame:RegisterEvent("CHALLENGE_MODE_START")
             battleResFrame:RegisterEvent("SPELL_UPDATE_CHARGES")
@@ -215,7 +215,7 @@ local function UpdateRaidTools(which)
         end
     end
 end
-Cell:RegisterCallback("UpdateRaidTools", "BattleRes_UpdateRaidTools", UpdateRaidTools)
+Cell:RegisterCallback("UpdateTools", "BattleRes_UpdateTools", UpdateTools)
 
 local function UpdateLayout(layout, which)
     layout = Cell.vars.currentLayoutTable
