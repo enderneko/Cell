@@ -799,3 +799,24 @@ function F:GetSpellInfo(spellId)
     -- CellScanningTooltip:Show()
     return name, icon, table.concat(lines, "\n")
 end
+
+-------------------------------------------------
+-- auras
+-------------------------------------------------
+-- name, icon, count, debuffType, duration, expirationTime, source, isStealable, nameplateShowPersonal, spellId, canApplyAura, isBossDebuff, castByPlayer, nameplateShowAll, timeMod = UnitAura
+-- NOTE: FrameXML/AuraUtil.lua
+-- AuraUtil.FindAura(predicate, unit, filter, predicateArg1, predicateArg2, predicateArg3)
+-- predicate(predicateArg1, predicateArg2, predicateArg3, ...)
+local function predicate(...)
+    local idToFind = ...
+    local id = select(13, ...)
+    return idToFind == id
+end
+
+function F:FindAuraById(unit, type, spellId)
+    if type == "BUFF" then
+        return AuraUtil.FindAura(predicate, unit, "HELPFUL", spellId)
+    else
+        return AuraUtil.FindAura(predicate, unit, "HARMFUL", spellId)
+    end
+end

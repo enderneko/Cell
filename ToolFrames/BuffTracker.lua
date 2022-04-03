@@ -13,7 +13,6 @@ local UnitGUID = UnitGUID
 local UnitClass = UnitClass
 local IsInGroup = IsInGroup
 local IsInRaid = IsInRaid
-local AuraUtil_FindAura = AuraUtil.FindAura
 
 -- 21562: Power Word: Fortitude
 -- 1459: Arcane Brilliance
@@ -262,16 +261,6 @@ end
 -------------------------------------------------
 -- check
 -------------------------------------------------
--- name, icon, count, debuffType, duration, expirationTime, source, isStealable, nameplateShowPersonal, spellId, canApplyAura, isBossDebuff, castByPlayer, nameplateShowAll, timeMod = UnitAura
--- NOTE: FrameXML/AuraUtil.lua
--- AuraUtil.FindAura(predicate, unit, filter, predicateArg1, predicateArg2, predicateArg3)
--- predicate(predicateArg1, predicateArg2, predicateArg3, ...)
-local function predicate(...)
-    local idToFind = ...
-    local id = select(13, ...)
-    return idToFind == id
-end
-
 local function CheckUnit(unit, updateBtn)
     -- print("CheckUnit", unit)
     if not (available["PWF"] or available["AB"] or available["BS"]) then return end
@@ -281,21 +270,21 @@ local function CheckUnit(unit, updateBtn)
         local spec = info and info.global_spec_id or ""
         local required = requiredBuffs[spec]
         if available["PWF"] then
-            if not AuraUtil_FindAura(predicate, unit, "HELPFUL", 21562) then
+            if not F:FindAuraById(unit, "BUFF", 21562) then
                 unaffected["PWF"][unit] = true
             else
                 unaffected["PWF"][unit] = nil
             end
         end
         if available["AB"] then
-            if required == "AB" and not AuraUtil_FindAura(predicate, unit, "HELPFUL", 1459) then
+            if required == "AB" and not F:FindAuraById(unit, "BUFF", 1459) then
                 unaffected["AB"][unit] = true
             else
                 unaffected["AB"][unit] = nil
             end
         end
         if available["BS"] then
-            if required == "BS" and not AuraUtil_FindAura(predicate, unit, "HELPFUL", 6673) then
+            if required == "BS" and not F:FindAuraById(unit, "BUFF", 6673) then
                 unaffected["BS"][unit] = true
             else
                 unaffected["BS"][unit] = nil
