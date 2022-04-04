@@ -6,4 +6,5 @@
 	<Script file="RaidRosterFrame.lua"/>
 	<Script file="DeathReport.lua"/>
 	<Script file="BuffTracker.lua"/>
+	<Script file="Glows.lua"/>
 </Ui>

@@ -154,12 +154,34 @@ function eventFrame:ADDON_LOADED(arg1)
 
         -- tools --------------------------------------------------------------------------------
         if type(CellDB["tools"]) ~= "table" then
+            local PIName = GetSpellInfo(10060)
+
             CellDB["tools"] = {
                 ["showBattleRes"] = true,
                 ["buffTracker"] = {false, {}},
                 ["deathReport"] = {false, 10},
                 ["readyAndPull"] = {false, {"default", 7}, {}},
                 ["marks"] = {false, "both_h", {}},
+                ["PIRequest"] = {
+                    true, -- enabled
+                    true, -- priest
+                    true, -- free cooldown
+                    "all", -- response type
+                    10, -- timeout
+                    strlower(PIName), -- keyword
+                    {
+                        "pixel", -- glow type
+                        {
+                            {1,0.25,1,1}, -- color
+                            0, -- x
+                            0, -- y
+                            9, -- N
+                            0.25, -- frequency
+                            8, -- length
+                            2 -- thickness
+                        }
+                    }
+                },
             }
         end
         -- if type(CellDB["clamped"]) ~= "boolean" then CellDB["clamped"] = false end

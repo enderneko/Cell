@@ -1012,6 +1012,31 @@ function F:Revise()
             CellDB["raidTools"] = nil
         end
 
+        -- add PIRequest
+        if type(CellDB["tools"]["PIRequest"]) ~= "table" then
+            local PIName = GetSpellInfo(10060)
+            CellDB["tools"]["PIRequest"] = {
+                true, -- enabled
+                true, -- priest
+                true, -- free cooldown
+                "all", -- response type
+                10, -- timeout
+                strlower(PIName), -- keyword
+                {
+                    "pixel", -- glow type
+                    {
+                        {1,0.25,1,1}, -- color
+                        0, -- x
+                        0, -- y
+                        9, -- N
+                        0.25, -- frequency
+                        8, -- length
+                        2 -- thickness
+                    }
+                }
+            }
+        end
+
         for _, layout in pairs(CellDB["layouts"]) do
             -- add barOrientation to layout
             if type(layout["barOrientation"]) ~= "table" then

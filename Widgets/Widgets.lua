@@ -137,6 +137,23 @@ function addon:UpdateOptionsFont(offset, useGameFont)
 end
 
 -----------------------------------------
+-- enable/disable
+-----------------------------------------
+function addon:SetEnabled(isEnabled, ...)
+    for _, w in pairs({...}) do
+        if w:IsObjectType("FontString") then
+            if isEnabled then
+                w:SetTextColor(1, 1, 1, 1)
+            else
+                w:SetTextColor(0.4, 0.4, 0.4, 1)
+            end            
+        else
+            w:SetEnabled(isEnabled)
+        end
+    end
+end
+
+-----------------------------------------
 -- seperator
 -----------------------------------------
 function addon:CreateSeparator(text, parent, width, color)
@@ -879,6 +896,8 @@ function addon:CreateColorPicker(parent, label, hasOpacity, func)
         
         newR, newG, newB, newA = tonumber(string.format("%.3f", newR)), tonumber(string.format("%.3f", newG)), tonumber(string.format("%.3f", newB)), newA and tonumber(string.format("%.3f", newA))
         
+        newA = hasOpacity and newA or 1
+        
         cp:SetBackdropColor(newR, newG, newB, newA)
         if func then
             func(newR, newG, newB, newA)
@@ -1020,9 +1039,9 @@ function addon:CreateSlider(name, parent, low, high, width, step, onValueChanged
         nameText:SetText(n)
     end
 
-    local currentEditBox = addon:CreateEditBox(slider, 44, 14)
+    local currentEditBox = addon:CreateEditBox(slider, 48, 14)
     slider.currentEditBox = currentEditBox
-    P:Point(currentEditBox, "TOPLEFT", slider, "BOTTOMLEFT", math.ceil(width / 2 - 22), -1)
+    P:Point(currentEditBox, "TOPLEFT", slider, "BOTTOMLEFT", math.ceil(width / 2 - 24), -1)
     -- currentEditBox:SetPoint("TOP", slider, "BOTTOM", 0, -1)
     currentEditBox:SetJustifyH("CENTER")
     currentEditBox:SetScript("OnEditFocusGained", function(self)

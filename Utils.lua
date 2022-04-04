@@ -357,6 +357,18 @@ function F:GetUnitButtonByGUID(guid)
     end
 end
 
+function F:GetUnitButtonByName(name)
+    if not Cell.vars.name[name] then return end
+
+    if Cell.vars.groupType == "raid" then
+        return Cell.unitButtons.raid.units[Cell.vars.name[name]]
+    elseif Cell.vars.groupType == "party" then
+        return Cell.unitButtons.party.units[Cell.vars.name[name]]
+    else -- solo
+        return Cell.unitButtons.solo[Cell.vars.name[name]]
+    end
+end
+
 function F:UpdateTextWidth(fs, text, width, relativeTo)
     if not text or not width then return end
 
