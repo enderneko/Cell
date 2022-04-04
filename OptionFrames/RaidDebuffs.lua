@@ -1012,37 +1012,63 @@ ShowDebuffs = function(bossId, buttonIndex)
     if debuffButtons[buttonIndex or 1] and debuffButtons[buttonIndex or 1]:IsShown() then
         debuffButtons[buttonIndex or 1]:Click()
     else
-        if RaidDebuffsPreviewButton:IsShown() then RaidDebuffsPreviewButton.fadeOut:Play() end
+        if CellRaidDebuffsPreviewButton:IsShown() then CellRaidDebuffsPreviewButton.fadeOut:Play() end
     end
 end
 
 --------------------------------------------------
 -- glow preview
 --------------------------------------------------
-local previewButton = CreateFrame("Button", "RaidDebuffsPreviewButton", debuffsTab, "CellUnitButtonTemplate")
-previewButton:SetPoint("TOPLEFT", debuffsTab, "TOPRIGHT", 5, -137)
-previewButton:UnregisterAllEvents()
-previewButton:SetScript("OnEnter", nil)
-previewButton:SetScript("OnLeave", nil)
-previewButton:SetScript("OnShow", nil)
-previewButton:SetScript("OnHide", nil)
-previewButton:SetScript("OnUpdate", nil)
-previewButton:Hide()
+local previewButton
 
-local previewButtonBG = Cell:CreateFrame("RaidDebuffsPreviewButtonBG", previewButton)
-previewButtonBG:SetPoint("TOPLEFT", previewButton, 0, 20)
-previewButtonBG:SetPoint("BOTTOMRIGHT", previewButton, "TOPRIGHT")
-previewButtonBG:SetFrameStrata("BACKGROUND")
-Cell:StylizeFrame(previewButtonBG, {.1, .1, .1, .77}, {0, 0, 0, 0})
-previewButtonBG:Show()
+local function CreatePreviewButton()
+    previewButton = CreateFrame("Button", "CellRaidDebuffsPreviewButton", debuffsTab, "CellUnitButtonTemplate")
+    previewButton:SetPoint("TOPLEFT", debuffsTab, "TOPRIGHT", 5, -137)
+    previewButton:UnregisterAllEvents()
+    previewButton:SetScript("OnEnter", nil)
+    previewButton:SetScript("OnLeave", nil)
+    previewButton:SetScript("OnShow", nil)
+    previewButton:SetScript("OnHide", nil)
+    previewButton:SetScript("OnUpdate", nil)
+    previewButton:Hide()
 
-local previewText = previewButtonBG:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET_TITLE")
-previewText:SetPoint("TOP", 0, -3)
-previewText:SetText(Cell:GetPlayerClassColorString()..L["Preview"])
+    local previewButtonBG = Cell:CreateFrame("RaidDebuffsPreviewButtonBG", previewButton)
+    previewButtonBG:SetPoint("TOPLEFT", previewButton, 0, 20)
+    previewButtonBG:SetPoint("BOTTOMRIGHT", previewButton, "TOPRIGHT")
+    previewButtonBG:SetFrameStrata("BACKGROUND")
+    Cell:StylizeFrame(previewButtonBG, {.1, .1, .1, .77}, {0, 0, 0, 0})
+    previewButtonBG:Show()
+
+    local previewText = previewButtonBG:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET_TITLE")
+    previewText:SetPoint("TOP", 0, -3)
+    previewText:SetText(Cell:GetPlayerClassColorString()..L["Preview"])
+
+    previewButton.fadeIn = previewButton:CreateAnimationGroup()
+    local fadeIn = previewButton.fadeIn:CreateAnimation("alpha")
+    fadeIn:SetFromAlpha(0)
+    fadeIn:SetToAlpha(1)
+    fadeIn:SetDuration(.25)
+    fadeIn:SetSmoothing("OUT")
+
+    previewButton.fadeOut = previewButton:CreateAnimationGroup()
+    local fadeOut = previewButton.fadeOut:CreateAnimation("alpha")
+    fadeOut:SetFromAlpha(1)
+    fadeOut:SetToAlpha(0)
+    fadeOut:SetDuration(0.25)
+    fadeOut:SetSmoothing("IN")
+    fadeOut:SetScript("OnPlay", function()
+        if previewButton.fadeIn:IsPlaying() then
+            previewButton.fadeIn:Stop()
+        end        
+    end)
+    previewButton.fadeOut:SetScript("OnFinished", function()
+        previewButton:Hide()
+    end)
+end
 
 local function UpdatePreviewButton()
-    if not previewButton.loaded then
-        previewButton.loaded = true
+    if not previewButton then
+        CreatePreviewButton()
     end
 
     local iTable = Cell.vars.currentLayoutTable["indicators"][1]
@@ -1077,28 +1103,6 @@ local function UpdatePreviewButton()
     -- alpha
     previewButton:SetBackdropColor(0, 0, 0, CellDB["appearance"]["bgAlpha"])
 end
-
-previewButton.fadeIn = previewButton:CreateAnimationGroup()
-local fadeIn = previewButton.fadeIn:CreateAnimation("alpha")
-fadeIn:SetFromAlpha(0)
-fadeIn:SetToAlpha(1)
-fadeIn:SetDuration(.25)
-fadeIn:SetSmoothing("OUT")
-
-previewButton.fadeOut = previewButton:CreateAnimationGroup()
-local fadeOut = previewButton.fadeOut:CreateAnimation("alpha")
-fadeOut:SetFromAlpha(1)
-fadeOut:SetToAlpha(0)
-fadeOut:SetDuration(0.25)
-fadeOut:SetSmoothing("IN")
-fadeOut:SetScript("OnPlay", function()
-    if previewButton.fadeIn:IsPlaying() then
-        previewButton.fadeIn:Stop()
-    end        
-end)
-previewButton.fadeOut:SetScript("OnFinished", function()
-    previewButton:Hide()
-end)
 
 -------------------------------------------------
 -- debuff details frame
@@ -2108,21 +2112,21 @@ end
 Cell:RegisterCallback("ShowOptionsTab", "RaidDebuffsTab_ShowTab", ShowTab)
 
 local function UpdateLayout()
-    if previewButton.loaded then
+    if previewButton then
         UpdatePreviewButton()
     end
 end
 Cell:RegisterCallback("UpdateLayout", "RaidDebuffsTab_UpdateLayout", UpdateLayout)
 
 local function UpdateAppearance()
-    if previewButton.loaded then
+    if previewButton then
         UpdatePreviewButton()
     end
 end
 Cell:RegisterCallback("UpdateAppearance", "RaidDebuffsTab_UpdateAppearance", UpdateAppearance)
 
 local function UpdateIndicators(layout, indicatorName, setting, value)
-    if previewButton.loaded then
+    if previewButton then
         if not layout or indicatorName == "nameText" then
             UpdatePreviewButton()
         end

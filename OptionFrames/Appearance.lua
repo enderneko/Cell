@@ -65,7 +65,7 @@ end
 local previewButton, previewButton2
 
 local function CreatePreviewButtons()
-    previewButton = CreateFrame("Button", "AppearancePreviewButton", appearanceTab, "CellUnitButtonTemplate")
+    previewButton = CreateFrame("Button", "CellAppearancePreviewButton", appearanceTab, "CellUnitButtonTemplate")
     previewButton:SetPoint("TOPLEFT", appearanceTab, "TOPRIGHT", 5, -200)
     previewButton:UnregisterAllEvents()
     previewButton:SetScript("OnEnter", nil)
@@ -211,9 +211,9 @@ local function UpdatePreviewButton()
     previewButton2.func.SetOrientation(unpack(Cell.vars.currentLayoutTable["barOrientation"]))
 
     -- size
-    previewButton:SetSize(unpack(Cell.vars.currentLayoutTable["size"]))
+    P:Size(previewButton, Cell.vars.currentLayoutTable["size"][1], Cell.vars.currentLayoutTable["size"][2])
     previewButton.func.SetPowerSize(Cell.vars.currentLayoutTable["powerSize"])
-    previewButton2:SetSize(unpack(Cell.vars.currentLayoutTable["size"]))
+    P:Size(previewButton2, Cell.vars.currentLayoutTable["size"][1], Cell.vars.currentLayoutTable["size"][2])
     previewButton2.func.SetPowerSize(Cell.vars.currentLayoutTable["powerSize"])
 
     -- value

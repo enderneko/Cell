@@ -16,7 +16,7 @@ local listButtons = {}
 -------------------------------------------------
 -- preview
 -------------------------------------------------
-local previewButton = CreateFrame("Button", "IndicatorsPreviewButton", indicatorsTab, "CellUnitButtonTemplate")
+local previewButton = CreateFrame("Button", "CellIndicatorsPreviewButton", indicatorsTab, "CellUnitButtonTemplate")
 previewButton:SetPoint("TOPLEFT", indicatorsTab, "TOPRIGHT", 10, -25)
 previewButton:UnregisterAllEvents()
 previewButton:SetScript("OnEnter", nil)

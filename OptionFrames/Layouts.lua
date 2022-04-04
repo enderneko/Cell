@@ -12,30 +12,34 @@ local selectedRole, selectedLayout, selectedLayoutTable
 -------------------------------------------------
 -- preview frame
 -------------------------------------------------
-local previewButton = CreateFrame("Button", "LayoutsPreviewButton", layoutsTab, "CellUnitButtonTemplate")
-previewButton:SetPoint("TOPRIGHT", layoutsTab, "TOPLEFT", -5, -20)
-previewButton:UnregisterAllEvents()
-previewButton:SetScript("OnEnter", nil)
-previewButton:SetScript("OnLeave", nil)
-previewButton:SetScript("OnShow", nil)
-previewButton:SetScript("OnHide", nil)
-previewButton:SetScript("OnUpdate", nil)
-previewButton:Show()
+local previewButton
 
-local previewButtonBG = Cell:CreateFrame("LayoutsPreviewButtonBG", layoutsTab)
-previewButtonBG:SetPoint("TOPLEFT", previewButton, 0, 20)
-previewButtonBG:SetPoint("BOTTOMRIGHT", previewButton, "TOPRIGHT")
-previewButtonBG:SetFrameStrata("BACKGROUND")
-Cell:StylizeFrame(previewButtonBG, {.1, .1, .1, .77}, {0, 0, 0, 0})
-previewButtonBG:Show()
-
-local previewText = previewButtonBG:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET_TITLE")
-previewText:SetPoint("TOP", 0, -3)
-previewText:SetText(Cell:GetPlayerClassColorString()..L["Preview"])
+local function CreatePreviewButton()
+    previewButton = CreateFrame("Button", "CellLayoutsPreviewButton", layoutsTab, "CellUnitButtonTemplate")
+    previewButton:SetPoint("TOPRIGHT", layoutsTab, "TOPLEFT", -5, -20)
+    previewButton:UnregisterAllEvents()
+    previewButton:SetScript("OnEnter", nil)
+    previewButton:SetScript("OnLeave", nil)
+    previewButton:SetScript("OnShow", nil)
+    previewButton:SetScript("OnHide", nil)
+    previewButton:SetScript("OnUpdate", nil)
+    previewButton:Show()
+    
+    local previewButtonBG = Cell:CreateFrame("LayoutsPreviewButtonBG", layoutsTab)
+    previewButtonBG:SetPoint("TOPLEFT", previewButton, 0, 20)
+    previewButtonBG:SetPoint("BOTTOMRIGHT", previewButton, "TOPRIGHT")
+    previewButtonBG:SetFrameStrata("BACKGROUND")
+    Cell:StylizeFrame(previewButtonBG, {.1, .1, .1, .77}, {0, 0, 0, 0})
+    previewButtonBG:Show()
+    
+    local previewText = previewButtonBG:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET_TITLE")
+    previewText:SetPoint("TOP", 0, -3)
+    previewText:SetText(Cell:GetPlayerClassColorString()..L["Preview"])
+end
 
 local function UpdatePreviewButton(which, value)
-    if not previewButton.loaded then
-        previewButton.loaded = true
+    if not previewButton then
+        CreatePreviewButton()
     end
 
     if not which or which == "nameText" then
@@ -89,7 +93,7 @@ local function UpdatePreviewButton(which, value)
     end
     
     if not which or which == "size" then
-        previewButton:SetSize(unpack(selectedLayoutTable["size"]))
+        P:Size(previewButton, selectedLayoutTable["size"][1], selectedLayoutTable["size"][2])
     end
 
     if not which or which == "barOrientation" then
@@ -1577,14 +1581,14 @@ end
 Cell:RegisterCallback("UpdateLayout", "LayoutsTab_UpdateLayout", UpdateLayoutAutoSwitchText)
 
 local function UpdateAppearance()
-    if previewButton.loaded and selectedLayout == Cell.vars.currentLayout then
+    if previewButton and selectedLayout == Cell.vars.currentLayout then
         UpdatePreviewButton("appearance")
     end
 end
 Cell:RegisterCallback("UpdateAppearance", "LayoutsTab_UpdateAppearance", UpdateAppearance)
 
 local function UpdateIndicators(layout, indicatorName, setting, value)
-    if previewButton.loaded and selectedLayout == Cell.vars.currentLayout then
+    if previewButton and selectedLayout == Cell.vars.currentLayout then
         if not layout or indicatorName == "nameText" then
             UpdatePreviewButton("nameText")
         end
