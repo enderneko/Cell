@@ -1398,13 +1398,23 @@ local function UnitButton_UpdateThreatBar(self)
     end
 end
 
+local LRC = LibStub:GetLibrary("LibRangeCheck-2.0")
 local function UnitButton_UpdateInRange(self)
     local unit = self.state.displayedUnit
     if not unit then return end
 
-    local inRange, checked = UnitInRange(unit)
-    if not checked then
-        inRange = UnitIsVisible(unit)
+    local inRange
+
+    if F:UnitInGroup(unit) then
+         -- NOTE: UnitInRange only works with group members
+        local checked
+        inRange, checked = UnitInRange(unit)
+        if not checked then
+            inRange = UnitIsVisible(unit)
+        end
+    else
+        local minRangeIfVisible, maxRangeIfVisible = LRC:GetRange(unit, true)
+        inRange = maxRangeIfVisible and maxRangeIfVisible <= 40
     end
 
     self.state.inRange = inRange

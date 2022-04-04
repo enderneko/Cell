@@ -12,4 +12,5 @@
     <Include file="LibSerialize\lib.xml"/>
     <Include file="LibDeflate\lib.xml"/>
     <Include file="LibGroupInSpecT\lib.xml"/>
+    <Script file="LibRangeCheck-2.0\LibRangeCheck-2.0.lua"/>
 </Ui>
