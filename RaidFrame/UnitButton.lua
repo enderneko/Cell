@@ -51,6 +51,7 @@ local barOrientation, barAnimationType, highlightEnabled, predictionEnabled, abs
 -------------------------------------------------
 -- unit button func declarations
 -------------------------------------------------
+local UnitButton_UpdateAll
 local UnitButton_UpdateAuras, UnitButton_UpdateRole, UnitButton_UpdateLeader, UnitButton_UpdateStatusIcon, UnitButton_UpdateStatusText, UnitButton_UpdateColor
 local UnitButton_UpdatePowerMax, UnitButton_UpdatePower, UnitButton_UpdatePowerType
 
@@ -1593,7 +1594,7 @@ UnitButton_UpdateColor = function(self)
     self.widget.incomingHeal:SetVertexColor(barR, barG, barB)
 end
 
-local function UnitButton_UpdateAll(self)
+UnitButton_UpdateAll = function(self)
     if not self:IsVisible() then return end
 
     UnitButton_UpdateVehicleStatus(self)
@@ -2534,6 +2535,7 @@ function F:UnitButton_OnLoad(button)
     end
 
     -- FIXME: fix boss 678
+    button.func.UpdateAll = UnitButton_UpdateAll
     button.func.UpdateHealth = UnitButton_UpdateHealth
     button.func.UpdateHealthMax = UnitButton_UpdateHealthMax
     button.func.UpdateAuras = UnitButton_UpdateAuras

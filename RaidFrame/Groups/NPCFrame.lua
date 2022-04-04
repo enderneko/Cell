@@ -136,8 +136,7 @@ for i = 6, 8 do
         boss678_guidToButton[guid] = button
         
         -- update now
-        button.func.UpdateHealthMax(button)
-        button.func.UpdateHealth(button)
+        button.func.UpdateAll(button)
 
         if not cleu:IsEventRegistered("COMBAT_LOG_EVENT_UNFILTERED") then
             cleu:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
@@ -161,12 +160,14 @@ for i = 6, 8 do
         if button.helper.elapsed >= 0.25 then
             local guid = UnitGUID(button.state.unit)
             -- check old guid
-            if guid and boss678_buttonToGuid[i] ~= guid then -- changed
+            if guid and boss678_buttonToGuid[i] ~= guid then --! unit changed
                 -- remove old
                 boss678_guidToButton[boss678_buttonToGuid[i] or ""] = nil
                 -- add new
                 boss678_buttonToGuid[i] = guid
                 boss678_guidToButton[guid] = button
+                -- update now
+                button.func.UpdateAll(button)
             end
             button.helper.elapsed = 0
         end
