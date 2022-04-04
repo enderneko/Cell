@@ -1871,15 +1871,30 @@ end
 -------------------------------------------------
 -- unit button show/hide/enter/leave
 -------------------------------------------------
+Cell.vars.guid = {} -- guid to unitid
+Cell.vars.name = {} -- name to unitid
+
 local function UnitButton_OnShow(self)
     -- self.updateRequired = nil -- prevent UnitButton_UpdateAll twice. when convert party <-> raid, GROUP_ROSTER_UPDATE fired.
     UnitButton_RegisterEvents(self)
-    -- Cell:Fire("UpdateClampRectInsets")
+
+    -- NOTE: update Cell.vars.guid
+    if self.state.unit then
+        local guid = UnitGUID(self.state.unit)
+        if guid then
+            Cell.vars.guid[guid] = self.state.unit
+        end
+        local name = GetUnitName(self.state.unit, true)
+        if name then
+            Cell.vars.name[name] = self.state.unit
+        end
+        -- print("show", self.state.unit, guid, name)
+    end
 end
 
 local function UnitButton_OnHide(self)
     UnitButton_UnregisterEvents(self)
-    -- Cell:Fire("UpdateClampRectInsets")
+
     if self.state.unit then
         -- reset debuffs
         if debuffs_cache[self.state.unit] then wipe(debuffs_cache[self.state.unit]) end
@@ -1897,6 +1912,15 @@ local function UnitButton_OnHide(self)
         if buffs_cache_count_castByMe[self.state.unit] then wipe(buffs_cache_count_castByMe[self.state.unit]) end
         if buffs_current[self.state.unit] then wipe(buffs_current[self.state.unit]) end
         if buffs_current_castByMe[self.state.unit] then wipe(buffs_current_castByMe[self.state.unit]) end
+
+        -- NOTE: update Cell.vars.guid
+        -- print("hide", self.state.unit, self.__unitGuid, self.__unitName)
+        if self.__unitGuid then
+            Cell.vars.guid[self.__unitGuid] = nil
+        end
+        if self.__unitName then
+            Cell.vars.name[self.__unitName] = nil
+        end
     end
     F:RemoveElementsExceptKeys(self.state, "unit", "displayedUnit")
 end
@@ -1924,6 +1948,8 @@ local function UnitButton_OnTick(self)
             -- unit entity changed
             F:RemoveElementsExceptKeys(self.state, "unit", "displayedUnit")
             self.__displayedGuid = guid
+            self.__unitGuid = UnitGUID(self.state.unit or "")
+            self.__unitName = GetUnitName(self.state.unit or "", true)
             self.updateRequired = 1
         end
     end
@@ -2466,6 +2492,16 @@ function F:UnitButton_OnLoad(button)
     -- readyCheckHighlight:SetPoint("BOTTOMRIGHT", 1, -1)
     -- readyCheckHighlight:SetTexture("Interface\\Buttons\\WHITE8x8")
     -- readyCheckHighlight:Hide()
+
+    --* pirGlowFrame (Power Infusion Request)
+    local pirGlowFrame = CreateFrame("Frame", name.."PIRGlowFrame", button)
+    button.widget.pirGlowFrame = pirGlowFrame
+    pirGlowFrame:SetAllPoints(button)
+    
+    --* drGlowFrame (Dispel Request)
+    local drGlowFrame = CreateFrame("Frame", name.."DRGlowFrame", button)
+    button.widget.drGlowFrame = drGlowFrame
+    drGlowFrame:SetAllPoints(button)
 
     --* overlayFrame
     local overlayFrame = CreateFrame("Frame", name.."OverlayFrame", button)

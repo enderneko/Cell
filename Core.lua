@@ -330,10 +330,10 @@ function eventFrame:ADDON_LOADED(arg1)
     -- end
 end
 
-Cell.vars.guid = {}
+-- Cell.vars.guid = {} -- NOTE: moved to UnitButton.lua OnShow/OnHide
 Cell.vars.role = {["TANK"]=0, ["HEALER"]=0, ["DAMAGER"]=0}
 function eventFrame:GROUP_ROSTER_UPDATE()
-    wipe(Cell.vars.guid)
+    -- wipe(Cell.vars.guid)
     if IsInRaid() then
         if Cell.vars.groupType ~= "raid" then
             Cell.vars.groupType = "raid"
@@ -347,10 +347,10 @@ function eventFrame:GROUP_ROSTER_UPDATE()
         -- update guid & raid setup
         for i = 1, GetNumGroupMembers() do
             -- update guid
-            local playerGUID = UnitGUID("raid"..i)
-            if playerGUID then
-                Cell.vars.guid[playerGUID] = "raid"..i
-            end
+            -- local playerGUID = UnitGUID("raid"..i)
+            -- if playerGUID then
+            --     Cell.vars.guid[playerGUID] = "raid"..i
+            -- end
             -- update raid setup
             local role = select(12, GetRaidRosterInfo(i))
             if role and Cell.vars.role[role] then
@@ -378,23 +378,23 @@ function eventFrame:GROUP_ROSTER_UPDATE()
             Cell:Fire("GroupTypeChanged", "party")
         end
         -- update guid
-        Cell.vars.guid[UnitGUID("player")] = "player"
-        if UnitGUID("pet") then
-            Cell.vars.guid[UnitGUID("pet")] = "pet"
-        end
-        for i = 1, 4 do
-            local playerGUID = UnitGUID("party"..i)
-            if playerGUID then
-                Cell.vars.guid[playerGUID] = "party"..i
-            else
-                break
-            end
+        -- Cell.vars.guid[UnitGUID("player")] = "player"
+        -- if UnitGUID("pet") then
+        --     Cell.vars.guid[UnitGUID("pet")] = "pet"
+        -- end
+        -- for i = 1, 4 do
+        --     local playerGUID = UnitGUID("party"..i)
+        --     if playerGUID then
+        --         Cell.vars.guid[playerGUID] = "party"..i
+        --     else
+        --         break
+        --     end
 
-            local petGUID = UnitGUID("partypet"..i)
-            if petGUID then
-                Cell.vars.guid[petGUID] = "partypet"..i
-            end
-        end
+        --     local petGUID = UnitGUID("partypet"..i)
+        --     if petGUID then
+        --         Cell.vars.guid[petGUID] = "partypet"..i
+        --     end
+        -- end
         -- update Cell.unitButtons.raid.units
         for i = 1, 40 do
             Cell.unitButtons.raid.units["raid"..i] = nil
@@ -413,10 +413,10 @@ function eventFrame:GROUP_ROSTER_UPDATE()
             Cell:Fire("GroupTypeChanged", "solo")
         end
         -- update guid
-        Cell.vars.guid[UnitGUID("player")] = "player"
-        if UnitGUID("pet") then
-            Cell.vars.guid[UnitGUID("pet")] = "pet"
-        end
+        -- Cell.vars.guid[UnitGUID("player")] = "player"
+        -- if UnitGUID("pet") then
+        --     Cell.vars.guid[UnitGUID("pet")] = "pet"
+        -- end
         -- update Cell.unitButtons.raid.units
         for i = 1, 40 do
             Cell.unitButtons.raid.units["raid"..i] = nil
