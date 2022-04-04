@@ -70,6 +70,7 @@ local function CreateSpecialThanksPane()
     local thanksText = specialThanksPane:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
     thanksText:SetPoint("TOPLEFT", 5, -27)
     thanksText:SetSpacing(5)
+    thanksText:SetJustifyH("LEFT")
     thanksText:SetText("夕曦 (NGA)")
 end
 
@@ -83,6 +84,7 @@ local function CreateTranslatorsPane()
     local translatorsText = translatorsPane:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
     translatorsText:SetPoint("TOPLEFT", 5, -27)
     translatorsText:SetSpacing(5)
+    translatorsText:SetJustifyH("LEFT")
     translatorsText:SetText("RainbowUI (zhTW)\nnaragok79 (koKR)\nBNS333 (zhTW)")
 end
 
@@ -93,7 +95,7 @@ local function CreateBugReportPane()
     local bugReportPane = Cell:CreateTitledPane(aboutTab, L["Bug Report & Suggestion"], 422, 73)
     bugReportPane:SetPoint("TOPLEFT", aboutTab, "TOPLEFT", 5, -355)
 
-    local bugReportEB = Cell:CreateEditBox(bugReportPane, 377, 20)
+    local bugReportEB = Cell:CreateEditBox(bugReportPane, 412, 20)
     bugReportEB:SetPoint("TOPLEFT", 5, -27)
     bugReportEB:SetText("https://github.com/enderneko/Cell/issues")
     bugReportEB:SetScript("OnTextChanged", function(self, userChanged)
@@ -104,7 +106,7 @@ local function CreateBugReportPane()
     end)
     
     if LOCALE_zhCN then
-        local cnbugReportEB = Cell:CreateEditBox(bugReportPane, 377, 20)
+        local cnbugReportEB = Cell:CreateEditBox(bugReportPane, 412, 20)
         cnbugReportEB:SetPoint("TOPLEFT", bugReportEB, "BOTTOMLEFT", 0, -5)
         cnbugReportEB:SetText("https://bbs.nga.cn/read.php?tid=23488341")
         cnbugReportEB:SetScript("OnTextChanged", function(self, userChanged)
