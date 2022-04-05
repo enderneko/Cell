@@ -34,19 +34,23 @@ local function CreateChangeLogsFrame()
         local height = content:GetContentHeight()
         content:SetHeight(height)
         changeLogsFrame.scrollFrame.content:SetHeight(height + 30)
+        P:PixelPerfectPoint(changeLogsFrame)
     end)
 end
 
-function F:CheckWhatsNew()
-    if CellDB["changeLogsViewed"] ~= Cell.version then
+function F:CheckWhatsNew(show)
+    if show or CellDB["changeLogsViewed"] ~= Cell.version then
         if not init then
             init = true
             CreateChangeLogsFrame()
         end
 
-        print(P:GetEffectiveScale())
-        changeLogsFrame:Show()
-        changeLogsFrame:ClearAllPoints()
-        changeLogsFrame:SetPoint("CENTER")
+        if changeLogsFrame:IsShown() then
+            changeLogsFrame:Hide()
+        else
+            changeLogsFrame:ClearAllPoints()
+            changeLogsFrame:SetPoint("CENTER")
+            changeLogsFrame:Show()
+        end
     end
 end

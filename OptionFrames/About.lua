@@ -18,11 +18,7 @@ local function CreateDescriptionPane()
     local changeLogsBtn = Cell:CreateButton(descriptionPane, L["Change Logs"], "class", {100, 17})
     changeLogsBtn:SetPoint("TOPRIGHT")
     changeLogsBtn:SetScript("OnClick", function()
-        if Cell.frames.changeLogsFrame:IsVisible() then
-            Cell.frames.changeLogsFrame:Hide()
-        else
-            Cell.frames.changeLogsFrame:Show()
-        end
+        F:CheckWhatsNew(true)
     end)
 
     local descText = descriptionPane:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
