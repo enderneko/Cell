@@ -244,12 +244,17 @@ function F:Sort(t, k1, order1, k2, order2, k3, order3)
     end)
 end
 
-function F:StringToTable(s, sep)
+function F:StringToTable(s, sep, convertToNum)
     local t = {}
     for i, v in pairs({string.split(sep, s)}) do
         v = strtrim(v)
         if v ~= "" then
-            tinsert(t, v)
+            if convertToNum then
+                v = tonumber(v)
+                if v then tinsert(t, v) end
+            else
+                tinsert(t, v)
+            end
         end
     end
     return t
@@ -345,28 +350,24 @@ function F:IterateAllUnitButtons(func)
     end
 end
 
-function F:GetUnitButtonByGUID(guid)
-    if not Cell.vars.guid[guid] then return end
+function F:GetUnitButtonByUnit(unit)
+    if not unit then return end
 
     if Cell.vars.groupType == "raid" then
-        return Cell.unitButtons.raid.units[Cell.vars.guid[guid]]
+        return Cell.unitButtons.raid.units[unit]
     elseif Cell.vars.groupType == "party" then
-        return Cell.unitButtons.party.units[Cell.vars.guid[guid]]
+        return Cell.unitButtons.party.units[unit]
     else -- solo
-        return Cell.unitButtons.solo[Cell.vars.guid[guid]]
+        return Cell.unitButtons.solo[unit]
     end
 end
 
-function F:GetUnitButtonByName(name)
-    if not Cell.vars.name[name] then return end
+function F:GetUnitButtonByGUID(guid)
+    return F:GetUnitButtonByUnit(Cell.vars.guid[guid])
+end
 
-    if Cell.vars.groupType == "raid" then
-        return Cell.unitButtons.raid.units[Cell.vars.name[name]]
-    elseif Cell.vars.groupType == "party" then
-        return Cell.unitButtons.party.units[Cell.vars.name[name]]
-    else -- solo
-        return Cell.unitButtons.solo[Cell.vars.name[name]]
-    end
+function F:GetUnitButtonByName(name)
+    return F:GetUnitButtonByUnit(Cell.vars.name[name])
 end
 
 function F:UpdateTextWidth(fs, text, width, relativeTo)
@@ -831,4 +832,26 @@ function F:FindAuraById(unit, type, spellId)
     else
         return AuraUtil.FindAura(predicate, unit, "HARMFUL", spellId)
     end
+end
+
+function F:FindDebuffByIds(unit, spellIds)
+    local debuffs = {}
+    AuraUtil.ForEachAura(unit, "HARMFUL", 10, function(...)
+        local name, icon, count, debuffType, duration, expirationTime, source, isStealable, nameplateShowPersonal, spellId = ...
+        if spellIds[spellId] then
+            debuffs[spellId] = debuffType
+        end
+    end)
+    return debuffs
+end
+
+function F:FindAuraByDebuffTypes(unit, types)
+    local debuffs = {}
+    AuraUtil.ForEachAura(unit, "HARMFUL", 10, function(...)
+        local name, icon, count, debuffType, duration, expirationTime, source, isStealable, nameplateShowPersonal, spellId = ...
+        if types == "all" or types[debuffType] then
+            debuffs[spellId] = debuffType
+        end
+    end)
+    return debuffs
 end

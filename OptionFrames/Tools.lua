@@ -8,13 +8,15 @@ Cell.frames.toolsTab = toolsTab
 toolsTab:SetAllPoints(Cell.frames.optionsFrame)
 toolsTab:Hide()
 
+local pirGlowOptionsBtn, drGlowOptionsBtn
+
 -------------------------------------------------
 -- raid tools
 -------------------------------------------------
 local resCB, reportCB, buffCB, readyPullCB, pullDropdown, secEditBox, marksBarCB, marksDropdown
 
 local function CreateToolsPane()
-    local toolsPane = Cell:CreateTitledPane(toolsTab, L["Raid Tools"].." |cFF777777"..L["only in group"], 422, 105)
+    local toolsPane = Cell:CreateTitledPane(toolsTab, L["Raid Tools"].." |cFF777777"..L["only in group"], 422, 107)
     toolsPane:SetPoint("TOPLEFT", 5, -5)
 
     local unlockBtn = Cell:CreateButton(toolsPane, L["Unlock"], "class", {60, 17})
@@ -206,7 +208,7 @@ end
 -------------------------------------------------
 -- power infusion request
 -------------------------------------------------
-local pirEnabledCB, onlyPriestCB, onlyFreeCooldownEB, pirResponseDD, pirTimeoutDD, pirMacroText, pirMacroEB, responseText, timeoutText
+local pirEnabledCB, onlyPriestCB, onlyFreeCooldownCB, pirResponseDD, pirTimeoutDD, pirMacroText, pirMacroEB, pirResponseText, pirTimeoutText
 
 local function UpdatePIRText()
     local macroText
@@ -243,23 +245,33 @@ local function UpdatePIRText()
 end
 
 local function UpdatePIRWidgets()
-    Cell:SetEnabled(CellDB["tools"]["PIRequest"][1], onlyPriestCB, pirResponseDD, pirTimeoutDD, pirMacroText, pirMacroEB, responseText, timeoutText)
-    Cell:SetEnabled(CellDB["tools"]["PIRequest"][1] and CellDB["tools"]["PIRequest"][2], onlyFreeCooldownEB)
+    Cell:SetEnabled(CellDB["tools"]["PIRequest"][1], onlyPriestCB, pirResponseDD, pirTimeoutDD, pirMacroText, pirMacroEB, pirResponseText, pirTimeoutText)
+    Cell:SetEnabled(CellDB["tools"]["PIRequest"][1] and CellDB["tools"]["PIRequest"][2], onlyFreeCooldownCB)
 end
 
 local function CreatePIRPane()
-    local pirPane = Cell:CreateTitledPane(toolsTab, L["Power Infusion Request"].." ("..L["Glow"]..")", 422, 150)
-    pirPane:SetPoint("TOPLEFT", 5, -125)
+    local pirPane = Cell:CreateTitledPane(toolsTab, L["Power Infusion Request"].." ("..L["Glow"]..")", 422, 140)
+    pirPane:SetPoint("TOPLEFT", 5, -127)
 
-    local glowOptionsBtn = Cell:CreateButton(pirPane, L["Glow Options"], "class", {105, 17})
-    glowOptionsBtn:SetPoint("TOPRIGHT", pirPane)
-    glowOptionsBtn:SetScript("OnClick", function()
+    pirGlowOptionsBtn = Cell:CreateButton(pirPane, L["Glow Options"], "class", {105, 17})
+    pirGlowOptionsBtn:SetPoint("TOPRIGHT", pirPane)
+    pirGlowOptionsBtn:SetScript("OnClick", function()
+        Cell:StopRainbowText(drGlowOptionsBtn:GetFontString())
+        local fs = pirGlowOptionsBtn:GetFontString()
+        if fs.rainbow then
+            Cell:StopRainbowText(fs)
+        else
+            Cell:StartRainbowText(fs)
+        end
         F:ShowGlowOptions(toolsTab, "PIRequest", 7)
+    end)
+    pirGlowOptionsBtn:SetScript("OnHide", function()
+        Cell:StopRainbowText(pirGlowOptionsBtn:GetFontString())
     end)
 
     local pirTips = pirPane:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
     pirTips:SetPoint("TOPLEFT", 5, -25)
-    pirTips:SetText(L["Glow unit button when a group member send a PI request"])
+    pirTips:SetText(L["Glow unit button when a group member send a %s request"]:format(Cell:GetPlayerClassColorString()..L["PI"].."|r"))
 
     -- enabled ----------------------------------------------------------------------
     pirEnabledCB = Cell:CreateCheckButton(pirPane, L["Enabled"], function(checked, self)
@@ -280,11 +292,11 @@ local function CreatePIRPane()
     ---------------------------------------------------------------------------------
     
     -- free cooldown ----------------------------------------------------------------------
-    onlyFreeCooldownEB = Cell:CreateCheckButton(pirPane, L["Free Cooldown Only"], function(checked, self)
+    onlyFreeCooldownCB = Cell:CreateCheckButton(pirPane, L["Free Cooldown Only"], function(checked, self)
         CellDB["tools"]["PIRequest"][3] = checked
         Cell:Fire("UpdateTools", "pirequest")
     end)
-    onlyFreeCooldownEB:SetPoint("TOPLEFT", onlyPriestCB, "TOPLEFT", 127, 0)
+    onlyFreeCooldownCB:SetPoint("TOPLEFT", onlyPriestCB, "TOPLEFT", 127, 0)
     ---------------------------------------------------------------------------------
 
     -- response ----------------------------------------------------------------------
@@ -320,13 +332,13 @@ local function CreatePIRPane()
         },
     })
 
-    responseText = pirPane:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
-    responseText:SetPoint("BOTTOMLEFT", pirResponseDD, "TOPLEFT", 0, 1)
-    responseText:SetText(L["Response Type"])
+    pirResponseText = pirPane:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
+    pirResponseText:SetPoint("BOTTOMLEFT", pirResponseDD, "TOPLEFT", 0, 1)
+    pirResponseText:SetText(L["Response Type"])
     ---------------------------------------------------------------------------------
 
-    -- timeout
-    pirTimeoutDD = Cell:CreateDropdown(pirPane, 65)
+    -- timeout ----------------------------------------------------------------------
+    pirTimeoutDD = Cell:CreateDropdown(pirPane, 60)
     pirTimeoutDD:SetPoint("TOPLEFT", pirResponseDD, "TOPRIGHT", 7, 0)
 
     local items = {}
@@ -343,10 +355,12 @@ local function CreatePIRPane()
     end
     pirTimeoutDD:SetItems(items)
 
-    timeoutText = pirPane:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
-    timeoutText:SetPoint("BOTTOMLEFT", pirTimeoutDD, "TOPLEFT", 0, 1)
-    timeoutText:SetText(L["Timeout"])
+    pirTimeoutText = pirPane:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
+    pirTimeoutText:SetPoint("BOTTOMLEFT", pirTimeoutDD, "TOPLEFT", 0, 1)
+    pirTimeoutText:SetText(L["Timeout"])
+    ---------------------------------------------------------------------------------
 
+    -- macro ------------------------------------------------------------------------
     pirMacroText = pirPane:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
     pirMacroText:SetPoint("TOPLEFT", pirResponseDD, "BOTTOMLEFT", 0, -10)
     pirMacroText:SetText(L["Macro"])
@@ -354,7 +368,148 @@ local function CreatePIRPane()
     pirMacroEB = Cell:CreateEditBox(pirPane, 357, 20)
     pirMacroEB:SetPoint("TOP", pirResponseDD, "BOTTOM", 0, -7)
     pirMacroEB:SetPoint("LEFT", pirMacroText, "RIGHT", 5, 0)
-    pirMacroEB:SetPoint("RIGHT")
+    pirMacroEB:SetPoint("RIGHT", -5, 0)
+    ---------------------------------------------------------------------------------
+end
+
+-------------------------------------------------
+-- dispel request
+-------------------------------------------------
+local drEnabledCB, drDispellableCB, drResponseDD, drResponseText, drTimeoutDD, drTimeoutText, drMacroText, drMacroEB, drDebuffsText, drDebuffsEB
+
+local function UpdateDRWidgets()
+    Cell:SetEnabled(CellDB["tools"]["DRequest"][1], drDispellableCB, drResponseDD, drResponseText, drTimeoutDD, drTimeoutText, drMacroText, drMacroEB)
+    Cell:SetEnabled(CellDB["tools"]["DRequest"][1] and CellDB["tools"]["DRequest"][3] == "specific", drDebuffsText, drDebuffsEB)
+end
+
+local function CreateDRPane()
+    local drPane = Cell:CreateTitledPane(toolsTab, L["Dispel Request"].." ("..L["Glow"]..")", 422, 183)
+    drPane:SetPoint("TOPLEFT", 5, -282)
+
+    drGlowOptionsBtn = Cell:CreateButton(drPane, L["Glow Options"], "class", {105, 17})
+    drGlowOptionsBtn:SetPoint("TOPRIGHT", drPane)
+    drGlowOptionsBtn:SetScript("OnClick", function()
+        Cell:StopRainbowText(pirGlowOptionsBtn:GetFontString())
+        local fs = drGlowOptionsBtn:GetFontString()
+        if fs.rainbow then
+            Cell:StopRainbowText(fs)
+        else
+            Cell:StartRainbowText(fs)
+        end
+        F:ShowGlowOptions(toolsTab, "DRequest", 6)
+    end)
+    drGlowOptionsBtn:SetScript("OnHide", function()
+        Cell:StopRainbowText(drGlowOptionsBtn:GetFontString())
+    end)
+
+    local drTips = drPane:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
+    drTips:SetPoint("TOPLEFT", 5, -25)
+    drTips:SetText(L["Glow unit button when a group member send a %s request"]:format(Cell:GetPlayerClassColorString()..L["DISPEL"].."|r"))
+
+    -- enabled ----------------------------------------------------------------------
+    drEnabledCB = Cell:CreateCheckButton(drPane, L["Enabled"], function(checked, self)
+        CellDB["tools"]["DRequest"][1] = checked
+        UpdateDRWidgets()
+        Cell:Fire("UpdateTools", "drequest")
+    end)
+    drEnabledCB:SetPoint("TOPLEFT", drPane, "TOPLEFT", 5, -45)
+    ---------------------------------------------------------------------------------
+
+    -- dispellable ------------------------------------------------------------------
+    drDispellableCB = Cell:CreateCheckButton(drPane, L["Dispellable By Me"], function(checked, self)
+        CellDB["tools"]["DRequest"][2] = checked
+        Cell:Fire("UpdateTools", "drequest")
+    end)
+    drDispellableCB:SetPoint("TOPLEFT", drEnabledCB, "TOPLEFT", 127, 0)
+    ---------------------------------------------------------------------------------
+
+    -- response ---------------------------------------------------------------------
+    drResponseDD = Cell:CreateDropdown(drPane, 345)
+    drResponseDD:SetPoint("TOPLEFT", drEnabledCB, "BOTTOMLEFT", 0, -27)
+    drResponseDD:SetItems({
+        {
+            ["text"] = L["Respond to all dispellable debuffs"],
+            ["value"] = "all",
+            ["onClick"] = function()
+                CellDB["tools"]["DRequest"][3] = "all"
+                UpdateDRWidgets()
+                Cell:Fire("UpdateTools", "drequest")
+            end
+        },
+        {
+            ["text"] = L["Respond to specific dispellable debuffs"],
+            ["value"] = "specific",
+            ["onClick"] = function()
+                CellDB["tools"]["DRequest"][3] = "specific"
+                UpdateDRWidgets()
+                Cell:Fire("UpdateTools", "drequest")
+            end
+        },
+    })
+
+    drResponseText = drPane:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
+    drResponseText:SetPoint("BOTTOMLEFT", drResponseDD, "TOPLEFT", 0, 1)
+    drResponseText:SetText(L["Response Type"])
+    ---------------------------------------------------------------------------------
+
+    -- timeout ----------------------------------------------------------------------
+    drTimeoutDD = Cell:CreateDropdown(drPane, 60)
+    drTimeoutDD:SetPoint("TOPLEFT", drResponseDD, "TOPRIGHT", 7, 0)
+
+    local items = {}
+    local secs = {1, 2, 3, 4, 5, 10, 15, 20, 25, 30}
+    for _, s in ipairs(secs) do
+        tinsert(items, {
+            ["text"] = s,
+            ["value"] = s,
+            ["onClick"] = function()
+                CellDB["tools"]["DRequest"][4] = s
+                Cell:Fire("UpdateTools", "drequest")
+            end
+        })
+    end
+    drTimeoutDD:SetItems(items)
+
+    drTimeoutText = drPane:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
+    drTimeoutText:SetPoint("BOTTOMLEFT", drTimeoutDD, "TOPLEFT", 0, 1)
+    drTimeoutText:SetText(L["Timeout"])
+    ---------------------------------------------------------------------------------
+
+    -- macro ------------------------------------------------------------------------
+    drMacroText = drPane:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
+    drMacroText:SetPoint("TOPLEFT", drResponseDD, "BOTTOMLEFT", 0, -10)
+    drMacroText:SetText(L["Macro"])
+
+    drMacroEB = Cell:CreateEditBox(drPane, 357, 20)
+    drMacroEB:SetPoint("TOP", drResponseDD, "BOTTOM", 0, -7)
+    drMacroEB:SetPoint("LEFT", drMacroText, "RIGHT", 5, 0)
+    drMacroEB:SetPoint("RIGHT", -5, 0)
+    drMacroEB:SetText("/run C_ChatInfo.SendAddonMessage(\"CELL_REQ_D\", \"D\", \"RAID\")")
+    drMacroEB:SetCursorPosition(0)
+    drMacroEB:SetScript("OnTextChanged", function(self, userChanged)
+        if userChanged then
+            drMacroEB:SetText("/run C_ChatInfo.SendAddonMessage(\"CELL_REQ_D\", \"D\", \"RAID\")")
+            drMacroEB:SetCursorPosition(0)
+            drMacroEB:HighlightText()
+        end
+    end)
+    ---------------------------------------------------------------------------------
+
+    -- debuffs ----------------------------------------------------------------------
+    drDebuffsEB = Cell:CreateEditBox(drPane, 357, 20)
+    drDebuffsEB:SetPoint("TOP", drMacroEB, "BOTTOM", 0, -25)
+    drDebuffsEB:SetPoint("RIGHT", -5, 0)
+    drDebuffsEB:SetPoint("LEFT", 5, 0)
+    drDebuffsEB:SetScript("OnTextChanged", function(self, userChanged)
+        if userChanged then
+            CellDB["tools"]["DRequest"][5] = F:StringToTable(drDebuffsEB:GetText(), " ", true)
+            Cell:Fire("UpdateTools", "drequest")
+        end
+    end)
+
+    drDebuffsText = drPane:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
+    drDebuffsText:SetPoint("BOTTOMLEFT", drDebuffsEB, "TOPLEFT", 0, 1)
+    drDebuffsText:SetText(L["Debuffs"].." ("..L["IDs separated by whitespaces"]..")")
     ---------------------------------------------------------------------------------
 end
 
@@ -367,6 +522,7 @@ local function ShowTab(tab)
         if not init then
             CreateToolsPane()
             CreatePIRPane()
+            CreateDRPane()
         end
         
         toolsTab:Show()
@@ -392,11 +548,19 @@ local function ShowTab(tab)
         -- power infusion request
         pirEnabledCB:SetChecked(CellDB["tools"]["PIRequest"][1])
         onlyPriestCB:SetChecked(CellDB["tools"]["PIRequest"][2])
-        onlyFreeCooldownEB:SetChecked(CellDB["tools"]["PIRequest"][3])
+        onlyFreeCooldownCB:SetChecked(CellDB["tools"]["PIRequest"][3])
         pirResponseDD:SetSelectedValue(CellDB["tools"]["PIRequest"][4])
         pirTimeoutDD:SetSelected(CellDB["tools"]["PIRequest"][5])
         UpdatePIRText()
         UpdatePIRWidgets()
+        
+        -- dispel request
+        drEnabledCB:SetChecked(CellDB["tools"]["DRequest"][1])
+        drDispellableCB:SetChecked(CellDB["tools"]["DRequest"][2])
+        drResponseDD:SetSelectedValue(CellDB["tools"]["DRequest"][3])
+        drTimeoutDD:SetSelected(CellDB["tools"]["DRequest"][4])
+        drDebuffsEB:SetText(F:TableToString(CellDB["tools"]["DRequest"][5], " "))
+        UpdateDRWidgets()
     else
         toolsTab:Hide()
     end

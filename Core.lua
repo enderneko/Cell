@@ -163,24 +163,42 @@ function eventFrame:ADDON_LOADED(arg1)
                 ["readyAndPull"] = {false, {"default", 7}, {}},
                 ["marks"] = {false, "both_h", {}},
                 ["PIRequest"] = {
-                    true, -- enabled
-                    true, -- priest
-                    true, -- free cooldown
-                    "all", -- response type
-                    10, -- timeout
-                    strlower(PIName), -- keyword
+                    true, -- [1] enabled
+                    true, -- [2] priest
+                    true, -- [3] free cooldown
+                    "all", -- [4] response type
+                    10, -- [5] timeout
+                    strlower(PIName), -- [6] keyword
                     {
-                        "pixel", -- glow type
+                        "pixel", -- [1] glow type
                         {
-                            {1,0.25,1,1}, -- color
-                            0, -- x
-                            0, -- y
-                            9, -- N
-                            0.25, -- frequency
-                            8, -- length
-                            2 -- thickness
-                        }
-                    }
+                            {1,0.25,1,1}, -- [1] color
+                            0, -- [2] x
+                            0, -- [3] y
+                            9, -- [4] N
+                            0.25, -- [5] frequency
+                            8, -- [6] length
+                            2 -- [7] thickness
+                        } -- [2] glowOptions
+                    } -- [7] glow
+                },
+                ["DRequest"] = {
+                    true, -- [1] enabled
+                    true, -- [2] dispellable
+                    "all", -- [3] response type
+                    30, -- [4] timeout
+                    {}, -- [5] debuffs
+                    {
+                        "shine", -- [1] glow type
+                        {
+                            {1,0,0.4,1}, -- [1] color
+                            0, -- [2] x
+                            0, -- [3] y
+                            9, -- [4] N
+                            0.5, -- [5] frequency
+                            2, -- [6] scale
+                        } -- [2] glowOptions
+                    } -- [6] glow
                 },
             }
         end

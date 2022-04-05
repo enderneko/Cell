@@ -154,6 +154,54 @@ function addon:SetEnabled(isEnabled, ...)
 end
 
 -----------------------------------------
+-- rainbow text
+-----------------------------------------
+local colorSelect = CreateFrame("Colorselect")
+function addon:StartRainbowText(fs, reverse)
+    -- save original
+    fs.text = fs:GetText()
+    
+    -- updater
+    fs.rainbow = true
+    if not fs.updater then
+        fs.updater = CreateFrame("Frame", nil, fs:GetParent())
+    end
+    
+    local pos = 0
+    local step = 360 / (#fs.text-1)
+    local col
+    local str
+    
+    fs.updater:SetScript("OnUpdate", function(self, elapsed)
+        
+        local hue = pos
+        -- NOTE: lua 正则匹配中文，不知道会不会有问题
+        str = fs.text:gsub("[%z\1-\127\194-\244][\128-\191]*", function(char)
+            colorSelect:SetColorHSV(hue,1,1)
+            col = CreateColor(colorSelect:GetColorRGB())
+            hue = (hue+step) > 360 and (hue+step)-360 or hue+step
+            return col:WrapTextInColorCode(char)
+        end)
+
+        if reverse then
+            pos = (pos+1) > 360 and 0 or pos + 1
+        else
+            pos = (pos-1) < 0 and 360 or pos - 1
+        end
+    
+        fs:SetText(str)
+    end)
+end
+
+function addon:StopRainbowText(fs)
+    fs.rainbow = nil
+    if fs.updater then
+        fs.updater:SetScript("OnUpdate", nil)
+        fs:SetText(fs.text)
+    end
+end
+
+-----------------------------------------
 -- seperator
 -----------------------------------------
 function addon:CreateSeparator(text, parent, width, color)

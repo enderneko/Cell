@@ -1036,6 +1036,28 @@ function F:Revise()
                 }
             }
         end
+        
+        -- add DRequest
+        if type(CellDB["tools"]["DRequest"]) ~= "table" then
+            CellDB["tools"]["DRequest"] = {
+                true, -- [1] enabled
+                true, -- [2] dispellable
+                "all", -- [3] response type
+                30, -- [4] timeout
+                {}, -- [5] debuffs
+                {
+                    "shine", -- [1] glow type
+                    {
+                        {1,0,0.4,1}, -- [1] color
+                        0, -- [2] x
+                        0, -- [3] y
+                        9, -- [4] N
+                        0.5, -- [5] frequency
+                        2, -- [6] scale
+                    } -- [2] glowOptions
+                } -- [6] glow
+            }
+        end
 
         for _, layout in pairs(CellDB["layouts"]) do
             -- add barOrientation to layout
