@@ -8,7 +8,7 @@ raidFrame:SetAllPoints(Cell.frames.mainFrame)
 
 local npcFrameAnchor = CreateFrame("Frame", "CellNPCFrameAnchor", raidFrame, "SecureFrameTemplate")
 npcFrameAnchor:Hide()
-raidFrame:SetFrameRef("npcanchor", npcFrameAnchor)
+raidFrame:SetFrameRef("npcAnchor", npcFrameAnchor)
 
 raidFrame:SetAttribute("_onattributechanged", [[
 	if name ~= "visibility" then
@@ -25,7 +25,7 @@ raidFrame:SetAttribute("_onattributechanged", [[
     if not maxGroup then return end -- NOTE: empty subgroup will cause maxGroup == nil
     
     local header = self:GetFrameRef("subgroup"..maxGroup)
-    local npcFrameAnchor = self:GetFrameRef("npcanchor")
+    local npcFrameAnchor = self:GetFrameRef("npcAnchor")
     local spacing = self:GetAttribute("spacing") or 0
     local orientation = self:GetAttribute("orientation") or "vertical"
     local anchor = self:GetAttribute("anchor") or "TOPLEFT"

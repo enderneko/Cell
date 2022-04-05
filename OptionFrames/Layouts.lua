@@ -414,7 +414,7 @@ npcPreviewAnchor:SetScript("OnDragStart", function()
 end)
 npcPreviewAnchor:SetScript("OnDragStop", function()
     npcPreviewAnchor:StopMovingOrSizing()
-    P:SavePosition(npcPreviewAnchor, selectedLayoutTable["npcAnchor"][2])
+    P:SavePosition(npcPreviewAnchor, selectedLayoutTable["friendlyNPC"][3])
 end)
 
 local npcPreviewName = npcPreviewAnchor:CreateFontString(nil, "OVERLAY", "CELL_FONT_CLASS_TITLE")
@@ -467,7 +467,7 @@ do
 end
 
 local function UpdateNPCPreview()
-    if not selectedLayoutTable["npcAnchor"][1] then
+    if not selectedLayoutTable["friendlyNPC"][1] or not selectedLayoutTable["friendlyNPC"][2] then
         if npcPreview.timer then
             npcPreview.timer:Cancel()
             npcPreview.timer = nil
@@ -505,11 +505,11 @@ local function UpdateNPCPreview()
         -- NOTE: move separate npc anchor with preview
         Cell.frames.separateNpcFrameAnchor:SetAllPoints(npcPreviewAnchor)
     else
-        P:LoadPosition(Cell.frames.separateNpcFrameAnchor, Cell.vars.currentLayoutTable["npcAnchor"][2])
+        P:LoadPosition(Cell.frames.separateNpcFrameAnchor, Cell.vars.currentLayoutTable["friendlyNPC"][3])
     end
 
-    if #selectedLayoutTable["npcAnchor"][2] == 2 then
-        P:LoadPosition(npcPreviewAnchor, selectedLayoutTable["npcAnchor"][2])
+    if #selectedLayoutTable["friendlyNPC"][3] == 2 then
+        P:LoadPosition(npcPreviewAnchor, selectedLayoutTable["friendlyNPC"][3])
     else
         npcPreviewAnchor:ClearAllPoints()
         npcPreviewAnchor:SetPoint("TOPLEFT", UIParent, "CENTER")
@@ -1392,7 +1392,7 @@ local orientationSwitch, rotateTexCB
 
 local function CreateBarOrientationPane()
     local barOrientationPane = Cell:CreateTitledPane(layoutsTab, L["Bar Orientation"], 205, 80)
-    barOrientationPane:SetPoint("TOPLEFT", 5, -400)
+    barOrientationPane:SetPoint("TOPLEFT", 5, -395)
 
     orientationSwitch = Cell:CreateSwitch(barOrientationPane, {163, 20}, L["Horizontal"], "horizontal", L["Vertical"], "vertical", function(which)
         selectedLayoutTable["barOrientation"][1] = which
@@ -1416,14 +1416,14 @@ end
 -------------------------------------------------
 -- npc frame
 -------------------------------------------------
-local separateCB
+local separateNPCCB, showNPCCB
 
 local function CreateNPCPane()
-    local npcPane = Cell:CreateTitledPane(layoutsTab, L["Friendly NPC Frame"], 205, 50)
-    npcPane:SetPoint("TOPLEFT", 222, -400)
+    local npcPane = Cell:CreateTitledPane(layoutsTab, L["Friendly NPC Frame"], 205, 70)
+    npcPane:SetPoint("TOPLEFT", 222, -395)
 
-    separateCB = Cell:CreateCheckButton(npcPane, L["Separate NPC Frame"], function(checked)
-        selectedLayoutTable["npcAnchor"][1] = checked
+    showNPCCB = Cell:CreateCheckButton(npcPane, L["Show NPC Frame"], function(checked)
+        selectedLayoutTable["friendlyNPC"][1] = checked
         if checked then
             if previewMode ~= 0 then
                 UpdateNPCPreview()
@@ -1433,9 +1433,28 @@ local function CreateNPCPane()
                 UpdateNPCPreview()
             end
         end
-        Cell:Fire("UpdateLayout", selectedLayout, "npc")
+        if selectedLayout == Cell.vars.currentLayout then
+            Cell:Fire("UpdateLayout", selectedLayout, "npc")
+        end
+    end)
+    showNPCCB:SetPoint("TOPLEFT", 5, -27)
+
+    separateNPCCB = Cell:CreateCheckButton(npcPane, L["Separate NPC Frame"], function(checked)
+        selectedLayoutTable["friendlyNPC"][2] = checked
+        if checked then
+            if previewMode ~= 0 then
+                UpdateNPCPreview()
+            end
+        else
+            if npcPreview:IsShown() then
+                UpdateNPCPreview()
+            end
+        end
+        if selectedLayout == Cell.vars.currentLayout then
+            Cell:Fire("UpdateLayout", selectedLayout, "npc")
+        end
     end, L["Separate NPC Frame"], L["Show friendly NPCs in a separate frame"], L["You can move it in Preview mode"])
-    separateCB:SetPoint("TOPLEFT", 5, -30)
+    separateNPCCB:SetPoint("TOPLEFT", showNPCCB, "BOTTOMLEFT", 0, -8)
 end
 
 -------------------------------------------------
@@ -1443,7 +1462,7 @@ end
 -------------------------------------------------
 local function CreateMiscPane()
     local miscPane = Cell:CreateTitledPane(layoutsTab, L["Misc"], 205, 50)
-    miscPane:SetPoint("TOPLEFT", 222, -460)
+    miscPane:SetPoint("TOPLEFT", 222, -480)
 
     local powerFilterBtn = Cell:CreateButton(miscPane, L["Power Bar Filters"], "class-hover", {163, 20})
     Cell.frames.layoutsTab.powerFilterBtn = powerFilterBtn
@@ -1521,7 +1540,8 @@ LoadLayoutDB = function(layout)
     rotateTexCB:SetChecked(selectedLayoutTable["barOrientation"][2])
 
     -- npc frame
-    separateCB:SetChecked(selectedLayoutTable["npcAnchor"][1])
+    showNPCCB:SetChecked(selectedLayoutTable["friendlyNPC"][1])
+    separateNPCCB:SetChecked(selectedLayoutTable["friendlyNPC"][2])
 
     UpdateGroupFilter()
     UpdatePreviewButton()

@@ -51,7 +51,7 @@ for i = 1, 8 do
     tinsert(Cell.unitButtons.npc, button)
 
     button:SetAttribute("unit", "boss"..i)
-    RegisterAttributeDriver(button, "state-visibility", "[@boss"..i..", help] show; hide")
+    -- RegisterAttributeDriver(button, "state-visibility", "[@boss"..i..", help] show; hide")
     
     -- for testing ------------------------------
     -- if i == 7 then
@@ -266,7 +266,7 @@ npcFrame:SetAttribute("_onstate-petstate", [[
 -------------------------------------------------
 -- separateAnchor
 -------------------------------------------------
-local separateAnchor = CreateFrame("Frame", nil, Cell.frames.mainFrame, "BackdropTemplate")
+local separateAnchor = CreateFrame("Frame", "CellSeparateNPCFrameAnchor", Cell.frames.mainFrame, "BackdropTemplate")
 Cell.frames.separateNpcFrameAnchor = separateAnchor
 P:Size(separateAnchor, 20, 10)
 separateAnchor:SetPoint("TOPLEFT", UIParent, "CENTER")
@@ -321,7 +321,7 @@ local function NPCFrame_UpdateLayout(layout, which)
                 groupSpacing = -layout["spacing"]
             end
 
-            if not Cell.vars.currentLayoutTable["npcAnchor"][1] then
+            if not Cell.vars.currentLayoutTable["friendlyNPC"][2] then
                 -- update whole NPCFrame point
                 if groupType == "raid" then
                     npcFrame:SetPoint(point, anchors["raid"])
@@ -356,7 +356,7 @@ local function NPCFrame_UpdateLayout(layout, which)
                 groupSpacing = -layout["spacing"]
             end
 
-            if not Cell.vars.currentLayoutTable["npcAnchor"][1] then
+            if not Cell.vars.currentLayoutTable["friendlyNPC"][2] then
                 -- update whole NPCFrame point
                 if groupType == "raid" then
                     npcFrame:SetPoint(point, anchors["raid"])
@@ -407,7 +407,7 @@ local function NPCFrame_UpdateLayout(layout, which)
         end
 
         -- update npcFrame anchor if separate from main 
-        if Cell.vars.currentLayoutTable["npcAnchor"][1] then
+        if Cell.vars.currentLayoutTable["friendlyNPC"][2] then
             if layout["anchor"] == "BOTTOMLEFT" then
                 npcFrame:SetPoint("BOTTOMLEFT", separateAnchor, "TOPLEFT", 0, 4)
             elseif layout["anchor"] == "BOTTOMRIGHT" then
@@ -421,14 +421,26 @@ local function NPCFrame_UpdateLayout(layout, which)
     end
 
     if not which or which == "npc" then
-        if Cell.vars.currentLayoutTable["npcAnchor"][1] then
-            UnregisterStateDriver(npcFrame, "groupstate")
-            UnregisterStateDriver(npcFrame, "petstate")
-            -- load separate npc frame position
-            P:LoadPosition(separateAnchor, Cell.vars.currentLayoutTable["npcAnchor"][2])
+        if Cell.vars.currentLayoutTable["friendlyNPC"][1] then
+            -- NOTE: RegisterAttributeDriver
+            for i, b in ipairs(Cell.unitButtons.npc) do
+                RegisterAttributeDriver(b, "state-visibility", "[@boss"..i..", help] show; hide")
+            end
+            if Cell.vars.currentLayoutTable["friendlyNPC"][2] then
+                UnregisterStateDriver(npcFrame, "groupstate")
+                UnregisterStateDriver(npcFrame, "petstate")
+                -- load separate npc frame position
+                P:LoadPosition(separateAnchor, Cell.vars.currentLayoutTable["friendlyNPC"][3])
+            else
+                RegisterStateDriver(npcFrame, "groupstate", "[group:raid] raid; [group:party] party; solo")
+                RegisterStateDriver(npcFrame, "petstate", "[@pet,exists] pet; [@partypet1,exists] pet1; [@partypet2,exists] pet2; [@partypet3,exists] pet3; [@partypet4,exists] pet4; nopet")
+            end
         else
-            RegisterStateDriver(npcFrame, "groupstate", "[group:raid] raid; [group:party] party; solo")
-            RegisterStateDriver(npcFrame, "petstate", "[@pet,exists] pet; [@partypet1,exists] pet1; [@partypet2,exists] pet2; [@partypet3,exists] pet3; [@partypet4,exists] pet4; nopet")
+            -- NOTE: RegisterAttributeDriver
+            for _, b in ipairs(Cell.unitButtons.npc) do
+                UnregisterAttributeDriver(b, "state-visibility")
+                b:Hide()
+            end
         end
     end
 end

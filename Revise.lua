@@ -1047,6 +1047,11 @@ function F:Revise()
                 layout["powerSize"] = layout["powerHeight"]
                 layout["powerHeight"] = nil
             end
+            -- rname npcAnchor to friendlyNPC
+            if type(layout["friendlyNPC"]) ~= "table" then
+                layout["friendlyNPC"] = {true, layout["npcAnchor"][1], layout["npcAnchor"][2]}
+                layout["npcAnchor"] = nil
+            end
         end
     end
 
