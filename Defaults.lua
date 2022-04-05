@@ -184,8 +184,10 @@ Cell.defaults.layout = {
             ["position"] = {"RIGHT", "RIGHT", 2, 5},
             ["frameLevel"] = 10,
             ["size"] = {12, 20},
+            ["showDuration"] = false,
             ["num"] = 2,
             ["orientation"] = "right-to-left",
+            ["font"] = {"Cell ".._G.DEFAULT, 11, "Outline", 2},
         }, -- 15
         {
             ["name"] = "Defensive Cooldowns",
@@ -195,8 +197,10 @@ Cell.defaults.layout = {
             ["position"] = {"LEFT", "LEFT", -2, 5},
             ["frameLevel"] = 10,
             ["size"] = {12, 20},
+            ["showDuration"] = false,
             ["num"] = 2,
             ["orientation"] = "left-to-right",
+            ["font"] = {"Cell ".._G.DEFAULT, 11, "Outline", 2},
         }, -- 16
         {
             ["name"] = "Tank Active Mitigation",
@@ -226,6 +230,7 @@ Cell.defaults.layout = {
             ["position"] = {"BOTTOMLEFT", "BOTTOMLEFT", 1, 4},
             ["frameLevel"] = 2,
             ["size"] = {{13, 13}, {17, 17}},
+            ["showDuration"] = false,
             ["num"] = 3,
             ["font"] = {"Cell ".._G.DEFAULT, 11, "Outline", 2},
             ["dispellableByMe"] = false,

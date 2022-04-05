@@ -251,14 +251,15 @@ local function InitIndicator(indicatorName)
         local icons = {135936, 572025, 135966, 627485, 237542}
         for i = 1, 5 do
             indicator[i]:SetScript("OnShow", function()
-                indicator[i]:SetCooldown(GetTime(), 7, nil, icons[i], 0)
-                indicator[i].cooldown.value = 0
-                indicator[i].cooldown:SetScript("OnUpdate", function(self, elapsed)
-                    self.value = self.value + elapsed
-                    if self.value >= 7 then
+                indicator[i]:SetCooldown(GetTime(), 8, nil, icons[i], 0)
+                indicator[i].cooldown:SetScript("OnUpdate", nil)
+                indicator[i]:SetScript("OnUpdate", function(self, elapsed)
+                    self.value = (self.value or 0) + elapsed
+                    if self.value >= 8 then
                         self.value = 0
                     end
-                    self:SetValue(self.value)
+                    self.duration:SetText(string.format("%d", 8-self.value))
+                    self.cooldown:SetValue(self.value)
                 end)
             end)
         end
@@ -266,14 +267,15 @@ local function InitIndicator(indicatorName)
         local icons = {135919, 136120, 538565, 132362, 132199}
         for i = 1, 5 do
             indicator[i]:SetScript("OnShow", function()
-                indicator[i]:SetCooldown(GetTime(), 7, nil, icons[i], 0)
-                indicator[i].cooldown.value = 0
-                indicator[i].cooldown:SetScript("OnUpdate", function(self, elapsed)
-                    self.value = self.value + elapsed
-                    if self.value >= 7 then
+                indicator[i]:SetCooldown(GetTime(), 8, nil, icons[i], 0)
+                indicator[i].cooldown:SetScript("OnUpdate", nil)
+                indicator[i]:SetScript("OnUpdate", function(self, elapsed)
+                    self.value = (self.value or 0) + elapsed
+                    if self.value >= 8 then
                         self.value = 0
                     end
-                    self:SetValue(self.value)
+                    self.duration:SetText(string.format("%d", 8-self.value))
+                    self.cooldown:SetValue(self.value)
                 end)
             end)
         end
@@ -928,11 +930,11 @@ local indicatorSettings = {
     ["aggroBar"] = {"enabled", "position", "frameLevel", "size-bar"},
     ["shieldBar"] = {"|cffb7b7b7"..L["With this indicator enabled, shield / overshield textures are disabled"], "enabled", "color-alpha", "position", "frameLevel", "height"},
     ["aoeHealing"] = {"enabled", "color", "height"},
-    ["externalCooldowns"] = {"enabled", "num:5", "orientation", "position", "frameLevel", "size"},
-    ["defensiveCooldowns"] = {"enabled", "num:5", "orientation", "position", "frameLevel", "size"},
+    ["externalCooldowns"] = {"enabled", "checkbutton2:showDuration:"..L["Show duration text instead of icon animation"], "num:5", "orientation", "position", "frameLevel", "size", "font"},
+    ["defensiveCooldowns"] = {"enabled", "checkbutton2:showDuration:"..L["Show duration text instead of icon animation"], "num:5", "orientation", "position", "frameLevel", "size", "font"},
     ["tankActiveMitigation"] = {"|cffb7b7b7"..I:GetTankActiveMitigationString(), "enabled", "position", "frameLevel", "size"},
     ["dispels"] = {"enabled", "checkbutton:dispellableByMe", "checkbutton2:enableHighlight", "position", "frameLevel", "size-square"},
-    ["debuffs"] = {"enabled", "checkbutton:dispellableByMe", "blacklist", "bigDebuffs", "num:10", "orientation", "position", "frameLevel", "size-normal-big", "font"},
+    ["debuffs"] = {"enabled", "checkbutton:dispellableByMe", "blacklist", "bigDebuffs", "checkbutton2:showDuration:"..L["Show duration text instead of icon animation"], "num:10", "orientation", "position", "frameLevel", "size-normal-big", "font"},
     ["raidDebuffs"] = {"|cffb7b7b7"..L["You can config debuffs in %s"]:format(Cell:GetPlayerClassColorString()..L["Raid Debuffs"].."|r"), "enabled", "checkbutton:onlyShowTopGlow", "num:3", "orientation", "position", "frameLevel", "size-border", "font"},
     ["targetedSpells"] = {"enabled", "spells", "glow", "position", "frameLevel", "size-border", "font"},
     ["targetCounter"] = {"|cffff2727"..L["HIGH CPU USAGE"].."!|r |cffb7b7b7"..L["Check all visible enemy nameplates. Battleground/Arena only."], "enabled", "color", "position", "frameLevel", "font"},

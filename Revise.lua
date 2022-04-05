@@ -1052,6 +1052,20 @@ function F:Revise()
                 layout["friendlyNPC"] = {true, layout["npcAnchor"][1], layout["npcAnchor"][2]}
                 layout["npcAnchor"] = nil
             end
+            -- add showDuration to external
+            if layout["indicators"][15] and layout["indicators"][15]["indicatorName"] == "externalCooldowns" then
+                layout["indicators"][15]["showDuration"] = false
+                layout["indicators"][15]["font"] = {"Cell ".._G.DEFAULT, 11, "Outline", 2}
+            end
+            -- add showDuration to defensive
+            if layout["indicators"][16] and layout["indicators"][16]["indicatorName"] == "defensiveCooldowns" then
+                layout["indicators"][16]["showDuration"] = false
+                layout["indicators"][16]["font"] = {"Cell ".._G.DEFAULT, 11, "Outline", 2}
+            end
+            -- add showDuration to debuffs
+            if layout["indicators"][19] and layout["indicators"][19]["indicatorName"] == "debuffs" then
+                layout["indicators"][19]["showDuration"] = false
+            end
         end
     end
 

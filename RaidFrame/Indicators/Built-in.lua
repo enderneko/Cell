@@ -72,6 +72,12 @@ function I:CreateDefensiveCooldowns(parent)
         end
 	end
 
+    function defensiveCooldowns:ShowDuration(show)
+        for i = 1, 5 do
+            defensiveCooldowns[i]:ShowDuration(show)
+        end
+    end
+
     function defensiveCooldowns:UpdatePixelPerfect()
         P:Resize(defensiveCooldowns)
         P:Repoint(defensiveCooldowns)
@@ -147,6 +153,12 @@ function I:CreateExternalCooldowns(parent)
             P:Point(frame, "RIGHT", externalCooldowns[i-1], "LEFT", 1, 0)
         end
 	end
+
+    function externalCooldowns:ShowDuration(show)
+        for i = 1, 5 do
+            externalCooldowns[i]:ShowDuration(show)
+        end
+    end
 
     function externalCooldowns:UpdatePixelPerfect()
         P:Resize(externalCooldowns)
@@ -302,6 +314,12 @@ function I:CreateDebuffs(parent)
         --     frame:SetPoint("LEFT", debuffs[i-1], "RIGHT")
         -- end
 	end
+
+    function debuffs:ShowDuration(show)
+        for i = 1, 10 do
+            debuffs[i]:ShowDuration(show)
+        end
+    end
 
     function debuffs:UpdatePixelPerfect()
         debuffs:OriginalSetSize(P:Scale(debuffs.normalSize[1]), P:Scale(debuffs.normalSize[2]))
