@@ -71,7 +71,7 @@ local function CreateSpecialThanksPane()
     thanksText:SetPoint("TOPLEFT", 5, -27)
     thanksText:SetSpacing(5)
     thanksText:SetJustifyH("LEFT")
-    thanksText:SetText("夕曦 (NGA)")
+    thanksText:SetText("夕曦 (NGA)\n黑色之城 (NGA)")
 end
 
 -------------------------------------------------
