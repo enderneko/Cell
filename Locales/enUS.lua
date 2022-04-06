@@ -52,6 +52,21 @@ select(2, ...).L = setmetatable({
     ["RAID_DEBUFFS_TIPS"] = "Tips: [Drag & Drop] to change debuff order. [Double-Click] on instance name to open Encounter Journal. [Shift+Left Click] on instance/boss name to share debuffs. [Alt+Left Click] on instance/boss name to reset debuffs. The priority of General Debuffs is higher than Boss Debuffs.",
 
     ["CHANGE LOGS"] = [[
+        <h1>r87-release (Apr 7, 2022, 04:40 GMT+8)</h1>
+        <h2>Tools</h2>
+        <p>+ Implemented Power Infusion Request.</p>
+        <p>+ Implemented Dispel Request.</p>
+        <h2>Layouts</h2>
+        <p>+ Added Show NPC Frame option.</p>
+        <p>+ Implemented vertical unit button.</p>
+        <h2>Indicators</h2>
+        <p>* Added Show Duration option to debuffs, externals and defensives.</p>
+        <h2>Misc</h2>
+        <p>* Rewrote Options UI.</p>
+        <p>* Fixed range check for NPCs.</p>
+        <p>* Update zhTW.</p>
+        <br/>
+
         <h1>r86-release (Mar 27, 2022, 15:00 GMT+8)</h1>
         <p>* Added a "Default" anchor option for tooltips.</p>
         <br/>
