@@ -251,7 +251,7 @@ end
 
 local function CreatePIRPane()
     local pirPane = Cell:CreateTitledPane(toolsTab, L["Power Infusion Request"].." ("..L["Glow"]..")", 422, 140)
-    pirPane:SetPoint("TOPLEFT", 5, -127)
+    pirPane:SetPoint("TOPLEFT", 5, -132)
 
     pirGlowOptionsBtn = Cell:CreateButton(pirPane, L["Glow Options"], "class", {105, 17})
     pirGlowOptionsBtn:SetPoint("TOPRIGHT", pirPane)
@@ -384,7 +384,7 @@ end
 
 local function CreateDRPane()
     local drPane = Cell:CreateTitledPane(toolsTab, L["Dispel Request"].." ("..L["Glow"]..")", 422, 183)
-    drPane:SetPoint("TOPLEFT", 5, -282)
+    drPane:SetPoint("TOPLEFT", 5, -292)
 
     drGlowOptionsBtn = Cell:CreateButton(drPane, L["Glow Options"], "class", {105, 17})
     drGlowOptionsBtn:SetPoint("TOPRIGHT", drPane)

@@ -230,7 +230,7 @@ function addon:CreateTitledPane(parent, text, width, height, color)
 
     local pane = CreateFrame("Frame", nil, parent, "BackdropTemplate")
     P:Size(pane, width, height)
-    addon:StylizeFrame(pane, {0,1,0,0.1}, {0,0,0,0})
+    -- addon:StylizeFrame(pane, {0,1,0,0.1}, {0,0,0,0})
 
     -- underline
     local line = pane:CreateTexture()

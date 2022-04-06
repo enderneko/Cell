@@ -87,8 +87,8 @@ function F:ShowTooltips(anchor, tooltipType, value)
 end
 
 local function CreateTooltipsPane()
-    local tooltipsPane = Cell:CreateTitledPane(generalTab, L["Tooltips"], 205, 200)
-    tooltipsPane:SetPoint("TOPLEFT", generalTab, "TOPLEFT", 222, -5)
+    local tooltipsPane = Cell:CreateTitledPane(generalTab, L["Tooltips"], 422, 200)
+    tooltipsPane:SetPoint("TOPLEFT", generalTab, "TOPLEFT", 5, -130)
 
     enableTooltipsCB = Cell:CreateCheckButton(tooltipsPane, L["Enabled"], function(checked, self)
         CellDB["general"]["enableTooltips"] = checked
@@ -121,7 +121,7 @@ local function CreateTooltipsPane()
     enableAuraTooltipsCB:SetEnabled(false)
 
     -- position
-    tooltipsAnchor = Cell:CreateDropdown(tooltipsPane, 97)
+    tooltipsAnchor = Cell:CreateDropdown(tooltipsPane, 117)
     tooltipsAnchor:SetPoint("TOPLEFT", enableAuraTooltipsCB, "BOTTOMLEFT", 0, -30)
     local points = {"BOTTOM", "BOTTOMLEFT", "BOTTOMRIGHT", "LEFT", "RIGHT", "TOP", "TOPLEFT", "TOPRIGHT"}
     local relativePoints = {"TOP", "TOPLEFT", "TOPRIGHT", "RIGHT", "LEFT", "BOTTOM", "BOTTOMLEFT", "BOTTOMRIGHT"}
@@ -142,8 +142,8 @@ local function CreateTooltipsPane()
     tooltipsAnchorText:SetText(L["Anchor Point"])
     tooltipsAnchorText:SetPoint("BOTTOMLEFT", tooltipsAnchor, "TOPLEFT", 0, 1)
 
-    tooltipsAnchoredTo = Cell:CreateDropdown(tooltipsPane, 97)
-    tooltipsAnchoredTo:SetPoint("TOPLEFT", tooltipsAnchor, "TOPRIGHT", 5, 0)
+    tooltipsAnchoredTo = Cell:CreateDropdown(tooltipsPane, 117)
+    tooltipsAnchoredTo:SetPoint("TOPLEFT", tooltipsAnchor, "TOPRIGHT", 15, 0)
     local relatives = {"Default", "Cell", "Unit Button", "Cursor", "Cursor Left", "Cursor Right"}
     local relativeToItems = {}
     for _, relative in pairs(relatives) do
@@ -162,13 +162,13 @@ local function CreateTooltipsPane()
     tooltipsAnchoredToText:SetText(L["Anchored To"])
     tooltipsAnchoredToText:SetPoint("BOTTOMLEFT", tooltipsAnchoredTo, "TOPLEFT", 0, 1)
 
-    tooltipsX = Cell:CreateSlider(L["X Offset"], tooltipsPane, -99, 99, 97, 1)
+    tooltipsX = Cell:CreateSlider(L["X Offset"], tooltipsPane, -99, 99, 117, 1)
     tooltipsX:SetPoint("TOPLEFT", tooltipsAnchor, "BOTTOMLEFT", 0, -25)
     tooltipsX.afterValueChangedFn = function(value)
         CellDB["general"]["tooltipsPosition"][4] = value
     end
 
-    tooltipsY = Cell:CreateSlider(L["Y Offset"], tooltipsPane, -99, 99, 97, 1)
+    tooltipsY = Cell:CreateSlider(L["Y Offset"], tooltipsPane, -99, 99, 117, 1)
     tooltipsY:SetPoint("TOPLEFT", tooltipsAnchoredTo, "BOTTOMLEFT", 0, -25)
     tooltipsY.afterValueChangedFn = function(value)
         CellDB["general"]["tooltipsPosition"][5] = value
@@ -181,8 +181,8 @@ end
 local hideBlizzardCB, lockCB, fadeoutCB, sortByRoleCB
 
 local function CreateMiscPane()
-    local miscPane = Cell:CreateTitledPane(generalTab, L["Misc"], 205, 120)
-    miscPane:SetPoint("TOPLEFT", generalTab, "TOPLEFT", 5, -120)
+    local miscPane = Cell:CreateTitledPane(generalTab, L["Misc"], 205, 110)
+    miscPane:SetPoint("TOPLEFT", generalTab, "TOPLEFT", 222, -5)
     
     -- local blizzardText = Cell:CreateSeparator(L["Blizzard Frames"], generalTab, 205)
     -- blizzardText:SetPoint("TOPLEFT", 5, -5)
