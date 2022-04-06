@@ -1878,16 +1878,21 @@ local function UnitButton_OnShow(self)
     -- self.updateRequired = nil -- prevent UnitButton_UpdateAll twice. when convert party <-> raid, GROUP_ROSTER_UPDATE fired.
     UnitButton_RegisterEvents(self)
 
-    -- NOTE: update Cell.vars.guid
     if self.state.unit then
+        -- NOTE: update Cell.vars.guid
         local guid = UnitGUID(self.state.unit)
         if guid then
             Cell.vars.guid[guid] = self.state.unit
         end
-        local name = GetUnitName(self.state.unit, true)
-        if name then
-            Cell.vars.name[name] = self.state.unit
-        end
+        --! NOTE: can't get valid name immediately after an unseen player joining into group
+        self.__timer = C_Timer.NewTicker(0.5, function()
+            local name = GetUnitName(self.state.unit, true)
+            if name and name ~= _G.UNKNOWN then
+                Cell.vars.name[name] = self.state.unit
+                self.__timer:Cancel()
+                self.__timer = nil
+            end
+        end)
         -- print("show", self.state.unit, guid, name)
     end
 end
@@ -2090,7 +2095,7 @@ function F:UnitButton_OnLoad(button)
     -- P:Point(incomingHeal, "TOPLEFT", healthBar:GetStatusBarTexture(), "TOPRIGHT")
     -- P:Point(incomingHeal, "BOTTOMLEFT", healthBar:GetStatusBarTexture(), "BOTTOMRIGHT")
     incomingHeal:SetTexture(Cell.vars.texture)
-    incomingHeal:SetAlpha(.4)
+    incomingHeal:SetAlpha(0.4)
     incomingHeal:Hide()
     incomingHeal.SetValue = DumbFunc
 
