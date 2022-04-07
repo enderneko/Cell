@@ -354,7 +354,7 @@ function F:GetUnitButtonByUnit(unit)
     if not unit then return end
 
     if Cell.vars.groupType == "raid" then
-        return Cell.unitButtons.raid.units[unit]
+        return Cell.unitButtons.raid.units[unit] or Cell.unitButtons.arena[unit]
     elseif Cell.vars.groupType == "party" then
         return Cell.unitButtons.party.units[unit]
     else -- solo
@@ -363,11 +363,11 @@ function F:GetUnitButtonByUnit(unit)
 end
 
 function F:GetUnitButtonByGUID(guid)
-    return F:GetUnitButtonByUnit(Cell.vars.guid[guid])
+    return F:GetUnitButtonByUnit(Cell.vars.guids[guid])
 end
 
 function F:GetUnitButtonByName(name)
-    return F:GetUnitButtonByUnit(Cell.vars.name[name])
+    return F:GetUnitButtonByUnit(Cell.vars.names[name])
 end
 
 function F:UpdateTextWidth(fs, text, width, relativeTo)

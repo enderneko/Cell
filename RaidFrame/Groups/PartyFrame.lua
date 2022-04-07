@@ -92,8 +92,6 @@ local function PartyFrame_UpdateLayout(layout, which)
     layout = CellDB["layoutAutoSwitch"][Cell.vars.playerSpecRole]["party"]
     layout = CellDB["layouts"][layout]
 
-    local buttons = Cell.unitButtons.party
-
     -- anchor
     local point, playerAnchorPoint, petAnchorPoint, playerSpacing, petSpacing, headerPoint
     if not which or which == "spacing" or which == "orientation" or which == "anchor" then

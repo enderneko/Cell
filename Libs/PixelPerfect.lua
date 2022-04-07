@@ -56,30 +56,30 @@ end
 local trunc = function(s) return s >= 0 and s-s%01 or s-s%-1 end
 local round = function(s) return s >= 0 and s-s%-1 or s-s%01 end
 function P:Scale(n)
-	return (mult == 1 or n == 0) and n or ((mult < 1 and trunc(n/mult) or round(n/mult)) * mult)
+    return (mult == 1 or n == 0) and n or ((mult < 1 and trunc(n/mult) or round(n/mult)) * mult)
 end
 
 function P:Size(frame, width, height)
     frame.width = width
     frame.height = height
-	frame:SetSize(P:Scale(width), P:Scale(height))
+    frame:SetSize(P:Scale(width), P:Scale(height))
 end
 
 function P:Width(frame, width)
     frame.width = width
-	frame:SetWidth(P:Scale(width))
+    frame:SetWidth(P:Scale(width))
 end
 
 function P:Height(frame, height)
     frame.height = height
-	frame:SetHeight(P:Scale(height))
+    frame:SetHeight(P:Scale(height))
 end
 
 function P:Point(frame, point, anchorTo, anchorPoint, x, y)
     if not frame.points then frame.points = {} end
     tinsert(frame.points, {point, anchorTo or frame:GetParent(), anchorPoint or point, x or 0, y or 0})
     local n = #frame.points
-	frame:SetPoint(frame.points[n][1], frame.points[n][2], frame.points[n][3], P:Scale(frame.points[n][4]), P:Scale(frame.points[n][5]))
+    frame:SetPoint(frame.points[n][1], frame.points[n][2], frame.points[n][3], P:Scale(frame.points[n][4]), P:Scale(frame.points[n][5]))
 end
 
 function P:ClearPoints(frame)

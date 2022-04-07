@@ -170,7 +170,7 @@ DR:SetScript("OnEvent", function(self, event)
     if event == "COMBAT_LOG_EVENT_UNFILTERED" then
         local timestamp, subEvent, _, sourceGUID, sourceName, sourceFlags, sourceRaidFlags, destGUID, destName, destFlags, destRaidFlags, spellID = CombatLogGetCurrentEventInfo()
         if subEvent == "SPELL_AURA_REMOVED" then
-            local unit = Cell.vars.guid[destGUID]
+            local unit = Cell.vars.guids[destGUID]
             if unit and drUnits[unit] and drUnits[unit][spellID] then
                 -- NOTE: one of debuffs removed, hide glow
                 drUnits[unit] = nil
@@ -188,7 +188,7 @@ end)
 -- glow on addon message
 Comm:RegisterComm("CELL_REQ_D", function(prefix, message, channel, sender)
     if drEnabled then
-        local unit = Cell.vars.name[sender]
+        local unit = Cell.vars.names[sender]
         if not unit or not UnitIsVisible(unit) then return end
 
         if drType == "all" then

@@ -49,7 +49,7 @@ local function StartTicker()
             
             if not target then -- no target
                 nameplateTargets[unit] = nil
-            elseif not Cell.vars.guid[target] then -- target doesn't exists in player's group
+            elseif not Cell.vars.guids[target] then -- target doesn't exists in player's group
                 nameplateTargets[unit] = nil
                 counter[target] = nil
             else
@@ -57,14 +57,14 @@ local function StartTicker()
             end
 
             target = nameplateTargets[unit]
-            if target and Cell.vars.guid[target] then -- valid target exists
+            if target and Cell.vars.guids[target] then -- valid target exists
                 if not counter[target] then counter[target] = {} end -- init
                 counter[target][unit] = true
             end
         end
 
         -- update indicator
-        for guid in pairs(Cell.vars.guid) do
+        for guid in pairs(Cell.vars.guids) do
             local b = F:GetUnitButtonByGUID(guid)
             if b then
                 if counter[guid] then

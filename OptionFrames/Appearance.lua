@@ -156,21 +156,18 @@ end
 local function UpdatePreviewShields()
     if CellDB["appearance"]["healPrediction"] then
         previewButton2.widget.incomingHeal:SetValue(0.2)
-        previewButton2.widget.incomingHeal:Show()
     else
         previewButton2.widget.incomingHeal:Hide()
     end
 
     if CellDB["appearance"]["healAbsorb"] then
         previewButton2.widget.absorbsBar:SetValue(0.3)
-        previewButton2.widget.absorbsBar:Show()
     else
         previewButton2.widget.absorbsBar:Hide()
     end
 
     if CellDB["appearance"]["shield"] then
         previewButton2.widget.shieldBar:SetValue(0.4)
-        previewButton2.widget.shieldBar:Show()
     else
         previewButton2.widget.shieldBar:Hide()
     end

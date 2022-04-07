@@ -1871,30 +1871,32 @@ end
 -------------------------------------------------
 -- unit button show/hide/enter/leave
 -------------------------------------------------
-Cell.vars.guid = {} -- guid to unitid
-Cell.vars.name = {} -- name to unitid
+Cell.vars.guids = {} -- guid to unitid
+Cell.vars.names = {} -- name to unitid
 
 local function UnitButton_OnShow(self)
     -- self.updateRequired = nil -- prevent UnitButton_UpdateAll twice. when convert party <-> raid, GROUP_ROSTER_UPDATE fired.
     UnitButton_RegisterEvents(self)
 
+    --[[
     if self.state.unit then
-        -- NOTE: update Cell.vars.guid
+        -- NOTE: update Cell.vars.guids
         local guid = UnitGUID(self.state.unit)
         if guid then
-            Cell.vars.guid[guid] = self.state.unit
+            Cell.vars.guids[guid] = self.state.unit
         end
         --! NOTE: can't get valid name immediately after an unseen player joining into group
         self.__timer = C_Timer.NewTicker(0.5, function()
             local name = GetUnitName(self.state.unit, true)
             if name and name ~= _G.UNKNOWN then
-                Cell.vars.name[name] = self.state.unit
+                Cell.vars.names[name] = self.state.unit
                 self.__timer:Cancel()
                 self.__timer = nil
             end
         end)
         -- print("show", self.state.unit, guid, name)
     end
+    ]]
 end
 
 local function UnitButton_OnHide(self)
@@ -1918,13 +1920,13 @@ local function UnitButton_OnHide(self)
         if buffs_current[self.state.unit] then wipe(buffs_current[self.state.unit]) end
         if buffs_current_castByMe[self.state.unit] then wipe(buffs_current_castByMe[self.state.unit]) end
 
-        -- NOTE: update Cell.vars.guid
+        -- NOTE: update Cell.vars.guids
         -- print("hide", self.state.unit, self.__unitGuid, self.__unitName)
         if self.__unitGuid then
-            Cell.vars.guid[self.__unitGuid] = nil
+            Cell.vars.guids[self.__unitGuid] = nil
         end
         if self.__unitName then
-            Cell.vars.name[self.__unitName] = nil
+            Cell.vars.names[self.__unitName] = nil
         end
     end
     F:RemoveElementsExceptKeys(self.state, "unit", "displayedUnit")
@@ -1944,20 +1946,42 @@ local function UnitButton_OnLeave(self)
     GameTooltip:Hide()
 end
 
+local UNKNOWN = _G.UNKNOWN
+local UNKNOWNOBJECT = _G.UNKNOWNOBJECT
 local function UnitButton_OnTick(self)
     local e = (self.__tickCount or 0) + 1
     if e >= 2 then -- every 0.5 second
         e = 0
-        local guid = UnitGUID(self.state.displayedUnit or "")
-        if guid ~= self.__displayedGuid then
-            -- unit entity changed
+        
+        local displayedGuid = UnitGUID(self.state.displayedUnit)
+        if displayedGuid ~= self.__displayedGuid then
+            -- NOTE: displayed unit entity changed
             F:RemoveElementsExceptKeys(self.state, "unit", "displayedUnit")
-            self.__displayedGuid = guid
-            self.__unitGuid = UnitGUID(self.state.unit or "")
-            self.__unitName = GetUnitName(self.state.unit or "", true)
+            self.__displayedGuid = displayedGuid
             self.updateRequired = 1
         end
+
+        local guid = UnitGUID(self.state.unit)
+        if guid ~= self.__unitGuid then
+            -- NOTE: unit entity changed
+            -- update Cell.vars.guids
+            self.__unitGuid = guid
+            Cell.vars.guids[guid] = self.state.unit
+            -- update Cell.vars.names
+            local name = GetUnitName(self.state.unit, true)
+            if (self.__nameRetries and self.__nameRetries >= 4) or (name and name ~= UNKNOWN and name ~= UNKNOWNOBJECT) then
+                self.__unitName = name
+                Cell.vars.names[name] = self.state.unit
+                self.__nameRetries = nil
+            else
+                -- NOTE: update on next tick
+                -- 国服可以起名为“未知目标”，干！就只多重试4次好了
+                self.__nameRetries = (self.__nameRetries or 0) + 1
+                self.__unitGuid = nil 
+            end
+        end
     end
+
     self.__tickCount = e
 
     UnitButton_UpdateInRange(self)
@@ -2256,13 +2280,18 @@ function F:UnitButton_OnLoad(button)
                 local incomingHealWidth = incomingPercent * barWidth
                 local lostHealthWidth = barWidth * (1 - button.state.healthPercent)
             
+                -- print(incomingPercent, barWidth, incomingHealWidth, lostHealthWidth)
+                -- FIXME: if incomingPercent is a very tiny number, like 0.005
+                -- P:Scale(incomingHealWidth) ==> 0
+                --! if width is set to 0, then the ACTUAL width may be 256!!!
+
                 if lostHealthWidth == 0 then
                     incomingHeal:Hide()
                 else
                     if lostHealthWidth > incomingHealWidth then
-                        P:Width(incomingHeal, incomingHealWidth)
+                        incomingHeal:SetWidth(incomingHealWidth)
                     else
-                        P:Width(incomingHeal, lostHealthWidth)
+                        incomingHeal:SetWidth(lostHealthWidth)
                     end
                     incomingHeal:Show()
                 end
@@ -2278,7 +2307,7 @@ function F:UnitButton_OnLoad(button)
                     local p = 1 - button.state.healthPercent
                     if p ~= 0 then
                         if shieldEnabled then
-                            P:Width(shieldBar, p * barWidth)
+                            shieldBar:SetWidth(p * barWidth)
                             shieldBar:Show()
                         else
                             shieldBar:Hide()
@@ -2293,7 +2322,7 @@ function F:UnitButton_OnLoad(button)
                     end
                 else
                     if shieldEnabled then
-                        P:Width(shieldBar, shieldPercent * barWidth)
+                        shieldBar:SetWidth(shieldPercent * barWidth)
                         shieldBar:Show()
                     else
                         shieldBar:Hide()
@@ -2315,7 +2344,7 @@ function F:UnitButton_OnLoad(button)
             P:Point(absorbsBar, "BOTTOMRIGHT", healthBar:GetStatusBarTexture())
             function absorbsBar:SetValue(absorbsPercent)
                 local barWidth = healthBar:GetWidth()
-                P:Width(absorbsBar, absorbsPercent * barWidth)
+                absorbsBar:SetWidth(absorbsPercent * barWidth)
                 absorbsBar:Show()
             end
             
@@ -2325,7 +2354,7 @@ function F:UnitButton_OnLoad(button)
             P:Point(damageFlashTex, "BOTTOMLEFT", healthBar:GetStatusBarTexture(), "BOTTOMRIGHT")
             function damageFlashTex:SetValue(lostPercent)
                 local barWidth = healthBar:GetWidth()
-                P:Width(damageFlashTex, barWidth * lostPercent)
+                damageFlashTex:SetWidth(barWidth * lostPercent)
             end
         else -- vertical
             P:ClearPoints(healthBarLoss)
@@ -2356,9 +2385,9 @@ function F:UnitButton_OnLoad(button)
                     incomingHeal:Hide()
                 else
                     if lostHealthHeight > incomingHealHeight then
-                        P:Height(incomingHeal, incomingHealHeight)
+                        incomingHeal:SetHeight(incomingHealHeight)
                     else
-                        P:Height(incomingHeal, lostHealthHeight)
+                        incomingHeal:SetHeight(lostHealthHeight)
                     end
                     incomingHeal:Show()
                 end
@@ -2374,7 +2403,7 @@ function F:UnitButton_OnLoad(button)
                     local p = 1 - button.state.healthPercent
                     if p ~= 0 then
                         if shieldEnabled then
-                            P:Height(shieldBar, p * barHeight)
+                            shieldBar:SetHeight(p * barHeight)
                             shieldBar:Show()
                         else
                             shieldBar:Hide()
@@ -2389,7 +2418,7 @@ function F:UnitButton_OnLoad(button)
                     end
                 else
                     if shieldEnabled then
-                        P:Height(shieldBar, shieldPercent * barHeight)
+                        shieldBar:SetHeight(shieldPercent * barHeight)
                         shieldBar:Show()
                     else
                         shieldBar:Hide()
@@ -2411,7 +2440,7 @@ function F:UnitButton_OnLoad(button)
             P:Point(absorbsBar, "TOPRIGHT", healthBar:GetStatusBarTexture())
             function absorbsBar:SetValue(absorbsPercent)
                 local barHeight = healthBar:GetHeight()
-                P:Height(absorbsBar, absorbsPercent * barHeight)
+                absorbsBar:SetHeight(absorbsPercent * barHeight)
                 absorbsBar:Show()
             end
             
@@ -2421,7 +2450,7 @@ function F:UnitButton_OnLoad(button)
             P:Point(damageFlashTex, "BOTTOMRIGHT", healthBar:GetStatusBarTexture(), "TOPRIGHT")
             function damageFlashTex:SetValue(lostPercent)
                 local barHeight = healthBar:GetHeight()
-                P:Height(damageFlashTex, barHeight * lostPercent)
+                damageFlashTex:SetHeight(barHeight * lostPercent)
             end
         end
     end
