@@ -570,7 +570,7 @@ local function Bar_SetCooldown(bar, start, duration, debuffType, texture, count)
 end
 
 function I:CreateAura_Bar(name, parent)
-    local bar = Cell:CreateStatusBar(parent, 18, 4, 100)
+    local bar = Cell:CreateStatusBar(name, parent, 18, 4, 100)
     bar:Hide()
     bar.indicatorType = "bar"
 

@@ -81,9 +81,6 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
     if not indicatorName then -- init
         wipe(enabledIndicators)
         wipe(indicatorNums)
-        F:IterateAllUnitButtons(function(b)
-            I:RemoveAllCustomIndicators(b)
-        end)
 
         for _, t in pairs(Cell.vars.currentLayoutTable["indicators"]) do
             -- update enabled
@@ -124,8 +121,14 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
             if t["onlyShowTopGlow"] ~= nil then
                 indicatorCustoms[t["indicatorName"]] = t["onlyShowTopGlow"]
             end
-            -- update indicators
-            F:IterateAllUnitButtons(function(b)
+        end
+
+        -- update indicators
+        F:IterateAllUnitButtons(function(b)
+            -- NOTE: Remove old
+            I:RemoveAllCustomIndicators(b)
+
+            for _, t in pairs(Cell.vars.currentLayoutTable["indicators"]) do
                 local indicator = b.indicators[t["indicatorName"]] or I:CreateIndicator(b, t)
                 -- update position
                 if t["position"] then
@@ -226,8 +229,18 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                 else
                     UpdateIndicatorParentVisibility(b, t["indicatorName"], t["enabled"])
                 end
-            end)
-        end
+            
+                --! update pixel perfect for built-in widgets
+                if t["type"] == "built-in" then
+                    if indicator.UpdatePixelPerfect then
+                        indicator:UpdatePixelPerfect() 
+                    end
+                end
+            end
+            
+            --! update pixel perfect for widgets
+            b.func.UpdatePixelPerfect()
+        end, true)
         indicatorsInitialized = true
     else
         -- changed in IndicatorsTab
@@ -243,19 +256,19 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
             elseif indicatorName == "roleIcon" then
                 F:IterateAllUnitButtons(function(b)
                     UnitButton_UpdateRole(b)
-                end)
+                end, true)
             elseif indicatorName == "leaderIcon" then
                 F:IterateAllUnitButtons(function(b)
                     UnitButton_UpdateLeader(b)
-                end)
+                end, true)
             elseif indicatorName == "playerRaidIcon" then
                 F:IterateAllUnitButtons(function(b)
                     b.func.UpdatePlayerRaidIcon(value)
-                end)
+                end, true)
             elseif indicatorName == "targetRaidIcon" then
                 F:IterateAllUnitButtons(function(b)
                     b.func.UpdateTargetRaidIcon(value)
-                end)
+                end, true)
             elseif indicatorName == "nameText" then
                 F:IterateAllUnitButtons(function(b)
                     if value then
@@ -263,19 +276,19 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                     else
                         b.indicators[indicatorName]:Hide()
                     end
-                end)
+                end, true)
             elseif indicatorName == "statusText" then
                 F:IterateAllUnitButtons(function(b)
                     b.func.UpdateStatusText()
-                end)
+                end, true)
             elseif indicatorName == "healthText" then
                 F:IterateAllUnitButtons(function(b)
                     b.func.UpdateHealthText()
-                end)
+                end, true)
             elseif indicatorName == "shieldBar" then
                 F:IterateAllUnitButtons(function(b)
                     b.func.UpdateShield()
-                end)
+                end, true)
             else
                 -- refresh
                 F:IterateAllUnitButtons(function(b)
@@ -284,24 +297,24 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                         b.indicators[indicatorName]:Hide() -- hide indicators which is shown right now
                     end
                     UnitButton_UpdateAuras(b)
-                end)
+                end, true)
             end
         elseif setting == "position" then
             F:IterateAllUnitButtons(function(b)
                 local indicator = b.indicators[indicatorName]
                 P:ClearPoints(indicator)
                 P:Point(indicator, value[1], b, value[2], value[3], value[4])
-            end)
+            end, true)
         elseif setting == "anchor" then
             F:IterateAllUnitButtons(function(b)
                 local indicator = b.indicators[indicatorName]
                 indicator:SetAnchor(value)
-            end)
+            end, true)
         elseif setting == "frameLevel" then
             F:IterateAllUnitButtons(function(b)
                 local indicator = b.indicators[indicatorName]
                 indicator:SetFrameLevel(b.widget.overlayFrame:GetFrameLevel()+value)
-            end)
+            end, true)
         elseif setting == "size" then
             F:IterateAllUnitButtons(function(b)
                 local indicator = b.indicators[indicatorName]
@@ -312,106 +325,106 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                 else
                     P:Size(indicator, value[1], value[2])
                 end
-            end)
+            end, true)
         elseif setting == "size-border" then
             F:IterateAllUnitButtons(function(b)
                 local indicator = b.indicators[indicatorName]
                 P:Size(indicator, value[1], value[2])
                 indicator:SetBorder(value[3])
-            end)
+            end, true)
         elseif setting == "thickness" then
             F:IterateAllUnitButtons(function(b)
                 local indicator = b.indicators[indicatorName]
                 indicator:SetThickness(value)
-            end)
+            end, true)
         elseif setting == "height" then
             F:IterateAllUnitButtons(function(b)
                 local indicator = b.indicators[indicatorName]
                 P:Height(indicator, value)
-            end)
+            end, true)
         elseif setting == "textWidth" then
             F:IterateAllUnitButtons(function(b)
                 local indicator = b.indicators[indicatorName]
                 indicator:UpdateTextWidth(value)
-            end)
+            end, true)
         elseif setting == "alpha" then
             F:IterateAllUnitButtons(function(b)
                 local indicator = b.indicators[indicatorName]
                 indicator:SetAlpha(value)
-            end)
+            end, true)
         elseif setting == "orientation" then
             F:IterateAllUnitButtons(function(b)
                 local indicator = b.indicators[indicatorName]
                 indicator:SetOrientation(value)
-            end)
+            end, true)
         elseif setting == "font" then
             F:IterateAllUnitButtons(function(b)
                 local indicator = b.indicators[indicatorName]
                 indicator:SetFont(unpack(value))
-            end)
+            end, true)
         elseif setting == "format" then
             F:IterateAllUnitButtons(function(b)
                 local indicator = b.indicators[indicatorName]
                 indicator:SetFormat(value)
                 b.func.UpdateHealthText()
-            end)
+            end, true)
         elseif setting == "color" then
             F:IterateAllUnitButtons(function(b)
                 local indicator = b.indicators[indicatorName]
                 indicator:SetColor(unpack(value))
-            end)
+            end, true)
         elseif setting == "colors" then --! NOTE: for customColors。 其他的colors不调用widget.func，不发出通知，因为这些指示器都使用OnUpdate更新颜色。
             F:IterateAllUnitButtons(function(b)
                 local indicator = b.indicators[indicatorName]
                 indicator:SetColors(value)
-            end)
+            end, true)
         elseif setting == "nameColor" then
             F:IterateAllUnitButtons(function(b)
                 b.func.UpdateColor()
-            end)
+            end, true)
         elseif setting == "vehicleNamePosition" then
             F:IterateAllUnitButtons(function(b)
                 local indicator = b.indicators[indicatorName]
                 indicator:UpdateVehicleNamePosition(value)
-            end)
+            end, true)
         elseif setting == "statusColors" then
             F:IterateAllUnitButtons(function(b)
                 UnitButton_UpdateStatusText(b)
-            end)
+            end, true)
         elseif setting == "num" then
             indicatorNums[indicatorName] = value
             -- refresh
             F:IterateAllUnitButtons(function(b)
                 UnitButton_UpdateAuras(b)
-            end)
+            end, true)
         elseif setting == "customTextures" then
             F:IterateAllUnitButtons(function(b)
                 local indicator = b.indicators[indicatorName]
                 indicator:SetCustomTexture(value)
                 UnitButton_UpdateRole(b)
-            end)
+            end, true)
         elseif setting == "checkbutton" then
             if value == "hideFull" then
                 --! 血量文字指示器需要立即被刷新
                 indicatorCustoms[indicatorName] = value2
                 F:IterateAllUnitButtons(function(b)
                     b.func.UpdateHealthText()
-                end)
+                end, true)
             elseif value == "enableHighlight" then
                 F:IterateAllUnitButtons(function(b)
                     b.indicators[indicatorName]:EnableHighlight(value2)
                     UnitButton_UpdateAuras(b)
-                end)
+                end, true)
             elseif value == "showDuration" then
                 F:IterateAllUnitButtons(function(b)
                     b.indicators[indicatorName]:ShowDuration(value2)
                     UnitButton_UpdateAuras(b)
-                end)
+                end, true)
             elseif value == "circledStackNums" then
                 F:IterateAllUnitButtons(function(b)
                     b.indicators[indicatorName]:SetCircledStackNums(value2)
                     UnitButton_UpdateAuras(b)
-                end)
+                end, true)
             else
                 indicatorCustoms[indicatorName] = value2
             end
@@ -451,26 +464,26 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                 if value["showDuration"] then
                     indicator:ShowDuration(value["showDuration"])
                 end
-            end)
+            end, true)
         elseif setting == "remove" then
             F:IterateAllUnitButtons(function(b)
                 I:RemoveIndicator(b, indicatorName, value)
-            end)
+            end, true)
         elseif setting == "auras" then
             -- indicator auras changed, hide them all, then recheck whether to show
             F:IterateAllUnitButtons(function(b)
                 b.indicators[indicatorName]:Hide()
                 UnitButton_UpdateAuras(b)
-            end)
+            end, true)
         elseif setting == "bigDebuffs" then
             bigDebuffs = F:ConvertTable(value)
             F:IterateAllUnitButtons(function(b)
                 UnitButton_UpdateAuras(b)
-            end)
+            end, true)
         elseif setting == "blacklist" then
             F:IterateAllUnitButtons(function(b)
                 UnitButton_UpdateAuras(b)
-            end)
+            end, true)
         end
     end
 end
@@ -2544,7 +2557,7 @@ function F:UnitButton_OnLoad(button)
     overlayFrame:SetAllPoints(button)
 
     -- aggro bar
-    local aggroBar = Cell:CreateStatusBar(overlayFrame, 18, 2, 100, true)
+    local aggroBar = Cell:CreateStatusBar(name.."AggroBar", overlayFrame, 18, 2, 100, true)
     button.indicators.aggroBar = aggroBar
     -- aggroBar:SetPoint("BOTTOMLEFT", overlayFrame, "TOPLEFT", 1, 0)
     aggroBar:Hide()
@@ -2585,7 +2598,7 @@ function F:UnitButton_OnLoad(button)
     end
 
     -- pixel perfect
-    button.func.UpdatePixelPerfect = function()
+    button.func.UpdatePixelPerfect = function(updateIndicators)
         button:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8x8", edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = P:Scale(1)})
         button:SetBackdropColor(0, 0, 0, CellDB["appearance"]["bgAlpha"])
         button:SetBackdropBorderColor(0, 0, 0, 1)
@@ -2606,10 +2619,12 @@ function F:UnitButton_OnLoad(button)
         
         button.func.UpdateHighlightSize()
 
-        -- indicators
-        for _, i in pairs(button.indicators) do
-            if i.UpdatePixelPerfect then
-               i:UpdatePixelPerfect() 
+        if updateIndicators then
+            -- indicators
+            for _, i in pairs(button.indicators) do
+                if i.UpdatePixelPerfect then
+                    i:UpdatePixelPerfect() 
+                end
             end
         end
     end

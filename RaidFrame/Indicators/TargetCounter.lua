@@ -89,7 +89,7 @@ function eventFrame:PLAYER_ENTERING_WORLD()
     wipe(counter)
     F:IterateAllUnitButtons(function(b)
         b.indicators.targetCounter:SetCount(0)
-    end)
+    end, true)
 
     local isIn, iType = IsInInstance()
     if counterEnabled and (iType == "pvp" or iType == "arena") then

@@ -324,8 +324,9 @@ local function UpdatePixelPerfect()
     options:UpdatePixelPerfect()
     raid:UpdatePixelPerfect()
 
-    F:IterateAllUnitButtons(function(b)
-        b.func.UpdatePixelPerfect()
-    end)
+    -- NOTE: update pixel perfect for each button moved to UpdateIndicators
+    -- F:IterateAllUnitButtons(function(b)
+    --     b.func.UpdatePixelPerfect()
+    -- end)
 end
 Cell:RegisterCallback("UpdatePixelPerfect", "MainFrame_UpdatePixelPerfect", UpdatePixelPerfect)

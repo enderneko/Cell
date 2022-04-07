@@ -321,31 +321,41 @@ end
 -------------------------------------------------
 -- unit buttons
 -------------------------------------------------
-function F:IterateAllUnitButtons(func)
+function F:IterateAllUnitButtons(func, updateCurrentGroupOnly)
     -- solo
-    for _, b in pairs(Cell.unitButtons.solo) do
-        func(b)
-    end
-    -- party
-    for index, b in pairs(Cell.unitButtons.party) do
-        if index ~= "units" then
+    if not updateCurrentGroupOnly or (updateCurrentGroupOnly and Cell.vars.groupType == "solo") then
+        for _, b in pairs(Cell.unitButtons.solo) do
             func(b)
         end
     end
-    -- raid
-    for index, header in pairs(Cell.unitButtons.raid) do
-        if index ~= "units" then
-            for _, b in ipairs(header) do
+
+    -- party
+    if not updateCurrentGroupOnly or (updateCurrentGroupOnly and Cell.vars.groupType == "party") then
+        for index, b in pairs(Cell.unitButtons.party) do
+            if index ~= "units" then
                 func(b)
             end
         end
     end
+
+    -- raid
+    if not updateCurrentGroupOnly or (updateCurrentGroupOnly and Cell.vars.groupType == "raid") then
+        for index, header in pairs(Cell.unitButtons.raid) do
+            if index ~= "units" then
+                for _, b in ipairs(header) do
+                    func(b)
+                end
+            end
+        end
+        
+        -- arena pet
+        for _, b in pairs(Cell.unitButtons.arena) do
+            func(b)
+        end
+    end
+
     -- npc
     for _, b in pairs(Cell.unitButtons.npc) do
-        func(b)
-    end
-    -- arena pet
-    for _, b in pairs(Cell.unitButtons.arena) do
         func(b)
     end
 end

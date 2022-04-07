@@ -1336,8 +1336,8 @@ end
 -----------------------------------------
 -- status bar
 -----------------------------------------
-function addon:CreateStatusBar(parent, width, height, maxValue, smooth, func, showText, texture, color)
-    local bar = CreateFrame("StatusBar", nil, parent, "BackdropTemplate")
+function addon:CreateStatusBar(name, parent, width, height, maxValue, smooth, func, showText, texture, color)
+    local bar = CreateFrame("StatusBar", name, parent, "BackdropTemplate")
 
     if not color then color = {classColor.t[1], classColor.t[2], classColor.t[3], 1} end
     if not texture then
@@ -2751,7 +2751,7 @@ end
 -- receiving frame
 -----------------------------------------
 function addon:CreateReceivingFrame(parent)
-    local f = CreateFrame("Frame", name, parent, "BackdropTemplate")
+    local f = CreateFrame("Frame", "CellReceivingFrame", parent, "BackdropTemplate")
     f:EnableMouse(true)
     f:SetMovable(true)
     f:SetUserPlaced(true)
@@ -2841,7 +2841,7 @@ function addon:CreateReceivingFrame(parent)
     cancelBtn:SetPoint("BOTTOMRIGHT")
 
     -- bar
-    local progressBar = addon:CreateStatusBar(f, 198, 18, 0, true, nil, true, "Interface\\AddOns\\Cell\\Media\\statusbar.tga", {0.7, 0.7, 0, 1})
+    local progressBar = addon:CreateStatusBar("CellReceivingFrameBar", f, 198, 18, 0, true, nil, true, "Interface\\AddOns\\Cell\\Media\\statusbar.tga", {0.7, 0.7, 0, 1})
     progressBar:SetPoint("BOTTOMLEFT", 1, 1)
     progressBar:SetPoint("BOTTOMRIGHT", cancelBtn, "BOTTOMLEFT")
     progressBar:Hide()

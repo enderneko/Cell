@@ -9,7 +9,7 @@ local P = Cell.pixelPerfectFuncs
 -- CreateDefensiveCooldowns
 -------------------------------------------------
 function I:CreateDefensiveCooldowns(parent)
-    local defensiveCooldowns = CreateFrame("Frame", parent:GetName().."ExternalCooldownParent", parent.widget.overlayFrame)
+    local defensiveCooldowns = CreateFrame("Frame", parent:GetName().."DefensiveCooldownParent", parent.widget.overlayFrame)
     parent.indicators.defensiveCooldowns = defensiveCooldowns
     -- defensiveCooldowns:SetSize(20, 10)
     defensiveCooldowns:Hide()
@@ -173,7 +173,7 @@ end
 -- CreateTankActiveMitigation
 -------------------------------------------------
 function I:CreateTankActiveMitigation(parent)
-    local bar = Cell:CreateStatusBar(parent.widget.overlayFrame, 18, 4, 100)
+    local bar = Cell:CreateStatusBar(parent:GetName().."TanckActiveMitigation", parent.widget.overlayFrame, 18, 4, 100)
     parent.indicators.tankActiveMitigation = bar
     bar:Hide()
     

@@ -449,7 +449,7 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                 end
             end
             -- pixel perfect
-            previewButton.func.UpdatePixelPerfect()
+            previewButton.func.UpdatePixelPerfect(true)
         end
     else
         local indicator = previewButton.indicators[indicatorName]
