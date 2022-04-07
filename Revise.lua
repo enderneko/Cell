@@ -1091,5 +1091,14 @@ function F:Revise()
         end
     end
 
+    -- r89-release
+    if CellDB["revise"] and dbRevision < 89 then
+        -- rename DRequest to dispelRequest
+        if type(CellDB["tools"]["DRequest"]) == "table" then
+            CellDB["tools"]["dispelRequest"] = CellDB["tools"]["DRequest"]
+            CellDB["tools"]["DRequest"] = nil
+        end
+    end
+
     CellDB["revise"] = Cell.version
 end

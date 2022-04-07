@@ -211,7 +211,7 @@ Comm:RegisterComm("CELL_REQ_D", function(prefix, message, channel, sender)
         if F:Getn(drUnits[unit]) ~= 0 then -- found
             local button = F:GetUnitButtonByName(sender)
             if button then
-                ShowGlow(button.widget.drGlowFrame, CellDB["tools"]["DRequest"][6][1], CellDB["tools"]["DRequest"][6][2], drTimeout)
+                ShowGlow(button.widget.drGlowFrame, CellDB["tools"]["dispelRequest"][6][1], CellDB["tools"]["dispelRequest"][6][2], drTimeout)
             end
         else
             drUnits[unit] = nil
@@ -223,13 +223,13 @@ local function DR_UpdateTools(which)
     if not which or which == "drequest" then
         HideAllDRGlows()
         
-        drEnabled = CellDB["tools"]["DRequest"][1]
+        drEnabled = CellDB["tools"]["dispelRequest"][1]
 
         if drEnabled then
-            drDispellable = CellDB["tools"]["DRequest"][2]
-            drType = CellDB["tools"]["DRequest"][3]
-            drTimeout = CellDB["tools"]["DRequest"][4]
-            drDebuffs = F:ConvertTable(CellDB["tools"]["DRequest"][5])
+            drDispellable = CellDB["tools"]["dispelRequest"][2]
+            drType = CellDB["tools"]["dispelRequest"][3]
+            drTimeout = CellDB["tools"]["dispelRequest"][4]
+            drDebuffs = F:ConvertTable(CellDB["tools"]["dispelRequest"][5])
 
             DR:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
             DR:RegisterEvent("ENCOUNTER_START")

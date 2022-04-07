@@ -263,7 +263,7 @@ local function CreatePIRPane()
         else
             Cell:StartRainbowText(fs)
         end
-        F:ShowGlowOptions(toolsTab, "PIRequest", 7)
+        F:ShowGlowOptions(toolsTab, "piRequest", CellDB["tools"]["PIRequest"][7])
     end)
     pirGlowOptionsBtn:SetScript("OnHide", function()
         Cell:StopRainbowText(pirGlowOptionsBtn:GetFontString())
@@ -378,8 +378,8 @@ end
 local drEnabledCB, drDispellableCB, drResponseDD, drResponseText, drTimeoutDD, drTimeoutText, drMacroText, drMacroEB, drDebuffsText, drDebuffsEB
 
 local function UpdateDRWidgets()
-    Cell:SetEnabled(CellDB["tools"]["DRequest"][1], drDispellableCB, drResponseDD, drResponseText, drTimeoutDD, drTimeoutText, drMacroText, drMacroEB)
-    Cell:SetEnabled(CellDB["tools"]["DRequest"][1] and CellDB["tools"]["DRequest"][3] == "specific", drDebuffsText, drDebuffsEB)
+    Cell:SetEnabled(CellDB["tools"]["dispelRequest"][1], drDispellableCB, drResponseDD, drResponseText, drTimeoutDD, drTimeoutText, drMacroText, drMacroEB)
+    Cell:SetEnabled(CellDB["tools"]["dispelRequest"][1] and CellDB["tools"]["dispelRequest"][3] == "specific", drDebuffsText, drDebuffsEB)
 end
 
 local function CreateDRPane()
@@ -396,7 +396,7 @@ local function CreateDRPane()
         else
             Cell:StartRainbowText(fs)
         end
-        F:ShowGlowOptions(toolsTab, "DRequest", 6)
+        F:ShowGlowOptions(toolsTab, "dispelRequest", CellDB["tools"]["dispelRequest"][6])
     end)
     drGlowOptionsBtn:SetScript("OnHide", function()
         Cell:StopRainbowText(drGlowOptionsBtn:GetFontString())
@@ -408,7 +408,7 @@ local function CreateDRPane()
 
     -- enabled ----------------------------------------------------------------------
     drEnabledCB = Cell:CreateCheckButton(drPane, L["Enabled"], function(checked, self)
-        CellDB["tools"]["DRequest"][1] = checked
+        CellDB["tools"]["dispelRequest"][1] = checked
         UpdateDRWidgets()
         Cell:Fire("UpdateTools", "drequest")
     end)
@@ -417,7 +417,7 @@ local function CreateDRPane()
 
     -- dispellable ------------------------------------------------------------------
     drDispellableCB = Cell:CreateCheckButton(drPane, L["Dispellable By Me"], function(checked, self)
-        CellDB["tools"]["DRequest"][2] = checked
+        CellDB["tools"]["dispelRequest"][2] = checked
         Cell:Fire("UpdateTools", "drequest")
     end)
     drDispellableCB:SetPoint("TOPLEFT", drEnabledCB, "TOPLEFT", 127, 0)
@@ -431,7 +431,7 @@ local function CreateDRPane()
             ["text"] = L["Respond to all dispellable debuffs"],
             ["value"] = "all",
             ["onClick"] = function()
-                CellDB["tools"]["DRequest"][3] = "all"
+                CellDB["tools"]["dispelRequest"][3] = "all"
                 UpdateDRWidgets()
                 Cell:Fire("UpdateTools", "drequest")
             end
@@ -440,7 +440,7 @@ local function CreateDRPane()
             ["text"] = L["Respond to specific dispellable debuffs"],
             ["value"] = "specific",
             ["onClick"] = function()
-                CellDB["tools"]["DRequest"][3] = "specific"
+                CellDB["tools"]["dispelRequest"][3] = "specific"
                 UpdateDRWidgets()
                 Cell:Fire("UpdateTools", "drequest")
             end
@@ -463,7 +463,7 @@ local function CreateDRPane()
             ["text"] = s,
             ["value"] = s,
             ["onClick"] = function()
-                CellDB["tools"]["DRequest"][4] = s
+                CellDB["tools"]["dispelRequest"][4] = s
                 Cell:Fire("UpdateTools", "drequest")
             end
         })
@@ -502,7 +502,7 @@ local function CreateDRPane()
     drDebuffsEB:SetPoint("LEFT", 5, 0)
     drDebuffsEB:SetScript("OnTextChanged", function(self, userChanged)
         if userChanged then
-            CellDB["tools"]["DRequest"][5] = F:StringToTable(drDebuffsEB:GetText(), " ", true)
+            CellDB["tools"]["dispelRequest"][5] = F:StringToTable(drDebuffsEB:GetText(), " ", true)
             Cell:Fire("UpdateTools", "drequest")
         end
     end)
@@ -555,11 +555,11 @@ local function ShowTab(tab)
         UpdatePIRWidgets()
         
         -- dispel request
-        drEnabledCB:SetChecked(CellDB["tools"]["DRequest"][1])
-        drDispellableCB:SetChecked(CellDB["tools"]["DRequest"][2])
-        drResponseDD:SetSelectedValue(CellDB["tools"]["DRequest"][3])
-        drTimeoutDD:SetSelected(CellDB["tools"]["DRequest"][4])
-        drDebuffsEB:SetText(F:TableToString(CellDB["tools"]["DRequest"][5], " "))
+        drEnabledCB:SetChecked(CellDB["tools"]["dispelRequest"][1])
+        drDispellableCB:SetChecked(CellDB["tools"]["dispelRequest"][2])
+        drResponseDD:SetSelectedValue(CellDB["tools"]["dispelRequest"][3])
+        drTimeoutDD:SetSelected(CellDB["tools"]["dispelRequest"][4])
+        drDebuffsEB:SetText(F:TableToString(CellDB["tools"]["dispelRequest"][5], " "))
         UpdateDRWidgets()
     else
         toolsTab:Hide()

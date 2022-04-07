@@ -5,7 +5,8 @@ local P = Cell.pixelPerfectFuncs
 
 local LCG = LibStub("LibCustomGlow-1.0")
 
-local mName, mIndex
+local key -- NOTE: key is used for identifying what the glow options belongs to
+local glowOptionsTable
 local glowOptionsFrame, previewButton
 
 --------------------------------------------------
@@ -78,7 +79,9 @@ end
 -------------------------------------------------
 local glowTypeDropdown, glowColor, glowLines, glowParticles, glowFrequency, glowLength, glowThickness, glowScale, glowOffsetX, glowOffsetY
 
-local function ShowGlowPreview(glowType, glowOptions, refresh)
+local function ShowGlowPreview(refresh)
+    local glowType, glowOptions = unpack(glowOptionsTable)
+
     if glowType == "normal" then
         LCG.PixelGlow_Stop(previewButton)
         LCG.AutoCastGlow_Stop(previewButton)
@@ -97,9 +100,10 @@ local function ShowGlowPreview(glowType, glowOptions, refresh)
     end
 end
 
-local function LoadGlowOptions(glowType, glowOptions)
-    ShowGlowPreview(glowType, glowOptions)
+local function LoadGlowOptions()
+    ShowGlowPreview()
 
+    local glowType, glowOptions = unpack(glowOptionsTable)
     glowTypeDropdown:SetSelectedValue(glowType)
     glowColor:SetColor(glowOptions[1])
 
@@ -155,24 +159,24 @@ local function LoadGlowOptions(glowType, glowOptions)
 end
 
 local function UpdateGlowType(glowType)
-    CellDB["tools"][mName][mIndex][1] = glowType
+    glowOptionsTable[1] = glowType
 
     if glowType == "normal" then
-        CellDB["tools"][mName][mIndex][2] = {{0.95,0.95,0.32,1}}
+        glowOptionsTable[2] = {{0.95,0.95,0.32,1}}
     elseif glowType == "pixel" then
-        CellDB["tools"][mName][mIndex][2] = {{0.95,0.95,0.32,1}, 0, 0, 9, 0.25, 8, 2}
+        glowOptionsTable[2] = {{0.95,0.95,0.32,1}, 0, 0, 9, 0.25, 8, 2}
     elseif glowType == "shine" then
-        CellDB["tools"][mName][mIndex][2] = {{0.95,0.95,0.32,1}, 0, 0, 9, 0.5, 1}
+        glowOptionsTable[2] = {{0.95,0.95,0.32,1}, 0, 0, 9, 0.5, 1}
     end
 
-    LoadGlowOptions(glowType, CellDB["tools"][mName][mIndex][2])
+    LoadGlowOptions()
 end
 
 local function SliderValueChanged(index, value, refresh)
     -- update db
-    CellDB["tools"][mName][mIndex][2][index] = value
+    glowOptionsTable[2][index] = value
     -- update preview
-    ShowGlowPreview(CellDB["tools"][mName][mIndex][1], CellDB["tools"][mName][mIndex][2], refresh)
+    ShowGlowPreview(refresh)
 end
 
 local function CreateGlowOptionsFrame()
@@ -213,12 +217,12 @@ local function CreateGlowOptionsFrame()
     -- glowColor
     glowColor = Cell:CreateColorPicker(glowOptionsFrame, L["Glow Color"], false, function(r, g, b)
         -- update db
-        CellDB["tools"][mName][mIndex][2][1][1] = r
-        CellDB["tools"][mName][mIndex][2][1][2] = g
-        CellDB["tools"][mName][mIndex][2][1][3] = b
-        CellDB["tools"][mName][mIndex][2][1][4] = 1
+        glowOptionsTable[2][1][1] = r
+        glowOptionsTable[2][1][2] = g
+        glowOptionsTable[2][1][3] = b
+        glowOptionsTable[2][1][4] = 1
         -- update preview
-        ShowGlowPreview(CellDB["tools"][mName][mIndex][1], CellDB["tools"][mName][mIndex][2])
+        ShowGlowPreview()
     end)
     -- glowColor:SetPoint("TOPLEFT", glowOptionsFrame, 5, 0)
     glowColor:SetPoint("TOPLEFT", glowTypeDropdown, "BOTTOMLEFT", 0, -10)
@@ -271,7 +275,7 @@ local function CreateGlowOptionsFrame()
     glowScale:SetPoint("TOPLEFT", glowFrequency, "BOTTOMLEFT", 0, -40)
 
     glowOptionsFrame:SetScript("OnHide", function()
-        mName = nil
+        key = nil
         glowOptionsFrame:Hide()
     end)
 end
@@ -279,22 +283,22 @@ end
 -------------------------------------------------
 -- functions
 -------------------------------------------------
-
-function F:ShowGlowOptions(parent, moduleName, moduleIndex)
+function F:ShowGlowOptions(parent, k, gTable)
     if not glowOptionsFrame then
         CreateGlowOptionsFrame()
     end
 
     glowOptionsFrame:SetParent(parent)
 
-    if moduleName == mName then
-        mName = nil
+    
+    if key == k then
+        key = nil
         glowOptionsFrame:Hide()
     else
-        mName = moduleName
-        mIndex = moduleIndex
+        glowOptionsTable = gTable
+        key = k
         UpdatePreviewButton()
-        LoadGlowOptions(CellDB["tools"][moduleName][moduleIndex][1], CellDB["tools"][moduleName][moduleIndex][2])
+        LoadGlowOptions()
         glowOptionsFrame:Show()
     end
 end

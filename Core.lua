@@ -182,7 +182,7 @@ function eventFrame:ADDON_LOADED(arg1)
                         } -- [2] glowOptions
                     } -- [7] glow
                 },
-                ["DRequest"] = {
+                ["dispelRequest"] = {
                     true, -- [1] enabled
                     true, -- [2] dispellable
                     "all", -- [3] response type
