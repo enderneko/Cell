@@ -1933,14 +1933,14 @@ local function UnitButton_OnHide(self)
         if buffs_current[self.state.unit] then wipe(buffs_current[self.state.unit]) end
         if buffs_current_castByMe[self.state.unit] then wipe(buffs_current_castByMe[self.state.unit]) end
 
-        -- NOTE: update Cell.vars.guids
-        -- print("hide", self.state.unit, self.__unitGuid, self.__unitName)
-        if self.__unitGuid then
-            Cell.vars.guids[self.__unitGuid] = nil
-        end
-        if self.__unitName then
-            Cell.vars.names[self.__unitName] = nil
-        end
+    end
+    -- NOTE: update Cell.vars.guids
+    -- print("hide", self.state.unit, self.__unitGuid, self.__unitName)
+    if self.__unitGuid then
+        Cell.vars.guids[self.__unitGuid] = nil
+    end
+    if self.__unitName then
+        Cell.vars.names[self.__unitName] = nil
     end
     F:RemoveElementsExceptKeys(self.state, "unit", "displayedUnit")
 end
@@ -1966,31 +1966,33 @@ local function UnitButton_OnTick(self)
     if e >= 2 then -- every 0.5 second
         e = 0
         
-        local displayedGuid = UnitGUID(self.state.displayedUnit)
-        if displayedGuid ~= self.__displayedGuid then
-            -- NOTE: displayed unit entity changed
-            F:RemoveElementsExceptKeys(self.state, "unit", "displayedUnit")
-            self.__displayedGuid = displayedGuid
-            self.updateRequired = 1
-        end
+        if self.state.unit and self.state.displayedUnit then
+            local displayedGuid = UnitGUID(self.state.displayedUnit)
+            if displayedGuid ~= self.__displayedGuid then
+                -- NOTE: displayed unit entity changed
+                F:RemoveElementsExceptKeys(self.state, "unit", "displayedUnit")
+                self.__displayedGuid = displayedGuid
+                self.updateRequired = 1
+            end
 
-        local guid = UnitGUID(self.state.unit)
-        if guid ~= self.__unitGuid then
-            -- NOTE: unit entity changed
-            -- update Cell.vars.guids
-            self.__unitGuid = guid
-            Cell.vars.guids[guid] = self.state.unit
-            -- update Cell.vars.names
-            local name = GetUnitName(self.state.unit, true)
-            if (self.__nameRetries and self.__nameRetries >= 4) or (name and name ~= UNKNOWN and name ~= UNKNOWNOBJECT) then
-                self.__unitName = name
-                Cell.vars.names[name] = self.state.unit
-                self.__nameRetries = nil
-            else
-                -- NOTE: update on next tick
-                -- 国服可以起名为“未知目标”，干！就只多重试4次好了
-                self.__nameRetries = (self.__nameRetries or 0) + 1
-                self.__unitGuid = nil 
+            local guid = UnitGUID(self.state.unit)
+            if guid and guid ~= self.__unitGuid then
+                -- NOTE: unit entity changed
+                -- update Cell.vars.guids
+                self.__unitGuid = guid
+                Cell.vars.guids[guid] = self.state.unit
+                -- update Cell.vars.names
+                local name = GetUnitName(self.state.unit, true)
+                if (name and self.__nameRetries and self.__nameRetries >= 4) or (name and name ~= UNKNOWN and name ~= UNKNOWNOBJECT) then
+                    self.__unitName = name
+                    Cell.vars.names[name] = self.state.unit
+                    self.__nameRetries = nil
+                else
+                    -- NOTE: update on next tick
+                    -- 国服可以起名为“未知目标”，干！就只多重试4次好了
+                    self.__nameRetries = (self.__nameRetries or 0) + 1
+                    self.__unitGuid = nil 
+                end
             end
         end
     end
