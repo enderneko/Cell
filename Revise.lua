@@ -1126,5 +1126,16 @@ function F:Revise()
         end
     end
 
+    -- r90-release
+    if CellDB["revise"] and dbRevision < 90 then
+        if type(CellDB["tools"]["spellRequest"]) == "table" then
+            for _, t in pairs(CellDB["tools"]["spellRequest"][7]) do
+                if type(t[2]) ~= "number" then
+                    tinsert(t, 2, t[1])
+                end
+            end
+        end
+    end
+
     CellDB["revise"] = Cell.version
 end

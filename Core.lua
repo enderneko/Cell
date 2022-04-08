@@ -173,7 +173,8 @@ function eventFrame:ADDON_LOADED(arg1)
                     {
                         { 
                             10060, -- [1] spellId
-                            POWER_INFUSION, -- [2] keyword
+                            10060, -- [2] buffId
+                            POWER_INFUSION, -- [3] keyword
                             {
                                 "pixel", -- [1] glow type
                                 {
@@ -185,12 +186,13 @@ function eventFrame:ADDON_LOADED(arg1)
                                     8, -- [6] length
                                     2 -- [7] thickness
                                 } -- [2] glowOptions
-                            }, -- [3] glow
-                            true -- [4] built-in
+                            }, -- [4] glow
+                            true -- [5] built-in
                         },
                         { 
                             29166, -- [1] spellId
-                            INNERVATE, -- [2] keyword
+                            29166, -- [2] buffId
+                            INNERVATE, -- [3] keyword
                             {
                                 "pixel", -- [1] glow type
                                 {
@@ -202,8 +204,8 @@ function eventFrame:ADDON_LOADED(arg1)
                                     8, -- [6] length
                                     2 -- [7] thickness
                                 } -- [2] glowOptions
-                            }, -- [3] glow
-                            true -- [4] built-in
+                            }, -- [4] glow
+                            true -- [5] built-in
                         },
                     }, -- [7] spells
                 },

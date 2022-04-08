@@ -53,10 +53,10 @@ end
 -------------------------------------------------
 local srEnabled, srKnown, srFreeCD, srReplyCD, srType, srTimeout
 local srSpells = {
-    -- [spellId] = {keywords, glowOptions}
+    -- [spellId] = {buffId, keywords, glowOptions}
 }
 local srUnits = {
-    -- [unit] = {spellId, button}
+    -- [unit] = {buffId, button}
 }
 local SR = CreateFrame("Frame")
 
@@ -96,9 +96,9 @@ end
 
 local function ShowSRGlow(spellId, button)
     if button then
-        if not F:FindAuraById(button.state.unit, "BUFF", spellId) and UnitIsVisible(button.state.unit) then
-            srUnits[button.state.unit] = {spellId, button} -- save for hiding
-            ShowGlow(button.widget.srGlowFrame, srSpells[spellId][2][1], srSpells[spellId][2][2], srTimeout, function()
+        if not F:FindAuraById(button.state.unit, "BUFF", srSpells[spellId][1]) and UnitIsVisible(button.state.unit) then
+            srUnits[button.state.unit] = {srSpells[spellId][1], button} --! save buffId for hiding
+            ShowGlow(button.widget.srGlowFrame, srSpells[spellId][3][1], srSpells[spellId][3][2], srTimeout, function()
                 srUnits[button.state.unit] = nil
             end)
         end
@@ -107,7 +107,7 @@ end
 
 -- glow on addon message
 Comm:RegisterComm("CELL_REQ_S", function(prefix, message, channel, sender)
-    if srEnabled then
+    if srEnabled and srType ~= "whisper" then
         local spellId, target = strsplit(":", message)
         spellId = tonumber(spellId)
 
@@ -126,7 +126,7 @@ function SR:CHAT_MSG_WHISPER(text, playerName, languageName, channelName, player
     if strmatch(text, "c.+|H.+|h%[.+%]|h|r.+%d+:%d+") then return end
 
     for spellId, t in pairs(srSpells) do
-        if strfind(strlower(text), strlower(t[1])) then
+        if strfind(strlower(text), strlower(t[2])) then
             if CheckSRConditions(spellId, playerName) then
                 ShowSRGlow(spellId, F:GetUnitButtonByGUID(guid))
                 break
@@ -137,7 +137,7 @@ end
 
 -- hide glow when aura changes
 function SR:UNIT_AURA(unit, isFullUpdate, updatedAuras)
-    local srUnit = srUnits[unit]
+    local srUnit = srUnits[unit] -- {buffId, button}
     if not srUnit then return end
 
     if type(updatedAuras) == "table" then
@@ -154,6 +154,8 @@ SR:SetScript("OnEvent", function(self, event, ...)
 	self[event](self, ...)
 end)
 
+-- CELL_SR_SPELLS = srSpells
+-- CELL_SR_UNITS = srUnits
 local function SR_UpdateTools(which)
     if not which or which == "spellRequest" then
         -- NOTE: hide all
@@ -172,7 +174,7 @@ local function SR_UpdateTools(which)
             srType = CellDB["tools"]["spellRequest"][5]
             srTimeout = CellDB["tools"]["spellRequest"][6]
             for _, t in pairs(CellDB["tools"]["spellRequest"][7]) do
-                srSpells[t[1]] = {t[2], t[3]}
+                srSpells[t[1]] = {t[2], t[3], t[4]}
             end
 
             if srType == "whisper" then

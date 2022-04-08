@@ -162,11 +162,11 @@ local function UpdateGlowType(glowType)
     glowOptionsTable[1] = glowType
 
     if glowType == "normal" then
-        glowOptionsTable[2] = {{0.95,0.95,0.32,1}}
+        glowOptionsTable[2] = {glowOptionsTable[2][1]}
     elseif glowType == "pixel" then
-        glowOptionsTable[2] = {{0.95,0.95,0.32,1}, 0, 0, 9, 0.25, 8, 2}
+        glowOptionsTable[2] = {glowOptionsTable[2][1], 0, 0, 9, 0.25, 8, 2}
     elseif glowType == "shine" then
-        glowOptionsTable[2] = {{0.95,0.95,0.32,1}, 0, 0, 9, 0.5, 1}
+        glowOptionsTable[2] = {glowOptionsTable[2][1], 0, 0, 9, 0.5, 1}
     end
 
     LoadGlowOptions()

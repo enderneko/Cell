@@ -758,7 +758,7 @@ local function CreateLayoutPane()
                 F:Print(L["Invalid layout name."])
             end
         end, nil, true, true)
-        popup:SetPoint("TOPLEFT", 117, -185)
+        popup:SetPoint("TOPLEFT", 117, -97)
     end)
     Cell:RegisterForCloseDropdown(renameBtn)
 
@@ -798,7 +798,7 @@ local function CreateLayoutPane()
             LoadLayoutDB("default")
             UpdateButtonStates()
         end, nil, true)
-        popup:SetPoint("TOPLEFT", 117, -185)
+        popup:SetPoint("TOPLEFT", 117, -97)
     end)
     Cell:RegisterForCloseDropdown(deleteBtn)
 

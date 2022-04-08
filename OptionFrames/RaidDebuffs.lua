@@ -662,7 +662,9 @@ local function CreateDebuffsFrame()
             end
             -- notify debuff list changed
             Cell:Fire("RaidDebuffsChanged", instanceIdToName[loadedInstance])
-        end, nil, true, true)
+        end, function()
+            CellTooltip:Hide()
+        end, true, true)
         popup.editBox:SetNumeric(true)
         popup.editBox:SetScript("OnTextChanged", function()
             local spellId = tonumber(popup.editBox:GetText())

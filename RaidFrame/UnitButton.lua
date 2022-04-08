@@ -2545,7 +2545,7 @@ function F:UnitButton_OnLoad(button)
     -- readyCheckHighlight:Hide()
 
     --* srGlowFrame (Spell Request)
-    local srGlowFrame = CreateFrame("Frame", name.."PIRGlowFrame", button)
+    local srGlowFrame = CreateFrame("Frame", name.."SRGlowFrame", button)
     button.widget.srGlowFrame = srGlowFrame
     srGlowFrame:SetAllPoints(button)
     
