@@ -1128,12 +1128,18 @@ function F:Revise()
 
     -- r90-release
     if CellDB["revise"] and dbRevision < 90 then
+        -- add buffId to spellRequest
         if type(CellDB["tools"]["spellRequest"]) == "table" then
             for _, t in pairs(CellDB["tools"]["spellRequest"][7]) do
                 if type(t[2]) ~= "number" then
                     tinsert(t, 2, t[1])
                 end
             end
+        end
+
+        -- add menuPosition
+        if not CellDB["general"]["menuPosition"] then
+            CellDB["general"]["menuPosition"] = "top_bottom"
         end
     end
 

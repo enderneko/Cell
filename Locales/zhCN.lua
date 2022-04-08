@@ -86,6 +86,7 @@ L["Lock Cell Frame"] = "把它给我锁死"
 L["Fade Out Menu"] = "淡出菜单"
 L["Fade out menu buttons on mouseout"] = "当鼠标移开时淡出菜单按钮"
 L["Sort Party By Role"] = "按职责排列小队"
+L["Menu Position"] = "菜单位置"
 
 -------------------------------------------------
 -- appearance

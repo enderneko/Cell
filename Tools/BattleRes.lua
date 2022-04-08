@@ -17,7 +17,6 @@ Cell:StylizeFrame(battleResFrame, {.1, .1, .1, .7}, {0, 0, 0, .5})
 -- Animation
 ---------------------------------
 local point, relativePoint, onShow, onHide
-local relativeTo = Cell.frames.anchorFrame
 local loaded = false
 
 battleResFrame.onMenuShow = battleResFrame:CreateAnimationGroup()
@@ -28,8 +27,8 @@ battleResFrame.onMenuShow:SetScript("OnPlay", function()
     battleResFrame.onMenuHide:Stop()
 end)
 battleResFrame.onMenuShow:SetScript("OnFinished", function()
-    P:ClearPoints(battleResFrame)
-    P:Point(battleResFrame, point, relativeTo, relativePoint, 0, onShow)
+    battleResFrame:ClearAllPoints()
+    battleResFrame:SetPoint(point, CellAnchorFrame, relativePoint, 0, onShow)
 end)
 
 function battleResFrame:OnMenuShow()
@@ -59,8 +58,8 @@ battleResFrame.onMenuHide:SetScript("OnPlay", function()
     battleResFrame.onMenuShow:Stop()
 end)
 battleResFrame.onMenuHide:SetScript("OnFinished", function()
-    P:ClearPoints(battleResFrame)
-    P:Point(battleResFrame, point, relativeTo, relativePoint, 0, onHide)
+    battleResFrame:ClearAllPoints()
+    battleResFrame:SetPoint(point, CellAnchorFrame, relativePoint, 0, onHide)
 end)
 
 function battleResFrame:OnMenuHide()
@@ -217,34 +216,49 @@ local function UpdateTools(which)
 end
 Cell:RegisterCallback("UpdateTools", "BattleRes_UpdateTools", UpdateTools)
 
-local function UpdateLayout(layout, which)
-    layout = Cell.vars.currentLayoutTable
 
-    if not loaded or which == "anchor" then
-        P:ClearPoints(battleResFrame)
+local function UpdatePosition()
+    local anchor = Cell.vars.currentLayoutTable["anchor"]
+    battleResFrame:ClearAllPoints()
 
-        if layout["anchor"] == "BOTTOMLEFT" then
-            point, relativePoint = "TOPLEFT", "BOTTOMLEFT"
-            onShow, onHide = -4, 10
-            
-        elseif layout["anchor"] == "BOTTOMRIGHT" then
-            point, relativePoint = "TOPRIGHT", "BOTTOMRIGHT"
-            onShow, onHide = -4, 10
-            
-        elseif layout["anchor"] == "TOPLEFT" then
-            point, relativePoint = "BOTTOMLEFT", "TOPLEFT"
-            onShow, onHide = 4, -10
-            
-        elseif layout["anchor"] == "TOPRIGHT" then
-            point, relativePoint = "BOTTOMRIGHT", "TOPRIGHT"
-            onShow, onHide = 4, -10
-        end
+    if anchor == "BOTTOMLEFT" then
+        point, relativePoint = "TOPLEFT", "BOTTOMLEFT"
+        onShow, onHide = -4, 10
+        
+    elseif anchor == "BOTTOMRIGHT" then
+        point, relativePoint = "TOPRIGHT", "BOTTOMRIGHT"
+        onShow, onHide = -4, 10
+        
+    elseif anchor == "TOPLEFT" then
+        point, relativePoint = "BOTTOMLEFT", "TOPLEFT"
+        onShow, onHide = 4, -10
+        
+    elseif anchor == "TOPRIGHT" then
+        point, relativePoint = "BOTTOMRIGHT", "TOPRIGHT"
+        onShow, onHide = 4, -10
+    end
 
+    if CellDB["general"]["menuPosition"] == "top_bottom" then
         if CellDB["general"]["fadeOut"] then
-            P:Point(battleResFrame, point, relativeTo, relativePoint, 0, onHide)
+            battleResFrame:SetPoint(point, CellAnchorFrame, relativePoint, 0, onHide)
         else
-            P:Point(battleResFrame, point, relativeTo, relativePoint, 0, onShow)
+            battleResFrame:SetPoint(point, CellAnchorFrame, relativePoint, 0, onShow)
         end
+    else
+        battleResFrame:SetPoint(point, CellMainFrame, relativePoint, 0, onShow)
+    end
+end
+
+local function UpdateMenu(which)
+    if which == "position" then
+        UpdatePosition()
+    end
+end
+Cell:RegisterCallback("UpdateMenu", "BattleRes_UpdateMenu", UpdateMenu)
+
+local function UpdateLayout(layout, which)
+    if not loaded or which == "anchor" then
+        UpdatePosition()
         loaded = true
     end
 end
@@ -252,7 +266,7 @@ Cell:RegisterCallback("UpdateLayout", "BattleRes_UpdateLayout", UpdateLayout)
 
 local function UpdatePixelPerfect()
     P:Resize(battleResFrame)
-    P:Repoint(battleResFrame)
+    -- P:Repoint(battleResFrame)
     Cell:StylizeFrame(battleResFrame, {.1, .1, .1, .7}, {0, 0, 0, .5})
     bar:UpdatePixelPerfect()
     P:Repoint(title)

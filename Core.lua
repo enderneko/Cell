@@ -148,6 +148,7 @@ function eventFrame:ADDON_LOADED(arg1)
                 ["hideBlizzard"] = true,
                 ["locked"] = false,
                 ["fadeOut"] = false,
+                ["menuPosition"] = "top_bottom",
                 ["sortPartyByRole"] = false,
             }
         end
@@ -568,17 +569,16 @@ function eventFrame:PLAYER_LOGIN()
     -- update texture and font
     Cell:Fire("UpdateAppearance")
     Cell:UpdateOptionsFont(CellDB["appearance"]["optionsFontSizeOffset"], CellDB["appearance"]["useGameFont"])
-    Cell:Fire("UpdatePixelPerfect")
     -- update tools
     Cell:Fire("UpdateTools")
     -- update raid debuff list
     Cell:Fire("UpdateRaidDebuffs")
     -- hide blizzard
     if CellDB["general"]["hideBlizzard"] then F:HideBlizzard() end
-    -- lock
-    F:UpdateFrameLock(CellDB["general"]["locked"])
-    -- fade out
-    F:UpdateMenuFadeOut(CellDB["general"]["fadeOut"])
+    -- lock & menu
+    Cell:Fire("UpdateMenu")
+    -- update pixel perfect
+    Cell:Fire("UpdatePixelPerfect")
 end
 
 local forceRecheck

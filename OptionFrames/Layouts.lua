@@ -211,20 +211,38 @@ end
 local function UpdateLayoutPreview()
     -- update layoutPreview point
     P:Size(layoutPreview, selectedLayoutTable["size"][1], selectedLayoutTable["size"][2])
-    P:ClearPoints(layoutPreview)
+    layoutPreview:ClearAllPoints()
     layoutPreviewName:ClearAllPoints()
-    if selectedLayoutTable["anchor"] == "BOTTOMLEFT" then
-        P:Point(layoutPreview, "BOTTOMLEFT", layoutPreviewAnchor, "TOPLEFT", 0, 4)
-        layoutPreviewName:SetPoint("LEFT", layoutPreviewAnchor, "RIGHT", 5, 0)
-    elseif selectedLayoutTable["anchor"] == "BOTTOMRIGHT" then
-        P:Point(layoutPreview, "BOTTOMRIGHT", layoutPreviewAnchor, "TOPRIGHT", 0, 4)
-        layoutPreviewName:SetPoint("RIGHT", layoutPreviewAnchor, "LEFT", -5, 0)
-    elseif selectedLayoutTable["anchor"] == "TOPLEFT" then
-        P:Point(layoutPreview, "TOPLEFT", layoutPreviewAnchor, "BOTTOMLEFT", 0, -4)
-        layoutPreviewName:SetPoint("LEFT", layoutPreviewAnchor, "RIGHT", 5, 0)
-    elseif selectedLayoutTable["anchor"] == "TOPRIGHT" then
-        P:Point(layoutPreview, "TOPRIGHT", layoutPreviewAnchor, "BOTTOMRIGHT", 0, -4)
-        layoutPreviewName:SetPoint("RIGHT", layoutPreviewAnchor, "LEFT", -5, 0)
+    if CellDB["general"]["menuPosition"] == "top_bottom" then
+        P:Size(layoutPreviewAnchor, 20, 10)
+        if selectedLayoutTable["anchor"] == "BOTTOMLEFT" then
+            layoutPreview:SetPoint("BOTTOMLEFT", layoutPreviewAnchor, "TOPLEFT", 0, 4)
+            layoutPreviewName:SetPoint("LEFT", layoutPreviewAnchor, "RIGHT", 5, 0)
+        elseif selectedLayoutTable["anchor"] == "BOTTOMRIGHT" then
+            layoutPreview:SetPoint("BOTTOMRIGHT", layoutPreviewAnchor, "TOPRIGHT", 0, 4)
+            layoutPreviewName:SetPoint("RIGHT", layoutPreviewAnchor, "LEFT", -5, 0)
+        elseif selectedLayoutTable["anchor"] == "TOPLEFT" then
+            layoutPreview:SetPoint("TOPLEFT", layoutPreviewAnchor, "BOTTOMLEFT", 0, -4)
+            layoutPreviewName:SetPoint("LEFT", layoutPreviewAnchor, "RIGHT", 5, 0)
+        elseif selectedLayoutTable["anchor"] == "TOPRIGHT" then
+            layoutPreview:SetPoint("TOPRIGHT", layoutPreviewAnchor, "BOTTOMRIGHT", 0, -4)
+            layoutPreviewName:SetPoint("RIGHT", layoutPreviewAnchor, "LEFT", -5, 0)
+        end
+    else
+        P:Size(layoutPreviewAnchor, 10, 20)
+        if selectedLayoutTable["anchor"] == "BOTTOMLEFT" then
+            layoutPreview:SetPoint("BOTTOMLEFT", layoutPreviewAnchor, "BOTTOMRIGHT", 4, 0)
+            layoutPreviewName:SetPoint("TOPLEFT", layoutPreviewAnchor, "BOTTOMLEFT", 0, -5)
+        elseif selectedLayoutTable["anchor"] == "BOTTOMRIGHT" then
+            layoutPreview:SetPoint("BOTTOMRIGHT", layoutPreviewAnchor, "BOTTOMLEFT", -4, 0)
+            layoutPreviewName:SetPoint("TOPRIGHT", layoutPreviewAnchor, "BOTTOMRIGHT", 0, -5)
+        elseif selectedLayoutTable["anchor"] == "TOPLEFT" then
+            layoutPreview:SetPoint("TOPLEFT", layoutPreviewAnchor, "TOPRIGHT", 4, 0)
+            layoutPreviewName:SetPoint("BOTTOMLEFT", layoutPreviewAnchor, "TOPLEFT", 0, 5)
+        elseif selectedLayoutTable["anchor"] == "TOPRIGHT" then
+            layoutPreview:SetPoint("TOPRIGHT", layoutPreviewAnchor, "TOPLEFT", -4, 0)
+            layoutPreviewName:SetPoint("BOTTOMRIGHT", layoutPreviewAnchor, "TOPRIGHT", 0, 5)
+        end
     end
 
     -- update layoutPreviewAnchor point
@@ -483,21 +501,39 @@ local function UpdateNPCPreview()
 
     -- update npcPreview point
     P:Size(npcPreview, selectedLayoutTable["size"][1], selectedLayoutTable["size"][2])
-    P:ClearPoints(npcPreview)
+    npcPreview:ClearAllPoints()
     npcPreviewName:ClearAllPoints()
     
-    if selectedLayoutTable["anchor"] == "BOTTOMLEFT" then
-        P:Point(npcPreview, "BOTTOMLEFT", npcPreviewAnchor, "TOPLEFT", 0, 4)
-        npcPreviewName:SetPoint("LEFT", npcPreviewAnchor, "RIGHT", 5, 0)
-    elseif selectedLayoutTable["anchor"] == "BOTTOMRIGHT" then
-        P:Point(npcPreview, "BOTTOMRIGHT", npcPreviewAnchor, "TOPRIGHT", 0, 4)
-        npcPreviewName:SetPoint("RIGHT", npcPreviewAnchor, "LEFT", -5, 0)
-    elseif selectedLayoutTable["anchor"] == "TOPLEFT" then
-        P:Point(npcPreview, "TOPLEFT", npcPreviewAnchor, "BOTTOMLEFT", 0, -4)
-        npcPreviewName:SetPoint("LEFT", npcPreviewAnchor, "RIGHT", 5, 0)
-    elseif selectedLayoutTable["anchor"] == "TOPRIGHT" then
-        P:Point(npcPreview, "TOPRIGHT", npcPreviewAnchor, "BOTTOMRIGHT", 0, -4)
-        npcPreviewName:SetPoint("RIGHT", npcPreviewAnchor, "LEFT", -5, 0)
+    if CellDB["general"]["menuPosition"] == "top_bottom" then
+        P:Size(npcPreviewAnchor, 20, 10)
+        if selectedLayoutTable["anchor"] == "BOTTOMLEFT" then
+            npcPreview:SetPoint("BOTTOMLEFT", npcPreviewAnchor, "TOPLEFT", 0, 4)
+            npcPreviewName:SetPoint("LEFT", npcPreviewAnchor, "RIGHT", 5, 0)
+        elseif selectedLayoutTable["anchor"] == "BOTTOMRIGHT" then
+            npcPreview:SetPoint("BOTTOMRIGHT", npcPreviewAnchor, "TOPRIGHT", 0, 4)
+            npcPreviewName:SetPoint("RIGHT", npcPreviewAnchor, "LEFT", -5, 0)
+        elseif selectedLayoutTable["anchor"] == "TOPLEFT" then
+            npcPreview:SetPoint("TOPLEFT", npcPreviewAnchor, "BOTTOMLEFT", 0, -4)
+            npcPreviewName:SetPoint("LEFT", npcPreviewAnchor, "RIGHT", 5, 0)
+        elseif selectedLayoutTable["anchor"] == "TOPRIGHT" then
+            npcPreview:SetPoint("TOPRIGHT", npcPreviewAnchor, "BOTTOMRIGHT", 0, -4)
+            npcPreviewName:SetPoint("RIGHT", npcPreviewAnchor, "LEFT", -5, 0)
+        end
+    else
+        P:Size(npcPreviewAnchor, 10, 20)
+        if selectedLayoutTable["anchor"] == "BOTTOMLEFT" then
+            npcPreview:SetPoint("BOTTOMLEFT", npcPreviewAnchor, "BOTTOMRIGHT", 4, 0)
+            npcPreviewName:SetPoint("TOPLEFT", npcPreviewAnchor, "BOTTOMLEFT", 0, -5)
+        elseif selectedLayoutTable["anchor"] == "BOTTOMRIGHT" then
+            npcPreview:SetPoint("BOTTOMRIGHT", npcPreviewAnchor, "BOTTOMLEFT", -4, 0)
+            npcPreviewName:SetPoint("TOPRIGHT", npcPreviewAnchor, "BOTTOMRIGHT", 0, -5)
+        elseif selectedLayoutTable["anchor"] == "TOPLEFT" then
+            npcPreview:SetPoint("TOPLEFT", npcPreviewAnchor, "TOPRIGHT", 4, 0)
+            npcPreviewName:SetPoint("BOTTOMLEFT", npcPreviewAnchor, "TOPLEFT", 0, 5)
+        elseif selectedLayoutTable["anchor"] == "TOPRIGHT" then
+            npcPreview:SetPoint("TOPRIGHT", npcPreviewAnchor, "TOPLEFT", -4, 0)
+            npcPreviewName:SetPoint("BOTTOMRIGHT", npcPreviewAnchor, "TOPRIGHT", 0, 5)
+        end
     end
 
     -- update npcAnchor point
