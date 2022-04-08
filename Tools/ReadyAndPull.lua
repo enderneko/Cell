@@ -200,6 +200,7 @@ Cell:RegisterCallback("PermissionChanged", "RaidButtons_PermissionChanged", Chec
 local function UpdateTools(which)
     if not which or which == "buttons" then
         CheckPermission()
+        ShowMover(Cell.vars.showMover and CellDB["tools"]["readyAndPull"][1])
     end
 
     if not which or which == "pullTimer" then

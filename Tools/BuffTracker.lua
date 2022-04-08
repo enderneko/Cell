@@ -426,6 +426,9 @@ local function UpdateTools(which)
                 buffTrackerFrame:GROUP_ROSTER_UPDATE(true)
             end
             enabled = true
+            if Cell.vars.showMover then
+                ShowMover(true)
+            end
         else
             buffTrackerFrame:UnregisterAllEvents()
             LGIST.UnregisterCallback(buffTrackerFrame, "GroupInSpecT_Update")
@@ -438,6 +441,7 @@ local function UpdateTools(which)
             AnchorButtons()
 
             enabled = false
+            ShowMover(false)
         end
     end
 

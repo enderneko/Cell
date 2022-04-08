@@ -356,6 +356,7 @@ local function UpdateTools(which)
     F:Debug("|cffBBFFFFUpdateTools:|r", which)
     if not which or which == "marks" then
         CheckPermission()
+        ShowMover(Cell.vars.showMover and CellDB["tools"]["marks"][1])
     end
 
     if not which then -- position

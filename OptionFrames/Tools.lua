@@ -2,6 +2,7 @@ local _, Cell = ...
 local L = Cell.L
 local F = Cell.funcs
 local P = Cell.pixelPerfectFuncs
+local LCG = LibStub("LibCustomGlow-1.0")
 
 local toolsTab = Cell:CreateFrame("CellOptionsFrame_ToolsTab", Cell.frames.optionsFrame, nil, nil, true)
 Cell.frames.toolsTab = toolsTab
@@ -19,19 +20,22 @@ local function CreateToolsPane()
     local toolsPane = Cell:CreateTitledPane(toolsTab, L["Raid Tools"].." |cFF777777"..L["only in group"], 422, 107)
     toolsPane:SetPoint("TOPLEFT", 5, -5)
 
-    local unlockBtn = Cell:CreateButton(toolsPane, L["Unlock"], "class", {60, 17})
+    local unlockBtn = Cell:CreateButton(toolsPane, L["Unlock"], "class", {70, 17})
     unlockBtn:SetPoint("TOPRIGHT", toolsPane)
     unlockBtn.locked = true
     unlockBtn:SetScript("OnClick", function(self)
         if self.locked then
             unlockBtn:SetText(L["Lock"])
             self.locked = false
-            Cell:Fire("ShowMover", true)
+            Cell.vars.showMover = true
+            LCG.PixelGlow_Start(unlockBtn, {0,1,0,1}, 9, 0.25, 8, 1)
         else
             unlockBtn:SetText(L["Unlock"])
             self.locked = true
-            Cell:Fire("ShowMover", false)
+            Cell.vars.showMover = false
+            LCG.PixelGlow_Stop(unlockBtn)
         end
+        Cell:Fire("ShowMover", Cell.vars.showMover)
     end)
 
     -- battle res
