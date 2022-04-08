@@ -312,7 +312,7 @@ local function CreateSRPane()
     pirTips:SetPoint("TOPLEFT", 5, -25)
     pirTips:SetJustifyH("LEFT")
     pirTips:SetSpacing(5)
-    pirTips:SetText(L["Glow unit button when a group member send a %s request"]:format(Cell:GetPlayerClassColorString()..L["SPELL"].."|r").."\n"..L["Shows only one spell glow on a unit button at a time"])
+    pirTips:SetText(L["Glow unit button when a group member sends a %s request"]:format(Cell:GetPlayerClassColorString()..L["SPELL"].."|r").."\n"..L["Shows only one spell glow on a unit button at a time"])
     -- NOTE: only shows one glow effect on a unit button at a time
 
     -- enabled ----------------------------------------------------------------------
@@ -598,7 +598,7 @@ local function CreateDRPane()
 
     local drTips = drPane:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
     drTips:SetPoint("TOPLEFT", 5, -25)
-    drTips:SetText(L["Glow unit button when a group member send a %s request"]:format(Cell:GetPlayerClassColorString()..L["DISPEL"].."|r"))
+    drTips:SetText(L["Glow unit button when a group member sends a %s request"]:format(Cell:GetPlayerClassColorString()..L["DISPEL"].."|r"))
 
     -- enabled ----------------------------------------------------------------------
     drEnabledCB = Cell:CreateCheckButton(drPane, L["Enabled"], function(checked, self)

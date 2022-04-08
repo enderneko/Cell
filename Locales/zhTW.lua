@@ -4,8 +4,7 @@ local L = select( 2, ...).L
 
 L["%s lock %s on %s."] = "%s將%s鎖定在%s。"
 L["%s unlock %s from %s."] = "%s將%s從%s解鎖。"
---[[Translation missing --]]
---[[ L["[Ctrl+LeftClick] to reset these settings"] = "[Ctrl+LeftClick] to reset these settings"--]] 
+L["[Ctrl+LeftClick] to reset these settings"] = "[Ctrl+左鍵] 來重置這些設定"
 L["|cff1Aff1AYes|r - Overwrite"] = "|cff1Aff1A是|r - 取代原有的"
 L["|cffff1A1ANo|r - Create New"] = "|cffff1A1A否|r - 建立新的"
 L["|cffffb5c5Left-Click:|r cast the spell"] = "|cffffb5c5左鍵:|r 施放技能"
@@ -18,6 +17,10 @@ L["About"] = "關於"
 L["ABOUT"] = "Cell 是受 CompactRaid 啟發的團隊框架，參考了其程式碼，重寫並增強。\n我個人很喜歡 CompactRaid，並常年使用它，但其作者似乎已經不再更新了。因此我寫了 Cell，希望你能喜歡。\n另外，我也參考了一些很棒的團隊框架，比如 Aptechka 和 Grid2。\nCell 並不打算成為一個輕量或強大 (如 VuhDo、Grid2) 的團隊框架插件。設定簡單，功能足夠，就行了。"
 L["ACCEPTED"] = "已接受"
 L["Action"] = "動作"
+--[[Translation missing --]]
+--[[ L["Add"] = ""--]] 
+--[[Translation missing --]]
+--[[ L["Add new spell"] = ""--]] 
 L["AFK"] = "暫離"
 L["Aggro (bar)"] = "仇恨 (條)"
 L["Aggro (blink)"] = "仇恨 (閃爍)"
@@ -41,8 +44,7 @@ L["Author"] = "作者"
 L["Available slash commands"] = "可用的聊天指令"
 L["Background Alpha"] = "背景透明度"
 L["Bar"] = "進度條"
---[[Translation missing --]]
---[[ L["Bar Orientation"] = "Bar Orientation"--]] 
+L["Bar Orientation"] = "條方向"
 L["Bars"] = "進度條"
 L["Battle Res Timer"] = "戰復計時器"
 L["BG 1-15"] = "戰場 1-15"
@@ -81,8 +83,7 @@ L["Close"] = "關閉"
 L["Color"] = "顏色"
 L["Common"] = "共用"
 L["Condition"] = "條件"
---[[Translation missing --]]
---[[ L["Contains"] = "Contains"--]] 
+L["Contains"] = "包含"
 L["Copy"] = "複製"
 L["Copy indicators from one layout to another"] = "將指示器從一個版面配置複製到另一個版面配置"
 L["Create"] = "建立"
@@ -113,15 +114,14 @@ L["Delete"] = "刪除"
 L["Delete debuff?"] = "是否確定要刪除減益?"
 L["Delete indicator"] = "是否確定要刪除指示器"
 L["Delete layout"] = "是否確定要刪除版面配置"
+--[[Translation missing --]]
+--[[ L["Delete spell?"] = ""--]] 
 L["Disabled"] = "停用"
 L["Disabled in battlegrounds and arenas"] = "戰場和競技場停用"
 L["Discard"] = "取消"
---[[Translation missing --]]
---[[ L["DISPEL"] = "DISPEL"--]] 
---[[Translation missing --]]
---[[ L["Dispel Request"] = "Dispel Request"--]] 
---[[Translation missing --]]
---[[ L["Dispellable By Me"] = "Dispellable By Me"--]] 
+L["DISPEL"] = "驅散"
+L["Dispel Request"] = "請求驅散"
+L["Dispellable By Me"] = "只有我能驅散時"
 L["dispellableByMe"] = "只顯示我能驅散的減益"
 L["Dispels"] = "驅散"
 L["DRINKING"] = "喝水"
@@ -147,22 +147,18 @@ L["Font Outline"] = "文字樣式"
 L["Font Size"] = "文字大小"
 L["Format"] = "格式"
 L["Frame Level"] = "框架層級"
---[[Translation missing --]]
---[[ L["Free Cooldown Only"] = "Free Cooldown Only"--]] 
+-- L["Free Cooldown Only"] = "只有能量灌注不在冷卻時"
 L["Frequency"] = "速度"
 L["Friendly NPC Frame"] = "友方 NPC 框架"
 L["From"] = "從"
 L["From: "] = "來自:"
 L["General"] = "一般"
 L["GHOST"] = "鬼魂"
---[[Translation missing --]]
---[[ L["Glow"] = "Glow"--]] 
+L["Glow"] = "發光"
 L["Glow Color"] = "發光顏色"
---[[Translation missing --]]
---[[ L["Glow Options"] = "Glow Options"--]] 
+L["Glow Options"] = "發光選項"
 L["Glow Type"] = "發光類型"
---[[Translation missing --]]
---[[ L["Glow unit button when a group member send a %s request"] = "Glow unit button when a group member send a %s request"--]] 
+L["Glow unit button when a group member sends a %s request"] = "當隊伍成員請求%s時高亮其單位按鈕"
 L["Gradient"] = "漸層"
 L["Group Arrangement"] = "隊伍排列"
 L["Group Columns"] = "隊伍直行數"
@@ -188,8 +184,7 @@ L["Horizontal"] = "水平"
 L["Horizontal Gradient"] = "水平漸層"
 L["Icon"] = "圖示"
 L["Icons"] = "圖示群組"
---[[Translation missing --]]
---[[ L["IDs separated by whitespaces"] = "IDs separated by whitespaces"--]] 
+L["IDs separated by whitespaces"] = "用空格分隔多個法術ID"
 L["Import"] = "匯入"
 L["Incompatible Version"] = "不相容的版本"
 L["Indicator Settings"] = "指示器設定"
@@ -202,6 +197,8 @@ L["Invalid"] = "無效"
 L["Invalid spell id."] = "無效的法術 ID。"
 L["INVERT"] = "反向選擇"
 L["It will be renamed if this layout name already exists"] = "如果該版面配置名稱已經存在，將自動重新命名"
+--[[Translation missing --]]
+--[[ L["Known Spells Only"] = ""--]] 
 L["Layout"] = "版面配置"
 L["Layout Auto Switch"] = "自動切換版面配置"
 L["Layout imported: %s."] = "已匯入版面配置: %s。"
@@ -264,22 +261,15 @@ L["PENDING"] = "等候"
 L["Percentage"] = "百分比"
 L["PET"] = "寵物"
 L["Pet Button Size"] = "寵物按鈕大小"
---[[Translation missing --]]
---[[ L["PI"] = "PI"--]] 
 L["Pixel"] = "像素"
 L["Pixel Perfect"] = "完美細緻模式"
 L["Play Icon Animation When"] = "播放圖示動畫於"
 L["Power Bar Filters"] = "能量條過濾方式"
 L["Power Color"] = "能量顏色"
 L["Power Color (dark)"] = "能量顏色 (暗)"
---[[Translation missing --]]
---[[ L["Power Infusion Request"] = "Power Infusion Request"--]] 
---[[Translation missing --]]
---[[ L["Power Size"] = "Power Size"--]] 
+L["Power Size"] = "能量條大小"
 L["Press Key to Bind"] = "按下要綁定的按鍵"
 L["Preview"] = "預覽"
---[[Translation missing --]]
---[[ L["Priest Only"] = "Priest Only"--]] 
 L["Profiles"] = "設定檔"
 L["Pull"] = "倒數"
 L["Pull Timer"] = "開怪倒數"
@@ -299,6 +289,8 @@ L["Remaining Time <"] = "剩餘時間 <"
 L["Rename"] = "更名"
 L["Rename indicator"] = "重新命名指示器"
 L["Rename layout"] = "重新名命版面配置"
+--[[Translation missing --]]
+--[[ L["Reply With Cooldown"] = ""--]] 
 L["Report deaths to group"] = "向隊伍通報死亡訊息"
 L["Request"] = "請求"
 L["Require font support"] = "需要字體支援"
@@ -311,25 +303,18 @@ L["reset all Layouts and Indicators"] = "重置版面配置和指示器的全部
 L["reset all Raid Debuffs"] = "重置全部的團隊減益"
 L["reset Cell position"] = "重置 Cell 的位置"
 L["Reset debuffs?"] = "是否要重置減益?"
---[[Translation missing --]]
---[[ L["Respond to all dispellable debuffs"] = "Respond to all dispellable debuffs"--]] 
---[[Translation missing --]]
---[[ L["Respond to all requests from group members"] = "Respond to all requests from group members"--]] 
---[[Translation missing --]]
---[[ L["Respond to requests that are only sent to me"] = "Respond to requests that are only sent to me"--]] 
---[[Translation missing --]]
---[[ L["Respond to specific dispellable debuffs"] = "Respond to specific dispellable debuffs"--]] 
---[[Translation missing --]]
---[[ L["Respond to whispers"] = "Respond to whispers"--]] 
---[[Translation missing --]]
---[[ L["Response Type"] = "Response Type"--]] 
+L["Respond to all dispellable debuffs"] = "回應所有的可驅散減益"
+L["Respond to all requests from group members"] = "回應所有隊伍成員的請求"
+L["Respond to requests that are only sent to me"] = "只回應對我發送的請求"
+L["Respond to specific dispellable debuffs"] = "只回應指定的可驅散減益"
+L["Respond to whispers"] = "回應密語"
+L["Response Type"] = "回應類型"
 L["Right"] = "右"
 L["RIGHT"] = "右"
 L["right-click: delete"] = "右鍵: 刪除"
 L["right-to-left"] = "從右到左"
 L["Role Icon"] = "角色職責圖示"
---[[Translation missing --]]
---[[ L["Rotate Texture"] = "Rotate Texture"--]] 
+L["Rotate Texture"] = "旋轉材質"
 L["Save"] = "儲存"
 L["Scale"] = "縮放大小"
 L["ScrollDown"] = "滾輪往下"
@@ -346,8 +331,7 @@ L["show Cell options frame"] = "打開 Cell 設定選項"
 L["Show Current Instance"] = "顯示當前副本"
 L["Show duration text instead of icon animation"] = "顯示持續時間數字而不是圖示動畫效果"
 L["Show friendly NPCs in a separate frame"] = "將友方 NPC 顯示在一個獨立的框架中"
---[[Translation missing --]]
---[[ L["Show NPC Frame"] = "Show NPC Frame"--]] 
+L["Show NPC Frame"] = "顯示npc框架"
 L["Show Party"] = "5人隊伍時要顯示"
 L["Show Party Pets"] = "顯示隊伍寵物"
 L["Show pets while in a party"] = "在隊伍中時顯示寵物"
@@ -355,6 +339,8 @@ L["Show Solo"] = "單人時要顯示"
 L["Show while in a party"] = "在隊伍中時顯示"
 L["Show while not in a group"] = "不在隊伍中時顯示"
 L["showDuration"] = "顯示持續時間文字"
+--[[Translation missing --]]
+--[[ L["Shows only one spell glow on a unit button at a time"] = ""--]] 
 L["Size"] = "大小"
 L["Size (Big)"] = "大小 (放大的)"
 L["Slash Commands"] = "聊天指令"
@@ -362,8 +348,16 @@ L["Solid"] = "單色"
 L["Solo/Party"] = "單人/5人隊伍"
 L["Sort Party By Role"] = "依角色職責排列隊伍"
 L["Special Thanks"] = "特別感謝"
+--[[Translation missing --]]
+--[[ L["SPELL"] = ""--]] 
 L["Spell"] = "法術"
+--[[Translation missing --]]
+--[[ L["Spell already exists."] = ""--]] 
 L["Spell List"] = "法術清單"
+--[[Translation missing --]]
+--[[ L["Spell Request"] = ""--]] 
+--[[Translation missing --]]
+--[[ L["Spells"] = ""--]] 
 L["Status Icon"] = "狀態圖示"
 L["Status Text"] = "狀態文字"
 L["Status Text Position"] = "狀態文字位置"
@@ -384,8 +378,7 @@ L["These \"reset\" commands below affect all your characters in this account"] =
 L["Thickness"] = "粗細"
 L["This may overwrite built-in indicators"] = "這可能會覆蓋掉內建的指示器"
 L["This will overwrite your debuffs"] = "將會取代你的減益"
---[[Translation missing --]]
---[[ L["Timeout"] = "Timeout"--]] 
+L["Timeout"] = "超時"
 L["Tip: Every layout has its own position setting"] = "提示: 每個版面配置都有各自的位置設定。"
 L["To"] = "到"
 L["To HealthBar's"] = "對齊到血條的"
