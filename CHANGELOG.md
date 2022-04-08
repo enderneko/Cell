@@ -1,3 +1,8 @@
-[Full Changelog](https://github.com/enderneko/Cell/compare/r87-release...a7a9393da64bbf4f97625e4ff92e86c97924e2d4)
+[Full Changelog](https://github.com/enderneko/Cell/compare/r88-release...e740abc53f2efb89fd582ea4e651530cbd69561d)
 
-- Fix heal prediction and request glows
+- Implement Spell Request
+- Update locales
+- Update glowOptionsFrame
+- Update unitButton's onTick
+- Slightly improve performance
+- Replace Cell.vars.myName with Cell.vars.playerName

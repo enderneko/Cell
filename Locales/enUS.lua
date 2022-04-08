@@ -52,6 +52,12 @@ select(2, ...).L = setmetatable({
     ["RAID_DEBUFFS_TIPS"] = "Tips: [Drag & Drop] to change debuff order. [Double-Click] on instance name to open Encounter Journal. [Shift+Left Click] on instance/boss name to share debuffs. [Alt+Left Click] on instance/boss name to reset debuffs. The priority of General Debuffs is higher than Boss Debuffs.",
 
     ["CHANGE LOGS"] = [[
+        <h1>r89-release (Apr 8, 2022, 09:22 GMT+8)</h1>
+        <p>* Implemented Spell Request (replace PI Request), it's way better.</p>
+        <p>* Fixed bugs.</p>
+        <p>* Updated locales.</p>
+        <br/>
+
         <h1>r88-release (Apr 7, 2022, 16:45 GMT+8)</h1>
         <p>* Fixed heal prediction and request glow.</p>
         <br/>
