@@ -240,7 +240,7 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
             
             --! update pixel perfect for widgets
             b.func.UpdatePixelPerfect()
-        end, true)
+        end, indicatorsInitialized) -- -- NOTE: indicatorsInitialized = false, update ALL GROUP TYPE; indicatorsInitialized = true, just update CURRENT GROUP TYPE
         indicatorsInitialized = true
     else
         -- changed in IndicatorsTab
@@ -672,14 +672,16 @@ local function UnitButton_UpdateDebuffs(self)
         for i = 1, indicatorNums["raidDebuffs"] do
             if debuffs_raid_indices[unit][i] then -- debuffs_raid_indices[unit][i] -> index
                 local name, icon, count, debuffType, duration, expirationTime, source, isStealable, nameplateShowPersonal, spellId = UnitDebuff(unit, debuffs_raid_indices[unit][i])
-                self.indicators.raidDebuffs[i]:SetCooldown(expirationTime - duration, duration, debuffType or "", icon, count, debuffs_raid_refreshing[unit][debuffs_raid_indices[unit][i]])
-                
-                startIndex = startIndex + 1
-                -- use debuffs_raid_orders(wiped before) to store debuffs indices shown by raidDebuffs indicator
-                debuffs_raid_orders[unit][debuffs_raid_indices[unit][i]] = true
+                if name then
+                    self.indicators.raidDebuffs[i]:SetCooldown(expirationTime - duration, duration, debuffType or "", icon, count, debuffs_raid_refreshing[unit][debuffs_raid_indices[unit][i]])
+                    
+                    startIndex = startIndex + 1
+                    -- use debuffs_raid_orders(wiped before) to store debuffs indices shown by raidDebuffs indicator
+                    debuffs_raid_orders[unit][debuffs_raid_indices[unit][i]] = true
 
-                if i == 1 then -- top
-                    topGlowType, topGlowOptions = I:GetDebuffGlow(name, spellId, count)
+                    if i == 1 then -- top
+                        topGlowType, topGlowOptions = I:GetDebuffGlow(name, spellId, count)
+                    end
                 end
             end
         end
@@ -722,8 +724,8 @@ local function UnitButton_UpdateDebuffs(self)
     if enabledIndicators["debuffs"] then
         -- bigDebuffs first
         for debuffIndex, refreshing in pairs(debuffs_big[unit]) do
-            local _, icon, count, debuffType, duration, expirationTime = UnitDebuff(unit, debuffIndex)
-            if not debuffs_raid_orders[unit][debuffIndex] and startIndex <= indicatorNums["debuffs"] then
+            local name, icon, count, debuffType, duration, expirationTime = UnitDebuff(unit, debuffIndex)
+            if name and not debuffs_raid_orders[unit][debuffIndex] and startIndex <= indicatorNums["debuffs"] then
                 -- start, duration, debuffType, texture, count, refreshing
                 self.indicators.debuffs[startIndex]:SetCooldown(expirationTime - duration, duration, debuffType or "", icon, count, refreshing, true)
                 startIndex = startIndex + 1
@@ -731,8 +733,8 @@ local function UnitButton_UpdateDebuffs(self)
         end
         -- then normal debuffs
         for debuffIndex, refreshing in pairs(debuffs_normal[unit]) do
-            local _, icon, count, debuffType, duration, expirationTime = UnitDebuff(unit, debuffIndex)
-            if not debuffs_raid_orders[unit][debuffIndex] and startIndex <= indicatorNums["debuffs"] then
+            local name, icon, count, debuffType, duration, expirationTime = UnitDebuff(unit, debuffIndex)
+            if name and not debuffs_raid_orders[unit][debuffIndex] and startIndex <= indicatorNums["debuffs"] then
                 -- start, duration, debuffType, texture, count, refreshing
                 self.indicators.debuffs[startIndex]:SetCooldown(expirationTime - duration, duration, debuffType or "", icon, count, refreshing)
                 startIndex = startIndex + 1
