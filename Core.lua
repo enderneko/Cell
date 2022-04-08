@@ -541,7 +541,7 @@ function eventFrame:PLAYER_LOGIN()
     eventFrame:RegisterEvent("GROUP_ROSTER_UPDATE")
     eventFrame:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
 
-    Cell.vars.myName = F:UnitName("player")
+    Cell.vars.playerName = F:UnitName("player")
     
     --! init bgMaxPlayers
     for i = 1, GetNumBattlegroundTypes() do

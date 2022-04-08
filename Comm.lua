@@ -265,7 +265,7 @@ Comm:RegisterComm("CELL_SEND", function(prefix, message, channel, sender)
     if channel ~= "WHISPER" then
         local target
         target, message = strsplit(":", message, 2)
-        if target ~= Cell.vars.myName then
+        if target ~= Cell.vars.playerName then
             return
         end
     end
@@ -291,7 +291,7 @@ Comm:RegisterComm("CELL_SEND_PROG", function(prefix, message, channel, sender)
     if channel ~= "WHISPER" then
         local target
         target, message = strsplit(":", message, 2)
-        if target ~= Cell.vars.myName then
+        if target ~= Cell.vars.playerName then
             return
         end
     end
@@ -309,7 +309,7 @@ Comm:RegisterComm("CELL_REQ", function(prefix, message, channel, requester)
     if channel ~= "WHISPER" then
         local target
         target, message = strsplit(":", message, 2)
-        if target ~= Cell.vars.myName then
+        if target ~= Cell.vars.playerName then
             return
         end
     end

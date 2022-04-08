@@ -2874,7 +2874,7 @@ function addon:CreateReceivingFrame(parent)
         end)
 
         -- NOTE: you cannot send to yourself
-        requestBtn:SetEnabled(playerName ~= Cell.vars.myName)
+        requestBtn:SetEnabled(playerName ~= Cell.vars.playerName)
         importBtn:Hide()
         dataLabel:Hide()
         dataText:Hide()
