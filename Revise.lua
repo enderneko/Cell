@@ -1012,53 +1012,6 @@ function F:Revise()
             CellDB["raidTools"] = nil
         end
 
-        -- add PIRequest
-        if type(CellDB["tools"]["PIRequest"]) ~= "table" then
-            local PIName = GetSpellInfo(10060)
-            CellDB["tools"]["PIRequest"] = {
-                true, -- enabled
-                true, -- priest
-                true, -- free cooldown
-                "all", -- response type
-                10, -- timeout
-                strlower(PIName), -- keyword
-                {
-                    "pixel", -- glow type
-                    {
-                        {1,0.25,1,1}, -- color
-                        0, -- x
-                        0, -- y
-                        9, -- N
-                        0.25, -- frequency
-                        8, -- length
-                        2 -- thickness
-                    }
-                }
-            }
-        end
-        
-        -- add DRequest
-        if type(CellDB["tools"]["DRequest"]) ~= "table" then
-            CellDB["tools"]["DRequest"] = {
-                true, -- [1] enabled
-                true, -- [2] dispellable
-                "all", -- [3] response type
-                30, -- [4] timeout
-                {}, -- [5] debuffs
-                {
-                    "shine", -- [1] glow type
-                    {
-                        {1,0,0.4,1}, -- [1] color
-                        0, -- [2] x
-                        0, -- [3] y
-                        9, -- [4] N
-                        0.5, -- [5] frequency
-                        2, -- [6] scale
-                    } -- [2] glowOptions
-                } -- [6] glow
-            }
-        end
-
         for _, layout in pairs(CellDB["layouts"]) do
             -- add barOrientation to layout
             if type(layout["barOrientation"]) ~= "table" then
@@ -1094,9 +1047,82 @@ function F:Revise()
     -- r89-release
     if CellDB["revise"] and dbRevision < 89 then
         -- rename DRequest to dispelRequest
-        if type(CellDB["tools"]["DRequest"]) == "table" then
-            CellDB["tools"]["dispelRequest"] = CellDB["tools"]["DRequest"]
-            CellDB["tools"]["DRequest"] = nil
+        if type(CellDB["tools"]["dispelRequest"]) ~= "table" then
+            if CellDB["tools"]["DRequest"] then
+                CellDB["tools"]["dispelRequest"] = CellDB["tools"]["DRequest"]
+                CellDB["tools"]["DRequest"] = nil
+            else
+                CellDB["tools"]["dispelRequest"] = {
+                    true, -- [1] enabled
+                    true, -- [2] dispellable
+                    "all", -- [3] response type
+                    30, -- [4] timeout
+                    {}, -- [5] debuffs
+                    {
+                        "shine", -- [1] glow type
+                        {
+                            {1,0,0.4,1}, -- [1] color
+                            0, -- [2] x
+                            0, -- [3] y
+                            9, -- [4] N
+                            0.5, -- [5] frequency
+                            2, -- [6] scale
+                        } -- [2] glowOptions
+                    } -- [6] glow
+                }
+            end
+        end
+
+        -- new spellRequest instead of PIRequest
+        if type(CellDB["tools"]["spellRequest"]) ~= "table" then
+            local POWER_INFUSION = GetSpellInfo(10060)
+            local INNERVATE = GetSpellInfo(29166)
+            
+            CellDB["tools"]["spellRequest"] = {
+                true, -- [1] enabled
+                true, -- [2] known spells only
+                true, -- [3] free cooldown only
+                false, -- [4] reply cooldown
+                "all", -- [5] response type
+                10, -- [6] timeout
+                {
+                    { 
+                        10060, -- [1] spellId
+                        POWER_INFUSION, -- [2] keyword
+                        {
+                            "pixel", -- [1] glow type
+                            {
+                                {1,1,0,1}, -- [1] color
+                                0, -- [2] x
+                                0, -- [3] y
+                                9, -- [4] N
+                                0.25, -- [5] frequency
+                                8, -- [6] length
+                                2 -- [7] thickness
+                            } -- [2] glowOptions
+                        }, -- [3] glow
+                        true -- [4] built-in
+                    },
+                    { 
+                        29166, -- [1] spellId
+                        INNERVATE, -- [2] keyword
+                        {
+                            "pixel", -- [1] glow type
+                            {
+                                {0,1,1,1}, -- [1] color
+                                0, -- [2] x
+                                0, -- [3] y
+                                9, -- [4] N
+                                0.25, -- [5] frequency
+                                8, -- [6] length
+                                2 -- [7] thickness
+                            } -- [2] glowOptions
+                        }, -- [3] glow
+                        true -- [4] built-in
+                    },
+                } -- [7] spells
+            }
+            CellDB["tools"]["PIRequest"] = nil
         end
     end
 

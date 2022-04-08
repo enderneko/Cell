@@ -2540,10 +2540,10 @@ function F:UnitButton_OnLoad(button)
     -- readyCheckHighlight:SetTexture("Interface\\Buttons\\WHITE8x8")
     -- readyCheckHighlight:Hide()
 
-    --* pirGlowFrame (Power Infusion Request)
-    local pirGlowFrame = CreateFrame("Frame", name.."PIRGlowFrame", button)
-    button.widget.pirGlowFrame = pirGlowFrame
-    pirGlowFrame:SetAllPoints(button)
+    --* srGlowFrame (Spell Request)
+    local srGlowFrame = CreateFrame("Frame", name.."PIRGlowFrame", button)
+    button.widget.srGlowFrame = srGlowFrame
+    srGlowFrame:SetAllPoints(button)
     
     --* drGlowFrame (Dispel Request)
     local drGlowFrame = CreateFrame("Frame", name.."DRGlowFrame", button)

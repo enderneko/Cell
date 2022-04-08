@@ -303,6 +303,11 @@ function F:ShowGlowOptions(parent, k, gTable)
     end
 end
 
+function F:HideGlowOptions()
+    key = nil
+    glowOptionsFrame:Hide()
+end
+
 -------------------------------------------------
 -- callbacks
 -------------------------------------------------

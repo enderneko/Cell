@@ -85,7 +85,7 @@ local function CreateTabButtons()
         ["clickCastings"] = 426,
         ["indicators"] = 441,
         ["debuffs"] = 421,
-        ["tools"] = 480,
+        ["tools"] = 562,
         ["about"] = 431,
     }
     

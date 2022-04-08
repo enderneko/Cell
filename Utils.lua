@@ -318,6 +318,12 @@ function F:FormatTime(s)
     return "%ds", floor(s)
 end
 
+function F:SecondsToTime(seconds)
+    local m = seconds / 60
+    local s = seconds % 60
+    return format("%d:%02d", m, s)
+end
+
 -------------------------------------------------
 -- unit buttons
 -------------------------------------------------

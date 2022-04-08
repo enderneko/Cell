@@ -154,7 +154,8 @@ function eventFrame:ADDON_LOADED(arg1)
 
         -- tools --------------------------------------------------------------------------------
         if type(CellDB["tools"]) ~= "table" then
-            local PIName = GetSpellInfo(10060)
+            local POWER_INFUSION = GetSpellInfo(10060)
+            local INNERVATE = GetSpellInfo(29166)
 
             CellDB["tools"] = {
                 ["showBattleRes"] = true,
@@ -162,25 +163,49 @@ function eventFrame:ADDON_LOADED(arg1)
                 ["deathReport"] = {false, 10},
                 ["readyAndPull"] = {false, {"default", 7}, {}},
                 ["marks"] = {false, "both_h", {}},
-                ["PIRequest"] = {
+                ["spellRequest"] = {
                     true, -- [1] enabled
-                    true, -- [2] priest
-                    true, -- [3] free cooldown
-                    "all", -- [4] response type
-                    10, -- [5] timeout
-                    strlower(PIName), -- [6] keyword
+                    true, -- [2] known spells only
+                    true, -- [3] free cooldown only
+                    false, -- [4] reply cooldown
+                    "all", -- [5] response type
+                    10, -- [6] timeout
                     {
-                        "pixel", -- [1] glow type
-                        {
-                            {1,0.25,1,1}, -- [1] color
-                            0, -- [2] x
-                            0, -- [3] y
-                            9, -- [4] N
-                            0.25, -- [5] frequency
-                            8, -- [6] length
-                            2 -- [7] thickness
-                        } -- [2] glowOptions
-                    } -- [7] glow
+                        { 
+                            10060, -- [1] spellId
+                            POWER_INFUSION, -- [2] keyword
+                            {
+                                "pixel", -- [1] glow type
+                                {
+                                    {1,1,0,1}, -- [1] color
+                                    0, -- [2] x
+                                    0, -- [3] y
+                                    9, -- [4] N
+                                    0.25, -- [5] frequency
+                                    8, -- [6] length
+                                    2 -- [7] thickness
+                                } -- [2] glowOptions
+                            }, -- [3] glow
+                            true -- [4] built-in
+                        },
+                        { 
+                            29166, -- [1] spellId
+                            INNERVATE, -- [2] keyword
+                            {
+                                "pixel", -- [1] glow type
+                                {
+                                    {0,1,1,1}, -- [1] color
+                                    0, -- [2] x
+                                    0, -- [3] y
+                                    9, -- [4] N
+                                    0.25, -- [5] frequency
+                                    8, -- [6] length
+                                    2 -- [7] thickness
+                                } -- [2] glowOptions
+                            }, -- [3] glow
+                            true -- [4] built-in
+                        },
+                    }, -- [7] spells
                 },
                 ["dispelRequest"] = {
                     true, -- [1] enabled
