@@ -1053,7 +1053,7 @@ function F:Revise()
                 CellDB["tools"]["DRequest"] = nil
             else
                 CellDB["tools"]["dispelRequest"] = {
-                    true, -- [1] enabled
+                    false, -- [1] enabled
                     true, -- [2] dispellable
                     "all", -- [3] response type
                     30, -- [4] timeout
@@ -1079,7 +1079,7 @@ function F:Revise()
             local INNERVATE = GetSpellInfo(29166)
             
             CellDB["tools"]["spellRequest"] = {
-                true, -- [1] enabled
+                false, -- [1] enabled
                 true, -- [2] known spells only
                 true, -- [3] free cooldown only
                 false, -- [4] reply cooldown

@@ -165,7 +165,7 @@ function eventFrame:ADDON_LOADED(arg1)
                 ["readyAndPull"] = {false, {"default", 7}, {}},
                 ["marks"] = {false, "both_h", {}},
                 ["spellRequest"] = {
-                    true, -- [1] enabled
+                    false, -- [1] enabled
                     true, -- [2] known spells only
                     true, -- [3] free cooldown only
                     false, -- [4] reply cooldown
@@ -211,7 +211,7 @@ function eventFrame:ADDON_LOADED(arg1)
                     }, -- [7] spells
                 },
                 ["dispelRequest"] = {
-                    true, -- [1] enabled
+                    false, -- [1] enabled
                     true, -- [2] dispellable
                     "all", -- [3] response type
                     30, -- [4] timeout
