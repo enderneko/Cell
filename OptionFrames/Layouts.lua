@@ -109,42 +109,40 @@ end
 -- layout preview
 -------------------------------------------------
 local previewMode = 0
-local layoutPreview = Cell:CreateFrame("CellLayoutPreviewFrame", Cell.frames.mainFrame, nil, nil, true)
-layoutPreview:EnableMouse(false)
-layoutPreview:SetFrameStrata("MEDIUM")
-layoutPreview:SetToplevel(true)
-layoutPreview:Hide()
+local layoutPreview, layoutPreviewAnchor, layoutPreviewName
+local function CreateLayoutPreview()
+    layoutPreview = Cell:CreateFrame("CellLayoutPreviewFrame", Cell.frames.mainFrame, nil, nil, true)
+    layoutPreview:EnableMouse(false)
+    layoutPreview:SetFrameStrata("MEDIUM")
+    layoutPreview:SetToplevel(true)
+    layoutPreview:Hide()
 
-local layoutPreviewAnchor = CreateFrame("Frame", "CellLayoutPreviewAnchorFrame", layoutPreview, "BackdropTemplate")
--- layoutPreviewAnchor:SetPoint("TOPLEFT", UIParent, "CENTER")
-P:Size(layoutPreviewAnchor, 20, 10)
-layoutPreviewAnchor:SetMovable(true)
-layoutPreviewAnchor:EnableMouse(true)
-layoutPreviewAnchor:RegisterForDrag("LeftButton")
-layoutPreviewAnchor:SetClampedToScreen(true)
-Cell:StylizeFrame(layoutPreviewAnchor, {0, 1, 0, 0.4})
-layoutPreviewAnchor:Hide()
-layoutPreviewAnchor:SetScript("OnDragStart", function()
-    layoutPreviewAnchor:StartMoving()
-    layoutPreviewAnchor:SetUserPlaced(false)
-end)
-layoutPreviewAnchor:SetScript("OnDragStop", function()
-    layoutPreviewAnchor:StopMovingOrSizing()
-    P:SavePosition(layoutPreviewAnchor, selectedLayoutTable["position"])
-end)
+    layoutPreviewAnchor = CreateFrame("Frame", "CellLayoutPreviewAnchorFrame", layoutPreview, "BackdropTemplate")
+    -- layoutPreviewAnchor:SetPoint("TOPLEFT", UIParent, "CENTER")
+    P:Size(layoutPreviewAnchor, 20, 10)
+    layoutPreviewAnchor:SetMovable(true)
+    layoutPreviewAnchor:EnableMouse(true)
+    layoutPreviewAnchor:RegisterForDrag("LeftButton")
+    layoutPreviewAnchor:SetClampedToScreen(true)
+    Cell:StylizeFrame(layoutPreviewAnchor, {0, 1, 0, 0.4})
+    layoutPreviewAnchor:Hide()
+    layoutPreviewAnchor:SetScript("OnDragStart", function()
+        layoutPreviewAnchor:StartMoving()
+        layoutPreviewAnchor:SetUserPlaced(false)
+    end)
+    layoutPreviewAnchor:SetScript("OnDragStop", function()
+        layoutPreviewAnchor:StopMovingOrSizing()
+        P:SavePosition(layoutPreviewAnchor, selectedLayoutTable["position"])
+    end)
 
-local layoutPreviewName = layoutPreviewAnchor:CreateFontString(nil, "OVERLAY", "CELL_FONT_CLASS_TITLE")
--- layoutPreviewName:SetFont(GameFontNormal:GetFont(), 14, "OUTLINE")
--- layoutPreviewName:SetShadowOffset(0, 0)
--- Cell:ColorFontStringByPlayerClass(layoutPreviewName)
+    layoutPreviewName = layoutPreviewAnchor:CreateFontString(nil, "OVERLAY", "CELL_FONT_CLASS_TITLE")
 
--- init raid preview
-do
+    -- init raid preview
     layoutPreview.fadeIn = layoutPreview:CreateAnimationGroup()
     local fadeIn = layoutPreview.fadeIn:CreateAnimation("alpha")
     fadeIn:SetFromAlpha(0)
     fadeIn:SetToAlpha(1)
-    fadeIn:SetDuration(.5)
+    fadeIn:SetDuration(0.5)
     fadeIn:SetSmoothing("OUT")
     fadeIn:SetScript("OnPlay", function()
         layoutPreview:Show()
@@ -162,10 +160,10 @@ do
 
     local desaturation = {
         [1] = 1,
-        [2] = .85,
-        [3] = .7,
-        [4] = .55,
-        [5] = .4,
+        [2] = 0.85,
+        [3] = 0.7,
+        [4] = 0.55,
+        [5] = 0.4,
     }
 
     -- headers
@@ -183,8 +181,8 @@ do
             header[j].tex = header:CreateTexture(nil, "ARTWORK")
             header[j].tex:SetTexture("Interface\\Buttons\\WHITE8x8")
     
-            P:Point(header[j].tex, "TOPLEFT", header[j], "TOPLEFT", 1, -1)
-            P:Point(header[j].tex, "BOTTOMRIGHT", header[j], "BOTTOMRIGHT", -1, 1)
+            header[j].tex:SetPoint("TOPLEFT", header[j], "TOPLEFT", P:Scale(1), P:Scale(-1))
+            header[j].tex:SetPoint("BOTTOMRIGHT", header[j], "BOTTOMRIGHT", P:Scale(-1), P:Scale(1))
 
             if i == 1 then
                 header[j].tex:SetVertexColor(F:ConvertRGB(255, 0, 0, 1, desaturation[j])) -- Red
@@ -209,6 +207,10 @@ do
 end
 
 local function UpdateLayoutPreview()
+    if not layoutPreview then
+        CreateLayoutPreview()
+    end
+
     -- update layoutPreview point
     P:Size(layoutPreview, selectedLayoutTable["size"][1], selectedLayoutTable["size"][2])
     layoutPreview:ClearAllPoints()
@@ -412,32 +414,33 @@ end
 -------------------------------------------------
 -- npc preview
 -------------------------------------------------
-local npcPreview = Cell:CreateFrame("CellNPCPreviewFrame", Cell.frames.mainFrame, nil, nil, true)
-npcPreview:EnableMouse(false)
-npcPreview:SetFrameStrata("MEDIUM")
-npcPreview:SetToplevel(true)
-npcPreview:Hide()
+local npcPreview, npcPreviewAnchor, npcPreviewName
+local function CreateNPCPreview()
+    npcPreview = Cell:CreateFrame("CellNPCPreviewFrame", Cell.frames.mainFrame, nil, nil, true)
+    npcPreview:EnableMouse(false)
+    npcPreview:SetFrameStrata("MEDIUM")
+    npcPreview:SetToplevel(true)
+    npcPreview:Hide()
 
-local npcPreviewAnchor = CreateFrame("Frame", "CellNPCPreviewAnchorFrame", npcPreview, "BackdropTemplate")
-P:Size(npcPreviewAnchor, 20, 10)
-npcPreviewAnchor:SetMovable(true)
-npcPreviewAnchor:EnableMouse(true)
-npcPreviewAnchor:RegisterForDrag("LeftButton")
-npcPreviewAnchor:SetClampedToScreen(true)
-Cell:StylizeFrame(npcPreviewAnchor, {0, 1, 0, 0.4})
-npcPreviewAnchor:Hide()
-npcPreviewAnchor:SetScript("OnDragStart", function()
-    npcPreviewAnchor:StartMoving()
-    npcPreviewAnchor:SetUserPlaced(false)
-end)
-npcPreviewAnchor:SetScript("OnDragStop", function()
-    npcPreviewAnchor:StopMovingOrSizing()
-    P:SavePosition(npcPreviewAnchor, selectedLayoutTable["friendlyNPC"][3])
-end)
+    npcPreviewAnchor = CreateFrame("Frame", "CellNPCPreviewAnchorFrame", npcPreview, "BackdropTemplate")
+    P:Size(npcPreviewAnchor, 20, 10)
+    npcPreviewAnchor:SetMovable(true)
+    npcPreviewAnchor:EnableMouse(true)
+    npcPreviewAnchor:RegisterForDrag("LeftButton")
+    npcPreviewAnchor:SetClampedToScreen(true)
+    Cell:StylizeFrame(npcPreviewAnchor, {0, 1, 0, 0.4})
+    npcPreviewAnchor:Hide()
+    npcPreviewAnchor:SetScript("OnDragStart", function()
+        npcPreviewAnchor:StartMoving()
+        npcPreviewAnchor:SetUserPlaced(false)
+    end)
+    npcPreviewAnchor:SetScript("OnDragStop", function()
+        npcPreviewAnchor:StopMovingOrSizing()
+        P:SavePosition(npcPreviewAnchor, selectedLayoutTable["friendlyNPC"][3])
+    end)
 
-local npcPreviewName = npcPreviewAnchor:CreateFontString(nil, "OVERLAY", "CELL_FONT_CLASS_TITLE")
+    npcPreviewName = npcPreviewAnchor:CreateFontString(nil, "OVERLAY", "CELL_FONT_CLASS_TITLE")
 
-do
     npcPreview.fadeIn = npcPreview:CreateAnimationGroup()
     local fadeIn = npcPreview.fadeIn:CreateAnimation("alpha")
     fadeIn:SetFromAlpha(0)
@@ -460,12 +463,11 @@ do
 
     local desaturation = {
         [1] = 1,
-        [2] = .85,
-        [3] = .7,
-        [4] = .55,
-        [5] = .4,
+        [2] = 0.85,
+        [3] = 0.7,
+        [4] = 0.55,
+        [5] = 0.4,
     }
-
 
     npcPreview.header = CreateFrame("Frame", "CellNPCPreviewFrameHeader", npcPreview)
     for i = 1, 5 do
@@ -476,8 +478,8 @@ do
         npcPreview.header[i].tex = npcPreview.header:CreateTexture(nil, "ARTWORK")
         npcPreview.header[i].tex:SetTexture("Interface\\Buttons\\WHITE8x8")
 
-        P:Point(npcPreview.header[i].tex, "TOPLEFT", npcPreview.header[i], "TOPLEFT", 1, -1)
-        P:Point(npcPreview.header[i].tex, "BOTTOMRIGHT", npcPreview.header[i], "BOTTOMRIGHT", -1, 1)
+        npcPreview.header[i].tex:SetPoint("TOPLEFT", npcPreview.header[i], "TOPLEFT", P:Scale(1), P:Scale(-1))
+        npcPreview.header[i].tex:SetPoint("BOTTOMRIGHT", npcPreview.header[i], "BOTTOMRIGHT", P:Scale(-1), P:Scale(1))
 
         npcPreview.header[i].tex:SetVertexColor(F:ConvertRGB(0, 255, 255, 1, desaturation[i])) -- cyan
         npcPreview.header[i].tex:SetAlpha(0.555)
@@ -485,6 +487,10 @@ do
 end
 
 local function UpdateNPCPreview()
+    if not npcPreview then
+        CreateNPCPreview()
+    end
+
     if not selectedLayoutTable["friendlyNPC"][1] or not selectedLayoutTable["friendlyNPC"][2] then
         if npcPreview.timer then
             npcPreview.timer:Cancel()
