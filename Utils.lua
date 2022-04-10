@@ -532,7 +532,11 @@ function F:GetHealthColor(percent, r, g, b)
     elseif CellDB["appearance"]["barColor"][1] == "gradient" then
         barR, barG, barB = F:ColorGradient(percent, 1,0,0, 1,0.7,0, 0.7,1,0)
     elseif CellDB["appearance"]["barColor"][1] == "gradient2" then
-        barR, barG, barB = F:ColorGradient(percent, 1,0,0, 1,0.7,0, 0.7,1,0)
+        if percent == 1 then
+            barR, barG, barB = r, g, b
+        else
+            barR, barG, barB = F:ColorGradient(percent, 1,0,0, 1,0.7,0, 0.7,1,0)
+        end
     else
         barR, barG, barB = unpack(CellDB["appearance"]["barColor"][2])
     end
@@ -544,7 +548,11 @@ function F:GetHealthColor(percent, r, g, b)
     elseif CellDB["appearance"]["lossColor"][1] == "gradient" then
         lossR, lossG, lossB = F:ColorGradient(percent, 1,0,0, 1,0.7,0, 0.7,1,0)
     elseif CellDB["appearance"]["lossColor"][1] == "gradient2" then
-        lossR, lossG, lossB = F:ColorGradient(percent, 1,0,0, 1,0.7,0, 0.7,1,0)
+        if percent == 1 then
+            lossR, lossG, lossB = r, g, b
+        else
+            lossR, lossG, lossB = F:ColorGradient(percent, 1,0,0, 1,0.7,0, 0.7,1,0)
+        end
     else
         lossR, lossG, lossB = unpack(CellDB["appearance"]["lossColor"][2])
     end
