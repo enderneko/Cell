@@ -4,6 +4,8 @@ local L = select( 2, ...).L
 
 L["%s lock %s on %s."] = "%s將%s鎖定在%s。"
 L["%s unlock %s from %s."] = "%s將%s從%s解鎖。"
+--[[Translation missing --]]
+--[[ L["[Alt+LeftClick] to edit"] = "[Alt+LeftClick] to edit"--]] 
 L["[Ctrl+LeftClick] to reset these settings"] = "[Ctrl+左鍵] 來重置這些設定"
 L["|cff1Aff1AYes|r - Overwrite"] = "|cff1Aff1A是|r - 取代原有的"
 L["|cffff1A1ANo|r - Create New"] = "|cffff1A1A否|r - 建立新的"
@@ -17,10 +19,8 @@ L["About"] = "關於"
 L["ABOUT"] = "Cell 是受 CompactRaid 啟發的團隊框架，參考了其程式碼，重寫並增強。\n我個人很喜歡 CompactRaid，並常年使用它，但其作者似乎已經不再更新了。因此我寫了 Cell，希望你能喜歡。\n另外，我也參考了一些很棒的團隊框架，比如 Aptechka 和 Grid2。\nCell 並不打算成為一個輕量或強大 (如 VuhDo、Grid2) 的團隊框架插件。設定簡單，功能足夠，就行了。"
 L["ACCEPTED"] = "已接受"
 L["Action"] = "動作"
---[[Translation missing --]]
---[[ L["Add"] = ""--]] 
---[[Translation missing --]]
---[[ L["Add new spell"] = ""--]] 
+L["Add"] = "增加"
+L["Add new spell"] = "增加新法術"
 L["AFK"] = "暫離"
 L["Aggro (bar)"] = "仇恨 (條)"
 L["Aggro (blink)"] = "仇恨 (閃爍)"
@@ -74,6 +74,8 @@ L["Cell will report first %d deaths during a raid encounter."] = "團隊首領�
 L["CENTER"] = "中"
 L["Change Logs"] = "更新資訊"
 L["Check all visible enemy nameplates. Battleground/Arena only."] = "檢查所有看見的敵方血條，只在戰場/競技場有效。"
+--[[Translation missing --]]
+--[[ L["Check If Exists"] = "Check If Exists"--]] 
 L["Check if your group members need some raid buffs"] = "檢查隊友是否需要某些團隊增益"
 L["circledStackNums"] = "用帶圈數字顯示層數"
 L["Class Color"] = "職業顏色"
@@ -114,8 +116,7 @@ L["Delete"] = "刪除"
 L["Delete debuff?"] = "是否確定要刪除減益?"
 L["Delete indicator"] = "是否確定要刪除指示器"
 L["Delete layout"] = "是否確定要刪除版面配置"
---[[Translation missing --]]
---[[ L["Delete spell?"] = ""--]] 
+L["Delete spell?"] = "刪除法術？"
 L["Disabled"] = "停用"
 L["Disabled in battlegrounds and arenas"] = "戰場和競技場停用"
 L["Discard"] = "取消"
@@ -124,8 +125,12 @@ L["Dispel Request"] = "請求驅散"
 L["Dispellable By Me"] = "只有我能驅散時"
 L["dispellableByMe"] = "只顯示我能驅散的減益"
 L["Dispels"] = "驅散"
+--[[Translation missing --]]
+--[[ L["Do nothing if requested spell/buff already exists on requester"] = "Do nothing if requested spell/buff already exists on requester"--]] 
 L["DRINKING"] = "喝水"
 L["Edit"] = "編輯"
+--[[Translation missing --]]
+--[[ L["Edit spell"] = "Edit spell"--]] 
 L["EN"] = "英"
 L["Enable"] = "啟用"
 L["Enabled"] = "啟用"
@@ -159,6 +164,8 @@ L["Glow Color"] = "發光顏色"
 L["Glow Options"] = "發光選項"
 L["Glow Type"] = "發光類型"
 L["Glow unit button when a group member sends a %s request"] = "當隊伍成員請求%s時高亮其單位按鈕"
+--[[Translation missing --]]
+--[[ L["Glows"] = "Glows"--]] 
 L["Gradient"] = "漸層"
 L["Group Arrangement"] = "隊伍排列"
 L["Group Columns"] = "隊伍直行數"
@@ -197,8 +204,7 @@ L["Invalid"] = "無效"
 L["Invalid spell id."] = "無效的法術 ID。"
 L["INVERT"] = "反向選擇"
 L["It will be renamed if this layout name already exists"] = "如果該版面配置名稱已經存在，將自動重新命名"
---[[Translation missing --]]
---[[ L["Known Spells Only"] = ""--]] 
+L["Known Spells Only"] = "只限學會的法術"
 L["Layout"] = "版面配置"
 L["Layout Auto Switch"] = "自動切換版面配置"
 L["Layout imported: %s."] = "已匯入版面配置: %s。"
@@ -220,6 +226,8 @@ L["Marks Bar"] = "標記工具列"
 L["marksTips"] = "\n|r目標標記\n左鍵: |cffffffff在目標上設置標記|r\n右鍵: |cffffffff將標記鎖定在目標上 (在你的隊伍中)|r"
 L["Max Icons"] = "最大顯示數量"
 L["Menu"] = "選單"
+--[[Translation missing --]]
+--[[ L["Menu Position"] = "Menu Position"--]] 
 L["Middle"] = "中鍵"
 L["Misc"] = "其他"
 L["Missing Buff"] = "缺少增益"
@@ -289,8 +297,7 @@ L["Remaining Time <"] = "剩餘時間 <"
 L["Rename"] = "更名"
 L["Rename indicator"] = "重新命名指示器"
 L["Rename layout"] = "重新名命版面配置"
---[[Translation missing --]]
---[[ L["Reply With Cooldown"] = ""--]] 
+L["Reply With Cooldown"] = "回覆剩餘冷卻時間"
 L["Report deaths to group"] = "向隊伍通報死亡訊息"
 L["Request"] = "請求"
 L["Require font support"] = "需要字體支援"
@@ -339,8 +346,7 @@ L["Show Solo"] = "單人時要顯示"
 L["Show while in a party"] = "在隊伍中時顯示"
 L["Show while not in a group"] = "不在隊伍中時顯示"
 L["showDuration"] = "顯示持續時間文字"
---[[Translation missing --]]
---[[ L["Shows only one spell glow on a unit button at a time"] = ""--]] 
+L["Shows only one spell glow on a unit button at a time"] = "每個單位按鈕上同一時間只能顯示一個法術高亮"
 L["Size"] = "大小"
 L["Size (Big)"] = "大小 (放大的)"
 L["Slash Commands"] = "聊天指令"
@@ -348,16 +354,14 @@ L["Solid"] = "單色"
 L["Solo/Party"] = "單人/5人隊伍"
 L["Sort Party By Role"] = "依角色職責排列隊伍"
 L["Special Thanks"] = "特別感謝"
---[[Translation missing --]]
---[[ L["SPELL"] = ""--]] 
+L["SPELL"] = "法術"
 L["Spell"] = "法術"
---[[Translation missing --]]
---[[ L["Spell already exists."] = ""--]] 
+L["Spell already exists."] = "法術已存在。"
 L["Spell List"] = "法術清單"
+L["Spell Request"] = "法術請求"
 --[[Translation missing --]]
---[[ L["Spell Request"] = ""--]] 
---[[Translation missing --]]
---[[ L["Spells"] = ""--]] 
+--[[ L["SpellId and BuffId are the same in most cases"] = "SpellId and BuffId are the same in most cases"--]] 
+L["Spells"] = "法術"
 L["Status Icon"] = "狀態圖示"
 L["Status Text"] = "狀態文字"
 L["Status Text Position"] = "狀態文字位置"
@@ -373,6 +377,8 @@ L["Text"] = "文字"
 L["Text Width"] = "文字寬度"
 L["Texture"] = "材質"
 L["The priority of spells decreases from top to bottom."] = "法術的優先順序是從上到下降低。"
+--[[Translation missing --]]
+--[[ L["The spell is required to apply a buff on the target"] = "The spell is required to apply a buff on the target"--]] 
 L["The spells list of a icons indicator is unordered (no priority)."] = "圖示指示器的法術清單是不排序的 (無優先順序)。"
 L["These \"reset\" commands below affect all your characters in this account"] = "以下的 \"重置\" 指令會影響此帳號中的所有角色"
 L["Thickness"] = "粗細"
