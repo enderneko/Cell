@@ -18,7 +18,7 @@ local function HideGlow(glowFrame)
 end
 
 local function ShowGlow(glowFrame, glowType, glowOptions, timeout, callback)
-    F:Debug("GLOW:", glowFrame:GetName())
+    F:Debug("SHOW_GLOW:", glowFrame:GetName())
     
     if glowType == "normal" then
         LCG.PixelGlow_Stop(glowFrame)
@@ -51,13 +51,17 @@ end
 -------------------------------------------------
 -- spell request
 -------------------------------------------------
-local srEnabled, srKnown, srFreeCD, srReplyCD, srType, srTimeout
+local srEnabled, srExists, srKnown, srFreeCD, srReplyCD, srType, srTimeout
 local srSpells = {
     -- [spellId] = {buffId, keywords, glowOptions}
 }
 local srUnits = {
-    -- [unit] = {buffId, button}
+    -- [unit] = {spellId, buffId, glowFrame}
 }
+local requestedSpells = {
+    -- [spellId] = unit
+}
+
 local SR = CreateFrame("Frame")
 
 local ITEM_COOLDOWN_TIME = _G.ITEM_COOLDOWN_TIME
@@ -96,16 +100,27 @@ end
 
 local function ShowSRGlow(spellId, button)
     if button then
-        if not F:FindAuraById(button.state.unit, "BUFF", srSpells[spellId][1]) and UnitIsVisible(button.state.unit) then
-            srUnits[button.state.unit] = {srSpells[spellId][1], button} --! save buffId for hiding
+        local unit = button.state.unit
+        if (not srExists or not F:FindAuraById(unit, "BUFF", srSpells[spellId][1])) and UnitIsVisible(unit) then
+            -- check if has previous request
+            if srUnits[unit] then
+                -- remove previous request
+                requestedSpells[srUnits[unit][1]] = nil
+            end
+            
+            --! save {spellId, buffId, button} for hiding
+            srUnits[unit] = {spellId, srSpells[spellId][1], button.widget.srGlowFrame} 
+            requestedSpells[spellId] = unit
+            
             ShowGlow(button.widget.srGlowFrame, srSpells[spellId][3][1], srSpells[spellId][3][2], srTimeout, function()
-                srUnits[button.state.unit] = nil
+                srUnits[unit] = nil
+                requestedSpells[spellId] = nil
             end)
         end
     end
 end
 
--- glow on addon message
+--! glow on addon message
 Comm:RegisterComm("CELL_REQ_S", function(prefix, message, channel, sender)
     if srEnabled and srType ~= "whisper" then
         local spellId, target = strsplit(":", message)
@@ -115,12 +130,12 @@ Comm:RegisterComm("CELL_REQ_S", function(prefix, message, channel, sender)
             -- NOTE: to all provider / to me
             if (srType == "all" and not target) or (srType == "me" and target == GetUnitName("player")) then
                 ShowSRGlow(spellId, F:GetUnitButtonByName(sender))
-            end   
+            end
         end
     end
 end)
 
--- glow on whisper
+--! glow on whisper
 function SR:CHAT_MSG_WHISPER(text, playerName, languageName, channelName, playerName2, specialFlags, zoneChannelID, channelIndex, channelBaseName, languageID, lineID, guid, bnSenderID, isMobile, isSubtitle, hideSenderInLetterbox, supressRaidIcons)
     -- NOTE: cd reply
     if strmatch(text, "c.+|H.+|h%[.+%]|h|r.+%d+:%d+") then return end
@@ -135,18 +150,35 @@ function SR:CHAT_MSG_WHISPER(text, playerName, languageName, channelName, player
     end
 end
 
--- hide glow when aura changes
+--! hide glow when aura changes
 function SR:UNIT_AURA(unit, isFullUpdate, updatedAuras)
-    local srUnit = srUnits[unit] -- {buffId, button}
+    local srUnit = srUnits[unit] -- {spellId, buffId, button}
     if not srUnit then return end
+    F:Debug("HIDE_GLOW [UNIT_AURA]:", unit, srUnit[1])
 
     if type(updatedAuras) == "table" then
         for _, aura in pairs(updatedAuras) do
-            if srUnit[1] == aura.spellId then
-                HideGlow(srUnit[2].widget.srGlowFrame)
+            if srUnit[2] == aura.spellId then
+                HideGlow(srUnit[3])
                 srUnits[unit] = nil
+                requestedSpells[srUnit[1]] = nil
+                break
             end
         end
+    end
+end
+
+--! hide glow when player spell cd
+function SR:UNIT_SPELLCAST_SUCCEEDED(unit, _, spellId)
+    if unit == "player" and requestedSpells[spellId] then
+        local requester = requestedSpells[spellId]
+        F:Debug("HIDE_GLOW [UNIT_SPELLCAST_SUCCEEDED]:", requester, spellId)
+        
+        if srUnits[requester] then
+            HideGlow(srUnits[requester][3])
+        end
+        srUnits[requester] = nil
+        requestedSpells[spellId] = nil
     end
 end
 
@@ -160,21 +192,23 @@ local function SR_UpdateTools(which)
     if not which or which == "spellRequest" then
         -- NOTE: hide all
         for _, t in pairs(srUnits) do
-            HideGlow(t[2].widget.srGlowFrame)
+            HideGlow(t[3])
         end
         wipe(srUnits)
         wipe(srSpells)
+        wipe(requestedSpells)
 
         srEnabled = CellDB["tools"]["spellRequest"][1]
         
         if srEnabled then
-            srKnown = CellDB["tools"]["spellRequest"][2]
-            srFreeCD = CellDB["tools"]["spellRequest"][3]
-            srReplyCD = CellDB["tools"]["spellRequest"][4]
-            srType = CellDB["tools"]["spellRequest"][5]
-            srTimeout = CellDB["tools"]["spellRequest"][6]
-            for _, t in pairs(CellDB["tools"]["spellRequest"][7]) do
-                srSpells[t[1]] = {t[2], t[3], t[4]}
+            srExists = CellDB["tools"]["spellRequest"][2]
+            srKnown = CellDB["tools"]["spellRequest"][3]
+            srFreeCD = CellDB["tools"]["spellRequest"][4]
+            srReplyCD = CellDB["tools"]["spellRequest"][5]
+            srType = CellDB["tools"]["spellRequest"][6]
+            srTimeout = CellDB["tools"]["spellRequest"][7]
+            for _, t in pairs(CellDB["tools"]["spellRequest"][8]) do
+                srSpells[t[1]] = {t[2], t[3], t[4]} -- [spellId] = {buffId, keywords, glowOptions}
             end
 
             if srType == "whisper" then
@@ -184,10 +218,11 @@ local function SR_UpdateTools(which)
             end
 
             SR:RegisterEvent("UNIT_AURA")
+            SR:RegisterEvent("UNIT_SPELLCAST_SUCCEEDED")
         else
             SR:UnregisterAllEvents()
         end
-        -- texplore(srUnits)
+        -- texplore(requestedSpells)
     end
 end
 Cell:RegisterCallback("UpdateTools", "SR_UpdateTools", SR_UpdateTools)

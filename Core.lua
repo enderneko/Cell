@@ -166,11 +166,12 @@ function eventFrame:ADDON_LOADED(arg1)
                 ["marks"] = {false, "both_h", {}},
                 ["spellRequest"] = {
                     false, -- [1] enabled
-                    true, -- [2] known spells only
-                    true, -- [3] free cooldown only
-                    false, -- [4] reply cooldown
-                    "all", -- [5] response type
-                    10, -- [6] timeout
+                    true, -- [2] check if exists
+                    true, -- [3] known spells only
+                    true, -- [4] free cooldown only
+                    false, -- [5] reply cooldown
+                    "all", -- [6] response type
+                    10, -- [7] timeout
                     {
                         { 
                             10060, -- [1] spellId
@@ -208,7 +209,7 @@ function eventFrame:ADDON_LOADED(arg1)
                             }, -- [4] glow
                             true -- [5] built-in
                         },
-                    }, -- [7] spells
+                    }, -- [8] spells
                 },
                 ["dispelRequest"] = {
                     false, -- [1] enabled

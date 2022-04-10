@@ -1128,9 +1128,11 @@ function F:Revise()
 
     -- r90-release
     if CellDB["revise"] and dbRevision < 90 then
-        -- add buffId to spellRequest
-        if type(CellDB["tools"]["spellRequest"]) == "table" then
-            for _, t in pairs(CellDB["tools"]["spellRequest"][7]) do
+        if type(CellDB["tools"]["spellRequest"]) == "table" and #CellDB["tools"]["spellRequest"] == 7 then
+            -- add check if exists
+            tinsert(CellDB["tools"]["spellRequest"], 2, true)
+            -- add buffId to spellRequest
+            for _, t in pairs(CellDB["tools"]["spellRequest"][8]) do
                 if type(t[2]) ~= "number" then
                     tinsert(t, 2, t[1])
                 end
