@@ -1263,7 +1263,7 @@ local function UnitButton_UpdateHealthMax(self)
         self.widget.healthBar:SetMinMaxValues(0, self.state.healthMax)
     end
 
-    if Cell.loaded and (CellDB["appearance"]["barColor"][1] == "Gradient" or CellDB["appearance"]["lossColor"][1] == "Gradient") then
+    if Cell.loaded and (CellDB["appearance"]["barColor"][1] == "gradient" or CellDB["appearance"]["lossColor"][1] == "gradient" or CellDB["appearance"]["barColor"][1] == "gradient2" or CellDB["appearance"]["lossColor"][1] == "gradient2") then
         UnitButton_UpdateColor(self)
     end
 end

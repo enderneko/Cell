@@ -135,7 +135,7 @@ local function CreatePreviewButtons()
                 previewButton.widget.healthBar:SetValue(health)
             end
 
-            if CellDB["appearance"]["barColor"][1] == "Gradient" or CellDB["appearance"]["lossColor"][1] == "Gradient" then
+            if CellDB["appearance"]["barColor"][1] == "gradient" or CellDB["appearance"]["lossColor"][1] == "gradient" or CellDB["appearance"]["barColor"][1] == "gradient2" or CellDB["appearance"]["lossColor"][1] == "gradient2" then
                 local r, g, b, lossR, lossG, lossB = F:GetHealthColor(healthPercent, F:GetClassColor(Cell.vars.playerClass))
                 previewButton.widget.healthBar:SetStatusBarColor(r, g, b, CellDB["appearance"]["barAlpha"])
                 previewButton.widget.healthBarLoss:SetVertexColor(lossR, lossG, lossB, CellDB["appearance"]["lossAlpha"])
@@ -312,29 +312,41 @@ local function CreateUnitButtonStylePane()
     barColorDropdown:SetItems({
         {
             ["text"] = L["Class Color"],
+            ["value"] = "class_color",
             ["onClick"] = function()
-                CellDB["appearance"]["barColor"][1] = "Class Color"
+                CellDB["appearance"]["barColor"][1] = "class_color"
                 Cell:Fire("UpdateAppearance", "color")
             end,
         },
         {
             ["text"] = L["Class Color (dark)"],
+            ["value"] = "class_color_dark",
             ["onClick"] = function()
-                CellDB["appearance"]["barColor"][1] = "Class Color (dark)"
+                CellDB["appearance"]["barColor"][1] = "class_color_dark"
                 Cell:Fire("UpdateAppearance", "color")
             end,
         },
         {
             ["text"] = L["Gradient"],
+            ["value"] = "gradient",
             ["onClick"] = function()
-                CellDB["appearance"]["barColor"][1] = "Gradient"
+                CellDB["appearance"]["barColor"][1] = "gradient"
+                Cell:Fire("UpdateAppearance", "color")
+            end,
+        },
+        {
+            ["text"] = L["Gradient"].." 2",
+            ["value"] = "gradient2",
+            ["onClick"] = function()
+                CellDB["appearance"]["barColor"][1] = "gradient2"
                 Cell:Fire("UpdateAppearance", "color")
             end,
         },
         {
             ["text"] = L["Custom Color"],
+            ["value"] = "custom",
             ["onClick"] = function()
-                CellDB["appearance"]["barColor"][1] = "Custom Color"
+                CellDB["appearance"]["barColor"][1] = "custom"
                 Cell:Fire("UpdateAppearance", "color")
             end,
         },
@@ -348,7 +360,7 @@ local function CreateUnitButtonStylePane()
         CellDB["appearance"]["barColor"][2][1] = r
         CellDB["appearance"]["barColor"][2][2] = g
         CellDB["appearance"]["barColor"][2][3] = b
-        if CellDB["appearance"]["barColor"][1] == "Custom Color" then
+        if CellDB["appearance"]["barColor"][1] == "custom" then
             Cell:Fire("UpdateAppearance", "color")
         end
     end)
@@ -360,29 +372,41 @@ local function CreateUnitButtonStylePane()
     lossColorDropdown:SetItems({
         {
             ["text"] = L["Class Color"],
+            ["value"] = "class_color",
             ["onClick"] = function()
-                CellDB["appearance"]["lossColor"][1] = "Class Color"
+                CellDB["appearance"]["lossColor"][1] = "class_color"
                 Cell:Fire("UpdateAppearance", "color")
             end,
         },
         {
             ["text"] = L["Class Color (dark)"],
+            ["value"] = "class_color_dark",
             ["onClick"] = function()
-                CellDB["appearance"]["lossColor"][1] = "Class Color (dark)"
+                CellDB["appearance"]["lossColor"][1] = "class_color_dark"
                 Cell:Fire("UpdateAppearance", "color")
             end,
         },
         {
             ["text"] = L["Gradient"],
+            ["value"] = "gradient",
             ["onClick"] = function()
-                CellDB["appearance"]["lossColor"][1] = "Gradient"
+                CellDB["appearance"]["lossColor"][1] = "gradient"
+                Cell:Fire("UpdateAppearance", "color")
+            end,
+        },
+        {
+            ["text"] = L["Gradient"].." 2",
+            ["value"] = "gradient2",
+            ["onClick"] = function()
+                CellDB["appearance"]["lossColor"][1] = "gradient2"
                 Cell:Fire("UpdateAppearance", "color")
             end,
         },
         {
             ["text"] = L["Custom Color"],
+            ["value"] = "custom",
             ["onClick"] = function()
-                CellDB["appearance"]["lossColor"][1] = "Custom Color"
+                CellDB["appearance"]["lossColor"][1] = "custom"
                 Cell:Fire("UpdateAppearance", "color")
             end,
         },
@@ -396,7 +420,7 @@ local function CreateUnitButtonStylePane()
         CellDB["appearance"]["lossColor"][2][1] = r
         CellDB["appearance"]["lossColor"][2][2] = g
         CellDB["appearance"]["lossColor"][2][3] = b
-        if CellDB["appearance"]["lossColor"][1] == "Custom Color" then
+        if CellDB["appearance"]["lossColor"][1] == "custom" then
             Cell:Fire("UpdateAppearance", "color")
         end
     end)
@@ -408,29 +432,33 @@ local function CreateUnitButtonStylePane()
     powerColorDropdown:SetItems({
         {
             ["text"] = L["Power Color"],
+            ["value"] = "power_color",
             ["onClick"] = function()
-                CellDB["appearance"]["powerColor"][1] = "Power Color"
+                CellDB["appearance"]["powerColor"][1] = "power_color"
                 Cell:Fire("UpdateAppearance", "color")
             end,
         },
         {
             ["text"] = L["Power Color (dark)"],
+            ["value"] = "power_color_dark",
             ["onClick"] = function()
-                CellDB["appearance"]["powerColor"][1] = "Power Color (dark)"
+                CellDB["appearance"]["powerColor"][1] = "power_color_dark"
                 Cell:Fire("UpdateAppearance", "color")
             end,
         },
         {
             ["text"] = L["Class Color"],
+            ["value"] = "class_color",
             ["onClick"] = function()
-                CellDB["appearance"]["powerColor"][1] = "Class Color"
+                CellDB["appearance"]["powerColor"][1] = "class_color"
                 Cell:Fire("UpdateAppearance", "color")
             end,
         },
         {
             ["text"] = L["Custom Color"],
+            ["value"] = "custom",
             ["onClick"] = function()
-                CellDB["appearance"]["powerColor"][1] = "Custom Color"
+                CellDB["appearance"]["powerColor"][1] = "custom"
                 Cell:Fire("UpdateAppearance", "color")
             end,
         },
@@ -444,7 +472,7 @@ local function CreateUnitButtonStylePane()
         CellDB["appearance"]["powerColor"][2][1] = r
         CellDB["appearance"]["powerColor"][2][2] = g
         CellDB["appearance"]["powerColor"][2][3] = b
-        if CellDB["appearance"]["powerColor"][1] == "Custom Color" then
+        if CellDB["appearance"]["powerColor"][1] == "custom" then
             Cell:Fire("UpdateAppearance", "color")
         end
     end)
@@ -604,12 +632,12 @@ local function CreateUnitButtonStylePane()
     resetBtn:SetScript("OnClick", function()
         if IsControlKeyDown() then
             CellDB["appearance"]["texture"] = "Cell ".._G.DEFAULT
-            CellDB["appearance"]["barColor"] = {"Class Color", {.2, .2, .2}}
-            CellDB["appearance"]["lossColor"] = {"Class Color (dark)", {.667, 0, 0}}
+            CellDB["appearance"]["barColor"] = {"class_color", {.2, .2, .2}}
+            CellDB["appearance"]["lossColor"] = {"class_color_dark", {.667, 0, 0}}
             CellDB["appearance"]["barAlpha"] = 1
             CellDB["appearance"]["lossAlpha"] = 1
             CellDB["appearance"]["bgAlpha"] = 1
-            CellDB["appearance"]["powerColor"] = {"Power Color", {.7, .7, .7}}
+            CellDB["appearance"]["powerColor"] = {"power_color", {.7, .7, .7}}
             CellDB["appearance"]["barAnimation"] = "Flash"
             CellDB["appearance"]["iconAnimation"] = "duration"
             CellDB["appearance"]["targetColor"] = {1, .31, .31, 1}
@@ -623,13 +651,13 @@ local function CreateUnitButtonStylePane()
     
             textureDropdown:SetSelected("Cell ".._G.DEFAULT, "Interface\\AddOns\\Cell\\Media\\statusbar.tga")
     
-            barColorDropdown:SetSelected(L["Class Color"])
+            barColorDropdown:SetSelectedValue("class_color")
             barColorPicker:SetColor({.2, .2, .2})
     
-            lossColorDropdown:SetSelected(L["Class Color (dark)"])
+            lossColorDropdown:SetSelectedValue(class_color_dark)
             lossColorPicker:SetColor({.667, 0, 0})
     
-            powerColorDropdown:SetSelected(L["Power Color"])
+            powerColorDropdown:SetSelectedValue("power_color")
             powerColorPicker:SetColor({.7, .7, .7})
     
             barAnimationDropdown:SetSelected(L["Flash"])
@@ -680,13 +708,13 @@ local function ShowTab(tab)
         useGameFontCB:SetChecked(CellDB["appearance"]["useGameFont"])
         
         CheckTextures()
-        barColorDropdown:SetSelected(L[CellDB["appearance"]["barColor"][1]])
+        barColorDropdown:SetSelectedValue(CellDB["appearance"]["barColor"][1])
         barColorPicker:SetColor(CellDB["appearance"]["barColor"][2])
 
-        lossColorDropdown:SetSelected(L[CellDB["appearance"]["lossColor"][1]])
+        lossColorDropdown:SetSelectedValue(CellDB["appearance"]["lossColor"][1])
         lossColorPicker:SetColor(CellDB["appearance"]["lossColor"][2])
 
-        powerColorDropdown:SetSelected(L[CellDB["appearance"]["powerColor"][1]])
+        powerColorDropdown:SetSelectedValue(CellDB["appearance"]["powerColor"][1])
         powerColorPicker:SetColor(CellDB["appearance"]["powerColor"][2])
 
         barAnimationDropdown:SetSelected(L[CellDB["appearance"]["barAnimation"]])

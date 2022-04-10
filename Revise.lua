@@ -1046,12 +1046,46 @@ function F:Revise()
 
     -- r90-release
     if CellDB["revise"] and dbRevision < 90 then
+        -- separate glows from tools
         CellDB["tools"]["spellRequest"] = nil
         CellDB["tools"]["dispelRequest"] = nil
 
         -- add menuPosition
         if not CellDB["general"]["menuPosition"] then
             CellDB["general"]["menuPosition"] = "top_bottom"
+        end
+
+        -- update health color
+        if CellDB["appearance"]["barColor"][1] == "Class Color" then
+            CellDB["appearance"]["barColor"][1] = "class_color"
+        elseif CellDB["appearance"]["barColor"][1] == "Class Color (dark)" then
+            CellDB["appearance"]["barColor"][1] = "class_color_dark"
+        elseif CellDB["appearance"]["barColor"][1] == "Gradient" then
+            CellDB["appearance"]["barColor"][1] = "gradient"
+        elseif CellDB["appearance"]["barColor"][1] == "Custom" then
+            CellDB["appearance"]["barColor"][1] = "custom"
+        end
+
+        -- update loss color
+        if CellDB["appearance"]["lossColor"][1] == "Class Color" then
+            CellDB["appearance"]["lossColor"][1] = "class_color"
+        elseif CellDB["appearance"]["lossColor"][1] == "Class Color (dark)" then
+            CellDB["appearance"]["lossColor"][1] = "class_color_dark"
+        elseif CellDB["appearance"]["lossColor"][1] == "Gradient" then
+            CellDB["appearance"]["lossColor"][1] = "gradient"
+        elseif CellDB["appearance"]["lossColor"][1] == "Custom" then
+            CellDB["appearance"]["lossColor"][1] = "custom"
+        end
+
+        -- update power color
+        if CellDB["appearance"]["powerColor"][1] == "Power Color" then
+            CellDB["appearance"]["powerColor"][1] = "power_color"
+        elseif CellDB["appearance"]["powerColor"][1] == "Power Color (dark)" then
+            CellDB["appearance"]["powerColor"][1] = "power_color_dark"
+        elseif CellDB["appearance"]["powerColor"][1] == "Class Color" then
+            CellDB["appearance"]["powerColor"][1] = "class_color"
+        elseif CellDB["appearance"]["powerColor"][1] == "Custom Color" then
+            CellDB["appearance"]["powerColor"][1] = "custom"
         end
     end
 

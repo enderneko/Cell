@@ -503,13 +503,13 @@ function F:GetPowerColor(unit, class)
         return r, g, b, r*0.2, g*0.2, b*0.2, t
     end
     
-    if CellDB["appearance"]["powerColor"][1] == "Power Color (dark)" then
+    if CellDB["appearance"]["powerColor"][1] == "power_color_dark" then
         lossR, lossG, lossB = r, g, b
         r, g, b = r*0.2, g*0.2, b*0.2
-    elseif CellDB["appearance"]["powerColor"][1] == "Class Color" then
+    elseif CellDB["appearance"]["powerColor"][1] == "class_color" then
         r, g, b = F:GetClassColor(class)
         lossR, lossG, lossB = r*0.2, g*0.2, b*0.2
-    elseif CellDB["appearance"]["powerColor"][1] == "Custom Color" then
+    elseif CellDB["appearance"]["powerColor"][1] == "custom" then
         r, g, b = unpack(CellDB["appearance"]["powerColor"][2])
         lossR, lossG, lossB = r*0.2, g*0.2, b*0.2
     else
@@ -525,21 +525,25 @@ function F:GetHealthColor(percent, r, g, b)
 
     local barR, barG, barB, lossR, lossG, lossB
     -- bar
-    if CellDB["appearance"]["barColor"][1] == "Class Color" then
+    if CellDB["appearance"]["barColor"][1] == "class_color" then
         barR, barG, barB = r, g, b
-    elseif CellDB["appearance"]["barColor"][1] == "Class Color (dark)" then
+    elseif CellDB["appearance"]["barColor"][1] == "class_color_dark" then
         barR, barG, barB = r*0.2, g*0.2, b*0.2
-    elseif CellDB["appearance"]["barColor"][1] == "Gradient" then
+    elseif CellDB["appearance"]["barColor"][1] == "gradient" then
+        barR, barG, barB = F:ColorGradient(percent, 1,0,0, 1,0.7,0, 0.7,1,0)
+    elseif CellDB["appearance"]["barColor"][1] == "gradient2" then
         barR, barG, barB = F:ColorGradient(percent, 1,0,0, 1,0.7,0, 0.7,1,0)
     else
         barR, barG, barB = unpack(CellDB["appearance"]["barColor"][2])
     end
     -- loss
-    if CellDB["appearance"]["lossColor"][1] == "Class Color" then
+    if CellDB["appearance"]["lossColor"][1] == "class_color" then
         lossR, lossG, lossB = r, g, b
-    elseif CellDB["appearance"]["lossColor"][1] == "Class Color (dark)" then
+    elseif CellDB["appearance"]["lossColor"][1] == "class_color_dark" then
         lossR, lossG, lossB = r*0.2, g*0.2, b*0.2
-    elseif CellDB["appearance"]["lossColor"][1] == "Gradient" then
+    elseif CellDB["appearance"]["lossColor"][1] == "gradient" then
+        lossR, lossG, lossB = F:ColorGradient(percent, 1,0,0, 1,0.7,0, 0.7,1,0)
+    elseif CellDB["appearance"]["lossColor"][1] == "gradient2" then
         lossR, lossG, lossB = F:ColorGradient(percent, 1,0,0, 1,0.7,0, 0.7,1,0)
     else
         lossR, lossG, lossB = unpack(CellDB["appearance"]["lossColor"][2])
