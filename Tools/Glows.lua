@@ -188,7 +188,9 @@ end)
 
 -- CELL_SR_SPELLS = srSpells
 -- CELL_SR_UNITS = srUnits
-local function SR_UpdateTools(which)
+local function SR_UpdateGlows(which)
+    F:Debug("|cffBBFFFFUpdateGlows:|r", which)
+
     if not which or which == "spellRequest" then
         -- NOTE: hide all
         for _, t in pairs(srUnits) do
@@ -198,16 +200,16 @@ local function SR_UpdateTools(which)
         wipe(srSpells)
         wipe(requestedSpells)
 
-        srEnabled = CellDB["tools"]["spellRequest"][1]
+        srEnabled = CellDB["glows"]["spellRequest"][1]
         
         if srEnabled then
-            srExists = CellDB["tools"]["spellRequest"][2]
-            srKnown = CellDB["tools"]["spellRequest"][3]
-            srFreeCD = CellDB["tools"]["spellRequest"][4]
-            srReplyCD = CellDB["tools"]["spellRequest"][5]
-            srType = CellDB["tools"]["spellRequest"][6]
-            srTimeout = CellDB["tools"]["spellRequest"][7]
-            for _, t in pairs(CellDB["tools"]["spellRequest"][8]) do
+            srExists = CellDB["glows"]["spellRequest"][2]
+            srKnown = CellDB["glows"]["spellRequest"][3]
+            srFreeCD = CellDB["glows"]["spellRequest"][4]
+            srReplyCD = CellDB["glows"]["spellRequest"][5]
+            srType = CellDB["glows"]["spellRequest"][6]
+            srTimeout = CellDB["glows"]["spellRequest"][7]
+            for _, t in pairs(CellDB["glows"]["spellRequest"][8]) do
                 srSpells[t[1]] = {t[2], t[3], t[4]} -- [spellId] = {buffId, keywords, glowOptions}
             end
 
@@ -225,7 +227,7 @@ local function SR_UpdateTools(which)
         -- texplore(requestedSpells)
     end
 end
-Cell:RegisterCallback("UpdateTools", "SR_UpdateTools", SR_UpdateTools)
+Cell:RegisterCallback("UpdateGlows", "SR_UpdateGlows", SR_UpdateGlows)
 
 -------------------------------------------------
 -- dispel request
@@ -292,7 +294,7 @@ Comm:RegisterComm("CELL_REQ_D", function(prefix, message, channel, sender)
         if F:Getn(drUnits[unit]) ~= 0 then -- found
             local button = F:GetUnitButtonByName(sender)
             if button then
-                ShowGlow(button.widget.drGlowFrame, CellDB["tools"]["dispelRequest"][6][1], CellDB["tools"]["dispelRequest"][6][2], drTimeout, function()
+                ShowGlow(button.widget.drGlowFrame, CellDB["glows"]["dispelRequest"][6][1], CellDB["glows"]["dispelRequest"][6][2], drTimeout, function()
                     drUnits[unit] = nil
                 end)
             end
@@ -302,17 +304,17 @@ Comm:RegisterComm("CELL_REQ_D", function(prefix, message, channel, sender)
     end
 end)
 
-local function DR_UpdateTools(which)
+local function DR_UpdateGlows(which)
     if not which or which == "dispelRequest" then
         HideAllDRGlows()
         
-        drEnabled = CellDB["tools"]["dispelRequest"][1]
+        drEnabled = CellDB["glows"]["dispelRequest"][1]
 
         if drEnabled then
-            drDispellable = CellDB["tools"]["dispelRequest"][2]
-            drType = CellDB["tools"]["dispelRequest"][3]
-            drTimeout = CellDB["tools"]["dispelRequest"][4]
-            drDebuffs = F:ConvertTable(CellDB["tools"]["dispelRequest"][5])
+            drDispellable = CellDB["glows"]["dispelRequest"][2]
+            drType = CellDB["glows"]["dispelRequest"][3]
+            drTimeout = CellDB["glows"]["dispelRequest"][4]
+            drDebuffs = F:ConvertTable(CellDB["glows"]["dispelRequest"][5])
 
             DR:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
             DR:RegisterEvent("ENCOUNTER_START")
@@ -324,4 +326,4 @@ local function DR_UpdateTools(which)
         -- texplore(drDebuffs)
     end
 end
-Cell:RegisterCallback("UpdateTools", "DR_UpdateTools", DR_UpdateTools)
+Cell:RegisterCallback("UpdateGlows", "DR_UpdateGlows", DR_UpdateGlows)

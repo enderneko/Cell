@@ -17,7 +17,7 @@
 	<Script file="RaidDebuffs_ImportExport.lua"/>
 	<Script file="RaidDebuffs_BfA.lua"/>
 	<Script file="RaidDebuffs_SL.lua"/>
-	<Script file="Tools.lua"/>
+	<Script file="Glows.lua"/>
 	<Script file="About.lua"/>
 	<Script file="GlowOptions.lua"/>
 </Ui>

@@ -2,218 +2,20 @@ local _, Cell = ...
 local L = Cell.L
 local F = Cell.funcs
 local P = Cell.pixelPerfectFuncs
-local LCG = LibStub("LibCustomGlow-1.0")
 
-local toolsTab = Cell:CreateFrame("CellOptionsFrame_ToolsTab", Cell.frames.optionsFrame, nil, nil, true)
-Cell.frames.toolsTab = toolsTab
-toolsTab:SetAllPoints(Cell.frames.optionsFrame)
-toolsTab:Hide()
+local glowsTab = Cell:CreateFrame("CellOptionsFrame_GlowsTab", Cell.frames.optionsFrame, nil, nil, true)
+Cell.frames.glowsTab = glowsTab
+glowsTab:SetAllPoints(Cell.frames.optionsFrame)
+glowsTab:Hide()
 
 local whichGlowOption, srGlowOptionsBtn, drGlowOptionsBtn
-
--------------------------------------------------
--- raid tools
--------------------------------------------------
-local resCB, reportCB, buffCB, readyPullCB, pullDropdown, secEditBox, marksBarCB, marksDropdown
-
-local function CreateToolsPane()
-    local toolsPane = Cell:CreateTitledPane(toolsTab, L["Raid Tools"].." |cFF777777"..L["only in group"], 422, 107)
-    toolsPane:SetPoint("TOPLEFT", 5, -5)
-
-    local unlockBtn = Cell:CreateButton(toolsPane, L["Unlock"], "class", {70, 17})
-    unlockBtn:SetPoint("TOPRIGHT", toolsPane)
-    unlockBtn.locked = true
-    unlockBtn:SetScript("OnClick", function(self)
-        if self.locked then
-            unlockBtn:SetText(L["Lock"])
-            self.locked = false
-            Cell.vars.showMover = true
-            LCG.PixelGlow_Start(unlockBtn, {0,1,0,1}, 9, 0.25, 8, 1)
-        else
-            unlockBtn:SetText(L["Unlock"])
-            self.locked = true
-            Cell.vars.showMover = false
-            LCG.PixelGlow_Stop(unlockBtn)
-        end
-        Cell:Fire("ShowMover", Cell.vars.showMover)
-    end)
-
-    -- battle res
-    resCB = Cell:CreateCheckButton(toolsPane, L["Battle Res Timer"], function(checked, self)
-        CellDB["tools"]["showBattleRes"] = checked
-        Cell:Fire("UpdateTools", "battleRes")
-    end, L["Battle Res Timer"], L["Only show during encounter or in mythic+"])
-    resCB:SetPoint("TOPLEFT", toolsPane, "TOPLEFT", 5, -27)
-
-    -- death report
-    reportCB = Cell:CreateCheckButton(toolsPane, L["Death Report"], function(checked, self)
-        CellDB["tools"]["deathReport"][1] = checked
-        Cell:Fire("UpdateTools", "deathReport")
-    end)
-    reportCB:SetPoint("TOPLEFT", resCB, "TOPLEFT", 139, 0)
-    reportCB:HookScript("OnEnter", function()
-        CellTooltip:SetOwner(reportCB, "ANCHOR_TOPLEFT", 0, 2)
-        CellTooltip:AddLine(L["Death Report"].." |cffff2727"..L["HIGH CPU USAGE"])
-        CellTooltip:AddLine("|cffff2727" .. L["Disabled in battlegrounds and arenas"])
-        CellTooltip:AddLine("|cffffffff" .. L["Report deaths to group"])
-        CellTooltip:AddLine("|cffffffff" .. L["Use |cFFFFB5C5/cell report X|r to set the number of reports during a raid encounter"])
-        CellTooltip:AddLine("|cffffffff" .. L["Current"]..": |cFFFFB5C5"..(CellDB["tools"]["deathReport"][2]==0 and L["all"] or string.format(L["first %d"], CellDB["tools"]["deathReport"][2])))
-        CellTooltip:Show()
-    end)
-    reportCB:HookScript("OnLeave", function()
-        CellTooltip:Hide()
-    end)
-
-    -- buff tracker
-    buffCB = Cell:CreateCheckButton(toolsPane, L["Buff Tracker"], function(checked, self)
-        CellDB["tools"]["buffTracker"][1] = checked
-        Cell:Fire("UpdateTools", "buffTracker")
-    end, L["Buff Tracker"].." |cffff7727"..L["MODERATE CPU USAGE"], L["Check if your group members need some raid buffs"], L["|cffffb5c5Left-Click:|r cast the spell"], L["|cffffb5c5Right-Click:|r report unaffected"]) -- L["|cffffb5c5Middle-Click:|r send custom message"]
-    buffCB:SetPoint("TOPLEFT", reportCB, "TOPLEFT", 139, 0)
-
-    -- ready & pull
-    readyPullCB = Cell:CreateCheckButton(toolsPane, L["ReadyCheck and PullTimer buttons"], function(checked, self)
-        CellDB["tools"]["readyAndPull"][1] = checked
-        pullDropdown:SetEnabled(checked)
-        secEditBox:SetEnabled(checked)
-        Cell:Fire("UpdateTools", "buttons")
-    end, L["ReadyCheck and PullTimer buttons"], L["Only show when you have permission to do this"], L["pullTimerTips"])
-    readyPullCB:SetPoint("TOPLEFT", resCB, "BOTTOMLEFT", 0, -15)
-
-    pullDropdown = Cell:CreateDropdown(toolsPane, 90)
-    pullDropdown:SetPoint("TOP", readyPullCB, 0, 3)
-    pullDropdown:SetPoint("LEFT", readyPullCB.label, "RIGHT", 5, 0)
-    pullDropdown:SetItems({
-        {
-            ["text"] = L["Default"],
-            ["value"] = "default",
-            ["onClick"] = function()
-                CellDB["tools"]["readyAndPull"][2][1] = "default"
-                Cell:Fire("UpdateTools", "pullTimer")
-            end,
-        },
-        {
-            ["text"] = "MRT",
-            ["value"] = "mrt",
-            ["onClick"] = function()
-                CellDB["tools"]["readyAndPull"][2][1] = "mrt"
-                Cell:Fire("UpdateTools", "pullTimer")
-            end,
-        },
-        {
-            ["text"] = "DBM",
-            ["value"] = "dbm",
-            ["onClick"] = function()
-                CellDB["tools"]["readyAndPull"][2][1] = "dbm"
-                Cell:Fire("UpdateTools", "pullTimer")
-            end,
-        },
-        {
-            ["text"] = "BigWigs",
-            ["value"] = "bw",
-            ["onClick"] = function()
-                CellDB["tools"]["readyAndPull"][2][1] = "bw"
-                Cell:Fire("UpdateTools", "pullTimer")
-            end,
-        },
-    })
-
-    secEditBox = Cell:CreateEditBox(toolsPane, 38, 20, false, false, true)
-    secEditBox:SetPoint("TOPLEFT", pullDropdown, "TOPRIGHT", 5, 0)
-    secEditBox:SetMaxLetters(3)
-
-    secEditBox.confirmBtn = Cell:CreateButton(toolsPane, "OK", "class", {27, 20})
-    secEditBox.confirmBtn:SetPoint("TOPLEFT", secEditBox, "TOPRIGHT", P:Scale(-1), 0)
-    secEditBox.confirmBtn:Hide()
-    secEditBox.confirmBtn:SetScript("OnHide", function()
-        secEditBox.confirmBtn:Hide()
-    end)
-    secEditBox.confirmBtn:SetScript("OnClick", function()
-        CellDB["tools"]["readyAndPull"][2][2] = tonumber(secEditBox:GetText())
-        Cell:Fire("UpdateTools", "pullTimer")
-        secEditBox.confirmBtn:Hide()
-    end)
-
-    secEditBox:SetScript("OnTextChanged", function(self, userChanged)
-        if userChanged then
-            local newSec = tonumber(self:GetText())
-            if newSec and newSec > 0 and newSec ~= CellDB["tools"]["readyAndPull"][2][2] then
-                secEditBox.confirmBtn:Show()
-            else
-                secEditBox.confirmBtn:Hide()
-            end
-        end
-    end)
-
-    -- marks bar
-    marksBarCB = Cell:CreateCheckButton(toolsPane, L["Marks Bar"], function(checked, self)
-        CellDB["tools"]["marks"][1] = checked
-        marksDropdown:SetEnabled(checked)
-        Cell:Fire("UpdateTools", "marks")
-    end, L["Marks Bar"], L["Only show when you have permission to do this"], L["marksTips"])
-    marksBarCB:SetPoint("TOPLEFT", readyPullCB, "BOTTOMLEFT", 0, -15)
-
-    marksDropdown = Cell:CreateDropdown(toolsPane, 200)
-    -- marksDropdown:SetPoint("TOPLEFT", marksBarCB, "BOTTOMRIGHT", 5, -5)
-    marksDropdown:SetPoint("TOP", marksBarCB, 0, 3)
-    marksDropdown:SetPoint("LEFT", marksBarCB.label, "RIGHT", 5, 0)
-    marksDropdown:SetItems({
-        {
-            ["text"] = L["Target Marks"].." ("..L["Horizontal"]..")",
-            ["value"] = "target_h",
-            ["onClick"] = function()
-                CellDB["tools"]["marks"][2] = "target_h"
-                Cell:Fire("UpdateTools", "marks")
-            end,
-        },
-        {
-            ["text"] = L["Target Marks"].." ("..L["Vertical"]..")",
-            ["value"] = "target_v",
-            ["onClick"] = function()
-                CellDB["tools"]["marks"][2] = "target_v"
-                Cell:Fire("UpdateTools", "marks")
-            end,
-        },
-        {
-            ["text"] = L["World Marks"].." ("..L["Horizontal"]..")",
-            ["value"] = "world_h",
-            ["onClick"] = function()
-                CellDB["tools"]["marks"][2] = "world_h"
-                Cell:Fire("UpdateTools", "marks")
-            end,
-        },
-        {
-            ["text"] = L["World Marks"].." ("..L["Vertical"]..")",
-            ["value"] = "world_v",
-            ["onClick"] = function()
-                CellDB["tools"]["marks"][2] = "world_v"
-                Cell:Fire("UpdateTools", "marks")
-            end,
-        },
-        {
-            ["text"] = L["Both"].." ("..L["Horizontal"]..")",
-            ["value"] = "both_h",
-            ["onClick"] = function()
-                CellDB["tools"]["marks"][2] = "both_h"
-                Cell:Fire("UpdateTools", "marks")
-            end,
-        },
-        {
-            ["text"] = L["Both"].." ("..L["Vertical"]..")",
-            ["value"] = "both_v",
-            ["onClick"] = function()
-                CellDB["tools"]["marks"][2] = "both_v"
-                Cell:Fire("UpdateTools", "marks")
-            end,
-        }
-    })
-end
+local ShowSpellEditFrame
 
 -------------------------------------------------
 -- spell request
 -------------------------------------------------
 local srEnabledCB, srExistsCB, srKnownOnlyCB, srFreeCDOnlyCB, srReplyCDCB, srResponseDD, srResponseText, srTimeoutDD, srTimeoutText, srSpellsDD, srSpellsText, srAddBtn, srDeleteBtn, srMacroText, srMacroEB
-local srSelectedSpell
+local srSelectedSpell, canEdit
 
 local function ShowSpellOptions(index)
     if whichGlowOption == "spellRequest" then
@@ -223,8 +25,8 @@ local function ShowSpellOptions(index)
 
     srSelectedSpell = index
 
-    local responseType = CellDB["tools"]["spellRequest"][6]
-    local spellId = CellDB["tools"]["spellRequest"][8][index][1]
+    local responseType = CellDB["glows"]["spellRequest"][6]
+    local spellId = CellDB["glows"]["spellRequest"][8][index][1]
     local macroText, keywords
     
     if responseType == "all" then
@@ -235,7 +37,7 @@ local function ShowSpellOptions(index)
         macroText = "/run C_ChatInfo.SendAddonMessage(\"CELL_REQ_S\", \""..spellId..":"..GetUnitName("player").."\", \"RAID\")"
     else -- whisper
         srMacroText:SetText(L["Contains"])
-        keywords = CellDB["tools"]["spellRequest"][8][index][3]
+        keywords = CellDB["glows"]["spellRequest"][8][index][3]
     end
 
     if macroText then
@@ -252,13 +54,14 @@ local function ShowSpellOptions(index)
         srMacroEB.gauge:SetText(keywords)
         srMacroEB:SetScript("OnTextChanged", function(self, userChanged)
             if userChanged then
-                CellDB["tools"]["spellRequest"][8][index][3] = strtrim(self:GetText())
-                Cell:Fire("UpdateTools", "spellRequest")
+                CellDB["glows"]["spellRequest"][8][index][3] = strtrim(self:GetText())
+                Cell:Fire("UpdateGlows", "spellRequest")
             end
         end)
     end
 
-    srDeleteBtn:SetEnabled(not CellDB["tools"]["spellRequest"][8][index][5]) -- not built-in
+    canEdit = not CellDB["glows"]["spellRequest"][8][index][5] -- not built-in
+    srDeleteBtn:SetEnabled(canEdit)
     srGlowOptionsBtn:SetEnabled(true)
     srMacroText:Show()
     srMacroEB:SetCursorPosition(0)
@@ -271,6 +74,7 @@ local function HideSpellOptions()
         Cell:StopRainbowText(srGlowOptionsBtn:GetFontString())
     end
     srSelectedSpell = nil
+    canEdit = nil
     srMacroText:Hide()
     srMacroEB:Hide()
     srSpellsDD:SetSelected()
@@ -280,7 +84,7 @@ end
 
 local function LoadSpellsDropdown()
     local items = {}
-    for i, t in pairs(CellDB["tools"]["spellRequest"][8]) do
+    for i, t in pairs(CellDB["glows"]["spellRequest"][8]) do
         local name, _, icon = GetSpellInfo(t[1])
         tinsert(items, {
             ["text"] = "|T"..icon..":0::0:0:16:16:1:15:1:15|t "..name,
@@ -295,18 +99,18 @@ end
 
 local function UpdateSRWidgets()
     CellDropdownList:Hide()
-    Cell:SetEnabled(CellDB["tools"]["spellRequest"][1], srExistsCB, srKnownOnlyCB, srResponseDD, srResponseText, srTimeoutDD, srTimeoutText, srSpellsDD, srSpellsText, srAddBtn, srDeleteBtn, srGlowOptionsBtn, srMacroText, srMacroEB)
-    Cell:SetEnabled(CellDB["tools"]["spellRequest"][1] and CellDB["tools"]["spellRequest"][3], srFreeCDOnlyCB, srReplyCDCB)
+    Cell:SetEnabled(CellDB["glows"]["spellRequest"][1], srExistsCB, srKnownOnlyCB, srResponseDD, srResponseText, srTimeoutDD, srTimeoutText, srSpellsDD, srSpellsText, srAddBtn, srDeleteBtn, srGlowOptionsBtn, srMacroText, srMacroEB)
+    Cell:SetEnabled(CellDB["glows"]["spellRequest"][1] and CellDB["glows"]["spellRequest"][3], srFreeCDOnlyCB, srReplyCDCB)
 end
 
 local function CreateSRPane()
-    if not Cell.frames.toolsTab.mask then
-        Cell:CreateMask(Cell.frames.toolsTab, nil, {1, -1, -1, 1})
-        Cell.frames.toolsTab.mask:Hide()
+    if not Cell.frames.glowsTab.mask then
+        Cell:CreateMask(Cell.frames.glowsTab, nil, {1, -1, -1, 1})
+        Cell.frames.glowsTab.mask:Hide()
     end
 
-    local srPane = Cell:CreateTitledPane(toolsTab, L["Spell Request"].." ("..L["Glow"]..")", 422, 227)
-    srPane:SetPoint("TOPLEFT", 5, -130)
+    local srPane = Cell:CreateTitledPane(glowsTab, L["Spell Request"].." ("..L["Glow"]..")", 422, 250)
+    srPane:SetPoint("TOPLEFT", 5, -5)
     srPane:SetScript("OnHide", function()
         whichGlowOption = nil
         HideSpellOptions()
@@ -320,10 +124,10 @@ local function CreateSRPane()
 
     -- enabled ----------------------------------------------------------------------
     srEnabledCB = Cell:CreateCheckButton(srPane, L["Enabled"], function(checked, self)
-        CellDB["tools"]["spellRequest"][1] = checked
+        CellDB["glows"]["spellRequest"][1] = checked
         UpdateSRWidgets()
         HideSpellOptions()
-        Cell:Fire("UpdateTools", "spellRequest")
+        Cell:Fire("UpdateGlows", "spellRequest")
     end)
     srEnabledCB:SetPoint("TOPLEFT", srPane, "TOPLEFT", 5, -65)
     ---------------------------------------------------------------------------------
@@ -338,26 +142,26 @@ local function CreateSRPane()
 
     -- known only -------------------------------------------------------------------
     srKnownOnlyCB = Cell:CreateCheckButton(srPane, L["Known Spells Only"], function(checked, self)
-        CellDB["tools"]["spellRequest"][3] = checked
+        CellDB["glows"]["spellRequest"][3] = checked
         UpdateSRWidgets()
         HideSpellOptions()
-        Cell:Fire("UpdateTools", "spellRequest")
+        Cell:Fire("UpdateGlows", "spellRequest")
     end)
     srKnownOnlyCB:SetPoint("TOPLEFT", srEnabledCB, "BOTTOMLEFT", 0, -8)
     ---------------------------------------------------------------------------------
     
     -- free cooldown ----------------------------------------------------------------
     srFreeCDOnlyCB = Cell:CreateCheckButton(srPane, L["Free Cooldown Only"], function(checked, self)
-        CellDB["tools"]["spellRequest"][4] = checked
-        Cell:Fire("UpdateTools", "spellRequest")
+        CellDB["glows"]["spellRequest"][4] = checked
+        Cell:Fire("UpdateGlows", "spellRequest")
     end)
     srFreeCDOnlyCB:SetPoint("TOPLEFT", srKnownOnlyCB, "TOPLEFT", 200, 0)
     ---------------------------------------------------------------------------------
 
     -- reply cd ---------------------------------------------------------------------
     srReplyCDCB = Cell:CreateCheckButton(srPane, L["Reply With Cooldown"], function(checked, self)
-        CellDB["tools"]["spellRequest"][5] = checked
-        Cell:Fire("UpdateTools", "spellRequest")
+        CellDB["glows"]["spellRequest"][5] = checked
+        Cell:Fire("UpdateGlows", "spellRequest")
     end)
     srReplyCDCB:SetPoint("TOPLEFT", srKnownOnlyCB, "BOTTOMLEFT", 0, -8)
     ---------------------------------------------------------------------------------
@@ -371,8 +175,8 @@ local function CreateSRPane()
             ["value"] = "all",
             ["onClick"] = function()
                 HideSpellOptions()
-                CellDB["tools"]["spellRequest"][6] = "all"
-                Cell:Fire("UpdateTools", "spellRequest")
+                CellDB["glows"]["spellRequest"][6] = "all"
+                Cell:Fire("UpdateGlows", "spellRequest")
             end
         },
         {
@@ -380,8 +184,8 @@ local function CreateSRPane()
             ["value"] = "me",
             ["onClick"] = function()
                 HideSpellOptions()
-                CellDB["tools"]["spellRequest"][6] = "me"
-                Cell:Fire("UpdateTools", "spellRequest")
+                CellDB["glows"]["spellRequest"][6] = "me"
+                Cell:Fire("UpdateGlows", "spellRequest")
             end
         },
         {
@@ -389,8 +193,8 @@ local function CreateSRPane()
             ["value"] = "whisper",
             ["onClick"] = function()
                 HideSpellOptions()
-                CellDB["tools"]["spellRequest"][6] = "whisper"
-                Cell:Fire("UpdateTools", "spellRequest")
+                CellDB["glows"]["spellRequest"][6] = "whisper"
+                Cell:Fire("UpdateGlows", "spellRequest")
             end
         },
     })
@@ -411,8 +215,8 @@ local function CreateSRPane()
             ["text"] = s,
             ["value"] = s,
             ["onClick"] = function()
-                CellDB["tools"]["spellRequest"][7] = s
-                Cell:Fire("UpdateTools", "spellRequest")
+                CellDB["glows"]["spellRequest"][7] = s
+                Cell:Fire("UpdateGlows", "spellRequest")
             end
         })
     end
@@ -431,133 +235,27 @@ local function CreateSRPane()
     srSpellsText:SetPoint("BOTTOMLEFT", srSpellsDD, "TOPLEFT", 0, 1)
     srSpellsText:SetText(L["Spells"])
     ---------------------------------------------------------------------------------
-    
+
     -- create -----------------------------------------------------------------------
     srAddBtn = Cell:CreateButton(srPane, L["Add"], "green-hover", {60, 20}, nil, nil, nil, nil, nil,
-        L["Add new spell"], L["The spell is required to apply a buff on the target"], L["SpellId and BuffId are the same in most cases"])
+        L["Add new spell"], L["[Alt+LeftClick] to edit"], L["The spell is required to apply a buff on the target"], L["SpellId and BuffId are the same in most cases"])
     srAddBtn:SetPoint("TOPLEFT", srSpellsDD, "TOPRIGHT", 7, 0)
-    srAddBtn:SetScript("OnClick", function()
-        local popup = Cell:CreateConfirmPopup(toolsTab, 200, L["Add new spell"], function(self)
-            CellTooltip:Hide()
-            if self.spellId and self.buffId then
-                -- check if exists
-                for _, t in pairs(CellDB["tools"]["spellRequest"][8]) do
-                    if t[1] == spellId then
-                        F:Print(L["Spell already exists."])
-                        return
-                    end
-                end
-
-                -- update db
-                tinsert(CellDB["tools"]["spellRequest"][8], {
-                    self.spellId,
-                    self.buffId,
-                    self.spellName,
-                    {
-                        "pixel", -- [1] glow type
-                        {
-                            {0,1,0.5,1}, -- [1] color
-                            0, -- [2] x
-                            0, -- [3] y
-                            9, -- [4] N
-                            0.25, -- [5] frequency
-                            8, -- [6] length
-                            2 -- [7] thickness
-                        } -- [2] glowOptions
-                    }
-                })
-                Cell:Fire("UpdateTools", "spellRequest")
-
-                local index = #CellDB["tools"]["spellRequest"][8]
-
-                -- update dropdown
-                srSpellsDD:AddItem({
-                    ["text"] = "|T"..self.spellIcon..":0::0:0:16:16:1:15:1:15|t "..self.spellName,
-                    ["value"] = self.spellId,
-                    ["onClick"] = function()
-                        ShowSpellOptions(index)
-                    end
-                })
-                srSpellsDD:SetSelectedValue(self.spellId)
-                ShowSpellOptions(index)
+    srAddBtn:SetScript("OnUpdate", function(self, elapsed)
+        srAddBtn.elapsed = (srAddBtn.elapsed or 0) + elapsed
+        if srAddBtn.elapsed >= 0.25 then
+            if IsAltKeyDown() and canEdit then
+                srAddBtn:SetText(L["Edit"])
             else
-                F:Print(L["Invalid spell id."])
+                srAddBtn:SetText(L["Add"])
             end
-        end, function()
-            CellTooltip:Hide()
-        end, true, true, 1)
-
-        popup:SetPoint("TOPLEFT", 117, -220)
-        popup.editBox:SetNumeric(true)
-        popup.editBox:SetScript("OnTextChanged", function()
-            local spellId = tonumber(popup.editBox:GetText())
-            if not spellId then
-                CellTooltip:Hide()
-                popup.validSpell = false
-                popup.button1:SetEnabled(false)
-                return
-            end
-    
-            local name, _, icon = GetSpellInfo(spellId)
-            if not name then
-                CellTooltip:Hide()
-                popup.validSpell = false
-                popup.button1:SetEnabled(false)
-                return
-            end
-
-            CellTooltip:SetOwner(popup, "ANCHOR_NONE")
-            CellTooltip:SetPoint("TOPLEFT", popup, "BOTTOMLEFT", 0, -1)
-            CellTooltip:SetHyperlink("spell:"..spellId)
-            CellTooltip:Show()
-
-            popup.validSpell = true
-            popup.button1:SetEnabled(popup.validSpell and popup.validBuff)
-
-            popup.spellId = spellId
-            popup.spellName = name
-            popup.spellIcon = icon
-        end)
-        -- buff id
-        if not popup.editBox2 then
-            popup.editBox2 = Cell:CreateEditBox(popup, 20, 20)
-            popup.editBox2:SetNumeric(true)
-            popup.editBox2:SetPoint("TOPLEFT", popup.editBox, "BOTTOMLEFT", 0, -5)
-            popup.editBox2:SetPoint("TOPRIGHT", popup.editBox, "BOTTOMRIGHT", 0, -5)
-            popup.editBox2:SetScript("OnTextChanged", function()
-                local spellId = tonumber(popup.editBox2:GetText())
-                if not spellId then
-                    popup.validBuff = false
-                    popup.button1:SetEnabled(false)
-                    return
-                end
-        
-                local name = GetSpellInfo(spellId)
-                if not name then
-                    popup.validBuff = false
-                    popup.button1:SetEnabled(false)
-                    return
-                end
-
-                popup.validBuff = true
-                popup.button1:SetEnabled(popup.validSpell and popup.validBuff)
-
-                popup.buffId = spellId
-            end)
-
-            popup.tip1 = popup.editBox:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
-            popup.tip1:SetTextColor(0.4, 0.4, 0.4, 1)
-            popup.tip1:SetText(L["Spell"].." ID")
-            popup.tip1:SetPoint("RIGHT", -5, 0)
-            
-            popup.tip2 = popup.editBox2:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
-            popup.tip2:SetTextColor(0.4, 0.4, 0.4, 1)
-            popup.tip2:SetText(L["Buff"].." ID")
-            popup.tip2:SetPoint("RIGHT", -5, 0)
         end
-        popup.editBox2:SetText("")
-        popup.dropdown1:Hide()
-        popup.button1:SetEnabled(false)
+    end)
+    srAddBtn:SetScript("OnClick", function()
+        if IsAltKeyDown() then
+            ShowSpellEditFrame(srSelectedSpell)
+        else
+            ShowSpellEditFrame()
+        end
     end)
     Cell:RegisterForCloseDropdown(srAddBtn)
     ---------------------------------------------------------------------------------
@@ -566,14 +264,15 @@ local function CreateSRPane()
     srDeleteBtn = Cell:CreateButton(srPane, L["Delete"], "red-hover", {60, 20})
     srDeleteBtn:SetPoint("TOPLEFT", srAddBtn, "TOPRIGHT", P:Scale(-1), 0)
     srDeleteBtn:SetScript("OnClick", function()
-        local name, _, icon = GetSpellInfo(CellDB["tools"]["spellRequest"][8][srSelectedSpell][1])
-        local popup = Cell:CreateConfirmPopup(toolsTab, 200, L["Delete spell?"].."\n".."|T"..icon..":0::0:0:16:16:1:15:1:15|t "..name, function(self)
-            tremove(CellDB["tools"]["spellRequest"][8], srSelectedSpell)
+        local name, _, icon = GetSpellInfo(CellDB["glows"]["spellRequest"][8][srSelectedSpell][1])
+        local spellEditFrame = Cell:CreateConfirmPopup(glowsTab, 200, L["Delete spell?"].."\n".."|T"..icon..":0::0:0:16:16:1:15:1:15|t "..name, function(self)
+            tremove(CellDB["glows"]["spellRequest"][8], srSelectedSpell)
             srSpellsDD:RemoveCurrentItem()
             HideSpellOptions()
-            Cell:Fire("UpdateTools", "spellRequest")
+            Cell:Fire("UpdateGlows", "spellRequest")
         end, nil, true)
-        popup:SetPoint("TOPLEFT", 117, -250)
+        spellEditFrame:SetPoint("LEFT", 117, 0)
+        spellEditFrame:SetPoint("BOTTOM", srDeleteBtn, 0, 0)
     end)
     Cell:RegisterForCloseDropdown(srDeleteBtn)
     ---------------------------------------------------------------------------------
@@ -590,7 +289,7 @@ local function CreateSRPane()
         else
             Cell:StartRainbowText(fs)
         end
-        F:ShowGlowOptions(toolsTab, "spellRequest", CellDB["tools"]["spellRequest"][8][srSelectedSpell][4])
+        F:ShowGlowOptions(glowsTab, "spellRequest", CellDB["glows"]["spellRequest"][8][srSelectedSpell][4])
     end)
     srGlowOptionsBtn:SetScript("OnHide", function()
         Cell:StopRainbowText(srGlowOptionsBtn:GetFontString())
@@ -631,18 +330,241 @@ local function CreateSRPane()
 end
 
 -------------------------------------------------
+-- spell edit frame
+-------------------------------------------------
+local spellId, buffId, spellName, spellIcon
+local spellEditFrame, title, spellIdEB, buffIdEB, addBtn, cancelBtn
+
+local function CreateSpellEditFrame()
+    spellEditFrame = CreateFrame("Frame", nil, glowsTab, "BackdropTemplate")
+    spellEditFrame:Hide()
+    Cell:StylizeFrame(spellEditFrame, {0.1, 0.1, 0.1, 0.95}, Cell:GetPlayerClassColorTable())
+    spellEditFrame:SetFrameStrata("DIALOG")
+    spellEditFrame:SetSize(200, 100)
+    spellEditFrame:SetPoint("LEFT", 117, 0)
+    spellEditFrame:SetPoint("BOTTOM", srAddBtn, 0, 0)
+    spellEditFrame:SetScript("OnHide", function()
+        CellTooltip:Hide()
+        glowsTab.mask:Hide()
+        spellEditFrame:Hide()
+        spellIdEB:SetText("")
+        buffIdEB:SetText("")
+        spellId, buffId, spellName, spellIcon = nil, nil, nil, nil
+    end)
+
+    -- title
+    title = spellEditFrame:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET_TITLE")
+    title:SetWordWrap(true)
+    title:SetJustifyH("CENTER")
+    title:SetPoint("TOPLEFT", 5, -8)
+    title:SetPoint("TOPRIGHT", -5, -8)
+    title:SetText(L["Add new spell"])
+
+    -- spllId editbox
+    spellIdEB = Cell:CreateEditBox(spellEditFrame, 20, 20)
+    spellIdEB:SetPoint("TOPLEFT", spellEditFrame, 10, -30)
+    spellIdEB:SetPoint("TOPRIGHT", spellEditFrame, -10, -30)
+    spellIdEB:SetNumeric(true)
+    spellIdEB:SetScript("OnTabPressed", function()
+        buffIdEB:SetFocus()
+    end)
+    spellIdEB:SetScript("OnTextChanged", function()
+        local id = tonumber(spellIdEB:GetText())
+        if not id then
+            CellTooltip:Hide()
+            spellId = nil
+            addBtn:SetEnabled(false)
+            spellIdEB.tip:SetTextColor(1, 0, 0, 0.777)
+            return
+        end
+
+        local name, _, icon = GetSpellInfo(id)
+        if not name then
+            CellTooltip:Hide()
+            spellId = nil
+            addBtn:SetEnabled(false)
+            spellIdEB.tip:SetTextColor(1, 0, 0, 0.777)
+            return
+        end
+
+        C_Timer.After(0.1, function()
+            CellTooltip:SetOwner(spellEditFrame, "ANCHOR_NONE")
+            CellTooltip:SetPoint("TOPLEFT", spellEditFrame, "BOTTOMLEFT", 0, -1)
+            CellTooltip:SetHyperlink("spell:"..id)
+            CellTooltip:Show()
+        end)
+
+        spellId = id
+        spellName = name
+        spellIcon = icon
+        addBtn:SetEnabled(spellId and buffId)
+        spellIdEB.tip:SetTextColor(0, 1, 0, 0.777)
+    end)
+
+    spellIdEB.tip = spellIdEB:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
+    spellIdEB.tip:SetTextColor(0.4, 0.4, 0.4, 1)
+    spellIdEB.tip:SetText(L["Spell"].." ID")
+    spellIdEB.tip:SetPoint("RIGHT", -5, 0)
+
+    -- buffId editbox
+    buffIdEB = Cell:CreateEditBox(spellEditFrame, 20, 20)
+    buffIdEB:SetPoint("TOPLEFT", spellIdEB, "BOTTOMLEFT", 0, -5)
+    buffIdEB:SetPoint("TOPRIGHT", spellIdEB, "BOTTOMRIGHT", 0, -5)
+    buffIdEB:SetNumeric(true)
+    buffIdEB:SetScript("OnTabPressed", function()
+        if spellIdEB:IsEnabled() then
+            spellIdEB:SetFocus()
+        end
+    end)
+    buffIdEB:SetScript("OnTextChanged", function()
+        local id = tonumber(buffIdEB:GetText())
+        if not id then
+            buffId = nil
+            addBtn:SetEnabled(false)
+            buffIdEB.tip:SetTextColor(1, 0, 0, 0.777)
+            return
+        end
+
+        local name = GetSpellInfo(id)
+        if not name then
+            buffId = nil
+            addBtn:SetEnabled(false)
+            buffIdEB.tip:SetTextColor(1, 0, 0, 0.777)
+            return
+        end
+
+        buffId = id
+        addBtn:SetEnabled(spellId and buffId)
+        buffIdEB.tip:SetTextColor(0, 1, 0, 0.777)
+    end)
+
+    buffIdEB.tip = buffIdEB:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
+    buffIdEB.tip:SetTextColor(0.4, 0.4, 0.4, 1)
+    buffIdEB.tip:SetText(L["Buff"].." ID")
+    buffIdEB.tip:SetPoint("RIGHT", -5, 0)
+
+    -- cancel
+    cancelBtn = Cell:CreateButton(spellEditFrame, L["Cancel"], "red", {50, 15})
+    cancelBtn:SetPoint("BOTTOMRIGHT")
+    cancelBtn:SetBackdropBorderColor(unpack(Cell:GetPlayerClassColorTable()))
+    cancelBtn:SetScript("OnClick", function()
+        spellEditFrame:Hide()
+    end)
+
+    -- add
+    addBtn = Cell:CreateButton(spellEditFrame, L["Add"], "green", {50, 15})
+    addBtn:SetPoint("BOTTOMRIGHT", cancelBtn, "BOTTOMLEFT", P:Scale(1), 0)
+    addBtn:SetBackdropBorderColor(unpack(Cell:GetPlayerClassColorTable()))
+    addBtn:SetScript("OnClick", function()
+        spellEditFrame:Hide()
+    end)
+end
+
+ShowSpellEditFrame = function(index)
+    glowsTab.mask:Show()
+    spellEditFrame:Show()
+
+    if not index then -- add
+        spellIdEB:SetEnabled(true)
+        spellIdEB:SetFocus()
+
+        title:SetText(L["Add new spell"])
+        addBtn:SetText(L["Add"])
+
+        addBtn:SetScript("OnClick", function()
+            if spellId and buffId then
+                -- check if exists
+                for _, t in pairs(CellDB["glows"]["spellRequest"][8]) do
+                    if t[1] == spellId then
+                        F:Print(L["Spell already exists."])
+                        return
+                    end
+                end
+
+                -- update db
+                tinsert(CellDB["glows"]["spellRequest"][8], {
+                    spellId,
+                    buffId,
+                    spellName,
+                    {
+                        "pixel", -- [1] glow type
+                        {
+                            {0,1,0.5,1}, -- [1] color
+                            0, -- [2] x
+                            0, -- [3] y
+                            9, -- [4] N
+                            0.25, -- [5] frequency
+                            8, -- [6] length
+                            2 -- [7] thickness
+                        } -- [2] glowOptions
+                    }
+                })
+                Cell:Fire("UpdateGlows", "spellRequest")
+
+                local index = #CellDB["glows"]["spellRequest"][8]
+
+                -- update dropdown
+                srSpellsDD:AddItem({
+                    ["text"] = "|T"..spellIcon..":0::0:0:16:16:1:15:1:15|t "..spellName,
+                    ["value"] = spellId,
+                    ["onClick"] = function()
+                        ShowSpellOptions(index)
+                    end
+                })
+                srSpellsDD:SetSelectedValue(spellId)
+                ShowSpellOptions(index)
+            else
+                F:Print(L["Invalid spell id."])
+            end
+            spellEditFrame:Hide()
+        end)
+    else
+        spellIdEB:SetEnabled(false)
+        buffIdEB:SetFocus()
+
+        spellIdEB:SetText(CellDB["glows"]["spellRequest"][8][index][1])
+        buffIdEB:SetText(CellDB["glows"]["spellRequest"][8][index][2])
+
+        title:SetText(L["Edit spell"])
+        addBtn:SetText(L["Save"])
+
+        addBtn:SetScript("OnClick", function()
+            if spellId and buffId then
+                -- update db
+                CellDB["glows"]["spellRequest"][8][index][2] = buffId
+                Cell:Fire("UpdateGlows", "spellRequest")
+
+                -- update dropdown
+                srSpellsDD:SetCurrentItem({
+                    ["text"] = "|T"..spellIcon..":0::0:0:16:16:1:15:1:15|t "..spellName,
+                    ["value"] = spellId,
+                    ["onClick"] = function()
+                        ShowSpellOptions(index)
+                    end
+                })
+                srSpellsDD:SetSelectedValue(spellId)
+                ShowSpellOptions(index)
+            else
+                F:Print(L["Invalid spell id."])
+            end
+            spellEditFrame:Hide()
+        end)
+    end
+end
+
+-------------------------------------------------
 -- dispel request
 -------------------------------------------------
 local drEnabledCB, drDispellableCB, drResponseDD, drResponseText, drTimeoutDD, drTimeoutText, drMacroText, drMacroEB, drDebuffsText, drDebuffsEB
 
 local function UpdateDRWidgets()
-    Cell:SetEnabled(CellDB["tools"]["dispelRequest"][1], drDispellableCB, drResponseDD, drResponseText, drTimeoutDD, drTimeoutText, drMacroText, drMacroEB, drGlowOptionsBtn)
-    Cell:SetEnabled(CellDB["tools"]["dispelRequest"][1] and CellDB["tools"]["dispelRequest"][3] == "specific", drDebuffsText, drDebuffsEB)
+    Cell:SetEnabled(CellDB["glows"]["dispelRequest"][1], drDispellableCB, drResponseDD, drResponseText, drTimeoutDD, drTimeoutText, drMacroText, drMacroEB, drGlowOptionsBtn)
+    Cell:SetEnabled(CellDB["glows"]["dispelRequest"][1] and CellDB["glows"]["dispelRequest"][3] == "specific", drDebuffsText, drDebuffsEB)
 end
 
 local function CreateDRPane()
-    local drPane = Cell:CreateTitledPane(toolsTab, L["Dispel Request"].." ("..L["Glow"]..")", 422, 183)
-    drPane:SetPoint("TOPLEFT", 5, -377)
+    local drPane = Cell:CreateTitledPane(glowsTab, L["Dispel Request"].." ("..L["Glow"]..")", 422, 183)
+    drPane:SetPoint("TOPLEFT", 5, -275)
 
     drGlowOptionsBtn = Cell:CreateButton(drPane, L["Glow Options"], "class", {105, 17})
     drGlowOptionsBtn:SetPoint("TOPRIGHT", drPane)
@@ -655,7 +577,7 @@ local function CreateDRPane()
         else
             Cell:StartRainbowText(fs)
         end
-        F:ShowGlowOptions(toolsTab, "dispelRequest", CellDB["tools"]["dispelRequest"][6])
+        F:ShowGlowOptions(glowsTab, "dispelRequest", CellDB["glows"]["dispelRequest"][6])
     end)
     drGlowOptionsBtn:SetScript("OnHide", function()
         Cell:StopRainbowText(drGlowOptionsBtn:GetFontString())
@@ -668,9 +590,9 @@ local function CreateDRPane()
 
     -- enabled ----------------------------------------------------------------------
     drEnabledCB = Cell:CreateCheckButton(drPane, L["Enabled"], function(checked, self)
-        CellDB["tools"]["dispelRequest"][1] = checked
+        CellDB["glows"]["dispelRequest"][1] = checked
         UpdateDRWidgets()
-        Cell:Fire("UpdateTools", "dispelRequest")
+        Cell:Fire("UpdateGlows", "dispelRequest")
         CellDropdownList:Hide()
         
         if whichGlowOption == "dispelRequest" then
@@ -683,8 +605,8 @@ local function CreateDRPane()
 
     -- dispellable ------------------------------------------------------------------
     drDispellableCB = Cell:CreateCheckButton(drPane, L["Dispellable By Me"], function(checked, self)
-        CellDB["tools"]["dispelRequest"][2] = checked
-        Cell:Fire("UpdateTools", "dispelRequest")
+        CellDB["glows"]["dispelRequest"][2] = checked
+        Cell:Fire("UpdateGlows", "dispelRequest")
     end)
     drDispellableCB:SetPoint("TOPLEFT", drEnabledCB, "TOPLEFT", 200, 0)
     ---------------------------------------------------------------------------------
@@ -697,18 +619,18 @@ local function CreateDRPane()
             ["text"] = L["Respond to all dispellable debuffs"],
             ["value"] = "all",
             ["onClick"] = function()
-                CellDB["tools"]["dispelRequest"][3] = "all"
+                CellDB["glows"]["dispelRequest"][3] = "all"
                 UpdateDRWidgets()
-                Cell:Fire("UpdateTools", "dispelRequest")
+                Cell:Fire("UpdateGlows", "dispelRequest")
             end
         },
         {
             ["text"] = L["Respond to specific dispellable debuffs"],
             ["value"] = "specific",
             ["onClick"] = function()
-                CellDB["tools"]["dispelRequest"][3] = "specific"
+                CellDB["glows"]["dispelRequest"][3] = "specific"
                 UpdateDRWidgets()
-                Cell:Fire("UpdateTools", "dispelRequest")
+                Cell:Fire("UpdateGlows", "dispelRequest")
             end
         },
     })
@@ -729,8 +651,8 @@ local function CreateDRPane()
             ["text"] = s,
             ["value"] = s,
             ["onClick"] = function()
-                CellDB["tools"]["dispelRequest"][4] = s
-                Cell:Fire("UpdateTools", "dispelRequest")
+                CellDB["glows"]["dispelRequest"][4] = s
+                Cell:Fire("UpdateGlows", "dispelRequest")
             end
         })
     end
@@ -788,9 +710,9 @@ local function CreateDRPane()
     drDebuffsEB:SetPoint("RIGHT", -5, 0)
     drDebuffsEB:SetScript("OnTextChanged", function(self, userChanged)
         if userChanged then
-            CellDB["tools"]["dispelRequest"][5] = F:StringToTable(drDebuffsEB:GetText(), " ", true)
+            CellDB["glows"]["dispelRequest"][5] = F:StringToTable(drDebuffsEB:GetText(), " ", true)
             drDebuffsEB.gauge:SetText(drDebuffsEB:GetText())
-            Cell:Fire("UpdateTools", "dispelRequest")
+            Cell:Fire("UpdateGlows", "dispelRequest")
         end
     end)
     drDebuffsEB.gauge = srMacroEB:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
@@ -824,56 +746,41 @@ end
 -------------------------------------------------
 local init
 local function ShowTab(tab)
-    if tab == "tools" then
+    if tab == "glows" then
         if not init then
-            CreateToolsPane()
             CreateSRPane()
+            CreateSpellEditFrame()
             CreateDRPane()
         end
         
-        toolsTab:Show()
+        glowsTab:Show()
 
         if init then return end
         init = true
 
-        -- raid tools
-        resCB:SetChecked(CellDB["tools"]["showBattleRes"])
-        reportCB:SetChecked(CellDB["tools"]["deathReport"][1])
-        buffCB:SetChecked(CellDB["tools"]["buffTracker"][1])
-
-        readyPullCB:SetChecked(CellDB["tools"]["readyAndPull"][1])
-        pullDropdown:SetSelectedValue(CellDB["tools"]["readyAndPull"][2][1])
-        secEditBox:SetText(CellDB["tools"]["readyAndPull"][2][2])
-        pullDropdown:SetEnabled(CellDB["tools"]["readyAndPull"][1])
-        secEditBox:SetEnabled(CellDB["tools"]["readyAndPull"][1])
-
-        marksDropdown:SetEnabled(CellDB["tools"]["marks"][1])
-        marksBarCB:SetChecked(CellDB["tools"]["marks"][1])
-        marksDropdown:SetSelectedValue(CellDB["tools"]["marks"][2])
-
         -- spell request
-        srEnabledCB:SetChecked(CellDB["tools"]["spellRequest"][1])
-        srExistsCB:SetChecked(CellDB["tools"]["spellRequest"][2])
-        srKnownOnlyCB:SetChecked(CellDB["tools"]["spellRequest"][3])
-        srFreeCDOnlyCB:SetChecked(CellDB["tools"]["spellRequest"][4])
-        srReplyCDCB:SetChecked(CellDB["tools"]["spellRequest"][5])
-        srResponseDD:SetSelectedValue(CellDB["tools"]["spellRequest"][6])
-        srTimeoutDD:SetSelected(CellDB["tools"]["spellRequest"][7])
+        srEnabledCB:SetChecked(CellDB["glows"]["spellRequest"][1])
+        srExistsCB:SetChecked(CellDB["glows"]["spellRequest"][2])
+        srKnownOnlyCB:SetChecked(CellDB["glows"]["spellRequest"][3])
+        srFreeCDOnlyCB:SetChecked(CellDB["glows"]["spellRequest"][4])
+        srReplyCDCB:SetChecked(CellDB["glows"]["spellRequest"][5])
+        srResponseDD:SetSelectedValue(CellDB["glows"]["spellRequest"][6])
+        srTimeoutDD:SetSelected(CellDB["glows"]["spellRequest"][7])
         UpdateSRWidgets()
         HideSpellOptions()
         LoadSpellsDropdown()
         
         -- dispel request
-        drEnabledCB:SetChecked(CellDB["tools"]["dispelRequest"][1])
-        drDispellableCB:SetChecked(CellDB["tools"]["dispelRequest"][2])
-        drResponseDD:SetSelectedValue(CellDB["tools"]["dispelRequest"][3])
-        drTimeoutDD:SetSelected(CellDB["tools"]["dispelRequest"][4])
-        drDebuffsEB:SetText(F:TableToString(CellDB["tools"]["dispelRequest"][5], " "))
+        drEnabledCB:SetChecked(CellDB["glows"]["dispelRequest"][1])
+        drDispellableCB:SetChecked(CellDB["glows"]["dispelRequest"][2])
+        drResponseDD:SetSelectedValue(CellDB["glows"]["dispelRequest"][3])
+        drTimeoutDD:SetSelected(CellDB["glows"]["dispelRequest"][4])
+        drDebuffsEB:SetText(F:TableToString(CellDB["glows"]["dispelRequest"][5], " "))
         drDebuffsEB.gauge:SetText(drDebuffsEB:GetText())
         drDebuffsEB:SetCursorPosition(0)
         UpdateDRWidgets()
     else
-        toolsTab:Hide()
+        glowsTab:Hide()
     end
 end
-Cell:RegisterCallback("ShowOptionsTab", "ToolsTab_ShowTab", ShowTab)
+Cell:RegisterCallback("ShowOptionsTab", "GlowsTab_ShowTab", ShowTab)

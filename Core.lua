@@ -153,17 +153,23 @@ function eventFrame:ADDON_LOADED(arg1)
             }
         end
 
-        -- tools --------------------------------------------------------------------------------
+        -- tools ----------------------------------------------------------------------------------
         if type(CellDB["tools"]) ~= "table" then
-            local POWER_INFUSION = GetSpellInfo(10060)
-            local INNERVATE = GetSpellInfo(29166)
-
             CellDB["tools"] = {
                 ["showBattleRes"] = true,
                 ["buffTracker"] = {false, {}},
                 ["deathReport"] = {false, 10},
                 ["readyAndPull"] = {false, {"default", 7}, {}},
                 ["marks"] = {false, "both_h", {}},
+            }
+        end
+
+        -- glows ----------------------------------------------------------------------------------
+        if type(CellDB["glows"]) ~= "table" then
+            local POWER_INFUSION = GetSpellInfo(10060)
+            local INNERVATE = GetSpellInfo(29166)
+
+            CellDB["glows"] = {
                 ["spellRequest"] = {
                     false, -- [1] enabled
                     true, -- [2] check if exists
@@ -231,7 +237,6 @@ function eventFrame:ADDON_LOADED(arg1)
                 },
             }
         end
-        -- if type(CellDB["clamped"]) ~= "boolean" then CellDB["clamped"] = false end
 
         -- appearance -----------------------------------------------------------------------------
         if type(CellDB["appearance"]) ~= "table" then
@@ -572,6 +577,8 @@ function eventFrame:PLAYER_LOGIN()
     Cell:UpdateOptionsFont(CellDB["appearance"]["optionsFontSizeOffset"], CellDB["appearance"]["useGameFont"])
     -- update tools
     Cell:Fire("UpdateTools")
+    -- update glows
+    Cell:Fire("UpdateGlows")
     -- update raid debuff list
     Cell:Fire("UpdateRaidDebuffs")
     -- hide blizzard

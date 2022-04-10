@@ -1531,7 +1531,7 @@ function addon:CreateConfirmPopup(parent, width, text, onAccept, onReject, mask,
     if not parent.confirmPopup then -- not init
         parent.confirmPopup = CreateFrame("Frame", nil, parent, "BackdropTemplate")
         parent.confirmPopup:SetSize(width, 100)
-        addon:StylizeFrame(parent.confirmPopup, {.1, .1, .1, .95}, {classColor.t[1], classColor.t[2], classColor.t[3], .7})
+        addon:StylizeFrame(parent.confirmPopup, {0.1, 0.1, 0.1, 0.95}, {classColor.t[1], classColor.t[2], classColor.t[3], 1})
         parent.confirmPopup:EnableMouse(true)
         parent.confirmPopup:Hide()
         
@@ -1558,11 +1558,11 @@ function addon:CreateConfirmPopup(parent, width, text, onAccept, onReject, mask,
         parent.confirmPopup.button1 = addon:CreateButton(parent.confirmPopup, L["Yes"], "green", {35, 15})
         -- button1:SetPoint("BOTTOMRIGHT", -45, 0)
         parent.confirmPopup.button1:SetPoint("BOTTOMRIGHT", -34, 0)
-        parent.confirmPopup.button1:SetBackdropBorderColor(classColor.t[1], classColor.t[2], classColor.t[3], .7)
+        parent.confirmPopup.button1:SetBackdropBorderColor(classColor.t[1], classColor.t[2], classColor.t[3], 1)
         -- no
         parent.confirmPopup.button2 = addon:CreateButton(parent.confirmPopup, L["No"], "red", {35, 15})
-        parent.confirmPopup.button2:SetPoint("LEFT", parent.confirmPopup.button1, "RIGHT", -1, 0)
-        parent.confirmPopup.button2:SetBackdropBorderColor(classColor.t[1], classColor.t[2], classColor.t[3], .7)
+        parent.confirmPopup.button2:SetPoint("LEFT", parent.confirmPopup.button1, "RIGHT", P:Scale(-1), 0)
+        parent.confirmPopup.button2:SetBackdropBorderColor(classColor.t[1], classColor.t[2], classColor.t[3], 1)
     end
 
     if hasEditBox then
