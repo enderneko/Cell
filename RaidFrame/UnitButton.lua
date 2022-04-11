@@ -1849,6 +1849,16 @@ end
 local function UnitButton_OnAttributeChanged(self, name, value)
     if name == "unit" then
         if not value or value ~= self.state.unit then
+            -- NOTE: when unitId for this button changes
+            if self.__unitGuid then -- self.__unitGuid is deleted when hide
+                -- print("deleteUnitGuid:", self:GetName(), self.state.unit, self.__unitGuid)
+                Cell.vars.guids[self.__unitGuid] = nil
+                self.__unitGuid = nil
+            end
+            if self.__unitName then
+                Cell.vars.names[self.__unitName] = nil
+                self.__unitName = nil
+            end
             wipe(self.state)
         end
 
@@ -1940,10 +1950,13 @@ local function UnitButton_OnHide(self)
     -- print("hide", self.state.unit, self.__unitGuid, self.__unitName)
     if self.__unitGuid then
         Cell.vars.guids[self.__unitGuid] = nil
+        self.__unitGuid = nil
     end
     if self.__unitName then
         Cell.vars.names[self.__unitName] = nil
+        self.__unitName = nil
     end
+    self.__displayedGuid = nil
     F:RemoveElementsExceptKeys(self.state, "unit", "displayedUnit")
 end
 
@@ -1979,6 +1992,7 @@ local function UnitButton_OnTick(self)
 
             local guid = UnitGUID(self.state.unit)
             if guid and guid ~= self.__unitGuid then
+                -- print("guidChanged:", self:GetName(), self.state.unit, guid)
                 -- NOTE: unit entity changed
                 -- update Cell.vars.guids
                 self.__unitGuid = guid
