@@ -64,11 +64,17 @@ local requestedSpells = {
 
 local SR = CreateFrame("Frame")
 
-local ITEM_COOLDOWN_TIME = _G.ITEM_COOLDOWN_TIME
-local function CheckSRConditions(spellId, sender)
-    if not srSpells[spellId] then
-        return
-    end
+local COOLDOWN_TIME = _G.ITEM_COOLDOWN_TIME
+local function CheckSRConditions(spellId, unit, sender)
+    F:Debug("CheckSRConditions:", spellId, unit, sender)
+
+    if not srSpells[spellId] then return end
+
+    -- can't find unit
+    if not unit or not UnitIsVisible(unit) then return end
+
+    -- already has this buff
+    if srExists and F:FindAuraById(unit, "BUFF", srSpells[spellId][1]) then return end
 
     if srKnown then
         if IsSpellKnown(spellId) then
@@ -79,14 +85,24 @@ local function CheckSRConditions(spellId, sender)
                 if start == 0 or duration == 0 then
                     return true
                 else
-                    if srReplyCD then -- reply cooldown
-                        SendChatMessage(GetSpellLink(spellId).." "..format(ITEM_COOLDOWN_TIME, F:SecondsToTime(cdLeft)), "WHISPER", nil, sender)
+                    local _, gcd = GetSpellCooldown(61304) --! check gcd
+                    if duration == gcd then -- spell ready
+                        return true
+                    else
+                        if srReplyCD then -- reply cooldown
+                            SendChatMessage(GetSpellLink(spellId).." "..format(COOLDOWN_TIME, F:SecondsToTime(cdLeft)), "WHISPER", nil, sender)
+                        end
+                        return false
                     end
-                    return false
                 end
             else -- NOTE: no require free cd
-                if srReplyCD and start > 0 and duration > 0 then -- reply cd if cd
-                    SendChatMessage(GetSpellLink(spellId).." "..format(ITEM_COOLDOWN_TIME, F:SecondsToTime(cdLeft)), "WHISPER", nil, sender)
+                if srReplyCD then -- reply cd if cd
+                    if start > 0 and duration > 0 then
+                        local _, gcd = GetSpellCooldown(61304) --! check gcd
+                        if duration ~= gcd then
+                            SendChatMessage(GetSpellLink(spellId).." "..format(COOLDOWN_TIME, F:SecondsToTime(cdLeft)), "WHISPER", nil, sender)
+                        end
+                    end
                 end
                 return true
             end
@@ -101,22 +117,21 @@ end
 local function ShowSRGlow(spellId, button)
     if button then
         local unit = button.state.unit
-        if (not srExists or not F:FindAuraById(unit, "BUFF", srSpells[spellId][1])) and UnitIsVisible(unit) then
-            -- check if has previous request
-            if srUnits[unit] then
-                -- remove previous request
-                requestedSpells[srUnits[unit][1]] = nil
-            end
-            
-            --! save {spellId, buffId, button} for hiding
-            srUnits[unit] = {spellId, srSpells[spellId][1], button.widget.srGlowFrame} 
-            requestedSpells[spellId] = unit
-            
-            ShowGlow(button.widget.srGlowFrame, srSpells[spellId][3][1], srSpells[spellId][3][2], srTimeout, function()
-                srUnits[unit] = nil
-                requestedSpells[spellId] = nil
-            end)
+
+        -- check if has previous request
+        if srUnits[unit] then
+            -- remove previous request
+            requestedSpells[srUnits[unit][1]] = nil
         end
+        
+        --! save {spellId, buffId, button} for hiding
+        srUnits[unit] = {spellId, srSpells[spellId][1], button.widget.srGlowFrame} 
+        requestedSpells[spellId] = unit
+        
+        ShowGlow(button.widget.srGlowFrame, srSpells[spellId][3][1], srSpells[spellId][3][2], srTimeout, function()
+            srUnits[unit] = nil
+            requestedSpells[spellId] = nil
+        end)
     end
 end
 
@@ -126,9 +141,10 @@ Comm:RegisterComm("CELL_REQ_S", function(prefix, message, channel, sender)
         local spellId, target = strsplit(":", message)
         spellId = tonumber(spellId)
 
-        if spellId and CheckSRConditions(spellId, sender) then
+        if spellId and CheckSRConditions(spellId, Cell.vars.names[sender], sender) then
+            local me = GetUnitName("player")
             -- NOTE: to all provider / to me
-            if (srType == "all" and not target) or (srType == "me" and target == GetUnitName("player")) then
+            if (srType == "all" and (not target or target == me)) or (srType == "me" and target == me) then
                 ShowSRGlow(spellId, F:GetUnitButtonByName(sender))
             end
         end
@@ -136,16 +152,17 @@ Comm:RegisterComm("CELL_REQ_S", function(prefix, message, channel, sender)
 end)
 
 --! glow on whisper
+-- NOTE: playerName always contains SERVER name!
 function SR:CHAT_MSG_WHISPER(text, playerName, languageName, channelName, playerName2, specialFlags, zoneChannelID, channelIndex, channelBaseName, languageID, lineID, guid, bnSenderID, isMobile, isSubtitle, hideSenderInLetterbox, supressRaidIcons)
-    -- NOTE: cd reply
-    if strmatch(text, "c.+|H.+|h%[.+%]|h|r.+%d+:%d+") then return end
+    -- NOTE: filter cd reply
+    if strmatch(text, "^|c.+|H.+|h%[.+%]|h|r.+") then return end
 
     for spellId, t in pairs(srSpells) do
         if strfind(strlower(text), strlower(t[2])) then
-            if CheckSRConditions(spellId, playerName) then
+            if CheckSRConditions(spellId, Cell.vars.guids[guid], playerName) then
                 ShowSRGlow(spellId, F:GetUnitButtonByGUID(guid))
-                break
             end
+            break
         end
     end
 end
@@ -154,11 +171,11 @@ end
 function SR:UNIT_AURA(unit, isFullUpdate, updatedAuras)
     local srUnit = srUnits[unit] -- {spellId, buffId, button}
     if not srUnit then return end
-    F:Debug("HIDE_GLOW [UNIT_AURA]:", unit, srUnit[1])
-
+    
     if type(updatedAuras) == "table" then
         for _, aura in pairs(updatedAuras) do
             if srUnit[2] == aura.spellId then
+                F:Debug("SR_HIDE [UNIT_AURA]:", unit, srUnit[1])
                 HideGlow(srUnit[3])
                 srUnits[unit] = nil
                 requestedSpells[srUnit[1]] = nil
@@ -172,7 +189,7 @@ end
 function SR:UNIT_SPELLCAST_SUCCEEDED(unit, _, spellId)
     if unit == "player" and requestedSpells[spellId] then
         local requester = requestedSpells[spellId]
-        F:Debug("HIDE_GLOW [UNIT_SPELLCAST_SUCCEEDED]:", requester, spellId)
+        F:Debug("SR_HIDE [UNIT_SPELLCAST_SUCCEEDED]:", requester, spellId)
         
         if srUnits[requester] then
             HideGlow(srUnits[requester][3])
@@ -200,17 +217,17 @@ local function SR_UpdateGlows(which)
         wipe(srSpells)
         wipe(requestedSpells)
 
-        srEnabled = CellDB["glows"]["spellRequest"][1]
+        srEnabled = CellDB["glows"]["spellRequest"]["enabled"]
         
         if srEnabled then
-            srExists = CellDB["glows"]["spellRequest"][2]
-            srKnown = CellDB["glows"]["spellRequest"][3]
-            srFreeCD = CellDB["glows"]["spellRequest"][4]
-            srReplyCD = CellDB["glows"]["spellRequest"][5]
-            srType = CellDB["glows"]["spellRequest"][6]
-            srTimeout = CellDB["glows"]["spellRequest"][7]
-            for _, t in pairs(CellDB["glows"]["spellRequest"][8]) do
-                srSpells[t[1]] = {t[2], t[3], t[4]} -- [spellId] = {buffId, keywords, glowOptions}
+            srExists = CellDB["glows"]["spellRequest"]["checkIfExists"]
+            srKnown = CellDB["glows"]["spellRequest"]["knownSpellsOnly"]
+            srFreeCD = CellDB["glows"]["spellRequest"]["freeCooldownOnly"]
+            srReplyCD = CellDB["glows"]["spellRequest"]["replyCooldown"]
+            srType = CellDB["glows"]["spellRequest"]["responseType"]
+            srTimeout = CellDB["glows"]["spellRequest"]["timeout"]
+            for _, t in pairs(CellDB["glows"]["spellRequest"]["spells"]) do
+                srSpells[t["spellId"]] = {t["buffId"], t["keywords"], t["glowOptions"]} -- [spellId] = {buffId, keywords, glowOptions}
             end
 
             if srType == "whisper" then

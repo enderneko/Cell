@@ -171,19 +171,19 @@ function eventFrame:ADDON_LOADED(arg1)
 
             CellDB["glows"] = {
                 ["spellRequest"] = {
-                    false, -- [1] enabled
-                    true, -- [2] check if exists
-                    true, -- [3] known spells only
-                    true, -- [4] free cooldown only
-                    false, -- [5] reply cooldown
-                    "all", -- [6] response type
-                    10, -- [7] timeout
-                    {
+                    ["enabled"] = false,
+                    ["checkIfExists"] = true,
+                    ["knownSpellsOnly"] = true,
+                    ["freeCooldownOnly"] = true,
+                    ["replyCooldown"] = false,
+                    ["responseType"] = "all",
+                    ["timeout"] = 10,
+                    ["spells"] = {
                         { 
-                            10060, -- [1] spellId
-                            10060, -- [2] buffId
-                            POWER_INFUSION, -- [3] keyword
-                            {
+                            ["spellId"] = 10060,
+                            ["buffId"] = 10060,
+                            ["keywords"] = POWER_INFUSION,
+                            ["glowOptions"] = {
                                 "pixel", -- [1] glow type
                                 {
                                     {1,1,0,1}, -- [1] color
@@ -194,14 +194,14 @@ function eventFrame:ADDON_LOADED(arg1)
                                     8, -- [6] length
                                     2 -- [7] thickness
                                 } -- [2] glowOptions
-                            }, -- [4] glow
-                            true -- [5] built-in
+                            },
+                            ["isBuiltIn"] = true
                         },
                         { 
-                            29166, -- [1] spellId
-                            29166, -- [2] buffId
-                            INNERVATE, -- [3] keyword
-                            {
+                            ["spellId"] = 29166,
+                            ["buffId"] = 29166,
+                            ["keywords"] = INNERVATE,
+                            ["glowOptions"] = {
                                 "pixel", -- [1] glow type
                                 {
                                     {0,1,1,1}, -- [1] color
@@ -212,8 +212,8 @@ function eventFrame:ADDON_LOADED(arg1)
                                     8, -- [6] length
                                     2 -- [7] thickness
                                 } -- [2] glowOptions
-                            }, -- [4] glow
-                            true -- [5] built-in
+                            },
+                            ["isBuiltIn"] = true
                         },
                     }, -- [8] spells
                 },

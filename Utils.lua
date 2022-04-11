@@ -318,10 +318,20 @@ function F:FormatTime(s)
     return "%ds", floor(s)
 end
 
+-- function F:SecondsToTime(seconds)
+--     local m = seconds / 60
+--     local s = seconds % 60
+--     return format("%d:%02d", m, s)
+-- end
+
+local SEC = _G.SPELL_DURATION_SEC
+local MIN = _G.SPELL_DURATION_MIN
 function F:SecondsToTime(seconds)
-    local m = seconds / 60
-    local s = seconds % 60
-    return format("%d:%02d", m, s)
+    if seconds > 60 then
+        return gsub(format(MIN, seconds / 60), "%.0", "")
+    else
+        return gsub(format(SEC, seconds), "%.0", "")
+    end
 end
 
 -------------------------------------------------

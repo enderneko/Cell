@@ -1089,5 +1089,29 @@ function F:Revise()
         end
     end
 
+    -- r90-release
+    if CellDB["revise"] and dbRevision < 91 then
+        -- update spellRequest dataStructure
+        if CellDB["glows"]["spellRequest"] and #CellDB["glows"]["spellRequest"] == 8 then
+            local srIndices = {"enabled", "checkIfExists", "knownSpellsOnly", "freeCooldownOnly", "replyCooldown", "responseType", "timeout", "spells"}
+            local spellIndices = {"spellId", "buffId", "keywords", "glowOptions", "isBuiltIn"}
+            local newSR = {}
+            for i, v in pairs(CellDB["glows"]["spellRequest"]) do
+                if i == 8 then -- spells
+                    newSR["spells"] = {}
+                    for j, st in pairs(v) do
+                        newSR["spells"][j] = {}
+                        for k, sv in pairs(st) do
+                            newSR["spells"][j][spellIndices[k]] = sv
+                        end
+                    end
+                else
+                    newSR[srIndices[i]] = v
+                end
+            end
+            CellDB["glows"]["spellRequest"] = newSR
+        end
+    end
+
     CellDB["revise"] = Cell.version
 end

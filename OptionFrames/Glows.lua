@@ -25,8 +25,8 @@ local function ShowSpellOptions(index)
 
     srSelectedSpell = index
 
-    local responseType = CellDB["glows"]["spellRequest"][6]
-    local spellId = CellDB["glows"]["spellRequest"][8][index][1]
+    local responseType = CellDB["glows"]["spellRequest"]["responseType"]
+    local spellId = CellDB["glows"]["spellRequest"]["spells"][index]["spellId"]
     local macroText, keywords
     
     if responseType == "all" then
@@ -37,7 +37,7 @@ local function ShowSpellOptions(index)
         macroText = "/run C_ChatInfo.SendAddonMessage(\"CELL_REQ_S\", \""..spellId..":"..GetUnitName("player").."\", \"RAID\")"
     else -- whisper
         srMacroText:SetText(L["Contains"])
-        keywords = CellDB["glows"]["spellRequest"][8][index][3]
+        keywords = CellDB["glows"]["spellRequest"]["spells"][index]["keywords"]
     end
 
     if macroText then
@@ -54,13 +54,13 @@ local function ShowSpellOptions(index)
         srMacroEB.gauge:SetText(keywords)
         srMacroEB:SetScript("OnTextChanged", function(self, userChanged)
             if userChanged then
-                CellDB["glows"]["spellRequest"][8][index][3] = strtrim(self:GetText())
+                CellDB["glows"]["spellRequest"]["spells"][index]["keywords"] = strtrim(self:GetText())
                 Cell:Fire("UpdateGlows", "spellRequest")
             end
         end)
     end
 
-    canEdit = not CellDB["glows"]["spellRequest"][8][index][5] -- not built-in
+    canEdit = not CellDB["glows"]["spellRequest"]["spells"][index]["isBuiltIn"] -- not built-in
     srDeleteBtn:SetEnabled(canEdit)
     srGlowOptionsBtn:SetEnabled(true)
     srMacroText:Show()
@@ -84,11 +84,11 @@ end
 
 local function LoadSpellsDropdown()
     local items = {}
-    for i, t in pairs(CellDB["glows"]["spellRequest"][8]) do
-        local name, _, icon = GetSpellInfo(t[1])
+    for i, t in pairs(CellDB["glows"]["spellRequest"]["spells"]) do
+        local name, _, icon = GetSpellInfo(t["spellId"])
         tinsert(items, {
             ["text"] = "|T"..icon..":0::0:0:16:16:1:15:1:15|t "..name,
-            ["value"] = t[1],
+            ["value"] = t["spellId"],
             ["onClick"] = function()
                 ShowSpellOptions(i)
             end
@@ -99,8 +99,8 @@ end
 
 local function UpdateSRWidgets()
     CellDropdownList:Hide()
-    Cell:SetEnabled(CellDB["glows"]["spellRequest"][1], srExistsCB, srKnownOnlyCB, srResponseDD, srResponseText, srTimeoutDD, srTimeoutText, srSpellsDD, srSpellsText, srAddBtn, srDeleteBtn, srGlowOptionsBtn, srMacroText, srMacroEB)
-    Cell:SetEnabled(CellDB["glows"]["spellRequest"][1] and CellDB["glows"]["spellRequest"][3], srFreeCDOnlyCB, srReplyCDCB)
+    Cell:SetEnabled(CellDB["glows"]["spellRequest"]["enabled"], srExistsCB, srKnownOnlyCB, srResponseDD, srResponseText, srTimeoutDD, srTimeoutText, srSpellsDD, srSpellsText, srAddBtn, srDeleteBtn, srGlowOptionsBtn, srMacroText, srMacroEB)
+    Cell:SetEnabled(CellDB["glows"]["spellRequest"]["enabled"] and CellDB["glows"]["spellRequest"]["knownSpellsOnly"], srFreeCDOnlyCB, srReplyCDCB)
 end
 
 local function CreateSRPane()
@@ -124,7 +124,7 @@ local function CreateSRPane()
 
     -- enabled ----------------------------------------------------------------------
     srEnabledCB = Cell:CreateCheckButton(srPane, L["Enabled"], function(checked, self)
-        CellDB["glows"]["spellRequest"][1] = checked
+        CellDB["glows"]["spellRequest"]["enabled"] = checked
         UpdateSRWidgets()
         HideSpellOptions()
         Cell:Fire("UpdateGlows", "spellRequest")
@@ -134,7 +134,7 @@ local function CreateSRPane()
     
     -- check exists -----------------------------------------------------------------
     srExistsCB = Cell:CreateCheckButton(srPane, L["Check If Exists"], function(checked, self)
-        CellDB["glows"]["spellRequest"][2] = checked
+        CellDB["glows"]["spellRequest"]["checkIfExists"] = checked
         Cell:Fire("UpdateGlows", "spellRequest")
     end, L["Do nothing if requested spell/buff already exists on requester"])
     srExistsCB:SetPoint("TOPLEFT", srEnabledCB, "TOPLEFT", 200, 0)
@@ -142,7 +142,7 @@ local function CreateSRPane()
 
     -- known only -------------------------------------------------------------------
     srKnownOnlyCB = Cell:CreateCheckButton(srPane, L["Known Spells Only"], function(checked, self)
-        CellDB["glows"]["spellRequest"][3] = checked
+        CellDB["glows"]["spellRequest"]["knownSpellsOnly"] = checked
         UpdateSRWidgets()
         HideSpellOptions()
         Cell:Fire("UpdateGlows", "spellRequest")
@@ -152,7 +152,7 @@ local function CreateSRPane()
     
     -- free cooldown ----------------------------------------------------------------
     srFreeCDOnlyCB = Cell:CreateCheckButton(srPane, L["Free Cooldown Only"], function(checked, self)
-        CellDB["glows"]["spellRequest"][4] = checked
+        CellDB["glows"]["spellRequest"]["freeCooldownOnly"] = checked
         Cell:Fire("UpdateGlows", "spellRequest")
     end)
     srFreeCDOnlyCB:SetPoint("TOPLEFT", srKnownOnlyCB, "TOPLEFT", 200, 0)
@@ -160,7 +160,7 @@ local function CreateSRPane()
 
     -- reply cd ---------------------------------------------------------------------
     srReplyCDCB = Cell:CreateCheckButton(srPane, L["Reply With Cooldown"], function(checked, self)
-        CellDB["glows"]["spellRequest"][5] = checked
+        CellDB["glows"]["spellRequest"]["replyCooldown"] = checked
         Cell:Fire("UpdateGlows", "spellRequest")
     end)
     srReplyCDCB:SetPoint("TOPLEFT", srKnownOnlyCB, "BOTTOMLEFT", 0, -8)
@@ -175,7 +175,7 @@ local function CreateSRPane()
             ["value"] = "all",
             ["onClick"] = function()
                 HideSpellOptions()
-                CellDB["glows"]["spellRequest"][6] = "all"
+                CellDB["glows"]["spellRequest"]["responseType"] = "all"
                 Cell:Fire("UpdateGlows", "spellRequest")
             end
         },
@@ -184,7 +184,7 @@ local function CreateSRPane()
             ["value"] = "me",
             ["onClick"] = function()
                 HideSpellOptions()
-                CellDB["glows"]["spellRequest"][6] = "me"
+                CellDB["glows"]["spellRequest"]["responseType"] = "me"
                 Cell:Fire("UpdateGlows", "spellRequest")
             end
         },
@@ -193,7 +193,7 @@ local function CreateSRPane()
             ["value"] = "whisper",
             ["onClick"] = function()
                 HideSpellOptions()
-                CellDB["glows"]["spellRequest"][6] = "whisper"
+                CellDB["glows"]["spellRequest"]["responseType"] = "whisper"
                 Cell:Fire("UpdateGlows", "spellRequest")
             end
         },
@@ -215,7 +215,7 @@ local function CreateSRPane()
             ["text"] = s,
             ["value"] = s,
             ["onClick"] = function()
-                CellDB["glows"]["spellRequest"][7] = s
+                CellDB["glows"]["spellRequest"]["timeout"] = s
                 Cell:Fire("UpdateGlows", "spellRequest")
             end
         })
@@ -251,7 +251,7 @@ local function CreateSRPane()
         end
     end)
     srAddBtn:SetScript("OnClick", function()
-        if IsAltKeyDown() then
+        if IsAltKeyDown() and canEdit then
             ShowSpellEditFrame(srSelectedSpell)
         else
             ShowSpellEditFrame()
@@ -264,9 +264,9 @@ local function CreateSRPane()
     srDeleteBtn = Cell:CreateButton(srPane, L["Delete"], "red-hover", {60, 20})
     srDeleteBtn:SetPoint("TOPLEFT", srAddBtn, "TOPRIGHT", P:Scale(-1), 0)
     srDeleteBtn:SetScript("OnClick", function()
-        local name, _, icon = GetSpellInfo(CellDB["glows"]["spellRequest"][8][srSelectedSpell][1])
+        local name, _, icon = GetSpellInfo(CellDB["glows"]["spellRequest"]["spells"][srSelectedSpell]["spellId"])
         local spellEditFrame = Cell:CreateConfirmPopup(glowsTab, 200, L["Delete spell?"].."\n".."|T"..icon..":0::0:0:16:16:1:15:1:15|t "..name, function(self)
-            tremove(CellDB["glows"]["spellRequest"][8], srSelectedSpell)
+            tremove(CellDB["glows"]["spellRequest"]["spells"], srSelectedSpell)
             srSpellsDD:RemoveCurrentItem()
             HideSpellOptions()
             Cell:Fire("UpdateGlows", "spellRequest")
@@ -289,7 +289,7 @@ local function CreateSRPane()
         else
             Cell:StartRainbowText(fs)
         end
-        F:ShowGlowOptions(glowsTab, "spellRequest", CellDB["glows"]["spellRequest"][8][srSelectedSpell][4])
+        F:ShowGlowOptions(glowsTab, "spellRequest", CellDB["glows"]["spellRequest"]["spells"][srSelectedSpell]["glowOptions"])
     end)
     srGlowOptionsBtn:SetScript("OnHide", function()
         Cell:StopRainbowText(srGlowOptionsBtn:GetFontString())
@@ -474,7 +474,7 @@ ShowSpellEditFrame = function(index)
         addBtn:SetScript("OnClick", function()
             if spellId and buffId then
                 -- check if exists
-                for _, t in pairs(CellDB["glows"]["spellRequest"][8]) do
+                for _, t in pairs(CellDB["glows"]["spellRequest"]["spells"]) do
                     if t[1] == spellId then
                         F:Print(L["Spell already exists."])
                         return
@@ -482,11 +482,11 @@ ShowSpellEditFrame = function(index)
                 end
 
                 -- update db
-                tinsert(CellDB["glows"]["spellRequest"][8], {
-                    spellId,
-                    buffId,
-                    spellName,
-                    {
+                tinsert(CellDB["glows"]["spellRequest"]["spells"], {
+                    ["spellId"] = spellId,
+                    ["buffId"] = buffId,
+                    ["keywords"] = spellName,
+                    ["glowOptions"] = {
                         "pixel", -- [1] glow type
                         {
                             {0,1,0.5,1}, -- [1] color
@@ -501,7 +501,7 @@ ShowSpellEditFrame = function(index)
                 })
                 Cell:Fire("UpdateGlows", "spellRequest")
 
-                local index = #CellDB["glows"]["spellRequest"][8]
+                local index = #CellDB["glows"]["spellRequest"]["spells"]
 
                 -- update dropdown
                 srSpellsDD:AddItem({
@@ -522,8 +522,8 @@ ShowSpellEditFrame = function(index)
         spellIdEB:SetEnabled(false)
         buffIdEB:SetFocus()
 
-        spellIdEB:SetText(CellDB["glows"]["spellRequest"][8][index][1])
-        buffIdEB:SetText(CellDB["glows"]["spellRequest"][8][index][2])
+        spellIdEB:SetText(CellDB["glows"]["spellRequest"]["spells"][index]["spellId"])
+        buffIdEB:SetText(CellDB["glows"]["spellRequest"]["spells"][index]["buffId"])
 
         title:SetText(L["Edit spell"])
         addBtn:SetText(L["Save"])
@@ -531,7 +531,7 @@ ShowSpellEditFrame = function(index)
         addBtn:SetScript("OnClick", function()
             if spellId and buffId then
                 -- update db
-                CellDB["glows"]["spellRequest"][8][index][2] = buffId
+                CellDB["glows"]["spellRequest"]["spells"][index]["buffId"] = buffId
                 Cell:Fire("UpdateGlows", "spellRequest")
 
                 -- update dropdown
@@ -759,13 +759,13 @@ local function ShowTab(tab)
         init = true
 
         -- spell request
-        srEnabledCB:SetChecked(CellDB["glows"]["spellRequest"][1])
-        srExistsCB:SetChecked(CellDB["glows"]["spellRequest"][2])
-        srKnownOnlyCB:SetChecked(CellDB["glows"]["spellRequest"][3])
-        srFreeCDOnlyCB:SetChecked(CellDB["glows"]["spellRequest"][4])
-        srReplyCDCB:SetChecked(CellDB["glows"]["spellRequest"][5])
-        srResponseDD:SetSelectedValue(CellDB["glows"]["spellRequest"][6])
-        srTimeoutDD:SetSelected(CellDB["glows"]["spellRequest"][7])
+        srEnabledCB:SetChecked(CellDB["glows"]["spellRequest"]["enabled"])
+        srExistsCB:SetChecked(CellDB["glows"]["spellRequest"]["checkIfExists"])
+        srKnownOnlyCB:SetChecked(CellDB["glows"]["spellRequest"]["knownSpellsOnly"])
+        srFreeCDOnlyCB:SetChecked(CellDB["glows"]["spellRequest"]["freeCooldownOnly"])
+        srReplyCDCB:SetChecked(CellDB["glows"]["spellRequest"]["replyCooldown"])
+        srResponseDD:SetSelectedValue(CellDB["glows"]["spellRequest"]["responseType"])
+        srTimeoutDD:SetSelected(CellDB["glows"]["spellRequest"]["timeout"])
         UpdateSRWidgets()
         HideSpellOptions()
         LoadSpellsDropdown()
