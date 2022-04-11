@@ -991,14 +991,14 @@ end
 -----------------------------------------
 function addon:CreateEditBox(parent, width, height, isTransparent, isMultiLine, isNumeric, font)
     local eb = CreateFrame("EditBox", nil, parent, "BackdropTemplate")
-    if not isTransparent then addon:StylizeFrame(eb, {.115, .115, .115, .9}) end
+    if not isTransparent then addon:StylizeFrame(eb, {0.115, 0.115, 0.115, 0.9}) end
     eb:SetFontObject(font or font_name)
     eb:SetMultiLine(isMultiLine)
     eb:SetMaxLetters(0)
     eb:SetJustifyH("LEFT")
     eb:SetJustifyV("MIDDLE")
-    eb:SetWidth(width or 0)
-    eb:SetHeight(height or 0)
+    P:Width(eb, width or 0)
+    P:Height(eb, height or 0)
     eb:SetTextInsets(5, 5, 0, 0)
     eb:SetAutoFocus(false)
     eb:SetNumeric(isNumeric)
@@ -1006,7 +1006,7 @@ function addon:CreateEditBox(parent, width, height, isTransparent, isMultiLine, 
     eb:SetScript("OnEnterPressed", function() eb:ClearFocus() end)
     eb:SetScript("OnEditFocusGained", function() eb:HighlightText() end)
     eb:SetScript("OnEditFocusLost", function() eb:HighlightText(0, 0) end)
-    eb:SetScript("OnDisable", function() eb:SetTextColor(.4, .4, .4, 1) end)
+    eb:SetScript("OnDisable", function() eb:SetTextColor(0.4, 0.4, 0.4, 1) end)
     eb:SetScript("OnEnable", function() eb:SetTextColor(1, 1, 1, 1) end)
 
     return eb

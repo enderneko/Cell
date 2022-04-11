@@ -14,7 +14,7 @@ local ShowSpellEditFrame
 -------------------------------------------------
 -- spell request
 -------------------------------------------------
-local srEnabledCB, srExistsCB, srKnownOnlyCB, srFreeCDOnlyCB, srReplyCDCB, srResponseDD, srResponseText, srTimeoutDD, srTimeoutText, srSpellsDD, srSpellsText, srAddBtn, srDeleteBtn, srMacroText, srMacroEB
+local waTips, srEnabledCB, srExistsCB, srKnownOnlyCB, srFreeCDOnlyCB, srReplyCDCB, srReplyCastEB, srResponseDD, srResponseText, srTimeoutDD, srTimeoutText, srSpellsDD, srSpellsText, srAddBtn, srDeleteBtn, srMacroText, srMacroEB
 local srSelectedSpell, canEdit
 
 local function ShowSpellOptions(index)
@@ -99,8 +99,9 @@ end
 
 local function UpdateSRWidgets()
     CellDropdownList:Hide()
-    Cell:SetEnabled(CellDB["glows"]["spellRequest"]["enabled"], srExistsCB, srKnownOnlyCB, srResponseDD, srResponseText, srTimeoutDD, srTimeoutText, srSpellsDD, srSpellsText, srAddBtn, srDeleteBtn, srGlowOptionsBtn, srMacroText, srMacroEB)
-    Cell:SetEnabled(CellDB["glows"]["spellRequest"]["enabled"] and CellDB["glows"]["spellRequest"]["knownSpellsOnly"], srFreeCDOnlyCB, srReplyCDCB)
+    Cell:SetEnabled(CellDB["glows"]["spellRequest"]["enabled"], waTips, srExistsCB, srKnownOnlyCB, srResponseDD, srResponseText, srTimeoutDD, srTimeoutText, srSpellsDD, srSpellsText, srAddBtn, srDeleteBtn, srGlowOptionsBtn, srMacroText, srMacroEB)
+    Cell:SetEnabled(CellDB["glows"]["spellRequest"]["enabled"] and CellDB["glows"]["spellRequest"]["knownSpellsOnly"], srFreeCDOnlyCB)
+    Cell:SetEnabled(CellDB["glows"]["spellRequest"]["enabled"] and CellDB["glows"]["spellRequest"]["knownSpellsOnly"] and CellDB["glows"]["spellRequest"]["responseType"] ~= "all", srReplyCDCB, srReplyCastEB)
 end
 
 local function CreateSRPane()
@@ -115,6 +116,10 @@ local function CreateSRPane()
         whichGlowOption = nil
         HideSpellOptions()
     end)
+
+    waTips = Cell:CreateButton(srPane, "WA", "class", {27, 17}, nil, nil, nil, nil, nil,
+        L["WeakAuras Events"], "EventName: CELL_NOTIFY", "Arg1: \"spellRequest\"", "Arg2: unitId", "Arg3: spellId")
+    waTips:SetPoint("TOPRIGHT")
 
     local pirTips = srPane:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
     pirTips:SetPoint("TOPLEFT", 5, -25)
@@ -146,7 +151,7 @@ local function CreateSRPane()
         UpdateSRWidgets()
         HideSpellOptions()
         Cell:Fire("UpdateGlows", "spellRequest")
-    end)
+    end, L["If disabled, no check, no reply, just glow"])
     srKnownOnlyCB:SetPoint("TOPLEFT", srEnabledCB, "BOTTOMLEFT", 0, -8)
     ---------------------------------------------------------------------------------
     
@@ -166,6 +171,31 @@ local function CreateSRPane()
     srReplyCDCB:SetPoint("TOPLEFT", srKnownOnlyCB, "BOTTOMLEFT", 0, -8)
     ---------------------------------------------------------------------------------
 
+    -- reply after cast -------------------------------------------------------------
+    srReplyCastEB = Cell:CreateEditBox(srPane, 20, 20)
+    srReplyCastEB:SetPoint("TOPLEFT", srFreeCDOnlyCB, "BOTTOMLEFT", 0, -5)
+    srReplyCastEB:SetPoint("RIGHT", -5, 0)
+    srReplyCastEB:SetScript("OnTextChanged", function(self, userChanged)
+        if userChanged then
+            local text = strtrim(self:GetText())
+            if text ~= "" then
+                CellDB["glows"]["spellRequest"]["replyAfterCast"] = text
+                srReplyCastEB.tip:Hide()
+            else
+                CellDB["glows"]["spellRequest"]["replyAfterCast"] = nil
+                srReplyCastEB.tip:Show()
+            end
+            Cell:Fire("UpdateGlows", "spellRequest")
+        end
+    end)
+
+    srReplyCastEB.tip = srReplyCastEB:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
+    srReplyCastEB.tip:SetPoint("LEFT", 5, 0)
+    srReplyCastEB.tip:SetTextColor(0.4, 0.4, 0.4, 1)
+    srReplyCastEB.tip:SetText(L["Reply After Cast"])
+    srReplyCastEB.tip:Hide()
+    ---------------------------------------------------------------------------------
+
     -- response ----------------------------------------------------------------------
     srResponseDD = Cell:CreateDropdown(srPane, 345)
     srResponseDD:SetPoint("TOPLEFT", srReplyCDCB, "BOTTOMLEFT", 0, -27)
@@ -177,6 +207,7 @@ local function CreateSRPane()
                 HideSpellOptions()
                 CellDB["glows"]["spellRequest"]["responseType"] = "all"
                 Cell:Fire("UpdateGlows", "spellRequest")
+                UpdateSRWidgets()
             end
         },
         {
@@ -186,6 +217,7 @@ local function CreateSRPane()
                 HideSpellOptions()
                 CellDB["glows"]["spellRequest"]["responseType"] = "me"
                 Cell:Fire("UpdateGlows", "spellRequest")
+                UpdateSRWidgets()
             end
         },
         {
@@ -195,6 +227,7 @@ local function CreateSRPane()
                 HideSpellOptions()
                 CellDB["glows"]["spellRequest"]["responseType"] = "whisper"
                 Cell:Fire("UpdateGlows", "spellRequest")
+                UpdateSRWidgets()
             end
         },
     })
@@ -764,6 +797,10 @@ local function ShowTab(tab)
         srKnownOnlyCB:SetChecked(CellDB["glows"]["spellRequest"]["knownSpellsOnly"])
         srFreeCDOnlyCB:SetChecked(CellDB["glows"]["spellRequest"]["freeCooldownOnly"])
         srReplyCDCB:SetChecked(CellDB["glows"]["spellRequest"]["replyCooldown"])
+        srReplyCastEB:SetText(CellDB["glows"]["spellRequest"]["replyAfterCast"] or "")
+        if not CellDB["glows"]["spellRequest"]["replyAfterCast"] then
+            srReplyCastEB.tip:Show()
+        end
         srResponseDD:SetSelectedValue(CellDB["glows"]["spellRequest"]["responseType"])
         srTimeoutDD:SetSelected(CellDB["glows"]["spellRequest"]["timeout"])
         UpdateSRWidgets()

@@ -175,9 +175,10 @@ function eventFrame:ADDON_LOADED(arg1)
                     ["checkIfExists"] = true,
                     ["knownSpellsOnly"] = true,
                     ["freeCooldownOnly"] = true,
-                    ["replyCooldown"] = false,
-                    ["responseType"] = "all",
+                    ["replyCooldown"] = true,
+                    ["responseType"] = "me",
                     ["timeout"] = 10,
+                    -- ["replyAfterCast"] = nil,
                     ["spells"] = {
                         { 
                             ["spellId"] = 10060,

@@ -28,6 +28,18 @@ local function Deserialize(encoded)
     return data
 end
 
+-----------------------------------------
+-- for WA
+-----------------------------------------
+function F:Notify(type, ...)
+    if WeakAuras then
+        WeakAuras.ScanEvents("CELL_NOTIFY", type, ...)
+    end
+end
+
+-----------------------------------------
+-- shared
+-----------------------------------------
 local eventFrame = CreateFrame("Frame")
 eventFrame:SetScript("OnEvent", function(self, event, ...)
     self[event](self, ...)

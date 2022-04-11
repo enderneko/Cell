@@ -51,7 +51,7 @@ end
 -------------------------------------------------
 -- spell request
 -------------------------------------------------
-local srEnabled, srExists, srKnown, srFreeCD, srReplyCD, srType, srTimeout
+local srEnabled, srExists, srKnown, srFreeCD, srReplyCD, srType, srTimeout, srCastMsg
 local srSpells = {
     -- [spellId] = {buffId, keywords, glowOptions}
 }
@@ -78,6 +78,10 @@ local function CheckSRConditions(spellId, unit, sender)
 
     if srKnown then
         if IsSpellKnown(spellId) then
+            -- if srDeadMsg and UnitIsDeadOrGhost("player") then
+            --     SendChatMessage(srDeadMsg, "WHISPER", nil, sender)
+            -- end
+
             local start, duration, enabled, modRate = GetSpellCooldown(spellId)
             local cdLeft = start + duration - GetTime()
 
@@ -132,6 +136,9 @@ local function ShowSRGlow(spellId, button)
             srUnits[unit] = nil
             requestedSpells[spellId] = nil
         end)
+
+        -- notify
+        F:Notify("spellRequest", unit, spellId)
     end
 end
 
@@ -190,6 +197,9 @@ function SR:UNIT_SPELLCAST_SUCCEEDED(unit, _, spellId)
     if unit == "player" and requestedSpells[spellId] then
         local requester = requestedSpells[spellId]
         F:Debug("SR_HIDE [UNIT_SPELLCAST_SUCCEEDED]:", requester, spellId)
+        if srCastMsg then
+            SendChatMessage(srCastMsg, "WHISPER", nil, GetUnitName(requester, true))
+        end
         
         if srUnits[requester] then
             HideGlow(srUnits[requester][3])
@@ -223,9 +233,16 @@ local function SR_UpdateGlows(which)
             srExists = CellDB["glows"]["spellRequest"]["checkIfExists"]
             srKnown = CellDB["glows"]["spellRequest"]["knownSpellsOnly"]
             srFreeCD = CellDB["glows"]["spellRequest"]["freeCooldownOnly"]
-            srReplyCD = CellDB["glows"]["spellRequest"]["replyCooldown"]
             srType = CellDB["glows"]["spellRequest"]["responseType"]
+            srReplyCD = CellDB["glows"]["spellRequest"]["replyCooldown"] and srType ~= "all"
             srTimeout = CellDB["glows"]["spellRequest"]["timeout"]
+            
+            if srType ~= "all" then
+                srCastMsg = CellDB["glows"]["spellRequest"]["replyAfterCast"]
+            else
+                srCastMsg = nil
+            end
+            
             for _, t in pairs(CellDB["glows"]["spellRequest"]["spells"]) do
                 srSpells[t["spellId"]] = {t["buffId"], t["keywords"], t["glowOptions"]} -- [spellId] = {buffId, keywords, glowOptions}
             end
