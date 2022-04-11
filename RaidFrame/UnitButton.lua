@@ -2558,6 +2558,12 @@ function F:UnitButton_OnLoad(button)
     -- readyCheckHighlight:SetTexture("Interface\\Buttons\\WHITE8x8")
     -- readyCheckHighlight:Hide()
 
+    --* tsGlowFrame (Targeted Spells)
+    local tsGlowFrame = CreateFrame("Frame", name.."TSGlowFrame", button)
+    button.widget.tsGlowFrame = tsGlowFrame
+    tsGlowFrame:SetAllPoints(button)
+
+
     --* srGlowFrame (Spell Request)
     local srGlowFrame = CreateFrame("Frame", name.."SRGlowFrame", button)
     button.widget.srGlowFrame = srGlowFrame
