@@ -4,8 +4,7 @@ local L = select( 2, ...).L
 
 L["%s lock %s on %s."] = "%s將%s鎖定在%s。"
 L["%s unlock %s from %s."] = "%s將%s從%s解鎖。"
---[[Translation missing --]]
---[[ L["[Alt+LeftClick] to edit"] = "[Alt+LeftClick] to edit"--]] 
+L["[Alt+LeftClick] to edit"] = "[Alt+左鍵] 修改"
 L["[Ctrl+LeftClick] to reset these settings"] = "[Ctrl+左鍵] 來重置這些設定"
 L["|cff1Aff1AYes|r - Overwrite"] = "|cff1Aff1A是|r - 取代原有的"
 L["|cffff1A1ANo|r - Create New"] = "|cffff1A1A否|r - 建立新的"
@@ -74,8 +73,7 @@ L["Cell will report first %d deaths during a raid encounter."] = "團隊首領�
 L["CENTER"] = "中"
 L["Change Logs"] = "更新資訊"
 L["Check all visible enemy nameplates. Battleground/Arena only."] = "檢查所有看見的敵方血條，只在戰場/競技場有效。"
---[[Translation missing --]]
---[[ L["Check If Exists"] = "Check If Exists"--]] 
+L["Check If Exists"] = "檢查增益是否存在"
 L["Check if your group members need some raid buffs"] = "檢查隊友是否需要某些團隊增益"
 L["circledStackNums"] = "用帶圈數字顯示層數"
 L["Class Color"] = "職業顏色"
@@ -125,12 +123,10 @@ L["Dispel Request"] = "請求驅散"
 L["Dispellable By Me"] = "只有我能驅散時"
 L["dispellableByMe"] = "只顯示我能驅散的減益"
 L["Dispels"] = "驅散"
---[[Translation missing --]]
---[[ L["Do nothing if requested spell/buff already exists on requester"] = "Do nothing if requested spell/buff already exists on requester"--]] 
+L["Do nothing if requested spell/buff already exists on requester"] = "若增益已存在於請求者身上，則不發光"
 L["DRINKING"] = "喝水"
 L["Edit"] = "編輯"
---[[Translation missing --]]
---[[ L["Edit spell"] = "Edit spell"--]] 
+L["Edit spell"] = "修改法術"
 L["EN"] = "英"
 L["Enable"] = "啟用"
 L["Enabled"] = "啟用"
@@ -164,8 +160,7 @@ L["Glow Color"] = "發光顏色"
 L["Glow Options"] = "發光選項"
 L["Glow Type"] = "發光類型"
 L["Glow unit button when a group member sends a %s request"] = "當隊伍成員請求%s時高亮其單位按鈕"
---[[Translation missing --]]
---[[ L["Glows"] = "Glows"--]] 
+L["Glows"] = "發光"
 L["Gradient"] = "漸層"
 L["Group Arrangement"] = "隊伍排列"
 L["Group Columns"] = "隊伍直行數"
@@ -192,6 +187,8 @@ L["Horizontal Gradient"] = "水平漸層"
 L["Icon"] = "圖示"
 L["Icons"] = "圖示群組"
 L["IDs separated by whitespaces"] = "用空格分隔多個法術ID"
+--[[Translation missing --]]
+--[[ L["If disabled, no check, no reply, just glow"] = "If disabled, no check, no reply, just glow"--]] 
 L["Import"] = "匯入"
 L["Incompatible Version"] = "不相容的版本"
 L["Indicator Settings"] = "指示器設定"
@@ -226,8 +223,7 @@ L["Marks Bar"] = "標記工具列"
 L["marksTips"] = "\n|r目標標記\n左鍵: |cffffffff在目標上設置標記|r\n右鍵: |cffffffff將標記鎖定在目標上 (在你的隊伍中)|r"
 L["Max Icons"] = "最大顯示數量"
 L["Menu"] = "選單"
---[[Translation missing --]]
---[[ L["Menu Position"] = "Menu Position"--]] 
+L["Menu Position"] = "選單位置"
 L["Middle"] = "中鍵"
 L["Misc"] = "其他"
 L["Missing Buff"] = "缺少增益"
@@ -297,6 +293,8 @@ L["Remaining Time <"] = "剩餘時間 <"
 L["Rename"] = "更名"
 L["Rename indicator"] = "重新命名指示器"
 L["Rename layout"] = "重新名命版面配置"
+--[[Translation missing --]]
+--[[ L["Reply After Cast"] = "Reply After Cast"--]] 
 L["Reply With Cooldown"] = "回覆剩餘冷卻時間"
 L["Report deaths to group"] = "向隊伍通報死亡訊息"
 L["Request"] = "請求"
@@ -359,8 +357,7 @@ L["Spell"] = "法術"
 L["Spell already exists."] = "法術已存在。"
 L["Spell List"] = "法術清單"
 L["Spell Request"] = "法術請求"
---[[Translation missing --]]
---[[ L["SpellId and BuffId are the same in most cases"] = "SpellId and BuffId are the same in most cases"--]] 
+L["SpellId and BuffId are the same in most cases"] = "大部分情況下法術ID與增益ID是相同的"
 L["Spells"] = "法術"
 L["Status Icon"] = "狀態圖示"
 L["Status Text"] = "狀態文字"
@@ -377,8 +374,7 @@ L["Text"] = "文字"
 L["Text Width"] = "文字寬度"
 L["Texture"] = "材質"
 L["The priority of spells decreases from top to bottom."] = "法術的優先順序是從上到下降低。"
---[[Translation missing --]]
---[[ L["The spell is required to apply a buff on the target"] = "The spell is required to apply a buff on the target"--]] 
+L["The spell is required to apply a buff on the target"] = "要求增加的法術能夠在目標上施加增益效果"
 L["The spells list of a icons indicator is unordered (no priority)."] = "圖示指示器的法術清單是不排序的 (無優先順序)。"
 L["These \"reset\" commands below affect all your characters in this account"] = "以下的 \"重置\" 指令會影響此帳號中的所有角色"
 L["Thickness"] = "粗細"
