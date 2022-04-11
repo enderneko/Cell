@@ -1111,6 +1111,16 @@ function F:Revise()
             end
             CellDB["glows"]["spellRequest"] = newSR
         end
+
+        -- update dispelRequest dataStructure
+        if CellDB["glows"]["dispelRequest"] and #CellDB["glows"]["dispelRequest"] == 6 then
+            local drIndices = {"enabled", "dispellableByMe", "responseType", "timeout", "debuffs", "glowOptions"}
+            local newDR = {}
+            for i, v in pairs(CellDB["glows"]["dispelRequest"]) do
+                newDR[drIndices[i]] = v
+            end
+            CellDB["glows"]["dispelRequest"] = newDR
+        end
     end
 
     CellDB["revise"] = Cell.version

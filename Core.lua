@@ -219,12 +219,12 @@ function eventFrame:ADDON_LOADED(arg1)
                     }, -- [8] spells
                 },
                 ["dispelRequest"] = {
-                    false, -- [1] enabled
-                    true, -- [2] dispellable
-                    "all", -- [3] response type
-                    30, -- [4] timeout
-                    {}, -- [5] debuffs
-                    {
+                    ["enabled"] = false,
+                    ["dispellableByMe"] = true,
+                    ["responseType"] = "all",
+                    ["timeout"] = 30,
+                    ["debuffs"] = {},
+                    ["glowOptions"] = {
                         "shine", -- [1] glow type
                         {
                             {1,0,0.4,1}, -- [1] color
@@ -234,7 +234,7 @@ function eventFrame:ADDON_LOADED(arg1)
                             0.5, -- [5] frequency
                             2, -- [6] scale
                         } -- [2] glowOptions
-                    } -- [6] glow
+                    }
                 },
             }
         end

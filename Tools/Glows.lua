@@ -328,7 +328,7 @@ Comm:RegisterComm("CELL_REQ_D", function(prefix, message, channel, sender)
         if F:Getn(drUnits[unit]) ~= 0 then -- found
             local button = F:GetUnitButtonByName(sender)
             if button then
-                ShowGlow(button.widget.drGlowFrame, CellDB["glows"]["dispelRequest"][6][1], CellDB["glows"]["dispelRequest"][6][2], drTimeout, function()
+                ShowGlow(button.widget.drGlowFrame, CellDB["glows"]["dispelRequest"]["glowOptions"][1], CellDB["glows"]["dispelRequest"]["glowOptions"][2], drTimeout, function()
                     drUnits[unit] = nil
                 end)
             end
@@ -342,13 +342,13 @@ local function DR_UpdateGlows(which)
     if not which or which == "dispelRequest" then
         HideAllDRGlows()
         
-        drEnabled = CellDB["glows"]["dispelRequest"][1]
+        drEnabled = CellDB["glows"]["dispelRequest"]["enabled"]
 
         if drEnabled then
-            drDispellable = CellDB["glows"]["dispelRequest"][2]
-            drType = CellDB["glows"]["dispelRequest"][3]
-            drTimeout = CellDB["glows"]["dispelRequest"][4]
-            drDebuffs = F:ConvertTable(CellDB["glows"]["dispelRequest"][5])
+            drDispellable = CellDB["glows"]["dispelRequest"]["dispellableByMe"]
+            drType = CellDB["glows"]["dispelRequest"]["responseType"]
+            drTimeout = CellDB["glows"]["dispelRequest"]["timeout"]
+            drDebuffs = F:ConvertTable(CellDB["glows"]["dispelRequest"]["debuffs"])
 
             DR:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
             DR:RegisterEvent("ENCOUNTER_START")
