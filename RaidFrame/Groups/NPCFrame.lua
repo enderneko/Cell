@@ -121,6 +121,7 @@ cleu:SetScript("OnEvent", function()
         if subEvent == "SPELL_HEAL" or subEvent == "SPELL_PERIODIC_HEAL" or subEvent == "SPELL_DAMAGE" or subEvent == "SPELL_PERIODIC_DAMAGE" then
             -- print("UpdateHealth:", boss678_guidToButton[destGUID]:GetName())
             boss678_guidToButton[destGUID].func.UpdateHealth(boss678_guidToButton[destGUID])
+            boss678_guidToButton[destGUID].func.UpdateHealthMax(boss678_guidToButton[destGUID])
         elseif subEvent == "SPELL_AURA_REFRESH" or subEvent == "SPELL_AURA_APPLIED" or subEvent == "SPELL_AURA_REMOVED" or subEvent == "SPELL_AURA_APPLIED_DOSE" or subEvent == "SPELL_AURA_REMOVED_DOSE" then
             boss678_guidToButton[destGUID].func.UpdateAuras(boss678_guidToButton[destGUID])
         end
