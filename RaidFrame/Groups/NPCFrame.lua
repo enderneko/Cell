@@ -49,6 +49,7 @@ npcFrame:SetAttribute("pointUpdater", pointUpdater)
 for i = 1, 8 do
     local button = CreateFrame("Button", npcFrame:GetName().."Button"..i, npcFrame, "CellUnitButtonTemplate")
     tinsert(Cell.unitButtons.npc, button)
+    Cell.unitButtons.npc.units["boss"..i] = button
 
     button:SetAttribute("unit", "boss"..i)
     -- RegisterAttributeDriver(button, "state-visibility", "[@boss"..i..", help] show; hide")
@@ -281,7 +282,7 @@ local function NPCFrame_UpdateLayout(layout, which)
 
     if not which or which == "size" or which == "power" or which == "barOrientation" then
         P:Size(npcFrame, layout["size"][1], layout["size"][2])
-        for _, b in pairs(Cell.unitButtons.npc) do
+        for _, b in ipairs(Cell.unitButtons.npc) do
             if not which or which == "size" then
                 P:Size(b, layout["size"][1], layout["size"][2])
             end

@@ -6,12 +6,14 @@ local P = Cell.pixelPerfectFuncs
 Cell.unitButtons = {
     ["solo"] = {},
     ["party"] = {
-        ["units"] = {}, -- NOTE: update in PartyFrame OnAttributeChanged
+        ["units"] = {}, -- NOTE: update in PartyFrame _initialAttribute-refreshUnitChange
     },
     ["raid"] = {
         ["units"] = {}, -- NOTE: update in UnitButton_OnAttributeChanged
     },
-    ["npc"] = {},
+    ["npc"] = {
+        ["units"] = {}, -- NOTE: update on creation
+    },
     ["arena"] = {},
 }
 
