@@ -1089,7 +1089,7 @@ function F:Revise()
         end
     end
 
-    -- r90-release
+    -- r91-release
     if CellDB["revise"] and dbRevision < 91 then
         -- update spellRequest dataStructure
         if CellDB["glows"]["spellRequest"] and #CellDB["glows"]["spellRequest"] == 8 then

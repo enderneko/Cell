@@ -1,14 +1,10 @@
+[Full Changelog](https://github.com/enderneko/Cell/compare/r90-release...9993d8ec8c1499a4036596167f9c21306df33410)
 
-[Full Changelog](https://github.com/enderneko/Cell/compare/r89-release...0afcdef691df01e813bee36b55da26b7b1e07e01)
-
-- Add health color Gradient2
-- Add Menu Position option
-- Update Spell Request
-- Disable SRquest & DRequest by default
-- Spell Request checks buffId instead of spellId
-- Separate Glows from Tools
 - Update zhTW
-- Update raid debuffs
-- Update pixel perfect for layout preview
-- Update raid tools lock/unlock
-- Fix unit buttons initialization and debuffs
+- Update Dispel Request
+- Update Spell Request
+- Add "Reply After Cast" option
+- Fix unit mapping table
+- Update GetUnitButtonByUnit for NPCs
+- Add UpdateHealthMax to boss678
+- Add a separate frame for TargetedSpells glow
