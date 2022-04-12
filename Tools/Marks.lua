@@ -374,6 +374,7 @@ local function UpdatePixelPerfect()
     for i = 1, 9 do
         markButtons[i]:UpdatePixelPerfect()
         worldMarkButtons[i]:UpdatePixelPerfect()
+        P:Repoint(markButtons[i].texture)
         P:Repoint(worldMarkButtons[i].texture)
     end
 end
