@@ -183,6 +183,12 @@ local function RaidFrame_UpdateLayout(layout, which)
             UnregisterAttributeDriver(arenaPetButtons[i], "state-visibility")
             arenaPetButtons[i]:Hide()
         end
+    elseif Cell.vars.inMythic then
+        layout = CellDB["layoutAutoSwitch"][Cell.vars.playerSpecRole]["mythic"]
+        for i = 1, 3 do
+            UnregisterAttributeDriver(arenaPetButtons[i], "state-visibility")
+            arenaPetButtons[i]:Hide()
+        end
     else
         layout = CellDB["layoutAutoSwitch"][Cell.vars.playerSpecRole]["raid"]
         for i = 1, 3 do

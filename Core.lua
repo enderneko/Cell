@@ -64,11 +64,11 @@ end)
 
 function F:UpdateLayout(layoutGroupType, updateIndicators)
     if InCombatLockdown() then
-        F:Debug("|cffbbbbbbF:UpdateLayout(\""..layoutGroupType.."\") DELAYED")
+        F:Debug("|cFF7CFC00F:UpdateLayout(\""..layoutGroupType.."\") DELAYED")
         delayedLayoutGroupType, delayedUpdateIndicators = layoutGroupType, updateIndicators
         delayedFrame:RegisterEvent("PLAYER_REGEN_ENABLED")
     else
-        F:Debug("|cffbbbbbbF:UpdateLayout(\""..layoutGroupType.."\")")
+        F:Debug("|cFF7CFC00F:UpdateLayout(\""..layoutGroupType.."\")")
         -- Cell.vars.layoutGroupType = layoutGroupType
         local layout = CellDB["layoutAutoSwitch"][Cell.vars.playerSpecRole][layoutGroupType]
         Cell.vars.currentLayout = layout
@@ -110,8 +110,12 @@ local function PreUpdateLayout()
         Cell.vars.inBattleground = false
         if Cell.vars.groupType == "solo" or Cell.vars.groupType == "party" then
             F:UpdateLayout("party", true)
-        else
-            F:UpdateLayout("raid", true)
+        else -- raid
+            if Cell.vars.inMythic then
+                F:UpdateLayout("mythic", true)
+            else
+                F:UpdateLayout("raid", true)
+            end
         end
     end
 end
@@ -317,6 +321,7 @@ function eventFrame:ADDON_LOADED(arg1)
                 ["TANK"] = {
                     ["party"] = "default",
                     ["raid"] = "default",
+                    ["mythic"] = "default",
                     ["arena"] = "default",
                     ["battleground15"] = "default",
                     ["battleground40"] = "default",
@@ -324,6 +329,7 @@ function eventFrame:ADDON_LOADED(arg1)
                 ["HEALER"] = {
                     ["party"] = "default",
                     ["raid"] = "default",
+                    ["mythic"] = "default",
                     ["arena"] = "default",
                     ["battleground15"] = "default",
                     ["battleground40"] = "default",
@@ -331,6 +337,7 @@ function eventFrame:ADDON_LOADED(arg1)
                 ["DAMAGER"] = {
                     ["party"] = "default",
                     ["raid"] = "default",
+                    ["mythic"] = "default",
                     ["arena"] = "default",
                     ["battleground15"] = "default",
                     ["battleground40"] = "default",
@@ -525,6 +532,7 @@ local inInstance
 function eventFrame:PLAYER_ENTERING_WORLD()
     -- eventFrame:UnregisterEvent("PLAYER_ENTERING_WORLD")
     F:Debug("PLAYER_ENTERING_WORLD")
+    Cell.vars.inMythic = false
 
     local isIn, iType = IsInInstance()
     instanceType = iType
@@ -532,6 +540,18 @@ function eventFrame:PLAYER_ENTERING_WORLD()
         F:Debug("|cffff1111Entered Instance:|r", iType)
         PreUpdateLayout()
         inInstance = true
+
+        -- NOTE: delayed check mythic raid
+        if Cell.vars.groupType == "raid" and iType == "raid" then
+            C_Timer.After(0.5, function()
+                local difficultyID, difficultyName = select(3, GetInstanceInfo()) --! can't get difficultyID, difficultyName immediately after entering an instance
+                Cell.vars.inMythic = difficultyID == 16
+                if Cell.vars.inMythic then
+                    PreUpdateLayout()
+                end
+            end)
+        end
+
     elseif inInstance then -- left insntance
         F:Debug("|cffff1111Left Instance|r")
         PreUpdateLayout()

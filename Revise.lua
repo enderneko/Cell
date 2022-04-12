@@ -1123,5 +1123,15 @@ function F:Revise()
         end
     end
 
+    -- r93-release
+    if CellDB["revise"] and dbRevision < 93 then
+        -- add layout auto switch for Mythic
+        for role, t in pairs(CellDB["layoutAutoSwitch"]) do
+            if not t["mythic"] then
+                t["mythic"] = "default"
+            end
+        end
+    end
+
     CellDB["revise"] = Cell.version
 end

@@ -680,7 +680,7 @@ end)
 -------------------------------------------------
 -- layout
 -------------------------------------------------
-local layoutDropdown, roleDropdown, partyDropdown, raidDropdown, arenaDropdown, bg15Dropdown, bg40Dropdown
+local layoutDropdown, roleDropdown, partyDropdown, raidDropdown, mythicDropdown, arenaDropdown, bg15Dropdown, bg40Dropdown
 local LoadLayoutDropdown, LoadAutoSwitchDropdowns
 local LoadLayoutDB, UpdateButtonStates, LoadLayoutAutoSwitchDB
 
@@ -909,7 +909,7 @@ end
 -------------------------------------------------
 -- layout auto switch
 -------------------------------------------------
-local partyText, raidText, arenaText, bg15Text, bg40Text
+local partyText, raidText, mythicText, arenaText, bg15Text, bg40Text
 
 local function CreateAutoSwitchPane()
     local autoSwitchPane = Cell:CreateTitledPane(layoutsTab, L["Layout Auto Switch"], 205, 200)
@@ -960,6 +960,14 @@ local function CreateAutoSwitchPane()
     raidText = autoSwitchPane:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
     raidText:SetPoint("BOTTOMLEFT", raidDropdown, "TOPLEFT", 0, 1)
     raidText:SetText(L["Raid"])
+    
+    -- mythic
+    mythicDropdown = Cell:CreateDropdown(autoSwitchPane, 90)
+    mythicDropdown:SetPoint("TOPLEFT", raidDropdown, "BOTTOMLEFT", 0, -30)
+    
+    mythicText = autoSwitchPane:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
+    mythicText:SetPoint("BOTTOMLEFT", mythicDropdown, "TOPLEFT", 0, 1)
+    mythicText:SetText(_G.PLAYER_DIFFICULTY6)
     
     -- arena
     arenaDropdown = Cell:CreateDropdown(autoSwitchPane, 90)
@@ -1033,6 +1041,25 @@ LoadAutoSwitchDropdowns = function()
         })
     end
     raidDropdown:SetItems(raidItems)
+    
+    -- mythicDropdown
+    local mythicItems = {}
+    for _, value in pairs(indices) do
+        table.insert(mythicItems, {
+            ["text"] = value == "default" and _G.DEFAULT or value,
+            ["onClick"] = function()
+                CellDB["layoutAutoSwitch"][selectedRole]["mythic"] = value
+                if Cell.vars.inMythic and Cell.vars.groupType == "raid" and selectedRole == Cell.vars.playerSpecRole then
+                    F:UpdateLayout("mythic")
+                    Cell:Fire("UpdateIndicators")
+                    LoadLayoutDB(Cell.vars.currentLayout)
+                    UpdateButtonStates()
+                    UpdateEnabledLayoutText()
+                end
+            end,
+        })
+    end
+    mythicDropdown:SetItems(mythicItems)
 
     -- arenaDropdown
     local arenaItems = {}
@@ -1145,7 +1172,7 @@ local widthSlider, heightSlider, powerSizeSlider, petSizeCB, petWidthSlider, pet
 
 local function CreateButtonSizePane()
     local buttonSizePane = Cell:CreateTitledPane(layoutsTab, L["Unit Button"], 139, 170)
-    buttonSizePane:SetPoint("TOPLEFT", 5, -210)
+    buttonSizePane:SetPoint("TOPLEFT", 5, -215)
     
     -- width
     widthSlider = Cell:CreateSlider(L["Width"], buttonSizePane, 20, 300, 117, 2, function(value)
@@ -1244,7 +1271,7 @@ local orientationDropdown, anchorDropdown, spacingSlider, rcSlider, groupSpacing
 
 local function CreateGroupArrangementPane()
     local groupArrangementPane = Cell:CreateTitledPane(layoutsTab, L["Group Arrangement"], 271, 170)
-    groupArrangementPane:SetPoint("TOPLEFT", 156, -210)
+    groupArrangementPane:SetPoint("TOPLEFT", 156, -215)
 
     -- orientation
     orientationDropdown = Cell:CreateDropdown(groupArrangementPane, 117)
@@ -1434,7 +1461,7 @@ local orientationSwitch, rotateTexCB
 
 local function CreateBarOrientationPane()
     local barOrientationPane = Cell:CreateTitledPane(layoutsTab, L["Bar Orientation"], 205, 80)
-    barOrientationPane:SetPoint("TOPLEFT", 5, -395)
+    barOrientationPane:SetPoint("TOPLEFT", 5, -400)
 
     orientationSwitch = Cell:CreateSwitch(barOrientationPane, {163, 20}, L["Horizontal"], "horizontal", L["Vertical"], "vertical", function(which)
         selectedLayoutTable["barOrientation"][1] = which
@@ -1462,7 +1489,7 @@ local separateNPCCB, showNPCCB
 
 local function CreateNPCPane()
     local npcPane = Cell:CreateTitledPane(layoutsTab, L["Friendly NPC Frame"], 205, 70)
-    npcPane:SetPoint("TOPLEFT", 222, -395)
+    npcPane:SetPoint("TOPLEFT", 222, -400)
 
     showNPCCB = Cell:CreateCheckButton(npcPane, L["Show NPC Frame"], function(checked)
         selectedLayoutTable["friendlyNPC"][1] = checked
@@ -1597,6 +1624,7 @@ LoadLayoutAutoSwitchDB = function(role)
     roleDropdown:SetSelectedValue(role)
     partyDropdown:SetSelected(CellDB["layoutAutoSwitch"][role]["party"] == "default" and _G.DEFAULT or CellDB["layoutAutoSwitch"][role]["party"])
     raidDropdown:SetSelected(CellDB["layoutAutoSwitch"][role]["raid"] == "default" and _G.DEFAULT or CellDB["layoutAutoSwitch"][role]["raid"])
+    mythicDropdown:SetSelected(CellDB["layoutAutoSwitch"][role]["mythic"] == "default" and _G.DEFAULT or CellDB["layoutAutoSwitch"][role]["mythic"])
     arenaDropdown:SetSelected(CellDB["layoutAutoSwitch"][role]["arena"] == "default" and _G.DEFAULT or CellDB["layoutAutoSwitch"][role]["arena"])
     bg15Dropdown:SetSelected(CellDB["layoutAutoSwitch"][role]["battleground15"] == "default" and _G.DEFAULT or CellDB["layoutAutoSwitch"][role]["battleground15"])
     bg40Dropdown:SetSelected(CellDB["layoutAutoSwitch"][role]["battleground40"] == "default" and _G.DEFAULT or CellDB["layoutAutoSwitch"][role]["battleground40"])
