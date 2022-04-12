@@ -52,6 +52,10 @@ select(2, ...).L = setmetatable({
     ["RAID_DEBUFFS_TIPS"] = "Tips: [Drag & Drop] to change debuff order. [Double-Click] on instance name to open Encounter Journal. [Shift+Left Click] on instance/boss name to share debuffs. [Alt+Left Click] on instance/boss name to reset debuffs. The priority of General Debuffs is higher than Boss Debuffs.",
 
     ["CHANGE LOGS"] = [[
+        <h1>r92-release (Apr 12, 2022, 14:30 GMT+8)</h1>
+        <p>* Fixed health color (gradient).</p>
+        <br/>
+
         <h1>r91-release (Apr 12, 2022, 08:35 GMT+8)</h1>
         <p>* Fixed Targeted Spells indicator.</p>
         <p>* Updated Spell Request.</p>
