@@ -509,6 +509,8 @@ L["Special Thanks"] = "蟹蟹"
 L["Translators"] = "翻译"
 L["Slash Commands"] = "斜杠命令"
 L["Bug Report & Suggestion"] = "问题报告与建议"
+L["Import & Export All Settings"] = "导入导出所有设置"
+L["All Cell settings will be overwritten!"] = "所有 Cell 设置将被覆盖！"
 
 -------------------------------------------------
 -- CHANGE LOGS

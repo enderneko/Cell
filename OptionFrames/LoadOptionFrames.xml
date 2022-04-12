@@ -19,5 +19,6 @@
 	<Script file="RaidDebuffs_SL.lua"/>
 	<Script file="Glows.lua"/>
 	<Script file="About.lua"/>
+	<Script file="About_ImportExport.lua"/>
 	<Script file="GlowOptions.lua"/>
 </Ui>

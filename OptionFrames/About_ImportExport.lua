@@ -7,23 +7,23 @@ local Serializer = LibStub:GetLibrary("LibSerialize")
 local LibDeflate = LibStub:GetLibrary("LibDeflate")
 local deflateConfig = {level = 9}
 
-local isImport, imported, exported = false, {}, ""
+local isImport, imported, exported = false, nil, ""
 
 local importExportFrame, importBtn, title, textArea
 
-local function CreateLayoutImportExportFrame()
-    importExportFrame = CreateFrame("Frame", "CellOptionsFrame_LayoutsImportExport", Cell.frames.layoutsTab, "BackdropTemplate")
+local function CreateImportExportFrame()
+    importExportFrame = CreateFrame("Frame", "CellOptionsFrame_ImportExport", Cell.frames.aboutTab, "BackdropTemplate")
     importExportFrame:Hide()
     Cell:StylizeFrame(importExportFrame, nil, Cell:GetPlayerClassColorTable())
     importExportFrame:EnableMouse(true)
     importExportFrame:SetFrameStrata("DIALOG")
-    importExportFrame:SetFrameLevel(Cell.frames.layoutsTab:GetFrameLevel()+20)
+    importExportFrame:SetFrameLevel(Cell.frames.aboutTab:GetFrameLevel()+20)
     P:Size(importExportFrame, 430, 170)
-    importExportFrame:SetPoint("TOPLEFT", P:Scale(1), -100)
+    importExportFrame:SetPoint("BOTTOMLEFT", P:Scale(1), 27)
     
-    if not Cell.frames.layoutsTab.mask then
-        Cell:CreateMask(Cell.frames.layoutsTab, nil, {1, -1, -1, 1})
-        Cell.frames.layoutsTab.mask:Hide()
+    if not Cell.frames.aboutTab.mask then
+        Cell:CreateMask(Cell.frames.aboutTab, nil, {1, -1, -1, 1})
+        Cell.frames.aboutTab.mask:Hide()
     end
 
     -- close
@@ -39,36 +39,16 @@ local function CreateLayoutImportExportFrame()
         -- lower frame level
         importExportFrame:SetFrameStrata("HIGH")
     
-        if CellDB["layouts"][imported["name"]] then
-            local text = L["Overwrite Layout"]..": "..(imported["name"] == "default" and _G.DEFAULT or imported["name"]).."?\n"..
-                L["|cff1Aff1AYes|r - Overwrite"].."\n"..L["|cffff1A1ANo|r - Create New"]
-            local popup = Cell:CreateConfirmPopup(Cell.frames.layoutsTab, 200, text, function(self)
-                -- !overwrite
-                local name = imported["name"]
-                CellDB["layouts"][name] = imported["data"]
-                Cell:Fire("LayoutImported", name)
-                importExportFrame:Hide()
-            end, function(self)
-                -- !create new
-                local name
-                local i = 2
-                repeat
-                    name = imported["name"].." "..i
-                    i = i + 1
-                until not CellDB["layouts"][name]
-    
-                CellDB["layouts"][name] = imported["data"]
-                Cell:Fire("LayoutImported", name)
-                importExportFrame:Hide()
-            end, true)
-            popup:SetPoint("TOPLEFT", importExportFrame, 117, -50)
-        else
-            -- !new
-            local name = imported["name"]
-            CellDB["layouts"][name] = imported["data"]
-            Cell:Fire("LayoutImported", name)
+        local text = "|cFFFF7070"..L["All Cell settings will be overwritten!"].."|r\n"..
+            L["|cff1Aff1AYes|r - Overwrite"].."\n".."|cffff1A1A"..L["No"].."|r - "..L["Cancel"]
+        local popup = Cell:CreateConfirmPopup(Cell.frames.aboutTab, 200, text, function(self)
+            -- !overwrite
+            CellDB = imported
+            ReloadUI()
+        end, function()
             importExportFrame:Hide()
-        end
+        end, true)
+        popup:SetPoint("TOPLEFT", importExportFrame, 117, -50)
     end)
     
     -- title
@@ -79,24 +59,23 @@ local function CreateLayoutImportExportFrame()
     textArea = Cell:CreateScrollEditBox(importExportFrame, function(eb, userChanged)
         if userChanged then
             if isImport then
-                wipe(imported)
+                imported = nil
                 local text = eb:GetText()
                 -- check
-                local version, name, data = string.match(text, "^!CELL:(%d+):([^:]+)!(.+)$")
+                local version, data = string.match(text, "^!CELL:(%d+)!(.+)$")
                 version = tonumber(version)
     
-                if name and version and data then
-                    if version >= Cell.MIN_LAYOUTS_VERSION then
+                if version and data then
+                    if version >= Cell.MIN_VERSION then
                         local success
                         data = LibDeflate:DecodeForPrint(data) -- decode
                         success, data = pcall(LibDeflate.DecompressDeflate, LibDeflate, data) -- decompress
                         success, data = Serializer:Deserialize(data) -- deserialize
                         
                         if success and data then
-                            title:SetText(L["Import"]..": "..(name == "default" and _G.DEFAULT or name))
+                            title:SetText(L["Import"]..": r"..version)
                             importBtn:SetEnabled(true)
-                            imported["name"] = name
-                            imported["data"] = data
+                            imported = data
                         else
                             title:SetText(L["Import"]..": |cffff2222"..L["Error"])
                             importBtn:SetEnabled(false)
@@ -132,23 +111,23 @@ local function CreateLayoutImportExportFrame()
         importExportFrame:Hide()
         isImport = false
         exported = ""
-        wipe(imported)
+        imported = nil
         -- hide mask
-        Cell.frames.layoutsTab.mask:Hide()
+        Cell.frames.aboutTab.mask:Hide()
     end)
     
     importExportFrame:SetScript("OnShow", function()
         -- raise frame level
         importExportFrame:SetFrameStrata("DIALOG")
-        Cell.frames.layoutsTab.mask:Show()
+        Cell.frames.aboutTab.mask:Show()
     end)
 end
 
 local init
-function F:ShowLayoutImportFrame()
+function F:ShowImportFrame()
     if not init then
         init = true    
-        CreateLayoutImportExportFrame()
+        CreateImportExportFrame()
     end
 
     importExportFrame:Show()
@@ -162,21 +141,21 @@ function F:ShowLayoutImportFrame()
     textArea.eb:SetFocus(true)
 end
 
-function F:ShowLayoutExportFrame(layoutName, layoutTable)
+function F:ShowExportFrame()
     if not init then
         init = true    
-        CreateLayoutImportExportFrame()
+        CreateImportExportFrame()
     end
 
     importExportFrame:Show()
     isImport = false
     importBtn:Hide()
 
-    title:SetText(L["Export"]..": "..(layoutName == "default" and _G.DEFAULT or layoutName))
+    title:SetText(L["Export"]..": "..Cell.version)
 
-    local prefix = "!CELL:"..(tonumber(string.match(Cell.version, "%d+")) or 0)..":"..layoutName.."!"
+    local prefix = "!CELL:"..(tonumber(string.match(Cell.version, "%d+")) or 0).."!"
 
-    exported = Serializer:Serialize(layoutTable) -- serialize
+    exported = Serializer:Serialize(CellDB) -- serialize
     exported = LibDeflate:CompressDeflate(exported, deflateConfig) -- compress
     exported = LibDeflate:EncodeForPrint(exported) -- encode
     exported = prefix..exported

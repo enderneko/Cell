@@ -63,7 +63,7 @@ local function CreateSpecialThanksPane()
     local specialThanksPane = Cell:CreateTitledPane(aboutTab, L["Special Thanks"], 205, 80)
     specialThanksPane:SetPoint("TOPLEFT", aboutTab, "TOPLEFT", 5, -255)
 
-    local thanksText = specialThanksPane:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
+    local thanksText = specialThanksPane:CreateFontString(nil, "OVERLAY", LOCALE_zhCN and "CELL_FONT_WIDGET" or "GameTooltipTextSmall")
     thanksText:SetPoint("TOPLEFT", 5, -27)
     thanksText:SetSpacing(5)
     thanksText:SetJustifyH("LEFT")
@@ -101,20 +101,37 @@ local function CreateBugReportPane()
         end
     end)
     
-    if LOCALE_zhCN then
-        local cnbugReportEB = Cell:CreateEditBox(bugReportPane, 412, 20)
-        cnbugReportEB:SetPoint("TOPLEFT", bugReportEB, "BOTTOMLEFT", 0, -5)
-        cnbugReportEB:SetText("https://bbs.nga.cn/read.php?tid=23488341")
-        cnbugReportEB:SetScript("OnTextChanged", function(self, userChanged)
-            if userChanged then
-                cnbugReportEB:SetText("https://bbs.nga.cn/read.php?tid=23488341")
-                cnbugReportEB:HighlightText()
-            end
-        end)
+    local cnbugReportEB = Cell:CreateEditBox(bugReportPane, 412, 20)
+    cnbugReportEB:SetPoint("TOPLEFT", bugReportEB, "BOTTOMLEFT", 0, -5)
+    cnbugReportEB:SetText("https://bbs.nga.cn/read.php?tid=23488341")
+    cnbugReportEB:SetScript("OnTextChanged", function(self, userChanged)
+        if userChanged then
+            cnbugReportEB:SetText("https://bbs.nga.cn/read.php?tid=23488341")
+            cnbugReportEB:HighlightText()
+        end
+    end)
         
-    end
 end
 
+-------------------------------------------------
+-- import & export
+-------------------------------------------------
+local function CreateImportExportPane()
+    local iePane = Cell:CreateTitledPane(aboutTab, L["Import & Export All Settings"], 422, 50)
+    iePane:SetPoint("TOPLEFT", 5, -448)
+
+    local importBtn = Cell:CreateButton(iePane, L["Import"], "class-hover", {200, 20})
+    importBtn:SetPoint("TOPLEFT", 5, -27)
+    importBtn:SetScript("OnClick", F.ShowImportFrame)
+    
+    local exportBtn = Cell:CreateButton(iePane, L["Export"], "class-hover", {200, 20})
+    exportBtn:SetPoint("TOPRIGHT", -5, -27)
+    exportBtn:SetScript("OnClick", F.ShowExportFrame)
+end
+
+-------------------------------------------------
+-- functions
+-------------------------------------------------
 local init
 local function ShowTab(tab)
     if tab == "about" then
@@ -126,6 +143,7 @@ local function ShowTab(tab)
             CreateSpecialThanksPane()
             CreateTranslatorsPane()
             CreateBugReportPane()
+            CreateImportExportPane()
         end
         aboutTab:Show()
         descriptionPane:SetTitle("Cell "..Cell.version)
