@@ -1062,7 +1062,7 @@ function F:Revise()
             CellDB["appearance"]["barColor"][1] = "class_color_dark"
         elseif CellDB["appearance"]["barColor"][1] == "Gradient" then
             CellDB["appearance"]["barColor"][1] = "gradient"
-        elseif CellDB["appearance"]["barColor"][1] == "Custom" then
+        elseif CellDB["appearance"]["barColor"][1] == "Custom Color" then
             CellDB["appearance"]["barColor"][1] = "custom"
         end
 
@@ -1073,7 +1073,7 @@ function F:Revise()
             CellDB["appearance"]["lossColor"][1] = "class_color_dark"
         elseif CellDB["appearance"]["lossColor"][1] == "Gradient" then
             CellDB["appearance"]["lossColor"][1] = "gradient"
-        elseif CellDB["appearance"]["lossColor"][1] == "Custom" then
+        elseif CellDB["appearance"]["lossColor"][1] == "Custom Color" then
             CellDB["appearance"]["lossColor"][1] = "custom"
         end
 

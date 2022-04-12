@@ -762,6 +762,11 @@ local function UpdateAppearance(which)
             end
             -- color
             if not which or which == "color" or which == "alpha" then
+                if strfind(CellDB["appearance"]["barColor"][1], "gradient") or strfind(CellDB["appearance"]["lossColor"][1], "gradient") then
+                    Cell.vars.useGradientColor = true
+                else
+                    Cell.vars.useGradientColor = nil
+                end
                 b.func.UpdateColor()
             end
             -- outOfRangeAlpha
