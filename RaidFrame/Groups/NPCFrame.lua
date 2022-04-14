@@ -121,7 +121,6 @@ cleu:SetScript("OnEvent", function()
         if subEvent == "SPELL_HEAL" or subEvent == "SPELL_PERIODIC_HEAL" or subEvent == "SPELL_DAMAGE" or subEvent == "SPELL_PERIODIC_DAMAGE" then
             -- print("UpdateHealth:", boss678_guidToButton[destGUID]:GetName())
             boss678_guidToButton[destGUID].func.UpdateHealth(boss678_guidToButton[destGUID])
-            boss678_guidToButton[destGUID].func.UpdateHealthMax(boss678_guidToButton[destGUID])
         elseif subEvent == "SPELL_AURA_REFRESH" or subEvent == "SPELL_AURA_APPLIED" or subEvent == "SPELL_AURA_REMOVED" or subEvent == "SPELL_AURA_APPLIED_DOSE" or subEvent == "SPELL_AURA_REMOVED_DOSE" then
             boss678_guidToButton[destGUID].func.UpdateAuras(boss678_guidToButton[destGUID])
         end
@@ -139,26 +138,26 @@ for i = 6, 8 do
         
         -- update now
         button.func.UpdateAll(button)
-
-        if not cleu:IsEventRegistered("COMBAT_LOG_EVENT_UNFILTERED") then
-            cleu:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
-            -- texplore(boss678_guidToButton)
-            -- texplore(boss678_buttonToGuid)
-        end
     end)
     
     button.helper:HookScript("OnHide", function()
         boss678_guidToButton[boss678_buttonToGuid[i] or ""] = nil
         boss678_buttonToGuid[i] = nil
+
+        button.helper.elapsed = nil
+        button.helper.elapsed2 = nil
+        button.helper.elapsed3 = nil
+
         if F:Getn(boss678_buttonToGuid) == 0 then
-            if cleu:IsEventRegistered("COMBAT_LOG_EVENT_UNFILTERED") then
-                cleu:UnregisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
-            end
+            cleu:UnregisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
         end
     end)
 
     button.helper:HookScript("OnUpdate", function(self, elapsed)
         button.helper.elapsed = (button.helper.elapsed or 0) + elapsed
+        button.helper.elapsed2 = (button.helper.elapsed2 or 0) + elapsed
+        button.helper.elapsed3 = (button.helper.elapsed3 or 0) + elapsed
+
         if button.helper.elapsed >= 0.25 then
             local guid = UnitGUID(button.state.unit)
             -- check old guid
@@ -172,6 +171,19 @@ for i = 6, 8 do
                 button.func.UpdateAll(button)
             end
             button.helper.elapsed = 0
+        end
+
+        if button.helper.elapsed2 >= 1 then
+            if not cleu:IsEventRegistered("COMBAT_LOG_EVENT_UNFILTERED") then
+                cleu:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
+            end
+            button.helper.elapsed2 = 0
+        end
+
+        if button.helper.elapsed3 >= 5 then
+            button.func.UpdateHealth(button)
+            button.func.UpdateHealthMax(button)
+            button.helper.elapsed3 = 0
         end
     end)
 end
