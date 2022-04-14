@@ -7,7 +7,7 @@ function F:Revise()
     local dbRevision = CellDB["revise"] and tonumber(string.match(CellDB["revise"], "%d+")) or 0
     F:Debug("DBRevision:", dbRevision)
 
-    if CellDB["revise"] and dbRevision < 62 then -- update from an unsupported version
+    if CellDB["revise"] and dbRevision < 81 then -- update from an unsupported version
         local f = CreateFrame("Frame")
         f:RegisterEvent("PLAYER_ENTERING_WORLD")
         f:SetScript("OnEvent", function()
@@ -21,7 +21,7 @@ function F:Revise()
         return
     end
 
-    --[[
+    --[=[
     -- r4-alpha add "castByMe"
     if not(CellDB["revise"]) or CellDB["revise"] < "r4-alpha" then
         for _, layout in pairs(CellDB["layouts"]) do
@@ -740,7 +740,6 @@ function F:Revise()
             end
         end
     end
-    ]]
 
     -- r63-release
     if CellDB["revise"] and dbRevision < 63 then
@@ -978,6 +977,7 @@ function F:Revise()
             CellDB["raidTools"]["buttonsPosition"] = nil
         end
     end
+    ]=]
     
     -- r82-release
     if CellDB["revise"] and dbRevision < 82 then
