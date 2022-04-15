@@ -1,7 +1,7 @@
 local addonName, Cell = ...
 
 -- number of built-in indicators
-Cell.defaults.builtIns = 22
+Cell.defaults.builtIns = 23
 
 Cell.defaults.layout = {
     ["size"] = {66, 46},
@@ -203,6 +203,19 @@ Cell.defaults.layout = {
             ["font"] = {"Cell ".._G.DEFAULT, 11, "Outline", 2},
         }, -- 16
         {
+            ["name"] = "Externals + Defensives",
+            ["indicatorName"] = "allCooldowns",
+            ["type"] = "built-in",
+            ["enabled"] = false,
+            ["position"] = {"LEFT", "LEFT", -2, 5},
+            ["frameLevel"] = 10,
+            ["size"] = {12, 20},
+            ["showDuration"] = false,
+            ["num"] = 2,
+            ["orientation"] = "left-to-right",
+            ["font"] = {"Cell ".._G.DEFAULT, 11, "Outline", 2},
+        }, -- 17
+        {
             ["name"] = "Tank Active Mitigation",
             ["indicatorName"] = "tankActiveMitigation",
             ["type"] = "built-in",
@@ -210,7 +223,7 @@ Cell.defaults.layout = {
             ["position"] = {"TOPLEFT", "TOPLEFT", 10, -1},
             ["frameLevel"] = 2,
             ["size"] = {18, 4},
-        }, -- 17
+        }, -- 18
         {
             ["name"] = "Dispels",
             ["indicatorName"] = "dispels",
@@ -221,7 +234,7 @@ Cell.defaults.layout = {
             ["size"] = {12, 12},
             ["dispellableByMe"] = true,
             ["enableHighlight"] = true,
-        }, -- 18
+        }, -- 19
         {
             ["name"] = "Debuffs",
             ["indicatorName"] = "debuffs",
@@ -261,7 +274,7 @@ Cell.defaults.layout = {
                 -- 358777, -- 痛苦之链
                 -----------------------------------------------
             },
-        }, -- 19
+        }, -- 20
         {
             ["name"] = "Raid Debuffs",
             ["indicatorName"] = "raidDebuffs",
@@ -277,7 +290,7 @@ Cell.defaults.layout = {
             -- ["stackFont"] = {"Cell ".._G.DEFAULT, 11, "Outline", "RIGHT", 2, 0},
             ["onlyShowTopGlow"] = true,
             ["orientation"] = "left-to-right",
-        }, -- 20
+        }, -- 21
         {
             ["name"] = "Targeted Spells",
             ["indicatorName"] = "targetedSpells",
@@ -307,7 +320,7 @@ Cell.defaults.layout = {
             },
             ["glow"] = {"Pixel", {0.95,0.95,0.32,1}, 9, .25, 8, 2},
             ["font"] = {"Cell ".._G.DEFAULT, 12, "Outline", 2},
-        }, -- 21
+        }, -- 22
         {
             ["name"] = "Target Counter",
             ["indicatorName"] = "targetCounter",
@@ -317,6 +330,6 @@ Cell.defaults.layout = {
             ["frameLevel"] = 15,
             ["font"] = {"Cell ".._G.DEFAULT, 15, "Outline", 0},
             ["color"] = {1, .1, .1},
-        }, -- 22
+        }, -- 23
     },
 }

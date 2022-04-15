@@ -144,7 +144,7 @@ end
 local function CreateColorPicker()
     local name = addonName.."ColorPicker"
 
-    colorPicker = addon:CreateMovableFrame(L["Color Picker"], name, 216, 295, "DIALOG", 1, true)
+    colorPicker = addon:CreateMovableFrame(_G.COLOR_PICKER, name, 216, 295, "DIALOG", 1, true)
     colorPicker:SetIgnoreParentScale(true)
     colorPicker:SetPoint("CENTER")
     colorPicker.header.closeBtn:Hide()

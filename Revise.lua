@@ -1131,6 +1131,25 @@ function F:Revise()
                 t["mythic"] = "default"
             end
         end
+
+        -- add allCooldowns
+        for _, layout in pairs(CellDB["layouts"]) do
+            if layout["indicators"][17] and layout["indicators"][17]["indicatorName"] ~= "allCooldowns" then
+                tinsert(layout["indicators"], 17, {
+                    ["name"] = "Externals + Defensives",
+                    ["indicatorName"] = "allCooldowns",
+                    ["type"] = "built-in",
+                    ["enabled"] = false,
+                    ["position"] = {"LEFT", "LEFT", -2, 5},
+                    ["frameLevel"] = 10,
+                    ["size"] = {12, 20},
+                    ["showDuration"] = false,
+                    ["num"] = 2,
+                    ["orientation"] = "left-to-right",
+                    ["font"] = {"Cell ".._G.DEFAULT, 11, "Outline", 2},
+                })
+            end
+        end
     end
 
     CellDB["revise"] = Cell.version

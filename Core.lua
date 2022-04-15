@@ -15,7 +15,7 @@ local L = Cell.L
 -- sharing version check
 Cell.MIN_VERSION = 93
 Cell.MIN_LAYOUTS_VERSION = 87
-Cell.MIN_INDICATORS_VERSION = 83
+Cell.MIN_INDICATORS_VERSION = 93
 Cell.MIN_DEBUFFS_VERSION = 78
 
 --@debug@

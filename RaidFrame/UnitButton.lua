@@ -805,7 +805,7 @@ local function UnitButton_UpdateBuffs(self)
     I:ResetCustomIndicators(unit, "buff")
 
     local refreshing, countIncreased, justApplied
-    local defensiveFound, externalFound, tankActiveMitigationFound, drinkingFound = 1, 1, false, false
+    local defensiveFound, externalFound, allFound, tankActiveMitigationFound, drinkingFound = 1, 1, 1, false, false
     for i = 1, 40 do
         -- name, icon, count, debuffType, duration, expirationTime, source, isStealable, nameplateShowPersonal, spellId, canApplyAura, isBossDebuff, castByPlayer, nameplateShowAll, timeMod, ...
         local name, icon, count, debuffType, duration, expirationTime, source, isStealable, nameplateShowPersonal, spellId = UnitBuff(unit, i)
@@ -836,6 +836,13 @@ local function UnitButton_UpdateBuffs(self)
                 -- start, duration, debuffType, texture, count, refreshing
                 self.indicators.externalCooldowns[externalFound]:SetCooldown(expirationTime - duration, duration, nil, icon, count, refreshing)
                 externalFound = externalFound + 1
+            end
+
+            -- allCooldowns
+            if enabledIndicators["allCooldowns"] and (I:IsExternalCooldown(name, source, unit) or I:IsDefensiveCooldown(name)) and allFound <= indicatorNums["allCooldowns"] then
+                -- start, duration, debuffType, texture, count, refreshing
+                self.indicators.allCooldowns[allFound]:SetCooldown(expirationTime - duration, duration, nil, icon, count, refreshing)
+                allFound = allFound + 1
             end
 
             -- tankActiveMitigation
@@ -881,6 +888,11 @@ local function UnitButton_UpdateBuffs(self)
     -- hide other externalCooldowns
     for i = externalFound, 5 do
         self.indicators.externalCooldowns[i]:Hide()
+    end
+    
+    -- hide other allCooldowns
+    for i = allFound, 5 do
+        self.indicators.allCooldowns[i]:Hide()
     end
     
     -- hide tankActiveMitigation
@@ -2692,6 +2704,7 @@ function F:UnitButton_OnLoad(button)
     I:CreateAoEHealing(button)
     I:CreateDefensiveCooldowns(button)
     I:CreateExternalCooldowns(button)
+    I:CreateAllCooldowns(button)
     I:CreateTankActiveMitigation(button)
     I:CreateDebuffs(button)
     I:CreateDispels(button)

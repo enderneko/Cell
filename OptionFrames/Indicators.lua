@@ -279,6 +279,22 @@ local function InitIndicator(indicatorName)
                 end)
             end)
         end
+    elseif indicatorName == "allCooldowns" then
+        local icons = {135936, 136120, 135966, 132362, 237542}
+        for i = 1, 5 do
+            indicator[i]:SetScript("OnShow", function()
+                indicator[i]:SetCooldown(GetTime(), 8, nil, icons[i], 0)
+                indicator[i].cooldown:SetScript("OnUpdate", nil)
+                indicator[i]:SetScript("OnUpdate", function(self, elapsed)
+                    self.value = (self.value or 0) + elapsed
+                    if self.value >= 8 then
+                        self.value = 0
+                    end
+                    self.duration:SetText(string.format("%d", 8-self.value))
+                    self.cooldown:SetValue(self.value)
+                end)
+            end)
+        end
     elseif string.find(indicatorName, "indicator") then
         if indicator.indicatorType == "icons" then
             for i = 1, 10 do
@@ -966,6 +982,7 @@ local indicatorSettings = {
     ["aoeHealing"] = {"enabled", "color", "height"},
     ["externalCooldowns"] = {"enabled", "checkbutton2:showDuration:"..L["Show duration text instead of icon animation"], "num:5", "orientation", "position", "frameLevel", "size", "font"},
     ["defensiveCooldowns"] = {"enabled", "checkbutton2:showDuration:"..L["Show duration text instead of icon animation"], "num:5", "orientation", "position", "frameLevel", "size", "font"},
+    ["allCooldowns"] = {L["Externals + Defensives, no need to enable all of them"], "enabled", "checkbutton2:showDuration:"..L["Show duration text instead of icon animation"], "num:5", "orientation", "position", "frameLevel", "size", "font"},
     ["tankActiveMitigation"] = {"|cffb7b7b7"..I:GetTankActiveMitigationString(), "enabled", "position", "frameLevel", "size"},
     ["dispels"] = {"enabled", "checkbutton:dispellableByMe", "checkbutton2:enableHighlight", "position", "frameLevel", "size-square"},
     ["debuffs"] = {"enabled", "checkbutton:dispellableByMe", "blacklist", "bigDebuffs", "checkbutton2:showDuration:"..L["Show duration text instead of icon animation"], "num:10", "orientation", "position", "frameLevel", "size-normal-big", "font"},

@@ -170,6 +170,87 @@ function I:CreateExternalCooldowns(parent)
 end
 
 -------------------------------------------------
+-- CreateAllCooldowns
+-------------------------------------------------
+function I:CreateAllCooldowns(parent)
+    local allCooldowns = CreateFrame("Frame", parent:GetName().."AllCooldownParent", parent.widget.overlayFrame)
+    parent.indicators.allCooldowns = allCooldowns
+    allCooldowns:Hide()
+
+    allCooldowns.OriginalSetSize = allCooldowns.SetSize
+
+    function allCooldowns:SetSize(width, height)
+        allCooldowns:OriginalSetSize(width, height)
+        for i = 1, 5 do
+            P:Size(allCooldowns[i], width, height)
+        end
+    end
+
+    function allCooldowns:SetFont(font, ...)
+        font = F:GetFont(font)
+        for i = 1, 5 do
+            allCooldowns[i]:SetFont(font, ...)
+        end
+    end
+
+    function allCooldowns:SetOrientation(orientation)
+        local point1, point2, x, y
+        if orientation == "left-to-right" then
+            point1 = "LEFT"
+            point2 = "RIGHT"
+            x = -1
+            y = 0
+        elseif orientation == "right-to-left" then
+            point1 = "RIGHT"
+            point2 = "LEFT"
+            x = 1
+            y = 0
+        elseif orientation == "top-to-bottom" then
+            point1 = "TOP"
+            point2 = "BOTTOM"
+            x = 0
+            y = 1
+        elseif orientation == "bottom-to-top" then
+            point1 = "BOTTOM"
+            point2 = "TOP"
+            x = 0
+            y = -1
+        end
+        
+        for i = 2, 5 do
+            P:ClearPoints(allCooldowns[i])
+            P:Point(allCooldowns[i], point1, allCooldowns[i-1], point2, x, y)
+        end
+    end
+
+    for i = 1, 5 do
+        local name = parent:GetName().."ExternalCooldown"..i
+        local frame = I:CreateAura_BarIcon(name, allCooldowns)
+        tinsert(allCooldowns, frame)
+
+        if i == 1 then
+            P:Point(frame, "TOPLEFT")
+        else
+            P:Point(frame, "RIGHT", allCooldowns[i-1], "LEFT", 1, 0)
+        end
+	end
+
+    function allCooldowns:ShowDuration(show)
+        for i = 1, 5 do
+            allCooldowns[i]:ShowDuration(show)
+        end
+    end
+
+    function allCooldowns:UpdatePixelPerfect()
+        P:Resize(allCooldowns)
+        P:Repoint(allCooldowns)
+        for i = 1, 5 do
+            allCooldowns[i]:UpdatePixelPerfect()
+        end
+    end
+end
+
+-------------------------------------------------
 -- CreateTankActiveMitigation
 -------------------------------------------------
 function I:CreateTankActiveMitigation(parent)
