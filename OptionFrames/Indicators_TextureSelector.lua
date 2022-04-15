@@ -23,7 +23,7 @@ local function CreateTextureSelector()
     textureSelector:SetHeight(235)
 
     -- add
-    local addEB = Cell:CreateEditBox(textureSelector, 327, 20)
+    local addEB = Cell:CreateEditBox(textureSelector, 355, 20)
     addEB:SetPoint("TOPLEFT", 5, -5)
     addEB.tip = addEB:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
     addEB.tip:SetTextColor(0.4, 0.4, 0.4, 1)
@@ -40,12 +40,12 @@ local function CreateTextureSelector()
         end
     end)
 
-    local addBtn = Cell:CreateButton(textureSelector, L["Add"], "class", {94, 20})
+    local addBtn = Cell:CreateButton(textureSelector, L["Add"], "class", {66, 20})
     addBtn:SetPoint("TOPLEFT", addEB, "TOPRIGHT", -1, 0)
     addBtn:SetScript("OnClick", function()
         local path = strtrim(addEB:GetText())
         -- check whether exists
-        if not F:TContains(CellDB["customTextures"], path) then
+        if path ~= "" and not F:TContains(CellDB["customTextures"], path) then
             -- update db
             tinsert(CellDB["customTextures"], path)
             -- reload
@@ -54,7 +54,7 @@ local function CreateTextureSelector()
     end)
 
     -- cancel
-    local cancelBtn = Cell:CreateButton(textureSelector, L["Cancel"], "red", {50, 20})
+    local cancelBtn = Cell:CreateButton(textureSelector, L["Cancel"], "red", {70, 20})
     cancelBtn:SetPoint("BOTTOMRIGHT")
     cancelBtn:SetBackdropBorderColor(unpack(Cell:GetPlayerClassColorTable()))
     cancelBtn:SetScript("OnClick", function()
@@ -62,7 +62,7 @@ local function CreateTextureSelector()
     end)
 
     -- OK
-    confirmBtn = Cell:CreateButton(textureSelector, L["Confirm"], "green", {50, 20})
+    confirmBtn = Cell:CreateButton(textureSelector, L["Confirm"], "green", {70, 20})
     confirmBtn:SetPoint("BOTTOMRIGHT", cancelBtn, "BOTTOMLEFT", P:Scale(1), 0)
     confirmBtn:SetBackdropBorderColor(unpack(Cell:GetPlayerClassColorTable()))
 
