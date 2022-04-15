@@ -136,6 +136,24 @@ function F:Utf8sub(str, startChar, numChars)
     return str:sub(startIndex, currentIndex - 1)
 end
 
+function F:FitWidth(fs, text, alignment)
+    fs:SetText(text)
+
+    if fs:IsTruncated() then
+        for i = 1, string.utf8len(text) do
+            if strlower(alignment) == "right" then
+                fs:SetText("..."..string.utf8sub(text, i))
+            else
+                fs:SetText(string.utf8sub(text, i).."...")
+            end
+            
+            if not fs:IsTruncated() then
+                break
+            end
+        end
+    end
+end
+
 -------------------------------------------------
 -- table
 -------------------------------------------------
@@ -782,6 +800,56 @@ function F:RotateTexture(texture, degrees)
     local URx, URy = CalculateCorner(degrees - 45)
     
     texture:SetTexCoord(ULx, ULy, LLx, LLy, URx, URy, LRx, LRy)
+end
+
+-- shapes
+local shapes = {
+    "circle_filled",
+    "circle_thin",
+    "circle",
+    "heart_filled",
+    "heart",
+    "square_filled",
+    "square",
+    "star_filled",
+    "star",
+    "starburst_filled",
+    "starburst",
+    "triangle_filled",
+    "triangle"
+}
+
+local powaTextures = {
+    9, 10, 12, 13, 14, 15, 21, 22, 25, 27, 29,
+    37, 38, 39, 40, 41, 42, 43, 44,
+    45, 49, 51, 52, 53, 58, 78, 118, 84,
+    96, 97, 98, 99, 100, 114, 115, 116, 132, 138, 143
+}
+
+function F:GetTextures()
+    local builtIns = #shapes
+
+    local t = {}
+    
+    -- built-ins
+    for _, s in pairs(shapes) do
+        tinsert(t, "Interface\\AddOns\\Cell\\Media\\Shapes\\"..s..".tga")
+    end
+    
+    -- add weakauras textures
+    if WeakAuras then
+        builtIns = builtIns + #powaTextures
+        for _, powa in pairs(powaTextures) do
+            tinsert(t, "Interface\\AddOns\\WeakAuras\\PowerAurasMedia\\Auras\\Aura"..powa..".tga")
+        end
+    end
+
+    -- customs
+    for _, path in pairs(CellDB["customTextures"]) do
+        tinsert(t, path)
+    end
+
+    return builtIns, t
 end
 
 -------------------------------------------------

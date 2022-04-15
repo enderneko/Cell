@@ -94,7 +94,7 @@ Cell.defaults.layout = {
             ["enabled"] = true,
             ["position"] = {"TOPLEFT", "TOPLEFT", 0, 0},
             ["size"] = {11, 11},
-            ["customTextures"] = {false, "Interface\\AddOns\\ElvUI\\Media\\Textures\\Tank.tga", "Interface\\AddOns\\ElvUI\\Media\\Textures\\Healer.tga", "Interface\\AddOns\\ElvUI\\Media\\Textures\\DPS.tga"},
+            ["customTextures"] = {false, "Interface\\AddOns\\ElvUI\\Core\\Media\\Textures\\Tank.tga", "Interface\\AddOns\\ElvUI\\Core\\Media\\Textures\\Healer.tga", "Interface\\AddOns\\ElvUI\\Core\\Media\\Textures\\DPS.tga"},
         }, -- 5
         {
             ["name"] = "Leader Icon",

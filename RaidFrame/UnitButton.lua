@@ -193,6 +193,10 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                 if t["colors"] then
                     indicator:SetColors(t["colors"])
                 end
+                -- update texture
+                if t["texture"] then
+                    indicator:SetTexture(t["texture"])
+                end
                 -- update dispel highlight
                 if type(t["enableHighlight"]) == "boolean" then
                     indicator:EnableHighlight(t["enableHighlight"])
@@ -403,6 +407,11 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                 indicator:SetCustomTexture(value)
                 UnitButton_UpdateRole(b)
             end, true)
+        elseif setting == "texture" then
+            F:IterateAllUnitButtons(function(b)
+                local indicator = b.indicators[indicatorName]
+                indicator:SetTexture(value)
+            end, true)
         elseif setting == "checkbutton" then
             if value == "hideFull" then
                 --! 血量文字指示器需要立即被刷新
@@ -444,6 +453,10 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                 if value["size"] then
                     P:Size(indicator, value["size"][1], value["size"][2])
                 end
+                -- update size
+                if value["frameLevel"] then
+                    indicator:SetFrameLevel(b.widget.overlayFrame:GetFrameLevel()+value["frameLevel"])
+                end
                 -- update orientation
                 if value["orientation"] then
                     indicator:SetOrientation(value["orientation"])
@@ -459,6 +472,10 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                 -- update colors
                 if value["colors"] then
                     indicator:SetColors(value["colors"])
+                end
+                -- update texture
+                if value["texture"] then
+                    indicator:SetTexture(value["texture"])
                 end
                 -- update showDuration
                 if value["showDuration"] then

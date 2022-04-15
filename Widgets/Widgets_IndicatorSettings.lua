@@ -2310,6 +2310,67 @@ local function CreateSetting_Glow(parent)
     return widget
 end
 
+local function CreateSetting_Texture(parent)
+    local widget
+
+    if not settingWidgets["texture"] then
+        widget = addon:CreateFrame("CellIndicatorSettings_Texture", parent, 240, 100)
+        settingWidgets["texture"] = widget
+
+        widget.pathBox = addon:CreateFrame(nil, widget, 216, 20)
+        addon:StylizeFrame(widget.pathBox, {0.115, 0.115, 0.115, 1}, {0, 0, 0, 1})
+        widget.pathBox:SetPoint("TOPLEFT", 5, -20)
+        widget.pathBox:Show()
+
+        widget.path = widget.pathBox:CreateFontString(nil, "OVERLAY", font_name)
+        widget.path:SetPoint("LEFT", 5, 0)
+        widget.path:SetPoint("RIGHT", -5, 0)
+        widget.path:SetWordWrap(false)
+
+        widget.button = addon:CreateButton(parent, "...", "class", {30, 20})
+        widget.button:SetPoint("TOPLEFT", widget.pathBox, "TOPRIGHT", P:Scale(-1), 0)
+        widget.button:SetScript("OnClick", function()
+            F:ShowTextureSelector(widget.selected, function(path)
+                widget.selected = path
+                widget.func({path, widget.rotation:GetValue(), widget.colorPicker:GetColor()})
+            end)
+        end)
+
+        widget.pathText = widget:CreateFontString(nil, "OVERLAY", font_name)
+        widget.pathText:SetText(L["Texture"])
+        widget.pathText:SetPoint("BOTTOMLEFT", widget.pathBox, "TOPLEFT", 0, 1)
+
+        widget.rotation = addon:CreateSlider(L["Rotation"], widget, -180, 180, 110, 1)
+        widget.rotation:SetPoint("TOPLEFT", widget.pathBox, "BOTTOMLEFT", 0, -25)
+        widget.rotation.afterValueChangedFn = function(value)
+            widget.func({widget.selected, value, widget.colorPicker:GetColor()})
+        end
+
+        widget.colorPicker = addon:CreateColorPicker(widget, L["Color"], true, function(r, g, b, a)
+            widget.func({widget.selected, widget.rotation:GetValue(), widget.colorPicker:GetColor()})
+        end)
+        widget.colorPicker:SetPoint("TOPLEFT", widget.rotation, "TOPRIGHT", 25, 0)
+
+        -- associate db
+        function widget:SetFunc(func)
+            widget.func = func
+        end
+
+        -- show db value
+        function widget:SetDBValue(t)
+            widget.selected = t[1]
+            F:FitWidth(widget.path, t[1], "right")
+            widget.rotation:SetValue(t[2])
+            widget.colorPicker:SetColor(t[3])
+        end
+    else
+        widget = settingWidgets["texture"]
+    end
+
+    widget:Show()
+    return widget
+end
+
 local auraButtons1 = {}
 local auraButtons2 = {}
 local GetSpellInfo = GetSpellInfo
@@ -2819,6 +2880,8 @@ function addon:CreateIndicatorSettings(parent, settingsTable)
             tinsert(widgetsTable, CreateSetting_CustomTextures(parent))
         elseif setting == "glow" then
             tinsert(widgetsTable, CreateSetting_Glow(parent))
+        elseif setting == "texture" then
+            tinsert(widgetsTable, CreateSetting_Texture(parent))
         elseif setting == "auras" or setting == "blacklist" or setting == "spells" then
             tinsert(widgetsTable, CreateSetting_Auras(parent))
         elseif setting == "auras2" or setting == "bigDebuffs" then

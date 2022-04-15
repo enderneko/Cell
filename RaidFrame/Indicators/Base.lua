@@ -652,6 +652,28 @@ function I:CreateAura_Color(name, parent)
 end
 
 -------------------------------------------------
+-- CreateAura_Texture
+-------------------------------------------------
+function I:CreateAura_Texture(name, parent)
+    local texture = CreateFrame("Frame", name, parent)
+    
+    local tex = texture:CreateTexture(name, "OVERLAY")
+    tex:SetAllPoints(texture)
+
+    function texture:SetCooldown()
+        texture:Show()
+    end
+    
+    function texture:SetTexture(texTbl) -- texture, rotation, color
+        tex:SetTexture(texTbl[1])
+        tex:SetRotation(texTbl[2] * math.pi / 180)
+        tex:SetVertexColor(unpack(texTbl[3]))
+    end
+
+    return texture
+end
+
+-------------------------------------------------
 -- CreateAura_Icons
 -------------------------------------------------
 function I:CreateAura_Icons(name, parent, num)

@@ -71,7 +71,7 @@ local function InitIndicator(indicatorName)
         indicator:UpdateName()
         indicator:UpdateVehicleName()
         -- texture type cannot glow by LCG
-        indicator.preview = CreateFrame("Frame", nil, previewButton)
+        indicator.preview = indicator.preview or CreateFrame("Frame", nil, previewButton)
         indicator.preview:SetAllPoints(indicator)
 
     elseif indicatorName == "statusText" then
@@ -134,7 +134,7 @@ local function InitIndicator(indicatorName)
         indicator:SetTexture("Interface\\AddOns\\Cell\\Media\\UI-LFG-ICON-PORTRAITROLES.blp")
         indicator:SetTexCoord(GetTexCoordsForRoleSmallCircle("DAMAGER"))
         -- texture type cannot glow by LCG
-        indicator.preview = CreateFrame("Frame", nil, previewButton)
+        indicator.preview = indicator.preview or CreateFrame("Frame", nil, previewButton)
         indicator.preview:SetAllPoints(indicator)
         indicator.roles = {"TANK", "HEALER", "DAMAGER"}
         indicator.role = 1
@@ -151,7 +151,7 @@ local function InitIndicator(indicatorName)
     elseif indicatorName == "leaderIcon" then
         indicator:SetTexture("Interface\\GroupFrame\\UI-Group-LeaderIcon")
         -- texture type cannot glow by LCG
-        indicator.preview = CreateFrame("Frame", nil, previewButton)
+        indicator.preview = indicator.preview or CreateFrame("Frame", nil, previewButton)
         indicator.preview:SetAllPoints(indicator)
         
     elseif indicatorName == "readyCheckIcon" then
@@ -314,9 +314,12 @@ local function InitIndicator(indicatorName)
             end)
         elseif indicator.indicatorType == "color" then
             -- texture type cannot glow by LCG
-            indicator.preview = CreateFrame("Frame", nil, previewButton)
+            indicator.preview = indicator.preview or CreateFrame("Frame", nil, previewButton)
             indicator.preview:SetAllPoints(indicator)
             indicator:SetCooldown(nil, nil, "Curse")
+        elseif indicator.indicatorType == "texture" then
+            -- texture type cannot glow by LCG
+            indicator:SetCooldown()
         else
             indicator.preview = indicator.preview or CreateFrame("Frame", nil, indicator)
             indicator:SetScript("OnShow", function()
@@ -431,6 +434,10 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                     indicator:SetCustomTexture(t["customTextures"])
                     indicator:SetRole(indicator.roles[indicator.role])
                 end
+                -- update texture
+                if t["texture"] then
+                    indicator:SetTexture(t["texture"])
+                end
                 -- update duration
                 if type(t["showDuration"]) == "boolean" then
                     indicator:ShowDuration(t["showDuration"])
@@ -522,6 +529,8 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
         elseif setting == "customTextures" then
             indicator:SetCustomTexture(value)
             indicator:SetRole(indicator.roles[indicator.role])
+        elseif setting == "texture" then
+            indicator:SetTexture(value)
         elseif setting == "checkbutton" then
             if value == "showDuration" then
                 indicator:ShowDuration(value2)
@@ -549,6 +558,10 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
             if value["size"] then
                 P:Size(indicator, value["size"][1], value["size"][2])
             end
+            -- update frame level
+            if value["frameLevel"] then
+                indicator:SetFrameLevel(previewButton.widget.overlayFrame:GetFrameLevel()+value["frameLevel"])
+            end
             -- update num
             if value["num"] then
                 for i, frame in ipairs(indicator) do
@@ -574,6 +587,10 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
             -- update colors
             if value["colors"] then
                 indicator:SetColors(value["colors"])
+            end
+            -- update colors
+            if value["texture"] then
+                indicator:SetTexture(value["texture"])
             end
             -- update duration
             if type(value["showDuration"]) == "boolean" then
@@ -669,6 +686,10 @@ local typeItems = {
     {
         ["text"] = L["Color"],
         ["value"] = "color",
+    },
+    {
+        ["text"] = L["Texture"],
+        ["value"] = "texture",
     },
     -- TODO:
     -- {
@@ -797,6 +818,19 @@ local function CreateListPane()
                     ["enabled"] = true,
                     ["anchor"] = "healthbar-current",
                     ["colors"] = {"gradient-vertical", {1, 0, 0.4, 1}, {0, 0, 0, 1}},
+                    ["auraType"] = indicatorAuraType,
+                    ["auras"] = {},
+                })
+            elseif indicatorType == "texture" then
+                tinsert(currentLayoutTable["indicators"], {
+                    ["name"] = name,
+                    ["indicatorName"] = indicatorName,
+                    ["type"] = indicatorType,
+                    ["enabled"] = true,
+                    ["position"] = {"TOP", "TOP", 0, 0},
+                    ["size"] = {16, 16},
+                    ["frameLevel"] = 10,
+                    ["texture"] = {"Interface\\AddOns\\Cell\\Media\\Shapes\\circle_filled.tga", 0, {1, 1, 1, 1}},
                     ["auraType"] = indicatorAuraType,
                     ["auras"] = {},
                 })
@@ -969,6 +1003,8 @@ local function ShowIndicatorSettings(id)
             settingsTable = {"enabled", "auras", "checkbutton2:showDuration:"..L["Show duration text instead of icon animation"], "num:10", "orientation", "position", "frameLevel", "size-square", "font"}
         elseif indicatorType == "color" then
             settingsTable = {"enabled", "auras", "customColors", "anchor"}
+        elseif indicatorType == "texture" then
+            settingsTable = {"enabled", "auras", "texture", "position", "frameLevel", "size"}
         end
         -- castByMe
         if currentLayoutTable["indicators"][id]["auraType"] == "buff" then

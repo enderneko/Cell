@@ -58,6 +58,7 @@ L["No"] = "否"
 L["ON"] = "开"
 L["OFF"] = "关"
 L["Disabled"] = "禁用"
+L["Confirm"] = "确认"
 
 -------------------------------------------------
 -- general
@@ -400,6 +401,7 @@ L["Solid"] = "纯色"
 L["Vertical Gradient"] = "垂直渐变"
 L["Horizontal Gradient"] = "水平渐变"
 L["Debuff Type"] = "减益类型"
+L["Rotation"] = "旋转"
 
 L["dispellableByMe"] = "只显示我能驱散的减益"
 L["castByMe"] = "只显示我施放的增益"

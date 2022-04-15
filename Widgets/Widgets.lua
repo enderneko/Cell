@@ -2030,7 +2030,7 @@ function addon:CreateScrollFrame(parent, top, bottom, color, border)
     end
     
     -- content
-    local content = CreateFrame("Frame", nil, scrollFrame)
+    local content = CreateFrame("Frame", nil, scrollFrame, "BackdropTemplate")
     content:SetSize(scrollFrame:GetWidth(), 2)
     scrollFrame:SetScrollChild(content)
     scrollFrame.content = content
