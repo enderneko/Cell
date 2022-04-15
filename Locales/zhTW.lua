@@ -27,6 +27,8 @@ L["Aggro (border)"] = "仇恨 (邊框)"
 L["all"] = "全部"
 L["ALL"] = "全部"
 L["All Bosses"] = "所有首領"
+--[[Translation missing --]]
+--[[ L["All Cell settings will be overwritten!"] = "All Cell settings will be overwritten!"--]] 
 L["Alpha"] = "透明度"
 L["Alt+Right-Click to remove a player"] = "Alt+右鍵點擊來移除玩家"
 L["Always Targeting"] = "總是選取目標"
@@ -83,6 +85,8 @@ L["Close"] = "關閉"
 L["Color"] = "顏色"
 L["Common"] = "共用"
 L["Condition"] = "條件"
+--[[Translation missing --]]
+--[[ L["Confirm"] = "Confirm"--]] 
 L["Contains"] = "包含"
 L["Copy"] = "複製"
 L["Copy indicators from one layout to another"] = "將指示器從一個版面配置複製到另一個版面配置"
@@ -137,6 +141,10 @@ L["Entire"] = "整個"
 L["Error"] = "錯誤"
 L["Export"] = "匯出"
 L["External Cooldowns"] = "減傷 (來自他人)"
+--[[Translation missing --]]
+--[[ L["Externals + Defensives"] = "Externals + Defensives"--]] 
+--[[Translation missing --]]
+--[[ L["Externals + Defensives, no need to enable all of them"] = "Externals + Defensives, no need to enable all of them"--]] 
 L["Extra Action Button"] = "使用額外快捷鍵"
 L["Fade Out Menu"] = "淡出選單"
 L["Fade out menu buttons on mouseout"] = "滑鼠移開時淡出選單按鈕"
@@ -148,7 +156,8 @@ L["Font Outline"] = "文字樣式"
 L["Font Size"] = "文字大小"
 L["Format"] = "格式"
 L["Frame Level"] = "框架層級"
--- L["Free Cooldown Only"] = "只有能量灌注不在冷卻時"
+--[[Needs Review --]]
+--[[ L["Free Cooldown Only"] = "只有能量灌注不在冷卻時"--]]
 L["Frequency"] = "速度"
 L["Friendly NPC Frame"] = "友方 NPC 框架"
 L["From"] = "從"
@@ -187,9 +196,10 @@ L["Horizontal Gradient"] = "水平漸層"
 L["Icon"] = "圖示"
 L["Icons"] = "圖示群組"
 L["IDs separated by whitespaces"] = "用空格分隔多個法術ID"
---[[Translation missing --]]
---[[ L["If disabled, no check, no reply, just glow"] = "If disabled, no check, no reply, just glow"--]] 
+L["If disabled, no check, no reply, just glow"] = "如停用，則不檢查冷卻，也不回覆密語，只顯示發光。"
 L["Import"] = "匯入"
+--[[Translation missing --]]
+--[[ L["Import & Export All Settings"] = "Import & Export All Settings"--]] 
 L["Incompatible Version"] = "不相容的版本"
 L["Indicator Settings"] = "指示器設定"
 L["Indicator settings are part of Layout settings which are account-wide."] = "指示器設定是版面配置設定的一部分，是帳號共用的。"
@@ -293,8 +303,7 @@ L["Remaining Time <"] = "剩餘時間 <"
 L["Rename"] = "更名"
 L["Rename indicator"] = "重新命名指示器"
 L["Rename layout"] = "重新名命版面配置"
---[[Translation missing --]]
---[[ L["Reply After Cast"] = "Reply After Cast"--]] 
+L["Reply After Cast"] = "施放技能後發送密語"
 L["Reply With Cooldown"] = "回覆剩餘冷卻時間"
 L["Report deaths to group"] = "向隊伍通報死亡訊息"
 L["Request"] = "請求"
@@ -320,6 +329,8 @@ L["right-click: delete"] = "右鍵: 刪除"
 L["right-to-left"] = "從右到左"
 L["Role Icon"] = "角色職責圖示"
 L["Rotate Texture"] = "旋轉材質"
+--[[Translation missing --]]
+--[[ L["Rotation"] = "Rotation"--]] 
 L["Save"] = "儲存"
 L["Scale"] = "縮放大小"
 L["ScrollDown"] = "滾輪往下"
