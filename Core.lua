@@ -272,7 +272,7 @@ function eventFrame:ADDON_LOADED(arg1)
                 ["powerColor"] = {"power_color", {0.7, 0.7, 0.7}},
                 ["barAnimation"] = "Flash",
                 ["iconAnimation"] = "duration",
-                ["targetColor"] = {1, 0.31, 0.31, 1},
+                ["targetColor"] = {1, 0, 0.4, 1},
                 ["mouseoverColor"] = {1, 1, 1, 0.6},
                 ["highlightSize"] = 1,
                 ["outOfRangeAlpha"] = 0.45,

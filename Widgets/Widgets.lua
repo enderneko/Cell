@@ -322,7 +322,7 @@ function addon:CreateMovableFrame(title, name, width, height, frameStrata, frame
     header:SetPoint("RIGHT")
     header:SetPoint("BOTTOM", f, "TOP", 0, -1)
     P:Height(header, 20)
-    addon:StylizeFrame(header, {.1, .1, .1, 1})
+    addon:StylizeFrame(header, {0.115, 0.115, 0.115, 1})
     
     header.text = header:CreateFontString(nil, "OVERLAY", font_class_title_name)
     header.text:SetText(title)
@@ -934,40 +934,47 @@ function addon:CreateColorPicker(parent, label, hasOpacity, func)
     cp.label:SetText(label)
     cp.label:SetPoint("LEFT", cp, "RIGHT", 5, 0)
     
-    local function ColorCallback(restore)
-        local newR, newG, newB, newA
-        if restore then
-            newR, newG, newB, newA = unpack(restore)
-        else
-            newA, newR, newG, newB = OpacitySliderFrame:GetValue(), ColorPickerFrame:GetColorRGB()
-        end
+    -- local function ColorCallback(restore)
+    --     local newR, newG, newB, newA
+    --     if restore then
+    --         newR, newG, newB, newA = unpack(restore)
+    --     else
+    --         newA, newR, newG, newB = OpacitySliderFrame:GetValue(), ColorPickerFrame:GetColorRGB()
+    --     end
         
-        newR, newG, newB, newA = tonumber(string.format("%.3f", newR)), tonumber(string.format("%.3f", newG)), tonumber(string.format("%.3f", newB)), newA and tonumber(string.format("%.3f", newA))
+    --     newR, newG, newB, newA = tonumber(string.format("%.3f", newR)), tonumber(string.format("%.3f", newG)), tonumber(string.format("%.3f", newB)), newA and tonumber(string.format("%.3f", newA))
         
-        newA = hasOpacity and newA or 1
+    --     newA = hasOpacity and newA or 1
         
-        cp:SetBackdropColor(newR, newG, newB, newA)
-        if func then
-            func(newR, newG, newB, newA)
-            cp.color[1] = newR
-            cp.color[2] = newG
-            cp.color[3] = newB
-            cp.color[4] = newA
-        end
-    end
+    --     cp:SetBackdropColor(newR, newG, newB, newA)
+    --     if func then
+    --         func(newR, newG, newB, newA)
+    --         cp.color[1] = newR
+    --         cp.color[2] = newG
+    --         cp.color[3] = newB
+    --         cp.color[4] = newA
+    --     end
+    -- end
     
-    local function ShowColorPicker()
-        ColorPickerFrame.hasOpacity = hasOpacity
-        ColorPickerFrame.opacity = cp.color[4]
-        ColorPickerFrame.previousValues = {unpack(cp.color)}
-        ColorPickerFrame.func, ColorPickerFrame.opacityFunc, ColorPickerFrame.cancelFunc = ColorCallback, ColorCallback, ColorCallback
-        ColorPickerFrame:SetColorRGB(unpack(cp.color))
-        ColorPickerFrame:Hide()
-        ColorPickerFrame:Show()
-    end
+    -- local function ShowColorPicker()
+    --     ColorPickerFrame.hasOpacity = hasOpacity
+    --     ColorPickerFrame.opacity = cp.color[4]
+    --     ColorPickerFrame.previousValues = {unpack(cp.color)}
+    --     ColorPickerFrame.func, ColorPickerFrame.opacityFunc, ColorPickerFrame.cancelFunc = ColorCallback, ColorCallback, ColorCallback
+    --     ColorPickerFrame:SetColorRGB(unpack(cp.color))
+    --     ColorPickerFrame:Hide()
+    --     ColorPickerFrame:Show()
+    -- end
     
     cp:SetScript("OnClick", function()
-        ShowColorPicker()
+        addon:ShowColorPicker(function(r, g, b, a)
+            func(r, g, b, a)
+            cp:SetBackdropColor(r, g, b, a)
+            cp.color[1] = r
+            cp.color[2] = g
+            cp.color[3] = b
+            cp.color[4] = a
+        end, hasOpacity, unpack(cp.color))
     end)
 
     cp.color = {1, 1, 1, 1}
@@ -2173,10 +2180,11 @@ function addon:CreateScrollFrame(parent, top, bottom, color, border)
         if button ~= 'LeftButton' then return end
         local offsetY = select(5, scrollThumb:GetPoint(1))
         local mouseY = select(2, GetCursorPosition())
+        local uiScale = UIParent:GetEffectiveScale() -- https://wowpedia.fandom.com/wiki/API_GetCursorPosition
         local currentScroll = scrollFrame:GetVerticalScroll()
         self:SetScript("OnUpdate", function(self)
             --------------------- y offset before dragging + mouse offset
-            local newOffsetY = offsetY + (select(2, GetCursorPosition()) - mouseY)
+            local newOffsetY = offsetY + (select(2, GetCursorPosition()) - mouseY) / uiScale
             
             -- even scrollThumb:SetPoint is already done in OnVerticalScroll, but it's useful in some cases.
             if newOffsetY >= 0 then -- @top

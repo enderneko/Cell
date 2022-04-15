@@ -3,6 +3,7 @@
 	<Script file="Animation.lua"/>
 	<Script file="Widgets.lua"/>
 	<Script file="Widgets_IndicatorSettings.lua"/>
+	<Script file="ColorPicker.lua"/>
 	<Include file="TooltipTemplate.xml"/>
 	<Script file="Tooltip.lua"/>
 </Ui>

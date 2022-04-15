@@ -24,13 +24,42 @@ end
 -------------------------------------------------
 -- color
 -------------------------------------------------
-function F:ConvertRGB(r, g, b, a, desaturation)
+function F:ConvertRGB(r, g, b, desaturation)
     if not desaturation then desaturation = 1 end
     r = r / 255 * desaturation
     g = g / 255 * desaturation
     b = b / 255 * desaturation
-    a = a and (a / 255) or 1
-    return r, g, b, a
+    return r, g, b
+end
+
+function F:ConvertRGBToHEX(r, g, b)
+    local hexadecimal = ""
+
+    for key, value in pairs({r, g, b}) do
+        local hex = ""
+
+        while(value > 0)do
+            local index = math.fmod(value, 16) + 1
+            value = math.floor(value / 16)
+            hex = string.sub("0123456789ABCDEF", index, index) .. hex			
+        end
+
+        if(string.len(hex) == 0)then
+            hex = "00"
+
+        elseif(string.len(hex) == 1)then
+            hex = "0" .. hex
+        end
+
+        hexadecimal = hexadecimal .. hex
+    end
+
+    return hexadecimal
+end
+
+function F:ConvertHEXToRGB(hex)
+    hex = hex:gsub("#","")
+    return tonumber("0x"..hex:sub(1,2)), tonumber("0x"..hex:sub(3,4)), tonumber("0x"..hex:sub(5,6))
 end
 
 -- https://wowpedia.fandom.com/wiki/ColorGradient
@@ -46,6 +75,113 @@ function F:ColorGradient(perc, r1,g1,b1, r2,g2,b2, r3,g3,b3)
     local rr1, rg1, rb1, rr2, rg2, rb2 = select((segment * 3) + 1, r1,g1,b1, r2,g2,b2, r3,g3,b3)
  
     return rr1 + (rr2 - rr1) * relperc, rg1 + (rg2 - rg1) * relperc, rb1 + (rb2 - rb1) * relperc
+end
+
+--! From ColorPickerAdvanced by Feyawen-Llane
+--[[ Convert RGB to HSV	---------------------------------------------------
+    Inputs:
+        r = Red [0, 1]
+        g = Green [0, 1]
+        b = Blue [0, 1]
+    Outputs:
+        H = Hue [0, 360]
+        S = Saturation [0, 1]
+        B = Brightness [0, 1]
+]]--
+function F:ConvertRGBToHSB(r, g, b)
+    local colorMax = max(max(r, g), b)
+    local colorMin = min(min(r, g), b)
+    local delta = colorMax - colorMin
+    local H, S, B
+    
+    -- WoW's LUA doesn't handle floating point numbers very well (Somehow 1.000000 != 1.000000   WTF?)
+    -- So we do this weird conversion of, Number to String back to Number, to make the IF..THEN work correctly!
+    colorMax = tonumber(format("%f", colorMax))
+    r = tonumber(format("%f", r))
+    g = tonumber(format("%f", g))
+    b = tonumber(format("%f", b))
+    
+    if (delta > 0) then
+        if (colorMax == r) then
+            H = 60 * (((g - b) / delta) % 6)
+        elseif (colorMax == g) then
+            H = 60 * (((b - r) / delta) + 2)
+        elseif (colorMax == b) then
+            H = 60 * (((r - g) / delta) + 4)
+        end
+        
+        if (colorMax > 0) then
+            S = delta / colorMax
+        else
+            S = 0
+        end
+        
+        B = colorMax
+    else
+        H = 0
+        S = 0
+        B = colorMax
+    end
+    
+    if (H < 0) then
+        H = H + 360
+    end
+    
+    return H, S, B
+end
+
+--[[ Convert HSB to RGB	---------------------------------------------------
+    Inputs:
+        h = Hue [0, 360]
+        s = Saturation [0, 1]
+        b = Brightness [0, 1]
+    Outputs:
+        R = Red [0,1]
+        G = Green [0,1]
+        B = Blue [0,1]
+]]--
+function F:ConvertHSBToRGB(h, s, b)
+    local chroma = b * s
+    local prime = (h / 60) % 6
+    local X = chroma * (1 - abs((prime % 2) - 1))
+    local M = b - chroma
+    local R, G, B
+
+    if (0 <= prime) and (prime < 1) then
+        R = chroma
+        G = X
+        B = 0
+    elseif (1 <= prime) and (prime < 2) then
+        R = X
+        G = chroma
+        B = 0
+    elseif (2 <= prime) and (prime < 3) then
+        R = 0
+        G = chroma
+        B = X
+    elseif (3 <= prime) and (prime < 4) then
+        R = 0
+        G = X
+        B = chroma
+    elseif (4 <= prime) and (prime < 5) then
+        R = X
+        G = 0
+        B = chroma
+    elseif (5 <= prime) and (prime < 6) then
+        R = chroma
+        G = 0
+        B = X
+    else
+        R = 0
+        G = 0
+        B = 0
+    end
+    
+    R = R + M
+    G = G + M
+    B =  B + M
+    
+    return R, G, B
 end
 
 -------------------------------------------------

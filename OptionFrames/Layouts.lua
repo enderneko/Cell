@@ -185,23 +185,23 @@ local function CreateLayoutPreview()
             header[j].tex:SetPoint("BOTTOMRIGHT", header[j], "BOTTOMRIGHT", P:Scale(-1), P:Scale(1))
 
             if i == 1 then
-                header[j].tex:SetVertexColor(F:ConvertRGB(255, 0, 0, 1, desaturation[j])) -- Red
+                header[j].tex:SetVertexColor(F:ConvertRGB(255, 0, 0, desaturation[j])) -- Red
             elseif i == 2 then
-                header[j].tex:SetVertexColor(F:ConvertRGB(255, 127, 0, 1, desaturation[j])) -- Orange
+                header[j].tex:SetVertexColor(F:ConvertRGB(255, 127, 0, desaturation[j])) -- Orange
             elseif i == 3 then
-                header[j].tex:SetVertexColor(F:ConvertRGB(255, 255, 0, 1, desaturation[j])) -- Yellow
+                header[j].tex:SetVertexColor(F:ConvertRGB(255, 255, 0, desaturation[j])) -- Yellow
             elseif i == 4 then
-                header[j].tex:SetVertexColor(F:ConvertRGB(0, 255, 0, 1, desaturation[j])) -- Green
+                header[j].tex:SetVertexColor(F:ConvertRGB(0, 255, 0, desaturation[j])) -- Green
             elseif i == 5 then
-                header[j].tex:SetVertexColor(F:ConvertRGB(0, 127, 255, 1, desaturation[j])) -- Blue
+                header[j].tex:SetVertexColor(F:ConvertRGB(0, 127, 255, desaturation[j])) -- Blue
             elseif i == 6 then
-                header[j].tex:SetVertexColor(F:ConvertRGB(127, 0, 255, 1, desaturation[j])) -- Indigo
+                header[j].tex:SetVertexColor(F:ConvertRGB(127, 0, 255, desaturation[j])) -- Indigo
             elseif i == 7 then
-                header[j].tex:SetVertexColor(F:ConvertRGB(238, 130, 238, 1, desaturation[j])) -- Violet
+                header[j].tex:SetVertexColor(F:ConvertRGB(238, 130, 238, desaturation[j])) -- Violet
             elseif i == 8 then
-                header[j].tex:SetVertexColor(F:ConvertRGB(255, 255, 255, 1, desaturation[j])) -- White
+                header[j].tex:SetVertexColor(F:ConvertRGB(255, 255, 255, desaturation[j])) -- White
             end
-            header[j].tex:SetAlpha(0.555)
+            header[j].tex:SetAlpha(0.5)
         end
     end
 end
