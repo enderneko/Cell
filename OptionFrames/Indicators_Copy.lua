@@ -16,7 +16,7 @@ local function CreateIndicatorsCopyFrame()
         Cell.frames.indicatorsTab.mask:Hide()
     end
 
-    copyFrame = Cell:CreateFrame("CellOptionsFrame_IndicatorsCopy", Cell.frames.indicatorsTab, 136, 387)
+    copyFrame = Cell:CreateFrame("CellOptionsFrame_IndicatorsCopy", Cell.frames.indicatorsTab, 136, 425)
     -- Cell.frames.indicatorsCopyFrame = copyFrame
     Cell:StylizeFrame(copyFrame, nil, Cell:GetPlayerClassColorTable())
     copyFrame:SetFrameStrata("DIALOG")
@@ -44,7 +44,7 @@ local function CreateIndicatorsCopyFrame()
     fromList:SetPoint("TOPLEFT", toDropdown, "BOTTOMLEFT", 0, -5)
     fromList:SetPoint("TOPRIGHT", toDropdown, "BOTTOMRIGHT", 0, -5)
     -- fromList:SetPoint("BOTTOM", 0, 34)
-    fromList:SetHeight(248)
+    fromList:SetHeight(286)
     
     Cell:CreateScrollFrame(fromList)
     fromList.scrollFrame:SetScrollStep(19)

@@ -458,7 +458,7 @@ end
 -- bosses frame
 -------------------------------------------------
 local function CreateBossesFrame()
-    local bossesFrame = Cell:CreateFrame("RaidDebuffsTab_Bosses", debuffsTab, 127, 210)
+    local bossesFrame = Cell:CreateFrame("RaidDebuffsTab_Bosses", debuffsTab, 127, 229)
     -- bossesFrame:SetPoint("TOPLEFT", instancesFrame, "BOTTOMLEFT", 0, -5)
     bossesFrame:SetPoint("BOTTOMLEFT", 5, 5)
     bossesFrame:Show()
@@ -609,7 +609,7 @@ end
 local debuffListFrame, dragged, delete
 
 local function CreateDebuffsFrame()
-    debuffListFrame = Cell:CreateFrame("RaidDebuffsTab_Debuffs", debuffsTab, 137, 362)
+    debuffListFrame = Cell:CreateFrame("RaidDebuffsTab_Debuffs", debuffsTab, 137, 381)
     debuffListFrame:SetPoint("TOPLEFT", instancesFrame, "TOPRIGHT", 5, 0)
     debuffListFrame:Show()
     Cell:CreateScrollFrame(debuffListFrame)

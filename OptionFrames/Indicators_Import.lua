@@ -21,7 +21,7 @@ local function CreateIndicatorsImportFrame()
         Cell.frames.indicatorsTab.mask:Hide()
     end
 
-    importFrame = Cell:CreateFrame("CellOptionsFrame_IndicatorsImport", Cell.frames.indicatorsTab, 430, 183)
+    importFrame = Cell:CreateFrame("CellOptionsFrame_IndicatorsImport", Cell.frames.indicatorsTab, 430, 221)
     importFrame:SetFrameLevel(Cell.frames.indicatorsTab:GetFrameLevel()+20)
     importFrame:SetFrameStrata("DIALOG")
     Cell:StylizeFrame(importFrame, nil, Cell:GetPlayerClassColorTable())

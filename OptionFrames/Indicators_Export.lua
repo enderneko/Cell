@@ -33,7 +33,7 @@ local function CreateIndicatorsExportFrame()
     end
 
     -- list
-    local listParent = Cell:CreateFrame(nil, exportParent, 136, 392)
+    local listParent = Cell:CreateFrame(nil, exportParent, 136, 430)
     Cell:StylizeFrame(listParent, nil, Cell:GetPlayerClassColorTable())
     listParent:SetFrameStrata("DIALOG")
     listParent:SetPoint("BOTTOMLEFT", 5, 24)
@@ -47,13 +47,13 @@ local function CreateIndicatorsExportFrame()
     Cell:StylizeFrame(listFrame)
     listFrame:SetPoint("TOPLEFT", 5, -20)
     listFrame:SetPoint("TOPRIGHT", -5, -5)
-    listFrame:SetHeight(324)
+    listFrame:SetHeight(362)
     
     Cell:CreateScrollFrame(listFrame)
     listFrame.scrollFrame:SetScrollStep(19)
 
     -- export area
-    exportFrame = Cell:CreateFrame(nil, exportParent, 281, 170)
+    exportFrame = Cell:CreateFrame(nil, exportParent, 281, 197)
     Cell:StylizeFrame(exportFrame, nil, Cell:GetPlayerClassColorTable())
     exportFrame:SetPoint("BOTTOMLEFT", listParent, "BOTTOMRIGHT", 5, 0)
     

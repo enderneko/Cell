@@ -710,7 +710,7 @@ local auraTypeItems = {
 }
 
 local function CreateListPane()
-    local listPane = Cell:CreateTitledPane(indicatorsTab, L["Indicators"], 136, 374)
+    local listPane = Cell:CreateTitledPane(indicatorsTab, L["Indicators"], 136, 412)
     listPane:SetPoint("TOPLEFT", 5, -62)
 
     listFrame = Cell:CreateFrame("IndicatorsTab_ListFrame", listPane)
@@ -866,7 +866,7 @@ local function CreateListPane()
             currentLayoutTable["indicators"][selected]["name"] = newName
             listButtons[selected]:SetText(newName)
         end, nil, true, true)
-        popup:SetPoint("TOPLEFT", 117, -120)
+        popup:SetPoint("TOPLEFT", 117, -200)
     end)
 
     deleteBtn = Cell:CreateButton(listPane, nil, "red-hover", {46, 20}, nil, nil, nil, nil, nil, L["Delete"])
@@ -884,7 +884,7 @@ local function CreateListPane()
             LoadIndicatorList()
             listButtons[1]:Click()
         end, nil, true)
-        popup:SetPoint("TOPLEFT", 117, -120)
+        popup:SetPoint("TOPLEFT", 117, -200)
     end)
 
     local importBtn = Cell:CreateButton(listPane, nil, "class-hover", {46, 20}, nil, nil, nil, nil, nil, L["Import"])
@@ -915,7 +915,7 @@ end
 local othersAlpha, settingsFrame
 
 local function CreateSettingsPane()
-    local settingsPane = Cell:CreateTitledPane(indicatorsTab, L["Indicator Settings"], 274, 431)
+    local settingsPane = Cell:CreateTitledPane(indicatorsTab, L["Indicator Settings"], 274, 469)
     settingsPane:SetPoint("TOPLEFT", 153, -5)
 
     othersAlpha = Cell:CreateSlider("", settingsPane, 0, 1, 50, .1, nil, function(value)
