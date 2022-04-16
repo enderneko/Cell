@@ -863,7 +863,7 @@ local function CreateListPane()
             end
 
         end, nil, true, true, 2)
-        popup:SetPoint("TOPLEFT", 117, -100)
+        popup:SetPoint("TOPLEFT", 117, -177)
         popup.dropdown1:SetItems(typeItems)
         popup.dropdown1:SetSelectedItem(1)
         -- popup.dropdown1:SetEnabled(false)
@@ -882,7 +882,7 @@ local function CreateListPane()
             currentLayoutTable["indicators"][selected]["name"] = newName
             listButtons[selected]:SetText(newName)
         end, nil, true, true)
-        popup:SetPoint("TOPLEFT", 117, -200)
+        popup:SetPoint("TOPLEFT", 117, -177)
     end)
 
     deleteBtn = Cell:CreateButton(listPane, nil, "red-hover", {46, 20}, nil, nil, nil, nil, nil, L["Delete"])
@@ -900,7 +900,7 @@ local function CreateListPane()
             LoadIndicatorList()
             listButtons[1]:Click()
         end, nil, true)
-        popup:SetPoint("TOPLEFT", 117, -200)
+        popup:SetPoint("TOPLEFT", 117, -177)
     end)
 
     local importBtn = Cell:CreateButton(listPane, nil, "class-hover", {46, 20}, nil, nil, nil, nil, nil, L["Import"])

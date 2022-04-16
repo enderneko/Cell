@@ -63,7 +63,7 @@ local enabledIndicators, indicatorNums, indicatorCustoms = {}, {}, {}
 local bigDebuffs = {}
 
 local function UpdateIndicatorParentVisibility(b, indicatorName, enabled)
-    if not (indicatorName == "debuffs" or indicatorName == "defensiveCooldowns" or indicatorName == "externalCooldowns" or indicatorName == "dispels") then
+    if not (indicatorName == "debuffs" or indicatorName == "defensiveCooldowns" or indicatorName == "externalCooldowns" or indicatorName == "allCooldowns" or indicatorName == "dispels") then
         return
     end
 

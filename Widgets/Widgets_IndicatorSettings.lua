@@ -2332,6 +2332,7 @@ local function CreateSetting_Texture(parent)
         widget.button:SetScript("OnClick", function()
             F:ShowTextureSelector(widget.selected, function(path)
                 widget.selected = path
+                F:FitWidth(widget.path, path, "right")
                 widget.func({path, widget.rotation:GetValue(), widget.colorPicker:GetColor()})
             end)
         end)

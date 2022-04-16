@@ -3,7 +3,6 @@ local L = Cell.L
 local I = Cell.iFuncs
 local F = Cell.funcs
 
--- NOTE: these spellIds ~= realSpellIds, spells are matched by names
 local debuffBlacklist = {
     8326, -- 鬼魂
     160029, -- 正在复活
