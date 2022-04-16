@@ -948,7 +948,7 @@ local indicatorSettings = {
     ["debuffs"] = {"enabled", "checkbutton:dispellableByMe", "blacklist", "bigDebuffs", "checkbutton2:showDuration:"..L["Show duration text instead of icon animation"], "num:10", "orientation", "position", "frameLevel", "size-normal-big", "font"},
     ["raidDebuffs"] = {"|cffb7b7b7"..L["You can config debuffs in %s"]:format(Cell:GetPlayerClassColorString()..L["Raid Debuffs"].."|r"), "enabled", "checkbutton:onlyShowTopGlow", "num:3", "orientation", "position", "frameLevel", "size-border", "font"},
     ["targetedSpells"] = {"enabled", "spells", "glow", "position", "frameLevel", "size-border", "font"},
-    ["targetCounter"] = {"|cffff2727"..L["HIGH CPU USAGE"].."!|r |cffb7b7b7"..L["Check all visible enemy nameplates. Battleground/Arena only."], "enabled", "color", "position", "frameLevel", "font"},
+    ["targetCounter"] = {"|cffff2727"..L["HIGH CPU USAGE"].."!|r |cffb7b7b7"..L["Check all visible enemy nameplates. Battleground/Arena only."], "enabled", "color", "position", "frameLevel", "font-noOffset"},
 }
 
 local function ShowIndicatorSettings(id)

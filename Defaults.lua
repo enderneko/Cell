@@ -328,7 +328,7 @@ Cell.defaults.layout = {
             ["enabled"] = false,
             ["position"] = {"TOP", "TOP", 0, 5},
             ["frameLevel"] = 15,
-            ["font"] = {"Cell ".._G.DEFAULT, 15, "Outline", 0},
+            ["font"] = {"Cell ".._G.DEFAULT, 15, "Outline"},
             ["color"] = {1, .1, .1},
         }, -- 23
     },
