@@ -452,24 +452,31 @@ function addon:ShowColorPicker(callback, hasAlpha, r, g, b, a)
         CreateColorPicker()
     end
 
+    -- already shown, restore previous
+    if colorPicker:IsShown() then
+        if Callback then
+            Callback(oR, oG, oB, oA)
+        end
+    end
+
+    -- backup for restore
     oR, oG, oB, oA = r or 1, g or 1, b or 1, a or 1
 
+    -- data & callback
     H, S, B = F:ConvertRGBToHSB(oR, oG, oB)
     A = oA
     Callback = callback
+    cancelBtn:SetScript("OnClick", function()
+        colorPicker:Hide()
+        if callback then callback(oR, oG, oB, oA) end
+    end)
 
     -- update original
     original:SetColor(oR, oG, oB, oA)
 
     -- update all
     UpdateAll("rgb", oR, oG, oB, oA, true, true)
-
     addon:SetEnabled(hasAlpha, alpha, aEB, aEB.label)
-
-    cancelBtn:SetScript("OnClick", function()
-        colorPicker:Hide()
-        if callback then callback(oR, oG, oB, oA) end
-    end)
 
     P:PixelPerfectPoint(colorPicker)
     colorPicker:Raise()
