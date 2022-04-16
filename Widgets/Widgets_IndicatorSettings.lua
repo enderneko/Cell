@@ -982,7 +982,7 @@ local function CreateSetting_Font(parent)
     local widget
 
     if not settingWidgets["font"] then
-        widget = addon:CreateFrame("CellIndicatorSettings_Font", parent, 240, 95)
+        widget = addon:CreateFrame("CellIndicatorSettings_Font", parent, 240, 145)
         settingWidgets["font"] = widget
 
         widget.font = addon:CreateDropdown(widget, 110)
@@ -990,7 +990,7 @@ local function CreateSetting_Font(parent)
         local items, fonts, defaultFontName, defaultFont = F:GetFontItems()
         for _, item in pairs(items) do
             item["onClick"] = function()
-                widget.func({widget.font:GetSelected(), widget.fontSize:GetValue(), widget.outline:GetSelected(), widget.xOffset:GetValue()})
+                widget.func({widget.font:GetSelected(), widget.fontSize:GetValue(), widget.outline:GetSelected(), widget.xOffset:GetValue(), widget.yOffset:GetValue()})
             end
         end
         widget.font:SetItems(items)
@@ -1000,34 +1000,34 @@ local function CreateSetting_Font(parent)
         widget.fontText:SetPoint("BOTTOMLEFT", widget.font, "TOPLEFT", 0, 1)
 
         widget.outline = addon:CreateDropdown(widget, 110)
-        widget.outline:SetPoint("LEFT", widget.font, "RIGHT", 25, 0)
+        widget.outline:SetPoint("TOPLEFT", widget.font, "TOPRIGHT", 25, 0)
         widget.outline:SetItems({
             {
                 ["text"] = L["None"],
                 ["value"] = "None",
                 ["onClick"] = function()
-                    widget.func({widget.font:GetSelected(), widget.fontSize:GetValue(), widget.outline:GetSelected(), widget.xOffset:GetValue()})
+                    widget.func({widget.font:GetSelected(), widget.fontSize:GetValue(), widget.outline:GetSelected(), widget.xOffset:GetValue(), widget.yOffset:GetValue()})
                 end,
             },
             {
                 ["text"] = L["Shadow"],
                 ["value"] = "Shadow",
                 ["onClick"] = function()
-                    widget.func({widget.font:GetSelected(), widget.fontSize:GetValue(), widget.outline:GetSelected(), widget.xOffset:GetValue()})
+                    widget.func({widget.font:GetSelected(), widget.fontSize:GetValue(), widget.outline:GetSelected(), widget.xOffset:GetValue(), widget.yOffset:GetValue()})
                 end,
             },
             {
                 ["text"] = L["Outline"],
                 ["value"] = "Outline",
                 ["onClick"] = function()
-                    widget.func({widget.font:GetSelected(), widget.fontSize:GetValue(), widget.outline:GetSelected(), widget.xOffset:GetValue()})
+                    widget.func({widget.font:GetSelected(), widget.fontSize:GetValue(), widget.outline:GetSelected(), widget.xOffset:GetValue(), widget.yOffset:GetValue()})
                 end,
             },
             {
                 ["text"] = L["Monochrome Outline"],
                 ["value"] = "Monochrome Outline",
                 ["onClick"] = function()
-                    widget.func({widget.font:GetSelected(), widget.fontSize:GetValue(), widget.outline:GetSelected(), widget.xOffset:GetValue()})
+                    widget.func({widget.font:GetSelected(), widget.fontSize:GetValue(), widget.outline:GetSelected(), widget.xOffset:GetValue(), widget.yOffset:GetValue()})
                 end,
             },
         })
@@ -1039,13 +1039,19 @@ local function CreateSetting_Font(parent)
         widget.fontSize = addon:CreateSlider(L["Font Size"], widget, 5, 30, 110, 1)
         widget.fontSize:SetPoint("TOPLEFT", widget.font, "BOTTOMLEFT", 0, -25)
         widget.fontSize.afterValueChangedFn = function(value)
-            widget.func({widget.font:GetSelected(), value, widget.outline:GetSelected(), widget.xOffset:GetValue()})
+            widget.func({widget.font:GetSelected(), value, widget.outline:GetSelected(), widget.xOffset:GetValue(), widget.yOffset:GetValue()})
         end
 
-        widget.xOffset = addon:CreateSlider(L["X Offset"], widget, -50, 50, 110, 1)
-        widget.xOffset:SetPoint("TOPLEFT", widget.outline, "BOTTOMLEFT", 0, -25)
+        widget.xOffset = addon:CreateSlider(L["X Offset"], widget, -10, 10, 110, 1)
+        widget.xOffset:SetPoint("TOPLEFT", widget.fontSize, "BOTTOMLEFT", 0, -40)
         widget.xOffset.afterValueChangedFn = function(value)
-            widget.func({widget.font:GetSelected(), widget.fontSize:GetValue(), widget.outline:GetSelected(), value})
+            widget.func({widget.font:GetSelected(), widget.fontSize:GetValue(), widget.outline:GetSelected(), value, widget.yOffset:GetValue()})
+        end
+        
+        widget.yOffset = addon:CreateSlider(L["Y Offset"], widget, -10, 10, 110, 1)
+        widget.yOffset:SetPoint("TOPLEFT", widget.xOffset, "TOPRIGHT", 25, 0)
+        widget.yOffset.afterValueChangedFn = function(value)
+            widget.func({widget.font:GetSelected(), widget.fontSize:GetValue(), widget.outline:GetSelected(), widget.xOffset:GetValue(), value})
         end
 
         -- associate db
@@ -1059,6 +1065,7 @@ local function CreateSetting_Font(parent)
             widget.fontSize:SetValue(fontTable[2])
             widget.outline:SetSelected(L[fontTable[3]])
             widget.xOffset:SetValue(fontTable[4])
+            widget.yOffset:SetValue(fontTable[5])
         end
     else
         widget = settingWidgets["font"]

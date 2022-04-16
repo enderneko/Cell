@@ -1154,6 +1154,7 @@ function F:Revise()
 
     -- r94-release
     if CellDB["revise"] and dbRevision < 94 then
+        -- add auraIconOptions
         if not CellDB["appearance"]["auraIconOptions"] then
             CellDB["appearance"]["auraIconOptions"] = {
                 ["animation"] = CellDB["appearance"]["iconAnimation"],
@@ -1163,6 +1164,30 @@ function F:Revise()
             }
 
             CellDB["appearance"]["iconAnimation"] = nil
+        end
+
+        -- add y offset
+        local modifications = {
+            [15] = "externalCooldowns",
+            [16] = "defensiveCooldowns",
+            [17] = "allCooldowns",
+            [20] = "debuffs",
+            [21] = "raidDebuffs",
+            [22] = "targetedSpells"
+        }
+        
+        for _, layout in pairs(CellDB["layouts"]) do
+            for i, t in pairs(layout["indicators"]) do
+                if i <= Cell.defaults.builtIns then -- built-ins
+                    if t["indicatorName"] == modifications[i] and not t["font"][5] then
+                        t["font"][5] = 1
+                    end
+                elseif t["type"] == "icon" or t["type"] == "icons" then -- custom icon/icons
+                    if not t["font"][5] then
+                        t["font"][5] = 1
+                    end
+                end
+            end
         end
     end
 

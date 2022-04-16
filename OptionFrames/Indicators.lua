@@ -724,7 +724,7 @@ local function CreateListPane()
                     ["position"] = {"TOPRIGHT", "TOPRIGHT", 0, 3},
                     ["frameLevel"] = 5,
                     ["size"] = {13, 13},
-                    ["font"] = {"Cell ".._G.DEFAULT, 11, "Outline", 2},
+                    ["font"] = {"Cell ".._G.DEFAULT, 11, "Outline", 2, 1},
                     ["showDuration"] = false,
                     ["auraType"] = indicatorAuraType,
                     ["auras"] = {},
@@ -737,7 +737,7 @@ local function CreateListPane()
                     ["enabled"] = true,
                     ["position"] = {"TOPRIGHT", "TOPRIGHT", 0, 3},
                     ["frameLevel"] = 5,
-                    ["font"] = {"Cell ".._G.DEFAULT, 12, "Outline", 0},
+                    ["font"] = {"Cell ".._G.DEFAULT, 12, "Outline"},
                     ["colors"] = {{0,1,0}, {1,1,0,.5}, {1,0,0,3}},
                     ["auraType"] = indicatorAuraType,
                     ["auras"] = {},
@@ -781,7 +781,7 @@ local function CreateListPane()
                     ["size"] = {13, 13},
                     ["num"] = 3,
                     ["orientation"] = "right-to-left",
-                    ["font"] = {"Cell ".._G.DEFAULT, 11, "Outline", 2},
+                    ["font"] = {"Cell ".._G.DEFAULT, 11, "Outline", 2, 1},
                     ["showDuration"] = false,
                     ["auraType"] = indicatorAuraType,
                     ["auras"] = {},
@@ -971,7 +971,7 @@ local function ShowIndicatorSettings(id)
         if indicatorType == "icon" then
             settingsTable = {"enabled", "auras", "checkbutton2:showDuration:"..L["Show duration text instead of icon animation"], "position", "frameLevel", "size-square", "font"}
         elseif indicatorType == "text" then
-            settingsTable = {"enabled", "auras", "checkbutton2:showDuration", "checkbutton3:circledStackNums:"..L["Require font support"], "colors", "position", "frameLevel", "font"}
+            settingsTable = {"enabled", "auras", "checkbutton2:showDuration", "checkbutton3:circledStackNums:"..L["Require font support"], "colors", "position", "frameLevel", "font-noOffset"}
         elseif indicatorType == "bar" then
             settingsTable = {"enabled", "auras", "colors", "position", "frameLevel", "size-bar"}
         elseif indicatorType == "rect" then

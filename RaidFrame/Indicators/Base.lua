@@ -8,7 +8,7 @@ local DebuffTypeColor = DebuffTypeColor
 -------------------------------------------------
 -- CreateAura_BorderIcon
 -------------------------------------------------
-local function BorderIcon_SetFont(frame, font, size, flags, horizontalOffset)
+local function BorderIcon_SetFont(frame, font, size, flags, xOffset, yOffset)
     if not strfind(strlower(font), ".ttf") then font = F:GetFont(font) end
 
     if flags == "Shadow" then
@@ -34,9 +34,9 @@ local function BorderIcon_SetFont(frame, font, size, flags, horizontalOffset)
         frame.duration:SetShadowColor(0, 0, 0, 0)
     end
     P:ClearPoints(frame.stack)
-    P:Point(frame.stack, "TOPRIGHT", frame.textFrame, "TOPRIGHT", horizontalOffset, 1)
+    P:Point(frame.stack, "TOPRIGHT", frame.textFrame, "TOPRIGHT", xOffset, yOffset)
     P:ClearPoints(frame.duration)
-    P:Point(frame.duration, "BOTTOMRIGHT", frame.textFrame, "BOTTOMRIGHT", horizontalOffset, -1)
+    P:Point(frame.duration, "BOTTOMRIGHT", frame.textFrame, "BOTTOMRIGHT", xOffset, -yOffset)
 end
 
 local function BorderIcon_SetCooldown(frame, start, duration, debuffType, texture, count, refreshing)
@@ -179,7 +179,7 @@ end
 -------------------------------------------------
 -- CreateAura_BarIcon
 -------------------------------------------------
-local function BarIcon_SetFont(frame, font, size, flags, horizontalOffset)
+local function BarIcon_SetFont(frame, font, size, flags, xOffset, yOffset)
     if not strfind(strlower(font), ".ttf") then font = F:GetFont(font) end
 
     if flags == "Shadow" then
@@ -205,9 +205,9 @@ local function BarIcon_SetFont(frame, font, size, flags, horizontalOffset)
         frame.duration:SetShadowColor(0, 0, 0, 0)
     end
     P:ClearPoints(frame.stack)
-    P:Point(frame.stack, "TOPRIGHT", frame.textFrame, "TOPRIGHT", horizontalOffset, 0)
+    P:Point(frame.stack, "TOPRIGHT", frame.textFrame, "TOPRIGHT", xOffset, yOffset)
     P:ClearPoints(frame.duration)
-    P:Point(frame.duration, "BOTTOMRIGHT", frame.textFrame, "BOTTOMRIGHT", horizontalOffset, 0)
+    P:Point(frame.duration, "BOTTOMRIGHT", frame.textFrame, "BOTTOMRIGHT", xOffset, -yOffset)
 end
 
 local function BarIcon_SetCooldown(frame, start, duration, debuffType, texture, count, refreshing)
@@ -394,7 +394,7 @@ end
 -------------------------------------------------
 -- CreateAura_Text
 -------------------------------------------------
-local function Text_SetFont(frame, font, size, flags, horizontalOffset)
+local function Text_SetFont(frame, font, size, flags)
     if not strfind(strlower(font), ".ttf") then font = F:GetFont(font) end
 
     if flags == "Shadow" then
@@ -417,11 +417,11 @@ local function Text_SetFont(frame, font, size, flags, horizontalOffset)
     local point = frame:GetPoint(1)
     frame.text:ClearAllPoints()
     if string.find(point, "LEFT") then
-        frame.text:SetPoint("LEFT", horizontalOffset, 0)
+        frame.text:SetPoint("LEFT")
     elseif string.find(point, "RIGHT") then
-        frame.text:SetPoint("RIGHT", horizontalOffset, 0)
+        frame.text:SetPoint("RIGHT")
     else
-        frame.text:SetPoint("CENTER", horizontalOffset, 0)
+        frame.text:SetPoint("CENTER")
     end
     frame:SetSize(size+3, size+3)
 end
@@ -497,14 +497,13 @@ function I:CreateAura_Text(name, parent)
 
     frame.OriginalSetPoint = frame.SetPoint
     function frame:SetPoint(point, relativeTo, relativePoint, x, y)
-        local horizontalOffset = select(4, text:GetPoint(1))
         text:ClearAllPoints()
         if string.find(point, "LEFT") then
-            text:SetPoint("LEFT", horizontalOffset, 0)
+            text:SetPoint("LEFT")
         elseif string.find(point, "RIGHT") then
-            text:SetPoint("RIGHT", horizontalOffset, 0)
+            text:SetPoint("RIGHT")
         else
-            text:SetPoint("CENTER", horizontalOffset, 0)
+            text:SetPoint("CENTER")
         end
         frame:OriginalSetPoint(point, relativeTo, relativePoint, x, y)
     end
