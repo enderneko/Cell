@@ -244,6 +244,7 @@ Cell.defaults.layout = {
             ["frameLevel"] = 2,
             ["size"] = {{13, 13}, {17, 17}},
             ["showDuration"] = false,
+            ["showTooltip"] = false,
             ["num"] = 3,
             ["font"] = {"Cell ".._G.DEFAULT, 11, "Outline", 2, 1},
             ["dispellableByMe"] = false,
@@ -290,6 +291,7 @@ Cell.defaults.layout = {
             -- ["stackFont"] = {"Cell ".._G.DEFAULT, 11, "Outline", "RIGHT", 2, 0},
             ["onlyShowTopGlow"] = true,
             ["orientation"] = "left-to-right",
+            ["showTooltip"] = false,
         }, -- 21
         {
             ["name"] = "Targeted Spells",

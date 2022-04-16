@@ -218,6 +218,11 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                     indicator:SetCustomTexture(t["customTextures"])
                     UnitButton_UpdateRole(b)
                 end
+                -- tooltip
+                if type(t["showTooltip"]) == "boolean" then
+                    indicator:ShowTooltip(t["showTooltip"])
+                end
+
                 -- init
                 -- update name visibility
                 if t["indicatorName"] == "nameText" then
@@ -428,6 +433,10 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                 F:IterateAllUnitButtons(function(b)
                     b.indicators[indicatorName]:ShowDuration(value2)
                     UnitButton_UpdateAuras(b)
+                end, true)
+            elseif value == "showTooltip" then
+                F:IterateAllUnitButtons(function(b)
+                    b.indicators[indicatorName]:ShowTooltip(value2)
                 end, true)
             elseif value == "circledStackNums" then
                 F:IterateAllUnitButtons(function(b)
@@ -691,7 +700,7 @@ local function UnitButton_UpdateDebuffs(self)
                 local name, icon, count, debuffType, duration, expirationTime, source, isStealable, nameplateShowPersonal, spellId = UnitDebuff(unit, debuffs_raid_indices[unit][i])
                 if name then
                     self.indicators.raidDebuffs[i]:SetCooldown(expirationTime - duration, duration, debuffType or "", icon, count, debuffs_raid_refreshing[unit][debuffs_raid_indices[unit][i]])
-                    
+                    self.indicators.raidDebuffs[i].spellId = spellId -- NOTE: for tooltip
                     startIndex = startIndex + 1
                     -- use debuffs_raid_orders(wiped before) to store debuffs indices shown by raidDebuffs indicator
                     debuffs_raid_orders[unit][debuffs_raid_indices[unit][i]] = true
@@ -711,6 +720,7 @@ local function UnitButton_UpdateDebuffs(self)
         -- hide other raid debuff indicators
         for i = startIndex, 3 do
             self.indicators.raidDebuffs[i]:Hide()
+            self.indicators.raidDebuffs[i].spellId = nil
         end
 
         -- update glow
@@ -741,19 +751,21 @@ local function UnitButton_UpdateDebuffs(self)
     if enabledIndicators["debuffs"] then
         -- bigDebuffs first
         for debuffIndex, refreshing in pairs(debuffs_big[unit]) do
-            local name, icon, count, debuffType, duration, expirationTime = UnitDebuff(unit, debuffIndex)
+            local name, icon, count, debuffType, duration, expirationTime, _, _, _, spellId = UnitDebuff(unit, debuffIndex)
             if name and not debuffs_raid_orders[unit][debuffIndex] and startIndex <= indicatorNums["debuffs"] then
                 -- start, duration, debuffType, texture, count, refreshing
                 self.indicators.debuffs[startIndex]:SetCooldown(expirationTime - duration, duration, debuffType or "", icon, count, refreshing, true)
+                self.indicators.debuffs[startIndex].spellId = spellId -- NOTE: for tooltip
                 startIndex = startIndex + 1
             end
         end
         -- then normal debuffs
         for debuffIndex, refreshing in pairs(debuffs_normal[unit]) do
-            local name, icon, count, debuffType, duration, expirationTime = UnitDebuff(unit, debuffIndex)
+            local name, icon, count, debuffType, duration, expirationTime, _, _, _, spellId = UnitDebuff(unit, debuffIndex)
             if name and not debuffs_raid_orders[unit][debuffIndex] and startIndex <= indicatorNums["debuffs"] then
                 -- start, duration, debuffType, texture, count, refreshing
                 self.indicators.debuffs[startIndex]:SetCooldown(expirationTime - duration, duration, debuffType or "", icon, count, refreshing)
+                self.indicators.debuffs[startIndex].spellId = spellId -- NOTE: for tooltip
                 startIndex = startIndex + 1
             end
         end
@@ -762,6 +774,7 @@ local function UnitButton_UpdateDebuffs(self)
     -- hide other debuff indicators
     for i = startIndex, 10 do
         self.indicators.debuffs[i]:Hide()
+        self.indicators.debuffs[i].spellId = nil
     end
 
     -- update dispels

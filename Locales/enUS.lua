@@ -19,6 +19,7 @@ select(2, ...).L = setmetatable({
     ["dispellableByMe"] = "Only show debuffs dispellable by me",
     ["castByMe"] = "Only show buffs cast by me",
     ["showDuration"] = "Show duration text",
+    ["showTooltip"] = "Show aura tooltip",
     ["enableHighlight"] = "Highlight unit button",
     ["hideFull"] = "Hide while HP is full",
     ["onlyShowTopGlow"] = "Only show glow for the first debuff",

@@ -367,6 +367,14 @@ function I:CreateAura_BarIcon(name, parent)
 
     frame.SetCooldown = BarIcon_SetCooldown
 
+    -- frame:SetScript("OnEnter", function()
+        -- local f = frame
+        -- repeat
+        --     f = f:GetParent()
+        -- until f:IsObjectType("button")
+        -- f:GetScript("OnEnter")(f)
+    -- end)
+    
     function frame:ShowDuration(show)
         frame.showDuration = show
         if show then

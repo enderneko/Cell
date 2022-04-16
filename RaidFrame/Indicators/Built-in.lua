@@ -402,6 +402,23 @@ function I:CreateDebuffs(parent)
         end
     end
 
+    function debuffs:ShowTooltip(show)
+        for i = 1, 10 do
+            if show then
+                debuffs[i]:SetScript("OnEnter", function()
+                    F:ShowTooltips(parent, "spell", debuffs[i].spellId)
+                end)
+                debuffs[i]:SetScript("OnLeave", function()
+                    GameTooltip:Hide()
+                end)
+            else
+                debuffs[i]:SetScript("OnEnter", nil)
+                debuffs[i]:SetScript("OnLeave", nil)
+                debuffs[i]:EnableMouse(false)
+            end
+        end
+    end
+
     function debuffs:UpdatePixelPerfect()
         debuffs:OriginalSetSize(P:Scale(debuffs.normalSize[1]), P:Scale(debuffs.normalSize[2]))
         P:Repoint(debuffs)
@@ -716,6 +733,23 @@ function I:CreateRaidDebuffs(parent)
         font = F:GetFont(font)
         for i = 1, 3 do
             raidDebuffs[i]:SetFont(font, ...)
+        end
+    end
+
+    function raidDebuffs:ShowTooltip(show)
+        for i = 1, 3 do
+            if show then
+                raidDebuffs[i]:SetScript("OnEnter", function()
+                    F:ShowTooltips(parent, "spell", raidDebuffs[i].spellId)
+                end)
+                raidDebuffs[i]:SetScript("OnLeave", function()
+                    GameTooltip:Hide()
+                end)
+            else
+                raidDebuffs[i]:SetScript("OnEnter", nil)
+                raidDebuffs[i]:SetScript("OnLeave", nil)
+                raidDebuffs[i]:EnableMouse(false)
+            end
         end
     end
 

@@ -416,6 +416,8 @@ L["enableHighlight"] = "高亮单位按钮"
 L["onlyShowTopGlow"] = "仅为优先级最高的减益显示发光效果"
 L["circledStackNums"] = "用带圈数字显示层数"
 L["Require font support"] = "需要字体支持"
+L["showTooltip"] = "显示鼠标提示"
+L["This will make these icons not click-through-able"] = "将会使这些图标不可点击穿透"
 
 L["left-to-right"] = "从左到右"
 L["right-to-left"] = "从右到左"

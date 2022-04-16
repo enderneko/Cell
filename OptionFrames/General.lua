@@ -116,14 +116,14 @@ local function CreateTooltipsPane()
     hideTooltipsInCombatCB:SetPoint("TOPLEFT", enableTooltipsCB, "BOTTOMLEFT", 0, -7)
 
     -- auras tooltips
-    enableAuraTooltipsCB = Cell:CreateCheckButton(tooltipsPane, L["Enable Auras Tooltips"], function(checked, self)
-    end)
-    enableAuraTooltipsCB:SetPoint("TOPLEFT", hideTooltipsInCombatCB, "BOTTOMLEFT", 0, -7)
-    enableAuraTooltipsCB:SetEnabled(false)
+    -- enableAuraTooltipsCB = Cell:CreateCheckButton(tooltipsPane, L["Enable Auras Tooltips"].." (pending)", function(checked, self)
+    -- end)
+    -- enableAuraTooltipsCB:SetPoint("TOPLEFT", hideTooltipsInCombatCB, "BOTTOMLEFT", 0, -7)
+    -- enableAuraTooltipsCB:SetEnabled(false)
 
     -- position
     tooltipsAnchor = Cell:CreateDropdown(tooltipsPane, 137)
-    tooltipsAnchor:SetPoint("TOPLEFT", enableAuraTooltipsCB, "BOTTOMLEFT", 0, -25)
+    tooltipsAnchor:SetPoint("TOPLEFT", hideTooltipsInCombatCB, "BOTTOMLEFT", 0, -25)
     local points = {"BOTTOM", "BOTTOMLEFT", "BOTTOMRIGHT", "LEFT", "RIGHT", "TOP", "TOPLEFT", "TOPRIGHT"}
     local relativePoints = {"TOP", "TOPLEFT", "TOPRIGHT", "RIGHT", "LEFT", "BOTTOM", "BOTTOMLEFT", "BOTTOMRIGHT"}
     local anchorItems = {}
