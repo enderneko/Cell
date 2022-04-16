@@ -138,7 +138,7 @@ local function ShowSRGlow(spellId, button)
         end)
 
         -- notify
-        F:Notify("spellRequest", unit, spellId)
+        F:Notify("SPELL_REQ_RECEIVED", unit, spellId, srSpells[spellId][1], srTimeout)
     end
 end
 
@@ -184,6 +184,9 @@ function SR:UNIT_AURA(unit, isFullUpdate, updatedAuras)
             if srUnit[2] == aura.spellId then
                 F:Debug("SR_HIDE [UNIT_AURA]:", unit, srUnit[1])
                 HideGlow(srUnit[3])
+                -- notify
+                F:Notify("SPELL_REQ_APPLIED", unit, srUnit[1], srUnit[2])
+                -- clear
                 srUnits[unit] = nil
                 requestedSpells[srUnit[1]] = nil
                 break
@@ -204,6 +207,10 @@ function SR:UNIT_SPELLCAST_SUCCEEDED(unit, _, spellId)
         if srUnits[requester] then
             HideGlow(srUnits[requester][3])
         end
+
+        -- notify
+        F:Notify("SPELL_REQ_CAST", requester, srUnits[requester][1], srUnits[requester][2])
+        -- clear
         srUnits[requester] = nil
         requestedSpells[spellId] = nil
     end
