@@ -933,6 +933,12 @@ function addon:CreateColorPicker(parent, label, hasOpacity, func)
     cp.label = cp:CreateFontString(nil, "OVERLAY", font_name)
     cp.label:SetText(label)
     cp.label:SetPoint("LEFT", cp, "RIGHT", 5, 0)
+
+    cp.mask = cp:CreateTexture(nil, "ARTWORK")
+    cp.mask:SetColorTexture(0.15, 0.15, 0.15, 0.7)
+    cp.mask:SetPoint("TOPLEFT", P:Scale(1), P:Scale(-1))
+    cp.mask:SetPoint("BOTTOMRIGHT", P:Scale(-1), P:Scale(1))
+    cp.mask:Hide()
     
     -- local function ColorCallback(restore)
     --     local newR, newG, newB, newA
@@ -978,17 +984,34 @@ function addon:CreateColorPicker(parent, label, hasOpacity, func)
     end)
 
     cp.color = {1, 1, 1, 1}
-    function cp:SetColor(t)
-        cp.color[1] = t[1]
-        cp.color[2] = t[2]
-        cp.color[3] = t[3]
-        cp.color[4] = t[4]
-        cp:SetBackdropColor(unpack(t))
+    function cp:SetColor(arg1, arg2, arg3, arg4)
+        if type(arg1) == "table" then
+            cp.color[1] = arg1[1]
+            cp.color[2] = arg1[2]
+            cp.color[3] = arg1[3]
+            cp.color[4] = arg1[4]
+            cp:SetBackdropColor(unpack(arg1))
+        else
+            cp.color[1] = arg1
+            cp.color[2] = arg2
+            cp.color[3] = arg3
+            cp.color[4] = arg4
+            cp:SetBackdropColor(arg1, arg2, arg3, arg4)
+        end
     end
 
     function cp:GetColor()
         return cp.color
     end
+
+    cp:SetScript("OnEnable", function()
+        cp.label:SetTextColor(1, 1, 1, 1)
+        cp.mask:Hide()
+    end)
+    cp:SetScript("OnDisable", function()
+        cp.label:SetTextColor(0.4, 0.4, 0.4, 1)
+        cp.mask:Show()
+    end)
 
     return cp
 end

@@ -13,7 +13,7 @@ local P = Cell.pixelPerfectFuncs
 local L = Cell.L
 
 -- sharing version check
-Cell.MIN_VERSION = 93
+Cell.MIN_VERSION = 94
 Cell.MIN_LAYOUTS_VERSION = 87
 Cell.MIN_INDICATORS_VERSION = 93
 Cell.MIN_DEBUFFS_VERSION = 78
@@ -271,7 +271,12 @@ function eventFrame:ADDON_LOADED(arg1)
                 ["bgAlpha"] = 1,
                 ["powerColor"] = {"power_color", {0.7, 0.7, 0.7}},
                 ["barAnimation"] = "Flash",
-                ["iconAnimation"] = "duration",
+                ["auraIconOptions"] = {
+                    ["animation"] = "duration",
+                    ["durationColorEnabled"] = false,
+                    ["durationColors"] = {{0,1,0}, {1,1,0,0.5}, {1,0,0,3}},
+                    ["durationDecimal"] = 0,
+                },
                 ["targetColor"] = {1, 0, 0.4, 1},
                 ["mouseoverColor"] = {1, 1, 1, 0.6},
                 ["highlightSize"] = 1,

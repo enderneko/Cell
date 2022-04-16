@@ -1,7 +1,10 @@
 local _, Cell = ...
 local L = Cell.L
 local F = Cell.funcs
+local I = Cell.iFuncs
 local P = Cell.pixelPerfectFuncs
+
+local LoadData
 
 local appearanceTab = Cell:CreateFrame("CellOptionsFrame_AppearanceTab", Cell.frames.optionsFrame, nil, nil, true)
 Cell.frames.appearanceTab = appearanceTab
@@ -60,13 +63,124 @@ local function CreateFontPane()
 end
 
 -------------------------------------------------
+-- preview icons
+-------------------------------------------------
+local borderIcon1, borderIcon2, barIcon1, barIcon2
+
+local function SetOnUpdate(indicator, type, icon, stack)
+    indicator.preview = indicator.preview or CreateFrame("Frame", nil, indicator)
+    indicator.preview:SetScript("OnUpdate", function(self, elapsed)
+        self.elapsedTime = (self.elapsedTime or 0) + elapsed
+        if self.elapsedTime >= 13 then
+            self.elapsedTime = 0
+            indicator:SetCooldown(GetTime(), 13, type, icon, stack)
+        end
+    end)
+    indicator:SetScript("OnShow", function()
+        indicator.preview.elapsedTime = 0
+        indicator:SetCooldown(GetTime(), 13, type, icon, stack)
+    end)
+end
+
+local function SetOnUpdate_Refresh(indicator, type, icon, stack)
+    indicator.preview = indicator.preview or CreateFrame("Frame", nil, indicator)
+    indicator.preview:SetScript("OnUpdate", function(self, elapsed)
+        self.elapsedTime = (self.elapsedTime or 0) + elapsed
+        if self.elapsedTime >= 5 then
+            self.elapsedTime = 0
+            indicator:SetCooldown(GetTime(), 13, type, icon, stack, true)
+        end
+    end)
+    indicator:SetScript("OnShow", function()
+        indicator.preview.elapsedTime = 0
+        indicator:SetCooldown(GetTime(), 13, type, icon, stack)
+    end)
+end
+
+-- update font
+local function UpdatePreviewIcons(layout, indicatorName, setting, value, value2)
+    if not indicatorName or indicatorName == "raidDebuffs" then
+        borderIcon1:SetFont(unpack(Cell.vars.currentLayoutTable.indicators[21].font))
+        borderIcon2:SetFont(unpack(Cell.vars.currentLayoutTable.indicators[21].font))
+    end
+    if not indicatorName or indicatorName == "debuffs" then
+        barIcon1:SetFont(unpack(Cell.vars.currentLayoutTable.indicators[20].font))
+        barIcon2:SetFont(unpack(Cell.vars.currentLayoutTable.indicators[20].font))
+    end
+end
+
+local function CreatePreviewIcons()
+    local previewIconsBG = Cell:CreateFrame("AppearancePreviewIconsBG", appearanceTab)
+    previewIconsBG:SetPoint("TOPLEFT", appearanceTab, "TOPRIGHT", 5, -122)
+    P:Size(previewIconsBG, 95, 45)
+    previewIconsBG:SetFrameStrata("BACKGROUND")
+    Cell:StylizeFrame(previewIconsBG, {0.1, 0.1, 0.1, 0.77}, {0, 0, 0, 0})
+    previewIconsBG:Show()
+
+    local previewText = previewIconsBG:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET_TITLE")
+    previewText:SetPoint("TOP", 0, -3)
+    previewText:SetText(Cell:GetPlayerClassColorString()..L["Preview"].." 1")
+
+    borderIcon1 = I:CreateAura_BorderIcon("AppearancePreviewIcon1", previewIconsBG, 2)
+    P:Size(borderIcon1, 22, 22)
+    borderIcon1:SetPoint("BOTTOMLEFT")
+    SetOnUpdate(borderIcon1, "Magic", 135819, 0)
+    borderIcon1:Show()
+
+    borderIcon2 = I:CreateAura_BorderIcon("AppearancePreviewIcon2", previewIconsBG, 2)
+    P:Size(borderIcon2, 22, 22)
+    borderIcon2:SetPoint("BOTTOMLEFT", borderIcon1, "BOTTOMRIGHT", P:Scale(1), 0)
+    borderIcon2.preview = CreateFrame("Frame", nil, borderIcon2)
+    borderIcon2.preview:SetScript("OnUpdate", function(self, elapsed)
+        self.elapsedTime = (self.elapsedTime or 0) + elapsed
+        if self.elapsedTime >= 6 then
+            self.elapsedTime = 0
+            self.stack = self.stack + 1
+            borderIcon2:SetCooldown(GetTime(), 13, "", 135718, self.stack, Cell.vars.iconAnimation ~= "never")
+        end
+    end)
+    borderIcon2:SetScript("OnShow", function()
+        borderIcon2.preview.stack = 1
+        borderIcon2.preview.elapsedTime = 0
+        borderIcon2:SetCooldown(GetTime(), 13, "", 135718, 1)
+    end)
+    borderIcon2:Show()
+
+    barIcon2 = I:CreateAura_BarIcon("AppearancePreviewIcon4", previewIconsBG)
+    P:Size(barIcon2, 22, 22)
+    barIcon2:SetPoint("BOTTOMRIGHT")
+    barIcon2.preview = CreateFrame("Frame", nil, barIcon2)
+    barIcon2.preview:SetScript("OnUpdate", function(self, elapsed)
+        self.elapsedTime = (self.elapsedTime or 0) + elapsed
+        if self.elapsedTime >= 6 then
+            self.elapsedTime = 0
+            barIcon2:SetCooldown(GetTime(), 13, nil, 136085, 0, Cell.vars.iconAnimation == "duration")
+        end
+    end)
+    barIcon2:SetScript("OnShow", function()
+        barIcon2.preview.elapsedTime = 0
+        barIcon2:SetCooldown(GetTime(), 13, nil, 136085, 0)
+    end)
+    barIcon2:Show()
+
+    barIcon1 = I:CreateAura_BarIcon("AppearancePreviewIcon3", previewIconsBG)
+    P:Size(barIcon1, 22, 22)
+    barIcon1:SetPoint("BOTTOMRIGHT", barIcon2, "BOTTOMLEFT", P:Scale(-1), 0)
+    barIcon1:ShowDuration(true)
+    SetOnUpdate(barIcon1, "", 1394887, 5)
+    barIcon1:Show()
+
+    UpdatePreviewIcons()
+end
+
+-------------------------------------------------
 -- preview button
 -------------------------------------------------
 local previewButton, previewButton2
 
 local function CreatePreviewButtons()
     previewButton = CreateFrame("Button", "CellAppearancePreviewButton", appearanceTab, "CellUnitButtonTemplate")
-    previewButton:SetPoint("TOPLEFT", appearanceTab, "TOPRIGHT", 5, -200)
+    previewButton:SetPoint("TOPLEFT", appearanceTab, "TOPRIGHT", 5, -255)
     previewButton:UnregisterAllEvents()
     previewButton:SetScript("OnEnter", nil)
     previewButton:SetScript("OnLeave", nil)
@@ -77,12 +191,12 @@ local function CreatePreviewButtons()
     previewButtonBG:SetPoint("TOPLEFT", previewButton, 0, 20)
     previewButtonBG:SetPoint("BOTTOMRIGHT", previewButton, "TOPRIGHT")
     previewButtonBG:SetFrameStrata("BACKGROUND")
-    Cell:StylizeFrame(previewButtonBG, {.1, .1, .1, .77}, {0, 0, 0, 0})
+    Cell:StylizeFrame(previewButtonBG, {0.1, 0.1, 0.1, 0.77}, {0, 0, 0, 0})
     previewButtonBG:Show()
     
     local previewText = previewButtonBG:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET_TITLE")
     previewText:SetPoint("TOP", 0, -3)
-    previewText:SetText(Cell:GetPlayerClassColorString()..L["Preview"].." 1")
+    previewText:SetText(Cell:GetPlayerClassColorString()..L["Preview"].." 2")
     
     previewButton2 = CreateFrame("Button", "AppearancePreviewButton2", appearanceTab, "CellUnitButtonTemplate")
     previewButton2:SetPoint("BOTTOMLEFT", appearanceTab, "BOTTOMRIGHT", 5, 20)
@@ -96,12 +210,12 @@ local function CreatePreviewButtons()
     previewButtonBG2:SetPoint("TOPLEFT", previewButton2, 0, 20)
     previewButtonBG2:SetPoint("BOTTOMRIGHT", previewButton2, "TOPRIGHT")
     previewButtonBG2:SetFrameStrata("BACKGROUND")
-    Cell:StylizeFrame(previewButtonBG2, {.1, .1, .1, .77}, {0, 0, 0, 0})
+    Cell:StylizeFrame(previewButtonBG2, {0.1, 0.1, 0.1, 0.77}, {0, 0, 0, 0})
     previewButtonBG2:Show()
     
     local previewText2 = previewButtonBG2:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET_TITLE")
     previewText2:SetPoint("TOP", 0, -3)
-    previewText2:SetText(Cell:GetPlayerClassColorString()..L["Preview"].." 2")
+    previewText2:SetText(Cell:GetPlayerClassColorString()..L["Preview"].." 3")
 
     -- animation
     local states = {-30, -60, 50, -40, 80}
@@ -245,7 +359,8 @@ end
 -- unitbutton
 -------------------------------------------------
 local textureDropdown, barColorDropdown, barColorPicker, lossColorDropdown, lossColorPicker, powerColorDropdown, powerColorPicker, barAnimationDropdown, targetColorPicker, mouseoverColorPicker, highlightSize
-local iconAnimationDropdown, barAlpha, lossAlpha, bgAlpha, oorAlpha, predCB, absorbCB, shieldCB, oversCB, resetBtn
+local barAlpha, lossAlpha, bgAlpha, oorAlpha, predCB, absorbCB, shieldCB, oversCB, resetBtn
+local iconOptionsBtn, iconOptionsFrame, iconAnimationDropdown, durationDecimalDropdown, durationColorCB, durationNormalCP, durationPercentCP, durationSecondCP, durationPercentDD, durationSecondEB, durationSecondText
 
 local function CheckTextures()
     local items = {}
@@ -292,6 +407,237 @@ local function CheckTextures()
     else
         textureDropdown:SetSelected(defaultTextureName, defaultTexture)
     end
+end
+
+local function CreateIconOptionsFrame()
+    if not appearanceTab.mask then
+        Cell:CreateMask(appearanceTab, nil, {1, -1, -1, 1})
+        appearanceTab.mask:Hide()
+    end
+
+    iconOptionsFrame = Cell:CreateFrame("CellOptionsFrame_IconOptions", appearanceTab, 230, 208)
+    iconOptionsFrame:SetBackdropBorderColor(unpack(Cell:GetPlayerClassColorTable()))
+    iconOptionsFrame:SetPoint("TOP", iconOptionsBtn, "BOTTOM", 0, -5)
+    iconOptionsFrame:SetPoint("RIGHT", -5, 0)
+    iconOptionsFrame:SetFrameStrata("DIALOG")
+    iconOptionsFrame:SetFrameLevel(50)
+
+    iconOptionsFrame:SetScript("OnShow", function()
+        appearanceTab.mask:Show()
+        iconOptionsBtn:SetFrameStrata("DIALOG")
+    end)
+    iconOptionsFrame:SetScript("OnHide", function()
+        iconOptionsFrame:Hide()
+        appearanceTab.mask:Hide()
+        iconOptionsBtn:SetFrameStrata("HIGH")
+    end)
+
+    -- icon animation
+    iconAnimationDropdown = Cell:CreateDropdown(iconOptionsFrame, 180)
+    iconAnimationDropdown:SetPoint("TOPLEFT", iconOptionsFrame, 10, -25)
+    iconAnimationDropdown:SetItems({
+        {
+            ["text"] = L["+ Stack & Duration"],
+            ["value"] = "duration",
+            ["onClick"] = function()
+                CellDB["appearance"]["auraIconOptions"]["animation"] = "duration"
+                Cell:Fire("UpdateAppearance", "icon")
+            end,
+        },
+        {
+            ["text"] = L["+ Stack"],
+            ["value"] = "stack",
+            ["onClick"] = function()
+                CellDB["appearance"]["auraIconOptions"]["animation"] = "stack"
+                Cell:Fire("UpdateAppearance", "icon")
+            end,
+        },
+        {
+            ["text"] = L["Never"],
+            ["value"] = "never",
+            ["onClick"] = function()
+                CellDB["appearance"]["auraIconOptions"]["animation"] = "never"
+                Cell:Fire("UpdateAppearance", "icon")
+            end,
+        },
+    })
+    
+    local iconAnimationText = iconOptionsFrame:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
+    iconAnimationText:SetPoint("BOTTOMLEFT", iconAnimationDropdown, "TOPLEFT", 0, 1)
+    iconAnimationText:SetText(L["Play Icon Animation When"])
+
+    -- duration decimal
+    local durationDecimalText1 = iconOptionsFrame:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
+    durationDecimalText1:SetPoint("TOPLEFT", iconAnimationDropdown, "BOTTOMLEFT", 0, -20)
+    durationDecimalText1:SetText(L["Display One Decimal Place When"])
+
+    local durationDecimalText2 = iconOptionsFrame:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
+    durationDecimalText2:SetPoint("TOPLEFT", durationDecimalText1, "BOTTOMLEFT", 0, -5)
+    durationDecimalText2:SetText(L["Remaining Time <"])
+
+    durationDecimalDropdown = Cell:CreateDropdown(iconOptionsFrame, 55)
+    durationDecimalDropdown:SetPoint("LEFT", durationDecimalText2, "RIGHT", 5, 0)
+    durationDecimalDropdown:SetItems({
+        {
+            ["text"] = 5,
+            ["value"] = 5,
+            ["onClick"] = function()
+                CellDB["appearance"]["auraIconOptions"]["durationDecimal"] = 5
+                Cell:Fire("UpdateAppearance", "icon")
+            end,
+        },
+        {
+            ["text"] = 4,
+            ["value"] = 4,
+            ["onClick"] = function()
+                CellDB["appearance"]["auraIconOptions"]["durationDecimal"] = 4
+                Cell:Fire("UpdateAppearance", "icon")
+            end,
+        },
+        {
+            ["text"] = 3,
+            ["value"] = 3,
+            ["onClick"] = function()
+                CellDB["appearance"]["auraIconOptions"]["durationDecimal"] = 3
+                Cell:Fire("UpdateAppearance", "icon")
+            end,
+        },
+        {
+            ["text"] = 2,
+            ["value"] = 2,
+            ["onClick"] = function()
+                CellDB["appearance"]["auraIconOptions"]["durationDecimal"] = 2
+                Cell:Fire("UpdateAppearance", "icon")
+            end,
+        },
+        {
+            ["text"] = 1,
+            ["value"] = 1,
+            ["onClick"] = function()
+                CellDB["appearance"]["auraIconOptions"]["durationDecimal"] = 1
+                Cell:Fire("UpdateAppearance", "icon")
+            end,
+        },
+        {
+            ["text"] = _G.NONE,
+            ["value"] = 0,
+            ["onClick"] = function()
+                CellDB["appearance"]["auraIconOptions"]["durationDecimal"] = 0
+                Cell:Fire("UpdateAppearance", "icon")
+            end,
+        },
+    })
+    
+    -- duration text color
+    durationColorCB = Cell:CreateCheckButton(iconOptionsFrame, L["Icon Duration Text Color"], function(checked, self)
+        CellDropdownList:Hide()
+
+        -- restore sec
+        durationSecondEB:SetText(CellDB["appearance"]["auraIconOptions"]["durationColors"][3][4])
+        durationSecondEB.confirmBtn:Hide()
+
+        CellDB["appearance"]["auraIconOptions"]["durationColorEnabled"] = checked
+        Cell:SetEnabled(checked, durationNormalCP, durationPercentCP, durationPercentDD, durationSecondCP, durationSecondEB, durationSecondText)
+        
+        Cell:Fire("UpdateAppearance", "icon")
+    end)
+    durationColorCB:SetPoint("TOPLEFT", 10, -117)
+
+    durationNormalCP = Cell:CreateColorPicker(iconOptionsFrame, L["Normal"], false, function(r, g, b)
+        CellDB["appearance"]["auraIconOptions"]["durationColors"][1][1] = r
+        CellDB["appearance"]["auraIconOptions"]["durationColors"][1][2] = g
+        CellDB["appearance"]["auraIconOptions"]["durationColors"][1][3] = b
+        Cell:Fire("UpdateAppearance", "icon")
+    end)
+    durationNormalCP:SetPoint("TOPLEFT", durationColorCB, "BOTTOMLEFT", 0, -8)
+    
+    durationPercentCP = Cell:CreateColorPicker(iconOptionsFrame, L["Remaining Time <"], false, function(r, g, b)
+        CellDB["appearance"]["auraIconOptions"]["durationColors"][2][1] = r
+        CellDB["appearance"]["auraIconOptions"]["durationColors"][2][2] = g
+        CellDB["appearance"]["auraIconOptions"]["durationColors"][2][3] = b
+        Cell:Fire("UpdateAppearance", "icon")
+    end)
+    durationPercentCP:SetPoint("TOPLEFT", durationNormalCP, "BOTTOMLEFT", 0, -8)
+    
+    durationSecondCP = Cell:CreateColorPicker(iconOptionsFrame, L["Remaining Time <"], false, function(r, g, b)
+        CellDB["appearance"]["auraIconOptions"]["durationColors"][3][1] = r
+        CellDB["appearance"]["auraIconOptions"]["durationColors"][3][2] = g
+        CellDB["appearance"]["auraIconOptions"]["durationColors"][3][3] = b
+        Cell:Fire("UpdateAppearance", "icon")
+    end)
+    durationSecondCP:SetPoint("TOPLEFT", durationPercentCP, "BOTTOMLEFT", 0, -8)
+
+    durationPercentDD = Cell:CreateDropdown(iconOptionsFrame, 55)
+    durationPercentDD:SetPoint("LEFT", durationPercentCP.label, "RIGHT", 5, 0)
+    durationPercentDD:SetItems({
+        {
+            ["text"] = "75%",
+            ["value"] = 0.75,
+            ["onClick"] = function()
+                CellDB["appearance"]["auraIconOptions"]["durationColors"][2][4] = 0.75
+                Cell:Fire("UpdateAppearance", "icon")
+            end,
+        },
+        {
+            ["text"] = "50%",
+            ["value"] = 0.5,
+            ["onClick"] = function()
+                CellDB["appearance"]["auraIconOptions"]["durationColors"][2][4] = 0.5
+                Cell:Fire("UpdateAppearance", "icon")
+            end,
+        },
+        {
+            ["text"] = "25%",
+            ["value"] = 0.25,
+            ["onClick"] = function()
+                CellDB["appearance"]["auraIconOptions"]["durationColors"][2][4] = 0.25
+                Cell:Fire("UpdateAppearance", "icon")
+            end,
+        },
+        {
+            ["text"] = _G.NONE,
+            ["value"] = 0,
+            ["onClick"] = function()
+                CellDB["appearance"]["auraIconOptions"]["durationColors"][2][4] = 0
+                Cell:Fire("UpdateAppearance", "icon")
+            end,
+        },
+    })
+    
+    durationSecondEB = Cell:CreateEditBox(iconOptionsFrame, 38, 20, false, false, true)
+    durationSecondEB:SetPoint("LEFT", durationSecondCP.label, "RIGHT", 5, 0)
+    durationSecondEB:SetMaxLetters(4)
+
+    durationSecondEB.confirmBtn = Cell:CreateButton(iconOptionsFrame, "OK", "class", {27, 20})
+    durationSecondEB.confirmBtn:SetPoint("LEFT", durationSecondEB, "RIGHT", -1, 0)
+    durationSecondEB.confirmBtn:Hide()
+    durationSecondEB.confirmBtn:SetScript("OnHide", function()
+        durationSecondEB.confirmBtn:Hide()
+    end)
+    durationSecondEB.confirmBtn:SetScript("OnClick", function()
+        local newSec = tonumber(durationSecondEB:GetText())
+        durationSecondEB:SetText(newSec)
+        durationSecondEB.confirmBtn:Hide()
+
+        CellDB["appearance"]["auraIconOptions"]["durationColors"][3][4] = newSec
+
+        Cell:Fire("UpdateAppearance", "icon")
+    end)
+
+    durationSecondEB:SetScript("OnTextChanged", function(self, userChanged)
+        if userChanged then
+            local newSec = tonumber(self:GetText())
+            if newSec and newSec ~= "" then
+                durationSecondEB.confirmBtn:Show()
+            else
+                durationSecondEB.confirmBtn:Hide()
+            end
+        end
+    end)
+
+    durationSecondText = iconOptionsFrame:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
+    durationSecondText:SetPoint("LEFT", durationSecondEB, "RIGHT", 5, 0)
+    durationSecondText:SetText(L["sec"])
 end
 
 local function CreateUnitButtonStylePane()
@@ -537,44 +883,23 @@ local function CreateUnitButtonStylePane()
         Cell:Fire("UpdateAppearance", "highlightSize")
     end
     
-    -- icon animation
-    iconAnimationDropdown = Cell:CreateDropdown(unitButtonPane, 160)
-    iconAnimationDropdown:SetPoint("TOPLEFT", unitButtonPane, "TOPLEFT", 222, -42)
-    iconAnimationDropdown:SetItems({
-        {
-            ["text"] = L["+ Stack & Duration"],
-            ["value"] = "duration",
-            ["onClick"] = function()
-                CellDB["appearance"]["iconAnimation"] = "duration"
-    
-            end,
-        },
-        {
-            ["text"] = L["+ Stack"],
-            ["value"] = "stack",
-            ["onClick"] = function()
-                CellDB["appearance"]["iconAnimation"] = "stack"
-            end,
-        },
-        {
-            ["text"] = L["Never"],
-            ["value"] = "never",
-            ["onClick"] = function()
-                CellDB["appearance"]["iconAnimation"] = "never"
-            end,
-        },
-    })
-    
-    local iconAnimationText = unitButtonPane:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
-    iconAnimationText:SetPoint("BOTTOMLEFT", iconAnimationDropdown, "TOPLEFT", 0, 1)
-    iconAnimationText:SetText(L["Play Icon Animation When"])
+    -- icon options
+    iconOptionsBtn = Cell:CreateButton(unitButtonPane, L["Aura Icon Options"], "class-hover", {160, 20})
+    iconOptionsBtn:SetPoint("TOPLEFT", unitButtonPane, "TOPLEFT", 222, -42)
+    iconOptionsBtn:SetScript("OnClick", function()
+        if iconOptionsFrame:IsShown() then
+            iconOptionsFrame:Hide()
+        else
+            iconOptionsFrame:Show()
+        end
+    end)
     
     -- bar alpha
     barAlpha = Cell:CreateSlider(L["Health Bar Alpha"], unitButtonPane, 0, 100, 141, 5, function(value)
         CellDB["appearance"]["barAlpha"] = value/100
         Cell:Fire("UpdateAppearance", "alpha")
     end, nil, true)
-    barAlpha:SetPoint("TOPLEFT", iconAnimationDropdown, "BOTTOMLEFT", 0, -30)
+    barAlpha:SetPoint("TOPLEFT", iconOptionsBtn, "BOTTOMLEFT", 0, -30)
     
     -- loss alpha
     lossAlpha = Cell:CreateSlider(L["Health Loss Alpha"], unitButtonPane, 0, 100, 141, 5, function(value)
@@ -639,7 +964,6 @@ local function CreateUnitButtonStylePane()
             CellDB["appearance"]["bgAlpha"] = 1
             CellDB["appearance"]["powerColor"] = {"power_color", {.7, .7, .7}}
             CellDB["appearance"]["barAnimation"] = "Flash"
-            CellDB["appearance"]["iconAnimation"] = "duration"
             CellDB["appearance"]["targetColor"] = {1, .31, .31, 1}
             CellDB["appearance"]["mouseoverColor"] = {1, 1, 1, .6}
             CellDB["appearance"]["highlightSize"] = 1
@@ -648,33 +972,17 @@ local function CreateUnitButtonStylePane()
             CellDB["appearance"]["healAbsorb"] = true
             CellDB["appearance"]["shield"] = true
             CellDB["appearance"]["overshield"] = true
+
+            CellDB["appearance"]["auraIconOptions"] = {
+                ["animation"] = "duration",
+                ["durationColorEnabled"] = false,
+                ["durationColors"] = {{0,1,0}, {1,1,0,0.5}, {1,0,0,3}},
+                ["durationDecimal"] = 0,
+            }
     
+            -- load data
             textureDropdown:SetSelected("Cell ".._G.DEFAULT, "Interface\\AddOns\\Cell\\Media\\statusbar.tga")
-    
-            barColorDropdown:SetSelectedValue("class_color")
-            barColorPicker:SetColor({.2, .2, .2})
-    
-            lossColorDropdown:SetSelectedValue(class_color_dark)
-            lossColorPicker:SetColor({.667, 0, 0})
-    
-            powerColorDropdown:SetSelectedValue("power_color")
-            powerColorPicker:SetColor({.7, .7, .7})
-    
-            barAnimationDropdown:SetSelected(L["Flash"])
-            iconAnimationDropdown:SetSelectedValue("duration")
-    
-            targetColorPicker:SetColor({1, .31, .31, 1})
-            mouseoverColorPicker:SetColor({1, 1, 1, .6})
-            highlightSize:SetValue(1)
-            oorAlpha:SetValue(45)
-            barAlpha:SetValue(100)
-            lossAlpha:SetValue(100)
-            bgAlpha:SetValue(100)
-    
-            predCB:SetChecked(true)
-            absorbCB:SetChecked(true)
-            shieldCB:SetChecked(true)
-            oversCB:SetChecked(true)
+            LoadData()
     
             Cell:Fire("UpdateAppearance")
         end
@@ -686,64 +994,88 @@ end
 -- functions
 -------------------------------------------------
 local init
+LoadData = function()
+    scaleSlider:SetValue(CellDB["appearance"]["scale"])
+    optionsFontSizeOffset:SetValue(CellDB["appearance"]["optionsFontSizeOffset"])
+    useGameFontCB:SetChecked(CellDB["appearance"]["useGameFont"])
+    
+    if not init then CheckTextures() end
+    barColorDropdown:SetSelectedValue(CellDB["appearance"]["barColor"][1])
+    barColorPicker:SetColor(CellDB["appearance"]["barColor"][2])
+
+    lossColorDropdown:SetSelectedValue(CellDB["appearance"]["lossColor"][1])
+    lossColorPicker:SetColor(CellDB["appearance"]["lossColor"][2])
+
+    powerColorDropdown:SetSelectedValue(CellDB["appearance"]["powerColor"][1])
+    powerColorPicker:SetColor(CellDB["appearance"]["powerColor"][2])
+
+    barAnimationDropdown:SetSelected(L[CellDB["appearance"]["barAnimation"]])
+
+    targetColorPicker:SetColor(CellDB["appearance"]["targetColor"])
+    mouseoverColorPicker:SetColor(CellDB["appearance"]["mouseoverColor"])
+    highlightSize:SetValue(CellDB["appearance"]["highlightSize"])
+    oorAlpha:SetValue(CellDB["appearance"]["outOfRangeAlpha"]*100)
+    barAlpha:SetValue(CellDB["appearance"]["barAlpha"]*100)
+    lossAlpha:SetValue(CellDB["appearance"]["lossAlpha"]*100)
+    bgAlpha:SetValue(CellDB["appearance"]["bgAlpha"]*100)
+
+    predCB:SetChecked(CellDB["appearance"]["healPrediction"])
+    absorbCB:SetChecked(CellDB["appearance"]["healAbsorb"])
+    shieldCB:SetChecked(CellDB["appearance"]["shield"])
+    oversCB:SetChecked(CellDB["appearance"]["overshield"])
+
+    -- icon options
+    iconAnimationDropdown:SetSelectedValue(CellDB["appearance"]["auraIconOptions"]["animation"])
+    durationDecimalDropdown:SetSelectedValue(CellDB["appearance"]["auraIconOptions"]["durationDecimal"])
+    durationColorCB:SetChecked(CellDB["appearance"]["auraIconOptions"]["durationColorEnabled"])
+    Cell:SetEnabled(CellDB["appearance"]["auraIconOptions"]["durationColorEnabled"], durationNormalCP, durationPercentCP, durationPercentDD, durationSecondCP, durationSecondEB, durationSecondText)
+    durationNormalCP:SetColor(CellDB["appearance"]["auraIconOptions"]["durationColors"][1])
+    durationPercentCP:SetColor(CellDB["appearance"]["auraIconOptions"]["durationColors"][2][1], CellDB["appearance"]["auraIconOptions"]["durationColors"][2][2], CellDB["appearance"]["auraIconOptions"]["durationColors"][2][3])
+    durationPercentDD:SetSelectedValue(CellDB["appearance"]["auraIconOptions"]["durationColors"][2][4])
+    durationSecondCP:SetColor(CellDB["appearance"]["auraIconOptions"]["durationColors"][3][1], CellDB["appearance"]["auraIconOptions"]["durationColors"][3][2], CellDB["appearance"]["auraIconOptions"]["durationColors"][3][3])
+    durationSecondEB:SetText(CellDB["appearance"]["auraIconOptions"]["durationColors"][3][4])
+end
+
 local function ShowTab(tab)
     if tab == "appearance" then
         if not init then
+            CreatePreviewIcons()
             CreatePreviewButtons()
             CreateScalePane()
             CreateFontPane()
             CreateUnitButtonStylePane()
+            CreateIconOptionsFrame()
         end
 
         appearanceTab:Show()
         
         if init then return end
-        init = true
 
         UpdatePreviewButton()
-
-        -- load data
-        scaleSlider:SetValue(CellDB["appearance"]["scale"])
-        optionsFontSizeOffset:SetValue(CellDB["appearance"]["optionsFontSizeOffset"])
-        useGameFontCB:SetChecked(CellDB["appearance"]["useGameFont"])
-        
-        CheckTextures()
-        barColorDropdown:SetSelectedValue(CellDB["appearance"]["barColor"][1])
-        barColorPicker:SetColor(CellDB["appearance"]["barColor"][2])
-
-        lossColorDropdown:SetSelectedValue(CellDB["appearance"]["lossColor"][1])
-        lossColorPicker:SetColor(CellDB["appearance"]["lossColor"][2])
-
-        powerColorDropdown:SetSelectedValue(CellDB["appearance"]["powerColor"][1])
-        powerColorPicker:SetColor(CellDB["appearance"]["powerColor"][2])
-
-        barAnimationDropdown:SetSelected(L[CellDB["appearance"]["barAnimation"]])
-        iconAnimationDropdown:SetSelectedValue(CellDB["appearance"]["iconAnimation"])
-
-        targetColorPicker:SetColor(CellDB["appearance"]["targetColor"])
-        mouseoverColorPicker:SetColor(CellDB["appearance"]["mouseoverColor"])
-        highlightSize:SetValue(CellDB["appearance"]["highlightSize"])
-        oorAlpha:SetValue(CellDB["appearance"]["outOfRangeAlpha"]*100)
-        barAlpha:SetValue(CellDB["appearance"]["barAlpha"]*100)
-        lossAlpha:SetValue(CellDB["appearance"]["lossAlpha"]*100)
-        bgAlpha:SetValue(CellDB["appearance"]["bgAlpha"]*100)
-
-        predCB:SetChecked(CellDB["appearance"]["healPrediction"])
-        absorbCB:SetChecked(CellDB["appearance"]["healAbsorb"])
-        shieldCB:SetChecked(CellDB["appearance"]["shield"])
-        oversCB:SetChecked(CellDB["appearance"]["overshield"])
+        LoadData()
+        init = true
     else
         appearanceTab:Hide()
     end
 end
 Cell:RegisterCallback("ShowOptionsTab", "AppearanceTab_ShowTab", ShowTab)
 
+-------------------------------------------------
+-- update preivew
+-------------------------------------------------
 local function UpdateLayout()
     if init and previewButton.loaded then
         UpdatePreviewButton()
     end
 end
 Cell:RegisterCallback("UpdateLayout", "AppearanceTab_UpdateLayout", UpdateLayout)
+
+local function UpdateIndicators(...)
+    if init then
+        UpdatePreviewIcons(...)
+    end
+end
+Cell:RegisterCallback("UpdateIndicators", "AppearanceTab_UpdateIndicators", UpdateIndicators)
 
 -------------------------------------------------
 -- update appearance
@@ -790,6 +1122,22 @@ local function UpdateAppearance(which)
                 b.func.UpdateHighlightSize()
             end
         end)
+    end
+
+    -- icon options
+    if not which or which == "icon" then
+        -- animation
+        Cell.vars.iconAnimation = CellDB["appearance"]["auraIconOptions"]["animation"]
+
+        -- decimal
+        Cell.vars.iconDurationDecimal = CellDB["appearance"]["auraIconOptions"]["durationDecimal"]
+
+        -- color
+        if CellDB["appearance"]["auraIconOptions"]["durationColorEnabled"] then
+            Cell.vars.iconDurationColors = CellDB["appearance"]["auraIconOptions"]["durationColors"]
+        else
+            Cell.vars.iconDurationColors = nil
+        end
     end
 
     -- scale

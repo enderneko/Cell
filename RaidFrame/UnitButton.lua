@@ -578,12 +578,12 @@ local function UnitButton_UpdateDebuffs(self)
         
         -- if duration and duration ~= 0 and duration <= 600 then
         if duration then
-            if CellDB["appearance"]["iconAnimation"] == "duration" then
+            if Cell.vars.iconAnimation == "duration" then
                 -- print(name, expirationTime-duration+.1>=GetTime()) -- NOTE: startTime ≈ now
                 justApplied = abs(expirationTime-GetTime()-duration) <= 0.1
                 countIncreased = debuffs_cache_count[unit][spellId] and (count > debuffs_cache_count[unit][spellId]) or false
                 refreshing = debuffs_cache[unit][spellId] and (justApplied or countIncreased) or false
-            elseif CellDB["appearance"]["iconAnimation"] == "stack" then
+            elseif Cell.vars.iconAnimation == "stack" then
                 refreshing = debuffs_cache_count[unit][spellId] and (count > debuffs_cache_count[unit][spellId]) or false
             else
                 refreshing = false
@@ -814,11 +814,11 @@ local function UnitButton_UpdateBuffs(self)
         end
         
         if duration then
-            if CellDB["appearance"]["iconAnimation"] == "duration" then
+            if Cell.vars.iconAnimation == "duration" then
                 justApplied = abs(expirationTime-GetTime()-duration) <= 0.1
                 countIncreased = buffs_cache_count[unit][spellId] and (count > buffs_cache_count[unit][spellId]) or false
                 refreshing = buffs_cache[unit][spellId] and (justApplied or countIncreased) or false
-            elseif CellDB["appearance"]["iconAnimation"] == "stack" then
+            elseif Cell.vars.iconAnimation == "stack" then
                 refreshing = buffs_cache_count[unit][spellId] and (count > buffs_cache_count[unit][spellId]) or false
             else
                 refreshing = false
@@ -928,11 +928,11 @@ local function UnitButton_UpdateBuffs(self)
         end
 
         if duration then
-            if CellDB["appearance"]["iconAnimation"] == "duration" then
+            if Cell.vars.iconAnimation == "duration" then
                 justApplied = abs(expirationTime-GetTime()-duration) <= 0.1
                 countIncreased = buffs_cache_count_castByMe[unit][spellId] and (count > buffs_cache_count_castByMe[unit][spellId]) or false
                 refreshing = buffs_cache_castByMe[unit][spellId] and (justApplied or countIncreased) or false
-            elseif CellDB["appearance"]["iconAnimation"] == "stack" then
+            elseif Cell.vars.iconAnimation == "stack" then
                 refreshing = buffs_cache_count_castByMe[unit][spellId] and (count > buffs_cache_count_castByMe[unit][spellId]) or false
             else
                 refreshing = false

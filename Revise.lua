@@ -1152,5 +1152,19 @@ function F:Revise()
         end
     end
 
+    -- r94-release
+    if CellDB["revise"] and dbRevision < 94 then
+        if not CellDB["appearance"]["auraIconOptions"] then
+            CellDB["appearance"]["auraIconOptions"] = {
+                ["animation"] = CellDB["appearance"]["iconAnimation"],
+                ["durationColorEnabled"] = false,
+                ["durationColors"] = {{0,1,0}, {1,1,0,0.5}, {1,0,0,3}},
+                ["durationDecimal"] = 0,
+            }
+
+            CellDB["appearance"]["iconAnimation"] = nil
+        end
+    end
+
     CellDB["revise"] = Cell.version
 end

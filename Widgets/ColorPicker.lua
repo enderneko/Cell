@@ -145,6 +145,7 @@ local function CreateColorPicker()
     local name = addonName.."ColorPicker"
 
     colorPicker = addon:CreateMovableFrame(_G.COLOR_PICKER, name, 216, 295, "DIALOG", 1, true)
+    colorPicker:SetFrameLevel(777)
     colorPicker:SetIgnoreParentScale(true)
     colorPicker:SetPoint("CENTER")
     colorPicker.header.closeBtn:Hide()
@@ -479,6 +480,5 @@ function addon:ShowColorPicker(callback, hasAlpha, r, g, b, a)
     addon:SetEnabled(hasAlpha, alpha, aEB, aEB.label)
 
     P:PixelPerfectPoint(colorPicker)
-    colorPicker:Raise()
     colorPicker:Show()
 end

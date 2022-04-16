@@ -9,7 +9,7 @@ local DebuffTypeColor = DebuffTypeColor
 -- CreateAura_BorderIcon
 -------------------------------------------------
 local function BorderIcon_SetFont(frame, font, size, flags, horizontalOffset)
-    if not string.find(font, ".ttf") then font = F:GetFont(font) end
+    if not strfind(strlower(font), ".ttf") then font = F:GetFont(font) end
 
     if flags == "Shadow" then
         frame.stack:SetFont(font, size)
@@ -61,13 +61,31 @@ local function BorderIcon_SetCooldown(frame, start, duration, debuffType, textur
         frame.duration:Show()
         frame:SetScript("OnUpdate", function()
             local remain = duration-(GetTime()-start)
-            -- if remain <= 5 then
-            --     frame.duration:SetText(string.format("%.1f", remain))
-            if remain <= 60 then
-                frame.duration:SetText(string.format("%d", remain))
+            if remain < 0 then remain = 0 end
+
+            -- color
+            if Cell.vars.iconDurationColors then
+                if remain < Cell.vars.iconDurationColors[3][4] then
+                    frame.duration:SetTextColor(Cell.vars.iconDurationColors[3][1], Cell.vars.iconDurationColors[3][2], Cell.vars.iconDurationColors[3][3])
+                elseif remain < (Cell.vars.iconDurationColors[2][4] * duration) then
+                    frame.duration:SetTextColor(Cell.vars.iconDurationColors[2][1], Cell.vars.iconDurationColors[2][2], Cell.vars.iconDurationColors[2][3])
+                else
+                    frame.duration:SetTextColor(Cell.vars.iconDurationColors[1][1], Cell.vars.iconDurationColors[1][2], Cell.vars.iconDurationColors[1][3])
+                end
             else
-                frame.duration:SetText("")
+                frame.duration:SetTextColor(1, 1, 1)
             end
+
+            -- format
+            if remain > 60 then
+                remain = string.format("%dm", remain/60)
+            elseif remain < Cell.vars.iconDurationDecimal then
+                remain = string.format("%.1f", remain)
+            else
+                remain = string.format("%d", remain)
+            end
+
+            frame.duration:SetText(remain)
         end)
     end
 
@@ -162,7 +180,7 @@ end
 -- CreateAura_BarIcon
 -------------------------------------------------
 local function BarIcon_SetFont(frame, font, size, flags, horizontalOffset)
-    if not string.find(font, ".ttf") then font = F:GetFont(font) end
+    if not strfind(strlower(font), ".ttf") then font = F:GetFont(font) end
 
     if flags == "Shadow" then
         frame.stack:SetFont(font, size)
@@ -201,11 +219,31 @@ local function BarIcon_SetCooldown(frame, start, duration, debuffType, texture, 
             frame.cooldown:Hide()
             frame:SetScript("OnUpdate", function()
                 local remain = duration-(GetTime()-start)
-                if remain <= 60 then
-                    frame.duration:SetText(string.format("%d", remain))
+                if remain < 0 then remain = 0 end
+
+                -- color
+                if Cell.vars.iconDurationColors then
+                    if remain < Cell.vars.iconDurationColors[3][4] then
+                        frame.duration:SetTextColor(Cell.vars.iconDurationColors[3][1], Cell.vars.iconDurationColors[3][2], Cell.vars.iconDurationColors[3][3])
+                    elseif remain < (Cell.vars.iconDurationColors[2][4] * duration) then
+                        frame.duration:SetTextColor(Cell.vars.iconDurationColors[2][1], Cell.vars.iconDurationColors[2][2], Cell.vars.iconDurationColors[2][3])
+                    else
+                        frame.duration:SetTextColor(Cell.vars.iconDurationColors[1][1], Cell.vars.iconDurationColors[1][2], Cell.vars.iconDurationColors[1][3])
+                    end
                 else
-                    frame.duration:SetText("")
+                    frame.duration:SetTextColor(1, 1, 1)
                 end
+
+                -- format
+                if remain > 60 then
+                    remain = string.format("%dm", remain/60)
+                elseif remain < Cell.vars.iconDurationDecimal then
+                    remain = string.format("%.1f", remain)
+                else
+                    remain = string.format("%d", remain)
+                end
+
+                frame.duration:SetText(remain)
             end)
         else
             -- init bar values
@@ -357,7 +395,7 @@ end
 -- CreateAura_Text
 -------------------------------------------------
 local function Text_SetFont(frame, font, size, flags, horizontalOffset)
-    if not string.find(font, ".ttf") then font = F:GetFont(font) end
+    if not strfind(strlower(font), ".ttf") then font = F:GetFont(font) end
 
     if flags == "Shadow" then
         frame.text:SetFont(font, size)

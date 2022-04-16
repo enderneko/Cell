@@ -60,6 +60,22 @@ local function UpdatePreviewButton()
     previewButton.loaded = true
 end
 
+-- indicator preview onupdate
+local function SetOnUpdate(indicator, type, icon, stack)
+    indicator.preview = indicator.preview or CreateFrame("Frame", nil, indicator)
+    indicator.preview:SetScript("OnUpdate", function(self, elapsed)
+        self.elapsedTime = (self.elapsedTime or 0) + elapsed
+        if self.elapsedTime >= 13 then
+            self.elapsedTime = 0
+            indicator:SetCooldown(GetTime(), 13, type, icon, stack)
+        end
+    end)
+    indicator:SetScript("OnShow", function()
+        indicator.preview.elapsedTime = 0
+        indicator:SetCooldown(GetTime(), 13, type, icon, stack)
+    end)
+end
+
 -- init preview button indicator animation
 local function InitIndicator(indicatorName)
     local indicator = previewButton.indicators[indicatorName]
@@ -198,18 +214,7 @@ local function InitIndicator(indicatorName)
         local types = {"", "Curse", "Disease", "Magic", "Poison", "", "Curse", "Disease", "Magic", "Poison"}
         local icons = {132155, 136139, 136128, 240443, 136182, 132155, 136139, 136128, 240443, 136182}
         for i = 1, 10 do
-            indicator[i]:SetScript("OnShow", function()
-                indicator[i]:SetCooldown(GetTime(), 8, types[i], icons[i], i)
-                indicator[i].cooldown:SetScript("OnUpdate", nil)
-                indicator[i]:SetScript("OnUpdate", function(self, elapsed)
-                    self.value = (self.value or 0) + elapsed
-                    if self.value >= 8 then
-                        self.value = 0
-                    end
-                    self.duration:SetText(string.format("%d", 8-self.value))
-                    self.cooldown:SetValue(self.value)
-                end)
-            end)
+            SetOnUpdate(indicator[i], types[i], icons[i], i)
         end
         
     elseif indicatorName == "dispels" then
@@ -218,11 +223,12 @@ local function InitIndicator(indicatorName)
 
     elseif indicatorName == "raidDebuffs" then
         indicator.isRaidDebuffs = true
+        local types = {"", "Curse", "Magic"}
         for i = 1, 3 do
             indicator[i]:HookScript("OnShow", function()
-                indicator[i]:SetCooldown(GetTime(), 10, "", "Interface\\Icons\\INV_Misc_QuestionMark", 7)
+                indicator[i]:SetCooldown(GetTime(), 13, types[i], "Interface\\Icons\\INV_Misc_QuestionMark", 7)
                 indicator[i].cooldown:SetScript("OnCooldownDone", function()
-                    indicator[i]:SetCooldown(GetTime(), 10, "", "Interface\\Icons\\INV_Misc_QuestionMark", 7)
+                    indicator[i]:SetCooldown(GetTime(), 13, types[i], "Interface\\Icons\\INV_Misc_QuestionMark", 7)
                 end)
             end)
             indicator[i]:HookScript("OnHide", function()
@@ -250,80 +256,30 @@ local function InitIndicator(indicatorName)
     elseif indicatorName == "externalCooldowns" then
         local icons = {135936, 572025, 135966, 627485, 237542}
         for i = 1, 5 do
-            indicator[i]:SetScript("OnShow", function()
-                indicator[i]:SetCooldown(GetTime(), 8, nil, icons[i], 0)
-                indicator[i].cooldown:SetScript("OnUpdate", nil)
-                indicator[i]:SetScript("OnUpdate", function(self, elapsed)
-                    self.value = (self.value or 0) + elapsed
-                    if self.value >= 8 then
-                        self.value = 0
-                    end
-                    self.duration:SetText(string.format("%d", 8-self.value))
-                    self.cooldown:SetValue(self.value)
-                end)
-            end)
+            SetOnUpdate(indicator[i], nil, icons[i], 0)
         end
     elseif indicatorName == "defensiveCooldowns" then
         local icons = {135919, 136120, 538565, 132362, 132199}
         for i = 1, 5 do
-            indicator[i]:SetScript("OnShow", function()
-                indicator[i]:SetCooldown(GetTime(), 8, nil, icons[i], 0)
-                indicator[i].cooldown:SetScript("OnUpdate", nil)
-                indicator[i]:SetScript("OnUpdate", function(self, elapsed)
-                    self.value = (self.value or 0) + elapsed
-                    if self.value >= 8 then
-                        self.value = 0
-                    end
-                    self.duration:SetText(string.format("%d", 8-self.value))
-                    self.cooldown:SetValue(self.value)
-                end)
-            end)
+            SetOnUpdate(indicator[i], nil, icons[i], 0)
         end
     elseif indicatorName == "allCooldowns" then
         local icons = {135936, 136120, 135966, 132362, 237542}
         for i = 1, 5 do
-            indicator[i]:SetScript("OnShow", function()
-                indicator[i]:SetCooldown(GetTime(), 8, nil, icons[i], 0)
-                indicator[i].cooldown:SetScript("OnUpdate", nil)
-                indicator[i]:SetScript("OnUpdate", function(self, elapsed)
-                    self.value = (self.value or 0) + elapsed
-                    if self.value >= 8 then
-                        self.value = 0
-                    end
-                    self.duration:SetText(string.format("%d", 8-self.value))
-                    self.cooldown:SetValue(self.value)
-                end)
-            end)
+            SetOnUpdate(indicator[i], nil, icons[i], 0)
         end
     elseif string.find(indicatorName, "indicator") then
         if indicator.indicatorType == "icons" then
             for i = 1, 10 do
-                indicator[i]:SetScript("OnShow", function()
-                    indicator[i]:SetCooldown(GetTime(), 8, nil, 134400, i)
-                    indicator[i].cooldown:SetScript("OnUpdate", nil)
-                    indicator[i]:SetScript("OnUpdate", function(self, elapsed)
-                        self.value = (self.value or 0) + elapsed
-                        if self.value >= 8 then
-                            self.value = 0
-                        end
-                        self.duration:SetText(string.format("%d", 8-self.value))
-                        self.cooldown:SetValue(self.value)
-                    end)
-                end)
+                SetOnUpdate(indicator[i], nil, 134400, i)
             end
         elseif indicator.indicatorType == "text" then
             indicator.isCustomText = true -- mark for custom glow
-            indicator.preview = indicator.preview or CreateFrame("Frame", nil, indicator)
+            SetOnUpdate(indicator, nil, 134400, 5)
+            --! overwrite
             indicator:SetScript("OnShow", function()
-                indicator:SetCooldown(GetTime(), 12, nil, 134400, 5)
+                indicator:SetCooldown(GetTime(), 13, nil, 134400, 5)
                 indicator.preview.elapsedTime = 0
-                indicator.preview:SetScript("OnUpdate", function(self, elapsed)
-                    self.elapsedTime = self.elapsedTime + elapsed
-                    if self.elapsedTime >= 12 then
-                        self.elapsedTime = 0
-                        indicator:SetCooldown(GetTime(), 12, nil, 134400, 5)
-                    end
-                end)
                 C_Timer.After(.2, function()
                     indicator:SetWidth(indicator.text:GetStringWidth() + 6)
                 end)
@@ -334,21 +290,9 @@ local function InitIndicator(indicatorName)
             indicator.preview:SetAllPoints(indicator)
             indicator:SetCooldown(nil, nil, "Curse")
         elseif indicator.indicatorType == "texture" then
-            -- texture type cannot glow by LCG
             indicator:SetCooldown()
         else
-            indicator.preview = indicator.preview or CreateFrame("Frame", nil, indicator)
-            indicator:SetScript("OnShow", function()
-                indicator:SetCooldown(GetTime(), 12, nil, 134400, 0)
-                indicator.preview.elapsedTime = 0
-                indicator.preview:SetScript("OnUpdate", function(self, elapsed)
-                    self.elapsedTime = self.elapsedTime + elapsed
-                    if self.elapsedTime >= 12 then
-                        self.elapsedTime = 0
-                        indicator:SetCooldown(GetTime(), 12, nil, 134400, 0)
-                    end
-                end)
-            end)
+            SetOnUpdate(indicator, nil, 134400, 0)
         end
     end
     indicator.init = true
@@ -464,9 +408,11 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                 end
                 -- after init
                 if t["enabled"] then
+                    indicator.enabled = true
                     indicator:Show()
                     if indicator.preview then indicator.preview:Show() end
                 else
+                    indicator.enabled = false
                     indicator:Hide()
                     if indicator.preview then indicator.preview:Hide() end
                 end
@@ -479,10 +425,12 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
         -- changed in IndicatorsTab
         if setting == "enabled" then
             if value then
+                indicator.enabled = true
                 indicator:Show()
                 if indicator.preview then indicator.preview:Show() end
                 if indicator.isTargetedSpells then indicator:ShowGlowPreview() end
             else
+                indicator.enabled = false
                 indicator:Hide()
                 if indicator.preview then indicator.preview:Hide() end
                 if indicator.isTargetedSpells then indicator:HideGlowPreview() end
@@ -527,7 +475,7 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
             indicator:SetOrientation(value)
         elseif setting == "font" then
             indicator:SetFont(unpack(value))
-            if indicator.isCustomText then
+            if indicator.isCustomText and indicator.enabled then
                 indicator:Hide()
                 indicator:Show()
             end
@@ -540,8 +488,10 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
         elseif setting == "vehicleNamePosition" then
             indicator:UpdateVehicleNamePosition(value)
         elseif setting == "statusColors" then
-            indicator:Hide()
-            indicator:Show()
+            if indicator.enabled then
+                indicator:Hide()
+                indicator:Show()
+            end
         elseif setting == "customTextures" then
             indicator:SetCustomTexture(value)
             indicator:SetRole(indicator.roles[indicator.role])
@@ -550,14 +500,18 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
         elseif setting == "checkbutton" then
             if value == "showDuration" then
                 indicator:ShowDuration(value2)
-                -- update through OnShow
-                indicator:Hide()
-                indicator:Show()
+                if indicator.enabled then
+                    -- update through OnShow
+                    indicator:Hide()
+                    indicator:Show()
+                end
             elseif value == "circledStackNums" then
                 indicator:SetCircledStackNums(value2)
-                -- update through OnShow
-                indicator:Hide()
-                indicator:Show()
+                if indicator.enabled then
+                    -- update through OnShow
+                    indicator:Hide()
+                    indicator:Show()
+                end
             end
         elseif setting == "create" then
             indicator = I:CreateIndicator(previewButton, value)
@@ -618,7 +572,13 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
             end
             InitIndicator(indicatorName)
             indicator:Show()
+            indicator.enabled = true
         elseif setting == "remove" then
+            if previewButton.indicators[indicatorName].preview then
+                previewButton.preview:SetParent(nil)
+                previewButton.preview:Hide()
+                previewButton.preview = nil
+            end
             I:RemoveIndicator(previewButton, indicatorName, value)
         end
     end

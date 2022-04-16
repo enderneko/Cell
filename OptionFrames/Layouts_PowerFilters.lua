@@ -6,7 +6,6 @@ local P = Cell.pixelPerfectFuncs
 local powerFilters = Cell:CreateFrame("CellOptionsFrame_PowerFilters", Cell.frames.layoutsTab, 270, 205)
 Cell.frames.powerFilters = powerFilters
 powerFilters:SetFrameStrata("DIALOG")
--- powerFilters:SetPoint("BOTTOMRIGHT", Cell.frames.layoutsTab.powerFilterBtn, "TOPRIGHT", 5, 5)
 powerFilters:SetFrameLevel(50)
 
 -------------------------------------------------
@@ -74,6 +73,7 @@ function F:ShowPowerFilters(selectedLayout, selectedLayoutTable)
     if not init then
         init = true
         powerFilters:UpdatePixelPerfect()
+        powerFilters:SetBackdropBorderColor(unpack(Cell:GetPlayerClassColorTable()))
         CreateFilters()
     end
 
