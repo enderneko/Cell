@@ -30,7 +30,7 @@ local previewButtonBG = Cell:CreateFrame("IndicatorsPreviewButtonBG", indicators
 previewButtonBG:SetPoint("TOPLEFT", previewButton, -5, 25)
 previewButtonBG:SetPoint("BOTTOMRIGHT", previewButton, 5, -5)
 previewButtonBG:SetFrameStrata("BACKGROUND")
-Cell:StylizeFrame(previewButtonBG, {.1, .1, .1, .9}, {0, 0, 0, 0})
+Cell:StylizeFrame(previewButtonBG, {0.1, 0.1, 0.1, 0.77}, {0, 0, 0, 0})
 previewButtonBG:Show()
 
 local previewText = previewButtonBG:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET_TITLE")
