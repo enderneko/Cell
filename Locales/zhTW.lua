@@ -27,8 +27,7 @@ L["Aggro (border)"] = "仇恨 (邊框)"
 L["all"] = "全部"
 L["ALL"] = "全部"
 L["All Bosses"] = "所有首領"
---[[Translation missing --]]
---[[ L["All Cell settings will be overwritten!"] = "All Cell settings will be overwritten!"--]] 
+L["All Cell settings will be overwritten!"] = "全部Cell的設定將被覆蓋！"
 L["Alpha"] = "透明度"
 L["Alt+Right-Click to remove a player"] = "Alt+右鍵點擊來移除玩家"
 L["Always Targeting"] = "總是選取目標"
@@ -41,6 +40,8 @@ L["Appearance"] = "外觀"
 L["Arena"] = "競技場"
 L["assist"] = "協助"
 L["Assist"] = "協助"
+--[[Translation missing --]]
+--[[ L["Aura Icon Options"] = "Aura Icon Options"--]] 
 L["Author"] = "作者"
 L["Available slash commands"] = "可用的聊天指令"
 L["Background Alpha"] = "背景透明度"
@@ -85,8 +86,7 @@ L["Close"] = "關閉"
 L["Color"] = "顏色"
 L["Common"] = "共用"
 L["Condition"] = "條件"
---[[Translation missing --]]
---[[ L["Confirm"] = "Confirm"--]] 
+L["Confirm"] = "確認"
 L["Contains"] = "包含"
 L["Copy"] = "複製"
 L["Copy indicators from one layout to another"] = "將指示器從一個版面配置複製到另一個版面配置"
@@ -127,6 +127,8 @@ L["Dispel Request"] = "請求驅散"
 L["Dispellable By Me"] = "只有我能驅散時"
 L["dispellableByMe"] = "只顯示我能驅散的減益"
 L["Dispels"] = "驅散"
+--[[Translation missing --]]
+--[[ L["Display One Decimal Place When"] = "Display One Decimal Place When"--]] 
 L["Do nothing if requested spell/buff already exists on requester"] = "若增益已存在於請求者身上，則不發光"
 L["DRINKING"] = "喝水"
 L["Edit"] = "編輯"
@@ -141,10 +143,8 @@ L["Entire"] = "整個"
 L["Error"] = "錯誤"
 L["Export"] = "匯出"
 L["External Cooldowns"] = "減傷 (來自他人)"
---[[Translation missing --]]
---[[ L["Externals + Defensives"] = "Externals + Defensives"--]] 
---[[Translation missing --]]
---[[ L["Externals + Defensives, no need to enable all of them"] = "Externals + Defensives, no need to enable all of them"--]] 
+L["Externals + Defensives"] = "減傷 (全部)"
+L["Externals + Defensives, no need to enable all of them"] = "包含了來自他人與自身的減傷，不必將它們全都啟用"
 L["Extra Action Button"] = "使用額外快捷鍵"
 L["Fade Out Menu"] = "淡出選單"
 L["Fade out menu buttons on mouseout"] = "滑鼠移開時淡出選單按鈕"
@@ -194,12 +194,13 @@ L["Highlight Size"] = "顯著標示粗細"
 L["Horizontal"] = "水平"
 L["Horizontal Gradient"] = "水平漸層"
 L["Icon"] = "圖示"
+--[[Translation missing --]]
+--[[ L["Icon Duration Text Color"] = "Icon Duration Text Color"--]] 
 L["Icons"] = "圖示群組"
 L["IDs separated by whitespaces"] = "用空格分隔多個法術ID"
 L["If disabled, no check, no reply, just glow"] = "如停用，則不檢查冷卻，也不回覆密語，只顯示發光。"
 L["Import"] = "匯入"
---[[Translation missing --]]
---[[ L["Import & Export All Settings"] = "Import & Export All Settings"--]] 
+L["Import & Export All Settings"] = "匯入與匯出所有設定"
 L["Incompatible Version"] = "不相容的版本"
 L["Indicator Settings"] = "指示器設定"
 L["Indicator settings are part of Layout settings which are account-wide."] = "指示器設定是版面配置設定的一部分，是帳號共用的。"
@@ -329,8 +330,7 @@ L["right-click: delete"] = "右鍵: 刪除"
 L["right-to-left"] = "從右到左"
 L["Role Icon"] = "角色職責圖示"
 L["Rotate Texture"] = "旋轉材質"
---[[Translation missing --]]
---[[ L["Rotation"] = "Rotation"--]] 
+L["Rotation"] = "旋轉"
 L["Save"] = "儲存"
 L["Scale"] = "縮放大小"
 L["ScrollDown"] = "滾輪往下"
@@ -356,6 +356,8 @@ L["Show while in a party"] = "在隊伍中時顯示"
 L["Show while not in a group"] = "不在隊伍中時顯示"
 L["showDuration"] = "顯示持續時間文字"
 L["Shows only one spell glow on a unit button at a time"] = "每個單位按鈕上同一時間只能顯示一個法術高亮"
+--[[Translation missing --]]
+--[[ L["showTooltip"] = "Show aura tooltip"--]] 
 L["Size"] = "大小"
 L["Size (Big)"] = "大小 (放大的)"
 L["Slash Commands"] = "聊天指令"
@@ -390,6 +392,8 @@ L["The spells list of a icons indicator is unordered (no priority)."] = "圖示�
 L["These \"reset\" commands below affect all your characters in this account"] = "以下的 \"重置\" 指令會影響此帳號中的所有角色"
 L["Thickness"] = "粗細"
 L["This may overwrite built-in indicators"] = "這可能會覆蓋掉內建的指示器"
+--[[Translation missing --]]
+--[[ L["This will make these icons not click-through-able"] = "This will make these icons not click-through-able"--]] 
 L["This will overwrite your debuffs"] = "將會取代你的減益"
 L["Timeout"] = "超時"
 L["Tip: Every layout has its own position setting"] = "提示: 每個版面配置都有各自的位置設定。"
