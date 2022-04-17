@@ -417,7 +417,7 @@ L["onlyShowTopGlow"] = "仅为优先级最高的减益显示发光效果"
 L["circledStackNums"] = "用带圈数字显示层数"
 L["Require font support"] = "需要字体支持"
 L["showTooltip"] = "显示鼠标提示"
-L["This will make these icons not click-through-able"] = "将会使这些图标不可点击穿透"
+L["This will make these icons not click-through-able"] = "将会使这些图标无法点击穿透"
 
 L["left-to-right"] = "从左到右"
 L["right-to-left"] = "从右到左"
@@ -526,6 +526,14 @@ L["All Cell settings will be overwritten!"] = "所有 Cell 设置将被覆盖！
 -------------------------------------------------
 L["Change Logs"] = "更新记录"
 L["CHANGE LOGS"] = [[
+    <h1>r94-release (Apr 17, 2022, 08:10 GMT+8)</h1>
+    <p>+ 在“外观”页面中新增“增减益图标选项”。</p>
+    <p>+ 为“减益”与“副本减益”指示器添加了“显示鼠标提示”的选项。需要注意的是，启用鼠标提示将会使这些图标无法点击穿透，也就是说它会使你点不到单位按钮。</p>
+    <p>* 为“图标”和“图标组”类型的指示器的字体选项添加了“Y 偏移”。</p>
+    <p>* 更新繁中。</p>
+    <p>* 继续修复bug。</p>
+    <br/>
+
     <h1>r93-release (Apr 16, 2022, 06:45 GMT+8)</h1>
     <p>+ 新指示器：减伤（全部）。</p>
     <p>+ 新自定义指示器类型：材质。</p>
