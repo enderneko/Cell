@@ -574,10 +574,10 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
             indicator:Show()
             indicator.enabled = true
         elseif setting == "remove" then
-            if previewButton.indicators[indicatorName].preview then
-                previewButton.preview:SetParent(nil)
-                previewButton.preview:Hide()
-                previewButton.preview = nil
+            if indicator.preview then
+                indicator.preview:SetParent(nil)
+                indicator.preview:Hide()
+                indicator.preview = nil
             end
             I:RemoveIndicator(previewButton, indicatorName, value)
         end
