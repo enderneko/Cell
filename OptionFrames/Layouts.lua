@@ -685,6 +685,9 @@ local LoadLayoutDropdown, LoadAutoSwitchDropdowns
 local LoadLayoutDB, UpdateButtonStates, LoadLayoutAutoSwitchDB
 
 local enabledLayoutText
+local function UpdateEnabledLayoutText()
+    enabledLayoutText:SetText("|cFF777777"..L["Current"]..": "..(Cell.vars.currentLayout == "default" and _G.DEFAULT or Cell.vars.currentLayout))
+end
 
 local function CreateLayoutPane()
     local layoutPane = Cell:CreateTitledPane(layoutsTab, L["Layout"], 205, 100)
@@ -761,18 +764,36 @@ local function CreateLayoutPane()
             local name = strtrim(self.editBox:GetText())
             if name ~= "" and strlower(name) ~= "default" and name ~= _G.DEFAULT and not CellDB["layouts"][name] then
                 -- update db
-                CellDB["layouts"][name] = F:Copy(CellDB["layouts"][selectedLayout])
+                CellDB["layouts"][name] = CellDB["layouts"][selectedLayout]
                 CellDB["layouts"][selectedLayout] = nil
-                -- check auto switch related
+                F:Print(L["Layout renamed: "].." "..selectedLayout.." "..L["to"].." "..name..".")
+                
+                -- update auto switch dropdowns
+                LoadAutoSwitchDropdowns()
                 for role, t in pairs(CellDB["layoutAutoSwitch"]) do
                     for groupType, layout in pairs(t) do
                         if layout == selectedLayout then
+                            -- NOTE: rename
                             CellDB["layoutAutoSwitch"][role][groupType] = name
+                            -- update its dropdown selection
+                            if groupType == "party" then
+                                partyDropdown:SetSelected(name)
+                            elseif groupType == "raid" then
+                                raidDropdown:SetSelected(name)
+                            elseif groupType == "mythic" then
+                                mythicDropdown:SetSelected(name)
+                            elseif groupType == "arena" then
+                                arenaDropdown:SetSelected(name)
+                            elseif groupType == "battleground15" then
+                                bg15Dropdown:SetSelected(name)
+                            elseif groupType == "battleground40" then
+                                bg40Dropdown:SetSelected(name)
+                            end
                         end
                     end
                 end
-                
-                -- check current
+
+                -- update if current
                 if selectedLayout == Cell.vars.currentLayout then
                     -- update vars
                     Cell.vars.currentLayout = name
@@ -790,11 +811,8 @@ local function CreateLayoutPane()
                     end,
                 })
                 layoutDropdown:SetSelected(name)
-                
-                F:Print(L["Layout renamed: "].." "..selectedLayout.." "..L["to"].." "..name..".")
 
                 -- reload
-                LoadAutoSwitchDropdowns()
                 LoadLayoutDB(name)
             else
                 F:Print(L["Invalid layout name."])
@@ -812,11 +830,28 @@ local function CreateLayoutPane()
             -- update db
             CellDB["layouts"][selectedLayout] = nil
             F:Print(L["Layout deleted: "]..selectedLayout..".")
-            -- check auto switch related
+
+            -- update auto switch dropdowns
+            LoadAutoSwitchDropdowns()
             for role, t in pairs(CellDB["layoutAutoSwitch"]) do
                 for groupType, layout in pairs(t) do
                     if layout == selectedLayout then
+                        -- NOTE: set to default
                         CellDB["layoutAutoSwitch"][role][groupType] = "default"
+                        -- update its dropdown selection
+                        if groupType == "party" then
+                            partyDropdown:SetSelected(_G.DEFAULT)
+                        elseif groupType == "raid" then
+                            raidDropdown:SetSelected(_G.DEFAULT)
+                        elseif groupType == "mythic" then
+                            mythicDropdown:SetSelected(_G.DEFAULT)
+                        elseif groupType == "arena" then
+                            arenaDropdown:SetSelected(_G.DEFAULT)
+                        elseif groupType == "battleground15" then
+                            bg15Dropdown:SetSelected(_G.DEFAULT)
+                        elseif groupType == "battleground40" then
+                            bg40Dropdown:SetSelected(_G.DEFAULT)
+                        end
                     end
                 end
             end
@@ -836,7 +871,6 @@ local function CreateLayoutPane()
             layoutDropdown:SetSelected(_G.DEFAULT)
 
             -- reload
-            LoadAutoSwitchDropdowns()
             LoadLayoutDB("default")
             UpdateButtonStates()
         end, nil, true)
@@ -876,10 +910,6 @@ local function CreateLayoutPane()
         ChatEdit_ActivateChat(editbox)
         editbox:SetText("[Cell:Layout: "..selectedLayout.." - "..Cell.vars.playerName.."]")
     end)
-end
-
-local function UpdateEnabledLayoutText()
-    enabledLayoutText:SetText("|cFF777777"..L["Current"]..": "..(Cell.vars.currentLayout == "default" and _G.DEFAULT or Cell.vars.currentLayout))
 end
 
 -- drop down
