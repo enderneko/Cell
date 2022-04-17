@@ -65,7 +65,7 @@ end
 -------------------------------------------------
 -- preview icons
 -------------------------------------------------
-local borderIcon1, borderIcon2, barIcon1, barIcon2
+local previewIconsBG, borderIcon1, borderIcon2, barIcon1, barIcon2
 
 local function SetOnUpdate(indicator, type, icon, stack)
     indicator.preview = indicator.preview or CreateFrame("Frame", nil, indicator)
@@ -110,8 +110,8 @@ local function UpdatePreviewIcons(layout, indicatorName, setting, value, value2)
 end
 
 local function CreatePreviewIcons()
-    local previewIconsBG = Cell:CreateFrame("AppearancePreviewIconsBG", appearanceTab)
-    previewIconsBG:SetPoint("TOPLEFT", appearanceTab, "TOPRIGHT", 5, -122)
+    previewIconsBG = Cell:CreateFrame("AppearancePreviewIconsBG", appearanceTab)
+    previewIconsBG:SetPoint("TOPLEFT", appearanceTab, "TOPRIGHT", 5, -100)
     P:Size(previewIconsBG, 95, 45)
     previewIconsBG:SetFrameStrata("HIGH")
     Cell:StylizeFrame(previewIconsBG, {0.1, 0.1, 0.1, 0.77}, {0, 0, 0, 0})
@@ -180,7 +180,7 @@ local previewButton, previewButton2
 
 local function CreatePreviewButtons()
     previewButton = CreateFrame("Button", "CellAppearancePreviewButton", appearanceTab, "CellUnitButtonTemplate")
-    previewButton:SetPoint("TOPLEFT", appearanceTab, "TOPRIGHT", 5, -255)
+    previewButton:SetPoint("TOPLEFT", previewIconsBG, "BOTTOMLEFT", 0, -50)
     previewButton:UnregisterAllEvents()
     previewButton:SetScript("OnEnter", nil)
     previewButton:SetScript("OnLeave", nil)
@@ -199,7 +199,7 @@ local function CreatePreviewButtons()
     previewText:SetText(Cell:GetPlayerClassColorString()..L["Preview"].." 2")
     
     previewButton2 = CreateFrame("Button", "AppearancePreviewButton2", appearanceTab, "CellUnitButtonTemplate")
-    previewButton2:SetPoint("BOTTOMLEFT", appearanceTab, "BOTTOMRIGHT", 5, 20)
+    previewButton2:SetPoint("TOPLEFT", previewButton, "BOTTOMLEFT", 0, -50)
     previewButton2:UnregisterAllEvents()
     previewButton2:SetScript("OnEnter", nil)
     previewButton2:SetScript("OnLeave", nil)
