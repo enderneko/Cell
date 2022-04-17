@@ -79,10 +79,16 @@ local function BorderIcon_SetCooldown(frame, start, duration, debuffType, textur
             -- format
             if remain > 60 then
                 remain = string.format("%dm", remain/60)
-            elseif remain < Cell.vars.iconDurationDecimal then
-                remain = string.format("%.1f", remain)
             else
-                remain = string.format("%d", remain)
+                if Cell.vars.iconDurationRoundUp then
+                    remain = math.ceil(remain)
+                else
+                    if remain < Cell.vars.iconDurationDecimal then
+                        remain = string.format("%.1f", remain)
+                    else
+                        remain = string.format("%d", remain)
+                    end
+                end
             end
 
             frame.duration:SetText(remain)
@@ -237,10 +243,16 @@ local function BarIcon_SetCooldown(frame, start, duration, debuffType, texture, 
                 -- format
                 if remain > 60 then
                     remain = string.format("%dm", remain/60)
-                elseif remain < Cell.vars.iconDurationDecimal then
-                    remain = string.format("%.1f", remain)
                 else
-                    remain = string.format("%d", remain)
+                    if Cell.vars.iconDurationRoundUp then
+                        remain = math.ceil(remain)
+                    else
+                        if remain < Cell.vars.iconDurationDecimal then
+                            remain = string.format("%.1f", remain)
+                        else
+                            remain = string.format("%d", remain)
+                        end
+                    end
                 end
 
                 frame.duration:SetText(remain)

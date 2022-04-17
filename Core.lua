@@ -259,33 +259,9 @@ function eventFrame:ADDON_LOADED(arg1)
                 scale = 2
             end
 
-            CellDB["appearance"] = {
-                ["scale"] = scale,
-                ["optionsFontSizeOffset"] = 0,
-                ["useGameFont"] = true,
-                ["texture"] = "Cell ".._G.DEFAULT,
-                ["barColor"] = {"class_color", {0.2, 0.2, 0.2}},
-                ["lossColor"] = {"class_color_dark", {0.667, 0, 0}},
-                ["barAlpha"] = 1,
-                ["lossAlpha"] = 1,
-                ["bgAlpha"] = 1,
-                ["powerColor"] = {"power_color", {0.7, 0.7, 0.7}},
-                ["barAnimation"] = "Flash",
-                ["auraIconOptions"] = {
-                    ["animation"] = "duration",
-                    ["durationColorEnabled"] = false,
-                    ["durationColors"] = {{0,1,0}, {1,1,0,0.5}, {1,0,0,3}},
-                    ["durationDecimal"] = 0,
-                },
-                ["targetColor"] = {1, 0, 0.4, 1},
-                ["mouseoverColor"] = {1, 1, 1, 0.6},
-                ["highlightSize"] = 1,
-                ["outOfRangeAlpha"] = 0.45,
-                ["healPrediction"] = true,
-                ["healAbsorb"] = true,
-                ["shield"] = true,
-                ["overshield"] = true,
-            }
+            CellDB["appearance"] = F:Copy(Cell.defaults.appearance)
+            -- update recommended scale
+            CellDB["appearance"]["scale"] = scale
         end
         P:SetRelativeScale(CellDB["appearance"]["scale"])
 

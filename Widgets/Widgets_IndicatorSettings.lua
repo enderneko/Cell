@@ -1470,7 +1470,7 @@ local function CreateSetting_Colors(parent)
         end)
         secColor:SetPoint("TOPLEFT", percentColor, "BOTTOMLEFT", 0, -8)
 
-        local percentDropdown = addon:CreateDropdown(widget, 55)
+        local percentDropdown = addon:CreateDropdown(widget, 60)
         percentDropdown:SetPoint("LEFT", percentColor.label, "RIGHT", 5, 0)
         percentDropdown:SetItems({
             {
@@ -1534,7 +1534,7 @@ local function CreateSetting_Colors(parent)
         -- 	},
         -- })
 
-        local secEditBox = addon:CreateEditBox(widget, 38, 20, false, false, true)
+        local secEditBox = addon:CreateEditBox(widget, 43, 20, false, false, true)
         secEditBox:SetPoint("LEFT", secColor.label, "RIGHT", 5, 0)
         secEditBox:SetMaxLetters(4)
  

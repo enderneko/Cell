@@ -1191,5 +1191,13 @@ function F:Revise()
         end
     end
 
+    -- r95-release
+    if CellDB["revise"] and dbRevision < 95 then
+        -- add round up
+        if type(CellDB["appearance"]["auraIconOptions"]["durationRoundUp"]) ~= "boolean" then
+            CellDB["appearance"]["auraIconOptions"]["durationRoundUp"] = false
+        end
+    end
+
     CellDB["revise"] = Cell.version
 end

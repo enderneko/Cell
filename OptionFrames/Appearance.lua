@@ -360,7 +360,7 @@ end
 -------------------------------------------------
 local textureDropdown, barColorDropdown, barColorPicker, lossColorDropdown, lossColorPicker, powerColorDropdown, powerColorPicker, barAnimationDropdown, targetColorPicker, mouseoverColorPicker, highlightSize
 local barAlpha, lossAlpha, bgAlpha, oorAlpha, predCB, absorbCB, shieldCB, oversCB, resetBtn
-local iconOptionsBtn, iconOptionsFrame, iconAnimationDropdown, durationDecimalDropdown, durationColorCB, durationNormalCP, durationPercentCP, durationSecondCP, durationPercentDD, durationSecondEB, durationSecondText
+local iconOptionsBtn, iconOptionsFrame, iconAnimationDropdown, durationRoundUpCB, durationDecimalText1, durationDecimalText2, durationDecimalDropdown, durationColorCB, durationNormalCP, durationPercentCP, durationSecondCP, durationPercentDD, durationSecondEB, durationSecondText
 
 local function CheckTextures()
     local items = {}
@@ -415,7 +415,7 @@ local function CreateIconOptionsFrame()
         appearanceTab.mask:Hide()
     end
 
-    iconOptionsFrame = Cell:CreateFrame("CellOptionsFrame_IconOptions", appearanceTab, 230, 208)
+    iconOptionsFrame = Cell:CreateFrame("CellOptionsFrame_IconOptions", appearanceTab, 230, 235)
     iconOptionsFrame:SetBackdropBorderColor(unpack(Cell:GetPlayerClassColorTable()))
     iconOptionsFrame:SetPoint("TOP", iconOptionsBtn, "BOTTOM", 0, -5)
     iconOptionsFrame:SetPoint("RIGHT", -5, 0)
@@ -466,16 +466,27 @@ local function CreateIconOptionsFrame()
     iconAnimationText:SetPoint("BOTTOMLEFT", iconAnimationDropdown, "TOPLEFT", 0, 1)
     iconAnimationText:SetText(L["Play Icon Animation When"])
 
+    -- duration round up
+    durationRoundUpCB = Cell:CreateCheckButton(iconOptionsFrame, L["Round Up Duration Text"], function(checked, self)
+        CellDropdownList:Hide()
+
+        CellDB["appearance"]["auraIconOptions"]["durationRoundUp"] = checked
+        Cell:SetEnabled(not checked, durationDecimalText1, durationDecimalText2, durationDecimalDropdown)
+        
+        Cell:Fire("UpdateAppearance", "icon")
+    end)
+    durationRoundUpCB:SetPoint("TOPLEFT", iconAnimationDropdown, "BOTTOMLEFT", 0, -22)
+
     -- duration decimal
-    local durationDecimalText1 = iconOptionsFrame:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
-    durationDecimalText1:SetPoint("TOPLEFT", iconAnimationDropdown, "BOTTOMLEFT", 0, -20)
+    durationDecimalText1 = iconOptionsFrame:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
+    durationDecimalText1:SetPoint("TOPLEFT", durationRoundUpCB, "BOTTOMLEFT", 0, -10)
     durationDecimalText1:SetText(L["Display One Decimal Place When"])
 
-    local durationDecimalText2 = iconOptionsFrame:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
+    durationDecimalText2 = iconOptionsFrame:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
     durationDecimalText2:SetPoint("TOPLEFT", durationDecimalText1, "BOTTOMLEFT", 0, -5)
     durationDecimalText2:SetText(L["Remaining Time <"])
 
-    durationDecimalDropdown = Cell:CreateDropdown(iconOptionsFrame, 55)
+    durationDecimalDropdown = Cell:CreateDropdown(iconOptionsFrame, 60)
     durationDecimalDropdown:SetPoint("LEFT", durationDecimalText2, "RIGHT", 5, 0)
     durationDecimalDropdown:SetItems({
         {
@@ -529,7 +540,7 @@ local function CreateIconOptionsFrame()
     })
     
     -- duration text color
-    durationColorCB = Cell:CreateCheckButton(iconOptionsFrame, L["Icon Duration Text Color"], function(checked, self)
+    durationColorCB = Cell:CreateCheckButton(iconOptionsFrame, L["Color Duration Text"], function(checked, self)
         CellDropdownList:Hide()
 
         -- restore sec
@@ -541,7 +552,7 @@ local function CreateIconOptionsFrame()
         
         Cell:Fire("UpdateAppearance", "icon")
     end)
-    durationColorCB:SetPoint("TOPLEFT", 10, -117)
+    durationColorCB:SetPoint("TOPLEFT", durationRoundUpCB, "BOTTOMLEFT", 0, -63)
 
     durationNormalCP = Cell:CreateColorPicker(iconOptionsFrame, L["Normal"], false, function(r, g, b)
         CellDB["appearance"]["auraIconOptions"]["durationColors"][1][1] = r
@@ -567,7 +578,7 @@ local function CreateIconOptionsFrame()
     end)
     durationSecondCP:SetPoint("TOPLEFT", durationPercentCP, "BOTTOMLEFT", 0, -8)
 
-    durationPercentDD = Cell:CreateDropdown(iconOptionsFrame, 55)
+    durationPercentDD = Cell:CreateDropdown(iconOptionsFrame, 60)
     durationPercentDD:SetPoint("LEFT", durationPercentCP.label, "RIGHT", 5, 0)
     durationPercentDD:SetItems({
         {
@@ -604,7 +615,7 @@ local function CreateIconOptionsFrame()
         },
     })
     
-    durationSecondEB = Cell:CreateEditBox(iconOptionsFrame, 38, 20, false, false, true)
+    durationSecondEB = Cell:CreateEditBox(iconOptionsFrame, 43, 20, false, false, true)
     durationSecondEB:SetPoint("LEFT", durationSecondCP.label, "RIGHT", 5, 0)
     durationSecondEB:SetMaxLetters(4)
 
@@ -956,29 +967,7 @@ local function CreateUnitButtonStylePane()
     resetBtn:SetPoint("TOPRIGHT")
     resetBtn:SetScript("OnClick", function()
         if IsControlKeyDown() then
-            CellDB["appearance"]["texture"] = "Cell ".._G.DEFAULT
-            CellDB["appearance"]["barColor"] = {"class_color", {.2, .2, .2}}
-            CellDB["appearance"]["lossColor"] = {"class_color_dark", {.667, 0, 0}}
-            CellDB["appearance"]["barAlpha"] = 1
-            CellDB["appearance"]["lossAlpha"] = 1
-            CellDB["appearance"]["bgAlpha"] = 1
-            CellDB["appearance"]["powerColor"] = {"power_color", {.7, .7, .7}}
-            CellDB["appearance"]["barAnimation"] = "Flash"
-            CellDB["appearance"]["targetColor"] = {1, .31, .31, 1}
-            CellDB["appearance"]["mouseoverColor"] = {1, 1, 1, .6}
-            CellDB["appearance"]["highlightSize"] = 1
-            CellDB["appearance"]["outOfRangeAlpha"] = .45
-            CellDB["appearance"]["healPrediction"] = true
-            CellDB["appearance"]["healAbsorb"] = true
-            CellDB["appearance"]["shield"] = true
-            CellDB["appearance"]["overshield"] = true
-
-            CellDB["appearance"]["auraIconOptions"] = {
-                ["animation"] = "duration",
-                ["durationColorEnabled"] = false,
-                ["durationColors"] = {{0,1,0}, {1,1,0,0.5}, {1,0,0,3}},
-                ["durationDecimal"] = 0,
-            }
+            Cell:ResetButtonStyle()
     
             -- load data
             textureDropdown:SetSelected("Cell ".._G.DEFAULT, "Interface\\AddOns\\Cell\\Media\\statusbar.tga")
@@ -1026,6 +1015,8 @@ LoadData = function()
 
     -- icon options
     iconAnimationDropdown:SetSelectedValue(CellDB["appearance"]["auraIconOptions"]["animation"])
+    durationRoundUpCB:SetChecked(CellDB["appearance"]["auraIconOptions"]["durationRoundUp"])
+    Cell:SetEnabled(not CellDB["appearance"]["auraIconOptions"]["durationRoundUp"], durationDecimalText1, durationDecimalText2, durationDecimalDropdown)
     durationDecimalDropdown:SetSelectedValue(CellDB["appearance"]["auraIconOptions"]["durationDecimal"])
     durationColorCB:SetChecked(CellDB["appearance"]["auraIconOptions"]["durationColorEnabled"])
     Cell:SetEnabled(CellDB["appearance"]["auraIconOptions"]["durationColorEnabled"], durationNormalCP, durationPercentCP, durationPercentDD, durationSecondCP, durationSecondEB, durationSecondText)
@@ -1128,6 +1119,9 @@ local function UpdateAppearance(which)
     if not which or which == "icon" then
         -- animation
         Cell.vars.iconAnimation = CellDB["appearance"]["auraIconOptions"]["animation"]
+
+        -- round up
+        Cell.vars.iconDurationRoundUp = CellDB["appearance"]["auraIconOptions"]["durationRoundUp"]
 
         -- decimal
         Cell.vars.iconDurationDecimal = CellDB["appearance"]["auraIconOptions"]["durationDecimal"]
