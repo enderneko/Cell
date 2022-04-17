@@ -481,7 +481,7 @@ local function CreateNPCPreview()
         npcPreview.header[i].tex:SetPoint("TOPLEFT", npcPreview.header[i], "TOPLEFT", P:Scale(1), P:Scale(-1))
         npcPreview.header[i].tex:SetPoint("BOTTOMRIGHT", npcPreview.header[i], "BOTTOMRIGHT", P:Scale(-1), P:Scale(1))
 
-        npcPreview.header[i].tex:SetVertexColor(F:ConvertRGB(0, 255, 255, 1, desaturation[i])) -- cyan
+        npcPreview.header[i].tex:SetVertexColor(F:ConvertRGB(0, 255, 255, desaturation[i])) -- cyan
         npcPreview.header[i].tex:SetAlpha(0.555)
     end
 end
