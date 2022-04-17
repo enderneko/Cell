@@ -25,12 +25,12 @@ Defaults\LoadDefaults.xml
 HideBlizzard.lua
 ChangeLogs.lua
 
-RaidFrame\Indicators\Base.lua
-RaidFrame\Indicators\Built-in.lua
-RaidFrame\Indicators\AoEHealing.lua
-RaidFrame\Indicators\TargetCounter.lua
-RaidFrame\Indicators\TargetedSpells.lua
-RaidFrame\Indicators\Custom.lua
+Indicators\Base.lua
+Indicators\Built-in.lua
+Indicators\AoEHealing.lua
+Indicators\TargetCounter.lua
+Indicators\TargetedSpells.lua
+Indicators\Custom.lua
 
 RaidFrame\MainFrame.lua
 RaidFrame\UnitButton.lua
