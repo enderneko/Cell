@@ -16,11 +16,11 @@ Locales\koKR.lua
 Libs\LoadLibs.xml
 
 Core.lua
-Defaults.lua
 Utils.lua
 Revise.lua
 Comm.lua
 Widgets\LoadWidgets.xml
+Defaults\LoadDefaults.xml
 
 HideBlizzard.lua
 ChangeLogs.lua
@@ -42,3 +42,4 @@ RaidFrame\Groups\NPCFrame.lua
 
 Tools\LoadTools.xml
 OptionFrames\LoadOptionFrames.xml
+RaidDebuffs\LoadRaidDebuffs.xml
