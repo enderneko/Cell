@@ -184,6 +184,7 @@ local defensiveCooldowns = {
     -- priest
     47585, -- 消散
     19236, -- 绝望祷言
+    586, -- 渐隐术
 
     -- rogue
     1966, -- 佯攻
