@@ -488,56 +488,19 @@ local function CreateIconOptionsFrame()
 
     durationDecimalDropdown = Cell:CreateDropdown(iconOptionsFrame, 60)
     durationDecimalDropdown:SetPoint("LEFT", durationDecimalText2, "RIGHT", 5, 0)
-    durationDecimalDropdown:SetItems({
-        {
-            ["text"] = 5,
-            ["value"] = 5,
+
+    local items = {}
+    for i = 5, 0, -1 do
+        tinsert(items, {
+            ["text"] = i == 0 and _G.NONE or i,
+            ["value"] = i,
             ["onClick"] = function()
-                CellDB["appearance"]["auraIconOptions"]["durationDecimal"] = 5
+                CellDB["appearance"]["auraIconOptions"]["durationDecimal"] = i
                 Cell:Fire("UpdateAppearance", "icon")
-            end,
-        },
-        {
-            ["text"] = 4,
-            ["value"] = 4,
-            ["onClick"] = function()
-                CellDB["appearance"]["auraIconOptions"]["durationDecimal"] = 4
-                Cell:Fire("UpdateAppearance", "icon")
-            end,
-        },
-        {
-            ["text"] = 3,
-            ["value"] = 3,
-            ["onClick"] = function()
-                CellDB["appearance"]["auraIconOptions"]["durationDecimal"] = 3
-                Cell:Fire("UpdateAppearance", "icon")
-            end,
-        },
-        {
-            ["text"] = 2,
-            ["value"] = 2,
-            ["onClick"] = function()
-                CellDB["appearance"]["auraIconOptions"]["durationDecimal"] = 2
-                Cell:Fire("UpdateAppearance", "icon")
-            end,
-        },
-        {
-            ["text"] = 1,
-            ["value"] = 1,
-            ["onClick"] = function()
-                CellDB["appearance"]["auraIconOptions"]["durationDecimal"] = 1
-                Cell:Fire("UpdateAppearance", "icon")
-            end,
-        },
-        {
-            ["text"] = _G.NONE,
-            ["value"] = 0,
-            ["onClick"] = function()
-                CellDB["appearance"]["auraIconOptions"]["durationDecimal"] = 0
-                Cell:Fire("UpdateAppearance", "icon")
-            end,
-        },
-    })
+            end
+        })
+    end
+    durationDecimalDropdown:SetItems(items)
     
     -- duration text color
     durationColorCB = Cell:CreateCheckButton(iconOptionsFrame, L["Color Duration Text"], function(checked, self)

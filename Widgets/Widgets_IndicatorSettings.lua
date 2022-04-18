@@ -1739,7 +1739,7 @@ local function CreateSetting_NameColor(parent)
         widget = addon:CreateFrame("CellIndicatorSettings_NameColor", parent, 240, 50)
         settingWidgets["nameColor"] = widget
 
-        widget.nameColorDropdown = Cell:CreateDropdown(widget, 120)
+        widget.nameColorDropdown = addon:CreateDropdown(widget, 120)
         widget.nameColorDropdown:SetPoint("TOPLEFT", 5, -20)
         widget.nameColorDropdown:SetItems({
             {
@@ -1762,7 +1762,7 @@ local function CreateSetting_NameColor(parent)
         nameColorText:SetPoint("BOTTOMLEFT", widget.nameColorDropdown, "TOPLEFT", 0, 1)
         nameColorText:SetText(L["Name Color"])
 
-        widget.nameColorPicker = Cell:CreateColorPicker(widget, "", false, function(r, g, b)
+        widget.nameColorPicker = addon:CreateColorPicker(widget, "", false, function(r, g, b)
             widget.func({widget.nameColorDropdown:GetSelected(), {r, g, b}})
         end)
         widget.nameColorPicker:SetPoint("LEFT", widget.nameColorDropdown, "RIGHT", 5, 0)
@@ -2016,6 +2016,76 @@ local function CreateSetting_CheckButton3(parent)
     return widget
 end
 
+local function CreateSetting_Duration(parent)
+    local widget
+
+    if not settingWidgets["duration"] then
+        widget = addon:CreateFrame("CellIndicatorSettings_Duration", parent, 240, 97)
+        settingWidgets["duration"] = widget
+
+        -- duration
+        widget.durationCB = addon:CreateCheckButton(widget, L["showDuration"], function(checked, self)
+            widget.durationTbl[1] = checked
+            widget.func(widget.durationTbl)
+        end)
+        widget.durationCB:SetPoint("TOPLEFT", 5, -8)
+
+        -- duration round up
+        widget.durationRoundUpCB = addon:CreateCheckButton(widget, L["Round Up Duration Text"], function(checked, self)
+            CellDropdownList:Hide()
+            widget.durationTbl[2] = checked
+            addon:SetEnabled(not checked, widget.durationDecimalText1, widget.durationDecimalText2, widget.durationDecimalDropdown)
+            widget.func(widget.durationTbl)
+        end)
+        widget.durationRoundUpCB:SetPoint("TOPLEFT", widget.durationCB, "BOTTOMLEFT", 0, -8)
+
+        -- duration decimal
+        widget.durationDecimalText1 = widget:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
+        widget.durationDecimalText1:SetPoint("TOPLEFT", widget.durationRoundUpCB, "BOTTOMLEFT", 1, -10)
+        widget.durationDecimalText1:SetText(L["Display One Decimal Place When"])
+
+        widget.durationDecimalText2 = widget:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
+        widget.durationDecimalText2:SetPoint("TOPLEFT", widget.durationDecimalText1, "BOTTOMLEFT", 0, -5)
+        widget.durationDecimalText2:SetText(L["Remaining Time <"])
+
+        widget.durationDecimalDropdown = addon:CreateDropdown(widget, 60)
+        widget.durationDecimalDropdown:SetPoint("LEFT", widget.durationDecimalText2, "RIGHT", 5, 0)
+
+        local items = {}
+        for i = 5, 0, -1 do
+            tinsert(items, {
+                ["text"] = i == 0 and _G.NONE or i,
+                ["value"] = i,
+                ["onClick"] = function()
+                    widget.durationTbl[3] = i
+                    widget.func(widget.durationTbl)
+                end
+            })
+        end
+        widget.durationDecimalDropdown:SetItems(items)
+
+        -- associate db
+        function widget:SetFunc(func)
+            -- NOTE: to notify indicator update
+            widget.func = func
+        end
+        
+        -- show db value
+        function widget:SetDBValue(durationTbl)
+            widget.durationTbl = durationTbl
+            widget.durationCB:SetChecked(durationTbl[1])
+            widget.durationRoundUpCB:SetChecked(durationTbl[2])
+            addon:SetEnabled(not durationTbl[2], widget.durationDecimalText1, widget.durationDecimalText2, widget.durationDecimalDropdown)
+            widget.durationDecimalDropdown:SetSelectedValue(durationTbl[3])
+        end
+    else
+        widget = settingWidgets["duration"]
+    end
+
+    widget:Show()
+    return widget
+end
+
 local function CreateSetting_CustomTextures(parent)
     local widget
 
@@ -2215,48 +2285,48 @@ local function CreateSetting_Glow(parent)
         widget.glowTypeText:SetText(L["Glow Type"])
         widget.glowTypeText:SetPoint("BOTTOMLEFT", widget.glowType, "TOPLEFT", 0, 1)
 
-        widget.glowColor = Cell:CreateColorPicker(widget, L["Glow Color"], false, function(r, g, b)
+        widget.glowColor = addon:CreateColorPicker(widget, L["Glow Color"], false, function(r, g, b)
             widget.glow[2] = {r, g, b, 1}
             widget.func(widget.glow)
         end)
         widget.glowColor:SetPoint("LEFT", widget.glowType, "RIGHT", 25, 0)
 
         -- glowNumber
-        widget.glowLines = Cell:CreateSlider(L["Lines"], widget, 1, 30, 110, 1, function(value)
+        widget.glowLines = addon:CreateSlider(L["Lines"], widget, 1, 30, 110, 1, function(value)
             widget.glow[3] = value
             widget.func(widget.glow)
         end)
         widget.glowLines:SetPoint("TOPLEFT", widget.glowType, "BOTTOMLEFT", 0, -25)
 
-        widget.glowParticles = Cell:CreateSlider(L["Particles"], widget, 1, 30, 110, 1, function(value)
+        widget.glowParticles = addon:CreateSlider(L["Particles"], widget, 1, 30, 110, 1, function(value)
             widget.glow[3] = value
             widget.func(widget.glow)
         end)
         widget.glowParticles:SetPoint("TOPLEFT", widget.glowType, "BOTTOMLEFT", 0, -25)
 
         -- glowFrequency
-        widget.glowFrequency = Cell:CreateSlider(L["Frequency"], widget, -2, 2, 110, .05, function(value)
+        widget.glowFrequency = addon:CreateSlider(L["Frequency"], widget, -2, 2, 110, .05, function(value)
             widget.glow[4] = value
             widget.func(widget.glow)
         end)
         widget.glowFrequency:SetPoint("TOPLEFT", widget.glowLines, "TOPRIGHT", 25, 0)
 
         -- glowLength
-        widget.glowLength = Cell:CreateSlider(L["Length"], widget, 1, 20, 110, 1, function(value)
+        widget.glowLength = addon:CreateSlider(L["Length"], widget, 1, 20, 110, 1, function(value)
             widget.glow[5] = value
             widget.func(widget.glow)
         end)
         widget.glowLength:SetPoint("TOPLEFT", widget.glowLines, "BOTTOMLEFT", 0, -40)
 
         -- glowThickness
-        widget.glowThickness = Cell:CreateSlider(L["Thickness"], widget, 1, 20, 110, 1, function(value)
+        widget.glowThickness = addon:CreateSlider(L["Thickness"], widget, 1, 20, 110, 1, function(value)
             widget.glow[6] = value
             widget.func(widget.glow)
         end)
         widget.glowThickness:SetPoint("TOPLEFT", widget.glowLength, "TOPRIGHT", 25, 0)
 
         -- glowScale
-        widget.glowScale = Cell:CreateSlider(L["Scale"], widget, 50, 500, 110, 1, function(value)
+        widget.glowScale = addon:CreateSlider(L["Scale"], widget, 50, 500, 110, 1, function(value)
             widget.glow[5] = value
             widget.func(widget.glow)
         end, nil, true)
@@ -2789,7 +2859,7 @@ local function CreateSetting_Tips(parent, text)
         -- widget.text:SetPoint("LEFT", 5, 0)
         -- widget.text:SetPoint("RIGHT", -5, 0)
         -- widget.text:SetJustifyH("LEFT")
-        widget.text = Cell:CreateScrollTextFrame(widget, "", 0.02, nil, nil, true)
+        widget.text = addon:CreateScrollTextFrame(widget, "", 0.02, nil, nil, true)
         widget.text:SetPoint("LEFT", 5, 0)
         widget.text:SetPoint("RIGHT", -5, 0)
 
@@ -2884,6 +2954,8 @@ function addon:CreateIndicatorSettings(parent, settingsTable)
             tinsert(widgetsTable, CreateSetting_CheckButton2(parent))
         elseif string.find(setting, "checkbutton") then
             tinsert(widgetsTable, CreateSetting_CheckButton(parent))
+        elseif setting == "duration" then
+            tinsert(widgetsTable, CreateSetting_Duration(parent))
         elseif setting == "customTextures" then
             tinsert(widgetsTable, CreateSetting_CustomTextures(parent))
         elseif setting == "glow" then

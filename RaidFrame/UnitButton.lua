@@ -205,6 +205,10 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                 if type(t["showDuration"]) == "boolean" then
                     indicator:ShowDuration(t["showDuration"])
                 end
+                -- update duration
+                if t["duration"] then
+                    indicator:SetDuration(t["duration"])
+                end
                 -- update circled nums
                 if type(t["circledStackNums"]) == "boolean" then
                     indicator:SetCircledStackNums(t["circledStackNums"])
@@ -417,6 +421,10 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                 local indicator = b.indicators[indicatorName]
                 indicator:SetTexture(value)
             end, true)
+        elseif setting == "duration" then
+            F:IterateAllUnitButtons(function(b)
+                UnitButton_UpdateAuras(b)
+            end, true)
         elseif setting == "checkbutton" then
             if value == "hideFull" then
                 --! 血量文字指示器需要立即被刷新
@@ -489,6 +497,10 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                 -- update showDuration
                 if value["showDuration"] then
                     indicator:ShowDuration(value["showDuration"])
+                end
+                -- update duration
+                if value["duration"] then
+                    indicator:SetDuration(value["duration"])
                 end
             end, true)
         elseif setting == "remove" then

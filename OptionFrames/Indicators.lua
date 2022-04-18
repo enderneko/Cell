@@ -402,6 +402,10 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                 if type(t["showDuration"]) == "boolean" then
                     indicator:ShowDuration(t["showDuration"])
                 end
+                -- update duration
+                if t["duration"] then
+                    indicator:SetDuration(t["duration"])
+                end
                  -- update circled nums
                  if type(t["circledStackNums"]) == "boolean" then
                     indicator:SetCircledStackNums(t["circledStackNums"])
@@ -497,6 +501,12 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
             indicator:SetRole(indicator.roles[indicator.role])
         elseif setting == "texture" then
             indicator:SetTexture(value)
+        elseif setting == "duration" then
+            -- indicator:SetDuration(value)
+            if indicator.enabled then
+                indicator:Hide()
+                indicator:Show()
+            end
         elseif setting == "checkbutton" then
             if value == "showDuration" then
                 indicator:ShowDuration(value2)
@@ -565,6 +575,10 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
             -- update duration
             if type(value["showDuration"]) == "boolean" then
                 indicator:ShowDuration(value["showDuration"])
+            end
+            -- update duration
+            if value["duration"] then
+                indicator:SetDuration(value["duration"])
             end
             -- update circled nums
             if type(value["circledStackNums"]) == "boolean" then
@@ -738,10 +752,14 @@ local function CreateListPane()
                     ["position"] = {"TOPRIGHT", "TOPRIGHT", 0, 3},
                     ["frameLevel"] = 5,
                     ["font"] = {"Cell ".._G.DEFAULT, 12, "Outline"},
-                    ["colors"] = {{0,1,0}, {1,1,0,.5}, {1,0,0,3}},
+                    ["colors"] = {{0,1,0}, {1,1,0,0.5}, {1,0,0,3}},
                     ["auraType"] = indicatorAuraType,
                     ["auras"] = {},
-                    ["showDuration"] = true,
+                    ["duration"] = {
+                        true, -- show duration
+                        false, -- round up duration
+                        0, -- decimal
+                    },
                     ["circledStackNums"] = false,
                 })
             elseif indicatorType == "bar" then
@@ -971,7 +989,7 @@ local function ShowIndicatorSettings(id)
         if indicatorType == "icon" then
             settingsTable = {"enabled", "auras", "checkbutton2:showDuration:"..L["Show duration text instead of icon animation"], "position", "frameLevel", "size-square", "font"}
         elseif indicatorType == "text" then
-            settingsTable = {"enabled", "auras", "checkbutton2:showDuration", "checkbutton3:circledStackNums:"..L["Require font support"], "colors", "position", "frameLevel", "font-noOffset"}
+            settingsTable = {"enabled", "auras", "duration", "checkbutton3:circledStackNums:"..L["Require font support"], "colors", "position", "frameLevel", "font-noOffset"}
         elseif indicatorType == "bar" then
             settingsTable = {"enabled", "auras", "colors", "position", "frameLevel", "size-bar"}
         elseif indicatorType == "rect" then

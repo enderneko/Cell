@@ -1197,6 +1197,24 @@ function F:Revise()
         if type(CellDB["appearance"]["auraIconOptions"]["durationRoundUp"]) ~= "boolean" then
             CellDB["appearance"]["auraIconOptions"]["durationRoundUp"] = false
         end
+
+        -- change showDuration to duration for custom TEXT indicators
+        for _, layout in pairs(CellDB["layouts"]) do
+            for i, t in pairs(layout["indicators"]) do
+                if t["type"] == "text" then
+                    if type(t["duration"]) ~= "table" then
+                        -- add new
+                        t["duration"] = {
+                            t["showDuration"], -- show duration
+                            false, -- round up duration
+                            0, -- decimal
+                        }
+                        -- remove old
+                        t["showDuration"] = nil
+                    end
+                end
+            end
+        end
     end
 
     CellDB["revise"] = Cell.version

@@ -454,7 +454,7 @@ local function Text_SetCooldown(frame, start, duration, debuffType, texture, cou
         frame.text:SetText(count)
         frame:SetScript("OnUpdate", nil)
     else
-        if frame.showDuration then
+        if frame.durationTbl[1] then
             if count == 0 then
                 count = ""
             elseif frame.circledStackNums then
@@ -464,7 +464,9 @@ local function Text_SetCooldown(frame, start, duration, debuffType, texture, cou
             end
             frame:SetScript("OnUpdate", function()
                 local remain = duration-(GetTime()-start)
-                -- update color
+                if remain < 0 then remain = 0 end
+
+                -- color
                 if remain <= frame.colors[3][4] then
                     frame.text:SetTextColor(frame.colors[3][1], frame.colors[3][2], frame.colors[3][3])
                 elseif remain <= duration * frame.colors[2][4] then
@@ -472,12 +474,23 @@ local function Text_SetCooldown(frame, start, duration, debuffType, texture, cou
                 else
                     frame.text:SetTextColor(unpack(frame.colors[1]))
                 end
-                -- update text
+
+                -- format
                 if remain > 60 then
-                    frame.text:SetText(count..math.ceil(remain/60).."m")
+                    remain = string.format("%dm", remain/60)
                 else
-                    frame.text:SetText(count..string.format("%d", remain))
+                    if frame.durationTbl[2] then
+                        remain = math.ceil(remain)
+                    else
+                        if remain < frame.durationTbl[3] then
+                            remain = string.format("%.1f", remain)
+                        else
+                            remain = string.format("%d", remain)
+                        end
+                    end
                 end
+
+                frame.text:SetText(count..remain)
             end)
         else
             count = count == 0 and 1 or count
@@ -530,8 +543,8 @@ function I:CreateAura_Text(name, parent)
 
     frame.SetCooldown = Text_SetCooldown
 
-    function frame:ShowDuration(show)
-        frame.showDuration = show
+    function frame:SetDuration(durationTbl)
+        frame.durationTbl = durationTbl
     end
 
     function frame:SetCircledStackNums(circled)
