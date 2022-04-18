@@ -136,7 +136,12 @@ local UnitIsUnit = UnitIsUnit
 local bos = GetSpellInfo(6940) -- 牺牲祝福
 function I:IsExternalCooldown(name, source, target)
     if name == bos then
-        return not UnitIsUnit(source, target)
+        if source and target then
+            -- NOTE: hide bos on caster
+            return not UnitIsUnit(source, target)
+        else
+            return true
+        end
     else
         return externalCooldowns[name]
     end

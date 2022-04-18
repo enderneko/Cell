@@ -58,7 +58,7 @@ local function CreateIndicatorsCopyFrame()
         last = tonumber(string.match(CellDB["layouts"][to]["indicators"][last]["indicatorName"], "%d+")) or last
     
         for i in pairs(selectedIndicators) do
-            if i <= 22 then -- built-in
+            if i <= Cell.defaults.builtIns then -- built-in
                 CellDB["layouts"][to]["indicators"][i] = F:Copy(CellDB["layouts"][from]["indicators"][i])
             else -- user-created
                 last = last + 1
