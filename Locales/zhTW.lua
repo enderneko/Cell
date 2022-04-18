@@ -40,8 +40,7 @@ L["Appearance"] = "外觀"
 L["Arena"] = "競技場"
 L["assist"] = "協助"
 L["Assist"] = "協助"
---[[Translation missing --]]
---[[ L["Aura Icon Options"] = "Aura Icon Options"--]] 
+L["Aura Icon Options"] = "光環圖示選項"
 L["Author"] = "作者"
 L["Available slash commands"] = "可用的聊天指令"
 L["Background Alpha"] = "背景透明度"
@@ -84,6 +83,8 @@ L["Class Color (dark)"] = "職業顏色 (暗)"
 L["Click-Castings"] = "滑鼠點擊施法"
 L["Close"] = "關閉"
 L["Color"] = "顏色"
+--[[Translation missing --]]
+--[[ L["Color Duration Text"] = "Color Duration Text"--]] 
 L["Common"] = "共用"
 L["Condition"] = "條件"
 L["Confirm"] = "確認"
@@ -127,8 +128,7 @@ L["Dispel Request"] = "請求驅散"
 L["Dispellable By Me"] = "只有我能驅散時"
 L["dispellableByMe"] = "只顯示我能驅散的減益"
 L["Dispels"] = "驅散"
---[[Translation missing --]]
---[[ L["Display One Decimal Place When"] = "Display One Decimal Place When"--]] 
+L["Display One Decimal Place When"] = "圖示持續時間顯示一位小數於"
 L["Do nothing if requested spell/buff already exists on requester"] = "若增益已存在於請求者身上，則不發光"
 L["DRINKING"] = "喝水"
 L["Edit"] = "編輯"
@@ -194,8 +194,6 @@ L["Highlight Size"] = "顯著標示粗細"
 L["Horizontal"] = "水平"
 L["Horizontal Gradient"] = "水平漸層"
 L["Icon"] = "圖示"
---[[Translation missing --]]
---[[ L["Icon Duration Text Color"] = "Icon Duration Text Color"--]] 
 L["Icons"] = "圖示群組"
 L["IDs separated by whitespaces"] = "用空格分隔多個法術ID"
 L["If disabled, no check, no reply, just glow"] = "如停用，則不檢查冷卻，也不回覆密語，只顯示發光。"
@@ -331,6 +329,8 @@ L["right-to-left"] = "從右到左"
 L["Role Icon"] = "角色職責圖示"
 L["Rotate Texture"] = "旋轉材質"
 L["Rotation"] = "旋轉"
+--[[Translation missing --]]
+--[[ L["Round Up Duration Text"] = "Round Up Duration Text"--]] 
 L["Save"] = "儲存"
 L["Scale"] = "縮放大小"
 L["ScrollDown"] = "滾輪往下"
@@ -356,8 +356,7 @@ L["Show while in a party"] = "在隊伍中時顯示"
 L["Show while not in a group"] = "不在隊伍中時顯示"
 L["showDuration"] = "顯示持續時間文字"
 L["Shows only one spell glow on a unit button at a time"] = "每個單位按鈕上同一時間只能顯示一個法術高亮"
---[[Translation missing --]]
---[[ L["showTooltip"] = "Show aura tooltip"--]] 
+L["showTooltip"] = "顯示光環提示"
 L["Size"] = "大小"
 L["Size (Big)"] = "大小 (放大的)"
 L["Slash Commands"] = "聊天指令"
@@ -392,8 +391,7 @@ L["The spells list of a icons indicator is unordered (no priority)."] = "圖示�
 L["These \"reset\" commands below affect all your characters in this account"] = "以下的 \"重置\" 指令會影響此帳號中的所有角色"
 L["Thickness"] = "粗細"
 L["This may overwrite built-in indicators"] = "這可能會覆蓋掉內建的指示器"
---[[Translation missing --]]
---[[ L["This will make these icons not click-through-able"] = "This will make these icons not click-through-able"--]] 
+L["This will make these icons not click-through-able"] = "這會使這些圖示無法點擊穿越"
 L["This will overwrite your debuffs"] = "將會取代你的減益"
 L["Timeout"] = "超時"
 L["Tip: Every layout has its own position setting"] = "提示: 每個版面配置都有各自的位置設定。"
