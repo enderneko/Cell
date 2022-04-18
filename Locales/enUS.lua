@@ -53,6 +53,13 @@ select(2, ...).L = setmetatable({
     ["RAID_DEBUFFS_TIPS"] = "Tips: [Drag & Drop] to change debuff order. [Double-Click] on instance name to open Encounter Journal. [Shift+Left Click] on instance/boss name to share debuffs. [Alt+Left Click] on instance/boss name to reset debuffs. The priority of General Debuffs is higher than Boss Debuffs.",
 
     ["CHANGE LOGS"] = [[
+        <h1>r95-release (Apr 18, 2022, 09:17 GMT+8)</h1>
+        <p>+ Added a "Round Up Duration" option into Aura Icon Options.</p>
+        <p>* Updated duration text options for custom TEXT indicators.</p>
+        <p>* Updated zhTW.</p>
+        <p>* Bug fixes.</p>
+        <br/>
+
         <h1>r94-release (Apr 17, 2022, 08:10 GMT+8)</h1>
         <p>+ Added Aura Icon Options in Appearance tab.</p>
         <p>+ Added Show aura tooltip options: Debuffs and RaidDebuffs.</p>

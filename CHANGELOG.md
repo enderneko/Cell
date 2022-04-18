@@ -1,11 +1,10 @@
-[Full Changelog](https://github.com/enderneko/Cell/compare/r93-release...f023c24ab65b97cf862c2f47786b3a58cde01144)
+[Full Changelog](https://github.com/enderneko/Cell/compare/r94-release...4050404d751d8ca59cc5838f090e3c0c39a0db21)
 
-- Add Aura Icon Options
-- Add Show aura tooltip option
-- Add font yOffset for icon and icons
-- Remove horizontalOffset from TargetCounter
-- Update color picker
-- Update preview backgrounds
-- Update Glows
-- Bug fixes
+- Add "Round Up Duration" option
+- Update duration options for custom text indicators
+- Add Fade (586, Priest) to Defensives
+- Update positions of appearance previews
+- Update layout preview (npc)
+- Fix layout deletion and renaming
+- Fix indicators deletion
 - Update zhTW
