@@ -83,8 +83,7 @@ L["Class Color (dark)"] = "職業顏色 (暗)"
 L["Click-Castings"] = "滑鼠點擊施法"
 L["Close"] = "關閉"
 L["Color"] = "顏色"
---[[Translation missing --]]
---[[ L["Color Duration Text"] = "Color Duration Text"--]] 
+L["Color Duration Text"] = "著色持續時間文字"
 L["Common"] = "共用"
 L["Condition"] = "條件"
 L["Confirm"] = "確認"
@@ -102,6 +101,8 @@ L["Cursor"] = "滑鼠游標"
 L["Cursor Left"] = "滑鼠游標左側"
 L["Cursor Right"] = "滑鼠游標右側"
 L["Custom Color"] = "自訂顏色"
+--[[Translation missing --]]
+--[[ L["Custom indicators will not be overwritten, even with same name"] = "Custom indicators will not be overwritten, even with same name"--]] 
 L["custom(s)"] = "自訂"
 L["Data transfer failed..."] = "資料傳輸失敗..."
 L["DEAD"] = "死亡"
@@ -329,8 +330,7 @@ L["right-to-left"] = "從右到左"
 L["Role Icon"] = "角色職責圖示"
 L["Rotate Texture"] = "旋轉材質"
 L["Rotation"] = "旋轉"
---[[Translation missing --]]
---[[ L["Round Up Duration Text"] = "Round Up Duration Text"--]] 
+L["Round Up Duration Text"] = "四捨五入持續時間文字"
 L["Save"] = "儲存"
 L["Scale"] = "縮放大小"
 L["ScrollDown"] = "滾輪往下"

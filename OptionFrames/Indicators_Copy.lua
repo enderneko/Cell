@@ -10,6 +10,15 @@ local selectedIndicators = {}
 
 local copyFrame, fromDropdown, toDropdown, fromList, copyBtn, closeBtn, allBtn, invertBtn
 
+-- local function GetCustomIndicatorNames(indicators)
+--     local names = {}
+--     for i = Cell.defaults.builtIns+1, #indicators do
+--         local iTbl = indicators[i]
+--         names[iTbl["name"]] = {i, iTbl["indicatorName"]}
+--     end
+--     return names
+-- end
+
 local function CreateIndicatorsCopyFrame()
     if not Cell.frames.indicatorsTab.mask then
         Cell:CreateMask(Cell.frames.indicatorsTab, nil, {1, -1, -1, 1})
