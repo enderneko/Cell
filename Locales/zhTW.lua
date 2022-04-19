@@ -101,8 +101,7 @@ L["Cursor"] = "滑鼠游標"
 L["Cursor Left"] = "滑鼠游標左側"
 L["Cursor Right"] = "滑鼠游標右側"
 L["Custom Color"] = "自訂顏色"
---[[Translation missing --]]
---[[ L["Custom indicators will not be overwritten, even with same name"] = "Custom indicators will not be overwritten, even with same name"--]] 
+L["Custom indicators will not be overwritten, even with same name"] = "即使同名，自定義指示器也不會被覆蓋"
 L["custom(s)"] = "自訂"
 L["Data transfer failed..."] = "資料傳輸失敗..."
 L["DEAD"] = "死亡"
@@ -136,6 +135,8 @@ L["Edit"] = "編輯"
 L["Edit spell"] = "修改法術"
 L["EN"] = "英"
 L["Enable"] = "啟用"
+--[[Translation missing --]]
+--[[ L["Enable Nicknames"] = "Enable Nicknames"--]] 
 L["Enabled"] = "啟用"
 L["enableHighlight"] = "顯著標示單位按鈕"
 L["Enter spell id"] = "請輸入法術 ID"
