@@ -744,11 +744,19 @@ local function CreateLayoutPane()
             }
         }
 
+        -- add "Inherit: default" to second
+        tinsert(inherits, {
+            ["text"] = L["Inherit: "] .. _G.DEFAULT,
+            ["value"] = "default",
+        })
+
         for name in pairs(CellDB["layouts"]) do
-            tinsert(inherits, {
-                ["text"] = L["Inherit: "] .. name,
-                ["value"] = name, 
-            })
+            if name ~= "default" then
+                tinsert(inherits, {
+                    ["text"] = L["Inherit: "] .. name,
+                    ["value"] = name, 
+                })
+            end
         end
 
         popup.dropdown1:SetItems(inherits)
