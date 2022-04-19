@@ -1217,5 +1217,16 @@ function F:Revise()
         end
     end
 
+    -- r96-release
+    if CellDB["revise"] and dbRevision < 96 then
+        for _, layout in pairs(CellDB["layouts"]) do
+            if layout["indicators"][22] and layout["indicators"][22]["indicatorName"] == "targetedSpells" then
+                if not F:TContains(layout["indicators"][22]["spells"], 332234) then -- 挥发精油
+                    tinsert(layout["indicators"][22]["spells"], 332234)
+                end
+            end
+        end
+    end
+
     CellDB["revise"] = Cell.version
 end

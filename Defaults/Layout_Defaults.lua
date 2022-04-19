@@ -318,9 +318,10 @@ Cell.defaults.layout = {
                 324079, -- 收割之镰
                 317963, -- 知识烦扰
                 333861, -- 回旋利刃
+                332234, -- 挥发精油
                 -- 328429, -- 窒息勒压
             },
-            ["glow"] = {"Pixel", {0.95,0.95,0.32,1}, 9, .25, 8, 2},
+            ["glow"] = {"Pixel", {0.95,0.95,0.32,1}, 9, 0.25, 8, 2},
             ["font"] = {"Cell ".._G.DEFAULT, 12, "Outline", 2, 1},
         }, -- 22
         {
@@ -331,7 +332,7 @@ Cell.defaults.layout = {
             ["position"] = {"TOP", "TOP", 0, 5},
             ["frameLevel"] = 15,
             ["font"] = {"Cell ".._G.DEFAULT, 15, "Outline"},
-            ["color"] = {1, .1, .1},
+            ["color"] = {1, 0.1, 0.1},
         }, -- 23
     },
 }
