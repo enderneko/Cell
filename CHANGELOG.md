@@ -1,6 +1,5 @@
-[Full Changelog](https://github.com/enderneko/Cell/compare/r95-release...8dd0cddae17488ba5f7144e6ce266409eebe2ef8)
+[Full Changelog](https://github.com/enderneko/Cell/compare/r96-release...d7e4e840e5a30b630895c16fcd62ef7123cadd0a)
 
 - Update locales
-- Update targetedSpells
-- Update layout creation dropdown
-- Fix bugs
+- Add nicknames
+- Try to fix issue that Cell can't be installed through CF

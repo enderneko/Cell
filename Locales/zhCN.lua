@@ -529,6 +529,12 @@ L["All Cell settings will be overwritten!"] = "所有 Cell 设置将被覆盖！
 -------------------------------------------------
 L["Change Logs"] = "更新记录"
 L["CHANGE LOGS"] = [[
+    <h1>r97-release (Apr 19, 2022, 20:10 GMT+8)</h1>
+    <p>+ 添加“昵称”（beta）。</p>
+    <p>* 更新本地化。</p>
+    <p>* 一天修复两回bug，就问你怕不怕。</p>
+    <br/>
+
     <h1>r96-release (Apr 19, 2022, 11:55 GMT+8)</h1>
     <p>* 歼灭两只bug。</p>
     <p>* 更新本地化。</p>
