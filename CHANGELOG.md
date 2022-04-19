@@ -1,10 +1,6 @@
-[Full Changelog](https://github.com/enderneko/Cell/compare/r94-release...4050404d751d8ca59cc5838f090e3c0c39a0db21)
+[Full Changelog](https://github.com/enderneko/Cell/compare/r95-release...8dd0cddae17488ba5f7144e6ce266409eebe2ef8)
 
-- Add "Round Up Duration" option
-- Update duration options for custom text indicators
-- Add Fade (586, Priest) to Defensives
-- Update positions of appearance previews
-- Update layout preview (npc)
-- Fix layout deletion and renaming
-- Fix indicators deletion
-- Update zhTW
+- Update locales
+- Update targetedSpells
+- Update layout creation dropdown
+- Fix bugs
