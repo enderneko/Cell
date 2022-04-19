@@ -12,10 +12,10 @@ generalTab:Hide()
 -------------------------------------------------
 -- visibility
 -------------------------------------------------
-local showSoloCB, showPartyCB, showPartyPetsCB
+local showSoloCB, showPartyCB, showPartyPetsCB, hideBlizzardCB
 
 local function CreateVisibilityPane()
-    local visibilityPane = Cell:CreateTitledPane(generalTab, L["Visibility"], 205, 100)
+    local visibilityPane = Cell:CreateTitledPane(generalTab, L["Visibility"], 205, 110)
     visibilityPane:SetPoint("TOPLEFT", generalTab, "TOPLEFT", 5, -5)
     
     showSoloCB = Cell:CreateCheckButton(visibilityPane, L["Show Solo"], function(checked, self)
@@ -36,6 +36,18 @@ local function CreateVisibilityPane()
         Cell:Fire("UpdateVisibility", "pets")
     end, L["Show Party Pets"], L["Show pets while in a party"])
     showPartyPetsCB:SetPoint("TOPLEFT", showPartyCB, "BOTTOMLEFT", 0, -7)
+
+    -- local blizzardText = Cell:CreateSeparator(L["Blizzard Frames"], generalTab, 205)
+    -- blizzardText:SetPoint("TOPLEFT", 5, -5)
+    hideBlizzardCB = Cell:CreateCheckButton(visibilityPane, L["Hide Blizzard Raid / Party"], function(checked, self)
+        CellDB["general"]["hideBlizzard"] = checked
+    
+        local popup = Cell:CreateConfirmPopup(generalTab, 200, L["A UI reload is required.\nDo it now?"], function()
+            ReloadUI()
+        end, nil, true)
+        popup:SetPoint("TOPLEFT", generalTab, "TOPLEFT", 117, -170)
+    end, L["Hide Blizzard Frames"], L["Require reload of the UI"])
+    hideBlizzardCB:SetPoint("TOPLEFT", showPartyPetsCB, "BOTTOMLEFT", 0, -7)
 end
 
 -------------------------------------------------
@@ -179,41 +191,29 @@ end
 -------------------------------------------------
 -- misc
 -------------------------------------------------
-local hideBlizzardCB, lockCB, sortByRoleCB, fadeoutCB, menuPositionDD
+local sortByRoleCB, lockCB, fadeoutCB, menuPositionDD, nicknameCB, nicknameEB
 
 local function CreateMiscPane()
-    local miscPane = Cell:CreateTitledPane(generalTab, L["Misc"], 205, 155)
-    miscPane:SetPoint("TOPLEFT", generalTab, 5, -125)
-    
-    -- local blizzardText = Cell:CreateSeparator(L["Blizzard Frames"], generalTab, 205)
-    -- blizzardText:SetPoint("TOPLEFT", 5, -5)
-    hideBlizzardCB = Cell:CreateCheckButton(miscPane, L["Hide Blizzard Raid / Party"], function(checked, self)
-        CellDB["general"]["hideBlizzard"] = checked
-    
-        local popup = Cell:CreateConfirmPopup(generalTab, 200, L["A UI reload is required.\nDo it now?"], function()
-            ReloadUI()
-        end, nil, true)
-        popup:SetPoint("TOPLEFT", generalTab, "TOPLEFT", 117, -170)
-    end, L["Hide Blizzard Frames"], L["Require reload of the UI"])
-    hideBlizzardCB:SetPoint("TOPLEFT", miscPane, "TOPLEFT", 5, -27)
-    
-    lockCB = Cell:CreateCheckButton(miscPane, L["Lock Cell Frame"], function(checked, self)
-        CellDB["general"]["locked"] = checked
-        Cell:Fire("UpdateMenu", "lock")
-    end)
-    lockCB:SetPoint("TOPLEFT", hideBlizzardCB, "BOTTOMLEFT", 0, -7)
+    local miscPane = Cell:CreateTitledPane(generalTab, L["Misc"], 205, 185)
+    miscPane:SetPoint("TOPLEFT", generalTab, 5, -134)
     
     sortByRoleCB = Cell:CreateCheckButton(miscPane, L["Sort Party By Role"], function(checked, self)
         CellDB["general"]["sortPartyByRole"] = checked
         Cell:Fire("UpdateSortMethod")
     end)
-    sortByRoleCB:SetPoint("TOPLEFT", lockCB, "BOTTOMLEFT", 0, -7)
+    sortByRoleCB:SetPoint("TOPLEFT", 5, -27)
 
+    lockCB = Cell:CreateCheckButton(miscPane, L["Lock Cell Frame"], function(checked, self)
+        CellDB["general"]["locked"] = checked
+        Cell:Fire("UpdateMenu", "lock")
+    end)
+    lockCB:SetPoint("TOPLEFT", sortByRoleCB, "BOTTOMLEFT", 0, -7)
+    
     fadeoutCB = Cell:CreateCheckButton(miscPane, L["Fade Out Menu"], function(checked, self)
         CellDB["general"]["fadeOut"] = checked
         Cell:Fire("UpdateMenu", "fadeOut")
     end, L["Fade Out Menu"], L["Fade out menu buttons on mouseout"])
-    fadeoutCB:SetPoint("TOPLEFT", sortByRoleCB, "BOTTOMLEFT", 0, -7)
+    fadeoutCB:SetPoint("TOPLEFT", lockCB, "BOTTOMLEFT", 0, -7)
 
     menuPositionDD = Cell:CreateDropdown(miscPane, 137)
     menuPositionDD:SetPoint("TOPLEFT", fadeoutCB, "BOTTOMLEFT", 0, -25)
@@ -239,6 +239,54 @@ local function CreateMiscPane()
     local menuPositionText = miscPane:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
     menuPositionText:SetText(L["Menu Position"])
     menuPositionText:SetPoint("BOTTOMLEFT", menuPositionDD, "TOPLEFT", 0, 1)
+
+    nicknameCB = Cell:CreateCheckButton(miscPane, L["Enable Nicknames"].." |cff777777(beta)", function(checked, self)
+        CellDB["general"]["nickname"][1] = checked
+        Cell:Fire("UpdateNicknames", "toggle", checked)
+
+        -- update EB
+        nicknameEB:SetEnabled(checked)
+        nicknameEB.confirmBtn:Hide()
+        nicknameEB:SetText(CellDB["general"]["nickname"][2] or "")
+    end)
+    nicknameCB:SetPoint("TOPLEFT", menuPositionDD, "BOTTOMLEFT", 0, -13)
+
+    nicknameEB = Cell:CreateEditBox(miscPane, 118, 20)
+    nicknameEB:SetPoint("TOPLEFT", nicknameCB, "BOTTOMRIGHT", 5, -5)
+
+    nicknameEB.confirmBtn = Cell:CreateButton(miscPane, "OK", "class", {27, 20})
+    nicknameEB.confirmBtn:SetPoint("TOPLEFT", nicknameEB, "TOPRIGHT", P:Scale(-1), 0)
+    nicknameEB.confirmBtn:Hide()
+    nicknameEB.confirmBtn:SetScript("OnHide", function()
+        nicknameEB.confirmBtn:Hide()
+    end)
+    nicknameEB.confirmBtn:SetScript("OnClick", function()
+        local text = strtrim(nicknameEB:GetText())
+        if text == "" then
+            CellDB["general"]["nickname"][2] = nil
+        else
+            CellDB["general"]["nickname"][2] = text
+        end
+        Cell:Fire("UpdateNicknames", "mine", CellDB["general"]["nickname"][2])
+        nicknameEB.confirmBtn:Hide()
+    end)
+
+    nicknameEB:SetScript("OnTextChanged", function(self, userChanged)
+        if userChanged then
+            local text = strtrim(nicknameEB:GetText())
+            if CellDB["general"]["nickname"][2] then -- already set a nickname
+                if text ~= CellDB["general"]["nickname"][2] then -- not the same nickname
+                    nicknameEB.confirmBtn:Show()
+                else
+                    nicknameEB.confirmBtn:Hide()
+                end
+            elseif text ~= "" then -- nickname not set, expect a non-empty string
+                nicknameEB.confirmBtn:Show()
+            else
+                nicknameEB.confirmBtn:Hide()
+            end
+        end
+    end)
 end
 
 -------------------------------------------------
@@ -248,7 +296,7 @@ local resCB, reportCB, buffCB, readyPullCB, pullDropdown, secEditBox, marksBarCB
 
 local function CreateToolsPane()
     local toolsPane = Cell:CreateTitledPane(generalTab, L["Raid Tools"].." |cFF777777"..L["only in group"], 422, 107)
-    toolsPane:SetPoint("TOPLEFT", 5, -304)
+    toolsPane:SetPoint("TOPLEFT", 5, -339)
 
     local unlockBtn = Cell:CreateButton(toolsPane, L["Unlock"], "class", {70, 17})
     unlockBtn:SetPoint("TOPRIGHT", toolsPane)
@@ -485,13 +533,16 @@ local function ShowTab(tab)
         showPartyCB:SetChecked(CellDB["general"]["showParty"])
         showPartyPetsCB:SetChecked(CellDB["general"]["showPartyPets"])
         showPartyPetsCB:SetEnabled(CellDB["general"]["showParty"])
+        hideBlizzardCB:SetChecked(CellDB["general"]["hideBlizzard"])
 
         -- misc
-        hideBlizzardCB:SetChecked(CellDB["general"]["hideBlizzard"])
         lockCB:SetChecked(CellDB["general"]["locked"])
         fadeoutCB:SetChecked(CellDB["general"]["fadeOut"])
         sortByRoleCB:SetChecked(CellDB["general"]["sortPartyByRole"])
         menuPositionDD:SetSelectedValue(CellDB["general"]["menuPosition"])
+        nicknameCB:SetChecked(CellDB["general"]["nickname"][1])
+        nicknameEB:SetEnabled(CellDB["general"]["nickname"][1])
+        nicknameEB:SetText(CellDB["general"]["nickname"][2] or "")
 
         -- raid tools
         resCB:SetChecked(CellDB["tools"]["showBattleRes"])

@@ -157,6 +157,7 @@ function eventFrame:ADDON_LOADED(arg1)
                 ["fadeOut"] = false,
                 ["menuPosition"] = "top_bottom",
                 ["sortPartyByRole"] = false,
+                ["nickname"] = {false},
             }
         end
 
@@ -555,8 +556,9 @@ function eventFrame:PLAYER_LOGIN()
     eventFrame:RegisterEvent("GROUP_ROSTER_UPDATE")
     eventFrame:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
 
-    Cell.vars.playerName = F:UnitName("player")
-    
+    Cell.vars.playerNameShort = GetUnitName("player")
+    Cell.vars.playerNameFull = F:UnitName("player")
+
     --! init bgMaxPlayers
     for i = 1, GetNumBattlegroundTypes() do
         local bgName, _, _, _, _, _, bgId, maxPlayers = GetBattlegroundInfo(i)

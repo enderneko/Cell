@@ -916,7 +916,7 @@ local function CreateLayoutPane()
     shareBtn:SetScript("OnClick", function()
         local editbox = ChatEdit_ChooseBoxForSend()
         ChatEdit_ActivateChat(editbox)
-        editbox:SetText("[Cell:Layout: "..selectedLayout.." - "..Cell.vars.playerName.."]")
+        editbox:SetText("[Cell:Layout: "..selectedLayout.." - "..Cell.vars.playerNameFull.."]")
     end)
 end
 

@@ -1228,5 +1228,12 @@ function F:Revise()
         end
     end
 
+    -- r97-release
+    if CellDB["revise"] and dbRevision < 97 then
+        if not CellDB["general"]["nickname"] then
+            CellDB["general"]["nickname"] = {false}
+        end
+    end
+
     CellDB["revise"] = Cell.version
 end

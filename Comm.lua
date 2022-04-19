@@ -40,11 +40,6 @@ end
 -----------------------------------------
 -- shared
 -----------------------------------------
-local eventFrame = CreateFrame("Frame")
-eventFrame:SetScript("OnEvent", function(self, event, ...)
-    self[event](self, ...)
-end)
-
 local sendChannel
 local function UpdateSendChannel()
     if IsInGroup(LE_PARTY_CATEGORY_INSTANCE) then
@@ -59,6 +54,11 @@ end
 -----------------------------------------
 -- Check Version
 -----------------------------------------
+local eventFrame = CreateFrame("Frame")
+eventFrame:SetScript("OnEvent", function(self, event, ...)
+    self[event](self, ...)
+end)
+
 eventFrame:RegisterEvent("GROUP_ROSTER_UPDATE")
 function eventFrame:GROUP_ROSTER_UPDATE()
     if IsInGroup() then
@@ -205,6 +205,135 @@ Comm:RegisterComm("CELL_PRIO", function(prefix, message, channel, sender)
 end)
 
 -----------------------------------------
+-- nickname
+-----------------------------------------
+Cell.vars.nicknames = {}
+local nic_check, nic_send
+
+-- events -----------------------------
+local nickname = CreateFrame("Frame")
+nickname:SetScript("OnEvent", function(self, event, ...)
+    self[event](self, ...)
+end)
+
+nickname:RegisterEvent("PLAYER_ENTERING_WORLD")
+
+function nickname:PLAYER_ENTERING_WORLD()
+    nickname:UnregisterEvent("PLAYER_ENTERING_WORLD")
+    Cell:Fire("UpdateNicknames")
+    nickname:RegisterEvent("GROUP_ROSTER_UPDATE")
+end
+
+function nickname:GROUP_ROSTER_UPDATE()
+    if IsInGroup() then
+        F:CheckNicknames()
+    end
+end
+---------------------------------------
+
+local function UpdateName(who)
+    F:Debug("|cFF69A000UpdateName:|r|cFF696969", who, Cell.vars.nicknames[who])
+    -- update name
+    local b = F:GetUnitButtonByName(who)
+    if b then
+        b.indicators.nameText:UpdateName()
+    end
+end
+
+local function UpdateSolo()
+    Cell.vars.nicknames[Cell.vars.playerNameShort] = CellDB["general"]["nickname"][2]
+    UpdateName(Cell.vars.playerNameShort)
+end
+
+local function UpdateNicknames(which, value)
+    F:Debug("|cFF80FF00UpdateNicknames:|r", which, value)
+    -- init or enable/disable
+    if not which then
+        wipe(Cell.vars.nicknames)
+        Cell.vars.nicknamesEnabled = CellDB["general"]["nickname"][1]
+        Cell.vars.playerNickname = CellDB["general"]["nickname"][1] and CellDB["general"]["nickname"][2] or nil
+        if Cell.vars.nicknamesEnabled then
+            if IsInGroup() then
+                F:CheckNicknames()
+            else
+                UpdateSolo()
+            end
+        end
+    end
+
+    -- player enable/disable nickname
+    if which == "toggle" then
+        wipe(Cell.vars.nicknames)
+        Cell.vars.nicknamesEnabled = CellDB["general"]["nickname"][1]
+        Cell.vars.playerNickname = CellDB["general"]["nickname"][1] and CellDB["general"]["nickname"][2] or nil
+
+        if Cell.vars.nicknamesEnabled then
+            if IsInGroup() then
+                F:CheckNicknames()
+            else
+                UpdateSolo()
+            end
+        else
+            if nic_check then nic_check:Cancel() end
+            -- disabled, notify others
+            UpdateSendChannel()
+            Comm:SendCommMessage("CELL_NIC", "CELL_NONE", sendChannel)
+            -- update all
+            F:IterateAllUnitButtons(function(b)
+                b.indicators.nameText:UpdateName()
+            end, true)
+        end
+    end
+
+    -- player changed nickname
+    if which == "mine" then
+        Cell.vars.playerNickname = CellDB["general"]["nickname"][2] or nil
+        if IsInGroup() then
+            -- notify others
+            UpdateSendChannel()
+            Comm:SendCommMessage("CELL_NIC", Cell.vars.playerNickname or "CELL_NONE", sendChannel)
+        else
+            UpdateSolo()
+        end
+    end
+end
+Cell:RegisterCallback("UpdateNicknames", "UpdateNicknames", UpdateNicknames)
+
+function F:CheckNicknames()
+    if Cell.vars.nicknamesEnabled then
+        if nic_check then nic_check:Cancel() end
+        nic_check = C_Timer.NewTimer(random(3), function()
+            UpdateSendChannel()
+            Comm:SendCommMessage("CELL_CNIC", "chk", sendChannel, nil, "ALERT")
+        end)
+    end
+end
+
+-- check nickname received
+Comm:RegisterComm("CELL_CNIC", function(prefix, message, channel, sender)
+    -- others send chk before you, no need to send chk again
+    if nic_check then nic_check:Cancel() end
+
+    if nic_send then nic_send:Cancel() end
+    nic_send = C_Timer.NewTimer(3, function()
+        UpdateSendChannel()
+        Comm:SendCommMessage("CELL_NIC", Cell.vars.playerNickname or "CELL_NONE", sendChannel)
+    end)
+end)
+
+-- nickname received
+Comm:RegisterComm("CELL_NIC", function(prefix, message, channel, sender)
+    if Cell.vars.nicknamesEnabled then
+        if message == "CELL_NONE" then
+            Cell.vars.nicknames[sender] = nil
+        else
+            Cell.vars.nicknames[sender] = message
+        end
+        UpdateName(sender)
+    end
+end)
+
+-----------------------------------------
 -- cross realm send
 -----------------------------------------
 local function CrossRealmSendCommMessage(prefix, message, playerName, priority, callbackFn)
@@ -277,7 +406,7 @@ Comm:RegisterComm("CELL_SEND", function(prefix, message, channel, sender)
     if channel ~= "WHISPER" then
         local target
         target, message = strsplit(":", message, 2)
-        if target ~= Cell.vars.playerName then
+        if target ~= Cell.vars.playerNameFull then
             return
         end
     end
@@ -303,7 +432,7 @@ Comm:RegisterComm("CELL_SEND_PROG", function(prefix, message, channel, sender)
     if channel ~= "WHISPER" then
         local target
         target, message = strsplit(":", message, 2)
-        if target ~= Cell.vars.playerName then
+        if target ~= Cell.vars.playerNameFull then
             return
         end
     end
@@ -321,7 +450,7 @@ Comm:RegisterComm("CELL_REQ", function(prefix, message, channel, requester)
     if channel ~= "WHISPER" then
         local target
         target, message = strsplit(":", message, 2)
-        if target ~= Cell.vars.playerName then
+        if target ~= Cell.vars.playerNameFull then
             return
         end
     end

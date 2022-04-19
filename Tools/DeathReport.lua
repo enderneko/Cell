@@ -164,7 +164,7 @@ function frame:GROUP_ROSTER_UPDATE()
             frame:RegisterEvent("ENCOUNTER_END")
         else
             if timer then timer:Cancel() end
-            timer = C_Timer.NewTimer(5, function()
+            timer = C_Timer.NewTimer(7, function()
                 F:CheckPriority()
             end)
         end
