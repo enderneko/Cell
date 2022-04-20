@@ -31,10 +31,10 @@ local function ShowSpellOptions(index)
     
     if responseType == "all" then
         srMacroText:SetText(L["Macro"])
-        macroText = "/run C_ChatInfo.SendAddonMessage(\"CELL_REQ_S\", \""..spellId.."\", \"RAID\")"
+        macroText = "/run C_ChatInfo.SendAddonMessage(\"CELL_REQ_S\",\""..spellId.."\",\"RAID\")"
     elseif responseType == "me" then
         srMacroText:SetText(L["Macro"])
-        macroText = "/run C_ChatInfo.SendAddonMessage(\"CELL_REQ_S\", \""..spellId..":"..GetUnitName("player").."\", \"RAID\")"
+        macroText = "/run C_ChatInfo.SendAddonMessage(\"CELL_REQ_S\",\""..spellId..":"..GetUnitName("player").."\",\"RAID\")"
     else -- whisper
         srMacroText:SetText(L["Contains"])
         keywords = CellDB["glows"]["spellRequest"]["spells"][index]["keywords"]
@@ -720,11 +720,11 @@ local function CreateDRPane()
     drMacroEB:SetPoint("TOP", drResponseDD, "BOTTOM", 0, -7)
     drMacroEB:SetPoint("LEFT", drMacroText, "RIGHT", 5, 0)
     drMacroEB:SetPoint("RIGHT", -5, 0)
-    drMacroEB:SetText("/run C_ChatInfo.SendAddonMessage(\"CELL_REQ_D\", \"D\", \"RAID\")")
+    drMacroEB:SetText("/run C_ChatInfo.SendAddonMessage(\"CELL_REQ_D\",\"D\",\"RAID\")")
     drMacroEB:SetCursorPosition(0)
     drMacroEB:SetScript("OnTextChanged", function(self, userChanged)
         if userChanged then
-            drMacroEB:SetText("/run C_ChatInfo.SendAddonMessage(\"CELL_REQ_D\", \"D\", \"RAID\")")
+            drMacroEB:SetText("/run C_ChatInfo.SendAddonMessage(\"CELL_REQ_D\",\"D\",\"RAID\")")
             drMacroEB:SetCursorPosition(0)
             drMacroEB:HighlightText()
         end
