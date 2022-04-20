@@ -1127,28 +1127,28 @@ function addon:CreateSlider(name, parent, low, high, width, step, onValueChanged
     end)
     currentEditBox:SetScript("OnEnterPressed", function(self)
         self:ClearFocus()
-        local value
-        if isPercentage then
-            value = string.gsub(self:GetText(), "%%", "")
-            value = tonumber(value)
-        else
-            value = tonumber(self:GetText())
-        end
+        local value = tonumber(self:GetText())
+        -- if isPercentage then
+        --     value = string.gsub(self:GetText(), "%%", "")
+        --     value = tonumber(value)
+        -- else
+        --     value = tonumber(self:GetText())
+        -- end
 
         if value == self.oldValue then return end
         if value then
             if value < slider.low then value = slider.low end
             if value > slider.high then value = slider.high end
-            self:SetText(value..unit)
+            self:SetText(value)
             slider:SetValue(value)
             if slider.onValueChangedFn then slider.onValueChangedFn(value) end
             if slider.afterValueChangedFn then slider.afterValueChangedFn(value) end
         else
-            self:SetText(self.oldValue..unit)
+            self:SetText(self.oldValue)
         end
     end)
     currentEditBox:SetScript("OnShow", function(self)
-        if self.oldValue then self:SetText(self.oldValue..unit) end
+        if self.oldValue then self:SetText(self.oldValue) end
     end)
 
     local lowText = slider:CreateFontString(nil, "OVERLAY", font_name)
@@ -1197,7 +1197,7 @@ function addon:CreateSlider(name, parent, low, high, width, step, onValueChanged
             value = tonumber(string.format("%.2f", value))
         end
 
-        currentEditBox:SetText(value..unit)
+        currentEditBox:SetText(value)
         currentEditBox.oldValue = value
         if userChanged and slider.onValueChangedFn then slider.onValueChangedFn(value) end
     end)

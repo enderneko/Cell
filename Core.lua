@@ -230,7 +230,7 @@ function eventFrame:ADDON_LOADED(arg1)
                     ["enabled"] = false,
                     ["dispellableByMe"] = true,
                     ["responseType"] = "all",
-                    ["timeout"] = 30,
+                    ["timeout"] = 10,
                     ["debuffs"] = {},
                     ["glowOptions"] = {
                         "shine", -- [1] glow type

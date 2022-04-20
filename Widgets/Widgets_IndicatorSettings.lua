@@ -441,7 +441,7 @@ local function CreateSetting_Height(parent)
         widget = addon:CreateFrame("CellIndicatorSettings_Height", parent, 240, 50)
         settingWidgets["height"] = widget
 
-        widget.height = addon:CreateSlider(L["Height"], widget, 1, 70, 110, 1)
+        widget.height = addon:CreateSlider(L["Height"], widget, 1, 300, 110, 1)
         widget.height:SetPoint("TOPLEFT", widget, 5, -20)
         widget.height.afterValueChangedFn = function(value)
             widget.func(value)

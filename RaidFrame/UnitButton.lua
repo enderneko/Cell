@@ -1382,12 +1382,11 @@ local function UnitButton_UpdateShieldAbsorbs(self)
         if enabledIndicators["shieldBar"] then
             self.indicators.shieldBar:Show()
             self.indicators.shieldBar:SetValue(shieldPercent)
-            self.widget.shieldBar:Hide()
-            self.widget.overShieldGlow:Hide()
         else
             self.indicators.shieldBar:Hide()
-            self.widget.shieldBar:SetValue(shieldPercent)
         end
+        
+        self.widget.shieldBar:SetValue(shieldPercent)
     else
         self.indicators.shieldBar:Hide()
         self.widget.shieldBar:Hide()
