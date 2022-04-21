@@ -52,7 +52,8 @@ local barOrientation, barAnimationType, highlightEnabled, predictionEnabled, abs
 -- unit button func declarations
 -------------------------------------------------
 local UnitButton_UpdateAll
-local UnitButton_UpdateAuras, UnitButton_UpdateRole, UnitButton_UpdateLeader, UnitButton_UpdateStatusIcon, UnitButton_UpdateStatusText, UnitButton_UpdateColor
+local UnitButton_UpdateAuras, UnitButton_UpdateRole, UnitButton_UpdateLeader, UnitButton_UpdateStatusIcon, UnitButton_UpdateStatusText
+local UnitButton_UpdateHealthColor, UnitButton_UpdateNameColor
 local UnitButton_UpdatePowerMax, UnitButton_UpdatePower, UnitButton_UpdatePowerType
 
 -------------------------------------------------
@@ -393,7 +394,7 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
             end, true)
         elseif setting == "nameColor" then
             F:IterateAllUnitButtons(function(b)
-                b.func.UpdateColor()
+                UnitButton_UpdateNameColor(b)
             end, true)
         elseif setting == "vehicleNamePosition" then
             F:IterateAllUnitButtons(function(b)
@@ -1008,6 +1009,12 @@ local function UpdateUnitHealthState(self)
     if self.state.wasDead ~= self.state.isDead then
         UnitButton_UpdateStatusText(self)
     end
+    
+    self.state.wasDeadOrGhost = self.state.isDeadOrGhost
+    self.state.isDeadOrGhost = UnitIsDeadOrGhost(unit)
+    if self.state.wasDeadOrGhost ~= self.state.isDeadOrGhost then
+        UnitButton_UpdateHealthColor(self)
+    end
 
     if enabledIndicators["healthText"] and healthMax ~= 0 and health ~= 0 then
         if health == healthMax then
@@ -1318,7 +1325,7 @@ local function UnitButton_UpdateHealthMax(self)
     end
 
     if Cell.vars.useGradientColor then
-        UnitButton_UpdateColor(self)
+        UnitButton_UpdateHealthColor(self)
     end
 end
 
@@ -1344,7 +1351,7 @@ local function UnitButton_UpdateHealth(self)
     end
 
     if Cell.vars.useGradientColor then
-        UnitButton_UpdateColor(self)
+        UnitButton_UpdateHealthColor(self)
     end
 
     self.state.healthPercentOld = healthPercent
@@ -1627,50 +1634,77 @@ local function UnitButton_UpdateName(self)
     self.indicators.nameText:UpdateName()
 end
 
-UnitButton_UpdateColor = function(self)
+UnitButton_UpdateNameColor = function(self)
     local unit = self.state.unit
     if not unit then return end
 
     self.state.class = select(2, UnitClass(unit)) --! update class or it may be nil
+
     local nameText = self.indicators.nameText
+
+    if not Cell.loaded then
+        nameText:SetTextColor(1, 1, 1)
+        return 
+    end
+    
+    if UnitIsPlayer(unit) then -- player
+        if not UnitIsConnected(unit) then
+            nameText:SetTextColor(F:GetClassColor(self.state.class))
+        elseif UnitIsCharmed(unit) then
+            nameText:SetTextColor(F:GetClassColor(self.state.class))
+        else
+            if Cell.vars.currentLayoutTable["indicators"][1]["nameColor"][1] == "Class Color" then
+                nameText:SetTextColor(F:GetClassColor(self.state.class))
+            else
+                nameText:SetTextColor(unpack(Cell.vars.currentLayoutTable["indicators"][1]["nameColor"][2]))
+            end
+        end
+    elseif string.find(unit, "pet") then -- pet
+        if Cell.vars.currentLayoutTable["indicators"][1]["nameColor"][1] == "Class Color" then
+            nameText:SetTextColor(0.5, 0.5, 1)
+        else
+            nameText:SetTextColor(unpack(Cell.vars.currentLayoutTable["indicators"][1]["nameColor"][2]))
+        end
+    else -- npc
+        if Cell.vars.currentLayoutTable["indicators"][1]["nameColor"][1] == "Class Color" then
+            nameText:SetTextColor(0, 1, 0.2)
+        else
+            nameText:SetTextColor(unpack(Cell.vars.currentLayoutTable["indicators"][1]["nameColor"][2]))
+        end
+    end
+end
+
+UnitButton_UpdateHealthColor = function(self)
+    local unit = self.state.unit
+    if not unit then return end
+
+    self.state.class = select(2, UnitClass(unit)) --! update class or it may be nil
 
     local barR, barG, barB
     local lossR, lossG, lossB
     local barA, lossA = 1, 1
     
     if Cell.loaded then
-        if Cell.vars.currentLayoutTable["indicators"][1]["nameColor"][1] == "Class Color" then
-            nameText:SetTextColor(F:GetClassColor(self.state.class))
-        else
-            nameText:SetTextColor(unpack(Cell.vars.currentLayoutTable["indicators"][1]["nameColor"][2]))
-        end
         barA =  CellDB["appearance"]["barAlpha"]
         lossA =  CellDB["appearance"]["lossAlpha"]
-    else
-        nameText:SetTextColor(1, 1, 1)
     end
 
     if UnitIsPlayer(unit) then -- player
         if not UnitIsConnected(unit) then
-            barR, barG, barB = .4, .4, .4
-            lossR, lossG, lossB = .4, .4, .4
-            nameText:SetTextColor(F:GetClassColor(self.state.class))
+            barR, barG, barB = 0.4, 0.4, 0.4
+            lossR, lossG, lossB = 0.4, 0.4, 0.4
         elseif UnitIsCharmed(unit) then
-            barR, barG, barB = .5, 0, 1
-            lossR, lossG, lossB = barR*.2, barG*.2, barB*.2
-            nameText:SetTextColor(F:GetClassColor(self.state.class))
+            barR, barG, barB = 0.5, 0, 1
+            lossR, lossG, lossB = barR*0.2, barG*0.2, barB*0.2
         elseif self.state.inVehicle then
-            barR, barG, barB, lossR, lossG, lossB = F:GetHealthColor(self.state.healthPercent, 0, 1, 0.2)
+            barR, barG, barB, lossR, lossG, lossB = F:GetHealthColor(self.state.healthPercent, self.state.isDeadOrGhost, 0, 1, 0.2)
         else
-            barR, barG, barB, lossR, lossG, lossB = F:GetHealthColor(self.state.healthPercent, F:GetClassColor(self.state.class))
+            barR, barG, barB, lossR, lossG, lossB = F:GetHealthColor(self.state.healthPercent, self.state.isDeadOrGhost, F:GetClassColor(self.state.class))
         end
     elseif string.find(unit, "pet") then -- pet
-        barR, barG, barB, lossR, lossG, lossB = F:GetHealthColor(self.state.healthPercent, 0.5, 0.5, 1)
-        if Cell.loaded and Cell.vars.currentLayoutTable["indicators"][1]["nameColor"][1] == "Class Color" then
-            nameText:SetTextColor(.5, .5, 1)
-        end
+        barR, barG, barB, lossR, lossG, lossB = F:GetHealthColor(self.state.healthPercent, self.state.isDeadOrGhost, 0.5, 0.5, 1)
     else -- npc
-        barR, barG, barB, lossR, lossG, lossB = F:GetHealthColor(self.state.healthPercent, 0, 1, 0.2)
+        barR, barG, barB, lossR, lossG, lossB = F:GetHealthColor(self.state.healthPercent, self.state.isDeadOrGhost, 0, 1, 0.2)
     end
 
     -- local r, g, b = RAID_CLASS_COLORS["DEATHKNIGHT"]:GetRGB()
@@ -1684,11 +1718,12 @@ UnitButton_UpdateAll = function(self)
 
     UnitButton_UpdateVehicleStatus(self)
     UnitButton_UpdateName(self)
+    UnitButton_UpdateNameColor(self)
     UnitButton_UpdateHealthMax(self)
     UnitButton_UpdateHealth(self)
     UnitButton_UpdateHealPrediction(self)
     UnitButton_UpdateStatusText(self)
-    UnitButton_UpdateColor(self)
+    UnitButton_UpdateHealthColor(self)
     UnitButton_UpdateTarget(self)
     UnitButton_UpdatePlayerRaidIcon(self)
     UnitButton_UpdateTargetRaidIcon(self)
@@ -1810,6 +1845,7 @@ local function UnitButton_OnEvent(self, event, unit)
         
         elseif event == "UNIT_NAME_UPDATE" then
             UnitButton_UpdateName(self)
+            UnitButton_UpdateNameColor(self)
         
         elseif event == "UNIT_MAXHEALTH" then
             UnitButton_UpdateHealthMax(self)
@@ -1855,8 +1891,9 @@ local function UnitButton_OnEvent(self, event, unit)
         elseif event == "PLAYER_FLAGS_CHANGED" or event == "UNIT_FLAGS" or event == "INCOMING_SUMMON_CHANGED" then
             UnitButton_UpdateStatusText(self)
             
-        elseif event == "UNIT_FACTION" then
-            UnitButton_UpdateColor(self) -- mind control
+        elseif event == "UNIT_FACTION" then -- mind control
+            UnitButton_UpdateNameColor(self)
+            UnitButton_UpdateHealthColor(self) 
             
         elseif event == "UNIT_THREAT_SITUATION_UPDATE" then
             UnitButton_UpdateThreat(self)
@@ -2315,7 +2352,7 @@ function F:UnitButton_OnLoad(button)
     end
 
     button.func.UpdateColor = function()
-        UnitButton_UpdateColor(button)
+        UnitButton_UpdateHealthColor(button)
         UnitButton_UpdatePowerType(button)
         button:SetBackdropColor(0, 0, 0, CellDB["appearance"]["bgAlpha"])
     end

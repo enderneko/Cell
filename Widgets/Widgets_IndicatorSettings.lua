@@ -1739,7 +1739,7 @@ local function CreateSetting_NameColor(parent)
         widget = addon:CreateFrame("CellIndicatorSettings_NameColor", parent, 240, 50)
         settingWidgets["nameColor"] = widget
 
-        widget.nameColorDropdown = addon:CreateDropdown(widget, 120)
+        widget.nameColorDropdown = addon:CreateDropdown(widget, 127)
         widget.nameColorDropdown:SetPoint("TOPLEFT", 5, -20)
         widget.nameColorDropdown:SetItems({
             {

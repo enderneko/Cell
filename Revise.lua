@@ -1235,5 +1235,12 @@ function F:Revise()
         end
     end
 
+    -- r98-release
+    if CellDB["revise"] and dbRevision < 98 then
+        if not CellDB["appearance"]["deathColor"] then
+            CellDB["appearance"]["deathColor"] = {false, {0.545, 0, 0}}
+        end
+    end
+
     CellDB["revise"] = Cell.version
 end

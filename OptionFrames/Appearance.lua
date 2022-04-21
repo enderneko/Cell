@@ -186,6 +186,9 @@ local function CreatePreviewButtons()
     previewButton:SetScript("OnLeave", nil)
     previewButton:SetScript("OnUpdate", nil)
     previewButton:Show()
+
+    previewButton.previewHealthText = previewButton.widget.overlayFrame:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
+    previewButton.previewHealthText:SetPoint("CENTER")
     
     local previewButtonBG = Cell:CreateFrame("AppearancePreviewButtonBG", appearanceTab)
     previewButtonBG:SetPoint("TOPLEFT", previewButton, 0, 20)
@@ -205,7 +208,7 @@ local function CreatePreviewButtons()
     previewButton2:SetScript("OnLeave", nil)
     previewButton2:SetScript("OnUpdate", nil)
     previewButton2:Show()
-    
+
     local previewButtonBG2 = Cell:CreateFrame("AppearancePreviewButtonBG", appearanceTab)
     previewButtonBG2:SetPoint("TOPLEFT", previewButton2, 0, 20)
     previewButtonBG2:SetPoint("BOTTOMRIGHT", previewButton2, "TOPRIGHT")
@@ -218,11 +221,14 @@ local function CreatePreviewButtons()
     previewText2:SetText(Cell:GetPlayerClassColorString()..L["Preview"].." 3")
 
     -- animation
-    local states = {-30, -60, 50, -40, 80}
+    local states = {-20, -30, -40, 50, -60, 0, 100, 0}
     local ticker
     previewButton:SetScript("OnShow", function()
         previewButton.perc = 1
+        previewButton.widget.healthBar:SetSmoothedValue(100)
         previewButton.widget.healthBar:SetValue(100)
+        previewButton.previewHealthText:SetText("100%")
+
         local health, healthPercent, healthPercentOld, currentState = 100, 1, 1, 1
 
         ticker = C_Timer.NewTicker(1, function()
@@ -249,14 +255,20 @@ local function CreatePreviewButtons()
                 previewButton.widget.healthBar:SetValue(health)
             end
 
-            if CellDB["appearance"]["barColor"][1] == "gradient" or CellDB["appearance"]["lossColor"][1] == "gradient" or CellDB["appearance"]["barColor"][1] == "gradient2" or CellDB["appearance"]["lossColor"][1] == "gradient2" then
-                local r, g, b, lossR, lossG, lossB = F:GetHealthColor(healthPercent, F:GetClassColor(Cell.vars.playerClass))
-                previewButton.widget.healthBar:SetStatusBarColor(r, g, b, CellDB["appearance"]["barAlpha"])
-                previewButton.widget.healthBarLoss:SetVertexColor(lossR, lossG, lossB, CellDB["appearance"]["lossAlpha"])
+            -- update text
+            if health == 0 then
+                previewButton.previewHealthText:SetText(L["DEAD"])
+            else
+                previewButton.previewHealthText:SetText(health.."%")
             end
 
+            -- update color
+            local r, g, b, lossR, lossG, lossB = F:GetHealthColor(healthPercent, health == 0, F:GetClassColor(Cell.vars.playerClass))
+            previewButton.widget.healthBar:SetStatusBarColor(r, g, b, CellDB["appearance"]["barAlpha"])
+            previewButton.widget.healthBarLoss:SetVertexColor(lossR, lossG, lossB, CellDB["appearance"]["lossAlpha"])
+
             healthPercentOld = healthPercent
-            currentState = currentState == 5 and 1 or (currentState + 1)
+            currentState = currentState == 8 and 1 or (currentState + 1)
         end)
     end)
 
@@ -342,11 +354,11 @@ local function UpdatePreviewButton()
 
     -- health color
     local r, g, b, lossR, lossG, lossB 
-    r, g, b, lossR, lossG, lossB = F:GetHealthColor(previewButton.perc or 1, F:GetClassColor(Cell.vars.playerClass))
+    r, g, b, lossR, lossG, lossB = F:GetHealthColor(previewButton.perc or 1, previewButton.perc == 0, F:GetClassColor(Cell.vars.playerClass))
     previewButton.widget.healthBar:SetStatusBarColor(r, g, b, CellDB["appearance"]["barAlpha"])
     previewButton.widget.healthBarLoss:SetVertexColor(lossR, lossG, lossB, CellDB["appearance"]["lossAlpha"])
 
-    r, g, b, lossR, lossG, lossB = F:GetHealthColor(0.6, F:GetClassColor(Cell.vars.playerClass))
+    r, g, b, lossR, lossG, lossB = F:GetHealthColor(0.6, false, F:GetClassColor(Cell.vars.playerClass))
     previewButton2.widget.healthBar:SetStatusBarColor(r, g, b, CellDB["appearance"]["barAlpha"])
     previewButton2.widget.healthBarLoss:SetVertexColor(lossR, lossG, lossB, CellDB["appearance"]["lossAlpha"])
 
@@ -358,7 +370,7 @@ end
 -------------------------------------------------
 -- unitbutton
 -------------------------------------------------
-local textureDropdown, barColorDropdown, barColorPicker, lossColorDropdown, lossColorPicker, powerColorDropdown, powerColorPicker, barAnimationDropdown, targetColorPicker, mouseoverColorPicker, highlightSize
+local textureDropdown, barColorDropdown, barColorPicker, lossColorDropdown, lossColorPicker, deathColorCB, deathColorPicker, powerColorDropdown, powerColorPicker, barAnimationDropdown, targetColorPicker, mouseoverColorPicker, highlightSize
 local barAlpha, lossAlpha, bgAlpha, oorAlpha, predCB, absorbCB, shieldCB, oversCB, resetBtn
 local iconOptionsBtn, iconOptionsFrame, iconAnimationDropdown, durationRoundUpCB, durationDecimalText1, durationDecimalText2, durationDecimalDropdown, durationColorCB, durationNormalCP, durationPercentCP, durationSecondCP, durationPercentDD, durationSecondEB, durationSecondText
 
@@ -635,6 +647,7 @@ local function CreateUnitButtonStylePane()
             ["value"] = "class_color",
             ["onClick"] = function()
                 CellDB["appearance"]["barColor"][1] = "class_color"
+                barColorPicker:SetEnabled(false)
                 Cell:Fire("UpdateAppearance", "color")
             end,
         },
@@ -643,6 +656,7 @@ local function CreateUnitButtonStylePane()
             ["value"] = "class_color_dark",
             ["onClick"] = function()
                 CellDB["appearance"]["barColor"][1] = "class_color_dark"
+                barColorPicker:SetEnabled(false)
                 Cell:Fire("UpdateAppearance", "color")
             end,
         },
@@ -651,6 +665,7 @@ local function CreateUnitButtonStylePane()
             ["value"] = "gradient",
             ["onClick"] = function()
                 CellDB["appearance"]["barColor"][1] = "gradient"
+                barColorPicker:SetEnabled(false)
                 Cell:Fire("UpdateAppearance", "color")
             end,
         },
@@ -659,6 +674,7 @@ local function CreateUnitButtonStylePane()
             ["value"] = "gradient2",
             ["onClick"] = function()
                 CellDB["appearance"]["barColor"][1] = "gradient2"
+                barColorPicker:SetEnabled(false)
                 Cell:Fire("UpdateAppearance", "color")
             end,
         },
@@ -667,6 +683,7 @@ local function CreateUnitButtonStylePane()
             ["value"] = "custom",
             ["onClick"] = function()
                 CellDB["appearance"]["barColor"][1] = "custom"
+                barColorPicker:SetEnabled(true)
                 Cell:Fire("UpdateAppearance", "color")
             end,
         },
@@ -695,6 +712,7 @@ local function CreateUnitButtonStylePane()
             ["value"] = "class_color",
             ["onClick"] = function()
                 CellDB["appearance"]["lossColor"][1] = "class_color"
+                lossColorPicker:SetEnabled(false)
                 Cell:Fire("UpdateAppearance", "color")
             end,
         },
@@ -703,6 +721,7 @@ local function CreateUnitButtonStylePane()
             ["value"] = "class_color_dark",
             ["onClick"] = function()
                 CellDB["appearance"]["lossColor"][1] = "class_color_dark"
+                lossColorPicker:SetEnabled(false)
                 Cell:Fire("UpdateAppearance", "color")
             end,
         },
@@ -711,22 +730,25 @@ local function CreateUnitButtonStylePane()
             ["value"] = "gradient",
             ["onClick"] = function()
                 CellDB["appearance"]["lossColor"][1] = "gradient"
+                lossColorPicker:SetEnabled(false)
                 Cell:Fire("UpdateAppearance", "color")
             end,
         },
-        -- {
-        --     ["text"] = L["Gradient"].." 2",
-        --     ["value"] = "gradient2",
-        --     ["onClick"] = function()
-        --         CellDB["appearance"]["lossColor"][1] = "gradient2"
-        --         Cell:Fire("UpdateAppearance", "color")
-        --     end,
-        -- },
+        {
+            ["text"] = L["Gradient"].." 2",
+            ["value"] = "gradient2",
+            ["onClick"] = function()
+                CellDB["appearance"]["lossColor"][1] = "gradient2"
+                lossColorPicker:SetEnabled(false)
+                Cell:Fire("UpdateAppearance", "color")
+            end,
+        },
         {
             ["text"] = L["Custom Color"],
             ["value"] = "custom",
             ["onClick"] = function()
                 CellDB["appearance"]["lossColor"][1] = "custom"
+                lossColorPicker:SetEnabled(true)
                 Cell:Fire("UpdateAppearance", "color")
             end,
         },
@@ -745,6 +767,24 @@ local function CreateUnitButtonStylePane()
         end
     end)
     lossColorPicker:SetPoint("LEFT", lossColorDropdown, "RIGHT", 5, 0)
+
+    -- death color
+    deathColorCB = Cell:CreateCheckButton(unitButtonPane, "", function(checked, self)
+        CellDB["appearance"]["deathColor"][1] = checked
+        deathColorPicker:SetEnabled(checked)
+        Cell:Fire("UpdateAppearance", "deathColor")
+    end, L["Enable Death Color"])
+    deathColorCB:SetPoint("TOPLEFT", lossColorPicker, "TOPRIGHT", 2, 0)
+
+    deathColorPicker = Cell:CreateColorPicker(unitButtonPane, "", false, function(r, g, b)
+        CellDB["appearance"]["deathColor"][2][1] = r
+        CellDB["appearance"]["deathColor"][2][2] = g
+        CellDB["appearance"]["deathColor"][2][3] = b
+        if CellDB["appearance"]["deathColor"][1] then
+            Cell:Fire("UpdateAppearance", "deathColor")
+        end
+    end)
+    deathColorPicker:SetPoint("TOPLEFT", deathColorCB, "TOPRIGHT", 2, 0)
     
     -- power color
     powerColorDropdown = Cell:CreateDropdown(unitButtonPane, 141)
@@ -755,6 +795,7 @@ local function CreateUnitButtonStylePane()
             ["value"] = "power_color",
             ["onClick"] = function()
                 CellDB["appearance"]["powerColor"][1] = "power_color"
+                powerColorPicker:SetEnabled(false)
                 Cell:Fire("UpdateAppearance", "color")
             end,
         },
@@ -763,6 +804,7 @@ local function CreateUnitButtonStylePane()
             ["value"] = "power_color_dark",
             ["onClick"] = function()
                 CellDB["appearance"]["powerColor"][1] = "power_color_dark"
+                powerColorPicker:SetEnabled(false)
                 Cell:Fire("UpdateAppearance", "color")
             end,
         },
@@ -771,6 +813,7 @@ local function CreateUnitButtonStylePane()
             ["value"] = "class_color",
             ["onClick"] = function()
                 CellDB["appearance"]["powerColor"][1] = "class_color"
+                powerColorPicker:SetEnabled(false)
                 Cell:Fire("UpdateAppearance", "color")
             end,
         },
@@ -779,6 +822,7 @@ local function CreateUnitButtonStylePane()
             ["value"] = "custom",
             ["onClick"] = function()
                 CellDB["appearance"]["powerColor"][1] = "custom"
+                powerColorPicker:SetEnabled(true)
                 Cell:Fire("UpdateAppearance", "color")
             end,
         },
@@ -954,12 +998,19 @@ LoadData = function()
     if not init then CheckTextures() end
     barColorDropdown:SetSelectedValue(CellDB["appearance"]["barColor"][1])
     barColorPicker:SetColor(CellDB["appearance"]["barColor"][2])
+    barColorPicker:SetEnabled(CellDB["appearance"]["barColor"][1] == "custom")
 
     lossColorDropdown:SetSelectedValue(CellDB["appearance"]["lossColor"][1])
     lossColorPicker:SetColor(CellDB["appearance"]["lossColor"][2])
+    lossColorPicker:SetEnabled(CellDB["appearance"]["lossColor"][1] == "custom")
+
+    deathColorCB:SetChecked(CellDB["appearance"]["deathColor"][1])
+    deathColorPicker:SetColor(CellDB["appearance"]["deathColor"][2])
+    deathColorPicker:SetEnabled(CellDB["appearance"]["deathColor"][1])
 
     powerColorDropdown:SetSelectedValue(CellDB["appearance"]["powerColor"][1])
     powerColorPicker:SetColor(CellDB["appearance"]["powerColor"][2])
+    powerColorPicker:SetEnabled(CellDB["appearance"]["powerColor"][1] == "custom")
 
     barAnimationDropdown:SetSelected(L[CellDB["appearance"]["barAnimation"]])
 
@@ -1037,9 +1088,21 @@ Cell:RegisterCallback("UpdateIndicators", "AppearanceTab_UpdateIndicators", Upda
 local function UpdateAppearance(which)
     F:Debug("|cff7f7fffUpdateAppearance:|r "..(which or "all"))
     
-    if not which or which == "texture" or which == "color" or which == "alpha" or which == "outOfRangeAlpha" or which == "shields" or which == "animation" or which == "highlightColor" or which == "highlightSize" then
+    if not which or which == "texture" or which == "color" or which == "deathColor" or which == "alpha" or which == "outOfRangeAlpha" or which == "shields" or which == "animation" or which == "highlightColor" or which == "highlightSize" then
         local tex
         if not which or which == "texture" then tex = F:GetBarTexture() end
+
+        if not which or which == "color" then
+            if strfind(CellDB["appearance"]["barColor"][1], "gradient") or strfind(CellDB["appearance"]["lossColor"][1], "gradient") then
+                Cell.vars.useGradientColor = true
+            else
+                Cell.vars.useGradientColor = nil
+            end
+        end
+
+        if not which or which == "deathColor" then
+            Cell.vars.useDeathColor = CellDB["appearance"]["deathColor"][1] and true or nil
+        end
 
         F:IterateAllUnitButtons(function(b)
             -- texture
@@ -1047,12 +1110,7 @@ local function UpdateAppearance(which)
                 b.func.SetTexture(tex)
             end
             -- color
-            if not which or which == "color" or which == "alpha" then
-                if strfind(CellDB["appearance"]["barColor"][1], "gradient") or strfind(CellDB["appearance"]["lossColor"][1], "gradient") then
-                    Cell.vars.useGradientColor = true
-                else
-                    Cell.vars.useGradientColor = nil
-                end
+            if not which or which == "color" or which == "deathColor" or which == "alpha" then
                 b.func.UpdateColor()
             end
             -- outOfRangeAlpha

@@ -1,4 +1,5 @@
 local addonName, Cell = ...
+local F = Cell.funcs
 
 Cell.defaults.appearance = {
     ["scale"] = 1,
@@ -7,6 +8,7 @@ Cell.defaults.appearance = {
     ["texture"] = "Cell ".._G.DEFAULT,
     ["barColor"] = {"class_color", {0.2, 0.2, 0.2}},
     ["lossColor"] = {"class_color_dark", {0.667, 0, 0}},
+    ["deathColor"] = {false, {0.545, 0, 0}},
     ["powerColor"] = {"power_color", {0.7, 0.7, 0.7}},
     ["barAlpha"] = 1,
     ["lossAlpha"] = 1,
@@ -36,6 +38,7 @@ local buttonStyleIndices = {
     "powerColor",
     "barAlpha",
     "lossAlpha",
+    "deathColor",
     "bgAlpha",
     "barAnimation",
     "auraIconOptions",
@@ -50,6 +53,10 @@ local buttonStyleIndices = {
 }
 function Cell:ResetButtonStyle()
     for _, index in pairs(buttonStyleIndices) do
-        CellDB["appearance"][index] = Cell.defaults.appearance[index]
+        if type(Cell.defaults.appearance[index]) == "table" then
+            CellDB["appearance"][index] = F:Copy(Cell.defaults.appearance[index])
+        else
+            CellDB["appearance"][index] = Cell.defaults.appearance[index]
+        end
     end
 end

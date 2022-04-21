@@ -47,7 +47,7 @@ local function UpdatePreviewButton()
     previewButton.widget.powerBar:SetStatusBarTexture(Cell.vars.texture)
 
     -- health color
-    local r, g, b = F:GetHealthColor(1, F:GetClassColor(Cell.vars.playerClass))
+    local r, g, b = F:GetHealthColor(1, false, F:GetClassColor(Cell.vars.playerClass))
     previewButton.widget.healthBar:SetStatusBarColor(r, g, b, CellDB["appearance"]["barAlpha"])
     
     -- power color
