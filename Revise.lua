@@ -12,7 +12,7 @@ function F:Revise()
         f:RegisterEvent("PLAYER_ENTERING_WORLD")
         f:SetScript("OnEvent", function()
             f:UnregisterAllEvents()
-            local popup = Cell:CreateConfirmPopup(CellMainFrame, 260, L["RESET"], function()
+            local popup = Cell:CreateConfirmPopup(CellAnchorFrame, 260, L["RESET"], function()
                 CellDB = nil
                 ReloadUI()
             end)

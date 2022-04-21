@@ -1571,12 +1571,6 @@ function addon:CreateConfirmPopup(parent, width, text, onAccept, onReject, mask,
             if mask and parent.mask then parent.mask:Hide() end
         end)
 
-        parent.confirmPopup:SetScript("OnShow", function ()
-            C_Timer.After(.2, function()
-                parent.confirmPopup:SetScript("OnUpdate", nil)
-            end)
-        end)
-        
         parent.confirmPopup.text = parent.confirmPopup:CreateFontString(nil, "OVERLAY", font_title_name)
         parent.confirmPopup.text:SetWordWrap(true)
         parent.confirmPopup.text:SetSpacing(3)
@@ -1593,6 +1587,17 @@ function addon:CreateConfirmPopup(parent, width, text, onAccept, onReject, mask,
         parent.confirmPopup.button2 = addon:CreateButton(parent.confirmPopup, L["No"], "red", {35, 15})
         parent.confirmPopup.button2:SetPoint("LEFT", parent.confirmPopup.button1, "RIGHT", P:Scale(-1), 0)
         parent.confirmPopup.button2:SetBackdropBorderColor(classColor.t[1], classColor.t[2], classColor.t[3], 1)
+
+        -- stop updating height
+        parent.confirmPopup:SetScript("OnEnter", function()
+            parent.confirmPopup:SetScript("OnUpdate", nil)
+        end)
+        parent.confirmPopup.button1:HookScript("OnEnter", function()
+            parent.confirmPopup:SetScript("OnUpdate", nil)
+        end)
+        parent.confirmPopup.button2:HookScript("OnEnter", function()
+            parent.confirmPopup:SetScript("OnUpdate", nil)
+        end)
     end
 
     if hasEditBox then
@@ -1678,12 +1683,6 @@ function addon:CreateConfirmPopup(parent, width, text, onAccept, onReject, mask,
         if hasEditBox then newHeight = newHeight + 30 end
         if dropdowns then newHeight = newHeight + 30 end
         parent.confirmPopup:SetHeight(newHeight)
-    end)
-
-    parent.confirmPopup:SetScript("OnShow", function()
-        C_Timer.After(2, function()
-            parent.confirmPopup:SetScript("OnUpdate", nil)
-        end)
     end)
 
     parent.confirmPopup:SetFrameStrata("DIALOG")
