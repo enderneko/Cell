@@ -714,14 +714,14 @@ local function CreateUnitButtonStylePane()
                 Cell:Fire("UpdateAppearance", "color")
             end,
         },
-        {
-            ["text"] = L["Gradient"].." 2",
-            ["value"] = "gradient2",
-            ["onClick"] = function()
-                CellDB["appearance"]["lossColor"][1] = "gradient2"
-                Cell:Fire("UpdateAppearance", "color")
-            end,
-        },
+        -- {
+        --     ["text"] = L["Gradient"].." 2",
+        --     ["value"] = "gradient2",
+        --     ["onClick"] = function()
+        --         CellDB["appearance"]["lossColor"][1] = "gradient2"
+        --         Cell:Fire("UpdateAppearance", "color")
+        --     end,
+        -- },
         {
             ["text"] = L["Custom Color"],
             ["value"] = "custom",

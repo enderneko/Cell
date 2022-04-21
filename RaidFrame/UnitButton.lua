@@ -1534,17 +1534,24 @@ UnitButton_UpdateStatusIcon = function(self)
     local icon = self.indicators.statusIcon
     if UnitHasIncomingResurrection(unit) then
         icon:SetTexture("Interface\\RaidFrame\\Raid-Icon-Rez")
+        icon:SetTexCoord(0, 1, 0, 1)
         icon:Show()
     elseif UnitIsPlayer(unit) and UnitPhaseReason(unit) and not self.state.inVehicle then
         -- https://wow.gamepedia.com/API_UnitPhaseReason
         icon:SetTexture("Interface\\TargetingFrame\\UI-PhasingIcon")
         icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
         icon:Show()
+    -- elseif UnitIsDeadOrGhost(unit) then
+    --     icon:SetTexture("Interface\\TargetingFrame\\UI-TargetingFrame-Skull")
+    --     icon:SetTexCoord(0, 1, 0, 1)
+    --     icon:Show()
     elseif self.state.BGFlag then
         icon:SetAtlas("nameplates-icon-flag-"..self.state.BGFlag)
+        icon:SetTexCoord(0, 1, 0, 1)
         icon:Show()
     elseif self.state.BGOrb then
         icon:SetAtlas("nameplates-icon-orb-"..self.state.BGOrb)
+        icon:SetTexCoord(0, 1, 0, 1)
         icon:Show()
     else
         icon:Hide()

@@ -940,7 +940,9 @@ local indicatorSettings = {
     ["nameText"] = {"enabled", "nameColor", "textWidth", "vehicleNamePosition", "namePosition", "font-noOffset"},
     ["statusText"] = {"enabled", "statusColors", "statusPosition", "frameLevel", "font-noOffset"},
     ["healthText"] = {"enabled", "format", "checkbutton:hideFull", "color", "position", "frameLevel", "font-noOffset"},
-    ["statusIcon"] = {"|TInterface\\RaidFrame\\Raid-Icon-Rez:18:18|t "..
+    ["statusIcon"] = {
+        -- "|A:dungeonskull:18:18|a "..
+        "|TInterface\\RaidFrame\\Raid-Icon-Rez:18:18|t "..
         "|TInterface\\TargetingFrame\\UI-PhasingIcon:18:18|t "..
         "|A:nameplates-icon-flag-horde:18:18|a "..
         "|A:nameplates-icon-flag-alliance:18:18|a "..

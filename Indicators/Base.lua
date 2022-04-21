@@ -736,7 +736,11 @@ function I:CreateAura_Texture(name, parent)
     end
     
     function texture:SetTexture(texTbl) -- texture, rotation, color
-        tex:SetTexture(texTbl[1])
+        if strfind(strlower(texTbl[1]), "^interface") then
+            tex:SetTexture(texTbl[1])
+        else
+            tex:SetAtlas(texTbl[1])
+        end
         tex:SetRotation(texTbl[2] * math.pi / 180)
         tex:SetVertexColor(unpack(texTbl[3]))
     end

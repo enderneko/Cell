@@ -938,6 +938,30 @@ function F:RotateTexture(texture, degrees)
     texture:SetTexCoord(ULx, ULy, LLx, LLy, URx, URy, LRx, LRy)
 end
 
+-- wow atlases
+local wowAtlases = {
+    "playerpartyblip",
+    "Artifacts-PerkRing-WhiteGlow",
+    "AftLevelup-WhiteIconGlow",
+    "LootBanner-IconGlow",
+    "AftLevelup-WhiteStarBurst",
+    "ChallengeMode-WhiteSpikeyGlow",
+    "UI-QuestPoiCampaign-OuterGlow",
+    "vignettekill",
+    "PetJournal-FavoritesIcon",
+    "dungeonskull",
+    "questnormal",
+    "questturnin",
+    "bags-icon-addslots",
+    "communities-chat-icon-plus",
+    "communities-chat-icon-minus",
+}
+
+-- wow textures
+local wowTextures = {
+
+}
+
 -- shapes
 local shapes = {
     "circle_filled",
@@ -955,6 +979,7 @@ local shapes = {
     "triangle"
 }
 
+-- weakauras
 local powaTextures = {
     9, 10, 12, 13, 14, 15, 21, 22, 25, 27, 29,
     37, 38, 39, 40, 41, 42, 43, 44,
@@ -963,10 +988,20 @@ local powaTextures = {
 }
 
 function F:GetTextures()
-    local builtIns = #shapes
+    local builtIns = #wowAtlases + #wowTextures + #shapes
 
     local t = {}
     
+    -- wow atlases
+    for _, wa in pairs(wowAtlases) do
+        tinsert(t, wa)
+    end
+    
+    -- wow textures
+    for _, wt in pairs(wowTextures) do
+        tinsert(t, wt)
+    end
+
     -- built-ins
     for _, s in pairs(shapes) do
         tinsert(t, "Interface\\AddOns\\Cell\\Media\\Shapes\\"..s..".tga")

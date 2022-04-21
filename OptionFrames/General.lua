@@ -45,7 +45,7 @@ local function CreateVisibilityPane()
         local popup = Cell:CreateConfirmPopup(generalTab, 200, L["A UI reload is required.\nDo it now?"], function()
             ReloadUI()
         end, nil, true)
-        popup:SetPoint("TOPLEFT", generalTab, "TOPLEFT", 117, -170)
+        popup:SetPoint("TOPLEFT", generalTab, 117, -77)
     end, L["Hide Blizzard Frames"], L["Require reload of the UI"])
     hideBlizzardCB:SetPoint("TOPLEFT", showPartyPetsCB, "BOTTOMLEFT", 0, -7)
 end

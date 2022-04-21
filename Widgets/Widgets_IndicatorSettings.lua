@@ -2402,6 +2402,7 @@ local function CreateSetting_Texture(parent)
         widget.path = widget.pathBox:CreateFontString(nil, "OVERLAY", font_name)
         widget.path:SetPoint("LEFT", 5, 0)
         widget.path:SetPoint("RIGHT", -5, 0)
+        widget.path:SetJustifyH("LEFT")
         widget.path:SetWordWrap(false)
 
         widget.button = addon:CreateButton(widget, "...", "class", {30, 20})
@@ -2425,7 +2426,7 @@ local function CreateSetting_Texture(parent)
         end
 
         widget.colorPicker = addon:CreateColorPicker(widget, L["Color"], true, function(r, g, b, a)
-            widget.func({widget.selected, widget.rotation:GetValue(), widget.colorPicker:GetColor()})
+            widget.func({widget.selected, widget.rotation:GetValue(), {r, g, b, a}})
         end)
         widget.colorPicker:SetPoint("TOPLEFT", widget.rotation, "TOPRIGHT", 25, 0)
 

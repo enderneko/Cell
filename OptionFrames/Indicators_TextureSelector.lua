@@ -156,7 +156,11 @@ LoadTextures = function()
         end
 
         -- texture
-        b.tex:SetTexture(path)
+        if strfind(strlower(path), "^interface") then
+            b.tex:SetTexture(path)
+        else
+            b.tex:SetAtlas(path)
+        end
 
         -- onclick
         b:SetScript("OnClick", function(self, button)
