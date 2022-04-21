@@ -726,6 +726,7 @@ end
 -------------------------------------------------
 function I:CreateAura_Texture(name, parent)
     local texture = CreateFrame("Frame", name, parent)
+    texture:Hide()
     
     local tex = texture:CreateTexture(name, "OVERLAY")
     tex:SetAllPoints(texture)
