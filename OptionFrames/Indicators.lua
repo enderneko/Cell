@@ -714,7 +714,7 @@ local function CreateListPane()
     -- buttons
     local createBtn = Cell:CreateButton(listPane, nil, "green-hover", {46, 20}, nil, nil, nil, nil, nil, L["Create"])
     createBtn:SetPoint("TOPLEFT", listFrame, "BOTTOMLEFT", 0, -5)
-    createBtn:SetTexture("Interface\\AddOns\\Cell\\Media\\Icons\\create.blp", {16, 16}, {"TOPLEFT", 14, 0})
+    createBtn:SetTexture("Interface\\AddOns\\Cell\\Media\\Icons\\create", {16, 16}, {"CENTER", 0, 0})
     createBtn:SetScript("OnClick", function()
         local popup = Cell:CreateConfirmPopup(indicatorsTab, 200, L["Create new indicator"], function(self)
             local name = strtrim(self.editBox:GetText())
@@ -824,7 +824,7 @@ local function CreateListPane()
                     ["position"] = {"TOP", "TOP", 0, 0},
                     ["size"] = {16, 16},
                     ["frameLevel"] = 10,
-                    ["texture"] = {"Interface\\AddOns\\Cell\\Media\\Shapes\\circle_filled.tga", 0, {1, 1, 1, 1}},
+                    ["texture"] = {"Interface\\AddOns\\Cell\\Media\\Shapes\\circle_blurred.tga", 0, {1, 1, 1, 1}},
                     ["auraType"] = indicatorAuraType,
                     ["auras"] = {},
                 })
@@ -851,7 +851,7 @@ local function CreateListPane()
 
     renameBtn = Cell:CreateButton(listPane, nil, "blue-hover", {46, 20}, nil, nil, nil, nil, nil, L["Rename"])
     renameBtn:SetPoint("TOPLEFT", createBtn, "TOPRIGHT", P:Scale(-1), 0)
-    renameBtn:SetTexture("Interface\\AddOns\\Cell\\Media\\Icons\\rename.blp", {16, 16}, {"TOPLEFT", 14, -2})
+    renameBtn:SetTexture("Interface\\AddOns\\Cell\\Media\\Icons\\rename", {16, 16}, {"CENTER", 0, 0})
     renameBtn:SetEnabled(false)
     renameBtn:SetScript("OnClick", function()
         local name = currentLayoutTable["indicators"][selected]["name"]
@@ -865,7 +865,7 @@ local function CreateListPane()
 
     deleteBtn = Cell:CreateButton(listPane, nil, "red-hover", {46, 20}, nil, nil, nil, nil, nil, L["Delete"])
     deleteBtn:SetPoint("TOPLEFT", renameBtn, "TOPRIGHT", P:Scale(-1), 0)
-    deleteBtn:SetTexture("Interface\\AddOns\\Cell\\Media\\Icons\\trash.blp", {16, 16}, {"TOPLEFT", 14, -2})
+    deleteBtn:SetTexture("Interface\\AddOns\\Cell\\Media\\Icons\\trash", {16, 16}, {"CENTER", 0, 0})
     deleteBtn:SetEnabled(false)
     deleteBtn:SetScript("OnClick", function()
         local name = currentLayoutTable["indicators"][selected]["name"]
@@ -883,21 +883,21 @@ local function CreateListPane()
 
     local importBtn = Cell:CreateButton(listPane, nil, "class-hover", {46, 20}, nil, nil, nil, nil, nil, L["Import"], L["Custom indicators will not be overwritten, even with same name"])
     importBtn:SetPoint("TOPLEFT", createBtn, "BOTTOMLEFT", 0, P:Scale(1))
-    importBtn:SetTexture("Interface\\AddOns\\Cell\\Media\\Icons\\import.blp", {16, 16}, {"TOPLEFT", 14, -2})
+    importBtn:SetTexture("Interface\\AddOns\\Cell\\Media\\Icons\\import", {16, 16}, {"TOPLEFT", 14, -2})
     importBtn:SetScript("OnClick", function()
         F:ShowIndicatorsImportFrame(currentLayout)
     end)
 
     local exportBtn = Cell:CreateButton(listPane, nil, "class-hover", {46, 20}, nil, nil, nil, nil, nil, L["Export"])
     exportBtn:SetPoint("TOPLEFT", importBtn, "TOPRIGHT", P:Scale(-1), 0)
-    exportBtn:SetTexture("Interface\\AddOns\\Cell\\Media\\Icons\\export.blp", {16, 16}, {"TOPLEFT", 14, -2})
+    exportBtn:SetTexture("Interface\\AddOns\\Cell\\Media\\Icons\\export", {16, 16}, {"TOPLEFT", 14, -2})
     exportBtn:SetScript("OnClick", function()
         F:ShowIndicatorsExportFrame(currentLayout)
     end)
 
     local copyBtn = Cell:CreateButton(listPane, nil, "class-hover", {46, 20}, nil, nil, nil, nil, nil, L["Copy"], L["Copy indicators from one layout to another"], L["Custom indicators will not be overwritten, even with same name"])
     copyBtn:SetPoint("TOPLEFT", exportBtn, "TOPRIGHT", P:Scale(-1), 0)
-    copyBtn:SetTexture("Interface\\AddOns\\Cell\\Media\\Icons\\copy.blp", {16, 16}, {"TOPLEFT", 14, -2})
+    copyBtn:SetTexture("Interface\\AddOns\\Cell\\Media\\Icons\\copy", {16, 16}, {"TOPLEFT", 14, -2})
     copyBtn:SetScript("OnClick", function()
         F:ShowIndicatorsCopyFrame()
     end)

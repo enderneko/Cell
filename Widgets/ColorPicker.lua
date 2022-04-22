@@ -274,7 +274,7 @@ local function CreateColorPicker()
     brightness:SetThumbTexture(brightness.thumb1)
 
     brightness.thumb2 = brightness:CreateTexture(nil, "ARTWORK")
-    brightness.thumb2:SetTexture("Interface\\AddOns\\Cell\\Media\\thumb.tga")
+    brightness.thumb2:SetTexture("Interface\\AddOns\\Cell\\Media\\Icons\\thumb.tga")
     P:Size(brightness.thumb2, 16, 16)
     brightness.thumb2:SetPoint("LEFT", brightness.thumb1, "RIGHT", -5, 0)
 
@@ -317,7 +317,7 @@ local function CreateColorPicker()
     alpha:SetThumbTexture(alpha.thumb1)
 
     alpha.thumb2 = brightness:CreateTexture(nil, "ARTWORK")
-    alpha.thumb2:SetTexture("Interface\\AddOns\\Cell\\Media\\thumb.tga")
+    alpha.thumb2:SetTexture("Interface\\AddOns\\Cell\\Media\\Icons\\thumb.tga")
     P:Size(alpha.thumb2, 16, 16)
     alpha.thumb2:SetPoint("LEFT", alpha.thumb1, "RIGHT", -5, 0)
 

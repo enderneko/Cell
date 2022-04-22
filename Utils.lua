@@ -971,6 +971,7 @@ local wowTextures = {
 
 -- shapes
 local shapes = {
+    "circle_blurred",
     "circle_filled",
     "circle_thin",
     "circle",
@@ -990,7 +991,7 @@ local shapes = {
 local powaTextures = {
     9, 10, 12, 13, 14, 15, 21, 22, 25, 27, 29,
     37, 38, 39, 40, 41, 42, 43, 44,
-    45, 49, 51, 52, 53, 58, 78, 118, 84,
+    49, 51, 52, 53, 58, 78, 118, 84,
     96, 97, 98, 99, 100, 114, 115, 116, 132, 138, 143
 }
 

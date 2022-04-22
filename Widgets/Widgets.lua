@@ -2315,9 +2315,13 @@ function addon:CreateDropdown(parent, width, dropdownType)
     addon:StylizeFrame(menu.button, {0.115, 0.115, 0.115, 1})
     menu.button:SetPoint("TOPRIGHT")
     menu.button:SetFrameLevel(menu:GetFrameLevel()+1)
-    menu.button:SetNormalTexture([[Interface\AddOns\Cell\Media\dropdown]])
-    menu.button:SetPushedTexture([[Interface\AddOns\Cell\Media\dropdown-pushed]])
-    menu.button:SetDisabledTexture([[Interface\AddOns\Cell\Media\dropdown-disabled]])
+    menu.button:SetNormalTexture([[Interface\AddOns\Cell\Media\Icons\dropdown-normal]])
+    menu.button:SetPushedTexture([[Interface\AddOns\Cell\Media\Icons\dropdown-pushed]])
+
+    local disabledTexture = menu.button:CreateTexture(nil, "OVERLAY")
+    disabledTexture:SetTexture([[Interface\AddOns\Cell\Media\Icons\dropdown-normal]])
+    disabledTexture:SetVertexColor(0.4, 0.4, 0.4, 1)
+    menu.button:SetDisabledTexture(disabledTexture)
 
     -- selected item
     menu.text = menu:CreateFontString(nil, "OVERLAY", font_name)
