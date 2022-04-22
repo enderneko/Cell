@@ -1237,8 +1237,16 @@ function F:Revise()
 
     -- r98-release
     if CellDB["revise"] and dbRevision < 98 then
+        -- add deathColor
         if not CellDB["appearance"]["deathColor"] then
             CellDB["appearance"]["deathColor"] = {false, {0.545, 0, 0}}
+        end
+
+        -- update frame level of aggro border
+        for _, layout in pairs(CellDB["layouts"]) do
+            if layout["indicators"][12] and layout["indicators"][12]["indicatorName"] == "aggroBorder" and layout["indicators"][12]["frameLevel"] == 1 then
+                layout["indicators"][12]["frameLevel"] = 3
+            end
         end
     end
 

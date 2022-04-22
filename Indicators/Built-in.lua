@@ -1199,16 +1199,16 @@ end
 -- aggro border
 -------------------------------------------------
 function I:CreateAggroBorder(parent)
-    local aggroBorder = CreateFrame("Frame", parent:GetName().."AggroBorder", parent.widget.overlayFrame, "BackdropTemplate")
+    local aggroBorder = CreateFrame("Frame", parent:GetName().."AggroBorder", parent, "BackdropTemplate")
 	parent.indicators.aggroBorder = aggroBorder
-    P:Point(aggroBorder, "TOPLEFT", parent.widget.overlayFrame, "TOPLEFT", 1, -1)
-    P:Point(aggroBorder, "BOTTOMRIGHT", parent.widget.overlayFrame, "BOTTOMRIGHT", -1, 1)
+    P:Point(aggroBorder, "TOPLEFT", parent, "TOPLEFT", 1, -1)
+    P:Point(aggroBorder, "BOTTOMRIGHT", parent, "BOTTOMRIGHT", -1, 1)
     aggroBorder:Hide()
 
-    local top = aggroBorder:CreateTexture(nil, "OVERLAY")
-    local bottom = aggroBorder:CreateTexture(nil, "OVERLAY")
-    local left = aggroBorder:CreateTexture(nil, "OVERLAY")
-    local right = aggroBorder:CreateTexture(nil, "OVERLAY")
+    local top = aggroBorder:CreateTexture(nil, "BORDER")
+    local bottom = aggroBorder:CreateTexture(nil, "BORDER")
+    local left = aggroBorder:CreateTexture(nil, "BORDER")
+    local right = aggroBorder:CreateTexture(nil, "BORDER")
 
     top:SetTexture("Interface\\Buttons\\WHITE8x8")
     top:SetGradientAlpha("VERTICAL", 1, 0.1, 0.1, 0, 1, 0.1, 0.1, 1)

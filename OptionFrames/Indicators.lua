@@ -318,7 +318,7 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                 end
                 -- update frameLevel
                 if t["frameLevel"] then
-                    indicator:SetFrameLevel(previewButton.widget.overlayFrame:GetFrameLevel()+t["frameLevel"])
+                    indicator:SetFrameLevel(indicator:GetParent():GetFrameLevel()+t["frameLevel"])
                 end
                 -- update size
                 if t["size"] then
@@ -445,7 +445,7 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
         elseif setting == "anchor" then
             indicator:SetAnchor(value)
         elseif setting == "frameLevel" then
-            indicator:SetFrameLevel(previewButton.widget.overlayFrame:GetFrameLevel()+value)
+            indicator:SetFrameLevel(indicator:GetParent():GetFrameLevel()+value)
         elseif setting == "size" then
             if indicatorName == "debuffs" then
                 indicator:SetSize(value[1], value[2])
@@ -540,7 +540,7 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
             end
             -- update frame level
             if value["frameLevel"] then
-                indicator:SetFrameLevel(previewButton.widget.overlayFrame:GetFrameLevel()+value["frameLevel"])
+                indicator:SetFrameLevel(indicator:GetParent():GetFrameLevel()+value["frameLevel"])
             end
             -- update num
             if value["num"] then
@@ -710,6 +710,11 @@ local function CreateListPane()
     
     Cell:CreateScrollFrame(listFrame)
     listFrame.scrollFrame:SetScrollStep(19)
+
+    -- group
+    local groupBtn = Cell:CreateButton(listPane, nil, "class-hover", {18, 18}, nil, nil, nil, nil, nil, L["Group"])
+    groupBtn:SetPoint("TOPRIGHT", 0, 1)
+    groupBtn:SetTexture("Interface\\AddOns\\Cell\\Media\\Icons\\group", {16, 16}, {"CENTER", 0, 0})
 
     -- buttons
     local createBtn = Cell:CreateButton(listPane, nil, "green-hover", {46, 20}, nil, nil, nil, nil, nil, L["Create"])

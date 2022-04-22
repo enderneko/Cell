@@ -142,7 +142,7 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                 end
                 -- update frameLevel
                 if t["frameLevel"] then
-                    indicator:SetFrameLevel(b.widget.overlayFrame:GetFrameLevel()+t["frameLevel"])
+                    indicator:SetFrameLevel(b:GetParent():GetFrameLevel()+t["frameLevel"])
                 end
                 -- update size
                 if t["size"] then
@@ -327,7 +327,7 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
         elseif setting == "frameLevel" then
             F:IterateAllUnitButtons(function(b)
                 local indicator = b.indicators[indicatorName]
-                indicator:SetFrameLevel(b.widget.overlayFrame:GetFrameLevel()+value)
+                indicator:SetFrameLevel(b:GetParent():GetFrameLevel()+value)
             end, true)
         elseif setting == "size" then
             F:IterateAllUnitButtons(function(b)
@@ -473,7 +473,7 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                 end
                 -- update size
                 if value["frameLevel"] then
-                    indicator:SetFrameLevel(b.widget.overlayFrame:GetFrameLevel()+value["frameLevel"])
+                    indicator:SetFrameLevel(b:GetParent():GetFrameLevel()+value["frameLevel"])
                 end
                 -- update orientation
                 if value["orientation"] then
@@ -2214,6 +2214,7 @@ function F:UnitButton_OnLoad(button)
     -- P:Point(powerBar, "BOTTOMRIGHT", button, "BOTTOMRIGHT", -1, 1)
     powerBar:SetStatusBarTexture(Cell.vars.texture)
     powerBar:GetStatusBarTexture():SetDrawLayer("ARTWORK", -6)
+    powerBar:SetFrameLevel(6)
 
     local gapTexture = button:CreateTexture(nil, "BORDER")
     button.widget.gapTexture = gapTexture
