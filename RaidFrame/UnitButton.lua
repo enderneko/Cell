@@ -2789,6 +2789,5 @@ function F:UnitButton_OnLoad(button)
     button:HookScript("OnLeave", UnitButton_OnLeave) -- SecureHandlerEnterLeaveTemplate
     button:SetScript("OnUpdate", UnitButton_OnUpdate)
     button:SetScript("OnEvent", UnitButton_OnEvent)
-    -- button:SetScript("OnSizeChanged", UnitButton_OnSizeChanged)
     button:RegisterForClicks("AnyDown")
 end

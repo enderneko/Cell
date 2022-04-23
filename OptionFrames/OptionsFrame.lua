@@ -83,7 +83,7 @@ local function CreateTabButtons()
         ["appearance"] = 451,
         ["layouts"] = 550,
         ["clickCastings"] = 426,
-        ["indicators"] = 479,
+        ["indicators"] = 493,
         ["debuffs"] = 440,
         ["glows"] = 459,
         ["about"] = 501,

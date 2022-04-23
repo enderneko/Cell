@@ -16,32 +16,84 @@ local listButtons = {}
 -------------------------------------------------
 -- preview
 -------------------------------------------------
-local previewButton = CreateFrame("Button", "CellIndicatorsPreviewButton", indicatorsTab, "CellUnitButtonTemplate")
-previewButton:SetPoint("TOPLEFT", indicatorsTab, "TOPRIGHT", 10, -25)
-previewButton:UnregisterAllEvents()
-previewButton:SetScript("OnEnter", nil)
-previewButton:SetScript("OnLeave", nil)
-previewButton:SetScript("OnShow", nil)
-previewButton:SetScript("OnHide", nil)
-previewButton:SetScript("OnUpdate", nil)
-previewButton:Show()
+local previewButton, previewButtonBG, previewAlphaSlider, previewScaleSlider
 
-local previewButtonBG = Cell:CreateFrame("IndicatorsPreviewButtonBG", indicatorsTab)
-previewButtonBG:SetPoint("TOPLEFT", previewButton, -5, 25)
-previewButtonBG:SetPoint("BOTTOMRIGHT", previewButton, 5, -5)
-previewButtonBG:SetFrameStrata("BACKGROUND")
-Cell:StylizeFrame(previewButtonBG, {0.1, 0.1, 0.1, 0.77}, {0, 0, 0, 0})
-previewButtonBG:Show()
+local function CreatePreviewButton()
+    previewButton = CreateFrame("Button", "CellIndicatorsPreviewButton", indicatorsTab, "CellUnitButtonTemplate")
+    -- previewButton:SetPoint("TOPLEFT", indicatorsTab, "TOPRIGHT", 10, -55)
+    previewButton:UnregisterAllEvents()
+    previewButton:SetScript("OnEnter", nil)
+    previewButton:SetScript("OnLeave", nil)
+    previewButton:SetScript("OnShow", nil)
+    previewButton:SetScript("OnHide", nil)
+    previewButton:SetScript("OnUpdate", nil)
+    previewButton:Show()
 
-local previewText = previewButtonBG:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET_TITLE")
-previewText:SetPoint("TOP", 0, -3)
-previewText:SetText(Cell:GetPlayerClassColorString()..L["Preview"])
+    previewButtonBG = Cell:CreateFrame("IndicatorsPreviewButtonBG", indicatorsTab)
+    -- previewButtonBG:SetPoint("TOPLEFT", indicatorsTab, "TOPRIGHT", 5, -1)
+    -- previewButtonBG:SetPoint("BOTTOMRIGHT", previewButton, 5, -5)
+    previewButtonBG:SetPoint("BOTTOM", previewButton, 0, -5)
+    previewButtonBG:SetFrameStrata("BACKGROUND")
+    Cell:StylizeFrame(previewButtonBG, {0.1, 0.1, 0.1, 0.77}, {0, 0, 0, 0})
+    previewButtonBG:Show()
+
+    function previewButton:UpdatePoint()
+        previewButton:ClearAllPoints()
+        previewButtonBG:ClearAllPoints()
+        previewButtonBG:SetPoint("TOPLEFT", indicatorsTab, "TOPRIGHT", 5, -1)
+
+        local x = 10
+        local y = Round(-55 / CellDB["indicatorPreviewScale"])
+
+        if (previewButton.width * CellDB["indicatorPreviewScale"]) <= 105 then
+            x = Round((115-previewButton.width)/2)+5
+            previewButtonBG:SetPoint("BOTTOM", previewButton, 0, -5)
+            P:Width(previewButtonBG, 115)
+        else
+            previewButtonBG:SetPoint("BOTTOMRIGHT", previewButton, 5, -5)
+        end
+
+        x = Round(x / CellDB["indicatorPreviewScale"])
+        previewButton:SetPoint("TOPLEFT", indicatorsTab, "TOPRIGHT", x, y)
+    end
+    
+    local previewText = previewButtonBG:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET_TITLE")
+    previewText:SetPoint("TOP", 0, -3)
+    previewText:SetText(Cell:GetPlayerClassColorString()..L["Preview"])
+
+    -- preview alpha
+    previewAlphaSlider = Cell:CreateSlider(L["Alpha"], previewButtonBG, 0, 1, 50, 0.1, nil, function(value)
+        CellDB["indicatorPreviewAlpha"] = value
+        listButtons[selected]:Click()
+    end)
+    previewAlphaSlider:SetPoint("TOPLEFT", 5, -30)
+    previewAlphaSlider.currentEditBox:Hide()
+    previewAlphaSlider.lowText:Hide()
+    previewAlphaSlider.highText:Hide()
+
+    -- preview scale
+    previewScaleSlider = Cell:CreateSlider(L["Scale"], previewButtonBG, 1, 3, 50, 1, nil, function(value)
+        CellDB["indicatorPreviewScale"] = value
+        previewButton:SetScale(value)
+        previewButton:UpdatePoint()
+    end)
+    previewScaleSlider:SetPoint("TOPLEFT", previewAlphaSlider, "TOPRIGHT", 5, 0)
+    previewScaleSlider.currentEditBox:Hide()
+    previewScaleSlider.lowText:Hide()
+    previewScaleSlider.highText:Hide()
+
+    -- local alphaText = settingsPane:CreateFontString(nil, "OVERLAY", "CELL_FONT_CLASS")
+    -- alphaText:SetPoint("BOTTOM", settingsPane.line, "TOP", 0, P:Scale(2))
+    -- alphaText:SetPoint("RIGHT", previewAlphaSlider, "LEFT", -5, 0)
+    -- alphaText:SetText(L["Alpha"])
+end
 
 local function UpdatePreviewButton()
     P:Size(previewButton, currentLayoutTable["size"][1], currentLayoutTable["size"][2])
     previewButton.func.SetOrientation(unpack(currentLayoutTable["barOrientation"]))
     previewButton.func.SetPowerSize(currentLayoutTable["powerSize"])
-    previewButton:GetScript("OnSizeChanged")(previewButton)
+    
+    previewButton:UpdatePoint()
     
     previewButton.widget.healthBar:SetStatusBarTexture(Cell.vars.texture)
     previewButton.widget.powerBar:SetStatusBarTexture(Cell.vars.texture)
@@ -56,8 +108,6 @@ local function UpdatePreviewButton()
 
     -- alpha
     previewButton:SetBackdropColor(0, 0, 0, CellDB["appearance"]["bgAlpha"])
-
-    previewButton.loaded = true
 end
 
 -- indicator preview onupdate
@@ -711,11 +761,6 @@ local function CreateListPane()
     Cell:CreateScrollFrame(listFrame)
     listFrame.scrollFrame:SetScrollStep(19)
 
-    -- group
-    local groupBtn = Cell:CreateButton(listPane, nil, "class-hover", {18, 18}, nil, nil, nil, nil, nil, L["Group"])
-    groupBtn:SetPoint("TOPRIGHT", 0, 1)
-    groupBtn:SetTexture("Interface\\AddOns\\Cell\\Media\\Icons\\group", {16, 16}, {"CENTER", 0, 0})
-
     -- buttons
     local createBtn = Cell:CreateButton(listPane, nil, "green-hover", {46, 20}, nil, nil, nil, nil, nil, L["Create"])
     createBtn:SetPoint("TOPLEFT", listFrame, "BOTTOMLEFT", 0, -5)
@@ -911,25 +956,11 @@ end
 -------------------------------------------------
 -- indicator settings
 -------------------------------------------------
-local othersAlpha, settingsFrame
+local settingsFrame
 
 local function CreateSettingsPane()
     local settingsPane = Cell:CreateTitledPane(indicatorsTab, L["Indicator Settings"], 274, 469)
     settingsPane:SetPoint("TOPLEFT", 153, -5)
-
-    othersAlpha = Cell:CreateSlider("", settingsPane, 0, 1, 50, .1, nil, function(value)
-        CellDB["indicatorPreviewAlpha"] = value
-        listButtons[selected]:Click()
-    end)
-    othersAlpha:SetPoint("TOPRIGHT", 0, -4)
-    othersAlpha.currentEditBox:Hide()
-    othersAlpha.lowText:Hide()
-    othersAlpha.highText:Hide()
-    
-    local alphaText = settingsPane:CreateFontString(nil, "OVERLAY", "CELL_FONT_CLASS")
-    alphaText:SetPoint("BOTTOM", settingsPane.line, "TOP", 0, P:Scale(2))
-    alphaText:SetPoint("RIGHT", othersAlpha, "LEFT", -5, 0)
-    alphaText:SetText(L["Alpha"])
 
     -- settings frame
     settingsFrame = Cell:CreateFrame("IndicatorsTab_SettingsFrame", settingsPane, 10, 10, true)
@@ -1141,7 +1172,7 @@ LoadIndicatorList = function()
             -- b = Cell:CreateButton(listFrame.scrollFrame.content, t["name"].." |cff7f7f7f("..L[t["auraType"]]..")", "transparent-class", {20, 20})
             b.typeIcon = b:CreateTexture(nil, "ARTWORK")
             b.typeIcon:SetPoint("RIGHT", -2, 0)
-            b.typeIcon:SetSize(16, 16)
+            P:Size(b.typeIcon, 16, 16)
             b.typeIcon:SetTexture("Interface\\AddOns\\Cell\\Media\\Indicators\\indicator-"..t["type"])
             -- b.typeIcon:SetAlpha(0.5)
             if t["auraType"] == "buff" then
@@ -1161,7 +1192,7 @@ LoadIndicatorList = function()
         if t["enabled"] then
             b:SetTextColor(1, 1, 1, 1)
         else
-            b:SetTextColor(.466, .466, .466, 1)
+            b:SetTextColor(0.466, 0.466, 0.466, 1)
         end
 
         b.ShowTooltip = function()
@@ -1242,9 +1273,10 @@ local function ShowTab(tab)
     if tab == "indicators" then
         if not init then
             init = true
+            CreatePreviewButton()
             CreateLayoutPane()
             CreateListPane()     
-            CreateSettingsPane()  
+            CreateSettingsPane()
         end
 
         indicatorsTab:Show()
@@ -1258,8 +1290,13 @@ local function ShowTab(tab)
         
         layoutDropdown:SetSelected(currentLayout == "default" and _G.DEFAULT or currentLayout)
         LoadIndicatorList()
+        
+        previewAlphaSlider:SetValue(CellDB["indicatorPreviewAlpha"])
+        previewScaleSlider:SetValue(CellDB["indicatorPreviewScale"])
+        previewButton:SetScale(CellDB["indicatorPreviewScale"])
+
         listButtons[1]:Click()
-        othersAlpha:SetValue(CellDB["indicatorPreviewAlpha"])
+        
         -- texplore(previewButton)
     else
         indicatorsTab:Hide()
@@ -1268,14 +1305,14 @@ end
 Cell:RegisterCallback("ShowOptionsTab", "IndicatorsTab_ShowTab", ShowTab)
 
 local function UpdateLayout()
-    if previewButton.loaded and currentLayout == Cell.vars.currentLayout then
+    if previewButton and currentLayout == Cell.vars.currentLayout then
         UpdatePreviewButton()
     end
 end
 Cell:RegisterCallback("UpdateLayout", "IndicatorsTab_UpdateLayout", UpdateLayout)
 
 local function UpdateAppearance()
-    if previewButton.loaded and currentLayout == Cell.vars.currentLayout then
+    if previewButton and currentLayout == Cell.vars.currentLayout then
         UpdatePreviewButton()
     end
 end

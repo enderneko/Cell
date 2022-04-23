@@ -377,10 +377,10 @@ local function RaidFrame_UpdateLayout(layout, which)
         -- REVIEW: fix name width
         if which == "groupFilter" then
             for j, b in ipairs({header:GetChildren()}) do
-                b:GetScript("OnSizeChanged")(b)
+                b.widget.healthBar:GetScript("OnSizeChanged")(b.widget.healthBar)
             end
             for i = 1, 3 do
-                arenaPetButtons[i]:GetScript("OnSizeChanged")(arenaPetButtons[i])
+                arenaPetButtons[i].widget.healthBar:GetScript("OnSizeChanged")(arenaPetButtons[i].widget.healthBar)
             end
         end
     end

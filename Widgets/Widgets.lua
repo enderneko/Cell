@@ -415,74 +415,74 @@ function addon:CreateButton(parent, text, buttonColor, size, noBorder, noBackgro
 
     local color, hoverColor
     if buttonColor == "red" then
-        color = {.6, .1, .1, .6}
-        hoverColor = {.6, .1, .1, 1}
+        color = {0.6, 0.1, 0.1, 0.6}
+        hoverColor = {0.6, 0.1, 0.1, 1}
     elseif buttonColor == "red-hover" then
-        color = {.115, .115, .115, 1}
-        hoverColor = {.6, .1, .1, 1}
+        color = {0.115, 0.115, 0.115, 1}
+        hoverColor = {0.6, 0.1, 0.1, 1}
     elseif buttonColor == "green" then
-        color = {.1, .6, .1, .6}
-        hoverColor = {.1, .6, .1, 1}
+        color = {0.1, 0.6, 0.1, 0.6}
+        hoverColor = {0.1, 0.6, 0.1, 1}
     elseif buttonColor == "green-hover" then
-        color = {.115, .115, .115, 1}
-        hoverColor = {.1, .6, .1, 1}
+        color = {0.115, 0.115, 0.115, 1}
+        hoverColor = {0.1, 0.6, 0.1, 1}
     elseif buttonColor == "cyan" then
-        color = {0, .9, .9, .6}
-        hoverColor = {0, .9, .9, 1}
+        color = {0, 0.9, 0.9, 0.6}
+        hoverColor = {0, 0.9, 0.9, 1}
     elseif buttonColor == "blue" then
-        color = {0, .5, .8, .6}
-        hoverColor = {0, .5, .8, 1}
+        color = {0, 0.5, 0.8, 0.6}
+        hoverColor = {0, 0.5, 0.8, 1}
     elseif buttonColor == "blue-hover" then
-        color = {.115, .115, .115, 1}
-        hoverColor = {0, .5, .8, 1}
+        color = {0.115, 0.115, 0.115, 1}
+        hoverColor = {0, 0.5, 0.8, 1}
     elseif buttonColor == "yellow" then
-        color = {.7, .7, 0, .6}
-        hoverColor = {.7, .7, 0, 1}
+        color = {0.7, 0.7, 0, 0.6}
+        hoverColor = {0.7, 0.7, 0, 1}
     elseif buttonColor == "yellow-hover" then
-        color = {.115, .115, .115, 1}
-        hoverColor = {.7, .7, 0, 1}
+        color = {0.115, 0.115, 0.115, 1}
+        hoverColor = {0.7, 0.7, 0, 1}
     elseif buttonColor == "class" then
         if class == "PRIEST" then
-            color = {classColor.t[1], classColor.t[2], classColor.t[3], .25}
-            hoverColor = {classColor.t[1], classColor.t[2], classColor.t[3], .5}
+            color = {classColor.t[1], classColor.t[2], classColor.t[3], 0.25}
+            hoverColor = {classColor.t[1], classColor.t[2], classColor.t[3], 0.5}
         else
-            color = {classColor.t[1], classColor.t[2], classColor.t[3], .3}
-            hoverColor = {classColor.t[1], classColor.t[2], classColor.t[3], .6}
+            color = {classColor.t[1], classColor.t[2], classColor.t[3], 0.3}
+            hoverColor = {classColor.t[1], classColor.t[2], classColor.t[3], 0.6}
         end
     elseif buttonColor == "class-hover" then
         color = {.115, .115, .115, 1}
         if class == "PRIEST" then
-            hoverColor = {classColor.t[1], classColor.t[2], classColor.t[3], .5}
+            hoverColor = {classColor.t[1], classColor.t[2], classColor.t[3], 0.5}
         else
-            hoverColor = {classColor.t[1], classColor.t[2], classColor.t[3], .6}
+            hoverColor = {classColor.t[1], classColor.t[2], classColor.t[3], 0.6}
         end
     elseif buttonColor == "chartreuse" then
-        color = {.5, 1, 0, .6}
-        hoverColor = {.5, 1, 0, .8}
+        color = {0.5, 1, 0, 0.6}
+        hoverColor = {0.5, 1, 0, 0.8}
     elseif buttonColor == "magenta" then
-        color = {.6, .1, .6, .6}
-        hoverColor = {.6, .1, .6, 1}
+        color = {0.6, 0.1, 0.6, 0.6}
+        hoverColor = {0.6, 0.1, 0.6, 1}
     elseif buttonColor == "transparent" then -- drop down item
         color = {0, 0, 0, 0}
-        hoverColor = {.5, 1, 0, .7}
+        hoverColor = {0.5, 1, 0, 0.7}
     elseif buttonColor == "transparent-white" then -- drop down item
         color = {0, 0, 0, 0}
-        hoverColor = {.4, .4, .4, .7}
+        hoverColor = {0.4, 0.4, 0.4, 0.7}
     elseif buttonColor == "transparent-light" then -- drop down item
         color = {0, 0, 0, 0}
-        hoverColor = {.5, 1, 0, .5}
+        hoverColor = {0.5, 1, 0, 0.5}
     elseif buttonColor == "transparent-class" then -- drop down item
         color = {0, 0, 0, 0}
         if class == "PRIEST" then
-            hoverColor = {classColor.t[1], classColor.t[2], classColor.t[3], .4}
+            hoverColor = {classColor.t[1], classColor.t[2], classColor.t[3], 0.4}
         else
-            hoverColor = {classColor.t[1], classColor.t[2], classColor.t[3], .6}
+            hoverColor = {classColor.t[1], classColor.t[2], classColor.t[3], 0.6}
         end
     elseif buttonColor == "none" then
         color = {0, 0, 0, 0}
     else
-        color = {.115, .115, .115, .7}
-        hoverColor = {.5, 1, 0, .6}
+        color = {0.115, 0.115, 0.115, 0.7}
+        hoverColor = {0.5, 1, 0, 0.6}
     end
 
     -- keep color & hoverColor
@@ -2440,7 +2440,6 @@ function addon:CreateDropdown(parent, width, dropdownType)
             if not list.items[i] then
                 -- init
                 b = addon:CreateButton(list.scrollFrame.content, item.text, "transparent-class", {18 ,18}, true) --! width is not important
-                b:SetHeight(18)
                 table.insert(list.items, b)
 
                 -- texture
@@ -2492,11 +2491,11 @@ function addon:CreateDropdown(parent, width, dropdownType)
             b:SetParent(list.scrollFrame.content)
             b:Show()
             if i == 1 then
-                b:SetPoint("TOPLEFT", 1, -1)
-                b:SetPoint("TOPRIGHT", -1, -1)
+                b:SetPoint("TOPLEFT", P:Scale(1), P:Scale(-1))
+                b:SetPoint("TOPRIGHT", P:Scale(-1), P:Scale(-1))
             else
-                b:SetPoint("TOPLEFT", list.items[i-1], "BOTTOMLEFT", 0, 0)
-                b:SetPoint("TOPRIGHT", list.items[i-1], "BOTTOMRIGHT", 0, 0)
+                b:SetPoint("TOPLEFT", list.items[i-1], "BOTTOMLEFT")
+                b:SetPoint("TOPRIGHT", list.items[i-1], "BOTTOMRIGHT")
             end
         end
 
@@ -2508,12 +2507,12 @@ function addon:CreateDropdown(parent, width, dropdownType)
         if #menu.items == 0 then
             list:SetSize(menu:GetWidth(), P:Scale(5))
         elseif #menu.items <= 10 then
-            list:SetSize(menu:GetWidth(), 2 + #menu.items*18)
-            list.scrollFrame:SetContentHeight(2 + #menu.items*18)
+            list:SetSize(menu:GetWidth(), P:Scale(2) + #menu.items*P:Scale(18))
+            list.scrollFrame:SetContentHeight(P:Scale(2) + #menu.items*P:Scale(18))
         else
-            list:SetSize(menu:GetWidth(), P:Scale(182))
+            list:SetSize(menu:GetWidth(), P:Scale(2) + 10*P:Scale(18))
             -- update list scrollFrame
-            list.scrollFrame:SetContentHeight(2 + #menu.items*18)
+            list.scrollFrame:SetContentHeight(P:Scale(2) + #menu.items*P:Scale(18))
         end
     end
 
