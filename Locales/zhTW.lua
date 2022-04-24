@@ -28,6 +28,8 @@ L["all"] = "全部"
 L["ALL"] = "全部"
 L["All Bosses"] = "所有首領"
 L["All Cell settings will be overwritten!"] = "全部Cell的設定將被覆蓋！"
+--[[Translation missing --]]
+--[[ L["All indicators of %s will be replaced with those in %s"] = "All indicators of %s will be replaced with those in %s"--]] 
 L["Alpha"] = "透明度"
 L["Alt+Right-Click to remove a player"] = "Alt+右鍵點擊來移除玩家"
 L["Always Targeting"] = "總是選取目標"
@@ -136,7 +138,8 @@ L["Edit spell"] = "修改法術"
 L["EN"] = "英"
 L["Enable"] = "啟用"
 --[[Translation missing --]]
---[[ L["Enable Nicknames"] = "Enable Nicknames"--]] 
+--[[ L["Enable Death Color"] = "Enable Death Color"--]] 
+L["Enable Nicknames"] = "啟用暱稱"
 L["Enabled"] = "啟用"
 L["enableHighlight"] = "顯著標示單位按鈕"
 L["Enter spell id"] = "請輸入法術 ID"
@@ -204,6 +207,8 @@ L["Import & Export All Settings"] = "匯入與匯出所有設定"
 L["Incompatible Version"] = "不相容的版本"
 L["Indicator Settings"] = "指示器設定"
 L["Indicator settings are part of Layout settings which are account-wide."] = "指示器設定是版面配置設定的一部分，是帳號共用的。"
+--[[Translation missing --]]
+--[[ L["Indicator Sync"] = "Indicator Sync"--]] 
 L["Indicators"] = "指示器"
 L["Inherit: "] = "繼承:"
 L["instakill"] = "秒殺"
@@ -375,6 +380,12 @@ L["Spells"] = "法術"
 L["Status Icon"] = "狀態圖示"
 L["Status Text"] = "狀態文字"
 L["Status Text Position"] = "狀態文字位置"
+--[[Translation missing --]]
+--[[ L["Sync Status"] = "Sync Status"--]] 
+--[[Translation missing --]]
+--[[ L["Sync With"] = "Sync With"--]] 
+--[[Translation missing --]]
+--[[ L["syncTips"] = "Set the master layout here\\nAll indicators of slave layout are fully in-sync with the master\\nIt's a two-way sync, but all indicators of slave layout will be lost when set a master"--]] 
 L["T"] = "天賦"
 L["Tank Active Mitigation"] = "坦克主動減傷"
 L["Target"] = "目標"
