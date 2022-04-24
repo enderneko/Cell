@@ -1242,10 +1242,21 @@ function F:Revise()
             CellDB["appearance"]["deathColor"] = {false, {0.545, 0, 0}}
         end
 
-        -- update frame level of aggro border
         for _, layout in pairs(CellDB["layouts"]) do
+            -- update frame level of aggro border
             if layout["indicators"][12] and layout["indicators"][12]["indicatorName"] == "aggroBorder" and layout["indicators"][12]["frameLevel"] == 1 then
                 layout["indicators"][12]["frameLevel"] = 3
+            end
+
+            -- update roleTexture
+            if layout["indicators"][5] and layout["indicators"][5]["indicatorName"] == "roleIcon" and not layout["indicators"][5]["roleTexture"] then
+                layout["indicators"][5]["roleTexture"] = {}
+                layout["indicators"][5]["roleTexture"][1] = layout["indicators"][5]["customTextures"][1] and "custom" or "default"
+                layout["indicators"][5]["roleTexture"][2] = layout["indicators"][5]["customTextures"][2]
+                layout["indicators"][5]["roleTexture"][3] = layout["indicators"][5]["customTextures"][3]
+                layout["indicators"][5]["roleTexture"][4] = layout["indicators"][5]["customTextures"][4]
+
+                layout["indicators"][5]["customTextures"] = nil
             end
         end
     end

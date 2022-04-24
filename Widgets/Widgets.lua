@@ -146,7 +146,13 @@ function addon:SetEnabled(isEnabled, ...)
                 w:SetTextColor(1, 1, 1, 1)
             else
                 w:SetTextColor(0.4, 0.4, 0.4, 1)
-            end            
+            end   
+        elseif w:IsObjectType("Texture") then   
+            if isEnabled then
+                w:SetDesaturated(false)
+            else
+                w:SetDesaturated(true)
+            end      
         else
             w:SetEnabled(isEnabled)
         end
@@ -765,7 +771,7 @@ function addon:CreatePowerFilter(parent, classFileName, buttons, width, height, 
     for i = #buttons, 1, -1 do
         local b = Cell:CreateButton(filter, nil, "class-hover", {height, height})
         filter.buttons[buttons[i]] = b
-        b:SetTexture("Interface\\AddOns\\Cell\\Media\\Roles\\"..buttons[i]..".blp", {height-4, height-4}, {"CENTER", 0, 0})
+        b:SetTexture("Interface\\AddOns\\Cell\\Media\\Roles\\"..buttons[i], {height-4, height-4}, {"CENTER", 0, 0})
 
         if last then
             b:SetPoint("BOTTOMRIGHT", last, "BOTTOMLEFT", P:Scale(1), 0)

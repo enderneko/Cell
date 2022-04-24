@@ -2086,67 +2086,96 @@ local function CreateSetting_Duration(parent)
     return widget
 end
 
-local function CreateSetting_CustomTextures(parent)
+local function CreateSetting_RoleTexture(parent)
     local widget
 
-    if not settingWidgets["customTextures"] then
-        widget = addon:CreateFrame("CellIndicatorSettings_CustomTextures", parent, 240, 165)
-        settingWidgets["customTextures"] = widget
+    if not settingWidgets["roleTexture"] then
+        widget = addon:CreateFrame("CellIndicatorSettings_RoleTexture", parent, 240, 165)
+        settingWidgets["roleTexture"] = widget
 
-        widget.cb = addon:CreateCheckButton(widget, L["Use Custom Textures"], function(checked)
-            widget.func({widget.cb:GetChecked(), widget.eb1:GetText(), widget.eb2:GetText(), widget.eb3:GetText()})
-            widget.eb1:SetEnabled(checked)
-            widget.eb2:SetEnabled(checked)
-            widget.eb3:SetEnabled(checked)
-        end)
-        widget.cb:SetPoint("TOPLEFT", 5, -8)
+        widget.texture = addon:CreateDropdown(widget, 260)
+        widget.texture:SetPoint("TOPLEFT", 5, -20)
+
+        local blizzard = F:UpperFirst(SLASH_TEXTTOSPEECH_BLIZZARD)
+        local indices = {"default", "default2", "blizzard", "blizzard2", "ffxiv", "miirgui", "mattui", "custom"}
+        local options = {
+            ["default"] = _G.DEFAULT,
+            ["default2"] = _G.DEFAULT.." 2",
+            ["blizzard"] = blizzard,
+            ["blizzard2"] = blizzard.." 2",
+            ["ffxiv"] = "FFXIV",
+            ["miirgui"] = "MiirGui",
+            ["mattui"] = "MattUI",
+            ["custom"] = _G.CUSTOM,
+        }
+
+        local items = {}
+        for _, v in ipairs(indices) do
+            tinsert(items, {
+                ["text"] = options[v],
+                ["value"] = v,
+                ["onClick"] = function()
+                    widget.func({v, widget.eb1:GetText(), widget.eb2:GetText(), widget.eb3:GetText()})
+                    addon:SetEnabled(v == "custom", 
+                        widget.text1, widget.text2, widget.text3,
+                        widget.texture1, widget.texture2, widget.texture3,
+                        widget.eb1, widget.eb2, widget.eb3
+                    )
+                end
+            })
+        end
+        widget.texture:SetItems(items)
+
+        widget.textureText = widget:CreateFontString(nil, "OVERLAY", font_name)
+        widget.textureText:SetText(L["Texture"])
+        widget.textureText:SetPoint("BOTTOMLEFT", widget.texture, "TOPLEFT", 0, 1)
 
         widget.eb1 = addon:CreateEditBox(widget, 260, 20)
-        widget.eb1:SetPoint("TOPLEFT", widget.cb, "BOTTOMLEFT", 0, -25)
+        widget.eb1:SetPoint("TOPLEFT", widget.texture, "BOTTOMLEFT", 0, -25)
         widget.eb1:SetScript("OnEnterPressed", function(self)
             self:ClearFocus()
-            widget.func({widget.cb:GetChecked(), self:GetText(), widget.eb2:GetText(), widget.eb3:GetText()})
+            widget.func({widget.texture:GetSelected(), self:GetText(), widget.eb2:GetText(), widget.eb3:GetText()})
             widget.texture1:SetTexture(self:GetText())
         end)
 
-        local text1 = widget:CreateFontString(nil, "OVERLAY", font_name)
-        text1:SetPoint("BOTTOMLEFT", widget.eb1, "TOPLEFT", 0, 1)
-        text1:SetText(_G["TANK"])
+        widget.text1 = widget:CreateFontString(nil, "OVERLAY", font_name)
+        widget.text1:SetPoint("BOTTOMLEFT", widget.eb1, "TOPLEFT", 0, 1)
+        widget.text1:SetText(_G["TANK"])
 
         widget.texture1 = widget:CreateTexture(nil, "ARTWORK")
-        widget.texture1:SetPoint("BOTTOMLEFT", text1, "BOTTOMRIGHT", 3, 0)
+        widget.texture1:SetPoint("BOTTOMLEFT", widget.text1, "BOTTOMRIGHT", 3, 0)
         widget.texture1:SetSize(16, 16)
         
         widget.eb2 = addon:CreateEditBox(widget, 260, 20)
         widget.eb2:SetPoint("TOPLEFT", widget.eb1, "BOTTOMLEFT", 0, -25)
         widget.eb2:SetScript("OnEnterPressed", function(self)
             self:ClearFocus()
-            widget.func({widget.cb:GetChecked(), widget.eb1:GetText(), self:GetText(), widget.eb3:GetText()})
+            widget.func({widget.texture:GetSelected(), widget.eb1:GetText(), self:GetText(), widget.eb3:GetText()})
             widget.texture2:SetTexture(self:GetText())
         end)
         
-        local text2 = widget:CreateFontString(nil, "OVERLAY", font_name)
-        text2:SetPoint("BOTTOMLEFT", widget.eb2, "TOPLEFT", 0, 1)
-        text2:SetText(_G["HEALER"])
+        widget.text2 = widget:CreateFontString(nil, "OVERLAY", font_name)
+        widget.text2:SetPoint("BOTTOMLEFT", widget.eb2, "TOPLEFT", 0, 1)
+        widget.text2:SetText(_G["HEALER"])
 
         widget.texture2 = widget:CreateTexture(nil, "ARTWORK")
-        widget.texture2:SetPoint("BOTTOMLEFT", text2, "BOTTOMRIGHT", 3, 0)
+        widget.texture2:SetPoint("BOTTOMLEFT", widget.text2, "BOTTOMRIGHT", 3, 0)
         widget.texture2:SetSize(16, 16)
 
         widget.eb3 = addon:CreateEditBox(widget, 260, 20)
         widget.eb3:SetPoint("TOPLEFT", widget.eb2, "BOTTOMLEFT", 0, -25)
         widget.eb3:SetScript("OnEnterPressed", function(self)
             self:ClearFocus()
-            widget.func({widget.cb:GetChecked(), widget.eb1:GetText(), widget.eb2:GetText(), self:GetText()})
+            widget.func({widget.texture:GetSelected(), widget.eb1:GetText(), widget.eb2:GetText(), self:GetText()})
             widget.texture3:SetTexture(self:GetText())
         end)
 
-        local text3 = widget:CreateFontString(nil, "OVERLAY", font_name)
-        text3:SetPoint("BOTTOMLEFT", widget.eb3, "TOPLEFT", 0, 1)
-        text3:SetText(_G["DAMAGER"])
+        widget.text3 = widget:CreateFontString(nil, "OVERLAY", font_name)
+        widget.text3:SetPoint("BOTTOMLEFT", widget.eb3, "TOPLEFT", 0, 1)
+        widget.text3:SetText(_G["DAMAGER"])
 
         widget.texture3 = widget:CreateTexture(nil, "ARTWORK")
-        widget.texture3:SetPoint("BOTTOMLEFT", text3, "BOTTOMRIGHT", 3, 0)
+        widget.texture3:SetPoint("BOTTOMLEFT", widget.text3, "BOTTOMRIGHT", 3, 0)
         widget.texture3:SetSize(16, 16)
 
         -- associate db
@@ -2156,10 +2185,13 @@ local function CreateSetting_CustomTextures(parent)
 
         -- show db value
         function widget:SetDBValue(t)
-            widget.cb:SetChecked(t[1])
-            widget.eb1:SetEnabled(t[1])
-            widget.eb2:SetEnabled(t[1])
-            widget.eb3:SetEnabled(t[1])
+            widget.texture:SetSelectedValue(t[1])
+            addon:SetEnabled(t[1] == "custom", 
+                widget.text1, widget.text2, widget.text3,
+                widget.texture1, widget.texture2, widget.texture3,
+                widget.eb1, widget.eb2, widget.eb3
+            )
+
             widget.eb1:SetText(t[2])
             widget.eb2:SetText(t[3])
             widget.eb3:SetText(t[4])
@@ -2171,7 +2203,7 @@ local function CreateSetting_CustomTextures(parent)
             widget.texture3:SetTexture(t[4])
         end
     else
-        widget = settingWidgets["customTextures"]
+        widget = settingWidgets["roleTexture"]
     end
 
     widget:Show()
@@ -2957,8 +2989,8 @@ function addon:CreateIndicatorSettings(parent, settingsTable)
             tinsert(widgetsTable, CreateSetting_CheckButton(parent))
         elseif setting == "duration" then
             tinsert(widgetsTable, CreateSetting_Duration(parent))
-        elseif setting == "customTextures" then
-            tinsert(widgetsTable, CreateSetting_CustomTextures(parent))
+        elseif setting == "roleTexture" then
+            tinsert(widgetsTable, CreateSetting_RoleTexture(parent))
         elseif setting == "glow" then
             tinsert(widgetsTable, CreateSetting_Glow(parent))
         elseif setting == "texture" then

@@ -218,9 +218,9 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                 if t["vehicleNamePosition"] then
                     indicator:UpdateVehicleNamePosition(t["vehicleNamePosition"])
                 end
-                -- update custom texture
-                if t["customTextures"] then
-                    indicator:SetCustomTexture(t["customTextures"])
+                -- update role texture
+                if t["roleTexture"] then
+                    indicator:SetRoleTexture(t["roleTexture"])
                     UnitButton_UpdateRole(b)
                 end
                 -- tooltip
@@ -411,10 +411,10 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
             F:IterateAllUnitButtons(function(b)
                 UnitButton_UpdateAuras(b)
             end, true)
-        elseif setting == "customTextures" then
+        elseif setting == "roleTexture" then
             F:IterateAllUnitButtons(function(b)
                 local indicator = b.indicators[indicatorName]
-                indicator:SetCustomTexture(value)
+                indicator:SetRoleTexture(value)
                 UnitButton_UpdateRole(b)
             end, true)
         elseif setting == "texture" then
@@ -1161,7 +1161,7 @@ UnitButton_UpdateRole = function(self)
         local role = UnitGroupRolesAssigned(unit)
         self.state.role = role
 
-        roleIcon:SetRole(role)
+        roleIcon:SetRole(role, LGIST:GetCachedInfo(self.state.guid))
     else
         roleIcon:Hide()
     end

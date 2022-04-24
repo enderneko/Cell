@@ -1129,14 +1129,30 @@ function I:CreateRoleIcon(parent)
     
     function roleIcon:SetRole(role)
         if role == "TANK" or role == "HEALER" or role == "DAMAGER" then
-            if roleIcon.useCustomTexture then
+            if roleIcon.texture == "default" then
+                roleIcon:SetTexture("Interface\\AddOns\\Cell\\Media\\Roles\\UI-LFG-ICON-PORTRAITROLES.blp")
+                roleIcon:SetTexCoord(GetTexCoordsForRoleSmallCircle(role))
+            elseif roleIcon.texture == "default2" then
+                roleIcon:SetTexture("Interface\\AddOns\\Cell\\Media\\Roles\\UI-LFG-ICON-ROLES.blp")
+                roleIcon:SetTexCoord(GetTexCoordsForRole(role))
+            elseif roleIcon.texture == "blizzard" then
+                roleIcon:SetTexture("Interface\\LFGFRAME\\UI-LFG-ICON-PORTRAITROLES.blp")
+                roleIcon:SetTexCoord(GetTexCoordsForRoleSmallCircle(role))
+            elseif roleIcon.texture == "blizzard2" then
+                roleIcon:SetTexture("Interface\\LFGFRAME\\UI-LFG-ICON-ROLES.blp")
+                roleIcon:SetTexCoord(GetTexCoordsForRole(role))
+            elseif roleIcon.texture == "ffxiv" then
+                roleIcon:SetTexture("Interface\\AddOns\\Cell\\Media\\Roles\\FFXIV\\"..role)
+                roleIcon:SetTexCoord(0, 1, 0, 1)
+            elseif roleIcon.texture == "miirgui" then
+                roleIcon:SetTexture("Interface\\AddOns\\Cell\\Media\\Roles\\MiirGui\\"..role)
+                roleIcon:SetTexCoord(0, 1, 0, 1)
+            elseif roleIcon.texture == "mattui" then
+                roleIcon:SetTexture("Interface\\AddOns\\Cell\\Media\\Roles\\MattUI.blp")
+                roleIcon:SetTexCoord(GetTexCoordsForRoleSmallCircle(role))
+            elseif roleIcon.texture == "custom" then
                 roleIcon:SetTexture(roleIcon[role])
                 roleIcon:SetTexCoord(0, 1, 0, 1)
-            else
-                roleIcon:SetTexture("Interface\\AddOns\\Cell\\Media\\UI-LFG-ICON-PORTRAITROLES.blp")
-                roleIcon:SetTexCoord(GetTexCoordsForRoleSmallCircle(role))
-                -- roleIcon:SetTexture("Interface\\AddOns\\Cell\\Media\\UI-LFG-ICON-ROLES.blp")
-                -- roleIcon:SetTexCoord(GetTexCoordsForRole(role))
             end
             roleIcon:Show()
 		else
@@ -1144,8 +1160,8 @@ function I:CreateRoleIcon(parent)
 		end
     end
 
-    function roleIcon:SetCustomTexture(t)
-        roleIcon.useCustomTexture = t[1]
+    function roleIcon:SetRoleTexture(t)
+        roleIcon.texture = t[1]
         roleIcon.TANK = t[2]
         roleIcon.HEALER = t[3]
         roleIcon.DAMAGER = t[4]

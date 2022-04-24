@@ -207,7 +207,7 @@ local function InitIndicator(indicatorName)
         indicator.elapsed = 0
         indicator.preview:SetScript("OnUpdate", function(self, elapsed)
             indicator.elapsed = indicator.elapsed + elapsed
-            if indicator.elapsed >= 2 then
+            if indicator.elapsed >= 1.5 then
                 indicator.elapsed = 0
                 indicator.role = (indicator.role + 1 > 3) and 1 or indicator.role + 1
                 indicator:SetRole(indicator.roles[indicator.role])
@@ -439,9 +439,9 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                 if t["vehicleNamePosition"] then
                     indicator:UpdateVehicleNamePosition(t["vehicleNamePosition"])
                 end
-                -- update custom texture
-                if t["customTextures"] then
-                    indicator:SetCustomTexture(t["customTextures"])
+                -- update role texture
+                if t["roleTexture"] then
+                    indicator:SetRoleTexture(t["roleTexture"])
                     indicator:SetRole(indicator.roles[indicator.role])
                 end
                 -- update texture
@@ -546,8 +546,8 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                 indicator:Hide()
                 indicator:Show()
             end
-        elseif setting == "customTextures" then
-            indicator:SetCustomTexture(value)
+        elseif setting == "roleTexture" then
+            indicator:SetRoleTexture(value)
             indicator:SetRole(indicator.roles[indicator.role])
         elseif setting == "texture" then
             indicator:SetTexture(value)
@@ -1204,7 +1204,7 @@ local indicatorSettings = {
         "|A:nameplates-icon-orb-green:18:18|a "..
         "|A:nameplates-icon-orb-orange:18:18|a "..
         "|A:nameplates-icon-orb-purple:18:18|a ", "enabled", "position", "frameLevel", "size-square"},
-    ["roleIcon"] = {"enabled", "position", "size-square", "customTextures"},
+    ["roleIcon"] = {"enabled", "position", "size-square", "roleTexture"},
     ["leaderIcon"] = {"|cffb7b7b7"..L["Leader Icons will hide while in combat"], "enabled", "position", "size-square"},
     ["readyCheckIcon"] = {"frameLevel", "size-square"},
     ["playerRaidIcon"] = {"enabled", "position", "frameLevel", "size-square", "alpha"},
