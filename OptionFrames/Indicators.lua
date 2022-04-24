@@ -29,7 +29,7 @@ local function CreatePreviewButton()
     previewButton:SetScript("OnUpdate", nil)
     previewButton:Show()
 
-    previewButtonBG = Cell:CreateFrame("IndicatorsPreviewButtonBG", indicatorsTab)
+    previewButtonBG = Cell:CreateFrame("CellIndicatorsPreviewButtonBG", indicatorsTab)
     -- previewButtonBG:SetPoint("TOPLEFT", indicatorsTab, "TOPRIGHT", 5, -1)
     -- previewButtonBG:SetPoint("BOTTOMRIGHT", previewButton, 5, -5)
     previewButtonBG:SetPoint("BOTTOM", previewButton, 0, -5)
@@ -43,7 +43,7 @@ local function CreatePreviewButton()
         previewButtonBG:SetPoint("TOPLEFT", indicatorsTab, "TOPRIGHT", 5, -1)
 
         local x = 10
-        local y = Round(-55 / CellDB["indicatorPreviewScale"])
+        local y = Round(-60 / CellDB["indicatorPreviewScale"])
 
         if (previewButton.width * CellDB["indicatorPreviewScale"]) <= 105 then
             x = Round((115-previewButton.width)/2)+5
@@ -57,16 +57,16 @@ local function CreatePreviewButton()
         previewButton:SetPoint("TOPLEFT", indicatorsTab, "TOPRIGHT", x, y)
     end
     
-    local previewText = previewButtonBG:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET_TITLE")
+    local previewText = previewButtonBG:CreateFontString(nil, "OVERLAY", "CELL_FONT_CLASS_TITLE")
     previewText:SetPoint("TOP", 0, -3)
-    previewText:SetText(Cell:GetPlayerClassColorString()..L["Preview"])
+    previewText:SetText(L["Preview"])
 
     -- preview alpha
     previewAlphaSlider = Cell:CreateSlider(L["Alpha"], previewButtonBG, 0, 1, 50, 0.1, nil, function(value)
         CellDB["indicatorPreviewAlpha"] = value
         listButtons[selected]:Click()
     end)
-    previewAlphaSlider:SetPoint("TOPLEFT", 5, -30)
+    previewAlphaSlider:SetPoint("TOPLEFT", 5, -35)
     previewAlphaSlider.currentEditBox:Hide()
     previewAlphaSlider.lowText:Hide()
     previewAlphaSlider.highText:Hide()
@@ -92,7 +92,7 @@ local function UpdatePreviewButton()
     P:Size(previewButton, currentLayoutTable["size"][1], currentLayoutTable["size"][2])
     previewButton.func.SetOrientation(unpack(currentLayoutTable["barOrientation"]))
     previewButton.func.SetPowerSize(currentLayoutTable["powerSize"])
-    
+
     previewButton:UpdatePoint()
     
     previewButton.widget.healthBar:SetStatusBarTexture(Cell.vars.texture)
@@ -330,7 +330,7 @@ local function InitIndicator(indicatorName)
             indicator:SetScript("OnShow", function()
                 indicator:SetCooldown(GetTime(), 13, nil, 134400, 5)
                 indicator.preview.elapsedTime = 0
-                C_Timer.After(.2, function()
+                C_Timer.After(0.2, function()
                     indicator:SetWidth(indicator.text:GetStringWidth() + 6)
                 end)
             end)
@@ -352,7 +352,7 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
     if not indicatorsTab:IsShown() then return end
 
     if not indicatorName then -- init
-        if not layout then -- call from UpdateIndicators() not from Cell:Fire("UpdateIndicators", ...)
+        if not layout then --! call from UpdateIndicators() not from Cell:Fire("UpdateIndicators", ...)
             I:RemoveAllCustomIndicators(previewButton)
             for _, t in pairs(currentLayoutTable["indicators"]) do
                 local indicator = previewButton.indicators[t["indicatorName"]] or I:CreateIndicator(previewButton, t)
@@ -659,7 +659,8 @@ Cell:RegisterCallback("UpdateTargetedSpells", "UpdateTargetedSpellsPreview", Upd
 -------------------------------------------------
 -- layout
 -------------------------------------------------
-local layoutDropdown
+local layoutDropdown, LoadLayoutDropdown, LoadSyncDropdown
+
 local function CreateLayoutPane()
     local layoutPane = Cell:CreateTitledPane(indicatorsTab, L["Layout"], 136, 50)
     layoutPane:SetPoint("TOPLEFT", indicatorsTab, "TOPLEFT", 5, -5)
@@ -669,7 +670,7 @@ local function CreateLayoutPane()
 end
 
 
-local function LoadLayoutDropdown()
+LoadLayoutDropdown = function()
     local indices = {}
     for name, _ in pairs(CellDB["layouts"]) do
         if name ~= "default" then
@@ -687,6 +688,7 @@ local function LoadLayoutDropdown()
                 currentLayout = value
                 currentLayoutTable = CellDB["layouts"][value]
 
+                LoadSyncDropdown()
                 UpdateIndicators()
                 UpdatePreviewButton()
                 LoadIndicatorList()
@@ -695,6 +697,222 @@ local function LoadLayoutDropdown()
         })
     end
     layoutDropdown:SetItems(items)
+end
+
+-------------------------------------------------
+-- indicator sync
+-------------------------------------------------
+local syncDropdown, syncStatus
+local masters, slaves = {}, {}
+
+local function ColorName(layout)
+    if layout == currentLayout then
+        if layout == "default" then
+            return "|cffff0066".._G.DEFAULT.."|r"
+        else
+            return "|cffff0066"..layout.."|r"
+        end
+    end
+
+    if layout == "default" then
+        return _G.DEFAULT
+    end
+
+    return layout
+end
+
+local function UpdateSyncedLayouts()
+    --! CLEAR SYNC
+    for slave, master in pairs(slaves) do
+        if CellDB["layouts"][slave] then -- not deleted
+            CellDB["layouts"][slave]["indicators"] = F:Copy(CellDB["layouts"][slave]["indicators"])
+        end
+    end
+
+    wipe(masters)
+    wipe(slaves)
+    
+    for layout, t in pairs(CellDB["layouts"]) do
+        local master = t["syncWith"]
+        if master then
+            if CellDB["layouts"][master] then -- master exists
+                if not masters[master] then masters[master] = {} end
+                masters[master][layout] = true
+                slaves[layout] = master
+            else -- master missing
+                t["syncWith"] = nil
+            end
+        end
+    end
+
+    --! SYNC NOW
+    for slave, master in pairs(slaves) do
+        CellDB["layouts"][slave]["indicators"] = CellDB["layouts"][master]["indicators"]
+    end
+
+    -- update syncStatus
+    if F:Getn(masters) == 0 then
+        syncStatus:Hide()
+    else
+        local text = ""
+        -- check synced
+        for master, t in pairs(masters) do
+            text = text..ColorName(master).."\n"
+            for slave in pairs(t) do
+                text = text.."  - "..ColorName(slave).."\n"
+            end
+        end
+        -- text = text.."\n"
+        -- check non-synced
+        for layout in pairs(CellDB["layouts"]) do
+            if not masters[layout] and not slaves[layout] then
+                text = text..ColorName(layout).."\n"
+            end
+        end
+
+        syncStatus:SetText(text)
+        syncStatus:Show()
+    end
+end
+
+local function GetNotifiedLayoutName(layout)
+    -- if currentlyEnabled is a slave
+    local masterOfCurrentlyEnabled = slaves[Cell.vars.currentLayout]
+    if masterOfCurrentlyEnabled then
+        -- if layout is currentlyEnabled's master or they share a same master
+        if layout == masterOfCurrentlyEnabled or slaves[layout] == masterOfCurrentlyEnabled then
+            return Cell.vars.currentLayout
+        end
+    end
+
+    -- if currentlyEnabled is a master
+    local slaves = masters[Cell.vars.currentLayout]
+    if slaves then
+        -- if layout is a slave of currentlyEnabled
+        if slaves[layout] then
+            return Cell.vars.currentLayout
+        end
+    end
+
+    return layout
+end
+
+LoadSyncDropdown = function()
+    UpdateSyncedLayouts()
+
+    if masters[currentLayout] then
+        -- NOTE: a master layout can not sync with others
+        syncDropdown:SetItems({
+            {
+                ["text"] = L["None"],
+                ["value"] = "none",
+            }
+        })
+        syncDropdown:SetSelectedValue("none")
+        syncDropdown:SetEnabled(false)
+    else
+        -- check
+        local indices = {}
+        for layout, _ in pairs(CellDB["layouts"]) do
+            -- NOTE: not current, not default, not slave
+            if layout ~= currentLayout and layout ~= "default" and not slaves[layout] then
+                tinsert(indices, layout)
+            end
+        end
+        table.sort(indices)
+        
+        -- NOTE: if current is not default, and default is not a slave
+        if currentLayout ~= "default" and not slaves["default"] then
+            tinsert(indices, 1, "default")
+        end
+        
+        -- make items
+        local items = {}
+        for _, layout in ipairs(indices) do
+            tinsert(items, {
+                ["text"] = layout == "default" and _G.DEFAULT or layout,
+                ["value"] = layout,
+                ["onClick"] = function()
+                    local popup = Cell:CreateConfirmPopup(indicatorsTab, 200, L["All indicators of %s will be replaced with those in %s"]:format("|cffff0066"..(currentLayout == "default" and _G.DEFAULT or currentLayout).."|r", "|cffff0066"..(layout == "default" and _G.DEFAULT or layout).."|r"), function(self)
+                        currentLayoutTable["syncWith"] = layout
+                        -- currentLayoutTable = CellDB["layouts"][currentLayout]
+                        UpdateSyncedLayouts()
+                        --! notify unitbuttons to update current indicators
+                        Cell:Fire("UpdateIndicators", currentLayout)
+                        --! update indicators preview
+                        UpdateIndicators()
+                        LoadIndicatorList()
+                        listButtons[1]:Click()
+                    end, function()
+                        syncDropdown:SetSelectedValue("none")
+                    end, true)
+                    popup:SetPoint("TOPLEFT", 117, -117)
+                end
+            })
+        end
+   
+        -- add "none"
+        tinsert(items, 1, {
+            ["text"] = L["None"],
+            ["value"] = "none",
+            ["onClick"] = function()
+                currentLayoutTable["syncWith"] = nil
+                -- currentLayoutTable = CellDB["layouts"][currentLayout]
+                UpdateSyncedLayouts()
+                --! notify unitbuttons to update current indicators
+                Cell:Fire("UpdateIndicators", currentLayout)
+                --! update indicators preview
+                UpdateIndicators()
+                LoadIndicatorList()
+                listButtons[1]:Click()
+            end
+        })
+
+        syncDropdown:SetItems(items)
+        syncDropdown:SetSelectedValue(currentLayoutTable["syncWith"] or "none")
+        syncDropdown:SetEnabled(true)
+    end
+end
+
+local function CreateSyncPane()
+    local syncPane = Cell:CreateTitledPane(indicatorsTab, L["Sync With"], 136, 50)
+    syncPane:SetPoint("TOPLEFT", 5, -60)
+
+    -- tip
+    syncTip = Cell:CreateButton(syncPane, nil, "red-hover", {17, 17}, nil, nil, nil, nil, nil, L["Indicator Sync"], L["syncTips"])
+    syncTip:SetPoint("TOPRIGHT")
+    syncTip.tex = syncTip:CreateTexture(nil, "ARTWORK")
+    syncTip.tex:SetAllPoints(syncTip)
+    syncTip.tex:SetTexture("Interface\\AddOns\\Cell\\Media\\Icons\\info2.tga")
+
+    -- sync
+    syncDropdown = Cell:CreateDropdown(syncPane, 136)
+    syncDropdown:SetPoint("TOPLEFT", 0, -25)
+
+    -- sync status
+    syncStatus = CreateFrame("Frame", "CellIndicatorsSyncStatus", indicatorsTab, "BackdropTemplate")
+    Cell:StylizeFrame(syncStatus, nil, Cell:GetPlayerClassColorTable())
+    syncStatus:SetSize(150, 30)
+    syncStatus:SetPoint("TOPRIGHT", syncPane, "TOPLEFT", -10, 3)
+    
+    syncStatus.title = syncStatus:CreateFontString(nil, "OVERLAY", "CELL_FONT_CLASS_TITLE")
+    syncStatus.title:SetText(L["Sync Status"])
+    syncStatus.title:SetPoint("BOTTOMLEFT", syncStatus, "TOPLEFT", 5, -18)
+    
+    syncStatus.text = syncStatus:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
+    syncStatus.text:SetPoint("TOPLEFT", syncStatus.title, "BOTTOMLEFT", 5, -5)
+    syncStatus.text:SetJustifyH("LEFT")
+    syncStatus.text:SetSpacing(3)
+
+    function syncStatus:SetText(text)
+        syncStatus.text:SetText(text)
+
+        syncStatus:SetScript("OnUpdate", function()
+            syncStatus:SetWidth(math.max(syncStatus.title:GetStringWidth(), syncStatus.text:GetStringWidth()) + 10)
+            syncStatus:SetHeight(syncStatus.title:GetStringHeight() + syncStatus.text:GetStringHeight() + 15)
+            syncStatus:SetScript("OnUpdate", nil)
+        end)
+    end
 end
 
 -------------------------------------------------
@@ -750,12 +968,12 @@ local auraTypeItems = {
 }
 
 local function CreateListPane()
-    local listPane = Cell:CreateTitledPane(indicatorsTab, L["Indicators"], 136, 412)
-    listPane:SetPoint("TOPLEFT", 5, -62)
+    local listPane = Cell:CreateTitledPane(indicatorsTab, L["Indicators"], 136, 373)
+    listPane:SetPoint("TOPLEFT", 5, -115)
 
     listFrame = Cell:CreateFrame("IndicatorsTab_ListFrame", listPane)
     listFrame:SetPoint("TOPLEFT", 0, -25)
-    listFrame:SetPoint("BOTTOMRIGHT", 0, 44)
+    listFrame:SetPoint("BOTTOMRIGHT", 0, 43)
     listFrame:Show()
     
     Cell:CreateScrollFrame(listFrame)
@@ -763,7 +981,7 @@ local function CreateListPane()
 
     -- buttons
     local createBtn = Cell:CreateButton(listPane, nil, "green-hover", {46, 20}, nil, nil, nil, nil, nil, L["Create"])
-    createBtn:SetPoint("TOPLEFT", listFrame, "BOTTOMLEFT", 0, -5)
+    createBtn:SetPoint("TOPLEFT", listFrame, "BOTTOMLEFT", 0, -4)
     createBtn:SetTexture("Interface\\AddOns\\Cell\\Media\\Icons\\create", {16, 16}, {"CENTER", 0, 0})
     createBtn:SetScript("OnClick", function()
         local popup = Cell:CreateConfirmPopup(indicatorsTab, 200, L["Create new indicator"], function(self)
@@ -882,7 +1100,7 @@ local function CreateListPane()
             if indicatorAuraType == "buff" then
                 currentLayoutTable["indicators"][last+1]["castByMe"] = true
             end
-            Cell:Fire("UpdateIndicators", currentLayout, indicatorName, "create", currentLayoutTable["indicators"][last+1])
+            Cell:Fire("UpdateIndicators", GetNotifiedLayoutName(currentLayout), indicatorName, "create", currentLayoutTable["indicators"][last+1])
             LoadIndicatorList()
             listButtons[last+1]:Click()
             -- check scroll
@@ -891,7 +1109,7 @@ local function CreateListPane()
             end
 
         end, nil, true, true, 2)
-        popup:SetPoint("TOPLEFT", 117, -177)
+        popup:SetPoint("TOPLEFT", 117, -187)
         popup.dropdown1:SetItems(typeItems)
         popup.dropdown1:SetSelectedItem(1)
         -- popup.dropdown1:SetEnabled(false)
@@ -910,7 +1128,7 @@ local function CreateListPane()
             currentLayoutTable["indicators"][selected]["name"] = newName
             listButtons[selected]:SetText(newName)
         end, nil, true, true)
-        popup:SetPoint("TOPLEFT", 117, -177)
+        popup:SetPoint("TOPLEFT", 117, -187)
     end)
 
     deleteBtn = Cell:CreateButton(listPane, nil, "red-hover", {46, 20}, nil, nil, nil, nil, nil, L["Delete"])
@@ -923,12 +1141,12 @@ local function CreateListPane()
         local auraType = currentLayoutTable["indicators"][selected]["auraType"]
 
         local popup = Cell:CreateConfirmPopup(indicatorsTab, 200, L["Delete indicator"].."?\n"..name, function(self)
-            Cell:Fire("UpdateIndicators", currentLayout, indicatorName, "remove", auraType)
+            Cell:Fire("UpdateIndicators", GetNotifiedLayoutName(currentLayout), indicatorName, "remove", auraType)
             tremove(currentLayoutTable["indicators"], selected)
             LoadIndicatorList()
             listButtons[1]:Click()
         end, nil, true)
-        popup:SetPoint("TOPLEFT", 117, -177)
+        popup:SetPoint("TOPLEFT", 117, -187)
     end)
 
     local importBtn = Cell:CreateButton(listPane, nil, "class-hover", {46, 20}, nil, nil, nil, nil, nil, L["Import"], L["Custom indicators will not be overwritten, even with same name"])
@@ -959,7 +1177,7 @@ end
 local settingsFrame
 
 local function CreateSettingsPane()
-    local settingsPane = Cell:CreateTitledPane(indicatorsTab, L["Indicator Settings"], 274, 469)
+    local settingsPane = Cell:CreateTitledPane(indicatorsTab, L["Indicator Settings"], 274, 483)
     settingsPane:SetPoint("TOPLEFT", 153, -5)
 
     -- settings frame
@@ -1100,21 +1318,24 @@ local function ShowIndicatorSettings(id)
 
         -- update func
         w:SetFunc(function(value, customSetting)
+            -- print("NOTIFY:", GetNotifiedLayoutName())
+            local notifiedLayout = GetNotifiedLayoutName(currentLayout)
+
             if value == nil and customSetting then --* NOTE: just Fire("UpdateIndicators") with customSetting
-                F:Debug("|cff77ff77SetFunc(Custom):|r ", currentLayout, indicatorName, customSetting)
-                Cell:Fire("UpdateIndicators", currentLayout, indicatorName, customSetting)
+                F:Debug("|cff77ff77SetFunc(Custom):|r ", notifiedLayout, indicatorName, customSetting)
+                Cell:Fire("UpdateIndicators", notifiedLayout, indicatorName, customSetting)
             else
                 if string.find(currentSetting, "checkbutton") then
                     local setting = select(2,string.split(":", currentSetting))
                     currentLayoutTable["indicators"][id][setting] = value
-                    Cell:Fire("UpdateIndicators", currentLayout, indicatorName, "checkbutton", setting, value) -- indicatorName, setting, value, value2
+                    Cell:Fire("UpdateIndicators", notifiedLayout, indicatorName, "checkbutton", setting, value) -- indicatorName, setting, value, value2
                 elseif currentSetting == "auras" then
                     -- currentLayoutTable["indicators"][id][currentSetting] = value -- NOTE: already changed in widget
-                    Cell:Fire("UpdateIndicators", currentLayout, indicatorName, currentSetting, currentLayoutTable["indicators"][id]["auraType"], value)
+                    Cell:Fire("UpdateIndicators", notifiedLayout, indicatorName, currentSetting, currentLayoutTable["indicators"][id]["auraType"], value)
                 elseif currentSetting == "blacklist" then
                     CellDB["debuffBlacklist"] = value
                     Cell.vars.debuffBlacklist = F:ConvertTable(CellDB["debuffBlacklist"])
-                    Cell:Fire("UpdateIndicators", currentLayout, "", "blacklist")
+                    Cell:Fire("UpdateIndicators", notifiedLayout, "", "blacklist")
                 elseif currentSetting == "spells" then
                     -- currentLayoutTable["indicators"][id][currentSetting] = value -- NOTE: already changed in widget
                     Cell:Fire("UpdateTargetedSpells", "spells", value)
@@ -1125,13 +1346,13 @@ local function ShowIndicatorSettings(id)
                     currentLayoutTable["indicators"][id]["size"][1] = value[1]
                     currentLayoutTable["indicators"][id]["size"][2] = value[2]
                     currentLayoutTable["indicators"][id]["border"] = value[3]
-                    Cell:Fire("UpdateIndicators", currentLayout, indicatorName, currentSetting, value)
+                    Cell:Fire("UpdateIndicators", notifiedLayout, indicatorName, currentSetting, value)
                 elseif currentSetting == "customColors" then
                     currentLayoutTable["indicators"][id]["colors"] = value
-                    Cell:Fire("UpdateIndicators", currentLayout, indicatorName, "colors", value)
+                    Cell:Fire("UpdateIndicators", notifiedLayout, indicatorName, "colors", value)
                 else
                     currentLayoutTable["indicators"][id][currentSetting] = value
-                    Cell:Fire("UpdateIndicators", currentLayout, indicatorName, currentSetting, value)
+                    Cell:Fire("UpdateIndicators", notifiedLayout, indicatorName, currentSetting, value)
                 end
                 -- show enabled/disabled status
                 if currentSetting == "enabled" then
@@ -1275,28 +1496,30 @@ local function ShowTab(tab)
             init = true
             CreatePreviewButton()
             CreateLayoutPane()
+            CreateSyncPane()
             CreateListPane()     
             CreateSettingsPane()
+            -- texplore(masters)
+            previewAlphaSlider:SetValue(CellDB["indicatorPreviewAlpha"])
+            previewScaleSlider:SetValue(CellDB["indicatorPreviewScale"])
+            previewButton:SetScale(CellDB["indicatorPreviewScale"])
         end
 
-        indicatorsTab:Show()
         LoadLayoutDropdown()
+        indicatorsTab:Show()
         
-        if currentLayout == Cell.vars.currentLayout then return end
+        local noUpdateIndicators = currentLayout == Cell.vars.currentLayout
         currentLayout = Cell.vars.currentLayout
         currentLayoutTable = Cell.vars.currentLayoutTable
+        LoadSyncDropdown()
+        if noUpdateIndicators then return end
+
         UpdatePreviewButton()
         UpdateIndicators()
         
         layoutDropdown:SetSelected(currentLayout == "default" and _G.DEFAULT or currentLayout)
         LoadIndicatorList()
-        
-        previewAlphaSlider:SetValue(CellDB["indicatorPreviewAlpha"])
-        previewScaleSlider:SetValue(CellDB["indicatorPreviewScale"])
-        previewButton:SetScale(CellDB["indicatorPreviewScale"])
-
         listButtons[1]:Click()
-        
         -- texplore(previewButton)
     else
         indicatorsTab:Hide()

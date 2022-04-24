@@ -4,6 +4,7 @@ local addonName, Cell = ...
 Cell.defaults.builtIns = 23
 
 Cell.defaults.layout = {
+    -- ["syncWith"] = "layoutName",
     ["size"] = {66, 46},
     ["petSize"] = {false, 66, 46},
     ["position"] = {},

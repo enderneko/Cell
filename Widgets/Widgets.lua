@@ -1587,17 +1587,6 @@ function addon:CreateConfirmPopup(parent, width, text, onAccept, onReject, mask,
         parent.confirmPopup.button2 = addon:CreateButton(parent.confirmPopup, L["No"], "red", {35, 15})
         parent.confirmPopup.button2:SetPoint("LEFT", parent.confirmPopup.button1, "RIGHT", P:Scale(-1), 0)
         parent.confirmPopup.button2:SetBackdropBorderColor(classColor.t[1], classColor.t[2], classColor.t[3], 1)
-
-        -- stop updating height
-        parent.confirmPopup:SetScript("OnEnter", function()
-            parent.confirmPopup:SetScript("OnUpdate", nil)
-        end)
-        parent.confirmPopup.button1:HookScript("OnEnter", function()
-            parent.confirmPopup:SetScript("OnUpdate", nil)
-        end)
-        parent.confirmPopup.button2:HookScript("OnEnter", function()
-            parent.confirmPopup:SetScript("OnUpdate", nil)
-        end)
     end
 
     if hasEditBox then
@@ -1683,6 +1672,8 @@ function addon:CreateConfirmPopup(parent, width, text, onAccept, onReject, mask,
         if hasEditBox then newHeight = newHeight + 30 end
         if dropdowns then newHeight = newHeight + 30 end
         parent.confirmPopup:SetHeight(newHeight)
+        -- run OnUpdate once, stop updating height
+        parent.confirmPopup:SetScript("OnUpdate", nil)
     end)
 
     parent.confirmPopup:SetFrameStrata("DIALOG")
@@ -2790,7 +2781,7 @@ function addon:CreateReceivingFrame(parent)
     f:SetUserPlaced(true)
     f:RegisterForDrag("LeftButton")
     f:SetFrameStrata("DIALOG")
-    f:SetFrameLevel(1)
+    f:SetFrameLevel(277)
     f:SetClampedToScreen(true)
     P:Size(f, 249, 135)
     f:SetPoint("TOPRIGHT", UIParent, "CENTER")

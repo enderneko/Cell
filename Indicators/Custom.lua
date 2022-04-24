@@ -32,7 +32,7 @@ function I:CreateIndicator(parent, indicatorTable)
     end
     parent.indicators[indicatorName] = indicator
     
-    if parent:GetName() ~= "IndicatorsPreviewButton" then
+    if parent ~= CellIndicatorsPreviewButton then
         -- keep custom indicators in table
         if indicatorTable["enabled"] then enabledIndicators[indicatorName] = true end
 
@@ -85,7 +85,7 @@ function I:RemoveAllCustomIndicators(parent)
         end
     end
 
-    if parent:GetName() ~= "IndicatorsPreviewButton" then
+    if parent ~= CellIndicatorsPreviewButton then
         wipe(enabledIndicators)
         wipe(customIndicators["buff"])
         wipe(customIndicators["debuff"])

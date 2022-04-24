@@ -6,6 +6,7 @@ Indicators:
     ☐ altpower
     ✘ icon cooldown style @cancelled(22-01-19 23:15)
     ✘ "durationFont" & "stackFont" settings @started(22-03-14 11:07) @cancelled(22-03-14 13:10) @wasted(2h3m38s)
+    ✔ sync indicator @started(22-04-23 23:27) @done(22-04-24 09:41) @lasted(10h14m37s)
 
 Libs:
     ☐ rewrite LibGroupInspectT

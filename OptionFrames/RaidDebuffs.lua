@@ -1034,7 +1034,7 @@ local function CreatePreviewButton()
     previewButton:SetScript("OnUpdate", nil)
     previewButton:Hide()
 
-    local previewButtonBG = Cell:CreateFrame("RaidDebuffsPreviewButtonBG", previewButton)
+    local previewButtonBG = Cell:CreateFrame("CellRaidDebuffsPreviewButtonBG", previewButton)
     previewButtonBG:SetPoint("TOPLEFT", previewButton, 0, 20)
     previewButtonBG:SetPoint("BOTTOMRIGHT", previewButton, "TOPRIGHT")
     previewButtonBG:SetFrameStrata("HIGH")

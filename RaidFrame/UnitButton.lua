@@ -142,7 +142,7 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                 end
                 -- update frameLevel
                 if t["frameLevel"] then
-                    indicator:SetFrameLevel(b:GetParent():GetFrameLevel()+t["frameLevel"])
+                    indicator:SetFrameLevel(indicator:GetParent():GetFrameLevel()+t["frameLevel"])
                 end
                 -- update size
                 if t["size"] then
@@ -327,7 +327,7 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
         elseif setting == "frameLevel" then
             F:IterateAllUnitButtons(function(b)
                 local indicator = b.indicators[indicatorName]
-                indicator:SetFrameLevel(b:GetParent():GetFrameLevel()+value)
+                indicator:SetFrameLevel(indicator:GetParent():GetFrameLevel()+value)
             end, true)
         elseif setting == "size" then
             F:IterateAllUnitButtons(function(b)
@@ -473,7 +473,7 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                 end
                 -- update size
                 if value["frameLevel"] then
-                    indicator:SetFrameLevel(b:GetParent():GetFrameLevel()+value["frameLevel"])
+                    indicator:SetFrameLevel(indicator:GetParent():GetFrameLevel()+value["frameLevel"])
                 end
                 -- update orientation
                 if value["orientation"] then
@@ -1016,7 +1016,7 @@ local function UpdateUnitHealthState(self)
         UnitButton_UpdateHealthColor(self)
     end
 
-    if enabledIndicators["healthText"] and healthMax ~= 0 and health ~= 0 then
+    if enabledIndicators["healthText"] and healthMax ~= 0 then
         if health == healthMax then
             if not indicatorCustoms["healthText"] then
                 self.indicators.healthText:SetHealth(health, healthMax)

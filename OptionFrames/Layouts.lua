@@ -25,7 +25,7 @@ local function CreatePreviewButton()
     previewButton:SetScript("OnUpdate", nil)
     previewButton:Show()
     
-    local previewButtonBG = Cell:CreateFrame("LayoutsPreviewButtonBG", layoutsTab)
+    local previewButtonBG = Cell:CreateFrame("CellLayoutsPreviewButtonBG", layoutsTab)
     previewButtonBG:SetPoint("TOPLEFT", previewButton, 0, 20)
     previewButtonBG:SetPoint("BOTTOMRIGHT", previewButton, "TOPRIGHT")
     previewButtonBG:SetFrameStrata("HIGH")
@@ -710,7 +710,7 @@ local function CreateLayoutPane()
             local name = strtrim(self.editBox:GetText())
             local inherit = self.dropdown1:GetSelected()
 
-            if name ~= "" and strlower(name) ~= "default" and name ~= _G.DEFAULT and not CellDB["layouts"][name] then
+            if name ~= "" and strlower(name) ~= "default" and name ~= _G.DEFAULT and strlower(name) ~= "none" and not CellDB["layouts"][name] then
                 -- update db copy current layout
                 if inherit == "cell-default-layout" then
                     CellDB["layouts"][name] = F:Copy(Cell.defaults.layout)
@@ -801,6 +801,13 @@ local function CreateLayoutPane()
                     end
                 end
 
+                -- update master-slave
+                for layout, t in pairs(CellDB["layouts"]) do
+                    if t["syncWith"] == selectedLayout then
+                        t["syncWith"] = name
+                    end
+                end
+
                 -- update if current
                 if selectedLayout == Cell.vars.currentLayout then
                     -- update vars
@@ -861,6 +868,13 @@ local function CreateLayoutPane()
                             bg40Dropdown:SetSelected(_G.DEFAULT)
                         end
                     end
+                end
+            end
+
+            -- update master-slave
+            for layout, t in pairs(CellDB["layouts"]) do
+                if t["syncWith"] == selectedLayout then
+                    t["syncWith"] = nil
                 end
             end
 
