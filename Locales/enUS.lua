@@ -54,6 +54,16 @@ select(2, ...).L = setmetatable({
     ["RAID_DEBUFFS_TIPS"] = "Tips: [Drag & Drop] to change debuff order. [Double-Click] on instance name to open Encounter Journal. [Shift+Left Click] on instance/boss name to share debuffs. [Alt+Left Click] on instance/boss name to reset debuffs. The priority of General Debuffs is higher than Boss Debuffs.",
 
     ["CHANGE LOGS"] = [[
+        <h1>r98-release (Apr 24, 2022, 16:10 GMT+8)</h1>
+        <p>+ Implemented indicator sync.</p>
+        <p>+ Implemented custom death color.</p>
+        <p>* Updated Role Icon indicator.</p>
+        <p>* Lowered the frame level of Aggro (border) indicator.</p>
+        <p>* Updated indicator preview.</p>
+        <p>* Updated zhTW.</p>
+        <p>* Bug fixes.</p>
+        <br/>
+        
         <h1>r97-release (Apr 19, 2022, 20:10 GMT+8)</h1>
         <p>+ Added nicknames (beta).</p>
         <p>* Updated locales.</p>

@@ -1,5 +1,12 @@
-[Full Changelog](https://github.com/enderneko/Cell/compare/r96-release...d7e4e840e5a30b630895c16fcd62ef7123cadd0a)
+[Full Changelog](https://github.com/enderneko/Cell/compare/r97-release...b2b4aadfd702595d58b8d4d0afc9a0729cb51537)
 
-- Update locales
-- Add nicknames
-- Try to fix issue that Cell can't be installed through CF
+- Update zhTW
+- Update role icons
+- Implement indicator sync
+- Add indicatorPreviewScale
+- Update frame level of AggroBorder
+- Update icons
+- Implement death color
+- Update texture selector
+- Fix custom texture indicator
+- ShieldBar indicator no longer effects ShieldBarTexture
