@@ -2409,6 +2409,12 @@ function addon:CreateDropdown(parent, width, dropdownType)
         menu.reloadRequired = true
     end
 
+    function menu:ClearItems()
+        wipe(menu.items)
+        menu.selected = nil
+        menu.text:SetText("")
+    end
+
     function menu:SetCurrentItem(item)
         menu.items[menu.selected] = item
         -- usually, update current item means to change its name (text) and func

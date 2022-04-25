@@ -131,7 +131,7 @@ end
 -------------------------------------------------
 Validate = function()
     from, to = fromDropdown:GetSelected(), toDropdown:GetSelected()
-    if from and to and from ~= to and F:Getn(selectedIndicators) ~= 0 then
+    if from and to and F:Getn(selectedIndicators) ~= 0 then
         copyBtn:SetEnabled(true)
     else
         copyBtn:SetEnabled(false)
@@ -215,26 +215,88 @@ local function LoadIndicators(layout)
     fromList.scrollFrame:SetContentHeight(20, n, -1)
 end
 
-local function LoadDropdowns()
-    local fromItems, toItems = {}, {}
+local function LoadToDropdown(from)
+    local masters, slaves = {}, {}
+
+    -- update master-slave
+    for l, t in pairs(CellDB["layouts"]) do
+        local master = t["syncWith"]
+        if master then
+            if CellDB["layouts"][master] then -- master exists
+                if not masters[master] then masters[master] = {} end
+                masters[master][l] = true
+                slaves[l] = master
+            end
+        end
+    end
+
+    local indices = {}
+
+    if slaves[from] then -- if FROM is a slave
+        local master = slaves[from]
+        for l, t in pairs(CellDB["layouts"]) do
+            -- not FROM, not its master, and its siblings
+            if l ~= from and l ~= master and not masters[master][l] then
+                if l == "default" then
+                    tinsert(indices, 1, "default")
+                else
+                    tinsert(indices, l)
+                end
+            end
+        end
+    elseif masters[from] then -- if FROM is a master
+        for l, t in pairs(CellDB["layouts"]) do
+            -- not FROM, not its slaves
+            if l ~= from and not masters[from][l] then
+                if l == "default" then
+                    tinsert(indices, 1, "default")
+                else
+                    tinsert(indices, l)
+                end
+            end
+        end
+    else
+        for l, t in pairs(CellDB["layouts"]) do
+            -- not FROM
+            if l ~= from then
+                if l == "default" then
+                    tinsert(indices, 1, "default")
+                else
+                    tinsert(indices, l)
+                end
+            end
+        end
+    end
+
+    local toItems = {}
+
+    for _, l in ipairs(indices) do
+        tinsert(toItems, {
+            ["text"] = l == "default" and _G.DEFAULT or l,
+            ["value"] = l,
+            ["onClick"] = function()
+                Validate()
+            end,
+        })
+    end
     
+    toDropdown:SetItems(toItems)
+end
+
+local function LoadFromDropdown()
+    local fromItems = {}
+
     tinsert(fromItems, {
         ["text"] = _G.DEFAULT,
         ["value"] = "default",
         ["onClick"] = function()
             LoadIndicators("default")
             Validate()
+            toDropdown:ClearItems()
+            LoadToDropdown("default")
         end,
     })
-
-    tinsert(toItems, {
-        ["text"] = _G.DEFAULT,
-        ["value"] = "default",
-        ["onClick"] = function()
-            Validate()
-        end,
-    })
-
+    
     for l, t in pairs(CellDB["layouts"]) do
         if l ~= "default" then
             tinsert(fromItems, {
@@ -242,20 +304,14 @@ local function LoadDropdowns()
                 ["onClick"] = function()
                     LoadIndicators(l)
                     Validate()
-                end,
-            })
-
-            tinsert(toItems, {
-                ["text"] = l,
-                ["onClick"] = function()
-                    Validate()
+                    toDropdown:ClearItems()
+                    LoadToDropdown(l)
                 end,
             })
         end
     end
 
     fromDropdown:SetItems(fromItems)
-    toDropdown:SetItems(toItems)
 end
 
 -------------------------------------------------
@@ -269,6 +325,7 @@ function F:ShowIndicatorsCopyFrame()
     end
 
     -- texplore(selectedIndicators)
-    LoadDropdowns()
+    LoadFromDropdown()
+    toDropdown:ClearItems()
     copyFrame:Show()
 end
