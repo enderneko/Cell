@@ -1229,11 +1229,11 @@ function F:Revise()
     end
 
     -- r97-release
-    if CellDB["revise"] and dbRevision < 97 then
-        if not CellDB["general"]["nickname"] then
-            CellDB["general"]["nickname"] = {false}
-        end
-    end
+    -- if CellDB["revise"] and dbRevision < 97 then
+    --     if not CellDB["general"]["nickname"] then
+    --         CellDB["general"]["nickname"] = {false}
+    --     end
+    -- end
 
     -- r98-release
     if CellDB["revise"] and dbRevision < 98 then
@@ -1261,5 +1261,11 @@ function F:Revise()
         end
     end
 
+    -- r99-release
+    if CellDB["revise"] and dbRevision < 99 then
+        -- remove old nickname
+        CellDB["general"]["nickname"] = nil
+    end
+    
     CellDB["revise"] = Cell.version
 end

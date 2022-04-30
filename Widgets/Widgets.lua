@@ -1530,7 +1530,7 @@ function addon:CreateMask(parent, text, points) -- points = {topleftX, topleftY,
         parent.mask = CreateFrame("Frame", nil, parent, "BackdropTemplate")
         addon:StylizeFrame(parent.mask, {0.15, 0.15, 0.15, 0.7}, {0, 0, 0, 0})
         parent.mask:SetFrameStrata("HIGH")
-        parent.mask:SetFrameLevel(100)
+        parent.mask:SetFrameLevel(parent:GetFrameLevel()+50)
         parent.mask:EnableMouse(true) -- can't click-through
         parent.mask:EnableMouseWheel(true) -- can't scroll-through
 

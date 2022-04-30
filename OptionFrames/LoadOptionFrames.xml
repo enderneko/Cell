@@ -2,6 +2,7 @@
 ..\FrameXML\UI.xsd">
 	<Script file="OptionsFrame.lua"/>
 	<Script file="General.lua"/>
+	<Script file="General_Nicknames.lua"/>
 	<Script file="Appearance.lua"/>
 	<Script file="Layouts.lua"/>
 	<Script file="Layouts_PowerFilters.lua"/>

@@ -1628,6 +1628,7 @@ local function UnitButton_UpdateName(self)
     if not unit then return end
 
     self.state.name = UnitName(unit)
+    self.state.fullName = F:UnitFullName(unit)
     self.state.class = select(2, UnitClass(unit))
     self.state.guid = UnitGUID(unit)
 
@@ -2094,17 +2095,21 @@ local function UnitButton_OnTick(self)
                 -- update Cell.vars.guids
                 self.__unitGuid = guid
                 Cell.vars.guids[guid] = self.state.unit
-                -- update Cell.vars.names
-                local name = GetUnitName(self.state.unit, true)
-                if (name and self.__nameRetries and self.__nameRetries >= 4) or (name and name ~= UNKNOWN and name ~= UNKNOWNOBJECT) then
-                    self.__unitName = name
-                    Cell.vars.names[name] = self.state.unit
-                    self.__nameRetries = nil
-                else
-                    -- NOTE: update on next tick
-                    -- 国服可以起名为“未知目标”，干！就只多重试4次好了
-                    self.__nameRetries = (self.__nameRetries or 0) + 1
-                    self.__unitGuid = nil 
+
+                -- NOTE: only save players' names
+                if UnitIsPlayer(self.state.unit) then
+                    -- update Cell.vars.names
+                    local name = GetUnitName(self.state.unit, true)
+                    if (name and self.__nameRetries and self.__nameRetries >= 4) or (name and name ~= UNKNOWN and name ~= UNKNOWNOBJECT) then
+                        self.__unitName = name
+                        Cell.vars.names[name] = self.state.unit
+                        self.__nameRetries = nil
+                    else
+                        -- NOTE: update on next tick
+                        -- 国服可以起名为“未知目标”，干！就只多重试4次好了
+                        self.__nameRetries = (self.__nameRetries or 0) + 1
+                        self.__unitGuid = nil 
+                    end
                 end
             end
         end

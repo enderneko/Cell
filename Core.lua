@@ -158,7 +158,16 @@ function eventFrame:ADDON_LOADED(arg1)
                 ["fadeOut"] = false,
                 ["menuPosition"] = "top_bottom",
                 ["sortPartyByRole"] = false,
-                ["nickname"] = {false},
+            }
+        end
+
+        -- nicknames ------------------------------------------------------------------------------
+        if type(CellDB["nicknames"]) ~= "table" then
+            CellDB["nicknames"] = {
+                ["mine"] = "",
+                ["sync"] = false,
+                ["custom"] = false,
+                ["list"] = {},
             }
         end
 
@@ -558,7 +567,7 @@ function eventFrame:PLAYER_LOGIN()
     eventFrame:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
 
     Cell.vars.playerNameShort = GetUnitName("player")
-    Cell.vars.playerNameFull = F:UnitName("player")
+    Cell.vars.playerNameFull = F:UnitFullName("player")
 
     --! init bgMaxPlayers
     for i = 1, GetNumBattlegroundTypes() do

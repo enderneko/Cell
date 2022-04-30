@@ -66,6 +66,7 @@ end
 powerFilters:SetScript("OnHide", function()
     powerFilters:Hide()
     Cell.frames.layoutsTab.mask:Hide()
+    Cell.frames.layoutsTab.powerFilterBtn:SetFrameStrata("HIGH")
 end)
 
 local init

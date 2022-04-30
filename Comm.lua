@@ -208,7 +208,45 @@ end)
 -- nickname
 -----------------------------------------
 Cell.vars.nicknames = {}
+Cell.vars.nicknameCustoms = {}
+
 local nic_check, nic_send
+
+local function UpdateName(who)
+    F:Debug("|cFF69A000UpdateName:|r|cFF696969", who, Cell.vars.nicknames[who], Cell.vars.nicknameCustoms[who])
+    -- update name
+    local b = F:GetUnitButtonByName(who)
+    if b then
+        b.indicators.nameText:UpdateName()
+    else
+        if strfind(who, "-") then
+            who = F:ToShortName(who)
+        else
+            who = who.."-"..F:GetRealmName()
+        end
+        b = F:GetUnitButtonByName(who)
+        if b then
+            b.indicators.nameText:UpdateName()
+        end
+    end
+end
+
+local function CheckNicknames()
+    if IsInGroup() then
+        if CellDB["nicknames"]["sync"] then
+            if nic_check then nic_check:Cancel() end
+            nic_check = C_Timer.NewTimer(random(3), function()
+                UpdateSendChannel()
+                Comm:SendCommMessage("CELL_CNIC", "chk", sendChannel, nil, "ALERT")
+            end)
+        end
+    end
+end
+
+local function CheckSelf()
+    Cell.vars.nicknames[Cell.vars.playerNameShort] = Cell.vars.playerNickname
+    UpdateName(Cell.vars.playerNameShort)
+end
 
 -- events -----------------------------
 local nickname = CreateFrame("Frame")
@@ -221,63 +259,53 @@ nickname:RegisterEvent("PLAYER_ENTERING_WORLD")
 function nickname:PLAYER_ENTERING_WORLD()
     nickname:UnregisterEvent("PLAYER_ENTERING_WORLD")
     Cell:Fire("UpdateNicknames")
-    nickname:RegisterEvent("GROUP_ROSTER_UPDATE")
 end
 
 function nickname:GROUP_ROSTER_UPDATE()
-    if IsInGroup() then
-        F:CheckNicknames()
-    end
+    CheckNicknames()
 end
 ---------------------------------------
 
-local function UpdateName(who)
-    F:Debug("|cFF69A000UpdateName:|r|cFF696969", who, Cell.vars.nicknames[who])
-    -- update name
-    local b = F:GetUnitButtonByName(who)
-    if b then
-        b.indicators.nameText:UpdateName()
-    end
-end
-
-local function UpdateSolo()
-    Cell.vars.nicknames[Cell.vars.playerNameShort] = CellDB["general"]["nickname"][2]
-    UpdateName(Cell.vars.playerNameShort)
-end
-
-local function UpdateNicknames(which, value)
-    F:Debug("|cFF80FF00UpdateNicknames:|r", which, value)
-    -- init or enable/disable
+local function UpdateNicknames(which, value1, value2)
+    F:Debug("|cFF80FF00UpdateNicknames:|r", which, value1, value2)
+    -- init
     if not which then
-        wipe(Cell.vars.nicknames)
-        Cell.vars.nicknamesEnabled = CellDB["general"]["nickname"][1]
-        Cell.vars.playerNickname = CellDB["general"]["nickname"][1] and CellDB["general"]["nickname"][2] or nil
-        if Cell.vars.nicknamesEnabled then
-            if IsInGroup() then
-                F:CheckNicknames()
-            else
-                UpdateSolo()
+        Cell.vars.playerNickname = CellDB["nicknames"]["mine"] ~= "" and CellDB["nicknames"]["mine"] or nil
+        Cell.vars.nicknameCustomEnabled = CellDB["nicknames"]["custom"]
+        CheckSelf()
+        
+        if CellDB["nicknames"]["sync"] then
+            CheckNicknames()
+            nickname:RegisterEvent("GROUP_ROSTER_UPDATE")
+        end
+
+        -- customs
+        for _, v in ipairs(CellDB["nicknames"]["list"]) do
+            local playerName, nickname = strsplit(":", v, 2)
+            if playerName and nickname then
+                Cell.vars.nicknameCustoms[playerName] = nickname
+                if CellDB["nicknames"]["custom"] then
+                    UpdateName(playerName)
+                end
             end
         end
     end
 
-    -- player enable/disable nickname
-    if which == "toggle" then
-        wipe(Cell.vars.nicknames)
-        Cell.vars.nicknamesEnabled = CellDB["general"]["nickname"][1]
-        Cell.vars.playerNickname = CellDB["general"]["nickname"][1] and CellDB["general"]["nickname"][2] or nil
-
-        if Cell.vars.nicknamesEnabled then
-            if IsInGroup() then
-                F:CheckNicknames()
-            else
-                UpdateSolo()
-            end
+    -- enable/disable sync
+    if which == "sync" then
+        if CellDB["nicknames"]["sync"] then
+            CheckNicknames()
+            nickname:RegisterEvent("GROUP_ROSTER_UPDATE")
         else
+            -- clear all except mine
+            F:RemoveElementsExceptKeys(Cell.vars.nicknames, Cell.vars.playerNameShort)
+            nickname:UnregisterEvent("GROUP_ROSTER_UPDATE")
+
             if nic_check then nic_check:Cancel() end
             -- disabled, notify others
             UpdateSendChannel()
             Comm:SendCommMessage("CELL_NIC", "CELL_NONE", sendChannel)
+
             -- update all
             F:IterateAllUnitButtons(function(b)
                 b.indicators.nameText:UpdateName()
@@ -287,27 +315,38 @@ local function UpdateNicknames(which, value)
 
     -- player changed nickname
     if which == "mine" then
-        Cell.vars.playerNickname = CellDB["general"]["nickname"][2] or nil
-        if IsInGroup() then
-            -- notify others
+        Cell.vars.playerNickname = CellDB["nicknames"]["mine"] ~= "" and CellDB["nicknames"]["mine"] or nil
+        
+        -- update self
+        CheckSelf()
+        
+        -- notify others
+        if IsInGroup() and CellDB["nicknames"]["sync"] then
             UpdateSendChannel()
             Comm:SendCommMessage("CELL_NIC", Cell.vars.playerNickname or "CELL_NONE", sendChannel)
-        else
-            UpdateSolo()
         end
+    end
+
+    -- customs
+    if which == "custom" then
+        Cell.vars.nicknameCustomEnabled = CellDB["nicknames"]["custom"]
+        -- update now
+        for playerName in pairs(Cell.vars.nicknameCustoms) do
+            UpdateName(playerName)
+        end
+    end
+    
+    -- list
+    if which == "list-add" then
+        Cell.vars.nicknameCustoms[value1] = value2
+        UpdateName(value1)
+    end
+    if which == "list-delete" then
+        Cell.vars.nicknameCustoms[value1] = nil
+        UpdateName(value1)
     end
 end
 Cell:RegisterCallback("UpdateNicknames", "UpdateNicknames", UpdateNicknames)
-
-function F:CheckNicknames()
-    if Cell.vars.nicknamesEnabled then
-        if nic_check then nic_check:Cancel() end
-        nic_check = C_Timer.NewTimer(random(3), function()
-            UpdateSendChannel()
-            Comm:SendCommMessage("CELL_CNIC", "chk", sendChannel, nil, "ALERT")
-        end)
-    end
-end
 
 -- check nickname received
 Comm:RegisterComm("CELL_CNIC", function(prefix, message, channel, sender)
@@ -317,13 +356,19 @@ Comm:RegisterComm("CELL_CNIC", function(prefix, message, channel, sender)
     if nic_send then nic_send:Cancel() end
     nic_send = C_Timer.NewTimer(3, function()
         UpdateSendChannel()
-        Comm:SendCommMessage("CELL_NIC", Cell.vars.playerNickname or "CELL_NONE", sendChannel)
+        if CellDB["nicknames"]["sync"] then
+            Comm:SendCommMessage("CELL_NIC", Cell.vars.playerNickname or "CELL_NONE", sendChannel)
+        else
+            Comm:SendCommMessage("CELL_NIC", "CELL_NONE", sendChannel)
+        end
     end)
 end)
 
 -- nickname received
 Comm:RegisterComm("CELL_NIC", function(prefix, message, channel, sender)
-    if Cell.vars.nicknamesEnabled then
+    if sender == Cell.vars.playerNameShort then return end
+
+    if CellDB["nicknames"]["sync"] then
         if message == "CELL_NONE" then
             Cell.vars.nicknames[sender] = nil
         else

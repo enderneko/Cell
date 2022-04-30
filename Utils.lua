@@ -448,17 +448,16 @@ function F:GetRealmName()
     return string.gsub(GetRealmName(), " ", "")
 end
 
-function F:UnitName(unit)
+function F:UnitFullName(unit)
     if not unit then return "" end
 
-    local name = UnitName(unit)
-    if not string.find(name, "-") then name = name .. "-" .. F:GetRealmName() end
+    local name = GetUnitName(unit, true)
+    if not string.find(name, "-") then name = name.."-"..F:GetRealmName() end
     return name
 end
 
-function F:GetShortName(fullName)
+function F:ToShortName(fullName)
     if not fullName then return "" end
-
     local shortName = strsplit("-", fullName)
     return shortName
 end

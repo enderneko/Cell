@@ -88,7 +88,6 @@ L["Fade Out Menu"] = "淡出菜单"
 L["Fade out menu buttons on mouseout"] = "当鼠标移开时淡出菜单按钮"
 L["Sort Party By Role"] = "按职责排列小队"
 L["Menu Position"] = "菜单位置"
-L["Enable Nicknames"] = "启用昵称"
 
 L["Tools"] = "工具"
 L["Raid Tools"] = "团队工具"
@@ -129,6 +128,18 @@ L["|cffffb5c5Right-Click:|r report unaffected"] = "|cffffb5c5右键：|r报告�
 L["Unaffected"] = "未获得此增益"
 L["Missing Buff"] = "缺少增益"
 L["many"] = "很多"
+
+-------------------------------------------------
+-- nickname
+-------------------------------------------------
+L["Nickname Options"] = "昵称选项"
+L["Name or Name-Server"] = "角色名 或 角色名-服务器名"
+L["Nickname"] = "昵称"
+L["My Nickname"] = "我的昵称"
+L["Awesome!"] = "太棒了！"
+L["Sync Nicknames with Others"] = "与他人同步昵称"
+L["Custom Nicknames"] = "自定义昵称"
+L["Only visible to me"] = "仅对自己可见"
 
 -------------------------------------------------
 -- appearance

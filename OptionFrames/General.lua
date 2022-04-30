@@ -191,7 +191,7 @@ end
 -------------------------------------------------
 -- misc
 -------------------------------------------------
-local sortByRoleCB, lockCB, fadeoutCB, menuPositionDD, nicknameCB, nicknameEB
+local sortByRoleCB, lockCB, fadeoutCB, menuPositionDD
 
 local function CreateMiscPane()
     local miscPane = Cell:CreateTitledPane(generalTab, L["Misc"], 205, 185)
@@ -240,52 +240,12 @@ local function CreateMiscPane()
     menuPositionText:SetText(L["Menu Position"])
     menuPositionText:SetPoint("BOTTOMLEFT", menuPositionDD, "TOPLEFT", 0, 1)
 
-    nicknameCB = Cell:CreateCheckButton(miscPane, L["Enable Nicknames"].." |cff777777(beta)", function(checked, self)
-        CellDB["general"]["nickname"][1] = checked
-        Cell:Fire("UpdateNicknames", "toggle", checked)
-
-        -- update EB
-        nicknameEB:SetEnabled(checked)
-        nicknameEB.confirmBtn:Hide()
-        nicknameEB:SetText(CellDB["general"]["nickname"][2] or "")
-    end)
-    nicknameCB:SetPoint("TOPLEFT", menuPositionDD, "BOTTOMLEFT", 0, -13)
-
-    nicknameEB = Cell:CreateEditBox(miscPane, 118, 20)
-    nicknameEB:SetPoint("TOPLEFT", nicknameCB, "BOTTOMRIGHT", 5, -5)
-
-    nicknameEB.confirmBtn = Cell:CreateButton(miscPane, "OK", "class", {27, 20})
-    nicknameEB.confirmBtn:SetPoint("TOPLEFT", nicknameEB, "TOPRIGHT", P:Scale(-1), 0)
-    nicknameEB.confirmBtn:Hide()
-    nicknameEB.confirmBtn:SetScript("OnHide", function()
-        nicknameEB.confirmBtn:Hide()
-    end)
-    nicknameEB.confirmBtn:SetScript("OnClick", function()
-        local text = strtrim(nicknameEB:GetText())
-        if text == "" then
-            CellDB["general"]["nickname"][2] = nil
-        else
-            CellDB["general"]["nickname"][2] = text
-        end
-        Cell:Fire("UpdateNicknames", "mine", CellDB["general"]["nickname"][2])
-        nicknameEB.confirmBtn:Hide()
-    end)
-
-    nicknameEB:SetScript("OnTextChanged", function(self, userChanged)
-        if userChanged then
-            local text = strtrim(nicknameEB:GetText())
-            if CellDB["general"]["nickname"][2] then -- already set a nickname
-                if text ~= CellDB["general"]["nickname"][2] then -- not the same nickname
-                    nicknameEB.confirmBtn:Show()
-                else
-                    nicknameEB.confirmBtn:Hide()
-                end
-            elseif text ~= "" then -- nickname not set, expect a non-empty string
-                nicknameEB.confirmBtn:Show()
-            else
-                nicknameEB.confirmBtn:Hide()
-            end
-        end
+    -- nickname options
+    local nicknameOptionsBtn = Cell:CreateButton(miscPane, L["Nickname Options"], "class-hover", {137, 20})
+    nicknameOptionsBtn:SetPoint("TOPLEFT", menuPositionDD, "BOTTOMLEFT", 0, -13)
+    Cell.frames.generalTab.nicknameOptionsBtn = nicknameOptionsBtn
+    nicknameOptionsBtn:SetScript("OnClick", function()
+        F:ShowNicknameOptions()
     end)
 end
 
@@ -498,6 +458,10 @@ local function ShowTab(tab)
             CreateTooltipsPane()
             CreateMiscPane()
             CreateToolsPane()
+
+            -- mask
+            Cell:CreateMask(generalTab, nil, {1, -1, -1, 1})
+            generalTab.mask:Hide()
         end 
 
         generalTab:Show()
@@ -540,9 +504,6 @@ local function ShowTab(tab)
         fadeoutCB:SetChecked(CellDB["general"]["fadeOut"])
         sortByRoleCB:SetChecked(CellDB["general"]["sortPartyByRole"])
         menuPositionDD:SetSelectedValue(CellDB["general"]["menuPosition"])
-        nicknameCB:SetChecked(CellDB["general"]["nickname"][1])
-        nicknameEB:SetEnabled(CellDB["general"]["nickname"][1])
-        nicknameEB:SetText(CellDB["general"]["nickname"][2] or "")
 
         -- raid tools
         resCB:SetChecked(CellDB["tools"]["showBattleRes"])

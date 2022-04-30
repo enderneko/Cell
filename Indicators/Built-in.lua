@@ -881,11 +881,13 @@ function I:CreateNameText(parent)
     end
 
     function nameText:UpdateName()
-        if Cell.vars.nicknamesEnabled then
-            F:UpdateTextWidth(nameText, Cell.vars.nicknames[parent.state.name] or parent.state.name, nameText.width, parent.widget.healthBar)
+        local name
+        if Cell.vars.nicknameCustomEnabled then
+            name = Cell.vars.nicknameCustoms[parent.state.fullName] or Cell.vars.nicknameCustoms[parent.state.name] or Cell.vars.nicknames[parent.state.fullName] or Cell.vars.nicknames[parent.state.name] or parent.state.name
         else
-            F:UpdateTextWidth(nameText, parent.state.name, nameText.width, parent.widget.healthBar)
+            name = Cell.vars.nicknames[parent.state.fullName] or Cell.vars.nicknames[parent.state.name] or parent.state.name
         end
+        F:UpdateTextWidth(nameText, name, nameText.width, parent.widget.healthBar)
     end
 
     function nameText:UpdateVehicleName()
