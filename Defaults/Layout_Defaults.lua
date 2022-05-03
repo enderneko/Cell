@@ -42,8 +42,9 @@ Cell.defaults.layout = {
             ["type"] = "built-in",
             ["enabled"] = true,
             ["position"] = {"CENTER", "CENTER", 0, 0},
+            ["frameLevel"] = 1,
             ["font"] = {"Cell ".._G.DEFAULT, 13, "Shadow"},
-            ["nameColor"] = {"Custom Color", {1, 1, 1}},
+            ["nameColor"] = {"custom", {1, 1, 1}},
             ["vehicleNamePosition"] = {"TOP", 0},
             ["textWidth"] = {"percentage", 0.75},
         }, -- 1

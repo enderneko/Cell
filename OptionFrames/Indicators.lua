@@ -1191,7 +1191,7 @@ local function CreateSettingsPane()
 end
 
 local indicatorSettings = {
-    ["nameText"] = {"enabled", "nameColor", "textWidth", "vehicleNamePosition", "namePosition", "font-noOffset"},
+    ["nameText"] = {"enabled", "nameColor", "textWidth", "vehicleNamePosition", "namePosition", "frameLevel", "font-noOffset"},
     ["statusText"] = {"enabled", "statusColors", "statusPosition", "frameLevel", "font-noOffset"},
     ["healthText"] = {"enabled", "format", "checkbutton:hideFull", "color", "position", "frameLevel", "font-noOffset"},
     ["statusIcon"] = {

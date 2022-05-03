@@ -1265,6 +1265,21 @@ function F:Revise()
     if CellDB["revise"] and dbRevision < 99 then
         -- remove old nickname
         CellDB["general"]["nickname"] = nil
+        
+        for _, layout in pairs(CellDB["layouts"]) do
+            if layout["indicators"][1] and layout["indicators"][1]["indicatorName"] == "nameText" then
+                -- add Frame Level to Name Text indicator
+                if not layout["indicators"][1]["frameLevel"] then
+                    layout["indicators"][1]["frameLevel"] = 1
+                end
+                -- update color
+                if layout["indicators"][1]["nameColor"][1] == "Class Color" then
+                    layout["indicators"][1]["nameColor"][1] = "class_color"
+                elseif layout["indicators"][1]["nameColor"][1] == "Custom Color" then
+                    layout["indicators"][1]["nameColor"][1] = "custom"
+                end
+            end
+        end
     end
     
     CellDB["revise"] = Cell.version

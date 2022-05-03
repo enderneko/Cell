@@ -542,7 +542,7 @@ unitButton = {
         healthBar, healthBarBackground, absorbsBar, shieldBar, incomingHeal, damageFlashTex, overShieldGlow,
         powerBar, powerBarBackground,
         statusTextFrame, statusText, timerText
-        overlayFrame, nameText, vehicleText,
+        overlayFrame, nameText
         aggroBlink, leaderIcon, statusIcon, readyCheckIcon, roleIcon,
     },
     func = {
@@ -1522,7 +1522,7 @@ local function UnitButton_UpdateVehicleStatus(self)
     else
         self.state.inVehicle = nil
         self.state.displayedUnit = self.state.unit
-        self.indicators.vehicleText:SetText("")
+        self.indicators.nameText.vehicle:SetText("")
     end
     
     if Cell.loaded and Cell.vars.currentLayoutTable["powerSize"] ~= 0 then
@@ -1644,33 +1644,33 @@ UnitButton_UpdateNameColor = function(self)
     local nameText = self.indicators.nameText
 
     if not Cell.loaded then
-        nameText:SetTextColor(1, 1, 1)
+        nameText:SetColor(1, 1, 1)
         return 
     end
     
     if UnitIsPlayer(unit) then -- player
         if not UnitIsConnected(unit) then
-            nameText:SetTextColor(F:GetClassColor(self.state.class))
+            nameText:SetColor(F:GetClassColor(self.state.class))
         elseif UnitIsCharmed(unit) then
-            nameText:SetTextColor(F:GetClassColor(self.state.class))
+            nameText:SetColor(F:GetClassColor(self.state.class))
         else
-            if Cell.vars.currentLayoutTable["indicators"][1]["nameColor"][1] == "Class Color" then
-                nameText:SetTextColor(F:GetClassColor(self.state.class))
+            if Cell.vars.currentLayoutTable["indicators"][1]["nameColor"][1] == "class_color" then
+                nameText:SetColor(F:GetClassColor(self.state.class))
             else
-                nameText:SetTextColor(unpack(Cell.vars.currentLayoutTable["indicators"][1]["nameColor"][2]))
+                nameText:SetColor(unpack(Cell.vars.currentLayoutTable["indicators"][1]["nameColor"][2]))
             end
         end
     elseif string.find(unit, "pet") then -- pet
-        if Cell.vars.currentLayoutTable["indicators"][1]["nameColor"][1] == "Class Color" then
-            nameText:SetTextColor(0.5, 0.5, 1)
+        if Cell.vars.currentLayoutTable["indicators"][1]["nameColor"][1] == "class_color" then
+            nameText:SetColor(0.5, 0.5, 1)
         else
-            nameText:SetTextColor(unpack(Cell.vars.currentLayoutTable["indicators"][1]["nameColor"][2]))
+            nameText:SetColor(unpack(Cell.vars.currentLayoutTable["indicators"][1]["nameColor"][2]))
         end
     else -- npc
-        if Cell.vars.currentLayoutTable["indicators"][1]["nameColor"][1] == "Class Color" then
-            nameText:SetTextColor(0, 1, 0.2)
+        if Cell.vars.currentLayoutTable["indicators"][1]["nameColor"][1] == "class_color" then
+            nameText:SetColor(0, 1, 0.2)
         else
-            nameText:SetTextColor(unpack(Cell.vars.currentLayoutTable["indicators"][1]["nameColor"][2]))
+            nameText:SetColor(unpack(Cell.vars.currentLayoutTable["indicators"][1]["nameColor"][2]))
         end
     end
 end
@@ -2148,7 +2148,7 @@ local startTimeCache = {}
 -- OVERLAY
 --	-7 readyCheckIcon, statusIcon
 -- ARTWORK 
---	top nameText, statusText, timerText, vehicleText
+--	top nameText, statusText, timerText
 --	-7 playerRaidIcon, roleIcon, leaderIcon
 -------------------------------------------------
 

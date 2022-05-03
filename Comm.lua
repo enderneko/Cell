@@ -246,6 +246,20 @@ end
 local function CheckSelf()
     Cell.vars.nicknames[Cell.vars.playerNameShort] = Cell.vars.playerNickname
     UpdateName(Cell.vars.playerNameShort)
+
+    -- update preview buttons
+    if CellLayoutsPreviewButton then
+        CellLayoutsPreviewButton.indicators.nameText:UpdateName()
+    end
+    if CellIndicatorsPreviewButton then
+        CellIndicatorsPreviewButton.indicators.nameText:UpdateName()
+    end
+    if CellRaidDebuffsPreviewButton then
+        CellRaidDebuffsPreviewButton.indicators.nameText:UpdateName()
+    end
+    if CellGlowsPreviewButton then
+        CellGlowsPreviewButton.indicators.nameText:UpdateName()
+    end
 end
 
 -- events -----------------------------

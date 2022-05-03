@@ -13,7 +13,7 @@ local glowOptionsFrame, previewButton
 -- glow preview
 --------------------------------------------------
 local function CreatePreviewButton()
-    previewButton = CreateFrame("Button", "CellToolsPreviewButton", glowOptionsFrame, "CellUnitButtonTemplate")
+    previewButton = CreateFrame("Button", "CellGlowsPreviewButton", glowOptionsFrame, "CellUnitButtonTemplate")
     previewButton:SetPoint("BOTTOMLEFT", glowOptionsFrame, "TOPLEFT", 0, 5)
     previewButton:UnregisterAllEvents()
     previewButton:SetScript("OnEnter", nil)
@@ -22,7 +22,7 @@ local function CreatePreviewButton()
     previewButton:SetScript("OnHide", nil)
     previewButton:SetScript("OnUpdate", nil)
     
-    local previewButtonBG = Cell:CreateFrame("CellToolsPreviewButtonBG", previewButton)
+    local previewButtonBG = Cell:CreateFrame("CellGlowsPreviewButtonBG", previewButton)
     previewButtonBG:SetPoint("TOPLEFT", previewButton, 0, 20)
     previewButtonBG:SetPoint("BOTTOMRIGHT", previewButton, "TOPRIGHT")
     previewButtonBG:SetFrameStrata("HIGH")

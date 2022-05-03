@@ -1744,16 +1744,18 @@ local function CreateSetting_NameColor(parent)
         widget.nameColorDropdown:SetItems({
             {
                 ["text"] = L["Class Color"],
-                ["value"] = "Class Color",
+                ["value"] = "class_color",
                 ["onClick"] = function()
-                    widget.func({"Class Color", widget.nameColorPicker:GetColor()})
+                    widget.func({"class_color", widget.nameColorPicker:GetColor()})
+                    widget.nameColorPicker:SetEnabled(false)
                 end,
             },
             {
                 ["text"] = L["Custom Color"],
-                ["value"] = "Custom Color",
+                ["value"] = "custom",
                 ["onClick"] = function()
-                    widget.func({"Custom Color", widget.nameColorPicker:GetColor()})
+                    widget.func({"custom", widget.nameColorPicker:GetColor()})
+                    widget.nameColorPicker:SetEnabled(true)
                 end,
             },
         })
@@ -1774,8 +1776,9 @@ local function CreateSetting_NameColor(parent)
         
         -- show db value
         function widget:SetDBValue(cTable)
-            widget.nameColorDropdown:SetSelected(L[cTable[1]])
+            widget.nameColorDropdown:SetSelectedValue(cTable[1])
             widget.nameColorPicker:SetColor(cTable[2])
+            widget.nameColorPicker:SetEnabled(cTable[1] == "custom")
         end
     else
         widget = settingWidgets["nameColor"]

@@ -129,7 +129,7 @@ function I:CreateTargetCounter(parent)
     text:SetPoint("CENTER", 1, 0)
 
     function targetCounter:SetFont(font, size, flags)
-        if not string.find(font, ".ttf") then font = F:GetFont(font) end
+        if not string.find(strlower(font), ".ttf") then font = F:GetFont(font) end
 
         if flags == "Shadow" then
             text:SetFont(font, size)
