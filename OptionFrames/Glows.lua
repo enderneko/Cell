@@ -110,7 +110,7 @@ local function CreateSRPane()
         Cell.frames.glowsTab.mask:Hide()
     end
 
-    local srPane = Cell:CreateTitledPane(glowsTab, L["Spell Request"].." ("..L["Glow"]..")", 422, 250)
+    local srPane = Cell:CreateTitledPane(glowsTab, L["Spell Request"], 422, 250)
     srPane:SetPoint("TOPLEFT", 5, -5)
     srPane:SetScript("OnHide", function()
         whichGlowOption = nil
@@ -611,7 +611,7 @@ local function UpdateDRWidgets()
 end
 
 local function CreateDRPane()
-    local drPane = Cell:CreateTitledPane(glowsTab, L["Dispel Request"].." ("..L["Glow"]..")", 422, 183)
+    local drPane = Cell:CreateTitledPane(glowsTab, L["Dispel Request"], 422, 183)
     drPane:SetPoint("TOPLEFT", 5, -275)
 
     drGlowOptionsBtn = Cell:CreateButton(drPane, L["Glow Options"], "class", {105, 17})

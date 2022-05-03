@@ -15,9 +15,9 @@ local function CreateDescriptionPane()
     descriptionPane = Cell:CreateTitledPane(aboutTab, "Cell", 422, 170)
     descriptionPane:SetPoint("TOPLEFT", aboutTab, "TOPLEFT", 5, -5)
 
-    local changeLogsBtn = Cell:CreateButton(descriptionPane, L["Change Logs"], "class", {100, 17})
-    changeLogsBtn:SetPoint("TOPRIGHT")
-    changeLogsBtn:SetScript("OnClick", function()
+    local changelogsBtn = Cell:CreateButton(descriptionPane, L["Changelogs"], "class", {100, 17})
+    changelogsBtn:SetPoint("TOPRIGHT")
+    changelogsBtn:SetScript("OnClick", function()
         F:CheckWhatsNew(true)
     end)
 

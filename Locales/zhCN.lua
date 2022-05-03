@@ -541,10 +541,10 @@ L["Import & Export All Settings"] = "导入导出所有设置"
 L["All Cell settings will be overwritten!"] = "所有 Cell 设置将被覆盖！"
 
 -------------------------------------------------
--- CHANGE LOGS
+-- CHANGELOGS
 -------------------------------------------------
-L["Change Logs"] = "更新记录"
-L["CHANGE LOGS"] = [[
+L["Changelogs"] = "更新记录"
+L["CHANGELOGS"] = [[
     <h1>r98-release (Apr 24, 2022, 16:10 GMT+8)</h1>
     <p>+ 新增“指示器同步”。</p>
     <p>+ 新增“自定义死亡颜色”。</p>

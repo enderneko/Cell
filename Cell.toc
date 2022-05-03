@@ -23,7 +23,6 @@ Widgets\LoadWidgets.xml
 Defaults\LoadDefaults.xml
 
 HideBlizzard.lua
-ChangeLogs.lua
 
 Indicators\Base.lua
 Indicators\Built-in.lua

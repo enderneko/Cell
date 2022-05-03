@@ -1159,7 +1159,7 @@ local function UpdateAppearance(which)
     if not which or which == "scale" then
         P:SetRelativeScale(CellDB["appearance"]["scale"])
         P:SetEffectiveScale(Cell.frames.mainFrame)
-        if Cell.frames.changeLogsFrame then P:SetEffectiveScale(Cell.frames.changeLogsFrame) end
+        if Cell.frames.changelogsFrame then P:SetEffectiveScale(Cell.frames.changelogsFrame) end
         P:SetEffectiveScale(CellTooltip)
         P:SetEffectiveScale(CellScanningTooltip)
         CellTooltip:UpdatePixelPerfect()
