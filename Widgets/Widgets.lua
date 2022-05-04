@@ -14,12 +14,12 @@ local LCG = LibStub("LibCustomGlow-1.0")
 local RAID_CLASS_COLORS = CUSTOM_CLASS_COLORS or RAID_CLASS_COLORS
 
 local colors = {
-    grey = {s="|cFFB2B2B2", t={.7, .7, .7}},
-    yellow = {s="|cFFFFD100", t= {1, .82, 0}},
-    orange = {s="|cFFFFC0CB", t= {1, .65, 0}},
-    firebrick = {s="|cFFFF3030", t={1, .19, .19}},
-    skyblue = {s="|cFF00CCFF", t={0, .8, 1}},
-    chartreuse = {s="|cFF80FF00", t={.5, 1, 0}},
+    grey = {s="|cFFB2B2B2", t={0.7, 0.7, 0.7}},
+    yellow = {s="|cFFFFD100", t= {1, 0.82, 0}},
+    orange = {s="|cFFFFC0CB", t= {1, 0.65, 0}},
+    firebrick = {s="|cFFFF3030", t={1, 0.19, 0.19}},
+    skyblue = {s="|cFF00CCFF", t={0, 0.8, 1}},
+    chartreuse = {s="|cFF80FF00", t={0.5, 1, 0}},
 }
 
 local class = select(2, UnitClass("player"))
@@ -847,18 +847,14 @@ function addon:CreateButtonGroup(buttons, onClick, func1, func2, onEnter, onLeav
         end
     end
 
-    -- HighlightButton() -- REVIEW:
-    
     for _, b in pairs(buttons) do
         b:SetScript("OnClick", function()
             HighlightButton(b.id)
             onClick(b.id, b)
         end)
     end
-    
-    -- buttons.HighlightButton = HighlightButton
 
-    return buttons, HighlightButton
+    return HighlightButton
 end
 
 -----------------------------------------
@@ -881,7 +877,9 @@ function addon:CreateCheckButton(parent, label, onClick, ...)
     -- cb.label:SetTextColor(classColor.t[1], classColor.t[2], classColor.t[3])
     
     P:Size(cb, 14, 14)
-    cb:SetHitRectInsets(0, -cb.label:GetStringWidth()-5, 0, 0)
+    if strtrim(label) ~= "" then
+        cb:SetHitRectInsets(0, -cb.label:GetStringWidth()-5, 0, 0)
+    end
 
     cb:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8x8", edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = P:Scale(1)})
     cb:SetBackdropColor(0.115, 0.115, 0.115, 0.9)
@@ -913,7 +911,11 @@ function addon:CreateCheckButton(parent, label, onClick, ...)
 
     function cb:SetText(text)
         cb.label:SetText(text)
-        cb:SetHitRectInsets(0, -cb.label:GetStringWidth()-5, 0, 0)
+        if strtrim(label) ~= "" then
+            cb:SetHitRectInsets(0, -cb.label:GetStringWidth()-5, 0, 0)
+        else
+            cb:SetHitRectInsets(0, 0, 0, 0)
+        end
     end
 
     addon:SetTooltips(cb, "ANCHOR_TOPLEFT", 0, 2, ...)
@@ -1048,10 +1050,12 @@ function addon:CreateEditBox(parent, width, height, isTransparent, isMultiLine, 
     return eb
 end
 
-function addon:CreateScrollEditBox(parent, onTextChanged)
+function addon:CreateScrollEditBox(parent, onTextChanged, scrollStep)
+    scrollStep = scrollStep or 1
+
     local frame = CreateFrame("Frame", nil, parent)
     addon:CreateScrollFrame(frame)
-    addon:StylizeFrame(frame.scrollFrame, {.15, .15, .15, .9})
+    addon:StylizeFrame(frame.scrollFrame, {0.15, 0.15, 0.15, 0.9})
     
     frame.eb = addon:CreateEditBox(frame.scrollFrame.content, 10, 20, true, true)
     frame.eb:SetPoint("TOPLEFT")
@@ -1064,7 +1068,7 @@ function addon:CreateScrollEditBox(parent, onTextChanged)
 
     -- https://wow.gamepedia.com/UIHANDLER_OnCursorChanged
     frame.eb:SetScript("OnCursorChanged", function(self, x, y, arg, lineHeight)
-        frame.scrollFrame:SetScrollStep(lineHeight)
+        frame.scrollFrame:SetScrollStep((lineHeight + frame.eb:GetSpacing()) * scrollStep)
 
         local vs = frame.scrollFrame:GetVerticalScroll()
         local h  = frame.scrollFrame:GetHeight()
@@ -1095,6 +1099,14 @@ function addon:CreateScrollEditBox(parent, onTextChanged)
         frame.eb:SetText(text)
         frame.scrollFrame:ResetScroll()
         frame.eb:SetCursorPosition(0)
+    end
+
+    function frame:GetText()
+        return frame.eb:GetText()
+    end
+
+    function frame:SetEnabled(enabled)
+        frame.eb:SetEnabled(enabled)
     end
 
     return frame
@@ -2165,7 +2177,7 @@ function addon:CreateScrollFrame(parent, top, bottom, color, border)
         -- for i = 1, #autoWidthWidgets do
         -- 	autoWidthWidgets[i]:SetWidth(scrollFrame:GetWidth())
         -- end
-        
+
         -- update content width
         content:SetWidth(scrollFrame:GetWidth())
     end)
@@ -2231,6 +2243,12 @@ function addon:CreateScrollFrame(parent, top, bottom, color, border)
             scrollThumb:SetPoint("TOP", 0, yoffset)
         end
     end)
+
+    function scrollFrame:UpdateSize()
+        content:GetScript("OnSizeChanged")(content)
+        scrollFrame:GetScript("OnVerticalScroll")(scrollFrame)
+        scrollFrame:VerticalScroll(0)
+    end
     
     local step = 25
     function scrollFrame:SetScrollStep(s)

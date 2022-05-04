@@ -541,6 +541,14 @@ L["Import & Export All Settings"] = "导入导出所有设置"
 L["All Cell settings will be overwritten!"] = "所有 Cell 设置将被覆盖！"
 
 -------------------------------------------------
+-- code snippets
+-------------------------------------------------
+L["Code Snippets"] = "代码片段"
+L["SNIPPETS_TIPS"] = "[双击]改名，[Shift+左键]删除。所有已勾选的代码片段将会在 Cell 初始化阶段的最后自动执行（即 ADDON_LOADED 事件中）。"
+L["Run"] = "执行"
+L["unnamed"] = "未命名"
+
+-------------------------------------------------
 -- CHANGELOGS
 -------------------------------------------------
 L["Changelogs"] = "更新记录"
@@ -558,7 +566,6 @@ L["CHANGELOGS"] = [[
     <h1>r97-release (Apr 19, 2022, 20:10 GMT+8)</h1>
     <p>+ 添加“昵称”（beta）。</p>
     <p>* 更新本地化。</p>
-    <p>* 一天修复两回bug，就问你怕不怕。</p>
     <br/>
 
     <h1>r96-release (Apr 19, 2022, 11:55 GMT+8)</h1>

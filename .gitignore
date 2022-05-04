@@ -7,5 +7,6 @@ Libs/*
 
 !Libs/CallbackHandler.lua
 !Libs/PixelPerfect.lua
+!Libs/FAIAP.lua
 !Libs/utf8.lua
 !Libs/LoadLibs.xml

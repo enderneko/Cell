@@ -21,6 +21,12 @@ local function CreateDescriptionPane()
         F:CheckWhatsNew(true)
     end)
 
+    local snippetsBtn = Cell:CreateButton(descriptionPane, L["Code Snippets"], "class", {120, 17})
+    snippetsBtn:SetPoint("TOPRIGHT", changelogsBtn, "TOPLEFT", 1, 0)
+    snippetsBtn:SetScript("OnClick", function()
+        F:ShowCodeSnippets()
+    end)
+
     local descText = descriptionPane:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
     descText:SetPoint("TOPLEFT", 5, -27)
     descText:SetPoint("RIGHT", -10, 0)

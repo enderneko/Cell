@@ -97,7 +97,7 @@ local function CreateTabButtons()
         end
     end
     
-    local buttonGroup = Cell:CreateButtonGroup({generalBtn, appearanceBtn, layoutsBtn, clickCastingsBtn, indicatorsBtn, debuffsBtn, glowsBtn, aboutBtn}, ShowTab)
+    Cell:CreateButtonGroup({generalBtn, appearanceBtn, layoutsBtn, clickCastingsBtn, indicatorsBtn, debuffsBtn, glowsBtn, aboutBtn}, ShowTab)
 end
 
 -------------------------------------------------

@@ -20,4 +20,5 @@
 	<Script file="About_ImportExport.lua"/>
 	<Script file="GlowOptions.lua"/>
 	<Script file="Changelogs.lua"/>
+	<Script file="CodeSnippets.lua"/>
 </Ui>

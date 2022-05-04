@@ -142,6 +142,8 @@ function eventFrame:ADDON_LOADED(arg1)
         if type(CellDB["indicatorPreviewScale"]) ~= "number" then CellDB["indicatorPreviewScale"] = 1 end
 
         if type(CellDB["customTextures"]) ~= "table" then CellDB["customTextures"] = {} end
+        
+        if type(CellDB["snippets"]) ~= "table" then CellDB["snippets"] = {} end
 
         -- general --------------------------------------------------------------------------------
         if type(CellDB["general"]) ~= "table" then
@@ -374,6 +376,7 @@ function eventFrame:ADDON_LOADED(arg1)
         if not CellDB["revise"] then CellDB["firstRun"] = true end
         F:Revise()
         F:CheckWhatsNew()
+        F:RunSnippets()
         Cell.loaded = true
     end
 
