@@ -1364,6 +1364,7 @@ function I:CreateStatusIcon(parent)
     local statusIcon = CreateFrame("Frame", parent:GetName().."StatusIcon", parent.widget.overlayFrame)
     parent.indicators.statusIcon = statusIcon
     statusIcon:Hide()
+
     statusIcon.tex = statusIcon:CreateTexture(nil, "OVERLAY")
     statusIcon.tex:SetAllPoints(statusIcon)
 
@@ -1378,6 +1379,22 @@ function I:CreateStatusIcon(parent)
     function statusIcon:SetAtlas(...)
         statusIcon.tex:SetAtlas(...)
     end
+    
+    function statusIcon:SetVertexColor(...)
+        statusIcon.tex:SetVertexColor(...)
+    end
+    
+    -- statusIcon.border = statusIcon:CreateTexture(nil, "BORDER")
+    -- statusIcon.border:SetAllPoints(statusIcon)
+
+    -- function statusIcon:ShowBorder(border)
+    --     statusIcon.border:SetTexture(border)
+    --     statusIcon.border:Show()
+    -- end
+    
+    -- function statusIcon:HideBorder()
+    --     statusIcon.border:Hide()
+    -- end
 
     -- resurrection icon
     local resurrectionIcon = CreateFrame("Frame", parent:GetName().."ResurrectionIcon", parent.widget.overlayFrame)

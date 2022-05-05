@@ -1537,28 +1537,72 @@ end
 UnitButton_UpdateStatusIcon = function(self)
     local unit = self.state.unit
     if not unit then return end
-
+    
+    -- https://wow.gamepedia.com/API_UnitPhaseReason
+    local phaseReason = UnitPhaseReason(unit)
+    
     local icon = self.indicators.statusIcon
-    if UnitHasIncomingResurrection(unit) then
+    
+    -- Interface\FrameXML\CompactUnitFrame.lua, CompactUnitFrame_UpdateCenterStatusIcon
+    if UnitInOtherParty(unit) then
+        icon:SetVertexColor(1, 1, 1, 1)
+        icon:SetTexture("Interface\\LFGFrame\\LFG-Eye")
+        -- icon:SetTexCoord(0.125, 0.25, 0.25, 0.5)
+        -- icon:SetTexCoord(0.145, 0.23, 0.29, 0.46)
+        icon:SetTexCoord(0.14, 0.235, 0.28, 0.47)
+        -- icon:ShowBorder("Interface\\Common\\RingBorder")
+        icon:Show()
+    elseif UnitHasIncomingResurrection(unit) then
+        icon:SetVertexColor(1, 1, 1, 1)
         icon:SetTexture("Interface\\RaidFrame\\Raid-Icon-Rez")
         icon:SetTexCoord(0, 1, 0, 1)
+        -- icon:HideBorder()
         icon:Show()
-    elseif UnitIsPlayer(unit) and UnitPhaseReason(unit) and not self.state.inVehicle then
-        -- https://wow.gamepedia.com/API_UnitPhaseReason
+    -- elseif C_IncomingSummon.HasIncomingSummon(unit) then
+    --     local status = C_IncomingSummon.IncomingSummonStatus(unit)
+    --     if(status == Enum.SummonStatus.Pending) then
+    --         icon:SetAtlas("Raid-Icon-SummonPending")
+    --         icon:SetTexCoord(0, 1, 0, 1)
+    --         icon.border:Hide()
+    --     elseif( status == Enum.SummonStatus.Accepted ) then
+    --         icon:SetAtlas("Raid-Icon-SummonAccepted")
+    --         icon:SetTexCoord(0, 1, 0, 1)
+    --         icon.border:Hide()
+    --     elseif( status == Enum.SummonStatus.Declined ) then
+    --         icon:SetAtlas("Raid-Icon-SummonDeclined")
+    --         icon:SetTexCoord(0, 1, 0, 1)
+    --         icon.border:Hide()
+    --     end
+    elseif UnitIsPlayer(unit) and phaseReason and not self.state.inVehicle then
+        -- ElvUI
+        if phaseReason == 3 then -- chromie, gold
+            icon:SetVertexColor(1, 0.9, 0.5)
+        elseif phaseReason == 2 then -- warmode, red
+            icon:SetVertexColor(1, 0.3, 0.3)
+        elseif phaseReason == 1 then -- sharding, green
+            icon:SetVertexColor(0.5, 1, 0.3)
+        else -- 0, phasing, blue
+            icon:SetVertexColor(0.3, 0.5, 1)
+        end
         icon:SetTexture("Interface\\TargetingFrame\\UI-PhasingIcon")
         icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
+        -- icon:HideBorder()
         icon:Show()
     -- elseif UnitIsDeadOrGhost(unit) then
     --     icon:SetTexture("Interface\\TargetingFrame\\UI-TargetingFrame-Skull")
     --     icon:SetTexCoord(0, 1, 0, 1)
     --     icon:Show()
     elseif self.state.BGFlag then
+        icon:SetVertexColor(1, 1, 1, 1)
         icon:SetAtlas("nameplates-icon-flag-"..self.state.BGFlag)
         icon:SetTexCoord(0, 1, 0, 1)
+        -- icon:HideBorder()
         icon:Show()
     elseif self.state.BGOrb then
+        icon:SetVertexColor(1, 1, 1, 1)
         icon:SetAtlas("nameplates-icon-orb-"..self.state.BGOrb)
         icon:SetTexCoord(0, 1, 0, 1)
+        -- icon:HideBorder()
         icon:Show()
     else
         icon:Hide()

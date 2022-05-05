@@ -1196,8 +1196,9 @@ local indicatorSettings = {
     ["healthText"] = {"enabled", "format", "checkbutton:hideFull", "color", "position", "frameLevel", "font-noOffset"},
     ["statusIcon"] = {
         -- "|A:dungeonskull:18:18|a "..
+        "|TInterface\\LFGFrame\\LFG-Eye:18:18:0:0:512:256:72:120:72:120|t "..
         "|TInterface\\RaidFrame\\Raid-Icon-Rez:18:18|t "..
-        "|TInterface\\TargetingFrame\\UI-PhasingIcon:18:18|t "..
+        "|TInterface\\TargetingFrame\\UI-PhasingIcon:18:18:0:0:31:31:3:28:3:28|t "..
         "|A:nameplates-icon-flag-horde:18:18|a "..
         "|A:nameplates-icon-flag-alliance:18:18|a "..
         "|A:nameplates-icon-orb-blue:18:18|a "..
