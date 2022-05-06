@@ -449,10 +449,15 @@ function F:GetRealmName()
 end
 
 function F:UnitFullName(unit)
-    if not unit then return "" end
+    if not unit or not UnitIsPlayer(unit) then return end
 
     local name = GetUnitName(unit, true)
-    if not string.find(name, "-") then name = name.."-"..F:GetRealmName() end
+    
+    --? name might be nil in some cases?
+    if name and not string.find(name, "-") then
+        name = name.."-"..F:GetRealmName()
+    end
+    
     return name
 end
 
