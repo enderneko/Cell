@@ -174,8 +174,10 @@ local function RaidFrame_UpdateLayout(layout, which)
     
     if Cell.vars.inBattleground == 5 then
         layout = CellDB["layoutAutoSwitch"][Cell.vars.playerSpecRole]["arena"]
-        for i = 1, 3 do
-            RegisterAttributeDriver(arenaPetButtons[i], "state-visibility", "[@raidpet"..i..", exists] show; hide")
+        if CellDB["general"]["showPartyPets"] then
+            for i = 1, 3 do
+                RegisterAttributeDriver(arenaPetButtons[i], "state-visibility", "[@raidpet"..i..", exists] show; hide")
+            end
         end
     elseif Cell.vars.inBattleground == 15 or Cell.vars.inBattleground == 40 then
         layout = CellDB["layoutAutoSwitch"][Cell.vars.playerSpecRole]["battleground"..Cell.vars.inBattleground]
@@ -397,3 +399,19 @@ local function RaidFrame_UpdateLayout(layout, which)
     end
 end
 Cell:RegisterCallback("UpdateLayout", "RaidFrame_UpdateLayout", RaidFrame_UpdateLayout)
+
+local function RaidFrame_UpdateVisibility(which)
+    if which == "pets" and Cell.vars.inBattleground == 5 then
+        if CellDB["general"]["showPartyPets"] then
+            for i = 1, 3 do
+                RegisterAttributeDriver(arenaPetButtons[i], "state-visibility", "[@raidpet"..i..", exists] show; hide")
+            end
+        else
+            for i = 1, 3 do
+                UnregisterAttributeDriver(arenaPetButtons[i], "state-visibility")
+                arenaPetButtons[i]:Hide()
+            end
+        end
+    end
+end
+Cell:RegisterCallback("UpdateVisibility", "RaidFrame_UpdateVisibility", RaidFrame_UpdateVisibility)
