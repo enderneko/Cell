@@ -55,6 +55,11 @@ select(2, ...).L = setmetatable({
     ["SNIPPETS_TIPS"] = "[Double-Click] to rename. [Shift-Click] to delete. All checked snippets will be automatically invoked at the end of Cell initialization process (in ADDON_LOADED event).",
 
     ["CHANGELOGS"] = [[
+        <h1>r100-release (May 7, 2022, 01:07 GMT+8)</h1>
+        <p>* Fixed several bugs.</p>
+        <p>* Updated zhTW.</p>
+        <br/>
+
         <h1>r99-release (May 5, 2022, 14:10 GMT+8)</h1>
         <p>* Rewrote nicknames.</p>
         <p>* Added frame level to Name Text indicator.</p>

@@ -1,8 +1,4 @@
-[Full Changelog](https://github.com/enderneko/Cell/compare/r98-release...f9f5d674c16ab12c9ff3b51316fbd961f1c0c38a)
+[Full Changelog](https://github.com/enderneko/Cell/compare/r99-release...c1238c2d88bed1b7e063d50981c98fd0e0b21e76)
 
-- Rewrite nicknames
-- Implement code snippets
-- Add frame level to name text indicator
-- Update status icon indicator
-- Update indicator copy
+- Bugs fix
 - Update zhTW
