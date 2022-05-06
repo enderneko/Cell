@@ -44,8 +44,7 @@ L["Assist"] = "協助"
 L["Aura Icon Options"] = "光環圖示選項"
 L["Author"] = "作者"
 L["Available slash commands"] = "可用的聊天指令"
---[[Translation missing --]]
---[[ L["Awesome!"] = "Awesome!"--]] 
+L["Awesome!"] = "超棒der!"
 L["Background Alpha"] = "背景透明度"
 L["Bar"] = "進度條"
 L["Bar Orientation"] = "條列方向"
@@ -85,8 +84,7 @@ L["Class Color"] = "職業顏色"
 L["Class Color (dark)"] = "職業顏色 (暗)"
 L["Click-Castings"] = "滑鼠點擊施法"
 L["Close"] = "關閉"
---[[Translation missing --]]
---[[ L["Code Snippets"] = "Code Snippets"--]] 
+L["Code Snippets"] = "程式碼片段"
 L["Color"] = "顏色"
 L["Color Duration Text"] = "著色持續時間文字"
 L["Common"] = "共用"
@@ -107,8 +105,7 @@ L["Cursor Left"] = "滑鼠游標左側"
 L["Cursor Right"] = "滑鼠游標右側"
 L["Custom Color"] = "自訂顏色"
 L["Custom indicators will not be overwritten, even with same name"] = "即使名稱相同，自訂指示器也不會被覆蓋掉"
---[[Translation missing --]]
---[[ L["Custom Nicknames"] = "Custom Nicknames"--]] 
+L["Custom Nicknames"] = "自訂暱稱"
 L["custom(s)"] = "自訂"
 L["Data transfer failed..."] = "資料傳輸失敗..."
 L["DEAD"] = "死亡"
@@ -248,21 +245,17 @@ L["MODERATE CPU USAGE"] = "中等 CPU 使用量"
 L["Monochrome Outline"] = "無消除鋸齒外框"
 L["Mouseover Highlight Color"] = "滑鼠指向顯著標示顏色"
 L["Mover"] = "拖曳我"
---[[Translation missing --]]
---[[ L["My Nickname"] = "My Nickname"--]] 
+L["My Nickname"] = "我的暱稱"
 L["Name Color"] = "名字顏色"
---[[Translation missing --]]
---[[ L["Name or Name-Server"] = "Name or Name-Server"--]] 
+L["Name or Name-Server"] = "角色ID 或 角色ID-伺服器名稱"
 L["Name Text"] = "名字"
 L["Name Width / UnitButton Width"] = "名字寬度 / 單位按鈕寬度"
 L["Name: "] = "名字:"
 L["Never"] = "永不"
 L["New"] = "新增"
 L["New version found (%s). Please visit %s to get the latest version."] = "已有新版本 (%s)。 請到 %s 下載最新版本。"
---[[Translation missing --]]
---[[ L["Nickname"] = "Nickname"--]] 
---[[Translation missing --]]
---[[ L["Nickname Options"] = "Nickname Options"--]] 
+L["Nickname"] = "暱稱"
+L["Nickname Options"] = "暱稱選項"
 L["No"] = "否"
 L["No custom debuffs to export!"] = "沒有能夠匯出的自訂減益!"
 L["None"] = "無"
@@ -275,8 +268,7 @@ L["Only available for Spells"] = "只對法術有效"
 L["only in group"] = "只有在隊伍中時"
 L["Only show during encounter or in mythic+"] = "只在首領戰或 M+ 顯示"
 L["Only show when you have permission to do this"] = "只在你有權限這樣做時才會顯示"
---[[Translation missing --]]
---[[ L["Only visible to me"] = "Only visible to me"--]] 
+L["Only visible to me"] = "只對我自己顯示"
 L["onlyShowTopGlow"] = "只有優先順序最高的減益會發光"
 L["Options"] = "選項"
 L["Options UI Font Size"] = "設定選項介面文字大小"
@@ -348,8 +340,7 @@ L["Role Icon"] = "角色職責圖示"
 L["Rotate Texture"] = "旋轉材質"
 L["Rotation"] = "旋轉"
 L["Round Up Duration Text"] = "四捨五入持續時間文字"
---[[Translation missing --]]
---[[ L["Run"] = "Run"--]] 
+L["Run"] = "執行"
 L["Save"] = "儲存"
 L["Scale"] = "縮放大小"
 L["ScrollDown"] = "滾輪往下"
@@ -379,8 +370,7 @@ L["showTooltip"] = "顯示光環提示"
 L["Size"] = "大小"
 L["Size (Big)"] = "大小 (放大的)"
 L["Slash Commands"] = "聊天指令"
---[[Translation missing --]]
---[[ L["SNIPPETS_TIPS"] = "[Double-Click] to rename. [Shift-Click] to delete. All checked snippets will be automatically invoked at the end of Cell initialization process (in ADDON_LOADED event)."--]] 
+L["SNIPPETS_TIPS"] = "[點兩下]重新名命。[Shift+左鍵]刪除。所有已勾選的程式碼片段將會在 Cell 初始化階段的最後自動執行 (即 ADDON_LOADED 事件中)。"
 L["Solid"] = "單色"
 L["Solo/Party"] = "單人/5人隊伍"
 L["Sort Party By Role"] = "依角色職責排列隊伍"
@@ -395,8 +385,7 @@ L["Spells"] = "法術"
 L["Status Icon"] = "狀態圖示"
 L["Status Text"] = "狀態文字"
 L["Status Text Position"] = "狀態文字位置"
---[[Translation missing --]]
---[[ L["Sync Nicknames with Others"] = "Sync Nicknames with Others"--]] 
+L["Sync Nicknames with Others"] = "與其他人同步暱稱"
 L["Sync Status"] = "同步狀態"
 L["Sync With"] = "同步"
 L["syncTips"] = "在這裡設置主要版面配置\n附屬的版面配置的所有指示器將與主要版面配置完全同步\n這種同步是雙向的，但在設定主要版面配置時會導致附屬的版面配置的所有指示器遺失"
@@ -442,8 +431,7 @@ L["Unit Button Style"] = "單位按鈕樣式"
 L["Unit Spacing"] = "單位間距"
 L["Unlimited"] = "無限制"
 L["Unlock"] = "解鎖"
---[[Translation missing --]]
---[[ L["unnamed"] = "unnamed"--]] 
+L["unnamed"] = "未命名"
 L["Use |cFFFFB5C5/cell report X|r to set the number of reports during a raid encounter"] = "輸入 |cFFFFB5C5/cell report X|r 來設定團隊首領戰時要通報的死亡訊息數量"
 L["Use common profile"] = "使用共用設定檔"
 L["Use separate profile for each spec"] = "每個專精使用不同的設定檔"
