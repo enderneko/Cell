@@ -2295,7 +2295,7 @@ list:SetScript("OnHide", function() list:Hide() end)
 
 -- close dropdown
 function addon:RegisterForCloseDropdown(f)
-    if f:GetObjectType() == "Button" then
+    if f:GetObjectType() == "Button" or f:GetObjectType() == "CheckButton" then
         f:HookScript("OnClick", function()
             list:Hide()
         end)
