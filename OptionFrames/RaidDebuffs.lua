@@ -156,17 +156,21 @@ local function LoadBuiltIn(instanceId, bossId, bossTable)
     if not loadedDebuffs[instanceId][bossId] then loadedDebuffs[instanceId][bossId] = {["enabled"]={}, ["disabled"]={}} end
     -- load
     for i, spellId in pairs(bossTable) do
-        if not (CellDB["raidDebuffs"][instanceId] and CellDB["raidDebuffs"][instanceId][bossId] and CellDB["raidDebuffs"][instanceId][bossId][tonumber(spellId)]) then
-            if type(spellId) == "string" then -- track by id
+        if not (CellDB["raidDebuffs"][instanceId] and CellDB["raidDebuffs"][instanceId][bossId] and CellDB["raidDebuffs"][instanceId][bossId][abs(tonumber(spellId))]) then
+            -- NOTE: is built-in and not modified
+            if type(spellId) == "string" then --* track by id
                 F:TInsert(loadedDebuffs[instanceId][bossId]["enabled"], {["id"]=tonumber(spellId), ["order"]=#loadedDebuffs[instanceId][bossId]["enabled"]+1, ["trackByID"]=true, ["condition"]={"None"}, ["built-in"]=true})
+            elseif spellId < 0 then --* disabled by default
+                tinsert(loadedDebuffs[instanceId][bossId]["disabled"], {["id"]=abs(spellId), ["order"]=0, ["condition"]={"None"}, ["built-in"]=true})
             else
                 F:TInsert(loadedDebuffs[instanceId][bossId]["enabled"], {["id"]=spellId, ["order"]=#loadedDebuffs[instanceId][bossId]["enabled"]+1, ["condition"]={"None"}, ["built-in"]=true})
             end
-        else -- exists in both CellDB and built-in
+        else 
+            -- NOTE: exists in both CellDB and built-in, mark it as built-in (not deletable)
             local found
-            -- find in loadedDebuffs and mark it as built-in
+            -- find in loadedDebuffs
             for _, sTable in pairs(loadedDebuffs[instanceId][bossId]["enabled"]) do
-                if sTable["id"] == tonumber(spellId) then
+                if sTable["id"] == abs(tonumber(spellId)) then
                     found = true
                     sTable["built-in"] = true
                     break
@@ -175,7 +179,7 @@ local function LoadBuiltIn(instanceId, bossId, bossTable)
             -- check disabled if not found
             if not found then
                 for _, sTable in pairs(loadedDebuffs[instanceId][bossId]["disabled"]) do
-                    if sTable["id"] == tonumber(spellId) then
+                    if sTable["id"] == abs(tonumber(spellId)) then
                         sTable["built-in"] = true
                         break
                     end
@@ -187,7 +191,7 @@ end
 
 local function CheckOrders(instanceId, bossId, bossTable)
     local currentN, correctN = #bossTable["enabled"], F:Getn(bossTable["enabled"])
-    if currentN ~= correctN then -- missing some debuffs, maybe deleted from .lua
+    if currentN ~= correctN then -- missing some debuffs, maybe deleted from built-in
         -- texplore(bossTable)
         F:Debug("|cffff2222FIX MISSING DEBUFFS|r", instanceId, bossId)
         local temp = {}
