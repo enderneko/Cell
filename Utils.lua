@@ -569,7 +569,7 @@ function F:UpdateTextWidth(fs, text, width, relativeTo)
             end
         end
     elseif width[1] == "length" then
-        if LOCALE_zhCN then
+        if F:IsAsian() then
             if string.len(text) == string.utf8len(text) then -- en
                 fs:SetText(string.utf8sub(text, 1, width[3] or width[2]))
             else
