@@ -9,7 +9,23 @@ local deflateConfig = {level = 9}
 
 local isImport, imported, exported = false, nil, ""
 
-local importExportFrame, importBtn, title, textArea
+local importExportFrame, importBtn, title, textArea, includeNicknamesCB
+
+local function GetExportString(includeNicknames)
+    local prefix = "!CELL:"..(tonumber(string.match(Cell.version, "%d+")) or 0).."!"
+
+    local db = F:Copy(CellDB)
+    
+    if not includeNicknames then
+        db["nicknames"] = nil
+    end
+
+    local str = Serializer:Serialize(db) -- serialize
+    str = LibDeflate:CompressDeflate(str, deflateConfig) -- compress
+    str = LibDeflate:EncodeForPrint(str) -- encode
+
+    return prefix..str
+end
 
 local function CreateImportExportFrame()
     importExportFrame = CreateFrame("Frame", "CellOptionsFrame_ImportExport", Cell.frames.aboutTab, "BackdropTemplate")
@@ -30,7 +46,7 @@ local function CreateImportExportFrame()
     local closeBtn = Cell:CreateButton(importExportFrame, "×", "red", {18, 18}, false, false, "CELL_FONT_SPECIAL", "CELL_FONT_SPECIAL")
     closeBtn:SetPoint("TOPRIGHT", P:Scale(-5), P:Scale(-1))
     closeBtn:SetScript("OnClick", function() importExportFrame:Hide() end)
-    
+
     -- import
     importBtn = Cell:CreateButton(importExportFrame, L["Import"], "green", {57, 18})
     importBtn:Hide()
@@ -54,6 +70,14 @@ local function CreateImportExportFrame()
     -- title
     title = importExportFrame:CreateFontString(nil, "OVERLAY", "CELL_FONT_CLASS")
     title:SetPoint("TOPLEFT", 5, -5)
+
+    -- export include nickname settings
+    includeNicknamesCB = Cell:CreateCheckButton(importExportFrame, L["Include Nickname Settings"], function(checked)
+        exported = GetExportString(checked)
+        textArea:SetText(exported)
+    end)
+    includeNicknamesCB:SetPoint("TOPLEFT", 5, -25)
+    includeNicknamesCB:Hide()
     
     -- textArea
     textArea = Cell:CreateScrollEditBox(importExportFrame, function(eb, userChanged)
@@ -96,8 +120,8 @@ local function CreateImportExportFrame()
         end
     end)
     Cell:StylizeFrame(textArea.scrollFrame, {0, 0, 0, 0}, Cell:GetPlayerClassColorTable())
-    textArea:SetPoint("TOPLEFT", P:Scale(5), P:Scale(-20))
-    textArea:SetPoint("BOTTOMRIGHT", P:Scale(-5), P:Scale(5))
+    textArea:SetPoint("TOPLEFT", 5, -20)
+    textArea:SetPoint("BOTTOMRIGHT", -5, 5)
     
     -- highlight text
     textArea.eb:SetScript("OnEditFocusGained", function() textArea.eb:HighlightText() end)
@@ -139,6 +163,10 @@ function F:ShowImportFrame()
     title:SetText(L["Import"])
     textArea:SetText("")
     textArea.eb:SetFocus(true)
+
+    includeNicknamesCB:Hide()
+    textArea:SetPoint("TOPLEFT", 5, -20)
+    P:Height(importExportFrame, 170)
 end
 
 function F:ShowExportFrame()
@@ -153,13 +181,13 @@ function F:ShowExportFrame()
 
     title:SetText(L["Export"]..": "..Cell.version)
 
-    local prefix = "!CELL:"..(tonumber(string.match(Cell.version, "%d+")) or 0).."!"
-
-    exported = Serializer:Serialize(CellDB) -- serialize
-    exported = LibDeflate:CompressDeflate(exported, deflateConfig) -- compress
-    exported = LibDeflate:EncodeForPrint(exported) -- encode
-    exported = prefix..exported
+    exported = GetExportString(false)
 
     textArea:SetText(exported)
     textArea.eb:SetFocus(true)
+
+    includeNicknamesCB:SetChecked(false)
+    includeNicknamesCB:Show()
+    textArea:SetPoint("TOPLEFT", 5, -50)
+    P:Height(importExportFrame, 200)
 end
