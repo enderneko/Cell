@@ -159,7 +159,11 @@ local function LoadBuiltIn(instanceId, bossId, bossTable)
         if not (CellDB["raidDebuffs"][instanceId] and CellDB["raidDebuffs"][instanceId][bossId] and CellDB["raidDebuffs"][instanceId][bossId][abs(tonumber(spellId))]) then
             -- NOTE: is built-in and not modified
             if type(spellId) == "string" then --* track by id
-                F:TInsert(loadedDebuffs[instanceId][bossId]["enabled"], {["id"]=tonumber(spellId), ["order"]=#loadedDebuffs[instanceId][bossId]["enabled"]+1, ["trackByID"]=true, ["condition"]={"None"}, ["built-in"]=true})
+                if tonumber(spellId) < 0 then
+                    tinsert(loadedDebuffs[instanceId][bossId]["disabled"], {["id"]=abs(tonumber(spellId)), ["order"]=0, ["trackByID"]=true, ["condition"]={"None"}, ["built-in"]=true})
+                else
+                    F:TInsert(loadedDebuffs[instanceId][bossId]["enabled"], {["id"]=abs(tonumber(spellId)), ["order"]=#loadedDebuffs[instanceId][bossId]["enabled"]+1, ["trackByID"]=true, ["condition"]={"None"}, ["built-in"]=true})
+                end
             elseif spellId < 0 then --* disabled by default
                 tinsert(loadedDebuffs[instanceId][bossId]["disabled"], {["id"]=abs(spellId), ["order"]=0, ["condition"]={"None"}, ["built-in"]=true})
             else
