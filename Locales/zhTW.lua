@@ -203,8 +203,7 @@ L["IDs separated by whitespaces"] = "用空格分隔多個法術ID"
 L["If disabled, no check, no reply, just glow"] = "停用時，不檢查冷卻，也不回覆密語，只顯示發光。"
 L["Import"] = "匯入"
 L["Import & Export All Settings"] = "匯入與匯出所有設定"
---[[Translation missing --]]
---[[ L["Include Nickname Settings"] = "Include Nickname Settings"--]] 
+L["Include Nickname Settings"] = "包含暱稱設定"
 L["Incompatible Version"] = "不相容的版本"
 L["Indicator Settings"] = "指示器設定"
 L["Indicator settings are part of Layout settings which are account-wide."] = "指示器設定是版面配置設定的一部分，是帳號共用的。"
