@@ -1,5 +1,4 @@
-[Full Changelog](https://github.com/enderneko/Cell/compare/r100-release...d3ee1cc55d0459e7a9a7d39596dae8ea1d8f7865)
+[Full Changelog](https://github.com/enderneko/Cell/compare/r101-beta...399523866a99bc8525047ef10d4854d79c96e4c1)
 
 - Update raid debuffs
-- Fix name text length
-- Update export
+- Update zhTW
