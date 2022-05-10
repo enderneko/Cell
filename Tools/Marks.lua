@@ -82,7 +82,7 @@ marks:Hide()
 local ticker
 local markButtons = {}
 for i = 1, 9 do
-    markButtons[i] = Cell:CreateButton(marks, "", "class-hover", {20, 20})
+    markButtons[i] = Cell:CreateButton(marks, "", "accent-hover", {20, 20})
     markButtons[i].texture = markButtons[i]:CreateTexture(nil, "ARTWORK")
     P:Point(markButtons[i].texture, "TOPLEFT", markButtons[i], "TOPLEFT", 2, -2)
     P:Point(markButtons[i].texture, "BOTTOMRIGHT", markButtons[i], "BOTTOMRIGHT", -2, 2)
@@ -183,7 +183,7 @@ worldMarks:Hide()
 local worldMarkIndices = {5, 6, 3, 2, 7, 1, 4, 8}
 local worldMarkButtons = {}
 for i = 1, 9 do
-    worldMarkButtons[i] = Cell:CreateButton(worldMarks, "", "class-hover", {20, 20}, false, false, nil, nil, "SecureActionButtonTemplate")
+    worldMarkButtons[i] = Cell:CreateButton(worldMarks, "", "accent-hover", {20, 20}, false, false, nil, nil, "SecureActionButtonTemplate")
     worldMarkButtons[i].texture = worldMarkButtons[i]:CreateTexture(nil, "ARTWORK")
     
     if i == 9 then

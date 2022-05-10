@@ -12,16 +12,17 @@ appearanceTab:SetAllPoints(Cell.frames.optionsFrame)
 appearanceTab:Hide()
 
 -------------------------------------------------
--- scale
+-- cell
 -------------------------------------------------
-local scaleSlider
+local scaleSlider, accentColorDropdown, accentColorPicker, optionsFontSizeOffset, useGameFontCB
 
-local function CreateScalePane()
-    local scalePane = Cell:CreateTitledPane(appearanceTab, L["Scale"], 205, 60)
-    scalePane:SetPoint("TOPLEFT", appearanceTab, "TOPLEFT", 5, -5)
+local function CreateCellPane()
+    local cellPane = Cell:CreateTitledPane(appearanceTab, "Cell", 422, 120)
+    cellPane:SetPoint("TOPLEFT", appearanceTab, "TOPLEFT", 5, -5)
     
-    scaleSlider = Cell:CreateSlider("", scalePane, 0.5, 4, 160, 0.1, nil, nil, nil, L["Scale"], L["Non-integer scaling may result in abnormal display of options UI"])
-    scaleSlider:SetPoint("TOPLEFT", scalePane, "TOPLEFT", 5, -27)
+    -- global scale
+    scaleSlider = Cell:CreateSlider(L["Scale"], cellPane, 0.5, 4, 160, 0.1, nil, nil, nil, L["Scale"], L["Non-integer scaling may result in abnormal display of options UI"])
+    scaleSlider:SetPoint("TOPLEFT", cellPane, "TOPLEFT", 5, -40)
     scaleSlider.afterValueChangedFn = function(value)
         CellDB["appearance"]["scale"] = value
         Cell:Fire("UpdateAppearance", "scale")
@@ -33,30 +34,75 @@ local function CreateScalePane()
         popup:SetPoint("TOPLEFT", appearanceTab, "TOPLEFT", 117, -70)
     end
     Cell:RegisterForCloseDropdown(scaleSlider)
-end
 
--------------------------------------------------
--- font
--------------------------------------------------
-local optionsFontSizeOffset, useGameFontCB
+    -- accent color
+    accentColorDropdown = Cell:CreateDropdown(cellPane, 141)
+    accentColorDropdown:SetPoint("TOPLEFT", 222, -40)
+    accentColorDropdown:SetItems({
+        {
+            ["text"] = L["Class Color"],
+            ["value"] = "class_color",
+            ["onClick"] = function()
+                if CellDB["appearance"]["accentColor"][1] ~= "class_color" then
+                    local popup = Cell:CreateConfirmPopup(appearanceTab, 200, L["A UI reload is required.\nDo it now?"], function()
+                        ReloadUI()
+                    end, nil, true)
+                    popup:SetPoint("TOPLEFT", appearanceTab, 117, -77)
+                end
+                CellDB["appearance"]["accentColor"][1] = "class_color"
+                accentColorPicker:SetEnabled(false)
+            end
+        },
+        {
+            ["text"] = L["Custom Color"],
+            ["value"] = "custom",
+            ["onClick"] = function()
+                if CellDB["appearance"]["accentColor"][1] ~= "custom" then
+                    local popup = Cell:CreateConfirmPopup(appearanceTab, 200, L["A UI reload is required.\nDo it now?"], function()
+                        ReloadUI()
+                    end, nil, true)
+                    popup:SetPoint("TOPLEFT", appearanceTab, 117, -77)
+                end
+                CellDB["appearance"]["accentColor"][1] = "custom"
+                accentColorPicker:SetEnabled(true)
+            end
+        },
+    })
 
-local function CreateFontPane()
-    local fontPane = Cell:CreateTitledPane(appearanceTab, L["Options UI Font Size"], 205, 60)
-    fontPane:SetPoint("TOPLEFT", appearanceTab, "TOPLEFT", 222, -5)
-    
-    optionsFontSizeOffset = Cell:CreateSlider("", fontPane, -5, 5, 160, 1)
-    optionsFontSizeOffset:SetPoint("TOPLEFT", fontPane, "TOPLEFT", 5, -27)
+    local accentColorText = cellPane:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
+    accentColorText:SetPoint("BOTTOMLEFT", accentColorDropdown, "TOPLEFT", 0, 1)
+    accentColorText:SetText(L["Options UI Accent Color"])
+
+    accentColorPicker = Cell:CreateColorPicker(cellPane, "", false, nil, function(r, g, b)
+        if CellDB["appearance"]["accentColor"][2][1] ~= r or CellDB["appearance"]["accentColor"][2][2] ~= g or CellDB["appearance"]["accentColor"][2][3] ~= b then
+            local popup = Cell:CreateConfirmPopup(appearanceTab, 200, L["A UI reload is required.\nDo it now?"], function()
+                ReloadUI()
+            end, nil, true)
+            popup:SetPoint("TOPLEFT", appearanceTab, 117, -77)
+        end
+
+        CellDB["appearance"]["accentColor"][2][1] = r
+        CellDB["appearance"]["accentColor"][2][2] = g
+        CellDB["appearance"]["accentColor"][2][3] = b
+    end)
+    accentColorPicker:SetPoint("LEFT", accentColorDropdown, "RIGHT", 5, 0)
+    Cell:RegisterForCloseDropdown(accentColorPicker)
+
+    -- options ui font size
+    optionsFontSizeOffset = Cell:CreateSlider(L["Options UI Font Size"], cellPane, -5, 5, 160, 1)
+    optionsFontSizeOffset:SetPoint("TOPLEFT", scaleSlider, "BOTTOMLEFT", 0, -40)
     
     optionsFontSizeOffset.afterValueChangedFn = function(value)
         CellDB["appearance"]["optionsFontSizeOffset"] = value
         Cell:UpdateOptionsFont(value, CellDB["appearance"]["useGameFont"])
     end
     
-    useGameFontCB = Cell:CreateCheckButton(fontPane, "", function(checked)
+    -- use game font
+    useGameFontCB = Cell:CreateCheckButton(cellPane, "Use Game Font", function(checked)
         CellDB["appearance"]["useGameFont"] = checked
         Cell:UpdateOptionsFont(CellDB["appearance"]["optionsFontSizeOffset"], checked)
-    end, "Use Game Font")
-    useGameFontCB:SetPoint("TOPRIGHT")
+    end)
+    useGameFontCB:SetPoint("TOPLEFT", accentColorDropdown, "BOTTOMLEFT", 0, -30)
     if F:IsAsian() then
         useGameFontCB:Hide()
     end
@@ -111,7 +157,7 @@ end
 
 local function CreatePreviewIcons()
     previewIconsBG = Cell:CreateFrame("CellAppearancePreviewIconsBG", appearanceTab)
-    previewIconsBG:SetPoint("TOPLEFT", appearanceTab, "TOPRIGHT", 5, -100)
+    previewIconsBG:SetPoint("TOPLEFT", appearanceTab, "TOPRIGHT", 5, -160)
     P:Size(previewIconsBG, 95, 45)
     previewIconsBG:SetFrameStrata("HIGH")
     Cell:StylizeFrame(previewIconsBG, {0.1, 0.1, 0.1, 0.77}, {0, 0, 0, 0})
@@ -119,7 +165,7 @@ local function CreatePreviewIcons()
 
     local previewText = previewIconsBG:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET_TITLE")
     previewText:SetPoint("TOP", 0, -3)
-    previewText:SetText(Cell:GetPlayerClassColorString()..L["Preview"].." 1")
+    previewText:SetText(Cell:GetAccentColorString()..L["Preview"].." 1")
 
     borderIcon1 = I:CreateAura_BorderIcon("CellAppearancePreviewIcon1", previewIconsBG, 2)
     P:Size(borderIcon1, 22, 22)
@@ -199,7 +245,7 @@ local function CreatePreviewButtons()
     
     local previewText = previewButtonBG:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET_TITLE")
     previewText:SetPoint("TOP", 0, -3)
-    previewText:SetText(Cell:GetPlayerClassColorString()..L["Preview"].." 2")
+    previewText:SetText(Cell:GetAccentColorString()..L["Preview"].." 2")
     
     previewButton2 = CreateFrame("Button", "CellAppearancePreviewButton2", appearanceTab, "CellUnitButtonTemplate")
     previewButton2:SetPoint("TOPLEFT", previewButton, "BOTTOMLEFT", 0, -50)
@@ -218,7 +264,7 @@ local function CreatePreviewButtons()
     
     local previewText2 = previewButtonBG2:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET_TITLE")
     previewText2:SetPoint("TOP", 0, -3)
-    previewText2:SetText(Cell:GetPlayerClassColorString()..L["Preview"].." 3")
+    previewText2:SetText(Cell:GetAccentColorString()..L["Preview"].." 3")
 
     -- animation
     local states = {-20, -30, -40, 50, -60, 0, 100, 0}
@@ -428,7 +474,7 @@ local function CreateIconOptionsFrame()
     end
 
     iconOptionsFrame = Cell:CreateFrame("CellOptionsFrame_IconOptions", appearanceTab, 230, 235)
-    iconOptionsFrame:SetBackdropBorderColor(unpack(Cell:GetPlayerClassColorTable()))
+    iconOptionsFrame:SetBackdropBorderColor(unpack(Cell:GetAccentColorTable()))
     iconOptionsFrame:SetPoint("TOP", iconOptionsBtn, "BOTTOM", 0, -5)
     iconOptionsFrame:SetPoint("RIGHT", -5, 0)
     iconOptionsFrame:SetFrameStrata("DIALOG")
@@ -594,7 +640,7 @@ local function CreateIconOptionsFrame()
     durationSecondEB:SetPoint("LEFT", durationSecondCP.label, "RIGHT", 5, 0)
     durationSecondEB:SetMaxLetters(4)
 
-    durationSecondEB.confirmBtn = Cell:CreateButton(iconOptionsFrame, "OK", "class", {27, 20})
+    durationSecondEB.confirmBtn = Cell:CreateButton(iconOptionsFrame, "OK", "accent", {27, 20})
     durationSecondEB.confirmBtn:SetPoint("LEFT", durationSecondEB, "RIGHT", -1, 0)
     durationSecondEB.confirmBtn:Hide()
     durationSecondEB.confirmBtn:SetScript("OnHide", function()
@@ -628,7 +674,7 @@ end
 
 local function CreateUnitButtonStylePane()
     local unitButtonPane = Cell:CreateTitledPane(appearanceTab, L["Unit Button Style"], 422, 366)
-    unitButtonPane:SetPoint("TOPLEFT", appearanceTab, "TOPLEFT", 5, -80)
+    unitButtonPane:SetPoint("TOPLEFT", appearanceTab, "TOPLEFT", 5, -140)
     
     -- texture
     textureDropdown = Cell:CreateDropdown(unitButtonPane, 160, "texture")
@@ -902,7 +948,7 @@ local function CreateUnitButtonStylePane()
     end
     
     -- icon options
-    iconOptionsBtn = Cell:CreateButton(unitButtonPane, L["Aura Icon Options"], "class-hover", {160, 20})
+    iconOptionsBtn = Cell:CreateButton(unitButtonPane, L["Aura Icon Options"], "accent-hover", {160, 20})
     iconOptionsBtn:SetPoint("TOPLEFT", unitButtonPane, "TOPLEFT", 222, -42)
     iconOptionsBtn:SetScript("OnClick", function()
         if iconOptionsFrame:IsShown() then
@@ -968,9 +1014,8 @@ local function CreateUnitButtonStylePane()
     end)
     oversCB:SetPoint("TOPLEFT", shieldCB, "BOTTOMLEFT", 0, -7)
     
-    
     -- reset
-    resetBtn = Cell:CreateButton(unitButtonPane, L["Reset All"], "class", {77, 17}, nil, nil, nil, nil, nil, L["Reset All"], L["[Ctrl+LeftClick] to reset these settings"])
+    resetBtn = Cell:CreateButton(unitButtonPane, L["Reset All"], "accent", {77, 17}, nil, nil, nil, nil, nil, L["Reset All"], L["[Ctrl+LeftClick] to reset these settings"])
     resetBtn:SetPoint("TOPRIGHT")
     resetBtn:SetScript("OnClick", function()
         if IsControlKeyDown() then
@@ -992,6 +1037,9 @@ end
 local init
 LoadData = function()
     scaleSlider:SetValue(CellDB["appearance"]["scale"])
+    accentColorDropdown:SetSelectedValue(CellDB["appearance"]["accentColor"][1])
+    accentColorPicker:SetColor(CellDB["appearance"]["accentColor"][2])
+    accentColorPicker:SetEnabled(CellDB["appearance"]["accentColor"][1] == "custom")
     optionsFontSizeOffset:SetValue(CellDB["appearance"]["optionsFontSizeOffset"])
     useGameFontCB:SetChecked(CellDB["appearance"]["useGameFont"])
     
@@ -1046,8 +1094,7 @@ local function ShowTab(tab)
         if not init then
             CreatePreviewIcons()
             CreatePreviewButtons()
-            CreateScalePane()
-            CreateFontPane()
+            CreateCellPane()
             CreateUnitButtonStylePane()
             CreateIconOptionsFrame()
         end
@@ -1165,6 +1212,7 @@ local function UpdateAppearance(which)
         P:SetEffectiveScale(CellScanningTooltip)
         CellTooltip:UpdatePixelPerfect()
         CellScanningTooltip:UpdatePixelPerfect()
+        Cell.menu:UpdatePixelPerfect()
     end
 
     -- preview

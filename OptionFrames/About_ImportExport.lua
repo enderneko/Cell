@@ -30,7 +30,7 @@ end
 local function CreateImportExportFrame()
     importExportFrame = CreateFrame("Frame", "CellOptionsFrame_ImportExport", Cell.frames.aboutTab, "BackdropTemplate")
     importExportFrame:Hide()
-    Cell:StylizeFrame(importExportFrame, nil, Cell:GetPlayerClassColorTable())
+    Cell:StylizeFrame(importExportFrame, nil, Cell:GetAccentColorTable())
     importExportFrame:EnableMouse(true)
     importExportFrame:SetFrameStrata("DIALOG")
     importExportFrame:SetFrameLevel(Cell.frames.aboutTab:GetFrameLevel()+20)
@@ -119,7 +119,7 @@ local function CreateImportExportFrame()
             end
         end
     end)
-    Cell:StylizeFrame(textArea.scrollFrame, {0, 0, 0, 0}, Cell:GetPlayerClassColorTable())
+    Cell:StylizeFrame(textArea.scrollFrame, {0, 0, 0, 0}, Cell:GetAccentColorTable())
     textArea:SetPoint("TOPLEFT", 5, -20)
     textArea:SetPoint("BOTTOMRIGHT", -5, 5)
     

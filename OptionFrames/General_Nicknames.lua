@@ -10,7 +10,7 @@ local customs = {}
 
 local function CreateNicknameOptionsFrame()
     nicknameOptionsFrame = CreateFrame("Frame", "CellOptionsFrame_Nicknames", Cell.frames.generalTab, "BackdropTemplate")
-    Cell:StylizeFrame(nicknameOptionsFrame, nil, Cell:GetPlayerClassColorTable())
+    Cell:StylizeFrame(nicknameOptionsFrame, nil, Cell:GetAccentColorTable())
     nicknameOptionsFrame:SetFrameStrata("DIALOG")
     nicknameOptionsFrame:SetFrameLevel(50)
     nicknameOptionsFrame:Hide()
@@ -54,7 +54,7 @@ local function CreateNicknameOptionsFrame()
         end
     end)
 
-    nicknameEB.confirmBtn = Cell:CreateButton(nicknameEB, L["Awesome!"], "class", {77, 20})
+    nicknameEB.confirmBtn = Cell:CreateButton(nicknameEB, L["Awesome!"], "accent", {77, 20})
     nicknameEB.confirmBtn:SetPoint("TOPRIGHT", nicknameEB)
     nicknameEB.confirmBtn:Hide()
     nicknameEB.confirmBtn:SetScript("OnHide", function()
@@ -188,7 +188,7 @@ local function CreateNicknameOptionsFrame()
     Cell:CreateScrollFrame(list)
     list.scrollFrame:SetScrollStep(19)
 
-    customs[0] = Cell:CreateButton(list.scrollFrame.content, "", "class-hover", {20, 20})
+    customs[0] = Cell:CreateButton(list.scrollFrame.content, "", "accent-hover", {20, 20})
     customs[0]:SetTexture("Interface\\AddOns\\Cell\\Media\\Icons\\new", {16, 16}, {"RIGHT", -1, 0})
     customs[0]:SetScript("OnClick", function()
         newItem.playerName:SetText("")
@@ -215,7 +215,7 @@ LoadList = function()
 
     for i, v in ipairs(CellDB["nicknames"]["list"]) do
         if not customs[i] then
-            customs[i] = Cell:CreateButton(list.scrollFrame.content, "", "class-hover", {20, 20})
+            customs[i] = Cell:CreateButton(list.scrollFrame.content, "", "accent-hover", {20, 20})
             -- playerName
             customs[i].playerName = customs[i]:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
             customs[i].playerName:SetPoint("LEFT", 5, 0)

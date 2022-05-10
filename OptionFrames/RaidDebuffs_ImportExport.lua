@@ -17,7 +17,7 @@ local importExportFrame, importBtn, title, instance, boss, whichBossesBtn, textA
 local function CreateDebuffsImportExportFrame()
     importExportFrame = CreateFrame("Frame", "CellOptionsFrame_RaidDebuffsImportExport", Cell.frames.raidDebuffsTab, "BackdropTemplate")
     importExportFrame:Hide()
-    Cell:StylizeFrame(importExportFrame, nil, Cell:GetPlayerClassColorTable())
+    Cell:StylizeFrame(importExportFrame, nil, Cell:GetAccentColorTable())
     importExportFrame:EnableMouse(true)
     importExportFrame:SetFrameStrata("DIALOG")
     importExportFrame:SetFrameLevel(Cell.frames.raidDebuffsTab:GetFrameLevel()+20)
@@ -160,7 +160,7 @@ local function CreateDebuffsImportExportFrame()
             end
         end
     end)
-    Cell:StylizeFrame(textArea.scrollFrame, {0, 0, 0, 0}, Cell:GetPlayerClassColorTable())
+    Cell:StylizeFrame(textArea.scrollFrame, {0, 0, 0, 0}, Cell:GetAccentColorTable())
     textArea:SetPoint("TOPLEFT", 5, -60)
     textArea:SetPoint("BOTTOMRIGHT", -5, 5)
     

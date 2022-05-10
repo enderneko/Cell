@@ -117,7 +117,7 @@ local function CreateSRPane()
         HideSpellOptions()
     end)
 
-    waTips = Cell:CreateButton(srPane, "WA", "class", {37, 17})
+    waTips = Cell:CreateButton(srPane, "WA", "accent", {37, 17})
     waTips:SetPoint("TOPRIGHT")
     waTips:HookScript("OnEnter", function()
         CellTooltip:SetOwner(waTips, "ANCHOR_NONE")
@@ -140,7 +140,7 @@ local function CreateSRPane()
     pirTips:SetPoint("TOPLEFT", 5, -25)
     pirTips:SetJustifyH("LEFT")
     pirTips:SetSpacing(5)
-    pirTips:SetText(L["Glow unit button when a group member sends a %s request"]:format(Cell:GetPlayerClassColorString()..L["SPELL"].."|r").."\n"..L["Shows only one spell glow on a unit button at a time"])
+    pirTips:SetText(L["Glow unit button when a group member sends a %s request"]:format(Cell:GetAccentColorString()..L["SPELL"].."|r").."\n"..L["Shows only one spell glow on a unit button at a time"])
 
     -- enabled ----------------------------------------------------------------------
     srEnabledCB = Cell:CreateCheckButton(srPane, L["Enabled"], function(checked, self)
@@ -326,7 +326,7 @@ local function CreateSRPane()
     ---------------------------------------------------------------------------------
     
     -- glow -------------------------------------------------------------------------
-    srGlowOptionsBtn = Cell:CreateButton(srPane, L["Glow Options"], "class", {105, 20})
+    srGlowOptionsBtn = Cell:CreateButton(srPane, L["Glow Options"], "accent", {105, 20})
     srGlowOptionsBtn:SetPoint("TOPLEFT", srDeleteBtn, "TOPRIGHT", P:Scale(-1), 0)
     srGlowOptionsBtn:SetScript("OnClick", function()
         whichGlowOption = "spellRequest"
@@ -386,7 +386,7 @@ local spellEditFrame, title, spellIdEB, buffIdEB, addBtn, cancelBtn
 local function CreateSpellEditFrame()
     spellEditFrame = CreateFrame("Frame", nil, glowsTab, "BackdropTemplate")
     spellEditFrame:Hide()
-    Cell:StylizeFrame(spellEditFrame, {0.1, 0.1, 0.1, 0.95}, Cell:GetPlayerClassColorTable())
+    Cell:StylizeFrame(spellEditFrame, {0.1, 0.1, 0.1, 0.95}, Cell:GetAccentColorTable())
     spellEditFrame:SetFrameStrata("DIALOG")
     spellEditFrame:SetSize(200, 100)
     spellEditFrame:SetPoint("LEFT", 117, 0)
@@ -494,7 +494,7 @@ local function CreateSpellEditFrame()
     -- cancel
     cancelBtn = Cell:CreateButton(spellEditFrame, L["Cancel"], "red", {50, 15})
     cancelBtn:SetPoint("BOTTOMRIGHT")
-    cancelBtn:SetBackdropBorderColor(unpack(Cell:GetPlayerClassColorTable()))
+    cancelBtn:SetBackdropBorderColor(unpack(Cell:GetAccentColorTable()))
     cancelBtn:SetScript("OnClick", function()
         spellEditFrame:Hide()
     end)
@@ -502,7 +502,7 @@ local function CreateSpellEditFrame()
     -- add
     addBtn = Cell:CreateButton(spellEditFrame, L["Add"], "green", {50, 15})
     addBtn:SetPoint("BOTTOMRIGHT", cancelBtn, "BOTTOMLEFT", P:Scale(1), 0)
-    addBtn:SetBackdropBorderColor(unpack(Cell:GetPlayerClassColorTable()))
+    addBtn:SetBackdropBorderColor(unpack(Cell:GetAccentColorTable()))
     addBtn:SetScript("OnClick", function()
         spellEditFrame:Hide()
     end)
@@ -614,7 +614,7 @@ local function CreateDRPane()
     local drPane = Cell:CreateTitledPane(glowsTab, L["Dispel Request"], 422, 183)
     drPane:SetPoint("TOPLEFT", 5, -275)
 
-    drGlowOptionsBtn = Cell:CreateButton(drPane, L["Glow Options"], "class", {105, 17})
+    drGlowOptionsBtn = Cell:CreateButton(drPane, L["Glow Options"], "accent", {105, 17})
     drGlowOptionsBtn:SetPoint("TOPRIGHT", drPane)
     drGlowOptionsBtn:SetScript("OnClick", function()
         whichGlowOption = "dispelRequest"
@@ -634,7 +634,7 @@ local function CreateDRPane()
 
     local drTips = drPane:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
     drTips:SetPoint("TOPLEFT", 5, -25)
-    drTips:SetText(L["Glow unit button when a group member sends a %s request"]:format(Cell:GetPlayerClassColorString()..L["DISPEL"].."|r"))
+    drTips:SetText(L["Glow unit button when a group member sends a %s request"]:format(Cell:GetAccentColorString()..L["DISPEL"].."|r"))
 
     -- enabled ----------------------------------------------------------------------
     drEnabledCB = Cell:CreateCheckButton(drPane, L["Enabled"], function(checked, self)

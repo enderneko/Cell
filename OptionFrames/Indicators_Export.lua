@@ -34,7 +34,7 @@ local function CreateIndicatorsExportFrame()
 
     -- list
     local listParent = Cell:CreateFrame(nil, exportParent, 136, 430)
-    Cell:StylizeFrame(listParent, nil, Cell:GetPlayerClassColorTable())
+    Cell:StylizeFrame(listParent, nil, Cell:GetAccentColorTable())
     listParent:SetFrameStrata("DIALOG")
     listParent:SetPoint("BOTTOMLEFT", 5, 24)
     listParent:Show()
@@ -54,7 +54,7 @@ local function CreateIndicatorsExportFrame()
 
     -- export area
     exportFrame = Cell:CreateFrame(nil, exportParent, 281, 197)
-    Cell:StylizeFrame(exportFrame, nil, Cell:GetPlayerClassColorTable())
+    Cell:StylizeFrame(exportFrame, nil, Cell:GetAccentColorTable())
     exportFrame:SetPoint("BOTTOMLEFT", listParent, "BOTTOMRIGHT", 5, 0)
     
     -- title
@@ -63,7 +63,7 @@ local function CreateIndicatorsExportFrame()
     
     -- textArea
     textArea = Cell:CreateScrollEditBox(exportFrame)
-    Cell:StylizeFrame(textArea.scrollFrame, {0, 0, 0, 0}, Cell:GetPlayerClassColorTable())
+    Cell:StylizeFrame(textArea.scrollFrame, {0, 0, 0, 0}, Cell:GetAccentColorTable())
     textArea:SetPoint("TOPLEFT", 5, -20)
     textArea:SetPoint("BOTTOMRIGHT", -5, 5)
     
@@ -114,7 +114,7 @@ local function CreateIndicatorsExportFrame()
         exportParent:Hide()
     end)
     
-    local allBtn = Cell:CreateButton(listParent, L["ALL"], "class-hover", {64, 20})
+    local allBtn = Cell:CreateButton(listParent, L["ALL"], "accent-hover", {64, 20})
     allBtn:SetPoint("BOTTOMLEFT", exportBtn, "TOPLEFT", 0, P:Scale(-1))
     allBtn:SetScript("OnClick", function()
         for i = 1, #indicatorButtons do
@@ -123,7 +123,7 @@ local function CreateIndicatorsExportFrame()
         Validate()
     end)
     
-    local invertBtn = Cell:CreateButton(listParent, L["INVERT"], "class-hover", {63, 20})
+    local invertBtn = Cell:CreateButton(listParent, L["INVERT"], "accent-hover", {63, 20})
     invertBtn:SetPoint("BOTTOMLEFT", closeBtn, "TOPLEFT", 0, P:Scale(-1))
     invertBtn:SetScript("OnClick", function()
         for i = 1, #indicatorButtons do

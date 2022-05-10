@@ -278,6 +278,13 @@ function eventFrame:ADDON_LOADED(arg1)
         end
         P:SetRelativeScale(CellDB["appearance"]["scale"])
 
+        -- color ---------------------------------------------------------------------------------
+        if CellDB["appearance"]["accentColor"] then -- version < r103
+            if CellDB["appearance"]["accentColor"][1] == "custom" then 
+                Cell:OverrideAccentColor(CellDB["appearance"]["accentColor"][2])
+            end
+        end
+
         -- click-casting --------------------------------------------------------------------------
         if type(CellDB["clickCastings"]) ~= "table" then CellDB["clickCastings"] = {} end
         Cell.vars.playerClass, Cell.vars.playerClassID = select(2, UnitClass("player"))

@@ -1281,6 +1281,13 @@ function F:Revise()
             end
         end
     end
+
+    -- r103-release
+    if CellDB["revise"] and dbRevision < 103 then
+        if type(CellDB["appearance"]["accentColor"]) ~= "table" then
+            CellDB["appearance"]["accentColor"] = {"class_color", {1, 0.26667, 0.4}}
+        end
+    end
     
     CellDB["revise"] = Cell.version
 end

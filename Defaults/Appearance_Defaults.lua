@@ -3,6 +3,7 @@ local F = Cell.funcs
 
 Cell.defaults.appearance = {
     ["scale"] = 1,
+    ["accentColor"] = {"class_color", {1, 0.26667, 0.4}}, -- FF4466
     ["optionsFontSizeOffset"] = 0,
     ["useGameFont"] = true,
     ["texture"] = "Cell ".._G.DEFAULT,

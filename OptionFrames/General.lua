@@ -241,7 +241,7 @@ local function CreateMiscPane()
     menuPositionText:SetPoint("BOTTOMLEFT", menuPositionDD, "TOPLEFT", 0, 1)
 
     -- nickname options
-    local nicknameOptionsBtn = Cell:CreateButton(miscPane, L["Nickname Options"], "class-hover", {137, 20})
+    local nicknameOptionsBtn = Cell:CreateButton(miscPane, L["Nickname Options"], "accent-hover", {137, 20})
     nicknameOptionsBtn:SetPoint("TOPLEFT", menuPositionDD, "BOTTOMLEFT", 0, -13)
     Cell.frames.generalTab.nicknameOptionsBtn = nicknameOptionsBtn
     nicknameOptionsBtn:SetScript("OnClick", function()
@@ -258,7 +258,7 @@ local function CreateToolsPane()
     local toolsPane = Cell:CreateTitledPane(generalTab, L["Raid Tools"].." |cFF777777"..L["only in group"], 422, 107)
     toolsPane:SetPoint("TOPLEFT", 5, -339)
 
-    local unlockBtn = Cell:CreateButton(toolsPane, L["Unlock"], "class", {70, 17})
+    local unlockBtn = Cell:CreateButton(toolsPane, L["Unlock"], "accent", {70, 17})
     unlockBtn:SetPoint("TOPRIGHT", toolsPane)
     unlockBtn.locked = true
     unlockBtn:SetScript("OnClick", function(self)
@@ -361,7 +361,7 @@ local function CreateToolsPane()
     secEditBox:SetPoint("TOPLEFT", pullDropdown, "TOPRIGHT", 5, 0)
     secEditBox:SetMaxLetters(3)
 
-    secEditBox.confirmBtn = Cell:CreateButton(toolsPane, "OK", "class", {27, 20})
+    secEditBox.confirmBtn = Cell:CreateButton(toolsPane, "OK", "accent", {27, 20})
     secEditBox.confirmBtn:SetPoint("TOPLEFT", secEditBox, "TOPRIGHT", P:Scale(-1), 0)
     secEditBox.confirmBtn:Hide()
     secEditBox.confirmBtn:SetScript("OnHide", function()

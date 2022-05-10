@@ -891,7 +891,7 @@ local function CreateSyncPane()
 
     -- sync status
     syncStatus = CreateFrame("Frame", "CellIndicatorsSyncStatus", indicatorsTab, "BackdropTemplate")
-    Cell:StylizeFrame(syncStatus, nil, Cell:GetPlayerClassColorTable())
+    Cell:StylizeFrame(syncStatus, nil, Cell:GetAccentColorTable())
     syncStatus:SetSize(150, 30)
     syncStatus:SetPoint("TOPRIGHT", syncPane, "TOPLEFT", -10, 3)
     
@@ -1149,21 +1149,21 @@ local function CreateListPane()
         popup:SetPoint("TOPLEFT", 117, -187)
     end)
 
-    local importBtn = Cell:CreateButton(listPane, nil, "class-hover", {46, 20}, nil, nil, nil, nil, nil, L["Import"], L["Custom indicators will not be overwritten, even with same name"])
+    local importBtn = Cell:CreateButton(listPane, nil, "accent-hover", {46, 20}, nil, nil, nil, nil, nil, L["Import"], L["Custom indicators will not be overwritten, even with same name"])
     importBtn:SetPoint("TOPLEFT", createBtn, "BOTTOMLEFT", 0, P:Scale(1))
     importBtn:SetTexture("Interface\\AddOns\\Cell\\Media\\Icons\\import", {16, 16}, {"TOPLEFT", 14, -2})
     importBtn:SetScript("OnClick", function()
         F:ShowIndicatorsImportFrame(currentLayout)
     end)
 
-    local exportBtn = Cell:CreateButton(listPane, nil, "class-hover", {46, 20}, nil, nil, nil, nil, nil, L["Export"])
+    local exportBtn = Cell:CreateButton(listPane, nil, "accent-hover", {46, 20}, nil, nil, nil, nil, nil, L["Export"])
     exportBtn:SetPoint("TOPLEFT", importBtn, "TOPRIGHT", P:Scale(-1), 0)
     exportBtn:SetTexture("Interface\\AddOns\\Cell\\Media\\Icons\\export", {16, 16}, {"TOPLEFT", 14, -2})
     exportBtn:SetScript("OnClick", function()
         F:ShowIndicatorsExportFrame(currentLayout)
     end)
 
-    local copyBtn = Cell:CreateButton(listPane, nil, "class-hover", {46, 20}, nil, nil, nil, nil, nil, L["Copy"], L["Copy indicators from one layout to another"], L["Custom indicators will not be overwritten, even with same name"])
+    local copyBtn = Cell:CreateButton(listPane, nil, "accent-hover", {46, 20}, nil, nil, nil, nil, nil, L["Copy"], L["Copy indicators from one layout to another"], L["Custom indicators will not be overwritten, even with same name"])
     copyBtn:SetPoint("TOPLEFT", exportBtn, "TOPRIGHT", P:Scale(-1), 0)
     copyBtn:SetTexture("Interface\\AddOns\\Cell\\Media\\Icons\\copy", {16, 16}, {"TOPLEFT", 14, -2})
     copyBtn:SetScript("OnClick", function()
@@ -1221,7 +1221,7 @@ local indicatorSettings = {
     ["tankActiveMitigation"] = {"|cffb7b7b7"..I:GetTankActiveMitigationString(), "enabled", "position", "frameLevel", "size"},
     ["dispels"] = {"enabled", "checkbutton:dispellableByMe", "checkbutton2:enableHighlight", "position", "frameLevel", "size-square"},
     ["debuffs"] = {"enabled", "checkbutton:dispellableByMe", "blacklist", "bigDebuffs", "checkbutton2:showDuration:"..L["Show duration text instead of icon animation"], "checkbutton3:showTooltip:"..L["This will make these icons not click-through-able"], "num:10", "orientation", "position", "frameLevel", "size-normal-big", "font"},
-    ["raidDebuffs"] = {"|cffb7b7b7"..L["You can config debuffs in %s"]:format(Cell:GetPlayerClassColorString()..L["Raid Debuffs"].."|r"), "enabled", "checkbutton:onlyShowTopGlow", "checkbutton2:showTooltip:"..L["This will make these icons not click-through-able"], "num:3", "orientation", "position", "frameLevel", "size-border", "font"},
+    ["raidDebuffs"] = {"|cffb7b7b7"..L["You can config debuffs in %s"]:format(Cell:GetAccentColorString()..L["Raid Debuffs"].."|r"), "enabled", "checkbutton:onlyShowTopGlow", "checkbutton2:showTooltip:"..L["This will make these icons not click-through-able"], "num:3", "orientation", "position", "frameLevel", "size-border", "font"},
     ["targetedSpells"] = {"enabled", "spells", "glow", "position", "frameLevel", "size-border", "font"},
     ["targetCounter"] = {"|cffff2727"..L["HIGH CPU USAGE"].."!|r |cffb7b7b7"..L["Check all visible enemy nameplates. Battleground/Arena only."], "enabled", "color", "position", "frameLevel", "font-noOffset"},
 }

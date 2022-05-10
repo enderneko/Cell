@@ -74,7 +74,7 @@ function F:ShowPowerFilters(selectedLayout, selectedLayoutTable)
     if not init then
         init = true
         powerFilters:UpdatePixelPerfect()
-        powerFilters:SetBackdropBorderColor(unpack(Cell:GetPlayerClassColorTable()))
+        powerFilters:SetBackdropBorderColor(unpack(Cell:GetAccentColorTable()))
         CreateFilters()
     end
 

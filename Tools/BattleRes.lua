@@ -84,7 +84,7 @@ end
 ---------------------------------
 -- Bar
 ---------------------------------
-local bar = Cell:CreateStatusBar("CellBattleResBar", battleResFrame, 10, 2, 100, false, nil, false, "Interface\\AddOns\\Cell\\Media\\statusbar", Cell:GetPlayerClassColorTable())
+local bar = Cell:CreateStatusBar("CellBattleResBar", battleResFrame, 10, 2, 100, false, nil, false, "Interface\\AddOns\\Cell\\Media\\statusbar", Cell:GetAccentColorTable())
 P:Point(bar, "BOTTOMLEFT", battleResFrame, "BOTTOMLEFT", 1, 1)
 P:Point(bar, "BOTTOMRIGHT", battleResFrame, "BOTTOMRIGHT", -1, 1)
 -- bar:SetMinMaxValues(0, 100)

@@ -437,9 +437,6 @@ local function CreateColorPicker()
     --------------------------------------------------
     confirmBtn = addon:CreateButton(colorPicker, L["Confirm"], "green", {97, 20})
     confirmBtn:SetPoint("BOTTOMLEFT", 7, 7)
-    confirmBtn:SetScript("OnClick", function()
-        colorPicker:Hide()
-    end)
     
     cancelBtn = addon:CreateButton(colorPicker, L["Cancel"], "red", {97, 20})
     cancelBtn:SetPoint("BOTTOMRIGHT", -7, 7)
@@ -448,7 +445,7 @@ end
 -------------------------------------------------
 -- show
 -------------------------------------------------
-function addon:ShowColorPicker(callback, hasAlpha, r, g, b, a)
+function addon:ShowColorPicker(callback, onConfirm, hasAlpha, r, g, b, a)
     if not colorPicker then
         CreateColorPicker()
     end
@@ -467,6 +464,15 @@ function addon:ShowColorPicker(callback, hasAlpha, r, g, b, a)
     H, S, B = F:ConvertRGBToHSB(oR, oG, oB)
     A = oA
     Callback = callback
+
+    confirmBtn:SetScript("OnClick", function()
+        colorPicker:Hide()
+        if onConfirm then
+            local r, g, b = F:ConvertHSBToRGB(H, S, B)
+            onConfirm(r, g, b, A)
+        end
+    end)
+
     cancelBtn:SetScript("OnClick", function()
         colorPicker:Hide()
         if callback then callback(oR, oG, oB, oA) end

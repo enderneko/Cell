@@ -92,7 +92,7 @@ frame:SetSize(100, 100)
 frame:SetPoint("BOTTOMLEFT", cellMainFrame, "TOPLEFT", 0, 30)
 frame:Hide()
 
-local mark = Cell:CreateButton(frame, "", "class-hover", {20, 20}, false, false, nil, nil, "SecureActionButtonTemplate")
+local mark = Cell:CreateButton(frame, "", "accent-hover", {20, 20}, false, false, nil, nil, "SecureActionButtonTemplate")
 mark:SetPoint("CENTER")
 mark:SetSize(20, 20)
 mark.texture = mark:CreateTexture(nil, "ARTWORK")

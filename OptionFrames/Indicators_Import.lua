@@ -24,7 +24,7 @@ local function CreateIndicatorsImportFrame()
     importFrame = Cell:CreateFrame("CellOptionsFrame_IndicatorsImport", Cell.frames.indicatorsTab, 430, 221)
     importFrame:SetFrameLevel(Cell.frames.indicatorsTab:GetFrameLevel()+20)
     importFrame:SetFrameStrata("DIALOG")
-    Cell:StylizeFrame(importFrame, nil, Cell:GetPlayerClassColorTable())
+    Cell:StylizeFrame(importFrame, nil, Cell:GetAccentColorTable())
     importFrame:SetPoint("BOTTOMLEFT", P:Scale(1), 24)
     
     -- title
@@ -33,7 +33,7 @@ local function CreateIndicatorsImportFrame()
 
     -- list
     local listFrame = CreateFrame("Frame", nil, importFrame, "BackdropTemplate")
-    Cell:StylizeFrame(listFrame, {0, 0, 0, 0}, Cell:GetPlayerClassColorTable())
+    Cell:StylizeFrame(listFrame, {0, 0, 0, 0}, Cell:GetAccentColorTable())
     listFrame:SetPoint("TOPLEFT", 5, -20)
     listFrame:SetPoint("BOTTOMRIGHT", importFrame, "BOTTOMLEFT", 139, 29)
     Cell:CreateScrollFrame(listFrame)
@@ -47,7 +47,7 @@ local function CreateIndicatorsImportFrame()
         -- lower frame level
         importFrame:SetFrameStrata("HIGH")
     
-        local text = L["Import"].." > "..Cell:GetPlayerClassColorString()..toLayoutName.."|r\n"
+        local text = L["Import"].." > "..Cell:GetAccentColorString()..toLayoutName.."|r\n"
             ..L["This may overwrite built-in indicators"].."\n"
             ..L["|cff1Aff1AYes|r - Overwrite"].."\n|cffff1A1A"..L["No"].."|r - "..L["Cancel"]
     
@@ -186,7 +186,7 @@ local function CreateIndicatorsImportFrame()
             end
         end
     end)
-    Cell:StylizeFrame(textArea.scrollFrame, {0, 0, 0, 0}, Cell:GetPlayerClassColorTable())
+    Cell:StylizeFrame(textArea.scrollFrame, {0, 0, 0, 0}, Cell:GetAccentColorTable())
     textArea:SetPoint("TOPLEFT", listFrame, "TOPRIGHT", 5, 0)
     textArea:SetPoint("BOTTOMRIGHT", -5, 5)
     

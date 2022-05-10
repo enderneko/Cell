@@ -15,7 +15,7 @@ local function CreateTextureSelector()
     end
 
     textureSelector = CreateFrame("Frame", "CellOptionsFrame_TextureSelector", Cell.frames.indicatorsTab, "BackdropTemplate")
-    Cell:StylizeFrame(textureSelector, nil, Cell:GetPlayerClassColorTable())
+    Cell:StylizeFrame(textureSelector, nil, Cell:GetAccentColorTable())
     textureSelector:SetFrameLevel(Cell.frames.indicatorsTab:GetFrameLevel()+20)
     textureSelector:SetFrameStrata("DIALOG")
     textureSelector:SetPoint("TOPLEFT", P:Scale(1), -100)
@@ -40,7 +40,7 @@ local function CreateTextureSelector()
         end
     end)
 
-    local addBtn = Cell:CreateButton(textureSelector, L["Add"], "class", {66, 20})
+    local addBtn = Cell:CreateButton(textureSelector, L["Add"], "accent", {66, 20})
     addBtn:SetPoint("TOPLEFT", addEB, "TOPRIGHT", -1, 0)
     addBtn:SetScript("OnClick", function()
         local path = strtrim(addEB:GetText())
@@ -56,7 +56,7 @@ local function CreateTextureSelector()
     -- cancel
     local cancelBtn = Cell:CreateButton(textureSelector, L["Cancel"], "red", {70, 20})
     cancelBtn:SetPoint("BOTTOMRIGHT")
-    cancelBtn:SetBackdropBorderColor(unpack(Cell:GetPlayerClassColorTable()))
+    cancelBtn:SetBackdropBorderColor(unpack(Cell:GetAccentColorTable()))
     cancelBtn:SetScript("OnClick", function()
         textureSelector:Hide()
     end)
@@ -64,7 +64,7 @@ local function CreateTextureSelector()
     -- OK
     confirmBtn = Cell:CreateButton(textureSelector, L["Confirm"], "green", {70, 20})
     confirmBtn:SetPoint("BOTTOMRIGHT", cancelBtn, "BOTTOMLEFT", P:Scale(1), 0)
-    confirmBtn:SetBackdropBorderColor(unpack(Cell:GetPlayerClassColorTable()))
+    confirmBtn:SetBackdropBorderColor(unpack(Cell:GetAccentColorTable()))
 
     -- textures
     local texFrame = Cell:CreateFrame(nil, textureSelector)
@@ -109,8 +109,8 @@ LoadTextures = function()
             b:SetBackdropColor(0.115, 0.115, 0.115, 1)
             b:SetBackdropBorderColor(0, 0, 0, 1)
             b:SetScript("OnEnter", function()
-                b:SetBackdropBorderColor(unpack(Cell:GetPlayerClassColorTable()))
-                b.delBtn:SetBackdropBorderColor(unpack(Cell:GetPlayerClassColorTable()))
+                b:SetBackdropBorderColor(unpack(Cell:GetAccentColorTable()))
+                b.delBtn:SetBackdropBorderColor(unpack(Cell:GetAccentColorTable()))
 
                 F:FitWidth(currentTexturePath, path, "right")
             end)
@@ -181,7 +181,7 @@ LoadTextures = function()
 
         -- highlight selected
         if selectedPath == path then
-            b:SetBackdropBorderColor(unpack(Cell:GetPlayerClassColorTable()))
+            b:SetBackdropBorderColor(unpack(Cell:GetAccentColorTable()))
         else
             b:SetBackdropBorderColor(0, 0, 0, 1)
         end

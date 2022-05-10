@@ -32,8 +32,12 @@ function F:ConvertRGB(r, g, b, desaturation)
     return r, g, b
 end
 
+function F:ConvertRGB_256(r, g, b)
+    return r * 255, g * 255, b * 255
+end
+
 function F:ConvertRGBToHEX(r, g, b)
-    local hexadecimal = ""
+    local result = ""
 
     for key, value in pairs({r, g, b}) do
         local hex = ""
@@ -51,10 +55,10 @@ function F:ConvertRGBToHEX(r, g, b)
             hex = "0" .. hex
         end
 
-        hexadecimal = hexadecimal .. hex
+        result = result .. hex
     end
 
-    return hexadecimal
+    return result
 end
 
 function F:ConvertHEXToRGB(hex)

@@ -23,26 +23,10 @@ local colors = {
 }
 
 local class = select(2, UnitClass("player"))
-local classColor = {s="|cCCB2B2B2", t={.7, .7, .7}}
+local accentColor = {s="|cCCB2B2B2", t={0.7, 0.7, 0.7}}
 if class then
-    classColor.t[1], classColor.t[2], classColor.t[3], classColor.s = RAID_CLASS_COLORS[class].r, RAID_CLASS_COLORS[class].g, RAID_CLASS_COLORS[class].b, RAID_CLASS_COLORS[class].colorStr
-    classColor.s = "|c"..classColor.s
-end
-
-function addon:ColorFontStringByPlayerClass(fs)
-    fs:SetTextColor(classColor.t[1], classColor.t[2], classColor.t[3])
-end
-
-function addon:GetPlayerClassColorTable(alpha)
-    if alpha then
-        return {classColor.t[1], classColor.t[2], classColor.t[3], alpha}
-    else
-        return classColor.t
-    end
-end
-
-function addon:GetPlayerClassColorString()
-    return classColor.s
+    accentColor.t[1], accentColor.t[2], accentColor.t[3], accentColor.s = RAID_CLASS_COLORS[class].r, RAID_CLASS_COLORS[class].g, RAID_CLASS_COLORS[class].b, RAID_CLASS_COLORS[class].colorStr
+    accentColor.s = "|c"..accentColor.s
 end
 
 -----------------------------------------
@@ -106,14 +90,14 @@ font_special:SetJustifyV("MIDDLE")
 
 local font_class_title = CreateFont(font_class_title_name)
 font_class_title:SetFont(GameFontNormal:GetFont(), 14)
-font_class_title:SetTextColor(classColor.t[1], classColor.t[2], classColor.t[3], 1)
+font_class_title:SetTextColor(accentColor.t[1], accentColor.t[2], accentColor.t[3])
 font_class_title:SetShadowColor(0, 0, 0)
 font_class_title:SetShadowOffset(1, -1)
 font_class_title:SetJustifyH("CENTER")
 
 local font_class = CreateFont(font_class_name)
 font_class:SetFont(GameFontNormal:GetFont(), 13)
-font_class:SetTextColor(classColor.t[1], classColor.t[2], classColor.t[3], 1)
+font_class:SetTextColor(accentColor.t[1], accentColor.t[2], accentColor.t[3])
 font_class:SetShadowColor(0, 0, 0)
 font_class:SetShadowOffset(1, -1)
 font_class:SetJustifyH("CENTER")
@@ -134,6 +118,44 @@ function addon:UpdateOptionsFont(offset, useGameFont)
     font_disable:SetFont(defaultFont, 13+offset)
     font_class_title:SetFont(defaultFont, 14+offset)
     font_class:SetFont(defaultFont, 13+offset)
+end
+
+-----------------------------------------
+-- Accent Color
+-----------------------------------------
+local accentColorOverride
+function addon:OverrideAccentColor(cTable)
+    accentColorOverride = true
+
+    accentColor.t[1], accentColor.t[2], accentColor.t[3] = unpack(cTable)
+    accentColor.s = "|cFF"..F:ConvertRGBToHEX(F:ConvertRGB_256(unpack(cTable)))
+    
+    font_class_title:SetTextColor(unpack(cTable))
+    font_class:SetTextColor(unpack(cTable))
+end
+
+function addon:GetAccentColorRGB()
+    return unpack(accentColor.t)
+end
+
+function addon:GetAccentColorTable(alpha)
+    if alpha then
+        return {accentColor.t[1], accentColor.t[2], accentColor.t[3], alpha}
+    else
+        return accentColor.t
+    end
+end
+
+function addon:GetAccentColorString()
+    return accentColor.s
+end
+
+function addon:ColorFontStringWithAccentColor(fs)
+    fs:SetTextColor(accentColor.t[1], accentColor.t[2], accentColor.t[3])
+end
+
+function addon:WrapTextInAccentColor(text)
+    return WrapTextInColorCode(text, accentColor.s)
 end
 
 -----------------------------------------
@@ -211,7 +233,7 @@ end
 -- seperator
 -----------------------------------------
 function addon:CreateSeparator(text, parent, width, color)
-    if not color then color = {t={classColor.t[1], classColor.t[2], classColor.t[3], 0.777}, s=classColor.s} end
+    if not color then color = {t={accentColor.t[1], accentColor.t[2], accentColor.t[3], 0.777}, s=accentColor.s} end
     if not width then width = parent:GetWidth()-10 end
 
     local fs = parent:CreateFontString(nil, "OVERLAY", font_title_name)
@@ -232,7 +254,7 @@ function addon:CreateSeparator(text, parent, width, color)
 end
 
 function addon:CreateTitledPane(parent, text, width, height, color)
-    if not color then color = {["r"]=classColor.t[1], ["g"]=classColor.t[2], ["b"]=classColor.t[3], ["a"]=0.777, ["s"]=classColor.s} end
+    if not color then color = {["r"]=accentColor.t[1], ["g"]=accentColor.t[2], ["b"]=accentColor.t[3], ["a"]=0.777, ["s"]=accentColor.s} end
 
     local pane = CreateFrame("Frame", nil, parent, "BackdropTemplate")
     P:Size(pane, width, height)
@@ -447,20 +469,20 @@ function addon:CreateButton(parent, text, buttonColor, size, noBorder, noBackgro
     elseif buttonColor == "yellow-hover" then
         color = {0.115, 0.115, 0.115, 1}
         hoverColor = {0.7, 0.7, 0, 1}
-    elseif buttonColor == "class" then
-        if class == "PRIEST" then
-            color = {classColor.t[1], classColor.t[2], classColor.t[3], 0.25}
-            hoverColor = {classColor.t[1], classColor.t[2], classColor.t[3], 0.5}
+    elseif buttonColor == "accent" then
+        if class == "PRIEST" and not accentColorOverride then
+            color = {accentColor.t[1], accentColor.t[2], accentColor.t[3], 0.25}
+            hoverColor = {accentColor.t[1], accentColor.t[2], accentColor.t[3], 0.5}
         else
-            color = {classColor.t[1], classColor.t[2], classColor.t[3], 0.3}
-            hoverColor = {classColor.t[1], classColor.t[2], classColor.t[3], 0.6}
+            color = {accentColor.t[1], accentColor.t[2], accentColor.t[3], 0.3}
+            hoverColor = {accentColor.t[1], accentColor.t[2], accentColor.t[3], 0.6}
         end
-    elseif buttonColor == "class-hover" then
-        color = {.115, .115, .115, 1}
-        if class == "PRIEST" then
-            hoverColor = {classColor.t[1], classColor.t[2], classColor.t[3], 0.5}
+    elseif buttonColor == "accent-hover" then
+        color = {0.115, 0.115, 0.115, 1}
+        if class == "PRIEST" and not accentColorOverride then
+            hoverColor = {accentColor.t[1], accentColor.t[2], accentColor.t[3], 0.5}
         else
-            hoverColor = {classColor.t[1], classColor.t[2], classColor.t[3], 0.6}
+            hoverColor = {accentColor.t[1], accentColor.t[2], accentColor.t[3], 0.6}
         end
     elseif buttonColor == "chartreuse" then
         color = {0.5, 1, 0, 0.6}
@@ -480,9 +502,9 @@ function addon:CreateButton(parent, text, buttonColor, size, noBorder, noBackgro
     elseif buttonColor == "transparent-class" then -- drop down item
         color = {0, 0, 0, 0}
         if class == "PRIEST" then
-            hoverColor = {classColor.t[1], classColor.t[2], classColor.t[3], 0.4}
+            hoverColor = {accentColor.t[1], accentColor.t[2], accentColor.t[3], 0.4}
         else
-            hoverColor = {classColor.t[1], classColor.t[2], classColor.t[3], 0.6}
+            hoverColor = {accentColor.t[1], accentColor.t[2], accentColor.t[3], 0.6}
         end
     elseif buttonColor == "none" then
         color = {0, 0, 0, 0}
@@ -769,7 +791,7 @@ function addon:CreatePowerFilter(parent, classFileName, buttons, width, height, 
     filter.buttons = {}
     local last
     for i = #buttons, 1, -1 do
-        local b = Cell:CreateButton(filter, nil, "class-hover", {height, height})
+        local b = Cell:CreateButton(filter, nil, "accent-hover", {height, height})
         filter.buttons[buttons[i]] = b
         b:SetTexture("Interface\\AddOns\\Cell\\Media\\Roles\\"..buttons[i], {height-4, height-4}, {"CENTER", 0, 0})
 
@@ -874,7 +896,7 @@ function addon:CreateCheckButton(parent, label, onClick, ...)
     cb.label = cb:CreateFontString(nil, "OVERLAY", font_name)
     cb.label:SetText(label)
     cb.label:SetPoint("LEFT", cb, "RIGHT", P:Scale(5), 0)
-    -- cb.label:SetTextColor(classColor.t[1], classColor.t[2], classColor.t[3])
+    -- cb.label:SetTextColor(accentColor.t[1], accentColor.t[2], accentColor.t[3])
     
     P:Size(cb, 14, 14)
     if strtrim(label) ~= "" then
@@ -886,12 +908,12 @@ function addon:CreateCheckButton(parent, label, onClick, ...)
     cb:SetBackdropBorderColor(0, 0, 0, 1)
 
     local checkedTexture = cb:CreateTexture(nil, "ARTWORK")
-    checkedTexture:SetColorTexture(classColor.t[1], classColor.t[2], classColor.t[3], 0.7)
+    checkedTexture:SetColorTexture(accentColor.t[1], accentColor.t[2], accentColor.t[3], 0.7)
     checkedTexture:SetPoint("TOPLEFT", P:Scale(1), P:Scale(-1))
     checkedTexture:SetPoint("BOTTOMRIGHT", P:Scale(-1), P:Scale(1))
 
     local highlightTexture = cb:CreateTexture(nil, "ARTWORK")
-    highlightTexture:SetColorTexture(classColor.t[1], classColor.t[2], classColor.t[3], 0.1)
+    highlightTexture:SetColorTexture(accentColor.t[1], accentColor.t[2], accentColor.t[3], 0.1)
     highlightTexture:SetPoint("TOPLEFT", P:Scale(1), P:Scale(-1))
     highlightTexture:SetPoint("BOTTOMRIGHT", P:Scale(-1), P:Scale(1))
     
@@ -901,7 +923,7 @@ function addon:CreateCheckButton(parent, label, onClick, ...)
 
     cb:SetScript("OnEnable", function()
         cb.label:SetTextColor(1, 1, 1)
-        checkedTexture:SetColorTexture(classColor.t[1], classColor.t[2], classColor.t[3], 0.7)
+        checkedTexture:SetColorTexture(accentColor.t[1], accentColor.t[2], accentColor.t[3], 0.7)
     end)
 
     cb:SetScript("OnDisable", function()
@@ -926,13 +948,13 @@ end
 -----------------------------------------
 -- colorpicker
 -----------------------------------------
-function addon:CreateColorPicker(parent, label, hasOpacity, func)
+function addon:CreateColorPicker(parent, label, hasOpacity, onChange, onConfirm)
     local cp = CreateFrame("Button", nil, parent, "BackdropTemplate")
     P:Size(cp, 14, 14)
     cp:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8x8", edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = P:Scale(1)})
     cp:SetBackdropBorderColor(0, 0, 0, 1)
     cp:SetScript("OnEnter", function()
-        cp:SetBackdropBorderColor(classColor.t[1], classColor.t[2], classColor.t[3], 0.5)
+        cp:SetBackdropBorderColor(accentColor.t[1], accentColor.t[2], accentColor.t[3], 0.5)
     end)
     cp:SetScript("OnLeave", function()
         cp:SetBackdropBorderColor(0, 0, 0, 1)
@@ -982,13 +1004,15 @@ function addon:CreateColorPicker(parent, label, hasOpacity, func)
     
     cp:SetScript("OnClick", function()
         addon:ShowColorPicker(function(r, g, b, a)
-            func(r, g, b, a)
             cp:SetBackdropColor(r, g, b, a)
             cp.color[1] = r
             cp.color[2] = g
             cp.color[3] = b
             cp.color[4] = a
-        end, hasOpacity, unpack(cp.color))
+            if onChange then
+                onChange(r, g, b, a)
+            end
+        end, onConfirm, hasOpacity, unpack(cp.color))
     end)
 
     cp.color = {1, 1, 1, 1}
@@ -1182,13 +1206,13 @@ function addon:CreateSlider(name, parent, low, high, width, step, onValueChanged
     highText:SetPoint("BOTTOM", currentEditBox)
 
     local tex = slider:CreateTexture(nil, "ARTWORK")
-    tex:SetColorTexture(classColor.t[1], classColor.t[2], classColor.t[3], .7)
+    tex:SetColorTexture(accentColor.t[1], accentColor.t[2], accentColor.t[3], .7)
     tex:SetSize(8, 8)
     slider:SetThumbTexture(tex)
 
     local valueBeforeClick
     slider.onEnter = function()
-        tex:SetColorTexture(classColor.t[1], classColor.t[2], classColor.t[3], 1)
+        tex:SetColorTexture(accentColor.t[1], accentColor.t[2], accentColor.t[3], 1)
         valueBeforeClick = slider:GetValue()
         if #tooltips > 0 then
             ShowTooltips(slider, "ANCHOR_TOPLEFT", 0, 3, tooltips)
@@ -1196,7 +1220,7 @@ function addon:CreateSlider(name, parent, low, high, width, step, onValueChanged
     end
     slider:SetScript("OnEnter", slider.onEnter)
     slider.onLeave = function()
-        tex:SetColorTexture(classColor.t[1], classColor.t[2], classColor.t[3], .7)
+        tex:SetColorTexture(accentColor.t[1], accentColor.t[2], accentColor.t[3], .7)
         CellTooltip:Hide()
     end
     slider:SetScript("OnLeave", slider.onLeave)
@@ -1279,7 +1303,7 @@ function addon:CreateSlider(name, parent, low, high, width, step, onValueChanged
         currentEditBox:SetEnabled(true)
         slider:SetScript("OnEnter", slider.onEnter)
         slider:SetScript("OnLeave", slider.onLeave)
-        tex:SetColorTexture(classColor.t[1], classColor.t[2], classColor.t[3], .7)
+        tex:SetColorTexture(accentColor.t[1], accentColor.t[2], accentColor.t[3], .7)
         lowText:SetTextColor(unpack(colors.grey.t))
         highText:SetTextColor(unpack(colors.grey.t))
     end)
@@ -1315,7 +1339,7 @@ function addon:CreateSwitch(parent, size, leftText, leftValue, rightText, rightV
     textRight:SetText(rightText)
 
     local highlight = switch:CreateTexture(nil, "ARTWORK")
-    highlight:SetColorTexture(classColor.t[1], classColor.t[2], classColor.t[3], class=="PRIEST" and 0.35 or 0.45)
+    highlight:SetColorTexture(accentColor.t[1], accentColor.t[2], accentColor.t[3], class=="PRIEST" and 0.35 or 0.45)
 
     local function UpdateHighlight(which)
         highlight:ClearAllPoints()
@@ -1371,11 +1395,11 @@ function addon:CreateSwitch(parent, size, leftText, leftValue, rightText, rightV
     end)
 
     switch:SetScript("OnEnter", function()
-        highlight:SetColorTexture(classColor.t[1], classColor.t[2], classColor.t[3], class=="PRIEST" and 0.55 or 0.65)
+        highlight:SetColorTexture(accentColor.t[1], accentColor.t[2], accentColor.t[3], class=="PRIEST" and 0.55 or 0.65)
     end)
 
     switch:SetScript("OnLeave", function()
-        highlight:SetColorTexture(classColor.t[1], classColor.t[2], classColor.t[3], class=="PRIEST" and 0.35 or 0.45)
+        highlight:SetColorTexture(accentColor.t[1], accentColor.t[2], accentColor.t[3], class=="PRIEST" and 0.35 or 0.45)
     end)
 
     return switch
@@ -1387,7 +1411,7 @@ end
 function addon:CreateStatusBar(name, parent, width, height, maxValue, smooth, func, showText, texture, color)
     local bar = CreateFrame("StatusBar", name, parent, "BackdropTemplate")
 
-    if not color then color = {classColor.t[1], classColor.t[2], classColor.t[3], 1} end
+    if not color then color = {accentColor.t[1], accentColor.t[2], accentColor.t[3], 1} end
     if not texture then
         local tex = bar:CreateTexture(nil, "ARTWORK")
         tex:SetColorTexture(1, 1, 1, 1)
@@ -1467,11 +1491,11 @@ function addon:CreateStatusBar(name, parent, width, height, maxValue, smooth, fu
 end
 
 function addon:CreateStatusBarButton(parent, text, size, maxValue, template)
-    local b = Cell:CreateButton(parent, text, "class-hover", size, false, true, nil, nil, template)
+    local b = Cell:CreateButton(parent, text, "accent-hover", size, false, true, nil, nil, template)
     b:SetFrameLevel(parent:GetFrameLevel()+2)
     b:SetBackdropColor(0, 0, 0, 0)
     b:SetScript("OnEnter", function()
-        b:SetBackdropBorderColor(unpack(classColor.t))
+        b:SetBackdropBorderColor(unpack(accentColor.t))
     end)
     b:SetScript("OnLeave", function()
         b:SetBackdropBorderColor(0, 0, 0, 1)
@@ -1482,7 +1506,7 @@ function addon:CreateStatusBarButton(parent, text, size, maxValue, template)
     bar:SetPoint("TOPLEFT", b)
     bar:SetPoint("BOTTOMRIGHT", b)
     bar:SetStatusBarTexture("Interface\\AddOns\\Cell\\Media\\statusbar.tga")
-    bar:SetStatusBarColor(classColor.t[1], classColor.t[2], classColor.t[3], .5)
+    bar:SetStatusBarColor(accentColor.t[1], accentColor.t[2], accentColor.t[3], .5)
     bar:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8x8", edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = 1})
     bar:SetBackdropColor(.115, .115, .115, 1)
     bar:SetBackdropBorderColor(0, 0, 0, 0)
@@ -1579,7 +1603,7 @@ function addon:CreateConfirmPopup(parent, width, text, onAccept, onReject, mask,
     if not parent.confirmPopup then -- not init
         parent.confirmPopup = CreateFrame("Frame", nil, parent, "BackdropTemplate")
         parent.confirmPopup:SetSize(width, 100)
-        addon:StylizeFrame(parent.confirmPopup, {0.1, 0.1, 0.1, 0.95}, {classColor.t[1], classColor.t[2], classColor.t[3], 1})
+        addon:StylizeFrame(parent.confirmPopup, {0.1, 0.1, 0.1, 0.95}, {accentColor.t[1], accentColor.t[2], accentColor.t[3], 1})
         parent.confirmPopup:EnableMouse(true)
         parent.confirmPopup:Hide()
         
@@ -1600,11 +1624,11 @@ function addon:CreateConfirmPopup(parent, width, text, onAccept, onReject, mask,
         parent.confirmPopup.button1 = addon:CreateButton(parent.confirmPopup, L["Yes"], "green", {35, 15})
         -- button1:SetPoint("BOTTOMRIGHT", -45, 0)
         parent.confirmPopup.button1:SetPoint("BOTTOMRIGHT", -34, 0)
-        parent.confirmPopup.button1:SetBackdropBorderColor(classColor.t[1], classColor.t[2], classColor.t[3], 1)
+        parent.confirmPopup.button1:SetBackdropBorderColor(accentColor.t[1], accentColor.t[2], accentColor.t[3], 1)
         -- no
         parent.confirmPopup.button2 = addon:CreateButton(parent.confirmPopup, L["No"], "red", {35, 15})
         parent.confirmPopup.button2:SetPoint("LEFT", parent.confirmPopup.button1, "RIGHT", P:Scale(-1), 0)
-        parent.confirmPopup.button2:SetBackdropBorderColor(classColor.t[1], classColor.t[2], classColor.t[3], 1)
+        parent.confirmPopup.button2:SetBackdropBorderColor(accentColor.t[1], accentColor.t[2], accentColor.t[3], 1)
     end
 
     if hasEditBox then
@@ -1719,7 +1743,7 @@ function addon:CreatePopupEditBox(parent, width, func, multiLine)
         eb:SetTextInsets(5, 5, 3, 4)
         eb:SetPoint("TOPLEFT")
         eb:SetPoint("TOPRIGHT")
-        addon:StylizeFrame(eb, {.115, .115, .115, 1}, {classColor.t[1], classColor.t[2], classColor.t[3], 1})
+        addon:StylizeFrame(eb, {.115, .115, .115, 1}, {accentColor.t[1], accentColor.t[2], accentColor.t[3], 1})
         
         eb:SetScript("OnEscapePressed", function()
             eb:SetText("")
@@ -1780,10 +1804,16 @@ end
 local menu = addon:CreateFrame(addonName.."CascadedMenu", UIParent, 100, 20)
 addon.menu = menu
 tinsert(UISpecialFrames, menu:GetName())
-menu:SetBackdropColor(.115, .115, .115, 1)
-menu:SetBackdropBorderColor(classColor.t[1], classColor.t[2], classColor.t[3], 1)
+menu:SetBackdropColor(0.115, 0.115, 0.115, 0.977)
+menu:SetBackdropBorderColor(accentColor.t[1], accentColor.t[2], accentColor.t[3], 1)
 menu:SetFrameStrata("TOOLTIP")
 menu.items = {}
+
+function menu:UpdatePixelPerfect()
+    menu:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8x8", edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = P:Scale(1)})
+    menu:SetBackdropColor(0.115, 0.115, 0.115, 0.977)
+    menu:SetBackdropBorderColor(Cell:GetAccentColorRGB())
+end
 
 -- items: menu items table
 -- itemTable: table to store item buttons --> menu/submenu
@@ -1849,7 +1879,7 @@ local function CreateItemButtons(items, itemTable, itemParent, level)
                 -- menu[level+1] parent == menu[level]
                 menu[level+1] = addon:CreateFrame(addonName.."CascadedSubMenu"..level, level == 0 and menu or menu[level], 100, 20)
                 menu[level+1]:SetBackdropColor(.115, .115, .115, 1)
-                menu[level+1]:SetBackdropBorderColor(classColor.t[1], classColor.t[2], classColor.t[3], 1)
+                menu[level+1]:SetBackdropBorderColor(accentColor.t[1], accentColor.t[2], accentColor.t[3], 1)
                 -- menu[level+1]:SetScript("OnHide", function(self) self:Hide() end)
             end
 
@@ -2087,7 +2117,7 @@ function addon:CreateScrollFrame(parent, top, bottom, color, border)
     scrollThumb:SetWidth(5) -- scrollbar's width is 5
     scrollThumb:SetHeight(scrollbar:GetHeight())
     scrollThumb:SetPoint("TOP")
-    addon:StylizeFrame(scrollThumb, {classColor.t[1], classColor.t[2], classColor.t[3], 0.8})
+    addon:StylizeFrame(scrollThumb, {accentColor.t[1], accentColor.t[2], accentColor.t[3], 0.8})
     scrollThumb:EnableMouse(true)
     scrollThumb:SetMovable(true)
     scrollThumb:SetHitRectInsets(-5, -5, 0, 0) -- Frame:SetHitRectInsets(left, right, top, bottom)
@@ -2283,7 +2313,7 @@ list.items = {}
 -- highlight
 highlightTexture = CreateFrame("Frame", nil, list, "BackdropTemplate")
 -- highlightTexture:SetBackdrop({edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = P:Scale(1)})
--- highlightTexture:SetBackdropBorderColor(unpack(classColor.t))
+-- highlightTexture:SetBackdropBorderColor(unpack(accentColor.t))
 highlightTexture:Hide()
 
 list:SetScript("OnShow", function()
@@ -2447,7 +2477,7 @@ function addon:CreateDropdown(parent, width, dropdownType)
             list.scrollFrame:SetScrollStep(18)
             addon:StylizeFrame(list, {0.115, 0.115, 0.115, 1})
             highlightTexture:SetBackdrop({edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = P:Scale(1)})
-            highlightTexture:SetBackdropBorderColor(unpack(classColor.t))
+            highlightTexture:SetBackdropBorderColor(unpack(accentColor.t))
         end
 
         -- hide highlight
@@ -2485,9 +2515,9 @@ function addon:CreateDropdown(parent, width, dropdownType)
             -- font
             local f, s = font:GetFont()
             if item.font then
-                b:GetFontString():SetFont(item.font, s+fontSizeOffset)
+                b:GetFontString():SetFont(item.font, s)
             else
-                b:GetFontString():SetFont(f, s+fontSizeOffset)
+                b:GetFontString():SetFont(f, s)
             end
 
             -- highlight
@@ -2608,7 +2638,7 @@ function addon:CreateBindingButton(parent, width)
         parent.bindingButton:SetFrameStrata("TOOLTIP")
         parent.bindingButton:Hide()
         tinsert(UISpecialFrames, parent.bindingButton:GetName())
-        addon:StylizeFrame(parent.bindingButton, {.1, .1, .1, 1}, {classColor.t[1], classColor.t[2], classColor.t[3]})
+        addon:StylizeFrame(parent.bindingButton, {.1, .1, .1, 1}, {accentColor.t[1], accentColor.t[2], accentColor.t[3]})
 
         parent.bindingButton.close = addon:CreateButton(parent.bindingButton, "×", "red", {18, 18}, true, true, "CELL_FONT_SPECIAL", "CELL_FONT_SPECIAL")
         parent.bindingButton.close:SetPoint("TOPRIGHT", -1, -1)
@@ -2701,7 +2731,7 @@ local function CreateGrid(parent, text, width)
     grid:RegisterForClicks("LeftButtonUp", "RightButtonUp")
 
     grid:SetScript("OnEnter", function() 
-        grid:SetBackdropColor(classColor.t[1], classColor.t[2], classColor.t[3], .15)
+        grid:SetBackdropColor(accentColor.t[1], accentColor.t[2], accentColor.t[3], .15)
         parent:Highlight()
     end)
 
@@ -2722,7 +2752,7 @@ function addon:CreateBindingListButton(parent, modifier, bindKey, bindType, bind
     b:SetBackdropBorderColor(0, 0, 0, 1)
 
     function b:Highlight()
-        b:SetBackdropColor(classColor.t[1], classColor.t[2], classColor.t[3], 0.1)
+        b:SetBackdropColor(accentColor.t[1], accentColor.t[2], accentColor.t[3], 0.1)
     end
 
     function b:Unhighlight()
@@ -2792,7 +2822,7 @@ function addon:CreateBindingListButton(parent, modifier, bindKey, bindType, bind
 
     function b:SetChanged(isChanged)
         if isChanged then
-            b:SetBorderColor(classColor.t[1], classColor.t[2], classColor.t[3], 1)
+            b:SetBorderColor(accentColor.t[1], accentColor.t[2], accentColor.t[3], 1)
         else
             b:SetBorderColor(0, 0, 0, 1)
         end

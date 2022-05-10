@@ -23,7 +23,7 @@ local function CreateCodeSnippetsFrame()
 
     -- rename box
     renameEB = Cell:CreateEditBox(codeSnippetsFrame, 20, 20)
-    Cell:StylizeFrame(renameEB, {0.115, 0.115, 0.115, 0.9}, Cell:GetPlayerClassColorTable())
+    Cell:StylizeFrame(renameEB, {0.115, 0.115, 0.115, 0.9}, Cell:GetAccentColorTable())
     renameEB:Hide()
     renameEB:SetScript("OnEscapePressed", function()
         renameEB:Hide()
@@ -40,7 +40,7 @@ local function CreateCodeSnippetsFrame()
     topPane:SetHeight(20)
 
     -- add
-    newBtn = Cell:CreateButton(topPane, "", "class-hover", {155, 20})
+    newBtn = Cell:CreateButton(topPane, "", "accent-hover", {155, 20})
     newBtn.tex = newBtn:CreateTexture(nil, "ARTWORK")
     newBtn.tex:SetPoint("CENTER")
     newBtn.tex:SetSize(12, 12)
@@ -183,7 +183,7 @@ LoadList = function()
                 width = 156
             end
 
-            buttons[i] = Cell:CreateButton(topPane, "", "class-hover", {width, 20})
+            buttons[i] = Cell:CreateButton(topPane, "", "accent-hover", {width, 20})
             buttons[i].id = i -- for highlight
             
             -- rename

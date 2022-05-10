@@ -33,14 +33,14 @@ end
 local generalBtn, appearanceBtn, clickCastingsBtn, aboutBtn, layoutsBtn, indicatorsBtn, debuffsBtn, glowsBtn, closeBtn
 
 local function CreateTabButtons()
-    generalBtn = Cell:CreateButton(optionsFrame, L["General"], "class-hover", {105, 20}, false, false, "CELL_FONT_WIDGET_TITLE", "CELL_FONT_WIDGET_TITLE_DISABLE")
-    appearanceBtn = Cell:CreateButton(optionsFrame, L["Appearance"], "class-hover", {105, 20}, false, false, "CELL_FONT_WIDGET_TITLE", "CELL_FONT_WIDGET_TITLE_DISABLE")
-    layoutsBtn = Cell:CreateButton(optionsFrame, L["Layouts"], "class-hover", {105, 20}, false, false, "CELL_FONT_WIDGET_TITLE", "CELL_FONT_WIDGET_TITLE_DISABLE")
-    clickCastingsBtn = Cell:CreateButton(optionsFrame, L["Click-Castings"], "class-hover", {120, 20}, false, false, "CELL_FONT_WIDGET_TITLE", "CELL_FONT_WIDGET_TITLE_DISABLE")
-    indicatorsBtn = Cell:CreateButton(optionsFrame, L["Indicators"], "class-hover", {105, 20}, false, false, "CELL_FONT_WIDGET_TITLE", "CELL_FONT_WIDGET_TITLE_DISABLE")
-    debuffsBtn = Cell:CreateButton(optionsFrame, L["Raid Debuffs"], "class-hover", {120, 20}, false, false, "CELL_FONT_WIDGET_TITLE", "CELL_FONT_WIDGET_TITLE_DISABLE")
-    glowsBtn = Cell:CreateButton(optionsFrame, L["Glows"], "class-hover", {105, 20}, false, false, "CELL_FONT_WIDGET_TITLE", "CELL_FONT_WIDGET_TITLE_DISABLE")
-    aboutBtn = Cell:CreateButton(optionsFrame, L["About"], "class-hover", {86, 20}, false, false, "CELL_FONT_WIDGET_TITLE", "CELL_FONT_WIDGET_TITLE_DISABLE")
+    generalBtn = Cell:CreateButton(optionsFrame, L["General"], "accent-hover", {105, 20}, false, false, "CELL_FONT_WIDGET_TITLE", "CELL_FONT_WIDGET_TITLE_DISABLE")
+    appearanceBtn = Cell:CreateButton(optionsFrame, L["Appearance"], "accent-hover", {105, 20}, false, false, "CELL_FONT_WIDGET_TITLE", "CELL_FONT_WIDGET_TITLE_DISABLE")
+    layoutsBtn = Cell:CreateButton(optionsFrame, L["Layouts"], "accent-hover", {105, 20}, false, false, "CELL_FONT_WIDGET_TITLE", "CELL_FONT_WIDGET_TITLE_DISABLE")
+    clickCastingsBtn = Cell:CreateButton(optionsFrame, L["Click-Castings"], "accent-hover", {120, 20}, false, false, "CELL_FONT_WIDGET_TITLE", "CELL_FONT_WIDGET_TITLE_DISABLE")
+    indicatorsBtn = Cell:CreateButton(optionsFrame, L["Indicators"], "accent-hover", {105, 20}, false, false, "CELL_FONT_WIDGET_TITLE", "CELL_FONT_WIDGET_TITLE_DISABLE")
+    debuffsBtn = Cell:CreateButton(optionsFrame, L["Raid Debuffs"], "accent-hover", {120, 20}, false, false, "CELL_FONT_WIDGET_TITLE", "CELL_FONT_WIDGET_TITLE_DISABLE")
+    glowsBtn = Cell:CreateButton(optionsFrame, L["Glows"], "accent-hover", {105, 20}, false, false, "CELL_FONT_WIDGET_TITLE", "CELL_FONT_WIDGET_TITLE_DISABLE")
+    aboutBtn = Cell:CreateButton(optionsFrame, L["About"], "accent-hover", {86, 20}, false, false, "CELL_FONT_WIDGET_TITLE", "CELL_FONT_WIDGET_TITLE_DISABLE")
     closeBtn = Cell:CreateButton(optionsFrame, "×", "red", {20, 20}, false, false, "CELL_FONT_SPECIAL", "CELL_FONT_SPECIAL")
     closeBtn:SetScript("OnClick", function()
         optionsFrame:Hide()
@@ -80,7 +80,7 @@ local function CreateTabButtons()
     
     local tabHeight = {
         ["general"] = 448,
-        ["appearance"] = 451,
+        ["appearance"] = 511,
         ["layouts"] = 550,
         ["clickCastings"] = 426,
         ["indicators"] = 493,

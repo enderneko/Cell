@@ -332,7 +332,7 @@ local function CreateTopWidgets()
     expansionDropdown:SetItems(expansionItems)
 
     -- current instance button
-    local showCurrentBtn = Cell:CreateButton(debuffsTab, "", "class-hover", {20, 20}, nil, nil, nil, nil, nil, L["Show Current Instance"])
+    local showCurrentBtn = Cell:CreateButton(debuffsTab, "", "accent-hover", {20, 20}, nil, nil, nil, nil, nil, L["Show Current Instance"])
     showCurrentBtn:SetPoint("TOPLEFT", expansionDropdown, "TOPRIGHT", 5, 0)
     showCurrentBtn.tex = showCurrentBtn:CreateTexture(nil, "ARTWORK")
     showCurrentBtn.tex:SetPoint("TOPLEFT", 1, -1)
@@ -346,14 +346,14 @@ local function CreateTopWidgets()
     end)
 
     -- import/export button
-    local importBtn = Cell:CreateButton(debuffsTab, "", "class-hover", {20, 20}, nil, nil, nil, nil, nil, L["Import"])
+    local importBtn = Cell:CreateButton(debuffsTab, "", "accent-hover", {20, 20}, nil, nil, nil, nil, nil, L["Import"])
     importBtn:SetPoint("TOPLEFT", showCurrentBtn, "TOPRIGHT", P:Scale(-1), 0)
     importBtn:SetTexture("Interface\\AddOns\\Cell\\Media\\Icons\\import.blp", {16, 16}, {"TOPLEFT", 2, -2})
     importBtn:SetScript("OnClick", function()
         F:ShowRaidDebuffsImportFrame()
     end)
     
-    local exportBtn = Cell:CreateButton(debuffsTab, "", "class-hover", {20, 20}, nil, nil, nil, nil, nil, L["Export"])
+    local exportBtn = Cell:CreateButton(debuffsTab, "", "accent-hover", {20, 20}, nil, nil, nil, nil, nil, L["Export"])
     exportBtn:SetPoint("TOPLEFT", importBtn, "TOPRIGHT", P:Scale(-1), 0)
     exportBtn:SetTexture("Interface\\AddOns\\Cell\\Media\\Icons\\export.blp", {16, 16}, {"TOPLEFT", 2, -2})
     exportBtn:SetScript("OnClick", function()
@@ -371,8 +371,8 @@ end
 -------------------------------------------------
 local function SetOnEnterLeave(frame)
     frame:SetScript("OnEnter", function()
-        frame:SetBackdropBorderColor(unpack(Cell:GetPlayerClassColorTable()))
-        frame.scrollFrame.scrollbar:SetBackdropBorderColor(unpack(Cell:GetPlayerClassColorTable()))
+        frame:SetBackdropBorderColor(unpack(Cell:GetAccentColorTable()))
+        frame.scrollFrame.scrollbar:SetBackdropBorderColor(unpack(Cell:GetAccentColorTable()))
         -- frame.scrollFrame.scrollThumb:SetBackdropBorderColor(0, 0, 0, .5)
     end)
     frame:SetScript("OnLeave", function()
@@ -624,7 +624,7 @@ local function CreateDebuffsFrame()
     debuffListFrame.scrollFrame:SetScrollStep(19)
     SetOnEnterLeave(debuffListFrame)
 
-    local create = Cell:CreateButton(debuffsTab, L["Create"], "class-hover", {66, 20})
+    local create = Cell:CreateButton(debuffsTab, L["Create"], "accent-hover", {66, 20})
     create:SetPoint("TOPLEFT", debuffListFrame, "BOTTOMLEFT", 0, -4)
     create:SetScript("OnClick", function()
         local popup = Cell:CreateConfirmPopup(debuffsTab, 200, L["Create new debuff (id)"], function(self)
@@ -695,7 +695,7 @@ local function CreateDebuffsFrame()
         popup:SetPoint("TOPLEFT", 117, -170)
     end)
     
-    delete = Cell:CreateButton(debuffsTab, L["Delete"], "class-hover", {66, 20})
+    delete = Cell:CreateButton(debuffsTab, L["Delete"], "accent-hover", {66, 20})
     delete:SetPoint("LEFT", create, "RIGHT", 5, 0)
     delete:SetEnabled(false)
     delete:SetScript("OnClick", function()
@@ -747,7 +747,7 @@ local function CreateDebuffsFrame()
 
     -- dragged
     dragged = Cell:CreateFrame("RaidDebuffsTab_Dragged", debuffsTab, 20, 20)
-    Cell:StylizeFrame(dragged, nil, Cell:GetPlayerClassColorTable())
+    Cell:StylizeFrame(dragged, nil, Cell:GetAccentColorTable())
     dragged:SetFrameStrata("HIGH")
     dragged:EnableMouse(false)
     dragged:SetMovable(true)
@@ -1051,7 +1051,7 @@ local function CreatePreviewButton()
 
     local previewText = previewButtonBG:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET_TITLE")
     previewText:SetPoint("TOP", 0, -3)
-    previewText:SetText(Cell:GetPlayerClassColorString()..L["Preview"])
+    previewText:SetText(Cell:GetAccentColorString()..L["Preview"])
 
     previewButton.fadeIn = previewButton:CreateAnimationGroup()
     local fadeIn = previewButton.fadeIn:CreateAnimation("alpha")
@@ -1136,7 +1136,7 @@ local function CreateDetailsFrame()
     detailsFrame:SetScript("OnUpdate", function()
         if detailsFrame:IsMouseOver() then
             if not isMouseOver or isMouseOver ~= 1 then
-                detailsFrame:SetBackdropBorderColor(unpack(Cell:GetPlayerClassColorTable()))
+                detailsFrame:SetBackdropBorderColor(unpack(Cell:GetAccentColorTable()))
                 isMouseOver = 1
             end
         else

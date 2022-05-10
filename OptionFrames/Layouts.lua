@@ -34,7 +34,7 @@ local function CreatePreviewButton()
     
     local previewText = previewButtonBG:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET_TITLE")
     previewText:SetPoint("TOP", 0, -3)
-    previewText:SetText(Cell:GetPlayerClassColorString()..L["Preview"])
+    previewText:SetText(Cell:GetAccentColorString()..L["Preview"])
 end
 
 local function UpdatePreviewButton(which, value)
@@ -703,7 +703,7 @@ local function CreateLayoutPane()
     layoutDropdown:SetPoint("TOPLEFT", 5, -27)
 
     -- new
-    local newBtn = Cell:CreateButton(layoutPane, L["New"], "class-hover", {55, 20})
+    local newBtn = Cell:CreateButton(layoutPane, L["New"], "accent-hover", {55, 20})
     newBtn:SetPoint("TOPLEFT", layoutDropdown, "BOTTOMLEFT", 0, -10)
     newBtn:SetScript("OnClick", function()
         local popup = Cell:CreateConfirmPopup(layoutsTab, 200, L["Create new layout"], function(self)
@@ -765,7 +765,7 @@ local function CreateLayoutPane()
     Cell:RegisterForCloseDropdown(newBtn)
 
     -- rename
-    local renameBtn = Cell:CreateButton(layoutPane, L["Rename"], "class-hover", {55, 20})
+    local renameBtn = Cell:CreateButton(layoutPane, L["Rename"], "accent-hover", {55, 20})
     renameBtn:SetPoint("TOPLEFT", newBtn, "TOPRIGHT", P:Scale(-1), 0)
     renameBtn:SetScript("OnClick", function()
         local popup = Cell:CreateConfirmPopup(layoutsTab, 200, L["Rename layout"].." "..selectedLayout, function(self)
@@ -838,7 +838,7 @@ local function CreateLayoutPane()
     Cell:RegisterForCloseDropdown(renameBtn)
 
     -- delete
-    local deleteBtn = Cell:CreateButton(layoutPane, L["Delete"], "class-hover", {55, 20})
+    local deleteBtn = Cell:CreateButton(layoutPane, L["Delete"], "accent-hover", {55, 20})
     deleteBtn:SetPoint("TOPLEFT", renameBtn, "TOPRIGHT", P:Scale(-1), 0)
     deleteBtn:SetScript("OnClick", function()
         local popup = Cell:CreateConfirmPopup(layoutsTab, 200, L["Delete layout"].." "..selectedLayout.."?", function(self)
@@ -901,14 +901,14 @@ local function CreateLayoutPane()
     Cell:RegisterForCloseDropdown(deleteBtn)
 
     -- import
-    local importBtn = Cell:CreateButton(layoutPane, L["Import"], "class-hover", {55, 20})
+    local importBtn = Cell:CreateButton(layoutPane, L["Import"], "accent-hover", {55, 20})
     importBtn:SetPoint("TOPLEFT", newBtn, "BOTTOMLEFT", 0, P:Scale(1))
     importBtn:SetScript("OnClick", function()
         F:ShowLayoutImportFrame()
     end)
 
     -- export
-    local exportBtn = Cell:CreateButton(layoutPane, L["Export"], "class-hover", {55, 20})
+    local exportBtn = Cell:CreateButton(layoutPane, L["Export"], "accent-hover", {55, 20})
     exportBtn:SetPoint("TOPLEFT", importBtn, "TOPRIGHT", P:Scale(-1), 0)
     exportBtn:SetScript("OnClick", function()
         F:ShowLayoutExportFrame(selectedLayout, selectedLayoutTable)
@@ -925,7 +925,7 @@ local function CreateLayoutPane()
     end
 
     -- copy & paste
-    local shareBtn = Cell:CreateButton(layoutPane, L["Share"], "class-hover", {55, 20})
+    local shareBtn = Cell:CreateButton(layoutPane, L["Share"], "accent-hover", {55, 20})
     shareBtn:SetPoint("TOPLEFT", exportBtn, "TOPRIGHT", P:Scale(-1), 0)
     shareBtn:SetScript("OnClick", function()
         local editbox = ChatEdit_ChooseBoxForSend()
@@ -1190,7 +1190,7 @@ local function CreateGroupFilterPane()
     groupFilterPane:SetPoint("TOPLEFT", 5, -123)
 
     for i = 1, 8 do
-        groupButtons[i] = Cell:CreateButton(groupFilterPane, i, "class-hover", {20, 20})
+        groupButtons[i] = Cell:CreateButton(groupFilterPane, i, "accent-hover", {20, 20})
         groupButtons[i]:SetScript("OnClick", function()
             selectedLayoutTable["groupFilter"][i] = not selectedLayoutTable["groupFilter"][i]
             UpdateButtonBorderColor(selectedLayoutTable["groupFilter"][i], groupButtons[i])
@@ -1432,7 +1432,7 @@ local function CreateGroupArrangementPane()
     anchorText:SetText(L["Anchor Point"])
     
     -- preview mode
-    previewModeBtn = Cell:CreateButton(groupArrangementPane, "|cff777777"..L["OFF"], "class", {117, 20})
+    previewModeBtn = Cell:CreateButton(groupArrangementPane, "|cff777777"..L["OFF"], "accent", {117, 20})
     previewModeBtn:SetPoint("TOPLEFT", anchorDropdown, "BOTTOMLEFT", 0, -30)
     previewModeBtn:SetScript("OnClick", function()
         previewMode = (previewMode == 2) and 0 or (previewMode + 1)
@@ -1585,7 +1585,7 @@ local function CreateMiscPane()
     local miscPane = Cell:CreateTitledPane(layoutsTab, L["Misc"], 205, 50)
     miscPane:SetPoint("TOPLEFT", 222, -480)
 
-    local powerFilterBtn = Cell:CreateButton(miscPane, L["Power Bar Filters"], "class-hover", {163, 20})
+    local powerFilterBtn = Cell:CreateButton(miscPane, L["Power Bar Filters"], "accent-hover", {163, 20})
     Cell.frames.layoutsTab.powerFilterBtn = powerFilterBtn
     powerFilterBtn:SetPoint("TOPLEFT", 5, -27)
     powerFilterBtn:SetScript("OnClick", function ()
@@ -1689,31 +1689,31 @@ local function UpdateLayoutAutoSwitchText()
             partyText:SetText(L["Solo/Party"])
             raidText:SetText(L["Raid"])
             arenaText:SetText(L["Arena"])
-            bg15Text:SetText(Cell:GetPlayerClassColorString()..L["BG 1-15"].."*")
+            bg15Text:SetText(Cell:GetAccentColorString()..L["BG 1-15"].."*")
             bg40Text:SetText(L["BG 16-40"])
         elseif Cell.vars.inBattleground == 40 then
             partyText:SetText(L["Solo/Party"])
             raidText:SetText(L["Raid"])
             arenaText:SetText(L["Arena"])
             bg15Text:SetText(L["BG 1-15"])
-            bg40Text:SetText(Cell:GetPlayerClassColorString()..L["BG 16-40"].."*")
+            bg40Text:SetText(Cell:GetAccentColorString()..L["BG 16-40"].."*")
         else -- 5 arena
             partyText:SetText(L["Solo/Party"])
             raidText:SetText(L["Raid"])
-            arenaText:SetText(Cell:GetPlayerClassColorString()..L["Arena"].."*")
+            arenaText:SetText(Cell:GetAccentColorString()..L["Arena"].."*")
             bg15Text:SetText(L["BG 1-15"])
             bg40Text:SetText(L["BG 16-40"])
         end
     else
         if Cell.vars.groupType == "solo" or Cell.vars.groupType == "party" then
-            partyText:SetText(Cell:GetPlayerClassColorString()..L["Solo/Party"].."*")
+            partyText:SetText(Cell:GetAccentColorString()..L["Solo/Party"].."*")
             raidText:SetText(L["Raid"])
             arenaText:SetText(L["Arena"])
             bg15Text:SetText(L["BG 1-15"])
             bg40Text:SetText(L["BG 16-40"])
         else
             partyText:SetText(L["Solo/Party"])
-            raidText:SetText(Cell:GetPlayerClassColorString()..L["Raid"].."*")
+            raidText:SetText(Cell:GetAccentColorString()..L["Raid"].."*")
             arenaText:SetText(L["Arena"])
             bg15Text:SetText(L["BG 1-15"])
             bg40Text:SetText(L["BG 16-40"])
