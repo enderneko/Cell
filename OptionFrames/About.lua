@@ -47,7 +47,7 @@ local function CreateAuthorPane()
     local authorNameText = authorPane:CreateFontString(nil, "OVERLAY")
     authorNameText:SetPoint("TOPLEFT", 5, -27)
     authorNameText:SetFont("Interface\\AddOns\\Cell\\Media\\font.ttf", 12)
-    authorNameText:SetText("篠崎-影之哀伤(CN)")
+    authorNameText:SetText("篠崎-影之哀伤 (CN)")
 end
 
 -------------------------------------------------
@@ -66,21 +66,21 @@ end
 -- special thanks
 -------------------------------------------------
 local function CreateSpecialThanksPane()
-    local specialThanksPane = Cell:CreateTitledPane(aboutTab, L["Special Thanks"], 205, 80)
+    local specialThanksPane = Cell:CreateTitledPane(aboutTab, L["Special Thanks"], 205, 112)
     specialThanksPane:SetPoint("TOPLEFT", aboutTab, "TOPLEFT", 5, -255)
 
     local thanksText = specialThanksPane:CreateFontString(nil, "OVERLAY", LOCALE_zhCN and "CELL_FONT_WIDGET" or "GameTooltipTextSmall")
     thanksText:SetPoint("TOPLEFT", 5, -27)
     thanksText:SetSpacing(5)
     thanksText:SetJustifyH("LEFT")
-    thanksText:SetText("夕曦 (NGA)\n黑色之城 (NGA)")
+    thanksText:SetText("夕曦 (NGA)\n黑色之城 (NGA)\n夏木沐-伊森利恩 (CN)")
 end
 
 -------------------------------------------------
 -- translators
 -------------------------------------------------
 local function CreateTranslatorsPane()
-    local translatorsPane = Cell:CreateTitledPane(aboutTab, L["Translators"], 205, 80)
+    local translatorsPane = Cell:CreateTitledPane(aboutTab, L["Translators"], 205, 112)
     translatorsPane:SetPoint("TOPLEFT", aboutTab, "TOPLEFT", 222, -255)
 
     local translatorsText = translatorsPane:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
@@ -95,7 +95,7 @@ end
 -------------------------------------------------
 local function CreateBugReportPane()
     local bugReportPane = Cell:CreateTitledPane(aboutTab, L["Bug Report & Suggestion"], 422, 73)
-    bugReportPane:SetPoint("TOPLEFT", aboutTab, "TOPLEFT", 5, -355)
+    bugReportPane:SetPoint("TOPLEFT", aboutTab, "TOPLEFT", 5, -380)
 
     local bugReportEB = Cell:CreateEditBox(bugReportPane, 412, 20)
     bugReportEB:SetPoint("TOPLEFT", 5, -27)
@@ -124,7 +124,7 @@ end
 -------------------------------------------------
 local function CreateImportExportPane()
     local iePane = Cell:CreateTitledPane(aboutTab, L["Import & Export All Settings"], 422, 50)
-    iePane:SetPoint("TOPLEFT", 5, -448)
+    iePane:SetPoint("TOPLEFT", 5, -467)
 
     local importBtn = Cell:CreateButton(iePane, L["Import"], "accent-hover", {200, 20})
     importBtn:SetPoint("TOPLEFT", 5, -27)
