@@ -272,6 +272,8 @@ L["Only show when you have permission to do this"] = "只在你有權限這樣�
 L["Only visible to me"] = "只對我自己顯示"
 L["onlyShowTopGlow"] = "只有優先順序最高的減益會發光"
 L["Options"] = "選項"
+--[[Translation missing --]]
+--[[ L["Options UI Accent Color"] = "Options UI Accent Color"--]] 
 L["Options UI Font Size"] = "設定選項介面文字大小"
 L["Orientation"] = "方向"
 L["Out of Range Alpha"] = "超出範圍透明度"

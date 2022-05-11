@@ -55,6 +55,10 @@ select(2, ...).L = setmetatable({
     ["SNIPPETS_TIPS"] = "[Double-Click] to rename. [Shift-Click] to delete. All checked snippets will be automatically invoked at the end of Cell initialization process (in ADDON_LOADED event).",
 
     ["CHANGELOGS"] = [[
+        <h1>r103-release (May 11, 2022, 08:10 GMT+8)</h1>
+        <p>+ Implemented accent color for options UI.</p>
+        <br/>
+
         <h1>r102-beta (May 8, 2022, 21:45 GMT+8)</h1>
         <p>* Updated raid debuffs.</p>
         <p>* Updated zhTW.</p>

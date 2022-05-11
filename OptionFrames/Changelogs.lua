@@ -6,7 +6,7 @@ local P = Cell.pixelPerfectFuncs
 local changelogsFrame
 
 local function CreateChangelogsFrame()
-    changelogsFrame = Cell:CreateMovableFrame("Cell "..L["Changelogs"], "CellChangelogsFrame", 370, 400, "DIALOG", 1, true)
+    changelogsFrame = Cell:CreateMovableFrame("Cell "..L["Changelogs"], "CellChangelogsFrame", 370, 430, "DIALOG", 1, true)
     Cell.frames.changelogsFrame = changelogsFrame
     changelogsFrame:SetToplevel(true)
 

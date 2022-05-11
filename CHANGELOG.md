@@ -1,4 +1,3 @@
-[Full Changelog](https://github.com/enderneko/Cell/compare/r101-beta...399523866a99bc8525047ef10d4854d79c96e4c1)
+[Full Changelog](https://github.com/enderneko/Cell/compare/r102-beta...d458b168023829a58d10e14653e3145e436e0e1a)
 
-- Update raid debuffs
-- Update zhTW
+- Implement accent color for options UI
