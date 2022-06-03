@@ -1,3 +1,3 @@
-[Full Changelog](https://github.com/enderneko/Cell/compare/r102-beta...d458b168023829a58d10e14653e3145e436e0e1a)
+[Full Changelog](https://github.com/enderneko/Cell/compare/r103-release...423c3d9d5c22cad1d925f1a0ee5ec77761fd1a07)
 
-- Implement accent color for options UI
+- Bump up toc
