@@ -222,7 +222,7 @@ local function UpdateName(who)
         if strfind(who, "-") then
             who = F:ToShortName(who)
         else
-            who = who.."-"..F:GetRealmName()
+            who = who.."-"..GetNormalizedRealmName()
         end
         b = F:GetUnitButtonByName(who)
         if b then

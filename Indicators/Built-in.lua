@@ -881,11 +881,18 @@ function I:CreateNameText(parent)
 
     function nameText:UpdateName()
         local name
-        if Cell.vars.nicknameCustomEnabled then
-            name = Cell.vars.nicknameCustoms[parent.state.fullName] or Cell.vars.nicknameCustoms[parent.state.name] or Cell.vars.nicknames[parent.state.fullName] or Cell.vars.nicknames[parent.state.name] or parent.state.name
+        
+        -- only check nickname for players
+        if parent.state.isPlayer then
+            if Cell.vars.nicknameCustomEnabled then
+                name = Cell.vars.nicknameCustoms[parent.state.fullName] or Cell.vars.nicknameCustoms[parent.state.name] or Cell.vars.nicknames[parent.state.fullName] or Cell.vars.nicknames[parent.state.name] or parent.state.name
+            else
+                name = Cell.vars.nicknames[parent.state.fullName] or Cell.vars.nicknames[parent.state.name] or parent.state.name
+            end
         else
-            name = Cell.vars.nicknames[parent.state.fullName] or Cell.vars.nicknames[parent.state.name] or parent.state.name
+            name = parent.state.name
         end
+
         F:UpdateTextWidth(nameText.name, name, nameText.width, parent.widget.healthBar)
         nameText:SetSize(nameText.name:GetWidth(), nameText.name:GetHeight())
     end
@@ -921,8 +928,8 @@ function I:CreateNameText(parent)
 
     function nameText:UpdateTextWidth(width)
         nameText.width = width
-        F:UpdateTextWidth(nameText.name, parent.state.name, width, parent.widget.healthBar)
-        nameText:SetSize(nameText.name:GetWidth(), nameText.name:GetHeight())
+        
+        nameText:UpdateName()
 
         if parent.state.inVehicle or nameText.isPreview then
             F:UpdateTextWidth(nameText.vehicle, nameText.isPreview and L["Vehicle Name"] or UnitName(parent.state.displayedUnit), width, parent.widget.healthBar)

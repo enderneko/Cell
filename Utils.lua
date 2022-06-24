@@ -448,9 +448,9 @@ end
 -------------------------------------------------
 -- general
 -------------------------------------------------
-function F:GetRealmName()
-    return string.gsub(GetRealmName(), " ", "")
-end
+-- function F:GetRealmName()
+--     return string.gsub(GetRealmName(), " ", "")
+-- end
 
 function F:UnitFullName(unit)
     if not unit or not UnitIsPlayer(unit) then return end
@@ -459,7 +459,7 @@ function F:UnitFullName(unit)
     
     --? name might be nil in some cases?
     if name and not string.find(name, "-") then
-        name = name.."-"..F:GetRealmName()
+        name = name.."-"..GetNormalizedRealmName()
     end
     
     return name

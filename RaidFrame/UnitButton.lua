@@ -1675,6 +1675,7 @@ local function UnitButton_UpdateName(self)
     self.state.fullName = F:UnitFullName(unit)
     self.state.class = select(2, UnitClass(unit))
     self.state.guid = UnitGUID(unit)
+    self.state.isPlayer = UnitIsPlayer(unit)
 
     self.indicators.nameText:UpdateName()
 end
