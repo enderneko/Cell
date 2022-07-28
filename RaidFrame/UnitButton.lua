@@ -5,6 +5,8 @@ local I = Cell.iFuncs
 local P = Cell.pixelPerfectFuncs
 local A = Cell.animations
 
+CELL_SUMMON_ICONS_ENABLED = false
+
 -- local LibCLHealth = LibStub("LibCombatLogHealth-1.0")
 
 local UnitGUID = UnitGUID
@@ -1558,21 +1560,21 @@ UnitButton_UpdateStatusIcon = function(self)
         icon:SetTexCoord(0, 1, 0, 1)
         -- icon:HideBorder()
         icon:Show()
-    -- elseif C_IncomingSummon.HasIncomingSummon(unit) then
-    --     local status = C_IncomingSummon.IncomingSummonStatus(unit)
-    --     if(status == Enum.SummonStatus.Pending) then
-    --         icon:SetAtlas("Raid-Icon-SummonPending")
-    --         icon:SetTexCoord(0, 1, 0, 1)
-    --         icon.border:Hide()
-    --     elseif( status == Enum.SummonStatus.Accepted ) then
-    --         icon:SetAtlas("Raid-Icon-SummonAccepted")
-    --         icon:SetTexCoord(0, 1, 0, 1)
-    --         icon.border:Hide()
-    --     elseif( status == Enum.SummonStatus.Declined ) then
-    --         icon:SetAtlas("Raid-Icon-SummonDeclined")
-    --         icon:SetTexCoord(0, 1, 0, 1)
-    --         icon.border:Hide()
-    --     end
+    elseif CELL_SUMMON_ICONS_ENABLED and C_IncomingSummon.HasIncomingSummon(unit) then
+        local status = C_IncomingSummon.IncomingSummonStatus(unit)
+        if status == Enum.SummonStatus.Pending then
+            icon:SetAtlas("Raid-Icon-SummonPending")
+            icon:SetTexCoord(0.15, 0.85, 0.15, 0.85)
+        elseif status == Enum.SummonStatus.Accepted then
+            icon:SetAtlas("Raid-Icon-SummonAccepted")
+            icon:SetTexCoord(0.15, 0.85, 0.15, 0.85)
+            C_Timer.After(6, function() UnitButton_UpdateStatusIcon(self) end)
+        elseif status == Enum.SummonStatus.Declined then
+            icon:SetAtlas("Raid-Icon-SummonDeclined")
+            icon:SetTexCoord(0.15, 0.85, 0.15, 0.85)
+            C_Timer.After(6, function() UnitButton_UpdateStatusIcon(self) end)
+        end
+        icon:Show()
     elseif UnitIsPlayer(unit) and phaseReason and not self.state.inVehicle then
         -- ElvUI
         if phaseReason == 3 then -- chromie, gold
@@ -1935,6 +1937,7 @@ local function UnitButton_OnEvent(self, event, unit)
             UnitButton_UpdateTargetRaidIcon(self)
             
         elseif event == "PLAYER_FLAGS_CHANGED" or event == "UNIT_FLAGS" or event == "INCOMING_SUMMON_CHANGED" then
+            if CELL_SUMMON_ICONS_ENABLED then UnitButton_UpdateStatusIcon(self) end
             UnitButton_UpdateStatusText(self)
             
         elseif event == "UNIT_FACTION" then -- mind control
