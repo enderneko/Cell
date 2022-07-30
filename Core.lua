@@ -22,19 +22,19 @@ Cell.MIN_DEBUFFS_VERSION = 78
 local debugMode = true
 --@end-debug@
 function F:Debug(arg, ...)
-	if debugMode then
-		if type(arg) == "string" or type(arg) == "number" then
-			print(arg, ...)
-		elseif type(arg) == "function" then
-			arg(...)
-		elseif arg == nil then
-			return true
-		end
-	end
+    if debugMode then
+        if type(arg) == "string" or type(arg) == "number" then
+            print(arg, ...)
+        elseif type(arg) == "function" then
+            arg(...)
+        elseif arg == nil then
+            return true
+        end
+    end
 end
 
 function F:Print(msg)
-	print("|cFFFF3030[Cell]|r " .. msg)
+    print("|cFFFF3030[Cell]|r " .. msg)
 end
 
 local IsInRaid = IsInRaid
@@ -647,7 +647,7 @@ function eventFrame:ACTIVE_TALENT_GROUP_CHANGED()
 end
 
 eventFrame:SetScript("OnEvent", function(self, event, ...)
-	self[event](self, ...)
+    self[event](self, ...)
 end)
 
 -------------------------------------------------
