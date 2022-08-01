@@ -9,7 +9,6 @@ externals:
   Libs/LibSerialize: https://github.com/rossnichols/LibSerialize
   Libs/LibCustomGlow-1.0: https://github.com/Stanzilla/LibCustomGlow
   Libs/LibSharedMedia-3.0: https://repos.curseforge.com/wow/libsharedmedia-3-0/trunk/LibSharedMedia-3.0
-  Libs/LibGroupInSpecT: https://repos.curseforge.com/wow/libgroupinspect/trunk
   Libs/LibDeflate: https://github.com/SafeteeWoW/LibDeflate
   Libs/LibRangeCheck-2.0: https://github.com/WeakAuras/LibRangeCheck-2.0
 
@@ -18,9 +17,6 @@ ignore:
   - Libs/LibDeflate/examples
   - Libs/LibDeflate/CONTRIBUTING.md
   - Libs/LibStub/tests
-  - Libs/LibGroupInSpecT/CallbackHandler-1.0
-  - Libs/LibGroupInSpecT/LibStub
-  - Libs/LibGroupInSpecT/embeds.xml
   - generate_changelog.sh
 
 manual-changelog:

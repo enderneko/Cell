@@ -1038,15 +1038,15 @@ end
 -------------------------------------------------
 -- power filter funcs
 -------------------------------------------------
-local LGIST = LibStub:GetLibrary("LibGroupInSpecT-1.1")
+local LGI = LibStub:GetLibrary("LibGroupInfo")
 local function GetRole(b)
     if b.state.role and b.state.role ~= "NONE" then
         return b.state.role
     end
 
-    local info = LGIST:GetCachedInfo(b.state.guid)
+    local info = LGI:GetCachedInfo(b.state.guid)
     if not info then return end
-    return info.spec_role
+    return info.role
 end
 
 local function ShouldShowPowerBar(b)
@@ -1163,7 +1163,7 @@ UnitButton_UpdateRole = function(self)
         local role = UnitGroupRolesAssigned(unit)
         self.state.role = role
 
-        roleIcon:SetRole(role, LGIST:GetCachedInfo(self.state.guid))
+        roleIcon:SetRole(role)
     else
         roleIcon:Hide()
     end

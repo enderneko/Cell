@@ -4,6 +4,7 @@
     <Script file="CallbackHandler.lua"/>
     <Script file="PixelPerfect.lua"/>
     <Script file="FAIAP.lua"/>
+    <Script file="LibGroupInfo.lua"/>
     <!-- externals -->
     <Script file="LibStub\LibStub.lua"/>
     <Include file="CallbackHandler-1.0\CallbackHandler-1.0.xml"/>
@@ -12,6 +13,6 @@
     <Include file="AceComm-3.0\AceComm-3.0.xml"/>
     <Include file="LibSerialize\lib.xml"/>
     <Include file="LibDeflate\lib.xml"/>
-    <Include file="LibGroupInSpecT\lib.xml"/>
+    <!-- <Include file="LibGroupInSpecT\lib.xml"/> -->
     <Script file="LibRangeCheck-2.0\LibRangeCheck-2.0.lua"/>
 </Ui>

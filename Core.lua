@@ -19,7 +19,7 @@ Cell.MIN_INDICATORS_VERSION = 99
 Cell.MIN_DEBUFFS_VERSION = 78
 
 --@debug@
-local debugMode = true
+-- local debugMode = true
 --@end-debug@
 function F:Debug(arg, ...)
     if debugMode then

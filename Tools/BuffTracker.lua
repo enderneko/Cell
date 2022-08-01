@@ -2,7 +2,7 @@ local _, Cell = ...
 local L = Cell.L
 local F = Cell.funcs
 local P = Cell.pixelPerfectFuncs
-local LGIST = LibStub:GetLibrary("LibGroupInSpecT-1.1")
+local LGI = LibStub:GetLibrary("LibGroupInfo")
 
 local UnitIsConnected = UnitIsConnected
 local UnitIsVisible = UnitIsVisible
@@ -266,8 +266,8 @@ local function CheckUnit(unit, updateBtn)
     if not (available["PWF"] or available["AB"] or available["BS"]) then return end
 
     if UnitIsConnected(unit) and UnitIsVisible(unit) and not UnitIsDeadOrGhost(unit) then
-        local info = LGIST:GetCachedInfo(UnitGUID(unit))
-        local spec = info and info.global_spec_id or ""
+        local info = LGI:GetCachedInfo(UnitGUID(unit))
+        local spec = info and info.specId or ""
         local required = requiredBuffs[spec]
         if available["PWF"] then
             if not F:FindAuraById(unit, "BUFF", 21562) then
@@ -337,7 +337,7 @@ end
 -- events
 -------------------------------------------------
 function buffTrackerFrame:UnitUpdated(event, guid, unit, info)
-    --    print(event, guid, unit, info.global_spec_id)
+    -- print(event, guid, unit, info.specId)
     if unit == "player" then 
         if UnitIsUnit("player", myUnit) then CheckUnit(myUnit, true) end
     elseif UnitIsPlayer(unit) then -- ignore pets
@@ -420,7 +420,7 @@ local function UpdateTools(which)
         if CellDB["tools"]["buffTracker"][1] then
             buffTrackerFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
             buffTrackerFrame:RegisterEvent("GROUP_ROSTER_UPDATE")
-            LGIST.RegisterCallback(buffTrackerFrame, "GroupInSpecT_Update", "UnitUpdated") 
+            LGI.RegisterCallback(buffTrackerFrame, "GroupInfo_Update", "UnitUpdated") 
 
             if not enabled and which == "buffTracker" then -- already in world, manually enabled
                 buffTrackerFrame:GROUP_ROSTER_UPDATE(true)
@@ -431,7 +431,7 @@ local function UpdateTools(which)
             end
         else
             buffTrackerFrame:UnregisterAllEvents()
-            LGIST.UnregisterCallback(buffTrackerFrame, "GroupInSpecT_Update")
+            LGI.UnregisterCallback(buffTrackerFrame, "GroupInfo_Update")
             
             wipe(unaffected["PWF"])
             wipe(unaffected["AB"])
