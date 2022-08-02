@@ -107,16 +107,33 @@ local function CreateBugReportPane()
         end
     end)
     
-    local cnbugReportEB = Cell:CreateEditBox(bugReportPane, 412, 20)
-    cnbugReportEB:SetPoint("TOPLEFT", bugReportEB, "BOTTOMLEFT", 0, -5)
-    cnbugReportEB:SetText("https://bbs.nga.cn/read.php?tid=23488341")
-    cnbugReportEB:SetScript("OnTextChanged", function(self, userChanged)
+    local cnBugReportEB = Cell:CreateEditBox(bugReportPane, 412, 20)
+    cnBugReportEB:SetPoint("TOPLEFT", bugReportEB, "BOTTOMLEFT", 0, -5)
+    cnBugReportEB:SetText("https://kook.top/w6uvTN")
+    cnBugReportEB:SetScript("OnTextChanged", function(self, userChanged)
         if userChanged then
-            cnbugReportEB:SetText("https://bbs.nga.cn/read.php?tid=23488341")
-            cnbugReportEB:HighlightText()
+            cnBugReportEB:SetText("https://kook.top/w6uvTN")
+            cnBugReportEB:HighlightText()
+        end
+    end)
+
+    local text = cnBugReportEB:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
+    text:SetPoint("RIGHT", -5, 0)
+    text:SetText("|cff777777CN|r")
+    
+    local cnBugReportEB2 = Cell:CreateEditBox(bugReportPane, 412, 20)
+    cnBugReportEB2:SetPoint("TOPLEFT", cnBugReportEB, "BOTTOMLEFT", 0, -5)
+    cnBugReportEB2:SetText("https://bbs.nga.cn/read.php?tid=23488341")
+    cnBugReportEB2:SetScript("OnTextChanged", function(self, userChanged)
+        if userChanged then
+            cnBugReportEB2:SetText("https://bbs.nga.cn/read.php?tid=23488341")
+            cnBugReportEB2:HighlightText()
         end
     end)
         
+    local text2 = cnBugReportEB2:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
+    text2:SetPoint("RIGHT", -5, 0)
+    text2:SetText("|cff777777CN|r")
 end
 
 -------------------------------------------------
@@ -124,7 +141,7 @@ end
 -------------------------------------------------
 local function CreateImportExportPane()
     local iePane = Cell:CreateTitledPane(aboutTab, L["Import & Export All Settings"], 422, 50)
-    iePane:SetPoint("TOPLEFT", 5, -467)
+    iePane:SetPoint("TOPLEFT", 5, -497)
 
     local importBtn = Cell:CreateButton(iePane, L["Import"], "accent-hover", {200, 20})
     importBtn:SetPoint("TOPLEFT", 5, -27)
