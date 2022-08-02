@@ -1,7 +1,4 @@
-[Full Changelog](https://github.com/enderneko/Cell/compare/r104-release...d9c5e9d9b4fd971cad7fe80176107389a3580c62)
+[Full Changelog](https://github.com/enderneko/Cell/compare/r105-beta...f448243d9130c45dba36382f9273613500f59c64)
 
-- Replace LibGroupInSpecT with LibGroupInfo
-- Update summon status icons
-- Fix nicknames
-- [snippet] server name
-- [snippet] hide in raid
+- Fix a lib init error
+- Cell不是CompactRaid修改版或增强版！
