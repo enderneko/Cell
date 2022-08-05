@@ -54,22 +54,22 @@ local bossIdToName = {
 local function LoadBossList(instanceId, list)
     EJ_SelectInstance(instanceId)
     for index = 1, 77 do
-		local name, _, id = EJ_GetEncounterInfoByIndex(index)
-		if not name or not id then
-			break
+        local name, _, id = EJ_GetEncounterInfoByIndex(index)
+        if not name or not id then
+            break
         end
         
         -- id, name, description, displayInfo, iconImage, uiModelSceneID = EJ_GetCreatureInfo(index [, encounterID])
         local image = select(5, EJ_GetCreatureInfo(1, id))
         tinsert(list, {["name"]=name, ["id"]=id, ["image"]=image})
         bossIdToName[id] = name
-	end
+    end
 end
 
 local function LoadInstanceList(tier, instanceType, list)
+    EJ_SelectTier(tier)
     local isRaid = instanceType == "raid"
     for index = 1, 77 do
-        EJ_SelectTier(tier)
         local id, name = EJ_GetInstanceByIndex(index, isRaid)
         if not id or not name then
             break
@@ -1872,26 +1872,26 @@ end
 OpenEncounterJournal = function(instanceId)
     if not IsAddOnLoaded("Blizzard_EncounterJournal") then LoadAddOn("Blizzard_EncounterJournal") end
     
-	local difficulty
-	if IsInInstance() then
-		difficulty = select(3,GetInstanceInfo())
-	else
-		difficulty = 14
+    local difficulty
+    if IsInInstance() then
+        difficulty = select(3,GetInstanceInfo())
+    else
+        difficulty = 14
     end
 
-	ShowUIPanel(EncounterJournal)
-	EJ_ContentTab_Select(EncounterJournal.instanceSelect.dungeonsTab.id)
-	EncounterJournal_DisplayInstance(instanceId)
+    ShowUIPanel(EncounterJournal)
+    EJ_ContentTab_Select(EncounterJournal.instanceSelect.dungeonsTab.id)
+    EncounterJournal_DisplayInstance(instanceId)
     EncounterJournal.lastInstance = instanceId
     
-	if not EJ_IsValidInstanceDifficulty(difficulty) then
-		difficulty = (difficulty==14 and 1) or (difficulty==15 and 2) or (difficulty==16 and 23) or (difficulty==17 and 7) or 0
-		if not EJ_IsValidInstanceDifficulty(difficulty) then
-			return
-		end
-	end
-	EJ_SetDifficulty(difficulty)
-	EncounterJournal.lastDifficulty = difficulty
+    if not EJ_IsValidInstanceDifficulty(difficulty) then
+        difficulty = (difficulty==14 and 1) or (difficulty==15 and 2) or (difficulty==16 and 23) or (difficulty==17 and 7) or 0
+        if not EJ_IsValidInstanceDifficulty(difficulty) then
+            return
+        end
+    end
+    EJ_SetDifficulty(difficulty)
+    EncounterJournal.lastDifficulty = difficulty
 end
 
 
