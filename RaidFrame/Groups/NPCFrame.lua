@@ -93,7 +93,7 @@ for i = 1, 8 do
 
     -- NOTE: update each npc unitbutton's point on show/hide
     button.helper = CreateFrame("Frame", nil, button, "SecureHandlerShowHideTemplate")
-	button.helper:SetFrameRef("npcFrame", npcFrame)
+    button.helper:SetFrameRef("npcFrame", npcFrame)
     button.helper:SetAttribute("pointUpdater", [[
         local orientation = self:GetAttribute("orientation")
         local point = self:GetAttribute("point")
@@ -103,8 +103,8 @@ for i = 1, 8 do
         local npcFrame = self:GetFrameRef("npcFrame")
         self:RunFor(npcFrame, npcFrame:GetAttribute("pointUpdater"), orientation, point, anchorPoint, unitSpacing)
     ]])
-	button.helper:SetAttribute("_onshow", [[ self:RunAttribute("pointUpdater") ]])
-	button.helper:SetAttribute("_onhide", [[ self:RunAttribute("pointUpdater") ]])
+    button.helper:SetAttribute("_onshow", [[ self:RunAttribute("pointUpdater") ]])
+    button.helper:SetAttribute("_onhide", [[ self:RunAttribute("pointUpdater") ]])
 end
 
 -------------------------------------------------

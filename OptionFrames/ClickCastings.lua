@@ -955,11 +955,11 @@ LoadProfile = function(isCommon)
         local b = CreateBindingListButton(modifier, bindKey, bindType, bindAction, i)
 
         if last then
-			b:SetPoint("TOP", last, "BOTTOM", 0, -5)
-		else
-			b:SetPoint("TOP")
-		end
-		last = b
+            b:SetPoint("TOP", last, "BOTTOM", 0, -5)
+        else
+            b:SetPoint("TOP")
+        end
+        last = b
     end
     -- F:Debug("-- Load clickCastings end ----------------")
     bindingsFrame.scrollFrame:SetContentHeight(20, #clickCastingTable, 5)

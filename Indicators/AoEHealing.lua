@@ -40,16 +40,16 @@ end)
 
 function I:CreateAoEHealing(parent)
     local aoeHealing = CreateFrame("Frame", nil, parent.widget.healthBar)
-	parent.indicators.aoeHealing = aoeHealing
-	aoeHealing:SetPoint("TOPLEFT", parent.widget.healthBar)
+    parent.indicators.aoeHealing = aoeHealing
+    aoeHealing:SetPoint("TOPLEFT", parent.widget.healthBar)
     aoeHealing:SetPoint("TOPRIGHT", parent.widget.healthBar)
     aoeHealing:SetFrameLevel(parent.widget.healthBar:GetFrameLevel()+1)
     -- aoeHealing:SetHeight(15)
-	aoeHealing:Hide()
+    aoeHealing:Hide()
 
-	aoeHealing.tex = aoeHealing:CreateTexture(nil, "ARTWORK")
+    aoeHealing.tex = aoeHealing:CreateTexture(nil, "ARTWORK")
     aoeHealing.tex:SetAllPoints(aoeHealing)
-	aoeHealing.tex:SetTexture("Interface\\Buttons\\WHITE8x8")
+    aoeHealing.tex:SetTexture("Interface\\Buttons\\WHITE8x8")
     
     local ag = aoeHealing:CreateAnimationGroup()
     local a1 = ag:CreateAnimation("Alpha")
@@ -72,8 +72,8 @@ function I:CreateAoEHealing(parent)
         aoeHealing:Hide()
     end)
 
-	function aoeHealing:SetColor(r, g, b)
-		aoeHealing.tex:SetGradientAlpha("VERTICAL", r, g, b, 0, r, g, b, .77)
+    function aoeHealing:SetColor(r, g, b)
+        aoeHealing.tex:SetGradientAlpha("VERTICAL", r, g, b, 0, r, g, b, .77)
     end
 
     function aoeHealing:ShowUp()

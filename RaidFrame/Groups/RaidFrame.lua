@@ -11,15 +11,15 @@ npcFrameAnchor:Hide()
 raidFrame:SetFrameRef("npcAnchor", npcFrameAnchor)
 
 raidFrame:SetAttribute("_onattributechanged", [[
-	if name ~= "visibility" then
-		return
+    if name ~= "visibility" then
+        return
     end
 
     local maxGroup
-	for i = 1, 8 do
-		if self:GetFrameRef("visibilityhelper"..i):IsVisible() then
-			maxGroup = i
-		end
+    for i = 1, 8 do
+        if self:GetFrameRef("visibilityhelper"..i):IsVisible() then
+            maxGroup = i
+        end
     end
 
     if not maxGroup then return end -- NOTE: empty subgroup will cause maxGroup == nil
@@ -101,35 +101,35 @@ columnAnchorPoint = [STRING] - the anchor point of each new column (ie. use LEFT
 local groupHeaders = {}
 local function CreateGroupHeader(group)
     local headerName = "CellRaidFrameHeader"..group
-	local header = CreateFrame("Frame", headerName, raidFrame, "SecureGroupHeaderTemplate")
+    local header = CreateFrame("Frame", headerName, raidFrame, "SecureGroupHeaderTemplate")
     groupHeaders[group] = header
     Cell.unitButtons.raid[headerName] = header
 
-	header:SetAttribute("initialConfigFunction", [[
+    header:SetAttribute("initialConfigFunction", [[
         RegisterUnitWatch(self)
 
         local header = self:GetParent()
-		self:SetWidth(header:GetAttribute("buttonWidth") or 66)
+        self:SetWidth(header:GetAttribute("buttonWidth") or 66)
         self:SetHeight(header:GetAttribute("buttonHeight") or 46)
     ]])
     
-	header:SetAttribute("template", "CellUnitButtonTemplate")
-	header:SetAttribute("columnAnchorPoint", "LEFT")
-	header:SetAttribute("point", "TOP")
+    header:SetAttribute("template", "CellUnitButtonTemplate")
+    header:SetAttribute("columnAnchorPoint", "LEFT")
+    header:SetAttribute("point", "TOP")
     header:SetAttribute("groupFilter", group)
     -- header:SetAttribute("groupFilter", "1,2,3,4,5,6,7,8")
     -- header:SetAttribute("groupBy", "ASSIGNEDROLE")
     -- header:SetAttribute("groupingOrder", "TANK,HEALER,DAMAGER,NONE")
     -- header:SetAttribute("maxColumns", 8)
-	header:SetAttribute("xOffset", 0)
-	header:SetAttribute("yOffset", -1)
-	header:SetAttribute("unitsPerColumn", 5)
-	header:SetAttribute("columnSpacing", 1)
+    header:SetAttribute("xOffset", 0)
+    header:SetAttribute("yOffset", -1)
+    header:SetAttribute("unitsPerColumn", 5)
+    header:SetAttribute("columnSpacing", 1)
     header:SetAttribute("maxColumns", 1)
     header:SetAttribute("startingIndex", 1)
-	header:SetAttribute("showRaid", true)
+    header:SetAttribute("showRaid", true)
 
-	return header
+    return header
 end
 
 for i = 1, 8 do
@@ -144,17 +144,17 @@ for i = 1, 8 do
     
     --! to make needButtons == 5 cheat configureChildren in SecureGroupHeaders.lua
     header:SetAttribute("startingIndex", -4)
-	header:Show()
+    header:Show()
     header:SetAttribute("startingIndex", 1)
 
     -- for npcFrame's point
     raidFrame:SetFrameRef("subgroup"..i, header)
     
     local helper = CreateFrame("Frame", nil, header[1], "SecureHandlerShowHideTemplate")
-	helper:SetFrameRef("raidframe", raidFrame)
-	raidFrame:SetFrameRef("visibilityhelper"..i, helper)
-	helper:SetAttribute("_onshow", [[ self:GetFrameRef("raidframe"):SetAttribute("visibility", 1) ]])
-	helper:SetAttribute("_onhide", [[ self:GetFrameRef("raidframe"):SetAttribute("visibility", 0) ]])
+    helper:SetFrameRef("raidframe", raidFrame)
+    raidFrame:SetFrameRef("visibilityhelper"..i, helper)
+    helper:SetAttribute("_onshow", [[ self:GetFrameRef("raidframe"):SetAttribute("visibility", 1) ]])
+    helper:SetAttribute("_onhide", [[ self:GetFrameRef("raidframe"):SetAttribute("visibility", 0) ]])
 end
 
 -- arena pet

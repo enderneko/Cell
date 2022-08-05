@@ -70,7 +70,7 @@ function I:CreateDefensiveCooldowns(parent)
         else
             P:Point(frame, "LEFT", defensiveCooldowns[i-1], "RIGHT", -1, 0)
         end
-	end
+    end
 
     function defensiveCooldowns:ShowDuration(show)
         for i = 1, 5 do
@@ -152,7 +152,7 @@ function I:CreateExternalCooldowns(parent)
         else
             P:Point(frame, "RIGHT", externalCooldowns[i-1], "LEFT", 1, 0)
         end
-	end
+    end
 
     function externalCooldowns:ShowDuration(show)
         for i = 1, 5 do
@@ -233,7 +233,7 @@ function I:CreateAllCooldowns(parent)
         else
             P:Point(frame, "RIGHT", allCooldowns[i-1], "LEFT", 1, 0)
         end
-	end
+    end
 
     function allCooldowns:ShowDuration(show)
         for i = 1, 5 do
@@ -394,7 +394,7 @@ function I:CreateDebuffs(parent)
         -- else
         --     frame:SetPoint("LEFT", debuffs[i-1], "RIGHT")
         -- end
-	end
+    end
 
     function debuffs:ShowDuration(show)
         for i = 1, 10 do
@@ -758,7 +758,7 @@ function I:CreateRaidDebuffs(parent)
         tinsert(raidDebuffs, frame)
         frame:SetScript("OnShow", raidDebuffs.UpdateSize)
         frame:SetScript("OnHide", raidDebuffs.UpdateSize)
-	end
+    end
 
     function raidDebuffs:UpdatePixelPerfect()
         raidDebuffs:OriginalSetSize(P:Scale(raidDebuffs.width), P:Scale(raidDebuffs.height))
@@ -965,14 +965,14 @@ end
 local startTimeCache = {}
 function I:CreateStatusText(parent)
     local statusText = CreateFrame("Frame", parent:GetName().."StatusText", parent.widget.overlayFrame)
-	parent.indicators.statusText = statusText
-	statusText:Hide()
+    parent.indicators.statusText = statusText
+    statusText:Hide()
 
-	local text = statusText:CreateFontString(nil, "ARTWORK", "CELL_FONT_STATUS")
-	statusText.text = text
+    local text = statusText:CreateFontString(nil, "ARTWORK", "CELL_FONT_STATUS")
+    statusText.text = text
 
     local timer = statusText:CreateFontString(nil, "ARTWORK", "CELL_FONT_STATUS")
-	statusText.timer = timer
+    statusText.timer = timer
     
     function statusText:GetStatus()
         return statusText.status
@@ -1036,29 +1036,29 @@ function I:CreateStatusText(parent)
     end
 
     function statusText:ShowTimer()
-		timer:Show()
-		if not startTimeCache[parent.state.guid] then startTimeCache[parent.state.guid] = GetTime() end
-		
-		statusText.ticker = C_Timer.NewTicker(1, function()
-			if not parent.state.guid and parent.state.unit then -- ElvUI AFK mode
-				parent.state.guid = UnitGUID(parent.state.unit)
-			end
-			if parent.state.guid and startTimeCache[parent.state.guid] then
-				timer:SetFormattedText(F:FormatTime(GetTime() - startTimeCache[parent.state.guid]))
-			else
-				timer:SetText("")
-			end
-		end)
-	end
+        timer:Show()
+        if not startTimeCache[parent.state.guid] then startTimeCache[parent.state.guid] = GetTime() end
+        
+        statusText.ticker = C_Timer.NewTicker(1, function()
+            if not parent.state.guid and parent.state.unit then -- ElvUI AFK mode
+                parent.state.guid = UnitGUID(parent.state.unit)
+            end
+            if parent.state.guid and startTimeCache[parent.state.guid] then
+                timer:SetFormattedText(F:FormatTime(GetTime() - startTimeCache[parent.state.guid]))
+            else
+                timer:SetText("")
+            end
+        end)
+    end
 
-	function statusText:HideTimer(reset)
-		timer:Hide()
-		timer:SetText("")
-		if reset then
-			if statusText.ticker then statusText.ticker:Cancel() end
-			startTimeCache[parent.state.guid] = nil
-		end
-	end
+    function statusText:HideTimer(reset)
+        timer:Hide()
+        timer:SetText("")
+        if reset then
+            if statusText.ticker then statusText.ticker:Cancel() end
+            startTimeCache[parent.state.guid] = nil
+        end
+    end
 end
 
 -------------------------------------------------
@@ -1138,8 +1138,8 @@ end
 -------------------------------------------------
 function I:CreateRoleIcon(parent)
     local roleIcon = parent.widget.overlayFrame:CreateTexture(parent:GetName().."RoleIcon", "ARTWORK", nil, -7)
-	parent.indicators.roleIcon = roleIcon
-	-- roleIcon:SetPoint("TOPLEFT", overlayFrame)
+    parent.indicators.roleIcon = roleIcon
+    -- roleIcon:SetPoint("TOPLEFT", overlayFrame)
     -- roleIcon:SetSize(11, 11)
     
     function roleIcon:SetRole(role)
@@ -1170,9 +1170,9 @@ function I:CreateRoleIcon(parent)
                 roleIcon:SetTexCoord(0, 1, 0, 1)
             end
             roleIcon:Show()
-		else
-			roleIcon:Hide()
-		end
+        else
+            roleIcon:Hide()
+        end
     end
 
     function roleIcon:SetRoleTexture(t)
@@ -1188,10 +1188,10 @@ end
 -------------------------------------------------
 function I:CreateLeaderIcon(parent)
     local leaderIcon = parent.widget.overlayFrame:CreateTexture(parent:GetName().."LeaderIcon", "ARTWORK", nil, -7)
-	parent.indicators.leaderIcon = leaderIcon
-	-- leaderIcon:SetPoint("TOPLEFT", roleIcon, "BOTTOM")
-	-- leaderIcon:SetPoint("TOPLEFT", 0, -11)
-	-- leaderIcon:SetSize(11, 11)
+    parent.indicators.leaderIcon = leaderIcon
+    -- leaderIcon:SetPoint("TOPLEFT", roleIcon, "BOTTOM")
+    -- leaderIcon:SetPoint("TOPLEFT", 0, -11)
+    -- leaderIcon:SetSize(11, 11)
     leaderIcon:Hide()
     
     function leaderIcon:SetIcon(isLeader, isAssistant)
@@ -1213,8 +1213,8 @@ end
 function I:CreateReadyCheckIcon(parent)
     local readyCheckIcon = CreateFrame("Frame", parent:GetName().."ReadyCheckIcon", parent.widget.overlayFrame)
     parent.indicators.readyCheckIcon = readyCheckIcon
-	-- readyCheckIcon:SetSize(16, 16)
-	readyCheckIcon:SetPoint("CENTER", parent.widget.healthBar)
+    -- readyCheckIcon:SetSize(16, 16)
+    readyCheckIcon:SetPoint("CENTER", parent.widget.healthBar)
     readyCheckIcon:Hide()
     readyCheckIcon:SetIgnoreParentAlpha(true)
     
@@ -1231,7 +1231,7 @@ end
 -------------------------------------------------
 function I:CreateAggroBorder(parent)
     local aggroBorder = CreateFrame("Frame", parent:GetName().."AggroBorder", parent, "BackdropTemplate")
-	parent.indicators.aggroBorder = aggroBorder
+    parent.indicators.aggroBorder = aggroBorder
     P:Point(aggroBorder, "TOPLEFT", parent, "TOPLEFT", 1, -1)
     P:Point(aggroBorder, "BOTTOMRIGHT", parent, "BOTTOMRIGHT", -1, 1)
     aggroBorder:Hide()
@@ -1286,13 +1286,13 @@ end
 -------------------------------------------------
 function I:CreateAggroBlink(parent)
     local aggroBlink = CreateFrame("Frame", parent:GetName().."AggroBlink", parent.widget.overlayFrame, "BackdropTemplate")
-	parent.indicators.aggroBlink = aggroBlink
-	-- aggroBlink:SetPoint("TOPLEFT")
-	-- aggroBlink:SetSize(10, 10)
-	aggroBlink:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8x8", edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = P:Scale(1)})
-	aggroBlink:SetBackdropColor(1, 0, 0, 1)
-	aggroBlink:SetBackdropBorderColor(0, 0, 0, 1)
-	aggroBlink:Hide()
+    parent.indicators.aggroBlink = aggroBlink
+    -- aggroBlink:SetPoint("TOPLEFT")
+    -- aggroBlink:SetSize(10, 10)
+    aggroBlink:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8x8", edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = P:Scale(1)})
+    aggroBlink:SetBackdropColor(1, 0, 0, 1)
+    aggroBlink:SetBackdropBorderColor(0, 0, 0, 1)
+    aggroBlink:Hide()
 
     local blink = aggroBlink:CreateAnimationGroup()
     aggroBlink.blink = blink
@@ -1303,14 +1303,14 @@ function I:CreateAggroBlink(parent)
     alpha:SetFromAlpha(1)
     alpha:SetToAlpha(0)
     alpha:SetDuration(0.5)
-	
-	aggroBlink:SetScript("OnShow", function(self)
-		self.blink:Play()
-	end)
-	
-	aggroBlink:SetScript("OnHide", function(self)
-		self.blink:Stop()
-	end)
+    
+    aggroBlink:SetScript("OnShow", function(self)
+        self.blink:Play()
+    end)
+    
+    aggroBlink:SetScript("OnHide", function(self)
+        self.blink:Stop()
+    end)
 
     function aggroBlink:ShowAggro(r, g, b)
         aggroBlink:SetBackdropColor(r, g, b)
