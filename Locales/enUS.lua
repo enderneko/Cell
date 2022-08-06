@@ -55,6 +55,11 @@ select(2, ...).L = setmetatable({
     ["SNIPPETS_TIPS"] = "[Double-Click] to rename. [Shift-Click] to delete. All checked snippets will be automatically invoked at the end of Cell initialization process (in ADDON_LOADED event).",
 
     ["CHANGELOGS"] = [[
+        <h1>r107-release (Aug 6, 2022, 19:50 GMT+8)</h1>
+        <p>* Updated M+ season 4 related debuffs.</p>
+        <p>* Added a "Current Season" item to expansion dropdown in Raid Debuffs.</p>
+        <br/>
+
         <h1>r106-beta (Aug 3, 2022, 00:45 GMT+8)</h1>
         <p>* Bug fixes.</p>
         <br/>
