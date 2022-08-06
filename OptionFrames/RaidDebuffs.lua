@@ -14,7 +14,7 @@ debuffsTab:Hide()
 local newestExpansion, loadedExpansion, loadedInstance, loadedBoss, isGeneral
 local currentBossTable, selectedButtonIndex, selectedSpellId, selectedSpellName, selectedSpellIcon
 -- functions
-local LoadExpansion, ShowInstances, ShowBosses, ShowDebuffs, ShowDetails, ShowImage, HideImage, OpenEncounterJournal
+local LoadExpansion, ShowInstances, ShowBosses, ShowDebuffs, ShowDetails, ShowInstanceImage, HideInstanceImage, ShowBossImage, HideBossImage, OpenEncounterJournal
 -- buttons
 local instanceButtons, bossButtons, debuffButtons = {}, {}, {}
 -------------------------------------------------
@@ -70,13 +70,13 @@ local function LoadInstanceList(tier, instanceType, list)
     EJ_SelectTier(tier)
     local isRaid = instanceType == "raid"
     for index = 1, 77 do
-        local id, name = EJ_GetInstanceByIndex(index, isRaid)
+        local id, name, _, _, image = EJ_GetInstanceByIndex(index, isRaid)
         if not id or not name then
             break
         end
 
         local eName = EJ_GetTierInfo(tier)
-        local instanceTable = {["name"]=name, ["id"]=id, ["bosses"]={}}
+        local instanceTable = {["name"]=name, ["id"]=id, ["image"]=image, ["bosses"]={}}
         tinsert(list, instanceTable)
         instanceNameMapping[name] = eName..":"..#list..":"..id -- NOTE: used for searching current zone debuffs & switch to current instance
         instanceIdToName[id] = name
@@ -97,12 +97,38 @@ local function LoadList()
     end
 end
 
+-------------------------------------------------
+-- dungeons for current mythic season
+-------------------------------------------------
+local CURRENT_SEASON = {
+    1194, -- 塔扎维什
+    860, -- 重返卡拉赞
+    1178, -- 麦卡贡行动
+    558, -- 钢铁码头
+    536, -- 恐轨车站
+}
+
+local function LoadDungeonsForCurrentSeason()
+    encounterJournalList["Current Season"] = {}
+    for i, journalInstanceID in pairs(CURRENT_SEASON) do
+        local name, _, _, image = EJ_GetInstanceInfo(journalInstanceID)
+
+        local instanceTable = {["name"]=name, ["id"]=journalInstanceID, ["image"]=image, ["bosses"]={}}
+        tinsert(encounterJournalList["Current Season"], instanceTable)
+
+        -- overwrite instanceNameMapping
+        instanceNameMapping[name] = "Current Season"..":"..i..":"..journalInstanceID
+        
+        LoadBossList(journalInstanceID, instanceTable["bosses"])
+    end
+end
+-------------------------------------------------
+
 LoadExpansion = function(eName)
     if loadedExpansion == eName then return end
     loadedExpansion = eName
     -- show then first boss of the first instance of the expansion
     ShowInstances(eName)
-
 end
 
 local unsortedDebuffs = {}
@@ -247,6 +273,7 @@ end
 
 local function UpdateRaidDebuffs()
     LoadList()
+    LoadDungeonsForCurrentSeason()
     LoadDebuffs()
     -- DevInstanceList = F:Copy(encounterJournalList["暗影国度"])
 end
@@ -329,6 +356,15 @@ local function CreateTopWidgets()
             end,
         })
     end
+
+    -- add Current Season to the top
+    tinsert(expansionItems, 1, {
+        ["text"] = L["Current Season"],
+        ["onClick"] = function()
+            LoadExpansion("Current Season")
+        end,
+    })
+
     expansionDropdown:SetItems(expansionItems)
 
     -- current instance button
@@ -395,6 +431,37 @@ local function CreateInstanceFrame()
     Cell:CreateScrollFrame(instancesFrame)
     instancesFrame.scrollFrame:SetScrollStep(19)
     SetOnEnterLeave(instancesFrame)
+
+    -- instance image frame
+    local imageFrame = Cell:CreateFrame("RaidDebuffsTab_InstanceImage", debuffsTab, 128, 64, true)
+    imageFrame.bg = imageFrame:CreateTexture(nil, "BACKGROUND")
+    imageFrame.bg:SetTexture("Interface\\Buttons\\WHITE8x8")
+    imageFrame.bg:SetGradientAlpha("HORIZONTAL", 0.1, 0.1, 0.1, 0, 0.1, 0.1, 0.1, 1)
+    
+    imageFrame.tex = imageFrame:CreateTexture(nil, "ARTWORK")
+    imageFrame.tex:SetSize(121, 64)
+    imageFrame.tex:SetPoint("TOPRIGHT", -1, -1)
+
+    local instanceNameText = imageFrame:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
+    instanceNameText:SetPoint("TOPLEFT", imageFrame, "BOTTOMLEFT", 0, -1)
+    instanceNameText:SetPoint("TOPRIGHT", imageFrame, "BOTTOMRIGHT", 0, -1)
+
+    imageFrame.bg:SetPoint("TOPLEFT", imageFrame, -2, 0)
+    imageFrame.bg:SetPoint("BOTTOMRIGHT", instanceNameText, 0, -1)
+    
+    ShowInstanceImage = function(image, b)
+        imageFrame.tex:SetTexture(image)
+        imageFrame.tex:SetTexCoord(0.015, 0.666, 0.03, 0.72)
+        instanceNameText:SetText(b:GetFontString():GetText())
+       
+        imageFrame:ClearAllPoints()
+        imageFrame:SetPoint("BOTTOMRIGHT", b, "BOTTOMLEFT", -5, 2)
+        imageFrame:Show()
+    end
+    
+    HideInstanceImage = function()
+        imageFrame:Hide()
+    end
 end
 
 ShowInstances = function(eName)
@@ -456,7 +523,15 @@ ShowInstances = function(eName)
             popup:SetPoint("TOPLEFT", 100, -170)
         end
         ShowBosses(id)
-    end, nil, nil, instancesFrame:GetScript("OnEnter"), instancesFrame:GetScript("OnLeave"))
+    end, nil, nil, function(b)
+        local _, iIndex = F:SplitToNumber("-", b.id)
+        ShowInstanceImage(encounterJournalList[loadedExpansion][iIndex]["image"], b)
+
+        instancesFrame:GetScript("OnEnter")()
+    end, function(b)
+        HideInstanceImage()
+        instancesFrame:GetScript("OnLeave")()
+    end)
 
     -- show the first boss
     instanceButtons[1]:Click()
@@ -465,149 +540,160 @@ end
 -------------------------------------------------
 -- bosses frame
 -------------------------------------------------
+local bossesFrame
+
 local function CreateBossesFrame()
-    local bossesFrame = Cell:CreateFrame("RaidDebuffsTab_Bosses", debuffsTab, 127, 229)
+    bossesFrame = Cell:CreateFrame("RaidDebuffsTab_Bosses", debuffsTab, 127, 229)
     -- bossesFrame:SetPoint("TOPLEFT", instancesFrame, "BOTTOMLEFT", 0, -5)
     bossesFrame:SetPoint("BOTTOMLEFT", 5, 5)
     bossesFrame:Show()
     Cell:CreateScrollFrame(bossesFrame)
     bossesFrame.scrollFrame:SetScrollStep(19)
     SetOnEnterLeave(bossesFrame)
-    
-    ShowBosses = function(instanceId, forceRefresh)
-        local iId, iIndex = F:SplitToNumber("-", instanceId)
-    
-        if loadedInstance == iId and not forceRefresh then return end
-        loadedInstance = iId
-    
-        bossesFrame.scrollFrame:ResetScroll()
-    
-        -- instance general debuff
-        if not bossButtons[0] then
-            bossButtons[0] = Cell:CreateButton(bossesFrame.scrollFrame.content, L["General"], "transparent-class", {20, 20})
-            bossButtons[0]:SetPoint("TOPLEFT")
-            bossButtons[0]:SetPoint("RIGHT")
-        end
-        bossButtons[0].id = iId
-        
-        -- bosses
-        for i, bTable in pairs(encounterJournalList[loadedExpansion][iIndex]["bosses"]) do
-            if not bossButtons[i] then
-                bossButtons[i] = Cell:CreateButton(bossesFrame.scrollFrame.content, bTable["name"], "transparent-class", {20, 20})
-            else
-                bossButtons[i]:SetText(bTable["name"])
-                bossButtons[i]:Show()
-            end
-    
-            -- send bossId-bossIndex to ShowDebuffs
-            -- bossIndex is used to show boss image when hover on boss button
-            bossButtons[i].id = bTable["id"].."-"..i
-    
-            bossButtons[i]:SetPoint("TOPLEFT", bossButtons[i-1], "BOTTOMLEFT", 0, 1)
-            bossButtons[i]:SetPoint("RIGHT")
-        end
-    
-        local n = #encounterJournalList[loadedExpansion][iIndex]["bosses"]
-    
-        -- update scrollFrame content height
-        bossesFrame.scrollFrame:SetContentHeight(20, n+1, -1)
-    
-        -- hide unused instance buttons
-        for i = n+1, #bossButtons do
-            bossButtons[i]:Hide()
-            bossButtons[i]:ClearAllPoints()
-        end
-    
-        -- set onclick/onenter
-        Cell:CreateButtonGroup(bossButtons, function(id, b)
-            if IsShiftKeyDown() and b:IsMouseOver() then -- NOTE: sharing
-                -- print("instance:"..iId, "bossId:"..id)
-                local editbox = GetCurrentKeyBoardFocus()
-                if editbox then
-                    if id == iId then -- general
-                        editbox:SetText("[Cell:Debuffs: "..bossIdToName[0].." ("..instanceIdToName[iId]..") - "..Cell.vars.playerNameFull.."]")
-                    else
-                        local bId = F:SplitToNumber("-", id)
-                        editbox:SetText("[Cell:Debuffs: "..bossIdToName[bId].." ("..instanceIdToName[iId]..") - "..Cell.vars.playerNameFull.."]")
-                    end
-                end
-            elseif IsAltKeyDown() and b:IsMouseOver() then -- NOTE: reset
-                local text
-                if id == iId then -- general
-                    text = bossIdToName[0]
-                else
-                    local bId = F:SplitToNumber("-", id)
-                    text = bossIdToName[bId]
-                end
-    
-                local popup = Cell:CreateConfirmPopup(Cell.frames.raidDebuffsTab, 200, L["Reset debuffs?"].."\n"..text, function(self)
-                    local which
-                    if id == iId then -- general
-                        which = bossIdToName[0].." ("..instanceIdToName[iId]..")"
-                        -- update
-                        F:UpdateRaidDebuffs(iId, "general", nil, which)
-                        -- reload
-                        C_Timer.After(0.25, function()
-                            ShowDebuffs(id, 1)
-                        end)
-                    else
-                        local bId, index = F:SplitToNumber("-", id)
-                        which = bossIdToName[bId].." ("..instanceIdToName[iId]..")"
-                        -- update
-                        F:UpdateRaidDebuffs(iId, bId, nil, which)
-                        -- reload
-                        C_Timer.After(0.25, function()
-                            ShowDebuffs(id, 1)
-                        end)
-                    end
-                end, nil, true)
-                popup:SetPoint("TOPLEFT", 100, -170)
-            end
-            ShowDebuffs(id)
-        end, nil, nil, function(b)
-            if b.id ~= iId then -- not General
-                local _, bIndex = F:SplitToNumber("-", b.id)
-                ShowImage(encounterJournalList[loadedExpansion][iIndex]["bosses"][bIndex]["image"], b)
-            end
-            bossesFrame:GetScript("OnEnter")()
-        end, function(b)
-            HideImage()
-            bossesFrame:GetScript("OnLeave")()
-        end)
-    
-        -- show General by default
-        if forceRefresh then
-            -- if general is already shown        
-            if loadedBoss == iId then
-                ShowDebuffs(iId, 1)
-            else
-                bossButtons[0]:Click()
-            end
-        else
-            bossButtons[0]:Click()
-        end
-    end
-    
+
     -- boss image frame
-    local imageFrame = Cell:CreateFrame("RaidDebuffsTab_Image", debuffsTab, 128, 64, true)
+    local imageFrame = Cell:CreateFrame("RaidDebuffsTab_BossImage", debuffsTab, 128, 64, true)
     imageFrame.bg = imageFrame:CreateTexture(nil, "BACKGROUND")
     imageFrame.bg:SetTexture("Interface\\Buttons\\WHITE8x8")
     imageFrame.bg:SetGradientAlpha("HORIZONTAL", 0.1, 0.1, 0.1, 0, 0.1, 0.1, 0.1, 1)
-    imageFrame.bg:SetAllPoints(imageFrame)
+    -- imageFrame.bg:SetAllPoints(imageFrame)
     
     imageFrame.tex = imageFrame:CreateTexture(nil, "ARTWORK")
     imageFrame.tex:SetSize(128, 64)
     imageFrame.tex:SetPoint("TOPRIGHT")
+
+    local bossNameText = imageFrame:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
+    bossNameText:SetPoint("TOPLEFT", imageFrame, "BOTTOMLEFT")
+    bossNameText:SetPoint("TOPRIGHT", imageFrame, "BOTTOMRIGHT")
+
+    imageFrame.bg:SetPoint("TOPLEFT", imageFrame, -2, 0)
+    imageFrame.bg:SetPoint("BOTTOMRIGHT", bossNameText, 0, -1)
     
-    ShowImage = function(image, b)
+    ShowBossImage = function(image, b)
         imageFrame.tex:SetTexture(image)
+        bossNameText:SetText(b:GetFontString():GetText())
+
         imageFrame:ClearAllPoints()
         imageFrame:SetPoint("BOTTOMRIGHT", b, "BOTTOMLEFT", -5, 0)
         imageFrame:Show()
     end
     
-    HideImage = function()
+    HideBossImage = function()
         imageFrame:Hide()
+    end
+end
+
+ShowBosses = function(instanceId, forceRefresh)
+    local iId, iIndex = F:SplitToNumber("-", instanceId)
+
+    if loadedInstance == iId and not forceRefresh then return end
+    loadedInstance = iId
+
+    bossesFrame.scrollFrame:ResetScroll()
+
+    -- instance general debuff
+    if not bossButtons[0] then
+        bossButtons[0] = Cell:CreateButton(bossesFrame.scrollFrame.content, L["General"], "transparent-class", {20, 20})
+        bossButtons[0]:SetPoint("TOPLEFT")
+        bossButtons[0]:SetPoint("RIGHT")
+    end
+    bossButtons[0].id = iId
+    
+    -- bosses
+    for i, bTable in pairs(encounterJournalList[loadedExpansion][iIndex]["bosses"]) do
+        if not bossButtons[i] then
+            bossButtons[i] = Cell:CreateButton(bossesFrame.scrollFrame.content, bTable["name"], "transparent-class", {20, 20})
+        else
+            bossButtons[i]:SetText(bTable["name"])
+            bossButtons[i]:Show()
+        end
+
+        -- send bossId-bossIndex to ShowDebuffs
+        -- bossIndex is used to show boss image when hover on boss button
+        bossButtons[i].id = bTable["id"].."-"..i
+
+        bossButtons[i]:SetPoint("TOPLEFT", bossButtons[i-1], "BOTTOMLEFT", 0, 1)
+        bossButtons[i]:SetPoint("RIGHT")
+    end
+
+    local n = #encounterJournalList[loadedExpansion][iIndex]["bosses"]
+
+    -- update scrollFrame content height
+    bossesFrame.scrollFrame:SetContentHeight(20, n+1, -1)
+
+    -- hide unused instance buttons
+    for i = n+1, #bossButtons do
+        bossButtons[i]:Hide()
+        bossButtons[i]:ClearAllPoints()
+    end
+
+    -- set onclick/onenter
+    Cell:CreateButtonGroup(bossButtons, function(id, b)
+        if IsShiftKeyDown() and b:IsMouseOver() then -- NOTE: sharing
+            -- print("instance:"..iId, "bossId:"..id)
+            local editbox = GetCurrentKeyBoardFocus()
+            if editbox then
+                if id == iId then -- general
+                    editbox:SetText("[Cell:Debuffs: "..bossIdToName[0].." ("..instanceIdToName[iId]..") - "..Cell.vars.playerNameFull.."]")
+                else
+                    local bId = F:SplitToNumber("-", id)
+                    editbox:SetText("[Cell:Debuffs: "..bossIdToName[bId].." ("..instanceIdToName[iId]..") - "..Cell.vars.playerNameFull.."]")
+                end
+            end
+        elseif IsAltKeyDown() and b:IsMouseOver() then -- NOTE: reset
+            local text
+            if id == iId then -- general
+                text = bossIdToName[0]
+            else
+                local bId = F:SplitToNumber("-", id)
+                text = bossIdToName[bId]
+            end
+
+            local popup = Cell:CreateConfirmPopup(Cell.frames.raidDebuffsTab, 200, L["Reset debuffs?"].."\n"..text, function(self)
+                local which
+                if id == iId then -- general
+                    which = bossIdToName[0].." ("..instanceIdToName[iId]..")"
+                    -- update
+                    F:UpdateRaidDebuffs(iId, "general", nil, which)
+                    -- reload
+                    C_Timer.After(0.25, function()
+                        ShowDebuffs(id, 1)
+                    end)
+                else
+                    local bId, index = F:SplitToNumber("-", id)
+                    which = bossIdToName[bId].." ("..instanceIdToName[iId]..")"
+                    -- update
+                    F:UpdateRaidDebuffs(iId, bId, nil, which)
+                    -- reload
+                    C_Timer.After(0.25, function()
+                        ShowDebuffs(id, 1)
+                    end)
+                end
+            end, nil, true)
+            popup:SetPoint("TOPLEFT", 100, -170)
+        end
+        ShowDebuffs(id)
+    end, nil, nil, function(b)
+        if b.id ~= iId then -- not General
+            local _, bIndex = F:SplitToNumber("-", b.id)
+            ShowBossImage(encounterJournalList[loadedExpansion][iIndex]["bosses"][bIndex]["image"], b)
+        end
+        bossesFrame:GetScript("OnEnter")()
+    end, function(b)
+        HideBossImage()
+        bossesFrame:GetScript("OnLeave")()
+    end)
+
+    -- show General by default
+    if forceRefresh then
+        -- if general is already shown        
+        if loadedBoss == iId then
+            ShowDebuffs(iId, 1)
+        else
+            bossButtons[0]:Click()
+        end
+    else
+        bossButtons[0]:Click()
     end
 end
 
@@ -2112,7 +2198,7 @@ local function ShowTab(tab)
         UpdatePreviewButton()
         
         if not loadedExpansion then
-            expansionDropdown:SetSelectedItem(1)
+            expansionDropdown:SetSelectedItem(2)
             LoadExpansion(newestExpansion)
         end
     else

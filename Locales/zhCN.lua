@@ -489,6 +489,7 @@ L["No custom debuffs to export!"] = "没有能够导出的减益！"
 L["This will overwrite your debuffs"] = "这将覆盖你的副本减益"
 L["Raid Debuffs updated: %s."] = "已更新副本减益：%s。"
 L["Reset debuffs?"] = "重置减益？"
+L["Current Season"] = "当前赛季"
 
 -------------------------------------------------
 -- glows
