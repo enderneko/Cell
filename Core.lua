@@ -3,6 +3,7 @@ _G.Cell = Cell
 Cell.defaults = {}
 Cell.frames = {}
 Cell.vars = {}
+Cell.snippetVars = {}
 Cell.funcs = {}
 Cell.iFuncs = {}
 Cell.animations = {}

@@ -42,6 +42,7 @@ local encounterJournalList = {
 local instanceNameMapping = {
     -- [instanceName] = expansionName:instanceIndex:instanceId,
 }
+Cell.snippetVars.instanceNameMapping = instanceNameMapping
 
 -- used for mapping instanceId --> instanceName
 local instanceIdToName = {}
@@ -106,6 +107,7 @@ local CURRENT_SEASON = {
     1178, -- 麦卡贡行动
     558, -- 钢铁码头
     536, -- 恐轨车站
+    -- 226
 }
 
 local function LoadDungeonsForCurrentSeason()
@@ -154,6 +156,7 @@ local loadedDebuffs = {
     --     },
     -- },
 }
+Cell.snippetVars.loadedDebuffs = loadedDebuffs
 
 -- db
 -- [spellId] = {
