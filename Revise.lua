@@ -7,7 +7,7 @@ function F:Revise()
     local dbRevision = CellDB["revise"] and tonumber(string.match(CellDB["revise"], "%d+")) or 0
     F:Debug("DBRevision:", dbRevision)
 
-    if CellDB["revise"] and dbRevision < 81 then -- update from an unsupported version
+    if CellDB["revise"] and dbRevision < 89 then -- update from an unsupported version
         local f = CreateFrame("Frame")
         f:RegisterEvent("PLAYER_ENTERING_WORLD")
         f:SetScript("OnEvent", function()
@@ -977,7 +977,6 @@ function F:Revise()
             CellDB["raidTools"]["buttonsPosition"] = nil
         end
     end
-    ]=]
     
     -- r82-release
     if CellDB["revise"] and dbRevision < 82 then
@@ -1043,6 +1042,7 @@ function F:Revise()
             end
         end
     end
+    ]=]
 
     -- r90-release
     if CellDB["revise"] and dbRevision < 90 then
@@ -1286,6 +1286,21 @@ function F:Revise()
     if CellDB["revise"] and dbRevision < 103 then
         if type(CellDB["appearance"]["accentColor"]) ~= "table" then
             CellDB["appearance"]["accentColor"] = {"class_color", {1, 0.26667, 0.4}}
+        end
+    end
+
+    -- r107-release
+    if CellDB["revise"] and dbRevision < 107 then
+        -- add season 4 debuffs
+        for _, layout in pairs(CellDB["layouts"]) do
+            if layout["indicators"][20] and layout["indicators"][20]["indicatorName"] == "debuffs" then
+                if not F:TContains(layout["indicators"][20]["bigDebuffs"], 373391) then
+                    tinsert(layout["indicators"][20]["bigDebuffs"], 373391) -- 梦魇
+                end
+                if not F:TContains(layout["indicators"][20]["bigDebuffs"], 373429) then
+                    tinsert(layout["indicators"][20]["bigDebuffs"], 373429) -- 腐臭虫群
+                end
+            end
         end
     end
     
