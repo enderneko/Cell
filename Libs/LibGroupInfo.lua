@@ -2,10 +2,10 @@
 -- File: LibGroupInfo.lua
 -- Author: enderneko (enderneko-dev@outlook.com)
 -- File Created: 2022/07/29 15:04:31 +0800
--- Last Modified: 2022/08/01 23:00:58 +0800
+-- Last Modified: 2022/08/13 01:26:17 +0800
 --]]
 
-local MAJOR, MINOR = "LibGroupInfo", 1
+local MAJOR, MINOR = "LibGroupInfo", 2
 local lib = LibStub:NewLibrary(MAJOR, MINOR)
 if not lib then return end -- already loaded
 
@@ -167,12 +167,17 @@ local function BuildAndNotify(unit)
     cache[guid].race = UnitRace(unit)
     cache[guid].gender = genders[UnitSex(unit)]
     cache[guid].role = role
+    cache[guid].faction = UnitFactionGroup(unit)
     
     -- spec
-    cache[guid].specId = specId
-    cache[guid].specName = specData[specId].name
-    cache[guid].specRole = specData[specId].role
-    cache[guid].specIcon = specData[specId].icon
+    if specId and specData[specId] then
+        cache[guid].specId = specId
+        cache[guid].specName = specData[specId].name
+        cache[guid].specRole = specData[specId].role
+        cache[guid].specIcon = specData[specId].icon
+    else
+        cache[guid].specId = 0
+    end
         
     --! fire
     lib.callbacks:Fire(UPDATE_EVENT, guid, unit, cache[guid])
