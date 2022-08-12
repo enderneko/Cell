@@ -55,7 +55,7 @@ end
 -------------------------------------------------
 local function CreateSlashPane()
     local slashPane = Cell:CreateTitledPane(aboutTab, L["Slash Commands"], 205, 50)
-    slashPane:SetPoint("TOPLEFT", aboutTab, "TOPLEFT", 222, -190)
+    slashPane:SetPoint("TOPLEFT", aboutTab, "TOPLEFT", 5, -260)
     
     local commandText = slashPane:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
     commandText:SetPoint("TOPLEFT", 5, -27)
@@ -63,25 +63,11 @@ local function CreateSlashPane()
 end
 
 -------------------------------------------------
--- special thanks
--------------------------------------------------
-local function CreateSpecialThanksPane()
-    local specialThanksPane = Cell:CreateTitledPane(aboutTab, L["Special Thanks"], 205, 112)
-    specialThanksPane:SetPoint("TOPLEFT", aboutTab, "TOPLEFT", 5, -255)
-
-    local thanksText = specialThanksPane:CreateFontString(nil, "OVERLAY", LOCALE_zhCN and "CELL_FONT_WIDGET" or "GameTooltipTextSmall")
-    thanksText:SetPoint("TOPLEFT", 5, -27)
-    thanksText:SetSpacing(5)
-    thanksText:SetJustifyH("LEFT")
-    thanksText:SetText("夕曦 (NGA)\n黑色之城 (NGA)\n夏木沐-伊森利恩 (CN)")
-end
-
--------------------------------------------------
 -- translators
 -------------------------------------------------
 local function CreateTranslatorsPane()
     local translatorsPane = Cell:CreateTitledPane(aboutTab, L["Translators"], 205, 112)
-    translatorsPane:SetPoint("TOPLEFT", aboutTab, "TOPLEFT", 222, -255)
+    translatorsPane:SetPoint("TOPLEFT", aboutTab, "TOPLEFT", 222, -190)
 
     local translatorsText = translatorsPane:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
     translatorsText:SetPoint("TOPLEFT", 5, -27)
@@ -91,11 +77,57 @@ local function CreateTranslatorsPane()
 end
 
 -------------------------------------------------
+-- special thanks
+-------------------------------------------------
+local function CreateSpecialThanksPane()
+    local specialThanksPane = Cell:CreateTitledPane(aboutTab, L["Special Thanks"].." |TInterface\\AddOns\\Cell\\Media\\heart:16:16|t ", 100, 100)
+    specialThanksPane:SetPoint("TOPLEFT", aboutTab, "TOPRIGHT", 6, -5)
+
+    local bgTex = specialThanksPane:CreateTexture(nil, "BACKGROUND")
+    bgTex:SetPoint("TOPLEFT", -5, 5)
+    bgTex:SetPoint("BOTTOMRIGHT", 5, -5)
+    bgTex:SetTexture("Interface\\Buttons\\WHITE8x8")
+    bgTex:SetGradientAlpha("HORIZONTAL", 0.1, 0.1, 0.1, 1, 0.1, 0.1, 0.1, 0.25)
+
+    local thanksText = specialThanksPane:CreateFontString(nil, "OVERLAY", LOCALE_zhCN and "CELL_FONT_WIDGET" or "GameTooltipTextSmall")
+    thanksText:SetPoint("TOPLEFT", 5, -27)
+    thanksText:SetSpacing(5)
+    thanksText:SetJustifyH("LEFT")
+    thanksText:SetText(
+        "夕曦 (NGA)\n"..
+        "黑色之城 (NGA)\n"..
+        "夏木沐-伊森利恩 (CN)\n"..
+        "flappysmurf (爱发电)\n"..
+        "Hawtian (爱发电)\n"..
+        "Smile (爱发电)\n"..
+        "青乙-影之哀伤 (CN)\n"
+    )
+
+    local elapsedTime = 0
+
+    local function updateFunc(self, elapsed)
+        elapsedTime = elapsedTime + elapsed
+        
+        specialThanksPane:SetHeight(thanksText:GetHeight() + 35)
+        specialThanksPane:SetWidth(thanksText:GetWidth() + 10)
+        
+        if elapsedTime >= 0.5 then
+            specialThanksPane:SetScript("OnUpdate", nil)
+        end
+    end
+
+    specialThanksPane:SetScript("OnShow", function()
+        elapsedTime = 0
+        specialThanksPane:SetScript("OnUpdate", updateFunc)
+    end)
+end
+
+-------------------------------------------------
 -- bugreport
 -------------------------------------------------
 local function CreateBugReportPane()
     local bugReportPane = Cell:CreateTitledPane(aboutTab, L["Bug Report & Suggestion"], 422, 73)
-    bugReportPane:SetPoint("TOPLEFT", aboutTab, "TOPLEFT", 5, -380)
+    bugReportPane:SetPoint("TOPLEFT", aboutTab, "TOPLEFT", 5, -330)
 
     local bugReportEB = Cell:CreateEditBox(bugReportPane, 412, 20)
     bugReportEB:SetPoint("TOPLEFT", 5, -27)
@@ -155,7 +187,7 @@ end
 -------------------------------------------------
 local function CreateImportExportPane()
     local iePane = Cell:CreateTitledPane(aboutTab, L["Import & Export All Settings"], 422, 50)
-    iePane:SetPoint("TOPLEFT", 5, -497)
+    iePane:SetPoint("TOPLEFT", 5, -455)
 
     local importBtn = Cell:CreateButton(iePane, L["Import"], "accent-hover", {200, 20})
     importBtn:SetPoint("TOPLEFT", 5, -27)
