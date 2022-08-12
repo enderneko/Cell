@@ -459,7 +459,11 @@ function F:UnitFullName(unit)
     
     --? name might be nil in some cases?
     if name and not string.find(name, "-") then
-        name = name.."-"..GetNormalizedRealmName()
+        local server = GetNormalizedRealmName()
+        --? server might be nil in some cases?
+        if server then
+            name = name.."-"..server
+        end
     end
     
     return name
