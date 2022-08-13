@@ -1,8 +1,16 @@
 ---------------------------------------------------------------------
 -- 在当前赛季的大秘境副本中，通过“副本减益”指示器显示这些减益
+-- 且这些减益的优先级为最高
 local debuffs = {
     373391, -- 梦魇
     373429, -- 腐臭虫群
+    373509, -- 暗影利爪
+}
+-- 在下列副本中也启用上述减益
+local instances = {
+    [1190] = true, -- 纳斯利亚堡
+    [1193] = true, -- 统御圣所
+    [1195] = true, -- 初诞者圣墓
 }
 ---------------------------------------------------------------------
 
@@ -15,7 +23,7 @@ function F:GetDebuffList(instanceName)
     local list = {}
     local eName, iIndex, iId = F:SplitToNumber(":", instanceNameMapping[instanceName])
 
-    if eName == "Current Season" then
+    if eName == "Current Season" or instances[iId] then
         for i, id in pairs(debuffs) do
             list[id] = {["order"]=i, ["condition"]={"None"}}
         end
