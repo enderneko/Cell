@@ -12,6 +12,9 @@ local customIndicators = {
     ["debuff"] = {},
 }
 
+Cell.snippetVars.enabledIndicators = enabledIndicators
+Cell.snippetVars.customIndicators = customIndicators
+
 function I:CreateIndicator(parent, indicatorTable)
     local indicatorName = indicatorTable["indicatorName"]
     local indicator

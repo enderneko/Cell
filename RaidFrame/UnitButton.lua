@@ -836,7 +836,7 @@ local function UnitButton_UpdateBuffs(self)
     local defensiveFound, externalFound, allFound, tankActiveMitigationFound, drinkingFound = 1, 1, 1, false, false
     for i = 1, 40 do
         -- name, icon, count, debuffType, duration, expirationTime, source, isStealable, nameplateShowPersonal, spellId, canApplyAura, isBossDebuff, castByPlayer, nameplateShowAll, timeMod, ...
-        local name, icon, count, debuffType, duration, expirationTime, source, isStealable, nameplateShowPersonal, spellId = UnitBuff(unit, i)
+        local name, icon, count, debuffType, duration, expirationTime, source, isStealable, nameplateShowPersonal, spellId, _, _, _, _, _, arg16 = UnitBuff(unit, i)
         if not name then
             break
         end
@@ -889,7 +889,7 @@ local function UnitButton_UpdateBuffs(self)
             end
 
             -- user created indicators
-            I:CheckCustomIndicators(unit, self, "buff", spellId, expirationTime - duration, duration, nil, icon, count, refreshing, false)
+            I:CheckCustomIndicators(unit, self, "buff", spellId, expirationTime - duration, duration, nil, icon, count, refreshing, false, arg16)
 
             -- check BG flags for statusIcon
             if spellId == 156621 then
@@ -950,7 +950,7 @@ local function UnitButton_UpdateBuffs(self)
     if not buffs_current_castByMe[unit] then buffs_current_castByMe[unit] = {} end
     for i = 1, 40 do
         -- name, icon, count, debuffType, duration, expirationTime, source, isStealable, nameplateShowPersonal, spellId, canApplyAura, isBossDebuff, castByPlayer, nameplateShowAll, timeMod, ...
-        local name, icon, count, debuffType, duration, expirationTime, source, isStealable, nameplateShowPersonal, spellId = UnitBuff(unit, i, "PLAYER")
+        local name, icon, count, debuffType, duration, expirationTime, source, isStealable, nameplateShowPersonal, spellId, _, _, _, _, _, arg16 = UnitBuff(unit, i, "PLAYER")
         if not name then
             break
         end
@@ -966,7 +966,7 @@ local function UnitButton_UpdateBuffs(self)
                 refreshing = false
             end
             
-            I:CheckCustomIndicators(unit, self, "buff", spellId, expirationTime - duration, duration, nil, icon, count, refreshing, true)
+            I:CheckCustomIndicators(unit, self, "buff", spellId, expirationTime - duration, duration, nil, icon, count, refreshing, true, arg16)
             
             buffs_cache_castByMe[unit][spellId] = expirationTime
             buffs_cache_count_castByMe[unit][spellId] = count
