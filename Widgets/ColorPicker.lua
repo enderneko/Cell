@@ -337,12 +337,12 @@ local function CreateColorPicker()
     picker:SetMovable(true)
 
     function picker:StartMoving(x, y, mouseX, mouseY)
-        local uiScale = UIParent:GetEffectiveScale()
+        local scale = P:GetEffectiveScale()
         self:SetScript("OnUpdate", function(self)
             local newMouseX, newMouseY = GetCursorPosition()
 
-            local newX = x + (newMouseX - mouseX) / uiScale
-            local newY = y + (newMouseY - mouseY) / uiScale
+            local newX = x + (newMouseX - mouseX) / scale
+            local newY = y + (newMouseY - mouseY) / scale
             
             if newX < 0 then -- left
                 newX = 0
@@ -371,7 +371,7 @@ local function CreateColorPicker()
         if button ~= 'LeftButton' then return end
         local x, y = select(4, picker:GetPoint(1))
         local mouseX, mouseY = GetCursorPosition()
-        
+
         picker:StartMoving(x, y, mouseX, mouseY)
     end)
 
@@ -385,12 +385,12 @@ local function CreateColorPicker()
         local hueSaturationX, hueSaturationY = hueSaturation:GetLeft(), hueSaturation:GetBottom()
         local mouseX, mouseY = GetCursorPosition()
         
-        local uiScale = UIParent:GetEffectiveScale()
-        mouseX, mouseY = mouseX/uiScale, mouseY/uiScale
+        local scale = P:GetEffectiveScale()
+        mouseX, mouseY = mouseX/scale, mouseY/scale
         
         -- start dragging
         local x, y = select(4, picker:GetPoint(1))
-        picker:StartMoving(mouseX/uiScale-hueSaturationX, mouseY/uiScale-hueSaturationY, mouseX, mouseY)
+        picker:StartMoving(mouseX/scale-hueSaturationX, mouseY/scale-hueSaturationY, mouseX, mouseY)
     end)
 
     hueSaturation:SetScript("OnMouseUp", function(self, button)
