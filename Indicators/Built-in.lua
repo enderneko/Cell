@@ -437,8 +437,9 @@ function I:CreateDispels(parent)
     -- dispels.highlight:SetAllPoints(parent.widget.healthBar)
     dispels.highlight:SetPoint("BOTTOMLEFT", parent.widget.healthBar)
     dispels.highlight:SetPoint("BOTTOMRIGHT", parent.widget.healthBar)
-    dispels.highlight:SetPoint("TOP", parent.widget.healthBar, "CENTER")
+    dispels.highlight:SetPoint("TOP", parent.widget.healthBar)
     dispels.highlight:SetTexture("Interface\\Buttons\\WHITE8x8")
+    -- dispels.highlight:SetVertexColor(0, 0, 0, 0)
     dispels.highlight:Hide()
 
     dispels.OriginalSetSize = dispels.SetSize
@@ -455,11 +456,11 @@ function I:CreateDispels(parent)
 
         local i = 1
         for dispelType, _ in pairs(dispelTypes) do
-            dispels[i]:SetDispel(dispelType)
-            i = i + 1
-            if dispelType then
+            if i == 1 and dispelType then
                 r, g, b, a = DebuffTypeColor[dispelType].r, DebuffTypeColor[dispelType].g, DebuffTypeColor[dispelType].b, 1
             end
+            dispels[i]:SetDispel(dispelType)
+            i = i + 1
         end
 
         -- hide unused

@@ -268,6 +268,7 @@ local function InitIndicator(indicatorName)
         end
         
     elseif indicatorName == "dispels" then
+        indicator.isDispels = true
         local types = {["Curse"]=true, ["Disease"]=true, ["Magic"]=true, ["Poison"]=true}
         indicator:SetDispels(types)
 
@@ -460,6 +461,10 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                  if type(t["circledStackNums"]) == "boolean" then
                     indicator:SetCircledStackNums(t["circledStackNums"])
                 end
+                -- update dispel highlight
+                if type(t["enableHighlight"]) == "boolean" then
+                    indicator:EnableHighlight(t["enableHighlight"])
+                end
                 -- after init
                 if t["enabled"] then
                     indicator.enabled = true
@@ -572,6 +577,8 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                     indicator:Hide()
                     indicator:Show()
                 end
+            elseif value == "enableHighlight" then
+                indicator:EnableHighlight(value2)
             end
         elseif setting == "create" then
             indicator = I:CreateIndicator(previewButton, value)
@@ -1464,6 +1471,9 @@ LoadIndicatorList = function()
                 i.blink.alpha:SetFromAlpha(1)
             else
                 i:SetAlpha(i.alpha or 1)
+                if i.isDispels then
+                    i.highlight:Show()
+                end
             end
         end
     end, function(id)
@@ -1483,6 +1493,9 @@ LoadIndicatorList = function()
             i.blink.alpha:SetFromAlpha(CellDB["indicatorPreviewAlpha"])
         else
             i:SetAlpha(CellDB["indicatorPreviewAlpha"])
+            if i.isDispels then
+                i.highlight:Hide()
+            end
         end
     end)
 end
