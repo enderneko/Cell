@@ -100,7 +100,8 @@ local function CreateSpecialThanksPane()
         "flappysmurf (爱发电)\n"..
         "Hawtian (爱发电)\n"..
         "Smile (爱发电)\n"..
-        "青乙-影之哀伤 (CN)\n"
+        "青乙-影之哀伤 (CN)\n"..
+        "黑诺-影之哀伤 (CN)\n"
     )
 
     local elapsedTime = 0

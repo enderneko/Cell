@@ -2,7 +2,7 @@
 -- File: RaidDebuffs_WoD.lua
 -- Author: enderneko (enderneko-dev@outlook.com)
 -- File Created: 2022/08/05 16:10:24 +0800
--- Last Modified: 2022/08/06 18:27:40 +0800
+-- Last Modified: 2022/08/15 17:51:58 +0800
 --]]
 
 local _, Cell = ...
@@ -123,6 +123,9 @@ local debuffs = {
 
     [536] = { -- 恐轨车站
         ["general"] = {
+            164192, -- 50000伏特（恐轨技师）
+            176147, -- 点燃（格罗姆卡枪手）
+            164241, -- 伤口出血（恐轨投弹手）
         },
         [1138] = { -- 箭火和波尔卡
         },
