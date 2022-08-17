@@ -1,4 +1,4 @@
--- Trail of Light
+-- 光明尾迹（单位按钮高亮）
 local F = Cell.funcs
 local LCG = LibStub("LibCustomGlow-1.0")
 local frame = CreateFrame("Frame")

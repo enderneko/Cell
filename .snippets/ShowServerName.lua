@@ -1,3 +1,4 @@
+-- 在单位按钮的角色名下方显示服务器名
 local F = Cell.funcs
 
 local function GetServerName(unit)

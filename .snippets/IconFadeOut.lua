@@ -1,3 +1,4 @@
+-- 自定义图标指示器随时间减少变得透明
 local END_ALPHA = 0.2
 
 local function SetCooldown(frame, start, duration, debuffType, texture, count, refreshing)
