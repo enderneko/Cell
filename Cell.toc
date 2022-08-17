@@ -40,5 +40,5 @@ RaidFrame\Groups\RaidFrame.lua
 RaidFrame\Groups\NPCFrame.lua
 
 Tools\LoadTools.xml
-OptionFrames\LoadOptionFrames.xml
+Modules\LoadModules.xml
 RaidDebuffs\LoadRaidDebuffs.xml
