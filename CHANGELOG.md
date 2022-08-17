@@ -1,7 +1,11 @@
-[Full Changelog](https://github.com/enderneko/Cell/compare/r106-beta...7460568a8d93c5ae3cf076de821c862b8014d4a6)
+[Full Changelog](https://github.com/enderneko/Cell/compare/r107-release...1fc79622fe29dd07184d9e8739c827052b3bdf9d)
 
-- Update M+ season 4 debuffs
-- Add Current Season dropdown item
-- Update RaidDebuffs
-- [snippet] MythicPlusDebuffs
-- Update About
+- Update mythic+ debuffs
+- Update "Dispels" indicator
+- Update "About"
+- Fix ColorPicker when scale~=1
+- Fix F:UnitFullName function
+- Fix LibGroupInfo
+- [snippet] SolidDispelHighlight
+- [snippet] HauntedMaskIcons
+- [snippet] GenericRaidDebuffs
