@@ -456,7 +456,7 @@ function I:CreateDispels(parent)
 
         local i = 1
         for dispelType, _ in pairs(dispelTypes) do
-            if i == 1 and dispelType then
+            if a == 0 and dispelType then
                 r, g, b, a = DebuffTypeColor[dispelType].r, DebuffTypeColor[dispelType].g, DebuffTypeColor[dispelType].b, 1
             end
             dispels[i]:SetDispel(dispelType)

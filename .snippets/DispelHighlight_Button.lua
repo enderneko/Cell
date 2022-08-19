@@ -1,4 +1,3 @@
--- solid dispel highlight
 -- 使用纯色而非渐变色显示驱散高亮
 local ALPHA = 0.6
 
@@ -17,7 +16,7 @@ F:IterateAllUnitButtons(function(b)
 
         local i = 1
         for dispelType, _ in pairs(dispelTypes) do
-            if i == 1 and dispelType then
+            if a == 0 and dispelType then
                 r, g, b, a = DebuffTypeColor[dispelType].r, DebuffTypeColor[dispelType].g, DebuffTypeColor[dispelType].b, 1
             end
             dispels[i]:SetDispel(dispelType)
@@ -33,5 +32,6 @@ F:IterateAllUnitButtons(function(b)
         dispels.highlight:SetColorTexture(r, g, b, a ~= 0 and ALPHA or 0)
     end
 
+    -- 修改护盾材质
     -- b.widget.shieldBar:SetTexture(Cell.vars.texture)
 end)
