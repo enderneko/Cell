@@ -560,6 +560,14 @@ unitButton = {
 -------------------------------------------------
 -- auras
 -------------------------------------------------
+-- NOTE: won't show if not a priest, otherwise show mine only
+local function FilterWeakenedSoul(spellId, caster)
+    if spellId ~= 6788 then return true end
+
+    if not Cell.vars.playerClassID == 5 then return end
+    return caster == "player"
+end
+
 local debuffs_cache = {}
 local debuffs_cache_count = {}
 local debuffs_current = {}
@@ -613,31 +621,37 @@ local function UnitButton_UpdateDebuffs(self)
                 refreshing = false
             end
 
-            if enabledIndicators["debuffs"] and duration <= 600 and not Cell.vars.debuffBlacklist[spellId] then
-                if not indicatorCustoms["debuffs"] then -- all debuffs
-                    if bigDebuffs[spellId] then  -- isBigDebuff
-                        debuffs_big[unit][i] = refreshing
-                        startIndex = startIndex + 1
-                    elseif startIndex <= indicatorNums["debuffs"]+indicatorNums["raidDebuffs"] then -- normal debuffs, may contain topDebuff
-                        debuffs_normal[unit][i] = refreshing
-                        startIndex = startIndex + 1
-                    end
-
-                elseif I:CanDispel(debuffType) then -- only dispellableByMe
-                    if bigDebuffs[spellId] then  -- isBigDebuff
-                        debuffs_big[unit][i] = refreshing
-                        startIndex = startIndex + 1
-                    elseif startIndex <= indicatorNums["debuffs"]+indicatorNums["raidDebuffs"] then -- normal debuffs, may contain topDebuff
-                        if I:CanDispel(debuffType) then
+            if FilterWeakenedSoul(spellId, source) then
+                if enabledIndicators["debuffs"] and duration <= 600 and not Cell.vars.debuffBlacklist[spellId] then
+                    if not indicatorCustoms["debuffs"] then -- all debuffs
+                        if bigDebuffs[spellId] then  -- isBigDebuff
+                            debuffs_big[unit][i] = refreshing
+                            startIndex = startIndex + 1
+                        elseif startIndex <= indicatorNums["debuffs"]+indicatorNums["raidDebuffs"] then -- normal debuffs, may contain topDebuff
                             debuffs_normal[unit][i] = refreshing
                             startIndex = startIndex + 1
                         end
+
+                    elseif I:CanDispel(debuffType) then -- only dispellableByMe
+                        if bigDebuffs[spellId] then  -- isBigDebuff
+                            debuffs_big[unit][i] = refreshing
+                            startIndex = startIndex + 1
+                        elseif startIndex <= indicatorNums["debuffs"]+indicatorNums["raidDebuffs"] then -- normal debuffs, may contain topDebuff
+                            if I:CanDispel(debuffType) then
+                                debuffs_normal[unit][i] = refreshing
+                                startIndex = startIndex + 1
+                            end
+                        end
                     end
                 end
+                
+                -- user created indicators
+                I:CheckCustomIndicators(unit, self, "debuff", spellId, expirationTime - duration, duration, debuffType or "", icon, count, refreshing)
+
+                debuffs_cache[unit][spellId] = expirationTime
+                debuffs_cache_count[unit][spellId] = count
+                debuffs_current[unit][spellId] = i
             end
-            
-            -- user created indicators
-            I:CheckCustomIndicators(unit, self, "debuff", spellId, expirationTime - duration, duration, debuffType or "", icon, count, refreshing)
 
             -- prepare raidDebuffs
             if enabledIndicators["raidDebuffs"] and I:GetDebuffOrder(name, spellId, count) then
@@ -654,10 +668,6 @@ local function UnitButton_UpdateDebuffs(self)
                     end
                 end
             end
-
-            debuffs_cache[unit][spellId] = expirationTime
-            debuffs_cache_count[unit][spellId] = count
-            debuffs_current[unit][spellId] = i
 
             if enabledIndicators["dispels"] and debuffType and debuffType ~= "" then
                 if indicatorCustoms["dispels"] then -- dispellableByMe
