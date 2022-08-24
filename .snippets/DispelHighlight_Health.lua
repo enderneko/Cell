@@ -5,6 +5,16 @@ local USE_SOLID_COLOR_TEXTURE = false
 
 local F = Cell.funcs
 
+-- 自定义颜色
+local debuffTypeColor = {
+    [""] = {r = 0.8, g = 0, b = 0},
+    ["Curse"] = {r = 0.6, g = 0, b = 1},
+    ["Disease"] = {r = 0.6, g = 0.4, b = 0},
+    ["Magic"] = {r = 0.2, g = 0.6, b = 1},
+    ["Poison"] = {r = 0, g = 0.6, b = 0},
+    ["none"] = {r = 0.8, g = 0, b = 0},
+}
+
 F:IterateAllUnitButtons(function(b)
     local dispels = b.indicators.dispels
 
@@ -22,7 +32,7 @@ F:IterateAllUnitButtons(function(b)
         local i = 1
         for dispelType, _ in pairs(dispelTypes) do
             if a == 0 and dispelType then
-                r, g, b, a = DebuffTypeColor[dispelType].r, DebuffTypeColor[dispelType].g, DebuffTypeColor[dispelType].b, 1
+                r, g, b, a = debuffTypeColor[dispelType].r, debuffTypeColor[dispelType].g, debuffTypeColor[dispelType].b, 1
             end
             dispels[i]:SetDispel(dispelType)
             i = i + 1
