@@ -1,5 +1,5 @@
 # description of this workflow, can be anything you want
-name: Package and release
+name: Package and Release
 
 # we need to let GitHub know _when_ we want to release, typically only when we create a new tag.
 # this will target only tags, and not all pushes to the master branch.
@@ -31,10 +31,10 @@ jobs:
     steps:
 
       # we first have to clone the AddOn project, this is a required step
-      - name: Clone project
+      - name: Clone Project
         uses: actions/checkout@v1  # note: checkout@v2 breaks git history, so generating a changelog and
                                    # file naming for non-tagged builds will not work properly
 
       # once cloned, we just run the GitHub Action for the packager project
-      - name: Create Retail Package
+      - name: Create Package
         uses: BigWigsMods/packager@v2
