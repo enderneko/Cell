@@ -129,68 +129,6 @@ local function DecodeDB(t)
     return modifier, bindKey, bindType, bindAction
 end
 
--- local invalidCache = {}
--- local function UpdateInvalidCache()
---     wipe(invalidCache)
---     -- db
---     for i, t in pairs(clickCastingTable) do
---         invalidCache[t[1]] = i
---     end
---     -- changed
---     for i, t in pairs(changed) do
---         local key = GetAttributeKey(t.modifier or t[1].modifier, t.bindKey or t[1].bindKey)
---         -- update db with changed
---         local dbAttrKey = F:GetIndex(invalidCache, i)
---         if dbAttrKey then
---             invalidCache[dbAttrKey] = nil
---         end
---         invalidCache[key] = i
---     end
---     -- deleted
---     for i, _ in pairs(deleted) do
---         -- update db with deleted
---         local dbAttrKey = F:GetIndex(invalidCache, i)
---         if dbAttrKey then
---             invalidCache[dbAttrKey] = nil
---         end
---     end
--- end
-
--- local function IsBindKeyValid(modifier, bindKey, useCache)
---     local key = GetAttributeKey(modifier, bindKey)
-
---     if useCache then
---         if invalidCache[key] then
---             return false, invalidCache[key]
---         end
---     else
---         -- check db
---         for i, t in pairs(clickCastingTable) do
---             if t[1] == key then
---                 return false, i
---             end
---         end
---     end
-
---     return true, key
--- end
-
--- local function GetAValidBindKey()
---     UpdateInvalidCache()
---     local validModifier, validKey
---     for key, _ in pairs(mouseKeyIDs) do
---         for _, modifier in pairs(modifiers) do
---             local isValid, value = IsBindKeyValid(modifier, key, true)
---             if isValid then
---                 validModifier, validKey = modifier, key
---                 break
---             end
---         end
---         if validModifier and validKey then break end
---     end
---     return validModifier, validKey
--- end
-
 -------------------------------------------------
 -- mouse wheel & keyboard
 -------------------------------------------------
@@ -509,6 +447,12 @@ local function ShowBindingMenu(index, b)
 end
 
 local function ShowTypesMenu(index, b)
+    local parent = select(2, menu:GetPoint(1))
+    if parent == b.typeGrid and menu:IsShown() then
+        menu:Hide()
+        return
+    end
+
     -- if already in deleted, do nothing
     if deleted[index] then return end
     
@@ -588,6 +532,12 @@ local function ShowTypesMenu(index, b)
 end
 
 local function ShowActionsMenu(index, b)
+    local parent = select(2, menu:GetPoint(1))
+    if parent == b.actionGrid and menu:IsShown() then
+        menu:Hide()
+        return
+    end
+
     -- if already in deleted, do nothing
     if deleted[index] then return end
 
@@ -705,6 +655,25 @@ local function ShowActionsMenu(index, b)
             },
         }
 
+        if Cell.isWrath and Cell.vars.playerClass == "WARLOCK" then
+            tinsert(items, {
+                ["text"] = L["Soulstone"],
+                ["onClick"] = function()
+                    changed[index] = changed[index] or {b}
+                    local macrotext = "/stopcasting\n/target mouseover\n/use item:36895\n/targetlasttarget"
+                    if b.bindAction ~= macrotext then
+                        changed[index]["bindAction"] = macrotext
+                        b.actionGrid:SetText(macrotext)
+                    else
+                        changed[index]["bindAction"] = nil
+                        b.actionGrid:SetText(b.bindAction)
+                    end
+                    CheckChanged(index, b)
+                    CheckChanges()
+                end,
+            })
+        end
+
     else -- spell
         items = {
             {
@@ -758,7 +727,7 @@ local function ShowActionsMenu(index, b)
     end
 
     menu:SetWidths(b.actionGrid:GetWidth())
-    menu:SetItems(items)
+    menu:SetItems(items, 15)
     P:ClearPoints(menu)
     P:Point(menu, "TOPLEFT", b.actionGrid, "BOTTOMLEFT", 0, -1)
     menu:ShowMenu()
@@ -775,18 +744,25 @@ local function UpdateCurrentText(isCommon)
     if isCommon then
         listPane:SetTitle(L["Current Profile"]..": "..L["Common"])
     else
-        listPane:SetTitle(L["Current Profile"]..": ".."|T"..Cell.vars.playerSpecIcon..":12:12:0:0:12:12:1:11:1:11|t "..Cell.vars.playerSpecName)
+        if Cell.isRetail then
+            listPane:SetTitle(L["Current Profile"]..": ".."|T"..Cell.vars.playerSpecIcon..":12:12:0:0:12:12:1:11:1:11|t "..Cell.vars.playerSpecName)
+        elseif Cell.isWrath then
+            local name, icon = F:GetActiveTalentInfo()
+            listPane:SetTitle(L["Current Profile"]..": ".."|T"..icon..":12:12:0:0:12:12:1:11:1:11|t "..name)
+        end
     end
 end
 
 local function CreateListPane()
-    listPane = Cell:CreateTitledPane(clickCastingsTab, L["Current Profile"], 422, 351)
+    listPane = Cell:CreateTitledPane(clickCastingsTab, L["Current Profile"], 422, 426)
     listPane:SetPoint("TOPLEFT", clickCastingsTab, "TOPLEFT", 5, -70)
     
-    local hintText = listPane:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET_TITLE")
-    hintText:SetPoint("BOTTOMRIGHT", listPane.line, "TOPRIGHT", 0, P:Scale(2))
-    hintText:SetText("|cFF777777"..L["left-click: edit"].."    "..L["right-click: delete"])
-    
+    local hint = Cell:CreateButton(listPane, nil, "accent-hover", {17, 17}, nil, nil, nil, nil, nil, L["Click-Castings"], L["clickcastingsHints"])
+    hint:SetPoint("TOPRIGHT")
+    hint.tex = hint:CreateTexture(nil, "ARTWORK")
+    hint.tex:SetAllPoints(hint)
+    hint.tex:SetTexture("Interface\\AddOns\\Cell\\Media\\Icons\\info2.tga")
+
     bindingButton = Cell:CreateBindingButton(listPane, 130)
 
     -- bindings frame
@@ -870,6 +846,10 @@ local function CreateListPane()
             t[1].keyGrid:SetText(modifierDisplay..L[t[1].bindKey])
             t[1].typeGrid:SetText(L[F:UpperFirst(t[1].bindType)])
             t[1].actionGrid:SetText(t[1].bindType == "general" and L[t[1].bindAction] or t[1].bindAction)
+            -- restore icon
+            if t[1].bindType == "spell" then
+                t[1]:ShowSpellIcon(t[1].bindAction)
+            end
         end
         wipe(deleted)
         wipe(changed)

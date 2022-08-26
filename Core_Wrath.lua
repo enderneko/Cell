@@ -20,7 +20,7 @@ Cell.MIN_INDICATORS_VERSION = 99
 Cell.MIN_DEBUFFS_VERSION = 78
 
 --@debug@
--- local debugMode = true
+local debugMode = true
 --@end-debug@
 function F:Debug(arg, ...)
     if debugMode then
@@ -72,7 +72,7 @@ function F:UpdateLayout(layoutGroupType, updateIndicators)
     else
         F:Debug("|cFF7CFC00F:UpdateLayout(\""..layoutGroupType.."\")")
         -- Cell.vars.layoutGroupType = layoutGroupType
-        local layout = CellLayoutAutoSwitchTable[Cell.vars.playerSpecRole][layoutGroupType]
+        local layout = CellLayoutAutoSwitchTable[Cell.vars.activeTalentGroup][layoutGroupType]
         Cell.vars.currentLayout = layout
         Cell.vars.currentLayoutTable = CellDB["layouts"][layout]
         Cell:Fire("UpdateLayout", Cell.vars.currentLayout)
@@ -88,9 +88,8 @@ local bgMaxPlayers = {
 
 -- layout auto switch
 local instanceType
+Cell.vars.raidType = "raid25"
 local function PreUpdateLayout()
-    if not Cell.vars.playerSpecRole then return end
-
     if instanceType == "pvp" then
         local name, _, _, _, _, _, _, id = GetInstanceInfo()
         if bgMaxPlayers[id] then
@@ -113,16 +112,14 @@ local function PreUpdateLayout()
         if Cell.vars.groupType == "solo" or Cell.vars.groupType == "party" then
             F:UpdateLayout("party", true)
         else -- raid
-            if Cell.vars.inMythic then
-                F:UpdateLayout("mythic", true)
-            else
-                F:UpdateLayout("raid", true)
+            if Cell.vars.raidType then
+                F:UpdateLayout(Cell.vars.raidType, true)
             end
         end
     end
 end
 Cell:RegisterCallback("GroupTypeChanged", "Core_GroupTypeChanged", PreUpdateLayout)
-Cell:RegisterCallback("RoleChanged", "Core_RoleChanged", PreUpdateLayout)
+Cell:RegisterCallback("ActiveTalentGroupChanged", "Core_ActiveTalentGroupChanged", PreUpdateLayout)
 
 -------------------------------------------------
 -- events
@@ -177,7 +174,7 @@ function eventFrame:ADDON_LOADED(arg1)
         -- tools ----------------------------------------------------------------------------------
         if type(CellDB["tools"]) ~= "table" then
             CellDB["tools"] = {
-                ["showBattleRes"] = true,
+                ["showBattleRes"] = false,
                 ["buffTracker"] = {false, {}},
                 ["deathReport"] = {false, 10},
                 ["readyAndPull"] = {false, {"default", 7}, {}},
@@ -295,21 +292,22 @@ function eventFrame:ADDON_LOADED(arg1)
                 ["useCommon"] = true,
                 ["alwaysTargeting"] = {
                     ["common"] = "disabled",
+                    [1] = "disabled",
+                    [2] = "disabled",
                 },
                 ["common"] = {
                     {"type1", "target"},
                     {"type2", "togglemenu"},
                 },
-            }
-            -- https://wow.gamepedia.com/SpecializationID
-            for sepcIndex = 1, GetNumSpecializationsForClassID(Cell.vars.playerClassID) do
-                local specID = GetSpecializationInfoForClassID(Cell.vars.playerClassID, sepcIndex)
-                CellDB["clickCastings"][Cell.vars.playerClass]["alwaysTargeting"][specID] = "disabled"
-                CellDB["clickCastings"][Cell.vars.playerClass][specID] = {
+                [1] = {
                     {"type1", "target"},
                     {"type2", "togglemenu"},
-                } 
-            end
+                },
+                [2] = {
+                    {"type1", "target"},
+                    {"type2", "togglemenu"},
+                },
+            }
         end
         Cell.vars.clickCastingTable = CellDB["clickCastings"][Cell.vars.playerClass]
 
@@ -321,28 +319,22 @@ function eventFrame:ADDON_LOADED(arg1)
         end
 
         -- init enabled layout
-        if type(CellDB["layoutAutoSwitch"]) ~= "table" then
-            CellDB["layoutAutoSwitch"] = {
-                ["TANK"] = {
+        if type(CellCharacterDB) ~= "table" then CellCharacterDB = {} end
+
+        if type(CellCharacterDB["layoutAutoSwitch"]) ~= "table" then
+            CellCharacterDB["layoutAutoSwitch"] = {
+                [1] = {
                     ["party"] = "default",
-                    ["raid"] = "default",
-                    ["mythic"] = "default",
+                    ["raid10"] = "default",
+                    ["raid25"] = "default",
                     ["arena"] = "default",
                     ["battleground15"] = "default",
                     ["battleground40"] = "default",
                 },
-                ["HEALER"] = {
+                [2] = {
                     ["party"] = "default",
-                    ["raid"] = "default",
-                    ["mythic"] = "default",
-                    ["arena"] = "default",
-                    ["battleground15"] = "default",
-                    ["battleground40"] = "default",
-                },
-                ["DAMAGER"] = {
-                    ["party"] = "default",
-                    ["raid"] = "default",
-                    ["mythic"] = "default",
+                    ["raid10"] = "default",
+                    ["raid25"] = "default",
                     ["arena"] = "default",
                     ["battleground15"] = "default",
                     ["battleground40"] = "default",
@@ -351,15 +343,15 @@ function eventFrame:ADDON_LOADED(arg1)
         end
 
         -- validate layout
-        for role, t in pairs(CellDB["layoutAutoSwitch"]) do
+        for talent, t in pairs(CellCharacterDB["layoutAutoSwitch"]) do
             for groupType, layout in pairs(t) do
                 if not CellDB["layouts"][layout] then
-                    CellDB["layoutAutoSwitch"][role][groupType] = "default"
+                    CellCharacterDB["layoutAutoSwitch"][talent][groupType] = "default"
                 end
             end
         end
 
-        CellLayoutAutoSwitchTable = CellDB["layoutAutoSwitch"]
+        CellLayoutAutoSwitchTable = CellCharacterDB["layoutAutoSwitch"]
 
         -- debuffBlacklist ------------------------------------------------------------------------
         if type(CellDB["debuffBlacklist"]) ~= "table" then
@@ -420,10 +412,8 @@ function eventFrame:ADDON_LOADED(arg1)
     -- end
 end
 
--- Cell.vars.guids = {} -- NOTE: moved to UnitButton.lua OnShow/OnHide
 Cell.vars.role = {["TANK"]=0, ["HEALER"]=0, ["DAMAGER"]=0}
 function eventFrame:GROUP_ROSTER_UPDATE()
-    -- wipe(Cell.vars.guids)
     if IsInRaid() then
         if Cell.vars.groupType ~= "raid" then
             Cell.vars.groupType = "raid"
@@ -436,11 +426,6 @@ function eventFrame:GROUP_ROSTER_UPDATE()
         Cell.vars.role["DAMAGER"] = 0
         -- update guid & raid setup
         for i = 1, GetNumGroupMembers() do
-            -- update guid
-            -- local playerGUID = UnitGUID("raid"..i)
-            -- if playerGUID then
-            --     Cell.vars.guids[playerGUID] = "raid"..i
-            -- end
             -- update raid setup
             local role = select(12, GetRaidRosterInfo(i))
             if role and Cell.vars.role[role] then
@@ -467,24 +452,6 @@ function eventFrame:GROUP_ROSTER_UPDATE()
             F:Debug("|cffffbb77GroupTypeChanged:|r party")
             Cell:Fire("GroupTypeChanged", "party")
         end
-        -- update guid
-        -- Cell.vars.guids[UnitGUID("player")] = "player"
-        -- if UnitGUID("pet") then
-        --     Cell.vars.guids[UnitGUID("pet")] = "pet"
-        -- end
-        -- for i = 1, 4 do
-        --     local playerGUID = UnitGUID("party"..i)
-        --     if playerGUID then
-        --         Cell.vars.guids[playerGUID] = "party"..i
-        --     else
-        --         break
-        --     end
-
-        --     local petGUID = UnitGUID("partypet"..i)
-        --     if petGUID then
-        --         Cell.vars.guids[petGUID] = "partypet"..i
-        --     end
-        -- end
         -- update Cell.unitButtons.raid.units
         for i = 1, 40 do
             Cell.unitButtons.raid.units["raid"..i] = nil
@@ -502,11 +469,6 @@ function eventFrame:GROUP_ROSTER_UPDATE()
             F:Debug("|cffffbb77GroupTypeChanged:|r solo")
             Cell:Fire("GroupTypeChanged", "solo")
         end
-        -- update guid
-        -- Cell.vars.guids[UnitGUID("player")] = "player"
-        -- if UnitGUID("pet") then
-        --     Cell.vars.guids[UnitGUID("pet")] = "pet"
-        -- end
         -- update Cell.unitButtons.raid.units
         for i = 1, 40 do
             Cell.unitButtons.raid.units["raid"..i] = nil
@@ -529,18 +491,9 @@ function eventFrame:GROUP_ROSTER_UPDATE()
     end
 end
 
--- NOTE: used to update pet in Cell.vars.guids
--- function eventFrame:UNIT_PET()
---     if not IsInRaid() then
---         eventFrame:GROUP_ROSTER_UPDATE()
---     end
--- end
-
 local inInstance
 function eventFrame:PLAYER_ENTERING_WORLD()
-    -- eventFrame:UnregisterEvent("PLAYER_ENTERING_WORLD")
     F:Debug("PLAYER_ENTERING_WORLD")
-    Cell.vars.inMythic = false
 
     local isIn, iType = IsInInstance()
     instanceType = iType
@@ -553,8 +506,12 @@ function eventFrame:PLAYER_ENTERING_WORLD()
         if Cell.vars.groupType == "raid" and iType == "raid" then
             C_Timer.After(0.5, function()
                 local difficultyID, difficultyName = select(3, GetInstanceInfo()) --! can't get difficultyID, difficultyName immediately after entering an instance
-                Cell.vars.inMythic = difficultyID == 16
-                if Cell.vars.inMythic then
+                if difficultyID == 3 or difficultyID == 5 then
+                    Cell.vars.raidType = "raid10"
+                elseif difficultyID == 4 or difficultyID == 6 then
+                    Cell.vars.raidType = "raid25"
+                end
+                if Cell.vars.raidType then
                     PreUpdateLayout()
                 end
             end)
@@ -571,11 +528,9 @@ function eventFrame:PLAYER_ENTERING_WORLD()
     end
 end
 
-local prevSpec
 function eventFrame:PLAYER_LOGIN()
     F:Debug("PLAYER_LOGIN")
     eventFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
-    -- eventFrame:RegisterEvent("UNIT_PET")
     eventFrame:RegisterEvent("GROUP_ROSTER_UPDATE")
     eventFrame:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
 
@@ -588,10 +543,15 @@ function eventFrame:PLAYER_LOGIN()
         bgMaxPlayers[bgId] = maxPlayers
     end
 
-    if not prevSpec then prevSpec = GetSpecialization() end
     Cell.vars.playerGUID = UnitGUID("player")
+
     -- update spec vars
-    Cell.vars.playerSpecID, Cell.vars.playerSpecName, _, Cell.vars.playerSpecIcon, Cell.vars.playerSpecRole = GetSpecializationInfo(prevSpec)
+    if not Cell.vars.activeTalentGroup then
+        Cell.vars.activeTalentGroup = GetActiveTalentGroup()
+        Cell.vars.playerSpecRole = Cell.vars.activeTalentGroup
+        Cell.vars.playerSpecID = Cell.vars.activeTalentGroup
+    end
+
     --! init Cell.vars.currentLayout and Cell.vars.currentLayoutTable 
     eventFrame:GROUP_ROSTER_UPDATE()
     -- update visibility
@@ -619,33 +579,17 @@ function eventFrame:PLAYER_LOGIN()
     Cell:Fire("UpdatePixelPerfect")
 end
 
-local forceRecheck
-local checkSpecFrame = CreateFrame("Frame")
-checkSpecFrame:SetScript("OnEvent", function()
-    eventFrame:ACTIVE_TALENT_GROUP_CHANGED()
-end)
--- PLAYER_SPECIALIZATION_CHANGED fires when level up, ACTIVE_TALENT_GROUP_CHANGED usually fire twice.
--- NOTE: ACTIVE_TALENT_GROUP_CHANGED fires before PLAYER_LOGIN, but can't GetSpecializationInfo before PLAYER_LOGIN
 function eventFrame:ACTIVE_TALENT_GROUP_CHANGED()
     F:Debug("ACTIVE_TALENT_GROUP_CHANGED")
     -- not in combat & spec CHANGED
-    if not InCombatLockdown() and (prevSpec and prevSpec ~= GetSpecialization() or forceRecheck) then
-        prevSpec = GetSpecialization()
-        -- update spec vars
-        Cell.vars.playerSpecID, Cell.vars.playerSpecName, _, Cell.vars.playerSpecIcon, Cell.vars.playerSpecRole = GetSpecializationInfo(prevSpec)
-        if not Cell.vars.playerSpecID then -- NOTE: when join in battleground, spec auto switched, during loading, can't get info from GetSpecializationInfo, until PLAYER_ENTERING_WORLD
-            forceRecheck = true
-            checkSpecFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
-            F:Debug("|cffffbb77RoleChanged:|r FAILED")
-        else
-            forceRecheck = false
-            checkSpecFrame:UnregisterEvent("PLAYER_ENTERING_WORLD")
-            if not CellDB["clickCastings"][Cell.vars.playerClass]["useCommon"] then
-                Cell:Fire("UpdateClickCastings")
-            end
-            F:Debug("|cffffbb77RoleChanged:|r", Cell.vars.playerSpecRole)
-            Cell:Fire("RoleChanged", Cell.vars.playerSpecRole)
-        end
+    if not InCombatLockdown() and (Cell.vars.activeTalentGroup and Cell.vars.activeTalentGroup ~= GetActiveTalentGroup()) then
+        Cell.vars.activeTalentGroup = GetActiveTalentGroup()
+        Cell.vars.playerSpecRole = Cell.vars.activeTalentGroup
+        Cell.vars.playerSpecID = Cell.vars.activeTalentGroup
+
+        Cell:Fire("UpdateClickCastings")
+        F:Debug("|cffffbb77ActiveTalentGroupChanged:|r", Cell.vars.activeTalentGroup)
+        Cell:Fire("ActiveTalentGroupChanged", Cell.vars.activeTalentGroup)
     end
 end
 

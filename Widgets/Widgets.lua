@@ -924,11 +924,13 @@ function addon:CreateCheckButton(parent, label, onClick, ...)
     cb:SetScript("OnEnable", function()
         cb.label:SetTextColor(1, 1, 1)
         checkedTexture:SetColorTexture(accentColor.t[1], accentColor.t[2], accentColor.t[3], 0.7)
+        cb:SetBackdropBorderColor(0, 0, 0, 1)
     end)
 
     cb:SetScript("OnDisable", function()
         cb.label:SetTextColor(0.4, 0.4, 0.4)
         checkedTexture:SetColorTexture(0.4, 0.4, 0.4)
+        cb:SetBackdropBorderColor(0, 0, 0, 0.4)
     end)
 
     function cb:SetText(text)
@@ -1827,17 +1829,19 @@ local function CreateItemButtons(items, itemTable, itemParent, level)
         if itemTable[i] and itemTable[i]:GetObjectType() == "Button" then
             b = itemTable[i]
             b:SetText(item.text)
-            if level == 0 then b:Show() end -- show valid top menu buttons
         else
             b = addon:CreateButton(itemParent, item.text, "transparent-class", {98 ,18}, true)
             tinsert(itemTable, b)
-            if i == 1 then
-                b:SetPoint("TOPLEFT", 1, -1)
-                b:SetPoint("RIGHT", -1, 0)
-            else
-                b:SetPoint("TOPLEFT", itemTable[i-1], "BOTTOMLEFT")
-                b:SetPoint("RIGHT", itemTable[i-1])
-            end
+        end
+
+        b:SetParent(itemParent)
+        b:ClearAllPoints()
+        if i == 1 then
+            b:SetPoint("TOPLEFT", 1, -1)
+            b:SetPoint("RIGHT", -1, 0)
+        else
+            b:SetPoint("TOPLEFT", itemTable[i-1], "BOTTOMLEFT")
+            b:SetPoint("RIGHT", itemTable[i-1])
         end
 
         if item.textColor then
@@ -1868,7 +1872,9 @@ local function CreateItemButtons(items, itemTable, itemParent, level)
             b:GetFontString():SetPoint("LEFT", P:Scale(5), 0)
         end
 
-        if level > 0 then
+        if level == 0 then
+            b:Show()-- show valid top menu buttons
+        else
             b:Hide()
             b:SetScript("OnHide", function(self) self:Hide() end)
         end
@@ -1931,15 +1937,103 @@ local function CreateItemButtons(items, itemTable, itemParent, level)
     itemParent:SetHeight(2 + #items*18)
 end
 
-function menu:SetItems(items)
+local function CreateItemButtons_Scroll(items, itemTable, limit)
+    menu:SetScript("OnHide", function(self) self:Hide() end)
+
+    for i, item in pairs(items) do
+        local b
+        if itemTable[i] and itemTable[i]:GetObjectType() == "Button" then
+            b = itemTable[i]
+            b:SetText(item.text)
+        else
+            b = addon:CreateButton(menu.scrollFrame.content, item.text, "transparent-class", {98 ,18}, true)
+            tinsert(itemTable, b)
+        end
+        
+        b:Show()
+        b:SetParent(menu.scrollFrame.content)
+        b:ClearAllPoints()
+        if i == 1 then
+            b:SetPoint("TOPLEFT", 1, -1)
+            b:SetPoint("RIGHT", -1, 0)
+        else
+            b:SetPoint("TOPLEFT", itemTable[i-1], "BOTTOMLEFT")
+            b:SetPoint("RIGHT", itemTable[i-1])
+        end
+
+        if item.textColor then
+            b:GetFontString():SetTextColor(unpack(item.textColor))
+        end
+
+        if item.icon then
+            if not b.icon then
+                b.iconBg = b:CreateTexture(nil, "BORDER")
+                P:Size(b.iconBg, 16, 16)
+                b.iconBg:SetPoint("TOPLEFT", P:Scale(5), P:Scale(-1))
+                b.iconBg:SetColorTexture(0, 0, 0, 1)
+
+                b.icon = b:CreateTexture(nil, "ARTWORK")
+                b.icon:SetPoint("TOPLEFT", b.iconBg, P:Scale(1), P:Scale(-1))
+                b.icon:SetPoint("BOTTOMRIGHT", b.iconBg, P:Scale(-1), P:Scale(1))
+                b.icon:SetTexCoord(0.08, 0.92, 0.08, 0.92)
+            end
+            b.icon:SetTexture(item.icon)
+            b.icon:Show()
+            b.iconBg:Show()
+            b:GetFontString():SetPoint("LEFT", b.iconBg, "RIGHT", P:Scale(2), 0)
+        else
+            if b.icon then
+                b.icon:Hide()
+                b.iconBg:Hide()
+            end
+            b:GetFontString():SetPoint("LEFT", P:Scale(5), 0)
+        end
+
+        if b.childrenSymbol then b.childrenSymbol:Hide() end
+
+        b:SetScript("OnEnter", function()
+            b:SetBackdropColor(unpack(b.hoverColor))
+        end)
+
+        b:SetScript("OnClick", function()
+            PlaySound(SOUNDKIT.U_CHAT_SCROLL_BUTTON)
+            menu:Hide()
+            if item.onClick then item.onClick(item.text) end
+        end)
+    end
+
+    -- update height
+    local n = #items
+    menu.scrollFrame:SetContentHeight(2 + n * 18)
+    if n <= limit then
+        menu:SetHeight(2 + n * 18)
+    else
+        menu:SetHeight(2 + limit * 18)
+    end
+end
+
+function menu:SetItems(items, limit)
     -- clear topmenu
     for _, b in pairs({menu:GetChildren()}) do
         if b:GetObjectType() == "Button" then
             b:Hide()
         end
     end
+
+    if not menu.scrollFrame then
+        addon:CreateScrollFrame(menu)
+        menu.scrollFrame:SetScrollStep(18)
+    end
+    menu.scrollFrame:Reset()
+
     -- create buttons -- items, itemTable, itemParent, level
-    CreateItemButtons(items, menu.items, menu, 0)
+    if limit then
+        menu.scrollFrame:Show()
+        CreateItemButtons_Scroll(items, menu.items, limit)
+    else
+        menu.scrollFrame:Hide()
+        CreateItemButtons(items, menu.items, menu, 0)
+    end
 end
 
 function menu:SetWidths(...)
@@ -2503,6 +2597,8 @@ function addon:CreateDropdown(parent, width, dropdownType)
                 b = list.items[i]
                 b:SetText(item.text)
             end
+
+            b:SetEnabled(not item.disabled)
 
             -- texture
             if item.texture then

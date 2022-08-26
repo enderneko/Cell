@@ -98,7 +98,7 @@ local function CreateSpecialThanksPane()
         "黑色之城 (NGA)\n"..
         "夏木沐-伊森利恩 (CN)\n"..
         "flappysmurf (爱发电)\n"..
-        "Hawtian (爱发电)\n"..
+        "七月核桃丶-白银之手 (CN)\n"..
         "Smile (爱发电)\n"..
         "青乙-影之哀伤 (CN)\n"..
         "黑诺-影之哀伤 (CN)\n"

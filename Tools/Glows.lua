@@ -1,3 +1,4 @@
+-- /script SetAllowDangerousScripts(true)
 local _, Cell = ...
 local L = Cell.L
 local F = Cell.funcs

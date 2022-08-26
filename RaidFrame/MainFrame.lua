@@ -141,7 +141,7 @@ menuFrame.fadeIn.alpha:SetSmoothing("OUT")
 menuFrame.fadeIn:SetScript("OnPlay", function()
     menuFrame.fadeOut:Stop()
     fadingIn = true
-    if CellDB["general"]["menuPosition"] == "top_bottom" then
+    if Cell.frames.battleResFrame and CellDB["general"]["menuPosition"] == "top_bottom" then
         Cell.frames.battleResFrame:OnMenuShow()
     end
 end)
@@ -161,7 +161,7 @@ menuFrame.fadeOut.alpha:SetSmoothing("OUT")
 menuFrame.fadeOut:SetScript("OnPlay", function()
     menuFrame.fadeIn:Stop()
     fadingOut = true
-    if CellDB["general"]["menuPosition"] == "top_bottom" then
+    if Cell.frames.battleResFrame and CellDB["general"]["menuPosition"] == "top_bottom" then
         Cell.frames.battleResFrame:OnMenuHide()
     end
 end)

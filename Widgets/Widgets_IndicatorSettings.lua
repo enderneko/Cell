@@ -505,7 +505,7 @@ local function CreateSetting_TextWidth(parent)
                     widget.percent:Hide()
                     widget.lengthValue = 5
                     
-                    if F:IsAsian() then
+                    if Cell.isAsian then
                         widget.length2:SetText(5)
                         widget.length2:Show()
                         widget.func({"length", 5, 5})
@@ -566,7 +566,7 @@ local function CreateSetting_TextWidth(parent)
             widget.length.confirmBtn:Hide()
             widget.lengthValue = length
             
-            if F:IsAsian() then
+            if Cell.isAsian then
                 widget.func({"length", length, tonumber(widget.length2:GetText()) or widget.lengthValue2})
             else
                 widget.func({"length", length})
@@ -588,7 +588,7 @@ local function CreateSetting_TextWidth(parent)
         widget.length2 = addon:CreateEditBox(widget, 33, 20, false, false, true)
         widget.length2:SetPoint("TOPLEFT", widget.length, "TOPRIGHT", 25, 0)
 
-        if F:IsAsian() then
+        if Cell.isAsian then
             widget.nonEnText = widget.length:CreateFontString(nil, "OVERLAY", font_name)
             widget.nonEnText:SetText(L["NON-EN"])
             widget.nonEnText:SetPoint("BOTTOMLEFT", widget.length, "TOPLEFT", 0, 1)
@@ -651,7 +651,7 @@ local function CreateSetting_TextWidth(parent)
                 widget.length:Show()
                 widget.percent:Hide()
 
-                if F:IsAsian() then
+                if Cell.isAsian then
                     widget.lengthValue2 = width[3] or width[2]
                     widget.length2:SetText(width[3] or width[2])
                     widget.length2:Show()

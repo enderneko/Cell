@@ -886,7 +886,7 @@ local function CreateSyncPane()
     syncPane:SetPoint("TOPLEFT", 5, -60)
 
     -- tip
-    syncTip = Cell:CreateButton(syncPane, nil, "red-hover", {17, 17}, nil, nil, nil, nil, nil, L["Indicator Sync"], L["syncTips"])
+    syncTip = Cell:CreateButton(syncPane, nil, "accent-hover", {17, 17}, nil, nil, nil, nil, nil, L["Indicator Sync"], L["syncTips"])
     syncTip:SetPoint("TOPRIGHT")
     syncTip.tex = syncTip:CreateTexture(nil, "ARTWORK")
     syncTip.tex:SetAllPoints(syncTip)
@@ -975,7 +975,7 @@ local auraTypeItems = {
 }
 
 local function CreateListPane()
-    local listPane = Cell:CreateTitledPane(indicatorsTab, L["Indicators"], 136, 373)
+    local listPane = Cell:CreateTitledPane(indicatorsTab, L["Indicators"], 136, 392)
     listPane:SetPoint("TOPLEFT", 5, -115)
 
     listFrame = Cell:CreateFrame("IndicatorsTab_ListFrame", listPane)
@@ -1104,9 +1104,17 @@ local function CreateListPane()
                     ["auras"] = {},
                 })
             end
+            
             if indicatorAuraType == "buff" then
+                -- cast by me
                 currentLayoutTable["indicators"][last+1]["castByMe"] = true
+                
+                -- wrath
+                if Cell.isWrath then
+                    currentLayoutTable["indicators"][last+1]["trackByName"] = true
+                end
             end
+
             Cell:Fire("UpdateIndicators", GetNotifiedLayoutName(currentLayout), indicatorName, "create", currentLayoutTable["indicators"][last+1])
             LoadIndicatorList()
             listButtons[last+1]:Click()
@@ -1184,7 +1192,7 @@ end
 local settingsFrame
 
 local function CreateSettingsPane()
-    local settingsPane = Cell:CreateTitledPane(indicatorsTab, L["Indicator Settings"], 274, 483)
+    local settingsPane = Cell:CreateTitledPane(indicatorsTab, L["Indicator Settings"], 274, 502)
     settingsPane:SetPoint("TOPLEFT", 153, -5)
 
     -- settings frame
@@ -1197,41 +1205,75 @@ local function CreateSettingsPane()
     settingsFrame.scrollFrame:SetScrollStep(35)
 end
 
-local indicatorSettings = {
-    ["nameText"] = {"enabled", "nameColor", "textWidth", "vehicleNamePosition", "namePosition", "frameLevel", "font-noOffset"},
-    ["statusText"] = {"enabled", "statusColors", "statusPosition", "frameLevel", "font-noOffset"},
-    ["healthText"] = {"enabled", "format", "checkbutton:hideFull", "color", "position", "frameLevel", "font-noOffset"},
-    ["statusIcon"] = {
-        -- "|A:dungeonskull:18:18|a "..
-        "|TInterface\\LFGFrame\\LFG-Eye:18:18:0:0:512:256:72:120:72:120|t "..
-        "|TInterface\\RaidFrame\\Raid-Icon-Rez:18:18|t "..
-        "|TInterface\\TargetingFrame\\UI-PhasingIcon:18:18:0:0:31:31:3:28:3:28|t "..
-        "|A:nameplates-icon-flag-horde:18:18|a "..
-        "|A:nameplates-icon-flag-alliance:18:18|a "..
-        "|A:nameplates-icon-orb-blue:18:18|a "..
-        "|A:nameplates-icon-orb-green:18:18|a "..
-        "|A:nameplates-icon-orb-orange:18:18|a "..
-        "|A:nameplates-icon-orb-purple:18:18|a ", "enabled", "position", "frameLevel", "size-square"},
-    ["roleIcon"] = {"enabled", "position", "size-square", "roleTexture"},
-    ["leaderIcon"] = {"|cffb7b7b7"..L["Leader Icons will hide while in combat"], "enabled", "position", "size-square"},
-    ["readyCheckIcon"] = {"frameLevel", "size-square"},
-    ["playerRaidIcon"] = {"enabled", "position", "frameLevel", "size-square", "alpha"},
-    ["targetRaidIcon"] = {"enabled", "position", "frameLevel", "size-square", "alpha"},
-    ["aggroBlink"] = {"enabled", "position", "frameLevel", "size"},
-    ["aggroBorder"] = {"enabled", "frameLevel", "thickness"},
-    ["aggroBar"] = {"enabled", "position", "frameLevel", "size-bar"},
-    ["shieldBar"] = {"enabled", "color-alpha", "position", "frameLevel", "height"},
-    ["aoeHealing"] = {"enabled", "color", "height"},
-    ["externalCooldowns"] = {"enabled", "checkbutton2:showDuration:"..L["Show duration text instead of icon animation"], "num:5", "orientation", "position", "frameLevel", "size", "font"},
-    ["defensiveCooldowns"] = {"enabled", "checkbutton2:showDuration:"..L["Show duration text instead of icon animation"], "num:5", "orientation", "position", "frameLevel", "size", "font"},
-    ["allCooldowns"] = {L["Externals + Defensives, no need to enable all of them"], "enabled", "checkbutton2:showDuration:"..L["Show duration text instead of icon animation"], "num:5", "orientation", "position", "frameLevel", "size", "font"},
-    ["tankActiveMitigation"] = {"|cffb7b7b7"..I:GetTankActiveMitigationString(), "enabled", "position", "frameLevel", "size"},
-    ["dispels"] = {"enabled", "checkbutton:dispellableByMe", "checkbutton2:enableHighlight", "position", "frameLevel", "size-square"},
-    ["debuffs"] = {"enabled", "checkbutton:dispellableByMe", "blacklist", "bigDebuffs", "checkbutton2:showDuration:"..L["Show duration text instead of icon animation"], "checkbutton3:showTooltip:"..L["This will make these icons not click-through-able"], "num:10", "orientation", "position", "frameLevel", "size-normal-big", "font"},
-    ["raidDebuffs"] = {"|cffb7b7b7"..L["You can config debuffs in %s"]:format(Cell:GetAccentColorString()..L["Raid Debuffs"].."|r"), "enabled", "checkbutton:onlyShowTopGlow", "checkbutton2:showTooltip:"..L["This will make these icons not click-through-able"], "num:3", "orientation", "position", "frameLevel", "size-border", "font"},
-    ["targetedSpells"] = {"enabled", "spells", "glow", "position", "frameLevel", "size-border", "font"},
-    ["targetCounter"] = {"|cffff2727"..L["HIGH CPU USAGE"].."!|r |cffb7b7b7"..L["Check all visible enemy nameplates. Battleground/Arena only."], "enabled", "color", "position", "frameLevel", "font-noOffset"},
-}
+local indicatorSettings
+if Cell.isRetail then
+    indicatorSettings = {
+        ["nameText"] = {"enabled", "nameColor", "textWidth", "vehicleNamePosition", "namePosition", "frameLevel", "font-noOffset"},
+        ["statusText"] = {"enabled", "statusColors", "statusPosition", "frameLevel", "font-noOffset"},
+        ["healthText"] = {"enabled", "format", "checkbutton:hideFull", "color", "position", "frameLevel", "font-noOffset"},
+        ["statusIcon"] = {
+            -- "|A:dungeonskull:18:18|a "..
+            "|TInterface\\LFGFrame\\LFG-Eye:18:18:0:0:512:256:72:120:72:120|t "..
+            "|TInterface\\RaidFrame\\Raid-Icon-Rez:18:18|t "..
+            "|TInterface\\TargetingFrame\\UI-PhasingIcon:18:18:0:0:31:31:3:28:3:28|t "..
+            "|A:nameplates-icon-flag-horde:18:18|a "..
+            "|A:nameplates-icon-flag-alliance:18:18|a "..
+            "|A:nameplates-icon-orb-blue:18:18|a "..
+            "|A:nameplates-icon-orb-green:18:18|a "..
+            "|A:nameplates-icon-orb-orange:18:18|a "..
+            "|A:nameplates-icon-orb-purple:18:18|a ", "enabled", "position", "frameLevel", "size-square"},
+        ["roleIcon"] = {"enabled", "position", "size-square", "roleTexture"},
+        ["leaderIcon"] = {"|cffb7b7b7"..L["Leader Icons will hide while in combat"], "enabled", "position", "size-square"},
+        ["readyCheckIcon"] = {"frameLevel", "size-square"},
+        ["playerRaidIcon"] = {"enabled", "position", "frameLevel", "size-square", "alpha"},
+        ["targetRaidIcon"] = {"enabled", "position", "frameLevel", "size-square", "alpha"},
+        ["aggroBlink"] = {"enabled", "position", "frameLevel", "size"},
+        ["aggroBorder"] = {"enabled", "frameLevel", "thickness"},
+        ["aggroBar"] = {"enabled", "position", "frameLevel", "size-bar"},
+        ["shieldBar"] = {"enabled", "color-alpha", "position", "frameLevel", "height"},
+        ["aoeHealing"] = {"enabled", "color", "height"},
+        ["externalCooldowns"] = {"enabled", "checkbutton2:showDuration:"..L["Show duration text instead of icon animation"], "num:5", "orientation", "position", "frameLevel", "size", "font"},
+        ["defensiveCooldowns"] = {"enabled", "checkbutton2:showDuration:"..L["Show duration text instead of icon animation"], "num:5", "orientation", "position", "frameLevel", "size", "font"},
+        ["allCooldowns"] = {L["Externals + Defensives, no need to enable all of them"], "enabled", "checkbutton2:showDuration:"..L["Show duration text instead of icon animation"], "num:5", "orientation", "position", "frameLevel", "size", "font"},
+        ["tankActiveMitigation"] = {"|cffb7b7b7"..I:GetTankActiveMitigationString(), "enabled", "position", "frameLevel", "size"},
+        ["dispels"] = {"enabled", "checkbutton:dispellableByMe", "checkbutton2:enableHighlight", "position", "frameLevel", "size-square"},
+        ["debuffs"] = {"enabled", "checkbutton:dispellableByMe", "blacklist", "bigDebuffs", "checkbutton2:showDuration:"..L["Show duration text instead of icon animation"], "checkbutton3:showTooltip:"..L["This will make these icons not click-through-able"], "num:10", "orientation", "position", "frameLevel", "size-normal-big", "font"},
+        ["raidDebuffs"] = {"|cffb7b7b7"..L["You can config debuffs in %s"]:format(Cell:GetAccentColorString()..L["Raid Debuffs"].."|r"), "enabled", "checkbutton:onlyShowTopGlow", "checkbutton2:showTooltip:"..L["This will make these icons not click-through-able"], "num:3", "orientation", "position", "frameLevel", "size-border", "font"},
+        ["targetedSpells"] = {"enabled", "spells", "glow", "position", "frameLevel", "size-border", "font"},
+        ["targetCounter"] = {"|cffff2727"..L["HIGH CPU USAGE"].."!|r |cffb7b7b7"..L["Check all visible enemy nameplates. Battleground/Arena only."], "enabled", "color", "position", "frameLevel", "font-noOffset"},
+    }
+elseif Cell.isWrath then
+    indicatorSettings = {
+        ["nameText"] = {"enabled", "nameColor", "textWidth", "vehicleNamePosition", "namePosition", "frameLevel", "font-noOffset"},
+        ["statusText"] = {"enabled", "statusColors", "statusPosition", "frameLevel", "font-noOffset"},
+        ["healthText"] = {"enabled", "format", "checkbutton:hideFull", "color", "position", "frameLevel", "font-noOffset"},
+        ["statusIcon"] = {
+            -- "|A:dungeonskull:18:18|a "..
+            "|TInterface\\LFGFrame\\LFG-Eye:18:18:0:0:512:256:72:120:72:120|t "..
+            "|TInterface\\RaidFrame\\Raid-Icon-Rez:18:18|t "..
+            "|TInterface\\TargetingFrame\\UI-PhasingIcon:18:18:0:0:31:31:3:28:3:28|t "..
+            "|A:horde_icon_and_flag-dynamicIcon:18:18|a "..
+            "|A:alliance_icon_and_flag-dynamicIcon:18:18|a ", "enabled", "position", "frameLevel", "size-square"},
+        ["roleIcon"] = {"enabled", "position", "size-square", "roleTexture"},
+        ["leaderIcon"] = {"|cffb7b7b7"..L["Leader Icons will hide while in combat"], "enabled", "position", "size-square"},
+        ["readyCheckIcon"] = {"frameLevel", "size-square"},
+        ["playerRaidIcon"] = {"enabled", "position", "frameLevel", "size-square", "alpha"},
+        ["targetRaidIcon"] = {"enabled", "position", "frameLevel", "size-square", "alpha"},
+        ["aggroBlink"] = {"enabled", "position", "frameLevel", "size"},
+        ["aggroBorder"] = {"enabled", "frameLevel", "thickness"},
+        ["aggroBar"] = {"enabled", "position", "frameLevel", "size-bar"},
+        ["aoeHealing"] = {"enabled", "color", "height"},
+        ["externalCooldowns"] = {"enabled", "checkbutton2:showDuration:"..L["Show duration text instead of icon animation"], "num:5", "orientation", "position", "frameLevel", "size", "font"},
+        ["defensiveCooldowns"] = {"enabled", "checkbutton2:showDuration:"..L["Show duration text instead of icon animation"], "num:5", "orientation", "position", "frameLevel", "size", "font"},
+        ["allCooldowns"] = {L["Externals + Defensives, no need to enable all of them"], "enabled", "checkbutton2:showDuration:"..L["Show duration text instead of icon animation"], "num:5", "orientation", "position", "frameLevel", "size", "font"},
+        ["dispels"] = {"enabled", "checkbutton:dispellableByMe", "checkbutton2:enableHighlight", "position", "frameLevel", "size-square"},
+        ["debuffs"] = {"enabled", "checkbutton:dispellableByMe", "blacklist", "bigDebuffs", "checkbutton2:showDuration:"..L["Show duration text instead of icon animation"], "checkbutton3:showTooltip:"..L["This will make these icons not click-through-able"], "num:10", "orientation", "position", "frameLevel", "size-normal-big", "font"},
+        ["raidDebuffs"] = {"|cffb7b7b7"..L["You can config debuffs in %s"]:format(Cell:GetAccentColorString()..L["Raid Debuffs"].."|r"), "enabled", "checkbutton:onlyShowTopGlow", "checkbutton2:showTooltip:"..L["This will make these icons not click-through-able"], "num:3", "orientation", "position", "frameLevel", "size-border", "font"},
+        ["targetedSpells"] = {"enabled", "spells", "glow", "position", "frameLevel", "size-border", "font"},
+        ["targetCounter"] = {"|cffff2727"..L["HIGH CPU USAGE"].."!|r |cffb7b7b7"..L["Check all visible enemy nameplates. Battleground/Arena only."], "enabled", "color", "position", "frameLevel", "font-noOffset"},
+    }
+end
+    
 
 local function ShowIndicatorSettings(id)
     -- if selected == id then return end
@@ -1251,7 +1293,7 @@ local function ShowIndicatorSettings(id)
         -- end
     else
         if indicatorType == "icon" then
-            settingsTable = {"enabled", "auras", "checkbutton2:showDuration:"..L["Show duration text instead of icon animation"], "position", "frameLevel", "size-square", "font"}
+            settingsTable = {"enabled", "auras", "checkbutton3:showDuration:"..L["Show duration text instead of icon animation"], "position", "frameLevel", "size-square", "font"}
         elseif indicatorType == "text" then
             settingsTable = {"enabled", "auras", "duration", "checkbutton3:circledStackNums:"..L["Require font support"], "colors", "position", "frameLevel", "font-noOffset"}
         elseif indicatorType == "bar" then
@@ -1259,16 +1301,22 @@ local function ShowIndicatorSettings(id)
         elseif indicatorType == "rect" then
             settingsTable = {"enabled", "auras", "colors", "position", "frameLevel", "size"}
         elseif indicatorType == "icons" then
-            settingsTable = {"enabled", "auras", "checkbutton2:showDuration:"..L["Show duration text instead of icon animation"], "num:10", "orientation", "position", "frameLevel", "size-square", "font"}
+            settingsTable = {"enabled", "auras", "checkbutton3:showDuration:"..L["Show duration text instead of icon animation"], "num:10", "orientation", "position", "frameLevel", "size-square", "font"}
         elseif indicatorType == "color" then
             settingsTable = {"enabled", "auras", "customColors", "anchor"}
         elseif indicatorType == "texture" then
             settingsTable = {"enabled", "auras", "texture", "position", "frameLevel", "size"}
         end
-        -- castByMe
+       
         if currentLayoutTable["indicators"][id]["auraType"] == "buff" then
+            -- castByMe
             tinsert(settingsTable, 3, "checkbutton:castByMe")
+            -- NOTE: trackByName (spell has a lot of RANKS!)
+            if Cell.isWrath then
+                tinsert(settingsTable, 4, "checkbutton2:trackByName")
+            end
         end
+       
         -- tips
         if indicatorType == "icons" then
             tinsert(settingsTable, 1, "|cffb7b7b7"..L["The spells list of a icons indicator is unordered (no priority)."].." "..L["Indicator settings are part of Layout settings which are account-wide."])

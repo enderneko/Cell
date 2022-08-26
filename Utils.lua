@@ -5,21 +5,81 @@ local F = Cell.funcs
 -------------------------------------------------
 -- game version
 -------------------------------------------------
-function F:IsAsian()
-    return LOCALE_zhCN or LOCALE_zhTW or LOCALE_koKR
+Cell.isAsian = LOCALE_zhCN or LOCALE_zhTW or LOCALE_koKR
+
+Cell.isRetail = WOW_PROJECT_ID == WOW_PROJECT_MAINLINE
+Cell.isClassic = WOW_PROJECT_ID == WOW_PROJECT_CLASSIC
+Cell.isBCC = WOW_PROJECT_ID == WOW_PROJECT_BURNING_CRUSADE_CLASSIC and LE_EXPANSION_LEVEL_CURRENT == LE_EXPANSION_BURNING_CRUSADE
+Cell.isWrath = WOW_PROJECT_ID == WOW_PROJECT_BURNING_CRUSADE_CLASSIC and LE_EXPANSION_LEVEL_CURRENT == LE_EXPANSION_WRATH_OF_THE_LICH_KING
+
+-------------------------------------------------
+-- WotLK
+-------------------------------------------------
+function F:GetActiveTalentInfo()
+    local which = GetActiveTalentGroup() == 1 and L["Primary Talents"] or L["Secondary Talents"]
+
+    local maxPoints = 0
+    local specName, specIcon, specFileName
+
+    for i = 1, GetNumTalentTabs() do
+        local name, texture, pointsSpent, fileName = GetTalentTabInfo(i)
+        if pointsSpent > maxPoints then
+            maxPoints = pointsSpent
+            specIcon = texture
+            specFileName = fileName
+        elseif pointsSpent == maxPoints then
+            specIcon = 132148
+        end
+    end
+
+    return which, specIcon, specFileName
 end
 
-function F:IsClassic()
-    return WOW_PROJECT_ID == WOW_PROJECT_CLASSIC
-end
+-- local specRoles = {
+--     ["DeathKnightBlood"] = "DAMAGER",
+--     ["DeathKnightFrost"] = "TANK",
+--     ["DeathKnightUnholy"] = "DAMAGER",
 
-function F:IsBCC()
-    return WOW_PROJECT_ID == WOW_PROJECT_BURNING_CRUSADE_CLASSIC
-end
+--     ["DruidRestoration"] = "HEALER",
+--     ["DruidBalance"] = "DAMAGER",
+--     -- ["DruidFeralCombat"] = nil,
 
-function F:IsRetail()
-    return WOW_PROJECT_ID == WOW_PROJECT_MAINLINE
-end
+--     ["HunterBeastMastery"] = "DAMAGER",
+--     ["HunterSurvival"] = "DAMAGER",
+--     ["HunterMarksmanship"] = "DAMAGER",
+    
+--     ["MageFrost"] = "DAMAGER",
+--     ["MageArcane"] = "DAMAGER",
+--     ["MageFire"] = "DAMAGER",
+
+--     ["PaladinHoly"] = "HEALER",
+--     ["PaladinCombat"] = "DAMAGER",
+--     ["PaladinProtection"] = "TANK",
+
+--     ["PriestShadow"] = "DAMAGER",
+--     ["PriestHoly"] = "HEALER",
+--     ["PriestDiscipline"] = "HEALER",
+
+--     ["RogueCombat"] = "DAMAGER",
+--     ["RogueSubtlety"] = "DAMAGER",
+--     ["RogueAssassination"] = "DAMAGER",
+
+--     ["ShamanElementalCombat"] = "DAMAGER",
+--     ["ShamanEnhancement"] = "DAMAGER",
+--     ["ShamanRestoration"] = "HEALER",
+
+--     ["WarlockSummoning"] = "DAMAGER",
+--     ["WarlockDestruction"] = "DAMAGER",
+--     ["WarlockCurses"] = "DAMAGER",
+
+--     ["WarriorArms"] = "DAMAGER",
+--     ["WarriorFury"] = "DAMAGER",
+--     ["WarriorProtection"] = "TANK",
+-- }
+
+-- function F:GetPlayerRole()
+
+-- end
 
 -------------------------------------------------
 -- color
@@ -200,7 +260,7 @@ elseif LOCALE_koKR then
     symbol_1K, symbol_10K, symbol_1B = "천", "만", "억"
 end
 
-if F:IsAsian() then
+if Cell.isAsian then
     function F:FormatNumber(n)
         if abs(n) >= 100000000 then
             return string.format("%.3f"..symbol_1B, n/100000000)
@@ -430,6 +490,21 @@ function F:ConvertTable(t)
     return temp
 end
 
+function F:ConvertAurasTable(t, convertIdToName)
+    if not convertIdToName then
+        return F:ConvertTable(t)
+    end
+
+    local temp = {}
+    for k, v in ipairs(t) do
+        local name = GetSpellInfo(v)
+        if name then
+            temp[name] = k
+        end
+    end
+    return temp
+end
+
 function F:CheckTableRemoved(previous, after)
     local aa = {}
     local ret = {}
@@ -492,11 +567,25 @@ end
 
 local SEC = _G.SPELL_DURATION_SEC
 local MIN = _G.SPELL_DURATION_MIN
+
+local PATTERN_SEC
+local PATTERN_MIN
+if strfind(SEC, "1f") then
+    PATTERN_SEC = "%.0"
+elseif strfind(SEC, "2f") then
+    PATTERN_SEC = "%.00"
+end
+if strfind(MIN, "1f") then
+    PATTERN_MIN = "%.0"
+elseif strfind(MIN, "2f") then
+    PATTERN_MIN = "%.00"
+end
+
 function F:SecondsToTime(seconds)
     if seconds > 60 then
-        return gsub(format(MIN, seconds / 60), "%.0", "")
+        return gsub(format(MIN, seconds / 60), PATTERN_MIN, "")
     else
-        return gsub(format(SEC, seconds), "%.0", "")
+        return gsub(format(SEC, seconds), PATTERN_SEC, "")
     end
 end
 
@@ -577,7 +666,7 @@ function F:UpdateTextWidth(fs, text, width, relativeTo)
             end
         end
     elseif width[1] == "length" then
-        if F:IsAsian() then
+        if Cell.isAsian then
             if string.len(text) == string.utf8len(text) then -- en
                 fs:SetText(string.utf8sub(text, 1, width[3] or width[2]))
             else
@@ -1131,24 +1220,54 @@ function F:FindAuraById(unit, type, spellId)
     end
 end
 
-function F:FindDebuffByIds(unit, spellIds)
-    local debuffs = {}
-    AuraUtil.ForEachAura(unit, "HARMFUL", 10, function(...)
-        local name, icon, count, debuffType, duration, expirationTime, source, isStealable, nameplateShowPersonal, spellId = ...
-        if spellIds[spellId] then
-            debuffs[spellId] = debuffType
-        end
-    end)
-    return debuffs
-end
+if Cell.isRetail then
+    function F:FindDebuffByIds(unit, spellIds)
+        local debuffs = {}
+        AuraUtil.ForEachAura(unit, "HARMFUL", 10, function(name, icon, count, debuffType, duration, expirationTime, source, isStealable, nameplateShowPersonal, spellId)
+            if spellIds[spellId] then
+                debuffs[spellId] = debuffType
+            end
+        end)
+        return debuffs
+    end
 
-function F:FindAuraByDebuffTypes(unit, types)
-    local debuffs = {}
-    AuraUtil.ForEachAura(unit, "HARMFUL", 10, function(...)
-        local name, icon, count, debuffType, duration, expirationTime, source, isStealable, nameplateShowPersonal, spellId = ...
-        if types == "all" or types[debuffType] then
-            debuffs[spellId] = debuffType
+    function F:FindAuraByDebuffTypes(unit, types)
+        local debuffs = {}
+        AuraUtil.ForEachAura(unit, "HARMFUL", 10, function(name, icon, count, debuffType, duration, expirationTime, source, isStealable, nameplateShowPersonal, spellId)
+            if types == "all" or types[debuffType] then
+                debuffs[spellId] = debuffType
+            end
+        end)
+        return debuffs
+    end
+else
+    function F:FindDebuffByIds(unit, spellIds)
+        local debuffs = {}
+        for i = 1, 40 do
+            local name, icon, count, debuffType, duration, expirationTime, source, isStealable, nameplateShowPersonal, spellId = UnitDebuff(unit, i)
+            if not name then
+                break
+            end
+
+            if spellIds[spellId] then
+                debuffs[spellId] = debuffType
+            end
         end
-    end)
-    return debuffs
+        return debuffs
+    end
+
+    function F:FindAuraByDebuffTypes(unit, types)
+        local debuffs = {}
+        for i = 1, 40 do
+            local name, icon, count, debuffType, duration, expirationTime, source, isStealable, nameplateShowPersonal, spellId = UnitDebuff(unit, i)
+            if not name then
+                break
+            end
+
+            if types == "all" or types[debuffType] then
+                debuffs[spellId] = debuffType
+            end
+        end
+        return debuffs
+    end
 end

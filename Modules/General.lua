@@ -282,6 +282,7 @@ local function CreateToolsPane()
         Cell:Fire("UpdateTools", "battleRes")
     end, L["Battle Res Timer"], L["Only show during encounter or in mythic+"])
     resCB:SetPoint("TOPLEFT", toolsPane, "TOPLEFT", 5, -27)
+    resCB:SetEnabled(Cell.isRetail)
 
     -- death report
     reportCB = Cell:CreateCheckButton(toolsPane, L["Death Report"], function(checked, self)
@@ -308,6 +309,7 @@ local function CreateToolsPane()
         Cell:Fire("UpdateTools", "buffTracker")
     end, L["Buff Tracker"].." |cffff7727"..L["MODERATE CPU USAGE"], L["Check if your group members need some raid buffs"], L["|cffffb5c5Left-Click:|r cast the spell"], L["|cffffb5c5Right-Click:|r report unaffected"]) -- L["|cffffb5c5Middle-Click:|r send custom message"]
     buffCB:SetPoint("TOPLEFT", reportCB, "TOPLEFT", 139, 0)
+    buffCB:SetEnabled(Cell.isRetail)
 
     -- ready & pull
     readyPullCB = Cell:CreateCheckButton(toolsPane, L["ReadyCheck and PullTimer buttons"], function(checked, self)
@@ -417,6 +419,7 @@ local function CreateToolsPane()
         {
             ["text"] = L["World Marks"].." ("..L["Horizontal"]..")",
             ["value"] = "world_h",
+            ["disabled"] = Cell.isWrath,
             ["onClick"] = function()
                 CellDB["tools"]["marks"][2] = "world_h"
                 Cell:Fire("UpdateTools", "marks")
@@ -425,6 +428,7 @@ local function CreateToolsPane()
         {
             ["text"] = L["World Marks"].." ("..L["Vertical"]..")",
             ["value"] = "world_v",
+            ["disabled"] = Cell.isWrath,
             ["onClick"] = function()
                 CellDB["tools"]["marks"][2] = "world_v"
                 Cell:Fire("UpdateTools", "marks")
@@ -433,6 +437,7 @@ local function CreateToolsPane()
         {
             ["text"] = L["Both"].." ("..L["Horizontal"]..")",
             ["value"] = "both_h",
+            ["disabled"] = Cell.isWrath,
             ["onClick"] = function()
                 CellDB["tools"]["marks"][2] = "both_h"
                 Cell:Fire("UpdateTools", "marks")
@@ -441,6 +446,7 @@ local function CreateToolsPane()
         {
             ["text"] = L["Both"].." ("..L["Vertical"]..")",
             ["value"] = "both_v",
+            ["disabled"] = Cell.isWrath,
             ["onClick"] = function()
                 CellDB["tools"]["marks"][2] = "both_v"
                 Cell:Fire("UpdateTools", "marks")

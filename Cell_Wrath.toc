@@ -1,9 +1,10 @@
-## Interface: 90207
+## Interface: 30400
 ## Title: Cell
-## Version: r109-release
+## Version: r109-beta
 ## Author: 篠崎
-## X-Flavor: Mainline
+## X-Flavor: Wrath
 ## SavedVariables: CellDB
+## SavedVariablesPerCharacter: CellCharacterDB
 
 ## X-Curse-Project-ID: 409666
 ## X-Wago-ID: qv63LLKb
@@ -14,14 +15,14 @@ Locales\zhCN.lua
 Locales\zhTW.lua
 Locales\koKR.lua
 
-Libs\LoadLibs.xml
+Libs\LoadLibs_Wrath.xml
 
-Core.lua
+Core_Wrath.lua
 Utils.lua
 Revise.lua
 Comm.lua
 Widgets\LoadWidgets.xml
-Defaults\LoadDefaults.xml
+Defaults\LoadDefaults_Wrath.xml
 
 HideBlizzard.lua
 
@@ -30,16 +31,17 @@ Indicators\Built-in.lua
 Indicators\AoEHealing.lua
 Indicators\TargetCounter.lua
 Indicators\TargetedSpells.lua
-Indicators\Custom.lua
+Indicators\Custom_Wrath.lua
 
 RaidFrame\MainFrame.lua
-RaidFrame\UnitButton.lua
+RaidFrame\UnitButton_Wrath.lua
 RaidFrame\UnitButton.xml
 RaidFrame\Groups\SoloFrame.lua
 RaidFrame\Groups\PartyFrame.lua
 RaidFrame\Groups\RaidFrame.lua
 RaidFrame\Groups\NPCFrame.lua
 
-Tools\LoadTools.xml
-Modules\LoadModules.xml
-RaidDebuffs\LoadRaidDebuffs.xml
+Tools\LoadTools_Wrath.xml
+RaidDebuffs\ExpansionData.lua
+Modules\LoadModules_Wrath.xml
+RaidDebuffs\LoadRaidDebuffs_Wrath.xml

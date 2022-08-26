@@ -2,7 +2,7 @@
 -- File: LibGroupInfo.lua
 -- Author: enderneko (enderneko-dev@outlook.com)
 -- File Created: 2022/07/29 15:04:31 +0800
--- Last Modified: 2022/08/13 01:26:17 +0800
+-- Last Modified: 2022/08/24 18:58:04 +0800
 --]]
 
 local MAJOR, MINOR = "LibGroupInfo", 2
@@ -17,6 +17,8 @@ local UPDATE_EVENT = "GroupInfo_Update"
 local PLAYER_GUID
 local RETRY_INTERVAL = 1.5
 local MAX_ATTEMPTS = 3
+local IS_RETAIL = WOW_PROJECT_ID == WOW_PROJECT_MAINLINE
+local IS_WRATH = WOW_PROJECT_ID == WOW_PROJECT_BURNING_CRUSADE_CLASSIC and LE_EXPANSION_LEVEL_CURRENT == LE_EXPANSION_WRATH_OF_THE_LICH_KING
 
 local debugMode = false
 local function Print(...)
@@ -112,6 +114,8 @@ local GetNumGroupMembers = GetNumGroupMembers
 local UnitInParty = UnitInParty
 local UnitInRaid = UnitInRaid
 
+-- local GetNumTalentTabs = GetNumTalentTabs
+-- local GetTalentTabInfo = GetTalentTabInfo
 
 -- event frame
 local frame = CreateFrame("Frame", MAJOR.."Frame")
@@ -183,27 +187,80 @@ local function BuildAndNotify(unit)
     lib.callbacks:Fire(UPDATE_EVENT, guid, unit, cache[guid])
 end
 
+-- local function BuildAndNotify_Wrath(unit)
+--     Print("|cffff7777LGI:BuildAndNotify|r", unit)
+
+--     local guid = UnitGUID(unit)
+--     if not cache[guid] then
+--         cache[guid] = {
+--             ["talents"] = {}
+--         }
+--     end
+
+--     -- general
+--     cache[guid].unit = unit
+--     cache[guid].name, cache[guid].realm = UnitNameUnmodified(unit)
+--     if not cache[guid].realm then
+--         cache[guid].realm = GetNormalizedRealmName()
+--     end
+--     cache[guid].level = UnitLevel(unit)
+--     cache[guid].race = UnitRace(unit)
+--     cache[guid].gender = genders[UnitSex(unit)]
+--     cache[guid].role = role
+--     cache[guid].faction = UnitFactionGroup(unit)
+    
+--     -- spec
+--     local isInspect = not UnitIsUnit(unit, "player")
+--     local maxPoints = 0
+
+--     for i = 1, GetNumTalentTabs(isInspect) do
+--         local name, texture, pointsSpent, fileName = GetTalentTabInfo(i, isInspect)
+--         cache[guid]["talents"][fileName] = {
+--             ["points"] = pointsSpent,
+--             ["name"] = name,
+--             ["icon"] = texture,
+--         }
+        
+--         if pointsSpent > maxPoints then
+--             maxPoints = pointsSpent
+--             cache[guid].specName = name
+--             cache[guid].specIcon = texture
+--         end
+--     end
+
+--     --! fire
+--     lib.callbacks:Fire(UPDATE_EVENT, guid, unit, cache[guid])
+-- end
+
 local function Query(unit)
     -- if InCombatLockdown() then return end
     if UnitIsDead("player") then return end
 
     if IsInGroup() and not (UnitInParty(unit) or UnitInRaid(unit)) then return end
     
-    BuildAndNotify(unit)
+    -- if IS_RETAIL then
+        BuildAndNotify(unit)
+    -- elseif IS_WRATH then
+    --     BuildAndNotify_Wrath(unit)
+    -- end
 end
 
 ---------------------------------------------------------------------
 -- login & reload
 ---------------------------------------------------------------------
 function frame:PLAYER_LOGIN()
-    CacheSpecData()
+    -- if IS_RETAIL then
+        CacheSpecData()
+        frame:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
+    -- elseif IS_WRATH then
+    --     frame:RegisterEvent("UNIT_AURA")
+    -- end
 
     frame:RegisterEvent("PLAYER_ENTERING_WORLD")
     frame:RegisterEvent("PLAYER_REGEN_ENABLED")
     frame:RegisterEvent("PLAYER_REGEN_DISABLED")
     frame:RegisterEvent("INSPECT_READY")
     frame:RegisterEvent("GROUP_ROSTER_UPDATE")
-    frame:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
     frame:RegisterEvent("UNIT_LEVEL")
     frame:RegisterEvent("UNIT_NAME_UPDATE")
     -- frame:RegisterEvent("UNIT_PHASE")
@@ -266,6 +323,10 @@ frame:SetScript("OnUpdate", function(self, elapsed)
 end)
 
 local function AddToQueue(unit, guid)
+    -- if IS_WRATH then
+    --     if not UnitInRange(unit) then return end
+    -- end
+    
     if not CanInspect(unit) then return end
     
     Print("|cffffff33LGI:|r", "AddToQueue", guid, unit)

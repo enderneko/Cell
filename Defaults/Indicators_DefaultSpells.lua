@@ -296,18 +296,18 @@ local dispellable = {
         [104] = {["Curse"] = true, ["Poison"] = true},
         -- Restoration
         [105] = {["Curse"] = true, ["Magic"] = true, ["Poison"] = true},
-        -------------------------
+    -------------------------
         
-        -- MAGE -----------------
+    -- MAGE -----------------
         -- 62 - Arcane
         [62] = {["Curse"] = true},
         -- 63 - Fire
         [63] = {["Curse"] = true},
         -- 64 - Frost
         [64] = {["Curse"] = true},
-        -------------------------
+    -------------------------
         
-        -- MONK -----------------
+    -- MONK -----------------
         -- 268 - Brewmaster
         [268] = {["Disease"] = true, ["Poison"] = true},
         -- 269 - Windwalker

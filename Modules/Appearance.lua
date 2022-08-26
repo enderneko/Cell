@@ -103,7 +103,7 @@ local function CreateCellPane()
         Cell:UpdateOptionsFont(CellDB["appearance"]["optionsFontSizeOffset"], checked)
     end)
     useGameFontCB:SetPoint("TOPLEFT", accentColorDropdown, "BOTTOMLEFT", 0, -30)
-    if F:IsAsian() then
+    if Cell.isAsian then
         useGameFontCB:Hide()
     end
 end
@@ -146,12 +146,12 @@ end
 -- update font
 local function UpdatePreviewIcons(layout, indicatorName, setting, value, value2)
     if not indicatorName or indicatorName == "raidDebuffs" then
-        borderIcon1:SetFont(unpack(Cell.vars.currentLayoutTable.indicators[21].font))
-        borderIcon2:SetFont(unpack(Cell.vars.currentLayoutTable.indicators[21].font))
+        borderIcon1:SetFont(unpack(Cell.vars.currentLayoutTable.indicators[Cell.defaults.indicatorIndices["raidDebuffs"]].font))
+        borderIcon2:SetFont(unpack(Cell.vars.currentLayoutTable.indicators[Cell.defaults.indicatorIndices["raidDebuffs"]].font))
     end
     if not indicatorName or indicatorName == "debuffs" then
-        barIcon1:SetFont(unpack(Cell.vars.currentLayoutTable.indicators[20].font))
-        barIcon2:SetFont(unpack(Cell.vars.currentLayoutTable.indicators[20].font))
+        barIcon1:SetFont(unpack(Cell.vars.currentLayoutTable.indicators[Cell.defaults.indicatorIndices["debuffs"]].font))
+        barIcon2:SetFont(unpack(Cell.vars.currentLayoutTable.indicators[Cell.defaults.indicatorIndices["debuffs"]].font))
     end
 end
 
@@ -213,7 +213,7 @@ local function CreatePreviewIcons()
     P:Size(barIcon1, 22, 22)
     barIcon1:SetPoint("BOTTOMRIGHT", barIcon2, "BOTTOMLEFT", P:Scale(-1), 0)
     barIcon1:ShowDuration(true)
-    SetOnUpdate(barIcon1, "", 1394887, 5)
+    SetOnUpdate(barIcon1, "", 132155, 5)
     barIcon1:Show()
 
     UpdatePreviewIcons()
@@ -332,22 +332,24 @@ local function UpdatePreviewShields()
         previewButton2.widget.incomingHeal:Hide()
     end
 
-    if CellDB["appearance"]["healAbsorb"] then
-        previewButton2.widget.absorbsBar:SetValue(0.3)
-    else
-        previewButton2.widget.absorbsBar:Hide()
-    end
+    if Cell.isRetail then
+        if CellDB["appearance"]["healAbsorb"] then
+            previewButton2.widget.absorbsBar:SetValue(0.3)
+        else
+            previewButton2.widget.absorbsBar:Hide()
+        end
 
-    if CellDB["appearance"]["shield"] then
-        previewButton2.widget.shieldBar:SetValue(0.4)
-    else
-        previewButton2.widget.shieldBar:Hide()
-    end
+        if CellDB["appearance"]["shield"] then
+            previewButton2.widget.shieldBar:SetValue(0.4)
+        else
+            previewButton2.widget.shieldBar:Hide()
+        end
 
-    if CellDB["appearance"]["overshield"] then
-        previewButton2.widget.overShieldGlow:Show()
-    else
-        previewButton2.widget.overShieldGlow:Hide()
+        if CellDB["appearance"]["overshield"] then
+            previewButton2.widget.overShieldGlow:Show()
+        else
+            previewButton2.widget.overShieldGlow:Hide()
+        end
     end
 end
 
@@ -999,6 +1001,7 @@ local function CreateUnitButtonStylePane()
         Cell:Fire("UpdateAppearance", "shields")
     end)
     absorbCB:SetPoint("TOPLEFT", predCB, "BOTTOMLEFT", 0, -7)
+    absorbCB:SetEnabled(Cell.isRetail)
     
     -- shield
     shieldCB = Cell:CreateCheckButton(unitButtonPane, L["Shield Texture"], function(checked, self)
@@ -1006,6 +1009,7 @@ local function CreateUnitButtonStylePane()
         Cell:Fire("UpdateAppearance", "shields")
     end)
     shieldCB:SetPoint("TOPLEFT", absorbCB, "BOTTOMLEFT", 0, -7)
+    shieldCB:SetEnabled(Cell.isRetail)
     
     -- overshield
     oversCB = Cell:CreateCheckButton(unitButtonPane, L["Overshield Texture"], function(checked, self)
@@ -1013,6 +1017,7 @@ local function CreateUnitButtonStylePane()
         Cell:Fire("UpdateAppearance", "shields")
     end)
     oversCB:SetPoint("TOPLEFT", shieldCB, "BOTTOMLEFT", 0, -7)
+    oversCB:SetEnabled(Cell.isRetail)
     
     -- reset
     resetBtn = Cell:CreateButton(unitButtonPane, L["Reset All"], "accent", {77, 17}, nil, nil, nil, nil, nil, L["Reset All"], L["[Ctrl+LeftClick] to reset these settings"])

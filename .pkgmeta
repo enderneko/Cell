@@ -1,6 +1,5 @@
 package-as: Cell
 enable-nolib-creation: no
-# enable-toc-creation: yes
 
 externals:
   Libs/LibStub: https://repos.curseforge.com/wow/libstub/trunk

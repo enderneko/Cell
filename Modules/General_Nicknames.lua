@@ -66,6 +66,7 @@ local function CreateNicknameOptionsFrame()
         CellDB["nicknames"]["mine"] = text
         Cell:Fire("UpdateNicknames", "mine", text)
         nicknameEB.confirmBtn:Hide()
+        nicknameEB:ClearFocus()
     end)
 
     nicknameEB.tip = nicknameEB:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")

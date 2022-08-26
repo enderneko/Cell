@@ -17,6 +17,7 @@ local currentBossTable, selectedButtonIndex, selectedSpellId, selectedSpellName,
 local LoadExpansion, ShowInstances, ShowBosses, ShowDebuffs, ShowDetails, ShowInstanceImage, HideInstanceImage, ShowBossImage, HideBossImage, OpenEncounterJournal
 -- buttons
 local instanceButtons, bossButtons, debuffButtons = {}, {}, {}
+
 -------------------------------------------------
 -- prepare debuff list
 -------------------------------------------------
@@ -26,17 +27,7 @@ local instanceButtons, bossButtons, debuffButtons = {}, {}, {}
 -- instanceName, ... = EJ_GetInstanceInfo(instanceId)
 
 -- used to sort list buttons
-local encounterJournalList = {
-    -- ["expansionName"] = {
-    --     {
-    --         ["name"] = instanceName,
-    --         ["id"] = instanceId,
-    --         ["bosses"] = {
-    --             {["name"]=name, ["id"]=id, ["image"]=image},
-    --         },
-    --     },
-    -- },
-}
+local encounterJournalList = F:GetExpansionData()
 
 -- used to GetInstanceInfo/GetRealZoneText --> instanceId
 local instanceNameMapping = {
@@ -52,81 +43,29 @@ local bossIdToName = {
     [0] = L["General"]
 }
 
-local function LoadBossList(instanceId, list)
-    EJ_SelectInstance(instanceId)
-    for index = 1, 77 do
-        local name, _, id = EJ_GetEncounterInfoByIndex(index)
-        if not name or not id then
-            break
-        end
-        
-        -- id, name, description, displayInfo, iconImage, uiModelSceneID = EJ_GetCreatureInfo(index [, encounterID])
-        local image = select(5, EJ_GetCreatureInfo(1, id))
-        tinsert(list, {["name"]=name, ["id"]=id, ["image"]=image})
-        bossIdToName[id] = name
-    end
-end
-
-local function LoadInstanceList(tier, instanceType, list)
-    EJ_SelectTier(tier)
-    local isRaid = instanceType == "raid"
-    for index = 1, 77 do
-        local id, name, _, _, image = EJ_GetInstanceByIndex(index, isRaid)
-        if not id or not name then
-            break
-        end
-
-        local eName = EJ_GetTierInfo(tier)
-        local instanceTable = {["name"]=name, ["id"]=id, ["image"]=image, ["bosses"]={}}
-        tinsert(list, instanceTable)
-        instanceNameMapping[name] = eName..":"..#list..":"..id -- NOTE: used for searching current zone debuffs & switch to current instance
-        instanceIdToName[id] = name
-
-        LoadBossList(id, instanceTable["bosses"])
-    end
-end
-
 local function LoadList()
-    for tier = 1, EJ_GetNumTiers() do
-        local name = EJ_GetTierInfo(tier)
-        encounterJournalList[name] = {}
+    local list = F:GetExpansionList()
 
-        LoadInstanceList(tier, "raid", encounterJournalList[name])
-        LoadInstanceList(tier, "party", encounterJournalList[name])
+    newestExpansion = list[1]
 
-        newestExpansion = name
+    for _, eName in ipairs(list) do
+        for i, iTable in pairs(encounterJournalList[eName]) do
+            local iName = iTable["name"]
+            local iId = iTable["id"]
+            instanceNameMapping[iName] = eName..":"..i..":"..iId -- NOTE: used for searching current zone debuffs & switch to current instance
+            instanceIdToName[iId] = iName
+
+            for _, bTable in pairs(iTable["bosses"]) do
+                
+                bossIdToName[bTable["id"]] = bTable["name"]
+            end
+        end
+
     end
+
 end
 
--------------------------------------------------
--- dungeons for current mythic season
--------------------------------------------------
-local CURRENT_SEASON = {
-    1194, -- 塔扎维什
-    860, -- 重返卡拉赞
-    1178, -- 麦卡贡行动
-    558, -- 钢铁码头
-    536, -- 恐轨车站
-    -- 226
-}
-
-local function LoadDungeonsForCurrentSeason()
-    encounterJournalList["Current Season"] = {}
-    for i, journalInstanceID in pairs(CURRENT_SEASON) do
-        local name, _, _, image = EJ_GetInstanceInfo(journalInstanceID)
-
-        local instanceTable = {["name"]=name, ["id"]=journalInstanceID, ["image"]=image, ["bosses"]={}}
-        tinsert(encounterJournalList["Current Season"], instanceTable)
-
-        -- overwrite instanceNameMapping
-        instanceNameMapping[name] = "Current Season"..":"..i..":"..journalInstanceID
-        
-        LoadBossList(journalInstanceID, instanceTable["bosses"])
-    end
-end
--------------------------------------------------
-
-LoadExpansion = function(eName)
+local LoadExpansion = function(eName)
     if loadedExpansion == eName then return end
     loadedExpansion = eName
     -- show then first boss of the first instance of the expansion
@@ -276,9 +215,7 @@ end
 
 local function UpdateRaidDebuffs()
     LoadList()
-    LoadDungeonsForCurrentSeason()
     LoadDebuffs()
-    -- DevInstanceList = F:Copy(encounterJournalList["暗影国度"])
 end
 Cell:RegisterCallback("UpdateRaidDebuffs", "RaidDebuffsTab_UpdateRaidDebuffs", UpdateRaidDebuffs)
 
@@ -350,8 +287,7 @@ local function CreateTopWidgets()
     expansionDropdown:SetPoint("TOPLEFT", 5, -5)
 
     local expansionItems = {}
-    for i = EJ_GetNumTiers(), 1, -1 do
-        local eName = EJ_GetTierInfo(i)
+    for _, eName in ipairs(F:GetExpansionList()) do
         tinsert(expansionItems, {
             ["text"] = eName,
             ["onClick"] = function()
@@ -359,15 +295,6 @@ local function CreateTopWidgets()
             end,
         })
     end
-
-    -- add Current Season to the top
-    tinsert(expansionItems, 1, {
-        ["text"] = L["Current Season"],
-        ["onClick"] = function()
-            LoadExpansion("Current Season")
-        end,
-    })
-
     expansionDropdown:SetItems(expansionItems)
 
     -- current instance button
@@ -481,9 +408,9 @@ ShowInstances = function(eName)
         instanceButtons[i].id = iTable["id"].."-"..i -- send instanceId-instanceIndex to ShowBosses
         
         -- open encounter journal
-        instanceButtons[i]:SetScript("OnDoubleClick", function()
-            OpenEncounterJournal(iTable["id"])
-        end)
+        -- instanceButtons[i]:SetScript("OnDoubleClick", function()
+        --     OpenEncounterJournal(iTable["id"])
+        -- end)
 
         if i == 1 then
             instanceButtons[i]:SetPoint("TOPLEFT")
@@ -1687,9 +1614,9 @@ UpdateGlowType = function(newType)
             if newType == "Normal" then
                 CellDB["raidDebuffs"][loadedInstance][tIndex][selectedSpellId] = {t["order"], false, {"None"}, newType, {{0.95,0.95,0.32,1}}}
             elseif newType == "Pixel" then
-                CellDB["raidDebuffs"][loadedInstance][tIndex][selectedSpellId] = {t["order"], false, {"None"}, newType, {{0.95,0.95,0.32,1}, 9, .25, 8, 2}}
+                CellDB["raidDebuffs"][loadedInstance][tIndex][selectedSpellId] = {t["order"], false, {"None"}, newType, {{0.95,0.95,0.32,1}, 9, 0.25, 8, 2}}
             elseif newType == "Shine" then
-                CellDB["raidDebuffs"][loadedInstance][tIndex][selectedSpellId] = {t["order"], false, {"None"}, newType, {{0.95,0.95,0.32,1}, 9, 0.5, 1}}
+                CellDB["raidDebuffs"][loadedInstance][tIndex][selectedSpellId] = {t["order"], false, {"None"}, newType, {{0.95,0.95,0.32,1}, 9, 0.5, 2}}
             end
         else
             CellDB["raidDebuffs"][loadedInstance][tIndex][selectedSpellId][4] = newType
@@ -1705,20 +1632,20 @@ UpdateGlowType = function(newType)
             elseif newType == "Pixel" then
                 if CellDB["raidDebuffs"][loadedInstance][tIndex][selectedSpellId][5] then
                     CellDB["raidDebuffs"][loadedInstance][tIndex][selectedSpellId][5][2] = 9
-                    CellDB["raidDebuffs"][loadedInstance][tIndex][selectedSpellId][5][3] = .25
+                    CellDB["raidDebuffs"][loadedInstance][tIndex][selectedSpellId][5][3] = 0.25
                     CellDB["raidDebuffs"][loadedInstance][tIndex][selectedSpellId][5][4] = 8
                     CellDB["raidDebuffs"][loadedInstance][tIndex][selectedSpellId][5][5] = 2
                 else
-                    CellDB["raidDebuffs"][loadedInstance][tIndex][selectedSpellId][5] = {{0.95,0.95,0.32,1}, 9, .25, 8, 2}
+                    CellDB["raidDebuffs"][loadedInstance][tIndex][selectedSpellId][5] = {{0.95,0.95,0.32,1}, 9, 0.25, 8, 2}
                 end
             elseif newType == "Shine" then
                 if CellDB["raidDebuffs"][loadedInstance][tIndex][selectedSpellId][5] then
                     CellDB["raidDebuffs"][loadedInstance][tIndex][selectedSpellId][5][2] = 9
-                    CellDB["raidDebuffs"][loadedInstance][tIndex][selectedSpellId][5][3] = .5
-                    CellDB["raidDebuffs"][loadedInstance][tIndex][selectedSpellId][5][4] = 1
+                    CellDB["raidDebuffs"][loadedInstance][tIndex][selectedSpellId][5][3] = 0.5
+                    CellDB["raidDebuffs"][loadedInstance][tIndex][selectedSpellId][5][4] = 2
                     CellDB["raidDebuffs"][loadedInstance][tIndex][selectedSpellId][5][5] = nil
                 else
-                    CellDB["raidDebuffs"][loadedInstance][tIndex][selectedSpellId][5] = {{0.95,0.95,0.32,1}, 9, 0.5, 1}
+                    CellDB["raidDebuffs"][loadedInstance][tIndex][selectedSpellId][5] = {{0.95,0.95,0.32,1}, 9, 0.5, 2}
                 end
             end
         end
@@ -1745,11 +1672,11 @@ UpdateGlowType = function(newType)
         elseif newType == "Shine" then
             if t["glowOptions"] then
                 t["glowOptions"][2] = 9
-                t["glowOptions"][3] = .5
-                t["glowOptions"][4] = 1
+                t["glowOptions"][3] = 0.5
+                t["glowOptions"][4] = 2
                 t["glowOptions"][5] = nil
             else
-                t["glowOptions"] = {{0.95,0.95,0.32,1}, 9, 0.5, 1}
+                t["glowOptions"] = {{0.95,0.95,0.32,1}, 9, 0.5, 2}
             end
         end
         LoadGlowOptions(newType, t["glowOptions"])
@@ -1959,31 +1886,30 @@ end
 -------------------------------------------------
 -- open encounter journal -- from grid2
 -------------------------------------------------
-OpenEncounterJournal = function(instanceId)
-    if not IsAddOnLoaded("Blizzard_EncounterJournal") then LoadAddOn("Blizzard_EncounterJournal") end
+-- OpenEncounterJournal = function(instanceId)
+--     if not IsAddOnLoaded("Blizzard_EncounterJournal") then LoadAddOn("Blizzard_EncounterJournal") end
     
-    local difficulty
-    if IsInInstance() then
-        difficulty = select(3,GetInstanceInfo())
-    else
-        difficulty = 14
-    end
+--     local difficulty
+--     if IsInInstance() then
+--         difficulty = select(3,GetInstanceInfo())
+--     else
+--         difficulty = 14
+--     end
 
-    ShowUIPanel(EncounterJournal)
-    EJ_ContentTab_Select(EncounterJournal.instanceSelect.dungeonsTab.id)
-    EncounterJournal_DisplayInstance(instanceId)
-    EncounterJournal.lastInstance = instanceId
+--     ShowUIPanel(EncounterJournal)
+--     EJ_ContentTab_Select(EncounterJournal.instanceSelect.dungeonsTab.id)
+--     EncounterJournal_DisplayInstance(instanceId)
+--     EncounterJournal.lastInstance = instanceId
     
-    if not EJ_IsValidInstanceDifficulty(difficulty) then
-        difficulty = (difficulty==14 and 1) or (difficulty==15 and 2) or (difficulty==16 and 23) or (difficulty==17 and 7) or 0
-        if not EJ_IsValidInstanceDifficulty(difficulty) then
-            return
-        end
-    end
-    EJ_SetDifficulty(difficulty)
-    EncounterJournal.lastDifficulty = difficulty
-end
-
+--     if not EJ_IsValidInstanceDifficulty(difficulty) then
+--         difficulty = (difficulty==14 and 1) or (difficulty==15 and 2) or (difficulty==16 and 23) or (difficulty==17 and 7) or 0
+--         if not EJ_IsValidInstanceDifficulty(difficulty) then
+--             return
+--         end
+--     end
+--     EJ_SetDifficulty(difficulty)
+--     EncounterJournal.lastDifficulty = difficulty
+-- end
 
 -------------------------------------------------
 -- functions
@@ -2202,7 +2128,7 @@ local function ShowTab(tab)
         UpdatePreviewButton()
         
         if not loadedExpansion then
-            expansionDropdown:SetSelectedItem(2)
+            expansionDropdown:SetSelectedItem(1)
             LoadExpansion(newestExpansion)
         end
     else

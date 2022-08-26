@@ -69,8 +69,9 @@ pullBtn:SetScript("OnEvent", function(self, event, ...)
     self[event](self, ...)
 end)
 
-local pullTicker
-local function Start(sec)
+local pullTicker, isPullTickerRunning
+local function Start(sec, sendToChat)
+    isPullTickerRunning = true
     pullBtn:SetMaxValue(sec)
     pullBtn:Start()
     
@@ -84,16 +85,28 @@ local function Start(sec)
     pullTicker = C_Timer.NewTicker(1, function()
         pullBtn.sec = pullBtn.sec - 1
         if pullBtn.sec == 0 then
+            isPullTickerRunning = false
             pullBtn:SetText(L["Go!"])
+            if sendToChat then
+                SendChatMessage(L["Go!"], IsInRaid() and "RAID_WARNING" or "PARTY")
+            end
         elseif pullBtn.sec == -1 then
             pullBtn:SetText(L["Pull"])
         else
             pullBtn:SetText(pullBtn.sec)
+            if sendToChat then
+                if pullBtn.sec > 3 then
+                    SendChatMessage(pullBtn.sec, IsInRaid() and "RAID" or "PARTY")
+                else
+                    SendChatMessage(pullBtn.sec, IsInRaid() and "RAID_WARNING" or "PARTY")
+                end
+            end
         end
     end, sec+1)
 end
 
 local function Stop()
+    isPullTickerRunning = false
     pullBtn:Stop()
            
     -- update button text
@@ -205,6 +218,8 @@ local function UpdateTools(which)
 
     if not which or which == "pullTimer" then
         pullBtn:UnregisterAllEvents()
+        pullBtn:SetScript("OnClick", nil)
+
         if CellDB["tools"]["readyAndPull"][2][1] == "mrt" then
             pullBtn:RegisterEvent("CHAT_MSG_ADDON")
             pullBtn:SetAttribute("macrotext1", "/ert pull "..CellDB["tools"]["readyAndPull"][2][2])
@@ -218,10 +233,24 @@ local function UpdateTools(which)
             pullBtn:SetAttribute("macrotext1", "/pull "..CellDB["tools"]["readyAndPull"][2][2])
             pullBtn:SetAttribute("macrotext2", "/pull 0")
         else -- default
-            -- C_PartyInfo.DoCountdown(CellDB["tools"]["readyAndPull"][2][2])
-            pullBtn:RegisterEvent("START_TIMER")
-            pullBtn:SetAttribute("macrotext1", "/cd "..CellDB["tools"]["readyAndPull"][2][2])
-            pullBtn:SetAttribute("macrotext2", "/cd 0")
+            if Cell.isRetail then
+                -- C_PartyInfo.DoCountdown(CellDB["tools"]["readyAndPull"][2][2])
+                pullBtn:RegisterEvent("START_TIMER")
+                pullBtn:SetAttribute("macrotext1", "/cd "..CellDB["tools"]["readyAndPull"][2][2])
+                pullBtn:SetAttribute("macrotext2", "/cd 0")
+            else
+                pullBtn:SetScript("OnClick", function(self, button)
+                    if button == "LeftButton" then
+                        SendChatMessage(L["Pull in %d sec."]:format(CellDB["tools"]["readyAndPull"][2][2]), IsInRaid() and "RAID_WARNING" or "PARTY")
+                        Start(CellDB["tools"]["readyAndPull"][2][2], true)
+                    else
+                        if isPullTickerRunning then
+                            SendChatMessage(L["Pull timer cancelled."], IsInRaid() and "RAID_WARNING" or "PARTY")
+                            Stop()
+                        end
+                    end
+                end)
+            end
         end
     end
 

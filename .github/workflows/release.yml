@@ -37,4 +37,4 @@ jobs:
 
       # once cloned, we just run the GitHub Action for the packager project
       - name: Create Retail Package
-        uses: BigWigsMods/packager@master
+        uses: BigWigsMods/packager@v2
