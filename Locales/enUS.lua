@@ -57,6 +57,14 @@ select(2, ...).L = setmetatable({
     ["SNIPPETS_TIPS"] = "[Double-Click] to rename. [Shift-Click] to delete. All checked snippets will be automatically invoked at the end of Cell initialization process (in ADDON_LOADED event).",
 
     ["CHANGELOGS"] = [[
+        <h1>r109-release (Aug 27, 2022, 03:10 GMT+8)</h1>
+        <h2>Retail</h2>
+        <p>* The "Weakened Soul" debuff from other players will not be visible anymore.</p>
+        <p>* Updated M+ debuffs.</p>
+        <h2>Wrath Classic</h2>
+        <p>* Cell should work on Wrath Classic now (not all Retail features are available).</p>
+        <br/>
+
         <h1>r108-release (Aug 17, 2022, 18:20 GMT+8)</h1>
         <p>* Updated M+ debuffs.</p>
         <p>* Fixed several bugs.</p>

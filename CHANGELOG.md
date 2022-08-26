@@ -1,11 +1,9 @@
-[Full Changelog](https://github.com/enderneko/Cell/compare/r107-release...1fc79622fe29dd07184d9e8739c827052b3bdf9d)
+[Full Changelog](https://github.com/enderneko/Cell/compare/r108-release...2d9718ca34488a304efe2049e0be1ac011009d97)
 
-- Update mythic+ debuffs
-- Update "Dispels" indicator
-- Update "About"
-- Fix ColorPicker when scale~=1
-- Fix F:UnitFullName function
-- Fix LibGroupInfo
-- [snippet] SolidDispelHighlight
-- [snippet] HauntedMaskIcons
-- [snippet] GenericRaidDebuffs
+- WotLK!
+- Filter Weakened Soul
+- Update import & export
+- Update zhTW.lua
+- Update M+ debuffs
+- [snippet] DispelHighlight_Health
+- [snippet] DispelHighlight
