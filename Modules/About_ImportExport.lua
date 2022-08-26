@@ -12,7 +12,7 @@ local isImport, imported, exported = false, nil, ""
 local importExportFrame, importBtn, title, textArea, includeNicknamesCB
 
 local function GetExportString(includeNicknames)
-    local prefix = "!CELL:"..(tonumber(string.match(Cell.version, "%d+")) or 0).."!"
+    local prefix = "!"..CELL_IMPORT_EXPORT_PREFIX..":"..(tonumber(string.match(Cell.version, "%d+")) or 0).."!"
 
     local db = F:Copy(CellDB)
     
@@ -86,7 +86,7 @@ local function CreateImportExportFrame()
                 imported = nil
                 local text = eb:GetText()
                 -- check
-                local version, data = string.match(text, "^!CELL:(%d+)!(.+)$")
+                local version, data = string.match(text, "^!"..CELL_IMPORT_EXPORT_PREFIX..":(%d+)!(.+)$")
                 version = tonumber(version)
     
                 if version and data then

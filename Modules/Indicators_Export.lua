@@ -98,7 +98,7 @@ local function CreateIndicatorsExportFrame()
         title:SetText(L["Export"]..": ".."|cff90EE90"..builtIn.." "..L["built-in(s)"].."|r, |cffFFB5C5"..custom.." "..L["custom(s)"].."|r")
     
         -- prepare string
-        local prefix = "!CELL:"..(tonumber(string.match(Cell.version, "%d+")) or 0)..":debuffs:"..(builtIn+custom).."!"
+        local prefix = "!"..CELL_IMPORT_EXPORT_PREFIX..":"..(tonumber(string.match(Cell.version, "%d+")) or 0)..":debuffs:"..(builtIn+custom).."!"
     
         local exported = Serializer:Serialize(data) -- serialize
         exported = LibDeflate:CompressDeflate(exported, deflateConfig) -- compress

@@ -82,7 +82,7 @@ local function CreateLayoutImportExportFrame()
                 wipe(imported)
                 local text = eb:GetText()
                 -- check
-                local version, name, data = string.match(text, "^!CELL:(%d+):([^:]+)!(.+)$")
+                local version, name, data = string.match(text, "^!"..CELL_IMPORT_EXPORT_PREFIX..":(%d+):([^:]+)!(.+)$")
                 version = tonumber(version)
     
                 if name and version and data then
@@ -174,7 +174,7 @@ function F:ShowLayoutExportFrame(layoutName, layoutTable)
 
     title:SetText(L["Export"]..": "..(layoutName == "default" and _G.DEFAULT or layoutName))
 
-    local prefix = "!CELL:"..(tonumber(string.match(Cell.version, "%d+")) or 0)..":"..layoutName.."!"
+    local prefix = "!"..CELL_IMPORT_EXPORT_PREFIX..":"..(tonumber(string.match(Cell.version, "%d+")) or 0)..":"..layoutName.."!"
 
     exported = Serializer:Serialize(layoutTable) -- serialize
     exported = LibDeflate:CompressDeflate(exported, deflateConfig) -- compress

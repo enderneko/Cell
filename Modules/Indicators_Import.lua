@@ -104,7 +104,7 @@ local function CreateIndicatorsImportFrame()
             listFrame.scrollFrame:Reset()
             local text = eb:GetText()
             -- check
-            local version, count, data = string.match(text, "^!CELL:(%d+):debuffs:(%d+)!(.+)$")
+            local version, count, data = string.match(text, "^!"..CELL_IMPORT_EXPORT_PREFIX..":(%d+):debuffs:(%d+)!(.+)$")
             version = tonumber(version)
             count = tonumber(count)
     
