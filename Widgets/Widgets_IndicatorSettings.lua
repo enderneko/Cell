@@ -1943,6 +1943,8 @@ local function CreateSetting_CheckButton(parent)
             widget.cb:SetText(L[settingName])
             if tooltip then
                 addon:SetTooltips(widget.cb, "ANCHOR_TOPLEFT", 0, 2, L[settingName], string.split("|", tooltip))
+            else
+                addon:ClearTooltips(widget.cb)
             end
         end
     else
@@ -1976,6 +1978,8 @@ local function CreateSetting_CheckButton2(parent)
             widget.cb:SetText(L[settingName])
             if tooltip then
                 addon:SetTooltips(widget.cb, "ANCHOR_TOPLEFT", 0, 2, L[settingName], string.split("|", tooltip))
+            else
+                addon:ClearTooltips(widget.cb)
             end
         end
     else
@@ -2009,6 +2013,8 @@ local function CreateSetting_CheckButton3(parent)
             widget.cb:SetText(L[settingName])
             if tooltip then
                 addon:SetTooltips(widget.cb, "ANCHOR_TOPLEFT", 0, 2, L[settingName], string.split("|", tooltip))
+            else
+                addon:ClearTooltips(widget.cb)
             end
         end
     else

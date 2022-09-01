@@ -367,6 +367,11 @@ end
 -- tooltip
 -----------------------------------------
 local function ShowTooltips(widget, anchor, x, y, tooltips)
+    if type(tooltips) ~= "table" or #tooltips == 0 then
+        CellTooltip:Hide()
+        return
+    end
+
     CellTooltip:SetOwner(widget, anchor or "ANCHOR_TOP", x or 0, y or 0)
     CellTooltip:AddLine(tooltips[1])
     for i = 2, #tooltips do
@@ -376,16 +381,22 @@ local function ShowTooltips(widget, anchor, x, y, tooltips)
 end
 
 function addon:SetTooltips(widget, anchor, x, y, ...)
-    local tooltips = {...}
+    if not widget.tooltipsInited then
+        widget._tooltipsInited = true
 
-    if #tooltips ~= 0 then
         widget:HookScript("OnEnter", function()
-            ShowTooltips(widget, anchor, x, y, tooltips)
+            ShowTooltips(widget, anchor, x, y, widget.tooltips)
         end)
         widget:HookScript("OnLeave", function()
             CellTooltip:Hide()
         end)
     end
+
+    widget.tooltips = {...}
+end
+
+function addon:ClearTooltips(widget)
+    widget.tooltips = nil
 end
 
 -----------------------------------------
