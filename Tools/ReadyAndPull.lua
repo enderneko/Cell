@@ -58,8 +58,8 @@ pullBtn = Cell:CreateStatusBarButton(buttonsFrame, L["Pull"], {60, 17}, 7, "Secu
 pullBtn:SetPoint("BOTTOMLEFT")
 -- pullBtn:SetPoint("BOTTOMRIGHT")
 pullBtn:RegisterForClicks("LeftButtonUp", "RightButtonUp")
-pullBtn:SetAttribute("type1", "macro")
-pullBtn:SetAttribute("type2", "macro")
+-- pullBtn:SetAttribute("type1", "macro")
+-- pullBtn:SetAttribute("type2", "macro")
 pullBtn:Hide()
 
 -------------------------------------------------
@@ -218,7 +218,9 @@ local function UpdateTools(which)
 
     if not which or which == "pullTimer" then
         pullBtn:UnregisterAllEvents()
-        pullBtn:SetScript("OnClick", nil)
+        pullBtn:SetScript("OnMouseUp", nil)
+        pullBtn:SetAttribute("type1", "macro")
+        pullBtn:SetAttribute("type2", "macro")
 
         if CellDB["tools"]["readyAndPull"][2][1] == "mrt" then
             pullBtn:RegisterEvent("CHAT_MSG_ADDON")
@@ -239,13 +241,15 @@ local function UpdateTools(which)
                 pullBtn:SetAttribute("macrotext1", "/cd "..CellDB["tools"]["readyAndPull"][2][2])
                 pullBtn:SetAttribute("macrotext2", "/cd 0")
             else
-                pullBtn:SetScript("OnClick", function(self, button)
+                pullBtn:SetAttribute("type1", nil)
+                pullBtn:SetAttribute("type2", nil)
+                pullBtn:SetScript("OnMouseUp", function(self, button)
                     if button == "LeftButton" then
-                        SendChatMessage(L["Pull in %d sec."]:format(CellDB["tools"]["readyAndPull"][2][2]), IsInRaid() and "RAID_WARNING" or "PARTY")
+                        SendChatMessage(L["Pull in %d sec"]:format(CellDB["tools"]["readyAndPull"][2][2]), IsInRaid() and "RAID_WARNING" or "PARTY")
                         Start(CellDB["tools"]["readyAndPull"][2][2], true)
                     else
                         if isPullTickerRunning then
-                            SendChatMessage(L["Pull timer cancelled."], IsInRaid() and "RAID_WARNING" or "PARTY")
+                            SendChatMessage(L["Pull timer cancelled"], IsInRaid() and "RAID_WARNING" or "PARTY")
                             Stop()
                         end
                     end
