@@ -83,8 +83,7 @@ L["circledStackNums"] = "用圓圈數字顯示層數"
 L["Class Color"] = "職業顏色"
 L["Class Color (dark)"] = "職業顏色 (暗)"
 L["Click-Castings"] = "滑鼠點擊施法"
---[[Translation missing --]]
---[[ L["clickcastingsHints"] = "Left-Click: edit\nRight-Click: delete"--]] 
+L["clickcastingsHints"] = "左鍵點擊：編輯\n右鍵點擊：刪除"
 L["Close"] = "關閉"
 L["Code Snippets"] = "程式碼片段"
 L["Color"] = "顏色"
@@ -297,10 +296,11 @@ L["Power Color (dark)"] = "能量顏色 (暗)"
 L["Power Size"] = "能量條大小"
 L["Press Key to Bind"] = "按下要綁定的按鍵"
 L["Preview"] = "預覽"
---[[Translation missing --]]
---[[ L["Primary Talents"] = "Primary Talents"--]] 
+L["Primary Talents"] = "主要天賦"
 L["Profiles"] = "設定檔"
 L["Pull"] = "倒數"
+--[[Translation missing --]]
+--[[ L["Pull in %d sec"] = "Pull in %d sec"--]] 
 L["Pull Timer"] = "開怪倒數"
 L["pullTimerTips"] = "\n|r開怪倒數\n左鍵: |cffffffff開始倒數計時|r\n右鍵: |cffffffff取消倒數計時|r"
 L["Raid"] = "團隊"
@@ -351,8 +351,7 @@ L["Scale"] = "縮放大小"
 L["ScrollDown"] = "滾輪往下"
 L["ScrollUp"] = "滾輪往上"
 L["sec"] = "秒"
---[[Translation missing --]]
---[[ L["Secondary Talents"] = "Secondary Talents"--]] 
+L["Secondary Talents"] = "次要天賦"
 L["Separate NPC Frame"] = "分離 NPC 框架"
 L["Shadow"] = "陰影"
 L["Share"] = "分享"
@@ -429,8 +428,7 @@ L["TOPLEFT"] = "左上"
 L["TOPRIGHT"] = "右上"
 L["top-to-bottom"] = "從上到下"
 L["Track by ID"] = "符合法術 ID"
---[[Translation missing --]]
---[[ L["trackByName"] = "Track by name"--]] 
+L["trackByName"] = "根據名稱追蹤"
 L["Translators"] = "翻譯"
 L["Type: "] = "類型:"
 L["Unaffected"] = "未獲得此增益"
