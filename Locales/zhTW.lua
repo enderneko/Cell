@@ -299,9 +299,9 @@ L["Preview"] = "預覽"
 L["Primary Talents"] = "主要天賦"
 L["Profiles"] = "設定檔"
 L["Pull"] = "倒數"
---[[Translation missing --]]
---[[ L["Pull in %d sec"] = "Pull in %d sec"--]] 
+L["Pull in %d sec"] = "開怪還有 %d 秒"
 L["Pull Timer"] = "開怪倒數"
+L["Pull timer cancelled"] = "開怪計時器已取消"
 L["pullTimerTips"] = "\n|r開怪倒數\n左鍵: |cffffffff開始倒數計時|r\n右鍵: |cffffffff取消倒數計時|r"
 L["Raid"] = "團隊"
 L["Raid Debuffs"] = "副本減益"
