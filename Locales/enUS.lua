@@ -57,6 +57,11 @@ select(2, ...).L = setmetatable({
     ["SNIPPETS_TIPS"] = "[Double-Click] to rename. [Shift-Click] to delete. All checked snippets will be automatically invoked at the end of Cell initialization process (in ADDON_LOADED event).",
 
     ["CHANGELOGS"] = [[
+        <h1>r111-release (Sep 3, 2022, 12:07 GMT+8)</h1>
+        <p>* Fixed game version check.</p>
+        <p>* Updated zhTW.</p>
+        <br/>
+
         <h1>r110-release (Sep 1, 2022, 19:50 GMT+8)</h1>
         <p>* Fixed pull button.</p>
         <p>* Fixed tooltips for checkbuttons.</p>

@@ -1,5 +1,4 @@
-[Full Changelog](https://github.com/enderneko/Cell/compare/r109-release...b8a1cfabf0a0afc5422c278a4e983ca7be26291b)
+[Full Changelog](https://github.com/enderneko/Cell/compare/r110-release...04ec857ddda7ec23e832d55c0a0c264246417c01)
 
-- Fix pull timer
-- Fix checkbutton tooltips
-- Update locales
+- Fix game version check
+- Update zhTW
