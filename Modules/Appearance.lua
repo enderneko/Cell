@@ -422,17 +422,18 @@ local textureDropdown, barColorDropdown, barColorPicker, lossColorDropdown, loss
 local barAlpha, lossAlpha, bgAlpha, oorAlpha, predCB, absorbCB, shieldCB, oversCB, resetBtn
 local iconOptionsBtn, iconOptionsFrame, iconAnimationDropdown, durationRoundUpCB, durationDecimalText1, durationDecimalText2, durationDecimalDropdown, durationColorCB, durationNormalCP, durationPercentCP, durationSecondCP, durationPercentDD, durationSecondEB, durationSecondText
 
+local LSM = LibStub("LibSharedMedia-3.0", true)
 local function CheckTextures()
     local items = {}
     local textures, textureNames
     local defaultTexture, defaultTextureName = "Interface\\AddOns\\Cell\\Media\\statusbar.tga", "Cell ".._G.DEFAULT
     
-    local LSM = LibStub("LibSharedMedia-3.0", true)
-    if LSM then
+    -- if LSM then
         textures, textureNames = F:Copy(LSM:HashTable("statusbar")), F:Copy(LSM:List("statusbar"))
-        -- insert default texture
+       
+        -- make default texture first
+        F:TRemove(textureNames, defaultTextureName)
         tinsert(textureNames, 1, defaultTextureName)
-        textures[defaultTextureName] = defaultTexture
 
         for _, name in pairs(textureNames) do
             tinsert(items, {
@@ -445,20 +446,20 @@ local function CheckTextures()
                 end,
             })
         end
-    else
-        textureNames = {defaultTextureName}
-        textures = {[defaultTextureName] = defaultTexture}
+    -- else
+    --     textureNames = {defaultTextureName}
+    --     textures = {[defaultTextureName] = defaultTexture}
 
-        tinsert(items, {
-            ["text"] = defaultTextureName,
-            ["texture"] = defaultTexture,
-            ["onClick"] = function()
-                CellDB["appearance"]["texture"] = defaultTextureName
-                F:GetBarTexture() -- update Cell.vars.texture NOW
-                Cell:Fire("UpdateAppearance", "texture")
-            end,
-        })
-    end
+    --     tinsert(items, {
+    --         ["text"] = defaultTextureName,
+    --         ["texture"] = defaultTexture,
+    --         ["onClick"] = function()
+    --             CellDB["appearance"]["texture"] = defaultTextureName
+    --             F:GetBarTexture() -- update Cell.vars.texture NOW
+    --             Cell:Fire("UpdateAppearance", "texture")
+    --         end,
+    --     })
+    -- end
     textureDropdown:SetItems(items)
 
     -- validation

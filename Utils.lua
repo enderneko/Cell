@@ -941,9 +941,10 @@ end
 -------------------------------------------------
 Cell.vars.texture = "Interface\\AddOns\\Cell\\Media\\statusbar.tga"
 local LSM = LibStub("LibSharedMedia-3.0", true)
+LSM:Register("statusbar", "Cell ".._G.DEFAULT, Cell.vars.texture)
 function F:GetBarTexture()
     --! update Cell.vars.texture for further use in UnitButton_OnLoad
-    if LSM and LSM:IsValid("statusbar", CellDB["appearance"]["texture"]) then
+    if LSM:IsValid("statusbar", CellDB["appearance"]["texture"]) then
         Cell.vars.texture = LSM:Fetch("statusbar", CellDB["appearance"]["texture"])
     else
         Cell.vars.texture = "Interface\\AddOns\\Cell\\Media\\statusbar.tga"
@@ -952,7 +953,7 @@ function F:GetBarTexture()
 end
 
 function F:GetFont(font)
-    if font and LSM and LSM:IsValid("font", font) then
+    if font and LSM:IsValid("font", font) then
         return LSM:Fetch("font", font)
     else
         if CellDB["appearance"]["useGameFont"] then
@@ -975,7 +976,7 @@ function F:GetFontItems()
     local items = {}
     local fonts, fontNames
     
-    if LSM then
+    -- if LSM then
         fonts, fontNames = F:Copy(LSM:HashTable("font")), F:Copy(LSM:List("font"))
         -- insert default font
         tinsert(fontNames, 1, defaultFontName)
@@ -991,19 +992,19 @@ function F:GetFontItems()
                 -- end,
             })
         end
-    else
-        fontNames = {defaultFontName}
-        fonts = {[defaultFontName] = defaultFont}
+    -- else
+    --     fontNames = {defaultFontName}
+    --     fonts = {[defaultFontName] = defaultFont}
 
-        tinsert(items, {
-            ["text"] = defaultFontName,
-            ["font"] = defaultFont,
-            -- ["onClick"] = function()
-            --     CellDB["appearance"]["font"] = defaultFontName
-            --     Cell:Fire("UpdateAppearance", "font")
-            -- end,
-        })
-    end
+    --     tinsert(items, {
+    --         ["text"] = defaultFontName,
+    --         ["font"] = defaultFont,
+    --         -- ["onClick"] = function()
+    --         --     CellDB["appearance"]["font"] = defaultFontName
+    --         --     Cell:Fire("UpdateAppearance", "font")
+    --         -- end,
+    --     })
+    -- end
     return items, fonts, defaultFontName, defaultFont 
 end
 
