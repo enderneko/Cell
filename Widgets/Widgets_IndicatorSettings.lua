@@ -1850,6 +1850,7 @@ local function CreateSetting_StatusColors(parent)
             widget.func(nil, "statusColors")
         end)
         pendingColor:SetPoint("TOPLEFT", ghostColor, "BOTTOMLEFT", 0, -8)
+        pendingColor:SetEnabled(Cell.isRetail)
 
         local acceptedColor = addon:CreateColorPicker(widget, L["ACCEPTED"], false, function(r, g, b)
             widget.colorsTable["ACCEPTED"][1] = r
@@ -1858,6 +1859,7 @@ local function CreateSetting_StatusColors(parent)
             widget.func(nil, "statusColors")
         end)
         acceptedColor:SetPoint("TOPLEFT", pendingColor, "TOPRIGHT", 70, 0)
+        acceptedColor:SetEnabled(Cell.isRetail)
 
         local declinedColor = addon:CreateColorPicker(widget, L["DECLINED"], false, function(r, g, b)
             widget.colorsTable["DECLINED"][1] = r
@@ -1866,6 +1868,7 @@ local function CreateSetting_StatusColors(parent)
             widget.func(nil, "statusColors")
         end)
         declinedColor:SetPoint("TOPLEFT", acceptedColor, "TOPRIGHT", 70, 0)
+        declinedColor:SetEnabled(Cell.isRetail)
 
         local resetBtn = addon:CreateButton(widget, L["Reset All"], "accent", {70, 20})
         resetBtn:SetPoint("TOPLEFT", pendingColor, "BOTTOMLEFT", 0, -8)

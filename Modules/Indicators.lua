@@ -142,6 +142,7 @@ local function InitIndicator(indicatorName)
 
     elseif indicatorName == "statusText" then
         local count = 2
+        local maxCount = Cell.isRetail and 9 or 6
         local ticker
         indicator:SetScript("OnShow", function()
             indicator:SetStatus("AFK")
@@ -177,7 +178,7 @@ local function InitIndicator(indicatorName)
                     indicator.timer:SetText()
                 end
 
-                if count < 9 then
+                if count < maxCount then
                     count = count + 1
                 else
                     count = 1
