@@ -2,7 +2,7 @@
 -- File: UnitButton_Wrath.lua
 -- Author: enderneko (enderneko-dev@outlook.com)
 -- File Created: 2022/08/20 19:44:26 +0800
--- Last Modified: 2022/08/26 19:07:37 +0800
+-- Last Modified: 2022/09/06 23:14:15 +0800
 --]]
 
 local _, Cell = ...
@@ -1035,7 +1035,7 @@ local function ShouldShowPowerBar(b)
         if type(Cell.vars.currentLayoutTable["powerFilters"][class]) == "boolean" then
             return Cell.vars.currentLayoutTable["powerFilters"][class]
         else
-            if role then
+            if role and type(Cell.vars.currentLayoutTable["powerFilters"][class][role]) == "boolean" then
                 return Cell.vars.currentLayoutTable["powerFilters"][class][role]
             else
                 return true -- show power if role not found
