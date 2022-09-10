@@ -4,6 +4,7 @@ local F = Cell.funcs
 local I = Cell.iFuncs
 local P = Cell.pixelPerfectFuncs
 local A = Cell.animations
+local LGI = LibStub:GetLibrary("LibGroupInfo")
 
 CELL_SUMMON_ICONS_ENABLED = false
 
@@ -832,6 +833,7 @@ local buffs_cache_castByMe = {}
 local buffs_cache_count_castByMe = {}
 local buffs_current = {}
 local buffs_current_castByMe = {}
+local buffs_mirror_image = {}
 local function UnitButton_UpdateBuffs(self)
     local unit = self.state.displayedUnit
     if not buffs_cache[unit] then buffs_cache[unit] = {} end
@@ -917,6 +919,18 @@ local function UnitButton_UpdateBuffs(self)
 
     -- update statusIcon
     UnitButton_UpdateStatusIcon(self)
+
+    -- check Mirror Image
+    if buffs_mirror_image[unit] then
+        if defensiveFound <= indicatorNums["defensiveCooldowns"] then
+            self.indicators.defensiveCooldowns[defensiveFound]:SetCooldown(buffs_mirror_image[unit], 40, nil, 135994, 0)
+            defensiveFound = defensiveFound + 1
+        end
+        if allFound <= indicatorNums["allCooldowns"] then
+            self.indicators.allCooldowns[allFound]:SetCooldown(buffs_mirror_image[unit], 40, nil, 135994, 0)
+            allFound = allFound + 1
+        end
+    end
     
     -- hide other defensiveCooldowns
     for i = defensiveFound, 5 do
@@ -998,6 +1012,25 @@ local function UnitButton_UpdateBuffs(self)
     I:ShowCustomIndicators(unit, self, "buff")
 end
 
+local cleu = CreateFrame("Frame")
+cleu:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
+cleu:SetScript("OnEvent", function()
+    local _, subEvent, _, sourceGUID, sourceName, sourceFlags, sourceRaidFlags, destGUID, destName, destFlags, destRaidFlags, spellId, spellName = CombatLogGetCurrentEventInfo()
+    if spellId == 55342 and F:IsFriend(sourceFlags) then
+        if subEvent == "SPELL_AURA_APPLIED" then
+            local unit = LGI:GuidToUnit(sourceGUID)
+            if unit then
+                buffs_mirror_image[unit] = GetTime()
+            end
+        elseif subEvent == "SPELL_AURA_REMOVED" then
+            local unit = LGI:GuidToUnit(sourceGUID)
+            if unit then
+                buffs_mirror_image[unit] = nil
+            end
+        end
+    end
+end)
+
 -------------------------------------------------
 -- functions
 -------------------------------------------------
@@ -1048,7 +1081,6 @@ end
 -------------------------------------------------
 -- power filter funcs
 -------------------------------------------------
-local LGI = LibStub:GetLibrary("LibGroupInfo")
 local function GetRole(b)
     if b.state.role and b.state.role ~= "NONE" then
         return b.state.role

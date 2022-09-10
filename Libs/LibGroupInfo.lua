@@ -2,7 +2,7 @@
 -- File: LibGroupInfo.lua
 -- Author: enderneko (enderneko-dev@outlook.com)
 -- File Created: 2022/07/29 15:04:31 +0800
--- Last Modified: 2022/08/24 18:58:04 +0800
+-- Last Modified: 2022/09/10 16:19:52 +0800
 --]]
 
 local MAJOR, MINOR = "LibGroupInfo", 2
@@ -33,6 +33,12 @@ lib.cache = cache
 
 function lib:GetCachedInfo(guid)
     return guid and cache[guid]
+end
+
+function lib:GuidToUnit(guid)
+    if cache[guid] then
+        return cache[guid].unit
+    end
 end
 
 -- static data
