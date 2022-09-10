@@ -124,12 +124,22 @@ local externalCooldowns = {
     3411, -- 援护
 }
 
-do
-    local temp = {}
-    for _, id in pairs(externalCooldowns) do
-        temp[GetSpellInfo(id)] = true
+local externals = {}
+for _, id in pairs(externalCooldowns) do
+    externals[GetSpellInfo(id)] = true
+end
+externalCooldowns = F:Copy(externals)
+
+function I:UpdateCustomExternals(t)
+    -- reset
+    externalCooldowns = F:Copy(externals)
+    -- insert
+    for _, id in pairs(t) do
+        local name = GetSpellInfo(id)
+        if name then
+            externalCooldowns[name] = true
+        end
     end
-    externalCooldowns = temp
 end
 
 local UnitIsUnit = UnitIsUnit
@@ -210,14 +220,24 @@ local defensiveCooldowns = {
     184364, -- 狂怒回复
 }
 
-do
-    local temp = {}
-    for _, id in pairs(defensiveCooldowns) do
-        temp[GetSpellInfo(id)] = true
-    end
-    defensiveCooldowns = temp
+local defensives = {}
+for _, id in pairs(defensiveCooldowns) do
+    defensives[GetSpellInfo(id)] = true
 end
+defensiveCooldowns = F:Copy(defensives)
 
+function I:UpdateCustomDefensives(t)
+    -- reset
+    defensiveCooldowns = F:Copy(defensives)
+    -- insert
+    for _, id in pairs(t) do
+        local name = GetSpellInfo(id)
+        if name then
+            defensiveCooldowns[name] = true
+        end
+    end
+end
+    
 function I:IsDefensiveCooldown(name)
     return defensiveCooldowns[name]
 end

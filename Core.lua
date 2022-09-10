@@ -368,6 +368,10 @@ function eventFrame:ADDON_LOADED(arg1)
             CellDB["debuffBlacklist"] = I:GetDefaultDebuffBlacklist()
         end
         Cell.vars.debuffBlacklist = F:ConvertTable(CellDB["debuffBlacklist"])
+
+        -- custom defensives/externals ------------------------------------------------------------
+        if type(CellDB["customDefensives"]) ~= "table" then CellDB["customDefensives"] = {} end
+        if type(CellDB["customExternals"]) ~= "table" then CellDB["customExternals"] = {} end
         
         -- raid debuffs ---------------------------------------------------------------------------
         if type(CellDB["raidDebuffs"]) ~= "table" then CellDB["raidDebuffs"] = {} end

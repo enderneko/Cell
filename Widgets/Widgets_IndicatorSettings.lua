@@ -3007,7 +3007,7 @@ function addon:CreateIndicatorSettings(parent, settingsTable)
             tinsert(widgetsTable, CreateSetting_Glow(parent))
         elseif setting == "texture" then
             tinsert(widgetsTable, CreateSetting_Texture(parent))
-        elseif setting == "auras" or setting == "blacklist" or setting == "spells" then
+        elseif setting == "auras" or setting == "blacklist" or setting == "spells" or setting == "customDefensives" or setting == "customExternals" then
             tinsert(widgetsTable, CreateSetting_Auras(parent))
         elseif setting == "auras2" or setting == "bigDebuffs" then
             tinsert(widgetsTable, CreateSetting_Auras2(parent))

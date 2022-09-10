@@ -1233,8 +1233,8 @@ if Cell.isRetail then
         ["aggroBar"] = {"enabled", "position", "frameLevel", "size-bar"},
         ["shieldBar"] = {"enabled", "color-alpha", "position", "frameLevel", "height"},
         ["aoeHealing"] = {"enabled", "color", "height"},
-        ["externalCooldowns"] = {"enabled", "checkbutton2:showDuration:"..L["Show duration text instead of icon animation"], "num:5", "orientation", "position", "frameLevel", "size", "font"},
-        ["defensiveCooldowns"] = {"enabled", "checkbutton2:showDuration:"..L["Show duration text instead of icon animation"], "num:5", "orientation", "position", "frameLevel", "size", "font"},
+        ["externalCooldowns"] = {"enabled", "customExternals", "checkbutton2:showDuration:"..L["Show duration text instead of icon animation"], "num:5", "orientation", "position", "frameLevel", "size", "font"},
+        ["defensiveCooldowns"] = {"enabled", "customDefensives", "checkbutton2:showDuration:"..L["Show duration text instead of icon animation"], "num:5", "orientation", "position", "frameLevel", "size", "font"},
         ["allCooldowns"] = {L["Externals + Defensives, no need to enable all of them"], "enabled", "checkbutton2:showDuration:"..L["Show duration text instead of icon animation"], "num:5", "orientation", "position", "frameLevel", "size", "font"},
         ["tankActiveMitigation"] = {"|cffb7b7b7"..I:GetTankActiveMitigationString(), "enabled", "position", "frameLevel", "size"},
         ["dispels"] = {"enabled", "checkbutton:dispellableByMe", "checkbutton2:enableHighlight", "position", "frameLevel", "size-square"},
@@ -1264,8 +1264,8 @@ elseif Cell.isWrath then
         ["aggroBorder"] = {"enabled", "frameLevel", "thickness"},
         ["aggroBar"] = {"enabled", "position", "frameLevel", "size-bar"},
         ["aoeHealing"] = {"enabled", "color", "height"},
-        ["externalCooldowns"] = {"enabled", "checkbutton2:showDuration:"..L["Show duration text instead of icon animation"], "num:5", "orientation", "position", "frameLevel", "size", "font"},
-        ["defensiveCooldowns"] = {"enabled", "checkbutton2:showDuration:"..L["Show duration text instead of icon animation"], "num:5", "orientation", "position", "frameLevel", "size", "font"},
+        ["externalCooldowns"] = {"enabled", "customExternals", "checkbutton2:showDuration:"..L["Show duration text instead of icon animation"], "num:5", "orientation", "position", "frameLevel", "size", "font"},
+        ["defensiveCooldowns"] = {"enabled", "customDefensives", "checkbutton2:showDuration:"..L["Show duration text instead of icon animation"], "num:5", "orientation", "position", "frameLevel", "size", "font"},
         ["allCooldowns"] = {L["Externals + Defensives, no need to enable all of them"], "enabled", "checkbutton2:showDuration:"..L["Show duration text instead of icon animation"], "num:5", "orientation", "position", "frameLevel", "size", "font"},
         ["dispels"] = {"enabled", "checkbutton:dispellableByMe", "checkbutton2:enableHighlight", "position", "frameLevel", "size-square"},
         ["debuffs"] = {"enabled", "checkbutton:dispellableByMe", "blacklist", "bigDebuffs", "checkbutton2:showDuration:"..L["Show duration text instead of icon animation"], "checkbutton3:showTooltip:"..L["This will make these icons not click-through-able"], "num:10", "orientation", "position", "frameLevel", "size-normal-big", "font"},
@@ -1356,6 +1356,10 @@ local function ShowIndicatorSettings(id)
             w:SetDBValue(L[F:UpperFirst(currentLayoutTable["indicators"][id]["auraType"]).." List"], currentLayoutTable["indicators"][id]["auras"], indicatorType == "icons", indicatorType == "icons")
         elseif currentSetting == "blacklist" then
             w:SetDBValue(L["Debuff Filter (blacklist)"], CellDB["debuffBlacklist"], true)
+        elseif currentSetting == "customDefensives" then
+            w:SetDBValue(_G.CUSTOM, CellDB["customDefensives"], true)
+        elseif currentSetting == "customExternals" then
+            w:SetDBValue(_G.CUSTOM, CellDB["customExternals"], true)
         elseif currentSetting == "bigDebuffs" then
             w:SetDBValue(L["Big Debuffs"], currentLayoutTable["indicators"][id]["bigDebuffs"], true)
         elseif currentSetting == "spells" then
@@ -1393,6 +1397,14 @@ local function ShowIndicatorSettings(id)
                     CellDB["debuffBlacklist"] = value
                     Cell.vars.debuffBlacklist = F:ConvertTable(CellDB["debuffBlacklist"])
                     Cell:Fire("UpdateIndicators", notifiedLayout, "", "blacklist")
+                elseif currentSetting == "customDefensives" then
+                    CellDB["customDefensives"] = value
+                    I:UpdateCustomDefensives(value)
+                    Cell:Fire("UpdateIndicators", notifiedLayout, "", "customDefensives")
+                elseif currentSetting == "customExternals" then
+                    CellDB["customExternals"] = value
+                    I:UpdateCustomExternals(value)
+                    Cell:Fire("UpdateIndicators", notifiedLayout, "", "customExternals")
                 elseif currentSetting == "spells" then
                     -- currentLayoutTable["indicators"][id][currentSetting] = value -- NOTE: already changed in widget
                     Cell:Fire("UpdateTargetedSpells", "spells", value)

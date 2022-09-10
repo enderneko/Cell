@@ -2,7 +2,7 @@
 -- File: UnitButton_Wrath.lua
 -- Author: enderneko (enderneko-dev@outlook.com)
 -- File Created: 2022/08/20 19:44:26 +0800
--- Last Modified: 2022/09/06 23:14:15 +0800
+-- Last Modified: 2022/09/10 22:06:45 +0800
 --]]
 
 local _, Cell = ...
@@ -525,7 +525,7 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
             F:IterateAllUnitButtons(function(b)
                 UnitButton_UpdateAuras(b)
             end, true)
-        elseif setting == "blacklist" then
+        elseif setting == "blacklist" or setting == "customDefensives" or setting == "customExternals" then
             F:IterateAllUnitButtons(function(b)
                 UnitButton_UpdateAuras(b)
             end, true)

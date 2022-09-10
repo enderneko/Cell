@@ -522,7 +522,7 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
             F:IterateAllUnitButtons(function(b)
                 UnitButton_UpdateAuras(b)
             end, true)
-        elseif setting == "blacklist" then
+        elseif setting == "blacklist" or setting == "customDefensives" or setting == "customExternals" then
             F:IterateAllUnitButtons(function(b)
                 UnitButton_UpdateAuras(b)
             end, true)
