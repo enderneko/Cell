@@ -2,7 +2,7 @@
 -- File: RaidDebuffs_Cata.lua
 -- Author: enderneko (enderneko-dev@outlook.com)
 -- File Created: 2022/08/05 16:11:02 +0800
--- Last Modified: 2022/08/05 17:43:29 +0800
+-- Last Modified: 2022/09/08 17:47:36 +0800
 --]]
 
 local _, Cell = ...
@@ -11,6 +11,7 @@ local F = Cell.funcs
 local debuffs = {
     [75] = { -- 巴拉丁监狱
         ["general"] = {
+            105859, -- 穿刺
         },
         [139] = { -- 阿尔加洛斯
         },

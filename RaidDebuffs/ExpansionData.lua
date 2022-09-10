@@ -2,7 +2,7 @@
 -- File: ExpansionData.lua
 -- Author: enderneko (enderneko-dev@outlook.com)
 -- File Created: 2022/08/26 04:40:40 +0800
--- Last Modified: 2022/08/26 16:12:01 +0800
+-- Last Modified: 2022/09/11 17:45:56 +0800
 --]]
 
 local _, Cell = ...
@@ -5627,9 +5627,9 @@ data.enUS = {
                     ["name"] = "Lord Jaraxxus",
                 }, -- [2]
                 {
-                    ["id"] = 1620,
-                    ["image"] = 1390442,
-                    ["name"] = "Champions of the Alliance",
+                    ["id"] = Cell.vars.playerFaction == "Horde" and 1620 or 1621,
+                    ["image"] = Cell.vars.playerFaction == "Horde" and 1390442 or 1390441,
+                    ["name"] = Cell.vars.playerFaction == "Horde" and "Champions of the Alliance" or "Champions of the Horde",
                 }, -- [3]
                 {
                     ["id"] = 1622,
@@ -6803,9 +6803,9 @@ data.zhCN = {
                     ["name"] = "加拉克苏斯大王",
                 }, -- [2]
                 {
-                    ["id"] = 1620,
-                    ["image"] = 1390442,
-                    ["name"] = "联盟的冠军",
+                    ["id"] = Cell.vars.playerFaction == "Horde" and 1620 or 1621,
+                    ["image"] = Cell.vars.playerFaction == "Horde" and 1390442 or 1390441,
+                    ["name"] = Cell.vars.playerFaction == "Horde" and "联盟的冠军" or "部落的冠军",
                 }, -- [3]
                 {
                     ["id"] = 1622,
@@ -15023,9 +15023,9 @@ data.zhTW = {
                     ["name"] = "賈拉克瑟斯領主",
                 }, -- [2]
                 {
-                    ["id"] = 1620,
-                    ["image"] = 1390442,
-                    ["name"] = "聯盟勇士",
+                    ["id"] = Cell.vars.playerFaction == "Horde" and 1620 or 1621,
+                    ["image"] = Cell.vars.playerFaction == "Horde" and 1390442 or 1390441,
+                    ["name"] = Cell.vars.playerFaction == "Horde" and "聯盟勇士" or "部落勇士",
                 }, -- [3]
                 {
                     ["id"] = 1622,
@@ -21176,9 +21176,9 @@ data.koKR = {
                     ["name"] = "군주 자락서스",
                 }, -- [2]
                 {
-                    ["id"] = 1620,
-                    ["image"] = 1390442,
-                    ["name"] = "얼라이언스의 용사",
+                    ["id"] = Cell.vars.playerFaction == "Horde" and 1620 or 1621,
+                    ["image"] = Cell.vars.playerFaction == "Horde" and 1390442 or 1390441,
+                    ["name"] = Cell.vars.playerFaction == "Horde" and "얼라이언스의 용사" or "호드의 용사",
                 }, -- [3]
                 {
                     ["id"] = 1622,

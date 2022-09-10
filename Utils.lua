@@ -2,6 +2,7 @@ local _, Cell = ...
 local L = Cell.L
 local F = Cell.funcs
 
+Cell.vars.playerFaction = UnitFactionGroup("player")
 -------------------------------------------------
 -- game version
 -------------------------------------------------

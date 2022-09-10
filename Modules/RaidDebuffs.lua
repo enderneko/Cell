@@ -367,7 +367,6 @@ local function CreateTopWidgets()
             LoadExpansion("Current Season")
         end,
     })
-
     expansionDropdown:SetItems(expansionItems)
 
     -- current instance button
@@ -383,6 +382,7 @@ local function CreateTopWidgets()
             OpenInstanceBoss(GetInstanceInfo())
         end
     end)
+    Cell:RegisterForCloseDropdown(showCurrentBtn)
 
     -- import/export button
     local importBtn = Cell:CreateButton(debuffsTab, "", "accent-hover", {20, 20}, nil, nil, nil, nil, nil, L["Import"])

@@ -310,7 +310,8 @@ local function CreateTopWidgets()
             OpenInstanceBoss(GetInstanceInfo())
         end
     end)
-
+    Cell:RegisterForCloseDropdown(showCurrentBtn)
+    
     -- import/export button
     local importBtn = Cell:CreateButton(debuffsTab, "", "accent-hover", {20, 20}, nil, nil, nil, nil, nil, L["Import"])
     importBtn:SetPoint("TOPLEFT", showCurrentBtn, "TOPRIGHT", P:Scale(-1), 0)
