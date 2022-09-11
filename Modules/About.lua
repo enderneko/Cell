@@ -101,7 +101,8 @@ local function CreateSpecialThanksPane()
         "七月核桃丶-白银之手 (CN)\n"..
         "Smile (爱发电)\n"..
         "青乙-影之哀伤 (CN)\n"..
-        "黑诺-影之哀伤 (CN)\n"
+        "黑诺-影之哀伤 (CN)\n"..
+        "Mike (爱发电)\n"
     )
 
     local elapsedTime = 0
