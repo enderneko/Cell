@@ -1,10 +1,10 @@
--- 高亮当前血量显示可驱散效果
-
+-- show dispel highlight with solid color (current health)
 -- 使用纯色材质（而非血条材质）
 local USE_SOLID_COLOR_TEXTURE = false
 
 local F = Cell.funcs
 
+-- custom dispel type color
 -- 自定义颜色
 local debuffTypeColor = {
     [""] = {r = 0.8, g = 0, b = 0},

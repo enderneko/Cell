@@ -1,3 +1,4 @@
+-- show dispel highlight with solid color (entire unit button)
 -- 使用纯色而非渐变色显示驱散高亮
 local ALPHA = 0.6
 
