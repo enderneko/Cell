@@ -18,15 +18,16 @@ F:IterateAllUnitButtons(function(b)
             name = b.state.name
         end
 
+        F:UpdateTextWidth(nameText.name, name, nameText.width, b.widget.healthBar)
+
         if IsInRaid() then
             local raidIndex = UnitInRaid(b.state.unit)
             if raidIndex and name then
                 local subgroup = select(3, GetRaidRosterInfo(raidIndex))
-                name = "|cffffffff"..subgroup.."-|r"..name
+                nameText.name:SetText("|cffffffff"..subgroup.."-|r"..nameText.name:GetText())
             end
         end
 
-        F:UpdateTextWidth(nameText.name, name, nameText.width, b.widget.healthBar)
         nameText:SetSize(nameText.name:GetWidth(), nameText.name:GetHeight())
     end
 end)
