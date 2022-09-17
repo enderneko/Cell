@@ -2,7 +2,7 @@
 -- File: LibGroupInfo.lua
 -- Author: enderneko (enderneko-dev@outlook.com)
 -- File Created: 2022/07/29 15:04:31 +0800
--- Last Modified: 2022/09/10 16:19:52 +0800
+-- Last Modified: 2022/09/15 18:51:05 +0800
 --]]
 
 local MAJOR, MINOR = "LibGroupInfo", 2
@@ -255,6 +255,9 @@ end
 -- login & reload
 ---------------------------------------------------------------------
 function frame:PLAYER_LOGIN()
+    PLAYER_GUID = UnitGUID("player")
+    cache[PLAYER_GUID] = {}
+    
     -- if IS_RETAIL then
         CacheSpecData()
         frame:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
@@ -271,8 +274,6 @@ function frame:PLAYER_LOGIN()
     frame:RegisterEvent("UNIT_NAME_UPDATE")
     -- frame:RegisterEvent("UNIT_PHASE")
     -- frame:RegisterEvent("PARTY_MEMBER_ENABLE")
-
-    PLAYER_GUID = UnitGUID("player")
 end
 
 function frame:PLAYER_ENTERING_WORLD(isLogin, isReload)
