@@ -364,6 +364,8 @@ function eventFrame:ADDON_LOADED(arg1)
         -- custom defensives/externals ------------------------------------------------------------
         if type(CellDB["customDefensives"]) ~= "table" then CellDB["customDefensives"] = {} end
         if type(CellDB["customExternals"]) ~= "table" then CellDB["customExternals"] = {} end
+        I:UpdateCustomDefensives(CellDB["customDefensives"])
+        I:UpdateCustomExternals(CellDB["customExternals"])
         
         -- raid debuffs ---------------------------------------------------------------------------
         if type(CellDB["raidDebuffs"]) ~= "table" then CellDB["raidDebuffs"] = {} end
