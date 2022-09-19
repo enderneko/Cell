@@ -2,7 +2,7 @@
 -- File: UnitButton_Wrath.lua
 -- Author: enderneko (enderneko-dev@outlook.com)
 -- File Created: 2022/08/20 19:44:26 +0800
--- Last Modified: 2022/09/10 22:06:45 +0800
+-- Last Modified: 2022/09/19 12:29:22 +0800
 --]]
 
 local _, Cell = ...
@@ -13,6 +13,7 @@ local P = Cell.pixelPerfectFuncs
 local A = Cell.animations
 
 local UnitGUID = UnitGUID
+local UnitClassBase = UnitClassBase
 local UnitHealth = UnitHealth
 local UnitHealthMax = UnitHealthMax
 local UnitGetIncomingHeals = UnitGetIncomingHeals
@@ -1538,7 +1539,7 @@ local function UnitButton_UpdateName(self)
 
     self.state.name = UnitName(unit)
     self.state.fullName = F:UnitFullName(unit)
-    self.state.class = select(2, UnitClass(unit))
+    self.state.class = UnitClassBase(unit)
     self.state.guid = UnitGUID(unit)
     self.state.isPlayer = UnitIsPlayer(unit)
 
@@ -1549,7 +1550,7 @@ UnitButton_UpdateNameColor = function(self)
     local unit = self.state.unit
     if not unit then return end
 
-    self.state.class = select(2, UnitClass(unit)) --! update class or it may be nil
+    self.state.class = UnitClassBase(unit) --! update class or it may be nil
 
     local nameText = self.indicators.nameText
 
@@ -1589,7 +1590,7 @@ UnitButton_UpdateHealthColor = function(self)
     local unit = self.state.unit
     if not unit then return end
 
-    self.state.class = select(2, UnitClass(unit)) --! update class or it may be nil
+    self.state.class = UnitClassBase(unit) --! update class or it may be nil
 
     local barR, barG, barB
     local lossR, lossG, lossB
@@ -1753,6 +1754,7 @@ local function UnitButton_OnEvent(self, event, unit)
         elseif event == "UNIT_NAME_UPDATE" then
             UnitButton_UpdateName(self)
             UnitButton_UpdateNameColor(self)
+            UnitButton_UpdateHealthColor(self)
         
         elseif event == "UNIT_MAXHEALTH" then
             UnitButton_UpdateHealthMax(self)

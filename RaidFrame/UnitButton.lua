@@ -12,6 +12,7 @@ CELL_SUMMON_ICONS_ENABLED = false
 
 local UnitGUID = UnitGUID
 -- local UnitHealth = LibCLHealth.UnitHealth
+local UnitClassBase = UnitClassBase
 local UnitHealth = UnitHealth
 local UnitHealthMax = UnitHealthMax
 local UnitGetIncomingHeals = UnitGetIncomingHeals
@@ -1720,7 +1721,7 @@ local function UnitButton_UpdateName(self)
 
     self.state.name = UnitName(unit)
     self.state.fullName = F:UnitFullName(unit)
-    self.state.class = select(2, UnitClass(unit))
+    self.state.class = UnitClassBase(unit)
     self.state.guid = UnitGUID(unit)
     self.state.isPlayer = UnitIsPlayer(unit)
 
@@ -1731,7 +1732,7 @@ UnitButton_UpdateNameColor = function(self)
     local unit = self.state.unit
     if not unit then return end
 
-    self.state.class = select(2, UnitClass(unit)) --! update class or it may be nil
+    self.state.class = UnitClassBase(unit) --! update class or it may be nil
 
     local nameText = self.indicators.nameText
 
@@ -1771,7 +1772,7 @@ UnitButton_UpdateHealthColor = function(self)
     local unit = self.state.unit
     if not unit then return end
 
-    self.state.class = select(2, UnitClass(unit)) --! update class or it may be nil
+    self.state.class = UnitClassBase(unit) --! update class or it may be nil
 
     local barR, barG, barB
     local lossR, lossG, lossB
@@ -1939,6 +1940,7 @@ local function UnitButton_OnEvent(self, event, unit)
         elseif event == "UNIT_NAME_UPDATE" then
             UnitButton_UpdateName(self)
             UnitButton_UpdateNameColor(self)
+            UnitButton_UpdateHealthColor(self)
         
         elseif event == "UNIT_MAXHEALTH" then
             UnitButton_UpdateHealthMax(self)
