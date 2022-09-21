@@ -619,7 +619,7 @@ local function ShowActionsMenu(index, b)
             {
                 ["text"] = L["Edit"],
                 ["onClick"] = function()
-                    local peb = Cell:CreatePopupEditBox(clickCastingsTab, 77, function(text)
+                    local peb = Cell:CreatePopupEditBox(clickCastingsTab, function(text)
                         changed[index] = changed[index] or {b}
                         if b.bindAction ~= text then
                             changed[index]["bindAction"] = text
@@ -632,7 +632,7 @@ local function ShowActionsMenu(index, b)
                         CheckChanges()
                     end, true)
                     peb:SetPoint("TOPLEFT", b.actionGrid)
-                    peb:SetPoint("TOPRIGHT", b.actionGrid)
+                    peb:SetPoint("BOTTOMRIGHT", b.actionGrid)
                     peb:SetTips("|cff777777"..L["Shift+Enter: add a new line"].."\n"..L["Enter: apply\nESC: discard"])
                     peb:ShowEditBox(b.bindType == "macro" and b.bindAction or "")
                 end,
@@ -679,7 +679,7 @@ local function ShowActionsMenu(index, b)
             {
                 ["text"] = L["Edit"],
                 ["onClick"] = function()
-                    local peb = Cell:CreatePopupEditBox(clickCastingsTab, 77, function(text)
+                    local peb = Cell:CreatePopupEditBox(clickCastingsTab, function(text)
                         changed[index] = changed[index] or {b}
                         if b.bindAction ~= text then
                             changed[index]["bindAction"] = text
@@ -694,7 +694,7 @@ local function ShowActionsMenu(index, b)
                         CheckChanges()
                     end)
                     P:Point(peb, "TOPLEFT", b.actionGrid)
-                    P:Point(peb, "TOPRIGHT", b.actionGrid)
+                    P:Point(peb, "BOTTOMRIGHT", b.actionGrid)
                     peb:SetTips("|cff777777"..L["Enter: apply\nESC: discard"])
                     peb:ShowEditBox(b.bindType == "spell" and b.bindAction or "")
                 end,

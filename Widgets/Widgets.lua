@@ -1742,21 +1742,18 @@ end
 -----------------------------------------
 -- popup edit box
 -----------------------------------------
-function addon:CreatePopupEditBox(parent, width, func, multiLine)
+function addon:CreatePopupEditBox(parent, func, multiLine)
     if not parent.popupEditBox then
         local eb = CreateFrame("EditBox", addonName.."PopupEditBox", parent, "BackdropTemplate")
         parent.popupEditBox = eb
         eb:Hide()
-        eb:SetWidth(width)
         eb:SetAutoFocus(true)
         eb:SetFontObject(font)
         eb:SetJustifyH("LEFT")
         eb:SetMultiLine(true)
         eb:SetMaxLetters(255)
         eb:SetTextInsets(5, 5, 3, 4)
-        eb:SetPoint("TOPLEFT")
-        eb:SetPoint("TOPRIGHT")
-        addon:StylizeFrame(eb, {.115, .115, .115, 1}, {accentColor.t[1], accentColor.t[2], accentColor.t[3], 1})
+        addon:StylizeFrame(eb, {0.115, 0.115, 0.115, 1}, {accentColor.t[1], accentColor.t[2], accentColor.t[3], 1})
         
         eb:SetScript("OnEscapePressed", function()
             eb:SetText("")
@@ -1777,7 +1774,7 @@ function addon:CreatePopupEditBox(parent, width, func, multiLine)
         tipsBackground:SetPoint("TOPLEFT", eb, "BOTTOMLEFT")
         tipsBackground:SetPoint("TOPRIGHT", eb, "BOTTOMRIGHT")
         tipsBackground:SetPoint("BOTTOM", tipsText, 0, -2)
-        tipsBackground:SetColorTexture(.115, .115, .115, .9)
+        tipsBackground:SetColorTexture(0.115, 0.115, 0.115, 0.9)
         tipsBackground:Hide()
 
         function eb:SetTips(text)
@@ -1805,7 +1802,6 @@ function addon:CreatePopupEditBox(parent, width, func, multiLine)
 
     -- set parent(for hiding) & size
     parent.popupEditBox:ClearAllPoints()
-    parent.popupEditBox:SetWidth(width)
     parent.popupEditBox:SetFrameStrata("DIALOG")
 
     return parent.popupEditBox

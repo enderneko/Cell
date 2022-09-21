@@ -34,4 +34,5 @@ end
 
 
 CreateTooltip("CellTooltip")
+CreateTooltip("CellSpellTooltip")
 CreateTooltip("CellScanningTooltip")
