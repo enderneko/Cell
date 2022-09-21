@@ -2895,6 +2895,337 @@ local function CreateSetting_Auras2(parent)
     return widget
 end
 
+local cleuAuraButtons = {}
+local function CreateCleuAuraButtons(parent, auraTable, updateHeightFunc)
+    local n = #auraTable
+
+    -- tooltip
+    if not parent.inputs then
+        local inputs = CreateFrame("Frame", nil, parent, "BackdropTemplate")
+        addon:StylizeFrame(inputs, {0.115, 0.115, 0.115, 1})
+        inputs:SetFrameStrata("DIALOG")
+        inputs:Hide()
+        inputs:SetScript("OnHide", function()
+            inputs:Hide()
+            inputs.spellEB.isValid = false
+            inputs.durationEB.isValid = false
+            inputs.spellEB:SetText("")
+            inputs.durationEB:SetText("")
+            inputs.okBtn:SetEnabled(false)
+            CellSpellTooltip:Hide()
+        end)
+
+        local function Validate()
+            inputs.okBtn:SetEnabled(inputs.spellEB.isValid and inputs.durationEB.isValid)
+        end
+
+        local spellEB = addon:CreateEditBox(inputs, 20, 20, false, false, true)
+        spellEB:SetAutoFocus(true)
+        spellEB.tip = spellEB:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
+        spellEB.tip:SetTextColor(0.4, 0.4, 0.4, 1)
+        spellEB.tip:SetText("ID")
+        spellEB.tip:SetPoint("RIGHT", -5, 0)
+        spellEB:SetScript("OnTextChanged", function()
+            spellEB.isValid = false
+            local spellId = tonumber(spellEB:GetText())
+            if not spellId then
+                CellSpellTooltip:Hide()
+                Validate()
+                return
+            end
+
+            local name = GetSpellInfo(spellId)
+            if not name then
+                CellSpellTooltip:Hide()
+                Validate()
+                return
+            end
+            
+            CellSpellTooltip:SetOwner(spellEB, "ANCHOR_NONE")
+            CellSpellTooltip:SetPoint("TOPLEFT", spellEB, "BOTTOMLEFT", 0, -1)
+            CellSpellTooltip:SetHyperlink("spell:"..spellId)
+            CellSpellTooltip:Show()
+            spellEB.isValid = true
+            Validate()
+        end)
+        spellEB:HookScript("OnHide", function()
+            CellSpellTooltip:Hide()
+        end)
+        spellEB:SetScript("OnEscapePressed", function()
+            inputs:Hide()
+        end)
+        
+        local durationEB = addon:CreateEditBox(inputs, 20, 20, false, false, true)
+        durationEB:SetAutoFocus(true)
+        durationEB:SetMaxLetters(2)
+        durationEB.tip = durationEB:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
+        durationEB.tip:SetTextColor(0.4, 0.4, 0.4, 1)
+        durationEB.tip:SetText(_G.AUCTION_DURATION)
+        durationEB.tip:SetPoint("RIGHT", -5, 0)
+        durationEB:SetScript("OnTextChanged", function()
+            durationEB.isValid = false
+            local duration = tonumber(durationEB:GetText())
+            if not duration or duration == 0 then
+                Validate()
+                return
+            end
+            durationEB.isValid = true
+            Validate()
+        end)
+        durationEB:SetScript("OnEscapePressed", function()
+            inputs:Hide()
+        end)
+
+        spellEB:SetScript("OnTabPressed", function()
+            durationEB:SetFocus(true)
+        end)
+        durationEB:SetScript("OnTabPressed", function()
+            spellEB:SetFocus(true)
+        end)
+
+        local okBtn = addon:CreateButton(inputs, "OK", "green", {40, 20})
+        okBtn:SetEnabled(false)
+
+        spellEB:SetPoint("TOPLEFT")
+        spellEB:SetPoint("BOTTOMRIGHT", inputs, "BOTTOMLEFT", 120, 0)
+        okBtn:SetPoint("BOTTOMRIGHT")
+        okBtn:SetPoint("TOPLEFT", inputs, "TOPRIGHT", -30, 0)
+        durationEB:SetPoint("TOPLEFT", spellEB, "TOPRIGHT", -1, 0)
+        durationEB:SetPoint("BOTTOMRIGHT", okBtn, "BOTTOMLEFT", 1, 0)
+
+        parent.inputs = inputs
+        inputs.spellEB = spellEB
+        inputs.durationEB = durationEB
+        inputs.okBtn = okBtn
+    end
+
+    -- new
+    if not cleuAuraButtons[0] then
+        cleuAuraButtons[0] = addon:CreateButton(parent, "", "transparent-class", {20, 20})
+        cleuAuraButtons[0]:SetTexture("Interface\\AddOns\\Cell\\Media\\Icons\\new", {16, 16}, {"RIGHT", -1, 0})
+        cleuAuraButtons[0]:SetPoint("BOTTOMLEFT")
+        cleuAuraButtons[0]:SetPoint("RIGHT")
+    end
+    
+    cleuAuraButtons[0]:SetScript("OnClick", function(self)
+        parent.inputs:SetPoint("TOPLEFT", self)
+        parent.inputs:SetPoint("BOTTOMRIGHT", self)
+        parent.inputs:Show()
+        parent.inputs.spellEB:SetText("")
+        parent.inputs.durationEB:SetText("")
+        parent.inputs.okBtn:SetEnabled(false)
+        parent.inputs.okBtn:SetScript("OnClick", function()
+            local spellId = tonumber(parent.inputs.spellEB:GetText())
+            local duration = tonumber(parent.inputs.durationEB:GetText())
+            -- update db
+            tinsert(auraTable, {spellId, duration})
+            parent.func(auraTable)
+            CreateCleuAuraButtons(parent, auraTable, updateHeightFunc)
+            updateHeightFunc(19)
+            parent.inputs:Hide()
+        end)
+    end)
+
+    for i, t in ipairs(auraTable) do
+        -- creation
+        if not cleuAuraButtons[i] then
+            cleuAuraButtons[i] = addon:CreateButton(parent, "", "transparent-class", {20, 20})
+
+            -- spellIcon
+            cleuAuraButtons[i].spellIconBg = cleuAuraButtons[i]:CreateTexture(nil, "BORDER")
+            cleuAuraButtons[i].spellIconBg:SetSize(16, 16)
+            cleuAuraButtons[i].spellIconBg:SetPoint("TOPLEFT", 2, -2)
+            cleuAuraButtons[i].spellIconBg:SetColorTexture(0, 0, 0, 1)
+            cleuAuraButtons[i].spellIconBg:Hide()
+
+            cleuAuraButtons[i].spellIcon = cleuAuraButtons[i]:CreateTexture(nil, "OVERLAY")
+            cleuAuraButtons[i].spellIcon:SetPoint("TOPLEFT", cleuAuraButtons[i].spellIconBg, 1, -1)
+            cleuAuraButtons[i].spellIcon:SetPoint("BOTTOMRIGHT", cleuAuraButtons[i].spellIconBg, -1, 1)
+            cleuAuraButtons[i].spellIcon:SetTexCoord(0.08, 0.92, 0.08, 0.92)
+            cleuAuraButtons[i].spellIcon:Hide()
+
+            -- spellId text
+            cleuAuraButtons[i].spellIdText = cleuAuraButtons[i]:CreateFontString(nil, "OVERLAY", font_name)
+            cleuAuraButtons[i].spellIdText:SetPoint("LEFT", cleuAuraButtons[i].spellIconBg, "RIGHT", 5, 0)
+            cleuAuraButtons[i].spellIdText:SetPoint("RIGHT", cleuAuraButtons[i], "LEFT", 80, 0)
+            cleuAuraButtons[i].spellIdText:SetWordWrap(false)
+            cleuAuraButtons[i].spellIdText:SetJustifyH("LEFT")
+            
+            -- spellName text
+            cleuAuraButtons[i].spellNameText = cleuAuraButtons[i]:CreateFontString(nil, "OVERLAY", font_name)
+            cleuAuraButtons[i].spellNameText:SetPoint("LEFT", cleuAuraButtons[i].spellIdText, "RIGHT", 5, 0)
+            cleuAuraButtons[i].spellNameText:SetPoint("RIGHT", -70, 0)
+            cleuAuraButtons[i].spellNameText:SetWordWrap(false)
+            cleuAuraButtons[i].spellNameText:SetJustifyH("LEFT")
+
+            -- duration text
+            cleuAuraButtons[i].durationText = cleuAuraButtons[i]:CreateFontString(nil, "OVERLAY", font_name)
+            cleuAuraButtons[i].durationText:SetPoint("LEFT", cleuAuraButtons[i].spellNameText, "RIGHT", 5, 0)
+            cleuAuraButtons[i].durationText:SetPoint("RIGHT", -40, 0)
+            cleuAuraButtons[i].durationText:SetWordWrap(false)
+            cleuAuraButtons[i].durationText:SetJustifyH("LEFT")
+
+            -- del
+            cleuAuraButtons[i].del = addon:CreateButton(cleuAuraButtons[i], "", "none", {18, 20}, true, true)
+            cleuAuraButtons[i].del:SetTexture("Interface\\AddOns\\Cell\\Media\\Icons\\delete", {16, 16}, {"CENTER", 0, 0})
+            cleuAuraButtons[i].del:SetPoint("RIGHT")
+            cleuAuraButtons[i].del.tex:SetVertexColor(0.6, 0.6, 0.6, 1)
+            cleuAuraButtons[i].del:SetScript("OnEnter", function()
+                cleuAuraButtons[i]:GetScript("OnEnter")(cleuAuraButtons[i])
+                cleuAuraButtons[i].del.tex:SetVertexColor(1, 1, 1, 1)
+            end)
+            cleuAuraButtons[i].del:SetScript("OnLeave",  function()
+                cleuAuraButtons[i]:GetScript("OnLeave")(cleuAuraButtons[i])
+                cleuAuraButtons[i].del.tex:SetVertexColor(0.6, 0.6, 0.6, 1)
+            end)
+            
+            -- edit
+            cleuAuraButtons[i].edit = addon:CreateButton(cleuAuraButtons[i], "", "none", {18, 20}, true, true)
+            cleuAuraButtons[i].edit:SetPoint("RIGHT", cleuAuraButtons[i].del, "LEFT", 1, 0)
+            cleuAuraButtons[i].edit:SetTexture("Interface\\AddOns\\Cell\\Media\\Icons\\info", {16, 16}, {"CENTER", 0, 0})
+            cleuAuraButtons[i].edit.tex:SetVertexColor(0.6, 0.6, 0.6, 1)
+            cleuAuraButtons[i].edit:SetScript("OnEnter", function()
+                cleuAuraButtons[i]:GetScript("OnEnter")(cleuAuraButtons[i])
+                cleuAuraButtons[i].edit.tex:SetVertexColor(1, 1, 1, 1)
+            end)
+            cleuAuraButtons[i].edit:SetScript("OnLeave",  function()
+                cleuAuraButtons[i]:GetScript("OnLeave")(cleuAuraButtons[i])
+                cleuAuraButtons[i].edit.tex:SetVertexColor(0.6, 0.6, 0.6, 1)
+            end)
+        end
+        
+        local name, _, icon = GetSpellInfo(t[1])
+        cleuAuraButtons[i].spellIdText:SetText(t[1])
+        cleuAuraButtons[i].spellNameText:SetText(name or L["Invalid"])
+        cleuAuraButtons[i].durationText:SetText(t[2])
+        if icon then
+            cleuAuraButtons[i].spellIcon:SetTexture(icon)
+            cleuAuraButtons[i].spellIconBg:Show()
+            cleuAuraButtons[i].spellIcon:Show()
+        else
+            cleuAuraButtons[i].spellIconBg:Hide()
+            cleuAuraButtons[i].spellIcon:Hide()
+        end
+        cleuAuraButtons[i].spellId = t[1]
+        cleuAuraButtons[i].duration = t[2]
+
+        -- spell tooltip
+        cleuAuraButtons[i]:HookScript("OnEnter", function(self)
+            if parent.inputs:IsShown() then return end
+
+            local name = GetSpellInfo(self.spellId)
+            if not name then
+                CellSpellTooltip:Hide()
+                return
+            end
+            
+            CellSpellTooltip:SetOwner(cleuAuraButtons[i], "ANCHOR_NONE")
+            CellSpellTooltip:SetPoint("TOPRIGHT", cleuAuraButtons[i], "TOPLEFT", -1, 0)
+            CellSpellTooltip:SetHyperlink("spell:"..self.spellId)
+            CellSpellTooltip:Show()
+        end)
+        cleuAuraButtons[i]:HookScript("OnLeave", function()
+            if parent.inputs:IsShown() then return end
+            CellSpellTooltip:Hide()
+        end)
+        
+        -- points
+        cleuAuraButtons[i]:ClearAllPoints()
+        if i == 1 then -- first
+            cleuAuraButtons[i]:SetPoint("TOPLEFT")
+        else
+            cleuAuraButtons[i]:SetPoint("TOPLEFT", cleuAuraButtons[i-1], "BOTTOMLEFT", 0, 1)
+        end
+        cleuAuraButtons[i]:SetPoint("RIGHT")
+        cleuAuraButtons[i]:Show()
+
+        -- functions
+        cleuAuraButtons[i].edit:SetScript("OnClick", function()
+            parent.inputs:SetPoint("TOPLEFT", cleuAuraButtons[i])
+            parent.inputs:SetPoint("BOTTOMRIGHT", cleuAuraButtons[i])
+            parent.inputs:Show()
+            parent.inputs.spellEB:SetText(cleuAuraButtons[i].spellId)
+            parent.inputs.durationEB:SetText(cleuAuraButtons[i].duration)
+            parent.inputs.okBtn:SetEnabled(false)
+            parent.inputs.okBtn:SetScript("OnClick", function()
+                local spellId = tonumber(parent.inputs.spellEB:GetText())
+                local duration = tonumber(parent.inputs.durationEB:GetText())
+                local spellName, _, spellIcon = GetSpellInfo(spellId)
+                -- update text
+                cleuAuraButtons[i].spellIdText:SetText(spellId)
+                cleuAuraButtons[i].spellNameText:SetText(spellName)
+                cleuAuraButtons[i].durationText:SetText(duration)
+                cleuAuraButtons[i].spellId = spellId
+                cleuAuraButtons[i].duration = duration
+                -- update db
+                auraTable[i] = {spellId, duration}
+                parent.func(auraTable)
+                if spellIcon then
+                    cleuAuraButtons[i].spellIcon:SetTexture(spellIcon)
+                    cleuAuraButtons[i].spellIconBg:Show()
+                    cleuAuraButtons[i].spellIcon:Show()
+                else
+                    cleuAuraButtons[i].spellIconBg:Hide()
+                    cleuAuraButtons[i].spellIcon:Hide()
+                end
+                parent.inputs:Hide()
+            end)
+        end)
+
+        cleuAuraButtons[i].del:SetScript("OnClick", function()
+            tremove(auraTable, i)
+            parent.func(auraTable)
+            CreateCleuAuraButtons(parent, auraTable, updateHeightFunc)
+            updateHeightFunc(-19)
+        end)
+    end
+
+    for i = n+1, #cleuAuraButtons do
+        cleuAuraButtons[i]:Hide()
+        cleuAuraButtons[i]:ClearAllPoints()
+    end
+end
+
+local function CreateSetting_CleuAuras(parent)
+    local widget
+
+    if not settingWidgets["cleuAuras"] then
+        widget = addon:CreateFrame("CellIndicatorSettings_CleuAuras", parent, 240, 128)
+        settingWidgets["cleuAuras"] = widget
+
+        widget.frame = addon:CreateFrame(nil, widget, 20, 20)
+        widget.frame:SetPoint("TOPLEFT", 5, -20)
+        widget.frame:SetPoint("RIGHT", -5, 0)
+        widget.frame:Show()
+        addon:StylizeFrame(widget.frame, {0.15, 0.15, 0.15, 1})
+
+        widget.text = widget:CreateFontString(nil, "OVERLAY", font_name)
+        widget.text:SetPoint("BOTTOMLEFT", widget.frame, "TOPLEFT", 0, 1)
+
+        -- associate db
+        function widget:SetFunc(func)
+            widget.frame.func = func
+        end
+
+        -- show db value
+        function widget:SetDBValue(t)
+            widget.text:SetText(L["cleuAurasTip"])
+            CreateCleuAuraButtons(widget.frame, t, function(diff)
+                widget.frame:SetHeight((#t+1)*19+1)
+                widget:SetHeight((#t+1)*19+1 + 20 + 5)
+                if diff then parent:SetHeight(parent:GetHeight()+diff) end
+            end)
+            widget.frame:SetHeight((#t+1)*19+1)
+            widget:SetHeight((#t+1)*19+1 + 20 + 5)
+        end
+    else
+        widget = settingWidgets["cleuAuras"]
+    end
+
+    widget:Show()
+    return widget
+end
+
 local function CreateSetting_Tips(parent, text)
     local widget
 
@@ -3013,6 +3344,8 @@ function addon:CreateIndicatorSettings(parent, settingsTable)
             tinsert(widgetsTable, CreateSetting_Auras(parent))
         elseif setting == "auras2" or setting == "bigDebuffs" then
             tinsert(widgetsTable, CreateSetting_Auras2(parent))
+        elseif setting == "cleuAuras" then
+            tinsert(widgetsTable, CreateSetting_CleuAuras(parent))
         else -- tips
             tinsert(widgetsTable, CreateSetting_Tips(parent, setting))
         end

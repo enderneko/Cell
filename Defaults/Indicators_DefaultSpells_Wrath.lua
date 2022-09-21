@@ -3,6 +3,9 @@ local L = Cell.L
 local I = Cell.iFuncs
 local F = Cell.funcs
 
+-------------------------------------------------
+-- debuffBlacklist
+-------------------------------------------------
 local debuffBlacklist = {
     8326, -- 鬼魂
     57723, -- 筋疲力尽

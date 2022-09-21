@@ -1239,7 +1239,7 @@ if Cell.isRetail then
         ["tankActiveMitigation"] = {"|cffb7b7b7"..I:GetTankActiveMitigationString(), "enabled", "position", "frameLevel", "size"},
         ["dispels"] = {"enabled", "checkbutton:dispellableByMe", "checkbutton2:enableHighlight", "position", "frameLevel", "size-square"},
         ["debuffs"] = {"enabled", "checkbutton:dispellableByMe", "blacklist", "bigDebuffs", "checkbutton2:showDuration:"..L["Show duration text instead of icon animation"], "checkbutton3:showTooltip:"..L["This will make these icons not click-through-able"], "num:10", "orientation", "position", "frameLevel", "size-normal-big", "font"},
-        ["raidDebuffs"] = {"|cffb7b7b7"..L["You can config debuffs in %s"]:format(Cell:GetAccentColorString()..L["Raid Debuffs"].."|r"), "enabled", "checkbutton:onlyShowTopGlow", "checkbutton2:showTooltip:"..L["This will make these icons not click-through-able"], "num:3", "orientation", "position", "frameLevel", "size-border", "font"},
+        ["raidDebuffs"] = {"|cffb7b7b7"..L["You can config debuffs in %s"]:format(Cell:GetAccentColorString()..L["Raid Debuffs"].."|r"), "enabled", "checkbutton:onlyShowTopGlow", "cleuAuras", "checkbutton2:showTooltip:"..L["This will make these icons not click-through-able"], "num:3", "orientation", "position", "frameLevel", "size-border", "font"},
         ["targetedSpells"] = {"enabled", "spells", "glow", "position", "frameLevel", "size-border", "font"},
         ["targetCounter"] = {"|cffff2727"..L["HIGH CPU USAGE"].."!|r |cffb7b7b7"..L["Check all visible enemy nameplates. Battleground/Arena only."], "enabled", "color", "position", "frameLevel", "font-noOffset"},
     }
@@ -1360,6 +1360,8 @@ local function ShowIndicatorSettings(id)
             w:SetDBValue(_G.CUSTOM, CellDB["customDefensives"], true)
         elseif currentSetting == "customExternals" then
             w:SetDBValue(_G.CUSTOM, CellDB["customExternals"], true)
+        elseif currentSetting == "cleuAuras" then
+            w:SetDBValue(CellDB["cleuAuras"])
         elseif currentSetting == "bigDebuffs" then
             w:SetDBValue(L["Big Debuffs"], currentLayoutTable["indicators"][id]["bigDebuffs"], true)
         elseif currentSetting == "spells" then
@@ -1405,6 +1407,9 @@ local function ShowIndicatorSettings(id)
                     CellDB["customExternals"] = value
                     I:UpdateCustomExternals(value)
                     Cell:Fire("UpdateIndicators", notifiedLayout, "", "customExternals")
+                elseif currentSetting == "cleuAuras" then
+                    CellDB["cleuAuras"] = value
+                    I:UpdateCleuAuras(value)
                 elseif currentSetting == "spells" then
                     -- currentLayoutTable["indicators"][id][currentSetting] = value -- NOTE: already changed in widget
                     Cell:Fire("UpdateTargetedSpells", "spells", value)

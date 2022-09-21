@@ -4,7 +4,8 @@ local F = Cell.funcs
 local I = Cell.iFuncs
 local P = Cell.pixelPerfectFuncs
 
-local DebuffTypeColor = DebuffTypeColor
+local DebuffTypeColor = F:Copy(DebuffTypeColor)
+DebuffTypeColor.cleu = {r=0, g=1, b=1}
 -------------------------------------------------
 -- CreateAura_BorderIcon
 -------------------------------------------------

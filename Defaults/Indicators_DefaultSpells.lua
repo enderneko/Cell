@@ -3,6 +3,9 @@ local L = Cell.L
 local I = Cell.iFuncs
 local F = Cell.funcs
 
+-------------------------------------------------
+-- debuffBlacklist
+-------------------------------------------------
 local debuffBlacklist = {
     8326, -- 鬼魂
     160029, -- 正在复活
@@ -481,4 +484,30 @@ function F:FirstRun()
     end)
     popup:SetPoint("TOPLEFT")
     popup:Show()
+end
+
+-------------------------------------------------
+-- cleuAuras
+-------------------------------------------------
+local cleuAuras = {}
+
+-- local cleus = {}
+-- for _, t in pairs(cleuAuras) do
+--     local icon = select(3, GetSpellInfo(t[1]))
+--     cleus[t[1]] = {t[2], icon}
+-- end
+-- cleuAuras = F:Copy(cleus)
+
+function I:UpdateCleuAuras(t)
+    -- reset
+    -- cleuAuras = F:Copy(cleus)
+    -- insert
+    for _, c in pairs(t) do
+        local icon = select(3, GetSpellInfo(c[1]))
+        cleuAuras[c[1]] = {c[2], icon}
+    end
+end
+    
+function I:CheckCleuAura(id)
+    return cleuAuras[id]
 end

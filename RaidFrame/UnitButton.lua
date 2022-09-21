@@ -570,6 +570,9 @@ local function FilterWeakenedSoul(spellId, caster)
     return caster == "player"
 end
 
+-- cleuAuras
+local cleuUnits = {}
+
 local debuffs_cache = {}
 local debuffs_cache_count = {}
 local debuffs_current = {}
@@ -709,9 +712,16 @@ local function UnitButton_UpdateDebuffs(self)
     end
 
     -- update raid debuffs
-    if raidDebuffsFound then
+    if raidDebuffsFound or cleuUnits[unit] then
         startIndex = 1
         self.indicators.raidDebuffs:Show()
+
+        -- cleuAuras
+        local offset = 0
+        if cleuUnits[unit] then
+            offset = 1
+            startIndex = startIndex + 1
+        end
 
         -- sort indices
         -- NOTE: debuffs_raid_orders[unit] = { [index] = debuffOrder } used for sorting
@@ -722,7 +732,7 @@ local function UnitButton_UpdateDebuffs(self)
         
         -- show
         local topGlowType, topGlowOptions
-        for i = 1, indicatorNums["raidDebuffs"] do
+        for i = 1+offset, indicatorNums["raidDebuffs"] do
             if debuffs_raid_indices[unit][i] then -- debuffs_raid_indices[unit][i] -> index
                 local name, icon, count, debuffType, duration, expirationTime, source, isStealable, nameplateShowPersonal, spellId = UnitDebuff(unit, debuffs_raid_indices[unit][i])
                 if name then
@@ -737,6 +747,11 @@ local function UnitButton_UpdateDebuffs(self)
                     end
                 end
             end
+        end
+
+        if cleuUnits[unit] then
+            self.indicators.raidDebuffs[1]:SetCooldown(cleuUnits[unit][1], cleuUnits[unit][2], "cleu", cleuUnits[unit][3], 1)
+            topGlowType, topGlowOptions = unpack(CellDB["cleuGlow"])
         end
 
         -- NOTE: debuffs_raid_indices no longer used after set raidDebuffs
@@ -1013,10 +1028,14 @@ local function UnitButton_UpdateBuffs(self)
     I:ShowCustomIndicators(unit, self, "buff")
 end
 
+-------------------------------------------------
+-- check auras using CLEU
+-------------------------------------------------
 local cleu = CreateFrame("Frame")
 cleu:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
 cleu:SetScript("OnEvent", function()
     local _, subEvent, _, sourceGUID, sourceName, sourceFlags, sourceRaidFlags, destGUID, destName, destFlags, destRaidFlags, spellId, spellName = CombatLogGetCurrentEventInfo()
+    -- mirror image
     if spellId == 55342 and F:IsFriend(sourceFlags) then
         if subEvent == "SPELL_AURA_APPLIED" then
             local unit = LGI:GuidToUnit(sourceGUID)
@@ -1027,6 +1046,20 @@ cleu:SetScript("OnEvent", function()
             local unit = LGI:GuidToUnit(sourceGUID)
             if unit then
                 buffs_mirror_image[unit] = nil
+            end
+        end
+    end
+    -- CLEU auras
+    if I:CheckCleuAura(spellId) and F:IsFriend(destFlags) then
+        if subEvent == "SPELL_AURA_APPLIED" then
+            local unit = LGI:GuidToUnit(destGUID)
+            if unit then
+                cleuUnits[unit] = {GetTime(), unpack(I:CheckCleuAura(spellId))}
+            end
+        elseif subEvent == "SPELL_AURA_REMOVED" then
+            local unit = LGI:GuidToUnit(destGUID)
+            if unit then
+                cleuUnits[unit] = nil
             end
         end
     end
