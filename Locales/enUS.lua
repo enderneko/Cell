@@ -58,6 +58,15 @@ select(2, ...).L = setmetatable({
     ["SNIPPETS_TIPS"] = "[Double-Click] to rename. [Shift-Click] to delete. All checked snippets will be automatically invoked at the end of Cell initialization process (in ADDON_LOADED event).",
 
     ["CHANGELOGS"] = [[
+        <h1>r113-release (Sep 22, 2022, 16:30 GMT+8)</h1>
+        <p>* Fixed custom defensives and externals.</p>
+        <h2>Retail</h2>
+        <p>+ Implemented CLEU auras (check Raid Debuffs indicator).</p>
+        <h2>Wrath Classic</h2>
+        <p>* Updated debuffs.</p>
+        <p>* Fixed health bar color.</p>
+        <br/>
+       
         <h1>r112-release (Sep 11, 2022, 19:00 GMT+8)</h1>
         <p>* Add custom auras support to Defensives and Externals.</p>
         <p>* Add Mirror Image to Defensives.</p>
