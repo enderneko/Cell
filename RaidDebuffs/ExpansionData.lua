@@ -2,7 +2,7 @@
 -- File: ExpansionData.lua
 -- Author: enderneko (enderneko-dev@outlook.com)
 -- File Created: 2022/08/26 04:40:40 +0800
--- Last Modified: 2022/09/11 17:45:56 +0800
+-- Last Modified: 2022/09/21 16:10:28 +0800
 --]]
 
 local _, Cell = ...
@@ -5755,10 +5755,15 @@ data.enUS = {
                     ["name"] = "Jedoga Shadowseeker",
                 }, -- [3]
                 {
+                    ["id"] = 583,
+                    ["image"] = 607534,
+                    ["name"] = "Amanitar",
+                }, -- [4]
+                {
                     ["id"] = 584,
                     ["image"] = 607639,
                     ["name"] = "Herald Volazj",
-                }, -- [4]
+                }, -- [5]
             },
         }, -- [10]
         {
@@ -5831,10 +5836,15 @@ data.enUS = {
                     ["name"] = "Moorabi",
                 }, -- [3]
                 {
+                    ["id"] = 595,
+                    ["image"] = 607592,
+                    ["name"] = "Eck the Ferocious",
+                }, -- [4]
+                {
                     ["id"] = 596,
                     ["image"] = 607605,
                     ["name"] = "Gal'darah",
-                }, -- [4]
+                }, -- [5]
             },
         }, -- [13]
         {
@@ -5985,25 +5995,30 @@ data.enUS = {
             ["name"] = "The Nexus",
             ["bosses"] = {
                 {
+                    ["id"] = Cell.vars.playerFaction == "Horde" and 617 or 833,
+                    ["image"] = Cell.vars.playerFaction == "Horde" and 607571 or 607568,
+                    ["name"] = Cell.vars.playerFaction == "Horde" and "Commander Stoutbeard" or "Commander Kolurg",
+                }, -- [1]
+                {
                     ["id"] = 618,
                     ["image"] = 607623,
                     ["name"] = "Grand Magus Telestra",
-                }, -- [1]
+                }, -- [2]
                 {
                     ["id"] = 619,
                     ["image"] = 607540,
                     ["name"] = "Anomalus",
-                }, -- [2]
+                }, -- [3]
                 {
                     ["id"] = 620,
                     ["image"] = 607735,
                     ["name"] = "Ormorok the Tree-Shaper",
-                }, -- [3]
+                }, -- [4]
                 {
                     ["id"] = 621,
                     ["image"] = 607671,
                     ["name"] = "Keristrasza",
-                }, -- [4]
+                }, -- [5]
             },
         }, -- [20]
         {
@@ -7034,10 +7049,15 @@ data.zhCN = {
                     ["name"] = "莫拉比",
                 }, -- [3]
                 {
+                    ["id"] = 595,
+                    ["image"] = 607592,
+                    ["name"] = "凶残的伊克",
+                }, -- [4]
+                {
                     ["id"] = 596,
                     ["image"] = 607605,
                     ["name"] = "迦尔达拉",
-                }, -- [4]
+                }, -- [5]
             },
         }, -- [14]
         {
@@ -7061,10 +7081,15 @@ data.zhCN = {
                     ["name"] = "耶戈达·觅影者",
                 }, -- [3]
                 {
+                    ["id"] = 583,
+                    ["image"] = 607534,
+                    ["name"] = "埃曼尼塔",
+                }, -- [4]
+                {
                     ["id"] = 584,
                     ["image"] = 607639,
                     ["name"] = "传令官沃拉兹",
-                }, -- [4]
+                }, -- [5]
             },
         }, -- [15]
         {
@@ -7279,25 +7304,30 @@ data.zhCN = {
             ["name"] = "魔枢",
             ["bosses"] = {
                 {
+                    ["id"] = Cell.vars.playerFaction == "Horde" and 617 or 833,
+                    ["image"] = Cell.vars.playerFaction == "Horde" and 607571 or 607568,
+                    ["name"] = Cell.vars.playerFaction == "Horde" and "指挥官斯托比德" or "指挥官库鲁尔格",
+                }, -- [1]
+                {
                     ["id"] = 618,
                     ["image"] = 607623,
                     ["name"] = "大魔导师泰蕾丝塔",
-                }, -- [1]
+                }, -- [2]
                 {
                     ["id"] = 619,
                     ["image"] = 607540,
                     ["name"] = "阿诺玛鲁斯",
-                }, -- [2]
+                }, -- [3]
                 {
                     ["id"] = 620,
                     ["image"] = 607735,
                     ["name"] = "塑树者奥莫洛克",
-                }, -- [3]
+                }, -- [4]
                 {
                     ["id"] = 621,
                     ["image"] = 607671,
                     ["name"] = "克莉斯塔萨",
-                }, -- [4]
+                }, -- [5]
             },
         }, -- [24]
         {
@@ -15222,10 +15252,15 @@ data.zhTW = {
                     ["name"] = "慕拉比",
                 }, -- [3]
                 {
+                    ["id"] = 595,
+                    ["image"] = 607592,
+                    ["name"] = "『兇猛』埃克",
+                }, -- [4]
+                {
                     ["id"] = 596,
                     ["image"] = 607605,
                     ["name"] = "蓋爾達拉",
-                }, -- [4]
+                }, -- [5]
             },
         }, -- [13]
         {
@@ -15261,25 +15296,30 @@ data.zhTW = {
             ["name"] = "奧核之心",
             ["bosses"] = {
                 {
+                    ["id"] = Cell.vars.playerFaction == "Horde" and 617 or 833,
+                    ["image"] = Cell.vars.playerFaction == "Horde" and 607571 or 607568,
+                    ["name"] = Cell.vars.playerFaction == "Horde" and "指揮官厚鬚" or "指揮官寇勒格",
+                }, -- [1]
+                {
                     ["id"] = 618,
                     ["image"] = 607623,
                     ["name"] = "大魔導師特雷斯翠",
-                }, -- [1]
+                }, -- [2]
                 {
                     ["id"] = 619,
                     ["image"] = 607540,
                     ["name"] = "艾諾瑪路斯",
-                }, -- [2]
+                }, -- [3]
                 {
                     ["id"] = 620,
                     ["image"] = 607735,
                     ["name"] = "『塑樹者』歐爾莫洛克",
-                }, -- [3]
+                }, -- [4]
                 {
                     ["id"] = 621,
                     ["image"] = 607671,
                     ["name"] = "凱瑞史卓莎",
-                }, -- [4]
+                }, -- [5]
             },
         }, -- [15]
         {
@@ -15330,10 +15370,15 @@ data.zhTW = {
                     ["name"] = "潔杜佳‧尋影者",
                 }, -- [3]
                 {
+                    ["id"] = 583,
+                    ["image"] = 607534,
+                    ["name"] = "毒蕈魔",
+                }, -- [4]
+                {
                     ["id"] = 584,
                     ["image"] = 607639,
                     ["name"] = "信使沃菈齊",
-                }, -- [4]
+                }, -- [5]
             },
         }, -- [17]
         {
@@ -21304,10 +21349,15 @@ data.koKR = {
                     ["name"] = "무라비",
                 }, -- [3]
                 {
+                    ["id"] = 595,
+                    ["image"] = 607592,
+                    ["name"] = "사나운 엑크",
+                }, -- [4]
+                {
                     ["id"] = 596,
                     ["image"] = 607605,
                     ["name"] = "갈다라",
-                }, -- [4]
+                }, -- [5]
             },
         }, -- [10]
         {
@@ -21397,25 +21447,30 @@ data.koKR = {
             ["name"] = "마력의 탑",
             ["bosses"] = {
                 {
+                    ["id"] = Cell.vars.playerFaction == "Horde" and 617 or 833,
+                    ["image"] = Cell.vars.playerFaction == "Horde" and 607571 or 607568,
+                    ["name"] = Cell.vars.playerFaction == "Horde" and "사령관 스타우트비어드" or "사령관 콜루르그",
+                }, -- [1]
+                {
                     ["id"] = 618,
                     ["image"] = 607623,
                     ["name"] = "대학자 텔레스트라",
-                }, -- [1]
+                }, -- [2]
                 {
                     ["id"] = 619,
                     ["image"] = 607540,
                     ["name"] = "아노말루스",
-                }, -- [2]
+                }, -- [3]
                 {
                     ["id"] = 620,
                     ["image"] = 607735,
                     ["name"] = "정원사 오르모로크",
-                }, -- [3]
+                }, -- [4]
                 {
                     ["id"] = 621,
                     ["image"] = 607671,
                     ["name"] = "케리스트라자",
-                }, -- [4]
+                }, -- [5]
             },
         }, -- [14]
         {
@@ -21552,10 +21607,15 @@ data.koKR = {
                     ["name"] = "어둠추적자 제도가",
                 }, -- [3]
                 {
+                    ["id"] = 583,
+                    ["image"] = 607534,
+                    ["name"] = "아마니타르",
+                }, -- [4]
+                {
                     ["id"] = 584,
                     ["image"] = 607639,
                     ["name"] = "사자 볼라즈",
-                }, -- [4]
+                }, -- [5]
             },
         }, -- [19]
         {
@@ -24220,9 +24280,9 @@ data.koKR = {
 -- functions
 -------------------------------------------------
 function F:GetExpansionList()
-    return list[GetLocale()]
+    return list[GetLocale()] or list.enUS
 end
 
 function F:GetExpansionData()
-    return data[GetLocale()]
+    return data[GetLocale()] or data.enUS
 end
