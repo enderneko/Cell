@@ -12,17 +12,16 @@ local playerSummoned = {}
 local eventFrame = CreateFrame("Frame")
 eventFrame:SetScript("OnEvent", function()
     local timestamp, subevent, _, sourceGUID, sourceName, sourceFlags, sourceRaidFlags, destGUID, destName, destFlags, destRaidFlags, spellId, spellName = CombatLogGetCurrentEventInfo()
-    -- check summoned
-    for guid, expirationTime in pairs(playerSummoned) do
-        if GetTime() >= expirationTime then
-            playerSummoned[guid] = nil
-        end
-    end
     -- if subevent == "SPELL_SUMMON" then print(subevent, sourceName, sourceGUID, destName, destGUID, spellName) end
     if subevent == "SPELL_SUMMON" then
+        -- print(sourceGUID == Cell.vars.playerGUID, destGUID, spellName)
         if sourceGUID == Cell.vars.playerGUID and destGUID and I:IsAoEHealing(spellName) then
-            if I:GetSummonDuration(spellName) then
-                playerSummoned[destGUID] = GetTime() + I:GetSummonDuration(spellName) -- expirationTime
+            local duration = I:GetSummonDuration(spellName)
+            if duration then
+                playerSummoned[destGUID] = GetTime() + duration -- expirationTime
+                C_Timer.After(duration, function()
+                    playerSummoned[destGUID] = nil
+                end)
             end
         end
         -- texplore(playerSummoned)
@@ -30,7 +29,8 @@ eventFrame:SetScript("OnEvent", function()
     -- if (subevent == "SPELL_HEAL" or subevent == "SPELL_PERIODIC_HEAL") then print(subevent, sourceName, sourceGUID, destName, spellId, spellName) end
     if subevent == "SPELL_HEAL" or subevent == "SPELL_PERIODIC_HEAL" then
         if destGUID then
-            if (sourceGUID == Cell.vars.playerGUID and I:IsAoEHealing(spellName)) or playerSummoned[sourceGUID] then
+            -- print(sourceGUID, playerSummoned[sourceGUID])
+            if (sourceGUID == Cell.vars.playerGUID and (I:IsAoEHealing(spellName) or I:IsAoEHealing(spellId))) or playerSummoned[sourceGUID] then
                 local b = F:GetUnitButtonByGUID(destGUID)
                 if b then b.indicators.aoeHealing:ShowUp() end
             end
