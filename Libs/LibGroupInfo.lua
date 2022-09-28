@@ -2,7 +2,7 @@
 -- File: LibGroupInfo.lua
 -- Author: enderneko (enderneko-dev@outlook.com)
 -- File Created: 2022/07/29 15:04:31 +0800
--- Last Modified: 2022/09/15 18:51:05 +0800
+-- Last Modified: 2022/09/28 22:12:24 +0800
 --]]
 
 local MAJOR, MINOR = "LibGroupInfo", 2
@@ -365,6 +365,8 @@ end
 ---------------------------------------------------------------------
 local wasInGroup
 function frame:GROUP_ROSTER_UPDATE()
+    cache[PLAYER_GUID].unit = "player"
+    
     if IsInRaid() then
         wasInGroup = true
         for i = 1, GetNumGroupMembers() do
@@ -374,6 +376,7 @@ function frame:GROUP_ROSTER_UPDATE()
                 AddToQueue(unit, guid)
             end
         end
+        cache[PLAYER_GUID].unit = "raid"..UnitInRaid("player")
         
     elseif IsInGroup() then
         wasInGroup = true
@@ -396,9 +399,6 @@ function frame:GROUP_ROSTER_UPDATE()
         wipe(queue)
         wipe(order)
     end
-
-    -- overwrite player
-    cache[PLAYER_GUID].unit = "player"
 end
 
 ---------------------------------------------------------------------

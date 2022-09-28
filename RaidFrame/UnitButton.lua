@@ -1037,29 +1037,27 @@ cleu:SetScript("OnEvent", function()
     local _, subEvent, _, sourceGUID, sourceName, sourceFlags, sourceRaidFlags, destGUID, destName, destFlags, destRaidFlags, spellId, spellName = CombatLogGetCurrentEventInfo()
     -- mirror image
     if spellId == 55342 and F:IsFriend(sourceFlags) then
+        local b = F:GetUnitButtonByGUID(sourceGUID)
         if subEvent == "SPELL_AURA_APPLIED" then
-            local unit = LGI:GuidToUnit(sourceGUID)
-            if unit then
-                buffs_mirror_image[unit] = GetTime()
+            if b and b.state.unit then
+                buffs_mirror_image[b.state.unit] = GetTime()
             end
         elseif subEvent == "SPELL_AURA_REMOVED" then
-            local unit = LGI:GuidToUnit(sourceGUID)
-            if unit then
-                buffs_mirror_image[unit] = nil
+            if b and b.state.unit then
+                buffs_mirror_image[b.state.unit] = nil
             end
         end
     end
     -- CLEU auras
     if I:CheckCleuAura(spellId) and F:IsFriend(destFlags) then
+        local b = F:GetUnitButtonByGUID(sourceGUID)
         if subEvent == "SPELL_AURA_APPLIED" then
-            local unit = LGI:GuidToUnit(destGUID)
-            if unit then
-                cleuUnits[unit] = {GetTime(), unpack(I:CheckCleuAura(spellId))}
+            if b and b.state.unit then
+                cleuUnits[b.state.unit] = {GetTime(), unpack(I:CheckCleuAura(spellId))}
             end
         elseif subEvent == "SPELL_AURA_REMOVED" then
-            local unit = LGI:GuidToUnit(destGUID)
-            if unit then
-                cleuUnits[unit] = nil
+            if b and b.state.unit then
+                cleuUnits[b.state.unit] = nil
             end
         end
     end
@@ -2115,6 +2113,9 @@ local function UnitButton_OnAttributeChanged(self, name, value)
             if buffs_cache_count_castByMe[self.state.unit] then wipe(buffs_cache_count_castByMe[self.state.unit]) end
             if buffs_current[self.state.unit] then wipe(buffs_current[self.state.unit]) end
             if buffs_current_castByMe[self.state.unit] then wipe(buffs_current_castByMe[self.state.unit]) end
+            -- reset
+            buffs_mirror_image[self.state.unit] = nil
+            cleuUnits[self.state.unit] = nil
         end
     end
 end
