@@ -2,7 +2,7 @@
 -- File: Layout_Defaults_Wrath.lua
 -- Author: enderneko (enderneko-dev@outlook.com)
 -- File Created: 2022/08/21 04:06:04 +0800
--- Last Modified: 2022/08/22 19:46:15 +0800
+-- Last Modified: 2022/09/29 19:34:05 +0800
 --]]
 
 local addonName, Cell = ...
@@ -32,6 +32,7 @@ Cell.defaults.indicatorIndices = {
     ["raidDebuffs"] = 19,
     ["targetedSpells"] = 20,
     ["targetCounter"] = 21,
+    ["consumables"] = 22,
 }
 
 Cell.defaults.layout = {
@@ -261,9 +262,6 @@ Cell.defaults.layout = {
             ["font"] = {"Cell ".._G.DEFAULT, 11, "Outline", 2, 1},
             ["dispellableByMe"] = false,
             ["orientation"] = "left-to-right",
-            ["bigDebuffs"] = {
-                
-            },
         }, -- 18
         {
             ["name"] = "Raid Debuffs",
@@ -307,5 +305,11 @@ Cell.defaults.layout = {
             ["font"] = {"Cell ".._G.DEFAULT, 15, "Outline"},
             ["color"] = {1, 0.1, 0.1},
         }, -- 21
+        {
+            ["name"] = "Consumables",
+            ["indicatorName"] = "consumables",
+            ["type"] = "built-in",
+            ["enabled"] = true,
+        }, -- 22
     },
 }

@@ -1363,7 +1363,7 @@ local function ShowIndicatorSettings(id)
         elseif currentSetting == "cleuAuras" then
             w:SetDBValue(CellDB["cleuAuras"])
         elseif currentSetting == "bigDebuffs" then
-            w:SetDBValue(L["Big Debuffs"], currentLayoutTable["indicators"][id]["bigDebuffs"], true)
+            w:SetDBValue(L["Big Debuffs"], CellDB["bigDebuffs"], true)
         elseif currentSetting == "spells" then
             w:SetDBValue(L["Spell List"], currentLayoutTable["indicators"][id]["spells"], true)
         elseif currentSetting == "size-border" then
@@ -1399,6 +1399,10 @@ local function ShowIndicatorSettings(id)
                     CellDB["debuffBlacklist"] = value
                     Cell.vars.debuffBlacklist = F:ConvertTable(CellDB["debuffBlacklist"])
                     Cell:Fire("UpdateIndicators", notifiedLayout, "", "blacklist")
+                elseif currentSetting == "bigDebuffs" then
+                    CellDB["bigDebuffs"] = value
+                    Cell.vars.bigDebuffs = F:ConvertTable(CellDB["bigDebuffs"])
+                    Cell:Fire("UpdateIndicators", notifiedLayout, "", "bigDebuffs")
                 elseif currentSetting == "customDefensives" then
                     CellDB["customDefensives"] = value
                     I:UpdateCustomDefensives(value)

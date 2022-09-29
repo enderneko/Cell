@@ -22,6 +22,18 @@ function I:GetDefaultDebuffBlacklist()
 end
 
 -------------------------------------------------
+-- bigDebuffs
+-------------------------------------------------
+local bigDebuffs = {
+    
+}
+
+function I:GetDefaultBigDebuffs()
+    return bigDebuffs
+end
+
+
+-------------------------------------------------
 -- aoeHealings
 -------------------------------------------------
 local aoeHealings = {

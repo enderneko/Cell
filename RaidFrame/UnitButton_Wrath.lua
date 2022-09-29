@@ -2,7 +2,7 @@
 -- File: UnitButton_Wrath.lua
 -- Author: enderneko (enderneko-dev@outlook.com)
 -- File Created: 2022/08/20 19:44:26 +0800
--- Last Modified: 2022/09/19 12:29:22 +0800
+-- Last Modified: 2022/09/29 19:37:47 +0800
 --]]
 
 local _, Cell = ...
@@ -64,7 +64,6 @@ local UnitButton_UpdatePowerMax, UnitButton_UpdatePower, UnitButton_UpdatePowerT
 -------------------------------------------------
 local indicatorsInitialized
 local enabledIndicators, indicatorNums, indicatorCustoms = {}, {}, {}
-local bigDebuffs = {}
 
 local function UpdateIndicatorParentVisibility(b, indicatorName, enabled)
     if not (indicatorName == "debuffs" or indicatorName == "defensiveCooldowns" or indicatorName == "externalCooldowns" or indicatorName == "allCooldowns" or indicatorName == "dispels") then
@@ -107,10 +106,6 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
             if t["indicatorName"] == "targetedSpells" then
                 I:EnableTargetedSpells(t["enabled"])
                 Cell:Fire("UpdateTargetedSpells", nil, t["spells"], t["glow"])
-            end
-            -- update bigDebuffs
-            if t["indicatorName"] == "debuffs" then
-                bigDebuffs = F:ConvertTable(t["bigDebuffs"])
             end
             -- update custom
             if t["dispellableByMe"] ~= nil then
@@ -521,12 +516,7 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                 b.indicators[indicatorName]:Hide()
                 UnitButton_UpdateAuras(b)
             end, true)
-        elseif setting == "bigDebuffs" then
-            bigDebuffs = F:ConvertTable(value)
-            F:IterateAllUnitButtons(function(b)
-                UnitButton_UpdateAuras(b)
-            end, true)
-        elseif setting == "blacklist" or setting == "customDefensives" or setting == "customExternals" then
+        elseif setting == "blacklist" or setting == "customDefensives" or setting == "customExternals" or setting == "bigDebuffs" then
             F:IterateAllUnitButtons(function(b)
                 UnitButton_UpdateAuras(b)
             end, true)
@@ -593,7 +583,7 @@ local function UnitButton_UpdateDebuffs(self)
 
             if enabledIndicators["debuffs"] and duration <= 600 and not Cell.vars.debuffBlacklist[spellId] then
                 if not indicatorCustoms["debuffs"] then -- all debuffs
-                    if bigDebuffs[spellId] then  -- isBigDebuff
+                    if Cell.vars.bigDebuffs[spellId] then  -- isBigDebuff
                         debuffs_big[unit][i] = refreshing
                         startIndex = startIndex + 1
                     elseif startIndex <= indicatorNums["debuffs"]+indicatorNums["raidDebuffs"] then -- normal debuffs, may contain topDebuff
@@ -602,7 +592,7 @@ local function UnitButton_UpdateDebuffs(self)
                     end
 
                 elseif I:CanDispel(debuffType) then -- only dispellableByMe
-                    if bigDebuffs[spellId] then  -- isBigDebuff
+                    if Cell.vars.bigDebuffs[spellId] then  -- isBigDebuff
                         debuffs_big[unit][i] = refreshing
                         startIndex = startIndex + 1
                     elseif startIndex <= indicatorNums["debuffs"]+indicatorNums["raidDebuffs"] then -- normal debuffs, may contain topDebuff

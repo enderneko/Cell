@@ -73,7 +73,7 @@ function I:CreateAoEHealing(parent)
     end)
 
     function aoeHealing:SetColor(r, g, b)
-        aoeHealing.tex:SetGradientAlpha("VERTICAL", r, g, b, 0, r, g, b, .77)
+        aoeHealing.tex:SetGradientAlpha("VERTICAL", r, g, b, 0, r, g, b, 0.77)
     end
 
     function aoeHealing:ShowUp()

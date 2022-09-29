@@ -7,7 +7,7 @@ function F:Revise()
     local dbRevision = CellDB["revise"] and tonumber(string.match(CellDB["revise"], "%d+")) or 0
     F:Debug("DBRevision:", dbRevision)
 
-    if CellDB["revise"] and dbRevision < 89 then -- update from an unsupported version
+    if CellDB["revise"] and dbRevision < 100 then -- update from an unsupported version
         local f = CreateFrame("Frame")
         f:RegisterEvent("PLAYER_ENTERING_WORLD")
         f:SetScript("OnEvent", function()
@@ -1042,7 +1042,6 @@ function F:Revise()
             end
         end
     end
-    ]=]
 
     -- r90-release
     if CellDB["revise"] and dbRevision < 90 then
@@ -1281,6 +1280,7 @@ function F:Revise()
             end
         end
     end
+    ]=]
 
     -- r103-release
     if CellDB["revise"] and dbRevision < 103 then
@@ -1292,16 +1292,13 @@ function F:Revise()
     -- r107-release
     if CellDB["revise"] and dbRevision < 107 then
         -- add season 4 debuffs
-        for _, layout in pairs(CellDB["layouts"]) do
-            if layout["indicators"][20] and layout["indicators"][20]["indicatorName"] == "debuffs" then
-                if not F:TContains(layout["indicators"][20]["bigDebuffs"], 373391) then
-                    tinsert(layout["indicators"][20]["bigDebuffs"], 373391) -- 梦魇
-                end
-                if not F:TContains(layout["indicators"][20]["bigDebuffs"], 373429) then
-                    tinsert(layout["indicators"][20]["bigDebuffs"], 373429) -- 腐臭虫群
-                end
-            end
+        if not F:TContains(CellDB["bigDebuffs"], 373391) then
+            tinsert(CellDB["bigDebuffs"], 373391) -- 梦魇
         end
+        if not F:TContains(CellDB["bigDebuffs"], 373429) then
+            tinsert(CellDB["bigDebuffs"], 373429) -- 腐臭虫群
+        end
+        Cell.vars.bigDebuffs = F:ConvertTable(CellDB["bigDebuffs"])
     end
     
     CellDB["revise"] = Cell.version

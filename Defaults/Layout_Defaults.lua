@@ -27,6 +27,7 @@ Cell.defaults.indicatorIndices = {
     ["raidDebuffs"] = 21,
     ["targetedSpells"] = 22,
     ["targetCounter"] = 23,
+    ["consumables"] = 24,
 }
 
 Cell.defaults.layout = {
@@ -277,37 +278,6 @@ Cell.defaults.layout = {
             ["font"] = {"Cell ".._G.DEFAULT, 11, "Outline", 2, 1},
             ["dispellableByMe"] = false,
             ["orientation"] = "left-to-right",
-            ["bigDebuffs"] = {
-                240443, -- 爆裂
-                209858, -- 死疽溃烂
-                46392, -- 专注打击
-                -----------------------------------------------
-                -- NOTE: Shrouded Affix - Shadowlands Season 4
-                373391, -- 梦魇
-                373429, -- 腐臭虫群
-                -----------------------------------------------
-                -----------------------------------------------
-                -- NOTE: Encrypted Affix - Shadowlands Season 3
-                -- 尤型拆卸者
-                -- 366297, -- 解构
-                -- 366288, -- 猛力砸击
-                -----------------------------------------------
-                -----------------------------------------------
-                -- NOTE: Tormented Affix - Shadowlands Season 2
-                -- 焚化者阿寇拉斯
-                -- 355732, -- 融化灵魂
-                -- 355738, -- 灼热爆破
-                -- 凇心之欧罗斯
-                -- 356667, -- 刺骨之寒
-                -- 刽子手瓦卢斯
-                -- 356925, -- 屠戮
-                -- 356923, -- 撕裂
-                -- 358973, -- 恐惧浪潮
-                -- 粉碎者索苟冬
-                -- 355806, -- 重压
-                -- 358777, -- 痛苦之链
-                -----------------------------------------------
-            },
         }, -- 20
         {
             ["name"] = "Raid Debuffs",
@@ -367,5 +337,11 @@ Cell.defaults.layout = {
             ["font"] = {"Cell ".._G.DEFAULT, 15, "Outline"},
             ["color"] = {1, 0.1, 0.1},
         }, -- 23
+        {
+            ["name"] = "Consumables",
+            ["indicatorName"] = "consumables",
+            ["type"] = "built-in",
+            ["enabled"] = true,
+        }, -- 24
     },
 }
