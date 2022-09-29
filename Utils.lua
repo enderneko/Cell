@@ -414,6 +414,19 @@ function F:TRemove(t, v)
     end
 end
 
+function F:TMergeOverwrite(...)
+    local tbls = {...}
+    if #tbls == 0 then return {} end
+
+    local temp = F:Copy(tbls[1])
+    for i = 2, #tbls do
+        for k, v in pairs(tbls[i]) do
+            temp[k] = v
+        end
+    end
+    return temp
+end
+
 function F:RemoveElementsExceptKeys(tbl, ...)
     local keys = {}
     for _, v in ipairs({...}) do
