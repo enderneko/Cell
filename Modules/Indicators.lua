@@ -657,13 +657,6 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
 end
 Cell:RegisterCallback("UpdateIndicators", "PreviewButton_UpdateIndicators", UpdateIndicators)
 
-local function UpdateTargetedSpellsPreview()
-    if currentLayoutTable and selected and currentLayoutTable["indicators"][selected]["indicatorName"] == "targetedSpells" then
-        previewButton.indicators.targetedSpells:ShowGlowPreview()
-    end
-end
-Cell:RegisterCallback("UpdateTargetedSpells", "UpdateTargetedSpellsPreview", UpdateTargetedSpellsPreview)
-
 -------------------------------------------------
 -- layout
 -------------------------------------------------
@@ -1240,7 +1233,7 @@ if Cell.isRetail then
         ["dispels"] = {"enabled", "checkbutton:dispellableByMe", "checkbutton2:enableHighlight", "position", "frameLevel", "size-square"},
         ["debuffs"] = {"enabled", "checkbutton:dispellableByMe", "blacklist", "bigDebuffs", "checkbutton2:showDuration:"..L["Show duration text instead of icon animation"], "checkbutton3:showTooltip:"..L["This will make these icons not click-through-able"], "num:10", "orientation", "position", "frameLevel", "size-normal-big", "font"},
         ["raidDebuffs"] = {"|cffb7b7b7"..L["You can config debuffs in %s"]:format(Cell:GetAccentColorString()..L["Raid Debuffs"].."|r"), "enabled", "checkbutton:onlyShowTopGlow", "cleuAuras", "checkbutton2:showTooltip:"..L["This will make these icons not click-through-able"], "num:3", "orientation", "position", "frameLevel", "size-border", "font"},
-        ["targetedSpells"] = {"enabled", "spells", "glow", "position", "frameLevel", "size-border", "font"},
+        ["targetedSpells"] = {"enabled", "targetedSpellsList", "targetedSpellsGlow", "position", "frameLevel", "size-border", "font"},
         ["targetCounter"] = {"|cffff2727"..L["HIGH CPU USAGE"].."!|r |cffb7b7b7"..L["Check all visible enemy nameplates. Battleground/Arena only."], "enabled", "color", "position", "frameLevel", "font-noOffset"},
         ["consumables"] = {"enabled", "consumablesPreview", "consumablesList"}
     }
@@ -1271,7 +1264,7 @@ elseif Cell.isWrath then
         ["dispels"] = {"enabled", "checkbutton:dispellableByMe", "checkbutton2:enableHighlight", "position", "frameLevel", "size-square"},
         ["debuffs"] = {"enabled", "checkbutton:dispellableByMe", "blacklist", "bigDebuffs", "checkbutton2:showDuration:"..L["Show duration text instead of icon animation"], "checkbutton3:showTooltip:"..L["This will make these icons not click-through-able"], "num:10", "orientation", "position", "frameLevel", "size-normal-big", "font"},
         ["raidDebuffs"] = {"|cffb7b7b7"..L["You can config debuffs in %s"]:format(Cell:GetAccentColorString()..L["Raid Debuffs"].."|r"), "enabled", "checkbutton:onlyShowTopGlow", "checkbutton2:showTooltip:"..L["This will make these icons not click-through-able"], "num:3", "orientation", "position", "frameLevel", "size-border", "font"},
-        ["targetedSpells"] = {"enabled", "spells", "glow", "position", "frameLevel", "size-border", "font"},
+        ["targetedSpells"] = {"enabled", "targetedSpellsList", "targetedSpellsGlow", "position", "frameLevel", "size-border", "font"},
         ["targetCounter"] = {"|cffff2727"..L["HIGH CPU USAGE"].."!|r |cffb7b7b7"..L["Check all visible enemy nameplates. Battleground/Arena only."], "enabled", "color", "position", "frameLevel", "font-noOffset"},
         ["consumables"] = {"enabled", "consumablesPreview", "consumablesList"},
     }
@@ -1368,8 +1361,10 @@ local function ShowIndicatorSettings(id)
             w:SetDBValue(L["Big Debuffs"], CellDB["bigDebuffs"], true)
         elseif currentSetting == "consumablesList" then
             w:SetDBValue(CellDB["consumables"])
-        elseif currentSetting == "spells" then
-            w:SetDBValue(L["Spell List"], currentLayoutTable["indicators"][id]["spells"], true)
+        elseif currentSetting == "targetedSpellsList" then
+            w:SetDBValue(L["Spell List"], CellDB["targetedSpellsList"], true)
+        elseif currentSetting == "targetedSpellsGlow" then
+            w:SetDBValue(CellDB["targetedSpellsGlow"])
         elseif currentSetting == "size-border" then
             w:SetDBValue(currentLayoutTable["indicators"][id]["size"], currentLayoutTable["indicators"][id]["border"])
         elseif currentSetting == "customColors" then
@@ -1421,12 +1416,14 @@ local function ShowIndicatorSettings(id)
                 elseif currentSetting == "consumablesList" then
                     CellDB["consumables"] = value
                     Cell.vars.consumables = I:ConvertConsumables(value)
-                elseif currentSetting == "spells" then
-                    -- currentLayoutTable["indicators"][id][currentSetting] = value -- NOTE: already changed in widget
-                    Cell:Fire("UpdateTargetedSpells", "spells", value)
-                elseif currentSetting == "glow" then
+                elseif currentSetting == "targetedSpellsList" then
+                    CellDB["targetedSpellsList"] = value
+                    Cell.vars.targetedSpellsList = F:ConvertTable(CellDB["targetedSpellsList"])
+                elseif currentSetting == "targetedSpellsGlow" then
                     -- NOTE: already changed in widget
-                    Cell:Fire("UpdateTargetedSpells", "glow", value)
+                    CellDB["targetedSpellsGlow"] = value
+                    Cell.vars.targetedSpellsGlow = CellDB["targetedSpellsGlow"]
+                    CellIndicatorsPreviewButton.indicators.targetedSpells:ShowGlowPreview()
                 elseif currentSetting == "size-border" then
                     currentLayoutTable["indicators"][id]["size"][1] = value[1]
                     currentLayoutTable["indicators"][id]["size"][2] = value[2]

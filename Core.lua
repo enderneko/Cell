@@ -14,10 +14,10 @@ local P = Cell.pixelPerfectFuncs
 local L = Cell.L
 
 -- sharing version check
-Cell.MIN_VERSION = 95
-Cell.MIN_LAYOUTS_VERSION = 98
+Cell.MIN_VERSION = 99
+Cell.MIN_LAYOUTS_VERSION = 99
 Cell.MIN_INDICATORS_VERSION = 99
-Cell.MIN_DEBUFFS_VERSION = 78
+Cell.MIN_DEBUFFS_VERSION = 99
 
 CELL_IMPORT_EXPORT_PREFIX = "CELL"
 
@@ -401,6 +401,17 @@ function eventFrame:ADDON_LOADED(arg1)
             CellDB["cleuGlow"] = {"Pixel", {{0, 1, 1, 1}, 9, 0.25, 8, 2}}
         end
         
+        -- targetedSpells -------------------------------------------------------------------------
+        if type(CellDB["targetedSpellsList"]) ~= "table" then
+            CellDB["targetedSpellsList"] = I:GetDefaultTargetedSpellsList()
+        end
+        Cell.vars.targetedSpellsList = F:ConvertTable(CellDB["targetedSpellsList"])
+        
+        if type(CellDB["targetedSpellsGlow"]) ~= "table" then
+            CellDB["targetedSpellsGlow"] = I:GetDefaultTargetedSpellsGlow()
+        end
+        Cell.vars.targetedSpellsGlow = CellDB["targetedSpellsGlow"]
+
         -- consumables ----------------------------------------------------------------------------
         if type(CellDB["consumables"]) ~= "table" then
             CellDB["consumables"] = I:GetDefaultConsumables()

@@ -2,7 +2,7 @@
 -- File: Layout_Defaults_Wrath.lua
 -- Author: enderneko (enderneko-dev@outlook.com)
 -- File Created: 2022/08/21 04:06:04 +0800
--- Last Modified: 2022/09/29 19:46:18 +0800
+-- Last Modified: 2022/10/01 00:13:58 +0800
 --]]
 
 local addonName, Cell = ...
@@ -289,10 +289,7 @@ Cell.defaults.layout = {
             ["frameLevel"] = 50,
             ["size"] = {20, 20},
             ["border"] = 2,
-            ["spells"] = {
-                
-            },
-            ["glow"] = {"Pixel", {0.95,0.95,0.32,1}, 9, 0.25, 8, 2},
+            -- ["glow"] = {"Pixel", {0.95,0.95,0.32,1}, 9, 0.25, 8, 2},
             ["font"] = {"Cell ".._G.DEFAULT, 12, "Outline", 2, 1},
         }, -- 20
         {

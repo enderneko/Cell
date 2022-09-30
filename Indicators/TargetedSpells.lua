@@ -14,22 +14,7 @@ local UnitChannelInfo = UnitChannelInfo
 -------------------------------------------------
 -- targeted spells
 -------------------------------------------------
-local spells, glow = {}, {}
 local casts, castsOnUnit = {}, {}
-
-local function UpdateTargetedSpells(setting, value, value2)
-    F:Debug("|cffff7777UpdateTargetedSpells:|r", setting, value, value2)
-    if setting == "spells" then
-        spells = F:ConvertTable(value)
-    elseif setting == "glow" then
-        glow = value
-    else
-        spells = F:ConvertTable(value)
-        glow = value2
-    end
-    -- spells[69068] = true
-end
-Cell:RegisterCallback("UpdateTargetedSpells", "UpdateTargetedSpells", UpdateTargetedSpells)
 
 local function GetCastsOnUnit(guid)
     if castsOnUnit[guid] then
@@ -70,7 +55,7 @@ local function UpdateCastsOnUnit(guid)
         b.indicators.targetedSpells:Hide()
     else
         b.indicators.targetedSpells:SetCooldown(startTime, endTime-startTime, icon, allCasts)
-        b.indicators.targetedSpells:ShowGlow(unpack(glow))
+        b.indicators.targetedSpells:ShowGlow(unpack(Cell.vars.targetedSpellsGlow))
     end
 end
 
@@ -107,7 +92,7 @@ eventFrame:SetScript("OnEvent", function(_, event, sourceUnit)
 
             if cast then previousTarget = cast["targetGUID"] end
 
-            if spellId and spells[spellId] then
+            if spellId and Cell.vars.targetedSpellsList[spellId] then
                 local targetUnit = sourceUnit.."target"
                 if UnitIsVisible(targetUnit) then
                     for member in F:IterateGroupMembers() do
@@ -158,7 +143,7 @@ function I:CreateTargetedSpells(parent)
 
         frame.border:Show()
         frame.cooldown:Show()
-        frame.cooldown:SetSwipeColor(unpack(glow[2]))
+        frame.cooldown:SetSwipeColor(unpack(Cell.vars.targetedSpellsGlow[2]))
         frame.cooldown:SetCooldown(start, duration)
         frame.icon:SetTexture(icon)
         frame:Show()
@@ -226,7 +211,7 @@ function I:CreateTargetedSpells(parent)
     end)
 
     function frame:ShowGlowPreview()
-        frame:ShowGlow(unpack(glow))
+        frame:ShowGlow(unpack(Cell.vars.targetedSpellsGlow))
     end
 
     function frame:HideGlowPreview()

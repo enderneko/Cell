@@ -106,7 +106,6 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
             -- update targetedSpells
             if t["indicatorName"] == "targetedSpells" then
                 I:EnableTargetedSpells(t["enabled"])
-                Cell:Fire("UpdateTargetedSpells", nil, t["spells"], t["glow"])
             end
             -- update consumables
             if t["indicatorName"] == "consumables" then

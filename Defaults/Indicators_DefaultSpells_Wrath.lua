@@ -306,6 +306,21 @@ function F:FirstRun()
 end
 
 -------------------------------------------------
+-- targetedSpells
+-------------------------------------------------
+local targetedSpells = {
+    
+}
+
+function I:GetDefaultTargetedSpellsList()
+    return targetedSpells
+end
+
+function I:GetDefaultTargetedSpellsGlow()
+    return {"Pixel", {0.95,0.95,0.32,1}, 9, 0.25, 8, 2}
+end
+
+-------------------------------------------------
 -- Consumables: Healing Potion & Healthstone
 -------------------------------------------------
 local consumables = {
