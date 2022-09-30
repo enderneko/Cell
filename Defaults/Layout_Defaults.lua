@@ -1,7 +1,7 @@
 local addonName, Cell = ...
 
 -- number of built-in indicators
-Cell.defaults.builtIns = 23
+Cell.defaults.builtIns = 24
 
 Cell.defaults.indicatorIndices = {
     ["nameText"] = 1,

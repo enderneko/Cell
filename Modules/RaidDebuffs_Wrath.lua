@@ -400,7 +400,7 @@ ShowInstances = function(eName)
 
     for i, iTable in pairs(encounterJournalList[eName]) do
         if not instanceButtons[i] then
-            instanceButtons[i] = Cell:CreateButton(instancesFrame.scrollFrame.content, iTable["name"], "transparent-class", {20, 20})
+            instanceButtons[i] = Cell:CreateButton(instancesFrame.scrollFrame.content, iTable["name"], "transparent-accent", {20, 20})
         else
             instanceButtons[i]:SetText(iTable["name"])
             instanceButtons[i]:Show()
@@ -524,7 +524,7 @@ ShowBosses = function(instanceId, forceRefresh)
 
     -- instance general debuff
     if not bossButtons[0] then
-        bossButtons[0] = Cell:CreateButton(bossesFrame.scrollFrame.content, L["General"], "transparent-class", {20, 20})
+        bossButtons[0] = Cell:CreateButton(bossesFrame.scrollFrame.content, L["General"], "transparent-accent", {20, 20})
         bossButtons[0]:SetPoint("TOPLEFT")
         bossButtons[0]:SetPoint("RIGHT")
     end
@@ -533,7 +533,7 @@ ShowBosses = function(instanceId, forceRefresh)
     -- bosses
     for i, bTable in pairs(encounterJournalList[loadedExpansion][iIndex]["bosses"]) do
         if not bossButtons[i] then
-            bossButtons[i] = Cell:CreateButton(bossesFrame.scrollFrame.content, bTable["name"], "transparent-class", {20, 20})
+            bossButtons[i] = Cell:CreateButton(bossesFrame.scrollFrame.content, bTable["name"], "transparent-accent", {20, 20})
         else
             bossButtons[i]:SetText(bTable["name"])
             bossButtons[i]:Show()
@@ -923,7 +923,7 @@ end
 local last
 local function CreateDebuffButton(i, sTable)
     if not debuffButtons[i] then
-        debuffButtons[i] = Cell:CreateButton(debuffListFrame.scrollFrame.content, " ", "transparent-class", {20, 20})
+        debuffButtons[i] = Cell:CreateButton(debuffListFrame.scrollFrame.content, " ", "transparent-accent", {20, 20})
         debuffButtons[i].index = i
         -- icon
         debuffButtons[i].icon = debuffButtons[i]:CreateTexture(nil, "ARTWORK")

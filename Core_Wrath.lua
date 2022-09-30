@@ -385,8 +385,14 @@ function eventFrame:ADDON_LOADED(arg1)
         --         },
         --     }
         -- }
+
+        -- consumables ----------------------------------------------------------------------------
+        if type(CellDB["consumables"]) ~= "table" then
+            CellDB["consumables"] = I:GetDefaultConsumables()
+        end
+        Cell.vars.consumables = CellDB["consumables"]
         
-        -- misc ---------------------------------------------------------------------------------
+        -- misc -----------------------------------------------------------------------------------
         Cell.version = GetAddOnMetadata(addonName, "version")
         Cell.versionNum = tonumber(string.match(Cell.version, "%d+")) 
         if not CellDB["revise"] then CellDB["firstRun"] = true end
@@ -396,7 +402,7 @@ function eventFrame:ADDON_LOADED(arg1)
         Cell.loaded = true
     end
 
-    -- omnicd ---------------------------------------------------------------------------------
+    -- omnicd -------------------------------------------------------------------------------------
     -- if arg1 == "OmniCD" then
     --     omnicdLoaded = true
 

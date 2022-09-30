@@ -167,7 +167,7 @@ local function LoadIndicators(layout)
     for i, t in pairs(CellDB["layouts"][layout]["indicators"]) do
         local b = indicatorButtons[i]
         if not b then
-            b = Cell:CreateButton(fromList.scrollFrame.content, " ", "transparent-class", {20, 20})
+            b = Cell:CreateButton(fromList.scrollFrame.content, " ", "transparent-accent", {20, 20})
             indicatorButtons[i] = b
             b.selected = false
             b:SetScript("OnClick", function()

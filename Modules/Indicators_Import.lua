@@ -136,9 +136,9 @@ local function CreateIndicatorsImportFrame()
                             for i, t in pairs(data) do
                                 local b
                                 if t["type"] == "built-in" then
-                                    b = Cell:CreateButton(listFrame.scrollFrame.content, L[t["name"]], "transparent-class", {20, 20})
+                                    b = Cell:CreateButton(listFrame.scrollFrame.content, L[t["name"]], "transparent-accent", {20, 20})
                                 else
-                                    b = Cell:CreateButton(listFrame.scrollFrame.content, t["name"], "transparent-class", {20, 20})
+                                    b = Cell:CreateButton(listFrame.scrollFrame.content, t["name"], "transparent-accent", {20, 20})
                                     b.typeIcon = b:CreateTexture(nil, "ARTWORK")
                                     b.typeIcon:SetPoint("RIGHT", -2, 0)
                                     b.typeIcon:SetSize(16, 16)

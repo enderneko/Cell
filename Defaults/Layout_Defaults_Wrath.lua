@@ -2,13 +2,13 @@
 -- File: Layout_Defaults_Wrath.lua
 -- Author: enderneko (enderneko-dev@outlook.com)
 -- File Created: 2022/08/21 04:06:04 +0800
--- Last Modified: 2022/09/29 19:34:05 +0800
+-- Last Modified: 2022/09/29 19:46:18 +0800
 --]]
 
 local addonName, Cell = ...
 
 -- number of built-in indicators
-Cell.defaults.builtIns = 21
+Cell.defaults.builtIns = 22
 
 Cell.defaults.indicatorIndices = {
     ["nameText"] = 1,

@@ -108,6 +108,10 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                 I:EnableTargetedSpells(t["enabled"])
                 Cell:Fire("UpdateTargetedSpells", nil, t["spells"], t["glow"])
             end
+            -- update consumables
+            if t["indicatorName"] == "consumables" then
+                I:EnableConsumables(t["enabled"])
+            end
             -- update custom
             if t["dispellableByMe"] ~= nil then
                 indicatorCustoms[t["indicatorName"]] = t["dispellableByMe"]
@@ -266,6 +270,8 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                 I:EnableTargetCounter(value)
             elseif indicatorName == "targetedSpells" then
                 I:EnableTargetedSpells(value)
+            elseif indicatorName == "consumables" then
+                I:EnableConsumables(value)
             elseif indicatorName == "roleIcon" then
                 F:IterateAllUnitButtons(function(b)
                     UnitButton_UpdateRole(b)
@@ -2904,6 +2910,7 @@ function F:UnitButton_OnLoad(button)
     I:CreateRaidDebuffs(button)
     I:CreateTargetedSpells(button)
     I:CreateTargetCounter(button)
+    I:CreateConsumables(button)
 
     -- events
     button:SetScript("OnAttributeChanged", UnitButton_OnAttributeChanged) -- init

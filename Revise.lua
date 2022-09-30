@@ -1300,6 +1300,22 @@ function F:Revise()
         end
         Cell.vars.bigDebuffs = F:ConvertTable(CellDB["bigDebuffs"])
     end
+
+    -- r114-release
+    if CellDB["revise"] and dbRevision < 114 then
+        -- Consumables
+        local index = Cell.defaults.indicatorIndices.consumables
+        for _, layout in pairs(CellDB["layouts"]) do
+            if not layout["indicators"][index] or layout["indicators"][index]["indicatorName"] ~= "consumables" then
+                tinsert(layout["indicators"], index, {
+                    ["name"] = "Consumables",
+                    ["indicatorName"] = "consumables",
+                    ["type"] = "built-in",
+                    ["enabled"] = true,
+                })
+            end
+        end
+    end
     
     CellDB["revise"] = Cell.version
 end

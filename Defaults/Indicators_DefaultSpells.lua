@@ -559,3 +559,34 @@ end
 function I:CheckCleuAura(id)
     return cleuAuras[id]
 end
+
+-------------------------------------------------
+-- Consumables: Healing Potion & Healthstone
+-------------------------------------------------
+local consumables = {
+    {
+        6262, -- 治疗石
+        {"A", {0.4, 1, 0}},
+    },
+    {
+        359867, -- 宇宙治疗药水
+        {"A", {1, 0.1, 0.1}},
+    },
+    {
+        307192, -- 灵魂治疗药水
+        {"A", {1, 0.1, 0.1}},
+    },
+}
+
+
+function I:GetDefaultConsumables()
+    return consumables
+end
+
+function I:ConvertConsumables(db)
+    local temp = {}
+    for _, t in pairs(db) do
+        temp[t[1]] = t[2]
+    end
+    return temp
+end

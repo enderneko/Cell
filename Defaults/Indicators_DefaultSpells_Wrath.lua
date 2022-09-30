@@ -304,3 +304,23 @@ function F:FirstRun()
     popup:SetPoint("TOPLEFT")
     popup:Show()
 end
+
+-------------------------------------------------
+-- Consumables: Healing Potion & Healthstone
+-------------------------------------------------
+local consumables = {
+    
+}
+
+
+function I:GetDefaultConsumables()
+    return consumables
+end
+
+function I:ConvertConsumables(db)
+    local temp = {}
+    for _, t in pairs(db) do
+        temp[t[1]] = t[2]
+    end
+    return temp
+end

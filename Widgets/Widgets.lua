@@ -510,9 +510,9 @@ function addon:CreateButton(parent, text, buttonColor, size, noBorder, noBackgro
     elseif buttonColor == "transparent-light" then -- drop down item
         color = {0, 0, 0, 0}
         hoverColor = {0.5, 1, 0, 0.5}
-    elseif buttonColor == "transparent-class" then -- drop down item
+    elseif buttonColor == "transparent-accent" then -- drop down item
         color = {0, 0, 0, 0}
-        if class == "PRIEST" then
+        if class == "PRIEST" and not accentColorOverride then
             hoverColor = {accentColor.t[1], accentColor.t[2], accentColor.t[3], 0.4}
         else
             hoverColor = {accentColor.t[1], accentColor.t[2], accentColor.t[3], 0.6}
@@ -562,7 +562,7 @@ function addon:CreateButton(parent, text, buttonColor, size, noBorder, noBackgro
             bg:SetDrawLayer("BACKGROUND", -8)
             b.bg = bg
             bg:SetAllPoints(b)
-            bg:SetColorTexture(.115, .115, .115, 1)
+            bg:SetColorTexture(0.115, 0.115, 0.115, 1)
         end
 
         b:SetBackdropBorderColor(0, 0, 0, 1)
@@ -1837,7 +1837,7 @@ local function CreateItemButtons(items, itemTable, itemParent, level)
             b = itemTable[i]
             b:SetText(item.text)
         else
-            b = addon:CreateButton(itemParent, item.text, "transparent-class", {98 ,18}, true)
+            b = addon:CreateButton(itemParent, item.text, "transparent-accent", {98 ,18}, true)
             tinsert(itemTable, b)
         end
 
@@ -1953,7 +1953,7 @@ local function CreateItemButtons_Scroll(items, itemTable, limit)
             b = itemTable[i]
             b:SetText(item.text)
         else
-            b = addon:CreateButton(menu.scrollFrame.content, item.text, "transparent-class", {98 ,18}, true)
+            b = addon:CreateButton(menu.scrollFrame.content, item.text, "transparent-accent", {98 ,18}, true)
             tinsert(itemTable, b)
         end
         
@@ -2449,7 +2449,7 @@ local function SetHighlightItem(i)
     end
 end
 
-function addon:CreateDropdown(parent, width, dropdownType)
+function addon:CreateDropdown(parent, width, dropdownType, isMini)
     local menu = CreateFrame("Frame", nil, parent, "BackdropTemplate")
     P:Size(menu, width, 20)
     menu:EnableMouse(true)
@@ -2457,25 +2457,37 @@ function addon:CreateDropdown(parent, width, dropdownType)
     addon:StylizeFrame(menu, {0.115, 0.115, 0.115, 1})
     
     -- button: open/close menu list
-    menu.button = addon:CreateButton(menu, "", "transparent-class", {18 ,20})
-    addon:StylizeFrame(menu.button, {0.115, 0.115, 0.115, 1})
-    menu.button:SetPoint("TOPRIGHT")
-    menu.button:SetFrameLevel(menu:GetFrameLevel()+1)
-    menu.button:SetNormalTexture([[Interface\AddOns\Cell\Media\Icons\dropdown-normal]])
-    menu.button:SetPushedTexture([[Interface\AddOns\Cell\Media\Icons\dropdown-pushed]])
+    if isMini then
+        menu.button = addon:CreateButton(menu, "", "transparent-accent", {18 ,18})
+        menu.button:SetAllPoints(menu)
+        menu.button:SetFrameLevel(menu:GetFrameLevel()+1)
+        -- selected item
+        menu.text = menu.button:CreateFontString(nil, "OVERLAY", font_name)
+        menu.text:SetPoint("LEFT", P:Scale(1), 0)
+        menu.text:SetPoint("RIGHT", P:Scale(-1), 0)
+        menu.text:SetJustifyH("CENTER")
+    else
+        menu.button = addon:CreateButton(menu, "", "transparent-accent", {18 ,20})
+        addon:StylizeFrame(menu.button, {0.115, 0.115, 0.115, 1})
+        menu.button:SetPoint("TOPRIGHT")
+        menu.button:SetFrameLevel(menu:GetFrameLevel()+1)
+        menu.button:SetNormalTexture([[Interface\AddOns\Cell\Media\Icons\dropdown-normal]])
+        menu.button:SetPushedTexture([[Interface\AddOns\Cell\Media\Icons\dropdown-pushed]])
 
-    local disabledTexture = menu.button:CreateTexture(nil, "OVERLAY")
-    disabledTexture:SetTexture([[Interface\AddOns\Cell\Media\Icons\dropdown-normal]])
-    disabledTexture:SetVertexColor(0.4, 0.4, 0.4, 1)
-    menu.button:SetDisabledTexture(disabledTexture)
+        local disabledTexture = menu.button:CreateTexture(nil, "OVERLAY")
+        disabledTexture:SetTexture([[Interface\AddOns\Cell\Media\Icons\dropdown-normal]])
+        disabledTexture:SetVertexColor(0.4, 0.4, 0.4, 1)
+        menu.button:SetDisabledTexture(disabledTexture)
+        -- selected item
+        menu.text = menu:CreateFontString(nil, "OVERLAY", font_name)
+        menu.text:SetPoint("TOPLEFT", P:Scale(5), P:Scale(-1))
+        menu.text:SetPoint("BOTTOMRIGHT", P:Scale(-18), P:Scale(1))
+        menu.text:SetJustifyH("LEFT")
+    end
 
     -- selected item
-    menu.text = menu:CreateFontString(nil, "OVERLAY", font_name)
     menu.text:SetJustifyV("MIDDLE")
-    menu.text:SetJustifyH("LEFT")
     menu.text:SetWordWrap(false)
-    menu.text:SetPoint("TOPLEFT", P:Scale(5), P:Scale(-1))
-    menu.text:SetPoint("BOTTOMRIGHT", P:Scale(-18), P:Scale(1))
 
     if dropdownType == "texture" then
         menu.texture = menu:CreateTexture(nil, "ARTWORK")
@@ -2591,7 +2603,7 @@ function addon:CreateDropdown(parent, width, dropdownType)
             local b
             if not list.items[i] then
                 -- init
-                b = addon:CreateButton(list.scrollFrame.content, item.text, "transparent-class", {18 ,18}, true) --! width is not important
+                b = addon:CreateButton(list.scrollFrame.content, item.text, "transparent-accent", {18 ,18}, true) --! width is not important
                 table.insert(list.items, b)
 
                 -- texture
@@ -2603,6 +2615,19 @@ function addon:CreateDropdown(parent, width, dropdownType)
             else
                 b = list.items[i]
                 b:SetText(item.text)
+            end
+
+            local fs = b:GetFontString()
+            if isMini then
+                fs:ClearAllPoints()
+                fs:SetJustifyH("CENTER")
+                fs:SetPoint("LEFT", 1, 0)
+                fs:SetPoint("RIGHT", -1, 0)
+            else
+                fs:ClearAllPoints()
+                fs:SetJustifyH("LEFT")
+                fs:SetPoint("LEFT", 5, 0)
+                fs:SetPoint("RIGHT", -5, 0)
             end
 
             b:SetEnabled(not item.disabled)

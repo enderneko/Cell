@@ -357,6 +357,7 @@ L["Dispels"] = "驱散"
 L["Debuffs"] = "减益"
 L["Targeted Spells"] = "被法术选中"
 L["Target Counter"] = "目标计数"
+L["Consumables"] = "消耗品"
 
 L["Create new indicator"] = "创建新指示器"
 L["Rename indicator"] = "重命名指示器"
@@ -430,6 +431,9 @@ L["Horizontal Gradient"] = "水平渐变"
 L["Debuff Type"] = "减益类型"
 L["Rotation"] = "旋转"
 L["Externals + Defensives, no need to enable all of them"] = "包含了来自他人与自身的减伤，不必将它们全都启用"
+
+L["Click to preview"] = "点击预览"
+L["Debug Mode"] = "调试模式"
 
 L["dispellableByMe"] = "只显示我能驱散的减益"
 L["castByMe"] = "只显示我施放的增益"

@@ -1242,6 +1242,7 @@ if Cell.isRetail then
         ["raidDebuffs"] = {"|cffb7b7b7"..L["You can config debuffs in %s"]:format(Cell:GetAccentColorString()..L["Raid Debuffs"].."|r"), "enabled", "checkbutton:onlyShowTopGlow", "cleuAuras", "checkbutton2:showTooltip:"..L["This will make these icons not click-through-able"], "num:3", "orientation", "position", "frameLevel", "size-border", "font"},
         ["targetedSpells"] = {"enabled", "spells", "glow", "position", "frameLevel", "size-border", "font"},
         ["targetCounter"] = {"|cffff2727"..L["HIGH CPU USAGE"].."!|r |cffb7b7b7"..L["Check all visible enemy nameplates. Battleground/Arena only."], "enabled", "color", "position", "frameLevel", "font-noOffset"},
+        ["consumables"] = {"enabled", "consumablesPreview", "consumablesList"}
     }
 elseif Cell.isWrath then
     indicatorSettings = {
@@ -1272,6 +1273,7 @@ elseif Cell.isWrath then
         ["raidDebuffs"] = {"|cffb7b7b7"..L["You can config debuffs in %s"]:format(Cell:GetAccentColorString()..L["Raid Debuffs"].."|r"), "enabled", "checkbutton:onlyShowTopGlow", "checkbutton2:showTooltip:"..L["This will make these icons not click-through-able"], "num:3", "orientation", "position", "frameLevel", "size-border", "font"},
         ["targetedSpells"] = {"enabled", "spells", "glow", "position", "frameLevel", "size-border", "font"},
         ["targetCounter"] = {"|cffff2727"..L["HIGH CPU USAGE"].."!|r |cffb7b7b7"..L["Check all visible enemy nameplates. Battleground/Arena only."], "enabled", "color", "position", "frameLevel", "font-noOffset"},
+        ["consumables"] = {"enabled", "consumablesPreview", "consumablesList"},
     }
 end
     
@@ -1364,6 +1366,8 @@ local function ShowIndicatorSettings(id)
             w:SetDBValue(CellDB["cleuAuras"])
         elseif currentSetting == "bigDebuffs" then
             w:SetDBValue(L["Big Debuffs"], CellDB["bigDebuffs"], true)
+        elseif currentSetting == "consumablesList" then
+            w:SetDBValue(CellDB["consumables"])
         elseif currentSetting == "spells" then
             w:SetDBValue(L["Spell List"], currentLayoutTable["indicators"][id]["spells"], true)
         elseif currentSetting == "size-border" then
@@ -1414,6 +1418,9 @@ local function ShowIndicatorSettings(id)
                 elseif currentSetting == "cleuAuras" then
                     CellDB["cleuAuras"] = value
                     I:UpdateCleuAuras(value)
+                elseif currentSetting == "consumablesList" then
+                    CellDB["consumables"] = value
+                    Cell.vars.consumables = I:ConvertConsumables(value)
                 elseif currentSetting == "spells" then
                     -- currentLayoutTable["indicators"][id][currentSetting] = value -- NOTE: already changed in widget
                     Cell:Fire("UpdateTargetedSpells", "spells", value)
@@ -1465,10 +1472,10 @@ LoadIndicatorList = function()
     for i, t in pairs(currentLayoutTable["indicators"]) do
         local b
         if t["type"] == "built-in" then
-            b = Cell:CreateButton(listFrame.scrollFrame.content, L[t["name"]], "transparent-class", {20, 20})
+            b = Cell:CreateButton(listFrame.scrollFrame.content, L[t["name"]], "transparent-accent", {20, 20})
         else
-            b = Cell:CreateButton(listFrame.scrollFrame.content, t["name"], "transparent-class", {20, 20})
-            -- b = Cell:CreateButton(listFrame.scrollFrame.content, t["name"].." |cff7f7f7f("..L[t["auraType"]]..")", "transparent-class", {20, 20})
+            b = Cell:CreateButton(listFrame.scrollFrame.content, t["name"], "transparent-accent", {20, 20})
+            -- b = Cell:CreateButton(listFrame.scrollFrame.content, t["name"].." |cff7f7f7f("..L[t["auraType"]]..")", "transparent-accent", {20, 20})
             b.typeIcon = b:CreateTexture(nil, "ARTWORK")
             b.typeIcon:SetPoint("RIGHT", -2, 0)
             P:Size(b.typeIcon, 16, 16)

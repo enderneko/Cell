@@ -2,7 +2,7 @@
 -- File: UnitButton_Wrath.lua
 -- Author: enderneko (enderneko-dev@outlook.com)
 -- File Created: 2022/08/20 19:44:26 +0800
--- Last Modified: 2022/09/29 19:37:47 +0800
+-- Last Modified: 2022/09/30 04:53:22 +0800
 --]]
 
 local _, Cell = ...
@@ -106,6 +106,10 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
             if t["indicatorName"] == "targetedSpells" then
                 I:EnableTargetedSpells(t["enabled"])
                 Cell:Fire("UpdateTargetedSpells", nil, t["spells"], t["glow"])
+            end
+            -- update consumables
+            if t["indicatorName"] == "consumables" then
+                I:EnableConsumables(t["enabled"])
             end
             -- update custom
             if t["dispellableByMe"] ~= nil then
@@ -265,6 +269,8 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                 I:EnableTargetCounter(value)
             elseif indicatorName == "targetedSpells" then
                 I:EnableTargetedSpells(value)
+            elseif indicatorName == "consumables" then
+                I:EnableConsumables(value)
             elseif indicatorName == "roleIcon" then
                 F:IterateAllUnitButtons(function(b)
                     UnitButton_UpdateRole(b)
@@ -2482,6 +2488,7 @@ function F:UnitButton_OnLoad(button)
     I:CreateRaidDebuffs(button)
     I:CreateTargetCounter(button)
     I:CreateTargetedSpells(button)
+    I:CreateConsumables(button)
 
     -- events
     button:SetScript("OnAttributeChanged", UnitButton_OnAttributeChanged) -- init
