@@ -58,6 +58,16 @@ select(2, ...).L = setmetatable({
     ["SNIPPETS_TIPS"] = "[Double-Click] to rename. [Shift-Click] to delete. All checked snippets will be automatically invoked at the end of Cell initialization process (in ADDON_LOADED event).",
 
     ["CHANGELOGS"] = [[
+        <h1>r114-release (Oct 1, 2022, 04:00 GMT+8)</h1>
+        <p>+ New indicator: Consumables.</p>
+        <p>* Updated indicators: AoEHealing, TargetedSpells and Debuffs.</p>
+        <p>* Updated zhTW.</p>
+        <h2>Retail</h2>
+        <p>* Fixed CLEU auras and Mirror Image.</p>
+        <h2>Wrath Classic</h2>
+        <p>* Updated raid debuffs.</p>
+        <br/>
+
         <h1>r113-release (Sep 22, 2022, 16:30 GMT+8)</h1>
         <p>* Fixed custom defensives and externals.</p>
         <h2>Retail</h2>
