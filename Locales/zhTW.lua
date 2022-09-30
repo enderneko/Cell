@@ -82,6 +82,9 @@ L["Check if your group members need some raid buffs"] = "檢查隊友是否需�
 L["circledStackNums"] = "用圓圈數字顯示層數"
 L["Class Color"] = "職業顏色"
 L["Class Color (dark)"] = "職業顏色 (暗)"
+L["cleuAurasTip"] = "通過戰鬥記錄事件找出看不到的法術效果"
+--[[Translation missing --]]
+--[[ L["Click to preview"] = "Click to preview"--]] 
 L["Click-Castings"] = "滑鼠點擊施法"
 L["clickcastingsHints"] = "左鍵點擊：編輯\n右鍵點擊：刪除"
 L["Close"] = "關閉"
@@ -91,6 +94,8 @@ L["Color Duration Text"] = "著色持續時間文字"
 L["Common"] = "共用"
 L["Condition"] = "條件"
 L["Confirm"] = "確認"
+--[[Translation missing --]]
+--[[ L["Consumables"] = "Consumables"--]] 
 L["Contains"] = "包含"
 L["Copy"] = "複製"
 L["Copy indicators from one layout to another"] = "將指示器從一個版面配置複製到另一個版面配置"
@@ -118,6 +123,8 @@ L["Debuff Filter (blacklist)"] = "過濾減益 (黑名單)"
 L["Debuff List"] = "減益清單"
 L["Debuff Type"] = "減益類型"
 L["Debuffs"] = "減益"
+--[[Translation missing --]]
+--[[ L["Debug Mode"] = "Debug Mode"--]] 
 L["DECLINED"] = "已拒絕"
 L["Default layout"] = "預設版面配置"
 L["Defensive Cooldowns"] = "減傷 (自身)"
