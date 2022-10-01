@@ -59,6 +59,12 @@ select(2, ...).L = setmetatable({
     ["SNIPPETS_TIPS"] = "[Double-Click] to rename. [Shift-Click] to delete. All checked snippets will be automatically invoked at the end of Cell initialization process (in ADDON_LOADED event).",
 
     ["CHANGELOGS"] = [[
+        <h1>r115-release (Oct 2, 2022, 07:35 GMT+8)</h1>
+        <p>* Updated indicators: Dispels and Consumables.</p>
+        <p>* Updated zhTW.</p>
+        <p>* Fixed Consumables indicator in WotLK.</p>
+        <br/>
+
         <h1>r114-release (Oct 1, 2022, 04:00 GMT+8)</h1>
         <p>+ New indicator: Consumables.</p>
         <p>* Updated indicators: AoEHealing, TargetedSpells and Debuffs.</p>

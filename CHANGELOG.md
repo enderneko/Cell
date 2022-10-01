@@ -1,11 +1,7 @@
-[Full Changelog](https://github.com/enderneko/Cell/compare/r113-release...90f555e10fd025f758b6f968c9935419587a559c)
+[Full Changelog](https://github.com/enderneko/Cell/compare/r114-release...1112571fc4ac6226800a92ba1b55e9afcc45f934)
 
-- Implement Consumables indicator
-- Update RaidDebuffs_WotLK
-- Fix CLEU auras
+- Update options of Dispel indicator
+- Add a speed option to Consumables
+- Fix Consumables in WotLK
 - Update zhTW
-- Update AoEHealing
-- Update patron
-- Update Utils
-- Move targetedSpells to CellDB
-- Move BigDebuffs from indicators to CellDB
+- Update snippets
