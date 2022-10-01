@@ -323,6 +323,7 @@ Cell.defaults.layout = {
             ["indicatorName"] = "consumables",
             ["type"] = "built-in",
             ["enabled"] = true,
+            ["speed"] = 1,
         }, -- 24
     },
 }

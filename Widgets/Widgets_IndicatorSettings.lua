@@ -3239,17 +3239,21 @@ local function CreateConsumablePreview(parent, style)
     
     Cell.iFuncs:CreateConsumables(f, true)
 
-    local ticker
-    f:SetScript("OnShow", function()
-        ticker = C_Timer.NewTicker(2, function()
+    function f:UpdateTicker(speed)
+        f:SetScript("OnShow", function()
             f.consumables:ShowUp(style, {1, 1, 1})
+            f.ticker = C_Timer.NewTicker(2/speed, function()
+                f.consumables:ShowUp(style, {1, 1, 1})
+            end)
         end)
-    end)
-
-    f:SetScript("OnHide", function()
-        ticker:Cancel()
-        ticker = nil
-    end)
+    
+        f:SetScript("OnHide", function()
+            if f.ticker then
+                f.ticker:Cancel()
+                f.ticker = nil
+            end
+        end)
+    end
 
     return f
 end
@@ -3258,7 +3262,7 @@ local function CreateSetting_ConsumablesPreview(parent)
     local widget
 
     if not settingWidgets["consumablesPreview"] then
-        widget = addon:CreateFrame("CellIndicatorSettings_ConsumablesPreview", parent, 240, 190)
+        widget = addon:CreateFrame("CellIndicatorSettings_ConsumablesPreview", parent, 240, 220)
         settingWidgets["consumablesPreview"] = widget
 
         local typeA = CreateConsumablePreview(widget, "A")
@@ -3288,9 +3292,44 @@ local function CreateSetting_ConsumablesPreview(parent)
         local typeE = CreateConsumablePreview(widget, "E")
         typeE:SetSize(70, 50)
         typeE:SetPoint("TOPLEFT", typeC1, "BOTTOMLEFT", 0, -5)
+
+        local previews = {
+            A = typeA,
+            B = typeB,
+            C1 = typeC1,
+            C2 = typeC2,
+            C3 = typeC3,
+            D = typeD,
+            E = typeE,
+        }
        
-        function widget:SetDBValue() end
-        function widget:SetFunc() end
+        local speedSlider = addon:CreateSlider(_G.SPEED, widget, 0.5, 1.5, 145, 0.05)
+        speedSlider:SetPoint("TOPLEFT", typeE, "BOTTOMLEFT", 0, -25)
+        speedSlider.afterValueChangedFn = function(value)
+            widget.func(value)
+
+            for _, f in pairs(previews) do
+                f:UpdateTicker(value)
+                f.consumables:SetSpeed(value)
+                f:Hide()
+                f:Show()
+            end
+        end
+
+        function widget:SetDBValue(speed)
+            speedSlider:SetValue(speed)
+
+            for _, f in pairs(previews) do
+                f:UpdateTicker(speed)
+                f.consumables:SetSpeed(speed)
+                f:Hide()
+                f:Show()
+            end
+        end
+
+        function widget:SetFunc(func)
+            widget.func = func
+        end
     else
         widget = settingWidgets["consumablesPreview"]
     end

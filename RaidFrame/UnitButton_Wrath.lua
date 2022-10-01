@@ -2,7 +2,7 @@
 -- File: UnitButton_Wrath.lua
 -- Author: enderneko (enderneko-dev@outlook.com)
 -- File Created: 2022/08/20 19:44:26 +0800
--- Last Modified: 2022/10/01 00:10:49 +0800
+-- Last Modified: 2022/10/02 04:21:11 +0800
 --]]
 
 local _, Cell = ...
@@ -227,6 +227,10 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                 -- tooltip
                 if type(t["showTooltip"]) == "boolean" then
                     indicator:ShowTooltip(t["showTooltip"])
+                end
+                -- speed
+                if t["speed"] then
+                    indicator:SetSpeed(t["speed"])
                 end
 
                 -- init
@@ -524,6 +528,11 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
         elseif setting == "blacklist" or setting == "customDefensives" or setting == "customExternals" or setting == "bigDebuffs" then
             F:IterateAllUnitButtons(function(b)
                 UnitButton_UpdateAuras(b)
+            end, true)
+        elseif setting == "speed" then
+            -- only Consumables indicator has this option for now
+            F:IterateAllUnitButtons(function(b)
+                b.indicators[indicatorName]:SetSpeed(value)
             end, true)
         end
     end

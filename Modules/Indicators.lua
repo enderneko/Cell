@@ -458,6 +458,10 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                 if t["duration"] then
                     indicator:SetDuration(t["duration"])
                 end
+                -- speed
+                if t["speed"] then
+                    indicator:SetSpeed(t["speed"])
+                end
                  -- update circled nums
                  if type(t["circledStackNums"]) == "boolean" then
                     indicator:SetCircledStackNums(t["circledStackNums"])
@@ -652,6 +656,8 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                 indicator.preview = nil
             end
             I:RemoveIndicator(previewButton, indicatorName, value)
+        elseif setting == "speed" then
+            indicator:SetSpeed(value)
         end
     end
 end
@@ -1359,6 +1365,8 @@ local function ShowIndicatorSettings(id)
             w:SetDBValue(CellDB["cleuAuras"])
         elseif currentSetting == "bigDebuffs" then
             w:SetDBValue(L["Big Debuffs"], CellDB["bigDebuffs"], true)
+        elseif currentSetting == "consumablesPreview" then
+            w:SetDBValue(currentLayoutTable["indicators"][id]["speed"])
         elseif currentSetting == "consumablesList" then
             w:SetDBValue(CellDB["consumables"])
         elseif currentSetting == "targetedSpellsList" then
@@ -1413,6 +1421,9 @@ local function ShowIndicatorSettings(id)
                 elseif currentSetting == "cleuAuras" then
                     CellDB["cleuAuras"] = value
                     I:UpdateCleuAuras(value)
+                elseif currentSetting == "consumablesPreview" then
+                    currentLayoutTable["indicators"][id]["speed"] = value
+                    Cell:Fire("UpdateIndicators", notifiedLayout, indicatorName, "speed", value)
                 elseif currentSetting == "consumablesList" then
                     CellDB["consumables"] = value
                     Cell.vars.consumables = I:ConvertConsumables(value)

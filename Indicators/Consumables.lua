@@ -62,21 +62,24 @@ local function CreateAnimationGroup_TypeA(parent)
     local ag = f:CreateAnimationGroup()
 
     local a1 = ag:CreateAnimation("Alpha")
+    a1.duration = 0.6
     a1:SetFromAlpha(0)
     a1:SetToAlpha(1)
     a1:SetOrder(1)
-    a1:SetDuration(0.5)
+    a1:SetDuration(a1.duration)
     a1:SetSmoothing("OUT")
 
     local t1 = ag:CreateAnimation("Translation")
+    t1.duration = 0.6
     t1:SetOrder(1)
     t1:SetSmoothing("OUT")
-    t1:SetDuration(0.5)
+    t1:SetDuration(t1.duration)
     
     local a2 = ag:CreateAnimation("Alpha")
+    a2.duration = 0.5
     a2:SetFromAlpha(1)
     a2:SetToAlpha(0)
-    a2:SetDuration(0.5)
+    a2:SetDuration(a2.duration)
     a2:SetOrder(2)
     -- a2:SetSmoothing("IN")
 
@@ -118,6 +121,12 @@ local function CreateAnimationGroup_TypeA(parent)
         end
     end
 
+    function ag:SetSpeedMultiplier(s)
+        a1:SetDuration(a1.duration/s)
+        t1:SetDuration(t1.duration/s)
+        a2:SetDuration(a2.duration/s)
+    end
+
     return ag
 end
 
@@ -144,19 +153,23 @@ local function CreateAnimationGroup_TypeB(parent)
     local ag = f:CreateAnimationGroup()
 
     local a1 = ag:CreateAnimation("Alpha")
+    a1.duration = 0.35
     a1:SetFromAlpha(0)
     a1:SetToAlpha(0.7)
-    a1:SetDuration(0.3)
+    a1:SetDuration(a1.duration)
+    -- a1:SetSmoothing("IN")
 
     local t1 = ag:CreateAnimation("Translation")
+    t1.duration = 0.7
     t1:SetSmoothing("IN_OUT")
-    t1:SetDuration(0.7)
+    t1:SetDuration(t1.duration)
     
-    local a2 = ag:CreateAnimation("Alpha")
-    a2:SetFromAlpha(0.7)
-    a2:SetToAlpha(0)
-    a2:SetDuration(0.3)
-    a2:SetStartDelay(0.7)
+    -- local a2 = ag:CreateAnimation("Alpha")
+    -- a2.duration = 0.3
+    -- a2:SetFromAlpha(0.7)
+    -- a2:SetToAlpha(0)
+    -- a2:SetDuration(a2.duration)
+    -- a2:SetStartDelay(t1.duration - a2.duration)
 
     ag:SetScript("OnPlay", function()
         f:Show()
@@ -180,6 +193,13 @@ local function CreateAnimationGroup_TypeB(parent)
 
     function ag:UpdateOrientation()
         -- do nothing
+    end
+
+    function ag:SetSpeedMultiplier(s)
+        a1:SetDuration(a1.duration/s)
+        t1:SetDuration(t1.duration/s)
+        -- a2:SetDuration(a2.duration/s)
+        -- a2:SetStartDelay((t1.duration-a2.duration)/s)
     end
 
     return ag
@@ -213,21 +233,24 @@ local function CreateAnimationGroup_TypeC(parent, subType)
     local ag = f:CreateAnimationGroup()
 
     local a1 = ag:CreateAnimation("Alpha")
+    a1.duration = 0.5
     a1:SetFromAlpha(0)
     a1:SetToAlpha(1)
     a1:SetOrder(1)
-    a1:SetDuration(0.5)
+    a1:SetDuration(a1.duration)
     a1:SetSmoothing("OUT")
 
     local t1 = ag:CreateAnimation("Translation")
+    t1.duration = 0.5
     t1:SetOrder(1)
     t1:SetSmoothing("OUT")
-    t1:SetDuration(0.5)
+    t1:SetDuration(t1.duration)
     
     local a2 = ag:CreateAnimation("Alpha")
+    a2.duration = 0.5
     a2:SetFromAlpha(1)
     a2:SetToAlpha(0)
-    a2:SetDuration(0.5)
+    a2:SetDuration(a2.duration)
     a2:SetOrder(2)
     a2:SetSmoothing("IN")
 
@@ -255,6 +278,12 @@ local function CreateAnimationGroup_TypeC(parent, subType)
         -- f:SetWidth(parent:GetParent():GetHeight()/2)
     end
 
+    function ag:SetSpeedMultiplier(s)
+        a1:SetDuration(a1.duration/s)
+        t1:SetDuration(t1.duration/s)
+        a2:SetDuration(a2.duration/s)
+    end
+
     return ag
 end
 
@@ -280,22 +309,25 @@ local function CreateAnimationGroup_TypeD(parent)
     local ag = f:CreateAnimationGroup()
 
     local a1 = ag:CreateAnimation("Alpha")
+    a1.duration = 0.5
     a1:SetFromAlpha(0)
     a1:SetToAlpha(1)
     a1:SetOrder(1)
-    a1:SetDuration(0.5)
+    a1:SetDuration(a1.duration)
     a1:SetSmoothing("OUT")
 
-    local s = ag:CreateAnimation("Scale")
-    s:SetFromScale(0,0)
-    s:SetToScale(1,1)
-    s:SetOrder(1)
-    s:SetDuration(0.5)
+    local s1 = ag:CreateAnimation("Scale")
+    s1.duration = 0.5
+    s1:SetFromScale(0,0)
+    s1:SetToScale(1,1)
+    s1:SetOrder(1)
+    s1:SetDuration(s1.duration)
 
     local a2 = ag:CreateAnimation("Alpha")
+    a2.duration = 0.5
     a2:SetFromAlpha(1)
     a2:SetToAlpha(0)
-    a2:SetDuration(0.5)
+    a2:SetDuration(a2.duration)
     a2:SetOrder(2)
     a2:SetSmoothing("IN")
 
@@ -321,6 +353,12 @@ local function CreateAnimationGroup_TypeD(parent)
 
     function ag:UpdateOrientation()
         -- do nothing
+    end
+
+    function ag:SetSpeedMultiplier(s)
+        a1:SetDuration(a1.duration/s)
+        s1:SetDuration(s1.duration/s)
+        a2:SetDuration(a2.duration/s)
     end
 
     return ag
@@ -351,8 +389,9 @@ local function CreateAnimationGroup_TypeE(parent)
     -- a1:SetSmoothing("OUT")
 
     local t1 = ag:CreateAnimation("Translation")
+    t1.duration = 0.8
     t1:SetSmoothing("IN_OUT")
-    t1:SetDuration(0.8)
+    t1:SetDuration(t1.duration)
     
     -- local a2 = ag:CreateAnimation("Alpha")
     -- a2:SetFromAlpha(0.7)
@@ -384,6 +423,10 @@ local function CreateAnimationGroup_TypeE(parent)
     end
 
     function ag:UpdateOrientation()
+    end
+
+    function ag:SetSpeedMultiplier(s)
+        t1:SetDuration(t1.duration/s)
     end
 
     return ag
@@ -433,6 +476,13 @@ function I:CreateConsumables(parent, isPreview)
                 a:UpdateOrientation()
             end
         end)
+    end
+
+    -- speed
+    function consumables:SetSpeed(speed)
+        for _, a in pairs(animations) do
+            a:SetSpeedMultiplier(speed)
+        end
     end
 
     -- show

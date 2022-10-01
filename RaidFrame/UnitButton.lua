@@ -229,6 +229,10 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                 if type(t["showTooltip"]) == "boolean" then
                     indicator:ShowTooltip(t["showTooltip"])
                 end
+                -- speed
+                if t["speed"] then
+                    indicator:SetSpeed(t["speed"])
+                end
 
                 -- init
                 -- update name visibility
@@ -521,6 +525,11 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
         elseif setting == "blacklist" or setting == "customDefensives" or setting == "customExternals" or setting == "bigDebuffs" then
             F:IterateAllUnitButtons(function(b)
                 UnitButton_UpdateAuras(b)
+            end, true)
+        elseif setting == "speed" then
+            -- only Consumables indicator has this option for now
+            F:IterateAllUnitButtons(function(b)
+                b.indicators[indicatorName]:SetSpeed(value)
             end, true)
         end
     end

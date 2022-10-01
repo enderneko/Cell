@@ -1317,5 +1317,16 @@ function F:Revise()
         end
     end
     
+    -- r115-release
+    if CellDB["revise"] and dbRevision < 115 then
+        -- Consumables
+        local index = Cell.defaults.indicatorIndices.consumables
+        for _, layout in pairs(CellDB["layouts"]) do
+            if not layout["indicators"][index]["speed"] then
+                layout["indicators"][index]["speed"] = 1.0
+            end
+        end
+    end
+    
     CellDB["revise"] = Cell.version
 end
