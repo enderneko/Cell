@@ -3661,6 +3661,67 @@ local function CreateSetting_ConsumablesList(parent)
     return widget
 end
 
+local function CreateSetting_HighlightType(parent)
+    local widget
+
+    if not settingWidgets["highlightType"] then
+        widget = addon:CreateFrame("CellIndicatorSettings_HighlightType", parent, 240, 50)
+        settingWidgets["highlightType"] = widget
+
+        widget.highlightType = addon:CreateDropdown(widget, 245)
+        widget.highlightType:SetPoint("TOPLEFT", 5, -20)
+        widget.highlightType:SetItems({
+            {
+                ["text"] = L["None"],
+                ["value"] = "none",
+                ["onClick"] = function()
+                    widget.func("none")
+                end,
+            },
+            {
+                ["text"] = L["Gradient"].." - "..L["Health Bar"].." ("..L["Entire"]..")",
+                ["value"] = "gradient",
+                ["onClick"] = function()
+                    widget.func("gradient")
+                end,
+            },
+            {
+                ["text"] = L["Solid"].." - "..L["Health Bar"].." ("..L["Entire"]..")",
+                ["value"] = "entire",
+                ["onClick"] = function()
+                    widget.func("entire")
+                end,
+            },
+            {
+                ["text"] = L["Solid"].." - "..L["Health Bar"].." ("..L["Current"]..")",
+                ["value"] = "current",
+                ["onClick"] = function()
+                    widget.func("current")
+                end,
+            },
+        })
+
+        widget.highlightTypeText = widget:CreateFontString(nil, "OVERLAY", font_name)
+        widget.highlightTypeText:SetText(L["Highlight Type"])
+        widget.highlightTypeText:SetPoint("BOTTOMLEFT", widget.highlightType, "TOPLEFT", 0, 1)
+
+        -- associate db
+        function widget:SetFunc(func)
+            widget.func = func
+        end
+        
+        -- show db value
+        function widget:SetDBValue(highlightType)
+            widget.highlightType:SetSelectedValue(highlightType)
+        end
+    else
+        widget = settingWidgets["highlightType"]
+    end
+
+    widget:Show()
+    return widget
+end
+
 local function CreateSetting_Tips(parent, text)
     local widget
 
@@ -3785,6 +3846,8 @@ function addon:CreateIndicatorSettings(parent, settingsTable)
             tinsert(widgetsTable, CreateSetting_ConsumablesPreview(parent))
         elseif setting == "consumablesList" then
             tinsert(widgetsTable, CreateSetting_ConsumablesList(parent))
+        elseif setting == "highlightType" then
+            tinsert(widgetsTable, CreateSetting_HighlightType(parent))
         else -- tips
             tinsert(widgetsTable, CreateSetting_Tips(parent, setting))
         end

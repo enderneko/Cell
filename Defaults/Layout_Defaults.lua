@@ -262,7 +262,8 @@ Cell.defaults.layout = {
             ["frameLevel"] = 15,
             ["size"] = {12, 12},
             ["dispellableByMe"] = true,
-            ["enableHighlight"] = true,
+            ["highlightType"] = "gradient",
+            ["showDispelTypeIcons"] = true,
         }, -- 19
         {
             ["name"] = "Debuffs",

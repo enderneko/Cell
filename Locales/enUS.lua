@@ -17,6 +17,7 @@ select(2, ...).L = setmetatable({
     ["VEHICLE"] = "Vehicle",
 
     ["dispellableByMe"] = "Only show debuffs dispellable by me",
+    ["showDispelTypeIcons"] = "Show Dispel Type Icons",
     ["castByMe"] = "Only show buffs cast by me",
     ["trackByName"] = "Track by name",
     ["showDuration"] = "Show duration text",

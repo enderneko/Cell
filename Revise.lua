@@ -1319,11 +1319,20 @@ function F:Revise()
     
     -- r115-release
     if CellDB["revise"] and dbRevision < 115 then
-        -- Consumables
-        local index = Cell.defaults.indicatorIndices.consumables
+        local consumablesIndex = Cell.defaults.indicatorIndices.consumables
+        local dispelsIndex = Cell.defaults.indicatorIndices.dispels
         for _, layout in pairs(CellDB["layouts"]) do
-            if not layout["indicators"][index]["speed"] then
-                layout["indicators"][index]["speed"] = 1.0
+            -- add speed to Consumables
+            if not layout["indicators"][consumablesIndex]["speed"] then
+                layout["indicators"][consumablesIndex]["speed"] = 1
+            end
+            -- add highlightType to Dispels
+            if not layout["indicators"][dispelsIndex]["highlightType"] then
+                layout["indicators"][dispelsIndex]["highlightType"] = "gradient"
+            end
+            -- add showDispelTypeIcons to Dispels
+            if type(layout["indicators"][dispelsIndex]["showDispelTypeIcons"]) ~= "boolean" then
+                layout["indicators"][dispelsIndex]["showDispelTypeIcons"] = true
             end
         end
     end

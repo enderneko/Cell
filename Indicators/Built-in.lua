@@ -435,10 +435,10 @@ function I:CreateDispels(parent)
 
     dispels.highlight = parent.widget.healthBar:CreateTexture(parent:GetName().."DispelHighlight", "ARTWORK")
     -- dispels.highlight:SetAllPoints(parent.widget.healthBar)
-    dispels.highlight:SetPoint("BOTTOMLEFT", parent.widget.healthBar)
-    dispels.highlight:SetPoint("BOTTOMRIGHT", parent.widget.healthBar)
-    dispels.highlight:SetPoint("TOP", parent.widget.healthBar)
-    dispels.highlight:SetTexture("Interface\\Buttons\\WHITE8x8")
+    -- dispels.highlight:SetPoint("BOTTOMLEFT", parent.widget.healthBar)
+    -- dispels.highlight:SetPoint("BOTTOMRIGHT", parent.widget.healthBar)
+    -- dispels.highlight:SetPoint("TOP", parent.widget.healthBar)
+    -- dispels.highlight:SetTexture("Interface\\Buttons\\WHITE8x8")
     -- dispels.highlight:SetVertexColor(0, 0, 0, 0)
     dispels.highlight:Hide()
 
@@ -459,8 +459,10 @@ function I:CreateDispels(parent)
             if a == 0 and dispelType then
                 r, g, b, a = DebuffTypeColor[dispelType].r, DebuffTypeColor[dispelType].g, DebuffTypeColor[dispelType].b, 1
             end
-            dispels[i]:SetDispel(dispelType)
-            i = i + 1
+            if dispels.showIcons then
+                dispels[i]:SetDispel(dispelType)
+                i = i + 1
+            end
         end
 
         -- hide unused
@@ -469,15 +471,40 @@ function I:CreateDispels(parent)
         end
 
         -- highlight
-        dispels.highlight:SetGradientAlpha("VERTICAL", r, g, b, a, r, g, b, 0)
+        if dispels.highlightType == "entire" then
+            dispels.highlight:SetVertexColor(r, g, b, a ~= 0 and 0.5 or 0)
+        elseif dispels.highlightType == "current" then
+            dispels.highlight:SetVertexColor(r, g, b, a)
+        else
+            dispels.highlight:SetGradientAlpha("VERTICAL", r, g, b, a, r, g, b, 0)
+        end
     end
 
-    function dispels:EnableHighlight(enabled)
-        if enabled then
-            dispels.highlight:Show()
-        else
+    function dispels:UpdateHighlight(highlightType)
+        dispels.highlightType = highlightType
+
+        if highlightType == "none" then
             dispels.highlight:Hide()
+        elseif highlightType == "gradient" then
+            dispels.highlight:ClearAllPoints()
+            dispels.highlight:SetAllPoints(parent.widget.healthBar)
+            dispels.highlight:SetTexture("Interface\\Buttons\\WHITE8x8")
+            dispels.highlight:Show()
+        elseif highlightType == "entire" then
+            dispels.highlight:ClearAllPoints()
+            dispels.highlight:SetAllPoints(parent.widget.healthBar)
+            dispels.highlight:SetTexture("Interface\\Buttons\\WHITE8x8")
+            dispels.highlight:Show()
+        elseif highlightType == "current" then
+            dispels.highlight:ClearAllPoints()
+            dispels.highlight:SetAllPoints(parent.widget.healthBar:GetStatusBarTexture())
+            dispels.highlight:SetTexture(Cell.vars.texture)
+            dispels.highlight:Show()
         end
+    end
+
+    function dispels:ShowIcons(show)
+        dispels.showIcons = show
     end
 
     for i = 1, 4 do
@@ -491,7 +518,7 @@ function I:CreateDispels(parent)
             icon:SetPoint("RIGHT", dispels[i-1], "LEFT", 7, 0)
         end
 
-        icon:SetTexCoord(.15, .85, .15, .85)
+        icon:SetTexCoord(0.15, 0.85, 0.15, 0.85)
         icon:SetDrawLayer("ARTWORK", i)
 
         function icon:SetDispel(dispelType)

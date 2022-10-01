@@ -431,11 +431,13 @@ L["Horizontal Gradient"] = "水平渐变"
 L["Debuff Type"] = "减益类型"
 L["Rotation"] = "旋转"
 L["Externals + Defensives, no need to enable all of them"] = "包含了来自他人与自身的减伤，不必将它们全都启用"
+L["Highlight Type"] = "高亮类型"
 
 L["Click to preview"] = "点击预览"
 L["Debug Mode"] = "调试模式"
 
 L["dispellableByMe"] = "只显示我能驱散的减益"
+L["showDispelTypeIcons"] = "显示驱散类型图标"
 L["castByMe"] = "只显示我施放的增益"
 L["trackByName"] = "匹配法术名称"
 L["showDuration"] = "显示持续时间文本"

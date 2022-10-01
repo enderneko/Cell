@@ -467,8 +467,14 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                     indicator:SetCircledStackNums(t["circledStackNums"])
                 end
                 -- update dispel highlight
-                if type(t["enableHighlight"]) == "boolean" then
-                    indicator:EnableHighlight(t["enableHighlight"])
+                if t["highlightType"] then
+                    indicator:UpdateHighlight(t["highlightType"])
+                end
+                -- update dispel icons
+                if type(t["showDispelTypeIcons"]) == "boolean" then
+                    indicator:ShowIcons(t["showDispelTypeIcons"])
+                    indicator.init = false
+                    InitIndicator(t["indicatorName"])
                 end
                 -- after init
                 if t["enabled"] then
@@ -567,6 +573,10 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                 indicator:Hide()
                 indicator:Show()
             end
+        elseif setting == "highlightType" then
+            indicator:UpdateHighlight(value)
+            indicator.init = false
+            InitIndicator(indicatorName)
         elseif setting == "checkbutton" then
             if value == "showDuration" then
                 indicator:ShowDuration(value2)
@@ -582,8 +592,10 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                     indicator:Hide()
                     indicator:Show()
                 end
-            elseif value == "enableHighlight" then
-                indicator:EnableHighlight(value2)
+            elseif value == "showDispelTypeIcons" then
+                indicator:ShowIcons(value2)
+                indicator.init = false
+                InitIndicator(indicatorName)
             end
         elseif setting == "create" then
             indicator = I:CreateIndicator(previewButton, value)
@@ -1236,7 +1248,7 @@ if Cell.isRetail then
         ["defensiveCooldowns"] = {"enabled", "customDefensives", "checkbutton2:showDuration:"..L["Show duration text instead of icon animation"], "num:5", "orientation", "position", "frameLevel", "size", "font"},
         ["allCooldowns"] = {L["Externals + Defensives, no need to enable all of them"], "enabled", "checkbutton2:showDuration:"..L["Show duration text instead of icon animation"], "num:5", "orientation", "position", "frameLevel", "size", "font"},
         ["tankActiveMitigation"] = {"|cffb7b7b7"..I:GetTankActiveMitigationString(), "enabled", "position", "frameLevel", "size"},
-        ["dispels"] = {"enabled", "checkbutton:dispellableByMe", "checkbutton2:enableHighlight", "position", "frameLevel", "size-square"},
+        ["dispels"] = {"enabled", "checkbutton:dispellableByMe", "highlightType", "checkbutton2:showDispelTypeIcons", "position", "frameLevel", "size-square"},
         ["debuffs"] = {"enabled", "checkbutton:dispellableByMe", "blacklist", "bigDebuffs", "checkbutton2:showDuration:"..L["Show duration text instead of icon animation"], "checkbutton3:showTooltip:"..L["This will make these icons not click-through-able"], "num:10", "orientation", "position", "frameLevel", "size-normal-big", "font"},
         ["raidDebuffs"] = {"|cffb7b7b7"..L["You can config debuffs in %s"]:format(Cell:GetAccentColorString()..L["Raid Debuffs"].."|r"), "enabled", "checkbutton:onlyShowTopGlow", "cleuAuras", "checkbutton2:showTooltip:"..L["This will make these icons not click-through-able"], "num:3", "orientation", "position", "frameLevel", "size-border", "font"},
         ["targetedSpells"] = {"enabled", "targetedSpellsList", "targetedSpellsGlow", "position", "frameLevel", "size-border", "font"},
@@ -1267,7 +1279,7 @@ elseif Cell.isWrath then
         ["externalCooldowns"] = {"enabled", "customExternals", "checkbutton2:showDuration:"..L["Show duration text instead of icon animation"], "num:5", "orientation", "position", "frameLevel", "size", "font"},
         ["defensiveCooldowns"] = {"enabled", "customDefensives", "checkbutton2:showDuration:"..L["Show duration text instead of icon animation"], "num:5", "orientation", "position", "frameLevel", "size", "font"},
         ["allCooldowns"] = {L["Externals + Defensives, no need to enable all of them"], "enabled", "checkbutton2:showDuration:"..L["Show duration text instead of icon animation"], "num:5", "orientation", "position", "frameLevel", "size", "font"},
-        ["dispels"] = {"enabled", "checkbutton:dispellableByMe", "checkbutton2:enableHighlight", "position", "frameLevel", "size-square"},
+        ["dispels"] = {"enabled", "checkbutton:dispellableByMe", "highlightType", "checkbutton2:showDispelTypeIcons", "position", "frameLevel", "size-square"},
         ["debuffs"] = {"enabled", "checkbutton:dispellableByMe", "blacklist", "bigDebuffs", "checkbutton2:showDuration:"..L["Show duration text instead of icon animation"], "checkbutton3:showTooltip:"..L["This will make these icons not click-through-able"], "num:10", "orientation", "position", "frameLevel", "size-normal-big", "font"},
         ["raidDebuffs"] = {"|cffb7b7b7"..L["You can config debuffs in %s"]:format(Cell:GetAccentColorString()..L["Raid Debuffs"].."|r"), "enabled", "checkbutton:onlyShowTopGlow", "checkbutton2:showTooltip:"..L["This will make these icons not click-through-able"], "num:3", "orientation", "position", "frameLevel", "size-border", "font"},
         ["targetedSpells"] = {"enabled", "targetedSpellsList", "targetedSpellsGlow", "position", "frameLevel", "size-border", "font"},

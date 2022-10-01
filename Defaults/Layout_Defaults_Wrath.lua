@@ -2,7 +2,7 @@
 -- File: Layout_Defaults_Wrath.lua
 -- Author: enderneko (enderneko-dev@outlook.com)
 -- File Created: 2022/08/21 04:06:04 +0800
--- Last Modified: 2022/10/02 04:19:47 +0800
+-- Last Modified: 2022/10/02 06:13:02 +0800
 --]]
 
 local addonName, Cell = ...
@@ -246,7 +246,8 @@ Cell.defaults.layout = {
             ["frameLevel"] = 15,
             ["size"] = {12, 12},
             ["dispellableByMe"] = true,
-            ["enableHighlight"] = true,
+            ["highlightType"] = "gradient",
+            ["showDispelTypeIcons"] = true,
         }, -- 17
         {
             ["name"] = "Debuffs",

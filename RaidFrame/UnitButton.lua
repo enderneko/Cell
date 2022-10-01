@@ -201,8 +201,12 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                     indicator:SetTexture(t["texture"])
                 end
                 -- update dispel highlight
-                if type(t["enableHighlight"]) == "boolean" then
-                    indicator:EnableHighlight(t["enableHighlight"])
+                if t["highlightType"] then
+                    indicator:UpdateHighlight(t["highlightType"])
+                end
+                -- update dispel icons
+                if type(t["showDispelTypeIcons"]) == "boolean" then
+                    indicator:ShowIcons(t["showDispelTypeIcons"])
                 end
                 -- update duration
                 if type(t["showDuration"]) == "boolean" then
@@ -434,6 +438,11 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
             F:IterateAllUnitButtons(function(b)
                 UnitButton_UpdateAuras(b)
             end, true)
+        elseif setting == "highlightType" then
+            F:IterateAllUnitButtons(function(b)
+                b.indicators[indicatorName]:UpdateHighlight(value)
+                UnitButton_UpdateAuras(b)
+            end, true)
         elseif setting == "checkbutton" then
             if value == "hideFull" then
                 --! 血量文字指示器需要立即被刷新
@@ -441,9 +450,9 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                 F:IterateAllUnitButtons(function(b)
                     b.func.UpdateHealthText()
                 end, true)
-            elseif value == "enableHighlight" then
+            elseif value == "showDispelTypeIcons" then
                 F:IterateAllUnitButtons(function(b)
-                    b.indicators[indicatorName]:EnableHighlight(value2)
+                    b.indicators[indicatorName]:ShowIcons(value2)
                     UnitButton_UpdateAuras(b)
                 end, true)
             elseif value == "showDuration" then
