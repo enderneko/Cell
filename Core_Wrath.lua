@@ -401,7 +401,7 @@ function eventFrame:ADDON_LOADED(arg1)
         if type(CellDB["consumables"]) ~= "table" then
             CellDB["consumables"] = I:GetDefaultConsumables()
         end
-        Cell.vars.consumables = CellDB["consumables"]
+        Cell.vars.consumables = I:ConvertConsumables(CellDB["consumables"])
         
         -- misc -----------------------------------------------------------------------------------
         Cell.version = GetAddOnMetadata(addonName, "version")
