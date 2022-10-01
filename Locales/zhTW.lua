@@ -83,8 +83,7 @@ L["circledStackNums"] = "用圓圈數字顯示層數"
 L["Class Color"] = "職業顏色"
 L["Class Color (dark)"] = "職業顏色 (暗)"
 L["cleuAurasTip"] = "通過戰鬥記錄事件找出看不到的法術效果"
---[[Translation missing --]]
---[[ L["Click to preview"] = "Click to preview"--]] 
+L["Click to preview"] = "點一下預覽"
 L["Click-Castings"] = "滑鼠點擊施法"
 L["clickcastingsHints"] = "左鍵點擊：編輯\n右鍵點擊：刪除"
 L["Close"] = "關閉"
@@ -94,8 +93,7 @@ L["Color Duration Text"] = "著色持續時間文字"
 L["Common"] = "共用"
 L["Condition"] = "條件"
 L["Confirm"] = "確認"
---[[Translation missing --]]
---[[ L["Consumables"] = "Consumables"--]] 
+L["Consumables"] = "消耗品"
 L["Contains"] = "包含"
 L["Copy"] = "複製"
 L["Copy indicators from one layout to another"] = "將指示器從一個版面配置複製到另一個版面配置"
@@ -123,8 +121,7 @@ L["Debuff Filter (blacklist)"] = "過濾減益 (黑名單)"
 L["Debuff List"] = "減益清單"
 L["Debuff Type"] = "減益類型"
 L["Debuffs"] = "減益"
---[[Translation missing --]]
---[[ L["Debug Mode"] = "Debug Mode"--]] 
+L["Debug Mode"] = "除錯模式"
 L["DECLINED"] = "已拒絕"
 L["Default layout"] = "預設版面配置"
 L["Defensive Cooldowns"] = "減傷 (自身)"
@@ -204,6 +201,8 @@ L["Hide Blizzard Raid / Party"] = "隱藏遊戲內建團隊/隊伍框架"
 L["hideFull"] = "滿血時不顯示"
 L["HIGH CPU USAGE"] = "高 CPU 使用量"
 L["Highlight Size"] = "顯著標示粗細"
+--[[Translation missing --]]
+--[[ L["Highlight Type"] = "Highlight Type"--]] 
 L["Horizontal"] = "水平"
 L["Horizontal Gradient"] = "水平漸層"
 L["Icon"] = "圖示"
@@ -377,6 +376,8 @@ L["Show pets while in a party"] = "在隊伍中時顯示寵物"
 L["Show Solo"] = "單人時要顯示"
 L["Show while in a party"] = "在隊伍中時顯示"
 L["Show while not in a group"] = "不在隊伍中時顯示"
+--[[Translation missing --]]
+--[[ L["showDispelTypeIcons"] = "Show Dispel Type Icons"--]] 
 L["showDuration"] = "顯示持續時間文字"
 L["Shows only one spell glow on a unit button at a time"] = "每個單位按鈕上同一時間只能顯示一個法術發光"
 L["showTooltip"] = "顯示光環提示"
