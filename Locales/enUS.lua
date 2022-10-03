@@ -17,7 +17,7 @@ select(2, ...).L = setmetatable({
     ["VEHICLE"] = "Vehicle",
 
     ["dispellableByMe"] = "Only show debuffs dispellable by me",
-    ["showDispelTypeIcons"] = "Show Dispel Type Icons",
+    ["showDispelTypeIcons"] = "Show dispel type icons",
     ["castByMe"] = "Only show buffs cast by me",
     ["trackByName"] = "Track by name",
     ["showDuration"] = "Show duration text",
@@ -25,7 +25,7 @@ select(2, ...).L = setmetatable({
     ["enableHighlight"] = "Highlight unit button",
     ["hideFull"] = "Hide while HP is full",
     ["onlyShowTopGlow"] = "Only show glow for the first debuff",
-    ["circledStackNums"] = "Circled Stack Numbers",
+    ["circledStackNums"] = "Circled stack numbers",
 
     ["BOTTOM"] = "Bottom",
     ["BOTTOMLEFT"] = "Bottom Left",
