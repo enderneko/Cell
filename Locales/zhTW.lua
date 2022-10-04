@@ -201,8 +201,7 @@ L["Hide Blizzard Raid / Party"] = "隱藏遊戲內建團隊/隊伍框架"
 L["hideFull"] = "滿血時不顯示"
 L["HIGH CPU USAGE"] = "高 CPU 使用量"
 L["Highlight Size"] = "顯著標示粗細"
---[[Translation missing --]]
---[[ L["Highlight Type"] = "Highlight Type"--]] 
+L["Highlight Type"] = "顯著標示類型"
 L["Horizontal"] = "水平"
 L["Horizontal Gradient"] = "水平漸層"
 L["Icon"] = "圖示"
@@ -376,8 +375,7 @@ L["Show pets while in a party"] = "在隊伍中時顯示寵物"
 L["Show Solo"] = "單人時要顯示"
 L["Show while in a party"] = "在隊伍中時顯示"
 L["Show while not in a group"] = "不在隊伍中時顯示"
---[[Translation missing --]]
---[[ L["showDispelTypeIcons"] = "Show Dispel Type Icons"--]] 
+L["showDispelTypeIcons"] = "顯示驅散類型圖示"
 L["showDuration"] = "顯示持續時間文字"
 L["Shows only one spell glow on a unit button at a time"] = "每個單位按鈕上同一時間只能顯示一個法術發光"
 L["showTooltip"] = "顯示光環提示"
