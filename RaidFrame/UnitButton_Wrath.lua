@@ -2,7 +2,7 @@
 -- File: UnitButton_Wrath.lua
 -- Author: enderneko (enderneko-dev@outlook.com)
 -- File Created: 2022/08/20 19:44:26 +0800
--- Last Modified: 2022/10/02 06:17:20 +0800
+-- Last Modified: 2022/10/05 00:15:07 +0800
 --]]
 
 local _, Cell = ...
@@ -11,6 +11,7 @@ local F = Cell.funcs
 local I = Cell.iFuncs
 local P = Cell.pixelPerfectFuncs
 local A = Cell.animations
+local HealComm = LibStub("LibHealComm-4.0")
 
 local UnitGUID = UnitGUID
 local UnitClassBase = UnitClassBase
@@ -1333,6 +1334,14 @@ local function UnitButton_UpdateHealPrediction(self)
     if not unit then return end
 
     local value = UnitGetIncomingHeals(unit) or 0
+    -- print("v1", value, self.state.healthMax, value / self.state.healthMax)
+    --! NOTE: use LibHealComm
+    if self.__displayedGuid then
+        value = HealComm:GetHealAmount(self.__displayedGuid, HealComm.CASTED_HEALS) or 0
+        local hots = select(3, HealComm:GetNextHealAmount(self.__displayedGuid, HealComm.HOT_HEALS)) or 0
+        value = value + hots
+    end
+
     if value == 0 then 
         self.widget.incomingHeal:Hide()
         return
@@ -1746,12 +1755,6 @@ local function UnitButton_RegisterEvents(self)
     -- self:RegisterEvent("UNIT_PET")
     self:RegisterEvent("UNIT_PORTRAIT_UPDATE") -- pet summoned far away
     
-    -- LibCLHealth.RegisterCallback(self, "COMBAT_LOG_HEALTH", function(event, unit, eventType)
-    -- 	-- eventType - either nil when event comes from combat log, or "UNIT_HEALTH" to indicate events that can carry  update to death/ghost states
-    -- 	-- print(event, unit, health)
-    -- 	UnitButton_UpdateHealth(self)
-    -- end)
-
     UnitButton_UpdateAll(self)
 end
 
@@ -1901,6 +1904,36 @@ local function UnitButton_OnAttributeChanged(self, name, value)
         end
     end
 end
+
+-- LibHealComm
+Cell.HealComm = {}
+local function UpdateHotsPrediction(_, event, casterGUID, spellID, healType, endTime, ...)
+    -- print(event, casterGUID, spellID, healType, endTime, ...)
+    if healType == HealComm.HOT_HEALS then
+        -- update incomingHeal
+        for i = 1, select("#", ...) do
+            local b = F:GetUnitButtonByGUID(select(i, ...))
+            if b then
+                UnitButton_UpdateHealPrediction(b)
+            end
+        end
+    end
+end
+Cell.HealComm.UpdateHotsPrediction = UpdateHotsPrediction
+HealComm.RegisterCallback(Cell.HealComm, "HealComm_HealStarted", "UpdateHotsPrediction")
+HealComm.RegisterCallback(Cell.HealComm, "HealComm_HealUpdated", "UpdateHotsPrediction")
+HealComm.RegisterCallback(Cell.HealComm, "HealComm_HealStopped", "UpdateHotsPrediction")
+
+-- update shield amount
+-- local cleu = CreateFrame("Frame")
+-- cleu:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
+-- cleu:SetScript("OnEvent", function()
+--     local _, subEvent, _, sourceGUID, sourceName, sourceFlags, sourceRaidFlags, destGUID, destName, destFlags, destRaidFlags, spellId, spellName, spellSchool, auraType, amount = CombatLogGetCurrentEventInfo()
+--     if subEvent == "SPELL_AURA_APPLIED" then
+--         print(spellId, spellName, spellSchool, auraType, amount)
+--     end
+-- end)
+
 
 -------------------------------------------------
 -- unit button show/hide/enter/leave
