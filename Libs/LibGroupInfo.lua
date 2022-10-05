@@ -2,10 +2,10 @@
 -- File: LibGroupInfo.lua
 -- Author: enderneko (enderneko-dev@outlook.com)
 -- File Created: 2022/07/29 15:04:31 +0800
--- Last Modified: 2022/09/28 22:12:24 +0800
+-- Last Modified: 2022/10/06 06:32:41 +0800
 --]]
 
-local MAJOR, MINOR = "LibGroupInfo", 2
+local MAJOR, MINOR = "LibGroupInfo", 3
 local lib = LibStub:NewLibrary(MAJOR, MINOR)
 if not lib then return end -- already loaded
 
@@ -18,7 +18,7 @@ local PLAYER_GUID
 local RETRY_INTERVAL = 1.5
 local MAX_ATTEMPTS = 3
 local IS_RETAIL = WOW_PROJECT_ID == WOW_PROJECT_MAINLINE
-local IS_WRATH = WOW_PROJECT_ID == WOW_PROJECT_BURNING_CRUSADE_CLASSIC and LE_EXPANSION_LEVEL_CURRENT == LE_EXPANSION_WRATH_OF_THE_LICH_KING
+local IS_WRATH = WOW_PROJECT_ID == WOW_PROJECT_WRATH_CLASSIC
 
 local debugMode = false
 local function Print(...)
@@ -101,6 +101,7 @@ lib.specRoles = specRoles
 -- functions
 local NotifyInspect = NotifyInspect
 local UnitGUID = UnitGUID
+local UnitClassBase = UnitClassBase
 local UnitIsUnit = UnitIsUnit
 local UnitIsDead = UnitIsDead
 local UnitIsConnected = UnitIsConnected
@@ -120,8 +121,8 @@ local GetNumGroupMembers = GetNumGroupMembers
 local UnitInParty = UnitInParty
 local UnitInRaid = UnitInRaid
 
--- local GetNumTalentTabs = GetNumTalentTabs
--- local GetTalentTabInfo = GetTalentTabInfo
+local GetNumTalentTabs = GetNumTalentTabs
+local GetTalentTabInfo = GetTalentTabInfo
 
 -- event frame
 local frame = CreateFrame("Frame", MAJOR.."Frame")
@@ -146,11 +147,34 @@ local function CacheSpecData()
     end
 end
 
+local function UpdateBaseInfo(unit, guid)
+    if not cache[guid] then cache[guid] = {} end
+    if IS_WRATH then
+        if not cache[guid]["talents"] then
+            cache[guid]["talents"] = {}
+        end
+    end
+
+    -- general
+    cache[guid].unit = unit
+    cache[guid].name, cache[guid].realm = UnitNameUnmodified(unit)
+    if not cache[guid].realm then
+        cache[guid].realm = GetNormalizedRealmName()
+    end
+    cache[guid].class = UnitClassBase(unit)
+    cache[guid].level = UnitLevel(unit)
+    cache[guid].race = select(2, UnitRace(unit))
+    cache[guid].gender = genders[UnitSex(unit)]
+    cache[guid].faction = UnitFactionGroup(unit)
+
+    return guid
+end
+
 local function BuildAndNotify(unit)
     Print("|cffff7777LGI:BuildAndNotify|r", unit)
 
     local guid = UnitGUID(unit)
-    if not cache[guid] then cache[guid] = {} end
+    UpdateBaseInfo(unit, guid)
 
     local specId, role
     
@@ -166,18 +190,8 @@ local function BuildAndNotify(unit)
         --     cache[guid].notVisible = nil
         -- end
     end
-    
-    -- general
-    cache[guid].unit = unit
-    cache[guid].name, cache[guid].realm = UnitNameUnmodified(unit)
-    if not cache[guid].realm then
-        cache[guid].realm = GetNormalizedRealmName()
-    end
-    cache[guid].level = UnitLevel(unit)
-    cache[guid].race = UnitRace(unit)
-    cache[guid].gender = genders[UnitSex(unit)]
+
     cache[guid].role = role
-    cache[guid].faction = UnitFactionGroup(unit)
     
     -- spec
     if specId and specData[specId] then
@@ -193,50 +207,51 @@ local function BuildAndNotify(unit)
     lib.callbacks:Fire(UPDATE_EVENT, guid, unit, cache[guid])
 end
 
--- local function BuildAndNotify_Wrath(unit)
---     Print("|cffff7777LGI:BuildAndNotify|r", unit)
+local function BuildAndNotify_Wrath(unit)
+    Print("|cffff7777LGI:BuildAndNotify_Wrath|r", unit)
 
---     local guid = UnitGUID(unit)
---     if not cache[guid] then
---         cache[guid] = {
---             ["talents"] = {}
---         }
---     end
+    local guid = UnitGUID(unit)
+    UpdateBaseInfo(unit, guid)
 
---     -- general
---     cache[guid].unit = unit
---     cache[guid].name, cache[guid].realm = UnitNameUnmodified(unit)
---     if not cache[guid].realm then
---         cache[guid].realm = GetNormalizedRealmName()
---     end
---     cache[guid].level = UnitLevel(unit)
---     cache[guid].race = UnitRace(unit)
---     cache[guid].gender = genders[UnitSex(unit)]
---     cache[guid].role = role
---     cache[guid].faction = UnitFactionGroup(unit)
-    
---     -- spec
---     local isInspect = not UnitIsUnit(unit, "player")
---     local maxPoints = 0
+    -- spec
+    local isInspect = not UnitIsUnit(unit, "player")
+    local maxPoints = 0
 
---     for i = 1, GetNumTalentTabs(isInspect) do
---         local name, texture, pointsSpent, fileName = GetTalentTabInfo(i, isInspect)
---         cache[guid]["talents"][fileName] = {
---             ["points"] = pointsSpent,
---             ["name"] = name,
---             ["icon"] = texture,
---         }
-        
---         if pointsSpent > maxPoints then
---             maxPoints = pointsSpent
---             cache[guid].specName = name
---             cache[guid].specIcon = texture
---         end
---     end
+    if isInspect then
+        for i = 1, GetNumTalentTabs(true) do
+            local name, texture, pointsSpent, fileName = GetTalentTabInfo(i, true, false)
+            cache[guid]["talents"][fileName] = {
+                ["points"] = pointsSpent,
+                ["name"] = name,
+                ["icon"] = texture,
+            }
+            
+            if pointsSpent > maxPoints then
+                maxPoints = pointsSpent
+                cache[guid].specName = name
+                cache[guid].specIcon = texture
+            end
+        end
+    else
+        for i = 1, GetNumTalentTabs() do
+            local name, texture, pointsSpent, fileName = GetTalentTabInfo(i)
+            cache[guid]["talents"][fileName] = {
+                ["points"] = pointsSpent,
+                ["name"] = name,
+                ["icon"] = texture,
+            }
+            
+            if pointsSpent > maxPoints then
+                maxPoints = pointsSpent
+                cache[guid].specName = name
+                cache[guid].specIcon = texture
+            end
+        end
+    end
 
---     --! fire
---     lib.callbacks:Fire(UPDATE_EVENT, guid, unit, cache[guid])
--- end
+    --! fire
+    lib.callbacks:Fire(UPDATE_EVENT, guid, unit, cache[guid])
+end
 
 local function Query(unit)
     -- if InCombatLockdown() then return end
@@ -244,11 +259,11 @@ local function Query(unit)
 
     if IsInGroup() and not (UnitInParty(unit) or UnitInRaid(unit)) then return end
     
-    -- if IS_RETAIL then
+    if IS_RETAIL then
         BuildAndNotify(unit)
-    -- elseif IS_WRATH then
-    --     BuildAndNotify_Wrath(unit)
-    -- end
+    else
+        BuildAndNotify_Wrath(unit)
+    end
 end
 
 ---------------------------------------------------------------------
@@ -256,14 +271,16 @@ end
 ---------------------------------------------------------------------
 function frame:PLAYER_LOGIN()
     PLAYER_GUID = UnitGUID("player")
-    cache[PLAYER_GUID] = {}
     
-    -- if IS_RETAIL then
+    if IS_RETAIL then
+        cache[PLAYER_GUID] = {}
         CacheSpecData()
         frame:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
-    -- elseif IS_WRATH then
-    --     frame:RegisterEvent("UNIT_AURA")
-    -- end
+    else
+        cache[PLAYER_GUID] = {["talents"]={}}
+        -- frame:RegisterEvent("UNIT_AURA")
+        -- FIXME: update talents of group members
+    end
 
     frame:RegisterEvent("PLAYER_ENTERING_WORLD")
     frame:RegisterEvent("PLAYER_REGEN_ENABLED")
@@ -330,11 +347,17 @@ frame:SetScript("OnUpdate", function(self, elapsed)
 end)
 
 local function AddToQueue(unit, guid)
-    -- if IS_WRATH then
-    --     if not UnitInRange(unit) then return end
-    -- end
-    
-    if not CanInspect(unit) then return end
+    if IS_WRATH then
+        if not UnitIsConnected(unit) or not CheckInteractDistance(unit, 1) or not CanInspect(unit) then
+            UpdateBaseInfo(unit, guid)
+            return
+        end
+    else
+        if not UnitIsConnected(unit) or not CanInspect(unit) then
+            UpdateBaseInfo(unit, guid)
+            return
+        end
+    end
     
     Print("|cffffff33LGI:|r", "AddToQueue", guid, unit)
     queue[guid] = {
@@ -372,7 +395,7 @@ function frame:GROUP_ROSTER_UPDATE()
         for i = 1, GetNumGroupMembers() do
             local unit = "raid"..i
             local guid = UnitGUID(unit)
-            if not (UnitIsUnit(unit, "player") or cache[guid] or queue[guid]) and UnitIsConnected(unit) then
+            if not (UnitIsUnit(unit, "player") or cache[guid] or queue[guid]) then
                 AddToQueue(unit, guid)
             end
         end
@@ -383,7 +406,7 @@ function frame:GROUP_ROSTER_UPDATE()
         for i = 1, GetNumGroupMembers()-1 do
             local unit = "party"..i
             local guid = UnitGUID(unit)
-            if not (cache[guid] or queue[guid]) and UnitIsConnected(unit) then
+            if not (cache[guid] or queue[guid]) then
                 AddToQueue(unit, guid)
             end
         end
@@ -429,6 +452,9 @@ function frame:UNIT_LEVEL(unit)
         cache[guid].level = UnitLevel(unit)
     end
 end
+
+-- function frame:UNIT_AURA(unit)
+-- end
 
 ---------------------------------------------------------------------
 -- combat check
