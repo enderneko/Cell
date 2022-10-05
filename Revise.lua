@@ -1301,41 +1301,60 @@ function F:Revise()
         Cell.vars.bigDebuffs = F:ConvertTable(CellDB["bigDebuffs"])
     end
 
-    -- r114-release
-    if CellDB["revise"] and dbRevision < 114 then
-        -- Consumables
-        local index = Cell.defaults.indicatorIndices.consumables
+    -- r117-release (merge r114 r115)
+    if CellDB["revise"] and dbRevision < 117 then
+        local shieldBarIndex = Cell.defaults.indicatorIndices.shieldBar
+        local consumablesIndex = Cell.defaults.indicatorIndices.consumables
+        local dispelsIndex = Cell.defaults.indicatorIndices.dispels
+
         for _, layout in pairs(CellDB["layouts"]) do
-            if not layout["indicators"][index] or layout["indicators"][index]["indicatorName"] ~= "consumables" then
-                tinsert(layout["indicators"], index, {
+            -- add ShieldBar back (r117)
+            if layout["indicators"][shieldBarIndex]["indicatorName"] ~= "shieldBar" then
+                tinsert(layout["indicators"], shieldBarIndex, {
+                    ["name"] = "Shield Bar",
+                    ["indicatorName"] = "shieldBar",
+                    ["type"] = "built-in",
+                    ["enabled"] = false,
+                    ["position"] = {"BOTTOMLEFT", "BOTTOMLEFT", 0, 0},
+                    ["frameLevel"] = 2,
+                    ["height"] = 4,
+                    ["color"] = {1, 1, 0, 1},
+                })
+            end
+            
+            -- add Consumables (r114)
+            if not layout["indicators"][consumablesIndex] or layout["indicators"][consumablesIndex]["indicatorName"] ~= "consumables" then
+                tinsert(layout["indicators"], consumablesIndex, {
                     ["name"] = "Consumables",
                     ["indicatorName"] = "consumables",
                     ["type"] = "built-in",
                     ["enabled"] = true,
+                    ["speed"] = 1,
                 })
             end
-        end
-    end
-    
-    -- r115-release
-    if CellDB["revise"] and dbRevision < 115 then
-        local consumablesIndex = Cell.defaults.indicatorIndices.consumables
-        local dispelsIndex = Cell.defaults.indicatorIndices.dispels
-        for _, layout in pairs(CellDB["layouts"]) do
-            -- add speed to Consumables
+            
+            -- add speed to Consumables (r115)
             if not layout["indicators"][consumablesIndex]["speed"] then
                 layout["indicators"][consumablesIndex]["speed"] = 1
             end
-            -- add highlightType to Dispels
+            
+            -- add highlightType to Dispels (r115)
             if not layout["indicators"][dispelsIndex]["highlightType"] then
                 layout["indicators"][dispelsIndex]["highlightType"] = "gradient"
             end
-            -- add showDispelTypeIcons to Dispels
+            
+            -- add showDispelTypeIcons to Dispels (r115)
             if type(layout["indicators"][dispelsIndex]["showDispelTypeIcons"]) ~= "boolean" then
                 layout["indicators"][dispelsIndex]["showDispelTypeIcons"] = true
             end
+
+            -- enable shield in WotLK
+            if Cell.isWrath then
+                CellDB["appearance"]["shield"] = true
+                CellDB["appearance"]["overshield"] = true
+            end
         end
     end
-    
+
     CellDB["revise"] = Cell.version
 end

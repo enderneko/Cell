@@ -2,7 +2,7 @@
 -- File: UnitButton_Wrath.lua
 -- Author: enderneko (enderneko-dev@outlook.com)
 -- File Created: 2022/08/20 19:44:26 +0800
--- Last Modified: 2022/10/05 00:15:07 +0800
+-- Last Modified: 2022/10/07 01:53:29 +0800
 --]]
 
 local _, Cell = ...
@@ -50,7 +50,7 @@ local UnitDebuff = UnitDebuff
 local IsInRaid = IsInRaid
 local UnitDetailedThreatSituation = UnitDetailedThreatSituation
 
-local barAnimationType, highlightEnabled, predictionEnabled
+local barAnimationType, highlightEnabled, predictionEnabled, shieldEnabled, overshieldEnabled
 
 -------------------------------------------------
 -- unit button func declarations
@@ -1647,6 +1647,124 @@ UnitButton_UpdateHealthColor = function(self)
     self.widget.incomingHeal:SetVertexColor(barR, barG, barB)
 end
 
+-------------------------------------------------
+-- LibHealComm
+-------------------------------------------------
+Cell.HealComm = {}
+local function UpdateHotsPrediction(_, event, casterGUID, spellID, healType, endTime, ...)
+    -- print(event, casterGUID, spellID, healType, endTime, ...)
+    if healType == HealComm.HOT_HEALS then
+        -- update incomingHeal
+        for i = 1, select("#", ...) do
+            local b = F:GetUnitButtonByGUID(select(i, ...))
+            if b then
+                UnitButton_UpdateHealPrediction(b)
+            end
+        end
+    end
+end
+Cell.HealComm.UpdateHotsPrediction = UpdateHotsPrediction
+HealComm.RegisterCallback(Cell.HealComm, "HealComm_HealStarted", "UpdateHotsPrediction")
+HealComm.RegisterCallback(Cell.HealComm, "HealComm_HealUpdated", "UpdateHotsPrediction")
+HealComm.RegisterCallback(Cell.HealComm, "HealComm_HealStopped", "UpdateHotsPrediction")
+
+-------------------------------------------------
+-- guess shield amount from Glyph of Power Word: Shield
+-------------------------------------------------
+local pwsInfo = {} -- Power Word: Shield
+local daInfo = {} -- Divine Aegis
+
+local function UnitButton_UpdateShieldAbsorbs(self)
+    local guid = self.state.guid
+    if not guid then return end
+    
+    local value = (pwsInfo[guid] or 0) + (daInfo[guid] or 0)
+    if value > 0 then
+        UpdateUnitHealthState(self)
+        local shieldPercent = value / self.state.healthMax
+
+        if enabledIndicators["shieldBar"] then
+            self.indicators.shieldBar:Show()
+            self.indicators.shieldBar:SetValue(shieldPercent)
+        else
+            self.indicators.shieldBar:Hide()
+        end
+        
+        self.widget.shieldBar:SetValue(shieldPercent)
+    else
+        self.indicators.shieldBar:Hide()
+        self.widget.shieldBar:Hide()
+        self.widget.overShieldGlow:Hide()
+    end
+end
+
+local function UpdateShield(guid)
+    local b = F:GetUnitButtonByGUID(guid)
+    if b then
+        UnitButton_UpdateShieldAbsorbs(b)
+    end
+end
+
+local pws = {
+    [17] = true, -- rank 1
+	[592] = true, -- rank 2
+	[600] = true, -- rank 3
+	[3747] = true, -- rank 4
+	[6056] = true, -- rank 5
+	[6066] = true, -- rank 6
+	[10898] = true, -- rank 7
+	[10899] = true, -- rank 8
+	[10900] = true, -- rank 9
+	[10901] = true, -- rank 10
+	[25217] = true, -- rank 11
+	[25218] = true, -- rank 12
+	[48065] = true, -- rank 13
+	[48066] = true, -- rank 14
+}
+
+local cleu = CreateFrame("Frame")
+cleu:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
+cleu:SetScript("OnEvent", function()
+    local _, subEvent, _, sourceGUID, sourceName, sourceFlags, sourceRaidFlags, destGUID, destName, destFlags, destRaidFlags, arg12, arg13, arg14, arg15, arg16, arg17, arg18, arg19, arg20, arg21, arg22 = CombatLogGetCurrentEventInfo()
+    
+    if subEvent == "SPELL_HEAL" then
+        -- spellId, spellName, spellSchool, amount, overhealing, absorbed, critical
+        if arg12 == 56160 then -- Glyph of Power Word: Shield
+            pwsInfo[destGUID] = arg15 / 0.2
+            UpdateShield(destGUID)
+        end
+        -- Divine Aegis NOTE: mine only
+        if Cell.vars.divineAegisMultiplier and arg18 then -- arg18: critical
+            daInfo[destGUID] = arg15 * Cell.vars.divineAegisMultiplier
+            UpdateShield(destGUID)
+        end
+    
+    elseif subEvent == "SPELL_ABSORBED" then
+        -- [spellID, spellName, spellSchool], casterGUID, casterName, casterFlags, casterRaidFlags, absorbSpellId, absorbSpellName, absorbSpellSchool, amount, critical
+        local absorbSpellId, absorbAmount
+        if arg21 then -- spell
+            absorbSpellId, absorbAmount = arg19, arg22
+        else -- swing
+            absorbSpellId, absorbAmount = arg16, arg19
+        end
+        -- update shields left
+        if pws[absorbSpellId] then
+            pwsInfo[destGUID] = (pwsInfo[destGUID] or 0) - absorbAmount
+        elseif absorbSpellId == 47753 then
+            daInfo[destGUID] = (daInfo[destGUID] or 0) - absorbAmount
+        end
+        UpdateShield(destGUID)
+    
+    elseif subEvent == "SPELL_AURA_REMOVED" then
+        if pws[arg12] then
+            pwsInfo[destGUID] = nil
+        elseif arg12 == 47753 then
+            daInfo[destGUID] = nil
+        end
+        UpdateShield(destGUID)
+    end
+end)
+
 UnitButton_UpdateAll = function(self)
     if not self:IsVisible() then return end
 
@@ -1661,6 +1779,7 @@ UnitButton_UpdateAll = function(self)
     UnitButton_UpdateTarget(self)
     UnitButton_UpdatePlayerRaidIcon(self)
     UnitButton_UpdateTargetRaidIcon(self)
+    UnitButton_UpdateShieldAbsorbs(self)
     UnitButton_UpdateInRange(self)
     UnitButton_UpdateRole(self)
     UnitButton_UpdateLeader(self)
@@ -1776,10 +1895,12 @@ local function UnitButton_OnEvent(self, event, unit)
             UnitButton_UpdateHealthMax(self)
             UnitButton_UpdateHealth(self)
             UnitButton_UpdateHealPrediction(self)
+            UnitButton_UpdateShieldAbsorbs(self)
             
         elseif event == "UNIT_HEALTH" or event == "UNIT_HEALTH_FREQUENT" then
             UnitButton_UpdateHealth(self)
             UnitButton_UpdateHealPrediction(self)
+            UnitButton_UpdateShieldAbsorbs(self)
             -- UnitButton_UpdateStatusText(self)
     
         elseif event == "UNIT_HEAL_PREDICTION" then
@@ -1901,39 +2022,12 @@ local function UnitButton_OnAttributeChanged(self, name, value)
             if buffs_cache_count_castByMe[self.state.unit] then wipe(buffs_cache_count_castByMe[self.state.unit]) end
             if buffs_current[self.state.unit] then wipe(buffs_current[self.state.unit]) end
             if buffs_current_castByMe[self.state.unit] then wipe(buffs_current_castByMe[self.state.unit]) end
+            -- reset shields
+            pwsInfo[self.state.unit] = nil
+            daInfo[self.state.unit] = nil
         end
     end
 end
-
--- LibHealComm
-Cell.HealComm = {}
-local function UpdateHotsPrediction(_, event, casterGUID, spellID, healType, endTime, ...)
-    -- print(event, casterGUID, spellID, healType, endTime, ...)
-    if healType == HealComm.HOT_HEALS then
-        -- update incomingHeal
-        for i = 1, select("#", ...) do
-            local b = F:GetUnitButtonByGUID(select(i, ...))
-            if b then
-                UnitButton_UpdateHealPrediction(b)
-            end
-        end
-    end
-end
-Cell.HealComm.UpdateHotsPrediction = UpdateHotsPrediction
-HealComm.RegisterCallback(Cell.HealComm, "HealComm_HealStarted", "UpdateHotsPrediction")
-HealComm.RegisterCallback(Cell.HealComm, "HealComm_HealUpdated", "UpdateHotsPrediction")
-HealComm.RegisterCallback(Cell.HealComm, "HealComm_HealStopped", "UpdateHotsPrediction")
-
--- update shield amount
--- local cleu = CreateFrame("Frame")
--- cleu:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
--- cleu:SetScript("OnEvent", function()
---     local _, subEvent, _, sourceGUID, sourceName, sourceFlags, sourceRaidFlags, destGUID, destName, destFlags, destRaidFlags, spellId, spellName, spellSchool, auraType, amount = CombatLogGetCurrentEventInfo()
---     if subEvent == "SPELL_AURA_APPLIED" then
---         print(spellId, spellName, spellSchool, auraType, amount)
---     end
--- end)
-
 
 -------------------------------------------------
 -- unit button show/hide/enter/leave
@@ -1986,8 +2080,11 @@ local function UnitButton_OnHide(self)
         if buffs_cache_count_castByMe[self.state.unit] then wipe(buffs_cache_count_castByMe[self.state.unit]) end
         if buffs_current[self.state.unit] then wipe(buffs_current[self.state.unit]) end
         if buffs_current_castByMe[self.state.unit] then wipe(buffs_current_castByMe[self.state.unit]) end
-
+        -- reset shields
+        pwsInfo[self.state.unit] = nil
+        daInfo[self.state.unit] = nil
     end
+    
     -- NOTE: update Cell.vars.guids
     -- print("hide", self.state.unit, self.__unitGuid, self.__unitName)
     if self.__unitGuid then
@@ -2168,9 +2265,35 @@ function F:UnitButton_OnLoad(button)
     incomingHeal:Hide()
     incomingHeal.SetValue = DumbFunc
 
+    -- shield bar
+    local shieldBar = healthBar:CreateTexture(name.."ShieldBar", "ARTWORK", nil, -7)
+    button.widget.shieldBar = shieldBar
+    -- P:Point(shieldBar, "TOPLEFT", healthBar:GetStatusBarTexture(), "TOPRIGHT")
+    -- P:Point(shieldBar, "BOTTOMLEFT", healthBar:GetStatusBarTexture(), "BOTTOMRIGHT")
+    shieldBar:SetTexture("Interface\\AddOns\\Cell\\Media\\shield.tga", "REPEAT", "REPEAT")
+    shieldBar:SetHorizTile(true)
+    shieldBar:SetVertTile(true)
+    shieldBar:SetVertexColor(1, 1, 1, 0.4)
+    shieldBar:Hide()
+    shieldBar.SetValue = DumbFunc
+
+    -- over-shield glow
+    local overShieldGlow = healthBar:CreateTexture(name.."OverShieldGlow", "ARTWORK", nil, -5)
+    button.widget.overShieldGlow = overShieldGlow
+    overShieldGlow:SetTexture("Interface\\RaidFrame\\Shield-Overshield")
+    overShieldGlow:SetBlendMode("ADD")
+    -- P:Point(overShieldGlow, "BOTTOMLEFT", healthBar, "BOTTOMRIGHT", -4, 0)
+    -- P:Point(overShieldGlow, "TOPLEFT", healthBar, "TOPRIGHT", -4, 0)
+    -- overShieldGlow:SetWidth(8)
+    overShieldGlow:Hide()
+
     button.func.UpdateShields = function()
         predictionEnabled = CellDB["appearance"]["healPrediction"]
+        shieldEnabled = CellDB["appearance"]["shield"]
+        overshieldEnabled = CellDB["appearance"]["overshield"]
+
         UnitButton_UpdateHealPrediction(button)
+        UnitButton_UpdateShieldAbsorbs(button)
     end
 
     -- bar animation
@@ -2295,6 +2418,47 @@ function F:UnitButton_OnLoad(button)
                     incomingHeal:Show()
                 end
             end
+
+            -- update shieldBar
+            P:ClearPoints(shieldBar)
+            P:Point(shieldBar, "TOPLEFT", healthBar:GetStatusBarTexture(), "TOPRIGHT")
+            P:Point(shieldBar, "BOTTOMLEFT", healthBar:GetStatusBarTexture(), "BOTTOMRIGHT")
+            function shieldBar:SetValue(shieldPercent)
+                local barWidth = healthBar:GetWidth()
+                if shieldPercent + button.state.healthPercent > 1 then -- overshield
+                    local p = 1 - button.state.healthPercent
+                    if p ~= 0 then
+                        if shieldEnabled then
+                            shieldBar:SetWidth(p * barWidth)
+                            shieldBar:Show()
+                        else
+                            shieldBar:Hide()
+                        end
+                    else
+                        shieldBar:Hide()
+                    end
+                    if overshieldEnabled then
+                        overShieldGlow:Show()
+                    else
+                        overShieldGlow:Hide()
+                    end
+                else
+                    if shieldEnabled then
+                        shieldBar:SetWidth(shieldPercent * barWidth)
+                        shieldBar:Show()
+                    else
+                        shieldBar:Hide()
+                    end
+                    overShieldGlow:Hide()
+                end
+            end
+            
+            -- update overShieldGlow
+            P:ClearPoints(overShieldGlow)
+            P:Point(overShieldGlow, "BOTTOMLEFT", healthBar, "BOTTOMRIGHT", -4, 0)
+            P:Point(overShieldGlow, "TOPLEFT", healthBar, "TOPRIGHT", -4, 0)
+            P:Width(overShieldGlow, 8)
+            F:RotateTexture(overShieldGlow, 0)
             
             -- update damageFlashTex
             P:ClearPoints(damageFlashTex)
@@ -2340,6 +2504,47 @@ function F:UnitButton_OnLoad(button)
                     incomingHeal:Show()
                 end
             end
+
+            -- update shieldBar
+            P:ClearPoints(shieldBar)
+            P:Point(shieldBar, "BOTTOMLEFT", healthBar:GetStatusBarTexture(), "TOPLEFT")
+            P:Point(shieldBar, "BOTTOMRIGHT", healthBar:GetStatusBarTexture(), "TOPRIGHT")
+            function shieldBar:SetValue(shieldPercent)
+                local barHeight = healthBar:GetHeight()
+                if shieldPercent + button.state.healthPercent > 1 then -- overshield
+                    local p = 1 - button.state.healthPercent
+                    if p ~= 0 then
+                        if shieldEnabled then
+                            shieldBar:SetHeight(p * barHeight)
+                            shieldBar:Show()
+                        else
+                            shieldBar:Hide()
+                        end
+                    else
+                        shieldBar:Hide()
+                    end
+                    if overshieldEnabled then
+                        overShieldGlow:Show()
+                    else
+                        overShieldGlow:Hide()
+                    end
+                else
+                    if shieldEnabled then
+                        shieldBar:SetHeight(shieldPercent * barHeight)
+                        shieldBar:Show()
+                    else
+                        shieldBar:Hide()
+                    end
+                    overShieldGlow:Hide()
+                end
+            end
+            
+            -- update overShieldGlow
+            P:ClearPoints(overShieldGlow)
+            P:Point(overShieldGlow, "BOTTOMLEFT", healthBar, "TOPLEFT", 0, -4)
+            P:Point(overShieldGlow, "BOTTOMRIGHT", healthBar, "TOPRIGHT", 0, -4)
+            P:Height(overShieldGlow, 8)
+            F:RotateTexture(overShieldGlow, 90)
             
             -- update damageFlashTex
             P:ClearPoints(damageFlashTex)
@@ -2482,6 +2687,11 @@ function F:UnitButton_OnLoad(button)
         UnitButton_UpdateStatusText(button)
     end
 
+    -- shields
+    button.func.UpdateShield = function()
+        UnitButton_UpdateShieldAbsorbs(button)
+    end
+
     -- pixel perfect
     button.func.UpdatePixelPerfect = function(updateIndicators)
         button:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8x8", edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = P:Scale(1)})
@@ -2497,6 +2707,8 @@ function F:UnitButton_OnLoad(button)
         P:Resize(gapTexture)
 
         P:Repoint(incomingHeal)
+        P:Repoint(shieldBar)
+        P:Repoint(overShieldGlow)
         P:Repoint(damageFlashTex)
         
         button.func.UpdateHighlightSize()
@@ -2529,6 +2741,7 @@ function F:UnitButton_OnLoad(button)
     I:CreateAggroBorder(button)
     I:CreatePlayerRaidIcon(button)
     I:CreateTargetRaidIcon(button)
+    I:CreateShieldBar(button)
     I:CreateAoEHealing(button)
     I:CreateDefensiveCooldowns(button)
     I:CreateExternalCooldowns(button)

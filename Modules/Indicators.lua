@@ -248,7 +248,7 @@ local function InitIndicator(indicatorName)
         end)
 
     elseif indicatorName == "shieldBar" then
-        indicator:SetValue(.5)
+        indicator:SetValue(0.5)
 
     elseif indicatorName == "tankActiveMitigation" then
         indicator.value = 0
@@ -1275,6 +1275,7 @@ elseif Cell.isWrath then
         ["aggroBlink"] = {"enabled", "position", "frameLevel", "size"},
         ["aggroBorder"] = {"enabled", "frameLevel", "thickness"},
         ["aggroBar"] = {"enabled", "position", "frameLevel", "size-bar"},
+        ["shieldBar"] = {"enabled", "color-alpha", "position", "frameLevel", "height"},
         ["aoeHealing"] = {"enabled", "color", "height"},
         ["externalCooldowns"] = {"enabled", "customExternals", "checkbutton2:showDuration:"..L["Show duration text instead of icon animation"], "num:5", "orientation", "position", "frameLevel", "size", "font"},
         ["defensiveCooldowns"] = {"enabled", "customDefensives", "checkbutton2:showDuration:"..L["Show duration text instead of icon animation"], "num:5", "orientation", "position", "frameLevel", "size", "font"},

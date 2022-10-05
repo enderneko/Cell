@@ -28,8 +28,8 @@ Cell.defaults.appearance = {
     ["outOfRangeAlpha"] = 0.45,
     ["healPrediction"] = true,
     ["healAbsorb"] = Cell.isRetail,
-    ["shield"] = Cell.isRetail,
-    ["overshield"] = Cell.isRetail,
+    ["shield"] = true,
+    ["overshield"] = true,
 }
 
 local buttonStyleIndices = {

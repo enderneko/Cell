@@ -14,4 +14,5 @@
     <Include file="LibDeflate\lib.xml"/>
     <Script file="LibRangeCheck-2.0\LibRangeCheck-2.0.lua"/>
     <Include file="LibHealComm-4.0\LibHealComm-4.0.xml"/>
+    <Script file="LibGroupInfo.lua"/>
 </Ui>

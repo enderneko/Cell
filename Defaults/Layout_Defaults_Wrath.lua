@@ -2,7 +2,7 @@
 -- File: Layout_Defaults_Wrath.lua
 -- Author: enderneko (enderneko-dev@outlook.com)
 -- File Created: 2022/08/21 04:06:04 +0800
--- Last Modified: 2022/10/02 06:13:02 +0800
+-- Last Modified: 2022/10/06 03:13:38 +0800
 --]]
 
 local addonName, Cell = ...
@@ -23,16 +23,17 @@ Cell.defaults.indicatorIndices = {
     ["aggroBlink"] = 10,
     ["aggroBar"] = 11,
     ["aggroBorder"] = 12,
-    ["aoeHealing"] = 13,
-    ["externalCooldowns"] = 14,
-    ["defensiveCooldowns"] = 15,
-    ["allCooldowns"] = 16,
-    ["dispels"] = 17,
-    ["debuffs"] = 18,
-    ["raidDebuffs"] = 19,
-    ["targetedSpells"] = 20,
-    ["targetCounter"] = 21,
-    ["consumables"] = 22,
+    ["shieldBar"] = 13,
+    ["aoeHealing"] = 14,
+    ["externalCooldowns"] = 15,
+    ["defensiveCooldowns"] = 16,
+    ["allCooldowns"] = 17,
+    ["dispels"] = 18,
+    ["debuffs"] = 19,
+    ["raidDebuffs"] = 20,
+    ["targetedSpells"] = 21,
+    ["targetCounter"] = 22,
+    ["consumables"] = 23,
 }
 
 Cell.defaults.layout = {
@@ -191,13 +192,23 @@ Cell.defaults.layout = {
             ["thickness"] = 3,
         }, -- 12
         {
+            ["name"] = "Shield Bar",
+            ["indicatorName"] = "shieldBar",
+            ["type"] = "built-in",
+            ["enabled"] = false,
+            ["position"] = {"BOTTOMLEFT", "BOTTOMLEFT", 0, 0},
+            ["frameLevel"] = 2,
+            ["height"] = 4,
+            ["color"] = {1, 1, 0, 1},
+        }, -- 13
+        {
             ["name"] = "AoE Healing",
             ["indicatorName"] = "aoeHealing",
             ["type"] = "built-in",
             ["enabled"] = true,
             ["height"] = 15,
             ["color"] = {1, 1, 0},
-        }, -- 13
+        }, -- 14
         {
             ["name"] = "External Cooldowns",
             ["indicatorName"] = "externalCooldowns",
@@ -210,7 +221,7 @@ Cell.defaults.layout = {
             ["num"] = 2,
             ["orientation"] = "right-to-left",
             ["font"] = {"Cell ".._G.DEFAULT, 11, "Outline", 2, 1},
-        }, -- 14
+        }, -- 15
         {
             ["name"] = "Defensive Cooldowns",
             ["indicatorName"] = "defensiveCooldowns",
@@ -223,7 +234,7 @@ Cell.defaults.layout = {
             ["num"] = 2,
             ["orientation"] = "left-to-right",
             ["font"] = {"Cell ".._G.DEFAULT, 11, "Outline", 2, 1},
-        }, -- 15
+        }, -- 16
         {
             ["name"] = "Externals + Defensives",
             ["indicatorName"] = "allCooldowns",
@@ -236,7 +247,7 @@ Cell.defaults.layout = {
             ["num"] = 2,
             ["orientation"] = "left-to-right",
             ["font"] = {"Cell ".._G.DEFAULT, 11, "Outline", 2, 1},
-        }, -- 16
+        }, -- 17
         {
             ["name"] = "Dispels",
             ["indicatorName"] = "dispels",
@@ -248,7 +259,7 @@ Cell.defaults.layout = {
             ["dispellableByMe"] = true,
             ["highlightType"] = "gradient",
             ["showDispelTypeIcons"] = true,
-        }, -- 17
+        }, -- 18
         {
             ["name"] = "Debuffs",
             ["indicatorName"] = "debuffs",
@@ -263,7 +274,7 @@ Cell.defaults.layout = {
             ["font"] = {"Cell ".._G.DEFAULT, 11, "Outline", 2, 1},
             ["dispellableByMe"] = false,
             ["orientation"] = "left-to-right",
-        }, -- 18
+        }, -- 19
         {
             ["name"] = "Raid Debuffs",
             ["indicatorName"] = "raidDebuffs",
@@ -280,7 +291,7 @@ Cell.defaults.layout = {
             ["onlyShowTopGlow"] = true,
             ["orientation"] = "left-to-right",
             ["showTooltip"] = false,
-        }, -- 19
+        }, -- 20
         {
             ["name"] = "Targeted Spells",
             ["indicatorName"] = "targetedSpells",
@@ -292,7 +303,7 @@ Cell.defaults.layout = {
             ["border"] = 2,
             -- ["glow"] = {"Pixel", {0.95,0.95,0.32,1}, 9, 0.25, 8, 2},
             ["font"] = {"Cell ".._G.DEFAULT, 12, "Outline", 2, 1},
-        }, -- 20
+        }, -- 21
         {
             ["name"] = "Target Counter",
             ["indicatorName"] = "targetCounter",
@@ -302,13 +313,13 @@ Cell.defaults.layout = {
             ["frameLevel"] = 15,
             ["font"] = {"Cell ".._G.DEFAULT, 15, "Outline"},
             ["color"] = {1, 0.1, 0.1},
-        }, -- 21
+        }, -- 22
         {
             ["name"] = "Consumables",
             ["indicatorName"] = "consumables",
             ["type"] = "built-in",
             ["enabled"] = true,
             ["speed"] = 1,
-        }, -- 22
+        }, -- 23
     },
 }

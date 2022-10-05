@@ -338,18 +338,18 @@ local function UpdatePreviewShields()
         else
             previewButton2.widget.absorbsBar:Hide()
         end
+    end
 
-        if CellDB["appearance"]["shield"] then
-            previewButton2.widget.shieldBar:SetValue(0.4)
-        else
-            previewButton2.widget.shieldBar:Hide()
-        end
+    if CellDB["appearance"]["shield"] then
+        previewButton2.widget.shieldBar:SetValue(0.4)
+    else
+        previewButton2.widget.shieldBar:Hide()
+    end
 
-        if CellDB["appearance"]["overshield"] then
-            previewButton2.widget.overShieldGlow:Show()
-        else
-            previewButton2.widget.overShieldGlow:Hide()
-        end
+    if CellDB["appearance"]["overshield"] then
+        previewButton2.widget.overShieldGlow:Show()
+    else
+        previewButton2.widget.overShieldGlow:Hide()
     end
 end
 
@@ -1010,7 +1010,6 @@ local function CreateUnitButtonStylePane()
         Cell:Fire("UpdateAppearance", "shields")
     end)
     shieldCB:SetPoint("TOPLEFT", absorbCB, "BOTTOMLEFT", 0, -7)
-    shieldCB:SetEnabled(Cell.isRetail)
     
     -- overshield
     oversCB = Cell:CreateCheckButton(unitButtonPane, L["Overshield Texture"], function(checked, self)
@@ -1018,7 +1017,6 @@ local function CreateUnitButtonStylePane()
         Cell:Fire("UpdateAppearance", "shields")
     end)
     oversCB:SetPoint("TOPLEFT", shieldCB, "BOTTOMLEFT", 0, -7)
-    oversCB:SetEnabled(Cell.isRetail)
     
     -- reset
     resetBtn = Cell:CreateButton(unitButtonPane, L["Reset All"], "accent", {77, 17}, nil, nil, nil, nil, nil, L["Reset All"], L["[Ctrl+LeftClick] to reset these settings"])

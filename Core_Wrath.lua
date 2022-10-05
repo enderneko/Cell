@@ -22,7 +22,7 @@ Cell.MIN_DEBUFFS_VERSION = 99
 CELL_IMPORT_EXPORT_PREFIX = "CELL_WRATH"
 
 --@debug@
-local debugMode = true
+-- local debugMode = true
 --@end-debug@
 function F:Debug(arg, ...)
     if debugMode then
@@ -559,14 +559,30 @@ function eventFrame:PLAYER_ENTERING_WORLD()
     end
 end
 
+local function CheckDivineAegis()
+    if Cell.vars.playerClass == "PRIEST" then
+        local rank = select(5, GetTalentInfo(1, 22))
+        if rank == 1 then
+            Cell.vars.divineAegisMultiplier = 0.1
+        elseif rank == 2 then
+            Cell.vars.divineAegisMultiplier = 0.2
+        elseif rank == 3 then
+            Cell.vars.divineAegisMultiplier = 0.3
+        end
+    end
+end
+
 function eventFrame:PLAYER_LOGIN()
     F:Debug("PLAYER_LOGIN")
     eventFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
     eventFrame:RegisterEvent("GROUP_ROSTER_UPDATE")
     eventFrame:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
+    eventFrame:RegisterEvent("PLAYER_TALENT_UPDATE")
 
     Cell.vars.playerNameShort = GetUnitName("player")
     Cell.vars.playerNameFull = F:UnitFullName("player")
+
+    CheckDivineAegis()
 
     --! init bgMaxPlayers
     for i = 1, GetNumBattlegroundTypes() do
@@ -621,7 +637,14 @@ function eventFrame:ACTIVE_TALENT_GROUP_CHANGED()
         Cell:Fire("UpdateClickCastings")
         F:Debug("|cffffbb77ActiveTalentGroupChanged:|r", Cell.vars.activeTalentGroup)
         Cell:Fire("ActiveTalentGroupChanged", Cell.vars.activeTalentGroup)
+
+        CheckDivineAegis()
     end
+end
+
+-- check Divine Aegis
+function eventFrame:PLAYER_TALENT_UPDATE()
+    CheckDivineAegis()
 end
 
 eventFrame:SetScript("OnEvent", function(self, event, ...)
