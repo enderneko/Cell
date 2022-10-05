@@ -630,9 +630,10 @@ local function UnitButton_UpdateDebuffs(self)
         if duration then
             if Cell.vars.iconAnimation == "duration" then
                 -- print(name, expirationTime-duration+.1>=GetTime()) -- NOTE: startTime ≈ now
-                justApplied = abs(expirationTime-GetTime()-duration) <= 0.1
+                -- justApplied = abs(expirationTime-GetTime()-duration) <= 0.1
+                justApplied = debuffs_cache[unit][spellId] and (debuffs_cache[unit][spellId] < expirationTime) or false
                 countIncreased = debuffs_cache_count[unit][spellId] and (count > debuffs_cache_count[unit][spellId]) or false
-                refreshing = debuffs_cache[unit][spellId] and (justApplied or countIncreased) or false
+                refreshing = justApplied or countIncreased
             elseif Cell.vars.iconAnimation == "stack" then
                 refreshing = debuffs_cache_count[unit][spellId] and (count > debuffs_cache_count[unit][spellId]) or false
             else
@@ -884,9 +885,10 @@ local function UnitButton_UpdateBuffs(self)
         
         if duration then
             if Cell.vars.iconAnimation == "duration" then
-                justApplied = abs(expirationTime-GetTime()-duration) <= 0.1
+                -- justApplied = abs(expirationTime-GetTime()-duration) <= 0.1
+                justApplied = buffs_cache[unit][spellId] and (buffs_cache[unit][spellId] < expirationTime) or false
                 countIncreased = buffs_cache_count[unit][spellId] and (count > buffs_cache_count[unit][spellId]) or false
-                refreshing = buffs_cache[unit][spellId] and (justApplied or countIncreased) or false
+                refreshing = justApplied or countIncreased
             elseif Cell.vars.iconAnimation == "stack" then
                 refreshing = buffs_cache_count[unit][spellId] and (count > buffs_cache_count[unit][spellId]) or false
             else
@@ -1010,9 +1012,10 @@ local function UnitButton_UpdateBuffs(self)
 
         if duration then
             if Cell.vars.iconAnimation == "duration" then
-                justApplied = abs(expirationTime-GetTime()-duration) <= 0.1
+                -- justApplied = abs(expirationTime-GetTime()-duration) <= 0.1
+                justApplied = buffs_cache_castByMe[unit][spellId] and (buffs_cache_castByMe[unit][spellId] < expirationTime) or false
                 countIncreased = buffs_cache_count_castByMe[unit][spellId] and (count > buffs_cache_count_castByMe[unit][spellId]) or false
-                refreshing = buffs_cache_castByMe[unit][spellId] and (justApplied or countIncreased) or false
+                refreshing = justApplied or countIncreased
             elseif Cell.vars.iconAnimation == "stack" then
                 refreshing = buffs_cache_count_castByMe[unit][spellId] and (count > buffs_cache_count_castByMe[unit][spellId]) or false
             else
@@ -2407,7 +2410,7 @@ function F:UnitButton_OnLoad(button)
     shieldBar:SetTexture("Interface\\AddOns\\Cell\\Media\\shield.tga", "REPEAT", "REPEAT")
     shieldBar:SetHorizTile(true)
     shieldBar:SetVertTile(true)
-    shieldBar:SetVertexColor(1, 1, 1, .4)
+    shieldBar:SetVertexColor(1, 1, 1, 0.4)
     shieldBar:Hide()
     shieldBar.SetValue = DumbFunc
 
@@ -2861,7 +2864,7 @@ function F:UnitButton_OnLoad(button)
         UnitButton_UpdateStatusText(button)
     end
 
-    -- statusText
+    -- shields
     button.func.UpdateShield = function()
         UnitButton_UpdateShieldAbsorbs(button)
     end
