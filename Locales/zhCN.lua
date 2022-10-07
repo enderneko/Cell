@@ -124,12 +124,15 @@ L["Cell will report first %d deaths during a raid encounter."] = "Cell 将会通
 L["A 0-40 integer is required."] = "需要一个0到40的整数。"
 L["instakill"] = "秒杀"
 L["Buff Tracker"] = "增益检查"
-L["Check if your group members need some raid buffs"] = "检查队伍是否需要补耐力、智力、攻强"
+L["Check if your group members need some raid buffs"] = "检查队伍成员是否需要某些团队增益"
 L["|cffffb5c5Left-Click:|r cast the spell"] = "|cffffb5c5左键：|r施放技能"
 L["|cffffb5c5Right-Click:|r report unaffected"] = "|cffffb5c5右键：|r报告缺少该增益的玩家"
 L["Unaffected"] = "未获得此增益"
 L["Missing Buff"] = "缺少增益"
 L["many"] = "很多"
+L["Use |cFFFFB5C5/cell buff X|r to set icon size"] = "用 |cFFFFB5C5/cell buff X|r 来设定图标尺寸"
+L["Buff Tracker icon size is set to %d."] = "将增益检查图标的尺寸设置为 %d。"
+L["A positive integer is required."] = "需要一个正整数。"
 
 -------------------------------------------------
 -- nickname

@@ -177,10 +177,10 @@ function eventFrame:ADDON_LOADED(arg1)
         if type(CellDB["tools"]) ~= "table" then
             CellDB["tools"] = {
                 ["showBattleRes"] = false,
-                ["buffTracker"] = {false, {}},
+                ["buffTracker"] = {false, {}, 27},
                 ["deathReport"] = {false, 10},
                 ["readyAndPull"] = {false, {"default", 7}, {}},
-                ["marks"] = {false, "both_h", {}},
+                ["marks"] = {false, "target_h", {}},
             }
         end
 
@@ -697,7 +697,7 @@ function SlashCmdList.CELL(msg, editbox)
 
     elseif command == "report" then
         rest = tonumber(rest:format("%d"))
-        if rest and rest>=0 and rest<=40 then
+        if rest and rest >= 0 and rest <= 40 then
             if rest == 0 then
                 F:Print(L["Cell will report all deaths during a raid encounter."])
             else
@@ -707,6 +707,16 @@ function SlashCmdList.CELL(msg, editbox)
             Cell:Fire("UpdateTools", "deathReport")
         else
             F:Print(L["A 0-40 integer is required."])
+        end
+   
+    elseif command == "buff" then
+        rest = tonumber(rest:format("%d"))
+        if rest and rest > 0 then
+            CellDB["tools"]["buffTracker"][3] = rest
+            F:Print(string.format(L["Buff Tracker icon size is set to %d."], rest))
+            Cell:Fire("UpdateTools", "buffTracker")
+        else
+            F:Print(L["A positive integer is required."])
         end
 
     else

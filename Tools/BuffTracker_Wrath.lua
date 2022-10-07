@@ -3,7 +3,7 @@ local L = Cell.L
 local F = Cell.funcs
 local P = Cell.pixelPerfectFuncs
 local LCG = LibStub("LibCustomGlow-1.0")
-local LGI = LibStub:GetLibrary("LibGroupInfo")
+-- local LGI = LibStub:GetLibrary("LibGroupInfo")
 
 local UnitIsConnected = UnitIsConnected
 local UnitIsVisible = UnitIsVisible
@@ -19,72 +19,78 @@ local IsInRaid = IsInRaid
 -- buffs
 -------------------------------------------------
 local buffs = {
-    ["PWF"] = {["id"]=21562, ["glowColor"]={F:GetClassColor("PRIEST")}}, -- Power Word: Fortitude
-    ["AB"] = {["id"]=1459, ["glowColor"]={F:GetClassColor("MAGE")}}, -- Arcane Brilliance
-    ["BS"] = {["id"]=6673, ["glowColor"]={F:GetClassColor("WARRIOR")}}, -- Battle Shout
+    -- 1243: Power Word: Fortitude
+    -- 21562: Prayer of Fortitude
+    ["PWF"] = {1243, 21562, glowColor = {F:GetClassColor("PRIEST")}},
+
+    -- 14752: Divine Spirit
+    -- 27681: Prayer of Spirit
+    ["DS"] = {14752, 27681, glowColor = {F:GetClassColor("PRIEST")}},
+
+    -- 976: Shadow Protection
+    -- 27683: Prayer of Shadow Protection
+    ["SP"] = {976, 27683, glowColor = {F:GetClassColor("PRIEST")}},
+
+    -- 1459: Arcane Intellect
+    -- 23028: Arcane Brilliance
+    ["AB"] = {1459, 23028, glowColor = {F:GetClassColor("MAGE")}},
+
+    -- 6673: Battle Shout
+    -- ["BS"] = {6673, glowColor = {F:GetClassColor("WARRIOR")}},
+
+    -- 469: Commanding Shout
+    -- ["CS"] = {469, glowColor = {F:GetClassColor("WARRIOR")}},
+
+    -- 1126: Mark of the Wild
+    -- 21849: Gift of the Wild
+    ["MotW"] = {1126, 21849, glowColor = {F:GetClassColor("DRUID")}},
+
+    -- 20217: Blessing of Kings
+    -- 25898: Greater Blessing of Kings
+    ["BoK"] = {20217, 25898, glowColor = {F:GetClassColor("PALADIN")}},
+
+    -- 19740: Blessing of Might
+    -- 25782: Greater Blessing of Might
+    ["BoM"] = {19740, 25782, glowColor = {F:GetClassColor("PALADIN")}},
+
+    -- 19742: Blessing of Wisdom
+    -- 25894: Greater Blessing of Wisdom
+    ["BoW"] = {19742, 25894, glowColor = {F:GetClassColor("PALADIN")}},
+
+    -- 20911: Blessing of Sanctuary
+    -- 25899: Greater Blessing of Sanctuary
+    ["BoS"] = {20911, 25899, glowColor = {F:GetClassColor("PALADIN")}},
 }
 
 do
     for _, t in pairs(buffs) do
-        local name, _, icon = GetSpellInfo(t["id"])
-        t["name"] = name
-        t["icon"] = icon
+        for i, id in ipairs(t) do
+            local name, _, icon = GetSpellInfo(id)
+            t[i] = {
+                ["id"] = id,
+                ["name"] = name,
+                ["icon"] = icon,
+            }
+        end
     end
 end
 
-local order = {"PWF", "AB", "BS"}
+local order = {"PWF", "AB", "DS", "MotW", "BoK", "BoM", "BoW", "BoS", "SP"}
 
 -------------------------------------------------
 -- required buffs
 -------------------------------------------------
 local requiredBuffs = {
-    [250] = "BS", -- Blood
-    [251] = "BS", -- Frost
-    [252] = "BS", -- Unholy
-
-    [577] = "BS", -- Havoc
-    [581] = "BS", -- Vengeance
-
-    [102] = "AB", -- Balance
-    [103] = "BS", -- Feral
-    [104] = "BS", -- Guardian
-    [105] = "AB", -- Restoration
-
-    [253] = "BS", -- Beast Mastery
-    [254] = "BS", -- Marksmanship
-    [255] = "BS", -- Survival
-
-    [62] = "AB", -- Arcane
-    [63] = "AB", -- Fire
-    [64] = "AB", -- Frost
-
-    [268] = "BS", -- Brewmaster
-    [269] = "BS", -- Windwalker
-    [270] = "AB", -- Mistweaver
-
-    [65] = "AB", -- Holy
-    [66] = "BS", -- Protection
-    [70] = "BS", -- Retribution
-
-    [256] = "AB", -- Discipline
-    [257] = "AB", -- Holy
-    [258] = "AB", -- Shadow
-
-    [259] = "BS", -- Assassination
-    [260] = "BS", -- Outlaw
-    [261] = "BS", -- Subtlety
-
-    [262] = "AB", -- Elemental
-    [263] = "BS", -- Enhancement
-    [264] = "AB", -- Restoration
-
-    [265] = "AB", -- Affliction
-    [266] = "AB", -- Demonology
-    [267] = "AB", -- Destruction
-
-    [71] = "BS", -- Arms
-    [72] = "BS", -- Fury
-    [73] = "BS", -- Protection
+    ["WARRIOR"] = {["PWF"]=true, ["MotW"]=true, ["BoK"]=true, ["BoM"]=true, ["BoS"]=true, ["SP"]=true},
+    ["PALADIN"] = {["PWF"]=true, ["AB"]=true, ["DS"]=true, ["MotW"]=true, ["BoK"]=true, ["BoM"]=true, ["BoW"]=true, ["BoS"]=true, ["SP"]=true},
+    ["HUNTER"] = {["PWF"]=true, ["MotW"]=true, ["BoK"]=true, ["BoM"]=true, ["BoS"]=true, ["SP"]=true},
+    ["ROGUE"] = {["PWF"]=true, ["MotW"]=true, ["BoK"]=true, ["BoM"]=true, ["BoS"]=true, ["SP"]=true},
+    ["PRIEST"] = {["PWF"]=true, ["AB"]=true, ["DS"]=true, ["MotW"]=true, ["BoK"]=true, ["BoW"]=true, ["BoS"]=true, ["SP"]=true},
+    ["DEATHKNIGHT"] = {["PWF"]=true, ["MotW"]=true, ["BoK"]=true, ["BoM"]=true, ["BoS"]=true, ["SP"]=true},
+    ["SHAMAN"] = {["PWF"]=true, ["AB"]=true, ["DS"]=true, ["MotW"]=true, ["BoK"]=true, ["BoM"]=true, ["BoW"]=true, ["BoS"]=true, ["SP"]=true},
+    ["MAGE"] = {["PWF"]=true, ["AB"]=true, ["MotW"]=true, ["BoK"]=true, ["BoW"]=true, ["BoS"]=true, ["SP"]=true},
+    ["WARLOCK"] = {["PWF"]=true, ["AB"]=true, ["MotW"]=true, ["BoK"]=true, ["BoW"]=true, ["BoS"]=true, ["SP"]=true},
+    ["DRUID"] = {["PWF"]=true, ["AB"]=true, ["DS"]=true, ["MotW"]=true, ["BoK"]=true, ["BoM"]=true, ["BoW"]=true, ["BoS"]=true, ["SP"]=true},
 }
 
 -------------------------------------------------
@@ -97,13 +103,29 @@ local hasBuffProvider
 local available = {
     ["PWF"] = false,
     ["AB"] = false,
+    ["DS"] = false,
+    ["MotW"] = false,
+    ["BoK"] = false,
+    ["BoM"] = false,
+    ["BoW"] = false,
+    ["BoS"] = false,
     ["BS"] = false,
+    ["CS"] = false,
+    ["SP"] = false,
 }
 
 local unaffected = {
     ["PWF"] = {},
     ["AB"] = {},
+    ["DS"] = {},
+    ["MotW"] = {},
+    ["BoK"] = {},
+    ["BoM"] = {},
+    ["BoW"] = {},
+    ["BoS"] = {},
     ["BS"] = {},
+    ["CS"] = {},
+    ["SP"] = {},
 }
 
 local function Reset(which)
@@ -123,7 +145,7 @@ end
 
 function F:GetUnaffectedString(spell)
     local list = unaffected[spell]
-    local buff = buffs[spell]["name"]
+    local buff = buffs[spell][1]["name"]
 
     local players = {}
     for unit in pairs(list) do
@@ -197,7 +219,7 @@ end
 
 do
     for _, k in ipairs(order) do
-        tinsert(fakeIcons, CreateFakeIcon(buffs[k]["icon"]))
+        tinsert(fakeIcons, CreateFakeIcon(buffs[k][1]["icon"]))
         local i = #fakeIcons
         
         if i == 1 then
@@ -238,7 +260,7 @@ local function UpdateSendChannel()
     end
 end
 
-local function CreateBuffButton(parent, size, spell, icon, index)
+local function CreateBuffButton(parent, size, spell1, spell2, icon, index)
     local b = CreateFrame("Button", nil, parent, "SecureActionButtonTemplate,BackdropTemplate")
     if parent then b:SetFrameLevel(parent:GetFrameLevel()+1) end
     P:Size(b, size[1], size[2])
@@ -248,7 +270,9 @@ local function CreateBuffButton(parent, size, spell, icon, index)
 
     b:RegisterForClicks("LeftButtonDown", "RightButtonDown")
     b:SetAttribute("type1", "spell")
-    b:SetAttribute("spell", spell)
+    b:SetAttribute("spell", spell2)
+    b:SetAttribute("shift-type1", "spell")
+    b:SetAttribute("shift-spell1", spell1)
     b:HookScript("OnClick", function(self, button, down)
         if button == "RightButton" then
             local msg = F:GetUnaffectedString(index)
@@ -346,14 +370,23 @@ local buttons = {}
 
 do
     for _, k in ipairs(order) do
-        buttons[k] = CreateBuffButton(buffTrackerFrame, {32, 32}, buffs[k]["name"], buffs[k]["icon"], k)
+        buttons[k] = CreateBuffButton(buffTrackerFrame, {32, 32}, buffs[k][1]["name"], buffs[k][2]["name"], buffs[k][2]["icon"], k)
         buttons[k]:Hide()
         buttons[k]:SetTooltips(unaffected[k])
     end
 end
 
+local paladinBuffs = {"BoK", "BoM", "BoW", "BoS"}
 local function UpdateButtons()
-    for _, k in pairs(order) do
+    -- NOTE: check paladin buffs
+    local found = 0
+    for _, k in pairs(paladinBuffs) do
+        if AuraUtil.FindAuraByName(buffs[k][1]["name"], "player", "BUFF") or AuraUtil.FindAuraByName(buffs[k][2]["name"], "player", "BUFF") then
+            found = found + 1
+        end
+    end
+
+    for _, k in ipairs(order) do
         if available[k] then
             local n = F:Getn(unaffected[k])
             if n == 0 then
@@ -364,8 +397,19 @@ local function UpdateButtons()
                 buttons[k].count:SetText(n)
                 buttons[k]:SetAlpha(1)
                 if unaffected[k][myUnit] then
-                    -- color, N, frequency, length, thickness
-                    buttons[k]:StartGlow("Pixel", buffs[k]["glowColor"], 8, 0.25, P:Scale(8), P:Scale(2))
+                    local showGlow
+                    if strfind(k, "^Bo") then
+                        showGlow = found < available[k]
+                    else
+                        showGlow = true
+                    end
+
+                    if showGlow then
+                        -- color, N, frequency, length, thickness
+                        buttons[k]:StartGlow("Pixel", buffs[k]["glowColor"], 8, 0.25, P:Scale(8), P:Scale(2))
+                    else
+                        buttons[k]:StopGlow()
+                    end
                 else
                     buttons[k]:StopGlow()
                 end
@@ -422,13 +466,10 @@ local function CheckUnit(unit, updateBtn)
     if not hasBuffProvider then return end
 
     if UnitIsConnected(unit) and UnitIsVisible(unit) and not UnitIsDeadOrGhost(unit) then
-        local info = LGI:GetCachedInfo(UnitGUID(unit))
-        local spec = info and info.specId or ""
-        local required = requiredBuffs[spec]
-
+        local required = requiredBuffs[UnitClassBase(unit)]
         for k, v in pairs(available) do
-            if v ~= false and (required == k or k == "PWF") then
-                if not F:FindAuraById(unit, "BUFF", buffs[k]["id"]) then
+            if v ~= false and required[k] then
+                if not (AuraUtil.FindAuraByName(buffs[k][1]["name"], unit, "BUFF") or AuraUtil.FindAuraByName(buffs[k][2]["name"], unit, "BUFF")) then
                     unaffected[k][unit] = true
                 else
                     unaffected[k][unit] = nil
@@ -452,14 +493,26 @@ local function IterateAllUnits()
         if UnitIsConnected(unit) and UnitIsVisible(unit) then
             if UnitClassBase(unit) == "PRIEST" then
                 available["PWF"] = true
+                available["DS"] = true
+                available["SP"] = true
                 hasBuffProvider = true
-            end
-            if UnitClassBase(unit) == "MAGE" then
+            
+            elseif UnitClassBase(unit) == "MAGE" then
                 available["AB"] = true
                 hasBuffProvider = true
-            end
-            if UnitClassBase(unit) == "WARRIOR" then
-                available["BS"] = true
+            
+            -- elseif UnitClassBase(unit) == "WARRIOR" then
+            --     available["BS"] = true
+
+            elseif UnitClassBase(unit) == "PALADIN" then
+                available["BoK"] = (available["BoK"] or 0) + 1
+                available["BoM"] = (available["BoM"] or 0) + 1
+                available["BoW"] = (available["BoW"] or 0) + 1
+                available["BoS"] = (available["BoS"] or 0) + 1
+                hasBuffProvider = true
+
+            elseif UnitClassBase(unit) == "DRUID" then
+                available["MotW"] = true
                 hasBuffProvider = true
             end
 
@@ -472,7 +525,7 @@ local function IterateAllUnits()
     AnchorButtons()
     
     Reset("unaffected")
-
+    
     for unit in F:IterateGroupMembers() do
         CheckUnit(unit)
     end
@@ -483,14 +536,13 @@ end
 -------------------------------------------------
 -- events
 -------------------------------------------------
-function buffTrackerFrame:UnitUpdated(event, guid, unit, info)
-    -- print(event, guid, unit, info.specId)
-    if unit == "player" then 
-        if UnitIsUnit("player", myUnit) then CheckUnit(myUnit, true) end
-    elseif UnitIsPlayer(unit) then -- ignore pets
-        CheckUnit(unit, true)
-    end
-end
+-- function buffTrackerFrame:UnitUpdated(event, guid, unit, info)
+--     if unit == "player" then 
+--         if UnitIsUnit("player", myUnit) then CheckUnit(myUnit, true) end
+--     elseif UnitIsPlayer(unit) then -- ignore pets
+--         CheckUnit(unit, true)
+--     end
+-- end
 
 function buffTrackerFrame:PLAYER_ENTERING_WORLD()
     buffTrackerFrame:UnregisterEvent("PLAYER_ENTERING_WORLD")
@@ -505,11 +557,15 @@ function buffTrackerFrame:GROUP_ROSTER_UPDATE(immediate)
         buffTrackerFrame:RegisterEvent("UNIT_FLAGS")
         buffTrackerFrame:RegisterEvent("PLAYER_UNGHOST")
         buffTrackerFrame:RegisterEvent("UNIT_AURA")
+        buffTrackerFrame:RegisterEvent("PARTY_MEMBER_ENABLE")
+        buffTrackerFrame:RegisterEvent("PARTY_MEMBER_DISABLE")
     else
         buffTrackerFrame:UnregisterEvent("READY_CHECK")
         buffTrackerFrame:UnregisterEvent("UNIT_FLAGS")
         buffTrackerFrame:UnregisterEvent("PLAYER_UNGHOST")
         buffTrackerFrame:UnregisterEvent("UNIT_AURA")
+        buffTrackerFrame:UnregisterEvent("PARTY_MEMBER_ENABLE")
+        buffTrackerFrame:UnregisterEvent("PARTY_MEMBER_DISABLE")
 
         Reset()
         AnchorButtons()
@@ -532,6 +588,14 @@ function buffTrackerFrame:UNIT_FLAGS()
 end
 
 function buffTrackerFrame:PLAYER_UNGHOST()
+    buffTrackerFrame:GROUP_ROSTER_UPDATE()
+end
+
+function buffTrackerFrame:PARTY_MEMBER_ENABLE()
+    buffTrackerFrame:GROUP_ROSTER_UPDATE()
+end
+
+function buffTrackerFrame:PARTY_MEMBER_DISABLE()
     buffTrackerFrame:GROUP_ROSTER_UPDATE()
 end
 
@@ -565,7 +629,7 @@ local function UpdateTools(which)
         if CellDB["tools"]["buffTracker"][1] then
             buffTrackerFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
             buffTrackerFrame:RegisterEvent("GROUP_ROSTER_UPDATE")
-            LGI.RegisterCallback(buffTrackerFrame, "GroupInfo_Update", "UnitUpdated") 
+            -- LGI.RegisterCallback(buffTrackerFrame, "GroupInfo_UpdateBase", "UnitUpdated") 
 
             if not enabled and which == "buffTracker" then -- already in world, manually enabled
                 buffTrackerFrame:GROUP_ROSTER_UPDATE(true)
@@ -576,7 +640,7 @@ local function UpdateTools(which)
             end
         else
             buffTrackerFrame:UnregisterAllEvents()
-            LGI.UnregisterCallback(buffTrackerFrame, "GroupInfo_Update")
+            -- LGI.UnregisterCallback(buffTrackerFrame, "GroupInfo_UpdateBase")
             
             Reset()
             myUnit = ""

@@ -1356,5 +1356,22 @@ function F:Revise()
         end
     end
 
+    -- r118-release
+    if CellDB["revise"] and dbRevision < 118 then
+        -- fix default value in Wrath Classic
+        if Cell.isWrath and CellDB["tools"]["marks"][2] == "both_h" then
+            CellDB["tools"]["marks"][2] = "target_h"
+        end
+
+        -- add size
+        if not CellDB["tools"]["buffTracker"][3] then
+            if Cell.isRetail then
+                CellDB["tools"]["buffTracker"][3] = 32
+            else
+                CellDB["tools"]["buffTracker"][3] = 27
+            end
+        end
+    end
+
     CellDB["revise"] = Cell.version
 end

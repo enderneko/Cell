@@ -2,10 +2,10 @@
 -- File: LibGroupInfo.lua
 -- Author: enderneko (enderneko-dev@outlook.com)
 -- File Created: 2022/07/29 15:04:31 +0800
--- Last Modified: 2022/10/06 06:32:41 +0800
+-- Last Modified: 2022/10/08 04:55:39 +0800
 --]]
 
-local MAJOR, MINOR = "LibGroupInfo", 3
+local MAJOR, MINOR = "LibGroupInfo", 4
 local lib = LibStub:NewLibrary(MAJOR, MINOR)
 if not lib then return end -- already loaded
 
@@ -13,6 +13,7 @@ lib.callbacks = LibStub("CallbackHandler-1.0"):New(lib)
 if not lib.callbacks then error(MAJOR.." requires CallbackHandler") end
 
 local UPDATE_EVENT = "GroupInfo_Update"
+local UPDATE_BASE_EVENT = "GroupInfo_UpdateBase"
 
 local PLAYER_GUID
 local RETRY_INTERVAL = 1.5
@@ -167,6 +168,9 @@ local function UpdateBaseInfo(unit, guid)
     cache[guid].gender = genders[UnitSex(unit)]
     cache[guid].faction = UnitFactionGroup(unit)
 
+    --! fire
+    lib.callbacks:Fire(UPDATE_BASE_EVENT, guid, unit, cache[guid])
+
     return guid
 end
 
@@ -279,7 +283,6 @@ function frame:PLAYER_LOGIN()
     else
         cache[PLAYER_GUID] = {["talents"]={}}
         -- frame:RegisterEvent("UNIT_AURA")
-        -- FIXME: update talents of group members
     end
 
     frame:RegisterEvent("PLAYER_ENTERING_WORLD")
@@ -428,6 +431,7 @@ end
 -- other events: update
 ---------------------------------------------------------------------
 function frame:PLAYER_SPECIALIZATION_CHANGED(unit)
+    if not UnitIsPlayer(unit) then return end
     if strfind(unit, "target") or strfind(unit, "nameplate") then return end
 
     if UnitIsUnit(unit, "player") then
@@ -446,6 +450,14 @@ function frame:UNIT_NAME_UPDATE(unit)
     frame:PLAYER_SPECIALIZATION_CHANGED(unit)
 end
 
+-- function frame:UNIT_PHASE(unit)
+--     frame:PLAYER_SPECIALIZATION_CHANGED(unit)
+-- end
+
+function frame:PARTY_MEMBER_ENABLE(unit)
+    frame:PLAYER_SPECIALIZATION_CHANGED(unit)
+end
+
 function frame:UNIT_LEVEL(unit)
     local guid = UnitGUID(unit)
     if cache[guid] then
@@ -453,7 +465,18 @@ function frame:UNIT_LEVEL(unit)
     end
 end
 
+-- local lastUpdate = {}
 -- function frame:UNIT_AURA(unit)
+--     print(unit)
+--     if InCombatLockdown() then return end
+--     if not (strfind(unit, "^party") or strfind(unit, "^raid")) then return end
+--     if not UnitIsPlayer(unit) then return end
+
+--     local guid = UnitGUID(unit)
+--     if not lastUpdate[guid] or GetTime() - lastUpdate[guid] > 600 then
+--         lastUpdate[guid] = GetTime()
+--         AddToQueue(unit, guid)
+--     end
 -- end
 
 ---------------------------------------------------------------------
