@@ -59,6 +59,11 @@ select(2, ...).L = setmetatable({
     ["SNIPPETS_TIPS"] = "[Double-Click] to rename. [Shift-Click] to delete. All checked snippets will be automatically invoked at the end of Cell initialization process (in ADDON_LOADED event).",
 
     ["CHANGELOGS"] = [[
+        <h1>r117-release (Oct 7, 2022, 10:37 GMT+8)</h1>
+        <h2>Wrath Classic</h2>
+        <p>* Updated shields: Shield Bar indicator, Shield / Overshield textures. (PWS with Glyph of PWS and Divine Aegis (from yourself) are supported.)</p>
+        <br/>
+
         <h1>r116-release (Oct 5, 2022, 00:27 GMT+8)</h1>
         <p>* Updated heal prediction in Wrath Classic (using LibHealComm-4.0).</p>
         <p>* Updated locales.</p>

@@ -1,4 +1,6 @@
-[Full Changelog](https://github.com/enderneko/Cell/compare/r115-release...00b18e5daa976fb82e9554728967fd3a25ba961f)
+[Full Changelog](https://github.com/enderneko/Cell/compare/r116-release...b160399c789f06d632b9ef821af81f3cb24421b0)
 
-- Update heal prediction in WotLK (embeds LibHealComm-4.0)
-- Update locales
+- Bring back shields in WotLK
+- Update LibGroupInfo
+- Update icon refreshing check
+- [snippet] DispelHighlight_CustomColor
