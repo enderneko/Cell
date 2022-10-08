@@ -2,7 +2,7 @@
 -- File: UnitButton_Wrath.lua
 -- Author: enderneko (enderneko-dev@outlook.com)
 -- File Created: 2022/08/20 19:44:26 +0800
--- Last Modified: 2022/10/07 01:53:29 +0800
+-- Last Modified: 2022/10/09 00:23:47 +0800
 --]]
 
 local _, Cell = ...
@@ -1983,7 +1983,7 @@ local function UnitButton_OnEvent(self, event, unit)
 end
 
 local function UnitButton_OnAttributeChanged(self, name, value)
-    if name == "unit" then
+    if name == "unit" and not self:GetAttribute("oldUnit") then
         if not value or value ~= self.state.unit then
             -- NOTE: when unitId for this button changes
             if self.__unitGuid then -- self.__unitGuid is deleted when hide

@@ -145,41 +145,127 @@ wrapFrame:SetAttribute("_onstate-mouseoverstate", [[
 --! NOTE: not available for unit far away (different map)
 RegisterStateDriver(wrapFrame, "mouseoverstate", "[@mouseover, exists] true; false")
 
-local function SetBindingClicks(b)
-    b:SetAttribute("_onenter", [[
-        -- print("_onenter")
-        self:ClearBindings()
-        self:Run(self:GetAttribute("snippet"))
+local SetBindingClicks
+if Cell.isRetail then
+    SetBindingClicks = function (b)
+        b:SetAttribute("_onenter", [[
+            -- print("_onenter")
+            self:ClearBindings()
+            self:Run(self:GetAttribute("snippet"))
 
-        -- self:SetBindingClick(true, "SHIFT-MOUSEWHEELUP", self, "shiftSCROLLUP")
-        -- FIXME: --! 如果游戏按键设置（比如“视角”“载具控制”）中绑定了滚轮，那么 self:SetBindingClick(true, "MOUSEWHEELUP", self, "SCROLLUP") 会失效
-        -- self:SetBindingClick(true, "MOUSEWHEELUP", self, "SCROLLUP")
-        -- self:SetBindingClick(true, "MOUSEWHEELDOWN", self, "SCROLLDOWN")
+            -- self:SetBindingClick(true, "SHIFT-MOUSEWHEELUP", self, "shiftSCROLLUP")
+            -- FIXME: --! 如果游戏按键设置（比如“视角”“载具控制”）中绑定了滚轮，那么 self:SetBindingClick(true, "MOUSEWHEELUP", self, "SCROLLUP") 会失效
+            -- self:SetBindingClick(true, "MOUSEWHEELUP", self, "SCROLLUP")
+            -- self:SetBindingClick(true, "MOUSEWHEELDOWN", self, "SCROLLDOWN")
 
-        -- self:SetBindingClick(true, "SHIFT-B", self, "shiftB")
-        -- self:SetBindingClick(true, "SHIFT-C", self, "shiftC")
-    ]])
+            -- self:SetBindingClick(true, "SHIFT-B", self, "shiftB")
+            -- self:SetBindingClick(true, "SHIFT-C", self, "shiftC")
+        ]])
 
-    wrapFrame:WrapScript(b, "OnEnter", [[
-        -- print("OnEnter")
-        if mouseoverbutton then mouseoverbutton:ClearBindings() end --! NOTE: 鼠标放在过远单位上->被挡住->移走->移至可用单位再移出，会发现之前的不可用单位的按键绑定仍未取消
-        mouseoverbutton = self
-    ]])
-    
-    --! NOTE: if another frame shows in front of b, _onleave will NOT trigger. Use WrapScript to solve this issue.
-    b:SetAttribute("_onleave", [[
-        -- print("_onleave")
-        self:ClearBindings()
-    ]])
+        wrapFrame:WrapScript(b, "OnEnter", [[
+            -- print("OnEnter")
+            if mouseoverbutton then mouseoverbutton:ClearBindings() end --! NOTE: 鼠标放在过远单位上->被挡住->移走->移至可用单位再移出，会发现之前的不可用单位的按键绑定仍未取消
+            mouseoverbutton = self
+        ]])
+        
+        --! NOTE: if another frame shows in front of b, _onleave will NOT trigger. Use WrapScript to solve this issue.
+        b:SetAttribute("_onleave", [[
+            -- print("_onleave")
+            self:ClearBindings()
+        ]])
 
-    -- wrapFrame:WrapScript(b, "OnLeave", [[
-    --     -- print("OnLeave")
-    --     mouseoverbutton = nil
-    -- ]])
+        -- wrapFrame:WrapScript(b, "OnLeave", [[
+        --     -- print("OnLeave")
+        --     mouseoverbutton = nil
+        -- ]])
 
-    b:SetAttribute("_onhide", [[
-        self:ClearBindings()
-    ]])
+        b:SetAttribute("_onhide", [[
+            self:ClearBindings()
+        ]])
+    end
+else
+    SetBindingClicks = function(b)
+        b:SetAttribute("_onenter", [[
+            -- print("_onenter")
+            self:ClearBindings()
+            self:Run(self:GetAttribute("snippet"))
+
+            -- self:SetBindingClick(true, "SHIFT-MOUSEWHEELUP", self, "shiftSCROLLUP")
+            -- FIXME: --! 如果游戏按键设置（比如“视角”“载具控制”）中绑定了滚轮，那么 self:SetBindingClick(true, "MOUSEWHEELUP", self, "SCROLLUP") 会失效
+            -- self:SetBindingClick(true, "MOUSEWHEELUP", self, "SCROLLUP")
+            -- self:SetBindingClick(true, "MOUSEWHEELDOWN", self, "SCROLLDOWN")
+
+            -- self:SetBindingClick(true, "SHIFT-B", self, "shiftB")
+            -- self:SetBindingClick(true, "SHIFT-C", self, "shiftC")
+
+            --! vehicle
+            local unit = self:GetAttribute("unit")
+            if UnitHasVehicleUI(unit) and not self:GetAttribute("oldUnit") then
+                -- print("update unit")
+                self:SetAttribute("oldUnit", unit)
+
+                local vehicle
+                if unit == "player" then
+                    vehicle = "pet"
+                elseif strfind(unit, "^party") then
+                    vehicle = string.gsub(unit, "party", "partypet")
+                elseif strfind(unit, "^raid") then
+                    vehicle = string.gsub(unit, "raid", "raidpet")
+                end
+                if vehicle then
+                    self:SetAttribute("unit", vehicle)
+                end
+            end
+        ]])
+
+        wrapFrame:WrapScript(b, "OnEnter", [[
+            -- print("OnEnter")
+            if mouseoverbutton then
+                --! NOTE: 鼠标放在过远单位上->被挡住->移走->移至可用单位再移出，会发现之前的不可用单位的按键绑定仍未取消
+                mouseoverbutton:ClearBindings()
+                
+                --! vehicle
+                local oldUnit = mouseoverbutton:GetAttribute("oldUnit")
+                if oldUnit then
+                    -- print("wrap restore unit")
+                    mouseoverbutton:SetAttribute("unit", oldUnit)
+                    mouseoverbutton:SetAttribute("oldUnit", nil)
+                end
+            end
+            mouseoverbutton = self
+        ]])
+        
+        --! NOTE: if another frame shows in front of b, _onleave will NOT trigger. Use WrapScript to solve this issue.
+        b:SetAttribute("_onleave", [[
+            -- print("_onleave")
+            self:ClearBindings()
+            
+            --! vehicle
+            local oldUnit = self:GetAttribute("oldUnit")
+            if oldUnit then
+                -- print("restore unit")
+                self:SetAttribute("oldUnit", nil)
+                self:SetAttribute("unit", oldUnit)
+            end
+        ]])
+
+        -- wrapFrame:WrapScript(b, "OnLeave", [[
+        --     -- print("OnLeave")
+        --     mouseoverbutton = nil
+        -- ]])
+
+        b:SetAttribute("_onhide", [[
+            self:ClearBindings()
+
+            --! vehicle
+            local oldUnit = self:GetAttribute("oldUnit")
+            if oldUnit then
+                -- print("restore unit")
+                self:SetAttribute("oldUnit", nil)
+                self:SetAttribute("unit", oldUnit)
+            end
+        ]])
+    end
 end
 
 -- FIXME: hope BLZ fix this bug
