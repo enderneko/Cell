@@ -335,7 +335,7 @@ local function NPCFrame_UpdateLayout(layout, which)
                 groupSpacing = -layout["spacing"]
             end
 
-            if not Cell.vars.currentLayoutTable["friendlyNPC"][2] then
+            if not layout["friendlyNPC"][2] then
                 -- update whole NPCFrame point
                 if groupType == "raid" then
                     npcFrame:SetPoint(point, anchors["raid"])
@@ -370,7 +370,7 @@ local function NPCFrame_UpdateLayout(layout, which)
                 groupSpacing = -layout["spacing"]
             end
 
-            if not Cell.vars.currentLayoutTable["friendlyNPC"][2] then
+            if not layout["friendlyNPC"][2] then
                 -- update whole NPCFrame point
                 if groupType == "raid" then
                     npcFrame:SetPoint(point, anchors["raid"])
@@ -421,7 +421,7 @@ local function NPCFrame_UpdateLayout(layout, which)
         end
 
         -- update npcFrame anchor if separate from main 
-        if Cell.vars.currentLayoutTable["friendlyNPC"][2] then
+        if layout["friendlyNPC"][2] then
             if layout["anchor"] == "BOTTOMLEFT" then
                 npcFrame:SetPoint("BOTTOMLEFT", separateAnchor, "TOPLEFT", 0, 4)
             elseif layout["anchor"] == "BOTTOMRIGHT" then
@@ -435,16 +435,16 @@ local function NPCFrame_UpdateLayout(layout, which)
     end
 
     if not which or which == "npc" then
-        if Cell.vars.currentLayoutTable["friendlyNPC"][1] then
+        if layout["friendlyNPC"][1] then
             -- NOTE: RegisterAttributeDriver
             for i, b in ipairs(Cell.unitButtons.npc) do
                 RegisterAttributeDriver(b, "state-visibility", "[@boss"..i..", help] show; hide")
             end
-            if Cell.vars.currentLayoutTable["friendlyNPC"][2] then
+            if layout["friendlyNPC"][2] then
                 UnregisterStateDriver(npcFrame, "groupstate")
                 UnregisterStateDriver(npcFrame, "petstate")
                 -- load separate npc frame position
-                P:LoadPosition(separateAnchor, Cell.vars.currentLayoutTable["friendlyNPC"][3])
+                P:LoadPosition(separateAnchor, layout["friendlyNPC"][3])
             else
                 RegisterStateDriver(npcFrame, "groupstate", "[group:raid] raid; [group:party] party; solo")
                 RegisterStateDriver(npcFrame, "petstate", "[@pet,exists] pet; [@partypet1,exists] pet1; [@partypet2,exists] pet2; [@partypet3,exists] pet3; [@partypet4,exists] pet4; nopet")
