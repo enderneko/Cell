@@ -1,6 +1,5 @@
-[Full Changelog](https://github.com/enderneko/Cell/compare/r116-release...b160399c789f06d632b9ef821af81f3cb24421b0)
+[Full Changelog](https://github.com/enderneko/Cell/compare/r117-release...fc894dc7b1276359c3f2efb54bca0138da9b75ce)
 
-- Bring back shields in WotLK
-- Update LibGroupInfo
-- Update icon refreshing check
-- [snippet] DispelHighlight_CustomColor
+- Fix vehicle targeting in WotLK
+- Update Buff Tracker
+- Update RaidDebuffs_WotLK

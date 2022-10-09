@@ -59,6 +59,11 @@ select(2, ...).L = setmetatable({
     ["SNIPPETS_TIPS"] = "[Double-Click] to rename. [Shift-Click] to delete. All checked snippets will be automatically invoked at the end of Cell initialization process (in ADDON_LOADED event).",
 
     ["CHANGELOGS"] = [[
+        <h1>r118-release (Oct 9, 2022, 23:30 GMT+8)</h1>
+        <p>* Updated Buff Tracker.</p>
+        <p>* Fixed vehicle targeting in WotLK.</p>
+        <br/>
+
         <h1>r117-release (Oct 7, 2022, 10:37 GMT+8)</h1>
         <h2>Wrath Classic</h2>
         <p>* Updated shields: Shield Bar indicator, Shield / Overshield textures. (PWS with Glyph of PWS and Divine Aegis (from yourself) are supported.)</p>
