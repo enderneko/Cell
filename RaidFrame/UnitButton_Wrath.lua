@@ -2,7 +2,7 @@
 -- File: UnitButton_Wrath.lua
 -- Author: enderneko (enderneko-dev@outlook.com)
 -- File Created: 2022/08/20 19:44:26 +0800
--- Last Modified: 2022/10/09 00:23:47 +0800
+-- Last Modified: 2022/10/10 04:42:09 +0800
 --]]
 
 local _, Cell = ...
@@ -1446,8 +1446,9 @@ local function UnitButton_UpdateVehicleStatus(self)
         if unit == "player" then
             self.state.displayedUnit = "vehicle"
         else
-            local prefix, id, suffix = strmatch(unit, "([^%d]+)([%d]*)(.*)")
-            self.state.displayedUnit = prefix.."pet"..id..suffix
+            -- local prefix, id, suffix = strmatch(unit, "([^%d]+)([%d]*)(.*)")
+            local prefix, id = strmatch(unit, "([^%d]+)([%d]+)")
+            self.state.displayedUnit = prefix.."pet"..id
         end
         self.indicators.nameText:UpdateVehicleName()
     else

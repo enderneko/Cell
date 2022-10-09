@@ -1607,8 +1607,9 @@ local function UnitButton_UpdateVehicleStatus(self)
         if unit == "player" then
             self.state.displayedUnit = "vehicle"
         else
-            local prefix, id, suffix = strmatch(unit, "([^%d]+)([%d]*)(.*)")
-            self.state.displayedUnit = prefix.."pet"..id..suffix
+            -- local prefix, id, suffix = strmatch(unit, "([^%d]+)([%d]*)(.*)")
+            local prefix, id = strmatch(unit, "([^%d]+)([%d]+)")
+            self.state.displayedUnit = prefix.."pet"..id
         end
         self.indicators.nameText:UpdateVehicleName()
     else

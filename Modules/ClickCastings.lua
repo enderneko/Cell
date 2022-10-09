@@ -244,8 +244,8 @@ else
             local oldUnit = self:GetAttribute("oldUnit")
             if oldUnit then
                 -- print("restore unit")
-                self:SetAttribute("oldUnit", nil)
                 self:SetAttribute("unit", oldUnit)
+                self:SetAttribute("oldUnit", nil)
             end
         ]])
 
