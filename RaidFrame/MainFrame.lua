@@ -84,6 +84,18 @@ raid:SetScript("OnClick", function()
     F:ShowRaidRosterFrame()
 end)
 
+-- local tools = Cell:CreateButton(menuFrame, "", "chartreuse", {20, 10}, false, true, nil, nil, "SecureHandlerAttributeTemplate,SecureHandlerClickTemplate")
+-- Cell:StylizeFrame(tools)
+-- tools:SetSize(20, 10)
+-- tools:EnableMouse(true)
+-- P:Point(tools, "LEFT", raid, "RIGHT", 1, 0)
+-- RegisterDragForMainFrame(tools)
+-- tools:SetAttribute("_onclick", [[
+--     print(self:GetFrameRef("main"))
+--     print(self:GetAttribute("main"))
+-- ]])
+-- SecureHandlerSetFrameRef(tools, "main", cellMainFrame)
+
 -- REVIEW: raid tool button
 --[===[
 local frame = CreateFrame("Frame", nil, cellMainFrame, "BackdropTemplate")

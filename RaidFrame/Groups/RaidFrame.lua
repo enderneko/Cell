@@ -112,7 +112,7 @@ local function CreateGroupHeader(group)
         self:SetWidth(header:GetAttribute("buttonWidth") or 66)
         self:SetHeight(header:GetAttribute("buttonHeight") or 46)
     ]])
-    
+
     header:SetAttribute("template", "CellUnitButtonTemplate")
     header:SetAttribute("columnAnchorPoint", "LEFT")
     header:SetAttribute("point", "TOP")
@@ -126,19 +126,14 @@ local function CreateGroupHeader(group)
     header:SetAttribute("unitsPerColumn", 5)
     header:SetAttribute("columnSpacing", 1)
     header:SetAttribute("maxColumns", 1)
-    header:SetAttribute("startingIndex", 1)
+    -- header:SetAttribute("startingIndex", 1)
     header:SetAttribute("showRaid", true)
-
-    return header
-end
-
-for i = 1, 8 do
-    local header = CreateGroupHeader(i)
 
     --[[ Interface\FrameXML\SecureGroupHeaders.lua line 150
         local loopStart = startingIndex;
         local loopFinish = min((startingIndex - 1) + unitsPerColumn * numColumns, unitCount)
         -- ensure there are enough buttons
+        numDisplayed = loopFinish - (loopStart - 1)
         local needButtons = max(1, numDisplayed); --! to make needButtons == 5
     ]]
     
@@ -148,13 +143,17 @@ for i = 1, 8 do
     header:SetAttribute("startingIndex", 1)
 
     -- for npcFrame's point
-    raidFrame:SetFrameRef("subgroup"..i, header)
+    raidFrame:SetFrameRef("subgroup"..group, header)
     
     local helper = CreateFrame("Frame", nil, header[1], "SecureHandlerShowHideTemplate")
     helper:SetFrameRef("raidframe", raidFrame)
-    raidFrame:SetFrameRef("visibilityhelper"..i, helper)
+    raidFrame:SetFrameRef("visibilityhelper"..group, helper)
     helper:SetAttribute("_onshow", [[ self:GetFrameRef("raidframe"):SetAttribute("visibility", 1) ]])
     helper:SetAttribute("_onhide", [[ self:GetFrameRef("raidframe"):SetAttribute("visibility", 0) ]])
+end
+
+for i = 1, 8 do
+    CreateGroupHeader(i)
 end
 
 -- arena pet
@@ -244,6 +243,10 @@ local function RaidFrame_UpdateLayout(layout, which)
                 --! important new button size depend on buttonWidth & buttonHeight
                 header:SetAttribute("buttonWidth", P:Scale(width))
                 header:SetAttribute("buttonHeight", P:Scale(height))
+
+                -- 确保按钮在“一定程度上”对齐
+                header:SetAttribute("minWidth", P:Scale(width) - layout["groupSpacing"])
+                header:SetAttribute("minHeight", P:Scale(height) - layout["groupSpacing"])
 
                 P:Size(npcFrameAnchor, width, height)
             end
