@@ -616,7 +616,7 @@ function addon:CreateButton(parent, text, buttonColor, size, noBorder, noBackgro
             b:SetScript("OnMouseUp", b.onMouseUp)
         end)
         b:HookScript("OnDisable", function()
-            b.tex:SetVertexColor(.4, .4, .4)
+            b.tex:SetVertexColor(0.4, 0.4, 0.4)
             b:SetScript("OnMouseDown", nil)
             b:SetScript("OnMouseUp", nil)
         end)
