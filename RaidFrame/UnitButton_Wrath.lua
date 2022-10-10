@@ -2,7 +2,7 @@
 -- File: UnitButton_Wrath.lua
 -- Author: enderneko (enderneko-dev@outlook.com)
 -- File Created: 2022/08/20 19:44:26 +0800
--- Last Modified: 2022/10/10 04:42:09 +0800
+-- Last Modified: 2022/10/10 17:20:55 +0800
 --]]
 
 local _, Cell = ...
@@ -1065,9 +1065,11 @@ local function ShouldShowPowerBar(b)
 end
 
 local function ShowPowerBar(b, s)
-    b:RegisterEvent("UNIT_POWER_FREQUENT")
-    b:RegisterEvent("UNIT_MAXPOWER")
-    b:RegisterEvent("UNIT_DISPLAYPOWER")
+    if b:IsShown() then
+        b:RegisterEvent("UNIT_POWER_FREQUENT")
+        b:RegisterEvent("UNIT_MAXPOWER")
+        b:RegisterEvent("UNIT_DISPLAYPOWER")
+    end
     b.widget.powerBar:Show()
     b.widget.powerBarLoss:Show()
     b.widget.gapTexture:Show()
@@ -1367,8 +1369,7 @@ end
 
 local function UnitButton_UpdateThreat(self)
     local unit = self.state.displayedUnit
-    if not unit then return end
-    -- if not unit or not UnitExists(unit) then return end
+    if not unit or not UnitExists(unit) then return end
 
     local status = UnitThreatSituation(unit)
     if status and status >= 2 then
@@ -1391,7 +1392,7 @@ local function UnitButton_UpdateThreatBar(self)
     end
 
     local unit = self.state.displayedUnit
-    if not unit then return end
+    if not unit or not UnitExists(unit) then return end
 
     -- isTanking, status, scaledPercentage, rawPercentage, threatValue = UnitDetailedThreatSituation(unit, mobUnit)
     local _, status, scaledPercentage, rawPercentage = UnitDetailedThreatSituation(unit, "target")
@@ -1886,6 +1887,8 @@ local function UnitButton_UnregisterEvents(self)
 end
 
 local function UnitButton_OnEvent(self, event, unit)
+    -- print(event, self:GetName(), unit, self.state.displayedUnit, self.state.unit)
+    -- if UnitExists(unit) and (UnitIsUnit(unit, self.state.displayedUnit) or UnitIsUnit(unit, self.state.unit)) then
     if unit and (self.state.displayedUnit == unit or self.state.unit == unit) then
         if  event == "UNIT_ENTERED_VEHICLE" or event == "UNIT_EXITED_VEHICLE" or event == "UNIT_CONNECTION" then
             self.updateRequired = 1
@@ -2663,6 +2666,7 @@ function F:UnitButton_OnLoad(button)
 
     -- raidIcons
     button.func.UpdatePlayerRaidIcon = function(enabled)
+        if not button:IsShown() then return end
         UnitButton_UpdatePlayerRaidIcon(button)
         if enabled then
             button:RegisterEvent("RAID_TARGET_UPDATE")
@@ -2671,6 +2675,7 @@ function F:UnitButton_OnLoad(button)
         end
     end
     button.func.UpdateTargetRaidIcon = function(enabled)
+        if not button:IsShown() then return end
         UnitButton_UpdateTargetRaidIcon(button)
         if enabled then
             button:RegisterEvent("UNIT_TARGET")
