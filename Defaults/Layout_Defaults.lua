@@ -45,6 +45,7 @@ Cell.defaults.layout = {
     ["groupSpacing"] = 0,
     ["groupFilter"] = {true, true, true, true, true, true, true, true},
     ["friendlyNPC"] = {true, false, {}},
+    ["spotlight"] = {false, {}, {}}, -- enabled, units, position
     ["powerFilters"] = {
         ["DEATHKNIGHT"] = {["TANK"] = true, ["DAMAGER"] = true},
         ["DEMONHUNTER"] = {["TANK"] = true, ["DAMAGER"] = true},

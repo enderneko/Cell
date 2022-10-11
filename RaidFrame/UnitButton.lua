@@ -1154,6 +1154,8 @@ local function ShouldShowPowerBar(b)
         class = "PET"
     elseif string.find(b.state.guid, "^Creature") then
         class = "NPC"
+    elseif string.find(b.state.guid, "^Vehicle") then
+        class = "VEHICLE"
     end
     
     if class then
@@ -2268,6 +2270,11 @@ local function UnitButton_OnTick(self)
     
     if self.updateRequired then
         self.updateRequired = nil
+        UnitButton_UpdateAll(self)
+    end
+
+    --! for targettarget
+    if self:GetAttribute("refreshOnUpdate") then
         UnitButton_UpdateAll(self)
     end
 end

@@ -289,6 +289,13 @@ L["You can move it in Preview mode"] = "你可以在“预览”模式中移动�
 L["Power Bar Filters"] = "能量条过滤"
 L["PET"] = "宠物"
 L["VEHICLE"] = "载具"
+L["Spotlight Frame"] = "特别关注框体"
+L["Show units you care about more in a separate frame"] = "将你特别关注的单位显示在一个单独的框体中"
+L["Target of Target"] = "目标的目标"
+L["Unit"] = "目标单位"
+L["Unit's Pet"] = "目标单位的宠物"
+L["Clear"] = "清除"
+L["Invalid unit."] = "无效单位。"
 L["Tip: Every layout has its own position setting"] = "提示：每个布局都有其单独的位置设置"
 
 -------------------------------------------------

@@ -1373,5 +1373,15 @@ function F:Revise()
         end
     end
 
+    -- r119-release
+    if CellDB["revise"] and dbRevision < 119 then
+        -- spotlight
+        for _, layout in pairs(CellDB["layouts"]) do
+            if not layout["spotlight"] then
+                layout["spotlight"] = {false, {}, {}} -- enabled, units, position
+            end
+        end
+    end
+
     CellDB["revise"] = Cell.version
 end

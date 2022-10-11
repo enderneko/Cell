@@ -2,7 +2,7 @@
 -- File: Layout_Defaults_Wrath.lua
 -- Author: enderneko (enderneko-dev@outlook.com)
 -- File Created: 2022/08/21 04:06:04 +0800
--- Last Modified: 2022/10/06 03:13:38 +0800
+-- Last Modified: 2022/10/11 03:00:22 +0800
 --]]
 
 local addonName, Cell = ...
@@ -51,6 +51,7 @@ Cell.defaults.layout = {
     ["groupSpacing"] = 0,
     ["groupFilter"] = {true, true, true, true, true, true, true, true},
     ["friendlyNPC"] = {true, false, {}},
+    ["spotlight"] = {false, {}, {}}, -- enabled, units, position
     ["powerFilters"] = {
         ["DEATHKNIGHT"] = {["TANK"] = true, ["DAMAGER"] = true},
         ["DRUID"] = {["TANK"] = true, ["DAMAGER"] = true, ["HEALER"] = true},

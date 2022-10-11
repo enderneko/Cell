@@ -41,6 +41,7 @@ RaidFrame\Groups\SoloFrame.lua
 RaidFrame\Groups\PartyFrame.lua
 RaidFrame\Groups\RaidFrame.lua
 RaidFrame\Groups\NPCFrame.lua
+RaidFrame\Groups\SpotlightFrame.lua
 
 Tools\LoadTools_Wrath.xml
 RaidDebuffs\ExpansionData.lua

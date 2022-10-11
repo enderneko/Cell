@@ -199,7 +199,7 @@ local function CreateLayoutPreview()
             elseif i == 7 then
                 header[j].tex:SetVertexColor(F:ConvertRGB(238, 130, 238, desaturation[j])) -- Violet
             elseif i == 8 then
-                header[j].tex:SetVertexColor(F:ConvertRGB(255, 255, 255, desaturation[j])) -- White
+                header[j].tex:SetVertexColor(F:ConvertRGB(0, 255, 255, desaturation[j])) -- Cyan
             end
             header[j].tex:SetAlpha(0.5)
         end
@@ -481,7 +481,7 @@ local function CreateNPCPreview()
         npcPreview.header[i].tex:SetPoint("TOPLEFT", npcPreview.header[i], "TOPLEFT", P:Scale(1), P:Scale(-1))
         npcPreview.header[i].tex:SetPoint("BOTTOMRIGHT", npcPreview.header[i], "BOTTOMRIGHT", P:Scale(-1), P:Scale(1))
 
-        npcPreview.header[i].tex:SetVertexColor(F:ConvertRGB(0, 255, 255, desaturation[i])) -- cyan
+        npcPreview.header[i].tex:SetVertexColor(F:ConvertRGB(255, 255, 255, desaturation[i])) -- White
         npcPreview.header[i].tex:SetAlpha(0.555)
     end
 end
@@ -651,6 +651,245 @@ local function UpdateNPCPreview()
 end
 
 -------------------------------------------------
+-- spotlight preview
+-------------------------------------------------
+local spotlightPreview, spotlightPreviewAnchor, spotlightPreviewName
+local function CreateSpotlightPreview()
+    spotlightPreview = Cell:CreateFrame("CellSpotlightPreviewFrame", Cell.frames.mainFrame, nil, nil, true)
+    spotlightPreview:EnableMouse(false)
+    spotlightPreview:SetFrameStrata("MEDIUM")
+    spotlightPreview:SetToplevel(true)
+    spotlightPreview:Hide()
+
+    spotlightPreviewAnchor = CreateFrame("Frame", "CellSpotlightPreviewAnchorFrame", spotlightPreview, "BackdropTemplate")
+    P:Size(spotlightPreviewAnchor, 20, 10)
+    spotlightPreviewAnchor:SetMovable(true)
+    spotlightPreviewAnchor:EnableMouse(true)
+    spotlightPreviewAnchor:RegisterForDrag("LeftButton")
+    spotlightPreviewAnchor:SetClampedToScreen(true)
+    Cell:StylizeFrame(spotlightPreviewAnchor, {0, 1, 0, 0.4})
+    spotlightPreviewAnchor:Hide()
+    spotlightPreviewAnchor:SetScript("OnDragStart", function()
+        spotlightPreviewAnchor:StartMoving()
+        spotlightPreviewAnchor:SetUserPlaced(false)
+    end)
+    spotlightPreviewAnchor:SetScript("OnDragStop", function()
+        spotlightPreviewAnchor:StopMovingOrSizing()
+        P:SavePosition(spotlightPreviewAnchor, selectedLayoutTable["spotlight"][3])
+    end)
+
+    spotlightPreviewName = spotlightPreviewAnchor:CreateFontString(nil, "OVERLAY", "CELL_FONT_CLASS_TITLE")
+
+    spotlightPreview.fadeIn = spotlightPreview:CreateAnimationGroup()
+    local fadeIn = spotlightPreview.fadeIn:CreateAnimation("alpha")
+    fadeIn:SetFromAlpha(0)
+    fadeIn:SetToAlpha(1)
+    fadeIn:SetDuration(0.5)
+    fadeIn:SetSmoothing("OUT")
+    fadeIn:SetScript("OnPlay", function()
+        spotlightPreview:Show()
+    end)
+    
+    spotlightPreview.fadeOut = spotlightPreview:CreateAnimationGroup()
+    local fadeOut = spotlightPreview.fadeOut:CreateAnimation("alpha")
+    fadeOut:SetFromAlpha(1)
+    fadeOut:SetToAlpha(0)
+    fadeOut:SetDuration(0.5)
+    fadeOut:SetSmoothing("IN")
+    fadeOut:SetScript("OnFinished", function()
+        spotlightPreview:Hide()
+    end)
+
+    local desaturation = {
+        [1] = 1,
+        [2] = 0.85,
+        [3] = 0.7,
+        [4] = 0.55,
+        [5] = 0.4,
+    }
+
+    spotlightPreview.header = CreateFrame("Frame", "CellSpotlightPreviewFrameHeader", spotlightPreview)
+    for i = 1, 5 do
+        spotlightPreview.header[i] = spotlightPreview.header:CreateTexture(nil, "BACKGROUND")
+        spotlightPreview.header[i]:SetColorTexture(0, 0, 0)
+        spotlightPreview.header[i]:SetAlpha(0.555)
+
+        spotlightPreview.header[i].tex = spotlightPreview.header:CreateTexture(nil, "ARTWORK")
+        spotlightPreview.header[i].tex:SetTexture("Interface\\Buttons\\WHITE8x8")
+
+        spotlightPreview.header[i].tex:SetPoint("TOPLEFT", spotlightPreview.header[i], "TOPLEFT", P:Scale(1), P:Scale(-1))
+        spotlightPreview.header[i].tex:SetPoint("BOTTOMRIGHT", spotlightPreview.header[i], "BOTTOMRIGHT", P:Scale(-1), P:Scale(1))
+
+        spotlightPreview.header[i].tex:SetVertexColor(F:ConvertRGB(255, 0, 102, desaturation[i])) -- cyan
+        spotlightPreview.header[i].tex:SetAlpha(0.555)
+    end
+end
+
+local function UpdateSpotlightPreview()
+    if not spotlightPreview then
+        CreateSpotlightPreview()
+    end
+
+    if not selectedLayoutTable["spotlight"][1] then
+        if spotlightPreview.timer then
+            spotlightPreview.timer:Cancel()
+            spotlightPreview.timer = nil
+        end
+        if spotlightPreview.fadeIn:IsPlaying() then
+            spotlightPreview.fadeIn:Stop()
+        end
+        if not spotlightPreview.fadeOut:IsPlaying() then
+            spotlightPreview.fadeOut:Play()
+        end
+        return
+    end
+
+    -- update spotlightPreview point
+    P:Size(spotlightPreview, selectedLayoutTable["size"][1], selectedLayoutTable["size"][2])
+    spotlightPreview:ClearAllPoints()
+    spotlightPreviewName:ClearAllPoints()
+    
+    if CellDB["general"]["menuPosition"] == "top_bottom" then
+        P:Size(spotlightPreviewAnchor, 20, 10)
+        if selectedLayoutTable["anchor"] == "BOTTOMLEFT" then
+            spotlightPreview:SetPoint("BOTTOMLEFT", spotlightPreviewAnchor, "TOPLEFT", 0, 4)
+            spotlightPreviewName:SetPoint("LEFT", spotlightPreviewAnchor, "RIGHT", 5, 0)
+        elseif selectedLayoutTable["anchor"] == "BOTTOMRIGHT" then
+            spotlightPreview:SetPoint("BOTTOMRIGHT", spotlightPreviewAnchor, "TOPRIGHT", 0, 4)
+            spotlightPreviewName:SetPoint("RIGHT", spotlightPreviewAnchor, "LEFT", -5, 0)
+        elseif selectedLayoutTable["anchor"] == "TOPLEFT" then
+            spotlightPreview:SetPoint("TOPLEFT", spotlightPreviewAnchor, "BOTTOMLEFT", 0, -4)
+            spotlightPreviewName:SetPoint("LEFT", spotlightPreviewAnchor, "RIGHT", 5, 0)
+        elseif selectedLayoutTable["anchor"] == "TOPRIGHT" then
+            spotlightPreview:SetPoint("TOPRIGHT", spotlightPreviewAnchor, "BOTTOMRIGHT", 0, -4)
+            spotlightPreviewName:SetPoint("RIGHT", spotlightPreviewAnchor, "LEFT", -5, 0)
+        end
+    else
+        P:Size(spotlightPreviewAnchor, 10, 20)
+        if selectedLayoutTable["anchor"] == "BOTTOMLEFT" then
+            spotlightPreview:SetPoint("BOTTOMLEFT", spotlightPreviewAnchor, "BOTTOMRIGHT", 4, 0)
+            spotlightPreviewName:SetPoint("TOPLEFT", spotlightPreviewAnchor, "BOTTOMLEFT", 0, -5)
+        elseif selectedLayoutTable["anchor"] == "BOTTOMRIGHT" then
+            spotlightPreview:SetPoint("BOTTOMRIGHT", spotlightPreviewAnchor, "BOTTOMLEFT", -4, 0)
+            spotlightPreviewName:SetPoint("TOPRIGHT", spotlightPreviewAnchor, "BOTTOMRIGHT", 0, -5)
+        elseif selectedLayoutTable["anchor"] == "TOPLEFT" then
+            spotlightPreview:SetPoint("TOPLEFT", spotlightPreviewAnchor, "TOPRIGHT", 4, 0)
+            spotlightPreviewName:SetPoint("BOTTOMLEFT", spotlightPreviewAnchor, "TOPLEFT", 0, 5)
+        elseif selectedLayoutTable["anchor"] == "TOPRIGHT" then
+            spotlightPreview:SetPoint("TOPRIGHT", spotlightPreviewAnchor, "TOPLEFT", -4, 0)
+            spotlightPreviewName:SetPoint("BOTTOMRIGHT", spotlightPreviewAnchor, "TOPRIGHT", 0, 5)
+        end
+    end
+
+    -- update npcAnchor point
+    if selectedLayout == Cell.vars.currentLayout then
+        -- NOTE: move separate npc anchor with preview
+        Cell.frames.spotlightFrameAnchor:SetAllPoints(spotlightPreviewAnchor)
+    else
+        P:LoadPosition(Cell.frames.spotlightFrameAnchor, Cell.vars.currentLayoutTable["spotlight"][3])
+    end
+
+    if #selectedLayoutTable["spotlight"][3] == 2 then
+        P:LoadPosition(spotlightPreviewAnchor, selectedLayoutTable["spotlight"][3])
+    else
+        spotlightPreviewAnchor:ClearAllPoints()
+        spotlightPreviewAnchor:SetPoint("TOPLEFT", UIParent, "CENTER")
+    end
+    spotlightPreviewAnchor:Show()
+    spotlightPreviewName:SetText(L["Layout"]..": "..selectedLayout.." ("..L["Spotlight"]..")")
+    spotlightPreviewName:Show()
+
+    -- re-arrange
+    local header = spotlightPreview.header
+    header:ClearAllPoints()
+
+    local spacing = selectedLayoutTable["spacing"]
+
+    if selectedLayoutTable["orientation"] == "vertical" then
+        -- anchor
+        local point, anchorPoint, unitSpacing
+        if selectedLayoutTable["anchor"] == "BOTTOMLEFT" then
+            point, anchorPoint = "BOTTOMLEFT", "TOPLEFT"
+            unitSpacing = spacing
+        elseif selectedLayoutTable["anchor"] == "BOTTOMRIGHT" then
+            point, anchorPoint = "BOTTOMRIGHT", "TOPRIGHT"
+            unitSpacing = spacing
+        elseif selectedLayoutTable["anchor"] == "TOPLEFT" then
+            point, anchorPoint = "TOPLEFT", "BOTTOMLEFT"
+            unitSpacing = -spacing
+        elseif selectedLayoutTable["anchor"] == "TOPRIGHT" then
+            point, anchorPoint = "TOPRIGHT", "BOTTOMRIGHT"
+            unitSpacing = -spacing
+        end
+
+        P:Size(header, selectedLayoutTable["size"][1], selectedLayoutTable["size"][2]*5+abs(unitSpacing)*4)
+        header:SetPoint(point)
+        
+        for i = 1, 5 do
+            P:Size(header[i], selectedLayoutTable["size"][1], selectedLayoutTable["size"][2])
+            header[i]:ClearAllPoints()
+
+            if i == 1 then
+                header[i]:SetPoint(point)
+            else
+                header[i]:SetPoint(point, header[i-1], anchorPoint, 0, unitSpacing)
+            end
+        end
+    else
+        -- anchor
+        local point, anchorPoint, unitSpacing
+        if selectedLayoutTable["anchor"] == "BOTTOMLEFT" then
+            point, anchorPoint = "BOTTOMLEFT", "BOTTOMRIGHT"
+            unitSpacing = spacing
+        elseif selectedLayoutTable["anchor"] == "BOTTOMRIGHT" then
+            point, anchorPoint = "BOTTOMRIGHT", "BOTTOMLEFT"
+            unitSpacing = -spacing
+        elseif selectedLayoutTable["anchor"] == "TOPLEFT" then
+            point, anchorPoint = "TOPLEFT", "TOPRIGHT"
+            unitSpacing = spacing
+        elseif selectedLayoutTable["anchor"] == "TOPRIGHT" then
+            point, anchorPoint = "TOPRIGHT", "TOPLEFT"
+            unitSpacing = -spacing
+        end
+
+        P:Size(header, selectedLayoutTable["size"][1]*5+abs(unitSpacing)*4, selectedLayoutTable["size"][2])
+        header:SetPoint(point)
+
+        for i = 1, 5 do
+            P:Size(header[i], selectedLayoutTable["size"][1], selectedLayoutTable["size"][2])
+            header[i]:ClearAllPoints()
+
+            if i == 1 then
+                header[i]:SetPoint(point)
+            else
+                header[i]:SetPoint(point, header[i-1], anchorPoint, unitSpacing, 0)
+            end
+        end
+    end
+
+    if spotlightPreview.fadeIn:IsPlaying() then
+        spotlightPreview.fadeIn:Restart()
+    else
+        spotlightPreview.fadeIn:Play()
+    end
+    
+    if spotlightPreview.fadeOut:IsPlaying() then
+        spotlightPreview.fadeOut:Stop()
+    end
+
+    if spotlightPreview.timer then
+        spotlightPreview.timer:Cancel()
+    end
+
+    if previewMode == 0 then
+        spotlightPreview.timer = C_Timer.NewTimer(1, function()
+            spotlightPreview.fadeOut:Play()
+            spotlightPreview.timer = nil
+        end)
+    end
+end
+
+-------------------------------------------------
 -- OnHide
 -------------------------------------------------
 layoutsTab:SetScript("OnHide", function()
@@ -674,6 +913,17 @@ layoutsTab:SetScript("OnHide", function()
     end
     if not npcPreview.fadeOut:IsPlaying() then
         npcPreview.fadeOut:Play()
+    end
+    
+    if spotlightPreview.timer then
+        spotlightPreview.timer:Cancel()
+        spotlightPreview.timer = nil
+    end
+    if spotlightPreview.fadeIn:IsPlaying() then
+        spotlightPreview.fadeIn:Stop()
+    end
+    if not spotlightPreview.fadeOut:IsPlaying() then
+        spotlightPreview.fadeOut:Play()
     end
 end)
 
@@ -1327,6 +1577,7 @@ local function CreateButtonSizePane()
         UpdatePreviewButton("size")
         UpdateLayoutPreview()
         UpdateNPCPreview()
+        UpdateSpotlightPreview()
     end)
     widthSlider:SetPoint("TOPLEFT", 5, -40)
     
@@ -1339,6 +1590,7 @@ local function CreateButtonSizePane()
         UpdatePreviewButton("size")
         UpdateLayoutPreview()
         UpdateNPCPreview()
+        UpdateSpotlightPreview()
     end)
     heightSlider:SetPoint("TOPLEFT", widthSlider, "BOTTOMLEFT", 0, -40)
     
@@ -1438,6 +1690,7 @@ local function CreateGroupArrangementPane()
                 end
                 UpdateLayoutPreview()
                 UpdateNPCPreview()
+                UpdateSpotlightPreview()
             end,
         },
         {
@@ -1457,6 +1710,7 @@ local function CreateGroupArrangementPane()
                 end
                 UpdateLayoutPreview()
                 UpdateNPCPreview()
+                UpdateSpotlightPreview()
             end,
         },
     })
@@ -1479,6 +1733,7 @@ local function CreateGroupArrangementPane()
                 end
                 UpdateLayoutPreview()
                 UpdateNPCPreview()
+                UpdateSpotlightPreview()
             end,
         },
         {
@@ -1491,6 +1746,7 @@ local function CreateGroupArrangementPane()
                 end
                 UpdateLayoutPreview()
                 UpdateNPCPreview()
+                UpdateSpotlightPreview()
             end,
         },
         {
@@ -1503,6 +1759,7 @@ local function CreateGroupArrangementPane()
                 end
                 UpdateLayoutPreview()
                 UpdateNPCPreview()
+                UpdateSpotlightPreview()
             end,
         },
         {
@@ -1515,6 +1772,7 @@ local function CreateGroupArrangementPane()
                 end
                 UpdateLayoutPreview()
                 UpdateNPCPreview()
+                UpdateSpotlightPreview()
             end,
         },
     })
@@ -1535,14 +1793,19 @@ local function CreateGroupArrangementPane()
             if npcPreview:IsShown() then
                 npcPreview.fadeOut:Play()
             end
+            if spotlightPreview:IsShown() then
+                spotlightPreview.fadeOut:Play()
+            end
         elseif previewMode == 1 then
             previewModeBtn:SetText(L["Party"])
             UpdateLayoutPreview()
             UpdateNPCPreview()
+            UpdateSpotlightPreview()
         else
             previewModeBtn:SetText(L["Raid"])
             UpdateLayoutPreview()
             UpdateNPCPreview()
+            UpdateSpotlightPreview()
         end
     end)
     previewModeBtn:SetScript("OnHide", function()
@@ -1563,6 +1826,7 @@ local function CreateGroupArrangementPane()
         -- preview
         UpdateLayoutPreview()
         UpdateNPCPreview()
+        UpdateSpotlightPreview()
     end)
     spacingSlider:SetPoint("TOPLEFT", orientationDropdown, "TOPRIGHT", 23, 0)
     
@@ -1627,15 +1891,15 @@ local function CreateBarOrientationPane()
 end
 
 -------------------------------------------------
--- npc frame
+-- other frames
 -------------------------------------------------
-local separateNPCCB, showNPCCB
+local separateNPCCB, showNPCCB, spotlightCB
 
-local function CreateNPCPane()
-    local npcPane = Cell:CreateTitledPane(layoutsTab, L["Friendly NPC Frame"], 205, 70)
-    npcPane:SetPoint("TOPLEFT", 222, -400)
+local function CreateOthersPane()
+    local othersPane = Cell:CreateTitledPane(layoutsTab, L["Other Frames"], 205, 70)
+    othersPane:SetPoint("TOPLEFT", 222, -400)
 
-    showNPCCB = Cell:CreateCheckButton(npcPane, L["Show NPC Frame"], function(checked)
+    showNPCCB = Cell:CreateCheckButton(othersPane, L["Show NPC Frame"], function(checked)
         selectedLayoutTable["friendlyNPC"][1] = checked
         if checked then
             if previewMode ~= 0 then
@@ -1652,7 +1916,7 @@ local function CreateNPCPane()
     end)
     showNPCCB:SetPoint("TOPLEFT", 5, -27)
 
-    separateNPCCB = Cell:CreateCheckButton(npcPane, L["Separate NPC Frame"], function(checked)
+    separateNPCCB = Cell:CreateCheckButton(othersPane, L["Separate NPC Frame"], function(checked)
         selectedLayoutTable["friendlyNPC"][2] = checked
         if checked then
             if previewMode ~= 0 then
@@ -1668,6 +1932,21 @@ local function CreateNPCPane()
         end
     end, L["Separate NPC Frame"], L["Show friendly NPCs in a separate frame"], L["You can move it in Preview mode"])
     separateNPCCB:SetPoint("TOPLEFT", showNPCCB, "BOTTOMLEFT", 0, -8)
+
+    spotlightCB = Cell:CreateCheckButton(othersPane, L["Spotlight Frame"], function(checked)
+        selectedLayoutTable["spotlight"][1] = checked
+        if checked then
+            UpdateSpotlightPreview()
+        else
+            if spotlightPreview:IsShown() then
+                UpdateSpotlightPreview()
+            end
+        end
+        if selectedLayout == Cell.vars.currentLayout then
+            Cell:Fire("UpdateLayout", selectedLayout, "spotlight")
+        end
+    end, L["Spotlight Frame"], L["Show units you care about more in a separate frame"])
+    spotlightCB:SetPoint("TOPLEFT", separateNPCCB, "BOTTOMLEFT", 0, -16)
 end
 
 -------------------------------------------------
@@ -1675,7 +1954,7 @@ end
 -------------------------------------------------
 local function CreateMiscPane()
     local miscPane = Cell:CreateTitledPane(layoutsTab, L["Misc"], 205, 50)
-    miscPane:SetPoint("TOPLEFT", 222, -480)
+    miscPane:SetPoint("TOPLEFT", 5, -485)
 
     local powerFilterBtn = Cell:CreateButton(miscPane, L["Power Bar Filters"], "accent-hover", {163, 20})
     Cell.frames.layoutsTab.powerFilterBtn = powerFilterBtn
@@ -1684,8 +1963,7 @@ local function CreateMiscPane()
         F:ShowPowerFilters(selectedLayout, selectedLayoutTable)
     end)
 
-    Cell.frames.powerFilters:SetPoint("BOTTOM", powerFilterBtn, "TOP", 0, P:Scale(5))
-    Cell.frames.powerFilters:SetPoint("RIGHT", miscPane)
+    Cell.frames.powerFilters:SetPoint("BOTTOMLEFT", powerFilterBtn, "TOPLEFT", 0, P:Scale(5))
 end
 
 -------------------------------------------------
@@ -1755,11 +2033,13 @@ LoadLayoutDB = function(layout)
     -- npc frame
     showNPCCB:SetChecked(selectedLayoutTable["friendlyNPC"][1])
     separateNPCCB:SetChecked(selectedLayoutTable["friendlyNPC"][2])
+    spotlightCB:SetChecked(selectedLayoutTable["spotlight"][1])
 
     UpdateGroupFilter()
     UpdatePreviewButton()
     UpdateLayoutPreview()
     UpdateNPCPreview()
+    UpdateSpotlightPreview()
 end
 
 LoadLayoutAutoSwitchDB = function(role)
@@ -1910,7 +2190,7 @@ local function ShowTab(tab)
             CreateButtonSizePane()
             CreateGroupArrangementPane()
             CreateBarOrientationPane()
-            CreateNPCPane()
+            CreateOthersPane()
             CreateMiscPane()
 
             LoadLayoutDropdown()

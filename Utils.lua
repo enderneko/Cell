@@ -644,18 +644,33 @@ function F:IterateAllUnitButtons(func, updateCurrentGroupOnly)
     for _, b in ipairs(Cell.unitButtons.npc) do
         func(b)
     end
+
+    -- spotlight
+    for _, b in pairs(Cell.unitButtons.spotlight) do
+        func(b)
+    end
 end
 
 function F:GetUnitButtonByUnit(unit)
     if not unit then return end
 
-    if Cell.vars.groupType == "raid" then
-        return Cell.unitButtons.raid.units[unit] or Cell.unitButtons.npc.units[unit] or Cell.unitButtons.arena[unit]
-    elseif Cell.vars.groupType == "party" then
-        return Cell.unitButtons.party.units[unit] or Cell.unitButtons.npc.units[unit]
-    else -- solo
-        return Cell.unitButtons.solo[unit] or Cell.unitButtons.npc.units[unit]
+    local normal, spotlight
+    for _, b in pairs(Cell.unitButtons.spotlight) do
+        if b.state.unit and UnitIsUnit(b.state.unit, unit) then
+            spotlight = b
+            break
+        end
     end
+
+    if Cell.vars.groupType == "raid" then
+        normal = Cell.unitButtons.raid.units[unit] or Cell.unitButtons.npc.units[unit] or Cell.unitButtons.arena[unit]
+    elseif Cell.vars.groupType == "party" then
+        normal = Cell.unitButtons.party.units[unit] or Cell.unitButtons.npc.units[unit]
+    else -- solo
+        normal = Cell.unitButtons.solo[unit] or Cell.unitButtons.npc.units[unit]
+    end
+
+    return normal, spotlight
 end
 
 function F:GetUnitButtonByGUID(guid)
@@ -863,9 +878,13 @@ end
 
 function F:GetPetUnit(playerUnit)
     if Cell.vars.groupType == "party" then
-        return "partypet"..strfind(playerUnit, "^party(%d+)$")
+        if playerUnit == "player" then
+            return "pet"
+        else
+            return "partypet"..select(3, strfind(playerUnit, "^party(%d+)$"))
+        end
     elseif Cell.vars.groupType == "raid" then
-        return "raidpet"..strfind(playerUnit, "^raid(%d+)$")
+        return "raidpet"..select(3, strfind(playerUnit, "^raid(%d+)$"))
     else
         return "pet"
     end
@@ -888,6 +907,23 @@ function F:IterateGroupMembers()
     end
 end
 
+function F:IterateGroupPets()
+    local groupType = IsInRaid() and "raid" or "party"
+    local numGroupMembers = GetNumGroupMembers()
+    local i = groupType == "party" and 0 or 1
+
+    return function()
+        local ret
+        if i == 0 and groupType == "party" then
+            ret = "pet"
+        elseif i <= numGroupMembers and i > 0 then
+            ret = groupType .. "pet" .. i
+        end
+        i = i + 1
+        return ret
+    end
+end
+
 function F:GetGroupType()
     if IsInRaid() then
         return "raid"
@@ -903,6 +939,50 @@ function F:UnitInGroup(unit, ignorePets)
         return UnitInParty(unit) or UnitInRaid(unit)
     else
         return UnitPlayerOrPetInParty(unit) or UnitPlayerOrPetInRaid(unit)
+    end
+end
+
+function F:GetTargetUnitID()
+    if IsInGroup() then
+        if not F:UnitInGroup("target") then return end
+
+        if UnitIsPlayer("target") then
+            for unit in F:IterateGroupMembers() do
+                if UnitIsUnit("target", unit) then
+                    return unit
+                end
+            end
+        else
+            for unit in F:IterateGroupPets() do
+                if UnitIsUnit("target", unit) then
+                    return unit
+                end
+            end
+        end
+    else
+        if UnitIsUnit("target", "player") then
+            return "player"
+        elseif UnitIsUnit("target", "pet") then
+            return "pet"
+        end
+    end
+end
+
+function F:GetTargetPetID()
+    if IsInGroup() then
+        if not F:UnitInGroup("target") then return end
+
+        if UnitIsPlayer("target") then
+            for unit in F:IterateGroupMembers() do
+                if UnitIsUnit("target", unit) then
+                    return F:GetPetUnit(unit)
+                end
+            end
+        end
+    else
+        if UnitIsUnit("target", "player") then
+            return "pet"
+        end
     end
 end
 

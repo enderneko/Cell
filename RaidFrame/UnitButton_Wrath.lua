@@ -2,7 +2,7 @@
 -- File: UnitButton_Wrath.lua
 -- Author: enderneko (enderneko-dev@outlook.com)
 -- File Created: 2022/08/20 19:44:26 +0800
--- Last Modified: 2022/10/10 17:20:55 +0800
+-- Last Modified: 2022/10/12 02:18:35 +0800
 --]]
 
 local _, Cell = ...
@@ -1047,6 +1047,8 @@ local function ShouldShowPowerBar(b)
         class = "PET"
     elseif string.find(b.state.guid, "^Creature") then
         class = "NPC"
+    elseif string.find(b.state.guid, "^Vehicle") then
+        class = "VEHICLE"
     end
     
     if class then
@@ -2169,6 +2171,11 @@ local function UnitButton_OnTick(self)
     
     if self.updateRequired then
         self.updateRequired = nil
+        UnitButton_UpdateAll(self)
+    end
+
+    --! for targettarget
+    if self:GetAttribute("refreshOnUpdate") then
         UnitButton_UpdateAll(self)
     end
 end
