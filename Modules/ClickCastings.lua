@@ -160,6 +160,15 @@ if Cell.isRetail then
 
             -- self:SetBindingClick(true, "SHIFT-B", self, "shiftB")
             -- self:SetBindingClick(true, "SHIFT-C", self, "shiftC")
+
+            --! update click-casting unit
+            local attrs = self:GetAttribute("cell")
+            -- print(attrs)
+            if attrs then
+                for _, k in pairs(table.new(strsplit("|", attrs))) do
+                    self:SetAttribute(k, string.gsub(self:GetAttribute(k), "@%w+", "@"..self:GetAttribute("unit")))
+                end
+            end
         ]])
 
         wrapFrame:WrapScript(b, "OnEnter", [[
@@ -197,6 +206,15 @@ else
 
             -- self:SetBindingClick(true, "SHIFT-B", self, "shiftB")
             -- self:SetBindingClick(true, "SHIFT-C", self, "shiftC")
+
+            --! update click-casting unit
+            local attrs = self:GetAttribute("cell")
+            -- print(attrs)
+            if attrs then
+                for _, k in pairs(table.new(strsplit("|", attrs))) do
+                    self:SetAttribute(k, string.gsub(self:GetAttribute(k), "@%w+", "@"..self:GetAttribute("unit")))
+                end
+            end
 
             --! vehicle
             local unit = self:GetAttribute("unit")
@@ -341,7 +359,7 @@ local function ClearClickCastings(b)
 end
 
 local function ApplyClickCastings(b)
-    for _, t in pairs(clickCastingTable) do
+    for i, t in pairs(clickCastingTable) do
         local bindKey = t[1]
         if strfind(bindKey, "SCROLL") then
             bindKey = GetMouseWheelBindKey(t[1])
@@ -353,10 +371,26 @@ local function ApplyClickCastings(b)
                 --NOTE: as macro
                 b:SetAttribute(bindKey, "macro")
                 local attr = string.gsub(bindKey, "type", "macrotext")
-                b:SetAttribute(attr, "/cast [@mouseover] ".. t[3].."\n/target [@mouseover]")
+                b:SetAttribute(attr, "/tar [@cell]\n/cast [@cell,help] ".. t[3])
+                --! store attribute keys for update
+                if i == 1 then
+                    b:SetAttribute("cell", attr)
+                else
+                    b:SetAttribute("cell", b:GetAttribute("cell").."|"..attr)
+                end
             else
-                local attr = string.gsub(bindKey, "type", "spell")
-                b:SetAttribute(attr, t[3])
+                -- NOTE: spell 在无效/过远的目标上会处于“等待选中目标”的状态，即鼠标指针有一圈灰色材质。用 macrotext 可以解决这个问题
+                -- local attr = string.gsub(bindKey, "type", "spell")
+                -- b:SetAttribute(attr, t[3])
+                b:SetAttribute(bindKey, "macro")
+                local attr = string.gsub(bindKey, "type", "macrotext")
+                b:SetAttribute(attr, "/cast [@cell,help] ".. t[3])
+                --! store attribute keys for update
+                if i == 1 then
+                    b:SetAttribute("cell", attr)
+                else
+                    b:SetAttribute("cell", b:GetAttribute("cell").."|"..attr)
+                end
             end
         elseif t[2] == "macro" then
             local attr = string.gsub(bindKey, "type", "macrotext")
