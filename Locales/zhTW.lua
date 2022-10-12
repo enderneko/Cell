@@ -83,8 +83,7 @@ L["Check if your group members need some raid buffs"] = "檢查隊友是否需�
 L["circledStackNums"] = "用圓圈數字顯示層數"
 L["Class Color"] = "職業顏色"
 L["Class Color (dark)"] = "職業顏色 (暗)"
---[[Translation missing --]]
---[[ L["Clear"] = "Clear"--]] 
+L["Clear"] = "清除"
 L["cleuAurasTip"] = "通過戰鬥記錄事件找出看不到的法術效果"
 L["Click to preview"] = "點一下預覽"
 L["Click-Castings"] = "滑鼠點擊施法"
@@ -224,8 +223,7 @@ L["instakill"] = "秒殺"
 L["Instance Name"] = "副本名稱"
 L["Invalid"] = "無效"
 L["Invalid spell id."] = "無效的法術 ID。"
---[[Translation missing --]]
---[[ L["Invalid unit."] = "Invalid unit."--]] 
+L["Invalid unit."] = "無效單位。"
 L["INVERT"] = "反向選擇"
 L["It will be renamed if this layout name already exists"] = "如果該版面配置名稱已經存在，將自動重新命名"
 L["Known Spells Only"] = "只限已學會的法術"
@@ -286,6 +284,8 @@ L["Options"] = "選項"
 L["Options UI Accent Color"] = "選項介面強調色"
 L["Options UI Font Size"] = "設定選項介面文字大小"
 L["Orientation"] = "方向"
+--[[Translation missing --]]
+--[[ L["Other Frames"] = "Other Frames"--]] 
 L["Out of Range Alpha"] = "超出範圍透明度"
 L["Outline"] = "外框"
 L["Overshield Texture"] = "超過血量上限的護盾材質"
@@ -378,8 +378,7 @@ L["Show Party"] = "5人隊伍時要顯示"
 L["Show Party Pets"] = "顯示隊伍寵物"
 L["Show pets while in a party"] = "在隊伍中時顯示寵物"
 L["Show Solo"] = "單人時要顯示"
---[[Translation missing --]]
---[[ L["Show units you care about more in a separate frame"] = "Show units you care about more in a separate frame"--]] 
+L["Show units you care about more in a separate frame"] = "在單獨的框架中顯示您更關心的單位"
 L["Show while in a party"] = "在隊伍中時顯示"
 L["Show while not in a group"] = "不在隊伍中時顯示"
 L["showDispelTypeIcons"] = "顯示驅散類型圖示"
@@ -401,8 +400,7 @@ L["Spell List"] = "法術清單"
 L["Spell Request"] = "法術請求"
 L["SpellId and BuffId are the same in most cases"] = "大部分情況下法術ID與增益ID是相同的"
 L["Spells"] = "法術"
---[[Translation missing --]]
---[[ L["Spotlight Frame"] = "Spotlight Frame"--]] 
+L["Spotlight Frame"] = "聚光框架"
 L["Status Icon"] = "狀態圖示"
 L["Status Text"] = "狀態文字"
 L["Status Text Position"] = "狀態文字位置"
@@ -417,8 +415,7 @@ L["target"] = "選為目標"
 L["Target Counter"] = "目標數量"
 L["Target Highlight Color"] = "選取目標顯著標示顏色"
 L["Target Marks"] = "目標標記"
---[[Translation missing --]]
---[[ L["Target of Target"] = "Target of Target"--]] 
+L["Target of Target"] = "目標的目標"
 L["Targeted Spells"] = "被法術選中"
 L["Text"] = "文字"
 L["Text Width"] = "文字寬度"
@@ -449,14 +446,12 @@ L["trackByName"] = "根據名稱追蹤"
 L["Translators"] = "翻譯"
 L["Type: "] = "類型:"
 L["Unaffected"] = "未獲得此增益"
---[[Translation missing --]]
---[[ L["Unit"] = "Unit"--]] 
+L["Unit"] = "單位"
 L["Unit Button"] = "單位按鈕"
 L["Unit Button Size"] = "單位按鈕大小"
 L["Unit Button Style"] = "單位按鈕樣式"
 L["Unit Spacing"] = "單位間距"
---[[Translation missing --]]
---[[ L["Unit's Pet"] = "Unit's Pet"--]] 
+L["Unit's Pet"] = "單位的寵物"
 L["Unlimited"] = "無限制"
 L["Unlock"] = "解鎖"
 L["unnamed"] = "未命名"
