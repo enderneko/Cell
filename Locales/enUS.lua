@@ -59,6 +59,13 @@ select(2, ...).L = setmetatable({
     ["SNIPPETS_TIPS"] = "[Double-Click] to rename. [Shift-Click] to delete. All checked snippets will be automatically invoked at the end of Cell initialization process (in ADDON_LOADED event).",
 
     ["CHANGELOGS"] = [[
+        <h1>r119-release (Oct 12, 2022, 18:10 GMT+8)</h1>
+        <p>+ Spotlight Frame (new): Shows up to 5 units you care about more. Each button can be set to target, target of target, focus, a group member or pet.</p>
+        <p>* Update Click-Castings.</p>
+        <p>* Update menu fade-in and fade-out.</p>
+        <p>* Update zhTW.</p>
+        <br/>
+
         <h1>r118-release (Oct 9, 2022, 23:30 GMT+8)</h1>
         <p>* Updated Buff Tracker.</p>
         <p>* Fixed vehicle targeting in WotLK.</p>
