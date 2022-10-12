@@ -213,6 +213,7 @@ else
             if attrs then
                 for _, k in pairs(table.new(strsplit("|", attrs))) do
                     self:SetAttribute(k, string.gsub(self:GetAttribute(k), "@%w+", "@"..self:GetAttribute("unit")))
+                    -- print(self:GetAttribute(k))
                 end
             end
 
@@ -337,6 +338,7 @@ end
 local previousClickCastings
 local function ClearClickCastings(b)
     if not previousClickCastings then return end
+    b:SetAttribute("cell", nil)
     for _, t in pairs(previousClickCastings) do
         local bindKey = t[1]
         if strfind(bindKey, "SCROLL") then
@@ -373,7 +375,7 @@ local function ApplyClickCastings(b)
                 local attr = string.gsub(bindKey, "type", "macrotext")
                 b:SetAttribute(attr, "/tar [@cell]\n/cast [@cell,help] ".. t[3])
                 --! store attribute keys for update
-                if i == 1 then
+                if not b:GetAttribute("cell") then
                     b:SetAttribute("cell", attr)
                 else
                     b:SetAttribute("cell", b:GetAttribute("cell").."|"..attr)
@@ -386,7 +388,7 @@ local function ApplyClickCastings(b)
                 local attr = string.gsub(bindKey, "type", "macrotext")
                 b:SetAttribute(attr, "/cast [@cell,help] ".. t[3])
                 --! store attribute keys for update
-                if i == 1 then
+                if not b:GetAttribute("cell") then
                     b:SetAttribute("cell", attr)
                 else
                     b:SetAttribute("cell", b:GetAttribute("cell").."|"..attr)
