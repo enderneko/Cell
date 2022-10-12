@@ -796,7 +796,7 @@ local function UpdateSpotlightPreview()
         spotlightPreviewAnchor:SetPoint("TOPLEFT", UIParent, "CENTER")
     end
     spotlightPreviewAnchor:Show()
-    spotlightPreviewName:SetText(L["Layout"]..": "..selectedLayout.." ("..L["Spotlight"]..")")
+    spotlightPreviewName:SetText(L["Layout"]..": "..selectedLayout.." ("..L["Spotlight Frame"]..")")
     spotlightPreviewName:Show()
 
     -- re-arrange

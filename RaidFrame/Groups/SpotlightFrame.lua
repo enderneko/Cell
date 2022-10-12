@@ -573,6 +573,9 @@ local function UpdateLayout(layout, which)
             for i = 1, 5 do
                 local unit = layout["spotlight"][2][i]
                 Cell.unitButtons.spotlight[i]:SetAttribute("unit", unit)
+                if unit == "targettarget" then
+                    Cell.unitButtons.spotlight[i]:SetAttribute("refreshOnUpdate", true)
+                end
                 RegisterUnitWatch(Cell.unitButtons.spotlight[i])
                 assignmentButtons[i]:SetText(unit or NONE)
             end
@@ -580,6 +583,7 @@ local function UpdateLayout(layout, which)
         else
             for i = 1, 5 do
                 Cell.unitButtons.spotlight[i]:SetAttribute("unit", nil)
+                Cell.unitButtons.spotlight[i]:SetAttribute("refreshOnUpdate", nil)
                 UnregisterUnitWatch(Cell.unitButtons.spotlight[i])
                 assignmentButtons[i]:SetText(NONE)
                 Cell.unitButtons.spotlight[i]:Hide()
