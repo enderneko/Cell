@@ -28,6 +28,7 @@ local function CreateChangelogsFrame()
     content:SetFontObject("p", "CELL_FONT_WIDGET")
     content:SetPoint("TOP", 0, -10)
     content:SetWidth(changelogsFrame:GetWidth() - 30)
+    content:SetHyperlinkFormat("|H%s|h|cFFFFD100%s|r|h")
 
     changelogsFrame:SetScript("OnShow", function()
         content:SetText("<html><body>" .. L["CHANGELOGS"] .. "</body></html>")
@@ -35,6 +36,19 @@ local function CreateChangelogsFrame()
         content:SetHeight(height)
         changelogsFrame.scrollFrame.content:SetHeight(height + 30)
         P:PixelPerfectPoint(changelogsFrame)
+    end)
+
+    content:SetScript("OnHyperlinkClick", function(self, linkData, link, button)
+        if linkData == "older" then
+            content:SetText("<html><body>" .. L["OLDER_CHANGELOGS"] .. "</body></html>")
+        elseif linkData == "recent" then
+            content:SetText("<html><body>" .. L["CHANGELOGS"] .. "</body></html>")
+        end
+            
+        local height = content:GetContentHeight()
+        content:SetHeight(height)
+        changelogsFrame.scrollFrame.content:SetHeight(height + 30)
+        changelogsFrame.scrollFrame:ResetScroll()
     end)
 end
 

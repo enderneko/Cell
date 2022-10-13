@@ -577,6 +577,8 @@ L["unnamed"] = "未命名"
 -- CHANGELOGS
 -------------------------------------------------
 L["Changelogs"] = "更新记录"
+L["Click to view recent changelogs"] = "点击查看近期更新记录"
+L["Click to view older changelogs"] = "点击查看远古更新记录"
 L["CHANGELOGS"] = [[
     <h1>r120-release (Oct 12, 2022, 20:45 GMT+8)</h1>
     <p>* 修复点击施法。</p>
@@ -658,6 +660,11 @@ L["CHANGELOGS"] = [[
     <p>* Cell 基本可以在巫妖王之怒怀旧服中使用了（但并非所有正式服的功能都可用，有些不想做，有些做不了）。</p>
     <br/>
 
+    <p><a href="older">]]..L["Click to view older changelogs"]..[[</a></p>
+    <br/>
+]]
+
+L["OLDER_CHANGELOGS"] = [[
     <h1>r108-release (Aug 17, 2022, 18:20 GMT+8)</h1>
     <p>* 更新当前赛季史诗钥石地下城的相关减益（感谢 夕曦@NGA 提供的列表）。</p>
     <p>* 修复了几处小问题。</p>
@@ -1128,6 +1135,7 @@ L["CHANGELOGS"] = [[
     <p>+ 新增的小队/团队预览模式可以帮你更方便地调整各种布局啦。</p>
     <p>+ 队伍锚点功能来啦，到 布局 -&gt; 队伍排列 那里看看吧。</p>
     <br/>
-    <br/>
+
+    <p><a href="recent">]]..L["Click to view recent changelogs"]..[[</a></p>
     <br/>
 ]]

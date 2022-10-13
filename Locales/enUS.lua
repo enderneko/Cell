@@ -139,6 +139,11 @@ select(2, ...).L = setmetatable({
         <p>* Cell should work on Wrath Classic now (not all Retail features are available).</p>
         <br/>
 
+        <p><a href="older">Click to view older changelogs</a></p>
+        <br/>
+    ]],
+
+    ["OLDER_CHANGELOGS"] = [[
         <h1>r108-release (Aug 17, 2022, 18:20 GMT+8)</h1>
         <p>* Updated M+ debuffs.</p>
         <p>* Fixed several bugs.</p>
@@ -612,7 +617,8 @@ select(2, ...).L = setmetatable({
         <p>+ Party/Raid Preview Mode will help you adjust layouts.</p>
         <p>+ Group Anchor Point comes, go check it out in Layouts -&gt; Group Arrangement.</p>
         <br/>
-        <br/>
+
+        <p><a href="recent">Click to view recent changelogs</a></p>
         <br/>
     ]],
 }, {
