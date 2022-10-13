@@ -1945,7 +1945,9 @@ local function CreateOthersPane()
         if selectedLayout == Cell.vars.currentLayout then
             Cell:Fire("UpdateLayout", selectedLayout, "spotlight")
         end
-    end, L["Spotlight Frame"], L["Show units you care about more in a separate frame"])
+    end, L["Spotlight Frame"], L["Show units you care about more in a separate frame"],
+    "|cffffb5c5"..L["Target"]..", "..L["Target of Target"]..", "..L["Focus"],
+    "|cffffb5c5"..L["Unit"]..", "..L["Unit's Pet"])
     spotlightCB:SetPoint("TOPLEFT", separateNPCCB, "BOTTOMLEFT", 0, -16)
 end
 

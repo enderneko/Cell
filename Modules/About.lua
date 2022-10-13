@@ -89,7 +89,18 @@ local function CreateSpecialThanksPane()
     bgTex:SetTexture("Interface\\Buttons\\WHITE8x8")
     bgTex:SetGradientAlpha("HORIZONTAL", 0.1, 0.1, 0.1, 1, 0.1, 0.1, 0.1, 0.25)
 
-    local thanksText = specialThanksPane:CreateFontString(nil, "OVERLAY", LOCALE_zhCN and "CELL_FONT_WIDGET" or "GameTooltipTextSmall")
+    local thanksText = specialThanksPane:CreateFontString(nil, "OVERLAY")
+    local font
+    if LOCALE_zhCN then
+        font = GameFontNormal:GetFont()
+    else
+        font = UNIT_NAME_FONT_CHINESE
+    end
+    thanksText:SetFont(font, 12)
+    thanksText:SetTextColor(1, 1, 1, 1)
+    thanksText:SetShadowColor(0, 0, 0)
+    thanksText:SetShadowOffset(1, -1)
+
     thanksText:SetPoint("TOPLEFT", 5, -27)
     thanksText:SetSpacing(5)
     thanksText:SetJustifyH("LEFT")
