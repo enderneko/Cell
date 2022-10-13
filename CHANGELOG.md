@@ -1,4 +1,5 @@
-[Full Changelog](https://github.com/enderneko/Cell/compare/r120-release...20a608252428026bf0264b3d4ae3f60c264c728d)
+[Full Changelog](https://github.com/enderneko/Cell/compare/r121-release...ddf28812a3fa746243533ae53f5072621203e426)
 
-- Fix targettarget of spotlight
-- Add hyperlinks to view older/recent changelogs
+- Fix vehicle click-castings in WotLK
+- Fix all ill-formed numbers
+- Update SpotlightFrame
