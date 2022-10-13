@@ -1,4 +1,4 @@
-[Full Changelog](https://github.com/enderneko/Cell/compare/r119-release...ade166e389605b2b119800302487ebead86b5ecc)
+[Full Changelog](https://github.com/enderneko/Cell/compare/r120-release...20a608252428026bf0264b3d4ae3f60c264c728d)
 
-- Fix Click-Castings
-- Update locales
+- Fix targettarget of spotlight
+- Add hyperlinks to view older/recent changelogs

@@ -580,6 +580,10 @@ L["Changelogs"] = "更新记录"
 L["Click to view recent changelogs"] = "点击查看近期更新记录"
 L["Click to view older changelogs"] = "点击查看远古更新记录"
 L["CHANGELOGS"] = [[
+    <h1>r121-release (Oct 13, 2022, 14:40 GMT+8)</h1>
+    <p>* 修复那啥的bug。</p>
+    <br/>
+
     <h1>r120-release (Oct 12, 2022, 20:45 GMT+8)</h1>
     <p>* 修复点击施法。</p>
     <p>* 更新本地化。</p>
