@@ -207,16 +207,6 @@ else
             -- self:SetBindingClick(true, "SHIFT-B", self, "shiftB")
             -- self:SetBindingClick(true, "SHIFT-C", self, "shiftC")
 
-            --! update click-casting unit
-            local attrs = self:GetAttribute("cell")
-            -- print(attrs)
-            if attrs then
-                for _, k in pairs(table.new(strsplit("|", attrs))) do
-                    self:SetAttribute(k, string.gsub(self:GetAttribute(k), "@%w+", "@"..self:GetAttribute("unit")))
-                    -- print(self:GetAttribute(k))
-                end
-            end
-
             --! vehicle
             local unit = self:GetAttribute("unit")
             if UnitHasVehicleUI(unit) and not self:GetAttribute("oldUnit") then
@@ -233,6 +223,16 @@ else
                 end
                 if vehicle then
                     self:SetAttribute("unit", vehicle)
+                end
+            end
+
+            --! update click-casting unit
+            local attrs = self:GetAttribute("cell")
+            -- print(attrs)
+            if attrs then
+                for _, k in pairs(table.new(strsplit("|", attrs))) do
+                    self:SetAttribute(k, string.gsub(self:GetAttribute(k), "@%w+", "@"..self:GetAttribute("unit")))
+                    -- print(self:GetAttribute(k))
                 end
             end
         ]])
