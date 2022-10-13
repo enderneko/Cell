@@ -73,7 +73,7 @@ local function SetCooldown(frame, start, duration, debuffType, texture, count, r
         frame.spark:SetColorTexture(r, g, b, 1)
     else
         r, g, b = 0, 0, 0
-        frame.spark:SetColorTexture(.5, .5, .5, 1)
+        frame.spark:SetColorTexture(0.5, 0.5, 0.5, 1)
     end
 
     frame:SetBackdropColor(r, g, b, 1)

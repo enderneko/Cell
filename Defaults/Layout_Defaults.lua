@@ -150,7 +150,7 @@ Cell.defaults.layout = {
             ["position"] = {"TOP", "TOP", 0, 3},
             ["frameLevel"] = 2,
             ["size"] = {14, 14},
-            ["alpha"] = .77,
+            ["alpha"] = 0.77,
         }, -- 8
         {
             ["name"] = "Raid Icon (target)",
@@ -160,7 +160,7 @@ Cell.defaults.layout = {
             ["position"] = {"TOP", "TOP", -14, 3},
             ["frameLevel"] = 2,
             ["size"] = {14, 14},
-            ["alpha"] = .77,
+            ["alpha"] = 0.77,
         }, -- 9
         {
             ["name"] = "Aggro (blink)",

@@ -4,7 +4,7 @@ local P = Cell.pixelPerfectFuncs
 
 local npcFrame = CreateFrame("Frame", "CellNPCFrame", Cell.frames.mainFrame, "SecureHandlerStateTemplate")
 Cell.frames.npcFrame = npcFrame
--- Cell:StylizeFrame(npcFrame, {1, .5, .5})
+-- Cell:StylizeFrame(npcFrame, {1, 0.5, 0.5})
 
 local anchors = {
     ["solo"] = CellSoloFramePlayer,

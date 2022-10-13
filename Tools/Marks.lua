@@ -62,14 +62,14 @@ Cell:RegisterCallback("ShowMover", "RaidMarks_ShowMover", ShowMover)
 -------------------------------------------------
 local markColors = {
     {1, 1, 0}, -- star
-    {1, .5, 0}, -- circle
-    {.5, 0, 1}, -- diamond
-    {0, 1, .2}, -- triangle
-    {.5, .5, .5}, -- moon
-    {0, .5, 1}, -- square
+    {1, 0.5, 0}, -- circle
+    {0.5, 0, 1}, -- diamond
+    {0, 1, 0.2}, -- triangle
+    {0.5, 0.5, 0.5}, -- moon
+    {0, 0.5, 1}, -- square
     {1, 0, 0}, -- cross
     {1, 1, 1}, -- skull
-    {1, .19, .19}, -- clear
+    {1, 0.19, 0.19}, -- clear
 }
 
 -------------------------------------------------
@@ -96,7 +96,7 @@ for i = 1, 9 do
             for j = 1, 8 do
                 SetRaidTarget("player", j)
             end
-            C_Timer.After(.5, function()
+            C_Timer.After(0.5, function()
                 SetRaidTarget("player", 0)
                 markButtons[i]:SetEnabled(true)
                 markButtons[i].texture:SetDesaturated(false)
@@ -196,7 +196,7 @@ for i = 1, 9 do
     else
         P:Point(worldMarkButtons[i].texture, "TOPLEFT", worldMarkButtons[i], "TOPLEFT", 1, -1)
         P:Point(worldMarkButtons[i].texture, "BOTTOMRIGHT", worldMarkButtons[i], "BOTTOMRIGHT", -1, 1)
-        worldMarkButtons[i].texture:SetColorTexture(markColors[i][1], markColors[i][2], markColors[i][3], .4)
+        worldMarkButtons[i].texture:SetColorTexture(markColors[i][1], markColors[i][2], markColors[i][3], 0.4)
         worldMarkButtons[i]:SetAttribute("type", "worldmarker")
         worldMarkButtons[i]:SetAttribute("marker", worldMarkIndices[i])
         -- worldMarkButtons[i]:SetAttribute("type", "macro")
@@ -217,7 +217,7 @@ end
 
 local worldMarksTimer
 worldMarks:SetScript("OnShow", function()
-    worldMarksTimer = C_Timer.NewTicker(.5, function()
+    worldMarksTimer = C_Timer.NewTicker(0.5, function()
         for i = 1, 8 do
             if IsRaidMarkerActive(worldMarkIndices[i]) then
                 worldMarkButtons[i]:SetBackdropBorderColor(markColors[i][1], markColors[i][2], markColors[i][3], 1)

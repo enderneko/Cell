@@ -34,7 +34,7 @@ function P:PixelPerfectPoint(frame)
     local top = frame:GetTop()
     
     frame:ClearAllPoints()
-    frame:SetPoint("TOPLEFT", UIParent, "BOTTOMLEFT", math.floor(left + .5), math.floor(top + .5))
+    frame:SetPoint("TOPLEFT", UIParent, "BOTTOMLEFT", math.floor(left + 0.5), math.floor(top + 0.5))
 end
 
 --------------------------------------------
@@ -123,8 +123,8 @@ end
 --------------------------------------------
 function P:SavePosition(frame, positionTable)
     wipe(positionTable)
-    local left = math.floor(frame:GetLeft() + .5)
-    local top = math.floor(frame:GetTop() + .5)
+    local left = math.floor(frame:GetLeft() + 0.5)
+    local top = math.floor(frame:GetTop() + 0.5)
     positionTable[1], positionTable[2] = left, top
 end
 

@@ -37,7 +37,7 @@ end
 local ticker
 local function StartTicker()
     if ticker then ticker:Cancel() end
-    ticker = C_Timer.NewTicker(.25, function()
+    ticker = C_Timer.NewTicker(0.25, function()
         -- reset
         for _, ct in pairs(counter) do
             wipe(ct)

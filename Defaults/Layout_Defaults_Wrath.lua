@@ -2,7 +2,7 @@
 -- File: Layout_Defaults_Wrath.lua
 -- Author: enderneko (enderneko-dev@outlook.com)
 -- File Created: 2022/08/21 04:06:04 +0800
--- Last Modified: 2022/10/11 03:00:22 +0800
+-- Last Modified: 2022/10/13 15:01:39 +0800
 --]]
 
 local addonName, Cell = ...
@@ -154,7 +154,7 @@ Cell.defaults.layout = {
             ["position"] = {"TOP", "TOP", 0, 3},
             ["frameLevel"] = 2,
             ["size"] = {14, 14},
-            ["alpha"] = .77,
+            ["alpha"] = 0.77,
         }, -- 8
         {
             ["name"] = "Raid Icon (target)",
@@ -164,7 +164,7 @@ Cell.defaults.layout = {
             ["position"] = {"TOP", "TOP", -14, 3},
             ["frameLevel"] = 2,
             ["size"] = {14, 14},
-            ["alpha"] = .77,
+            ["alpha"] = 0.77,
         }, -- 9
         {
             ["name"] = "Aggro (blink)",

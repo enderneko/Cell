@@ -69,7 +69,7 @@ local function CreateRaidRosterGrid(parent, index)
         grid:StartMoving()
         grid:SetUserPlaced(false)
         grid:SetBackdropBorderColor(unpack(grid.color))
-        grid:SetBackdropColor(.1, .1, .1, .9)
+        grid:SetBackdropColor(0.1, 0.1, 0.1, 0.9)
         grid.isMoving = true
         movingGrid = grid
     end)
@@ -80,7 +80,7 @@ local function CreateRaidRosterGrid(parent, index)
         grid:SetPoint(unpack(grid.point1))
         grid:SetPoint(unpack(grid.point2))
         grid:SetBackdropBorderColor(0, 0, 0, 1)
-        grid:SetBackdropColor(.1, .1, .1, .5)
+        grid:SetBackdropColor(0.1, 0.1, 0.1, 0.5)
         grid.isMoving = nil
     end)
     

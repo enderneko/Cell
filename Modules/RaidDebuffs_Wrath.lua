@@ -340,7 +340,7 @@ local function SetOnEnterLeave(frame)
     frame:SetScript("OnEnter", function()
         frame:SetBackdropBorderColor(unpack(Cell:GetAccentColorTable()))
         frame.scrollFrame.scrollbar:SetBackdropBorderColor(unpack(Cell:GetAccentColorTable()))
-        -- frame.scrollFrame.scrollThumb:SetBackdropBorderColor(0, 0, 0, .5)
+        -- frame.scrollFrame.scrollThumb:SetBackdropBorderColor(0, 0, 0, 0.5)
     end)
     frame:SetScript("OnLeave", function()
         frame:SetBackdropBorderColor(0, 0, 0, 1)
@@ -780,7 +780,7 @@ local function CreateDebuffsFrame()
     dragged.icon = dragged:CreateTexture(nil, "ARTWORK")
     dragged.icon:SetSize(16, 16)
     dragged.icon:SetPoint("LEFT", 2, 0)
-    dragged.icon:SetTexCoord(.08, .92, .08, .92)
+    dragged.icon:SetTexCoord(0.08, 0.92, 0.08, 0.92)
     -- text
     dragged.text = dragged:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
     dragged.text:SetPoint("LEFT", dragged.icon, "RIGHT", 2, 0)
@@ -794,7 +794,7 @@ local function RegisterForDrag(b)
     b:SetMovable(true)
     b:RegisterForDrag("LeftButton")
     b:SetScript("OnDragStart", function(self)
-        self:SetAlpha(.5)
+        self:SetAlpha(0.5)
         dragged:SetWidth(self:GetWidth())
         dragged.icon:SetTexture(self.spellIcon)
         dragged.text:SetText(self:GetText())
@@ -929,7 +929,7 @@ local function CreateDebuffButton(i, sTable)
         debuffButtons[i].icon = debuffButtons[i]:CreateTexture(nil, "ARTWORK")
         debuffButtons[i].icon:SetSize(16, 16)
         debuffButtons[i].icon:SetPoint("LEFT", 2, 0)
-        debuffButtons[i].icon:SetTexCoord(.08, .92, .08, .92)
+        debuffButtons[i].icon:SetTexCoord(0.08, 0.92, 0.08, 0.92)
         -- update text position
         debuffButtons[i]:GetFontString():ClearAllPoints()
         debuffButtons[i]:GetFontString():SetPoint("LEFT", debuffButtons[i].icon, "RIGHT", 2, 0)
@@ -951,7 +951,7 @@ local function CreateDebuffButton(i, sTable)
 
     debuffButtons[i].spellId = sTable["id"]
     if sTable["order"] == 0 then
-        debuffButtons[i]:SetTextColor(.4, .4, .4)
+        debuffButtons[i]:SetTextColor(0.4, 0.4, 0.4)
         UnregisterForDrag(debuffButtons[i])
         debuffButtons[i].enabled = nil
     else
@@ -1075,7 +1075,7 @@ local function CreatePreviewButton()
     local fadeIn = previewButton.fadeIn:CreateAnimation("alpha")
     fadeIn:SetFromAlpha(0)
     fadeIn:SetToAlpha(1)
-    fadeIn:SetDuration(.25)
+    fadeIn:SetDuration(0.25)
     fadeIn:SetSmoothing("OUT")
 
     previewButton.fadeOut = previewButton:CreateAnimationGroup()
@@ -1180,7 +1180,7 @@ local function CreateDetailsFrame()
     
     spellIcon = detailsContentFrame:CreateTexture(nil, "ARTWORK")
     spellIcon:SetDrawLayer("ARTWORK", 7)
-    spellIcon:SetTexCoord(.08, .92, .08, .92)
+    spellIcon:SetTexCoord(0.08, 0.92, 0.08, 0.92)
     spellIcon:SetPoint("TOPLEFT", spellIconBG, 1, -1)
     spellIcon:SetPoint("BOTTOMRIGHT", spellIconBG, -1, 1)
     
@@ -1534,7 +1534,7 @@ local function CreateDetailsFrame()
     glowParticles:SetPoint("TOPLEFT", glowColor, "BOTTOMLEFT", 0, -25)
 
     -- glowFrequency
-    glowFrequency = Cell:CreateSlider(L["Frequency"], glowOptionsFrame, -2, 2, 117, .05, function(value)
+    glowFrequency = Cell:CreateSlider(L["Frequency"], glowOptionsFrame, -2, 2, 117, 0.05, function(value)
         SliderValueChanged(3, value)
     end)
     glowFrequency:SetPoint("TOPLEFT", glowLines, "BOTTOMLEFT", 0, -40)
@@ -1664,11 +1664,11 @@ UpdateGlowType = function(newType)
         elseif newType == "Pixel" then
             if t["glowOptions"] then
                 t["glowOptions"][2] = 9
-                t["glowOptions"][3] = .25
+                t["glowOptions"][3] = 0.25
                 t["glowOptions"][4] = 8
                 t["glowOptions"][5] = 2
             else
-                t["glowOptions"] = {{0.95,0.95,0.32,1}, 9, .25, 8, 2}
+                t["glowOptions"] = {{0.95,0.95,0.32,1}, 9, 0.25, 8, 2}
             end
         elseif newType == "Shine" then
             if t["glowOptions"] then
@@ -1848,7 +1848,7 @@ ShowDetails = function(spell)
     -- SetSpellDesc(desc)
     -- -- to ensure desc
     -- if timer then timer:Cancel() end
-    -- timer = C_Timer.NewTimer(.7, function()
+    -- timer = C_Timer.NewTimer(0.7, function()
     --     SetSpellDesc(select(3, F:GetSpellInfo(spellId)))
     -- end)
     

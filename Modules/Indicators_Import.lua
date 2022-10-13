@@ -143,7 +143,7 @@ local function CreateIndicatorsImportFrame()
                                     b.typeIcon:SetPoint("RIGHT", -2, 0)
                                     b.typeIcon:SetSize(16, 16)
                                     b.typeIcon:SetTexture("Interface\\AddOns\\Cell\\Media\\Indicators\\indicator-"..t["type"])
-                                    b.typeIcon:SetAlpha(.5)
+                                    b.typeIcon:SetAlpha(0.5)
                         
                                     b:GetFontString():ClearAllPoints()
                                     b:GetFontString():SetPoint("LEFT", 5, 0)

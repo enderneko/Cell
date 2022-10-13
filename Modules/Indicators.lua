@@ -1465,7 +1465,7 @@ local function ShowIndicatorSettings(id)
                     if value then
                         listButtons[id]:SetTextColor(1, 1, 1, 1)
                     else
-                        listButtons[id]:SetTextColor(.466, .466, .466, 1)
+                        listButtons[id]:SetTextColor(0.466, 0.466, 0.466, 1)
                     end
                 end
             end

@@ -263,7 +263,7 @@ function I:CreateTankActiveMitigation(parent)
     bar:SetReverseFill(true)
 
     local tex = bar:CreateTexture(nil, "ARTWORK")
-    tex:SetColorTexture(.7, .7, .7)
+    tex:SetColorTexture(0.7, 0.7, 0.7)
     tex:SetPoint("TOPLEFT")
     tex:SetPoint("BOTTOMRIGHT", bar:GetStatusBarTexture(), "BOTTOMLEFT")
 
@@ -1440,7 +1440,7 @@ function I:CreateStatusIcon(parent)
     resurrectionIcon.icon:SetAllPoints(resurrectionIcon)
     resurrectionIcon.icon:SetTexCoord(0.08, 0.92, 0.08, 0.92)
     resurrectionIcon.icon:SetDesaturated(true)
-    resurrectionIcon.icon:SetVertexColor(.4, .4, .4, .5)
+    resurrectionIcon.icon:SetVertexColor(0.4, 0.4, 0.4, 0.5)
     resurrectionIcon.icon:SetTexture("Interface\\RaidFrame\\Raid-Icon-Rez")
 
     function resurrectionIcon:SetTimer(start, duration)

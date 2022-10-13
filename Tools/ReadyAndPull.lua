@@ -34,7 +34,7 @@ local function ShowMover(show)
         if not CellDB["tools"]["readyAndPull"][1] then return end
         buttonsFrame:EnableMouse(true)
         buttonsFrame.moverText:Show()
-        Cell:StylizeFrame(buttonsFrame, {0, 1, 0, .4}, {0, 0, 0, 0})
+        Cell:StylizeFrame(buttonsFrame, {0, 1, 0, 0.4}, {0, 0, 0, 0})
         if not F:HasPermission() then -- button not shown
             readyBtn:Show()
             pullBtn:Show()

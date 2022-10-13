@@ -116,8 +116,8 @@ local function CreateTooltipsPane()
             tooltipsAnchoredToText:SetTextColor(1, 1, 1)
             UpdateTooltipsOptions()
         else
-            tooltipsAnchorText:SetTextColor(.4, .4, .4)
-            tooltipsAnchoredToText:SetTextColor(.4, .4, .4)
+            tooltipsAnchorText:SetTextColor(0.4, 0.4, 0.4)
+            tooltipsAnchoredToText:SetTextColor(0.4, 0.4, 0.4)
         end
     end)
     enableTooltipsCB:SetPoint("TOPLEFT", tooltipsPane, "TOPLEFT", 5, -27)

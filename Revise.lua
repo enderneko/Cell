@@ -45,7 +45,7 @@ function F:Revise()
         -- add "textWidth"
         for _, layout in pairs(CellDB["layouts"]) do
             if not layout["textWidth"] then
-                layout["textWidth"] = .75
+                layout["textWidth"] = 0.75
             end
         end
         -- remove old raid tools related
@@ -127,8 +127,8 @@ function F:Revise()
     -- r22-release
     if not(CellDB["revise"]) or dbRevision < 22 then
         -- highlight color
-        if not CellDB["appearance"]["targetColor"] then CellDB["appearance"]["targetColor"] = {1, .19, .19, .5} end
-        if not CellDB["appearance"]["mouseoverColor"] then CellDB["appearance"]["mouseoverColor"] = {1, 1, 1, .5} end
+        if not CellDB["appearance"]["targetColor"] then CellDB["appearance"]["targetColor"] = {1, 0.19, 0.19, 0.5} end
+        if not CellDB["appearance"]["mouseoverColor"] then CellDB["appearance"]["mouseoverColor"] = {1, 1, 1, 0.5} end
         for _, layout in pairs(CellDB["layouts"]) do
             -- columns/rows
             if type(layout["columns"]) ~= "number" then layout["columns"] = 8 end
@@ -143,7 +143,7 @@ function F:Revise()
             -- 		["enabled"] = true,
             -- 		["position"] = {"TOP", "TOP", 0, 3},
             -- 		["size"] = {14, 14},
-            -- 		["alpha"] = .77,
+            -- 		["alpha"] = 0.77,
             -- 	})
             -- end
         end
@@ -165,7 +165,7 @@ function F:Revise()
                         ["enabled"] = true,
                         ["position"] = {"TOP", "TOP", 0, 3},
                         ["size"] = {14, 14},
-                        ["alpha"] = .77,
+                        ["alpha"] = 0.77,
                     })
                 end
             end
@@ -177,7 +177,7 @@ function F:Revise()
                     ["enabled"] = false,
                     ["position"] = {"TOP", "TOP", -14, 3},
                     ["size"] = {14, 14},
-                    ["alpha"] = .77,
+                    ["alpha"] = 0.77,
                 })
             end
         end
@@ -372,7 +372,7 @@ function F:Revise()
                         if sTable[3] == "None" or sTable[3] == "Normal" then
                             sTable[4] = {color}
                         elseif sTable[3] == "Pixel" then
-                            sTable[4] = {color, 9, .25, 8, 2}
+                            sTable[4] = {color, 9, 0.25, 8, 2}
                         elseif sTable[3] == "Shine" then
                             sTable[4] = {color, 9, 0.5, 1}
                         end
@@ -413,7 +413,7 @@ function F:Revise()
                     ["font"] = {"Cell ".._G.DEFAULT, 13, "Shadow"},
                     ["nameColor"] = {"Custom Color", {1, 1, 1}},
                     ["vehicleNamePosition"] = {"TOP", 0},
-                    ["textWidth"] = .75,
+                    ["textWidth"] = 0.75,
                 })
             end
 
@@ -476,7 +476,7 @@ function F:Revise()
                     ["size"] = {20, 20},
                     ["border"] = 2,
                     ["spells"] = {},
-                    ["glow"] = {"Pixel", {0.95,0.95,0.32,1}, 9, .25, 8, 2},
+                    ["glow"] = {"Pixel", {0.95,0.95,0.32,1}, 9, 0.25, 8, 2},
                     ["font"] = {"Cell ".._G.DEFAULT, 12, "Outline", 2},
                 })
             end
@@ -540,7 +540,7 @@ function F:Revise()
             CellDB["appearance"]["highlightSize"] = 1
         end
         if type(CellDB["appearance"]["outOfRangeAlpha"]) ~= "number" then
-            CellDB["appearance"]["outOfRangeAlpha"] = .45
+            CellDB["appearance"]["outOfRangeAlpha"] = 0.45
         end
     end
 
@@ -602,7 +602,7 @@ function F:Revise()
                     ["position"] = {"TOP", "TOP", 0, 5},
                     ["frameLevel"] = 15,
                     ["font"] = {"Cell ".._G.DEFAULT, 15, "Outline", 0},
-                    ["color"] = {1, .1, .1},
+                    ["color"] = {1, 0.1, 0.1},
                 })
             end
         end

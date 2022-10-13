@@ -61,7 +61,7 @@ font_title:SetJustifyH("CENTER")
 
 local font_title_disable = CreateFont(font_title_disable_name)
 font_title_disable:SetFont(GameFontNormal:GetFont(), 14)
-font_title_disable:SetTextColor(.4, .4, .4, 1)
+font_title_disable:SetTextColor(0.4, 0.4, 0.4, 1)
 font_title_disable:SetShadowColor(0, 0, 0)
 font_title_disable:SetShadowOffset(1, -1)
 font_title_disable:SetJustifyH("CENTER")
@@ -75,7 +75,7 @@ font:SetJustifyH("CENTER")
 
 local font_disable = CreateFont(font_disable_name)
 font_disable:SetFont(GameFontNormal:GetFont(), 13)
-font_disable:SetTextColor(.4, .4, .4, 1)
+font_disable:SetTextColor(0.4, 0.4, 0.4, 1)
 font_disable:SetShadowColor(0, 0, 0)
 font_disable:SetShadowOffset(1, -1)
 font_disable:SetJustifyH("CENTER")
@@ -415,7 +415,7 @@ function addon:ChangeSizeWithAnimation(frame, targetWidth, targetHeight, step, s
     local diffW = (targetWidth - currentWidth) / step
     
     local animationTimer
-    animationTimer = C_Timer.NewTicker(.025, function()
+    animationTimer = C_Timer.NewTicker(0.025, function()
         if diffW ~= 0 then
             if diffW > 0 then
                 currentWidth = math.min(currentWidth + diffW, targetWidth)
@@ -1044,7 +1044,7 @@ function addon:CreateSlider(name, parent, low, high, width, step, onValueChanged
     slider:SetSize(width, 10)
     local unit = isPercentage and "%" or ""
 
-    addon:StylizeFrame(slider, {.115, .115, .115, 1})
+    addon:StylizeFrame(slider, {0.115, 0.115, 0.115, 1})
     
     local nameText = slider:CreateFontString(nil, "OVERLAY", font_name)
     nameText:SetText(name)
@@ -1101,7 +1101,7 @@ function addon:CreateSlider(name, parent, low, high, width, step, onValueChanged
     highText:SetPoint("BOTTOM", currentEditBox)
 
     local tex = slider:CreateTexture(nil, "ARTWORK")
-    tex:SetColorTexture(accentColor.t[1], accentColor.t[2], accentColor.t[3], .7)
+    tex:SetColorTexture(accentColor.t[1], accentColor.t[2], accentColor.t[3], 0.7)
     tex:SetSize(8, 8)
     slider:SetThumbTexture(tex)
 
@@ -1115,7 +1115,7 @@ function addon:CreateSlider(name, parent, low, high, width, step, onValueChanged
     end
     slider:SetScript("OnEnter", slider.onEnter)
     slider.onLeave = function()
-        tex:SetColorTexture(accentColor.t[1], accentColor.t[2], accentColor.t[3], .7)
+        tex:SetColorTexture(accentColor.t[1], accentColor.t[2], accentColor.t[3], 0.7)
         CellTooltip:Hide()
     end
     slider:SetScript("OnLeave", slider.onLeave)
@@ -1184,13 +1184,13 @@ function addon:CreateSlider(name, parent, low, high, width, step, onValueChanged
     slider:SetValue(low) -- NOTE: needs to be after OnValueChanged
 
     slider:SetScript("OnDisable", function()
-        nameText:SetTextColor(.4, .4, .4)
+        nameText:SetTextColor(0.4, 0.4, 0.4)
         currentEditBox:SetEnabled(false)
         slider:SetScript("OnEnter", nil)
         slider:SetScript("OnLeave", nil)
-        tex:SetColorTexture(.4, .4, .4, .7)
-        lowText:SetTextColor(.4, .4, .4)
-        highText:SetTextColor(.4, .4, .4)
+        tex:SetColorTexture(0.4, 0.4, 0.4, 0.7)
+        lowText:SetTextColor(0.4, 0.4, 0.4)
+        highText:SetTextColor(0.4, 0.4, 0.4)
     end)
     
     slider:SetScript("OnEnable", function()
@@ -1198,7 +1198,7 @@ function addon:CreateSlider(name, parent, low, high, width, step, onValueChanged
         currentEditBox:SetEnabled(true)
         slider:SetScript("OnEnter", slider.onEnter)
         slider:SetScript("OnLeave", slider.onLeave)
-        tex:SetColorTexture(accentColor.t[1], accentColor.t[2], accentColor.t[3], .7)
+        tex:SetColorTexture(accentColor.t[1], accentColor.t[2], accentColor.t[3], 0.7)
         lowText:SetTextColor(unpack(colors.grey.t))
         highText:SetTextColor(unpack(colors.grey.t))
     end)
@@ -1330,7 +1330,7 @@ function addon:CreateStatusBar(name, parent, width, height, maxValue, smooth, fu
     P:Width(bar, width)
     P:Height(bar, height)
     bar:SetBackdrop({bgFile="Interface\\Buttons\\WHITE8x8"})
-    bar:SetBackdropColor(.07, .07, .07, .9)
+    bar:SetBackdropColor(0.07, 0.07, 0.07, 0.9)
     -- bar:SetBackdropBorderColor(0, 0, 0, 1)
 
     if showText then
@@ -1401,9 +1401,9 @@ function addon:CreateStatusBarButton(parent, text, size, maxValue, template)
     bar:SetPoint("TOPLEFT", b)
     bar:SetPoint("BOTTOMRIGHT", b)
     bar:SetStatusBarTexture("Interface\\AddOns\\Cell\\Media\\statusbar.tga")
-    bar:SetStatusBarColor(accentColor.t[1], accentColor.t[2], accentColor.t[3], .5)
+    bar:SetStatusBarColor(accentColor.t[1], accentColor.t[2], accentColor.t[3], 0.5)
     bar:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8x8", edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = 1})
-    bar:SetBackdropColor(.115, .115, .115, 1)
+    bar:SetBackdropColor(0.115, 0.115, 0.115, 1)
     bar:SetBackdropBorderColor(0, 0, 0, 0)
     P:Size(bar, size[1], size[2])
     bar:SetMinMaxValues(0, maxValue)
@@ -1466,7 +1466,7 @@ function addon:CreateMask(parent, text, points) -- points = {topleftX, topleftY,
         parent.mask:EnableMouseWheel(true) -- can't scroll-through
 
         parent.mask.text = parent.mask:CreateFontString(nil, "OVERLAY", font_title_name)
-        parent.mask.text:SetTextColor(1, .2, .2)
+        parent.mask.text:SetTextColor(1, 0.2, 0.2)
         parent.mask.text:SetPoint("LEFT", 5, 0)
         parent.mask.text:SetPoint("RIGHT", -5, 0)
 
@@ -1773,7 +1773,7 @@ local function CreateItemButtons(items, itemTable, itemParent, level)
             if not menu[level+1] then
                 -- menu[level+1] parent == menu[level]
                 menu[level+1] = addon:CreateFrame(addonName.."CascadedSubMenu"..level, level == 0 and menu or menu[level], 100, 20)
-                menu[level+1]:SetBackdropColor(.115, .115, .115, 1)
+                menu[level+1]:SetBackdropColor(0.115, 0.115, 0.115, 1)
                 menu[level+1]:SetBackdropBorderColor(accentColor.t[1], accentColor.t[2], accentColor.t[3], 1)
                 -- menu[level+1]:SetScript("OnHide", function(self) self:Hide() end)
             end
@@ -1977,21 +1977,21 @@ function addon:CreateScrollTextFrame(parent, s, timePerScroll, scrollStep, delay
     local alpha = fadeIn:CreateAnimation("Alpha")
     alpha:SetFromAlpha(0)
     alpha:SetToAlpha(1)
-    alpha:SetDuration(.5)
+    alpha:SetDuration(0.5)
     
     local fadeOutIn = text:CreateAnimationGroup()
     local alpha1 = fadeOutIn:CreateAnimation("Alpha")
     alpha1:SetStartDelay(delayTime)
     alpha1:SetFromAlpha(1)
     alpha1:SetToAlpha(0)
-    alpha1:SetDuration(.5)
+    alpha1:SetDuration(0.5)
     alpha1:SetOrder(1)
     local alpha2 = fadeOutIn:CreateAnimation("Alpha")
     alpha2:SetFromAlpha(0)
     alpha2:SetToAlpha(1)
-    alpha2:SetDuration(.5)
+    alpha2:SetDuration(0.5)
     alpha2:SetOrder(2)
-    alpha2:SetStartDelay(.1)
+    alpha2:SetStartDelay(0.1)
 
     local maxHScrollRange
     local elapsedTime, delay, scroll = 0, 0, 0
@@ -2648,7 +2648,7 @@ function addon:CreateBindingButton(parent, width)
         parent.bindingButton:SetFrameStrata("TOOLTIP")
         parent.bindingButton:Hide()
         tinsert(UISpecialFrames, parent.bindingButton:GetName())
-        addon:StylizeFrame(parent.bindingButton, {.1, .1, .1, 1}, {accentColor.t[1], accentColor.t[2], accentColor.t[3]})
+        addon:StylizeFrame(parent.bindingButton, {0.1, 0.1, 0.1, 1}, {accentColor.t[1], accentColor.t[2], accentColor.t[3]})
 
         parent.bindingButton.close = addon:CreateButton(parent.bindingButton, "×", "red", {18, 18}, true, true, "CELL_FONT_SPECIAL", "CELL_FONT_SPECIAL")
         parent.bindingButton.close:SetPoint("TOPRIGHT", -1, -1)
@@ -2741,7 +2741,7 @@ local function CreateGrid(parent, text, width)
     grid:RegisterForClicks("LeftButtonUp", "RightButtonUp")
 
     grid:SetScript("OnEnter", function() 
-        grid:SetBackdropColor(accentColor.t[1], accentColor.t[2], accentColor.t[3], .15)
+        grid:SetBackdropColor(accentColor.t[1], accentColor.t[2], accentColor.t[3], 0.15)
         parent:Highlight()
     end)
 

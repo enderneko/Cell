@@ -11,7 +11,7 @@ Cell.frames.battleResFrame = battleResFrame
 -- battleResFrame:SetPoint("BOTTOMLEFT", Cell.frames.mainFrame, "TOPLEFT", 0, 17)
 P:Size(battleResFrame, 75, 20)
 battleResFrame:Hide()
-Cell:StylizeFrame(battleResFrame, {.1, .1, .1, .7}, {0, 0, 0, .5})
+Cell:StylizeFrame(battleResFrame, {0.1, 0.1, 0.1, 0.7}, {0, 0, 0, 0.5})
 
 ---------------------------------
 -- Animation
@@ -21,7 +21,7 @@ local loaded = false
 
 battleResFrame.onMenuShow = battleResFrame:CreateAnimationGroup()
 battleResFrame.onMenuShow.trans = battleResFrame.onMenuShow:CreateAnimation("translation")
-battleResFrame.onMenuShow.trans:SetDuration(.3)
+battleResFrame.onMenuShow.trans:SetDuration(0.3)
 battleResFrame.onMenuShow.trans:SetSmoothing("OUT")
 battleResFrame.onMenuShow:SetScript("OnPlay", function()
     battleResFrame.onMenuHide:Stop()
@@ -52,7 +52,7 @@ end
 
 battleResFrame.onMenuHide = battleResFrame:CreateAnimationGroup()
 battleResFrame.onMenuHide.trans = battleResFrame.onMenuHide:CreateAnimation("translation")
-battleResFrame.onMenuHide.trans:SetDuration(.3)
+battleResFrame.onMenuHide.trans:SetDuration(0.3)
 battleResFrame.onMenuHide.trans:SetSmoothing("OUT")
 battleResFrame.onMenuHide:SetScript("OnPlay", function()
     battleResFrame.onMenuShow:Stop()
@@ -113,8 +113,8 @@ stack:SetPoint("LEFT", title, "RIGHT")
 rTime:SetPoint("LEFT", stack, "RIGHT")
 dummy:SetPoint("BOTTOMLEFT", bar, "TOPLEFT", 0, 22)
 
-title:SetTextColor(.66, .66, .66)
-rTime:SetTextColor(.66, .66, .66)
+title:SetTextColor(0.66, 0.66, 0.66)
+rTime:SetTextColor(0.66, 0.66, 0.66)
 
 title:SetText(L["BR"]..": ")
 stack:SetText("")
@@ -267,7 +267,7 @@ Cell:RegisterCallback("UpdateLayout", "BattleRes_UpdateLayout", UpdateLayout)
 local function UpdatePixelPerfect()
     P:Resize(battleResFrame)
     -- P:Repoint(battleResFrame)
-    Cell:StylizeFrame(battleResFrame, {.1, .1, .1, .7}, {0, 0, 0, .5})
+    Cell:StylizeFrame(battleResFrame, {0.1, 0.1, 0.1, 0.7}, {0, 0, 0, 0.5})
     bar:UpdatePixelPerfect()
     P:Repoint(title)
 end

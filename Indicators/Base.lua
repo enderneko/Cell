@@ -110,7 +110,7 @@ function I:CreateAura_BorderIcon(name, parent, borderSize)
     frame:Hide()
     -- frame:SetSize(11, 11)
     frame:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8x8"})
-    frame:SetBackdropColor(0, 0, 0, .75)
+    frame:SetBackdropColor(0, 0, 0, 0.75)
     
     local border = frame:CreateTexture(name.."Border", "BORDER")
     frame.border = border
@@ -132,7 +132,7 @@ function I:CreateAura_BorderIcon(name, parent, borderSize)
 
     local icon = iconFrame:CreateTexture(name.."Icon", "ARTWORK")
     frame.icon = icon
-    icon:SetTexCoord(.12, .88, .12, .88)
+    icon:SetTexCoord(0.12, 0.88, 0.12, 0.88)
     icon:SetAllPoints(iconFrame)
 
     local textFrame = CreateFrame("Frame", nil, iconFrame)
@@ -272,7 +272,7 @@ local function BarIcon_SetCooldown(frame, start, duration, debuffType, texture, 
         frame.spark:SetColorTexture(r, g, b, 1)
     else
         r, g, b = 0, 0, 0
-        frame.spark:SetColorTexture(.5, .5, .5, 1)
+        frame.spark:SetColorTexture(0.5, 0.5, 0.5, 1)
     end
 
     frame:SetBackdropColor(r, g, b, 1)

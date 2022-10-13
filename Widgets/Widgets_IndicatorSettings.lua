@@ -8,16 +8,16 @@ local LCG = LibStub("LibCustomGlow-1.0")
 -- Color
 -----------------------------------------
 local colors = {
-    grey = {s="|cFFB2B2B2", t={.7, .7, .7}},
-    yellow = {s="|cFFFFD100", t= {1, .82, 0}},
-    orange = {s="|cFFFFC0CB", t= {1, .65, 0}},
-    firebrick = {s="|cFFFF3030", t={1, .19, .19}},
-    skyblue = {s="|cFF00CCFF", t={0, .8, 1}},
-    chartreuse = {s="|cFF80FF00", t={.5, 1, 0}},
+    grey = {s="|cFFB2B2B2", t={0.7, 0.7, 0.7}},
+    yellow = {s="|cFFFFD100", t= {1, 0.82, 0}},
+    orange = {s="|cFFFFC0CB", t= {1, 0.65, 0}},
+    firebrick = {s="|cFFFF3030", t={1, 0.19, 0.19}},
+    skyblue = {s="|cFF00CCFF", t={0, 0.8, 1}},
+    chartreuse = {s="|cFF80FF00", t={0.5, 1, 0}},
 }
 
 local class = select(2, UnitClass("player"))
-local classColor = {s="|cCCB2B2B2", t={.7, .7, .7}}
+local classColor = {s="|cCCB2B2B2", t={0.7, 0.7, 0.7}}
 if class then
     classColor.t[1], classColor.t[2], classColor.t[3], classColor.s = GetClassColor(class)
     classColor.s = "|c"..classColor.s
@@ -678,7 +678,7 @@ local function CreateSetting_Alpha(parent)
         widget = addon:CreateFrame("CellIndicatorSettings_Alpha", parent, 240, 50)
         settingWidgets["alpha"] = widget
 
-        widget.alpha = addon:CreateSlider(L["Alpha"], widget, 0, 1, 110, .01)
+        widget.alpha = addon:CreateSlider(L["Alpha"], widget, 0, 1, 110, 0.01)
         widget.alpha:SetPoint("TOPLEFT", widget, 5, -20)
         widget.alpha.afterValueChangedFn = function(value)
             widget.func(value)
@@ -1477,19 +1477,19 @@ local function CreateSetting_Colors(parent)
             {
                 ["text"] = "75%",
                 ["onClick"] = function()
-                    widget.colorsTable[2][4] = .75
+                    widget.colorsTable[2][4] = 0.75
                 end,
             },
             {
                 ["text"] = "50%",
                 ["onClick"] = function()
-                    widget.colorsTable[2][4] = .5
+                    widget.colorsTable[2][4] = 0.5
                 end,
             },
             {
                 ["text"] = "25%",
                 ["onClick"] = function()
-                    widget.colorsTable[2][4] = .25
+                    widget.colorsTable[2][4] = 0.25
                 end,
             },
             {
@@ -2284,7 +2284,7 @@ local function CreateSetting_Glow(parent)
                     widget.glowLines:Show()
                     widget.glowLines:SetValue(9)
                     widget.glowFrequency:Show()
-                    widget.glowFrequency:SetValue(.25)
+                    widget.glowFrequency:SetValue(0.25)
                     widget.glowLength:Show()
                     widget.glowLength:SetValue(8)
                     widget.glowThickness:Show()
@@ -2294,7 +2294,7 @@ local function CreateSetting_Glow(parent)
                     widget.glow[1] = "Pixel"
                     widget.glow[2] = {0.95,0.95,0.32,1}
                     widget.glow[3] = 9
-                    widget.glow[4] = .25
+                    widget.glow[4] = 0.25
                     widget.glow[5] = 8
                     widget.glow[6] = 2
                     widget.func(widget.glow)
@@ -2309,7 +2309,7 @@ local function CreateSetting_Glow(parent)
                     widget.glowParticles:Show()
                     widget.glowParticles:SetValue(9)
                     widget.glowFrequency:Show()
-                    widget.glowFrequency:SetValue(.5)
+                    widget.glowFrequency:SetValue(0.5)
                     widget.glowScale:Show()
                     widget.glowScale:SetValue(100)
                     widget.glowLines:Hide()
@@ -2318,7 +2318,7 @@ local function CreateSetting_Glow(parent)
                     widget.glow[1] = "Shine"
                     widget.glow[2] = {0.95,0.95,0.32,1}
                     widget.glow[3] = 9
-                    widget.glow[4] = .5
+                    widget.glow[4] = 0.5
                     widget.glow[5] = 1
                     widget.glow[6] = nil
                     widget.func(widget.glow)
@@ -2350,7 +2350,7 @@ local function CreateSetting_Glow(parent)
         widget.glowParticles:SetPoint("TOPLEFT", widget.glowType, "BOTTOMLEFT", 0, -25)
 
         -- glowFrequency
-        widget.glowFrequency = addon:CreateSlider(L["Frequency"], widget, -2, 2, 110, .05, function(value)
+        widget.glowFrequency = addon:CreateSlider(L["Frequency"], widget, -2, 2, 110, 0.05, function(value)
             widget.glow[4] = value
             widget.func(widget.glow)
         end)
@@ -2384,7 +2384,7 @@ local function CreateSetting_Glow(parent)
 
         -- show db value
         function widget:SetDBValue(t)
-            -- {"Pixel", {0.95,0.95,0.32,1}, 9, .25, 8, 2},
+            -- {"Pixel", {0.95,0.95,0.32,1}, 9, 0.25, 8, 2},
             widget.glow = t
             widget.glowType:SetSelectedValue(t[1])
             widget.glowColor:SetColor(t[2])
