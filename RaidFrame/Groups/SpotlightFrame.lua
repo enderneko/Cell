@@ -142,12 +142,8 @@ local function CreateAssignmentButton(index)
 
     b:SetScript("OnAttributeChanged", function(self, name, value)
         if name ~= "text" then return end
-        b:SetText(value)
+        b:SetText(value == "none" and NONE or value)
     end)
-
-    -- hooksecurefunc(parent.func, "UpdatePixelPerfect", function()
-    --     b:UpdatePixelPerfect()
-    -- end)
 
     return b
 end
