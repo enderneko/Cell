@@ -1,5 +1,5 @@
-[Full Changelog](https://github.com/enderneko/Cell/compare/r121-release...ddf28812a3fa746243533ae53f5072621203e426)
+[Full Changelog](https://github.com/enderneko/Cell/compare/r122-release...b32877ec09c0350c692ee16e7cb45ea91cbadbf2)
 
-- Fix vehicle click-castings in WotLK
-- Fix all ill-formed numbers
-- Update SpotlightFrame
+- Update ClickCastings_DefaultSpells
+- Update zhTW
+- LMAO

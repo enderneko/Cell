@@ -59,6 +59,11 @@ select(2, ...).L = setmetatable({
     ["SNIPPETS_TIPS"] = "[Double-Click] to rename. [Shift-Click] to delete. All checked snippets will be automatically invoked at the end of Cell initialization process (in ADDON_LOADED event).",
 
     ["CHANGELOGS"] = [[
+        <h1>r123-release (Oct 15, 2022, 03:22 GMT+8)</h1>
+        <p>* Update default click-castings spells list.</p>
+        <p>* Update zhTW.</p>
+        <br/>
+
         <h1>r122-release (Oct 14, 2022, 04:25 GMT+8)</h1>
         <p>* Fixed Click-Castings.</p>
         <br/>
