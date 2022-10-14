@@ -63,6 +63,7 @@ local defaultSpells = {
     ["HUNTER"] = {
         ["common"] = {
             34477, -- Misdirection - 误导
+            53271, -- Master's Call - 主人的召唤
             "53480P", -- pvp - Roar of Sacrifice - 牺牲咆哮
         },
         -- 253 - Beast Mastery
