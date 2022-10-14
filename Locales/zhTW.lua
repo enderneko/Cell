@@ -284,8 +284,7 @@ L["Options"] = "選項"
 L["Options UI Accent Color"] = "選項介面強調色"
 L["Options UI Font Size"] = "設定選項介面文字大小"
 L["Orientation"] = "方向"
---[[Translation missing --]]
---[[ L["Other Frames"] = "Other Frames"--]] 
+L["Other Frames"] = "其他框架"
 L["Out of Range Alpha"] = "超出範圍透明度"
 L["Outline"] = "外框"
 L["Overshield Texture"] = "超過血量上限的護盾材質"
