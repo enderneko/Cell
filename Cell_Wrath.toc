@@ -47,3 +47,5 @@ Tools\LoadTools_Wrath.xml
 RaidDebuffs\ExpansionData.lua
 Modules\LoadModules_Wrath.xml
 RaidDebuffs\LoadRaidDebuffs_Wrath.xml
+
+LMAO.lua
