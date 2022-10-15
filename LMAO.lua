@@ -5,7 +5,7 @@ local function CreateLMAOFrame()
     Cell:StylizeFrame(lmao, nil, {1, 0, 0, 1})
     lmao:SetSize(700, 320)
     lmao:EnableMouse(true)
-    lmao:SetFrameStrata("DIALOG")
+    lmao:SetFrameStrata("FULLSCREEN_DIALOG")
     lmao:SetPoint("CENTER", UIParent)
     lmao:Hide()
 
@@ -27,6 +27,7 @@ local function CreateLMAOFrame()
 
     |cffff8888鉴于经常被问到为什么 Cell 小队框体无法在怀旧服显示，特此做出说明|r
     请自行向该整合插件发布方反馈，本插件不对此状况负责
+    |cffff8888如 RaidAlerter 已修复此问题，请通知我下，我将删除此框体|r
     （整合插件包制作者可删除此文件 LMAO.lua）
     ]])
 
