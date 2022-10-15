@@ -1,5 +1,5 @@
-[Full Changelog](https://github.com/enderneko/Cell/compare/r122-release...b32877ec09c0350c692ee16e7cb45ea91cbadbf2)
+[Full Changelog](https://github.com/enderneko/Cell/compare/r123-release...15dad8cdf39c973bd13bb620c454f112860a131f)
 
-- Update ClickCastings_DefaultSpells
-- Update zhTW
-- LMAO
+- Fix menu visibility
+- Update menu fade in/out
+- Update LMAO

@@ -580,6 +580,11 @@ L["Changelogs"] = "更新记录"
 L["Click to view recent changelogs"] = "点击查看近期更新记录"
 L["Click to view older changelogs"] = "点击查看远古更新记录"
 L["CHANGELOGS"] = [[
+    <h1>r124-release (Oct 15, 2022, 15:27 GMT+8)</h1>
+    <p>* 修复菜单（选项按钮）的可见性。</p>
+    <p>* 更新菜单的淡入淡出。</p>
+    <br/>
+
     <h1>r123-release (Oct 15, 2022, 03:22 GMT+8)</h1>
     <p>* 更新点击施法的默认法术列表。</p>
     <p>* 更新繁中。</p>
