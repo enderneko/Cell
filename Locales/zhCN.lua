@@ -3,7 +3,7 @@ if not LOCALE_zhCN then return end
 local L = select( 2, ...).L
 
 L["New version found (%s). Please visit %s to get the latest version."] = "发现新版本 (%s)。 请访问 %s 下载最新版本。"
-L["ABOUT"] = "Cell 受启发于 CompactRaid，但并非其修改版或增强版，而是一个全新的团队框架。\n我个人很喜欢 CompactRaid，并常年使用它，但其作者似乎已经不再更新了。因此我写了 Cell，希望你能喜欢。\n另外，我也参考了一些很棒的团队框架，比如 Aptechka 和 Grid2。\nCell 并不打算成为一个轻量或强大（如 VuhDo、Grid2）的团队框架插件。设置简单，功能足够，就行了。"
+L["ABOUT"] = "Cell 受启发于 CompactRaid，但并非其修改版或增强版，而是一个全新的团队框架。\n我个人很喜欢 CompactRaid，并常年使用它，但其作者似乎已经不再更新了。因此我写了 Cell，希望你能喜欢。\n另外，我也参考了一些很棒的团队框架，比如 Aptechka、Grid2 和 VuhDo。\nCell 并不打算成为一个轻量或强大的团队框架插件。设置简单，功能足够，就行了。"
 L["RESET"] = "从过旧的版本更新，需要重置Cell。\n|cff22ff22是|r - 重置Cell\n|cffff2222否|r - 我自己搞定"
 
 -------------------------------------------------
