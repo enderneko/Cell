@@ -1,5 +1,4 @@
-[Full Changelog](https://github.com/enderneko/Cell/compare/r123-release...15dad8cdf39c973bd13bb620c454f112860a131f)
+[Full Changelog](https://github.com/enderneko/Cell/compare/r124-release...b7fca09299330900f6b7328dbbf9caaf73e30537)
 
-- Fix menu visibility
-- Update menu fade in/out
-- Update LMAO
+- Update locales
+- Update patron
