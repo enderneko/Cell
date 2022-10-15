@@ -18,7 +18,7 @@ Cell.unitButtons = {
     ["spotlight"] = {},
 }
 
-local hoverTop, hoverBottom, hoverLeft, hoverRight
+-- local hoverTop, hoverBottom, hoverLeft, hoverRight
 local tooltipPoint, tooltipRelativePoint, tooltipX, tooltipY
 -------------------------------------------------
 -- CellMainFrame
@@ -246,10 +246,14 @@ local function UpdateHoverFrame()
     end
 
     hoverFrame:ClearAllPoints()
-    hoverFrame:SetPoint("TOP", top, 0, hoverTop)
-    hoverFrame:SetPoint("BOTTOM", bottom, 0, hoverBottom)
-    hoverFrame:SetPoint("LEFT", left, hoverLeft, 0)
-    hoverFrame:SetPoint("RIGHT", right, hoverRight, 0)
+    -- hoverFrame:SetPoint("TOP", top, 0, hoverTop)
+    -- hoverFrame:SetPoint("BOTTOM", bottom, 0, hoverBottom)
+    -- hoverFrame:SetPoint("LEFT", left, hoverLeft, 0)
+    -- hoverFrame:SetPoint("RIGHT", right, hoverRight, 0)
+    hoverFrame:SetPoint("TOP", top, 0, 1)
+    hoverFrame:SetPoint("BOTTOM", bottom, 0, -1)
+    hoverFrame:SetPoint("LEFT", left, -1, 0)
+    hoverFrame:SetPoint("RIGHT", right, 1, 0)
 end
 
 -------------------------------------------------
@@ -363,25 +367,25 @@ local function UpdatePosition()
             cellMainFrame:SetPoint("BOTTOMLEFT", anchorFrame, "TOPLEFT", 0, 4)
             P:Point(raid, "BOTTOMLEFT", options, "BOTTOMRIGHT", 1, 0)
             tooltipPoint, tooltipRelativePoint, tooltipX, tooltipY = "TOPLEFT", "BOTTOMLEFT", 0, -3
-            hoverTop, hoverBottom, hoverLeft, hoverRight = 5, -20, -20, 20
+            -- hoverTop, hoverBottom, hoverLeft, hoverRight = 5, -20, -20, 20
             
         elseif anchor == "BOTTOMRIGHT" then
             cellMainFrame:SetPoint("BOTTOMRIGHT", anchorFrame, "TOPRIGHT", 0, 4)
             P:Point(raid, "BOTTOMRIGHT", options, "BOTTOMLEFT", -1, 0)
             tooltipPoint, tooltipRelativePoint, tooltipX, tooltipY = "TOPRIGHT", "BOTTOMRIGHT", 0, -3
-            hoverTop, hoverBottom, hoverLeft, hoverRight = 5, -20, -20, 20
+            -- hoverTop, hoverBottom, hoverLeft, hoverRight = 5, -20, -20, 20
             
         elseif anchor == "TOPLEFT" then
             cellMainFrame:SetPoint("TOPLEFT", anchorFrame, "BOTTOMLEFT", 0, -4)
             P:Point(raid, "TOPLEFT", options, "TOPRIGHT", 1, 0)
             tooltipPoint, tooltipRelativePoint, tooltipX, tooltipY = "BOTTOMLEFT", "TOPLEFT", 0, 3
-            hoverTop, hoverBottom, hoverLeft, hoverRight = 20, -5, -20, 20
+            -- hoverTop, hoverBottom, hoverLeft, hoverRight = 20, -5, -20, 20
             
         elseif anchor == "TOPRIGHT" then
             cellMainFrame:SetPoint("TOPRIGHT", anchorFrame, "BOTTOMRIGHT", 0, -4)
             P:Point(raid, "TOPRIGHT", options, "TOPLEFT", -1, 0)
             tooltipPoint, tooltipRelativePoint, tooltipX, tooltipY = "BOTTOMRIGHT", "TOPRIGHT", 0, 3
-            hoverTop, hoverBottom, hoverLeft, hoverRight = 20, -5, -20, 20
+            -- hoverTop, hoverBottom, hoverLeft, hoverRight = 20, -5, -20, 20
         end
     else -- left_right
         P:Size(anchorFrame, 10, 20)
@@ -392,25 +396,25 @@ local function UpdatePosition()
             cellMainFrame:SetPoint("BOTTOMLEFT", anchorFrame, "BOTTOMRIGHT", 4, 0)
             P:Point(raid, "BOTTOMLEFT", options, "TOPLEFT", 0, 1)
             tooltipPoint, tooltipRelativePoint, tooltipX, tooltipY = "BOTTOMRIGHT", "BOTTOMLEFT", -3, 0
-            hoverTop, hoverBottom, hoverLeft, hoverRight = 20, -20, -20, 5
+            -- hoverTop, hoverBottom, hoverLeft, hoverRight = 20, -20, -20, 5
             
         elseif anchor == "BOTTOMRIGHT" then
             cellMainFrame:SetPoint("BOTTOMRIGHT", anchorFrame, "BOTTOMLEFT", -4, 0)
             P:Point(raid, "BOTTOMRIGHT", options, "TOPRIGHT", 0, 1)
             tooltipPoint, tooltipRelativePoint, tooltipX, tooltipY = "BOTTOMLEFT", "BOTTOMRIGHT", 3, 0
-            hoverTop, hoverBottom, hoverLeft, hoverRight = 20, -20, -5, 20
+            -- hoverTop, hoverBottom, hoverLeft, hoverRight = 20, -20, -5, 20
             
         elseif anchor == "TOPLEFT" then
             cellMainFrame:SetPoint("TOPLEFT", anchorFrame, "TOPRIGHT", 4, 0)
             P:Point(raid, "TOPLEFT", options, "BOTTOMLEFT", 0, -1)
             tooltipPoint, tooltipRelativePoint, tooltipX, tooltipY = "TOPRIGHT", "TOPLEFT", -3, 0
-            hoverTop, hoverBottom, hoverLeft, hoverRight = 20, -20, -20, 5
+            -- hoverTop, hoverBottom, hoverLeft, hoverRight = 20, -20, -20, 5
             
         elseif anchor == "TOPRIGHT" then
             cellMainFrame:SetPoint("TOPRIGHT", anchorFrame, "TOPLEFT", -4, 0)
             P:Point(raid, "TOPRIGHT", options, "BOTTOMRIGHT", 0, -1)
             tooltipPoint, tooltipRelativePoint, tooltipX, tooltipY = "TOPLEFT", "TOPRIGHT", 3, 0
-            hoverTop, hoverBottom, hoverLeft, hoverRight = 20, -20, -5, 20
+            -- hoverTop, hoverBottom, hoverLeft, hoverRight = 20, -20, -5, 20
         end
     end
 
