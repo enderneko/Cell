@@ -289,32 +289,6 @@ end
 -------------------------------------------------
 -- group type changed
 -------------------------------------------------
-local function MainFrame_GroupTypeChanged(groupType)
-    if groupType == "raid" then
-        raid:Show()
-    else
-        raid:Hide()
-    end
-    UpdateHoverFrame()
-
-    if groupType == "solo" then
-        if CellDB["general"]["showSolo"] then
-            options:Show()
-        else
-            options:Hide()
-        end
-    elseif groupType == "party" then
-        if CellDB["general"]["showParty"] then
-            options:Show()
-        else
-            options:Hide()
-        end
-    else -- raid
-        options:Show()
-    end
-end
-Cell:RegisterCallback("GroupTypeChanged", "MainFrame_GroupTypeChanged", MainFrame_GroupTypeChanged)
-
 local function MainFrame_UpdateVisibility()
     if Cell.vars.groupType == "solo" then
         if CellDB["general"]["showSolo"] then
@@ -328,9 +302,23 @@ local function MainFrame_UpdateVisibility()
         else
             menuFrame:Hide()
         end
+    else -- raid: always show
+        menuFrame:Show()
     end
 end
 Cell:RegisterCallback("UpdateVisibility", "MainFrame_UpdateVisibility", MainFrame_UpdateVisibility)
+
+local function MainFrame_GroupTypeChanged(groupType)
+    if groupType == "raid" then
+        raid:Show()
+    else
+        raid:Hide()
+    end
+    UpdateHoverFrame()
+    -- check whether menu should be shown
+    MainFrame_UpdateVisibility()
+end
+Cell:RegisterCallback("GroupTypeChanged", "MainFrame_GroupTypeChanged", MainFrame_GroupTypeChanged)
 
 -------------------------------------------------
 -- event
