@@ -220,10 +220,12 @@ end
 local function BarIcon_SetCooldown(frame, start, duration, debuffType, texture, count, refreshing)
     if duration == 0 then
         frame.cooldown:Hide()
+        frame.duration:Hide()
         frame:SetScript("OnUpdate", nil)
     else
         if frame.showDuration then
             frame.cooldown:Hide()
+            frame.duration:Show()
             frame:SetScript("OnUpdate", function()
                 local remain = duration-(GetTime()-start)
                 if remain < 0 then remain = 0 end
@@ -263,6 +265,7 @@ local function BarIcon_SetCooldown(frame, start, duration, debuffType, texture, 
             frame.cooldown:SetMinMaxValues(0, duration)
             frame.cooldown:SetValue(GetTime()-start)
             frame.cooldown:Show()
+            frame.duration:Hide()
         end
     end
 
