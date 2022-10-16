@@ -3210,7 +3210,7 @@ local function CreateSetting_CleuAuras(parent)
 
         -- show db value
         function widget:SetDBValue(t)
-            widget.text:SetText(L["cleuAurasTip"])
+            widget.text:SetText(L["cleuAurasTips"])
             CreateCleuAuraButtons(widget.frame, t, function(diff)
                 widget.frame:SetHeight((#t+1)*19+1)
                 widget:SetHeight((#t+1)*19+1 + 20 + 5)

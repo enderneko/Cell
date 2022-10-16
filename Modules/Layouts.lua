@@ -1974,7 +1974,7 @@ end
 local tips = layoutsTab:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
 tips:SetPoint("BOTTOMLEFT", 5, 5)
 tips:SetJustifyH("LEFT")
-tips:SetText("|cff777777"..L["Tip: Every layout has its own position setting"])
+tips:SetText("|cffb7b7b7"..L["Tip: Every layout has its own position setting"])
 
 -------------------------------------------------
 -- functions

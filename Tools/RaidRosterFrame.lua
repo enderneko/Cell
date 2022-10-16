@@ -7,9 +7,17 @@ local raidRosterFrame = Cell:CreateFrame("CellRaidRosterFrame", Cell.frames.main
 Cell.frames.raidRosterFrame = raidRosterFrame
 raidRosterFrame:SetFrameStrata("HIGH")
 
-local tips = raidRosterFrame:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
-tips:SetPoint("BOTTOMLEFT", raidRosterFrame, 5, 5)
-tips:SetText("|cff777777"..L["Alt+Right-Click to remove a player"])
+local assistantCB
+local function CreateWidgets()
+    assistantCB = Cell:CreateCheckButton(raidRosterFrame, "|TInterface\\GroupFrame\\UI-Group-AssistantIcon:16:16|t", function(checked)
+        SetEveryoneIsAssistant(checked)
+    end)
+    assistantCB:SetPoint("BOTTOMRIGHT", -25, 5)
+
+    local tips = Cell:CreateScrollTextFrame(raidRosterFrame, "|cffb7b7b7"..L["raidRosterTips"], 0.02, nil, 2)
+    tips:SetPoint("BOTTOMLEFT", raidRosterFrame, 5, 2)
+    tips:SetPoint("RIGHT", assistantCB, "LEFT", -5, 0)
+end
 
 -------------------------------------------------
 -- sort TODO:
@@ -43,9 +51,15 @@ local function CreateRaidRosterGrid(parent, index)
 
     grid:SetFrameLevel(7)
     
+    local roleIconBg = grid:CreateTexture(nil, "BORDER")
+    roleIconBg:SetPoint("TOPLEFT", 2, -2)
+    roleIconBg:SetSize(13, 13)
+    roleIconBg:SetColorTexture(0, 0, 0, 1)
+
     local roleIcon = grid:CreateTexture(nil, "ARTWORK")
-    roleIcon:SetPoint("TOPLEFT", 2, -2)
-    roleIcon:SetSize(13, 13)
+    roleIcon:SetPoint("TOPLEFT", roleIconBg, P:Scale(1), P:Scale(-1))
+    roleIcon:SetPoint("BOTTOMRIGHT", roleIconBg, P:Scale(-1), P:Scale(1))
+    roleIcon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
 
     local nameText = grid:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
     nameText:SetPoint("LEFT", roleIcon, "RIGHT", 2, 0)
@@ -54,10 +68,20 @@ local function CreateRaidRosterGrid(parent, index)
     nameText:SetJustifyH("LEFT")
 
     -- click
-    grid:RegisterForClicks("RightButtonUp")
+    grid:RegisterForClicks("RightButtonDown")
     grid:SetScript("OnClick", function()
         if IsAltKeyDown() then
             UninviteUnit(grid.name)
+        else
+            if not UnitIsGroupLeader("player") then return end
+            
+            if UnitIsGroupLeader(grid.unit) then return end
+
+            if UnitIsGroupAssistant(grid.unit) then
+                DemoteAssistant(grid.unit)
+            else
+                PromoteToAssistant(grid.unit)
+            end
         end
     end)
 
@@ -123,15 +147,25 @@ local function CreateRaidRosterGrid(parent, index)
         end
     end)
 
-    function grid:Set(name, color, role)
+    function grid:Set(name, color, role, isLeader, isAssistant)
         grid.color[1], grid.color[2], grid.color[3] = color[1], color[2], color[3]
         nameText:SetText(name)
         nameText:SetTextColor(unpack(color))
+        
+        roleIcon:Show()
+        roleIconBg:Show()
         if role == "NONE" then
-            roleIcon:Hide()
+            roleIcon:SetTexture(134400)
         else
             roleIcon:SetTexture("Interface\\AddOns\\Cell\\Media\\Roles\\"..role)
-            roleIcon:Show()
+        end
+
+        if isLeader then
+            roleIconBg:SetColorTexture(1, 0.84, 0, 1)
+        elseif isAssistant then
+            roleIconBg:SetColorTexture(0.7, 0.7, 0.7, 1)
+        else
+            roleIconBg:SetColorTexture(0, 0, 0, 1)
         end
     end
 
@@ -143,6 +177,8 @@ local function CreateRaidRosterGrid(parent, index)
 
         nameText:SetText("")
         nameText:SetTextColor(1, 1, 1)
+        roleIconBg:SetColorTexture(0, 0, 0, 1)
+        roleIconBg:Hide()
         roleIcon:Hide()
 
         grid:EnableMouse(false)
@@ -166,11 +202,12 @@ local function CreateRaidRosterGrid(parent, index)
 
         grid.hasUnit = true
         grid.raidIndex = raidIndex
+        grid.unit = "raid"..raidIndex
         grid.name = name
         grid.role = combatRole
         grid.color[1], grid.color[2], grid.color[3] = F:GetClassColor(classFileName)
-        
-        grid:Set(name, grid.color, combatRole)
+
+        grid:Set(name, grid.color, combatRole, UnitIsGroupLeader(grid.unit), UnitIsGroupAssistant(grid.unit))
 
         grid:EnableMouse(true)
 
@@ -262,12 +299,14 @@ end
 raidRosterFrame:SetScript("OnEvent", function()
     UpdateRoster()
     CheckPermission()
+    assistantCB:SetChecked(IsEveryoneAssistant())
 end)
 
 raidRosterFrame:SetScript("OnShow", function()
     raidRosterFrame:RegisterEvent("GROUP_ROSTER_UPDATE")
     UpdateRoster()
     CheckPermission()
+    assistantCB:SetChecked(IsEveryoneAssistant())
 end)
 raidRosterFrame:SetScript("OnHide", function()
     raidRosterFrame:UnregisterEvent("GROUP_ROSTER_UPDATE")
@@ -292,6 +331,7 @@ function F:ShowRaidRosterFrame()
     if not init then
         init = true
         raidRosterFrame:UpdatePixelPerfect()
+        CreateWidgets()
         CreateRosterContainer()
     end
 
