@@ -220,6 +220,7 @@ end
 -------------------------------------------------
 local menu = CreateFrame("Frame", "CellSpotlightAssignmentMenu", spotlightFrame, "BackdropTemplate,SecureHandlerAttributeTemplate,SecureHandlerShowHideTemplate")
 menu:SetFrameStrata("TOOLTIP")
+menu:SetClampedToScreen(true)
 menu:Hide()
 
 --! assignmentBtn -> spotlightButton
