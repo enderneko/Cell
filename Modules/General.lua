@@ -320,7 +320,7 @@ local function CreateToolsPane()
         pullDropdown:SetEnabled(checked)
         secEditBox:SetEnabled(checked)
         Cell:Fire("UpdateTools", "buttons")
-    end, L["ReadyCheck and PullTimer buttons"], L["Only show when you have permission to do this"], L["pullTimerTips"])
+    end, L["ReadyCheck and PullTimer buttons"], L["Only show when you have permission to do this"], L["readyCheckTips"], L["pullTimerTips"])
     readyPullCB:SetPoint("TOPLEFT", resCB, "BOTTOMLEFT", 0, -15)
     Cell:RegisterForCloseDropdown(readyPullCB)
 

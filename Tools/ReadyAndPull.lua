@@ -152,8 +152,13 @@ P:Point(readyBtn, "BOTTOMLEFT", pullBtn, "TOPLEFT", 0, 3)
 -- P:Point(readyBtn, "BOTTOMRIGHT", pullBtn, "TOPRIGHT", 0, 3)
 readyBtn:Hide()
 
-readyBtn:SetScript("OnClick", function()
-    DoReadyCheck()
+readyBtn:RegisterForClicks("LeftButtonDown", "RightButtonDown")
+readyBtn:SetScript("OnClick", function(self, button)
+    if button == "LeftButton" then
+        DoReadyCheck()
+    else
+        InitiateRolePoll()
+    end
 end)
 readyBtn:RegisterEvent("READY_CHECK")
 readyBtn:RegisterEvent("READY_CHECK_FINISHED")

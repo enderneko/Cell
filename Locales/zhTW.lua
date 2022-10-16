@@ -322,6 +322,8 @@ L["RAID_DEBUFFS_TIPS"] = "提示: [拖曳] 減益可以調整順序 [點兩下] 
 L["Ready"] = "團確"
 L["Ready Check Icon"] = "準備確認圖示"
 L["ReadyCheck and PullTimer buttons"] = "準備確認和開怪倒數按鈕"
+--[[Translation missing --]]
+--[[ L["readyCheckTips"] = "\n|rReady Check\nLeft-Click: |cffffffffinitiate a ready check|r\nRight-Click: |cffffffffstart a role check|r"--]] 
 L["Rect"] = "矩形"
 L["Remaining Time <"] = "剩餘時間 <"
 L["Rename"] = "更名"

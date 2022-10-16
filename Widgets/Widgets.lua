@@ -375,7 +375,9 @@ local function ShowTooltips(widget, anchor, x, y, tooltips)
     CellTooltip:SetOwner(widget, anchor or "ANCHOR_TOP", x or 0, y or 0)
     CellTooltip:AddLine(tooltips[1])
     for i = 2, #tooltips do
-        CellTooltip:AddLine("|cffffffff" .. tooltips[i])
+        if tooltips[i] then
+            CellTooltip:AddLine("|cffffffff" .. tooltips[i])
+        end
     end
     CellTooltip:Show()
 end
