@@ -75,6 +75,7 @@ Cell.defaults.layout = {
             ["nameColor"] = {"custom", {1, 1, 1}},
             ["vehicleNamePosition"] = {"TOP", 0},
             ["textWidth"] = {"percentage", 0.75},
+            ["showGroupNumber"] = false,
         }, -- 1
         {
             ["name"] = "Status Text",

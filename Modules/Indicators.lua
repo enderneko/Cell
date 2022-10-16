@@ -133,6 +133,7 @@ local function InitIndicator(indicatorName)
 
     if indicatorName == "nameText" then
         previewButton.state.name = UnitName("player")
+        previewButton.state.isPlayer = true
         indicator.isPreview = true
         indicator:UpdateName()
         indicator:UpdateVehicleName()
@@ -437,6 +438,10 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                 if t["nameColor"] then
                     indicator:UpdatePreviewColor(t["nameColor"])
                 end
+                -- update groupNumber
+                if type(t["showGroupNumber"]) == "boolean" then
+                    indicator:ShowGroupNumber(t["showGroupNumber"])
+                end
                 -- update vehicleNamePosition
                 if t["vehicleNamePosition"] then
                     indicator:UpdateVehicleNamePosition(t["vehicleNamePosition"])
@@ -578,7 +583,9 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
             indicator.init = false
             InitIndicator(indicatorName)
         elseif setting == "checkbutton" then
-            if value == "showDuration" then
+            if value == "showGroupNumber" then
+                indicator:ShowGroupNumber(value2)
+            elseif value == "showDuration" then
                 indicator:ShowDuration(value2)
                 if indicator.enabled then
                     -- update through OnShow
@@ -1220,7 +1227,7 @@ end
 local indicatorSettings
 if Cell.isRetail then
     indicatorSettings = {
-        ["nameText"] = {"enabled", "nameColor", "textWidth", "vehicleNamePosition", "namePosition", "frameLevel", "font-noOffset"},
+        ["nameText"] = {"enabled", "nameColor", "textWidth", "checkbutton:showGroupNumber", "vehicleNamePosition", "namePosition", "frameLevel", "font-noOffset"},
         ["statusText"] = {"enabled", "statusColors", "statusPosition", "frameLevel", "font-noOffset"},
         ["healthText"] = {"enabled", "format", "checkbutton:hideFull", "color", "position", "frameLevel", "font-noOffset"},
         ["statusIcon"] = {
@@ -1257,7 +1264,7 @@ if Cell.isRetail then
     }
 elseif Cell.isWrath then
     indicatorSettings = {
-        ["nameText"] = {"enabled", "nameColor", "textWidth", "vehicleNamePosition", "namePosition", "frameLevel", "font-noOffset"},
+        ["nameText"] = {"enabled", "nameColor", "textWidth", "checkbutton:showGroupNumber", "vehicleNamePosition", "namePosition", "frameLevel", "font-noOffset"},
         ["statusText"] = {"enabled", "statusColors", "statusPosition", "frameLevel", "font-noOffset"},
         ["healthText"] = {"enabled", "format", "checkbutton:hideFull", "color", "position", "frameLevel", "font-noOffset"},
         ["statusIcon"] = {

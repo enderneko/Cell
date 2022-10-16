@@ -2,7 +2,7 @@
 -- File: UnitButton_Wrath.lua
 -- Author: enderneko (enderneko-dev@outlook.com)
 -- File Created: 2022/08/20 19:44:26 +0800
--- Last Modified: 2022/10/12 02:18:35 +0800
+-- Last Modified: 2022/10/16 21:00:17 +0800
 --]]
 
 local _, Cell = ...
@@ -219,6 +219,10 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                 -- update circled nums
                 if type(t["circledStackNums"]) == "boolean" then
                     indicator:SetCircledStackNums(t["circledStackNums"])
+                end
+                -- update groupNumber
+                if type(t["showGroupNumber"]) == "boolean" then
+                    indicator:ShowGroupNumber(t["showGroupNumber"])
                 end
                 -- update vehicleNamePosition
                 if t["vehicleNamePosition"] then
@@ -444,7 +448,11 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                 UnitButton_UpdateAuras(b)
             end, true)
         elseif setting == "checkbutton" then
-            if value == "hideFull" then
+            if value == "showGroupNumber" then
+                F:IterateAllUnitButtons(function(b)
+                    b.indicators[indicatorName]:ShowGroupNumber(value2)
+                end, true)
+            elseif value == "hideFull" then
                 --! 血量文字指示器需要立即被刷新
                 indicatorCustoms[indicatorName] = value2
                 F:IterateAllUnitButtons(function(b)

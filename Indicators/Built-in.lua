@@ -922,6 +922,24 @@ function I:CreateNameText(parent)
         end
 
         F:UpdateTextWidth(nameText.name, name, nameText.width, parent.widget.healthBar)
+
+        if nameText.name:GetText() then
+            if nameText.isPreview then
+                if nameText.showGroupNumber then
+                    nameText.name:SetText("|cffbbbbbb7-|r"..nameText.name:GetText())
+                end
+            else
+                if IsInRaid() and nameText.showGroupNumber then
+                    local raidIndex = UnitInRaid(parent.state.unit)
+                    if raidIndex then
+                        local subgroup = select(3, GetRaidRosterInfo(raidIndex))
+                        -- nameText.name:SetText("|TInterface\\AddOns\\Cell\\Media\\Icons\\group"..subgroup..":0:0:0:-1:64:64:6:58:6:58|t"..nameText.name:GetText())
+                        nameText.name:SetText("|cffbbbbbb"..subgroup.."-|r"..nameText.name:GetText())
+                    end
+                end
+            end
+        end
+
         nameText:SetSize(nameText.name:GetWidth(), nameText.name:GetHeight())
     end
 
@@ -974,6 +992,11 @@ function I:CreateNameText(parent)
 
     function nameText:SetColor(r, g, b)
         nameText.name:SetTextColor(r, g, b)
+    end
+
+    function nameText:ShowGroupNumber(show)
+        nameText.showGroupNumber = show
+        nameText:UpdateName()
     end
 
     parent.widget.healthBar:SetScript("OnSizeChanged", function()

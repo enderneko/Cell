@@ -382,6 +382,8 @@ L["Show while in a party"] = "在隊伍中時顯示"
 L["Show while not in a group"] = "不在隊伍中時顯示"
 L["showDispelTypeIcons"] = "顯示驅散類型圖示"
 L["showDuration"] = "顯示持續時間文字"
+--[[Translation missing --]]
+--[[ L["showGroupNumber"] = "Show group number"--]]
 L["Shows only one spell glow on a unit button at a time"] = "每個單位按鈕上同一時間只能顯示一個法術發光"
 L["showTooltip"] = "顯示光環提示"
 L["Size"] = "大小"

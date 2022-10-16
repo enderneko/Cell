@@ -220,6 +220,10 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                 if type(t["circledStackNums"]) == "boolean" then
                     indicator:SetCircledStackNums(t["circledStackNums"])
                 end
+                -- update groupNumber
+                if type(t["showGroupNumber"]) == "boolean" then
+                    indicator:ShowGroupNumber(t["showGroupNumber"])
+                end
                 -- update vehicleNamePosition
                 if t["vehicleNamePosition"] then
                     indicator:UpdateVehicleNamePosition(t["vehicleNamePosition"])
@@ -444,7 +448,11 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                 UnitButton_UpdateAuras(b)
             end, true)
         elseif setting == "checkbutton" then
-            if value == "hideFull" then
+            if value == "showGroupNumber" then
+                F:IterateAllUnitButtons(function(b)
+                    b.indicators[indicatorName]:ShowGroupNumber(value2)
+                end, true)
+            elseif value == "hideFull" then
                 --! 血量文字指示器需要立即被刷新
                 indicatorCustoms[indicatorName] = value2
                 F:IterateAllUnitButtons(function(b)

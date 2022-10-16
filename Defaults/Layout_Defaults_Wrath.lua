@@ -2,7 +2,7 @@
 -- File: Layout_Defaults_Wrath.lua
 -- Author: enderneko (enderneko-dev@outlook.com)
 -- File Created: 2022/08/21 04:06:04 +0800
--- Last Modified: 2022/10/13 15:01:39 +0800
+-- Last Modified: 2022/10/16 20:20:24 +0800
 --]]
 
 local addonName, Cell = ...
@@ -79,6 +79,7 @@ Cell.defaults.layout = {
             ["nameColor"] = {"custom", {1, 1, 1}},
             ["vehicleNamePosition"] = {"TOP", 0},
             ["textWidth"] = {"percentage", 0.75},
+            ["showGroupNumber"] = false,
         }, -- 1
         {
             ["name"] = "Status Text",
