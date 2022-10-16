@@ -271,6 +271,10 @@ local defensiveCooldowns = {
     184364, -- 狂怒回复
 }
 
+local defensiveCooldownIDs = {
+    [113862] = true, -- Greater Invisibility - 强化隐形术
+}
+
 local defensives = {}
 for _, id in pairs(defensiveCooldowns) do
     defensives[GetSpellInfo(id)] = true
@@ -289,8 +293,8 @@ function I:UpdateCustomDefensives(t)
     end
 end
     
-function I:IsDefensiveCooldown(name)
-    return defensiveCooldowns[name]
+function I:IsDefensiveCooldown(nameOrID)
+    return defensiveCooldowns[nameOrID] or defensiveCooldownIDs[nameOrID]
 end
 
 -------------------------------------------------
