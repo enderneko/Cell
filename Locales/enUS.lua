@@ -62,6 +62,15 @@ select(2, ...).L = setmetatable({
     ["SNIPPETS_TIPS"] = "[Double-Click] to rename. [Shift-Click] to delete. All checked snippets will be automatically invoked at the end of Cell initialization process (in ADDON_LOADED event).",
 
     ["CHANGELOGS"] = [[
+        <h1>r126-release (Oct 17, 2022, 16:35 GMT+8)</h1>
+        <p>* Fixed icon duration text.</p>
+        <p>* Added "Show group number" to Name Text indicator.</p>
+        <p>* Made spotlight menu always on-screen.</p>
+        <p>* Updated default spell list of Defensives and Externals.</p>
+        <p>* Updated raid roster frame, right-click on a member to set assistant.</p>
+        <p>* Updated Ready button, right-click on it to start a role check.</p>
+        <br/>
+
         <h1>r125-release (Oct 15, 2022, 16:30 GMT+8)</h1>
         <p>* Updated locales.</p>
         <br/>
