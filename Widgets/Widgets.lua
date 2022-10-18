@@ -1692,9 +1692,9 @@ function addon:CreatePopupEditBox(parent, func, multiLine)
 end
 
 -----------------------------------------
--- cascaded menu
+-- cascading menu
 -----------------------------------------
-local menu = addon:CreateFrame(addonName.."CascadedMenu", UIParent, 100, 20)
+local menu = addon:CreateFrame(addonName.."CascadingMenu", UIParent, 100, 20)
 addon.menu = menu
 tinsert(UISpecialFrames, menu:GetName())
 menu:SetBackdropColor(0.115, 0.115, 0.115, 0.977)
@@ -1774,7 +1774,7 @@ local function CreateItemButtons(items, itemTable, itemParent, level)
             -- create sub menu level+1
             if not menu[level+1] then
                 -- menu[level+1] parent == menu[level]
-                menu[level+1] = addon:CreateFrame(addonName.."CascadedSubMenu"..level, level == 0 and menu or menu[level], 100, 20)
+                menu[level+1] = addon:CreateFrame(addonName.."CascadingSubMenu"..level, level == 0 and menu or menu[level], 100, 20)
                 menu[level+1]:SetBackdropColor(0.115, 0.115, 0.115, 1)
                 menu[level+1]:SetBackdropBorderColor(accentColor.t[1], accentColor.t[2], accentColor.t[3], 1)
                 -- menu[level+1]:SetScript("OnHide", function(self) self:Hide() end)
@@ -1895,11 +1895,11 @@ local function CreateItemButtons_Scroll(items, itemTable, limit)
 
     -- update height
     local n = #items
-    menu.scrollFrame:SetContentHeight(2 + n * 18)
+    menu.scrollFrame:SetContentHeight(P:Scale(2) + n * P:Scale(18))
     if n <= limit then
-        menu:SetHeight(2 + n * 18)
+        menu:SetHeight(P:Scale(2) + n * P:Scale(18))
     else
-        menu:SetHeight(2 + limit * 18)
+        menu:SetHeight(P:Scale(2) + limit * P:Scale(18))
     end
 end
 
