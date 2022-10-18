@@ -99,10 +99,10 @@ local rTime = battleResFrame:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET"
 local dummy = battleResFrame:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET") -- used for updating width of battleResFrame
 dummy:Hide()
 
-title:SetFont(title:GetFont(), 13)
-stack:SetFont(stack:GetFont(), 13)
-rTime:SetFont(rTime:GetFont(), 13)
-dummy:SetFont(dummy:GetFont(), 13)
+title:SetFont(title:GetFont(), 13, "")
+stack:SetFont(stack:GetFont(), 13, "")
+rTime:SetFont(rTime:GetFont(), 13, "")
+dummy:SetFont(dummy:GetFont(), 13, "")
 
 title:SetJustifyH("LEFT")
 stack:SetJustifyH("LEFT")

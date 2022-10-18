@@ -153,7 +153,7 @@ function I:CreateTargetedSpells(parent)
         if not string.find(strlower(font), ".ttf") then font = F:GetFont(font) end
 
         if flags == "Shadow" then
-            frame.stack:SetFont(font, size)
+            frame.stack:SetFont(font, size, "")
             frame.stack:SetShadowOffset(1, -1)
             frame.stack:SetShadowColor(0, 0, 0, 1)
         else

@@ -13,10 +13,10 @@ local function BorderIcon_SetFont(frame, font, size, flags, xOffset, yOffset)
     if not strfind(strlower(font), ".ttf") then font = F:GetFont(font) end
 
     if flags == "Shadow" then
-        frame.stack:SetFont(font, size)
+        frame.stack:SetFont(font, size, "")
         frame.stack:SetShadowOffset(1, -1)
         frame.stack:SetShadowColor(0, 0, 0, 1)
-        frame.duration:SetFont(font, size)
+        frame.duration:SetFont(font, size, "")
         frame.duration:SetShadowOffset(1, -1)
         frame.duration:SetShadowColor(0, 0, 0, 1)
     else
@@ -190,10 +190,10 @@ local function BarIcon_SetFont(frame, font, size, flags, xOffset, yOffset)
     if not strfind(strlower(font), ".ttf") then font = F:GetFont(font) end
 
     if flags == "Shadow" then
-        frame.stack:SetFont(font, size)
+        frame.stack:SetFont(font, size, "")
         frame.stack:SetShadowOffset(1, -1)
         frame.stack:SetShadowColor(0, 0, 0, 1)
-        frame.duration:SetFont(font, size)
+        frame.duration:SetFont(font, size, "")
         frame.duration:SetShadowOffset(1, -1)
         frame.duration:SetShadowColor(0, 0, 0, 1)
     else
@@ -422,7 +422,7 @@ local function Text_SetFont(frame, font, size, flags)
     if not strfind(strlower(font), ".ttf") then font = F:GetFont(font) end
 
     if flags == "Shadow" then
-        frame.text:SetFont(font, size)
+        frame.text:SetFont(font, size, "")
         frame.text:SetShadowOffset(1, -1)
         frame.text:SetShadowColor(0, 0, 0, 1)
     else

@@ -46,7 +46,7 @@ local function CreateAuthorPane()
     
     local authorNameText = authorPane:CreateFontString(nil, "OVERLAY")
     authorNameText:SetPoint("TOPLEFT", 5, -27)
-    authorNameText:SetFont("Interface\\AddOns\\Cell\\Media\\font.ttf", 12)
+    authorNameText:SetFont("Interface\\AddOns\\Cell\\Media\\font.ttf", 12, "")
     authorNameText:SetText("篠崎-影之哀伤 (CN)")
 end
 
@@ -96,7 +96,7 @@ local function CreateSpecialThanksPane()
     else
         font = UNIT_NAME_FONT_CHINESE
     end
-    thanksText:SetFont(font, 12)
+    thanksText:SetFont(font, 12, "")
     thanksText:SetTextColor(1, 1, 1, 1)
     thanksText:SetShadowColor(0, 0, 0)
     thanksText:SetShadowOffset(1, -1)

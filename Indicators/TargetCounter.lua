@@ -132,7 +132,7 @@ function I:CreateTargetCounter(parent)
         if not string.find(strlower(font), ".ttf") then font = F:GetFont(font) end
 
         if flags == "Shadow" then
-            text:SetFont(font, size)
+            text:SetFont(font, size, "")
             text:SetShadowOffset(1, -1)
             text:SetShadowColor(0, 0, 0, 1)
         else

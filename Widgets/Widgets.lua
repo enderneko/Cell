@@ -53,35 +53,35 @@ local font_class_title_name = strupper(addonName).."_FONT_CLASS_TITLE"
 local font_class_name = strupper(addonName).."_FONT_CLASS"
 
 local font_title = CreateFont(font_title_name)
-font_title:SetFont(GameFontNormal:GetFont(), 14)
+font_title:SetFont(GameFontNormal:GetFont(), 14, "")
 font_title:SetTextColor(1, 1, 1, 1)
 font_title:SetShadowColor(0, 0, 0)
 font_title:SetShadowOffset(1, -1)
 font_title:SetJustifyH("CENTER")
 
 local font_title_disable = CreateFont(font_title_disable_name)
-font_title_disable:SetFont(GameFontNormal:GetFont(), 14)
+font_title_disable:SetFont(GameFontNormal:GetFont(), 14, "")
 font_title_disable:SetTextColor(0.4, 0.4, 0.4, 1)
 font_title_disable:SetShadowColor(0, 0, 0)
 font_title_disable:SetShadowOffset(1, -1)
 font_title_disable:SetJustifyH("CENTER")
 
 local font = CreateFont(font_name)
-font:SetFont(GameFontNormal:GetFont(), 13)
+font:SetFont(GameFontNormal:GetFont(), 13, "")
 font:SetTextColor(1, 1, 1, 1)
 font:SetShadowColor(0, 0, 0)
 font:SetShadowOffset(1, -1)
 font:SetJustifyH("CENTER")
 
 local font_disable = CreateFont(font_disable_name)
-font_disable:SetFont(GameFontNormal:GetFont(), 13)
+font_disable:SetFont(GameFontNormal:GetFont(), 13, "")
 font_disable:SetTextColor(0.4, 0.4, 0.4, 1)
 font_disable:SetShadowColor(0, 0, 0)
 font_disable:SetShadowOffset(1, -1)
 font_disable:SetJustifyH("CENTER")
 
 local font_special = CreateFont(font_special_name)
-font_special:SetFont("Interface\\AddOns\\Cell\\Media\\font.ttf", 12)
+font_special:SetFont("Interface\\AddOns\\Cell\\Media\\font.ttf", 12, "")
 font_special:SetTextColor(1, 1, 1, 1)
 font_special:SetShadowColor(0, 0, 0)
 font_special:SetShadowOffset(1, -1)
@@ -89,14 +89,14 @@ font_special:SetJustifyH("CENTER")
 font_special:SetJustifyV("MIDDLE")
 
 local font_class_title = CreateFont(font_class_title_name)
-font_class_title:SetFont(GameFontNormal:GetFont(), 14)
+font_class_title:SetFont(GameFontNormal:GetFont(), 14, "")
 font_class_title:SetTextColor(accentColor.t[1], accentColor.t[2], accentColor.t[3])
 font_class_title:SetShadowColor(0, 0, 0)
 font_class_title:SetShadowOffset(1, -1)
 font_class_title:SetJustifyH("CENTER")
 
 local font_class = CreateFont(font_class_name)
-font_class:SetFont(GameFontNormal:GetFont(), 13)
+font_class:SetFont(GameFontNormal:GetFont(), 13, "")
 font_class:SetTextColor(accentColor.t[1], accentColor.t[2], accentColor.t[3])
 font_class:SetShadowColor(0, 0, 0)
 font_class:SetShadowOffset(1, -1)
@@ -112,12 +112,12 @@ function addon:UpdateOptionsFont(offset, useGameFont)
     end
     fontSizeOffset = offset
 
-    font_title:SetFont(defaultFont, 14+offset)
-    font_title_disable:SetFont(defaultFont, 14+offset)
-    font:SetFont(defaultFont, 13+offset)
-    font_disable:SetFont(defaultFont, 13+offset)
-    font_class_title:SetFont(defaultFont, 14+offset)
-    font_class:SetFont(defaultFont, 13+offset)
+    font_title:SetFont(defaultFont, 14+offset, "")
+    font_title_disable:SetFont(defaultFont, 14+offset, "")
+    font:SetFont(defaultFont, 13+offset, "")
+    font_disable:SetFont(defaultFont, 13+offset, "")
+    font_class_title:SetFont(defaultFont, 14+offset, "")
+    font_class:SetFont(defaultFont, 13+offset, "")
 end
 
 -----------------------------------------
@@ -2397,7 +2397,7 @@ function addon:CreateDropdown(parent, width, dropdownType, isMini)
                 if dropdownType == "texture" then
                     menu.texture:SetTexture(value)
                 elseif dropdownType == "font" then
-                    menu.text:SetFont(value, 13+fontSizeOffset)
+                    menu.text:SetFont(value, 13+fontSizeOffset, "")
                 end
                 break
             end
@@ -2527,9 +2527,9 @@ function addon:CreateDropdown(parent, width, dropdownType, isMini)
             -- font
             local f, s = font:GetFont()
             if item.font then
-                b:GetFontString():SetFont(item.font, s)
+                b:GetFontString():SetFont(item.font, s, "")
             else
-                b:GetFontString():SetFont(f, s)
+                b:GetFontString():SetFont(f, s, "")
             end
 
             -- highlight

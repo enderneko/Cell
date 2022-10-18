@@ -48,15 +48,6 @@ local UnitGUID = UnitGUID
 -- local IsInBattleGround = C_PvP.IsBattleground -- NOTE: can't get valid value immediately after PLAYER_ENTERING_WORLD
 
 -------------------------------------------------
--- fonts -- used by old versions only
--------------------------------------------------
-local font_name = CreateFont("CELL_FONT_NAME")
-font_name:SetFont(GameFontNormal:GetFont(), 13)
-
-local font_status = CreateFont("CELL_FONT_STATUS")
-font_status:SetFont(GameFontNormal:GetFont(), 11)
-
--------------------------------------------------
 -- layout
 -------------------------------------------------
 local delayedLayoutGroupType, delayedUpdateIndicators

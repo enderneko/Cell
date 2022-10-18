@@ -827,6 +827,12 @@ end
 -------------------------------------------------
 -- name text
 -------------------------------------------------
+local font_name = CreateFont("CELL_FONT_NAME")
+font_name:SetFont(GameFontNormal:GetFont(), 13, "")
+
+local font_status = CreateFont("CELL_FONT_STATUS")
+font_status:SetFont(GameFontNormal:GetFont(), 11, "")
+
 function I:CreateNameText(parent)
     local nameText = CreateFrame("Frame", parent:GetName().."NameText", parent.widget.overlayFrame)
     parent.indicators.nameText = nameText
@@ -851,10 +857,10 @@ function I:CreateNameText(parent)
         if not string.find(strlower(font), ".ttf") then font = F:GetFont(font) end
 
         if flags == "Shadow" then
-            nameText.name:SetFont(font, size)
+            nameText.name:SetFont(font, size, "")
             nameText.name:SetShadowOffset(1, -1)
             nameText.name:SetShadowColor(0, 0, 0, 1)
-            nameText.vehicle:SetFont(font, size-2)
+            nameText.vehicle:SetFont(font, size-2, "")
             nameText.vehicle:SetShadowOffset(1, -1)
             nameText.vehicle:SetShadowColor(0, 0, 0, 1)
         else
@@ -1063,10 +1069,10 @@ function I:CreateStatusText(parent)
         if not string.find(strlower(font), ".ttf") then font = F:GetFont(font) end
 
         if flags == "Shadow" then
-            text:SetFont(font, size)
+            text:SetFont(font, size, "")
             text:SetShadowOffset(1, -1)
             text:SetShadowColor(0, 0, 0, 1)
-            timer:SetFont(font, size)
+            timer:SetFont(font, size, "")
             timer:SetShadowOffset(1, -1)
             timer:SetShadowColor(0, 0, 0, 1)
         else
@@ -1127,7 +1133,7 @@ function I:CreateHealthText(parent)
         if not string.find(strlower(font), ".ttf") then font = F:GetFont(font) end
 
         if flags == "Shadow" then
-            text:SetFont(font, size)
+            text:SetFont(font, size, "")
             text:SetShadowOffset(1, -1)
             text:SetShadowColor(0, 0, 0, 1)
         else
