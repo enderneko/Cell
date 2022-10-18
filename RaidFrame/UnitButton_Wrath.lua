@@ -2,7 +2,7 @@
 -- File: UnitButton_Wrath.lua
 -- Author: enderneko (enderneko-dev@outlook.com)
 -- File Created: 2022/08/20 19:44:26 +0800
--- Last Modified: 2022/10/16 21:00:17 +0800
+-- Last Modified: 2022/10/19 02:19:07 +0800
 --]]
 
 local _, Cell = ...
@@ -17,7 +17,7 @@ local UnitGUID = UnitGUID
 local UnitClassBase = UnitClassBase
 local UnitHealth = UnitHealth
 local UnitHealthMax = UnitHealthMax
-local UnitGetIncomingHeals = UnitGetIncomingHeals
+-- local UnitGetIncomingHeals = UnitGetIncomingHeals
 local UnitIsUnit = UnitIsUnit
 local UnitIsConnected = UnitIsConnected
 local UnitIsAFK = UnitIsAFK
@@ -949,7 +949,8 @@ local function UnitButton_UpdateBuffs(self)
         if duration then
             if Cell.vars.iconAnimation == "duration" then
                 -- justApplied = abs(expirationTime-GetTime()-duration) <= 0.1
-                justApplied = buffs_cache_castByMe[unit][spellId] and (buffs_cache_castByMe[unit][spellId] < expirationTime) or false
+                --! FIXME: use floor to fix weird expirationTime of Wild Growth
+                justApplied = buffs_cache_castByMe[unit][spellId] and (floor(buffs_cache_castByMe[unit][spellId]) < floor(expirationTime)) or false
                 countIncreased = buffs_cache_count_castByMe[unit][spellId] and (count > buffs_cache_count_castByMe[unit][spellId]) or false
                 refreshing = justApplied or countIncreased
             elseif Cell.vars.iconAnimation == "stack" then
@@ -1348,13 +1349,15 @@ local function UnitButton_UpdateHealPrediction(self)
     local unit = self.state.displayedUnit
     if not unit then return end
 
-    local value = UnitGetIncomingHeals(unit) or 0
-    -- print("v1", value, self.state.healthMax, value / self.state.healthMax)
+    local value = 0
     --! NOTE: use LibHealComm
     if self.__displayedGuid then
-        value = HealComm:GetHealAmount(self.__displayedGuid, HealComm.CASTED_HEALS) or 0
-        local hots = select(3, HealComm:GetNextHealAmount(self.__displayedGuid, HealComm.HOT_HEALS)) or 0
-        value = value + hots
+        local modifier = HealComm:GetHealModifier(self.__displayedGuid) or 1
+        value = (HealComm:GetHealAmount(self.__displayedGuid, HealComm.CASTED_HEALS) or 0) * modifier
+        -- local hot = select(3, HealComm:GetNextHealAmount(self.__displayedGuid, HealComm.HOT_HEALS)) or 0
+        -- NOTE: hots within 3 seconds
+        hot = (HealComm:GetHealAmount(self.__displayedGuid, HealComm.OVERTIME_AND_BOMB_HEALS, GetTime()+3) or 0) * modifier
+        value = value + hot
     end
 
     if value == 0 then 
@@ -1666,22 +1669,23 @@ end
 -- LibHealComm
 -------------------------------------------------
 Cell.HealComm = {}
-local function UpdateHotsPrediction(_, event, casterGUID, spellID, healType, endTime, ...)
+local function HealComm_UpdateHealPrediction(_, event, casterGUID, spellID, healType, endTime, ...)
     -- print(event, casterGUID, spellID, healType, endTime, ...)
-    if healType == HealComm.HOT_HEALS then
-        -- update incomingHeal
-        for i = 1, select("#", ...) do
-            local b = F:GetUnitButtonByGUID(select(i, ...))
-            if b then
-                UnitButton_UpdateHealPrediction(b)
-            end
+    -- update incomingHeal
+    for i = 1, select("#", ...) do
+        local b = F:GetUnitButtonByGUID(select(i, ...))
+        if b then
+            UnitButton_UpdateHealPrediction(b)
         end
     end
 end
-Cell.HealComm.UpdateHotsPrediction = UpdateHotsPrediction
-HealComm.RegisterCallback(Cell.HealComm, "HealComm_HealStarted", "UpdateHotsPrediction")
-HealComm.RegisterCallback(Cell.HealComm, "HealComm_HealUpdated", "UpdateHotsPrediction")
-HealComm.RegisterCallback(Cell.HealComm, "HealComm_HealStopped", "UpdateHotsPrediction")
+Cell.HealComm.HealComm_UpdateHealPrediction = HealComm_UpdateHealPrediction
+HealComm.RegisterCallback(Cell.HealComm, "HealComm_HealStarted", "HealComm_UpdateHealPrediction")
+HealComm.RegisterCallback(Cell.HealComm, "HealComm_HealUpdated", "HealComm_UpdateHealPrediction")
+HealComm.RegisterCallback(Cell.HealComm, "HealComm_HealStopped", "HealComm_UpdateHealPrediction")
+HealComm.RegisterCallback(Cell.HealComm, "HealComm_HealDelayed", "HealComm_UpdateHealPrediction")
+HealComm.RegisterCallback(Cell.HealComm, "HealComm_ModifierChanged", "HealComm_UpdateHealPrediction")
+HealComm.RegisterCallback(Cell.HealComm, "HealComm_GUIDDisappeared", "HealComm_UpdateHealPrediction")
 
 -------------------------------------------------
 -- guess shield amount from Glyph of Power Word: Shield
