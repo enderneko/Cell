@@ -11,8 +11,8 @@
 ## Cell is a unique raid frame addon inspired by CompactRaid
 
 I love __CompactRaid__ so much, but it seems to be abandoned. And I made Cell, hope you enjoy.
-Some ideas are from other great raid frame addons, such as __Aptechka__, __Grid2__.
-Cell is not meant to be a lightweight or powerful (like VuhDo, Grid2) raid frames addon.
+Some ideas are from other great raid frame addons, such as __Aptechka__, __Grid2__ and __VuhDo__.
+Cell is not meant to be a lightweight or powerful raid frame addon.
 It's easy to use and good enough for you (hope so).
 
 ## Features
@@ -23,7 +23,8 @@ It's easy to use and good enough for you (hope so).
 - __Indicators:__ dozens of built-in indicators and unlimited custom indicators (icon, bar, rect, text, icons).
 - __Raid Debuffs:__ debuffs priority and glow.
 - __Useful Raid Tools:__ ready check, countdown, rebuff, death report, marks, battleres.
-- __Sexy Options UI:__ I mean yes it's pretty darn good!
+- __Nice Options UI:__ I mean yes it's pretty darn good!
+- __Spotlight Frame:__ extra 5 unit buttons, can be set to Target, Target of Target, Focus, Unit or Unit's Pet.
 - __Compatibility:__ [Class Colors](https://www.curseforge.com/wow/addons/classcolors), [OmniCD](https://www.curseforge.com/wow/addons/omnicd) and of course, [WAs](https://wago.io/weakauras).
 
 ## Not supported and probably won't be included in the future
