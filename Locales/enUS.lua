@@ -62,6 +62,11 @@ select(2, ...).L = setmetatable({
     ["SNIPPETS_TIPS"] = "[Double-Click] to rename. [Shift-Click] to delete. All checked snippets will be automatically invoked at the end of Cell initialization process (in ADDON_LOADED event).",
 
     ["CHANGELOGS"] = [[
+        <h1>r127-release (Oct 19, 2022, 02:45 GMT+8)</h1>
+        <p>* Fixed heal prediction in WotLK.</p>
+        <p>* Updated zhTW.</p>
+        <br/>
+
         <h1>r126-release (Oct 17, 2022, 16:35 GMT+8)</h1>
         <p>* Fixed icon duration text.</p>
         <p>* Added "Show group number" to Name Text indicator.</p>

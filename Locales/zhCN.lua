@@ -583,6 +583,11 @@ L["Changelogs"] = "更新记录"
 L["Click to view recent changelogs"] = "点击查看近期更新记录"
 L["Click to view older changelogs"] = "点击查看远古更新记录"
 L["CHANGELOGS"] = [[
+    <h1>r127-release (Oct 19, 2022, 02:45 GMT+8)</h1>
+    <p>* 修复巫妖王之怒怀旧服的治疗预估（感谢 橘子味橙汁 帮忙发现了问题所在）。</p>
+    <p>* 更新繁中。</p>
+    <br/>
+
     <h1>r126-release (Oct 17, 2022, 16:35 GMT+8)</h1>
     <p>* 修复图标的持续时间文本。</p>
     <p>* 为“名字”指示器添加了“显示队伍编号”的选项。</p>

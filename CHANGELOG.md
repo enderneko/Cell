@@ -1,9 +1,6 @@
-[Full Changelog](https://github.com/enderneko/Cell/compare/r125-release...bbeb473c942f4d33db70d4bf05f6ebe86b603137)
+[Full Changelog](https://github.com/enderneko/Cell/compare/r126-release...adeb35f680f2f7e7b290ae86458f768ee9693b33)
 
-- Add "Show group number" to NameText
-- Make spotlight menu always on-screen
-- Update defensives for Retail
-- Update externals for WotLK
-- Fix icon duration text
-- Update RaidRosterFrame
-- Update ReadyAndPull
+- Fix heal prediction in WotLK
+- Fix SetFont in 10.0
+- Update zhTW
+- Update README
