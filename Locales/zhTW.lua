@@ -319,13 +319,11 @@ L["Raid Icon (player)"] = "團隊圖示 (玩家)"
 L["Raid Icon (target)"] = "團隊圖示 (目標)"
 L["Raid Tools"] = "團隊工具"
 L["RAID_DEBUFFS_TIPS"] = "提示: [拖曳] 減益可以調整順序 [點兩下] 副本名稱可以打開冒險指南 [Shift+左鍵] 副本或首領名稱可以分享減益清單 [Alt+左鍵] 副本或首領名稱可以重置減益清單。一般減益的優先順序比首領減益的優先順序更高。"
---[[Translation missing --]]
---[[ L["raidRosterTips"] = "[Right-Click] promote/demote (assistant). [Alt+Right-Click] uninvite."--]] 
+L["raidRosterTips"] = "[右鍵] 助理，[Alt+右鍵] 移除。"
 L["Ready"] = "團確"
 L["Ready Check Icon"] = "準備確認圖示"
 L["ReadyCheck and PullTimer buttons"] = "準備確認和開怪倒數按鈕"
---[[Translation missing --]]
---[[ L["readyCheckTips"] = "\n|rReady Check\nLeft-Click: |cffffffffinitiate a ready check|r\nRight-Click: |cffffffffstart a role check|r"--]] 
+L["readyCheckTips"] = "\n|r準備確認\n左鍵: |cffffffff準備確認|r\n右鍵: |cffffffff角色職責確認|r"
 L["Rect"] = "矩形"
 L["Remaining Time <"] = "剩餘時間 <"
 L["Rename"] = "更名"
@@ -386,8 +384,7 @@ L["Show while in a party"] = "在隊伍中時顯示"
 L["Show while not in a group"] = "不在隊伍中時顯示"
 L["showDispelTypeIcons"] = "顯示驅散類型圖示"
 L["showDuration"] = "顯示持續時間文字"
---[[Translation missing --]]
---[[ L["showGroupNumber"] = "Show group number"--]]
+L["showGroupNumber"] = "顯示隊伍編號"
 L["Shows only one spell glow on a unit button at a time"] = "每個單位按鈕上同一時間只能顯示一個法術發光"
 L["showTooltip"] = "顯示光環提示"
 L["Size"] = "大小"
