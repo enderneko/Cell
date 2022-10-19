@@ -118,8 +118,13 @@ Cell:RegisterCallback("ActiveTalentGroupChanged", "Core_ActiveTalentGroupChanged
 -- events
 -------------------------------------------------
 local eventFrame = CreateFrame("Frame")
+eventFrame:RegisterEvent("VARIABLES_LOADED")
 eventFrame:RegisterEvent("ADDON_LOADED")
 eventFrame:RegisterEvent("PLAYER_LOGIN")
+
+function eventFrame:VARIABLES_LOADED()
+    SetCVar("predictedHealth", 1)
+end
 
 -- local cellLoaded, omnicdLoaded
 function eventFrame:ADDON_LOADED(arg1)
