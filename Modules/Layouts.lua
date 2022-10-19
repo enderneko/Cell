@@ -1866,7 +1866,7 @@ local function CreateGroupArrangementPane()
     previewModeText:SetText(L["Preview"])
     
     -- spacing
-    spacingSlider = Cell:CreateSlider(L["Unit Spacing"], groupArrangementPane, 0, 10, 117, 1, function(value)
+    spacingSlider = Cell:CreateSlider(L["Unit Spacing"], groupArrangementPane, 0, 20, 117, 1, function(value)
         selectedLayoutTable["spacing"] = value
         if selectedLayout == Cell.vars.currentLayout then
             Cell:Fire("UpdateLayout", selectedLayout, "spacing")
