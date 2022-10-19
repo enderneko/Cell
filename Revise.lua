@@ -1383,5 +1383,18 @@ function F:Revise()
         end
     end
 
+    -- r128-release
+    if CellDB["revise"] and dbRevision < 128 then
+        -- spotlight
+        for _, layout in pairs(CellDB["layouts"]) do
+            if layout["spotlight"] and #layout["spotlight"] ~= 5 then
+                -- sizeEnabled
+                layout["spotlight"][4] = false
+                -- size
+                layout["spotlight"][5] = {66, 46}
+            end
+        end
+    end
+
     CellDB["revise"] = Cell.version
 end

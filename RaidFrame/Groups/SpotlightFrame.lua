@@ -467,11 +467,18 @@ Cell:RegisterCallback("UpdateMenu", "SpotlightFrame_UpdateMenu", UpdateMenu)
 local function UpdateLayout(layout, which)
     layout = Cell.vars.currentLayoutTable
 
-    if not which or which == "size" then
-        P:Size(spotlightFrame, unpack(layout["size"]))
+    if not which or which == "size" or which == "spotlightSize" then
+        local width, height
+        if layout["spotlight"][4] then
+            width, height = unpack(layout["spotlight"][5])
+        else
+            width, height = unpack(layout["size"])
+        end
+
+        P:Size(spotlightFrame, width, height)
 
         for _, f in pairs(placeholders) do
-            P:Size(f, unpack(layout["size"]))
+            P:Size(f, width, height)
         end
     end
 

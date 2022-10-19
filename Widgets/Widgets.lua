@@ -1236,7 +1236,11 @@ function addon:CreateSwitch(parent, size, leftText, leftValue, rightText, rightV
     textRight:SetText(rightText)
 
     local highlight = switch:CreateTexture(nil, "ARTWORK")
-    highlight:SetColorTexture(accentColor.t[1], accentColor.t[2], accentColor.t[3], class=="PRIEST" and 0.35 or 0.45)
+    if class == "PRIEST" and not accentColorOverride then
+        highlight:SetColorTexture(accentColor.t[1], accentColor.t[2], accentColor.t[3], 0.35)
+    else
+        highlight:SetColorTexture(accentColor.t[1], accentColor.t[2], accentColor.t[3], 0.45)
+    end
 
     local function UpdateHighlight(which)
         highlight:ClearAllPoints()
@@ -1292,11 +1296,112 @@ function addon:CreateSwitch(parent, size, leftText, leftValue, rightText, rightV
     end)
 
     switch:SetScript("OnEnter", function()
-        highlight:SetColorTexture(accentColor.t[1], accentColor.t[2], accentColor.t[3], class=="PRIEST" and 0.55 or 0.65)
+        if class == "PRIEST" and not accentColorOverride then
+            highlight:SetColorTexture(accentColor.t[1], accentColor.t[2], accentColor.t[3], 0.55)
+        else
+            highlight:SetColorTexture(accentColor.t[1], accentColor.t[2], accentColor.t[3], 0.65)
+        end
     end)
 
     switch:SetScript("OnLeave", function()
-        highlight:SetColorTexture(accentColor.t[1], accentColor.t[2], accentColor.t[3], class=="PRIEST" and 0.35 or 0.45)
+        if class == "PRIEST" and not accentColorOverride then
+            highlight:SetColorTexture(accentColor.t[1], accentColor.t[2], accentColor.t[3], 0.35)
+        else
+            highlight:SetColorTexture(accentColor.t[1], accentColor.t[2], accentColor.t[3], 0.45)
+        end
+    end)
+
+    return switch
+end
+
+function addon:CreateTripleSwitch(parent, size, func)
+    local switch = CreateFrame("Frame", nil, parent, "BackdropTemplate")
+    P:Size(switch, size[1], size[2])
+    addon:StylizeFrame(switch, {0.115, 0.115, 0.115, 1})
+    
+    local highlight = switch:CreateTexture(nil, "ARTWORK")
+    if class == "PRIEST" and not accentColorOverride then
+        highlight:SetColorTexture(accentColor.t[1], accentColor.t[2], accentColor.t[3], 0.35)
+    else
+        highlight:SetColorTexture(accentColor.t[1], accentColor.t[2], accentColor.t[3], 0.45)
+    end
+
+    local function UpdateHighlight(which)
+        local width = size[1] - 2
+
+        highlight:ClearAllPoints()
+        if which == "LEFT" then
+            highlight:SetPoint("TOPLEFT", P:Scale(1), P:Scale(-1))
+            highlight:SetPoint("BOTTOMRIGHT", switch, "BOTTOMLEFT", P:Scale(width/3+1), P:Scale(1))
+        elseif which == "CENTER" then
+            highlight:SetPoint("TOPLEFT", P:Scale(width/3+1), P:Scale(-1))
+            highlight:SetPoint("BOTTOMRIGHT", P:Scale(-width/3-1), P:Scale(1))
+        else
+            highlight:SetPoint("TOPLEFT", P:Scale(width/3*2+1), P:Scale(-1))
+            highlight:SetPoint("BOTTOMRIGHT", P:Scale(-1), P:Scale(1))
+        end
+    end
+
+    local ag = highlight:CreateAnimationGroup()
+    local t1 = ag:CreateAnimation("Translation")
+    -- t1:SetOffset(highlight:GetWidth(), 0)
+    t1:SetDuration(0.2)
+    t1:SetSmoothing("IN_OUT")
+    ag:SetScript("OnPlay", function()
+        switch.isPlaying = true -- prevent continuous clicking
+    end)
+    ag:SetScript("OnFinished", function()
+        switch.isPlaying = false
+        if switch.selected == "LEFT" then
+            switch:SetSelected("CENTER", true)
+        elseif switch.selected == "CENTER" then
+            switch:SetSelected("RIGHT", true)
+        else
+            switch:SetSelected("LEFT", true)
+        end
+    end)
+    
+    function switch:SetSelected(value, runFunc)
+        local width = size[1] - 2
+
+        if value == "LEFT" then
+            switch.selected = "LEFT"
+            UpdateHighlight("LEFT")
+            t1:SetOffset(width/3, 0)
+            
+        elseif value == "CENTER" then
+            switch.selected = "CENTER"
+            UpdateHighlight("CENTER")
+            t1:SetOffset(width/3, 0)
+        else
+            switch.selected = "RIGHT"
+            UpdateHighlight("RIGHT")
+            t1:SetOffset(-width/3*2, 0)
+        end
+
+        if func and runFunc then func(value) end
+    end
+
+    switch:SetScript("OnMouseDown", function()
+        if switch.selected and not switch.isPlaying then
+            ag:Play()
+        end
+    end)
+
+    switch:SetScript("OnEnter", function()
+        if class == "PRIEST" and not accentColorOverride then
+            highlight:SetColorTexture(accentColor.t[1], accentColor.t[2], accentColor.t[3], 0.55)
+        else
+            highlight:SetColorTexture(accentColor.t[1], accentColor.t[2], accentColor.t[3], 0.65)
+        end
+    end)
+
+    switch:SetScript("OnLeave", function()
+        if class == "PRIEST" and not accentColorOverride then
+            highlight:SetColorTexture(accentColor.t[1], accentColor.t[2], accentColor.t[3], 0.35)
+        else
+            highlight:SetColorTexture(accentColor.t[1], accentColor.t[2], accentColor.t[3], 0.45)
+        end
     end)
 
     return switch

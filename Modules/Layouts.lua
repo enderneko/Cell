@@ -1562,14 +1562,19 @@ end
 -------------------------------------------------
 -- button size
 -------------------------------------------------
-local widthSlider, heightSlider, powerSizeSlider, petSizeCB, petWidthSlider, petHeightSlider, switch
+local widthSlider, heightSlider, powerSizeSlider, petSizeCB, petWidthSlider, petHeightSlider, spotlightSizeCB, spotlightWidthSlider, spotlightHeightSlider, switch
 
 local function CreateButtonSizePane()
-    local buttonSizePane = Cell:CreateTitledPane(layoutsTab, L["Unit Button"], 139, 170)
+    local buttonSizePane = Cell:CreateTitledPane(layoutsTab, L["Unit Button Size"], 139, 170)
     buttonSizePane:SetPoint("TOPLEFT", 5, -215)
     
+    --* page1 -----------------------------------
+    local page1 = CreateFrame("Frame", nil, layoutsTab)
+    page1:SetAllPoints(buttonSizePane)
+    page1:Hide()
+
     -- width
-    widthSlider = Cell:CreateSlider(L["Width"], buttonSizePane, 20, 300, 117, 2, function(value)
+    widthSlider = Cell:CreateSlider(L["Width"], page1, 20, 300, 117, 2, function(value)
         selectedLayoutTable["size"][1] = value
         if selectedLayout == Cell.vars.currentLayout then
             Cell:Fire("UpdateLayout", selectedLayout, "size")
@@ -1582,7 +1587,7 @@ local function CreateButtonSizePane()
     widthSlider:SetPoint("TOPLEFT", 5, -40)
     
     -- height
-    heightSlider = Cell:CreateSlider(L["Height"], buttonSizePane, 20, 300, 117, 2, function(value)
+    heightSlider = Cell:CreateSlider(L["Height"], page1, 20, 300, 117, 2, function(value)
         selectedLayoutTable["size"][2] = value
         if selectedLayout == Cell.vars.currentLayout then
             Cell:Fire("UpdateLayout", selectedLayout, "size")
@@ -1595,7 +1600,7 @@ local function CreateButtonSizePane()
     heightSlider:SetPoint("TOPLEFT", widthSlider, "BOTTOMLEFT", 0, -40)
     
     -- power height
-    powerSizeSlider = Cell:CreateSlider(L["Power Size"], buttonSizePane, 0, 20, 117, 1, function(value)
+    powerSizeSlider = Cell:CreateSlider(L["Power Size"], page1, 0, 20, 117, 1, function(value)
         selectedLayoutTable["powerSize"] = value
         if selectedLayout == Cell.vars.currentLayout then
             Cell:Fire("UpdateLayout", selectedLayout, "power")
@@ -1603,9 +1608,14 @@ local function CreateButtonSizePane()
         UpdatePreviewButton("power")
     end)
     powerSizeSlider:SetPoint("TOPLEFT", heightSlider, "BOTTOMLEFT", 0, -40)
-    
+
+    --* page2 -----------------------------------
+    local page2 = CreateFrame("Frame", nil, layoutsTab)
+    page2:SetAllPoints(buttonSizePane)
+    page2:Hide()
+
     -- petSize
-    petSizeCB = Cell:CreateCheckButton(buttonSizePane, L["Pet Button Size"], function(checked, self)
+    petSizeCB = Cell:CreateCheckButton(page2, L["Pet Button Size"], function(checked, self)
         if checked then
             petWidthSlider:SetEnabled(true)
             petHeightSlider:SetEnabled(true)
@@ -1618,10 +1628,10 @@ local function CreateButtonSizePane()
             Cell:Fire("UpdateLayout", selectedLayout, "petSize")
         end
     end)
-    petSizeCB:SetPoint("TOPLEFT", buttonSizePane, 5, -40)
+    petSizeCB:SetPoint("TOPLEFT", 5, -40)
     
     -- petWidth
-    petWidthSlider = Cell:CreateSlider(L["Width"].." ("..PET..")", buttonSizePane, 40, 300, 117, 2, function(value)
+    petWidthSlider = Cell:CreateSlider(L["Width"], page2, 40, 300, 117, 2, function(value)
         selectedLayoutTable["petSize"][2] = value
         if selectedLayout == Cell.vars.currentLayout then
             Cell:Fire("UpdateLayout", selectedLayout, "petSize")
@@ -1630,34 +1640,72 @@ local function CreateButtonSizePane()
     petWidthSlider:SetPoint("TOPLEFT", petSizeCB, "BOTTOMLEFT", 0, -36)
     
     -- petHeight
-    petHeightSlider = Cell:CreateSlider(L["Height"].." ("..PET..")", buttonSizePane, 20, 300, 117, 2, function(value)
+    petHeightSlider = Cell:CreateSlider(L["Height"], page2, 20, 300, 117, 2, function(value)
         selectedLayoutTable["petSize"][3] = value
         if selectedLayout == Cell.vars.currentLayout then
             Cell:Fire("UpdateLayout", selectedLayout, "petSize")
         end
     end)
     petHeightSlider:SetPoint("TOPLEFT", petWidthSlider, "BOTTOMLEFT", 0, -40)
-    
-    -- player/pet switch
-    switch = Cell:CreateSwitch(buttonSizePane, {22, 10}, "", "player", "", "pet", function(which)
-        if which == "player" then
-            widthSlider:Show()
-            heightSlider:Show()
-            powerSizeSlider:Show()
-            petSizeCB:Hide()
-            petWidthSlider:Hide()
-            petHeightSlider:Hide()
+
+    --* page3 -----------------------------------
+    local page3 = CreateFrame("Frame", nil, layoutsTab)
+    page3:SetAllPoints(buttonSizePane)
+    page3:Hide()
+
+    -- spotlightSize
+    spotlightSizeCB = Cell:CreateCheckButton(page3, L["Spotlight Button Size"], function(checked, self)
+        if checked then
+            spotlightWidthSlider:SetEnabled(true)
+            spotlightHeightSlider:SetEnabled(true)
         else
-            widthSlider:Hide()
-            heightSlider:Hide()
-            powerSizeSlider:Hide()
-            petSizeCB:Show()
-            petWidthSlider:Show()
-            petHeightSlider:Show()
+            spotlightWidthSlider:SetEnabled(false)
+            spotlightHeightSlider:SetEnabled(false)
+        end
+
+        selectedLayoutTable["spotlight"][4] = checked
+        if selectedLayout == Cell.vars.currentLayout then
+            Cell:Fire("UpdateLayout", selectedLayout, "spotlightSize")
+        end
+    end)
+    spotlightSizeCB:SetPoint("TOPLEFT", 5, -40)
+
+    -- spotlightWidth
+    spotlightWidthSlider = Cell:CreateSlider(L["Width"], page3, 40, 300, 117, 2, function(value)
+        selectedLayoutTable["spotlight"][5][1] = value
+        if selectedLayout == Cell.vars.currentLayout then
+            Cell:Fire("UpdateLayout", selectedLayout, "spotlightSize")
+        end
+    end)
+    spotlightWidthSlider:SetPoint("TOPLEFT", spotlightSizeCB, "BOTTOMLEFT", 0, -36)
+    
+    -- spotlightHeight
+    spotlightHeightSlider = Cell:CreateSlider(L["Height"], page3, 20, 300, 117, 2, function(value)
+        selectedLayoutTable["spotlight"][5][2] = value
+        if selectedLayout == Cell.vars.currentLayout then
+            Cell:Fire("UpdateLayout", selectedLayout, "spotlightSize")
+        end
+    end)
+    spotlightHeightSlider:SetPoint("TOPLEFT", spotlightWidthSlider, "BOTTOMLEFT", 0, -40)
+
+    -- switch
+    switch = Cell:CreateTripleSwitch(buttonSizePane, {32, 10}, function(which)
+        if which == "LEFT" then
+            page1:Show()
+            page2:Hide()
+            page3:Hide()
+        elseif which == "CENTER" then
+            page1:Hide()
+            page2:Show()
+            page3:Hide()
+        else
+            page1:Hide()
+            page2:Hide()
+            page3:Show()
         end
     end)
     switch:SetPoint("BOTTOMRIGHT", buttonSizePane.line, "TOPRIGHT", 0, P:Scale(2))
-    switch:SetSelected("player", true)
+    switch:SetSelected("LEFT", true)
 end
 
 -------------------------------------------------
@@ -1995,13 +2043,14 @@ LoadLayoutDB = function(layout)
     petSizeCB:SetChecked(selectedLayoutTable["petSize"][1])
     petWidthSlider:SetValue(selectedLayoutTable["petSize"][2])
     petHeightSlider:SetValue(selectedLayoutTable["petSize"][3])
-    if selectedLayoutTable["petSize"][1] then
-        petWidthSlider:SetEnabled(true)
-        petHeightSlider:SetEnabled(true)
-    else
-        petWidthSlider:SetEnabled(false)
-        petHeightSlider:SetEnabled(false)
-    end
+    petWidthSlider:SetEnabled(selectedLayoutTable["petSize"][1])
+    petHeightSlider:SetEnabled(selectedLayoutTable["petSize"][1])
+
+    spotlightSizeCB:SetChecked(selectedLayoutTable["spotlight"][4])
+    spotlightWidthSlider:SetValue(selectedLayoutTable["spotlight"][5][1])
+    spotlightHeightSlider:SetValue(selectedLayoutTable["spotlight"][5][2])
+    spotlightWidthSlider:SetEnabled(selectedLayoutTable["spotlight"][4])
+    spotlightHeightSlider:SetEnabled(selectedLayoutTable["spotlight"][4])
 
     spacingSlider:SetValue(selectedLayoutTable["spacing"])
     

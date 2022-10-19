@@ -402,6 +402,8 @@ L["Spell List"] = "法術清單"
 L["Spell Request"] = "法術請求"
 L["SpellId and BuffId are the same in most cases"] = "大部分情況下法術ID與增益ID是相同的"
 L["Spells"] = "法術"
+--[[Translation missing --]]
+--[[ L["Spotlight Button Size"] = "Spotlight Button Size"--]] 
 L["Spotlight Frame"] = "聚光框架"
 L["Status Icon"] = "狀態圖示"
 L["Status Text"] = "狀態文字"
