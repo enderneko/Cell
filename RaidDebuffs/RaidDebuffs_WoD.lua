@@ -2,7 +2,7 @@
 -- File: RaidDebuffs_WoD.lua
 -- Author: enderneko (enderneko-dev@outlook.com)
 -- File Created: 2022/08/05 16:10:24 +0800
--- Last Modified: 2022/08/17 17:38:55 +0800
+-- Last Modified: 2022/10/21 05:02:23 +0800
 --]]
 
 local _, Cell = ...
@@ -26,6 +26,9 @@ local debuffs = {
         [1128] = { -- 卡加斯·刃拳
         },
         [971] = { -- 屠夫
+            156152, -- 龟裂创伤
+            156147, -- 切肉刀
+            156151, -- 捶肉槌
         },
         [1195] = { -- 泰克图斯
         },
