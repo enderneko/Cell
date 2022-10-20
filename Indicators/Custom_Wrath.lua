@@ -2,7 +2,7 @@
 -- File: Custom_Wrath.lua
 -- Author: enderneko (enderneko-dev@outlook.com)
 -- File Created: 2022/08/26 03:04:05 +0800
--- Last Modified: 2022/08/26 03:47:05 +0800
+-- Last Modified: 2022/10/21 03:21:09 +0800
 --]]
 
 local _, Cell = ...
@@ -161,6 +161,7 @@ function I:CheckCustomIndicators(unit, unitButton, auraType, spellId, name, star
                     if indicatorTable["castByMe"] == castByMe then
                         if indicatorTable["isIcons"] then
                             if indicatorTable["found"][unit] <= indicatorTable["num"] then
+                                unitButton.indicators[indicatorName]:UpdateSize(indicatorTable["found"][unit])
                                 unitButton.indicators[indicatorName][indicatorTable["found"][unit]]:SetCooldown(start, duration, debuffType, texture, count, refreshing)
                                 indicatorTable["found"][unit] = indicatorTable["found"][unit] + 1
                                 unitButton.indicators[indicatorName]:Show()

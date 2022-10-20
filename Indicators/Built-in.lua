@@ -17,9 +17,35 @@ function I:CreateDefensiveCooldowns(parent)
     defensiveCooldowns.OriginalSetSize = defensiveCooldowns.SetSize
 
     function defensiveCooldowns:SetSize(width, height)
-        defensiveCooldowns:OriginalSetSize(width, height)
+        -- defensiveCooldowns:OriginalSetSize(width, height)
+        defensiveCooldowns.width = width
+        defensiveCooldowns.height = height
+
         for i = 1, 5 do
             P:Size(defensiveCooldowns[i], width, height)
+        end
+
+        defensiveCooldowns:UpdateSize()
+    end
+
+    function defensiveCooldowns:UpdateSize(iconsShown)
+        if not (defensiveCooldowns.width and defensiveCooldowns.height and defensiveCooldowns.orientation) then return end -- not init
+        if iconsShown then -- call from I:UnitButton_UpdateBuffs or preview
+            if defensiveCooldowns.orientation == "horizontal" then
+                defensiveCooldowns:OriginalSetSize(P:Scale(defensiveCooldowns.width)*iconsShown-P:Scale(iconsShown-1), P:Scale(defensiveCooldowns.height))
+            else
+                defensiveCooldowns:OriginalSetSize(P:Scale(defensiveCooldowns.width), P:Scale(defensiveCooldowns.height)*iconsShown-P:Scale(iconsShown-1))
+            end
+        else
+            for i = 1, 5 do
+                if defensiveCooldowns[i]:IsShown() then
+                    if defensiveCooldowns.orientation == "horizontal" then
+                        defensiveCooldowns:OriginalSetSize(P:Scale(defensiveCooldowns.width)*i-P:Scale(i-1), P:Scale(defensiveCooldowns.height))
+                    else
+                        defensiveCooldowns:OriginalSetSize(P:Scale(defensiveCooldowns.width), P:Scale(defensiveCooldowns.height)*i-P:Scale(i-1))
+                    end
+                end
+            end
         end
     end
 
@@ -33,31 +59,41 @@ function I:CreateDefensiveCooldowns(parent)
     function defensiveCooldowns:SetOrientation(orientation)
         local point1, point2, x, y
         if orientation == "left-to-right" then
-            point1 = "LEFT"
-            point2 = "RIGHT"
+            point1 = "TOPLEFT"
+            point2 = "TOPRIGHT"
+            defensiveCooldowns.orientation = "horizontal"
             x = -1
             y = 0
         elseif orientation == "right-to-left" then
-            point1 = "RIGHT"
-            point2 = "LEFT"
+            point1 = "TOPRIGHT"
+            point2 = "TOPLEFT"
+            defensiveCooldowns.orientation = "horizontal"
             x = 1
             y = 0
         elseif orientation == "top-to-bottom" then
-            point1 = "TOP"
-            point2 = "BOTTOM"
+            point1 = "TOPLEFT"
+            point2 = "BOTTOMLEFT"
+            defensiveCooldowns.orientation = "vertical"
             x = 0
             y = 1
         elseif orientation == "bottom-to-top" then
-            point1 = "BOTTOM"
-            point2 = "TOP"
+            point1 = "BOTTOMLEFT"
+            point2 = "TOPLEFT"
+            defensiveCooldowns.orientation = "vertical"
             x = 0
             y = -1
         end
         
-        for i = 2, 5 do
+        for i = 1, 5 do
             P:ClearPoints(defensiveCooldowns[i])
-            P:Point(defensiveCooldowns[i], point1, defensiveCooldowns[i-1], point2, x, y)
+            if i == 1 then
+                P:Point(defensiveCooldowns[i], point1)
+            else
+                P:Point(defensiveCooldowns[i], point1, defensiveCooldowns[i-1], point2, x, y)
+            end
         end
+
+        defensiveCooldowns:UpdateSize()
     end
 
     for i = 1, 5 do
@@ -65,11 +101,11 @@ function I:CreateDefensiveCooldowns(parent)
         local frame = I:CreateAura_BarIcon(name, defensiveCooldowns)
         tinsert(defensiveCooldowns, frame)
 
-        if i == 1 then
-            P:Point(frame, "TOPLEFT")
-        else
-            P:Point(frame, "LEFT", defensiveCooldowns[i-1], "RIGHT", -1, 0)
-        end
+        -- if i == 1 then
+        --     P:Point(frame, "TOPLEFT")
+        -- else
+        --     P:Point(frame, "LEFT", defensiveCooldowns[i-1], "RIGHT", -1, 0)
+        -- end
     end
 
     function defensiveCooldowns:ShowDuration(show)
@@ -79,7 +115,7 @@ function I:CreateDefensiveCooldowns(parent)
     end
 
     function defensiveCooldowns:UpdatePixelPerfect()
-        P:Resize(defensiveCooldowns)
+        -- P:Resize(defensiveCooldowns)
         P:Repoint(defensiveCooldowns)
         for i = 1, 5 do
             defensiveCooldowns[i]:UpdatePixelPerfect()
@@ -93,15 +129,40 @@ end
 function I:CreateExternalCooldowns(parent)
     local externalCooldowns = CreateFrame("Frame", parent:GetName().."ExternalCooldownParent", parent.widget.overlayFrame)
     parent.indicators.externalCooldowns = externalCooldowns
-    -- externalCooldowns:SetSize(20, 10)
     externalCooldowns:Hide()
 
     externalCooldowns.OriginalSetSize = externalCooldowns.SetSize
 
     function externalCooldowns:SetSize(width, height)
-        externalCooldowns:OriginalSetSize(width, height)
+        -- externalCooldowns:OriginalSetSize(width, height)
+        externalCooldowns.width = width
+        externalCooldowns.height = height
+
         for i = 1, 5 do
             P:Size(externalCooldowns[i], width, height)
+        end
+
+        externalCooldowns:UpdateSize()
+    end
+
+    function externalCooldowns:UpdateSize(iconsShown)
+        if not (externalCooldowns.width and externalCooldowns.height and externalCooldowns.orientation) then return end -- not init
+        if iconsShown then -- call from I:UnitButton_UpdateBuffs or preview
+            if externalCooldowns.orientation == "horizontal" then
+                externalCooldowns:OriginalSetSize(P:Scale(externalCooldowns.width)*iconsShown-P:Scale(iconsShown-1), P:Scale(externalCooldowns.height))
+            else
+                externalCooldowns:OriginalSetSize(P:Scale(externalCooldowns.width), P:Scale(externalCooldowns.height)*iconsShown-P:Scale(iconsShown-1))
+            end
+        else
+            for i = 1, 5 do
+                if externalCooldowns[i]:IsShown() then
+                    if externalCooldowns.orientation == "horizontal" then
+                        externalCooldowns:OriginalSetSize(P:Scale(externalCooldowns.width)*i-P:Scale(i-1), P:Scale(externalCooldowns.height))
+                    else
+                        externalCooldowns:OriginalSetSize(P:Scale(externalCooldowns.width), P:Scale(externalCooldowns.height)*i-P:Scale(i-1))
+                    end
+                end
+            end
         end
     end
 
@@ -115,43 +176,47 @@ function I:CreateExternalCooldowns(parent)
     function externalCooldowns:SetOrientation(orientation)
         local point1, point2, x, y
         if orientation == "left-to-right" then
-            point1 = "LEFT"
-            point2 = "RIGHT"
+            point1 = "TOPLEFT"
+            point2 = "TOPRIGHT"
+            externalCooldowns.orientation = "horizontal"
             x = -1
             y = 0
         elseif orientation == "right-to-left" then
-            point1 = "RIGHT"
-            point2 = "LEFT"
+            point1 = "TOPRIGHT"
+            point2 = "TOPLEFT"
+            externalCooldowns.orientation = "horizontal"
             x = 1
             y = 0
         elseif orientation == "top-to-bottom" then
-            point1 = "TOP"
-            point2 = "BOTTOM"
+            point1 = "TOPLEFT"
+            point2 = "BOTTOMLEFT"
+            externalCooldowns.orientation = "vertical"
             x = 0
             y = 1
         elseif orientation == "bottom-to-top" then
-            point1 = "BOTTOM"
-            point2 = "TOP"
+            point1 = "BOTTOMLEFT"
+            point2 = "TOPLEFT"
+            externalCooldowns.orientation = "vertical"
             x = 0
             y = -1
         end
         
-        for i = 2, 5 do
+        for i = 1, 5 do
             P:ClearPoints(externalCooldowns[i])
-            P:Point(externalCooldowns[i], point1, externalCooldowns[i-1], point2, x, y)
+            if i == 1 then
+                P:Point(externalCooldowns[i], point1)
+            else
+                P:Point(externalCooldowns[i], point1, externalCooldowns[i-1], point2, x, y)
+            end
         end
+
+        externalCooldowns:UpdateSize()
     end
 
     for i = 1, 5 do
         local name = parent:GetName().."ExternalCooldown"..i
         local frame = I:CreateAura_BarIcon(name, externalCooldowns)
         tinsert(externalCooldowns, frame)
-
-        if i == 1 then
-            P:Point(frame, "TOPLEFT")
-        else
-            P:Point(frame, "RIGHT", externalCooldowns[i-1], "LEFT", 1, 0)
-        end
     end
 
     function externalCooldowns:ShowDuration(show)
@@ -161,7 +226,7 @@ function I:CreateExternalCooldowns(parent)
     end
 
     function externalCooldowns:UpdatePixelPerfect()
-        P:Resize(externalCooldowns)
+        -- P:Resize(externalCooldowns)
         P:Repoint(externalCooldowns)
         for i = 1, 5 do
             externalCooldowns[i]:UpdatePixelPerfect()
@@ -180,9 +245,35 @@ function I:CreateAllCooldowns(parent)
     allCooldowns.OriginalSetSize = allCooldowns.SetSize
 
     function allCooldowns:SetSize(width, height)
-        allCooldowns:OriginalSetSize(width, height)
+        -- allCooldowns:OriginalSetSize(width, height)
+        allCooldowns.width = width
+        allCooldowns.height = height
+
         for i = 1, 5 do
             P:Size(allCooldowns[i], width, height)
+        end
+
+        allCooldowns:UpdateSize()
+    end
+
+    function allCooldowns:UpdateSize(iconsShown)
+        if not (allCooldowns.width and allCooldowns.height and allCooldowns.orientation) then return end -- not init
+        if iconsShown then -- call from I:UnitButton_UpdateBuffs or preview
+            if allCooldowns.orientation == "horizontal" then
+                allCooldowns:OriginalSetSize(P:Scale(allCooldowns.width)*iconsShown-P:Scale(iconsShown-1), P:Scale(allCooldowns.height))
+            else
+                allCooldowns:OriginalSetSize(P:Scale(allCooldowns.width), P:Scale(allCooldowns.height)*iconsShown-P:Scale(iconsShown-1))
+            end
+        else
+            for i = 1, 5 do
+                if allCooldowns[i]:IsShown() then
+                    if allCooldowns.orientation == "horizontal" then
+                        allCooldowns:OriginalSetSize(P:Scale(allCooldowns.width)*i-P:Scale(i-1), P:Scale(allCooldowns.height))
+                    else
+                        allCooldowns:OriginalSetSize(P:Scale(allCooldowns.width), P:Scale(allCooldowns.height)*i-P:Scale(i-1))
+                    end
+                end
+            end
         end
     end
 
@@ -196,43 +287,47 @@ function I:CreateAllCooldowns(parent)
     function allCooldowns:SetOrientation(orientation)
         local point1, point2, x, y
         if orientation == "left-to-right" then
-            point1 = "LEFT"
-            point2 = "RIGHT"
+            point1 = "TOPLEFT"
+            point2 = "TOPRIGHT"
+            allCooldowns.orientation = "horizontal"
             x = -1
             y = 0
         elseif orientation == "right-to-left" then
-            point1 = "RIGHT"
-            point2 = "LEFT"
+            point1 = "TOPRIGHT"
+            point2 = "TOPLEFT"
+            allCooldowns.orientation = "horizontal"
             x = 1
             y = 0
         elseif orientation == "top-to-bottom" then
-            point1 = "TOP"
-            point2 = "BOTTOM"
+            point1 = "TOPLEFT"
+            point2 = "BOTTOMLEFT"
+            allCooldowns.orientation = "vertical"
             x = 0
             y = 1
         elseif orientation == "bottom-to-top" then
-            point1 = "BOTTOM"
-            point2 = "TOP"
+            point1 = "BOTTOMLEFT"
+            point2 = "TOPLEFT"
+            allCooldowns.orientation = "vertical"
             x = 0
             y = -1
         end
         
-        for i = 2, 5 do
+        for i = 1, 5 do
             P:ClearPoints(allCooldowns[i])
-            P:Point(allCooldowns[i], point1, allCooldowns[i-1], point2, x, y)
+            if i == 1 then
+                P:Point(allCooldowns[i], point1)
+            else
+                P:Point(allCooldowns[i], point1, allCooldowns[i-1], point2, x, y)
+            end
         end
+
+        allCooldowns:UpdateSize()
     end
 
     for i = 1, 5 do
         local name = parent:GetName().."ExternalCooldown"..i
         local frame = I:CreateAura_BarIcon(name, allCooldowns)
         tinsert(allCooldowns, frame)
-
-        if i == 1 then
-            P:Point(frame, "TOPLEFT")
-        else
-            P:Point(frame, "RIGHT", allCooldowns[i-1], "LEFT", 1, 0)
-        end
     end
 
     function allCooldowns:ShowDuration(show)
@@ -242,7 +337,7 @@ function I:CreateAllCooldowns(parent)
     end
 
     function allCooldowns:UpdatePixelPerfect()
-        P:Resize(allCooldowns)
+        -- P:Resize(allCooldowns)
         P:Repoint(allCooldowns)
         for i = 1, 5 do
             allCooldowns[i]:UpdatePixelPerfect()
@@ -294,43 +389,11 @@ function I:CreateDebuffs(parent)
     -- debuffs:SetSize(11, 11)
     debuffs:Hide()
 
-    debuffs.hAlignment = ""
-    debuffs.vAlignment = ""
-    debuffs.OriginalSetPoint = debuffs.SetPoint
-    function debuffs:SetPoint(point, relativeTo, relativePoint, x, y)
-        debuffs:OriginalSetPoint(point, relativeTo, relativePoint, x, y)
-
-        if string.find(point, "LEFT") then
-            debuffs.hAlignment = "LEFT"
-        elseif string.find(point, "RIGHT") then
-            debuffs.hAlignment = "RIGHT"
-        else
-            debuffs.hAlignment = ""
-        end
-
-        if string.find(point, "TOP") then
-            debuffs.vAlignment = "TOP"
-        elseif string.find(point, "BOTTOM") then
-            debuffs.vAlignment = "BOTTOM"
-        else
-            debuffs.vAlignment = ""
-        end
-
-        if debuffs.vAlignment == "" and debuffs.hAlignment == "" then
-            debuffs.vAlignment = "CENTER"
-        end
-
-        debuffs[1]:ClearAllPoints()
-        debuffs[1]:SetPoint(debuffs.vAlignment..debuffs.hAlignment)
-        --! update others' position
-        debuffs:SetOrientation(debuffs.orientation or "left-to-right")
-    end
-
     debuffs.OriginalSetSize = debuffs.SetSize
     function debuffs:SetSize(normalSize, bigSize)
-        debuffs:OriginalSetSize(P:Scale(normalSize[1]), P:Scale(normalSize[2]))
+        -- debuffs:OriginalSetSize(P:Scale(normalSize[1]), P:Scale(normalSize[2]))
         for i = 1, 10 do
-            debuffs[i]:SetSize(P:Scale(normalSize[1]), P:Scale(normalSize[2]))
+            P:Size(debuffs[i], normalSize[1], normalSize[2])
         end
         -- store sizes for SetCooldown
         debuffs.normalSize = normalSize
@@ -338,6 +401,24 @@ function I:CreateDebuffs(parent)
         -- remove wrong data from UnitButton.lua (UpdateIndicators)
         debuffs.width = nil
         debuffs.height = nil
+
+        debuffs:UpdateSize()
+    end
+
+    function debuffs:UpdateSize()
+        if not (debuffs.normalSize and debuffs.bigSize and debuffs.orientation) then return end -- not init
+
+        local size = 0
+        for i = 1, 10 do
+            if debuffs[i]:IsShown() then
+                size = size + debuffs[i].width
+            end
+        end
+        if debuffs.orientation == "left-to-right" or debuffs.orientation == "right-to-left"  then
+            debuffs:OriginalSetSize(size, debuffs.normalSize[2])
+        else
+            debuffs:OriginalSetSize(debuffs.normalSize[1], size)
+        end
     end
 
     function debuffs:SetFont(font, ...)
@@ -347,13 +428,44 @@ function I:CreateDebuffs(parent)
         end
     end
 
+    debuffs.hAlignment = ""
+    debuffs.vAlignment = ""
+    debuffs.OriginalSetPoint = debuffs.SetPoint
+    function debuffs:SetPoint(point, relativeTo, relativePoint, x, y)
+        debuffs:OriginalSetPoint(point, relativeTo, relativePoint, x, y)
+
+        if string.find(point, "LEFT$") then
+            debuffs.hAlignment = "LEFT"
+        elseif string.find(point, "RIGHT$") then
+            debuffs.hAlignment = "RIGHT"
+        else
+            debuffs.hAlignment = ""
+        end
+
+        if string.find(point, "^TOP") then
+            debuffs.vAlignment = "TOP"
+        elseif string.find(point, "^BOTTOM") then
+            debuffs.vAlignment = "BOTTOM"
+        else
+            debuffs.vAlignment = ""
+        end
+
+        if debuffs.hAlignment == "" and debuffs.vAlignment == "" then
+            debuffs.vAlignment = "CENTER"
+        end
+
+        -- debuffs[1]:ClearAllPoints()
+        -- debuffs[1]:SetPoint(debuffs.vAlignment..debuffs.hAlignment)
+        -- --! update icons
+        debuffs:SetOrientation(debuffs.orientation or "left-to-right")
+    end
+
+    --! NOTE: SetPoint must be invoked before SetOrientation
     function debuffs:SetOrientation(orientation)
         debuffs.orientation = orientation
-
         local point1, point2, v, h
         v = debuffs.vAlignment == "CENTER" and "" or debuffs.vAlignment
         h = debuffs.hAlignment
-
         if orientation == "left-to-right" then
             point1 = v.."LEFT"
             point2 = v.."RIGHT"
@@ -368,10 +480,16 @@ function I:CreateDebuffs(parent)
             point2 = "TOP"..h
         end
         
-        for i = 2, 10 do
-            debuffs[i]:ClearAllPoints()
-            debuffs[i]:SetPoint(point1, debuffs[i-1], point2)
+        for i = 1, 10 do
+            P:ClearPoints(debuffs[i])
+            if i == 1 then
+                P:Point(debuffs[i], point1)
+            else
+                P:Point(debuffs[i], point1, debuffs[i-1], point2)
+            end
         end
+
+        debuffs:UpdateSize()
     end
 
     for i = 1, 10 do
@@ -388,12 +506,6 @@ function I:CreateDebuffs(parent)
                 P:Size(frame, debuffs.normalSize[1], debuffs.normalSize[2])
             end
         end
-
-        -- if i == 1 then
-        --     frame:SetPoint("TOPLEFT")
-        -- else
-        --     frame:SetPoint("LEFT", debuffs[i-1], "RIGHT")
-        -- end
     end
 
     function debuffs:ShowDuration(show)
@@ -420,8 +532,11 @@ function I:CreateDebuffs(parent)
     end
 
     function debuffs:UpdatePixelPerfect()
-        debuffs:OriginalSetSize(P:Scale(debuffs.normalSize[1]), P:Scale(debuffs.normalSize[2]))
+        -- debuffs:OriginalSetSize(P:Scale(debuffs.normalSize[1]), P:Scale(debuffs.normalSize[2]))
         P:Repoint(debuffs)
+        for i = 1, 10 do
+            debuffs[i]:UpdatePixelPerfect()
+        end
     end
 end
 
@@ -656,63 +771,41 @@ function I:CreateRaidDebuffs(parent)
         end
     end
 
-    raidDebuffs.hAlignment = ""
-    raidDebuffs.vAlignment = ""
-    raidDebuffs.isCentered = false
-    raidDebuffs.OriginalSetPoint = raidDebuffs.SetPoint
-    function raidDebuffs:SetPoint(point, relativeTo, relativePoint, x, y)
-        raidDebuffs:OriginalSetPoint(point, relativeTo, relativePoint, x, y)
-
-        if string.find(point, "LEFT") then
-            raidDebuffs.hAlignment = "LEFT"
-        elseif string.find(point, "RIGHT") then
-            raidDebuffs.hAlignment = "RIGHT"
-        else
-            raidDebuffs.hAlignment = ""
-        end
-
-        if string.find(point, "TOP") then
-            raidDebuffs.vAlignment = "TOP"
-        elseif string.find(point, "BOTTOM") then
-            raidDebuffs.vAlignment = "BOTTOM"
-        else
-            raidDebuffs.vAlignment = ""
-        end
-
-        if raidDebuffs.vAlignment == "" and raidDebuffs.hAlignment == "" then
-            raidDebuffs.isCentered = true
-        else
-            raidDebuffs.isCentered = false
-        end
-
-        raidDebuffs:SetOrientation(raidDebuffs.orientation or "left-to-right")
-    end
-
     -- update parent size to make position right
-    function raidDebuffs:UpdateSize()
+    function raidDebuffs:UpdateSize(iconsShown)
         if not (raidDebuffs.orientation and raidDebuffs.width and raidDebuffs.height) then return end
         
-        local shows = 1
-        for i = 2, 3 do
-            if raidDebuffs[i]:IsShown() then
-                shows = shows + 1
+        local width, height = raidDebuffs.width, raidDebuffs.height
+        if iconsShown then -- call from UnitButton_UpdateDebuffs or preview
+            if raidDebuffs.orientation == "horizontal"  then
+                width = P:Scale(raidDebuffs.width) * iconsShown + P:Scale(iconsShown - 1) 
+                height = P:Scale(raidDebuffs.height)
+            else
+                width = P:Scale(raidDebuffs.width)
+                height = P:Scale(raidDebuffs.height) * iconsShown + P:Scale(iconsShown - 1)
+            end
+        else
+            for i = 1, 3 do
+                if raidDebuffs[i]:IsShown() then
+                    if raidDebuffs.orientation == "horizontal"  then
+                        width = P:Scale(raidDebuffs.width) * i + P:Scale(i - 1) 
+                        height = P:Scale(raidDebuffs.height)
+                    else
+                        width = P:Scale(raidDebuffs.width)
+                        height = P:Scale(raidDebuffs.height) * i + P:Scale(i - 1)
+                    end
+                end
             end
         end
 
-        -- gap = 1
-        if raidDebuffs.orientation == "left-to-right" or raidDebuffs.orientation == "right-to-left"  then
-            raidDebuffs:OriginalSetSize(P:Scale(raidDebuffs.width * shows + shows - 1), P:Scale(raidDebuffs.height))
-        elseif raidDebuffs.orientation == "top-to-bottom" or raidDebuffs.orientation == "bottom-to-top" then
-            raidDebuffs:OriginalSetSize(P:Scale(raidDebuffs.width), P:Scale(raidDebuffs.height * shows + shows - 1))
-        end
+        raidDebuffs:OriginalSetSize(width, height)
     end
 
     raidDebuffs.OriginalSetSize = raidDebuffs.SetSize
     function raidDebuffs:SetSize(width, height)
         raidDebuffs.width = width
         raidDebuffs.height = height
-
-        raidDebuffs:OriginalSetSize(width, height)
+        
         for i = 1, 3 do
             raidDebuffs[i]:SetSize(width, height)
         end
@@ -721,37 +814,41 @@ function I:CreateRaidDebuffs(parent)
     end
 
     function raidDebuffs:SetOrientation(orientation)
-        raidDebuffs.orientation = orientation
-
-        local point1, point2, v, h, xOff, yOff
-        v = raidDebuffs.vAlignment
-        h = raidDebuffs.hAlignment
+        local point1, point2, xOff, yOff
 
         if orientation == "left-to-right" then
-            point1 = v.."LEFT"
-            point2 = v.."RIGHT"
+            point1 = "TOPLEFT"
+            point2 = "TOPRIGHT"
+            raidDebuffs.orientation = "horizontal"
             xOff = 1
             yOff = 0
         elseif orientation == "right-to-left" then
-            point1 = v.."RIGHT"
-            point2 = v.."LEFT"
+            point1 = "TOPRIGHT"
+            point2 = "TOPLEFT"
+            raidDebuffs.orientation = "horizontal"
             xOff = -1
             yOff = 0
         elseif orientation == "top-to-bottom" then
-            point1 = "TOP"..h
-            point2 = "BOTTOM"..h
+            point1 = "TOPLEFT"
+            point2 = "BOTTOMLEFT"
+            raidDebuffs.orientation = "vertical"
             xOff = 0
             yOff = -1
         elseif orientation == "bottom-to-top" then
-            point1 = "BOTTOM"..h
-            point2 = "TOP"..h
+            point1 = "BOTTOMLEFT"
+            point2 = "TOPLEFT"
+            raidDebuffs.orientation = "vertical"
             xOff = 0
             yOff = 1
         end
         
         for i = 1, 3 do
-            raidDebuffs[i]:ClearAllPoints()
-            raidDebuffs[i]:SetPoint(point1, raidDebuffs[i-1], point2, P:Scale(xOff), P:Scale(yOff))
+            P:ClearPoints(raidDebuffs[i])
+            if i == 1 then
+                P:Point(raidDebuffs[i], point1)
+            else
+                P:Point(raidDebuffs[i], point1, raidDebuffs[i-1], point2, P:Scale(xOff), P:Scale(yOff))
+            end
         end
 
         raidDebuffs:UpdateSize()
@@ -789,7 +886,7 @@ function I:CreateRaidDebuffs(parent)
     end
 
     function raidDebuffs:UpdatePixelPerfect()
-        raidDebuffs:OriginalSetSize(P:Scale(raidDebuffs.width), P:Scale(raidDebuffs.height))
+        -- raidDebuffs:OriginalSetSize(P:Scale(raidDebuffs.width), P:Scale(raidDebuffs.height))
         P:Repoint(raidDebuffs)
         for i = 1, 3 do
             raidDebuffs[i]:UpdatePixelPerfect()

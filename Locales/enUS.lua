@@ -38,10 +38,10 @@ select(2, ...).L = setmetatable({
     ["TOPLEFT"] = "Top Left",
     ["TOPRIGHT"] = "Top Right",
 
-    ["left-to-right"] = "Left-to-Right",
-    ["right-to-left"] = "Right-to-Left",
-    ["top-to-bottom"] = "Top-to-Bottom",
-    ["bottom-to-top"] = "Bottom-to-Top",
+    ["left-to-right"] = "Left to Right",
+    ["right-to-left"] = "Right to Left",
+    ["top-to-bottom"] = "Top to Bottom",
+    ["bottom-to-top"] = "Bottom to Top",
 
     ["ALL"] = "All",
     ["INVERT"] = "Invert",

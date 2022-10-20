@@ -148,6 +148,7 @@ function I:CheckCustomIndicators(unit, unitButton, auraType, spellId, start, dur
                     if indicatorTable["castByMe"] == castByMe then
                         if indicatorTable["isIcons"] then
                             if indicatorTable["found"][unit] <= indicatorTable["num"] then
+                                unitButton.indicators[indicatorName]:UpdateSize(indicatorTable["found"][unit])
                                 unitButton.indicators[indicatorName][indicatorTable["found"][unit]]:SetCooldown(start, duration, debuffType, texture, count, refreshing)
                                 indicatorTable["found"][unit] = indicatorTable["found"][unit] + 1
                                 unitButton.indicators[indicatorName]:Show()

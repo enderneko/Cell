@@ -2,7 +2,7 @@
 -- File: UnitButton_Wrath.lua
 -- Author: enderneko (enderneko-dev@outlook.com)
 -- File Created: 2022/08/20 19:44:26 +0800
--- Last Modified: 2022/10/20 18:46:01 +0800
+-- Last Modified: 2022/10/21 04:47:03 +0800
 --]]
 
 local _, Cell = ...
@@ -735,7 +735,10 @@ local function UnitButton_UpdateDebuffs(self)
         --     table.remove(debuffs_raid_indices[unit], startIndex)
         -- end
 
-        -- hide other raid debuff indicators
+        -- update raidDebuffs
+        if startIndex > 1 then
+            self.indicators.raidDebuffs:UpdateSize(startIndex - 1)
+        end
         for i = startIndex, 3 do
             self.indicators.raidDebuffs[i]:Hide()
             self.indicators.raidDebuffs[i].spellId = nil
@@ -789,7 +792,10 @@ local function UnitButton_UpdateDebuffs(self)
         end
     end
 
-    -- hide other debuff indicators
+    -- update debuffs
+    if startIndex > 1 then
+        self.indicators.debuffs:UpdateSize(startIndex - 1)
+    end
     for i = startIndex, 10 do
         self.indicators.debuffs[i]:Hide()
         self.indicators.debuffs[i].spellId = nil
@@ -906,17 +912,26 @@ local function UnitButton_UpdateBuffs(self)
     -- update statusIcon
     UnitButton_UpdateStatusIcon(self)
     
-    -- hide other defensiveCooldowns
+    -- update defensiveCooldowns
+    if defensiveFound > 1 then
+        self.indicators.defensiveCooldowns:UpdateSize(defensiveFound - 1)
+    end
     for i = defensiveFound, 5 do
         self.indicators.defensiveCooldowns[i]:Hide()
     end
     
-    -- hide other externalCooldowns
+    -- update externalCooldowns
+    if externalFound > 1 then
+        self.indicators.externalCooldowns:UpdateSize(externalFound - 1)
+    end
     for i = externalFound, 5 do
         self.indicators.externalCooldowns[i]:Hide()
     end
     
-    -- hide other allCooldowns
+    -- update allCooldowns
+    if allFound > 1 then
+        self.indicators.allCooldowns:UpdateSize(allFound - 1)
+    end
     for i = allFound, 5 do
         self.indicators.allCooldowns[i]:Hide()
     end

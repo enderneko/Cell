@@ -757,17 +757,41 @@ end
 -------------------------------------------------
 function I:CreateAura_Icons(name, parent, num)
     local icons = CreateFrame("Frame", name, parent)
-    -- icons:SetSize(11, 11)
     icons:Hide()
     icons.indicatorType = "icons"
 
     icons.OriginalSetSize = icons.SetSize
 
+    function icons:UpdateSize(iconsShown)
+        if not (icons.width and icons.height and icons.orientation) then return end -- not init
+        if iconsShown then -- call from I:CheckCustomIndicators or preview
+            if icons.orientation == "horizontal" then
+                icons:OriginalSetSize(P:Scale(icons.width)*iconsShown, P:Scale(icons.height))
+            else
+                icons:OriginalSetSize(P:Scale(icons.width), P:Scale(icons.height)*iconsShown)
+            end
+        else
+            for i = 1, num do
+                if icons[i]:IsShown() then
+                    if icons.orientation == "horizontal" then
+                        icons:OriginalSetSize(P:Scale(icons.width)*i, P:Scale(icons.height))
+                    else
+                        icons:OriginalSetSize(P:Scale(icons.width), P:Scale(icons.height)*i)
+                    end
+                end
+            end
+        end
+    end
+
     function icons:SetSize(width, height)
-        icons:OriginalSetSize(width, height)
+        icons.width = width
+        icons.height = height
+
         for i = 1, num do
             P:Size(icons[i], width, height)
         end
+
+        icons:UpdateSize()
     end
 
     function icons:SetFont(font, ...)
@@ -782,21 +806,31 @@ function I:CreateAura_Icons(name, parent, num)
         if orientation == "left-to-right" then
             point1 = "TOPLEFT"
             point2 = "TOPRIGHT"
+            icons.orientation = "horizontal"
         elseif orientation == "right-to-left" then
             point1 = "TOPRIGHT"
             point2 = "TOPLEFT"
+            icons.orientation = "horizontal"
         elseif orientation == "top-to-bottom" then
             point1 = "TOPLEFT"
             point2 = "BOTTOMLEFT"
+            icons.orientation = "vertical"
         elseif orientation == "bottom-to-top" then
             point1 = "BOTTOMLEFT"
             point2 = "TOPLEFT"
+            icons.orientation = "vertical"
         end
         
-        for i = 2, num do
+        for i = 1, num do
             P:ClearPoints(icons[i])
-            P:Point(icons[i], point1, icons[i-1], point2)
+            if i == 1 then
+                P:Point(icons[i], point1)
+            else
+                P:Point(icons[i], point1, icons[i-1], point2)
+            end
         end
+
+        icons:UpdateSize()
     end
 
     for i = 1, num do
@@ -818,7 +852,7 @@ function I:CreateAura_Icons(name, parent, num)
     end
 
     function icons:UpdatePixelPerfect()
-        P:Resize(icons)
+        -- P:Resize(icons)
         P:Repoint(icons)
         for i = 1, num do
             icons[i]:UpdatePixelPerfect()

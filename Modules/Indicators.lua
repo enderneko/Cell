@@ -412,6 +412,7 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                             frame:Hide()
                         end
                     end
+                    if indicator.UpdateSize then indicator:UpdateSize(t["num"]) end
                 end
                 -- update format
                 if t["format"] then -- healthText
@@ -542,6 +543,7 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                 else
                     frame:Hide()
                 end
+                if indicator.UpdateSize then indicator:UpdateSize(value) end
             end
         elseif setting == "format" then
             indicator:SetFormat(value)
@@ -632,6 +634,7 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                         frame:Hide()
                     end
                 end
+                if indicator.UpdateSize then indicator:UpdateSize(value["num"]) end
             end
             -- update orientation
             if value["orientation"] then
