@@ -2,7 +2,7 @@
 -- File: Layout_Defaults_Wrath.lua
 -- Author: enderneko (enderneko-dev@outlook.com)
 -- File Created: 2022/08/21 04:06:04 +0800
--- Last Modified: 2022/10/19 16:41:21 +0800
+-- Last Modified: 2022/10/21 02:15:34 +0800
 --]]
 
 local addonName, Cell = ...
@@ -90,15 +90,15 @@ Cell.defaults.layout = {
             ["frameLevel"] = 30,
             ["font"] = {"Cell ".._G.DEFAULT, 11, "Shadow"},
             ["colors"] = {
-                ["AFK"] = {1, 0.19, 0.19},
-                ["OFFLINE"] = {1, 0.19, 0.19},
-                ["DEAD"] = {1, 0.19, 0.19},
-                ["GHOST"] = {1, 0.19, 0.19},
-                ["FEIGN"] = {1, 1, 0.12},
-                ["DRINKING"] = {0.12, 0.75, 1},
-                ["PENDING"] = {1, 1, 0.12},
-                ["ACCEPTED"] = {0.12, 1, 0.12},
-                ["DECLINED"] = {1, 0.19, 0.19},
+                ["AFK"] = {1, 0.19, 0.19, 1},
+                ["OFFLINE"] = {1, 0.19, 0.19, 1},
+                ["DEAD"] = {1, 0.19, 0.19, 1},
+                ["GHOST"] = {1, 0.19, 0.19, 1},
+                ["FEIGN"] = {1, 1, 0.12, 1},
+                ["DRINKING"] = {0.12, 0.75, 1, 1},
+                ["PENDING"] = {1, 1, 0.12, 1},
+                ["ACCEPTED"] = {0.12, 1, 0.12, 1},
+                ["DECLINED"] = {1, 0.19, 0.19, 1},
             },
         }, -- 2
         {

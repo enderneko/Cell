@@ -1796,76 +1796,85 @@ local function CreateSetting_StatusColors(parent)
         widget = addon:CreateFrame("CellIndicatorSettings_StatusColors", parent, 240, 100)
         settingWidgets["statusColors"] = widget
 
-        local afkColor = addon:CreateColorPicker(widget, L["AFK"], false, function(r, g, b)
+        local afkColor = addon:CreateColorPicker(widget, L["AFK"], true, function(r, g, b, a)
             widget.colorsTable["AFK"][1] = r
             widget.colorsTable["AFK"][2] = g 
             widget.colorsTable["AFK"][3] = b
+            widget.colorsTable["AFK"][4] = a
             widget.func(nil, "statusColors")
         end)
         afkColor:SetPoint("TOPLEFT", 5, -7)
         
-        local offlineColor = addon:CreateColorPicker(widget, L["OFFLINE"], false, function(r, g, b)
+        local offlineColor = addon:CreateColorPicker(widget, L["OFFLINE"], true, function(r, g, b, a)
             widget.colorsTable["OFFLINE"][1] = r
             widget.colorsTable["OFFLINE"][2] = g 
             widget.colorsTable["OFFLINE"][3] = b
+            widget.colorsTable["OFFLINE"][4] = a
             widget.func(nil, "statusColors")
         end)
         offlineColor:SetPoint("TOPLEFT", afkColor, "TOPRIGHT", 70, 0)
         
-        local deadColor = addon:CreateColorPicker(widget, L["DEAD"], false, function(r, g, b)
+        local deadColor = addon:CreateColorPicker(widget, L["DEAD"], true, function(r, g, b, a)
             widget.colorsTable["DEAD"][1] = r
             widget.colorsTable["DEAD"][2] = g 
             widget.colorsTable["DEAD"][3] = b
+            widget.colorsTable["DEAD"][4] = a
             widget.func(nil, "statusColors")
         end)
         deadColor:SetPoint("TOPLEFT", offlineColor, "TOPRIGHT", 70, 0)
 
-        local ghostColor = addon:CreateColorPicker(widget, L["GHOST"], false, function(r, g, b)
+        local ghostColor = addon:CreateColorPicker(widget, L["GHOST"], true, function(r, g, b, a)
             widget.colorsTable["GHOST"][1] = r
             widget.colorsTable["GHOST"][2] = g 
             widget.colorsTable["GHOST"][3] = b
+            widget.colorsTable["GHOST"][4] = a
             widget.func(nil, "statusColors")
         end)
         ghostColor:SetPoint("TOPLEFT", afkColor, "BOTTOMLEFT", 0, -8)
 
-        local feignColor = addon:CreateColorPicker(widget, L["FEIGN"], false, function(r, g, b)
+        local feignColor = addon:CreateColorPicker(widget, L["FEIGN"], true, function(r, g, b, a)
             widget.colorsTable["FEIGN"][1] = r
             widget.colorsTable["FEIGN"][2] = g 
             widget.colorsTable["FEIGN"][3] = b
+            widget.colorsTable["FEIGN"][4] = a
             widget.func(nil, "statusColors")
         end)
         feignColor:SetPoint("TOPLEFT", ghostColor, "TOPRIGHT", 70, 0)
 
-        local drinkingColor = addon:CreateColorPicker(widget, L["DRINKING"], false, function(r, g, b)
+        local drinkingColor = addon:CreateColorPicker(widget, L["DRINKING"], true, function(r, g, b, a)
             widget.colorsTable["DRINKING"][1] = r
             widget.colorsTable["DRINKING"][2] = g 
             widget.colorsTable["DRINKING"][3] = b
+            widget.colorsTable["DRINKING"][4] = a
             widget.func(nil, "statusColors")
         end)
         drinkingColor:SetPoint("TOPLEFT", feignColor, "TOPRIGHT", 70, 0)
 
-        local pendingColor = addon:CreateColorPicker(widget, L["PENDING"], false, function(r, g, b)
+        local pendingColor = addon:CreateColorPicker(widget, L["PENDING"], true, function(r, g, b, a)
             widget.colorsTable["PENDING"][1] = r
             widget.colorsTable["PENDING"][2] = g 
             widget.colorsTable["PENDING"][3] = b
+            widget.colorsTable["PENDING"][4] = a
             widget.func(nil, "statusColors")
         end)
         pendingColor:SetPoint("TOPLEFT", ghostColor, "BOTTOMLEFT", 0, -8)
         pendingColor:SetEnabled(Cell.isRetail)
 
-        local acceptedColor = addon:CreateColorPicker(widget, L["ACCEPTED"], false, function(r, g, b)
+        local acceptedColor = addon:CreateColorPicker(widget, L["ACCEPTED"], true, function(r, g, b, a)
             widget.colorsTable["ACCEPTED"][1] = r
             widget.colorsTable["ACCEPTED"][2] = g 
             widget.colorsTable["ACCEPTED"][3] = b
+            widget.colorsTable["ACCEPTED"][4] = a
             widget.func(nil, "statusColors")
         end)
         acceptedColor:SetPoint("TOPLEFT", pendingColor, "TOPRIGHT", 70, 0)
         acceptedColor:SetEnabled(Cell.isRetail)
 
-        local declinedColor = addon:CreateColorPicker(widget, L["DECLINED"], false, function(r, g, b)
+        local declinedColor = addon:CreateColorPicker(widget, L["DECLINED"], true, function(r, g, b, a)
             widget.colorsTable["DECLINED"][1] = r
             widget.colorsTable["DECLINED"][2] = g 
             widget.colorsTable["DECLINED"][3] = b
+            widget.colorsTable["DECLINED"][4] = a
             widget.func(nil, "statusColors")
         end)
         declinedColor:SetPoint("TOPLEFT", acceptedColor, "TOPRIGHT", 70, 0)
@@ -1874,15 +1883,15 @@ local function CreateSetting_StatusColors(parent)
         local resetBtn = addon:CreateButton(widget, L["Reset All"], "accent", {70, 20})
         resetBtn:SetPoint("TOPLEFT", pendingColor, "BOTTOMLEFT", 0, -8)
         resetBtn:SetScript("OnClick", function()
-            widget.colorsTable["AFK"] = {1, 0.19, 0.19}
-            widget.colorsTable["OFFLINE"] = {1, 0.19, 0.19}
-            widget.colorsTable["DEAD"] = {1, 0.19, 0.19}
-            widget.colorsTable["GHOST"] = {1, 0.19, 0.19}
-            widget.colorsTable["FEIGN"] = {1, 1, 0.12}
-            widget.colorsTable["DRINKING"] = {0.12, 0.75, 1}
-            widget.colorsTable["PENDING"] = {1, 1, 0.12}
-            widget.colorsTable["ACCEPTED"] = {0.12, 1, 0.12}
-            widget.colorsTable["DECLINED"] = {1, 0.19, 0.19}
+            widget.colorsTable["AFK"] = {1, 0.19, 0.19, 1}
+            widget.colorsTable["OFFLINE"] = {1, 0.19, 0.19, 1}
+            widget.colorsTable["DEAD"] = {1, 0.19, 0.19, 1}
+            widget.colorsTable["GHOST"] = {1, 0.19, 0.19, 1}
+            widget.colorsTable["FEIGN"] = {1, 1, 0.12, 1}
+            widget.colorsTable["DRINKING"] = {0.12, 0.75, 1, 1}
+            widget.colorsTable["PENDING"] = {1, 1, 0.12, 1}
+            widget.colorsTable["ACCEPTED"] = {0.12, 1, 0.12, 1}
+            widget.colorsTable["DECLINED"] = {1, 0.19, 0.19, 1}
 
             afkColor:SetColor(widget.colorsTable["AFK"])
             offlineColor:SetColor(widget.colorsTable["OFFLINE"])
