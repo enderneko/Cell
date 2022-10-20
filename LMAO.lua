@@ -31,12 +31,22 @@ local function CreateLMAOFrame()
     （整合插件包制作者可删除此文件 LMAO.lua）
     ]])
 
-    local button = Cell:CreateButton(lmao, "知道了！知道了！知道了！", "red", {20, 20}, nil)
+    local button = Cell:CreateButton(lmao, "知道了！", "red", {20, 20}, nil)
     button:SetPoint("BOTTOMLEFT", 1, 1)
     button:SetPoint("BOTTOMRIGHT", -1, 1)
+    
+    local count = 1
     button:SetScript("OnClick", function()
-        CellDB.lmao = true
-        lmao:Hide()
+        if count == 1 then
+            button:SetText("知道了！知道了！")
+            count = 2
+        elseif count == 2 then
+            button:SetText("知道了！知道了！知道了！")
+            count = 3
+        else
+            CellDB.lmao = true
+            lmao:Hide()
+        end
     end)
 
     if not CellDB.lmao then
