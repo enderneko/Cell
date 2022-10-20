@@ -2,7 +2,7 @@
 -- File: UnitButton_Wrath.lua
 -- Author: enderneko (enderneko-dev@outlook.com)
 -- File Created: 2022/08/20 19:44:26 +0800
--- Last Modified: 2022/10/19 02:19:07 +0800
+-- Last Modified: 2022/10/20 18:46:01 +0800
 --]]
 
 local _, Cell = ...
@@ -12,6 +12,8 @@ local I = Cell.iFuncs
 local P = Cell.pixelPerfectFuncs
 local A = Cell.animations
 local HealComm = LibStub("LibHealComm-4.0")
+
+CELL_FADE_OUT_HEALTH_PERCENT = nil
 
 local UnitGUID = UnitGUID
 local UnitClassBase = UnitClassBase
@@ -1338,6 +1340,14 @@ local function UnitButton_UpdateHealth(self)
     end
 
     self.state.healthPercentOld = healthPercent
+
+    if CELL_FADE_OUT_HEALTH_PERCENT then
+        if self.state.inRange and healthPercent < CELL_FADE_OUT_HEALTH_PERCENT then
+            A:FrameFadeIn(self, 0.25, self:GetAlpha(), 1)
+        else
+            A:FrameFadeOut(self, 0.25, self:GetAlpha(), CellDB["appearance"]["outOfRangeAlpha"])
+        end
+    end
 end
 
 local function UnitButton_UpdateHealPrediction(self)
@@ -1441,7 +1451,15 @@ local function UnitButton_UpdateInRange(self)
     if Cell.loaded then
         if self.state.inRange ~= self.state.wasInRange then
             if inRange then
-                A:FrameFadeIn(self, 0.25, self:GetAlpha(), 1)
+                if CELL_FADE_OUT_HEALTH_PERCENT then
+                    if self.state.healthPercent < CELL_FADE_OUT_HEALTH_PERCENT then
+                        A:FrameFadeIn(self, 0.25, self:GetAlpha(), 1)
+                    else
+                        A:FrameFadeOut(self, 0.25, self:GetAlpha(), CellDB["appearance"]["outOfRangeAlpha"])
+                    end
+                else
+                    A:FrameFadeIn(self, 0.25, self:GetAlpha(), 1)
+                end
             else
                 A:FrameFadeOut(self, 0.25, self:GetAlpha(), CellDB["appearance"]["outOfRangeAlpha"])
             end

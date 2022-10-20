@@ -7,6 +7,7 @@ local A = Cell.animations
 local LGI = LibStub:GetLibrary("LibGroupInfo")
 
 CELL_SUMMON_ICONS_ENABLED = false
+CELL_FADE_OUT_HEALTH_PERCENT = nil
 
 -- local LibCLHealth = LibStub("LibCombatLogHealth-1.0")
 
@@ -1459,6 +1460,14 @@ local function UnitButton_UpdateHealth(self)
     end
 
     self.state.healthPercentOld = healthPercent
+
+    if CELL_FADE_OUT_HEALTH_PERCENT then
+        if self.state.inRange and healthPercent < CELL_FADE_OUT_HEALTH_PERCENT then
+            A:FrameFadeIn(self, 0.25, self:GetAlpha(), 1)
+        else
+            A:FrameFadeOut(self, 0.25, self:GetAlpha(), CellDB["appearance"]["outOfRangeAlpha"])
+        end
+    end
 end
 
 local function UnitButton_UpdateHealPrediction(self)
@@ -1599,7 +1608,15 @@ local function UnitButton_UpdateInRange(self)
     if Cell.loaded then
         if self.state.inRange ~= self.state.wasInRange then
             if inRange then
-                A:FrameFadeIn(self, 0.25, self:GetAlpha(), 1)
+                if CELL_FADE_OUT_HEALTH_PERCENT then
+                    if self.state.healthPercent < CELL_FADE_OUT_HEALTH_PERCENT then
+                        A:FrameFadeIn(self, 0.25, self:GetAlpha(), 1)
+                    else
+                        A:FrameFadeOut(self, 0.25, self:GetAlpha(), CellDB["appearance"]["outOfRangeAlpha"])
+                    end
+                else
+                    A:FrameFadeIn(self, 0.25, self:GetAlpha(), 1)
+                end
             else
                 A:FrameFadeOut(self, 0.25, self:GetAlpha(), CellDB["appearance"]["outOfRangeAlpha"])
             end
