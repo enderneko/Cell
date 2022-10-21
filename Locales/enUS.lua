@@ -62,6 +62,14 @@ select(2, ...).L = setmetatable({
     ["SNIPPETS_TIPS"] = "[Double-Click] to rename. [Shift-Click] to delete. All checked snippets will be automatically invoked at the end of Cell initialization process (in ADDON_LOADED event).",
 
     ["CHANGELOGS"] = [[
+        <h1>r128-release (Oct 21, 2022, 18:57 GMT+8)</h1>
+        <p>* Updated alignment of indicators with multiple icons. Horizontal/Vertical centering is supported.</p>
+        <p>* Added alpha to each status of StatusText.</p>
+        <p>+ Added spotlight button size. You can find this in Layouts -> Unit Button Size (3rd page).</p>
+        <p>* Updated raid debuffs.</p>
+        <p>* Updated defensives and externals.</p>
+        <br/>
+
         <h1>r127-release (Oct 19, 2022, 02:45 GMT+8)</h1>
         <p>* Fixed heal prediction in WotLK.</p>
         <p>* Updated zhTW.</p>
