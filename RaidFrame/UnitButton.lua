@@ -1624,7 +1624,7 @@ local function UnitButton_UpdateInRange(self)
         if self.state.inRange ~= self.state.wasInRange then
             if inRange then
                 if CELL_FADE_OUT_HEALTH_PERCENT then
-                    if self.state.healthPercent < CELL_FADE_OUT_HEALTH_PERCENT then
+                    if not self.state.healthPercent or self.state.healthPercent < CELL_FADE_OUT_HEALTH_PERCENT then
                         A:FrameFadeIn(self, 0.25, self:GetAlpha(), 1)
                     else
                         A:FrameFadeOut(self, 0.25, self:GetAlpha(), CellDB["appearance"]["outOfRangeAlpha"])

@@ -2,7 +2,7 @@
 -- File: UnitButton_Wrath.lua
 -- Author: enderneko (enderneko-dev@outlook.com)
 -- File Created: 2022/08/20 19:44:26 +0800
--- Last Modified: 2022/10/21 04:47:03 +0800
+-- Last Modified: 2022/10/22 14:02:10 +0800
 --]]
 
 local _, Cell = ...
@@ -1467,7 +1467,7 @@ local function UnitButton_UpdateInRange(self)
         if self.state.inRange ~= self.state.wasInRange then
             if inRange then
                 if CELL_FADE_OUT_HEALTH_PERCENT then
-                    if self.state.healthPercent < CELL_FADE_OUT_HEALTH_PERCENT then
+                    if not self.state.healthPercent or self.state.healthPercent < CELL_FADE_OUT_HEALTH_PERCENT then
                         A:FrameFadeIn(self, 0.25, self:GetAlpha(), 1)
                     else
                         A:FrameFadeOut(self, 0.25, self:GetAlpha(), CellDB["appearance"]["outOfRangeAlpha"])
