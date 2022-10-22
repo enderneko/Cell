@@ -114,7 +114,7 @@ local function CreateCodeSnippetsFrame()
     Cell:StylizeFrame(codePane.scrollFrame, {0.115, 0.115, 0.115, 0.9})
     codePane:SetPoint("TOPLEFT", topPane, "BOTTOMLEFT", 0, -10)
     codePane:SetPoint("BOTTOMRIGHT", bottomPane, "TOPRIGHT", 0, 10)
-    codePane.eb:SetSpacing(3)
+    -- codePane.eb:SetSpacing(3)
 
     codePane.eb:HookScript("OnTextChanged", function(self, userChanged)
         if selected then
