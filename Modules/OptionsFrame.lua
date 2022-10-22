@@ -79,7 +79,7 @@ local function CreateTabButtons()
     aboutBtn.id = "about"
     
     local tabHeight = {
-        ["general"] = 448,
+        ["general"] = 469,
         ["appearance"] = 511,
         ["layouts"] = 560,
         ["clickCastings"] = 501,

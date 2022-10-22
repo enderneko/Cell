@@ -44,15 +44,15 @@ local function HideFrame(baseName, doNotReparent)
     end
 end
 
-function F:HideBlizzard()
-    -- raid
+function F:HideBlizzardParty()
+    for i = 1, 4 do
+        HideFrame("PartyMemberFrame"..i)
+    end
+end
+
+function F:HideBlizzardRaid()
     CompactRaidFrameManager_SetSetting("IsShown", "0")
     _G.UIParent:UnregisterEvent("GROUP_ROSTER_UPDATE")
     _G.CompactRaidFrameManager:UnregisterAllEvents()
     _G.CompactRaidFrameManager:SetParent(hiddenParent)
-
-    -- party
-    for i = 1, 4 do
-        HideFrame("PartyMemberFrame"..i)
-    end
 end

@@ -199,7 +199,10 @@ L["Health Text"] = "血量文字"
 L["Height"] = "高度"
 L["Hide"] = "隱藏"
 L["Hide Blizzard Frames"] = "隱藏遊戲內建框架"
-L["Hide Blizzard Raid / Party"] = "隱藏遊戲內建團隊/隊伍框架"
+--[[Translation missing --]]
+--[[ L["Hide Blizzard Party"] = "Hide Blizzard Party"--]] 
+--[[Translation missing --]]
+--[[ L["Hide Blizzard Raid"] = "Hide Blizzard Raid"--]] 
 L["hideFull"] = "滿血時不顯示"
 L["HIGH CPU USAGE"] = "高 CPU 使用量"
 L["Highlight Size"] = "顯著標示粗細"
@@ -402,9 +405,8 @@ L["Spell List"] = "法術清單"
 L["Spell Request"] = "法術請求"
 L["SpellId and BuffId are the same in most cases"] = "大部分情況下法術ID與增益ID是相同的"
 L["Spells"] = "法術"
---[[Translation missing --]]
---[[ L["Spotlight Button Size"] = "Spotlight Button Size"--]] 
-L["Spotlight Frame"] = "聚光框架"
+L["Spotlight Button Size"] = "特別關注按鈕大小"
+L["Spotlight Frame"] = "特別關注框架"
 L["Status Icon"] = "狀態圖示"
 L["Status Text"] = "狀態文字"
 L["Status Text Position"] = "狀態文字位置"

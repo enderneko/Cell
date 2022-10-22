@@ -151,7 +151,8 @@ function eventFrame:ADDON_LOADED(arg1)
                 ["showSolo"] = true,
                 ["showParty"] = true,
                 ["showPartyPets"] = true,
-                ["hideBlizzard"] = true,
+                ["hideBlizzardParty"] = true,
+                ["hideBlizzardRaid"] = true,
                 ["locked"] = false,
                 ["fadeOut"] = false,
                 ["menuPosition"] = "top_bottom",
@@ -615,7 +616,8 @@ function eventFrame:PLAYER_LOGIN()
     -- update raid debuff list
     Cell:Fire("UpdateRaidDebuffs")
     -- hide blizzard
-    if CellDB["general"]["hideBlizzard"] then F:HideBlizzard() end
+    if CellDB["general"]["hideBlizzardParty"] then F:HideBlizzardParty() end
+    if CellDB["general"]["hideBlizzardRaid"] then F:HideBlizzardRaid() end
     -- lock & menu
     Cell:Fire("UpdateMenu")
     -- update pixel perfect

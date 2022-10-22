@@ -1396,5 +1396,14 @@ function F:Revise()
         end
     end
 
+    -- r129-release
+    if CellDB["revise"] and dbRevision < 129 then
+        if type(CellDB["general"]["hideBlizzard"]) == "boolean" then
+            CellDB["general"]["hideBlizzardParty"] = CellDB["general"]["hideBlizzard"]
+            CellDB["general"]["hideBlizzardRaid"] = CellDB["general"]["hideBlizzard"]
+            CellDB["general"]["hideBlizzard"] = nil
+        end
+    end
+
     CellDB["revise"] = Cell.version
 end

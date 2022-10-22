@@ -12,10 +12,10 @@ generalTab:Hide()
 -------------------------------------------------
 -- visibility
 -------------------------------------------------
-local showSoloCB, showPartyCB, showPartyPetsCB, hideBlizzardCB
+local showSoloCB, showPartyCB, showPartyPetsCB, hideBlizzardPartyCB, hideBlizzardRaidCB
 
 local function CreateVisibilityPane()
-    local visibilityPane = Cell:CreateTitledPane(generalTab, L["Visibility"], 205, 110)
+    local visibilityPane = Cell:CreateTitledPane(generalTab, L["Visibility"], 205, 131)
     visibilityPane:SetPoint("TOPLEFT", generalTab, "TOPLEFT", 5, -5)
     
     showSoloCB = Cell:CreateCheckButton(visibilityPane, L["Show Solo"], function(checked, self)
@@ -37,17 +37,25 @@ local function CreateVisibilityPane()
     end, L["Show Party Pets"], L["Show pets while in a party"])
     showPartyPetsCB:SetPoint("TOPLEFT", showPartyCB, "BOTTOMLEFT", 0, -7)
 
-    -- local blizzardText = Cell:CreateSeparator(L["Blizzard Frames"], generalTab, 205)
-    -- blizzardText:SetPoint("TOPLEFT", 5, -5)
-    hideBlizzardCB = Cell:CreateCheckButton(visibilityPane, L["Hide Blizzard Raid / Party"], function(checked, self)
-        CellDB["general"]["hideBlizzard"] = checked
+    hideBlizzardPartyCB = Cell:CreateCheckButton(visibilityPane, L["Hide Blizzard Party"], function(checked, self)
+        CellDB["general"]["hideBlizzardParty"] = checked
     
         local popup = Cell:CreateConfirmPopup(generalTab, 200, L["A UI reload is required.\nDo it now?"], function()
             ReloadUI()
         end, nil, true)
         popup:SetPoint("TOPLEFT", generalTab, 117, -77)
     end, L["Hide Blizzard Frames"], L["Require reload of the UI"])
-    hideBlizzardCB:SetPoint("TOPLEFT", showPartyPetsCB, "BOTTOMLEFT", 0, -7)
+    hideBlizzardPartyCB:SetPoint("TOPLEFT", showPartyPetsCB, "BOTTOMLEFT", 0, -7)
+   
+    hideBlizzardRaidCB = Cell:CreateCheckButton(visibilityPane, L["Hide Blizzard Raid"], function(checked, self)
+        CellDB["general"]["hideBlizzardRaid"] = checked
+    
+        local popup = Cell:CreateConfirmPopup(generalTab, 200, L["A UI reload is required.\nDo it now?"], function()
+            ReloadUI()
+        end, nil, true)
+        popup:SetPoint("TOPLEFT", generalTab, 117, -77)
+    end, L["Hide Blizzard Frames"], L["Require reload of the UI"])
+    hideBlizzardRaidCB:SetPoint("TOPLEFT", hideBlizzardPartyCB, "BOTTOMLEFT", 0, -7)
 end
 
 -------------------------------------------------
@@ -195,7 +203,7 @@ local sortByRoleCB, lockCB, fadeoutCB, menuPositionDD
 
 local function CreateMiscPane()
     local miscPane = Cell:CreateTitledPane(generalTab, L["Misc"], 205, 185)
-    miscPane:SetPoint("TOPLEFT", generalTab, 5, -134)
+    miscPane:SetPoint("TOPLEFT", generalTab, 5, -155)
     
     sortByRoleCB = Cell:CreateCheckButton(miscPane, L["Sort Party By Role"], function(checked, self)
         CellDB["general"]["sortPartyByRole"] = checked
@@ -256,7 +264,7 @@ local resCB, reportCB, buffCB, readyPullCB, pullDropdown, secEditBox, marksBarCB
 
 local function CreateToolsPane()
     local toolsPane = Cell:CreateTitledPane(generalTab, L["Raid Tools"].." |cFF777777"..L["only in group"], 422, 107)
-    toolsPane:SetPoint("TOPLEFT", 5, -339)
+    toolsPane:SetPoint("TOPLEFT", 5, -360)
 
     local unlockBtn = Cell:CreateButton(toolsPane, L["Unlock"], "accent", {70, 17})
     unlockBtn:SetPoint("TOPRIGHT", toolsPane)
@@ -508,7 +516,8 @@ local function ShowTab(tab)
         showPartyCB:SetChecked(CellDB["general"]["showParty"])
         showPartyPetsCB:SetChecked(CellDB["general"]["showPartyPets"])
         showPartyPetsCB:SetEnabled(CellDB["general"]["showParty"])
-        hideBlizzardCB:SetChecked(CellDB["general"]["hideBlizzard"])
+        hideBlizzardPartyCB:SetChecked(CellDB["general"]["hideBlizzardParty"])
+        hideBlizzardRaidCB:SetChecked(CellDB["general"]["hideBlizzardRaid"])
 
         -- misc
         lockCB:SetChecked(CellDB["general"]["locked"])
