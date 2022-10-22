@@ -274,6 +274,7 @@ function eventFrame:ADDON_LOADED(arg1)
             CellDB["appearance"]["scale"] = scale
         end
         P:SetRelativeScale(CellDB["appearance"]["scale"])
+        F:EnableLibHealComm(CellDB["appearance"]["useLibHealComm"])
 
         -- color ---------------------------------------------------------------------------------
         if CellDB["appearance"]["accentColor"] then -- version < r103

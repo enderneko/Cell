@@ -2,7 +2,7 @@
 -- File: UnitButton_Wrath.lua
 -- Author: enderneko (enderneko-dev@outlook.com)
 -- File Created: 2022/08/20 19:44:26 +0800
--- Last Modified: 2022/10/22 14:02:10 +0800
+-- Last Modified: 2022/10/22 19:19:57 +0800
 --]]
 
 local _, Cell = ...
@@ -11,7 +11,7 @@ local F = Cell.funcs
 local I = Cell.iFuncs
 local P = Cell.pixelPerfectFuncs
 local A = Cell.animations
-local HealComm = LibStub("LibHealComm-4.0")
+local HealComm = LibStub("LibHealComm-4.0", true)
 
 CELL_FADE_OUT_HEALTH_PERCENT = nil
 
@@ -1365,6 +1365,7 @@ local function UnitButton_UpdateHealth(self)
     end
 end
 
+local useLibHealComm = true
 local function UnitButton_UpdateHealPrediction(self)
     if not predictionEnabled then
         self.widget.incomingHeal:Hide()
@@ -1375,14 +1376,19 @@ local function UnitButton_UpdateHealPrediction(self)
     if not unit then return end
 
     local value = 0
-    --! NOTE: use LibHealComm
-    if self.__displayedGuid then
-        local modifier = HealComm:GetHealModifier(self.__displayedGuid) or 1
-        value = (HealComm:GetHealAmount(self.__displayedGuid, HealComm.CASTED_HEALS) or 0) * modifier
-        -- local hot = select(3, HealComm:GetNextHealAmount(self.__displayedGuid, HealComm.HOT_HEALS)) or 0
-        -- NOTE: hots within 3 seconds
-        hot = (HealComm:GetHealAmount(self.__displayedGuid, HealComm.OVERTIME_AND_BOMB_HEALS, GetTime()+3) or 0) * modifier
-        value = value + hot
+
+    if useLibHealComm then
+        --! NOTE: use LibHealComm
+        if self.__displayedGuid then
+            local modifier = HealComm:GetHealModifier(self.__displayedGuid) or 1
+            value = (HealComm:GetHealAmount(self.__displayedGuid, HealComm.CASTED_HEALS) or 0) * modifier
+            -- local hot = select(3, HealComm:GetNextHealAmount(self.__displayedGuid, HealComm.HOT_HEALS)) or 0
+            -- NOTE: hots within 3 seconds
+            local hot = (HealComm:GetHealAmount(self.__displayedGuid, HealComm.OVERTIME_AND_BOMB_HEALS, GetTime()+3) or 0) * modifier
+            value = value + hot
+        end
+    else
+        value = UnitGetIncomingHeals(unit) or 0
     end
 
     if value == 0 then 
@@ -1713,12 +1719,20 @@ local function HealComm_UpdateHealPrediction(_, event, casterGUID, spellID, heal
     end
 end
 Cell.HealComm.HealComm_UpdateHealPrediction = HealComm_UpdateHealPrediction
-HealComm.RegisterCallback(Cell.HealComm, "HealComm_HealStarted", "HealComm_UpdateHealPrediction")
-HealComm.RegisterCallback(Cell.HealComm, "HealComm_HealUpdated", "HealComm_UpdateHealPrediction")
-HealComm.RegisterCallback(Cell.HealComm, "HealComm_HealStopped", "HealComm_UpdateHealPrediction")
-HealComm.RegisterCallback(Cell.HealComm, "HealComm_HealDelayed", "HealComm_UpdateHealPrediction")
-HealComm.RegisterCallback(Cell.HealComm, "HealComm_ModifierChanged", "HealComm_UpdateHealPrediction")
-HealComm.RegisterCallback(Cell.HealComm, "HealComm_GUIDDisappeared", "HealComm_UpdateHealPrediction")
+
+function F:EnableLibHealComm(enabled)
+    useLibHealComm = enabled
+    if enabled then
+        HealComm.RegisterCallback(Cell.HealComm, "HealComm_HealStarted", "HealComm_UpdateHealPrediction")
+        HealComm.RegisterCallback(Cell.HealComm, "HealComm_HealUpdated", "HealComm_UpdateHealPrediction")
+        HealComm.RegisterCallback(Cell.HealComm, "HealComm_HealStopped", "HealComm_UpdateHealPrediction")
+        HealComm.RegisterCallback(Cell.HealComm, "HealComm_HealDelayed", "HealComm_UpdateHealPrediction")
+        HealComm.RegisterCallback(Cell.HealComm, "HealComm_ModifierChanged", "HealComm_UpdateHealPrediction")
+        HealComm.RegisterCallback(Cell.HealComm, "HealComm_GUIDDisappeared", "HealComm_UpdateHealPrediction")
+    else
+        HealComm.UnregisterAllCallbacks(Cell.HealComm)
+    end
+end
 
 -------------------------------------------------
 -- guess shield amount from Glyph of Power Word: Shield
@@ -1958,7 +1972,9 @@ local function UnitButton_OnEvent(self, event, unit)
             -- UnitButton_UpdateStatusText(self)
     
         elseif event == "UNIT_HEAL_PREDICTION" then
-            UnitButton_UpdateHealPrediction(self)
+            if not useLibHealComm then
+                UnitButton_UpdateHealPrediction(self)
+            end
     
         elseif event == "UNIT_MAXPOWER" then
             UnitButton_UpdatePowerMax(self)

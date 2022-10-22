@@ -419,7 +419,7 @@ end
 -- unitbutton
 -------------------------------------------------
 local textureDropdown, barColorDropdown, barColorPicker, lossColorDropdown, lossColorPicker, deathColorCB, deathColorPicker, powerColorDropdown, powerColorPicker, barAnimationDropdown, targetColorPicker, mouseoverColorPicker, highlightSize
-local barAlpha, lossAlpha, bgAlpha, oorAlpha, predCB, absorbCB, shieldCB, oversCB, resetBtn
+local barAlpha, lossAlpha, bgAlpha, oorAlpha, predCB, useLibCB, absorbCB, shieldCB, oversCB, resetBtn
 local iconOptionsBtn, iconOptionsFrame, iconAnimationDropdown, durationRoundUpCB, durationDecimalText1, durationDecimalText2, durationDecimalDropdown, durationColorCB, durationNormalCP, durationPercentCP, durationSecondCP, durationPercentDD, durationSecondEB, durationSecondText
 
 local LSM = LibStub("LibSharedMedia-3.0", true)
@@ -930,7 +930,7 @@ local function CreateUnitButtonStylePane()
         CellDB["appearance"]["targetColor"][4] = a
         Cell:Fire("UpdateAppearance", "highlightColor")
     end)
-    targetColorPicker:SetPoint("TOPLEFT", barAnimationDropdown, "BOTTOMLEFT", 0, -15)
+    targetColorPicker:SetPoint("TOPLEFT", barAnimationDropdown, "BOTTOMLEFT", 0, -30)
     
     -- mouseover highlight
     mouseoverColorPicker = Cell:CreateColorPicker(unitButtonPane, L["Mouseover Highlight Color"], true, function(r, g, b, a)
@@ -995,13 +995,21 @@ local function CreateUnitButtonStylePane()
         Cell:Fire("UpdateAppearance", "shields")
     end)
     predCB:SetPoint("TOPLEFT", oorAlpha, "BOTTOMLEFT", 0, -35)
+
+    -- heal prediction use LibHealComm
+    useLibCB = Cell:CreateCheckButton(unitButtonPane, _G.USE.." LibHealComm", function(checked, self)
+        CellDB["appearance"]["useLibHealComm"] = checked
+        F:EnableLibHealComm(checked)
+    end)
+    useLibCB:SetPoint("TOPLEFT", predCB, "BOTTOMLEFT", 14, -7)
+    useLibCB:SetEnabled(Cell.isWrath)
     
     -- heal absorb
     absorbCB = Cell:CreateCheckButton(unitButtonPane, L["Heal Absorb"], function(checked, self)
         CellDB["appearance"]["healAbsorb"] = checked
         Cell:Fire("UpdateAppearance", "shields")
     end)
-    absorbCB:SetPoint("TOPLEFT", predCB, "BOTTOMLEFT", 0, -7)
+    absorbCB:SetPoint("TOPLEFT", predCB, "BOTTOMLEFT", 0, -28)
     absorbCB:SetEnabled(Cell.isRetail)
     
     -- shield
@@ -1075,6 +1083,7 @@ LoadData = function()
     bgAlpha:SetValue(CellDB["appearance"]["bgAlpha"]*100)
 
     predCB:SetChecked(CellDB["appearance"]["healPrediction"])
+    useLibCB:SetChecked(CellDB["appearance"]["useLibHealComm"])
     absorbCB:SetChecked(CellDB["appearance"]["healAbsorb"])
     shieldCB:SetChecked(CellDB["appearance"]["shield"])
     oversCB:SetChecked(CellDB["appearance"]["overshield"])

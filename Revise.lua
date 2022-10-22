@@ -1403,6 +1403,10 @@ function F:Revise()
             CellDB["general"]["hideBlizzardRaid"] = CellDB["general"]["hideBlizzard"]
             CellDB["general"]["hideBlizzard"] = nil
         end
+
+        if type(CellDB["appearance"]["useLibHealComm"]) ~= "boolean" then
+            CellDB["appearance"]["useLibHealComm"] = Cell.isWrath
+        end
     end
 
     CellDB["revise"] = Cell.version
