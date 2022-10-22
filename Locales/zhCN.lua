@@ -585,6 +585,12 @@ L["Changelogs"] = "更新记录"
 L["Click to view recent changelogs"] = "点击查看近期更新记录"
 L["Click to view older changelogs"] = "点击查看远古更新记录"
 L["CHANGELOGS"] = [[
+    <h1>r129-release (Oct 22, 2022, 19:37 GMT+8)</h1>
+    <p>* 添加了一个用于禁用 LibHealComm 的选项。</p>
+    <p>* 将“隐藏暴雪团队/小队”分为了两个选项。</p>
+    <p>* 更新繁中。</p>
+    <br/>
+
     <h1>r128-release (Oct 21, 2022, 18:57 GMT+8)</h1>
     <p>* 更新多图标指示器的对其方式，现在支持水平/垂直居中。</p>
     <p>* 为状态文字指示器的每个状态颜色添加了透明度。</p>
