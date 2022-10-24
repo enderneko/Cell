@@ -585,6 +585,11 @@ L["Changelogs"] = "更新记录"
 L["Click to view recent changelogs"] = "点击查看近期更新记录"
 L["Click to view older changelogs"] = "点击查看远古更新记录"
 L["CHANGELOGS"] = [[
+    <h1>r130-release (Oct 24, 2022, 22:00 GMT+8)</h1>
+    <p>* 小修一下。</p>
+    <p>* 更新繁中。</p>
+    <br/>
+
     <h1>r129-release (Oct 22, 2022, 19:37 GMT+8)</h1>
     <p>* 添加了一个用于禁用 LibHealComm 的选项。</p>
     <p>* 将“隐藏暴雪团队/小队”分为了两个选项。</p>

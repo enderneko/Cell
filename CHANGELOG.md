@@ -1,5 +1,7 @@
-[Full Changelog](https://github.com/enderneko/Cell/compare/r128-release...be215be51e7e9e26e78a29d86e703f212469eece)
+[Full Changelog](https://github.com/enderneko/Cell/compare/r129-release...ac35d735a14e2533f00f49a36f00f93dfe903ee8)
 
-- Add an option to disable LibHealComm in WotLK
-- Hide blizzard raid and party separately
-- Fix CELL_FADE_OUT_HEALTH_PERCENT
+- Add resurrections to default click-castings
+- Update zhTW
+- Update LMAO.lua
+- [snippet] HideButtonBorder
+- [snippet] CooldownIcons_BlizzardStyle
