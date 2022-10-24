@@ -53,7 +53,7 @@ local function CreateLMAOFrame()
         lmao:RegisterEvent("PLAYER_ENTERING_WORLD")
         lmao:SetScript("OnEvent", function()
             lmao:UnregisterEvent("PLAYER_ENTERING_WORLD")
-            if IsAddOnLoaded("RaidAlerter") then
+            if IsAddOnLoaded("RaidAlerter") or IsAddOnLoadOnDemand("RaidAlerter") then
                 lmao:Show()
                 lmao:SetHeight(text:GetStringHeight() + 39)
                 lmao:SetWidth(text:GetStringWidth() + 11)
