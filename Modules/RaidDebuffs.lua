@@ -427,7 +427,7 @@ end
 local instancesFrame
 
 local function CreateInstanceFrame()
-    instancesFrame = Cell:CreateFrame("RaidDebuffsTab_Instances", debuffsTab, 127, 172)
+    instancesFrame = Cell:CreateFrame("RaidDebuffsTab_Instances", debuffsTab, 127, 229)
     instancesFrame:SetPoint("TOPLEFT", expansionDropdown, "BOTTOMLEFT", 0, -5)
     -- instancesFrame:SetPoint("BOTTOMLEFT", 5, 5)
     instancesFrame:Show()
@@ -706,7 +706,7 @@ end
 local debuffListFrame, dragged, delete
 
 local function CreateDebuffsFrame()
-    debuffListFrame = Cell:CreateFrame("RaidDebuffsTab_Debuffs", debuffsTab, 137, 381)
+    debuffListFrame = Cell:CreateFrame("RaidDebuffsTab_Debuffs", debuffsTab, 137, 438)
     debuffListFrame:SetPoint("TOPLEFT", instancesFrame, "TOPRIGHT", 5, 0)
     debuffListFrame:Show()
     Cell:CreateScrollFrame(debuffListFrame)

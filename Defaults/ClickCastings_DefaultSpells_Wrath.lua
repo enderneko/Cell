@@ -4,6 +4,9 @@ local F = Cell.funcs
 
 local GetSpellInfo = GetSpellInfo
 
+-------------------------------------------------
+-- click-castings
+-------------------------------------------------
 local defaultSpells = {
     ["DEATHKNIGHT"] = {
         ["common"] = {
@@ -191,4 +194,38 @@ function F:GetSpellList(class)
 
     -- texplore(spells)
     return spells
+end
+
+-------------------------------------------------
+-- resurrections
+-------------------------------------------------
+local resurrections = {
+    ["DEATHKNIGHT"] = {
+        {"type-R", "spell", 61999},
+    },
+    ["DRUID"] = {
+        {"type-R", "spell", 50769},
+        {"type-shiftR", "spell", 20484},
+    },
+    ["PALADIN"] = {
+        {"type-shiftR", "spell", 7328},
+    },
+    ["PRIEST"] = {
+        {"type-shiftR", "spell", 2006},
+    },
+    ["SHAMAN"] = {
+        {"type-shiftR", "spell", 2008},
+    },
+}
+
+do
+    for class, t in pairs(resurrections) do
+        for _, clickCasting in pairs(t) do
+            clickCasting[3] = GetSpellInfo(clickCasting[3])
+        end
+    end
+end
+
+function F:GetResurrectionClickCastings(class)
+    return resurrections[class] or {}
 end

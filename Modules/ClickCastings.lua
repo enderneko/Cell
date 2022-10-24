@@ -876,7 +876,7 @@ local function UpdateCurrentText(isCommon)
 end
 
 local function CreateListPane()
-    listPane = Cell:CreateTitledPane(clickCastingsTab, L["Current Profile"], 422, 426)
+    listPane = Cell:CreateTitledPane(clickCastingsTab, L["Current Profile"], 422, 451)
     listPane:SetPoint("TOPLEFT", clickCastingsTab, "TOPLEFT", 5, -70)
     
     local hint = Cell:CreateButton(listPane, nil, "accent-hover", {17, 17}, nil, nil, nil, nil, nil, L["Click-Castings"], L["clickcastingsHints"])

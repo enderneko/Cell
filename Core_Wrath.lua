@@ -308,6 +308,14 @@ function eventFrame:ADDON_LOADED(arg1)
                     {"type2", "togglemenu"},
                 },
             }
+
+            -- add resurrections
+            for _, t in pairs(F:GetResurrectionClickCastings(Cell.vars.playerClass)) do
+                tinsert(CellDB["clickCastings"][Cell.vars.playerClass]["common"], t)
+                for i = 1, 2 do
+                    tinsert(CellDB["clickCastings"][Cell.vars.playerClass][i], t)
+                end
+            end
         end
         Cell.vars.clickCastingTable = CellDB["clickCastings"][Cell.vars.playerClass]
 
