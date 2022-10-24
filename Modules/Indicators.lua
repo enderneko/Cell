@@ -1335,10 +1335,10 @@ local function ShowIndicatorSettings(id)
        
         if currentLayoutTable["indicators"][id]["auraType"] == "buff" then
             -- castByMe
-            tinsert(settingsTable, 3, "checkbutton:castByMe")
+            tinsert(settingsTable, 2, "checkbutton:castByMe")
             -- NOTE: trackByName (spell has a lot of RANKS!)
             if Cell.isWrath then
-                tinsert(settingsTable, 4, "checkbutton2:trackByName")
+                tinsert(settingsTable, 3, "checkbutton2:trackByName")
             end
         end
        
