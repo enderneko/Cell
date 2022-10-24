@@ -199,10 +199,8 @@ L["Health Text"] = "血量文字"
 L["Height"] = "高度"
 L["Hide"] = "隱藏"
 L["Hide Blizzard Frames"] = "隱藏遊戲內建框架"
---[[Translation missing --]]
---[[ L["Hide Blizzard Party"] = "Hide Blizzard Party"--]] 
---[[Translation missing --]]
---[[ L["Hide Blizzard Raid"] = "Hide Blizzard Raid"--]] 
+L["Hide Blizzard Party"] = "隱藏遊戲內建隊伍框架"
+L["Hide Blizzard Raid"] = "隱藏遊戲內建團隊框架"
 L["hideFull"] = "滿血時不顯示"
 L["HIGH CPU USAGE"] = "高 CPU 使用量"
 L["Highlight Size"] = "顯著標示粗細"
