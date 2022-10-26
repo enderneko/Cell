@@ -20,6 +20,7 @@ local IsInRaid = IsInRaid
 -------------------------------------------------
 local buffs = {
     ["PWF"] = {["id"]=21562, ["glowColor"]={F:GetClassColor("PRIEST")}}, -- Power Word: Fortitude
+    ["MotW"] = {["id"]=1126, ["glowColor"]={F:GetClassColor("DRUID")}}, -- Mark of the Wild
     ["AB"] = {["id"]=1459, ["glowColor"]={F:GetClassColor("MAGE")}}, -- Arcane Brilliance
     ["BS"] = {["id"]=6673, ["glowColor"]={F:GetClassColor("WARRIOR")}}, -- Battle Shout
 }
@@ -32,7 +33,7 @@ do
     end
 end
 
-local order = {"PWF", "AB", "BS"}
+local order = {"PWF", "MotW", "AB", "BS"}
 
 -------------------------------------------------
 -- required buffs
@@ -96,12 +97,14 @@ local hasBuffProvider
 
 local available = {
     ["PWF"] = false,
+    ["MotW"] = false,
     ["AB"] = false,
     ["BS"] = false,
 }
 
 local unaffected = {
     ["PWF"] = {},
+    ["MotW"] = {},
     ["AB"] = {},
     ["BS"] = {},
 }
@@ -246,7 +249,7 @@ local function CreateBuffButton(parent, size, spell, icon, index)
     b:SetBackdrop({edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = P:Scale(1)})
     b:SetBackdropBorderColor(0, 0, 0, 1)
 
-    b:RegisterForClicks("LeftButtonDown", "RightButtonDown")
+    b:RegisterForClicks("LeftButtonUp", "RightButtonUp", "LeftButtonDown", "RightButtonDown") -- NOTE: ActionButtonUseKeyDown will affect this
     b:SetAttribute("type1", "spell")
     b:SetAttribute("spell", spell)
     b:HookScript("OnClick", function(self, button, down)
@@ -427,7 +430,7 @@ local function CheckUnit(unit, updateBtn)
         local required = requiredBuffs[spec]
 
         for k, v in pairs(available) do
-            if v ~= false and (required == k or k == "PWF") then
+            if v ~= false and (required == k or k == "PWF" or k == "MotW") then
                 if not F:FindAuraById(unit, "BUFF", buffs[k]["id"]) then
                     unaffected[k][unit] = true
                 else
@@ -452,6 +455,10 @@ local function IterateAllUnits()
         if UnitIsConnected(unit) and UnitIsVisible(unit) then
             if UnitClassBase(unit) == "PRIEST" then
                 available["PWF"] = true
+                hasBuffProvider = true
+            end
+            if UnitClassBase(unit) == "DRUID" then
+                available["MotW"] = true
                 hasBuffProvider = true
             end
             if UnitClassBase(unit) == "MAGE" then
