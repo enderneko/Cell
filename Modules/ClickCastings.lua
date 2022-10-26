@@ -971,6 +971,8 @@ local function CreateListPane()
             -- restore icon
             if t[1].bindType == "spell" then
                 t[1]:ShowSpellIcon(t[1].bindAction)
+            else
+                t[1]:HideSpellIcon()
             end
         end
         wipe(deleted)

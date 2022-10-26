@@ -583,7 +583,16 @@ function addon:CreateButton(parent, text, buttonColor, size, noBorder, noBackgro
     end
 
     -- click sound
-    b:SetScript("PostClick", function() PlaySound(SOUNDKIT.U_CHAT_SCROLL_BUTTON) end)
+    b:SetScript("PostClick", function(self, button, down)
+        --! NOTE: ActionButtonUseKeyDown will affect OnClick
+        if template and strfind(template, "Secure") then
+            if down == GetCVarBool("ActionButtonUseKeyDown") then
+                PlaySound(SOUNDKIT.U_CHAT_SCROLL_BUTTON)
+            end
+        else
+            PlaySound(SOUNDKIT.U_CHAT_SCROLL_BUTTON)
+        end
+    end)
 
     addon:SetTooltips(b, "ANCHOR_TOPLEFT", 0, 3, ...)
 
@@ -1802,6 +1811,7 @@ end
 local menu = addon:CreateFrame(addonName.."CascadingMenu", UIParent, 100, 20)
 addon.menu = menu
 tinsert(UISpecialFrames, menu:GetName())
+menu:SetClampedToScreen(true)
 menu:SetBackdropColor(0.115, 0.115, 0.115, 0.977)
 menu:SetBackdropBorderColor(accentColor.t[1], accentColor.t[2], accentColor.t[3], 1)
 menu:SetFrameStrata("TOOLTIP")

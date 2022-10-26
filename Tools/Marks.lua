@@ -184,6 +184,7 @@ local worldMarkIndices = {5, 6, 3, 2, 7, 1, 4, 8}
 local worldMarkButtons = {}
 for i = 1, 9 do
     worldMarkButtons[i] = Cell:CreateButton(worldMarks, "", "accent-hover", {20, 20}, false, false, nil, nil, "SecureActionButtonTemplate")
+    worldMarkButtons[i]:RegisterForClicks("LeftButtonUp", "LeftButtonDown") -- NOTE: ActionButtonUseKeyDown will affect this
     worldMarkButtons[i].texture = worldMarkButtons[i]:CreateTexture(nil, "ARTWORK")
     
     if i == 9 then
