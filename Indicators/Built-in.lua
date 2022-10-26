@@ -591,7 +591,11 @@ function I:CreateDispels(parent)
         elseif dispels.highlightType == "current" then
             dispels.highlight:SetVertexColor(r, g, b, a)
         else
-            dispels.highlight:SetGradientAlpha("VERTICAL", r, g, b, a, r, g, b, 0)
+            if Cell.isRetail then
+                dispels.highlight:SetGradient("VERTICAL", CreateColor(r, g, b, a), CreateColor(r, g, b, 0))
+            else
+                dispels.highlight:SetGradientAlpha("VERTICAL", r, g, b, a, r, g, b, 0)
+            end
         end
     end
 
@@ -1396,35 +1400,51 @@ function I:CreateAggroBorder(parent)
     local right = aggroBorder:CreateTexture(nil, "BORDER")
 
     top:SetTexture("Interface\\Buttons\\WHITE8x8")
-    top:SetGradientAlpha("VERTICAL", 1, 0.1, 0.1, 0, 1, 0.1, 0.1, 1)
     top:SetPoint("TOPLEFT")
     top:SetPoint("TOPRIGHT")
     top:SetHeight(5)
-
+    
     bottom:SetTexture("Interface\\Buttons\\WHITE8x8")
-    bottom:SetGradientAlpha("VERTICAL", 1, 0.1, 0.1, 1, 1, 0.1, 0.1, 0)
     bottom:SetPoint("BOTTOMLEFT")
     bottom:SetPoint("BOTTOMRIGHT")
     bottom:SetHeight(5)
-
+    
     left:SetTexture("Interface\\Buttons\\WHITE8x8")
-    left:SetGradientAlpha("HORIZONTAL", 1, 0.1, 0.1, 1, 1, 0.1, 0.1, 0)
     left:SetPoint("TOPLEFT")
     left:SetPoint("BOTTOMLEFT")
     left:SetWidth(5)
-
+    
     right:SetTexture("Interface\\Buttons\\WHITE8x8")
-    right:SetGradientAlpha("HORIZONTAL", 1, 0.1, 0.1, 0, 1, 0.1, 0.1, 1)
     right:SetPoint("TOPRIGHT")
     right:SetPoint("BOTTOMRIGHT")
     right:SetWidth(5)
+    
+    if Cell.isRetail then
+        top:SetGradient("VERTICAL", CreateColor(1, 0.1, 0.1, 0), CreateColor(1, 0.1, 0.1, 1))
+        bottom:SetGradient("VERTICAL", CreateColor(1, 0.1, 0.1, 1), CreateColor(1, 0.1, 0.1, 0))
+        left:SetGradient("HORIZONTAL", CreateColor(1, 0.1, 0.1, 1), CreateColor(1, 0.1, 0.1, 0))
+        right:SetGradient("HORIZONTAL", CreateColor(1, 0.1, 0.1, 0), CreateColor(1, 0.1, 0.1, 1))
 
-    function aggroBorder:ShowAggro(r, g, b)
-        top:SetGradientAlpha("VERTICAL", r, g, b, 0, r, g, b, 1)
-        bottom:SetGradientAlpha("VERTICAL", r, g, b, 1, r, g, b, 0)
-        left:SetGradientAlpha("HORIZONTAL", r, g, b, 1, r, g, b, 0)
-        right:SetGradientAlpha("HORIZONTAL", r, g, b, 0, r, g, b, 1)
-        aggroBorder:Show()
+        function aggroBorder:ShowAggro(r, g, b)
+            top:SetGradient("VERTICAL", CreateColor(r, g, b, 0), CreateColor(r, g, b, 1))
+            bottom:SetGradient("VERTICAL", CreateColor(r, g, b, 1), CreateColor(r, g, b, 0))
+            left:SetGradient("HORIZONTAL", CreateColor(r, g, b, 1), CreateColor(r, g, b, 0))
+            right:SetGradient("HORIZONTAL", CreateColor(r, g, b, 0), CreateColor(r, g, b, 1))
+            aggroBorder:Show()
+        end
+    else
+        top:SetGradientAlpha("VERTICAL", 1, 0.1, 0.1, 0, 1, 0.1, 0.1, 1)
+        bottom:SetGradientAlpha("VERTICAL", 1, 0.1, 0.1, 1, 1, 0.1, 0.1, 0)
+        left:SetGradientAlpha("HORIZONTAL", 1, 0.1, 0.1, 1, 1, 0.1, 0.1, 0)
+        right:SetGradientAlpha("HORIZONTAL", 1, 0.1, 0.1, 0, 1, 0.1, 0.1, 1)
+
+        function aggroBorder:ShowAggro(r, g, b)
+            top:SetGradientAlpha("VERTICAL", r, g, b, 0, r, g, b, 1)
+            bottom:SetGradientAlpha("VERTICAL", r, g, b, 1, r, g, b, 0)
+            left:SetGradientAlpha("HORIZONTAL", r, g, b, 1, r, g, b, 0)
+            right:SetGradientAlpha("HORIZONTAL", r, g, b, 0, r, g, b, 1)
+            aggroBorder:Show()
+        end
     end
 
     function aggroBorder:SetThickness(n)

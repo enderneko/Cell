@@ -697,28 +697,55 @@ function I:CreateAura_Color(name, parent)
         end
     end
 
-    function color:SetColors(colors)
-        color.type = colors[1]
-
-        if colors[1] == "solid" then
-            solidTex:SetVertexColor(colors[2][1], colors[2][2], colors[2][3], colors[2][4])
-            solidTex:SetTexture(Cell.vars.texture)
-            solidTex:Show()
-            gradientTex:Hide()
-        elseif colors[1] == "gradient-vertical" then
-            gradientTex:SetGradientAlpha("VERTICAL", colors[2][1], colors[2][2], colors[2][3], colors[2][4], colors[3][1], colors[3][2], colors[3][3], colors[3][4])
-            gradientTex:Show()
-            solidTex:Hide()
-        elseif colors[1] == "gradient-horizontal" then
-            gradientTex:SetGradientAlpha("HORIZONTAL", colors[2][1], colors[2][2], colors[2][3], colors[2][4], colors[3][1], colors[3][2], colors[3][3], colors[3][4])
-            gradientTex:Show()
-            solidTex:Hide()
-        elseif colors[1] == "debuff-type" then
-            solidTex:SetVertexColor(colors[2][1], colors[2][2], colors[2][3], colors[2][4])
-            solidTex:SetTexture(Cell.vars.texture)
-            solidTex:Show()
-            gradientTex:Hide()
-            color.alpha = colors[2][4]
+    if Cell.isRetail then
+        function color:SetColors(colors)
+            color.type = colors[1]
+    
+            if colors[1] == "solid" then
+                solidTex:SetVertexColor(colors[2][1], colors[2][2], colors[2][3], colors[2][4])
+                solidTex:SetTexture(Cell.vars.texture)
+                solidTex:Show()
+                gradientTex:Hide()
+            elseif colors[1] == "gradient-vertical" then
+                gradientTex:SetGradient("VERTICAL", CreateColor(colors[2][1], colors[2][2], colors[2][3], colors[2][4]), CreateColor(colors[3][1], colors[3][2], colors[3][3], colors[3][4]))
+                gradientTex:Show()
+                solidTex:Hide()
+            elseif colors[1] == "gradient-horizontal" then
+                gradientTex:SetGradient("HORIZONTAL", CreateColor(colors[2][1], colors[2][2], colors[2][3], colors[2][4]), CreateColor(colors[3][1], colors[3][2], colors[3][3], colors[3][4]))
+                gradientTex:Show()
+                solidTex:Hide()
+            elseif colors[1] == "debuff-type" then
+                solidTex:SetVertexColor(colors[2][1], colors[2][2], colors[2][3], colors[2][4])
+                solidTex:SetTexture(Cell.vars.texture)
+                solidTex:Show()
+                gradientTex:Hide()
+                color.alpha = colors[2][4]
+            end
+        end
+    else
+        function color:SetColors(colors)
+            color.type = colors[1]
+    
+            if colors[1] == "solid" then
+                solidTex:SetVertexColor(colors[2][1], colors[2][2], colors[2][3], colors[2][4])
+                solidTex:SetTexture(Cell.vars.texture)
+                solidTex:Show()
+                gradientTex:Hide()
+            elseif colors[1] == "gradient-vertical" then
+                gradientTex:SetGradientAlpha("VERTICAL", colors[2][1], colors[2][2], colors[2][3], colors[2][4], colors[3][1], colors[3][2], colors[3][3], colors[3][4])
+                gradientTex:Show()
+                solidTex:Hide()
+            elseif colors[1] == "gradient-horizontal" then
+                gradientTex:SetGradientAlpha("HORIZONTAL", colors[2][1], colors[2][2], colors[2][3], colors[2][4], colors[3][1], colors[3][2], colors[3][3], colors[3][4])
+                gradientTex:Show()
+                solidTex:Hide()
+            elseif colors[1] == "debuff-type" then
+                solidTex:SetVertexColor(colors[2][1], colors[2][2], colors[2][3], colors[2][4])
+                solidTex:SetTexture(Cell.vars.texture)
+                solidTex:Show()
+                gradientTex:Hide()
+                color.alpha = colors[2][4]
+            end
         end
     end
         

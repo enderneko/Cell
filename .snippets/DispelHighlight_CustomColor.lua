@@ -38,7 +38,11 @@ F:IterateAllUnitButtons(function(b)
         elseif dispels.highlightType == "current" then
             dispels.highlight:SetVertexColor(r, g, b, a)
         else
-            dispels.highlight:SetGradientAlpha("VERTICAL", r, g, b, a, r, g, b, 0)
+            if Cell.isRetail then
+                dispels.highlight:SetGradient("VERTICAL", CreateColor(r, g, b, a), CreateColor(r, g, b, 0))
+            else
+                dispels.highlight:SetGradientAlpha("VERTICAL", r, g, b, a, r, g, b, 0)
+            end
         end
     end
 
