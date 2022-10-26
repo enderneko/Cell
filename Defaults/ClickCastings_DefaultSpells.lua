@@ -261,6 +261,8 @@ local defaultSpells = {
 }
 
 function F:GetSpellList(class, spec)
+    return {}
+    --[[
     local spells = defaultSpells[class]["common"] and F:Copy(defaultSpells[class]["common"]) or {}
     
     -- check spec
@@ -287,6 +289,7 @@ function F:GetSpellList(class, spec)
 
     -- texplore(spells)
     return spells
+    ]]
 end
 
 -------------------------------------------------

@@ -1,7 +1,4 @@
-[Full Changelog](https://github.com/enderneko/Cell/compare/r129-release...ac35d735a14e2533f00f49a36f00f93dfe903ee8)
+[Full Changelog](https://github.com/enderneko/Cell/compare/r130-release...6369fc9a4fa105edc497dbe04e75819ac11d2a45)
 
-- Add resurrections to default click-castings
-- Update zhTW
-- Update LMAO.lua
-- [snippet] HideButtonBorder
-- [snippet] CooldownIcons_BlizzardStyle
+- Update API changes in DF
+- Adjust order of indicator options
