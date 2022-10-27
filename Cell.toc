@@ -1,6 +1,6 @@
 ## Interface: 100000
 ## Title: Cell
-## Version: r131-beta
+## Version: r132-release
 ## Author: 篠崎
 ## X-Flavor: Mainline
 ## SavedVariables: CellDB

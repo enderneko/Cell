@@ -1,4 +1,7 @@
-[Full Changelog](https://github.com/enderneko/Cell/compare/r130-release...6369fc9a4fa105edc497dbe04e75819ac11d2a45)
+[Full Changelog](https://github.com/enderneko/Cell/compare/r131-beta...287240ba1f370ac5f2dbf139d7c91f6caddff8c6)
 
-- Update API changes in DF
-- Adjust order of indicator options
+- Implement health threshold indicator
+- Update spells for DF
+- Update buff tracker
+- Fix dispel highlight strata
+- Fix a ActionButtonUseKeyDown caused issue
