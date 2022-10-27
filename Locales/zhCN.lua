@@ -589,6 +589,10 @@ L["Changelogs"] = "更新记录"
 L["Click to view recent changelogs"] = "点击查看近期更新记录"
 L["Click to view older changelogs"] = "点击查看远古更新记录"
 L["CHANGELOGS"] = [[
+    <h1>r133-release (Oct 28, 2022, 05:15 GMT+8)</h1>
+    <p>* Bug fixes.</p>
+    <br/>
+
     <h1>r132-release (Oct 27, 2022, 19:07 GMT+8)</h1>
     <p>+ 新指示器：血量阈值。</p>
     <p>* 更新巨龙时代的部分法术。</p>

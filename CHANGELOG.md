@@ -1,7 +1,4 @@
-[Full Changelog](https://github.com/enderneko/Cell/compare/r131-beta...287240ba1f370ac5f2dbf139d7c91f6caddff8c6)
+[Full Changelog](https://github.com/enderneko/Cell/compare/r132-release...2ea332005be1b5af49960e6b2ad07087d95cef02)
 
-- Implement health threshold indicator
-- Update spells for DF
-- Update buff tracker
-- Fix dispel highlight strata
-- Fix a ActionButtonUseKeyDown caused issue
+- Fix blizzard party hide
+- Update spotlight frame menu
