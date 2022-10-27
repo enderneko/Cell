@@ -6,47 +6,55 @@ local hiddenParent = CreateFrame("Frame", nil, _G.UIParent)
 hiddenParent:SetAllPoints()
 hiddenParent:Hide()
 
-local function HideFrame(baseName, doNotReparent)
-    local frame = _G[baseName]
+local function HideFrame(frame)
+    if not frame then return end
+    
+    frame:UnregisterAllEvents()
+    frame:Hide()
+    frame:SetParent(hiddenParent)
 
-    if frame then
-        frame:UnregisterAllEvents()
-        frame:Hide()
+    local health = frame.healthBar or frame.healthbar
+    if health then
+        health:UnregisterAllEvents()
+    end
 
-        if not doNotReparent then
-            frame:SetParent(hiddenParent)
-        end
+    local power = frame.manabar
+    if power then
+        power:UnregisterAllEvents()
+    end
 
-        local health = frame.healthBar or frame.healthbar
-        if health then
-            health:UnregisterAllEvents()
-        end
+    local spell = frame.castBar or frame.spellbar
+    if spell then
+        spell:UnregisterAllEvents()
+    end
 
-        local power = frame.manabar
-        if power then
-            power:UnregisterAllEvents()
-        end
+    local altpowerbar = frame.powerBarAlt
+    if altpowerbar then
+        altpowerbar:UnregisterAllEvents()
+    end
 
-        local spell = frame.castBar or frame.spellbar
-        if spell then
-            spell:UnregisterAllEvents()
-        end
+    local buffFrame = frame.BuffFrame
+    if buffFrame then
+        buffFrame:UnregisterAllEvents()
+    end
 
-        local altpowerbar = frame.powerBarAlt
-        if altpowerbar then
-            altpowerbar:UnregisterAllEvents()
-        end
-
-        local buffFrame = frame.BuffFrame
-        if buffFrame then
-            buffFrame:UnregisterAllEvents()
-        end
+    local petFrame = frame.PetFrame
+    if petFrame then
+        petFrame:UnregisterAllEvents()
     end
 end
 
 function F:HideBlizzardParty()
-    for i = 1, 4 do
-        HideFrame("PartyMemberFrame"..i)
+    if Cell.isRetail then
+        _G.PartyFrame:UnregisterAllEvents()
+        for frame in _G.PartyFrame.PartyMemberFramePool:EnumerateActive() do
+            HideFrame(frame)
+        end
+    else
+        for i = 1, 4 do
+            HideFrame(_G["PartyMemberFrame"..i])
+            HideFrame(_G["CompactPartyMemberFrame"..i])
+        end
     end
 end
 
