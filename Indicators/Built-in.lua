@@ -1628,3 +1628,90 @@ function I:CreateStatusIcon(parent)
         resurrectionIcon:SetFrameLevel(level)
     end
 end
+
+-------------------------------------------------
+-- health threshold
+-------------------------------------------------
+function I:CreateHealthThresholds(parent)
+    local healthThresholds = CreateFrame("Frame", parent:GetName().."HealthThresholds", parent.widget.healthBar)
+    parent.indicators.healthThresholds = healthThresholds
+    healthThresholds:SetAllPoints(parent.widget.healthBar)
+    healthThresholds:SetFrameLevel(parent.widget.healthBar:GetFrameLevel()+1)
+    
+    healthThresholds.tex = healthThresholds:CreateTexture(nil, "ARTWORK")
+    
+    function healthThresholds:SetThickness(thickness)
+        healthThresholds.thickness = thickness
+        P:Size(healthThresholds.tex, thickness, thickness)
+    end
+
+    function healthThresholds:SetOrientation(orientation)
+        healthThresholds.orientation = orientation
+        healthThresholds.tex:ClearAllPoints()
+        if orientation == "horizontal" then
+            healthThresholds.tex:SetPoint("TOP")
+            healthThresholds.tex:SetPoint("BOTTOM")
+        else
+            healthThresholds.tex:SetPoint("LEFT")
+            healthThresholds.tex:SetPoint("RIGHT")
+        end
+    end
+    
+    function healthThresholds:CheckThreshold(percent)
+        local found
+        for i, t in ipairs(Cell.vars.healthThresholds) do
+            if percent < t[1] then
+                found = i
+                break
+            end
+        end
+        if found then
+            if healthThresholds.orientation == "horizontal" then
+                healthThresholds.tex:SetPoint("LEFT", Cell.vars.healthThresholds[found][1] * parent.widget.healthBar:GetWidth(), 0)
+            else
+                healthThresholds.tex:SetPoint("BOTTOM", 0, Cell.vars.healthThresholds[found][1] * parent.widget.healthBar:GetHeight())
+            end
+            healthThresholds.tex:SetColorTexture(unpack(Cell.vars.healthThresholds[found][2]))
+            healthThresholds:Show()
+        else
+            healthThresholds:Hide()
+        end
+    end
+
+    if parent == CellIndicatorsPreviewButton then
+        healthThresholds.tex:Hide()
+
+        function healthThresholds:UpdateThresholdsPreview()
+            for i, t in ipairs(Cell.vars.healthThresholds) do
+                healthThresholds[i] = healthThresholds[i] or healthThresholds:CreateTexture(nil, "ARTWORK")
+                P:Size(healthThresholds[i], healthThresholds.thickness, healthThresholds.thickness)
+                healthThresholds[i]:SetColorTexture(unpack(t[2]))
+                -- healthThresholds[i]:SetBlendMode("ADD")
+                
+                healthThresholds[i]:ClearAllPoints()
+                if healthThresholds.orientation == "horizontal" then
+                    healthThresholds[i]:SetPoint("TOP")
+                    healthThresholds[i]:SetPoint("BOTTOM")
+                    healthThresholds[i]:SetPoint("LEFT", t[1] * parent.widget.healthBar:GetWidth(), 0)
+                else
+                    healthThresholds[i]:SetPoint("LEFT")
+                    healthThresholds[i]:SetPoint("RIGHT")
+                    healthThresholds[i]:SetPoint("BOTTOM", 0, t[1] * parent.widget.healthBar:GetHeight())
+                end
+                healthThresholds[i]:Show()
+            end
+            -- hide unused
+            for i = #Cell.vars.healthThresholds+1, #healthThresholds do
+                if healthThresholds[i] then
+                    healthThresholds[i]:Hide()
+                end
+            end
+        end
+    end
+end
+
+-- sort and save
+function I:UpdateHealthThresholds()
+    Cell.vars.healthThresholds = Cell.vars.currentLayoutTable.indicators[Cell.defaults.indicatorIndices.healthThresholds].thresholds
+    F:Sort(Cell.vars.healthThresholds, 1, "ascending")
+end

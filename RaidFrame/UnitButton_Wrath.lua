@@ -2,7 +2,7 @@
 -- File: UnitButton_Wrath.lua
 -- Author: enderneko (enderneko-dev@outlook.com)
 -- File Created: 2022/08/20 19:44:26 +0800
--- Last Modified: 2022/10/22 19:19:57 +0800
+-- Last Modified: 2022/10/27 18:33:48 +0800
 --]]
 
 local _, Cell = ...
@@ -112,6 +112,10 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
             -- update consumables
             if t["indicatorName"] == "consumables" then
                 I:EnableConsumables(t["enabled"])
+            end
+            -- update healthThresholds
+            if t["indicatorName"] == "healthThresholds" then
+                I:UpdateHealthThresholds()
             end
             -- update custom
             if t["dispellableByMe"] ~= nil then
@@ -321,6 +325,13 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                 F:IterateAllUnitButtons(function(b)
                     b.func.UpdateShield()
                 end, true)
+            elseif indicatorName == "healthThresholds" then
+                if value then
+                    I:UpdateHealthThresholds()
+                end
+                F:IterateAllUnitButtons(function(b)
+                    b.func.UpdateHealth(b)
+                end, true)
             else
                 -- refresh
                 F:IterateAllUnitButtons(function(b)
@@ -448,6 +459,11 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
             F:IterateAllUnitButtons(function(b)
                 b.indicators[indicatorName]:UpdateHighlight(value)
                 UnitButton_UpdateAuras(b)
+            end, true)
+        elseif setting == "thresholds" then
+            I:UpdateHealthThresholds()
+            F:IterateAllUnitButtons(function(b)
+                b.func.UpdateHealth(b)
             end, true)
         elseif setting == "checkbutton" then
             if value == "showGroupNumber" then
@@ -1355,6 +1371,12 @@ local function UnitButton_UpdateHealth(self)
     end
 
     self.state.healthPercentOld = healthPercent
+
+    if enabledIndicators["healthThresholds"] then
+        self.indicators.healthThresholds:CheckThreshold(healthPercent)
+    else
+        self.indicators.healthThresholds:Hide()
+    end
 
     if CELL_FADE_OUT_HEALTH_PERCENT then
         if self.state.inRange and healthPercent < CELL_FADE_OUT_HEALTH_PERCENT then
@@ -2439,6 +2461,8 @@ function F:UnitButton_OnLoad(button)
         powerBar:SetOrientation(orientation)
         powerBar:SetRotatesTexture(rotateTexture)
 
+        button.indicators.healthThresholds:SetOrientation(orientation)
+
         if rotateTexture then
             F:RotateTexture(healthBarLoss, 90)
             F:RotateTexture(powerBarLoss, 90)
@@ -2829,6 +2853,7 @@ function F:UnitButton_OnLoad(button)
     I:CreateTargetCounter(button)
     I:CreateTargetedSpells(button)
     I:CreateConsumables(button)
+    I:CreateHealthThresholds(button)
 
     -- events
     button:SetScript("OnAttributeChanged", UnitButton_OnAttributeChanged) -- init

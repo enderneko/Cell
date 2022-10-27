@@ -334,8 +334,13 @@ local function CreateAnimationGroup_TypeD(parent)
 
     local s1 = ag:CreateAnimation("Scale")
     s1.duration = 0.5
-    s1:SetScaleFrom(0,0)
-    s1:SetScaleTo(1,1)
+    if Cell.isRetail then
+        s1:SetScaleFrom(0,0)
+        s1:SetScaleTo(1,1)
+    else
+        s1:SetFromScale(0,0)
+        s1:SetToScale(1,1)
+    end
     s1:SetOrder(1)
     s1:SetDuration(s1.duration)
 

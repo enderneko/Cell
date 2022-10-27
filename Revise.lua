@@ -1301,58 +1301,12 @@ function F:Revise()
         Cell.vars.bigDebuffs = F:ConvertTable(CellDB["bigDebuffs"])
     end
 
-    -- r117-release (merge r114 r115)
+    -- r117-release
     if CellDB["revise"] and dbRevision < 117 then
-        local shieldBarIndex = Cell.defaults.indicatorIndices.shieldBar
-        local consumablesIndex = Cell.defaults.indicatorIndices.consumables
-        local dispelsIndex = Cell.defaults.indicatorIndices.dispels
-
-        for _, layout in pairs(CellDB["layouts"]) do
-            -- add ShieldBar back (r117)
-            if layout["indicators"][shieldBarIndex]["indicatorName"] ~= "shieldBar" then
-                tinsert(layout["indicators"], shieldBarIndex, {
-                    ["name"] = "Shield Bar",
-                    ["indicatorName"] = "shieldBar",
-                    ["type"] = "built-in",
-                    ["enabled"] = false,
-                    ["position"] = {"BOTTOMLEFT", "BOTTOMLEFT", 0, 0},
-                    ["frameLevel"] = 2,
-                    ["height"] = 4,
-                    ["color"] = {1, 1, 0, 1},
-                })
-            end
-            
-            -- add Consumables (r114)
-            if not layout["indicators"][consumablesIndex] or layout["indicators"][consumablesIndex]["indicatorName"] ~= "consumables" then
-                tinsert(layout["indicators"], consumablesIndex, {
-                    ["name"] = "Consumables",
-                    ["indicatorName"] = "consumables",
-                    ["type"] = "built-in",
-                    ["enabled"] = true,
-                    ["speed"] = 1,
-                })
-            end
-            
-            -- add speed to Consumables (r115)
-            if not layout["indicators"][consumablesIndex]["speed"] then
-                layout["indicators"][consumablesIndex]["speed"] = 1
-            end
-            
-            -- add highlightType to Dispels (r115)
-            if not layout["indicators"][dispelsIndex]["highlightType"] then
-                layout["indicators"][dispelsIndex]["highlightType"] = "gradient"
-            end
-            
-            -- add showDispelTypeIcons to Dispels (r115)
-            if type(layout["indicators"][dispelsIndex]["showDispelTypeIcons"]) ~= "boolean" then
-                layout["indicators"][dispelsIndex]["showDispelTypeIcons"] = true
-            end
-
-            -- enable shield in WotLK
-            if Cell.isWrath then
-                CellDB["appearance"]["shield"] = true
-                CellDB["appearance"]["overshield"] = true
-            end
+        -- enable shield in WotLK
+        if Cell.isWrath then
+            CellDB["appearance"]["shield"] = true
+            CellDB["appearance"]["overshield"] = true
         end
     end
 
@@ -1406,6 +1360,70 @@ function F:Revise()
 
         if type(CellDB["appearance"]["useLibHealComm"]) ~= "boolean" then
             CellDB["appearance"]["useLibHealComm"] = Cell.isWrath
+        end
+    end
+
+    -- r132-release (merge r114 r115 r117)
+    if CellDB["revise"] and dbRevision < 132 then
+        local healthThresholdsIndex = Cell.defaults.indicatorIndices.healthThresholds
+        local shieldBarIndex = Cell.defaults.indicatorIndices.shieldBar
+        local dispelsIndex = Cell.defaults.indicatorIndices.dispels
+        local consumablesIndex = Cell.defaults.indicatorIndices.consumables
+
+        for _, layout in pairs(CellDB["layouts"]) do
+            -- add healthThresholds
+            if layout["indicators"][healthThresholdsIndex]["indicatorName"] ~= "healthThresholds" then
+                tinsert(layout["indicators"], healthThresholdsIndex, {
+                    ["name"] = "Health Thresholds",
+                    ["indicatorName"] = "healthThresholds",
+                    ["type"] = "built-in",
+                    ["enabled"] = false,
+                    ["thickness"] = 1,
+                    ["thresholds"] = {
+                        {0.35, {1, 0, 0, 1}},
+                    },
+                })
+            end
+
+            -- add ShieldBar back (r117)
+            if layout["indicators"][shieldBarIndex]["indicatorName"] ~= "shieldBar" then
+                tinsert(layout["indicators"], shieldBarIndex, {
+                    ["name"] = "Shield Bar",
+                    ["indicatorName"] = "shieldBar",
+                    ["type"] = "built-in",
+                    ["enabled"] = false,
+                    ["position"] = {"BOTTOMLEFT", "BOTTOMLEFT", 0, 0},
+                    ["frameLevel"] = 2,
+                    ["height"] = 4,
+                    ["color"] = {1, 1, 0, 1},
+                })
+            end
+            
+            -- add Consumables (r114)
+            if not layout["indicators"][consumablesIndex] or layout["indicators"][consumablesIndex]["indicatorName"] ~= "consumables" then
+                tinsert(layout["indicators"], consumablesIndex, {
+                    ["name"] = "Consumables",
+                    ["indicatorName"] = "consumables",
+                    ["type"] = "built-in",
+                    ["enabled"] = true,
+                    ["speed"] = 1,
+                })
+            end
+            
+            -- add speed to Consumables (r115)
+            if not layout["indicators"][consumablesIndex]["speed"] then
+                layout["indicators"][consumablesIndex]["speed"] = 1
+            end
+            
+            -- add highlightType to Dispels (r115)
+            if not layout["indicators"][dispelsIndex]["highlightType"] then
+                layout["indicators"][dispelsIndex]["highlightType"] = "gradient"
+            end
+            
+            -- add showDispelTypeIcons to Dispels (r115)
+            if type(layout["indicators"][dispelsIndex]["showDispelTypeIcons"]) ~= "boolean" then
+                layout["indicators"][dispelsIndex]["showDispelTypeIcons"] = true
+            end
         end
     end
 

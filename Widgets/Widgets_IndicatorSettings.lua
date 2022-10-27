@@ -338,7 +338,7 @@ local function CreateSetting_Thickness(parent)
         widget = addon:CreateFrame("CellIndicatorSettings_Thickness", parent, 240, 50)
         settingWidgets["thickness"] = widget
 
-        widget.size = addon:CreateSlider(L["Size"], widget, 2, 12, 110, 1)
+        widget.size = addon:CreateSlider(L["Size"], widget, 1, 15, 110, 1)
         widget.size:SetPoint("TOPLEFT", widget, 5, -20)
         widget.size.afterValueChangedFn = function(value)
             widget.func(value)
@@ -564,6 +564,7 @@ local function CreateSetting_TextWidth(parent)
         widget.length.confirmBtn:SetScript("OnClick", function()
             local length = tonumber(widget.length:GetText())
             widget.length:SetText(length)
+            widget.length:ClearFocus()
             widget.length.confirmBtn:Hide()
             widget.lengthValue = length
             
@@ -606,6 +607,7 @@ local function CreateSetting_TextWidth(parent)
             widget.length2.confirmBtn:SetScript("OnClick", function()
                 local length = tonumber(widget.length2:GetText())
                 widget.length2:SetText(length)
+                widget.length2:ClearFocus()
                 widget.length2.confirmBtn:Hide()
                 widget.func({"length", tonumber(widget.length:GetText()) or widget.lengthValue, length})
                 widget.lengthValue2 = length
@@ -1549,6 +1551,7 @@ local function CreateSetting_Colors(parent)
             local newSec = tonumber(secEditBox:GetText())
             widget.colorsTable[3][4] = newSec
             secEditBox:SetText(newSec)
+            secEditBox:ClearFocus()
             secEditBox.confirmBtn:Hide()
         end)
 
@@ -3670,6 +3673,179 @@ local function CreateSetting_ConsumablesList(parent)
     return widget
 end
 
+local thresholdButtons = {}
+local function CreateThresholdButtons(parent, thresholdTable, updateHeightFunc)
+    local n = #thresholdTable
+
+    -- new
+    if not thresholdButtons[0] then
+        thresholdButtons[0] = addon:CreateButton(parent, "", "transparent-accent", {20, 20})
+        thresholdButtons[0]:SetTexture("Interface\\AddOns\\Cell\\Media\\Icons\\new", {16, 16}, {"RIGHT", -1, 0})
+        thresholdButtons[0]:SetPoint("BOTTOMLEFT")
+        thresholdButtons[0]:SetPoint("RIGHT")
+    end
+    
+    thresholdButtons[0]:SetScript("OnClick", function(self)
+        tinsert(thresholdTable, {0.99, {1, 0, 0, 1}})
+        parent.func(thresholdTable)
+        CreateThresholdButtons(parent, thresholdTable, updateHeightFunc)
+        updateHeightFunc(19)
+    end)
+
+
+    for i, t in ipairs(thresholdTable) do
+        -- creation
+        if not thresholdButtons[i] then
+            thresholdButtons[i] = addon:CreateButton(parent, "", "transparent-accent", {20, 20})
+
+            -- threshold
+            thresholdButtons[i].eb = addon:CreateEditBox(thresholdButtons[i], 35, 16, false, false, true)
+            thresholdButtons[i].eb:SetPoint("TOPLEFT", 2, -2)
+            thresholdButtons[i].eb:SetMaxLetters(2)
+            thresholdButtons[i].eb:HookScript("OnEnter", function()
+                thresholdButtons[i]:GetScript("OnEnter")(thresholdButtons[i])
+            end)
+            thresholdButtons[i].eb:HookScript("OnLeave", function()
+                thresholdButtons[i]:GetScript("OnLeave")(thresholdButtons[i])
+            end)
+            
+            thresholdButtons[i].confirmBtn = addon:CreateButton(thresholdButtons[i], "OK", "accent", {27, 16})
+            thresholdButtons[i].confirmBtn:SetPoint("TOPLEFT", thresholdButtons[i].eb, "TOPRIGHT", P:Scale(-1), 0)
+            thresholdButtons[i].confirmBtn:Hide()
+            thresholdButtons[i].confirmBtn:SetScript("OnHide", function()
+                thresholdButtons[i].confirmBtn:Hide()
+            end)
+            thresholdButtons[i].confirmBtn:HookScript("OnEnter", function()
+                thresholdButtons[i]:GetScript("OnEnter")(thresholdButtons[i])
+            end)
+            thresholdButtons[i].confirmBtn:HookScript("OnLeave", function()
+                thresholdButtons[i]:GetScript("OnLeave")(thresholdButtons[i])
+            end)
+            thresholdButtons[i].confirmBtn:SetScript("OnClick", function()
+                local newThreshold = tonumber(thresholdButtons[i].eb:GetText())
+                thresholdTable[i][1] = newThreshold / 100
+                parent.func(thresholdTable)
+                thresholdButtons[i].eb:ClearFocus()
+                thresholdButtons[i].confirmBtn:Hide()
+                CreateThresholdButtons(parent, thresholdTable, updateHeightFunc)
+            end)
+
+            thresholdButtons[i].eb:SetScript("OnTextChanged", function(self, userChanged)
+                if userChanged then
+                    local newThreshold = tonumber(self:GetText())
+                    if newThreshold and newThreshold ~= thresholdTable[i][1] * 100 then
+                        thresholdButtons[i].confirmBtn:Show()
+                    else
+                        thresholdButtons[i].confirmBtn:Hide()
+                    end
+                end
+            end)
+
+            -- percentSign
+            thresholdButtons[i].percentSign = thresholdButtons[i]:CreateFontString(nil, "OVERLAY", font_name)
+            thresholdButtons[i].percentSign:SetPoint("LEFT", thresholdButtons[i].eb, "RIGHT", 2, 0)
+            thresholdButtons[i].percentSign:SetText("%")
+
+            -- color
+            thresholdButtons[i].colorPicker = addon:CreateColorPicker(thresholdButtons[i], "", true, nil, function(r, g, b, a)
+                thresholdTable[i][2][1] = r
+                thresholdTable[i][2][2] = g
+                thresholdTable[i][2][3] = b
+                thresholdTable[i][2][4] = a
+                parent.func(thresholdTable)
+            end)
+            thresholdButtons[i].colorPicker:SetPoint("TOPLEFT", thresholdButtons[i].eb, "TOPRIGHT", P:Scale(30), P:Scale(-1))
+            thresholdButtons[i].colorPicker:HookScript("OnEnter", function()
+                thresholdButtons[i]:GetScript("OnEnter")(thresholdButtons[i])
+            end)
+            thresholdButtons[i].colorPicker:HookScript("OnLeave", function()
+                thresholdButtons[i]:GetScript("OnLeave")(thresholdButtons[i])
+            end)
+
+            -- del
+            thresholdButtons[i].del = addon:CreateButton(thresholdButtons[i], "", "none", {18, 20}, true, true)
+            thresholdButtons[i].del:SetTexture("Interface\\AddOns\\Cell\\Media\\Icons\\delete", {16, 16}, {"CENTER", 0, 0})
+            thresholdButtons[i].del:SetPoint("RIGHT")
+            thresholdButtons[i].del.tex:SetVertexColor(0.6, 0.6, 0.6, 1)
+            thresholdButtons[i].del:SetScript("OnEnter", function()
+                thresholdButtons[i]:GetScript("OnEnter")(thresholdButtons[i])
+                thresholdButtons[i].del.tex:SetVertexColor(1, 1, 1, 1)
+            end)
+            thresholdButtons[i].del:SetScript("OnLeave",  function()
+                thresholdButtons[i]:GetScript("OnLeave")(thresholdButtons[i])
+                thresholdButtons[i].del.tex:SetVertexColor(0.6, 0.6, 0.6, 1)
+            end)
+        end
+        
+        -- fill data
+        thresholdButtons[i].eb:SetText(t[1]*100)
+        thresholdButtons[i].colorPicker:SetColor(t[2])
+
+        -- points
+        thresholdButtons[i]:ClearAllPoints()
+        if i == 1 then -- first
+            thresholdButtons[i]:SetPoint("TOPLEFT")
+        else
+            thresholdButtons[i]:SetPoint("TOPLEFT", thresholdButtons[i-1], "BOTTOMLEFT", 0, P:Scale(1))
+        end
+        thresholdButtons[i]:SetPoint("RIGHT")
+        thresholdButtons[i]:Show()
+
+        -- functions
+        thresholdButtons[i].del:SetScript("OnClick", function()
+            tremove(thresholdTable, i)
+            parent.func(thresholdTable)
+            CreateThresholdButtons(parent, thresholdTable, updateHeightFunc)
+            updateHeightFunc(-19)
+        end)
+    end
+
+    for i = n+1, #thresholdButtons do
+        thresholdButtons[i]:Hide()
+        thresholdButtons[i]:ClearAllPoints()
+    end
+end
+
+local function CreateSetting_Thresholds(parent)
+    local widget
+
+    if not settingWidgets["thresholds"] then
+        widget = addon:CreateFrame("CellIndicatorSettings_Thresholds", parent, 240, 128)
+        settingWidgets["thresholds"] = widget
+
+        widget.text = widget:CreateFontString(nil, "OVERLAY", font_name)
+        widget.text:SetPoint("TOPLEFT", 7, -7)
+        widget.text:SetText(L["Only one threshold is displayed at a time"])
+
+        widget.frame = addon:CreateFrame(nil, widget, 100, 20)
+        widget.frame:SetPoint("TOPLEFT", 5, -27)
+        -- widget.frame:SetPoint("RIGHT", -5, 0)
+        widget.frame:Show()
+        addon:StylizeFrame(widget.frame, {0.15, 0.15, 0.15, 1})
+
+        -- associate db
+        function widget:SetFunc(func)
+            widget.frame.func = func
+        end
+
+        -- show db value
+        function widget:SetDBValue(t)
+            CreateThresholdButtons(widget.frame, t, function(diff)
+                widget.frame:SetHeight((#t+1)*19+1)
+                widget:SetHeight((#t+1)*19+1 + 27 + 5)
+                if diff then parent:SetHeight(parent:GetHeight()+diff) end
+            end)
+            widget.frame:SetHeight((#t+1)*19+1)
+            widget:SetHeight((#t+1)*19+1 + 27 + 5)
+        end
+    else
+        widget = settingWidgets["thresholds"]
+    end
+
+    widget:Show()
+    return widget
+end
+
 local function CreateSetting_HighlightType(parent)
     local widget
 
@@ -3857,6 +4033,8 @@ function addon:CreateIndicatorSettings(parent, settingsTable)
             tinsert(widgetsTable, CreateSetting_ConsumablesList(parent))
         elseif setting == "highlightType" then
             tinsert(widgetsTable, CreateSetting_HighlightType(parent))
+        elseif setting == "thresholds" then
+            tinsert(widgetsTable, CreateSetting_Thresholds(parent))
         else -- tips
             tinsert(widgetsTable, CreateSetting_Tips(parent, setting))
         end

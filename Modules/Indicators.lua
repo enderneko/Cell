@@ -385,6 +385,9 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                 -- update thickness
                 if t["thickness"] then
                     indicator:SetThickness(t["thickness"])
+                    if t["indicatorName"] == "healthThresholds" then
+                        indicator:UpdateThresholdsPreview()
+                    end
                 end
                 -- update textWidth
                 if t["textWidth"] then
@@ -529,6 +532,9 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
             indicator:SetBorder(value[3])
         elseif setting == "thickness" then
             indicator:SetThickness(value)
+            if indicatorName == "healthThresholds" then
+                indicator:UpdateThresholdsPreview()
+            end
         elseif setting == "height" then
             P:Height(indicator, value)
         elseif setting == "textWidth" then
@@ -584,6 +590,8 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
             indicator:UpdateHighlight(value)
             indicator.init = false
             InitIndicator(indicatorName)
+        elseif setting == "thresholds" then
+            indicator:UpdateThresholdsPreview()
         elseif setting == "checkbutton" then
             if value == "showGroupNumber" then
                 indicator:ShowGroupNumber(value2)
@@ -1263,7 +1271,8 @@ if Cell.isRetail then
         ["raidDebuffs"] = {"|cffb7b7b7"..L["You can config debuffs in %s"]:format(Cell:GetAccentColorString()..L["Raid Debuffs"].."|r"), "enabled", "checkbutton:onlyShowTopGlow", "cleuAuras", "checkbutton2:showTooltip:"..L["This will make these icons not click-through-able"], "num:3", "orientation", "position", "frameLevel", "size-border", "font"},
         ["targetedSpells"] = {"enabled", "targetedSpellsList", "targetedSpellsGlow", "position", "frameLevel", "size-border", "font"},
         ["targetCounter"] = {"|cffff2727"..L["HIGH CPU USAGE"].."!|r |cffb7b7b7"..L["Check all visible enemy nameplates. Battleground/Arena only."], "enabled", "color", "position", "frameLevel", "font-noOffset"},
-        ["consumables"] = {"enabled", "consumablesPreview", "consumablesList"}
+        ["consumables"] = {"enabled", "consumablesPreview", "consumablesList"},
+        ["healthThresholds"] = {"enabled", "thresholds", "thickness"},
     }
 elseif Cell.isWrath then
     indicatorSettings = {
@@ -1296,6 +1305,7 @@ elseif Cell.isWrath then
         ["targetedSpells"] = {"enabled", "targetedSpellsList", "targetedSpellsGlow", "position", "frameLevel", "size-border", "font"},
         ["targetCounter"] = {"|cffff2727"..L["HIGH CPU USAGE"].."!|r |cffb7b7b7"..L["Check all visible enemy nameplates. Battleground/Arena only."], "enabled", "color", "position", "frameLevel", "font-noOffset"},
         ["consumables"] = {"enabled", "consumablesPreview", "consumablesList"},
+        ["healthThresholds"] = {"enabled", "thresholds", "thickness"},
     }
 end
     
