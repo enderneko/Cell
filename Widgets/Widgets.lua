@@ -1995,6 +1995,22 @@ local function CreateItemButtons_Scroll(items, itemTable, limit)
             b:GetFontString():SetPoint("LEFT", P:Scale(5), 0)
         end
 
+        -- if item.marker then
+        --     if not b.marker then
+        --         b.marker = b:CreateTexture(nil, "OVERLAY")
+        --         P:Size(b.marker, 16, 16)
+        --         b.marker:SetAllPoints(b.iconBg)
+        --     end
+        --     b.marker:SetTexture("Interface\\AddOns\\Cell\\Media\\Icons\\icon_marker.tga")
+        --     b.marker:SetVertexColor(1, 1, 1, 0.77)
+        --     b.marker:SetBlendMode("ADD")
+        --     b.marker:Show()
+        -- else
+        --     if b.marker then
+        --         b.marker:Hide()
+        --     end
+        -- end
+
         if b.childrenSymbol then b.childrenSymbol:Hide() end
 
         b:SetScript("OnEnter", function()

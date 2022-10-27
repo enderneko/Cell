@@ -70,6 +70,8 @@ L["Bug Report & Suggestion"] = "回報 Bug & 建議"
 L["built-in(s)"] = "內建"
 L["Button4"] = "按鍵 4"
 L["Button5"] = "按鍵 5"
+--[[Translation missing --]]
+--[[ L["C"] = "Class Talent"--]] 
 L["Cancel"] = "取消"
 L["Can't change options in combat."] = "無法在戰鬥中更改設定。"
 L["castByMe"] = "只顯示我施放的增益"
@@ -358,6 +360,8 @@ L["Rotate Texture"] = "旋轉材質"
 L["Rotation"] = "旋轉"
 L["Round Up Duration Text"] = "四捨五入持續時間文字"
 L["Run"] = "執行"
+--[[Translation missing --]]
+--[[ L["S"] = "Spec Talent"--]] 
 L["Save"] = "儲存"
 L["Scale"] = "縮放大小"
 L["ScrollDown"] = "滾輪往下"

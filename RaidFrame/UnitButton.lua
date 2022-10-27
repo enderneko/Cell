@@ -2464,7 +2464,7 @@ function F:UnitButton_OnLoad(button)
     shieldBar.SetValue = DumbFunc
 
     -- over-shield glow
-    local overShieldGlow = healthBar:CreateTexture(name.."OverShieldGlow", "ARTWORK", nil, -5)
+    local overShieldGlow = healthBar:CreateTexture(name.."OverShieldGlow", "OVERLAY")
     button.widget.overShieldGlow = overShieldGlow
     overShieldGlow:SetTexture("Interface\\RaidFrame\\Shield-Overshield")
     overShieldGlow:SetBlendMode("ADD")
@@ -2474,7 +2474,7 @@ function F:UnitButton_OnLoad(button)
     overShieldGlow:Hide()
 
     -- absorbs bar
-    local absorbsBar = healthBar:CreateTexture(name.."AbsorbsBar", "ARTWORK", nil, -6)
+    local absorbsBar = healthBar:CreateTexture(name.."AbsorbsBar", "OVERLAY")
     button.widget.absorbsBar = absorbsBar
     -- P:Point(absorbsBar, "TOPRIGHT", healthBar:GetStatusBarTexture())
     -- P:Point(absorbsBar, "BOTTOMRIGHT", healthBar:GetStatusBarTexture())

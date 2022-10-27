@@ -10,6 +10,8 @@ select(2, ...).L = setmetatable({
     ["assist"] = "Assist",
     ["togglemenu"] = "Menu",
     ["T"] = "Talent",
+    ["C"] = "Class Talent",
+    ["S"] = "Spec Talent",
     ["P"] = "PvP Talent",
     ["notBound"] = "|cff777777".._G.NOT_BOUND,
 
