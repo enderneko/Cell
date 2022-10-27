@@ -236,11 +236,11 @@ end
 -- hide
 SecureHandlerSetFrameRef(menu, "config", config)
 SecureHandlerSetFrameRef(config, "menu", menu)
-menu:SetAttribute("_onhide", [[
-    for i = 1, 5 do
-        self:GetFrameRef("assignment"..i):Hide()
-    end
-]])
+-- menu:SetAttribute("_onhide", [[
+--     for i = 1, 5 do
+--         self:GetFrameRef("assignment"..i):Hide()
+--     end
+-- ]])
 
 -- menu items
 local target = Cell:CreateButton(menu, L["Target"], "transparent-accent", {20, 20}, true, false, nil, nil, "SecureHandlerAttributeTemplate,SecureHandlerClickTemplate")
