@@ -357,7 +357,7 @@ function addon:CreateMovableFrame(title, name, width, height, frameStrata, frame
     header.text:SetPoint("CENTER", header)
     
     header.closeBtn = addon:CreateButton(header, "×", "red", {20, 20}, false, false, "CELL_FONT_SPECIAL", "CELL_FONT_SPECIAL")
-    header.closeBtn:SetPoint("RIGHT")
+    header.closeBtn:SetPoint("TOPRIGHT")
     header.closeBtn:SetScript("OnClick", function() f:Hide() end)
 
     return f

@@ -15,8 +15,8 @@ local L = Cell.L
 
 -- sharing version check
 Cell.MIN_VERSION = 99
-Cell.MIN_LAYOUTS_VERSION = 99
-Cell.MIN_INDICATORS_VERSION = 99
+Cell.MIN_LAYOUTS_VERSION = 133
+Cell.MIN_INDICATORS_VERSION = 132
 Cell.MIN_DEBUFFS_VERSION = 99
 
 CELL_IMPORT_EXPORT_PREFIX = "CELL"
@@ -143,6 +143,18 @@ function eventFrame:ADDON_LOADED(arg1)
         if type(CellDB["customTextures"]) ~= "table" then CellDB["customTextures"] = {} end
         
         if type(CellDB["snippets"]) ~= "table" then CellDB["snippets"] = {} end
+        if not CellDB["snippets"][0] then
+            CellDB["snippets"][0] = {
+                ["autorun"] = true,
+                ["code"] = "-- use \"/run CellDB['snippets'][0]=nil ReloadUI()\" to reset this snippet\n\n"..
+                    "-- fade out unit button if hp percent < (number: 0-1)\n"..
+                    "CELL_FADE_OUT_HEALTH_PERCENT = nil\n\n"..
+                    "-- add summon icons to Status Icon indicator (boolean, retail only)\n"..
+                    "CELL_SUMMON_ICONS_ENABLED = false\n\n"..
+                    "-- use separate width and height for custom indicator icons (boolean)\n"..
+                    "CELL_RECTANGULAR_CUSTOM_INDICATOR_ICONS = false",
+            }
+        end
 
         -- general --------------------------------------------------------------------------------
         if type(CellDB["general"]) ~= "table" then

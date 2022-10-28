@@ -6,16 +6,20 @@ local P = Cell.pixelPerfectFuncs
 local codeSnippetsFrame
 local topPane, codePane, bottomPane, renameEB, newBtn, errorPopup
 local buttons = {}
-local selected
+local selected, forceLoadSelected = 0, true
 local LoadList, LoadSnippet, RunSnippet
 
 local function CreateCodeSnippetsFrame()
-    codeSnippetsFrame = Cell:CreateMovableFrame("Cell "..L["Code Snippets"], "CellCodeSnippetsFrame", 640, 550, "HIGH")
+    codeSnippetsFrame = Cell:CreateMovableFrame("Cell "..L["Code Snippets"], "CellCodeSnippetsFrame", 641, 550, "HIGH")
     Cell.frames.codeSnippetsFrame = codeSnippetsFrame
     codeSnippetsFrame:SetToplevel(true)
     codeSnippetsFrame:SetPoint("CENTER")
 
     P:SetEffectiveScale(codeSnippetsFrame)
+
+    local reloadBtn = Cell:CreateButton(codeSnippetsFrame.header, "Reload", "blue", {70, 20})
+    reloadBtn:SetPoint("TOPRIGHT", codeSnippetsFrame.header.closeBtn, "TOPLEFT", P:Scale(1), 0)
+    reloadBtn:SetScript("OnClick", ReloadUI)
 
     local tips = Cell:CreateScrollTextFrame(codeSnippetsFrame, "|cffb7b7b7"..L["SNIPPETS_TIPS"])
     tips:SetPoint("TOPLEFT", 10, -10)
@@ -40,7 +44,7 @@ local function CreateCodeSnippetsFrame()
     topPane:SetHeight(20)
 
     -- add
-    newBtn = Cell:CreateButton(topPane, "", "accent-hover", {155, 20})
+    newBtn = Cell:CreateButton(topPane, "", "accent-hover", {156, 20})
     newBtn.tex = newBtn:CreateTexture(nil, "ARTWORK")
     newBtn.tex:SetPoint("CENTER")
     newBtn.tex:SetSize(12, 12)
@@ -51,6 +55,8 @@ local function CreateCodeSnippetsFrame()
             ["autorun"] = false,
             ["code"] = "\n\n", -- NOTE: FAIAP
         })
+        selected = #CellDB["snippets"]
+        forceLoadSelected = true
         LoadList()
     end)
 
@@ -117,11 +123,9 @@ local function CreateCodeSnippetsFrame()
     -- codePane.eb:SetSpacing(3)
 
     codePane.eb:HookScript("OnTextChanged", function(self, userChanged)
-        if selected then
-            local changed =  CellDB["snippets"][selected]["code"] ~= codePane:GetText()
-            saveBtn:SetEnabled(changed)
-            discardBtn:SetEnabled(changed)
-        end
+        local changed =  CellDB["snippets"][selected]["code"] ~= codePane:GetText()
+        saveBtn:SetEnabled(changed)
+        discardBtn:SetEnabled(changed)
     end)
 
     codePane.eb:SetScript("OnEditFocusGained", function()
@@ -174,16 +178,17 @@ local function CreateCodeSnippetsFrame()
 end
 
 LoadList = function()
+    -- built-in
+    if not buttons[0] then
+        buttons[0] = Cell:CreateButton(topPane, "Cell", "accent-hover", {156, 20})
+        buttons[0].id = 0 -- for highlight
+        buttons[0]:SetPoint("TOPLEFT")
+    end
+
+    -- user created
     for i, t in ipairs(CellDB["snippets"]) do
         if not buttons[i] then
-            local width
-            if i % 4 == 0 then
-                width = 155
-            else
-                width = 156
-            end
-
-            buttons[i] = Cell:CreateButton(topPane, "", "accent-hover", {width, 20})
+            buttons[i] = Cell:CreateButton(topPane, "", "accent-hover", {156, 20})
             buttons[i].id = i -- for highlight
             
             -- rename
@@ -232,12 +237,12 @@ LoadList = function()
             buttons[i].del:SetScript("OnClick", function()
                 if IsShiftKeyDown() then
                     tremove(CellDB["snippets"], i)
-                    if selected then
-                        if selected == i then -- delete selected
-                            selected = nil
-                        elseif selected > i then -- before selected
-                            selected = selected - 1
-                        end
+                    if selected == i then -- delete selected
+                        selected = 0
+                        forceLoadSelected = true
+                    elseif selected > i then -- before selected
+                        selected = selected - 1
+                        renameEB:Hide()
                     end
                     LoadList()
                 end
@@ -268,9 +273,7 @@ LoadList = function()
         buttons[i].label:SetText(i.."."..t["name"])
 
         buttons[i]:ClearAllPoints()
-        if i == 1 then
-            buttons[i]:SetPoint("TOPLEFT")
-        elseif i % 4 == 1 then
+        if i % 4 == 0 then
             buttons[i]:SetPoint("TOPLEFT", buttons[i-4], "BOTTOMLEFT", 0, 1)
         else
             buttons[i]:SetPoint("TOPLEFT", buttons[i-1], "TOPRIGHT", -1, 0)
@@ -283,12 +286,12 @@ LoadList = function()
     local total = #CellDB["snippets"]
     if total == 0 then
         newBtn:ClearAllPoints()
-        newBtn:SetPoint("TOPLEFT")
+        newBtn:SetPoint("TOPLEFT", buttons[0], "TOPRIGHT", -1, 0)
         newBtn:Show()
-    elseif total == 20 then
+    elseif total == 19 then
         newBtn:ClearAllPoints()
         newBtn:Hide()
-    elseif total % 4 == 0 then
+    elseif (total + 1) % 4 == 0 then
         newBtn:ClearAllPoints()
         newBtn:SetPoint("TOPLEFT", buttons[total-3], "BOTTOMLEFT", 0, 1)
         newBtn:Show()
@@ -300,29 +303,18 @@ LoadList = function()
 
     -- highlight
     local Highlight = Cell:CreateButtonGroup(buttons, function(index)
-        renameEB:Hide()
-        errorPopup:Hide()
         LoadSnippet(index)
     end)
 
-    if selected then
-        Highlight(selected)
-    else
-        Highlight()
-        bottomPane.saveBtn:SetEnabled(false)
-        bottomPane.discardBtn:SetEnabled(false)
-        bottomPane.runBtn:SetEnabled(false)
-        codePane:SetEnabled(false)
-        codePane:SetText("")
-        errorPopup:Hide()
-    end
+    Highlight(selected)
+    LoadSnippet(selected)
 
     -- update height
     local rows
-    if total == 20 then
+    if total == 19 then
         rows = 5
     else
-        rows = math.ceil((total+1) / 4)
+        rows = math.ceil((total+2) / 4)
     end
     topPane:SetHeight(rows*20 - (rows-1))
     
@@ -337,13 +329,16 @@ LoadList = function()
 end
 
 LoadSnippet = function(index)
-    if selected ~= index then
+    if selected ~= index or forceLoadSelected then
         selected = index
+        forceLoadSelected = false
         codePane:SetText(CellDB["snippets"][index]["code"])
         codePane:SetEnabled(true)
         bottomPane.runBtn:SetEnabled(true)
         bottomPane.saveBtn:SetEnabled(false)
         bottomPane.discardBtn:SetEnabled(false)
+        renameEB:Hide()
+        errorPopup:Hide()
     end
 end
 
@@ -362,6 +357,7 @@ end
 function F:ShowCodeSnippets()
     if not codeSnippetsFrame then
         CreateCodeSnippetsFrame()
+        P:PixelPerfectPoint(codeSnippetsFrame)
         LoadList()
     end
 
@@ -373,7 +369,8 @@ function F:ShowCodeSnippets()
 end
 
 function F:RunSnippets()
-    for i, t in pairs(CellDB["snippets"]) do
+    for i = 0, #CellDB["snippets"] do
+        local t = CellDB["snippets"][i]
         if t["autorun"] then
             local errorMsg = RunSnippet(t["code"])
             if errorMsg then
