@@ -1231,7 +1231,7 @@ local function UpdateAppearance(which)
     end
 
     -- preview
-    if init and previewButton:IsVisible() then
+    if which ~= "highlightColor" and which ~= "highlightSize" and init and previewButton:IsVisible() then
         UpdatePreviewButton()
     end
 end
