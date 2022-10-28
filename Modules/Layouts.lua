@@ -744,8 +744,15 @@ local function UpdateSpotlightPreview()
         return
     end
 
+    local width, height
+    if selectedLayoutTable["spotlight"][4] then
+        width, height = unpack(selectedLayoutTable["spotlight"][5])
+    else
+        width, height = unpack(selectedLayoutTable["size"])
+    end
+
     -- update spotlightPreview point
-    P:Size(spotlightPreview, selectedLayoutTable["size"][1], selectedLayoutTable["size"][2])
+    P:Size(spotlightPreview, width, height)
     spotlightPreview:ClearAllPoints()
     spotlightPreviewName:ClearAllPoints()
     
@@ -822,11 +829,11 @@ local function UpdateSpotlightPreview()
             unitSpacing = -spacing
         end
 
-        P:Size(header, selectedLayoutTable["size"][1], selectedLayoutTable["size"][2]*5+abs(unitSpacing)*4)
+        P:Size(header, width, height*5+abs(unitSpacing)*4)
         header:SetPoint(point)
         
         for i = 1, 5 do
-            P:Size(header[i], selectedLayoutTable["size"][1], selectedLayoutTable["size"][2])
+            P:Size(header[i], width, height)
             header[i]:ClearAllPoints()
 
             if i == 1 then
@@ -852,11 +859,11 @@ local function UpdateSpotlightPreview()
             unitSpacing = -spacing
         end
 
-        P:Size(header, selectedLayoutTable["size"][1]*5+abs(unitSpacing)*4, selectedLayoutTable["size"][2])
+        P:Size(header, width*5+abs(unitSpacing)*4, height)
         header:SetPoint(point)
 
         for i = 1, 5 do
-            P:Size(header[i], selectedLayoutTable["size"][1], selectedLayoutTable["size"][2])
+            P:Size(header[i], width, height)
             header[i]:ClearAllPoints()
 
             if i == 1 then
@@ -1667,6 +1674,7 @@ local function CreateButtonSizePane()
         if selectedLayout == Cell.vars.currentLayout then
             Cell:Fire("UpdateLayout", selectedLayout, "spotlightSize")
         end
+        UpdateSpotlightPreview()
     end)
     spotlightSizeCB:SetPoint("TOPLEFT", 5, -40)
 
@@ -1676,6 +1684,7 @@ local function CreateButtonSizePane()
         if selectedLayout == Cell.vars.currentLayout then
             Cell:Fire("UpdateLayout", selectedLayout, "spotlightSize")
         end
+        UpdateSpotlightPreview()
     end)
     spotlightWidthSlider:SetPoint("TOPLEFT", spotlightSizeCB, "BOTTOMLEFT", 0, -36)
     
@@ -1685,6 +1694,7 @@ local function CreateButtonSizePane()
         if selectedLayout == Cell.vars.currentLayout then
             Cell:Fire("UpdateLayout", selectedLayout, "spotlightSize")
         end
+        UpdateSpotlightPreview()
     end)
     spotlightHeightSlider:SetPoint("TOPLEFT", spotlightWidthSlider, "BOTTOMLEFT", 0, -40)
 
