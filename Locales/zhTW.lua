@@ -96,6 +96,8 @@ L["Color Duration Text"] = "著色持續時間文字"
 L["Common"] = "共用"
 L["Condition"] = "條件"
 L["Confirm"] = "確認"
+--[[Translation missing --]]
+--[[ L["Conflicts Detected!"] = "Conflicts Detected!"--]] 
 L["Consumables"] = "消耗品"
 L["Contains"] = "包含"
 L["Copy"] = "複製"
@@ -332,6 +334,8 @@ L["ReadyCheck and PullTimer buttons"] = "準備確認和開怪倒數按鈕"
 L["readyCheckTips"] = "\n|r準備確認\n左鍵: |cffffffff準備確認|r\n右鍵: |cffffffff角色職責確認|r"
 L["Rect"] = "矩形"
 L["Remaining Time <"] = "剩餘時間 <"
+--[[Translation missing --]]
+--[[ L["Remove"] = "Remove"--]] 
 L["Rename"] = "更名"
 L["Rename indicator"] = "重新命名指示器"
 L["Rename layout"] = "重新名命版面配置"

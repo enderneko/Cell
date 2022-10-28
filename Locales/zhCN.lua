@@ -214,6 +214,8 @@ L["New"] = "新建"
 L["Save"] = "保存"
 L["Discard"] = "撤销"
 L["clickcastingsHints"] = "左键：编辑\n右键：删除"
+L["Conflicts Detected!"] = "发现冲突！"
+L["Remove"] = "移除"
 
 L["Left"] = "左键"
 L["Right"] = "右键"
@@ -590,7 +592,7 @@ L["Click to view recent changelogs"] = "点击查看近期更新记录"
 L["Click to view older changelogs"] = "点击查看远古更新记录"
 L["CHANGELOGS"] = [[
     <h1>r133-release (Oct 28, 2022, 05:15 GMT+8)</h1>
-    <p>* Bug fixes.</p>
+    <p>* 修bug。</p>
     <br/>
 
     <h1>r132-release (Oct 27, 2022, 19:07 GMT+8)</h1>

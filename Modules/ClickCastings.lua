@@ -1073,6 +1073,39 @@ LoadProfile = function(isCommon)
 end
 
 -------------------------------------------------
+-- check conflicts
+-------------------------------------------------
+function CheckConflicts()
+    local selfCast = GetModifiedClick("SELFCAST")
+    -- local focusCast = GetModifiedClick("FOCUSCAST")
+
+    local selfCastMsg, focusCastMsg
+    if selfCast ~= "NONE" then
+        selfCastMsg = AUTO_SELF_CAST_KEY_TEXT..": |cFFFFD100"..selfCast.."|r\n"
+    end
+    -- if focusCast ~= "NONE" then
+    --     focusCastMsg = FOCUS_CAST_KEY_TEXT..": |cFFFFD100"..focusCast.."|r\n"
+    -- end
+
+    if selfCastMsg or focusCastMsg then
+        local msg = "|cFFFF3030"..L["Conflicts Detected!"].."|r\n"..(selfCastMsg or "")..(focusCastMsg or "")..
+            "\n|cFFFF3030"..L["Yes"].."|r - "..L["Remove"].."\n".."|cFFFF3030"..L["No"].."|r - "..L["Cancel"]
+
+        local popup = Cell:CreateConfirmPopup(clickCastingsTab, 200, msg, function(self)
+            --! NOTE: show-set-hide or commit
+            -- ShowUIPanel(SettingsPanel)
+            -- Settings.OpenToCategory(8)
+            Settings.SetValue("SELFCAST", "NONE", true)
+            -- HideUIPanel(SettingsPanel)
+            SettingsPanel:Commit()
+            -- SetModifiedClick("SELFCAST", "NONE")
+            -- SetModifiedClick("FOCUSCAST", "NONE")
+        end, nil, true)
+        popup:SetPoint("TOPLEFT", 117, -90)
+    end
+end
+
+-------------------------------------------------
 -- functions
 -------------------------------------------------
 local init
@@ -1092,6 +1125,10 @@ end
 Cell:RegisterCallback("ShowOptionsTab", "ClickCastingsTab_ShowTab", ShowTab)
 
 clickCastingsTab:SetScript("OnShow", function()
+    if Cell.isRetail then
+        CheckConflicts()
+    end
+
     if loaded then return end
 
     loaded = true
