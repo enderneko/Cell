@@ -583,16 +583,20 @@ function addon:CreateButton(parent, text, buttonColor, size, noBorder, noBackgro
     end
 
     -- click sound
-    b:SetScript("PostClick", function(self, button, down)
-        --! NOTE: ActionButtonUseKeyDown will affect OnClick
-        if template and strfind(template, "Secure") then
-            if down == GetCVarBool("ActionButtonUseKeyDown") then
+    if Cell.isRetail then
+        b:SetScript("PostClick", function(self, button, down)
+            --! NOTE: ActionButtonUseKeyDown will affect OnClick
+            if template and strfind(template, "Secure") then
+                if down == GetCVarBool("ActionButtonUseKeyDown") then
+                    PlaySound(SOUNDKIT.U_CHAT_SCROLL_BUTTON)
+                end
+            else
                 PlaySound(SOUNDKIT.U_CHAT_SCROLL_BUTTON)
             end
-        else
-            PlaySound(SOUNDKIT.U_CHAT_SCROLL_BUTTON)
-        end
-    end)
+        end)
+    else
+        b:SetScript("PostClick", function() PlaySound(SOUNDKIT.U_CHAT_SCROLL_BUTTON) end)
+    end
 
     addon:SetTooltips(b, "ANCHOR_TOPLEFT", 0, 3, ...)
 
