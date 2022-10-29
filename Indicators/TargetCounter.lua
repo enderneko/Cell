@@ -65,12 +65,19 @@ local function StartTicker()
 
         -- update indicator
         for guid in pairs(Cell.vars.guids) do
-            local b = F:GetUnitButtonByGUID(guid)
-            if b then
+            local b1, b2 = F:GetUnitButtonByGUID(guid)
+            if b1 then
                 if counter[guid] then
-                    b.indicators.targetCounter:SetCount(F:Getn(counter[guid]))
+                    b1.indicators.targetCounter:SetCount(F:Getn(counter[guid]))
                 else
-                    b.indicators.targetCounter:SetCount(0)
+                    b1.indicators.targetCounter:SetCount(0)
+                end
+            end
+            if b2 then
+                if counter[guid] then
+                    b2.indicators.targetCounter:SetCount(F:Getn(counter[guid]))
+                else
+                    b2.indicators.targetCounter:SetCount(0)
                 end
             end
         end

@@ -325,6 +325,8 @@ L["Raid Debuffs"] = "副本減益"
 L["Raid Debuffs updated: %s."] = "已更新團隊減益: %s。"
 L["Raid Icon (player)"] = "團隊圖示 (玩家)"
 L["Raid Icon (target)"] = "團隊圖示 (目標)"
+--[[Translation missing --]]
+--[[ L["Raid Pets"] = "Raid Pets"--]] 
 L["Raid Tools"] = "團隊工具"
 L["RAID_DEBUFFS_TIPS"] = "提示: [拖曳] 減益可以調整順序 [點兩下] 副本名稱可以打開冒險指南 [Shift+左鍵] 副本或首領名稱可以分享減益清單 [Alt+左鍵] 副本或首領名稱可以重置減益清單。一般減益的優先順序比首領減益的優先順序更高。"
 L["raidRosterTips"] = "[右鍵] 助理，[Alt+右鍵] 移除。"
@@ -387,8 +389,10 @@ L["Show duration text instead of icon animation"] = "顯示持續時間數字而
 L["Show friendly NPCs in a separate frame"] = "將友方 NPC 顯示在一個獨立的框架中"
 L["Show NPC Frame"] = "顯示 NPC 框架"
 L["Show Party"] = "5人隊伍時要顯示"
-L["Show Party Pets"] = "顯示隊伍寵物"
-L["Show pets while in a party"] = "在隊伍中時顯示寵物"
+--[[Translation missing --]]
+--[[ L["Show Party/Arena Pets"] = "Show Party/Arena Pets"--]] 
+--[[Translation missing --]]
+--[[ L["Show Raid Pets"] = "Show Raid Pets"--]] 
 L["Show Solo"] = "單人時要顯示"
 L["Show units you care about more in a separate frame"] = "在單獨的框架中顯示您更關心的單位"
 L["Show while in a party"] = "在隊伍中時顯示"

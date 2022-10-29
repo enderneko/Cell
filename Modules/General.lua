@@ -12,7 +12,7 @@ generalTab:Hide()
 -------------------------------------------------
 -- visibility
 -------------------------------------------------
-local showSoloCB, showPartyCB, showPartyPetsCB, hideBlizzardPartyCB, hideBlizzardRaidCB
+local showSoloCB, showPartyCB, hideBlizzardPartyCB, hideBlizzardRaidCB
 
 local function CreateVisibilityPane()
     local visibilityPane = Cell:CreateTitledPane(generalTab, L["Visibility"], 205, 131)
@@ -27,16 +27,9 @@ local function CreateVisibilityPane()
     showPartyCB = Cell:CreateCheckButton(visibilityPane, L["Show Party"], function(checked, self)
         CellDB["general"]["showParty"] = checked
         Cell:Fire("UpdateVisibility", "party")
-        showPartyPetsCB:SetEnabled(checked)
     end, L["Show Party"], L["Show while in a party"], L["To open options frame, use /cell options"])
     showPartyCB:SetPoint("TOPLEFT", showSoloCB, "BOTTOMLEFT", 0, -7)
     
-    showPartyPetsCB = Cell:CreateCheckButton(visibilityPane, L["Show Party Pets"], function(checked, self)
-        CellDB["general"]["showPartyPets"] = checked
-        Cell:Fire("UpdateVisibility", "pets")
-    end, L["Show Party Pets"], L["Show pets while in a party"])
-    showPartyPetsCB:SetPoint("TOPLEFT", showPartyCB, "BOTTOMLEFT", 0, -7)
-
     hideBlizzardPartyCB = Cell:CreateCheckButton(visibilityPane, L["Hide Blizzard Party"], function(checked, self)
         CellDB["general"]["hideBlizzardParty"] = checked
     
@@ -45,7 +38,7 @@ local function CreateVisibilityPane()
         end, nil, true)
         popup:SetPoint("TOPLEFT", generalTab, 117, -77)
     end, L["Hide Blizzard Frames"], L["Require reload of the UI"])
-    hideBlizzardPartyCB:SetPoint("TOPLEFT", showPartyPetsCB, "BOTTOMLEFT", 0, -7)
+    hideBlizzardPartyCB:SetPoint("TOPLEFT", showPartyCB, "BOTTOMLEFT", 0, -7)
    
     hideBlizzardRaidCB = Cell:CreateCheckButton(visibilityPane, L["Hide Blizzard Raid"], function(checked, self)
         CellDB["general"]["hideBlizzardRaid"] = checked
@@ -514,8 +507,6 @@ local function ShowTab(tab)
         -- visibility
         showSoloCB:SetChecked(CellDB["general"]["showSolo"])
         showPartyCB:SetChecked(CellDB["general"]["showParty"])
-        showPartyPetsCB:SetChecked(CellDB["general"]["showPartyPets"])
-        showPartyPetsCB:SetEnabled(CellDB["general"]["showParty"])
         hideBlizzardPartyCB:SetChecked(CellDB["general"]["hideBlizzardParty"])
         hideBlizzardRaidCB:SetChecked(CellDB["general"]["hideBlizzardRaid"])
 

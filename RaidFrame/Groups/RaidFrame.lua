@@ -172,11 +172,9 @@ local function RaidFrame_UpdateLayout(layout, which)
     init = true
 
     -- arena pets
-    if Cell.vars.inBattleground == 5 then
-        if CellDB["general"]["showPartyPets"] then
-            for i = 1, 3 do
-                RegisterAttributeDriver(arenaPetButtons[i], "state-visibility", "[@raidpet"..i..", exists] show; hide")
-            end
+    if Cell.vars.inBattleground == 5 and layout["pet"][1] then
+        for i = 1, 3 do
+            RegisterAttributeDriver(arenaPetButtons[i], "state-visibility", "[@raidpet"..i..", exists] show; hide")
         end
     else
         for i = 1, 3 do
@@ -210,8 +208,8 @@ local function RaidFrame_UpdateLayout(layout, which)
 
     if not which or which == "size" or which == "petSize" or which == "power" or which == "barOrientation" then
         for i = 1, 3 do
-            if layout["petSize"][1] then
-                P:Size(arenaPetButtons[i], layout["petSize"][2], layout["petSize"][3])
+            if layout["pet"][4] then
+                P:Size(arenaPetButtons[i], layout["pet"][5][1], layout["pet"][5][2])
             else
                 P:Size(arenaPetButtons[i], width, height)
             end
@@ -401,19 +399,3 @@ local function RaidFrame_UpdateLayout(layout, which)
     end
 end
 Cell:RegisterCallback("UpdateLayout", "RaidFrame_UpdateLayout", RaidFrame_UpdateLayout)
-
-local function RaidFrame_UpdateVisibility(which)
-    if which == "pets" and Cell.vars.inBattleground == 5 then
-        if CellDB["general"]["showPartyPets"] then
-            for i = 1, 3 do
-                RegisterAttributeDriver(arenaPetButtons[i], "state-visibility", "[@raidpet"..i..", exists] show; hide")
-            end
-        else
-            for i = 1, 3 do
-                UnregisterAttributeDriver(arenaPetButtons[i], "state-visibility")
-                arenaPetButtons[i]:Hide()
-            end
-        end
-    end
-end
-Cell:RegisterCallback("UpdateVisibility", "RaidFrame_UpdateVisibility", RaidFrame_UpdateVisibility)

@@ -638,6 +638,13 @@ function F:IterateAllUnitButtons(func, updateCurrentGroupOnly)
         for _, b in pairs(Cell.unitButtons.arena) do
             func(b)
         end
+
+        -- raid pet
+        for index, b in pairs(Cell.unitButtons.raidpet) do
+            if index ~= "units" then
+                func(b)
+            end
+        end
     end
 
     -- npc
@@ -663,7 +670,11 @@ function F:GetUnitButtonByUnit(unit)
     end
 
     if Cell.vars.groupType == "raid" then
-        normal = Cell.unitButtons.raid.units[unit] or Cell.unitButtons.npc.units[unit] or Cell.unitButtons.arena[unit]
+        if Cell.vars.inBattleground == 5 then
+            normal = Cell.unitButtons.raid.units[unit] or Cell.unitButtons.npc.units[unit] or Cell.unitButtons.arena[unit]
+        else
+            normal = Cell.unitButtons.raid.units[unit] or Cell.unitButtons.npc.units[unit] or Cell.unitButtons.raidpet.units[unit]
+        end
     elseif Cell.vars.groupType == "party" then
         normal = Cell.unitButtons.party.units[unit] or Cell.unitButtons.npc.units[unit]
     else -- solo

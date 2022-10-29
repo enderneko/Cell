@@ -53,11 +53,11 @@ for i = 1, 8 do
 
     button:SetAttribute("unit", "boss"..i)
     -- RegisterAttributeDriver(button, "state-visibility", "[@boss"..i..", help] show; hide")
-    if i == 1 then
-        button:SetAttribute("unit", "player")
-        RegisterUnitWatch(button)
-    end
     -- for testing ------------------------------
+    -- if i == 1 then
+    --     button:SetAttribute("unit", "player")
+    --     RegisterUnitWatch(button)
+    -- end
     -- if i == 7 then
     --     button:SetAttribute("unit", "player")
     --     RegisterUnitWatch(button)
@@ -353,7 +353,17 @@ local function NPCFrame_UpdateLayout(layout, which)
         end
     end
 
-    if not which or which == "spacing" or which == "orientation" or which == "anchor" or which == "npc" then
+    if not which or which == "pet" then
+        if layout["pet"][1] then
+            npcFrame:SetFrameRef("party", CellPartyFrameHeaderUnitButton1Pet)
+            anchors["party"] = CellPartyFrameHeaderUnitButton1Pet
+        else
+            npcFrame:SetFrameRef("party", CellPartyFrameHeaderUnitButton1)
+            anchors["party"] = CellPartyFrameHeaderUnitButton1
+        end
+    end
+
+    if not which or which == "spacing" or which == "orientation" or which == "anchor" or which == "npc" or which == "pet" then
         local groupType = F:GetGroupType()
         npcFrame:ClearAllPoints()
 
@@ -463,7 +473,9 @@ local function NPCFrame_UpdateLayout(layout, which)
                 last = button
             end
         end
+    end
 
+    if not which or which == "anchor" or which == "npc" then
         UpdatePosition()
     end
 
@@ -498,20 +510,6 @@ local function NPCFrame_UpdateVisibility(which)
         local showSolo = CellDB["general"]["showSolo"] and "show" or "hide"
         local showParty = CellDB["general"]["showParty"] and "show" or "hide"
         RegisterAttributeDriver(npcFrame, "state-visibility", "[group:raid] show; [group:party] "..showParty.."; "..showSolo)
-    end
-
-    if not which or which == "pets" then
-        if CellDB["general"]["showPartyPets"] then
-            npcFrame:SetFrameRef("party", CellPartyFrameHeaderUnitButton1Pet)
-            anchors["party"] = CellPartyFrameHeaderUnitButton1Pet
-        else
-            npcFrame:SetFrameRef("party", CellPartyFrameHeaderUnitButton1)
-            anchors["party"] = CellPartyFrameHeaderUnitButton1
-        end
-        -- update now if current in a party
-        if Cell.vars.groupType == "party" then
-            NPCFrame_UpdateLayout(Cell.vars.currentLayout, "spacing")
-        end
     end
 end
 Cell:RegisterCallback("UpdateVisibility", "NPCFrame_UpdateVisibility", NPCFrame_UpdateVisibility)

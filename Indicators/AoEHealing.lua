@@ -31,8 +31,9 @@ eventFrame:SetScript("OnEvent", function()
         if destGUID then
             -- print(sourceGUID, playerSummoned[sourceGUID])
             if (sourceGUID == Cell.vars.playerGUID and (I:IsAoEHealing(spellName) or I:IsAoEHealing(spellId))) or playerSummoned[sourceGUID] then
-                local b = F:GetUnitButtonByGUID(destGUID)
-                if b then b.indicators.aoeHealing:ShowUp() end
+                local b1, b2 = F:GetUnitButtonByGUID(destGUID)
+                if b1 then b1.indicators.aoeHealing:ShowUp() end
+                if b2 then b2.indicators.aoeHealing:ShowUp() end
             end
         end
     end

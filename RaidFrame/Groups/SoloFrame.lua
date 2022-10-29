@@ -29,16 +29,16 @@ local function SoloFrame_UpdateLayout(layout, which)
     if not which or which == "size" then
         local width, height = unpack(layout["size"])
         P:Size(playerButton, width, height)
-        if layout["petSize"][1] then
-            P:Size(petButton, layout["petSize"][2], layout["petSize"][3])
+        if layout["pet"][4] then
+            P:Size(petButton, layout["pet"][5][1], layout["pet"][5][2])
         else
             P:Size(petButton, width, height)
         end
     end
 
     if which == "petSize" then
-        if layout["petSize"][1] then
-            P:Size(petButton, layout["petSize"][2], layout["petSize"][3])
+        if layout["pet"][4] then
+            P:Size(petButton, layout["pet"][5][1], layout["pet"][5][2])
         else
             P:Size(petButton, layout["size"][1], layout["size"][2])
         end

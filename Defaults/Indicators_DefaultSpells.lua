@@ -587,6 +587,7 @@ local cleuAuras = {}
 
 function I:UpdateCleuAuras(t)
     -- reset
+    wipe(cleuAuras)
     -- cleuAuras = F:Copy(cleus)
     -- insert
     for _, c in pairs(t) do

@@ -28,10 +28,9 @@ eventFrame:SetScript("OnEvent", function(self, event, unit, castGUID, spellID)
     end
 
     if Cell.vars.consumables[spellID] then
-        local b = F:GetUnitButtonByUnit(unit)
-        if b then
-            b.indicators.consumables:ShowUp(unpack(Cell.vars.consumables[spellID]))
-        end
+        local b1, b2 = F:GetUnitButtonByUnit(unit)
+        if b1 then b1.indicators.consumables:ShowUp(unpack(Cell.vars.consumables[spellID])) end
+        if b2 then b2.indicators.consumables:ShowUp(unpack(Cell.vars.consumables[spellID])) end
     end
 end)
 

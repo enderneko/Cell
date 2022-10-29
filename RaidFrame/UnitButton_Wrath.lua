@@ -2,7 +2,7 @@
 -- File: UnitButton_Wrath.lua
 -- Author: enderneko (enderneko-dev@outlook.com)
 -- File Created: 2022/08/20 19:44:26 +0800
--- Last Modified: 2022/10/27 18:33:48 +0800
+-- Last Modified: 2022/10/30 04:33:47 +0800
 --]]
 
 local _, Cell = ...
@@ -1399,7 +1399,7 @@ local function UnitButton_UpdateHealPrediction(self)
 
     local value = 0
 
-    if useLibHealComm then
+    if useLibHealComm and HealComm then
         --! NOTE: use LibHealComm
         if self.__displayedGuid then
             local modifier = HealComm:GetHealModifier(self.__displayedGuid) or 1
@@ -1734,9 +1734,12 @@ local function HealComm_UpdateHealPrediction(_, event, casterGUID, spellID, heal
     -- print(event, casterGUID, spellID, healType, endTime, ...)
     -- update incomingHeal
     for i = 1, select("#", ...) do
-        local b = F:GetUnitButtonByGUID(select(i, ...))
-        if b then
-            UnitButton_UpdateHealPrediction(b)
+        local b1, b2 = F:GetUnitButtonByGUID(select(i, ...))
+        if b1 then
+            UnitButton_UpdateHealPrediction(b1)
+        end
+        if b2 then
+            UnitButton_UpdateHealPrediction(b2)
         end
     end
 end
@@ -1787,9 +1790,12 @@ local function UnitButton_UpdateShieldAbsorbs(self)
 end
 
 local function UpdateShield(guid)
-    local b = F:GetUnitButtonByGUID(guid)
-    if b then
-        UnitButton_UpdateShieldAbsorbs(b)
+    local b1, b2 = F:GetUnitButtonByGUID(guid)
+    if b1 then
+        UnitButton_UpdateShieldAbsorbs(b1)
+    end
+    if b2 then
+        UnitButton_UpdateShieldAbsorbs(b2)
     end
 end
 

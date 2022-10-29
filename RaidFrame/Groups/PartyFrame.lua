@@ -93,8 +93,8 @@ local function PartyFrame_UpdateLayout(layout, which)
     layout = CellDB["layouts"][layout]
 
     -- anchor
-    local point, playerAnchorPoint, petAnchorPoint, playerSpacing, petSpacing, headerPoint
     if not which or which == "spacing" or which == "orientation" or which == "anchor" then
+        local point, playerAnchorPoint, petAnchorPoint, playerSpacing, petSpacing, headerPoint
         if layout["orientation"] == "vertical" then
             if layout["anchor"] == "BOTTOMLEFT" then
                 point, playerAnchorPoint, petAnchorPoint = "BOTTOMLEFT", "TOPLEFT", "BOTTOMRIGHT"
@@ -176,16 +176,16 @@ local function PartyFrame_UpdateLayout(layout, which)
                 header:SetAttribute("buttonWidth", P:Scale(width))
                 header:SetAttribute("buttonHeight", P:Scale(height))
                 P:Size(petButton, width, height)
-                if layout["petSize"][1] then
-                    P:Size(petButton, layout["petSize"][2], layout["petSize"][3])
+                if layout["pet"][4] then
+                    P:Size(petButton, layout["pet"][5][1], layout["pet"][5][2])
                 else
                     P:Size(petButton, width, height)
                 end
             end
 
             if which == "petSize" then
-                if layout["petSize"][1] then
-                    P:Size(petButton, layout["petSize"][2], layout["petSize"][3])
+                if layout["pet"][4] then
+                    P:Size(petButton, layout["pet"][5][1], layout["pet"][5][2])
                 else
                     P:Size(petButton, layout["size"][1], layout["size"][2])
                 end
@@ -203,6 +203,20 @@ local function PartyFrame_UpdateLayout(layout, which)
             end
         end
     end
+
+    if not which or which == "pet" then
+        header:SetAttribute("showPartyPets", layout["pet"][1])
+        if layout["pet"][1] then
+            for i, playerButton in ipairs({header:GetChildren()}) do
+                RegisterUnitWatch(playerButton.petButton)
+            end
+        else
+            for i, playerButton in ipairs({header:GetChildren()}) do
+                UnregisterUnitWatch(playerButton.petButton)
+                playerButton.petButton:Hide()
+            end
+        end
+    end
 end
 Cell:RegisterCallback("UpdateLayout", "PartyFrame_UpdateLayout", PartyFrame_UpdateLayout)
 
@@ -213,20 +227,6 @@ local function PartyFrame_UpdateVisibility(which)
         else
             UnregisterAttributeDriver(partyFrame, "state-visibility")
             partyFrame:Hide()
-        end
-    end
-
-    if not which or which == "pets" then
-        header:SetAttribute("showPartyPets", CellDB["general"]["showPartyPets"])
-        if CellDB["general"]["showPartyPets"] then
-            for i, playerButton in ipairs({header:GetChildren()}) do
-                RegisterUnitWatch(playerButton.petButton)
-            end
-        else
-            for i, playerButton in ipairs({header:GetChildren()}) do
-                UnregisterUnitWatch(playerButton.petButton)
-                playerButton.petButton:Hide()
-            end
         end
     end
 end

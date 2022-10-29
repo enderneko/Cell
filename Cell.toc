@@ -39,6 +39,7 @@ RaidFrame\UnitButton.xml
 RaidFrame\Groups\SoloFrame.lua
 RaidFrame\Groups\PartyFrame.lua
 RaidFrame\Groups\RaidFrame.lua
+RaidFrame\Groups\RaidPetFrame.lua
 RaidFrame\Groups\NPCFrame.lua
 RaidFrame\Groups\SpotlightFrame.lua
 

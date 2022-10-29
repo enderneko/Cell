@@ -2,7 +2,7 @@
 -- File: Layout_Defaults_Wrath.lua
 -- Author: enderneko (enderneko-dev@outlook.com)
 -- File Created: 2022/08/21 04:06:04 +0800
--- Last Modified: 2022/10/27 12:26:29 +0800
+-- Last Modified: 2022/10/30 02:44:49 +0800
 --]]
 
 local addonName, Cell = ...
@@ -40,7 +40,6 @@ Cell.defaults.indicatorIndices = {
 Cell.defaults.layout = {
     -- ["syncWith"] = "layoutName",
     ["size"] = {66, 46},
-    ["petSize"] = {false, 66, 46},
     ["position"] = {},
     ["powerSize"] = 2,
     ["spacing"] = 3,
@@ -52,6 +51,7 @@ Cell.defaults.layout = {
     ["groupSpacing"] = 0,
     ["groupFilter"] = {true, true, true, true, true, true, true, true},
     ["friendlyNPC"] = {true, false, {}},
+    ["pet"] = {true, false, {}, false, {66, 46}}, -- partyPetsEnabled, raidPetsEnabled, raidPetsPosition, sizeEnabled, size
     ["spotlight"] = {false, {}, {}, false, {66, 46}}, -- enabled, units, position, sizeEnabled, size
     ["powerFilters"] = {
         ["DEATHKNIGHT"] = {["TANK"] = true, ["DAMAGER"] = true},

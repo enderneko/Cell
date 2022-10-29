@@ -185,6 +185,7 @@ for i = 1, 5 do
     -- b:SetAttribute("unit", "player")
     -- RegisterUnitWatch(b)
     b:SetAllPoints(placeholders[i])
+    b.isSpotlight = true --! NOTE: prevent overwrite Cell.vars.guids and Cell.vars.names
 
     --! 天杀的 Secure Codes
     SecureHandlerSetFrameRef(b, "placeholder", placeholders[i])

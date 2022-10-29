@@ -15,7 +15,7 @@ local L = Cell.L
 
 -- sharing version check
 Cell.MIN_VERSION = 99
-Cell.MIN_LAYOUTS_VERSION = 133
+Cell.MIN_LAYOUTS_VERSION = 134
 Cell.MIN_INDICATORS_VERSION = 132
 Cell.MIN_DEBUFFS_VERSION = 99
 
@@ -165,7 +165,6 @@ function eventFrame:ADDON_LOADED(arg1)
                 ["tooltipsPosition"] = {"BOTTOMLEFT", "Default", "TOPLEFT", 0, 15},
                 ["showSolo"] = true,
                 ["showParty"] = true,
-                ["showPartyPets"] = true,
                 ["hideBlizzardParty"] = true,
                 ["hideBlizzardRaid"] = true,
                 ["locked"] = false,

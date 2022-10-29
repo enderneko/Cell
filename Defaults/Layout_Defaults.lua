@@ -34,7 +34,6 @@ Cell.defaults.indicatorIndices = {
 Cell.defaults.layout = {
     -- ["syncWith"] = "layoutName",
     ["size"] = {66, 46},
-    ["petSize"] = {false, 66, 46},
     ["position"] = {},
     ["powerSize"] = 2,
     ["spacing"] = 3,
@@ -46,6 +45,7 @@ Cell.defaults.layout = {
     ["groupSpacing"] = 0,
     ["groupFilter"] = {true, true, true, true, true, true, true, true},
     ["friendlyNPC"] = {true, false, {}},
+    ["pet"] = {true, false, {}, false, {66, 46}}, -- partyPetsEnabled, raidPetsEnabled, raidPetsPosition, sizeEnabled, size
     ["spotlight"] = {false, {}, {}, false, {66, 46}}, -- enabled, units, position, sizeEnabled, size
     ["powerFilters"] = {
         ["DEATHKNIGHT"] = {["TANK"] = true, ["DAMAGER"] = true},

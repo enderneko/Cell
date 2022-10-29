@@ -1427,5 +1427,16 @@ function F:Revise()
         end
     end
 
+    -- r134-release add silly raid pets
+    if CellDB["revise"] and dbRevision < 134 then
+        for _, layout in pairs(CellDB["layouts"]) do
+            if not layout["pet"] then
+                layout["pet"] = {CellDB["general"]["showPartyPets"], false, {}, layout["petSize"][1], {layout["petSize"][2], layout["petSize"][3]}} -- partyPetsEnabled, raidPetsEnabled, raidPetsPosition, sizeEnabled, size
+                layout["petSize"] = nil
+            end
+        end
+        CellDB["general"]["showPartyPets"] = nil
+    end
+
     CellDB["revise"] = Cell.version
 end

@@ -1093,27 +1093,39 @@ cleu:SetScript("OnEvent", function()
     local _, subEvent, _, sourceGUID, sourceName, sourceFlags, sourceRaidFlags, destGUID, destName, destFlags, destRaidFlags, spellId, spellName = CombatLogGetCurrentEventInfo()
     -- mirror image
     if spellId == 55342 and F:IsFriend(sourceFlags) then
-        local b = F:GetUnitButtonByGUID(sourceGUID)
+        local b1, b2 = F:GetUnitButtonByGUID(sourceGUID)
         if subEvent == "SPELL_AURA_APPLIED" then
-            if b and b.state.unit then
-                buffs_mirror_image[b.state.unit] = GetTime()
+            if b1 and b1.state.unit then
+                buffs_mirror_image[b1.state.unit] = GetTime()
+            end
+            if b2 and b2.state.unit then
+                buffs_mirror_image[b2.state.unit] = GetTime()
             end
         elseif subEvent == "SPELL_AURA_REMOVED" then
-            if b and b.state.unit then
-                buffs_mirror_image[b.state.unit] = nil
+            if b1 and b1.state.unit then
+                buffs_mirror_image[b1.state.unit] = nil
+            end
+            if b2 and b2.state.unit then
+                buffs_mirror_image[b2.state.unit] = nil
             end
         end
     end
     -- CLEU auras
     if I:CheckCleuAura(spellId) and F:IsFriend(destFlags) then
-        local b = F:GetUnitButtonByGUID(sourceGUID)
+        local b1, b2 = F:GetUnitButtonByGUID(sourceGUID)
         if subEvent == "SPELL_AURA_APPLIED" then
-            if b and b.state.unit then
-                cleuUnits[b.state.unit] = {GetTime(), unpack(I:CheckCleuAura(spellId))}
+            if b1 and b1.state.unit then
+                cleuUnits[b1.state.unit] = {GetTime(), unpack(I:CheckCleuAura(spellId))}
+            end
+            if b2 and b2.state.unit then
+                cleuUnits[b2.state.unit] = {GetTime(), unpack(I:CheckCleuAura(spellId))}
             end
         elseif subEvent == "SPELL_AURA_REMOVED" then
-            if b and b.state.unit then
-                cleuUnits[b.state.unit] = nil
+            if b1 and b1.state.unit then
+                cleuUnits[b1.state.unit] = nil
+            end
+            if b2 and b2.state.unit then
+                cleuUnits[b2.state.unit] = nil
             end
         end
     end
@@ -2158,11 +2170,11 @@ local function UnitButton_OnAttributeChanged(self, name, value)
             -- NOTE: when unitId for this button changes
             if self.__unitGuid then -- self.__unitGuid is deleted when hide
                 -- print("deleteUnitGuid:", self:GetName(), self.state.unit, self.__unitGuid)
-                Cell.vars.guids[self.__unitGuid] = nil
+                if not self.isSpotlight then Cell.vars.guids[self.__unitGuid] = nil end
                 self.__unitGuid = nil
             end
             if self.__unitName then
-                Cell.vars.names[self.__unitName] = nil
+                if not self.isSpotlight then Cell.vars.names[self.__unitName] = nil end
                 self.__unitName = nil
             end
             wipe(self.state)
@@ -2171,7 +2183,7 @@ local function UnitButton_OnAttributeChanged(self, name, value)
         if type(value) == "string" then
             self.state.unit = value
             self.state.displayedUnit = value
-            if string.find(value, "raid") then Cell.unitButtons.raid.units[value] = self end
+            if string.find(value, "^raid%d+$") then Cell.unitButtons.raid.units[value] = self end
             -- for omnicd
             if string.match(value, "raid%d") then
                 local i = string.match(value, "%d")
@@ -2258,11 +2270,11 @@ local function UnitButton_OnHide(self)
     -- NOTE: update Cell.vars.guids
     -- print("hide", self.state.unit, self.__unitGuid, self.__unitName)
     if self.__unitGuid then
-        Cell.vars.guids[self.__unitGuid] = nil
+        if not self.isSpotlight then Cell.vars.guids[self.__unitGuid] = nil end
         self.__unitGuid = nil
     end
     if self.__unitName then
-        Cell.vars.names[self.__unitName] = nil
+        if not self.isSpotlight then Cell.vars.names[self.__unitName] = nil end
         self.__unitName = nil
     end
     self.__displayedGuid = nil
@@ -2305,7 +2317,7 @@ local function UnitButton_OnTick(self)
                 -- NOTE: unit entity changed
                 -- update Cell.vars.guids
                 self.__unitGuid = guid
-                Cell.vars.guids[guid] = self.state.unit
+                if not self.isSpotlight then Cell.vars.guids[guid] = self.state.unit end
 
                 -- NOTE: only save players' names
                 if UnitIsPlayer(self.state.unit) then
@@ -2313,7 +2325,7 @@ local function UnitButton_OnTick(self)
                     local name = GetUnitName(self.state.unit, true)
                     if (name and self.__nameRetries and self.__nameRetries >= 4) or (name and name ~= UNKNOWN and name ~= UNKNOWNOBJECT) then
                         self.__unitName = name
-                        Cell.vars.names[name] = self.state.unit
+                        if not self.isSpotlight then Cell.vars.names[name] = self.state.unit end
                         self.__nameRetries = nil
                     else
                         -- NOTE: update on next tick

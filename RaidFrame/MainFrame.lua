@@ -11,6 +11,9 @@ Cell.unitButtons = {
     ["raid"] = {
         ["units"] = {}, -- NOTE: update in UnitButton_OnAttributeChanged
     },
+    ["raidpet"] = {
+        ["units"] = {}, -- NOTE: update in _initialAttribute-refreshUnitChange
+    },
     ["npc"] = {
         ["units"] = {}, -- NOTE: update on creation
     },
