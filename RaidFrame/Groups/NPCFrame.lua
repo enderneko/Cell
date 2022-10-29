@@ -53,7 +53,10 @@ for i = 1, 8 do
 
     button:SetAttribute("unit", "boss"..i)
     -- RegisterAttributeDriver(button, "state-visibility", "[@boss"..i..", help] show; hide")
-    
+    if i == 1 then
+        button:SetAttribute("unit", "player")
+        RegisterUnitWatch(button)
+    end
     -- for testing ------------------------------
     -- if i == 7 then
     --     button:SetAttribute("unit", "player")
@@ -289,6 +292,47 @@ separateAnchor:SetPoint("TOPLEFT", UIParent, "CENTER")
 -------------------------------------------------
 -- functions
 -------------------------------------------------
+local function UpdatePosition()
+    local layout = Cell.vars.currentLayoutTable
+    
+    -- update npcFrame anchor if separate from main
+    if layout["friendlyNPC"][2] then
+        npcFrame:ClearAllPoints()
+        P:LoadPosition(separateAnchor, layout["friendlyNPC"][3])
+
+        if CellDB["general"]["menuPosition"] == "top_bottom" then
+            P:Size(separateAnchor, 20, 10)
+            if layout["anchor"] == "BOTTOMLEFT" then
+                npcFrame:SetPoint("BOTTOMLEFT", separateAnchor, "TOPLEFT", 0, 4)
+            elseif layout["anchor"] == "BOTTOMRIGHT" then
+                npcFrame:SetPoint("BOTTOMRIGHT", separateAnchor, "TOPRIGHT", 0, 4)
+            elseif layout["anchor"] == "TOPLEFT" then
+                npcFrame:SetPoint("TOPLEFT", separateAnchor, "BOTTOMLEFT", 0, -4)
+            elseif layout["anchor"] == "TOPRIGHT" then
+                npcFrame:SetPoint("TOPRIGHT", separateAnchor, "BOTTOMRIGHT", 0, -4)
+            end
+        else
+            P:Size(separateAnchor, 10, 20)
+            if layout["anchor"] == "BOTTOMLEFT" then
+                npcFrame:SetPoint("BOTTOMLEFT", separateAnchor, "BOTTOMRIGHT", 4, 0)
+            elseif layout["anchor"] == "BOTTOMRIGHT" then
+                npcFrame:SetPoint("BOTTOMRIGHT", separateAnchor, "BOTTOMLEFT", -4, 0)
+            elseif layout["anchor"] == "TOPLEFT" then
+                npcFrame:SetPoint("TOPLEFT", separateAnchor, "TOPRIGHT", 4, 0)
+            elseif layout["anchor"] == "TOPRIGHT" then
+                npcFrame:SetPoint("TOPRIGHT", separateAnchor, "TOPLEFT", -4, 0)
+            end
+        end
+    end
+end
+
+local function UpdateMenu(which)
+    if which == "position" then
+        UpdatePosition()
+    end
+end
+Cell:RegisterCallback("UpdateMenu", "NPCFrame_UpdateMenu", UpdateMenu)
+
 local function NPCFrame_UpdateLayout(layout, which)
     -- if layout ~= Cell.vars.currentLayout then return end
     layout = Cell.vars.currentLayoutTable
@@ -420,18 +464,7 @@ local function NPCFrame_UpdateLayout(layout, which)
             end
         end
 
-        -- update npcFrame anchor if separate from main 
-        if layout["friendlyNPC"][2] then
-            if layout["anchor"] == "BOTTOMLEFT" then
-                npcFrame:SetPoint("BOTTOMLEFT", separateAnchor, "TOPLEFT", 0, 4)
-            elseif layout["anchor"] == "BOTTOMRIGHT" then
-                npcFrame:SetPoint("BOTTOMRIGHT", separateAnchor, "TOPRIGHT", 0, 4)
-            elseif layout["anchor"] == "TOPLEFT" then
-                npcFrame:SetPoint("TOPLEFT", separateAnchor, "BOTTOMLEFT", 0, -4)
-            elseif layout["anchor"] == "TOPRIGHT" then
-                npcFrame:SetPoint("TOPRIGHT", separateAnchor, "BOTTOMRIGHT", 0, -4)
-            end
-        end
+        UpdatePosition()
     end
 
     if not which or which == "npc" then
