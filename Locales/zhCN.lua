@@ -470,6 +470,7 @@ L["Require font support"] = "需要字体支持"
 L["showTooltip"] = "显示鼠标提示"
 L["This will make these icons not click-through-able"] = "将会使这些图标无法点击穿透"
 L["Only one threshold is displayed at a time"] = "同一时间只显示一个阈值"
+L["hideDamager"] = "隐藏伤害输出"
 
 L["left-to-right"] = "从左到右"
 L["right-to-left"] = "从右到左"

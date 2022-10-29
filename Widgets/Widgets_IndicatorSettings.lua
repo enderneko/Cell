@@ -2115,7 +2115,7 @@ local function CreateSetting_RoleTexture(parent)
     local widget
 
     if not settingWidgets["roleTexture"] then
-        widget = addon:CreateFrame("CellIndicatorSettings_RoleTexture", parent, 240, 165)
+        widget = addon:CreateFrame("CellIndicatorSettings_RoleTexture", parent, 240, 180)
         settingWidgets["roleTexture"] = widget
 
         widget.texture = addon:CreateDropdown(widget, 260)

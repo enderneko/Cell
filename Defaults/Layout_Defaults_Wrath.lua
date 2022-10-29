@@ -2,7 +2,7 @@
 -- File: Layout_Defaults_Wrath.lua
 -- Author: enderneko (enderneko-dev@outlook.com)
 -- File Created: 2022/08/21 04:06:04 +0800
--- Last Modified: 2022/10/30 02:44:49 +0800
+-- Last Modified: 2022/10/30 06:22:20 +0800
 --]]
 
 local addonName, Cell = ...
@@ -138,6 +138,7 @@ Cell.defaults.layout = {
             ["indicatorName"] = "roleIcon",
             ["type"] = "built-in",
             ["enabled"] = true,
+            ["hideDamager"] = false,
             ["position"] = {"TOPLEFT", "TOPLEFT", 0, 0},
             ["size"] = {11, 11},
             ["roleTexture"] = {"default", "Interface\\AddOns\\ElvUI\\Core\\Media\\Textures\\Tank.tga", "Interface\\AddOns\\ElvUI\\Core\\Media\\Textures\\Healer.tga", "Interface\\AddOns\\ElvUI\\Core\\Media\\Textures\\DPS.tga"},

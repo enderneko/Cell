@@ -1427,7 +1427,7 @@ function F:Revise()
         end
     end
 
-    -- r134-release add silly raid pets
+    -- r134-release add SILLY raid pets
     if CellDB["revise"] and dbRevision < 134 then
         for _, layout in pairs(CellDB["layouts"]) do
             if not layout["pet"] then

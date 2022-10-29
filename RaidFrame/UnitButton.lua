@@ -236,6 +236,7 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                 -- update role texture
                 if t["roleTexture"] then
                     indicator:SetRoleTexture(t["roleTexture"])
+                    indicator:HideDamager(t["hideDamager"])
                     UnitButton_UpdateRole(b)
                 end
                 -- tooltip
@@ -493,6 +494,11 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                 F:IterateAllUnitButtons(function(b)
                     b.indicators[indicatorName]:SetCircledStackNums(value2)
                     UnitButton_UpdateAuras(b)
+                end, true)
+            elseif value == "hideDamager" then
+                F:IterateAllUnitButtons(function(b)
+                    b.indicators[indicatorName]:HideDamager(value2)
+                    UnitButton_UpdateRole(b)
                 end, true)
             else
                 indicatorCustoms[indicatorName] = value2

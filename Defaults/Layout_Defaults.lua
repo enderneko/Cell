@@ -134,6 +134,7 @@ Cell.defaults.layout = {
             ["indicatorName"] = "roleIcon",
             ["type"] = "built-in",
             ["enabled"] = true,
+            ["hideDamager"] = false,
             ["position"] = {"TOPLEFT", "TOPLEFT", 0, 0},
             ["size"] = {11, 11},
             ["roleTexture"] = {"default", "Interface\\AddOns\\ElvUI\\Core\\Media\\Textures\\Tank.tga", "Interface\\AddOns\\ElvUI\\Core\\Media\\Textures\\Healer.tga", "Interface\\AddOns\\ElvUI\\Core\\Media\\Textures\\DPS.tga"},

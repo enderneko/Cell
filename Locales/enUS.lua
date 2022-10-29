@@ -29,6 +29,7 @@ select(2, ...).L = setmetatable({
     ["hideFull"] = "Hide while HP is full",
     ["onlyShowTopGlow"] = "Only show glow for the first debuff",
     ["circledStackNums"] = "Circled stack numbers",
+    ["hideDamager"] = "Hide Damager",
 
     ["BOTTOM"] = "Bottom",
     ["BOTTOMLEFT"] = "Bottom Left",
