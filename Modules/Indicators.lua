@@ -5,6 +5,8 @@ local I = Cell.iFuncs
 local P = Cell.pixelPerfectFuncs
 local LCG = LibStub("LibCustomGlow-1.0")
 
+CELL_RECTANGULAR_CUSTOM_INDICATOR_ICONS = false
+
 local indicatorsTab = Cell:CreateFrame("CellOptionsFrame_IndicatorsTab", Cell.frames.optionsFrame, nil, nil, true)
 Cell.frames.indicatorsTab = indicatorsTab
 indicatorsTab:SetAllPoints(Cell.frames.optionsFrame)
@@ -1328,7 +1330,7 @@ local function ShowIndicatorSettings(id)
         -- end
     else
         if indicatorType == "icon" then
-            settingsTable = {"enabled", "auras", "checkbutton3:showDuration:"..L["Show duration text instead of icon animation"], "position", "frameLevel", "size-square", "font"}
+            settingsTable = {"enabled", "auras", "checkbutton3:showDuration:"..L["Show duration text instead of icon animation"], "position", "frameLevel", CELL_RECTANGULAR_CUSTOM_INDICATOR_ICONS and "size" or "size-square", "font"}
         elseif indicatorType == "text" then
             settingsTable = {"enabled", "auras", "duration", "checkbutton3:circledStackNums:"..L["Require font support"], "colors", "position", "frameLevel", "font-noOffset"}
         elseif indicatorType == "bar" then
@@ -1336,7 +1338,7 @@ local function ShowIndicatorSettings(id)
         elseif indicatorType == "rect" then
             settingsTable = {"enabled", "auras", "colors", "position", "frameLevel", "size"}
         elseif indicatorType == "icons" then
-            settingsTable = {"enabled", "auras", "checkbutton3:showDuration:"..L["Show duration text instead of icon animation"], "num:10", "orientation", "position", "frameLevel", "size-square", "font"}
+            settingsTable = {"enabled", "auras", "checkbutton3:showDuration:"..L["Show duration text instead of icon animation"], "num:10", "orientation", "position", "frameLevel", CELL_RECTANGULAR_CUSTOM_INDICATOR_ICONS and "size" or "size-square", "font"}
         elseif indicatorType == "color" then
             settingsTable = {"enabled", "auras", "customColors", "anchor"}
         elseif indicatorType == "texture" then
