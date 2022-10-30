@@ -593,6 +593,12 @@ L["Changelogs"] = "更新记录"
 L["Click to view recent changelogs"] = "点击查看近期更新记录"
 L["Click to view older changelogs"] = "点击查看远古更新记录"
 L["CHANGELOGS"] = [[
+    <h1>r134-release (Oct 30, 2022, 19:20 GMT+8)</h1>
+    <p>+ 被迫添加了团队宠物（最多20个草草草）。</p>
+    <p>* 为“职责图标”指示器添加了“隐藏伤害输出”的选项。</p>
+    <p>* 修复了几坨bug。</p>
+    <br/>
+        
     <h1>r133-release (Oct 28, 2022, 05:15 GMT+8)</h1>
     <p>* 修bug。</p>
     <br/>

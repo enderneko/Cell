@@ -125,7 +125,8 @@ local function CreateSpecialThanksPane()
         "席慕容 (NGA)\n"..
         "星空 (爱发电)\n"..
         "年复一年路西法 (爱发电)\n"..
-        "阿哲 (爱发电)"
+        "阿哲 (爱发电)\n"..
+        "北方 (爱发电)"
     )
 
     local elapsedTime = 0
