@@ -45,7 +45,4 @@ F:IterateAllUnitButtons(function(b)
             end
         end
     end
-
-    -- 修改护盾材质
-    -- b.widget.shieldBar:SetTexture(Cell.vars.texture)
 end)
