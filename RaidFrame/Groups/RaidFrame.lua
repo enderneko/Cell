@@ -171,18 +171,6 @@ local function RaidFrame_UpdateLayout(layout, which)
     if Cell.vars.groupType ~= "raid" and init then return end
     init = true
 
-    -- arena pets
-    if Cell.vars.inBattleground == 5 and layout["pet"][1] then
-        for i = 1, 3 do
-            RegisterAttributeDriver(arenaPetButtons[i], "state-visibility", "[@raidpet"..i..", exists] show; hide")
-        end
-    else
-        for i = 1, 3 do
-            UnregisterAttributeDriver(arenaPetButtons[i], "state-visibility")
-            arenaPetButtons[i]:Hide()
-        end
-    end
-    
     if Cell.vars.inBattleground == 5 then
         layout = CellLayoutAutoSwitchTable[Cell.vars.playerSpecRole]["arena"]
     elseif Cell.vars.inBattleground == 15 or Cell.vars.inBattleground == 40 then
@@ -196,6 +184,18 @@ local function RaidFrame_UpdateLayout(layout, which)
     end
 
     layout = CellDB["layouts"][layout]
+
+    -- arena pets
+    if Cell.vars.inBattleground == 5 and layout["pet"][1] then
+        for i = 1, 3 do
+            RegisterAttributeDriver(arenaPetButtons[i], "state-visibility", "[@raidpet"..i..", exists] show; hide")
+        end
+    else
+        for i = 1, 3 do
+            UnregisterAttributeDriver(arenaPetButtons[i], "state-visibility")
+            arenaPetButtons[i]:Hide()
+        end
+    end
 
     local width, height = unpack(layout["size"])
 
