@@ -2305,7 +2305,7 @@ local function CreateOthersPane()
         if selectedLayout == Cell.vars.currentLayout then
             Cell:Fire("UpdateLayout", selectedLayout, "pet")
         end
-    end)
+    end, L["Show Raid Pets"], L["You can move it in Preview mode"])
     raidPetsCB:SetPoint("TOPLEFT", partyPetsCB, "BOTTOMLEFT", 0, -8)
 
     spotlightCB = Cell:CreateCheckButton(othersPane, L["Spotlight Frame"], function(checked)
