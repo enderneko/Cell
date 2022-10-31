@@ -13,6 +13,7 @@ L["|cffffb5c5Right-Click:|r report unaffected"] = "|cffffb5c5左鍵:|r 報告缺
 L["+ Stack"] = "層數增加時"
 L["+ Stack & Duration"] = "層數與持續時間增加時"
 L["A 0-40 integer is required."] = "需要 0 ~ 40 的整數。"
+L["A positive integer is required."] = "需要正整數。"
 L["A UI reload is required.\nDo it now?"] = "需要重新載入介面。\n是否要現在立即重新載入?"
 L["About"] = "關於"
 L["ABOUT"] = "Cell 是受 CompactRaid 啟發的團隊框架，參考了其程式碼，重寫並增強。\n我個人很喜歡 CompactRaid，並常年使用它，但其作者似乎已經不再更新了。因此我寫了 Cell，希望你能喜歡。\n另外，我也參考了一些很棒的團隊框架，比如 Aptechka 和 Grid2。\nCell 並不打算成為一個輕量或強大 (如 VuhDo、Grid2) 的團隊框架插件。設定簡單，功能足夠，就行了。"
@@ -96,8 +97,7 @@ L["Color Duration Text"] = "著色持續時間文字"
 L["Common"] = "共用"
 L["Condition"] = "條件"
 L["Confirm"] = "確認"
---[[Translation missing --]]
---[[ L["Conflicts Detected!"] = "Conflicts Detected!"--]] 
+L["Conflicts Detected!"] = "發現衝突!"
 L["Consumables"] = "消耗品"
 L["Contains"] = "包含"
 L["Copy"] = "複製"
@@ -199,15 +199,13 @@ L["Health Bar Color"] = "血量條顏色"
 L["Health Loss Alpha"] = "損失血量透明度"
 L["Health Loss Color"] = "損失血量顏色"
 L["Health Text"] = "血量文字"
---[[Translation missing --]]
---[[ L["Health Thresholds"] = "Health Thresholds"--]] 
+L["Health Thresholds"] = "血量臨界值"
 L["Height"] = "高度"
 L["Hide"] = "隱藏"
 L["Hide Blizzard Frames"] = "隱藏遊戲內建框架"
 L["Hide Blizzard Party"] = "隱藏遊戲內建隊伍框架"
 L["Hide Blizzard Raid"] = "隱藏遊戲內建團隊框架"
---[[Translation missing --]]
---[[ L["hideDamager"] = "Hide Damager"--]] 
+L["hideDamager"] = "隱藏傷害輸出"
 L["hideFull"] = "滿血時不顯示"
 L["HIGH CPU USAGE"] = "高 CPU 使用量"
 L["Highlight Size"] = "顯著標示粗細"
@@ -284,8 +282,7 @@ L["OFFLINE"] = "離線"
 L["ON"] = "開"
 L["Only available for Spells"] = "只對法術有效"
 L["only in group"] = "只有在隊伍中時"
---[[Translation missing --]]
---[[ L["Only one threshold is displayed at a time"] = "Only one threshold is displayed at a time"--]] 
+L["Only one threshold is displayed at a time"] = "同時間只會顯示一個臨界值"
 L["Only show during encounter or in mythic+"] = "只在首領戰或 M+ 顯示"
 L["Only show when you have permission to do this"] = "只在你有權限這樣做時才會顯示"
 L["Only visible to me"] = "只對我自己顯示"
@@ -327,8 +324,7 @@ L["Raid Debuffs"] = "副本減益"
 L["Raid Debuffs updated: %s."] = "已更新團隊減益: %s。"
 L["Raid Icon (player)"] = "團隊圖示 (玩家)"
 L["Raid Icon (target)"] = "團隊圖示 (目標)"
---[[Translation missing --]]
---[[ L["Raid Pets"] = "Raid Pets"--]] 
+L["Raid Pets"] = "團隊寵物"
 L["Raid Tools"] = "團隊工具"
 L["RAID_DEBUFFS_TIPS"] = "提示: [拖曳] 減益可以調整順序 [點兩下] 副本名稱可以打開冒險指南 [Shift+左鍵] 副本或首領名稱可以分享減益清單 [Alt+左鍵] 副本或首領名稱可以重置減益清單。一般減益的優先順序比首領減益的優先順序更高。"
 L["raidRosterTips"] = "[右鍵] 助理，[Alt+右鍵] 移除。"
@@ -338,8 +334,7 @@ L["ReadyCheck and PullTimer buttons"] = "準備確認和開怪倒數按鈕"
 L["readyCheckTips"] = "\n|r準備確認\n左鍵: |cffffffff準備確認|r\n右鍵: |cffffffff角色職責確認|r"
 L["Rect"] = "矩形"
 L["Remaining Time <"] = "剩餘時間 <"
---[[Translation missing --]]
---[[ L["Remove"] = "Remove"--]] 
+L["Remove"] = "移除"
 L["Rename"] = "更名"
 L["Rename indicator"] = "重新命名指示器"
 L["Rename layout"] = "重新名命版面配置"
@@ -391,10 +386,8 @@ L["Show duration text instead of icon animation"] = "顯示持續時間數字而
 L["Show friendly NPCs in a separate frame"] = "將友方 NPC 顯示在一個獨立的框架中"
 L["Show NPC Frame"] = "顯示 NPC 框架"
 L["Show Party"] = "5人隊伍時要顯示"
---[[Translation missing --]]
---[[ L["Show Party/Arena Pets"] = "Show Party/Arena Pets"--]] 
---[[Translation missing --]]
---[[ L["Show Raid Pets"] = "Show Raid Pets"--]] 
+L["Show Party/Arena Pets"] = "顯示隊伍/競技場寵物"
+L["Show Raid Pets"] = "顯示團隊寵物"
 L["Show Solo"] = "單人時要顯示"
 L["Show units you care about more in a separate frame"] = "在單獨的框架中顯示您更關心的單位"
 L["Show while in a party"] = "在隊伍中時顯示"
