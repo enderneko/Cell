@@ -2,7 +2,7 @@
 -- File: UnitButton_Wrath.lua
 -- Author: enderneko (enderneko-dev@outlook.com)
 -- File Created: 2022/08/20 19:44:26 +0800
--- Last Modified: 2022/10/30 04:33:47 +0800
+-- Last Modified: 2022/11/01 06:18:51 +0800
 --]]
 
 local _, Cell = ...
@@ -1760,16 +1760,19 @@ function F:EnableLibHealComm(enabled)
 end
 
 -------------------------------------------------
--- guess shield amount from Glyph of Power Word: Shield
+-- shields
 -------------------------------------------------
 local pwsInfo = {} -- Power Word: Shield
 local daInfo = {} -- Divine Aegis
+-- 64413: Protection of Ancient Kings
+-- 64411: Blessing of Ancient Kings
+local pakInfo = {}
 
 local function UnitButton_UpdateShieldAbsorbs(self)
     local guid = self.state.guid
     if not guid then return end
     
-    local value = (pwsInfo[guid] or 0) + (daInfo[guid] or 0)
+    local value = (pwsInfo[guid] or 0) + (daInfo[guid] or 0) + (pakInfo[guid] or 0)
     if value > 0 then
         UpdateUnitHealthState(self)
         local shieldPercent = value / self.state.healthMax
@@ -1818,21 +1821,76 @@ local pws = {
 
 local cleu = CreateFrame("Frame")
 cleu:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
+
+local UnitLevel = UnitLevel
+-- local totalAbsorbed = 0
+local lastHealAmount, lastHealGUID
+local blessing
+
 cleu:SetScript("OnEvent", function()
-    local _, subEvent, _, sourceGUID, sourceName, sourceFlags, sourceRaidFlags, destGUID, destName, destFlags, destRaidFlags, arg12, arg13, arg14, arg15, arg16, arg17, arg18, arg19, arg20, arg21, arg22 = CombatLogGetCurrentEventInfo()
+    local timestamp, subEvent, _, sourceGUID, sourceName, sourceFlags, sourceRaidFlags, destGUID, destName, destFlags, destRaidFlags, arg12, arg13, arg14, arg15, arg16, arg17, arg18, arg19, arg20, arg21, arg22 = CombatLogGetCurrentEventInfo()
     
+    -- thanks to momo2366 https://github.com/enderneko/Cell/issues/43
     if subEvent == "SPELL_HEAL" then
         -- spellId, spellName, spellSchool, amount, overhealing, absorbed, critical
         if arg12 == 56160 then -- Glyph of Power Word: Shield
-            pwsInfo[destGUID] = arg15 / 0.2
+            if arg18 then
+                pwsInfo[destGUID] = arg15 / 1.5 / 0.2
+            else
+                pwsInfo[destGUID] = arg15 / 0.2
+            end
+            UpdateShield(destGUID)
+            -- totalAbsorbed = 0
+            -- print(arg18, "healed:", arg15, "shield:", pwsInfo[destGUID])
+        end
+        
+        -- Divine Aegis (mine)
+        -- https://wowpedia.fandom.com/wiki/Patch_3.1.0
+        --* Divine Aegis effects will now stack, however the amount absorbed cannot exceed 125*level (of the target). It will also now take into account total healing including overhealing.
+        if sourceGUID == Cell.vars.playerGUID and Cell.vars.divineAegisMultiplier and arg18 then -- arg18: critical
+            local maxDA = Cell.vars.guids[destGUID] and 125 * UnitLevel(Cell.vars.guids[destGUID]) or 10000
+            if not daInfo[destGUID] then
+                daInfo[destGUID] = min(arg15 * Cell.vars.divineAegisMultiplier, maxDA)
+                -- totalAbsorbed = 0
+                -- print(arg18, "healed:", arg15, "max:", maxDA, "shield:", daInfo[destGUID])
+            else
+                -- print(arg18, "healed:", arg15, "max:", maxDA, "shield:", daInfo[destGUID] + currentDA, "("..daInfo[destGUID].."+"..currentDA..")")
+                daInfo[destGUID] = min(daInfo[destGUID] + arg15 * Cell.vars.divineAegisMultiplier, maxDA)
+            end
             UpdateShield(destGUID)
         end
-        -- Divine Aegis NOTE: mine only
-        if Cell.vars.divineAegisMultiplier and arg18 then -- arg18: critical
-            daInfo[destGUID] = arg15 * Cell.vars.divineAegisMultiplier
-            UpdateShield(destGUID)
+
+        -- https://wowpedia.fandom.com/wiki/Val%27anyr,_Hammer_of_Ancient_Kings
+        if sourceGUID == Cell.vars.playerGUID then
+            --! NOTE: PotAK applied AFTER healing
+            lastHealAmount = arg12
+            lastHealGUID = destGUID --? AoE healing
+            if blessing then
+                if not pakInfo[destGUID] then
+                    pakInfo[destGUID] = min(arg12 * 0.15, 20000)
+                else
+                    pakInfo[destGUID] = min(pakInfo[destGUID] + arg12 * 0.15, 20000)
+                end
+                UpdateShield(destGUID)
+            end
         end
-    
+
+    elseif subEvent == "SPELL_PERIODIC_HEAL" then
+        -- https://wowpedia.fandom.com/wiki/Val%27anyr,_Hammer_of_Ancient_Kings
+        if sourceGUID == Cell.vars.playerGUID then
+            --! NOTE: PotAK applied AFTER healing
+            lastHealAmount = arg12
+            lastHealGUID = destGUID --? AoE healing
+            if blessing then
+                if not pakInfo[destGUID] then
+                    pakInfo[destGUID] = min(arg12 * 0.15, 20000)
+                else
+                    pakInfo[destGUID] = min(pakInfo[destGUID] + arg12 * 0.15, 20000)
+                end
+                UpdateShield(destGUID)
+            end
+        end
+
     elseif subEvent == "SPELL_ABSORBED" then
         -- [spellID, spellName, spellSchool], casterGUID, casterName, casterFlags, casterRaidFlags, absorbSpellId, absorbSpellName, absorbSpellSchool, amount, critical
         local absorbSpellId, absorbAmount
@@ -1841,21 +1899,43 @@ cleu:SetScript("OnEvent", function()
         else -- swing
             absorbSpellId, absorbAmount = arg16, arg19
         end
+
+        -- totalAbsorbed = totalAbsorbed + absorbAmount
+        -- print("ABSORBED", "current:", absorbAmount, "total:", totalAbsorbed)
+        
         -- update shields left
         if pws[absorbSpellId] then
             pwsInfo[destGUID] = (pwsInfo[destGUID] or 0) - absorbAmount
         elseif absorbSpellId == 47753 then
             daInfo[destGUID] = (daInfo[destGUID] or 0) - absorbAmount
+        elseif absorbSpellId == 64413 then
+            pakInfo[destGUID] = (pakInfo[destGUID] or 0) - absorbAmount
         end
         UpdateShield(destGUID)
     
     elseif subEvent == "SPELL_AURA_REMOVED" then
         if pws[arg12] then
             pwsInfo[destGUID] = nil
-        elseif arg12 == 47753 then
-            daInfo[destGUID] = nil
+        elseif sourceGUID == Cell.vars.playerGUID then
+            if arg12 == 47753 then -- Divine Aegis NOTE: mine only
+                daInfo[destGUID] = nil
+            elseif arg12 == 64413 then
+                pakInfo[destGUID] = nil
+            elseif arg12 == 64411 then
+                --! BLESSING END
+                blessing = false
+            end
         end
         UpdateShield(destGUID)
+
+    elseif subEvent == "SPELL_AURA_APPLIED" then
+        -- NOTE: 10% chance whenever a hot or direct spell heals, with a 45 sec internal cooldown
+        if arg12 == 64411 and sourceGUID == Cell.vars.playerGUID then
+            --! BLESSING START
+            blessing = true
+            pakInfo[lastHealGUID] = lastHealAmount * 0.15
+            UpdateShield(lastHealGUID)
+        end
     end
 end)
 
