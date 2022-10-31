@@ -593,6 +593,12 @@ L["Changelogs"] = "更新记录"
 L["Click to view recent changelogs"] = "点击查看近期更新记录"
 L["Click to view older changelogs"] = "点击查看远古更新记录"
 L["CHANGELOGS"] = [[
+    <h1>r135-release (Nov 1, 2022, 06:27 GMT+8)</h1>
+    <p>* 修复竞技场宠物。</p>
+    <p>* 更新巫妖王之怒怀旧服的护盾。</p>
+    <p>* 更新繁中。</p>
+    <br/>
+
     <h1>r134-release (Oct 30, 2022, 19:20 GMT+8)</h1>
     <p>+ 被迫添加了团队宠物（最多20个草草草）。</p>
     <p>* 为“职责图标”指示器添加了“隐藏伤害输出”的选项。</p>

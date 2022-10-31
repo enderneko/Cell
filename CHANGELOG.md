@@ -1,12 +1,8 @@
-[Full Changelog](https://github.com/enderneko/Cell/compare/r133-release...96ce087a305da43ba7c09ed6b4b0a64624f44147)
+[Full Changelog](https://github.com/enderneko/Cell/compare/r134-release...126f7de4a8ebff88421c3e7de85050dea912562a)
 
-- Implement SILLY raid pets
-- Add hide damager to role icon indicator
-- Check self cast key
-- Update code snippets
-- Fix NPC frame position
-- Fix secure buttons in WotLK
-- Fix spotlight preview
-- Fix appearance preview
-- [snippet] update HauntedMaskIcons
-- [snippet] CELL_RECTANGULAR_CUSTOM_INDICATOR_ICONS
+- Fix arena pets
+- Update shields on WotLK
+- Update zhTW
+- Add a tooltip for Show Raid Pets
+- Restore EJSuggestTab_GetPlayerTierIndex
+- [snippet] CustomTexture_ShieldAndAbsorb
