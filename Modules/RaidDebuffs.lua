@@ -98,6 +98,16 @@ local function LoadList()
     end
 end
 
+--! NOTE: restore selected tier, EncounterJournal_CheckAndDisplayLootTab
+local frame = CreateFrame("Frame")
+frame:RegisterEvent("ADDON_LOADED")
+frame:SetScript("OnEvent", function(self, event, addon)
+    if addon == "Blizzard_EncounterJournal" then
+        frame:UnregisterAllEvents()
+        EJ_SelectTier(EJSuggestTab_GetPlayerTierIndex())
+    end
+end)
+
 -------------------------------------------------
 -- dungeons for current mythic season
 -------------------------------------------------
