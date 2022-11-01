@@ -2,7 +2,7 @@
 -- File: UnitButton_Wrath.lua
 -- Author: enderneko (enderneko-dev@outlook.com)
 -- File Created: 2022/08/20 19:44:26 +0800
--- Last Modified: 2022/11/02 00:49:21 +0800
+-- Last Modified: 2022/11/02 02:13:33 +0800
 --]]
 
 local _, Cell = ...
@@ -811,7 +811,7 @@ local function UnitButton_UpdateDebuffs(self)
 
     -- update debuffs
     if startIndex > 1 then
-        self.indicators.debuffs:UpdateSize(startIndex - 1)
+        self.indicators.debuffs:UpdateSize()
     end
     for i = startIndex, 10 do
         self.indicators.debuffs[i]:Hide()

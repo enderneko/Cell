@@ -793,17 +793,17 @@ function I:CreateAura_Icons(name, parent, num)
         if not (icons.width and icons.height and icons.orientation) then return end -- not init
         if iconsShown then -- call from I:CheckCustomIndicators or preview
             if icons.orientation == "horizontal" then
-                icons:OriginalSetSize(P:Scale(icons.width)*iconsShown, P:Scale(icons.height))
+                icons:OriginalSetSize(icons.width*iconsShown, icons.height)
             else
-                icons:OriginalSetSize(P:Scale(icons.width), P:Scale(icons.height)*iconsShown)
+                icons:OriginalSetSize(icons.width, icons.height*iconsShown)
             end
         else
             for i = 1, num do
                 if icons[i]:IsShown() then
                     if icons.orientation == "horizontal" then
-                        icons:OriginalSetSize(P:Scale(icons.width)*i, P:Scale(icons.height))
+                        icons:OriginalSetSize(icons.width*i, icons.height)
                     else
-                        icons:OriginalSetSize(P:Scale(icons.width), P:Scale(icons.height)*i)
+                        icons:OriginalSetSize(icons.width, icons.height*i)
                     end
                 end
             end
@@ -815,7 +815,7 @@ function I:CreateAura_Icons(name, parent, num)
         icons.height = height
 
         for i = 1, num do
-            P:Size(icons[i], width, height)
+            icons[i]:SetSize(width, height)
         end
 
         icons:UpdateSize()
@@ -864,12 +864,6 @@ function I:CreateAura_Icons(name, parent, num)
         local name = name.."Icons"..i
         local frame = I:CreateAura_BarIcon(name, icons)
         icons[i] = frame
-
-        if i == 1 then
-            P:Point(frame, "TOPLEFT")
-        else
-            P:Point(frame, "RIGHT", icons[i-1], "LEFT")
-        end
     end
 
     function icons:ShowDuration(show)

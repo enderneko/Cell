@@ -22,7 +22,7 @@ function I:CreateDefensiveCooldowns(parent)
         defensiveCooldowns.height = height
 
         for i = 1, 5 do
-            P:Size(defensiveCooldowns[i], width, height)
+            defensiveCooldowns[i]:SetSize(width, height)
         end
 
         defensiveCooldowns:UpdateSize()
@@ -32,17 +32,17 @@ function I:CreateDefensiveCooldowns(parent)
         if not (defensiveCooldowns.width and defensiveCooldowns.height and defensiveCooldowns.orientation) then return end -- not init
         if iconsShown then -- call from I:UnitButton_UpdateBuffs or preview
             if defensiveCooldowns.orientation == "horizontal" then
-                defensiveCooldowns:OriginalSetSize(P:Scale(defensiveCooldowns.width)*iconsShown-P:Scale(iconsShown-1), P:Scale(defensiveCooldowns.height))
+                defensiveCooldowns:OriginalSetSize(defensiveCooldowns.width*iconsShown-P:Scale(iconsShown-1), defensiveCooldowns.height)
             else
-                defensiveCooldowns:OriginalSetSize(P:Scale(defensiveCooldowns.width), P:Scale(defensiveCooldowns.height)*iconsShown-P:Scale(iconsShown-1))
+                defensiveCooldowns:OriginalSetSize(defensiveCooldowns.width, defensiveCooldowns.height*iconsShown-P:Scale(iconsShown-1))
             end
         else
             for i = 1, 5 do
                 if defensiveCooldowns[i]:IsShown() then
                     if defensiveCooldowns.orientation == "horizontal" then
-                        defensiveCooldowns:OriginalSetSize(P:Scale(defensiveCooldowns.width)*i-P:Scale(i-1), P:Scale(defensiveCooldowns.height))
+                        defensiveCooldowns:OriginalSetSize(defensiveCooldowns.width*i-P:Scale(i-1), defensiveCooldowns.height)
                     else
-                        defensiveCooldowns:OriginalSetSize(P:Scale(defensiveCooldowns.width), P:Scale(defensiveCooldowns.height)*i-P:Scale(i-1))
+                        defensiveCooldowns:OriginalSetSize(defensiveCooldowns.width, defensiveCooldowns.height*i-P:Scale(i-1))
                     end
                 end
             end
@@ -139,7 +139,7 @@ function I:CreateExternalCooldowns(parent)
         externalCooldowns.height = height
 
         for i = 1, 5 do
-            P:Size(externalCooldowns[i], width, height)
+            externalCooldowns[i]:SetSize(width, height)
         end
 
         externalCooldowns:UpdateSize()
@@ -149,17 +149,17 @@ function I:CreateExternalCooldowns(parent)
         if not (externalCooldowns.width and externalCooldowns.height and externalCooldowns.orientation) then return end -- not init
         if iconsShown then -- call from I:UnitButton_UpdateBuffs or preview
             if externalCooldowns.orientation == "horizontal" then
-                externalCooldowns:OriginalSetSize(P:Scale(externalCooldowns.width)*iconsShown-P:Scale(iconsShown-1), P:Scale(externalCooldowns.height))
+                externalCooldowns:OriginalSetSize(externalCooldowns.width*iconsShown-P:Scale(iconsShown-1), externalCooldowns.height)
             else
-                externalCooldowns:OriginalSetSize(P:Scale(externalCooldowns.width), P:Scale(externalCooldowns.height)*iconsShown-P:Scale(iconsShown-1))
+                externalCooldowns:OriginalSetSize(externalCooldowns.width, externalCooldowns.height*iconsShown-P:Scale(iconsShown-1))
             end
         else
             for i = 1, 5 do
                 if externalCooldowns[i]:IsShown() then
                     if externalCooldowns.orientation == "horizontal" then
-                        externalCooldowns:OriginalSetSize(P:Scale(externalCooldowns.width)*i-P:Scale(i-1), P:Scale(externalCooldowns.height))
+                        externalCooldowns:OriginalSetSize(externalCooldowns.width*i-P:Scale(i-1), externalCooldowns.height)
                     else
-                        externalCooldowns:OriginalSetSize(P:Scale(externalCooldowns.width), P:Scale(externalCooldowns.height)*i-P:Scale(i-1))
+                        externalCooldowns:OriginalSetSize(externalCooldowns.width, externalCooldowns.height*i-P:Scale(i-1))
                     end
                 end
             end
@@ -250,7 +250,7 @@ function I:CreateAllCooldowns(parent)
         allCooldowns.height = height
 
         for i = 1, 5 do
-            P:Size(allCooldowns[i], width, height)
+            allCooldowns[i]:SetSize(width, height)
         end
 
         allCooldowns:UpdateSize()
@@ -260,17 +260,17 @@ function I:CreateAllCooldowns(parent)
         if not (allCooldowns.width and allCooldowns.height and allCooldowns.orientation) then return end -- not init
         if iconsShown then -- call from I:UnitButton_UpdateBuffs or preview
             if allCooldowns.orientation == "horizontal" then
-                allCooldowns:OriginalSetSize(P:Scale(allCooldowns.width)*iconsShown-P:Scale(iconsShown-1), P:Scale(allCooldowns.height))
+                allCooldowns:OriginalSetSize(allCooldowns.width*iconsShown-P:Scale(iconsShown-1), allCooldowns.height)
             else
-                allCooldowns:OriginalSetSize(P:Scale(allCooldowns.width), P:Scale(allCooldowns.height)*iconsShown-P:Scale(iconsShown-1))
+                allCooldowns:OriginalSetSize(allCooldowns.width, allCooldowns.height*iconsShown-P:Scale(iconsShown-1))
             end
         else
             for i = 1, 5 do
                 if allCooldowns[i]:IsShown() then
                     if allCooldowns.orientation == "horizontal" then
-                        allCooldowns:OriginalSetSize(P:Scale(allCooldowns.width)*i-P:Scale(i-1), P:Scale(allCooldowns.height))
+                        allCooldowns:OriginalSetSize(allCooldowns.width*i-P:Scale(i-1), allCooldowns.height)
                     else
-                        allCooldowns:OriginalSetSize(P:Scale(allCooldowns.width), P:Scale(allCooldowns.height)*i-P:Scale(i-1))
+                        allCooldowns:OriginalSetSize(allCooldowns.width, allCooldowns.height*i-P:Scale(i-1))
                     end
                 end
             end
@@ -391,14 +391,13 @@ function I:CreateDebuffs(parent)
 
     debuffs.OriginalSetSize = debuffs.SetSize
     function debuffs:SetSize(normalSize, bigSize)
-        -- debuffs:OriginalSetSize(P:Scale(normalSize[1]), P:Scale(normalSize[2]))
         for i = 1, 10 do
             P:Size(debuffs[i], normalSize[1], normalSize[2])
         end
         -- store sizes for SetCooldown
         debuffs.normalSize = normalSize
         debuffs.bigSize = bigSize
-        -- remove wrong data from UnitButton.lua (UpdateIndicators)
+        -- remove wrong data from PixelPerfect
         debuffs.width = nil
         debuffs.height = nil
 
@@ -415,9 +414,9 @@ function I:CreateDebuffs(parent)
             end
         end
         if debuffs.orientation == "left-to-right" or debuffs.orientation == "right-to-left"  then
-            debuffs:OriginalSetSize(size, debuffs.normalSize[2])
+            debuffs:OriginalSetSize(P:Scale(size), P:Scale(debuffs.normalSize[2]))
         else
-            debuffs:OriginalSetSize(debuffs.normalSize[1], size)
+            debuffs:OriginalSetSize(P:Scale(debuffs.normalSize[1]), P:Scale(size))
         end
     end
 
@@ -532,7 +531,6 @@ function I:CreateDebuffs(parent)
     end
 
     function debuffs:UpdatePixelPerfect()
-        -- debuffs:OriginalSetSize(P:Scale(debuffs.normalSize[1]), P:Scale(debuffs.normalSize[2]))
         P:Repoint(debuffs)
         for i = 1, 10 do
             debuffs[i]:UpdatePixelPerfect()
@@ -782,21 +780,21 @@ function I:CreateRaidDebuffs(parent)
         local width, height = raidDebuffs.width, raidDebuffs.height
         if iconsShown then -- call from UnitButton_UpdateDebuffs or preview
             if raidDebuffs.orientation == "horizontal"  then
-                width = P:Scale(raidDebuffs.width) * iconsShown + P:Scale(iconsShown - 1) 
-                height = P:Scale(raidDebuffs.height)
+                width = raidDebuffs.width * iconsShown + P:Scale(iconsShown - 1) 
+                height = raidDebuffs.height
             else
-                width = P:Scale(raidDebuffs.width)
-                height = P:Scale(raidDebuffs.height) * iconsShown + P:Scale(iconsShown - 1)
+                width = raidDebuffs.width
+                height = raidDebuffs.height * iconsShown + P:Scale(iconsShown - 1)
             end
         else
             for i = 1, 3 do
                 if raidDebuffs[i]:IsShown() then
                     if raidDebuffs.orientation == "horizontal"  then
-                        width = P:Scale(raidDebuffs.width) * i + P:Scale(i - 1) 
-                        height = P:Scale(raidDebuffs.height)
+                        width = raidDebuffs.width * i + P:Scale(i - 1) 
+                        height = raidDebuffs.height
                     else
-                        width = P:Scale(raidDebuffs.width)
-                        height = P:Scale(raidDebuffs.height) * i + P:Scale(i - 1)
+                        width = raidDebuffs.width
+                        height = raidDebuffs.height * i + P:Scale(i - 1)
                     end
                 end
             end
@@ -851,7 +849,7 @@ function I:CreateRaidDebuffs(parent)
             if i == 1 then
                 P:Point(raidDebuffs[i], point1)
             else
-                P:Point(raidDebuffs[i], point1, raidDebuffs[i-1], point2, P:Scale(xOff), P:Scale(yOff))
+                P:Point(raidDebuffs[i], point1, raidDebuffs[i-1], point2, xOff, yOff)
             end
         end
 
@@ -890,7 +888,6 @@ function I:CreateRaidDebuffs(parent)
     end
 
     function raidDebuffs:UpdatePixelPerfect()
-        -- raidDebuffs:OriginalSetSize(P:Scale(raidDebuffs.width), P:Scale(raidDebuffs.height))
         P:Repoint(raidDebuffs)
         for i = 1, 3 do
             raidDebuffs[i]:UpdatePixelPerfect()

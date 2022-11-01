@@ -864,7 +864,7 @@ local function UnitButton_UpdateDebuffs(self)
 
     -- update debuffs
     if startIndex > 1 then
-        self.indicators.debuffs:UpdateSize(startIndex - 1)
+        self.indicators.debuffs:UpdateSize()
     end
     for i = startIndex, 10 do
         self.indicators.debuffs[i]:Hide()
