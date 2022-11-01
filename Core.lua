@@ -161,12 +161,12 @@ function eventFrame:ADDON_LOADED(arg1)
             CellDB["general"] = {
                 ["enableTooltips"] = false,
                 ["hideTooltipsInCombat"] = true,
-                -- ["enableAurasTooltips"] = false,
                 ["tooltipsPosition"] = {"BOTTOMLEFT", "Default", "TOPLEFT", 0, 15},
                 ["showSolo"] = true,
                 ["showParty"] = true,
                 ["hideBlizzardParty"] = true,
                 ["hideBlizzardRaid"] = true,
+                ["useCleuHealthUpdater"] = false,
                 ["locked"] = false,
                 ["fadeOut"] = false,
                 ["menuPosition"] = "top_bottom",
@@ -672,6 +672,8 @@ function eventFrame:PLAYER_LOGIN()
     Cell:Fire("UpdateMenu")
     -- update pixel perfect
     Cell:Fire("UpdatePixelPerfect")
+    -- update CLEU
+    Cell:Fire("UpdateCLEU")
 end
 
 local forceRecheck

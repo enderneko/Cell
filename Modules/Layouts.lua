@@ -2250,7 +2250,7 @@ end
 local separateNPCCB, showNPCCB, spotlightCB, partyPetsCB, raidPetsCB
 
 local function CreateOthersPane()
-    local othersPane = Cell:CreateTitledPane(layoutsTab, L["Other Frames"], 205, 70)
+    local othersPane = Cell:CreateTitledPane(layoutsTab, L["Other Frames"], 205, 145)
     othersPane:SetPoint("TOPLEFT", 222, -400)
 
     showNPCCB = Cell:CreateCheckButton(othersPane, L["Show NPC Frame"], function(checked)

@@ -220,6 +220,8 @@ L["Import"] = "匯入"
 L["Import & Export All Settings"] = "匯入與匯出所有設定"
 L["Include Nickname Settings"] = "包含暱稱設定"
 L["Incompatible Version"] = "不相容的版本"
+--[[Translation missing --]]
+--[[ L["Increase Health Update Rate"] = "Increase Health Update Rate"--]] 
 L["Indicator Settings"] = "指示器設定"
 L["Indicator settings are part of Layout settings which are account-wide."] = "指示器設定是版面配置設定的一部分，是帳號共用的。"
 L["Indicator Sync"] = "指示器同步"
@@ -472,6 +474,8 @@ L["Unlock"] = "解鎖"
 L["unnamed"] = "未命名"
 L["Use |cFFFFB5C5/cell buff X|r to set icon size"] = "輸入 |cFFFFB5C5/cell buff X|r 來設定圖示大小"
 L["Use |cFFFFB5C5/cell report X|r to set the number of reports during a raid encounter"] = "輸入 |cFFFFB5C5/cell report X|r 來設定團隊首領戰時要通報的死亡訊息數量"
+--[[Translation missing --]]
+--[[ L["Use CLEU events to increase health update rate"] = "Use CLEU events to increase health update rate"--]] 
 L["Use common profile"] = "使用共用設定檔"
 L["Use separate profile for each spec"] = "每個專精使用不同的設定檔"
 L["VEHICLE"] = "載具"

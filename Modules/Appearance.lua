@@ -676,7 +676,7 @@ local function CreateIconOptionsFrame()
 end
 
 local function CreateUnitButtonStylePane()
-    local unitButtonPane = Cell:CreateTitledPane(appearanceTab, L["Unit Button Style"], 422, 366)
+    local unitButtonPane = Cell:CreateTitledPane(appearanceTab, L["Unit Button Style"], 422, 387)
     unitButtonPane:SetPoint("TOPLEFT", appearanceTab, "TOPLEFT", 5, -140)
     
     -- texture

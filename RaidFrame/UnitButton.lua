@@ -50,6 +50,7 @@ local UnitBuff = UnitBuff
 local UnitDebuff = UnitDebuff
 local IsInRaid = IsInRaid
 local UnitDetailedThreatSituation = UnitDetailedThreatSituation
+local CombatLogGetCurrentEventInfo = CombatLogGetCurrentEventInfo
 
 local barAnimationType, highlightEnabled, predictionEnabled, absorbEnabled, shieldEnabled, overshieldEnabled
 
@@ -1140,10 +1141,10 @@ end)
 -------------------------------------------------
 -- functions
 -------------------------------------------------
-local function UpdateUnitHealthState(self)
+local function UpdateUnitHealthState(self, diff)
     local unit = self.state.displayedUnit
 
-    local health = UnitHealth(unit)
+    local health = UnitHealth(unit) + (diff or 0)
     local healthMax = UnitHealthMax(unit)
 
     self.state.health = health
@@ -1483,11 +1484,11 @@ local function UnitButton_UpdateHealthMax(self)
     end
 end
 
-local function UnitButton_UpdateHealth(self)
+local function UnitButton_UpdateHealth(self, diff)
     local unit = self.state.displayedUnit
     if not unit then return end
 
-    UpdateUnitHealthState(self)
+    UpdateUnitHealthState(self, diff)
     local healthPercent = self.state.healthPercent
     
     if barAnimationType == "Flash" then
@@ -1938,6 +1939,52 @@ UnitButton_UpdateHealthColor = function(self)
     self.widget.incomingHeal:SetVertexColor(barR, barG, barB)
 end
 
+-------------------------------------------------
+-- cleu health updater
+-------------------------------------------------
+local cleuHealthUpdater = CreateFrame("Frame", "CellCleuHealthUpdater")
+cleuHealthUpdater:SetScript("OnEvent", function()
+    local _, subEvent, _, sourceGUID, sourceName, sourceFlags, sourceRaidFlags, destGUID, destName, destFlags, destRaidFlags, arg12, arg13, arg14, arg15, arg16, arg17, arg18, arg19, arg20, arg21, arg22 = CombatLogGetCurrentEventInfo()
+    
+    local b1, b2 = F:GetUnitButtonByGUID(destGUID)
+    if not b1 then return end
+
+    local diff
+    if subEvent == "SPELL_HEAL" or subEvent == "SPELL_PERIODIC_HEAL" then
+        -- spellId, spellName, spellSchool, amount, overhealing, absorbed, critical
+        diff = arg15
+    elseif subEvent == "SPELL_DAMAGE" or subEvent == "SPELL_PERIODIC_DAMAGE" then
+        -- spellId, spellName, spellSchool, amount, overhealing, absorbed, critical
+        diff = -arg15
+    elseif subEvent == "SWING_DAMAGE" then
+        -- amount
+        diff = -arg12
+    elseif subEvent == "RANGE_DAMAGE" then
+        -- spellId, spellName, spellSchool, amount
+        diff = -arg15
+    elseif subEvent == "ENVIRONMENTAL_DAMAGE" then
+        -- environmentalType, amount
+        diff = -arg13
+    end
+
+    if diff and diff ~= 0 then
+        if b1 then UnitButton_UpdateHealth(b1, diff) end
+        if b2 then UnitButton_UpdateHealth(b2, diff) end
+    end
+end)
+
+local function UpdateCLEU()
+    if CellDB["general"]["useCleuHealthUpdater"] then
+        cleuHealthUpdater:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
+    else
+        cleuHealthUpdater:UnregisterAllEvents()
+    end
+end
+Cell:RegisterCallback("UpdateCLEU", "UnitButton_UpdateCLEU", UpdateCLEU)
+
+-------------------------------------------------
+-- update all
+-------------------------------------------------
 UnitButton_UpdateAll = function(self)
     if not self:IsVisible() then return end
 

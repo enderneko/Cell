@@ -15,7 +15,7 @@ generalTab:Hide()
 local showSoloCB, showPartyCB, hideBlizzardPartyCB, hideBlizzardRaidCB
 
 local function CreateVisibilityPane()
-    local visibilityPane = Cell:CreateTitledPane(generalTab, L["Visibility"], 205, 131)
+    local visibilityPane = Cell:CreateTitledPane(generalTab, L["Visibility"], 205, 110)
     visibilityPane:SetPoint("TOPLEFT", generalTab, "TOPLEFT", 5, -5)
     
     showSoloCB = Cell:CreateCheckButton(visibilityPane, L["Show Solo"], function(checked, self)
@@ -192,17 +192,23 @@ end
 -------------------------------------------------
 -- misc
 -------------------------------------------------
-local sortByRoleCB, lockCB, fadeoutCB, menuPositionDD
+local useCleuCB, sortByRoleCB, lockCB, fadeoutCB, menuPositionDD
 
 local function CreateMiscPane()
     local miscPane = Cell:CreateTitledPane(generalTab, L["Misc"], 205, 185)
-    miscPane:SetPoint("TOPLEFT", generalTab, 5, -155)
+    miscPane:SetPoint("TOPLEFT", generalTab, 5, -134)
     
+    useCleuCB = Cell:CreateCheckButton(miscPane, L["Increase Health Update Rate"], function(checked, self)
+        CellDB["general"]["useCleuHealthUpdater"] = checked
+        Cell:Fire("UpdateCLEU")
+    end, "|cffff2727"..L["HIGH CPU USAGE"], L["Use CLEU events to increase health update rate"])
+    useCleuCB:SetPoint("TOPLEFT", 5, -27)
+
     sortByRoleCB = Cell:CreateCheckButton(miscPane, L["Sort Party By Role"], function(checked, self)
         CellDB["general"]["sortPartyByRole"] = checked
         Cell:Fire("UpdateSortMethod")
     end)
-    sortByRoleCB:SetPoint("TOPLEFT", 5, -27)
+    sortByRoleCB:SetPoint("TOPLEFT", useCleuCB, "BOTTOMLEFT", 0, -7)
 
     lockCB = Cell:CreateCheckButton(miscPane, L["Lock Cell Frame"], function(checked, self)
         CellDB["general"]["locked"] = checked
@@ -257,7 +263,7 @@ local resCB, reportCB, buffCB, readyPullCB, pullDropdown, secEditBox, marksBarCB
 
 local function CreateToolsPane()
     local toolsPane = Cell:CreateTitledPane(generalTab, L["Raid Tools"].." |cFF777777"..L["only in group"], 422, 107)
-    toolsPane:SetPoint("TOPLEFT", 5, -360)
+    toolsPane:SetPoint("TOPLEFT", 5, -340)
 
     local unlockBtn = Cell:CreateButton(toolsPane, L["Unlock"], "accent", {70, 17})
     unlockBtn:SetPoint("TOPRIGHT", toolsPane)
@@ -511,9 +517,10 @@ local function ShowTab(tab)
         hideBlizzardRaidCB:SetChecked(CellDB["general"]["hideBlizzardRaid"])
 
         -- misc
+        useCleuCB:SetChecked(CellDB["general"]["useCleuHealthUpdater"])
+        sortByRoleCB:SetChecked(CellDB["general"]["sortPartyByRole"])
         lockCB:SetChecked(CellDB["general"]["locked"])
         fadeoutCB:SetChecked(CellDB["general"]["fadeOut"])
-        sortByRoleCB:SetChecked(CellDB["general"]["sortPartyByRole"])
         menuPositionDD:SetSelectedValue(CellDB["general"]["menuPosition"])
 
         -- raid tools
