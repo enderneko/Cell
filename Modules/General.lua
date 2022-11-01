@@ -75,7 +75,7 @@ local function UpdateTooltipsOptions()
 end
 
 function F:ShowTooltips(anchor, tooltipType, value)
-    if not CellDB["general"]["enableTooltips"] or (CellDB["general"]["hideTooltipsInCombat"] and InCombatLockdown()) then return end
+    if not CellDB["general"]["enableTooltips"] or (tooltipType == "unit" and CellDB["general"]["hideTooltipsInCombat"] and InCombatLockdown()) then return end
     
     if CellDB["general"]["tooltipsPosition"][2] == "Default" then
         GameTooltip_SetDefaultAnchor(GameTooltip, anchor)

@@ -450,6 +450,8 @@ L["To transfer across realm, you need to be in the same group"] = "必須在同�
 L["To UnitButton's"] = "對齊到單位按鈕的"
 L["togglemenu"] = "選單"
 L["Tooltips"] = "滑鼠提示"
+--[[Translation missing --]]
+--[[ L["Tooltips need to be enabled in General tab"] = "Tooltips need to be enabled in General tab"--]] 
 L["TOP"] = "上"
 L["TOPLEFT"] = "左上"
 L["TOPRIGHT"] = "右上"
