@@ -596,6 +596,11 @@ L["Changelogs"] = "更新记录"
 L["Click to view recent changelogs"] = "点击查看近期更新记录"
 L["Click to view older changelogs"] = "点击查看远古更新记录"
 L["CHANGELOGS"] = [[
+    <h1>r136-release (Nov 2, 2022, 17:59 GMT+8)</h1>
+    <p>+ 添加了一个增加血条刷新速率的选项（但不推荐使用）。</p>
+    <p>* 好像修复了什么bug，但我忘了。</p>
+    <br/>
+
     <h1>r135-release (Nov 1, 2022, 06:27 GMT+8)</h1>
     <p>* 修复竞技场宠物。</p>
     <p>* 更新巫妖王之怒怀旧服的护盾。</p>

@@ -1,6 +1,6 @@
 ## Interface: 30400
 ## Title: Cell
-## Version: r135-release
+## Version: r136-release
 ## Author: 篠崎
 ## X-Flavor: Wrath
 ## SavedVariables: CellDB

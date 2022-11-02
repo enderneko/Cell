@@ -65,6 +65,11 @@ select(2, ...).L = setmetatable({
     ["SNIPPETS_TIPS"] = "[Double-Click] to rename. [Shift-Click] to delete. All checked snippets will be automatically invoked at the end of Cell initialization process (in ADDON_LOADED event).",
 
     ["CHANGELOGS"] = [[
+        <h1>r136-release (Nov 2, 2022, 17:59 GMT+8)</h1>
+        <p>+ Added an option to increase health update rate (but not recommended).</p>
+        <p>* Bug fixes.</p>
+        <br/>
+
         <h1>r135-release (Nov 1, 2022, 06:27 GMT+8)</h1>
         <p>* Fixed arena pets.</p>
         <p>* Updated shields on Wrath Classic.</p>

@@ -1,8 +1,6 @@
-[Full Changelog](https://github.com/enderneko/Cell/compare/r134-release...126f7de4a8ebff88421c3e7de85050dea912562a)
+[Full Changelog](https://github.com/enderneko/Cell/compare/r135-release...a0f548ff952a4f033f19182eff0f32941e1dd589)
 
-- Fix arena pets
-- Update shields on WotLK
-- Update zhTW
-- Add a tooltip for Show Raid Pets
-- Restore EJSuggestTab_GetPlayerTierIndex
-- [snippet] CustomTexture_ShieldAndAbsorb
+- Fix indicator size
+- Implement CLEU health updater
+- Update tooltips
+- Update layout tab height
