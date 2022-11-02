@@ -126,7 +126,7 @@ end
 -- CreateTargetCounter
 -------------------------------------------------
 function I:CreateTargetCounter(parent)
-    local targetCounter = CreateFrame("Frame", nil, parent)
+    local targetCounter = CreateFrame("Frame", parent:GetName().."TargetCounter", parent)
     parent.indicators.targetCounter = targetCounter
     targetCounter:Hide()
 
