@@ -607,13 +607,14 @@ unitButton = {
 -------------------------------------------------
 -- auras
 -------------------------------------------------
--- NOTE: won't show if not a priest, otherwise show mine only
-local function FilterWeakenedSoul(spellId, caster)
-    if spellId ~= 6788 then return true end
+-- NOTE: Weakened Soul has been removed in Dragonflight
+-- won't show if not a priest, otherwise show mine only
+-- local function FilterWeakenedSoul(spellId, caster)
+--     if spellId ~= 6788 then return true end
 
-    if not Cell.vars.playerClassID == 5 then return end
-    return caster == "player"
-end
+--     if not Cell.vars.playerClassID == 5 then return end
+--     return caster == "player"
+-- end
 
 -- cleuAuras
 local cleuUnits = {}
@@ -672,7 +673,7 @@ local function UnitButton_UpdateDebuffs(self)
                 refreshing = false
             end
 
-            if FilterWeakenedSoul(spellId, source) then
+            -- if FilterWeakenedSoul(spellId, source) then
                 if enabledIndicators["debuffs"] and duration <= 600 and not Cell.vars.debuffBlacklist[spellId] then
                     if not indicatorCustoms["debuffs"] then -- all debuffs
                         if Cell.vars.bigDebuffs[spellId] then  -- isBigDebuff
@@ -702,7 +703,7 @@ local function UnitButton_UpdateDebuffs(self)
                 debuffs_cache[unit][spellId] = expirationTime
                 debuffs_cache_count[unit][spellId] = count
                 debuffs_current[unit][spellId] = i
-            end
+            -- end
 
             -- prepare raidDebuffs
             if enabledIndicators["raidDebuffs"] and I:GetDebuffOrder(name, spellId, count) then
