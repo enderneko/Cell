@@ -788,9 +788,9 @@ local function UpdateRaidPetPreview()
         end
     end
 
-    -- update npcAnchor point
+    -- update anchor point
     if selectedLayout == Cell.vars.currentLayout then
-        -- NOTE: move separate npc anchor with preview
+        -- NOTE: move anchor with preview
         CellRaidPetAnchorFrame:SetAllPoints(raidPetPreviewAnchor)
     else
         P:LoadPosition(CellRaidPetAnchorFrame, Cell.vars.currentLayoutTable["pet"][3])
