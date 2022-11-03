@@ -379,3 +379,17 @@ function F:RunSnippets()
         end
     end
 end
+
+function F:GetDefaultSnippet()
+    return {
+        ["autorun"] = true,
+        ["code"] = "-- snippets can be found at https://github.com/enderneko/Cell/tree/master/.snippets\n"..
+            "-- use \"/run CellDB['snippets'][0]=nil ReloadUI()\" to reset this snippet\n\n"..
+            "-- fade out unit button if hp percent < (number: 0-1)\n"..
+            "CELL_FADE_OUT_HEALTH_PERCENT = nil\n\n"..
+            "-- add summon icons to Status Icon indicator (boolean, retail only)\n"..
+            "CELL_SUMMON_ICONS_ENABLED = false\n\n"..
+            "-- use separate width and height for custom indicator icons (boolean)\n"..
+            "CELL_RECTANGULAR_CUSTOM_INDICATOR_ICONS = false",
+    }
+end

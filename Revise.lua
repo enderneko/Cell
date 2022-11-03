@@ -1438,5 +1438,12 @@ function F:Revise()
         CellDB["general"]["showPartyPets"] = nil
     end
 
+    -- r137-release
+    if CellDB["revise"] and dbRevision < 137 then
+        if not strfind(CellDB["snippets"][0]["code"], "^%-%- snippets can be found") then
+            CellDB["snippets"][0]["code"] = "-- snippets can be found at https://github.com/enderneko/Cell/tree/master/.snippets\n"..CellDB["snippets"][0]["code"]
+        end
+    end
+
     CellDB["revise"] = Cell.version
 end
