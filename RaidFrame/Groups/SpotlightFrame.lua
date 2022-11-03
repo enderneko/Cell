@@ -19,6 +19,10 @@ anchorFrame:SetMovable(true)
 anchorFrame:SetClampedToScreen(true)
 
 local hoverFrame = CreateFrame("Frame", nil, spotlightFrame, "BackdropTemplate")
+hoverFrame:SetPoint("TOP", anchorFrame, 0, 1)
+hoverFrame:SetPoint("BOTTOM", anchorFrame, 0, -1)
+hoverFrame:SetPoint("LEFT", anchorFrame, -1, 0)
+hoverFrame:SetPoint("RIGHT", anchorFrame, 1, 0)
 -- Cell:StylizeFrame(hoverFrame, {1,0,0,0.3}, {0,0,0,0})
 
 local config = Cell:CreateButton(anchorFrame, nil, "accent", {20, 10}, false, true, nil, nil, "SecureHandlerAttributeTemplate,SecureHandlerClickTemplate")
@@ -388,11 +392,8 @@ local function UpdatePosition()
     local anchor = Cell.vars.currentLayoutTable["anchor"]
     
     spotlightFrame:ClearAllPoints()
-    hoverFrame:ClearAllPoints()
     -- NOTE: detach from spotlightPreviewAnchor
     P:LoadPosition(anchorFrame, Cell.vars.currentLayoutTable["spotlight"][3])
-
-    -- local hoverTop, hoverBottom, hoverLeft, hoverRight
 
     if CellDB["general"]["menuPosition"] == "top_bottom" then
         P:Size(anchorFrame, 20, 10)
@@ -400,19 +401,15 @@ local function UpdatePosition()
         if anchor == "BOTTOMLEFT" then
             spotlightFrame:SetPoint("BOTTOMLEFT", anchorFrame, "TOPLEFT", 0, 4)
             tooltipPoint, tooltipRelativePoint, tooltipX, tooltipY = "TOPLEFT", "BOTTOMLEFT", 0, -3
-            -- hoverTop, hoverBottom, hoverLeft, hoverRight = 5, -20, -20, 20
         elseif anchor == "BOTTOMRIGHT" then
             spotlightFrame:SetPoint("BOTTOMRIGHT", anchorFrame, "TOPRIGHT", 0, 4)
             tooltipPoint, tooltipRelativePoint, tooltipX, tooltipY = "TOPRIGHT", "BOTTOMRIGHT", 0, -3
-            -- hoverTop, hoverBottom, hoverLeft, hoverRight = 5, -20, -20, 20
         elseif anchor == "TOPLEFT" then
             spotlightFrame:SetPoint("TOPLEFT", anchorFrame, "BOTTOMLEFT", 0, -4)
             tooltipPoint, tooltipRelativePoint, tooltipX, tooltipY = "BOTTOMLEFT", "TOPLEFT", 0, 3
-            -- hoverTop, hoverBottom, hoverLeft, hoverRight = 20, -5, -20, 20
         elseif anchor == "TOPRIGHT" then
             spotlightFrame:SetPoint("TOPRIGHT", anchorFrame, "BOTTOMRIGHT", 0, -4)
             tooltipPoint, tooltipRelativePoint, tooltipX, tooltipY = "BOTTOMRIGHT", "TOPRIGHT", 0, 3
-            -- hoverTop, hoverBottom, hoverLeft, hoverRight = 20, -5, -20, 20
         end
     else -- left_right
         P:Size(anchorFrame, 10, 20)
@@ -420,26 +417,17 @@ local function UpdatePosition()
         if anchor == "BOTTOMLEFT" then
             spotlightFrame:SetPoint("BOTTOMLEFT", anchorFrame, "BOTTOMRIGHT", 4, 0)
             tooltipPoint, tooltipRelativePoint, tooltipX, tooltipY = "BOTTOMRIGHT", "BOTTOMLEFT", -3, 0
-            -- hoverTop, hoverBottom, hoverLeft, hoverRight = 20, -20, -20, 5
         elseif anchor == "BOTTOMRIGHT" then
             spotlightFrame:SetPoint("BOTTOMRIGHT", anchorFrame, "BOTTOMLEFT", -4, 0)
             tooltipPoint, tooltipRelativePoint, tooltipX, tooltipY = "BOTTOMLEFT", "BOTTOMRIGHT", 3, 0
-            -- hoverTop, hoverBottom, hoverLeft, hoverRight = 20, -20, -5, 20
         elseif anchor == "TOPLEFT" then
             spotlightFrame:SetPoint("TOPLEFT", anchorFrame, "TOPRIGHT", 4, 0)
             tooltipPoint, tooltipRelativePoint, tooltipX, tooltipY = "TOPRIGHT", "TOPLEFT", -3, 0
-            -- hoverTop, hoverBottom, hoverLeft, hoverRight = 20, -20, -20, 5
         elseif anchor == "TOPRIGHT" then
             spotlightFrame:SetPoint("TOPRIGHT", anchorFrame, "TOPLEFT", -4, 0)
             tooltipPoint, tooltipRelativePoint, tooltipX, tooltipY = "TOPLEFT", "TOPRIGHT", 3, 0
-            -- hoverTop, hoverBottom, hoverLeft, hoverRight = 20, -20, -5, 20
         end
     end
-
-    hoverFrame:SetPoint("TOP", anchorFrame, 0, 1)
-    hoverFrame:SetPoint("BOTTOM", anchorFrame, 0, -1)
-    hoverFrame:SetPoint("LEFT", anchorFrame, -1, 0)
-    hoverFrame:SetPoint("RIGHT", anchorFrame, 1, 0)
 end
 
 local function UpdateMenu(which)

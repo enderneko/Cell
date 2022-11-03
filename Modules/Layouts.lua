@@ -1046,19 +1046,16 @@ local function UpdateSpotlightPreview()
         end
     end
 
-    -- update npcAnchor point
+    -- update preview anchor
+    spotlightPreviewAnchor:ClearAllPoints()
     if selectedLayout == Cell.vars.currentLayout then
-        -- NOTE: move separate npc anchor with preview
-        Cell.frames.spotlightFrameAnchor:SetAllPoints(spotlightPreviewAnchor)
+        spotlightPreviewAnchor:EnableMouse(false)
+        spotlightPreviewAnchor:SetAllPoints(Cell.frames.spotlightFrameAnchor)
     else
-        P:LoadPosition(Cell.frames.spotlightFrameAnchor, Cell.vars.currentLayoutTable["spotlight"][3])
-    end
-
-    if #selectedLayoutTable["spotlight"][3] == 2 then
-        P:LoadPosition(spotlightPreviewAnchor, selectedLayoutTable["spotlight"][3])
-    else
-        spotlightPreviewAnchor:ClearAllPoints()
-        spotlightPreviewAnchor:SetPoint("TOPLEFT", UIParent, "CENTER")
+        spotlightPreviewAnchor:EnableMouse(true)
+        if not P:LoadPosition(spotlightPreviewAnchor, selectedLayoutTable["spotlight"][3]) then
+            spotlightPreviewAnchor:SetPoint("TOPLEFT", UIParent, "CENTER")
+        end
     end
     spotlightPreviewAnchor:Show()
     spotlightPreviewName:SetText(L["Layout"]..": "..selectedLayout.." ("..L["Spotlight Frame"]..")")
