@@ -1,4 +1,5 @@
 local _, Cell = ...
+local L = Cell.L
 local F = Cell.funcs
 local P = Cell.pixelPerfectFuncs
 
@@ -15,6 +16,135 @@ local anchors = {
 for k, v in pairs(anchors) do
     npcFrame:SetFrameRef(k, v)
 end
+
+-------------------------------------------------
+-- separateAnchor
+-------------------------------------------------
+local tooltipPoint, tooltipRelativePoint, tooltipX, tooltipY
+
+local separateAnchor = CreateFrame("Frame", "CellSeparateNPCFrameAnchor", Cell.frames.mainFrame, "BackdropTemplate")
+Cell.frames.separateNpcFrameAnchor = separateAnchor
+separateAnchor:SetMovable(true)
+separateAnchor:SetClampedToScreen(true)
+P:Size(separateAnchor, 20, 10)
+separateAnchor:SetPoint("TOPLEFT", UIParent, "CENTER")
+-- Cell:StylizeFrame(separateAnchor, {0, 1, 0, 0.4})
+
+local hoverFrame = CreateFrame("Frame", nil, npcFrame)
+hoverFrame:SetPoint("TOP", separateAnchor, 0, 1)
+hoverFrame:SetPoint("BOTTOM", separateAnchor, 0, -1)
+hoverFrame:SetPoint("LEFT", separateAnchor, -1, 0)
+hoverFrame:SetPoint("RIGHT", separateAnchor, 1, 0)
+
+local dumb = Cell:CreateButton(separateAnchor, nil, "accent", {20, 10}, false, true)
+dumb:Hide()
+dumb:SetFrameStrata("MEDIUM")
+dumb:SetAllPoints(separateAnchor)
+dumb:SetScript("OnDragStart", function()
+    separateAnchor:StartMoving()
+    separateAnchor:SetUserPlaced(false)
+end)
+dumb:SetScript("OnDragStop", function()
+    separateAnchor:StopMovingOrSizing()
+    P:SavePosition(separateAnchor, Cell.vars.currentLayoutTable["friendlyNPC"][3])
+end)
+dumb:HookScript("OnEnter", function()
+    hoverFrame:GetScript("OnEnter")(hoverFrame)
+    CellTooltip:SetOwner(dumb, "ANCHOR_NONE")
+    CellTooltip:SetPoint(tooltipPoint, dumb, tooltipRelativePoint, tooltipX, tooltipY)
+    CellTooltip:AddLine(L["Friendly NPC Frame"])
+    CellTooltip:Show()
+end)
+dumb:HookScript("OnLeave", function()
+    hoverFrame:GetScript("OnLeave")(hoverFrame)
+    CellTooltip:Hide()
+end)
+
+function npcFrame:UpdateSeparateAnchor()
+    local show
+    if Cell.vars.currentLayoutTable["friendlyNPC"][2] then
+        for _, b in ipairs(Cell.unitButtons.npc) do
+            show = b:IsShown()
+            if show then break end
+        end
+    end
+    
+    hoverFrame:EnableMouse(show)
+    if show then
+        dumb:Show()
+        if CellDB["general"]["fadeOut"] then
+            if hoverFrame:IsMouseOver() then
+                separateAnchor.fadeIn:Play()
+            else
+                separateAnchor.fadeOut:GetScript("OnFinished")(separateAnchor.fadeOut)
+            end
+        end
+    else
+        dumb:Hide()
+    end
+end
+
+-------------------------------------------------
+-- fadeIn & fadeOut
+-------------------------------------------------
+local fadingIn, fadedIn, fadingOut, fadedOut
+separateAnchor.fadeIn = separateAnchor:CreateAnimationGroup()
+separateAnchor.fadeIn.alpha = separateAnchor.fadeIn:CreateAnimation("alpha")
+separateAnchor.fadeIn.alpha:SetFromAlpha(0)
+separateAnchor.fadeIn.alpha:SetToAlpha(1)
+separateAnchor.fadeIn.alpha:SetDuration(0.5)
+separateAnchor.fadeIn.alpha:SetSmoothing("OUT")
+separateAnchor.fadeIn:SetScript("OnPlay", function()
+    separateAnchor.fadeOut:Finish()
+    fadingIn = true
+end)
+separateAnchor.fadeIn:SetScript("OnFinished", function()
+    fadingIn = false
+    fadingOut = false
+    fadedIn = true
+    fadedOut = false
+    separateAnchor:SetAlpha(1)
+
+    if CellDB["general"]["fadeOut"] and not hoverFrame:IsMouseOver() then
+        separateAnchor.fadeOut:Play()
+    end
+end)
+
+separateAnchor.fadeOut = separateAnchor:CreateAnimationGroup()
+separateAnchor.fadeOut.alpha = separateAnchor.fadeOut:CreateAnimation("alpha")
+separateAnchor.fadeOut.alpha:SetFromAlpha(1)
+separateAnchor.fadeOut.alpha:SetToAlpha(0)
+separateAnchor.fadeOut.alpha:SetDuration(0.5)
+separateAnchor.fadeOut.alpha:SetSmoothing("OUT")
+separateAnchor.fadeOut:SetScript("OnPlay", function()
+    separateAnchor.fadeIn:Finish()
+    fadingOut = true
+end)
+separateAnchor.fadeOut:SetScript("OnFinished", function()
+    fadingIn = false
+    fadingOut = false
+    fadedIn = false
+    fadedOut = true
+    separateAnchor:SetAlpha(0)
+
+    if hoverFrame:IsMouseOver() then
+        separateAnchor.fadeIn:Play()
+    end
+end)
+
+hoverFrame:SetScript("OnEnter", function()
+    if not CellDB["general"]["fadeOut"] then return end
+    if not (fadingIn or fadedIn) then
+        separateAnchor.fadeIn:Play()
+    end
+end)
+hoverFrame:SetScript("OnLeave", function()
+    if not CellDB["general"]["fadeOut"] then return end
+    if hoverFrame:IsMouseOver() then return end
+    if not (fadingOut or fadedOut) then
+        separateAnchor.fadeOut:Play()
+    end
+end)
 
 -------------------------------------------------
 -- NOTE: update each npc unit button
@@ -40,6 +170,8 @@ local pointUpdater = [[
             last = button
         end
     end
+
+    self:CallMethod("UpdateSeparateAnchor")
 ]]
 npcFrame:SetAttribute("pointUpdater", pointUpdater)
 
@@ -55,7 +187,7 @@ for i = 1, 8 do
     -- RegisterAttributeDriver(button, "state-visibility", "[@boss"..i..", help] show; hide")
     -- for testing ------------------------------
     -- if i == 1 then
-    --     button:SetAttribute("unit", "player")
+    --     button:SetAttribute("unit", "target")
     --     RegisterUnitWatch(button)
     -- end
     -- if i == 7 then
@@ -281,15 +413,6 @@ npcFrame:SetAttribute("_onstate-petstate", [[
 -- RegisterStateDriver(npcFrame, "petstate", "[@pet,exists] pet; [@partypet1,exists] pet1; [@partypet2,exists] pet2; [@partypet3,exists] pet3; [@partypet4,exists] pet4; nopet")
 
 -------------------------------------------------
--- separateAnchor
--------------------------------------------------
-local separateAnchor = CreateFrame("Frame", "CellSeparateNPCFrameAnchor", Cell.frames.mainFrame, "BackdropTemplate")
-Cell.frames.separateNpcFrameAnchor = separateAnchor
-P:Size(separateAnchor, 20, 10)
-separateAnchor:SetPoint("TOPLEFT", UIParent, "CENTER")
--- Cell:StylizeFrame(separateAnchor, {0, 1, 0, 0.4})
-
--------------------------------------------------
 -- functions
 -------------------------------------------------
 local function UpdatePosition()
@@ -304,29 +427,55 @@ local function UpdatePosition()
             P:Size(separateAnchor, 20, 10)
             if layout["anchor"] == "BOTTOMLEFT" then
                 npcFrame:SetPoint("BOTTOMLEFT", separateAnchor, "TOPLEFT", 0, 4)
+                tooltipPoint, tooltipRelativePoint, tooltipX, tooltipY = "TOPLEFT", "BOTTOMLEFT", 0, -3
             elseif layout["anchor"] == "BOTTOMRIGHT" then
                 npcFrame:SetPoint("BOTTOMRIGHT", separateAnchor, "TOPRIGHT", 0, 4)
+                tooltipPoint, tooltipRelativePoint, tooltipX, tooltipY = "TOPRIGHT", "BOTTOMRIGHT", 0, -3
             elseif layout["anchor"] == "TOPLEFT" then
                 npcFrame:SetPoint("TOPLEFT", separateAnchor, "BOTTOMLEFT", 0, -4)
+                tooltipPoint, tooltipRelativePoint, tooltipX, tooltipY = "BOTTOMLEFT", "TOPLEFT", 0, 3
             elseif layout["anchor"] == "TOPRIGHT" then
                 npcFrame:SetPoint("TOPRIGHT", separateAnchor, "BOTTOMRIGHT", 0, -4)
+                tooltipPoint, tooltipRelativePoint, tooltipX, tooltipY = "BOTTOMRIGHT", "TOPRIGHT", 0, 3
             end
         else
             P:Size(separateAnchor, 10, 20)
             if layout["anchor"] == "BOTTOMLEFT" then
                 npcFrame:SetPoint("BOTTOMLEFT", separateAnchor, "BOTTOMRIGHT", 4, 0)
+                tooltipPoint, tooltipRelativePoint, tooltipX, tooltipY = "BOTTOMRIGHT", "BOTTOMLEFT", -3, 0
             elseif layout["anchor"] == "BOTTOMRIGHT" then
                 npcFrame:SetPoint("BOTTOMRIGHT", separateAnchor, "BOTTOMLEFT", -4, 0)
+                tooltipPoint, tooltipRelativePoint, tooltipX, tooltipY = "BOTTOMLEFT", "BOTTOMRIGHT", 3, 0
             elseif layout["anchor"] == "TOPLEFT" then
                 npcFrame:SetPoint("TOPLEFT", separateAnchor, "TOPRIGHT", 4, 0)
+                tooltipPoint, tooltipRelativePoint, tooltipX, tooltipY = "TOPRIGHT", "TOPLEFT", -3, 0
             elseif layout["anchor"] == "TOPRIGHT" then
                 npcFrame:SetPoint("TOPRIGHT", separateAnchor, "TOPLEFT", -4, 0)
+                tooltipPoint, tooltipRelativePoint, tooltipX, tooltipY = "TOPLEFT", "TOPRIGHT", 3, 0
             end
         end
     end
+
+    npcFrame:UpdateSeparateAnchor()
 end
 
 local function UpdateMenu(which)
+    if not which or which == "lock" then
+        if CellDB["general"]["locked"] then
+            dumb:RegisterForDrag()
+        else
+            dumb:RegisterForDrag("LeftButton")
+        end
+    end
+
+    if not which or which == "fadeOut" then
+        if CellDB["general"]["fadeOut"] then
+            separateAnchor.fadeOut:Play()
+        else
+            separateAnchor.fadeIn:Play()
+        end
+    end
+
     if which == "position" then
         UpdatePosition()
     end
