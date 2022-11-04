@@ -1330,7 +1330,7 @@ end
 if Cell.isRetail then
     function F:FindDebuffByIds(unit, spellIds)
         local debuffs = {}
-        AuraUtil.ForEachAura(unit, "HARMFUL", 10, function(name, icon, count, debuffType, duration, expirationTime, source, isStealable, nameplateShowPersonal, spellId)
+        AuraUtil.ForEachAura(unit, "HARMFUL", nil, function(name, icon, count, debuffType, duration, expirationTime, source, isStealable, nameplateShowPersonal, spellId)
             if spellIds[spellId] then
                 debuffs[spellId] = debuffType
             end
@@ -1340,7 +1340,7 @@ if Cell.isRetail then
 
     function F:FindAuraByDebuffTypes(unit, types)
         local debuffs = {}
-        AuraUtil.ForEachAura(unit, "HARMFUL", 10, function(name, icon, count, debuffType, duration, expirationTime, source, isStealable, nameplateShowPersonal, spellId)
+        AuraUtil.ForEachAura(unit, "HARMFUL", nil, function(name, icon, count, debuffType, duration, expirationTime, source, isStealable, nameplateShowPersonal, spellId)
             if types == "all" or types[debuffType] then
                 debuffs[spellId] = debuffType
             end
