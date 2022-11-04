@@ -596,6 +596,12 @@ L["Changelogs"] = "更新记录"
 L["Click to view recent changelogs"] = "点击查看近期更新记录"
 L["Click to view older changelogs"] = "点击查看远古更新记录"
 L["CHANGELOGS"] = [[
+    <h1>r137-release (Nov 4, 2022, 18:07 GMT+8)</h1>
+    <p>* 为团队宠物与分离的NPC框体添加了移动按钮。</p>
+    <p>* 更新繁中。</p>
+    <p>* 修bug。</p>
+    <br/>
+
     <h1>r136-release (Nov 2, 2022, 17:59 GMT+8)</h1>
     <p>+ 添加了一个增加血条刷新速率的选项（但不推荐使用）。</p>
     <p>* 好像修复了什么bug，但我忘了。</p>
