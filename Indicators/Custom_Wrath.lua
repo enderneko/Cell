@@ -2,7 +2,7 @@
 -- File: Custom_Wrath.lua
 -- Author: enderneko (enderneko-dev@outlook.com)
 -- File Created: 2022/08/26 03:04:05 +0800
--- Last Modified: 2022/10/21 03:21:09 +0800
+-- Last Modified: 2022/11/04 17:53:01 +0800
 --]]
 
 local _, Cell = ...
@@ -68,7 +68,7 @@ function I:CreateIndicator(parent, indicatorTable)
 
         if auraType == "buff" then
             customIndicators[auraType][indicatorName]["castByMe"] = indicatorTable["castByMe"]
-            customIndicators[auraType][indicatorName]["_auras"] = indicatorTable["auras"] --* wrath
+            customIndicators[auraType][indicatorName]["_auras"] = F:Copy(indicatorTable["auras"]) --* wrath
             customIndicators[auraType][indicatorName]["trackByName"] = indicatorTable["trackByName"] --* wrath
         end
     end
@@ -116,6 +116,7 @@ local function UpdateCustomIndicators(layout, indicatorName, setting, value, val
             enabledIndicators[indicatorName] = nil
         end
     elseif setting == "auras" then
+        customIndicators[value][indicatorName]["_auras"] = F:Copy(value2) --* wrath
         customIndicators[value][indicatorName]["auras"] = F:ConvertAurasTable(value2, customIndicators[value][indicatorName]["trackByName"]) --* wrath
     elseif setting == "checkbutton" then
         if customIndicators["buff"][indicatorName] then
@@ -181,6 +182,7 @@ function I:CheckCustomIndicators(unit, unitButton, auraType, spellId, name, star
                 else -- debuff
                     if indicatorTable["isIcons"] then
                         if indicatorTable["found"][unit] <= indicatorTable["num"] then
+                            unitButton.indicators[indicatorName]:UpdateSize(indicatorTable["found"][unit])
                             unitButton.indicators[indicatorName][indicatorTable["found"][unit]]:SetCooldown(start, duration, debuffType, texture, count, refreshing)
                             indicatorTable["found"][unit] = indicatorTable["found"][unit] + 1
                             unitButton.indicators[indicatorName]:Show()
