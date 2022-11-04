@@ -243,8 +243,8 @@ local function RaidFrame_UpdateLayout(layout, which)
                 header:SetAttribute("buttonHeight", P:Scale(height))
 
                 -- 确保按钮在“一定程度上”对齐
-                header:SetAttribute("minWidth", P:Scale(width) - layout["groupSpacing"])
-                header:SetAttribute("minHeight", P:Scale(height) - layout["groupSpacing"])
+                header:SetAttribute("minWidth", P:Scale(width))
+                header:SetAttribute("minHeight", P:Scale(height))
 
                 P:Size(npcFrameAnchor, width, height)
             end
