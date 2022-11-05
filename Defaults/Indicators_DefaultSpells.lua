@@ -17,6 +17,7 @@ local debuffBlacklist = {
     195776, -- 月羽疫病
     352562, -- 起伏机动
     356419, -- 审判灵魂
+    387847, -- 邪甲术
 }
 
 function I:GetDefaultDebuffBlacklist()
