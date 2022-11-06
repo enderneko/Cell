@@ -25,14 +25,13 @@ It's easy to use and good enough for you (hope so).
 - __Useful Raid Tools:__ ready check, countdown, rebuff, death report, marks, battleres.
 - __Nice Options UI:__ I mean yes it's pretty darn good!
 - __Spotlight Frame:__ extra 5 unit buttons, can be set to Target, Target of Target, Focus, Unit or Unit's Pet.
-- __Compatibility:__ [Class Colors](https://www.curseforge.com/wow/addons/classcolors), [OmniCD](https://www.curseforge.com/wow/addons/omnicd) and of course, [WAs](https://wago.io/weakauras).
+- __Compatibility:__ [BigDebuffs](https://www.curseforge.com/wow/addons/bigdebuffs), [Class Colors](https://www.curseforge.com/wow/addons/classcolors), [OmniCD](https://www.curseforge.com/wow/addons/omnicd) and of course, [WAs](https://wago.io/weakauras).
 
 ## Not supported and probably won't be included in the future
 
 - Sort raid by name/class/role
 - Custom border
-- Blizzard style icons
-- Addons like Clique, BigDebuffs
+- Addons like Clique
 
 ## Slash Commands
 
