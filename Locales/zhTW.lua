@@ -300,6 +300,8 @@ L["Overwrite Layout"] = "取代版面配置"
 L["P"] = "PvP 天賦"
 L["Particles"] = "粒子數"
 L["Party"] = "隊伍"
+--[[Translation missing --]]
+--[[ L["Patrons"] = "Patrons"--]] 
 L["PENDING"] = "等候"
 L["Percentage"] = "百分比"
 L["PET"] = "寵物"
