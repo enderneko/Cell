@@ -553,6 +553,10 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                 if value["duration"] then
                     indicator:SetDuration(value["duration"])
                 end
+                -- FirstRun: Healers
+                if value["auras"] and #value["auras"] ~= 0 then
+                    UnitButton_UpdateAuras(b)
+                end
             end, true)
         elseif setting == "remove" then
             F:IterateAllUnitButtons(function(b)
@@ -620,36 +624,39 @@ unitButton = {
 -- cleuAuras
 local cleuUnits = {}
 
-local debuffs_count = {}
+local debuffs_current = {}
+local debuffs_cache = {}
+local debuffs_cache_count = {}
 local debuffs_normal = {}
 local debuffs_big = {}
 local debuffs_dispel = {}
-local debuffs_raid = {} -- store matching raid debuffs auraInstanceID
-local debuffs_raid_orders = {} -- store matching raid debuffs orders ([auraInstanceID] = order)
+local debuffs_raid = {} -- store raid debuffs auraInstanceID
+local debuffs_raid_refreshing = {} -- store raid debuffs refreshing status ([auraInstanceID] = refreshing)
+local debuffs_raid_orders = {} -- store raid debuffs orders ([auraInstanceID] = order)
 local debuffs_glowing_current = {}
 local debuffs_glowing_cache = {}
 local function UnitButton_UpdateDebuffs(self)
     local unit = self.state.displayedUnit
+
+    if not debuffs_current[unit] then debuffs_current[unit] = {} end
+    if not debuffs_cache[unit] then debuffs_cache[unit] = {} end
+    if not debuffs_cache_count[unit] then debuffs_cache_count[unit] = {} end
     if not debuffs_normal[unit] then debuffs_normal[unit] = {} end
     if not debuffs_big[unit] then debuffs_big[unit] = {} end
     if not debuffs_dispel[unit] then debuffs_dispel[unit] = {} end
     if not debuffs_raid[unit] then debuffs_raid[unit] = {} end
+    if not debuffs_raid_refreshing[unit] then debuffs_raid_refreshing[unit] = {} end
     if not debuffs_raid_orders[unit] then debuffs_raid_orders[unit] = {} end
     if not debuffs_glowing_current[unit] then debuffs_glowing_current[unit] = {} end
     if not debuffs_glowing_cache[unit] then debuffs_glowing_cache[unit] = {} end
     self.state.BGOrb = nil
-
-    if not debuffs_count[unit] then 
-        debuffs_count[unit] = {}
-    else
-        wipe(debuffs_count[unit])
-    end
 
     -- user created indicators
     I:ResetCustomIndicators(self, "debuff")
 
     local startIndex, resurrectionFound, raidDebuffsFound = 1
     local glowType, glowOptions
+    local refreshing, countIncreased, justApplied
 
     AuraUtil.ForEachAura(unit, "HARMFUL", nil, function(auraInfo)
         local auraInstanceID = auraInfo.auraInstanceID
@@ -657,15 +664,28 @@ local function UnitButton_UpdateDebuffs(self)
         local icon = auraInfo.icon
         local count = auraInfo.applications
         local debuffType = auraInfo.isHarmful and auraInfo.dispelName
-        local start = (auraInfo.expirationTime or 0) - auraInfo.duration
+        local expirationTime = auraInfo.expirationTime or 0
+        local start = expirationTime - auraInfo.duration
         local duration = auraInfo.duration
         local source = auraInfo.sourceUnit
         local spellId = auraInfo.spellId
         -- local attribute = auraInfo.points[1] -- UnitAura:arg16
         
-        debuffs_count[unit][auraInstanceID] = count
-
         if duration then
+            if Cell.vars.iconAnimation == "duration" then
+                justApplied = debuffs_cache[unit][auraInstanceID] and (debuffs_cache[unit][auraInstanceID] < expirationTime) or false
+                countIncreased = debuffs_cache_count[unit][auraInstanceID] and (count > debuffs_cache_count[unit][auraInstanceID]) or false
+                refreshing = justApplied or countIncreased
+            elseif Cell.vars.iconAnimation == "stack" then
+                refreshing = debuffs_cache_count[unit][auraInstanceID] and (count > debuffs_cache_count[unit][auraInstanceID]) or false
+            else
+                refreshing = false
+            end
+
+            debuffs_current[unit][auraInstanceID] = true
+            debuffs_cache[unit][auraInstanceID] = expirationTime
+            debuffs_cache_count[unit][auraInstanceID] = count
+
             if enabledIndicators["debuffs"] and duration <= 600 and not Cell.vars.debuffBlacklist[spellId] then
                 -- all debuffs / only dispellableByMe
                 if not indicatorCustoms["debuffs"] or I:CanDispel(debuffType) then 
@@ -673,9 +693,9 @@ local function UnitButton_UpdateDebuffs(self)
                     if startIndex <= indicatorNums["debuffs"]+indicatorNums["raidDebuffs"] then
                         startIndex = startIndex + 1
                         if Cell.vars.bigDebuffs[spellId] then
-                            tinsert(debuffs_big[unit], auraInstanceID)
+                            debuffs_big[unit][auraInstanceID] = refreshing
                         else
-                            tinsert(debuffs_normal[unit], auraInstanceID)
+                            debuffs_normal[unit][auraInstanceID] = refreshing
                         end
                     end
                 end
@@ -689,9 +709,10 @@ local function UnitButton_UpdateDebuffs(self)
             if enabledIndicators["raidDebuffs"] and order then
                 raidDebuffsFound = true
                 tinsert(debuffs_raid[unit], auraInstanceID)
+                debuffs_raid_refreshing[unit][auraInstanceID] = refreshing
                 debuffs_raid_orders[unit][auraInstanceID] = order
 
-                if not indicatorCustoms["raidDebuffs"] then -- glow all matching debuffs
+                if not indicatorCustoms["raidDebuffs"] then -- glow all
                     glowType, glowOptions = I:GetDebuffGlow(name, spellId, count)
                     if glowType and glowType ~= "None" then
                         debuffs_glowing_current[unit][glowType] = glowOptions
@@ -758,9 +779,8 @@ local function UnitButton_UpdateDebuffs(self)
             if debuffs_raid[unit][i] then -- debuffs_raid[unit][i] -> auraInstanceID
                 local auraInfo = GetAuraDataByAuraInstanceID(unit, debuffs_raid[unit][i])
                 if auraInfo then
-                    self.indicators.raidDebuffs[i]:SetCooldown((auraInfo.expirationTime or 0) - auraInfo.duration, auraInfo.duration, auraInfo.dispelName or "", auraInfo.icon, auraInfo.applications)
+                    self.indicators.raidDebuffs[i]:SetCooldown((auraInfo.expirationTime or 0) - auraInfo.duration, auraInfo.duration, auraInfo.dispelName or "", auraInfo.icon, auraInfo.applications, debuffs_raid_refreshing[unit][debuffs_raid[unit][i]])
                     self.indicators.raidDebuffs[i].spellId = spellId -- NOTE: for tooltip
-                    self.indicators.raidDebuffs[i].auraInstanceID = auraInfo.auraInstanceID
                     startIndex = startIndex + 1
                     -- use debuffs_raid_orders(wiped before) to store debuffs indices shown by raidDebuffs indicator
                     debuffs_raid_orders[unit][debuffs_raid[unit][i]] = true
@@ -784,7 +804,6 @@ local function UnitButton_UpdateDebuffs(self)
         for i = startIndex, 3 do
             self.indicators.raidDebuffs[i]:Hide()
             self.indicators.raidDebuffs[i].spellId = nil
-            self.indicators.raidDebuffs[i].auraInstanceID = nil
         end
 
         -- update glow
@@ -814,25 +833,23 @@ local function UnitButton_UpdateDebuffs(self)
     startIndex = 1
     if enabledIndicators["debuffs"] then
         -- bigDebuffs first
-        for _, auraInstanceID in pairs(debuffs_big[unit]) do
+        for auraInstanceID, refreshing in pairs(debuffs_big[unit]) do
             local auraInfo = GetAuraDataByAuraInstanceID(unit, auraInstanceID)
             if auraInfo and not debuffs_raid_orders[unit][auraInstanceID] and startIndex <= indicatorNums["debuffs"] then
                 -- start, duration, debuffType, texture, count
-                self.indicators.debuffs[startIndex]:SetCooldown((auraInfo.expirationTime or 0) - auraInfo.duration, auraInfo.duration, auraInfo.dispelName or "", auraInfo.icon, auraInfo.applications, false, true)
+                self.indicators.debuffs[startIndex]:SetCooldown((auraInfo.expirationTime or 0) - auraInfo.duration, auraInfo.duration, auraInfo.dispelName or "", auraInfo.icon, auraInfo.applications, refreshing, true)
                 self.indicators.debuffs[startIndex].spellId = spellId -- NOTE: for tooltip
-                self.indicators.debuffs[startIndex].auraInstanceID = auraInfo.auraInstanceID
                 self.indicators.debuffs[startIndex].isBigDebuff = true
                 startIndex = startIndex + 1
             end
         end
         -- then normal debuffs
-        for _, auraInstanceID in pairs(debuffs_normal[unit]) do
+        for auraInstanceID, refreshing in pairs(debuffs_normal[unit]) do
             local auraInfo = GetAuraDataByAuraInstanceID(unit, auraInstanceID)
             if auraInfo and not debuffs_raid_orders[unit][auraInstanceID] and startIndex <= indicatorNums["debuffs"] then
                 -- start, duration, debuffType, texture, count
-                self.indicators.debuffs[startIndex]:SetCooldown((auraInfo.expirationTime or 0) - auraInfo.duration, auraInfo.duration, auraInfo.dispelName or "", auraInfo.icon, auraInfo.applications)
+                self.indicators.debuffs[startIndex]:SetCooldown((auraInfo.expirationTime or 0) - auraInfo.duration, auraInfo.duration, auraInfo.dispelName or "", auraInfo.icon, auraInfo.applications, refreshing)
                 self.indicators.debuffs[startIndex].spellId = spellId -- NOTE: for tooltip
-                self.indicators.debuffs[startIndex].auraInstanceID = auraInfo.auraInstanceID
                 self.indicators.debuffs[startIndex].isBigDebuff = false
                 startIndex = startIndex + 1
             end
@@ -846,85 +863,103 @@ local function UnitButton_UpdateDebuffs(self)
     for i = startIndex, 10 do
         self.indicators.debuffs[i]:Hide()
         self.indicators.debuffs[i].spellId = nil
-        self.indicators.debuffs[i].auraInstanceID = nil
         self.indicators.debuffs[i].isBigDebuff = nil
     end
 
     -- update dispels
     self.indicators.dispels:SetDispels(debuffs_dispel[unit])
-    
+
+    -- user created indicators
+    I:ShowCustomIndicators(self, "debuff")
+
+    -- update debuffs_cache
+    for spellId, expirationTime in pairs(debuffs_cache[unit]) do
+        -- lost or expired
+        if not debuffs_current[unit][spellId] or (expirationTime ~= 0 and GetTime() >= expirationTime) then -- expirationTime == 0: no duration 
+            debuffs_cache[unit][spellId] = nil
+            debuffs_cache_count[unit][spellId] = nil
+        end
+    end
+
+    wipe(debuffs_current[unit])
     wipe(debuffs_normal[unit])
     wipe(debuffs_big[unit])
     wipe(debuffs_dispel[unit])
     wipe(debuffs_raid[unit])
+    wipe(debuffs_raid_refreshing[unit])
     wipe(debuffs_raid_orders[unit])
 end
 
-local buffs_count = {}
+local buffs_current = {}
+local buffs_cache = {}
+local buffs_cache_count = {}
 local buffs_mirror_image = {}
 local function UnitButton_UpdateBuffs(self)
     local unit = self.state.displayedUnit
     
-    if not buffs_count[unit] then 
-        buffs_count[unit] = {}
-    else
-        wipe(buffs_count[unit])
-    end
-
+    if not buffs_cache[unit] then buffs_cache[unit] = {} end
+    if not buffs_cache_count[unit] then buffs_cache_count[unit] = {} end
+    if not buffs_current[unit] then buffs_current[unit] = {} end
     self.state.BGFlag = nil
     
     -- user created indicators
     I:ResetCustomIndicators(self, "buff")
 
+    local refreshing, countIncreased, justApplied
     local defensiveFound, externalFound, allFound, tankActiveMitigationFound, drinkingFound = 0, 0, 0, false, false
     
     AuraUtil.ForEachAura(unit, "HELPFUL", nil, function(auraInfo)
-        -- player_auras[auraInfo.auraInstanceID] = auraInfo
-        -- if auraInfo.isHelpful then auraInfo.dispelName = nil end
-        -- auraInfo.start = (auraInfo.expirationTime or 0) - auraInfo.duration
-
         local auraInstanceID = auraInfo.auraInstanceID
         local name = auraInfo.name
         local icon = auraInfo.icon
         local count = auraInfo.applications
         local debuffType = auraInfo.isHarmful and auraInfo.dispelName
-        local start = (auraInfo.expirationTime or 0) - auraInfo.duration
+        local expirationTime = auraInfo.expirationTime or 0
+        local start = expirationTime - auraInfo.duration
         local duration = auraInfo.duration
         local source = auraInfo.sourceUnit
         local spellId = auraInfo.spellId
         local attribute = auraInfo.points[1] -- UnitAura:arg16
 
-        buffs_count[unit][auraInstanceID] = count
-
         if duration then
+            if Cell.vars.iconAnimation == "duration" then
+                justApplied = buffs_cache[unit][auraInstanceID] and (buffs_cache[unit][auraInstanceID] < expirationTime) or false
+                countIncreased = buffs_cache_count[unit][auraInstanceID] and (count > buffs_cache_count[unit][auraInstanceID]) or false
+                refreshing = justApplied or countIncreased
+            elseif Cell.vars.iconAnimation == "stack" then
+                refreshing = buffs_cache_count[unit][auraInstanceID] and (count > buffs_cache_count[unit][auraInstanceID]) or false
+            else
+                refreshing = false
+            end
+        
+            buffs_current[unit][auraInstanceID] = true
+            buffs_cache[unit][auraInstanceID] = expirationTime
+            buffs_cache_count[unit][auraInstanceID] = count
+        
             -- defensiveCooldowns
             if enabledIndicators["defensiveCooldowns"] and (I:IsDefensiveCooldown(name) or I:IsDefensiveCooldown(spellId)) and defensiveFound < indicatorNums["defensiveCooldowns"] then
                 defensiveFound = defensiveFound + 1
                 -- start, duration, debuffType, texture, count, refreshing
-                self.indicators.defensiveCooldowns[defensiveFound]:SetCooldown(start, duration, nil, icon, count)
-                self.indicators.defensiveCooldowns[defensiveFound].auraInstanceID = auraInstanceID
+                self.indicators.defensiveCooldowns[defensiveFound]:SetCooldown(start, duration, nil, icon, count, refreshing)
             end
 
             -- externalCooldowns
             if enabledIndicators["externalCooldowns"] and I:IsExternalCooldown(name, source, unit) and externalFound < indicatorNums["externalCooldowns"] then
                 externalFound = externalFound + 1
                 -- start, duration, debuffType, texture, count, refreshing
-                self.indicators.externalCooldowns[externalFound]:SetCooldown(start, duration, nil, icon, count)
-                self.indicators.externalCooldowns[externalFound].auraInstanceID = auraInstanceID
+                self.indicators.externalCooldowns[externalFound]:SetCooldown(start, duration, nil, icon, count, refreshing)
             end
 
             -- allCooldowns
             if enabledIndicators["allCooldowns"] and (I:IsExternalCooldown(name, source, unit) or I:IsDefensiveCooldown(name) or I:IsDefensiveCooldown(spellId)) and allFound < indicatorNums["allCooldowns"] then
                 allFound = allFound + 1
                 -- start, duration, debuffType, texture, count, refreshing
-                self.indicators.allCooldowns[allFound]:SetCooldown(start, duration, nil, icon, count)
-                self.indicators.allCooldowns[allFound].auraInstanceID = auraInstanceID
+                self.indicators.allCooldowns[allFound]:SetCooldown(start, duration, nil, icon, count, refreshing)
             end
 
             -- tankActiveMitigation
             if enabledIndicators["tankActiveMitigation"] and I:IsTankActiveMitigation(name) then
                 self.indicators.tankActiveMitigation:SetCooldown(start, duration)
-                self.indicators.tankActiveMitigation.auraInstanceID = auraInstanceID
                 tankActiveMitigationFound = true
             end
 
@@ -938,7 +973,7 @@ local function UnitButton_UpdateBuffs(self)
             end
 
             -- user created indicators
-            I:UpdateCustomIndicators(self, auraInfo)
+            I:UpdateCustomIndicators(self, auraInfo, refreshing)
 
             -- check BG flags for statusIcon
             if spellId == 156621 then
@@ -970,7 +1005,6 @@ local function UnitButton_UpdateBuffs(self)
     end
     for i = defensiveFound + 1, 5 do
         self.indicators.defensiveCooldowns[i]:Hide()
-        self.indicators.defensiveCooldowns[i].auraInstanceID = nil
     end
     
     -- update externalCooldowns
@@ -979,7 +1013,6 @@ local function UnitButton_UpdateBuffs(self)
     end
     for i = externalFound + 1, 5 do
         self.indicators.externalCooldowns[i]:Hide()
-        self.indicators.externalCooldowns[i].auraInstanceID = nil
     end
     
     -- update allCooldowns
@@ -988,7 +1021,6 @@ local function UnitButton_UpdateBuffs(self)
     end
     for i = allFound + 1, 5 do
         self.indicators.allCooldowns[i]:Hide()
-        self.indicators.allCooldowns[i].auraInstanceID = nil
     end
     
     -- hide tankActiveMitigation
@@ -1001,214 +1033,42 @@ local function UnitButton_UpdateBuffs(self)
         self.indicators.statusText:Hide()
         self.indicators.statusText:SetStatus()
     end
-end
 
--------------------------------------------------
---* Add
--------------------------------------------------
-local function AddToIndicator(self, indicatorName, auraInfo)
-    local indicator = self.indicators[indicatorName]
-    for i = 1, indicatorNums[indicatorName] do
-        if not indicator[i].auraInstanceID then
-            indicator[i]:SetCooldown((auraInfo.expirationTime or 0) - auraInfo.duration, auraInfo.duration, auraInfo.isHarmful and auraInfo.dispelName, auraInfo.icon, auraInfo.applications)
-            indicator[i].auraInstanceID = auraInfo.auraInstanceID
-            break
+    -- user created indicators
+    I:ShowCustomIndicators(self, "buff")
+
+    -- update buffs_cache
+    for auraInstanceID, expirationTime in pairs(buffs_cache[unit]) do
+        -- lost or expired
+        if not buffs_current[unit][auraInstanceID] or (expirationTime ~= 0 and GetTime() >= expirationTime) then
+            buffs_cache[unit][auraInstanceID] = nil
+            buffs_cache_count[unit][auraInstanceID] = nil
         end
     end
-    indicator:UpdateSize()
+    wipe(buffs_current[unit])
 end
 
-local function UnitButton_CheckAddedAuras(self, addedAuras)
-    local unit = self.state.displayedUnit
-    local debuffs_found
-
-    for _, auraInfo in pairs(addedAuras) do
-        -- player_auras[auraInfo.auraInstanceID] = auraInfo
-        
-        if auraInfo.isHelpful then
-            if not buffs_count[unit] then buffs_count[unit] = {} end
-            buffs_count[unit][auraInfo.auraInstanceID] = auraInfo.applications
-
-            -- defensives
-            if enabledIndicators["defensiveCooldowns"] and (I:IsDefensiveCooldown(auraInfo.spellId) or I:IsDefensiveCooldown(auraInfo.name)) then
-                AddToIndicator(self, "defensiveCooldowns", auraInfo)
-            end
-            
-            -- externals
-            if enabledIndicators["externalCooldowns"] and I:IsExternalCooldown(auraInfo.name, auraInfo.sourceUnit, unit) then
-                AddToIndicator(self, "externalCooldowns", auraInfo)
-            end
-
-            -- all
-            if enabledIndicators["allCooldowns"] and (I:IsDefensiveCooldown(auraInfo.spellId) or I:IsDefensiveCooldown(auraInfo.name) or I:IsExternalCooldown(auraInfo.name, auraInfo.sourceUnit, unit)) then
-                AddToIndicator(self, "allCooldowns", auraInfo)
-            end
-
-            -- tankActiveMitigation
-            if enabledIndicators["tankActiveMitigation"] and I:IsTankActiveMitigation(auraInfo.name) then
-                self.indicators.tankActiveMitigation:SetCooldown((auraInfo.expirationTime or 0) - auraInfo.duration, auraInfo.duration)
-            end
-
-            -- drinking
-            if enabledIndicators["statusText"] and I:IsDrinking(auraInfo.name) then
-                if not self.indicators.statusText:GetStatus() then
-                    self.indicators.statusText:SetStatus("DRINKING")
-                    self.indicators.statusText:Show()
-                end
-            end
-
-            -- check BG flags for statusIcon
-            if auraInfo.spellId == 156621 then
-                self.state.BGFlag = "alliance"
-            elseif auraInfo.spellId == 156618 then
-                self.state.BGFlag = "horde"
-            end
-
-            -- customs
-            I:UpdateCustomIndicators(self, auraInfo)
-        else
-            debuffs_found = true
-        end
-    end
-    
-    
-    if debuffs_found then
-        UnitButton_UpdateDebuffs(self)
-    else
-        -- update statusIcon
-        UnitButton_UpdateStatusIcon(self)
-    end
+local function ResetAuraTables(unit)
+    -- reset debuffs
+    if debuffs_current[unit] then wipe(debuffs_current[unit]) end
+    if debuffs_cache[unit] then wipe(debuffs_cache[unit]) end
+    if debuffs_cache_count[unit] then wipe(debuffs_cache_count[unit]) end
+    if debuffs_normal[unit] then wipe(debuffs_normal[unit]) end
+    if debuffs_big[unit] then wipe(debuffs_big[unit]) end
+    if debuffs_dispel[unit] then wipe(debuffs_dispel[unit]) end
+    if debuffs_glowing_current[unit] then wipe(debuffs_glowing_current[unit]) end
+    if debuffs_glowing_cache[unit] then wipe(debuffs_glowing_cache[unit]) end
+    if debuffs_raid[unit] then wipe(debuffs_raid[unit]) end
+    if debuffs_raid_refreshing[unit] then wipe(debuffs_raid_refreshing[unit]) end
+    if debuffs_raid_orders[unit] then wipe(debuffs_raid_orders[unit]) end
+    -- reset buffs
+    if buffs_current[unit] then wipe(buffs_current[unit]) end
+    if buffs_cache[unit] then wipe(buffs_cache[unit]) end
+    if buffs_cache_count[unit] then wipe(buffs_cache_count[unit]) end
+    -- reset
+    buffs_mirror_image[unit] = nil
+    cleuUnits[unit] = nil
 end
-
--------------------------------------------------
---* Update
--------------------------------------------------
-local function UpdateIndicator(self, indicatorName, auraInfo, refreshing)
-    local indicator = self.indicators[indicatorName]
-    for i = 1, indicatorNums[indicatorName] do
-        if indicator[i].auraInstanceID == auraInfo.auraInstanceID then
-            if auraInfo.isHelpful then
-                indicator[i]:SetCooldown((auraInfo.expirationTime or 0) - auraInfo.duration, auraInfo.duration, nil, auraInfo.icon, auraInfo.applications, refreshing)
-            else
-                indicator[i]:SetCooldown((auraInfo.expirationTime or 0) - auraInfo.duration, auraInfo.duration, auraInfo.dispelName or "", auraInfo.icon, auraInfo.applications, refreshing, indicator[i].isBigDebuff)
-            end
-            break
-        end
-    end
-    indicator:UpdateSize()
-end
-
-local function UnitButton_CheckUpdatedAuras(self, updatedAuraInstanceIDs)
-    local unit = self.state.displayedUnit
-    local refreshing
-
-    for _, auraInstanceId in pairs(updatedAuraInstanceIDs) do
-        local auraInfo = GetAuraDataByAuraInstanceID(self.state.displayedUnit , auraInstanceId)
-        -- player_auras[auraInstanceId] = auraInfo
-        -- if auraInfo.isHelpful then auraInfo.dispelName = nil end
-        -- auraInfo.start = (auraInfo.expirationTime or 0) - auraInfo.duration
-
-        if Cell.vars.iconAnimation == "duration" then
-            refreshing = true
-        elseif Cell.vars.iconAnimation == "stack" then
-            if auraInfo.isHelpful then
-                refreshing = buffs_count[unit][auraInfo.auraInstanceID] < auraInfo.applications
-            else
-                refreshing = debuffs_count[unit][auraInfo.auraInstanceID] < auraInfo.applications
-            end
-        else
-            refreshing = false
-        end
-
-        if auraInfo.isHelpful then
-            -- defensives
-            if enabledIndicators["defensiveCooldowns"] and I:IsDefensiveCooldown(auraInfo.spellId) or I:IsDefensiveCooldown(auraInfo.name) then
-                UpdateIndicator(self, "defensiveCooldowns", auraInfo, refreshing)
-            end
-
-            -- externals
-            if enabledIndicators["externalCooldowns"] and I:IsExternalCooldown(auraInfo.name, auraInfo.sourceUnit, unit) then
-                UpdateIndicator(self, "externalCooldowns", auraInfo, refreshing)
-            end
-
-            -- all
-            if enabledIndicators["allCooldowns"] and (I:IsDefensiveCooldown(auraInfo.spellId) or I:IsDefensiveCooldown(auraInfo.name) or I:IsExternalCooldown(auraInfo.name, auraInfo.sourceUnit, unit)) then
-                UpdateIndicator(self, "allCooldowns", auraInfo, refreshing)
-            end
-
-            -- tankActiveMitigation
-            if enabledIndicators["tankActiveMitigation"] and I:IsTankActiveMitigation(auraInfo.name) then
-                self.indicators.tankActiveMitigation:SetCooldown((auraInfo.expirationTime or 0) - auraInfo.duration, auraInfo.duration)
-            end
-
-            buffs_count[unit][auraInfo.auraInstanceID] = auraInfo.applications
-
-        else
-            if enabledIndicators["debuffs"] and auraInfo.duration <= 600 and not Cell.vars.debuffBlacklist[auraInfo.spellId] then
-                UpdateIndicator(self, "debuffs", auraInfo, refreshing)
-            end
-
-            if enabledIndicators["raidDebuffs"] and I:GetDebuffOrder(auraInfo.name, auraInfo.spellId, auraInfo.applications) then
-                UpdateIndicator(self, "raidDebuffs", auraInfo, refreshing)
-            end
-
-            debuffs_count[unit][auraInfo.auraInstanceID] = auraInfo.applications
-        end
-
-        -- customs
-        I:UpdateCustomIndicators(self, auraInfo, refreshing)
-    end
-end
-
--------------------------------------------------
---* Remove
--------------------------------------------------
--- local function RemoveFromIndicator(self, indicatorName, auraInfo)
---     local indicator = self.indicators[indicatorName]
---     local found
---     for i = 1, indicatorNums[indicatorName] do
---         if indicator[i].auraInstanceID == auraInfo.auraInstanceID then
---             indicator[i].auraInstanceID = nil
---             indicator[i]:Hide()
---             found = true
---         end
-
---         if found then
---             if indicator[i+1] and indicator[i+1].auraInstanceID then -- has next
---                 local info = player_auras[indicator[i+1].auraInstanceID]
---                 indicator[i]:SetCooldown(info.start, info.duration, info.dispelName, info.icon, info.applications)
---                 indicator[i].auraInstanceID = indicator[i+1].auraInstanceID
---             else -- no next
---                 indicator[i].auraInstanceID = nil
---                 indicator[i]:Hide()
---             end
---         end
---     end
---     indicator:UpdateSize()
--- end
-
--- local function UnitButton_CheckRemovedAuras(self, removedAuraInstanceIDs)
---     for _, auraInstanceId in pairs(removedAuraInstanceIDs) do
---         local auraInfo = player_auras[auraInstanceId]
-
---         -- defensives
---         if enabledIndicators["defensiveCooldowns"] and (I:IsDefensiveCooldown(auraInfo.spellId) or I:IsDefensiveCooldown(auraInfo.name)) then
---             RemoveFromIndicator(self, "defensiveCooldowns", auraInfo)
---         end
-
---         -- drinking
---         if enabledIndicators["statusText"] and self.indicators.statusText.drinkingAuraInstanceID == auraInfo.auraInstanceID then
---             if self.indicators.statusText:GetStatus() == "DRINKING" then
---                 self.indicators.statusText.drinkingAuraInstanceID = nil
---                 self.indicators.statusText:Hide()
---                 self.indicators.statusText:SetStatus()
---             end
---         end
-
---         --! update auraInfo
---         player_auras[auraInstanceId] = nil
---     end
--- end
 
 -------------------------------------------------
 -- check auras using CLEU
@@ -1264,6 +1124,35 @@ end)
 -------------------------------------------------
 -- functions
 -------------------------------------------------
+UnitButton_UpdateAuras = function(self, updatedAuras)
+    if not indicatorsInitialized then return end
+
+    local unit = self.state.displayedUnit
+    if not unit then return end
+
+    UnitButton_UpdateDebuffs(self)
+    UnitButton_UpdateBuffs(self)
+    --[[
+    if not updatedAuras or updatedAuras.isFullUpdate then
+        UnitButton_UpdateDebuffs(self)
+        UnitButton_UpdateBuffs(self)
+        return
+    end
+
+    if updatedAuras.removedAuraInstanceIDs then
+        -- NOTE: auras removed, rescan
+        UnitButton_UpdateDebuffs(self)
+        UnitButton_UpdateBuffs(self)
+    elseif updatedAuras.addedAuras then
+        UnitButton_CheckAddedAuras(self, updatedAuras.addedAuras)
+    end
+    
+    if updatedAuras.updatedAuraInstanceIDs then
+        UnitButton_CheckUpdatedAuras(self, updatedAuras.updatedAuraInstanceIDs)
+    end
+    ]]
+end
+
 local function UpdateUnitHealthState(self, diff)
     local unit = self.state.displayedUnit
 
@@ -1713,26 +1602,6 @@ local function UnitButton_UpdateHealAbsorbs(self)
         self.widget.absorbsBar:SetValue(absorbsPercent)
     else
         self.widget.absorbsBar:Hide()
-    end
-end
-
-UnitButton_UpdateAuras = function(self, updatedAuras)
-    if not indicatorsInitialized then return end
-
-    local unit = self.state.displayedUnit
-    if not unit then return end
-
-    if not updatedAuras or updatedAuras.isFullUpdate then
-        UnitButton_UpdateDebuffs(self)
-        UnitButton_UpdateBuffs(self)
-    elseif updatedAuras.removedAuraInstanceIDs then
-        -- NOTE: auras removed, rescan
-        UnitButton_UpdateDebuffs(self)
-        UnitButton_UpdateBuffs(self)
-    elseif updatedAuras.addedAuras then
-        UnitButton_CheckAddedAuras(self, updatedAuras.addedAuras)
-    elseif updatedAuras.updatedAuraInstanceIDs then
-        UnitButton_CheckUpdatedAuras(self, updatedAuras.updatedAuraInstanceIDs)
     end
 end
 
@@ -2377,17 +2246,7 @@ local function UnitButton_OnAttributeChanged(self, name, value)
                 self.unitid = value
             end
 
-            -- reset debuffs
-            if debuffs_normal[self.state.unit] then wipe(debuffs_normal[self.state.unit]) end
-            if debuffs_big[self.state.unit] then wipe(debuffs_big[self.state.unit]) end
-            if debuffs_dispel[self.state.unit] then wipe(debuffs_dispel[self.state.unit]) end
-            if debuffs_glowing_current[self.state.unit] then wipe(debuffs_glowing_current[self.state.unit]) end
-            if debuffs_glowing_cache[self.state.unit] then wipe(debuffs_glowing_cache[self.state.unit]) end
-            -- reset buffs
-            if buffs_count[self.state.unit] then wipe(buffs_count[self.state.unit]) end
-            -- reset
-            buffs_mirror_image[self.state.unit] = nil
-            cleuUnits[self.state.unit] = nil
+            ResetAuraTables(value)
         end
     end
 end
@@ -2427,17 +2286,7 @@ local function UnitButton_OnHide(self)
     UnitButton_UnregisterEvents(self)
 
     if self.state.unit then
-        -- reset debuffs
-        if debuffs_normal[self.state.unit] then wipe(debuffs_normal[self.state.unit]) end
-        if debuffs_big[self.state.unit] then wipe(debuffs_big[self.state.unit]) end
-        if debuffs_dispel[self.state.unit] then wipe(debuffs_dispel[self.state.unit]) end
-        if debuffs_glowing_current[self.state.unit] then wipe(debuffs_glowing_current[self.state.unit]) end
-        if debuffs_glowing_cache[self.state.unit] then wipe(debuffs_glowing_cache[self.state.unit]) end
-        -- reset buffs
-        if buffs_count[self.state.unit] then wipe(buffs_count[self.state.unit]) end
-        -- reset
-        buffs_mirror_image[self.state.unit] = nil
-        cleuUnits[self.state.unit] = nil
+        ResetAuraTables(self.state.unit)
     end
     -- NOTE: update Cell.vars.guids
     -- print("hide", self.state.unit, self.__unitGuid, self.__unitName)

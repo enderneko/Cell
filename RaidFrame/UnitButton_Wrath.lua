@@ -2,7 +2,7 @@
 -- File: UnitButton_Wrath.lua
 -- Author: enderneko (enderneko-dev@outlook.com)
 -- File Created: 2022/08/20 19:44:26 +0800
--- Last Modified: 2022/11/02 02:13:33 +0800
+-- Last Modified: 2022/11/06 23:23:43 +0800
 --]]
 
 local _, Cell = ...
@@ -550,6 +550,10 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                 -- update duration
                 if value["duration"] then
                     indicator:SetDuration(value["duration"])
+                end
+                -- FirstRun: Healers
+                if value["auras"] and #value["auras"] ~= 0 then
+                    UnitButton_UpdateAuras(b)
                 end
             end, true)
         elseif setting == "remove" then

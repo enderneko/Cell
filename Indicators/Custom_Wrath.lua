@@ -2,7 +2,7 @@
 -- File: Custom_Wrath.lua
 -- Author: enderneko (enderneko-dev@outlook.com)
 -- File Created: 2022/08/26 03:04:05 +0800
--- Last Modified: 2022/11/04 17:53:01 +0800
+-- Last Modified: 2022/11/06 23:21:09 +0800
 --]]
 
 local _, Cell = ...
@@ -42,11 +42,11 @@ function I:CreateIndicator(parent, indicatorTable)
     end
     parent.indicators[indicatorName] = indicator
     
-    if parent ~= CellIndicatorsPreviewButton then
+    --! init enabledIndicators & customIndicators
+    local auraType = indicatorTable["auraType"]
+    if parent ~= CellIndicatorsPreviewButton and not customIndicators[auraType][indicatorName] then
         -- keep custom indicators in table
         if indicatorTable["enabled"] then enabledIndicators[indicatorName] = true end
-
-        local auraType = indicatorTable["auraType"]
 
         -- NOTE: icons is different from other custom indicators, more like the Debuffs indicator
         if indicatorTable["type"] == "icons" then
