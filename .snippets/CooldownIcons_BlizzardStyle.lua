@@ -1,3 +1,5 @@
+-- blizzard style cooldown animation
+-- 暴雪样式图标
 local COLOR_BORDER_BY_DISPEL_TYPE = true
 local DRAW_EDGE = true
 
