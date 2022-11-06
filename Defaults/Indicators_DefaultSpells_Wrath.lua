@@ -25,7 +25,7 @@ end
 -- bigDebuffs
 -------------------------------------------------
 local bigDebuffs = {
-    
+    46392, -- 专注打击
 }
 
 function I:GetDefaultBigDebuffs()

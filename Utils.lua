@@ -3,6 +3,27 @@ local L = Cell.L
 local F = Cell.funcs
 
 Cell.vars.playerFaction = UnitFactionGroup("player")
+
+local classToID = {
+    WARRIOR = 1,
+    PALADIN = 2,
+    HUNTER = 3,
+    ROGUE = 4,
+    PRIEST = 5,
+    DEATHKNIGHT = 6,
+    SHAMAN = 7,
+    MAGE = 8,
+    WARLOCK = 9,
+    MONK = 10,
+    DRUID = 11,
+    DEMONHUNTER = 12,
+    EVOKER = 13,
+}
+
+function F:GetClassID(class)
+    return classToID[class]
+end
+
 -------------------------------------------------
 -- game version
 -------------------------------------------------
@@ -505,6 +526,7 @@ function F:ConvertTable(t)
     return temp
 end
 
+local GetSpellInfo = GetSpellInfo
 function F:ConvertAurasTable(t, convertIdToName)
     if not convertIdToName then
         return F:ConvertTable(t)
@@ -533,6 +555,21 @@ function F:CheckTableRemoved(previous, after)
         end
     end
     return ret
+end
+
+function F:FilterInvalidSpells(t)
+    if not t then return end
+    for i = #t, 1, -1 do
+        local spellId
+        if type(t[i]) == "number" then
+            spellId = t[i]
+        else -- consumables
+            spellId = t[i][1]
+        end
+        if not GetSpellInfo(spellId) then
+            tremove(t, i)
+        end
+    end
 end
 
 -------------------------------------------------

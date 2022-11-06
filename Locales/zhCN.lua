@@ -580,6 +580,7 @@ L["Slash Commands"] = "斜杠命令"
 L["Bug Report & Suggestion"] = "问题报告与建议"
 L["Import & Export All Settings"] = "导入导出所有设置"
 L["All Cell settings will be overwritten!"] = "所有 Cell 设置将被覆盖！"
+L["Autorun will be disabled for all code snippets"] = "将禁用所有代码片段的自动运行"
 L["Include Nickname Settings"] = "包含昵称设置"
 
 -------------------------------------------------

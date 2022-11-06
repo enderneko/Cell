@@ -19,8 +19,6 @@ Cell.MIN_LAYOUTS_VERSION = 134
 Cell.MIN_INDICATORS_VERSION = 132
 Cell.MIN_DEBUFFS_VERSION = 99
 
-CELL_IMPORT_EXPORT_PREFIX = "CELL"
-
 --@debug@
 -- local debugMode = true
 --@end-debug@
