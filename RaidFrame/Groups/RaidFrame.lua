@@ -158,7 +158,7 @@ end
 
 -- arena pet
 local arenaPetButtons = {}
-for i = 1, 3 do
+for i = 1, (Cell.isRetail and 3 or 5) do
     arenaPetButtons[i] = CreateFrame("Button", "CellArenaPet"..i, raidFrame, "CellUnitButtonTemplate")
     arenaPetButtons[i]:SetAttribute("unit", "raidpet"..i)
 
@@ -187,13 +187,13 @@ local function RaidFrame_UpdateLayout(layout, which)
 
     -- arena pets
     if Cell.vars.inBattleground == 5 and layout["pet"][1] then
-        for i = 1, 3 do
-            RegisterAttributeDriver(arenaPetButtons[i], "state-visibility", "[@raidpet"..i..", exists] show; hide")
+        for i, arenaPet in ipairs(arenaPetButtons) do
+            RegisterAttributeDriver(arenaPet, "state-visibility", "[@raidpet"..i..", exists] show; hide")
         end
     else
-        for i = 1, 3 do
-            UnregisterAttributeDriver(arenaPetButtons[i], "state-visibility")
-            arenaPetButtons[i]:Hide()
+        for i, arenaPet in ipairs(arenaPetButtons) do
+            UnregisterAttributeDriver(arenaPet, "state-visibility")
+            arenaPet:Hide()
         end
     end
 
@@ -207,15 +207,15 @@ local function RaidFrame_UpdateLayout(layout, which)
     end
 
     if not which or which == "size" or which == "petSize" or which == "power" or which == "barOrientation" then
-        for i = 1, 3 do
+        for i, arenaPet in ipairs(arenaPetButtons) do
             if layout["pet"][4] then
-                P:Size(arenaPetButtons[i], layout["pet"][5][1], layout["pet"][5][2])
+                P:Size(arenaPet, layout["pet"][5][1], layout["pet"][5][2])
             else
-                P:Size(arenaPetButtons[i], width, height)
+                P:Size(arenaPet, width, height)
             end
             -- NOTE: SetOrientation BEFORE SetPowerSize
-            arenaPetButtons[i].func.SetOrientation(unpack(layout["barOrientation"]))
-            arenaPetButtons[i].func.SetPowerSize(layout["powerSize"])
+            arenaPet.func.SetOrientation(unpack(layout["barOrientation"]))
+            arenaPet.func.SetPowerSize(layout["powerSize"])
         end
     end
 
@@ -295,7 +295,7 @@ local function RaidFrame_UpdateLayout(layout, which)
                 if i == 1 then
                     header:SetPoint(point)
                     -- arena pets
-                    for k = 1, 3 do
+                    for k in ipairs(arenaPetButtons) do
                         arenaPetButtons[k]:ClearAllPoints()
                         if k == 1 then
                             arenaPetButtons[k]:SetPoint(point, npcFrameAnchor)
@@ -353,7 +353,7 @@ local function RaidFrame_UpdateLayout(layout, which)
                 if i == 1 then
                     header:SetPoint(point)
                     -- arena pets
-                    for k = 1, 3 do
+                    for k in ipairs(arenaPetButtons) do
                         arenaPetButtons[k]:ClearAllPoints()
                         if k == 1 then
                             arenaPetButtons[k]:SetPoint(point, npcFrameAnchor)
@@ -381,8 +381,8 @@ local function RaidFrame_UpdateLayout(layout, which)
             for j, b in ipairs({header:GetChildren()}) do
                 b.widget.healthBar:GetScript("OnSizeChanged")(b.widget.healthBar)
             end
-            for k = 1, 3 do
-                arenaPetButtons[k].widget.healthBar:GetScript("OnSizeChanged")(arenaPetButtons[k].widget.healthBar)
+            for k, arenaPet in ipairs(arenaPetButtons) do
+                arenaPet.widget.healthBar:GetScript("OnSizeChanged")(arenaPet.widget.healthBar)
             end
         end
     end
