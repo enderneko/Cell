@@ -21,9 +21,10 @@ local function RegisterDragForOptionsFrame(frame)
     end)
     frame:SetScript("OnDragStop", function()
         optionsFrame:StopMovingOrSizing()
-        -- P:PixelPerfectPoint(optionsFrame)
-        optionsFrame:ClearAllPoints()
-        optionsFrame:SetPoint("TOPLEFT", UIParent, "BOTTOMLEFT", optionsFrame:GetLeft(), optionsFrame:GetTop())
+        P:PixelPerfectPoint(optionsFrame)
+        -- optionsFrame:ClearAllPoints()
+        -- optionsFrame:SetPoint("TOPLEFT", UIParent, "BOTTOMLEFT", optionsFrame:GetLeft(), optionsFrame:GetTop())
+        -- print( optionsFrame:GetLeft(), optionsFrame:GetTop())
     end)
 end
 
@@ -113,7 +114,7 @@ function F:ShowOptionsFrame()
     if not init then
         init = true
         P:Resize(optionsFrame)
-        Cell:StylizeFrame(optionsFrame) -- pixel perfect border
+        P:Reborder(optionsFrame)
         CreateTabButtons()
     end
 
