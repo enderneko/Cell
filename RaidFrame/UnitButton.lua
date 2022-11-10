@@ -624,6 +624,7 @@ unitButton = {
 -- cleuAuras
 local cleuUnits = {}
 
+local debuffs_indices = {} -- tooltips
 local debuffs_current = {}
 local debuffs_cache = {}
 local debuffs_cache_count = {}
@@ -638,6 +639,7 @@ local debuffs_glowing_cache = {}
 local function UnitButton_UpdateDebuffs(self)
     local unit = self.state.displayedUnit
 
+    if not debuffs_indices[unit] then debuffs_indices[unit] = {} end
     if not debuffs_current[unit] then debuffs_current[unit] = {} end
     if not debuffs_cache[unit] then debuffs_cache[unit] = {} end
     if not debuffs_cache_count[unit] then debuffs_cache_count[unit] = {} end
@@ -657,6 +659,7 @@ local function UnitButton_UpdateDebuffs(self)
     local startIndex, resurrectionFound, raidDebuffsFound = 1
     local glowType, glowOptions
     local refreshing, countIncreased, justApplied
+    local index = 0
 
     AuraUtil.ForEachAura(unit, "HARMFUL", nil, function(auraInfo)
         local auraInstanceID = auraInfo.auraInstanceID
@@ -670,6 +673,9 @@ local function UnitButton_UpdateDebuffs(self)
         local source = auraInfo.sourceUnit
         local spellId = auraInfo.spellId
         -- local attribute = auraInfo.points[1] -- UnitAura:arg16
+
+        index = index + 1
+        debuffs_indices[unit][auraInstanceID] = index
         
         if duration then
             if Cell.vars.iconAnimation == "duration" then
@@ -780,7 +786,7 @@ local function UnitButton_UpdateDebuffs(self)
                 local auraInfo = GetAuraDataByAuraInstanceID(unit, debuffs_raid[unit][i])
                 if auraInfo then
                     self.indicators.raidDebuffs[i]:SetCooldown((auraInfo.expirationTime or 0) - auraInfo.duration, auraInfo.duration, auraInfo.dispelName or "", auraInfo.icon, auraInfo.applications, debuffs_raid_refreshing[unit][debuffs_raid[unit][i]])
-                    self.indicators.raidDebuffs[i].spellId = spellId -- NOTE: for tooltip
+                    self.indicators.raidDebuffs[i].index = debuffs_indices[unit][auraInstanceID] -- NOTE: for tooltip
                     startIndex = startIndex + 1
                     -- use debuffs_raid_orders(wiped before) to store debuffs indices shown by raidDebuffs indicator
                     debuffs_raid_orders[unit][debuffs_raid[unit][i]] = true
@@ -803,7 +809,7 @@ local function UnitButton_UpdateDebuffs(self)
         end
         for i = startIndex, 3 do
             self.indicators.raidDebuffs[i]:Hide()
-            self.indicators.raidDebuffs[i].spellId = nil
+            self.indicators.raidDebuffs[i].index = nil
         end
 
         -- update glow
@@ -838,7 +844,7 @@ local function UnitButton_UpdateDebuffs(self)
             if auraInfo and not debuffs_raid_orders[unit][auraInstanceID] and startIndex <= indicatorNums["debuffs"] then
                 -- start, duration, debuffType, texture, count
                 self.indicators.debuffs[startIndex]:SetCooldown((auraInfo.expirationTime or 0) - auraInfo.duration, auraInfo.duration, auraInfo.dispelName or "", auraInfo.icon, auraInfo.applications, refreshing, true)
-                self.indicators.debuffs[startIndex].spellId = spellId -- NOTE: for tooltip
+                self.indicators.debuffs[startIndex].index = debuffs_indices[unit][auraInstanceID] -- NOTE: for tooltip
                 self.indicators.debuffs[startIndex].isBigDebuff = true
                 startIndex = startIndex + 1
             end
@@ -849,7 +855,7 @@ local function UnitButton_UpdateDebuffs(self)
             if auraInfo and not debuffs_raid_orders[unit][auraInstanceID] and startIndex <= indicatorNums["debuffs"] then
                 -- start, duration, debuffType, texture, count
                 self.indicators.debuffs[startIndex]:SetCooldown((auraInfo.expirationTime or 0) - auraInfo.duration, auraInfo.duration, auraInfo.dispelName or "", auraInfo.icon, auraInfo.applications, refreshing)
-                self.indicators.debuffs[startIndex].spellId = spellId -- NOTE: for tooltip
+                self.indicators.debuffs[startIndex].index = debuffs_indices[unit][auraInstanceID] -- NOTE: for tooltip
                 self.indicators.debuffs[startIndex].isBigDebuff = false
                 startIndex = startIndex + 1
             end
@@ -862,7 +868,7 @@ local function UnitButton_UpdateDebuffs(self)
     end
     for i = startIndex, 10 do
         self.indicators.debuffs[i]:Hide()
-        self.indicators.debuffs[i].spellId = nil
+        self.indicators.debuffs[i].index = nil
         self.indicators.debuffs[i].isBigDebuff = nil
     end
 
@@ -881,6 +887,7 @@ local function UnitButton_UpdateDebuffs(self)
         end
     end
 
+    wipe(debuffs_indices[unit])
     wipe(debuffs_current[unit])
     wipe(debuffs_normal[unit])
     wipe(debuffs_big[unit])
@@ -1050,6 +1057,7 @@ end
 
 local function ResetAuraTables(unit)
     -- reset debuffs
+    if debuffs_indices[unit] then wipe(debuffs_indices[unit]) end
     if debuffs_current[unit] then wipe(debuffs_current[unit]) end
     if debuffs_cache[unit] then wipe(debuffs_cache[unit]) end
     if debuffs_cache_count[unit] then wipe(debuffs_cache_count[unit]) end

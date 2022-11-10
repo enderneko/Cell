@@ -1,4 +1,5 @@
 local _, Cell = ...
+local F = Cell.funcs
 local P = Cell.pixelPerfectFuncs
 
 -----------------------------------------
@@ -32,7 +33,33 @@ local function CreateTooltip(name)
     end
 end
 
-
 CreateTooltip("CellTooltip")
 CreateTooltip("CellSpellTooltip")
 CreateTooltip("CellScanningTooltip")
+
+function F:ShowTooltips(anchor, tooltipType, unit, aura)
+    if not CellDB["general"]["enableTooltips"] or (tooltipType == "unit" and CellDB["general"]["hideTooltipsInCombat"] and InCombatLockdown()) then return end
+    
+    if CellDB["general"]["tooltipsPosition"][2] == "Default" then
+        GameTooltip_SetDefaultAnchor(GameTooltip, anchor)
+    elseif CellDB["general"]["tooltipsPosition"][2] == "Cell" then
+        GameTooltip:SetOwner(Cell.frames.mainFrame, "ANCHOR_NONE")
+        GameTooltip:SetPoint(CellDB["general"]["tooltipsPosition"][1], Cell.frames.mainFrame, CellDB["general"]["tooltipsPosition"][3], CellDB["general"]["tooltipsPosition"][4], CellDB["general"]["tooltipsPosition"][5])
+    elseif CellDB["general"]["tooltipsPosition"][2] == "Unit Button" then
+        GameTooltip:SetOwner(anchor, "ANCHOR_NONE")
+        GameTooltip:SetPoint(CellDB["general"]["tooltipsPosition"][1], anchor, CellDB["general"]["tooltipsPosition"][3], CellDB["general"]["tooltipsPosition"][4], CellDB["general"]["tooltipsPosition"][5])
+    elseif CellDB["general"]["tooltipsPosition"][2] == "Cursor" then
+        GameTooltip:SetOwner(anchor, "ANCHOR_CURSOR")
+    elseif CellDB["general"]["tooltipsPosition"][2] == "Cursor Left" then
+        GameTooltip:SetOwner(anchor, "ANCHOR_CURSOR_LEFT", CellDB["general"]["tooltipsPosition"][4], CellDB["general"]["tooltipsPosition"][5])
+    elseif CellDB["general"]["tooltipsPosition"][2] == "Cursor Right" then
+        GameTooltip:SetOwner(anchor, "ANCHOR_CURSOR_RIGHT", CellDB["general"]["tooltipsPosition"][4], CellDB["general"]["tooltipsPosition"][5])
+    end
+
+    if tooltipType == "unit" then
+        GameTooltip:SetUnit(unit)
+    elseif tooltipType == "spell" then
+        -- GameTooltip:SetSpellByID(aura)
+        GameTooltip:SetUnitAura(unit, aura)
+    end
+end
