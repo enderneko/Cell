@@ -598,6 +598,12 @@ L["Changelogs"] = "更新记录"
 L["Click to view recent changelogs"] = "点击查看近期更新记录"
 L["Click to view older changelogs"] = "点击查看远古更新记录"
 L["CHANGELOGS"] = [[
+    <h1>r138-release (Nov 12, 2022, 04:56 GMT+8)</h1>
+    <p>* 更新导入导出。</p>
+    <p>* 将“单位间距”分为“单位间距 X”与“单位间距 Y”。</p>
+    <p>* 修不完的bug。</p>
+    <br/>
+
     <h1>r137-release (Nov 4, 2022, 18:07 GMT+8)</h1>
     <p>* 为团队宠物与分离的NPC框体添加了移动按钮。</p>
     <p>* 更新繁中。</p>
