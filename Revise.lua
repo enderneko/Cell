@@ -1454,6 +1454,14 @@ function F:Revise()
                 Cell.vars.debuffBlacklist = F:ConvertTable(CellDB["debuffBlacklist"])
             end
         end
+
+        for _, layout in pairs(CellDB["layouts"]) do
+            if layout["spacing"] then
+                layout["spacingX"] = layout["spacing"]
+                layout["spacingY"] = layout["spacing"]
+                layout["spacing"] = nil
+            end
+        end
     end
 
     CellDB["revise"] = Cell.version
