@@ -16,10 +16,10 @@ local function CreateTooltip(name)
         tooltip:SetBackdropBorderColor(Cell:GetAccentColorRGB())
     end)
 
-    tooltip:SetScript("OnTooltipSetItem", function()
-        -- color border with item quality color
-        tooltip:SetBackdropBorderColor(_G[name.."TextLeft1"]:GetTextColor())
-    end)
+    -- tooltip:SetScript("OnTooltipSetItem", function()
+    --     -- color border with item quality color
+    --     tooltip:SetBackdropBorderColor(_G[name.."TextLeft1"]:GetTextColor())
+    -- end)
 
     tooltip:SetScript("OnHide", function()
         -- SetX with invalid data may or may not clear the tooltip's contents.
