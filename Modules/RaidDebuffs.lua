@@ -1983,7 +1983,7 @@ OpenEncounterJournal = function(instanceId)
     end
 
     ShowUIPanel(EncounterJournal)
-    EJ_ContentTab_Select(EncounterJournal.instanceSelect.dungeonsTab.id)
+    EJ_ContentTab_Select(EncounterJournal.dungeonsTab:GetID())
     EncounterJournal_DisplayInstance(instanceId)
     EncounterJournal.lastInstance = instanceId
     
