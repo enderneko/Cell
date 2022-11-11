@@ -1461,6 +1461,9 @@ function F:Revise()
                 layout["spacingY"] = layout["spacing"]
                 layout["spacing"] = nil
             end
+            if not layout["powerFilters"]["EVOKER"] then
+                layout["powerFilters"]["EVOKER"] = {["DAMAGER"] = true, ["HEALER"] = true}
+            end
         end
     end
 

@@ -52,6 +52,7 @@ Cell.defaults.layout = {
         ["DEATHKNIGHT"] = {["TANK"] = true, ["DAMAGER"] = true},
         ["DEMONHUNTER"] = {["TANK"] = true, ["DAMAGER"] = true},
         ["DRUID"] = {["TANK"] = true, ["DAMAGER"] = true, ["HEALER"] = true},
+        ["EVOKER"] = {["DAMAGER"] = true, ["HEALER"] = true},
         ["HUNTER"] = true,
         ["MAGE"] = true,
         ["MONK"] = {["TANK"] = true, ["DAMAGER"] = true, ["HEALER"] = true},
