@@ -1762,15 +1762,14 @@ UnitButton_UpdateStatusIcon = function(self)
         end
         icon:Show()
     elseif UnitIsPlayer(unit) and phaseReason and not self.state.inVehicle then
-        -- ElvUI
-        if phaseReason == 3 then -- chromie, gold
-            icon:SetVertexColor(1, 0.9, 0.5)
+        if phaseReason == 3 then -- chromie, yellow
+            icon:SetVertexColor(1, 1, 0)
         elseif phaseReason == 2 then -- warmode, red
-            icon:SetVertexColor(1, 0.3, 0.3)
+            icon:SetVertexColor(1, 0.6, 0.6)
         elseif phaseReason == 1 then -- sharding, green
-            icon:SetVertexColor(0.5, 1, 0.3)
-        else -- 0, phasing, blue
-            icon:SetVertexColor(0.3, 0.5, 1)
+            icon:SetVertexColor(0.5, 1, 0.5)
+        else -- 0, phasing
+            icon:SetVertexColor(1, 1, 1)
         end
         icon:SetTexture("Interface\\TargetingFrame\\UI-PhasingIcon")
         icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
