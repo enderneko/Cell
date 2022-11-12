@@ -582,6 +582,7 @@ function eventFrame:PLAYER_LOGIN()
     eventFrame:RegisterEvent("GROUP_ROSTER_UPDATE")
     eventFrame:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
     eventFrame:RegisterEvent("PLAYER_TALENT_UPDATE")
+    eventFrame:RegisterEvent("UI_SCALE_CHANGED")
 
     Cell.vars.playerNameShort = GetUnitName("player")
     Cell.vars.playerNameFull = F:UnitFullName("player")
@@ -631,6 +632,11 @@ function eventFrame:PLAYER_LOGIN()
     Cell:Fire("UpdatePixelPerfect")
     -- update CLEU
     Cell:Fire("UpdateCLEU")
+end
+
+function eventFrame:UI_SCALE_CHANGED()
+    Cell:Fire("UpdatePixelPerfect")
+    Cell:Fire("UpdateAppearance", "scale")
 end
 
 function eventFrame:ACTIVE_TALENT_GROUP_CHANGED()
