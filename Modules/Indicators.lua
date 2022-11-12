@@ -1661,6 +1661,22 @@ local function ShowTab(tab)
 end
 Cell:RegisterCallback("ShowOptionsTab", "IndicatorsTab_ShowTab", ShowTab)
 
+function F:ReloadIndicatorList()
+    if not init then return end
+    if indicatorsTab:IsShown() then
+        LoadIndicatorList()
+        listFrame.scrollFrame:ScrollToBottom()
+        listButtons[#listButtons]:Click()
+    else
+        indicatorsTab:SetScript("OnShow", function()
+            indicatorsTab:SetScript("OnShow", nil)
+            UpdateIndicators()
+            LoadIndicatorList()
+            listButtons[1]:Click()
+        end)
+    end
+end
+
 local function UpdateLayout()
     if previewButton and currentLayout == Cell.vars.currentLayout then
         UpdatePreviewButton()

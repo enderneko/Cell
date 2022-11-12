@@ -218,7 +218,7 @@ Cell.defaults.layout = {
             ["indicatorName"] = "aoeHealing",
             ["type"] = "built-in",
             ["enabled"] = true,
-            ["height"] = 15,
+            ["height"] = 10,
             ["color"] = {1, 1, 0},
         }, -- 15
         {

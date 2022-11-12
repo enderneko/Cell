@@ -303,6 +303,7 @@ function F:FirstRun()
         })
         Cell:Fire("UpdateIndicators", Cell.vars.currentLayout, indicatorName, "create", currentLayoutTable["indicators"][last+1])
         CellDB["firstRun"] = false
+        F:ReloadIndicatorList()
     end, function()
         CellDB["firstRun"] = false
     end)
