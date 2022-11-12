@@ -11,6 +11,7 @@ L["RESET"] = "从过旧的版本更新，需要重置Cell。\n|cff22ff22是|r - 
 -------------------------------------------------
 L["Available slash commands"] = "可用的斜杠命令"
 L["show Cell options frame"] = "打开Cell选项界面"
+L["create a \"Healers\" indicator"] = "创建一个 “Healers” 指示器"
 L["reset Cell position"] = "重置Cell位置"
 L["These \"reset\" commands below affect all your characters in this account"] = "以下这些“重置”命令会影响该账号下的所有角色"
 L["reset all Layouts and Indicators"] = "重置所有布局与指示器"
