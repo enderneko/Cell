@@ -574,7 +574,7 @@ L["IDs separated by whitespaces"] = "用空格分隔多个法术ID"
 -------------------------------------------------
 L["About"] = "关于"
 L["Author"] = "作者"
-L["Special Thanks"] = "蟹蟹"
+L["Special Thanks"] = "特别感谢"
 L["Patrons"] = "感谢发电"
 L["Translators"] = "翻译"
 L["Slash Commands"] = "斜杠命令"
@@ -599,6 +599,14 @@ L["Changelogs"] = "更新记录"
 L["Click to view recent changelogs"] = "点击查看近期更新记录"
 L["Click to view older changelogs"] = "点击查看远古更新记录"
 L["CHANGELOGS"] = [[
+    <h1>r139-release (Nov 13, 2022, 23:10 GMT+8)</h1>
+    <p>* 更新唤魔师法术。</p>
+    <p>* 更新斜杠命令。</p>
+    <p>* 更新特别关注框体。</p>
+    <p>* 更新繁中与韩文。</p>
+    <p>* 修复减益的鼠标提示。</p>
+    <br/>
+
     <h1>r138-release (Nov 12, 2022, 04:56 GMT+8)</h1>
     <p>* 更新导入导出。</p>
     <p>* 将“单位间距”分为“单位间距 X”与“单位间距 Y”。</p>
