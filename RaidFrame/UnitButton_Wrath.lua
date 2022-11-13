@@ -2,7 +2,7 @@
 -- File: UnitButton_Wrath.lua
 -- Author: enderneko (enderneko-dev@outlook.com)
 -- File Created: 2022/08/20 19:44:26 +0800
--- Last Modified: 2022/11/06 23:23:43 +0800
+-- Last Modified: 2022/11/14 01:46:46 +0800
 --]]
 
 local _, Cell = ...
@@ -1751,6 +1751,8 @@ end
 Cell.HealComm.HealComm_UpdateHealPrediction = HealComm_UpdateHealPrediction
 
 function F:EnableLibHealComm(enabled)
+    if not HealComm then return end
+
     useLibHealComm = enabled
     if enabled then
         HealComm.RegisterCallback(Cell.HealComm, "HealComm_HealStarted", "HealComm_UpdateHealPrediction")
