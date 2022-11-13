@@ -617,6 +617,7 @@ function eventFrame:PLAYER_LOGIN()
     -- update texture and font
     Cell:Fire("UpdateAppearance")
     Cell:UpdateOptionsFont(CellDB["appearance"]["optionsFontSizeOffset"], CellDB["appearance"]["useGameFont"])
+    Cell:UpdateAboutFont(CellDB["appearance"]["optionsFontSizeOffset"])
     -- update tools
     Cell:Fire("UpdateTools")
     -- update glows
