@@ -460,7 +460,7 @@ local function Text_SetCooldown(frame, start, duration, debuffType, texture, cou
     else
         if frame.durationTbl[1] then
             local fmt
-            if count == 0 then
+            if count == 0 or (count == 1 and not frame.circledStackNums) then
                 fmt, count = "%s", ""
             elseif frame.circledStackNums then
                 fmt, count = "%s ", circled[count] .. " "
