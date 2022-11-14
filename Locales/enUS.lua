@@ -69,7 +69,7 @@ select(2, ...).L = setmetatable({
         <p>* Updated evoker spells.</p>
         <p>* Updated slash commands.</p>
         <p>* Updated spotlight.</p>
-        <p>* Update zhTW and koKR.</p>
+        <p>* Updated zhTW and koKR.</p>
         <p>* Fixed aura tooltips.</p>
         <br/>
 
