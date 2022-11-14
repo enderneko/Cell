@@ -20,6 +20,7 @@ select(2, ...).L = setmetatable({
 
     ["showGroupNumber"] = "Show group number",
     ["dispellableByMe"] = "Only show debuffs dispellable by me",
+    ["showDuplicate"] = "Don't hide shown raid debuffs",
     ["showDispelTypeIcons"] = "Show dispel type icons",
     ["castByMe"] = "Only show buffs cast by me",
     ["trackByName"] = "Track by name",

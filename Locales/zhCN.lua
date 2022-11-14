@@ -461,6 +461,7 @@ L["Debug Mode"] = "调试模式"
 
 L["showGroupNumber"] = "显示队伍编号"
 L["dispellableByMe"] = "只显示我能驱散的减益"
+L["showDuplicate"] = "不隐藏已显示为副本减益的减益"
 L["showDispelTypeIcons"] = "显示驱散类型图标"
 L["castByMe"] = "只显示我施放的增益"
 L["trackByName"] = "匹配法术名称"

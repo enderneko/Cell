@@ -67,7 +67,7 @@ local UnitButton_UpdatePowerMax, UnitButton_UpdatePower, UnitButton_UpdatePowerT
 -- unit button init indicators
 -------------------------------------------------
 local indicatorsInitialized
-local enabledIndicators, indicatorNums, indicatorCustoms = {}, {}, {}
+local enabledIndicators, indicatorNums, indicatorCustoms, indicatorShowDuplicates = {}, {}, {}, {}
 
 local function UpdateIndicatorParentVisibility(b, indicatorName, enabled)
     if not (indicatorName == "debuffs" or indicatorName == "defensiveCooldowns" or indicatorName == "externalCooldowns" or indicatorName == "allCooldowns" or indicatorName == "dispels") then
@@ -130,6 +130,9 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
             end
             if t["onlyShowTopGlow"] ~= nil then
                 indicatorCustoms[t["indicatorName"]] = t["onlyShowTopGlow"]
+            end
+            if t["showDuplicate"] ~= nil then
+                indicatorShowDuplicates[t["indicatorName"]] = t["showDuplicate"]
             end
         end
 
@@ -502,6 +505,11 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                     b.indicators[indicatorName]:HideDamager(value2)
                     UnitButton_UpdateRole(b)
                 end, true)
+            elseif value == "showDuplicate" then
+                indicatorShowDuplicates[indicatorName] = value2
+                F:IterateAllUnitButtons(function(b)
+                    UnitButton_UpdateAuras(b)
+                end, true)
             else
                 indicatorCustoms[indicatorName] = value2
             end
@@ -841,7 +849,7 @@ local function UnitButton_UpdateDebuffs(self)
         -- bigDebuffs first
         for auraInstanceID, refreshing in pairs(debuffs_big[unit]) do
             local auraInfo = GetAuraDataByAuraInstanceID(unit, auraInstanceID)
-            if auraInfo and not debuffs_raid_orders[unit][auraInstanceID] and startIndex <= indicatorNums["debuffs"] then
+            if auraInfo and (indicatorShowDuplicates["debuffs"] or not debuffs_raid_orders[unit][auraInstanceID]) and startIndex <= indicatorNums["debuffs"] then
                 -- start, duration, debuffType, texture, count
                 self.indicators.debuffs[startIndex]:SetCooldown((auraInfo.expirationTime or 0) - auraInfo.duration, auraInfo.duration, auraInfo.dispelName or "", auraInfo.icon, auraInfo.applications, refreshing, true)
                 self.indicators.debuffs[startIndex].index = debuffs_indices[unit][auraInstanceID] -- NOTE: for tooltip
@@ -852,7 +860,7 @@ local function UnitButton_UpdateDebuffs(self)
         -- then normal debuffs
         for auraInstanceID, refreshing in pairs(debuffs_normal[unit]) do
             local auraInfo = GetAuraDataByAuraInstanceID(unit, auraInstanceID)
-            if auraInfo and not debuffs_raid_orders[unit][auraInstanceID] and startIndex <= indicatorNums["debuffs"] then
+            if auraInfo and (indicatorShowDuplicates["debuffs"] or not debuffs_raid_orders[unit][auraInstanceID]) and startIndex <= indicatorNums["debuffs"] then
                 -- start, duration, debuffType, texture, count
                 self.indicators.debuffs[startIndex]:SetCooldown((auraInfo.expirationTime or 0) - auraInfo.duration, auraInfo.duration, auraInfo.dispelName or "", auraInfo.icon, auraInfo.applications, refreshing)
                 self.indicators.debuffs[startIndex].index = debuffs_indices[unit][auraInstanceID] -- NOTE: for tooltip
