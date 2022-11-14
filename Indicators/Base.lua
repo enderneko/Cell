@@ -60,6 +60,8 @@ local function BorderIcon_SetCooldown(frame, start, duration, debuffType, textur
         frame.cooldown:SetSwipeColor(r, g, b)
         frame.cooldown:SetCooldown(start, duration)
         frame.duration:Show()
+
+        local fmt
         frame:SetScript("OnUpdate", function()
             local remain = duration-(GetTime()-start)
             if remain < 0 then remain = 0 end
@@ -79,20 +81,20 @@ local function BorderIcon_SetCooldown(frame, start, duration, debuffType, textur
 
             -- format
             if remain > 60 then
-                remain = string.format("%dm", remain/60)
+                fmt, remain = "%dm", remain/60
             else
                 if Cell.vars.iconDurationRoundUp then
-                    remain = math.ceil(remain)
+                    fmt, remain = "%d", ceil(remain)
                 else
                     if remain < Cell.vars.iconDurationDecimal then
-                        remain = string.format("%.1f", remain)
+                        fmt = "%.1f"
                     else
-                        remain = string.format("%d", remain)
+                        fmt = "%d"
                     end
                 end
             end
 
-            frame.duration:SetText(remain)
+            frame.duration:SetFormattedText(fmt, remain)
         end)
     end
 
@@ -226,6 +228,8 @@ local function BarIcon_SetCooldown(frame, start, duration, debuffType, texture, 
         if frame.showDuration then
             frame.cooldown:Hide()
             frame.duration:Show()
+
+            local fmt
             frame:SetScript("OnUpdate", function()
                 local remain = duration-(GetTime()-start)
                 if remain < 0 then remain = 0 end
@@ -245,20 +249,20 @@ local function BarIcon_SetCooldown(frame, start, duration, debuffType, texture, 
 
                 -- format
                 if remain > 60 then
-                    remain = string.format("%dm", remain/60)
+                    fmt, remain = "%dm", remain/60
                 else
                     if Cell.vars.iconDurationRoundUp then
-                        remain = math.ceil(remain)
+                        fmt, remain = "%d", ceil(remain)
                     else
                         if remain < Cell.vars.iconDurationDecimal then
-                            remain = string.format("%.1f", remain)
+                            fmt = "%.1f"
                         else
-                            remain = string.format("%d", remain)
+                            fmt = "%d"
                         end
                     end
                 end
 
-                frame.duration:SetText(remain)
+                frame.duration:SetFormattedText(fmt, remain)
             end)
         else
             -- init bar values
@@ -458,9 +462,9 @@ local function Text_SetCooldown(frame, start, duration, debuffType, texture, cou
         frame.text:SetText(count)
         frame:SetScript("OnUpdate", nil)
     else
+        local fmt
         if frame.durationTbl[1] then
-            local fmt
-            if count == 0 or (count == 1 and not frame.circledStackNums) then
+            if count == 0 then
                 fmt, count = "%s", ""
             elseif frame.circledStackNums then
                 fmt, count = "%s ", circled[count] .. " "
@@ -486,8 +490,7 @@ local function Text_SetCooldown(frame, start, duration, debuffType, texture, cou
                     fmt2, remain = fmt .. "%dm", remain/60
                 else
                     if frame.durationTbl[2] then
-                        fmt2, remain = fmt .. "%d", remain + 0.9999
-                        remain = remain < 1 and 1 or remain
+                        fmt2, remain = fmt .. "%d", ceil(remain)
                     else
                         if remain < frame.durationTbl[3] then
                             fmt2 = fmt .. "%.1f"
@@ -500,8 +503,8 @@ local function Text_SetCooldown(frame, start, duration, debuffType, texture, cou
             end)
         else
             count = count == 0 and 1 or count
-            local fmt = frame.circledStackNums and circled[count]
-            if fmt then
+            if frame.circledStackNums then
+                fmt = circled[count]
                 count = nil
             else
                 fmt = "%d"
