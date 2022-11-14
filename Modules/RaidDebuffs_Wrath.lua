@@ -687,28 +687,28 @@ local function CreateDebuffsFrame()
             end
             -- notify debuff list changed
             Cell:Fire("RaidDebuffsChanged", instanceIdToName[loadedInstance])
-            CellTooltip:Hide()
+            CellSpellTooltip:Hide()
         end, function()
-            CellTooltip:Hide()
+            CellSpellTooltip:Hide()
         end, true, true)
         popup.editBox:SetNumeric(true)
         popup.editBox:SetScript("OnTextChanged", function()
             local spellId = tonumber(popup.editBox:GetText())
             if not spellId then
-                CellTooltip:Hide()
+                CellSpellTooltip:Hide()
                 return
             end
     
             local name = GetSpellInfo(spellId)
             if not name then
-                CellTooltip:Hide()
+                CellSpellTooltip:Hide()
                 return
             end
             
-            CellTooltip:SetOwner(popup, "ANCHOR_NONE")
-            CellTooltip:SetPoint("TOPLEFT", popup, "BOTTOMLEFT", 0, -1)
-            CellTooltip:SetHyperlink("spell:"..spellId)
-            CellTooltip:Show()
+            CellSpellTooltip:SetOwner(popup, "ANCHOR_NONE")
+            CellSpellTooltip:SetPoint("TOPLEFT", popup, "BOTTOMLEFT", 0, -1)
+            CellSpellTooltip:SetSpellByID(spellId)
+            CellSpellTooltip:Show()
         end)
         popup:SetPoint("TOPLEFT", 117, -170)
     end)
@@ -1028,13 +1028,13 @@ ShowDebuffs = function(bossId, buttonIndex)
     -- set onclick
     Cell:CreateButtonGroup(debuffButtons, ShowDetails, nil, nil, function(b)
         debuffListFrame:GetScript("OnEnter")()
-        CellTooltip:SetOwner(b, "ANCHOR_NONE")
-        CellTooltip:SetPoint("TOPRIGHT", b, "TOPLEFT", -1, 0)
-        CellTooltip:SetHyperlink("spell:"..b.spellId)
-        CellTooltip:Show()
+        CellSpellTooltip:SetOwner(b, "ANCHOR_NONE")
+        CellSpellTooltip:SetPoint("TOPRIGHT", b, "TOPLEFT", -1, 0)
+        CellSpellTooltip:SetSpellByID(b.spellId)
+        CellSpellTooltip:Show()
     end, function(b)
         debuffListFrame:GetScript("OnLeave")()
-        CellTooltip:Hide()
+        CellSpellTooltip:Hide()
     end)
 
     if debuffButtons[buttonIndex or 1] and debuffButtons[buttonIndex or 1]:IsShown() then

@@ -2533,8 +2533,9 @@ local function CreateAuraButtons(parent, auraButtons, auraTable, noUpDownButtons
             
             CellSpellTooltip:SetOwner(popup, "ANCHOR_NONE")
             CellSpellTooltip:SetPoint("TOPLEFT", popup, "BOTTOMLEFT", 0, -1)
-            CellSpellTooltip:SetHyperlink("spell:"..spellId)
+            CellSpellTooltip:SetSpellByID(spellId)
             CellSpellTooltip:Show()
+            -- F:ShowSpellTooltips(CellSpellTooltip, spellId)
         end)
         
         popup:HookScript("OnHide", function()
@@ -2694,7 +2695,7 @@ local function CreateAuraButtons(parent, auraButtons, auraTable, noUpDownButtons
                     
                     CellSpellTooltip:SetOwner(auraButtons[i], "ANCHOR_NONE")
                     CellSpellTooltip:SetPoint("TOPRIGHT", auraButtons[i], "TOPLEFT", -1, 0)
-                    CellSpellTooltip:SetHyperlink("spell:"..self.spellId)
+                    CellSpellTooltip:SetSpellByID(self.spellId)
                     CellSpellTooltip:Show()
                 end
             end)
@@ -2949,7 +2950,7 @@ local function CreateCleuAuraButtons(parent, auraTable, updateHeightFunc)
             
             CellSpellTooltip:SetOwner(spellEB, "ANCHOR_NONE")
             CellSpellTooltip:SetPoint("TOPLEFT", spellEB, "BOTTOMLEFT", 0, -1)
-            CellSpellTooltip:SetHyperlink("spell:"..spellId)
+            CellSpellTooltip:SetSpellByID(spellId)
             CellSpellTooltip:Show()
             spellEB.isValid = true
             Validate()
@@ -3127,7 +3128,7 @@ local function CreateCleuAuraButtons(parent, auraTable, updateHeightFunc)
             
             CellSpellTooltip:SetOwner(cleuAuraButtons[i], "ANCHOR_NONE")
             CellSpellTooltip:SetPoint("TOPRIGHT", cleuAuraButtons[i], "TOPLEFT", -1, 0)
-            CellSpellTooltip:SetHyperlink("spell:"..self.spellId)
+            CellSpellTooltip:SetSpellByID(self.spellId)
             CellSpellTooltip:Show()
         end)
         cleuAuraButtons[i]:HookScript("OnLeave", function()
@@ -3367,7 +3368,7 @@ local function CreateConsumableButtons(parent, spellTable, updateHeightFunc)
             
             CellSpellTooltip:SetOwner(popup, "ANCHOR_NONE")
             CellSpellTooltip:SetPoint("TOPLEFT", popup, "BOTTOMLEFT", 0, -1)
-            CellSpellTooltip:SetHyperlink("spell:"..spellId)
+            CellSpellTooltip:SetSpellByID(spellId)
             CellSpellTooltip:Show()
         end)
         
@@ -3547,7 +3548,7 @@ local function CreateConsumableButtons(parent, spellTable, updateHeightFunc)
                 
                 CellSpellTooltip:SetOwner(consumableButtons[i], "ANCHOR_NONE")
                 CellSpellTooltip:SetPoint("TOPRIGHT", consumableButtons[i], "TOPLEFT", -1, 0)
-                CellSpellTooltip:SetHyperlink("spell:"..self.spellId)
+                CellSpellTooltip:SetSpellByID(self.spellId)
                 CellSpellTooltip:Show()
             end
         end)
