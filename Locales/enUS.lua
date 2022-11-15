@@ -65,6 +65,10 @@ select(2, ...).L = setmetatable({
     ["SNIPPETS_TIPS"] = "[Double-Click] to rename. [Shift-Click] to delete. All checked snippets will be automatically invoked at the end of Cell initialization process (in ADDON_LOADED event).",
 
     ["CHANGELOGS"] = [[
+        <h1>r141-release (Nov 16, 2022, 06:17 GMT+8)</h1>
+        <p>* Fixed tooltips (Wrath Classic).</p>
+        <br/>
+
         <h1>r140-release (Nov 16, 2022, 05:40 GMT+8)</h1>
         <p>* Updated tooltips related functions.</p>
         <p>* Updated zhTW and koKR.</p>
