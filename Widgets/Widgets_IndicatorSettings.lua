@@ -2535,7 +2535,6 @@ local function CreateAuraButtons(parent, auraButtons, auraTable, noUpDownButtons
             CellSpellTooltip:SetPoint("TOPLEFT", popup, "BOTTOMLEFT", 0, -1)
             CellSpellTooltip:SetSpellByID(spellId)
             CellSpellTooltip:Show()
-            -- F:ShowSpellTooltips(CellSpellTooltip, spellId)
         end)
         
         popup:HookScript("OnHide", function()

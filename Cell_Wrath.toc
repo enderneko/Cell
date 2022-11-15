@@ -21,7 +21,7 @@ Core_Wrath.lua
 Utils.lua
 Revise.lua
 Comm.lua
-Widgets\LoadWidgets.xml
+Widgets\LoadWidgets_Wrath.xml
 Defaults\LoadDefaults_Wrath.xml
 
 HideBlizzard.lua

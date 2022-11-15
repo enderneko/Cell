@@ -12,11 +12,13 @@ local function CreateTooltip(name)
     tooltip:SetBackdropBorderColor(Cell:GetAccentColorRGB())
     tooltip:SetOwner(UIParent, "ANCHOR_NONE")
 
-    tooltip:RegisterEvent("TOOLTIP_DATA_UPDATE")
-    tooltip:SetScript("OnEvent", function()
-        -- Interface\FrameXML\GameTooltip.lua line924
-        tooltip:RefreshData()
-    end)
+    if Cell.isRetail then
+        tooltip:RegisterEvent("TOOLTIP_DATA_UPDATE")
+        tooltip:SetScript("OnEvent", function()
+            -- Interface\FrameXML\GameTooltip.lua line924
+            tooltip:RefreshData()
+        end)
+    end
 
     tooltip:SetScript("OnTooltipCleared", function()
         -- reset border color
