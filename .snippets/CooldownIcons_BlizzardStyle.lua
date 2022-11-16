@@ -204,6 +204,13 @@ F:IterateAllUnitButtons(function(b)
     -- debuffs
     for i = 1, 10 do
         CreateCooldown(b.indicators.debuffs[i])
+        hooksecurefunc(b.indicators.debuffs[i], "SetCooldown", function(self, start, duration, debuffType, texture, count, refreshing, isBigDebuff)
+            if isBigDebuff then
+                P:Size(self, b.indicators.debuffs.bigSize[1], b.indicators.debuffs.bigSize[2])
+            else
+                P:Size(self, b.indicators.debuffs.normalSize[1], b.indicators.debuffs.normalSize[2])
+            end
+        end)
     end
 
     for i = 1, 5 do
