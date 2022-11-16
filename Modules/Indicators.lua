@@ -21,7 +21,7 @@ local listButtons = {}
 local previewButton, previewButtonBG, previewAlphaSlider, previewScaleSlider
 
 local function CreatePreviewButton()
-    previewButton = CreateFrame("Button", "CellIndicatorsPreviewButton", indicatorsTab, "CellUnitPreviewButtonTemplate")
+    previewButton = CreateFrame("Button", "CellIndicatorsPreviewButton", indicatorsTab, "CellPreviewButtonTemplate")
     -- previewButton:SetPoint("TOPLEFT", indicatorsTab, "TOPRIGHT", 10, -55)
     previewButton:UnregisterAllEvents()
     previewButton:SetScript("OnEnter", nil)
