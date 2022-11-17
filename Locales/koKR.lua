@@ -94,15 +94,14 @@ L["Button5"] = "5번 버튼"
 --[[ L["C"] = "Class Talent"--]] 
 --[[Translation missing --]]
 --[[ L["Cancel"] = "Cancel"--]] 
-L["Can't change options in combat."] = "전투 중 옵션을 바꿀 수 없습니다."
+L["Can't change options in combat"] = "전투 중 옵션을 바꿀 수 없습니다."
 L["castByMe"] = "자신이 시전한 강화 효과만"
 L["Cell will report all deaths during a raid encounter."] = "Cell은 공격대 교전 중 모든 죽음을 보고합니다."
 L["Cell will report first %d deaths during a raid encounter."] = "Cell은 공격대 교전 중 처음 %d명의 죽음을 보고합니다."
 L["CENTER"] = "중앙"
 --[[Translation missing --]]
 --[[ L["Changelogs"] = "Changelogs"--]] 
---[[Translation missing --]]
---[[ L["Check all visible enemy nameplates. Battleground/Arena only."] = "Check all visible enemy nameplates. Battleground/Arena only."--]] 
+L["Check all visible enemy nameplates. Battleground/Arena only."] = "보이는 모든 적 이름표를 확인합니다. 전장/투기장 전용."
 --[[Translation missing --]]
 --[[ L["Check If Exists"] = "Check If Exists"--]] 
 --[[Translation missing --]]
@@ -206,8 +205,7 @@ L["Enabled"] = "사용"
 L["enableHighlight"] = "강조 사용"
 L["Enter spell id"] = "주문 ID 입력"
 L["Enter: apply\nESC: discard"] = "Enter: 적용 ESC: 취소"
---[[Translation missing --]]
---[[ L["Entire"] = "Entire"--]] 
+L["Entire"] = "전체"
 --[[Translation missing --]]
 --[[ L["Error"] = "Error"--]] 
 L["Export"] = "내보내기"
@@ -240,14 +238,13 @@ L["Frequency"] = "빈도"
 L["General"] = "일반"
 L["GHOST"] = "유령"
 L["Glow"] = "반짝임"
-L["Glow Color"] = "Glow 색상"
+L["Glow Color"] = "반짝임 색상"
 L["Glow Options"] = "반짝임 옵션"
-L["Glow Type"] = "Glow 형태"
+L["Glow Type"] = "반짝임 유형"
 --[[Translation missing --]]
 --[[ L["Glow unit button when a group member sends a %s request"] = "Glow unit button when a group member sends a %s request"--]] 
 L["Glows"] = "반짝임"
---[[Translation missing --]]
---[[ L["Gradient"] = "Gradient"--]] 
+L["Gradient"] = "그러데이션"
 L["Group Arrangement"] = "그룹 배치"
 L["Group Columns"] = "그룹 열"
 L["Group Filter"] = "그룹 필터"
@@ -290,7 +287,7 @@ L["Include Nickname Settings"] = "별명 설정 포함"
 --[[ L["Incompatible Version"] = "Incompatible Version"--]] 
 L["Increase Health Update Rate"] = "생명력 업데이트 속도 증가"
 L["Indicator Settings"] = "표시기 설정"
-L["Indicator settings are part of Layout settings which are account-wide."] = "지시기 설정은 계정 전체에 적용되는 배치 설정의 일부입니다."
+L["Indicator settings are part of Layout settings which are account-wide."] = "표시기 설정은 계정 전체 배치 설정의 일부입니다."
 L["Indicator Sync"] = "표시기 동기화"
 L["Indicators"] = "표시기"
 --[[Translation missing --]]
@@ -366,7 +363,7 @@ L["only in group"] = "그룹에서만"
 --[[Translation missing --]]
 --[[ L["Only one threshold is displayed at a time"] = "Only one threshold is displayed at a time"--]] 
 L["Only show during encounter or in mythic+"] = "신화+ 에서만 표시"
-L["Only show when you have permission to do this"] = "이 작업을 수행 할 권한이 있을경우에만 표시"
+L["Only show when you have permission to do this"] = "이 작업을 수행할 수 있는 권한이 있는 경우에만 표시"
 --[[Translation missing --]]
 --[[ L["Only visible to me"] = "Only visible to me"--]] 
 L["onlyShowTopGlow"] = "Glow만 표시"
@@ -380,8 +377,7 @@ L["Out of Range Alpha"] = "사정거리 밖 투명도"
 L["Outline"] = "테두리"
 --[[Translation missing --]]
 --[[ L["Overshield Texture"] = "Overshield Texture"--]] 
---[[Translation missing --]]
---[[ L["Overwrite Layout"] = "Overwrite Layout"--]] 
+L["Overwrite Layout"] = "배치 덮어쓰기"
 L["P"] = "PvP 특성"
 L["Particles"] = "입자"
 L["Party"] = "파티"
@@ -454,7 +450,7 @@ L["Require reload of the UI"] = "UI 재시작 필요"
 L["Reset All"] = "모두 초기화"
 L["reset all Cell settings"] = "모든 Cell 설정 초기화"
 L["reset all Click-Castings"] = "모든 클릭 주문 시전 초기화"
-L["reset all Layouts and Indicators"] = "모든 배치 및 지시기 초기화"
+L["reset all Layouts and Indicators"] = "모든 배치 및 표시기 초기화"
 L["reset all Raid Debuffs"] = "모든 공격대 디버프 초기화"
 L["reset Cell position"] = "Cell 위치 초기화"
 --[[Translation missing --]]
@@ -499,7 +495,7 @@ L["Shield Bar"] = "보호막 바"
 --[[ L["Shield Texture"] = "Shield Texture"--]] 
 L["Shift+Enter: add a new line"] = "Shift+Enter: 새로운 라인 추가"
 L["Shine"] = "Shine"
-L["show Cell options frame"] = "Cell 옵션 창"
+L["show Cell options frame"] = "Cell 옵션 창 표시"
 L["Show Current Instance"] = "현재 인스턴스 표시"
 --[[Translation missing --]]
 --[[ L["Show duration text instead of icon animation"] = "Show duration text instead of icon animation"--]] 
@@ -514,8 +510,7 @@ L["Show Solo"] = "솔로잉시 표시"
 --[[ L["Show units you care about more in a separate frame"] = "Show units you care about more in a separate frame"--]] 
 L["Show while in a party"] = "파티시에만 표시합니다."
 L["Show while not in a group"] = "솔로잉시 표시합니다."
---[[Translation missing --]]
---[[ L["showDispelTypeIcons"] = "Show Dispel Type Icons"--]] 
+L["showDispelTypeIcons"] = "해제 유형 아이콘 표시"
 L["showDuration"] = "지속시간 표시"
 --[[Translation missing --]]
 --[[ L["showGroupNumber"] = "Show group number"--]] 
@@ -528,8 +523,7 @@ L["Size"] = "크기"
 L["Slash Commands"] = "슬래시 명령어"
 --[[Translation missing --]]
 --[[ L["SNIPPETS_TIPS"] = "[Double-Click] to rename. [Shift-Click] to delete. All checked snippets will be automatically invoked at the end of Cell initialization process (in ADDON_LOADED event)."--]] 
---[[Translation missing --]]
---[[ L["Solid"] = "Solid"--]] 
+L["Solid"] = "단색"
 L["Solo/Party"] = "솔로잉/파티"
 L["Sort Party By Role"] = "역할별로 파티 정렬"
 L["Special Thanks"] = "특히 감사"
