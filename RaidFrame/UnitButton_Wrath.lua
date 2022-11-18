@@ -2,7 +2,7 @@
 -- File: UnitButton_Wrath.lua
 -- Author: enderneko (enderneko-dev@outlook.com)
 -- File Created: 2022/08/20 19:44:26 +0800
--- Last Modified: 2022/11/14 01:46:46 +0800
+-- Last Modified: 2022/11/18 20:38:41 +0800
 --]]
 
 local _, Cell = ...
@@ -1477,12 +1477,22 @@ local function UnitButton_UpdateThreatBar(self)
 end
 
 local LRC = LibStub:GetLibrary("LibRangeCheck-2.0")
+local checker
+LRC.RegisterCallback(Cell, LRC.CHECKERS_CHANGED, function()
+    checker = LRC:GetSmartMaxChecker(40)
+end)
+
 local function UnitButton_UpdateInRange(self)
     local unit = self.state.displayedUnit
     if not unit then return end
 
-    local inRange
+    local inRange = false
 
+    if checker then
+        inRange = (UnitIsVisible(unit) and checker(unit)) or false
+    end
+
+    --[[
     if F:UnitInGroup(unit) then
          -- NOTE: UnitInRange only works with group members
         local checked
@@ -1494,6 +1504,7 @@ local function UnitButton_UpdateInRange(self)
         local minRangeIfVisible, maxRangeIfVisible = LRC:GetRange(unit, true)
         inRange = maxRangeIfVisible and maxRangeIfVisible <= 40
     end
+    ]]
 
     self.state.inRange = inRange
     if Cell.loaded then
