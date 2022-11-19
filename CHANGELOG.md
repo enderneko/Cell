@@ -1,8 +1,5 @@
-[Full Changelog](https://github.com/enderneko/Cell/compare/r141-release...b816fb992b265d890a8e303c57789f4f008f8423)
+[Full Changelog](https://github.com/enderneko/Cell/compare/r142-release...68b97ad8d7739a95e19b09ba3a8b282a99b3e0c8)
 
-- Make options frame openable in combat
-- Update koKR
+- Update range checker
+- Fix appearance reset
 - Update patrons
-- [snippet] IndicatorIcons_CustomColor
-- [snippet] ShieldAndAbsorb_CustomTexture
-- [snippet] fix big debuffs
