@@ -600,6 +600,11 @@ L["Changelogs"] = "更新记录"
 L["Click to view recent changelogs"] = "点击查看近期更新记录"
 L["Click to view older changelogs"] = "点击查看远古更新记录"
 L["CHANGELOGS"] = [[
+    <h1>r144-release (Nov 20, 2022, 05:02 GMT+8)</h1>
+    <p>+ 为特别关注框体添加了几个快捷操作。</p>
+    <p>* 修复bug。</p>
+    <br/>
+
     <h1>r143-release (Nov 19, 2022, 15:02 GMT+8)</h1>
     <p>* 为唤魔师更新了距离检查（30码）。</p>
     <p>* 修复外观下的重置功能。</p>

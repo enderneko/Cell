@@ -1,5 +1,6 @@
-[Full Changelog](https://github.com/enderneko/Cell/compare/r142-release...68b97ad8d7739a95e19b09ba3a8b282a99b3e0c8)
+[Full Changelog](https://github.com/enderneko/Cell/compare/r143-release...e217a40410af9a213f21d175ffde7ac333c1b054)
 
-- Update range checker
-- Fix appearance reset
-- Update patrons
+- Add several shortcuts to spotlight frame
+- Fix macro editbox in click-castings tab
+- Update Widgets_IndicatorSettings
+- Update Patrons
