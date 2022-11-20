@@ -18,12 +18,13 @@ local F = Cell.funcs
 local offset = #debuffs
 local instanceNameMapping = Cell.snippetVars.instanceNameMapping
 local loadedDebuffs = Cell.snippetVars.loadedDebuffs
+local mythicPlusDungeons = EJ_GetTierInfo(EJ_GetNumTiers())
 
 function F:GetDebuffList(instanceName)
     local list = {}
     local eName, iIndex, iId = F:SplitToNumber(":", instanceNameMapping[instanceName])
 
-    if eName == "Current Season" or instances[iId] then
+    if eName == mythicPlusDungeons or instances[iId] then
         for i, id in pairs(debuffs) do
             list[id] = {["order"]=i, ["condition"]={"None"}}
         end
