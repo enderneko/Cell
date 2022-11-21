@@ -542,6 +542,8 @@ L["Spells"] = "주문"
 --[[ L["Spotlight Button Size"] = "Spotlight Button Size"--]] 
 --[[Translation missing --]]
 --[[ L["Spotlight Frame"] = "Spotlight Frame"--]] 
+--[[Translation missing --]]
+--[[ L["spotlightTips"] = "Left-Click: |cffffffffmenu|r\nRight-Click: |cffffffffclear|r\nLeft-Drag: |cffffffffset unit (not in combat)|r\nRight-Drag: |cffffffffset unit's pet (not in combat)|r"--]] 
 L["Status Icon"] = "상태 아이콘"
 L["Status Text"] = "상태 문자"
 L["Status Text Position"] = "상태 문자 위치"
