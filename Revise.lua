@@ -1478,5 +1478,20 @@ function F:Revise()
         end
     end
 
+    -- r145-release
+    if CellDB["revise"] and dbRevision < 145 then
+        if Cell.isRetail then
+            -- add "Initials"
+            for class, t in pairs(CellDB["clickCastings"]) do
+                local specID = GetSpecializationInfoForClassID(F:GetClassID(class), 5)
+                t["alwaysTargeting"][specID] = "disabled"
+                t[specID] = {
+                    {"type1", "target"},
+                    {"type2", "togglemenu"},
+                }
+            end
+        end
+    end
+
     CellDB["revise"] = Cell.version
 end

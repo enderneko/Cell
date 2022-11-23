@@ -532,13 +532,15 @@ else
         -- update dispellable
         wipe(dispellable)
         local activeConfigID = C_ClassTalents.GetActiveConfigID()
-        for dispelType, value in pairs(dispelNodeID[Cell.vars.playerSpecID]) do
-            if type(value) == "boolean" then
-                dispellable[dispelType] = value
-            else -- number: check node info
-                local nodeInfo = C_Traits.GetNodeInfo(activeConfigID, value)
-                if nodeInfo and nodeInfo.ranksPurchased ~= 0 then
-                    dispellable[dispelType] = true
+        if dispelNodeID[Cell.vars.playerSpecID] then
+            for dispelType, value in pairs(dispelNodeID[Cell.vars.playerSpecID]) do
+                if type(value) == "boolean" then
+                    dispellable[dispelType] = value
+                else -- number: check node info
+                    local nodeInfo = C_Traits.GetNodeInfo(activeConfigID, value)
+                    if nodeInfo and nodeInfo.ranksPurchased ~= 0 then
+                        dispellable[dispelType] = true
+                    end
                 end
             end
         end
