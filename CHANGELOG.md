@@ -1,6 +1,9 @@
-[Full Changelog](https://github.com/enderneko/Cell/compare/r143-release...e217a40410af9a213f21d175ffde7ac333c1b054)
+[Full Changelog](https://github.com/enderneko/Cell/compare/r144-release...159820fdf13a9b82990e82e9b3c7530e0896d32e)
 
-- Add several shortcuts to spotlight frame
-- Fix macro editbox in click-castings tab
-- Update Widgets_IndicatorSettings
-- Update Patrons
+- Fix click-castings
+- Update dispellable checker
+- Fix a Cell init issue
+- Update zhTW
+- Update patrons
+- Update snippet
+- Update aura icons preview
