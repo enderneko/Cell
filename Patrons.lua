@@ -30,6 +30,7 @@ local patrons = {
     {"6ND8 (爱发电)", "6nd8"},
     {"伊莉丝翠的眷顾 (爱发电)", "yilisicuidejuangu"},
     {"秋末旷夜-凤凰之神 (CN)", "qiumokuangye"},
+    {"批歪 (爱发电)", "piwai"},
 }
 
 -- sort
@@ -44,6 +45,7 @@ local tests = {
     ["Devevoker-Lycanthoth"] = true,
     ["Celldev-Lycanthoth"] = true,
     ["Programming-Lycanthoth"] = true,
+    ["Programming-影之哀伤"] = true,
     ["篠崎-影之哀伤"] = true,
 }
 
