@@ -232,6 +232,7 @@ L["target"] = "目标"
 L["focus"] = "焦点"
 L["assist"] = "协助"
 L["togglemenu"] = "菜单"
+L["togglemenu_nocombat"] = "菜单（非战斗中）"
 
 L["Target"] = "目标"
 L["Focus"] = "焦点"

@@ -9,6 +9,7 @@ select(2, ...).L = setmetatable({
     ["focus"] = "Focus",
     ["assist"] = "Assist",
     ["togglemenu"] = "Menu",
+    ["togglemenu_nocombat"] = "Menu (not in combat)",
     ["T"] = "Talent",
     ["C"] = "Class Talent",
     ["S"] = "Spec Talent",
