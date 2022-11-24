@@ -1478,11 +1478,16 @@ function F:Revise()
         end
     end
 
-    -- r145-release
-    if CellDB["revise"] and dbRevision < 145 then
+    -- r146-release
+    if CellDB["revise"] and dbRevision < 146 then
         if Cell.isRetail then
             -- add "Initials"
             for class, t in pairs(CellDB["clickCastings"]) do
+                -- fix alwaysTargeting
+                if not t["alwaysTargeting"] then
+                    t["alwaysTargeting"] = {["common"] = "disabled"}
+                end
+                -- set up initial spec
                 local specID = GetSpecializationInfoForClassID(F:GetClassID(class), 5)
                 t["alwaysTargeting"][specID] = "disabled"
                 t[specID] = {
