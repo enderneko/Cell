@@ -351,7 +351,7 @@ local function InitIndicator(indicatorName)
         elseif indicator.indicatorType == "texture" then
             indicator:SetCooldown()
         else
-            SetOnUpdate(indicator, nil, 134400, 0)
+            SetOnUpdate(indicator, nil, 134400, 5)
         end
     end
     indicator.init = true
@@ -468,6 +468,10 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                 -- update duration
                 if type(t["showDuration"]) == "boolean" then
                     indicator:ShowDuration(t["showDuration"])
+                end
+                -- update stack
+                if type(t["showStack"]) == "boolean" then
+                    indicator:ShowStack(t["showStack"])
                 end
                 -- update duration
                 if t["duration"] then
@@ -608,6 +612,8 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                     indicator:Hide()
                     indicator:Show()
                 end
+            elseif value == "showStack" then
+                indicator:ShowStack(value2)
             elseif value == "circledStackNums" then
                 indicator:SetCircledStackNums(value2)
                 if indicator.enabled then
@@ -673,6 +679,10 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
             -- update duration
             if type(value["showDuration"]) == "boolean" then
                 indicator:ShowDuration(value["showDuration"])
+            end
+            -- update stack
+            if type(value["showStack"]) == "boolean" then
+                indicator:ShowStack(value["showStack"])
             end
             -- update duration
             if value["duration"] then
@@ -1082,7 +1092,10 @@ local function CreateListPane()
                     ["position"] = {"TOPRIGHT", "TOPRIGHT", -1, 2},
                     ["frameLevel"] = 5,
                     ["size"] = {18, 4},
-                    ["colors"] = {{0,1,0}, {1,1,0,.5}, {1,0,0,3}},
+                    ["colors"] = {{0,1,0}, {1,1,0,0.5}, {1,0,0,3}},
+                    ["orientation"] = "horizontal",
+                    ["font"] = {"Cell ".._G.DEFAULT, 11, "Outline", 0, 0},
+                    ["showStack"] = false,
                     ["auraType"] = indicatorAuraType,
                     ["auras"] = {},
                 })
@@ -1095,7 +1108,9 @@ local function CreateListPane()
                     ["position"] = {"TOPRIGHT", "TOPRIGHT", 0, 2},
                     ["frameLevel"] = 5,
                     ["size"] = {11, 4},
-                    ["colors"] = {{0,1,0}, {1,1,0,.5}, {1,0,0,3}},
+                    ["colors"] = {{0,1,0}, {1,1,0,0.5}, {1,0,0,3}},
+                    ["font"] = {"Cell ".._G.DEFAULT, 11, "Outline", 0, 0},
+                    ["showStack"] = false,
                     ["auraType"] = indicatorAuraType,
                     ["auras"] = {},
                 })
@@ -1338,9 +1353,9 @@ local function ShowIndicatorSettings(id)
         elseif indicatorType == "text" then
             settingsTable = {"enabled", "auras", "duration", "checkbutton3:circledStackNums:"..L["Require font support"], "colors", "position", "frameLevel", "font-noOffset"}
         elseif indicatorType == "bar" then
-            settingsTable = {"enabled", "auras", "colors", "position", "frameLevel", "size-bar"}
+            settingsTable = {"enabled", "auras", "colors", "checkbutton3:showStack", "barOrientation", "position", "frameLevel", "size-bar", "font"}
         elseif indicatorType == "rect" then
-            settingsTable = {"enabled", "auras", "colors", "position", "frameLevel", "size"}
+            settingsTable = {"enabled", "auras", "colors", "checkbutton3:showStack", "position", "frameLevel", "size", "font"}
         elseif indicatorType == "icons" then
             settingsTable = {"enabled", "auras", "checkbutton3:showDuration:"..L["Show duration text instead of icon animation"], "num:10", "orientation", "position", "frameLevel", CELL_RECTANGULAR_CUSTOM_INDICATOR_ICONS and "size" or "size-square", "font"}
         elseif indicatorType == "color" then
@@ -1372,7 +1387,7 @@ local function ShowIndicatorSettings(id)
     local height = 0
     for i, w in pairs(widgets) do
         if last then
-            w:SetPoint("TOPLEFT", last, "BOTTOMLEFT", 0, P:Scale(-7))
+            w:SetPoint("TOPLEFT", last, "BOTTOMLEFT", 0, -7)
         else
             w:SetPoint("TOPLEFT")
         end
@@ -1386,6 +1401,7 @@ local function ShowIndicatorSettings(id)
         if currentSetting == "size-square" or currentSetting == "size-bar" or currentSetting == "size-normal-big" then currentSetting = "size" end
         if currentSetting == "font-noOffset" then currentSetting = "font" end
         if currentSetting == "namePosition" or currentSetting == "statusPosition" then currentSetting = "position" end
+        if currentSetting == "barOrientation" then currentSetting = "orientation" end
         
         -- echo
         if string.find(currentSetting, "checkbutton") then

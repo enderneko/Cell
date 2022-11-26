@@ -2,7 +2,7 @@
 -- File: UnitButton_Wrath.lua
 -- Author: enderneko (enderneko-dev@outlook.com)
 -- File Created: 2022/08/20 19:44:26 +0800
--- Last Modified: 2022/11/27 05:30:23 +0800
+-- Last Modified: 2022/11/27 06:32:04 +0800
 --]]
 
 local _, Cell = ...
@@ -222,6 +222,10 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                 -- update duration
                 if type(t["showDuration"]) == "boolean" then
                     indicator:ShowDuration(t["showDuration"])
+                end
+                -- update stack
+                if type(t["showStack"]) == "boolean" then
+                    indicator:ShowStack(t["showStack"])
                 end
                 -- update duration
                 if t["duration"] then
@@ -491,6 +495,11 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                     b.indicators[indicatorName]:ShowDuration(value2)
                     UnitButton_UpdateAuras(b)
                 end, true)
+            elseif value == "showStack" then
+                F:IterateAllUnitButtons(function(b)
+                    b.indicators[indicatorName]:ShowStack(value2)
+                    UnitButton_UpdateAuras(b)
+                end, true)
             elseif value == "trackByName" then
                 F:IterateAllUnitButtons(function(b)
                     UnitButton_UpdateAuras(b)
@@ -550,6 +559,10 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                 -- update showDuration
                 if value["showDuration"] then
                     indicator:ShowDuration(value["showDuration"])
+                end
+                -- update showStack
+                if value["showStack"] then
+                    indicator:ShowStack(value["showStack"])
                 end
                 -- update duration
                 if value["duration"] then

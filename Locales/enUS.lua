@@ -25,6 +25,7 @@ select(2, ...).L = setmetatable({
     ["castByMe"] = "Only show buffs cast by me",
     ["trackByName"] = "Track by name",
     ["showDuration"] = "Show duration text",
+    ["showStack"] = "Show stack text",
     ["showTooltip"] = "Show aura tooltip",
     ["enableHighlight"] = "Highlight unit button",
     ["hideFull"] = "Hide while HP is full",

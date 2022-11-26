@@ -1530,6 +1530,24 @@ function F:Revise()
         if type(CellDB["appearance"]["healAbsorb"]) == "boolean" then
             CellDB["appearance"]["healAbsorb"] = {CellDB["appearance"]["healAbsorb"], {1, 0.1, 0.1, 0.9}}
         end
+
+        -- custom indicator
+        for _, layout in pairs(CellDB["layouts"]) do
+            for _, indicator in pairs(layout["indicators"]) do
+                if indicator["type"] == "bar" then
+                    if not indicator["orientation"] then indicator["orientation"] = "horizontal" end
+                    if type(indicator["showStack"]) ~= "boolean" then
+                        indicator["showStack"] = false
+                        indicator["font"] = {"Cell ".._G.DEFAULT, 11, "Outline", 0, 0}
+                    end
+                elseif indicator["type"] == "rect" then
+                    if type(indicator["showStack"]) ~= "boolean" then
+                        indicator["showStack"] = false
+                        indicator["font"] = {"Cell ".._G.DEFAULT, 11, "Outline", 0, 0}
+                    end
+                end
+            end
+        end
     end
 
     CellDB["revise"] = Cell.version
