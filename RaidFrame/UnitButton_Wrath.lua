@@ -2,7 +2,7 @@
 -- File: UnitButton_Wrath.lua
 -- Author: enderneko (enderneko-dev@outlook.com)
 -- File Created: 2022/08/20 19:44:26 +0800
--- Last Modified: 2022/11/26 18:34:51 +0800
+-- Last Modified: 2022/11/27 05:30:23 +0800
 --]]
 
 local _, Cell = ...
@@ -1685,7 +1685,12 @@ UnitButton_UpdateHealthColor = function(self)
     -- local r, g, b = RAID_CLASS_COLORS["DEATHKNIGHT"]:GetRGB()
     self.widget.healthBar:SetStatusBarColor(barR, barG, barB, barA)
     self.widget.healthBarLoss:SetVertexColor(lossR, lossG, lossB, lossA)
-    self.widget.incomingHeal:SetVertexColor(barR, barG, barB)
+
+    if Cell.loaded and CellDB["appearance"]["healPrediction"][2] then
+        self.widget.incomingHeal:SetVertexColor(CellDB["appearance"]["healPrediction"][3][1], CellDB["appearance"]["healPrediction"][3][2], CellDB["appearance"]["healPrediction"][3][3], CellDB["appearance"]["healPrediction"][3][4])
+    else
+        self.widget.incomingHeal:SetVertexColor(barR, barG, barB, 0.4)
+    end
 end
 
 -------------------------------------------------
@@ -2454,7 +2459,7 @@ function F:UnitButton_OnLoad(button)
     -- P:Point(incomingHeal, "TOPLEFT", healthBar:GetStatusBarTexture(), "TOPRIGHT")
     -- P:Point(incomingHeal, "BOTTOMLEFT", healthBar:GetStatusBarTexture(), "BOTTOMRIGHT")
     incomingHeal:SetTexture(Cell.vars.texture)
-    incomingHeal:SetAlpha(0.4)
+    -- incomingHeal:SetAlpha(0.4)
     incomingHeal:Hide()
     incomingHeal.SetValue = DumbFunc
 
@@ -2481,9 +2486,11 @@ function F:UnitButton_OnLoad(button)
     overShieldGlow:Hide()
 
     button.func.UpdateShields = function()
-        predictionEnabled = CellDB["appearance"]["healPrediction"]
-        shieldEnabled = CellDB["appearance"]["shield"]
+        predictionEnabled = CellDB["appearance"]["healPrediction"][1]
+        shieldEnabled = CellDB["appearance"]["shield"][1]
         overshieldEnabled = CellDB["appearance"]["overshield"]
+
+        button.widget.shieldBar:SetVertexColor(CellDB["appearance"]["shield"][2][1], CellDB["appearance"]["shield"][2][2], CellDB["appearance"]["shield"][2][3], CellDB["appearance"]["shield"][2][4])
 
         UnitButton_UpdateHealPrediction(button)
         UnitButton_UpdateShieldAbsorbs(button)

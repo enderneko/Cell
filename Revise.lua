@@ -1519,6 +1519,17 @@ function F:Revise()
                 end
             end
         end
+
+        -- appearance
+        if type(CellDB["appearance"]["healPrediction"]) == "boolean" then
+            CellDB["appearance"]["healPrediction"] = {CellDB["appearance"]["healPrediction"], false, {1, 1, 1, 0.4}}
+        end
+        if type(CellDB["appearance"]["shield"]) == "boolean" then
+            CellDB["appearance"]["shield"] = {CellDB["appearance"]["shield"], {1, 1, 1, 0.4}}
+        end
+        if type(CellDB["appearance"]["healAbsorb"]) == "boolean" then
+            CellDB["appearance"]["healAbsorb"] = {CellDB["appearance"]["healAbsorb"], {1, 0.1, 0.1, 0.9}}
+        end
     end
 
     CellDB["revise"] = Cell.version

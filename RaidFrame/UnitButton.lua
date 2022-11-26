@@ -1885,7 +1885,12 @@ UnitButton_UpdateHealthColor = function(self)
     -- local r, g, b = RAID_CLASS_COLORS["DEATHKNIGHT"]:GetRGB()
     self.widget.healthBar:SetStatusBarColor(barR, barG, barB, barA)
     self.widget.healthBarLoss:SetVertexColor(lossR, lossG, lossB, lossA)
-    self.widget.incomingHeal:SetVertexColor(barR, barG, barB)
+
+    if Cell.loaded and CellDB["appearance"]["healPrediction"][2] then
+        self.widget.incomingHeal:SetVertexColor(CellDB["appearance"]["healPrediction"][3][1], CellDB["appearance"]["healPrediction"][3][2], CellDB["appearance"]["healPrediction"][3][3], CellDB["appearance"]["healPrediction"][3][4])
+    else
+        self.widget.incomingHeal:SetVertexColor(barR, barG, barB, 0.4)
+    end
 end
 
 -------------------------------------------------
@@ -2450,7 +2455,7 @@ function F:UnitButton_OnLoad(button)
     -- P:Point(incomingHeal, "TOPLEFT", healthBar:GetStatusBarTexture(), "TOPRIGHT")
     -- P:Point(incomingHeal, "BOTTOMLEFT", healthBar:GetStatusBarTexture(), "BOTTOMRIGHT")
     incomingHeal:SetTexture(Cell.vars.texture)
-    incomingHeal:SetAlpha(0.4)
+    -- incomingHeal:SetAlpha(0.4)
     incomingHeal:Hide()
     incomingHeal.SetValue = DumbFunc
 
@@ -2490,10 +2495,13 @@ function F:UnitButton_OnLoad(button)
     absorbsBar.SetValue = DumbFunc
 
     button.func.UpdateShields = function()
-        predictionEnabled = CellDB["appearance"]["healPrediction"]
-        absorbEnabled = CellDB["appearance"]["healAbsorb"]
-        shieldEnabled = CellDB["appearance"]["shield"]
+        predictionEnabled = CellDB["appearance"]["healPrediction"][1]
+        absorbEnabled = CellDB["appearance"]["healAbsorb"][1]
+        shieldEnabled = CellDB["appearance"]["shield"][1]
         overshieldEnabled = CellDB["appearance"]["overshield"]
+
+        button.widget.absorbsBar:SetVertexColor(CellDB["appearance"]["healAbsorb"][2][1], CellDB["appearance"]["healAbsorb"][2][2], CellDB["appearance"]["healAbsorb"][2][3], CellDB["appearance"]["healAbsorb"][2][4])
+        button.widget.shieldBar:SetVertexColor(CellDB["appearance"]["shield"][2][1], CellDB["appearance"]["shield"][2][2], CellDB["appearance"]["shield"][2][3], CellDB["appearance"]["shield"][2][4])
 
         UnitButton_UpdateHealPrediction(button)
         UnitButton_UpdateHealAbsorbs(button)
