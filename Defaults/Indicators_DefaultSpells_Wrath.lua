@@ -150,6 +150,7 @@ local defensiveCooldowns = {
 
     -- priest
     47585, -- 消散
+    27827, -- 救赎之魂
 
     -- rogue
     1966, -- 佯攻
