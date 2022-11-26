@@ -1498,5 +1498,28 @@ function F:Revise()
         end
     end
 
+    -- r147-release
+    if CellDB["revise"] and dbRevision < 147 then
+        if Cell.isRetail then
+            for role, t in pairs(CellDB["layoutAutoSwitch"]) do
+                if t["raid"] then
+                    t["raid_outdoor"] = t["raid"]
+                    t["raid_instance"] = t["raid"]
+                    t["raid"] = nil
+                end
+                if t["mythic"] then
+                    t["raid_mythic"] = t["mythic"]
+                    t["mythic"] = nil
+                end
+            end
+        else
+            for role, t in pairs(CellCharacterDB["layoutAutoSwitch"]) do
+                if not t["raid_outdoor"] then
+                    t["raid_outdoor"] = t["raid25"]
+                end
+            end
+        end
+    end
+
     CellDB["revise"] = Cell.version
 end

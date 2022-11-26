@@ -79,7 +79,6 @@ local bgMaxPlayers = {
 
 -- layout auto switch
 local instanceType
-Cell.vars.raidType = "raid25"
 local function PreUpdateLayout()
     if instanceType == "pvp" then
         local name, _, _, _, _, _, _, id = GetInstanceInfo()
@@ -105,6 +104,8 @@ local function PreUpdateLayout()
         else -- raid
             if Cell.vars.raidType then
                 F:UpdateLayout(Cell.vars.raidType, true)
+            else
+                F:UpdateLayout("raid_outdoor", true)
             end
         end
     end
@@ -333,6 +334,7 @@ function eventFrame:ADDON_LOADED(arg1)
             CellCharacterDB["layoutAutoSwitch"] = {
                 [1] = {
                     ["party"] = "default",
+                    ["raid_outdoor"] = "default",
                     ["raid10"] = "default",
                     ["raid25"] = "default",
                     ["arena"] = "default",
@@ -341,6 +343,7 @@ function eventFrame:ADDON_LOADED(arg1)
                 },
                 [2] = {
                     ["party"] = "default",
+                    ["raid_outdoor"] = "default",
                     ["raid10"] = "default",
                     ["raid25"] = "default",
                     ["arena"] = "default",
@@ -534,6 +537,8 @@ function eventFrame:PLAYER_ENTERING_WORLD()
 
     local isIn, iType = IsInInstance()
     instanceType = iType
+    Cell.vars.raidType = nil
+
     if isIn then
         F:Debug("|cffff1111Entered Instance:|r", iType)
         PreUpdateLayout()
