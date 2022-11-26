@@ -328,6 +328,8 @@ local function CreatePreviewButtons()
         ticker:Cancel()
         ticker = nil
     end)
+
+    Cell:Fire("CreatePreview", previewButton, previewButton2)
 end
 
 local function UpdatePreviewShields()
@@ -418,6 +420,8 @@ local function UpdatePreviewButton()
     UpdatePreviewShields()
 
     previewButton.loaded = true
+
+    Cell:Fire("UpdatePreview", previewButton, previewButton2)
 end
 
 -------------------------------------------------

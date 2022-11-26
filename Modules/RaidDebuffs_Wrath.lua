@@ -1092,6 +1092,8 @@ local function CreatePreviewButton()
     previewButton.fadeOut:SetScript("OnFinished", function()
         previewButton:Hide()
     end)
+
+    Cell:Fire("CreatePreview", previewButton)
 end
 
 local function UpdatePreviewButton()
@@ -1130,6 +1132,8 @@ local function UpdatePreviewButton()
 
     -- alpha
     previewButton:SetBackdropColor(0, 0, 0, CellDB["appearance"]["bgAlpha"])
+
+    Cell:Fire("UpdatePreview", previewButton)
 end
 
 -------------------------------------------------

@@ -35,6 +35,8 @@ local function CreatePreviewButton()
     local previewText = previewButtonBG:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET_TITLE")
     previewText:SetPoint("TOP", 0, -3)
     previewText:SetText(Cell:GetAccentColorString()..L["Preview"])
+
+    Cell:Fire("CreatePreview", previewButton)
 end
 
 local function UpdatePreviewButton(which, value)
@@ -103,6 +105,8 @@ local function UpdatePreviewButton(which, value)
     if not which or which == "power" or which == "barOrientation" then
         previewButton.func.SetPowerSize(selectedLayoutTable["powerSize"])
     end
+
+    Cell:Fire("UpdatePreview", previewButton)
 end
 
 -------------------------------------------------

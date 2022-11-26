@@ -88,6 +88,8 @@ local function CreatePreviewButton()
     -- alphaText:SetPoint("BOTTOM", settingsPane.line, "TOP", 0, P:Scale(2))
     -- alphaText:SetPoint("RIGHT", previewAlphaSlider, "LEFT", -5, 0)
     -- alphaText:SetText(L["Alpha"])
+
+    Cell:Fire("CreatePreview", previewButton)
 end
 
 local function UpdatePreviewButton()
@@ -110,6 +112,8 @@ local function UpdatePreviewButton()
 
     -- alpha
     previewButton:SetBackdropColor(0, 0, 0, CellDB["appearance"]["bgAlpha"])
+
+    Cell:Fire("UpdatePreview", previewButton)
 end
 
 -- indicator preview onupdate
