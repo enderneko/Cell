@@ -1405,7 +1405,7 @@ local function ShowIndicatorSettings(id)
         elseif currentSetting == "consumablesList" then
             w:SetDBValue(CellDB["consumables"])
         elseif currentSetting == "targetedSpellsList" then
-            w:SetDBValue(L["Spell List"], CellDB["targetedSpellsList"], true)
+            w:SetDBValue(L["Spell List"], CellDB["targetedSpellsList"], true, true)
         elseif currentSetting == "targetedSpellsGlow" then
             w:SetDBValue(CellDB["targetedSpellsGlow"])
         elseif currentSetting == "size-border" then
