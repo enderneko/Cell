@@ -2,7 +2,7 @@
 -- File: UnitButton_Wrath.lua
 -- Author: enderneko (enderneko-dev@outlook.com)
 -- File Created: 2022/08/20 19:44:26 +0800
--- Last Modified: 2022/11/18 20:38:41 +0800
+-- Last Modified: 2022/11/26 18:34:51 +0800
 --]]
 
 local _, Cell = ...
@@ -59,7 +59,7 @@ local barAnimationType, highlightEnabled, predictionEnabled, shieldEnabled, over
 -- unit button func declarations
 -------------------------------------------------
 local UnitButton_UpdateAll
-local UnitButton_UpdateAuras, UnitButton_UpdateRole, UnitButton_UpdateLeader, UnitButton_UpdateStatusIcon, UnitButton_UpdateStatusText
+local UnitButton_UpdateAuras, UnitButton_UpdateRole, UnitButton_UpdateLeader, UnitButton_UpdateStatusText
 local UnitButton_UpdateHealthColor, UnitButton_UpdateNameColor
 local UnitButton_UpdatePowerMax, UnitButton_UpdatePower, UnitButton_UpdatePowerType
 
@@ -97,6 +97,10 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
             -- update num
             if t["num"] then
                 indicatorNums[t["indicatorName"]] = t["num"]
+            end
+            -- update statusIcon
+            if t["indicatorName"] == "statusIcon" then
+                I:EnableStatusIcon(t["enabled"])
             end
             -- update aoehealing
             if t["indicatorName"] == "aoeHealing" then
@@ -612,7 +616,7 @@ local function UnitButton_UpdateDebuffs(self)
     -- user created indicators
     I:ResetCustomIndicators(unit, "debuff")
 
-    local startIndex, resurrectionFound, raidDebuffsFound = 1
+    local startIndex, raidDebuffsFound = 1
     local glowType, glowOptions
     local refreshing, countIncreased, justApplied
 
@@ -691,12 +695,6 @@ local function UnitButton_UpdateDebuffs(self)
                 end
             end
 
-            -- resurrectionIcon
-            if spellId == 160029 then
-                resurrectionFound = true
-                self.indicators.resurrectionIcon:SetTimer(expirationTime - duration, duration)
-            end
-
             -- BG orbs
             -- if spellId == 121164 then
             --     self.state.BGOrb = "blue"
@@ -711,13 +709,6 @@ local function UnitButton_UpdateDebuffs(self)
             --     self.state.BGOrb = "orange"
             -- end
         end
-    end
-    
-    -- update statusIcon
-    UnitButton_UpdateStatusIcon(self)
-
-    if not resurrectionFound then
-        self.indicators.resurrectionIcon:Hide()
     end
 
     -- update raid debuffs
@@ -930,9 +921,6 @@ local function UnitButton_UpdateBuffs(self)
         end
     end
 
-    -- update statusIcon
-    UnitButton_UpdateStatusIcon(self)
-    
     -- update defensiveCooldowns
     if defensiveFound > 1 then
         self.indicators.defensiveCooldowns:UpdateSize(defensiveFound - 1)
@@ -1041,6 +1029,11 @@ local function UpdateUnitHealthState(self, diff)
     self.state.isDead = health == 0
     if self.state.wasDead ~= self.state.isDead then
         UnitButton_UpdateStatusText(self)
+        I:UpdateStatusIcon_Resurrection(self)
+        if not self.state.isDead then
+            self.state.hasSoulstone = nil
+            I:UpdateStatusIcon(self)
+        end
     end
     
     self.state.wasDeadOrGhost = self.state.isDeadOrGhost
@@ -1436,6 +1429,7 @@ UnitButton_UpdateAuras = function(self)
 
     UnitButton_UpdateDebuffs(self)
     UnitButton_UpdateBuffs(self)
+    I:UpdateStatusIcon(self)
 end
 
 local function UnitButton_UpdateThreat(self)
@@ -1554,54 +1548,6 @@ local function UnitButton_UpdateVehicleStatus(self)
         else
             HidePowerBar(self)
         end
-    end
-end
-
-UnitButton_UpdateStatusIcon = function(self)
-    local unit = self.state.unit
-    if not unit then return end
-    
-    local icon = self.indicators.statusIcon
-    icon:SetIgnoreParentAlpha(false)
-
-    -- Interface\FrameXML\CompactUnitFrame.lua, CompactUnitFrame_UpdateCenterStatusIcon
-    if UnitInOtherParty(unit) then
-        icon:SetVertexColor(1, 1, 1, 1)
-        icon:SetTexture("Interface\\LFGFrame\\LFG-Eye")
-        -- icon:SetTexCoord(0.125, 0.25, 0.25, 0.5)
-        -- icon:SetTexCoord(0.145, 0.23, 0.29, 0.46)
-        icon:SetTexCoord(0.14, 0.235, 0.28, 0.47)
-        -- icon:ShowBorder("Interface\\Common\\RingBorder")
-        icon:Show()
-    elseif UnitHasIncomingResurrection(unit) then
-        icon:SetVertexColor(1, 1, 1, 1)
-        icon:SetTexture("Interface\\RaidFrame\\Raid-Icon-Rez")
-        icon:SetTexCoord(0, 1, 0, 1)
-        -- icon:HideBorder()
-        icon:Show()
-    elseif UnitIsPlayer(unit) and UnitIsConnected(unit) and not UnitInPhase(unit) and not self.state.inVehicle then
-        icon:SetTexture("Interface\\TargetingFrame\\UI-PhasingIcon")
-        icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
-        icon:Show()
-    -- elseif UnitIsDeadOrGhost(unit) then
-    --     icon:SetTexture("Interface\\TargetingFrame\\UI-TargetingFrame-Skull")
-    --     icon:SetTexCoord(0, 1, 0, 1)
-    --     icon:Show()
-    elseif self.state.BGFlag then
-        icon:SetIgnoreParentAlpha(true)
-        icon:SetVertexColor(1, 1, 1, 1)
-        icon:SetAtlas(self.state.BGFlag.."_icon_and_flag-dynamicIcon")
-        icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
-        -- icon:HideBorder()
-        icon:Show()
-    -- elseif self.state.BGOrb then
-    --     icon:SetVertexColor(1, 1, 1, 1)
-    --     icon:SetAtlas("nameplates-icon-orb-"..self.state.BGOrb)
-    --     icon:SetTexCoord(0, 1, 0, 1)
-    --     -- icon:HideBorder()
-    --     icon:Show()
-    else
-        icon:Hide()
     end
 end
 
@@ -2024,8 +1970,8 @@ UnitButton_UpdateAll = function(self)
     UnitButton_UpdateReadyCheck(self)
     UnitButton_UpdateThreat(self)
     UnitButton_UpdateThreatBar(self)
-    UnitButton_UpdateStatusIcon(self)
     UnitButton_UpdateAuras(self)
+    I:UpdateStatusIcon_Resurrection(self)
 
     if Cell.loaded then
         if Cell.vars.currentLayoutTable["powerSize"] ~= 0 then
@@ -2101,10 +2047,10 @@ local function UnitButton_RegisterEvents(self)
     self:RegisterEvent("READY_CHECK_FINISHED")
     self:RegisterEvent("READY_CHECK_CONFIRM")
     
-    self:RegisterEvent("UNIT_PHASE") -- warmode, traditional sources of phasing such as progress through quest chains
-    self:RegisterEvent("PARTY_MEMBER_DISABLE")
-    self:RegisterEvent("PARTY_MEMBER_ENABLE")
-    self:RegisterEvent("INCOMING_RESURRECT_CHANGED")
+    -- self:RegisterEvent("UNIT_PHASE") -- warmode, traditional sources of phasing such as progress through quest chains
+    -- self:RegisterEvent("PARTY_MEMBER_DISABLE")
+    -- self:RegisterEvent("PARTY_MEMBER_ENABLE")
+    -- self:RegisterEvent("INCOMING_RESURRECT_CHANGED")
     
     -- self:RegisterEvent("VOICE_CHAT_CHANNEL_ACTIVATED")
     -- self:RegisterEvent("VOICE_CHAT_CHANNEL_DEACTIVATED")
@@ -2176,8 +2122,8 @@ local function UnitButton_OnEvent(self, event, unit)
         elseif event == "UNIT_THREAT_SITUATION_UPDATE" then
             UnitButton_UpdateThreat(self)
 
-        elseif event == "INCOMING_RESURRECT_CHANGED" or event == "UNIT_PHASE" or event == "PARTY_MEMBER_DISABLE" or event == "PARTY_MEMBER_ENABLE" then
-            UnitButton_UpdateStatusIcon(self)
+        -- elseif event == "INCOMING_RESURRECT_CHANGED" or event == "UNIT_PHASE" or event == "PARTY_MEMBER_DISABLE" or event == "PARTY_MEMBER_ENABLE" then
+        --     UnitButton_UpdateStatusIcon(self)
     
         elseif event == "READY_CHECK_CONFIRM" then
             UnitButton_UpdateReadyCheck(self)
