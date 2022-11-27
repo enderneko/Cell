@@ -1245,6 +1245,7 @@ local function CreateLayoutPane()
                 -- update dropdown
                 layoutDropdown:AddItem({
                     ["text"] = name,
+                    ["value"] = name,
                     ["onClick"] = function()
                         LoadLayoutDB(name)
                         UpdateButtonStates()
@@ -1352,6 +1353,7 @@ local function CreateLayoutPane()
                 -- update dropdown
                 layoutDropdown:SetCurrentItem({
                     ["text"] = name,
+                    ["value"] = name,
                     ["onClick"] = function()
                         LoadLayoutDB(name)
                         UpdateButtonStates()

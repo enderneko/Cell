@@ -7,6 +7,12 @@ function F:Revise()
     local dbRevision = CellDB["revise"] and tonumber(string.match(CellDB["revise"], "%d+")) or 0
     F:Debug("DBRevision:", dbRevision)
 
+    local charaDbRevision
+    if Cell.isWrath then
+        charaDbRevision = CellCharacterDB["revise"] and tonumber(string.match(CellCharacterDB["revise"], "%d+")) or 0
+        F:Debug("CharaDBRevision:", dbRevision)
+    end
+
     if CellDB["revise"] and dbRevision < 100 then -- update from an unsupported version
         local f = CreateFrame("Frame")
         f:RegisterEvent("PLAYER_ENTERING_WORLD")
@@ -1512,12 +1518,6 @@ function F:Revise()
                     t["mythic"] = nil
                 end
             end
-        else
-            for role, t in pairs(CellCharacterDB["layoutAutoSwitch"]) do
-                if not t["raid_outdoor"] then
-                    t["raid_outdoor"] = t["raid25"]
-                end
-            end
         end
 
         -- appearance
@@ -1550,5 +1550,17 @@ function F:Revise()
         end
     end
 
+    -- r148-release
+    if CellDB["revise"] and charaDbRevision and charaDbRevision < 148 then
+        for role, t in pairs(CellCharacterDB["layoutAutoSwitch"]) do
+            if not t["raid_outdoor"] then
+                t["raid_outdoor"] = t["raid25"]
+            end
+        end
+    end
+
     CellDB["revise"] = Cell.version
+    if Cell.isWrath then
+        CellCharacterDB["revise"] = Cell.version
+    end
 end
