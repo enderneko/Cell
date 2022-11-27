@@ -2,7 +2,7 @@
 -- File: Layout_Defaults_Wrath.lua
 -- Author: enderneko (enderneko-dev@outlook.com)
 -- File Created: 2022/08/21 04:06:04 +0800
--- Last Modified: 2022/11/13 05:50:23 +0800
+-- Last Modified: 2022/11/28 04:07:34 +0800
 --]]
 
 local addonName, Cell = ...
@@ -51,7 +51,7 @@ Cell.defaults.layout = {
     ["rows"] = 8,
     ["groupSpacing"] = 0,
     ["groupFilter"] = {true, true, true, true, true, true, true, true},
-    ["friendlyNPC"] = {true, false, {}},
+    ["npc"] = {true, false, {}, false, {66, 46}}, -- npcEnabled, separateNpc, position, sizeEnabled, size
     ["pet"] = {true, false, {}, false, {66, 46}}, -- partyPetsEnabled, raidPetsEnabled, raidPetsPosition, sizeEnabled, size
     ["spotlight"] = {false, {}, {}, false, {66, 46}}, -- enabled, units, position, sizeEnabled, size
     ["powerFilters"] = {

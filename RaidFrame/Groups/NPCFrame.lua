@@ -47,7 +47,7 @@ dumb:SetScript("OnDragStart", function()
 end)
 dumb:SetScript("OnDragStop", function()
     separateAnchor:StopMovingOrSizing()
-    P:SavePosition(separateAnchor, Cell.vars.currentLayoutTable["friendlyNPC"][3])
+    P:SavePosition(separateAnchor, Cell.vars.currentLayoutTable["npc"][3])
 end)
 dumb:HookScript("OnEnter", function()
     hoverFrame:GetScript("OnEnter")(hoverFrame)
@@ -63,7 +63,7 @@ end)
 
 function npcFrame:UpdateSeparateAnchor()
     local show
-    if Cell.vars.currentLayoutTable["friendlyNPC"][2] then
+    if Cell.vars.currentLayoutTable["npc"][2] then
         for _, b in ipairs(Cell.unitButtons.npc) do
             show = b:IsShown()
             if show then break end
@@ -185,7 +185,7 @@ for i = 1, 8 do
     Cell.unitButtons.npc.units["boss"..i] = button
 
     button:SetAttribute("unit", "boss"..i)
-    -- RegisterAttributeDriver(button, "state-visibility", "[@boss"..i..", help] show; hide")
+    -- button:SetAttribute("unit", "player")
     -- for testing ------------------------------
     -- if i == 1 then
     --     button:SetAttribute("unit", "target")
@@ -420,9 +420,9 @@ local function UpdatePosition()
     local layout = Cell.vars.currentLayoutTable
     
     -- update npcFrame anchor if separate from main
-    if layout["friendlyNPC"][2] then
+    if layout["npc"][2] then
         npcFrame:ClearAllPoints()
-        P:LoadPosition(separateAnchor, layout["friendlyNPC"][3])
+        P:LoadPosition(separateAnchor, layout["npc"][3])
 
         if CellDB["general"]["menuPosition"] == "top_bottom" then
             P:Size(separateAnchor, 20, 10)
@@ -487,19 +487,31 @@ local function NPCFrame_UpdateLayout(layout, which)
     -- if layout ~= Cell.vars.currentLayout then return end
     layout = Cell.vars.currentLayoutTable
 
-    if not which or which == "size" or which == "power" or which == "barOrientation" then
-        P:Size(npcFrame, layout["size"][1], layout["size"][2])
+    if not which or which == "size" or which == "npcSize" then
+        local width, height
+        if layout["npc"][4] then
+            width, height = unpack(layout["npc"][5])
+        else
+            width, height = unpack(layout["size"])
+        end
+
+        P:Size(npcFrame, width, height)
+
         for _, b in ipairs(Cell.unitButtons.npc) do
-            if not which or which == "size" then
-                P:Size(b, layout["size"][1], layout["size"][2])
-            end
-            -- NOTE: SetOrientation BEFORE SetPowerSize
-            if not which or which == "barOrientation" then
-                B:SetOrientation(b, layout["barOrientation"][1], layout["barOrientation"][2])
-            end
-            if not which or which == "power" or which == "barOrientation" then
-                B:SetPowerSize(b, layout["powerSize"])
-            end
+            P:Size(b, width, height)
+        end
+    end
+
+    -- NOTE: SetOrientation BEFORE SetPowerSize
+    if not which or which == "barOrientation" then
+        for _, b in ipairs(Cell.unitButtons.npc) do
+            B:SetOrientation(b, layout["barOrientation"][1], layout["barOrientation"][2])
+        end
+    end
+    
+    if not which or which == "power" or which == "barOrientation" then
+        for _, b in ipairs(Cell.unitButtons.npc) do
+            B:SetPowerSize(b, layout["powerSize"])
         end
     end
 
@@ -539,7 +551,7 @@ local function NPCFrame_UpdateLayout(layout, which)
                 groupSpacing = -layout["spacingX"]
             end
 
-            if not layout["friendlyNPC"][2] then
+            if not layout["npc"][2] then
                 -- update whole NPCFrame point
                 if groupType == "raid" then
                     npcFrame:SetPoint(point, anchors["raid"])
@@ -574,7 +586,7 @@ local function NPCFrame_UpdateLayout(layout, which)
                 groupSpacing = -layout["spacingY"]
             end
 
-            if not layout["friendlyNPC"][2] then
+            if not layout["npc"][2] then
                 -- update whole NPCFrame point
                 if groupType == "raid" then
                     npcFrame:SetPoint(point, anchors["raid"])
@@ -630,16 +642,17 @@ local function NPCFrame_UpdateLayout(layout, which)
     end
 
     if not which or which == "npc" then
-        if layout["friendlyNPC"][1] then
+        if layout["npc"][1] then
             -- NOTE: RegisterAttributeDriver
             for i, b in ipairs(Cell.unitButtons.npc) do
                 RegisterAttributeDriver(b, "state-visibility", "[@boss"..i..", help] show; hide")
+                -- RegisterAttributeDriver(b, "state-visibility", "[@player, help] show; hide")
             end
-            if layout["friendlyNPC"][2] then
+            if layout["npc"][2] then
                 UnregisterStateDriver(npcFrame, "groupstate")
                 UnregisterStateDriver(npcFrame, "petstate")
                 -- load separate npc frame position
-                P:LoadPosition(separateAnchor, layout["friendlyNPC"][3])
+                P:LoadPosition(separateAnchor, layout["npc"][3])
             else
                 RegisterStateDriver(npcFrame, "groupstate", "[group:raid] raid; [group:party] party; solo")
                 RegisterStateDriver(npcFrame, "petstate", "[@pet,exists] pet; [@partypet1,exists] pet1; [@partypet2,exists] pet2; [@partypet3,exists] pet3; [@partypet4,exists] pet4; nopet")
