@@ -68,6 +68,16 @@ select(2, ...).L = setmetatable({
     ["SNIPPETS_TIPS"] = "[Double-Click] to rename. [Shift-Click] to delete. All checked snippets will be automatically invoked at the end of Cell initialization process (in ADDON_LOADED event).",
 
     ["CHANGELOGS"] = [[
+        <h1>r147-release (Nov 27, 2022, 18:02 GMT+8)</h1>
+        <p>* Updated layout auto switch, added a "Raid Outdoor" type.</p>
+        <p>* Added color options: Heal Prediction, Heal Absorb and Shield Texture.</p>
+        <p>* Updated Status Icon indicator (resurrections related).</p>
+        <p>* Updated Targeted Spells indicator.</p>
+        <p>* Updated custom indicators (Bar/Rect), added stack text.</p>
+        <p>* Fixed range checker.</p>
+        <p>* Other bug fixes.</p>
+        <br/>
+
         <h1>r146-release (Nov 25, 2022, 05:15 GMT+8)</h1>
         <p>* Updated click-castings.</p>
         <p>* Bug fixes.</p>

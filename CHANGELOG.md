@@ -1,5 +1,12 @@
-[Full Changelog](https://github.com/enderneko/Cell/compare/r145-release...e362a2879d2c4c11de750e564fd56084cc89506b)
+[Full Changelog](https://github.com/enderneko/Cell/compare/r146-release...6155441216dd6e08befd64935d2d01eea107d9d4)
 
-- Add togglemenu_nocombat
-- Fix alwaysTargeting issue
-- Update patron highlights
+- Fix range checker
+- Fix color picker
+- Fix patrons button on wrath
+- Update layout
+- Update appearance
+- Update status icon indicator
+- Update targeted spells indicator
+- Update custom bar/rect indicators
+- Update spells for built-in indicators
+- Add several callbacks
