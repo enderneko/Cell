@@ -603,6 +603,11 @@ L["Changelogs"] = "更新记录"
 L["Click to view recent changelogs"] = "点击查看近期更新记录"
 L["Click to view older changelogs"] = "点击查看远古更新记录"
 L["CHANGELOGS"] = [[
+    <h1>r148-release (Nov 27, 2022, 22:07 GMT+8)</h1>
+    <p>* 修复怀旧服的布局自动切换。</p>
+    <p>* 更新繁中。</p>
+    <br/>
+
     <h1>r147-release (Nov 27, 2022, 18:02 GMT+8)</h1>
     <p>* 更新布局自动切换，添加了“副本 野外”类型。</p>
     <p>* 添加颜色选项：治疗预估、治疗吸收、护盾材质。</p>

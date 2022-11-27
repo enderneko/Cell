@@ -68,6 +68,11 @@ select(2, ...).L = setmetatable({
     ["SNIPPETS_TIPS"] = "[Double-Click] to rename. [Shift-Click] to delete. All checked snippets will be automatically invoked at the end of Cell initialization process (in ADDON_LOADED event).",
 
     ["CHANGELOGS"] = [[
+        <h1>r148-release (Nov 27, 2022, 22:07 GMT+8)</h1>
+        <p>* Fixed layout auto switch on Wrath.</p>
+        <p>* Updated zhTW.</p>
+        <br/>
+
         <h1>r147-release (Nov 27, 2022, 18:02 GMT+8)</h1>
         <p>* Updated layout auto switch, added a "Raid Outdoor" type.</p>
         <p>* Added color options: Heal Prediction, Heal Absorb and Shield Texture.</p>
