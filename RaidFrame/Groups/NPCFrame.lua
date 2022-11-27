@@ -1,6 +1,7 @@
 local _, Cell = ...
 local L = Cell.L
 local F = Cell.funcs
+local B = Cell.bFuncs
 local P = Cell.pixelPerfectFuncs
 
 local npcFrame = CreateFrame("Frame", "CellNPCFrame", Cell.frames.mainFrame, "SecureHandlerStateTemplate")
@@ -255,9 +256,9 @@ cleu:SetScript("OnEvent", function()
     if boss678_guidToButton[destGUID] then
         if subEvent == "SPELL_HEAL" or subEvent == "SPELL_PERIODIC_HEAL" or subEvent == "SPELL_DAMAGE" or subEvent == "SPELL_PERIODIC_DAMAGE" then
             -- print("UpdateHealth:", boss678_guidToButton[destGUID]:GetName())
-            boss678_guidToButton[destGUID].func.UpdateHealth(boss678_guidToButton[destGUID])
+            B.UpdateHealth(boss678_guidToButton[destGUID])
         elseif subEvent == "SPELL_AURA_REFRESH" or subEvent == "SPELL_AURA_APPLIED" or subEvent == "SPELL_AURA_REMOVED" or subEvent == "SPELL_AURA_APPLIED_DOSE" or subEvent == "SPELL_AURA_REMOVED_DOSE" then
-            boss678_guidToButton[destGUID].func.UpdateAuras(boss678_guidToButton[destGUID])
+            B.UpdateAuras(boss678_guidToButton[destGUID])
         end
     end
 end)
@@ -272,7 +273,7 @@ for i = 6, 8 do
         boss678_guidToButton[guid] = button
         
         -- update now
-        button.func.UpdateAll(button)
+        B.UpdateAll(button)
     end)
     
     button.helper:HookScript("OnHide", function()
@@ -303,7 +304,7 @@ for i = 6, 8 do
                 boss678_buttonToGuid[i] = guid
                 boss678_guidToButton[guid] = button
                 -- update now
-                button.func.UpdateAll(button)
+                B.UpdateAll(button)
             end
             button.helper.elapsed = 0
         end
@@ -316,8 +317,8 @@ for i = 6, 8 do
         end
 
         if button.helper.elapsed3 >= 5 then
-            button.func.UpdateHealth(button)
-            button.func.UpdateHealthMax(button)
+            B.UpdateHealth(button)
+            B.UpdateHealthMax(button)
             button.helper.elapsed3 = 0
         end
     end)
@@ -494,10 +495,10 @@ local function NPCFrame_UpdateLayout(layout, which)
             end
             -- NOTE: SetOrientation BEFORE SetPowerSize
             if not which or which == "barOrientation" then
-                b.func.SetOrientation(unpack(layout["barOrientation"]))
+                B:SetOrientation(b, layout["barOrientation"][1], layout["barOrientation"][2])
             end
             if not which or which == "power" or which == "barOrientation" then
-                b.func.SetPowerSize(layout["powerSize"])
+                B:SetPowerSize(b, layout["powerSize"])
             end
         end
     end

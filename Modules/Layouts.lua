@@ -1,6 +1,7 @@
 local _, Cell = ...
 local L = Cell.L
 local F = Cell.funcs
+local B = Cell.bFuncs
 local P = Cell.pixelPerfectFuncs
 
 local layoutsTab = Cell:CreateFrame("CellOptionsFrame_LayoutsTab", Cell.frames.optionsFrame, nil, nil, true)
@@ -99,11 +100,11 @@ local function UpdatePreviewButton(which, value)
     end
 
     if not which or which == "barOrientation" then
-        previewButton.func.SetOrientation(unpack(selectedLayoutTable["barOrientation"]))
+        B:SetOrientation(previewButton, selectedLayoutTable["barOrientation"][1], selectedLayoutTable["barOrientation"][2])
     end
 
     if not which or which == "power" or which == "barOrientation" then
-        previewButton.func.SetPowerSize(selectedLayoutTable["powerSize"])
+        B:SetPowerSize(previewButton, selectedLayoutTable["powerSize"])
     end
 
     Cell:Fire("UpdatePreview", previewButton)

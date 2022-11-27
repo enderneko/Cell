@@ -6,6 +6,7 @@ Cell.vars = {}
 Cell.snippetVars = {}
 Cell.funcs = {}
 Cell.iFuncs = {}
+Cell.bFuncs = {}
 Cell.animations = {}
 
 local F = Cell.funcs
