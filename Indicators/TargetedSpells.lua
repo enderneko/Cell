@@ -254,6 +254,13 @@ function I:CreateTargetedSpells(parent)
     end
 end
 
+-- NOTE: in case there's a casting spell, hide!
+local function EnterLeaveInstance()
+    F:IterateAllUnitButtons(function(b)
+        b.indicators.targetedSpells:Hide()
+    end, true)
+end
+
 function I:EnableTargetedSpells(enabled)
     if enabled then
         -- UNIT_SPELLCAST_DELAYED UNIT_SPELLCAST_FAILED UNIT_SPELLCAST_FAILED_QUIET UNIT_SPELLCAST_INTERRUPTED UNIT_SPELLCAST_START UNIT_SPELLCAST_STOP
@@ -275,8 +282,15 @@ function I:EnableTargetedSpells(enabled)
         eventFrame:RegisterEvent("NAME_PLATE_UNIT_REMOVED")
         
         eventFrame:RegisterEvent("ENCOUNTER_END")
+
+        Cell:RegisterCallback("EnterInstance", "TargetedSpells_EnterInstance", EnterLeaveInstance)
+        Cell:RegisterCallback("LeaveInstance", "TargetedSpells_LeaveInstance", EnterLeaveInstance)
     else
         eventFrame:UnregisterAllEvents()
+        
+        Cell:UnregisterCallback("EnterInstance", "TargetedSpells_EnterInstance")
+        Cell:UnregisterCallback("LeaveInstance", "TargetedSpells_LeaveInstance")
+
         F:IterateAllUnitButtons(function(b)
             b.indicators.targetedSpells:Hide()
         end)

@@ -603,6 +603,7 @@ function eventFrame:PLAYER_ENTERING_WORLD()
 
     if isIn then
         F:Debug("|cffff1111Entered Instance:|r", iType)
+        Cell:Fire("EnterInstance", iType)
         PreUpdateLayout()
         inInstance = true
 
@@ -619,6 +620,7 @@ function eventFrame:PLAYER_ENTERING_WORLD()
 
     elseif inInstance then -- left insntance
         F:Debug("|cffff1111Left Instance|r")
+        Cell:Fire("LeaveInstance")
         PreUpdateLayout()
         inInstance = false
     end
