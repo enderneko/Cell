@@ -1667,24 +1667,43 @@ local function UnitButton_UpdateThreatBar(self)
 end
 
 local LRC = LibStub:GetLibrary("LibRangeCheck-2.0")
+-- BUG: seems not right on a dead unit
+-- local checker
+-- LRC.RegisterCallback(Cell, LRC.CHECKERS_CHANGED, function()
+--     if UnitClassBase("player") == "EVOKER" then
+--         checker = LRC:GetSmartMaxChecker(30)
+--     else
+--         checker = LRC:GetSmartMaxChecker(40)
+--     end
+--     Cell.checker = checker
+-- end)
 local checker
-LRC.RegisterCallback(Cell, LRC.CHECKERS_CHANGED, function()
-    if UnitClassBase("player") == "EVOKER" then
-        checker = LRC:GetSmartMaxChecker(30)
-    else
-        checker = LRC:GetSmartMaxChecker(40)
+if UnitClassBase("player") == "EVOKER" then
+    checker = function(unit)
+        local minRangeIfVisible, maxRangeIfVisible = LRC:GetRange(unit, true)
+        if F:UnitInGroup(unit) and UnitIsDeadOrGhost(unit) then
+            return (maxRangeIfVisible and maxRangeIfVisible <= 40) or false
+        else
+            return (maxRangeIfVisible and maxRangeIfVisible <= 30) or false
+        end
     end
-end)
+else
+    checker = function(unit)
+        local minRangeIfVisible, maxRangeIfVisible = LRC:GetRange(unit, true)
+        return (maxRangeIfVisible and maxRangeIfVisible <= 40) or false
+    end
+end
+
 
 local function UnitButton_UpdateInRange(self)
     local unit = self.state.displayedUnit
     if not unit then return end
 
-    local inRange = false
+    local inRange = checker(unit)
 
-    if checker then
-        inRange = (UnitIsVisible(unit) and checker(unit)) or false
-    end
+    -- if checker then
+    --     inRange = (UnitIsVisible(unit) and checker(unit)) or false
+    -- end
 
     --[[
     if F:UnitInGroup(unit) then
