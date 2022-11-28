@@ -2331,20 +2331,54 @@ end
 -------------------------------------------------
 -- bar orientation
 -------------------------------------------------
-local orientationSwitch, rotateTexCB
+local barOrientationDropdown, rotateTexCB
 
 local function CreateBarOrientationPane()
     local barOrientationPane = Cell:CreateTitledPane(layoutsTab, L["Bar Orientation"], 205, 80)
     barOrientationPane:SetPoint("TOPLEFT", 5, -295)
 
-    orientationSwitch = Cell:CreateSwitch(barOrientationPane, {163, 20}, L["Horizontal"], "horizontal", L["Vertical"], "vertical", function(which)
-        selectedLayoutTable["barOrientation"][1] = which
+    local function SetOrientation(orientation)
+        selectedLayoutTable["barOrientation"][1] = orientation
         if selectedLayout == Cell.vars.currentLayout then
             Cell:Fire("UpdateLayout", selectedLayout, "barOrientation")
         end
         UpdatePreviewButton("barOrientation")
-    end)
-    orientationSwitch:SetPoint("TOPLEFT", 5, -27)
+    end
+
+    barOrientationDropdown = Cell:CreateDropdown(barOrientationPane, 163)
+    barOrientationDropdown:SetPoint("TOPLEFT", 5, -27)
+    barOrientationDropdown:SetItems({
+        {
+            ["text"] = L["Horizontal"],
+            ["value"] = "horizontal",
+            ["onClick"] = function()
+                SetOrientation("horizontal")
+            end,
+        },
+        {
+            ["text"] = L["Vertical"].." A",
+            ["value"] = "vertical",
+            ["onClick"] = function()
+                SetOrientation("vertical")
+            end,
+        },
+        {
+            ["text"] = L["Vertical"].." B",
+            ["value"] = "vertical_health",
+            ["onClick"] = function()
+                SetOrientation("vertical_health")
+            end,
+        },
+    })
+
+    -- orientationSwitch = Cell:CreateSwitch(barOrientationPane, {163, 20}, L["Horizontal"], "horizontal", L["Vertical"], "vertical", function(which)
+    --     selectedLayoutTable["barOrientation"][1] = which
+    --     if selectedLayout == Cell.vars.currentLayout then
+    --         Cell:Fire("UpdateLayout", selectedLayout, "barOrientation")
+    --     end
+    --     UpdatePreviewButton("barOrientation")
+    -- end)
+    -- orientationSwitch:SetPoint("TOPLEFT", 5, -27)
     
     rotateTexCB = Cell:CreateCheckButton(barOrientationPane, L["Rotate Texture"], function(checked)
         selectedLayoutTable["barOrientation"][2] = checked
@@ -2353,7 +2387,7 @@ local function CreateBarOrientationPane()
         end
         UpdatePreviewButton("barOrientation")
     end)
-    rotateTexCB:SetPoint("TOPLEFT", orientationSwitch, "BOTTOMLEFT", 0, -10)
+    rotateTexCB:SetPoint("TOPLEFT", barOrientationDropdown, "BOTTOMLEFT", 0, -10)
 end
 
 -------------------------------------------------
@@ -2523,7 +2557,7 @@ LoadLayoutDB = function(layout)
     anchorDropdown:SetSelectedValue(selectedLayoutTable["anchor"])
 
     -- bar orientation
-    orientationSwitch:SetSelected(selectedLayoutTable["barOrientation"][1])
+    barOrientationDropdown:SetSelectedValue(selectedLayoutTable["barOrientation"][1])
     rotateTexCB:SetChecked(selectedLayoutTable["barOrientation"][2])
 
     -- other frames

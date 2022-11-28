@@ -728,7 +728,7 @@ local function CreateUnitButtonStylePane()
             end,
         },
         {
-            ["text"] = L["Gradient"],
+            ["text"] = L["Gradient"].." A",
             ["value"] = "gradient",
             ["onClick"] = function()
                 CellDB["appearance"]["barColor"][1] = "gradient"
@@ -737,7 +737,7 @@ local function CreateUnitButtonStylePane()
             end,
         },
         {
-            ["text"] = L["Gradient"].." 2",
+            ["text"] = L["Gradient"].." B",
             ["value"] = "gradient2",
             ["onClick"] = function()
                 CellDB["appearance"]["barColor"][1] = "gradient2"
@@ -793,7 +793,7 @@ local function CreateUnitButtonStylePane()
             end,
         },
         {
-            ["text"] = L["Gradient"],
+            ["text"] = L["Gradient"].." A",
             ["value"] = "gradient",
             ["onClick"] = function()
                 CellDB["appearance"]["lossColor"][1] = "gradient"
@@ -802,7 +802,7 @@ local function CreateUnitButtonStylePane()
             end,
         },
         {
-            ["text"] = L["Gradient"].." 2",
+            ["text"] = L["Gradient"].." B",
             ["value"] = "gradient2",
             ["onClick"] = function()
                 CellDB["appearance"]["lossColor"][1] = "gradient2"

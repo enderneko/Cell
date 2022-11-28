@@ -92,19 +92,19 @@ local function CreateAnimationGroup_TypeA(parent)
     end)
 
     function ag:ShowUp(r, g, b)
-        if orientation == "vertical" then
-            t1:SetOffset(0, parent:GetHeight())
-            if Cell.isRetail then
-                tex:SetGradient("VERTICAL", CreateColor(r, g, b, 0), CreateColor(r, g, b, 1))
-            else
-                tex:SetGradientAlpha("VERTICAL", r, g, b, 0, r, g, b, 1)
-            end
-        else
+        if orientation == "horizontal" then
             t1:SetOffset(parent:GetWidth(), 0)
             if Cell.isRetail then
                 tex:SetGradient("HORIZONTAL", CreateColor(r, g, b, 0), CreateColor(r, g, b, 1))
             else
                 tex:SetGradientAlpha("HORIZONTAL", r, g, b, 0, r, g, b, 1)
+            end
+        else
+            t1:SetOffset(0, parent:GetHeight())
+            if Cell.isRetail then
+                tex:SetGradient("VERTICAL", CreateColor(r, g, b, 0), CreateColor(r, g, b, 1))
+            else
+                tex:SetGradientAlpha("VERTICAL", r, g, b, 0, r, g, b, 1)
             end
         end
 
@@ -116,16 +116,16 @@ local function CreateAnimationGroup_TypeA(parent)
     end
 
     function ag:UpdateOrientation()
-        if orientation == "vertical" then
-            f:ClearAllPoints()
-            f:SetPoint("TOPLEFT", parent, "BOTTOMLEFT")
-            f:SetPoint("TOPRIGHT", parent, "BOTTOMRIGHT")
-            f:SetHeight(15)
-        else
+        if orientation == "horizontal" then
             f:ClearAllPoints()
             f:SetPoint("TOPRIGHT", parent, "TOPLEFT")
             f:SetPoint("BOTTOMRIGHT", parent, "BOTTOMLEFT")
             f:SetWidth(15)
+        else
+            f:ClearAllPoints()
+            f:SetPoint("TOPLEFT", parent, "BOTTOMLEFT")
+            f:SetPoint("TOPRIGHT", parent, "BOTTOMRIGHT")
+            f:SetHeight(15)
         end
     end
 

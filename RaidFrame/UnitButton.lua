@@ -1280,7 +1280,7 @@ local function ShowPowerBar(b, s)
 
     P:ClearPoints(b.widget.healthBar)
     P:ClearPoints(b.widget.powerBar)
-    if b.orientation == "horizontal" then
+    if b.orientation == "horizontal" or b.orientation == "vertical_health" then
         P:Point(b.widget.healthBar, "TOPLEFT", b, "TOPLEFT", 1, -1)
         P:Point(b.widget.healthBar, "BOTTOMRIGHT", b, "BOTTOMRIGHT", -1, s + 2)
         P:Point(b.widget.powerBar, "TOPLEFT", b.widget.healthBar, "BOTTOMLEFT", 0, -1)
@@ -2426,9 +2426,14 @@ function B:SetOrientation(button, orientation, rotateTexture)
     local absorbsBar = button.widget.absorbsBar
 
     button.orientation = orientation
-    healthBar:SetOrientation(orientation)
+    if orientation == "vertical_health" then
+        healthBar:SetOrientation("vertical")
+        powerBar:SetOrientation("horizontal")
+    else
+        healthBar:SetOrientation(orientation)
+        powerBar:SetOrientation(orientation)
+    end
     healthBar:SetRotatesTexture(rotateTexture)
-    powerBar:SetOrientation(orientation)
     powerBar:SetRotatesTexture(rotateTexture)
     
     button.indicators.healthThresholds:SetOrientation(orientation)
@@ -2557,16 +2562,29 @@ function B:SetOrientation(button, orientation, rotateTexture)
         P:Point(healthBarLoss, "TOPRIGHT", healthBar)
         P:Point(healthBarLoss, "BOTTOMLEFT", healthBar:GetStatusBarTexture(), "TOPLEFT")
         
-        -- update powerBarLoss
-        P:ClearPoints(powerBarLoss)
-        P:Point(powerBarLoss, "TOPRIGHT", powerBar)
-        P:Point(powerBarLoss, "BOTTOMLEFT", powerBar:GetStatusBarTexture(), "TOPLEFT")
-        
-        -- update gapTexture
-        P:ClearPoints(gapTexture)
-        P:Point(gapTexture, "TOPRIGHT", powerBar, "TOPLEFT")
-        P:Point(gapTexture, "BOTTOMRIGHT", powerBar, "BOTTOMLEFT")
-        P:Width(gapTexture, 1)
+        if orientation == "vertical" then
+            -- update powerBarLoss
+            P:ClearPoints(powerBarLoss)
+            P:Point(powerBarLoss, "TOPRIGHT", powerBar)
+            P:Point(powerBarLoss, "BOTTOMLEFT", powerBar:GetStatusBarTexture(), "TOPLEFT")
+            
+            -- update gapTexture
+            P:ClearPoints(gapTexture)
+            P:Point(gapTexture, "TOPRIGHT", powerBar, "TOPLEFT")
+            P:Point(gapTexture, "BOTTOMRIGHT", powerBar, "BOTTOMLEFT")
+            P:Width(gapTexture, 1)
+        else -- vertical_health
+            -- update powerBarLoss
+            P:ClearPoints(powerBarLoss)
+            P:Point(powerBarLoss, "TOPRIGHT", powerBar)
+            P:Point(powerBarLoss, "BOTTOMLEFT", powerBar:GetStatusBarTexture(), "BOTTOMRIGHT")
+            
+            -- update gapTexture
+            P:ClearPoints(gapTexture)
+            P:Point(gapTexture, "BOTTOMLEFT", powerBar, "TOPLEFT")
+            P:Point(gapTexture, "BOTTOMRIGHT", powerBar, "TOPRIGHT")
+            P:Height(gapTexture, 1)
+        end
         
         -- update incomingHeal
         P:ClearPoints(incomingHeal)
