@@ -685,8 +685,10 @@ function eventFrame:PLAYER_LOGIN()
 end
 
 function eventFrame:UI_SCALE_CHANGED()
+    F:Debug("UI_SCALE_CHANGED: ", "effectiveScale:", P:GetEffectiveScale(), "uiScale:", UIParent:GetScale())
     Cell:Fire("UpdatePixelPerfect")
     Cell:Fire("UpdateAppearance", "scale")
+    PreUpdateLayout()
 end
 
 local forceRecheck
