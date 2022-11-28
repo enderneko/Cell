@@ -1211,6 +1211,7 @@ end)
 -------------------------------------------------
 -- layout
 -------------------------------------------------
+local autoSwitchFrame
 local layoutDropdown, roleDropdown, partyDropdown, raidOutdoorDropdown, raidInstanceDropdown, raidMythicDropdown, arenaDropdown, bg15Dropdown, bg40Dropdown
 local raid10Dropdown, raid25Dropdown -- wrath
 local LoadLayoutDropdown, LoadAutoSwitchDropdowns
@@ -1522,7 +1523,7 @@ local raidInstance = L["Raid"].." ".._G.INSTANCE
 local raidMythic = L["Raid"].." ".._G.PLAYER_DIFFICULTY6
 
 local function CreateAutoSwitchPane()
-    local autoSwitchFrame = Cell:CreateFrame("CellLayoutAutoSwitchFrame", layoutsTab, 160, 410)
+    autoSwitchFrame = Cell:CreateFrame("CellLayoutAutoSwitchFrame", layoutsTab, 160, 410)
     autoSwitchFrame:SetPoint("TOPLEFT", layoutsTab, "TOPRIGHT", 5, 0)
     autoSwitchFrame:Show()
 
@@ -2718,8 +2719,17 @@ local function ShowTab(tab)
 
             -- mask
             F:ApplyCombatFunctionToTab(layoutsTab)
+            F:ApplyCombatFunctionToTab(autoSwitchFrame)
             Cell:CreateMask(layoutsTab, nil, {1, -1, -1, 1})
             layoutsTab.mask:Hide()
+            Cell:CreateMask(autoSwitchFrame, nil, {1, -1, -1, 1})
+            autoSwitchFrame.mask:Hide()
+            layoutsTab.mask:SetScript("OnShow", function()
+                autoSwitchFrame.mask:Show()
+            end)
+            layoutsTab.mask:SetScript("OnHide", function()
+                autoSwitchFrame.mask:Hide()
+            end)
         end
         
         -- UpdateEnabledLayoutText()
