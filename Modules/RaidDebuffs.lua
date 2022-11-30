@@ -89,6 +89,8 @@ local function LoadInstanceList(tier, instanceType, list)
 end
 
 local function LoadList()
+    local currentTier = EJ_GetCurrentTier()
+
     for tier = 1, EJ_GetNumTiers() do
         local name = EJ_GetTierInfo(tier)
         encounterJournalList[name] = {}
@@ -98,17 +100,9 @@ local function LoadList()
 
         tierNames[tier] = name
     end
-end
 
---! NOTE: restore selected tier, EncounterJournal_CheckAndDisplayLootTab
-local frame = CreateFrame("Frame")
-frame:RegisterEvent("ADDON_LOADED")
-frame:SetScript("OnEvent", function(self, event, addon)
-    if addon == "Blizzard_EncounterJournal" then
-        frame:UnregisterAllEvents()
-        EJ_SelectTier(EJSuggestTab_GetPlayerTierIndex())
-    end
-end)
+    EJ_SelectTier(currentTier)
+end
 
 -------------------------------------------------
 -- dungeons for current mythic season
