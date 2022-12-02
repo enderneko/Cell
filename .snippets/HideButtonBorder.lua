@@ -1,8 +1,6 @@
--- do not forget to set highlight size to -1
--- 需要将高亮尺寸设置为 -1
+-- hide button border, a negative highlight size is recommended
+-- 隐藏按钮边框，建议将高亮尺寸设定为负值
 
-Cell.funcs:IterateAllUnitButtons(function(b)
-    hooksecurefunc(b.func, "UpdatePixelPerfect", function()
-        b:SetBackdrop(nil)
-    end)
+hooksecurefunc(Cell.bFuncs, "UpdatePixelPerfect", function(self, b)
+    b:SetBackdrop(nil)
 end)

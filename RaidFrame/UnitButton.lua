@@ -2879,7 +2879,7 @@ function F:UnitButton_OnLoad(button)
     -- P:Point(powerBar, "BOTTOMRIGHT", button, "BOTTOMRIGHT", -1, 1)
     powerBar:SetStatusBarTexture(Cell.vars.texture)
     powerBar:GetStatusBarTexture():SetDrawLayer("ARTWORK", -6)
-    powerBar:SetFrameLevel(6)
+    powerBar:SetFrameLevel(5)
 
     local gapTexture = button:CreateTexture(nil, "BORDER")
     button.widget.gapTexture = gapTexture
