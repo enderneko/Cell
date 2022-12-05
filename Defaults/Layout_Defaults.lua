@@ -280,6 +280,7 @@ Cell.defaults.layout = {
             ["dispellableByMe"] = true,
             ["highlightType"] = "gradient",
             ["showDispelTypeIcons"] = true,
+            ["orientation"] = "right-to-left",
         }, -- 20
         {
             ["name"] = "Debuffs",

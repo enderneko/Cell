@@ -2,7 +2,7 @@
 -- File: Layout_Defaults_Wrath.lua
 -- Author: enderneko (enderneko-dev@outlook.com)
 -- File Created: 2022/08/21 04:06:04 +0800
--- Last Modified: 2022/11/28 04:07:34 +0800
+-- Last Modified: 2022/12/06 02:57:50 +0800
 --]]
 
 local addonName, Cell = ...
@@ -274,6 +274,7 @@ Cell.defaults.layout = {
             ["dispellableByMe"] = true,
             ["highlightType"] = "gradient",
             ["showDispelTypeIcons"] = true,
+            ["orientation"] = "right-to-left",
         }, -- 19
         {
             ["name"] = "Debuffs",

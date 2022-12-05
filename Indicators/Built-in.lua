@@ -558,10 +558,49 @@ function I:CreateDispels(parent)
     dispels.OriginalSetSize = dispels.SetSize
 
     function dispels:SetSize(width, height)
+        dispels.width = width
+        dispels.height = height
+
         dispels:OriginalSetSize(width, height)
         for i = 1, 4 do
             dispels[i]:SetSize(width, height)
         end
+
+        if dispels._orientation then
+            dispels:SetOrientation(dispels._orientation)            
+        else
+            dispels:UpdateSize()
+        end
+    end
+
+    function dispels:UpdateSize(iconsShown)
+        if not (dispels.orientation and dispels.width and dispels.height) then return end
+        
+        local width, height = dispels.width, dispels.height
+        if iconsShown then -- SetDispels
+            iconsShown = iconsShown - 1
+            if dispels.orientation == "horizontal"  then
+                width = dispels.width + (iconsShown - 1) * floor(dispels.width / 2)
+                height = dispels.height
+            else
+                width = dispels.width
+                height = dispels.height + (iconsShown - 1) * floor(dispels.height / 2)
+            end
+        else
+            for i = 1, 4 do
+                if dispels[i]:IsShown() then
+                    if dispels.orientation == "horizontal"  then
+                        width = dispels.width + (i - 1) * floor(dispels.width / 2)
+                        height = dispels.height
+                    else
+                        width = dispels.width
+                        height = dispels.height + (i - 1) * floor(dispels.height / 2)
+                    end
+                end
+            end
+        end
+
+        dispels:OriginalSetSize(width, height)
     end
 
     function dispels:SetDispels(dispelTypes)
@@ -577,6 +616,8 @@ function I:CreateDispels(parent)
                 i = i + 1
             end
         end
+
+        dispels:UpdateSize(i)
 
         -- hide unused
         for j = i, 4 do
@@ -624,22 +665,62 @@ function I:CreateDispels(parent)
         dispels.showIcons = show
     end
 
+    function dispels:SetOrientation(orientation)
+        dispels._orientation = orientation
+        --! SetSize must be invoked before this
+        local point, x, y
+
+        if orientation == "left-to-right" then
+            point = "TOPLEFT"
+            x = floor(dispels.width / 2)
+            y = 0
+            dispels.orientation = "horizontal"
+        elseif orientation == "right-to-left" then
+            point = "TOPRIGHT"
+            x = -floor(dispels.width / 2)
+            y = 0
+            dispels.orientation = "horizontal"
+        elseif orientation == "top-to-bottom" then
+            point = "TOPLEFT"
+            x = 0
+            y = -floor(dispels.height / 2)
+            dispels.orientation = "vertical"
+        elseif orientation == "bottom-to-top" then
+            point = "BOTTOMLEFT"
+            x = 0
+            y = floor(dispels.height / 2)
+            dispels.orientation = "vertical"
+        end
+        
+        for i = 1, 4 do
+            dispels[i]:ClearAllPoints()
+            if i == 1 then
+                dispels[i]:SetPoint(point)
+            else
+                dispels[i]:SetPoint(point, dispels[i-1], point, x, y)
+            end
+        end
+
+        dispels:UpdateSize()
+    end
+
     for i = 1, 4 do
         local icon = dispels:CreateTexture(parent:GetName().."Dispel"..i, "ARTWORK")
         tinsert(dispels, icon)
         icon:Hide()
 
-        if i == 1 then
-            icon:SetPoint("TOPLEFT")
-        else
-            icon:SetPoint("RIGHT", dispels[i-1], "LEFT", 7, 0)
-        end
+        -- if i == 1 then
+        --     icon:SetPoint("TOPLEFT")
+        -- else
+        --     icon:SetPoint("TOPRIGHT", dispels[i-1], "TOPLEFT", 7, 0)
+        -- end
 
-        icon:SetTexCoord(0.15, 0.85, 0.15, 0.85)
-        icon:SetDrawLayer("ARTWORK", i)
+        -- icon:SetTexCoord(0.15, 0.85, 0.15, 0.85)
+        icon:SetDrawLayer("ARTWORK", 5-i)
 
         function icon:SetDispel(dispelType)
-            icon:SetTexture("Interface\\RaidFrame\\Raid-Icon-Debuff"..dispelType)
+            -- icon:SetTexture("Interface\\RaidFrame\\Raid-Icon-Debuff"..dispelType)
+            icon:SetTexture("Interface\\AddOns\\Cell\\Media\\Debuffs\\"..dispelType)
             icon:Show()
         end
     end

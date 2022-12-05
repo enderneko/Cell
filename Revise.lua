@@ -1574,6 +1574,17 @@ function F:Revise()
         end
     end
 
+    -- r150-release
+    if CellDB["revise"] and dbRevision < 150 then
+        -- add orientation to Dispels
+        local index = Cell.defaults.indicatorIndices["dispels"]
+        for _, layout in pairs(CellDB["layouts"]) do
+            if layout["indicators"][index] and not layout["indicators"][index]["orientation"] then
+                layout["indicators"][index]["orientation"] = "right-to-left"
+            end
+        end
+    end
+
     CellDB["revise"] = Cell.version
     if Cell.isWrath then
         CellCharacterDB["revise"] = Cell.version
