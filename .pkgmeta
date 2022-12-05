@@ -10,7 +10,6 @@ externals:
   Libs/LibSharedMedia-3.0: https://repos.curseforge.com/wow/libsharedmedia-3-0/trunk/LibSharedMedia-3.0
   Libs/LibDeflate: https://github.com/SafeteeWoW/LibDeflate
   Libs/LibRangeCheck-2.0: https://github.com/WeakAuras/LibRangeCheck-2.0
-  Libs/LibHealComm-4.0: https://repos.curseforge.com/wow/libhealcomm-4-0
 
 ignore:
   - Libs/LibDeflate/docs

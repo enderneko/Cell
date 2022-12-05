@@ -2,7 +2,7 @@
 -- File: UnitButton_Wrath.lua
 -- Author: enderneko (enderneko-dev@outlook.com)
 -- File Created: 2022/08/20 19:44:26 +0800
--- Last Modified: 2022/11/29 06:27:09 +0800
+-- Last Modified: 2022/12/06 04:25:33 +0800
 --]]
 
 local _, Cell = ...
@@ -1399,7 +1399,7 @@ local function UnitButton_UpdateHealth(self, diff)
     end
 end
 
-local useLibHealComm = true
+local useLibHealComm = false
 local function UnitButton_UpdateHealPrediction(self)
     if not predictionEnabled then
         self.widget.incomingHeal:Hide()

@@ -1365,7 +1365,7 @@ function F:Revise()
         end
 
         if type(CellDB["appearance"]["useLibHealComm"]) ~= "boolean" then
-            CellDB["appearance"]["useLibHealComm"] = Cell.isWrath
+            CellDB["appearance"]["useLibHealComm"] = false
         end
     end
 
