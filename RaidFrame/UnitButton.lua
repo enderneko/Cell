@@ -938,7 +938,7 @@ local function UnitButton_UpdateBuffs(self)
         local duration = auraInfo.duration
         local source = auraInfo.sourceUnit
         local spellId = auraInfo.spellId
-        local attribute = auraInfo.points[1] -- UnitAura:arg16
+        -- local attribute = auraInfo.points[1] -- UnitAura:arg16
 
         if duration then
             if Cell.vars.iconAnimation == "duration" then
