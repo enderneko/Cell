@@ -1576,11 +1576,31 @@ function F:Revise()
 
     -- r150-release
     if CellDB["revise"] and dbRevision < 150 then
-        -- add orientation to Dispels
-        local index = Cell.defaults.indicatorIndices["dispels"]
+        local dispels = Cell.defaults.indicatorIndices["dispels"]
+        local mitigation = Cell.defaults.indicatorIndices["tankActiveMitigation"]
+        local aggroBar = Cell.defaults.indicatorIndices["aggroBar"]
+
         for _, layout in pairs(CellDB["layouts"]) do
-            if layout["indicators"][index] and not layout["indicators"][index]["orientation"] then
-                layout["indicators"][index]["orientation"] = "right-to-left"
+            -- add orientation to Dispels
+            if layout["indicators"][dispels] and not layout["indicators"][dispels]["orientation"] then
+                layout["indicators"][dispels]["orientation"] = "right-to-left"
+            end
+            -- update bars
+            if Cell.isRetail and mitigation and layout["indicators"][mitigation] then
+                layout["indicators"][mitigation]["size"][1] = layout["indicators"][mitigation]["size"][1] + 2
+                layout["indicators"][mitigation]["size"][2] = layout["indicators"][mitigation]["size"][2] + 2
+                if layout["indicators"][mitigation]["position"][3] == 10 and layout["indicators"][mitigation]["position"][4] == -1 then
+                    layout["indicators"][mitigation]["position"][3] = 9
+                    layout["indicators"][mitigation]["position"][4] = 0
+                end
+            end
+            if layout["indicators"][aggroBar] then
+                layout["indicators"][aggroBar]["size"][1] = layout["indicators"][aggroBar]["size"][1] + 2
+                layout["indicators"][aggroBar]["size"][2] = layout["indicators"][aggroBar]["size"][2] + 2
+                if layout["indicators"][aggroBar]["position"][3] == 1 and layout["indicators"][aggroBar]["position"][4] == 0 then
+                    layout["indicators"][aggroBar]["position"][3] = 0
+                    layout["indicators"][aggroBar]["position"][4] = -1
+                end
             end
         end
     end

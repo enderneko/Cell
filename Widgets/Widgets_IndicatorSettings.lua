@@ -354,7 +354,7 @@ local function CreateSetting_SizeBar(parent)
             widget.func({value, widget.height:GetValue()})
         end
         
-        widget.height = addon:CreateSlider(L["Height"], widget, 1, 50, 110, 1)
+        widget.height = addon:CreateSlider(L["Height"], widget, 3, 50, 110, 1)
         widget.height:SetPoint("LEFT", widget.width, "RIGHT", 25, 0)
         widget.height.afterValueChangedFn = function(value)
             widget.func({widget.width:GetValue(), value})

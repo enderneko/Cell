@@ -2,7 +2,7 @@
 -- File: UnitButton_Wrath.lua
 -- Author: enderneko (enderneko-dev@outlook.com)
 -- File Created: 2022/08/20 19:44:26 +0800
--- Last Modified: 2022/12/07 02:47:16 +0800
+-- Last Modified: 2022/12/07 10:33:20 +0800
 --]]
 
 local _, Cell = ...
@@ -2907,7 +2907,7 @@ function F:UnitButton_OnLoad(button)
     overlayFrame:SetAllPoints(button)
 
     -- aggro bar
-    local aggroBar = Cell:CreateStatusBar(name.."AggroBar", overlayFrame, 18, 2, 100, true)
+    local aggroBar = Cell:CreateStatusBar(name.."AggroBar", overlayFrame, 20, 4, 100, true)
     button.indicators.aggroBar = aggroBar
     -- aggroBar:SetPoint("BOTTOMLEFT", overlayFrame, "TOPLEFT", 1, 0)
     aggroBar:Hide()

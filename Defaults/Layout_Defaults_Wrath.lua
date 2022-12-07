@@ -2,7 +2,7 @@
 -- File: Layout_Defaults_Wrath.lua
 -- Author: enderneko (enderneko-dev@outlook.com)
 -- File Created: 2022/08/21 04:06:04 +0800
--- Last Modified: 2022/12/06 02:57:50 +0800
+-- Last Modified: 2022/12/07 10:12:16 +0800
 --]]
 
 local addonName, Cell = ...
@@ -194,9 +194,9 @@ Cell.defaults.layout = {
             ["indicatorName"] = "aggroBar",
             ["type"] = "built-in",
             ["enabled"] = true,
-            ["position"] = {"BOTTOMLEFT", "TOPLEFT", 1, 0},
+            ["position"] = {"BOTTOMLEFT", "TOPLEFT", 0, -1},
             ["frameLevel"] = 1,
-            ["size"] = {18, 2},
+            ["size"] = {20, 4},
         }, -- 12
         {
             ["name"] = "Aggro (border)",

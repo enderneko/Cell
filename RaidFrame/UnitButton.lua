@@ -3019,7 +3019,7 @@ function F:UnitButton_OnLoad(button)
     overlayFrame:SetAllPoints(button)
 
     -- aggro bar
-    local aggroBar = Cell:CreateStatusBar(name.."AggroBar", overlayFrame, 18, 2, 100, true)
+    local aggroBar = Cell:CreateStatusBar(name.."AggroBar", overlayFrame, 20, 4, 100, true)
     button.indicators.aggroBar = aggroBar
     -- aggroBar:SetPoint("BOTTOMLEFT", overlayFrame, "TOPLEFT", 1, 0)
     aggroBar:Hide()

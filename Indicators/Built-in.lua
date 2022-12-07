@@ -180,7 +180,7 @@ end
 -- CreateTankActiveMitigation
 -------------------------------------------------
 function I:CreateTankActiveMitigation(parent)
-    local bar = Cell:CreateStatusBar(parent:GetName().."TanckActiveMitigation", parent.widget.overlayFrame, 18, 4, 100)
+    local bar = Cell:CreateStatusBar(parent:GetName().."TanckActiveMitigation", parent.widget.overlayFrame, 20, 6, 100)
     parent.indicators.tankActiveMitigation = bar
     bar:Hide()
     
@@ -188,8 +188,8 @@ function I:CreateTankActiveMitigation(parent)
     bar:GetStatusBarTexture():SetAlpha(0)
     bar:SetReverseFill(true)
 
-    local tex = bar:CreateTexture(nil, "ARTWORK")
-    tex:SetColorTexture(0.7, 0.7, 0.7)
+    local tex = bar:CreateTexture(nil, "BORDER", nil, -1)
+    tex:SetColorTexture(F:GetClassColor(Cell.vars.playerClass))
     tex:SetPoint("TOPLEFT")
     tex:SetPoint("BOTTOMRIGHT", bar:GetStatusBarTexture(), "BOTTOMLEFT")
 

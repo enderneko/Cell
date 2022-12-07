@@ -1287,7 +1287,7 @@ if Cell.isRetail then
         ["externalCooldowns"] = {"enabled", "customExternals", "checkbutton2:showDuration:"..L["Show duration text instead of icon animation"], "num:5", "orientation", "size", "font", "position", "frameLevel"},
         ["defensiveCooldowns"] = {"enabled", "customDefensives", "checkbutton2:showDuration:"..L["Show duration text instead of icon animation"], "num:5", "orientation", "size", "font", "position", "frameLevel"},
         ["allCooldowns"] = {L["Externals + Defensives, no need to enable all of them"], "enabled", "checkbutton2:showDuration:"..L["Show duration text instead of icon animation"], "num:5", "orientation", "size", "font", "position", "frameLevel"},
-        ["tankActiveMitigation"] = {"|cffb7b7b7"..I:GetTankActiveMitigationString(), "enabled", "size", "position", "frameLevel"},
+        ["tankActiveMitigation"] = {"|cffb7b7b7"..I:GetTankActiveMitigationString(), "enabled", "size-bar", "position", "frameLevel"},
         ["dispels"] = {"enabled", "checkbutton:dispellableByMe", "highlightType", "checkbutton2:showDispelTypeIcons", "orientation", "size-square", "position", "frameLevel"},
         ["debuffs"] = {"enabled", "checkbutton:dispellableByMe", "blacklist", "bigDebuffs", "checkbutton2:showDuration:"..L["Show duration text instead of icon animation"], "checkbutton3:showTooltip:"..L["This will make these icons not click-through-able"].."|"..L["Tooltips need to be enabled in General tab"], "num:10", "orientation", "size-normal-big", "font", "position", "frameLevel"},
         ["raidDebuffs"] = {"|cffb7b7b7"..L["You can config debuffs in %s"]:format(Cell:GetAccentColorString()..L["Raid Debuffs"].."|r"), "enabled", "checkbutton:onlyShowTopGlow", "cleuAuras", "checkbutton2:showTooltip:"..L["This will make these icons not click-through-able"].."|"..L["Tooltips need to be enabled in General tab"], "num:3", "orientation", "size-border", "font", "position", "frameLevel"},
@@ -1590,10 +1590,7 @@ LoadIndicatorList = function()
 
     Cell:CreateButtonGroup(listButtons, ShowIndicatorSettings, function(id)
         local i = previewButton.indicators[currentLayoutTable["indicators"][id]["indicatorName"]]
-        if i:IsObjectType("StatusBar") then
-            LCG.PixelGlow_Start(i.border)
-            i:SetAlpha(1)
-        elseif i:IsObjectType("Texture") or i:IsObjectType("FontString") then
+        if i:IsObjectType("Texture") or i:IsObjectType("FontString") then
             LCG.PixelGlow_Start(i.preview)
             i:SetAlpha(i.alpha or 1)
         else
@@ -1619,9 +1616,7 @@ LoadIndicatorList = function()
         end
     end, function(id)
         local i = previewButton.indicators[currentLayoutTable["indicators"][id]["indicatorName"]]
-        if i:IsObjectType("StatusBar") then
-            LCG.PixelGlow_Stop(i.border)
-        elseif i:IsObjectType("Texture") or i:IsObjectType("FontString") then
+        if i:IsObjectType("Texture") or i:IsObjectType("FontString") then
             LCG.PixelGlow_Stop(i.preview)
         else
             LCG.PixelGlow_Stop(i)
