@@ -27,8 +27,8 @@ local UnitIsDeadOrGhost = UnitIsDeadOrGhost
 local UnitIsGhost = UnitIsGhost
 local UnitPowerType = UnitPowerType
 local UnitPowerMax = UnitPowerMax
-local UnitInRange = UnitInRange
-local UnitIsVisible = UnitIsVisible
+-- local UnitInRange = UnitInRange
+-- local UnitIsVisible = UnitIsVisible
 local SetRaidTargetIconTexture = SetRaidTargetIconTexture
 local GetTime = GetTime
 local GetRaidTargetIndex = GetRaidTargetIndex
@@ -1667,6 +1667,7 @@ local function UnitButton_UpdateThreatBar(self)
     end
 end
 
+--[[
 local LRC = LibStub:GetLibrary("LibRangeCheck-2.0")
 -- BUG: seems not right on a dead unit
 -- local checker
@@ -1694,31 +1695,13 @@ else
         return (maxRangeIfVisible and maxRangeIfVisible <= 40) or false
     end
 end
-
+]]
 
 local function UnitButton_UpdateInRange(self)
     local unit = self.state.displayedUnit
     if not unit then return end
 
-    local inRange = checker(unit)
-
-    -- if checker then
-    --     inRange = (UnitIsVisible(unit) and checker(unit)) or false
-    -- end
-
-    --[[
-    if F:UnitInGroup(unit) then
-         -- NOTE: UnitInRange only works with group members
-        local checked
-        inRange, checked = UnitInRange(unit)
-        if not checked then
-            inRange = UnitIsVisible(unit)
-        end
-    else
-        local minRangeIfVisible, maxRangeIfVisible = LRC:GetRange(unit, true)
-        inRange = maxRangeIfVisible and maxRangeIfVisible <= 40
-    end
-    ]]
+    local inRange = F:IsInRange(unit)
 
     self.state.inRange = inRange
     if Cell.loaded then

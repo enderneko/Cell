@@ -9,7 +9,7 @@ externals:
   Libs/LibCustomGlow-1.0: https://github.com/Stanzilla/LibCustomGlow
   Libs/LibSharedMedia-3.0: https://repos.curseforge.com/wow/libsharedmedia-3-0/trunk/LibSharedMedia-3.0
   Libs/LibDeflate: https://github.com/SafeteeWoW/LibDeflate
-  Libs/LibRangeCheck-2.0: https://github.com/WeakAuras/LibRangeCheck-2.0
+  # Libs/LibRangeCheck-2.0: https://github.com/WeakAuras/LibRangeCheck-2.0
 
 ignore:
   - Libs/LibDeflate/docs
@@ -22,5 +22,5 @@ manual-changelog:
   filename: CHANGELOG.md
   markup-type: markdown
 
-move-folders:
-  Cell/Libs/LibRangeCheck-2.0/LibRangeCheck-2.0: Cell/Libs/LibRangeCheck-2.0
+# move-folders:
+#   Cell/Libs/LibRangeCheck-2.0/LibRangeCheck-2.0: Cell/Libs/LibRangeCheck-2.0
