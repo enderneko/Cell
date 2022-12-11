@@ -1603,6 +1603,28 @@ function F:Revise()
                 end
             end
         end
+
+        -- targetedSpells
+        if Cell.isRetail then
+            -- 红玉新生法池
+            if not F:TContains(CellDB["targetedSpellsList"], 372858) then -- 灼热打击
+                tinsert(CellDB["targetedSpellsList"], 372858)
+            end
+            -- 奈萨鲁斯
+            if not F:TContains(CellDB["targetedSpellsList"], 374533) then -- 炽热挥舞
+                tinsert(CellDB["targetedSpellsList"], 374533)
+            end
+            if not F:TContains(CellDB["targetedSpellsList"], 377018) then -- 熔火真金
+                tinsert(CellDB["targetedSpellsList"], 377018)
+            end
+            -- 蕨皮山谷
+            if not F:TContains(CellDB["targetedSpellsList"], 381444) then -- 野蛮冲撞
+                tinsert(CellDB["targetedSpellsList"], 381444)
+            end
+            if not F:TContains(CellDB["targetedSpellsList"], 373912) then -- 腐朽打击
+                tinsert(CellDB["targetedSpellsList"], 373912)
+            end
+        end
     end
 
     CellDB["revise"] = Cell.version
