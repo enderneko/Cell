@@ -1633,6 +1633,17 @@ function F:Revise()
             if not F:TContains(CellDB["debuffBlacklist"], 213213) then -- 伪装
                 tinsert(CellDB["debuffBlacklist"], 213213)
             end
+
+            -- bigDebuffs
+            if not F:TContains(CellDB["bigDebuffs"], 240559) then -- 重伤
+                tinsert(CellDB["bigDebuffs"], 240559)
+            end
+            if not F:TContains(CellDB["bigDebuffs"], 396369) then -- 闪电标记
+                tinsert(CellDB["bigDebuffs"], 396369)
+            end
+            if not F:TContains(CellDB["bigDebuffs"], 396364) then -- 狂风标记
+                tinsert(CellDB["bigDebuffs"], 396364)
+            end
         end
     end
 
