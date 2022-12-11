@@ -1,7 +1,14 @@
-[Full Changelog](https://github.com/enderneko/Cell/compare/r148-release...b35fd9d0d7173383499f2fb15cffd46c8b97f8fc)
+[Full Changelog](https://github.com/enderneko/Cell/compare/r149-release...34ed4898bf586240312b0825d0a2420b468013f6)
 
-- Add npc button size
-- Add bar orientation Vertical B
-- Protect autoSwitchFrame
-- Update UI_SCALE_CHANGED
-- Introduce Cell.bFuncs
+- Update raid debuffs
+- Update dungeon debuffs
+- Update drinking
+- Update status bar creation
+- Update status icon indicator
+- Update range checker
+- Update custom indicators on WotLK
+- Update dispels indicator
+- Update anchor points of shield bar indicator
+- Optimize indicator functions
+- Remove LibHealComm
+- Restore selected tier (encounter journal)
