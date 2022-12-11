@@ -1604,8 +1604,8 @@ function F:Revise()
             end
         end
 
-        -- targetedSpells
         if Cell.isRetail then
+            -- targetedSpells
             -- 红玉新生法池
             if not F:TContains(CellDB["targetedSpellsList"], 372858) then -- 灼热打击
                 tinsert(CellDB["targetedSpellsList"], 372858)
@@ -1623,6 +1623,15 @@ function F:Revise()
             end
             if not F:TContains(CellDB["targetedSpellsList"], 373912) then -- 腐朽打击
                 tinsert(CellDB["targetedSpellsList"], 373912)
+            end
+            -- 英灵殿
+            if not F:TContains(CellDB["targetedSpellsList"], 193092) then -- 放血扫击
+                tinsert(CellDB["targetedSpellsList"], 193092)
+            end
+
+            -- debuffBlacklist
+            if not F:TContains(CellDB["debuffBlacklist"], 213213) then -- 伪装
+                tinsert(CellDB["debuffBlacklist"], 213213)
             end
         end
     end

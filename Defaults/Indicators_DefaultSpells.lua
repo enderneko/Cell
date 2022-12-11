@@ -21,6 +21,7 @@ local debuffBlacklist = {
     352562, -- 起伏机动
     356419, -- 审判灵魂
     387847, -- 邪甲术
+    213213, -- 伪装
 }
 
 function I:GetDefaultDebuffBlacklist()
@@ -725,6 +726,10 @@ end
 -- targetedSpells
 -------------------------------------------------
 local targetedSpells = {
+    -- Legion ----------------------
+    -- 英灵殿
+    193092, -- 放血扫击
+
     -- Shadowlands -----------------
     320788, -- 冻结之缚
     344496, -- 震荡爆发
@@ -743,7 +748,6 @@ local targetedSpells = {
     333861, -- 回旋利刃
     332234, -- 挥发精油
     -- 328429, -- 窒息勒压
-    --------------------------------
 
     -- Dragonflight ----------------
     -- 红玉新生法池
@@ -754,7 +758,6 @@ local targetedSpells = {
     -- 蕨皮山谷
     381444, -- 野蛮冲撞
     373912, -- 腐朽打击
-    --------------------------------
 }
 
 function I:GetDefaultTargetedSpellsList()
