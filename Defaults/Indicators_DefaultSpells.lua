@@ -550,7 +550,7 @@ else
         -- update dispellable
         wipe(dispellable)
         local activeConfigID = C_ClassTalents.GetActiveConfigID()
-        if dispelNodeID[Cell.vars.playerSpecID] then
+        if activeConfigID and dispelNodeID[Cell.vars.playerSpecID] then
             for dispelType, value in pairs(dispelNodeID[Cell.vars.playerSpecID]) do
                 if type(value) == "boolean" then
                     dispellable[dispelType] = value
@@ -604,7 +604,7 @@ local spells =  {
     48438, -- 野性成长
     102351, -- 塞纳里奥结界
     102352, -- 塞纳里奥结界
-    391888, -- 激变蜂群
+    391891, -- 激变蜂群
 
     -- evoker
     363502, -- 梦境飞行
