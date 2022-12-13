@@ -50,5 +50,3 @@ RaidDebuffs\ExpansionData.lua
 Patrons.lua
 Modules\LoadModules_Wrath.xml
 RaidDebuffs\LoadRaidDebuffs_Wrath.xml
-
-LMAO.lua
