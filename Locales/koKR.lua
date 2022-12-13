@@ -14,8 +14,7 @@ local L = select( 2, ...).L
 --[[ L["|cff1Aff1AYes|r - Overwrite"] = "|cff1Aff1AYes|r - Overwrite"--]] 
 --[[Translation missing --]]
 --[[ L["|cffff1A1ANo|r - Create New"] = "|cffff1A1ANo|r - Create New"--]] 
---[[Translation missing --]]
---[[ L["|cffffb5c5Left-Click:|r cast the spell"] = "|cffffb5c5Left-Click:|r cast the spell"--]] 
+L["|cffffb5c5Left-Click:|r cast the spell"] = "|cffffb5c5좌클릭:|r 주문 시전"
 --[[Translation missing --]]
 --[[ L["|cffffb5c5Right-Click:|r report unaffected"] = "|cffffb5c5Right-Click:|r report unaffected"--]] 
 L["+ Stack"] = "+ 중첩"
@@ -59,7 +58,7 @@ L["Aura Icon Options"] = "효과 아이콘 옵션"
 L["Author"] = "제작자"
 --[[Translation missing --]]
 --[[ L["Autorun will be disabled for all code snippets"] = "Autorun will be disabled for all code snippets"--]] 
-L["Available slash commands"] = "사용가능한 슬래시 명령"
+L["Available slash commands"] = "사용 가능한 슬래시 명령"
 --[[Translation missing --]]
 --[[ L["Awesome!"] = "Awesome!"--]] 
 L["Background Alpha"] = "배경 투명도"
@@ -88,12 +87,12 @@ L["Buff Tracker"] = "강화 효과 추적기"
 L["Bug Report & Suggestion"] = "버그 신고 & 제안"
 --[[Translation missing --]]
 --[[ L["built-in(s)"] = "built-in(s)"--]] 
+L["Button Size"] = "유닛 버튼 크기"
 L["Button4"] = "4번 버튼"
 L["Button5"] = "5번 버튼"
 --[[Translation missing --]]
 --[[ L["C"] = "Class Talent"--]] 
---[[Translation missing --]]
---[[ L["Cancel"] = "Cancel"--]] 
+L["Cancel"] = "취소"
 L["Can't change options in combat"] = "전투 중 옵션을 바꿀 수 없습니다."
 L["castByMe"] = "자신이 시전한 강화 효과만"
 L["Cell will report all deaths during a raid encounter."] = "Cell은 공격대 교전 중 모든 죽음을 보고합니다."
@@ -104,8 +103,7 @@ L["CENTER"] = "중앙"
 L["Check all visible enemy nameplates. Battleground/Arena only."] = "보이는 모든 적 이름표를 확인합니다. 전장/투기장 전용."
 --[[Translation missing --]]
 --[[ L["Check If Exists"] = "Check If Exists"--]] 
---[[Translation missing --]]
---[[ L["Check if your group members need some raid buffs"] = "Check if your group members need some raid buffs"--]] 
+L["Check if your group members need some raid buffs"] = "그룹 구성원에게 공격대 강화 효과가 필요한지 확인"
 --[[Translation missing --]]
 --[[ L["circledStackNums"] = "Circled Stack Numbers"--]] 
 L["Class Color"] = "직업 색상"
@@ -178,8 +176,7 @@ L["Delete layout"] = "배치 삭제"
 --[[ L["Delete spell?"] = "Delete spell?"--]] 
 --[[Translation missing --]]
 --[[ L["Disabled"] = "Disabled"--]] 
---[[Translation missing --]]
---[[ L["Disabled in battlegrounds and arenas"] = "Disabled in battlegrounds and arenas"--]] 
+L["Disabled in battlegrounds and arenas"] = "전장 및 투기장에서 꺼짐"
 L["Discard"] = "취소"
 --[[Translation missing --]]
 --[[ L["DISPEL"] = "DISPEL"--]] 
@@ -206,8 +203,7 @@ L["enableHighlight"] = "강조 사용"
 L["Enter spell id"] = "주문 ID 입력"
 L["Enter: apply\nESC: discard"] = "Enter: 적용 ESC: 취소"
 L["Entire"] = "전체"
---[[Translation missing --]]
---[[ L["Error"] = "Error"--]] 
+L["Error"] = "오류"
 L["Export"] = "내보내기"
 L["External Cooldowns"] = "외부 재사용 시간"
 --[[Translation missing --]]
@@ -217,8 +213,7 @@ L["External Cooldowns"] = "외부 재사용 시간"
 L["Extra Action Button"] = "추가 행동 버튼"
 L["Fade Out Menu"] = "메뉴 옵션 사라짐"
 L["Fade out menu buttons on mouseout"] = "마우스가 벗어날때 메뉴 옵션 버튼이 점점 사라집니다."
---[[Translation missing --]]
---[[ L["first %d"] = "first %d"--]] 
+L["first %d"] = "처음 %d명"
 L["Focus"] = "주시"
 L["focus"] = "주시 대상"
 L["Font"] = "글자"
@@ -283,8 +278,7 @@ L["IDs separated by whitespaces"] = "공백으로 구분된 ID"
 L["Import"] = "가져오기"
 L["Import & Export All Settings"] = "모든 설정 가져오기 & 내보내기"
 L["Include Nickname Settings"] = "별명 설정 포함"
---[[Translation missing --]]
---[[ L["Incompatible Version"] = "Incompatible Version"--]] 
+L["Incompatible Version"] = "비호환 버전"
 L["Increase Health Update Rate"] = "생명력 업데이트 속도 증가"
 L["Indicator Settings"] = "표시기 설정"
 L["Indicator settings are part of Layout settings which are account-wide."] = "표시기 설정은 계정 전체 배치 설정의 일부입니다."
@@ -316,6 +310,8 @@ L["Left"] = "왼쪽 버튼"
 --[[ L["Left Spell"] = "Left Spell"--]] 
 L["left-to-right"] = "좌측에서 우측으로"
 L["Length"] = "길이"
+--[[Translation missing --]]
+--[[ L["LibHealComm needs to be installed"] = "LibHealComm needs to be installed"--]] 
 L["Lines"] = "라인"
 L["Lock"] = "잠금"
 L["Lock Cell Frame"] = "Cell 창 잠금"
@@ -353,6 +349,7 @@ L["None"] = "없음"
 --[[Translation missing --]]
 --[[ L["NON-EN"] = "NON-EN"--]] 
 L["Normal"] = "Normal"
+L["NPC Button"] = "NPC 버튼"
 L["OFF"] = "끄기"
 L["OFFLINE"] = "오프"
 --[[Translation missing --]]
@@ -374,6 +371,7 @@ L["Orientation"] = "방향"
 --[[Translation missing --]]
 --[[ L["Other Frames"] = "Other Frames"--]] 
 L["Out of Range Alpha"] = "사정거리 밖 투명도"
+L["Outdoor"] = "실외"
 L["Outline"] = "테두리"
 --[[Translation missing --]]
 --[[ L["Overshield Texture"] = "Overshield Texture"--]] 
@@ -387,7 +385,7 @@ L["PENDING"] = "대기"
 L["Percentage"] = "백분율"
 --[[Translation missing --]]
 --[[ L["PET"] = "Pet"--]] 
-L["Pet Button Size"] = "소환수 버튼 크기"
+L["Pet Button"] = "소환수 버튼 크기"
 L["Pixel"] = "픽셀"
 L["Pixel Perfect"] = "완벽한 픽셀"
 --[[Translation missing --]]
@@ -408,7 +406,7 @@ L["Pull"] = "풀링"
 L["Pull Timer"] = "풀링 타이머"
 --[[Translation missing --]]
 --[[ L["Pull timer cancelled"] = "Pull timer cancelled"--]] 
-L["pullTimerTips"] = "|r풀링 타이머 왼쪽 클릭: |cffffffff타이머 시작|r 오른쪽 클릭: |cffffffff타이머 취소|r"
+L["pullTimerTips"] = "\n|r풀링 타이머\n좌클릭: |cffffffff타이머 시작|r\n우클릭: |cffffffff타이머 취소|r"
 L["Raid"] = "공격대"
 L["Raid Debuffs"] = "공격대 약화 효과"
 --[[Translation missing --]]
@@ -438,8 +436,7 @@ L["Rename layout"] = "배치 이름 변경"
 --[[ L["Reply After Cast"] = "Reply After Cast"--]] 
 --[[Translation missing --]]
 --[[ L["Reply With Cooldown"] = "Reply With Cooldown"--]] 
---[[Translation missing --]]
---[[ L["Report deaths to group"] = "Report deaths to group"--]] 
+L["Report deaths to group"] = "그룹에 죽음 보고"
 --[[Translation missing --]]
 --[[ L["Request"] = "Request"--]] 
 --[[Translation missing --]]
@@ -451,7 +448,7 @@ L["Reset All"] = "모두 초기화"
 L["reset all Cell settings"] = "모든 Cell 설정 초기화"
 L["reset all Click-Castings"] = "모든 클릭 주문 시전 초기화"
 L["reset all Layouts and Indicators"] = "모든 배치 및 표시기 초기화"
-L["reset all Raid Debuffs"] = "모든 공격대 디버프 초기화"
+L["reset all Raid Debuffs"] = "모든 공격대 약화 효과 초기화"
 L["reset Cell position"] = "Cell 위치 초기화"
 --[[Translation missing --]]
 --[[ L["Reset debuffs?"] = "Reset debuffs?"--]] 
@@ -495,7 +492,7 @@ L["Shield Bar"] = "보호막 바"
 --[[ L["Shield Texture"] = "Shield Texture"--]] 
 L["Shift+Enter: add a new line"] = "Shift+Enter: 새로운 라인 추가"
 L["Shine"] = "Shine"
-L["show Cell options frame"] = "Cell 옵션 창 표시"
+L["show Cell options frame"] = "Cell 옵션 창을 표시합니다"
 L["Show Current Instance"] = "현재 인스턴스 표시"
 --[[Translation missing --]]
 --[[ L["Show duration text instead of icon animation"] = "Show duration text instead of icon animation"--]] 
@@ -516,6 +513,8 @@ L["showDuration"] = "지속시간 표시"
 --[[ L["showGroupNumber"] = "Show group number"--]] 
 --[[Translation missing --]]
 --[[ L["Shows only one spell glow on a unit button at a time"] = "Shows only one spell glow on a unit button at a time"--]] 
+--[[Translation missing --]]
+--[[ L["showStack"] = "Show stack text"--]] 
 L["showTooltip"] = "효과 툴팁 표시"
 L["Size"] = "크기"
 --[[Translation missing --]]
@@ -539,7 +538,7 @@ L["Spell List"] = "주문 목록"
 --[[ L["SpellId and BuffId are the same in most cases"] = "SpellId and BuffId are the same in most cases"--]] 
 L["Spells"] = "주문"
 --[[Translation missing --]]
---[[ L["Spotlight Button Size"] = "Spotlight Button Size"--]] 
+--[[ L["Spotlight Button"] = "Spotlight Button"--]] 
 --[[Translation missing --]]
 --[[ L["Spotlight Frame"] = "Spotlight Frame"--]] 
 --[[Translation missing --]]
@@ -569,7 +568,7 @@ L["Texture"] = "텍스처"
 L["The priority of spells decreases from top to bottom."] = "주문의 우선 순위는 위에서 아래로 감소합니다."
 L["The spell is required to apply a buff on the target"] = "대상에게 강화 효과를 적용하려면 주문이 필요합니다."
 L["The spells list of a icons indicator is unordered (no priority)."] = "아이콘 지시기의 주문 목록은 순서가 없습니다. (우선 순위 없음)"
-L["These \"reset\" commands below affect all your characters in this account"] = "아래의 \"reset\" 명령은 이 계정의 모든 캐릭터에 영향을 미칩니다."
+L["These \"reset\" commands below affect all your characters in this account"] = "아래의 \"reset\" 명령은 이 계정의 모든 캐릭터에 영향을 미칩니다"
 L["Thickness"] = "두께"
 --[[Translation missing --]]
 --[[ L["This may overwrite built-in indicators"] = "This may overwrite built-in indicators"--]] 
@@ -582,10 +581,12 @@ L["Tip: Every layout has its own position setting"] = "팁: 모든 배치에는 
 --[[Translation missing --]]
 --[[ L["To"] = "To"--]] 
 L["To HealthBar's"] = "생명력 바에서"
-L["To open options frame, use /cell options"] = "옵션 창을 열려면 /cell options을 사용하세요."
+L["To open options frame, use /cell options"] = "옵션 창을 열려면 /cell options를 사용하세요."
 L["To transfer across realm, you need to be in the same group"] = "렐름 간의 전송은 동일 그룹에 있어야 합니다."
 L["To UnitButton's"] = "유닛 버튼에서"
 L["togglemenu"] = "토글 메뉴"
+--[[Translation missing --]]
+--[[ L["togglemenu_nocombat"] = "Menu (not in combat)"--]] 
 L["Tooltips"] = "유닛 툴팁"
 --[[Translation missing --]]
 --[[ L["Tooltips need to be enabled in General tab"] = "Tooltips need to be enabled in General tab"--]] 
@@ -600,14 +601,13 @@ L["Type: "] = "유형:"
 L["Unaffected"] = "영향 없음"
 L["Unit"] = "유닛"
 L["Unit Button"] = "유닛 버튼"
-L["Unit Button Size"] = "유닛 버튼 크기"
 L["Unit Button Style"] = "유닛 버튼 스타일"
 L["Unit Spacing"] = "유닛 간격"
 L["Unit's Pet"] = "유닛 소환수"
 L["Unlimited"] = "제한 없음"
 L["Unlock"] = "해제"
 L["unnamed"] = "이름 없음"
-L["Use |cFFFFB5C5/cell buff X|r to set icon size"] = "이이콘 사이즈 설정은 |cFFFFB5C5/cell buff X|r 사용 하십시요"
+L["Use |cFFFFB5C5/cell buff X|r to set icon size"] = "|cFFFFB5C5/cell buff X|r를 사용하여 아이콘 크기 설정"
 L["Use |cFFFFB5C5/cell report X|r to set the number of reports during a raid encounter"] = "레이드 진행중 보고서의 숫자 설정은 |cFFFFB5C5/cell report X|r 사용 하십시요."
 --[[Translation missing --]]
 --[[ L["Use CLEU events to increase health update rate"] = "Use CLEU events to increase health update rate"--]] 
@@ -630,4 +630,4 @@ L["Yes"] = "예"
 L["You"] = "당신"
 L["You can config debuffs in %s"] = "%s에서 약화 효과를 설정할 수 있습니다."
 L["You can move it in Preview mode"] = "미리보기 모드에서 옮길 수 있습니다."
-L["You don't have permission to do this"] = "이 작업을 수행 할 권한이 없습니다."
+L["You don't have permission to do this"] = "이 작업을 수행할 수 있는 권한이 없습니다."
