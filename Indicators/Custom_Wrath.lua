@@ -2,7 +2,7 @@
 -- File: Custom_Wrath.lua
 -- Author: enderneko (enderneko-dev@outlook.com)
 -- File Created: 2022/08/26 03:04:05 +0800
--- Last Modified: 2022/12/06 08:52:01 +0800
+-- Last Modified: 2022/12/25 05:27:33 +0800
 --]]
 
 local _, Cell = ...
@@ -51,7 +51,7 @@ function I:CreateIndicator(parent, indicatorTable)
         -- NOTE: icons is different from other custom indicators, more like the Debuffs indicator
         if indicatorTable["type"] == "icons" then
             customIndicators[auraType][indicatorName] = {
-                ["auras"] = F:ConvertAurasTable(indicatorTable["auras"], indicatorTable["trackByName"]), -- auras to match
+                ["auras"] = F:ConvertSpellTable(indicatorTable["auras"], indicatorTable["trackByName"]), -- auras to match
                 ["isIcons"] = true,
                 ["found"] = {},
                 ["num"] = indicatorTable["num"],
@@ -59,7 +59,7 @@ function I:CreateIndicator(parent, indicatorTable)
             }
         else
             customIndicators[auraType][indicatorName] = {
-                ["auras"] = F:ConvertAurasTable(indicatorTable["auras"], indicatorTable["trackByName"]), -- auras to match
+                ["auras"] = F:ConvertSpellTable(indicatorTable["auras"], indicatorTable["trackByName"]), -- auras to match
                 ["top"] = {}, -- top aura details
                 ["topOrder"] = {}, -- top aura order
                 -- ["castByMe"]
@@ -117,12 +117,12 @@ local function UpdateCustomIndicators(layout, indicatorName, setting, value, val
         end
     elseif setting == "auras" then
         customIndicators[value][indicatorName]["_auras"] = F:Copy(value2) --* wrath
-        customIndicators[value][indicatorName]["auras"] = F:ConvertAurasTable(value2, customIndicators[value][indicatorName]["trackByName"]) --* wrath
+        customIndicators[value][indicatorName]["auras"] = F:ConvertSpellTable(value2, customIndicators[value][indicatorName]["trackByName"]) --* wrath
     elseif setting == "checkbutton" then
         if customIndicators["buff"][indicatorName] then
             customIndicators["buff"][indicatorName][value] = value2
             if value == "trackByName" then
-                customIndicators["buff"][indicatorName]["auras"] = F:ConvertAurasTable(customIndicators["buff"][indicatorName]["_auras"], value2) --* wrath
+                customIndicators["buff"][indicatorName]["auras"] = F:ConvertSpellTable(customIndicators["buff"][indicatorName]["_auras"], value2) --* wrath
             end
         elseif customIndicators["debuff"][indicatorName] then
             customIndicators["debuff"][indicatorName][value] = value2

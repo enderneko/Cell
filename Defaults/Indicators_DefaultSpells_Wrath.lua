@@ -81,7 +81,7 @@ end
 -------------------------------------------------
 -- externalCooldowns
 -------------------------------------------------
-local externalCooldowns = {
+local externalNames = {
     -- death knight
     51052, -- 反魔法领域
 
@@ -101,33 +101,30 @@ local externalCooldowns = {
     -- warrior
     3411, -- 援护
 }
+externalNames = F:ConvertSpellTable(externalNames, true)
 
-local externals = {}
-for _, id in pairs(externalCooldowns) do
-    externals[GetSpellInfo(id)] = true
-end
-externalCooldowns = F:Copy(externals)
+local externalIDs = {}
 
+-- customs
+local customExternalNames = {}
 function I:UpdateCustomExternals(t)
-    -- reset
-    externalCooldowns = F:Copy(externals)
-    -- insert
+    wipe(customExternalNames)
     for _, id in pairs(t) do
         local name = GetSpellInfo(id)
         if name then
-            externalCooldowns[name] = true
+            customExternalNames[name] = true
         end
     end
 end
 
-function I:IsExternalCooldown(name, source, target)
-    return externalCooldowns[name]
+function I:IsExternalCooldown(name, id, source, target)
+    return externalNames[name] or externalIDs[id] or customExternalNames[name] 
 end
 
 -------------------------------------------------
 -- defensiveCooldowns
 -------------------------------------------------
-local defensiveCooldowns = {
+local defensiveNames = {
     -- death knight
     48707, -- 反魔法护罩
     48792, -- 冰封之韧
@@ -166,27 +163,24 @@ local defensiveCooldowns = {
     23920, -- 法术反射
     55694, -- 狂怒回复
 }
+defensiveNames = F:ConvertSpellTable(defensiveNames, true)
 
-local defensives = {}
-for _, id in pairs(defensiveCooldowns) do
-    defensives[GetSpellInfo(id)] = true
-end
-defensiveCooldowns = F:Copy(defensives)
+local defensiveIDs = {}
 
+-- customs
+local customDefensives = {}
 function I:UpdateCustomDefensives(t)
-    -- reset
-    defensiveCooldowns = F:Copy(defensives)
-    -- insert
+    wipe(customDefensives)
     for _, id in pairs(t) do
         local name = GetSpellInfo(id)
         if name then
-            defensiveCooldowns[name] = true
+            customDefensives[name] = true
         end
     end
 end
 
-function I:IsDefensiveCooldown(name)
-    return defensiveCooldowns[name]
+function I:IsDefensiveCooldown(name, id)
+    return defensiveNames[name] or defensiveIDs[id] or customDefensives[name]
 end
 
 -------------------------------------------------

@@ -956,21 +956,21 @@ local function UnitButton_UpdateBuffs(self)
             buffs_cache_count[unit][auraInstanceID] = count
         
             -- defensiveCooldowns
-            if enabledIndicators["defensiveCooldowns"] and (I:IsDefensiveCooldown(name) or I:IsDefensiveCooldown(spellId)) and defensiveFound < indicatorNums["defensiveCooldowns"] then
+            if enabledIndicators["defensiveCooldowns"] and I:IsDefensiveCooldown(name, spellId) and defensiveFound < indicatorNums["defensiveCooldowns"] then
                 defensiveFound = defensiveFound + 1
                 -- start, duration, debuffType, texture, count, refreshing
                 self.indicators.defensiveCooldowns[defensiveFound]:SetCooldown(start, duration, nil, icon, count, refreshing)
             end
 
             -- externalCooldowns
-            if enabledIndicators["externalCooldowns"] and I:IsExternalCooldown(name, source, unit) and externalFound < indicatorNums["externalCooldowns"] then
+            if enabledIndicators["externalCooldowns"] and I:IsExternalCooldown(name, spellId, source, unit) and externalFound < indicatorNums["externalCooldowns"] then
                 externalFound = externalFound + 1
                 -- start, duration, debuffType, texture, count, refreshing
                 self.indicators.externalCooldowns[externalFound]:SetCooldown(start, duration, nil, icon, count, refreshing)
             end
 
             -- allCooldowns
-            if enabledIndicators["allCooldowns"] and (I:IsExternalCooldown(name, source, unit) or I:IsDefensiveCooldown(name) or I:IsDefensiveCooldown(spellId)) and allFound < indicatorNums["allCooldowns"] then
+            if enabledIndicators["allCooldowns"] and (I:IsExternalCooldown(name, spellId, source, unit) or I:IsDefensiveCooldown(name, spellId)) and allFound < indicatorNums["allCooldowns"] then
                 allFound = allFound + 1
                 -- start, duration, debuffType, texture, count, refreshing
                 self.indicators.allCooldowns[allFound]:SetCooldown(start, duration, nil, icon, count, refreshing)
