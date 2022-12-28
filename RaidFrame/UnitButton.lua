@@ -220,7 +220,7 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                     indicator:ShowIcons(t["showDispelTypeIcons"])
                 end
                 -- update duration
-                if type(t["showDuration"]) == "boolean" then
+                if type(t["showDuration"]) == "boolean" or type(t["showDuration"]) == "number" then
                     indicator:ShowDuration(t["showDuration"])
                 end
                 -- update stack
@@ -475,6 +475,11 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
             F:IterateAllUnitButtons(function(b)
                 B.UpdateHealth(b)
             end, true)
+        elseif setting == "showDuration" then
+            F:IterateAllUnitButtons(function(b)
+                b.indicators[indicatorName]:ShowDuration(value)
+                UnitButton_UpdateAuras(b)
+            end, true)
         elseif setting == "checkbutton" then
             if value == "showGroupNumber" then
                 F:IterateAllUnitButtons(function(b)
@@ -489,11 +494,6 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
             elseif value == "showDispelTypeIcons" then
                 F:IterateAllUnitButtons(function(b)
                     b.indicators[indicatorName]:ShowIcons(value2)
-                    UnitButton_UpdateAuras(b)
-                end, true)
-            elseif value == "showDuration" then
-                F:IterateAllUnitButtons(function(b)
-                    b.indicators[indicatorName]:ShowDuration(value2)
                     UnitButton_UpdateAuras(b)
                 end, true)
             elseif value == "showStack" then

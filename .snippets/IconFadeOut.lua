@@ -6,11 +6,42 @@ local function SetCooldown(frame, start, duration, debuffType, texture, count, r
         frame.cooldown:Hide()
         frame:SetScript("OnUpdate", nil)
     else
-        if frame.showDuration then
+        local threshold
+        if frame.showDuration == true then
             frame.cooldown:Hide()
+            frame.duration:Show()
+            -- update threshold
+            threshold = duration
+        else -- false or number
+            -- init bar values
+            frame.cooldown:SetMinMaxValues(0, duration)
+            frame.cooldown:SetValue(GetTime()-start)
+            frame.cooldown:Show()
+            -- update threshold and duration visibility
+            if not frame.showDuration then
+                frame.duration:Hide()
+            elseif frame.showDuration == 0 then
+                threshold = duration
+                frame.duration:Show()
+            elseif frame.showDuration >= 1 then
+                threshold = frame.showDuration
+                frame.duration:Show()
+            else -- < 1
+                threshold = frame.showDuration * duration
+                frame.duration:Show()
+            end
+        end
+
+        if frame.showDuration then
+            local fmt
             frame:SetScript("OnUpdate", function()
                 local remain = duration-(GetTime()-start)
                 if remain < 0 then remain = 0 end
+
+                if remain > threshold then
+                    frame.duration:SetText("")
+                    return
+                end
 
                 -- color
                 if Cell.vars.iconDurationColors then
@@ -27,20 +58,20 @@ local function SetCooldown(frame, start, duration, debuffType, texture, count, r
 
                 -- format
                 if remain > 60 then
-                    remain = string.format("%dm", remain/60)
+                    fmt, remain = "%dm", remain/60
                 else
                     if Cell.vars.iconDurationRoundUp then
-                        remain = math.ceil(remain)
+                        fmt, remain = "%d", ceil(remain)
                     else
                         if remain < Cell.vars.iconDurationDecimal then
-                            remain = string.format("%.1f", remain)
+                            fmt = "%.1f"
                         else
-                            remain = string.format("%d", remain)
+                            fmt = "%d"
                         end
                     end
                 end
 
-                frame.duration:SetText(remain)
+                frame.duration:SetFormattedText(fmt, remain)
 
                 -- modify buff alpha
                 if not debuffType then
@@ -59,11 +90,6 @@ local function SetCooldown(frame, start, duration, debuffType, texture, count, r
                     end
                 end)
             end
-
-            -- init bar values
-            frame.cooldown:SetMinMaxValues(0, duration)
-            frame.cooldown:SetValue(GetTime()-start)
-            frame.cooldown:Show()
         end
     end
 
