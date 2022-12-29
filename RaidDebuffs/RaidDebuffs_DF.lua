@@ -2,7 +2,7 @@
 -- File: RaidDebuffs_DF.lua
 -- Author: enderneko (enderneko-dev@outlook.com)
 -- File Created: 2022/12/05 17:28:20 +0800
--- Last Modified: 2022/12/26 08:41:54 +0800
+-- Last Modified: 2022/12/29 01:08:11 +0800
 --]]
 
 local _, Cell = ...
@@ -336,6 +336,7 @@ local debuffs = {
             -372858, -- 灼热打击
         },
         [2503] = { -- 基拉卡与厄克哈特·风脉
+            381515, -- 风暴猛击
             381526, -- 怒吼火息
             381862, -- 地狱火之核
             384773, -- 烈焰余烬

@@ -1668,6 +1668,11 @@ function F:Revise()
                 })
             end
             Cell.vars.consumables = I:ConvertConsumables(CellDB["consumables"])
+
+            -- 英灵殿
+            if not F:TContains(CellDB["targetedSpellsList"], 193659) then -- 邪炽冲刺
+                tinsert(CellDB["targetedSpellsList"], 193659)
+            end
         end
     end
 
