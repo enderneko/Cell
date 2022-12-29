@@ -607,6 +607,12 @@ L["Changelogs"] = "更新记录"
 L["Click to view recent changelogs"] = "点击查看近期更新记录"
 L["Click to view older changelogs"] = "点击查看远古更新记录"
 L["CHANGELOGS"] = [[
+    <h1>r152-release (Dec 29, 2022, 19:40 GMT+8)</h1>
+    <p>* 更新副本减益。</p>
+    <p>* 更新持续时间文本的相关选项（如果你使用了相关代码片段，需要自行手动更新）。</p>
+    <p>* 修复增益检查。</p>
+    <br/>
+
     <h1>r151-release (Dec 17, 2022, 10:18 GMT+8)</h1>
     <p>* 更新副本减益：化身巨龙牢窟。</p>
     <p>* 修复唤魔师的距离检查。</p>

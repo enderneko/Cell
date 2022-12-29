@@ -1,8 +1,9 @@
-[Full Changelog](https://github.com/enderneko/Cell/compare/r150-release...e7aa99f07d641d62f03383f4a4fef05926951d29)
+[Full Changelog](https://github.com/enderneko/Cell/compare/r151-release...d21fc55d481e190c6ac01ac9e03dfb7852f25dbe)
 
-- Update VotI debuffs
-- Fix range checker for evoker
-- Fix dispellable
-- Update koKR & zhTW
-- Update patrons
-- Remove tips about RaidAlerter
+- Update healthText
+- Update consumables
+- Update indicator spells
+- Update duration text option
+- Update defensives and externals
+- Update raid debuffs
+- Fix buff tracker for evoker

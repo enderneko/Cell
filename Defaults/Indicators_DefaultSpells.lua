@@ -387,7 +387,7 @@ local tankActiveMitigations = {
 
 local tankActiveMitigationNames = {
     -- death knight
-    F:GetClassColorStr("DEATHKNIGHT")..GetSpellInfo(77535).."|r", -- 鲜血护盾
+    -- F:GetClassColorStr("DEATHKNIGHT")..GetSpellInfo(77535).."|r", -- 鲜血护盾
     F:GetClassColorStr("DEATHKNIGHT")..GetSpellInfo(195181).."|r", -- 白骨之盾
 
     -- demon hunter
