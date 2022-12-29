@@ -2,7 +2,7 @@
 -- File: Layout_Defaults_Wrath.lua
 -- Author: enderneko (enderneko-dev@outlook.com)
 -- File Created: 2022/08/21 04:06:04 +0800
--- Last Modified: 2022/12/07 10:12:16 +0800
+-- Last Modified: 2022/12/29 12:05:44 +0800
 --]]
 
 local addonName, Cell = ...
@@ -113,7 +113,7 @@ Cell.defaults.layout = {
             ["font"] = {"Cell ".._G.DEFAULT, 10, "Shadow"},
             ["color"] = {1, 1, 1},
             ["format"] = "percentage",
-            ["hideFull"] = true,
+            ["hideIfEmptyOrFull"] = true,
         }, -- 3
         {
             ["name"] = "Health Thresholds",

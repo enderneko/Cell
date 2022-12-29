@@ -1262,7 +1262,7 @@ if Cell.isRetail then
     indicatorSettings = {
         ["nameText"] = {"enabled", "nameColor", "textWidth", "checkbutton:showGroupNumber", "vehicleNamePosition", "namePosition", "font-noOffset", "frameLevel"},
         ["statusText"] = {"enabled", "statusColors", "statusPosition", "font-noOffset", "frameLevel"},
-        ["healthText"] = {"enabled", "format", "checkbutton:hideFull", "color", "font-noOffset", "position", "frameLevel"},
+        ["healthText"] = {"enabled", "format", "checkbutton:hideIfEmptyOrFull", "color", "font-noOffset", "position", "frameLevel"},
         ["statusIcon"] = {
             -- "|A:dungeonskull:18:18|a "..
             "|TInterface\\LFGFrame\\LFG-Eye:18:18:0:0:512:256:72:120:72:120|t "..
@@ -1300,7 +1300,7 @@ elseif Cell.isWrath then
     indicatorSettings = {
         ["nameText"] = {"enabled", "nameColor", "textWidth", "checkbutton:showGroupNumber", "vehicleNamePosition", "namePosition", "font-noOffset", "frameLevel"},
         ["statusText"] = {"enabled", "statusColors", "statusPosition", "font-noOffset", "frameLevel"},
-        ["healthText"] = {"enabled", "format", "checkbutton:hideFull", "color", "font-noOffset", "position", "frameLevel"},
+        ["healthText"] = {"enabled", "format", "checkbutton:hideIfEmptyOrFull", "color", "font-noOffset", "position", "frameLevel"},
         ["statusIcon"] = {
             -- "|A:dungeonskull:18:18|a "..
             "|TInterface\\LFGFrame\\LFG-Eye:18:18:0:0:512:256:72:120:72:120|t "..

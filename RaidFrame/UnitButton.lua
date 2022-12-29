@@ -129,8 +129,8 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
             -- if t["castByMe"] ~= nil then
             --     indicatorCustoms[t["indicatorName"]] = t["castByMe"]
             -- end
-            if t["hideFull"] ~= nil then
-                indicatorCustoms[t["indicatorName"]] = t["hideFull"]
+            if t["hideIfEmptyOrFull"] ~= nil then
+                indicatorCustoms[t["indicatorName"]] = t["hideIfEmptyOrFull"]
             end
             if t["onlyShowTopGlow"] ~= nil then
                 indicatorCustoms[t["indicatorName"]] = t["onlyShowTopGlow"]
@@ -485,7 +485,7 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                 F:IterateAllUnitButtons(function(b)
                     b.indicators[indicatorName]:ShowGroupNumber(value2)
                 end, true)
-            elseif value == "hideFull" then
+            elseif value == "hideIfEmptyOrFull" then
                 --! 血量文字指示器需要立即被刷新
                 indicatorCustoms[indicatorName] = value2
                 F:IterateAllUnitButtons(function(b)
@@ -1205,7 +1205,7 @@ local function UpdateUnitHealthState(self, diff)
     end
 
     if enabledIndicators["healthText"] and healthMax ~= 0 then
-        if health == healthMax then
+        if health == healthMax or self.state.isDeadOrGhost then
             if not indicatorCustoms["healthText"] then
                 self.indicators.healthText:SetHealth(health, healthMax)
                 self.indicators.healthText:Show()

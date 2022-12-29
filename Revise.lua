@@ -1674,6 +1674,16 @@ function F:Revise()
                 tinsert(CellDB["targetedSpellsList"], 193659)
             end
         end
+
+        for _, layout in pairs(CellDB["layouts"]) do
+            local nameText = Cell.defaults.indicatorIndices.healthText
+            if layout["indicators"][nameText] and layout["indicators"][nameText]["indicatorName"] == "nameText" then
+                if type(layout["indicators"][nameText]["hideFull"]) == "boolean" then
+                    layout["indicators"][nameText]["hideIfEmptyOrFull"] = layout["indicators"][nameText]["hideFull"]
+                    layout["indicators"][nameText]["hideFull"] = nil
+                end
+            end
+        end
     end
 
     CellDB["revise"] = Cell.version
