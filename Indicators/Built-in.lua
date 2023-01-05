@@ -1396,6 +1396,10 @@ function I:CreateAggroBorder(parent)
         left:SetWidth(n)
         right:SetWidth(n)
     end
+
+    function aggroBorder:UpdatePixelPerfect()
+        P:Repoint(aggroBorder)
+    end
 end
 
 -------------------------------------------------
