@@ -1,9 +1,7 @@
-[Full Changelog](https://github.com/enderneko/Cell/compare/r151-release...d21fc55d481e190c6ac01ac9e03dfb7852f25dbe)
+[Full Changelog](https://github.com/enderneko/Cell/compare/r152-release...7d40eab289c8248b48bc1973a8f43e1270f3aa64)
 
-- Update healthText
-- Update consumables
-- Update indicator spells
-- Update duration text option
-- Update defensives and externals
-- Update raid debuffs
-- Fix buff tracker for evoker
+- Try to fix font issue
+- Update debuffs for Ulduar
+- Update targetedSpells
+- Fix pixel perfect for aggroBorder
+- Update patrons
