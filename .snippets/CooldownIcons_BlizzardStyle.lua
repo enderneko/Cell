@@ -11,7 +11,7 @@ local I = Cell.iFuncs
 local P = Cell.pixelPerfectFuncs
 
 local function BarIcon_SetFont(frame, font, size, flags, xOffset, yOffset)
-    if not strfind(strlower(font), ".ttf") then font = F:GetFont(font) end
+    font = F:GetFont(font)
 
     if flags == "Shadow" then
         frame.stack:SetFont(font, size, "")
