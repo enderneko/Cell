@@ -1759,6 +1759,26 @@ function F:Revise()
         end
     end
 
+    -- r154-release
+    if CellDB["revise"] and dbRevision < 154 then
+        if Cell.isRetail then
+            -- 诺库德阻击战
+            if not F:TContains(CellDB["targetedSpellsList"], 376644) then -- 钢铁之矛
+                tinsert(CellDB["targetedSpellsList"], 376644)
+            end
+            if not F:TContains(CellDB["targetedSpellsList"], 376865) then -- 静电之矛
+                tinsert(CellDB["targetedSpellsList"], 376865)
+            end
+            if not F:TContains(CellDB["targetedSpellsList"], 382836) then -- 残杀
+                tinsert(CellDB["targetedSpellsList"], 382836)
+            end
+            -- 英灵殿
+            if not F:TContains(CellDB["targetedSpellsList"], 196838) then -- 血之气息
+                tinsert(CellDB["targetedSpellsList"], 196838)
+            end
+        end
+    end
+
     CellDB["revise"] = Cell.version
     if Cell.isWrath then
         CellCharacterDB["revise"] = Cell.version

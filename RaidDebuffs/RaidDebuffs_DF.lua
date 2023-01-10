@@ -2,7 +2,7 @@
 -- File: RaidDebuffs_DF.lua
 -- Author: enderneko (enderneko-dev@outlook.com)
 -- File Created: 2022/12/05 17:28:20 +0800
--- Last Modified: 2022/12/29 01:08:11 +0800
+-- Last Modified: 2023/01/06 21:35:14 +0800
 --]]
 
 local _, Cell = ...
@@ -116,6 +116,7 @@ local debuffs = {
             -375458, -- 寒冰怒气
         },
         [2499] = { -- 莱萨杰丝，噬雷之龙
+            394583, -- 分散电荷
             381615, -- 静电充能
             399713, -- 磁力充能
             377467, -- 积雷充能
