@@ -165,7 +165,7 @@ end
 local function CreatePatronsPane()
     -- pane
     local patronsPane = Cell:CreateTitledPane(aboutTab, "", 100, 100)
-    patronsPane:SetFrameStrata("LOW")
+    -- patronsPane:SetFrameStrata("LOW")
     patronsPane:SetPoint("TOPLEFT", aboutTab, "TOPRIGHT", 6, -5)
     patronsPane:SetPoint("BOTTOMLEFT", aboutTab, "BOTTOMRIGHT", 6, 5)
     patronsPane:Hide()

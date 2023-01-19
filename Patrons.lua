@@ -31,9 +31,11 @@ local patrons = {
     {"伊莉丝翠的眷顾 (爱发电)", "yilisicuidejuangu"},
     {"秋末旷夜-凤凰之神 (CN)", "qiumokuangye"},
     {"批歪 (爱发电)", "piwai"},
-    {"ZzZ (爱发电)", "zzz"},
+    {"曾經活過-憤怒使者 (TW)", "cengjinghuoguo"},
     {"音速豆奶-白银之手 (CN)", "yinsudounai"},
     {"月神之韧 (爱发电)", "yueshenzhiren"},
+    {"Si (爱发电)", "si"},
+    {"晓文 (爱发电)", "xiaowen"},
 }
 
 -- sort
