@@ -2,7 +2,7 @@
 -- File: UnitButton_Wrath.lua
 -- Author: enderneko (enderneko-dev@outlook.com)
 -- File Created: 2022/08/20 19:44:26 +0800
--- Last Modified: 2022/12/29 12:08:45 +0800
+-- Last Modified: 2023/01/20 00:15:20 +0800
 --]]
 
 local _, Cell = ...
@@ -642,16 +642,18 @@ local function UnitButton_UpdateDebuffs(self)
             break
         end
         
+        local auraInstanceID = (source or "") .. spellId
+        
         -- if duration and duration ~= 0 and duration <= 600 then
         if duration then
             if Cell.vars.iconAnimation == "duration" then
                 -- print(name, expirationTime-duration+.1>=GetTime()) -- NOTE: startTime ≈ now
                 -- justApplied = abs(expirationTime-GetTime()-duration) <= 0.1
-                justApplied = debuffs_cache[unit][spellId] and (debuffs_cache[unit][spellId] < expirationTime) or false
-                countIncreased = debuffs_cache_count[unit][spellId] and (count > debuffs_cache_count[unit][spellId]) or false
+                justApplied = debuffs_cache[unit][auraInstanceID] and (debuffs_cache[unit][auraInstanceID] < expirationTime) or false
+                countIncreased = debuffs_cache_count[unit][auraInstanceID] and (count > debuffs_cache_count[unit][auraInstanceID]) or false
                 refreshing = justApplied or countIncreased
             elseif Cell.vars.iconAnimation == "stack" then
-                refreshing = debuffs_cache_count[unit][spellId] and (count > debuffs_cache_count[unit][spellId]) or false
+                refreshing = debuffs_cache_count[unit][auraInstanceID] and (count > debuffs_cache_count[unit][auraInstanceID]) or false
             else
                 refreshing = false
             end
@@ -698,9 +700,9 @@ local function UnitButton_UpdateDebuffs(self)
                 end
             end
 
-            debuffs_cache[unit][spellId] = expirationTime
-            debuffs_cache_count[unit][spellId] = count
-            debuffs_current[unit][spellId] = i
+            debuffs_cache[unit][auraInstanceID] = expirationTime
+            debuffs_cache_count[unit][auraInstanceID] = count
+            debuffs_current[unit][auraInstanceID] = i
 
             if enabledIndicators["dispels"] and debuffType and debuffType ~= "" then
                 if indicatorCustoms["dispels"] then -- dispellableByMe
@@ -835,11 +837,11 @@ local function UnitButton_UpdateDebuffs(self)
     I:ShowCustomIndicators(self, "debuff")
     
     -- update debuffs_cache
-    for spellId, expirationTime in pairs(debuffs_cache[unit]) do
+    for auraInstanceID, expirationTime in pairs(debuffs_cache[unit]) do
         -- lost or expired
-        if not debuffs_current[unit][spellId] or (expirationTime ~= 0 and GetTime() >= expirationTime) then -- expirationTime == 0: no duration 
-            debuffs_cache[unit][spellId] = nil
-            debuffs_cache_count[unit][spellId] = nil
+        if not debuffs_current[unit][auraInstanceID] or (expirationTime ~= 0 and GetTime() >= expirationTime) then -- expirationTime == 0: no duration 
+            debuffs_cache[unit][auraInstanceID] = nil
+            debuffs_cache_count[unit][auraInstanceID] = nil
         end
     end
 
@@ -873,15 +875,17 @@ local function UnitButton_UpdateBuffs(self)
         if not name then
             break
         end
+
+        local auraInstanceID = (source or "") .. spellId
         
         if duration then
             if Cell.vars.iconAnimation == "duration" then
                 -- justApplied = abs(expirationTime-GetTime()-duration) <= 0.1
-                justApplied = buffs_cache[unit][spellId] and (buffs_cache[unit][spellId] < expirationTime) or false
-                countIncreased = buffs_cache_count[unit][spellId] and (count > buffs_cache_count[unit][spellId]) or false
+                justApplied = buffs_cache[unit][auraInstanceID] and (buffs_cache[unit][auraInstanceID] < expirationTime) or false
+                countIncreased = buffs_cache_count[unit][auraInstanceID] and (count > buffs_cache_count[unit][auraInstanceID]) or false
                 refreshing = justApplied or countIncreased
             elseif Cell.vars.iconAnimation == "stack" then
-                refreshing = buffs_cache_count[unit][spellId] and (count > buffs_cache_count[unit][spellId]) or false
+                refreshing = buffs_cache_count[unit][auraInstanceID] and (count > buffs_cache_count[unit][auraInstanceID]) or false
             else
                 refreshing = false
             end
@@ -927,9 +931,9 @@ local function UnitButton_UpdateBuffs(self)
                 self.state.BGFlag = "horde"
             end
             
-            buffs_cache[unit][spellId] = expirationTime
-            buffs_cache_count[unit][spellId] = count
-            buffs_current[unit][spellId] = i
+            buffs_cache[unit][auraInstanceID] = expirationTime
+            buffs_cache_count[unit][auraInstanceID] = count
+            buffs_current[unit][auraInstanceID] = i
         end
     end
 
@@ -964,11 +968,11 @@ local function UnitButton_UpdateBuffs(self)
     end
     
     -- update buffs_cache
-    for spellId, expirationTime in pairs(buffs_cache[unit]) do
+    for auraInstanceID, expirationTime in pairs(buffs_cache[unit]) do
         -- lost or expired
-        if not buffs_current[unit][spellId] or (expirationTime ~= 0 and GetTime() >= expirationTime) then
-            buffs_cache[unit][spellId] = nil
-            buffs_cache_count[unit][spellId] = nil
+        if not buffs_current[unit][auraInstanceID] or (expirationTime ~= 0 and GetTime() >= expirationTime) then
+            buffs_cache[unit][auraInstanceID] = nil
+            buffs_cache_count[unit][auraInstanceID] = nil
         end
     end
     wipe(buffs_current[unit])
