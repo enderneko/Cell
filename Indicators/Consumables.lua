@@ -94,18 +94,10 @@ local function CreateAnimationGroup_TypeA(parent)
     function ag:ShowUp(r, g, b)
         if orientation == "horizontal" then
             t1:SetOffset(parent:GetWidth(), 0)
-            if Cell.isRetail then
-                tex:SetGradient("HORIZONTAL", CreateColor(r, g, b, 0), CreateColor(r, g, b, 1))
-            else
-                tex:SetGradientAlpha("HORIZONTAL", r, g, b, 0, r, g, b, 1)
-            end
+            tex:SetGradient("HORIZONTAL", CreateColor(r, g, b, 0), CreateColor(r, g, b, 1))
         else
             t1:SetOffset(0, parent:GetHeight())
-            if Cell.isRetail then
-                tex:SetGradient("VERTICAL", CreateColor(r, g, b, 0), CreateColor(r, g, b, 1))
-            else
-                tex:SetGradientAlpha("VERTICAL", r, g, b, 0, r, g, b, 1)
-            end
+            tex:SetGradient("VERTICAL", CreateColor(r, g, b, 0), CreateColor(r, g, b, 1))
         end
 
         if ag:IsPlaying() then
@@ -153,11 +145,7 @@ local function CreateAnimationGroup_TypeB(parent)
     local tex = f:CreateTexture(nil, "ARTWORK")
     tex:SetPoint("BOTTOMRIGHT")
     tex:SetWidth(WIDTH)
-    if Cell.isRetail then
-        tex:SetRotation(45 * math.pi / 180, CreateVector2D(1, 0))
-    else
-        tex:SetRotation(45 * math.pi / 180, 1, 0)
-    end
+    tex:SetRotation(45 * math.pi / 180, CreateVector2D(1, 0))
 
     tex:AddMaskTexture(parent.mask)
 
@@ -277,11 +265,7 @@ local function CreateAnimationGroup_TypeC(parent, subType)
     function ag:ShowUp(r, g, b)
         f:SetWidth(parent:GetParent():GetHeight()/2)
         t1:SetOffset(0, parent:GetHeight()/2)
-        if Cell.isRetail then
-            tex:SetGradient("VERTICAL", CreateColor(r, g, b, 0), CreateColor(r, g, b, 1))
-        else
-            tex:SetGradientAlpha("VERTICAL", r, g, b, 0, r, g, b, 1)
-        end
+        tex:SetGradient("VERTICAL", CreateColor(r, g, b, 0), CreateColor(r, g, b, 1))
 
         if ag:IsPlaying() then
             ag:Restart()
@@ -334,13 +318,8 @@ local function CreateAnimationGroup_TypeD(parent)
 
     local s1 = ag:CreateAnimation("Scale")
     s1.duration = 0.5
-    if Cell.isRetail then
-        s1:SetScaleFrom(0,0)
-        s1:SetScaleTo(1,1)
-    else
-        s1:SetFromScale(0,0)
-        s1:SetToScale(1,1)
-    end
+    s1:SetScaleFrom(0,0)
+    s1:SetScaleTo(1,1)
     s1:SetOrder(1)
     s1:SetDuration(s1.duration)
 

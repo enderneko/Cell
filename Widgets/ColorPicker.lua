@@ -37,11 +37,7 @@ local function UpdateColor_HSBA(h, s, b, a, updateBrightness, updatePickers)
 
     if updateBrightness then
         local _r, _g, _b = F:ConvertHSBToRGB(h, s, 1)
-        if addon.isRetail then
-            brightness.tex:SetGradient("VERTICAL", CreateColor(0, 0, 0, 1), CreateColor(_r, _g, _b, 1))
-        else
-            brightness.tex:SetGradient("VERTICAL", 0, 0, 0, _r, _g, _b)
-        end
+        brightness.tex:SetGradient("VERTICAL", CreateColor(0, 0, 0, 1), CreateColor(_r, _g, _b, 1))
     end
 
     if updatePickers then
@@ -226,11 +222,7 @@ local function CreateColorPicker()
         hueSaturation[i]:SetTexture("Interface\\Buttons\\WHITE8x8")
         -- hueSaturation[i]:SetColorTexture(1, 1, 1, 1)
         -- hueSaturation[i]:SetVertexColor(1, 1, 1, 1)
-        if addon.isRetail then
-            hueSaturation[i]:SetGradient("HORIZONTAL", CreateColor(color[i].r, color[i].g, color[i].b, 1), CreateColor(color[i+1].r, color[i+1].g, color[i+1].b, 1))
-        else
-            hueSaturation[i]:SetGradient("HORIZONTAL", color[i].r, color[i].g, color[i].b, color[i+1].r, color[i+1].g, color[i+1].b)
-        end
+        hueSaturation[i]:SetGradient("HORIZONTAL", CreateColor(color[i].r, color[i].g, color[i].b, 1), CreateColor(color[i+1].r, color[i+1].g, color[i+1].b, 1))
 
         -- width
         hueSaturation[i]:SetWidth(sectionSize)
@@ -248,11 +240,7 @@ local function CreateColorPicker()
     local saturation = hueSaturation:CreateTexture(name.."HS_Saturation", "ARTWORK", nil, 1)
     saturation:SetBlendMode("BLEND")
     saturation:SetTexture("Interface\\Buttons\\WHITE8x8")
-    if addon.isRetail then
-        saturation:SetGradient("VERTICAL", CreateColor(1, 1, 1, 1), CreateColor(1, 1, 1, 0))
-    else
-        saturation:SetGradientAlpha("VERTICAL", 1, 1, 1, 1, 1, 1, 1, 0)
-    end
+    saturation:SetGradient("VERTICAL", CreateColor(1, 1, 1, 1), CreateColor(1, 1, 1, 0))
     saturation:SetAllPoints(hueSaturation)
 
     --------------------------------------------------
@@ -328,11 +316,7 @@ local function CreateColorPicker()
     alpha.tex:SetPoint("TOPLEFT", P:Scale(1), P:Scale(-1))
     alpha.tex:SetPoint("BOTTOMRIGHT", P:Scale(-1), P:Scale(1))
     alpha.tex:SetTexture("Interface\\Buttons\\WHITE8x8")
-    if addon.isRetail then
-        alpha.tex:SetGradient("VERTICAL", CreateColor(0, 0, 0, 1), CreateColor(1, 1, 1, 1))
-    else
-        alpha.tex:SetGradient("VERTICAL", 0, 0, 0, 1, 1, 1)
-    end
+    alpha.tex:SetGradient("VERTICAL", CreateColor(0, 0, 0, 1), CreateColor(1, 1, 1, 1))
 
     alpha.thumb1 = alpha:CreateTexture(nil, "ARTWORK")
     P:Size(alpha.thumb1, 17, 1)

@@ -73,14 +73,8 @@ function I:CreateAoEHealing(parent)
         aoeHealing:Hide()
     end)
 
-    if Cell.isRetail then
-        function aoeHealing:SetColor(r, g, b)
-            aoeHealing.tex:SetGradient("VERTICAL", CreateColor(r, g, b, 0), CreateColor(r, g, b, 0.77))
-        end
-    else
-        function aoeHealing:SetColor(r, g, b)
-            aoeHealing.tex:SetGradientAlpha("VERTICAL", r, g, b, 0, r, g, b, 0.77)
-        end
+    function aoeHealing:SetColor(r, g, b)
+        aoeHealing.tex:SetGradient("VERTICAL", CreateColor(r, g, b, 0), CreateColor(r, g, b, 0.77))
     end
 
     function aoeHealing:ShowUp()
