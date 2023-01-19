@@ -1,7 +1,8 @@
-[Full Changelog](https://github.com/enderneko/Cell/compare/r152-release...7d40eab289c8248b48bc1973a8f43e1270f3aa64)
+[Full Changelog](https://github.com/enderneko/Cell/compare/r153-release...76ddd61b2decf63fde22a9f136ad69077a7e7718)
 
-- Try to fix font issue
-- Update debuffs for Ulduar
-- Update targetedSpells
-- Fix pixel perfect for aggroBorder
+- Fix missing healthThresholds indicator
+- Fix click-castings
+- Fix battle res progress bar
+- Update targeted spells
+- Update zhTW
 - Update patrons

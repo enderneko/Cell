@@ -607,6 +607,11 @@ L["Changelogs"] = "更新记录"
 L["Click to view recent changelogs"] = "点击查看近期更新记录"
 L["Click to view older changelogs"] = "点击查看远古更新记录"
 L["CHANGELOGS"] = [[
+    <h1>r154-release (Jan 19, 2023, 12:34 GMT+8)</h1>
+    <p>* 修复几处小问题。</p>
+    <p>* 适配3.4.1。</p>
+    <br/>
+    
     <h1>r153-release (Jan 6, 2023, 02:37 GMT+8)</h1>
     <p>* 尝试修复：字体和仇恨(边框)指示器。</p>
     <p>* 更新被法术选中指示器的默认法术列表。</p>
