@@ -594,7 +594,11 @@ local function ShowBindingMenu(index, b)
     bindingButton:SetFunc(function(modifier, key)
         F:Debug(modifier, key)
         local modifierDisplay = modifiersDisplay[F:GetIndex(modifiers, modifier)]
-        b.keyGrid:SetText(modifierDisplay..L[key])
+        if strlen(key) == 1 then
+            b.keyGrid:SetText(modifierDisplay..key)
+        else
+            b.keyGrid:SetText(modifierDisplay..L[key])
+        end
 
         changed[index] = changed[index] or {b}
         -- check modifier
