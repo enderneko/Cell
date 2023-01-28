@@ -545,13 +545,19 @@ function eventFrame:PLAYER_ENTERING_WORLD()
         PreUpdateLayout()
         inInstance = true
 
-        -- NOTE: delayed check mythic raid
+        -- NOTE: delayed raid difficulty check
         if Cell.vars.groupType == "raid" and iType == "raid" then
             C_Timer.After(0.5, function()
-                local difficultyID, difficultyName = select(3, GetInstanceInfo()) --! can't get difficultyID, difficultyName immediately after entering an instance
-                if difficultyID == 3 or difficultyID == 5 then
+                --! can't get difficultyID, difficultyName immediately after entering an instance
+                local _, _, difficultyID, difficultyName, maxPlayers = GetInstanceInfo()
+                -- if difficultyID == 3 or difficultyID == 5 or difficultyID == 175 or difficultyID == 193 then
+                --     Cell.vars.raidType = "raid10"
+                -- elseif difficultyID == 4 or difficultyID == 6 or difficultyID == 176 or difficultyID == 194 then
+                --     Cell.vars.raidType = "raid25"
+                -- end
+                if maxPlayers == 10 then
                     Cell.vars.raidType = "raid10"
-                elseif difficultyID == 4 or difficultyID == 6 then
+                elseif maxPlayers == 25 then
                     Cell.vars.raidType = "raid25"
                 end
                 if Cell.vars.raidType then
