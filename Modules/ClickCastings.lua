@@ -437,14 +437,14 @@ local function ApplyClickCastings(b)
             if (alwaysTargeting == "left" and bindKey == "type1") or alwaysTargeting == "any" then
                 b:SetAttribute(bindKey, "macro")
                 local attr = string.gsub(bindKey, "type", "macrotext")
-                b:SetAttribute(attr, "/tar [@cell]\n/cast [@cell,help"..condition.."] "..t[3])
+                b:SetAttribute(attr, "/tar [@cell]\n/cast [@cell"..condition.."] "..t[3])
                 UpdatePlaceholder(b, attr)
             else
                 -- local attr = string.gsub(bindKey, "type", "spell")
                 -- b:SetAttribute(attr, t[3])
                 b:SetAttribute(bindKey, "macro")
                 local attr = string.gsub(bindKey, "type", "macrotext")
-                b:SetAttribute(attr, "/cast [@cell,help"..condition.."] "..t[3])
+                b:SetAttribute(attr, "/cast [@cell"..condition.."] "..t[3])
                 UpdatePlaceholder(b, attr)
             end
         elseif t[2] == "macro" then
