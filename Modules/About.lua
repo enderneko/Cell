@@ -286,7 +286,7 @@ local function CreateBugReportPane()
     text:SetPoint("RIGHT", -5, 0)
     text:SetText("|cff777777CN|r")
     
-    local cnBugReportEB2 = Cell:CreateEditBox(bugReportPane, 204, 20)
+    local cnBugReportEB2 = Cell:CreateEditBox(bugReportPane, 412, 20)
     cnBugReportEB2:SetPoint("TOPLEFT", cnBugReportEB, "BOTTOMLEFT", 0, -5)
     cnBugReportEB2:SetText("https://bbs.nga.cn/read.php?tid=23488341")
     cnBugReportEB2:SetScript("OnTextChanged", function(self, userChanged)
@@ -300,19 +300,19 @@ local function CreateBugReportPane()
     text2:SetPoint("RIGHT", -5, 0)
     text2:SetText("|cff777777CN|r")
 
-    local cnBugReportEB3 = Cell:CreateEditBox(bugReportPane, 203, 20)
-    cnBugReportEB3:SetPoint("TOPLEFT", cnBugReportEB2, "TOPRIGHT", 5, 0)
-    cnBugReportEB3:SetText("https://bbs.nga.cn/read.php?tid=32921170")
-    cnBugReportEB3:SetScript("OnTextChanged", function(self, userChanged)
-        if userChanged then
-            cnBugReportEB3:SetText("https://bbs.nga.cn/read.php?tid=32921170")
-            cnBugReportEB3:HighlightText()
-        end
-    end)
+    -- local cnBugReportEB3 = Cell:CreateEditBox(bugReportPane, 203, 20)
+    -- cnBugReportEB3:SetPoint("TOPLEFT", cnBugReportEB2, "TOPRIGHT", 5, 0)
+    -- cnBugReportEB3:SetText("https://bbs.nga.cn/read.php?tid=32921170")
+    -- cnBugReportEB3:SetScript("OnTextChanged", function(self, userChanged)
+    --     if userChanged then
+    --         cnBugReportEB3:SetText("https://bbs.nga.cn/read.php?tid=32921170")
+    --         cnBugReportEB3:HighlightText()
+    --     end
+    -- end)
         
-    local text3 = cnBugReportEB3:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
-    text3:SetPoint("RIGHT", -5, 0)
-    text3:SetText("|cff777777CN|r")
+    -- local text3 = cnBugReportEB3:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
+    -- text3:SetPoint("RIGHT", -5, 0)
+    -- text3:SetText("|cff777777CN|r")
 end
 
 -------------------------------------------------
