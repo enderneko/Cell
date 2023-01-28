@@ -242,9 +242,11 @@ else
                 local vehicle
                 if unit == "player" then
                     vehicle = "pet"
-                elseif strfind(unit, "^party") then
+                elseif strfind(unit, "^party%d+$") then
+                    -- print("PARTY")
                     vehicle = string.gsub(unit, "party", "partypet")
-                elseif strfind(unit, "^raid") then
+                elseif strfind(unit, "^raid%d+$") then
+                    -- print("RAID")
                     vehicle = string.gsub(unit, "raid", "raidpet")
                 end
                 if vehicle then
@@ -397,6 +399,15 @@ local function ClearClickCastings(b)
     end
 end
 
+--! store attribute keys, update them in _onenter
+local function UpdatePlaceholder(b, attr)
+    if not b:GetAttribute("cell") then
+        b:SetAttribute("cell", attr)
+    else
+        b:SetAttribute("cell", b:GetAttribute("cell").."|"..attr)
+    end
+end
+
 local function ApplyClickCastings(b)
     for i, t in pairs(clickCastingTable) do
         local bindKey = t[1]
@@ -406,6 +417,11 @@ local function ApplyClickCastings(b)
 
         if t[2] == "togglemenu_nocombat" then
             b:SetAttribute("menu", bindKey)
+        elseif Cell.isWrath and t[2] == "target" then --! solve SetAttribute("type*", "target") bug produced in 3.4.1
+            b:SetAttribute(bindKey, "macro")
+            local attr = string.gsub(bindKey, "type", "macrotext")
+            b:SetAttribute(attr, "/tar [@cell]")
+            UpdatePlaceholder(b, attr)
         else
             b:SetAttribute(bindKey, t[2])
         end
@@ -422,24 +438,14 @@ local function ApplyClickCastings(b)
                 b:SetAttribute(bindKey, "macro")
                 local attr = string.gsub(bindKey, "type", "macrotext")
                 b:SetAttribute(attr, "/tar [@cell]\n/cast [@cell,help"..condition.."] "..t[3])
-                --! store attribute keys for update
-                if not b:GetAttribute("cell") then
-                    b:SetAttribute("cell", attr)
-                else
-                    b:SetAttribute("cell", b:GetAttribute("cell").."|"..attr)
-                end
+                UpdatePlaceholder(b, attr)
             else
                 -- local attr = string.gsub(bindKey, "type", "spell")
                 -- b:SetAttribute(attr, t[3])
                 b:SetAttribute(bindKey, "macro")
                 local attr = string.gsub(bindKey, "type", "macrotext")
                 b:SetAttribute(attr, "/cast [@cell,help"..condition.."] "..t[3])
-                --! store attribute keys for update
-                if not b:GetAttribute("cell") then
-                    b:SetAttribute("cell", attr)
-                else
-                    b:SetAttribute("cell", b:GetAttribute("cell").."|"..attr)
-                end
+                UpdatePlaceholder(b, attr)
             end
         elseif t[2] == "macro" then
             local attr = string.gsub(bindKey, "type", "macrotext")
