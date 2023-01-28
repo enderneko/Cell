@@ -68,6 +68,11 @@ select(2, ...).L = setmetatable({
     ["SNIPPETS_TIPS"] = "[Double-Click] to rename. [Shift-Click] to delete. All checked snippets will be automatically invoked at the end of Cell initialization process (in ADDON_LOADED event).",
 
     ["CHANGELOGS"] = [[
+        <h1>r155-release (Jan 28, 2023, 10:30 GMT+8)</h1>
+        <p>* Fixed click-castings on Wrath.</p>
+        <p>* Fixed aura refreshing animation on Wrath.</p>
+        <br/>
+
         <h1>r154-release (Jan 19, 2023, 12:34 GMT+8)</h1>
         <p>* Bug fixes.</p>
         <p>* Update for 3.4.1.</p>

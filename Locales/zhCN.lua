@@ -607,6 +607,12 @@ L["Changelogs"] = "更新记录"
 L["Click to view recent changelogs"] = "点击查看近期更新记录"
 L["Click to view older changelogs"] = "点击查看远古更新记录"
 L["CHANGELOGS"] = [[
+    <h1>r155-release (Jan 28, 2023, 10:30 GMT+8)</h1>
+    <p>* 修复怀旧服的点击施法问题。</p>
+    <p>* 修复怀旧服的增减益图标刷新动画的问题。</p>
+    <p>! 国服没了，本人也没计划玩外服，因此，之后的开发与测试均在PTR上完成，且并非所有场景都能测试到，有问题请在KOOK上反馈（在国服重开之前，NGA的发布帖都没有更新的计划）。</p>
+    <br/>
+
     <h1>r154-release (Jan 19, 2023, 12:34 GMT+8)</h1>
     <p>* 修复几处小问题。</p>
     <p>* 适配3.4.1。</p>

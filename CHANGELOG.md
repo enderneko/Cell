@@ -1,8 +1,6 @@
-[Full Changelog](https://github.com/enderneko/Cell/compare/r153-release...76ddd61b2decf63fde22a9f136ad69077a7e7718)
+[Full Changelog](https://github.com/enderneko/Cell/compare/r154-release...6308bec6d551a5088dd4d41dbb709d82b6a0c31a)
 
-- Fix missing healthThresholds indicator
-- Fix click-castings
-- Fix battle res progress bar
-- Update targeted spells
-- Update zhTW
+- Remove "help" condition in click-castings
+- Fix aura refreshing animation on wrath
+- Fix vehicle targeting issue on wrath
 - Update patrons
