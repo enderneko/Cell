@@ -177,72 +177,102 @@ end
 -------------------------------------------------
 -- externalCooldowns
 -------------------------------------------------
-local externalNames = {
-    -- death knight
-    51052, -- 反魔法领域
+local externals = { -- true: track by name, false: track by id
+    ["DEATHKNIGHT"] = {
+        [51052] = true, -- 反魔法领域
+    },
 
-    -- demon hunter
-    196718, -- 黑暗
+    ["DEMONHUNTER"] = {
+        [196718] = true, -- 黑暗
+    },
 
-    -- druid
-    102342, -- 铁木树皮
+    ["DRUID"] = {
+        [102342] = true, -- 铁木树皮
+    },
 
-    -- evoker
-    374227, -- 微风
-    357170, -- 时间膨胀
-    378441, -- 时间停止
+    ["EVOKER"] = {
+        [374227] = true, -- 微风
+        [357170] = true, -- 时间膨胀
+        [378441] = true, -- 时间停止
+    },
 
-    -- mage
-    198158, -- 群体隐形
+    ["MAGE"] = {
+        [198158] = true, -- 群体隐形
+    },
 
-    -- monk
-    116849, -- 作茧缚命
-    202248, -- 偏转冥想
+    ["MONK"] = {
+        [116849] = true, -- 作茧缚命
+        [202248] = true, -- 偏转冥想
+    },
 
-    -- paladin
-    1022, -- 保护祝福
-    6940, -- 牺牲祝福
-    204018, -- 破咒祝福
-    31821, -- 光环掌握
-    210256, -- 庇护祝福
-    -- 211210, -- 提尔的保护
-    -- 216328, -- 光之优雅
+    ["PALADIN"] = {
+        [1022] = true, -- 保护祝福
+        [6940] = true, -- 牺牲祝福
+        [204018] = true, -- 破咒祝福
+        [31821] = true, -- 光环掌握
+        [210256] = true, -- 庇护祝福
+        [228050] = false, -- 圣盾术 (被遗忘的女王护卫)
+        -- [211210] = true, -- 提尔的保护
+        -- [216328] = true, -- 光之优雅
+    },
 
-    -- priest
-    33206, -- 痛苦压制
-    47788, -- 守护之魂
-    62618, -- 真言术：障
-    213610, -- 神圣守卫
-    197268, -- 希望之光
+    ["PRIEST"] = {
+        [33206] = true, -- 痛苦压制
+        [47788] = true, -- 守护之魂
+        [62618] = true, -- 真言术：障
+        [213610] = true, -- 神圣守卫
+        [197268] = true, -- 希望之光
+    },
 
-    -- rogue
-    114018, -- 潜伏帷幕
+    ["ROGUE"] = {
+        [114018] = true, -- 潜伏帷幕
+    },
 
-    -- shaman
-    98008, -- 灵魂链接图腾
-    201633, -- 大地之墙图腾
-    8178, -- 根基图腾
-    383018, -- 石肤图腾
+    ["SHAMAN"] = {
+        [98008] = true, -- 灵魂链接图腾
+        [201633] = true, -- 大地之墙图腾
+        [8178] = true, -- 根基图腾
+        [383018] = true, -- 石肤图腾
+    },
 
-    -- warrior
-    97462, -- 集结呐喊
-    3411, -- 援护
-    213871, -- 护卫
+    ["WARRIOR"] = {
+        [97462] = true, -- 集结呐喊
+        [3411] = true, -- 援护
+        [213871] = true, -- 护卫
+    },
 }
-externalNames = F:ConvertSpellTable(externalNames, true)
 
-local externalIDs = {
-    228050, -- 圣盾术 (被遗忘的女王护卫)
-}
+function I:GetExternals()
+    return externals
+end
 
--- customs
-local customExternalNames = {}
-function I:UpdateCustomExternals(t)
-    wipe(customExternalNames)
-    for _, id in pairs(t) do
+local builtInExternals = {}
+local customExternals = {}
+
+function I:UpdateExternals(t)
+    -- user disabled
+    wipe(builtInExternals)
+    for class, spells in pairs(externals) do
+        for id, trackByName in pairs(spells) do
+            if not t["disabled"][id] then -- not disabled
+                if trackByName then
+                    local name = GetSpellInfo(id)
+                    if name then
+                        builtInExternals[name] = true
+                    end
+                else
+                    builtInExternals[id] = true
+                end
+            end
+        end
+    end
+
+    -- user created
+    wipe(customExternals)
+    for _, id in pairs(t["custom"]) do
         local name = GetSpellInfo(id)
         if name then
-            customExternalNames[name] = true
+            customExternals[name] = true
         end
     end
 end
@@ -258,107 +288,139 @@ function I:IsExternalCooldown(name, id, source, target)
             return true
         end
     else
-        return externalNames[name] or externalIDs[id] or customExternalNames[name]
+        return builtInExternals[name] or builtInExternals[id] or customExternals[name]
     end
 end
 
 -------------------------------------------------
 -- defensiveCooldowns
 -------------------------------------------------
-local defensiveNames = {
-    -- death knight
-    48707, -- 反魔法护罩
-    48792, -- 冰封之韧
-    49028, -- 符文刃舞
-    55233, -- 吸血鬼之血
-    49039, -- 巫妖之躯
-    194679, -- 符文分流
+local defensives = { -- true: track by name, false: track by id
+    ["DEATHKNIGHT"] = {
+        [48707] = true, -- 反魔法护罩
+        [48792] = true, -- 冰封之韧
+        [49028] = true, -- 符文刃舞
+        [55233] = true, -- 吸血鬼之血
+        [49039] = true, -- 巫妖之躯
+        [194679] = true, -- 符文分流
+    },
 
-    -- demon hunter
-    196555, -- 虚空行走
-    198589, -- 疾影
-    187827, -- 恶魔变形
+    ["DEMONHUNTER"] = {
+        [196555] = true, -- 虚空行走
+        [198589] = true, -- 疾影
+        [187827] = true, -- 恶魔变形
+    },
 
-    -- druid
-    22812, -- 树皮术
-    61336, -- 生存本能
-    200851, -- 沉睡者之怒
-    -- 102558, -- 化身：乌索克的守护者
-    -- 22842, -- 狂暴回复
+    ["DRUID"] = {
+        [22812] = true, -- 树皮术
+        [61336] = true, -- 生存本能
+        [200851] = true, -- 沉睡者之怒
+        -- [102558] = true, -- 化身：乌索克的守护者
+        -- [22842] = true, -- 狂暴回复
+    },
 
-    -- evoker
-    363916, -- 黑曜鳞片
-    374348, -- 新生光焰
-    370960, -- 翡翠交融
+    ["EVOKER"] = {
+        [363916] = true, -- 黑曜鳞片
+        [374348] = true, -- 新生光焰
+        [370960] = true, -- 翡翠交融
+    },
 
-    -- hunter
-    186265, -- 灵龟守护
-    264735, -- 优胜劣汰
+    ["HUNTER"] = {
+        [186265] = true, -- 灵龟守护
+        [264735] = true, -- 优胜劣汰
+    },
 
-    -- mage
-    45438, -- 寒冰屏障
+    ["MAGE"] = {
+        [45438] = true, -- 寒冰屏障
+        [113862] = false, -- Greater Invisibility - 强化隐形术
+    },
 
-    -- monk
-    115176, -- 禅悟冥想
-    115203, -- 壮胆酒
-    122278, -- 躯不坏
-    122783, -- 散魔功
-    125174, -- 业报之触
+    ["MONK"] = {
+        [115176] = true, -- 禅悟冥想
+        [115203] = true, -- 壮胆酒
+        [122278] = true, -- 躯不坏
+        [122783] = true, -- 散魔功
+        [125174] = true, -- 业报之触
+    },
 
-    -- paladin
-    498, -- 圣佑术
-    642, -- 圣盾术
-    31850, -- 炽热防御者
-    212641, -- 远古列王守卫
-    205191, -- 以眼还眼
+    ["PALADIN"] = {
+        [498] = true, -- 圣佑术
+        [642] = true, -- 圣盾术
+        [31850] = true, -- 炽热防御者
+        [212641] = true, -- 远古列王守卫
+        [205191] = true, -- 以眼还眼
+    },
 
-    -- priest
-    47585, -- 消散
-    19236, -- 绝望祷言
-    586, -- 渐隐术 -- TODO: 373446 通透影像
-    193065, -- 防护圣光
-    27827, -- 救赎之魂
+    ["PRIEST"] = {
+        [47585] = true, -- 消散
+        [19236] = true, -- 绝望祷言
+        [586] = true, -- 渐隐术 -- TODO: 373446 通透影像
+        [193065] = true, -- 防护圣光
+        [27827] = true, -- 救赎之魂
+    },
 
-    -- rogue
-    1966, -- 佯攻
-    5277, -- 闪避
-    31224, -- 暗影斗篷
+    ["ROGUE"] = {
+        [1966] = true, -- 佯攻
+        [5277] = true, -- 闪避
+        [31224] = true, -- 暗影斗篷
+    },
 
-    -- shaman
-    108271, -- 星界转移
-    210918, -- 灵体形态
+    ["SHAMAN"] = {
+        [108271] = true, -- 星界转移
+        [210918] = true, -- 灵体形态
+    },
 
-    -- warlock
-    104773, -- 不灭决心
-    212295, -- 虚空守卫
+    ["WARLOCK"] = {
+        [104773] = true, -- 不灭决心
+        [212295] = true, -- 虚空守卫
+    },
 
-    -- warrior
-    871, -- 盾墙
-    12975, -- 破釜沉舟
-    23920, -- 法术反射
-    118038, -- 剑在人在
-    184364, -- 狂怒回复
+    ["WARRIOR"] = {
+        [871] = true, -- 盾墙
+        [12975] = true, -- 破釜沉舟
+        [23920] = true, -- 法术反射
+        [118038] = true, -- 剑在人在
+        [184364] = true, -- 狂怒回复
+    },
 }
-defensiveNames = F:ConvertSpellTable(defensiveNames, true)
 
-local defensiveIDs = {
-    [113862] = true, -- Greater Invisibility - 强化隐形术
-}
+function I:GetDefensives()
+    return defensives
+end
 
--- customs
+local builtInDefensives = {}
 local customDefensives = {}
-function I:UpdateCustomDefensives(t)
+
+function I:UpdateDefensives(t)
+    -- user disabled
+    wipe(builtInDefensives)
+    for class, spells in pairs(defensives) do
+        for id, trackByName in pairs(spells) do
+            if not t["disabled"][id] then -- not disabled
+                if trackByName then
+                    local name = GetSpellInfo(id)
+                    if name then
+                        builtInDefensives[name] = true
+                    end
+                else
+                    builtInDefensives[id] = true
+                end
+            end
+        end
+    end
+
+    -- user created
     wipe(customDefensives)
-    for _, id in pairs(t) do
+    for _, id in pairs(t["custom"]) do
         local name = GetSpellInfo(id)
         if name then
             customDefensives[name] = true
         end
     end
 end
-    
+
 function I:IsDefensiveCooldown(name, id)
-    return defensiveNames[name] or defensiveIDs[id] or customDefensives[name]
+    return builtInDefensives[name] or builtInDefensives[id] or customDefensives[name]
 end
 
 -------------------------------------------------

@@ -377,11 +377,9 @@ function eventFrame:ADDON_LOADED(arg1)
         end
         Cell.vars.bigDebuffs = F:ConvertTable(CellDB["bigDebuffs"])
 
-        -- custom defensives/externals ------------------------------------------------------------
-        if type(CellDB["customDefensives"]) ~= "table" then CellDB["customDefensives"] = {} end
-        if type(CellDB["customExternals"]) ~= "table" then CellDB["customExternals"] = {} end
-        I:UpdateCustomDefensives(CellDB["customDefensives"])
-        I:UpdateCustomExternals(CellDB["customExternals"])
+        -- defensives/externals -------------------------------------------------------------------
+        if type(CellDB["defensives"]) ~= "table" then CellDB["defensives"] = {["disabled"]={}, ["custom"]={}} end
+        if type(CellDB["externals"]) ~= "table" then CellDB["externals"] = {["disabled"]={}, ["custom"]={}} end
         
         -- raid debuffs ---------------------------------------------------------------------------
         if type(CellDB["raidDebuffs"]) ~= "table" then CellDB["raidDebuffs"] = {} end
@@ -647,6 +645,9 @@ function eventFrame:PLAYER_LOGIN()
     Cell:Fire("UpdatePixelPerfect")
     -- update CLEU
     Cell:Fire("UpdateCLEU")
+    -- update builtIns and customs
+    I:UpdateDefensives(CellDB["defensives"])
+    I:UpdateExternals(CellDB["externals"])
 end
 
 function eventFrame:UI_SCALE_CHANGED()

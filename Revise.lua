@@ -1793,6 +1793,18 @@ function F:Revise()
         end
     end
 
+    -- r156-release
+    if CellDB["revise"] and dbRevision < 156 then
+        if CellDB["customDefensives"] then
+            CellDB["defensives"]["custom"] = CellDB["customDefensives"]
+            CellDB["customDefensives"] = nil
+        end
+        if CellDB["customExternals"] then
+            CellDB["externals"]["custom"] = CellDB["customExternals"]
+            CellDB["customExternals"] = nil
+        end
+    end
+
     CellDB["revise"] = Cell.version
     if Cell.isWrath then
         CellCharacterDB["revise"] = Cell.version

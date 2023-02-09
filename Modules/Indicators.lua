@@ -1284,9 +1284,9 @@ if Cell.isRetail then
         ["aggroBar"] = {"enabled", "size-bar", "position", "frameLevel"},
         ["shieldBar"] = {"enabled", "color-alpha", "height", "position-noHCenter", "frameLevel"},
         ["aoeHealing"] = {"enabled", "color", "height"},
-        ["externalCooldowns"] = {"enabled", "customExternals", "durationVisibility", "num:5", "orientation", "size", "font", "position", "frameLevel"},
-        ["defensiveCooldowns"] = {"enabled", "customDefensives", "durationVisibility", "num:5", "orientation", "size", "font", "position", "frameLevel"},
-        ["allCooldowns"] = {L["Externals + Defensives, no need to enable all of them"], "enabled", "durationVisibility", "num:5", "orientation", "size", "font", "position", "frameLevel"},
+        ["externalCooldowns"] = {L["Even if disabled, the settings below affect \"Externals + Defensives\" indicator"], "enabled", "builtInExternals", "customExternals", "durationVisibility", "num:5", "orientation", "size", "font", "position", "frameLevel"},
+        ["defensiveCooldowns"] = {L["Even if disabled, the settings below affect \"Externals + Defensives\" indicator"], "enabled", "builtInDefensives", "customDefensives", "durationVisibility", "num:5", "orientation", "size", "font", "position", "frameLevel"},
+        ["allCooldowns"] = {"enabled", "durationVisibility", "num:5", "orientation", "size", "font", "position", "frameLevel"},
         ["tankActiveMitigation"] = {"|cffb7b7b7"..I:GetTankActiveMitigationString(), "enabled", "size-bar", "position", "frameLevel"},
         ["dispels"] = {"enabled", "checkbutton:dispellableByMe", "highlightType", "checkbutton2:showDispelTypeIcons", "orientation", "size-square", "position", "frameLevel"},
         ["debuffs"] = {"enabled", "checkbutton:dispellableByMe", "blacklist", "bigDebuffs", "durationVisibility", "checkbutton3:showTooltip:"..L["This will make these icons not click-through-able"].."|"..L["Tooltips need to be enabled in General tab"], "num:10", "orientation", "size-normal-big", "font", "position", "frameLevel"},
@@ -1318,9 +1318,9 @@ elseif Cell.isWrath then
         ["aggroBar"] = {"enabled", "size-bar", "position", "frameLevel"},
         ["shieldBar"] = {"enabled", "color-alpha", "height", "position-noHCenter", "frameLevel"},
         ["aoeHealing"] = {"enabled", "color", "height"},
-        ["externalCooldowns"] = {"enabled", "customExternals", "durationVisibility", "num:5", "orientation", "size", "font", "position", "frameLevel"},
-        ["defensiveCooldowns"] = {"enabled", "customDefensives", "durationVisibility", "num:5", "orientation", "size", "font", "position", "frameLevel"},
-        ["allCooldowns"] = {L["Externals + Defensives, no need to enable all of them"], "enabled", "durationVisibility", "num:5", "orientation", "size", "font", "position", "frameLevel"},
+        ["externalCooldowns"] = {L["Even if disabled, the settings below affect \"Externals + Defensives\" indicator"], "enabled", "builtInExternals", "customExternals", "durationVisibility", "num:5", "orientation", "size", "font", "position", "frameLevel"},
+        ["defensiveCooldowns"] = {L["Even if disabled, the settings below affect \"Externals + Defensives\" indicator"], "enabled", "builtInDefensives", "customDefensives", "durationVisibility", "num:5", "orientation", "size", "font", "position", "frameLevel"},
+        ["allCooldowns"] = {"enabled", "durationVisibility", "num:5", "orientation", "size", "font", "position", "frameLevel"},
         ["dispels"] = {"enabled", "checkbutton:dispellableByMe", "highlightType", "checkbutton2:showDispelTypeIcons", "orientation", "size-square", "position", "frameLevel"},
         ["debuffs"] = {"enabled", "checkbutton:dispellableByMe", "blacklist", "bigDebuffs", "durationVisibility", "checkbutton3:showTooltip:"..L["This will make these icons not click-through-able"].."|"..L["Tooltips need to be enabled in General tab"], "num:10", "orientation", "size-normal-big", "font", "position", "frameLevel"},
         ["raidDebuffs"] = {"|cffb7b7b7"..L["You can config debuffs in %s"]:format(Cell:GetAccentColorString()..L["Raid Debuffs"].."|r"), "enabled", "checkbutton:onlyShowTopGlow", "checkbutton2:showTooltip:"..L["This will make these icons not click-through-able"].."|"..L["Tooltips need to be enabled in General tab"], "num:3", "orientation", "size-border", "font", "position", "frameLevel"},
@@ -1414,10 +1414,14 @@ local function ShowIndicatorSettings(id)
             w:SetDBValue(L[F:UpperFirst(currentLayoutTable["indicators"][id]["auraType"]).." List"], currentLayoutTable["indicators"][id]["auras"], indicatorType == "icons", indicatorType == "icons")
         elseif currentSetting == "blacklist" then
             w:SetDBValue(L["Debuff Filter (blacklist)"], CellDB["debuffBlacklist"], true)
+        elseif currentSetting == "builtInDefensives" then
+            w:SetDBValue(I:GetDefensives(), CellDB["defensives"]["disabled"])
         elseif currentSetting == "customDefensives" then
-            w:SetDBValue(_G.CUSTOM, CellDB["customDefensives"], true)
+            w:SetDBValue(_G.CUSTOM, CellDB["defensives"]["custom"], true)
+        elseif currentSetting == "builtInExternals" then
+            w:SetDBValue(I:GetExternals(), CellDB["externals"]["disabled"])
         elseif currentSetting == "customExternals" then
-            w:SetDBValue(_G.CUSTOM, CellDB["customExternals"], true)
+            w:SetDBValue(_G.CUSTOM, CellDB["externals"]["custom"], true)
         elseif currentSetting == "cleuAuras" then
             w:SetDBValue(CellDB["cleuAuras"])
         elseif currentSetting == "bigDebuffs" then
@@ -1467,14 +1471,20 @@ local function ShowIndicatorSettings(id)
                     CellDB["bigDebuffs"] = value
                     Cell.vars.bigDebuffs = F:ConvertTable(CellDB["bigDebuffs"])
                     Cell:Fire("UpdateIndicators", notifiedLayout, "", "bigDebuffs")
+                elseif currentSetting == "builtInDefensives" then
+                    I:UpdateDefensives(CellDB["defensives"])
+                    Cell:Fire("UpdateIndicators", notifiedLayout, "", "defensives")
                 elseif currentSetting == "customDefensives" then
-                    CellDB["customDefensives"] = value
-                    I:UpdateCustomDefensives(value)
-                    Cell:Fire("UpdateIndicators", notifiedLayout, "", "customDefensives")
+                    CellDB["defensives"]["custom"] = value
+                    I:UpdateDefensives(CellDB["defensives"])
+                    Cell:Fire("UpdateIndicators", notifiedLayout, "", "defensives")
+                elseif currentSetting == "builtInExternals" then
+                    I:UpdateExternals(CellDB["externals"])
+                    Cell:Fire("UpdateIndicators", notifiedLayout, "", "externals")
                 elseif currentSetting == "customExternals" then
-                    CellDB["customExternals"] = value
-                    I:UpdateCustomExternals(value)
-                    Cell:Fire("UpdateIndicators", notifiedLayout, "", "customExternals")
+                    CellDB["externals"]["custom"] = value
+                    I:UpdateExternals(CellDB["externals"])
+                    Cell:Fire("UpdateIndicators", notifiedLayout, "", "externals")
                 elseif currentSetting == "cleuAuras" then
                     CellDB["cleuAuras"] = value
                     I:UpdateCleuAuras(value)

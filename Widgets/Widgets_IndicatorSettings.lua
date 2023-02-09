@@ -3460,6 +3460,172 @@ local function CreateSetting_CleuAuras(parent)
     return widget
 end
 
+-------------------------------------------------
+-- CreateSetting_BuiltIns
+-------------------------------------------------
+local classOrder = {"DEATHKNIGHT", "DEMONHUNTER", "DRUID", "EVOKER", "HUNTER", "MAGE", "MONK", "PALADIN", "PRIEST", "ROGUE", "SHAMAN", "WARLOCK", "WARRIOR"}
+local classFrames = {}
+local spellButtons = {}
+local buttonIndex = 1
+local builtInUpdater
+
+local function UpdateSpellButton(btn, class, isDisabled)
+    if isDisabled then
+        btn:SetBackdropColor(0.6, 0.6, 0.6, 0.85)
+        btn.icon:SetDesaturated(true)
+    else
+        local r, g, b = F:GetClassColor(class)
+        btn:SetBackdropColor(r, g, b, 0.85)
+        btn.icon:SetDesaturated(false)
+    end
+end
+
+local function CreateSpellButtons(parent, class, spells, disableds)
+    local n = 1
+    for spellId in pairs(spells) do
+        if not spellButtons[buttonIndex] then
+            spellButtons[buttonIndex] = CreateFrame("Button", "CellIndicatorSettings_BuiltIns_SpellButton"..buttonIndex, parent:GetParent(), "BackdropTemplate")
+            spellButtons[buttonIndex]:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8x8"})
+            P:Size(spellButtons[buttonIndex], 20, 20)
+            
+            spellButtons[buttonIndex].icon = spellButtons[buttonIndex]:CreateTexture(nil, "ARTWORK")
+            spellButtons[buttonIndex].icon:SetTexCoord(0.12, 0.88, 0.12, 0.88)
+            P:Point(spellButtons[buttonIndex].icon, "TOPLEFT", 2, -2)
+            P:Point(spellButtons[buttonIndex].icon, "BOTTOMRIGHT", -2, 2)
+        end
+        
+        spellButtons[buttonIndex]:SetParent(parent)
+        spellButtons[buttonIndex]:Show()
+        
+        -- tooltips
+        spellButtons[buttonIndex]:SetScript("OnEnter", function(self)
+            CellSpellTooltip:SetOwner(self, "ANCHOR_NONE")
+            CellSpellTooltip:SetPoint("BOTTOMLEFT", self, "TOPLEFT", 0, P:Scale(2))
+            CellSpellTooltip:SetSpellByID(spellId)
+            CellSpellTooltip:Show()
+        end)
+        spellButtons[buttonIndex]:SetScript("OnLeave", function()
+            CellSpellTooltip:Hide()
+        end)
+
+        -- click
+        spellButtons[buttonIndex]:SetScript("OnClick", function(self)
+            if disableds[spellId] then
+                disableds[spellId] = nil
+            else
+                disableds[spellId] = true
+            end
+            UpdateSpellButton(self, class, disableds[spellId])
+            builtInUpdater()
+        end)
+
+        local icon = select(3, GetSpellInfo(spellId))
+        spellButtons[buttonIndex].icon:SetTexture(icon)
+        
+        UpdateSpellButton(spellButtons[buttonIndex], class, disableds[spellId])
+        
+        spellButtons[buttonIndex]:ClearAllPoints()
+        if n == 1 then
+            spellButtons[buttonIndex]:SetPoint("TOPLEFT", 5, -20)
+        elseif (n - 1) % 10 == 0 then
+            spellButtons[buttonIndex]:SetPoint("TOPLEFT", spellButtons[buttonIndex-10], "BOTTOMLEFT", 0, -5)
+        else
+            spellButtons[buttonIndex]:SetPoint("TOPLEFT", spellButtons[buttonIndex-1], "TOPRIGHT", 5, 0)
+        end
+        
+        n = n + 1
+        buttonIndex = buttonIndex + 1
+    end
+
+    local row = ceil((n - 1) / 10)
+    return row * 20 + (row - 1) * 5
+end
+
+local function CreateClassFrames(parent, builtIns, disableds)
+    local height = 0
+    local last
+    
+    for _, class in pairs(classOrder) do
+        if not classFrames[class] then
+            classFrames[class] = addon:CreateFrame("CellIndicatorSettings_BuiltIns_"..class, parent, nil, nil, true)
+            classFrames[class].text = classFrames[class]:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
+            classFrames[class].text:SetPoint("TOPLEFT", 5, -5)
+        end
+
+        local f = classFrames[class]
+        
+        if builtIns[class] then
+            -- set position
+            f:Show()
+            f:ClearAllPoints()
+            if last then
+                f:SetPoint("TOPLEFT", last, "BOTTOMLEFT")
+            else
+                f:SetPoint("TOPLEFT")
+            end
+            f:SetPoint("RIGHT")
+            last = f
+
+            -- update text
+            f.text:SetText(F:GetClassColorStr(class)..F:GetLocalizedClassName(class))
+            
+            -- create buttons
+            local buttonHeight = CreateSpellButtons(f, class, builtIns[class], disableds)
+
+            -- update height
+            f:SetHeight(buttonHeight + 20 + 5)
+            height = height + buttonHeight + 20 + 5
+        else
+            f:Hide()
+        end
+    end
+
+    -- hide unused spell buttons
+    for i = buttonIndex, #spellButtons do
+        spellButtons[i]:Hide()
+    end
+
+    return height
+end
+
+local function CreateSetting_BuiltIns(parent)
+    local widget
+
+    if not settingWidgets["builtIns"] then
+        widget = addon:CreateFrame("CellIndicatorSettings_BuiltIns", parent, 240, 128)
+        settingWidgets["builtIns"] = widget
+
+        widget.frame = addon:CreateFrame(nil, widget, 20, 20)
+        widget.frame:SetPoint("TOPLEFT", 5, -20)
+        widget.frame:SetPoint("RIGHT", -5, 0)
+        widget.frame:Show()
+        addon:StylizeFrame(widget.frame, {0.15, 0.15, 0.15, 1})
+
+        widget.text = widget:CreateFontString(nil, "OVERLAY", font_name)
+        widget.text:SetPoint("BOTTOMLEFT", widget.frame, "TOPLEFT", 0, 1)
+        widget.text:SetText(L["Built-in Spells"])
+
+
+        -- associate db
+        function widget:SetFunc(func)
+            builtInUpdater = func
+        end
+
+        -- show db value
+        function widget:SetDBValue(builtIns, disableds)
+            buttonIndex = 1
+            local height = CreateClassFrames(widget.frame, builtIns, disableds)
+            widget.frame:SetHeight(height)
+            widget:SetHeight(height + 25)
+        end
+    else
+        widget = settingWidgets["builtIns"]
+    end
+
+    widget:Show()
+    return widget
+end
+
 local function CreateConsumablePreview(parent, style)
     local f = CreateFrame("Frame", "CellIndicatorSettings_ConsumablesPreview_Type"..style, parent, "BackdropTemplate")
     f:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8x8", edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = P:Scale(1)})
@@ -4254,6 +4420,8 @@ function addon:CreateIndicatorSettings(parent, settingsTable)
             tinsert(widgetsTable, CreateSetting_Auras2(parent))
         elseif setting == "cleuAuras" then
             tinsert(widgetsTable, CreateSetting_CleuAuras(parent))
+        elseif setting == "builtInDefensives" or setting == "builtInExternals" then
+            tinsert(widgetsTable, CreateSetting_BuiltIns(parent))
         elseif setting == "consumablesPreview" then
             tinsert(widgetsTable, CreateSetting_ConsumablesPreview(parent))
         elseif setting == "consumablesList" then

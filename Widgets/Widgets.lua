@@ -311,9 +311,7 @@ function addon:CreateFrame(name, parent, width, height, isTransparent)
 
     function f:UpdatePixelPerfect()
         if not isTransparent then addon:StylizeFrame(f) end
-        if width and height then
-            P:Resize(f)
-        end
+        P:Resize(f)
     end
 
     return f

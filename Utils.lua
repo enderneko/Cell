@@ -4,7 +4,24 @@ local F = Cell.funcs
 
 Cell.vars.playerFaction = UnitFactionGroup("player")
 
-local classToID = {
+-------------------------------------------------
+-- game version
+-------------------------------------------------
+Cell.isAsian = LOCALE_zhCN or LOCALE_zhTW or LOCALE_koKR
+
+Cell.isRetail = WOW_PROJECT_ID == WOW_PROJECT_MAINLINE
+Cell.isClassic = WOW_PROJECT_ID == WOW_PROJECT_CLASSIC
+-- Cell.isBCC = WOW_PROJECT_ID == WOW_PROJECT_BURNING_CRUSADE_CLASSIC and LE_EXPANSION_LEVEL_CURRENT == LE_EXPANSION_BURNING_CRUSADE
+-- Cell.isWrath = WOW_PROJECT_ID == WOW_PROJECT_WRATH_CLASSIC and LE_EXPANSION_LEVEL_CURRENT == LE_EXPANSION_WRATH_OF_THE_LICH_KING
+Cell.isWrath = WOW_PROJECT_ID == WOW_PROJECT_WRATH_CLASSIC
+
+-------------------------------------------------
+-- class
+-------------------------------------------------
+local localizedClass = {}
+FillLocalizedClassList(localizedClass)
+
+local classFileToID = {
     WARRIOR = 1,
     PALADIN = 2,
     HUNTER = 3,
@@ -20,20 +37,34 @@ local classToID = {
     EVOKER = 13,
 }
 
-function F:GetClassID(class)
-    return classToID[class]
+local classIDToFile = {
+    [1] = "WARRIOR",
+    [2] = "PALADIN",
+    [3] = "HUNTER",
+    [4] = "ROGUE",
+    [5] = "PRIEST",
+    [6] = "DEATHKNIGHT",
+    [7] = "SHAMAN",
+    [8] = "MAGE",
+    [9] = "WARLOCK",
+    [10] = "MONK",
+    [11] = "DRUID",
+    [12] = "DEMONHUNTER",
+    [13] = "EVOKER",
+}
+
+function F:GetClassID(classFile)
+    return classFileToID[classFile]
 end
 
--------------------------------------------------
--- game version
--------------------------------------------------
-Cell.isAsian = LOCALE_zhCN or LOCALE_zhTW or LOCALE_koKR
-
-Cell.isRetail = WOW_PROJECT_ID == WOW_PROJECT_MAINLINE
-Cell.isClassic = WOW_PROJECT_ID == WOW_PROJECT_CLASSIC
--- Cell.isBCC = WOW_PROJECT_ID == WOW_PROJECT_BURNING_CRUSADE_CLASSIC and LE_EXPANSION_LEVEL_CURRENT == LE_EXPANSION_BURNING_CRUSADE
--- Cell.isWrath = WOW_PROJECT_ID == WOW_PROJECT_WRATH_CLASSIC and LE_EXPANSION_LEVEL_CURRENT == LE_EXPANSION_WRATH_OF_THE_LICH_KING
-Cell.isWrath = WOW_PROJECT_ID == WOW_PROJECT_WRATH_CLASSIC
+function F:GetLocalizedClassName(classFileOrID)
+    if type(classFileOrID) == "string" then
+        return localizedClass[classFileOrID]
+    elseif type(classFileOrID) == "number" and classIDToFile[classFileOrID] then
+        return localizedClass[classIDToFile[classFileOrID]]
+    end
+    return ""
+end
 
 -------------------------------------------------
 -- WotLK

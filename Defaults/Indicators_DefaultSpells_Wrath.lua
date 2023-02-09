@@ -81,97 +81,150 @@ end
 -------------------------------------------------
 -- externalCooldowns
 -------------------------------------------------
-local externalNames = {
-    -- death knight
-    51052, -- 反魔法领域
+local externals = { -- true: track by name, false: track by id
+    ["DEATHKNIGHT"] = {
+        [51052] = true, -- 反魔法领域
+    },
 
-    -- paladin
-    1022, -- 保护祝福
-    6940, -- 牺牲祝福
-    64205, -- 神圣牺牲
-    70940, -- 神圣护卫者
-    19752, -- 神圣干涉
-    31821, -- 光环掌握
-    20236, -- 强化圣疗术（天赋）
+    ["PALADIN"] = {
+        [1022] = true, -- 保护祝福
+        [6940] = true, -- 牺牲祝福
+        [64205] = true, -- 神圣牺牲
+        [70940] = true, -- 神圣护卫者
+        [19752] = true, -- 神圣干涉
+        [31821] = true, -- 光环掌握
+        [20236] = true, -- 强化圣疗术（天赋）
+    },
 
-    -- priest
-    33206, -- 痛苦压制
-    47788, -- 守护之魂
+    ["PRIEST"] = {
+        [33206] = true, -- 痛苦压制
+        [47788] = true, -- 守护之魂
+    },
 
-    -- warrior
-    3411, -- 援护
+    ["WARRIOR"] = {
+        [3411] = true, -- 援护
+    },
 }
-externalNames = F:ConvertSpellTable(externalNames, true)
 
-local externalIDs = {}
+function I:GetExternals()
+    return externals
+end
 
--- customs
-local customExternalNames = {}
-function I:UpdateCustomExternals(t)
-    wipe(customExternalNames)
-    for _, id in pairs(t) do
+local builtInExternals = {}
+local customExternals = {}
+
+function I:UpdateExternals(t)
+       -- user disabled
+    wipe(builtInExternals)
+    for class, spells in pairs(externals) do
+        for id, trackByName in pairs(spells) do
+            if not t["disabled"][id] then -- not disabled
+                if trackByName then
+                    local name = GetSpellInfo(id)
+                    if name then
+                        builtInExternals[name] = true
+                    end
+                else
+                    builtInExternals[id] = true
+                end
+            end
+        end
+    end
+
+    -- user created
+    wipe(customExternals)
+    for _, id in pairs(t["custom"]) do
         local name = GetSpellInfo(id)
         if name then
-            customExternalNames[name] = true
+            customExternals[name] = true
         end
     end
 end
 
 function I:IsExternalCooldown(name, id, source, target)
-    return externalNames[name] or externalIDs[id] or customExternalNames[name] 
+    return builtInExternals[name] or builtInExternals[id] or customExternals[name]
 end
 
 -------------------------------------------------
 -- defensiveCooldowns
 -------------------------------------------------
-local defensiveNames = {
-    -- death knight
-    48707, -- 反魔法护罩
-    48792, -- 冰封之韧
-    55233, -- 吸血鬼之血
+local defensives = { -- true: track by name, false: track by id
+    ["DEATHKNIGHT"] = {
+        [48707] = true, -- 反魔法护罩
+        [48792] = true, -- 冰封之韧
+        [55233] = true, -- 吸血鬼之血
+    },
 
-    -- druid
-    22812, -- 树皮术
-    22842, -- 狂暴回复
-    61336, -- 生存本能
+    ["DRUID"] = {
+        [22812] = true, -- 树皮术
+        [22842] = true, -- 狂暴回复
+        [61336] = true, -- 生存本能
+    },
 
-    -- hunter
-    19263, -- 威慑
+    ["HUNTER"] = {
+        [19263] = true, -- 威慑
+    },
 
-    -- mage
-    45438, -- 寒冰屏障
+    ["MAGE"] = {
+        [45438] = true, -- 寒冰屏障
+    },
 
-    -- paladin
-    498, -- 圣佑术
-    642, -- 圣盾术
+    ["PALADIN"] = {
+        [498] = true, -- 圣佑术
+        [642] = true, -- 圣盾术
+    },
 
-    -- priest
-    47585, -- 消散
-    27827, -- 救赎之魂
+    ["PRIEST"] = {
+        [47585] = true, -- 消散
+        [27827] = true, -- 救赎之魂
+    },
 
-    -- rogue
-    1966, -- 佯攻
-    5277, -- 闪避
-    31224, -- 暗影斗篷
+    ["ROGUE"] = {
+        [1966] = true, -- 佯攻
+        [5277] = true, -- 闪避
+        [31224] = true, -- 暗影斗篷
+    },
 
-    -- shaman
-    30823, -- 萨满之怒
+    ["SHAMAN"] = {
+        [30823] = true, -- 萨满之怒
+    },
 
-    -- warrior
-    871, -- 盾墙
-    12975, -- 破釜沉舟
-    23920, -- 法术反射
-    55694, -- 狂怒回复
+    ["WARRIOR"] = {
+        [871] = true, -- 盾墙
+        [12975] = true, -- 破釜沉舟
+        [23920] = true, -- 法术反射
+        [55694] = true, -- 狂怒回复
+    },
 }
-defensiveNames = F:ConvertSpellTable(defensiveNames, true)
 
-local defensiveIDs = {}
+function I:GetDefensives()
+    return defensives
+end
 
--- customs
+local builtInDefensives = {}
 local customDefensives = {}
-function I:UpdateCustomDefensives(t)
+
+function I:UpdateDefensives(t)
+    -- user disabled
+    wipe(builtInDefensives)
+    for class, spells in pairs(defensives) do
+        for id, trackByName in pairs(spells) do
+            if not t["disabled"][id] then -- not disabled
+                if trackByName then
+                    local name = GetSpellInfo(id)
+                    if name then
+                        builtInDefensives[name] = true
+                    end
+                else
+                    builtInDefensives[id] = true
+                end
+            end
+        end
+    end
+
+    -- user created
     wipe(customDefensives)
-    for _, id in pairs(t) do
+    for _, id in pairs(t["custom"]) do
         local name = GetSpellInfo(id)
         if name then
             customDefensives[name] = true
@@ -180,7 +233,7 @@ function I:UpdateCustomDefensives(t)
 end
 
 function I:IsDefensiveCooldown(name, id)
-    return defensiveNames[name] or defensiveIDs[id] or customDefensives[name]
+    return builtInDefensives[name] or builtInDefensives[id] or customDefensives[name]
 end
 
 -------------------------------------------------
