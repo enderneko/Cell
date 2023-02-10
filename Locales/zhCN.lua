@@ -588,6 +588,7 @@ L["Patrons"] = "感谢发电"
 L["Translators"] = "翻译"
 L["Slash Commands"] = "斜杠命令"
 L["Bug Report & Suggestion"] = "问题报告与建议"
+L["Links"] = "链接"
 L["Import & Export All Settings"] = "导入导出所有设置"
 L["All Cell settings will be overwritten!"] = "所有 Cell 设置将被覆盖！"
 L["Autorun will be disabled for all code snippets"] = "将禁用所有代码片段的自动运行"
@@ -611,7 +612,7 @@ L["CHANGELOGS"] = [[
     <h1>r155-release (Jan 28, 2023, 10:30 GMT+8)</h1>
     <p>* 修复怀旧服的点击施法问题。</p>
     <p>* 修复怀旧服的增减益图标刷新动画的问题。</p>
-    <p>! 国服没了，本人也没计划玩外服，因此，之后的开发与测试均在PTR上完成，并非所有场景都能测试到，有问题请在KOOK上反馈（在国服重开之前，NGA的发布帖都没有计划维护）。</p>
+    <p>! 国服没了，本人也没计划玩外服，因此，之后的开发与测试均在PTR上完成，并非所有场景都能测试到，有问题请在KOOK上反馈（在国服重开之前，NGA的发布帖都没有维护的打算）。</p>
     <br/>
 
     <h1>r154-release (Jan 19, 2023, 12:34 GMT+8)</h1>

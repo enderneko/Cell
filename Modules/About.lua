@@ -256,63 +256,104 @@ local function CreatePatronsPane()
 end
 
 -------------------------------------------------
--- bugreport
+-- links
 -------------------------------------------------
-local function CreateBugReportPane()
-    local bugReportPane = Cell:CreateTitledPane(aboutTab, L["Bug Report & Suggestion"], 422, 100)
-    bugReportPane:SetPoint("TOPLEFT", aboutTab, "TOPLEFT", 5, -385)
+local links = {}
+local function CreateLink(parent, id, icon, onEnter)
+    local f = CreateFrame("Frame", nil, parent, "BackdropTemplate")
+    P:Size(f, 34, 34)
+    f:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8x8"})
+    f:SetBackdropColor(0, 0, 0, 1)
 
-    local bugReportEB = Cell:CreateEditBox(bugReportPane, 412, 20)
-    bugReportEB:SetPoint("TOPLEFT", 5, -27)
-    bugReportEB:SetText("https://github.com/enderneko/Cell/issues")
-    bugReportEB:SetScript("OnTextChanged", function(self, userChanged)
-        if userChanged then
-            bugReportEB:SetText("https://github.com/enderneko/Cell/issues")
-            bugReportEB:HighlightText()
-        end
-    end)
+    links[id] = f
     
-    local cnBugReportEB = Cell:CreateEditBox(bugReportPane, 412, 20)
-    cnBugReportEB:SetPoint("TOPLEFT", bugReportEB, "BOTTOMLEFT", 0, -5)
-    cnBugReportEB:SetText("https://kook.top/q4T7yp")
-    cnBugReportEB:SetScript("OnTextChanged", function(self, userChanged)
-        if userChanged then
-            cnBugReportEB:SetText("https://kook.top/q4T7yp")
-            cnBugReportEB:HighlightText()
+    f.icon = f:CreateTexture(nil, "ARTWORK")
+    P:Point(f.icon, "TOPLEFT", 1, -1)
+    P:Point(f.icon, "BOTTOMRIGHT", -1, 1)
+    f.icon:SetTexture(icon)
+
+    f:SetScript("OnEnter", function()
+        f:SetBackdropColor(Cell:GetAccentColorRGB())
+        for  _id, _f in pairs(links) do
+            if _id ~= id then
+                _f:SetBackdropColor(0, 0, 0, 1)
+            end
         end
+        if onEnter then onEnter() end
     end)
 
-    local text = cnBugReportEB:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
-    text:SetPoint("RIGHT", -5, 0)
-    text:SetText("|cff777777CN|r")
+    f:SetScript("OnHide", function()
+        f:SetBackdropColor(0, 0, 0, 1)
+    end)
+
+    return f
+end
+
+local function CreateLinksPane()
+    local linksPane = Cell:CreateTitledPane(aboutTab, L["Links"], 422, 100)
+    linksPane:SetPoint("TOPLEFT", aboutTab, "TOPLEFT", 5, -385)
+
+    local linksEB = Cell:CreateEditBox(linksPane, 412, 20)
+    linksEB:SetPoint("TOPLEFT", 5, -27)
+    linksEB:SetText("https://github.com/enderneko/Cell/issues")
+    linksEB:SetScript("OnTextChanged", function(self, userChanged)
+        if userChanged then
+            linksEB:SetText("https://github.com/enderneko/Cell/issues")
+            linksEB:HighlightText()
+        else
+            linksEB:ClearFocus()
+        end
+        linksEB:SetCursorPosition(0)
+    end)
+    linksEB:SetScript("OnHide", function()
+        linksEB:SetText("https://github.com/enderneko/Cell/issues")
+    end)
+
+    --! github
+    local github = CreateLink(linksPane, "github", "Interface\\AddOns\\Cell\\Media\\Links\\github.tga", function()
+        linksEB:SetText("https://github.com/enderneko/Cell")
+    end)
+    github:SetPoint("TOPLEFT", linksEB, "BOTTOMLEFT", 0, -7)
+
+    --! curseforge
+    local curseforge = CreateLink(linksPane, "curseforge", "Interface\\AddOns\\Cell\\Media\\Links\\curseforge.tga", function()
+        linksEB:SetText("https://www.curseforge.com/wow/addons/cell")
+    end)
+    curseforge:SetPoint("TOPLEFT", github, "TOPRIGHT", 7, 0)
+
+    --! kook
+    local kook = CreateLink(linksPane, "kook", "Interface\\AddOns\\Cell\\Media\\Links\\kook.tga", function()
+        linksEB:SetText("https://kook.top/q4T7yp")
+    end)
+    kook:SetPoint("TOPLEFT", curseforge, "TOPRIGHT", 7, 0)
+
+    --! discord
+    local discord = CreateLink(linksPane, "discord", "Interface\\AddOns\\Cell\\Media\\Links\\discord.tga", function()
+        linksEB:SetText("")
+    end)
+    discord:SetPoint("TOPLEFT", kook, "TOPRIGHT", 7, 0)
+    discord:SetScript("OnEnter", nil)
+    discord:SetAlpha(0.3)
+
+    --! nga
+    local nga = CreateLink(linksPane, "nga", "Interface\\AddOns\\Cell\\Media\\Links\\nga.tga", function()
+        linksEB:SetText("https://bbs.nga.cn/read.php?tid=23488341")
+    end)
+    nga:SetPoint("TOPLEFT", discord, "TOPRIGHT", 7, 0)
+
+    --! afdian
+    local afdian = CreateLink(linksPane, "afdian", "Interface\\AddOns\\Cell\\Media\\Links\\afdian.tga", function()
+        linksEB:SetText("https://afdian.net/a/enderneko")
+    end)
+    afdian:SetPoint("TOPRIGHT", linksEB, "BOTTOMRIGHT", 0, -7)
     
-    local cnBugReportEB2 = Cell:CreateEditBox(bugReportPane, 412, 20)
-    cnBugReportEB2:SetPoint("TOPLEFT", cnBugReportEB, "BOTTOMLEFT", 0, -5)
-    cnBugReportEB2:SetText("https://bbs.nga.cn/read.php?tid=23488341")
-    cnBugReportEB2:SetScript("OnTextChanged", function(self, userChanged)
-        if userChanged then
-            cnBugReportEB2:SetText("https://bbs.nga.cn/read.php?tid=23488341")
-            cnBugReportEB2:HighlightText()
-        end
+    --! ko-fi
+    local kofi = CreateLink(linksPane, "kofi", "Interface\\AddOns\\Cell\\Media\\Links\\ko-fi.tga", function()
+        linksEB:SetText("")
     end)
-        
-    local text2 = cnBugReportEB2:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
-    text2:SetPoint("RIGHT", -5, 0)
-    text2:SetText("|cff777777CN|r")
-
-    -- local cnBugReportEB3 = Cell:CreateEditBox(bugReportPane, 203, 20)
-    -- cnBugReportEB3:SetPoint("TOPLEFT", cnBugReportEB2, "TOPRIGHT", 5, 0)
-    -- cnBugReportEB3:SetText("https://bbs.nga.cn/read.php?tid=32921170")
-    -- cnBugReportEB3:SetScript("OnTextChanged", function(self, userChanged)
-    --     if userChanged then
-    --         cnBugReportEB3:SetText("https://bbs.nga.cn/read.php?tid=32921170")
-    --         cnBugReportEB3:HighlightText()
-    --     end
-    -- end)
-        
-    -- local text3 = cnBugReportEB3:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
-    -- text3:SetPoint("RIGHT", -5, 0)
-    -- text3:SetText("|cff777777CN|r")
+    kofi:SetPoint("TOPRIGHT", afdian, "TOPLEFT", -7, 0)
+    kofi:SetScript("OnEnter", nil)
+    kofi:SetAlpha(0.3)
 end
 
 -------------------------------------------------
@@ -344,7 +385,7 @@ local function ShowTab(tab)
             CreateSlashPane()
             CreateSpecialThanksPane()
             CreateTranslatorsPane()
-            CreateBugReportPane()
+            CreateLinksPane()
             CreateImportExportPane()
             CreatePatronsPane()
         end
