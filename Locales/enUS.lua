@@ -68,6 +68,11 @@ select(2, ...).L = setmetatable({
     ["SNIPPETS_TIPS"] = "[Double-Click] to rename. [Shift-Click] to delete. All checked snippets will be automatically invoked at the end of Cell initialization process (in ADDON_LOADED event).",
 
     ["CHANGELOGS"] = [[
+        <h1>r156-release (Feb 10, 2023, 10:52 GMT+8)</h1>
+        <p>+ Add toggles for built-in spells (Defensives and Externals).</p>
+        <p>* Fix raid type checker on Wrath.</p>
+        <br/>
+
         <h1>r155-release (Jan 28, 2023, 10:30 GMT+8)</h1>
         <p>* Fixed click-castings on Wrath.</p>
         <p>* Fixed aura refreshing animation on Wrath.</p>
