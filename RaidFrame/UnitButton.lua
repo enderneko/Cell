@@ -1177,6 +1177,7 @@ local function UpdateUnitHealthState(self, diff)
 
     local health = UnitHealth(unit) + (diff or 0)
     local healthMax = UnitHealthMax(unit)
+    health = min(health, healthMax) --! diff
 
     self.state.health = health
     self.state.healthMax = healthMax

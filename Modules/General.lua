@@ -175,7 +175,7 @@ local function CreateMiscPane()
     useCleuCB = Cell:CreateCheckButton(miscPane, L["Increase Health Update Rate"], function(checked, self)
         CellDB["general"]["useCleuHealthUpdater"] = checked
         Cell:Fire("UpdateCLEU")
-    end, "|cffff2727"..L["HIGH CPU USAGE"], L["Use CLEU events to increase health update rate"])
+    end, "|cffff2727"..L["HIGH CPU USAGE"].." (UNRELIABLE)", L["Use CLEU events to increase health update rate"])
     useCleuCB:SetPoint("TOPLEFT", 5, -27)
 
     sortByRoleCB = Cell:CreateCheckButton(miscPane, L["Sort Party By Role"], function(checked, self)

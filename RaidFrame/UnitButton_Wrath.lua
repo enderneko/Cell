@@ -2,7 +2,7 @@
 -- File: UnitButton_Wrath.lua
 -- Author: enderneko (enderneko-dev@outlook.com)
 -- File Created: 2022/08/20 19:44:26 +0800
--- Last Modified: 2023/02/10 06:28:59 +0800
+-- Last Modified: 2023/03/03 20:00:01 +0800
 --]]
 
 local _, Cell = ...
@@ -1007,6 +1007,7 @@ local function UpdateUnitHealthState(self, diff)
 
     local health = UnitHealth(unit) + (diff or 0)
     local healthMax = UnitHealthMax(unit)
+    health = min(health, healthMax) --! diff
 
     self.state.health = health
     self.state.healthMax = healthMax
