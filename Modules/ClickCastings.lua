@@ -235,31 +235,24 @@ else
 
             --! vehicle
             local unit = self:GetAttribute("unit")
-            if UnitHasVehicleUI(unit) and not self:GetAttribute("oldUnit") then
-                -- print("update unit")
-                self:SetAttribute("oldUnit", unit)
-
-                local vehicle
+            local vehicle
+            if UnitHasVehicleUI(unit) then
                 if unit == "player" then
                     vehicle = "pet"
                 elseif strfind(unit, "^party%d+$") then
-                    -- print("PARTY")
                     vehicle = string.gsub(unit, "party", "partypet")
                 elseif strfind(unit, "^raid%d+$") then
-                    -- print("RAID")
                     vehicle = string.gsub(unit, "raid", "raidpet")
-                end
-                if vehicle then
-                    self:SetAttribute("unit", vehicle)
                 end
             end
 
             --! update click-casting unit
+            local clickCastingUnit = vehicle or unit
             local attrs = self:GetAttribute("cell")
             -- print(attrs)
             if attrs then
                 for _, k in pairs(table.new(strsplit("|", attrs))) do
-                    self:SetAttribute(k, string.gsub(self:GetAttribute(k), "@%w+", "@"..self:GetAttribute("unit")))
+                    self:SetAttribute(k, string.gsub(self:GetAttribute(k), "@%w+", "@"..clickCastingUnit))
                     -- print(self:GetAttribute(k))
                 end
             end
@@ -296,14 +289,6 @@ else
         b:SetAttribute("_onleave", [[
             -- print("_onleave")
             self:ClearBindings()
-            
-            --! vehicle (current button)
-            local oldUnit = self:GetAttribute("oldUnit")
-            if oldUnit then
-                -- print("restore unit")
-                self:SetAttribute("unit", oldUnit)
-                self:SetAttribute("oldUnit", nil)
-            end
         ]])
 
         -- wrapFrame:WrapScript(b, "OnLeave", [[
@@ -417,11 +402,14 @@ local function ApplyClickCastings(b)
 
         if t[2] == "togglemenu_nocombat" then
             b:SetAttribute("menu", bindKey)
-        elseif Cell.isWrath and t[2] == "target" then --! solve SetAttribute("type*", "target") bug produced in 3.4.1
-            b:SetAttribute(bindKey, "macro")
-            local attr = string.gsub(bindKey, "type", "macrotext")
-            b:SetAttribute(attr, "/tar [@cell]")
-            UpdatePlaceholder(b, attr)
+        ------------------------------------------------------------------
+        --* 已修复：实际上载具（宠物按钮）无法选中的原因是没有 SetAttribute("toggleForVehicle", false)
+        -- elseif Cell.isWrath and t[2] == "target" then
+        --     b:SetAttribute(bindKey, "macro")
+        --     local attr = string.gsub(bindKey, "type", "macrotext")
+        --     b:SetAttribute(attr, "/tar [@cell]")
+        --     UpdatePlaceholder(b, attr)
+        ------------------------------------------------------------------
         else
             b:SetAttribute(bindKey, t[2])
         end

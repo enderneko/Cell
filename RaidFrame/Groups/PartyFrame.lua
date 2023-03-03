@@ -48,6 +48,8 @@ header:SetAttribute("_initialAttribute-refreshUnitChange", [[
         else
             petUnit = string.gsub(unit, "party", "partypet")
         end
+        --! button for pet/vehicle only, toggleForVehicle MUST be false
+        petButton:SetAttribute("toggleForVehicle", false)
         petButton:SetAttribute("unit", petUnit)
         RegisterUnitWatch(petButton)
     end

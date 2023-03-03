@@ -152,6 +152,8 @@ end
 
 header:SetAttribute("_initialAttributeNames", "refreshUnitChange")
 header:SetAttribute("_initialAttribute-refreshUnitChange", [[
+    --! button for pet/vehicle only, toggleForVehicle MUST be false
+    self:SetAttribute("toggleForVehicle", false)
     self:GetParent():CallMethod("UpdateButtonUnits", self:GetName(), self:GetAttribute("unit"))
 ]])
     
