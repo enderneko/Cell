@@ -1260,6 +1260,14 @@ function I:CreateRoleIcon(parent)
                 roleIcon:SetTexCoord(0, 1, 0, 1)
             end
             roleIcon:Show()
+        elseif role == "VEHICLE" then
+            roleIcon:SetTexture("interface/minimap/objecticonsatlas")
+            if Cell.isRetail then
+                roleIcon:SetTexCoord(0.2392578125, 0.2705078125, 0.4697265625, 0.5009765625)
+            else
+                roleIcon:SetTexCoord(0.39453125, 0.45703125, 0.859375, 0.921875)
+            end
+            roleIcon:Show()
         else
             roleIcon:Hide()
         end
