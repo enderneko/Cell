@@ -609,6 +609,11 @@ L["Changelogs"] = "更新记录"
 L["Click to view recent changelogs"] = "点击查看近期更新记录"
 L["Click to view older changelogs"] = "点击查看远古更新记录"
 L["CHANGELOGS"] = [[
+    <h1>r157-release (Mar 7, 2023, 18:31 GMT+8)</h1>
+    <p>* 修复一些异常。</p>
+    <p>* 更新繁中。</p>
+    <br/>
+
     <h1>r156-release (Feb 10, 2023, 10:52 GMT+8)</h1>
     <p>+ 为“减伤”指示器的内置法术添加了开关。</p>
     <p>* 修复怀旧服的副本类型检查。</p>
