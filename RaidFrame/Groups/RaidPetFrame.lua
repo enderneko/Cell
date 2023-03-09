@@ -136,14 +136,16 @@ end)
 local header = CreateFrame("Frame", "CellRaidPetFrameHeader", raidPetFrame, "SecureGroupPetHeaderTemplate")
 header:SetAllPoints(raidPetFrame)
 
--- header:SetAttribute("initialConfigFunction", [[
---     -- print(self:GetName())
---     RegisterUnitWatch(self)
+header:SetAttribute("initialConfigFunction", [[
+    --! button for pet/vehicle only, toggleForVehicle MUST be false
+    self:SetAttribute("toggleForVehicle", false)
+
+    -- RegisterUnitWatch(self)
     
---     local header = self:GetParent()
---     self:SetWidth(header:GetAttribute("buttonWidth") or 66)
---     self:SetHeight(header:GetAttribute("buttonHeight") or 46)
--- ]])
+    -- local header = self:GetParent()
+    -- self:SetWidth(header:GetAttribute("buttonWidth") or 66)
+    -- self:SetHeight(header:GetAttribute("buttonHeight") or 46)
+]])
 
 function header:UpdateButtonUnits(bName, unit)
     if not unit then return end
@@ -152,8 +154,6 @@ end
 
 header:SetAttribute("_initialAttributeNames", "refreshUnitChange")
 header:SetAttribute("_initialAttribute-refreshUnitChange", [[
-    --! button for pet/vehicle only, toggleForVehicle MUST be false
-    self:SetAttribute("toggleForVehicle", false)
     self:GetParent():CallMethod("UpdateButtonUnits", self:GetName(), self:GetAttribute("unit"))
 ]])
     

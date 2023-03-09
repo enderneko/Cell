@@ -97,13 +97,13 @@ local function CreateGroupHeader(group)
     groupHeaders[group] = header
     Cell.unitButtons.raid[headerName] = header
 
-    header:SetAttribute("initialConfigFunction", [[
-        RegisterUnitWatch(self)
+    -- header:SetAttribute("initialConfigFunction", [[
+    --     RegisterUnitWatch(self)
 
-        local header = self:GetParent()
-        self:SetWidth(header:GetAttribute("buttonWidth") or 66)
-        self:SetHeight(header:GetAttribute("buttonHeight") or 46)
-    ]])
+    --     local header = self:GetParent()
+    --     self:SetWidth(header:GetAttribute("buttonWidth") or 66)
+    --     self:SetHeight(header:GetAttribute("buttonHeight") or 46)
+    -- ]])
 
     header:SetAttribute("template", "CellUnitButtonTemplate")
     header:SetAttribute("columnAnchorPoint", "LEFT")

@@ -25,13 +25,13 @@ function header:UpdateButtonUnits(bName, unit)
     Cell.unitButtons.party.units[petUnit] = _G[bName].petButton
 end
 
-header:SetAttribute("initialConfigFunction", [[
-    RegisterUnitWatch(self)
+-- header:SetAttribute("initialConfigFunction", [[
+--     RegisterUnitWatch(self)
 
-    local header = self:GetParent()
-    self:SetWidth(header:GetAttribute("buttonWidth") or 66)
-    self:SetHeight(header:GetAttribute("buttonHeight") or 46)
-]])
+--     local header = self:GetParent()
+--     self:SetWidth(header:GetAttribute("buttonWidth") or 66)
+--     self:SetHeight(header:GetAttribute("buttonHeight") or 46)
+-- ]])
 
 header:SetAttribute("_initialAttributeNames", "refreshUnitChange")
 header:SetAttribute("_initialAttribute-refreshUnitChange", [[
@@ -48,8 +48,6 @@ header:SetAttribute("_initialAttribute-refreshUnitChange", [[
         else
             petUnit = string.gsub(unit, "party", "partypet")
         end
-        --! button for pet/vehicle only, toggleForVehicle MUST be false
-        petButton:SetAttribute("toggleForVehicle", false)
         petButton:SetAttribute("unit", petUnit)
         RegisterUnitWatch(petButton)
     end
@@ -74,6 +72,9 @@ header:SetAttribute("startingIndex", 1)
 for i, playerButton in ipairs({header:GetChildren()}) do
     local petButton = CreateFrame("Button", playerButton:GetName().."Pet", playerButton, "CellUnitButtonTemplate")
     petButton:SetIgnoreParentAlpha(true)
+
+    --! button for pet/vehicle only, toggleForVehicle MUST be false
+    petButton:SetAttribute("toggleForVehicle", false)
     
     playerButton.petButton = petButton
     SecureHandlerSetFrameRef(playerButton, "petButton", petButton)
