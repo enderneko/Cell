@@ -376,6 +376,11 @@ function eventFrame:ADDON_LOADED(arg1)
             CellDB["bigDebuffs"] = I:GetDefaultBigDebuffs()
         end
         Cell.vars.bigDebuffs = F:ConvertTable(CellDB["bigDebuffs"])
+                
+        -- debuffTypeColor -----------------------------------------------------------------------------
+        if type(CellDB["debuffTypeColor"]) ~= "table" then
+            I:ResetDebuffTypeColor()
+        end
 
         -- defensives/externals -------------------------------------------------------------------
         if type(CellDB["defensives"]) ~= "table" then CellDB["defensives"] = {["disabled"]={}, ["custom"]={}} end

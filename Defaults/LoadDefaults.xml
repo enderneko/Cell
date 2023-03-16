@@ -2,6 +2,7 @@
 ..\FrameXML\UI.xsd">
 	<Script file="Appearance_Defaults.lua"/>
 	<Script file="Layout_Defaults.lua"/>
-	<Script file="ClickCastings_DefaultSpells.lua"/>
-	<Script file="Indicators_DefaultSpells.lua"/>
+	<Script file="ClickCasting_DefaultSpells.lua"/>
+	<Script file="Indicator_Defaults.lua"/>
+	<Script file="Indicator_DefaultSpells.lua"/>
 </Ui>

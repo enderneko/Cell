@@ -490,6 +490,11 @@ L["right-to-left"] = "从右到左"
 L["top-to-bottom"] = "从上到下"
 L["bottom-to-top"] = "从下到上"
 
+L["Curse"] = "诅咒"
+L["Poison"] = "中毒"
+L["Disease"] = "疾病"
+L["Magic"] = "魔法"
+
 L["Leader Icons will hide while in combat"] = "战斗时队长图标将会隐藏"
 L["You can config debuffs in %s"] = "你可以在 %s 里设置减益"
 L["Indicator settings are part of Layout settings which are account-wide."] = "指示器设置是布局设置的一部分，它们是账号配置而非角色。"

@@ -278,8 +278,51 @@ local function InitIndicator(indicatorName)
         
     elseif indicatorName == "dispels" then
         indicator.isDispels = true
-        local types = {["Curse"]=true, ["Disease"]=true, ["Magic"]=true, ["Poison"]=true}
-        indicator:SetDispels(types)
+
+        local debuffTypes = {
+            {["Curse"]=true},
+            {["Disease"]=true},
+            {["Magic"]=true},
+            {["Poison"]=true},
+        }
+
+        -- override
+        indicator.UpdateHighlight = function(self, highlightType)
+            indicator.highlightType = highlightType
+    
+            if highlightType == "none" then
+                indicator.highlight:Hide()
+            elseif highlightType == "gradient" then
+                indicator.highlight:ClearAllPoints()
+                indicator.highlight:SetAllPoints(previewButton.widget.healthBar)
+                indicator.highlight:SetTexture("Interface\\Buttons\\WHITE8x8")
+                indicator.highlight:Show()
+            elseif highlightType == "entire" then
+                indicator.highlight:ClearAllPoints()
+                indicator.highlight:SetAllPoints(previewButton.widget.healthBar)
+                indicator.highlight:SetTexture("Interface\\Buttons\\WHITE8x8")
+                indicator.highlight:Show()
+            elseif highlightType == "current" then
+                indicator.highlight:ClearAllPoints()
+                indicator.highlight:SetAllPoints(previewButton.widget.healthBar:GetStatusBarTexture())
+                indicator.highlight:SetTexture(Cell.vars.texture)
+                indicator.highlight:Show()
+            end
+
+            -- preview
+            indicator.elapsed = 0
+            indicator.current = 1
+            indicator:SetDispels(debuffTypes[indicator.current])
+            indicator:SetScript("OnUpdate", function(self, elapsed)
+                indicator.elapsed = indicator.elapsed + elapsed
+                if indicator.elapsed >= 1 then
+                    indicator.elapsed = 0
+                    indicator.current = indicator.current + 1
+                    if indicator.current == 5 then indicator.current = 1 end
+                    indicator:SetDispels(debuffTypes[indicator.current])
+                end
+            end)
+        end
 
     elseif indicatorName == "raidDebuffs" then
         indicator.isRaidDebuffs = true

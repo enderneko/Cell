@@ -4,8 +4,6 @@ local F = Cell.funcs
 local I = Cell.iFuncs
 local P = Cell.pixelPerfectFuncs
 
-local DebuffTypeColor = F:Copy(DebuffTypeColor)
-DebuffTypeColor.cleu = {r=0, g=1, b=1}
 -------------------------------------------------
 -- CreateAura_BorderIcon
 -------------------------------------------------
@@ -43,7 +41,7 @@ end
 local function BorderIcon_SetCooldown(frame, start, duration, debuffType, texture, count, refreshing)
     local r, g, b
     if debuffType then
-        r, g, b = DebuffTypeColor[debuffType].r, DebuffTypeColor[debuffType].g, DebuffTypeColor[debuffType].b
+        r, g, b = I:GetDebuffTypeColor(debuffType)
     else
         r, g, b = 0, 0, 0
     end
@@ -297,7 +295,7 @@ local function BarIcon_SetCooldown(frame, start, duration, debuffType, texture, 
 
     local r, g, b
     if debuffType then
-        r, g, b = DebuffTypeColor[debuffType].r, DebuffTypeColor[debuffType].g, DebuffTypeColor[debuffType].b
+        r, g, b = I:GetDebuffTypeColor(debuffType)
         frame.spark:SetColorTexture(r, g, b, 1)
     else
         r, g, b = 0, 0, 0
@@ -780,7 +778,7 @@ function I:CreateAura_Color(name, parent)
 
     function color:SetCooldown(start, duration, debuffType, texture, count, refreshing)
         if color.type == "debuff-type" and debuffType then
-            solidTex:SetVertexColor(DebuffTypeColor[debuffType]["r"], DebuffTypeColor[debuffType]["g"], DebuffTypeColor[debuffType]["b"], color.alpha)
+            solidTex:SetVertexColor(CellDB["debuffTypeColor"][debuffType]["r"], CellDB["debuffTypeColor"][debuffType]["g"], CellDB["debuffTypeColor"][debuffType]["b"], color.alpha)
         end
         color:Show()
     end

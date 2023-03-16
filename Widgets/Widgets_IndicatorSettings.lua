@@ -1,6 +1,7 @@
 local addonName, addon = ...
 local L = addon.L
 local F = addon.funcs
+local I = addon.iFuncs
 local P = addon.pixelPerfectFuncs
 local LCG = LibStub("LibCustomGlow-1.0")
 
@@ -3636,7 +3637,7 @@ local function CreateConsumablePreview(parent, style)
     text:SetPoint("CENTER")
     text:SetText("Type "..style)
     
-    Cell.iFuncs:CreateConsumables(f, true)
+    I:CreateConsumables(f, true)
 
     function f:UpdateTicker(speed)
         f:SetScript("OnShow", function()
@@ -4237,7 +4238,7 @@ local function CreateSetting_HighlightType(parent)
     local widget
 
     if not settingWidgets["highlightType"] then
-        widget = addon:CreateFrame("CellIndicatorSettings_HighlightType", parent, 240, 50)
+        widget = addon:CreateFrame("CellIndicatorSettings_HighlightType", parent, 240, 117)
         settingWidgets["highlightType"] = widget
 
         widget.highlightType = addon:CreateDropdown(widget, 245)
@@ -4247,6 +4248,11 @@ local function CreateSetting_HighlightType(parent)
                 ["text"] = L["None"],
                 ["value"] = "none",
                 ["onClick"] = function()
+                    -- widget.curseCP:SetEnabled(false)
+                    -- widget.diseaseCP:SetEnabled(false)
+                    -- widget.magicCP:SetEnabled(false)
+                    -- widget.poisonCP:SetEnabled(false)
+                    -- widget.resetBtn:SetEnabled(false)
                     widget.func("none")
                 end,
             },
@@ -4254,6 +4260,11 @@ local function CreateSetting_HighlightType(parent)
                 ["text"] = L["Gradient"].." - "..L["Health Bar"].." ("..L["Entire"]..")",
                 ["value"] = "gradient",
                 ["onClick"] = function()
+                    -- widget.curseCP:SetEnabled(true)
+                    -- widget.diseaseCP:SetEnabled(true)
+                    -- widget.magicCP:SetEnabled(true)
+                    -- widget.poisonCP:SetEnabled(true)
+                    -- widget.resetBtn:SetEnabled(true)
                     widget.func("gradient")
                 end,
             },
@@ -4261,6 +4272,11 @@ local function CreateSetting_HighlightType(parent)
                 ["text"] = L["Solid"].." - "..L["Health Bar"].." ("..L["Entire"]..")",
                 ["value"] = "entire",
                 ["onClick"] = function()
+                    -- widget.curseCP:SetEnabled(true)
+                    -- widget.diseaseCP:SetEnabled(true)
+                    -- widget.magicCP:SetEnabled(true)
+                    -- widget.poisonCP:SetEnabled(true)
+                    -- widget.resetBtn:SetEnabled(true)
                     widget.func("entire")
                 end,
             },
@@ -4268,6 +4284,11 @@ local function CreateSetting_HighlightType(parent)
                 ["text"] = L["Solid"].." - "..L["Health Bar"].." ("..L["Current"]..")",
                 ["value"] = "current",
                 ["onClick"] = function()
+                    -- widget.curseCP:SetEnabled(true)
+                    -- widget.diseaseCP:SetEnabled(true)
+                    -- widget.magicCP:SetEnabled(true)
+                    -- widget.poisonCP:SetEnabled(true)
+                    -- widget.resetBtn:SetEnabled(true)
                     widget.func("current")
                 end,
             },
@@ -4277,6 +4298,46 @@ local function CreateSetting_HighlightType(parent)
         widget.highlightTypeText:SetText(L["Highlight Type"])
         widget.highlightTypeText:SetPoint("BOTTOMLEFT", widget.highlightType, "TOPLEFT", 0, 1)
 
+        -- curse
+        widget.curseCP = addon:CreateColorPicker(widget, "|TInterface\\AddOns\\Cell\\Media\\Debuffs\\Curse:0|t "..L["Curse"], false, nil, function(r, g, b)
+            I:SetDebuffTypeColor("Curse", r, g, b)
+            widget.func(widget.highlightType:GetSelected())
+        end)
+        widget.curseCP:SetPoint("TOPLEFT", widget.highlightType, "BOTTOMLEFT", 0, -7)
+
+        -- disease
+        widget.diseaseCP = addon:CreateColorPicker(widget, "|TInterface\\AddOns\\Cell\\Media\\Debuffs\\Disease:0|t "..L["Disease"], false, nil, function(r, g, b)
+            I:SetDebuffTypeColor("Disease", r, g, b)
+            widget.func(widget.highlightType:GetSelected())
+        end)
+        widget.diseaseCP:SetPoint("TOPLEFT", widget.curseCP, "TOPRIGHT", 110, 0)
+
+        -- magic
+        widget.magicCP = addon:CreateColorPicker(widget, "|TInterface\\AddOns\\Cell\\Media\\Debuffs\\Magic:0|t "..L["Magic"], false, nil, function(r, g, b)
+            I:SetDebuffTypeColor("Magic", r, g, b)
+            widget.func(widget.highlightType:GetSelected())
+        end)
+        widget.magicCP:SetPoint("TOPLEFT", widget.curseCP, "BOTTOMLEFT", 0, -7)
+
+        -- poison
+        widget.poisonCP = addon:CreateColorPicker(widget, "|TInterface\\AddOns\\Cell\\Media\\Debuffs\\Poison:0|t "..L["Poison"], false, nil, function(r, g, b)
+            I:SetDebuffTypeColor("Poison", r, g, b)
+            widget.func(widget.highlightType:GetSelected())
+        end)
+        widget.poisonCP:SetPoint("TOPLEFT", widget.magicCP, "TOPRIGHT", 110, 0)
+
+        -- reset
+        widget.resetBtn = addon:CreateButton(widget, L["Reset All"], "accent-hover", {70, 20})
+        widget.resetBtn:SetPoint("TOPLEFT", widget.magicCP, "BOTTOMLEFT", 0, -7)
+        widget.resetBtn:SetScript("OnClick", function()
+            I:ResetDebuffTypeColor()
+            widget.curseCP:SetColor(I:GetDebuffTypeColor("Curse"))
+            widget.diseaseCP:SetColor(I:GetDebuffTypeColor("Disease"))
+            widget.magicCP:SetColor(I:GetDebuffTypeColor("Magic"))
+            widget.poisonCP:SetColor(I:GetDebuffTypeColor("Poison"))
+            widget.func(widget.highlightType:GetSelected())
+        end)
+
         -- associate db
         function widget:SetFunc(func)
             widget.func = func
@@ -4285,6 +4346,16 @@ local function CreateSetting_HighlightType(parent)
         -- show db value
         function widget:SetDBValue(highlightType)
             widget.highlightType:SetSelectedValue(highlightType)
+            widget.curseCP:SetColor(I:GetDebuffTypeColor("Curse"))
+            widget.diseaseCP:SetColor(I:GetDebuffTypeColor("Disease"))
+            widget.magicCP:SetColor(I:GetDebuffTypeColor("Magic"))
+            widget.poisonCP:SetColor(I:GetDebuffTypeColor("Poison"))
+
+            -- widget.curseCP:SetEnabled(highlightType ~= "none")
+            -- widget.diseaseCP:SetEnabled(highlightType ~= "none")
+            -- widget.magicCP:SetEnabled(highlightType ~= "none")
+            -- widget.poisonCP:SetEnabled(highlightType ~= "none")
+            -- widget.resetBtn:SetEnabled(highlightType ~= "none")
         end
     else
         widget = settingWidgets["highlightType"]

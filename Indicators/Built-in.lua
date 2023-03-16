@@ -432,7 +432,8 @@ local function Dispels_SetDispels(self, dispelTypes)
     local i = 1
     for dispelType, _ in pairs(dispelTypes) do
         if a == 0 and dispelType then
-            r, g, b, a = DebuffTypeColor[dispelType].r, DebuffTypeColor[dispelType].g, DebuffTypeColor[dispelType].b, 1
+            r, g, b = I:GetDebuffTypeColor(dispelType)
+            a = 1
         end
         if self.showIcons then
             self[i]:SetDispel(dispelType)
@@ -517,7 +518,7 @@ function I:CreateDispels(parent)
     dispels.SetSize = Dispels_SetSize
     dispels.UpdateSize = Dispels_UpdateSize
     dispels.SetDispels = Dispels_SetDispels
-    dispels.UpdateHighlight = Dispels_UpdateHighlight
+    -- dispels.UpdateHighlight = Dispels_UpdateHighlight
     dispels.ShowIcons = Dispels_ShowIcons
     dispels.SetOrientation = Dispels_SetOrientation
 

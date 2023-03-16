@@ -2,6 +2,7 @@
 ..\FrameXML\UI.xsd">
 	<Script file="Appearance_Defaults.lua"/>
 	<Script file="Layout_Defaults_Wrath.lua"/>
-	<Script file="ClickCastings_DefaultSpells_Wrath.lua"/>
-	<Script file="Indicators_DefaultSpells_Wrath.lua"/>
+	<Script file="ClickCasting_DefaultSpells_Wrath.lua"/>
+	<Script file="Indicator_Defaults.lua"/>
+	<Script file="Indicator_DefaultSpells_Wrath.lua"/>
 </Ui>
