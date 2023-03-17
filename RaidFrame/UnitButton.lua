@@ -70,10 +70,15 @@ local indicatorsInitialized
 local enabledIndicators, indicatorNums, indicatorCustoms = {}, {}, {}
 
 local function UpdateIndicatorParentVisibility(b, indicatorName, enabled)
-    if not (indicatorName == "debuffs" or indicatorName == "defensiveCooldowns" or indicatorName == "externalCooldowns" or indicatorName == "allCooldowns" or indicatorName == "dispels") then
+    if not (indicatorName == "debuffs" or
+            indicatorName == "defensiveCooldowns" or
+            indicatorName == "externalCooldowns" or
+            indicatorName == "allCooldowns" or
+            indicatorName == "dispels" or
+            indicatorName == "missingBuffs") then
         return
     end
-
+    
     if enabled then
         b.indicators[indicatorName]:Show()
     else
@@ -121,6 +126,11 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
             -- update healthThresholds
             if t["indicatorName"] == "healthThresholds" then
                 I:UpdateHealthThresholds()
+            end
+            -- update missingBuffs
+            if t["indicatorName"] == "missingBuffs" then
+                I:EnableMissingBuffs(t["enabled"])
+                I:UpdateMissingBuffsNum(t["num"])
             end
             -- update custom
             if t["dispellableByMe"] ~= nil then
@@ -342,6 +352,11 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                 F:IterateAllUnitButtons(function(b)
                     B.UpdateHealth(b)
                 end, true)
+            elseif indicatorName == "missingBuffs" then
+                I:EnableMissingBuffs(value)
+                F:IterateAllUnitButtons(function(b)
+                    UpdateIndicatorParentVisibility(b, indicatorName, value)
+                end, true)
             else
                 -- refresh
                 F:IterateAllUnitButtons(function(b)
@@ -446,10 +461,14 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
             end, true)
         elseif setting == "num" then
             indicatorNums[indicatorName] = value
-            -- refresh
-            F:IterateAllUnitButtons(function(b)
-                UnitButton_UpdateAuras(b)
-            end, true)
+            if indicatorName == "missingBuffs" then
+                I:UpdateMissingBuffsNum(value)
+            else
+                -- refresh
+                F:IterateAllUnitButtons(function(b)
+                    UnitButton_UpdateAuras(b)
+                end, true)
+            end
         elseif setting == "roleTexture" then
             F:IterateAllUnitButtons(function(b)
                 local indicator = b.indicators[indicatorName]
@@ -3084,6 +3103,7 @@ function F:UnitButton_OnLoad(button)
     I:CreateTargetCounter(button)
     I:CreateConsumables(button)
     I:CreateHealthThresholds(button)
+    I:CreateMissingBuffs(button)
 
     -- events
     button:SetScript("OnAttributeChanged", UnitButton_OnAttributeChanged) -- init

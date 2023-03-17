@@ -906,3 +906,29 @@ function I:ConvertConsumables(db)
     end
     return temp
 end
+
+-------------------------------------------------
+-- missing buffs
+-------------------------------------------------
+local missingBuffs = {
+    21562, -- PWF
+    1126, -- MotW
+    1459, -- AB
+    6673, -- BS
+    364342, -- BotB
+}
+
+function I:GetDefaultMissingBuffs()
+    return missingBuffs
+end
+
+function I:GetMissingBuffsString()
+    local s = ""
+    for _, id in pairs(missingBuffs) do
+        local icon = select(3, GetSpellInfo(id))
+        if icon then
+            s = s .. "|T" .. icon .. ":16:16:0:0:16:16:1:15:1:15|t "
+        end
+    end
+    return s
+end

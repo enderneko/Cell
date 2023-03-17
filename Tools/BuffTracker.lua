@@ -1,6 +1,7 @@
 local _, Cell = ...
 local L = Cell.L
 local F = Cell.funcs
+local I = Cell.iFuncs
 local P = Cell.pixelPerfectFuncs
 local LCG = LibStub("LibCustomGlow-1.0")
 local LGI = LibStub:GetLibrary("LibGroupInfo")
@@ -19,11 +20,11 @@ local IsInRaid = IsInRaid
 -- buffs
 -------------------------------------------------
 local buffs = {
-    ["PWF"] = {["id"]=21562, ["glowColor"]={F:GetClassColor("PRIEST")}}, -- Power Word: Fortitude
-    ["MotW"] = {["id"]=1126, ["glowColor"]={F:GetClassColor("DRUID")}}, -- Mark of the Wild
-    ["AB"] = {["id"]=1459, ["glowColor"]={F:GetClassColor("MAGE")}}, -- Arcane Brilliance
-    ["BS"] = {["id"]=6673, ["glowColor"]={F:GetClassColor("WARRIOR")}}, -- Battle Shout
-    ["BotB"] = {["id"]=364342, ["glowColor"]={F:GetClassColor("EVOKER")}}, -- Blessing of the Bronze
+    ["PWF"] = {["id"]=21562, ["glowColor"]={F:GetClassColor("PRIEST")}, ["provider"]="PRIEST"}, -- Power Word: Fortitude
+    ["MotW"] = {["id"]=1126, ["glowColor"]={F:GetClassColor("DRUID")}, ["provider"]="DRUID"}, -- Mark of the Wild
+    ["AB"] = {["id"]=1459, ["glowColor"]={F:GetClassColor("MAGE")}, ["provider"]="MAGE"}, -- Arcane Brilliance
+    ["BS"] = {["id"]=6673, ["glowColor"]={F:GetClassColor("WARRIOR")}, ["provider"]="WARRIOR"}, -- Battle Shout
+    ["BotB"] = {["id"]=364342, ["glowColor"]={F:GetClassColor("EVOKER")}, ["provider"]="EVOKER"}, -- Blessing of the Bronze
 }
 
 do
@@ -427,6 +428,8 @@ end
 -- check
 -------------------------------------------------
 local function CheckUnit(unit, updateBtn)
+    I:HideMissingBuffs(unit)
+
     -- print("CheckUnit", unit)
     if not hasBuffProvider then return end
 
@@ -440,12 +443,14 @@ local function CheckUnit(unit, updateBtn)
                 if required == k or k == "PWF" or k == "MotW" then
                     if not F:FindAuraById(unit, "BUFF", buffs[k]["id"]) then
                         unaffected[k][unit] = true
+                        I:ShowMissingBuff(unit, buffs[k]["icon"], Cell.vars.playerClass == buffs[k]["provider"])
                     else
                         unaffected[k][unit] = nil
                     end
                 elseif k == "BotB" then
                     if not AuraUtil.FindAuraByName(buffs[k]["name"], unit, "HELPFUL") then
                         unaffected[k][unit] = true
+                        I:ShowMissingBuff(unit, buffs[k]["icon"], Cell.vars.playerClass == buffs[k]["provider"])
                     else
                         unaffected[k][unit] = nil
                     end
@@ -542,7 +547,7 @@ function buffTrackerFrame:GROUP_ROSTER_UPDATE(immediate)
     if immediate then
         IterateAllUnits()
     else
-        timer = C_Timer.NewTimer(2, IterateAllUnits)
+        timer = C_Timer.NewTimer(3, IterateAllUnits)
     end
 end
 
@@ -607,6 +612,11 @@ local function UpdateTools(which)
 
             enabled = false
             ShowMover(false)
+
+            -- missingBuffs indicator
+            for unit in F:IterateGroupMembers() do
+                I:HideMissingBuffs(unit, true)
+            end
         end
 
         ResizeButtons()

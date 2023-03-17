@@ -1805,6 +1805,31 @@ function F:Revise()
         end
     end
 
+    -- r158-release
+    if CellDB["revise"] and dbRevision < 158 then
+        --! Missing Buffs indicator only works on Retail
+        --! because it's difficult to check Blessings on Wrath
+        if Cell.isRetail then
+            local index = Cell.defaults.indicatorIndices.missingBuffs
+            for _, layout in pairs(CellDB["layouts"]) do
+                if not layout["indicators"][index] or layout["indicators"][index]["indicatorName"] ~= "missingBuffs" then
+                    tinsert(layout.indicators, index, {
+                        ["name"] = "Missing Buffs",
+                        ["indicatorName"] = "missingBuffs",
+                        ["type"] = "built-in",
+                        ["enabled"] = false,
+                        -- ["trackByName"] = Cell.isWrath,
+                        ["position"] = {"BOTTOMRIGHT", "BOTTOMRIGHT", 0, 4},
+                        ["frameLevel"] = 10,
+                        ["size"] = {13, 13},
+                        ["num"] = 3,
+                        ["orientation"] = "right-to-left",
+                    })
+                end
+            end
+        end
+    end
+
     CellDB["revise"] = Cell.version
     if Cell.isWrath then
         CellCharacterDB["revise"] = Cell.version

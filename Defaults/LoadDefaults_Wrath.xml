@@ -1,8 +1,8 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\FrameXML\UI.xsd">
+	<Script file="Indicator_Defaults.lua"/>
+	<Script file="Indicator_DefaultSpells_Wrath.lua"/>
 	<Script file="Appearance_Defaults.lua"/>
 	<Script file="Layout_Defaults_Wrath.lua"/>
 	<Script file="ClickCasting_DefaultSpells_Wrath.lua"/>
-	<Script file="Indicator_Defaults.lua"/>
-	<Script file="Indicator_DefaultSpells_Wrath.lua"/>
 </Ui>

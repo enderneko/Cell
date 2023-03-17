@@ -1059,6 +1059,9 @@ function I:CreateStatusText(parent)
     parent.indicators.statusText = statusText
     statusText:Hide()
 
+    -- statusText:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8x8"})
+    -- statusText:SetBackdropColor(0, 0, 0, 0.3)
+
     local text = statusText:CreateFontString(nil, "ARTWORK", "CELL_FONT_STATUS")
     statusText.text = text
 
@@ -1557,4 +1560,96 @@ end
 function I:UpdateHealthThresholds()
     Cell.vars.healthThresholds = Cell.vars.currentLayoutTable.indicators[Cell.defaults.indicatorIndices.healthThresholds].thresholds
     F:Sort(Cell.vars.healthThresholds, 1, "ascending")
+end
+
+-------------------------------------------------
+-- missing buffs
+-------------------------------------------------
+function I:CreateMissingBuffs(parent)
+    local missingBuffs = CreateFrame("Frame", parent:GetName().."MissingBuffParent", parent.widget.overlayFrame)
+    parent.indicators.missingBuffs = missingBuffs
+    missingBuffs:Hide()
+
+    missingBuffs.OriginalSetSize = missingBuffs.SetSize
+    missingBuffs.SetSize = Cooldowns_SetSize
+    missingBuffs.UpdateSize = Cooldowns_UpdateSize
+    missingBuffs.SetOrientation = Cooldowns_SetOrientation
+    missingBuffs.UpdatePixelPerfect = Cooldowns_UpdatePixelPerfect
+
+    for i = 1, 5 do
+        local name = parent:GetName().."MissingBuff"..i
+        local frame = I:CreateAura_BarIcon(name, missingBuffs)
+        tinsert(missingBuffs, frame)
+        frame:HookScript("OnSizeChanged", function()
+            if frame.glow then
+                LCG.ButtonGlow_Start(frame)
+            else
+                LCG.ButtonGlow_Stop(frame)
+            end
+        end)
+    end
+end
+
+local missingBuffsEnabled, missingBuffsNum = false, 0
+function I:EnableMissingBuffs(enabled)
+    missingBuffsEnabled = enabled
+
+    if enabled and CellDB["tools"]["buffTracker"][1] then
+        CellBuffTrackerFrame:GROUP_ROSTER_UPDATE(true)
+    end
+end
+
+function I:UpdateMissingBuffsNum(num)
+    missingBuffsNum = num
+
+    if missingBuffsEnabled and CellDB["tools"]["buffTracker"][1] then
+        CellBuffTrackerFrame:GROUP_ROSTER_UPDATE(true)
+    end
+end
+
+local missingBuffsCounter = {}
+function I:HideMissingBuffs(unit, force)
+    if not (missingBuffsEnabled or force) then return end
+    
+    missingBuffsCounter[unit] = nil
+    
+    local b1, b2 = F:GetUnitButtonByUnit(unit)
+    for i = 1, 5 do
+        if b1 then
+            b1.indicators.missingBuffs[i]:Hide()
+            -- LCG.ButtonGlow_Stop(b1.indicators.missingBuffs[i])
+        end
+        if b2 then
+            b2.indicators.missingBuffs[i]:Hide()
+            -- LCG.ButtonGlow_Stop(b2.indicators.missingBuffs[i])
+        end
+    end
+end
+
+local function ShowMissingBuff(b, index, icon, glow)
+    b.indicators.missingBuffs:UpdateSize(index)
+    
+    local f = b.indicators.missingBuffs[index]
+    
+    f:SetCooldown(0, 0, nil, icon, 0)
+
+    if glow then
+        LCG.ButtonGlow_Start(f)
+        f.glow = true
+    else
+        LCG.ButtonGlow_Stop(f)
+        f.glow = nil
+    end
+end
+
+function I:ShowMissingBuff(unit, icon, canProvide)
+    if not missingBuffsEnabled then return end
+    
+    missingBuffsCounter[unit] = (missingBuffsCounter[unit] or 0) + 1
+
+    if missingBuffsCounter[unit] > missingBuffsNum then return end
+
+    local b1, b2 = F:GetUnitButtonByUnit(unit)
+    if b1 then ShowMissingBuff(b1, missingBuffsCounter[unit], icon, canProvide)end
+    if b2 then ShowMissingBuff(b2, missingBuffsCounter[unit], icon, canProvide)end
 end

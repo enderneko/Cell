@@ -386,6 +386,7 @@ L["Targeted Spells"] = "被法术选中"
 L["Target Counter"] = "目标计数"
 L["Consumables"] = "消耗品"
 L["Health Thresholds"] = "血量阈值"
+L["Missing Buffs"] = "缺失增益"
 
 L["Create new indicator"] = "创建新指示器"
 L["Rename indicator"] = "重命名指示器"
