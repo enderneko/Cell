@@ -20,11 +20,11 @@ local IsInRaid = IsInRaid
 -- buffs
 -------------------------------------------------
 local buffs = {
-    ["PWF"] = {["id"]=21562, ["glowColor"]={F:GetClassColor("PRIEST")}, ["provider"]="PRIEST"}, -- Power Word: Fortitude
-    ["MotW"] = {["id"]=1126, ["glowColor"]={F:GetClassColor("DRUID")}, ["provider"]="DRUID"}, -- Mark of the Wild
-    ["AB"] = {["id"]=1459, ["glowColor"]={F:GetClassColor("MAGE")}, ["provider"]="MAGE"}, -- Arcane Brilliance
-    ["BS"] = {["id"]=6673, ["glowColor"]={F:GetClassColor("WARRIOR")}, ["provider"]="WARRIOR"}, -- Battle Shout
-    ["BotB"] = {["id"]=364342, ["glowColor"]={F:GetClassColor("EVOKER")}, ["provider"]="EVOKER"}, -- Blessing of the Bronze
+    ["PWF"] = {id=21562, glowColor={F:GetClassColor("PRIEST")}, provider="PRIEST", level=6}, -- Power Word: Fortitude
+    ["MotW"] = {id=1126, glowColor={F:GetClassColor("DRUID")}, provider="DRUID", level=9}, -- Mark of the Wild
+    ["AB"] = {id=1459, glowColor={F:GetClassColor("MAGE")}, provider="MAGE", level=8}, -- Arcane Brilliance
+    ["BS"] = {id=6673, glowColor={F:GetClassColor("WARRIOR")}, provider="WARRIOR", level=10}, -- Battle Shout
+    ["BotB"] = {id=364342, glowColor={F:GetClassColor("EVOKER")}, provider="EVOKER", level=60}, -- Blessing of the Bronze
 }
 
 do
@@ -475,20 +475,33 @@ local function IterateAllUnits()
     for unit in F:IterateGroupMembers() do
         if UnitIsConnected(unit) and UnitIsVisible(unit) then
             if UnitClassBase(unit) == "PRIEST" then
-                available["PWF"] = true
-                hasBuffProvider = true
+                if UnitLevel(unit) >= buffs["PWF"]["level"] then
+                    available["PWF"] = true
+                    hasBuffProvider = true
+                end
+
             elseif UnitClassBase(unit) == "DRUID" then
-                available["MotW"] = true
-                hasBuffProvider = true
+                if UnitLevel(unit) >= buffs["MotW"]["level"] then
+                    available["MotW"] = true
+                    hasBuffProvider = true
+                end
             elseif UnitClassBase(unit) == "MAGE" then
-                available["AB"] = true
-                hasBuffProvider = true
+                if UnitLevel(unit) >= buffs["AB"]["level"] then
+                    available["AB"] = true
+                    hasBuffProvider = true
+                end
+
             elseif UnitClassBase(unit) == "WARRIOR" then
-                available["BS"] = true
-                hasBuffProvider = true
+                if UnitLevel(unit) >= buffs["BS"]["level"] then
+                    available["BS"] = true
+                    hasBuffProvider = true
+                end
+                
             elseif UnitClassBase(unit) == "EVOKER" then
-                available["BotB"] = true
-                hasBuffProvider = true
+                if UnitLevel(unit) >= buffs["BotB"]["level"] then
+                    available["BotB"] = true
+                    hasBuffProvider = true
+                end
             end
 
             if UnitIsUnit("player", unit) then

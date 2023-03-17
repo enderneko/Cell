@@ -927,7 +927,7 @@ function I:GetMissingBuffsString()
     for _, id in pairs(missingBuffs) do
         local icon = select(3, GetSpellInfo(id))
         if icon then
-            s = s .. "|T" .. icon .. ":16:16:0:0:16:16:1:15:1:15|t "
+            s = s .. "|T" .. icon .. ":14:14:0:0:14:14:1:13:1:13|t "
         end
     end
     return s

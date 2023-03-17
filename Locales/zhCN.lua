@@ -35,7 +35,7 @@ L["%s lock %s on %s."] = "%s将%s锁定在%s。"
 L["%s unlock %s from %s."] = "%s将%s从%s解锁。"
 -- L["Raid Sort"] = "团队排序"
 -- L["Raid Roster"] = "团队名单"
-L["Alt+Right-Click to remove a player"] = "用 Alt+右键 将玩家从团队中移出"
+L["raidRosterTips"] = "[右键] 助理，[Alt+右键] 移除。"
 
 -------------------------------------------------
 -- status text
@@ -504,7 +504,7 @@ L["The priority of spells decreases from top to bottom."] = "法术优先级从�
 L["With this indicator enabled, shield / overshield textures are disabled"] = "启用该指示器将会禁用血条上的护盾材质"
 L["Check all visible enemy nameplates. Battleground/Arena only."] = "检查所有可见的敌方姓名板。仅在战场、竞技场有效。"
 L["cleuAurasTips"] = "通过战斗记录事件匹配不可见的法术效果"
-L["raidRosterTips"] = "[右键] 助理，[Alt+右键] 移除。"
+L["%s in General must be enabled to make this indicator work"] = "要使用此指示器，必须先启用常规页面下的 %s 功能  "
 
 L["Would you like Cell to create a \"Healers\" indicator (icons)?"] = "需要 Cell 为你创建一个 “Healers” 指示器（图标组）？"
 
