@@ -68,6 +68,13 @@ select(2, ...).L = setmetatable({
     ["SNIPPETS_TIPS"] = "[Double-Click] to rename. [Shift-Click] to delete. All checked snippets will be automatically invoked at the end of Cell initialization process (in ADDON_LOADED event).",
 
     ["CHANGELOGS"] = [[
+        <h1>r158-release (Mar 17, 2023, 20:17 GMT+8)</h1>
+        <p>+ New indicator: Missing Buffs (Retail only).</p>
+        <p>+ Added custom dispel type color options for Dispels indicator.</p>
+        <p>* Update raid debuffs checker.</p>
+        <p>* Update initialConfigFunction of each group header.</p>
+        <br/>
+
         <h1>r157-release (Mar 7, 2023, 18:31 GMT+8)</h1>
         <p>* Bug fixes.</p>
         <p>* Updated zhTW.</p>

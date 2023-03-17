@@ -1,7 +1,7 @@
-[Full Changelog](https://github.com/enderneko/Cell/compare/r156-release...3415089ef75273c5f760a15cdabd6ec4084b8003)
+[Full Changelog](https://github.com/enderneko/Cell/compare/r157-release...e26bb5374787fad894f74262724c8acd69b0004a)
 
-- Fix mouseover macros on vehicles
-- Fix cleuHealthUpdater
-- Update zhTW
-- Add vehicle root checker
-- Update "Healers"
+- New indicator: Missing Buffs
+- Update Buff Tracker on Retail
+- Implement custom dispel type color
+- Update raid debuffs checker
+- Update initialConfigFunction of headers

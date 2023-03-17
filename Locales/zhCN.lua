@@ -615,6 +615,13 @@ L["Changelogs"] = "更新记录"
 L["Click to view recent changelogs"] = "点击查看近期更新记录"
 L["Click to view older changelogs"] = "点击查看远古更新记录"
 L["CHANGELOGS"] = [[
+    <h1>r158-release (Mar 17, 2023, 20:17 GMT+8)</h1>
+    <p>+ 新指示器：缺失增益（仅正式服）。</p>
+    <p>+ 为“驱散”指示器添加了自定义驱散类型颜色的选项。</p>
+    <p>* 更新副本减益记录索引的方式，现在更加可靠。</p>
+    <p>* 对框架的 initialConfigFunction 进行了微调。</p>
+    <br/>
+
     <h1>r157-release (Mar 7, 2023, 18:31 GMT+8)</h1>
     <p>* 修复一些异常。</p>
     <p>* 更新繁中。</p>
