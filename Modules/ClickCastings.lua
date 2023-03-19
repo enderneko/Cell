@@ -1171,14 +1171,18 @@ function CheckConflicts()
             "\n|cFFFF3030"..L["Yes"].."|r - "..L["Remove"].."\n".."|cFFFF3030"..L["No"].."|r - "..L["Cancel"]
 
         local popup = Cell:CreateConfirmPopup(clickCastingsTab, 200, msg, function(self)
-            --! NOTE: show-set-hide or commit
-            -- ShowUIPanel(SettingsPanel)
-            -- Settings.OpenToCategory(8)
-            Settings.SetValue("SELFCAST", "NONE", true)
-            -- HideUIPanel(SettingsPanel)
-            SettingsPanel:Commit()
-            -- SetModifiedClick("SELFCAST", "NONE")
-            -- SetModifiedClick("FOCUSCAST", "NONE")
+            if Cell.isRetail then
+                --! NOTE: show-set-hide or commit
+                -- ShowUIPanel(SettingsPanel)
+                -- Settings.OpenToCategory(8)
+                Settings.SetValue("SELFCAST", "NONE", true)
+                -- HideUIPanel(SettingsPanel)
+                SettingsPanel:Commit()
+            else
+                SetModifiedClick("SELFCAST", "NONE")
+                -- SetModifiedClick("FOCUSCAST", "NONE")
+                SaveBindings(GetCurrentBindingSet())
+            end
         end, nil, true)
         popup:SetPoint("TOPLEFT", 117, -90)
     end
@@ -1205,9 +1209,7 @@ end
 Cell:RegisterCallback("ShowOptionsTab", "ClickCastingsTab_ShowTab", ShowTab)
 
 clickCastingsTab:SetScript("OnShow", function()
-    if Cell.isRetail then
-        CheckConflicts()
-    end
+    CheckConflicts()
 
     if loaded then return end
 
