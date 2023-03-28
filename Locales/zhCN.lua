@@ -615,6 +615,11 @@ L["Changelogs"] = "更新记录"
 L["Click to view recent changelogs"] = "点击查看近期更新记录"
 L["Click to view older changelogs"] = "点击查看远古更新记录"
 L["CHANGELOGS"] = [[
+    <h1>r159-release (Mar 28, 2023, 22:59 GMT+8)</h1>
+    <p>+ 为怀旧服版本添加了“自我施法快捷键”的冲突检查。</p>
+    <p>* 更新繁中。</p>
+    <br/>
+        
     <h1>r158-release (Mar 17, 2023, 20:17 GMT+8)</h1>
     <p>+ 新指示器：缺失增益（仅正式服）。</p>
     <p>+ 为“驱散”指示器添加了自定义驱散类型颜色的选项。</p>

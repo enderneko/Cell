@@ -1,7 +1,5 @@
-[Full Changelog](https://github.com/enderneko/Cell/compare/r157-release...e26bb5374787fad894f74262724c8acd69b0004a)
+[Full Changelog](https://github.com/enderneko/Cell/compare/r158-release...4a54466efd32d6a6ba38e8a1cb7d448c06811b61)
 
-- New indicator: Missing Buffs
-- Update Buff Tracker on Retail
-- Implement custom dispel type color
-- Update raid debuffs checker
-- Update initialConfigFunction of headers
+- Add Self Cast Key checker for Wrath
+- Update zhTW
+- Update README.md
