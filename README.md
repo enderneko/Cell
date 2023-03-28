@@ -8,12 +8,16 @@
 [![cell on curseforge](https://img.shields.io/badge/dynamic/json?color=f16436&label=CurseForge&query=%24.downloads.total&url=https%3A%2F%2Fapi.cfwidget.com%2F409666&style=flat)](https://www.curseforge.com/wow/addons/cell)
 [![cell on wago](https://img.shields.io/badge/Wago-Cell-ad1319)](https://addons.wago.io/addons/cell)
 
+&nbsp;
+
 ## Cell is a unique raid frame addon inspired by CompactRaid
 
 I love __CompactRaid__ so much, but it seems to be abandoned. And I made Cell, hope you enjoy.
 Some ideas are from other great raid frame addons, such as __Aptechka__, __Grid2__ and __VuhDo__.
 Cell is not meant to be a lightweight or powerful raid frame addon.
 It's easy to use and good enough for you (hope so).
+
+&nbsp;
 
 ## Features
 
@@ -27,15 +31,48 @@ It's easy to use and good enough for you (hope so).
 - __Spotlight Frame:__ extra 5 unit buttons, can be set to Target, Target of Target, Focus, Unit or Unit's Pet.
 - __Compatibility:__ [BigDebuffs](https://www.curseforge.com/wow/addons/bigdebuffs), [Class Colors](https://www.curseforge.com/wow/addons/classcolors), [OmniCD](https://www.curseforge.com/wow/addons/omnicd) and of course, [WAs](https://wago.io/weakauras).
 
+&nbsp;
+
+## Code Snippets
+
+__Try to disable all snippets if there are any issues.__
+
+Check <https://github.com/enderneko/Cell/tree/master/.snippets> for more snippets.
+
+### Usage
+
+1. Cell Options -> About -> Code Snippets
+2. New -> Paste -> Save -> Check AutoRun
+3. Reload
+
+### Blizzard style cooldowns
+
+<https://raw.githubusercontent.com/enderneko/Cell/master/.snippets/CooldownIcons_BlizzardStyle.lua>
+
+![Blizzard Style Cooldowns](https://github.com/enderneko/Cell/raw/master/.snippets/CooldownIcons_BlizzardStyle.gif)
+
+### Always show cooldown animations
+
+<https://raw.githubusercontent.com/enderneko/Cell/master/.snippets/CooldownIcons_ForceShow.lua>
+
+![Always show cooldown animations 1](https://github.com/enderneko/Cell/raw/master/.snippets/CooldownIcons_ForceShow1.gif)
+![Always show cooldown animations 2](https://github.com/enderneko/Cell/raw/master/.snippets/CooldownIcons_ForceShow2.gif)
+
+&nbsp;
+
 ## Not supported and probably won't be included in the future
 
 - Sort raid by name/class/role
 - Custom border
 - Addons like Clique
 
+&nbsp;
+
 ## Slash Commands
 
 Use __/cell__ for more information.
+
+&nbsp;
 
 ## Misc
 
