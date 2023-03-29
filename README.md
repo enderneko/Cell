@@ -51,13 +51,6 @@ Check <https://github.com/enderneko/Cell/tree/master/.snippets> for more snippet
 
 ![Blizzard Style Cooldowns](https://github.com/enderneko/Cell/raw/master/.snippets/CooldownIcons_BlizzardStyle.gif)
 
-### Always show cooldown animations
-
-<https://raw.githubusercontent.com/enderneko/Cell/master/.snippets/CooldownIcons_ForceShow.lua>
-
-![Always show cooldown animations 1](https://github.com/enderneko/Cell/raw/master/.snippets/CooldownIcons_ForceShow1.gif)
-![Always show cooldown animations 2](https://github.com/enderneko/Cell/raw/master/.snippets/CooldownIcons_ForceShow2.gif)
-
 &nbsp;
 
 ## Not supported and probably won't be included in the future
