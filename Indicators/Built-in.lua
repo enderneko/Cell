@@ -879,7 +879,7 @@ function I:CreateNameText(parent)
     end)
 
     function nameText:SetFont(font, size, flags)
-        if not string.find(strlower(font), ".ttf") then font = F:GetFont(font) end
+        font = F:GetFont(font)
 
         if flags == "Shadow" then
             nameText.name:SetFont(font, size, "")
@@ -1103,7 +1103,7 @@ function I:CreateStatusText(parent)
     end
     
     function statusText:SetFont(font, size, flags)
-        if not string.find(strlower(font), ".ttf") then font = F:GetFont(font) end
+        font = F:GetFont(font)
 
         if flags == "Shadow" then
             text:SetFont(font, size, "")
@@ -1167,7 +1167,7 @@ function I:CreateHealthText(parent)
     healthText.text = text
 
     function healthText:SetFont(font, size, flags)
-        if not string.find(strlower(font), ".ttf") then font = F:GetFont(font) end
+        font = F:GetFont(font)
 
         if flags == "Shadow" then
             text:SetFont(font, size, "")

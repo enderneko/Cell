@@ -183,7 +183,7 @@ function I:CreateTargetedSpells(parent)
     end
 
     function frame:SetFont(font, size, flags, horizontalOffset)
-        if not string.find(strlower(font), ".ttf") then font = F:GetFont(font) end
+        font = F:GetFont(font)
 
         if flags == "Shadow" then
             frame.stack:SetFont(font, size, "")
