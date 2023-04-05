@@ -23,17 +23,17 @@ local function Cooldowns_UpdateSize(self, iconsShown)
     if not (self.width and self.height and self.orientation) then return end -- not init
     if iconsShown then -- call from I:UnitButton_UpdateBuffs or preview
         if self.orientation == "horizontal" then
-            self:OriginalSetSize(self.width*iconsShown-P:Scale(iconsShown-1), self.height)
+            self:_SetSize(self.width*iconsShown-P:Scale(iconsShown-1), self.height)
         else
-            self:OriginalSetSize(self.width, self.height*iconsShown-P:Scale(iconsShown-1))
+            self:_SetSize(self.width, self.height*iconsShown-P:Scale(iconsShown-1))
         end
     else
         for i = 1, 5 do
             if self[i]:IsShown() then
                 if self.orientation == "horizontal" then
-                    self:OriginalSetSize(self.width*i-P:Scale(i-1), self.height)
+                    self:_SetSize(self.width*i-P:Scale(i-1), self.height)
                 else
-                    self:OriginalSetSize(self.width, self.height*i-P:Scale(i-1))
+                    self:_SetSize(self.width, self.height*i-P:Scale(i-1))
                 end
             end
         end
@@ -108,7 +108,7 @@ function I:CreateDefensiveCooldowns(parent)
     -- defensiveCooldowns:SetSize(20, 10)
     defensiveCooldowns:Hide()
 
-    defensiveCooldowns.OriginalSetSize = defensiveCooldowns.SetSize
+    defensiveCooldowns._SetSize = defensiveCooldowns.SetSize
     defensiveCooldowns.SetSize = Cooldowns_SetSize
     defensiveCooldowns.UpdateSize = Cooldowns_UpdateSize
     defensiveCooldowns.SetFont = Cooldowns_SetFont
@@ -137,7 +137,7 @@ function I:CreateExternalCooldowns(parent)
     parent.indicators.externalCooldowns = externalCooldowns
     externalCooldowns:Hide()
 
-    externalCooldowns.OriginalSetSize = externalCooldowns.SetSize
+    externalCooldowns._SetSize = externalCooldowns.SetSize
     externalCooldowns.SetSize = Cooldowns_SetSize
     externalCooldowns.UpdateSize = Cooldowns_UpdateSize
     externalCooldowns.SetFont = Cooldowns_SetFont
@@ -160,7 +160,7 @@ function I:CreateAllCooldowns(parent)
     parent.indicators.allCooldowns = allCooldowns
     allCooldowns:Hide()
 
-    allCooldowns.OriginalSetSize = allCooldowns.SetSize
+    allCooldowns._SetSize = allCooldowns.SetSize
     allCooldowns.SetSize = Cooldowns_SetSize
     allCooldowns.UpdateSize = Cooldowns_UpdateSize
     allCooldowns.SetFont = Cooldowns_SetFont
@@ -237,9 +237,9 @@ local function Debuffs_UpdateSize(self)
         end
     end
     if self.orientation == "left-to-right" or self.orientation == "right-to-left"  then
-        self:OriginalSetSize(P:Scale(size), P:Scale(self.normalSize[2]))
+        self:_SetSize(P:Scale(size), P:Scale(self.normalSize[2]))
     else
-        self:OriginalSetSize(P:Scale(self.normalSize[1]), P:Scale(size))
+        self:_SetSize(P:Scale(self.normalSize[1]), P:Scale(size))
     end
 end
 
@@ -250,7 +250,7 @@ local function Debuffs_SetFont(self, ...)
 end
 
 local function Debuffs_SetPoint(self, point, relativeTo, relativePoint, x, y)
-    self:OriginalSetPoint(point, relativeTo, relativePoint, x, y)
+    self:_SetPoint(point, relativeTo, relativePoint, x, y)
 
     if string.find(point, "LEFT$") then
         self.hAlignment = "LEFT"
@@ -329,14 +329,14 @@ function I:CreateDebuffs(parent)
     -- debuffs:SetSize(11, 11)
     debuffs:Hide()
 
-    debuffs.OriginalSetSize = debuffs.SetSize
+    debuffs._SetSize = debuffs.SetSize
     debuffs.SetSize = Debuffs_SetSize
     debuffs.UpdateSize = Debuffs_UpdateSize
     debuffs.SetFont = Debuffs_SetFont
 
     debuffs.hAlignment = ""
     debuffs.vAlignment = ""
-    debuffs.OriginalSetPoint = debuffs.SetPoint
+    debuffs._SetPoint = debuffs.SetPoint
     debuffs.SetPoint = Debuffs_SetPoint
     debuffs.SetOrientation = Debuffs_SetOrientation
 
@@ -365,9 +365,9 @@ function I:CreateDebuffs(parent)
         local frame = I:CreateAura_BarIcon(name, debuffs)
         tinsert(debuffs, frame)
 
-        frame.OriginalSetCooldown = frame.SetCooldown
+        frame._SetCooldown = frame.SetCooldown
         function frame:SetCooldown(start, duration, debuffType, texture, count, refreshing, isBigDebuff)
-            frame:OriginalSetCooldown(start, duration, debuffType, texture, count, refreshing)
+            frame:_SetCooldown(start, duration, debuffType, texture, count, refreshing)
             if isBigDebuff then
                 P:Size(frame, debuffs.bigSize[1], debuffs.bigSize[2])
             else
@@ -384,7 +384,7 @@ local function Dispels_SetSize(self, width, height)
     self.width = width
     self.height = height
 
-    self:OriginalSetSize(width, height)
+    self:_SetSize(width, height)
     for i = 1, 4 do
         self[i]:SetSize(width, height)
     end
@@ -423,7 +423,7 @@ local function Dispels_UpdateSize(self, iconsShown)
         end
     end
 
-    self:OriginalSetSize(width, height)
+    self:_SetSize(width, height)
 end
 
 local function Dispels_SetDispels(self, dispelTypes)
@@ -514,7 +514,7 @@ function I:CreateDispels(parent)
     -- dispels.highlight:SetVertexColor(0, 0, 0, 0)
     dispels.highlight:Hide()
 
-    dispels.OriginalSetSize = dispels.SetSize
+    dispels._SetSize = dispels.SetSize
     dispels.SetSize = Dispels_SetSize
     dispels.UpdateSize = Dispels_UpdateSize
     dispels.SetDispels = Dispels_SetDispels
@@ -683,7 +683,7 @@ local function RaidDebuffs_UpdateSize(self, iconsShown)
         end
     end
 
-    self:OriginalSetSize(width, height)
+    self:_SetSize(width, height)
 end
 
 local function RaidDebuffs_SetOrientation(self, orientation)
@@ -789,7 +789,7 @@ function I:CreateRaidDebuffs(parent)
         LCG.AutoCastGlow_Stop(parent)
     end)
 
-    raidDebuffs.OriginalSetSize = raidDebuffs.SetSize
+    raidDebuffs._SetSize = raidDebuffs.SetSize
     raidDebuffs.SetSize = RaidDebuffs_SetSize
     raidDebuffs.SetBorder = RaidDebuffs_SetBorder
     raidDebuffs.UpdateSize = RaidDebuffs_UpdateSize
@@ -909,10 +909,10 @@ function I:CreateNameText(parent)
         end
     end
 
-    nameText.OriginalSetPoint = nameText.SetPoint
+    nameText._SetPoint = nameText.SetPoint
     function nameText:SetPoint(point, relativeTo, relativePoint, x, y)
         -- override relativeTo
-        nameText:OriginalSetPoint(point, parent.widget.healthBar, relativePoint, x, y)
+        nameText:_SetPoint(point, parent.widget.healthBar, relativePoint, x, y)
 
         -- update name
         nameText.name:ClearAllPoints()
@@ -1087,12 +1087,12 @@ function I:CreateStatusText(parent)
         statusText.colors = colors
     end
     
-    statusText.OriginalSetPoint = statusText.SetPoint
+    statusText._SetPoint = statusText.SetPoint
     function statusText:SetPoint(point, _, yOffset)
         statusText:ClearAllPoints()
-        statusText:OriginalSetPoint("LEFT", parent.widget.healthBar)
-        statusText:OriginalSetPoint("RIGHT", parent.widget.healthBar)
-        statusText:OriginalSetPoint(point, parent.widget.healthBar, 0, yOffset)
+        statusText:_SetPoint("LEFT", parent.widget.healthBar)
+        statusText:_SetPoint("RIGHT", parent.widget.healthBar)
+        statusText:_SetPoint(point, parent.widget.healthBar, 0, yOffset)
 
         text:ClearAllPoints()
         text:SetPoint(point.."LEFT")
@@ -1188,7 +1188,7 @@ function I:CreateHealthText(parent)
         healthText:SetSize(text:GetStringWidth()+3, size+3)
     end
 
-    healthText.OriginalSetPoint = healthText.SetPoint
+    healthText._SetPoint = healthText.SetPoint
     function healthText:SetPoint(point, relativeTo, relativePoint, x, y)
         text:ClearAllPoints()
         if string.find(point, "LEFT") then
@@ -1198,7 +1198,7 @@ function I:CreateHealthText(parent)
         else
             text:SetPoint("CENTER")
         end
-        healthText:OriginalSetPoint(point, relativeTo, relativePoint, x, y)
+        healthText:_SetPoint(point, relativeTo, relativePoint, x, y)
     end
 
     function healthText:SetFormat(format)
@@ -1570,7 +1570,7 @@ function I:CreateMissingBuffs(parent)
     parent.indicators.missingBuffs = missingBuffs
     missingBuffs:Hide()
 
-    missingBuffs.OriginalSetSize = missingBuffs.SetSize
+    missingBuffs._SetSize = missingBuffs.SetSize
     missingBuffs.SetSize = Cooldowns_SetSize
     missingBuffs.UpdateSize = Cooldowns_UpdateSize
     missingBuffs.SetOrientation = Cooldowns_SetOrientation

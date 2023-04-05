@@ -136,9 +136,9 @@ function I:CreateStatusIcon(parent)
     end)
     -------------------------------------------------------
     
-    statusIcon.OriginalSetFrameLevel = statusIcon.SetFrameLevel
+    statusIcon._SetFrameLevel = statusIcon.SetFrameLevel
     function statusIcon:SetFrameLevel(level)
-        statusIcon:OriginalSetFrameLevel(level)
+        statusIcon:_SetFrameLevel(level)
         resurrectionIcon:SetFrameLevel(level)
     end
 end
