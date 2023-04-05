@@ -2,7 +2,7 @@
 -- File: UnitButton_Wrath.lua
 -- Author: enderneko (enderneko-dev@outlook.com)
 -- File Created: 2022/08/20 19:44:26 +0800
--- Last Modified: 2023/04/05 17:14:45 +0800
+-- Last Modified: 2023/04/05 18:47:36 +0800
 --]]
 
 local _, Cell = ...
@@ -274,12 +274,12 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                     UpdateIndicatorParentVisibility(b, t["indicatorName"], t["enabled"])
                 end
             
-                --! update pixel perfect for built-in widgets
-                if t["type"] == "built-in" then
-                    if indicator.UpdatePixelPerfect then
-                        indicator:UpdatePixelPerfect() 
-                    end
-                end
+                -- update pixel perfect for built-in widgets
+                -- if t["type"] == "built-in" then
+                --     if indicator.UpdatePixelPerfect then
+                --         indicator:UpdatePixelPerfect()
+                --     end
+                -- end
             end
             
             --! update pixel perfect for widgets

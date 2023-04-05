@@ -409,7 +409,7 @@ local function CrossRealmSendCommMessage(prefix, message, playerName, priority, 
 end
 
 -----------------------------------------
--- Send / Receive Raid Debuffs
+-- Send / Receive Raid Debuffs and Layouts
 -----------------------------------------
 local function filterFunc(self, event, msg, player, arg1, arg2, arg3, flag, channelId, ...)
     local newMsg = ""

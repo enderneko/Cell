@@ -284,12 +284,12 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                     UpdateIndicatorParentVisibility(b, t["indicatorName"], t["enabled"])
                 end
             
-                --! update pixel perfect for built-in widgets
-                if t["type"] == "built-in" then
-                    if indicator.UpdatePixelPerfect then
-                        indicator:UpdatePixelPerfect() 
-                    end
-                end
+                -- update pixel perfect for built-in widgets
+                -- if t["type"] == "built-in" then
+                --     if indicator.UpdatePixelPerfect then
+                --         indicator:UpdatePixelPerfect() 
+                --     end
+                -- end
             end
             
             --! update pixel perfect for widgets
