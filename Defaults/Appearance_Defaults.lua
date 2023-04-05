@@ -53,7 +53,8 @@ local buttonStyleIndices = {
     "shield",
     "overshield",
 }
-function Cell:ResetButtonStyle()
+
+function F:ResetButtonStyle()
     for _, index in pairs(buttonStyleIndices) do
         if type(Cell.defaults.appearance[index]) == "table" then
             CellDB["appearance"][index] = F:Copy(Cell.defaults.appearance[index])

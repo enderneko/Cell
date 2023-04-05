@@ -878,7 +878,7 @@ local function UpdateSyncedLayouts()
     end
 end
 
-local function GetNotifiedLayoutName(layout)
+function F:GetNotifiedLayoutName(layout)
     -- if currentlyEnabled is a slave
     local masterOfCurrentlyEnabled = slaves[Cell.vars.currentLayout]
     if masterOfCurrentlyEnabled then
@@ -1216,7 +1216,7 @@ local function CreateListPane()
                 end
             end
 
-            Cell:Fire("UpdateIndicators", GetNotifiedLayoutName(currentLayout), indicatorName, "create", currentLayoutTable["indicators"][last+1])
+            Cell:Fire("UpdateIndicators", F:GetNotifiedLayoutName(currentLayout), indicatorName, "create", currentLayoutTable["indicators"][last+1])
             LoadIndicatorList()
             listButtons[last+1]:Click()
             -- check scroll
@@ -1257,7 +1257,7 @@ local function CreateListPane()
         local auraType = currentLayoutTable["indicators"][selected]["auraType"]
 
         local popup = Cell:CreateConfirmPopup(indicatorsTab, 200, L["Delete indicator"].."?\n"..name, function(self)
-            Cell:Fire("UpdateIndicators", GetNotifiedLayoutName(currentLayout), indicatorName, "remove", auraType)
+            Cell:Fire("UpdateIndicators", F:GetNotifiedLayoutName(currentLayout), indicatorName, "remove", auraType)
             tremove(currentLayoutTable["indicators"], selected)
             LoadIndicatorList()
             listButtons[1]:Click()
@@ -1499,8 +1499,8 @@ local function ShowIndicatorSettings(id)
 
         -- update func
         w:SetFunc(function(value, customSetting)
-            -- print("NOTIFY:", GetNotifiedLayoutName())
-            local notifiedLayout = GetNotifiedLayoutName(currentLayout)
+            -- print("NOTIFY:", F:GetNotifiedLayoutName())
+            local notifiedLayout = F:GetNotifiedLayoutName(currentLayout)
 
             if value == nil and customSetting then --* NOTE: just Fire("UpdateIndicators") with customSetting
                 F:Debug("|cff77ff77SetFunc(Custom):|r ", notifiedLayout, indicatorName, customSetting)

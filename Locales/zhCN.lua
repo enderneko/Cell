@@ -196,6 +196,11 @@ L["Shield Texture"] = "护盾材质"
 L["Overshield Texture"] = "超过血量上限的护盾材质"
 L["Reset All"] = "全部重置"
 L["[Ctrl+LeftClick] to reset these settings"] = "[Ctrl+左键] 点击此按钮来重置这些设置"
+L["Debuff Type Color"] = "减益类型颜色"
+L["Curse"] = "诅咒"
+L["Poison"] = "中毒"
+L["Disease"] = "疾病"
+L["Magic"] = "魔法"
 
 -------------------------------------------------
 -- click-castings
@@ -490,11 +495,6 @@ L["left-to-right"] = "从左到右"
 L["right-to-left"] = "从右到左"
 L["top-to-bottom"] = "从上到下"
 L["bottom-to-top"] = "从下到上"
-
-L["Curse"] = "诅咒"
-L["Poison"] = "中毒"
-L["Disease"] = "疾病"
-L["Magic"] = "魔法"
 
 L["Leader Icons will hide while in combat"] = "战斗时队长图标将会隐藏"
 L["You can config debuffs in %s"] = "你可以在 %s 里设置减益"

@@ -5,7 +5,7 @@ local B = Cell.bFuncs
 local I = Cell.iFuncs
 local P = Cell.pixelPerfectFuncs
 
-local LoadData
+local LoadData, LoadButtonStyle, LoadDebuffTypeColor
 
 local appearanceTab = Cell:CreateFrame("CellOptionsFrame_AppearanceTab", Cell.frames.optionsFrame, nil, nil, true)
 Cell.frames.appearanceTab = appearanceTab
@@ -130,20 +130,20 @@ local function SetOnUpdate(indicator, type, icon, stack)
     end)
 end
 
-local function SetOnUpdate_Refresh(indicator, type, icon, stack)
-    indicator.preview = indicator.preview or CreateFrame("Frame", nil, indicator)
-    indicator.preview:SetScript("OnUpdate", function(self, elapsed)
-        self.elapsedTime = (self.elapsedTime or 0) + elapsed
-        if self.elapsedTime >= 5 then
-            self.elapsedTime = 0
-            indicator:SetCooldown(GetTime(), 13, type, icon, stack, true)
-        end
-    end)
-    indicator:SetScript("OnShow", function()
-        indicator.preview.elapsedTime = 0
-        indicator:SetCooldown(GetTime(), 13, type, icon, stack)
-    end)
-end
+-- local function SetOnUpdate_Refresh(indicator, type, icon, stack)
+--     indicator.preview = indicator.preview or CreateFrame("Frame", nil, indicator)
+--     indicator.preview:SetScript("OnUpdate", function(self, elapsed)
+--         self.elapsedTime = (self.elapsedTime or 0) + elapsed
+--         if self.elapsedTime >= 5 then
+--             self.elapsedTime = 0
+--             indicator:SetCooldown(GetTime(), 13, type, icon, stack, true)
+--         end
+--     end)
+--     indicator:SetScript("OnShow", function()
+--         indicator.preview.elapsedTime = 0
+--         indicator:SetCooldown(GetTime(), 13, type, icon, stack)
+--     end)
+-- end
 
 --[=[ update font
 local function UpdatePreviewIcons(layout, indicatorName, setting, value, value2)
@@ -221,6 +221,31 @@ local function CreatePreviewIcons()
     barIcon1:ShowDuration(true)
     SetOnUpdate(barIcon1, "", 132155, 5)
     barIcon1:Show()
+
+    -- display debuff type colors
+    -- curse_border = I:CreateAura_BorderIcon("CellAppearancePreviewIconCurse1", previewIconsBG, 2)
+    -- P:Size(curse_border, 22 ,22)
+    -- curse_border:SetPoint("TOPLEFT", borderIcon1, "BOTTOMLEFT", 0, P:Scale(-1))
+    -- curse_border:SetCooldown(0, 0, "Curse", 136139, 0)
+    -- curse_border:Show()
+    
+    -- disease_border = I:CreateAura_BorderIcon("CellAppearancePreviewIconDisease1", previewIconsBG, 2)
+    -- P:Size(disease_border, 22 ,22)
+    -- disease_border:SetPoint("TOPLEFT", curse_border, "TOPRIGHT", P:Scale(1), 0)
+    -- disease_border:SetCooldown(0, 0, "Disease", 136128, 0)
+    -- disease_border:Show()
+    
+    -- magic_border = I:CreateAura_BorderIcon("CellAppearancePreviewIconMagic1", previewIconsBG, 2)
+    -- P:Size(magic_border, 22 ,22)
+    -- magic_border:SetPoint("TOPLEFT", disease_border, "TOPRIGHT", P:Scale(1), 0)
+    -- magic_border:SetCooldown(0, 0, "Magic", 240443, 0)
+    -- magic_border:Show()
+    
+    -- poison_border = I:CreateAura_BorderIcon("CellAppearancePreviewIconPoison1", previewIconsBG, 2)
+    -- P:Size(poison_border, 22 ,22)
+    -- poison_border:SetPoint("TOPLEFT", magic_border, "TOPRIGHT", P:Scale(1), 0)
+    -- poison_border:SetCooldown(0, 0, "Poison", 136182, 0)
+    -- poison_border:Show()
 
     -- UpdatePreviewIcons()
 end
@@ -436,7 +461,7 @@ end
 -- unitbutton
 -------------------------------------------------
 local textureDropdown, barColorDropdown, barColorPicker, lossColorDropdown, lossColorPicker, deathColorCB, deathColorPicker, powerColorDropdown, powerColorPicker, barAnimationDropdown, targetColorPicker, mouseoverColorPicker, highlightSize
-local barAlpha, lossAlpha, bgAlpha, oorAlpha, predCB, useLibCB, absorbCB, shieldCB, oversCB, resetBtn
+local barAlpha, lossAlpha, bgAlpha, oorAlpha, predCB, useLibCB, absorbCB, shieldCB, oversCB
 local predCustomCB, predColorPicker, absorbColorPicker, shieldColorPicker
 local iconOptionsBtn, iconOptionsFrame, iconAnimationDropdown, durationRoundUpCB, durationDecimalText1, durationDecimalText2, durationDecimalDropdown, durationColorCB, durationNormalCP, durationPercentCP, durationSecondCP, durationPercentDD, durationSecondEB, durationSecondText
 
@@ -1088,17 +1113,67 @@ local function CreateUnitButtonStylePane()
     oversCB:SetPoint("TOPLEFT", shieldCB, "BOTTOMLEFT", 0, -7)
     
     -- reset
-    resetBtn = Cell:CreateButton(unitButtonPane, L["Reset All"], "accent", {77, 17}, nil, nil, nil, nil, nil, L["Reset All"], L["[Ctrl+LeftClick] to reset these settings"])
+    local resetBtn = Cell:CreateButton(unitButtonPane, L["Reset All"], "accent", {77, 17}, nil, nil, nil, nil, nil, L["Reset All"], L["[Ctrl+LeftClick] to reset these settings"])
     resetBtn:SetPoint("TOPRIGHT")
     resetBtn:SetScript("OnClick", function()
         if IsControlKeyDown() then
-            Cell:ResetButtonStyle()
+            F:ResetButtonStyle()
     
             -- load data
             textureDropdown:SetSelected("Cell ".._G.DEFAULT, "Interface\\AddOns\\Cell\\Media\\statusbar.tga")
-            LoadData()
+            LoadButtonStyle()
     
             Cell:Fire("UpdateAppearance", "reset")
+        end
+    end)
+    Cell:RegisterForCloseDropdown(resetBtn) -- close dropdown
+end
+
+-------------------------------------------------
+-- debuff type color
+-------------------------------------------------
+local curseCP, diseaseCP, magicCP, poisonCP
+
+local function CreateDebuffTypeColorPane()
+    local dtcPane = Cell:CreateTitledPane(appearanceTab, L["Debuff Type Color"], 422, 45)
+    dtcPane:SetPoint("TOPLEFT", appearanceTab, "TOPLEFT", 5, -565)
+
+    -- curse
+    curseCP = Cell:CreateColorPicker(dtcPane, "|TInterface\\AddOns\\Cell\\Media\\Debuffs\\Curse:0|t"..L["Curse"], false, nil, function(r, g, b)
+        I:SetDebuffTypeColor("Curse", r, g, b)
+        Cell:Fire("UpdateIndicators", F:GetNotifiedLayoutName(Cell.vars.currentLayout), "dispels", "debuffTypeColor")
+    end)
+    curseCP:SetPoint("TOPLEFT", 5, -27)
+
+    -- disease
+    diseaseCP = Cell:CreateColorPicker(dtcPane, "|TInterface\\AddOns\\Cell\\Media\\Debuffs\\Disease:0|t"..L["Disease"], false, nil, function(r, g, b)
+        I:SetDebuffTypeColor("Disease", r, g, b)
+        Cell:Fire("UpdateIndicators", F:GetNotifiedLayoutName(Cell.vars.currentLayout), "dispels", "debuffTypeColor")
+    end)
+    diseaseCP:SetPoint("TOPLEFT", curseCP, "TOPRIGHT", 95, 0)
+
+    -- magic
+    magicCP = Cell:CreateColorPicker(dtcPane, "|TInterface\\AddOns\\Cell\\Media\\Debuffs\\Magic:0|t"..L["Magic"], false, nil, function(r, g, b)
+        I:SetDebuffTypeColor("Magic", r, g, b)
+        Cell:Fire("UpdateIndicators", F:GetNotifiedLayoutName(Cell.vars.currentLayout), "dispels", "debuffTypeColor")
+    end)
+    magicCP:SetPoint("TOPLEFT", diseaseCP, "TOPRIGHT", 95, 0)
+
+    -- poison
+    poisonCP = Cell:CreateColorPicker(dtcPane, "|TInterface\\AddOns\\Cell\\Media\\Debuffs\\Poison:0|t"..L["Poison"], false, nil, function(r, g, b)
+        I:SetDebuffTypeColor("Poison", r, g, b)
+        Cell:Fire("UpdateIndicators", F:GetNotifiedLayoutName(Cell.vars.currentLayout), "dispels", "debuffTypeColor")
+    end)
+    poisonCP:SetPoint("TOPLEFT", magicCP, "TOPRIGHT", 95, 0)
+
+    -- reset
+    local resetBtn = Cell:CreateButton(dtcPane, L["Reset All"], "accent", {77, 17}, nil, nil, nil, nil, nil, L["Reset All"], L["[Ctrl+LeftClick] to reset these settings"])
+    resetBtn:SetPoint("TOPRIGHT")
+    resetBtn:SetScript("OnClick", function()
+        if IsControlKeyDown() then
+            I:ResetDebuffTypeColor()
+            LoadDebuffTypeColor()
+            Cell:Fire("UpdateIndicators", F:GetNotifiedLayoutName(Cell.vars.currentLayout), "dispels", "debuffTypeColor")
         end
     end)
     Cell:RegisterForCloseDropdown(resetBtn) -- close dropdown
@@ -1108,14 +1183,7 @@ end
 -- functions
 -------------------------------------------------
 local init
-LoadData = function()
-    scaleSlider:SetValue(CellDB["appearance"]["scale"])
-    accentColorDropdown:SetSelectedValue(CellDB["appearance"]["accentColor"][1])
-    accentColorPicker:SetColor(CellDB["appearance"]["accentColor"][2])
-    accentColorPicker:SetEnabled(CellDB["appearance"]["accentColor"][1] == "custom")
-    optionsFontSizeOffset:SetValue(CellDB["appearance"]["optionsFontSizeOffset"])
-    useGameFontCB:SetChecked(CellDB["appearance"]["useGameFont"])
-    
+LoadButtonStyle = function()
     if not init then CheckTextures() end
     barColorDropdown:SetSelectedValue(CellDB["appearance"]["barColor"][1])
     barColorPicker:SetColor(CellDB["appearance"]["barColor"][2])
@@ -1172,6 +1240,25 @@ LoadData = function()
     durationSecondEB:SetText(CellDB["appearance"]["auraIconOptions"]["durationColors"][3][4])
 end
 
+LoadDebuffTypeColor = function()
+    curseCP:SetColor(I:GetDebuffTypeColor("Curse"))
+    diseaseCP:SetColor(I:GetDebuffTypeColor("Disease"))
+    magicCP:SetColor(I:GetDebuffTypeColor("Magic"))
+    poisonCP:SetColor(I:GetDebuffTypeColor("Poison"))
+end
+
+LoadData = function()
+    scaleSlider:SetValue(CellDB["appearance"]["scale"])
+    accentColorDropdown:SetSelectedValue(CellDB["appearance"]["accentColor"][1])
+    accentColorPicker:SetColor(CellDB["appearance"]["accentColor"][2])
+    accentColorPicker:SetEnabled(CellDB["appearance"]["accentColor"][1] == "custom")
+    optionsFontSizeOffset:SetValue(CellDB["appearance"]["optionsFontSizeOffset"])
+    useGameFontCB:SetChecked(CellDB["appearance"]["useGameFont"])
+    
+    LoadButtonStyle()
+    LoadDebuffTypeColor()
+end
+
 local function ShowTab(tab)
     if tab == "appearance" then
         if not init then
@@ -1180,6 +1267,7 @@ local function ShowTab(tab)
             CreateCellPane()
             CreateUnitButtonStylePane()
             CreateIconOptionsFrame()
+            CreateDebuffTypeColorPane()
             F:ApplyCombatFunctionToWidget(scaleSlider)
         end
 
