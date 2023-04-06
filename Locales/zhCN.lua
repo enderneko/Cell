@@ -615,6 +615,12 @@ L["Changelogs"] = "更新记录"
 L["Click to view recent changelogs"] = "点击查看近期更新记录"
 L["Click to view older changelogs"] = "点击查看远古更新记录"
 L["CHANGELOGS"] = [[
+    <h1>r160-release (Apr 6, 2023, 21:00 GMT+8)</h1>
+    <p>* 移动“减益类型颜色”选项至外观页面。</p>
+    <p>* 修复了一个字体配置的异常。</p>
+    <p>* 提升正式服的版本到100007。</p>
+    <br/>
+
     <h1>r159-release (Mar 28, 2023, 22:59 GMT+8)</h1>
     <p>+ 为怀旧服版本添加了“自我施法快捷键”的冲突检查。</p>
     <p>* 更新繁中。</p>

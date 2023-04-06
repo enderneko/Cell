@@ -68,6 +68,12 @@ select(2, ...).L = setmetatable({
     ["SNIPPETS_TIPS"] = "[Double-Click] to rename. [Shift-Click] to delete. All checked snippets will be automatically invoked at the end of Cell initialization process (in ADDON_LOADED event).",
 
     ["CHANGELOGS"] = [[
+        <h1>r160-release (Apr 6, 2023, 21:00 GMT+8)</h1>
+        <p>* Moved "Debuff Type Color" options to Appearance.</p>
+        <p>* Fixed a "font is nil" issue.</p>
+        <p>* Bumped retail toc to 100007.</p>
+        <br/>
+
         <h1>r159-release (Mar 28, 2023, 22:59 GMT+8)</h1>
         <p>+ Added Self Cast Key checker for Wrath.</p>
         <p>* Updated zhTW.</p>

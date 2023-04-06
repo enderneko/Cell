@@ -1,5 +1,9 @@
-[Full Changelog](https://github.com/enderneko/Cell/compare/r158-release...4a54466efd32d6a6ba38e8a1cb7d448c06811b61)
+[Full Changelog](https://github.com/enderneko/Cell/compare/r159-release...35979d222e8ea0be99cc07739842f98d602568c2)
 
-- Add Self Cast Key checker for Wrath
-- Update zhTW
-- Update README.md
+- Move debuff type color options to Appearance
+- Fix font is nil issue
+- Remove UpdatePixelPerfect functions during indicator init process
+- Set unsupported version to 149
+- Rename functions: OriginalSetXxx -> _SetXxx
+- Add Earth Shield (383648) to Healers
+- Remove deprecated snippets
