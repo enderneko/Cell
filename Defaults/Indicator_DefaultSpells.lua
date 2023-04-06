@@ -592,15 +592,7 @@ else
     eventFrame:RegisterEvent("TRAIT_CONFIG_UPDATED")
     -- eventFrame:RegisterEvent("ACTIVE_PLAYER_SPECIALIZATION_CHANGED")
 
-    local lock, timer
-
     local function UpdateDispellable()
-        if timer then timer:Cancel() end
-        timer = C_Timer.NewTimer(1, function() lock = nil end)
-
-        if lock then return end
-        lock = true
-
         -- update dispellable
         wipe(dispellable)
         local activeConfigID = C_ClassTalents.GetActiveConfigID()
@@ -620,14 +612,21 @@ else
         -- texplore(dispellable)
     end
 
+    local timer
+
     eventFrame:SetScript("OnEvent", function(self, event)
         if event == "PLAYER_ENTERING_WORLD" then
             eventFrame:UnregisterEvent("PLAYER_ENTERING_WORLD")
         end
-        UpdateDispellable()
+
+        if timer then timer:Cancel() end
+        timer = C_Timer.NewTimer(1, UpdateDispellable)
     end)
 
-    Cell:RegisterCallback("SpecChanged", "Dispellable_SpecChanged", UpdateDispellable)
+    Cell:RegisterCallback("SpecChanged", "Dispellable_SpecChanged", function()
+        if timer then timer:Cancel() end
+        timer = C_Timer.NewTimer(1, UpdateDispellable)
+    end)
 end
 
 -------------------------------------------------
