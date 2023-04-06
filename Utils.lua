@@ -1439,6 +1439,8 @@ local shapes = {
     "circle",
     "heart_filled",
     "heart",
+    "rhombus",
+    "rhombus_filled",
     "square_filled",
     "square",
     "star_filled",
@@ -1446,7 +1448,7 @@ local shapes = {
     "starburst_filled",
     "starburst",
     "triangle_filled",
-    "triangle"
+    "triangle",
 }
 
 -- weakauras

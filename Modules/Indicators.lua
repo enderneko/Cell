@@ -1367,6 +1367,7 @@ elseif Cell.isWrath then
         ["aggroBorder"] = {"enabled", "thickness", "frameLevel"},
         ["aggroBar"] = {"enabled", "size-bar", "position", "frameLevel"},
         ["shieldBar"] = {"enabled", "color-alpha", "height", "position-noHCenter", "frameLevel"},
+        -- ["powerWordShield"] = {"enabled", "size-border", "position", "frameLevel"},
         ["aoeHealing"] = {"enabled", "color", "height"},
         ["externalCooldowns"] = {L["Even if disabled, the settings below affect \"Externals + Defensives\" indicator"], "enabled", "builtInExternals", "customExternals", "durationVisibility", "num:5", "orientation", "size", "font", "position", "frameLevel"},
         ["defensiveCooldowns"] = {L["Even if disabled, the settings below affect \"Externals + Defensives\" indicator"], "enabled", "builtInDefensives", "customDefensives", "durationVisibility", "num:5", "orientation", "size", "font", "position", "frameLevel"},

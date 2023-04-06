@@ -2,7 +2,7 @@
 -- File: UnitButton_Wrath.lua
 -- Author: enderneko (enderneko-dev@outlook.com)
 -- File Created: 2022/08/20 19:44:26 +0800
--- Last Modified: 2023/04/05 18:47:36 +0800
+-- Last Modified: 2023/04/06 19:09:01 +0800
 --]]
 
 local _, Cell = ...
@@ -163,6 +163,8 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                     -- NOTE: debuffs: ["size"] = {{normalSize}, {bigSize}}
                     if t["indicatorName"] == "debuffs" then
                         indicator:SetSize(t["size"][1], t["size"][2])
+                    -- elseif t["indicatorName"] == "powerWordShield" then
+                    --     indicator:SetSize(t["size"][1], t["size"][2], t["size"][3])
                     else
                         P:Size(indicator, t["size"][1], t["size"][2])
                     end
@@ -2974,6 +2976,7 @@ function F:UnitButton_OnLoad(button)
     I:CreateTargetedSpells(button)
     I:CreateConsumables(button)
     I:CreateHealthThresholds(button)
+    -- I:CreatePowerWordShield(button)
 
     -- events
     button:SetScript("OnAttributeChanged", UnitButton_OnAttributeChanged) -- init

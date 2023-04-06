@@ -2,7 +2,7 @@
 -- File: Layout_Defaults_Wrath.lua
 -- Author: enderneko (enderneko-dev@outlook.com)
 -- File Created: 2022/08/21 04:06:04 +0800
--- Last Modified: 2022/12/29 12:05:44 +0800
+-- Last Modified: 2023/04/06 19:09:59 +0800
 --]]
 
 local addonName, Cell = ...
@@ -216,6 +216,15 @@ Cell.defaults.layout = {
             ["height"] = 4,
             ["color"] = {1, 1, 0, 1},
         }, -- 14
+        -- {
+        --     ["name"] = "PW:S (beta)",
+        --     ["indicatorName"] = "powerWordShield",
+        --     ["type"] = "built-in",
+        --     ["enabled"] = false,
+        --     ["position"] = {"BOTTOMRIGHT", "BOTTOMRIGHT", 0, 0},
+        --     ["frameLevel"] = 10,
+        --     ["size"] = {16, 16, 3},
+        -- }, --15
         {
             ["name"] = "AoE Healing",
             ["indicatorName"] = "aoeHealing",

@@ -1653,3 +1653,96 @@ function I:ShowMissingBuff(unit, icon, canProvide)
     if b1 then ShowMissingBuff(b1, missingBuffsCounter[unit], icon, canProvide)end
     if b2 then ShowMissingBuff(b2, missingBuffsCounter[unit], icon, canProvide)end
 end
+
+-------------------------------------------------
+-- power word : shield 怀旧服API太落后，不想做了！
+-------------------------------------------------
+-- function I:CreatePowerWordShield(parent)
+--     local powerWordShield = CreateFrame("Frame", parent:GetName().."PowerWordShield", parent.widget.overlayFrame, "BackdropTemplate")
+--     parent.indicators.powerWordShield = powerWordShield
+--     powerWordShield:Hide()
+
+--     powerWordShield:SetBackdrop({bgFile = [[Interface\AddOns\Cell\Media\Shapes\circle_filled.tga]]})
+--     powerWordShield:SetBackdropColor(0, 0, 0, 0.5)
+
+--     powerWordShield._SetSize = powerWordShield.SetSize
+
+--     --! shield amount
+--     local cooldown = CreateFrame("Cooldown", parent:GetName().."PowerWordShieldAmount", powerWordShield)
+--     powerWordShield.cooldown = cooldown
+--     cooldown:SetAllPoints(powerWordShield)
+--     cooldown:SetSwipeTexture([[Interface\AddOns\Cell\Media\Shapes\circle_filled.tga]])
+--     -- cooldown:SetSwipeTexture("Interface\\Buttons\\WHITE8x8")
+--     cooldown:SetSwipeColor(1, 1, 0)
+--     cooldown.noCooldownCount = true -- disable omnicc
+--     cooldown:SetHideCountdownNumbers(true)
+
+--     --! innerBG
+--     local innerBG = cooldown:CreateTexture(nil, "OVERLAY")
+--     innerBG:SetPoint("CENTER")
+--     innerBG:SetTexture([[Interface\AddOns\Cell\Media\Shapes\circle_filled.tga]], "CLAMP", "CLAMP", "TRILINEAR")
+--     innerBG:SetVertexColor(0, 0, 0, 1)
+
+--     --! shield duration bar
+--     local shieldDurationBar = CreateFrame("StatusBar", parent:GetName().."PowerWordShieldDuration", cooldown)
+--     shieldDurationBar:SetMinMaxValues(0, 100)
+--     shieldDurationBar:SetValue(70)
+--     shieldDurationBar:SetOrientation("VERTICAL")
+--     shieldDurationBar:SetPoint("CENTER")
+
+--     shieldDurationBar.tex = shieldDurationBar:CreateTexture(nil, "OVERLAY")
+--     shieldDurationBar.tex:SetTexture([[Interface\AddOns\Cell\Media\Shapes\circle_filled.tga]], "CLAMP", "CLAMP", "TRILINEAR")
+--     shieldDurationBar.tex:SetVertexColor(0, 1, 0, 1)
+--     shieldDurationBar:SetStatusBarTexture(shieldDurationBar.tex)
+    
+--     --! weakened soul duration bar
+--     local weakenedSoulDurationBar = CreateFrame("StatusBar", parent:GetName().."WeakenedSoulDuration", cooldown)
+--     weakenedSoulDurationBar:SetMinMaxValues(0, 100)
+--     weakenedSoulDurationBar:SetValue(70)
+--     weakenedSoulDurationBar:SetOrientation("VERTICAL")
+--     weakenedSoulDurationBar:SetPoint("CENTER")
+--     weakenedSoulDurationBar:SetFrameLevel(shieldDurationBar:GetFrameLevel() + 1)
+
+--     weakenedSoulDurationBar.tex = weakenedSoulDurationBar:CreateTexture(nil, "OVERLAY")
+--     weakenedSoulDurationBar.tex:SetTexture([[Interface\AddOns\Cell\Media\Shapes\semicircle.tga]], "CLAMP", "CLAMP", "TRILINEAR")
+--     weakenedSoulDurationBar.tex:SetVertexColor(1, 0, 0, 1)
+--     weakenedSoulDurationBar:SetStatusBarTexture(weakenedSoulDurationBar.tex)
+
+--     function powerWordShield:SetSize(width, height, shieldThickness)
+--         powerWordShield.width = width
+--         powerWordShield.height = height
+--         powerWordShield.shieldThickness = shieldThickness
+
+--         powerWordShield:UpdatePixelPerfect()
+--     end
+
+--     function powerWordShield:UpdatePixelPerfect()
+--         local width = powerWordShield.width
+--         local height = powerWordShield.height
+
+--         powerWordShield:_SetSize(width, height)
+--         innerBG:SetSize(width-P:Scale(powerWordShield.shieldThickness+2), height-P:Scale(powerWordShield.shieldThickness+2))
+        
+--         local offset = P:Scale(powerWordShield.shieldThickness+2+1)
+--         shieldDurationBar:SetSize(width-offset, height-offset)
+--         weakenedSoulDurationBar:SetSize(width-offset, height-offset)
+--     end
+
+--     function powerWordShield:UpdateShieldValue(value)
+--         cooldown:SetCooldown(GetTime()-(powerWordShield.max-value), powerWordShield.max)
+--         if value ~= 0 then
+--             powerWordShield:Show()
+--             cooldown:Pause()
+--         else
+--             powerWordShield:Hide()
+--         end
+--     end
+
+--     function powerWordShield:SetShieldCooldown(start, duration, maxValue)
+--         powerWordShield.max = maxValue
+--     end
+
+--     function powerWordShield:SetWeakenedSoulCooldown(start, duration)
+
+--     end
+-- end
