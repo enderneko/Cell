@@ -15,10 +15,10 @@ local P = Cell.pixelPerfectFuncs
 local L = Cell.L
 
 -- sharing version check
-Cell.MIN_VERSION = 138
-Cell.MIN_LAYOUTS_VERSION = 138
-Cell.MIN_INDICATORS_VERSION = 138
-Cell.MIN_DEBUFFS_VERSION = 138
+Cell.MIN_VERSION = 149
+Cell.MIN_LAYOUTS_VERSION = 149
+Cell.MIN_INDICATORS_VERSION = 149
+Cell.MIN_DEBUFFS_VERSION = 149
 
 --@debug@
 -- local debugMode = true

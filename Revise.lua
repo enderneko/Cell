@@ -13,7 +13,7 @@ function F:Revise()
         F:Debug("CharaDBRevision:", charaDbRevision)
     end
 
-    if CellDB["revise"] and dbRevision < 100 then -- update from an unsupported version
+    if CellDB["revise"] and dbRevision < 149 then -- update from an unsupported version
         local f = CreateFrame("Frame")
         f:RegisterEvent("PLAYER_ENTERING_WORLD")
         f:SetScript("OnEvent", function()
