@@ -1,9 +1,4 @@
-[Full Changelog](https://github.com/enderneko/Cell/compare/r159-release...35979d222e8ea0be99cc07739842f98d602568c2)
+[Full Changelog](https://github.com/enderneko/Cell/compare/r160-release...ea10b9f776ada3b6fdd348f8e9b8ee40d05f4fed)
 
-- Move debuff type color options to Appearance
-- Fix font is nil issue
-- Remove UpdatePixelPerfect functions during indicator init process
-- Set unsupported version to 149
-- Rename functions: OriginalSetXxx -> _SetXxx
-- Add Earth Shield (383648) to Healers
-- Remove deprecated snippets
+- Fix dispelling checker (retail)
+- Update zhTW

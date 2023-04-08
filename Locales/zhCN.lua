@@ -615,6 +615,11 @@ L["Changelogs"] = "更新记录"
 L["Click to view recent changelogs"] = "点击查看近期更新记录"
 L["Click to view older changelogs"] = "点击查看远古更新记录"
 L["CHANGELOGS"] = [[
+    <h1>r161-release (Apr 8, 2023, 20:00 GMT+8)</h1>
+    <p>* Fixed dispellable debuff type checker (retail).</p>
+    <p>* Updated zhTW.</p>
+    <br/>
+
     <h1>r160-release (Apr 6, 2023, 21:00 GMT+8)</h1>
     <p>* 移动“减益类型颜色”选项至外观页面。</p>
     <p>* 修复了一个字体配置的异常。</p>
@@ -682,6 +687,11 @@ L["CHANGELOGS"] = [[
     <p>* 修复几处bug。</p>
     <br/>
 
+    <p><a href="older">]]..L["Click to view older changelogs"]..[[</a></p>
+    <br/>
+]]
+
+L["OLDER_CHANGELOGS"] = [[
     <h1>r149-release (Nov 29, 2022, 06:35 GMT+8)</h1>
     <p>* 添加 NPC 按钮尺寸选项。</p>
     <p>* 添加条方向选项“纵向 B”。</p>
@@ -921,12 +931,7 @@ L["CHANGELOGS"] = [[
     <h2>巫妖王之怒</h2>
     <p>* Cell 基本可以在巫妖王之怒怀旧服中使用了（但并非所有正式服的功能都可用，有些不想做，有些做不了）。</p>
     <br/>
-
-    <p><a href="older">]]..L["Click to view older changelogs"]..[[</a></p>
-    <br/>
-]]
-
-L["OLDER_CHANGELOGS"] = [[
+    
     <h1>r108-release (Aug 17, 2022, 18:20 GMT+8)</h1>
     <p>* 更新当前赛季史诗钥石地下城的相关减益（感谢 夕曦@NGA 提供的列表）。</p>
     <p>* 修复了几处小问题。</p>
