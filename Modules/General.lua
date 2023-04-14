@@ -166,7 +166,7 @@ end
 -------------------------------------------------
 -- misc
 -------------------------------------------------
-local useCleuCB, sortByRoleCB, lockCB, fadeoutCB, menuPositionDD
+local useCleuCB, lockCB, fadeoutCB, menuPositionDD
 
 local function CreateMiscPane()
     local miscPane = Cell:CreateTitledPane(generalTab, L["Misc"], 205, 185)
@@ -178,17 +178,11 @@ local function CreateMiscPane()
     end, "|cffff2727"..L["HIGH CPU USAGE"].." (EXPERIMENTAL)", L["Use CLEU events to increase health update rate"])
     useCleuCB:SetPoint("TOPLEFT", 5, -27)
 
-    sortByRoleCB = Cell:CreateCheckButton(miscPane, L["Sort Party By Role"], function(checked, self)
-        CellDB["general"]["sortPartyByRole"] = checked
-        Cell:Fire("UpdateSortMethod")
-    end)
-    sortByRoleCB:SetPoint("TOPLEFT", useCleuCB, "BOTTOMLEFT", 0, -7)
-
     lockCB = Cell:CreateCheckButton(miscPane, L["Lock Cell Frame"], function(checked, self)
         CellDB["general"]["locked"] = checked
         Cell:Fire("UpdateMenu", "lock")
     end)
-    lockCB:SetPoint("TOPLEFT", sortByRoleCB, "BOTTOMLEFT", 0, -7)
+    lockCB:SetPoint("TOPLEFT", useCleuCB, "BOTTOMLEFT", 0, -7)
     
     fadeoutCB = Cell:CreateCheckButton(miscPane, L["Fade Out Menu"], function(checked, self)
         CellDB["general"]["fadeOut"] = checked
@@ -493,7 +487,6 @@ local function ShowTab(tab)
 
         -- misc
         useCleuCB:SetChecked(CellDB["general"]["useCleuHealthUpdater"])
-        sortByRoleCB:SetChecked(CellDB["general"]["sortPartyByRole"])
         lockCB:SetChecked(CellDB["general"]["locked"])
         fadeoutCB:SetChecked(CellDB["general"]["fadeOut"])
         menuPositionDD:SetSelectedValue(CellDB["general"]["menuPosition"])

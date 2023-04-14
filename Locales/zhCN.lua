@@ -88,7 +88,6 @@ L["Use CLEU events to increase health update rate"] = "使用战斗记录事件�
 L["Lock Cell Frame"] = "把它给我锁死"
 L["Fade Out Menu"] = "淡出菜单"
 L["Fade out menu buttons on mouseout"] = "当鼠标移开时淡出菜单按钮"
-L["Sort Party By Role"] = "按职责排列小队"
 L["Menu Position"] = "菜单位置"
 
 L["Tools"] = "工具"
@@ -318,6 +317,7 @@ L["Unit"] = "目标单位"
 L["Unit's Pet"] = "目标单位的宠物"
 L["Clear"] = "清除"
 L["Invalid unit."] = "无效单位。"
+L["Sort By Role (Party Only)"] = "按职责排序（仅小队）"
 L["Tip: Every layout has its own position setting"] = "提示：每个布局都有其单独的位置设置"
 
 -------------------------------------------------

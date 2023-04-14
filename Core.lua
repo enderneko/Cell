@@ -162,7 +162,6 @@ function eventFrame:ADDON_LOADED(arg1)
                 ["locked"] = false,
                 ["fadeOut"] = false,
                 ["menuPosition"] = "top_bottom",
-                ["sortPartyByRole"] = false,
             }
         end
 
@@ -660,8 +659,6 @@ function eventFrame:PLAYER_LOGIN()
     eventFrame:GROUP_ROSTER_UPDATE()
     -- update visibility
     Cell:Fire("UpdateVisibility")
-    -- update sortMethod
-    Cell:Fire("UpdateSortMethod")
     -- update click-castings
     Cell:Fire("UpdateClickCastings")
     -- update indicators

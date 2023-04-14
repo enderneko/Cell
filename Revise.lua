@@ -1830,6 +1830,16 @@ function F:Revise()
         end
     end
 
+    -- r162-release
+    if CellDB["revise"] and dbRevision < 162 then
+        if type(CellDB["general"]["sortPartyByRole"]) == "boolean" then
+            for _, layout in pairs(CellDB["layouts"]) do
+                layout["sortByRole"] = CellDB["general"]["sortPartyByRole"]
+            end
+            CellDB["general"]["sortPartyByRole"] = nil
+        end
+    end
+
     CellDB["revise"] = Cell.version
     if Cell.isWrath then
         CellCharacterDB["revise"] = Cell.version

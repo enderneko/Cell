@@ -221,11 +221,24 @@ local function PartyFrame_UpdateLayout(layout, which)
             end
         end
     end
+
+    if not which or which == "sort" then
+        if layout["sortByRole"] then
+            header:SetAttribute("sortMethod", "NAME")
+            header:SetAttribute("groupingOrder", "TANK,HEALER,DAMAGER,NONE")
+            header:SetAttribute("groupBy", "ASSIGNEDROLE")
+        else
+            header:SetAttribute("sortMethod", "INDEX")
+            header:SetAttribute("groupingOrder", "")
+            header:SetAttribute("groupBy", nil)
+        end
+    end
 end
 Cell:RegisterCallback("UpdateLayout", "PartyFrame_UpdateLayout", PartyFrame_UpdateLayout)
 
 local function PartyFrame_UpdateVisibility(which)
     if not which or which == "party" then
+        header:SetAttribute("showParty", CellDB["general"]["showParty"])
         if CellDB["general"]["showParty"] then
             RegisterAttributeDriver(partyFrame, "state-visibility", "[group:raid] hide; [group:party] show; hide")
         else
@@ -235,16 +248,3 @@ local function PartyFrame_UpdateVisibility(which)
     end
 end
 Cell:RegisterCallback("UpdateVisibility", "PartyFrame_UpdateVisibility", PartyFrame_UpdateVisibility)
-
-local function PartyFrame_UpdateSortMethod()
-    if CellDB["general"]["sortPartyByRole"] then
-        header:SetAttribute("sortMethod", "NAME")
-        header:SetAttribute("groupingOrder", "TANK,HEALER,DAMAGER,NONE")
-        header:SetAttribute("groupBy", "ASSIGNEDROLE")
-    else
-        header:SetAttribute("sortMethod", "INDEX")
-        header:SetAttribute("groupingOrder", "")
-        header:SetAttribute("groupBy", nil)
-    end
-end
-Cell:RegisterCallback("UpdateSortMethod", "PartyFrame_UpdateSortMethod", PartyFrame_UpdateSortMethod)

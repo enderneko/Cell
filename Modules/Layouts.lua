@@ -2474,8 +2474,9 @@ end
 -------------------------------------------------
 -- misc
 -------------------------------------------------
+local sortByRoleCB
 local function CreateMiscPane()
-    local miscPane = Cell:CreateTitledPane(layoutsTab, L["Misc"], 205, 50)
+    local miscPane = Cell:CreateTitledPane(layoutsTab, L["Misc"], 205, 72)
     miscPane:SetPoint("TOPLEFT", 5, -390)
 
     local powerFilterBtn = Cell:CreateButton(miscPane, L["Power Bar Filters"], "accent-hover", {163, 20})
@@ -2486,6 +2487,12 @@ local function CreateMiscPane()
     end)
 
     Cell.frames.powerFilters:SetPoint("BOTTOMLEFT", powerFilterBtn, "TOPLEFT", 0, P:Scale(5))
+
+    sortByRoleCB = Cell:CreateCheckButton(miscPane, L["Sort By Role (Party Only)"], function(checked, self)
+        selectedLayoutTable["sortByRole"] = checked
+        Cell:Fire("UpdateLayout", selectedLayout, "sort")
+    end)
+    sortByRoleCB:SetPoint("TOPLEFT", powerFilterBtn, "BOTTOMLEFT", 0, -7)
 end
 
 -------------------------------------------------
@@ -2567,6 +2574,9 @@ LoadLayoutDB = function(layout)
     partyPetsCB:SetChecked(selectedLayoutTable["pet"][1])
     raidPetsCB:SetChecked(selectedLayoutTable["pet"][2])
     spotlightCB:SetChecked(selectedLayoutTable["spotlight"][1])
+
+    -- sort
+    sortByRoleCB:SetChecked(selectedLayoutTable["sortByRole"])
 
     UpdateGroupFilter()
     UpdatePreviewButton()
