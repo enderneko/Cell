@@ -617,9 +617,9 @@ L["Click to view recent changelogs"] = "点击查看近期更新记录"
 L["Click to view older changelogs"] = "点击查看远古更新记录"
 L["CHANGELOGS"] = [[
     <h1>r162-release (Apr 14, 2023, 19:00 GMT+8)</h1>
-    <p>* Moved "Sort By Role" to Layouts.</p>
-    <p>* Added "Hide Self" in Layouts.</p>
-    <p>* Fixed "Track by name" for custom indicators (wrath).</p>
+    <p>* 移动“按职责排序”选项到布局页面。</p>
+    <p>* 在布局中添加了“隐藏自己”的选项。</p>
+    <p>* 修复怀旧服中自定义指示器的“匹配法术名称”功能。</p>
     <br/>
 
     <h1>r161-release (Apr 8, 2023, 20:00 GMT+8)</h1>
