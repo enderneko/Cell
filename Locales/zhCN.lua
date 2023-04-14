@@ -318,6 +318,7 @@ L["Unit's Pet"] = "目标单位的宠物"
 L["Clear"] = "清除"
 L["Invalid unit."] = "无效单位。"
 L["Sort By Role (Party Only)"] = "按职责排序（仅小队）"
+L["Hide Self (Party Only)"] = "隐藏自己（仅小队）"
 L["Tip: Every layout has its own position setting"] = "提示：每个布局都有其单独的位置设置"
 
 -------------------------------------------------

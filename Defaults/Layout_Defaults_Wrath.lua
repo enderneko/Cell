@@ -2,7 +2,7 @@
 -- File: Layout_Defaults_Wrath.lua
 -- Author: enderneko (enderneko-dev@outlook.com)
 -- File Created: 2022/08/21 04:06:04 +0800
--- Last Modified: 2023/04/14 18:29:55 +0800
+-- Last Modified: 2023/04/14 18:48:45 +0800
 --]]
 
 local addonName, Cell = ...
@@ -55,6 +55,7 @@ Cell.defaults.layout = {
     ["pet"] = {true, false, {}, false, {66, 46}}, -- partyPetsEnabled, raidPetsEnabled, raidPetsPosition, sizeEnabled, size
     ["spotlight"] = {false, {}, {}, false, {66, 46}}, -- enabled, units, position, sizeEnabled, size
     ["sortByRole"] = false,
+    ["hideSelf"] = false,
     ["powerFilters"] = {
         ["DEATHKNIGHT"] = {["TANK"] = true, ["DAMAGER"] = true},
         ["DRUID"] = {["TANK"] = true, ["DAMAGER"] = true, ["HEALER"] = true},

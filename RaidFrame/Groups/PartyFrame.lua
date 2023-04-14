@@ -233,6 +233,10 @@ local function PartyFrame_UpdateLayout(layout, which)
             header:SetAttribute("groupBy", nil)
         end
     end
+
+    if not which or which == "hideSelf" then
+        header:SetAttribute("showPlayer", not layout["hideSelf"])
+    end
 end
 Cell:RegisterCallback("UpdateLayout", "PartyFrame_UpdateLayout", PartyFrame_UpdateLayout)
 
