@@ -616,9 +616,15 @@ L["Changelogs"] = "更新记录"
 L["Click to view recent changelogs"] = "点击查看近期更新记录"
 L["Click to view older changelogs"] = "点击查看远古更新记录"
 L["CHANGELOGS"] = [[
+    <h1>r162-release (Apr 14, 2023, 19:00 GMT+8)</h1>
+    <p>* Moved "Sort By Role" to Layouts.</p>
+    <p>* Added "Hide Self" in Layouts.</p>
+    <p>* Fixed "Track by name" for custom indicators (wrath).</p>
+    <br/>
+
     <h1>r161-release (Apr 8, 2023, 20:00 GMT+8)</h1>
-    <p>* Fixed dispellable debuff type checker (retail).</p>
-    <p>* Updated zhTW.</p>
+    <p>* 修复可驱散减益类型检查（正式服）。</p>
+    <p>* 更新繁中。</p>
     <br/>
 
     <h1>r160-release (Apr 6, 2023, 21:00 GMT+8)</h1>
