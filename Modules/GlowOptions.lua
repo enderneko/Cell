@@ -26,7 +26,6 @@ local function CreatePreviewButton()
     local previewButtonBG = Cell:CreateFrame("CellGlowsPreviewButtonBG", previewButton)
     previewButtonBG:SetPoint("TOPLEFT", previewButton, 0, 20)
     previewButtonBG:SetPoint("BOTTOMRIGHT", previewButton, "TOPRIGHT")
-    previewButtonBG:SetFrameStrata("HIGH")
     Cell:StylizeFrame(previewButtonBG, {0.1, 0.1, 0.1, 0.77}, {0, 0, 0, 0})
     previewButtonBG:Show()
     

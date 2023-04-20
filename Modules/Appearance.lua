@@ -15,14 +15,14 @@ appearanceTab:Hide()
 -------------------------------------------------
 -- cell
 -------------------------------------------------
-local scaleSlider, accentColorDropdown, accentColorPicker, optionsFontSizeOffset, useGameFontCB
+local scaleSlider, strataDropdown, accentColorDropdown, accentColorPicker, optionsFontSizeOffset, useGameFontCB
 
 local function CreateCellPane()
-    local cellPane = Cell:CreateTitledPane(appearanceTab, "Cell", 422, 120)
+    local cellPane = Cell:CreateTitledPane(appearanceTab, "Cell", 422, 140)
     cellPane:SetPoint("TOPLEFT", appearanceTab, "TOPLEFT", 5, -5)
     
     -- global scale
-    scaleSlider = Cell:CreateSlider(L["Scale"], cellPane, 0.5, 4, 160, 0.05, nil, nil, nil, L["Scale"], L["Non-integer scaling may result in abnormal display of options UI"])
+    scaleSlider = Cell:CreateSlider(L["Scale"], cellPane, 0.5, 4, 141, 0.05, nil, nil, nil, L["Scale"], L["Non-integer scaling may result in abnormal display of options UI"])
     scaleSlider:SetPoint("TOPLEFT", cellPane, "TOPLEFT", 5, -40)
     scaleSlider.afterValueChangedFn = function(value)
         CellDB["appearance"]["scale"] = value
@@ -36,9 +36,57 @@ local function CreateCellPane()
     end
     Cell:RegisterForCloseDropdown(scaleSlider)
 
+    -- options ui font size
+    optionsFontSizeOffset = Cell:CreateSlider(L["Options UI Font Size"], cellPane, -5, 5, 141, 1)
+    optionsFontSizeOffset:SetPoint("TOPLEFT", 222, -40)
+    
+    optionsFontSizeOffset.afterValueChangedFn = function(value)
+        CellDB["appearance"]["optionsFontSizeOffset"] = value
+        Cell:UpdateOptionsFont(value, CellDB["appearance"]["useGameFont"])
+        Cell:UpdateAboutFont(value)
+    end
+
+    -- raid frame strata
+    strataDropdown = Cell:CreateDropdown(cellPane, 141)
+    strataDropdown:SetPoint("TOPLEFT", scaleSlider, 0, -50)
+    strataDropdown:SetItems({
+        {
+            ["text"] = "LOW",
+            ["onClick"] = function()
+                CellDB["appearance"]["strata"] = "LOW"
+                Cell:Fire("UpdateAppearance", "strata")
+            end,
+        },
+        {
+            ["text"] = "MEDIUM",
+            ["onClick"] = function()
+                CellDB["appearance"]["strata"] = "MEDIUM"
+                Cell:Fire("UpdateAppearance", "strata")
+            end,
+        },
+        {
+            ["text"] = "HIGH",
+            ["onClick"] = function()
+                CellDB["appearance"]["strata"] = "HIGH"
+                Cell:Fire("UpdateAppearance", "strata")
+            end,
+        },
+    })
+
+    local scaleSliderText =  cellPane:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
+    scaleSliderText:SetPoint("BOTTOMLEFT", strataDropdown, "TOPLEFT", 0, 1)
+    scaleSliderText:SetText(L["Strata"])
+    hooksecurefunc(strataDropdown, "SetEnabled", function(self, enabled)
+        if enabled then
+            scaleSliderText:SetTextColor(1, 1, 1)
+        else
+            scaleSliderText:SetTextColor(0.4, 0.4, 0.4)
+        end
+    end)
+
     -- accent color
     accentColorDropdown = Cell:CreateDropdown(cellPane, 141)
-    accentColorDropdown:SetPoint("TOPLEFT", 222, -40)
+    accentColorDropdown:SetPoint("TOPLEFT", optionsFontSizeOffset, 0, -50)
     accentColorDropdown:SetItems({
         {
             ["text"] = L["Class Color"],
@@ -89,22 +137,12 @@ local function CreateCellPane()
     accentColorPicker:SetPoint("LEFT", accentColorDropdown, "RIGHT", 5, 0)
     Cell:RegisterForCloseDropdown(accentColorPicker)
 
-    -- options ui font size
-    optionsFontSizeOffset = Cell:CreateSlider(L["Options UI Font Size"], cellPane, -5, 5, 160, 1)
-    optionsFontSizeOffset:SetPoint("TOPLEFT", scaleSlider, "BOTTOMLEFT", 0, -40)
-    
-    optionsFontSizeOffset.afterValueChangedFn = function(value)
-        CellDB["appearance"]["optionsFontSizeOffset"] = value
-        Cell:UpdateOptionsFont(value, CellDB["appearance"]["useGameFont"])
-        Cell:UpdateAboutFont(value)
-    end
-    
     -- use game font
     useGameFontCB = Cell:CreateCheckButton(cellPane, "Use Game Font", function(checked)
         CellDB["appearance"]["useGameFont"] = checked
         Cell:UpdateOptionsFont(CellDB["appearance"]["optionsFontSizeOffset"], checked)
     end)
-    useGameFontCB:SetPoint("TOPLEFT", accentColorDropdown, "BOTTOMLEFT", 0, -30)
+    useGameFontCB:SetPoint("TOPLEFT", strataDropdown, 0, -32)
     if Cell.isAsian then
         useGameFontCB:Hide()
     end
@@ -161,7 +199,6 @@ local function CreatePreviewIcons()
     previewIconsBG = Cell:CreateFrame("CellAppearancePreviewIconsBG", appearanceTab)
     previewIconsBG:SetPoint("TOPLEFT", appearanceTab, "TOPRIGHT", 5, -160)
     P:Size(previewIconsBG, 95, 45)
-    previewIconsBG:SetFrameStrata("HIGH")
     Cell:StylizeFrame(previewIconsBG, {0.1, 0.1, 0.1, 0.77}, {0, 0, 0, 0})
     previewIconsBG:Show()
 
@@ -270,7 +307,6 @@ local function CreatePreviewButtons()
     local previewButtonBG = Cell:CreateFrame("CellAppearancePreviewButtonBG", appearanceTab)
     previewButtonBG:SetPoint("TOPLEFT", previewButton, 0, 20)
     previewButtonBG:SetPoint("BOTTOMRIGHT", previewButton, "TOPRIGHT")
-    previewButtonBG:SetFrameStrata("HIGH")
     Cell:StylizeFrame(previewButtonBG, {0.1, 0.1, 0.1, 0.77}, {0, 0, 0, 0})
     previewButtonBG:Show()
     
@@ -289,7 +325,6 @@ local function CreatePreviewButtons()
     local previewButtonBG2 = Cell:CreateFrame("CellAppearancePreviewButtonBG2", appearanceTab)
     previewButtonBG2:SetPoint("TOPLEFT", previewButton2, 0, 20)
     previewButtonBG2:SetPoint("BOTTOMRIGHT", previewButton2, "TOPRIGHT")
-    previewButtonBG2:SetFrameStrata("HIGH")
     Cell:StylizeFrame(previewButtonBG2, {0.1, 0.1, 0.1, 0.77}, {0, 0, 0, 0})
     previewButtonBG2:Show()
     
@@ -523,17 +558,16 @@ local function CreateIconOptionsFrame()
     iconOptionsFrame:SetBackdropBorderColor(unpack(Cell:GetAccentColorTable()))
     iconOptionsFrame:SetPoint("TOP", iconOptionsBtn, "BOTTOM", 0, -5)
     iconOptionsFrame:SetPoint("RIGHT", -5, 0)
-    iconOptionsFrame:SetFrameStrata("DIALOG")
-    iconOptionsFrame:SetFrameLevel(50)
+    iconOptionsFrame:SetFrameLevel(appearanceTab:GetFrameLevel() + 50)
 
     iconOptionsFrame:SetScript("OnShow", function()
         appearanceTab.mask:Show()
-        iconOptionsBtn:SetFrameStrata("DIALOG")
+        iconOptionsBtn:SetFrameLevel(appearanceTab:GetFrameLevel() + 50)
     end)
     iconOptionsFrame:SetScript("OnHide", function()
         iconOptionsFrame:Hide()
         appearanceTab.mask:Hide()
-        iconOptionsBtn:SetFrameStrata("HIGH")
+        iconOptionsBtn:SetFrameLevel(appearanceTab:GetFrameLevel() + 1)
     end)
 
     -- icon animation
@@ -720,7 +754,7 @@ end
 
 local function CreateUnitButtonStylePane()
     local unitButtonPane = Cell:CreateTitledPane(appearanceTab, L["Unit Button Style"], 422, 410)
-    unitButtonPane:SetPoint("TOPLEFT", appearanceTab, "TOPLEFT", 5, -140)
+    unitButtonPane:SetPoint("TOPLEFT", appearanceTab, "TOPLEFT", 5, -160)
     
     -- texture
     textureDropdown = Cell:CreateDropdown(unitButtonPane, 160, "texture")
@@ -1136,7 +1170,7 @@ local curseCP, diseaseCP, magicCP, poisonCP
 
 local function CreateDebuffTypeColorPane()
     local dtcPane = Cell:CreateTitledPane(appearanceTab, L["Debuff Type Color"], 422, 45)
-    dtcPane:SetPoint("TOPLEFT", appearanceTab, "TOPLEFT", 5, -565)
+    dtcPane:SetPoint("TOPLEFT", appearanceTab, "TOPLEFT", 5, -585)
 
     -- curse
     curseCP = Cell:CreateColorPicker(dtcPane, "|TInterface\\AddOns\\Cell\\Media\\Debuffs\\Curse:0|t"..L["Curse"], false, nil, function(r, g, b)
@@ -1249,6 +1283,7 @@ end
 
 LoadData = function()
     scaleSlider:SetValue(CellDB["appearance"]["scale"])
+    strataDropdown:SetSelected(CellDB["appearance"]["strata"])
     accentColorDropdown:SetSelectedValue(CellDB["appearance"]["accentColor"][1])
     accentColorPicker:SetColor(CellDB["appearance"]["accentColor"][2])
     accentColorPicker:SetEnabled(CellDB["appearance"]["accentColor"][1] == "custom")
@@ -1269,6 +1304,7 @@ local function ShowTab(tab)
             CreateIconOptionsFrame()
             CreateDebuffTypeColorPane()
             F:ApplyCombatFunctionToWidget(scaleSlider)
+            F:ApplyCombatFunctionToWidget(strataDropdown)
         end
 
         appearanceTab:Show()
@@ -1389,6 +1425,14 @@ local function UpdateAppearance(which)
         CellSpellTooltip:UpdatePixelPerfect()
         -- CellScanningTooltip:UpdatePixelPerfect()
         Cell.menu:UpdatePixelPerfect()
+    end
+
+    -- strata
+    if not which or which == "strata" then
+        Cell.frames.mainFrame:SetFrameStrata(CellDB["appearance"]["strata"])
+        Cell.frames.optionsFrame:SetFrameStrata("DIALOG")
+        Cell.frames.menuFrame:SetFrameStrata("HIGH")
+        Cell.frames.menuFrame:SetToplevel(true)
     end
 
     -- preview

@@ -11,8 +11,7 @@ local customs = {}
 local function CreateNicknameOptionsFrame()
     nicknameOptionsFrame = CreateFrame("Frame", "CellOptionsFrame_Nicknames", Cell.frames.generalTab, "BackdropTemplate")
     Cell:StylizeFrame(nicknameOptionsFrame, nil, Cell:GetAccentColorTable())
-    nicknameOptionsFrame:SetFrameStrata("DIALOG")
-    nicknameOptionsFrame:SetFrameLevel(50)
+    nicknameOptionsFrame:SetFrameLevel(Cell.frames.generalTab:GetFrameLevel() + 50)
     nicknameOptionsFrame:Hide()
 
     nicknameOptionsFrame:SetPoint("LEFT", Cell.frames.generalTab.nicknameOptionsBtn, "RIGHT", 5, 0)
@@ -22,7 +21,7 @@ local function CreateNicknameOptionsFrame()
     nicknameOptionsFrame:SetScript("OnHide", function()
         nicknameOptionsFrame:Hide()
         Cell.frames.generalTab.mask:Hide()
-        Cell.frames.generalTab.nicknameOptionsBtn:SetFrameStrata("HIGH")
+        Cell.frames.generalTab.nicknameOptionsBtn:SetFrameLevel(Cell.frames.generalTab:GetFrameLevel() + 1)
         newItem:Hide()
     end)
 
@@ -100,12 +99,11 @@ local function CreateNicknameOptionsFrame()
     list:Show()
 
     Cell:CreateMask(list, L["Disabled"])
-    list.mask:SetFrameStrata("DIALOG")
     list.mask:Hide()
 
     -- list new
     newItem = Cell:CreateFrame(nil, list)
-    newItem:SetFrameLevel(list:GetFrameLevel()+10)
+    newItem:SetFrameLevel(list:GetFrameLevel() + 10)
     newItem:SetAllPoints(list)
 
     newItem.playerName = Cell:CreateEditBox(newItem, 20, 20)
@@ -310,10 +308,10 @@ function F:ShowNicknameOptions()
 
     if nicknameOptionsFrame:IsShown() then
         nicknameOptionsFrame:Hide()
-        Cell.frames.generalTab.nicknameOptionsBtn:SetFrameStrata("HIGH")
+        Cell.frames.generalTab.nicknameOptionsBtn:SetFrameLevel(Cell.frames.generalTab:GetFrameLevel() + 1)
     else
         nicknameOptionsFrame:Show()
-        Cell.frames.generalTab.nicknameOptionsBtn:SetFrameStrata("DIALOG")
+        Cell.frames.generalTab.nicknameOptionsBtn:SetFrameLevel(Cell.frames.generalTab:GetFrameLevel() + 50)
         Cell.frames.generalTab.mask:Show()
         LoadData()
     end

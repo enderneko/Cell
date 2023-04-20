@@ -18,8 +18,7 @@ local Toggle, Validate
 local exportParent = CreateFrame("Frame", "CellOptionsFrame_IndicatorsExport", Cell.frames.indicatorsTab)
 exportParent:Hide()
 exportParent:SetAllPoints(Cell.frames.indicatorsTab)
-exportParent:SetFrameLevel(Cell.frames.indicatorsTab:GetFrameLevel()+20)
-exportParent:SetFrameStrata("DIALOG")
+exportParent:SetFrameLevel(Cell.frames.indicatorsTab:GetFrameLevel() + 50)
 
 -------------------------------------------------
 -- export
@@ -35,7 +34,6 @@ local function CreateIndicatorsExportFrame()
     -- list
     local listParent = Cell:CreateFrame(nil, exportParent, 136, 430)
     Cell:StylizeFrame(listParent, nil, Cell:GetAccentColorTable())
-    listParent:SetFrameStrata("DIALOG")
     listParent:SetPoint("BOTTOMLEFT", 5, 24)
     listParent:Show()
     
@@ -264,8 +262,6 @@ exportParent:SetScript("OnHide", function()
 end)
 
 exportParent:SetScript("OnShow", function()
-    -- raise frame level
-    exportFrame:SetFrameStrata("DIALOG")
     Cell.frames.indicatorsTab.mask:Show()
 end)
 

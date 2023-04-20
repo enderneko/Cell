@@ -5,8 +5,7 @@ local P = Cell.pixelPerfectFuncs
 
 local powerFilters = Cell:CreateFrame("CellOptionsFrame_PowerFilters", Cell.frames.layoutsTab, 270, 205)
 Cell.frames.powerFilters = powerFilters
-powerFilters:SetFrameStrata("DIALOG")
-powerFilters:SetFrameLevel(50)
+powerFilters:SetFrameLevel(Cell.frames.layoutsTab:GetFrameLevel() + 50)
 
 -------------------------------------------------
 -- filters
@@ -77,7 +76,7 @@ end
 powerFilters:SetScript("OnHide", function()
     powerFilters:Hide()
     Cell.frames.layoutsTab.mask:Hide()
-    Cell.frames.layoutsTab.powerFilterBtn:SetFrameStrata("HIGH")
+    Cell.frames.layoutsTab.powerFilterBtn:SetFrameLevel(Cell.frames.layoutsTab:GetFrameLevel() + 1)
 end)
 
 local init
@@ -91,10 +90,10 @@ function F:ShowPowerFilters(selectedLayout, selectedLayoutTable)
 
     if powerFilters:IsShown() then
         powerFilters:Hide()
-        Cell.frames.layoutsTab.powerFilterBtn:SetFrameStrata("HIGH")
+        Cell.frames.layoutsTab.powerFilterBtn:SetFrameLevel(Cell.frames.layoutsTab:GetFrameLevel() + 1)
     else
         powerFilters:Show()
-        Cell.frames.layoutsTab.powerFilterBtn:SetFrameStrata("DIALOG")
+        Cell.frames.layoutsTab.powerFilterBtn:SetFrameLevel(Cell.frames.layoutsTab:GetFrameLevel() + 50)
         Cell.frames.layoutsTab.mask:Show()
         -- load db
         dkF:LoadConfig(selectedLayout, selectedLayoutTable)

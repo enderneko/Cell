@@ -73,10 +73,10 @@ end
 local menuFrame = CreateFrame("Frame", "CellMenuFrame", cellMainFrame)
 Cell.frames.menuFrame = menuFrame
 menuFrame:SetAllPoints(anchorFrame)
+menuFrame:SetFrameStrata("HIGH")
 
 local options = Cell:CreateButton(menuFrame, "", "red", {20, 10}, false, true)
 P:Point(options, "TOPLEFT", menuFrame)
-options:SetFrameStrata("MEDIUM")
 RegisterButtonEvents(options)
 options:SetScript("OnClick", function()
     F:ShowOptionsFrame()
@@ -93,7 +93,6 @@ end)
 
 local raid = Cell:CreateButton(menuFrame, "", "blue", {20, 10}, false, true)
 P:Point(raid, "LEFT", options, "RIGHT", 1, 0)
-raid:SetFrameStrata("MEDIUM")
 RegisterButtonEvents(raid)
 raid:SetScript("OnClick", function()
     F:ShowRaidRosterFrame()

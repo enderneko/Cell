@@ -19,8 +19,7 @@ local function CreateDebuffsImportExportFrame()
     importExportFrame:Hide()
     Cell:StylizeFrame(importExportFrame, nil, Cell:GetAccentColorTable())
     importExportFrame:EnableMouse(true)
-    importExportFrame:SetFrameStrata("DIALOG")
-    importExportFrame:SetFrameLevel(Cell.frames.raidDebuffsTab:GetFrameLevel()+20)
+    importExportFrame:SetFrameLevel(Cell.frames.raidDebuffsTab:GetFrameLevel() + 50)
     P:Size(importExportFrame, 430, 170)
     importExportFrame:SetPoint("TOPLEFT", P:Scale(1), -100)
     if not Cell.frames.raidDebuffsTab.mask then
@@ -68,7 +67,7 @@ local function CreateDebuffsImportExportFrame()
     importBtn:SetPoint("TOPRIGHT", closeBtn, "TOPLEFT", 1, 0)
     importBtn:SetScript("OnClick", function()
         -- lower frame level
-        importExportFrame:SetFrameStrata("HIGH")
+        importExportFrame:SetFrameLevel(Cell.frames.raidDebuffsTab:GetFrameLevel() + 20)
     
         local text = L["This will overwrite your debuffs"].."\n"..
             L["|cff1Aff1AYes|r - Overwrite"].."\n|cffff1A1A"..L["No"].."|r - "..L["Cancel"]
@@ -182,7 +181,7 @@ local function CreateDebuffsImportExportFrame()
     
     importExportFrame:SetScript("OnShow", function()
         -- raise frame level
-        importExportFrame:SetFrameStrata("DIALOG")
+        importExportFrame:SetFrameLevel(Cell.frames.raidDebuffsTab:GetFrameLevel() + 50)
         Cell.frames.raidDebuffsTab.mask:Show()
     end)
 end

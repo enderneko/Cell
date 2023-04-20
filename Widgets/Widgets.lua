@@ -1664,8 +1664,8 @@ function addon:CreateMask(parent, text, points) -- points = {topleftX, topleftY,
     if not parent.mask then -- not init
         parent.mask = CreateFrame("Frame", nil, parent, "BackdropTemplate")
         addon:StylizeFrame(parent.mask, {0.15, 0.15, 0.15, 0.7}, {0, 0, 0, 0})
-        parent.mask:SetFrameStrata("HIGH")
-        parent.mask:SetFrameLevel(parent:GetFrameLevel()+20)
+        -- parent.mask:SetFrameStrata("HIGH")
+        parent.mask:SetFrameLevel(parent:GetFrameLevel()+30)
         parent.mask:EnableMouse(true) -- can't click-through
         parent.mask:EnableMouseWheel(true) -- can't scroll-through
 
@@ -1703,8 +1703,8 @@ function addon:CreateCombatMask(parent)
     mask:SetPoint("BOTTOMRIGHT", P:Scale(-1), P:Scale(1))
 
     addon:StylizeFrame(mask, {0.17, 0.15, 0.15, 0.8}, {0, 0, 0, 0})
-    mask:SetFrameStrata("DIALOG")
-    mask:SetFrameLevel(parent:GetFrameLevel()+70)
+    -- mask:SetFrameStrata("DIALOG")
+    mask:SetFrameLevel(parent:GetFrameLevel()+100)
     mask:EnableMouse(true) -- can't click-through
     mask:EnableMouseWheel(true) -- can't scroll-through
 
@@ -1839,8 +1839,8 @@ function addon:CreateConfirmPopup(parent, width, text, onAccept, onReject, mask,
         parent.confirmPopup:SetScript("OnUpdate", nil)
     end)
 
-    parent.confirmPopup:SetFrameStrata("DIALOG")
-    parent.confirmPopup:SetFrameLevel(2)
+    -- parent.confirmPopup:SetFrameStrata("DIALOG")
+    parent.confirmPopup:SetFrameLevel(parent:GetFrameLevel() + 50)
     parent.confirmPopup:ClearAllPoints() -- prepare for SetPoint()
     parent.confirmPopup:Show()
 
@@ -1910,7 +1910,8 @@ function addon:CreatePopupEditBox(parent, func, multiLine)
 
     -- set parent(for hiding) & size
     parent.popupEditBox:ClearAllPoints()
-    parent.popupEditBox:SetFrameStrata("DIALOG")
+    -- parent.popupEditBox:SetFrameStrata("DIALOG")
+    parent.popupEditBox:SetFrameLevel(parent:GetFrameLevel() + 50)
 
     return parent.popupEditBox
 end
@@ -2545,7 +2546,7 @@ highlightTexture:Hide()
 list:SetScript("OnShow", function()
     list:SetScale(list.menu:GetEffectiveScale())
     list:SetFrameStrata(list.menu:GetFrameStrata())
-    list:SetFrameLevel(77) -- top of its strata
+    list:SetFrameLevel(100) -- top
 end)
 list:SetScript("OnHide", function() list:Hide() end)
 
@@ -2826,6 +2827,9 @@ function addon:CreateDropdown(parent, width, dropdownType, isMini)
             menu.text:SetTextColor(1, 1, 1)
         else
             menu.text:SetTextColor(0.4, 0.4, 0.4)
+            if list.menu == menu then
+                list:Hide()
+            end
         end
     end
 

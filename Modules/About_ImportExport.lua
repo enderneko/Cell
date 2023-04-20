@@ -156,8 +156,7 @@ local function CreateImportExportFrame()
     importExportFrame:Hide()
     Cell:StylizeFrame(importExportFrame, nil, Cell:GetAccentColorTable())
     importExportFrame:EnableMouse(true)
-    importExportFrame:SetFrameStrata("DIALOG")
-    importExportFrame:SetFrameLevel(Cell.frames.aboutTab:GetFrameLevel()+20)
+    importExportFrame:SetFrameLevel(Cell.frames.aboutTab:GetFrameLevel() + 50)
     P:Size(importExportFrame, 430, 170)
     importExportFrame:SetPoint("BOTTOMLEFT", P:Scale(1), 27)
     
@@ -177,7 +176,7 @@ local function CreateImportExportFrame()
     importBtn:SetPoint("TOPRIGHT", closeBtn, "TOPLEFT", P:Scale(1), 0)
     importBtn:SetScript("OnClick", function()
         -- lower frame level
-        importExportFrame:SetFrameStrata("HIGH")
+        importExportFrame:SetFrameLevel(Cell.frames.aboutTab:GetFrameLevel() + 20)
     
         local text = "|cFFFF7070"..L["All Cell settings will be overwritten!"].."|r\n"..
             "|cFFB7B7B7"..L["Autorun will be disabled for all code snippets"].."|r\n"..
@@ -265,7 +264,7 @@ local function CreateImportExportFrame()
     
     importExportFrame:SetScript("OnShow", function()
         -- raise frame level
-        importExportFrame:SetFrameStrata("DIALOG")
+        importExportFrame:SetFrameLevel(Cell.frames.aboutTab:GetFrameLevel() + 50)
         Cell.frames.aboutTab.mask:Show()
     end)
 end

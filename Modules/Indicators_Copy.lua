@@ -28,7 +28,7 @@ local function CreateIndicatorsCopyFrame()
     copyFrame = Cell:CreateFrame("CellOptionsFrame_IndicatorsCopy", Cell.frames.indicatorsTab, 136, 425)
     -- Cell.frames.indicatorsCopyFrame = copyFrame
     Cell:StylizeFrame(copyFrame, nil, Cell:GetAccentColorTable())
-    copyFrame:SetFrameStrata("DIALOG")
+    copyFrame:SetFrameLevel(Cell.frames.indicatorsTab:GetFrameLevel() + 50)
     copyFrame:SetPoint("BOTTOMLEFT", 5, 24)
     copyFrame:Hide()
 

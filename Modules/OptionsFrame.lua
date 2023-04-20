@@ -9,7 +9,7 @@ local optionsFrame = Cell:CreateFrame("CellOptionsFrame", Cell.frames.mainFrame,
 Cell.frames.optionsFrame = optionsFrame
 -- optionsFrame:SetPoint("BOTTOMLEFT", Cell.frames.mainFrame, "TOPLEFT", 0, 16)
 optionsFrame:SetPoint("CENTER", UIParent)
-optionsFrame:SetFrameStrata("HIGH")
+optionsFrame:SetFrameStrata("DIALOG")
 optionsFrame:SetClampedToScreen(true)
 optionsFrame:SetClampRectInsets(0, 0, 40, 0)
 optionsFrame:SetMovable(true)
@@ -80,7 +80,7 @@ local function CreateTabButtons()
     
     local tabHeight = {
         ["general"] = 450,
-        ["appearance"] = 615,
+        ["appearance"] = 635,
         ["layouts"] = 510,
         ["clickCastings"] = 526,
         ["indicators"] = 512,

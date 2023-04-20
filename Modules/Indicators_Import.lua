@@ -23,8 +23,7 @@ local function CreateIndicatorsImportFrame()
     end
 
     importFrame = Cell:CreateFrame("CellOptionsFrame_IndicatorsImport", Cell.frames.indicatorsTab, 430, 221)
-    importFrame:SetFrameLevel(Cell.frames.indicatorsTab:GetFrameLevel()+20)
-    importFrame:SetFrameStrata("DIALOG")
+    importFrame:SetFrameLevel(Cell.frames.indicatorsTab:GetFrameLevel() + 50)
     Cell:StylizeFrame(importFrame, nil, Cell:GetAccentColorTable())
     importFrame:SetPoint("BOTTOMLEFT", P:Scale(1), 24)
     
@@ -46,7 +45,7 @@ local function CreateIndicatorsImportFrame()
     importBtn:SetEnabled(false)
     importBtn:SetScript("OnClick", function()
         -- lower frame level
-        importFrame:SetFrameStrata("HIGH")
+        importFrame:SetFrameLevel(Cell.frames.indicatorsTab:GetFrameLevel() + 20)
     
         local text = L["Import"].." > "..Cell:GetAccentColorString()..toLayoutName.."|r\n"
             ..L["This may overwrite built-in indicators"].."\n"
@@ -255,7 +254,7 @@ local function CreateIndicatorsImportFrame()
     
     importFrame:SetScript("OnShow", function()
         -- raise frame level
-        importFrame:SetFrameStrata("DIALOG")
+        importFrame:SetFrameLevel(Cell.frames.indicatorsTab:GetFrameLevel() + 50)
         Cell.frames.indicatorsTab.mask:Show()
     end)
 end

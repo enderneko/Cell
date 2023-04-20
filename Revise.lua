@@ -1840,6 +1840,13 @@ function F:Revise()
         end
     end
 
+    -- r163-release
+    if CellDB["revise"] and dbRevision < 163 then
+        if type(CellDB["appearance"]["strata"]) ~= "string" then
+            CellDB["appearance"]["strata"] = "LOW"
+        end
+    end
+
     CellDB["revise"] = Cell.version
     if Cell.isWrath then
         CellCharacterDB["revise"] = Cell.version

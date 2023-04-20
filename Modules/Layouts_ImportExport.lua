@@ -63,8 +63,7 @@ local function CreateLayoutImportExportFrame()
     importExportFrame:Hide()
     Cell:StylizeFrame(importExportFrame, nil, Cell:GetAccentColorTable())
     importExportFrame:EnableMouse(true)
-    importExportFrame:SetFrameStrata("DIALOG")
-    importExportFrame:SetFrameLevel(Cell.frames.layoutsTab:GetFrameLevel()+20)
+    importExportFrame:SetFrameLevel(Cell.frames.layoutsTab:GetFrameLevel() + 50)
     P:Size(importExportFrame, 430, 170)
     importExportFrame:SetPoint("TOPLEFT", P:Scale(1), -100)
     
@@ -84,7 +83,7 @@ local function CreateLayoutImportExportFrame()
     importBtn:SetPoint("TOPRIGHT", closeBtn, "TOPLEFT", P:Scale(1), 0)
     importBtn:SetScript("OnClick", function()
         -- lower frame level
-        importExportFrame:SetFrameStrata("HIGH")
+        importExportFrame:SetFrameLevel(Cell.frames.layoutsTab:GetFrameLevel() + 20)
     
         if CellDB["layouts"][imported["name"]] then
             local text = L["Overwrite Layout"]..": "..(imported["name"] == "default" and _G.DEFAULT or imported["name"]).."?\n"..
@@ -168,7 +167,7 @@ local function CreateLayoutImportExportFrame()
     
     importExportFrame:SetScript("OnShow", function()
         -- raise frame level
-        importExportFrame:SetFrameStrata("DIALOG")
+        importExportFrame:SetFrameLevel(Cell.frames.layoutsTab:GetFrameLevel() + 50)
         Cell.frames.layoutsTab.mask:Show()
     end)
 end

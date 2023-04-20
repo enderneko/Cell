@@ -29,7 +29,6 @@ local function CreatePreviewButton()
     local previewButtonBG = Cell:CreateFrame("CellLayoutsPreviewButtonBG", layoutsTab)
     previewButtonBG:SetPoint("TOPLEFT", previewButton, 0, 20)
     previewButtonBG:SetPoint("BOTTOMRIGHT", previewButton, "TOPRIGHT")
-    previewButtonBG:SetFrameStrata("HIGH")
     Cell:StylizeFrame(previewButtonBG, {0.1, 0.1, 0.1, 0.77}, {0, 0, 0, 0})
     previewButtonBG:Show()
     
@@ -118,7 +117,7 @@ local layoutPreview, layoutPreviewAnchor, layoutPreviewName
 local function CreateLayoutPreview()
     layoutPreview = Cell:CreateFrame("CellLayoutPreviewFrame", Cell.frames.mainFrame, nil, nil, true)
     layoutPreview:EnableMouse(false)
-    layoutPreview:SetFrameStrata("MEDIUM")
+    layoutPreview:SetFrameStrata("HIGH")
     layoutPreview:SetToplevel(true)
     layoutPreview:Hide()
 
@@ -422,7 +421,7 @@ local npcPreview, npcPreviewAnchor, npcPreviewName
 local function CreateNPCPreview()
     npcPreview = Cell:CreateFrame("CellNPCPreviewFrame", Cell.frames.mainFrame, nil, nil, true)
     npcPreview:EnableMouse(false)
-    npcPreview:SetFrameStrata("MEDIUM")
+    npcPreview:SetFrameStrata("HIGH")
     npcPreview:SetToplevel(true)
     npcPreview:Hide()
 
@@ -667,7 +666,7 @@ local raidPetPreview, raidPetPreviewAnchor, raidPetPreviewName
 local function CreateRaidPetPreview()
     raidPetPreview = Cell:CreateFrame("CellRaidPetPreviewFrame", Cell.frames.mainFrame, nil, nil, true)
     raidPetPreview:EnableMouse(false)
-    raidPetPreview:SetFrameStrata("MEDIUM")
+    raidPetPreview:SetFrameStrata("HIGH")
     raidPetPreview:SetToplevel(true)
     raidPetPreview:Hide()
 
@@ -924,7 +923,7 @@ local spotlightPreview, spotlightPreviewAnchor, spotlightPreviewName
 local function CreateSpotlightPreview()
     spotlightPreview = Cell:CreateFrame("CellSpotlightPreviewFrame", Cell.frames.mainFrame, nil, nil, true)
     spotlightPreview:EnableMouse(false)
-    spotlightPreview:SetFrameStrata("MEDIUM")
+    spotlightPreview:SetFrameStrata("HIGH")
     spotlightPreview:SetToplevel(true)
     spotlightPreview:Hide()
 

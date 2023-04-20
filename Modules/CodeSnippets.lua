@@ -10,7 +10,7 @@ local selected, forceLoadSelected = 0, true
 local LoadList, LoadSnippet, RunSnippet
 
 local function CreateCodeSnippetsFrame()
-    codeSnippetsFrame = Cell:CreateMovableFrame("Cell "..L["Code Snippets"], "CellCodeSnippetsFrame", 641, 550, "HIGH")
+    codeSnippetsFrame = Cell:CreateMovableFrame("Cell "..L["Code Snippets"], "CellCodeSnippetsFrame", 641, 550, "DIALOG")
     Cell.frames.codeSnippetsFrame = codeSnippetsFrame
     codeSnippetsFrame:SetToplevel(true)
     codeSnippetsFrame:SetPoint("CENTER")
@@ -155,7 +155,7 @@ local function CreateCodeSnippetsFrame()
 
     -- errorPopup
     errorPopup = CreateFrame("Frame", nil, codePane, "BackdropTemplate")
-    errorPopup:SetFrameStrata("DIALOG")
+    errorPopup:SetFrameStrata("TOOLTIP")
     Cell:StylizeFrame(errorPopup, {0.15, 0.1, 0.1, 0.95})
     errorPopup:SetWidth(200)
     errorPopup:SetPoint("BOTTOMLEFT")
