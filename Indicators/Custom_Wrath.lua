@@ -1,10 +1,3 @@
---[[
--- File: Custom_Wrath.lua
--- Author: enderneko (enderneko-dev@outlook.com)
--- File Created: 2022/08/26 03:04:05 +0800
--- Last Modified: 2023/04/14 17:59:13 +0800
---]]
-
 local _, Cell = ...
 local L = Cell.L
 local F = Cell.funcs
@@ -144,6 +137,9 @@ function I:ResetCustomIndicators(unitButton, auraType)
     local unit = unitButton.state.displayedUnit
 
     for indicatorName, indicatorTable in pairs(customIndicators[auraType]) do
+        --? indicators removed
+        if not indicatorName then break end
+        
         if indicatorTable["isIcons"] then
             indicatorTable["found"][unit] = 0
 
@@ -193,7 +189,7 @@ function I:UpdateCustomIndicators(unitButton, auraType, spellId, spellName, star
     local unit = unitButton.state.displayedUnit
 
     for indicatorName, indicatorTable in pairs(customIndicators[auraType]) do
-        if enabledIndicators[indicatorName] and unitButton.indicators[indicatorName] then
+        if indicatorName and enabledIndicators[indicatorName] and unitButton.indicators[indicatorName] then
             local spell  --* trackByName
             if indicatorTable["trackByName"] then
                 spell = spellName
@@ -221,7 +217,7 @@ end
 function I:ShowCustomIndicators(unitButton, auraType)
     local unit = unitButton.state.displayedUnit
     for indicatorName, indicatorTable in pairs(customIndicators[auraType]) do
-        if enabledIndicators[indicatorName] and unitButton.indicators[indicatorName] then
+        if indicatorName and enabledIndicators[indicatorName] and unitButton.indicators[indicatorName] then
             if not indicatorTable["isIcons"] then
                 if indicatorTable["top"][unit]["start"] then
                     unitButton.indicators[indicatorName]:SetCooldown(

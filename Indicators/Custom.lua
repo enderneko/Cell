@@ -131,6 +131,9 @@ function I:ResetCustomIndicators(unitButton, auraType)
     local unit = unitButton.state.displayedUnit
 
     for indicatorName, indicatorTable in pairs(customIndicators[auraType]) do
+        --? indicators removed
+        if not indicatorName then break end
+
         if indicatorTable["isIcons"] then
             indicatorTable["found"][unit] = 0
 
@@ -189,7 +192,7 @@ function I:UpdateCustomIndicators(unitButton, auraInfo, refreshing)
     local castByMe = auraInfo.sourceUnit == "player"
 
     for indicatorName, indicatorTable in pairs(customIndicators[auraType]) do
-        if enabledIndicators[indicatorName] and unitButton.indicators[indicatorName] then
+        if indicatorName and enabledIndicators[indicatorName] and unitButton.indicators[indicatorName] then
             if indicatorTable["auras"][spellId] or indicatorTable["auras"][0] then -- is in indicator spell list
                 if auraType == "buff" then
                     -- check castByMe
@@ -210,7 +213,7 @@ end
 function I:ShowCustomIndicators(unitButton, auraType)
     local unit = unitButton.state.displayedUnit
     for indicatorName, indicatorTable in pairs(customIndicators[auraType]) do
-        if enabledIndicators[indicatorName] and unitButton.indicators[indicatorName] then
+        if indicatorName and enabledIndicators[indicatorName] and unitButton.indicators[indicatorName] then
             if not indicatorTable["isIcons"] then
                 if indicatorTable["top"][unit]["start"] then
                     unitButton.indicators[indicatorName]:SetCooldown(
