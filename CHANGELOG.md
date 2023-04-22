@@ -1,5 +1,7 @@
-[Full Changelog](https://github.com/enderneko/Cell/compare/r161-release...b6c08cae2b1c4c5e724567bad7b9b96799249149)
+[Full Changelog](https://github.com/enderneko/Cell/compare/r162-release...870f3f8f002431bc4ce07c1fac2586c11b0a4393)
 
-- Fix trackByName for wrath indicators
-- Add hideSelf for party
-- Move "Sort By Role" to Layouts
+- Fix nil indicatorName issue
+- Fix binding key display for click-castings
+- Update frame strata
+- Update zhTW
+- Rename snippets

@@ -617,6 +617,12 @@ L["Changelogs"] = "更新记录"
 L["Click to view recent changelogs"] = "点击查看近期更新记录"
 L["Click to view older changelogs"] = "点击查看远古更新记录"
 L["CHANGELOGS"] = [[
+    <h1>r163-release (Apr 22, 2023, 20:07 GMT+8)</h1>
+    <p>* 更新 Cell 框体层级，并在外观下添加了“层级”选项。</p>
+    <p>* 修复一处 indicatorName 为空的问题。</p>
+    <p>* 更新繁中。</p>
+    <br/>
+
     <h1>r162-release (Apr 14, 2023, 19:00 GMT+8)</h1>
     <p>* 移动“按职责排序”选项到布局页面。</p>
     <p>* 在布局中添加了“隐藏自己”的选项。</p>
