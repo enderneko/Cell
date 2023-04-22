@@ -1044,7 +1044,7 @@ local function CreateListPane()
             t[1]:SetChanged(false)
 
             local modifierDisplay = modifiersDisplay[F:GetIndex(modifiers, t[1].modifier)]
-            t[1].keyGrid:SetText(modifierDisplay..L[t[1].bindKey])
+            t[1].keyGrid:SetText(modifierDisplay..((t[1].bindKey=="P" or t[1].bindKey=="T") and t[1].bindKey or L[t[1].bindKey]))
             t[1].typeGrid:SetText(L[F:UpperFirst(t[1].bindType)])
             t[1].actionGrid:SetText(t[1].bindType == "general" and L[t[1].bindAction] or t[1].bindAction)
             -- restore icon
