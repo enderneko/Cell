@@ -1843,7 +1843,7 @@ function F:Revise()
     -- r163-release
     if CellDB["revise"] and dbRevision < 163 then
         if type(CellDB["appearance"]["strata"]) ~= "string" then
-            CellDB["appearance"]["strata"] = "LOW"
+            CellDB["appearance"]["strata"] = "MEDIUM"
         end
     end
 

@@ -3,7 +3,7 @@ local F = Cell.funcs
 
 Cell.defaults.appearance = {
     ["scale"] = 1,
-    ["strata"] = "LOW",
+    ["strata"] = "MEDIUM",
     ["accentColor"] = {"class_color", {1, 0.26667, 0.4}}, -- FF4466
     ["optionsFontSizeOffset"] = 0,
     ["useGameFont"] = true,

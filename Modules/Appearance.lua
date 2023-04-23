@@ -1431,8 +1431,6 @@ local function UpdateAppearance(which)
     if not which or which == "strata" then
         Cell.frames.mainFrame:SetFrameStrata(CellDB["appearance"]["strata"])
         Cell.frames.optionsFrame:SetFrameStrata("DIALOG")
-        Cell.frames.menuFrame:SetFrameStrata("HIGH")
-        Cell.frames.menuFrame:SetToplevel(true)
     end
 
     -- preview
