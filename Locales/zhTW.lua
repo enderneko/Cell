@@ -438,8 +438,7 @@ L["spotlightTips"] = "左鍵: |cffffffff選單|r\n右鍵: |cffffffff清除|r\n�
 L["Status Icon"] = "狀態圖示"
 L["Status Text"] = "狀態文字"
 L["Status Text Position"] = "狀態文字位置"
---[[Translation missing --]]
---[[ L["Strata"] = "Strata"--]] 
+L["Strata"] = "層級"
 L["Sync Nicknames with Others"] = "與其他人同步暱稱"
 L["Sync Status"] = "同步狀態"
 L["Sync With"] = "同步"
