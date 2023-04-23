@@ -620,8 +620,14 @@ L["Changelogs"] = "更新记录"
 L["Click to view recent changelogs"] = "点击查看近期更新记录"
 L["Click to view older changelogs"] = "点击查看远古更新记录"
 L["CHANGELOGS"] = [[
+    <h1>r164-release (Apr 24, 2023, 05:55 GMT+8)</h1>
+    <p>+ 在点击施法下添加了“不智能复活”的选项。</p>
+    <p>* 修复菜单按钮的层级。</p>
+    <p>* 更新繁中。</p>
+    <br/>
+
     <h1>r163-release (Apr 22, 2023, 20:07 GMT+8)</h1>
-    <p>* 更新 Cell 框体层级，并在外观下添加了“层级”选项。</p>
+    <p>+ 更新 Cell 框体层级，并在外观下添加了“层级”选项。</p>
     <p>* 修复一处 indicatorName 为空的问题。</p>
     <p>* 更新繁中。</p>
     <br/>

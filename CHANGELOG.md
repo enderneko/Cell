@@ -1,7 +1,6 @@
-[Full Changelog](https://github.com/enderneko/Cell/compare/r162-release...870f3f8f002431bc4ce07c1fac2586c11b0a4393)
+[Full Changelog](https://github.com/enderneko/Cell/compare/r163-release...0189bdd3af70375b1a75464d069f35d487b9b46d)
 
-- Fix nil indicatorName issue
-- Fix binding key display for click-castings
-- Update frame strata
+- Add sMaRt resurrection
+- Fix resurrection icon
+- Update menu strata
 - Update zhTW
-- Rename snippets

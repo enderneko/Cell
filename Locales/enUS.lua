@@ -68,8 +68,14 @@ select(2, ...).L = setmetatable({
     ["SNIPPETS_TIPS"] = "[Double-Click] to rename. [Shift-Click] to delete. All checked snippets will be automatically invoked at the end of Cell initialization process (in ADDON_LOADED event).",
 
     ["CHANGELOGS"] = [[
+        <h1>r164-release (Apr 24, 2023, 05:55 GMT+8)</h1>
+        <p>+ Added a "Smart Resurrection" option in Click-Castings.</p>
+        <p>* Fixed menu strata.</p>
+        <p>* Updated zhTW.</p>
+        <br/>
+
         <h1>r163-release (Apr 22, 2023, 20:07 GMT+8)</h1>
-        <p>* Updated Cell frame strata, added a "Strata" option in Appearance.</p>
+        <p>+ Updated Cell frame strata, added a "Strata" option in Appearance.</p>
         <p>* Fixed a null indicatorName issue.</p>
         <p>* Updated zhTW.</p>
         <br/>
