@@ -263,3 +263,38 @@ end
 function F:GetResurrectionClickCastings(class)
     return resurrection_click_castings[class] or {}
 end
+
+-------------------------------------------------
+-- smart resurrection
+-------------------------------------------------
+local normalResurrection = {
+    ["DRUID"] = 50769,
+    ["PALADIN"] = 7328,
+    ["PRIEST"] = 2006,
+    ["SHAMAN"] = 2008,
+}
+
+do
+    for class, spell in pairs(normalResurrection) do
+        normalResurrection[class] = GetSpellInfo(spell)
+    end
+end
+
+function F:GetNormalResurrection(class)
+    return normalResurrection[class]
+end
+
+local combatResurrection = {
+    ["DEATHKNIGHT"] = 61999,
+    ["DRUID"] = 20484,
+}
+
+do
+    for class, spell in pairs(combatResurrection) do
+        combatResurrection[class] = GetSpellInfo(spell)
+    end
+end
+
+function F:GetCombatResurrection(class)
+    return combatResurrection[class]
+end

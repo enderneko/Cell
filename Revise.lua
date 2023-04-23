@@ -1846,6 +1846,15 @@ function F:Revise()
             CellDB["appearance"]["strata"] = "MEDIUM"
         end
     end
+    
+    -- r164-release
+    if CellDB["revise"] and dbRevision < 164 then
+        for class, t in pairs(CellDB["clickCastings"]) do
+            if type(t["smartResurrection"]) ~= "string" then
+                t["smartResurrection"] = "disabled"
+            end
+        end
+    end
 
     CellDB["revise"] = Cell.version
     if Cell.isWrath then

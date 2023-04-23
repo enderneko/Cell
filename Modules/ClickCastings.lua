@@ -13,7 +13,7 @@ local bindingsFrame
 local clickCastingTable
 local loaded
 local LoadProfile
-local alwaysTargeting
+local alwaysTargeting, smartResurrection
 -------------------------------------------------
 -- changes
 -------------------------------------------------
@@ -422,17 +422,32 @@ local function ApplyClickCastings(b)
                 condition = F:IsResurrectionForDead(t[3]) and ",dead" or ",nodead"
             end
 
+            -- "sMaRt" resurrection
+            local sMaRt = ""
+            if smartResurrection ~= "disabled" and not F:IsResurrectionForDead(t[3]) then
+                if strfind(smartResurrection, "^normal") then
+                    if F:GetNormalResurrection(Cell.vars.playerClass) then
+                        sMaRt = sMaRt .. ";[@cell,dead,nocombat] "..F:GetNormalResurrection(Cell.vars.playerClass)
+                    end
+                end
+                if strfind(smartResurrection, "combat$") then
+                    if F:GetCombatResurrection(Cell.vars.playerClass) then
+                        sMaRt = sMaRt .. ";[@cell,dead,combat] "..F:GetCombatResurrection(Cell.vars.playerClass)
+                    end
+                end
+            end
+
             if (alwaysTargeting == "left" and bindKey == "type1") or alwaysTargeting == "any" then
                 b:SetAttribute(bindKey, "macro")
                 local attr = string.gsub(bindKey, "type", "macrotext")
-                b:SetAttribute(attr, "/tar [@cell]\n/cast [@cell"..condition.."] "..t[3])
+                b:SetAttribute(attr, "/tar [@cell]\n/cast [@cell"..condition.."] "..t[3]..sMaRt)
                 UpdatePlaceholder(b, attr)
             else
                 -- local attr = string.gsub(bindKey, "type", "spell")
                 -- b:SetAttribute(attr, t[3])
                 b:SetAttribute(bindKey, "macro")
                 local attr = string.gsub(bindKey, "type", "macrotext")
-                b:SetAttribute(attr, "/cast [@cell"..condition.."] "..t[3])
+                b:SetAttribute(attr, "/cast [@cell"..condition.."] "..t[3]..sMaRt)
                 UpdatePlaceholder(b, attr)
             end
         elseif t[2] == "macro" then
@@ -442,20 +457,20 @@ local function ApplyClickCastings(b)
     end
 end
 
-local function UpdateClickCastings(noLoad)
+local function UpdateClickCastings(noReload)
     F:Debug("|cff77ff77UpdateClickCastings:|r useCommon: "..tostring(Cell.vars.clickCastingTable["useCommon"]))
     clickCastingTable = Cell.vars.clickCastingTable["useCommon"] and Cell.vars.clickCastingTable["common"] or Cell.vars.clickCastingTable[Cell.vars.playerSpecID]
+    
     -- FIXME: remove this determine statement
     if Cell.vars.clickCastingTable["alwaysTargeting"] then
         alwaysTargeting = Cell.vars.clickCastingTable["alwaysTargeting"][Cell.vars.clickCastingTable["useCommon"] and "common" or Cell.vars.playerSpecID]
     else
         alwaysTargeting = "disabled"
     end
-    
-    if noLoad then -- create new
-        bindingsFrame.scrollFrame:SetContentHeight(20, #clickCastingTable, 5)
-        bindingsFrame.scrollFrame:ScrollToBottom()
-    else
+
+    smartResurrection = Cell.vars.clickCastingTable["smartResurrection"]
+
+    if not noReload then
         if clickCastingsTab:IsVisible() then
             LoadProfile(Cell.vars.clickCastingTable["useCommon"])
         else
@@ -487,10 +502,10 @@ Cell:RegisterCallback("UpdateClickCastings", "UpdateClickCastings", UpdateClickC
 local profileDropdown
 
 local function CreateProfilePane()
-    local profilePane = Cell:CreateTitledPane(clickCastingsTab, L["Profiles"], 250, 50)
+    local profilePane = Cell:CreateTitledPane(clickCastingsTab, L["Profiles"], 422, 50)
     profilePane:SetPoint("TOPLEFT", 5, -5)
     
-    profileDropdown = Cell:CreateDropdown(profilePane, 240)
+    profileDropdown = Cell:CreateDropdown(profilePane, 412)
     profileDropdown:SetPoint("TOPLEFT", profilePane, "TOPLEFT", 5, -27)
     
     profileDropdown:SetItems({
@@ -520,10 +535,10 @@ end
 local targetingDropdown
 
 local function CreateTargetingPane()
-    local targetingPane = Cell:CreateTitledPane(clickCastingsTab, L["Always Targeting"], 160, 50)
-    targetingPane:SetPoint("TOPLEFT", clickCastingsTab, "TOPLEFT", 267, -5)
+    local targetingPane = Cell:CreateTitledPane(clickCastingsTab, L["Always Targeting"], 205, 50)
+    targetingPane:SetPoint("TOPLEFT", clickCastingsTab, "TOPLEFT", 5, -70)
 
-    targetingDropdown = Cell:CreateDropdown(targetingPane, 150)
+    targetingDropdown = Cell:CreateDropdown(targetingPane, 195)
     targetingDropdown:SetPoint("TOPLEFT", targetingPane, "TOPLEFT", 5, -27)
 
     targetingDropdown:SetItems({
@@ -559,6 +574,47 @@ local function CreateTargetingPane()
         },
     })
     Cell:SetTooltips(targetingDropdown, "ANCHOR_TOPLEFT", 0, 2, L["Always Targeting"], L["Only available for Spells"])
+end
+
+-------------------------------------------------
+-- sMaRt resurrection
+-------------------------------------------------
+local smartResDropdown
+
+local function CreateSmartResPane()
+    local smartResPane = Cell:CreateTitledPane(clickCastingsTab, L["Smart Resurrection"], 205, 50)
+    smartResPane:SetPoint("TOPLEFT", clickCastingsTab, "TOPLEFT", 222, -70)
+
+    smartResDropdown = Cell:CreateDropdown(smartResPane, 195)
+    smartResDropdown:SetPoint("TOPLEFT", smartResPane, "TOPLEFT", 5, -27)
+    
+    smartResDropdown:SetItems({
+        {
+            ["text"] = L["Disabled"],
+            ["value"] = "disabled",
+            ["onClick"] = function()
+                Cell.vars.clickCastingTable["smartResurrection"] = "disabled"
+                Cell:Fire("UpdateClickCastings", true)
+            end
+        },
+        {
+            ["text"] = L["Normal"],
+            ["value"] = "normal",
+            ["onClick"] = function()
+                Cell.vars.clickCastingTable["smartResurrection"] = "normal"
+                Cell:Fire("UpdateClickCastings", true)
+            end
+        },
+        {
+            ["text"] = L["Normal + Combat Res"],
+            ["value"] = "normal+combat",
+            ["onClick"] = function()
+                Cell.vars.clickCastingTable["smartResurrection"] = "normal+combat"
+                Cell:Fire("UpdateClickCastings", true)
+            end
+        },
+    })
+    Cell:SetTooltips(smartResDropdown, "ANCHOR_TOPLEFT", 0, 2, L["Smart Resurrection"], L["Replace click-castings of Spell type with resurrection spells on dead units"])
 end
 
 -------------------------------------------------
@@ -956,7 +1012,7 @@ end
 
 local function CreateListPane()
     listPane = Cell:CreateTitledPane(clickCastingsTab, L["Current Profile"], 422, 451)
-    listPane:SetPoint("TOPLEFT", clickCastingsTab, "TOPLEFT", 5, -70)
+    listPane:SetPoint("BOTTOMLEFT", clickCastingsTab, 5, 5)
     
     local hint = Cell:CreateButton(listPane, nil, "accent-hover", {17, 17}, nil, nil, nil, nil, nil, L["Click-Castings"], L["clickcastingsHints"])
     hint:SetPoint("TOPRIGHT")
@@ -988,9 +1044,13 @@ local function CreateListPane()
             b:SetPoint("TOP")
         end
         last = b
-        Cell:Fire("UpdateClickCastings", true)
+
         menu:Hide()
         bindingButton:Hide()
+
+        -- scroll
+        bindingsFrame.scrollFrame:SetContentHeight(20, #clickCastingTable, 5)
+        bindingsFrame.scrollFrame:ScrollToBottom()
     end)
 
     saveBtn = Cell:CreateButton(listPane, L["Save"], "green-hover", {142, 20})
@@ -1198,6 +1258,7 @@ local function ShowTab(tab)
             init = true
             CreateProfilePane()
             CreateTargetingPane()
+            CreateSmartResPane()
             CreateListPane()
             F:ApplyCombatFunctionToTab(clickCastingsTab)
         end
@@ -1219,6 +1280,8 @@ clickCastingsTab:SetScript("OnShow", function()
     profileDropdown:SetSelectedItem(isCommon and 1 or 2)
     UpdateCurrentText(isCommon)
     LoadProfile(isCommon)
+
+    smartResDropdown:SetSelectedValue(Cell.vars.clickCastingTable["smartResurrection"])
 
     menu:SetMenuParent(clickCastingsTab)
     -- texplore(changed)

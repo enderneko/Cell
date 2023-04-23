@@ -294,6 +294,7 @@ function eventFrame:ADDON_LOADED(arg1)
         if type(CellDB["clickCastings"][Cell.vars.playerClass]) ~= "table" then
             CellDB["clickCastings"][Cell.vars.playerClass] = {
                 ["useCommon"] = true,
+                ["smartResurrection"] = "disabled",
                 ["alwaysTargeting"] = {
                     ["common"] = "disabled",
                 },
