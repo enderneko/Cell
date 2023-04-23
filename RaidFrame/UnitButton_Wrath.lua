@@ -1,10 +1,3 @@
---[[
--- File: UnitButton_Wrath.lua
--- Author: enderneko (enderneko-dev@outlook.com)
--- File Created: 2022/08/20 19:44:26 +0800
--- Last Modified: 2023/04/06 19:09:01 +0800
---]]
-
 local _, Cell = ...
 local L = Cell.L
 local F = Cell.funcs
@@ -1037,6 +1030,7 @@ local function UpdateUnitHealthState(self, diff)
     self.state.wasDeadOrGhost = self.state.isDeadOrGhost
     self.state.isDeadOrGhost = UnitIsDeadOrGhost(unit)
     if self.state.wasDeadOrGhost ~= self.state.isDeadOrGhost then
+        I:UpdateStatusIcon_Resurrection(self)
         UnitButton_UpdateHealthColor(self)
     end
 

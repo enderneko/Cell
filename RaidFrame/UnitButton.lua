@@ -1224,6 +1224,7 @@ local function UpdateUnitHealthState(self, diff)
     self.state.wasDeadOrGhost = self.state.isDeadOrGhost
     self.state.isDeadOrGhost = UnitIsDeadOrGhost(unit)
     if self.state.wasDeadOrGhost ~= self.state.isDeadOrGhost then
+        I:UpdateStatusIcon_Resurrection(self)
         UnitButton_UpdateHealthColor(self)
     end
 
