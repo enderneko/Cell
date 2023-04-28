@@ -2746,7 +2746,7 @@ local function CreateAuraButtons(parent, auraButtons, auraTable, noUpDownButtons
                 return
             end
 
-            local name = GetSpellInfo(spellId)
+            local name, _, tex = GetSpellInfo(spellId)
             if not name then
                 CellSpellTooltip:Hide()
                 return
@@ -2754,7 +2754,7 @@ local function CreateAuraButtons(parent, auraButtons, auraTable, noUpDownButtons
             
             CellSpellTooltip:SetOwner(popup, "ANCHOR_NONE")
             CellSpellTooltip:SetPoint("TOPLEFT", popup, "BOTTOMLEFT", 0, -1)
-            CellSpellTooltip:SetSpellByID(spellId)
+            CellSpellTooltip:SetSpellByID(spellId, tex)
             CellSpellTooltip:Show()
         end)
         
@@ -2895,6 +2895,7 @@ local function CreateAuraButtons(parent, auraButtons, auraTable, noUpDownButtons
             local name, _, icon = GetSpellInfo(spell)
             auraButtons[i].spellIdText:SetText(spell)
             auraButtons[i].spellId = spell
+            auraButtons[i].spellTex = icon
             auraButtons[i].spellNameText:SetText(name or "|cffff2222"..L["Invalid"])
             if icon then
                 auraButtons[i].spellIcon:SetTexture(icon)
@@ -2915,7 +2916,7 @@ local function CreateAuraButtons(parent, auraButtons, auraTable, noUpDownButtons
                     
                     CellSpellTooltip:SetOwner(auraButtons[i], "ANCHOR_NONE")
                     CellSpellTooltip:SetPoint("TOPRIGHT", auraButtons[i], "TOPLEFT", -1, 0)
-                    CellSpellTooltip:SetSpellByID(self.spellId)
+                    CellSpellTooltip:SetSpellByID(self.spellId, self.spellTex)
                     CellSpellTooltip:Show()
                 end
             end)
@@ -2990,6 +2991,7 @@ local function CreateAuraButtons(parent, auraButtons, auraTable, noUpDownButtons
                         -- update text
                         auraButtons[i].spellIdText:SetText(spellId)
                         auraButtons[i].spellId = spellId
+                        auraButtons[i].spellTex = spellIcon
                         auraButtons[i].spellNameText:SetText(spellName)
                         -- update db
                         auraTable[i] = spellId
