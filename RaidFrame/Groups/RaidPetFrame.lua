@@ -160,11 +160,17 @@ header:SetAttribute("_initialAttribute-refreshUnitChange", [[
 header:SetAttribute("template", "CellUnitButtonTemplate")
 header:SetAttribute("point", "TOP")
 header:SetAttribute("columnAnchorPoint", "LEFT")
-header:SetAttribute("maxColumns", 8)
 header:SetAttribute("unitsPerColumn", 5)
 
---! to make needButtons == 20
-header:SetAttribute("startingIndex", -19)
+if Cell.isRetail then
+    header:SetAttribute("maxColumns", 4)
+    --! make needButtons == 20
+    header:SetAttribute("startingIndex", -19)
+else
+    header:SetAttribute("maxColumns", 5)
+    --! make needButtons == 25
+    header:SetAttribute("startingIndex", -24)
+end
 header:Show()
 header:SetAttribute("startingIndex", 1)
 
