@@ -100,3 +100,24 @@ function A:FrameFadeOut(frame, timeToFade, startAlpha, endAlpha)
 
     FrameFade(frame, frame.fade)
 end
+
+-----------------------------------------
+-- fade in/out on mouseover/mouseout
+-----------------------------------------
+function A:ApplyFadeInOutToParent(parent, condition, ...)
+    for _, f in pairs({...}) do
+        f:SetHitRectInsets(-2, -2, -2, -2)
+        
+        f:HookScript("OnEnter", function()
+            if condition() then
+                A:FrameFadeIn(parent, 0.25, parent:GetAlpha(), 1)
+            end
+        end)
+        
+        f:HookScript("OnLeave", function()
+            if condition() then
+                A:FrameFadeOut(parent, 0.25, parent:GetAlpha(), 0)
+            end
+        end)
+    end
+end

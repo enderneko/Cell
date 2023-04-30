@@ -2,6 +2,7 @@ local _, Cell = ...
 local L = Cell.L
 local F = Cell.funcs
 local P = Cell.pixelPerfectFuncs
+local A = Cell.animations
 
 local readyBtn, pullBtn
 
@@ -39,6 +40,7 @@ local function ShowMover(show)
             readyBtn:Show()
             pullBtn:Show()
         end
+        buttonsFrame:SetAlpha(1)
     else
         buttonsFrame:EnableMouse(false)
         buttonsFrame.moverText:Hide()
@@ -47,6 +49,7 @@ local function ShowMover(show)
             readyBtn:Hide()
             pullBtn:Hide()
         end
+        buttonsFrame:SetAlpha(CellDB["tools"]["fadeOut"] and 0 or 1)
     end
 end
 Cell:RegisterCallback("ShowMover", "RaidButtons_ShowMover", ShowMover)
@@ -190,6 +193,13 @@ readyBtn:SetScript("OnEvent", function(self, event, arg1, arg2)
 end)
 
 -------------------------------------------------
+-- fade out
+-------------------------------------------------
+A:ApplyFadeInOutToParent(buttonsFrame, function()
+    return CellDB["tools"]["fadeOut"] and not buttonsFrame.moverText:IsShown()
+end, readyBtn, pullBtn)
+
+-------------------------------------------------
 -- functions
 -------------------------------------------------
 local function CheckPermission()
@@ -262,6 +272,14 @@ local function UpdateTools(which)
                     end
                 end)
             end
+        end
+    end
+
+    if not which or which == "fadeOut" then
+        if CellDB["tools"]["fadeOut"] and not buttonsFrame.moverText:IsShown() then
+            buttonsFrame:SetAlpha(0)
+        else
+            buttonsFrame:SetAlpha(1)
         end
     end
 

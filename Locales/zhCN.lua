@@ -135,6 +135,7 @@ L["many"] = "很多"
 L["Use |cFFFFB5C5/cell buff X|r to set icon size"] = "用 |cFFFFB5C5/cell buff X|r 来设定图标尺寸"
 L["Buff Tracker icon size is set to %d."] = "将增益检查图标的尺寸设置为 %d。"
 L["A positive integer is required."] = "需要一个正整数。"
+L["Fade Out These Buttons"] = "淡出这些按钮"
 
 -------------------------------------------------
 -- nickname

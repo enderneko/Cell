@@ -166,7 +166,7 @@ end
 -------------------------------------------------
 -- misc
 -------------------------------------------------
-local useCleuCB, lockCB, fadeoutCB, menuPositionDD
+local useCleuCB, lockCB, fadeOutCB, menuPositionDD
 
 local function CreateMiscPane()
     local miscPane = Cell:CreateTitledPane(generalTab, L["Misc"], 205, 185)
@@ -184,14 +184,14 @@ local function CreateMiscPane()
     end)
     lockCB:SetPoint("TOPLEFT", useCleuCB, "BOTTOMLEFT", 0, -7)
     
-    fadeoutCB = Cell:CreateCheckButton(miscPane, L["Fade Out Menu"], function(checked, self)
+    fadeOutCB = Cell:CreateCheckButton(miscPane, L["Fade Out Menu"], function(checked, self)
         CellDB["general"]["fadeOut"] = checked
         Cell:Fire("UpdateMenu", "fadeOut")
     end, L["Fade Out Menu"], L["Fade out menu buttons on mouseout"])
-    fadeoutCB:SetPoint("TOPLEFT", lockCB, "BOTTOMLEFT", 0, -7)
+    fadeOutCB:SetPoint("TOPLEFT", lockCB, "BOTTOMLEFT", 0, -7)
 
     menuPositionDD = Cell:CreateDropdown(miscPane, 137)
-    menuPositionDD:SetPoint("TOPLEFT", fadeoutCB, "BOTTOMLEFT", 0, -25)
+    menuPositionDD:SetPoint("TOPLEFT", fadeOutCB, "BOTTOMLEFT", 0, -25)
     menuPositionDD:SetItems({
         {
             ["text"] = L["TOP"].." / "..L["BOTTOM"],
@@ -227,10 +227,10 @@ end
 -------------------------------------------------
 -- raid tools
 -------------------------------------------------
-local resCB, reportCB, buffCB, readyPullCB, pullDropdown, secEditBox, marksBarCB, marksDropdown
+local resCB, reportCB, buffCB, readyPullCB, pullDropdown, secEditBox, marksBarCB, marksDropdown, fadeOutToolsCB
 
 local function CreateToolsPane()
-    local toolsPane = Cell:CreateTitledPane(generalTab, L["Raid Tools"].." |cFF777777"..L["only in group"], 422, 107)
+    local toolsPane = Cell:CreateTitledPane(generalTab, L["Raid Tools"].." |cFF777777"..L["only in group"], 422, 167)
     toolsPane:SetPoint("TOPLEFT", 5, -340)
 
     local unlockBtn = Cell:CreateButton(toolsPane, L["Unlock"], "accent", {70, 17})
@@ -264,7 +264,7 @@ local function CreateToolsPane()
         CellDB["tools"]["deathReport"][1] = checked
         Cell:Fire("UpdateTools", "deathReport")
     end)
-    reportCB:SetPoint("TOPLEFT", resCB, "TOPLEFT", 139, 0)
+    reportCB:SetPoint("TOPLEFT", resCB, "TOPLEFT", 217, 0)
     reportCB:HookScript("OnEnter", function()
         CellTooltip:SetOwner(reportCB, "ANCHOR_TOPLEFT", 0, 2)
         CellTooltip:AddLine(L["Death Report"].." |cffff2727"..L["HIGH CPU USAGE"])
@@ -287,7 +287,7 @@ local function CreateToolsPane()
     L["|cffffb5c5Right-Click:|r report unaffected"], 
     L["Use |cFFFFB5C5/cell buff X|r to set icon size"], 
     "|cffffffff" .. L["Current"]..": |cFFFFB5C5"..CellDB["tools"]["buffTracker"][3])
-    buffCB:SetPoint("TOPLEFT", reportCB, "TOPLEFT", 139, 0)
+    buffCB:SetPoint("TOPLEFT", resCB, "BOTTOMLEFT", 0, -15)
 
     -- ready & pull
     readyPullCB = Cell:CreateCheckButton(toolsPane, L["ReadyCheck and PullTimer buttons"], function(checked, self)
@@ -296,7 +296,7 @@ local function CreateToolsPane()
         secEditBox:SetEnabled(checked)
         Cell:Fire("UpdateTools", "buttons")
     end, L["ReadyCheck and PullTimer buttons"], L["Only show when you have permission to do this"], L["readyCheckTips"], L["pullTimerTips"])
-    readyPullCB:SetPoint("TOPLEFT", resCB, "BOTTOMLEFT", 0, -15)
+    readyPullCB:SetPoint("TOPLEFT", buffCB, "BOTTOMLEFT", 0, -15)
     Cell:RegisterForCloseDropdown(readyPullCB)
 
     pullDropdown = Cell:CreateDropdown(toolsPane, 90)
@@ -431,6 +431,24 @@ local function CreateToolsPane()
             end,
         }
     })
+
+    -- fadeOut
+    fadeOutToolsCB = Cell:CreateCheckButton(toolsPane, L["Fade Out These Buttons"], function(checked, self)
+        CellDB["tools"]["fadeOut"] = checked
+        Cell:Fire("UpdateTools", "fadeOut")
+    end)
+    fadeOutToolsCB:SetPoint("TOPLEFT", marksBarCB, "BOTTOMLEFT", 0, -15)
+
+    local region = CreateFrame("Frame", nil, toolsPane)
+    region:SetPoint("TOPLEFT", 0, -49)
+    region:SetPoint("BOTTOMRIGHT", 0, 31)
+
+    fadeOutToolsCB:HookScript("OnEnter", function()
+        LCG.PixelGlow_Start(region, Cell:GetAccentColorTable(1), 27, 0.1, 17, 1)
+    end)
+    fadeOutToolsCB:HookScript("OnLeave", function()
+        LCG.PixelGlow_Stop(region)
+    end)
 end
 
 -------------------------------------------------
@@ -488,7 +506,7 @@ local function ShowTab(tab)
         -- misc
         useCleuCB:SetChecked(CellDB["general"]["useCleuHealthUpdater"])
         lockCB:SetChecked(CellDB["general"]["locked"])
-        fadeoutCB:SetChecked(CellDB["general"]["fadeOut"])
+        fadeOutCB:SetChecked(CellDB["general"]["fadeOut"])
         menuPositionDD:SetSelectedValue(CellDB["general"]["menuPosition"])
 
         -- raid tools
@@ -505,6 +523,8 @@ local function ShowTab(tab)
         marksDropdown:SetEnabled(CellDB["tools"]["marks"][1])
         marksBarCB:SetChecked(CellDB["tools"]["marks"][1])
         marksDropdown:SetSelectedValue(CellDB["tools"]["marks"][2])
+
+        fadeOutToolsCB:SetChecked(CellDB["tools"]["fadeOut"])
     else
         generalTab:Hide()
     end

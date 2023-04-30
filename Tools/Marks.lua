@@ -2,6 +2,7 @@ local _, Cell = ...
 local L = Cell.L
 local F = Cell.funcs
 local P = Cell.pixelPerfectFuncs
+local A = Cell.animations
 
 local marks, worldMarks
 
@@ -45,6 +46,7 @@ local function ShowMover(show)
                 worldMarks:Show()
             end
         end
+        marksFrame:SetAlpha(1)
     else
         marksFrame:EnableMouse(false)
         marksFrame.moverText:Hide()
@@ -53,6 +55,7 @@ local function ShowMover(show)
             marks:Hide()
             worldMarks:Hide()
         end
+        marksFrame:SetAlpha(CellDB["tools"]["fadeOut"] and 0 or 1)
     end
 end
 Cell:RegisterCallback("ShowMover", "RaidMarks_ShowMover", ShowMover)
@@ -236,6 +239,20 @@ worldMarks:SetScript("OnHide", function()
 end)
 
 -------------------------------------------------
+-- fade out
+-------------------------------------------------
+local buttons = {}
+for _, b in pairs(markButtons) do
+    tinsert(buttons, b)
+end
+for _, b in pairs(worldMarkButtons) do
+    tinsert(buttons, b)
+end
+A:ApplyFadeInOutToParent(marksFrame, function()
+    return CellDB["tools"]["fadeOut"] and not marksFrame.moverText:IsShown()
+end, unpack(buttons))
+
+-------------------------------------------------
 -- functions
 -------------------------------------------------
 local function Rearrange(marksConfig)
@@ -358,6 +375,14 @@ local function UpdateTools(which)
     if not which or which == "marks" then
         CheckPermission()
         ShowMover(Cell.vars.showMover and CellDB["tools"]["marks"][1])
+    end
+
+    if not which or which == "fadeOut" then
+        if CellDB["tools"]["fadeOut"] and not marksFrame.moverText:IsShown() then
+            marksFrame:SetAlpha(0)
+        else
+            marksFrame:SetAlpha(1)
+        end
     end
 
     if not which then -- position

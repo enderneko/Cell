@@ -4,6 +4,7 @@ local F = Cell.funcs
 local P = Cell.pixelPerfectFuncs
 local LCG = LibStub("LibCustomGlow-1.0")
 -- local LGI = LibStub:GetLibrary("LibGroupInfo")
+local A = Cell.animations
 
 local UnitIsConnected = UnitIsConnected
 local UnitIsVisible = UnitIsVisible
@@ -237,11 +238,13 @@ local function ShowMover(show)
         buffTrackerFrame.moverText:Show()
         Cell:StylizeFrame(buffTrackerFrame, {0, 1, 0, 0.4}, {0, 0, 0, 0})
         fakeIconsFrame:Show()
+        buffTrackerFrame:SetAlpha(1)
     else
         buffTrackerFrame:EnableMouse(false)
         buffTrackerFrame.moverText:Hide()
         Cell:StylizeFrame(buffTrackerFrame, {0, 0, 0, 0}, {0, 0, 0, 0})
         fakeIconsFrame:Hide()
+        buffTrackerFrame:SetAlpha(CellDB["tools"]["fadeOut"] and 0 or 1)
     end
 end
 Cell:RegisterCallback("ShowMover", "BuffTracker_ShowMover", ShowMover)
@@ -459,6 +462,17 @@ local function ResizeButtons()
 end
 
 -------------------------------------------------
+-- fade out
+-------------------------------------------------
+local fadeOuts = {}
+for _, b in pairs(buttons) do
+    tinsert(fadeOuts, b)
+end
+A:ApplyFadeInOutToParent(buffTrackerFrame, function()
+    return CellDB["tools"]["fadeOut"] and not buffTrackerFrame.moverText:IsShown()
+end, unpack(fadeOuts))
+
+-------------------------------------------------
 -- check
 -------------------------------------------------
 local function CheckUnit(unit, updateBtn)
@@ -651,6 +665,14 @@ local function UpdateTools(which)
         end
 
         ResizeButtons()
+    end
+
+    if not which or which == "fadeOut" then
+        if CellDB["tools"]["fadeOut"] and not buffTrackerFrame.moverText:IsShown() then
+            buffTrackerFrame:SetAlpha(0)
+        else
+            buffTrackerFrame:SetAlpha(1)
+        end
     end
 
     if not which then -- position
