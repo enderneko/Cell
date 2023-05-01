@@ -1,6 +1,6 @@
-[Full Changelog](https://github.com/enderneko/Cell/compare/r163-release...0189bdd3af70375b1a75464d069f35d487b9b46d)
+[Full Changelog](https://github.com/enderneko/Cell/compare/r164-release...9dc241fd42092c0e47ca85fa4d4e7037d8e77e5b)
 
-- Add sMaRt resurrection
-- Fix resurrection icon
-- Update menu strata
+- Implement fade in/out for raid tools
+- Fix raid pet frame
+- Add icon to CellSpellTooltip
 - Update zhTW

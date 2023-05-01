@@ -68,6 +68,12 @@ select(2, ...).L = setmetatable({
     ["SNIPPETS_TIPS"] = "[Double-Click] to rename. [Shift-Click] to delete. All checked snippets will be automatically invoked at the end of Cell initialization process (in ADDON_LOADED event).",
 
     ["CHANGELOGS"] = [[
+        <h1>r165-release (May 1, 2023, 19:37 GMT+8)</h1>
+        <p>+ Added an option to make raid tools show on mouseover.</p>
+        <p>* Tried to fix raid pet frame issue during some encounters.</p>
+        <p>* Updated zhTW.</p>
+        <br/>
+
         <h1>r164-release (Apr 24, 2023, 05:55 GMT+8)</h1>
         <p>+ Added a "Smart Resurrection" option in Click-Castings.</p>
         <p>* Fixed menu strata.</p>
