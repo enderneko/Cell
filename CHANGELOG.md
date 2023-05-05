@@ -1,6 +1,7 @@
-[Full Changelog](https://github.com/enderneko/Cell/compare/r164-release...9dc241fd42092c0e47ca85fa4d4e7037d8e77e5b)
+[Full Changelog](https://github.com/enderneko/Cell/compare/r165-release...05df7f4815c781986423f82bc9c930b12989b52c)
 
-- Implement fade in/out for raid tools
-- Fix raid pet frame
-- Add icon to CellSpellTooltip
+- Fix import on wrath
+- Update addon compartment
+- [snippet] PartyAssignmentIcon
+- Update C_AddOns
 - Update zhTW

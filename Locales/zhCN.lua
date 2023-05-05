@@ -621,6 +621,12 @@ L["Changelogs"] = "更新记录"
 L["Click to view recent changelogs"] = "点击查看近期更新记录"
 L["Click to view older changelogs"] = "点击查看远古更新记录"
 L["CHANGELOGS"] = [[
+    <h1>r166-release (May 5, 2023, 16:48 GMT+8)</h1>
+    <p>* 修复怀旧服的导入功能。</p>
+    <p>* 适配 10.1.0 与 3.4.2。</p>
+    <p>* 更新繁中。</p>
+    <br/>
+
     <h1>r165-release (May 1, 2023, 19:37 GMT+8)</h1>
     <p>+ 为部分团队工具添加了鼠标指向时显示的选项。</p>
     <p>* 尝试修复部分战斗中由宠物框体导致的问题。</p>
