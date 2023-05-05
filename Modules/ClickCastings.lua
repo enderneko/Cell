@@ -385,6 +385,8 @@ local function ClearClickCastings(b)
 end
 
 --! store attribute keys, update them in _onenter
+--! NOTE: 尝试用于修复距离过远目标的点击施法问题，但没有卵用，确认是游戏问题。
+--! NOTE: 当目标为敌对时，@范围内/距离稍微超出一点儿的 > 自动自我施法的优先级 > @距离过远的
 local function UpdatePlaceholder(b, attr)
     if not b:GetAttribute("cell") then
         b:SetAttribute("cell", attr)
