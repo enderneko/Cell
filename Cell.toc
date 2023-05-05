@@ -1,9 +1,11 @@
-## Interface: 100007
+## Interface: 100100
 ## Title: Cell
 ## Version: r165-release
 ## Author: 篠崎
 ## X-Flavor: Mainline
 ## SavedVariables: CellDB
+## AddonCompartmentFunc: Cell_OnAddonCompartmentClick
+## IconTexture: Interface\AddOns\Cell\Media\icon.tga
 
 ## X-Curse-Project-ID: 409666
 ## X-Wago-ID: qv63LLKb

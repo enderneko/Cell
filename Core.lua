@@ -816,3 +816,7 @@ function SlashCmdList.CELL(msg, editbox)
         )
     end
 end
+
+function Cell_OnAddonCompartmentClick()
+    F:ShowOptionsFrame()
+end
