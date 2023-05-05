@@ -5,7 +5,7 @@ local P = Cell.pixelPerfectFuncs
 
 local raidRosterFrame = Cell:CreateFrame("CellRaidRosterFrame", Cell.frames.mainFrame, 405, 230)
 Cell.frames.raidRosterFrame = raidRosterFrame
-raidRosterFrame:SetFrameStrata("HIGH")
+raidRosterFrame:SetFrameStrata("DIALOG")
 
 local assistantCB
 local function CreateWidgets()
