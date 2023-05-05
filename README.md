@@ -42,7 +42,7 @@ Check <https://github.com/enderneko/Cell/tree/master/.snippets> for more snippet
 ### Usage
 
 1. Cell Options -> About -> Code Snippets
-2. New -> Paste -> Save -> Check AutoRun
+2. New -> Paste -> Save -> Tick the AutoRun box
 3. Reload
 
 ### Blizzard style cooldowns
