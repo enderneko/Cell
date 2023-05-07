@@ -86,6 +86,8 @@ local function CreateDebuffsImportExportFrame()
             importExportFrame:Hide()
         end, true)
         popup:SetPoint("TOPLEFT", importExportFrame, 117, -50)
+
+        textArea.eb:ClearFocus()
     end)
     
     -- textArea

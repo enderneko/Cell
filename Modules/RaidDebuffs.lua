@@ -352,10 +352,10 @@ local function OpenInstanceBoss(instanceName, bossName)
     end
 end
 
-local function CreateTopWidgets()
+local function CreateWidgets()
     -- expansion dropdown
-    expansionDropdown = Cell:CreateDropdown(debuffsTab, 127)
-    expansionDropdown:SetPoint("TOPLEFT", 5, -5)
+    expansionDropdown = Cell:CreateDropdown(debuffsTab, 269)
+    expansionDropdown:SetPoint("TOPLEFT", 5, -7)
 
     local expansionItems = {}
     for i = EJ_GetNumTiers(), 1, -1 do
@@ -378,12 +378,10 @@ local function CreateTopWidgets()
     expansionDropdown:SetItems(expansionItems)
 
     -- current instance button
-    local showCurrentBtn = Cell:CreateButton(debuffsTab, "", "accent-hover", {20, 20}, nil, nil, nil, nil, nil, L["Show Current Instance"])
-    showCurrentBtn:SetPoint("TOPLEFT", expansionDropdown, "TOPRIGHT", 5, 0)
+    local showCurrentBtn = Cell:CreateButton(debuffsTab, "", "accent-hover", {46, 20}, nil, nil, nil, nil, nil, L["Show Current Instance"])
+    showCurrentBtn:SetPoint("TOPRIGHT", -5, -7)
     showCurrentBtn.tex = showCurrentBtn:CreateTexture(nil, "ARTWORK")
-    showCurrentBtn.tex:SetPoint("TOPLEFT", 1, -1)
-    showCurrentBtn.tex:SetPoint("BOTTOMRIGHT", -1, 1)
-    showCurrentBtn.tex:SetAtlas("DungeonSkull")
+    showCurrentBtn:SetTexture("DungeonSkull", {18, 18}, {"CENTER", 0, 0}, true)
     
     showCurrentBtn:SetScript("OnClick", function()
         if IsInInstance() then
@@ -393,24 +391,24 @@ local function CreateTopWidgets()
     Cell:RegisterForCloseDropdown(showCurrentBtn)
 
     -- import/export button
-    local importBtn = Cell:CreateButton(debuffsTab, "", "accent-hover", {20, 20}, nil, nil, nil, nil, nil, L["Import"])
-    importBtn:SetPoint("TOPLEFT", showCurrentBtn, "TOPRIGHT", P:Scale(-1), 0)
-    importBtn:SetTexture("Interface\\AddOns\\Cell\\Media\\Icons\\import.blp", {16, 16}, {"TOPLEFT", 2, -2})
-    importBtn:SetScript("OnClick", function()
-        F:ShowRaidDebuffsImportFrame()
-    end)
-    
-    local exportBtn = Cell:CreateButton(debuffsTab, "", "accent-hover", {20, 20}, nil, nil, nil, nil, nil, L["Export"])
-    exportBtn:SetPoint("TOPLEFT", importBtn, "TOPRIGHT", P:Scale(-1), 0)
-    exportBtn:SetTexture("Interface\\AddOns\\Cell\\Media\\Icons\\export.blp", {16, 16}, {"TOPLEFT", 2, -2})
+    local exportBtn = Cell:CreateButton(debuffsTab, "", "accent-hover", {46, 20}, nil, nil, nil, nil, nil, L["Export"])
+    exportBtn:SetPoint("TOPRIGHT", showCurrentBtn, "TOPLEFT", P:Scale(-5), 0)
+    exportBtn:SetTexture("Interface\\AddOns\\Cell\\Media\\Icons\\export.blp", {16, 16}, {"CENTER", 0, 0})
     exportBtn:SetScript("OnClick", function()
         F:ShowRaidDebuffsExportFrame(loadedInstance, loadedInstance == loadedBoss and "general" or loadedBoss)
     end)
 
+    local importBtn = Cell:CreateButton(debuffsTab, "", "accent-hover", {46, 20}, nil, nil, nil, nil, nil, L["Import"])
+    importBtn:SetPoint("TOPRIGHT", exportBtn, "TOPLEFT", P:Scale(-5), 0)
+    importBtn:SetTexture("Interface\\AddOns\\Cell\\Media\\Icons\\import.blp", {16, 16}, {"CENTER", 0, 0})
+    importBtn:SetScript("OnClick", function()
+        F:ShowRaidDebuffsImportFrame()
+    end)
+
     -- tips
     local tips = Cell:CreateScrollTextFrame(debuffsTab, "|cffb7b7b7"..L["RAID_DEBUFFS_TIPS"], 0.02, nil, 2)
-    tips:SetPoint("TOPLEFT", exportBtn, "TOPRIGHT", 5, 0)
-    tips:SetPoint("RIGHT", -5, 0)
+    tips:SetPoint("BOTTOMLEFT", 5, 3)
+    tips:SetPoint("BOTTOMRIGHT", -5, 3)
 end
 
 -------------------------------------------------
@@ -555,8 +553,8 @@ local bossesFrame
 
 local function CreateBossesFrame()
     bossesFrame = Cell:CreateFrame("RaidDebuffsTab_Bosses", debuffsTab, 127, 229)
-    -- bossesFrame:SetPoint("TOPLEFT", instancesFrame, "BOTTOMLEFT", 0, -5)
-    bossesFrame:SetPoint("BOTTOMLEFT", 5, 5)
+    bossesFrame:SetPoint("TOPLEFT", instancesFrame, "BOTTOMLEFT", 0, -5)
+    -- bossesFrame:SetPoint("BOTTOMLEFT", 5, 5)
     bossesFrame:Show()
     Cell:CreateScrollFrame(bossesFrame)
     bossesFrame.scrollFrame:SetScrollStep(19)
@@ -722,7 +720,7 @@ local function CreateDebuffsFrame()
     SetOnEnterLeave(debuffListFrame)
 
     local create = Cell:CreateButton(debuffsTab, L["Create"], "accent-hover", {66, 20})
-    create:SetPoint("TOPLEFT", debuffListFrame, "BOTTOMLEFT", 0, -4)
+    create:SetPoint("TOPLEFT", debuffListFrame, "BOTTOMLEFT", 0, -5)
     create:SetScript("OnClick", function()
         local popup = Cell:CreateConfirmPopup(debuffsTab, 200, L["Create new debuff (id)"], function(self)
             local id = tonumber(self.editBox:GetText()) or 0
@@ -1231,7 +1229,7 @@ local conditionHeight, glowOptionsHeight, glowConditionHeight = 0, 0, 0
 local function CreateDetailsFrame()
     detailsFrame = Cell:CreateFrame("RaidDebuffsTab_DebuffDetails", debuffsTab)
     detailsFrame:SetPoint("TOPLEFT", debuffListFrame, "TOPRIGHT", 5, 0)
-    detailsFrame:SetPoint("BOTTOMRIGHT", -5, 5)
+    detailsFrame:SetPoint("BOTTOMRIGHT", -5, 24)
     detailsFrame:Show()
     
     local isMouseOver
@@ -2203,7 +2201,7 @@ local function ShowTab(tab)
     if tab == "debuffs" then
         if not init then
             init = true    
-            CreateTopWidgets()
+            CreateWidgets()
             CreateInstanceFrame()
             CreateBossesFrame()
             CreateDebuffsFrame()

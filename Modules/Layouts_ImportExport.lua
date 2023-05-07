@@ -94,6 +94,7 @@ local function CreateLayoutImportExportFrame()
                 DoImport(false)
             end, true)
             popup:SetPoint("TOPLEFT", importExportFrame, 117, -50)
+            textArea.eb:ClearFocus()
         else
             DoImport(true)
         end

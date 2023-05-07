@@ -14,7 +14,7 @@ local imported
 -------------------------------------------------
 -- import frame
 -------------------------------------------------
-local importFrame, title
+local importFrame, title, textArea
 
 local function CreateIndicatorsImportFrame()
     if not Cell.frames.indicatorsTab.mask then
@@ -128,6 +128,8 @@ local function CreateIndicatorsImportFrame()
             importFrame:Hide()
         end, true)
         popup:SetPoint("TOPLEFT", importFrame, 75, -40)
+
+        textArea.eb:ClearFocus()
     end)
     
     local closeBtn = Cell:CreateButton(importFrame, L["Close"], "red", {67, 20})
@@ -143,7 +145,7 @@ local function CreateIndicatorsImportFrame()
         listFrame.scrollFrame:Reset()
     end
     
-    local textArea = Cell:CreateScrollEditBox(importFrame, function(eb, userChanged)
+    textArea = Cell:CreateScrollEditBox(importFrame, function(eb, userChanged)
         if userChanged then
             listFrame.scrollFrame:Reset()
             local text = eb:GetText()

@@ -610,11 +610,15 @@ function addon:CreateButton(parent, text, buttonColor, size, noBorder, noBackgro
     addon:SetTooltips(b, "ANCHOR_TOPLEFT", 0, 3, ...)
 
     -- texture
-    function b:SetTexture(tex, texSize, point)
+    function b:SetTexture(tex, texSize, point, isAtlas)
         b.tex = b:CreateTexture(nil, "ARTWORK")
         b.tex:SetPoint(unpack(point))
         b.tex:SetSize(unpack(texSize))
-        b.tex:SetTexture(tex)
+        if isAtlas then
+            b.tex:SetAtlas(tex)
+        else
+            b.tex:SetTexture(tex)
+        end
         -- update fontstring point
         if s then
             s:ClearAllPoints()

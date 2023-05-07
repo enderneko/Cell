@@ -187,6 +187,8 @@ local function CreateImportExportFrame()
             importExportFrame:Hide()
         end, true)
         popup:SetPoint("TOPLEFT", importExportFrame, 117, -20)
+
+        textArea.eb:ClearFocus()
     end)
     
     -- title
