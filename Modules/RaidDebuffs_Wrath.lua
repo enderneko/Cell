@@ -700,7 +700,7 @@ local function CreateDebuffsFrame()
                 return
             end
     
-            local name = GetSpellInfo(spellId)
+            local name, _, icon = GetSpellInfo(spellId)
             if not name then
                 CellSpellTooltip:Hide()
                 return
@@ -708,7 +708,7 @@ local function CreateDebuffsFrame()
             
             CellSpellTooltip:SetOwner(popup, "ANCHOR_NONE")
             CellSpellTooltip:SetPoint("TOPLEFT", popup, "BOTTOMLEFT", 0, -1)
-            CellSpellTooltip:SetSpellByID(spellId)
+            CellSpellTooltip:SetSpellByID(spellId, icon)
             CellSpellTooltip:Show()
         end)
         popup:SetPoint("TOPLEFT", 117, -170)
@@ -951,6 +951,7 @@ local function CreateDebuffButton(i, sTable)
     end
 
     debuffButtons[i].spellId = sTable["id"]
+    debuffButtons[i].spellTex = icon
     if sTable["order"] == 0 then
         debuffButtons[i]:SetTextColor(0.4, 0.4, 0.4)
         UnregisterForDrag(debuffButtons[i])
@@ -1031,7 +1032,7 @@ ShowDebuffs = function(bossId, buttonIndex)
         debuffListFrame:GetScript("OnEnter")()
         CellSpellTooltip:SetOwner(b, "ANCHOR_NONE")
         CellSpellTooltip:SetPoint("TOPRIGHT", b, "TOPLEFT", -1, 0)
-        CellSpellTooltip:SetSpellByID(b.spellId)
+        CellSpellTooltip:SetSpellByID(b.spellId, b.spellTex)
         CellSpellTooltip:Show()
     end, function(b)
         debuffListFrame:GetScript("OnLeave")()
