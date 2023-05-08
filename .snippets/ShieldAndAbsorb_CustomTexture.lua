@@ -1,8 +1,6 @@
 Cell.funcs:IterateAllUnitButtons(function(b)
-    -- current health bar texture / 当前血条材质
-    -- SetTexture(Cell.vars.texture)
-    -- default health bar texture / 默认血条材质
-    -- SetTexture("Interface\\AddOns\\Cell\\Media\\statusbar.tga")
+    -- current health bar texture / 当前血条材质: Cell.vars.texture
+    -- default health bar texture / 默认血条材质: Interface\\AddOns\\Cell\\Media\\statusbar.tga
     
     -- shield texture / 护盾材质
     -- default/默认: SetTexture("Interface\\AddOns\\Cell\\Media\\shield.tga", "REPEAT", "REPEAT")
