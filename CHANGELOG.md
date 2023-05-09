@@ -1,7 +1,6 @@
-[Full Changelog](https://github.com/enderneko/Cell/compare/r165-release...05df7f4815c781986423f82bc9c930b12989b52c)
+[Full Changelog](https://github.com/enderneko/Cell/compare/r166-release...056162dfb66c9c0760e4020f3a420c67cd2c72b4)
 
-- Fix import on wrath
-- Update addon compartment
-- [snippet] PartyAssignmentIcon
-- Update C_AddOns
-- Update zhTW
+- Fix strata of spotlight frame
+- Update snippet
+- Update option frames
+- Update CellSpellTooltip icon for wrath

@@ -621,6 +621,10 @@ L["Changelogs"] = "更新记录"
 L["Click to view recent changelogs"] = "点击查看近期更新记录"
 L["Click to view older changelogs"] = "点击查看远古更新记录"
 L["CHANGELOGS"] = [[
+    <h1>r167-release (May 10, 2023, 00:59 GMT+8)</h1>
+    <p>* 修复特别关注框体的层级问题。</p>
+    <br/>
+
     <h1>r166-release (May 5, 2023, 16:48 GMT+8)</h1>
     <p>* 修复怀旧服的导入功能。</p>
     <p>* 适配 10.1.0 与 3.4.2。</p>

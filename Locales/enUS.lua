@@ -68,6 +68,10 @@ select(2, ...).L = setmetatable({
     ["SNIPPETS_TIPS"] = "[Double-Click] to rename. [Shift-Click] to delete. All checked snippets will be automatically invoked at the end of Cell initialization process (in ADDON_LOADED event).",
 
     ["CHANGELOGS"] = [[
+        <h1>r167-release (May 10, 2023, 00:59 GMT+8)</h1>
+        <p>* Fixed strata of Spotlight Frame.</p>
+        <br/>
+
         <h1>r166-release (May 5, 2023, 16:48 GMT+8)</h1>
         <p>* Fixed import on wrath.</p>
         <p>* Bumped retail toc to 100100.</p>
