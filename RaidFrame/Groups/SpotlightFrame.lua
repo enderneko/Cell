@@ -132,7 +132,6 @@ end)
 -- target frame: drag and set
 -------------------------------------------------
 local targetFrame = Cell:CreateFrame(nil, spotlightFrame, 50, 20)
-targetFrame:SetFrameStrata("TOOLTIP")
 targetFrame.label = targetFrame:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
 targetFrame.label:SetPoint("CENTER")
 targetFrame:EnableMouse(false)
@@ -142,7 +141,7 @@ function targetFrame:StartMoving()
     local scale = P:GetEffectiveScale()
     targetFrame:SetScript("OnUpdate", function()
         local x, y = GetCursorPosition()
-        targetFrame:SetPoint("CENTER", hueSaturation, "BOTTOMLEFT", x/scale, y/scale + 10)
+        targetFrame:SetPoint("BOTTOMLEFT", UIParent, x/scale, y/scale)
         targetFrame:SetWidth(targetFrame.label:GetWidth() + 10)
     end)
 end
@@ -159,7 +158,7 @@ local function CreateAssignmentButton(index)
     local b = Cell:CreateButton(spotlightFrame, NONE, "accent-hover", {20, 20}, false, false, nil, nil, "SecureHandlerAttributeTemplate,SecureHandlerClickTemplate")
     b:GetFontString():SetNonSpaceWrap(true)
     b:GetFontString():SetWordWrap(true)
-    b:SetFrameStrata("MEDIUM")
+    b:SetToplevel(true)
     b:RegisterForClicks("LeftButtonUp", "RightButtonUp")
     b:SetAttribute("index", index)
     b:Hide()
@@ -694,3 +693,12 @@ local function UpdatePixelPerfect()
     end
 end
 Cell:RegisterCallback("UpdatePixelPerfect", "SpotlightFrame_UpdatePixelPerfect", UpdatePixelPerfect)
+
+local function UpdateAppearance(which)
+    if not which or which == "strata" then
+        C_Timer.After(1, function()
+            targetFrame:SetFrameStrata("TOOLTIP")
+        end)
+    end
+end
+Cell:RegisterCallback("UpdateAppearance", "SpotlightFrame_UpdateAppearance", UpdateAppearance)
