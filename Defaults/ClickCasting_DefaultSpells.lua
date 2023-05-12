@@ -303,11 +303,11 @@ function F:GetSpellList(class, spec)
     for i, v in pairs(spells) do
         if type(v) == "number" then
             local name, _, icon = GetSpellInfo(v)
-            spells[i] = {icon, name}
+            spells[i] = {icon, name, nil, v}
         else -- string
             local spellId, spellType = strmatch(v, "(%d+)(%a)")
             local name, _, icon = GetSpellInfo(spellId)
-            spells[i] = {icon, name, L[spellType], spellType}
+            spells[i] = {icon, name, L[spellType], spellId}
         end
     end
 

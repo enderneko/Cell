@@ -3058,8 +3058,8 @@ function addon:CreateBindingListButton(parent, modifier, bindKey, bindType, bind
     spellIcon:SetTexCoord(0.08, 0.92, 0.08, 0.92)
     spellIcon:Hide()
 
-    function b:ShowSpellIcon(spellName)
-        spellIcon:SetTexture(GetSpellTexture(spellName) or 134400)
+    function b:ShowSpellIcon(spell)
+        spellIcon:SetTexture(GetSpellTexture(spell) or 134400)
         spellIconBg:Show()
         spellIcon:Show()
         -- actionGrid.text:ClearAllPoints()

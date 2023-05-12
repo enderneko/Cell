@@ -3,6 +3,8 @@ local L = Cell.L
 local F = Cell.funcs
 local P = Cell.pixelPerfectFuncs
 
+local GetSpellInfo = GetSpellInfo
+
 local clickCastingsTab = Cell:CreateFrame("CellOptionsFrame_ClickCastingsTab", Cell.frames.optionsFrame, nil, nil, true)
 Cell.frames.clickCastingsTab = clickCastingsTab
 clickCastingsTab:SetAllPoints(Cell.frames.optionsFrame)
@@ -417,16 +419,18 @@ local function ApplyClickCastings(b)
         end
 
         if t[2] == "spell" then
+            local spellName = GetSpellInfo(t[3]) or ""
+
             -- NOTE: spell 在无效/过远的目标上会处于“等待选中目标”的状态，即鼠标指针有一圈灰色材质。用 macrotext 可以解决这个问题
             -- NOTE: 但对于尸体状态（未释放）的目标，需要额外判断
             local condition = ""
-            if not F:IsSoulstone(t[3]) then
-                condition = F:IsResurrectionForDead(t[3]) and ",dead" or ",nodead"
+            if not F:IsSoulstone(spellName) then
+                condition = F:IsResurrectionForDead(spellName) and ",dead" or ",nodead"
             end
 
             -- "sMaRt" resurrection
             local sMaRt = ""
-            if smartResurrection ~= "disabled" and not F:IsResurrectionForDead(t[3]) then
+            if smartResurrection ~= "disabled" and not F:IsResurrectionForDead(spellName) then
                 if strfind(smartResurrection, "^normal") then
                     if F:GetNormalResurrection(Cell.vars.playerClass) then
                         sMaRt = sMaRt .. ";[@cell,dead,nocombat] "..F:GetNormalResurrection(Cell.vars.playerClass)
@@ -442,14 +446,14 @@ local function ApplyClickCastings(b)
             if (alwaysTargeting == "left" and bindKey == "type1") or alwaysTargeting == "any" then
                 b:SetAttribute(bindKey, "macro")
                 local attr = string.gsub(bindKey, "type", "macrotext")
-                b:SetAttribute(attr, "/tar [@cell]\n/cast [@cell"..condition.."] "..t[3]..sMaRt)
+                b:SetAttribute(attr, "/tar [@cell]\n/cast [@cell"..condition.."] "..spellName..sMaRt)
                 UpdatePlaceholder(b, attr)
             else
                 -- local attr = string.gsub(bindKey, "type", "spell")
-                -- b:SetAttribute(attr, t[3])
+                -- b:SetAttribute(attr, spellName)
                 b:SetAttribute(bindKey, "macro")
                 local attr = string.gsub(bindKey, "type", "macrotext")
-                b:SetAttribute(attr, "/cast [@cell"..condition.."] "..t[3]..sMaRt)
+                b:SetAttribute(attr, "/cast [@cell"..condition.."] "..spellName..sMaRt)
                 UpdatePlaceholder(b, attr)
             end
         elseif t[2] == "macro" then
@@ -743,7 +747,7 @@ local function ShowTypesMenu(index, b)
                     changed[index]["bindType"] = nil
                     changed[index]["bindAction"] = nil
                     b.actionGrid:SetText(b.bindAction)
-                    b:ShowSpellIcon(b.bindAction)
+                    b:ShowSpellIcon(b.bindSpell)
                 end
                 CheckChanged(index, b)
                 CheckChanges()
@@ -894,6 +898,7 @@ local function ShowActionsMenu(index, b)
                     else
                         peb:ShowEditBox("")
                     end
+                    peb:SetNumeric(false)
                 end,
             },
             {
@@ -940,27 +945,32 @@ local function ShowActionsMenu(index, b)
                 ["onClick"] = function()
                     local peb = Cell:CreatePopupEditBox(clickCastingsTab, function(text)
                         changed[index] = changed[index] or {b}
-                        if b.bindAction ~= text then
+                        text = tonumber(text) or ""
+                        if b.bindSpell ~= text then
                             changed[index]["bindAction"] = text
-                            b.actionGrid:SetText(text)
+                            b.actionGrid:SetText(GetSpellInfo(text) or "")
                             b:ShowSpellIcon(text)
                         else
                             changed[index]["bindAction"] = nil
                             b.actionGrid:SetText(b.bindAction)
-                            b:ShowSpellIcon(b.bindAction)
+                            b:ShowSpellIcon(b.bindSpell)
                         end
                         CheckChanged(index, b)
                         CheckChanges()
                     end)
                     P:Point(peb, "TOPLEFT", b.actionGrid)
                     P:Point(peb, "BOTTOMRIGHT", b.actionGrid)
-                    peb:SetTips("|cff777777"..L["Enter: apply\nESC: discard"])
-                    peb:ShowEditBox(b.bindType == "spell" and b.bindAction or "")
+                    peb:SetTips("|cff777777"..L["Input spell id"].."\n"..L["Enter: apply\nESC: discard"])
+                    peb:ShowEditBox(b.bindSpell)
+                    peb:SetNumeric(true)
                 end,
             },
         }
-        local spells = F:GetSpellList(Cell.vars.playerClass, Cell.vars.playerSpecID)
+
         -- default spells
+        local spells = F:GetSpellList(Cell.vars.playerClass, Cell.vars.playerSpecID)
+        -- {icon, name, type(C/S/P), id}
+        
         for _, t in ipairs(spells) do
             tinsert(items, {
                 --! CANNOT use "|T****|t", if too many items (over 10?), it will cause game stuck!! I don't know why!
@@ -969,14 +979,14 @@ local function ShowActionsMenu(index, b)
                 ["icon"] = t[1],
                 ["onClick"] = function()
                     changed[index] = changed[index] or {b}
-                    if b.bindAction ~= t[2] then
-                        changed[index]["bindAction"] = t[2]
+                    if b.bindSpell ~= t[4] then
+                        changed[index]["bindAction"] = t[4]
                         b.actionGrid:SetText(t[2])
-                        b:ShowSpellIcon(t[2])
+                        b:ShowSpellIcon(t[4])
                     else
                         changed[index]["bindAction"] = nil
                         b.actionGrid:SetText(b.bindAction)
-                        b:ShowSpellIcon(b.bindAction)
+                        b:ShowSpellIcon(b.bindSpell)
                     end
                     CheckChanged(index, b)
                     CheckChanges()
@@ -1111,7 +1121,7 @@ local function CreateListPane()
             t[1].actionGrid:SetText(t[1].bindType == "general" and L[t[1].bindAction] or t[1].bindAction)
             -- restore icon
             if t[1].bindType == "spell" then
-                t[1]:ShowSpellIcon(t[1].bindAction)
+                t[1]:ShowSpellIcon(t[1].bindSpell)
             else
                 t[1]:HideSpellIcon()
             end
@@ -1130,8 +1140,17 @@ end
 CreateBindingListButton = function(modifier, bindKey, bindType, bindAction, i)
     local modifierDisplay = modifiersDisplay[F:GetIndex(modifiers, modifier)]
 
-    local b = Cell:CreateBindingListButton(bindingsFrame.scrollFrame.content, modifierDisplay, (bindKey=="P" or bindKey=="T") and bindKey or L[bindKey], L[F:UpperFirst(bindType)], bindType == "general" and L[bindAction] or bindAction)
+    local bindSpell
+    if bindType == "general" then
+        bindAction = L[bindAction]
+    elseif bindType == "spell" then
+        bindSpell = bindAction
+        bindAction = GetSpellInfo(bindAction) or ""
+    end
+
+    local b = Cell:CreateBindingListButton(bindingsFrame.scrollFrame.content, modifierDisplay, (bindKey=="P" or bindKey=="T") and bindKey or L[bindKey], L[F:UpperFirst(bindType)], bindAction)
     b.modifier, b.bindKey, b.bindType, b.bindAction = modifier, bindKey, bindType, bindAction
+    b.bindSpell = bindSpell
 
     b:SetPoint("LEFT", 5, 0)
     b:SetPoint("RIGHT", -5, 0)
@@ -1179,7 +1198,7 @@ CreateBindingListButton = function(modifier, bindKey, bindType, bindAction, i)
 
     -- spell icon
     if bindType == "spell" then
-        b:ShowSpellIcon(bindAction)
+        b:ShowSpellIcon(bindSpell)
     else
         b:HideSpellIcon()
     end

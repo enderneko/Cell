@@ -189,7 +189,7 @@ function F:GetSpellList(class)
         end
 
         local name, _, icon = GetSpellInfo(spellId)
-        spells[i] = {icon, name, spellType}
+        spells[i] = {icon, name, spellType, spellId}
     end
 
     -- texplore(spells)
