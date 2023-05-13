@@ -91,11 +91,15 @@ end
 local function LoadList()
     local currentTier = EJ_GetCurrentTier()
 
-    for tier = 1, EJ_GetNumTiers() do
+    local num = EJ_GetNumTiers()
+
+    for tier = 1, num do
         local name = EJ_GetTierInfo(tier)
         encounterJournalList[name] = {}
 
-        LoadInstanceList(tier, "raid", encounterJournalList[name])
+        if tier ~= num then -- don't load raid for "Mythic+ Dungeon"
+            LoadInstanceList(tier, "raid", encounterJournalList[name])
+        end
         LoadInstanceList(tier, "party", encounterJournalList[name])
 
         tierNames[tier] = name
