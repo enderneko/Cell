@@ -1856,6 +1856,20 @@ function F:Revise()
         end
     end
 
+    -- r168-release
+    if CellDB["revise"] and dbRevision < 168 then
+        if Cell.isRetail then
+            -- targetedSpells
+            -- 亚贝鲁斯，焰影熔炉
+            if not F:TContains(CellDB["targetedSpellsList"], 401022) then -- 灾祸掠击
+                tinsert(CellDB["targetedSpellsList"], 401022)
+            end
+            if not F:TContains(CellDB["targetedSpellsList"], 407790) then -- 身影碎离
+                tinsert(CellDB["targetedSpellsList"], 407790)
+            end
+        end
+    end
+
     CellDB["revise"] = Cell.version
     if Cell.isWrath then
         CellCharacterDB["revise"] = Cell.version
