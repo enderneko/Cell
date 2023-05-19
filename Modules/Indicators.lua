@@ -340,6 +340,43 @@ local function InitIndicator(indicatorName)
             end)
         end
 
+    elseif indicatorName == "privateAuras" then
+        indicator.isPrivateAuras = true
+
+        indicator.mask = indicator:CreateMaskTexture()
+        indicator.mask:SetTexture("interface/framegeneral/uiframeiconmask", "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
+        indicator.mask:SetAllPoints(indicator)
+
+        indicator.icon = indicator:CreateTexture(nil, "ARTWORK")
+        indicator.icon:SetAllPoints(indicator)
+        indicator.icon:SetTexture(237555)
+        indicator.icon:AddMaskTexture(indicator.mask)
+
+        indicator.border = indicator:CreateTexture(nil, "BORDER")
+        indicator.border:SetPoint("TOPLEFT", indicator.icon, -1, 0)
+        indicator.border:SetPoint("BOTTOMRIGHT", indicator.icon, 1, 0)
+        indicator.border:SetTexture([[Interface\Buttons\UI-Debuff-Overlays]])
+        indicator.border:SetTexCoord(0.296875, 0.5703125, 0, 0.515625)
+        indicator.border:SetVertexColor(0.8, 0, 0)
+
+        indicator.cooldown = CreateFrame("Cooldown", nil, indicator, "CooldownFrameTemplate")
+        indicator.cooldown:SetAllPoints(indicator)
+        indicator.cooldown:SetReverse(true)
+        indicator.cooldown:SetDrawEdge(false)
+        indicator.cooldown:SetDrawBling(false)
+        
+        local timer
+        indicator:HookScript("OnShow", function()
+            if timer then timer:Cancel() end
+            indicator.cooldown:SetCooldown(GetTime(), 15)
+            timer = C_Timer.NewTicker(15, function()
+                indicator.cooldown:SetCooldown(GetTime(), 15)
+            end)
+        end)
+        indicator:HookScript("OnHide", function()
+            if timer then timer:Cancel() end
+        end)
+
     elseif indicatorName == "targetedSpells" then
         indicator.isTargetedSpells = true
         indicator:SetScript("OnShow", function()
@@ -545,6 +582,11 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                     indicator.init = false
                     InitIndicator(t["indicatorName"])
                 end
+                -- privateAuraOptions
+                if t["privateAuraOptions"] then
+                    indicator.cooldown:SetDrawSwipe(t["privateAuraOptions"][1])
+                    indicator.cooldown:SetHideCountdownNumbers(not (t["privateAuraOptions"][1] and t["privateAuraOptions"][2]))
+                end
                 -- after init
                 if t["enabled"] then
                     indicator.enabled = true
@@ -659,6 +701,9 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                 indicator:Hide()
                 indicator:Show()
             end
+        elseif setting == "privateAuraOptions" then
+            indicator.cooldown:SetDrawSwipe(value[1])
+            indicator.cooldown:SetHideCountdownNumbers(not (value[1] and value[2]))
         elseif setting == "checkbutton" then
             if value == "showGroupNumber" then
                 indicator:ShowGroupNumber(value2)
@@ -1340,6 +1385,7 @@ if Cell.isRetail then
         ["dispels"] = {"enabled", "checkbutton:dispellableByMe", "highlightType", "checkbutton2:showDispelTypeIcons", "orientation", "size-square", "position", "frameLevel"},
         ["debuffs"] = {"enabled", "checkbutton:dispellableByMe", "blacklist", "bigDebuffs", "durationVisibility", "checkbutton3:showTooltip:"..L["This will make these icons not click-through-able"].."|"..L["Tooltips need to be enabled in General tab"], "num:10", "orientation", "size-normal-big", "font", "position", "frameLevel"},
         ["raidDebuffs"] = {"|cffb7b7b7"..L["You can config debuffs in %s"]:format(Cell:GetAccentColorString()..L["Raid Debuffs"].."|r"), "enabled", "checkbutton:onlyShowTopGlow", "cleuAuras", "checkbutton2:showTooltip:"..L["This will make these icons not click-through-able"].."|"..L["Tooltips need to be enabled in General tab"], "num:3", "orientation", "size-border", "font", "position", "frameLevel"},
+        ["privateAuras"] = {"|cffb7b7b7"..L["Due to restrictions of the private aura system, this indicator can only use Blizzard style."], "enabled", "privateAuraOptions", "size-square", "position", "frameLevel"},
         ["targetedSpells"] = {"enabled", "targetedSpellsList", "targetedSpellsGlow", "size-border", "font", "position", "frameLevel"},
         ["targetCounter"] = {"|cffff2727"..L["HIGH CPU USAGE"].."!|r |cffb7b7b7"..L["Check all visible enemy nameplates. Battleground/Arena only."], "enabled", "color", "font-noOffset", "position", "frameLevel"},
         ["consumables"] = {"enabled", "consumablesPreview", "consumablesList"},
@@ -1656,7 +1702,7 @@ LoadIndicatorList = function()
             LCG.PixelGlow_Start(i.preview)
             i:SetAlpha(i.alpha or 1)
         else
-            if i.isRaidDebuffs then
+            if i.isRaidDebuffs or i.isPrivateAuras then
                 LCG.PixelGlow_Start(i, nil, nil, nil, nil, nil, 2, 2)
             elseif i.isTargetedSpells then
                 LCG.PixelGlow_Start(i, nil, nil, nil, nil, nil, 2, 2)

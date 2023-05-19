@@ -1870,6 +1870,28 @@ function F:Revise()
         end
     end
 
+    -- r169-release
+    if CellDB["revise"] and dbRevision < 169 then
+        if Cell.isRetail then
+            local privateAuras = Cell.defaults.indicatorIndices["privateAuras"]
+    
+            for _, layout in pairs(CellDB["layouts"]) do
+                if layout["indicators"][privateAuras]["indicatorName"] ~= "privateAuras" then
+                    tinsert(layout["indicators"], privateAuras, {
+                        ["name"] = "Private Auras",
+                        ["indicatorName"] = "privateAuras",
+                        ["type"] = "built-in",
+                        ["enabled"] = true,
+                        ["position"] = {"TOP", "TOP", 0, 3},
+                        ["frameLevel"] = 25,
+                        ["size"] = {18, 18},
+                        ["privateAuraOptions"] = {true, false},
+                    })
+                end
+            end
+        end
+    end
+
     CellDB["revise"] = Cell.version
     if Cell.isWrath then
         CellCharacterDB["revise"] = Cell.version

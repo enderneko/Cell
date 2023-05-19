@@ -1,7 +1,7 @@
 local addonName, Cell = ...
 
 -- number of built-in indicators
-Cell.defaults.builtIns = 26
+Cell.defaults.builtIns = 27
 
 Cell.defaults.indicatorIndices = {
     ["nameText"] = 1,
@@ -26,10 +26,11 @@ Cell.defaults.indicatorIndices = {
     ["dispels"] = 20,
     ["debuffs"] = 21,
     ["raidDebuffs"] = 22,
-    ["targetedSpells"] = 23,
-    ["targetCounter"] = 24,
-    ["consumables"] = 25,
-    ["missingBuffs"] = 26,
+    ["privateAuras"] = 23,
+    ["targetedSpells"] = 24,
+    ["targetCounter"] = 25,
+    ["consumables"] = 26,
+    ["missingBuffs"] = 27,
 }
 
 Cell.defaults.layout = {
@@ -318,6 +319,16 @@ Cell.defaults.layout = {
             ["showTooltip"] = false,
         }, -- 22
         {
+            ["name"] = "Private Auras",
+            ["indicatorName"] = "privateAuras",
+            ["type"] = "built-in",
+            ["enabled"] = true,
+            ["position"] = {"TOP", "TOP", 0, 3},
+            ["frameLevel"] = 25,
+            ["size"] = {18, 18},
+            ["privateAuraOptions"] = {true, false},
+        }, -- 23
+        {
             ["name"] = "Targeted Spells",
             ["indicatorName"] = "targetedSpells",
             ["type"] = "built-in",
@@ -328,7 +339,7 @@ Cell.defaults.layout = {
             ["border"] = 2,
             -- ["glow"] = {"Pixel", {0.95,0.95,0.32,1}, 9, 0.25, 8, 2},
             ["font"] = {"Cell ".._G.DEFAULT, 12, "Outline", 2, 1},
-        }, -- 23
+        }, -- 24
         {
             ["name"] = "Target Counter",
             ["indicatorName"] = "targetCounter",
@@ -338,14 +349,14 @@ Cell.defaults.layout = {
             ["frameLevel"] = 15,
             ["font"] = {"Cell ".._G.DEFAULT, 15, "Outline"},
             ["color"] = {1, 0.1, 0.1},
-        }, -- 24
+        }, -- 25
         {
             ["name"] = "Consumables",
             ["indicatorName"] = "consumables",
             ["type"] = "built-in",
             ["enabled"] = true,
             ["speed"] = 1,
-        }, -- 25
+        }, -- 26
         {
             ["name"] = "Missing Buffs",
             ["indicatorName"] = "missingBuffs",
@@ -357,6 +368,6 @@ Cell.defaults.layout = {
             ["size"] = {13, 13},
             ["num"] = 3,
             ["orientation"] = "right-to-left",
-        }, -- 26
+        }, -- 27
     },
 }

@@ -71,6 +71,7 @@ local enabledIndicators, indicatorNums, indicatorCustoms = {}, {}, {}
 
 local function UpdateIndicatorParentVisibility(b, indicatorName, enabled)
     if not (indicatorName == "debuffs" or
+            indicatorName == "privateAuras" or
             indicatorName == "defensiveCooldowns" or
             indicatorName == "externalCooldowns" or
             indicatorName == "allCooldowns" or
@@ -266,6 +267,10 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                 -- speed
                 if t["speed"] then
                     indicator:SetSpeed(t["speed"])
+                end
+                -- privateAuraOptions
+                if t["privateAuraOptions"] then
+                    indicator:UpdateOptions(t["privateAuraOptions"])
                 end
 
                 -- init
@@ -498,6 +503,10 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
             F:IterateAllUnitButtons(function(b)
                 b.indicators[indicatorName]:ShowDuration(value)
                 UnitButton_UpdateAuras(b)
+            end, true)
+        elseif setting == "privateAuraOptions" then
+            F:IterateAllUnitButtons(function(b)
+                b.indicators[indicatorName]:UpdateOptions(value)
             end, true)
         elseif setting == "checkbutton" then
             if value == "showGroupNumber" then
@@ -2259,10 +2268,17 @@ local function UnitButton_OnAttributeChanged(self, name, value)
             wipe(self.state)
         end
 
+        -- private auras
+        if self.state.unit ~= value then
+            -- print("unitChanged:", self:GetName(), value)
+            self.indicators.privateAuras:UpdatePrivateAuraAnchor(value)
+        end
+
         if type(value) == "string" then
             self.state.unit = value
             self.state.displayedUnit = value
             if string.find(value, "^raid%d+$") then Cell.unitButtons.raid.units[value] = self end
+           
             -- for omnicd
             if string.match(value, "raid%d") then
                 local i = string.match(value, "%d")
@@ -2385,6 +2401,7 @@ local function UnitButton_OnTick(self)
 
     self.__tickCount = e
 
+    -- !TODO: use UNIT_DISTANCE_CHECK_UPDATE and UNIT_IN_RANGE_UPDATE events in 10.1.5
     UnitButton_UpdateInRange(self)
     
     if self.updateRequired then
@@ -3100,6 +3117,7 @@ function F:UnitButton_OnLoad(button)
     I:CreateDebuffs(button)
     I:CreateDispels(button)
     I:CreateRaidDebuffs(button)
+    I:CreatePrivateAuras(button)
     I:CreateTargetedSpells(button)
     I:CreateTargetCounter(button)
     I:CreateConsumables(button)

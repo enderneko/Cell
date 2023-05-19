@@ -1287,7 +1287,7 @@ else
                 end
             else
                 -- print("CheckInteractDistance", unit)
-                return CheckInteractDistance("target", 4) -- 28 yards
+                return CheckInteractDistance(unit, 4) -- 28 yards
             end
         end
     end

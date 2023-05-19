@@ -393,6 +393,7 @@ L["Externals + Defensives"] = "减伤 (全部)"
 L["Tank Active Mitigation"] = "坦克主动减伤"
 L["Dispels"] = "驱散"
 L["Debuffs"] = "减益"
+L["Private Auras"] = "个人光环" -- 私有光环？
 L["Targeted Spells"] = "被法术选中"
 L["Target Counter"] = "目标计数"
 L["Consumables"] = "消耗品"
@@ -502,15 +503,18 @@ L["right-to-left"] = "从右到左"
 L["top-to-bottom"] = "从上到下"
 L["bottom-to-top"] = "从下到上"
 
+L["Show countdown swipe"] = "显示倒计时动画"
+L["Show countdown number"] = "显示倒计时文本"
+L["Due to restrictions of the private aura system, this indicator can only use Blizzard style."] = "由于个人光环系统的限制，该指示器只能使用暴雪样式。"
+
 L["Leader Icons will hide while in combat"] = "战斗时队长图标将会隐藏"
 L["You can config debuffs in %s"] = "你可以在 %s 里设置减益"
 L["Indicator settings are part of Layout settings which are account-wide."] = "指示器设置是布局设置的一部分，它们是账号配置而非角色。"
 L["The spells list of a icons indicator is unordered (no priority)."] = "图标组指示器的法术列表是无序的（无优先级）。"
 L["The priority of spells decreases from top to bottom."] = "法术优先级从上到下递减。"
-L["With this indicator enabled, shield / overshield textures are disabled"] = "启用该指示器将会禁用血条上的护盾材质"
 L["Check all visible enemy nameplates. Battleground/Arena only."] = "检查所有可见的敌方姓名板。仅在战场、竞技场有效。"
 L["cleuAurasTips"] = "通过战斗记录事件匹配不可见的法术效果"
-L["%s in General must be enabled to make this indicator work"] = "要使用此指示器，必须先启用常规页面下的 %s 功能  "
+L["%s in General must be enabled to make this indicator work"] = "要使用此指示器，必须先启用常规页面下的 %s 功能"
 
 L["Would you like Cell to create a \"Healers\" indicator (icons)?"] = "需要 Cell 为你创建一个 “Healers” 指示器（图标组）？"
 

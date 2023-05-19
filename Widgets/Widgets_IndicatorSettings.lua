@@ -4344,6 +4344,43 @@ local function CreateSetting_HighlightType(parent)
     return widget
 end
 
+local function CreateSetting_PrivateAuraOptions(parent)
+    local widget
+
+    if not settingWidgets["privateAuraOptions"] then
+        widget = addon:CreateFrame("CellIndicatorSettings_PrivateAuraOptions", parent, 240, 55)
+        settingWidgets["privateAuraOptions"] = widget
+
+        widget.cb1 = addon:CreateCheckButton(widget, L["Show countdown swipe"])
+        widget.cb1:SetPoint("TOPLEFT", 5, -8)
+        widget.cb2 = addon:CreateCheckButton(widget, L["Show countdown number"])
+        widget.cb2:SetPoint("TOPLEFT", widget.cb1, "BOTTOMLEFT", 0, -7)
+
+        -- associate db
+        function widget:SetFunc(func)
+            widget.cb1.onClick = function(checked)
+                widget.cb2:SetEnabled(checked)
+                func({checked, widget.cb2:GetChecked()})
+            end
+            widget.cb2.onClick = function(checked)
+                func({widget.cb1:GetChecked(), checked})
+            end
+        end
+
+        -- show db value
+        function widget:SetDBValue(t)
+            widget.cb1:SetChecked(t[1])
+            widget.cb2:SetChecked(t[2])
+            widget.cb2:SetEnabled(t[1])
+        end
+    else
+        widget = settingWidgets["privateAuraOptions"]
+    end
+
+    widget:Show()
+    return widget
+end
+
 local function CreateSetting_Tips(parent, text)
     local widget
 
@@ -4480,6 +4517,8 @@ function addon:CreateIndicatorSettings(parent, settingsTable)
             tinsert(widgetsTable, CreateSetting_HighlightType(parent))
         elseif setting == "thresholds" then
             tinsert(widgetsTable, CreateSetting_Thresholds(parent))
+        elseif setting == "privateAuraOptions" then
+            tinsert(widgetsTable, CreateSetting_PrivateAuraOptions(parent))
         else -- tips
             tinsert(widgetsTable, CreateSetting_Tips(parent, setting))
         end

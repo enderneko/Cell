@@ -823,6 +823,72 @@ function I:CreateRaidDebuffs(parent)
 end
 
 -------------------------------------------------
+-- private auras
+-------------------------------------------------
+local function PrivateAuras_UpdatePrivateAuraAnchor(self, unit)
+    -- remove old
+    if self.auraAnchorID then
+        C_UnitAuras.RemovePrivateAuraAnchor(self.auraAnchorID)
+        self.unit = nil
+        self.auraAnchorID = nil
+    end
+
+    -- add new
+    if unit then
+        local _showCountdownFrame, _showCountdownNumbers = true, false
+        if type(self.showCountdownFrame) == "boolean" then _showCountdownFrame = self.showCountdownFrame end
+        if type(self.showCountdownNumbers) == "boolean" then _showCountdownNumbers = self.showCountdownNumbers end
+
+        self.unit = unit
+        self.auraAnchorID = C_UnitAuras.AddPrivateAuraAnchor({
+            unitToken = unit,
+            auraIndex = 2,
+            parent = self,
+            showCountdownFrame = _showCountdownFrame,
+            showCountdownNumbers = _showCountdownNumbers,
+            iconInfo = {
+                iconWidth = self:GetWidth(),
+                iconHeight = self:GetHeight(),
+                iconAnchor = {
+                    point = "CENTER",
+                    relativeTo = self,
+                    relativePoint = "CENTER",
+                    offsetX = 0,
+                    offsetY = 0,
+                },
+            },
+            -- durationAnchor = {
+            --     point = "BOTTOMRIGHT",
+            --     relativeTo = self,
+            --     relativePoint = "BOTTOMRIGHT",
+            --     offsetX = 0,
+            --     offsetY = 0,
+            -- },
+        })
+    end
+end
+
+function I:CreatePrivateAuras(parent)
+    local privateAuras = CreateFrame("Frame", parent:GetName().."PrivateAuraParent", parent.widget.overlayFrame)
+    parent.indicators.privateAuras = privateAuras
+    privateAuras:Hide()
+
+    privateAuras.UpdatePrivateAuraAnchor = PrivateAuras_UpdatePrivateAuraAnchor
+    privateAuras._SetSize = privateAuras.SetSize
+
+    function privateAuras:SetSize(width, height)
+        privateAuras:_SetSize(width, height)
+        privateAuras:UpdatePrivateAuraAnchor(privateAuras.unit)
+    end
+
+    function privateAuras:UpdateOptions(t)
+        self.showCountdownFrame = t[1]
+        self.showCountdownNumbers = t[2]
+        privateAuras:UpdatePrivateAuraAnchor(privateAuras.unit)
+    end
+end
+
+-------------------------------------------------
 -- player raid icon
 -------------------------------------------------
 function I:CreatePlayerRaidIcon(parent)
