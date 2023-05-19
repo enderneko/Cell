@@ -68,6 +68,12 @@ select(2, ...).L = setmetatable({
     ["SNIPPETS_TIPS"] = "[Double-Click] to rename. [Shift-Click] to delete. All checked snippets will be automatically invoked at the end of Cell initialization process (in ADDON_LOADED event).",
 
     ["CHANGELOGS"] = [[
+        <h1>r169-release (May 20, 2023, 04:18 GMT+8)</h1>
+        <h2>Retail</h2>
+        <p>+ New indicator: Private Auras.</p>
+        <p>* Updated dispel checker.</p>
+        <br/>
+
         <h1>r168-release (May 13, 2023, 19:23 GMT+8)</h1>
         <p>! Click-castings are now saved as spell id instead of name. This can make click-casting profiles work on clients in various languages (reconfiguration of click-casting spells is required).</p>
         <p>* Update Aberrus debuffs.</p>
