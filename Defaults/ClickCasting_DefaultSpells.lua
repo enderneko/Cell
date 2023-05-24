@@ -395,13 +395,13 @@ local resurrection_click_castings = {
     },
 }
 
-do
-    for class, t in pairs(resurrection_click_castings) do
-        for _, clickCasting in pairs(t) do
-            clickCasting[3] = GetSpellInfo(clickCasting[3])
-        end
-    end
-end
+-- do
+--     for class, t in pairs(resurrection_click_castings) do
+--         for _, clickCasting in pairs(t) do
+--             clickCasting[3] = GetSpellInfo(clickCasting[3])
+--         end
+--     end
+-- end
 
 function F:GetResurrectionClickCastings(class)
     return resurrection_click_castings[class] or {}
