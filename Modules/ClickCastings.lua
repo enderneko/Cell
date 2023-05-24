@@ -917,6 +917,70 @@ local function ShowActionsMenu(index, b)
                     CheckChanges()
                 end,
             },
+            {
+                ["text"] = _G.INVTYPE_TRINKET.." 1",
+                ["onClick"] = function()
+                    changed[index] = changed[index] or {b}
+                    local macrotext = "/use [@mouseover] 13"
+                    if b.bindAction ~= macrotext then
+                        changed[index]["bindAction"] = macrotext
+                        b.actionGrid:SetText(macrotext)
+                    else
+                        changed[index]["bindAction"] = nil
+                        b.actionGrid:SetText(b.bindAction)
+                    end
+                    CheckChanged(index, b)
+                    CheckChanges()
+                end,
+            },
+            {
+                ["text"] = _G.INVTYPE_TRINKET.." 2",
+                ["onClick"] = function()
+                    changed[index] = changed[index] or {b}
+                    local macrotext = "/use [@mouseover] 14"
+                    if b.bindAction ~= macrotext then
+                        changed[index]["bindAction"] = macrotext
+                        b.actionGrid:SetText(macrotext)
+                    else
+                        changed[index]["bindAction"] = nil
+                        b.actionGrid:SetText(b.bindAction)
+                    end
+                    CheckChanged(index, b)
+                    CheckChanges()
+                end,
+            },
+            {
+                ["text"] = _G.INVTYPE_WRIST,
+                ["onClick"] = function()
+                    changed[index] = changed[index] or {b}
+                    local macrotext = "/use [@mouseover] 9"
+                    if b.bindAction ~= macrotext then
+                        changed[index]["bindAction"] = macrotext
+                        b.actionGrid:SetText(macrotext)
+                    else
+                        changed[index]["bindAction"] = nil
+                        b.actionGrid:SetText(b.bindAction)
+                    end
+                    CheckChanged(index, b)
+                    CheckChanges()
+                end,
+            },
+            {
+                ["text"] = _G.INVTYPE_HAND,
+                ["onClick"] = function()
+                    changed[index] = changed[index] or {b}
+                    local macrotext = "/use [@mouseover] 10"
+                    if b.bindAction ~= macrotext then
+                        changed[index]["bindAction"] = macrotext
+                        b.actionGrid:SetText(macrotext)
+                    else
+                        changed[index]["bindAction"] = nil
+                        b.actionGrid:SetText(b.bindAction)
+                    end
+                    CheckChanged(index, b)
+                    CheckChanges()
+                end,
+            },
         }
 
         if Cell.isWrath and Cell.vars.playerClass == "WARLOCK" then
