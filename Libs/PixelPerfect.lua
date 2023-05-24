@@ -38,6 +38,42 @@ function P:PixelPerfectPoint(frame)
 end
 
 --------------------------------------------
+-- PixelUtil
+--------------------------------------------
+-- local effectiveScale = 1
+-- function P:SetRelativeScale(scale)
+--     effectiveScale = scale
+-- end
+
+-- function P:GetEffectiveScale()
+--     return effectiveScale
+-- end
+
+-- function P:SetEffectiveScale(frame)
+--     frame:SetScale(effectiveScale)
+-- end
+
+-- function P:Scale(uiUnitSize)
+--     if uiUnitSize == 0 then
+--         return 0
+--     end
+
+--     local uiUnitFactor = PixelUtil.GetPixelToUIUnitFactor()
+--     local numPixels = Round((uiUnitSize * effectiveScale) / uiUnitFactor)
+--     if uiUnitSize < 0.0 then
+--         if numPixels > -1 then
+--             numPixels = -1
+--         end
+--     else
+--         if numPixels < 1 then
+--             numPixels = 1
+--         end
+--     end
+
+--     return numPixels * uiUnitFactor / effectiveScale
+-- end
+
+--------------------------------------------
 -- some are stolen from ElvUI
 --------------------------------------------
 -- local function GetUIParentScale()

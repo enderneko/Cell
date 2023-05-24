@@ -945,6 +945,7 @@ function I:CreateNameText(parent)
     end)
 
     function nameText:SetFont(font, size, flags)
+        nameText.flags = flags
         font = F:GetFont(font)
 
         if flags == "Shadow" then
@@ -969,6 +970,7 @@ function I:CreateNameText(parent)
             nameText.vehicle:SetShadowOffset(0, 0)
             nameText.vehicle:SetShadowColor(0, 0, 0, 0)
         end
+
         nameText:UpdateName()
         if parent.state.inVehicle or nameText.isPreview then
             nameText:UpdateVehicleName()
@@ -1114,6 +1116,19 @@ function I:CreateNameText(parent)
             end
         end
     end)
+
+    function nameText:UpdatePixelPerfect()
+        if nameText.flags == "Shadow" then
+            -- NOTE: remove then add shadows back
+            nameText.name:SetShadowOffset(0, 0)
+            nameText.vehicle:SetShadowOffset(0, 0)
+
+            nameText.name:SetShadowOffset(1, -1)
+            nameText.name:SetShadowColor(0, 0, 0, 1)
+            nameText.vehicle:SetShadowOffset(1, -1)
+            nameText.vehicle:SetShadowColor(0, 0, 0, 1)
+        end
+    end
 end
 
 -------------------------------------------------
@@ -1169,6 +1184,7 @@ function I:CreateStatusText(parent)
     end
     
     function statusText:SetFont(font, size, flags)
+        statusText.flags = flags
         font = F:GetFont(font)
 
         if flags == "Shadow" then
@@ -1217,6 +1233,19 @@ function I:CreateStatusText(parent)
         if reset then
             if statusText.ticker then statusText.ticker:Cancel() end
             startTimeCache[parent.state.guid] = nil
+        end
+    end
+
+    function statusText:UpdatePixelPerfect()
+        if statusText.flags == "Shadow" then
+            -- NOTE: remove then add shadows back
+            text:SetShadowOffset(0, 0)
+            timer:SetShadowOffset(0, 0)
+
+            text:SetShadowOffset(1, -1)
+            text:SetShadowColor(0, 0, 0, 1)
+            timer:SetShadowOffset(1, -1)
+            timer:SetShadowColor(0, 0, 0, 1)
         end
     end
 end
