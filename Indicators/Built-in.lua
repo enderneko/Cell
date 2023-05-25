@@ -924,8 +924,6 @@ font_name:SetFont(GameFontNormal:GetFont(), 13, "")
 local font_status = CreateFont("CELL_FONT_STATUS")
 font_status:SetFont(GameFontNormal:GetFont(), 11, "")
 
-local LibNickTag
-
 function I:CreateNameText(parent)
     local nameText = CreateFrame("Frame", parent:GetName().."NameText", parent.widget.overlayFrame)
     parent.indicators.nameText = nameText
@@ -1022,13 +1020,8 @@ function I:CreateNameText(parent)
         
         -- only check nickname for players
         if parent.state.isPlayer then
-            if CELL_NICKTAG_ENABLED then
-                if not LibNickTag then
-                    LibNickTag = LibStub:GetLibrary("NickTag-1.0")
-                end
-                if LibNickTag then
-                    name = LibNickTag:GetNickname(parent.state.name, nil, true)
-                end
+            if CELL_NICKTAG_ENABLED and Cell.NickTag then
+                name = Cell.NickTag:GetNickname(parent.state.name, nil, true)
             end
 
             if Cell.vars.nicknameCustomEnabled then

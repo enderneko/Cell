@@ -1892,6 +1892,13 @@ function F:Revise()
         end
     end
 
+    -- r170-release
+    if CellDB["revise"] and dbRevision < 170 then
+        if not strfind(CellDB["snippets"][0]["code"], "CELL_NICKTAG_ENABLED") then
+            CellDB["snippets"][0]["code"] = CellDB["snippets"][0]["code"].."\n\n--Use nicknames from Details! Damage Meter (NickTag-1.0 library)\nCELL_NICKTAG_ENABLED = false"
+        end
+    end
+
     CellDB["revise"] = Cell.version
     if Cell.isWrath then
         CellCharacterDB["revise"] = Cell.version

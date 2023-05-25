@@ -412,6 +412,8 @@ function F:GetDefaultSnippet()
             "-- add summon icons to Status Icon indicator (boolean, retail only)\n"..
             "CELL_SUMMON_ICONS_ENABLED = false\n\n"..
             "-- use separate width and height for custom indicator icons (boolean)\n"..
-            "CELL_RECTANGULAR_CUSTOM_INDICATOR_ICONS = false",
+            "CELL_RECTANGULAR_CUSTOM_INDICATOR_ICONS = false\n\n"..
+            "--Use nicknames from Details! Damage Meter (NickTag-1.0 library)\n"..
+            "CELL_NICKTAG_ENABLED = false",
     }
 end

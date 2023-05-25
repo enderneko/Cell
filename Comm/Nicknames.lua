@@ -205,3 +205,35 @@ Comm:RegisterComm("CELL_NIC", function(prefix, message, channel, sender)
         UpdateName(sender)
     end
 end)
+
+-----------------------------------------
+-- NickTag
+-----------------------------------------
+local f = CreateFrame("Frame")
+f:RegisterEvent("PLAYER_LOGIN")
+f:SetScript("OnEvent", function()
+    f:UnregisterAllEvents()
+    
+    if not CELL_NICKTAG_ENABLED then return end
+
+    local nickTag = LibStub:GetLibrary("NickTag-1.0")
+    if nickTag then
+        Cell.NickTag = nickTag
+
+        local function UpdateAll()
+            -- update all
+            F:IterateAllUnitButtons(function(b)
+                b.indicators.nameText:UpdateName()
+            end, true)
+        end
+        
+        local timer
+        nickTag:RegisterCallback("NickTag_Update", function()
+            if timer then
+                timer:Cancel()
+                timer = nil
+            end
+            timer = C_Timer.NewTimer(3, UpdateAll)
+        end)
+    end
+end)
