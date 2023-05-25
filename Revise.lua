@@ -1897,6 +1897,26 @@ function F:Revise()
         if not strfind(CellDB["snippets"][0]["code"], "CELL_NICKTAG_ENABLED") then
             CellDB["snippets"][0]["code"] = CellDB["snippets"][0]["code"].."\n\n--Use nicknames from Details! Damage Meter (NickTag-1.0 library)\nCELL_NICKTAG_ENABLED = false"
         end
+
+        if Cell.isWrath then
+            local index = Cell.defaults.indicatorIndices.missingBuffs
+            for _, layout in pairs(CellDB["layouts"]) do
+                if not layout["indicators"][index] or layout["indicators"][index]["indicatorName"] ~= "missingBuffs" then
+                    tinsert(layout.indicators, index, {
+                        ["name"] = "Missing Buffs",
+                        ["indicatorName"] = "missingBuffs",
+                        ["type"] = "built-in",
+                        ["enabled"] = false,
+                        ["buffByMe"] = false,
+                        ["position"] = {"BOTTOMRIGHT", "BOTTOMRIGHT", 0, 4},
+                        ["frameLevel"] = 10,
+                        ["size"] = {13, 13},
+                        ["num"] = 3,
+                        ["orientation"] = "right-to-left",
+                    })
+                end
+            end
+        end
     end
 
     CellDB["revise"] = Cell.version

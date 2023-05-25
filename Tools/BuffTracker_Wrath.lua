@@ -1,6 +1,7 @@
 local _, Cell = ...
 local L = Cell.L
 local F = Cell.funcs
+local I = Cell.iFuncs
 local P = Cell.pixelPerfectFuncs
 local LCG = LibStub("LibCustomGlow-1.0")
 -- local LGI = LibStub:GetLibrary("LibGroupInfo")
@@ -22,45 +23,45 @@ local IsInRaid = IsInRaid
 local buffs = {
     -- 1243: Power Word: Fortitude
     -- 21562: Prayer of Fortitude
-    ["PWF"] = {1243, 21562, glowColor = {F:GetClassColor("PRIEST")}},
+    ["PWF"] = {1243, 21562, glowColor={F:GetClassColor("PRIEST")}, provider="PRIEST"},
 
     -- 14752: Divine Spirit
     -- 27681: Prayer of Spirit
-    ["DS"] = {14752, 27681, glowColor = {F:GetClassColor("PRIEST")}},
+    ["DS"] = {14752, 27681, glowColor={F:GetClassColor("PRIEST")}, provider="PRIEST"},
 
     -- 976: Shadow Protection
     -- 27683: Prayer of Shadow Protection
-    ["SP"] = {976, 27683, glowColor = {F:GetClassColor("PRIEST")}},
+    ["SP"] = {976, 27683, glowColor={F:GetClassColor("PRIEST")}, provider="PRIEST"},
 
     -- 1459: Arcane Intellect
     -- 23028: Arcane Brilliance
-    ["AB"] = {1459, 23028, glowColor = {F:GetClassColor("MAGE")}},
+    ["AB"] = {1459, 23028, glowColor={F:GetClassColor("MAGE")}, provider="MAGE"},
 
     -- 6673: Battle Shout
-    ["BS"] = {6673, glowColor = {F:GetClassColor("WARRIOR")}},
+    ["BS"] = {6673, glowColor={F:GetClassColor("WARRIOR")}, provider="WARRIOR"},
 
     -- 469: Commanding Shout
-    ["CS"] = {469, glowColor = {F:GetClassColor("WARRIOR")}},
+    ["CS"] = {469, glowColor={F:GetClassColor("WARRIOR")}, provider="WARRIOR"},
 
     -- 1126: Mark of the Wild
     -- 21849: Gift of the Wild
-    ["MotW"] = {1126, 21849, glowColor = {F:GetClassColor("DRUID")}},
+    ["MotW"] = {1126, 21849, glowColor={F:GetClassColor("DRUID")}, provider="DRUID"},
 
     -- 20217: Blessing of Kings
     -- 25898: Greater Blessing of Kings
-    ["BoK"] = {20217, 25898, glowColor = {F:GetClassColor("PALADIN")}},
+    ["BoK"] = {20217, 25898, glowColor={F:GetClassColor("PALADIN")}, provider="PALADIN"},
 
     -- 19740: Blessing of Might
     -- 25782: Greater Blessing of Might
-    ["BoM"] = {19740, 25782, glowColor = {F:GetClassColor("PALADIN")}},
+    ["BoM"] = {19740, 25782, glowColor={F:GetClassColor("PALADIN")}, provider="PALADIN"},
 
     -- 19742: Blessing of Wisdom
     -- 25894: Greater Blessing of Wisdom
-    ["BoW"] = {19742, 25894, glowColor = {F:GetClassColor("PALADIN")}},
+    ["BoW"] = {19742, 25894, glowColor={F:GetClassColor("PALADIN")}, provider="PALADIN"},
 
     -- 20911: Blessing of Sanctuary
     -- 25899: Greater Blessing of Sanctuary
-    ["BoS"] = {20911, 25899, glowColor = {F:GetClassColor("PALADIN")}},
+    ["BoS"] = {20911, 25899, glowColor={F:GetClassColor("PALADIN")}, provider="PALADIN"},
 }
 
 do
@@ -68,7 +69,7 @@ do
         for i, id in ipairs(t) do
             local name, _, icon = GetSpellInfo(id)
             t[i] = {
-                ["id"] = id,
+                -- ["id"] = id,
                 ["name"] = name,
                 ["icon"] = icon,
             }
@@ -373,7 +374,7 @@ local buttons = {}
 
 do
     for _, k in ipairs(order) do
-        buttons[k] = CreateBuffButton(buffTrackerFrame, {32, 32}, buffs[k][1]["name"], buffs[k][2] and buffs[k][2]["name"], buffs[k][2] and buffs[k][2]["icon"] or buffs[k][1]["icon"], k)
+        buttons[k] = CreateBuffButton(buffTrackerFrame, {32, 32}, buffs[k][1]["name"], buffs[k][2] and buffs[k][2]["name"], buffs[k][1]["icon"], k)
         buttons[k]:Hide()
         buttons[k]:SetTooltips(unaffected[k])
     end
@@ -486,7 +487,25 @@ end, unpack(fadeOuts))
 -------------------------------------------------
 -- check
 -------------------------------------------------
+local function HasMyBuff(unit, _buffs)
+    for _, b in pairs(_buffs) do
+        local source = select(7, AuraUtil.FindAuraByName(buffs[b][1]["name"], unit, "BUFF,PLAYER"))
+        if source == "player" then
+            return true
+        end
+
+        if buffs[b][2] then
+            source = select(7, AuraUtil.FindAuraByName(buffs[b][2]["name"], unit, "BUFF,PLAYER"))
+            if source == "player" then
+                return true
+            end
+        end
+    end
+end
+
 local function CheckUnit(unit, updateBtn)
+    I:HideMissingBuffs(unit)
+
     -- print("CheckUnit", unit)
     if not hasBuffProvider then return end
 
@@ -496,17 +515,34 @@ local function CheckUnit(unit, updateBtn)
             if v ~= false and required[k] then
                 if not (AuraUtil.FindAuraByName(buffs[k][1]["name"], unit, "BUFF") or (buffs[k][2] and AuraUtil.FindAuraByName(buffs[k][2]["name"], unit, "BUFF"))) then
                     unaffected[k][unit] = true
+                    
+                    -- NOTE: don't check paladin/warrior shit here
+                    if not strfind(k, "^Bo") and k ~= "BS" and k ~= "CS" then
+                        I:ShowMissingBuff(unit, buffs[k][1]["icon"], Cell.vars.playerClass == buffs[k]["provider"])
+                    end
                 else
                     unaffected[k][unit] = nil
                 end
             end
         end
+
+        -- NOTE: check shits
+        if Cell.vars.playerClass == "PALADIN" then
+            if not HasMyBuff(unit, paladinBuffs) then
+                I:ShowMissingBuff(unit, 254882, true)
+            end
+        elseif Cell.vars.playerClass == "WARRIOR" then
+            if not HasMyBuff(unit, warriorBuffs) then
+                I:ShowMissingBuff(unit, 254882, true)
+            end
+        end
+        
     else
         for k, t in pairs(unaffected) do
             t[unit] = nil
         end
     end
-    
+
     if updateBtn then UpdateButtons() end
 end
 
@@ -529,6 +565,7 @@ local function IterateAllUnits()
             elseif UnitClassBase(unit) == "WARRIOR" then
                 available["BS"] = (available["BS"] or 0) + 1
                 available["CS"] = (available["CS"] or 0) + 1
+                hasBuffProvider = true
 
             elseif UnitClassBase(unit) == "PALADIN" then
                 available["BoK"] = (available["BoK"] or 0) + 1
@@ -674,6 +711,11 @@ local function UpdateTools(which)
 
             enabled = false
             ShowMover(false)
+
+            -- missingBuffs indicator
+            for unit in F:IterateGroupMembers() do
+                I:HideMissingBuffs(unit, true)
+            end
         end
 
         ResizeButtons()

@@ -2,13 +2,13 @@
 -- File: Layout_Defaults_Wrath.lua
 -- Author: enderneko (enderneko-dev@outlook.com)
 -- File Created: 2022/08/21 04:06:04 +0800
--- Last Modified: 2023/04/14 18:48:45 +0800
+-- Last Modified: 2023/05/25 21:53:36 +0800
 --]]
 
 local addonName, Cell = ...
 
 -- number of built-in indicators
-Cell.defaults.builtIns = 24
+Cell.defaults.builtIns = 25
 
 Cell.defaults.indicatorIndices = {
     ["nameText"] = 1,
@@ -35,6 +35,7 @@ Cell.defaults.indicatorIndices = {
     ["targetedSpells"] = 22,
     ["targetCounter"] = 23,
     ["consumables"] = 24,
+    ["missingBuffs"] = 25,
 }
 
 Cell.defaults.layout = {
@@ -348,5 +349,17 @@ Cell.defaults.layout = {
             ["enabled"] = true,
             ["speed"] = 1,
         }, -- 24
+        {
+            ["name"] = "Missing Buffs",
+            ["indicatorName"] = "missingBuffs",
+            ["type"] = "built-in",
+            ["enabled"] = false,
+            ["buffByMe"] = false,
+            ["position"] = {"BOTTOMRIGHT", "BOTTOMRIGHT", 0, 4},
+            ["frameLevel"] = 10,
+            ["size"] = {13, 13},
+            ["num"] = 3,
+            ["orientation"] = "right-to-left",
+        }, -- 25
     },
 }
