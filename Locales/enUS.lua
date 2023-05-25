@@ -69,6 +69,14 @@ select(2, ...).L = setmetatable({
     ["SNIPPETS_TIPS"] = "[Double-Click] to rename. [Shift-Click] to delete. All checked snippets will be automatically invoked at the end of Cell initialization process (in ADDON_LOADED event).",
 
     ["CHANGELOGS"] = [[
+        <h1>r170-release (May 25, 2023, 00:21 GMT+8)</h1>
+        <p>* Updated raid debuffs: Aberrus and M+. (Thanks to 钛锬)</p>
+        <p>* Updated raid debuffs: ToC. (Thanks to 橘子味橙汁)</p>
+        <p>* Added support for NickTag. To display nicknames from Details!, set CELL_NICKTAG_ENABLED to true in Code Snippets.</p>
+        <p>* Updated Missing Buffs indicator and brought it to Wrath.</p>
+        <p>* Updated zhTW.</p>
+        <br/>
+
         <h1>r169-release (May 20, 2023, 04:18 GMT+8)</h1>
         <h2>Retail</h2>
         <p>+ New indicator: Private Auras.</p>
