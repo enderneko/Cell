@@ -47,6 +47,7 @@ end
 local font_title_name = strupper(addonName).."_FONT_WIDGET_TITLE"
 local font_title_disable_name = strupper(addonName).."_FONT_WIDGET_TITLE_DISABLE"
 local font_name = strupper(addonName).."_FONT_WIDGET"
+local font_chinese_name = strupper(addonName).."_FONT_CHINESE"
 local font_disable_name = strupper(addonName).."_FONT_WIDGET_DISABLE"
 local font_special_name = strupper(addonName).."_FONT_SPECIAL"
 local font_class_title_name = strupper(addonName).."_FONT_CLASS_TITLE"
@@ -72,6 +73,13 @@ font:SetTextColor(1, 1, 1, 1)
 font:SetShadowColor(0, 0, 0)
 font:SetShadowOffset(1, -1)
 font:SetJustifyH("CENTER")
+
+local font_chinese = CreateFont(font_chinese_name)
+font_chinese:SetFont(UNIT_NAME_FONT_CHINESE, 14, "")
+font_chinese:SetTextColor(1, 1, 1, 1)
+font_chinese:SetShadowColor(0, 0, 0)
+font_chinese:SetShadowOffset(1, -1)
+font_chinese:SetJustifyH("CENTER")
 
 local font_disable = CreateFont(font_disable_name)
 font_disable:SetFont(GameFontNormal:GetFont(), 13, "")
@@ -115,6 +123,7 @@ function addon:UpdateOptionsFont(offset, useGameFont)
     font_title:SetFont(defaultFont, 14+offset, "")
     font_title_disable:SetFont(defaultFont, 14+offset, "")
     font:SetFont(defaultFont, 13+offset, "")
+    font_chinese:SetFont(UNIT_NAME_FONT_CHINESE, 14+offset, "")
     font_disable:SetFont(defaultFont, 13+offset, "")
     font_class_title:SetFont(defaultFont, 14+offset, "")
     font_class:SetFont(defaultFont, 13+offset, "")
