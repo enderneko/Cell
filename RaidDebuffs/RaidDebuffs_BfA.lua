@@ -1,3 +1,10 @@
+--[[
+-- File: RaidDebuffs_BfA.lua
+-- Author: enderneko (enderneko-dev@outlook.com)
+-- File Created: 2022/08/05 16:11:24 +0800
+-- Last Modified: 2023/05/25 20:44:53 +0800
+--]]
+
 local _, Cell = ...
 local L = Cell.L
 local F = Cell.funcs
@@ -565,26 +572,34 @@ local debuffs = {
 
     [1001] = { -- 自由镇
         ["general"] = {
-            257908, -- Hoja aceitada
-            257478, -- Mordedura entorpecedora
-            274384, -- Trampas para ratas
+            257908, -- 浸油之刃
+            257478, -- 减速撕咬
+            274384, -- 捕鼠陷阱
+            258323, -- 感染之伤
+            257739, -- 盲目怒火
+            257775, -- 瘟疫步
+
         },
         [2102] = { -- 天空上尉库拉格
-            278993, -- Vile Bombardment
+            278993, -- 污秽轰炸
+            256106, -- 艾泽里特填装弹
         },
         [2093] = { -- 海盗议会
-            258874, -- Blackout Barrel
-            267523, -- Oleada cortante
-            1604,   -- Atontado
+            258874, -- 眩晕酒桶
+            267523, -- 刀刃疾突
+            1604,   -- 眩晕
+            258352, -- 葡萄弹
         },
         [2094] = { -- 藏宝竞技场
-            256553, -- Flailing Shark
-            256363, -- Pu�etazo desgarrador
+            256553, -- 扭动的鲨鱼
+            256363, -- 裂伤拳
+            268283, -- 视线受阻
         },
         [2095] = { -- 哈兰·斯威提
-            281591, -- Cannon Barrage
-            257460, -- Escombros igneos
-            257314, -- Bomba de polvora negra
+            281591, -- 火炮弹幕
+            257460, -- 燃烧残片
+            257314, -- 黑火药炸弹
+            413131, -- 回旋锋匕
         },
     },
 
