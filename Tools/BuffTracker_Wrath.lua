@@ -37,10 +37,10 @@ local buffs = {
     ["AB"] = {1459, 23028, glowColor = {F:GetClassColor("MAGE")}},
 
     -- 6673: Battle Shout
-    -- ["BS"] = {6673, glowColor = {F:GetClassColor("WARRIOR")}},
+    ["BS"] = {6673, glowColor = {F:GetClassColor("WARRIOR")}},
 
     -- 469: Commanding Shout
-    -- ["CS"] = {469, glowColor = {F:GetClassColor("WARRIOR")}},
+    ["CS"] = {469, glowColor = {F:GetClassColor("WARRIOR")}},
 
     -- 1126: Mark of the Wild
     -- 21849: Gift of the Wild
@@ -76,22 +76,22 @@ do
     end
 end
 
-local order = {"PWF", "AB", "DS", "MotW", "BoK", "BoM", "BoW", "BoS", "SP"}
+local order = {"PWF", "AB", "DS", "MotW", "BoK", "BoM", "BoW", "BoS", "BS", "CS", "SP"}
 
 -------------------------------------------------
 -- required buffs
 -------------------------------------------------
 local requiredBuffs = {
-    ["WARRIOR"] = {["PWF"]=true, ["MotW"]=true, ["BoK"]=true, ["BoM"]=true, ["BoS"]=true, ["SP"]=true},
-    ["PALADIN"] = {["PWF"]=true, ["AB"]=true, ["DS"]=true, ["MotW"]=true, ["BoK"]=true, ["BoM"]=true, ["BoW"]=true, ["BoS"]=true, ["SP"]=true},
-    ["HUNTER"] = {["PWF"]=true, ["MotW"]=true, ["BoK"]=true, ["BoM"]=true, ["BoS"]=true, ["SP"]=true},
-    ["ROGUE"] = {["PWF"]=true, ["MotW"]=true, ["BoK"]=true, ["BoM"]=true, ["BoS"]=true, ["SP"]=true},
-    ["PRIEST"] = {["PWF"]=true, ["AB"]=true, ["DS"]=true, ["MotW"]=true, ["BoK"]=true, ["BoW"]=true, ["BoS"]=true, ["SP"]=true},
-    ["DEATHKNIGHT"] = {["PWF"]=true, ["MotW"]=true, ["BoK"]=true, ["BoM"]=true, ["BoS"]=true, ["SP"]=true},
-    ["SHAMAN"] = {["PWF"]=true, ["AB"]=true, ["DS"]=true, ["MotW"]=true, ["BoK"]=true, ["BoM"]=true, ["BoW"]=true, ["BoS"]=true, ["SP"]=true},
-    ["MAGE"] = {["PWF"]=true, ["AB"]=true, ["MotW"]=true, ["BoK"]=true, ["BoW"]=true, ["BoS"]=true, ["SP"]=true},
-    ["WARLOCK"] = {["PWF"]=true, ["AB"]=true, ["MotW"]=true, ["BoK"]=true, ["BoW"]=true, ["BoS"]=true, ["SP"]=true},
-    ["DRUID"] = {["PWF"]=true, ["AB"]=true, ["DS"]=true, ["MotW"]=true, ["BoK"]=true, ["BoM"]=true, ["BoW"]=true, ["BoS"]=true, ["SP"]=true},
+    ["WARRIOR"] = {["PWF"]=true, ["MotW"]=true, ["BoK"]=true, ["BoM"]=true, ["BoS"]=true, ["BS"]=true, ["CS"]=true, ["SP"]=true},
+    ["PALADIN"] = {["PWF"]=true, ["AB"]=true, ["DS"]=true, ["MotW"]=true, ["BoK"]=true, ["BoM"]=true, ["BoW"]=true, ["BoS"]=true, ["BS"]=true, ["CS"]=true, ["SP"]=true},
+    ["HUNTER"] = {["PWF"]=true, ["MotW"]=true, ["BoK"]=true, ["BoM"]=true, ["BoS"]=true, ["BS"]=true, ["CS"]=true, ["SP"]=true},
+    ["ROGUE"] = {["PWF"]=true, ["MotW"]=true, ["BoK"]=true, ["BoM"]=true, ["BoS"]=true, ["BS"]=true, ["CS"]=true, ["SP"]=true},
+    ["PRIEST"] = {["PWF"]=true, ["AB"]=true, ["DS"]=true, ["MotW"]=true, ["BoK"]=true, ["BoW"]=true, ["BoS"]=true, ["CS"]=true, ["SP"]=true},
+    ["DEATHKNIGHT"] = {["PWF"]=true, ["MotW"]=true, ["BoK"]=true, ["BoM"]=true, ["BoS"]=true, ["BS"]=true, ["CS"]=true, ["SP"]=true},
+    ["SHAMAN"] = {["PWF"]=true, ["AB"]=true, ["DS"]=true, ["MotW"]=true, ["BoK"]=true, ["BoM"]=true, ["BoW"]=true, ["BoS"]=true, ["BS"]=true, ["CS"]=true, ["SP"]=true},
+    ["MAGE"] = {["PWF"]=true, ["AB"]=true, ["MotW"]=true, ["BoK"]=true, ["BoW"]=true, ["BoS"]=true, ["CS"]=true, ["SP"]=true},
+    ["WARLOCK"] = {["PWF"]=true, ["AB"]=true, ["MotW"]=true, ["BoK"]=true, ["BoW"]=true, ["BoS"]=true, ["CS"]=true, ["SP"]=true},
+    ["DRUID"] = {["PWF"]=true, ["AB"]=true, ["DS"]=true, ["MotW"]=true, ["BoK"]=true, ["BoM"]=true, ["BoW"]=true, ["BoS"]=true, ["BS"]=true, ["CS"]=true, ["SP"]=true},
 }
 
 -------------------------------------------------
@@ -273,7 +273,7 @@ local function CreateBuffButton(parent, size, spell1, spell2, icon, index)
 
     b:RegisterForClicks("LeftButtonDown", "RightButtonDown")
     b:SetAttribute("type1", "spell")
-    b:SetAttribute("spell", spell2)
+    b:SetAttribute("spell", spell2 or spell1)
     b:SetAttribute("shift-type1", "spell")
     b:SetAttribute("shift-spell1", spell1)
     b:HookScript("OnClick", function(self, button, down)
@@ -373,19 +373,28 @@ local buttons = {}
 
 do
     for _, k in ipairs(order) do
-        buttons[k] = CreateBuffButton(buffTrackerFrame, {32, 32}, buffs[k][1]["name"], buffs[k][2]["name"], buffs[k][2]["icon"], k)
+        buttons[k] = CreateBuffButton(buffTrackerFrame, {32, 32}, buffs[k][1]["name"], buffs[k][2] and buffs[k][2]["name"], buffs[k][2] and buffs[k][2]["icon"] or buffs[k][1]["icon"], k)
         buttons[k]:Hide()
         buttons[k]:SetTooltips(unaffected[k])
     end
 end
 
 local paladinBuffs = {"BoK", "BoM", "BoW", "BoS"}
+local warriorBuffs = {"BS", "CS"}
 local function UpdateButtons()
     -- NOTE: check paladin buffs
-    local found = 0
+    local paladinBuffsFound = 0
     for _, k in pairs(paladinBuffs) do
-        if AuraUtil.FindAuraByName(buffs[k][1]["name"], "player", "BUFF") or AuraUtil.FindAuraByName(buffs[k][2]["name"], "player", "BUFF") then
-            found = found + 1
+        if AuraUtil.FindAuraByName(buffs[k][1]["name"], "player", "BUFF") or (buffs[k][2] and AuraUtil.FindAuraByName(buffs[k][2]["name"], "player", "BUFF")) then
+            paladinBuffsFound = paladinBuffsFound + 1
+        end
+    end
+    
+    -- NOTE: check warrior buffs
+    local warriorBuffsFound = 0
+    for _, k in pairs(warriorBuffs) do
+        if AuraUtil.FindAuraByName(buffs[k][1]["name"], "player", "BUFF") then
+            warriorBuffsFound = warriorBuffsFound + 1
         end
     end
 
@@ -402,7 +411,9 @@ local function UpdateButtons()
                 if unaffected[k][myUnit] then
                     local showGlow
                     if strfind(k, "^Bo") then
-                        showGlow = found < available[k]
+                        showGlow = paladinBuffsFound < available[k]
+                    elseif k == "BS" or k == "CS" then
+                        showGlow = warriorBuffsFound < available[k]
                     else
                         showGlow = true
                     end
@@ -483,7 +494,7 @@ local function CheckUnit(unit, updateBtn)
         local required = requiredBuffs[UnitClassBase(unit)]
         for k, v in pairs(available) do
             if v ~= false and required[k] then
-                if not (AuraUtil.FindAuraByName(buffs[k][1]["name"], unit, "BUFF") or AuraUtil.FindAuraByName(buffs[k][2]["name"], unit, "BUFF")) then
+                if not (AuraUtil.FindAuraByName(buffs[k][1]["name"], unit, "BUFF") or (buffs[k][2] and AuraUtil.FindAuraByName(buffs[k][2]["name"], unit, "BUFF"))) then
                     unaffected[k][unit] = true
                 else
                     unaffected[k][unit] = nil
@@ -515,8 +526,9 @@ local function IterateAllUnits()
                 available["AB"] = true
                 hasBuffProvider = true
             
-            -- elseif UnitClassBase(unit) == "WARRIOR" then
-            --     available["BS"] = true
+            elseif UnitClassBase(unit) == "WARRIOR" then
+                available["BS"] = (available["BS"] or 0) + 1
+                available["CS"] = (available["CS"] or 0) + 1
 
             elseif UnitClassBase(unit) == "PALADIN" then
                 available["BoK"] = (available["BoK"] or 0) + 1
