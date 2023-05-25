@@ -1390,7 +1390,7 @@ if Cell.isRetail then
         ["targetCounter"] = {"|cffff2727"..L["HIGH CPU USAGE"].."!|r |cffb7b7b7"..L["Check all visible enemy nameplates. Battleground/Arena only."], "enabled", "color", "font-noOffset", "position", "frameLevel"},
         ["consumables"] = {"enabled", "consumablesPreview", "consumablesList"},
         ["healthThresholds"] = {"enabled", "thresholds", "thickness"},
-        ["missingBuffs"] = {I:GetMissingBuffsString().."|cffb7b7b7"..(L["%s in General must be enabled to make this indicator work"]:format(Cell:GetAccentColorString()..L["Buff Tracker"].."|r")), "enabled", "num:5", "orientation", "size-square", "position", "frameLevel"},
+        ["missingBuffs"] = {I:GetMissingBuffsString().."|cffb7b7b7"..(L["%s in General must be enabled to make this indicator work"]:format(Cell:GetAccentColorString()..L["Buff Tracker"].."|r")), "enabled", "checkbutton:buffByMe", "num:5", "orientation", "size-square", "position", "frameLevel"},
     }
 elseif Cell.isWrath then
     indicatorSettings = {

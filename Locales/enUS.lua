@@ -23,6 +23,7 @@ select(2, ...).L = setmetatable({
     ["dispellableByMe"] = "Only show debuffs dispellable by me",
     ["showDispelTypeIcons"] = "Show dispel type icons",
     ["castByMe"] = "Only show buffs cast by me",
+    ["buffByMe"] = "Only show buffs I can apply",
     ["trackByName"] = "Track by name",
     ["showDuration"] = "Show duration text",
     ["showStack"] = "Show stack text",

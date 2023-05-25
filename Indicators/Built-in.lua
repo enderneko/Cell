@@ -1697,7 +1697,7 @@ function I:CreateMissingBuffs(parent)
     end
 end
 
-local missingBuffsEnabled, missingBuffsNum = false, 0
+local missingBuffsEnabled, missingBuffsNum, missingBuffsOnlyMine = false, 0, false
 function I:EnableMissingBuffs(enabled)
     missingBuffsEnabled = enabled
 
@@ -1706,10 +1706,18 @@ function I:EnableMissingBuffs(enabled)
     end
 end
 
-function I:UpdateMissingBuffsNum(num)
+function I:UpdateMissingBuffsNum(num, noUpdate)
     missingBuffsNum = num
 
-    if missingBuffsEnabled and CellDB["tools"]["buffTracker"][1] then
+    if not noUpdate and missingBuffsEnabled and CellDB["tools"]["buffTracker"][1] then
+        CellBuffTrackerFrame:GROUP_ROSTER_UPDATE(true)
+    end
+end
+
+function I:UpdateMissingBuffsFilter(buffByMe, noUpdate)
+    missingBuffsOnlyMine = buffByMe
+
+    if not noUpdate and missingBuffsEnabled and CellDB["tools"]["buffTracker"][1] then
         CellBuffTrackerFrame:GROUP_ROSTER_UPDATE(true)
     end
 end
@@ -1733,14 +1741,14 @@ function I:HideMissingBuffs(unit, force)
     end
 end
 
-local function ShowMissingBuff(b, index, icon, glow)
+local function ShowMissingBuff(b, index, icon, buffByMe)
     b.indicators.missingBuffs:UpdateSize(index)
     
     local f = b.indicators.missingBuffs[index]
     
     f:SetCooldown(0, 0, nil, icon, 0)
 
-    if glow then
+    if buffByMe then
         LCG.ButtonGlow_Start(f)
         f.glow = true
     else
@@ -1749,16 +1757,17 @@ local function ShowMissingBuff(b, index, icon, glow)
     end
 end
 
-function I:ShowMissingBuff(unit, icon, canProvide)
+function I:ShowMissingBuff(unit, icon, buffByMe)
     if not missingBuffsEnabled then return end
+    if missingBuffsOnlyMine and not buffByMe then return end
     
     missingBuffsCounter[unit] = (missingBuffsCounter[unit] or 0) + 1
 
     if missingBuffsCounter[unit] > missingBuffsNum then return end
 
     local b1, b2 = F:GetUnitButtonByUnit(unit)
-    if b1 then ShowMissingBuff(b1, missingBuffsCounter[unit], icon, canProvide)end
-    if b2 then ShowMissingBuff(b2, missingBuffsCounter[unit], icon, canProvide)end
+    if b1 then ShowMissingBuff(b1, missingBuffsCounter[unit], icon, buffByMe)end
+    if b2 then ShowMissingBuff(b2, missingBuffsCounter[unit], icon, buffByMe)end
 end
 
 -------------------------------------------------

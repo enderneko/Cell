@@ -130,8 +130,9 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
             end
             -- update missingBuffs
             if t["indicatorName"] == "missingBuffs" then
+                I:UpdateMissingBuffsNum(t["num"], true)
+                I:UpdateMissingBuffsFilter(t["buffByMe"], true)
                 I:EnableMissingBuffs(t["enabled"])
-                I:UpdateMissingBuffsNum(t["num"])
             end
             -- update custom
             if t["dispellableByMe"] ~= nil then
@@ -543,6 +544,8 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                     b.indicators[indicatorName]:HideDamager(value2)
                     UnitButton_UpdateRole(b)
                 end, true)
+            elseif value == "buffByMe" then
+                I:UpdateMissingBuffsFilter(value2)
             else
                 indicatorCustoms[indicatorName] = value2
             end
