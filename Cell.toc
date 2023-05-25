@@ -21,7 +21,7 @@ Libs\LoadLibs.xml
 Core.lua
 Utils.lua
 Revise.lua
-Comm.lua
+Comm\LoadComm.xml
 Widgets\LoadWidgets.xml
 Defaults\LoadDefaults.xml
 

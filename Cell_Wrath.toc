@@ -20,7 +20,7 @@ Libs\LoadLibs_Wrath.xml
 Core_Wrath.lua
 Utils.lua
 Revise.lua
-Comm.lua
+Comm\LoadComm.xml
 Widgets\LoadWidgets_Wrath.xml
 Defaults\LoadDefaults_Wrath.xml
 
