@@ -401,8 +401,8 @@ local missingBuffs = {
     1243, -- PWF
     1126, -- MotW
     1459, -- AB
-    6673, -- BS
-    20217, -- BoK
+    14752, -- DS
+    976, -- SP
 }
 
 function I:GetDefaultMissingBuffs()
