@@ -396,7 +396,7 @@ function F:RunSnippets()
         if t["autorun"] then
             local errorMsg = RunSnippet(t["code"])
             if errorMsg then
-                F:Print("|cFFFF3030Snippet Error ("..i.."."..t["name"].."):|r "..errorMsg)
+                F:Print("|cFFFF3030Snippet Error ("..i.."."..(t["name"] or "Cell").."):|r "..errorMsg)
             end
         end
     end
