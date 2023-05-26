@@ -627,7 +627,12 @@ L["Changelogs"] = "更新记录"
 L["Click to view recent changelogs"] = "点击查看近期更新记录"
 L["Click to view older changelogs"] = "点击查看远古更新记录"
 L["CHANGELOGS"] = [[
-    <h1>r170-release (May 25, 2023, 00:21 GMT+8)</h1>
+    <h1>r171-release (May 26, 2023, 19:27 GMT+8)</h1>
+    <p>* 将唤魔师的“灼烧之焰”从驱散检查器中移除。将代码片段中的 CELL_DISPEL_EVOKER_CAUTERIZING_FLAME 设置为 true，可使该法术加入驱散检查。</p>
+    <p>* 更新繁中。</p>
+    <br/>
+
+    <h1>r170-release (May 26, 2023, 00:21 GMT+8)</h1>
     <p>* 更新副本减益：亚贝鲁斯 和 史诗钥石地下城。（感谢钛锬）</p>
     <p>* 更新副本减益：十字军的试炼。（感谢橘子味橙汁）</p>
     <p>* 添加对 NickTag 的支持。要显示 Details! 中设置的昵称，将代码片段中的 CELL_NICKTAG_ENABLED 设置为 true 即可。</p>

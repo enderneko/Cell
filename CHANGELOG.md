@@ -1,13 +1,5 @@
-[Full Changelog](https://github.com/enderneko/Cell/compare/r169-release...05ba9edcd7eff825281bfc07e32e7858ea4eed23)
+[Full Changelog](https://github.com/enderneko/Cell/compare/r170-release...9b8c3413e247712eeb02b100a8d0525ad87d9521)
 
-- Update debuffs for Aberrus and M+
-- Update ToC debuffs
-- Update click-casting macros
-- Fix default click-casting for resurrections
-- Add NickTag support
-- Add buffByMe option to Missing Buffs indicator
-- Add BS and CS to Buff Tracker on Wrath
-- Bring Missing Buffs to Wrath
-- Update name & status font shadow when UI scale changes
-- Update patrons
+- Remove Cauterizing Flame from dispel checker
+- Update missing buffs preview
 - Update zhTW

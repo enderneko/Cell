@@ -69,7 +69,12 @@ select(2, ...).L = setmetatable({
     ["SNIPPETS_TIPS"] = "[Double-Click] to rename. [Shift-Click] to delete. All checked snippets will be automatically invoked at the end of Cell initialization process (in ADDON_LOADED event).",
 
     ["CHANGELOGS"] = [[
-        <h1>r170-release (May 25, 2023, 00:21 GMT+8)</h1>
+        <h1>r171-release (May 26, 2023, 19:27 GMT+8)</h1>
+        <p>* Removed Cauterizing Flame (Evoker) from dispel checker. You can add it back by setting CELL_DISPEL_EVOKER_CAUTERIZING_FLAME to true in Code Snippets.</p>
+        <p>* Updated zhTW.</p>
+        <br/>
+
+        <h1>r170-release (May 26, 2023, 00:21 GMT+8)</h1>
         <p>* Updated raid debuffs: Aberrus and M+. (Thanks to 钛锬)</p>
         <p>* Updated raid debuffs: ToC. (Thanks to 橘子味橙汁)</p>
         <p>* Added support for NickTag. To display nicknames from Details!, set CELL_NICKTAG_ENABLED to true in Code Snippets.</p>
