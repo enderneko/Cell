@@ -1025,7 +1025,7 @@ local function ShowActionsMenu(index, b)
                     P:Point(peb, "TOPLEFT", b.actionGrid)
                     P:Point(peb, "BOTTOMRIGHT", b.actionGrid)
                     peb:SetTips("|cff777777"..L["Input spell id"].."\n"..L["Enter: apply\nESC: discard"])
-                    peb:ShowEditBox(b.bindSpell)
+                    peb:ShowEditBox(b.bindSpell or "")
                     peb:SetNumeric(true)
                 end,
             },
