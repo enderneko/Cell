@@ -413,7 +413,9 @@ function F:GetDefaultSnippet()
             "CELL_SUMMON_ICONS_ENABLED = false\n\n"..
             "-- use separate width and height for custom indicator icons (boolean)\n"..
             "CELL_RECTANGULAR_CUSTOM_INDICATOR_ICONS = false\n\n"..
-            "--Use nicknames from Details! Damage Meter (NickTag-1.0 library)\n"..
-            "CELL_NICKTAG_ENABLED = false",
+            "-- Use nicknames from Details! Damage Meter (NickTag-1.0 library)\n"..
+            "CELL_NICKTAG_ENABLED = false\n\n"..
+            "-- Add Evoker spell Cauterizing Flame into dispel checker\n"..
+            "CELL_DISPEL_EVOKER_CAUTERIZING_FLAME = false",
     }
 end

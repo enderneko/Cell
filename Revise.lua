@@ -1895,7 +1895,7 @@ function F:Revise()
     -- r170-release
     if CellDB["revise"] and dbRevision < 170 then
         if not strfind(CellDB["snippets"][0]["code"], "CELL_NICKTAG_ENABLED") then
-            CellDB["snippets"][0]["code"] = CellDB["snippets"][0]["code"].."\n\n--Use nicknames from Details! Damage Meter (NickTag-1.0 library)\nCELL_NICKTAG_ENABLED = false"
+            CellDB["snippets"][0]["code"] = CellDB["snippets"][0]["code"].."\n\n-- Use nicknames from Details! Damage Meter (NickTag-1.0 library)\nCELL_NICKTAG_ENABLED = false"
         end
 
         if Cell.isWrath then
@@ -1916,6 +1916,13 @@ function F:Revise()
                     })
                 end
             end
+        end
+    end
+
+    -- r171-release
+    if CellDB["revise"] and dbRevision < 171 then
+        if not strfind(CellDB["snippets"][0]["code"], "CELL_DISPEL_EVOKER_CAUTERIZING_FLAME") then
+            CellDB["snippets"][0]["code"] = CellDB["snippets"][0]["code"].."\n\n-- Add Evoker spell Cauterizing Flame into dispel checker\nCELL_DISPEL_EVOKER_CAUTERIZING_FLAME = false"
         end
     end
 

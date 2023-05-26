@@ -493,7 +493,7 @@ function I:CanDispel(dispelType)
     return dispellable[dispelType]
 end
 
-local dispelNodeID = {
+local dispelNodeIDs = {
     -- DRUID ----------------
         -- 102 - Balance
         [102] = {["Curse"] = 82205, ["Poison"] = 82205},
@@ -507,9 +507,9 @@ local dispelNodeID = {
     
     -- EVOKER ---------------
         -- 1467 - Devastation
-        [1467] = {["Curse"] = 68673, ["Disease"] = 68673, ["Poison"] = 68689},
+        [1467] = {["Poison"] = 68689},
         -- 1468	- Preservation
-        [1468] = {["Curse"] = 68673, ["Disease"] = 68673, ["Magic"] = true, ["Poison"] = true},
+        [1468] = {["Magic"] = true, ["Poison"] = true},
     -------------------------
         
     -- MAGE -----------------
@@ -596,8 +596,8 @@ else
         -- update dispellable
         wipe(dispellable)
         local activeConfigID = C_ClassTalents.GetActiveConfigID()
-        if activeConfigID and dispelNodeID[Cell.vars.playerSpecID] then
-            for dispelType, value in pairs(dispelNodeID[Cell.vars.playerSpecID]) do
+        if activeConfigID and dispelNodeIDs[Cell.vars.playerSpecID] then
+            for dispelType, value in pairs(dispelNodeIDs[Cell.vars.playerSpecID]) do
                 if type(value) == "boolean" then
                     dispellable[dispelType] = value
                 else -- number: check node info
@@ -617,6 +617,12 @@ else
     eventFrame:SetScript("OnEvent", function(self, event)
         if event == "PLAYER_ENTERING_WORLD" then
             eventFrame:UnregisterEvent("PLAYER_ENTERING_WORLD")
+            if Cell.vars.playerClass == "EVOKER" and CELL_DISPEL_EVOKER_CAUTERIZING_FLAME then
+                -- 1467 - Devastation
+                dispelNodeIDs[1467] = {["Curse"] = 68673, ["Disease"] = 68673, ["Poison"] = 68689}
+                -- 1468	- Preservation
+                dispelNodeIDs[1468] = {["Curse"] = 68673, ["Disease"] = 68673, ["Magic"] = true, ["Poison"] = true}
+            end
         end
 
         if timer then timer:Cancel() end
