@@ -2,7 +2,7 @@ if not LOCALE_zhTW then return end
 
 local L = select( 2, ...).L
 
-L["%s in General must be enabled to make this indicator work."] = "要使用此指示器，必須先啟用一般標籤頁中的 %s 功能"
+L["%s in General must be enabled to make this indicator work."] = "要使用此指示器，必須先啟用一般標籤頁面中的 %s 功能。"
 L["%s lock %s on %s."] = "%s將%s鎖定在%s。"
 L["%s unlock %s from %s."] = "%s將%s從%s解鎖。"
 L["[Alt+LeftClick] to edit"] = "[Alt+左鍵] 修改"
@@ -69,8 +69,7 @@ L["Buff"] = "增益"
 L["Buff List"] = "增益清單"
 L["Buff Tracker"] = "增益監控"
 L["Buff Tracker icon size is set to %d."] = "將增益監控的圖示大小設為 %d。"
---[[Translation missing --]]
---[[ L["buffByMe"] = "Only show buffs I can apply"--]] 
+L["buffByMe"] = "只顯示我能施放的增益"
 L["Bug Report & Suggestion"] = "回報 Bug & 建議"
 L["Built-in Spells"] = "內建法術"
 L["built-in(s)"] = "內建"
@@ -230,8 +229,7 @@ L["Icon"] = "圖示"
 L["Icons"] = "圖示群組"
 L["IDs separated by whitespaces"] = "用空格分隔多個法術ID"
 L["If disabled, no check, no reply, just glow"] = "停用時，不檢查冷卻，也不回覆密語，只顯示發光。"
---[[Translation missing --]]
---[[ L["If you are a paladin or warrior, and the unit has no buffs from you, a %s icon will be displayed."] = "If you are a paladin or warrior, and the unit has no buffs from you, a %s icon will be displayed."--]] 
+L["If you are a paladin or warrior, and the unit has no buffs from you, a %s icon will be displayed."] = "如果你是聖騎士或戰士，且該單位沒有來自你的增益時，將會顯示%s圖示。"
 L["Import"] = "匯入"
 L["Import & Export All Settings"] = "匯入與匯出所有設定"
 L["Include Nickname Settings"] = "包含暱稱設定"
