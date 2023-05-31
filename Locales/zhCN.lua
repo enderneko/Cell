@@ -556,6 +556,9 @@ L["This will overwrite your debuffs"] = "这将覆盖你的副本减益"
 L["Raid Debuffs updated: %s."] = "已更新副本减益：%s。"
 L["Reset debuffs?"] = "重置减益？"
 L["Current Season"] = "当前赛季"
+L["Want to help improve Raid Debuffs?"] = "想要帮忙完善副本减益嘛？"
+L["Use %s addon"] = "用这个插件 %s"
+L["Then create a PR or submit a ticket on GitHub"] = "然后在GitHub上提交PR或Issue就可以啦"
 
 -------------------------------------------------
 -- glows

@@ -67,9 +67,9 @@ Use __/cell__ for more information.
 
 &nbsp;
 
-## Help perfect Raid Debuffs
+## Want to help improve Raid Debuffs
 
-Use [Instance Spell Collector](https://legacy.curseforge.com/wow/addons/instance-spell-collector) to collect debuffs.
+Use [Instance Spell Collector](https://legacy.curseforge.com/wow/addons/instance-spell-collector) to collect debuffs. Then create a PR or submit a ticket on GitHub.
 
 &nbsp;
 

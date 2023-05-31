@@ -468,6 +468,8 @@ L["Texture"] = "材質"
 L["The priority of spells decreases from top to bottom."] = "法術的優先順序是從上到下降低。"
 L["The spell is required to apply a buff on the target"] = "要求增加的法術能夠在目標上施加增益效果"
 L["The spells list of a icons indicator is unordered (no priority)."] = "圖示指示器的法術清單是不排序的 (無優先順序)。"
+--[[Translation missing --]]
+--[[ L["Then create a PR or submit a ticket on GitHub"] = "Then create a PR or submit a ticket on GitHub"--]] 
 L["These \"reset\" commands below affect all your characters in this account"] = "以下的 \"重置\" 指令會影響此帳號中的所有角色"
 L["Thickness"] = "粗細"
 L["This may overwrite built-in indicators"] = "這可能會覆蓋掉內建的指示器"
@@ -501,6 +503,8 @@ L["Unit's Pet"] = "單位的寵物"
 L["Unlimited"] = "無限制"
 L["Unlock"] = "解鎖"
 L["unnamed"] = "未命名"
+--[[Translation missing --]]
+--[[ L["Use %s addon"] = "Use %s addon"--]] 
 L["Use |cFFFFB5C5/cell buff X|r to set icon size"] = "輸入 |cFFFFB5C5/cell buff X|r 來設定圖示大小"
 L["Use |cFFFFB5C5/cell report X|r to set the number of reports during a raid encounter"] = "輸入 |cFFFFB5C5/cell report X|r 來設定團隊首領戰時要通報的死亡訊息數量"
 L["Use CLEU events to increase health update rate"] = "使用戰鬥記錄事件來增加血條的更新頻率"
@@ -512,6 +516,8 @@ L["Vehicle Name Position"] = "載具名稱位置"
 L["Vertical"] = "垂直"
 L["Vertical Gradient"] = "垂直漸層"
 L["Visibility"] = "顯示"
+--[[Translation missing --]]
+--[[ L["Want to help improve Raid Debuffs?"] = "Want to help improve Raid Debuffs?"--]] 
 L["Width"] = "寬度"
 L["World Marks"] = "世界標記"
 L["Would you like Cell to create a \"Healers\" indicator (icons)?"] = "是否需要 Cell 為你建立治療用的 \"Healers\" 指示器 (圖示群組)?"
