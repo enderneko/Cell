@@ -1,5 +1,5 @@
-[Full Changelog](https://github.com/enderneko/Cell/compare/r170-release...9b8c3413e247712eeb02b100a8d0525ad87d9521)
+[Full Changelog](https://github.com/enderneko/Cell/compare/r171-release...ae0608a30baff79c1d6f6467755f727ff8e0425b)
 
-- Remove Cauterizing Flame from dispel checker
-- Update missing buffs preview
-- Update zhTW
+- Fix general actions of click-castings
+- Fix nil SetText in click-castings
+- Add Instance Spell Collector tips

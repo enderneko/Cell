@@ -630,6 +630,10 @@ L["Changelogs"] = "更新记录"
 L["Click to view recent changelogs"] = "点击查看近期更新记录"
 L["Click to view older changelogs"] = "点击查看远古更新记录"
 L["CHANGELOGS"] = [[
+    <h1>r172-release (May 31, 2023, 16:46 GMT+8)</h1>
+    <p>* 修复点击施法。如果你绑定的快捷键不起作用（尤其是常规类型的），删掉然后重新添加。</p>
+    <br/>
+
     <h1>r171-release (May 26, 2023, 19:27 GMT+8)</h1>
     <p>* 将唤魔师的“灼烧之焰”从驱散检查器中移除。将代码片段中的 CELL_DISPEL_EVOKER_CAUTERIZING_FLAME 设置为 true，可使该法术加入驱散检查。</p>
     <p>* 更新繁中。</p>

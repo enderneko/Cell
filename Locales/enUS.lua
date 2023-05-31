@@ -69,6 +69,10 @@ select(2, ...).L = setmetatable({
     ["SNIPPETS_TIPS"] = "[Double-Click] to rename. [Shift-Click] to delete. All checked snippets will be automatically invoked at the end of Cell initialization process (in ADDON_LOADED event).",
 
     ["CHANGELOGS"] = [[
+        <h1>r172-release (May 31, 2023, 16:46 GMT+8)</h1>
+        <p>* Fixed Click-Castings. If your bindings (especially the General type) don't work, remove them and then re-add them.</p>
+        <br/>
+
         <h1>r171-release (May 26, 2023, 19:27 GMT+8)</h1>
         <p>* Removed Cauterizing Flame (Evoker) from dispel checker. You can add it back by setting CELL_DISPEL_EVOKER_CAUTERIZING_FLAME to true in Code Snippets.</p>
         <p>* Updated zhTW.</p>
