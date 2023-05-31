@@ -1012,7 +1012,7 @@ local function ShowActionsMenu(index, b)
                         text = tonumber(text) or ""
                         if b.bindSpell ~= text then
                             changed[index]["bindAction"] = text
-                            b.actionGrid:SetText(GetSpellInfo(text) or "")
+                            b.actionGrid:SetText(GetSpellInfo(text) or "|cFFFF3030"..L["Invalid"])
                             b:ShowSpellIcon(text)
                         else
                             changed[index]["bindAction"] = nil
@@ -1203,16 +1203,20 @@ end
 -------------------------------------------------
 CreateBindingListButton = function(modifier, bindKey, bindType, bindAction, i)
     local modifierDisplay = modifiersDisplay[F:GetIndex(modifiers, modifier)]
+    local bindKeyDisplay = strlen(bindKey) == 1 and bindKey or L[bindKey]
 
-    local bindSpell
+    local bindActionDisplay, bindSpell
     if bindType == "general" then
-        bindAction = L[bindAction]
+        bindActionDisplay = L[bindAction]
     elseif bindType == "spell" then
-        bindSpell = bindAction
-        bindAction = GetSpellInfo(bindAction) or ""
+        bindSpell = bindAction -- spellId
+        bindAction = GetSpellInfo(bindAction) or "|cFFFF3030"..L["Invalid"] -- spellName
+        bindActionDisplay = bindAction
+    else
+        bindActionDisplay = bindAction
     end
 
-    local b = Cell:CreateBindingListButton(bindingsFrame.scrollFrame.content, modifierDisplay, (bindKey=="P" or bindKey=="T") and bindKey or L[bindKey], L[F:UpperFirst(bindType)], bindAction)
+    local b = Cell:CreateBindingListButton(bindingsFrame.scrollFrame.content, modifierDisplay, bindKeyDisplay, L[F:UpperFirst(bindType)], bindActionDisplay)
     b.modifier, b.bindKey, b.bindType, b.bindAction = modifier, bindKey, bindType, bindAction
     b.bindSpell = bindSpell
 

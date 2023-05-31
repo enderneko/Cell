@@ -2918,7 +2918,7 @@ function addon:CreateBindingButton(parent, width)
         
         parent.bindingButton.text = parent.bindingButton:CreateFontString(nil, "OVERLAY", font_name)
         parent.bindingButton.text:SetPoint("LEFT")
-        parent.bindingButton.text:SetPoint("RIGHT", parent.bindingButton.close, "LEFT")
+        -- parent.bindingButton.text:SetPoint("RIGHT", parent.bindingButton.close, "LEFT")
         parent.bindingButton.text:SetText(L["Press Key to Bind"])
 
         parent.bindingButton:SetScript("OnHide", function()
