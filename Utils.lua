@@ -351,7 +351,10 @@ end
 -------------------------------------------------
 -- string
 -------------------------------------------------
-function F:UpperFirst(str)
+function F:UpperFirst(str, lowerOthers)
+    if lowerOthers then
+        str = strlower(str)
+    end
     return (str:gsub("^%l", string.upper))
 end
 
@@ -1051,6 +1054,7 @@ function F:UnitInGroup(unit, ignorePets)
     end
 end
 
+-- UnitTokenFromGUID
 function F:GetTargetUnitID(target)
     if UnitIsUnit(target, "player") then
         return "player"

@@ -1369,7 +1369,7 @@ if Cell.isRetail then
             "|A:nameplates-icon-orb-orange:18:18|a "..
             "|A:nameplates-icon-orb-purple:18:18|a ", "enabled", "size-square", "position", "frameLevel"},
         ["roleIcon"] = {"enabled", "checkbutton:hideDamager", "size-square", "roleTexture", "position"},
-        ["leaderIcon"] = {"|cffb7b7b7"..L["Leader Icons will hide while in combat"], "enabled", "size-square", "position"},
+        ["leaderIcon"] = {"enabled", "checkbutton:hideInCombat", "size-square", "position"},
         ["readyCheckIcon"] = {"size-square", "frameLevel"},
         ["playerRaidIcon"] = {"enabled", "size-square", "alpha", "position", "frameLevel"},
         ["targetRaidIcon"] = {"enabled", "size-square", "alpha", "position", "frameLevel"},
@@ -1405,7 +1405,7 @@ elseif Cell.isWrath then
             "|A:horde_icon_and_flag-dynamicIcon:18:18|a "..
             "|A:alliance_icon_and_flag-dynamicIcon:18:18|a ", "enabled", "size-square", "position", "frameLevel"},
         ["roleIcon"] = {"enabled", "checkbutton:hideDamager", "size-square", "roleTexture", "position"},
-        ["leaderIcon"] = {"|cffb7b7b7"..L["Leader Icons will hide while in combat"], "enabled", "size-square", "position"},
+        ["leaderIcon"] = {"enabled", "checkbutton:hideInCombat", "size-square", "position"},
         ["readyCheckIcon"] = {"size-square", "frameLevel"},
         ["playerRaidIcon"] = {"enabled", "size-square", "alpha", "position", "frameLevel"},
         ["targetRaidIcon"] = {"enabled", "size-square", "alpha", "position", "frameLevel"},

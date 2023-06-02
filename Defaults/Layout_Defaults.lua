@@ -150,6 +150,7 @@ Cell.defaults.layout = {
             ["indicatorName"] = "leaderIcon",
             ["type"] = "built-in",
             ["enabled"] = true,
+            ["hideInCombat"] = true,
             ["position"] = {"TOPLEFT", "TOPLEFT", 0, -11},
             ["size"] = {11, 11},
         }, -- 7

@@ -1,10 +1,3 @@
---[[
--- File: Layout_Defaults_Wrath.lua
--- Author: enderneko (enderneko-dev@outlook.com)
--- File Created: 2022/08/21 04:06:04 +0800
--- Last Modified: 2023/05/25 21:53:36 +0800
---]]
-
 local addonName, Cell = ...
 
 -- number of built-in indicators
@@ -152,6 +145,7 @@ Cell.defaults.layout = {
             ["indicatorName"] = "leaderIcon",
             ["type"] = "built-in",
             ["enabled"] = true,
+            ["hideInCombat"] = true,
             ["position"] = {"TOPLEFT", "TOPLEFT", 0, -11},
             ["size"] = {11, 11},
         }, -- 7

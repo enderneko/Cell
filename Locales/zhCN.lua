@@ -498,6 +498,7 @@ L["This will make these icons not click-through-able"] = "将会使这些图标�
 L["Tooltips need to be enabled in General tab"] = "需要先启用常规页面中的鼠标提示功能"
 L["Only one threshold is displayed at a time"] = "同一时间只显示一个阈值"
 L["hideDamager"] = "隐藏伤害输出"
+L["hideInCombat"] = "战斗中隐藏"
 
 L["left-to-right"] = "从左到右"
 L["right-to-left"] = "从右到左"
@@ -508,7 +509,6 @@ L["Show countdown swipe"] = "显示倒计时动画"
 L["Show countdown number"] = "显示倒计时文本"
 L["Due to restrictions of the private aura system, this indicator can only use Blizzard style."] = "由于个人光环系统的限制，该指示器只能使用暴雪样式。"
 
-L["Leader Icons will hide while in combat"] = "战斗时队长图标将会隐藏"
 L["You can config debuffs in %s"] = "你可以在 %s 里设置减益"
 L["Indicator settings are part of Layout settings which are account-wide."] = "指示器设置是布局设置的一部分，它们是账号配置而非角色。"
 L["The spells list of a icons indicator is unordered (no priority)."] = "图标组指示器的法术列表是无序的（无优先级）。"

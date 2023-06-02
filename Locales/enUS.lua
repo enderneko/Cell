@@ -33,6 +33,7 @@ select(2, ...).L = setmetatable({
     ["onlyShowTopGlow"] = "Only show glow for the first debuff",
     ["circledStackNums"] = "Circled stack numbers",
     ["hideDamager"] = "Hide Damager",
+    ["hideInCombat"] = "Hide in combat",
 
     ["BOTTOM"] = "Bottom",
     ["BOTTOMLEFT"] = "Bottom Left",

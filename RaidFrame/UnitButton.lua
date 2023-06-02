@@ -147,6 +147,9 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
             if t["onlyShowTopGlow"] ~= nil then
                 indicatorCustoms[t["indicatorName"]] = t["onlyShowTopGlow"]
             end
+            if t["hideInCombat"] ~= nil then
+                indicatorCustoms[t["indicatorName"]] = t["hideInCombat"]
+            end
         end
 
         -- update indicators
@@ -519,6 +522,11 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                 indicatorCustoms[indicatorName] = value2
                 F:IterateAllUnitButtons(function(b)
                     B:UpdateHealthText(b)
+                end, true)
+            elseif value == "hideInCombat" then
+                indicatorCustoms[indicatorName] = value2
+                F:IterateAllUnitButtons(function(b)
+                    UnitButton_UpdateLeader(b)
                 end, true)
             elseif value == "showDispelTypeIcons" then
                 F:IterateAllUnitButtons(function(b)
@@ -1432,7 +1440,7 @@ UnitButton_UpdateLeader = function(self, event)
     local leaderIcon = self.indicators.leaderIcon
 
     if enabledIndicators["leaderIcon"] then
-        if InCombatLockdown() or event == "PLAYER_REGEN_DISABLED" then
+        if indicatorCustoms["leaderIcon"] and (InCombatLockdown() or event == "PLAYER_REGEN_DISABLED") then
             leaderIcon:Hide()
             return
         end

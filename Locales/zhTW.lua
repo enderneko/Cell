@@ -220,6 +220,8 @@ L["hide icon animation"] = "隱藏圖示動畫"
 L["Hide Self (Party Only)"] = "隱藏自己 (僅限小隊)"
 L["hideDamager"] = "隱藏傷害輸出"
 L["hideIfEmptyOrFull"] = "死亡或滿血時隱藏"
+--[[Translation missing --]]
+--[[ L["hideInCombat"] = "Hide in combat"--]] 
 L["HIGH CPU USAGE"] = "高 CPU 使用量"
 L["Highlight Size"] = "顯著標示粗細"
 L["Highlight Type"] = "顯著標示類型"

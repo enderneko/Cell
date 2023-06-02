@@ -1926,6 +1926,17 @@ function F:Revise()
         end
     end
 
+    -- r173-release
+    if CellDB["revise"] and dbRevision < 173 then
+        local leaderIcon = Cell.defaults.indicatorIndices["leaderIcon"]
+
+        for _, layout in pairs(CellDB["layouts"]) do
+            if type(layout["indicators"][leaderIcon]["hideInCombat"]) ~= "boolean" then
+                layout["indicators"][leaderIcon]["hideInCombat"] = true
+            end
+        end
+    end
+
     CellDB["revise"] = Cell.version
     if Cell.isWrath then
         CellCharacterDB["revise"] = Cell.version
