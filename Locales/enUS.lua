@@ -70,6 +70,15 @@ select(2, ...).L = setmetatable({
     ["SNIPPETS_TIPS"] = "[Double-Click] to rename. [Shift-Click] to delete. All checked snippets will be automatically invoked at the end of Cell initialization process (in ADDON_LOADED event).",
 
     ["CHANGELOGS"] = [[
+        <h1>About the M+ Afflicted Souls</h1>
+        <p>I've received some requests about showing Afflicted Souls on Cell. Simply put, due to the limitation of the plugin API, it is not possible. I can make them display on Cell, but these buttons will not be clickable, so there is no need. It is better to use WA.</p>
+        <br/>
+
+        <h1>r173-release (Jun 2, 2023, 18:36 GMT+8)</h1>
+        <p>* Added a "Hide in combat" option for Leader Icon indicator.</p>
+        <p>* Updated zhTW.</p>
+        <br/>
+
         <h1>r172-release (May 31, 2023, 16:46 GMT+8)</h1>
         <p>* Fixed Click-Castings. If your bindings (especially the General type) don't work, remove them and then re-add them.</p>
         <br/>

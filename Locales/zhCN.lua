@@ -630,6 +630,15 @@ L["Changelogs"] = "更新记录"
 L["Click to view recent changelogs"] = "点击查看近期更新记录"
 L["Click to view older changelogs"] = "点击查看远古更新记录"
 L["CHANGELOGS"] = [[
+    <h1>关于受难之魂</h1>
+    <p>最近收到些“让Cell显示受难之魂”的请求。简单地说就是，由于插件API的限制，做不了。让Cell“显示”它们是可行的，但这些按钮是不可交互的，因此没有必要做，不如用WA。</p>
+    <br/>
+
+    <h1>r173-release (Jun 2, 2023, 18:36 GMT+8)</h1>
+    <p>* 为队长图标指示器添加了“战斗中隐藏”的选项。</p>
+    <p>* 更新繁中。</p>
+    <br/>
+
     <h1>r172-release (May 31, 2023, 16:46 GMT+8)</h1>
     <p>* 修复点击施法。如果你绑定的快捷键不起作用（尤其是常规类型的），删掉然后重新添加。</p>
     <br/>

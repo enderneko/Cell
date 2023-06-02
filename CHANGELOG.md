@@ -1,5 +1,4 @@
-[Full Changelog](https://github.com/enderneko/Cell/compare/r171-release...ae0608a30baff79c1d6f6467755f727ff8e0425b)
+[Full Changelog](https://github.com/enderneko/Cell/compare/r172-release...764ad4a8f4698dd3f8858b33396369b5c472beda)
 
-- Fix general actions of click-castings
-- Fix nil SetText in click-castings
-- Add Instance Spell Collector tips
+- Add a hideInCombat option for Leader Icon
+- Update zhTW
