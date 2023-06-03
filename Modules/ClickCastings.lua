@@ -430,7 +430,7 @@ local function ApplyClickCastings(b)
 
             -- "sMaRt" resurrection
             local sMaRt = ""
-            if smartResurrection ~= "disabled" and not F:IsResurrectionForDead(spellName) then
+            if smartResurrection ~= "disabled" and not (F:IsResurrectionForDead(spellName) or F:IsSoulstone(spellName)) then
                 if strfind(smartResurrection, "^normal") then
                     if F:GetNormalResurrection(Cell.vars.playerClass) then
                         sMaRt = sMaRt .. ";[@cell,dead,nocombat] "..F:GetNormalResurrection(Cell.vars.playerClass)
