@@ -513,7 +513,7 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                 -- update format
                 if t["format"] then -- healthText
                     indicator:SetFormat(t["format"])
-                    indicator:SetHealth(21377, 65535)
+                    indicator:SetHealth(21377, 65535, 16384)
                 end
                 -- update orientation
                 if t["orientation"] then
@@ -655,7 +655,7 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
             end
         elseif setting == "format" then
             indicator:SetFormat(value)
-            indicator:SetHealth(21377, 65535)
+            indicator:SetHealth(21377, 65535, 16384)
         elseif setting == "orientation" then
             indicator:SetOrientation(value)
         elseif setting == "font" then

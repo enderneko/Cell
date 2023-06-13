@@ -819,7 +819,7 @@ local function CreateSetting_Format(parent)
         widget = addon:CreateFrame("CellIndicatorSettings_Format", parent, 240, 50)
         settingWidgets["format"] = widget
 
-        widget.format = addon:CreateDropdown(widget, 110)
+        widget.format = addon:CreateDropdown(widget, 245)
         widget.format:SetPoint("TOPLEFT", 5, -20)
         widget.format:SetItems({
             {
@@ -827,6 +827,20 @@ local function CreateSetting_Format(parent)
                 ["value"] = "percentage",
                 ["onClick"] = function()
                     widget.func("percentage")
+                end,
+            },
+            {
+                ["text"] = "32%+25% |cFFB2B2B2+"..L["shields"],
+                ["value"] = "percentage-absorbs",
+                ["onClick"] = function()
+                    widget.func("percentage-absorbs")
+                end,
+            },
+            {
+                ["text"] = "57% |cFFB2B2B2+"..L["shields"],
+                ["value"] = "percentage-absorbs-merged",
+                ["onClick"] = function()
+                    widget.func("percentage-absorbs-merged")
                 end,
             },
             {
@@ -848,6 +862,20 @@ local function CreateSetting_Format(parent)
                 ["value"] = "number-short",
                 ["onClick"] = function()
                     widget.func("number-short")
+                end,
+            },
+            {
+                ["text"] = F:FormatNumber(21377).."+"..F:FormatNumber(16384).." |cFFB2B2B2+"..L["shields"],
+                ["value"] = "number-absorbs-short",
+                ["onClick"] = function()
+                    widget.func("number-absorbs-short")
+                end,
+            },
+            {
+                ["text"] = F:FormatNumber(21377+16384).." |cFFB2B2B2+"..L["shields"],
+                ["value"] = "number-absorbs-merged-short",
+                ["onClick"] = function()
+                    widget.func("number-absorbs-merged-short")
                 end,
             },
             {

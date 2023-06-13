@@ -1316,15 +1316,31 @@ function I:CreateHealthText(parent)
         text:SetTextColor(r, g, b)
     end
 
-    function healthText:SetHealth(current, max)
+    function healthText:SetHealth(current, max, totalAbsorbs)
         if healthText.format == "percentage" then
             text:SetText(string.format("%d%%", current/max*100))
+        elseif healthText.format == "percentage-absorbs" then
+            if totalAbsorbs == 0 then
+                text:SetText(string.format("%d%%", current/max*100))
+            else
+                text:SetText(string.format("%d%%+%d%%", current/max*100, totalAbsorbs/max*100))
+            end
+        elseif healthText.format == "percentage-absorbs-merged" then
+            text:SetText(string.format("%d%%", (current+totalAbsorbs)/max*100))
         elseif healthText.format == "percentage-deficit" then
             text:SetText(string.format("%d%%", (current-max)/max*100))
         elseif healthText.format == "number" then
             text:SetText(current)
         elseif healthText.format == "number-short" then
             text:SetText(F:FormatNumber(current))
+        elseif healthText.format == "number-absorbs-short" then
+            if totalAbsorbs == 0 then
+                text:SetText(F:FormatNumber(current))
+            else
+                text:SetText(F:FormatNumber(current).."+"..F:FormatNumber(totalAbsorbs))
+            end
+        elseif healthText.format == "number-absorbs-merged-short" then
+            text:SetText(F:FormatNumber(current+totalAbsorbs))
         elseif healthText.format == "number-deficit" then
             text:SetText(current-max)
         elseif healthText.format == "number-deficit-short" then

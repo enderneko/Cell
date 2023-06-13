@@ -1223,6 +1223,7 @@ local function UpdateUnitHealthState(self, diff)
 
     self.state.health = health
     self.state.healthMax = healthMax
+    self.state.totalAbsorbs = UnitGetTotalAbsorbs(unit)
 
     if healthMax == 0 then
         self.state.healthPercent = 0
@@ -1251,13 +1252,13 @@ local function UpdateUnitHealthState(self, diff)
     if enabledIndicators["healthText"] and healthMax ~= 0 then
         if health == healthMax or self.state.isDeadOrGhost then
             if not indicatorCustoms["healthText"] then
-                self.indicators.healthText:SetHealth(health, healthMax)
+                self.indicators.healthText:SetHealth(health, healthMax, self.state.totalAbsorbs)
                 self.indicators.healthText:Show()
             else
                 self.indicators.healthText:Hide()
             end
         else
-            self.indicators.healthText:SetHealth(health, healthMax)
+            self.indicators.healthText:SetHealth(health, healthMax, self.state.totalAbsorbs)
             self.indicators.healthText:Show()
         end
     else
@@ -1661,10 +1662,10 @@ local function UnitButton_UpdateShieldAbsorbs(self)
     local unit = self.state.displayedUnit
     if not unit then return end
     
-    local value = UnitGetTotalAbsorbs(unit)
-    if value > 0 then
-        UpdateUnitHealthState(self)
-        local shieldPercent = value / self.state.healthMax
+    UpdateUnitHealthState(self)
+
+    if self.state.totalAbsorbs > 0 then
+        local shieldPercent = self.state.totalAbsorbs / self.state.healthMax
 
         if enabledIndicators["shieldBar"] then
             self.indicators.shieldBar:Show()

@@ -220,8 +220,7 @@ L["hide icon animation"] = "隱藏圖示動畫"
 L["Hide Self (Party Only)"] = "隱藏自己 (僅限小隊)"
 L["hideDamager"] = "隱藏傷害輸出"
 L["hideIfEmptyOrFull"] = "死亡或滿血時隱藏"
---[[Translation missing --]]
---[[ L["hideInCombat"] = "Hide in combat"--]] 
+L["hideInCombat"] = "戰鬥中隱藏"
 L["HIGH CPU USAGE"] = "高 CPU 使用量"
 L["Highlight Size"] = "顯著標示粗細"
 L["Highlight Type"] = "顯著標示類型"
@@ -406,6 +405,8 @@ L["Shadow"] = "陰影"
 L["Share"] = "分享"
 L["Shield Bar"] = "護盾條"
 L["Shield Texture"] = "護盾材質"
+--[[Translation missing --]]
+--[[ L["shields"] = "shields"--]] 
 L["Shift+Enter: add a new line"] = "Shift+Enter: 增加一行"
 L["Shine"] = "閃耀"
 L["show Cell options frame"] = "打開 Cell 設定選項"

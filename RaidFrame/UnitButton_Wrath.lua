@@ -1037,8 +1037,15 @@ end
 -------------------------------------------------
 -- functions
 -------------------------------------------------
+local pwsInfo = {} -- Power Word: Shield
+local daInfo = {} -- Divine Aegis
+-- 64413: Protection of Ancient Kings
+-- 64411: Blessing of Ancient Kings
+local pakInfo = {}
+
 local function UpdateUnitHealthState(self, diff)
     local unit = self.state.displayedUnit
+    local guid = self.state.guid
 
     local health = UnitHealth(unit) + (diff or 0)
     local healthMax = UnitHealthMax(unit)
@@ -1046,6 +1053,11 @@ local function UpdateUnitHealthState(self, diff)
 
     self.state.health = health
     self.state.healthMax = healthMax
+    if guid then
+        self.state.totalAbsorbs = (pwsInfo[guid] or 0) + (daInfo[guid] or 0) + (pakInfo[guid] or 0)
+    else
+        self.state.totalAbsorbs = 0
+    end
 
     if healthMax == 0 then
         self.state.healthPercent = 0
@@ -1074,13 +1086,13 @@ local function UpdateUnitHealthState(self, diff)
     if enabledIndicators["healthText"] and healthMax ~= 0 then
         if health == healthMax or self.state.isDeadOrGhost then
             if not indicatorCustoms["healthText"] then
-                self.indicators.healthText:SetHealth(health, healthMax)
+                self.indicators.healthText:SetHealth(health, healthMax, self.state.totalAbsorbs)
                 self.indicators.healthText:Show()
             else
                 self.indicators.healthText:Hide()
             end
         else
-            self.indicators.healthText:SetHealth(health, healthMax)
+            self.indicators.healthText:SetHealth(health, healthMax, self.state.totalAbsorbs)
             self.indicators.healthText:Show()
         end
     else
@@ -1766,20 +1778,14 @@ end
 -------------------------------------------------
 -- shields
 -------------------------------------------------
-local pwsInfo = {} -- Power Word: Shield
-local daInfo = {} -- Divine Aegis
--- 64413: Protection of Ancient Kings
--- 64411: Blessing of Ancient Kings
-local pakInfo = {}
-
 local function UnitButton_UpdateShieldAbsorbs(self)
-    local guid = self.state.guid
-    if not guid then return end
-    
-    local value = (pwsInfo[guid] or 0) + (daInfo[guid] or 0) + (pakInfo[guid] or 0)
-    if value > 0 then
-        UpdateUnitHealthState(self)
-        local shieldPercent = value / self.state.healthMax
+    local unit = self.state.displayedUnit
+    if not unit then return end
+
+    UpdateUnitHealthState(self)
+
+    if self.state.totalAbsorbs > 0 then
+        local shieldPercent = self.state.totalAbsorbs / self.state.healthMax
 
         if enabledIndicators["shieldBar"] then
             self.indicators.shieldBar:Show()
@@ -2876,7 +2882,7 @@ function F:UnitButton_OnLoad(button)
     shieldBar.SetValue = DumbFunc
 
     -- over-shield glow
-    local overShieldGlow = healthBar:CreateTexture(name.."OverShieldGlow", "ARTWORK", nil, -5)
+    local overShieldGlow = healthBar:CreateTexture(name.."OverShieldGlow", "OVERLAY")
     button.widget.overShieldGlow = overShieldGlow
     overShieldGlow:SetTexture("Interface\\RaidFrame\\Shield-Overshield")
     overShieldGlow:SetBlendMode("ADD")
