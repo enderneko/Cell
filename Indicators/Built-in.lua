@@ -842,7 +842,7 @@ local function PrivateAuras_UpdatePrivateAuraAnchor(self, unit)
         self.unit = unit
         self.auraAnchorID = C_UnitAuras.AddPrivateAuraAnchor({
             unitToken = unit,
-            auraIndex = 2,
+            auraIndex = 1,
             parent = self,
             showCountdownFrame = _showCountdownFrame,
             showCountdownNumbers = _showCountdownNumbers,
