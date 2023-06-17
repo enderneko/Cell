@@ -453,7 +453,7 @@ local function Dispels_SetDispels(self, dispelTypes)
         self.highlight:SetVertexColor(r, g, b, a ~= 0 and 0.5 or 0)
     elseif self.highlightType == "current" then
         self.highlight:SetVertexColor(r, g, b, a)
-    else
+    else -- gradient and gradient-half
         self.highlight:SetGradient("VERTICAL", CreateColor(r, g, b, a), CreateColor(r, g, b, 0))
     end
 end
@@ -530,6 +530,12 @@ function I:CreateDispels(parent)
         elseif highlightType == "gradient" then
             dispels.highlight:ClearAllPoints()
             dispels.highlight:SetAllPoints(parent.widget.healthBar)
+            dispels.highlight:SetTexture("Interface\\Buttons\\WHITE8x8")
+            dispels.highlight:Show()
+        elseif highlightType == "gradient-half" then
+            dispels.highlight:ClearAllPoints()
+            dispels.highlight:SetPoint("BOTTOMLEFT", parent.widget.healthBar)
+            dispels.highlight:SetPoint("TOPRIGHT", parent.widget.healthBar, "RIGHT")
             dispels.highlight:SetTexture("Interface\\Buttons\\WHITE8x8")
             dispels.highlight:Show()
         elseif highlightType == "entire" then

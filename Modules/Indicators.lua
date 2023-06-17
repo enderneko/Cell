@@ -297,6 +297,12 @@ local function InitIndicator(indicatorName)
                 indicator.highlight:SetAllPoints(previewButton.widget.healthBar)
                 indicator.highlight:SetTexture("Interface\\Buttons\\WHITE8x8")
                 indicator.highlight:Show()
+            elseif highlightType == "gradient-half" then
+                indicator.highlight:ClearAllPoints()
+                indicator.highlight:SetPoint("BOTTOMLEFT", previewButton.widget.healthBar)
+                indicator.highlight:SetPoint("TOPRIGHT", previewButton.widget.healthBar, "RIGHT")
+                indicator.highlight:SetTexture("Interface\\Buttons\\WHITE8x8")
+                indicator.highlight:Show()
             elseif highlightType == "entire" then
                 indicator.highlight:ClearAllPoints()
                 indicator.highlight:SetAllPoints(previewButton.widget.healthBar)

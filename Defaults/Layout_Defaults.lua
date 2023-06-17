@@ -283,7 +283,7 @@ Cell.defaults.layout = {
             ["frameLevel"] = 15,
             ["size"] = {12, 12},
             ["dispellableByMe"] = true,
-            ["highlightType"] = "gradient",
+            ["highlightType"] = "gradient-half",
             ["showDispelTypeIcons"] = true,
             ["orientation"] = "right-to-left",
         }, -- 20

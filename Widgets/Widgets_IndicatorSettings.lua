@@ -4290,6 +4290,13 @@ local function CreateSetting_HighlightType(parent)
                 end,
             },
             {
+                ["text"] = L["Gradient"].." - "..L["Health Bar"].." ("..L["Half"]..")",
+                ["value"] = "gradient-half",
+                ["onClick"] = function()
+                    widget.func("gradient-half")
+                end,
+            },
+            {
                 ["text"] = L["Solid"].." - "..L["Health Bar"].." ("..L["Entire"]..")",
                 ["value"] = "entire",
                 ["onClick"] = function()

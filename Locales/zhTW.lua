@@ -202,6 +202,8 @@ L["Group Columns"] = "隊伍直行數"
 L["Group Filter"] = "過濾隊伍"
 L["Group Rows"] = "隊伍橫列數"
 L["Group Spacing"] = "隊伍間距"
+--[[Translation missing --]]
+--[[ L["Half"] = "Half"--]] 
 L["Heal Absorb"] = "治療吸收"
 L["Heal Prediction"] = "治療預估"
 L["Health Bar"] = "血量條"
