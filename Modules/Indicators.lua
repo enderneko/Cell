@@ -1360,7 +1360,7 @@ local function CreateSettingsPane()
     settingsFrame:Show()
     
     Cell:CreateScrollFrame(settingsFrame)
-    settingsFrame.scrollFrame:SetScrollStep(35)
+    settingsFrame.scrollFrame:SetScrollStep(50)
 end
 
 local indicatorSettings

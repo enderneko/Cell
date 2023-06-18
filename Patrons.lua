@@ -39,6 +39,7 @@ local patrons = {
     {"Hardpp-Illidan (US)", "hardpp", "六月的奶德-艾露恩"},
     {"握握-暗影之月 (TW)", "wowo"},
     {"千雪之心 (爱发电)", "qianxuezhixin"},
+    {"朝 (爱发电)", "chao"},
 }
 
 -- sort
