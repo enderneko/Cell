@@ -10,35 +10,9 @@ local F = Cell.funcs
 local I = Cell.iFuncs
 local P = Cell.pixelPerfectFuncs
 
-local function BarIcon_SetFont(frame, font, size, flags, xOffset, yOffset)
-    font = F:GetFont(font)
-
-    if flags == "Shadow" then
-        frame.stack:SetFont(font, size, "")
-        frame.stack:SetShadowOffset(1, -1)
-        frame.stack:SetShadowColor(0, 0, 0, 1)
-        frame.duration:SetFont(font, size, "")
-        frame.duration:SetShadowOffset(1, -1)
-        frame.duration:SetShadowColor(0, 0, 0, 1)
-    else
-        if flags == "None" then
-            flags = ""
-        elseif flags == "Outline" then
-            flags = "OUTLINE"
-        else
-            flags = "OUTLINE, MONOCHROME"
-        end
-        frame.stack:SetFont(font, size, flags)
-        frame.stack:SetShadowOffset(0, 0)
-        frame.stack:SetShadowColor(0, 0, 0, 0)
-        frame.duration:SetFont(font, size, flags)
-        frame.duration:SetShadowOffset(0, 0)
-        frame.duration:SetShadowColor(0, 0, 0, 0)
-    end
-    P:ClearPoints(frame.stack)
-    P:Point(frame.stack, "TOPRIGHT", frame.textFrame, "TOPRIGHT", xOffset, yOffset)
-    P:ClearPoints(frame.duration)
-    P:Point(frame.duration, "BOTTOMRIGHT", frame.textFrame, "BOTTOMRIGHT", xOffset, -yOffset)
+local function BarIcon_SetFont(frame, font1, font2)
+    I:SetFont(frame.stack, frame.textFrame, unpack(font1))
+    I:SetFont(frame.duration, frame.textFrame, unpack(font2))
 end
 
 local function BarIcon_SetCooldown(frame, start, duration, debuffType, texture, count, refreshing)
@@ -92,7 +66,7 @@ local function BarIcon_SetCooldown(frame, start, duration, debuffType, texture, 
                         frame.duration:SetTextColor(Cell.vars.iconDurationColors[1][1], Cell.vars.iconDurationColors[1][2], Cell.vars.iconDurationColors[1][3])
                     end
                 else
-                    frame.duration:SetTextColor(1, 1, 1)
+                    frame.duration:SetTextColor(frame.duration.r, frame.duration.g, frame.duration.b)
                 end
 
                 -- format
@@ -117,7 +91,7 @@ local function BarIcon_SetCooldown(frame, start, duration, debuffType, texture, 
 
     local r, g, b
     if COLOR_BORDER_BY_DISPEL_TYPE and debuffType then
-        r, g, b = DebuffTypeColor[debuffType].r, DebuffTypeColor[debuffType].g, DebuffTypeColor[debuffType].b
+        r, g, b = I:GetDebuffTypeColor(debuffType)
     else
         r, g, b = 0, 0, 0
     end
