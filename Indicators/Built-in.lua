@@ -46,6 +46,10 @@ local function Cooldowns_SetFont(self, ...)
     end
 end
 
+-- local function DurationText_SetFont(self, ...)
+--     I:SetFont(self.duration, self.textFrame, ...)
+-- end
+
 local function Cooldowns_ShowDuration(self, show)
     for i = 1, 5 do
         self[i]:ShowDuration(show)
@@ -120,12 +124,6 @@ function I:CreateDefensiveCooldowns(parent)
         local name = parent:GetName().."DefensiveCooldown"..i
         local frame = I:CreateAura_BarIcon(name, defensiveCooldowns)
         tinsert(defensiveCooldowns, frame)
-
-        -- if i == 1 then
-        --     P:Point(frame, "TOPLEFT")
-        -- else
-        --     P:Point(frame, "LEFT", defensiveCooldowns[i-1], "RIGHT", -1, 0)
-        -- end
     end
 end
 

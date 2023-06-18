@@ -34,6 +34,8 @@ select(2, ...).L = setmetatable({
     ["circledStackNums"] = "Circled stack numbers",
     ["hideDamager"] = "Hide Damager",
     ["hideInCombat"] = "Hide in combat",
+    ["stackFont"] = "Stack Font",
+    ["durationFont"] = "Duration Font",
 
     ["BOTTOM"] = "Bottom",
     ["BOTTOMLEFT"] = "Bottom Left",

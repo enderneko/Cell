@@ -1936,6 +1936,32 @@ function F:Revise()
             end
         end
     end
+    
+    -- r174-release
+    if CellDB["revise"] and dbRevision < 174 then
+        for _, layout in pairs(CellDB["layouts"]) do
+            for _, indicator in pairs(layout["indicators"]) do
+                local name = indicator["indicatorName"]
+                local type = indicator["type"]
+                local font = indicator["font"]
+
+                if font and #font == 5 then
+                    if name == "debuffs" or name == "raidDebuffs" or name == "externalCooldowns" or name == "defensiveCooldowns" or name == "allCooldowns" or type == "icon" or type == "icons" then
+                        indicator["font"] = {
+                            {font[1], font[2], font[3], "TOPRIGHT", font[4], font[5], {1, 1, 1}}, -- stackFont
+                            {font[1], font[2], font[3], "BOTTOMRIGHT", font[4], -font[5], {1, 1, 1}}, -- durationFont
+                        }
+
+                    elseif name == "targetedSpells" then
+                        indicator["font"] = {font[1], font[2], font[3], "TOPRIGHT", font[4], font[5], {1, 1, 1}}
+
+                    elseif type == "bar" or type == "rect" then
+                        indicator["font"] = {font[1], font[2], font[3], "CENTER", font[4], font[5], {1, 1, 1}}
+                    end
+                end
+            end
+        end
+    end
 
     CellDB["revise"] = Cell.version
     if Cell.isWrath then

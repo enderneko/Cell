@@ -400,12 +400,12 @@ local function InitIndicator(indicatorName)
         indicator:SetCount(3)
 
     elseif indicatorName == "externalCooldowns" then
-        local icons = {135936, 572025, 135966, 627485, 237542}
+        local icons = {135936, 135964, 135966, 237510, 237542}
         for i = 1, 5 do
             SetOnUpdate(indicator[i], nil, icons[i], 0)
         end
     elseif indicatorName == "defensiveCooldowns" then
-        local icons = {135919, 136120, 538565, 132362, 132199}
+        local icons = {135919, 136120, 135841, 132362, 132199}
         for i = 1, 5 do
             SetOnUpdate(indicator[i], nil, icons[i], 0)
         end
@@ -1160,7 +1160,10 @@ local function CreateListPane()
                     ["position"] = {"TOPRIGHT", "TOPRIGHT", 0, 3},
                     ["frameLevel"] = 5,
                     ["size"] = {13, 13},
-                    ["font"] = {"Cell ".._G.DEFAULT, 11, "Outline", 2, 1},
+                    ["font"] = {
+                        {"Cell ".._G.DEFAULT, 11, "Outline", "TOPRIGHT", 2, 1, {1, 1, 1}},
+                        {"Cell ".._G.DEFAULT, 11, "Outline", "BOTTOMRIGHT", 2, -1, {1, 1, 1}},
+                    },
                     ["showDuration"] = false,
                     ["auraType"] = indicatorAuraType,
                     ["auras"] = {},
@@ -1195,7 +1198,7 @@ local function CreateListPane()
                     ["size"] = {18, 4},
                     ["colors"] = {{0,1,0}, {1,1,0,0.5}, {1,0,0,3}},
                     ["orientation"] = "horizontal",
-                    ["font"] = {"Cell ".._G.DEFAULT, 11, "Outline", 0, 0},
+                    ["font"] = {"Cell ".._G.DEFAULT, 11, "Outline", "CENTER", 0, 0, {1, 1, 1}},
                     ["showStack"] = false,
                     ["auraType"] = indicatorAuraType,
                     ["auras"] = {},
@@ -1210,7 +1213,7 @@ local function CreateListPane()
                     ["frameLevel"] = 5,
                     ["size"] = {11, 4},
                     ["colors"] = {{0,1,0}, {1,1,0,0.5}, {1,0,0,3}},
-                    ["font"] = {"Cell ".._G.DEFAULT, 11, "Outline", 0, 0},
+                    ["font"] = {"Cell ".._G.DEFAULT, 11, "Outline", "CENTER", 0, 0, {1, 1, 1}},
                     ["showStack"] = false,
                     ["auraType"] = indicatorAuraType,
                     ["auras"] = {},
@@ -1226,7 +1229,10 @@ local function CreateListPane()
                     ["size"] = {13, 13},
                     ["num"] = 3,
                     ["orientation"] = "right-to-left",
-                    ["font"] = {"Cell ".._G.DEFAULT, 11, "Outline", 2, 1},
+                    ["font"] = {
+                        {"Cell ".._G.DEFAULT, 11, "Outline", "TOPRIGHT", 2, 1, {1, 1, 1}},
+                        {"Cell ".._G.DEFAULT, 11, "Outline", "BOTTOMRIGHT", 2, -1, {1, 1, 1}},
+                    },
                     ["showDuration"] = false,
                     ["auraType"] = indicatorAuraType,
                     ["auras"] = {},
@@ -1360,9 +1366,9 @@ end
 local indicatorSettings
 if Cell.isRetail then
     indicatorSettings = {
-        ["nameText"] = {"enabled", "nameColor", "textWidth", "checkbutton:showGroupNumber", "vehicleNamePosition", "namePosition", "font-noOffset", "frameLevel"},
-        ["statusText"] = {"enabled", "statusColors", "statusPosition", "font-noOffset", "frameLevel"},
-        ["healthText"] = {"enabled", "format", "checkbutton:hideIfEmptyOrFull", "color", "font-noOffset", "position", "frameLevel"},
+        ["nameText"] = {"enabled", "nameColor", "textWidth", "checkbutton:showGroupNumber", "vehicleNamePosition", "namePosition", "frameLevel", "font-noOffset"},
+        ["statusText"] = {"enabled", "statusColors", "statusPosition", "frameLevel", "font-noOffset"},
+        ["healthText"] = {"enabled", "format", "checkbutton:hideIfEmptyOrFull", "color", "position", "frameLevel", "font-noOffset"},
         ["statusIcon"] = {
             -- "|A:dungeonskull:18:18|a "..
             "|TInterface\\LFGFrame\\LFG-Eye:18:18:0:0:512:256:72:120:72:120|t "..
@@ -1384,25 +1390,25 @@ if Cell.isRetail then
         ["aggroBar"] = {"enabled", "size-bar", "position", "frameLevel"},
         ["shieldBar"] = {"enabled", "color-alpha", "height", "position-noHCenter", "frameLevel"},
         ["aoeHealing"] = {"enabled", "color", "height"},
-        ["externalCooldowns"] = {L["Even if disabled, the settings below affect \"Externals + Defensives\" indicator"], "enabled", "builtInExternals", "customExternals", "durationVisibility", "num:5", "orientation", "size", "font", "position", "frameLevel"},
-        ["defensiveCooldowns"] = {L["Even if disabled, the settings below affect \"Externals + Defensives\" indicator"], "enabled", "builtInDefensives", "customDefensives", "durationVisibility", "num:5", "orientation", "size", "font", "position", "frameLevel"},
-        ["allCooldowns"] = {"enabled", "durationVisibility", "num:5", "orientation", "size", "font", "position", "frameLevel"},
+        ["externalCooldowns"] = {L["Even if disabled, the settings below affect \"Externals + Defensives\" indicator"], "enabled", "builtInExternals", "customExternals", "durationVisibility", "num:5", "orientation", "size", "position", "frameLevel", "font1:stackFont", "font2:durationFont"},
+        ["defensiveCooldowns"] = {L["Even if disabled, the settings below affect \"Externals + Defensives\" indicator"], "enabled", "builtInDefensives", "customDefensives", "durationVisibility", "num:5", "orientation", "size", "position", "frameLevel", "font1:stackFont", "font2:durationFont"},
+        ["allCooldowns"] = {"enabled", "durationVisibility", "num:5", "orientation", "size", "position", "frameLevel", "font1:stackFont", "font2:durationFont"},
         ["tankActiveMitigation"] = {"|cffb7b7b7"..I:GetTankActiveMitigationString(), "enabled", "size-bar", "position", "frameLevel"},
         ["dispels"] = {"enabled", "checkbutton:dispellableByMe", "highlightType", "checkbutton2:showDispelTypeIcons", "orientation", "size-square", "position", "frameLevel"},
-        ["debuffs"] = {"enabled", "checkbutton:dispellableByMe", "blacklist", "bigDebuffs", "durationVisibility", "checkbutton3:showTooltip:"..L["This will make these icons not click-through-able"].."|"..L["Tooltips need to be enabled in General tab"], "num:10", "orientation", "size-normal-big", "font", "position", "frameLevel"},
-        ["raidDebuffs"] = {"|cffb7b7b7"..L["You can config debuffs in %s"]:format(Cell:GetAccentColorString()..L["Raid Debuffs"].."|r"), "enabled", "checkbutton:onlyShowTopGlow", "cleuAuras", "checkbutton2:showTooltip:"..L["This will make these icons not click-through-able"].."|"..L["Tooltips need to be enabled in General tab"], "num:3", "orientation", "size-border", "font", "position", "frameLevel"},
+        ["debuffs"] = {"enabled", "checkbutton:dispellableByMe", "blacklist", "bigDebuffs", "durationVisibility", "checkbutton3:showTooltip:"..L["This will make these icons not click-through-able"].."|"..L["Tooltips need to be enabled in General tab"], "num:10", "orientation", "size-normal-big", "position", "frameLevel", "font1:stackFont", "font2:durationFont"},
+        ["raidDebuffs"] = {"|cffb7b7b7"..L["You can config debuffs in %s"]:format(Cell:GetAccentColorString()..L["Raid Debuffs"].."|r"), "enabled", "checkbutton:onlyShowTopGlow", "cleuAuras", "checkbutton2:showTooltip:"..L["This will make these icons not click-through-able"].."|"..L["Tooltips need to be enabled in General tab"], "num:3", "orientation", "size-border", "position", "frameLevel", "font1:stackFont", "font2:durationFont"},
         ["privateAuras"] = {"|cffb7b7b7"..L["Due to restrictions of the private aura system, this indicator can only use Blizzard style."], "enabled", "privateAuraOptions", "size-square", "position", "frameLevel"},
-        ["targetedSpells"] = {"enabled", "targetedSpellsList", "targetedSpellsGlow", "size-border", "font", "position", "frameLevel"},
-        ["targetCounter"] = {"|cffff2727"..L["HIGH CPU USAGE"].."!|r |cffb7b7b7"..L["Check all visible enemy nameplates. Battleground/Arena only."], "enabled", "color", "font-noOffset", "position", "frameLevel"},
+        ["targetedSpells"] = {"enabled", "targetedSpellsList", "targetedSpellsGlow", "size-border", "position", "frameLevel", "font"},
+        ["targetCounter"] = {"|cffff2727"..L["HIGH CPU USAGE"].."!|r |cffb7b7b7"..L["Check all visible enemy nameplates. Battleground/Arena only."], "enabled", "color", "position", "frameLevel", "font-noOffset"},
         ["consumables"] = {"enabled", "consumablesPreview", "consumablesList"},
         ["healthThresholds"] = {"enabled", "thresholds", "thickness"},
         ["missingBuffs"] = {I:GetMissingBuffsString().."|cffb7b7b7"..(L["%s in General must be enabled to make this indicator work."]:format(Cell:GetAccentColorString()..L["Buff Tracker"].."|r")), "enabled", "checkbutton:buffByMe", "num:5", "orientation", "size-square", "position", "frameLevel"},
     }
 elseif Cell.isWrath then
     indicatorSettings = {
-        ["nameText"] = {"enabled", "nameColor", "textWidth", "checkbutton:showGroupNumber", "vehicleNamePosition", "namePosition", "font-noOffset", "frameLevel"},
-        ["statusText"] = {"enabled", "statusColors", "statusPosition", "font-noOffset", "frameLevel"},
-        ["healthText"] = {"enabled", "format", "checkbutton:hideIfEmptyOrFull", "color", "font-noOffset", "position", "frameLevel"},
+        ["nameText"] = {"enabled", "nameColor", "textWidth", "checkbutton:showGroupNumber", "vehicleNamePosition", "namePosition", "frameLevel", "font-noOffset"},
+        ["statusText"] = {"enabled", "statusColors", "statusPosition", "frameLevel", "font-noOffset"},
+        ["healthText"] = {"enabled", "format", "checkbutton:hideIfEmptyOrFull", "color", "position", "frameLevel", "font-noOffset"},
         ["statusIcon"] = {
             -- "|A:dungeonskull:18:18|a "..
             "|TInterface\\LFGFrame\\LFG-Eye:18:18:0:0:512:256:72:120:72:120|t "..
@@ -1421,14 +1427,14 @@ elseif Cell.isWrath then
         ["shieldBar"] = {"enabled", "color-alpha", "height", "position-noHCenter", "frameLevel"},
         -- ["powerWordShield"] = {"enabled", "size-border", "position", "frameLevel"},
         ["aoeHealing"] = {"enabled", "color", "height"},
-        ["externalCooldowns"] = {L["Even if disabled, the settings below affect \"Externals + Defensives\" indicator"], "enabled", "builtInExternals", "customExternals", "durationVisibility", "num:5", "orientation", "size", "font", "position", "frameLevel"},
-        ["defensiveCooldowns"] = {L["Even if disabled, the settings below affect \"Externals + Defensives\" indicator"], "enabled", "builtInDefensives", "customDefensives", "durationVisibility", "num:5", "orientation", "size", "font", "position", "frameLevel"},
-        ["allCooldowns"] = {"enabled", "durationVisibility", "num:5", "orientation", "size", "font", "position", "frameLevel"},
+        ["externalCooldowns"] = {L["Even if disabled, the settings below affect \"Externals + Defensives\" indicator"], "enabled", "builtInExternals", "customExternals", "durationVisibility", "num:5", "orientation", "size", "position", "frameLevel", "font1:stackFont", "font2:durationFont"},
+        ["defensiveCooldowns"] = {L["Even if disabled, the settings below affect \"Externals + Defensives\" indicator"], "enabled", "builtInDefensives", "customDefensives", "durationVisibility", "num:5", "orientation", "size", "position", "frameLevel", "font1:stackFont", "font2:durationFont"},
+        ["allCooldowns"] = {"enabled", "durationVisibility", "num:5", "orientation", "size", "position", "frameLevel", "font1:stackFont", "font2:durationFont"},
         ["dispels"] = {"enabled", "checkbutton:dispellableByMe", "highlightType", "checkbutton2:showDispelTypeIcons", "orientation", "size-square", "position", "frameLevel"},
-        ["debuffs"] = {"enabled", "checkbutton:dispellableByMe", "blacklist", "bigDebuffs", "durationVisibility", "checkbutton3:showTooltip:"..L["This will make these icons not click-through-able"].."|"..L["Tooltips need to be enabled in General tab"], "num:10", "orientation", "size-normal-big", "font", "position", "frameLevel"},
-        ["raidDebuffs"] = {"|cffb7b7b7"..L["You can config debuffs in %s"]:format(Cell:GetAccentColorString()..L["Raid Debuffs"].."|r"), "enabled", "checkbutton:onlyShowTopGlow", "checkbutton2:showTooltip:"..L["This will make these icons not click-through-able"].."|"..L["Tooltips need to be enabled in General tab"], "num:3", "orientation", "size-border", "font", "position", "frameLevel"},
-        ["targetedSpells"] = {"enabled", "targetedSpellsList", "targetedSpellsGlow", "size-border", "font", "position", "frameLevel"},
-        ["targetCounter"] = {"|cffff2727"..L["HIGH CPU USAGE"].."!|r |cffb7b7b7"..L["Check all visible enemy nameplates. Battleground/Arena only."], "enabled", "color", "font-noOffset", "position", "frameLevel"},
+        ["debuffs"] = {"enabled", "checkbutton:dispellableByMe", "blacklist", "bigDebuffs", "durationVisibility", "checkbutton3:showTooltip:"..L["This will make these icons not click-through-able"].."|"..L["Tooltips need to be enabled in General tab"], "num:10", "orientation", "size-normal-big", "position", "frameLevel", "font1:stackFont", "font2:durationFont"},
+        ["raidDebuffs"] = {"|cffb7b7b7"..L["You can config debuffs in %s"]:format(Cell:GetAccentColorString()..L["Raid Debuffs"].."|r"), "enabled", "checkbutton:onlyShowTopGlow", "checkbutton2:showTooltip:"..L["This will make these icons not click-through-able"].."|"..L["Tooltips need to be enabled in General tab"], "num:3", "orientation", "size-border", "position", "frameLevel", "font1:stackFont", "font2:durationFont"},
+        ["targetedSpells"] = {"enabled", "targetedSpellsList", "targetedSpellsGlow", "size-border", "position", "frameLevel", "font"},
+        ["targetCounter"] = {"|cffff2727"..L["HIGH CPU USAGE"].."!|r |cffb7b7b7"..L["Check all visible enemy nameplates. Battleground/Arena only."], "enabled", "color", "position", "frameLevel", "font-noOffset"},
         ["consumables"] = {"enabled", "consumablesPreview", "consumablesList"},
         ["healthThresholds"] = {"enabled", "thresholds", "thickness"},
         ["missingBuffs"] = {"|cffb7b7b7"..(L["%s in General must be enabled to make this indicator work."]:format(Cell:GetAccentColorString()..L["Buff Tracker"].."|r")).." "..(L["If you are a paladin or warrior, and the unit has no buffs from you, a %s icon will be displayed."]:format("|T254882:14:14:0:0:14:14:1:13:1:13|t")), "enabled", "checkbutton:buffByMe", "num:5", "orientation", "size-square", "position", "frameLevel"},
@@ -1454,19 +1460,19 @@ local function ShowIndicatorSettings(id)
         -- end
     else
         if indicatorType == "icon" then
-            settingsTable = {"enabled", "auras", "durationVisibility", "position", "frameLevel", CELL_RECTANGULAR_CUSTOM_INDICATOR_ICONS and "size" or "size-square", "font"}
+            settingsTable = {"enabled", "auras", "durationVisibility", CELL_RECTANGULAR_CUSTOM_INDICATOR_ICONS and "size" or "size-square", "position", "frameLevel", "font1:stackFont", "font2:durationFont"}
         elseif indicatorType == "text" then
             settingsTable = {"enabled", "auras", "duration", "checkbutton3:circledStackNums:"..L["Require font support"], "colors", "position", "frameLevel", "font-noOffset"}
         elseif indicatorType == "bar" then
-            settingsTable = {"enabled", "auras", "colors", "checkbutton3:showStack", "barOrientation", "position", "frameLevel", "size-bar", "font"}
+            settingsTable = {"enabled", "auras", "colors", "checkbutton3:showStack", "barOrientation", "size-bar", "position", "frameLevel", "font"}
         elseif indicatorType == "rect" then
-            settingsTable = {"enabled", "auras", "colors", "checkbutton3:showStack", "position", "frameLevel", "size", "font"}
+            settingsTable = {"enabled", "auras", "colors", "checkbutton3:showStack", "size", "position", "frameLevel", "font"}
         elseif indicatorType == "icons" then
-            settingsTable = {"enabled", "auras", "durationVisibility", "num:10", "orientation", "position", "frameLevel", CELL_RECTANGULAR_CUSTOM_INDICATOR_ICONS and "size" or "size-square", "font"}
+            settingsTable = {"enabled", "auras", "durationVisibility", "num:10", "orientation", CELL_RECTANGULAR_CUSTOM_INDICATOR_ICONS and "size" or "size-square", "position", "frameLevel", "font1:stackFont", "font2:durationFont"}
         elseif indicatorType == "color" then
             settingsTable = {"enabled", "auras", "customColors", "anchor"}
         elseif indicatorType == "texture" then
-            settingsTable = {"enabled", "auras", "texture", "position", "frameLevel", "size"}
+            settingsTable = {"enabled", "auras", "texture", "size", "position", "frameLevel"}
         end
        
         if currentLayoutTable["indicators"][id]["auraType"] == "buff" then
@@ -1492,7 +1498,7 @@ local function ShowIndicatorSettings(id)
     local height = 0
     for i, w in pairs(widgets) do
         if last then
-            w:SetPoint("TOPLEFT", last, "BOTTOMLEFT", 0, -7)
+            w:SetPoint("TOPLEFT", last, "BOTTOMLEFT", 0, -10)
         else
             w:SetPoint("TOPLEFT")
         end
@@ -1510,9 +1516,13 @@ local function ShowIndicatorSettings(id)
         if currentSetting == "durationVisibility" then currentSetting = "showDuration" end
         
         -- echo
-        if string.find(currentSetting, "checkbutton") then
+        if string.find(currentSetting, "^checkbutton") then
             local _, setting, tooltip = string.split(":", currentSetting)
             w:SetDBValue(setting, currentLayoutTable["indicators"][id][setting], tooltip)
+        elseif string.find(currentSetting, "^font%d") then
+            local index, setting = strmatch(currentSetting, "^font(%d):(.+)")
+            index = tonumber(index)
+            w:SetDBValue(currentLayoutTable["indicators"][id]["font"][index], setting)
         elseif currentSetting == "auras" then
             -- TODO: indicatorType == "bars"
             w:SetDBValue(L[F:UpperFirst(currentLayoutTable["indicators"][id]["auraType"]).." List"], currentLayoutTable["indicators"][id]["auras"], indicatorType == "icons", indicatorType == "icons")
@@ -1564,6 +1574,9 @@ local function ShowIndicatorSettings(id)
                     local setting = select(2,string.split(":", currentSetting))
                     currentLayoutTable["indicators"][id][setting] = value
                     Cell:Fire("UpdateIndicators", notifiedLayout, indicatorName, "checkbutton", setting, value) -- indicatorName, setting, value, value2
+                elseif currentSetting == "font" or string.find(currentSetting, "^font%d") then
+                    -- NOTE: values already changed in widget
+                    Cell:Fire("UpdateIndicators", notifiedLayout, indicatorName, "font", currentLayoutTable["indicators"][id]["font"])
                 elseif currentSetting == "auras" then
                     -- currentLayoutTable["indicators"][id][currentSetting] = value -- NOTE: already changed in widget
                     Cell:Fire("UpdateIndicators", notifiedLayout, indicatorName, currentSetting, currentLayoutTable["indicators"][id]["auraType"], value)
@@ -1630,7 +1643,7 @@ local function ShowIndicatorSettings(id)
         end)
     end
 
-    settingsFrame.scrollFrame:SetContentHeight(height + (#widgets-1)*7)
+    settingsFrame.scrollFrame:SetContentHeight(height + (#widgets-1)*10)
 
     if string.find(indicatorName, "indicator") then
         renameBtn:SetEnabled(true)

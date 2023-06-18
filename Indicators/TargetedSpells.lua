@@ -182,27 +182,8 @@ function I:CreateTargetedSpells(parent)
         frame:Show()
     end
 
-    function frame:SetFont(font, size, flags, horizontalOffset)
-        font = F:GetFont(font)
-
-        if flags == "Shadow" then
-            frame.stack:SetFont(font, size, "")
-            frame.stack:SetShadowOffset(1, -1)
-            frame.stack:SetShadowColor(0, 0, 0, 1)
-        else
-            if flags == "None" then
-                flags = ""
-            elseif flags == "Outline" then
-                flags = "OUTLINE"
-            else
-                flags = "OUTLINE, MONOCHROME"
-            end
-            frame.stack:SetFont(font, size, flags)
-            frame.stack:SetShadowOffset(0, 0)
-            frame.stack:SetShadowColor(0, 0, 0, 0)
-        end
-        frame.stack:ClearAllPoints()
-        frame.stack:SetPoint("TOPRIGHT", horizontalOffset, 1)
+    function frame:SetFont(font, size, flags, anchor, xOffset, yOffset)
+        I:SetFont(frame.stack, frame, font, size, flags, anchor, xOffset, yOffset)
     end
 
     function frame:ShowGlow(glowType, color, arg1, arg2, arg3, arg4)

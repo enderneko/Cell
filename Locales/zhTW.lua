@@ -156,6 +156,8 @@ L["Display One Decimal Place When"] = "圖示持續時間顯示一位小數於"
 L["Do nothing if requested spell/buff already exists on requester"] = "若增益已存在於請求者身上，則不發光"
 L["DRINKING"] = "喝水"
 L["Due to restrictions of the private aura system, this indicator can only use Blizzard style."] = "由於個人光環系統的限制，該指示器只能使用暴雪樣式。"
+--[[Translation missing --]]
+--[[ L["durationFont"] = "Duration Font"--]] 
 L["Edit"] = "編輯"
 L["Edit spell"] = "修改法術"
 L["EN"] = "英"
@@ -449,6 +451,8 @@ L["Spells"] = "法術"
 L["Spotlight Button"] = "特別關注按鈕"
 L["Spotlight Frame"] = "特別關注框架"
 L["spotlightTips"] = "左鍵: |cffffffff選單|r\n右鍵: |cffffffff清除|r\n左鍵拖曳: |cffffffff設為目標單位 (非戰鬥中)|r\n右鍵拖曳: |cffffffff設為目標單位的寵物 (非戰鬥中)|r"
+--[[Translation missing --]]
+--[[ L["stackFont"] = "Stack Font"--]] 
 L["Status Icon"] = "狀態圖示"
 L["Status Text"] = "狀態文字"
 L["Status Text Position"] = "狀態文字位置"
@@ -476,6 +480,8 @@ L["Then create a PR or submit a ticket on GitHub"] = "然後在 GitHub 上提交
 L["These \"reset\" commands below affect all your characters in this account"] = "以下的 \"重置\" 指令會影響此帳號中的所有角色"
 L["Thickness"] = "粗細"
 L["This may overwrite built-in indicators"] = "這可能會覆蓋掉內建的指示器"
+--[[Translation missing --]]
+--[[ L["This setting will be ignored, if the %1$s option in %2$s tab is checked"] = "This setting will be ignored, if the %1$s option in %2$s tab is checked"--]] 
 L["This will make these icons not click-through-able"] = "這會讓這些圖示無法點擊穿透"
 L["This will overwrite your debuffs"] = "將會取代你的減益"
 L["Timeout"] = "超時"

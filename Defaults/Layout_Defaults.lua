@@ -237,7 +237,10 @@ Cell.defaults.layout = {
             ["showDuration"] = false,
             ["num"] = 2,
             ["orientation"] = "right-to-left",
-            ["font"] = {"Cell ".._G.DEFAULT, 11, "Outline", 2, 1},
+            ["font"] = {
+                {"Cell ".._G.DEFAULT, 11, "Outline", "TOPRIGHT", 2, 1, {1, 1, 1}},
+                {"Cell ".._G.DEFAULT, 11, "Outline", "BOTTOMRIGHT", 2, -1, {1, 1, 1}},
+            },
         }, -- 16
         {
             ["name"] = "Defensive Cooldowns",
@@ -250,7 +253,10 @@ Cell.defaults.layout = {
             ["showDuration"] = false,
             ["num"] = 2,
             ["orientation"] = "left-to-right",
-            ["font"] = {"Cell ".._G.DEFAULT, 11, "Outline", 2, 1},
+            ["font"] = {
+                {"Cell ".._G.DEFAULT, 11, "Outline", "TOPRIGHT", 2, 1, {1, 1, 1}},
+                {"Cell ".._G.DEFAULT, 11, "Outline", "BOTTOMRIGHT", 2, -1, {1, 1, 1}},
+            },
         }, -- 17
         {
             ["name"] = "Externals + Defensives",
@@ -263,7 +269,10 @@ Cell.defaults.layout = {
             ["showDuration"] = false,
             ["num"] = 2,
             ["orientation"] = "left-to-right",
-            ["font"] = {"Cell ".._G.DEFAULT, 11, "Outline", 2, 1},
+            ["font"] = {
+                {"Cell ".._G.DEFAULT, 11, "Outline", "TOPRIGHT", 2, 1, {1, 1, 1}},
+                {"Cell ".._G.DEFAULT, 11, "Outline", "BOTTOMRIGHT", 2, -1, {1, 1, 1}},
+            },
         }, -- 18
         {
             ["name"] = "Tank Active Mitigation",
@@ -298,7 +307,10 @@ Cell.defaults.layout = {
             ["showDuration"] = false,
             ["showTooltip"] = false,
             ["num"] = 3,
-            ["font"] = {"Cell ".._G.DEFAULT, 11, "Outline", 2, 1},
+            ["font"] = {
+                {"Cell ".._G.DEFAULT, 11, "Outline", "TOPRIGHT", 2, 1, {1, 1, 1}},
+                {"Cell ".._G.DEFAULT, 11, "Outline", "BOTTOMRIGHT", 2, -1, {1, 1, 1}},
+            },
             ["dispellableByMe"] = false,
             ["orientation"] = "left-to-right",
         }, -- 21
@@ -312,9 +324,10 @@ Cell.defaults.layout = {
             ["size"] = {22, 22},
             ["border"] = 2,
             ["num"] = 1,
-            ["font"] = {"Cell ".._G.DEFAULT, 11, "Outline", 2, 1},
-            -- ["durationFont"] = {true, "Cell ".._G.DEFAULT, 11, "Outline", "RIGHT", 2, 0},
-            -- ["stackFont"] = {"Cell ".._G.DEFAULT, 11, "Outline", "RIGHT", 2, 0},
+            ["font"] = {
+                {"Cell ".._G.DEFAULT, 11, "Outline", "TOPRIGHT", 2, 1, {1, 1, 1}},
+                {"Cell ".._G.DEFAULT, 11, "Outline", "BOTTOMRIGHT", 2, -1, {1, 1, 1}},
+            },
             ["onlyShowTopGlow"] = true,
             ["orientation"] = "left-to-right",
             ["showTooltip"] = false,
@@ -339,7 +352,7 @@ Cell.defaults.layout = {
             ["size"] = {20, 20},
             ["border"] = 2,
             -- ["glow"] = {"Pixel", {0.95,0.95,0.32,1}, 9, 0.25, 8, 2},
-            ["font"] = {"Cell ".._G.DEFAULT, 12, "Outline", 2, 1},
+            ["font"] = {"Cell ".._G.DEFAULT, 12, "Outline", "TOPRIGHT", 2, 1, {1, 1, 1}},
         }, -- 24
         {
             ["name"] = "Target Counter",

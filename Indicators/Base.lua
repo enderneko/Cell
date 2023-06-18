@@ -5,18 +5,15 @@ local I = Cell.iFuncs
 local P = Cell.pixelPerfectFuncs
 
 -------------------------------------------------
--- CreateAura_BorderIcon
+-- SetFont
 -------------------------------------------------
-local function BorderIcon_SetFont(frame, font, size, flags, xOffset, yOffset)
+function I:SetFont(fs, anchorTo, font, size, flags, anchor, xOffset, yOffset, color)
     font = F:GetFont(font)
 
     if flags == "Shadow" then
-        frame.stack:SetFont(font, size, "")
-        frame.stack:SetShadowOffset(1, -1)
-        frame.stack:SetShadowColor(0, 0, 0, 1)
-        frame.duration:SetFont(font, size, "")
-        frame.duration:SetShadowOffset(1, -1)
-        frame.duration:SetShadowColor(0, 0, 0, 1)
+        fs:SetFont(font, size, "")
+        fs:SetShadowOffset(1, -1)
+        fs:SetShadowColor(0, 0, 0, 1)
     else
         if flags == "None" then
             flags = ""
@@ -25,17 +22,30 @@ local function BorderIcon_SetFont(frame, font, size, flags, xOffset, yOffset)
         else
             flags = "OUTLINE, MONOCHROME"
         end
-        frame.stack:SetFont(font, size, flags)
-        frame.stack:SetShadowOffset(0, 0)
-        frame.stack:SetShadowColor(0, 0, 0, 0)
-        frame.duration:SetFont(font, size, flags)
-        frame.duration:SetShadowOffset(0, 0)
-        frame.duration:SetShadowColor(0, 0, 0, 0)
+        fs:SetFont(font, size, flags)
+        fs:SetShadowOffset(0, 0)
+        fs:SetShadowColor(0, 0, 0, 0)
     end
-    P:ClearPoints(frame.stack)
-    P:Point(frame.stack, "TOPRIGHT", frame.textFrame, "TOPRIGHT", xOffset, yOffset)
-    P:ClearPoints(frame.duration)
-    P:Point(frame.duration, "BOTTOMRIGHT", frame.textFrame, "BOTTOMRIGHT", xOffset, -yOffset)
+    
+    P:ClearPoints(fs)
+    P:Point(fs, anchor, anchorTo, anchor, xOffset, yOffset)
+
+    if color then
+        fs.r = color[1]
+        fs.g = color[2]
+        fs.b = color[3]
+        fs:SetTextColor(fs.r, fs.g, fs.b)
+    else
+        fs.r, fs.g, fs.b = 1, 1, 1
+    end
+end
+
+-------------------------------------------------
+-- CreateAura_BorderIcon
+-------------------------------------------------
+local function BorderIcon_SetFont(frame, font1, font2)
+    I:SetFont(frame.stack, frame.textFrame, unpack(font1))
+    I:SetFont(frame.duration, frame.textFrame, unpack(font2))
 end
 
 local function BorderIcon_SetCooldown(frame, start, duration, debuffType, texture, count, refreshing)
@@ -74,7 +84,7 @@ local function BorderIcon_SetCooldown(frame, start, duration, debuffType, textur
                     frame.duration:SetTextColor(Cell.vars.iconDurationColors[1][1], Cell.vars.iconDurationColors[1][2], Cell.vars.iconDurationColors[1][3])
                 end
             else
-                frame.duration:SetTextColor(1, 1, 1)
+                frame.duration:SetTextColor(frame.duration.r, frame.duration.g, frame.duration.b)
             end
 
             -- format
@@ -186,35 +196,9 @@ end
 -------------------------------------------------
 -- CreateAura_BarIcon
 -------------------------------------------------
-local function BarIcon_SetFont(frame, font, size, flags, xOffset, yOffset)
-    font = F:GetFont(font)
-
-    if flags == "Shadow" then
-        frame.stack:SetFont(font, size, "")
-        frame.stack:SetShadowOffset(1, -1)
-        frame.stack:SetShadowColor(0, 0, 0, 1)
-        frame.duration:SetFont(font, size, "")
-        frame.duration:SetShadowOffset(1, -1)
-        frame.duration:SetShadowColor(0, 0, 0, 1)
-    else
-        if flags == "None" then
-            flags = ""
-        elseif flags == "Outline" then
-            flags = "OUTLINE"
-        else
-            flags = "OUTLINE, MONOCHROME"
-        end
-        frame.stack:SetFont(font, size, flags)
-        frame.stack:SetShadowOffset(0, 0)
-        frame.stack:SetShadowColor(0, 0, 0, 0)
-        frame.duration:SetFont(font, size, flags)
-        frame.duration:SetShadowOffset(0, 0)
-        frame.duration:SetShadowColor(0, 0, 0, 0)
-    end
-    P:ClearPoints(frame.stack)
-    P:Point(frame.stack, "TOPRIGHT", frame.textFrame, "TOPRIGHT", xOffset, yOffset)
-    P:ClearPoints(frame.duration)
-    P:Point(frame.duration, "BOTTOMRIGHT", frame.textFrame, "BOTTOMRIGHT", xOffset, -yOffset)
+local function BarIcon_SetFont(frame, font1, font2)
+    I:SetFont(frame.stack, frame.textFrame, unpack(font1))
+    I:SetFont(frame.duration, frame.textFrame, unpack(font2))
 end
 
 local function BarIcon_SetCooldown(frame, start, duration, debuffType, texture, count, refreshing)
@@ -270,7 +254,7 @@ local function BarIcon_SetCooldown(frame, start, duration, debuffType, texture, 
                         frame.duration:SetTextColor(Cell.vars.iconDurationColors[1][1], Cell.vars.iconDurationColors[1][2], Cell.vars.iconDurationColors[1][3])
                     end
                 else
-                    frame.duration:SetTextColor(1, 1, 1)
+                    frame.duration:SetTextColor(frame.duration.r, frame.duration.g, frame.duration.b)
                 end
 
                 -- format
@@ -595,27 +579,8 @@ end
 -------------------------------------------------
 -- CreateAura_Rect
 -------------------------------------------------
-local function Rect_SetFont(frame, font, size, flags, xOffset, yOffset)
-    font = F:GetFont(font)
-
-    if flags == "Shadow" then
-        frame.stack:SetFont(font, size, "")
-        frame.stack:SetShadowOffset(1, -1)
-        frame.stack:SetShadowColor(0, 0, 0, 1)
-    else
-        if flags == "None" then
-            flags = ""
-        elseif flags == "Outline" then
-            flags = "OUTLINE"
-        else
-            flags = "OUTLINE, MONOCHROME"
-        end
-        frame.stack:SetFont(font, size, flags)
-        frame.stack:SetShadowOffset(0, 0)
-        frame.stack:SetShadowColor(0, 0, 0, 0)
-    end
-    P:ClearPoints(frame.stack)
-    P:Point(frame.stack, "CENTER", frame, "CENTER", xOffset, yOffset)
+local function Rect_SetFont(frame, font, size, flags, anchor, xOffset, yOffset, color)
+    I:SetFont(frame.stack, frame, font, size, flags, anchor, xOffset, yOffset, color)
 end
 
 local function Rect_SetCooldown(frame, start, duration, debuffType, texture, count)
@@ -682,27 +647,8 @@ end
 -------------------------------------------------
 -- CreateAura_Bar
 -------------------------------------------------
-local function Bar_SetFont(bar, font, size, flags, xOffset, yOffset)
-    font = F:GetFont(font)
-
-    if flags == "Shadow" then
-        bar.stack:SetFont(font, size, "")
-        bar.stack:SetShadowOffset(1, -1)
-        bar.stack:SetShadowColor(0, 0, 0, 1)
-    else
-        if flags == "None" then
-            flags = ""
-        elseif flags == "Outline" then
-            flags = "OUTLINE"
-        else
-            flags = "OUTLINE, MONOCHROME"
-        end
-        bar.stack:SetFont(font, size, flags)
-        bar.stack:SetShadowOffset(0, 0)
-        bar.stack:SetShadowColor(0, 0, 0, 0)
-    end
-    P:ClearPoints(bar.stack)
-    P:Point(bar.stack, "CENTER", bar, "CENTER", xOffset, yOffset)
+local function Bar_SetFont(frame, font, size, flags, anchor, xOffset, yOffset, color)
+    I:SetFont(frame.stack, frame, font, size, flags, anchor, xOffset, yOffset, color)
 end
 
 local function Bar_SetCooldown(bar, start, duration, debuffType, texture, count)
