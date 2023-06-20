@@ -1417,11 +1417,11 @@ UnitButton_UpdateRole = function(self)
     local unit = self.state.unit
     if not unit then return end
 
+    local role = UnitGroupRolesAssigned(unit)
+    self.state.role = role
+    
     local roleIcon = self.indicators.roleIcon
-
     if enabledIndicators["roleIcon"] then
-        local role = UnitGroupRolesAssigned(unit)
-        self.state.role = role
 
         roleIcon:SetRole(role)
 

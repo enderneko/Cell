@@ -3,7 +3,7 @@ local L = Cell.L
 local F = Cell.funcs
 local P = Cell.pixelPerfectFuncs
 
-local powerFilters = Cell:CreateFrame("CellOptionsFrame_PowerFilters", Cell.frames.layoutsTab, 270, 205)
+local powerFilters = Cell:CreateFrame("CellOptionsFrame_PowerFilters", Cell.frames.layoutsTab, 285, 205)
 Cell.frames.powerFilters = powerFilters
 powerFilters:SetFrameLevel(Cell.frames.layoutsTab:GetFrameLevel() + 50)
 
@@ -13,29 +13,29 @@ powerFilters:SetFrameLevel(Cell.frames.layoutsTab:GetFrameLevel() + 50)
 local dkF, dhF, druidF, evokerF, hunterF, mageF, monkF, paladinF, priestF, rogueF, shamanF, warlockF, warriorF, petF, vehicleF, npcF
 
 local function CreateFilters()
-    dkF =  Cell:CreatePowerFilter(powerFilters, "DEATHKNIGHT", {"TANK", "DAMAGER"}, 125, 20, 20)
-    druidF = Cell:CreatePowerFilter(powerFilters, "DRUID", {"TANK", "HEALER", "DAMAGER"}, 125, 20, 20)
-    hunterF = Cell:CreatePowerFilter(powerFilters, "HUNTER", {"DAMAGER"}, 125, 20, 20)
-    mageF = Cell:CreatePowerFilter(powerFilters, "MAGE", {"DAMAGER"}, 125, 20, 20)
-    paladinF = Cell:CreatePowerFilter(powerFilters, "PALADIN", {"TANK", "HEALER", "DAMAGER"}, 125, 20, 20)
-    priestF = Cell:CreatePowerFilter(powerFilters, "PRIEST", {"HEALER", "DAMAGER"}, 125, 20, 20)
-    rogueF = Cell:CreatePowerFilter(powerFilters, "ROGUE", {"DAMAGER"}, 125, 20, 20)
-    shamanF = Cell:CreatePowerFilter(powerFilters, "SHAMAN", {"HEALER", "DAMAGER"}, 125, 20, 20)
-    warlockF = Cell:CreatePowerFilter(powerFilters, "WARLOCK", {"DAMAGER"}, 125, 20, 20)
-    warriorF = Cell:CreatePowerFilter(powerFilters, "WARRIOR", {"TANK", "DAMAGER"}, 125, 20, 20)
-    petF = Cell:CreatePowerFilter(powerFilters, "PET", {"DAMAGER"}, 125, 20, 20)
-    vehicleF = Cell:CreatePowerFilter(powerFilters, "VEHICLE", {"DAMAGER"}, 125, 20, 20)
-    npcF = Cell:CreatePowerFilter(powerFilters, "NPC", {"DAMAGER"}, 125, 20, 20)
+    dkF =  Cell:CreatePowerFilter(powerFilters, "DEATHKNIGHT", {"TANK", "DAMAGER"}, 135, 20, 20)
+    druidF = Cell:CreatePowerFilter(powerFilters, "DRUID", {"TANK", "HEALER", "DAMAGER"}, 135, 20, 20)
+    hunterF = Cell:CreatePowerFilter(powerFilters, "HUNTER", {"DAMAGER"}, 135, 20, 20)
+    mageF = Cell:CreatePowerFilter(powerFilters, "MAGE", {"DAMAGER"}, 135, 20, 20)
+    paladinF = Cell:CreatePowerFilter(powerFilters, "PALADIN", {"TANK", "HEALER", "DAMAGER"}, 135, 20, 20)
+    priestF = Cell:CreatePowerFilter(powerFilters, "PRIEST", {"HEALER", "DAMAGER"}, 135, 20, 20)
+    rogueF = Cell:CreatePowerFilter(powerFilters, "ROGUE", {"DAMAGER"}, 135, 20, 20)
+    shamanF = Cell:CreatePowerFilter(powerFilters, "SHAMAN", {"HEALER", "DAMAGER"}, 135, 20, 20)
+    warlockF = Cell:CreatePowerFilter(powerFilters, "WARLOCK", {"DAMAGER"}, 135, 20, 20)
+    warriorF = Cell:CreatePowerFilter(powerFilters, "WARRIOR", {"TANK", "DAMAGER"}, 135, 20, 20)
+    petF = Cell:CreatePowerFilter(powerFilters, "PET", {"DAMAGER"}, 135, 20, 20)
+    vehicleF = Cell:CreatePowerFilter(powerFilters, "VEHICLE", {"DAMAGER"}, 135, 20, 20)
+    npcF = Cell:CreatePowerFilter(powerFilters, "NPC", {"DAMAGER"}, 135, 20, 20)
 
     if Cell.isRetail then
         P:Height(powerFilters, 205)
 
-        dhF = Cell:CreatePowerFilter(powerFilters, "DEMONHUNTER", {"TANK", "DAMAGER"}, 125, 20, 20)
-        monkF = Cell:CreatePowerFilter(powerFilters, "MONK", {"TANK", "HEALER", "DAMAGER"}, 125, 20, 20)
-        evokerF = Cell:CreatePowerFilter(powerFilters, "EVOKER", {"HEALER", "DAMAGER"}, 125, 20, 20)
+        dhF = Cell:CreatePowerFilter(powerFilters, "DEMONHUNTER", {"TANK", "DAMAGER"}, 135, 20, 20)
+        monkF = Cell:CreatePowerFilter(powerFilters, "MONK", {"TANK", "HEALER", "DAMAGER"}, 135, 20, 20)
+        evokerF = Cell:CreatePowerFilter(powerFilters, "EVOKER", {"HEALER", "DAMAGER"}, 135, 20, 20)
 
         dkF:SetPoint("TOPLEFT", 5, -5)
-        dhF:SetPoint("TOPLEFT", 140, -5)
+        dhF:SetPoint("TOPLEFT", 145, -5)
         druidF:SetPoint("TOPLEFT", dkF, "BOTTOMLEFT", 0, -5)
         evokerF:SetPoint("TOPLEFT", dhF, "BOTTOMLEFT", 0, -5)
         hunterF:SetPoint("TOPLEFT", druidF, "BOTTOMLEFT", 0, -5)
@@ -55,7 +55,7 @@ local function CreateFilters()
         P:Height(powerFilters, 180)
 
         dkF:SetPoint("TOPLEFT", 5, -5)
-        druidF:SetPoint("TOPLEFT", 140, -5)
+        druidF:SetPoint("TOPLEFT", 145, -5)
         hunterF:SetPoint("TOPLEFT", dkF, "BOTTOMLEFT", 0, -5)
         mageF:SetPoint("TOPLEFT", druidF, "BOTTOMLEFT", 0, -5)
         paladinF:SetPoint("TOPLEFT", hunterF, "BOTTOMLEFT", 0, -5)
