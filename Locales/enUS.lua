@@ -79,6 +79,11 @@ select(2, ...).L = setmetatable({
         <p>I've received some requests about showing Afflicted Souls on Cell. Simply put, due to the limitation of the plugin API, it is not possible. I can make them display on Cell, but these buttons will not be clickable, so there is no need. It is better to use WA.</p>
         <br/>
 
+        <h1>r175-release (Jun 20, 2023, 11:22 GMT+8)</h1>
+        <p>* Fixed Power Bar Filters.</p>
+        <p>* Fixed animation Type A of Consumables indicator (Wrath).</p>
+        <br/>
+        
         <h1>r174-release (Jun 18, 2023, 17:25 GMT+8)</h1>
         <p>* Updated font options for some indicators. The stack font and duration font can be set separately. And if you use CooldownIcons_BlizzardStyle snippet, an update is required.</p>
         <p>* Health Text indicator: added options to show shield value.</p>

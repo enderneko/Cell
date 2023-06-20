@@ -2664,6 +2664,9 @@ function B:SetOrientation(button, orientation, rotateTexture)
             damageFlashTex:SetHeight(barHeight * lostPercent)
         end
     end
+
+    -- update consumables
+    I:UpdateConsumablesOrientation(button, orientation)
 end
 
 function B:UpdateHighlightColor(button)
