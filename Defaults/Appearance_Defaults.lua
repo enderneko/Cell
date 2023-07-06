@@ -9,6 +9,7 @@ Cell.defaults.appearance = {
     ["useGameFont"] = true,
     ["texture"] = "Cell ".._G.DEFAULT,
     ["barColor"] = {"class_color", {0.2, 0.2, 0.2}},
+    ["fullColor"] = {false, {0.2, 0.2, 0.2}},
     ["lossColor"] = {"class_color_dark", {0.667, 0, 0}},
     ["deathColor"] = {false, {0.545, 0, 0}},
     ["powerColor"] = {"power_color", {0.7, 0.7, 0.7}},

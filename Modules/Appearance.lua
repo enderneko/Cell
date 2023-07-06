@@ -500,7 +500,7 @@ end
 -------------------------------------------------
 -- unitbutton
 -------------------------------------------------
-local textureDropdown, barColorDropdown, barColorPicker, lossColorDropdown, lossColorPicker, deathColorCB, deathColorPicker, powerColorDropdown, powerColorPicker, barAnimationDropdown, targetColorPicker, mouseoverColorPicker, highlightSize
+local textureDropdown, barColorDropdown, barColorPicker, fullColorCB, fullColorPicker, lossColorDropdown, lossColorPicker, deathColorCB, deathColorPicker, powerColorDropdown, powerColorPicker, barAnimationDropdown, targetColorPicker, mouseoverColorPicker, highlightSize
 local barAlpha, lossAlpha, bgAlpha, oorAlpha, predCB, useLibCB, absorbCB, shieldCB, oversCB
 local predCustomCB, predColorPicker, absorbColorPicker, shieldColorPicker
 local iconOptionsBtn, iconOptionsFrame, iconAnimationDropdown, durationRoundUpCB, durationDecimalText1, durationDecimalText2, durationDecimalDropdown, durationColorCB, durationNormalCP, durationPercentCP, durationSecondCP, durationPercentDD, durationSecondEB, durationSecondText
@@ -833,6 +833,24 @@ local function CreateUnitButtonStylePane()
         end
     end)
     barColorPicker:SetPoint("LEFT", barColorDropdown, "RIGHT", 5, 0)
+
+    -- full hp color
+    fullColorCB = Cell:CreateCheckButton(unitButtonPane, "", function(checked, self)
+        CellDB["appearance"]["fullColor"][1] = checked
+        fullColorPicker:SetEnabled(checked)
+        Cell:Fire("UpdateAppearance", "fullColor")
+    end, L["Enable Full Health Color"])
+    fullColorCB:SetPoint("TOPLEFT", barColorPicker, "TOPRIGHT", 2, 0)
+
+    fullColorPicker = Cell:CreateColorPicker(unitButtonPane, "", false, function(r, g, b)
+        CellDB["appearance"]["fullColor"][2][1] = r
+        CellDB["appearance"]["fullColor"][2][2] = g
+        CellDB["appearance"]["fullColor"][2][3] = b
+        if CellDB["appearance"]["fullColor"][1] then
+            Cell:Fire("UpdateAppearance", "fullColor")
+        end
+    end)
+    fullColorPicker:SetPoint("TOPLEFT", fullColorCB, "TOPRIGHT", 2, 0)
     
     -- loss color
     lossColorDropdown = Cell:CreateDropdown(unitButtonPane, 141)
@@ -1227,6 +1245,10 @@ LoadButtonStyle = function()
     barColorDropdown:SetSelectedValue(CellDB["appearance"]["barColor"][1])
     barColorPicker:SetColor(CellDB["appearance"]["barColor"][2])
     barColorPicker:SetEnabled(CellDB["appearance"]["barColor"][1] == "custom")
+    
+    fullColorCB:SetChecked(CellDB["appearance"]["fullColor"][1])
+    fullColorPicker:SetColor(CellDB["appearance"]["fullColor"][2])
+    fullColorPicker:SetEnabled(CellDB["appearance"]["fullColor"][1])
 
     lossColorDropdown:SetSelectedValue(CellDB["appearance"]["lossColor"][1])
     lossColorPicker:SetColor(CellDB["appearance"]["lossColor"][2])
@@ -1350,7 +1372,7 @@ Cell:RegisterCallback("UpdateIndicators", "AppearanceTab_UpdateIndicators", Upda
 local function UpdateAppearance(which)
     F:Debug("|cff7f7fffUpdateAppearance:|r "..(which or "all"))
     
-    if not which or which == "texture" or which == "color" or which == "deathColor" or which == "alpha" or which == "outOfRangeAlpha" or which == "shields" or which == "animation" or which == "highlightColor" or which == "highlightSize" or which == "reset" then
+    if not which or which == "texture" or which == "color" or which == "fullColor" or which == "deathColor" or which == "alpha" or which == "outOfRangeAlpha" or which == "shields" or which == "animation" or which == "highlightColor" or which == "highlightSize" or which == "reset" then
         local tex
         if not which or which == "texture" or which == "reset" then tex = F:GetBarTexture() end
 
@@ -1358,12 +1380,16 @@ local function UpdateAppearance(which)
             if strfind(CellDB["appearance"]["barColor"][1], "gradient") or strfind(CellDB["appearance"]["lossColor"][1], "gradient") then
                 Cell.vars.useGradientColor = true
             else
-                Cell.vars.useGradientColor = nil
+                Cell.vars.useGradientColor = false
             end
         end
 
+        if not which or which == "fullColor" or which == "reset" then
+            Cell.vars.useFullColor = CellDB["appearance"]["fullColor"][1] and true or false
+        end
+
         if not which or which == "deathColor" or which == "reset" then
-            Cell.vars.useDeathColor = CellDB["appearance"]["deathColor"][1] and true or nil
+            Cell.vars.useDeathColor = CellDB["appearance"]["deathColor"][1] and true or false
         end
 
         F:IterateAllUnitButtons(function(b)
@@ -1372,12 +1398,12 @@ local function UpdateAppearance(which)
                 B:SetTexture(b, tex)
             end
             -- color
-            if not which or which == "color" or which == "deathColor" or which == "alpha" or which == "shields" or which == "reset" then
+            if not which or which == "color" or which == "fullColor" or which == "deathColor" or which == "alpha" or which == "shields" or which == "reset" then
                 B:UpdateColor(b)
             end
             -- outOfRangeAlpha
             if which == "outOfRangeAlpha" or which == "reset" then
-                b.state.wasInRange = nil
+                b.state.wasInRange = false
             end
             -- shields
             if not which or which == "shields" or which == "reset" then

@@ -1963,6 +1963,14 @@ function F:Revise()
         end
     end
 
+    -- r176-release
+    if CellDB["revise"] and dbRevision < 176 then
+        -- full hp color
+        if type(CellDB["appearance"]["fullColor"]) ~= "table" then
+            CellDB["appearance"]["fullColor"] = {false, {0.2, 0.2, 0.2}}
+        end
+    end
+
     CellDB["revise"] = Cell.version
     if Cell.isWrath then
         CellCharacterDB["revise"] = Cell.version
