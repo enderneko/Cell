@@ -79,6 +79,12 @@ select(2, ...).L = setmetatable({
         <p>I've received some requests about showing Afflicted Souls on Cell. Simply put, due to the limitation of the plugin API, it is not possible. I can make them display on Cell, but these buttons will not be clickable, so there is no need. It is better to use WA.</p>
         <br/>
 
+        <h1>r176-release (Jul 6, 2023, 14:34 GMT+8)</h1>
+        <p>+ Added full health color options in Appearance.</p>
+        <p>* Updated zhTW.</p>
+        <p>* Updated Cell discord link.</p>
+        <br/>
+
         <h1>r175-release (Jun 20, 2023, 11:22 GMT+8)</h1>
         <p>* Fixed Power Bar Filters.</p>
         <p>* Fixed animation Type A of Consumables indicator (Wrath).</p>
