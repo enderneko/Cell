@@ -53,7 +53,7 @@ local function SetCooldown(frame, start, duration, debuffType, texture, count, r
                         frame.duration:SetTextColor(Cell.vars.iconDurationColors[1][1], Cell.vars.iconDurationColors[1][2], Cell.vars.iconDurationColors[1][3])
                     end
                 else
-                    frame.duration:SetTextColor(1, 1, 1)
+                    frame.duration:SetTextColor(frame.duration.r, frame.duration.g, frame.duration.b)
                 end
 
                 -- format

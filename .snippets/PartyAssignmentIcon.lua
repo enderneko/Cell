@@ -1,3 +1,4 @@
+-- relative to Leader Icon indicator
 local point, relativePoint, x, y = "TOPLEFT", "BOTTOMLEFT", 0, 2
 local size = 11
 
