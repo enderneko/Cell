@@ -320,25 +320,23 @@ local function CreateLinksPane()
     end)
     curseforge:SetPoint("TOPLEFT", github, "TOPRIGHT", 7, 0)
 
+    --! discord
+    local discord = CreateLink(linksPane, "discord", "Interface\\AddOns\\Cell\\Media\\Links\\discord.tga", function()
+        linksEB:SetText("https://discord.gg/9PSe3fKQGJ")
+    end)
+    discord:SetPoint("TOPLEFT", curseforge, "TOPRIGHT", 7, 0)
+    
     --! kook
     local kook = CreateLink(linksPane, "kook", "Interface\\AddOns\\Cell\\Media\\Links\\kook.tga", function()
         linksEB:SetText("https://kook.top/q4T7yp")
     end)
-    kook:SetPoint("TOPLEFT", curseforge, "TOPRIGHT", 7, 0)
-
-    --! discord
-    local discord = CreateLink(linksPane, "discord", "Interface\\AddOns\\Cell\\Media\\Links\\discord.tga", function()
-        linksEB:SetText("")
-    end)
-    discord:SetPoint("TOPLEFT", kook, "TOPRIGHT", 7, 0)
-    discord:SetScript("OnEnter", nil)
-    discord:SetAlpha(0.3)
+    kook:SetPoint("TOPLEFT", discord, "TOPRIGHT", 7, 0)
 
     --! nga
     local nga = CreateLink(linksPane, "nga", "Interface\\AddOns\\Cell\\Media\\Links\\nga.tga", function()
         linksEB:SetText("https://bbs.nga.cn/read.php?tid=23488341")
     end)
-    nga:SetPoint("TOPLEFT", discord, "TOPRIGHT", 7, 0)
+    nga:SetPoint("TOPLEFT", kook, "TOPRIGHT", 7, 0)
 
     --! afdian
     local afdian = CreateLink(linksPane, "afdian", "Interface\\AddOns\\Cell\\Media\\Links\\afdian.tga", function()

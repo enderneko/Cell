@@ -35,7 +35,7 @@ It's easy to use and good enough for you (hope so).
 
 ## Code Snippets
 
-__Try to disable all snippets if there are any issues.__
+__Try disabling all snippets if there are any issues.__
 
 Check <https://github.com/enderneko/Cell/tree/master/.snippets> for more snippets.
 
@@ -74,5 +74,7 @@ Use [Instance Spell Collector](https://legacy.curseforge.com/wow/addons/instance
 &nbsp;
 
 ## Misc
+
+Discord: <https://discord.gg/9PSe3fKQGJ>
 
 [简体中文介绍在这里](https://bbs.nga.cn/read.php?tid=23488341)
