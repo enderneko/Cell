@@ -156,13 +156,14 @@ L["Display One Decimal Place When"] = "圖示持續時間顯示一位小數於"
 L["Do nothing if requested spell/buff already exists on requester"] = "若增益已存在於請求者身上，則不發光"
 L["DRINKING"] = "喝水"
 L["Due to restrictions of the private aura system, this indicator can only use Blizzard style."] = "由於個人光環系統的限制，該指示器只能使用暴雪樣式。"
---[[Translation missing --]]
---[[ L["durationFont"] = "Duration Font"--]] 
+L["durationFont"] = "持續時間字體"
 L["Edit"] = "編輯"
 L["Edit spell"] = "修改法術"
 L["EN"] = "英"
 L["Enable"] = "啟用"
 L["Enable Death Color"] = "啟用死亡顏色"
+--[[Translation missing --]]
+--[[ L["Enable Full Health Color"] = "Enable Full Health Color"--]] 
 L["Enabled"] = "啟用"
 L["enableHighlight"] = "顯著標示單位按鈕"
 L["Enter: apply\nESC: discard"] = "Enter: 套用\nESC: 取消"
@@ -204,8 +205,7 @@ L["Group Columns"] = "隊伍直行數"
 L["Group Filter"] = "過濾隊伍"
 L["Group Rows"] = "隊伍橫列數"
 L["Group Spacing"] = "隊伍間距"
---[[Translation missing --]]
---[[ L["Half"] = "Half"--]] 
+L["Half"] = "半高"
 L["Heal Absorb"] = "治療吸收"
 L["Heal Prediction"] = "治療預估"
 L["Health Bar"] = "血量條"
@@ -409,8 +409,7 @@ L["Shadow"] = "陰影"
 L["Share"] = "分享"
 L["Shield Bar"] = "護盾條"
 L["Shield Texture"] = "護盾材質"
---[[Translation missing --]]
---[[ L["shields"] = "shields"--]] 
+L["shields"] = "護盾"
 L["Shift+Enter: add a new line"] = "Shift+Enter: 增加一行"
 L["Shine"] = "閃耀"
 L["show Cell options frame"] = "打開 Cell 設定選項"
@@ -451,8 +450,7 @@ L["Spells"] = "法術"
 L["Spotlight Button"] = "特別關注按鈕"
 L["Spotlight Frame"] = "特別關注框架"
 L["spotlightTips"] = "左鍵: |cffffffff選單|r\n右鍵: |cffffffff清除|r\n左鍵拖曳: |cffffffff設為目標單位 (非戰鬥中)|r\n右鍵拖曳: |cffffffff設為目標單位的寵物 (非戰鬥中)|r"
---[[Translation missing --]]
---[[ L["stackFont"] = "Stack Font"--]] 
+L["stackFont"] = "層數字體"
 L["Status Icon"] = "狀態圖示"
 L["Status Text"] = "狀態文字"
 L["Status Text Position"] = "狀態文字位置"
@@ -480,8 +478,7 @@ L["Then create a PR or submit a ticket on GitHub"] = "然後在 GitHub 上提交
 L["These \"reset\" commands below affect all your characters in this account"] = "以下的 \"重置\" 指令會影響此帳號中的所有角色"
 L["Thickness"] = "粗細"
 L["This may overwrite built-in indicators"] = "這可能會覆蓋掉內建的指示器"
---[[Translation missing --]]
---[[ L["This setting will be ignored, if the %1$s option in %2$s tab is checked"] = "This setting will be ignored, if the %1$s option in %2$s tab is checked"--]] 
+L["This setting will be ignored, if the %1$s option in %2$s tab is enabled"] = "如果啟用了%2$s標籤頁面中的%1$s選項，此設定將被忽略"
 L["This will make these icons not click-through-able"] = "這會讓這些圖示無法點擊穿透"
 L["This will overwrite your debuffs"] = "將會取代你的減益"
 L["Timeout"] = "超時"

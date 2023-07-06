@@ -1575,7 +1575,7 @@ local function CreateSetting_Generic_Font(parent, index)
             end
 
             if title == "durationFont" then
-                addon:SetTooltips(widget.color, "ANCHOR_TOPLEFT", 0, 1, L["Color"], L["This setting will be ignored, if the %1$s option in %2$s tab is checked"]:format(addon:GetAccentColorString().."\""..L["Color Duration Text"].."\"|r", L["Appearance"]))
+                addon:SetTooltips(widget.color, "ANCHOR_TOPLEFT", 0, 1, L["Color"], L["This setting will be ignored, if the %1$s option in %2$s tab is enabled"]:format(addon:GetAccentColorString().."\""..L["Color Duration Text"].."\"|r", L["Appearance"]))
             else
                 addon:ClearTooltips(widget.color)
             end
