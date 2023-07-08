@@ -506,6 +506,8 @@ L["Unit Button"] = "單位按鈕"
 L["Unit Button Style"] = "單位按鈕樣式"
 L["Unit Spacing"] = "單位間距"
 L["Unit's Pet"] = "單位的寵物"
+--[[Translation missing --]]
+--[[ L["Unit's Target"] = "Unit's Target"--]] 
 L["Unlimited"] = "無限制"
 L["Unlock"] = "解鎖"
 L["unnamed"] = "未命名"

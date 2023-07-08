@@ -7,7 +7,7 @@ local P = Cell.pixelPerfectFuncs
 local LCG = LibStub("LibCustomGlow-1.0")
 
 local placeholders, assignmentButtons = {}, {}
-local menu, target, targettarget, focus, unit, pet, clear
+local menu, target, targettarget, focus, unit, unitpet, unittarget, clear
 local tooltipPoint, tooltipRelativePoint, tooltipX, tooltipY
 local NONE = strlower(_G.NONE)
 -------------------------------------------------
@@ -226,7 +226,7 @@ local function CreateAssignmentButton(index)
             if targetFrame.type == "unit" then
                 unit:SetUnit(b:GetAttribute("index"), f.state.displayedUnit)
             elseif targetFrame.type == "pet" then
-                pet:SetUnit(b:GetAttribute("index"), f.state.displayedUnit)
+                unitpet:SetUnit(b:GetAttribute("index"), f.state.displayedUnit)
             end
         end
     end)
@@ -397,17 +397,17 @@ function unit:SetUnit(index, target)
     end
 end
 
-pet = Cell:CreateButton(menu, L["Unit's Pet"], "transparent-accent", {20, 20}, true, false, nil, nil, "SecureHandlerAttributeTemplate,SecureHandlerClickTemplate")
-P:Point(pet, "TOPLEFT", unit, "BOTTOMLEFT")
-P:Point(pet, "TOPRIGHT", unit, "BOTTOMRIGHT")
-pet:SetAttribute("_onclick", [[
+unitpet = Cell:CreateButton(menu, L["Unit's Pet"], "transparent-accent", {20, 20}, true, false, nil, nil, "SecureHandlerAttributeTemplate,SecureHandlerClickTemplate")
+P:Point(unitpet, "TOPLEFT", unit, "BOTTOMLEFT")
+P:Point(unitpet, "TOPRIGHT", unit, "BOTTOMRIGHT")
+unitpet:SetAttribute("_onclick", [[
     local menu = self:GetParent()
     local index = menu:GetAttribute("index")
     menu:GetFrameRef("spotlight"..index):SetAttribute("refreshOnUpdate", nil)
     self:CallMethod("SetUnit", index, "target")
     menu:Hide()
 ]])
-function pet:SetUnit(index, target)
+function unitpet:SetUnit(index, target)
     local unit = F:GetTargetPetID(target)
     if unit then
         Cell.unitButtons.spotlight[index]:SetAttribute("unit", unit)
@@ -418,9 +418,38 @@ function pet:SetUnit(index, target)
     end
 end
 
+unittarget = Cell:CreateButton(menu, L["Unit's Target"], "transparent-accent", {20, 20}, true, false, nil, nil, "SecureHandlerAttributeTemplate,SecureHandlerClickTemplate")
+P:Point(unittarget, "TOPLEFT", unitpet, "BOTTOMLEFT")
+P:Point(unittarget, "TOPRIGHT", unitpet, "BOTTOMRIGHT")
+unittarget:SetAttribute("_onclick", [[
+    local menu = self:GetParent()
+    local index = menu:GetAttribute("index")
+    menu:GetFrameRef("spotlight"..index):SetAttribute("refreshOnUpdate", true)
+    self:CallMethod("SetUnit", index, "target")
+    menu:Hide()
+]])
+function unittarget:SetUnit(index, target)
+    local unit = F:GetTargetUnitID(target)
+    if unit then
+        if unit == "player" then
+            unit = "target"
+            Cell.unitButtons.spotlight[index]:SetAttribute("refreshOnUpdate", nil)
+        else
+            unit = unit.."target"
+            -- NOTE: no EVENT for this kind of targets， use OnUpdate
+            Cell.unitButtons.spotlight[index]:SetAttribute("refreshOnUpdate", true)
+        end
+        Cell.unitButtons.spotlight[index]:SetAttribute("unit", unit)
+        assignmentButtons[index]:SetText(unit)
+        menu:Save(index, unit)
+    else
+        F:Print(L["Invalid unit."])
+    end
+end
+
 clear = Cell:CreateButton(menu, L["Clear"], "transparent-accent", {20, 20}, true, false, nil, nil, "SecureHandlerAttributeTemplate,SecureHandlerClickTemplate")
-P:Point(clear, "TOPLEFT", pet, "BOTTOMLEFT")
-P:Point(clear, "TOPRIGHT", pet, "BOTTOMRIGHT")
+P:Point(clear, "TOPLEFT", unittarget, "BOTTOMLEFT")
+P:Point(clear, "TOPRIGHT", unittarget, "BOTTOMRIGHT")
 clear:SetAttribute("_onclick", [[
     local menu = self:GetParent()
     local index = menu:GetAttribute("index")
@@ -438,10 +467,12 @@ menu:RegisterEvent("PLAYER_REGEN_DISABLED")
 menu:SetScript("OnEvent", function(self, event)
     if event == "PLAYER_REGEN_DISABLED" then
         unit:SetEnabled(false)
-        pet:SetEnabled(false)
+        unittarget:SetEnabled(false)
+        unitpet:SetEnabled(false)
     else
         unit:SetEnabled(true)
-        pet:SetEnabled(true)
+        unittarget:SetEnabled(true)
+        unitpet:SetEnabled(true)
     end
 end)
 
@@ -453,17 +484,17 @@ end
 local dumbFS1 = menu:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
 dumbFS1:SetText(L["Target of Target"])
 local dumbFS2 = menu:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
-dumbFS2:SetText(L["Unit's Pet"])
+dumbFS2:SetText(L["Unit's Target"])
 
 function menu:UpdatePixelPerfect()
-    P:Size(menu, ceil(max(dumbFS1:GetStringWidth(), dumbFS2:GetStringWidth())) + 13, 122)
+    P:Size(menu, ceil(max(dumbFS1:GetStringWidth(), dumbFS2:GetStringWidth())) + 13, 20*7+2)
 
     Cell:StylizeFrame(menu, nil, Cell:GetAccentColorTable())
     target:UpdatePixelPerfect()
     focus:UpdatePixelPerfect()
     targettarget:UpdatePixelPerfect()
     unit:UpdatePixelPerfect()
-    pet:UpdatePixelPerfect()
+    unitpet:UpdatePixelPerfect()
     clear:UpdatePixelPerfect()
 end
 
@@ -648,7 +679,7 @@ local function UpdateLayout(layout, which)
             for i = 1, 5 do
                 local unit = layout["spotlight"][2][i]
                 Cell.unitButtons.spotlight[i]:SetAttribute("unit", unit)
-                if unit == "targettarget" then
+                if unit and strfind(unit, "^.+target$") then
                     Cell.unitButtons.spotlight[i]:SetAttribute("refreshOnUpdate", true)
                 end
                 RegisterUnitWatch(Cell.unitButtons.spotlight[i])

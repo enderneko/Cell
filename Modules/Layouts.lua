@@ -2466,7 +2466,7 @@ local function CreateOthersPane()
         end
     end, L["Spotlight Frame"], L["Show units you care about more in a separate frame"],
     "|cffffb5c5"..L["Target"]..", "..L["Target of Target"]..", "..L["Focus"],
-    "|cffffb5c5"..L["Unit"]..", "..L["Unit's Pet"])
+    "|cffffb5c5"..L["Unit"]..", "..L["Unit's Pet"]..", "..L["Unit's Target"])
     spotlightCB:SetPoint("TOPLEFT", raidPetsCB, "BOTTOMLEFT", 0, -14)
 end
 
