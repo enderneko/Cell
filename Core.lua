@@ -418,12 +418,12 @@ function eventFrame:ADDON_LOADED(arg1)
         --     }
         -- }
 
-        if type(CellDB["cleuAuras"]) ~= "table" then CellDB["cleuAuras"] = {} end
-        I:UpdateCleuAuras(CellDB["cleuAuras"])
+        -- if type(CellDB["cleuAuras"]) ~= "table" then CellDB["cleuAuras"] = {} end
+        -- I:UpdateCleuAuras(CellDB["cleuAuras"])
 
-        if type(CellDB["cleuGlow"]) ~= "table" then
-            CellDB["cleuGlow"] = {"Pixel", {{0, 1, 1, 1}, 9, 0.25, 8, 2}}
-        end
+        -- if type(CellDB["cleuGlow"]) ~= "table" then
+        --     CellDB["cleuGlow"] = {"Pixel", {{0, 1, 1, 1}, 9, 0.25, 8, 2}}
+        -- end
         
         -- targetedSpells -------------------------------------------------------------------------
         if type(CellDB["targetedSpellsList"]) ~= "table" then
@@ -684,7 +684,7 @@ function eventFrame:PLAYER_LOGIN()
     Cell:Fire("UpdateMenu")
     -- update pixel perfect
     Cell:Fire("UpdatePixelPerfect")
-    -- update CLEU
+    -- update CLEU health
     Cell:Fire("UpdateCLEU")
     -- update builtIns and customs
     I:UpdateDefensives(CellDB["defensives"])

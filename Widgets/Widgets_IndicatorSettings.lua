@@ -3415,45 +3415,45 @@ local function CreateCleuAuraButtons(parent, auraTable, updateHeightFunc)
     end
 end
 
-local function CreateSetting_CleuAuras(parent)
-    local widget
+-- local function CreateSetting_CleuAuras(parent)
+--     local widget
 
-    if not settingWidgets["cleuAuras"] then
-        widget = addon:CreateFrame("CellIndicatorSettings_CleuAuras", parent, 240, 128)
-        settingWidgets["cleuAuras"] = widget
+--     if not settingWidgets["cleuAuras"] then
+--         widget = addon:CreateFrame("CellIndicatorSettings_CleuAuras", parent, 240, 128)
+--         settingWidgets["cleuAuras"] = widget
 
-        widget.frame = addon:CreateFrame(nil, widget, 20, 20)
-        widget.frame:SetPoint("TOPLEFT", 5, -20)
-        widget.frame:SetPoint("RIGHT", -5, 0)
-        widget.frame:Show()
-        addon:StylizeFrame(widget.frame, {0.15, 0.15, 0.15, 1})
+--         widget.frame = addon:CreateFrame(nil, widget, 20, 20)
+--         widget.frame:SetPoint("TOPLEFT", 5, -20)
+--         widget.frame:SetPoint("RIGHT", -5, 0)
+--         widget.frame:Show()
+--         addon:StylizeFrame(widget.frame, {0.15, 0.15, 0.15, 1})
 
-        widget.text = widget:CreateFontString(nil, "OVERLAY", font_name)
-        widget.text:SetPoint("BOTTOMLEFT", widget.frame, "TOPLEFT", 0, 1)
+--         widget.text = widget:CreateFontString(nil, "OVERLAY", font_name)
+--         widget.text:SetPoint("BOTTOMLEFT", widget.frame, "TOPLEFT", 0, 1)
 
-        -- associate db
-        function widget:SetFunc(func)
-            widget.frame.func = func
-        end
+--         -- associate db
+--         function widget:SetFunc(func)
+--             widget.frame.func = func
+--         end
 
-        -- show db value
-        function widget:SetDBValue(t)
-            widget.text:SetText(L["cleuAurasTips"])
-            CreateCleuAuraButtons(widget.frame, t, function(diff)
-                widget.frame:SetHeight((#t+1)*19+1)
-                widget:SetHeight((#t+1)*19+1 + 20 + 5)
-                if diff then parent:SetHeight(parent:GetHeight()+diff) end
-            end)
-            widget.frame:SetHeight((#t+1)*19+1)
-            widget:SetHeight((#t+1)*19+1 + 20 + 5)
-        end
-    else
-        widget = settingWidgets["cleuAuras"]
-    end
+--         -- show db value
+--         function widget:SetDBValue(t)
+--             widget.text:SetText(L["cleuAurasTips"])
+--             CreateCleuAuraButtons(widget.frame, t, function(diff)
+--                 widget.frame:SetHeight((#t+1)*19+1)
+--                 widget:SetHeight((#t+1)*19+1 + 20 + 5)
+--                 if diff then parent:SetHeight(parent:GetHeight()+diff) end
+--             end)
+--             widget.frame:SetHeight((#t+1)*19+1)
+--             widget:SetHeight((#t+1)*19+1 + 20 + 5)
+--         end
+--     else
+--         widget = settingWidgets["cleuAuras"]
+--     end
 
-    widget:Show()
-    return widget
-end
+--     widget:Show()
+--     return widget
+-- end
 
 -------------------------------------------------
 -- CreateSetting_BuiltIns
@@ -4502,8 +4502,8 @@ function addon:CreateIndicatorSettings(parent, settingsTable)
             tinsert(widgetsTable, CreateSetting_Auras(parent))
         elseif setting == "auras2" or setting == "bigDebuffs" then
             tinsert(widgetsTable, CreateSetting_Auras2(parent))
-        elseif setting == "cleuAuras" then
-            tinsert(widgetsTable, CreateSetting_CleuAuras(parent))
+        -- elseif setting == "cleuAuras" then
+        --     tinsert(widgetsTable, CreateSetting_CleuAuras(parent))
         elseif setting == "builtInDefensives" or setting == "builtInExternals" then
             tinsert(widgetsTable, CreateSetting_BuiltIns(parent))
         elseif setting == "consumablesPreview" then

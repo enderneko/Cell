@@ -678,7 +678,7 @@ unitButton = {
 -- end
 
 -- cleuAuras
-local cleuUnits = {}
+-- local cleuUnits = {}
 
 local debuffs_indices = {} -- tooltips
 local debuffs_current = {}
@@ -817,16 +817,17 @@ local function UnitButton_UpdateDebuffs(self)
     end
 
     -- update raid debuffs
-    if raidDebuffsFound or cleuUnits[unit] then
+    -- if raidDebuffsFound or cleuUnits[unit] then
+    if raidDebuffsFound then
         startIndex = 1
         self.indicators.raidDebuffs:Show()
 
         -- cleuAuras
-        local offset = 0
-        if cleuUnits[unit] then
-            offset = 1
-            startIndex = startIndex + 1
-        end
+        -- local offset = 0
+        -- if cleuUnits[unit] then
+        --     offset = 1
+        --     startIndex = startIndex + 1
+        -- end
 
         -- sort indices
         -- NOTE: debuffs_raid_orders[unit] = { [auraInstanceID] = debuffOrder } used for sorting
@@ -836,7 +837,8 @@ local function UnitButton_UpdateDebuffs(self)
         
         -- show
         local topGlowType, topGlowOptions
-        for i = 1+offset, indicatorNums["raidDebuffs"] do
+        -- for i = 1+offset, indicatorNums["raidDebuffs"] do
+        for i = 1, indicatorNums["raidDebuffs"] do
             if debuffs_raid[unit][i] then -- debuffs_raid[unit][i] -> auraInstanceID
                 local auraInfo = GetAuraDataByAuraInstanceID(unit, debuffs_raid[unit][i])
                 if auraInfo then
@@ -853,10 +855,10 @@ local function UnitButton_UpdateDebuffs(self)
             end
         end
 
-        if cleuUnits[unit] then
-            self.indicators.raidDebuffs[1]:SetCooldown(cleuUnits[unit][1], cleuUnits[unit][2], "cleu", cleuUnits[unit][3], 1)
-            topGlowType, topGlowOptions = unpack(CellDB["cleuGlow"])
-        end
+        -- if cleuUnits[unit] then
+        --     self.indicators.raidDebuffs[1]:SetCooldown(cleuUnits[unit][1], cleuUnits[unit][2], "cleu", cleuUnits[unit][3], 1)
+        --     topGlowType, topGlowOptions = unpack(CellDB["cleuGlow"])
+        -- end
 
         -- update raidDebuffs
         if startIndex > 1 then
@@ -1126,7 +1128,7 @@ local function ResetAuraTables(unit)
     if buffs_cache_count[unit] then wipe(buffs_cache_count[unit]) end
     -- reset
     buffs_mirror_image[unit] = nil
-    cleuUnits[unit] = nil
+    -- cleuUnits[unit] = nil
 end
 
 -------------------------------------------------
@@ -1156,28 +1158,28 @@ cleu:SetScript("OnEvent", function()
         end
     end
     -- CLEU auras
-    if I:CheckCleuAura(spellId) and F:IsFriend(destFlags) then
-        local b1, b2 = F:GetUnitButtonByGUID(sourceGUID)
-        if subEvent == "SPELL_AURA_APPLIED" then
-            if b1 and b1.state.unit then
-                cleuUnits[b1.state.unit] = {GetTime(), unpack(I:CheckCleuAura(spellId))}
-                UnitButton_UpdateDebuffs(b1)
-            end
-            if b2 and b2.state.unit then
-                cleuUnits[b2.state.unit] = {GetTime(), unpack(I:CheckCleuAura(spellId))}
-                UnitButton_UpdateDebuffs(b2)
-            end
-        elseif subEvent == "SPELL_AURA_REMOVED" then
-            if b1 and b1.state.unit then
-                cleuUnits[b1.state.unit] = nil
-                UnitButton_UpdateDebuffs(b1)
-            end
-            if b2 and b2.state.unit then
-                cleuUnits[b2.state.unit] = nil
-                UnitButton_UpdateDebuffs(b2)
-            end
-        end
-    end
+    -- if I:CheckCleuAura(spellId) and F:IsFriend(destFlags) then
+    --     local b1, b2 = F:GetUnitButtonByGUID(sourceGUID)
+    --     if subEvent == "SPELL_AURA_APPLIED" then
+    --         if b1 and b1.state.unit then
+    --             cleuUnits[b1.state.unit] = {GetTime(), unpack(I:CheckCleuAura(spellId))}
+    --             UnitButton_UpdateDebuffs(b1)
+    --         end
+    --         if b2 and b2.state.unit then
+    --             cleuUnits[b2.state.unit] = {GetTime(), unpack(I:CheckCleuAura(spellId))}
+    --             UnitButton_UpdateDebuffs(b2)
+    --         end
+    --     elseif subEvent == "SPELL_AURA_REMOVED" then
+    --         if b1 and b1.state.unit then
+    --             cleuUnits[b1.state.unit] = nil
+    --             UnitButton_UpdateDebuffs(b1)
+    --         end
+    --         if b2 and b2.state.unit then
+    --             cleuUnits[b2.state.unit] = nil
+    --             UnitButton_UpdateDebuffs(b2)
+    --         end
+    --     end
+    -- end
 end)
 
 -------------------------------------------------

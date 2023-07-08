@@ -775,29 +775,21 @@ end
 -------------------------------------------------
 -- cleuAuras
 -------------------------------------------------
-local cleuAuras = {}
+-- local cleuAuras = {}
 
--- local cleus = {}
--- for _, t in pairs(cleuAuras) do
---     local icon = select(3, GetSpellInfo(t[1]))
---     cleus[t[1]] = {t[2], icon}
+-- function I:UpdateCleuAuras(t)
+--     -- reset
+--     wipe(cleuAuras)
+--     -- insert
+--     for _, c in pairs(t) do
+--         local icon = select(3, GetSpellInfo(c[1]))
+--         cleuAuras[c[1]] = {c[2], icon}
+--     end
 -- end
--- cleuAuras = F:Copy(cleus)
-
-function I:UpdateCleuAuras(t)
-    -- reset
-    wipe(cleuAuras)
-    -- cleuAuras = F:Copy(cleus)
-    -- insert
-    for _, c in pairs(t) do
-        local icon = select(3, GetSpellInfo(c[1]))
-        cleuAuras[c[1]] = {c[2], icon}
-    end
-end
     
-function I:CheckCleuAura(id)
-    return cleuAuras[id]
-end
+-- function I:CheckCleuAura(id)
+--     return cleuAuras[id]
+-- end
 
 -------------------------------------------------
 -- targetedSpells

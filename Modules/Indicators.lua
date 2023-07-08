@@ -1396,7 +1396,7 @@ if Cell.isRetail then
         ["tankActiveMitigation"] = {"|cffb7b7b7"..I:GetTankActiveMitigationString(), "enabled", "size-bar", "position", "frameLevel"},
         ["dispels"] = {"enabled", "checkbutton:dispellableByMe", "highlightType", "checkbutton2:showDispelTypeIcons", "orientation", "size-square", "position", "frameLevel"},
         ["debuffs"] = {"enabled", "checkbutton:dispellableByMe", "blacklist", "bigDebuffs", "durationVisibility", "checkbutton3:showTooltip:"..L["This will make these icons not click-through-able"].."|"..L["Tooltips need to be enabled in General tab"], "num:10", "orientation", "size-normal-big", "position", "frameLevel", "font1:stackFont", "font2:durationFont"},
-        ["raidDebuffs"] = {"|cffb7b7b7"..L["You can config debuffs in %s"]:format(Cell:GetAccentColorString()..L["Raid Debuffs"].."|r"), "enabled", "checkbutton:onlyShowTopGlow", "cleuAuras", "checkbutton2:showTooltip:"..L["This will make these icons not click-through-able"].."|"..L["Tooltips need to be enabled in General tab"], "num:3", "orientation", "size-border", "position", "frameLevel", "font1:stackFont", "font2:durationFont"},
+        ["raidDebuffs"] = {"|cffb7b7b7"..L["You can config debuffs in %s"]:format(Cell:GetAccentColorString()..L["Raid Debuffs"].."|r"), "enabled", "checkbutton:onlyShowTopGlow", "checkbutton2:showTooltip:"..L["This will make these icons not click-through-able"].."|"..L["Tooltips need to be enabled in General tab"], "num:3", "orientation", "size-border", "position", "frameLevel", "font1:stackFont", "font2:durationFont"},
         ["privateAuras"] = {"|cffb7b7b7"..L["Due to restrictions of the private aura system, this indicator can only use Blizzard style."], "enabled", "privateAuraOptions", "size-square", "position", "frameLevel"},
         ["targetedSpells"] = {"enabled", "targetedSpellsList", "targetedSpellsGlow", "size-border", "position", "frameLevel", "font"},
         ["targetCounter"] = {"|cffff2727"..L["HIGH CPU USAGE"].."!|r |cffb7b7b7"..L["Check all visible enemy nameplates. Battleground/Arena only."], "enabled", "color", "position", "frameLevel", "font-noOffset"},
@@ -1536,8 +1536,8 @@ local function ShowIndicatorSettings(id)
             w:SetDBValue(I:GetExternals(), CellDB["externals"]["disabled"])
         elseif currentSetting == "customExternals" then
             w:SetDBValue(_G.CUSTOM, CellDB["externals"]["custom"], true)
-        elseif currentSetting == "cleuAuras" then
-            w:SetDBValue(CellDB["cleuAuras"])
+        -- elseif currentSetting == "cleuAuras" then
+        --     w:SetDBValue(CellDB["cleuAuras"])
         elseif currentSetting == "bigDebuffs" then
             w:SetDBValue(L["Big Debuffs"], CellDB["bigDebuffs"], true)
         elseif currentSetting == "consumablesPreview" then
@@ -1602,9 +1602,9 @@ local function ShowIndicatorSettings(id)
                     CellDB["externals"]["custom"] = value
                     I:UpdateExternals(CellDB["externals"])
                     Cell:Fire("UpdateIndicators", notifiedLayout, "", "externals")
-                elseif currentSetting == "cleuAuras" then
-                    CellDB["cleuAuras"] = value
-                    I:UpdateCleuAuras(value)
+                -- elseif currentSetting == "cleuAuras" then
+                --     CellDB["cleuAuras"] = value
+                --     I:UpdateCleuAuras(value)
                 elseif currentSetting == "consumablesPreview" then
                     currentLayoutTable["indicators"][id]["speed"] = value
                     Cell:Fire("UpdateIndicators", notifiedLayout, indicatorName, "speed", value)
