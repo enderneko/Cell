@@ -89,6 +89,15 @@ local defaultSpells = {
             "367226S", -- Spiritbloom - 精神之花
             "357170S", -- Time Dilation - 时间膨胀
         },
+        -- 1473 - Augmentation
+        [1473] = {
+            -- "395152S", -- Ebon Might - 黑檀之力
+            "360827S", -- Blistering Scales - 炽火龙鳞
+            "409311S", -- Prescience - 先知先觉
+            "406732S", -- Spatial Paradox - 空间悖论
+            "408233S", -- Bestow Weyrnstone - 赋予军营之石
+            "412710S", -- Timelessness - 超脱时间
+        }
     },
 
     ["HUNTER"] = {

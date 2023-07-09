@@ -1971,6 +1971,21 @@ function F:Revise()
         end
     end
 
+    -- r177-release
+    if CellDB["revise"] and dbRevision < 177 then
+        --! evoker Augmentation 1473
+        if CellDB["clickCastings"]["EVOKER"] then
+            if not CellDB["clickCastings"]["EVOKER"][1473] then
+                CellDB["clickCastings"]["EVOKER"]["alwaysTargeting"][1473] = "disabled"
+                CellDB["clickCastings"]["EVOKER"][1473] = {
+                    {"type1", "target"},
+                    {"type2", "togglemenu"},
+                    {"type-shiftR", "spell", 361227},
+                }
+            end
+        end
+    end
+
     CellDB["revise"] = Cell.version
     if Cell.isWrath then
         CellCharacterDB["revise"] = Cell.version
