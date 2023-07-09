@@ -178,6 +178,8 @@ L["Extra Action Button"] = "使用額外快捷鍵"
 L["Fade Out Menu"] = "淡出選單"
 L["Fade out menu buttons on mouseout"] = "滑鼠移開時淡出選單按鈕"
 L["Fade Out These Buttons"] = "淡出這些按鈕"
+--[[Translation missing --]]
+--[[ L["fadeOut"] = "Fade out over time"--]] 
 L["first %d"] = "前 %d 個"
 L["Focus"] = "專注"
 L["focus"] = "專注目標"

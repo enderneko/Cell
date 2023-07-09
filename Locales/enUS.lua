@@ -36,6 +36,7 @@ select(2, ...).L = setmetatable({
     ["hideInCombat"] = "Hide in combat",
     ["stackFont"] = "Stack Font",
     ["durationFont"] = "Duration Font",
+    ["fadeOut"] = "Fade out over time",
 
     ["BOTTOM"] = "Bottom",
     ["BOTTOMLEFT"] = "Bottom Left",

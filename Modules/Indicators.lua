@@ -442,7 +442,11 @@ local function InitIndicator(indicatorName)
             indicator.preview:SetAllPoints(indicator)
             indicator:SetCooldown(nil, nil, "Curse")
         elseif indicator.indicatorType == "texture" then
-            indicator:SetCooldown()
+            function indicator:SetFadeOut(fadeOut)
+                indicator.fadeOut = fadeOut
+                indicator.preview.elapsedTime = 13 -- update now!
+            end
+            SetOnUpdate(indicator, nil, 134400, 0)
         else
             SetOnUpdate(indicator, nil, 134400, 5)
         end
@@ -593,6 +597,10 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                     indicator.cooldown:SetDrawSwipe(t["privateAuraOptions"][1])
                     indicator.cooldown:SetHideCountdownNumbers(not (t["privateAuraOptions"][1] and t["privateAuraOptions"][2]))
                 end
+                -- update fadeOut
+                if type(t["fadeOut"]) == "boolean" then
+                    indicator:SetFadeOut(t["fadeOut"])
+                end
                 -- after init
                 if t["enabled"] then
                     indicator.enabled = true
@@ -726,6 +734,8 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                 indicator:ShowIcons(value2)
                 indicator.init = false
                 InitIndicator(indicatorName)
+            elseif value == "fadeOut" then
+                indicator:SetFadeOut(value2)
             end
         elseif setting == "create" then
             indicator = I:CreateIndicator(previewButton, value)
@@ -792,6 +802,10 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
             -- update circled nums
             if type(value["circledStackNums"]) == "boolean" then
                 indicator:SetCircledStackNums(value["circledStackNums"])
+            end
+            -- update fadeOut
+            if type(value["fadeOut"]) == "boolean" then
+                indicator:SetFadeOut(value["fadeOut"])
             end
             InitIndicator(indicatorName)
             indicator:Show()
@@ -1260,6 +1274,7 @@ local function CreateListPane()
                     ["texture"] = {"Interface\\AddOns\\Cell\\Media\\Shapes\\circle_blurred.tga", 0, {1, 1, 1, 1}},
                     ["auraType"] = indicatorAuraType,
                     ["auras"] = {},
+                    ["fadeOut"] = false,
                 })
             end
             
@@ -1472,7 +1487,7 @@ local function ShowIndicatorSettings(id)
         elseif indicatorType == "color" then
             settingsTable = {"enabled", "auras", "customColors", "anchor"}
         elseif indicatorType == "texture" then
-            settingsTable = {"enabled", "auras", "texture", "size", "position", "frameLevel"}
+            settingsTable = {"enabled", "checkbutton3:fadeOut", "auras", "texture", "size", "position", "frameLevel"}
         end
        
         if currentLayoutTable["indicators"][id]["auraType"] == "buff" then

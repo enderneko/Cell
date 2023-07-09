@@ -506,6 +506,7 @@ L["Tooltips need to be enabled in General tab"] = "需要先启用常规页面�
 L["Only one threshold is displayed at a time"] = "同一时间只显示一个阈值"
 L["hideDamager"] = "隐藏伤害输出"
 L["hideInCombat"] = "战斗中隐藏"
+L["fadeOut"] = "随时间淡出"
 
 L["left-to-right"] = "从左到右"
 L["right-to-left"] = "从右到左"

@@ -268,6 +268,10 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                 if t["speed"] then
                     indicator:SetSpeed(t["speed"])
                 end
+                -- update fadeOut
+                if type(t["fadeOut"]) == "boolean" then
+                    indicator:SetFadeOut(t["fadeOut"])
+                end
 
                 -- init
                 -- update name visibility
@@ -546,6 +550,11 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                 end, true)
             elseif value == "buffByMe" then
                 I:UpdateMissingBuffsFilter(value2)
+            elseif value == "fadeOut" then
+                F:IterateAllUnitButtons(function(b)
+                    b.indicators[indicatorName]:SetFadeOut(value2)
+                    UnitButton_UpdateAuras(b)
+                end, true)
             else
                 indicatorCustoms[indicatorName] = value2
             end
@@ -600,6 +609,14 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                 -- update duration
                 if value["duration"] then
                     indicator:SetDuration(value["duration"])
+                end
+                 -- update circled nums
+                 if type(value["circledStackNums"]) == "boolean" then
+                    indicator:SetCircledStackNums(value["circledStackNums"])
+                end
+                -- update fadeOut
+                if type(value["fadeOut"]) == "boolean" then
+                    indicator:SetFadeOut(value["fadeOut"])
                 end
                 -- FirstRun: Healers
                 if value["auras"] and #value["auras"] ~= 0 then

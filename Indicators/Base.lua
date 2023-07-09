@@ -777,12 +777,31 @@ end
 function I:CreateAura_Texture(name, parent)
     local texture = CreateFrame("Frame", name, parent)
     texture:Hide()
+    texture.indicatorType = "texture"
     
     local tex = texture:CreateTexture(name, "OVERLAY")
     tex:SetAllPoints(texture)
 
-    function texture:SetCooldown()
+    function texture:SetCooldown(start, duration)
+        if texture.fadeOut then
+            texture:SetScript("OnUpdate", function(self, elapsed)
+                self.elapsed = (self.elapsed or 0) + elapsed
+                if self.elapsed >= 0.1 then
+                    local remain = duration - (GetTime() - start)
+                    if remain < 0 then remain = 0 end
+                    tex:SetAlpha(remain / duration * 0.8 + 0.2)
+                    self.elapsed = 0
+                end
+            end)
+        else
+            texture:SetScript("OnUpdate", nil)
+            tex:SetAlpha(1)
+        end
         texture:Show()
+    end
+
+    function texture:SetFadeOut(fadeOut)
+        texture.fadeOut = fadeOut
     end
     
     function texture:SetTexture(texTbl) -- texture, rotation, color
