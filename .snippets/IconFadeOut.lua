@@ -56,6 +56,11 @@ local function SetCooldown(frame, start, duration, debuffType, texture, count, r
                     frame.duration:SetTextColor(frame.duration.r, frame.duration.g, frame.duration.b)
                 end
 
+                -- modify buff alpha
+                if not debuffType then
+                    frame:SetAlpha((remain/duration)*(1-END_ALPHA)+END_ALPHA)
+                end
+
                 -- format
                 if remain > 60 then
                     fmt, remain = "%dm", remain/60
@@ -72,11 +77,6 @@ local function SetCooldown(frame, start, duration, debuffType, texture, count, r
                 end
 
                 frame.duration:SetFormattedText(fmt, remain)
-
-                -- modify buff alpha
-                if not debuffType then
-                    frame:SetAlpha((remain/duration)*(1-END_ALPHA)+END_ALPHA)
-                end
             end)
         else
             -- modify buff alpha
