@@ -40,6 +40,7 @@ local patrons = {
     {"握握-暗影之月 (TW)", "wowo"},
     {"千雪之心 (爱发电)", "qianxuezhixin"},
     {"朝 (爱发电)", "chao"},
+    {"Sonichunter-地獄吼 (TW)", "sonichunter", "Katoomba-地獄吼 (TW)"},
 }
 
 -- sort
