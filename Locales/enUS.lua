@@ -80,6 +80,14 @@ select(2, ...).L = setmetatable({
         <p>I've received some requests about showing Afflicted Souls on Cell. Simply put, due to the limitation of the plugin API, it is not possible. I can make them display on Cell, but these buttons will not be clickable, so there is no need. It is better to use WA.</p>
         <br/>
 
+        <h1>r177-release (Jul 10, 2023, 16:41 GMT+8)</h1>
+        <p>+ Updated for Augmentation evokers.</p>
+        <p>+ Added a "Fade out over time" option for custom texture indicators.</p>
+        <p>+ Added "Unit's Target" to spotlight frame.</p>
+        <p>- Removed "CLEU auras" from Raid Debuffs indicator.</p>
+        <p>* Updated zhTW.</p>
+        <br/>
+
         <h1>r176-release (Jul 6, 2023, 14:34 GMT+8)</h1>
         <p>+ Added full health color options in Appearance.</p>
         <p>* Updated zhTW.</p>
