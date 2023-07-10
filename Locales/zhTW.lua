@@ -162,8 +162,7 @@ L["Edit spell"] = "修改法術"
 L["EN"] = "英"
 L["Enable"] = "啟用"
 L["Enable Death Color"] = "啟用死亡顏色"
---[[Translation missing --]]
---[[ L["Enable Full Health Color"] = "Enable Full Health Color"--]] 
+L["Enable Full Health Color"] = "啟用滿血顏色"
 L["Enabled"] = "啟用"
 L["enableHighlight"] = "顯著標示單位按鈕"
 L["Enter: apply\nESC: discard"] = "Enter: 套用\nESC: 取消"
