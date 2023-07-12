@@ -1986,6 +1986,27 @@ function F:Revise()
         end
     end
 
+    -- r178-release
+    if CellDB["revise"] and dbRevision < 178 then
+        if Cell.isWrath then
+            for _, layout in pairs(CellDB["layouts"]) do
+                local index = Cell.defaults.indicatorIndices.powerWordShield
+                if layout["indicators"][index]["indicatorName"] ~= "powerWordShield" then
+                    tinsert(layout["indicators"], index, {
+                        ["name"] = "PW:S",
+                        ["indicatorName"] = "powerWordShield",
+                        ["type"] = "built-in",
+                        ["enabled"] = false,
+                        ["position"] = {"CENTER", "BOTTOMRIGHT", -7, 7},
+                        ["frameLevel"] = 10,
+                        ["size"] = {20, 20},
+                        ["shieldByMe"] = true,
+                    })
+                end
+            end
+        end
+    end
+
     CellDB["revise"] = Cell.version
     if Cell.isWrath then
         CellCharacterDB["revise"] = Cell.version

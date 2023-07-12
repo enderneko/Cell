@@ -177,8 +177,7 @@ L["Extra Action Button"] = "使用額外快捷鍵"
 L["Fade Out Menu"] = "淡出選單"
 L["Fade out menu buttons on mouseout"] = "滑鼠移開時淡出選單按鈕"
 L["Fade Out These Buttons"] = "淡出這些按鈕"
---[[Translation missing --]]
---[[ L["fadeOut"] = "Fade out over time"--]] 
+L["fadeOut"] = "隨時間淡出"
 L["first %d"] = "前 %d 個"
 L["Focus"] = "專注"
 L["focus"] = "專注目標"
@@ -307,6 +306,8 @@ L["NPC Button"] = "NPC 按鈕"
 L["OFF"] = "關"
 L["OFFLINE"] = "離線"
 L["ON"] = "開"
+--[[Translation missing --]]
+--[[ L["Only available for Priests"] = "Only available for Priests"--]] 
 L["Only available for Spells"] = "只對法術有效"
 L["only in group"] = "只有在隊伍中時"
 L["Only one threshold is displayed at a time"] = "同時間只會顯示一個臨界值"
@@ -350,6 +351,8 @@ L["Pull in %d sec"] = "開怪還有 %d 秒"
 L["Pull Timer"] = "開怪倒數"
 L["Pull timer cancelled"] = "開怪計時器已取消"
 L["pullTimerTips"] = "\n|r開怪倒數\n左鍵: |cffffffff開始倒數計時|r\n右鍵: |cffffffff取消倒數計時|r"
+--[[Translation missing --]]
+--[[ L["PW:S"] = "PW:S"--]] 
 L["Raid"] = "團隊"
 L["Raid Debuffs"] = "副本減益"
 L["Raid Debuffs updated: %s."] = "已更新團隊減益: %s。"
@@ -410,6 +413,8 @@ L["Shadow"] = "陰影"
 L["Share"] = "分享"
 L["Shield Bar"] = "護盾條"
 L["Shield Texture"] = "護盾材質"
+--[[Translation missing --]]
+--[[ L["shieldByMe"] = "Only show PW:S cast by me"--]] 
 L["shields"] = "護盾"
 L["Shift+Enter: add a new line"] = "Shift+Enter: 增加一行"
 L["Shine"] = "閃耀"
@@ -507,8 +512,7 @@ L["Unit Button"] = "單位按鈕"
 L["Unit Button Style"] = "單位按鈕樣式"
 L["Unit Spacing"] = "單位間距"
 L["Unit's Pet"] = "單位的寵物"
---[[Translation missing --]]
---[[ L["Unit's Target"] = "Unit's Target"--]] 
+L["Unit's Target"] = "指定單位的目標"
 L["Unlimited"] = "無限制"
 L["Unlock"] = "解鎖"
 L["unnamed"] = "未命名"

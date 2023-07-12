@@ -720,6 +720,7 @@ function SlashCmdList.CELL(msg, editbox)
             Cell.frames.raidMarksFrame:ClearAllPoints()
             Cell.frames.raidMarksFrame:SetPoint("BOTTOMRIGHT", UIParent, "CENTER")
             CellDB = nil
+            CellCharacterDB = nil
             ReloadUI()
 
         elseif rest == "layouts" then

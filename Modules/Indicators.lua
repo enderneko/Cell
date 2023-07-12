@@ -258,6 +258,24 @@ local function InitIndicator(indicatorName)
     elseif indicatorName == "shieldBar" then
         indicator:SetValue(0.5)
 
+    elseif indicatorName == "powerWordShield" then
+        indicator:SetScript("OnShow", function()
+            indicator.elapsed = 0
+            indicator:UpdateShield(200, 200)
+            indicator:SetShieldCooldown(GetTime(), 30)
+            indicator:SetWeakenedSoulCooldown(GetTime(), 15)
+        end)
+
+        indicator:SetScript("OnUpdate", function(self, elapsed)
+            indicator.elapsed = (indicator.elapsed or 0) + elapsed
+            indicator:UpdateShield(200-indicator.elapsed*10)
+            if indicator.elapsed >= 20 then
+                indicator.elapsed = 0
+                indicator:SetShieldCooldown(GetTime(), 30)
+                indicator:SetWeakenedSoulCooldown(GetTime(), 15)
+            end
+        end)
+
     elseif indicatorName == "tankActiveMitigation" then
         indicator.value = 0
         indicator:SetMinMaxValues(0, 100)
@@ -1440,7 +1458,7 @@ elseif Cell.isWrath then
         ["aggroBorder"] = {"enabled", "thickness", "frameLevel"},
         ["aggroBar"] = {"enabled", "size-bar", "position", "frameLevel"},
         ["shieldBar"] = {"enabled", "color-alpha", "height", "position-noHCenter", "frameLevel"},
-        -- ["powerWordShield"] = {"enabled", "size-border", "position", "frameLevel"},
+        ["powerWordShield"] = {"|cffb7b7b7"..L["Only available for Priests"], "enabled", "checkbutton:shieldByMe", "size-square", "position", "frameLevel"},
         ["aoeHealing"] = {"enabled", "color", "height"},
         ["externalCooldowns"] = {L["Even if disabled, the settings below affect \"Externals + Defensives\" indicator"], "enabled", "builtInExternals", "customExternals", "durationVisibility", "num:5", "orientation", "size", "position", "frameLevel", "font1:stackFont", "font2:durationFont"},
         ["defensiveCooldowns"] = {L["Even if disabled, the settings below affect \"Externals + Defensives\" indicator"], "enabled", "builtInDefensives", "customDefensives", "durationVisibility", "num:5", "orientation", "size", "position", "frameLevel", "font1:stackFont", "font2:durationFont"},

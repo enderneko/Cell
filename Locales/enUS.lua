@@ -37,6 +37,7 @@ select(2, ...).L = setmetatable({
     ["stackFont"] = "Stack Font",
     ["durationFont"] = "Duration Font",
     ["fadeOut"] = "Fade out over time",
+    ["shieldByMe"] = "Only show PW:S cast by me",
 
     ["BOTTOM"] = "Bottom",
     ["BOTTOMLEFT"] = "Bottom Left",
