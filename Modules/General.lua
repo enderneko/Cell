@@ -2,6 +2,7 @@ local _, Cell = ...
 local L = Cell.L
 local F = Cell.funcs
 local P = Cell.pixelPerfectFuncs
+local B = Cell.bFuncs
 local LCG = LibStub("LibCustomGlow-1.0")
 
 local generalTab = Cell:CreateFrame("CellOptionsFrame_GeneralTab", Cell.frames.optionsFrame, nil, nil, true)
@@ -166,17 +167,25 @@ end
 -------------------------------------------------
 -- misc
 -------------------------------------------------
-local useCleuCB, lockCB, fadeOutCB, menuPositionDD
+local translitCB, useCleuCB, lockCB, fadeOutCB, menuPositionDD
 
 local function CreateMiscPane()
     local miscPane = Cell:CreateTitledPane(generalTab, L["Misc"], 205, 185)
     miscPane:SetPoint("TOPLEFT", generalTab, 5, -134)
     
+    translitCB = Cell:CreateCheckButton(miscPane, L["Translit Cyrillic to Latin"], function(checked, self)
+        CellDB["general"]["translit"] = checked
+        F:IterateAllUnitButtons(function(b)
+            B.UpdateName(b)
+        end, true)
+    end)
+    translitCB:SetPoint("TOPLEFT", 5, -27)
+
     useCleuCB = Cell:CreateCheckButton(miscPane, L["Increase Health Update Rate"], function(checked, self)
         CellDB["general"]["useCleuHealthUpdater"] = checked
         Cell:Fire("UpdateCLEU")
     end, "|cffff2727"..L["HIGH CPU USAGE"].." (EXPERIMENTAL)", L["Use CLEU events to increase health update rate"])
-    useCleuCB:SetPoint("TOPLEFT", 5, -27)
+    useCleuCB:SetPoint("TOPLEFT", translitCB, "BOTTOMLEFT", 0, -7)
 
     lockCB = Cell:CreateCheckButton(miscPane, L["Lock Cell Frame"], function(checked, self)
         CellDB["general"]["locked"] = checked
@@ -231,7 +240,7 @@ local resCB, reportCB, buffCB, readyPullCB, pullDropdown, secEditBox, marksBarCB
 
 local function CreateToolsPane()
     local toolsPane = Cell:CreateTitledPane(generalTab, L["Raid Tools"].." |cFF777777"..L["only in group"], 422, 167)
-    toolsPane:SetPoint("TOPLEFT", 5, -340)
+    toolsPane:SetPoint("TOPLEFT", 5, -345)
 
     local unlockBtn = Cell:CreateButton(toolsPane, L["Unlock"], "accent", {70, 17})
     unlockBtn:SetPoint("TOPRIGHT", toolsPane)
@@ -504,6 +513,7 @@ local function ShowTab(tab)
         hideBlizzardRaidCB:SetChecked(CellDB["general"]["hideBlizzardRaid"])
 
         -- misc
+        translitCB:SetChecked(CellDB["general"]["translit"])
         useCleuCB:SetChecked(CellDB["general"]["useCleuHealthUpdater"])
         lockCB:SetChecked(CellDB["general"]["locked"])
         fadeOutCB:SetChecked(CellDB["general"]["fadeOut"])

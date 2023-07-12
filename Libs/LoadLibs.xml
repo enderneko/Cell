@@ -13,5 +13,6 @@
     <Include file="LibSerialize\lib.xml"/>
     <Include file="LibDeflate\lib.xml"/>
     <Script file="LibGroupInfo.lua"/>
+    <Include file="LibTranslit-1.0\LibTranslit-1.0.xml"/>
     <!-- <Script file="LibRangeCheck-2.0\LibRangeCheck-2.0.lua"/> -->
 </Ui>

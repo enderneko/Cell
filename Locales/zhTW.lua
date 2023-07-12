@@ -505,6 +505,8 @@ L["top-to-bottom"] = "從上到下"
 L["Track by ID"] = "符合法術 ID"
 L["trackByName"] = "根據名稱追蹤"
 L["Translators"] = "翻譯"
+--[[Translation missing --]]
+--[[ L["Translit Cyrillic to Latin"] = "Translit Cyrillic to Latin"--]] 
 L["Type: "] = "類型:"
 L["Unaffected"] = "未獲得此增益"
 L["Unit"] = "單位"

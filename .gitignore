@@ -12,3 +12,4 @@ Libs/*
 !Libs/LibGroupInfo.lua
 !Libs/LoadLibs.xml
 !Libs/LoadLibs_Wrath.xml
+!Libs/LibTranslit-1.0

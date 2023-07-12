@@ -2,6 +2,7 @@ local _, Cell = ...
 local L = Cell.L
 local F = Cell.funcs
 local P = Cell.pixelPerfectFuncs
+local LibTranslit = LibStub("LibTranslit-1.0")
 
 local raidRosterFrame = Cell:CreateFrame("CellRaidRosterFrame", Cell.frames.mainFrame, 405, 230)
 Cell.frames.raidRosterFrame = raidRosterFrame
@@ -284,6 +285,11 @@ local function UpdateRoster()
 
     for i = 1, GetNumGroupMembers() do
         local name, _, subgroup, _, _, classFileName, _, _, _, _, _, combatRole = GetRaidRosterInfo(i)
+        
+        if CellDB["general"]["translit"] then
+            name = LibTranslit:Transliterate(name)
+        end
+        
         groups[subgroup]:Insert(name, classFileName, combatRole, i)
     end
 end

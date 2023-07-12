@@ -6,6 +6,7 @@ local I = Cell.iFuncs
 local P = Cell.pixelPerfectFuncs
 local A = Cell.animations
 local HealComm = LibStub("LibHealComm-4.0", true)
+local LibTranslit = LibStub("LibTranslit-1.0")
 
 CELL_FADE_OUT_HEALTH_PERCENT = nil
 
@@ -1702,6 +1703,11 @@ local function UnitButton_UpdateName(self)
     self.state.guid = UnitGUID(unit)
     self.state.isPlayer = UnitIsPlayer(unit)
 
+    if Cell.loaded and CellDB["general"]["translit"] then
+        self.state.name = LibTranslit:Transliterate(self.state.name)
+        self.state.fullName = LibTranslit:Transliterate(self.state.fullName)
+    end
+
     self.indicators.nameText:UpdateName()
 end
 
@@ -2863,6 +2869,7 @@ B.UpdateAll = UnitButton_UpdateAll
 B.UpdateHealth = UnitButton_UpdateHealth
 B.UpdateHealthMax = UnitButton_UpdateHealthMax
 B.UpdateAuras = UnitButton_UpdateAuras
+B.UpdateName = UnitButton_UpdateName
 
 -------------------------------------------------
 -- unit button init
