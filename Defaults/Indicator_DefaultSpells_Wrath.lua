@@ -232,7 +232,12 @@ function I:UpdateDefensives(t)
     end
 end
 
+local defensiveBlacklist = {
+    [67378] = true
+}
+
 function I:IsDefensiveCooldown(name, id)
+    if defensiveBlacklist[id] then return end
     return builtInDefensives[name] or builtInDefensives[id] or customDefensives[name]
 end
 
