@@ -1,8 +1,6 @@
-[Full Changelog](https://github.com/enderneko/Cell/compare/r176-release...097786de90d25dcb21b8f30958ad9ab0369281c5)
+[Full Changelog](https://github.com/enderneko/Cell/compare/r177-release...3e5688ac254442c81c0cb21b1d3386b9489acd01)
 
-- Update for Augmentation
-- Add a "Fade out over time" option for textures
-- Add "Unit's Target" to spotlight frame
-- Remove CLEU auras from Raid Debuffs indicator
-- Update zhTW
-- [snippet] update IconFadeOut
+
+- Implement PW:S indicator
+- Update Defensives
+- Update Patrons
