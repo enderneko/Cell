@@ -1,4 +1,6 @@
-[Full Changelog](https://github.com/enderneko/Cell/compare/r178-release...d7a8b1877feddb565b97d3d146c51dad5e0805ed)
+[Full Changelog](https://github.com/enderneko/Cell/compare/r179-release...f3beb7fba9031cdf23eb00d0e887c1093e3a3905)
 
-- Implement translit
-- Update PW:S indicator
+- Implement dispel highlight filter (blacklist)
+- Fix dispel checker for Evokers
+- Fix Ready Check Icon
+- Update zhTW
