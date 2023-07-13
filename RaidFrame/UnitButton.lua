@@ -1792,7 +1792,8 @@ else
 end
 ]]
 
-local function UnitButton_UpdateInRange(self)
+-- UNIT_IN_RANGE_UPDATE: unit, inRange
+local function UnitButton_UpdateInRange(self, ir)
     local unit = self.state.displayedUnit
     if not unit then return end
 
@@ -2228,7 +2229,10 @@ local function UnitButton_OnEvent(self, event, unit, arg)
     
         elseif event == "UNIT_AURA" then
             UnitButton_UpdateAuras(self, arg)
-    
+
+        -- elseif event == "UNIT_IN_RANGE_UPDATE" then
+        --     UnitButton_UpdateInRange(self, arg)
+
         elseif event == "UNIT_TARGET" then
             UnitButton_UpdateTargetRaidIcon(self)
             
@@ -2314,7 +2318,12 @@ local function UnitButton_OnAttributeChanged(self, name, value)
             self.state.unit = value
             self.state.displayedUnit = value
             if string.find(value, "^raid%d+$") then Cell.unitButtons.raid.units[value] = self end
-           
+
+            -- range
+            -- if value ~= "focus" and not strfind(value, "target$") then
+            --     self:RegisterUnitEvent("UNIT_IN_RANGE_UPDATE", value)
+            -- end
+            
             -- for omnicd
             if string.match(value, "raid%d") then
                 local i = string.match(value, "%d")
@@ -2323,6 +2332,8 @@ local function UnitButton_OnAttributeChanged(self, name, value)
             end
 
             ResetAuraTables(value)
+        -- else
+        --     self:UnregisterEvent("UNIT_IN_RANGE_UPDATE")
         end
     end
 end
@@ -2438,7 +2449,9 @@ local function UnitButton_OnTick(self)
     self.__tickCount = e
 
     -- !TODO: use UNIT_DISTANCE_CHECK_UPDATE and UNIT_IN_RANGE_UPDATE events in 10.1.5
-    UnitButton_UpdateInRange(self)
+    -- if self.state.displayedUnit == "target" or self.state.displayedUnit == "focus" then
+        UnitButton_UpdateInRange(self)
+    -- end
     
     if self.updateRequired then
         self.updateRequired = nil
