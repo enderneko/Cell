@@ -643,7 +643,7 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                 b.indicators[indicatorName]:Hide()
                 UnitButton_UpdateAuras(b)
             end, true)
-        elseif setting == "blacklist" or setting == "defensives" or setting == "externals" or setting == "bigDebuffs" or setting == "debuffTypeColor" then
+        elseif setting == "debuffBlacklist" or setting == "dispelBlacklist" or setting == "defensives" or setting == "externals" or setting == "bigDebuffs" or setting == "debuffTypeColor" then
             F:IterateAllUnitButtons(function(b)
                 UnitButton_UpdateAuras(b)
             end, true)
@@ -766,10 +766,14 @@ local function UnitButton_UpdateDebuffs(self)
             debuffs_current[unit][auraInstanceID] = i
 
             if enabledIndicators["dispels"] and debuffType and debuffType ~= "" then
-                if indicatorCustoms["dispels"] then -- dispellableByMe
-                    if I:CanDispel(debuffType) then debuffs_dispel[unit][debuffType] = true end
-                else
-                    debuffs_dispel[unit][debuffType] = true
+                -- all dispels / only dispellableByMe
+                if not indicatorCustoms["dispels"] or I:CanDispel(debuffType) then
+                    if Cell.vars.dispelBlacklist[spellId] then
+                        -- no highlight
+                        debuffs_dispel[unit][debuffType] = false
+                    else
+                        debuffs_dispel[unit][debuffType] = true
+                    end
                 end
             end
 

@@ -386,6 +386,12 @@ function eventFrame:ADDON_LOADED(arg1)
 
         CellLayoutAutoSwitchTable = CellDB["layoutAutoSwitch"]
 
+        -- dispelBlacklist ------------------------------------------------------------------------
+        if type(CellDB["dispelBlacklist"]) ~= "table" then
+            CellDB["dispelBlacklist"] = I:GetDefaultDispelBlacklist()
+        end
+        Cell.vars.dispelBlacklist = F:ConvertTable(CellDB["dispelBlacklist"])
+
         -- debuffBlacklist ------------------------------------------------------------------------
         if type(CellDB["debuffBlacklist"]) ~= "table" then
             CellDB["debuffBlacklist"] = I:GetDefaultDebuffBlacklist()

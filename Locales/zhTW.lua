@@ -226,6 +226,8 @@ L["hideDamager"] = "隱藏傷害輸出"
 L["hideIfEmptyOrFull"] = "死亡或滿血時隱藏"
 L["hideInCombat"] = "戰鬥中隱藏"
 L["HIGH CPU USAGE"] = "高 CPU 使用量"
+--[[Translation missing --]]
+--[[ L["Highlight Filter (blacklist)"] = ""--]] 
 L["Highlight Size"] = "顯著標示粗細"
 L["Highlight Type"] = "顯著標示類型"
 L["Horizontal"] = "水平"
@@ -489,8 +491,7 @@ L["Tip: Every layout has its own position setting"] = "提示: 每個版面配�
 L["To"] = "到"
 L["To HealthBar's"] = "對齊到血條的"
 L["To open options frame, use /cell options"] = "輸入 /cell options 打開設定選項"
---[[Translation missing --]]
---[[ L["To show shield value, |cffff2727Glyph of Power Word: Shield|r is required"] = "To show shield value, |cffff2727Glyph of Power Word: Shield|r is required"--]] 
+L["To show shield value, |cffff2727Glyph of Power Word: Shield|r is required"] = "需要有|cffff2727真言術：盾雕紋|r才能顯示護盾值"
 L["To transfer across realm, you need to be in the same group"] = "必須在同一個隊伍中才能垮伺服器傳輸。"
 L["To UnitButton's"] = "對齊到單位按鈕的"
 L["togglemenu"] = "選單"
@@ -504,8 +505,7 @@ L["top-to-bottom"] = "從上到下"
 L["Track by ID"] = "符合法術 ID"
 L["trackByName"] = "根據名稱追蹤"
 L["Translators"] = "翻譯"
---[[Translation missing --]]
---[[ L["Translit Cyrillic to Latin"] = "Translit Cyrillic to Latin"--]] 
+L["Translit Cyrillic to Latin"] = "將俄文轉換成英文"
 L["Type: "] = "類型:"
 L["Unaffected"] = "未獲得此增益"
 L["Unit"] = "單位"

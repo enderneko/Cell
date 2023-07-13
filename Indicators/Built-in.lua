@@ -428,8 +428,8 @@ local function Dispels_SetDispels(self, dispelTypes)
     local r, g, b, a = 0, 0, 0, 0
 
     local i = 1
-    for dispelType, _ in pairs(dispelTypes) do
-        if a == 0 and dispelType then
+    for dispelType, showHighlight in pairs(dispelTypes) do
+        if a == 0 and dispelType and showHighlight then
             r, g, b = I:GetDebuffTypeColor(dispelType)
             a = 1
         end

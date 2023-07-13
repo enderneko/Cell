@@ -4,6 +4,16 @@ local I = Cell.iFuncs
 local F = Cell.funcs
 
 -------------------------------------------------
+-- dispelBlacklist
+-------------------------------------------------
+-- supress dispel highlight
+local dispelBlacklist = {}
+
+function I:GetDefaultDispelBlacklist()
+    return dispelBlacklist
+end
+
+-------------------------------------------------
 -- debuffBlacklist
 -------------------------------------------------
 local debuffBlacklist = {
