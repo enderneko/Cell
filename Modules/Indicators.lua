@@ -230,7 +230,21 @@ local function InitIndicator(indicatorName)
         indicator.preview:SetAllPoints(indicator)
         
     elseif indicatorName == "readyCheckIcon" then
-        indicator:SetTexture(READY_CHECK_READY_TEXTURE)
+        local status = {"ready", "notready", "waiting"}
+        indicator:SetScript("OnShow", function()
+            indicator.elapsed = 0
+            indicator.current = 1
+            indicator:SetStatus("ready")
+        end)
+        indicator:SetScript("OnUpdate", function(self, elapsed)
+            indicator.elapsed = (indicator.elapsed or 0) + elapsed
+            if indicator.elapsed >= 2 then
+                indicator.elapsed = 0
+                indicator.current = indicator.current + 1
+                if indicator.current > 3 then indicator.current = 1 end
+                indicator:SetStatus(status[indicator.current])
+            end
+        end)
 
     elseif indicatorName == "aggroBlink" then
         indicator.isAggroBlink = true

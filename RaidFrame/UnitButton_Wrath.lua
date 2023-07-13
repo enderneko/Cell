@@ -1365,11 +1365,6 @@ local function UnitButton_UpdateTargetRaidIcon(self)
     end
 end
 
-local READYCHECK_STATUS = {
-    ready = {t = READY_CHECK_READY_TEXTURE, c = {0, 1, 0, 1}},
-    waiting = {t = READY_CHECK_WAITING_TEXTURE, c = {1, 1, 0, 1}},
-    notready = {t = READY_CHECK_NOT_READY_TEXTURE, c = {1, 0, 0, 1}},
-}
 local function UnitButton_UpdateReadyCheck(self)
     local unit = self.state.unit
     if not unit then return end
@@ -1380,8 +1375,7 @@ local function UnitButton_UpdateReadyCheck(self)
     if status then
         -- self.widget.readyCheckHighlight:SetVertexColor(unpack(READYCHECK_STATUS[status].c))
         -- self.widget.readyCheckHighlight:Show()
-        self.indicators.readyCheckIcon:SetTexture(READYCHECK_STATUS[status].t)
-        self.indicators.readyCheckIcon:Show()
+        self.indicators.readyCheckIcon:SetStatus(status)
     else
         -- self.widget.readyCheckHighlight:Hide()
         self.indicators.readyCheckIcon:Hide()
@@ -1391,7 +1385,7 @@ end
 local function UnitButton_FinishReadyCheck(self)
     if self.state.readyCheckStatus == "waiting" then
         -- self.widget.readyCheckHighlight:SetVertexColor(unpack(READYCHECK_STATUS.notready.c))
-        self.indicators.readyCheckIcon:SetTexture(READYCHECK_STATUS.notready.t)
+        self.indicators.readyCheckIcon:SetStatus("notready")
     end
     C_Timer.After(6, function()
         -- self.widget.readyCheckHighlight:Hide()
