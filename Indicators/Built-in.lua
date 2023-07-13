@@ -1819,7 +1819,9 @@ function I:CreatePowerWordShield(parent)
     --! shield duration
     local shieldCooldown = CreateFrame("Cooldown", parent:GetName().."PowerWordShieldDuration", powerWordShield)
     shieldCooldown:SetFrameLevel(shieldAmount:GetFrameLevel() + 1)
-    shieldCooldown:SetPoint("CENTER")
+    -- shieldCooldown:SetPoint("CENTER")
+    shieldCooldown:SetPoint("TOPLEFT", P:Scale(1), P:Scale(-1))
+    shieldCooldown:SetPoint("BOTTOMRIGHT", P:Scale(-1), P:Scale(1))
     shieldCooldown:SetSwipeTexture([[Interface\AddOns\Cell\Media\Shapes\circle_filled.tga]])
     shieldCooldown:SetSwipeColor(0, 1, 0)
     shieldCooldown.noCooldownCount = true -- disable omnicc
@@ -1832,7 +1834,9 @@ function I:CreatePowerWordShield(parent)
     --! weakened soul duration
     local weakendedSoulCooldown = CreateFrame("Cooldown", parent:GetName().."WeakenedSoulDuration", powerWordShield)
     weakendedSoulCooldown:SetFrameLevel(shieldAmount:GetFrameLevel() + 2)
-    weakendedSoulCooldown:SetPoint("CENTER")
+    -- weakendedSoulCooldown:SetPoint("CENTER")
+    weakendedSoulCooldown:SetPoint("TOPLEFT", P:Scale(1), P:Scale(-1))
+    weakendedSoulCooldown:SetPoint("BOTTOMRIGHT", P:Scale(-1), P:Scale(1))
     weakendedSoulCooldown:SetSwipeTexture([[Interface\AddOns\Cell\Media\Shapes\circle_filled.tga]])
     weakendedSoulCooldown:SetSwipeColor(1, 0, 0)
     weakendedSoulCooldown.noCooldownCount = true -- disable omnicc
@@ -1869,20 +1873,22 @@ function I:CreatePowerWordShield(parent)
         elseif max then
             powerWordShield.max = max
         end
-        
+
+        shieldCooldown:ClearAllPoints()
         weakendedSoulCooldown:ClearAllPoints()
 
         if value ~= 0 and powerWordShield.max then
             shieldAmount:SetCooldown(GetTime()-(powerWordShield.max-value), powerWordShield.max)
             shieldAmount:Pause()
+            shieldCooldown:SetPoint("CENTER")
             weakendedSoulCooldown:SetPoint("CENTER")
         else
+            shieldCooldown:SetPoint("TOPLEFT", P:Scale(1), P:Scale(-1))
+            shieldCooldown:SetPoint("BOTTOMRIGHT", P:Scale(-1), P:Scale(1))
             weakendedSoulCooldown:SetPoint("TOPLEFT", P:Scale(1), P:Scale(-1))
             weakendedSoulCooldown:SetPoint("BOTTOMRIGHT", P:Scale(-1), P:Scale(1))
         end
     end
-
-
 
     local function Update()
         if not (shieldCooldown:IsShown() or weakendedSoulCooldown:IsShown()) then

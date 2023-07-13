@@ -306,8 +306,6 @@ L["NPC Button"] = "NPC 按鈕"
 L["OFF"] = "關"
 L["OFFLINE"] = "離線"
 L["ON"] = "開"
---[[Translation missing --]]
---[[ L["Only available for Priests"] = "Only available for Priests"--]] 
 L["Only available for Spells"] = "只對法術有效"
 L["only in group"] = "只有在隊伍中時"
 L["Only one threshold is displayed at a time"] = "同時間只會顯示一個臨界值"
@@ -413,8 +411,7 @@ L["Shadow"] = "陰影"
 L["Share"] = "分享"
 L["Shield Bar"] = "護盾條"
 L["Shield Texture"] = "護盾材質"
---[[Translation missing --]]
---[[ L["shieldByMe"] = "Only show PW:S cast by me"--]] 
+L["shieldByMe"] = "只顯示我施放的真言術：盾"
 L["shields"] = "護盾"
 L["Shift+Enter: add a new line"] = "Shift+Enter: 增加一行"
 L["Shine"] = "閃耀"
@@ -492,6 +489,8 @@ L["Tip: Every layout has its own position setting"] = "提示: 每個版面配�
 L["To"] = "到"
 L["To HealthBar's"] = "對齊到血條的"
 L["To open options frame, use /cell options"] = "輸入 /cell options 打開設定選項"
+--[[Translation missing --]]
+--[[ L["To show shield value, |cffff2727Glyph of Power Word: Shield|r is required"] = "To show shield value, |cffff2727Glyph of Power Word: Shield|r is required"--]] 
 L["To transfer across realm, you need to be in the same group"] = "必須在同一個隊伍中才能垮伺服器傳輸。"
 L["To UnitButton's"] = "對齊到單位按鈕的"
 L["togglemenu"] = "選單"

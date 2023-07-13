@@ -1863,7 +1863,7 @@ local function UnitButton_UpdatePowerWordShield(self, current, max, resetMax)
     self.indicators.powerWordShield:UpdateShield(current, max, resetMax)
 end
 
-local function UpdateShield(guid, max, resetMax)
+local function UpdateShield(guid, max, rese1tMax)
     local b1, b2 = F:GetUnitButtonByGUID(guid)
     if b1 then
         UnitButton_UpdateShieldAbsorbs(b1)
@@ -2002,6 +2002,7 @@ cleu:SetScript("OnEvent", function()
                 -- print("PWS removed", timestamp)
                 pwsInfo[destGUID] = nil
             end
+            UpdateShield(destGUID)
         elseif sourceGUID == Cell.vars.playerGUID then
             if arg12 == 47753 then -- Divine Aegis NOTE: mine only
                 daInfo[destGUID] = nil
@@ -2011,8 +2012,8 @@ cleu:SetScript("OnEvent", function()
                 --! BLESSING END
                 blessing = false
             end
+            UpdateShield(destGUID)
         end
-        UpdateShield(destGUID)
 
     elseif subEvent == "SPELL_AURA_APPLIED" then
         -- NOTE: 10% chance whenever a hot or direct spell heals, with a 45 sec internal cooldown
