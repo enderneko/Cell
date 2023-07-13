@@ -92,6 +92,7 @@ local defaultSpells = {
         -- 1473 - Augmentation
         [1473] = {
             -- "395152S", -- Ebon Might - 黑檀之力
+            "365585C", -- Expunge - 净除
             "360827S", -- Blistering Scales - 炽火龙鳞
             "409311S", -- Prescience - 先知先觉
             "406732S", -- Spatial Paradox - 空间悖论

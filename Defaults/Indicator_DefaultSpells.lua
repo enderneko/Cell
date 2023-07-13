@@ -517,9 +517,11 @@ local dispelNodeIDs = {
     
     -- EVOKER ---------------
         -- 1467 - Devastation
-        [1467] = {["Poison"] = 68689},
+        [1467] = {["Poison"] = 93306},
         -- 1468	- Preservation
         [1468] = {["Magic"] = true, ["Poison"] = true},
+        -- 1473 - Augmentation
+        [1473] = {["Poison"] = 93306},
     -------------------------
         
     -- MAGE -----------------
@@ -629,9 +631,11 @@ else
             eventFrame:UnregisterEvent("PLAYER_ENTERING_WORLD")
             if Cell.vars.playerClass == "EVOKER" and CELL_DISPEL_EVOKER_CAUTERIZING_FLAME then
                 -- 1467 - Devastation
-                dispelNodeIDs[1467] = {["Curse"] = 68673, ["Disease"] = 68673, ["Poison"] = 68689}
+                dispelNodeIDs[1467] = {["Curse"] = 93294, ["Disease"] = 93294, ["Poison"] = 93306}
                 -- 1468	- Preservation
-                dispelNodeIDs[1468] = {["Curse"] = 68673, ["Disease"] = 68673, ["Magic"] = true, ["Poison"] = true}
+                dispelNodeIDs[1468] = {["Curse"] = 93294, ["Disease"] = 93294, ["Magic"] = true, ["Poison"] = true}
+                -- 1473 - Augmentation
+                dispelNodeIDs[1473] = {["Curse"] = 93294, ["Disease"] = 93294, ["Poison"] = 93306}
             end
         end
 
