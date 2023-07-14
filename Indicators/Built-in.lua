@@ -1884,6 +1884,16 @@ function I:CreatePowerWordShield(parent)
         shieldAmount:SetPoint("BOTTOMRIGHT", P:Scale(-1), P:Scale(1))
     end
 
+    function powerWordShield:SetShape(shape)
+        local tex = "Interface\\AddOns\\Cell\\Media\\Shapes\\"..shape.."_filled.tga"
+        powerWordShield:SetBackdrop({bgFile = tex})
+        powerWordShield:SetBackdropColor(0, 0, 0, 0.75)
+        shieldAmount:SetSwipeTexture(tex)
+        innerBG:SetTexture(tex, "CLAMP", "CLAMP", "TRILINEAR")
+        shieldCooldown:SetSwipeTexture(tex)
+        weakendedSoulCooldown:SetSwipeTexture(tex)
+    end
+
     function powerWordShield:UpdateShield(value, max, resetMax)
         -- print("UpdateShield:", value, max, resetMax)
 

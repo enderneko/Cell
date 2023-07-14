@@ -280,6 +280,10 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                 if type(t["fadeOut"]) == "boolean" then
                     indicator:SetFadeOut(t["fadeOut"])
                 end
+                -- update shape
+                if t["shape"] then
+                    indicator:SetShape(t["shape"])
+                end
 
                 -- init
                 -- update name visibility
@@ -651,6 +655,10 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
             -- only Consumables indicator has this option for now
             F:IterateAllUnitButtons(function(b)
                 b.indicators[indicatorName]:SetSpeed(value)
+            end, true)
+        elseif setting == "shape" then
+            F:IterateAllUnitButtons(function(b)
+                b.indicators[indicatorName]:SetShape(value)
             end, true)
         end
     end

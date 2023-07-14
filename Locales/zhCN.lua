@@ -486,6 +486,7 @@ L["Rotation"] = "旋转"
 L["Even if disabled, the settings below affect \"Externals + Defensives\" indicator"] = "即使被禁用，下列设置也会对“减伤 (全部)”指示器生效"
 L["Built-in Spells"] = "内置法术"
 L["Highlight Type"] = "高亮类型"
+L["Shape"] = "形状"
 L["To show shield value, |cffff2727Glyph of Power Word: Shield|r is required"] = "需要有|cffff2727真言术：盾雕文|r才能显示盾值"
 
 L["Click to preview"] = "点击预览"

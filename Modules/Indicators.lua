@@ -633,6 +633,11 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                 if type(t["fadeOut"]) == "boolean" then
                     indicator:SetFadeOut(t["fadeOut"])
                 end
+                -- update shape
+                if t["shape"] then
+                    indicator:SetShape(t["shape"])
+                end
+
                 -- after init
                 if t["enabled"] then
                     indicator.enabled = true
@@ -750,6 +755,10 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
         elseif setting == "privateAuraOptions" then
             indicator.cooldown:SetDrawSwipe(value[1])
             indicator.cooldown:SetHideCountdownNumbers(not (value[1] and value[2]))
+        elseif setting == "speed" then
+            indicator:SetSpeed(value)
+        elseif setting == "shape" then
+            indicator:SetShape(value)
         elseif setting == "checkbutton" then
             if value == "showGroupNumber" then
                 indicator:ShowGroupNumber(value2)
@@ -849,8 +858,6 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                 indicator.preview = nil
             end
             I:RemoveIndicator(previewButton, indicatorName, value)
-        elseif setting == "speed" then
-            indicator:SetSpeed(value)
         end
     end
 end
@@ -1472,7 +1479,7 @@ elseif Cell.isWrath then
         ["aggroBorder"] = {"enabled", "thickness", "frameLevel"},
         ["aggroBar"] = {"enabled", "size-bar", "position", "frameLevel"},
         ["shieldBar"] = {"enabled", "color-alpha", "height", "position-noHCenter", "frameLevel"},
-        ["powerWordShield"] = {L["To show shield value, |cffff2727Glyph of Power Word: Shield|r is required"], "enabled", "checkbutton:shieldByMe", "size-square", "position", "frameLevel"},
+        ["powerWordShield"] = {L["To show shield value, |cffff2727Glyph of Power Word: Shield|r is required"], "enabled", "checkbutton:shieldByMe", "shape", "size-square", "position", "frameLevel"},
         ["aoeHealing"] = {"enabled", "color", "height"},
         ["externalCooldowns"] = {L["Even if disabled, the settings below affect \"Externals + Defensives\" indicator"], "enabled", "builtInExternals", "customExternals", "durationVisibility", "num:5", "orientation", "size", "position", "frameLevel", "font1:stackFont", "font2:durationFont"},
         ["defensiveCooldowns"] = {L["Even if disabled, the settings below affect \"Externals + Defensives\" indicator"], "enabled", "builtInDefensives", "customDefensives", "durationVisibility", "num:5", "orientation", "size", "position", "frameLevel", "font1:stackFont", "font2:durationFont"},

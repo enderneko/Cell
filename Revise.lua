@@ -2007,6 +2007,18 @@ function F:Revise()
         end
     end
 
+    -- r181-release
+    if CellDB["revise"] and dbRevision < 181 then
+        if Cell.isWrath then
+            for _, layout in pairs(CellDB["layouts"]) do
+                local index = Cell.defaults.indicatorIndices.powerWordShield
+                if type(layout["indicators"][index]["shape"]) ~= "string" then
+                    layout["indicators"][index]["shape"] = "circle"
+                end
+            end
+        end
+    end
+
     CellDB["revise"] = Cell.version
     if Cell.isWrath then
         CellCharacterDB["revise"] = Cell.version

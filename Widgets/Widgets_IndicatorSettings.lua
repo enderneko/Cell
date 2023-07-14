@@ -4408,6 +4408,104 @@ local function CreateSetting_Tips(parent, text)
     return widget
 end
 
+local function CreateSetting_Shape(parent)
+    local widget
+
+    if not settingWidgets["shape"] then
+        widget = addon:CreateFrame("CellIndicatorSettings_Shape", parent, 240, 50)
+        settingWidgets["shape"] = widget
+
+        local shapes = {"circle", "square", "rhombus", "hexagon", "octagon"}
+
+        widget.buttons = {}
+
+        for i, s in pairs(shapes) do
+            widget.buttons[s] = addon:CreateButton(widget, nil, "accent-hover", {22, 22})
+            widget.buttons[s]:SetTexture("Interface\\AddOns\\Cell\\Media\\Shapes\\"..shapes[i].."_filled", {18, 18}, {"CENTER", 0, 0})
+
+            -- button group
+            widget.buttons[s].id = s
+
+            if i == 1 then
+                widget.buttons[s]:SetPoint("TOPLEFT", 5, -20)
+            else
+                widget.buttons[s]:SetPoint("TOPLEFT", widget.buttons[shapes[i-1]], "TOPRIGHT", 5, 0)
+            end
+        end
+
+        widget.highlight = Cell:CreateButtonGroup(widget.buttons, function(shape)
+            widget.func(shape)
+        end)
+
+        -- widget.shape = addon:CreateDropdown(widget, 153)
+        -- widget.shape:SetPoint("TOPLEFT", 5, -20)
+        -- widget.shape:SetItems({
+        --     {
+        --         ["text"] = "|TInterface\\AddOns\\Cell\\Media\\Shapes\\circle_filled:0|t",
+        --         ["value"] = "circle",
+        --         ["onClick"] = function()
+        --             widget.func("circle")
+        --         end,
+        --     },
+        --     {
+        --         ["text"] = "|TInterface\\AddOns\\Cell\\Media\\Shapes\\square_filled:0|t",
+        --         ["value"] = "square",
+        --         ["onClick"] = function()
+        --             widget.func("square")
+        --         end,
+        --     },
+        --     {
+        --         ["text"] = "|TInterface\\AddOns\\Cell\\Media\\Shapes\\rhombus_filled:0|t",
+        --         ["value"] = "rhombus",
+        --         ["onClick"] = function()
+        --             widget.func("rhombus")
+        --         end,
+        --     },
+        --     {
+        --         ["text"] = "|TInterface\\AddOns\\Cell\\Media\\Shapes\\hexagon_filled:0|t",
+        --         ["value"] = "hexagon",
+        --         ["onClick"] = function()
+        --             widget.func("hexagon")
+        --         end,
+        --     },
+        --     {
+        --         ["text"] = "|TInterface\\AddOns\\Cell\\Media\\Shapes\\octagon_filled:0|t",
+        --         ["value"] = "octagon",
+        --         ["onClick"] = function()
+        --             widget.func("octagon")
+        --         end,
+        --     },
+        --     {
+        --         ["text"] = "|TInterface\\AddOns\\Cell\\Media\\Shapes\\star_filled:0|t",
+        --         ["value"] = "star",
+        --         ["onClick"] = function()
+        --             widget.func("star")
+        --         end,
+        --     },
+        -- })
+
+        widget.shapeText = widget:CreateFontString(nil, "OVERLAY", font_name)
+        widget.shapeText:SetText(L["Shape"])
+        widget.shapeText:SetPoint("BOTTOMLEFT", widget.buttons[shapes[1]], "TOPLEFT", 0, 2)
+
+        -- associate db
+        function widget:SetFunc(func)
+            widget.func = func
+        end
+        
+        -- show db value
+        function widget:SetDBValue(shape)
+            -- widget.shape:SetSelectedValue(shape)
+            widget.highlight(shape)
+        end
+    else
+        widget = settingWidgets["shape"]
+    end
+
+    widget:Show()
+    return widget
+end
+
 -----------------------------------------
 -- create
 -----------------------------------------
@@ -4516,6 +4614,8 @@ function addon:CreateIndicatorSettings(parent, settingsTable)
             tinsert(widgetsTable, CreateSetting_Thresholds(parent))
         elseif setting == "privateAuraOptions" then
             tinsert(widgetsTable, CreateSetting_PrivateAuraOptions(parent))
+        elseif setting == "shape" then
+            tinsert(widgetsTable, CreateSetting_Shape(parent))
         else -- tips
             tinsert(widgetsTable, CreateSetting_Tips(parent, setting))
         end

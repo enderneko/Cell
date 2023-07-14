@@ -226,8 +226,7 @@ L["hideDamager"] = "隱藏傷害輸出"
 L["hideIfEmptyOrFull"] = "死亡或滿血時隱藏"
 L["hideInCombat"] = "戰鬥中隱藏"
 L["HIGH CPU USAGE"] = "高 CPU 使用量"
---[[Translation missing --]]
---[[ L["Highlight Filter (blacklist)"] = ""--]] 
+L["Highlight Filter (blacklist)"] = "過濾顯著標示 (黑名單)"
 L["Highlight Size"] = "顯著標示粗細"
 L["Highlight Type"] = "顯著標示類型"
 L["Horizontal"] = "水平"
@@ -410,6 +409,8 @@ L["sec"] = "秒"
 L["Secondary Talents"] = "次要天賦"
 L["Separate NPC Frame"] = "分離 NPC 框架"
 L["Shadow"] = "陰影"
+--[[Translation missing --]]
+--[[ L["Shape"] = "Shape"--]] 
 L["Share"] = "分享"
 L["Shield Bar"] = "護盾條"
 L["Shield Texture"] = "護盾材質"
