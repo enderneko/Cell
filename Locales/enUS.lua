@@ -81,6 +81,11 @@ select(2, ...).L = setmetatable({
         <p>I've received some requests about showing Afflicted Souls on Cell. Simply put, due to the limitation of the plugin API, it is not possible. I can make them display on Cell, but these buttons will not be clickable, so there is no need. It is better to use WA.</p>
         <br/>
 
+        <h1>r181-release (Jul 15, 2023, 03:12 GMT+8)</h1>
+        <p>+ Added a "Shape" option for PW:S indicator.</p>
+        <p>* Updated zhTW.</p>
+        <br/>
+
         <h1>r180-release (Jul 14, 2023, 05:48 GMT+8)</h1>
         <p>+ Added "Highlight Filter (blacklist)" for Dispel indicator.</p>
         <p>* Fixed dispel checker for Evokers.</p>
