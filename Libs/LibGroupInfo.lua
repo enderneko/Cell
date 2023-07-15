@@ -1,9 +1,9 @@
---[[
+---------------------------------------------------------------------
 -- File: LibGroupInfo.lua
 -- Author: enderneko (enderneko-dev@outlook.com)
--- File Created: 2022/07/29 15:04:31 +0800
--- Last Modified: 2022/10/08 04:55:39 +0800
---]]
+-- Created : 2022-07-29 15:04:31 +08:00
+-- Modified: 2023-07-17 20:45:50 +08:00
+---------------------------------------------------------------------
 
 local MAJOR, MINOR = "LibGroupInfo", 4
 local lib = LibStub:NewLibrary(MAJOR, MINOR)
@@ -138,6 +138,7 @@ local IsInGroup = IsInGroup
 local GetNumGroupMembers = GetNumGroupMembers
 local UnitInParty = UnitInParty
 local UnitInRaid = UnitInRaid
+local UnitGroupRolesAssigned = UnitGroupRolesAssigned
 
 local GetNumTalentTabs = GetNumTalentTabs
 local GetTalentTabInfo = GetTalentTabInfo
@@ -193,6 +194,7 @@ local function UpdateBaseInfo(unit, guid)
     cache[guid].race = select(2, UnitRace(unit))
     cache[guid].gender = genders[UnitSex(unit)]
     cache[guid].faction = UnitFactionGroup(unit)
+    cache[guid].assignedRole = UnitGroupRolesAssigned(unit)
 
     --! fire
     lib.callbacks:Fire(UPDATE_BASE_EVENT, guid, unit, cache[guid])
