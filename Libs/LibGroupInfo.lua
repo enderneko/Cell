@@ -50,50 +50,67 @@ local specRoles = {
     [250] = "TANK", -- Blood
     [251] = "MELEE", -- Frost
     [252] = "MELEE", -- Unholy
+    [1455] = "DAMAGER",
     -- Demon Hunter
     [577] = "MELEE", -- Havoc
     [581] = "TANK", -- Vengeance
+    [1456] = "DAMAGER",
     -- Druid
     [102] = "RANGED", -- Balance
     [103] = "MELEE", -- Feral
     [104] = "TANK", -- Guardian
     [105] = "HEALER", -- Restoration
+    [1447] = "DAMAGER",
+    -- Evoker
+    [1467] = "RANGED", -- Devastation
+    [1468] = "HEALER", -- Preservation
+    [1473] = "RANGED", -- Augmentation
+    [1465] = "DAMAGER",
     -- Hunter
     [253] = "RANGED", -- Beast Mastery
     [254] = "RANGED", -- Marksmanship
     [255] = "MELEE", -- Survival
+    [1448] = "DAMAGER",
     -- Mage
     [62] = "RANGED", -- Arcane
     [63] = "RANGED", -- Fire
     [64] = "RANGED", -- Frost
+    [1449] = "DAMAGER",
     -- Monk
     [268] = "TANK", -- Brewmaster
     [269] = "MELEE", -- Windwalker
     [270] = "HEALER", -- Mistweaver
+    [1450] = "DAMAGER",
     -- Paladin
     [65] = "HEALER", -- Holy
     [66] = "TANK", -- Protection
     [70] = "MELEE", -- Retribution
+    [1451] = "DAMAGER",
     -- Priest
     [256] = "HEALER", -- Discipline
     [257] = "HEALER", -- Holy
     [258] = "RANGED", -- Shadow
+    [1452] = "DAMAGER",
     -- Rogue
     [259] = "MELEE", -- Assassination
     [260] = "MELEE", -- Combat
     [261] = "MELEE", -- Subtlety
+    [1453] = "DAMAGER",
     -- Shaman
     [262] = "RANGED", -- Elemental
     [263] = "MELEE", -- Enhancement
     [264] = "HEALER", -- Restoration
+    [1444] = "DAMAGER",
     -- Warlock
     [265] = "RANGED", -- Affliction
     [266] = "RANGED", -- Demonology
     [267] = "RANGED", -- Destruction
+    [1454] = "DAMAGER",
     -- Warrior
     [71] = "MELEE", -- Arms
     [72] = "MELEE", -- Fury
     [73] = "TANK", -- Protection
+    [1446] = "DAMAGER",
 }
 
 lib.specData = specData
@@ -139,6 +156,15 @@ local function CacheSpecData()
     for classId = 1, GetNumClasses() do
         for specIndex = 1, GetNumSpecializationsForClassID(classId) do
             local id, name, description, icon, role = GetSpecializationInfoForClassID(classId, specIndex)
+            specData[id] = {
+                ["name"] = name,
+                ["icon"] = icon,
+                ["role"] = specRoles[id],
+            }
+        end
+        -- initials
+        if IS_RETAIL then
+            local id, name, description, icon, role = GetSpecializationInfoForClassID(classId, 5)
             specData[id] = {
                 ["name"] = name,
                 ["icon"] = icon,

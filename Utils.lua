@@ -1017,11 +1017,18 @@ end
 function F:IterateGroupMembers()
     local groupType = IsInRaid() and "raid" or "party"
     local numGroupMembers = GetNumGroupMembers()
-    local i = groupType == "party" and 0 or 1
+    local i
+
+    if groupType == "party" then
+        i = 0
+        numGroupMembers = numGroupMembers - 1
+    else
+        i = 1
+    end
 
     return function()
         local ret
-        if i == 0 and groupType == "party" then
+        if i == 0 then
             ret = "player"
         elseif i <= numGroupMembers and i > 0 then
             ret = groupType .. i

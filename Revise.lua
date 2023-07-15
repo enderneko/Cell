@@ -13,13 +13,14 @@ function F:Revise()
         F:Debug("CharaDBRevision:", charaDbRevision)
     end
 
-    if CellDB["revise"] and dbRevision < 149 then -- update from an unsupported version
+    if CellDB["revise"] and (dbRevision < 149 or (charaDbRevision and charaDbRevision < 149)) then -- update from an unsupported version
         local f = CreateFrame("Frame")
         f:RegisterEvent("PLAYER_ENTERING_WORLD")
         f:SetScript("OnEvent", function()
             f:UnregisterAllEvents()
             local popup = Cell:CreateConfirmPopup(CellAnchorFrame, 260, L["RESET"], function()
                 CellDB = nil
+                CellCharacterDB = nil
                 ReloadUI()
             end)
             popup:SetPoint("TOPLEFT")
