@@ -135,6 +135,7 @@ function eventFrame:ADDON_LOADED(arg1)
         eventFrame:UnregisterEvent("ADDON_LOADED")
         
         if type(CellDB) ~= "table" then CellDB = {} end
+        if type(CellCharacterDB) ~= "table" then CellCharacterDB = {} end
 
         if type(CellDB["optionsFramePosition"]) ~= "table" then CellDB["optionsFramePosition"] = {} end
 
@@ -288,11 +289,10 @@ function eventFrame:ADDON_LOADED(arg1)
         end
 
         -- click-casting --------------------------------------------------------------------------
-        if type(CellDB["clickCastings"]) ~= "table" then CellDB["clickCastings"] = {} end
-        Cell.vars.playerClass, Cell.vars.playerClassID = select(2, UnitClass("player"))
+        Cell.vars.playerClass, Cell.vars.playerClassID = UnitClassBase("player")
 
-        if type(CellDB["clickCastings"][Cell.vars.playerClass]) ~= "table" then
-            CellDB["clickCastings"][Cell.vars.playerClass] = {
+        if type(CellCharacterDB["clickCastings"]) ~= "table" then
+            CellCharacterDB["clickCastings"] = {
                 ["useCommon"] = true,
                 ["smartResurrection"] = "disabled",
                 ["alwaysTargeting"] = {
@@ -316,13 +316,13 @@ function eventFrame:ADDON_LOADED(arg1)
 
             -- add resurrections
             for _, t in pairs(F:GetResurrectionClickCastings(Cell.vars.playerClass)) do
-                tinsert(CellDB["clickCastings"][Cell.vars.playerClass]["common"], t)
+                tinsert(CellCharacterDB["clickCastings"]["common"], t)
                 for i = 1, 2 do
-                    tinsert(CellDB["clickCastings"][Cell.vars.playerClass][i], t)
+                    tinsert(CellCharacterDB["clickCastings"][i], t)
                 end
             end
         end
-        Cell.vars.clickCastingTable = CellDB["clickCastings"][Cell.vars.playerClass]
+        Cell.vars.clickCastingTable = CellCharacterDB["clickCastings"]
 
         -- layouts --------------------------------------------------------------------------------
         if type(CellDB["layouts"]) ~= "table" then
@@ -332,8 +332,6 @@ function eventFrame:ADDON_LOADED(arg1)
         end
 
         -- init enabled layout
-        if type(CellCharacterDB) ~= "table" then CellCharacterDB = {} end
-
         if type(CellCharacterDB["layoutAutoSwitch"]) ~= "table" then
             CellCharacterDB["layoutAutoSwitch"] = {
                 [1] = {
@@ -738,7 +736,7 @@ function SlashCmdList.CELL(msg, editbox)
             ReloadUI()
             
         elseif rest == "clickcastings" then
-            CellDB["clickCastings"] = nil
+            CellCharacterDB["clickCastings"] = nil
             ReloadUI()
         end
 

@@ -1974,15 +1974,17 @@ function F:Revise()
 
     -- r177-release
     if CellDB["revise"] and dbRevision < 177 then
-        --! evoker Augmentation 1473
-        if CellDB["clickCastings"]["EVOKER"] then
-            if not CellDB["clickCastings"]["EVOKER"][1473] then
-                CellDB["clickCastings"]["EVOKER"]["alwaysTargeting"][1473] = "disabled"
-                CellDB["clickCastings"]["EVOKER"][1473] = {
-                    {"type1", "target"},
-                    {"type2", "togglemenu"},
-                    {"type-shiftR", "spell", 361227},
-                }
+        if Cell.isRetail then
+            --! evoker Augmentation 1473
+            if CellDB["clickCastings"]["EVOKER"] then
+                if not CellDB["clickCastings"]["EVOKER"][1473] then
+                    CellDB["clickCastings"]["EVOKER"]["alwaysTargeting"][1473] = "disabled"
+                    CellDB["clickCastings"]["EVOKER"][1473] = {
+                        {"type1", "target"},
+                        {"type2", "togglemenu"},
+                        {"type-shiftR", "spell", 361227},
+                    }
+                end
             end
         end
     end
@@ -2015,6 +2017,20 @@ function F:Revise()
                 local index = Cell.defaults.indicatorIndices.powerWordShield
                 if type(layout["indicators"][index]["shape"]) ~= "string" then
                     layout["indicators"][index]["shape"] = "circle"
+                end
+            end
+        end
+    end
+
+    -- r182-release
+    if CellDB["revise"] and dbRevision < 182 then
+        if Cell.isWrath then
+            if CellDB["clickCastings"] and CellDB["clickCastings"][Cell.vars.playerClass] then
+                if not CellCharacterDB["clickCastings"]["processed"] then
+                    CellCharacterDB["clickCastings"] = CellDB["clickCastings"][Cell.vars.playerClass]
+                    Cell.vars.clickCastingTable = CellCharacterDB["clickCastings"]
+                    -- flag as processed
+                    CellCharacterDB["clickCastings"]["processed"] = true
                 end
             end
         end
