@@ -1,9 +1,9 @@
---[[
--- File: RaidDebuffs_BfA.lua
+---------------------------------------------------------------------
+-- File: Cell\RaidDebuffs\RaidDebuffs_BfA.lua
 -- Author: enderneko (enderneko-dev@outlook.com)
--- File Created: 2022/08/05 16:11:24 +0800
--- Last Modified: 2023/05/25 20:44:53 +0800
---]]
+-- Created : 2022-08-05 16:11:24 +08:00
+-- Modified: 2023-07-16 15:30:43 +08:00
+---------------------------------------------------------------------
 
 local _, Cell = ...
 local L = Cell.L

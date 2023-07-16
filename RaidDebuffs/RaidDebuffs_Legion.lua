@@ -1,9 +1,9 @@
---[[
--- File: RaidDebuffs_Legion.lua
+---------------------------------------------------------------------
+-- File: Cell\RaidDebuffs\RaidDebuffs_Legion.lua
 -- Author: enderneko (enderneko-dev@outlook.com)
--- File Created: 2022/08/05 16:05:39 +0800
--- Last Modified: 2023/05/25 20:44:49 +0800
---]]
+-- Created : 2022-08-05 16:05:39 +08:00
+-- Modified: 2023-07-16 15:35:20 +08:00
+---------------------------------------------------------------------
 
 local _, Cell = ...
 local F = Cell.funcs

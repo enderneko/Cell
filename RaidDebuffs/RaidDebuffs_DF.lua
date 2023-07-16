@@ -1,9 +1,9 @@
---[[
--- File: RaidDebuffs_DF.lua
+---------------------------------------------------------------------
+-- File: Cell\RaidDebuffs\RaidDebuffs_DF.lua
 -- Author: enderneko (enderneko-dev@outlook.com)
--- File Created: 2022/12/05 17:28:20 +0800
--- Last Modified: 2023/06/05 01:14:31 +0800
---]]
+-- Created : 2022-12-05 17:28:20 +08:00
+-- Modified: 2023-07-16 15:40:25 +08:00
+---------------------------------------------------------------------
 
 local _, Cell = ...
 local F = Cell.funcs

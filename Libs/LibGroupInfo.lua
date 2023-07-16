@@ -1,8 +1,8 @@
 ---------------------------------------------------------------------
--- File: LibGroupInfo.lua
+-- File: Cell\Libs\LibGroupInfo.lua
 -- Author: enderneko (enderneko-dev@outlook.com)
 -- Created : 2022-07-29 15:04:31 +08:00
--- Modified: 2023-07-17 20:45:50 +08:00
+-- Modified: 2023-07-17 20:46:10 +08:00
 ---------------------------------------------------------------------
 
 local MAJOR, MINOR = "LibGroupInfo", 4

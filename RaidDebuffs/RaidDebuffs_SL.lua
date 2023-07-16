@@ -1,3 +1,10 @@
+---------------------------------------------------------------------
+-- File: Cell\RaidDebuffs\RaidDebuffs_SL.lua
+-- Author: enderneko (enderneko-dev@outlook.com)
+-- Created : 2020-12-09 20:59:11 +08:00
+-- Modified: 2023-07-16 15:38:45 +08:00
+---------------------------------------------------------------------
+
 local _, Cell = ...
 local F = Cell.funcs
 

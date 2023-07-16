@@ -1,9 +1,9 @@
---[[
--- File: ExpansionData.lua
+---------------------------------------------------------------------
+-- File: Cell\RaidDebuffs\ExpansionData.lua
 -- Author: enderneko (enderneko-dev@outlook.com)
--- File Created: 2022/08/26 04:40:40 +0800
--- Last Modified: 2022/09/21 16:10:28 +0800
---]]
+-- Created : 2022-08-26 04:40:40 +08:00
+-- Modified: 2023-07-16 15:32:08 +08:00
+---------------------------------------------------------------------
 
 local _, Cell = ...
 local F = Cell.funcs

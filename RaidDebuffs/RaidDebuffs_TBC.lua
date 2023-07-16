@@ -1,9 +1,9 @@
---[[
--- File: RaidDebuffs_TBC.lua
+---------------------------------------------------------------------
+-- File: Cell\RaidDebuffs\RaidDebuffs_TBC.lua
 -- Author: enderneko (enderneko-dev@outlook.com)
--- File Created: 2022/08/05 17:45:05 +0800
--- Last Modified: 2022/08/05 17:45:49 +0800
---]]
+-- Created : 2022-08-05 17:45:05 +08:00
+-- Modified: 2023-07-16 15:39:12 +08:00
+---------------------------------------------------------------------
 
 local _, Cell = ...
 local F = Cell.funcs

@@ -1,9 +1,9 @@
---[[
--- File: RaidDebuffs_MoP.lua
+---------------------------------------------------------------------
+-- File: Cell\RaidDebuffs\RaidDebuffs_MoP.lua
 -- Author: enderneko (enderneko-dev@outlook.com)
--- File Created: 2022/08/05 16:10:47 +0800
--- Last Modified: 2022/12/28 23:01:14 +0800
---]]
+-- Created : 2022-08-05 16:10:47 +08:00
+-- Modified: 2023-07-16 15:35:41 +08:00
+---------------------------------------------------------------------
 
 local _, Cell = ...
 local F = Cell.funcs
