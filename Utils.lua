@@ -59,9 +59,9 @@ end
 
 function F:GetLocalizedClassName(classFileOrID)
     if type(classFileOrID) == "string" then
-        return localizedClass[classFileOrID]
+        return localizedClass[classFileOrID] or classFileOrID
     elseif type(classFileOrID) == "number" and classIDToFile[classFileOrID] then
-        return localizedClass[classIDToFile[classFileOrID]]
+        return localizedClass[classIDToFile[classFileOrID]] or classFileOrID
     end
     return ""
 end
@@ -833,7 +833,7 @@ end
 -------------------------------------------------
 local RAID_CLASS_COLORS = CUSTOM_CLASS_COLORS or RAID_CLASS_COLORS
 function F:GetClassColor(class)
-    if class and class ~= "" then
+    if class and class ~= "" and RAID_CLASS_COLORS[class] then
         if CUSTOM_CLASS_COLORS then
             return CUSTOM_CLASS_COLORS[class].r, CUSTOM_CLASS_COLORS[class].g, CUSTOM_CLASS_COLORS[class].b
         else
@@ -845,7 +845,7 @@ function F:GetClassColor(class)
 end
 
 function F:GetClassColorStr(class)
-    if class and class ~= "" then
+    if class and class ~= "" and RAID_CLASS_COLORS[class] then
         return "|c"..RAID_CLASS_COLORS[class].colorStr
     else
         return "|cffffffff"

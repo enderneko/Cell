@@ -323,6 +323,8 @@ L["Out of Range Alpha"] = "超出範圍透明度"
 L["Outdoor"] = "野外"
 L["Outline"] = "外框"
 L["Overshield Texture"] = "超過血量上限的護盾材質"
+--[[Translation missing --]]
+--[[ L["Overwrite Click-Casting"] = "Overwrite Click-Casting"--]] 
 L["Overwrite Layout"] = "取代版面配置"
 L["P"] = "PvP 天賦"
 L["Particles"] = "粒子數"
@@ -409,8 +411,7 @@ L["sec"] = "秒"
 L["Secondary Talents"] = "次要天賦"
 L["Separate NPC Frame"] = "分離 NPC 框架"
 L["Shadow"] = "陰影"
---[[Translation missing --]]
---[[ L["Shape"] = "Shape"--]] 
+L["Shape"] = "形狀"
 L["Share"] = "分享"
 L["Shield Bar"] = "護盾條"
 L["Shield Texture"] = "護盾材質"

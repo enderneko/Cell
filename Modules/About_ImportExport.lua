@@ -23,6 +23,7 @@ local function DoImport()
     if Cell.isRetail then
         imported["appearance"]["useLibHealComm"] = false
     elseif Cell.isWrath then
+        imported["clickCastings"] = nil
         imported["layoutAutoSwitch"] = nil
         imported["cleuAuras"] = nil
         imported["cleuGlow"] = nil

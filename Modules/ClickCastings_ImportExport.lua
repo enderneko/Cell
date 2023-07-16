@@ -11,65 +11,29 @@ local isImport, imported, exported = false, {}, ""
 
 local importExportFrame, importBtn, title, textArea
 
-local function DoImport(isOverwrite)
-    local name, layout = imported["name"], imported["data"]
-
-    -- indicators
-    local builtInFound = {}
-    for i =  #layout["indicators"], 1, -1 do
-        if layout["indicators"][i]["type"] == "built-in" then -- remove unsupported built-in
-            local indicatorName = layout["indicators"][i]["indicatorName"]
-            builtInFound[indicatorName] = true
-            if not Cell.defaults.indicatorIndices[indicatorName] then
-                tremove(layout["indicators"], i)
-            end
-        else -- remove invalid spells from custom indicators
-            F:FilterInvalidSpells(layout["indicators"][i]["auras"])
-        end
-    end        
-
-    -- add missing indicators
-    if F:Getn(builtInFound) ~= Cell.defaults.builtIns then
-        for indicatorName, index in pairs(Cell.defaults.indicatorIndices) do
-            if not builtInFound[indicatorName] then
-                tinsert(layout["indicators"], index, Cell.defaults.layout.indicators[index])
-            end
-        end
-    end
-
-    -- texplore(imported.data)
-
-    if isOverwrite then
-        --! overwrite if exists
-        CellDB["layouts"][name] = layout
-        Cell:Fire("LayoutImported", name)
-        importExportFrame:Hide()
+local function DoImport()
+    if Cell.vars.clickCastingTable["useCommon"] then
+        Cell.vars.clickCastingTable["common"] = imported
     else
-        --! create new
-        local i = 2
-        repeat
-            name = imported["name"].." "..i
-            i = i + 1
-        until not CellDB["layouts"][name]
-
-        CellDB["layouts"][name] = layout
-        Cell:Fire("LayoutImported", name)
-        importExportFrame:Hide()
+        Cell.vars.clickCastingTable[Cell.vars.playerSpecID] = imported
     end
+
+    Cell:Fire("UpdateClickCastings")
+    importExportFrame:Hide()
 end
 
-local function CreateLayoutImportExportFrame()
-    importExportFrame = CreateFrame("Frame", "CellOptionsFrame_LayoutsImportExport", Cell.frames.layoutsTab, "BackdropTemplate")
+local function CreateClickCastingImportExportFrame()
+    importExportFrame = CreateFrame("Frame", "CellOptionsFrame_ClickCastingsImportExport", Cell.frames.clickCastingsTab, "BackdropTemplate")
     importExportFrame:Hide()
     Cell:StylizeFrame(importExportFrame, nil, Cell:GetAccentColorTable())
     importExportFrame:EnableMouse(true)
-    importExportFrame:SetFrameLevel(Cell.frames.layoutsTab:GetFrameLevel() + 50)
+    importExportFrame:SetFrameLevel(Cell.frames.clickCastingsTab:GetFrameLevel() + 50)
     P:Size(importExportFrame, 430, 170)
-    importExportFrame:SetPoint("TOPLEFT", P:Scale(1), -100)
+    importExportFrame:SetPoint("TOPLEFT", P:Scale(1), -160)
     
-    if not Cell.frames.layoutsTab.mask then
-        Cell:CreateMask(Cell.frames.layoutsTab, nil, {1, -1, -1, 1})
-        Cell.frames.layoutsTab.mask:Hide()
+    if not Cell.frames.clickCastingsTab.mask then
+        Cell:CreateMask(Cell.frames.clickCastingsTab, nil, {1, -1, -1, 1})
+        Cell.frames.clickCastingsTab.mask:Hide()
     end
 
     -- close
@@ -83,21 +47,13 @@ local function CreateLayoutImportExportFrame()
     importBtn:SetPoint("TOPRIGHT", closeBtn, "TOPLEFT", P:Scale(1), 0)
     importBtn:SetScript("OnClick", function()
         -- lower frame level
-        importExportFrame:SetFrameLevel(Cell.frames.layoutsTab:GetFrameLevel() + 20)
+        importExportFrame:SetFrameLevel(Cell.frames.clickCastingsTab:GetFrameLevel() + 20)
     
-        if CellDB["layouts"][imported["name"]] then
-            local text = L["Overwrite Layout"]..": "..(imported["name"] == "default" and _G.DEFAULT or imported["name"]).."?\n"..
-                L["|cff1Aff1AYes|r - Overwrite"].."\n"..L["|cffff1A1ANo|r - Create New"]
-            local popup = Cell:CreateConfirmPopup(Cell.frames.layoutsTab, 200, text, function(self)
-                DoImport(true)
-            end, function(self)
-                DoImport(false)
-            end, true)
-            popup:SetPoint("TOPLEFT", importExportFrame, 117, -50)
-            textArea.eb:ClearFocus()
-        else
-            DoImport(true)
-        end
+        local popup = Cell:CreateConfirmPopup(Cell.frames.clickCastingsTab, 200, L["Overwrite Click-Casting"].."?", function(self)
+            DoImport()
+        end, nil, true)
+        popup:SetPoint("TOPLEFT", importExportFrame, 117, -50)
+        textArea.eb:ClearFocus()
     end)
     
     -- title
@@ -111,21 +67,20 @@ local function CreateLayoutImportExportFrame()
                 imported = {}
                 local text = eb:GetText()
                 -- check
-                local version, name, data = string.match(text, "^!CELL:(%d+):LAYOUT:([^:]+)!(.+)$")
+                local version, class, data = string.match(text, "^!CELL:(%d+):CLICKCASTING:([^:]+)!(.+)$")
                 version = tonumber(version)
     
-                if name and version and data then
-                    if version >= Cell.MIN_LAYOUTS_VERSION then
+                if class and version and data then
+                    if version >= Cell.MIN_CLICKCASTINGS_VERSION then
                         local success
                         data = LibDeflate:DecodeForPrint(data) -- decode
                         success, data = pcall(LibDeflate.DecompressDeflate, LibDeflate, data) -- decompress
                         success, data = Serializer:Deserialize(data) -- deserialize
                         
                         if success and data then
-                            title:SetText(L["Import"]..": "..(name == "default" and _G.DEFAULT or name))
-                            importBtn:SetEnabled(true)
-                            imported["name"] = name
-                            imported["data"] = data
+                            title:SetText(L["Import"]..": "..F:GetClassColorStr(class)..F:GetLocalizedClassName(class))
+                            imported = data
+                            importBtn:SetEnabled(class == Cell.vars.playerClass)
                         else
                             title:SetText(L["Import"]..": |cffff2222"..L["Error"])
                             importBtn:SetEnabled(false)
@@ -163,21 +118,21 @@ local function CreateLayoutImportExportFrame()
         exported = ""
         imported = {}
         -- hide mask
-        Cell.frames.layoutsTab.mask:Hide()
+        Cell.frames.clickCastingsTab.mask:Hide()
     end)
     
     importExportFrame:SetScript("OnShow", function()
         -- raise frame level
-        importExportFrame:SetFrameLevel(Cell.frames.layoutsTab:GetFrameLevel() + 50)
-        Cell.frames.layoutsTab.mask:Show()
+        importExportFrame:SetFrameLevel(Cell.frames.clickCastingsTab:GetFrameLevel() + 50)
+        Cell.frames.clickCastingsTab.mask:Show()
     end)
 end
 
 local init
-function F:ShowLayoutImportFrame()
+function F:ShowClickCastingImportFrame()
     if not init then
         init = true    
-        CreateLayoutImportExportFrame()
+        CreateClickCastingImportExportFrame()
     end
 
     importExportFrame:Show()
@@ -191,21 +146,21 @@ function F:ShowLayoutImportFrame()
     textArea.eb:SetFocus(true)
 end
 
-function F:ShowLayoutExportFrame(layoutName, layoutTable)
+function F:ShowClickCastingExportFrame(clickCastingTable)
     if not init then
         init = true    
-        CreateLayoutImportExportFrame()
+        CreateClickCastingImportExportFrame()
     end
 
     importExportFrame:Show()
     isImport = false
     importBtn:Hide()
 
-    title:SetText(L["Export"]..": "..(layoutName == "default" and _G.DEFAULT or layoutName))
+    title:SetText(L["Export"]..": "..F:GetClassColorStr(Cell.vars.playerClass)..F:GetLocalizedClassName(Cell.vars.playerClass))
 
-    local prefix = "!CELL:"..Cell.versionNum..":LAYOUT:"..layoutName.."!"
+    local prefix = "!CELL:"..Cell.versionNum..":CLICKCASTING:"..Cell.vars.playerClass.."!"
 
-    exported = Serializer:Serialize(layoutTable) -- serialize
+    exported = Serializer:Serialize(clickCastingTable) -- serialize
     exported = LibDeflate:CompressDeflate(exported, deflateConfig) -- compress
     exported = LibDeflate:EncodeForPrint(exported) -- encode
     exported = prefix..exported

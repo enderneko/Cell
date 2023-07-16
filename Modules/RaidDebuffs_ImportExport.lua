@@ -94,7 +94,7 @@ local function CreateDebuffsImportExportFrame()
     textArea = Cell:CreateScrollEditBox(importExportFrame, function(eb, userChanged)
         if userChanged then
             if isImport then
-                wipe(imported)
+                imported = {}
                 local text = eb:GetText()
                 -- check
                 local version, instanceId, bossId, data = string.match(text, "^!CELL:(%d+):DEBUFF:(%d+):(.+)!(.+)$")
@@ -177,7 +177,7 @@ local function CreateDebuffsImportExportFrame()
         importExportFrame:Hide()
         isImport = false
         exported = ""
-        wipe(imported)
+        imported = {}
         Cell.frames.raidDebuffsTab.mask:Hide()
     end)
     

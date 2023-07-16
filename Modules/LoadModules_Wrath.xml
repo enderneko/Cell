@@ -8,6 +8,7 @@
 	<Script file="Layouts_PowerFilters.lua"/>
 	<Script file="Layouts_ImportExport.lua"/>
 	<Script file="ClickCastings.lua"/>
+	<Script file="ClickCastings_ImportExport.lua"/>
 	<Script file="Indicators.lua"/>
 	<Script file="Indicators_Copy.lua"/>
 	<Script file="Indicators_Export.lua"/>

@@ -553,7 +553,7 @@ local function CreateTargetingPane()
             ["value"] = "disabled",
             ["onClick"] = function()
                 local spec = Cell.vars.clickCastingTable["useCommon"] and "common" or Cell.vars.playerSpecID
-                CellDB["clickCastings"][Cell.vars.playerClass]["alwaysTargeting"][spec] = "disabled"
+                Cell.vars.clickCastingTable["alwaysTargeting"][spec] = "disabled"
                 alwaysTargeting = "disabled"
                 Cell:Fire("UpdateClickCastings", true)
             end,
@@ -563,7 +563,7 @@ local function CreateTargetingPane()
             ["value"] = "left",
             ["onClick"] = function()
                 local spec = Cell.vars.clickCastingTable["useCommon"] and "common" or Cell.vars.playerSpecID
-                CellDB["clickCastings"][Cell.vars.playerClass]["alwaysTargeting"][spec] = "left"
+                Cell.vars.clickCastingTable["alwaysTargeting"][spec] = "left"
                 alwaysTargeting = "left"
                 Cell:Fire("UpdateClickCastings", true)
             end,
@@ -573,7 +573,7 @@ local function CreateTargetingPane()
             ["value"] = "any",
             ["onClick"] = function()
                 local spec = Cell.vars.clickCastingTable["useCommon"] and "common" or Cell.vars.playerSpecID
-                CellDB["clickCastings"][Cell.vars.playerClass]["alwaysTargeting"][spec] = "any"
+                Cell.vars.clickCastingTable["alwaysTargeting"][spec] = "any"
                 alwaysTargeting = "any"
                 Cell:Fire("UpdateClickCastings", true)
             end,
@@ -1095,6 +1095,20 @@ local function CreateListPane()
     hint.tex = hint:CreateTexture(nil, "ARTWORK")
     hint.tex:SetAllPoints(hint)
     hint.tex:SetTexture("Interface\\AddOns\\Cell\\Media\\Icons\\info2.tga")
+
+    local export = Cell:CreateButton(listPane, nil, "accent-hover", {27, 17}, nil, nil, nil, nil, nil, L["Export"])
+    export:SetPoint("TOPRIGHT", hint, "TOPLEFT", -1, 0)
+    export:SetTexture("Interface\\AddOns\\Cell\\Media\\Icons\\export", {15, 15}, {"CENTER", 0, 0})
+    export:SetScript("OnClick", function()
+        F:ShowClickCastingExportFrame(clickCastingTable)
+    end)
+
+    local import = Cell:CreateButton(listPane, nil, "accent-hover", {27, 17}, nil, nil, nil, nil, nil, L["Import"])
+    import:SetPoint("TOPRIGHT", export, "TOPLEFT", -1, 0)
+    import:SetTexture("Interface\\AddOns\\Cell\\Media\\Icons\\import", {15, 15}, {"CENTER", 0, 0})
+    import:SetScript("OnClick", function()
+        F:ShowClickCastingImportFrame()
+    end)
 
     bindingButton = Cell:CreateBindingButton(listPane, 130)
 
