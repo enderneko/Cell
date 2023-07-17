@@ -101,6 +101,15 @@ end
 -------------------------------------------------
 local previewMode = 0
 local layoutPreview, layoutPreviewAnchor, layoutPreviewName
+
+local desaturation = {
+    [1] = 1,
+    [2] = 0.85,
+    [3] = 0.7,
+    [4] = 0.55,
+    [5] = 0.4,
+}
+
 local function CreateLayoutPreview()
     layoutPreview = Cell:CreateFrame("CellLayoutPreviewFrame", Cell.frames.mainFrame, nil, nil, true)
     layoutPreview:EnableMouse(false)
@@ -149,14 +158,6 @@ local function CreateLayoutPreview()
         layoutPreview:Hide()
     end)
 
-    local desaturation = {
-        [1] = 1,
-        [2] = 0.85,
-        [3] = 0.7,
-        [4] = 0.55,
-        [5] = 0.4,
-    }
-
     -- headers
     layoutPreview.headers = {}
     for i = 1, 8 do
@@ -192,7 +193,7 @@ local function CreateLayoutPreview()
             elseif i == 8 then
                 header[j].tex:SetVertexColor(F:ConvertRGB(0, 255, 255, desaturation[j])) -- Cyan
             end
-            header[j].tex:SetAlpha(0.5)
+            header[j].tex:SetAlpha(0.555)
         end
     end
 end
@@ -451,14 +452,6 @@ local function CreateNPCPreview()
         npcPreview:Hide()
     end)
 
-    local desaturation = {
-        [1] = 1,
-        [2] = 0.85,
-        [3] = 0.7,
-        [4] = 0.55,
-        [5] = 0.4,
-    }
-
     npcPreview.header = CreateFrame("Frame", "CellNPCPreviewFrameHeader", npcPreview)
     for i = 1, 5 do
         npcPreview.header[i] = npcPreview.header:CreateTexture(nil, "BACKGROUND")
@@ -662,6 +655,7 @@ end
 -- raidpet preview
 -------------------------------------------------
 local raidPetPreview, raidPetPreviewAnchor, raidPetPreviewName
+local raidPetNums = Cell.isRetail and 20 or 25
 local function CreateRaidPetPreview()
     raidPetPreview = Cell:CreateFrame("CellRaidPetPreviewFrame", Cell.frames.mainFrame, nil, nil, true)
     raidPetPreview:EnableMouse(false)
@@ -708,16 +702,9 @@ local function CreateRaidPetPreview()
         raidPetPreview:Hide()
     end)
 
-    local desaturation = {
-        [1] = 1,
-        [2] = 0.85,
-        [3] = 0.7,
-        [4] = 0.55,
-        [0] = 0.4,
-    }
-
     raidPetPreview.header = CreateFrame("Frame", "CellRaidPetPreviewFrameHeader", raidPetPreview)
-    for i = 1, 20 do
+
+    for i = 1, raidPetNums do
         raidPetPreview.header[i] = raidPetPreview.header:CreateTexture(nil, "BACKGROUND")
         raidPetPreview.header[i]:SetColorTexture(0, 0, 0)
         raidPetPreview.header[i]:SetAlpha(0.555)
@@ -728,7 +715,7 @@ local function CreateRaidPetPreview()
         raidPetPreview.header[i].tex:SetPoint("TOPLEFT", raidPetPreview.header[i], "TOPLEFT", P:Scale(1), P:Scale(-1))
         raidPetPreview.header[i].tex:SetPoint("BOTTOMRIGHT", raidPetPreview.header[i], "BOTTOMRIGHT", P:Scale(-1), P:Scale(1))
 
-        raidPetPreview.header[i].tex:SetVertexColor(F:ConvertRGB(127, 127, 255, desaturation[i%5]))
+        raidPetPreview.header[i].tex:SetVertexColor(F:ConvertRGB(127, 127, 255, desaturation[i%5==0 and 5 or i%5]))
         raidPetPreview.header[i].tex:SetAlpha(0.555)
     end
 end
@@ -857,7 +844,7 @@ local function UpdateRaidPetPreview()
         P:Size(header, width*4+abs(unitSpacing)*3, height*5+abs(unitSpacing)*4)
         header:SetPoint(point)
         
-        for i = 1, 20 do
+        for i = 1, raidPetNums do
             P:Size(header[i], width, height)
             header[i]:ClearAllPoints()
 
@@ -893,7 +880,7 @@ local function UpdateRaidPetPreview()
         P:Size(header, width*5+abs(unitSpacing)*4, height*4+abs(unitSpacing)*3)
         header:SetPoint(point)
 
-        for i = 1, 20 do
+        for i = 1, raidPetNums do
             P:Size(header[i], width, height)
             header[i]:ClearAllPoints()
 
@@ -976,14 +963,6 @@ local function CreateSpotlightPreview()
     fadeOut:SetScript("OnFinished", function()
         spotlightPreview:Hide()
     end)
-
-    local desaturation = {
-        [1] = 1,
-        [2] = 0.85,
-        [3] = 0.7,
-        [4] = 0.55,
-        [5] = 0.4,
-    }
 
     spotlightPreview.header = CreateFrame("Frame", "CellSpotlightPreviewFrameHeader", spotlightPreview)
     for i = 1, 5 do
