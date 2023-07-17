@@ -669,12 +669,22 @@ L["unnamed"] = "未命名"
 L["Changelogs"] = "更新记录"
 L["Click to view recent changelogs"] = "点击查看近期更新记录"
 L["Click to view older changelogs"] = "点击查看远古更新记录"
+
+-- <h1>About the M+ Afflicted Souls</h1>
+-- <p>I've received some requests about showing Afflicted Souls on Cell. Simply put, due to the limitation of the plugin API, it is not possible. I can make them display on Cell, but these buttons will not be clickable, so there is no need. It is better to use WA.</p>
+-- <br/>
+-- <h1>关于受难之魂</h1>
+-- <p>最近收到些“让Cell显示受难之魂”的请求。简单地说就是，由于插件API的限制，做不了。让Cell“显示”它们是可行的，但这些按钮是不可交互的，因此没有必要做，不如用WA。</p>
+-- <br/>
+
 L["CHANGELOGS"] = [[
     <h1>如果更新后发现Cell不能正常工作，尝试禁用代码片段。</h1>
     <br/>
     
-    <h1>关于受难之魂</h1>
-    <p>最近收到些“让Cell显示受难之魂”的请求。简单地说就是，由于插件API的限制，做不了。让Cell“显示”它们是可行的，但这些按钮是不可交互的，因此没有必要做，不如用WA。</p>
+    <h1>r182-release (Jul 18, 2023, 05:07 GMT+8)</h1>
+    <p>* 重构布局模块。</p>
+    <p>* 更新永恒黎明的副本减益列表，感谢钛锬(NGA)收集并提供已排序的副本减益。</p>
+    <p>+ 为点击施法添加了导入导出功能。</p>
     <br/>
 
     <h1>r181-release (Jul 15, 2023, 03:12 GMT+8)</h1>

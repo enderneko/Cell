@@ -77,8 +77,10 @@ select(2, ...).L = setmetatable({
         <h1>Try disabling code snippets, if Cell doesn't work after update.</h1>
         <br/>
         
-        <h1>About the M+ Afflicted Souls</h1>
-        <p>I've received some requests about showing Afflicted Souls on Cell. Simply put, due to the limitation of the plugin API, it is not possible. I can make them display on Cell, but these buttons will not be clickable, so there is no need. It is better to use WA.</p>
+        <h1>r182-release (Jul 18, 2023, 05:07 GMT+8)</h1>
+        <p>* Refactored Layouts.</p>
+        <p>* Updated debuffs for Dawn of the Infinite, thanks to 钛锬(NGA).</p>
+        <p>+ Implemented import &amp; export for Click-Castings.</p>
         <br/>
 
         <h1>r181-release (Jul 15, 2023, 03:12 GMT+8)</h1>
