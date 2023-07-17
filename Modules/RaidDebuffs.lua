@@ -1150,6 +1150,7 @@ local previewButton
 
 local function CreatePreviewButton()
     previewButton = CreateFrame("Button", "CellRaidDebuffsPreviewButton", debuffsTab, "CellPreviewButtonTemplate")
+    -- previewButton.type = "main" -- layout setup
     previewButton:SetPoint("TOPLEFT", debuffsTab, "TOPRIGHT", 5, -137)
     previewButton:UnregisterAllEvents()
     previewButton:SetScript("OnEnter", nil)
@@ -1213,9 +1214,9 @@ local function UpdatePreviewButton()
         previewButton.indicators.nameText:Hide()
     end
 
-    P:Size(previewButton, Cell.vars.currentLayoutTable["size"][1], Cell.vars.currentLayoutTable["size"][2])
+    P:Size(previewButton, Cell.vars.currentLayoutTable["main"]["size"][1], Cell.vars.currentLayoutTable["main"]["size"][2])
     B:SetOrientation(previewButton, Cell.vars.currentLayoutTable["barOrientation"][1], Cell.vars.currentLayoutTable["barOrientation"][2])
-    B:SetPowerSize(previewButton, Cell.vars.currentLayoutTable["powerSize"])
+    B:SetPowerSize(previewButton, Cell.vars.currentLayoutTable["main"]["powerSize"])
 
     previewButton.widget.healthBar:SetStatusBarTexture(Cell.vars.texture)
     previewButton.widget.powerBar:SetStatusBarTexture(Cell.vars.texture)

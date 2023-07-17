@@ -39,7 +39,7 @@ config:SetScript("OnDragStart", function()
 end)
 config:SetScript("OnDragStop", function()
     anchorFrame:StopMovingOrSizing()
-    P:SavePosition(anchorFrame, Cell.vars.currentLayoutTable["spotlight"][3])
+    P:SavePosition(anchorFrame, Cell.vars.currentLayoutTable["spotlight"]["position"])
 end)
 config:SetAttribute("_onclick", [[
     for i = 1, 5 do
@@ -268,6 +268,7 @@ for i = 1, 5 do
     -- unit button
     local b = CreateFrame("Button", "CellSpotlightFrameUnitButton"..i, spotlightFrame, "CellUnitButtonTemplate")
     Cell.unitButtons.spotlight[i] = b
+    -- b.type = "spotlight" -- layout setup
     -- b:SetAttribute("unit", "player")
     -- RegisterUnitWatch(b)
     b:SetAllPoints(placeholders[i])
@@ -477,7 +478,7 @@ menu:SetScript("OnEvent", function(self, event)
 end)
 
 function menu:Save(index, unit)
-    Cell.vars.currentLayoutTable["spotlight"][2][index] = unit
+    Cell.vars.currentLayoutTable["spotlight"]["units"][index] = unit
 end
 
 -- update width to show full text
@@ -502,11 +503,18 @@ end
 -- functions
 -------------------------------------------------
 local function UpdatePosition()
-    local anchor = Cell.vars.currentLayoutTable["anchor"]
+    local layout = Cell.vars.currentLayoutTable
+    
+    local anchor
+    if layout["spotlight"]["sameArrangementAsMain"] then
+        anchor = layout["main"]["anchor"]
+    else
+        anchor = layout["spotlight"]["anchor"]
+    end
     
     spotlightFrame:ClearAllPoints()
     -- NOTE: detach from spotlightPreviewAnchor
-    P:LoadPosition(anchorFrame, Cell.vars.currentLayoutTable["spotlight"][3])
+    P:LoadPosition(anchorFrame, layout["spotlight"]["position"])
 
     if CellDB["general"]["menuPosition"] == "top_bottom" then
         P:Size(anchorFrame, 20, 10)
@@ -569,12 +577,12 @@ Cell:RegisterCallback("UpdateMenu", "SpotlightFrame_UpdateMenu", UpdateMenu)
 local function UpdateLayout(layout, which)
     layout = Cell.vars.currentLayoutTable
 
-    if not which or which == "size" or which == "spotlightSize" then
+    if not which or strfind(which, "size$") then
         local width, height
-        if layout["spotlight"][4] then
-            width, height = unpack(layout["spotlight"][5])
+        if layout["spotlight"]["sameSizeAsMain"] then
+            width, height = unpack(layout["main"]["size"])
         else
-            width, height = unpack(layout["size"])
+            width, height = unpack(layout["spotlight"]["size"])
         end
 
         P:Size(spotlightFrame, width, height)
@@ -584,52 +592,65 @@ local function UpdateLayout(layout, which)
         end
     end
 
-    if not which or which == "spacing" or which == "orientation" or which == "anchor" then
+    if not which or strfind(which, "arrangement$") then
+        local orientation, anchor, spacingX, spacingY
+        if layout["spotlight"]["sameArrangementAsMain"] then
+            orientation = layout["main"]["orientation"]
+            anchor = layout["main"]["anchor"]
+            spacingX = layout["main"]["spacingX"]
+            spacingY = layout["main"]["spacingY"]
+        else
+            orientation = layout["spotlight"]["orientation"]
+            anchor = layout["spotlight"]["anchor"]
+            spacingX = layout["spotlight"]["spacingX"]
+            spacingY = layout["spotlight"]["spacingY"]
+        end
+
         -- anchors
         local point, anchorPoint, unitSpacing
         local menuAnchorPoint, menuX, menuY
         
-        if layout["orientation"] == "vertical" then
-            if layout["anchor"] == "BOTTOMLEFT" then
+        if orientation == "vertical" then
+            if anchor == "BOTTOMLEFT" then
                 point, anchorPoint = "BOTTOMLEFT", "TOPLEFT"
-                unitSpacing = layout["spacingX"]
+                unitSpacing = spacingX
                 menuAnchorPoint = "BOTTOMRIGHT"
                 menuX, menuY = 4, 0
-            elseif layout["anchor"] == "BOTTOMRIGHT" then
+            elseif anchor == "BOTTOMRIGHT" then
                 point, anchorPoint = "BOTTOMRIGHT", "TOPRIGHT"
-                unitSpacing = layout["spacingX"]
+                unitSpacing = spacingX
                 menuAnchorPoint = "BOTTOMLEFT"
                 menuX, menuY = -4, 0
-            elseif layout["anchor"] == "TOPLEFT" then
+            elseif anchor == "TOPLEFT" then
                 point, anchorPoint = "TOPLEFT", "BOTTOMLEFT"
-                unitSpacing = -layout["spacingX"]
+                unitSpacing = -spacingX
                 menuAnchorPoint = "TOPRIGHT"
                 menuX, menuY = 4, 0
-            elseif layout["anchor"] == "TOPRIGHT" then
+            elseif anchor == "TOPRIGHT" then
                 point, anchorPoint = "TOPRIGHT", "BOTTOMRIGHT"
-                unitSpacing = -layout["spacingX"]
+                unitSpacing = -spacingX
                 menuAnchorPoint = "TOPLEFT"
                 menuX, menuY = -4, 0
             end
         else
-            if layout["anchor"] == "BOTTOMLEFT" then
+            if anchor == "BOTTOMLEFT" then
                 point, anchorPoint = "BOTTOMLEFT", "BOTTOMRIGHT"
-                unitSpacing = layout["spacingX"]
+                unitSpacing = spacingX
                 menuAnchorPoint = "TOPLEFT"
                 menuX, menuY = 0, 4
-            elseif layout["anchor"] == "BOTTOMRIGHT" then
+            elseif anchor == "BOTTOMRIGHT" then
                 point, anchorPoint = "BOTTOMRIGHT", "BOTTOMLEFT"
-                unitSpacing = -layout["spacingX"]
+                unitSpacing = -spacingX
                 menuAnchorPoint = "TOPRIGHT"
                 menuX, menuY = 0, 4
-            elseif layout["anchor"] == "TOPLEFT" then
+            elseif anchor == "TOPLEFT" then
                 point, anchorPoint = "TOPLEFT", "TOPRIGHT"
-                unitSpacing = layout["spacingX"]
+                unitSpacing = spacingX
                 menuAnchorPoint = "BOTTOMLEFT"
                 menuX, menuY = 0, -4
-            elseif layout["anchor"] == "TOPRIGHT" then
+            elseif anchor == "TOPRIGHT" then
                 point, anchorPoint = "TOPRIGHT", "TOPLEFT"
-                unitSpacing = -layout["spacingX"]
+                unitSpacing = -spacingX
                 menuAnchorPoint = "BOTTOMRIGHT"
                 menuX, menuY = 0, -4
             end
@@ -645,7 +666,7 @@ local function UpdateLayout(layout, which)
         for i, f in pairs(placeholders) do
             f:ClearAllPoints()
             if last then
-                if layout["orientation"] == "vertical" then
+                if orientation == "vertical" then
                     f:SetPoint(point, last, anchorPoint, 0, unitSpacing)
                 else
                     f:SetPoint(point, last, anchorPoint, unitSpacing, 0)
@@ -655,9 +676,7 @@ local function UpdateLayout(layout, which)
             end
             last = f
         end
-    end
 
-    if not which or which == "anchor" then
         UpdatePosition()
     end
 
@@ -668,16 +687,20 @@ local function UpdateLayout(layout, which)
         end
     end
     
-    if not which or which == "power" or which == "barOrientation" then
+    if not which or strfind(which, "power$") or which == "barOrientation" then
         for _, b in pairs(Cell.unitButtons.spotlight) do
-            B:SetPowerSize(b, layout["powerSize"])
+            if layout["spotlight"]["sameSizeAsMain"] then
+                B:SetPowerSize(b, layout["main"]["powerSize"])
+            else
+                B:SetPowerSize(b, layout["spotlight"]["powerSize"])
+            end
         end
     end
 
     if not which or which == "spotlight" then
-        if layout["spotlight"][1] then
+        if layout["spotlight"]["enabled"] then
             for i = 1, 5 do
-                local unit = layout["spotlight"][2][i]
+                local unit = layout["spotlight"]["units"][i]
                 Cell.unitButtons.spotlight[i]:SetAttribute("unit", unit)
                 if unit and strfind(unit, "^.+target$") then
                     Cell.unitButtons.spotlight[i]:SetAttribute("refreshOnUpdate", true)
@@ -700,7 +723,7 @@ local function UpdateLayout(layout, which)
     end
 
     -- load position
-    if not P:LoadPosition(anchorFrame, layout["spotlight"][3]) then
+    if not P:LoadPosition(anchorFrame, layout["spotlight"]["position"]) then
         P:ClearPoints(anchorFrame)
         -- no position, use default
         anchorFrame:SetPoint("TOPLEFT", UIParent, "CENTER")

@@ -220,7 +220,7 @@ Cell:RegisterCallback("UpdateTools", "BattleRes_UpdateTools", UpdateTools)
 
 
 local function UpdatePosition()
-    local anchor = Cell.vars.currentLayoutTable["anchor"]
+    local anchor = Cell.vars.currentLayoutTable["main"]["anchor"]
     battleResFrame:ClearAllPoints()
 
     if anchor == "BOTTOMLEFT" then

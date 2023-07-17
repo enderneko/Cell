@@ -90,7 +90,7 @@ function F:ShowPowerFilters(selectedLayout, selectedLayoutTable)
 
     if powerFilters:IsShown() then
         powerFilters:Hide()
-        Cell.frames.layoutsTab.powerFilterBtn:SetFrameLevel(Cell.frames.layoutsTab:GetFrameLevel() + 1)
+        Cell.frames.layoutsTab.powerFilterBtn:SetFrameLevel(Cell.frames.layoutsTab:GetFrameLevel() + 2)
     else
         powerFilters:Show()
         Cell.frames.layoutsTab.powerFilterBtn:SetFrameLevel(Cell.frames.layoutsTab:GetFrameLevel() + 50)

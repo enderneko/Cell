@@ -325,9 +325,9 @@ Cell:RegisterCallback("GroupTypeChanged", "RaidRosterFrame_GroupTypeChanged", Gr
 
 local function UpdateLayout(layout, which)
     layout = Cell.vars.currentLayoutTable
-    if not which or which == "anchor" then
+    if not which or which == "main-arrangement" then
         raidRosterFrame:ClearAllPoints()
-        raidRosterFrame:SetPoint(layout["anchor"], Cell.frames.mainFrame)
+        raidRosterFrame:SetPoint(layout["main"]["anchor"], Cell.frames.mainFrame)
     end
 end
 Cell:RegisterCallback("UpdateLayout", "RaidRosterFrame_UpdateLayout", UpdateLayout)

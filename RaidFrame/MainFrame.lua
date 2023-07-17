@@ -53,7 +53,7 @@ local function RegisterButtonEvents(frame)
     end)
     frame:SetScript("OnDragStop", function()
         anchorFrame:StopMovingOrSizing()
-        P:SavePosition(anchorFrame, Cell.vars.currentLayoutTable["position"])
+        P:SavePosition(anchorFrame, Cell.vars.currentLayoutTable["main"]["position"])
         -- if not InCombatLockdown() then
             -- P:PixelPerfectPoint(anchorFrame)
         -- end
@@ -228,7 +228,7 @@ hoverFrame:SetScript("OnLeave", function()
 end)
 
 local function UpdateHoverFrame()
-    local anchor = Cell.vars.currentLayoutTable["anchor"]
+    local anchor = Cell.vars.currentLayoutTable["main"]["anchor"]
     local top, bottom, left, right
 
     if CellDB["general"]["menuPosition"] == "top_bottom" then
@@ -346,7 +346,7 @@ Cell:RegisterCallback("GroupTypeChanged", "MainFrame_GroupTypeChanged", MainFram
 -- load & update
 -------------------------------------------------
 local function UpdatePosition()
-    local anchor = Cell.vars.currentLayoutTable["anchor"]
+    local anchor = Cell.vars.currentLayoutTable["main"]["anchor"]
     
     cellMainFrame:ClearAllPoints()
     P:ClearPoints(raid)
@@ -469,16 +469,16 @@ local function MainFrame_UpdateLayout(layout, which)
     
     layout = Cell.vars.currentLayoutTable
     
-    if not which or which == "size" then
-        P:Size(cellMainFrame, unpack(layout["size"]))
+    if not which or which == "main-size" then
+        P:Size(cellMainFrame, unpack(layout["main"]["size"]))
     end
 
-    if not which or which == "anchor" then
+    if not which or which == "main-arrangement" then
         UpdatePosition()
     end
 
     -- load position
-    if not P:LoadPosition(anchorFrame, Cell.vars.currentLayoutTable["position"]) then
+    if not P:LoadPosition(anchorFrame, layout["main"]["position"]) then
         P:ClearPoints(anchorFrame)
         -- no position, use default
         anchorFrame:SetPoint("TOPLEFT", UIParent, "CENTER")

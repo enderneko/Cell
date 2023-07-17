@@ -9,12 +9,14 @@ soloFrame:SetAllPoints(Cell.frames.mainFrame)
 -- RegisterAttributeDriver(soloFrame, "state-visibility", "[group] hide; show")
 
 local playerButton = CreateFrame("Button", soloFrame:GetName().."Player", soloFrame, "CellUnitButtonTemplate")
+-- playerButton.type = "main" -- layout setup
 playerButton:SetAttribute("unit", "player")
 playerButton:SetPoint("TOPLEFT")
 playerButton:Show()
 Cell.unitButtons.solo["player"] = playerButton
 
 local petButton = CreateFrame("Button", soloFrame:GetName().."Pet", soloFrame, "CellUnitButtonTemplate")
+-- petButton.type = "pet" -- layout setup
 petButton:SetAttribute("unit", "pet")
 RegisterAttributeDriver(petButton, "state-visibility", "[nopet] hide; [vehicleui] hide; show")
 Cell.unitButtons.solo["pet"] = petButton
@@ -27,21 +29,13 @@ local function SoloFrame_UpdateLayout(layout, which)
     layout = CellLayoutAutoSwitchTable[Cell.vars.playerSpecRole]["party"]
     layout = CellDB["layouts"][layout]
 
-    if not which or which == "size" then
-        local width, height = unpack(layout["size"])
+    if not which or strfind(which, "size$") then
+        local width, height = unpack(layout["main"]["size"])
         P:Size(playerButton, width, height)
-        if layout["pet"][4] then
-            P:Size(petButton, layout["pet"][5][1], layout["pet"][5][2])
-        else
+        if layout["pet"]["sameSizeAsMain"] then
             P:Size(petButton, width, height)
-        end
-    end
-
-    if which == "petSize" then
-        if layout["pet"][4] then
-            P:Size(petButton, layout["pet"][5][1], layout["pet"][5][2])
         else
-            P:Size(petButton, layout["size"][1], layout["size"][2])
+            P:Size(petButton, layout["pet"]["size"][1], layout["pet"]["size"][2])
         end
     end
 
@@ -51,47 +45,50 @@ local function SoloFrame_UpdateLayout(layout, which)
         B:SetOrientation(petButton, layout["barOrientation"][1], layout["barOrientation"][2])
     end
     
-    if not which or which == "power" or which == "barOrientation" then
-        B:SetPowerSize(playerButton, layout["powerSize"])
-        B:SetPowerSize(petButton, layout["powerSize"])
+    if not which or strfind(which, "power$") or which == "barOrientation" then
+        B:SetPowerSize(playerButton, layout["main"]["powerSize"])
+        if layout["pet"]["sameSizeAsMain"] then
+            B:SetPowerSize(petButton, layout["main"]["powerSize"])
+        else
+            B:SetPowerSize(petButton, layout["pet"]["powerSize"])
+        end
     end
 
-
-    if not which or which == "spacing" or which == "orientation" or which == "anchor" then
+    if not which or which == "main-arrangement" then
         petButton:ClearAllPoints()
-        if layout["orientation"] == "vertical" then
+        if layout["main"]["orientation"] == "vertical" then
             -- anchor
             local point, anchorPoint, unitSpacing
-            if layout["anchor"] == "BOTTOMLEFT" then
+            if layout["main"]["anchor"] == "BOTTOMLEFT" then
                 point, anchorPoint = "BOTTOMLEFT", "TOPLEFT"
-                unitSpacing = layout["spacingY"]
-            elseif layout["anchor"] == "BOTTOMRIGHT" then
+                unitSpacing = layout["main"]["spacingY"]
+            elseif layout["main"]["anchor"] == "BOTTOMRIGHT" then
                 point, anchorPoint = "BOTTOMRIGHT", "TOPRIGHT"
-                unitSpacing = layout["spacingY"]
-            elseif layout["anchor"] == "TOPLEFT" then
+                unitSpacing = layout["main"]["spacingY"]
+            elseif layout["main"]["anchor"] == "TOPLEFT" then
                 point, anchorPoint = "TOPLEFT", "BOTTOMLEFT"
-                unitSpacing = -layout["spacingY"]
-            elseif layout["anchor"] == "TOPRIGHT" then
+                unitSpacing = -layout["main"]["spacingY"]
+            elseif layout["main"]["anchor"] == "TOPRIGHT" then
                 point, anchorPoint = "TOPRIGHT", "BOTTOMRIGHT"
-                unitSpacing = -layout["spacingY"]
+                unitSpacing = -layout["main"]["spacingY"]
             end
 
             petButton:SetPoint(point, playerButton, anchorPoint, 0, unitSpacing)
         else
             -- anchor
             local point, anchorPoint, unitSpacing
-            if layout["anchor"] == "BOTTOMLEFT" then
+            if layout["main"]["anchor"] == "BOTTOMLEFT" then
                 point, anchorPoint = "BOTTOMLEFT", "BOTTOMRIGHT"
-                unitSpacing = layout["spacingX"]
-            elseif layout["anchor"] == "BOTTOMRIGHT" then
+                unitSpacing = layout["main"]["spacingX"]
+            elseif layout["main"]["anchor"] == "BOTTOMRIGHT" then
                 point, anchorPoint = "BOTTOMRIGHT", "BOTTOMLEFT"
-                unitSpacing = -layout["spacingX"]
-            elseif layout["anchor"] == "TOPLEFT" then
+                unitSpacing = -layout["main"]["spacingX"]
+            elseif layout["main"]["anchor"] == "TOPLEFT" then
                 point, anchorPoint = "TOPLEFT", "TOPRIGHT"
-                unitSpacing = layout["spacingX"]
-            elseif layout["anchor"] == "TOPRIGHT" then
+                unitSpacing = layout["main"]["spacingX"]
+            elseif layout["main"]["anchor"] == "TOPRIGHT" then
                 point, anchorPoint = "TOPRIGHT", "TOPLEFT"
-                unitSpacing = -layout["spacingX"]
+                unitSpacing = -layout["main"]["spacingX"]
             end
 
             petButton:SetPoint(point, playerButton, anchorPoint, unitSpacing, 0)

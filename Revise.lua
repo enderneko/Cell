@@ -2034,6 +2034,80 @@ function F:Revise()
                 end
             end
         end
+
+        for _, layout in pairs(CellDB["layouts"]) do
+            if not layout["main"] then
+                layout["main"] = {
+                    ["sortByRole"] = layout["sortByRole"],
+                    ["hideSelf"] = layout["hideSelf"],
+                    ["size"] = layout["size"],
+                    ["position"] = layout["position"],
+                    ["powerSize"] = layout["powerSize"],
+                    ["orientation"] = layout["orientation"],
+                    ["anchor"] = layout["anchor"],
+                    ["spacingX"] = layout["spacingX"],
+                    ["spacingY"] = layout["spacingY"],
+                    ["columns"] = layout["columns"],
+                    ["rows"] = layout["rows"],
+                    ["groupSpacing"] = layout["groupSpacing"],
+                }
+                
+                layout["pet"] = {
+                    ["partyEnabled"] = layout["pet"][1],
+                    ["raidEnabled"] = layout["pet"][2],
+                    ["sameSizeAsMain"] = not layout["pet"][4],
+                    ["sameArrangementAsMain"] = true,
+                    ["size"] = layout["pet"][5],
+                    ["position"] = layout["pet"][3],
+                    ["powerSize"] = layout["powerSize"],
+                    ["orientation"] = layout["orientation"],
+                    ["anchor"] = layout["anchor"],
+                    ["spacingX"] = layout["spacingX"],
+                    ["spacingY"] = layout["spacingY"],
+                }
+
+                layout["npc"] = {
+                    ["enabled"] = layout["npc"][1],
+                    ["separate"] = layout["npc"][2],
+                    ["sameSizeAsMain"] = not layout["npc"][4],
+                    ["sameArrangementAsMain"] = true,
+                    ["size"] = layout["npc"][5],
+                    ["position"] = layout["npc"][3],
+                    ["powerSize"] = layout["powerSize"],
+                    ["orientation"] = layout["orientation"],
+                    ["anchor"] = layout["anchor"],
+                    ["spacingX"] = layout["spacingX"],
+                    ["spacingY"] = layout["spacingY"],
+                }
+
+                layout["spotlight"] = {
+                    ["enabled"] = layout["spotlight"][1],
+                    ["units"] = layout["spotlight"][2],
+                    ["sameSizeAsMain"] = not layout["spotlight"][4],
+                    ["sameArrangementAsMain"] = true,
+                    ["size"] = layout["spotlight"][5],
+                    ["position"] = layout["spotlight"][3],
+                    ["powerSize"] = layout["powerSize"],
+                    ["orientation"] = layout["orientation"],
+                    ["anchor"] = layout["anchor"],
+                    ["spacingX"] = layout["spacingX"],
+                    ["spacingY"] = layout["spacingY"],
+                }
+            end
+
+            layout["size"] = nil
+            layout["position"] = nil
+            layout["powerSize"] = nil
+            layout["spacingX"] = nil
+            layout["spacingY"] = nil
+            layout["orientation"] = nil
+            layout["anchor"] = nil
+            layout["columns"] = nil
+            layout["rows"] = nil
+            layout["groupSpacing"] = nil
+            layout["sortByRole"] = nil
+            layout["hideSelf"] = nil
+        end
     end
 
     CellDB["revise"] = Cell.version

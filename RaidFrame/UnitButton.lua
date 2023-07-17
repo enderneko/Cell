@@ -1305,6 +1305,8 @@ local function GetRole(b)
 end
 
 local function ShouldShowPowerBar(b)
+    if not b.powerSize or b.powerSize == 0 then return end
+
     if not b.state.guid then
         return true
     end
@@ -1338,7 +1340,7 @@ local function ShouldShowPowerBar(b)
     return true
 end
 
-local function ShowPowerBar(b, s)
+local function ShowPowerBar(b)
     if b:IsShown() then
         b:RegisterEvent("UNIT_POWER_FREQUENT")
         b:RegisterEvent("UNIT_MAXPOWER")
@@ -1352,12 +1354,12 @@ local function ShowPowerBar(b, s)
     P:ClearPoints(b.widget.powerBar)
     if b.orientation == "horizontal" or b.orientation == "vertical_health" then
         P:Point(b.widget.healthBar, "TOPLEFT", b, "TOPLEFT", 1, -1)
-        P:Point(b.widget.healthBar, "BOTTOMRIGHT", b, "BOTTOMRIGHT", -1, s + 2)
+        P:Point(b.widget.healthBar, "BOTTOMRIGHT", b, "BOTTOMRIGHT", -1, b.powerSize + 2)
         P:Point(b.widget.powerBar, "TOPLEFT", b.widget.healthBar, "BOTTOMLEFT", 0, -1)
         P:Point(b.widget.powerBar, "BOTTOMRIGHT", b, "BOTTOMRIGHT", -1, 1)
     else
         P:Point(b.widget.healthBar, "TOPLEFT", b, "TOPLEFT", 1, -1)
-        P:Point(b.widget.healthBar, "BOTTOMRIGHT", b, "BOTTOMRIGHT", -(s + 2), 1)
+        P:Point(b.widget.healthBar, "BOTTOMRIGHT", b, "BOTTOMRIGHT", -(b.powerSize + 2), 1)
         P:Point(b.widget.powerBar, "TOPLEFT", b.widget.healthBar, "TOPRIGHT", 1, 0)
         P:Point(b.widget.powerBar, "BOTTOMRIGHT", b, "BOTTOMRIGHT", -1, 1)
     end
@@ -1840,10 +1842,10 @@ local function UnitButton_UpdateVehicleStatus(self)
         self.state.displayedUnit = self.state.unit
         self.indicators.nameText.vehicle:SetText("")
     end
-    
-    if Cell.loaded and Cell.vars.currentLayoutTable["powerSize"] ~= 0 then
+
+    if Cell.loaded then
         if ShouldShowPowerBar(self) then
-            ShowPowerBar(self, Cell.vars.currentLayoutTable["powerSize"])
+            ShowPowerBar(self)
         else
             HidePowerBar(self)
         end
@@ -2083,13 +2085,11 @@ UnitButton_UpdateAll = function(self)
     I:UpdateStatusIcon_Resurrection(self)
 
     if Cell.loaded then
-        if Cell.vars.currentLayoutTable["powerSize"] ~= 0 then
-            -- 单位按钮显示、专精、载具发生变化时
-            if ShouldShowPowerBar(self) then
-                ShowPowerBar(self, Cell.vars.currentLayoutTable["powerSize"])
-            else
-                HidePowerBar(self)
-            end
+        -- 单位按钮显示、专精、载具发生变化时
+        if ShouldShowPowerBar(self) then
+            ShowPowerBar(self)
+        else
+            HidePowerBar(self)
         end
     else
         UnitButton_UpdatePowerType(self)
@@ -2477,11 +2477,13 @@ end
 -- button functions
 -------------------------------------------------
 function B:SetPowerSize(button, size)
+    button.powerSize = size
+
     if size == 0 then
         HidePowerBar(button)
     else
         if ShouldShowPowerBar(button) then
-            ShowPowerBar(button, size)
+            ShowPowerBar(button)
         else
             HidePowerBar(button)
         end

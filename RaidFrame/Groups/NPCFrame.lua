@@ -47,7 +47,7 @@ dumb:SetScript("OnDragStart", function()
 end)
 dumb:SetScript("OnDragStop", function()
     separateAnchor:StopMovingOrSizing()
-    P:SavePosition(separateAnchor, Cell.vars.currentLayoutTable["npc"][3])
+    P:SavePosition(separateAnchor, Cell.vars.currentLayoutTable["npc"]["position"])
 end)
 dumb:HookScript("OnEnter", function()
     hoverFrame:GetScript("OnEnter")(hoverFrame)
@@ -63,7 +63,7 @@ end)
 
 function npcFrame:UpdateSeparateAnchor()
     local show
-    if Cell.vars.currentLayoutTable["npc"][2] then
+    if Cell.vars.currentLayoutTable["npc"]["separate"] then
         for _, b in ipairs(Cell.unitButtons.npc) do
             show = b:IsShown()
             if show then break end
@@ -183,6 +183,7 @@ for i = 1, 8 do
     local button = CreateFrame("Button", npcFrame:GetName().."Button"..i, npcFrame, "CellUnitButtonTemplate")
     tinsert(Cell.unitButtons.npc, button)
     Cell.unitButtons.npc.units["boss"..i] = button
+    -- button.type = "npc" -- layout setup
 
     button:SetAttribute("unit", "boss"..i)
     -- button:SetAttribute("unit", "player")
@@ -420,37 +421,44 @@ local function UpdatePosition()
     local layout = Cell.vars.currentLayoutTable
     
     -- update npcFrame anchor if separate from main
-    if layout["npc"][2] then
+    if layout["npc"]["separate"] then
         npcFrame:ClearAllPoints()
-        P:LoadPosition(separateAnchor, layout["npc"][3])
+        P:LoadPosition(separateAnchor, layout["npc"]["position"])
+
+        local anchor
+        if layout["pet"]["sameArrangementAsMain"] then
+            anchor = layout["main"]["anchor"]
+        else
+            anchor = layout["npc"]["anchor"]
+        end
 
         if CellDB["general"]["menuPosition"] == "top_bottom" then
             P:Size(separateAnchor, 20, 10)
-            if layout["anchor"] == "BOTTOMLEFT" then
+            if anchor == "BOTTOMLEFT" then
                 npcFrame:SetPoint("BOTTOMLEFT", separateAnchor, "TOPLEFT", 0, 4)
                 tooltipPoint, tooltipRelativePoint, tooltipX, tooltipY = "TOPLEFT", "BOTTOMLEFT", 0, -3
-            elseif layout["anchor"] == "BOTTOMRIGHT" then
+            elseif anchor == "BOTTOMRIGHT" then
                 npcFrame:SetPoint("BOTTOMRIGHT", separateAnchor, "TOPRIGHT", 0, 4)
                 tooltipPoint, tooltipRelativePoint, tooltipX, tooltipY = "TOPRIGHT", "BOTTOMRIGHT", 0, -3
-            elseif layout["anchor"] == "TOPLEFT" then
+            elseif anchor == "TOPLEFT" then
                 npcFrame:SetPoint("TOPLEFT", separateAnchor, "BOTTOMLEFT", 0, -4)
                 tooltipPoint, tooltipRelativePoint, tooltipX, tooltipY = "BOTTOMLEFT", "TOPLEFT", 0, 3
-            elseif layout["anchor"] == "TOPRIGHT" then
+            elseif anchor == "TOPRIGHT" then
                 npcFrame:SetPoint("TOPRIGHT", separateAnchor, "BOTTOMRIGHT", 0, -4)
                 tooltipPoint, tooltipRelativePoint, tooltipX, tooltipY = "BOTTOMRIGHT", "TOPRIGHT", 0, 3
             end
         else
             P:Size(separateAnchor, 10, 20)
-            if layout["anchor"] == "BOTTOMLEFT" then
+            if anchor == "BOTTOMLEFT" then
                 npcFrame:SetPoint("BOTTOMLEFT", separateAnchor, "BOTTOMRIGHT", 4, 0)
                 tooltipPoint, tooltipRelativePoint, tooltipX, tooltipY = "BOTTOMRIGHT", "BOTTOMLEFT", -3, 0
-            elseif layout["anchor"] == "BOTTOMRIGHT" then
+            elseif anchor == "BOTTOMRIGHT" then
                 npcFrame:SetPoint("BOTTOMRIGHT", separateAnchor, "BOTTOMLEFT", -4, 0)
                 tooltipPoint, tooltipRelativePoint, tooltipX, tooltipY = "BOTTOMLEFT", "BOTTOMRIGHT", 3, 0
-            elseif layout["anchor"] == "TOPLEFT" then
+            elseif anchor == "TOPLEFT" then
                 npcFrame:SetPoint("TOPLEFT", separateAnchor, "TOPRIGHT", 4, 0)
                 tooltipPoint, tooltipRelativePoint, tooltipX, tooltipY = "TOPRIGHT", "TOPLEFT", -3, 0
-            elseif layout["anchor"] == "TOPRIGHT" then
+            elseif anchor == "TOPRIGHT" then
                 npcFrame:SetPoint("TOPRIGHT", separateAnchor, "TOPLEFT", -4, 0)
                 tooltipPoint, tooltipRelativePoint, tooltipX, tooltipY = "TOPLEFT", "TOPRIGHT", 3, 0
             end
@@ -487,12 +495,12 @@ local function NPCFrame_UpdateLayout(layout, which)
     -- if layout ~= Cell.vars.currentLayout then return end
     layout = Cell.vars.currentLayoutTable
 
-    if not which or which == "size" or which == "npcSize" then
+    if not which or strfind(which, "size$") then
         local width, height
-        if layout["npc"][4] then
-            width, height = unpack(layout["npc"][5])
+        if layout["npc"]["sameSizeAsMain"] then
+            width, height = unpack(layout["main"]["size"])
         else
-            width, height = unpack(layout["size"])
+            width, height = unpack(layout["npc"]["size"])
         end
 
         P:Size(npcFrame, width, height)
@@ -509,14 +517,18 @@ local function NPCFrame_UpdateLayout(layout, which)
         end
     end
     
-    if not which or which == "power" or which == "barOrientation" then
+    if not which or strfind(which, "power$") or which == "barOrientation" then
         for _, b in ipairs(Cell.unitButtons.npc) do
-            B:SetPowerSize(b, layout["powerSize"])
+            if layout["npc"]["sameSizeAsMain"] then
+                B:SetPowerSize(b, layout["main"]["powerSize"])
+            else
+                B:SetPowerSize(b, layout["npc"]["powerSize"])
+            end
         end
     end
 
     if not which or which == "pet" then
-        if layout["pet"][1] then
+        if layout["pet"]["partyEnabled"] then
             npcFrame:SetFrameRef("party", CellPartyFrameHeaderUnitButton1Pet)
             anchors["party"] = CellPartyFrameHeaderUnitButton1Pet
         else
@@ -525,33 +537,44 @@ local function NPCFrame_UpdateLayout(layout, which)
         end
     end
 
-    if not which or which == "spacing" or which == "orientation" or which == "anchor" or which == "npc" or which == "pet" then
+    if not which or strfind(which, "arrangement$") or which == "npc" or which == "pet" then
         local groupType = F:GetGroupType()
         npcFrame:ClearAllPoints()
 
-        -- anchors
+        local orientation, anchor, spacingX, spacingY
+        if layout["npc"]["sameArrangementAsMain"] then
+            orientation = layout["main"]["orientation"]
+            anchor = layout["main"]["anchor"]
+            spacingX = layout["main"]["spacingX"]
+            spacingY = layout["main"]["spacingY"]
+        else
+            orientation = layout["npc"]["orientation"]
+            anchor = layout["npc"]["anchor"]
+            spacingX = layout["npc"]["spacingX"]
+            spacingY = layout["npc"]["spacingY"]
+        end
+
         local point, anchorPoint, groupAnchorPoint, unitSpacing, groupSpacing
-        
-        if layout["orientation"] == "vertical" then
-            if layout["anchor"] == "BOTTOMLEFT" then
+        if orientation == "vertical" then
+            if anchor == "BOTTOMLEFT" then
                 point, anchorPoint, groupAnchorPoint = "BOTTOMLEFT", "TOPLEFT", "BOTTOMRIGHT"
-                unitSpacing = layout["spacingY"]
-                groupSpacing = layout["spacingX"]
-            elseif layout["anchor"] == "BOTTOMRIGHT" then
+                unitSpacing = spacingY
+                groupSpacing = spacingX
+            elseif anchor == "BOTTOMRIGHT" then
                 point, anchorPoint, groupAnchorPoint = "BOTTOMRIGHT", "TOPRIGHT", "BOTTOMLEFT"
-                unitSpacing = layout["spacingY"]
-                groupSpacing = -layout["spacingX"]
-            elseif layout["anchor"] == "TOPLEFT" then
+                unitSpacing = spacingY
+                groupSpacing = -spacingX
+            elseif anchor == "TOPLEFT" then
                 point, anchorPoint, groupAnchorPoint = "TOPLEFT", "BOTTOMLEFT", "TOPRIGHT"
-                unitSpacing = -layout["spacingY"]
-                groupSpacing = layout["spacingX"]
-            elseif layout["anchor"] == "TOPRIGHT" then
+                unitSpacing = -spacingY
+                groupSpacing = spacingX
+            elseif anchor == "TOPRIGHT" then
                 point, anchorPoint, groupAnchorPoint = "TOPRIGHT", "BOTTOMRIGHT", "TOPLEFT"
-                unitSpacing = -layout["spacingY"]
-                groupSpacing = -layout["spacingX"]
+                unitSpacing = -spacingY
+                groupSpacing = -spacingX
             end
 
-            if not layout["npc"][2] then
+            if not layout["npc"]["separate"] then
                 -- update whole NPCFrame point
                 if groupType == "raid" then
                     npcFrame:SetPoint(point, anchors["raid"])
@@ -568,25 +591,25 @@ local function NPCFrame_UpdateLayout(layout, which)
                 end
             end
         else
-            if layout["anchor"] == "BOTTOMLEFT" then
+            if anchor == "BOTTOMLEFT" then
                 point, anchorPoint, groupAnchorPoint = "BOTTOMLEFT", "BOTTOMRIGHT", "TOPLEFT"
-                unitSpacing = layout["spacingX"]
-                groupSpacing = layout["spacingY"]
-            elseif layout["anchor"] == "BOTTOMRIGHT" then
+                unitSpacing = spacingX
+                groupSpacing = spacingY
+            elseif anchor == "BOTTOMRIGHT" then
                 point, anchorPoint, groupAnchorPoint = "BOTTOMRIGHT", "BOTTOMLEFT", "TOPRIGHT"
-                unitSpacing = -layout["spacingX"]
-                groupSpacing = layout["spacingY"]
-            elseif layout["anchor"] == "TOPLEFT" then
+                unitSpacing = -spacingX
+                groupSpacing = spacingY
+            elseif anchor == "TOPLEFT" then
                 point, anchorPoint, groupAnchorPoint = "TOPLEFT", "TOPRIGHT", "BOTTOMLEFT"
-                unitSpacing = layout["spacingX"]
-                groupSpacing = -layout["spacingY"]
-            elseif layout["anchor"] == "TOPRIGHT" then
+                unitSpacing = spacingX
+                groupSpacing = -spacingY
+            elseif anchor == "TOPRIGHT" then
                 point, anchorPoint, groupAnchorPoint = "TOPRIGHT", "TOPLEFT", "BOTTOMRIGHT"
-                unitSpacing = -layout["spacingX"]
-                groupSpacing = -layout["spacingY"]
+                unitSpacing = -spacingX
+                groupSpacing = -spacingY
             end
 
-            if not layout["npc"][2] then
+            if not layout["npc"]["separate"] then
                 -- update whole NPCFrame point
                 if groupType == "raid" then
                     npcFrame:SetPoint(point, anchors["raid"])
@@ -605,7 +628,7 @@ local function NPCFrame_UpdateLayout(layout, which)
         end
 
         -- save point data
-        npcFrame:SetAttribute("orientation", layout["orientation"])
+        npcFrame:SetAttribute("orientation", orientation)
         npcFrame:SetAttribute("point", point)
         npcFrame:SetAttribute("anchorPoint", anchorPoint)
         npcFrame:SetAttribute("groupAnchorPoint", groupAnchorPoint)
@@ -615,7 +638,7 @@ local function NPCFrame_UpdateLayout(layout, which)
         local last
         for i = 1, 8 do
             local button = Cell.unitButtons.npc[i]
-            button.helper:SetAttribute("orientation", layout["orientation"])
+            button.helper:SetAttribute("orientation", orientation)
             button.helper:SetAttribute("point", point)
             button.helper:SetAttribute("anchorPoint", anchorPoint)
             button.helper:SetAttribute("unitSpacing", unitSpacing)
@@ -624,7 +647,7 @@ local function NPCFrame_UpdateLayout(layout, which)
             if button:IsVisible() then
                 button:ClearAllPoints()
                 if last then
-                    if layout["orientation"] == "vertical" then
+                    if orientation == "vertical" then
                         button:SetPoint(point, last, anchorPoint, 0, unitSpacing)
                     else
                         button:SetPoint(point, last, anchorPoint, unitSpacing, 0)
@@ -637,22 +660,22 @@ local function NPCFrame_UpdateLayout(layout, which)
         end
     end
 
-    if not which or which == "anchor" or which == "npc" then
+    if not which or strfind(which, "arrangement$") or which == "npc" then
         UpdatePosition()
     end
 
     if not which or which == "npc" then
-        if layout["npc"][1] then
+        if layout["npc"]["enabled"] then
             -- NOTE: RegisterAttributeDriver
             for i, b in ipairs(Cell.unitButtons.npc) do
                 RegisterAttributeDriver(b, "state-visibility", "[@boss"..i..", help] show; hide")
                 -- RegisterAttributeDriver(b, "state-visibility", "[@player, help] show; hide")
             end
-            if layout["npc"][2] then
+            if layout["npc"]["separate"] then
                 UnregisterStateDriver(npcFrame, "groupstate")
                 UnregisterStateDriver(npcFrame, "petstate")
                 -- load separate npc frame position
-                P:LoadPosition(separateAnchor, layout["npc"][3])
+                P:LoadPosition(separateAnchor, layout["npc"]["position"])
             else
                 RegisterStateDriver(npcFrame, "groupstate", "[group:raid] raid; [group:party] party; solo")
                 RegisterStateDriver(npcFrame, "petstate", "[@pet,exists] pet; [@partypet1,exists] pet1; [@partypet2,exists] pet2; [@partypet3,exists] pet3; [@partypet4,exists] pet4; nopet")

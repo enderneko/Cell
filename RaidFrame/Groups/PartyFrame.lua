@@ -70,7 +70,10 @@ header:SetAttribute("startingIndex", 1)
 
 -- init pet buttons
 for i, playerButton in ipairs({header:GetChildren()}) do
+    -- playerButton.type = "main" -- layout setup
+
     local petButton = CreateFrame("Button", playerButton:GetName().."Pet", playerButton, "CellUnitButtonTemplate")
+    -- petButton.type = "pet" -- layout setup
     petButton:SetIgnoreParentAlpha(true)
 
     --! button for pet/vehicle only, toggleForVehicle MUST be false
@@ -97,55 +100,55 @@ local function PartyFrame_UpdateLayout(layout, which)
     layout = CellDB["layouts"][layout]
 
     -- anchor
-    if not which or which == "spacing" or which == "orientation" or which == "anchor" then
+    if not which or which == "main-arrangement" then
         local point, playerAnchorPoint, petAnchorPoint, playerSpacing, petSpacing, headerPoint
-        if layout["orientation"] == "vertical" then
-            if layout["anchor"] == "BOTTOMLEFT" then
+        if layout["main"]["orientation"] == "vertical" then
+            if layout["main"]["anchor"] == "BOTTOMLEFT" then
                 point, playerAnchorPoint, petAnchorPoint = "BOTTOMLEFT", "TOPLEFT", "BOTTOMRIGHT"
                 headerPoint = "BOTTOM"
-                playerSpacing = layout["spacingY"]
-                petSpacing = layout["spacingX"]
-            elseif layout["anchor"] == "BOTTOMRIGHT" then
+                playerSpacing = layout["main"]["spacingY"]
+                petSpacing = layout["main"]["spacingX"]
+            elseif layout["main"]["anchor"] == "BOTTOMRIGHT" then
                 point, playerAnchorPoint, petAnchorPoint = "BOTTOMRIGHT", "TOPRIGHT", "BOTTOMLEFT"
                 headerPoint = "BOTTOM"
-                playerSpacing = layout["spacingY"]
-                petSpacing = -layout["spacingX"]
-            elseif layout["anchor"] == "TOPLEFT" then
+                playerSpacing = layout["main"]["spacingY"]
+                petSpacing = -layout["main"]["spacingX"]
+            elseif layout["main"]["anchor"] == "TOPLEFT" then
                 point, playerAnchorPoint, petAnchorPoint = "TOPLEFT", "BOTTOMLEFT", "TOPRIGHT"
                 headerPoint = "TOP"
-                playerSpacing = -layout["spacingY"]
-                petSpacing = layout["spacingX"]
-            elseif layout["anchor"] == "TOPRIGHT" then
+                playerSpacing = -layout["main"]["spacingY"]
+                petSpacing = layout["main"]["spacingX"]
+            elseif layout["main"]["anchor"] == "TOPRIGHT" then
                 point, playerAnchorPoint, petAnchorPoint = "TOPRIGHT", "BOTTOMRIGHT", "TOPLEFT"
                 headerPoint = "TOP"
-                playerSpacing = -layout["spacingY"]
-                petSpacing = -layout["spacingX"]
+                playerSpacing = -layout["main"]["spacingY"]
+                petSpacing = -layout["main"]["spacingX"]
             end
 
             header:SetAttribute("xOffset", 0)
             header:SetAttribute("yOffset", playerSpacing)
         else
             -- anchor
-            if layout["anchor"] == "BOTTOMLEFT" then
+            if layout["main"]["anchor"] == "BOTTOMLEFT" then
                 point, playerAnchorPoint, petAnchorPoint = "BOTTOMLEFT", "BOTTOMRIGHT", "TOPLEFT"
                 headerPoint = "LEFT"
-                playerSpacing = layout["spacingX"]
-                petSpacing = layout["spacingY"]
-            elseif layout["anchor"] == "BOTTOMRIGHT" then
+                playerSpacing = layout["main"]["spacingX"]
+                petSpacing = layout["main"]["spacingY"]
+            elseif layout["main"]["anchor"] == "BOTTOMRIGHT" then
                 point, playerAnchorPoint, petAnchorPoint = "BOTTOMRIGHT", "BOTTOMLEFT", "TOPRIGHT"
                 headerPoint = "RIGHT"
-                playerSpacing = -layout["spacingX"]
-                petSpacing = layout["spacingY"]
-            elseif layout["anchor"] == "TOPLEFT" then
+                playerSpacing = -layout["main"]["spacingX"]
+                petSpacing = layout["main"]["spacingY"]
+            elseif layout["main"]["anchor"] == "TOPLEFT" then
                 point, playerAnchorPoint, petAnchorPoint = "TOPLEFT", "TOPRIGHT", "BOTTOMLEFT"
                 headerPoint = "LEFT"
-                playerSpacing = layout["spacingX"]
-                petSpacing = -layout["spacingY"]
-            elseif layout["anchor"] == "TOPRIGHT" then
+                playerSpacing = layout["main"]["spacingX"]
+                petSpacing = -layout["main"]["spacingY"]
+            elseif layout["main"]["anchor"] == "TOPRIGHT" then
                 point, playerAnchorPoint, petAnchorPoint = "TOPRIGHT", "TOPLEFT", "BOTTOMRIGHT"
                 headerPoint = "RIGHT"
-                playerSpacing = -layout["spacingX"]
-                petSpacing = -layout["spacingY"]
+                playerSpacing = -layout["main"]["spacingX"]
+                petSpacing = -layout["main"]["spacingY"]
             end
 
             header:SetAttribute("xOffset", playerSpacing)
@@ -161,7 +164,7 @@ local function PartyFrame_UpdateLayout(layout, which)
             header[j]:ClearAllPoints()
             -- update petButton's point
             header[j].petButton:ClearAllPoints()
-            if layout["orientation"] == "vertical" then
+            if layout["main"]["orientation"] == "vertical" then
                 header[j].petButton:SetPoint(point, header[j], petAnchorPoint, petSpacing, 0)
             else
                 header[j].petButton:SetPoint(point, header[j], petAnchorPoint, 0, petSpacing)
@@ -170,28 +173,19 @@ local function PartyFrame_UpdateLayout(layout, which)
         header:SetAttribute("unitsPerColumn", 5)
     end
 
-    if not which or which == "size" or which == "petSize" or which == "power" or which == "barOrientation" then
+    if not which or strfind(which, "size$") or strfind(which, "power$") or which == "barOrientation" then
         for i, playerButton in ipairs({header:GetChildren()}) do
             local petButton = playerButton.petButton
 
-            if not which or which == "size" then
-                local width, height = unpack(layout["size"])
+            if not which or strfind(which, "size$") then
+                local width, height = unpack(layout["main"]["size"])
                 P:Size(playerButton, width, height)
                 header:SetAttribute("buttonWidth", P:Scale(width))
                 header:SetAttribute("buttonHeight", P:Scale(height))
-                P:Size(petButton, width, height)
-                if layout["pet"][4] then
-                    P:Size(petButton, layout["pet"][5][1], layout["pet"][5][2])
-                else
+                if layout["pet"]["sameSizeAsMain"] then
                     P:Size(petButton, width, height)
-                end
-            end
-
-            if which == "petSize" then
-                if layout["pet"][4] then
-                    P:Size(petButton, layout["pet"][5][1], layout["pet"][5][2])
                 else
-                    P:Size(petButton, layout["size"][1], layout["size"][2])
+                    P:Size(petButton, layout["pet"]["size"][1], layout["pet"]["size"][2])
                 end
             end
 
@@ -201,16 +195,20 @@ local function PartyFrame_UpdateLayout(layout, which)
                 B:SetOrientation(petButton, layout["barOrientation"][1], layout["barOrientation"][2])
             end
            
-            if not which or which == "power" or which == "barOrientation" then
-                B:SetPowerSize(playerButton, layout["powerSize"])
-                B:SetPowerSize(petButton, layout["powerSize"])
+            if not which or strfind(which, "power$") or which == "barOrientation" then
+                B:SetPowerSize(playerButton, layout["main"]["powerSize"])
+                if layout["pet"]["sameSizeAsMain"] then
+                    B:SetPowerSize(petButton, layout["main"]["powerSize"])
+                else
+                    B:SetPowerSize(petButton, layout["pet"]["powerSize"])
+                end
             end
         end
     end
 
     if not which or which == "pet" then
-        header:SetAttribute("showPartyPets", layout["pet"][1])
-        if layout["pet"][1] then
+        header:SetAttribute("showPartyPets", layout["pet"]["partyEnabled"])
+        if layout["pet"]["partyEnabled"] then
             for i, playerButton in ipairs({header:GetChildren()}) do
                 RegisterUnitWatch(playerButton.petButton)
             end

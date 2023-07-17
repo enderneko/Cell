@@ -278,44 +278,55 @@ L["Create new layout"] = "新建布局"
 L["Delete layout"] = "删除布局"
 L["Default layout"] = "默认布局"
 L["Inherit: "] = "继承："
+L["Tip: Every layout has its own position setting"] = "提示：每个布局都有其单独的位置设置"
+
+-- layout preview
+L["Party"] = "小队"
+L["Raid Pets"] = "团队宠物"
+L["Friendly NPC Frame"] = "友方 NPC 框体"
+
+-- layout auto switch
 L["Layout Auto Switch"] = "布局自动切换"
 L["Solo/Party"] = "单人/小队"
 L["Outdoor"] = "野外"
 L["Arena"] = "竞技场"
 L["BG 1-15"] = "战场 1-15"
 L["BG 16-40"] = "战场 16-40"
-L["Group Filter"] = "队伍过滤"
-L["Group Arrangement"] = "队伍排列"
-L["Orientation"] = "方向"
-L["Vertical"] = "纵向"
-L["Horizontal"] = "横向"
-L["Party"] = "小队"
-L["Button Size"] = "按钮尺寸"
-L["Pet Button"] = "宠物按钮"
-L["Spotlight Button"] = "特别关注按钮"
-L["NPC Button"] = "NPC 按钮"
+
+-- group filters
+L["Group Filters"] = "队伍过滤"
+
+-- layout setup
+L["Layout Setup"] = "布局设置"
+L["Main"] = "主框体"
+L["Pet"] = "宠物"
+L["Spotlight"] = "特别关注"
 L["Width"] = "宽"
 L["Height"] = "高"
 L["Power Size"] = "能量条尺寸"
-L["Misc"] = "其他"
+L["Orientation"] = "方向"
+L["Vertical"] = "纵向"
+L["Horizontal"] = "横向"
 L["Unit Spacing"] = "单位间距"
 L["Group Columns"] = "队伍列数"
 L["Group Rows"] = "队伍行数"
 L["Group Spacing"] = "队伍间距"
-L["Bar Orientation"] = "条方向"
-L["Rotate Texture"] = "旋转材质"
-L["Friendly NPC Frame"] = "友方 NPC 框体"
-L["Other Frames"] = "其他框体"
+
+L["Sort By Role (Party Only)"] = "按职责排序（仅小队）"
+L["Hide Self (Party Only)"] = "隐藏自己（仅小队）"
+
+L["Use Same Size As Main"] = "使用与主框体相同的尺寸"
+L["Use Same Arrangement As Main"] = "使用与主框体相同的排列"
+
+L["Show Party/Arena Pets"] = "显示小队/竞技场宠物"
+L["Show Raid Pets"] = "显示团队宠物"
+
 L["Show NPC Frame"] = "显示 NPC 框体"
 L["Separate NPC Frame"] = "分离 NPC 框体"
 L["Show friendly NPCs in a separate frame"] = "将友方 NPC 显示在一个单独的框体中"
 L["You can move it in Preview mode"] = "你可以在“预览”模式中移动它"
-L["Power Bar Filters"] = "能量条过滤"
-L["PET"] = "宠物"
-L["VEHICLE"] = "载具"
-L["Show Party/Arena Pets"] = "显示小队/竞技场宠物"
-L["Show Raid Pets"] = "显示团队宠物"
-L["Raid Pets"] = "团队宠物"
+
+L["Enable Spotlight Frame"] = "启用特别关注框体"
 L["Spotlight Frame"] = "特别关注框体"
 L["spotlightTips"] = "左键：|cffffffff菜单|r\n右键：|cffffffff清除|r\n左键拖动：|cffffffff设置为目标单位（非战斗中）|r\n右键拖动：|cffffffff设置为目标单位的宠物（非战斗中）|r"
 L["Show units you care about more in a separate frame"] = "将你特别关注的单位显示在一个单独的框体中"
@@ -325,9 +336,23 @@ L["Unit's Target"] = "指定单位的目标"
 L["Unit's Pet"] = "指定单位的宠物"
 L["Clear"] = "清除"
 L["Invalid unit."] = "无效单位。"
-L["Sort By Role (Party Only)"] = "按职责排序（仅小队）"
-L["Hide Self (Party Only)"] = "隐藏自己（仅小队）"
-L["Tip: Every layout has its own position setting"] = "提示：每个布局都有其单独的位置设置"
+
+-- L["Group Arrangement"] = "队伍排列"
+-- L["Button Size"] = "按钮尺寸"
+-- L["Pet Button"] = "宠物按钮"
+-- L["Spotlight Button"] = "特别关注按钮"
+-- L["NPC Button"] = "NPC 按钮"
+-- L["Other Frames"] = "其他框体"
+
+-- bar orientation
+L["Bar Orientation"] = "条方向"
+L["Rotate Texture"] = "旋转材质"
+
+-- misc
+L["Misc"] = "其他"
+L["Power Bar Filters"] = "能量条过滤"
+L["PET"] = "宠物"
+L["VEHICLE"] = "载具"
 
 -------------------------------------------------
 -- send/receive

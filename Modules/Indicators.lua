@@ -23,6 +23,7 @@ local previewButton, previewButtonBG, previewAlphaSlider, previewScaleSlider
 
 local function CreatePreviewButton()
     previewButton = CreateFrame("Button", "CellIndicatorsPreviewButton", indicatorsTab, "CellPreviewButtonTemplate")
+    -- previewButton.type = "main" -- layout setup
     -- previewButton:SetPoint("TOPLEFT", indicatorsTab, "TOPRIGHT", 10, -55)
     previewButton:UnregisterAllEvents()
     previewButton:SetScript("OnEnter", nil)
@@ -94,9 +95,9 @@ local function CreatePreviewButton()
 end
 
 local function UpdatePreviewButton()
-    P:Size(previewButton, currentLayoutTable["size"][1], currentLayoutTable["size"][2])
+    P:Size(previewButton, currentLayoutTable["main"]["size"][1], currentLayoutTable["main"]["size"][2])
     B:SetOrientation(previewButton, currentLayoutTable["barOrientation"][1], currentLayoutTable["barOrientation"][2])
-    B:SetPowerSize(previewButton, currentLayoutTable["powerSize"])
+    B:SetPowerSize(previewButton, currentLayoutTable["main"]["powerSize"])
 
     previewButton:UpdatePoint()
     

@@ -10,6 +10,7 @@ layoutsTab:SetAllPoints(Cell.frames.optionsFrame)
 layoutsTab:Hide()
 
 local selectedRole, selectedLayout, selectedLayoutTable
+local selectedPage = "main"
 -------------------------------------------------
 -- preview frame
 -------------------------------------------------
@@ -64,20 +65,6 @@ local function UpdatePreviewButton(which, value)
         end
     end
 
-    -- if not which or which == "statusText" then
-    --     local iTable = selectedLayoutTable["indicators"][2]
-    --     if iTable["enabled"] then
-    --         previewButton.indicators.statusText:Show()
-    --         previewButton.indicators.statusText:SetFont(unpack(iTable["font"]))
-    --         previewButton.indicators.statusText:ClearAllPoints()
-    --         previewButton.indicators.statusText:SetPoint(iTable["position"][1], nil, iTable["position"][2])
-    --         previewButton.indicators.statusText.text:SetText(L["OFFLINE"])
-    --         previewButton.indicators.statusText.timer:SetText("13m")
-    --     else
-    --         previewButton.indicators.statusText:Hide()
-    --     end
-    -- end
-
     if not which or which == "appearance" then
         previewButton.widget.healthBar:SetStatusBarTexture(Cell.vars.texture)
         previewButton.widget.powerBar:SetStatusBarTexture(Cell.vars.texture)
@@ -95,7 +82,7 @@ local function UpdatePreviewButton(which, value)
     end
     
     if not which or which == "size" then
-        P:Size(previewButton, selectedLayoutTable["size"][1], selectedLayoutTable["size"][2])
+        P:Size(previewButton, selectedLayoutTable["main"]["size"][1], selectedLayoutTable["main"]["size"][2])
     end
 
     if not which or which == "barOrientation" then
@@ -103,7 +90,7 @@ local function UpdatePreviewButton(which, value)
     end
 
     if not which or which == "power" or which == "barOrientation" then
-        B:SetPowerSize(previewButton, selectedLayoutTable["powerSize"])
+        B:SetPowerSize(previewButton, selectedLayoutTable["main"]["powerSize"])
     end
 
     Cell:Fire("UpdatePreview", previewButton)
@@ -136,7 +123,7 @@ local function CreateLayoutPreview()
     end)
     layoutPreviewAnchor:SetScript("OnDragStop", function()
         layoutPreviewAnchor:StopMovingOrSizing()
-        P:SavePosition(layoutPreviewAnchor, selectedLayoutTable["position"])
+        P:SavePosition(layoutPreviewAnchor, selectedLayoutTable["main"]["position"])
     end)
 
     layoutPreviewName = layoutPreviewAnchor:CreateFontString(nil, "OVERLAY", "CELL_FONT_CLASS_TITLE")
@@ -216,36 +203,36 @@ local function UpdateLayoutPreview()
     end
 
     -- update layoutPreview point
-    P:Size(layoutPreview, selectedLayoutTable["size"][1], selectedLayoutTable["size"][2])
+    P:Size(layoutPreview, selectedLayoutTable["main"]["size"][1], selectedLayoutTable["main"]["size"][2])
     layoutPreview:ClearAllPoints()
     layoutPreviewName:ClearAllPoints()
     if CellDB["general"]["menuPosition"] == "top_bottom" then
         P:Size(layoutPreviewAnchor, 20, 10)
-        if selectedLayoutTable["anchor"] == "BOTTOMLEFT" then
+        if selectedLayoutTable["main"]["anchor"] == "BOTTOMLEFT" then
             layoutPreview:SetPoint("BOTTOMLEFT", layoutPreviewAnchor, "TOPLEFT", 0, 4)
             layoutPreviewName:SetPoint("LEFT", layoutPreviewAnchor, "RIGHT", 5, 0)
-        elseif selectedLayoutTable["anchor"] == "BOTTOMRIGHT" then
+        elseif selectedLayoutTable["main"]["anchor"] == "BOTTOMRIGHT" then
             layoutPreview:SetPoint("BOTTOMRIGHT", layoutPreviewAnchor, "TOPRIGHT", 0, 4)
             layoutPreviewName:SetPoint("RIGHT", layoutPreviewAnchor, "LEFT", -5, 0)
-        elseif selectedLayoutTable["anchor"] == "TOPLEFT" then
+        elseif selectedLayoutTable["main"]["anchor"] == "TOPLEFT" then
             layoutPreview:SetPoint("TOPLEFT", layoutPreviewAnchor, "BOTTOMLEFT", 0, -4)
             layoutPreviewName:SetPoint("LEFT", layoutPreviewAnchor, "RIGHT", 5, 0)
-        elseif selectedLayoutTable["anchor"] == "TOPRIGHT" then
+        elseif selectedLayoutTable["main"]["anchor"] == "TOPRIGHT" then
             layoutPreview:SetPoint("TOPRIGHT", layoutPreviewAnchor, "BOTTOMRIGHT", 0, -4)
             layoutPreviewName:SetPoint("RIGHT", layoutPreviewAnchor, "LEFT", -5, 0)
         end
     else
         P:Size(layoutPreviewAnchor, 10, 20)
-        if selectedLayoutTable["anchor"] == "BOTTOMLEFT" then
+        if selectedLayoutTable["main"]["anchor"] == "BOTTOMLEFT" then
             layoutPreview:SetPoint("BOTTOMLEFT", layoutPreviewAnchor, "BOTTOMRIGHT", 4, 0)
             layoutPreviewName:SetPoint("TOPLEFT", layoutPreviewAnchor, "BOTTOMLEFT", 0, -5)
-        elseif selectedLayoutTable["anchor"] == "BOTTOMRIGHT" then
+        elseif selectedLayoutTable["main"]["anchor"] == "BOTTOMRIGHT" then
             layoutPreview:SetPoint("BOTTOMRIGHT", layoutPreviewAnchor, "BOTTOMLEFT", -4, 0)
             layoutPreviewName:SetPoint("TOPRIGHT", layoutPreviewAnchor, "BOTTOMRIGHT", 0, -5)
-        elseif selectedLayoutTable["anchor"] == "TOPLEFT" then
+        elseif selectedLayoutTable["main"]["anchor"] == "TOPLEFT" then
             layoutPreview:SetPoint("TOPLEFT", layoutPreviewAnchor, "TOPRIGHT", 4, 0)
             layoutPreviewName:SetPoint("BOTTOMLEFT", layoutPreviewAnchor, "TOPLEFT", 0, 5)
-        elseif selectedLayoutTable["anchor"] == "TOPRIGHT" then
+        elseif selectedLayoutTable["main"]["anchor"] == "TOPRIGHT" then
             layoutPreview:SetPoint("TOPRIGHT", layoutPreviewAnchor, "TOPLEFT", -4, 0)
             layoutPreviewName:SetPoint("BOTTOMRIGHT", layoutPreviewAnchor, "TOPRIGHT", 0, 5)
         end
@@ -257,8 +244,8 @@ local function UpdateLayoutPreview()
         layoutPreviewAnchor:Hide()
         layoutPreviewName:Hide()
     else
-        if #selectedLayoutTable["position"] == 2 then
-            P:LoadPosition(layoutPreviewAnchor, selectedLayoutTable["position"])
+        if #selectedLayoutTable["main"]["position"] == 2 then
+            P:LoadPosition(layoutPreviewAnchor, selectedLayoutTable["main"]["position"])
         else
             layoutPreviewAnchor:ClearAllPoints()
             layoutPreviewAnchor:SetPoint("TOPLEFT", UIParent, "CENTER")
@@ -278,39 +265,39 @@ local function UpdateLayoutPreview()
 
     for i, group in ipairs(shownGroups) do
         local header = layoutPreview.headers[group]
-        local spacingX = selectedLayoutTable["spacingX"]
-        local spacingY = selectedLayoutTable["spacingY"]
+        local spacingX = selectedLayoutTable["main"]["spacingX"]
+        local spacingY = selectedLayoutTable["main"]["spacingY"]
         
         header:ClearAllPoints()
 
-        if selectedLayoutTable["orientation"] == "vertical" then
+        if selectedLayoutTable["main"]["orientation"] == "vertical" then
             -- anchor
             local point, anchorPoint, groupAnchorPoint, unitSpacing, groupSpacing, verticalSpacing
-            if selectedLayoutTable["anchor"] == "BOTTOMLEFT" then
+            if selectedLayoutTable["main"]["anchor"] == "BOTTOMLEFT" then
                 point, anchorPoint, groupAnchorPoint = "BOTTOMLEFT", "TOPLEFT", "BOTTOMRIGHT"
                 unitSpacing = spacingY
                 groupSpacing = spacingX
-                verticalSpacing = spacingY+selectedLayoutTable["groupSpacing"]
-            elseif selectedLayoutTable["anchor"] == "BOTTOMRIGHT" then
+                verticalSpacing = spacingY+selectedLayoutTable["main"]["groupSpacing"]
+            elseif selectedLayoutTable["main"]["anchor"] == "BOTTOMRIGHT" then
                 point, anchorPoint, groupAnchorPoint = "BOTTOMRIGHT", "TOPRIGHT", "BOTTOMLEFT"
                 unitSpacing = spacingY
                 groupSpacing = -spacingX
-                verticalSpacing = spacingY+selectedLayoutTable["groupSpacing"]
-            elseif selectedLayoutTable["anchor"] == "TOPLEFT" then
+                verticalSpacing = spacingY+selectedLayoutTable["main"]["groupSpacing"]
+            elseif selectedLayoutTable["main"]["anchor"] == "TOPLEFT" then
                 point, anchorPoint, groupAnchorPoint = "TOPLEFT", "BOTTOMLEFT", "TOPRIGHT"
                 unitSpacing = -spacingY
                 groupSpacing = spacingX
-                verticalSpacing = -spacingY-selectedLayoutTable["groupSpacing"]
-            elseif selectedLayoutTable["anchor"] == "TOPRIGHT" then
+                verticalSpacing = -spacingY-selectedLayoutTable["main"]["groupSpacing"]
+            elseif selectedLayoutTable["main"]["anchor"] == "TOPRIGHT" then
                 point, anchorPoint, groupAnchorPoint = "TOPRIGHT", "BOTTOMRIGHT", "TOPLEFT"
                 unitSpacing = -spacingY
                 groupSpacing = -spacingX
-                verticalSpacing = -spacingY-selectedLayoutTable["groupSpacing"]
+                verticalSpacing = -spacingY-selectedLayoutTable["main"]["groupSpacing"]
             end
 
-            P:Size(header, selectedLayoutTable["size"][1], selectedLayoutTable["size"][2]*5+abs(unitSpacing)*4)
+            P:Size(header, selectedLayoutTable["main"]["size"][1], selectedLayoutTable["main"]["size"][2]*5+abs(unitSpacing)*4)
             for j = 1, 5 do
-                P:Size(header[j], selectedLayoutTable["size"][1], selectedLayoutTable["size"][2])
+                P:Size(header[j], selectedLayoutTable["main"]["size"][1], selectedLayoutTable["main"]["size"][2])
                 header[j]:ClearAllPoints()
 
                 if j == 1 then
@@ -323,8 +310,8 @@ local function UpdateLayoutPreview()
             if i == 1 then
                 header:SetPoint(point)
             else
-                if i / selectedLayoutTable["columns"] > 1 then -- not the first row
-                    header:SetPoint(point, layoutPreview.headers[shownGroups[i-selectedLayoutTable["columns"]]], anchorPoint, 0, verticalSpacing)
+                if i / selectedLayoutTable["main"]["columns"] > 1 then -- not the first row
+                    header:SetPoint(point, layoutPreview.headers[shownGroups[i-selectedLayoutTable["main"]["columns"]]], anchorPoint, 0, verticalSpacing)
                 else
                     header:SetPoint(point, layoutPreview.headers[shownGroups[i-1]], groupAnchorPoint, groupSpacing, 0)
                 end
@@ -332,31 +319,31 @@ local function UpdateLayoutPreview()
         else
             -- anchor
             local point, anchorPoint, groupAnchorPoint, unitSpacing, groupSpacing, horizontalSpacing
-            if selectedLayoutTable["anchor"] == "BOTTOMLEFT" then
+            if selectedLayoutTable["main"]["anchor"] == "BOTTOMLEFT" then
                 point, anchorPoint, groupAnchorPoint = "BOTTOMLEFT", "BOTTOMRIGHT", "TOPLEFT"
                 unitSpacing = spacingX
                 groupSpacing = spacingY
-                horizontalSpacing = spacingX+selectedLayoutTable["groupSpacing"]
-            elseif selectedLayoutTable["anchor"] == "BOTTOMRIGHT" then
+                horizontalSpacing = spacingX+selectedLayoutTable["main"]["groupSpacing"]
+            elseif selectedLayoutTable["main"]["anchor"] == "BOTTOMRIGHT" then
                 point, anchorPoint, groupAnchorPoint = "BOTTOMRIGHT", "BOTTOMLEFT", "TOPRIGHT"
                 unitSpacing = -spacingX
                 groupSpacing = spacingY
-                horizontalSpacing = -spacingX-selectedLayoutTable["groupSpacing"]
-            elseif selectedLayoutTable["anchor"] == "TOPLEFT" then
+                horizontalSpacing = -spacingX-selectedLayoutTable["main"]["groupSpacing"]
+            elseif selectedLayoutTable["main"]["anchor"] == "TOPLEFT" then
                 point, anchorPoint, groupAnchorPoint = "TOPLEFT", "TOPRIGHT", "BOTTOMLEFT"
                 unitSpacing = spacingX
                 groupSpacing = -spacingY
-                horizontalSpacing = spacingX+selectedLayoutTable["groupSpacing"]
-            elseif selectedLayoutTable["anchor"] == "TOPRIGHT" then
+                horizontalSpacing = spacingX+selectedLayoutTable["main"]["groupSpacing"]
+            elseif selectedLayoutTable["main"]["anchor"] == "TOPRIGHT" then
                 point, anchorPoint, groupAnchorPoint = "TOPRIGHT", "TOPLEFT", "BOTTOMRIGHT"
                 unitSpacing = -spacingX
                 groupSpacing = -spacingY
-                horizontalSpacing = -spacingX-selectedLayoutTable["groupSpacing"]
+                horizontalSpacing = -spacingX-selectedLayoutTable["main"]["groupSpacing"]
             end
 
-            P:Size(header, selectedLayoutTable["size"][1]*5+abs(unitSpacing)*4, selectedLayoutTable["size"][2])
+            P:Size(header, selectedLayoutTable["main"]["size"][1]*5+abs(unitSpacing)*4, selectedLayoutTable["main"]["size"][2])
             for j = 1, 5 do
-                P:Size(header[j], selectedLayoutTable["size"][1], selectedLayoutTable["size"][2])
+                P:Size(header[j], selectedLayoutTable["main"]["size"][1], selectedLayoutTable["main"]["size"][2])
                 header[j]:ClearAllPoints()
 
                 if j == 1 then
@@ -369,8 +356,8 @@ local function UpdateLayoutPreview()
             if i == 1 then
                 header:SetPoint(point)
             else
-                if i / selectedLayoutTable["rows"] > 1 then -- not the first column
-                    header:SetPoint(point, layoutPreview.headers[shownGroups[i-selectedLayoutTable["rows"]]], anchorPoint, horizontalSpacing, 0)
+                if i / selectedLayoutTable["main"]["rows"] > 1 then -- not the first column
+                    header:SetPoint(point, layoutPreview.headers[shownGroups[i-selectedLayoutTable["main"]["rows"]]], anchorPoint, horizontalSpacing, 0)
                 else
                     header:SetPoint(point, layoutPreview.headers[shownGroups[i-1]], groupAnchorPoint, 0, groupSpacing)
                 end
@@ -439,7 +426,7 @@ local function CreateNPCPreview()
     end)
     npcPreviewAnchor:SetScript("OnDragStop", function()
         npcPreviewAnchor:StopMovingOrSizing()
-        P:SavePosition(npcPreviewAnchor, selectedLayoutTable["npc"][3])
+        P:SavePosition(npcPreviewAnchor, selectedLayoutTable["npc"]["position"])
     end)
 
     npcPreviewName = npcPreviewAnchor:CreateFontString(nil, "OVERLAY", "CELL_FONT_CLASS_TITLE")
@@ -494,7 +481,7 @@ local function UpdateNPCPreview()
         CreateNPCPreview()
     end
 
-    if not selectedLayoutTable["npc"][1] or not selectedLayoutTable["npc"][2] then
+    if not selectedLayoutTable["npc"]["enabled"] or not selectedLayoutTable["npc"]["separate"] then
         if npcPreview.timer then
             npcPreview.timer:Cancel()
             npcPreview.timer = nil
@@ -508,13 +495,28 @@ local function UpdateNPCPreview()
         return
     end
 
+    -- size
     local width, height
-    if selectedLayoutTable["npc"][4] then
-        width, height = unpack(selectedLayoutTable["npc"][5])
+    if selectedLayoutTable["npc"]["sameSizeAsMain"] then
+        width, height = unpack(selectedLayoutTable["main"]["size"])
     else
-        width, height = unpack(selectedLayoutTable["size"])
+        width, height = unpack(selectedLayoutTable["npc"]["size"])
     end
     P:Size(npcPreview, width, height)
+
+    -- arrangement
+    local orientation, anchor, spacingX, spacingY
+    if selectedLayoutTable["npc"]["sameArrangementAsMain"] then
+        orientation = selectedLayoutTable["main"]["orientation"]
+        anchor = selectedLayoutTable["main"]["anchor"]
+        spacingX = selectedLayoutTable["main"]["spacingX"]
+        spacingY = selectedLayoutTable["main"]["spacingY"]
+    else
+        orientation = selectedLayoutTable["npc"]["orientation"]
+        anchor = selectedLayoutTable["npc"]["anchor"]
+        spacingX = selectedLayoutTable["npc"]["spacingX"]
+        spacingY = selectedLayoutTable["npc"]["spacingY"]
+    end
 
     -- update npcPreview point
     npcPreview:ClearAllPoints()
@@ -522,31 +524,31 @@ local function UpdateNPCPreview()
     
     if CellDB["general"]["menuPosition"] == "top_bottom" then
         P:Size(npcPreviewAnchor, 20, 10)
-        if selectedLayoutTable["anchor"] == "BOTTOMLEFT" then
+        if anchor == "BOTTOMLEFT" then
             npcPreview:SetPoint("BOTTOMLEFT", npcPreviewAnchor, "TOPLEFT", 0, 4)
             npcPreviewName:SetPoint("LEFT", npcPreviewAnchor, "RIGHT", 5, 0)
-        elseif selectedLayoutTable["anchor"] == "BOTTOMRIGHT" then
+        elseif anchor == "BOTTOMRIGHT" then
             npcPreview:SetPoint("BOTTOMRIGHT", npcPreviewAnchor, "TOPRIGHT", 0, 4)
             npcPreviewName:SetPoint("RIGHT", npcPreviewAnchor, "LEFT", -5, 0)
-        elseif selectedLayoutTable["anchor"] == "TOPLEFT" then
+        elseif anchor == "TOPLEFT" then
             npcPreview:SetPoint("TOPLEFT", npcPreviewAnchor, "BOTTOMLEFT", 0, -4)
             npcPreviewName:SetPoint("LEFT", npcPreviewAnchor, "RIGHT", 5, 0)
-        elseif selectedLayoutTable["anchor"] == "TOPRIGHT" then
+        elseif anchor == "TOPRIGHT" then
             npcPreview:SetPoint("TOPRIGHT", npcPreviewAnchor, "BOTTOMRIGHT", 0, -4)
             npcPreviewName:SetPoint("RIGHT", npcPreviewAnchor, "LEFT", -5, 0)
         end
     else
         P:Size(npcPreviewAnchor, 10, 20)
-        if selectedLayoutTable["anchor"] == "BOTTOMLEFT" then
+        if anchor == "BOTTOMLEFT" then
             npcPreview:SetPoint("BOTTOMLEFT", npcPreviewAnchor, "BOTTOMRIGHT", 4, 0)
             npcPreviewName:SetPoint("TOPLEFT", npcPreviewAnchor, "BOTTOMLEFT", 0, -5)
-        elseif selectedLayoutTable["anchor"] == "BOTTOMRIGHT" then
+        elseif anchor == "BOTTOMRIGHT" then
             npcPreview:SetPoint("BOTTOMRIGHT", npcPreviewAnchor, "BOTTOMLEFT", -4, 0)
             npcPreviewName:SetPoint("TOPRIGHT", npcPreviewAnchor, "BOTTOMRIGHT", 0, -5)
-        elseif selectedLayoutTable["anchor"] == "TOPLEFT" then
+        elseif anchor == "TOPLEFT" then
             npcPreview:SetPoint("TOPLEFT", npcPreviewAnchor, "TOPRIGHT", 4, 0)
             npcPreviewName:SetPoint("BOTTOMLEFT", npcPreviewAnchor, "TOPLEFT", 0, 5)
-        elseif selectedLayoutTable["anchor"] == "TOPRIGHT" then
+        elseif anchor == "TOPRIGHT" then
             npcPreview:SetPoint("TOPRIGHT", npcPreviewAnchor, "TOPLEFT", -4, 0)
             npcPreviewName:SetPoint("BOTTOMRIGHT", npcPreviewAnchor, "TOPRIGHT", 0, 5)
         end
@@ -557,11 +559,11 @@ local function UpdateNPCPreview()
         -- NOTE: move separate npc anchor with preview
         Cell.frames.separateNpcFrameAnchor:SetAllPoints(npcPreviewAnchor)
     else
-        P:LoadPosition(Cell.frames.separateNpcFrameAnchor, Cell.vars.currentLayoutTable["npc"][3])
+        P:LoadPosition(Cell.frames.separateNpcFrameAnchor, Cell.vars.currentLayoutTable["npc"]["position"])
     end
 
-    if #selectedLayoutTable["npc"][3] == 2 then
-        P:LoadPosition(npcPreviewAnchor, selectedLayoutTable["npc"][3])
+    if #selectedLayoutTable["npc"]["position"] == 2 then
+        P:LoadPosition(npcPreviewAnchor, selectedLayoutTable["npc"]["position"])
     else
         npcPreviewAnchor:ClearAllPoints()
         npcPreviewAnchor:SetPoint("TOPLEFT", UIParent, "CENTER")
@@ -574,22 +576,19 @@ local function UpdateNPCPreview()
     local header = npcPreview.header
     header:ClearAllPoints()
 
-    local spacingX = selectedLayoutTable["spacingX"]
-    local spacingY = selectedLayoutTable["spacingY"]
-
-    if selectedLayoutTable["orientation"] == "vertical" then
+    if orientation == "vertical" then
         -- anchor
         local point, anchorPoint, unitSpacing
-        if selectedLayoutTable["anchor"] == "BOTTOMLEFT" then
+        if anchor == "BOTTOMLEFT" then
             point, anchorPoint = "BOTTOMLEFT", "TOPLEFT"
             unitSpacing = spacingY
-        elseif selectedLayoutTable["anchor"] == "BOTTOMRIGHT" then
+        elseif anchor == "BOTTOMRIGHT" then
             point, anchorPoint = "BOTTOMRIGHT", "TOPRIGHT"
             unitSpacing = spacingY
-        elseif selectedLayoutTable["anchor"] == "TOPLEFT" then
+        elseif anchor == "TOPLEFT" then
             point, anchorPoint = "TOPLEFT", "BOTTOMLEFT"
             unitSpacing = -spacingY
-        elseif selectedLayoutTable["anchor"] == "TOPRIGHT" then
+        elseif anchor == "TOPRIGHT" then
             point, anchorPoint = "TOPRIGHT", "BOTTOMRIGHT"
             unitSpacing = -spacingY
         end
@@ -610,16 +609,16 @@ local function UpdateNPCPreview()
     else
         -- anchor
         local point, anchorPoint, unitSpacing
-        if selectedLayoutTable["anchor"] == "BOTTOMLEFT" then
+        if anchor == "BOTTOMLEFT" then
             point, anchorPoint = "BOTTOMLEFT", "BOTTOMRIGHT"
             unitSpacing = spacingX
-        elseif selectedLayoutTable["anchor"] == "BOTTOMRIGHT" then
+        elseif anchor == "BOTTOMRIGHT" then
             point, anchorPoint = "BOTTOMRIGHT", "BOTTOMLEFT"
             unitSpacing = -spacingX
-        elseif selectedLayoutTable["anchor"] == "TOPLEFT" then
+        elseif anchor == "TOPLEFT" then
             point, anchorPoint = "TOPLEFT", "TOPRIGHT"
             unitSpacing = spacingX
-        elseif selectedLayoutTable["anchor"] == "TOPRIGHT" then
+        elseif anchor == "TOPRIGHT" then
             point, anchorPoint = "TOPRIGHT", "TOPLEFT"
             unitSpacing = -spacingX
         end
@@ -684,7 +683,7 @@ local function CreateRaidPetPreview()
     end)
     raidPetPreviewAnchor:SetScript("OnDragStop", function()
         raidPetPreviewAnchor:StopMovingOrSizing()
-        P:SavePosition(raidPetPreviewAnchor, selectedLayoutTable["pet"][3])
+        P:SavePosition(raidPetPreviewAnchor, selectedLayoutTable["pet"]["position"])
     end)
 
     raidPetPreviewName = raidPetPreviewAnchor:CreateFontString(nil, "OVERLAY", "CELL_FONT_CLASS_TITLE")
@@ -739,7 +738,7 @@ local function UpdateRaidPetPreview()
         CreateRaidPetPreview()
     end
 
-    if not selectedLayoutTable["pet"][2] then
+    if not selectedLayoutTable["pet"]["raidEnabled"] then
         if raidPetPreview.timer then
             raidPetPreview.timer:Cancel()
             raidPetPreview.timer = nil
@@ -753,13 +752,28 @@ local function UpdateRaidPetPreview()
         return
     end
 
+    -- size
     local width, height
-    if selectedLayoutTable["pet"][4] then
-        width, height = unpack(selectedLayoutTable["pet"][5])
+    if selectedLayoutTable["pet"]["sameSizeAsMain"] then
+        width, height = unpack(selectedLayoutTable["main"]["size"])
     else
-        width, height = unpack(selectedLayoutTable["size"])
+        width, height = unpack(selectedLayoutTable["pet"]["size"])
     end
     P:Size(raidPetPreview, width, height)
+
+    -- arrangement
+    local orientation, anchor, spacingX, spacingY
+    if selectedLayoutTable["pet"]["sameArrangementAsMain"] then
+        orientation = selectedLayoutTable["main"]["orientation"]
+        anchor = selectedLayoutTable["main"]["anchor"]
+        spacingX = selectedLayoutTable["main"]["spacingX"]
+        spacingY = selectedLayoutTable["main"]["spacingY"]
+    else
+        orientation = selectedLayoutTable["pet"]["orientation"]
+        anchor = selectedLayoutTable["pet"]["anchor"]
+        spacingX = selectedLayoutTable["pet"]["spacingX"]
+        spacingY = selectedLayoutTable["pet"]["spacingY"]
+    end
 
     -- update raidPetPreview point
     raidPetPreview:ClearAllPoints()
@@ -767,31 +781,31 @@ local function UpdateRaidPetPreview()
     
     if CellDB["general"]["menuPosition"] == "top_bottom" then
         P:Size(raidPetPreviewAnchor, 20, 10)
-        if selectedLayoutTable["anchor"] == "BOTTOMLEFT" then
+        if anchor == "BOTTOMLEFT" then
             raidPetPreview:SetPoint("BOTTOMLEFT", raidPetPreviewAnchor, "TOPLEFT", 0, 4)
             raidPetPreviewName:SetPoint("LEFT", raidPetPreviewAnchor, "RIGHT", 5, 0)
-        elseif selectedLayoutTable["anchor"] == "BOTTOMRIGHT" then
+        elseif anchor == "BOTTOMRIGHT" then
             raidPetPreview:SetPoint("BOTTOMRIGHT", raidPetPreviewAnchor, "TOPRIGHT", 0, 4)
             raidPetPreviewName:SetPoint("RIGHT", raidPetPreviewAnchor, "LEFT", -5, 0)
-        elseif selectedLayoutTable["anchor"] == "TOPLEFT" then
+        elseif anchor == "TOPLEFT" then
             raidPetPreview:SetPoint("TOPLEFT", raidPetPreviewAnchor, "BOTTOMLEFT", 0, -4)
             raidPetPreviewName:SetPoint("LEFT", raidPetPreviewAnchor, "RIGHT", 5, 0)
-        elseif selectedLayoutTable["anchor"] == "TOPRIGHT" then
+        elseif anchor == "TOPRIGHT" then
             raidPetPreview:SetPoint("TOPRIGHT", raidPetPreviewAnchor, "BOTTOMRIGHT", 0, -4)
             raidPetPreviewName:SetPoint("RIGHT", raidPetPreviewAnchor, "LEFT", -5, 0)
         end
     else
         P:Size(raidPetPreviewAnchor, 10, 20)
-        if selectedLayoutTable["anchor"] == "BOTTOMLEFT" then
+        if anchor == "BOTTOMLEFT" then
             raidPetPreview:SetPoint("BOTTOMLEFT", raidPetPreviewAnchor, "BOTTOMRIGHT", 4, 0)
             raidPetPreviewName:SetPoint("TOPLEFT", raidPetPreviewAnchor, "BOTTOMLEFT", 0, -5)
-        elseif selectedLayoutTable["anchor"] == "BOTTOMRIGHT" then
+        elseif anchor == "BOTTOMRIGHT" then
             raidPetPreview:SetPoint("BOTTOMRIGHT", raidPetPreviewAnchor, "BOTTOMLEFT", -4, 0)
             raidPetPreviewName:SetPoint("TOPRIGHT", raidPetPreviewAnchor, "BOTTOMRIGHT", 0, -5)
-        elseif selectedLayoutTable["anchor"] == "TOPLEFT" then
+        elseif anchor == "TOPLEFT" then
             raidPetPreview:SetPoint("TOPLEFT", raidPetPreviewAnchor, "TOPRIGHT", 4, 0)
             raidPetPreviewName:SetPoint("BOTTOMLEFT", raidPetPreviewAnchor, "TOPLEFT", 0, 5)
-        elseif selectedLayoutTable["anchor"] == "TOPRIGHT" then
+        elseif anchor == "TOPRIGHT" then
             raidPetPreview:SetPoint("TOPRIGHT", raidPetPreviewAnchor, "TOPLEFT", -4, 0)
             raidPetPreviewName:SetPoint("BOTTOMRIGHT", raidPetPreviewAnchor, "TOPRIGHT", 0, 5)
         end
@@ -802,11 +816,11 @@ local function UpdateRaidPetPreview()
         -- NOTE: move anchor with preview
         CellRaidPetAnchorFrame:SetAllPoints(raidPetPreviewAnchor)
     else
-        P:LoadPosition(CellRaidPetAnchorFrame, Cell.vars.currentLayoutTable["pet"][3])
+        P:LoadPosition(CellRaidPetAnchorFrame, Cell.vars.currentLayoutTable["pet"]["position"])
     end
 
-    if #selectedLayoutTable["pet"][3] == 2 then
-        P:LoadPosition(raidPetPreviewAnchor, selectedLayoutTable["pet"][3])
+    if #selectedLayoutTable["pet"]["position"] == 2 then
+        P:LoadPosition(raidPetPreviewAnchor, selectedLayoutTable["pet"]["position"])
     else
         raidPetPreviewAnchor:ClearAllPoints()
         raidPetPreviewAnchor:SetPoint("TOPLEFT", UIParent, "CENTER")
@@ -819,25 +833,22 @@ local function UpdateRaidPetPreview()
     local header = raidPetPreview.header
     header:ClearAllPoints()
 
-    local spacingX = selectedLayoutTable["spacingX"]
-    local spacingY = selectedLayoutTable["spacingY"]
-
-    if selectedLayoutTable["orientation"] == "vertical" then
+    if orientation == "vertical" then
         -- anchor
         local point, anchorPoint, groupAnchorPoint, unitSpacing, groupSpacing
-        if selectedLayoutTable["anchor"] == "BOTTOMLEFT" then
+        if anchor == "BOTTOMLEFT" then
             point, anchorPoint, groupAnchorPoint = "BOTTOMLEFT", "TOPLEFT", "BOTTOMRIGHT"
             unitSpacing = spacingY
             groupSpacing = spacingX
-        elseif selectedLayoutTable["anchor"] == "BOTTOMRIGHT" then
+        elseif anchor == "BOTTOMRIGHT" then
             point, anchorPoint, groupAnchorPoint = "BOTTOMRIGHT", "TOPRIGHT", "BOTTOMLEFT"
             unitSpacing = spacingY
             groupSpacing = -spacingX
-        elseif selectedLayoutTable["anchor"] == "TOPLEFT" then
+        elseif anchor == "TOPLEFT" then
             point, anchorPoint, groupAnchorPoint = "TOPLEFT", "BOTTOMLEFT", "TOPRIGHT"
             unitSpacing = -spacingY
             groupSpacing = spacingX
-        elseif selectedLayoutTable["anchor"] == "TOPRIGHT" then
+        elseif anchor == "TOPRIGHT" then
             point, anchorPoint, groupAnchorPoint = "TOPRIGHT", "BOTTOMRIGHT", "TOPLEFT"
             unitSpacing = -spacingY
             groupSpacing = -spacingX
@@ -861,19 +872,19 @@ local function UpdateRaidPetPreview()
     else
         -- anchor
         local point, anchorPoint, groupAnchorPoint, unitSpacing, groupSpacing
-            if selectedLayoutTable["anchor"] == "BOTTOMLEFT" then
+            if anchor == "BOTTOMLEFT" then
                 point, anchorPoint, groupAnchorPoint = "BOTTOMLEFT", "BOTTOMRIGHT", "TOPLEFT"
                 unitSpacing = spacingX
                 groupSpacing = spacingY
-            elseif selectedLayoutTable["anchor"] == "BOTTOMRIGHT" then
+            elseif anchor == "BOTTOMRIGHT" then
                 point, anchorPoint, groupAnchorPoint = "BOTTOMRIGHT", "BOTTOMLEFT", "TOPRIGHT"
                 unitSpacing = -spacingX
                 groupSpacing = spacingY
-            elseif selectedLayoutTable["anchor"] == "TOPLEFT" then
+            elseif anchor == "TOPLEFT" then
                 point, anchorPoint, groupAnchorPoint = "TOPLEFT", "TOPRIGHT", "BOTTOMLEFT"
                 unitSpacing = spacingX
                 groupSpacing = -spacingY
-            elseif selectedLayoutTable["anchor"] == "TOPRIGHT" then
+            elseif anchor == "TOPRIGHT" then
                 point, anchorPoint, groupAnchorPoint = "TOPRIGHT", "TOPLEFT", "BOTTOMRIGHT"
                 unitSpacing = -spacingX
                 groupSpacing = -spacingY
@@ -941,7 +952,7 @@ local function CreateSpotlightPreview()
     end)
     spotlightPreviewAnchor:SetScript("OnDragStop", function()
         spotlightPreviewAnchor:StopMovingOrSizing()
-        P:SavePosition(spotlightPreviewAnchor, selectedLayoutTable["spotlight"][3])
+        P:SavePosition(spotlightPreviewAnchor, selectedLayoutTable["spotlight"]["position"])
     end)
 
     spotlightPreviewName = spotlightPreviewAnchor:CreateFontString(nil, "OVERLAY", "CELL_FONT_CLASS_TITLE")
@@ -996,7 +1007,7 @@ local function UpdateSpotlightPreview()
         CreateSpotlightPreview()
     end
 
-    if not selectedLayoutTable["spotlight"][1] then
+    if not selectedLayoutTable["spotlight"]["enabled"] then
         if spotlightPreview.timer then
             spotlightPreview.timer:Cancel()
             spotlightPreview.timer = nil
@@ -1010,11 +1021,26 @@ local function UpdateSpotlightPreview()
         return
     end
 
+    -- size
     local width, height
-    if selectedLayoutTable["spotlight"][4] then
-        width, height = unpack(selectedLayoutTable["spotlight"][5])
+    if selectedLayoutTable["spotlight"]["sameSizeAsMain"] then
+        width, height = unpack(selectedLayoutTable["main"]["size"])
     else
-        width, height = unpack(selectedLayoutTable["size"])
+        width, height = unpack(selectedLayoutTable["spotlight"]["size"])
+    end
+
+    -- arrangement
+    local orientation, anchor, spacingX, spacingY
+    if selectedLayoutTable["spotlight"]["sameArrangementAsMain"] then
+        orientation = selectedLayoutTable["main"]["orientation"]
+        anchor = selectedLayoutTable["main"]["anchor"]
+        spacingX = selectedLayoutTable["main"]["spacingX"]
+        spacingY = selectedLayoutTable["main"]["spacingY"]
+    else
+        orientation = selectedLayoutTable["spotlight"]["orientation"]
+        anchor = selectedLayoutTable["spotlight"]["anchor"]
+        spacingX = selectedLayoutTable["spotlight"]["spacingX"]
+        spacingY = selectedLayoutTable["spotlight"]["spacingY"]
     end
 
     -- update spotlightPreview point
@@ -1024,31 +1050,31 @@ local function UpdateSpotlightPreview()
     
     if CellDB["general"]["menuPosition"] == "top_bottom" then
         P:Size(spotlightPreviewAnchor, 20, 10)
-        if selectedLayoutTable["anchor"] == "BOTTOMLEFT" then
+        if anchor == "BOTTOMLEFT" then
             spotlightPreview:SetPoint("BOTTOMLEFT", spotlightPreviewAnchor, "TOPLEFT", 0, 4)
             spotlightPreviewName:SetPoint("LEFT", spotlightPreviewAnchor, "RIGHT", 5, 0)
-        elseif selectedLayoutTable["anchor"] == "BOTTOMRIGHT" then
+        elseif anchor == "BOTTOMRIGHT" then
             spotlightPreview:SetPoint("BOTTOMRIGHT", spotlightPreviewAnchor, "TOPRIGHT", 0, 4)
             spotlightPreviewName:SetPoint("RIGHT", spotlightPreviewAnchor, "LEFT", -5, 0)
-        elseif selectedLayoutTable["anchor"] == "TOPLEFT" then
+        elseif anchor == "TOPLEFT" then
             spotlightPreview:SetPoint("TOPLEFT", spotlightPreviewAnchor, "BOTTOMLEFT", 0, -4)
             spotlightPreviewName:SetPoint("LEFT", spotlightPreviewAnchor, "RIGHT", 5, 0)
-        elseif selectedLayoutTable["anchor"] == "TOPRIGHT" then
+        elseif anchor == "TOPRIGHT" then
             spotlightPreview:SetPoint("TOPRIGHT", spotlightPreviewAnchor, "BOTTOMRIGHT", 0, -4)
             spotlightPreviewName:SetPoint("RIGHT", spotlightPreviewAnchor, "LEFT", -5, 0)
         end
     else
         P:Size(spotlightPreviewAnchor, 10, 20)
-        if selectedLayoutTable["anchor"] == "BOTTOMLEFT" then
+        if anchor == "BOTTOMLEFT" then
             spotlightPreview:SetPoint("BOTTOMLEFT", spotlightPreviewAnchor, "BOTTOMRIGHT", 4, 0)
             spotlightPreviewName:SetPoint("TOPLEFT", spotlightPreviewAnchor, "BOTTOMLEFT", 0, -5)
-        elseif selectedLayoutTable["anchor"] == "BOTTOMRIGHT" then
+        elseif anchor == "BOTTOMRIGHT" then
             spotlightPreview:SetPoint("BOTTOMRIGHT", spotlightPreviewAnchor, "BOTTOMLEFT", -4, 0)
             spotlightPreviewName:SetPoint("TOPRIGHT", spotlightPreviewAnchor, "BOTTOMRIGHT", 0, -5)
-        elseif selectedLayoutTable["anchor"] == "TOPLEFT" then
+        elseif anchor == "TOPLEFT" then
             spotlightPreview:SetPoint("TOPLEFT", spotlightPreviewAnchor, "TOPRIGHT", 4, 0)
             spotlightPreviewName:SetPoint("BOTTOMLEFT", spotlightPreviewAnchor, "TOPLEFT", 0, 5)
-        elseif selectedLayoutTable["anchor"] == "TOPRIGHT" then
+        elseif anchor == "TOPRIGHT" then
             spotlightPreview:SetPoint("TOPRIGHT", spotlightPreviewAnchor, "TOPLEFT", -4, 0)
             spotlightPreviewName:SetPoint("BOTTOMRIGHT", spotlightPreviewAnchor, "TOPRIGHT", 0, 5)
         end
@@ -1061,7 +1087,7 @@ local function UpdateSpotlightPreview()
         spotlightPreviewAnchor:SetAllPoints(Cell.frames.spotlightFrameAnchor)
     else
         spotlightPreviewAnchor:EnableMouse(true)
-        if not P:LoadPosition(spotlightPreviewAnchor, selectedLayoutTable["spotlight"][3]) then
+        if not P:LoadPosition(spotlightPreviewAnchor, selectedLayoutTable["spotlight"]["position"]) then
             spotlightPreviewAnchor:SetPoint("TOPLEFT", UIParent, "CENTER")
         end
     end
@@ -1073,22 +1099,19 @@ local function UpdateSpotlightPreview()
     local header = spotlightPreview.header
     header:ClearAllPoints()
 
-    local spacingX = selectedLayoutTable["spacingX"]
-    local spacingY = selectedLayoutTable["spacingY"]
-
-    if selectedLayoutTable["orientation"] == "vertical" then
+    if orientation == "vertical" then
         -- anchor
         local point, anchorPoint, unitSpacing
-        if selectedLayoutTable["anchor"] == "BOTTOMLEFT" then
+        if anchor == "BOTTOMLEFT" then
             point, anchorPoint = "BOTTOMLEFT", "TOPLEFT"
             unitSpacing = spacingY
-        elseif selectedLayoutTable["anchor"] == "BOTTOMRIGHT" then
+        elseif anchor == "BOTTOMRIGHT" then
             point, anchorPoint = "BOTTOMRIGHT", "TOPRIGHT"
             unitSpacing = spacingY
-        elseif selectedLayoutTable["anchor"] == "TOPLEFT" then
+        elseif anchor == "TOPLEFT" then
             point, anchorPoint = "TOPLEFT", "BOTTOMLEFT"
             unitSpacing = -spacingY
-        elseif selectedLayoutTable["anchor"] == "TOPRIGHT" then
+        elseif anchor == "TOPRIGHT" then
             point, anchorPoint = "TOPRIGHT", "BOTTOMRIGHT"
             unitSpacing = -spacingY
         end
@@ -1109,16 +1132,16 @@ local function UpdateSpotlightPreview()
     else
         -- anchor
         local point, anchorPoint, unitSpacing
-        if selectedLayoutTable["anchor"] == "BOTTOMLEFT" then
+        if anchor == "BOTTOMLEFT" then
             point, anchorPoint = "BOTTOMLEFT", "BOTTOMRIGHT"
             unitSpacing = spacingX
-        elseif selectedLayoutTable["anchor"] == "BOTTOMRIGHT" then
+        elseif anchor == "BOTTOMRIGHT" then
             point, anchorPoint = "BOTTOMRIGHT", "BOTTOMLEFT"
             unitSpacing = -spacingX
-        elseif selectedLayoutTable["anchor"] == "TOPLEFT" then
+        elseif anchor == "TOPLEFT" then
             point, anchorPoint = "TOPLEFT", "TOPRIGHT"
             unitSpacing = spacingX
-        elseif selectedLayoutTable["anchor"] == "TOPRIGHT" then
+        elseif anchor == "TOPRIGHT" then
             point, anchorPoint = "TOPRIGHT", "TOPLEFT"
             unitSpacing = -spacingX
         end
@@ -1869,7 +1892,7 @@ end
 
 local groupButtons = {}
 local function CreateGroupFilterPane()
-    local groupFilterPane = Cell:CreateTitledPane(layoutsTab, L["Group Filter"], 205, 80)
+    local groupFilterPane = Cell:CreateTitledPane(layoutsTab, L["Group Filters"], 205, 80)
     groupFilterPane:SetPoint("TOPLEFT", 222, -5)
 
     for i = 1, 8 do
@@ -1940,367 +1963,283 @@ local function UpdateGroupFilter()
 end
 
 -------------------------------------------------
--- button size
+-- layout setup
 -------------------------------------------------
 local widthSlider, heightSlider, powerSizeSlider
-local petSizeCB, petWidthSlider, petHeightSlider
-local npcSizeCB, npcWidthSlider, npcHeightSlider
-local spotlightSizeCB, spotlightWidthSlider, spotlightHeightSlider
 
-local function CreateButtonSizePane()
-    local buttonSizePane = Cell:CreateTitledPane(layoutsTab, L["Button Size"], 139, 170)
-    buttonSizePane:SetPoint("TOPLEFT", 5, -105)
+local rcSlider, groupSpacingSlider
+local orientationDropdown, anchorDropdown, spacingXSlider, spacingYSlider
+
+local sameSizeAsMainCB, sameArrangementAsMainCB
+local sortByRoleCB, hideSelfCB
+local separateNpcCB, showNpcCB, spotlightCB, partyPetsCB, raidPetsCB
+
+local function UpdateSize()
+    if selectedLayout == Cell.vars.currentLayout then
+        Cell:Fire("UpdateLayout", selectedLayout, selectedPage.."-size")
+    end
     
-    --* page1 -----------------------------------
-    local page1 = CreateFrame("Frame", nil, layoutsTab)
-    page1:SetAllPoints(buttonSizePane)
-    page1:Hide()
+    if selectedPage == "main" then
+        UpdatePreviewButton("size")
+        UpdateLayoutPreview()
+        if selectedLayoutTable["pet"]["sameSizeAsMain"] then
+            UpdateRaidPetPreview()
+        end
+        if selectedLayoutTable["npc"]["sameSizeAsMain"] then
+            UpdateNPCPreview()
+        end
+        if selectedLayoutTable["spotlight"]["sameSizeAsMain"] then
+            UpdateSpotlightPreview()
+        end
+    elseif selectedPage == "pet" then
+        UpdateRaidPetPreview()
+    elseif selectedPage == "npc" then
+        UpdateNPCPreview()
+    elseif selectedPage == "spotlight" then
+        UpdateSpotlightPreview()
+    end
+end
+
+local function UpdateArrangement()
+    if selectedLayout == Cell.vars.currentLayout then
+        Cell:Fire("UpdateLayout", selectedLayout, selectedPage.."-arrangement")
+    end
+    
+    if selectedPage == "main" then
+        UpdateLayoutPreview()
+        if selectedLayoutTable["pet"]["sameArrangementAsMain"] then
+            UpdateRaidPetPreview()
+        end
+        if selectedLayoutTable["npc"]["sameArrangementAsMain"] then
+            UpdateNPCPreview()
+        end
+        if selectedLayoutTable["spotlight"]["sameArrangementAsMain"] then
+            UpdateSpotlightPreview()
+        end
+    elseif selectedPage == "pet" then
+        UpdateRaidPetPreview()
+    elseif selectedPage == "npc" then
+        UpdateNPCPreview()
+    elseif selectedPage == "spotlight" then
+        UpdateSpotlightPreview()
+    end
+end
+
+local function CreateLayoutSetupPane()
+    local layoutSetupPane = Cell:CreateTitledPane(layoutsTab, L["Layout Setup"], 422, 290)
+    layoutSetupPane:SetPoint("TOPLEFT", 5, -110)
+
+    -- buttons
+    local spotlight = Cell:CreateButton(layoutSetupPane, L["Spotlight"], "accent-hover", {85, 17})
+    spotlight:SetPoint("TOPRIGHT", layoutSetupPane)
+    spotlight.id = "spotlight"
+    
+    local npc = Cell:CreateButton(layoutSetupPane, "NPC", "accent-hover", {70, 17})
+    npc:SetPoint("TOPRIGHT", spotlight, "TOPLEFT", P:Scale(1), 0)
+    npc.id = "npc"
+    
+    local pet = Cell:CreateButton(layoutSetupPane, L["Pet"], "accent-hover", {70, 17})
+    pet:SetPoint("TOPRIGHT", npc, "TOPLEFT", P:Scale(1), 0)
+    pet.id = "pet"
+
+    local main = Cell:CreateButton(layoutSetupPane, L["Main"], "accent-hover", {70, 17})
+    main:SetPoint("TOPRIGHT", pet, "TOPLEFT", P:Scale(1), 0)
+    main.id = "main"
+
+    -- same size as main
+    sameSizeAsMainCB = Cell:CreateCheckButton(layoutSetupPane, L["Use Same Size As Main"], function(checked, self)
+        selectedLayoutTable[selectedPage]["sameSizeAsMain"] = checked
+        widthSlider:SetEnabled(not checked)
+        heightSlider:SetEnabled(not checked)
+        powerSizeSlider:SetEnabled(not checked)
+        -- update size and power
+        UpdateSize()
+        if selectedLayout == Cell.vars.currentLayout then
+            Cell:Fire("UpdateLayout", selectedLayout, selectedPage.."-power")
+        end
+    end)
+    sameSizeAsMainCB:Hide()
+
+    -- same arrangement as main
+    sameArrangementAsMainCB = Cell:CreateCheckButton(layoutSetupPane, L["Use Same Arrangement As Main"], function(checked, self)
+        selectedLayoutTable[selectedPage]["sameArrangementAsMain"] = checked
+        orientationDropdown:SetEnabled(not checked)
+        anchorDropdown:SetEnabled(not checked)
+        spacingXSlider:SetEnabled(not checked)
+        spacingYSlider:SetEnabled(not checked)
+        UpdateArrangement()
+    end)
+    sameArrangementAsMainCB:SetPoint("TOPLEFT", sameSizeAsMainCB, "BOTTOMLEFT", 0, -8)
+    sameArrangementAsMainCB:Hide()
 
     -- width
-    widthSlider = Cell:CreateSlider(L["Width"], page1, 20, 300, 117, 2, function(value)
-        selectedLayoutTable["size"][1] = value
-        if selectedLayout == Cell.vars.currentLayout then
-            Cell:Fire("UpdateLayout", selectedLayout, "size")
-        end
-        UpdatePreviewButton("size")
-        UpdateLayoutPreview()
-        UpdateNPCPreview()
-        if not selectedLayoutTable["pet"][4] then
-            UpdateRaidPetPreview()
-        end
-        if not selectedLayoutTable["spotlight"][4] then
-            UpdateSpotlightPreview()
-        end
+    widthSlider = Cell:CreateSlider(L["Width"], layoutSetupPane, 20, 300, 117, 2, function(value)
+        selectedLayoutTable[selectedPage]["size"][1] = value
+        UpdateSize()
     end)
-    widthSlider:SetPoint("TOPLEFT", 5, -40)
     
     -- height
-    heightSlider = Cell:CreateSlider(L["Height"], page1, 20, 300, 117, 2, function(value)
-        selectedLayoutTable["size"][2] = value
-        if selectedLayout == Cell.vars.currentLayout then
-            Cell:Fire("UpdateLayout", selectedLayout, "size")
-        end
-        UpdatePreviewButton("size")
-        UpdateLayoutPreview()
-        UpdateNPCPreview()
-        if not selectedLayoutTable["pet"][4] then
-            UpdateRaidPetPreview()
-        end
-        if not selectedLayoutTable["spotlight"][4] then
-            UpdateSpotlightPreview()
-        end
+    heightSlider = Cell:CreateSlider(L["Height"], layoutSetupPane, 20, 300, 117, 2, function(value)
+        selectedLayoutTable[selectedPage]["size"][2] = value
+        UpdateSize()
     end)
-    heightSlider:SetPoint("TOPLEFT", widthSlider, 0, -50)
+    heightSlider:SetPoint("TOPLEFT", widthSlider, 0, -55)
     
     -- power height
-    powerSizeSlider = Cell:CreateSlider(L["Power Size"], page1, 0, 20, 117, 1, function(value)
-        selectedLayoutTable["powerSize"] = value
+    powerSizeSlider = Cell:CreateSlider(L["Power Size"], layoutSetupPane, 0, 20, 117, 1, function(value)
+        selectedLayoutTable[selectedPage]["powerSize"] = value
         if selectedLayout == Cell.vars.currentLayout then
-            Cell:Fire("UpdateLayout", selectedLayout, "power")
+            Cell:Fire("UpdateLayout", selectedLayout, selectedPage.."-power")
         end
         UpdatePreviewButton("power")
     end)
-    powerSizeSlider:SetPoint("TOPLEFT", heightSlider, 0, -50)
-
-    --* page2 -----------------------------------
-    local page2 = CreateFrame("Frame", nil, layoutsTab)
-    page2:SetAllPoints(buttonSizePane)
-    page2:Hide()
-
-    -- petSize
-    petSizeCB = Cell:CreateCheckButton(page2, L["Pet Button"], function(checked, self)
-        if checked then
-            petWidthSlider:SetEnabled(true)
-            petHeightSlider:SetEnabled(true)
-        else
-            petWidthSlider:SetEnabled(false)
-            petHeightSlider:SetEnabled(false)
-        end
-        selectedLayoutTable["pet"][4] = checked
-        if selectedLayout == Cell.vars.currentLayout then
-            Cell:Fire("UpdateLayout", selectedLayout, "petSize")
-        end
-        UpdateRaidPetPreview()
-    end)
-    petSizeCB:SetPoint("TOPLEFT", 5, -40)
-    
-    -- petWidth
-    petWidthSlider = Cell:CreateSlider(L["Width"], page2, 40, 300, 117, 2, function(value)
-        selectedLayoutTable["pet"][5][1] = value
-        if selectedLayout == Cell.vars.currentLayout then
-            Cell:Fire("UpdateLayout", selectedLayout, "petSize")
-        end
-        UpdateRaidPetPreview()
-    end)
-    petWidthSlider:SetPoint("TOPLEFT", 5, -90)
-    
-    -- petHeight
-    petHeightSlider = Cell:CreateSlider(L["Height"], page2, 20, 300, 117, 2, function(value)
-        selectedLayoutTable["pet"][5][2] = value
-        if selectedLayout == Cell.vars.currentLayout then
-            Cell:Fire("UpdateLayout", selectedLayout, "petSize")
-        end
-        UpdateRaidPetPreview()
-    end)
-    petHeightSlider:SetPoint("TOPLEFT", petWidthSlider, 0, -50)
-
-    --* page3 -----------------------------------
-    local page3 = CreateFrame("Frame", nil, layoutsTab)
-    page3:SetAllPoints(buttonSizePane)
-    page3:Hide()
-
-    -- spotlightSize
-    npcSizeCB = Cell:CreateCheckButton(page3, L["NPC Button"], function(checked, self)
-        if checked then
-            npcWidthSlider:SetEnabled(true)
-            npcHeightSlider:SetEnabled(true)
-        else
-            npcWidthSlider:SetEnabled(false)
-            npcHeightSlider:SetEnabled(false)
-        end
-
-        selectedLayoutTable["npc"][4] = checked
-        if selectedLayout == Cell.vars.currentLayout then
-            Cell:Fire("UpdateLayout", selectedLayout, "npcSize")
-        end
-        UpdateNPCPreview()
-    end)
-    npcSizeCB:SetPoint("TOPLEFT", 5, -40)
-
-    -- spotlightWidth
-    npcWidthSlider = Cell:CreateSlider(L["Width"], page3, 40, 300, 117, 2, function(value)
-        selectedLayoutTable["npc"][5][1] = value
-        if selectedLayout == Cell.vars.currentLayout then
-            Cell:Fire("UpdateLayout", selectedLayout, "npcSize")
-        end
-        UpdateNPCPreview()
-    end)
-    npcWidthSlider:SetPoint("TOPLEFT", 5, -90)
-    
-    -- spotlightHeight
-    npcHeightSlider = Cell:CreateSlider(L["Height"], page3, 20, 300, 117, 2, function(value)
-        selectedLayoutTable["npc"][5][2] = value
-        if selectedLayout == Cell.vars.currentLayout then
-            Cell:Fire("UpdateLayout", selectedLayout, "npcSize")
-        end
-        UpdateNPCPreview()
-    end)
-    npcHeightSlider:SetPoint("TOPLEFT", npcWidthSlider, 0, -50)
-
-    --* page4 -----------------------------------
-    local page4 = CreateFrame("Frame", nil, layoutsTab)
-    page4:SetAllPoints(buttonSizePane)
-    page4:Hide()
-
-    -- spotlightSize
-    spotlightSizeCB = Cell:CreateCheckButton(page4, L["Spotlight Button"], function(checked, self)
-        if checked then
-            spotlightWidthSlider:SetEnabled(true)
-            spotlightHeightSlider:SetEnabled(true)
-        else
-            spotlightWidthSlider:SetEnabled(false)
-            spotlightHeightSlider:SetEnabled(false)
-        end
-
-        selectedLayoutTable["spotlight"][4] = checked
-        if selectedLayout == Cell.vars.currentLayout then
-            Cell:Fire("UpdateLayout", selectedLayout, "spotlightSize")
-        end
-        UpdateSpotlightPreview()
-    end)
-    spotlightSizeCB:SetPoint("TOPLEFT", 5, -40)
-
-    -- spotlightWidth
-    spotlightWidthSlider = Cell:CreateSlider(L["Width"], page4, 40, 300, 117, 2, function(value)
-        selectedLayoutTable["spotlight"][5][1] = value
-        if selectedLayout == Cell.vars.currentLayout then
-            Cell:Fire("UpdateLayout", selectedLayout, "spotlightSize")
-        end
-        UpdateSpotlightPreview()
-    end)
-    spotlightWidthSlider:SetPoint("TOPLEFT", 5, -90)
-    
-    -- spotlightHeight
-    spotlightHeightSlider = Cell:CreateSlider(L["Height"], page4, 20, 300, 117, 2, function(value)
-        selectedLayoutTable["spotlight"][5][2] = value
-        if selectedLayout == Cell.vars.currentLayout then
-            Cell:Fire("UpdateLayout", selectedLayout, "spotlightSize")
-        end
-        UpdateSpotlightPreview()
-    end)
-    spotlightHeightSlider:SetPoint("TOPLEFT", spotlightWidthSlider, 0, -50)
-
-    -- switch
-    local switch = Cell:CreateFourfoldSwitch(buttonSizePane, {38, 10}, function(which)
-        if which == 1 then page1:Show() else page1:Hide() end
-        if which == 2 then page2:Show() else page2:Hide() end
-        if which == 3 then page3:Show() else page3:Hide() end
-        if which == 4 then page4:Show() else page4:Hide() end
-    end)
-    switch:SetPoint("BOTTOMRIGHT", buttonSizePane.line, "TOPRIGHT", 0, P:Scale(2))
-    switch:SetSelected(1, true)
-end
-
--------------------------------------------------
--- group arrangement
--------------------------------------------------
-local orientationDropdown, anchorDropdown, spacingXSlider, rcSlider, groupSpacingSlider
-
-local function CreateGroupArrangementPane()
-    local groupArrangementPane = Cell:CreateTitledPane(layoutsTab, L["Group Arrangement"], 271, 170)
-    groupArrangementPane:SetPoint("TOPLEFT", 156, -105)
+    powerSizeSlider:SetPoint("TOPLEFT", heightSlider, 0, -55)
 
     -- orientation
-    orientationDropdown = Cell:CreateDropdown(groupArrangementPane, 117)
-    orientationDropdown:SetPoint("TOPLEFT", 5, -40)
+    orientationDropdown = Cell:CreateDropdown(layoutSetupPane, 117)
+    orientationDropdown:SetPoint("TOPLEFT", widthSlider, "TOPRIGHT", 30, 0)
     orientationDropdown:SetItems({
         {
             ["text"] = L["Vertical"],
             ["value"] = "vertical",
             ["onClick"] = function()
-                selectedLayoutTable["orientation"] = "vertical"
-                if selectedLayout == Cell.vars.currentLayout then
-                    Cell:Fire("UpdateLayout", selectedLayout, "orientation")
+                selectedLayoutTable[selectedPage]["orientation"] = "vertical"
+                UpdateArrangement()
+                
+                if selectedPage == "main" then
+                    rcSlider:SetName(L["Group Columns"])
+                    rcSlider:SetValue(selectedLayoutTable["main"]["columns"])
+                    if selectedLayoutTable["main"]["columns"] == 8 then
+                        groupSpacingSlider:SetEnabled(false)
+                    else
+                        groupSpacingSlider:SetEnabled(true)
+                    end
                 end
-                rcSlider:SetName(L["Group Columns"])
-                rcSlider:SetValue(selectedLayoutTable["columns"])
-                if selectedLayoutTable["columns"] == 8 then
-                    groupSpacingSlider:SetEnabled(false)
-                else
-                    groupSpacingSlider:SetEnabled(true)
-                end
-                UpdateLayoutPreview()
-                UpdateNPCPreview()
-                UpdateRaidPetPreview()
-                UpdateSpotlightPreview()
             end,
         },
         {
             ["text"] = L["Horizontal"],
             ["value"] = "horizontal",
             ["onClick"] = function()
-                selectedLayoutTable["orientation"] = "horizontal"
-                if selectedLayout == Cell.vars.currentLayout then
-                    Cell:Fire("UpdateLayout", selectedLayout, "orientation")
+                selectedLayoutTable[selectedPage]["orientation"] = "horizontal"
+                UpdateArrangement()
+
+                if selectedPage == "main" then
+                    rcSlider:SetName(L["Group Rows"])
+                    rcSlider:SetValue(selectedLayoutTable["main"]["rows"])
+                    if selectedLayoutTable["main"]["rows"] == 8 then
+                        groupSpacingSlider:SetEnabled(false)
+                    else
+                        groupSpacingSlider:SetEnabled(true)
+                    end
                 end
-                rcSlider:SetName(L["Group Rows"])
-                rcSlider:SetValue(selectedLayoutTable["rows"])
-                if selectedLayoutTable["rows"] == 8 then
-                    groupSpacingSlider:SetEnabled(false)
-                else
-                    groupSpacingSlider:SetEnabled(true)
-                end
-                UpdateLayoutPreview()
-                UpdateNPCPreview()
-                UpdateRaidPetPreview()
-                UpdateSpotlightPreview()
             end,
         },
     })
     
-    local orientationText = groupArrangementPane:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
+    local orientationText = layoutSetupPane:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
     orientationText:SetPoint("BOTTOMLEFT", orientationDropdown, "TOPLEFT", 0, 1)
     orientationText:SetText(L["Orientation"])
+
+    hooksecurefunc(orientationDropdown, "SetEnabled", function(self, enabled)
+        if enabled then
+            orientationText:SetTextColor(1, 1, 1)
+        else
+            orientationText:SetTextColor(0.4, 0.4, 0.4)
+        end
+    end)
     
     -- anchor
-    anchorDropdown = Cell:CreateDropdown(groupArrangementPane, 117)
-    anchorDropdown:SetPoint("TOPLEFT", orientationDropdown, 0, -50)
+    anchorDropdown = Cell:CreateDropdown(layoutSetupPane, 117)
+    anchorDropdown:SetPoint("TOPLEFT", orientationDropdown, "TOPRIGHT", 30, 0)
     anchorDropdown:SetItems({
         {
             ["text"] = L["BOTTOMLEFT"],
             ["value"] = "BOTTOMLEFT",
             ["onClick"] = function()
-                selectedLayoutTable["anchor"] = "BOTTOMLEFT"
-                if selectedLayout == Cell.vars.currentLayout then
-                    Cell:Fire("UpdateLayout", selectedLayout, "anchor")
-                end
-                UpdateLayoutPreview()
-                UpdateNPCPreview()
-                UpdateRaidPetPreview()
-                UpdateSpotlightPreview()
+                selectedLayoutTable[selectedPage]["anchor"] = "BOTTOMLEFT"
+                UpdateArrangement()
             end,
         },
         {
             ["text"] = L["BOTTOMRIGHT"],
             ["value"] = "BOTTOMRIGHT",
             ["onClick"] = function()
-                selectedLayoutTable["anchor"] = "BOTTOMRIGHT"
-                if selectedLayout == Cell.vars.currentLayout then
-                    Cell:Fire("UpdateLayout", selectedLayout, "anchor")
-                end
-                UpdateLayoutPreview()
-                UpdateNPCPreview()
-                UpdateRaidPetPreview()
-                UpdateSpotlightPreview()
+                selectedLayoutTable[selectedPage]["anchor"] = "BOTTOMRIGHT"
+                UpdateArrangement()
             end,
         },
         {
             ["text"] = L["TOPLEFT"],
             ["value"] = "TOPLEFT",
             ["onClick"] = function()
-                selectedLayoutTable["anchor"] = "TOPLEFT"
-                if selectedLayout == Cell.vars.currentLayout then
-                    Cell:Fire("UpdateLayout", selectedLayout, "anchor")
-                end
-                UpdateLayoutPreview()
-                UpdateNPCPreview()
-                UpdateRaidPetPreview()
-                UpdateSpotlightPreview()
+                selectedLayoutTable[selectedPage]["anchor"] = "TOPLEFT"
+                UpdateArrangement()
             end,
         },
         {
             ["text"] = L["TOPRIGHT"],
             ["value"] = "TOPRIGHT",
             ["onClick"] = function()
-                selectedLayoutTable["anchor"] = "TOPRIGHT"
-                if selectedLayout == Cell.vars.currentLayout then
-                    Cell:Fire("UpdateLayout", selectedLayout, "anchor")
-                end
-                UpdateLayoutPreview()
-                UpdateNPCPreview()
-                UpdateRaidPetPreview()
-                UpdateSpotlightPreview()
+                selectedLayoutTable[selectedPage]["anchor"] = "TOPRIGHT"
+                UpdateArrangement()
             end,
         },
     })
     
-    local anchorText = groupArrangementPane:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
+    local anchorText = layoutSetupPane:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
     anchorText:SetPoint("BOTTOMLEFT", anchorDropdown, "TOPLEFT", 0, 1)
     anchorText:SetText(L["Anchor Point"])
-    
-    -- spacing
-    spacingXSlider = Cell:CreateSlider(L["Unit Spacing"].." X", groupArrangementPane, 0, 50, 117, 1, function(value)
-        selectedLayoutTable["spacingX"] = value
-        if selectedLayout == Cell.vars.currentLayout then
-            Cell:Fire("UpdateLayout", selectedLayout, "spacing")
-        end
-        -- preview
-        UpdateLayoutPreview()
-        UpdateNPCPreview()
-        UpdateRaidPetPreview()
-        UpdateSpotlightPreview()
-    end)
-    spacingXSlider:SetPoint("TOPLEFT", orientationDropdown, "TOPRIGHT", 23, 0)
 
-    spacingYSlider = Cell:CreateSlider(L["Unit Spacing"].." Y", groupArrangementPane, 0, 50, 117, 1, function(value)
-        selectedLayoutTable["spacingY"] = value
-        if selectedLayout == Cell.vars.currentLayout then
-            Cell:Fire("UpdateLayout", selectedLayout, "spacing")
+    hooksecurefunc(anchorDropdown, "SetEnabled", function(self, enabled)
+        if enabled then
+            anchorText:SetTextColor(1, 1, 1)
+        else
+            anchorText:SetTextColor(0.4, 0.4, 0.4)
         end
-        -- preview
-        UpdateLayoutPreview()
-        UpdateNPCPreview()
-        UpdateRaidPetPreview()
-        UpdateSpotlightPreview()
     end)
-    spacingYSlider:SetPoint("TOPLEFT", spacingXSlider, 0, -50)
-    
+
+     -- spacing
+     spacingXSlider = Cell:CreateSlider(L["Unit Spacing"].." X", layoutSetupPane, 0, 50, 117, 1, function(value)
+        selectedLayoutTable[selectedPage]["spacingX"] = value
+        UpdateArrangement()
+    end)
+    spacingXSlider:SetPoint("TOPLEFT", orientationDropdown, 0, -55)
+
+    spacingYSlider = Cell:CreateSlider(L["Unit Spacing"].." Y", layoutSetupPane, 0, 50, 117, 1, function(value)
+        selectedLayoutTable[selectedPage]["spacingY"] = value
+        UpdateArrangement()
+    end)
+    spacingYSlider:SetPoint("TOPLEFT", anchorDropdown, 0, -55)
+
+    -- pages
+    local pages = {}
+
+    --* main ------------------------------------
+    pages.main = CreateFrame("Frame", nil, layoutsTab)
+    pages.main:SetAllPoints(layoutSetupPane)
+    pages.main:Hide()
+
+    -- sort by role
+    sortByRoleCB = Cell:CreateCheckButton(pages.main, L["Sort By Role (Party Only)"], function(checked, self)
+        selectedLayoutTable["main"]["sortByRole"] = checked
+        Cell:Fire("UpdateLayout", selectedLayout, "sort")
+    end)
+    sortByRoleCB:SetPoint("TOPLEFT", 5, -27)
+
+    -- hide self
+    hideSelfCB = Cell:CreateCheckButton(pages.main, L["Hide Self (Party Only)"], function(checked, self)
+        selectedLayoutTable["main"]["hideSelf"] = checked
+        Cell:Fire("UpdateLayout", selectedLayout, "hideSelf")
+    end)
+    hideSelfCB:SetPoint("TOPLEFT", sortByRoleCB, "BOTTOMLEFT", 0, -8)
+
     -- rows/columns
-    rcSlider = Cell:CreateSlider("", groupArrangementPane, 1, 8, 117, 1, function(value)
-        if selectedLayoutTable["orientation"] == "vertical" then
-            selectedLayoutTable["columns"] = value
+    rcSlider = Cell:CreateSlider("", pages.main, 1, 8, 117, 1, function(value)
+        if selectedLayoutTable["main"]["orientation"] == "vertical" then
+            selectedLayoutTable["main"]["columns"] = value
         else -- horizontal
-            selectedLayoutTable["rows"] = value
+            selectedLayoutTable["main"]["rows"] = value
         end
         if value == 8 then
             groupSpacingSlider:SetEnabled(false)
@@ -2313,19 +2252,151 @@ local function CreateGroupArrangementPane()
         -- preview
         UpdateLayoutPreview()
     end)
-    rcSlider:SetPoint("TOPLEFT", anchorDropdown, 0, -50)
+    rcSlider:SetPoint("TOPLEFT", spacingXSlider, 0, -55)
     
     -- group spacing
-    groupSpacingSlider = Cell:CreateSlider(L["Group Spacing"], groupArrangementPane, 0, 50, 117, 1, function(value)
-        selectedLayoutTable["groupSpacing"] = value
+    groupSpacingSlider = Cell:CreateSlider(L["Group Spacing"], pages.main, 0, 50, 117, 1, function(value)
+        selectedLayoutTable["main"]["groupSpacing"] = value
         if selectedLayout == Cell.vars.currentLayout then
             Cell:Fire("UpdateLayout", selectedLayout, "groupSpacing")
         end
         -- preview
         UpdateLayoutPreview()
     end)
-    groupSpacingSlider:SetPoint("TOPLEFT", spacingYSlider, 0, -50)
+    groupSpacingSlider:SetPoint("TOPLEFT", spacingYSlider, 0, -55)
+
+    --* pet -------------------------------------
+    pages.pet = CreateFrame("Frame", nil, layoutsTab)
+    pages.pet:SetAllPoints(layoutSetupPane)
+    pages.pet:Hide()
+
+    partyPetsCB = Cell:CreateCheckButton(pages.pet, L["Show Party/Arena Pets"], function(checked)
+        selectedLayoutTable["pet"]["partyEnabled"] = checked
+        if selectedLayout == Cell.vars.currentLayout then
+            Cell:Fire("UpdateLayout", selectedLayout, "pet")
+        end
+    end)
+    partyPetsCB:SetPoint("TOPLEFT", 5, -27)
+
+    raidPetsCB = Cell:CreateCheckButton(pages.pet, L["Show Raid Pets"], function(checked)
+        selectedLayoutTable["pet"]["raidEnabled"] = checked
+        if checked then
+            UpdateRaidPetPreview()
+        else
+            if raidPetPreview:IsShown() then
+                UpdateRaidPetPreview()
+            end
+        end
+        if selectedLayout == Cell.vars.currentLayout then
+            Cell:Fire("UpdateLayout", selectedLayout, "pet")
+        end
+    end, L["Show Raid Pets"], L["You can move it in Preview mode"])
+    raidPetsCB:SetPoint("TOPLEFT", partyPetsCB, "BOTTOMLEFT", 0, -8)
+
+    --* npc -------------------------------------
+    pages.npc = CreateFrame("Frame", nil, layoutsTab)
+    pages.npc:SetAllPoints(layoutSetupPane)
+    pages.npc:Hide()
+
+    showNpcCB = Cell:CreateCheckButton(pages.npc, L["Show NPC Frame"], function(checked)
+        selectedLayoutTable["npc"]["enabled"] = checked
+        if checked then
+            UpdateNPCPreview()
+        else
+            if npcPreview:IsShown() then
+                UpdateNPCPreview()
+            end
+        end
+        separateNpcCB:SetEnabled(checked)
+        if selectedLayout == Cell.vars.currentLayout then
+            Cell:Fire("UpdateLayout", selectedLayout, "npc")
+        end
+    end)
+    showNpcCB:SetPoint("TOPLEFT", 5, -27)
+
+    separateNpcCB = Cell:CreateCheckButton(pages.npc, L["Separate NPC Frame"], function(checked)
+        selectedLayoutTable["npc"]["separate"] = checked
+        if checked then
+            UpdateNPCPreview()
+        else
+            if npcPreview:IsShown() then
+                UpdateNPCPreview()
+            end
+        end
+        if selectedLayout == Cell.vars.currentLayout then
+            Cell:Fire("UpdateLayout", selectedLayout, "npc")
+        end
+    end, L["Separate NPC Frame"], L["Show friendly NPCs in a separate frame"], L["You can move it in Preview mode"])
+    separateNpcCB:SetPoint("TOPLEFT", showNpcCB, "BOTTOMLEFT", 0, -8)
+
+    --* spotlight -------------------------------
+    pages.spotlight = CreateFrame("Frame", nil, layoutsTab)
+    pages.spotlight:SetAllPoints(layoutSetupPane)
+    pages.spotlight:Hide()
+
+    spotlightCB = Cell:CreateCheckButton(pages.spotlight, L["Enable Spotlight Frame"], function(checked)
+        selectedLayoutTable["spotlight"]["enabled"] = checked
+        if checked then
+            UpdateSpotlightPreview()
+        else
+            if spotlightPreview:IsShown() then
+                UpdateSpotlightPreview()
+            end
+        end
+        if selectedLayout == Cell.vars.currentLayout then
+            Cell:Fire("UpdateLayout", selectedLayout, "spotlight")
+        end
+    end, L["Spotlight Frame"], L["Show units you care about more in a separate frame"],
+    "|cffffb5c5"..L["Target"]..", "..L["Target of Target"]..", "..L["Focus"],
+    "|cffffb5c5"..L["Unit"]..", "..L["Unit's Pet"]..", "..L["Unit's Target"])
+    spotlightCB:SetPoint("TOPLEFT", 5, -27)
+
+    -- button group
+    Cell:CreateButtonGroup({main, pet, npc, spotlight}, function(tab)
+        selectedPage = tab
+
+        -- load
+        LoadPageDB(tab)
+
+        -- repoint
+        sameSizeAsMainCB:ClearAllPoints()
+        if tab == "main" then
+        elseif tab == "pet" then
+            sameSizeAsMainCB:SetPoint("TOPLEFT", raidPetsCB, "BOTTOMLEFT", 0, -14)
+        elseif tab == "npc" then
+            sameSizeAsMainCB:SetPoint("TOPLEFT", separateNpcCB, "BOTTOMLEFT", 0, -14)
+        elseif tab == "spotlight" then
+            sameSizeAsMainCB:SetPoint("TOPLEFT", spotlightCB, "BOTTOMLEFT", 0, -14)
+        end
+        
+        widthSlider:ClearAllPoints()
+        if tab == "main" then
+            sameSizeAsMainCB:Hide()
+            sameArrangementAsMainCB:Hide()
+            widthSlider:SetPoint("TOPLEFT", hideSelfCB, 0, -50)
+        else
+            sameSizeAsMainCB:Show()
+            sameArrangementAsMainCB:Show()
+            widthSlider:SetPoint("TOPLEFT", sameArrangementAsMainCB, 0, -50)
+        end
+
+        -- show & hide
+        for name, page in pairs(pages) do
+            if name == tab then
+                page:Show()
+            else
+                page:Hide()
+            end
+        end
+    end)
+
+    layoutSetupPane:SetScript("OnShow", function()
+        if layoutSetupPane.shown then return end
+        layoutSetupPane.shown = true
+        main:Click()
+    end)
 end
+
 
 -------------------------------------------------
 -- bar orientation
@@ -2334,7 +2405,7 @@ local barOrientationDropdown, rotateTexCB
 
 local function CreateBarOrientationPane()
     local barOrientationPane = Cell:CreateTitledPane(layoutsTab, L["Bar Orientation"], 205, 80)
-    barOrientationPane:SetPoint("TOPLEFT", 5, -295)
+    barOrientationPane:SetPoint("TOPLEFT", 5, -420)
 
     local function SetOrientation(orientation)
         selectedLayoutTable["barOrientation"][1] = orientation
@@ -2344,7 +2415,7 @@ local function CreateBarOrientationPane()
         UpdatePreviewButton("barOrientation")
     end
 
-    barOrientationDropdown = Cell:CreateDropdown(barOrientationPane, 163)
+    barOrientationDropdown = Cell:CreateDropdown(barOrientationPane, 193)
     barOrientationDropdown:SetPoint("TOPLEFT", 5, -27)
     barOrientationDropdown:SetItems({
         {
@@ -2390,114 +2461,20 @@ local function CreateBarOrientationPane()
 end
 
 -------------------------------------------------
--- other frames
--------------------------------------------------
-local separateNPCCB, showNPCCB, spotlightCB, partyPetsCB, raidPetsCB
-
-local function CreateOthersPane()
-    local othersPane = Cell:CreateTitledPane(layoutsTab, L["Other Frames"], 205, 145)
-    othersPane:SetPoint("TOPLEFT", 222, -295)
-
-    showNPCCB = Cell:CreateCheckButton(othersPane, L["Show NPC Frame"], function(checked)
-        selectedLayoutTable["npc"][1] = checked
-        if checked then
-            UpdateNPCPreview()
-        else
-            if npcPreview:IsShown() then
-                UpdateNPCPreview()
-            end
-        end
-        separateNPCCB:SetEnabled(checked)
-        if selectedLayout == Cell.vars.currentLayout then
-            Cell:Fire("UpdateLayout", selectedLayout, "npc")
-        end
-    end)
-    showNPCCB:SetPoint("TOPLEFT", 5, -27)
-
-    separateNPCCB = Cell:CreateCheckButton(othersPane, L["Separate NPC Frame"], function(checked)
-        selectedLayoutTable["npc"][2] = checked
-        if checked then
-            UpdateNPCPreview()
-        else
-            if npcPreview:IsShown() then
-                UpdateNPCPreview()
-            end
-        end
-        if selectedLayout == Cell.vars.currentLayout then
-            Cell:Fire("UpdateLayout", selectedLayout, "npc")
-        end
-    end, L["Separate NPC Frame"], L["Show friendly NPCs in a separate frame"], L["You can move it in Preview mode"])
-    separateNPCCB:SetPoint("TOPLEFT", showNPCCB, "BOTTOMLEFT", 0, -8)
-
-    partyPetsCB = Cell:CreateCheckButton(othersPane, L["Show Party/Arena Pets"], function(checked)
-        selectedLayoutTable["pet"][1] = checked
-        if selectedLayout == Cell.vars.currentLayout then
-            Cell:Fire("UpdateLayout", selectedLayout, "pet")
-        end
-    end)
-    partyPetsCB:SetPoint("TOPLEFT", separateNPCCB, "BOTTOMLEFT", 0, -14)
-
-    raidPetsCB = Cell:CreateCheckButton(othersPane, L["Show Raid Pets"], function(checked)
-        selectedLayoutTable["pet"][2] = checked
-        if checked then
-            UpdateRaidPetPreview()
-        else
-            if raidPetPreview:IsShown() then
-                UpdateRaidPetPreview()
-            end
-        end
-        if selectedLayout == Cell.vars.currentLayout then
-            Cell:Fire("UpdateLayout", selectedLayout, "pet")
-        end
-    end, L["Show Raid Pets"], L["You can move it in Preview mode"])
-    raidPetsCB:SetPoint("TOPLEFT", partyPetsCB, "BOTTOMLEFT", 0, -8)
-
-    spotlightCB = Cell:CreateCheckButton(othersPane, L["Spotlight Frame"], function(checked)
-        selectedLayoutTable["spotlight"][1] = checked
-        if checked then
-            UpdateSpotlightPreview()
-        else
-            if spotlightPreview:IsShown() then
-                UpdateSpotlightPreview()
-            end
-        end
-        if selectedLayout == Cell.vars.currentLayout then
-            Cell:Fire("UpdateLayout", selectedLayout, "spotlight")
-        end
-    end, L["Spotlight Frame"], L["Show units you care about more in a separate frame"],
-    "|cffffb5c5"..L["Target"]..", "..L["Target of Target"]..", "..L["Focus"],
-    "|cffffb5c5"..L["Unit"]..", "..L["Unit's Pet"]..", "..L["Unit's Target"])
-    spotlightCB:SetPoint("TOPLEFT", raidPetsCB, "BOTTOMLEFT", 0, -14)
-end
-
--------------------------------------------------
 -- misc
 -------------------------------------------------
-local sortByRoleCB, hideSelfCB
 local function CreateMiscPane()
-    local miscPane = Cell:CreateTitledPane(layoutsTab, L["Misc"], 205, 92)
-    miscPane:SetPoint("TOPLEFT", 5, -390)
+    local miscPane = Cell:CreateTitledPane(layoutsTab, L["Misc"], 205, 80)
+    miscPane:SetPoint("TOPLEFT", 222, -420)
 
-    local powerFilterBtn = Cell:CreateButton(miscPane, L["Power Bar Filters"], "accent-hover", {163, 20})
+    local powerFilterBtn = Cell:CreateButton(miscPane, L["Power Bar Filters"], "accent-hover", {195, 20})
     Cell.frames.layoutsTab.powerFilterBtn = powerFilterBtn
     powerFilterBtn:SetPoint("TOPLEFT", 5, -27)
     powerFilterBtn:SetScript("OnClick", function ()
         F:ShowPowerFilters(selectedLayout, selectedLayoutTable)
     end)
 
-    Cell.frames.powerFilters:SetPoint("BOTTOMLEFT", powerFilterBtn, "TOPLEFT", 0, P:Scale(5))
-
-    sortByRoleCB = Cell:CreateCheckButton(miscPane, L["Sort By Role (Party Only)"], function(checked, self)
-        selectedLayoutTable["sortByRole"] = checked
-        Cell:Fire("UpdateLayout", selectedLayout, "sort")
-    end)
-    sortByRoleCB:SetPoint("TOPLEFT", powerFilterBtn, "BOTTOMLEFT", 0, -7)
-
-    hideSelfCB = Cell:CreateCheckButton(miscPane, L["Hide Self (Party Only)"], function(checked, self)
-        selectedLayoutTable["hideSelf"] = checked
-        Cell:Fire("UpdateLayout", selectedLayout, "hideSelf")
-    end)
-    hideSelfCB:SetPoint("TOPLEFT", sortByRoleCB, "BOTTOMLEFT", 0, -7)
+    Cell.frames.powerFilters:SetPoint("BOTTOMRIGHT", powerFilterBtn, "TOPRIGHT", 0, P:Scale(5))
 end
 
 -------------------------------------------------
@@ -2512,6 +2489,45 @@ tips:SetText("|cffababab"..L["Tip: Every layout has its own position setting"])
 -- functions
 -------------------------------------------------
 local init
+
+LoadPageDB = function(page)
+    -- size
+    widthSlider:SetValue(selectedLayoutTable[page]["size"][1])
+    heightSlider:SetValue(selectedLayoutTable[page]["size"][2])
+    powerSizeSlider:SetValue(selectedLayoutTable[page]["powerSize"])
+
+    spacingXSlider:SetValue(selectedLayoutTable[page]["spacingX"])
+    spacingYSlider:SetValue(selectedLayoutTable[page]["spacingY"])
+
+    -- group arrangement
+    orientationDropdown:SetSelectedValue(selectedLayoutTable[page]["orientation"])
+    anchorDropdown:SetSelectedValue(selectedLayoutTable[page]["anchor"])
+
+    -- same as main
+    if page ~= "main" then
+        sameSizeAsMainCB:SetChecked(selectedLayoutTable[page]["sameSizeAsMain"])
+        sameArrangementAsMainCB:SetChecked(selectedLayoutTable[page]["sameArrangementAsMain"])
+    end
+
+    if page == "main" then
+        widthSlider:SetEnabled(true)
+        heightSlider:SetEnabled(true)
+        powerSizeSlider:SetEnabled(true)
+        orientationDropdown:SetEnabled(true)
+        anchorDropdown:SetEnabled(true)
+        spacingXSlider:SetEnabled(true)
+        spacingYSlider:SetEnabled(true)
+    else
+        widthSlider:SetEnabled(not selectedLayoutTable[page]["sameSizeAsMain"])
+        heightSlider:SetEnabled(not selectedLayoutTable[page]["sameSizeAsMain"])
+        powerSizeSlider:SetEnabled(not selectedLayoutTable[page]["sameSizeAsMain"])
+        orientationDropdown:SetEnabled(not selectedLayoutTable[page]["sameArrangementAsMain"])
+        anchorDropdown:SetEnabled(not selectedLayoutTable[page]["sameArrangementAsMain"])
+        spacingXSlider:SetEnabled(not selectedLayoutTable[page]["sameArrangementAsMain"])
+        spacingYSlider:SetEnabled(not selectedLayoutTable[page]["sameArrangementAsMain"])
+    end
+end
+
 LoadLayoutDB = function(layout)
     F:Debug("LoadLayoutDB: "..layout)
 
@@ -2520,69 +2536,39 @@ LoadLayoutDB = function(layout)
 
     layoutDropdown:SetSelectedValue(selectedLayout)
 
-    widthSlider:SetValue(selectedLayoutTable["size"][1])
-    heightSlider:SetValue(selectedLayoutTable["size"][2])
-    powerSizeSlider:SetValue(selectedLayoutTable["powerSize"])
-
-    petSizeCB:SetChecked(selectedLayoutTable["pet"][4])
-    petWidthSlider:SetValue(selectedLayoutTable["pet"][5][1])
-    petHeightSlider:SetValue(selectedLayoutTable["pet"][5][2])
-    petWidthSlider:SetEnabled(selectedLayoutTable["pet"][4])
-    petHeightSlider:SetEnabled(selectedLayoutTable["pet"][4])
-    
-    npcSizeCB:SetChecked(selectedLayoutTable["npc"][4])
-    npcWidthSlider:SetValue(selectedLayoutTable["npc"][5][1])
-    npcHeightSlider:SetValue(selectedLayoutTable["npc"][5][2])
-    npcWidthSlider:SetEnabled(selectedLayoutTable["npc"][4])
-    npcHeightSlider:SetEnabled(selectedLayoutTable["npc"][4])
-
-    spotlightSizeCB:SetChecked(selectedLayoutTable["spotlight"][4])
-    spotlightWidthSlider:SetValue(selectedLayoutTable["spotlight"][5][1])
-    spotlightHeightSlider:SetValue(selectedLayoutTable["spotlight"][5][2])
-    spotlightWidthSlider:SetEnabled(selectedLayoutTable["spotlight"][4])
-    spotlightHeightSlider:SetEnabled(selectedLayoutTable["spotlight"][4])
-
-    spacingXSlider:SetValue(selectedLayoutTable["spacingX"])
-    spacingYSlider:SetValue(selectedLayoutTable["spacingY"])
-    
-    if selectedLayoutTable["orientation"] == "vertical" then
+    if selectedLayoutTable["main"]["orientation"] == "vertical" then
         rcSlider:SetName(L["Group Columns"])
-        rcSlider:SetValue(selectedLayoutTable["columns"])
-        if selectedLayoutTable["columns"] == 8 then
+        rcSlider:SetValue(selectedLayoutTable["main"]["columns"])
+        if selectedLayoutTable["main"]["columns"] == 8 then
             groupSpacingSlider:SetEnabled(false)
         else
             groupSpacingSlider:SetEnabled(true)
         end
     else
         rcSlider:SetName(L["Group Rows"])
-        rcSlider:SetValue(selectedLayoutTable["rows"])
-        if selectedLayoutTable["rows"] == 8 then
+        rcSlider:SetValue(selectedLayoutTable["main"]["rows"])
+        if selectedLayoutTable["main"]["rows"] == 8 then
             groupSpacingSlider:SetEnabled(false)
         else
             groupSpacingSlider:SetEnabled(true)
         end
     end
-    groupSpacingSlider:SetValue(selectedLayoutTable["groupSpacing"])
-
-    -- group arrangement
-    orientationDropdown:SetSelectedValue(selectedLayoutTable["orientation"])
-    anchorDropdown:SetSelectedValue(selectedLayoutTable["anchor"])
+    groupSpacingSlider:SetValue(selectedLayoutTable["main"]["groupSpacing"])
 
     -- bar orientation
     barOrientationDropdown:SetSelectedValue(selectedLayoutTable["barOrientation"][1])
     rotateTexCB:SetChecked(selectedLayoutTable["barOrientation"][2])
 
-    -- other frames
-    showNPCCB:SetChecked(selectedLayoutTable["npc"][1])
-    separateNPCCB:SetChecked(selectedLayoutTable["npc"][2])
-    separateNPCCB:SetEnabled(selectedLayoutTable["npc"][1])
-    partyPetsCB:SetChecked(selectedLayoutTable["pet"][1])
-    raidPetsCB:SetChecked(selectedLayoutTable["pet"][2])
-    spotlightCB:SetChecked(selectedLayoutTable["spotlight"][1])
-
-    -- misc
-    sortByRoleCB:SetChecked(selectedLayoutTable["sortByRole"])
-    hideSelfCB:SetChecked(selectedLayoutTable["hideSelf"])
+    -- pages
+    LoadPageDB(selectedPage)
+    sortByRoleCB:SetChecked(selectedLayoutTable["main"]["sortByRole"])
+    hideSelfCB:SetChecked(selectedLayoutTable["main"]["hideSelf"])
+    partyPetsCB:SetChecked(selectedLayoutTable["pet"]["partyEnabled"])
+    raidPetsCB:SetChecked(selectedLayoutTable["pet"]["raidEnabled"])
+    showNpcCB:SetChecked(selectedLayoutTable["npc"]["enabled"])
+    separateNpcCB:SetChecked(selectedLayoutTable["npc"]["separate"])
+    separateNpcCB:SetEnabled(selectedLayoutTable["npc"]["enabled"])
+    spotlightCB:SetChecked(selectedLayoutTable["spotlight"]["enabled"])
 
     UpdateGroupFilter()
     UpdatePreviewButton()
@@ -2758,10 +2744,8 @@ local function ShowTab(tab)
             CreateAutoSwitchPane()
             UpdateLayoutAutoSwitchText()
             CreateGroupFilterPane()
-            CreateButtonSizePane()
-            CreateGroupArrangementPane()
+            CreateLayoutSetupPane()
             CreateBarOrientationPane()
-            CreateOthersPane()
             CreateMiscPane()
 
             LoadLayoutDropdown()

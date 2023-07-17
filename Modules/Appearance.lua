@@ -299,6 +299,7 @@ local previewButton, previewButton2
 
 local function CreatePreviewButtons()
     previewButton = CreateFrame("Button", "CellAppearancePreviewButton", appearanceTab, "CellPreviewButtonTemplate")
+    -- previewButton.type = "main" -- layout setup
     previewButton:SetPoint("TOPLEFT", previewIconsBG, "BOTTOMLEFT", 0, -50)
     previewButton:UnregisterAllEvents()
     previewButton:SetScript("OnEnter", nil)
@@ -320,6 +321,7 @@ local function CreatePreviewButtons()
     previewText:SetText(Cell:GetAccentColorString()..L["Preview"].." 2")
     
     previewButton2 = CreateFrame("Button", "CellAppearancePreviewButton2", appearanceTab, "CellPreviewButtonTemplate")
+    -- previewButton2.type = "main" -- layout setup
     previewButton2:SetPoint("TOPLEFT", previewButton, "BOTTOMLEFT", 0, -50)
     previewButton2:UnregisterAllEvents()
     previewButton2:SetScript("OnEnter", nil)
@@ -363,8 +365,6 @@ local function CreatePreviewButtons()
                 elseif diff <= -0.05 and diff >= -1 then
                     previewButton.func.ShowFlash(abs(diff))
                     -- print(abs(diff))
-                    -- previewButton.widget.damageFlashTex:SetWidth((Cell.vars.currentLayoutTable["size"][1] - 2) * abs(diff))
-                    -- previewButton.widget.damageFlashTex:Show()
                 end
             elseif CellDB["appearance"]["barAnimation"] == "Smooth" then
                 previewButton.widget.healthBar:SetSmoothedValue(health)
@@ -462,10 +462,10 @@ local function UpdatePreviewButton()
     B:SetOrientation(previewButton2, Cell.vars.currentLayoutTable["barOrientation"][1], Cell.vars.currentLayoutTable["barOrientation"][2])
 
     -- size
-    P:Size(previewButton, Cell.vars.currentLayoutTable["size"][1], Cell.vars.currentLayoutTable["size"][2])
-    B:SetPowerSize(previewButton, Cell.vars.currentLayoutTable["powerSize"])
-    P:Size(previewButton2, Cell.vars.currentLayoutTable["size"][1], Cell.vars.currentLayoutTable["size"][2])
-    B:SetPowerSize(previewButton2, Cell.vars.currentLayoutTable["powerSize"])
+    P:Size(previewButton, Cell.vars.currentLayoutTable["main"]["size"][1], Cell.vars.currentLayoutTable["main"]["size"][2])
+    B:SetPowerSize(previewButton, Cell.vars.currentLayoutTable["main"]["powerSize"])
+    P:Size(previewButton2, Cell.vars.currentLayoutTable["main"]["size"][1], Cell.vars.currentLayoutTable["main"]["size"][2])
+    B:SetPowerSize(previewButton2, Cell.vars.currentLayoutTable["main"]["powerSize"])
 
     -- value
     if CellDB["appearance"]["barAnimation"] == "Smooth" then

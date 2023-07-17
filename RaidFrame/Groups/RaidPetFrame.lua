@@ -33,7 +33,7 @@ dumb:SetScript("OnDragStart", function()
 end)
 dumb:SetScript("OnDragStop", function()
     anchorFrame:StopMovingOrSizing()
-    P:SavePosition(anchorFrame, Cell.vars.currentLayoutTable["pet"][3])
+    P:SavePosition(anchorFrame, Cell.vars.currentLayoutTable["pet"]["position"])
 end)
 dumb:HookScript("OnEnter", function()
     hoverFrame:GetScript("OnEnter")(hoverFrame)
@@ -49,7 +49,7 @@ end)
 
 function raidPetFrame:UpdateAnchor()
     local show
-    if Cell.vars.currentLayoutTable["pet"][2] then
+    if Cell.vars.currentLayoutTable["pet"]["raidEnabled"] then
         show = Cell.unitButtons.raidpet[1]:IsShown()
     end
     
@@ -176,6 +176,7 @@ header:SetAttribute("startingIndex", 1)
 
 for i, b in ipairs({header:GetChildren()}) do
     Cell.unitButtons.raidpet[i] = b
+    -- b.type = "pet" -- layout setup
 end
 
 -- update mover
@@ -192,9 +193,14 @@ end)
 local function UpdatePosition()
     raidPetFrame:ClearAllPoints()
     -- NOTE: detach from spotlightPreviewAnchor
-    P:LoadPosition(anchorFrame, Cell.vars.currentLayoutTable["pet"][3])
+    P:LoadPosition(anchorFrame, Cell.vars.currentLayoutTable["pet"]["position"])
 
-    local anchor = Cell.vars.currentLayoutTable["anchor"]
+    local anchor
+    if Cell.vars.currentLayoutTable["pet"]["sameArrangementAsMain"] then
+        anchor = Cell.vars.currentLayoutTable["main"]["anchor"]
+    else
+        anchor = Cell.vars.currentLayoutTable["pet"]["anchor"]
+    end
     
     if CellDB["general"]["menuPosition"] == "top_bottom" then
         P:Size(anchorFrame, 20, 10)
@@ -275,13 +281,15 @@ local function RaidPetFrame_UpdateLayout(layout, which)
     
     layout = CellDB["layouts"][layout]
 
-    if not which or which == "size" or which == "petSize" or which == "power" or which == "barOrientation" then
-        local width, height
+    if not which or strfind(which, "size$") or strfind(which, "power$") or which == "barOrientation" then
+        local width, height, powerSize
         
-        if layout["pet"][4] then
-            width, height = unpack(layout["pet"][5])
+        if layout["pet"]["sameSizeAsMain"] then
+            width, height = unpack(layout["main"]["size"])
+            powerSize = layout["main"]["powerSize"]
         else
-            width, height = unpack(layout["size"])
+            width, height = unpack(layout["pet"]["size"])
+            powerSize = layout["pet"]["powerSize"]
         end
 
         P:Size(raidPetFrame, width, height)
@@ -290,7 +298,7 @@ local function RaidPetFrame_UpdateLayout(layout, which)
         header:SetAttribute("buttonHeight", P:Scale(height))
 
         for i, b in ipairs({header:GetChildren()}) do
-            if not which or which == "size" or which == "petSize" then
+            if not which or strfind(which, "size$") then
                 P:Size(b, width, height)
             end
 
@@ -299,58 +307,71 @@ local function RaidPetFrame_UpdateLayout(layout, which)
                 B:SetOrientation(b, layout["barOrientation"][1], layout["barOrientation"][2])
             end
            
-            if not which or which == "power" or which == "barOrientation" then
-                B:SetPowerSize(b, layout["powerSize"])
+            if not which or strfind(which, "power$") or which == "barOrientation" then
+                B:SetPowerSize(b, powerSize)
             end
         end
     end
 
-    if not which or which == "spacing" or which == "orientation" or which == "anchor" then
+    if not which or strfind(which, "arrangement$") then
+        local orientation, anchor, spacingX, spacingY
+        if layout["pet"]["sameArrangementAsMain"] then
+            orientation = layout["main"]["orientation"]
+            anchor = layout["main"]["anchor"]
+            spacingX = layout["main"]["spacingX"]
+            spacingY = layout["main"]["spacingY"]
+        else
+            orientation = layout["pet"]["orientation"]
+            anchor = layout["pet"]["anchor"]
+            spacingX = layout["pet"]["spacingX"]
+            spacingY = layout["pet"]["spacingY"]
+        end
+
         local point, anchorPoint, unitSpacing, headerPoint, headerColumnAnchorPoint
         if layout["orientation"] == "vertical" then
             -- anchor
-            if layout["anchor"] == "BOTTOMLEFT" then
+            if anchor == "BOTTOMLEFT" then
                 point, anchorPoint = "BOTTOMLEFT", "TOPLEFT"
                 headerPoint, headerColumnAnchorPoint = "BOTTOM", "LEFT"
-                unitSpacing = layout["spacingY"]
-            elseif layout["anchor"] == "BOTTOMRIGHT" then
+                unitSpacing = spacingY
+            elseif anchor == "BOTTOMRIGHT" then
                 point, anchorPoint = "BOTTOMRIGHT", "TOPRIGHT"
                 headerPoint, headerColumnAnchorPoint = "BOTTOM", "RIGHT"
-                unitSpacing = layout["spacingY"]
-            elseif layout["anchor"] == "TOPLEFT" then
+                unitSpacing = spacingY
+            elseif anchor == "TOPLEFT" then
                 point, anchorPoint = "TOPLEFT", "BOTTOMLEFT"
                 headerPoint, headerColumnAnchorPoint = "TOP", "LEFT"
-                unitSpacing = -layout["spacingY"]
-            elseif layout["anchor"] == "TOPRIGHT" then
+                unitSpacing = -spacingY
+            elseif anchor == "TOPRIGHT" then
                 point, anchorPoint = "TOPRIGHT", "BOTTOMRIGHT"
                 headerPoint, headerColumnAnchorPoint = "TOP", "RIGHT"
-                unitSpacing = -layout["spacingY"]
+                unitSpacing = -spacingY
             end
 
-            header:SetAttribute("columnSpacing", layout["spacingX"])
+            header:SetAttribute("columnSpacing", spacingX)
             header:SetAttribute("xOffset", 0)
             header:SetAttribute("yOffset", unitSpacing)
         else
             -- anchor
-            if layout["anchor"] == "BOTTOMLEFT" then
+            if anchor == "BOTTOMLEFT" then
                 point, anchorPoint = "BOTTOMLEFT", "BOTTOMRIGHT"
                 headerPoint, headerColumnAnchorPoint = "LEFT", "BOTTOM"
-                unitSpacing = layout["spacingX"]
-            elseif layout["anchor"] == "BOTTOMRIGHT" then
+                unitSpacing = spacingX
+            elseif anchor == "BOTTOMRIGHT" then
                 point, anchorPoint = "BOTTOMRIGHT", "BOTTOMLEFT"
                 headerPoint, headerColumnAnchorPoint = "RIGHT", "BOTTOM"
-                unitSpacing = -layout["spacingX"]
-            elseif layout["anchor"] == "TOPLEFT" then
+                unitSpacing = -spacingX
+            elseif anchor == "TOPLEFT" then
                 point, anchorPoint = "TOPLEFT", "TOPRIGHT"
                 headerPoint, headerColumnAnchorPoint = "LEFT", "TOP"
-                unitSpacing = layout["spacingX"]
-            elseif layout["anchor"] == "TOPRIGHT" then
+                unitSpacing = spacingX
+            elseif anchor == "TOPRIGHT" then
                 point, anchorPoint = "TOPRIGHT", "TOPLEFT"
                 headerPoint, headerColumnAnchorPoint = "RIGHT", "TOP"
-                unitSpacing = -layout["spacingX"]
+                unitSpacing = -spacingX
             end
 
-            header:SetAttribute("columnSpacing", layout["spacingY"])
+            header:SetAttribute("columnSpacing", spacingY)
             header:SetAttribute("xOffset", unitSpacing)
             header:SetAttribute("yOffset", 0)
         end
@@ -367,13 +388,13 @@ local function RaidPetFrame_UpdateLayout(layout, which)
         header:SetAttribute("unitsPerColumn", 5)
         header:SetAttribute("maxColumns", 8)
     end
-
-    if not which or which == "anchor" then
+    
+    if not which or strfind(which, "arrangement$") then
         UpdatePosition()
     end
 
     if not which or which == "pet" then
-        if layout["pet"][2] and Cell.vars.inBattleground ~= 5 then
+        if layout["pet"]["raidEnabled"] and Cell.vars.inBattleground ~= 5 then
             header:SetAttribute("showRaid", true)
             RegisterAttributeDriver(raidPetFrame, "state-visibility", "[group:raid] show; [group:party] hide; hide")
         else
