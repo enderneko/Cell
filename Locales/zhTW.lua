@@ -162,8 +162,7 @@ L["EN"] = "英"
 L["Enable"] = "啟用"
 L["Enable Death Color"] = "啟用死亡顏色"
 L["Enable Full Health Color"] = "啟用滿血顏色"
---[[Translation missing --]]
---[[ L["Enable Spotlight Frame"] = ""--]] 
+L["Enable Spotlight Frame"] = "啟用特別關注框架"
 L["Enabled"] = "啟用"
 L["enableHighlight"] = "顯著標示單位按鈕"
 L["Enter: apply\nESC: discard"] = "Enter: 套用\nESC: 取消"
@@ -258,8 +257,7 @@ L["Known Spells Only"] = "只限已學會的法術"
 L["Layout"] = "版面配置"
 L["Layout Auto Switch"] = "自動切換版面配置"
 L["Layout imported: %s."] = "已匯入版面配置: %s。"
---[[Translation missing --]]
---[[ L["Layout Setup"] = ""--]] 
+L["Layout Setup"] = "版面配置設定"
 L["Layouts"] = "版面配置"
 L["Leader Icon"] = "隊長圖示"
 L["LEFT"] = "左"
@@ -274,8 +272,7 @@ L["Lock"] = "鎖定"
 L["Lock Cell Frame"] = "鎖定 Cell 團隊框架的位置"
 L["Macro"] = "巨集"
 L["Magic"] = "魔法"
---[[Translation missing --]]
---[[ L["Main"] = ""--]] 
+L["Main"] = "主框架"
 L["many"] = "很多"
 L["Marks Bar"] = "標記工具列"
 L["marksTips"] = "\n|r目標標記\n左鍵: |cffffffff在目標上設置標記|r\n右鍵: |cffffffff將標記鎖定在目標上 (在你的隊伍中)|r"
@@ -333,9 +330,8 @@ L["Party"] = "隊伍"
 L["Patrons"] = "贊助"
 L["PENDING"] = "等候"
 L["Percentage"] = "百分比"
+L["Pet"] = "寵物"
 L["PET"] = "寵物"
---[[Translation missing --]]
---[[ L["Pet"] = ""--]] 
 L["Pixel"] = "像素"
 L["Pixel Perfect"] = "完美細緻模式"
 L["Play Icon Animation When"] = "播放圖示動畫於"
@@ -455,8 +451,7 @@ L["Spell List"] = "法術清單"
 L["Spell Request"] = "法術請求"
 L["SpellId and BuffId are the same in most cases"] = "大部分情況下法術ID與增益ID是相同的"
 L["Spells"] = "法術"
---[[Translation missing --]]
---[[ L["Spotlight"] = ""--]] 
+L["Spotlight"] = "特別關注"
 L["Spotlight Frame"] = "特別關注框架"
 L["spotlightTips"] = "左鍵: |cffffffff選單|r\n右鍵: |cffffffff清除|r\n左鍵拖曳: |cffffffff設為目標單位 (非戰鬥中)|r\n右鍵拖曳: |cffffffff設為目標單位的寵物 (非戰鬥中)|r"
 L["stackFont"] = "層數字體"
@@ -526,10 +521,8 @@ L["Use |cFFFFB5C5/cell buff X|r to set icon size"] = "輸入 |cFFFFB5C5/cell buf
 L["Use |cFFFFB5C5/cell report X|r to set the number of reports during a raid encounter"] = "輸入 |cFFFFB5C5/cell report X|r 來設定團隊首領戰時要通報的死亡訊息數量"
 L["Use CLEU events to increase health update rate"] = "使用戰鬥記錄事件來增加血條的更新頻率"
 L["Use common profile"] = "使用共用設定檔"
---[[Translation missing --]]
---[[ L["Use Same Arrangement As Main"] = ""--]] 
---[[Translation missing --]]
---[[ L["Use Same Size As Main"] = ""--]] 
+L["Use Same Arrangement As Main"] = "使用與主框架相同的排列"
+L["Use Same Size As Main"] = "使用與主框架相同的大小"
 L["Use separate profile for each spec"] = "每個專精使用不同的設定檔"
 L["VEHICLE"] = "載具"
 L["vehicle name"] = "載具名稱"
