@@ -77,6 +77,11 @@ select(2, ...).L = setmetatable({
         <h1>Try disabling code snippets, if Cell doesn't work after update.</h1>
         <br/>
         
+        <h1>r183-release (Jul 18, 2023, 15:09 GMT+8)</h1>
+        <p>* Fixed layout: sort by role, hide self.</p>
+        <p>* Updated zhTW.</p>
+        <br/>
+
         <h1>r182-release (Jul 18, 2023, 05:07 GMT+8)</h1>
         <p>* Refactored Layouts.</p>
         <p>* Updated debuffs for Dawn of the Infinite, thanks to 钛锬(NGA).</p>

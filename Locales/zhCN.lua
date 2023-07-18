@@ -680,6 +680,11 @@ L["Click to view older changelogs"] = "点击查看远古更新记录"
 L["CHANGELOGS"] = [[
     <h1>如果更新后发现Cell不能正常工作，尝试禁用代码片段。</h1>
     <br/>
+
+    <h1>r183-release (Jul 18, 2023, 15:09 GMT+8)</h1>
+    <p>* 修复布局：按职责排序，隐藏自己。</p>
+    <p>* 更新繁中。</p>
+    <br/>
     
     <h1>r182-release (Jul 18, 2023, 05:07 GMT+8)</h1>
     <p>* 重构布局模块。</p>
