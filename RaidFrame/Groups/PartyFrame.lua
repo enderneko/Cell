@@ -221,7 +221,7 @@ local function PartyFrame_UpdateLayout(layout, which)
     end
 
     if not which or which == "sort" then
-        if layout["sortByRole"] then
+        if layout["main"]["sortByRole"] then
             header:SetAttribute("sortMethod", "NAME")
             header:SetAttribute("groupingOrder", "TANK,HEALER,DAMAGER,NONE")
             header:SetAttribute("groupBy", "ASSIGNEDROLE")
@@ -233,7 +233,7 @@ local function PartyFrame_UpdateLayout(layout, which)
     end
 
     if not which or which == "hideSelf" then
-        header:SetAttribute("showPlayer", not layout["hideSelf"])
+        header:SetAttribute("showPlayer", not layout["main"]["hideSelf"])
     end
 end
 Cell:RegisterCallback("UpdateLayout", "PartyFrame_UpdateLayout", PartyFrame_UpdateLayout)
