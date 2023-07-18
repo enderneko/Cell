@@ -36,6 +36,7 @@ local SPEC_PRIORITY = {
     252, -- Death Knight - Unholy 邪恶
     577, -- Demon Hunter - Havoc 浩劫
     103, -- Druid - Feral 野性
+    255, -- Hunter - Survival 生存
     269, -- Monk - Windwalker 踏风
     70, -- Paladin - Retribution 惩戒
     259, -- Rogue - Assassination 奇袭
@@ -46,11 +47,10 @@ local SPEC_PRIORITY = {
     72, -- Warrior - Fury 狂怒
 
     -- Ranged
-    1467, -- Evoker - Devastation 湮灭
     253, -- Hunter - Beast Mastery 野兽控制
     254, -- Hunter - Marksmanship 射击
-    255, -- Hunter - Survival 生存
     102, -- Druid - Balance 平衡
+    1467, -- Evoker - Devastation 湮灭
     62, -- Mage - Arcane 奥术
     63, -- Mage - Fire 火焰
     64, -- Mage - Frost 冰霜
