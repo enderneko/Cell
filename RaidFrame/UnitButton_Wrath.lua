@@ -2342,7 +2342,7 @@ Cell.vars.guids = {} -- guid to unitid
 Cell.vars.names = {} -- name to unitid
 
 local function UnitButton_OnShow(self)
-    -- self.updateRequired = nil -- prevent UnitButton_UpdateAll twice. when convert party <-> raid, GROUP_ROSTER_UPDATE fired.
+    self.updateRequired = nil -- prevent UnitButton_UpdateAll twice. when convert party <-> raid, GROUP_ROSTER_UPDATE fired.
     UnitButton_RegisterEvents(self)
 
     --[[

@@ -2061,6 +2061,8 @@ Cell:RegisterCallback("UpdateCLEU", "UnitButton_UpdateCLEU", UpdateCLEU)
 UnitButton_UpdateAll = function(self)
     if not self:IsVisible() then return end
 
+    -- print(GetTime(), "UpdateAll", self:GetName())
+
     UnitButton_UpdateVehicleStatus(self)
     UnitButton_UpdateName(self)
     UnitButton_UpdateNameColor(self)
@@ -2169,12 +2171,6 @@ local function UnitButton_RegisterEvents(self)
     -- self:RegisterEvent("UNIT_PET")
     self:RegisterEvent("UNIT_PORTRAIT_UPDATE") -- pet summoned far away
     
-    -- LibCLHealth.RegisterCallback(self, "COMBAT_LOG_HEALTH", function(event, unit, eventType)
-    -- 	-- eventType - either nil when event comes from combat log, or "UNIT_HEALTH" to indicate events that can carry  update to death/ghost states
-    -- 	-- print(event, unit, health)
-    -- 	UnitButton_UpdateHealth(self)
-    -- end)
-
     UnitButton_UpdateAll(self)
 end
 
@@ -2345,7 +2341,8 @@ Cell.vars.guids = {} -- guid to unitid
 Cell.vars.names = {} -- name to unitid
 
 local function UnitButton_OnShow(self)
-    -- self.updateRequired = nil -- prevent UnitButton_UpdateAll twice. when convert party <-> raid, GROUP_ROSTER_UPDATE fired.
+    -- print(GetTime(), "OnShow", self:GetName())
+    self.updateRequired = nil -- prevent UnitButton_UpdateAll twice. when convert party <-> raid, GROUP_ROSTER_UPDATE fired.
     UnitButton_RegisterEvents(self)
 
     --[[

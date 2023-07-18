@@ -903,6 +903,12 @@ function I:CreateAura_Icons(name, parent, num)
         icons[i] = frame
     end
 
+    icons:SetScript("OnHide", function()
+        for i = 1, num do
+            icons[i]:Hide()
+        end
+    end)
+
     function icons:ShowDuration(show)
         for i = 1, num do
             icons[i]:ShowDuration(show)

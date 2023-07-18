@@ -79,6 +79,12 @@ end
 
 -- used for switching to a new layout
 function I:RemoveAllCustomIndicators(parent)
+    if parent ~= CellIndicatorsPreviewButton then
+        wipe(enabledIndicators)
+        wipe(customIndicators["buff"])
+        wipe(customIndicators["debuff"])
+    end
+
     for indicatorName, indicator in pairs(parent.indicators) do
         if string.find(indicatorName, "^indicator") then
             indicator:ClearAllPoints()
@@ -86,12 +92,6 @@ function I:RemoveAllCustomIndicators(parent)
             indicator:SetParent(nil)
             parent.indicators[indicatorName] = nil
         end
-    end
-
-    if parent ~= CellIndicatorsPreviewButton then
-        wipe(enabledIndicators)
-        wipe(customIndicators["buff"])
-        wipe(customIndicators["debuff"])
     end
 end
 
@@ -131,26 +131,18 @@ function I:ResetCustomIndicators(unitButton, auraType)
     local unit = unitButton.state.displayedUnit
 
     for indicatorName, indicatorTable in pairs(customIndicators[auraType]) do
-        --? indicators removed
-        if not indicatorName then break end
-
-        if indicatorTable["isIcons"] then
-            indicatorTable["found"][unit] = 0
-
-            for i = 1, 10 do
-                unitButton.indicators[indicatorName][i]:Hide()
-            end
+        if enabledIndicators[indicatorName] and unitButton.indicators[indicatorName] then
             unitButton.indicators[indicatorName]:Hide()
-
-        else
-            indicatorTable["topOrder"][unit] = 999
-            if not indicatorTable["top"][unit] then
-                indicatorTable["top"][unit] = {}
+            if indicatorTable["isIcons"] then
+                indicatorTable["found"][unit] = 0
             else
-                wipe(indicatorTable["top"][unit])
+                indicatorTable["topOrder"][unit] = 999
+                if not indicatorTable["top"][unit] then
+                    indicatorTable["top"][unit] = {}
+                else
+                    wipe(indicatorTable["top"][unit])
+                end
             end
-
-            unitButton.indicators[indicatorName]:Hide()
         end
     end
 end
