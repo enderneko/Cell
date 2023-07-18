@@ -101,54 +101,59 @@ local function PartyFrame_UpdateLayout(layout, which)
 
     -- anchor
     if not which or which == "main-arrangement" then
+        local orientation = layout["main"]["orientation"]
+        local anchor = layout["main"]["anchor"]
+        local spacingX = layout["main"]["spacingX"]
+        local spacingY = layout["main"]["spacingY"]
+
         local point, playerAnchorPoint, petAnchorPoint, playerSpacing, petSpacing, headerPoint
-        if layout["main"]["orientation"] == "vertical" then
-            if layout["main"]["anchor"] == "BOTTOMLEFT" then
+        if orientation == "vertical" then
+            if anchor == "BOTTOMLEFT" then
                 point, playerAnchorPoint, petAnchorPoint = "BOTTOMLEFT", "TOPLEFT", "BOTTOMRIGHT"
                 headerPoint = "BOTTOM"
-                playerSpacing = layout["main"]["spacingY"]
-                petSpacing = layout["main"]["spacingX"]
-            elseif layout["main"]["anchor"] == "BOTTOMRIGHT" then
+                playerSpacing = spacingY
+                petSpacing = spacingX
+            elseif anchor == "BOTTOMRIGHT" then
                 point, playerAnchorPoint, petAnchorPoint = "BOTTOMRIGHT", "TOPRIGHT", "BOTTOMLEFT"
                 headerPoint = "BOTTOM"
-                playerSpacing = layout["main"]["spacingY"]
-                petSpacing = -layout["main"]["spacingX"]
-            elseif layout["main"]["anchor"] == "TOPLEFT" then
+                playerSpacing = spacingY
+                petSpacing = -spacingX
+            elseif anchor == "TOPLEFT" then
                 point, playerAnchorPoint, petAnchorPoint = "TOPLEFT", "BOTTOMLEFT", "TOPRIGHT"
                 headerPoint = "TOP"
-                playerSpacing = -layout["main"]["spacingY"]
-                petSpacing = layout["main"]["spacingX"]
-            elseif layout["main"]["anchor"] == "TOPRIGHT" then
+                playerSpacing = -spacingY
+                petSpacing = spacingX
+            elseif anchor == "TOPRIGHT" then
                 point, playerAnchorPoint, petAnchorPoint = "TOPRIGHT", "BOTTOMRIGHT", "TOPLEFT"
                 headerPoint = "TOP"
-                playerSpacing = -layout["main"]["spacingY"]
-                petSpacing = -layout["main"]["spacingX"]
+                playerSpacing = -spacingY
+                petSpacing = -spacingX
             end
 
             header:SetAttribute("xOffset", 0)
             header:SetAttribute("yOffset", playerSpacing)
         else
             -- anchor
-            if layout["main"]["anchor"] == "BOTTOMLEFT" then
+            if anchor == "BOTTOMLEFT" then
                 point, playerAnchorPoint, petAnchorPoint = "BOTTOMLEFT", "BOTTOMRIGHT", "TOPLEFT"
                 headerPoint = "LEFT"
-                playerSpacing = layout["main"]["spacingX"]
-                petSpacing = layout["main"]["spacingY"]
-            elseif layout["main"]["anchor"] == "BOTTOMRIGHT" then
+                playerSpacing = spacingX
+                petSpacing = spacingY
+            elseif anchor == "BOTTOMRIGHT" then
                 point, playerAnchorPoint, petAnchorPoint = "BOTTOMRIGHT", "BOTTOMLEFT", "TOPRIGHT"
                 headerPoint = "RIGHT"
-                playerSpacing = -layout["main"]["spacingX"]
-                petSpacing = layout["main"]["spacingY"]
-            elseif layout["main"]["anchor"] == "TOPLEFT" then
+                playerSpacing = -spacingX
+                petSpacing = spacingY
+            elseif anchor == "TOPLEFT" then
                 point, playerAnchorPoint, petAnchorPoint = "TOPLEFT", "TOPRIGHT", "BOTTOMLEFT"
                 headerPoint = "LEFT"
-                playerSpacing = layout["main"]["spacingX"]
-                petSpacing = -layout["main"]["spacingY"]
-            elseif layout["main"]["anchor"] == "TOPRIGHT" then
+                playerSpacing = spacingX
+                petSpacing = -spacingY
+            elseif anchor == "TOPRIGHT" then
                 point, playerAnchorPoint, petAnchorPoint = "TOPRIGHT", "TOPLEFT", "BOTTOMRIGHT"
                 headerPoint = "RIGHT"
-                playerSpacing = -layout["main"]["spacingX"]
-                petSpacing = -layout["main"]["spacingY"]
+                playerSpacing = -spacingX
+                petSpacing = -spacingY
             end
 
             header:SetAttribute("xOffset", playerSpacing)
@@ -164,7 +169,7 @@ local function PartyFrame_UpdateLayout(layout, which)
             header[j]:ClearAllPoints()
             -- update petButton's point
             header[j].petButton:ClearAllPoints()
-            if layout["main"]["orientation"] == "vertical" then
+            if orientation == "vertical" then
                 header[j].petButton:SetPoint(point, header[j], petAnchorPoint, petSpacing, 0)
             else
                 header[j].petButton:SetPoint(point, header[j], petAnchorPoint, 0, petSpacing)

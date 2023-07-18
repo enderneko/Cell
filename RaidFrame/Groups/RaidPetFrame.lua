@@ -328,7 +328,7 @@ local function RaidPetFrame_UpdateLayout(layout, which)
         end
 
         local point, anchorPoint, unitSpacing, headerPoint, headerColumnAnchorPoint
-        if layout["orientation"] == "vertical" then
+        if orientation == "vertical" then
             -- anchor
             if anchor == "BOTTOMLEFT" then
                 point, anchorPoint = "BOTTOMLEFT", "TOPLEFT"
