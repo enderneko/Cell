@@ -1165,6 +1165,7 @@ local UnitIsVisible = UnitIsVisible
 local UnitInRange = UnitInRange
 local UnitCanAssist = UnitCanAssist
 local UnitCanAttack = UnitCanAttack
+local UnitCanCooperate = UnitCanCooperate
 local IsSpellInRange = IsSpellInRange
 local IsItemInRange = IsItemInRange
 local CheckInteractDistance = CheckInteractDistance
@@ -1249,15 +1250,24 @@ if playerClass == "EVOKER" then
     local spellAlive = GetSpellInfo(361469)
 
     -- NOTE: UnitInRange for evoker is around 50y
-    function F:IsInRange(unit)
+    function F:IsInRange(unit, check)
         if not UnitIsVisible(unit) then
             return false
         end
     
         if UnitIsUnit("player", unit) then
             return true
+        -- elseif not check and F:UnitInGroup(unit) then
+        --     -- NOTE: UnitInRange only works with group players/pets
+        --     local checked
+        --     inRange, checked = UnitInRange(unit)
+        --     if not checked then
+        --         return F:IsInRange(unit, true)
+        --     end
+        --     return inRange
         else
-            if UnitCanAssist("player", unit) then
+            -- UnitCanCooperate works with cross-faction, UnitCanAssist does not
+            if UnitCanAssist("player", unit) or UnitCanCooperate("player", unit) then
                 -- print("CanAssist", unit)
                 if UnitIsDead(unit) then
                     return IsSpellInRange(spellDead, unit) == 1 -- 40y
@@ -1273,7 +1283,7 @@ if playerClass == "EVOKER" then
                 end
             else
                 -- print("CheckInteractDistance", unit)
-                return CheckInteractDistance("unit", 4) -- 28 yards
+                return CheckInteractDistance(unit, 4) -- 28 yards
             end
         end
     end
