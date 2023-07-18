@@ -19,8 +19,8 @@ function F:Revise()
         f:SetScript("OnEvent", function()
             f:UnregisterAllEvents()
             local popup = Cell:CreateConfirmPopup(CellAnchorFrame, 260, L["RESET"], function()
-                CellDB = nil
-                CellCharacterDB = nil
+                if dbRevision < 149 then CellDB = nil end
+                if charaDbRevision and charaDbRevision < 149 then CellCharacterDB = nil end
                 ReloadUI()
             end)
             popup:SetPoint("TOPLEFT")
