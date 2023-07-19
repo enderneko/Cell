@@ -1,5 +1,7 @@
-[Full Changelog](https://github.com/enderneko/Cell/compare/r182-release...22b48d183cb75e363f4b1b5aed20828269145a46)
+[Full Changelog](https://github.com/enderneko/Cell/compare/r183-release...8fbd84601514517c198bc87f1a3272e76cd95132)
 
-- Fix layout
-- Update zhTW
-- [snippet] update
+- Fix range checker for Evokers
+- Fix custom indicator issue when group type changed
+- Fix raid pet orientation
+- Fix power bar update
+- Add boss1target for Spotlight

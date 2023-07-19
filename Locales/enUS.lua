@@ -77,6 +77,12 @@ select(2, ...).L = setmetatable({
         <h1>Try disabling code snippets, if Cell doesn't work after update.</h1>
         <br/>
         
+        <h1>r184-release (Jul 19, 2023, 23:12 GMT+8)</h1>
+        <p>* Fixed range checker for Evokers.</p>
+        <p>* Fixed several layout issues.</p>
+        <p>+ Added "Boss1's Target" to spotlight frame.</p>
+        <br/>
+
         <h1>r183-release (Jul 18, 2023, 15:09 GMT+8)</h1>
         <p>* Fixed layout: sort by role, hide self.</p>
         <p>* Updated zhTW.</p>
