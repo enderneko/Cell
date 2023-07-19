@@ -7,7 +7,7 @@ local P = Cell.pixelPerfectFuncs
 local LCG = LibStub("LibCustomGlow-1.0")
 
 local placeholders, assignmentButtons = {}, {}
-local menu, target, targettarget, focus, unit, unitpet, unittarget, clear
+local menu, target, targettarget, focus, unit, unitpet, unittarget, boss1target, clear
 local tooltipPoint, tooltipRelativePoint, tooltipX, tooltipY
 local NONE = strlower(_G.NONE)
 -------------------------------------------------
@@ -448,9 +448,24 @@ function unittarget:SetUnit(index, target)
     end
 end
 
+boss1target = Cell:CreateButton(menu, L["Boss1's Target"], "transparent-accent", {20, 20}, true, false, nil, nil, "SecureHandlerAttributeTemplate,SecureHandlerClickTemplate")
+P:Point(boss1target, "TOPLEFT", unittarget, "BOTTOMLEFT")
+P:Point(boss1target, "TOPRIGHT", unittarget, "BOTTOMRIGHT")
+boss1target:SetAttribute("_onclick", [[
+    local menu = self:GetParent()
+    local index = menu:GetAttribute("index")
+    local spotlight = menu:GetFrameRef("spotlight"..index)
+    spotlight:SetAttribute("unit", "boss1target")
+    spotlight:SetAttribute("refreshOnUpdate", true)
+    menu:GetFrameRef("assignment"..index):SetAttribute("text", "boss1target")
+    menu:Hide()
+
+    menu:CallMethod("Save", index, "boss1target")
+]])
+
 clear = Cell:CreateButton(menu, L["Clear"], "transparent-accent", {20, 20}, true, false, nil, nil, "SecureHandlerAttributeTemplate,SecureHandlerClickTemplate")
-P:Point(clear, "TOPLEFT", unittarget, "BOTTOMLEFT")
-P:Point(clear, "TOPRIGHT", unittarget, "BOTTOMRIGHT")
+P:Point(clear, "TOPLEFT", boss1target, "BOTTOMLEFT")
+P:Point(clear, "TOPRIGHT", boss1target, "BOTTOMRIGHT")
 clear:SetAttribute("_onclick", [[
     local menu = self:GetParent()
     local index = menu:GetAttribute("index")
@@ -488,7 +503,7 @@ local dumbFS2 = menu:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
 dumbFS2:SetText(L["Unit's Target"])
 
 function menu:UpdatePixelPerfect()
-    P:Size(menu, ceil(max(dumbFS1:GetStringWidth(), dumbFS2:GetStringWidth())) + 13, 20*7+2)
+    P:Size(menu, ceil(max(dumbFS1:GetStringWidth(), dumbFS2:GetStringWidth())) + 13, 20*8+2)
 
     Cell:StylizeFrame(menu, nil, Cell:GetAccentColorTable())
     target:UpdatePixelPerfect()

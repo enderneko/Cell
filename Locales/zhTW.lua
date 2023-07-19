@@ -59,6 +59,8 @@ L["Big Debuffs"] = "放大顯示減益"
 L["Blizzard Frames"] = "遊戲內建框架"
 L["Border"] = "邊框"
 L["Boss Name"] = "首領名稱"
+--[[Translation missing --]]
+--[[ L["Boss1's Target"] = ""--]] 
 L["Both"] = "全部"
 L["BOTTOM"] = "下"
 L["BOTTOMLEFT"] = "左下"

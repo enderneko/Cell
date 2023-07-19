@@ -332,8 +332,9 @@ L["spotlightTips"] = "左键：|cffffffff菜单|r\n右键：|cffffffff清除|r\n
 L["Show units you care about more in a separate frame"] = "将你特别关注的单位显示在一个单独的框体中"
 L["Target of Target"] = "目标的目标"
 L["Unit"] = "指定单位"
-L["Unit's Target"] = "指定单位的目标"
 L["Unit's Pet"] = "指定单位的宠物"
+L["Unit's Target"] = "指定单位的目标"
+L["Boss1's Target"] = "Boss1的目标"
 L["Clear"] = "清除"
 L["Invalid unit."] = "无效单位。"
 
