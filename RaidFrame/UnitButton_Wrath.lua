@@ -2104,8 +2104,8 @@ UnitButton_UpdateAll = function(self)
     UnitButton_UpdateAuras(self)
     I:UpdateStatusIcon_Resurrection(self)
 
-    if Cell.loaded then
-        -- 单位按钮显示、专精、载具发生变化时
+    if Cell.loaded and self.powerBarUpdateRequired then
+        self.powerBarUpdateRequired = nil
         if ShouldShowPowerBar(self) then
             ShowPowerBar(self)
         else
@@ -2200,6 +2200,7 @@ local function UnitButton_OnEvent(self, event, unit)
     if unit and (self.state.displayedUnit == unit or self.state.unit == unit) then
         if  event == "UNIT_ENTERED_VEHICLE" or event == "UNIT_EXITED_VEHICLE" or event == "UNIT_CONNECTION" then
             self.updateRequired = 1
+            self.powerBarUpdateRequired = 1
         
         elseif event == "UNIT_NAME_UPDATE" then
             UnitButton_UpdateName(self)
@@ -2260,12 +2261,14 @@ local function UnitButton_OnEvent(self, event, unit)
         elseif event == "UNIT_PORTRAIT_UPDATE" then -- pet summoned far away
             if self.state.healthMax == 0 then
                 self.updateRequired = 1
+                self.powerBarUpdateRequired = 1
             end
         end
 
     else
         if event == "PLAYER_ENTERING_WORLD" or event == "GROUP_ROSTER_UPDATE" then
             self.updateRequired = 1
+            self.powerBarUpdateRequired = 1
 
         elseif event == "PLAYER_REGEN_ENABLED" or event == "PLAYER_REGEN_DISABLED" then
             UnitButton_UpdateLeader(self, event)
@@ -2343,6 +2346,7 @@ Cell.vars.names = {} -- name to unitid
 
 local function UnitButton_OnShow(self)
     self.updateRequired = nil -- prevent UnitButton_UpdateAll twice. when convert party <-> raid, GROUP_ROSTER_UPDATE fired.
+    self.powerBarUpdateRequired = 1
     UnitButton_RegisterEvents(self)
 
     --[[
@@ -2422,6 +2426,7 @@ local function UnitButton_OnTick(self)
                 F:RemoveElementsExceptKeys(self.state, "unit", "displayedUnit")
                 self.__displayedGuid = displayedGuid
                 self.updateRequired = 1
+                self.powerBarUpdateRequired = 1
             end
 
             local guid = UnitGUID(self.state.unit)
@@ -2460,7 +2465,7 @@ local function UnitButton_OnTick(self)
         UnitButton_UpdateAll(self)
     end
 
-    --! for targettarget
+    --! for Xtarget
     if self:GetAttribute("refreshOnUpdate") then
         UnitButton_UpdateAll(self)
     end

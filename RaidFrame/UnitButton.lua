@@ -1305,6 +1305,7 @@ local function GetRole(b)
 end
 
 local function ShouldShowPowerBar(b)
+    if not b:IsVisible() then return end
     if not b.powerSize or b.powerSize == 0 then return end
 
     if not b.state.guid then
@@ -1341,7 +1342,7 @@ local function ShouldShowPowerBar(b)
 end
 
 local function ShowPowerBar(b)
-    if b:IsShown() then
+    if b:IsVisible() then
         b:RegisterEvent("UNIT_POWER_FREQUENT")
         b:RegisterEvent("UNIT_MAXPOWER")
         b:RegisterEvent("UNIT_DISPLAYPOWER")
@@ -1364,7 +1365,7 @@ local function ShowPowerBar(b)
         P:Point(b.widget.powerBar, "BOTTOMRIGHT", b, "BOTTOMRIGHT", -1, 1)
     end
 
-    if b:IsShown() then
+    if b:IsVisible() then
         -- update now
         UnitButton_UpdatePowerMax(b)
         UnitButton_UpdatePower(b)
@@ -2086,8 +2087,8 @@ UnitButton_UpdateAll = function(self)
     UnitButton_UpdateAuras(self)
     I:UpdateStatusIcon_Resurrection(self)
 
-    if Cell.loaded then
-        -- 单位按钮显示、专精、载具发生变化时
+    if Cell.loaded and self.powerBarUpdateRequired then
+        self.powerBarUpdateRequired = nil
         if ShouldShowPowerBar(self) then
             ShowPowerBar(self)
         else
@@ -2182,6 +2183,7 @@ local function UnitButton_OnEvent(self, event, unit, arg)
     if unit and (self.state.displayedUnit == unit or self.state.unit == unit) then
         if  event == "UNIT_ENTERED_VEHICLE" or event == "UNIT_EXITED_VEHICLE" or event == "UNIT_CONNECTION" then
             self.updateRequired = 1
+            self.powerBarUpdateRequired = 1
         
         elseif event == "UNIT_NAME_UPDATE" then
             UnitButton_UpdateName(self)
@@ -2252,12 +2254,14 @@ local function UnitButton_OnEvent(self, event, unit, arg)
         elseif event == "UNIT_PORTRAIT_UPDATE" then -- pet summoned far away
             if self.state.healthMax == 0 then
                 self.updateRequired = 1
+                self.powerBarUpdateRequired = 1
             end
         end
 
     else
         if event == "PLAYER_ENTERING_WORLD" or event == "GROUP_ROSTER_UPDATE" then
             self.updateRequired = 1
+            self.powerBarUpdateRequired = 1
 
         elseif event == "PLAYER_REGEN_ENABLED" or event == "PLAYER_REGEN_DISABLED" then
             UnitButton_UpdateLeader(self, event)
@@ -2343,6 +2347,7 @@ Cell.vars.names = {} -- name to unitid
 local function UnitButton_OnShow(self)
     -- print(GetTime(), "OnShow", self:GetName())
     self.updateRequired = nil -- prevent UnitButton_UpdateAll twice. when convert party <-> raid, GROUP_ROSTER_UPDATE fired.
+    self.powerBarUpdateRequired = 1
     UnitButton_RegisterEvents(self)
 
     --[[
@@ -2367,6 +2372,7 @@ local function UnitButton_OnShow(self)
 end
 
 local function UnitButton_OnHide(self)
+    -- print(GetTime(), "OnHide", self:GetName())
     UnitButton_UnregisterEvents(self)
 
     if self.state.unit then
@@ -2403,6 +2409,7 @@ end
 local UNKNOWN = _G.UNKNOWN
 local UNKNOWNOBJECT = _G.UNKNOWNOBJECT
 local function UnitButton_OnTick(self)
+    -- print(GetTime(), "OnTick", self.updateRequired, self:GetAttribute("refreshOnUpdate"), self:GetName())
     local e = (self.__tickCount or 0) + 1
     if e >= 2 then -- every 0.5 second
         e = 0
@@ -2414,6 +2421,7 @@ local function UnitButton_OnTick(self)
                 F:RemoveElementsExceptKeys(self.state, "unit", "displayedUnit")
                 self.__displayedGuid = displayedGuid
                 self.updateRequired = 1
+                self.powerBarUpdateRequired = 1
             end
 
             local guid = UnitGUID(self.state.unit)
@@ -2455,7 +2463,7 @@ local function UnitButton_OnTick(self)
         UnitButton_UpdateAll(self)
     end
 
-    --! for targettarget
+    --! for Xtarget
     if self:GetAttribute("refreshOnUpdate") then
         UnitButton_UpdateAll(self)
     end
@@ -2474,6 +2482,7 @@ end
 -- button functions
 -------------------------------------------------
 function B:SetPowerSize(button, size)
+    -- print(GetTime(), "SetPowerSize", button:GetName(), button:IsShown(), button:IsVisible())
     button.powerSize = size
 
     if size == 0 then
