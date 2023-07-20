@@ -922,7 +922,7 @@ local function CreateSetting_DurationVisibility(parent)
         widget = addon:CreateFrame("CellIndicatorSettings_DurationVisibility", parent, 240, 50)
         settingWidgets["durationVisibility"] = widget
 
-        widget.durationVisibility = addon:CreateDropdown(widget, 200)
+        widget.durationVisibility = addon:CreateDropdown(widget, 245)
         widget.durationVisibility:SetPoint("TOPLEFT", 5, -20)
         widget.durationVisibility:SetItems({
             {
@@ -990,9 +990,9 @@ local function CreateSetting_DurationVisibility(parent)
             },
         })
 
-        widget.orientationText = widget:CreateFontString(nil, "OVERLAY", font_name)
-        widget.orientationText:SetText(L["showDuration"])
-        widget.orientationText:SetPoint("BOTTOMLEFT", widget.durationVisibility, "TOPLEFT", 0, 1)
+        widget.durationVisibilityText = widget:CreateFontString(nil, "OVERLAY", font_name)
+        widget.durationVisibilityText:SetText(L["showDuration"])
+        widget.durationVisibilityText:SetPoint("BOTTOMLEFT", widget.durationVisibility, "TOPLEFT", 0, 1)
 
         -- associate db
         function widget:SetFunc(func)
@@ -1018,7 +1018,7 @@ local function CreateSetting_Orientation(parent)
         widget = addon:CreateFrame("CellIndicatorSettings_Orientation", parent, 240, 50)
         settingWidgets["orientation"] = widget
 
-        widget.orientation = addon:CreateDropdown(widget, 153)
+        widget.orientation = addon:CreateDropdown(widget, 245)
         widget.orientation:SetPoint("TOPLEFT", 5, -20)
         widget.orientation:SetItems({
             {
