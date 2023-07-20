@@ -3,85 +3,30 @@ local L = Cell.L
 local F = Cell.funcs
 local P = Cell.pixelPerfectFuncs
 
-local nicknameOptionsFrame
-local nicknameEB, syncCB, customCB, list, newItem
+local customNicknamesFrame
+local customCB, list, newItem
 local LoadList
 local customs = {}
 
-local function CreateNicknameOptionsFrame()
-    nicknameOptionsFrame = CreateFrame("Frame", "CellOptionsFrame_Nicknames", Cell.frames.generalTab, "BackdropTemplate")
-    Cell:StylizeFrame(nicknameOptionsFrame, nil, Cell:GetAccentColorTable())
-    nicknameOptionsFrame:SetFrameLevel(Cell.frames.generalTab:GetFrameLevel() + 50)
-    nicknameOptionsFrame:Hide()
+local function CreateCustomNicknamesFrame()
+    customNicknamesFrame = CreateFrame("Frame", "CellOptionsFrame_Nicknames", Cell.frames.generalTab, "BackdropTemplate")
+    Cell:StylizeFrame(customNicknamesFrame, nil, Cell:GetAccentColorTable())
+    customNicknamesFrame:SetFrameLevel(Cell.frames.generalTab:GetFrameLevel() + 50)
+    customNicknamesFrame:Hide()
 
-    nicknameOptionsFrame:SetPoint("LEFT", Cell.frames.generalTab.nicknameOptionsBtn, "RIGHT", 5, 0)
-    nicknameOptionsFrame:SetPoint("TOPRIGHT", -5, -5)
-    nicknameOptionsFrame:SetPoint("BOTTOMRIGHT", -5, 5)
+    customNicknamesFrame:SetPoint("LEFT", Cell.frames.generalTab.customNicknamesBtn, "RIGHT", 5, 0)
+    customNicknamesFrame:SetPoint("BOTTOMRIGHT", -5, 5)
+    customNicknamesFrame:SetHeight(425)
 
-    nicknameOptionsFrame:SetScript("OnHide", function()
-        nicknameOptionsFrame:Hide()
+    customNicknamesFrame:SetScript("OnHide", function()
+        customNicknamesFrame:Hide()
         Cell.frames.generalTab.mask:Hide()
-        Cell.frames.generalTab.nicknameOptionsBtn:SetFrameLevel(Cell.frames.generalTab:GetFrameLevel() + 1)
+        Cell.frames.generalTab.customNicknamesBtn:SetFrameLevel(Cell.frames.generalTab:GetFrameLevel() + 1)
         newItem:Hide()
     end)
 
-    -- my nickname
-    nicknameEB = Cell:CreateEditBox(nicknameOptionsFrame, 20, 20)
-    nicknameEB:SetPoint("TOPLEFT", 10, -10)
-    nicknameEB:SetPoint("TOPRIGHT", -10, -10)
-    nicknameEB:SetScript("OnTextChanged", function(self, userChanged)
-        local text = strtrim(nicknameEB:GetText())
-
-        if text == "" then
-            nicknameEB.tip:Show()
-        else
-            nicknameEB.tip:Hide()
-        end
-        
-        if userChanged then
-            if CellDB["nicknames"]["mine"] ~= "" then -- already set a nickname
-                if text ~= CellDB["nicknames"]["mine"] then -- not the same nickname
-                    nicknameEB.confirmBtn:Show()
-                else
-                    nicknameEB.confirmBtn:Hide()
-                end
-            elseif text ~= "" then -- nickname not set, expect a non-empty string
-                nicknameEB.confirmBtn:Show()
-            else
-                nicknameEB.confirmBtn:Hide()
-            end
-        end
-    end)
-
-    nicknameEB.confirmBtn = Cell:CreateButton(nicknameEB, L["Awesome!"], "accent", {77, 20})
-    nicknameEB.confirmBtn:SetPoint("TOPRIGHT", nicknameEB)
-    nicknameEB.confirmBtn:Hide()
-    nicknameEB.confirmBtn:SetScript("OnHide", function()
-        nicknameEB.confirmBtn:Hide()
-    end)
-    nicknameEB.confirmBtn:SetScript("OnClick", function()
-        local text = strtrim(nicknameEB:GetText())
-        nicknameEB:SetText(text)
-        CellDB["nicknames"]["mine"] = text
-        Cell:Fire("UpdateNicknames", "mine", text)
-        nicknameEB.confirmBtn:Hide()
-        nicknameEB:ClearFocus()
-    end)
-
-    nicknameEB.tip = nicknameEB:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
-    nicknameEB.tip:SetPoint("LEFT", 5, 0)
-    nicknameEB.tip:SetTextColor(0.4, 0.4, 0.4, 1)
-    nicknameEB.tip:SetText(L["My Nickname"])
-
-    -- sync with others
-    syncCB = Cell:CreateCheckButton(nicknameOptionsFrame, L["Sync Nicknames with Others"], function(checked, self)
-        CellDB["nicknames"]["sync"] = checked
-        Cell:Fire("UpdateNicknames", "sync", checked)
-    end)
-    syncCB:SetPoint("TOPLEFT", nicknameEB, "BOTTOMLEFT", 0, -10)
-
     -- custom
-    customCB = Cell:CreateCheckButton(nicknameOptionsFrame, L["Custom Nicknames"], function(checked, self)
+    customCB = Cell:CreateCheckButton(customNicknamesFrame, L["Custom Nicknames"], function(checked, self)
         CellDB["nicknames"]["custom"] = checked
         Cell:Fire("UpdateNicknames", "custom", checked)
         if checked then
@@ -90,10 +35,10 @@ local function CreateNicknameOptionsFrame()
             list.mask:Show()
         end
     end, L["Only visible to me"])
-    customCB:SetPoint("TOPLEFT", syncCB, "BOTTOMLEFT", 0, -26)
+    customCB:SetPoint("TOPLEFT", 10, -10)
 
     -- list
-    list = Cell:CreateFrame(nil, nicknameOptionsFrame)
+    list = Cell:CreateFrame(nil, customNicknamesFrame)
     list:SetPoint("TOPLEFT", customCB, "BOTTOMLEFT", 0, -10)
     list:SetPoint("BOTTOMRIGHT", -10, 10)
     list:Show()
@@ -286,12 +231,10 @@ LoadList = function()
         end
     end
 
-    list.scrollFrame:SetContentHeight((#CellDB["nicknames"]["list"]+1)*19+1)
+    list.scrollFrame:SetContentHeight(20, #CellDB["nicknames"]["list"]+1, -1)
 end
 
 local function LoadData()
-    nicknameEB:SetText(CellDB["nicknames"]["mine"])
-    syncCB:SetChecked(CellDB["nicknames"]["sync"])
     customCB:SetChecked(CellDB["nicknames"]["custom"])
     if CellDB["nicknames"]["custom"] then
         list.mask:Hide()
@@ -301,17 +244,17 @@ local function LoadData()
     LoadList()
 end
 
-function F:ShowNicknameOptions()
-    if not nicknameOptionsFrame then
-        CreateNicknameOptionsFrame()
+function F:ShowCustomNicknames()
+    if not customNicknamesFrame then
+        CreateCustomNicknamesFrame()
     end
 
-    if nicknameOptionsFrame:IsShown() then
-        nicknameOptionsFrame:Hide()
-        Cell.frames.generalTab.nicknameOptionsBtn:SetFrameLevel(Cell.frames.generalTab:GetFrameLevel() + 1)
+    if customNicknamesFrame:IsShown() then
+        customNicknamesFrame:Hide()
+        Cell.frames.generalTab.customNicknamesBtn:SetFrameLevel(Cell.frames.generalTab:GetFrameLevel() + 1)
     else
-        nicknameOptionsFrame:Show()
-        Cell.frames.generalTab.nicknameOptionsBtn:SetFrameLevel(Cell.frames.generalTab:GetFrameLevel() + 50)
+        customNicknamesFrame:Show()
+        Cell.frames.generalTab.customNicknamesBtn:SetFrameLevel(Cell.frames.generalTab:GetFrameLevel() + 50)
         Cell.frames.generalTab.mask:Show()
         LoadData()
     end

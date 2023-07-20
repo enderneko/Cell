@@ -6,6 +6,9 @@
     <Script file="RaidRosterFrame.lua"/>
     <Script file="DeathReport.lua"/>
     <Script file="BuffTracker.lua"/>
+    <Script file="RaidTools.lua"/>
+    <Script file="SpellRequest.lua"/>
+    <Script file="DispelRequest.lua"/>
     <Script file="Glows.lua"/>
     <Script file="GlowOptions.lua"/>
 </Ui>

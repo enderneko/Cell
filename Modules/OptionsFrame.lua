@@ -30,7 +30,7 @@ end
 -------------------------------------------------
 -- button group
 -------------------------------------------------
-local generalBtn, appearanceBtn, clickCastingsBtn, aboutBtn, layoutsBtn, indicatorsBtn, debuffsBtn, glowsBtn, closeBtn
+local generalBtn, appearanceBtn, clickCastingsBtn, aboutBtn, layoutsBtn, indicatorsBtn, debuffsBtn, utilitiesBtn, closeBtn
 
 local function CreateTabButtons()
     generalBtn = Cell:CreateButton(optionsFrame, L["General"], "accent-hover", {105, 20}, false, false, "CELL_FONT_WIDGET_TITLE", "CELL_FONT_WIDGET_TITLE_DISABLE")
@@ -39,7 +39,7 @@ local function CreateTabButtons()
     clickCastingsBtn = Cell:CreateButton(optionsFrame, L["Click-Castings"], "accent-hover", {120, 20}, false, false, "CELL_FONT_WIDGET_TITLE", "CELL_FONT_WIDGET_TITLE_DISABLE")
     indicatorsBtn = Cell:CreateButton(optionsFrame, L["Indicators"], "accent-hover", {105, 20}, false, false, "CELL_FONT_WIDGET_TITLE", "CELL_FONT_WIDGET_TITLE_DISABLE")
     debuffsBtn = Cell:CreateButton(optionsFrame, L["Raid Debuffs"], "accent-hover", {120, 20}, false, false, "CELL_FONT_WIDGET_TITLE", "CELL_FONT_WIDGET_TITLE_DISABLE")
-    glowsBtn = Cell:CreateButton(optionsFrame, L["Glows"], "accent-hover", {105, 20}, false, false, "CELL_FONT_WIDGET_TITLE", "CELL_FONT_WIDGET_TITLE_DISABLE")
+    utilitiesBtn = Cell:CreateButton(optionsFrame, L["Utilities"], "accent-hover", {105, 20}, false, false, "CELL_FONT_WIDGET_TITLE", "CELL_FONT_WIDGET_TITLE_DISABLE")
     aboutBtn = Cell:CreateButton(optionsFrame, L["About"], "accent-hover", {86, 20}, false, false, "CELL_FONT_WIDGET_TITLE", "CELL_FONT_WIDGET_TITLE_DISABLE")
     closeBtn = Cell:CreateButton(optionsFrame, "×", "red", {20, 20}, false, false, "CELL_FONT_SPECIAL", "CELL_FONT_SPECIAL")
     closeBtn:SetScript("OnClick", function()
@@ -50,15 +50,15 @@ local function CreateTabButtons()
     layoutsBtn:SetPoint("BOTTOMLEFT", optionsFrame, "TOPLEFT", 0, P:Scale(-1))
     indicatorsBtn:SetPoint("BOTTOMLEFT", layoutsBtn, "BOTTOMRIGHT", P:Scale(-1), 0)
     debuffsBtn:SetPoint("BOTTOMLEFT", indicatorsBtn, "BOTTOMRIGHT", P:Scale(-1), 0)
-    glowsBtn:SetPoint("BOTTOMLEFT", debuffsBtn, "BOTTOMRIGHT", P:Scale(-1), 0)
-    glowsBtn:SetPoint("BOTTOMRIGHT", optionsFrame, "TOPRIGHT", 0, P:Scale(-1))
+    utilitiesBtn:SetPoint("BOTTOMLEFT", debuffsBtn, "BOTTOMRIGHT", P:Scale(-1), 0)
+    utilitiesBtn:SetPoint("BOTTOMRIGHT", optionsFrame, "TOPRIGHT", 0, P:Scale(-1))
     -- line 2
     generalBtn:SetPoint("BOTTOMLEFT", layoutsBtn, "TOPLEFT", 0, P:Scale(-1))
     appearanceBtn:SetPoint("BOTTOMLEFT", generalBtn, "BOTTOMRIGHT", P:Scale(-1), 0)
     clickCastingsBtn:SetPoint("BOTTOMLEFT", appearanceBtn, "BOTTOMRIGHT", P:Scale(-1), 0)
     aboutBtn:SetPoint("BOTTOMLEFT", clickCastingsBtn, "BOTTOMRIGHT", P:Scale(-1), 0)
     closeBtn:SetPoint("BOTTOMLEFT", aboutBtn, "BOTTOMRIGHT", P:Scale(-1), 0)
-    closeBtn:SetPoint("BOTTOMRIGHT", glowsBtn, "TOPRIGHT", 0, P:Scale(-1))
+    closeBtn:SetPoint("BOTTOMRIGHT", utilitiesBtn, "TOPRIGHT", 0, P:Scale(-1))
     
     RegisterDragForOptionsFrame(generalBtn)
     RegisterDragForOptionsFrame(appearanceBtn)
@@ -66,7 +66,7 @@ local function CreateTabButtons()
     RegisterDragForOptionsFrame(clickCastingsBtn)
     RegisterDragForOptionsFrame(indicatorsBtn)
     RegisterDragForOptionsFrame(debuffsBtn)
-    RegisterDragForOptionsFrame(glowsBtn)
+    RegisterDragForOptionsFrame(utilitiesBtn)
     RegisterDragForOptionsFrame(aboutBtn)
     
     generalBtn.id = "general"
@@ -75,17 +75,17 @@ local function CreateTabButtons()
     clickCastingsBtn.id = "clickCastings"
     indicatorsBtn.id = "indicators"
     debuffsBtn.id = "debuffs"
-    glowsBtn.id = "glows"
+    utilitiesBtn.id = "utilities"
     aboutBtn.id = "about"
     
     local tabHeight = {
-        ["general"] = 515,
+        ["general"] = 500,
         ["appearance"] = 635,
         ["layouts"] = 525,
         ["clickCastings"] = 592,
         ["indicators"] = 512,
         ["debuffs"] = 521,
-        ["glows"] = 459,
+        ["utilities"] = 459,
         ["about"] = 555,
     }
     
@@ -95,9 +95,34 @@ local function CreateTabButtons()
             Cell:Fire("ShowOptionsTab", tab)
             lastShownTab = tab
         end
+        if tab == utilitiesBtn.id then
+            F:ShowUtilityList()
+        end
+    end
+
+    local function OnEnter(b)
+        if b.id ~= utilitiesBtn.id then
+            F:HideUtilityList()
+        end
+        if utilitiesBtn.timer then
+            utilitiesBtn.timer:Cancel()
+            utilitiesBtn.timer = nil
+        end
+    end
+
+    local function OnLeave(b)
+        if b.id == utilitiesBtn.id then
+            utilitiesBtn.timer = C_Timer.NewTicker(0.5, function()
+                if not F:IsUtilityListMouseover() then
+                    F:HideUtilityList()
+                    utilitiesBtn.timer:Cancel()
+                    utilitiesBtn.timer = nil
+                end
+            end)
+        end
     end
     
-    Cell:CreateButtonGroup({generalBtn, appearanceBtn, layoutsBtn, clickCastingsBtn, indicatorsBtn, debuffsBtn, glowsBtn, aboutBtn}, ShowTab)
+    Cell:CreateButtonGroup({generalBtn, appearanceBtn, layoutsBtn, clickCastingsBtn, indicatorsBtn, debuffsBtn, utilitiesBtn, aboutBtn}, ShowTab, nil, nil, OnEnter, OnLeave)
 end
 
 -------------------------------------------------

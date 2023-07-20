@@ -3,25 +3,17 @@ local L = Cell.L
 local F = Cell.funcs
 local P = Cell.pixelPerfectFuncs
 
-local glowsTab = Cell:CreateFrame("CellOptionsFrame_GlowsTab", Cell.frames.optionsFrame, nil, nil, true)
-Cell.frames.glowsTab = glowsTab
-glowsTab:SetAllPoints(Cell.frames.optionsFrame)
-glowsTab:Hide()
-
-local whichGlowOption, srGlowOptionsBtn, drGlowOptionsBtn
-local ShowSpellEditFrame
-
 -------------------------------------------------
 -- spell request
 -------------------------------------------------
+local srPane, srGlowOptionsBtn
+local ShowSpellEditFrame
 local waTips, srEnabledCB, srExistsCB, srKnownOnlyCB, srFreeCDOnlyCB, srReplyCDCB, srReplyCastEB, srResponseDD, srResponseText, srTimeoutDD, srTimeoutText, srSpellsDD, srSpellsText, srAddBtn, srDeleteBtn, srMacroText, srMacroEB
 local srSelectedSpell, canEdit
 
 local function ShowSpellOptions(index)
-    if whichGlowOption == "spellRequest" then
-        F:HideGlowOptions()
-        Cell:StopRainbowText(srGlowOptionsBtn:GetFontString())
-    end
+    F:HideGlowOptions()
+    Cell:StopRainbowText(srGlowOptionsBtn:GetFontString())
 
     srSelectedSpell = index
 
@@ -69,10 +61,9 @@ local function ShowSpellOptions(index)
 end
 
 local function HideSpellOptions()
-    if whichGlowOption == "spellRequest" then
-        F:HideGlowOptions()
-        Cell:StopRainbowText(srGlowOptionsBtn:GetFontString())
-    end
+    F:HideGlowOptions()
+    Cell:StopRainbowText(srGlowOptionsBtn:GetFontString())
+
     srSelectedSpell = nil
     canEdit = nil
     srMacroText:Hide()
@@ -105,15 +96,15 @@ local function UpdateSRWidgets()
 end
 
 local function CreateSRPane()
-    if not Cell.frames.glowsTab.mask then
-        Cell:CreateMask(Cell.frames.glowsTab, nil, {1, -1, -1, 1})
-        Cell.frames.glowsTab.mask:Hide()
+    if not Cell.frames.utilitiesTab.mask then
+        Cell:CreateMask(Cell.frames.utilitiesTab, nil, {1, -1, -1, 1})
+        Cell.frames.utilitiesTab.mask:Hide()
     end
 
-    local srPane = Cell:CreateTitledPane(glowsTab, L["Spell Request"], 422, 250)
+    srPane = Cell:CreateTitledPane(Cell.frames.utilitiesTab, L["Spell Request"], 422, 250)
     srPane:SetPoint("TOPLEFT", 5, -5)
+    srPane:SetPoint("BOTTOMRIGHT", -5, 5)
     srPane:SetScript("OnHide", function()
-        whichGlowOption = nil
         HideSpellOptions()
     end)
 
@@ -149,7 +140,7 @@ local function CreateSRPane()
         HideSpellOptions()
         Cell:Fire("UpdateGlows", "spellRequest")
     end)
-    srEnabledCB:SetPoint("TOPLEFT", srPane, "TOPLEFT", 5, -65)
+    srEnabledCB:SetPoint("TOPLEFT", srPane, "TOPLEFT", 5, -70)
     ---------------------------------------------------------------------------------
     
     -- check exists -----------------------------------------------------------------
@@ -167,7 +158,7 @@ local function CreateSRPane()
         HideSpellOptions()
         Cell:Fire("UpdateGlows", "spellRequest")
     end, L["If disabled, no check, no reply, just glow"])
-    srKnownOnlyCB:SetPoint("TOPLEFT", srEnabledCB, "BOTTOMLEFT", 0, -8)
+    srKnownOnlyCB:SetPoint("TOPLEFT", srEnabledCB, "BOTTOMLEFT", 0, -15)
     ---------------------------------------------------------------------------------
     
     -- free cooldown ----------------------------------------------------------------
@@ -183,12 +174,12 @@ local function CreateSRPane()
         CellDB["glows"]["spellRequest"]["replyCooldown"] = checked
         Cell:Fire("UpdateGlows", "spellRequest")
     end)
-    srReplyCDCB:SetPoint("TOPLEFT", srKnownOnlyCB, "BOTTOMLEFT", 0, -8)
+    srReplyCDCB:SetPoint("TOPLEFT", srKnownOnlyCB, "BOTTOMLEFT", 0, -15)
     ---------------------------------------------------------------------------------
 
     -- reply after cast -------------------------------------------------------------
     srReplyCastEB = Cell:CreateEditBox(srPane, 20, 20)
-    srReplyCastEB:SetPoint("TOPLEFT", srFreeCDOnlyCB, "BOTTOMLEFT", 0, -5)
+    srReplyCastEB:SetPoint("TOPLEFT", srFreeCDOnlyCB, "BOTTOMLEFT", 0, -12)
     srReplyCastEB:SetPoint("RIGHT", -5, 0)
     srReplyCastEB:SetScript("OnTextChanged", function(self, userChanged)
         if userChanged then
@@ -313,7 +304,7 @@ local function CreateSRPane()
     srDeleteBtn:SetPoint("TOPLEFT", srAddBtn, "TOPRIGHT", P:Scale(-1), 0)
     srDeleteBtn:SetScript("OnClick", function()
         local name, _, icon = GetSpellInfo(CellDB["glows"]["spellRequest"]["spells"][srSelectedSpell]["spellId"])
-        local spellEditFrame = Cell:CreateConfirmPopup(glowsTab, 200, L["Delete spell?"].."\n".."|T"..icon..":0::0:0:16:16:1:15:1:15|t "..name, function(self)
+        local spellEditFrame = Cell:CreateConfirmPopup(Cell.frames.utilitiesTab, 200, L["Delete spell?"].."\n".."|T"..icon..":0::0:0:16:16:1:15:1:15|t "..name, function(self)
             tremove(CellDB["glows"]["spellRequest"]["spells"], srSelectedSpell)
             srSpellsDD:RemoveCurrentItem()
             HideSpellOptions()
@@ -329,15 +320,13 @@ local function CreateSRPane()
     srGlowOptionsBtn = Cell:CreateButton(srPane, L["Glow Options"], "accent", {105, 20})
     srGlowOptionsBtn:SetPoint("TOPLEFT", srDeleteBtn, "TOPRIGHT", P:Scale(-1), 0)
     srGlowOptionsBtn:SetScript("OnClick", function()
-        whichGlowOption = "spellRequest"
-        Cell:StopRainbowText(drGlowOptionsBtn:GetFontString())
         local fs = srGlowOptionsBtn:GetFontString()
         if fs.rainbow then
             Cell:StopRainbowText(fs)
         else
             Cell:StartRainbowText(fs)
         end
-        F:ShowGlowOptions(glowsTab, "spellRequest", CellDB["glows"]["spellRequest"]["spells"][srSelectedSpell]["glowOptions"])
+        F:ShowGlowOptions(Cell.frames.utilitiesTab, "spellRequest", CellDB["glows"]["spellRequest"]["spells"][srSelectedSpell]["glowOptions"])
     end)
     srGlowOptionsBtn:SetScript("OnHide", function()
         Cell:StopRainbowText(srGlowOptionsBtn:GetFontString())
@@ -384,16 +373,16 @@ local spellId, buffId, spellName, spellIcon
 local spellEditFrame, title, spellIdEB, buffIdEB, addBtn, cancelBtn
 
 local function CreateSpellEditFrame()
-    spellEditFrame = CreateFrame("Frame", nil, glowsTab, "BackdropTemplate")
+    spellEditFrame = CreateFrame("Frame", nil, Cell.frames.utilitiesTab, "BackdropTemplate")
     spellEditFrame:Hide()
     Cell:StylizeFrame(spellEditFrame, {0.1, 0.1, 0.1, 0.95}, Cell:GetAccentColorTable())
-    spellEditFrame:SetFrameLevel(glowsTab:GetFrameLevel() + 50)
+    spellEditFrame:SetFrameLevel(Cell.frames.utilitiesTab:GetFrameLevel() + 50)
     spellEditFrame:SetSize(200, 100)
     spellEditFrame:SetPoint("LEFT", 117, 0)
     spellEditFrame:SetPoint("BOTTOM", srAddBtn, 0, 0)
     spellEditFrame:SetScript("OnHide", function()
         CellSpellTooltip:Hide()
-        glowsTab.mask:Hide()
+        Cell.frames.utilitiesTab.mask:Hide()
         spellEditFrame:Hide()
         spellIdEB:SetText("")
         buffIdEB:SetText("")
@@ -509,7 +498,7 @@ local function CreateSpellEditFrame()
 end
 
 ShowSpellEditFrame = function(index)
-    glowsTab.mask:Show()
+    Cell.frames.utilitiesTab.mask:Show()
     spellEditFrame:Show()
 
     if not index then -- add
@@ -601,208 +590,18 @@ ShowSpellEditFrame = function(index)
 end
 
 -------------------------------------------------
--- dispel request
--------------------------------------------------
-local drEnabledCB, drDispellableCB, drResponseDD, drResponseText, drTimeoutDD, drTimeoutText, drMacroText, drMacroEB, drDebuffsText, drDebuffsEB
-
-local function UpdateDRWidgets()
-    Cell:SetEnabled(CellDB["glows"]["dispelRequest"]["enabled"], drDispellableCB, drResponseDD, drResponseText, drTimeoutDD, drTimeoutText, drMacroText, drMacroEB, drGlowOptionsBtn)
-    Cell:SetEnabled(CellDB["glows"]["dispelRequest"]["enabled"] and CellDB["glows"]["dispelRequest"]["responseType"] == "specific", drDebuffsText, drDebuffsEB)
-end
-
-local function CreateDRPane()
-    local drPane = Cell:CreateTitledPane(glowsTab, L["Dispel Request"], 422, 183)
-    drPane:SetPoint("TOPLEFT", 5, -275)
-
-    drGlowOptionsBtn = Cell:CreateButton(drPane, L["Glow Options"], "accent", {105, 17})
-    drGlowOptionsBtn:SetPoint("TOPRIGHT", drPane)
-    drGlowOptionsBtn:SetScript("OnClick", function()
-        whichGlowOption = "dispelRequest"
-        Cell:StopRainbowText(srGlowOptionsBtn:GetFontString())
-        local fs = drGlowOptionsBtn:GetFontString()
-        if fs.rainbow then
-            Cell:StopRainbowText(fs)
-        else
-            Cell:StartRainbowText(fs)
-        end
-        F:ShowGlowOptions(glowsTab, "dispelRequest", CellDB["glows"]["dispelRequest"]["glowOptions"])
-    end)
-    drGlowOptionsBtn:SetScript("OnHide", function()
-        Cell:StopRainbowText(drGlowOptionsBtn:GetFontString())
-    end)
-    Cell:RegisterForCloseDropdown(drGlowOptionsBtn)
-
-    local drTips = drPane:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
-    drTips:SetPoint("TOPLEFT", 5, -25)
-    drTips:SetText(L["Glow unit button when a group member sends a %s request"]:format(Cell:GetAccentColorString()..L["DISPEL"].."|r"))
-
-    -- enabled ----------------------------------------------------------------------
-    drEnabledCB = Cell:CreateCheckButton(drPane, L["Enabled"], function(checked, self)
-        CellDB["glows"]["dispelRequest"]["enabled"] = checked
-        UpdateDRWidgets()
-        Cell:Fire("UpdateGlows", "dispelRequest")
-        CellDropdownList:Hide()
-        
-        if whichGlowOption == "dispelRequest" then
-            F:HideGlowOptions()
-            Cell:StopRainbowText(drGlowOptionsBtn:GetFontString())
-        end
-    end)
-    drEnabledCB:SetPoint("TOPLEFT", drPane, "TOPLEFT", 5, -45)
-    ---------------------------------------------------------------------------------
-
-    -- dispellable ------------------------------------------------------------------
-    drDispellableCB = Cell:CreateCheckButton(drPane, L["Dispellable By Me"], function(checked, self)
-        CellDB["glows"]["dispelRequest"]["dispellableByMe"] = checked
-        Cell:Fire("UpdateGlows", "dispelRequest")
-    end)
-    drDispellableCB:SetPoint("TOPLEFT", drEnabledCB, "TOPLEFT", 200, 0)
-    ---------------------------------------------------------------------------------
-
-    -- response ---------------------------------------------------------------------
-    drResponseDD = Cell:CreateDropdown(drPane, 345)
-    drResponseDD:SetPoint("TOPLEFT", drEnabledCB, "BOTTOMLEFT", 0, -27)
-    drResponseDD:SetItems({
-        {
-            ["text"] = L["Respond to all dispellable debuffs"],
-            ["value"] = "all",
-            ["onClick"] = function()
-                CellDB["glows"]["dispelRequest"]["responseType"] = "all"
-                UpdateDRWidgets()
-                Cell:Fire("UpdateGlows", "dispelRequest")
-            end
-        },
-        {
-            ["text"] = L["Respond to specific dispellable debuffs"],
-            ["value"] = "specific",
-            ["onClick"] = function()
-                CellDB["glows"]["dispelRequest"]["responseType"] = "specific"
-                UpdateDRWidgets()
-                Cell:Fire("UpdateGlows", "dispelRequest")
-            end
-        },
-    })
-
-    drResponseText = drPane:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
-    drResponseText:SetPoint("BOTTOMLEFT", drResponseDD, "TOPLEFT", 0, 1)
-    drResponseText:SetText(L["Response Type"])
-    ---------------------------------------------------------------------------------
-
-    -- timeout ----------------------------------------------------------------------
-    drTimeoutDD = Cell:CreateDropdown(drPane, 60)
-    drTimeoutDD:SetPoint("TOPLEFT", drResponseDD, "TOPRIGHT", 7, 0)
-
-    local items = {}
-    local secs = {1, 2, 3, 4, 5, 10, 15, 20, 25, 30}
-    for _, s in ipairs(secs) do
-        tinsert(items, {
-            ["text"] = s,
-            ["value"] = s,
-            ["onClick"] = function()
-                CellDB["glows"]["dispelRequest"]["timeout"] = s
-                Cell:Fire("UpdateGlows", "dispelRequest")
-            end
-        })
-    end
-    drTimeoutDD:SetItems(items)
-
-    drTimeoutText = drPane:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
-    drTimeoutText:SetPoint("BOTTOMLEFT", drTimeoutDD, "TOPLEFT", 0, 1)
-    drTimeoutText:SetText(L["Timeout"])
-    ---------------------------------------------------------------------------------
-
-    -- macro ------------------------------------------------------------------------
-    drMacroText = drPane:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
-    drMacroText:SetPoint("TOPLEFT", drResponseDD, "BOTTOMLEFT", 0, -10)
-    drMacroText:SetText(L["Macro"])
-
-    drMacroEB = Cell:CreateEditBox(drPane, 357, 20)
-    drMacroEB:SetPoint("TOP", drResponseDD, "BOTTOM", 0, -7)
-    drMacroEB:SetPoint("LEFT", drMacroText, "RIGHT", 5, 0)
-    drMacroEB:SetPoint("RIGHT", -5, 0)
-    drMacroEB:SetText("/run C_ChatInfo.SendAddonMessage(\"CELL_REQ_D\",\"D\",\"RAID\")")
-    drMacroEB:SetCursorPosition(0)
-    drMacroEB:SetScript("OnTextChanged", function(self, userChanged)
-        if userChanged then
-            drMacroEB:SetText("/run C_ChatInfo.SendAddonMessage(\"CELL_REQ_D\",\"D\",\"RAID\")")
-            drMacroEB:SetCursorPosition(0)
-            drMacroEB:HighlightText()
-        end
-    end)
-    drMacroEB.gauge = srMacroEB:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
-    drMacroEB.gauge:SetText(drMacroEB:GetText())
-    drMacroEB:SetScript("OnEditFocusGained", function()
-        local requiredWidth = drMacroEB.gauge:GetStringWidth()
-        if requiredWidth > drMacroEB:GetWidth() then
-            drMacroEB:ClearAllPoints()
-            drMacroEB:SetPoint("TOP", drResponseDD, "BOTTOM", 0, -7)
-            drMacroEB:SetPoint("LEFT", drMacroText, "RIGHT", 5, 0)
-            drMacroEB:SetWidth(requiredWidth + 20)
-            drMacroEB:HighlightText()
-        end
-    end)
-    drMacroEB:SetScript("OnEditFocusLost", function()
-        drMacroEB:ClearAllPoints()
-        drMacroEB:SetPoint("TOP", drResponseDD, "BOTTOM", 0, -7)
-        drMacroEB:SetPoint("LEFT", drMacroText, "RIGHT", 5, 0)
-        drMacroEB:SetPoint("RIGHT", -5, 0)
-        drMacroEB:SetCursorPosition(0)
-        drMacroEB:HighlightText(0, 0)
-    end)
-    ---------------------------------------------------------------------------------
-
-    -- debuffs ----------------------------------------------------------------------
-    drDebuffsEB = Cell:CreateEditBox(drPane, 357, 20)
-    drDebuffsEB:SetPoint("TOP", drMacroEB, "BOTTOM", 0, -25)
-    drDebuffsEB:SetPoint("LEFT", 5, 0)
-    drDebuffsEB:SetPoint("RIGHT", -5, 0)
-    drDebuffsEB:SetScript("OnTextChanged", function(self, userChanged)
-        if userChanged then
-            CellDB["glows"]["dispelRequest"]["debuffs"] = F:StringToTable(drDebuffsEB:GetText(), " ", true)
-            drDebuffsEB.gauge:SetText(drDebuffsEB:GetText())
-            Cell:Fire("UpdateGlows", "dispelRequest")
-        end
-    end)
-    drDebuffsEB.gauge = srMacroEB:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
-    drDebuffsEB:SetScript("OnEditFocusGained", function()
-        local requiredWidth = drDebuffsEB.gauge:GetStringWidth()
-        if requiredWidth > drDebuffsEB:GetWidth() then
-            drDebuffsEB:ClearAllPoints()
-            drDebuffsEB:SetPoint("TOP", drMacroEB, "BOTTOM", 0, -25)
-            drDebuffsEB:SetPoint("LEFT", 5, 0)
-            drDebuffsEB:SetWidth(requiredWidth + 20)
-            drDebuffsEB:HighlightText()
-        end
-    end)
-    drDebuffsEB:SetScript("OnEditFocusLost", function()
-        drDebuffsEB:ClearAllPoints()
-        drDebuffsEB:SetPoint("TOP", drMacroEB, "BOTTOM", 0, -25)
-        drDebuffsEB:SetPoint("LEFT", 5, 0)
-        drDebuffsEB:SetPoint("RIGHT", -5, 0)
-        drDebuffsEB:SetCursorPosition(0)
-        drDebuffsEB:HighlightText(0, 0)
-    end)
-
-    drDebuffsText = drPane:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
-    drDebuffsText:SetPoint("BOTTOMLEFT", drDebuffsEB, "TOPLEFT", 0, 1)
-    drDebuffsText:SetText(L["Debuffs"].." ("..L["IDs separated by whitespaces"]..")")
-    ---------------------------------------------------------------------------------
-end
-
--------------------------------------------------
 -- show
 -------------------------------------------------
 local init
-local function ShowTab(tab)
-    if tab == "glows" then
+local function ShowUtilitySettings(which)
+    if which == "spellRequest" then
         if not init then
             CreateSRPane()
             CreateSpellEditFrame()
-            CreateDRPane()
         end
         
-        glowsTab:Show()
-
+        srPane:Show()
+        
         if init then return end
         init = true
 
@@ -822,17 +621,8 @@ local function ShowTab(tab)
         HideSpellOptions()
         LoadSpellsDropdown()
         
-        -- dispel request
-        drEnabledCB:SetChecked(CellDB["glows"]["dispelRequest"]["enabled"])
-        drDispellableCB:SetChecked(CellDB["glows"]["dispelRequest"]["dispellableByMe"])
-        drResponseDD:SetSelectedValue(CellDB["glows"]["dispelRequest"]["responseType"])
-        drTimeoutDD:SetSelected(CellDB["glows"]["dispelRequest"]["timeout"])
-        drDebuffsEB:SetText(F:TableToString(CellDB["glows"]["dispelRequest"]["debuffs"], " "))
-        drDebuffsEB.gauge:SetText(drDebuffsEB:GetText())
-        drDebuffsEB:SetCursorPosition(0)
-        UpdateDRWidgets()
-    else
-        glowsTab:Hide()
+    elseif init then
+        srPane:Hide()
     end
 end
-Cell:RegisterCallback("ShowOptionsTab", "GlowsTab_ShowTab", ShowTab)
+Cell:RegisterCallback("ShowUtilitySettings", "SpellRequest_ShowUtilitySettings", ShowUtilitySettings)

@@ -46,7 +46,9 @@ RaidFrames\Groups\RaidPetFrame.lua
 RaidFrames\Groups\NPCFrame.lua
 RaidFrames\Groups\SpotlightFrame.lua
 
-Utilities\LoadUtilities.xml
-Patrons.lua
 Modules\LoadModules.xml
+Utilities\LoadUtilities.xml
+
 RaidDebuffs\LoadRaidDebuffs.xml
+
+Patrons.lua

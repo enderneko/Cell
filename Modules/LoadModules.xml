@@ -16,7 +16,7 @@
 	<Script file="Indicators_TextureSelector.lua"/>
 	<Script file="RaidDebuffs.lua"/>
 	<Script file="RaidDebuffs_ImportExport.lua"/>
-	<Script file="Glows.lua"/>
+	<Script file="Utilities.lua"/>
 	<Script file="About.lua"/>
 	<Script file="About_ImportExport.lua"/>
 	<Script file="About_Patrons.lua"/>

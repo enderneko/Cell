@@ -45,8 +45,10 @@ RaidFrames\Groups\RaidPetFrame.lua
 RaidFrames\Groups\NPCFrame.lua
 RaidFrames\Groups\SpotlightFrame.lua
 
-Utilities\LoadUtilities_Wrath.xml
 RaidDebuffs\ExpansionData.lua
-Patrons.lua
 Modules\LoadModules_Wrath.xml
+Utilities\LoadUtilities_Wrath.xml
+
 RaidDebuffs\LoadRaidDebuffs_Wrath.xml
+
+Patrons.lua

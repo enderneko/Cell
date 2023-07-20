@@ -310,7 +310,7 @@ end
 
 function F:HideGlowOptions()
     key = nil
-    glowOptionsFrame:Hide()
+    if glowOptionsFrame then glowOptionsFrame:Hide() end
 end
 
 -------------------------------------------------
