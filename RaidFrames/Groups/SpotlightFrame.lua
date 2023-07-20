@@ -7,7 +7,7 @@ local P = Cell.pixelPerfectFuncs
 local LCG = LibStub("LibCustomGlow-1.0")
 
 local placeholders, assignmentButtons = {}, {}
-local menu, target, targettarget, focus, unit, unitpet, unittarget, boss1target, clear
+local menu, target, targettarget, focus, focustarget, unit, unitpet, unittarget, boss1target, clear
 local tooltipPoint, tooltipRelativePoint, tooltipX, tooltipY
 local NONE = strlower(_G.NONE)
 -------------------------------------------------
@@ -377,9 +377,24 @@ focus:SetAttribute("_onclick", [[
     menu:CallMethod("Save", index, "focus")
 ]])
 
+focustarget = Cell:CreateButton(menu, L["Focus Target"], "transparent-accent", {20, 20}, true, false, nil, nil, "SecureHandlerAttributeTemplate,SecureHandlerClickTemplate")
+P:Point(focustarget, "TOPLEFT", focus, "BOTTOMLEFT")
+P:Point(focustarget, "TOPRIGHT", focus, "BOTTOMRIGHT")
+focustarget:SetAttribute("_onclick", [[
+    local menu = self:GetParent()
+    local index = menu:GetAttribute("index")
+    local spotlight = menu:GetFrameRef("spotlight"..index)
+    spotlight:SetAttribute("unit", "focustarget")
+    spotlight:SetAttribute("refreshOnUpdate", true)
+    menu:GetFrameRef("assignment"..index):SetAttribute("text", "focustarget")
+    menu:Hide()
+
+    menu:CallMethod("Save", index, "focustarget")
+]])
+
 unit = Cell:CreateButton(menu, L["Unit"], "transparent-accent", {20, 20}, true, false, nil, nil, "SecureHandlerAttributeTemplate,SecureHandlerClickTemplate")
-P:Point(unit, "TOPLEFT", focus, "BOTTOMLEFT")
-P:Point(unit, "TOPRIGHT", focus, "BOTTOMRIGHT")
+P:Point(unit, "TOPLEFT", focustarget, "BOTTOMLEFT")
+P:Point(unit, "TOPRIGHT", focustarget, "BOTTOMRIGHT")
 unit:SetAttribute("_onclick", [[
     local menu = self:GetParent()
     local index = menu:GetAttribute("index")
@@ -448,7 +463,7 @@ function unittarget:SetUnit(index, target)
     end
 end
 
-boss1target = Cell:CreateButton(menu, L["Boss1's Target"], "transparent-accent", {20, 20}, true, false, nil, nil, "SecureHandlerAttributeTemplate,SecureHandlerClickTemplate")
+boss1target = Cell:CreateButton(menu, L["Boss1 Target"], "transparent-accent", {20, 20}, true, false, nil, nil, "SecureHandlerAttributeTemplate,SecureHandlerClickTemplate")
 P:Point(boss1target, "TOPLEFT", unittarget, "BOTTOMLEFT")
 P:Point(boss1target, "TOPRIGHT", unittarget, "BOTTOMRIGHT")
 boss1target:SetAttribute("_onclick", [[
@@ -503,7 +518,7 @@ local dumbFS2 = menu:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
 dumbFS2:SetText(L["Unit's Target"])
 
 function menu:UpdatePixelPerfect()
-    P:Size(menu, ceil(max(dumbFS1:GetStringWidth(), dumbFS2:GetStringWidth())) + 13, 20*8+2)
+    P:Size(menu, ceil(max(dumbFS1:GetStringWidth(), dumbFS2:GetStringWidth())) + 13, 20*9+2)
 
     Cell:StylizeFrame(menu, nil, Cell:GetAccentColorTable())
     target:UpdatePixelPerfect()
