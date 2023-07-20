@@ -36,17 +36,17 @@ Indicators\TargetedSpells.lua
 Indicators\Consumables.lua
 Indicators\Custom.lua
 
-RaidFrame\MainFrame.lua
-RaidFrame\UnitButton.lua
-RaidFrame\UnitButton.xml
-RaidFrame\Groups\SoloFrame.lua
-RaidFrame\Groups\PartyFrame.lua
-RaidFrame\Groups\RaidFrame.lua
-RaidFrame\Groups\RaidPetFrame.lua
-RaidFrame\Groups\NPCFrame.lua
-RaidFrame\Groups\SpotlightFrame.lua
+RaidFrames\MainFrame.lua
+RaidFrames\UnitButton.lua
+RaidFrames\UnitButton.xml
+RaidFrames\Groups\SoloFrame.lua
+RaidFrames\Groups\PartyFrame.lua
+RaidFrames\Groups\RaidFrame.lua
+RaidFrames\Groups\RaidPetFrame.lua
+RaidFrames\Groups\NPCFrame.lua
+RaidFrames\Groups\SpotlightFrame.lua
 
-Tools\LoadTools.xml
+Utilities\LoadUtilities.xml
 Patrons.lua
 Modules\LoadModules.xml
 RaidDebuffs\LoadRaidDebuffs.xml
