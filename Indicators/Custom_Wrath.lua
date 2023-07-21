@@ -141,6 +141,9 @@ function I:ResetCustomIndicators(unitButton, auraType)
             unitButton.indicators[indicatorName]:Hide()
             if indicatorTable["isIcons"] then
                 indicatorTable["found"][unit] = 0
+                for i = 1, 10 do
+                    unitButton.indicators[indicatorName][i]:Hide()
+                end
             else
                 indicatorTable["topOrder"][unit] = 999
                 if not indicatorTable["top"][unit] then
