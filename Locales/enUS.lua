@@ -78,10 +78,17 @@ select(2, ...).L = setmetatable({
         <h1>Try disabling code snippets, if Cell doesn't work after update.</h1>
         <br/>
         
+        <h1>r185-release (Jul 21, 2023, 20:57 GMT+8)</h1>
+        <p>* Updated Options UI (wip).</p>
+        <p>+ Added "Only show overshields" to Shield Bar indicator.</p>
+        <p>+ Added "Focus Target" to spotlight frame.</p>
+        <p>* Fixed Raid Debuffs tab on Wrath.</p>
+        <br/>
+
         <h1>r184-release (Jul 19, 2023, 23:12 GMT+8)</h1>
         <p>* Fixed range checker for Evokers.</p>
         <p>* Fixed several layout issues.</p>
-        <p>+ Added "Boss1's Target" to spotlight frame.</p>
+        <p>+ Added "Boss1 Target" to spotlight frame.</p>
         <br/>
 
         <h1>r183-release (Jul 18, 2023, 15:09 GMT+8)</h1>

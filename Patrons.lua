@@ -41,6 +41,8 @@ local patrons = {
     {"千雪之心 (爱发电)", "qianxuezhixin"},
     {"朝 (爱发电)", "chao"},
     {"Sonichunter-地獄吼 (TW)", "sonichunter", "Katoomba-地獄吼 (TW)"},
+    {"ATOMS. ོ (爱发电)", "atoms"},
+    {"L (爱发电)", "atoms"},
 }
 
 -- sort
