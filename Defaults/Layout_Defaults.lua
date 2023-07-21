@@ -258,6 +258,7 @@ Cell.defaults.layout = {
             ["frameLevel"] = 2,
             ["height"] = 4,
             ["color"] = {1, 1, 0, 1},
+            ["onlyShowOvershields"] = false,
         }, -- 14
         {
             ["name"] = "AoE Healing",

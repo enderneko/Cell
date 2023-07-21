@@ -38,6 +38,7 @@ select(2, ...).L = setmetatable({
     ["durationFont"] = "Duration Font",
     ["fadeOut"] = "Fade out over time",
     ["shieldByMe"] = "Only show PW:S cast by me",
+    ["onlyShowOvershields"] = "Only show overshields",
 
     ["BOTTOM"] = "Bottom",
     ["BOTTOMLEFT"] = "Bottom Left",

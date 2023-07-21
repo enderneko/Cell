@@ -315,6 +315,8 @@ L["Only one threshold is displayed at a time"] = "同時間只會顯示一個臨
 L["Only show during encounter or in mythic+"] = "只在首領戰或 M+ 顯示"
 L["Only show when you have permission to do this"] = "只在你有權限這樣做時才會顯示"
 L["Only visible to me"] = "只對我自己顯示"
+--[[Translation missing --]]
+--[[ L["onlyShowOvershields"] = ""--]] 
 L["onlyShowTopGlow"] = "只有優先順序最高的減益會發光"
 L["Options"] = "選項"
 L["Options UI Accent Color"] = "選項介面強調色"

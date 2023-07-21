@@ -495,6 +495,7 @@ L["hideDamager"] = "隐藏伤害输出"
 L["hideInCombat"] = "战斗中隐藏"
 L["fadeOut"] = "随时间淡出"
 L["shieldByMe"] = "只显示我施放的真言术：盾"
+L["onlyShowOvershields"] = "只显示超过血量上限的护盾"
 
 L["left-to-right"] = "从左到右"
 L["right-to-left"] = "从右到左"

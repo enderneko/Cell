@@ -59,6 +59,7 @@ local UnitButton_UpdateAll
 local UnitButton_UpdateAuras, UnitButton_UpdateRole, UnitButton_UpdateLeader, UnitButton_UpdateStatusText
 local UnitButton_UpdateHealthColor, UnitButton_UpdateNameColor
 local UnitButton_UpdatePowerMax, UnitButton_UpdatePower, UnitButton_UpdatePowerType
+local UnitButton_UpdateShieldAbsorbs
 
 -------------------------------------------------
 -- unit button init indicators
@@ -153,6 +154,9 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
             end
             if t["shieldByMe"] ~= nil then
                 indicatorCustoms[t["indicatorName"]] = t["shieldByMe"]
+            end
+            if t["onlyShowOvershields"] ~= nil then
+                indicatorCustoms[t["indicatorName"]] = t["onlyShowOvershields"]
             end
         end
 
@@ -534,6 +538,11 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                 end, true)
             elseif value == "shieldByMe" then
                 indicatorCustoms[indicatorName] = value2
+            elseif value == "onlyShowOvershields" then
+                indicatorCustoms[indicatorName] = value2
+                F:IterateAllUnitButtons(function(b)
+                    UnitButton_UpdateShieldAbsorbs(b)
+                end, true)
             elseif value == "showDispelTypeIcons" then
                 F:IterateAllUnitButtons(function(b)
                     b.indicators[indicatorName]:ShowIcons(value2)
@@ -1841,7 +1850,7 @@ end
 -------------------------------------------------
 -- shields
 -------------------------------------------------
-local function UnitButton_UpdateShieldAbsorbs(self)
+UnitButton_UpdateShieldAbsorbs = function(self)
     local unit = self.state.displayedUnit
     if not unit then return end
 
@@ -1851,8 +1860,19 @@ local function UnitButton_UpdateShieldAbsorbs(self)
         local shieldPercent = self.state.totalAbsorbs / self.state.healthMax
 
         if enabledIndicators["shieldBar"] then
-            self.indicators.shieldBar:Show()
-            self.indicators.shieldBar:SetValue(shieldPercent)
+            if indicatorCustoms["shieldBar"] then
+                -- onlyShowOvershields
+                local overshieldPercent = (self.state.totalAbsorbs + self.state.health - self.state.healthMax) / self.state.healthMax
+                if overshieldPercent > 0 then
+                    self.indicators.shieldBar:Show()
+                    self.indicators.shieldBar:SetValue(overshieldPercent)
+                else
+                    self.indicators.shieldBar:Hide()
+                end
+            else
+                self.indicators.shieldBar:Show()
+                self.indicators.shieldBar:SetValue(shieldPercent)
+            end
         else
             self.indicators.shieldBar:Hide()
         end
