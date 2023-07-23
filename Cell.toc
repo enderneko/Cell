@@ -37,6 +37,11 @@ Indicators\Consumables.lua
 Indicators\Custom.lua
 
 RaidFrames\MainFrame.lua
+
+Modules\LoadModules.xml
+Utilities\LoadUtilities.xml
+RaidDebuffs\LoadRaidDebuffs.xml
+
 RaidFrames\UnitButton.lua
 RaidFrames\UnitButton.xml
 RaidFrames\Groups\SoloFrame.lua
@@ -45,10 +50,5 @@ RaidFrames\Groups\RaidFrame.lua
 RaidFrames\Groups\RaidPetFrame.lua
 RaidFrames\Groups\NPCFrame.lua
 RaidFrames\Groups\SpotlightFrame.lua
-
-Modules\LoadModules.xml
-Utilities\LoadUtilities.xml
-
-RaidDebuffs\LoadRaidDebuffs.xml
 
 Patrons.lua

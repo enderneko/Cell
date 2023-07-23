@@ -7,8 +7,9 @@
     <Script file="DeathReport.lua"/>
     <Script file="BuffTracker.lua"/>
     <Script file="RaidTools.lua"/>
-    <Script file="SpellRequest.lua"/>
-    <Script file="DispelRequest.lua"/>
-    <Script file="Glows.lua"/>
-    <Script file="GlowOptions.lua"/>
+    <Script file="Request_Spell.lua"/>
+    <Script file="Request_Dispel.lua"/>
+    <Script file="Request_Show.lua"/>
+    <Script file="Request_GlowOptions.lua"/>
+    <Script file="Request_IconOptions.lua"/>
 </Ui>

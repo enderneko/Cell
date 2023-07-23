@@ -32,8 +32,8 @@ eventFrame:SetScript("OnEvent", function()
             -- print(sourceGUID, playerSummoned[sourceGUID])
             if (sourceGUID == Cell.vars.playerGUID and (I:IsAoEHealing(spellName) or I:IsAoEHealing(spellId))) or playerSummoned[sourceGUID] then
                 local b1, b2 = F:GetUnitButtonByGUID(destGUID)
-                if b1 then b1.indicators.aoeHealing:ShowUp() end
-                if b2 then b2.indicators.aoeHealing:ShowUp() end
+                if b1 then b1.indicators.aoeHealing:Display() end
+                if b2 then b2.indicators.aoeHealing:Display() end
             end
         end
     end
@@ -77,7 +77,7 @@ function I:CreateAoEHealing(parent)
         aoeHealing.tex:SetGradient("VERTICAL", CreateColor(r, g, b, 0), CreateColor(r, g, b, 0.77))
     end
 
-    function aoeHealing:ShowUp()
+    function aoeHealing:Display()
         -- if ag:IsPlaying() then
         --     ag:Restart()
         -- else

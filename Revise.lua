@@ -2110,6 +2110,31 @@ function F:Revise()
         end
     end
 
+    -- r186-release
+    if CellDB["revise"] and dbRevision < 186 then
+        if CellDB["glows"] then
+            CellDB["spellRequest"] = CellDB["glows"]["spellRequest"]
+            CellDB["dispelRequest"] = CellDB["glows"]["dispelRequest"]
+            CellDB["glows"] = nil
+
+            CellDB["spellRequest"]["sharedIconOptions"] = {
+                "beat", -- [1] animation
+                27, -- [2] size
+                "BOTTOMRIGHT", -- [3] anchor
+                "BOTTOMRIGHT", -- [4] anchorTo
+                0, -- [5] x
+                0, -- [6] y
+            }
+    
+            for _, t in pairs(CellDB["spellRequest"]["spells"]) do
+                t["type"] = "icon"
+                t["icon"] = select(3, GetSpellInfo(t["spellId"]))
+                t["iconColor"] = t["glowOptions"][2][1]
+            end
+        end
+        
+    end
+
     CellDB["revise"] = Cell.version
     if Cell.isWrath then
         CellCharacterDB["revise"] = Cell.version

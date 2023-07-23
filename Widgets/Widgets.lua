@@ -2660,7 +2660,14 @@ function addon:CreateDropdown(parent, width, dropdownType, isMini)
         if not valid then
             menu.selected = nil
             menu.text:SetText("")
+            SetHighlightItem()
         end
+    end
+
+    function menu:ClearSelected()
+        menu.selected = nil
+        menu.text:SetText("")
+        SetHighlightItem()
     end
 
     function menu:SetSelectedValue(value)
@@ -2713,6 +2720,7 @@ function addon:CreateDropdown(parent, width, dropdownType, isMini)
         wipe(menu.items)
         menu.selected = nil
         menu.text:SetText("")
+        SetHighlightItem()
     end
 
     function menu:SetCurrentItem(item)

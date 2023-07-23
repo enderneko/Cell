@@ -7,6 +7,7 @@ Cell.snippetVars = {}
 Cell.funcs = {}
 Cell.iFuncs = {}
 Cell.bFuncs = {}
+Cell.uFuncs = {}
 Cell.animations = {}
 
 local F = Cell.funcs
@@ -126,6 +127,14 @@ local eventFrame = CreateFrame("Frame")
 eventFrame:RegisterEvent("VARIABLES_LOADED")
 eventFrame:RegisterEvent("ADDON_LOADED")
 eventFrame:RegisterEvent("PLAYER_LOGIN")
+eventFrame:RegisterEvent("LOADING_SCREEN_ENABLED")
+
+function eventFrame:LOADING_SCREEN_ENABLED()
+    if not InCombatLockdown() and not UnitAffectingCombat("player") then
+        F:Debug("|cffff7777collectgarbage")
+        collectgarbage("collect")
+    end
+end
 
 function eventFrame:VARIABLES_LOADED()
     SetCVar("predictedHealth", 1)
@@ -191,81 +200,97 @@ function eventFrame:ADDON_LOADED(arg1)
             }
         end
 
-        -- glows ----------------------------------------------------------------------------------
-        if type(CellDB["glows"]) ~= "table" then
-            local POWER_INFUSION = GetSpellInfo(10060)
-            local INNERVATE = GetSpellInfo(29166)
-
-            CellDB["glows"] = {
-                ["spellRequest"] = {
-                    ["enabled"] = false,
-                    ["checkIfExists"] = true,
-                    ["knownSpellsOnly"] = true,
-                    ["freeCooldownOnly"] = true,
-                    ["replyCooldown"] = true,
-                    ["responseType"] = "me",
-                    ["timeout"] = 10,
-                    -- ["replyAfterCast"] = nil,
-                    ["spells"] = {
-                        { 
-                            ["spellId"] = 10060,
-                            ["buffId"] = 10060,
-                            ["keywords"] = POWER_INFUSION,
-                            ["glowOptions"] = {
-                                "pixel", -- [1] glow type
-                                {
-                                    {1,1,0,1}, -- [1] color
-                                    0, -- [2] x
-                                    0, -- [3] y
-                                    9, -- [4] N
-                                    0.25, -- [5] frequency
-                                    8, -- [6] length
-                                    2 -- [7] thickness
-                                } -- [2] glowOptions
-                            },
-                            ["isBuiltIn"] = true
-                        },
-                        { 
-                            ["spellId"] = 29166,
-                            ["buffId"] = 29166,
-                            ["keywords"] = INNERVATE,
-                            ["glowOptions"] = {
-                                "pixel", -- [1] glow type
-                                {
-                                    {0,1,1,1}, -- [1] color
-                                    0, -- [2] x
-                                    0, -- [3] y
-                                    9, -- [4] N
-                                    0.25, -- [5] frequency
-                                    8, -- [6] length
-                                    2 -- [7] thickness
-                                } -- [2] glowOptions
-                            },
-                            ["isBuiltIn"] = true
-                        },
-                    }, -- [8] spells
+        -- spellRequest ---------------------------------------------------------------------------
+        if type(CellDB["spellRequest"]) ~= "table" then
+            local POWER_INFUSION, _, POWER_INFUSION_ICON = GetSpellInfo(10060)
+            local INNERVATE, _, INNERVATE_ICON = GetSpellInfo(29166)
+            
+            CellDB["spellRequest"] = {
+                ["enabled"] = false,
+                ["checkIfExists"] = true,
+                ["knownSpellsOnly"] = true,
+                ["freeCooldownOnly"] = true,
+                ["replyCooldown"] = true,
+                ["responseType"] = "me",
+                ["timeout"] = 10,
+                -- ["replyAfterCast"] = nil,
+                ["sharedIconOptions"] = {
+                    "beat", -- [1] animation
+                    27, -- [2] size
+                    "BOTTOMRIGHT", -- [3] anchor
+                    "BOTTOMRIGHT", -- [4] anchorTo
+                    0, -- [5] x
+                    0, -- [6] y
                 },
-                ["dispelRequest"] = {
-                    ["enabled"] = false,
-                    ["dispellableByMe"] = true,
-                    ["responseType"] = "all",
-                    ["timeout"] = 10,
-                    ["debuffs"] = {},
-                    ["glowOptions"] = {
-                        "shine", -- [1] glow type
-                        {
-                            {1,0,0.4,1}, -- [1] color
-                            0, -- [2] x
-                            0, -- [3] y
-                            9, -- [4] N
-                            0.5, -- [5] frequency
-                            2, -- [6] scale
-                        } -- [2] glowOptions
-                    }
+                ["spells"] = {
+                    { 
+                        ["spellId"] = 10060,
+                        ["buffId"] = 10060,
+                        ["keywords"] = POWER_INFUSION,
+                        ["icon"] = POWER_INFUSION_ICON,
+                        ["type"] = "icon",
+                        ["iconColor"] = {1, 1, 0, 1},
+                        ["glowOptions"] = {
+                            "pixel", -- [1] glow type
+                            {
+                                {1,1,0,1}, -- [1] color
+                                0, -- [2] x
+                                0, -- [3] y
+                                9, -- [4] N
+                                0.25, -- [5] frequency
+                                8, -- [6] length
+                                2 -- [7] thickness
+                            } -- [2] glowOptions
+                        },
+                        ["isBuiltIn"] = true
+                    },
+                    { 
+                        ["spellId"] = 29166,
+                        ["buffId"] = 29166,
+                        ["keywords"] = INNERVATE,
+                        ["icon"] = INNERVATE_ICON,
+                        ["type"] = "icon",
+                        ["iconColor"] = {0, 1, 1, 1},
+                        ["glowOptions"] = {
+                            "pixel", -- [1] glow type
+                            {
+                                {0, 1, 1, 1}, -- [1] color
+                                0, -- [2] x
+                                0, -- [3] y
+                                9, -- [4] N
+                                0.25, -- [5] frequency
+                                8, -- [6] length
+                                2 -- [7] thickness
+                            } -- [2] glowOptions
+                        },
+                        ["isBuiltIn"] = true
+                    },
                 },
             }
         end
 
+        -- dispelRequest --------------------------------------------------------------------------
+        if type(CellDB["dispelRequest"]) ~= "table" then
+            CellDB["dispelRequest"] = {
+                ["enabled"] = false,
+                ["dispellableByMe"] = true,
+                ["responseType"] = "all",
+                ["timeout"] = 10,
+                ["debuffs"] = {},
+                ["glowOptions"] = {
+                    "shine", -- [1] glow type
+                    {
+                        {1,0,0.4,1}, -- [1] color
+                        0, -- [2] x
+                        0, -- [3] y
+                        9, -- [4] N
+                        0.5, -- [5] frequency
+                        2, -- [6] scale
+                    } -- [2] glowOptions
+                }
+            }
+        end
+        
         -- appearance -----------------------------------------------------------------------------
         if type(CellDB["appearance"]) ~= "table" then
             -- get recommended scale
@@ -682,8 +707,8 @@ function eventFrame:PLAYER_LOGIN()
     Cell:UpdateAboutFont(CellDB["appearance"]["optionsFontSizeOffset"])
     -- update tools
     Cell:Fire("UpdateTools")
-    -- update glows
-    Cell:Fire("UpdateGlows")
+    -- update requests
+    Cell:Fire("UpdateRequests")
     -- update raid debuff list
     Cell:Fire("UpdateRaidDebuffs")
     -- hide blizzard

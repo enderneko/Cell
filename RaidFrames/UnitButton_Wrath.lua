@@ -3,6 +3,7 @@ local L = Cell.L
 local F = Cell.funcs
 local B = Cell.bFuncs
 local I = Cell.iFuncs
+local U = Cell.uFuncs
 local P = Cell.pixelPerfectFuncs
 local A = Cell.animations
 local HealComm = LibStub("LibHealComm-4.0", true)
@@ -2897,6 +2898,8 @@ function B:UpdatePixelPerfect(button, updateIndicators)
         button.indicators.nameText:UpdatePixelPerfect()
         button.indicators.statusText:UpdatePixelPerfect()
     end
+
+    button.widget.srIcon:UpdatePixelPerfect()
 end
 
 B.UpdateAll = UnitButton_UpdateAll
@@ -3083,15 +3086,16 @@ function F:UnitButton_OnLoad(button)
     button.widget.tsGlowFrame = tsGlowFrame
     tsGlowFrame:SetAllPoints(button)
 
-
     --* srGlowFrame (Spell Request)
     local srGlowFrame = CreateFrame("Frame", name.."SRGlowFrame", button)
     button.widget.srGlowFrame = srGlowFrame
+    srGlowFrame:SetFrameLevel(120)
     srGlowFrame:SetAllPoints(button)
     
     --* drGlowFrame (Dispel Request)
     local drGlowFrame = CreateFrame("Frame", name.."DRGlowFrame", button)
     button.widget.drGlowFrame = drGlowFrame
+    drGlowFrame:SetFrameLevel(120)
     drGlowFrame:SetAllPoints(button)
 
     --* overlayFrame
@@ -3132,6 +3136,7 @@ function F:UnitButton_OnLoad(button)
     I:CreateHealthThresholds(button)
     I:CreateMissingBuffs(button)
     I:CreatePowerWordShield(button)
+    U:CreateSpellRequestIcon(button)
 
     -- events
     button:SetScript("OnAttributeChanged", UnitButton_OnAttributeChanged) -- init

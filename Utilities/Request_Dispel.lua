@@ -1,6 +1,7 @@
 local _, Cell = ...
 local L = Cell.L
 local F = Cell.funcs
+local U = Cell.uFuncs
 local P = Cell.pixelPerfectFuncs
 
 -------------------------------------------------
@@ -10,8 +11,8 @@ local drPane, drGlowOptionsBtn
 local drEnabledCB, drDispellableCB, drResponseDD, drResponseText, drTimeoutDD, drTimeoutText, drMacroText, drMacroEB, drDebuffsText, drDebuffsEB
 
 local function UpdateDRWidgets()
-    Cell:SetEnabled(CellDB["glows"]["dispelRequest"]["enabled"], drDispellableCB, drResponseDD, drResponseText, drTimeoutDD, drTimeoutText, drMacroText, drMacroEB, drGlowOptionsBtn)
-    Cell:SetEnabled(CellDB["glows"]["dispelRequest"]["enabled"] and CellDB["glows"]["dispelRequest"]["responseType"] == "specific", drDebuffsText, drDebuffsEB)
+    Cell:SetEnabled(CellDB["dispelRequest"]["enabled"], drDispellableCB, drResponseDD, drResponseText, drTimeoutDD, drTimeoutText, drMacroText, drMacroEB, drGlowOptionsBtn)
+    Cell:SetEnabled(CellDB["dispelRequest"]["enabled"] and CellDB["dispelRequest"]["responseType"] == "specific", drDebuffsText, drDebuffsEB)
 end
 
 local function CreateDRPane()
@@ -28,7 +29,7 @@ local function CreateDRPane()
         else
             Cell:StartRainbowText(fs)
         end
-        F:ShowGlowOptions(Cell.frames.utilitiesTab, "dispelRequest", CellDB["glows"]["dispelRequest"]["glowOptions"])
+        U:ShowGlowOptions(Cell.frames.utilitiesTab, "dispelRequest", CellDB["dispelRequest"]["glowOptions"])
     end)
     drGlowOptionsBtn:SetScript("OnHide", function()
         Cell:StopRainbowText(drGlowOptionsBtn:GetFontString())
@@ -41,12 +42,12 @@ local function CreateDRPane()
 
     -- enabled ----------------------------------------------------------------------
     drEnabledCB = Cell:CreateCheckButton(drPane, L["Enabled"], function(checked, self)
-        CellDB["glows"]["dispelRequest"]["enabled"] = checked
+        CellDB["dispelRequest"]["enabled"] = checked
         UpdateDRWidgets()
-        Cell:Fire("UpdateGlows", "dispelRequest")
+        Cell:Fire("UpdateRequests", "dispelRequest")
         CellDropdownList:Hide()
         
-        F:HideGlowOptions()
+        U:HideGlowOptions()
         Cell:StopRainbowText(drGlowOptionsBtn:GetFontString())
     end)
     drEnabledCB:SetPoint("TOPLEFT", drPane, "TOPLEFT", 5, -50)
@@ -54,8 +55,8 @@ local function CreateDRPane()
 
     -- dispellable ------------------------------------------------------------------
     drDispellableCB = Cell:CreateCheckButton(drPane, L["Dispellable By Me"], function(checked, self)
-        CellDB["glows"]["dispelRequest"]["dispellableByMe"] = checked
-        Cell:Fire("UpdateGlows", "dispelRequest")
+        CellDB["dispelRequest"]["dispellableByMe"] = checked
+        Cell:Fire("UpdateRequests", "dispelRequest")
     end)
     drDispellableCB:SetPoint("TOPLEFT", drEnabledCB, "TOPLEFT", 200, 0)
     ---------------------------------------------------------------------------------
@@ -68,18 +69,18 @@ local function CreateDRPane()
             ["text"] = L["Respond to all dispellable debuffs"],
             ["value"] = "all",
             ["onClick"] = function()
-                CellDB["glows"]["dispelRequest"]["responseType"] = "all"
+                CellDB["dispelRequest"]["responseType"] = "all"
                 UpdateDRWidgets()
-                Cell:Fire("UpdateGlows", "dispelRequest")
+                Cell:Fire("UpdateRequests", "dispelRequest")
             end
         },
         {
             ["text"] = L["Respond to specific dispellable debuffs"],
             ["value"] = "specific",
             ["onClick"] = function()
-                CellDB["glows"]["dispelRequest"]["responseType"] = "specific"
+                CellDB["dispelRequest"]["responseType"] = "specific"
                 UpdateDRWidgets()
-                Cell:Fire("UpdateGlows", "dispelRequest")
+                Cell:Fire("UpdateRequests", "dispelRequest")
             end
         },
     })
@@ -100,8 +101,8 @@ local function CreateDRPane()
             ["text"] = s,
             ["value"] = s,
             ["onClick"] = function()
-                CellDB["glows"]["dispelRequest"]["timeout"] = s
-                Cell:Fire("UpdateGlows", "dispelRequest")
+                CellDB["dispelRequest"]["timeout"] = s
+                Cell:Fire("UpdateRequests", "dispelRequest")
             end
         })
     end
@@ -159,9 +160,9 @@ local function CreateDRPane()
     drDebuffsEB:SetPoint("RIGHT", -5, 0)
     drDebuffsEB:SetScript("OnTextChanged", function(self, userChanged)
         if userChanged then
-            CellDB["glows"]["dispelRequest"]["debuffs"] = F:StringToTable(drDebuffsEB:GetText(), " ", true)
+            CellDB["dispelRequest"]["debuffs"] = F:StringToTable(drDebuffsEB:GetText(), " ", true)
             drDebuffsEB.gauge:SetText(drDebuffsEB:GetText())
-            Cell:Fire("UpdateGlows", "dispelRequest")
+            Cell:Fire("UpdateRequests", "dispelRequest")
         end
     end)
     drDebuffsEB.gauge = drMacroEB:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
@@ -206,11 +207,11 @@ local function ShowUtilitySettings(which)
         init = true
 
         -- dispel request
-        drEnabledCB:SetChecked(CellDB["glows"]["dispelRequest"]["enabled"])
-        drDispellableCB:SetChecked(CellDB["glows"]["dispelRequest"]["dispellableByMe"])
-        drResponseDD:SetSelectedValue(CellDB["glows"]["dispelRequest"]["responseType"])
-        drTimeoutDD:SetSelected(CellDB["glows"]["dispelRequest"]["timeout"])
-        drDebuffsEB:SetText(F:TableToString(CellDB["glows"]["dispelRequest"]["debuffs"], " "))
+        drEnabledCB:SetChecked(CellDB["dispelRequest"]["enabled"])
+        drDispellableCB:SetChecked(CellDB["dispelRequest"]["dispellableByMe"])
+        drResponseDD:SetSelectedValue(CellDB["dispelRequest"]["responseType"])
+        drTimeoutDD:SetSelected(CellDB["dispelRequest"]["timeout"])
+        drDebuffsEB:SetText(F:TableToString(CellDB["dispelRequest"]["debuffs"], " "))
         drDebuffsEB.gauge:SetText(drDebuffsEB:GetText())
         drDebuffsEB:SetCursorPosition(0)
         UpdateDRWidgets()

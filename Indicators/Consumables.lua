@@ -30,8 +30,8 @@ eventFrame:SetScript("OnEvent", function(self, event, unit, castGUID, spellID)
 
     if Cell.vars.consumables[spellID] then
         local b1, b2 = F:GetUnitButtonByUnit(unit)
-        if b1 then b1.indicators.consumables:ShowUp(unpack(Cell.vars.consumables[spellID])) end
-        if b2 then b2.indicators.consumables:ShowUp(unpack(Cell.vars.consumables[spellID])) end
+        if b1 then b1.indicators.consumables:Display(unpack(Cell.vars.consumables[spellID])) end
+        if b2 then b2.indicators.consumables:Display(unpack(Cell.vars.consumables[spellID])) end
     end
 end)
 
@@ -91,7 +91,7 @@ local function CreateAnimationGroup_TypeA(parent)
         f:Hide()
     end)
 
-    function ag:ShowUp(r, g, b)
+    function ag:Display(r, g, b)
         if orientation == "horizontal" then
             t1:SetOffset(parent:GetWidth(), 0)
             tex:SetGradient("HORIZONTAL", CreateColor(r, g, b, 0), CreateColor(r, g, b, 1))
@@ -179,7 +179,7 @@ local function CreateAnimationGroup_TypeB(parent)
         f:Hide()
     end)
 
-    function ag:ShowUp(r, g, b)
+    function ag:Display(r, g, b)
         t1:SetOffset(parent:GetWidth() + math.tan(math.pi/4)*parent:GetHeight() + WIDTH/math.cos(math.pi/4), 0)
         tex:SetHeight(parent:GetHeight()/math.sin(math.pi/4) + WIDTH)
         tex:SetColorTexture(r, g, b)
@@ -262,7 +262,7 @@ local function CreateAnimationGroup_TypeC(parent, subType)
         f:Hide()
     end)
 
-    function ag:ShowUp(r, g, b)
+    function ag:Display(r, g, b)
         f:SetWidth(parent:GetParent():GetHeight()/2)
         t1:SetOffset(0, parent:GetHeight()/2)
         tex:SetGradient("VERTICAL", CreateColor(r, g, b, 0), CreateColor(r, g, b, 1))
@@ -339,7 +339,7 @@ local function CreateAnimationGroup_TypeD(parent)
         f:Hide()
     end)
 
-    function ag:ShowUp(r, g, b)
+    function ag:Display(r, g, b)
         local l = math.sqrt((parent:GetHeight()/2)^2 + (parent:GetWidth()/2)^2) * 2
         tex:SetSize(l, l)
         tex:SetColorTexture(r, g, b, 0.5)
@@ -408,7 +408,7 @@ local function CreateAnimationGroup_TypeE(parent)
         f:Hide()
     end)
 
-    function ag:ShowUp(r, g, b)
+    function ag:Display(r, g, b)
         local l = parent:GetHeight()*2
         f:SetWidth(l)
         t1:SetOffset(l+parent:GetWidth(), 0)
@@ -481,8 +481,8 @@ function I:CreateConsumables(parent, isPreview)
     end
 
     -- show
-    function consumables:ShowUp(animationType, color)
-        animations[animationType]:ShowUp(unpack(color))
+    function consumables:Display(animationType, color)
+        animations[animationType]:Display(unpack(color))
     end
 end
 

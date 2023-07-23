@@ -3,10 +3,14 @@ local _, Cell = ...
 local L = Cell.L
 local F = Cell.funcs
 local I = Cell.iFuncs
+local P = Cell.pixelPerfectFuncs
 
 local LCG = LibStub("LibCustomGlow-1.0")
 local Comm = LibStub:GetLibrary("AceComm-3.0")
 
+-------------------------------------------------
+-- glow
+-------------------------------------------------
 local function HideGlow(glowFrame)
     LCG.ButtonGlow_Stop(glowFrame)
     LCG.PixelGlow_Stop(glowFrame)
@@ -50,9 +54,38 @@ local function ShowGlow(glowFrame, glowType, glowOptions, timeout, callback)
 end
 
 -------------------------------------------------
+-- icon
+-------------------------------------------------
+local function HideIcon(icon)
+    icon:Hide()
+
+    if icon.timer then
+        icon.timer:Cancel()
+        icon.timer = nil
+    end
+end
+
+local function ShowIcon(icon, tex, iconColor, timeout, callback)
+    F:Debug("SHOW_ICON:", icon:GetName())
+    
+    icon:Display(tex, iconColor)
+
+    if icon.timer then
+        icon.timer:Cancel()
+    end
+    icon.timer = C_Timer.NewTimer(timeout, function()
+        icon.timer = nil
+        HideIcon(icon)
+        if callback then
+            callback()
+        end
+    end)
+end
+
+-------------------------------------------------
 -- spell request
 -------------------------------------------------
-local srEnabled, srExists, srKnown, srFreeCD, srReplyCD, srType, srTimeout, srCastMsg
+local srEnabled, srExists, srKnown, srFreeCD, srReplyCD, srResponseType, srTimeout, srCastMsg
 local srSpells = {
     -- [spellId] = {buffId, keywords, glowOptions}
 }
@@ -75,7 +108,7 @@ local function CheckSRConditions(spellId, unit, sender)
     if not unit or not UnitIsVisible(unit) then return end
 
     -- already has this buff
-    if srExists and F:FindAuraById(unit, "BUFF", srSpells[spellId][1]) then return end
+    if srExists and F:FindAuraById(unit, "BUFF", srSpells[spellId][2]) then return end
 
     if srKnown then
         if IsSpellKnown(spellId) then
@@ -119,7 +152,7 @@ local function CheckSRConditions(spellId, unit, sender)
     end
 end
 
-local function ShowSRGlow(spellId, button)
+local function ShowSpellRequest(spellId, button)
     if button then
         local unit = button.state.unit
 
@@ -130,30 +163,37 @@ local function ShowSRGlow(spellId, button)
         end
         
         --! save {spellId, buffId, button} for hiding
-        srUnits[unit] = {spellId, srSpells[spellId][1], button.widget.srGlowFrame} 
+        srUnits[unit] = {spellId, srSpells[spellId][2], button} 
         requestedSpells[spellId] = unit
         
-        ShowGlow(button.widget.srGlowFrame, srSpells[spellId][3][1], srSpells[spellId][3][2], srTimeout, function()
-            srUnits[unit] = nil
-            requestedSpells[spellId] = nil
-        end)
+        if srSpells[spellId][1] == "icon" then
+            ShowIcon(button.widget.srIcon, srSpells[spellId][4], srSpells[spellId][5], srTimeout, function()
+                srUnits[unit] = nil
+                requestedSpells[spellId] = nil
+            end)
+        else
+            ShowGlow(button.widget.srGlowFrame, srSpells[spellId][4][1], srSpells[spellId][4][2], srTimeout, function()
+                srUnits[unit] = nil
+                requestedSpells[spellId] = nil
+            end)
+        end
 
         -- notify
-        F:Notify("SPELL_REQ_RECEIVED", unit, spellId, srSpells[spellId][1], srTimeout)
+        F:Notify("SPELL_REQ_RECEIVED", unit, spellId, srSpells[spellId][2], srTimeout)
     end
 end
 
 --! glow on addon message
 Comm:RegisterComm("CELL_REQ_S", function(prefix, message, channel, sender)
-    if srEnabled and srType ~= "whisper" then
+    if srEnabled and srResponseType ~= "whisper" then
         local spellId, target = strsplit(":", message)
         spellId = tonumber(spellId)
 
         if spellId and CheckSRConditions(spellId, Cell.vars.names[sender], sender) then
             local me = GetUnitName("player")
             -- NOTE: to all provider / to me
-            if (srType == "all" and (not target or target == me)) or (srType == "me" and target == me) then
-                ShowSRGlow(spellId, F:GetUnitButtonByName(sender))
+            if (srResponseType == "all" and (not target or target == me)) or (srResponseType == "me" and target == me) then
+                ShowSpellRequest(spellId, F:GetUnitButtonByName(sender))
             end
         end
     end
@@ -166,9 +206,9 @@ function SR:CHAT_MSG_WHISPER(text, playerName, languageName, channelName, player
     if strmatch(text, "^|c.+|H.+|h%[.+%]|h|r.+") then return end
 
     for spellId, t in pairs(srSpells) do
-        if strfind(strlower(text), strlower(t[2])) then
+        if strfind(strlower(text), strlower(t[3])) then
             if CheckSRConditions(spellId, Cell.vars.guids[guid], playerName) then
-                ShowSRGlow(spellId, F:GetUnitButtonByGUID(guid))
+                ShowSpellRequest(spellId, F:GetUnitButtonByGUID(guid))
             end
             break
         end
@@ -185,7 +225,8 @@ if Cell.isRetail then
             for _, aura in pairs(updatedAuras.addedAuras) do
                 if srUnit[2] == aura.spellId then
                     F:Debug("SR_HIDE [UNIT_AURA]:", unit, srUnit[1])
-                    HideGlow(srUnit[3])
+                    HideGlow(srUnit[3].widget.srGlowFrame)
+                    HideIcon(srUnit[3].widget.srIcon)
                     -- notify
                     F:Notify("SPELL_REQ_APPLIED", unit, srUnit[1], srUnit[2])
                     -- clear
@@ -203,7 +244,8 @@ else
         
         if F:FindAuraById(unit, "BUFF", srUnit[2]) then
             F:Debug("SR_HIDE [UNIT_AURA]:", unit, srUnit[1])
-            HideGlow(srUnit[3])
+            HideGlow(srUnit[3].widget.srGlowFrame)
+            HideIcon(srUnit[3].widget.srIcon)
             -- notify
             F:Notify("SPELL_REQ_APPLIED", unit, srUnit[1], srUnit[2])
             -- clear
@@ -225,7 +267,8 @@ function SR:UNIT_SPELLCAST_SUCCEEDED(unit, _, spellId)
         end
         
         if srUnits[requester] then
-            HideGlow(srUnits[requester][3])
+            HideGlow(srUnits[requester][3].widget.srGlowFrame)
+            HideIcon(srUnits[requester][3].widget.srIcon)
         end
 
         -- notify
@@ -242,39 +285,35 @@ end)
 
 -- CELL_SR_SPELLS = srSpells
 -- CELL_SR_UNITS = srUnits
-local function SR_UpdateGlows(which)
-    F:Debug("|cffBBFFFFUpdateGlows:|r", which)
+local function SR_UpdateRequests(which)
+    F:Debug("|cffBBFFFFUpdateRequests:|r", which)
 
     if not which or which == "spellRequest" then
         -- NOTE: hide all
         for _, t in pairs(srUnits) do
-            HideGlow(t[3])
+            HideGlow(t[3].widget.srGlowFrame)
+            HideIcon(t[3].widget.srIcon)
         end
         wipe(srUnits)
-        wipe(srSpells)
         wipe(requestedSpells)
 
-        srEnabled = CellDB["glows"]["spellRequest"]["enabled"]
+        srEnabled = CellDB["spellRequest"]["enabled"]
         
         if srEnabled then
-            srExists = CellDB["glows"]["spellRequest"]["checkIfExists"]
-            srKnown = CellDB["glows"]["spellRequest"]["knownSpellsOnly"]
-            srFreeCD = CellDB["glows"]["spellRequest"]["freeCooldownOnly"]
-            srType = CellDB["glows"]["spellRequest"]["responseType"]
-            srReplyCD = CellDB["glows"]["spellRequest"]["replyCooldown"] and srType ~= "all"
-            srTimeout = CellDB["glows"]["spellRequest"]["timeout"]
+            srExists = CellDB["spellRequest"]["checkIfExists"]
+            srKnown = CellDB["spellRequest"]["knownSpellsOnly"]
+            srFreeCD = CellDB["spellRequest"]["freeCooldownOnly"]
+            srResponseType = CellDB["spellRequest"]["responseType"]
+            srReplyCD = CellDB["spellRequest"]["replyCooldown"] and srResponseType ~= "all"
+            srTimeout = CellDB["spellRequest"]["timeout"]
             
-            if srType ~= "all" then
-                srCastMsg = CellDB["glows"]["spellRequest"]["replyAfterCast"]
+            if srResponseType ~= "all" then
+                srCastMsg = CellDB["spellRequest"]["replyAfterCast"]
             else
                 srCastMsg = nil
             end
             
-            for _, t in pairs(CellDB["glows"]["spellRequest"]["spells"]) do
-                srSpells[t["spellId"]] = {t["buffId"], t["keywords"], t["glowOptions"]} -- [spellId] = {buffId, keywords, glowOptions}
-            end
-
-            if srType == "whisper" then
+            if srResponseType == "whisper" then
                 SR:RegisterEvent("CHAT_MSG_WHISPER")
             else
                 SR:UnregisterEvent("CHAT_MSG_WHISPER")
@@ -287,8 +326,32 @@ local function SR_UpdateGlows(which)
         end
         -- texplore(requestedSpells)
     end
+
+    if not which or which == "spellRequest_icon" then
+        F:IterateAllUnitButtons(function(b)
+            local setting = CellDB["spellRequest"]["sharedIconOptions"]
+            b.widget.srIcon:SetAnimationType(setting[1])
+            P:Size(b.widget.srIcon, setting[2], setting[2])
+            P:ClearPoints(b.widget.srIcon)
+            P:Point(b.widget.srIcon, setting[3], b.widget.srGlowFrame, setting[4], setting[5], setting[6])
+        end)
+    end
+
+    if not which or which == "spellRequest_spells" then
+        if srEnabled then
+            wipe(srSpells)
+
+            for _, t in pairs(CellDB["spellRequest"]["spells"]) do
+                if t["type"] == "icon" then
+                    srSpells[t["spellId"]] = {t["type"], t["buffId"], t["keywords"], t["icon"], t["iconColor"]} -- [spellId] = {buffId, keywords, icon, iconColor}
+                else
+                    srSpells[t["spellId"]] = {t["type"], t["buffId"], t["keywords"], t["glowOptions"]} -- [spellId] = {buffId, keywords, glowOptions}
+                end
+            end
+        end
+    end
 end
-Cell:RegisterCallback("UpdateGlows", "SR_UpdateGlows", SR_UpdateGlows)
+Cell:RegisterCallback("UpdateRequests", "SR_UpdateRequests", SR_UpdateRequests)
 
 -------------------------------------------------
 -- dispel request
@@ -355,7 +418,7 @@ Comm:RegisterComm("CELL_REQ_D", function(prefix, message, channel, sender)
         if F:Getn(drUnits[unit]) ~= 0 then -- found
             local button = F:GetUnitButtonByName(sender)
             if button then
-                ShowGlow(button.widget.drGlowFrame, CellDB["glows"]["dispelRequest"]["glowOptions"][1], CellDB["glows"]["dispelRequest"]["glowOptions"][2], drTimeout, function()
+                ShowGlow(button.widget.drGlowFrame, CellDB["dispelRequest"]["glowOptions"][1], CellDB["dispelRequest"]["glowOptions"][2], drTimeout, function()
                     drUnits[unit] = nil
                 end)
             end
@@ -365,17 +428,17 @@ Comm:RegisterComm("CELL_REQ_D", function(prefix, message, channel, sender)
     end
 end)
 
-local function DR_UpdateGlows(which)
+local function DR_UpdateRequests(which)
     if not which or which == "dispelRequest" then
         HideAllDRGlows()
         
-        drEnabled = CellDB["glows"]["dispelRequest"]["enabled"]
+        drEnabled = CellDB["dispelRequest"]["enabled"]
 
         if drEnabled then
-            drDispellable = CellDB["glows"]["dispelRequest"]["dispellableByMe"]
-            drType = CellDB["glows"]["dispelRequest"]["responseType"]
-            drTimeout = CellDB["glows"]["dispelRequest"]["timeout"]
-            drDebuffs = F:ConvertTable(CellDB["glows"]["dispelRequest"]["debuffs"])
+            drDispellable = CellDB["dispelRequest"]["dispellableByMe"]
+            drType = CellDB["dispelRequest"]["responseType"]
+            drTimeout = CellDB["dispelRequest"]["timeout"]
+            drDebuffs = F:ConvertTable(CellDB["dispelRequest"]["debuffs"])
 
             DR:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
             DR:RegisterEvent("ENCOUNTER_START")
@@ -387,4 +450,4 @@ local function DR_UpdateGlows(which)
         -- texplore(drDebuffs)
     end
 end
-Cell:RegisterCallback("UpdateGlows", "DR_UpdateGlows", DR_UpdateGlows)
+Cell:RegisterCallback("UpdateRequests", "DR_UpdateRequests", DR_UpdateRequests)

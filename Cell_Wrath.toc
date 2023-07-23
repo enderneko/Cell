@@ -36,6 +36,12 @@ Indicators\Consumables.lua
 Indicators\Custom_Wrath.lua
 
 RaidFrames\MainFrame.lua
+
+RaidDebuffs\ExpansionData.lua
+Modules\LoadModules_Wrath.xml
+Utilities\LoadUtilities_Wrath.xml
+RaidDebuffs\LoadRaidDebuffs_Wrath.xml
+
 RaidFrames\UnitButton_Wrath.lua
 RaidFrames\UnitButton.xml
 RaidFrames\Groups\SoloFrame.lua
@@ -44,11 +50,5 @@ RaidFrames\Groups\RaidFrame.lua
 RaidFrames\Groups\RaidPetFrame.lua
 RaidFrames\Groups\NPCFrame.lua
 RaidFrames\Groups\SpotlightFrame.lua
-
-RaidDebuffs\ExpansionData.lua
-Modules\LoadModules_Wrath.xml
-Utilities\LoadUtilities_Wrath.xml
-
-RaidDebuffs\LoadRaidDebuffs_Wrath.xml
 
 Patrons.lua

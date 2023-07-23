@@ -2,11 +2,11 @@ local _, Cell = ...
 local L = Cell.L
 local F = Cell.funcs
 local B = Cell.bFuncs
+local U = Cell.uFuncs
 local P = Cell.pixelPerfectFuncs
 
 local LCG = LibStub("LibCustomGlow-1.0")
 
-local key -- NOTE: key is used for identifying what the glow options belongs to
 local glowOptionsTable
 local glowOptionsFrame, previewButton
 
@@ -84,7 +84,7 @@ end
 -------------------------------------------------
 local glowTypeDropdown, glowColor, glowLines, glowParticles, glowFrequency, glowLength, glowThickness, glowScale, glowOffsetX, glowOffsetY
 
-local function ShowGlowPreview(refresh)
+local function UpdateGlowPreview(refresh)
     local glowType, glowOptions = unpack(glowOptionsTable)
 
     if glowType == "normal" then
@@ -106,7 +106,7 @@ local function ShowGlowPreview(refresh)
 end
 
 local function LoadGlowOptions()
-    ShowGlowPreview()
+    UpdateGlowPreview()
 
     local glowType, glowOptions = unpack(glowOptionsTable)
     glowTypeDropdown:SetSelectedValue(glowType)
@@ -181,12 +181,11 @@ local function SliderValueChanged(index, value, refresh)
     -- update db
     glowOptionsTable[2][index] = value
     -- update preview
-    ShowGlowPreview(refresh)
+    UpdateGlowPreview(refresh)
 end
 
 local function CreateGlowOptionsFrame()
     glowOptionsFrame = Cell:CreateFrame("CellOptionsFrame_GlowOptions", Cell.frames.optionsFrame, 127, 371)
-    Cell.frames.options = glowOptionsFrame
     glowOptionsFrame:SetPoint("BOTTOMLEFT", Cell.frames.optionsFrame, "BOTTOMRIGHT", 5, 0)
 
     local glowTypeText = glowOptionsFrame:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
@@ -227,7 +226,7 @@ local function CreateGlowOptionsFrame()
         glowOptionsTable[2][1][3] = b
         glowOptionsTable[2][1][4] = 1
         -- update preview
-        ShowGlowPreview()
+        UpdateGlowPreview()
     end)
     -- glowColor:SetPoint("TOPLEFT", glowOptionsFrame, 5, 0)
     glowColor:SetPoint("TOPLEFT", glowTypeDropdown, "BOTTOMLEFT", 0, -10)
@@ -280,7 +279,6 @@ local function CreateGlowOptionsFrame()
     glowScale:SetPoint("TOPLEFT", glowFrequency, "BOTTOMLEFT", 0, -40)
 
     glowOptionsFrame:SetScript("OnHide", function()
-        key = nil
         glowOptionsFrame:Hide()
     end)
 end
@@ -288,28 +286,23 @@ end
 -------------------------------------------------
 -- functions
 -------------------------------------------------
-function F:ShowGlowOptions(parent, k, gTable)
+function U:ShowGlowOptions(parent, t)
     if not glowOptionsFrame then
         CreateGlowOptionsFrame()
     end
 
-    glowOptionsFrame:SetParent(parent)
-
-    
-    if key == k then
-        key = nil
+    if glowOptionsFrame:IsShown() then
         glowOptionsFrame:Hide()
     else
-        glowOptionsTable = gTable
-        key = k
+        glowOptionsFrame:SetParent(parent)
+        glowOptionsTable = t
         UpdatePreviewButton()
         LoadGlowOptions()
         glowOptionsFrame:Show()
     end
 end
 
-function F:HideGlowOptions()
-    key = nil
+function U:HideGlowOptions()
     if glowOptionsFrame then glowOptionsFrame:Hide() end
 end
 

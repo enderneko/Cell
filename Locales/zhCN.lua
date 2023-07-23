@@ -616,8 +616,13 @@ L["Fade Out These Buttons"] = "淡出这些按钮"
 -- spell request
 -------------------------------------------------
 L["Glows"] = "亮闪闪"
+L["Type"] = "类型"
 L["Glow"] = "发光"
 L["Glow Options"] = "发光选项"
+L["Icon Options"] = "图标选项"
+L["Animation"] = "动画"
+L["Beat"] = "跳动"
+L["Blink"] = "闪烁"
 L["Spell Request"] = "法术请求"
 L["Glow unit button when a group member sends a %s request"] = "当队内成员请求%s时高亮其单位按钮"
 L["Shows only one spell glow on a unit button at a time"] = "每个单位按钮上同一时间只能显示一个法术高亮"

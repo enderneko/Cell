@@ -3635,9 +3635,9 @@ local function CreateConsumablePreview(parent, style)
 
     function f:UpdateTicker(speed)
         f:SetScript("OnShow", function()
-            f.consumables:ShowUp(style, {1, 1, 1})
+            f.consumables:Display(style, {1, 1, 1})
             f.ticker = C_Timer.NewTicker(2/speed, function()
-                f.consumables:ShowUp(style, {1, 1, 1})
+                f.consumables:Display(style, {1, 1, 1})
             end)
         end)
     
@@ -3845,7 +3845,7 @@ local function CreateConsumableButtons(parent, spellTable, updateHeightFunc)
                 tinsert(items, {
                     ["text"] = style,
                     ["onClick"] = function()
-                        CellIndicatorsPreviewButton.indicators.consumables:ShowUp(style, consumableButtons[i].animationColor)
+                        CellIndicatorsPreviewButton.indicators.consumables:Display(style, consumableButtons[i].animationColor)
                         consumableButtons[i].animationType = style
                         -- update db
                         spellTable[i][2][1] = style
@@ -3862,7 +3862,7 @@ local function CreateConsumableButtons(parent, spellTable, updateHeightFunc)
                 spellTable[i][2][2][3] = b
                 parent.func(spellTable)
                 consumableButtons[i].animationColor = {r, g, b}
-                CellIndicatorsPreviewButton.indicators.consumables:ShowUp(consumableButtons[i].animationType, consumableButtons[i].animationColor)
+                CellIndicatorsPreviewButton.indicators.consumables:Display(consumableButtons[i].animationType, consumableButtons[i].animationColor)
             end)
             consumableButtons[i].colorPicker:SetPoint("TOPLEFT", consumableButtons[i].styleDropdown, "TOPRIGHT", 2, -1)
             consumableButtons[i].colorPicker:HookScript("OnEnter", function()
@@ -3902,7 +3902,7 @@ local function CreateConsumableButtons(parent, spellTable, updateHeightFunc)
 
             -- preview
             consumableButtons[i]:SetScript("OnClick", function(self, button)
-                CellIndicatorsPreviewButton.indicators.consumables:ShowUp(consumableButtons[i].animationType, consumableButtons[i].animationColor)
+                CellIndicatorsPreviewButton.indicators.consumables:Display(consumableButtons[i].animationType, consumableButtons[i].animationColor)
             end)
         end
         
