@@ -58,60 +58,62 @@ local function DoImport()
     end
 
     -- click-castings
-    if Cell.isRetail then
-        for class, t in pairs(imported["clickCastings"]) do
-            -- remove
-            t[1] = nil
-            t[2] = nil
-            t["alwaysTargeting"][1] = nil
-            t["alwaysTargeting"][2] = nil
-            -- add
-            local classID = F:GetClassID(class)
-            for sepcIndex = 1, GetNumSpecializationsForClassID(classID) do
-                local specID = GetSpecializationInfoForClassID(classID, sepcIndex)
-                if not t["alwaysTargeting"][specID] then
-                    t["alwaysTargeting"][specID] = "disabled"
-                end
-                if not t[specID] then
-                    t[specID] = {
-                        {"type1", "target"},
-                        {"type2", "togglemenu"},
-                    } 
-                end
-            end
-        end
-    elseif Cell.isWrath then
-        for class, t in pairs(imported["clickCastings"]) do
-            -- remove
-            for k in pairs(t) do
-                if k ~= "useCommon" and k ~= "alwaysTargeting" and k ~= "smartResurrection" and k ~= "common" and k ~= 1 and k ~= 2 then
-                    t[k] = nil
+    if imported["clickCastings"] then
+        if Cell.isRetail then
+            for class, t in pairs(imported["clickCastings"]) do
+                -- remove
+                t[1] = nil
+                t[2] = nil
+                t["alwaysTargeting"][1] = nil
+                t["alwaysTargeting"][2] = nil
+                -- add
+                local classID = F:GetClassID(class)
+                for sepcIndex = 1, GetNumSpecializationsForClassID(classID) do
+                    local specID = GetSpecializationInfoForClassID(classID, sepcIndex)
+                    if not t["alwaysTargeting"][specID] then
+                        t["alwaysTargeting"][specID] = "disabled"
+                    end
+                    if not t[specID] then
+                        t[specID] = {
+                            {"type1", "target"},
+                            {"type2", "togglemenu"},
+                        } 
+                    end
                 end
             end
-            for k in pairs(t["alwaysTargeting"]) do
-                if k ~= "common" and k ~= 1 and k ~= 2 then
-                    t["alwaysTargeting"][k] = nil
-                end
-            end
-            -- add
-            if not t["alwaysTargeting"][1] then
-                t["alwaysTargeting"][1] = "disabled"
-            end
-            if not t["alwaysTargeting"][2] then
-                t["alwaysTargeting"][2] = "disabled"
-            end
-            if not t[1] then
-                t[1] = {
-                    {"type1", "target"},
-                    {"type2", "togglemenu"},
-                }
-            end
-            if not t[2] then
-                t[2] = {
-                    {"type1", "target"},
-                    {"type2", "togglemenu"},
-                }
-            end
+        -- elseif Cell.isWrath then
+        --     for class, t in pairs(imported["clickCastings"]) do
+        --         -- remove
+        --         for k in pairs(t) do
+        --             if k ~= "useCommon" and k ~= "alwaysTargeting" and k ~= "smartResurrection" and k ~= "common" and k ~= 1 and k ~= 2 then
+        --                 t[k] = nil
+        --             end
+        --         end
+        --         for k in pairs(t["alwaysTargeting"]) do
+        --             if k ~= "common" and k ~= 1 and k ~= 2 then
+        --                 t["alwaysTargeting"][k] = nil
+        --             end
+        --         end
+        --         -- add
+        --         if not t["alwaysTargeting"][1] then
+        --             t["alwaysTargeting"][1] = "disabled"
+        --         end
+        --         if not t["alwaysTargeting"][2] then
+        --             t["alwaysTargeting"][2] = "disabled"
+        --         end
+        --         if not t[1] then
+        --             t[1] = {
+        --                 {"type1", "target"},
+        --                 {"type2", "togglemenu"},
+        --             }
+        --         end
+        --         if not t[2] then
+        --             t[2] = {
+        --                 {"type1", "target"},
+        --                 {"type2", "togglemenu"},
+        --             }
+        --         end
+        --     end
         end
     end
 
@@ -187,7 +189,7 @@ local function CreateImportExportFrame()
         end, function()
             importExportFrame:Hide()
         end, true)
-        popup:SetPoint("TOPLEFT", importExportFrame, 117, -20)
+        popup:SetPoint("TOPLEFT", importExportFrame, 117, -25)
 
         textArea.eb:ClearFocus()
     end)

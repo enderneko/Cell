@@ -357,7 +357,7 @@ end
 -- import & export
 -------------------------------------------------
 local function CreateImportExportPane()
-    local iePane = Cell:CreateTitledPane(aboutTab, L["Import & Export All Settings"], 422, 50)
+    local iePane = Cell:CreateTitledPane(aboutTab, L["Import & Export All Settings"]..(Cell.isWrath and " |cffababab"..L["Except Click-Castings"] or ""), 422, 50)
     iePane:SetPoint("TOPLEFT", 5, -500)
 
     local importBtn = Cell:CreateButton(iePane, L["Import"], "accent-hover", {200, 20})
