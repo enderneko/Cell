@@ -60,7 +60,10 @@ select(2, ...).L = setmetatable({
     ["Default"] = _G.DEFAULT,
 
     ["ABOUT"] = "Cell is a unique raid frame addon inspired by CompactRaid.\nI love CompactRaid so much, but it seems to be abandoned. And I made Cell, hope you enjoy.\nSome ideas are from other great raid frame addons, such as Aptechka, Grid2 and VuhDo.\nCell is not meant to be a lightweight or powerful raid frame addon. It's easy to use and good enough for you (hope so).",
-    ["RESET"] = "Cell requires a full reset after updating from a very old version.\n|cff22ff22Yes|r - Reset Cell\n|cffff2222No|r - I'll fix it myself",
+    ["RESET"] = "Cell requires a full reset after updating from a very old version",
+    ["RESET_CHARACTER"] = "Cell requires a character profile reset after updating from a very old version",
+    ["RESET_INCLUDES"] = "Only Click-Castings and Layout Auto Switch are included",
+    ["RESET_YES_NO"] = "|cff22ff22Yes|r - Reset Cell\n|cffff2222No|r - I'll fix it myself",
 
     ["clickcastingsHints"] = "Left-Click: edit\nRight-Click: delete",
     ["syncTips"] = "Set the master layout here\nAll indicators of slave layout are fully in-sync with the master\nIt's a two-way sync, but all indicators of slave layout will be lost when set a master",

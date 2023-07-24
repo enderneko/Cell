@@ -13,14 +13,28 @@ function F:Revise()
         F:Debug("CharaDBRevision:", charaDbRevision)
     end
 
-    if CellDB["revise"] and (dbRevision < 149 or (charaDbRevision and charaDbRevision < 149)) then -- update from an unsupported version
+    if CellDB["revise"] and dbRevision < Cell.MIN_VERSION then -- update from an unsupported version
         local f = CreateFrame("Frame")
         f:RegisterEvent("PLAYER_ENTERING_WORLD")
         f:SetScript("OnEvent", function()
             f:UnregisterAllEvents()
-            local popup = Cell:CreateConfirmPopup(CellAnchorFrame, 260, L["RESET"], function()
-                if dbRevision < 149 then CellDB = nil end
-                if charaDbRevision and charaDbRevision < 149 then CellCharacterDB = nil end
+            local popup = Cell:CreateConfirmPopup(CellAnchorFrame, 260, L["RESET"].."\n"..L["RESET_YES_NO"], function()
+                CellDB = nil
+                CellCharacterDB = nil
+                ReloadUI()
+            end)
+            popup:SetPoint("TOPLEFT")
+        end)
+        return
+    end
+    
+    if CellCharacterDB and CellCharacterDB["revise"] and charaDbRevision < Cell.MIN_VERSION then -- update from an unsupported version
+        local f = CreateFrame("Frame")
+        f:RegisterEvent("PLAYER_ENTERING_WORLD")
+        f:SetScript("OnEvent", function()
+            f:UnregisterAllEvents()
+            local popup = Cell:CreateConfirmPopup(CellAnchorFrame, 260, L["RESET_CHARACTER"].."\n|cFFB7B7B7"..L["RESET_INCLUDES"].."|r\n"..L["RESET_YES_NO"], function()
+                CellCharacterDB = nil
                 ReloadUI()
             end)
             popup:SetPoint("TOPLEFT")
@@ -2143,6 +2157,10 @@ function F:Revise()
             }
             
             CellDB["dispelRequest"]["type"] = "text"
+        end
+
+        if Cell.isWrath then
+            CellCharacterDB["clickCastings"]["class"] = Cell.vars.playerClass
         end
     end
 

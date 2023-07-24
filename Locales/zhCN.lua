@@ -4,7 +4,10 @@ local L = select( 2, ...).L
 
 L["New version found (%s). Please visit %s to get the latest version."] = "发现新版本 (%s)。 请访问 %s 下载最新版本。"
 L["ABOUT"] = "Cell 受启发于 CompactRaid，但并非其修改版或增强版，而是一个全新的团队框架。\n我个人很喜欢 CompactRaid，并常年使用它，但其作者似乎已经不再更新了。因此我写了 Cell，希望你能喜欢。\n另外，我也参考了一些很棒的团队框架，比如 Aptechka、Grid2 和 VuhDo。\nCell 并不打算成为一个轻量或强大的团队框架插件。设置简单，功能足够，就行了。"
-L["RESET"] = "从过旧的版本更新，需要重置Cell。\n|cff22ff22是|r - 重置Cell\n|cffff2222否|r - 我自己搞定"
+L["RESET"] = "从过旧的版本更新，需要重置Cell"
+L["RESET_CHARACTER"] = "从过旧的版本更新，需要重置Cell的角色配置"
+L["RESET_INCLUDES"] = "这仅包括点击施法与布局自动切换"
+L["RESET_YES_NO"] = "|cff22ff22是|r - 重置Cell\n|cffff2222否|r - 我自己搞定"
 
 -------------------------------------------------
 -- slash command
@@ -673,10 +676,10 @@ L["Slash Commands"] = "斜杠命令"
 L["Bug Report & Suggestion"] = "问题报告与建议"
 L["Links"] = "链接"
 L["Import & Export All Settings"] = "导入导出所有设置"
-L["Except Click-Castings"] = "不包括点击施法"
 L["All Cell settings will be overwritten!"] = "所有 Cell 设置将被覆盖！"
 L["Autorun will be disabled for all code snippets"] = "将禁用所有代码片段的自动运行"
 L["Include Nickname Settings"] = "包含昵称设置"
+L["Include Character Settings"] = "包含角色设置"
 
 -------------------------------------------------
 -- code snippets

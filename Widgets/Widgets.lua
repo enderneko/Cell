@@ -1739,6 +1739,7 @@ function addon:CreateConfirmPopup(parent, width, text, onAccept, onReject, mask,
         parent.confirmPopup:SetSize(width, 100)
         addon:StylizeFrame(parent.confirmPopup, {0.1, 0.1, 0.1, 0.95}, {accentColor.t[1], accentColor.t[2], accentColor.t[3], 1})
         parent.confirmPopup:EnableMouse(true)
+        parent.confirmPopup:SetClampedToScreen(true)
         parent.confirmPopup:Hide()
         
         parent.confirmPopup:SetScript("OnHide", function()

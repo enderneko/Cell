@@ -9,7 +9,7 @@ local deflateConfig = {level = 9}
 
 local isImport, imported, exported = false, nil, ""
 
-local importExportFrame, importBtn, title, textArea, includeNicknamesCB
+local importExportFrame, importBtn, title, textArea, includeNicknamesCB, includeCharacterCB
 
 local function DoImport()
     -- raid debuffs
@@ -19,14 +19,10 @@ local function DoImport()
         end
     end
 
-    -- remove invalid
+    -- deal with invalid
     if Cell.isRetail then
         imported["appearance"]["useLibHealComm"] = false
     elseif Cell.isWrath then
-        imported["clickCastings"] = nil
-        imported["layoutAutoSwitch"] = nil
-        imported["cleuAuras"] = nil
-        imported["cleuGlow"] = nil
         imported["appearance"]["healAbsorb"][1] = false
     end
 
@@ -58,64 +54,45 @@ local function DoImport()
     end
 
     -- click-castings
+    local clickCastings
     if imported["clickCastings"] then
-        if Cell.isRetail then
-            for class, t in pairs(imported["clickCastings"]) do
-                -- remove
-                t[1] = nil
-                t[2] = nil
-                t["alwaysTargeting"][1] = nil
-                t["alwaysTargeting"][2] = nil
-                -- add
-                local classID = F:GetClassID(class)
-                for sepcIndex = 1, GetNumSpecializationsForClassID(classID) do
-                    local specID = GetSpecializationInfoForClassID(classID, sepcIndex)
-                    if not t["alwaysTargeting"][specID] then
-                        t["alwaysTargeting"][specID] = "disabled"
-                    end
-                    if not t[specID] then
-                        t[specID] = {
-                            {"type1", "target"},
-                            {"type2", "togglemenu"},
-                        } 
-                    end
-                end
-            end
-        -- elseif Cell.isWrath then
-        --     for class, t in pairs(imported["clickCastings"]) do
-        --         -- remove
-        --         for k in pairs(t) do
-        --             if k ~= "useCommon" and k ~= "alwaysTargeting" and k ~= "smartResurrection" and k ~= "common" and k ~= 1 and k ~= 2 then
-        --                 t[k] = nil
-        --             end
-        --         end
-        --         for k in pairs(t["alwaysTargeting"]) do
-        --             if k ~= "common" and k ~= 1 and k ~= 2 then
-        --                 t["alwaysTargeting"][k] = nil
-        --             end
-        --         end
-        --         -- add
-        --         if not t["alwaysTargeting"][1] then
-        --             t["alwaysTargeting"][1] = "disabled"
-        --         end
-        --         if not t["alwaysTargeting"][2] then
-        --             t["alwaysTargeting"][2] = "disabled"
-        --         end
-        --         if not t[1] then
-        --             t[1] = {
-        --                 {"type1", "target"},
-        --                 {"type2", "togglemenu"},
-        --             }
-        --         end
-        --         if not t[2] then
-        --             t[2] = {
-        --                 {"type1", "target"},
-        --                 {"type2", "togglemenu"},
-        --             }
-        --         end
-        --     end
+        if Cell.isRetail then -- RETAIL -> RETAIL
+            clickCastings = imported["clickCastings"]
+        else -- RETAIL -> WRATH
+            clickCastings = nil
         end
+        imported["clickCastings"] = nil
+
+    elseif imported["characterDB"] and imported["characterDB"]["clickCastings"] then
+        if Cell.isWrath and imported["characterDB"]["clickCastings"]["class"] == Cell.vars.playerClass then -- WRATH -> WRATH, same class
+            clickCastings = imported["characterDB"]["clickCastings"]
+        else -- WRATH -> RETAIL
+            clickCastings = nil
+        end
+        imported["characterDB"]["clickCastings"] = nil
     end
+
+    -- layout auto switch
+    local layoutAutoSwitch
+    if imported["layoutAutoSwitch"] then
+        if Cell.isRetail then -- RETAIL -> RETAIL
+            layoutAutoSwitch = imported["layoutAutoSwitch"]
+        else -- RETAIL -> WRATH
+            layoutAutoSwitch = nil
+        end
+        imported["layoutAutoSwitch"] = nil
+
+    elseif imported["characterDB"] and imported["characterDB"]["layoutAutoSwitch"] then
+        if Cell.isWrath then -- WRATH -> WRATH
+            layoutAutoSwitch = imported["characterDB"]["layoutAutoSwitch"]
+        else -- WRATH -> RETAIL
+            layoutAutoSwitch = nil
+        end
+        imported["characterDB"]["layoutAutoSwitch"] = nil
+    end
+
+    -- remove characterDB
+    imported["characterDB"] = nil
 
     -- remove invalid
     F:FilterInvalidSpells(imported["debuffBlacklist"])
@@ -135,16 +112,30 @@ local function DoImport()
 
     --! overwrite
     CellDB = imported
+    
+    if Cell.isRetail then
+        CellDB["clickCastings"] = clickCastings
+        CellDB["layoutAutoSwitch"] = layoutAutoSwitch
+    else
+        CellCharacterDB["clickCastings"] = clickCastings
+        CellCharacterDB["layoutAutoSwitch"] = layoutAutoSwitch
+        CellCharacterDB["revise"] = imported["revise"]
+    end
+
     ReloadUI()
 end
 
-local function GetExportString(includeNicknames)
+local function GetExportString(includeNicknames, includeCharacter)
     local prefix = "!CELL:"..Cell.versionNum..":ALL!"
 
     local db = F:Copy(CellDB)
-    
+
     if not includeNicknames then
         db["nicknames"] = nil
+    end
+
+    if includeCharacter then
+        db["characterDB"] = F:Copy(CellCharacterDB)
     end
 
     local str = Serializer:Serialize(db) -- serialize
@@ -200,11 +191,20 @@ local function CreateImportExportFrame()
 
     -- export include nickname settings
     includeNicknamesCB = Cell:CreateCheckButton(importExportFrame, L["Include Nickname Settings"], function(checked)
-        exported = GetExportString(checked)
+        exported = GetExportString(checked, includeCharacterCB:GetChecked())
         textArea:SetText(exported)
     end)
     includeNicknamesCB:SetPoint("TOPLEFT", 5, -25)
     includeNicknamesCB:Hide()
+   
+    -- export include character settings
+    includeCharacterCB = Cell:CreateCheckButton(importExportFrame, L["Include Character Settings"], function(checked)
+        exported = GetExportString(includeNicknamesCB:GetChecked(), checked)
+        textArea:SetText(exported)
+    end)
+    includeCharacterCB:SetPoint("TOPLEFT", includeNicknamesCB, "TOPRIGHT", 200, 0)
+    includeCharacterCB:Hide()
+    Cell:SetTooltips(includeCharacterCB, "ANCHOR_TOPLEFT", 0, 2, L["Click-Castings"]..", "..L["Layout Auto Switch"])
     
     -- textArea
     textArea = Cell:CreateScrollEditBox(importExportFrame, function(eb, userChanged)
@@ -292,6 +292,7 @@ function F:ShowImportFrame()
     textArea.eb:SetFocus(true)
 
     includeNicknamesCB:Hide()
+    includeCharacterCB:Hide()
     textArea:SetPoint("TOPLEFT", 5, -20)
     P:Height(importExportFrame, 170)
 end
@@ -315,6 +316,10 @@ function F:ShowExportFrame()
 
     includeNicknamesCB:SetChecked(false)
     includeNicknamesCB:Show()
+    if Cell.isWrath then
+        includeCharacterCB:SetChecked(false)
+        includeCharacterCB:Show()
+    end
     textArea:SetPoint("TOPLEFT", 5, -50)
     P:Height(importExportFrame, 200)
 end

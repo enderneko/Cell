@@ -328,6 +328,7 @@ function eventFrame:ADDON_LOADED(arg1)
 
         if type(CellCharacterDB["clickCastings"]) ~= "table" then
             CellCharacterDB["clickCastings"] = {
+                ["class"] = Cell.vars.playerClass, -- validate on import
                 ["useCommon"] = true,
                 ["smartResurrection"] = "disabled",
                 ["alwaysTargeting"] = {
