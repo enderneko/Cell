@@ -81,6 +81,13 @@ select(2, ...).L = setmetatable({
         <h1>Try disabling code snippets, if Cell doesn't work after update.</h1>
         <br/>
         
+        <h1>r186-release (Jul 24, 2023, 21:06 GMT+8)</h1>
+        <p>* Fixed import &amp; export.</p>
+        <p>* Updated Dispel/Spell Request.</p>
+        <p>* Updated Health Text indicator.</p>
+        <p>* Updated zhTW.</p>
+        <br/>
+        
         <h1>r185-release (Jul 21, 2023, 20:57 GMT+8)</h1>
         <p>* Updated Options UI (wip).</p>
         <p>+ Added "Only show overshields" to Shield Bar indicator.</p>
