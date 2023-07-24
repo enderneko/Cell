@@ -625,7 +625,7 @@ L["Beat"] = "跳动"
 L["Blink"] = "闪烁"
 L["Spell Request"] = "法术请求"
 L["Glow unit button when a group member sends a %s request"] = "当队内成员请求%s时高亮其单位按钮"
-L["Shows only one spell glow on a unit button at a time"] = "每个单位按钮上同一时间只能显示一个法术高亮"
+L["Shows only one spell request on a unit button at a time"] = "每个单位按钮上同一时间只能显示一个法术请求"
 L["Check If Exists"] = "检查增益是否存在"
 L["Do nothing if requested spell/buff already exists on requester"] = "若增益已存在于请求者身上，则不发光"
 L["Free Cooldown Only"] = "仅当法术不在冷却时"
@@ -659,6 +659,7 @@ L["Dispellable By Me"] = "仅当我能驱散时"
 L["Respond to all dispellable debuffs"] = "响应所有的可驱散减益"
 L["Respond to specific dispellable debuffs"] = "仅响应指定的可驱散减益"
 L["IDs separated by whitespaces"] = "用空格分隔多个法术ID"
+L["Text Options"] = "文本选项"
 
 -------------------------------------------------
 -- about

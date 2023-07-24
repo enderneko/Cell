@@ -12,4 +12,5 @@
     <Script file="Request_Show.lua"/>
     <Script file="Request_GlowOptions.lua"/>
     <Script file="Request_IconOptions.lua"/>
+    <Script file="Request_TextOptions.lua"/>
 </Ui>

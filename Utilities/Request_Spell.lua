@@ -152,7 +152,7 @@ local function CreateSRPane()
     srTips:SetPoint("TOPLEFT", 5, -25)
     srTips:SetJustifyH("LEFT")
     srTips:SetSpacing(5)
-    srTips:SetText(L["Glow unit button when a group member sends a %s request"]:format(Cell:GetAccentColorString()..L["SPELL"].."|r").."\n"..L["Shows only one spell glow on a unit button at a time"])
+    srTips:SetText(L["Glow unit button when a group member sends a %s request"]:format(Cell:GetAccentColorString()..L["SPELL"].."|r").."\n"..L["Shows only one spell request on a unit button at a time"])
 
     -- enabled ----------------------------------------------------------------------
     srEnabledCB = Cell:CreateCheckButton(srPane, L["Enabled"], function(checked, self)

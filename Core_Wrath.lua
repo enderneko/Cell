@@ -273,10 +273,19 @@ function eventFrame:ADDON_LOADED(arg1)
                 ["responseType"] = "all",
                 ["timeout"] = 10,
                 ["debuffs"] = {},
+                ["type"] = "text",
+                ["textOptions"] = {
+                    {1, 0, 0, 1}, -- [1] color 
+                    32, -- [2] size
+                    "TOPLEFT", -- [3] anchor
+                    "TOPLEFT", -- [4] anchorTo
+                    -1, -- [5] x
+                    5, -- [6] y
+                },
                 ["glowOptions"] = {
                     "shine", -- [1] glow type
                     {
-                        {1,0,0.4,1}, -- [1] color
+                        {1, 0, 0.4, 1}, -- [1] color
                         0, -- [2] x
                         0, -- [3] y
                         9, -- [4] N

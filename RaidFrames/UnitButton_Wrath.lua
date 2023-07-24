@@ -3137,6 +3137,7 @@ function F:UnitButton_OnLoad(button)
     I:CreateMissingBuffs(button)
     I:CreatePowerWordShield(button)
     U:CreateSpellRequestIcon(button)
+    U:CreateDispelRequestText(button)
 
     -- events
     button:SetScript("OnAttributeChanged", UnitButton_OnAttributeChanged) -- init

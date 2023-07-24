@@ -83,6 +83,35 @@ local function ShowIcon(icon, tex, iconColor, timeout, callback)
 end
 
 -------------------------------------------------
+-- text
+-------------------------------------------------
+local function HideText(text)
+    text:Hide()
+
+    if text.timer then
+        text.timer:Cancel()
+        text.timer = nil
+    end
+end
+
+local function ShowText(text, timeout, callback)
+    F:Debug("SHOW_TEXT:", text:GetName())
+    
+    text:Display()
+
+    if text.timer then
+        text.timer:Cancel()
+    end
+    text.timer = C_Timer.NewTimer(timeout, function()
+        text.timer = nil
+        HideText(text)
+        if callback then
+            callback()
+        end
+    end)
+end
+
+-------------------------------------------------
 -- spell request
 -------------------------------------------------
 local srEnabled, srExists, srKnown, srFreeCD, srReplyCD, srResponseType, srTimeout, srCastMsg
@@ -356,7 +385,7 @@ Cell:RegisterCallback("UpdateRequests", "SR_UpdateRequests", SR_UpdateRequests)
 -------------------------------------------------
 -- dispel request
 -------------------------------------------------
-local drEnabled, drDispellable, drType, drTimeout, drDebuffs
+local drEnabled, drDispellable, drResponseType, drTimeout, drDebuffs, drDisplayType
 local drUnits = {}
 local DR = CreateFrame("Frame")
 
@@ -367,6 +396,7 @@ local function HideAllDRGlows()
         local button = F:GetUnitButtonByUnit(unit)
         if button then
             HideGlow(button.widget.drGlowFrame)
+            HideText(button.widget.drText)
         end
     end
     wipe(drUnits)
@@ -384,6 +414,7 @@ DR:SetScript("OnEvent", function(self, event)
                 local button = F:GetUnitButtonByGUID(destGUID)
                 if button then
                     HideGlow(button.widget.drGlowFrame)
+                    HideText(button.widget.drText)
                 end
             end
         end
@@ -398,7 +429,7 @@ Comm:RegisterComm("CELL_REQ_D", function(prefix, message, channel, sender)
         local unit = Cell.vars.names[sender]
         if not unit or not UnitIsVisible(unit) then return end
 
-        if drType == "all" then
+        if drResponseType == "all" then
             -- NOTE: get all dispellable debuffs on unit
             drUnits[unit] = F:FindAuraByDebuffTypes(unit, "all")
         else -- specific debuff
@@ -418,9 +449,15 @@ Comm:RegisterComm("CELL_REQ_D", function(prefix, message, channel, sender)
         if F:Getn(drUnits[unit]) ~= 0 then -- found
             local button = F:GetUnitButtonByName(sender)
             if button then
-                ShowGlow(button.widget.drGlowFrame, CellDB["dispelRequest"]["glowOptions"][1], CellDB["dispelRequest"]["glowOptions"][2], drTimeout, function()
-                    drUnits[unit] = nil
-                end)
+                if drDisplayType == "text" then
+                    ShowText(button.widget.drText, drTimeout, function()
+                        drUnits[unit] = nil
+                    end)
+                else
+                    ShowGlow(button.widget.drGlowFrame, CellDB["dispelRequest"]["glowOptions"][1], CellDB["dispelRequest"]["glowOptions"][2], drTimeout, function()
+                        drUnits[unit] = nil
+                    end)
+                end
             end
         else
             drUnits[unit] = nil
@@ -436,9 +473,10 @@ local function DR_UpdateRequests(which)
 
         if drEnabled then
             drDispellable = CellDB["dispelRequest"]["dispellableByMe"]
-            drType = CellDB["dispelRequest"]["responseType"]
+            drResponseType = CellDB["dispelRequest"]["responseType"]
             drTimeout = CellDB["dispelRequest"]["timeout"]
             drDebuffs = F:ConvertTable(CellDB["dispelRequest"]["debuffs"])
+            drDisplayType = CellDB["dispelRequest"]["type"]
 
             DR:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
             DR:RegisterEvent("ENCOUNTER_START")
@@ -448,6 +486,18 @@ local function DR_UpdateRequests(which)
         end
         -- texplore(drUnits)
         -- texplore(drDebuffs)
+
+    end
+    
+    if not which or which == "dispelRequest_text" then
+        F:IterateAllUnitButtons(function(b)
+            local setting = CellDB["dispelRequest"]["textOptions"]
+            b.widget.drText:SetType(setting[1])
+            b.widget.drText:SetColor(setting[2])
+            P:Size(b.widget.drText, setting[3] * 2, setting[3])
+            P:ClearPoints(b.widget.drText)
+            P:Point(b.widget.drText, setting[4], b.widget.srGlowFrame, setting[5], setting[6], setting[7])
+        end)
     end
 end
 Cell:RegisterCallback("UpdateRequests", "DR_UpdateRequests", DR_UpdateRequests)

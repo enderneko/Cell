@@ -3209,6 +3209,7 @@ function F:UnitButton_OnLoad(button)
     I:CreateHealthThresholds(button)
     I:CreateMissingBuffs(button)
     U:CreateSpellRequestIcon(button)
+    U:CreateDispelRequestText(button)
 
     -- events
     button:SetScript("OnAttributeChanged", UnitButton_OnAttributeChanged) -- init

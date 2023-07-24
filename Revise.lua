@@ -2131,8 +2131,19 @@ function F:Revise()
                 t["icon"] = select(3, GetSpellInfo(t["spellId"]))
                 t["iconColor"] = t["glowOptions"][2][1]
             end
+            
+            CellDB["dispelRequest"]["textOptions"] = {
+                "A",
+                {1, 0, 0, 1}, -- [1] color 
+                32, -- [2] size
+                "TOPLEFT", -- [3] anchor
+                "TOPLEFT", -- [4] anchorTo
+                -1, -- [5] x
+                5, -- [6] y
+            }
+            
+            CellDB["dispelRequest"]["type"] = "text"
         end
-        
     end
 
     CellDB["revise"] = Cell.version
