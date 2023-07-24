@@ -892,6 +892,13 @@ local function CreateSetting_Format(parent)
                     widget.func("number-deficit-short")
                 end,
             },
+            {
+                ["text"] = F:FormatNumber(21377).." 32%",
+                ["value"] = "current-short-percentage",
+                ["onClick"] = function()
+                    widget.func("current-short-percentage")
+                end,
+            },
         })
 
         widget.formatText = widget:CreateFontString(nil, "OVERLAY", font_name)

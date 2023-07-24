@@ -1322,17 +1322,17 @@ function I:CreateHealthText(parent)
 
     function healthText:SetHealth(current, max, totalAbsorbs)
         if healthText.format == "percentage" then
-            text:SetText(string.format("%d%%", current/max*100))
+            text:SetFormattedText("%d%%", current/max*100)
         elseif healthText.format == "percentage-absorbs" then
             if totalAbsorbs == 0 then
-                text:SetText(string.format("%d%%", current/max*100))
+                text:SetFormattedText("%d%%", current/max*100)
             else
-                text:SetText(string.format("%d%%+%d%%", current/max*100, totalAbsorbs/max*100))
+                text:SetFormattedText("%d%%+%d%%", current/max*100, totalAbsorbs/max*100)
             end
         elseif healthText.format == "percentage-absorbs-merged" then
-            text:SetText(string.format("%d%%", (current+totalAbsorbs)/max*100))
+            text:SetFormattedText("%d%%", (current+totalAbsorbs)/max*100)
         elseif healthText.format == "percentage-deficit" then
-            text:SetText(string.format("%d%%", (current-max)/max*100))
+            text:SetFormattedText("%d%%", (current-max)/max*100)
         elseif healthText.format == "number" then
             text:SetText(current)
         elseif healthText.format == "number-short" then
@@ -1341,7 +1341,7 @@ function I:CreateHealthText(parent)
             if totalAbsorbs == 0 then
                 text:SetText(F:FormatNumber(current))
             else
-                text:SetText(F:FormatNumber(current).."+"..F:FormatNumber(totalAbsorbs))
+                text:SetFormattedText("%s+%s", F:FormatNumber(current), F:FormatNumber(totalAbsorbs))
             end
         elseif healthText.format == "number-absorbs-merged-short" then
             text:SetText(F:FormatNumber(current+totalAbsorbs))
@@ -1349,6 +1349,8 @@ function I:CreateHealthText(parent)
             text:SetText(current-max)
         elseif healthText.format == "number-deficit-short" then
             text:SetText(F:FormatNumber(current-max))
+        elseif healthText.format == "current-short-percentage" then
+            text:SetFormattedText("%s %d%%", F:FormatNumber(current), (current/max*100))
         end
         healthText:SetWidth(text:GetStringWidth()+3)
     end
