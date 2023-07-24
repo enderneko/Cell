@@ -37,6 +37,8 @@ L["Always Targeting"] = "總是選取目標"
 L["Anchor Point"] = "自己的"
 L["Anchor To"] = "對齊到"
 L["Anchored To"] = "對齊到"
+--[[Translation missing --]]
+--[[ L["Animation"] = ""--]] 
 L["Any Spells"] = "所有法術"
 L["AoE Healing"] = "範圍治療 (團補)"
 L["Appearance"] = "外觀"
@@ -53,9 +55,13 @@ L["Bar"] = "進度條"
 L["Bar Orientation"] = "條列方向"
 L["Bars"] = "進度條"
 L["Battle Res Timer"] = "戰復計時器"
+--[[Translation missing --]]
+--[[ L["Beat"] = ""--]] 
 L["BG 1-15"] = "戰場 1-15"
 L["BG 16-40"] = "戰場 16-40"
 L["Big Debuffs"] = "放大顯示減益"
+--[[Translation missing --]]
+--[[ L["Blink"] = ""--]] 
 L["Blizzard Frames"] = "遊戲內建框架"
 L["Border"] = "邊框"
 L["Boss Name"] = "首領名稱"
@@ -233,12 +239,16 @@ L["Highlight Type"] = "顯著標示類型"
 L["Horizontal"] = "水平"
 L["Horizontal Gradient"] = "水平漸層"
 L["Icon"] = "圖示"
+--[[Translation missing --]]
+--[[ L["Icon Options"] = ""--]] 
 L["Icons"] = "圖示群組"
 L["IDs separated by whitespaces"] = "用空格分隔多個法術ID"
 L["If disabled, no check, no reply, just glow"] = "停用時，不檢查冷卻，也不回覆密語，只顯示發光。"
 L["If you are a paladin or warrior, and the unit has no buffs from you, a %s icon will be displayed."] = "如果你是聖騎士或戰士，且該單位沒有來自你的增益時，將會顯示%s圖示。"
 L["Import"] = "匯入"
 L["Import & Export All Settings"] = "匯入與匯出所有設定"
+--[[Translation missing --]]
+--[[ L["Include Character Settings"] = ""--]] 
 L["Include Nickname Settings"] = "包含暱稱設定"
 L["Incompatible Version"] = "不相容的版本"
 L["Increase Health Update Rate"] = "增加血條更新頻率"
@@ -315,8 +325,7 @@ L["Only one threshold is displayed at a time"] = "同時間只會顯示一個臨
 L["Only show during encounter or in mythic+"] = "只在首領戰或 M+ 顯示"
 L["Only show when you have permission to do this"] = "只在你有權限這樣做時才會顯示"
 L["Only visible to me"] = "只對我自己顯示"
---[[Translation missing --]]
---[[ L["onlyShowOvershields"] = ""--]] 
+L["onlyShowOvershields"] = "只顯示超過血量上限的護盾"
 L["onlyShowTopGlow"] = "只有優先順序最高的減益會發光"
 L["Options"] = "選項"
 L["Options UI Accent Color"] = "選項介面強調色"
@@ -340,8 +349,7 @@ L["Pixel"] = "像素"
 L["Pixel Perfect"] = "完美細緻模式"
 L["Play Icon Animation When"] = "播放圖示動畫於"
 L["Poison"] = "中毒"
---[[Translation missing --]]
---[[ L["Position"] = ""--]] 
+L["Position"] = "位置"
 L["Power Bar Filters"] = "能量條過濾方式"
 L["Power Color"] = "能量顏色"
 L["Power Color (dark)"] = "能量顏色 (暗)"
@@ -383,7 +391,8 @@ L["Report deaths to group"] = "向隊伍通報死亡訊息"
 L["Request"] = "請求"
 L["Require font support"] = "需要字體支援"
 L["Require reload of the UI"] = "需要重新載入介面"
-L["RESET"] = "從非常舊的版本更新之後，需要完整重置 Cell。\n|cff22ff22是|r - 重置 Cell\n|cffff2222否|r - 我要自己修正"
+--[[Translation missing --]]
+--[[ L["RESET"] = ""--]] 
 L["Reset All"] = "全部重置"
 L["reset all Cell settings"] = "重置 Cell 的全部設定"
 L["reset all Click-Castings"] = "重置滑鼠點擊施法的全部設定"
@@ -391,6 +400,12 @@ L["reset all Layouts and Indicators"] = "重置版面配置和指示器的全部
 L["reset all Raid Debuffs"] = "重置全部的團隊減益"
 L["reset Cell position"] = "重置 Cell 的位置"
 L["Reset debuffs?"] = "是否要重置減益?"
+--[[Translation missing --]]
+--[[ L["RESET_CHARACTER"] = ""--]] 
+--[[Translation missing --]]
+--[[ L["RESET_INCLUDES"] = ""--]] 
+--[[Translation missing --]]
+--[[ L["RESET_YES_NO"] = ""--]] 
 L["Respond to all dispellable debuffs"] = "回應所有的可驅散減益"
 L["Respond to all requests from group members"] = "回應所有隊伍成員的請求"
 L["Respond to requests that are only sent to me"] = "只回應對我發送的請求"
@@ -438,7 +453,8 @@ L["Show while not in a group"] = "不在隊伍中時顯示"
 L["showDispelTypeIcons"] = "顯示驅散類型圖示"
 L["showDuration"] = "顯示持續時間文字"
 L["showGroupNumber"] = "顯示隊伍編號"
-L["Shows only one spell glow on a unit button at a time"] = "每個單位按鈕上同一時間只能顯示一個法術發光"
+--[[Translation missing --]]
+--[[ L["Shows only one spell request on a unit button at a time"] = ""--]] 
 L["showStack"] = "顯示層數文字"
 L["showTooltip"] = "顯示光環提示"
 L["Size"] = "大小"
@@ -479,6 +495,8 @@ L["Target Marks"] = "目標標記"
 L["Target of Target"] = "目標的目標"
 L["Targeted Spells"] = "被法術選中"
 L["Text"] = "文字"
+--[[Translation missing --]]
+--[[ L["Text Options"] = ""--]] 
 L["Text Width"] = "文字寬度"
 L["Texture"] = "材質"
 L["The priority of spells decreases from top to bottom."] = "法術的優先順序是從上到下降低。"
@@ -511,6 +529,8 @@ L["Track by ID"] = "符合法術 ID"
 L["trackByName"] = "根據名稱追蹤"
 L["Translators"] = "翻譯"
 L["Translit Cyrillic to Latin"] = "將俄文轉換成英文"
+--[[Translation missing --]]
+--[[ L["Type"] = ""--]] 
 L["Type: "] = "類型:"
 L["Unaffected"] = "未獲得此增益"
 L["Unit"] = "單位"
@@ -530,8 +550,7 @@ L["Use common profile"] = "使用共用設定檔"
 L["Use Same Arrangement As Main"] = "使用與主框架相同的排列"
 L["Use Same Size As Main"] = "使用與主框架相同的大小"
 L["Use separate profile for each spec"] = "每個專精使用不同的設定檔"
---[[Translation missing --]]
---[[ L["Utilities"] = ""--]] 
+L["Utilities"] = "工具"
 L["VEHICLE"] = "載具"
 L["vehicle name"] = "載具名稱"
 L["Vehicle Name Position"] = "載具名稱位置"
