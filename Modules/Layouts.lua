@@ -2731,8 +2731,8 @@ local function ShowTab(tab)
             LoadAutoSwitchDropdowns()
 
             -- mask
-            F:ApplyCombatFunctionToTab(layoutsTab)
-            F:ApplyCombatFunctionToTab(autoSwitchFrame)
+            F:ApplyCombatProtectionToFrame(layoutsTab)
+            F:ApplyCombatProtectionToFrame(autoSwitchFrame)
             Cell:CreateMask(layoutsTab, nil, {1, -1, -1, 1})
             layoutsTab.mask:Hide()
             Cell:CreateMask(autoSwitchFrame, nil, {1, -1, -1, 1})

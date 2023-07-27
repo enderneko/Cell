@@ -602,6 +602,22 @@ function F:ConvertSpellTable(t, convertIdToName)
     return temp
 end
 
+function F:ConvertSpellDurationTable(t, convertIdToName)
+    local temp = {}
+    for _, v in ipairs(t) do
+        local id, duration = strsplit(":", v)
+        local name = GetSpellInfo(id)
+        if name then
+            if convertIdToName then
+                temp[name] = tonumber(duration)
+            else
+                temp[tonumber(id)] = tonumber(duration)
+            end
+        end
+    end
+    return temp
+end
+
 function F:CheckTableRemoved(previous, after)
     local aa = {}
     local ret = {}

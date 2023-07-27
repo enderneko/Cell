@@ -2,11 +2,11 @@ if not LOCALE_zhTW then return end
 
 local L = select( 2, ...).L
 
-L["%s in General must be enabled to make this indicator work."] = "要使用此指示器，必須先啟用一般標籤頁面中的 %s 功能。"
+L["%s in Utilities must be enabled to make this indicator work."] = "要使用此指示器，必須先啟用一般標籤頁面中的 %s 功能。"
 L["%s lock %s on %s."] = "%s將%s鎖定在%s。"
 L["%s unlock %s from %s."] = "%s將%s從%s解鎖。"
-L["[Alt+LeftClick] to edit"] = "[Alt+左鍵] 修改"
-L["[Ctrl+LeftClick] to reset these settings"] = "[Ctrl+左鍵] 重置這些設定"
+L["[Alt+Left-Click] to edit"] = "[Alt+左鍵] 修改"
+L["[Ctrl+Left-Click] to reset these settings"] = "[Ctrl+左鍵] 重置這些設定"
 L["|cff1Aff1AYes|r - Overwrite"] = "|cff1Aff1A是|r - 取代原有的"
 L["|cffff1A1ANo|r - Create New"] = "|cffff1A1A否|r - 建立新的"
 L["|cffffb5c5Left-Click:|r cast the spell"] = "|cffffb5c5左鍵:|r 施放技能"
@@ -37,8 +37,7 @@ L["Always Targeting"] = "總是選取目標"
 L["Anchor Point"] = "自己的"
 L["Anchor To"] = "對齊到"
 L["Anchored To"] = "對齊到"
---[[Translation missing --]]
---[[ L["Animation"] = ""--]] 
+L["Animation"] = "動畫"
 L["Any Spells"] = "所有法術"
 L["AoE Healing"] = "範圍治療 (團補)"
 L["Appearance"] = "外觀"
@@ -55,13 +54,11 @@ L["Bar"] = "進度條"
 L["Bar Orientation"] = "條列方向"
 L["Bars"] = "進度條"
 L["Battle Res Timer"] = "戰復計時器"
---[[Translation missing --]]
---[[ L["Beat"] = ""--]] 
+L["Beat"] = "跳動"
 L["BG 1-15"] = "戰場 1-15"
 L["BG 16-40"] = "戰場 16-40"
 L["Big Debuffs"] = "放大顯示減益"
---[[Translation missing --]]
---[[ L["Blink"] = ""--]] 
+L["Blink"] = "閃爍"
 L["Blizzard Frames"] = "遊戲內建框架"
 L["Border"] = "邊框"
 L["Boss Name"] = "首領名稱"
@@ -85,10 +82,16 @@ L["Button5"] = "按鍵 5"
 L["C"] = "職業天賦"
 L["Cancel"] = "取消"
 L["Can't change options in combat"] = "無法在戰鬥中更改設定"
+--[[Translation missing --]]
+--[[ L["cast Inner spell"] = ""--]] 
+--[[Translation missing --]]
+--[[ L["cast Outer spell"] = ""--]] 
 L["castByMe"] = "只顯示我施放的增益"
 L["Cell will report all deaths during a raid encounter."] = "團隊首領戰時，Cell 會通報全部的死亡訊息。"
 L["Cell will report first %d deaths during a raid encounter."] = "團隊首領戰時，Cell 會通報前 %d 個死亡訊息。"
 L["CENTER"] = "中"
+--[[Translation missing --]]
+--[[ L["change mode / apply changes"] = ""--]] 
 L["Changelogs"] = "更新資訊"
 L["Check all visible enemy nameplates. Battleground/Arena only."] = "檢查所有看見的敵方血條，只在戰場/競技場有效。"
 L["Check If Exists"] = "檢查增益是否存在"
@@ -97,6 +100,8 @@ L["circledStackNums"] = "用圓圈數字顯示層數"
 L["Class Color"] = "職業顏色"
 L["Class Color (dark)"] = "職業顏色 (暗)"
 L["Clear"] = "清除"
+--[[Translation missing --]]
+--[[ L["clear unit"] = ""--]] 
 L["cleuAurasTips"] = "通過戰鬥記錄事件找出看不到的法術效果"
 L["Click to preview"] = "點一下預覽"
 L["Click-Castings"] = "滑鼠點擊施法"
@@ -118,6 +123,8 @@ L["create a \"Healers\" indicator"] = "建立 \"Healers\" 指示器"
 L["Create new debuff (id)"] = "建立新的減益 (法術 ID)"
 L["Create new indicator"] = "建立新的指示器"
 L["Create new layout"] = "建立新的版面配置"
+--[[Translation missing --]]
+--[[ L["Create several buttons for quick casting and buff monitoring"] = ""--]] 
 L["Current"] = "目前為"
 L["Current Boss"] = "當前首領"
 L["Current Profile"] = "目前設定檔"
@@ -152,6 +159,8 @@ L["Delete spell?"] = "是否要刪除法術？"
 L["Disabled"] = "停用"
 L["Disabled in battlegrounds and arenas"] = "戰場和競技場停用"
 L["Discard"] = "取消"
+--[[Translation missing --]]
+--[[ L["discard changes"] = ""--]] 
 L["Disease"] = "疾病"
 L["DISPEL"] = "驅散"
 L["Dispel Request"] = "請求驅散"
@@ -202,6 +211,10 @@ L["From: "] = "來自:"
 L["General"] = "一般"
 L["GHOST"] = "鬼魂"
 L["Glow"] = "發光"
+--[[Translation missing --]]
+--[[ L["Glow Buffs"] = ""--]] 
+--[[Translation missing --]]
+--[[ L["Glow Casts"] = ""--]] 
 L["Glow Color"] = "發光顏色"
 L["Glow Options"] = "發光選項"
 L["Glow Type"] = "發光類型"
@@ -239,16 +252,14 @@ L["Highlight Type"] = "顯著標示類型"
 L["Horizontal"] = "水平"
 L["Horizontal Gradient"] = "水平漸層"
 L["Icon"] = "圖示"
---[[Translation missing --]]
---[[ L["Icon Options"] = ""--]] 
+L["Icon Options"] = "圖示選項"
 L["Icons"] = "圖示群組"
 L["IDs separated by whitespaces"] = "用空格分隔多個法術ID"
 L["If disabled, no check, no reply, just glow"] = "停用時，不檢查冷卻，也不回覆密語，只顯示發光。"
 L["If you are a paladin or warrior, and the unit has no buffs from you, a %s icon will be displayed."] = "如果你是聖騎士或戰士，且該單位沒有來自你的增益時，將會顯示%s圖示。"
 L["Import"] = "匯入"
 L["Import & Export All Settings"] = "匯入與匯出所有設定"
---[[Translation missing --]]
---[[ L["Include Character Settings"] = ""--]] 
+L["Include Character Settings"] = "包含角色設定"
 L["Include Nickname Settings"] = "包含暱稱設定"
 L["Incompatible Version"] = "不相容的版本"
 L["Increase Health Update Rate"] = "增加血條更新頻率"
@@ -257,9 +268,13 @@ L["Indicator settings are part of Layout settings which are account-wide."] = "�
 L["Indicator Sync"] = "指示器同步"
 L["Indicators"] = "指示器"
 L["Inherit: "] = "繼承:"
+--[[Translation missing --]]
+--[[ L["Inner Buff"] = ""--]] 
 L["Input spell id"] = "請輸入法術 ID"
 L["instakill"] = "秒殺"
 L["Instance Name"] = "副本名稱"
+--[[Translation missing --]]
+--[[ L["Instant Mode"] = ""--]] 
 L["Invalid"] = "無效"
 L["Invalid spell id."] = "無效的法術 ID。"
 L["Invalid unit."] = "無效單位。"
@@ -275,6 +290,10 @@ L["Leader Icon"] = "隊長圖示"
 L["LEFT"] = "左"
 L["Left"] = "左"
 L["Left Spell"] = "左鍵法術"
+--[[Translation missing --]]
+--[[ L["Left-Click"] = ""--]] 
+--[[Translation missing --]]
+--[[ L["Left-Drag"] = ""--]] 
 L["left-to-right"] = "從左到右"
 L["Length"] = "長度"
 L["LibHealComm needs to be installed"] = "需要自行安裝 LibHealComm"
@@ -298,6 +317,8 @@ L["Missing Buffs"] = "缺少增益"
 L["MODERATE CPU USAGE"] = "中等 CPU 使用量"
 L["Monochrome Outline"] = "無消除鋸齒外框"
 L["Mouseover Highlight Color"] = "滑鼠指向顯著標示顏色"
+--[[Translation missing --]]
+--[[ L["move"] = ""--]] 
 L["Mover"] = "拖曳我"
 L["My Nickname"] = "我的暱稱"
 L["Name Color"] = "名字顏色"
@@ -312,6 +333,10 @@ L["Nickname"] = "暱稱"
 L["Nickname Options"] = "暱稱選項"
 L["No"] = "否"
 L["No custom debuffs to export!"] = "沒有能夠匯出的自訂減益!"
+--[[Translation missing --]]
+--[[ L["No guarantee of the order of members in each subgroup"] = ""--]] 
+--[[Translation missing --]]
+--[[ L["No support for rearrangement of members within a same subgroup"] = ""--]] 
 L["None"] = "無"
 L["NON-EN"] = "中"
 L["Normal"] = "一般"
@@ -333,6 +358,8 @@ L["Options UI Font Size"] = "設定選項介面文字大小"
 L["Orientation"] = "方向"
 L["Out of Range Alpha"] = "超出範圍透明度"
 L["Outdoor"] = "野外"
+--[[Translation missing --]]
+--[[ L["Outer Buff"] = ""--]] 
 L["Outline"] = "外框"
 L["Overshield Texture"] = "超過血量上限的護盾材質"
 L["Overwrite Click-Casting"] = "覆蓋點擊施法"
@@ -354,6 +381,8 @@ L["Power Bar Filters"] = "能量條過濾方式"
 L["Power Color"] = "能量顏色"
 L["Power Color (dark)"] = "能量顏色 (暗)"
 L["Power Size"] = "能量條大小"
+--[[Translation missing --]]
+--[[ L["Premade Mode"] = ""--]] 
 L["Press Key to Bind"] = "按下要綁定的按鍵"
 L["Preview"] = "預覽"
 L["Primary Talents"] = "主要天賦"
@@ -361,10 +390,11 @@ L["Private Auras"] = "個人光環"
 L["Profiles"] = "設定檔"
 L["Pull"] = "倒數"
 L["Pull in %d sec"] = "開怪還有 %d 秒"
-L["Pull Timer"] = "開怪倒數"
 L["Pull timer cancelled"] = "開怪計時器已取消"
 L["pullTimerTips"] = "\n|r開怪倒數\n左鍵: |cffffffff開始倒數計時|r\n右鍵: |cffffffff取消倒數計時|r"
 L["PW:S"] = "真言術：盾"
+--[[Translation missing --]]
+--[[ L["Quick Cast"] = ""--]] 
 L["Raid"] = "團隊"
 L["Raid Debuffs"] = "副本減益"
 L["Raid Debuffs updated: %s."] = "已更新團隊減益: %s。"
@@ -391,8 +421,7 @@ L["Report deaths to group"] = "向隊伍通報死亡訊息"
 L["Request"] = "請求"
 L["Require font support"] = "需要字體支援"
 L["Require reload of the UI"] = "需要重新載入介面"
---[[Translation missing --]]
---[[ L["RESET"] = ""--]] 
+L["RESET"] = "從非常舊的版本更新之後，需要重置 Cell"
 L["Reset All"] = "全部重置"
 L["reset all Cell settings"] = "重置 Cell 的全部設定"
 L["reset all Click-Castings"] = "重置滑鼠點擊施法的全部設定"
@@ -400,12 +429,9 @@ L["reset all Layouts and Indicators"] = "重置版面配置和指示器的全部
 L["reset all Raid Debuffs"] = "重置全部的團隊減益"
 L["reset Cell position"] = "重置 Cell 的位置"
 L["Reset debuffs?"] = "是否要重置減益?"
---[[Translation missing --]]
---[[ L["RESET_CHARACTER"] = ""--]] 
---[[Translation missing --]]
---[[ L["RESET_INCLUDES"] = ""--]] 
---[[Translation missing --]]
---[[ L["RESET_YES_NO"] = ""--]] 
+L["RESET_CHARACTER"] = "從過舊的版本更新，需要重置角色設定檔"
+L["RESET_INCLUDES"] = "只包括滑鼠點擊施法和自動切換版面配置"
+L["RESET_YES_NO"] = "|cff22ff22是|r - 重置 Cell\n|cffff2222否|r - 我自己搞定"
 L["Respond to all dispellable debuffs"] = "回應所有的可驅散減益"
 L["Respond to all requests from group members"] = "回應所有隊伍成員的請求"
 L["Respond to requests that are only sent to me"] = "只回應對我發送的請求"
@@ -414,6 +440,10 @@ L["Respond to whispers"] = "回應密語"
 L["Response Type"] = "回應類型"
 L["Right"] = "右"
 L["RIGHT"] = "右"
+--[[Translation missing --]]
+--[[ L["Right-Click"] = ""--]] 
+--[[Translation missing --]]
+--[[ L["Right-Drag"] = ""--]] 
 L["right-to-left"] = "從右到左"
 L["Role Icon"] = "角色職責圖示"
 L["Rotate Texture"] = "旋轉材質"
@@ -428,6 +458,8 @@ L["ScrollUp"] = "滾輪往上"
 L["sec"] = "秒"
 L["Secondary Talents"] = "次要天賦"
 L["Separate NPC Frame"] = "分離 NPC 框架"
+--[[Translation missing --]]
+--[[ L["set unit"] = ""--]] 
 L["Shadow"] = "陰影"
 L["Shape"] = "形狀"
 L["Share"] = "分享"
@@ -453,8 +485,7 @@ L["Show while not in a group"] = "不在隊伍中時顯示"
 L["showDispelTypeIcons"] = "顯示驅散類型圖示"
 L["showDuration"] = "顯示持續時間文字"
 L["showGroupNumber"] = "顯示隊伍編號"
---[[Translation missing --]]
---[[ L["Shows only one spell request on a unit button at a time"] = ""--]] 
+L["Shows only one spell request on a unit button at a time"] = "每個單位按鈕同時間只能顯示一個法術請求"
 L["showStack"] = "顯示層數文字"
 L["showTooltip"] = "顯示光環提示"
 L["Size"] = "大小"
@@ -465,6 +496,8 @@ L["SNIPPETS_TIPS"] = "[點兩下]重新名命。[Shift+左鍵]刪除。所有已
 L["Solid"] = "單色"
 L["Solo/Party"] = "單人/5人隊伍"
 L["Sort By Role (Party Only)"] = "依角色職責排序 (僅限小隊)"
+--[[Translation missing --]]
+--[[ L["Spacing"] = ""--]] 
 L["Special Thanks"] = "特別感謝"
 L["SPELL"] = "法術"
 L["Spell"] = "法術"
@@ -495,8 +528,7 @@ L["Target Marks"] = "目標標記"
 L["Target of Target"] = "目標的目標"
 L["Targeted Spells"] = "被法術選中"
 L["Text"] = "文字"
---[[Translation missing --]]
---[[ L["Text Options"] = ""--]] 
+L["Text Options"] = "文字選項"
 L["Text Width"] = "文字寬度"
 L["Texture"] = "材質"
 L["The priority of spells decreases from top to bottom."] = "法術的優先順序是從上到下降低。"
@@ -504,6 +536,8 @@ L["The spell is required to apply a buff on the target"] = "要求增加的法�
 L["The spells list of a icons indicator is unordered (no priority)."] = "圖示指示器的法術清單是不排序的 (無優先順序)。"
 L["Then create a PR or submit a ticket on GitHub"] = "然後在 GitHub 上提交 PR 或 Issue 就可以啦"
 L["These \"reset\" commands below affect all your characters in this account"] = "以下的 \"重置\" 指令會影響此帳號中的所有角色"
+--[[Translation missing --]]
+--[[ L["These settings are spec-specific"] = ""--]] 
 L["Thickness"] = "粗細"
 L["This may overwrite built-in indicators"] = "這可能會覆蓋掉內建的指示器"
 L["This setting will be ignored, if the %1$s option in %2$s tab is enabled"] = "如果啟用了%2$s標籤頁面中的%1$s選項，此設定將被忽略"
@@ -511,6 +545,8 @@ L["This will make these icons not click-through-able"] = "這會讓這些圖示�
 L["This will overwrite your debuffs"] = "將會取代你的減益"
 L["Timeout"] = "超時"
 L["Tip: Every layout has its own position setting"] = "提示: 每個版面配置都有各自的位置設定。"
+--[[Translation missing --]]
+--[[ L["Tip: right-click to delete"] = ""--]] 
 L["To"] = "到"
 L["To HealthBar's"] = "對齊到血條的"
 L["To open options frame, use /cell options"] = "輸入 /cell options 打開設定選項"
@@ -529,8 +565,7 @@ L["Track by ID"] = "符合法術 ID"
 L["trackByName"] = "根據名稱追蹤"
 L["Translators"] = "翻譯"
 L["Translit Cyrillic to Latin"] = "將俄文轉換成英文"
---[[Translation missing --]]
---[[ L["Type"] = ""--]] 
+L["Type"] = "類型"
 L["Type: "] = "類型:"
 L["Unaffected"] = "未獲得此增益"
 L["Unit"] = "單位"
@@ -557,6 +592,8 @@ L["Vehicle Name Position"] = "載具名稱位置"
 L["Vertical"] = "垂直"
 L["Vertical Gradient"] = "垂直漸層"
 L["Visibility"] = "顯示"
+--[[Translation missing --]]
+--[[ L["Waiting for combat to end..."] = ""--]] 
 L["Want to help improve Raid Debuffs?"] = "想要幫忙完善副本減益嗎?"
 L["Width"] = "寬度"
 L["World Marks"] = "世界標記"
@@ -567,4 +604,6 @@ L["Yes"] = "是"
 L["You"] = "你"
 L["You can config debuffs in %s"] = "你可以在 %s 中設定減益法術"
 L["You can move it in Preview mode"] = "可以在 \"預覽\" 模式中移動它"
+--[[Translation missing --]]
+--[[ L["You can't do that while in combat."] = ""--]] 
 L["You don't have permission to do this"] = "你沒有權限這樣做"

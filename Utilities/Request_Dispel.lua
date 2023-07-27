@@ -133,8 +133,8 @@ local function CreateDRPane()
         local requiredWidth = drMacroEB.gauge:GetStringWidth()
         if requiredWidth > drMacroEB:GetWidth() then
             P:Width(drMacroEB, requiredWidth + 20)
-            drMacroEB:HighlightText()
         end
+        drMacroEB:HighlightText()
     end)
 
     drMacroEB:SetScript("OnEditFocusLost", function()
@@ -203,7 +203,7 @@ local function CreateDRPane()
         popup:SetPoint("BOTTOMRIGHT", self)
         popup:ShowEditBox("")
         popup:SetFrameStrata("DIALOG")
-        popup:SetTips("|cff777777"..L["Input spell id"])
+        popup:SetTips("|cffababab"..L["Input spell id"])
     end)
 
     drDebuffsText = drPane:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")

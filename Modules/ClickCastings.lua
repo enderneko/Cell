@@ -882,7 +882,7 @@ local function ShowActionsMenu(index, b)
                     peb:SetPoint("TOPRIGHT", b.actionGrid)
                     P:Height(peb, 20)
                     -- peb:SetPoint("BOTTOMRIGHT", b.actionGrid)
-                    peb:SetTips("|cff777777"..L["Shift+Enter: add a new line"].."\n"..L["Enter: apply\nESC: discard"])
+                    peb:SetTips("|cffababab"..L["Shift+Enter: add a new line"].."\n"..L["Enter: apply\nESC: discard"])
                     if b.bindType == "macro" then
                         if changed[index] and changed[index]["bindAction"] then
                             peb:ShowEditBox(changed[index]["bindAction"])
@@ -1024,7 +1024,7 @@ local function ShowActionsMenu(index, b)
                     end)
                     P:Point(peb, "TOPLEFT", b.actionGrid)
                     P:Point(peb, "BOTTOMRIGHT", b.actionGrid)
-                    peb:SetTips("|cff777777"..L["Input spell id"].."\n"..L["Enter: apply\nESC: discard"])
+                    peb:SetTips("|cffababab"..L["Input spell id"].."\n"..L["Enter: apply\nESC: discard"])
                     peb:ShowEditBox(b.bindSpell or "")
                     peb:SetNumeric(true)
                 end,
@@ -1363,7 +1363,7 @@ local function ShowTab(tab)
             CreateTargetingPane()
             CreateSmartResPane()
             CreateListPane()
-            F:ApplyCombatFunctionToTab(clickCastingsTab)
+            F:ApplyCombatProtectionToFrame(clickCastingsTab)
         end
         clickCastingsTab:Show()
     else

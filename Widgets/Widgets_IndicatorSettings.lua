@@ -2840,9 +2840,9 @@ local function CreateAuraButtons(parent, auraButtons, auraTable, noUpDownButtons
         popup:SetPoint("BOTTOMRIGHT", self)
         popup:ShowEditBox("")
         if isZeroValid then
-            parent.popupEditBox:SetTips("|cff777777"..L["Input spell id"]..", 0 = ".. L["all"])
+            parent.popupEditBox:SetTips("|cffababab"..L["Input spell id"]..", 0 = ".. L["all"])
         else
-            parent.popupEditBox:SetTips("|cff777777"..L["Input spell id"])
+            parent.popupEditBox:SetTips("|cffababab"..L["Input spell id"])
         end
     end)
 
@@ -3064,7 +3064,7 @@ local function CreateAuraButtons(parent, auraButtons, auraTable, noUpDownButtons
             popup:SetPoint("TOPLEFT", auraButtons[i])
             popup:SetPoint("BOTTOMRIGHT", auraButtons[i])
             popup:ShowEditBox(auraButtons[i].spellId or "")
-            parent.popupEditBox:SetTips("|cff777777"..L["Input spell id"])
+            parent.popupEditBox:SetTips("|cffababab"..L["Input spell id"])
         end)
 
         auraButtons[i].del:SetScript("OnClick", function()
@@ -3852,7 +3852,7 @@ local function CreateConsumableButtons(parent, spellTable, updateHeightFunc)
         popup:SetPoint("TOPLEFT", self)
         popup:SetPoint("BOTTOMRIGHT", self)
         popup:ShowEditBox("")
-        parent.popupEditBox:SetTips("|cff777777"..L["Input spell id"])
+        parent.popupEditBox:SetTips("|cffababab"..L["Input spell id"])
     end)
 
 
@@ -4043,7 +4043,7 @@ local function CreateConsumableButtons(parent, spellTable, updateHeightFunc)
             popup:SetPoint("TOPLEFT", consumableButtons[i])
             popup:SetPoint("BOTTOMRIGHT", consumableButtons[i])
             popup:ShowEditBox(consumableButtons[i].spellId or "")
-            parent.popupEditBox:SetTips("|cff777777"..L["Input spell id"])
+            parent.popupEditBox:SetTips("|cffababab"..L["Input spell id"])
         end)
 
         consumableButtons[i].del:SetScript("OnClick", function()

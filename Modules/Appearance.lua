@@ -1330,8 +1330,8 @@ local function ShowTab(tab)
             CreateUnitButtonStylePane()
             CreateIconOptionsFrame()
             CreateDebuffTypeColorPane()
-            F:ApplyCombatFunctionToWidget(scaleSlider)
-            F:ApplyCombatFunctionToWidget(strataDropdown)
+            F:ApplyCombatProtectionToWidget(scaleSlider)
+            F:ApplyCombatProtectionToWidget(strataDropdown)
         end
 
         appearanceTab:Show()

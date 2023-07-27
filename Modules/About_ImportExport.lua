@@ -23,6 +23,7 @@ local function DoImport()
     if Cell.isRetail then
         imported["appearance"]["useLibHealComm"] = false
     elseif Cell.isWrath then
+        imported["quickCast"] = nil
         imported["appearance"]["healAbsorb"][1] = false
     end
 
@@ -94,7 +95,7 @@ local function DoImport()
     -- remove characterDB
     imported["characterDB"] = nil
 
-    -- remove invalid
+    -- remove invalid spells
     F:FilterInvalidSpells(imported["debuffBlacklist"])
     F:FilterInvalidSpells(imported["bigDebuffs"])
     F:FilterInvalidSpells(imported["consumables"])

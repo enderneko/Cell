@@ -181,24 +181,24 @@ end
 -------------------------------------------------
 -- InCombatLockdown
 -------------------------------------------------
-local protectedTabs = {}
-function F:ApplyCombatFunctionToTab(tab)
-    tinsert(protectedTabs, tab)
-    Cell:CreateCombatMask(tab)
+local protectedFrames = {}
+function F:ApplyCombatProtectionToFrame(f)
+    tinsert(protectedFrames, f)
+    Cell:CreateCombatMask(f)
     
     if InCombatLockdown() then
-        tab.combatMask:Show()
+        f.combatMask:Show()
     end
 
-    tab:HookScript("OnShow", function()
+    f:HookScript("OnShow", function()
         if InCombatLockdown() then
-            tab.combatMask:Show()
+            f.combatMask:Show()
         end
     end)
 end
 
 local protectedWidgets = {}
-function F:ApplyCombatFunctionToWidget(widget)
+function F:ApplyCombatProtectionToWidget(widget)
     tinsert(protectedWidgets, widget)
 
     if InCombatLockdown() then
@@ -210,14 +210,14 @@ optionsFrame:RegisterEvent("PLAYER_REGEN_DISABLED")
 optionsFrame:RegisterEvent("PLAYER_REGEN_ENABLED")
 optionsFrame:SetScript("OnEvent", function(self, event)
     if event == "PLAYER_REGEN_DISABLED" then
-        for _, f in pairs(protectedTabs) do
+        for _, f in pairs(protectedFrames) do
             f.combatMask:Show()
         end
         for _, w in pairs(protectedWidgets) do
             w:SetEnabled(false)
         end
     elseif event == "PLAYER_REGEN_ENABLED" then
-        for _, f in pairs(protectedTabs) do
+        for _, f in pairs(protectedFrames) do
             f.combatMask:Hide()
         end
         for _, w in pairs(protectedWidgets) do

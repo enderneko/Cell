@@ -169,7 +169,7 @@ end
 local lockCB, fadeOutCB, menuPositionDD
 
 local function CreatePositionPane()
-    local positionPane = Cell:CreateTitledPane(generalTab, L["Position"], 205, 185)
+    local positionPane = Cell:CreateTitledPane(generalTab, L["Position"], 205, 120)
     positionPane:SetPoint("TOPLEFT", generalTab, 5, -145)
     
     lockCB = Cell:CreateCheckButton(positionPane, L["Lock Cell Frames"], function(checked, self)
@@ -215,7 +215,7 @@ end
 -------------------------------------------------
 local nicknameEB, syncCB
 local function CreateNicknamePane()
-    local nicknamePane = Cell:CreateTitledPane(generalTab, L["Nickname"], 422, 185)
+    local nicknamePane = Cell:CreateTitledPane(generalTab, L["Nickname"], 422, 110)
     nicknamePane:SetPoint("TOPLEFT", generalTab, 5, -290)
 
     -- my nickname
@@ -280,7 +280,7 @@ end
 local translitCB, useCleuCB
 
 local function CreateMiscPane()
-    local miscPane = Cell:CreateTitledPane(generalTab, L["Misc"], 422, 185)
+    local miscPane = Cell:CreateTitledPane(generalTab, L["Misc"], 422, 70)
     miscPane:SetPoint("TOPLEFT", generalTab, 5, -420)
     
     translitCB = Cell:CreateCheckButton(miscPane, L["Translit Cyrillic to Latin"], function(checked, self)
@@ -312,7 +312,7 @@ local function ShowTab(tab)
             CreateMiscPane()
 
             -- mask
-            F:ApplyCombatFunctionToTab(generalTab)
+            F:ApplyCombatProtectionToFrame(generalTab)
             Cell:CreateMask(generalTab, nil, {1, -1, -1, 1})
             generalTab.mask:Hide()
         end 
