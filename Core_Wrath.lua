@@ -275,6 +275,7 @@ function eventFrame:ADDON_LOADED(arg1)
                 ["debuffs"] = {},
                 ["type"] = "text",
                 ["textOptions"] = {
+                    "A",
                     {1, 0, 0, 1}, -- [1] color 
                     32, -- [2] size
                     "TOPLEFT", -- [3] anchor

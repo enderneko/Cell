@@ -2164,6 +2164,13 @@ function F:Revise()
         end
     end
 
+    -- r187-release
+    if CellDB["revise"] and dbRevision < 187 then
+        if type(CellDB["dispelRequest"]["textOptions"][1]) ~= "string" then
+            tinsert(CellDB["dispelRequest"]["textOptions"][1], 1, "A")
+        end
+    end
+
     CellDB["revise"] = Cell.version
     if Cell.isWrath then
         CellCharacterDB["revise"] = Cell.version
