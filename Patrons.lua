@@ -42,7 +42,7 @@ local patrons = {
     {"朝 (爱发电)", "chao"},
     {"Sonichunter-地獄吼 (TW)", "sonichunter", "Katoomba-地獄吼 (TW)"},
     {"ATOMS. ོ (爱发电)", "atoms"},
-    {"L (爱发电)", "L"},
+    {"微樓聽雨-銀翼要塞 (TW)", "weiloutingyu"},
 }
 
 -- sort
