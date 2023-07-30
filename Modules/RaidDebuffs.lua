@@ -1240,7 +1240,7 @@ end
 -------------------------------------------------
 local detailsFrame, spellIcon, spellNameText, spellIdText, enabledCB, trackByIdCB
 local conditionDropDown, conditionFrame, conditionOperator, conditionValue
-local glowTypeText, glowTypeDropdown, glowOptionsFrame, glowConditionType, glowConditionOperator, glowConditionValue, glowColor, glowLines, glowParticles, glowFrequency, glowLength, glowThickness, glowScale
+local glowTypeText, glowTypeDropdown, glowOptionsFrame, glowConditionType, glowConditionOperator, glowConditionValue, glowColor, glowLines, glowParticles, glowDuration, glowFrequency, glowLength, glowThickness, glowScale
 
 local LoadCondition, UpdateCondition
 local UpdateGlowType, LoadGlowOptions, LoadGlowCondition, ShowGlowPreview
@@ -1501,6 +1501,13 @@ local function CreateDetailsFrame()
                 UpdateGlowType("Shine")
             end,
         },
+        {
+            ["text"] = L["Proc"],
+            ["value"] = "Proc",
+            ["onClick"] = function()
+                UpdateGlowType("Proc")
+            end,
+        },
     })
 
     -- glow options
@@ -1636,6 +1643,12 @@ local function CreateDetailsFrame()
     end)
     glowParticles:SetPoint("TOPLEFT", glowColor, "BOTTOMLEFT", 0, -25)
 
+    -- duration
+    glowDuration = Cell:CreateSlider(L["Duration"], glowOptionsFrame, 0.1, 3, 117, 0.1, function(value)
+        SliderValueChanged(2, value, true)
+    end)
+    glowDuration:SetPoint("TOPLEFT", glowColor, "BOTTOMLEFT", 0, -25)
+
     -- glowFrequency
     glowFrequency = Cell:CreateSlider(L["Frequency"], glowOptionsFrame, -2, 2, 117, 0.05, function(value)
         SliderValueChanged(3, value)
@@ -1721,6 +1734,8 @@ UpdateGlowType = function(newType)
                 CellDB["raidDebuffs"][loadedInstance][tIndex][selectedSpellId] = {t["order"], false, {"None"}, newType, {{0.95,0.95,0.32,1}, 9, 0.25, 8, 2}}
             elseif newType == "Shine" then
                 CellDB["raidDebuffs"][loadedInstance][tIndex][selectedSpellId] = {t["order"], false, {"None"}, newType, {{0.95,0.95,0.32,1}, 9, 0.5, 1}}
+            elseif newType == "Proc" then
+                CellDB["raidDebuffs"][loadedInstance][tIndex][selectedSpellId] = {t["order"], false, {"None"}, newType, {{0.95,0.95,0.32,1}, 1}}
             end
         else
             CellDB["raidDebuffs"][loadedInstance][tIndex][selectedSpellId][4] = newType
@@ -1750,6 +1765,15 @@ UpdateGlowType = function(newType)
                     CellDB["raidDebuffs"][loadedInstance][tIndex][selectedSpellId][5][5] = nil
                 else
                     CellDB["raidDebuffs"][loadedInstance][tIndex][selectedSpellId][5] = {{0.95,0.95,0.32,1}, 9, 0.5, 1}
+                end
+            elseif newType == "Proc" then
+                if CellDB["raidDebuffs"][loadedInstance][tIndex][selectedSpellId][5] then
+                    CellDB["raidDebuffs"][loadedInstance][tIndex][selectedSpellId][5][2] = 1
+                    CellDB["raidDebuffs"][loadedInstance][tIndex][selectedSpellId][5][3] = nil
+                    CellDB["raidDebuffs"][loadedInstance][tIndex][selectedSpellId][5][4] = nil
+                    CellDB["raidDebuffs"][loadedInstance][tIndex][selectedSpellId][5][5] = nil
+                else
+                    CellDB["raidDebuffs"][loadedInstance][tIndex][selectedSpellId][5] = {{0.95,0.95,0.32,1}, 1}
                 end
             end
         end
@@ -1782,6 +1806,15 @@ UpdateGlowType = function(newType)
             else
                 t["glowOptions"] = {{0.95,0.95,0.32,1}, 9, 0.5, 1}
             end
+        elseif newType == "Proc" then
+            if t["glowOptions"] then
+                t["glowOptions"][2] = 1
+                t["glowOptions"][3] = nil
+                t["glowOptions"][4] = nil
+                t["glowOptions"][5] = nil
+            else
+                t["glowOptions"] = {{0.95,0.95,0.32,1}, 1}
+            end
         end
         LoadGlowOptions(newType, t["glowOptions"])
         -- notify debuff list changed
@@ -1805,35 +1838,53 @@ ShowGlowPreview = function(glowType, glowOptions, refresh)
         if glowType == "Normal" then
             LCG.PixelGlow_Stop(previewButton)
             LCG.AutoCastGlow_Stop(previewButton)
+            LCG.ProcGlow_Stop(previewButton)
             LCG.ButtonGlow_Start(previewButton, glowOptions[1])
         elseif glowType == "Pixel" then
             LCG.ButtonGlow_Stop(previewButton)
             LCG.AutoCastGlow_Stop(previewButton)
+            LCG.ProcGlow_Stop(previewButton)
             -- color, N, frequency, length, thickness
             LCG.PixelGlow_Start(previewButton, glowOptions[1], glowOptions[2], glowOptions[3], glowOptions[4], glowOptions[5])
         elseif glowType == "Shine" then
             LCG.ButtonGlow_Stop(previewButton)
             LCG.PixelGlow_Stop(previewButton)
+            LCG.ProcGlow_Stop(previewButton)
             if refresh then LCG.AutoCastGlow_Stop(previewButton) end
             -- color, N, frequency, scale
             LCG.AutoCastGlow_Start(previewButton, glowOptions[1], glowOptions[2], glowOptions[3], glowOptions[4])
+        elseif glowType == "Proc" then
+            LCG.ButtonGlow_Stop(previewButton)
+            LCG.PixelGlow_Stop(previewButton)
+            LCG.AutoCastGlow_Stop(previewButton)
+            -- color, duration
+            LCG.ProcGlow_Start(previewButton, {color=glowOptions[1], duration=glowOptions[2], startAnim=false})
         end
     else
         previewButton.fadeIn:SetScript("OnFinished", function()
             if glowType == "Normal" then
                 LCG.PixelGlow_Stop(previewButton)
                 LCG.AutoCastGlow_Stop(previewButton)
+                LCG.ProcGlow_Stop(previewButton)
                 LCG.ButtonGlow_Start(previewButton, glowOptions[1])
             elseif glowType == "Pixel" then
                 LCG.ButtonGlow_Stop(previewButton)
                 LCG.AutoCastGlow_Stop(previewButton)
+                LCG.ProcGlow_Stop(previewButton)
                 -- color, N, frequency, length, thickness
                 LCG.PixelGlow_Start(previewButton, glowOptions[1], glowOptions[2], glowOptions[3], glowOptions[4], glowOptions[5])
             elseif glowType == "Shine" then
                 LCG.ButtonGlow_Stop(previewButton)
                 LCG.PixelGlow_Stop(previewButton)
+                LCG.ProcGlow_Stop(previewButton)
                 -- color, N, frequency, scale
                 LCG.AutoCastGlow_Start(previewButton, glowOptions[1], glowOptions[2], glowOptions[3], glowOptions[4])
+            elseif glowType == "Proc" then
+                LCG.ButtonGlow_Stop(previewButton)
+                LCG.PixelGlow_Stop(previewButton)
+                LCG.AutoCastGlow_Stop(previewButton)
+                -- color, duration
+                LCG.ProcGlow_Start(previewButton, {color=glowOptions[1], duration=glowOptions[2], startAnim=false})
             end
         end)
         previewButton:Show()
@@ -1857,6 +1908,7 @@ LoadGlowOptions = function(glowType, glowOptions)
     if glowType == "Normal" then
         glowLines:Hide()
         glowParticles:Hide()
+        glowDuration:Hide()
         glowFrequency:Hide()
         glowLength:Hide()
         glowThickness:Hide()
@@ -1868,6 +1920,7 @@ LoadGlowOptions = function(glowType, glowOptions)
         glowLength:Show()
         glowThickness:Show()
         glowParticles:Hide()
+        glowDuration:Hide()
         glowScale:Hide()
         glowLines:SetValue(glowOptions[2])
         glowFrequency:SetValue(glowOptions[3])
@@ -1879,12 +1932,23 @@ LoadGlowOptions = function(glowType, glowOptions)
         glowFrequency:Show()
         glowScale:Show()
         glowLines:Hide()
+        glowDuration:Hide()
         glowLength:Hide()
         glowThickness:Hide()
         glowParticles:SetValue(glowOptions[2])
         glowFrequency:SetValue(glowOptions[3])
         glowScale:SetValue(glowOptions[4]*100)
         glowOptionsHeight = 175
+    elseif glowType == "Proc" then
+        glowDuration:Show()
+        glowLines:Hide()
+        glowParticles:Hide()
+        glowFrequency:Hide()
+        glowLength:Hide()
+        glowThickness:Hide()
+        glowScale:Hide()
+        glowDuration:SetValue(glowOptions[2])
+        glowOptionsHeight = 30
     end
 
     glowOptionsFrame:Show()

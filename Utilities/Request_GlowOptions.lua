@@ -82,7 +82,7 @@ end
 -------------------------------------------------
 -- glow options
 -------------------------------------------------
-local glowTypeDropdown, glowColor, glowLines, glowParticles, glowFrequency, glowLength, glowThickness, glowScale, glowOffsetX, glowOffsetY
+local glowTypeDropdown, glowColor, glowLines, glowParticles, glowDuration, glowFrequency, glowLength, glowThickness, glowScale, glowOffsetX, glowOffsetY
 
 local function UpdateGlowPreview(refresh)
     local glowType, glowOptions = unpack(glowOptionsTable)
@@ -90,18 +90,27 @@ local function UpdateGlowPreview(refresh)
     if glowType == "normal" then
         LCG.PixelGlow_Stop(previewButton)
         LCG.AutoCastGlow_Stop(previewButton)
+        LCG.ProcGlow_Stop(previewButton)
         LCG.ButtonGlow_Start(previewButton, glowOptions[1])
     elseif glowType == "pixel" then
         LCG.ButtonGlow_Stop(previewButton)
         LCG.AutoCastGlow_Stop(previewButton)
+        LCG.ProcGlow_Stop(previewButton)
         -- color, N, frequency, length, thickness, x, y
         LCG.PixelGlow_Start(previewButton, glowOptions[1], glowOptions[4], glowOptions[5], glowOptions[6], glowOptions[7], glowOptions[2], glowOptions[3])
     elseif glowType == "shine" then
         LCG.ButtonGlow_Stop(previewButton)
         LCG.PixelGlow_Stop(previewButton)
+        LCG.ProcGlow_Stop(previewButton)
         if refresh then LCG.AutoCastGlow_Stop(previewButton) end
         -- color, N, frequency, scale, x, y
         LCG.AutoCastGlow_Start(previewButton, glowOptions[1], glowOptions[4], glowOptions[5], glowOptions[6], glowOptions[2], glowOptions[3])
+    elseif glowType == "proc" then
+        LCG.ButtonGlow_Stop(previewButton)
+        LCG.PixelGlow_Stop(previewButton)
+        LCG.AutoCastGlow_Stop(previewButton)
+        -- color, duration
+        LCG.ProcGlow_Start(previewButton, {color=glowOptions[1], xOffset=glowOptions[2], yOffset=glowOptions[3], duration=glowOptions[4], startAnim=false})
     end
 end
 
@@ -112,54 +121,69 @@ local function LoadGlowOptions()
     glowTypeDropdown:SetSelectedValue(glowType)
     glowColor:SetColor(glowOptions[1])
 
+    glowOffsetX:SetEnabled(glowType ~= "normal")
+    glowOffsetY:SetEnabled(glowType ~= "normal")
+    glowLines:SetEnabled(glowType ~= "normal")
+    glowFrequency:SetEnabled(glowType ~= "normal")
+    glowLength:SetEnabled(glowType ~= "normal")
+    glowThickness:SetEnabled(glowType ~= "normal")
+
     if glowType == "normal" then
         glowLines:Show()
+        glowFrequency:Show()
         glowLength:Show()
         glowThickness:Show()
+
         glowParticles:Hide()
+        glowDuration:Hide()
         glowScale:Hide()
-        glowOffsetX:SetEnabled(false)
-        glowOffsetY:SetEnabled(false)
-        glowLines:SetEnabled(false)
-        glowFrequency:SetEnabled(false)
-        glowParticles:SetEnabled(false)
-        glowScale:SetEnabled(false)
-        glowLength:SetEnabled(false)
-        glowThickness:SetEnabled(false)
+
     elseif glowType == "pixel" then
         glowLines:Show()
+        glowFrequency:Show()
         glowLength:Show()
         glowThickness:Show()
+
         glowParticles:Hide()
+        glowDuration:Hide()
         glowScale:Hide()
-        glowOffsetX:SetEnabled(true)
-        glowOffsetY:SetEnabled(true)
-        glowLines:SetEnabled(true)
-        glowFrequency:SetEnabled(true)
-        glowLength:SetEnabled(true)
-        glowThickness:SetEnabled(true)
+
         glowOffsetX:SetValue(glowOptions[2])
         glowOffsetY:SetValue(glowOptions[3])
         glowLines:SetValue(glowOptions[4])
         glowFrequency:SetValue(glowOptions[5])
         glowLength:SetValue(glowOptions[6])
         glowThickness:SetValue(glowOptions[7])
+
     elseif glowType == "shine" then
         glowParticles:Show()
+        glowFrequency:Show()
         glowScale:Show()
+
         glowLines:Hide()
+        glowDuration:Hide()
         glowLength:Hide()
         glowThickness:Hide()
-        glowOffsetX:SetEnabled(true)
-        glowOffsetY:SetEnabled(true)
-        glowFrequency:SetEnabled(true)
-        glowParticles:SetEnabled(true)
-        glowScale:SetEnabled(true)
+        
         glowOffsetX:SetValue(glowOptions[2])
         glowOffsetY:SetValue(glowOptions[3])
         glowParticles:SetValue(glowOptions[4])
         glowFrequency:SetValue(glowOptions[5])
         glowScale:SetValue(glowOptions[6]*100)
+
+    elseif glowType == "proc" then
+        glowDuration:Show()
+
+        glowLines:Hide()
+        glowParticles:Hide()
+        glowFrequency:Hide()
+        glowLength:Hide()
+        glowThickness:Hide()
+        glowScale:Hide()
+
+        glowOffsetX:SetValue(glowOptions[2])
+        glowOffsetY:SetValue(glowOptions[3])
+        glowDuration:SetValue(glowOptions[4])
     end
 end
 
@@ -172,6 +196,8 @@ local function UpdateGlowType(glowType)
         glowOptionsTable[2] = {glowOptionsTable[2][1], 0, 0, 9, 0.25, 8, 2}
     elseif glowType == "shine" then
         glowOptionsTable[2] = {glowOptionsTable[2][1], 0, 0, 9, 0.5, 1}
+    elseif glowType == "proc" then
+        glowOptionsTable[2] = {glowOptionsTable[2][1], 0, 0, 1}
     end
 
     LoadGlowOptions()
@@ -216,6 +242,13 @@ local function CreateGlowOptionsFrame()
                 UpdateGlowType("shine")
             end,
         },
+        {
+            ["text"] = L["Proc"],
+            ["value"] = "proc",
+            ["onClick"] = function()
+                UpdateGlowType("proc")
+            end,
+        },
     })
 
     -- glowColor
@@ -253,6 +286,12 @@ local function CreateGlowOptionsFrame()
         SliderValueChanged(4, value, true)
     end)
     glowParticles:SetPoint("TOPLEFT", glowOffsetY, "BOTTOMLEFT", 0, -40)
+
+    -- duration
+    glowDuration = Cell:CreateSlider(L["Duration"], glowOptionsFrame, 0.1, 3, 117, 0.1, function(value)
+        SliderValueChanged(4, value, true)
+    end)
+    glowDuration:SetPoint("TOPLEFT", glowOffsetY, "BOTTOMLEFT", 0, -40)
 
     -- glowFrequency
     glowFrequency = Cell:CreateSlider(L["Frequency"], glowOptionsFrame, -2, 2, 117, 0.05, function(value)

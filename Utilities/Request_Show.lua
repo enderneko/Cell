@@ -15,6 +15,7 @@ local function HideGlow(glowFrame)
     LCG.ButtonGlow_Stop(glowFrame)
     LCG.PixelGlow_Stop(glowFrame)
     LCG.AutoCastGlow_Stop(glowFrame)
+    LCG.ProcGlow_Stop(glowFrame)
     
     if glowFrame.timer then
         glowFrame.timer:Cancel()
@@ -28,17 +29,26 @@ local function ShowGlow(glowFrame, glowType, glowOptions, timeout, callback)
     if glowType == "normal" then
         LCG.PixelGlow_Stop(glowFrame)
         LCG.AutoCastGlow_Stop(glowFrame)
+        LCG.ProcGlow_Stop(glowFrame)
         LCG.ButtonGlow_Start(glowFrame, glowOptions[1])
     elseif glowType == "pixel" then
         LCG.ButtonGlow_Stop(glowFrame)
         LCG.AutoCastGlow_Stop(glowFrame)
+        LCG.ProcGlow_Stop(glowFrame)
         -- color, N, frequency, length, thickness, x, y
         LCG.PixelGlow_Start(glowFrame, glowOptions[1], glowOptions[4], glowOptions[5], glowOptions[6], glowOptions[7], glowOptions[2], glowOptions[3])
     elseif glowType == "shine" then
         LCG.ButtonGlow_Stop(glowFrame)
         LCG.PixelGlow_Stop(glowFrame)
+        LCG.ProcGlow_Stop(glowFrame)
         -- color, N, frequency, scale, x, y
         LCG.AutoCastGlow_Start(glowFrame, glowOptions[1], glowOptions[4], glowOptions[5], glowOptions[6], glowOptions[2], glowOptions[3])
+    elseif glowType == "proc" then
+        LCG.ButtonGlow_Stop(glowFrame)
+        LCG.PixelGlow_Stop(glowFrame)
+        LCG.AutoCastGlow_Stop(glowFrame)
+        -- color, duration
+        LCG.ProcGlow_Start(glowFrame, {color=glowOptions[1], xOffset=glowOptions[2], yOffset=glowOptions[3], duration=glowOptions[4], startAnim=false})
     end
 
     if glowFrame.timer then

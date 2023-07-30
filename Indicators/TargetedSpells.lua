@@ -190,38 +190,39 @@ function I:CreateTargetedSpells(parent)
         if glowType == "Normal" then
             LCG.PixelGlow_Stop(parent.widget.tsGlowFrame)
             LCG.AutoCastGlow_Stop(parent.widget.tsGlowFrame)
+            LCG.ProcGlow_Stop(parent.widget.tsGlowFrame)
             LCG.ButtonGlow_Start(parent.widget.tsGlowFrame, color)
         elseif glowType == "Pixel" then
             LCG.ButtonGlow_Stop(parent.widget.tsGlowFrame)
             LCG.AutoCastGlow_Stop(parent.widget.tsGlowFrame)
+            LCG.ProcGlow_Stop(parent.widget.tsGlowFrame)
             -- color, N, frequency, length, thickness
             LCG.PixelGlow_Start(parent.widget.tsGlowFrame, color, arg1, arg2, arg3, arg4)
         elseif glowType == "Shine" then
             LCG.ButtonGlow_Stop(parent.widget.tsGlowFrame)
             LCG.PixelGlow_Stop(parent.widget.tsGlowFrame)
+            LCG.ProcGlow_Stop(parent.widget.tsGlowFrame)
             -- color, N, frequency, scale
             LCG.AutoCastGlow_Start(parent.widget.tsGlowFrame, color, arg1, arg2, arg3)
+        elseif glowType == "Proc" then
+            LCG.ButtonGlow_Stop(parent.widget.tsGlowFrame)
+            LCG.PixelGlow_Stop(parent.widget.tsGlowFrame)
+            LCG.AutoCastGlow_Stop(parent.widget.tsGlowFrame)
+            -- color, duration
+            LCG.ProcGlow_Start(parent.widget.tsGlowFrame, {color=color, duration=arg1, startAnim=false})
         else
             LCG.ButtonGlow_Stop(parent.widget.tsGlowFrame)
             LCG.PixelGlow_Stop(parent.widget.tsGlowFrame)
             LCG.AutoCastGlow_Stop(parent.widget.tsGlowFrame)
+            LCG.ProcGlow_Stop(parent.widget.tsGlowFrame)
         end
     end
-
-    -- function frame:HideGlow(glowType)
-    --     if glowType == "Normal" then
-    --         LCG.ButtonGlow_Stop(parent.widget.tsGlowFrame)
-    --     elseif glowType == "Pixel" then
-    --         LCG.PixelGlow_Stop(parent.widget.tsGlowFrame)
-    --     elseif glowType == "Shine" then
-    --         LCG.AutoCastGlow_Stop(parent.widget.tsGlowFrame)
-    --     end
-    -- end
 
     frame:SetScript("OnHide", function()
         LCG.ButtonGlow_Stop(parent.widget.tsGlowFrame)
         LCG.PixelGlow_Stop(parent.widget.tsGlowFrame)
         LCG.AutoCastGlow_Stop(parent.widget.tsGlowFrame)
+        LCG.ProcGlow_Stop(parent.widget.tsGlowFrame)
     end)
 
     function frame:ShowGlowPreview()
@@ -232,6 +233,7 @@ function I:CreateTargetedSpells(parent)
         LCG.ButtonGlow_Stop(parent.widget.tsGlowFrame)
         LCG.PixelGlow_Stop(parent.widget.tsGlowFrame)
         LCG.AutoCastGlow_Stop(parent.widget.tsGlowFrame)
+        LCG.ProcGlow_Stop(parent.widget.tsGlowFrame)
     end
 end
 

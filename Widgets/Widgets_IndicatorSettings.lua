@@ -2473,6 +2473,7 @@ local function CreateSetting_Glow(parent)
                     widget.glowColor:SetColor({0.95,0.95,0.32,1})
                     widget.glowLines:Hide()
                     widget.glowParticles:Hide()
+                    widget.glowDuration:Hide()
                     widget.glowFrequency:Hide()
                     widget.glowLength:Hide()
                     widget.glowThickness:Hide()
@@ -2494,6 +2495,7 @@ local function CreateSetting_Glow(parent)
                     widget.glowColor:SetColor({0.95,0.95,0.32,1})
                     widget.glowLines:Hide()
                     widget.glowParticles:Hide()
+                    widget.glowDuration:Hide()
                     widget.glowFrequency:Hide()
                     widget.glowLength:Hide()
                     widget.glowThickness:Hide()
@@ -2522,6 +2524,7 @@ local function CreateSetting_Glow(parent)
                     widget.glowThickness:Show()
                     widget.glowThickness:SetValue(2)
                     widget.glowParticles:Hide()
+                    widget.glowDuration:Hide()
                     widget.glowScale:Hide()
                     widget.glow[1] = "Pixel"
                     widget.glow[2] = {0.95,0.95,0.32,1}
@@ -2545,6 +2548,7 @@ local function CreateSetting_Glow(parent)
                     widget.glowScale:Show()
                     widget.glowScale:SetValue(100)
                     widget.glowLines:Hide()
+                    widget.glowDuration:Hide()
                     widget.glowLength:Hide()
                     widget.glowThickness:Hide()
                     widget.glow[1] = "Shine"
@@ -2552,6 +2556,29 @@ local function CreateSetting_Glow(parent)
                     widget.glow[3] = 9
                     widget.glow[4] = 0.5
                     widget.glow[5] = 1
+                    widget.glow[6] = nil
+                    widget.func(widget.glow)
+                end,
+            },
+            {
+                ["text"] = L["Proc"],
+                ["value"] = "Proc",
+                ["onClick"] = function()
+                    widget:SetHeight(95)
+                    widget.glowColor:SetColor({0.95,0.95,0.32,1})
+                    widget.glowDuration:Show()
+                    widget.glowDuration:SetValue(1)
+                    widget.glowParticles:Hide()
+                    widget.glowFrequency:Hide()
+                    widget.glowScale:Hide()
+                    widget.glowLines:Hide()
+                    widget.glowLength:Hide()
+                    widget.glowThickness:Hide()
+                    widget.glow[1] = "Proc"
+                    widget.glow[2] = {0.95,0.95,0.32,1}
+                    widget.glow[3] = 1
+                    widget.glow[4] = nil
+                    widget.glow[5] = nil
                     widget.glow[6] = nil
                     widget.func(widget.glow)
                 end,
@@ -2580,6 +2607,13 @@ local function CreateSetting_Glow(parent)
             widget.func(widget.glow)
         end)
         widget.glowParticles:SetPoint("TOPLEFT", widget.glowType, "BOTTOMLEFT", 0, -25)
+        
+        -- glowDuration
+        widget.glowDuration = addon:CreateSlider(L["Duration"], widget, 0.1, 3, 110, 0.1, function(value)
+            widget.glow[3] = value
+            widget.func(widget.glow)
+        end)
+        widget.glowDuration:SetPoint("TOPLEFT", widget.glowType, "BOTTOMLEFT", 0, -25)
 
         -- glowFrequency
         widget.glowFrequency = addon:CreateSlider(L["Frequency"], widget, -2, 2, 110, 0.05, function(value)
@@ -2624,13 +2658,13 @@ local function CreateSetting_Glow(parent)
             if t[1] == "None" or t[1] == "Normal" then
                 widget.glowLines:Hide()
                 widget.glowParticles:Hide()
+                widget.glowDuration:Hide()
                 widget.glowFrequency:Hide()
                 widget.glowLength:Hide()
                 widget.glowThickness:Hide()
                 widget.glowScale:Hide()
                 widget:SetHeight(50)
             else
-                widget:SetHeight(145)
                 if t[1] == "Pixel" then
                     widget.glowLines:Show()
                     widget.glowLines:SetValue(t[3])
@@ -2640,8 +2674,11 @@ local function CreateSetting_Glow(parent)
                     widget.glowLength:SetValue(t[5])
                     widget.glowThickness:Show()
                     widget.glowThickness:SetValue(t[6])
+
                     widget.glowParticles:Hide()
+                    widget.glowDuration:Hide()
                     widget.glowScale:Hide()
+                    widget:SetHeight(145)
 
                 elseif t[1] == "Shine" then
                     widget.glowParticles:Show()
@@ -2650,9 +2687,24 @@ local function CreateSetting_Glow(parent)
                     widget.glowFrequency:SetValue(t[4])
                     widget.glowScale:Show()
                     widget.glowScale:SetValue(t[5]*100)
+
                     widget.glowLines:Hide()
+                    widget.glowDuration:Hide()
                     widget.glowLength:Hide()
                     widget.glowThickness:Hide()
+                    widget:SetHeight(145)
+               
+                elseif t[1] == "Proc" then
+                    widget.glowDuration:Show()
+                    widget.glowDuration:SetValue(t[3])
+
+                    widget.glowLines:Hide()
+                    widget.glowParticles:Hide()
+                    widget.glowFrequency:Hide()
+                    widget.glowLength:Hide()
+                    widget.glowScale:Hide()
+                    widget.glowThickness:Hide()
+                    widget:SetHeight(95)
                 end
             end
         end

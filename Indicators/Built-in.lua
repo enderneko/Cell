@@ -754,12 +754,14 @@ function I:CreateRaidDebuffs(parent)
             if not noHiding then
                 LCG.PixelGlow_Stop(parent)
                 LCG.AutoCastGlow_Stop(parent)
+                LCG.ProcGlow_Stop(parent)
             end
             LCG.ButtonGlow_Start(parent, glowOptions[1])
         elseif glowType == "Pixel" then
             if not noHiding then
                 LCG.ButtonGlow_Stop(parent)
                 LCG.AutoCastGlow_Stop(parent)
+                LCG.ProcGlow_Stop(parent)
             end
             -- color, N, frequency, length, thickness
             LCG.PixelGlow_Start(parent, glowOptions[1], glowOptions[2], glowOptions[3], glowOptions[4], glowOptions[5])
@@ -767,9 +769,18 @@ function I:CreateRaidDebuffs(parent)
             if not noHiding then
                 LCG.ButtonGlow_Stop(parent)
                 LCG.PixelGlow_Stop(parent)
+                LCG.ProcGlow_Stop(parent)
             end
             -- color, N, frequency, scale
             LCG.AutoCastGlow_Start(parent, glowOptions[1], glowOptions[2], glowOptions[3], glowOptions[4])
+        elseif glowType == "Proc" then
+            if not noHiding then
+                LCG.ButtonGlow_Stop(parent)
+                LCG.PixelGlow_Stop(parent)
+                LCG.AutoCastGlow_Stop(parent)
+            end
+            -- color, duration
+            LCG.ProcGlow_Start(parent, {color=glowOptions[1], duration=glowOptions[2], startAnim=false})
         else
             LCG.ButtonGlow_Stop(parent)
             LCG.PixelGlow_Stop(parent)
