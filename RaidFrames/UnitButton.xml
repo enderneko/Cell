@@ -16,6 +16,7 @@
         <Scripts>
             <OnLoad>
                 Cell.funcs:UnitButton_OnLoad(self)
+                self.isPreview = true
             </OnLoad>
         </Scripts>
     </Button>

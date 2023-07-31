@@ -2560,7 +2560,7 @@ highlightTexture:Hide()
 list:SetScript("OnShow", function()
     list:SetScale(list.menu:GetEffectiveScale())
     list:SetFrameStrata(list.menu:GetFrameStrata())
-    list:SetFrameLevel(100) -- top
+    list:SetFrameLevel(list.menu:GetFrameLevel() + 20) -- top
 end)
 list:SetScript("OnHide", function() list:Hide() end)
 

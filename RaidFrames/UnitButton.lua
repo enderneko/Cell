@@ -1315,7 +1315,7 @@ local function GetRole(b)
 end
 
 local function ShouldShowPowerBar(b)
-    if not b:IsVisible() then return end
+    if not (b:IsVisible() or b.isPreview) then return end
     if not b.powerSize or b.powerSize == 0 then return end
 
     if not b.state.guid then
@@ -1352,7 +1352,7 @@ local function ShouldShowPowerBar(b)
 end
 
 local function ShowPowerBar(b)
-    if b:IsVisible() then
+    if b:IsVisible() and not b.isPreview then
         b:RegisterEvent("UNIT_POWER_FREQUENT")
         b:RegisterEvent("UNIT_MAXPOWER")
         b:RegisterEvent("UNIT_DISPLAYPOWER")
@@ -3002,7 +3002,7 @@ function F:UnitButton_OnLoad(button)
     -- P:Point(healthBar, "BOTTOMRIGHT", button, "BOTTOMRIGHT", -1, 4)
     healthBar:SetStatusBarTexture(Cell.vars.texture)
     healthBar:GetStatusBarTexture():SetDrawLayer("ARTWORK", -6)
-    healthBar:SetFrameLevel(5)
+    healthBar:SetFrameLevel(button:GetFrameLevel()+5)
     
     -- hp loss
     local healthBarLoss = button:CreateTexture(name.."HealthBarLoss", "ARTWORK", nil , -7)
@@ -3018,7 +3018,7 @@ function F:UnitButton_OnLoad(button)
     -- P:Point(powerBar, "BOTTOMRIGHT", button, "BOTTOMRIGHT", -1, 1)
     powerBar:SetStatusBarTexture(Cell.vars.texture)
     powerBar:GetStatusBarTexture():SetDrawLayer("ARTWORK", -6)
-    powerBar:SetFrameLevel(5)
+    powerBar:SetFrameLevel(button:GetFrameLevel()+5)
 
     local gapTexture = button:CreateTexture(nil, "BORDER")
     button.widget.gapTexture = gapTexture
@@ -3128,7 +3128,7 @@ function F:UnitButton_OnLoad(button)
     local targetHighlight = CreateFrame("Frame", name.."TargetHighlight", button, "BackdropTemplate")
     button.widget.targetHighlight = targetHighlight
     targetHighlight:EnableMouse(false)
-    targetHighlight:SetFrameLevel(6)
+    targetHighlight:SetFrameLevel(button:GetFrameLevel()+6)
     -- targetHighlight:SetBackdrop({edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = P:Scale(1)})
     -- P:Point(targetHighlight, "TOPLEFT", button, "TOPLEFT", -1, 1)
     -- P:Point(targetHighlight, "BOTTOMRIGHT", button, "BOTTOMRIGHT", 1, -1)
@@ -3138,7 +3138,7 @@ function F:UnitButton_OnLoad(button)
     local mouseoverHighlight = CreateFrame("Frame", name.."MouseoverHighlight", button, "BackdropTemplate")
     button.widget.mouseoverHighlight = mouseoverHighlight
     mouseoverHighlight:EnableMouse(false)
-    mouseoverHighlight:SetFrameLevel(7)
+    mouseoverHighlight:SetFrameLevel(button:GetFrameLevel()+7)
     -- mouseoverHighlight:SetBackdrop({edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = P:Scale(1)})
     -- P:Point(mouseoverHighlight, "TOPLEFT", button, "TOPLEFT", -1, 1)
     -- P:Point(mouseoverHighlight, "BOTTOMRIGHT", button, "BOTTOMRIGHT", 1, -1)
@@ -3160,19 +3160,19 @@ function F:UnitButton_OnLoad(button)
     --* srGlowFrame (Spell Request)
     local srGlowFrame = CreateFrame("Frame", name.."SRGlowFrame", button)
     button.widget.srGlowFrame = srGlowFrame
-    srGlowFrame:SetFrameLevel(120)
+    srGlowFrame:SetFrameLevel(button:GetFrameLevel()+120)
     srGlowFrame:SetAllPoints(button)
     
     --* drGlowFrame (Dispel Request)
     local drGlowFrame = CreateFrame("Frame", name.."DRGlowFrame", button)
     button.widget.drGlowFrame = drGlowFrame
-    drGlowFrame:SetFrameLevel(120)
+    drGlowFrame:SetFrameLevel(button:GetFrameLevel()+120)
     drGlowFrame:SetAllPoints(button)
 
     --* overlayFrame
     local overlayFrame = CreateFrame("Frame", name.."OverlayFrame", button)
     button.widget.overlayFrame = overlayFrame
-    overlayFrame:SetFrameLevel(8) -- button:GetFrameLevel() == 4
+    overlayFrame:SetFrameLevel(button:GetFrameLevel()+8) -- button:GetFrameLevel() == 4
     overlayFrame:SetAllPoints(button)
 
     -- aggro bar
