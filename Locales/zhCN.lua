@@ -29,16 +29,23 @@ L["Options"] = "选项"
 L["Raid"] = "团队"
 
 -------------------------------------------------
--- tools
+-- mouse
 -------------------------------------------------
-L["Pull Timer"] = "开怪倒数"
-L["You don't have permission to do this"] = "你没有权限这样做"
-L["You"] = "你"
-L["%s lock %s on %s."] = "%s将%s锁定在%s。"
-L["%s unlock %s from %s."] = "%s将%s从%s解锁。"
--- L["Raid Sort"] = "团队排序"
--- L["Raid Roster"] = "团队名单"
+L["Left-Click"] = "左键"
+L["Right-Click"] = "右键"
+
+-------------------------------------------------
+-- raid roster
+-------------------------------------------------
+L["Instant Mode"] = "即时模式"
+L["Premade Mode"] = "预编排模式"
+L["Waiting for combat to end..."] = "等待战斗结束…"
+L["No support for rearrangement of members within a same subgroup"] = "不支持重排序同小队内的成员"
+L["No guarantee of the order of members in each subgroup"] = "不保证每个小队成员的顺序"
+L["change mode / apply changes"] = "切换模式 / 应用改动"
+L["discard changes"] = "放弃改动"
 L["raidRosterTips"] = "[右键] 助理，[Alt+右键] 移除。"
+L["You don't have permission to do this"] = "你没有权限这样做"
 
 -------------------------------------------------
 -- status text
@@ -616,6 +623,10 @@ L["Use |cFFFFB5C5/cell buff X|r to set icon size"] = "用 |cFFFFB5C5/cell buff X
 L["Buff Tracker icon size is set to %d."] = "将增益检查图标的尺寸设置为 %d。"
 L["A positive integer is required."] = "需要一个正整数。"
 L["Fade Out These Buttons"] = "淡出这些按钮"
+L["%s lock %s on %s."] = "%s将%s锁定在%s。"
+L["%s unlock %s from %s."] = "%s将%s从%s解锁。"
+L["You"] = "你"
+-- L["Pull Timer"] = "开怪倒数"
 
 -------------------------------------------------
 -- spell request

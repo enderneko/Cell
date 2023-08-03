@@ -121,3 +121,50 @@ function A:ApplyFadeInOutToParent(parent, condition, ...)
         end)
     end
 end
+
+-----------------------------------------
+-- add fade in/out
+-----------------------------------------
+function A:CreateFadeIn(frame, fromAlpha, toAlpha, duration, delay, onFinished)
+    local fadeIn = frame:CreateAnimationGroup()
+    frame.fadeIn = fadeIn
+    fadeIn.alpha = fadeIn:CreateAnimation("Alpha")
+    fadeIn.alpha:SetFromAlpha(fromAlpha)
+    fadeIn.alpha:SetToAlpha(toAlpha)
+    fadeIn.alpha:SetDuration(duration)
+    if delay then fadeIn.alpha:SetStartDelay(delay) end
+    
+    if onFinished then
+        fadeIn:SetScript("OnFinished", onFinished)
+    else
+        fadeIn:SetScript("OnFinished", function()
+            frame:Show()
+        end)
+    end
+
+    function frame:FadeIn()
+        fadeIn:Play()
+    end
+end
+
+function A:CreateFadeOut(frame, fromAlpha, toAlpha, duration, delay, onFinished)
+    local fadeOut = frame:CreateAnimationGroup()
+    frame.fadeOut = fadeOut
+    fadeOut.alpha = fadeOut:CreateAnimation("Alpha")
+    fadeOut.alpha:SetFromAlpha(fromAlpha)
+    fadeOut.alpha:SetToAlpha(toAlpha)
+    fadeOut.alpha:SetDuration(duration)
+    if delay then fadeOut.alpha:SetStartDelay(delay) end
+
+    if onFinished then
+        fadeOut:SetScript("OnFinished", onFinished)
+    else
+        fadeOut:SetScript("OnFinished", function()
+            frame:Hide()
+        end)
+    end
+
+    function frame:FadeOut()
+        fadeOut:Play()
+    end
+end

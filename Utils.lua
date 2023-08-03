@@ -66,6 +66,16 @@ function F:GetLocalizedClassName(classFileOrID)
     return ""
 end
 
+function F:IterateClasses()
+    local i = 0
+    return function()
+        i = i + 1
+        if i <= GetNumClasses() then
+            return GetClassInfo(i)
+        end
+    end
+end
+
 -------------------------------------------------
 -- WotLK
 -------------------------------------------------
@@ -437,6 +447,14 @@ function F:GetIndex(t, e)
         end
     end
     return nil
+end
+
+function F:GetKeys(t)
+    local keys = {}
+    for k in pairs(t) do
+        tinsert(keys, k)
+    end
+    return keys
 end
 
 function F:Copy(t)
@@ -980,6 +998,17 @@ local UnitName = UnitName
 local UnitIsGroupLeader = UnitIsGroupLeader
 local UnitIsGroupAssistant = UnitIsGroupAssistant
 
+function F:GetNumSubgroupMembers(group)
+    local n = 0
+    for i = 1, GetNumGroupMembers() do
+        local name, _, subgroup = GetRaidRosterInfo(i)
+        if subgroup == group then
+            n = n + 1
+        end
+    end
+    return n
+end
+
 function F:GetUnitsInSubGroup(group)
     local units = {}
     for i = 1, GetNumGroupMembers() do
@@ -990,6 +1019,31 @@ function F:GetUnitsInSubGroup(group)
         end
     end
     return units
+end
+
+function F:GetRaidInfoByName(fullName)
+    for i = 1, GetNumGroupMembers() do
+        -- rank: Returns 2 if the raid member is the leader of the raid, 1 if the raid member is promoted to assistant, and 0 otherwise.
+        local name, rank, subgroup = GetRaidRosterInfo(i)
+        if name == fullName then
+            return i, subgroup, rank
+        end
+    end
+end
+
+function F:GetRaidInfoBySubgroupIndex(group, index)
+    local currentIndex = 0
+    for i = 1, GetNumGroupMembers() do
+        local name, rank, subgroup = GetRaidRosterInfo(i)
+        if subgroup == group then
+            currentIndex = currentIndex + 1
+            if currentIndex == index then
+                return i, name, rank -- found
+            end
+        elseif subgroup > group and currentIndex ~= 0 then
+            return -- nil if not found
+        end
+    end
 end
 
 function F:GetPetUnit(playerUnit)

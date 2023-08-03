@@ -311,8 +311,8 @@ function addon:StylizeFrame(frame, color, borderColor)
     frame:SetBackdropBorderColor(unpack(borderColor))
 end
 
-function addon:CreateFrame(name, parent, width, height, isTransparent)
-    local f = CreateFrame("Frame", name, parent, "BackdropTemplate")
+function addon:CreateFrame(name, parent, width, height, isTransparent, template)
+    local f = CreateFrame("Frame", name, parent, template and template..",BackdropTemplate" or "BackdropTemplate")
     f:Hide()
     if not isTransparent then addon:StylizeFrame(f) end
     f:EnableMouse(true)
@@ -1584,7 +1584,7 @@ function addon:CreateStatusBar(name, parent, width, height, maxValue, smooth, fu
             bar.text:SetText(format("%d%%", value / maxValue * 100))
         end
         
-        if func then func() end
+        if func then func(value) end
     end)
 
     bar:SetScript("OnHide", function()
