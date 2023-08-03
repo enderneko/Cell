@@ -268,27 +268,65 @@ end
 local tankIcon = "|TInterface\\AddOns\\Cell\\Media\\Roles\\TANK:0|t"
 local healerIcon = "|TInterface\\AddOns\\Cell\\Media\\Roles\\HEALER:0|t"
 local damagerIcon = "|TInterface\\AddOns\\Cell\\Media\\Roles\\DAMAGER:0|t"
+
+local function UpdateRaidSetupTooltips()
+    local counts = GetGroupMemberCountsForDisplay()
+
+    CellTooltip:ClearLines()
+    CellTooltip:AddLine(L["Raid"])
+    CellTooltip:AddLine(
+        tankIcon.." |cffffffff"..counts.TANK.."   "..
+        healerIcon.." |cffffffff"..counts.HEALER.."   "..
+        damagerIcon.." |cffffffff"..counts.DAMAGER
+    )
+    CellTooltip:AddLine(" ")
+
+    local line
+    local n = 0
+    
+    for _, class in F:IterateClasses() do
+        if counts[class] ~= 0 then
+            if line then
+                line = line.."   |A:classicon-"..strlower(class)..":0:0|a |cffffffff"..counts[class]
+            else
+                line = "|A:classicon-"..strlower(class)..":0:0|a |cffffffff"..counts[class]
+            end
+            
+            n = n + 1
+
+            if n == 5 then
+                CellTooltip:AddLine(line)
+                n = 0
+                line = nil
+            end
+        end
+    end
+
+    if n ~= 0 then
+        CellTooltip:AddLine(line)
+    end
+
+    CellTooltip:Show()
+end
+
 raid:HookScript("OnEnter", function()
     CellTooltip:SetOwner(raid, "ANCHOR_NONE")
     CellTooltip:SetPoint(tooltipPoint, raid, tooltipRelativePoint, tooltipX, tooltipY)
-    CellTooltip:AddLine(L["Raid"])
-    CellTooltip:AddLine(tankIcon.." |cffffffff"..Cell.vars.role["TANK"])
-    CellTooltip:AddLine(healerIcon.." |cffffffff"..Cell.vars.role["HEALER"])
-    CellTooltip:AddLine(damagerIcon.." |cffffffff"..Cell.vars.role["DAMAGER"])
-    CellTooltip:Show()
+    -- CellTooltip:AddLine(L["Raid"])
+    -- CellTooltip:AddLine(tankIcon.." |cffffffff"..Cell.vars.role["TANK"])
+    -- CellTooltip:AddLine(healerIcon.." |cffffffff"..Cell.vars.role["HEALER"])
+    -- CellTooltip:AddLine(damagerIcon.." |cffffffff"..Cell.vars.role["DAMAGER"])
+    -- CellTooltip:Show()
+    UpdateRaidSetupTooltips()
 end)
+
 raid:HookScript("OnLeave", function()
     CellTooltip:Hide()
 end)
 
 function F:UpdateRaidSetup()
     if CellTooltip:GetOwner() == raid then
-        CellTooltip:ClearLines()
-        CellTooltip:AddLine(L["Raid"])
-        CellTooltip:AddLine(tankIcon.." |cffffffff"..Cell.vars.role["TANK"])
-        CellTooltip:AddLine(healerIcon.." |cffffffff"..Cell.vars.role["HEALER"])
-        CellTooltip:AddLine(damagerIcon.." |cffffffff"..Cell.vars.role["DAMAGER"])
-        CellTooltip:Show() -- resize
+        UpdateRaidSetupTooltips()
     end
 end
 
