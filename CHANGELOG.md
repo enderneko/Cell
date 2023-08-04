@@ -1,8 +1,9 @@
-[Full Changelog](https://github.com/enderneko/Cell/compare/r185-release...0c4b51daa5ced575f08cb3912138cd18ee4a80aa)
+[Full Changelog](https://github.com/enderneko/Cell/compare/r186-release...fbe58c793fc23abbae01b914a9f7dfcc5fa6accc)
 
-- Fixed import & export
-- Update Health Text indicator
-- Update Dispel Request
-- Update Spell Request
-- Fix icons
-- Update zhTW
+- Implement Quick Cast
+- Add Proc Glow
+- Update raid roster frame
+- Update raid setup tooltips
+- Fix dispel request on wrath
+- Update patrons
+- [snippet] IndicatorBars_ShowDuration

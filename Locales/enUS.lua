@@ -80,6 +80,13 @@ select(2, ...).L = setmetatable({
     ["CHANGELOGS"] = [[
         <h1>Try disabling code snippets, if Cell doesn't work after update.</h1>
         <br/>
+
+        <h1>r187-release (Aug 5, 2023, 06:25 GMT+8)</h1>
+        <p>+ New utility: Quick Cast (Retail only).</p>
+        <p>+ Added Proc Glow.</p>
+        <p>+ Added "Premade Mode" to raid roster utility.</p>
+        <p>* Fixed Dispel Request on Wrath.</p>
+        <br/>
         
         <h1>r186-release (Jul 24, 2023, 21:06 GMT+8)</h1>
         <p>* Fixed import &amp; export.</p>
