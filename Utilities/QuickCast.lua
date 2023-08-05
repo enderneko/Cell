@@ -113,34 +113,34 @@ local function CreateQCPane()
     qcOrientationDD:SetPoint("TOPLEFT", qcNameDD, 0, -50)
     qcOrientationDD:SetItems({
         {
-            ["text"] = L["Horizontal"].." →",
-            ["value"] = "horizontal-left-to-right",
+            ["text"] = L["left-to-right"],
+            ["value"] = "left-to-right",
             ["onClick"] = function()
-                quickCastTable["orientation"] = "horizontal-left-to-right"
+                quickCastTable["orientation"] = "left-to-right"
                 Cell:Fire("UpdateQuickCast")
             end
         },
         {
-            ["text"] = L["Horizontal"].." ←",
-            ["value"] = "horizontal-right-to-left",
+            ["text"] = L["right-to-left"],
+            ["value"] = "right-to-left",
             ["onClick"] = function()
-                quickCastTable["orientation"] = "horizontal-right-to-left"
+                quickCastTable["orientation"] = "right-to-left"
                 Cell:Fire("UpdateQuickCast")
             end
         },
         {
-            ["text"] = L["Vertical"].." ↓",
-            ["value"] = "vertical-top-to-bottom",
+            ["text"] = L["top-to-bottom"],
+            ["value"] = "top-to-bottom",
             ["onClick"] = function()
-                quickCastTable["orientation"] = "vertical-top-to-bottom"
+                quickCastTable["orientation"] = "top-to-bottom"
                 Cell:Fire("UpdateQuickCast")
             end
         },
         {
-            ["text"] = L["Vertical"].." ↑",
-            ["value"] = "vertical-bottom-to-top",
+            ["text"] = L["bottom-to-top"],
+            ["value"] = "bottom-to-top",
             ["onClick"] = function()
-                quickCastTable["orientation"] = "vertical-bottom-to-top"
+                quickCastTable["orientation"] = "bottom-to-top"
                 Cell:Fire("UpdateQuickCast")
             end
         },
@@ -1201,7 +1201,7 @@ local function UpdateQuickCast()
         -- quickCastFrame:RegisterEvent("GROUP_ROSTER_UPDATE")
 
         -- update parent size
-        if strfind(quickCastTable["orientation"], "^vertical") then
+        if strfind(quickCastTable["orientation"], "top") then
             P:Size(quickCastFrame, quickCastTable["size"], quickCastTable["size"] * quickCastTable["num"] + quickCastTable["spacing"] * (quickCastTable["num"] - 1))
         else
             P:Size(quickCastFrame, quickCastTable["size"] * quickCastTable["num"] + quickCastTable["spacing"] * (quickCastTable["num"] - 1), quickCastTable["size"])
@@ -1235,25 +1235,25 @@ local function UpdateQuickCast()
             quickCastButtons[i]:Show()
     
             P:ClearPoints(quickCastButtons[i])
-            if quickCastTable["orientation"] == "horizontal-left-to-right" then
+            if quickCastTable["orientation"] == "left-to-right" then
                 if i == 1 then
                     P:Point(quickCastButtons[i], "TOPLEFT")
                 else
                     P:Point(quickCastButtons[i], "TOPLEFT", quickCastButtons[i-1], "TOPRIGHT", quickCastTable["spacing"], 0)
                 end
-            elseif quickCastTable["orientation"] == "horizontal-right-to-left" then
+            elseif quickCastTable["orientation"] == "right-to-left" then
                 if i == 1 then
                     P:Point(quickCastButtons[i], "TOPRIGHT")
                 else
                     P:Point(quickCastButtons[i], "TOPRIGHT", quickCastButtons[i-1], "TOPLEFT", -quickCastTable["spacing"], 0)
                 end
-            elseif quickCastTable["orientation"] == "vertical-top-to-bottom" then
+            elseif quickCastTable["orientation"] == "top-to-bottom" then
                 if i == 1 then
                     P:Point(quickCastButtons[i], "TOPLEFT")
                 else
                     P:Point(quickCastButtons[i], "TOPLEFT", quickCastButtons[i-1], "BOTTOMLEFT", 0, -quickCastTable["spacing"])
                 end
-            elseif quickCastTable["orientation"] == "vertical-bottom-to-top" then
+            elseif quickCastTable["orientation"] == "bottom-to-top" then
                 if i == 1 then
                     P:Point(quickCastButtons[i], "BOTTOMLEFT")
                 else

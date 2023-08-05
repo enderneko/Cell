@@ -2184,6 +2184,20 @@ function F:Revise()
             end
         end
     end
+    
+    -- r188-release
+    if CellDB["revise"] and dbRevision < 188 then
+        if Cell.isRetail and type(CellDB["quickCast"]) == "table" then
+            for class, classTbl in pairs(CellDB["quickCast"]) do
+                for spec, specTbl in pairs(classTbl) do
+                    if strfind(specTbl["orientation"], "^vertical") or strfind(specTbl["orientation"], "^horizontal") then
+                        specTbl["orientation"] = specTbl["orientation"]:gsub("^vertical%-", "")
+                        specTbl["orientation"] = specTbl["orientation"]:gsub("^horizontal%-", "")
+                    end
+                end
+            end
+        end
+    end
 
     CellDB["revise"] = Cell.version
     if Cell.isWrath then

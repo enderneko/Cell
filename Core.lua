@@ -322,7 +322,7 @@ function eventFrame:ADDON_LOADED(arg1)
                     ["enabled"] = false,
                     ["namePosition"] = "RIGHT",
                     ["num"] = 4,
-                    ["orientation"] = "vertical-top-to-bottom",
+                    ["orientation"] = "top-to-bottom",
                     ["size"] = 25,
                     ["spacing"] = 3,
                     ["glowBuffsColor"] = {1, 1, 0, 1},
