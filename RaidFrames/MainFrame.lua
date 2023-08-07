@@ -269,6 +269,16 @@ local tankIcon = "|TInterface\\AddOns\\Cell\\Media\\Roles\\TANK:0|t"
 local healerIcon = "|TInterface\\AddOns\\Cell\\Media\\Roles\\HEALER:0|t"
 local damagerIcon = "|TInterface\\AddOns\\Cell\\Media\\Roles\\DAMAGER:0|t"
 
+local GetGroupMemberCountsForDisplay = GetGroupMemberCountsForDisplay
+if not GetGroupMemberCountsForDisplay then
+    GetGroupMemberCountsForDispla = function()
+        local data = GetGroupMemberCounts()
+        data.DAMAGER = data.DAMAGER + data.NOROLE --People without a role count as damager
+        data.NOROLE = 0
+        return data
+    end
+end
+
 local function UpdateRaidSetupTooltips()
     local counts = GetGroupMemberCountsForDisplay()
 
