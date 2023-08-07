@@ -36,9 +36,9 @@ function F:ShowUtilityList()
         dumbFS2:SetText(L["Dispel Request"])
 
         if Cell.isRetail then
-            P:Size(listFrame, ceil(max(dumbFS1:GetStringWidth(), dumbFS2:GetStringWidth())) + 13, 20*4+2)
+            P:Size(listFrame, ceil(max(dumbFS1:GetStringWidth(), dumbFS2:GetStringWidth())) + 13, 20*4)
         else
-            P:Size(listFrame, ceil(max(dumbFS1:GetStringWidth(), dumbFS2:GetStringWidth())) + 13, 20*3+2)
+            P:Size(listFrame, ceil(max(dumbFS1:GetStringWidth(), dumbFS2:GetStringWidth())) + 13, 20*3)
         end
         Cell:StylizeFrame(listFrame, nil, Cell:GetAccentColorTable())
 

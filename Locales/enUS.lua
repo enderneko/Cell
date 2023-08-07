@@ -81,6 +81,11 @@ select(2, ...).L = setmetatable({
         <h1>Try disabling code snippets, if Cell doesn't work after update.</h1>
         <br/>
 
+        <h1>r188-release (Aug 7, 2023, 19:42 GMT+8)</h1>
+        <p>* Fixed raid setup tooltip on Wrath.</p>
+        <p>* Updated zhTW.</p>
+        <br/>
+
         <h1>r187-release (Aug 5, 2023, 06:25 GMT+8)</h1>
         <p>+ New utility: Quick Cast (Retail only).</p>
         <p>+ Added Proc Glow.</p>
