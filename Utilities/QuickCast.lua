@@ -951,11 +951,14 @@ CreateQuickCastButton = function(parent, name, isPreview)
                 self.elapsed = (self.elapsed or 0) + elapsed
                 if self.elapsed >= 0.1 then
                     local remain = duration - (GetTime() - start)
-                    if remain < 0 then
-                        remain = 0
+                    if remain <= 0 then
+                        glowBuffCD:SetAlpha(0.1)
                         glowBuffCD:Hide()
+                    elseif remain >= duration then
+                        glowBuffCD:SetAlpha(1)
+                    else
+                        glowBuffCD:SetAlpha(remain / duration * 0.9 + 0.1)
                     end
-                    glowBuffCD:SetAlpha(remain / duration * 0.9 + 0.1)
                     self.elapsed = 0
                 end
             end)
@@ -972,11 +975,14 @@ CreateQuickCastButton = function(parent, name, isPreview)
                 self.elapsed = (self.elapsed or 0) + elapsed
                 if self.elapsed >= 0.1 then
                     local remain = duration - (GetTime() - start)
-                    if remain < 0 then
-                        remain = 0
+                    if remain <= 0 then
+                        glowCastCD:SetAlpha(0.1)
                         glowCastCD:Hide()
+                    elseif remain >= duration then
+                        glowCastCD:SetAlpha(1)
+                    else
+                        glowCastCD:SetAlpha(remain / duration * 0.9 + 0.1)
                     end
-                    glowCastCD:SetAlpha(remain / duration * 0.9 + 0.1)
                     self.elapsed = 0
                 end
             end)

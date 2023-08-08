@@ -788,8 +788,13 @@ function I:CreateAura_Texture(name, parent)
                 self.elapsed = (self.elapsed or 0) + elapsed
                 if self.elapsed >= 0.1 then
                     local remain = duration - (GetTime() - start)
-                    if remain < 0 then remain = 0 end
-                    tex:SetAlpha(remain / duration * 0.8 + 0.2)
+                    if remain <= 0 then
+                        tex:SetAlpha(0.2)
+                    elseif remain >= duration then
+                        tex:SetAlpha(1)
+                    else
+                        tex:SetAlpha(remain / duration * 0.8 + 0.2)
+                    end
                     self.elapsed = 0
                 end
             end)

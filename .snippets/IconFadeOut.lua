@@ -37,6 +37,7 @@ local function SetCooldown(frame, start, duration, debuffType, texture, count, r
             frame:SetScript("OnUpdate", function()
                 local remain = duration-(GetTime()-start)
                 if remain < 0 then remain = 0 end
+                if remain > duration then remain = duration end
 
                 if remain > threshold then
                     frame.duration:SetText("")
