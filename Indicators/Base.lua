@@ -708,7 +708,7 @@ end
 -------------------------------------------------
 function I:CreateAura_Color(name, parent)
     local color = CreateFrame("Frame", name, parent)
-    color:SetFrameLevel(8)
+    color:SetFrameLevel(parent:GetFrameLevel()+8)
     color:Hide()
     color.indicatorType = "color"
 
