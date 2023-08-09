@@ -81,6 +81,10 @@ select(2, ...).L = setmetatable({
         <h1>Try disabling code snippets, if Cell doesn't work after update.</h1>
         <br/>
 
+        <h1>r189-release (Aug 9, 2023, 08:27 GMT+8)</h1>
+        <p>* Fixed custom indicators: Color and Texture.</p>
+        <br/>
+
         <h1>r188-release (Aug 7, 2023, 19:42 GMT+8)</h1>
         <p>* Fixed raid setup tooltip on Wrath.</p>
         <p>* Updated zhTW.</p>
