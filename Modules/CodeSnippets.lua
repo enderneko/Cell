@@ -413,9 +413,11 @@ function F:GetDefaultSnippet()
             "CELL_SUMMON_ICONS_ENABLED = false\n\n"..
             "-- use separate width and height for custom indicator icons (boolean)\n"..
             "CELL_RECTANGULAR_CUSTOM_INDICATOR_ICONS = false\n\n"..
-            "-- Use nicknames from Details! Damage Meter (NickTag-1.0 library)\n"..
+            "-- Use nicknames from Details! Damage Meter (boolean, NickTag-1.0 library)\n"..
             "CELL_NICKTAG_ENABLED = false\n\n"..
-            "-- Add Evoker spell Cauterizing Flame into dispel checker\n"..
-            "CELL_DISPEL_EVOKER_CAUTERIZING_FLAME = false",
+            "-- Add Evoker spell Cauterizing Flame into dispel checker (boolean)\n"..
+            "CELL_DISPEL_EVOKER_CAUTERIZING_FLAME = false\n\n"..
+            "-- remove raid setup details from the tooltip of the Raid button (boolean)\n"..
+            "CELL_TOOLTIP_REMOVE_RAID_SETUP_DETAILS = false"
     }
 end

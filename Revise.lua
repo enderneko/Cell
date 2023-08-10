@@ -1910,7 +1910,7 @@ function F:Revise()
     -- r170-release
     if CellDB["revise"] and dbRevision < 170 then
         if not strfind(CellDB["snippets"][0]["code"], "CELL_NICKTAG_ENABLED") then
-            CellDB["snippets"][0]["code"] = CellDB["snippets"][0]["code"].."\n\n-- Use nicknames from Details! Damage Meter (NickTag-1.0 library)\nCELL_NICKTAG_ENABLED = false"
+            CellDB["snippets"][0]["code"] = CellDB["snippets"][0]["code"].."\n\n-- Use nicknames from Details! Damage Meter (boolean, NickTag-1.0 library)\nCELL_NICKTAG_ENABLED = false"
         end
 
         if Cell.isWrath then
@@ -1937,7 +1937,7 @@ function F:Revise()
     -- r171-release
     if CellDB["revise"] and dbRevision < 171 then
         if not strfind(CellDB["snippets"][0]["code"], "CELL_DISPEL_EVOKER_CAUTERIZING_FLAME") then
-            CellDB["snippets"][0]["code"] = CellDB["snippets"][0]["code"].."\n\n-- Add Evoker spell Cauterizing Flame into dispel checker\nCELL_DISPEL_EVOKER_CAUTERIZING_FLAME = false"
+            CellDB["snippets"][0]["code"] = CellDB["snippets"][0]["code"].."\n\n-- Add Evoker spell Cauterizing Flame into dispel checker (boolean)\nCELL_DISPEL_EVOKER_CAUTERIZING_FLAME = false"
         end
     end
 
@@ -2196,6 +2196,13 @@ function F:Revise()
                     end
                 end
             end
+        end
+    end
+
+    -- r190-release
+    if CellDB["revise"] and dbRevision < 190 then
+        if not strfind(CellDB["snippets"][0]["code"], "CELL_TOOLTIP_REMOVE_RAID_SETUP_DETAILS") then
+            CellDB["snippets"][0]["code"] = CellDB["snippets"][0]["code"].."\n\n-- remove raid setup details from the tooltip of the Raid button (boolean)\nCELL_TOOLTIP_REMOVE_RAID_SETUP_DETAILS = false"
         end
     end
 

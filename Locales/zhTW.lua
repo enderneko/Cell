@@ -408,6 +408,8 @@ L["RESET"] = "從非常舊的版本更新之後，需要重置 Cell"
 L["Reset All"] = "全部重置"
 L["reset all Cell settings"] = "重置 Cell 的全部設定"
 L["reset all Click-Castings"] = "重置滑鼠點擊施法的全部設定"
+--[[Translation missing --]]
+--[[ L["reset all Code Snippets"] = ""--]] 
 L["reset all Layouts and Indicators"] = "重置版面配置和指示器的全部設定"
 L["reset all Raid Debuffs"] = "重置全部的團隊減益"
 L["reset Cell position"] = "重置 Cell 的位置"

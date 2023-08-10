@@ -2381,7 +2381,7 @@ end
 -----------------------------------------
 function addon:CreateScrollTextFrame(parent, s, timePerScroll, scrollStep, delayTime, noFadeIn)
     if not delayTime then delayTime = 3 end
-    if not timePerScroll then timePerScroll = 0.025 end
+    if not timePerScroll then timePerScroll = 0.02 end
     if not scrollStep then scrollStep = 1 end
 
     local frame = CreateFrame("ScrollFrame", nil, parent)
@@ -2420,7 +2420,7 @@ function addon:CreateScrollTextFrame(parent, s, timePerScroll, scrollStep, delay
 
     local maxHScrollRange
     local elapsedTime, delay, scroll = 0, 0, 0
-    local nextRound
+    local wait, nextRound
     
     alpha1:SetScript("OnFinished", function()
         frame:SetHorizontalScroll(0)

@@ -20,6 +20,7 @@ L["These \"reset\" commands below affect all your characters in this account"] =
 L["reset all Layouts and Indicators"] = "重置所有布局与指示器"
 L["reset all Click-Castings"] = "重置所有点击施法"
 L["reset all Raid Debuffs"] = "重置所有副本减益"
+L["reset all Code Snippets"] = "重置所有代码片段"
 L["reset all Cell settings"] = "重置所有Cell设置"
 
 -------------------------------------------------

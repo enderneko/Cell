@@ -269,51 +269,48 @@ local tankIcon = "|TInterface\\AddOns\\Cell\\Media\\Roles\\TANK:0|t"
 local healerIcon = "|TInterface\\AddOns\\Cell\\Media\\Roles\\HEALER:0|t"
 local damagerIcon = "|TInterface\\AddOns\\Cell\\Media\\Roles\\DAMAGER:0|t"
 
-local GetGroupMemberCountsForDisplay = GetGroupMemberCountsForDisplay
-if not GetGroupMemberCountsForDisplay then
-    GetGroupMemberCountsForDispla = function()
-        local data = GetGroupMemberCounts()
-        data.DAMAGER = data.DAMAGER + data.NOROLE --People without a role count as damager
-        data.NOROLE = 0
-        return data
-    end
-end
+-- local GetGroupMemberCountsForDisplay = GetGroupMemberCountsForDisplay
+-- if not GetGroupMemberCountsForDisplay then
+--     GetGroupMemberCountsForDispla = function()
+--         local data = GetGroupMemberCounts()
+--         data.DAMAGER = data.DAMAGER + data.NOROLE --People without a role count as damager
+--         data.NOROLE = 0
+--         return data
+--     end
+-- end
 
-local function UpdateRaidSetupTooltips()
-    local counts = GetGroupMemberCountsForDisplay()
+local function GetRaidSetupDetail(role)
+    local line = "  "
 
-    CellTooltip:ClearLines()
-    CellTooltip:AddLine(L["Raid"])
-    CellTooltip:AddLine(
-        tankIcon.." |cffffffff"..counts.TANK.."   "..
-        healerIcon.." |cffffffff"..counts.HEALER.."   "..
-        damagerIcon.." |cffffffff"..counts.DAMAGER
-    )
-    CellTooltip:AddLine(" ")
+    for class in F:IterateClasses() do
+        if Cell.vars.raidSetup[role][class] then
+            local r, g, b = F:ConvertRGB_256(F:GetClassColor(class))
 
-    local line
-    local n = 0
-    
-    for _, class in F:IterateClasses() do
-        if counts[class] ~= 0 then
-            if line then
-                line = line.."   |A:classicon-"..strlower(class)..":0:0|a |cffffffff"..counts[class]
-            else
-                line = "|A:classicon-"..strlower(class)..":0:0|a |cffffffff"..counts[class]
-            end
-            
-            n = n + 1
+            for i = 1, Cell.vars.raidSetup[role][class] do
+                if line ~= "  " then
+                    line = line .. "|TInterface\\Buttons\\WHITE8x8:10:1:0:0:1:10:1:1:1:10:0:0:0|t"
+                end
 
-            if n == 5 then
-                CellTooltip:AddLine(line)
-                n = 0
-                line = nil
+                line = line .. "|TInterface\\Buttons\\WHITE8x8:10:2:0:0:2:10:1:2:1:10:"..r..":"..g..":"..b.."|t"
             end
         end
     end
 
-    if n ~= 0 then
-        CellTooltip:AddLine(line)
+    return line
+end
+
+local function UpdateRaidSetupTooltip()
+    CellTooltip:ClearLines()
+    CellTooltip:AddLine(L["Raid"])
+
+    if CELL_TOOLTIP_REMOVE_RAID_SETUP_DETAILS then
+        CellTooltip:AddLine(tankIcon.." |cffffffff"..Cell.vars.raidSetup.TANK.ALL)
+        CellTooltip:AddLine(healerIcon.." |cffffffff"..Cell.vars.raidSetup.HEALER.ALL)
+        CellTooltip:AddLine(damagerIcon.." |cffffffff"..Cell.vars.raidSetup.DAMAGER.ALL)
+    else
+        CellTooltip:AddLine(tankIcon.." |cffffffff"..Cell.vars.raidSetup.TANK.ALL.."|r"..GetRaidSetupDetail("TANK"))
+        CellTooltip:AddLine(healerIcon.." |cffffffff"..Cell.vars.raidSetup.HEALER.ALL.."|r"..GetRaidSetupDetail("HEALER"))
+        CellTooltip:AddLine(damagerIcon.." |cffffffff"..Cell.vars.raidSetup.DAMAGER.ALL.."|r"..GetRaidSetupDetail("DAMAGER"))
     end
 
     CellTooltip:Show()
@@ -322,12 +319,7 @@ end
 raid:HookScript("OnEnter", function()
     CellTooltip:SetOwner(raid, "ANCHOR_NONE")
     CellTooltip:SetPoint(tooltipPoint, raid, tooltipRelativePoint, tooltipX, tooltipY)
-    -- CellTooltip:AddLine(L["Raid"])
-    -- CellTooltip:AddLine(tankIcon.." |cffffffff"..Cell.vars.role["TANK"])
-    -- CellTooltip:AddLine(healerIcon.." |cffffffff"..Cell.vars.role["HEALER"])
-    -- CellTooltip:AddLine(damagerIcon.." |cffffffff"..Cell.vars.role["DAMAGER"])
-    -- CellTooltip:Show()
-    UpdateRaidSetupTooltips()
+    UpdateRaidSetupTooltip()
 end)
 
 raid:HookScript("OnLeave", function()
@@ -336,7 +328,7 @@ end)
 
 function F:UpdateRaidSetup()
     if CellTooltip:GetOwner() == raid then
-        UpdateRaidSetupTooltips()
+        UpdateRaidSetupTooltip()
     end
 end
 

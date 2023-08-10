@@ -563,39 +563,53 @@ function eventFrame:ADDON_LOADED(arg1)
     -- end
 end
 
--- Cell.vars.guids = {} -- NOTE: moved to UnitButton.lua OnShow/OnHide
-Cell.vars.role = {["TANK"]=0, ["HEALER"]=0, ["DAMAGER"]=0}
+Cell.vars.raidSetup = {
+    ["TANK"]={["ALL"]=0},
+    ["HEALER"]={["ALL"]=0},
+    ["DAMAGER"]={["ALL"]=0},
+}
+
 function eventFrame:GROUP_ROSTER_UPDATE()
-    -- wipe(Cell.vars.guids)
     if IsInRaid() then
         if Cell.vars.groupType ~= "raid" then
             Cell.vars.groupType = "raid"
             F:Debug("|cffffbb77GroupTypeChanged:|r raid")
             Cell:Fire("GroupTypeChanged", "raid")
         end
+        
         -- reset raid setup
-        Cell.vars.role["TANK"] = 0
-        Cell.vars.role["HEALER"] = 0
-        Cell.vars.role["DAMAGER"] = 0
-        -- update guid & raid setup
-        for i = 1, GetNumGroupMembers() do
-            -- update guid
-            -- local playerGUID = UnitGUID("raid"..i)
-            -- if playerGUID then
-            --     Cell.vars.guids[playerGUID] = "raid"..i
-            -- end
-            -- update raid setup
-            local role = select(12, GetRaidRosterInfo(i))
-            if role and Cell.vars.role[role] then
-                Cell.vars.role[role] = Cell.vars.role[role] + 1
+        for _, t in pairs(Cell.vars.raidSetup) do
+            for class in pairs(t) do
+                if class == "ALL" then
+                    t["ALL"] = 0
+                else
+                    t[class] = nil
+                end
             end
         end
+        
+        -- update guid & raid setup
+        for i = 1, GetNumGroupMembers() do
+            -- update raid setup
+            local _, _, _, _, _, class, _, _, _, _, _, role = GetRaidRosterInfo(i)
+            if not role or role == "NONE" then role = "DAMAGER" end
+            -- update ALL
+            Cell.vars.raidSetup[role]["ALL"] = Cell.vars.raidSetup[role]["ALL"] + 1
+            -- update for each class
+            if not Cell.vars.raidSetup[role][class] then
+                Cell.vars.raidSetup[role][class] = 1
+            else
+                Cell.vars.raidSetup[role][class] = Cell.vars.raidSetup[role][class] + 1
+            end
+        end
+
         -- update Cell.unitButtons.raid.units
         for i = GetNumGroupMembers()+1, 40 do
             Cell.unitButtons.raid.units["raid"..i] = nil
             _G["CellRaidFrameMember"..i] = nil
         end
         F:UpdateRaidSetup()
+
         -- update Cell.unitButtons.party.units
         Cell.unitButtons.party.units["player"] = nil
         Cell.unitButtons.party.units["pet"] = nil
@@ -610,29 +624,13 @@ function eventFrame:GROUP_ROSTER_UPDATE()
             F:Debug("|cffffbb77GroupTypeChanged:|r party")
             Cell:Fire("GroupTypeChanged", "party")
         end
-        -- update guid
-        -- Cell.vars.guids[UnitGUID("player")] = "player"
-        -- if UnitGUID("pet") then
-        --     Cell.vars.guids[UnitGUID("pet")] = "pet"
-        -- end
-        -- for i = 1, 4 do
-        --     local playerGUID = UnitGUID("party"..i)
-        --     if playerGUID then
-        --         Cell.vars.guids[playerGUID] = "party"..i
-        --     else
-        --         break
-        --     end
 
-        --     local petGUID = UnitGUID("partypet"..i)
-        --     if petGUID then
-        --         Cell.vars.guids[petGUID] = "partypet"..i
-        --     end
-        -- end
         -- update Cell.unitButtons.raid.units
         for i = 1, 40 do
             Cell.unitButtons.raid.units["raid"..i] = nil
             _G["CellRaidFrameMember"..i] = nil
         end
+
         -- update Cell.unitButtons.party.units
         for i = GetNumGroupMembers(), 4 do
             Cell.unitButtons.party.units["party"..i] = nil
@@ -645,16 +643,13 @@ function eventFrame:GROUP_ROSTER_UPDATE()
             F:Debug("|cffffbb77GroupTypeChanged:|r solo")
             Cell:Fire("GroupTypeChanged", "solo")
         end
-        -- update guid
-        -- Cell.vars.guids[UnitGUID("player")] = "player"
-        -- if UnitGUID("pet") then
-        --     Cell.vars.guids[UnitGUID("pet")] = "pet"
-        -- end
+
         -- update Cell.unitButtons.raid.units
         for i = 1, 40 do
             Cell.unitButtons.raid.units["raid"..i] = nil
             _G["CellRaidFrameMember"..i] = nil
         end
+
         -- update Cell.unitButtons.party.units
         Cell.unitButtons.party.units["player"] = nil
         Cell.unitButtons.party.units["pet"] = nil
@@ -671,13 +666,6 @@ function eventFrame:GROUP_ROSTER_UPDATE()
         F:Debug("|cffbb00bbPermissionChanged")
     end
 end
-
--- NOTE: used to update pet in Cell.vars.guids
--- function eventFrame:UNIT_PET()
---     if not IsInRaid() then
---         eventFrame:GROUP_ROSTER_UPDATE()
---     end
--- end
 
 local inInstance
 function eventFrame:PLAYER_ENTERING_WORLD()
@@ -722,7 +710,6 @@ local prevSpec
 function eventFrame:PLAYER_LOGIN()
     F:Debug("PLAYER_LOGIN")
     eventFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
-    -- eventFrame:RegisterEvent("UNIT_PET")
     eventFrame:RegisterEvent("GROUP_ROSTER_UPDATE")
     eventFrame:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
     eventFrame:RegisterEvent("UI_SCALE_CHANGED")
@@ -853,12 +840,17 @@ function SlashCmdList.CELL(msg, editbox)
             CellDB["layouts"] = nil
             ReloadUI()
 
+        elseif rest == "clickcastings" then
+            CellDB["clickCastings"] = nil
+            ReloadUI()
+        
         elseif rest == "raiddebuffs" then
             CellDB["raidDebuffs"] = nil
             ReloadUI()
-            
-        elseif rest == "clickcastings" then
-            CellDB["clickCastings"] = nil
+        
+        elseif rest == "snippets" then
+            CellDB["snippets"] = {}
+            CellDB["snippets"][0] = F:GetDefaultSnippet()
             ReloadUI()
         end
 
@@ -895,6 +887,7 @@ function SlashCmdList.CELL(msg, editbox)
             "|cFFFFB5C5/cell reset layouts|r: "..L["reset all Layouts and Indicators"]..".\n"..
             "|cFFFFB5C5/cell reset clickcastings|r: "..L["reset all Click-Castings"]..".\n"..
             "|cFFFFB5C5/cell reset raiddebuffs|r: "..L["reset all Raid Debuffs"]..".\n"..
+            "|cFFFFB5C5/cell reset snippets|r: "..L["reset all Code Snippets"]..".\n"..
             "|cFFFFB5C5/cell reset all|r: "..L["reset all Cell settings"].."."
         )
     end

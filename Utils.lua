@@ -21,37 +21,19 @@ Cell.isWrath = WOW_PROJECT_ID == WOW_PROJECT_WRATH_CLASSIC
 local localizedClass = {}
 FillLocalizedClassList(localizedClass)
 
-local classFileToID = {
-    WARRIOR = 1,
-    PALADIN = 2,
-    HUNTER = 3,
-    ROGUE = 4,
-    PRIEST = 5,
-    DEATHKNIGHT = 6,
-    SHAMAN = 7,
-    MAGE = 8,
-    WARLOCK = 9,
-    MONK = 10,
-    DRUID = 11,
-    DEMONHUNTER = 12,
-    EVOKER = 13,
-}
+local sortedClasses = {}
+local classFileToID = {}
+local classIDToFile = {}
 
-local classIDToFile = {
-    [1] = "WARRIOR",
-    [2] = "PALADIN",
-    [3] = "HUNTER",
-    [4] = "ROGUE",
-    [5] = "PRIEST",
-    [6] = "DEATHKNIGHT",
-    [7] = "SHAMAN",
-    [8] = "MAGE",
-    [9] = "WARLOCK",
-    [10] = "MONK",
-    [11] = "DRUID",
-    [12] = "DEMONHUNTER",
-    [13] = "EVOKER",
-}
+do
+    for i = 1, GetNumClasses() do
+        local classFile = select(2, GetClassInfo(i))
+        tinsert(sortedClasses, classFile)
+        classFileToID[classFile] = i
+        classIDToFile[i] = classFile
+    end
+    sort(sortedClasses)
+end
 
 function F:GetClassID(classFile)
     return classFileToID[classFile]
@@ -71,7 +53,7 @@ function F:IterateClasses()
     return function()
         i = i + 1
         if i <= GetNumClasses() then
-            return GetClassInfo(i)
+            return sortedClasses[i], classFileToID[sortedClasses[i]]
         end
     end
 end
@@ -157,7 +139,7 @@ function F:ConvertRGB(r, g, b, desaturation)
 end
 
 function F:ConvertRGB_256(r, g, b)
-    return r * 255, g * 255, b * 255
+    return floor(r * 255), floor(g * 255), floor(b * 255)
 end
 
 function F:ConvertRGBToHEX(r, g, b)
