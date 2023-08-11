@@ -294,10 +294,10 @@ local function CreateLinksPane()
 
     local linksEB = Cell:CreateEditBox(linksPane, 412, 20)
     linksEB:SetPoint("TOPLEFT", 5, -27)
-    linksEB:SetText("https://github.com/enderneko/Cell/issues")
+    linksEB:SetText("https://github.com/enderneko/Cell")
     linksEB:SetScript("OnTextChanged", function(self, userChanged)
         if userChanged then
-            linksEB:SetText("https://github.com/enderneko/Cell/issues")
+            linksEB:SetText("https://github.com/enderneko/Cell")
             linksEB:HighlightText()
         else
             linksEB:ClearFocus()
@@ -305,7 +305,7 @@ local function CreateLinksPane()
         linksEB:SetCursorPosition(0)
     end)
     linksEB:SetScript("OnHide", function()
-        linksEB:SetText("https://github.com/enderneko/Cell/issues")
+        linksEB:SetText("https://github.com/enderneko/Cell")
     end)
 
     --! github
