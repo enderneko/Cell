@@ -172,11 +172,11 @@ function eventFrame:ADDON_LOADED(arg1)
                 ["showParty"] = true,
                 ["hideBlizzardParty"] = true,
                 ["hideBlizzardRaid"] = true,
-                ["translit"] = false,
-                ["useCleuHealthUpdater"] = false,
                 ["locked"] = false,
                 ["fadeOut"] = false,
                 ["menuPosition"] = "top_bottom",
+                ["translit"] = false,
+                ["useCleuHealthUpdater"] = false,
             }
         end
 

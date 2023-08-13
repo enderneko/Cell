@@ -789,12 +789,19 @@ function I:CreateRaidDebuffs(parent)
     end
 
     function raidDebuffs:HideGlow(glowType)
-        if glowType == "Normal" then
+        if not glowType then
+            -- hide all
             LCG.ButtonGlow_Stop(parent)
-        elseif glowType == "Pixel" then
             LCG.PixelGlow_Stop(parent)
-        elseif glowType == "Shine" then
             LCG.AutoCastGlow_Stop(parent)
+        else
+            if glowType == "Normal" then
+                LCG.ButtonGlow_Stop(parent)
+            elseif glowType == "Pixel" then
+                LCG.PixelGlow_Stop(parent)
+            elseif glowType == "Shine" then
+                LCG.AutoCastGlow_Stop(parent)
+            end
         end
     end
 

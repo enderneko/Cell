@@ -916,7 +916,7 @@ function addon:CreateCheckButton(parent, label, onClick, ...)
         end
     end
 
-    addon:SetTooltips(cb, "ANCHOR_TOPLEFT", 0, 2, ...)
+    addon:SetTooltips(cb, "ANCHOR_TOPLEFT", 0, 3, ...)
 
     return cb
 end
