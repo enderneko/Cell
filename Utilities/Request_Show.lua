@@ -239,10 +239,11 @@ Comm:RegisterComm("CELL_REQ_S", function(prefix, message, channel, sender)
 end)
 
 --! glow on whisper
+local COOLDOWN_TIME_TEXT = string.gsub(ITEM_COOLDOWN_TIME, "%%s", "")
 -- NOTE: playerName always contains SERVER name!
 function SR:CHAT_MSG_WHISPER(text, playerName, languageName, channelName, playerName2, specialFlags, zoneChannelID, channelIndex, channelBaseName, languageID, lineID, guid, bnSenderID, isMobile, isSubtitle, hideSenderInLetterbox, supressRaidIcons)
     -- NOTE: filter cd reply
-    if strmatch(text, "^|c.+|H.+|h%[.+%]|h|r.+") then return end
+    if strfind(text, "^|c.+|H.+|h%[.+%]|h|r "..COOLDOWN_TIME_TEXT..".+") then return end
 
     for spellId, t in pairs(srSpells) do
         if strfind(strlower(text), strlower(t[3])) then
