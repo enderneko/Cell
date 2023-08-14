@@ -266,7 +266,7 @@ for i = 1, 5 do
     SecureHandlerSetFrameRef(config, "assignment"..i, assignmentButtons[i])
     
     -- unit button
-    local b = CreateFrame("Button", "CellSpotlightFrameUnitButton"..i, spotlightFrame, "CellUnitButtonTemplate")
+    local b = CreateFrame("Button", "_CellSpotlightFrameUnitButton"..i, spotlightFrame, "CellUnitButtonTemplate") -- TODO: rename
     Cell.unitButtons.spotlight[i] = b
     -- b.type = "spotlight" -- layout setup
     -- b:SetAttribute("unit", "player")
