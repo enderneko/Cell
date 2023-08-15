@@ -1192,18 +1192,20 @@ end
 -------------------------------------------------
 local cleu = CreateFrame("Frame")
 cleu:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
+
+local function UpdateMirrorImage(b, event)
+    if event == "SPELL_AURA_APPLIED" then
+        b._mirror_image = GetTime()
+    elseif subEvent == "SPELL_AURA_REMOVED" then
+        b._mirror_image = nil
+    end
+end
+
 cleu:SetScript("OnEvent", function()
     local _, subEvent, _, sourceGUID, sourceName, sourceFlags, sourceRaidFlags, destGUID, destName, destFlags, destRaidFlags, spellId, spellName = CombatLogGetCurrentEventInfo()
     -- mirror image
     if spellId == 55342 and F:IsFriend(sourceFlags) then
-        local b1, b2 = F:GetUnitButtonByGUID(sourceGUID)
-        if subEvent == "SPELL_AURA_APPLIED" then
-            if b1 then b1._mirror_image = GetTime() end
-            if b2 then b2._mirror_image = GetTime() end
-        elseif subEvent == "SPELL_AURA_REMOVED" then
-            if b1 then b1._mirror_image = nil end
-            if b2 then b2._mirror_image = nil end
-        end
+        F:HandleUnitButton("guid", sourceGUID, UpdateMirrorImage, subEvent)
     end
     -- CLEU auras
     -- if I:CheckCleuAura(spellId) and F:IsFriend(destFlags) then
@@ -1281,7 +1283,7 @@ UnitButton_UpdateAuras = function(self, updateInfo)
     
     if buffsChanged then UnitButton_UpdateBuffs(self) end
     if debuffsChanged then UnitButton_UpdateDebuffs(self) end
-    I:UpdateStatusIcon(self)
+    I.UpdateStatusIcon(self)
 end
 
 local function UpdateUnitHealthState(self, diff)
@@ -1305,10 +1307,10 @@ local function UpdateUnitHealthState(self, diff)
     self.state.isDead = health == 0
     if self.state.wasDead ~= self.state.isDead then
         UnitButton_UpdateStatusText(self)
-        I:UpdateStatusIcon_Resurrection(self)
+        I.UpdateStatusIcon_Resurrection(self)
         if not self.state.isDead then
             self.state.hasSoulstone = nil
-            I:UpdateStatusIcon(self)
+            I.UpdateStatusIcon(self)
         end
     end
     
@@ -1430,21 +1432,6 @@ local function HidePowerBar(b)
     P:Point(b.widget.healthBar, "TOPLEFT", b, "TOPLEFT", 1, -1)
     P:Point(b.widget.healthBar, "BOTTOMRIGHT", b, "BOTTOMRIGHT", -1, 1)
 end
-
--- local roleUpdater = CreateFrame("Frame")
--- function roleUpdater:UnitUpdated(event, guid, unit, info)
---     if Cell.vars.currentLayoutTable and Cell.vars.currentLayoutTable["powerSize"] ~= 0 then
---         local b = F:GetUnitButtonByGUID(guid)
---         if not b then return end
-
---         if ShouldShowPowerBar(b) then
---             ShowPowerBar(b, Cell.vars.currentLayoutTable["powerSize"])
---         else
---             HidePowerBar(b)
---         end
---     end
--- end
--- LGIST.RegisterCallback(roleUpdater, "GroupInSpecT_Update", "UnitUpdated")
 
 -------------------------------------------------
 -- unit button functions
@@ -2076,8 +2063,7 @@ local cleuHealthUpdater = CreateFrame("Frame", "CellCleuHealthUpdater")
 cleuHealthUpdater:SetScript("OnEvent", function()
     local _, subEvent, _, sourceGUID, sourceName, sourceFlags, sourceRaidFlags, destGUID, destName, destFlags, destRaidFlags, arg12, arg13, arg14, arg15, arg16, arg17, arg18, arg19, arg20, arg21, arg22 = CombatLogGetCurrentEventInfo()
     
-    local b1, b2 = F:GetUnitButtonByGUID(destGUID)
-    if not b1 then return end
+    if not F:IsFriend(destFlags) then return end
 
     local diff
     if subEvent == "SPELL_HEAL" or subEvent == "SPELL_PERIODIC_HEAL" then
@@ -2098,8 +2084,7 @@ cleuHealthUpdater:SetScript("OnEvent", function()
     end
 
     if diff and diff ~= 0 then
-        if b1 then UnitButton_UpdateHealth(b1, diff) end
-        if b2 then UnitButton_UpdateHealth(b2, diff) end
+        F:HandleUnitButton("guid", destGUID, UnitButton_UpdateHealth, diff)
     end
 end)
 
@@ -2141,7 +2126,7 @@ UnitButton_UpdateAll = function(self)
     UnitButton_UpdateThreatBar(self)
     -- UnitButton_UpdateStatusIcon(self)
     UnitButton_UpdateAuras(self)
-    I:UpdateStatusIcon_Resurrection(self)
+    I.UpdateStatusIcon_Resurrection(self)
 
     if Cell.loaded and self.powerBarUpdateRequired then
         self.powerBarUpdateRequired = nil

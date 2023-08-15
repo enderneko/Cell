@@ -8,6 +8,10 @@ local I = Cell.iFuncs
 -------------------------------------------------
 local CombatLogGetCurrentEventInfo = CombatLogGetCurrentEventInfo
 
+local function Display(b)
+    b.indicators.aoeHealing:Display()
+end
+
 local playerSummoned = {}
 local eventFrame = CreateFrame("Frame")
 eventFrame:SetScript("OnEvent", function()
@@ -31,9 +35,7 @@ eventFrame:SetScript("OnEvent", function()
         if destGUID then
             -- print(sourceGUID, playerSummoned[sourceGUID])
             if (sourceGUID == Cell.vars.playerGUID and (I:IsAoEHealing(spellName) or I:IsAoEHealing(spellId))) or playerSummoned[sourceGUID] then
-                local b1, b2 = F:GetUnitButtonByGUID(destGUID)
-                if b1 then b1.indicators.aoeHealing:Display() end
-                if b2 then b2.indicators.aoeHealing:Display() end
+                F:HandleUnitButton("guid", destGUID, Display)
             end
         end
     end

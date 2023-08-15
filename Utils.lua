@@ -756,13 +756,7 @@ end
 function F:GetUnitButtonByUnit(unit)
     if not unit then return end
 
-    local normal, spotlight
-    for _, b in pairs(Cell.unitButtons.spotlight) do
-        if b.state.unit and UnitIsUnit(b.state.unit, unit) then
-            spotlight = b
-            break
-        end
-    end
+    local normal, spotlight1, spotlight2, spotlight3, spotlight4, spotlight5
 
     if Cell.vars.groupType == "raid" then
         if Cell.vars.inBattleground == 5 then
@@ -776,7 +770,23 @@ function F:GetUnitButtonByUnit(unit)
         normal = Cell.unitButtons.solo[unit] or Cell.unitButtons.npc.units[unit]
     end
 
-    return normal, spotlight
+    for _, b in pairs(Cell.unitButtons.spotlight) do
+        if b.state.unit and UnitIsUnit(b.state.unit, unit) then
+            if not spotlight1 then
+                spotlight1 = b
+            elseif not spotlight2 then
+                spotlight2 = b
+            elseif not spotlight3 then
+                spotlight3 = b
+            elseif not spotlight4 then
+                spotlight4 = b
+            elseif not spotlight5 then
+                spotlight5 = b
+            end
+        end
+    end
+
+    return normal, spotlight1, spotlight2, spotlight3, spotlight4, spotlight5
 end
 
 function F:GetUnitButtonByGUID(guid)
@@ -785,6 +795,46 @@ end
 
 function F:GetUnitButtonByName(name)
     return F:GetUnitButtonByUnit(Cell.vars.names[name])
+end
+
+function F:HandleUnitButton(type, unit, func, ...)
+    if not unit then return end
+
+    if type == "guid" then
+        unit = Cell.vars.guids[unit]
+    elseif type == "name" then
+        unit = Cell.vars.names[unit]
+    end
+
+    if not unit then return end
+
+    local handled, normal
+
+    if Cell.vars.groupType == "raid" then
+        if Cell.vars.inBattleground == 5 then
+            normal = Cell.unitButtons.raid.units[unit] or Cell.unitButtons.npc.units[unit] or Cell.unitButtons.arena[unit]
+        else
+            normal = Cell.unitButtons.raid.units[unit] or Cell.unitButtons.npc.units[unit] or Cell.unitButtons.raidpet.units[unit]
+        end
+    elseif Cell.vars.groupType == "party" then
+        normal = Cell.unitButtons.party.units[unit] or Cell.unitButtons.npc.units[unit]
+    else -- solo
+        normal = Cell.unitButtons.solo[unit] or Cell.unitButtons.npc.units[unit]
+    end
+
+    if normal then
+        func(normal, ...)
+        handled = true
+    end
+    
+    for _, b in pairs(Cell.unitButtons.spotlight) do
+        if b.state.unit and UnitIsUnit(b.state.unit, unit) then
+            func(b, ...)
+            handled = true
+        end
+    end
+
+    return handled
 end
 
 function F:UpdateTextWidth(fs, text, width, relativeTo)

@@ -500,6 +500,7 @@ end
 local dispellable = {}
 
 function I:CanDispel(dispelType)
+    if not dispelType then return end
     return dispellable[dispelType]
 end
 

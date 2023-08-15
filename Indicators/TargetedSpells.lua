@@ -36,10 +36,21 @@ local function GetCastsOnUnit(guid)
     return castsOnUnit[guid]
 end
 
-local function UpdateCastsOnUnit(guid)
-    local b1, b2 = F:GetUnitButtonByGUID(guid)
-    if not (b1 or b2) then return end
+local function HideCasts(b)
+    b.indicators.targetedSpells:Hide()
+end
 
+local function ShowCasts(b, noneZeroFound, start, duration, icon, num)
+    b.indicators.targetedSpells:SetCooldown(start, duration, icon, num)
+    -- glow if not 0
+    if noneZeroFound then
+        b.indicators.targetedSpells:ShowGlow(unpack(Cell.vars.targetedSpellsGlow))
+    else
+        b.indicators.targetedSpells:ShowGlow()
+    end
+end
+
+local function UpdateCastsOnUnit(guid)
     local allCasts = 0
     local startTime, endTime, spellId, icon
     local noneZeroFound
@@ -66,27 +77,9 @@ local function UpdateCastsOnUnit(guid)
     end
 
     if allCasts == 0 then
-        if b1 then b1.indicators.targetedSpells:Hide() end
-        if b2 then b2.indicators.targetedSpells:Hide() end
+        F:HandleUnitButton("guid", guid, HideCasts)
     else
-        if b1 then
-            b1.indicators.targetedSpells:SetCooldown(startTime, endTime-startTime, icon, allCasts)
-            -- glow if not 0
-            if noneZeroFound then
-                b1.indicators.targetedSpells:ShowGlow(unpack(Cell.vars.targetedSpellsGlow))
-            else
-                b1.indicators.targetedSpells:ShowGlow()
-            end
-        end
-        if b2 then
-            b2.indicators.targetedSpells:SetCooldown(startTime, endTime-startTime, icon, allCasts)
-            -- glow if not 0
-            if noneZeroFound then
-                b2.indicators.targetedSpells:ShowGlow(unpack(Cell.vars.targetedSpellsGlow))
-            else
-                b2.indicators.targetedSpells:ShowGlow()
-            end
-        end
+        F:HandleUnitButton("guid", guid, ShowCasts, noneZeroFound, startTime, endTime-startTime, icon, allCasts)
     end
 end
 

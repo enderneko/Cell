@@ -35,7 +35,9 @@ local function CreateDRPane()
 
     local drTips = drPane:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
     drTips:SetPoint("TOPLEFT", 5, -25)
-    drTips:SetText(L["Glow unit button when a group member sends a %s request"]:format(Cell:GetAccentColorString()..L["DISPEL"].."|r"))
+    drTips:SetJustifyH("LEFT")
+    drTips:SetSpacing(5)
+    drTips:SetText(L["Glow unit button when a group member sends a %s request"]:format(Cell:GetAccentColorString()..L["DISPEL"].."|r").."\n"..L["Spotlight frames are not supported"])
 
     -- enabled ----------------------------------------------------------------------
     drEnabledCB = Cell:CreateCheckButton(drPane, L["Enabled"], function(checked, self)
@@ -48,7 +50,7 @@ local function CreateDRPane()
         U:HideTextOptions()
         Cell:StopRainbowText(drTypeOptionsBtn:GetFontString())
     end)
-    drEnabledCB:SetPoint("TOPLEFT", drPane, "TOPLEFT", 5, -60)
+    drEnabledCB:SetPoint("TOPLEFT", drPane, "TOPLEFT", 5, -80)
     ---------------------------------------------------------------------------------
 
     -- dispellable ------------------------------------------------------------------

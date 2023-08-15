@@ -26,22 +26,21 @@ Cell.vars.nicknameCustoms = {}
 
 local nic_check, nic_send
 
+local function Update(b)
+    b.indicators.nameText:UpdateName()
+end
+
 local function UpdateName(who)
     F:Debug("|cFF69A000UpdateName:|r|cFF696969", who, Cell.vars.nicknames[who], Cell.vars.nicknameCustoms[who])
     -- update name
-    local b1, b2 = F:GetUnitButtonByName(who)
-    if b1 then
-        b1.indicators.nameText:UpdateName()
-        if b2 then b2.indicators.nameText:UpdateName() end
-    else
+    local handled = F:HandleUnitButton("name", who, Update)
+    if not handled then
         if strfind(who, "-") then
             who = F:ToShortName(who)
         else
             who = who.."-"..GetNormalizedRealmName()
         end
-        b1, b2 = F:GetUnitButtonByName(who)
-        if b1 then b1.indicators.nameText:UpdateName() end
-        if b2 then b2.indicators.nameText:UpdateName() end
+        F:HandleUnitButton("name", who, Update)
     end
 end
 

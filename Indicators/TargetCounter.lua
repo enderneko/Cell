@@ -34,6 +34,14 @@ function eventFrame:NAME_PLATE_UNIT_ADDED(unit)
     nameplates[unit] = true
 end
 
+local function SetCount(b)
+    if counter[guid] then
+        b.indicators.targetCounter:SetCount(F:Getn(counter[guid]))
+    else
+        b.indicators.targetCounter:SetCount(0)
+    end
+end
+
 local ticker
 local function StartTicker()
     if ticker then ticker:Cancel() end
@@ -65,21 +73,7 @@ local function StartTicker()
 
         -- update indicator
         for guid in pairs(Cell.vars.guids) do
-            local b1, b2 = F:GetUnitButtonByGUID(guid)
-            if b1 then
-                if counter[guid] then
-                    b1.indicators.targetCounter:SetCount(F:Getn(counter[guid]))
-                else
-                    b1.indicators.targetCounter:SetCount(0)
-                end
-            end
-            if b2 then
-                if counter[guid] then
-                    b2.indicators.targetCounter:SetCount(F:Getn(counter[guid]))
-                else
-                    b2.indicators.targetCounter:SetCount(0)
-                end
-            end
+            F:HandleUnitButton("guid", guid, SetCount)
         end
     end)
 end

@@ -10,10 +10,13 @@ CELL_SUMMON_ICONS_ENABLED = false
 -------------------------------------------------
 local eventFrame = CreateFrame("Frame")
 eventFrame:SetScript("OnEvent", function(self, event, unit)
-    local b1, b2 = F:GetUnitButtonByUnit(unit)
-    if b1 then I:UpdateStatusIcon(b1) end
-    if b2 then I:UpdateStatusIcon(b2) end
+    F:HandleUnitButton("unit", unit, I.UpdateStatusIcon)
 end)
+
+local function DiedWithSoulstone(b)
+    b.state.hasSoulstone = true
+    I.UpdateStatusIcon(b)
+end
 
 local rez = {}
 local SOULSTONE = GetSpellInfo(20707)
@@ -34,24 +37,14 @@ cleuFrame:SetScript("OnEvent", function()
     elseif subEvent == "UNIT_DIED" then
         -- print("died", timestamp, destName)
         if soulstones[destGUID] then
-            local b1, b2 = F:GetUnitButtonByGUID(destGUID)
-            if b1 then
-                b1.state.hasSoulstone = true
-                I:UpdateStatusIcon(b1)
-            end
-            if b2 then
-                b2.state.hasSoulstone = true
-                I:UpdateStatusIcon_Resurrection(b2)
-            end
+            F:HandleUnitButton("guid", destGUID, DiedWithSoulstone)
         end
         soulstones[destGUID] = nil
     elseif subEvent == "SPELL_RESURRECT" then
         local start, duration = GetTime(), 60
         rez[destGUID] = {start, duration}
     
-        local b1, b2 = F:GetUnitButtonByGUID(destGUID)
-        if b1 then I:UpdateStatusIcon_Resurrection(b1, start, duration) end
-        if b2 then I:UpdateStatusIcon_Resurrection(b2, start, duration) end
+        F:HandleUnitButton("guid", destGUID, I.UpdateStatusIcon_Resurrection, start, duration)
     end
 end)
 
@@ -146,7 +139,7 @@ end
 -------------------------------------------------
 -- resurrection
 -------------------------------------------------
-function I:UpdateStatusIcon_Resurrection(button, start, duration)
+function I.UpdateStatusIcon_Resurrection(button, start, duration)
     local guid = button.state.guid
     local unit = button.state.unit
     local resurrectionIcon = button.indicators.resurrectionIcon
@@ -190,7 +183,7 @@ end
 -- update (UnitButton_UpdateAuras)
 -------------------------------------------------
 if Cell.isRetail then
-    function I:UpdateStatusIcon(button)
+    function I.UpdateStatusIcon(button)
         local unit = button.state.unit
         if not unit then return end
         
@@ -225,11 +218,11 @@ if Cell.isRetail then
             elseif status == Enum.SummonStatus.Accepted then
                 icon:SetAtlas("Raid-Icon-SummonAccepted")
                 icon:SetTexCoord(0.15, 0.85, 0.15, 0.85)
-                C_Timer.After(6, function() I:UpdateStatusIcon(button) end)
+                C_Timer.After(6, function() I.UpdateStatusIcon(button) end)
             elseif status == Enum.SummonStatus.Declined then
                 icon:SetAtlas("Raid-Icon-SummonDeclined")
                 icon:SetTexCoord(0.15, 0.85, 0.15, 0.85)
-                C_Timer.After(6, function() I:UpdateStatusIcon(button) end)
+                C_Timer.After(6, function() I.UpdateStatusIcon(button) end)
             end
             icon:Show()
         elseif UnitIsPlayer(unit) and phaseReason and not button.state.inVehicle then
@@ -264,7 +257,7 @@ if Cell.isRetail then
         end
     end
 else
-    function I:UpdateStatusIcon(button)
+    function I.UpdateStatusIcon(button)
         local unit = button.state.unit
         if not unit then return end
         

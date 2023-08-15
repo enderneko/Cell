@@ -576,6 +576,7 @@ L["Then create a PR or submit a ticket on GitHub"] = "然后在GitHub上提交PR
 -- utilities
 -------------------------------------------------
 L["Utilities"] = "工具"
+L["Spotlight frames are not supported"] = "不支持特别关注框体"
 
 -------------------------------------------------
 -- raid tools

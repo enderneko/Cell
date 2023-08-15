@@ -1781,23 +1781,19 @@ function I:UpdateMissingBuffsFilter(buffByMe, noUpdate)
     end
 end
 
+local function HideMissingBuffs(b)
+    for i = 1, 5 do
+        b.indicators.missingBuffs[i]:Hide()
+    end
+end
+
 local missingBuffsCounter = {}
 function I:HideMissingBuffs(unit, force)
     if not (missingBuffsEnabled or force) then return end
     
     missingBuffsCounter[unit] = nil
-    
-    local b1, b2 = F:GetUnitButtonByUnit(unit)
-    for i = 1, 5 do
-        if b1 then
-            b1.indicators.missingBuffs[i]:Hide()
-            -- LCG.ButtonGlow_Stop(b1.indicators.missingBuffs[i])
-        end
-        if b2 then
-            b2.indicators.missingBuffs[i]:Hide()
-            -- LCG.ButtonGlow_Stop(b2.indicators.missingBuffs[i])
-        end
-    end
+
+    F:HandleUnitButton("unit", unit, HideMissingBuffs)
 end
 
 local function ShowMissingBuff(b, index, icon, buffByMe)
@@ -1824,9 +1820,7 @@ function I:ShowMissingBuff(unit, icon, buffByMe)
 
     if missingBuffsCounter[unit] > missingBuffsNum then return end
 
-    local b1, b2 = F:GetUnitButtonByUnit(unit)
-    if b1 then ShowMissingBuff(b1, missingBuffsCounter[unit], icon, buffByMe)end
-    if b2 then ShowMissingBuff(b2, missingBuffsCounter[unit], icon, buffByMe)end
+    F:HandleUnitButton("unit", unit, ShowMissingBuff, missingBuffsCounter[unit], icon, buffByMe)
 end
 
 -------------------------------------------------

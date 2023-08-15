@@ -99,7 +99,7 @@ end
 local utilityHeight = {
     ["raidTools"] = 300,
     ["spellRequest"] = 400,
-    ["dispelRequest"] = 400,
+    ["dispelRequest"] = 420,
     ["quickCast"] = 510,
 }
 

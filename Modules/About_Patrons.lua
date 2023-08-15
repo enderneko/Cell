@@ -26,7 +26,7 @@ end
 local eventFrame = CreateFrame("Frame")
 eventFrame:RegisterEvent("FIRST_FRAME_RENDERED")
 
-function StopRainbow(unit)
+local function StopRainbow(unit)
     local b = F:GetUnitButtonByUnit(unit)
     if b then
         local fs = b.indicators.nameText.name

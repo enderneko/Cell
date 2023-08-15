@@ -152,7 +152,10 @@ local function CreateSRPane()
     srTips:SetPoint("TOPLEFT", 5, -25)
     srTips:SetJustifyH("LEFT")
     srTips:SetSpacing(5)
-    srTips:SetText(L["Glow unit button when a group member sends a %s request"]:format(Cell:GetAccentColorString()..L["SPELL"].."|r").."\n"..L["Shows only one spell request on a unit button at a time"])
+    srTips:SetText(L["Glow unit button when a group member sends a %s request"]:format(Cell:GetAccentColorString()..L["SPELL"].."|r").."\n"..
+        L["Shows only one spell request on a unit button at a time"].."\n"..
+        L["Spotlight frames are not supported"]
+    )
 
     -- enabled ----------------------------------------------------------------------
     srEnabledCB = Cell:CreateCheckButton(srPane, L["Enabled"], function(checked, self)
@@ -161,7 +164,7 @@ local function CreateSRPane()
         HideSpellOptions()
         Cell:Fire("UpdateRequests", "spellRequest")
     end)
-    srEnabledCB:SetPoint("TOPLEFT", srPane, "TOPLEFT", 5, -80)
+    srEnabledCB:SetPoint("TOPLEFT", srPane, "TOPLEFT", 5, -100)
     ---------------------------------------------------------------------------------
     
     -- check exists -----------------------------------------------------------------

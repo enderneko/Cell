@@ -18,6 +18,10 @@ local orientation
 -- UNIT_SPELLCAST_SUCCEEDED
 -- unit, castGUID, spellID
 
+local function Display(b, ...)
+    b.indicators.consumables:Display(...)
+end
+
 local eventFrame = CreateFrame("Frame")
 eventFrame:SetScript("OnEvent", function(self, event, unit, castGUID, spellID)
     -- filter out players not in your group
@@ -29,9 +33,7 @@ eventFrame:SetScript("OnEvent", function(self, event, unit, castGUID, spellID)
     end
 
     if Cell.vars.consumables[spellID] then
-        local b1, b2 = F:GetUnitButtonByUnit(unit)
-        if b1 then b1.indicators.consumables:Display(unpack(Cell.vars.consumables[spellID])) end
-        if b2 then b2.indicators.consumables:Display(unpack(Cell.vars.consumables[spellID])) end
+        F:HandleUnitButton("unit", unit, Display, unpack(Cell.vars.consumables[spellID]))
     end
 end)
 

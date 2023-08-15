@@ -273,6 +273,8 @@ local dispellable = {
 }
 
 function I:CanDispel(dispelType)
+    if not dispelType then return end
+    
     if dispellable[Cell.vars.playerClassID] then
         if Cell.vars.playerClassID == 7 then -- 萨满
             -- NOTE: 净化灵魂天赋可以解除诅咒

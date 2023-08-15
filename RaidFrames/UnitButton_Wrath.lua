@@ -1137,17 +1137,17 @@ local function UpdateUnitHealthState(self, diff)
     self.state.isDead = health == 0
     if self.state.wasDead ~= self.state.isDead then
         UnitButton_UpdateStatusText(self)
-        I:UpdateStatusIcon_Resurrection(self)
+        I.UpdateStatusIcon_Resurrection(self)
         if not self.state.isDead then
             self.state.hasSoulstone = nil
-            I:UpdateStatusIcon(self)
+            I.UpdateStatusIcon(self)
         end
     end
     
     self.state.wasDeadOrGhost = self.state.isDeadOrGhost
     self.state.isDeadOrGhost = UnitIsDeadOrGhost(unit)
     if self.state.wasDeadOrGhost ~= self.state.isDeadOrGhost then
-        I:UpdateStatusIcon_Resurrection(self)
+        I.UpdateStatusIcon_Resurrection(self)
         UnitButton_UpdateHealthColor(self)
     end
 
@@ -1564,7 +1564,7 @@ UnitButton_UpdateAuras = function(self)
 
     UnitButton_UpdateDebuffs(self)
     UnitButton_UpdateBuffs(self)
-    I:UpdateStatusIcon(self)
+    I.UpdateStatusIcon(self)
 end
 
 local function UnitButton_UpdateThreat(self)
@@ -1817,13 +1817,7 @@ local function HealComm_UpdateHealPrediction(_, event, casterGUID, spellID, heal
     -- print(event, casterGUID, spellID, healType, endTime, ...)
     -- update incomingHeal
     for i = 1, select("#", ...) do
-        local b1, b2 = F:GetUnitButtonByGUID(select(i, ...))
-        if b1 then
-            UnitButton_UpdateHealPrediction(b1)
-        end
-        if b2 then
-            UnitButton_UpdateHealPrediction(b2)
-        end
+        F:HandleUnitButton("guid", select(i, ...), UnitButton_UpdateHealPrediction)
     end
 end
 Cell.HealComm.HealComm_UpdateHealPrediction = HealComm_UpdateHealPrediction
@@ -1888,16 +1882,13 @@ local function UnitButton_UpdatePowerWordShield(self, current, max, resetMax)
     self.indicators.powerWordShield:UpdateShield(current, max, resetMax)
 end
 
-local function UpdateShield(guid, max, rese1tMax)
-    local b1, b2 = F:GetUnitButtonByGUID(guid)
-    if b1 then
-        UnitButton_UpdateShieldAbsorbs(b1)
-        UnitButton_UpdatePowerWordShield(b1, pwsInfo[guid] or 0, max, resetMax)
-    end
-    if b2 then
-        UnitButton_UpdateShieldAbsorbs(b2)
-        UnitButton_UpdatePowerWordShield(b2, pwsInfo[guid] or 0, max, resetMax)
-    end
+local function _UpdateShield(b, current, max, resetMax)
+    UnitButton_UpdateShieldAbsorbs(b)
+    UnitButton_UpdatePowerWordShield(b, current, max, resetMax)
+end
+
+local function UpdateShield(guid, max, resetMax)
+    F:HandleUnitButton("guid", guid, _UpdateShield, pwsInfo[guid] or 0, max, resetMax)
 end
 
 POWER_WORD_SHIELD = {
@@ -2058,8 +2049,7 @@ local cleuHealthUpdater = CreateFrame("Frame", "CellCleuHealthUpdater")
 cleuHealthUpdater:SetScript("OnEvent", function()
     local _, subEvent, _, sourceGUID, sourceName, sourceFlags, sourceRaidFlags, destGUID, destName, destFlags, destRaidFlags, arg12, arg13, arg14, arg15, arg16, arg17, arg18, arg19, arg20, arg21, arg22 = CombatLogGetCurrentEventInfo()
     
-    local b1, b2 = F:GetUnitButtonByGUID(destGUID)
-    if not b1 then return end
+    if not F:IsFriend(destFlags) then return end
 
     local diff
     if subEvent == "SPELL_HEAL" or subEvent == "SPELL_PERIODIC_HEAL" then
@@ -2080,8 +2070,7 @@ cleuHealthUpdater:SetScript("OnEvent", function()
     end
 
     if diff and diff ~= 0 then
-        if b1 then UnitButton_UpdateHealth(b1, diff) end
-        if b2 then UnitButton_UpdateHealth(b2, diff) end
+        F:HandleUnitButton("guid", destGUID, UnitButton_UpdateHealth, diff)
     end
 end)
 
@@ -2119,7 +2108,7 @@ UnitButton_UpdateAll = function(self)
     UnitButton_UpdateThreat(self)
     UnitButton_UpdateThreatBar(self)
     UnitButton_UpdateAuras(self)
-    I:UpdateStatusIcon_Resurrection(self)
+    I.UpdateStatusIcon_Resurrection(self)
 
     if Cell.loaded and self.powerBarUpdateRequired then
         self.powerBarUpdateRequired = nil
