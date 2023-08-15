@@ -2204,6 +2204,30 @@ function F:Revise()
         if not strfind(CellDB["snippets"][0]["code"], "CELL_TOOLTIP_REMOVE_RAID_SETUP_DETAILS") then
             CellDB["snippets"][0]["code"] = CellDB["snippets"][0]["code"].."\n\n-- remove raid setup details from the tooltip of the Raid button (boolean)\nCELL_TOOLTIP_REMOVE_RAID_SETUP_DETAILS = false"
         end
+
+        if Cell.isRetail then
+            for _, layout in pairs(CellDB["layouts"]) do
+                local index = Cell.defaults.indicatorIndices.crowdControls
+                if layout["indicators"][index]["indicatorName"] ~= "crowdControls" then
+                    tinsert(layout["indicators"], index, {
+                        ["name"] = "Crowd Controls",
+                        ["indicatorName"] = "crowdControls",
+                        ["type"] = "built-in",
+                        ["enabled"] = false,
+                        ["position"] = {"CENTER", "CENTER", 0, 0},
+                        ["frameLevel"] = 20,
+                        ["size"] = {22, 22},
+                        ["border"] = 2,
+                        ["num"] = 3,
+                        ["font"] = {
+                            {"Cell ".._G.DEFAULT, 11, "Outline", "TOPRIGHT", 2, 1, {1, 1, 1}},
+                            {"Cell ".._G.DEFAULT, 11, "Outline", "BOTTOMRIGHT", 2, -1, {1, 1, 1}},
+                        },
+                        ["orientation"] = "left-to-right",
+                    })
+                end
+            end
+        end
     end
 
     CellDB["revise"] = Cell.version

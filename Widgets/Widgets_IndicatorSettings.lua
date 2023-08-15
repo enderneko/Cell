@@ -1582,7 +1582,7 @@ local function CreateSetting_Generic_Font(parent, index)
             end
 
             if title == "durationFont" then
-                addon:SetTooltips(widget.color, "ANCHOR_TOPLEFT", 0, 1, L["Color"], L["This setting will be ignored, if the %1$s option in %2$s tab is enabled"]:format(addon:GetAccentColorString().."\""..L["Color Duration Text"].."\"|r", L["Appearance"]))
+                addon:SetTooltips(widget.color, "ANCHOR_TOPLEFT", 0, 3, L["Color"], L["This setting will be ignored, if the %1$s option in %2$s tab is enabled"]:format(addon:GetAccentColorString().."\""..L["Color Duration Text"].."\"|r", L["Appearance"]))
             else
                 addon:ClearTooltips(widget.color)
             end
@@ -3517,7 +3517,7 @@ end
 -------------------------------------------------
 -- CreateSetting_BuiltIns
 -------------------------------------------------
-local classOrder = {"DEATHKNIGHT", "DEMONHUNTER", "DRUID", "EVOKER", "HUNTER", "MAGE", "MONK", "PALADIN", "PRIEST", "ROGUE", "SHAMAN", "WARLOCK", "WARRIOR"}
+local classOrder = {"DEATHKNIGHT", "DEMONHUNTER", "DRUID", "EVOKER", "HUNTER", "MAGE", "MONK", "PALADIN", "PRIEST", "ROGUE", "SHAMAN", "WARLOCK", "WARRIOR", "UNCATEGORIZED"}
 local classFrames = {}
 local spellButtons = {}
 local buttonIndex = 1
@@ -3528,8 +3528,12 @@ local function UpdateSpellButton(btn, class, isDisabled)
         btn:SetBackdropColor(0.6, 0.6, 0.6, 0.85)
         btn.icon:SetDesaturated(true)
     else
-        local r, g, b = F:GetClassColor(class)
-        btn:SetBackdropColor(r, g, b, 0.85)
+        if class == "UNCATEGORIZED" then
+            btn:SetBackdropColor(0.75, 0.75, 0.75, 0.85)
+        else
+            local r, g, b = F:GetClassColor(class)
+            btn:SetBackdropColor(r, g, b, 0.85)
+        end
         btn.icon:SetDesaturated(false)
     end
 end
@@ -3554,7 +3558,7 @@ local function CreateSpellButtons(parent, class, spells, disableds)
         -- tooltips
         spellButtons[buttonIndex]:SetScript("OnEnter", function(self)
             CellSpellTooltip:SetOwner(self, "ANCHOR_NONE")
-            CellSpellTooltip:SetPoint("BOTTOMLEFT", self, "TOPLEFT", 0, P:Scale(2))
+            CellSpellTooltip:SetPoint("BOTTOMLEFT", self, "TOPLEFT", 0, P:Scale(3))
             CellSpellTooltip:SetSpellByID(spellId)
             CellSpellTooltip:Show()
         end)
@@ -3621,7 +3625,11 @@ local function CreateClassFrames(parent, builtIns, disableds)
             last = f
 
             -- update text
-            f.text:SetText(F:GetClassColorStr(class)..F:GetLocalizedClassName(class))
+            if class == "UNCATEGORIZED" then
+                f.text:SetText("|cffbababa"..L["Uncategorized"])
+            else
+                f.text:SetText(F:GetClassColorStr(class)..F:GetLocalizedClassName(class))
+            end
             
             -- create buttons
             local buttonHeight = CreateSpellButtons(f, class, builtIns[class], disableds)
@@ -4655,13 +4663,13 @@ function addon:CreateIndicatorSettings(parent, settingsTable)
             tinsert(widgetsTable, CreateSetting_Glow(parent))
         elseif setting == "texture" then
             tinsert(widgetsTable, CreateSetting_Texture(parent))
-        elseif setting == "auras" or setting == "debuffBlacklist" or setting == "dispelBlacklist" or setting == "targetedSpellsList" or setting == "customDefensives" or setting == "customExternals" then
+        elseif setting == "auras" or setting == "debuffBlacklist" or setting == "dispelBlacklist" or setting == "targetedSpellsList" or setting == "customDefensives" or setting == "customExternals" or setting == "customCrowdControls" then
             tinsert(widgetsTable, CreateSetting_Auras(parent))
         elseif setting == "auras2" or setting == "bigDebuffs" then
             tinsert(widgetsTable, CreateSetting_Auras2(parent))
         -- elseif setting == "cleuAuras" then
         --     tinsert(widgetsTable, CreateSetting_CleuAuras(parent))
-        elseif setting == "builtInDefensives" or setting == "builtInExternals" then
+        elseif setting == "builtInDefensives" or setting == "builtInExternals" or setting == "builtInCrowdControls" then
             tinsert(widgetsTable, CreateSetting_BuiltIns(parent))
         elseif setting == "consumablesPreview" then
             tinsert(widgetsTable, CreateSetting_ConsumablesPreview(parent))

@@ -419,9 +419,9 @@ local function InitIndicator(indicatorName)
     elseif indicatorName == "targetedSpells" then
         indicator.isTargetedSpells = true
         indicator:SetScript("OnShow", function()
-            indicator:SetCooldown(GetTime(), 3, "Interface\\Icons\\spell_nature_polymorph", 7)
+            indicator:SetCooldown(GetTime(), 3, "Interface\\Icons\\ability_warlock_chaosbolt", 7)
             indicator.cooldown:SetScript("OnCooldownDone", function()
-                indicator:SetCooldown(GetTime(), 3, "Interface\\Icons\\spell_nature_polymorph", 7)
+                indicator:SetCooldown(GetTime(), 3, "Interface\\Icons\\ability_warlock_chaosbolt", 7)
             end)
         end)
         indicator:SetScript("OnHide", function()
@@ -431,6 +431,26 @@ local function InitIndicator(indicatorName)
 
     elseif indicatorName == "targetCounter" then
         indicator:SetCount(3)
+
+    elseif indicatorName == "crowdControls" then
+        indicator.isCrowdControls = true
+        local spells = {
+            {"Magic", "Interface\\Icons\\spell_nature_polymorph"}, 
+            {"Magic", "Interface\\Icons\\spell_shadow_psychicscream"}, 
+            {"", "Interface\\Icons\\spell_nature_earthbind"}, 
+        }
+        for i = 1, 3 do
+            indicator[i]:HookScript("OnShow", function()
+                indicator[i]:SetCooldown(GetTime(), 13, spells[i][1], spells[i][2], 7)
+                indicator[i].cooldown:SetScript("OnCooldownDone", function()
+                    indicator[i]:SetCooldown(GetTime(), 13, spells[i][1], spells[i][2], 7)
+                end)
+            end)
+            indicator[i]:HookScript("OnHide", function()
+                indicator[i].cooldown:Hide()
+                indicator[i].cooldown:SetScript("OnCooldownDone", nil)
+            end)
+        end
 
     elseif indicatorName == "externalCooldowns" then
         local icons = {135936, 135964, 135966, 237510, 237542}
@@ -1455,6 +1475,7 @@ if Cell.isRetail then
         ["privateAuras"] = {"|cffb7b7b7"..L["Due to restrictions of the private aura system, this indicator can only use Blizzard style."], "enabled", "privateAuraOptions", "size-square", "position", "frameLevel"},
         ["targetedSpells"] = {"enabled", "targetedSpellsList", "targetedSpellsGlow", "size-border", "position", "frameLevel", "font"},
         ["targetCounter"] = {"|cffff2727"..L["HIGH CPU USAGE"].."!|r |cffb7b7b7"..L["Check all visible enemy nameplates. Battleground/Arena only."], "enabled", "color", "position", "frameLevel", "font-noOffset"},
+        ["crowdControls"] = {"enabled", "builtInCrowdControls", "customCrowdControls", "num:3", "orientation", "size-border", "position", "frameLevel", "font1:stackFont", "font2:durationFont"},
         ["consumables"] = {"enabled", "consumablesPreview", "consumablesList"},
         ["healthThresholds"] = {"enabled", "thresholds", "thickness"},
         ["missingBuffs"] = {I:GetMissingBuffsString().."|cffb7b7b7"..(L["%s in Utilities must be enabled to make this indicator work."]:format(Cell:GetAccentColorString()..L["Buff Tracker"].."|r")), "enabled", "checkbutton:buffByMe", "num:5", "orientation", "size-square", "position", "frameLevel"},
@@ -1593,6 +1614,10 @@ local function ShowIndicatorSettings(id)
             w:SetDBValue(I:GetExternals(), CellDB["externals"]["disabled"])
         elseif currentSetting == "customExternals" then
             w:SetDBValue(_G.CUSTOM, CellDB["externals"]["custom"], true)
+        elseif currentSetting == "builtInCrowdControls" then
+            w:SetDBValue(I:GetCrowdControls(), CellDB["crowdControls"]["disabled"])
+        elseif currentSetting == "customCrowdControls" then
+            w:SetDBValue(_G.CUSTOM, CellDB["crowdControls"]["custom"], true)
         -- elseif currentSetting == "cleuAuras" then
         --     w:SetDBValue(CellDB["cleuAuras"])
         elseif currentSetting == "bigDebuffs" then
@@ -1663,6 +1688,13 @@ local function ShowIndicatorSettings(id)
                     CellDB["externals"]["custom"] = value
                     I:UpdateExternals(CellDB["externals"])
                     Cell:Fire("UpdateIndicators", notifiedLayout, "", "externals")
+                elseif currentSetting == "builtInCrowdControls" then
+                    I:UpdateCrowdControls(CellDB["crowdControls"])
+                    Cell:Fire("UpdateIndicators", notifiedLayout, "", "crowdControls")
+                elseif currentSetting == "customCrowdControls" then
+                    CellDB["crowdControls"]["custom"] = value
+                    I:UpdateCrowdControls(CellDB["crowdControls"])
+                    Cell:Fire("UpdateIndicators", notifiedLayout, "", "crowdControls")
                 -- elseif currentSetting == "cleuAuras" then
                 --     CellDB["cleuAuras"] = value
                 --     I:UpdateCleuAuras(value)
@@ -1783,7 +1815,7 @@ LoadIndicatorList = function()
             LCG.PixelGlow_Start(i.preview)
             i:SetAlpha(i.alpha or 1)
         else
-            if i.isRaidDebuffs or i.isPrivateAuras then
+            if i.isRaidDebuffs or i.isPrivateAuras or i.isCrowdControls then
                 LCG.PixelGlow_Start(i, nil, nil, nil, nil, nil, 2, 2)
             elseif i.isTargetedSpells then
                 LCG.PixelGlow_Start(i, nil, nil, nil, nil, nil, 2, 2)

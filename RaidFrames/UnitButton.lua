@@ -79,6 +79,7 @@ local function UpdateIndicatorParentVisibility(b, indicatorName, enabled)
             indicatorName == "externalCooldowns" or
             indicatorName == "allCooldowns" or
             indicatorName == "dispels" or
+            indicatorName == "crowdControls" or
             indicatorName == "missingBuffs") then
         return
     end
@@ -652,7 +653,7 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                 b.indicators[indicatorName]:Hide()
                 UnitButton_UpdateAuras(b)
             end, true)
-        elseif setting == "debuffBlacklist" or setting == "dispelBlacklist" or setting == "defensives" or setting == "externals" or setting == "bigDebuffs" or setting == "debuffTypeColor" then
+        elseif setting == "debuffBlacklist" or setting == "dispelBlacklist" or setting == "defensives" or setting == "externals" or setting == "crowdControls" or setting == "bigDebuffs" or setting == "debuffTypeColor" then
             F:IterateAllUnitButtons(function(b)
                 UnitButton_UpdateAuras(b)
             end, true)
@@ -739,6 +740,7 @@ end
 local function ResetDebuffVars(self)
     self._debuffs.resurrectionFound = false
     self._debuffs.raidDebuffsFound = false
+    self._debuffs.crowdControlsFound = 0
 
     self.state.BGOrb = nil -- TODO: move to _debuffs
 end
@@ -748,7 +750,7 @@ local function HandleDebuffs(self, auraInfo, index)
     local name = auraInfo.name
     local icon = auraInfo.icon
     local count = auraInfo.applications
-    local debuffType = auraInfo.isHarmful and auraInfo.dispelName
+    local debuffType = auraInfo.dispelName or ""
     local expirationTime = auraInfo.expirationTime or 0
     local start = expirationTime - auraInfo.duration
     local duration = auraInfo.duration
@@ -778,8 +780,8 @@ local function HandleDebuffs(self, auraInfo, index)
         if enabledIndicators["debuffs"] and duration <= 600 and not Cell.vars.debuffBlacklist[spellId] then
             -- all debuffs / only dispellableByMe
             if not indicatorCustoms["debuffs"] or I:CanDispel(debuffType) then 
-                -- debuffs, may contain topDebuff
-                if startIndex <= indicatorNums["debuffs"]+indicatorNums["raidDebuffs"] then
+                -- debuffs, may contain topDebuff and cc
+                if startIndex <= indicatorNums["debuffs"]+indicatorNums["raidDebuffs"]+indicatorNums["crowdControls"] then
                     startIndex = startIndex + 1
                     if Cell.vars.bigDebuffs[spellId] then
                         self._debuffs_big[auraInstanceID] = refreshing
@@ -822,6 +824,13 @@ local function HandleDebuffs(self, auraInfo, index)
             end
         end
 
+        -- crowdControls
+        if enabledIndicators["crowdControls"] and I:IsCrowdControls(name, spellId) and self._debuffs.crowdControlsFound < indicatorNums["crowdControls"] then
+            self._debuffs.crowdControlsFound = self._debuffs.crowdControlsFound + 1
+            self._debuffs_cc[auraInstanceID] = true
+            self.indicators.crowdControls[self._debuffs.crowdControlsFound]:SetCooldown(start, duration, debuffType, icon, count, refreshing)
+        end
+
         -- resurrections: 图腾复生/复生
         if spellId == 255234 or spellId == 225080 then
             -- NOTE: this rez lasts longer than the debuff
@@ -856,10 +865,11 @@ local function UnitButton_UpdateDebuffs(self)
         self.state.hasRezDebuff = nil
     end
 
+    local startIndex = 1
+    
     -- update raid debuffs
     -- if self._debuffs.raidDebuffsFound or cleuUnits[unit] then
     if self._debuffs.raidDebuffsFound then
-        local startIndex = 1
         self.indicators.raidDebuffs:Show()
 
         -- cleuAuras
@@ -938,7 +948,7 @@ local function UnitButton_UpdateDebuffs(self)
         -- bigDebuffs first
         for auraInstanceID, refreshing in pairs(self._debuffs_big) do
             local auraInfo = GetAuraDataByAuraInstanceID(unit, auraInstanceID)
-            if auraInfo and not self._debuffs_raid_shown[auraInstanceID] and startIndex <= indicatorNums["debuffs"] then
+            if auraInfo and not (self._debuffs_raid_shown[auraInstanceID] or self._debuffs_cc[auraInstanceID]) and startIndex <= indicatorNums["debuffs"] then
                 -- start, duration, debuffType, texture, count
                 self.indicators.debuffs[startIndex]:SetCooldown((auraInfo.expirationTime or 0) - auraInfo.duration, auraInfo.duration, auraInfo.dispelName or "", auraInfo.icon, auraInfo.applications, refreshing, true)
                 self.indicators.debuffs[startIndex].index = self._debuffs_indices[auraInstanceID] -- NOTE: for tooltip
@@ -948,7 +958,7 @@ local function UnitButton_UpdateDebuffs(self)
         -- then normal debuffs
         for auraInstanceID, refreshing in pairs(self._debuffs_normal) do
             local auraInfo = GetAuraDataByAuraInstanceID(unit, auraInstanceID)
-            if auraInfo and not self._debuffs_raid_shown[auraInstanceID] and startIndex <= indicatorNums["debuffs"] then
+            if auraInfo and not (self._debuffs_raid_shown[auraInstanceID] or self._debuffs_cc[auraInstanceID]) and startIndex <= indicatorNums["debuffs"] then
                 -- start, duration, debuffType, texture, count
                 self.indicators.debuffs[startIndex]:SetCooldown((auraInfo.expirationTime or 0) - auraInfo.duration, auraInfo.duration, auraInfo.dispelName or "", auraInfo.icon, auraInfo.applications, refreshing)
                 self.indicators.debuffs[startIndex].index = self._debuffs_indices[auraInstanceID] -- NOTE: for tooltip
@@ -969,14 +979,22 @@ local function UnitButton_UpdateDebuffs(self)
     -- update dispels
     self.indicators.dispels:SetDispels(self._debuffs_dispel)
 
+    -- update crowdControls
+    if self._debuffs.crowdControlsFound > 0 then
+        self.indicators.crowdControls:UpdateSize(self._debuffs.crowdControlsFound)
+    end
+    for i = self._debuffs.crowdControlsFound + 1, 3 do
+        self.indicators.crowdControls[i]:Hide()
+    end
+
     -- user created indicators
     I:ShowCustomIndicators(self, "debuff")
 
-    -- wipe(debuffs_current[unit])
     wipe(self._debuffs_indices)
     wipe(self._debuffs_normal)
     wipe(self._debuffs_big)
     wipe(self._debuffs_dispel)
+    wipe(self._debuffs_cc)
     wipe(self._debuffs_raid)
     wipe(self._debuffs_raid_refreshing)
     wipe(self._debuffs_raid_orders)
@@ -997,11 +1015,13 @@ local function ResetBuffVars(self)
 end
 
 local function HandleBuff(self, auraInfo)
+    local unit = self.state.displayedUnit
+
     local auraInstanceID = auraInfo.auraInstanceID
     local name = auraInfo.name
     local icon = auraInfo.icon
     local count = auraInfo.applications
-    local debuffType = auraInfo.isHarmful and auraInfo.dispelName
+    -- local debuffType = auraInfo.isHarmful and auraInfo.dispelName
     local expirationTime = auraInfo.expirationTime or 0
     local start = expirationTime - auraInfo.duration
     local duration = auraInfo.duration
@@ -1153,6 +1173,7 @@ local function InitAuraTables(self)
     self._debuffs_normal = {} -- [auraInstanceID] = refreshing
     self._debuffs_big = {} -- [auraInstanceID] = refreshing
     self._debuffs_dispel = {} -- [debuffType] = true/false
+    self._debuffs_cc = {} -- [auraInstanceID] = refreshing
     self._debuffs_raid = {} -- {id1, id2, ...}
     self._debuffs_raid_refreshing = {} -- [auraInstanceID] = refreshing
     self._debuffs_raid_orders = {} -- [auraInstanceID] = order
@@ -1172,6 +1193,7 @@ local function ResetAuraTables(self)
     wipe(self._debuffs_normal)
     wipe(self._debuffs_big)
     wipe(self._debuffs_dispel)
+    wipe(self._debuffs_cc)
     wipe(self._debuffs_raid)
     wipe(self._debuffs_raid_refreshing)
     wipe(self._debuffs_raid_orders)
@@ -1317,7 +1339,7 @@ local function UpdateUnitHealthState(self, diff)
     self.state.wasDeadOrGhost = self.state.isDeadOrGhost
     self.state.isDeadOrGhost = UnitIsDeadOrGhost(unit)
     if self.state.wasDeadOrGhost ~= self.state.isDeadOrGhost then
-        I:UpdateStatusIcon_Resurrection(self)
+        I.UpdateStatusIcon_Resurrection(self)
         UnitButton_UpdateHealthColor(self)
     end
 
@@ -3226,6 +3248,7 @@ function F:UnitButton_OnLoad(button)
     I:CreatePrivateAuras(button)
     I:CreateTargetedSpells(button)
     I:CreateTargetCounter(button)
+    I:CreateCrowdControls(button)
     I:CreateConsumables(button)
     I:CreateHealthThresholds(button)
     I:CreateMissingBuffs(button)

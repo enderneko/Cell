@@ -517,6 +517,9 @@ function eventFrame:ADDON_LOADED(arg1)
         end
         Cell.vars.targetedSpellsGlow = CellDB["targetedSpellsGlow"]
 
+        -- crowdControls --------------------------------------------------------------------------
+        if type(CellDB["crowdControls"]) ~= "table" then CellDB["crowdControls"] = {["disabled"]={}, ["custom"]={}} end
+
         -- consumables ----------------------------------------------------------------------------
         if type(CellDB["consumables"]) ~= "table" then
             CellDB["consumables"] = I:GetDefaultConsumables()
@@ -759,6 +762,7 @@ function eventFrame:PLAYER_LOGIN()
     -- update builtIns and customs
     I:UpdateDefensives(CellDB["defensives"])
     I:UpdateExternals(CellDB["externals"])
+    I:UpdateCrowdControls(CellDB["crowdControls"])
 end
 
 function eventFrame:UI_SCALE_CHANGED()

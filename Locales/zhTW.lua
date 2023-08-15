@@ -120,6 +120,8 @@ L["Create new debuff (id)"] = "建立新的減益 (法術 ID)"
 L["Create new indicator"] = "建立新的指示器"
 L["Create new layout"] = "建立新的版面配置"
 L["Create several buttons for quick casting and buff monitoring"] = "建立幾個快速施法按鈕，並具有簡單的增益監控功能"
+--[[Translation missing --]]
+--[[ L["Crowd Controls"] = ""--]] 
 L["Current"] = "目前為"
 L["Current Boss"] = "當前首領"
 L["Current Profile"] = "目前設定檔"
@@ -489,6 +491,8 @@ L["SpellId and BuffId are the same in most cases"] = "大部分情況下法術ID
 L["Spells"] = "法術"
 L["Spotlight"] = "特別關注"
 L["Spotlight Frame"] = "特別關注框架"
+--[[Translation missing --]]
+--[[ L["Spotlight frames are not supported"] = ""--]] 
 L["spotlightTips"] = "左鍵: |cffffffff選單|r\n右鍵: |cffffffff清除|r\n左鍵拖曳: |cffffffff設為目標單位 (非戰鬥中)|r\n右鍵拖曳: |cffffffff設為目標單位的寵物 (非戰鬥中)|r"
 L["stackFont"] = "層數字體"
 L["Status Icon"] = "狀態圖示"
@@ -547,6 +551,8 @@ L["Translit Cyrillic to Latin"] = "將俄文轉換成英文"
 L["Type"] = "類型"
 L["Type: "] = "類型:"
 L["Unaffected"] = "未獲得此增益"
+--[[Translation missing --]]
+--[[ L["Uncategorized"] = ""--]] 
 L["Unit"] = "單位"
 L["Unit Button"] = "單位按鈕"
 L["Unit Button Style"] = "單位按鈕樣式"

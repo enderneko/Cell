@@ -1929,3 +1929,27 @@ function I:CreatePowerWordShield(parent)
         end
     end
 end
+
+-------------------------------------------------
+-- crowd controls
+-------------------------------------------------
+function I:CreateCrowdControls(parent)
+    local crowdControls = CreateFrame("Frame", parent:GetName().."CrowdControlsParent", parent.widget.overlayFrame)
+    parent.indicators.crowdControls = crowdControls
+    crowdControls:Hide()
+   
+    crowdControls._SetSize = crowdControls.SetSize
+    crowdControls.SetSize = Cooldowns_SetSize
+    crowdControls.SetBorder = Cooldowns_SetBorder
+    crowdControls.UpdateSize = Cooldowns_UpdateSize_WithSpacing
+    crowdControls.SetOrientation = Cooldowns_SetOrientation_WithSpacing
+    crowdControls.SetFont = Cooldowns_SetFont
+    crowdControls.UpdatePixelPerfect = Cooldowns_UpdatePixelPerfect
+
+    for i = 1, 3 do
+        local frame = I:CreateAura_BorderIcon(parent:GetName().."CrowdControl"..i, crowdControls, 2)
+        tinsert(crowdControls, frame)
+        frame:SetScript("OnShow", crowdControls.UpdateSize)
+        frame:SetScript("OnHide", crowdControls.UpdateSize)
+    end
+end

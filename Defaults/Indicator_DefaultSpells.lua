@@ -956,3 +956,179 @@ function I:GetMissingBuffsString()
     end
     return s
 end
+
+-------------------------------------------------
+-- crowdControls
+-------------------------------------------------
+local crowdControls = { -- true: track by name, false: track by id
+    ["DEATHKNIGHT"] = {
+        [47476] = true, -- 绞袭
+        [91800] = true, -- 撕扯
+        [207167] = true, -- 致盲冰雨
+        [210128] = true, -- 复苏
+        [221562] = true, -- 窒息
+        [287254] = false, -- 寒冬死神
+        [377048] = true, -- 绝对零度
+    },
+
+    ["DEMONHUNTER"] = {
+        [179057] = true, -- 混乱新星
+        [205630] = true, -- 伊利丹之握
+        [204490] = true, -- 沉默咒符
+        [207684] = true, -- 悲苦咒符
+        [211881] = true, -- 邪能爆发
+        [217832] = true, -- 禁锢
+        -- [213491] = true, -- 恶魔践踏
+    },
+
+    ["DRUID"] = {
+        [99] = true, -- 夺魂咆哮
+        [2637] = true, -- 休眠
+        [5211] = true, -- 蛮力猛击
+        [22570] = true, -- 割碎
+        [33786] = true, -- 旋风
+        [81261] = true, -- 日光术
+        [127797] = true, -- 乌索尔旋风
+        [163505] = false, -- 斜掠
+        [209749] = true, -- 精灵虫群
+        [202244] = true, -- 蛮力冲锋
+        [410065] = false, -- 活性树脂
+    },
+
+    ["EVOKER"] = {
+        [360806] = true, -- 梦游
+        [372245] = true, -- 天空霸主
+        [408544] = true, -- 震地猛击
+    },
+
+    ["HUNTER"] = {
+        [1513] = true, -- 恐吓野兽
+        [3355] = true, -- 冰冻陷阱
+        [24394] = true, -- 胁迫
+        [117526] = true, -- 束缚射击
+        [213691] = true, -- 驱散射击
+        [357021] = false, -- 连续震荡
+        [407032] = true, -- 粘稠焦油炸弹
+    },
+
+    ["MAGE"] = {
+        [118] = true, -- 变形术
+        [31661] = true, -- 龙息术
+        [82691] = true, -- 冰霜之环
+        [383121] = true, -- 群体变形
+        [389831] = false, -- 积雪
+    },
+
+    ["MONK"] = {
+        [115078] = true, -- 分筋错骨
+        [119381] = true, -- 扫堂腿
+        [198909] = true, -- 赤精之歌
+        [202274] = true, -- 热酿
+        [202346] = true, -- 醉上加醉
+        [233759] = true, -- 抓钩武器
+    },
+
+    ["PALADIN"] = {
+        [853] = true, -- 制裁之锤
+        [10326] = true, -- 超度邪恶
+        [20066] = true, -- 忏悔
+        [105421] = true, -- 盲目之光
+        [234299] = true, -- 制裁之拳
+        [255941] = false, -- 灰烬觉醒
+    },
+
+    ["PRIEST"] = {
+        [605] = true, -- 精神控制
+        [8122] = true, -- 心灵尖啸
+        [9484] = true, -- 束缚亡灵
+        [15487] = true, -- 沉默
+        [64044] = true, -- 心灵惊骇
+        [88625] = true, -- 圣言术-罚
+        -- [226943] = true, -- 心灵炸弹
+    },
+
+    ["ROGUE"] = {
+        [408] = true, -- 肾击
+        [1776] = true, -- 凿击
+        [1833] = true, -- 偷袭
+        [2094] = true, -- 致盲
+        [6770] = true, -- 闷棍
+        [207777] = true, -- 卸除武装
+        [212183] = true, -- 烟雾弹
+        [305485] = true, -- 闪电磁索
+    },
+
+    ["SHAMAN"] = {
+        [51514] = true, -- 妖术
+        [77505] = true, -- 地震术
+        [118345] = true, -- 粉碎
+        [118905] = true, -- 静电充能
+        [197214] = true, -- 裂地术
+    },
+
+    ["WARLOCK"] = {
+        [710] = true, -- 放逐术
+        [5484] = true, -- 恐惧嚎叫
+        [5782] = true, -- 恐惧
+        [6358] = true, -- 诱惑
+        [6789] = true, -- 死亡缠绕
+        [22703] = true, -- 地狱火觉醒
+        [30283] = true, -- 暗影之怒
+        [89766] = true, -- 巨斧投掷
+        [196364] = false, -- 痛苦无常
+        [213688] = true, -- 邪能顺劈
+    },
+
+    ["WARRIOR"] = {
+        [5246] = true, -- 破胆怒吼
+        [132168] = true, -- 震荡波
+        [132169] = true, -- 风暴之锤
+        [236077] = true, -- 缴械
+    },
+
+    ["UNCATEGORIZED"] = {
+        [20549] = true, -- 战争践踏
+        [107079] = true, -- 震山掌
+        [255723] = true, -- 蛮牛冲撞
+        [287712] = true, -- 强力一击
+    }
+}
+
+function I:GetCrowdControls()
+    return crowdControls
+end
+
+local builtInCrowdControls = {}
+local customCrowdControls = {}
+
+function I:UpdateCrowdControls(t)
+    -- user disabled
+    wipe(builtInCrowdControls)
+    for class, spells in pairs(crowdControls) do
+        for id, trackByName in pairs(spells) do
+            if not t["disabled"][id] then -- not disabled
+                if trackByName then
+                    local name = GetSpellInfo(id)
+                    if name then
+                        builtInCrowdControls[name] = true
+                    end
+                else
+                    builtInCrowdControls[id] = true
+                end
+            end
+        end
+    end
+
+    -- user created
+    wipe(customCrowdControls)
+    for _, id in pairs(t["custom"]) do
+        local name = GetSpellInfo(id)
+        if name then
+            customCrowdControls[name] = true
+        end
+    end
+end
+
+function I:IsCrowdControls(name, id)
+    return builtInCrowdControls[name] or builtInCrowdControls[id] or customCrowdControls[name]
+end
