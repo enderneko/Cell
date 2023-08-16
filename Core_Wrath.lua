@@ -359,7 +359,7 @@ function eventFrame:ADDON_LOADED(arg1)
                 end
             end
         end
-        Cell.vars.clickCastingTable = CellCharacterDB["clickCastings"]
+        Cell.vars.clickCastings = CellCharacterDB["clickCastings"]
 
         -- layouts --------------------------------------------------------------------------------
         if type(CellDB["layouts"]) ~= "table" then

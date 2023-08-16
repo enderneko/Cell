@@ -12,10 +12,10 @@ local isImport, imported, exported = false, {}, ""
 local importExportFrame, importBtn, title, textArea
 
 local function DoImport()
-    if Cell.vars.clickCastingTable["useCommon"] then
-        Cell.vars.clickCastingTable["common"] = imported
+    if Cell.vars.clickCastings["useCommon"] then
+        Cell.vars.clickCastings["common"] = imported
     else
-        Cell.vars.clickCastingTable[Cell.vars.playerSpecID] = imported
+        Cell.vars.clickCastings[Cell.vars.playerSpecID] = imported
     end
 
     Cell:Fire("UpdateClickCastings")

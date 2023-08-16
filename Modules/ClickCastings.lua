@@ -464,21 +464,21 @@ local function ApplyClickCastings(b)
 end
 
 local function UpdateClickCastings(noReload)
-    F:Debug("|cff77ff77UpdateClickCastings:|r useCommon: "..tostring(Cell.vars.clickCastingTable["useCommon"]))
-    clickCastingTable = Cell.vars.clickCastingTable["useCommon"] and Cell.vars.clickCastingTable["common"] or Cell.vars.clickCastingTable[Cell.vars.playerSpecID]
+    F:Debug("|cff77ff77UpdateClickCastings:|r useCommon: "..tostring(Cell.vars.clickCastings["useCommon"]))
+    clickCastingTable = Cell.vars.clickCastings["useCommon"] and Cell.vars.clickCastings["common"] or Cell.vars.clickCastings[Cell.vars.playerSpecID]
     
     -- FIXME: remove this determine statement
-    if Cell.vars.clickCastingTable["alwaysTargeting"] then
-        alwaysTargeting = Cell.vars.clickCastingTable["alwaysTargeting"][Cell.vars.clickCastingTable["useCommon"] and "common" or Cell.vars.playerSpecID]
+    if Cell.vars.clickCastings["alwaysTargeting"] then
+        alwaysTargeting = Cell.vars.clickCastings["alwaysTargeting"][Cell.vars.clickCastings["useCommon"] and "common" or Cell.vars.playerSpecID]
     else
         alwaysTargeting = "disabled"
     end
 
-    smartResurrection = Cell.vars.clickCastingTable["smartResurrection"]
+    smartResurrection = Cell.vars.clickCastings["smartResurrection"]
 
     if not noReload then
         if clickCastingsTab:IsVisible() then
-            LoadProfile(Cell.vars.clickCastingTable["useCommon"])
+            LoadProfile(Cell.vars.clickCastings["useCommon"])
         else
             loaded = false
         end
@@ -518,7 +518,7 @@ local function CreateProfilePane()
         {
             ["text"] = L["Use common profile"],
             ["onClick"] = function()
-                Cell.vars.clickCastingTable["useCommon"] = true
+                Cell.vars.clickCastings["useCommon"] = true
                 Cell:Fire("UpdateClickCastings")
                 LoadProfile(true)
             end,
@@ -526,7 +526,7 @@ local function CreateProfilePane()
         {
             ["text"] = L["Use separate profile for each spec"],
             ["onClick"] = function()
-                Cell.vars.clickCastingTable["useCommon"] = false
+                Cell.vars.clickCastings["useCommon"] = false
                 Cell:Fire("UpdateClickCastings")
                 LoadProfile(false)
             end,
@@ -552,8 +552,8 @@ local function CreateTargetingPane()
             ["text"] = L["Disabled"],
             ["value"] = "disabled",
             ["onClick"] = function()
-                local spec = Cell.vars.clickCastingTable["useCommon"] and "common" or Cell.vars.playerSpecID
-                Cell.vars.clickCastingTable["alwaysTargeting"][spec] = "disabled"
+                local spec = Cell.vars.clickCastings["useCommon"] and "common" or Cell.vars.playerSpecID
+                Cell.vars.clickCastings["alwaysTargeting"][spec] = "disabled"
                 alwaysTargeting = "disabled"
                 Cell:Fire("UpdateClickCastings", true)
             end,
@@ -562,8 +562,8 @@ local function CreateTargetingPane()
             ["text"] = L["Left Spell"],
             ["value"] = "left",
             ["onClick"] = function()
-                local spec = Cell.vars.clickCastingTable["useCommon"] and "common" or Cell.vars.playerSpecID
-                Cell.vars.clickCastingTable["alwaysTargeting"][spec] = "left"
+                local spec = Cell.vars.clickCastings["useCommon"] and "common" or Cell.vars.playerSpecID
+                Cell.vars.clickCastings["alwaysTargeting"][spec] = "left"
                 alwaysTargeting = "left"
                 Cell:Fire("UpdateClickCastings", true)
             end,
@@ -572,8 +572,8 @@ local function CreateTargetingPane()
             ["text"] = L["Any Spells"],
             ["value"] = "any",
             ["onClick"] = function()
-                local spec = Cell.vars.clickCastingTable["useCommon"] and "common" or Cell.vars.playerSpecID
-                Cell.vars.clickCastingTable["alwaysTargeting"][spec] = "any"
+                local spec = Cell.vars.clickCastings["useCommon"] and "common" or Cell.vars.playerSpecID
+                Cell.vars.clickCastings["alwaysTargeting"][spec] = "any"
                 alwaysTargeting = "any"
                 Cell:Fire("UpdateClickCastings", true)
             end,
@@ -599,7 +599,7 @@ local function CreateSmartResPane()
             ["text"] = L["Disabled"],
             ["value"] = "disabled",
             ["onClick"] = function()
-                Cell.vars.clickCastingTable["smartResurrection"] = "disabled"
+                Cell.vars.clickCastings["smartResurrection"] = "disabled"
                 Cell:Fire("UpdateClickCastings", true)
             end
         },
@@ -607,7 +607,7 @@ local function CreateSmartResPane()
             ["text"] = L["Normal"],
             ["value"] = "normal",
             ["onClick"] = function()
-                Cell.vars.clickCastingTable["smartResurrection"] = "normal"
+                Cell.vars.clickCastings["smartResurrection"] = "normal"
                 Cell:Fire("UpdateClickCastings", true)
             end
         },
@@ -615,7 +615,7 @@ local function CreateSmartResPane()
             ["text"] = L["Normal + Combat Res"],
             ["value"] = "normal+combat",
             ["onClick"] = function()
-                Cell.vars.clickCastingTable["smartResurrection"] = "normal+combat"
+                Cell.vars.clickCastings["smartResurrection"] = "normal+combat"
                 Cell:Fire("UpdateClickCastings", true)
             end
         },
@@ -1379,12 +1379,12 @@ clickCastingsTab:SetScript("OnShow", function()
 
     loaded = true
     
-    local isCommon = Cell.vars.clickCastingTable["useCommon"]
+    local isCommon = Cell.vars.clickCastings["useCommon"]
     profileDropdown:SetSelectedItem(isCommon and 1 or 2)
     UpdateCurrentText(isCommon)
     LoadProfile(isCommon)
 
-    smartResDropdown:SetSelectedValue(Cell.vars.clickCastingTable["smartResurrection"])
+    smartResDropdown:SetSelectedValue(Cell.vars.clickCastings["smartResurrection"])
 
     menu:SetMenuParent(clickCastingsTab)
     -- texplore(changed)

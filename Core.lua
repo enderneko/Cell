@@ -406,7 +406,7 @@ function eventFrame:ADDON_LOADED(arg1)
                 end
             end
         end
-        Cell.vars.clickCastingTable = CellDB["clickCastings"][Cell.vars.playerClass]
+        Cell.vars.clickCastings = CellDB["clickCastings"][Cell.vars.playerClass]
 
         -- layouts --------------------------------------------------------------------------------
         if type(CellDB["layouts"]) ~= "table" then

@@ -2042,7 +2042,7 @@ function F:Revise()
             if CellDB["clickCastings"] and CellDB["clickCastings"][Cell.vars.playerClass] then
                 if not CellCharacterDB["clickCastings"]["processed"] then
                     CellCharacterDB["clickCastings"] = CellDB["clickCastings"][Cell.vars.playerClass]
-                    Cell.vars.clickCastingTable = CellCharacterDB["clickCastings"]
+                    Cell.vars.clickCastings = CellCharacterDB["clickCastings"]
                     -- flag as processed
                     CellCharacterDB["clickCastings"]["processed"] = true
                 end
