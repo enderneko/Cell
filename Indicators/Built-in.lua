@@ -1344,6 +1344,12 @@ end
 -------------------------------------------------
 -- role icon
 -------------------------------------------------
+local defaultRoleIcon = {
+    TANK = "Interface\\AddOns\\Cell\\Media\\Roles\\TANK32",
+    HEALER = "Interface\\AddOns\\Cell\\Media\\Roles\\HEALER32",
+    DAMAGER = "Interface\\AddOns\\Cell\\Media\\Roles\\DAMAGER32",
+}
+
 function I:CreateRoleIcon(parent)
     local roleIcon = parent.widget.overlayFrame:CreateTexture(parent:GetName().."RoleIcon", "ARTWORK", nil, -7)
     parent.indicators.roleIcon = roleIcon
@@ -1353,8 +1359,10 @@ function I:CreateRoleIcon(parent)
     function roleIcon:SetRole(role)
         if role == "TANK" or role == "HEALER" or (not roleIcon.hideDamager and role == "DAMAGER") then
             if roleIcon.texture == "default" then
-                roleIcon:SetTexture("Interface\\AddOns\\Cell\\Media\\Roles\\UI-LFG-ICON-PORTRAITROLES.blp")
-                roleIcon:SetTexCoord(GetTexCoordsForRoleSmallCircle(role))
+                -- roleIcon:SetTexture("Interface\\AddOns\\Cell\\Media\\Roles\\UI-LFG-ICON-PORTRAITROLES.blp")
+                -- roleIcon:SetTexCoord(GetTexCoordsForRoleSmallCircle(role))
+                roleIcon:SetTexture(defaultRoleIcon[role])
+                roleIcon:SetTexCoord(0, 1, 0, 1)
             elseif roleIcon.texture == "default2" then
                 roleIcon:SetTexture("Interface\\AddOns\\Cell\\Media\\Roles\\UI-LFG-ICON-ROLES.blp")
                 roleIcon:SetTexCoord(GetTexCoordsForRole(role))
