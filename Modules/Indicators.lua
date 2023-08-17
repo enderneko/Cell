@@ -1220,7 +1220,7 @@ local function CreateListPane()
             
             local last = #currentLayoutTable["indicators"]
             if currentLayoutTable["indicators"][last]["type"] == "built-in" then
-                indicatorName = "indicator"..(last+1)
+                indicatorName = "indicator1"
             else
                 indicatorName = "indicator"..(tonumber(strmatch(currentLayoutTable["indicators"][last]["indicatorName"], "%d+"))+1)
             end

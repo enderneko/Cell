@@ -57,7 +57,7 @@ local function CreateIndicatorsImportFrame()
             local lastIndex
             local last = #toLayoutTable["indicators"]
             if toLayoutTable["indicators"][last]["type"] == "built-in" then
-                lastIndex = last
+                lastIndex = 0
             else
                 lastIndex = tonumber(strmatch(toLayoutTable["indicators"][last]["indicatorName"], "%d+"))
             end
