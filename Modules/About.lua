@@ -8,7 +8,7 @@ Cell.frames.aboutTab = aboutTab
 aboutTab:SetAllPoints(Cell.frames.optionsFrame)
 aboutTab:Hide()
 
-local authorText, translatorsText, specialThanksText, patronsText
+local authorText, translatorsTextCN, translatorsTextKR, specialThanksText, patronsText
 local UpdateFont
 
 -------------------------------------------------
@@ -76,16 +76,32 @@ local function CreateTranslatorsPane()
     local translatorsPane = Cell:CreateTitledPane(aboutTab, L["Translators"], 205, 112)
     translatorsPane:SetPoint("TOPLEFT", aboutTab, "TOPLEFT", 5, -255)
 
-    translatorsText = translatorsPane:CreateFontString(nil, "OVERLAY")
-    translatorsText.font = UNIT_NAME_FONT_KOREAN
-    translatorsText.size = 12
-    UpdateFont(translatorsText)
+    translatorsTextCN = translatorsPane:CreateFontString(nil, "OVERLAY")
+    translatorsTextCN.font = UNIT_NAME_FONT_CHINESE
+    translatorsTextCN.size = 13
+    UpdateFont(translatorsTextCN)
 
-    translatorsText:SetPoint("TOPLEFT", 5, -27)
-    translatorsText:SetPoint("TOPRIGHT", -5, -27)
-    translatorsText:SetSpacing(5)
-    translatorsText:SetJustifyH("LEFT")
-    translatorsText:SetText("zhTW: RainbowUI, BNS333\nkoKR: naragok79, netaras, 부패질")
+    translatorsTextCN:SetPoint("TOPLEFT", 5, -27)
+    translatorsTextCN:SetPoint("TOPRIGHT", -5, -27)
+    translatorsTextCN:SetSpacing(5)
+    translatorsTextCN:SetJustifyH("LEFT")
+    translatorsTextCN:SetText("zhTW: RainbowUI, BNS333, 米利")
+
+    translatorsTextKR = translatorsPane:CreateFontString(nil, "OVERLAY")
+    translatorsTextKR.font = UNIT_NAME_FONT_KOREAN
+    translatorsTextKR.size = 12
+    UpdateFont(translatorsTextKR)
+
+    if translatorsTextCN:GetNumLines() == 1 then
+        translatorsTextKR:SetPoint("TOPLEFT", 5, -45)
+        translatorsTextKR:SetPoint("TOPRIGHT", -5, -45)
+    else
+        translatorsTextKR:SetPoint("TOPLEFT", 5, -73)
+        translatorsTextKR:SetPoint("TOPRIGHT", -5, -73)
+    end
+    translatorsTextKR:SetSpacing(5)
+    translatorsTextKR:SetJustifyH("LEFT")
+    translatorsTextKR:SetText("koKR: naragok79, netaras, 부패질")
 end
 
 -------------------------------------------------
@@ -96,11 +112,7 @@ local function CreateSpecialThanksPane()
     specialThanksPane:SetPoint("TOPLEFT", aboutTab, "TOPLEFT", 222, -255)
 
     specialThanksText = specialThanksPane:CreateFontString(nil, "OVERLAY")
-    if LOCALE_zhCN then
-        specialThanksText.font = GameFontNormal:GetFont()
-    else
-        specialThanksText.font = UNIT_NAME_FONT_CHINESE
-    end
+    specialThanksText.font = UNIT_NAME_FONT_CHINESE
     specialThanksText.size = 13
     UpdateFont(specialThanksText)
 
@@ -180,17 +192,13 @@ local function CreatePatronsPane()
     bgTex:SetPoint("TOPLEFT", -5, 5)
     bgTex:SetPoint("BOTTOMRIGHT", 5, -5)
     bgTex:SetTexture("Interface\\Buttons\\WHITE8x8")
-    bgTex:SetGradient("HORIZONTAL", CreateColor(0.1, 0.1, 0.1, 1), CreateColor(0.1, 0.1, 0.1, 0.25))
+    bgTex:SetGradient("HORIZONTAL", CreateColor(0.1, 0.1, 0.1, 1), CreateColor(0.1, 0.1, 0.1, 0.3))
 
     local patronsScroll = Cell:CreateScrollFrame(patronsPane, -27, 0)
     patronsScroll:SetScrollStep(27)
 
     patronsText = patronsScroll.content:CreateFontString(nil, "OVERLAY")
-    if LOCALE_zhCN then
-        patronsText.font = GameFontNormal:GetFont()
-    else
-        patronsText.font = UNIT_NAME_FONT_CHINESE
-    end
+    patronsText.font = UNIT_NAME_FONT_CHINESE
     patronsText.size = 12
     UpdateFont(patronsText)
 
@@ -396,7 +404,7 @@ Cell:RegisterCallback("ShowOptionsTab", "AboutTab_ShowTab", ShowTab)
 
 UpdateFont = function(fs)
     if not fs then return end
-    
+
     fs:SetFont(fs.font, fs.size + CellDB["appearance"]["optionsFontSizeOffset"], "")
     fs:SetTextColor(1, 1, 1, 1)
     fs:SetShadowColor(0, 0, 0)
@@ -405,7 +413,8 @@ end
 
 function Cell:UpdateAboutFont()
     UpdateFont(authorText)
-    UpdateFont(translatorsText)
+    UpdateFont(translatorsTextCN)
+    UpdateFont(translatorsTextKR)
     UpdateFont(specialThanksText)
     UpdateFont(patronsText)
 end
