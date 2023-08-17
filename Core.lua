@@ -66,7 +66,12 @@ function F:UpdateLayout(layoutGroupType, updateIndicators)
     else
         F:Debug("|cFF7CFC00F:UpdateLayout(\""..layoutGroupType.."\")")
         -- Cell.vars.layoutGroupType = layoutGroupType
-        local layout = CellLayoutAutoSwitchTable[Cell.vars.playerSpecRole][layoutGroupType]
+        local layout
+        if Cell.vars.layoutAutoSwitch[Cell.vars.playerSpecID] then
+            layout = Cell.vars.layoutAutoSwitch[Cell.vars.playerSpecID][layoutGroupType]
+        else
+            layout = Cell.vars.layoutAutoSwitch[Cell.vars.playerSpecRole][layoutGroupType]
+        end
         Cell.vars.currentLayout = layout
         Cell.vars.currentLayoutTable = CellDB["layouts"][layout]
         Cell:Fire("UpdateLayout", Cell.vars.currentLayout)
@@ -119,6 +124,7 @@ local function PreUpdateLayout()
 end
 Cell:RegisterCallback("GroupTypeChanged", "Core_GroupTypeChanged", PreUpdateLayout)
 Cell:RegisterCallback("SpecChanged", "Core_SpecChanged", PreUpdateLayout)
+Cell:RegisterCallback("LayoutAutoSwitchChanged", "Core_LayoutAutoSwitchChanged", PreUpdateLayout)
 
 -------------------------------------------------
 -- events
@@ -457,7 +463,7 @@ function eventFrame:ADDON_LOADED(arg1)
             end
         end
 
-        CellLayoutAutoSwitchTable = CellDB["layoutAutoSwitch"]
+        Cell.vars.layoutAutoSwitch = CellDB["layoutAutoSwitch"]
 
         -- dispelBlacklist ------------------------------------------------------------------------
         if type(CellDB["dispelBlacklist"]) ~= "table" then

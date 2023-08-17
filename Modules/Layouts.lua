@@ -9,7 +9,8 @@ Cell.frames.layoutsTab = layoutsTab
 layoutsTab:SetAllPoints(Cell.frames.optionsFrame)
 layoutsTab:Hide()
 
-local selectedRole, selectedLayout, selectedLayoutTable
+local autoSwitchIndex
+local selectedLayout, selectedLayoutTable
 local selectedPage = "main"
 -------------------------------------------------
 -- preview frame
@@ -1213,7 +1214,8 @@ end)
 -- layout
 -------------------------------------------------
 local autoSwitchFrame
-local layoutDropdown, roleDropdown, partyDropdown, raidOutdoorDropdown, raidInstanceDropdown, raidMythicDropdown, arenaDropdown, bg15Dropdown, bg40Dropdown
+local typeSwitch, currentProfileBox
+local layoutDropdown, partyDropdown, raidOutdoorDropdown, raidInstanceDropdown, raidMythicDropdown, arenaDropdown, bg15Dropdown, bg40Dropdown
 local raid10Dropdown, raid25Dropdown -- wrath
 local LoadLayoutDropdown, LoadAutoSwitchDropdowns
 local LoadLayoutDB, UpdateButtonStates, LoadLayoutAutoSwitchDB
@@ -1315,11 +1317,11 @@ local function CreateLayoutPane()
                 
                 -- update auto switch dropdowns
                 LoadAutoSwitchDropdowns()
-                for role, t in pairs(CellLayoutAutoSwitchTable) do
+                for role, t in pairs(Cell.vars.layoutAutoSwitch) do
                     for groupType, layout in pairs(t) do
                         if layout == selectedLayout then
                             -- NOTE: rename
-                            CellLayoutAutoSwitchTable[role][groupType] = name
+                            Cell.vars.layoutAutoSwitch[role][groupType] = name
                             -- update its dropdown selection
                             if groupType == "party" then
                                 partyDropdown:SetSelected(name)
@@ -1393,11 +1395,11 @@ local function CreateLayoutPane()
 
             -- update auto switch dropdowns
             LoadAutoSwitchDropdowns()
-            for role, t in pairs(CellLayoutAutoSwitchTable) do
+            for role, t in pairs(Cell.vars.layoutAutoSwitch) do
                 for groupType, layout in pairs(t) do
                     if layout == selectedLayout then
                         -- NOTE: set to default
-                        CellLayoutAutoSwitchTable[role][groupType] = "default"
+                        Cell.vars.layoutAutoSwitch[role][groupType] = "default"
                         -- update its dropdown selection
                         if groupType == "party" then
                             partyDropdown:SetSelectedValue("default")
@@ -1524,68 +1526,73 @@ local raidInstance = L["Raid"].." ".._G.INSTANCE
 local raidMythic = L["Raid"].." ".._G.PLAYER_DIFFICULTY6
 
 local function CreateAutoSwitchPane()
-    autoSwitchFrame = Cell:CreateFrame("CellLayoutAutoSwitchFrame", layoutsTab, 160, 410)
+    autoSwitchFrame = Cell:CreateFrame("CellLayoutAutoSwitchFrame", layoutsTab, 160, 465)
     autoSwitchFrame:SetPoint("TOPLEFT", layoutsTab, "TOPRIGHT", 5, 0)
     autoSwitchFrame:Show()
 
     local autoSwitchPane = Cell:CreateTitledPane(autoSwitchFrame, L["Layout Auto Switch"], 150, 400)
     autoSwitchPane:SetPoint("TOPLEFT", 5, -5)
 
-    -- role
-    roleDropdown = Cell:CreateDropdown(autoSwitchPane, 140)
-    roleDropdown:SetPoint("TOPLEFT", 5, -27)
+    if Cell.isRetail then
+        -- type switch
+        typeSwitch = Cell:CreateSwitch(autoSwitchPane, {140, 20}, L["Role"], "role", L["Spec"], "spec", function(value)
+            if value == "role" then
+                Cell.vars.layoutAutoSwitch[Cell.vars.playerSpecID] = nil
+            else
+                Cell.vars.layoutAutoSwitch[Cell.vars.playerSpecID] = {
+                    ["party"] = "default",
+                    ["raid_outdoor"] = "default",
+                    ["raid_instance"] = "default",
+                    ["raid_mythic"] = "default",
+                    ["arena"] = "default",
+                    ["battleground15"] = "default",
+                    ["battleground40"] = "default",
+                }
+            end
+            Cell:Fire("LayoutAutoSwitchChanged")
+            LoadLayoutAutoSwitchDB()
+        end)
+        typeSwitch:SetPoint("TOPLEFT", 5, -27)
+
+        typeSwitch:HookScript("OnEnter", function()
+            CellTooltip:SetOwner(typeSwitch, "ANCHOR_NONE")
+            CellTooltip:SetPoint("TOPLEFT", typeSwitch, "TOPRIGHT", 15, 0)
+            CellTooltip:AddLine(L["Layout Auto Switch"])
+            CellTooltip:AddLine(L["Role"]..": |cffffffff"..strlower(L["Use common profile"]).." |TInterface\\AddOns\\Cell\\Media\\Roles\\TANK:12|t |TInterface\\AddOns\\Cell\\Media\\Roles\\HEALER:12|t |TInterface\\AddOns\\Cell\\Media\\Roles\\DAMAGER:12|t")
+            CellTooltip:AddLine(L["Spec"]..": |cffffffff"..L["use separate profile for current spec"])
+            CellTooltip:Show()
+        end)
+
+        typeSwitch:HookScript("OnLeave", function()
+            CellTooltip:Hide()
+        end)
+    end
+
+    -- current profile box
+    currentProfileBox = CreateFrame("Frame", nil, autoSwitchPane, "BackdropTemplate")
+    Cell:StylizeFrame(currentProfileBox, {0.115, 0.115, 0.115, 1})
+    P:Size(currentProfileBox, 140, 20)
+
+    currentProfileBox.text = currentProfileBox:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
+    currentProfileBox.text:SetPoint("LEFT", P:Scale(5), 0)
+    currentProfileBox.text:SetPoint("RIGHT", P:Scale(-5), 0)
+    currentProfileBox.text:SetJustifyH("LEFT")
 
     if Cell.isRetail then
-        roleDropdown:SetItems({
-            {
-                ["text"] = "|TInterface\\AddOns\\Cell\\Media\\Roles\\TANK:11|t "..TANK,
-                ["value"] = "TANK",
-                ["onClick"] = function()
-                    selectedRole = "TANK"
-                    LoadLayoutAutoSwitchDB(selectedRole)
-                end,
-            },
-            {
-                ["text"] = "|TInterface\\AddOns\\Cell\\Media\\Roles\\HEALER:11|t "..HEALER,
-                ["value"] = "HEALER",
-                ["onClick"] = function()
-                    selectedRole = "HEALER"
-                    LoadLayoutAutoSwitchDB(selectedRole)
-                end,
-            },
-            {
-                ["text"] = "|TInterface\\AddOns\\Cell\\Media\\Roles\\DAMAGER:11|t "..DAMAGER,
-                ["value"] = "DAMAGER",
-                ["onClick"] = function()
-                    selectedRole = "DAMAGER"
-                    LoadLayoutAutoSwitchDB(selectedRole)
-                end,
-            },
-        })
+        currentProfileBox:SetPoint("TOPLEFT", typeSwitch, "BOTTOMLEFT", 0, -30)
     else
-        roleDropdown:SetItems({
-            {
-                ["text"] = "|TInterface\\AddOns\\Cell\\Media\\Icons\\1:13|t "..L["Primary Talents"],
-                ["value"] = 1,
-                ["onClick"] = function()
-                    selectedRole = 1
-                    LoadLayoutAutoSwitchDB(selectedRole)
-                end,
-            },
-            {
-                ["text"] = "|TInterface\\AddOns\\Cell\\Media\\Icons\\2:13|t "..L["Secondary Talents"],
-                ["value"] = 2,
-                ["onClick"] = function()
-                    selectedRole = 2
-                    LoadLayoutAutoSwitchDB(selectedRole)
-                end,
-            },
-        })
+        currentProfileBox:SetPoint("TOPLEFT", 5, -42)
+        P:Height(autoSwitchFrame, 430)
     end
+
+    local currentProfileText = autoSwitchPane:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
+    currentProfileText:SetPoint("BOTTOMLEFT", currentProfileBox, "TOPLEFT", 0, 1)
+    currentProfileText:SetTextColor(Cell:GetAccentColorRGB())
+    currentProfileText:SetText(L["Current Profile"])
     
     -- party
     partyDropdown = Cell:CreateDropdown(autoSwitchPane, 140)
-    partyDropdown:SetPoint("TOPLEFT", roleDropdown, "BOTTOMLEFT", 0, -25)
+    partyDropdown:SetPoint("TOPLEFT", currentProfileBox, "BOTTOMLEFT", 0, -30)
     
     partyText = autoSwitchPane:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
     partyText:SetPoint("BOTTOMLEFT", partyDropdown, "TOPLEFT", 0, 1)
@@ -1679,8 +1686,8 @@ LoadAutoSwitchDropdowns = function()
             ["text"] = value == "default" and _G.DEFAULT or value,
             ["value"] = value,
             ["onClick"] = function()
-                CellLayoutAutoSwitchTable[selectedRole]["party"] = value
-                if not Cell.vars.inBattleground and (Cell.vars.groupType == "solo" or Cell.vars.groupType == "party") and (selectedRole == Cell.vars.playerSpecRole) then
+                Cell.vars.layoutAutoSwitch[autoSwitchIndex]["party"] = value
+                if not Cell.vars.inBattleground and (Cell.vars.groupType == "solo" or Cell.vars.groupType == "party") then
                     F:UpdateLayout("party")
                     Cell:Fire("UpdateIndicators")
                     LoadLayoutDB(Cell.vars.currentLayout)
@@ -1699,8 +1706,8 @@ LoadAutoSwitchDropdowns = function()
             ["text"] = value == "default" and _G.DEFAULT or value,
             ["value"] = value,
             ["onClick"] = function()
-                CellLayoutAutoSwitchTable[selectedRole]["raid_outdoor"] = value
-                if not Cell.vars.inBattleground and not Cell.vars.inInstance and Cell.vars.groupType == "raid" and selectedRole == Cell.vars.playerSpecRole then
+                Cell.vars.layoutAutoSwitch[autoSwitchIndex]["raid_outdoor"] = value
+                if not Cell.vars.inBattleground and not Cell.vars.inInstance and Cell.vars.groupType == "raid" then
                     F:UpdateLayout("raid_outdoor")
                     Cell:Fire("UpdateIndicators")
                     LoadLayoutDB(Cell.vars.currentLayout)
@@ -1720,8 +1727,8 @@ LoadAutoSwitchDropdowns = function()
                 ["text"] = value == "default" and _G.DEFAULT or value,
                 ["value"] = value,
                 ["onClick"] = function()
-                    CellLayoutAutoSwitchTable[selectedRole]["raid_instance"] = value
-                    if Cell.vars.inInstance and not Cell.vars.inMythic and Cell.vars.groupType == "raid" and selectedRole == Cell.vars.playerSpecRole then
+                    Cell.vars.layoutAutoSwitch[autoSwitchIndex]["raid_instance"] = value
+                    if Cell.vars.inInstance and not Cell.vars.inMythic and Cell.vars.groupType == "raid" then
                         F:UpdateLayout("raid_instance")
                         Cell:Fire("UpdateIndicators")
                         LoadLayoutDB(Cell.vars.currentLayout)
@@ -1740,8 +1747,8 @@ LoadAutoSwitchDropdowns = function()
                 ["text"] = value == "default" and _G.DEFAULT or value,
                 ["value"] = value,
                 ["onClick"] = function()
-                    CellLayoutAutoSwitchTable[selectedRole]["raid_mythic"] = value
-                    if Cell.vars.inMythic and Cell.vars.groupType == "raid" and selectedRole == Cell.vars.playerSpecRole then
+                    Cell.vars.layoutAutoSwitch[autoSwitchIndex]["raid_mythic"] = value
+                    if Cell.vars.inMythic and Cell.vars.groupType == "raid" then
                         F:UpdateLayout("raid_mythic")
                         Cell:Fire("UpdateIndicators")
                         LoadLayoutDB(Cell.vars.currentLayout)
@@ -1761,8 +1768,8 @@ LoadAutoSwitchDropdowns = function()
                 ["text"] = value == "default" and _G.DEFAULT or value,
                 ["value"] = value,
                 ["onClick"] = function()
-                    CellLayoutAutoSwitchTable[selectedRole]["raid10"] = value
-                    if not Cell.vars.inBattleground and Cell.vars.groupType == "raid" and  Cell.vars.raidType == "raid10" and selectedRole == Cell.vars.playerSpecRole then
+                    Cell.vars.layoutAutoSwitch[autoSwitchIndex]["raid10"] = value
+                    if not Cell.vars.inBattleground and Cell.vars.groupType == "raid" and  Cell.vars.raidType == "raid10" then
                         F:UpdateLayout("raid10")
                         Cell:Fire("UpdateIndicators")
                         LoadLayoutDB(Cell.vars.currentLayout)
@@ -1781,8 +1788,8 @@ LoadAutoSwitchDropdowns = function()
                 ["text"] = value == "default" and _G.DEFAULT or value,
                 ["value"] = value,
                 ["onClick"] = function()
-                    CellLayoutAutoSwitchTable[selectedRole]["raid25"] = value
-                    if not Cell.vars.inBattleground and Cell.vars.groupType == "raid" and  Cell.vars.raidType == "raid25" and selectedRole == Cell.vars.playerSpecRole then
+                    Cell.vars.layoutAutoSwitch[autoSwitchIndex]["raid25"] = value
+                    if not Cell.vars.inBattleground and Cell.vars.groupType == "raid" and  Cell.vars.raidType == "raid25" then
                         F:UpdateLayout("raid25")
                         Cell:Fire("UpdateIndicators")
                         LoadLayoutDB(Cell.vars.currentLayout)
@@ -1802,8 +1809,8 @@ LoadAutoSwitchDropdowns = function()
             ["text"] = value == "default" and _G.DEFAULT or value,
             ["value"] = value,
             ["onClick"] = function()
-                CellLayoutAutoSwitchTable[selectedRole]["arena"] = value
-                if Cell.vars.inBattleground == 5 and selectedRole == Cell.vars.playerSpecRole then
+                Cell.vars.layoutAutoSwitch[autoSwitchIndex]["arena"] = value
+                if Cell.vars.inBattleground == 5 then
                     F:UpdateLayout("arena")
                     Cell:Fire("UpdateIndicators")
                     LoadLayoutDB(Cell.vars.currentLayout)
@@ -1822,8 +1829,8 @@ LoadAutoSwitchDropdowns = function()
             ["text"] = value == "default" and _G.DEFAULT or value,
             ["value"] = value,
             ["onClick"] = function()
-                CellLayoutAutoSwitchTable[selectedRole]["battleground15"] = value
-                if Cell.vars.inBattleground == 15 and selectedRole == Cell.vars.playerSpecRole then
+                Cell.vars.layoutAutoSwitch[autoSwitchIndex]["battleground15"] = value
+                if Cell.vars.inBattleground == 15 then
                     F:UpdateLayout("battleground15")
                     Cell:Fire("UpdateIndicators")
                     LoadLayoutDB(Cell.vars.currentLayout)
@@ -1842,8 +1849,8 @@ LoadAutoSwitchDropdowns = function()
             ["text"] = value == "default" and _G.DEFAULT or value,
             ["value"] = value,
             ["onClick"] = function()
-                CellLayoutAutoSwitchTable[selectedRole]["battleground40"] = value
-                if Cell.vars.inBattleground == 40 and selectedRole == Cell.vars.playerSpecRole then
+                Cell.vars.layoutAutoSwitch[autoSwitchIndex]["battleground40"] = value
+                if Cell.vars.inBattleground == 40 then
                     F:UpdateLayout("battleground40")
                     Cell:Fire("UpdateIndicators")
                     LoadLayoutDB(Cell.vars.currentLayout)
@@ -2557,27 +2564,46 @@ LoadLayoutDB = function(layout)
     UpdateSpotlightPreview()
 end
 
-LoadLayoutAutoSwitchDB = function(role)
-    selectedRole = role
-
-    roleDropdown:SetSelectedValue(role)
-    partyDropdown:SetSelectedValue(CellLayoutAutoSwitchTable[role]["party"])
-    raidOutdoorDropdown:SetSelectedValue(CellLayoutAutoSwitchTable[role]["raid_outdoor"])
-    arenaDropdown:SetSelectedValue(CellLayoutAutoSwitchTable[role]["arena"])
-    bg15Dropdown:SetSelectedValue(CellLayoutAutoSwitchTable[role]["battleground15"])
-    bg40Dropdown:SetSelectedValue(CellLayoutAutoSwitchTable[role]["battleground40"])
-
+LoadLayoutAutoSwitchDB = function()
     if Cell.isRetail then
-        raidInstanceDropdown:SetSelectedValue(CellLayoutAutoSwitchTable[role]["raid_instance"])
-        raidMythicDropdown:SetSelectedValue(CellLayoutAutoSwitchTable[role]["raid_mythic"])
+        if Cell.vars.layoutAutoSwitch[Cell.vars.playerSpecID] then
+            autoSwitchIndex = Cell.vars.playerSpecID
+            currentProfileBox.text:SetText("|T"..Cell.vars.playerSpecIcon..":12:12:0:0:12:12:1:11:1:11|t "..Cell.vars.playerSpecName)
+        else
+            autoSwitchIndex = Cell.vars.playerSpecRole
+            currentProfileBox.text:SetText("|TInterface\\AddOns\\Cell\\Media\\Roles\\"..autoSwitchIndex..":12|t ".._G[autoSwitchIndex])
+        end
+        
+        typeSwitch:SetSelected(Cell.vars.layoutAutoSwitch[Cell.vars.playerSpecID] and "spec" or "role")
+        raidInstanceDropdown:SetSelectedValue(Cell.vars.layoutAutoSwitch[autoSwitchIndex]["raid_instance"])
+        raidMythicDropdown:SetSelectedValue(Cell.vars.layoutAutoSwitch[autoSwitchIndex]["raid_mythic"])
     else
-        raid10Dropdown:SetSelectedValue(CellLayoutAutoSwitchTable[role]["raid10"])
-        raid25Dropdown:SetSelectedValue(CellLayoutAutoSwitchTable[role]["raid25"])
+        autoSwitchIndex = Cell.vars.playerSpecRole
+        if autoSwitchIndex == 1 then
+            currentProfileBox.text:SetText("|TInterface\\AddOns\\Cell\\Media\\Icons\\1:13|t "..L["Primary Talents"])
+        else
+            currentProfileBox.text:SetText("|TInterface\\AddOns\\Cell\\Media\\Icons\\2:13|t "..L["Secondary Talents"])
+        end
+        raid10Dropdown:SetSelectedValue(Cell.vars.layoutAutoSwitch[autoSwitchIndex]["raid10"])
+        raid25Dropdown:SetSelectedValue(Cell.vars.layoutAutoSwitch[autoSwitchIndex]["raid25"])
     end
+
+    partyDropdown:SetSelectedValue(Cell.vars.layoutAutoSwitch[autoSwitchIndex]["party"])
+    raidOutdoorDropdown:SetSelectedValue(Cell.vars.layoutAutoSwitch[autoSwitchIndex]["raid_outdoor"])
+    arenaDropdown:SetSelectedValue(Cell.vars.layoutAutoSwitch[autoSwitchIndex]["arena"])
+    bg15Dropdown:SetSelectedValue(Cell.vars.layoutAutoSwitch[autoSwitchIndex]["battleground15"])
+    bg40Dropdown:SetSelectedValue(Cell.vars.layoutAutoSwitch[autoSwitchIndex]["battleground40"])
 end
 
-local function UpdateLayoutAutoSwitchText()
+local function UpdateLayoutAutoSwitch(layout)
     if not init then return end
+
+    if layout and layoutsTab:IsVisible() then
+        -- NOTE: group type changed / spec changed
+        LoadLayoutDB(Cell.vars.currentLayout)
+        LoadLayoutAutoSwitchDB()
+    end
+
     if Cell.vars.inBattleground then
         if Cell.vars.inBattleground == 15 then
             partyText:SetText(L["Solo/Party"])
@@ -2656,7 +2682,7 @@ local function UpdateLayoutAutoSwitchText()
         end
     end
 end
-Cell:RegisterCallback("UpdateLayout", "LayoutsTab_UpdateLayout", UpdateLayoutAutoSwitchText)
+Cell:RegisterCallback("UpdateLayout", "LayoutsTab_UpdateLayout", UpdateLayoutAutoSwitch)
 
 local function UpdateAppearance()
     if previewButton and selectedLayout == Cell.vars.currentLayout then
@@ -2721,7 +2747,7 @@ local function ShowTab(tab)
 
             CreateLayoutPane()
             CreateAutoSwitchPane()
-            UpdateLayoutAutoSwitchText()
+            UpdateLayoutAutoSwitch()
             CreateGroupFilterPane()
             CreateLayoutSetupPane()
             CreateBarOrientationPane()
@@ -2747,12 +2773,12 @@ local function ShowTab(tab)
         
         -- UpdateEnabledLayoutText()
         
-        if selectedLayout ~= Cell.vars.currentLayout then
+        -- if selectedLayout ~= Cell.vars.currentLayout then
             LoadLayoutDB(Cell.vars.currentLayout)
-        end
-        if selectedRole ~= Cell.vars.playerSpecRole then
-            LoadLayoutAutoSwitchDB(Cell.vars.playerSpecRole)
-        end
+        -- end
+
+        LoadLayoutAutoSwitchDB()
+
         UpdateButtonStates()
         
         layoutsTab:Show()
@@ -2761,6 +2787,16 @@ local function ShowTab(tab)
     end
 end
 Cell:RegisterCallback("ShowOptionsTab", "LayoutsTab_ShowTab", ShowTab)
+
+layoutsTab:SetScript("OnHide", function()
+    if layoutsTab:IsShown() then
+        layoutsTab:SetScript("OnShow", function()
+            LoadLayoutDB(Cell.vars.currentLayout)
+        end)
+    else
+        layoutsTab:SetScript("OnShow", nil)
+    end
+end)
 
 -------------------------------------------------
 -- sharing functions

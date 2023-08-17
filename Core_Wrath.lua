@@ -66,7 +66,7 @@ function F:UpdateLayout(layoutGroupType, updateIndicators)
     else
         F:Debug("|cFF7CFC00F:UpdateLayout(\""..layoutGroupType.."\")")
         -- Cell.vars.layoutGroupType = layoutGroupType
-        local layout = CellLayoutAutoSwitchTable[Cell.vars.activeTalentGroup][layoutGroupType]
+        local layout = Cell.vars.layoutAutoSwitch[Cell.vars.activeTalentGroup][layoutGroupType]
         Cell.vars.currentLayout = layout
         Cell.vars.currentLayoutTable = CellDB["layouts"][layout]
         Cell:Fire("UpdateLayout", Cell.vars.currentLayout)
@@ -401,7 +401,7 @@ function eventFrame:ADDON_LOADED(arg1)
             end
         end
 
-        CellLayoutAutoSwitchTable = CellCharacterDB["layoutAutoSwitch"]
+        Cell.vars.layoutAutoSwitch = CellCharacterDB["layoutAutoSwitch"]
 
         -- dispelBlacklist ------------------------------------------------------------------------
         if type(CellDB["dispelBlacklist"]) ~= "table" then

@@ -1078,10 +1078,10 @@ local function UpdateCurrentText(isCommon)
         listPane:SetTitle(L["Current Profile"]..": "..L["Common"])
     else
         if Cell.isRetail then
-            listPane:SetTitle(L["Current Profile"]..": ".."|T"..Cell.vars.playerSpecIcon..":12:12:0:0:12:12:1:11:1:11|t "..Cell.vars.playerSpecName)
+            listPane:SetTitle(L["Current Profile"]..": ".."|T"..Cell.vars.playerSpecIcon..":12:12:0:1:12:12:1:11:1:11|t "..Cell.vars.playerSpecName)
         elseif Cell.isWrath then
             local name, icon = F:GetActiveTalentInfo()
-            listPane:SetTitle(L["Current Profile"]..": ".."|T"..icon..":12:12:0:0:12:12:1:11:1:11|t "..name)
+            listPane:SetTitle(L["Current Profile"]..": ".."|T"..icon..":12:12:0:1:12:12:1:11:1:11|t "..name)
         end
     end
 end

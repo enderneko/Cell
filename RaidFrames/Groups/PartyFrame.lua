@@ -93,10 +93,9 @@ end
 
 local init
 local function PartyFrame_UpdateLayout(layout, which)
-    -- if layout ~= Cell.vars.currentLayout then return end
     if Cell.vars.groupType ~= "party" and init then return end
     init = true
-    layout = CellLayoutAutoSwitchTable[Cell.vars.playerSpecRole]["party"]
+    
     layout = CellDB["layouts"][layout]
 
     -- anchor

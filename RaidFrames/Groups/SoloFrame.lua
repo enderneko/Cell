@@ -23,10 +23,9 @@ Cell.unitButtons.solo["pet"] = petButton
 
 local init
 local function SoloFrame_UpdateLayout(layout, which)
-    -- if layout ~= Cell.vars.currentLayout then return end
     if Cell.vars.groupType ~= "solo" and init then return end
     init = true
-    layout = CellLayoutAutoSwitchTable[Cell.vars.playerSpecRole]["party"]
+    
     layout = CellDB["layouts"][layout]
 
     if not which or strfind(which, "size$") then
