@@ -491,8 +491,11 @@ local function UpdateMenu(which)
 end
 Cell:RegisterCallback("UpdateMenu", "NPCFrame_UpdateMenu", UpdateMenu)
 
+local previousLayout
 local function NPCFrame_UpdateLayout(layout, which)
-    -- if layout ~= Cell.vars.currentLayout then return end
+    if previousLayout == layout and not which then return end
+    previousLayout = layout
+
     layout = Cell.vars.currentLayoutTable
 
     if not which or strfind(which, "size$") then

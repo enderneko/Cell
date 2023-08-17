@@ -604,7 +604,11 @@ local function UpdateMenu(which)
 end
 Cell:RegisterCallback("UpdateMenu", "SpotlightFrame_UpdateMenu", UpdateMenu)
 
+local previousLayout
 local function UpdateLayout(layout, which)
+    if previousLayout == layout and not which then return end
+    previousLayout = layout
+
     layout = Cell.vars.currentLayoutTable
 
     if not which or strfind(which, "size$") then

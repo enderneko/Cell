@@ -65,10 +65,10 @@ function F:UpdateLayout(layoutGroupType, updateIndicators)
         delayedFrame:RegisterEvent("PLAYER_REGEN_ENABLED")
     else
         F:Debug("|cFF7CFC00F:UpdateLayout(\""..layoutGroupType.."\")")
-        -- Cell.vars.layoutGroupType = layoutGroupType
         local layout = Cell.vars.layoutAutoSwitch[Cell.vars.activeTalentGroup][layoutGroupType]
         Cell.vars.currentLayout = layout
         Cell.vars.currentLayoutTable = CellDB["layouts"][layout]
+        Cell.vars.layoutGroupType = layoutGroupType
         Cell:Fire("UpdateLayout", Cell.vars.currentLayout)
         if updateIndicators then
             Cell:Fire("UpdateIndicators")
@@ -533,10 +533,12 @@ function eventFrame:GROUP_ROSTER_UPDATE()
             -- update ALL
             Cell.vars.raidSetup[role]["ALL"] = Cell.vars.raidSetup[role]["ALL"] + 1
             -- update for each class
-            if not Cell.vars.raidSetup[role][class] then
-                Cell.vars.raidSetup[role][class] = 1
-            else
-                Cell.vars.raidSetup[role][class] = Cell.vars.raidSetup[role][class] + 1
+            if class then
+                if not Cell.vars.raidSetup[role][class] then
+                    Cell.vars.raidSetup[role][class] = 1
+                else
+                    Cell.vars.raidSetup[role][class] = Cell.vars.raidSetup[role][class] + 1
+                end
             end
         end
 

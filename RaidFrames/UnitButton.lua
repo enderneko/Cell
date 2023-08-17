@@ -69,7 +69,6 @@ local UnitButton_UpdateShieldAbsorbs
 -------------------------------------------------
 -- unit button init indicators
 -------------------------------------------------
-local indicatorsInitialized
 local enabledIndicators, indicatorNums, indicatorCustoms = {}, {}, {}
 
 local function UpdateIndicatorParentVisibility(b, indicatorName, enabled)
@@ -91,10 +90,37 @@ local function UpdateIndicatorParentVisibility(b, indicatorName, enabled)
     end
 end
 
-local function UpdateIndicators(layout, indicatorName, setting, value, value2)
-    if layout and layout ~= Cell.vars.currentLayout then return end
+local indicatorsInitialized
+local previousLayout = {}
 
+local function UpdateIndicators(layout, indicatorName, setting, value, value2)
     F:Debug("|cffff7777UpdateIndicators:|r ", layout, indicatorName, setting, value, value2)
+    
+    if layout then
+        -- Cell:Fire("UpdateIndicators", layout): indicators copy/import
+        -- Cell:Fire("UpdateIndicators", xxx, ...): indicator updated
+        for k, v in pairs(previousLayout) do
+            if v == layout then
+                previousLayout[k] = nil -- update required
+            end
+        end
+
+        --! indicator changed, bu not current layout
+        if layout ~= Cell.vars.currentLayout then
+            F:Debug("NO UPDATE: not active layout")
+            return
+        end
+
+    elseif not indicatorName then -- Cell:Fire("UpdateIndicators")
+        --! layout switched, check if update is required
+        if previousLayout[Cell.vars.layoutGroupType] == Cell.vars.currentLayout then
+            F:Debug("NO UPDATE: only reset custom indicator tables")
+            I:ResetCustomIndicatorTables()
+            return
+        end
+    end
+    previousLayout[Cell.vars.layoutGroupType] = Cell.vars.currentLayout
+
     if not indicatorName then -- init
         wipe(enabledIndicators)
         wipe(indicatorNums)

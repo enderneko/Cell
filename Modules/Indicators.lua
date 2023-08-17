@@ -514,7 +514,7 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
         if not layout then --! call from UpdateIndicators() not from Cell:Fire("UpdateIndicators", ...)
             I:RemoveAllCustomIndicators(previewButton)
             for _, t in pairs(currentLayoutTable["indicators"]) do
-                local indicator = previewButton.indicators[t["indicatorName"]] or I:CreateIndicator(previewButton, t)
+                local indicator = previewButton.indicators[t["indicatorName"]] or I:CreateIndicator(previewButton, t, true)
                 InitIndicator(t["indicatorName"])
                 -- update position
                 if t["position"] then
@@ -800,7 +800,7 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                 indicator:SetFadeOut(value2)
             end
         elseif setting == "create" then
-            indicator = I:CreateIndicator(previewButton, value)
+            indicator = I:CreateIndicator(previewButton, value, true)
             -- update position
             if value["position"] then
                 P:ClearPoints(indicator)

@@ -161,10 +161,13 @@ for i = 1, (Cell.isRetail and 3 or 5) do
     Cell.unitButtons.arena["raidpet"..i] = arenaPetButtons[i]
 end
 
-local init
+local init, previousLayout
 local function RaidFrame_UpdateLayout(layout, which)
     if Cell.vars.groupType ~= "raid" and init then return end
     init = true
+
+    if previousLayout == layout and not which then return end
+    previousLayout = layout
 
     layout = CellDB["layouts"][layout]
 

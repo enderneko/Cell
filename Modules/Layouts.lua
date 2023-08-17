@@ -1687,9 +1687,8 @@ LoadAutoSwitchDropdowns = function()
             ["value"] = value,
             ["onClick"] = function()
                 Cell.vars.layoutAutoSwitch[autoSwitchIndex]["party"] = value
-                if not Cell.vars.inBattleground and (Cell.vars.groupType == "solo" or Cell.vars.groupType == "party") then
-                    F:UpdateLayout("party")
-                    Cell:Fire("UpdateIndicators")
+                if Cell.vars.layoutGroupType == "party" then
+                    F:UpdateLayout("party", true)
                     LoadLayoutDB(Cell.vars.currentLayout)
                     UpdateButtonStates()
                     -- UpdateEnabledLayoutText()
@@ -1707,9 +1706,8 @@ LoadAutoSwitchDropdowns = function()
             ["value"] = value,
             ["onClick"] = function()
                 Cell.vars.layoutAutoSwitch[autoSwitchIndex]["raid_outdoor"] = value
-                if not Cell.vars.inBattleground and not Cell.vars.inInstance and Cell.vars.groupType == "raid" then
-                    F:UpdateLayout("raid_outdoor")
-                    Cell:Fire("UpdateIndicators")
+                if Cell.vars.layoutGroupType == "raid_outdoor" then
+                    F:UpdateLayout("raid_outdoor", true)
                     LoadLayoutDB(Cell.vars.currentLayout)
                     UpdateButtonStates()
                     -- UpdateEnabledLayoutText()
@@ -1728,9 +1726,8 @@ LoadAutoSwitchDropdowns = function()
                 ["value"] = value,
                 ["onClick"] = function()
                     Cell.vars.layoutAutoSwitch[autoSwitchIndex]["raid_instance"] = value
-                    if Cell.vars.inInstance and not Cell.vars.inMythic and Cell.vars.groupType == "raid" then
-                        F:UpdateLayout("raid_instance")
-                        Cell:Fire("UpdateIndicators")
+                    if Cell.vars.layoutGroupType == "raid_instance" then
+                        F:UpdateLayout("raid_instance", true)
                         LoadLayoutDB(Cell.vars.currentLayout)
                         UpdateButtonStates()
                         -- UpdateEnabledLayoutText()
@@ -1748,9 +1745,8 @@ LoadAutoSwitchDropdowns = function()
                 ["value"] = value,
                 ["onClick"] = function()
                     Cell.vars.layoutAutoSwitch[autoSwitchIndex]["raid_mythic"] = value
-                    if Cell.vars.inMythic and Cell.vars.groupType == "raid" then
-                        F:UpdateLayout("raid_mythic")
-                        Cell:Fire("UpdateIndicators")
+                    if Cell.vars.layoutGroupType == "raid_mythic" then
+                        F:UpdateLayout("raid_mythic", true)
                         LoadLayoutDB(Cell.vars.currentLayout)
                         UpdateButtonStates()
                         -- UpdateEnabledLayoutText()
@@ -1769,9 +1765,8 @@ LoadAutoSwitchDropdowns = function()
                 ["value"] = value,
                 ["onClick"] = function()
                     Cell.vars.layoutAutoSwitch[autoSwitchIndex]["raid10"] = value
-                    if not Cell.vars.inBattleground and Cell.vars.groupType == "raid" and  Cell.vars.raidType == "raid10" then
-                        F:UpdateLayout("raid10")
-                        Cell:Fire("UpdateIndicators")
+                    if Cell.vars.layoutGroupType == "raid10" then
+                        F:UpdateLayout("raid10", true)
                         LoadLayoutDB(Cell.vars.currentLayout)
                         UpdateButtonStates()
                         -- UpdateEnabledLayoutText()
@@ -1789,9 +1784,8 @@ LoadAutoSwitchDropdowns = function()
                 ["value"] = value,
                 ["onClick"] = function()
                     Cell.vars.layoutAutoSwitch[autoSwitchIndex]["raid25"] = value
-                    if not Cell.vars.inBattleground and Cell.vars.groupType == "raid" and  Cell.vars.raidType == "raid25" then
-                        F:UpdateLayout("raid25")
-                        Cell:Fire("UpdateIndicators")
+                    if Cell.vars.layoutGroupType == "raid25" then
+                        F:UpdateLayout("raid25", true)
                         LoadLayoutDB(Cell.vars.currentLayout)
                         UpdateButtonStates()
                         -- UpdateEnabledLayoutText()
@@ -1810,9 +1804,8 @@ LoadAutoSwitchDropdowns = function()
             ["value"] = value,
             ["onClick"] = function()
                 Cell.vars.layoutAutoSwitch[autoSwitchIndex]["arena"] = value
-                if Cell.vars.inBattleground == 5 then
-                    F:UpdateLayout("arena")
-                    Cell:Fire("UpdateIndicators")
+                if Cell.vars.layoutGroupType == "arena" then
+                    F:UpdateLayout("arena", true)
                     LoadLayoutDB(Cell.vars.currentLayout)
                     UpdateButtonStates()
                     -- UpdateEnabledLayoutText()
@@ -1830,9 +1823,8 @@ LoadAutoSwitchDropdowns = function()
             ["value"] = value,
             ["onClick"] = function()
                 Cell.vars.layoutAutoSwitch[autoSwitchIndex]["battleground15"] = value
-                if Cell.vars.inBattleground == 15 then
-                    F:UpdateLayout("battleground15")
-                    Cell:Fire("UpdateIndicators")
+                if Cell.vars.layoutGroupType == "battleground15" then
+                    F:UpdateLayout("battleground15", true)
                     LoadLayoutDB(Cell.vars.currentLayout)
                     UpdateButtonStates()
                     -- UpdateEnabledLayoutText()
@@ -1850,9 +1842,8 @@ LoadAutoSwitchDropdowns = function()
             ["value"] = value,
             ["onClick"] = function()
                 Cell.vars.layoutAutoSwitch[autoSwitchIndex]["battleground40"] = value
-                if Cell.vars.inBattleground == 40 then
-                    F:UpdateLayout("battleground40")
-                    Cell:Fire("UpdateIndicators")
+                if Cell.vars.layoutGroupType == "battleground40" then
+                    F:UpdateLayout("battleground40", true)
                     LoadLayoutDB(Cell.vars.currentLayout)
                     UpdateButtonStates()
                     -- UpdateEnabledLayoutText()
@@ -2705,25 +2696,7 @@ Cell:RegisterCallback("UpdateIndicators", "LayoutsTab_UpdateIndicators", UpdateI
 
 local function LayoutImported(name)
     if Cell.vars.currentLayout == name then -- update overwrite
-        if Cell.vars.inBattleground then 
-            if Cell.vars.inBattleground == 5 then
-                F:UpdateLayout("arena")
-            elseif Cell.vars.inBattleground == 15 then
-                F:UpdateLayout("battleground15")
-            elseif Cell.vars.inBattleground == 40 then
-                F:UpdateLayout("battleground40")
-            end
-        else 
-            if Cell.vars.groupType == "solo" or Cell.vars.groupType == "party" then
-                F:UpdateLayout("party")
-            elseif Cell.vars.groupType == "raid" then
-                F:UpdateLayout("raid")
-            end
-        end
-        Cell:Fire("UpdateIndicators")
-        LoadLayoutDB(name)
-        UpdateButtonStates()
-
+        F:UpdateLayout(Cell.vars.layoutGroupType, true)
     else -- load new
         -- update dropdown
         layoutDropdown:AddItem({
@@ -2734,9 +2707,9 @@ local function LayoutImported(name)
             end,
         })
         LoadAutoSwitchDropdowns()
-        LoadLayoutDB(name)
-        UpdateButtonStates()
     end
+    LoadLayoutDB(name)
+    UpdateButtonStates()
 end
 Cell:RegisterCallback("LayoutImported", "LayoutsTab_LayoutImported", LayoutImported)
 

@@ -1245,7 +1245,7 @@ local function CreateSetting_Font(parent)
         settingWidgets["font"] = widget
 
         widget.Update = function()
-            widget.fontTable[1] = widget.font:GetSelected()
+            widget.fontTable[1] = widget.font:GetSelected() or "Cell ".._G.DEFAULT
             widget.fontTable[2] = widget.fontSize:GetValue()
             widget.fontTable[3] =  widget.outline:GetSelected()
             widget.fontTable[4] = widget.anchor:GetSelected()
@@ -1379,7 +1379,7 @@ local function CreateSetting_FontNoOffset(parent)
         settingWidgets["font-noOffset"] = widget
 
         widget.Update = function()
-            widget.fontTable[1] = widget.font:GetSelected()
+            widget.fontTable[1] = widget.font:GetSelected() or "Cell ".._G.DEFAULT
             widget.fontTable[2] = widget.fontSize:GetValue()
             widget.fontTable[3] =  widget.outline:GetSelected()
             widget.func()
@@ -1458,7 +1458,7 @@ local function CreateSetting_Generic_Font(parent, index)
         settingWidgets[index] = widget
 
         widget.Update = function()
-            widget.fontTable[1] = widget.font:GetSelected()
+            widget.fontTable[1] = widget.font:GetSelected() or "Cell ".._G.DEFAULT
             widget.fontTable[2] = widget.fontSize:GetValue()
             widget.fontTable[3] =  widget.outline:GetSelected()
             widget.fontTable[4] = widget.anchor:GetSelected()

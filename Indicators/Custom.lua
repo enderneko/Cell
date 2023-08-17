@@ -15,7 +15,38 @@ local customIndicators = {
 Cell.snippetVars.enabledIndicators = enabledIndicators
 Cell.snippetVars.customIndicators = customIndicators
 
-function I:CreateIndicator(parent, indicatorTable)
+--! init enabledIndicators & customIndicators
+local function UpdateTablesForIndicator(indicatorTable)
+    local indicatorName = indicatorTable["indicatorName"]
+    local auraType = indicatorTable["auraType"]
+
+    -- keep custom indicators in table
+    if indicatorTable["enabled"] then enabledIndicators[indicatorName] = true end
+
+    -- NOTE: icons is different from other custom indicators, more like the Debuffs indicator
+    if indicatorTable["type"] == "icons" then
+        customIndicators[auraType][indicatorName] = {
+            ["auras"] = F:ConvertTable(indicatorTable["auras"]), -- auras to match
+            ["isIcons"] = true,
+            ["found"] = {},
+            ["num"] = indicatorTable["num"],
+            -- ["castByMe"]
+        }
+    else
+        customIndicators[auraType][indicatorName] = {
+            ["auras"] = F:ConvertTable(indicatorTable["auras"]), -- auras to match
+            ["top"] = {}, -- top aura details
+            ["topOrder"] = {}, -- top aura order
+            -- ["castByMe"]
+        }
+    end
+
+    if auraType == "buff" then
+        customIndicators[auraType][indicatorName]["castByMe"] = indicatorTable["castByMe"]
+    end
+end
+
+function I:CreateIndicator(parent, indicatorTable, noTableUpdate)
     local indicatorName = indicatorTable["indicatorName"]
     local indicator
     if indicatorTable["type"] == "icon" then
@@ -35,33 +66,8 @@ function I:CreateIndicator(parent, indicatorTable)
     end
     parent.indicators[indicatorName] = indicator
     
-    --! init enabledIndicators & customIndicators
-    local auraType = indicatorTable["auraType"]
-    if parent ~= CellIndicatorsPreviewButton and not customIndicators[auraType][indicatorName] then
-        -- keep custom indicators in table
-        if indicatorTable["enabled"] then enabledIndicators[indicatorName] = true end
-
-        -- NOTE: icons is different from other custom indicators, more like the Debuffs indicator
-        if indicatorTable["type"] == "icons" then
-            customIndicators[auraType][indicatorName] = {
-                ["auras"] = F:ConvertTable(indicatorTable["auras"]), -- auras to match
-                ["isIcons"] = true,
-                ["found"] = {},
-                ["num"] = indicatorTable["num"],
-                -- ["castByMe"]
-            }
-        else
-            customIndicators[auraType][indicatorName] = {
-                ["auras"] = F:ConvertTable(indicatorTable["auras"]), -- auras to match
-                ["top"] = {}, -- top aura details
-                ["topOrder"] = {}, -- top aura order
-                -- ["castByMe"]
-            }
-        end
-
-        if auraType == "buff" then
-            customIndicators[auraType][indicatorName]["castByMe"] = indicatorTable["castByMe"]
-        end
+    if not noTableUpdate then
+        UpdateTablesForIndicator(indicatorTable)
     end
 
     return indicator
@@ -92,6 +98,18 @@ function I:RemoveAllCustomIndicators(parent)
             indicator:SetParent(nil)
             parent.indicators[indicatorName] = nil
         end
+    end
+end
+
+function I:ResetCustomIndicatorTables()
+    -- clear
+    wipe(enabledIndicators)
+    wipe(customIndicators["buff"])
+    wipe(customIndicators["debuff"])
+
+    -- update customs
+    for i = Cell.defaults.builtIns + 1, #Cell.vars.currentLayoutTable.indicators do
+        UpdateTablesForIndicator(Cell.vars.currentLayoutTable.indicators[i])
     end
 end
 
