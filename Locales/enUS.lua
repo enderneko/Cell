@@ -81,6 +81,17 @@ select(2, ...).L = setmetatable({
         <h1>Try disabling code snippets, if Cell doesn't work after update.</h1>
         <br/>
 
+        <h1>r190-beta (Aug 18, 2023, 21:30 GMT+8)</h1>
+        <p>! This is a beta version. If you want to revert to previous version, use the macro in Cell/CHANGELOG.md.</p>
+        <p>+ New indicator: Crowd Controls (Retail).</p>
+        <p>* Updated Layout Auto Switch, now support spec profile (Retail).</p>
+        <p>* Optimized UNIT_AURA related functions.</p>
+        <p>* Fixed indicators issues with Spotlight frames.</p>
+        <p>* Updated Quick Cast, Spell Request.</p>
+        <p>* Updated raid setup tooltip.</p>
+        <p>* Update zhTW.</p>
+        <br/>
+
         <h1>r189-release (Aug 9, 2023, 08:27 GMT+8)</h1>
         <p>* Fixed custom indicators: Color and Texture.</p>
         <br/>
