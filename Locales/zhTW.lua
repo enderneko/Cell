@@ -120,8 +120,7 @@ L["Create new debuff (id)"] = "建立新的減益 (法術 ID)"
 L["Create new indicator"] = "建立新的指示器"
 L["Create new layout"] = "建立新的版面配置"
 L["Create several buttons for quick casting and buff monitoring"] = "建立幾個快速施法按鈕，並具有簡單的增益監控功能"
---[[Translation missing --]]
---[[ L["Crowd Controls"] = ""--]] 
+L["Crowd Controls"] = "群體控制"
 L["Current"] = "目前為"
 L["Current Boss"] = "當前首領"
 L["Current Profile"] = "目前設定檔"
@@ -357,8 +356,8 @@ L["Party"] = "隊伍"
 L["Patrons"] = "贊助"
 L["PENDING"] = "等候"
 L["Percentage"] = "百分比"
-L["Pet"] = "寵物"
 L["PET"] = "寵物"
+L["Pet"] = "寵物"
 L["Pixel"] = "像素"
 L["Pixel Perfect"] = "完美細緻模式"
 L["Play Icon Animation When"] = "播放圖示動畫於"
@@ -410,8 +409,7 @@ L["RESET"] = "從非常舊的版本更新之後，需要重置 Cell"
 L["Reset All"] = "全部重置"
 L["reset all Cell settings"] = "重置 Cell 的全部設定"
 L["reset all Click-Castings"] = "重置滑鼠點擊施法的全部設定"
---[[Translation missing --]]
---[[ L["reset all Code Snippets"] = ""--]] 
+L["reset all Code Snippets"] = "重置所有程式碼片段"
 L["reset all Layouts and Indicators"] = "重置版面配置和指示器的全部設定"
 L["reset all Raid Debuffs"] = "重置全部的團隊減益"
 L["reset Cell position"] = "重置 Cell 的位置"
@@ -430,6 +428,8 @@ L["RIGHT"] = "右"
 L["Right-Click"] = "右鍵"
 L["Right-Drag"] = "右鍵拖曳"
 L["right-to-left"] = "從右到左"
+--[[Translation missing --]]
+--[[ L["Role"] = ""--]] 
 L["Role Icon"] = "角色職責圖示"
 L["Rotate Texture"] = "旋轉材質"
 L["Rotation"] = "旋轉"
@@ -481,6 +481,8 @@ L["Solid"] = "單色"
 L["Solo/Party"] = "單人/5人隊伍"
 L["Sort By Role (Party Only)"] = "依角色職責排序 (僅限小隊)"
 L["Spacing"] = "間距"
+--[[Translation missing --]]
+--[[ L["Spec"] = ""--]] 
 L["Special Thanks"] = "特別感謝"
 L["SPELL"] = "法術"
 L["Spell"] = "法術"
@@ -491,8 +493,7 @@ L["SpellId and BuffId are the same in most cases"] = "大部分情況下法術ID
 L["Spells"] = "法術"
 L["Spotlight"] = "特別關注"
 L["Spotlight Frame"] = "特別關注框架"
---[[Translation missing --]]
---[[ L["Spotlight frames are not supported"] = ""--]] 
+L["Spotlight frames are not supported"] = "不支援特別關注框架"
 L["spotlightTips"] = "左鍵: |cffffffff選單|r\n右鍵: |cffffffff清除|r\n左鍵拖曳: |cffffffff設為目標單位 (非戰鬥中)|r\n右鍵拖曳: |cffffffff設為目標單位的寵物 (非戰鬥中)|r"
 L["stackFont"] = "層數字體"
 L["Status Icon"] = "狀態圖示"
@@ -551,8 +552,7 @@ L["Translit Cyrillic to Latin"] = "將俄文轉換成英文"
 L["Type"] = "類型"
 L["Type: "] = "類型:"
 L["Unaffected"] = "未獲得此增益"
---[[Translation missing --]]
---[[ L["Uncategorized"] = ""--]] 
+L["Uncategorized"] = "未分類"
 L["Unit"] = "單位"
 L["Unit Button"] = "單位按鈕"
 L["Unit Button Style"] = "單位按鈕樣式"
@@ -569,6 +569,8 @@ L["Use CLEU events to increase health update rate"] = "使用戰鬥記錄事件�
 L["Use common profile"] = "使用共用設定檔"
 L["Use Same Arrangement As Main"] = "使用與主框架相同的排列"
 L["Use Same Size As Main"] = "使用與主框架相同的大小"
+--[[Translation missing --]]
+--[[ L["use separate profile for current spec"] = ""--]] 
 L["Use separate profile for each spec"] = "每個專精使用不同的設定檔"
 L["Utilities"] = "工具"
 L["VEHICLE"] = "載具"
