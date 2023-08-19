@@ -26,11 +26,26 @@ local classFileToID = {}
 local classIDToFile = {}
 
 do
-    for i = 1, GetNumClasses() do
+    -- WARRIOR = 1,
+    -- PALADIN = 2,
+    -- HUNTER = 3,
+    -- ROGUE = 4,
+    -- PRIEST = 5,
+    -- DEATHKNIGHT = 6,
+    -- SHAMAN = 7,
+    -- MAGE = 8,
+    -- WARLOCK = 9,
+    -- MONK = 10,
+    -- DRUID = 11,
+    -- DEMONHUNTER = 12,
+    -- EVOKER = 13,
+    for i = 1, GetNumClasses() do --! returns the highest class ID
         local classFile = select(2, GetClassInfo(i))
-        tinsert(sortedClasses, classFile)
-        classFileToID[classFile] = i
-        classIDToFile[i] = classFile
+        if classFile then --! returns nil for classes that don't exist in Classic.
+            tinsert(sortedClasses, classFile)
+            classFileToID[classFile] = i
+            classIDToFile[i] = classFile
+        end
     end
     sort(sortedClasses)
 end
