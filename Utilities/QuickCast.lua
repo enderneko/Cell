@@ -835,7 +835,7 @@ local function QuickCast_UpdateInRange(self, ir)
     if ir then
         A:FrameFadeIn(self, 0.25, self:GetAlpha(), 1)
     else
-        A:FrameFadeOut(self, 0.25, self:GetAlpha(), 0.4)
+        A:FrameFadeOut(self, 0.25, self:GetAlpha(), 0.25)
     end
 end
 
@@ -1143,7 +1143,7 @@ CreateQuickCastButton = function(parent, name, isPreview)
             b:RegisterEvent("UNIT_SPELLCAST_SUCCEEDED")
             b:SetGlowCastCooldown()
 
-            --! check dead
+            --! check dead / offline
             b:RegisterEvent("UNIT_FLAGS")
             QuickCast_UpdateStatus(b)
         else
