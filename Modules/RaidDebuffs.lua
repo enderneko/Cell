@@ -39,6 +39,10 @@ local encounterJournalList = {
     --     },
     -- },
 }
+--@debug@
+Cell_expansionData = encounterJournalList
+Cell_expansionNames = {}
+--@end-debug@
 
 -- used to GetInstanceInfo/GetRealZoneText --> instanceId
 local instanceNameMapping = {
@@ -96,6 +100,9 @@ local function LoadList()
     for tier = 1, num do
         local name = EJ_GetTierInfo(tier)
         encounterJournalList[name] = {}
+        --@debug@
+        tinsert(Cell_expansionNames, 1, name)
+        --@end-debug@
 
         if tier ~= num then -- don't load raid for "Mythic+ Dungeon"
             LoadInstanceList(tier, "raid", encounterJournalList[name])
@@ -290,7 +297,6 @@ local function UpdateRaidDebuffs()
     LoadList()
     -- LoadDungeonsForCurrentSeason()
     LoadDebuffs()
-    -- DevInstanceList = F:Copy(encounterJournalList["暗影国度"])
 end
 Cell:RegisterCallback("UpdateRaidDebuffs", "RaidDebuffsTab_UpdateRaidDebuffs", UpdateRaidDebuffs)
 
