@@ -93,6 +93,72 @@ end
 local indicatorsInitialized
 local previousLayout = {}
 
+local function ResetIndicatorTables()
+    wipe(enabledIndicators)
+    wipe(indicatorNums)
+
+    for _, t in pairs(Cell.vars.currentLayoutTable["indicators"]) do
+        -- update enabled
+        if t["enabled"] then
+            enabledIndicators[t["indicatorName"]] = true
+        end
+        -- update num
+        if t["num"] then
+            indicatorNums[t["indicatorName"]] = t["num"]
+        end
+        -- update statusIcon
+        if t["indicatorName"] == "statusIcon" then
+            I:EnableStatusIcon(t["enabled"])
+        end
+        -- update aoehealing
+        if t["indicatorName"] == "aoeHealing" then
+            I:EnableAoEHealing(t["enabled"])
+        end
+        -- update targetCounter
+        if t["indicatorName"] == "targetCounter" then
+            I:EnableTargetCounter(t["enabled"])
+        end
+        -- update targetedSpells
+        if t["indicatorName"] == "targetedSpells" then
+            I:EnableTargetedSpells(t["enabled"])
+            I:ShowAllTargetedSpells(t["showAllSpells"])
+        end
+        -- update consumables
+        if t["indicatorName"] == "consumables" then
+            I:EnableConsumables(t["enabled"])
+        end
+        -- update healthThresholds
+        if t["indicatorName"] == "healthThresholds" then
+            I:UpdateHealthThresholds()
+        end
+        -- update missingBuffs
+        if t["indicatorName"] == "missingBuffs" then
+            I:UpdateMissingBuffsNum(t["num"], true)
+            I:UpdateMissingBuffsFilter(t["buffByMe"], true)
+            I:EnableMissingBuffs(t["enabled"])
+        end
+        -- update custom
+        if t["dispellableByMe"] ~= nil then
+            indicatorCustoms[t["indicatorName"]] = t["dispellableByMe"]
+        end
+        -- if t["castByMe"] ~= nil then
+        --     indicatorCustoms[t["indicatorName"]] = t["castByMe"]
+        -- end
+        if t["hideIfEmptyOrFull"] ~= nil then
+            indicatorCustoms[t["indicatorName"]] = t["hideIfEmptyOrFull"]
+        end
+        if t["onlyShowTopGlow"] ~= nil then
+            indicatorCustoms[t["indicatorName"]] = t["onlyShowTopGlow"]
+        end
+        if t["hideInCombat"] ~= nil then
+            indicatorCustoms[t["indicatorName"]] = t["hideInCombat"]
+        end
+        if t["onlyShowOvershields"] ~= nil then
+            indicatorCustoms[t["indicatorName"]] = t["onlyShowOvershields"]
+        end
+    end
+end
+
 local function UpdateIndicators(layout, indicatorName, setting, value, value2)
     F:Debug("|cffff7777UpdateIndicators:|r ", layout, indicatorName, setting, value, value2)
     
@@ -116,74 +182,14 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
         if previousLayout[Cell.vars.layoutGroupType] == Cell.vars.currentLayout then
             F:Debug("NO UPDATE: only reset custom indicator tables")
             I:ResetCustomIndicatorTables()
+            ResetIndicatorTables()
             return
         end
     end
     previousLayout[Cell.vars.layoutGroupType] = Cell.vars.currentLayout
 
     if not indicatorName then -- init
-        wipe(enabledIndicators)
-        wipe(indicatorNums)
-
-        for _, t in pairs(Cell.vars.currentLayoutTable["indicators"]) do
-            -- update enabled
-            if t["enabled"] then
-                enabledIndicators[t["indicatorName"]] = true
-            end
-            -- update num
-            if t["num"] then
-                indicatorNums[t["indicatorName"]] = t["num"]
-            end
-            -- update statusIcon
-            if t["indicatorName"] == "statusIcon" then
-                I:EnableStatusIcon(t["enabled"])
-            end
-            -- update aoehealing
-            if t["indicatorName"] == "aoeHealing" then
-                I:EnableAoEHealing(t["enabled"])
-            end
-            -- update targetCounter
-            if t["indicatorName"] == "targetCounter" then
-                I:EnableTargetCounter(t["enabled"])
-            end
-            -- update targetedSpells
-            if t["indicatorName"] == "targetedSpells" then
-                I:EnableTargetedSpells(t["enabled"])
-            end
-            -- update consumables
-            if t["indicatorName"] == "consumables" then
-                I:EnableConsumables(t["enabled"])
-            end
-            -- update healthThresholds
-            if t["indicatorName"] == "healthThresholds" then
-                I:UpdateHealthThresholds()
-            end
-            -- update missingBuffs
-            if t["indicatorName"] == "missingBuffs" then
-                I:UpdateMissingBuffsNum(t["num"], true)
-                I:UpdateMissingBuffsFilter(t["buffByMe"], true)
-                I:EnableMissingBuffs(t["enabled"])
-            end
-            -- update custom
-            if t["dispellableByMe"] ~= nil then
-                indicatorCustoms[t["indicatorName"]] = t["dispellableByMe"]
-            end
-            -- if t["castByMe"] ~= nil then
-            --     indicatorCustoms[t["indicatorName"]] = t["castByMe"]
-            -- end
-            if t["hideIfEmptyOrFull"] ~= nil then
-                indicatorCustoms[t["indicatorName"]] = t["hideIfEmptyOrFull"]
-            end
-            if t["onlyShowTopGlow"] ~= nil then
-                indicatorCustoms[t["indicatorName"]] = t["onlyShowTopGlow"]
-            end
-            if t["hideInCombat"] ~= nil then
-                indicatorCustoms[t["indicatorName"]] = t["hideInCombat"]
-            end
-            if t["onlyShowOvershields"] ~= nil then
-                indicatorCustoms[t["indicatorName"]] = t["onlyShowOvershields"]
-            end
-        end
+        ResetIndicatorTables()
 
         -- update indicators
         F:IterateAllUnitButtons(function(b)
@@ -601,6 +607,8 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                     b.indicators[indicatorName]:SetFadeOut(value2)
                     UnitButton_UpdateAuras(b)
                 end, true)
+            elseif value == "showAllSpells" then
+                I:ShowAllTargetedSpells(value2)
             else
                 indicatorCustoms[indicatorName] = value2
             end

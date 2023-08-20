@@ -513,6 +513,8 @@ L["hideInCombat"] = "战斗中隐藏"
 L["fadeOut"] = "随时间淡出"
 L["shieldByMe"] = "只显示我施放的真言术：盾"
 L["onlyShowOvershields"] = "只显示超过血量上限的护盾"
+L["showAllSpells"] = "显示所有法术"
+L["Glow is only available to the spells in the list below"] = "发光仅对列表的中的法术有效"
 L["Uncategorized"] = "未分类"
 
 L["left-to-right"] = "从左到右"

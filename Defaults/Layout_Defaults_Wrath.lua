@@ -374,11 +374,11 @@ Cell.defaults.layout = {
             ["indicatorName"] = "targetedSpells",
             ["type"] = "built-in",
             ["enabled"] = true,
+            ["showAllSpells"] = false,
             ["position"] = {"CENTER", "TOPLEFT", 7, -7},
             ["frameLevel"] = 50,
             ["size"] = {20, 20},
             ["border"] = 2,
-            -- ["glow"] = {"Pixel", {0.95,0.95,0.32,1}, 9, 0.25, 8, 2},
             ["font"] = {"Cell ".._G.DEFAULT, 12, "Outline", "TOPRIGHT", 2, 1, {1, 1, 1}},
         }, -- 23
         {

@@ -39,6 +39,7 @@ select(2, ...).L = setmetatable({
     ["fadeOut"] = "Fade out over time",
     ["shieldByMe"] = "Only show PW:S cast by me",
     ["onlyShowOvershields"] = "Only show overshields",
+    ["showAllSpells"] = "Show all spells",
 
     ["BOTTOM"] = "Bottom",
     ["BOTTOMLEFT"] = "Bottom Left",
