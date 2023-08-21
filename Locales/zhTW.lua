@@ -209,6 +209,8 @@ L["Glow"] = "發光"
 L["Glow Buffs"] = "增益發光"
 L["Glow Casts"] = "施法發光"
 L["Glow Color"] = "發光顏色"
+--[[Translation missing --]]
+--[[ L["Glow is only available to the spells in the list below"] = ""--]] 
 L["Glow Options"] = "發光選項"
 L["Glow Type"] = "發光類型"
 L["Glow unit button when a group member sends a %s request"] = "當隊伍成員請求%s時，顯著標示他的單位按鈕"
@@ -356,8 +358,8 @@ L["Party"] = "隊伍"
 L["Patrons"] = "贊助"
 L["PENDING"] = "等候"
 L["Percentage"] = "百分比"
-L["PET"] = "寵物"
 L["Pet"] = "寵物"
+L["PET"] = "寵物"
 L["Pixel"] = "像素"
 L["Pixel Perfect"] = "完美細緻模式"
 L["Play Icon Animation When"] = "播放圖示動畫於"
@@ -428,8 +430,7 @@ L["RIGHT"] = "右"
 L["Right-Click"] = "右鍵"
 L["Right-Drag"] = "右鍵拖曳"
 L["right-to-left"] = "從右到左"
---[[Translation missing --]]
---[[ L["Role"] = ""--]] 
+L["Role"] = "角色職責"
 L["Role Icon"] = "角色職責圖示"
 L["Rotate Texture"] = "旋轉材質"
 L["Rotation"] = "旋轉"
@@ -466,6 +467,8 @@ L["Show Solo"] = "單人時要顯示"
 L["Show units you care about more in a separate frame"] = "在單獨的框架中顯示您更關心的單位"
 L["Show while in a party"] = "在隊伍中時顯示"
 L["Show while not in a group"] = "不在隊伍中時顯示"
+--[[Translation missing --]]
+--[[ L["showAllSpells"] = ""--]] 
 L["showDispelTypeIcons"] = "顯示驅散類型圖示"
 L["showDuration"] = "顯示持續時間文字"
 L["showGroupNumber"] = "顯示隊伍編號"
@@ -481,8 +484,7 @@ L["Solid"] = "單色"
 L["Solo/Party"] = "單人/5人隊伍"
 L["Sort By Role (Party Only)"] = "依角色職責排序 (僅限小隊)"
 L["Spacing"] = "間距"
---[[Translation missing --]]
---[[ L["Spec"] = ""--]] 
+L["Spec"] = "專精"
 L["Special Thanks"] = "特別感謝"
 L["SPELL"] = "法術"
 L["Spell"] = "法術"
@@ -569,8 +571,7 @@ L["Use CLEU events to increase health update rate"] = "使用戰鬥記錄事件�
 L["Use common profile"] = "使用共用設定檔"
 L["Use Same Arrangement As Main"] = "使用與主框架相同的排列"
 L["Use Same Size As Main"] = "使用與主框架相同的大小"
---[[Translation missing --]]
---[[ L["use separate profile for current spec"] = ""--]] 
+L["use separate profile for current spec"] = "當前專精使用獨立的設定檔"
 L["Use separate profile for each spec"] = "每個專精使用不同的設定檔"
 L["Utilities"] = "工具"
 L["VEHICLE"] = "載具"
