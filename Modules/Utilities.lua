@@ -28,6 +28,8 @@ function F:ShowUtilityList()
         Cell:StylizeFrame(listFrame, {0,1,0,0.1}, {0,0,0,1})
         listFrame:SetPoint("TOPLEFT", utilitiesTab, "TOPRIGHT", 1, 0)
         listFrame:SetFrameStrata("TOOLTIP")
+        
+        Cell:StylizeFrame(listFrame, nil, Cell:GetAccentColorTable())
 
         -- update width to show full text
         local dumbFS1 = listFrame:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
@@ -35,51 +37,40 @@ function F:ShowUtilityList()
         local dumbFS2 = listFrame:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
         dumbFS2:SetText(L["Dispel Request"])
 
+        -- buttons
+        local buttons = {}
+
+        buttons["raidTools"] = Cell:CreateButton(listFrame, L["Raid Tools"], "transparent-accent", {20, 20}, true)
+        buttons["raidTools"].id = "raidTools"
+        buttons["raidTools"]:SetPoint("TOPLEFT")
+        buttons["raidTools"]:SetPoint("TOPRIGHT")
+        
+        buttons["spellRequest"] = Cell:CreateButton(listFrame, L["Spell Request"], "transparent-accent", {20, 20}, true)
+        buttons["spellRequest"].id = "spellRequest"
+        buttons["spellRequest"]:SetPoint("TOPLEFT", buttons["raidTools"], "BOTTOMLEFT")
+        buttons["spellRequest"]:SetPoint("TOPRIGHT", buttons["raidTools"], "BOTTOMRIGHT")
+        
+        buttons["dispelRequest"] = Cell:CreateButton(listFrame, L["Dispel Request"], "transparent-accent", {20, 20}, true)
+        buttons["dispelRequest"].id = "dispelRequest"
+        buttons["dispelRequest"]:SetPoint("TOPLEFT", buttons["spellRequest"], "BOTTOMLEFT")
+        buttons["dispelRequest"]:SetPoint("TOPRIGHT", buttons["spellRequest"], "BOTTOMRIGHT")
+
         if Cell.isRetail then
+            buttons["quickCast"] = Cell:CreateButton(listFrame, L["Quick Cast"], "transparent-accent", {20, 20}, true)
+            buttons["quickCast"].id = "quickCast"
+            buttons["quickCast"]:SetPoint("TOPLEFT", buttons["dispelRequest"], "BOTTOMLEFT")
+            buttons["quickCast"]:SetPoint("TOPRIGHT", buttons["dispelRequest"], "BOTTOMRIGHT")
             P:Size(listFrame, ceil(max(dumbFS1:GetStringWidth(), dumbFS2:GetStringWidth())) + 13, 20*4)
         else
             P:Size(listFrame, ceil(max(dumbFS1:GetStringWidth(), dumbFS2:GetStringWidth())) + 13, 20*3)
         end
-        Cell:StylizeFrame(listFrame, nil, Cell:GetAccentColorTable())
 
-        -- buttons
-        local raidToolsBtn = Cell:CreateButton(listFrame, L["Raid Tools"], "transparent-accent", {20, 20}, true)
-        raidToolsBtn:SetPoint("TOPLEFT")
-        raidToolsBtn:SetPoint("TOPRIGHT")
-        raidToolsBtn:SetScript("OnClick", function()
-            lastShown = "raidTools"
-            Cell:Fire("ShowUtilitySettings", "raidTools")
+        local highlight = Cell:CreateButtonGroup({buttons["raidTools"], buttons["spellRequest"], buttons["dispelRequest"], buttons["quickCast"]}, function(id)
+            lastShown = id
+            Cell:Fire("ShowUtilitySettings", id)
             listFrame:Hide()
         end)
-        
-        local spellRequestBtn = Cell:CreateButton(listFrame, L["Spell Request"], "transparent-accent", {20, 20}, true)
-        spellRequestBtn:SetPoint("TOPLEFT", raidToolsBtn, "BOTTOMLEFT")
-        spellRequestBtn:SetPoint("TOPRIGHT", raidToolsBtn, "BOTTOMRIGHT")
-        spellRequestBtn:SetScript("OnClick", function()
-            lastShown = "spellRequest"
-            Cell:Fire("ShowUtilitySettings", "spellRequest")
-            listFrame:Hide()
-        end)
-        
-        local dispelRequestBtn = Cell:CreateButton(listFrame, L["Dispel Request"], "transparent-accent", {20, 20}, true)
-        dispelRequestBtn:SetPoint("TOPLEFT", spellRequestBtn, "BOTTOMLEFT")
-        dispelRequestBtn:SetPoint("TOPRIGHT", spellRequestBtn, "BOTTOMRIGHT")
-        dispelRequestBtn:SetScript("OnClick", function()
-            lastShown = "dispelRequest"
-            Cell:Fire("ShowUtilitySettings", "dispelRequest")
-            listFrame:Hide()
-        end)
-
-        if Cell.isRetail then
-            local quickCastBtn = Cell:CreateButton(listFrame, L["Quick Cast"], "transparent-accent", {20, 20}, true)
-            quickCastBtn:SetPoint("TOPLEFT", dispelRequestBtn, "BOTTOMLEFT")
-            quickCastBtn:SetPoint("TOPRIGHT", dispelRequestBtn, "BOTTOMRIGHT")
-            quickCastBtn:SetScript("OnClick", function()
-                lastShown = "quickCast"
-                Cell:Fire("ShowUtilitySettings", "quickCast")
-                listFrame:Hide()
-            end)
-        end
+        highlight("raidTools")
     end
 
     listFrame:Show()
