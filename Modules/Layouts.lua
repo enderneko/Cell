@@ -2765,6 +2765,8 @@ layoutsTab:SetScript("OnHide", function()
     if layoutsTab:IsShown() then
         layoutsTab:SetScript("OnShow", function()
             LoadLayoutDB(Cell.vars.currentLayout)
+            LoadLayoutAutoSwitchDB()
+            UpdateButtonStates()
         end)
     else
         layoutsTab:SetScript("OnShow", nil)
