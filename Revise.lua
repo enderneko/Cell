@@ -2230,6 +2230,56 @@ function F:Revise()
         end
     end
 
+    --! update from old versions, validate all indicators
+    if CellDB["revise"] and CellDB["revise"] ~=  Cell.version then
+        for layoutName, layout in pairs(CellDB["layouts"]) do
+            local toValidate = F:Copy(Cell.defaults.indicatorIndices)
+            local temp = {}
+            
+            -- built-ins
+            for i, t in ipairs(layout["indicators"]) do
+                local name = t["indicatorName"]
+                if t["type"] == "built-in" and toValidate[name] then
+                    if i == toValidate[name] then
+                        -- copy valid indicator
+                        -- print(layoutName, "RIGHT", i, name)
+                        tinsert(temp, t)
+                    else
+                        -- search for correct indicator
+                        local found
+                        for j = i, #layout["indicators"] do
+                            if name == layout["indicators"][j]["indicatorName"] then
+                                -- print(layoutName, "WRONG_FOUND", j, "->", toValidate[name], name)
+                                found = true
+                                tinsert(temp, layout["indicators"][j])
+                                break
+                            end
+                        end
+                        -- not found, copy from Defaults
+                        if not found then
+                            -- print(layoutName, "WRONG_NOT_FOUND", i, name)
+                            tinsert(temp, Cell.defaults.layout.indicators[toValidate[name]])
+                        end
+                    end
+                    -- remove validated
+                    toValidate[name] = nil
+                end
+            end
+            
+            -- customs
+            local index = 1
+            for i, t in ipairs(layout["indicators"]) do
+                if t["type"] ~= "built-in" then
+                    t["indicatorName"] = "indicator"..index
+                    tinsert(temp, t)
+                    index = index + 1
+                end
+            end
+
+            layout["indicators"] = temp
+        end
+    end
+
     CellDB["revise"] = Cell.version
     if Cell.isWrath then
         CellCharacterDB["revise"] = Cell.version
