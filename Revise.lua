@@ -2199,7 +2199,7 @@ function F:Revise()
         end
     end
 
-    -- r190-release
+    -- r190-beta
     if CellDB["revise"] and dbRevision < 190 then
         if not strfind(CellDB["snippets"][0]["code"], "CELL_TOOLTIP_REMOVE_RAID_SETUP_DETAILS") then
             CellDB["snippets"][0]["code"] = CellDB["snippets"][0]["code"].."\n\n-- remove raid setup details from the tooltip of the Raid button (boolean)\nCELL_TOOLTIP_REMOVE_RAID_SETUP_DETAILS = false"
@@ -2230,7 +2230,26 @@ function F:Revise()
         end
     end
 
-    --! update from old versions, validate all indicators
+    -- r192-release
+    if CellDB["revise"] and dbRevision < 192 then
+        if Cell.isRetail then
+            for c, ct in pairs(CellDB["quickCast"]) do
+                for s, st in pairs(ct) do
+                    if not st["enabled"] and st["outerBuff"] == 0 and st["innerBuff"] == 0 then
+                        ct[s] = nil
+                    end
+                end
+
+                if F:Getn(ct) == 0 then
+                    CellDB["quickCast"][c] = nil
+                end
+            end
+        end
+    end
+
+    -- ----------------------------------------------------------------------- --
+    --            update from old versions, validate all indicators            --
+    -- ----------------------------------------------------------------------- --
     if CellDB["revise"] and CellDB["revise"] ~=  Cell.version then
         for layoutName, layout in pairs(CellDB["layouts"]) do
             local toValidate = F:Copy(Cell.defaults.indicatorIndices)

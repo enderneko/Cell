@@ -796,7 +796,7 @@ function SlashCmdList.CELL(msg, editbox)
             ReloadUI()
 
         elseif rest == "clickcastings" then
-            CellDB["clickCastings"] = nil
+            CellCharacterDB["clickCastings"] = nil
             ReloadUI()
         
         elseif rest == "raiddebuffs" then

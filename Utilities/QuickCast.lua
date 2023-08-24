@@ -12,6 +12,25 @@ local LCG = LibStub("LibCustomGlow-1.0")
 local quickCastTable
 local UpdatePreview, CreateQuickCastButton
 
+local defaultQuickCastTable = {
+    ["enabled"] = false,
+    ["namePosition"] = "RIGHT",
+    ["num"] = 4,
+    ["orientation"] = "top-to-bottom",
+    ["size"] = 25,
+    ["spacing"] = 3,
+    ["glowBuffsColor"] = {1, 1, 0, 1},
+    ["glowBuffs"] = {},
+    ["glowCastsColor"] = {1, 0, 1, 1},
+    ["glowCasts"] = {},
+    ["outerColor"] = {0.11, 0.74, 0.9},
+    ["outerBuff"] = 0,
+    ["innerColor"] = {0.95, 0.32, 0.37},
+    ["innerBuff"] = 0,
+    ["units"] = {},
+    ["position"] = {},
+}
+
 -- ----------------------------------------------------------------------- --
 --                              option widgets                             --
 -- ----------------------------------------------------------------------- --
@@ -55,9 +74,18 @@ local function CreateQCPane()
 
     -- enabled ----------------------------------------------------------------------
     qcEnabledCB = Cell:CreateCheckButton(qcPane, L["Enabled"], function(checked, self)
-        quickCastTable["enabled"] = checked
-        UpdateWidgets()
+        if not CellDB["quickCast"][Cell.vars.playerClass] then
+            CellDB["quickCast"][Cell.vars.playerClass] = {}
+        end
+        
+        if not CellDB["quickCast"][Cell.vars.playerClass][Cell.vars.playerSpecID] then
+            CellDB["quickCast"][Cell.vars.playerClass][Cell.vars.playerSpecID] = F:Copy(defaultQuickCastTable)
+        end
+
+        CellDB["quickCast"][Cell.vars.playerClass][Cell.vars.playerSpecID]["enabled"] = checked
+
         Cell:Fire("UpdateQuickCast")
+        UpdateWidgets()
     end)
     qcEnabledCB:SetPoint("TOPLEFT", qcPane, 5, -85)
 
@@ -1245,8 +1273,10 @@ end
 --                                callbacks                                --
 -- ----------------------------------------------------------------------- --
 local function UpdateQuickCast()
-    if not quickCastTable then
+    if CellDB["quickCast"][Cell.vars.playerClass] and CellDB["quickCast"][Cell.vars.playerClass][Cell.vars.playerSpecID] then
         quickCastTable = CellDB["quickCast"][Cell.vars.playerClass][Cell.vars.playerSpecID]
+    else
+        quickCastTable = defaultQuickCastTable
     end
 
     -- prepare others
@@ -1339,10 +1369,9 @@ end
 Cell:RegisterCallback("UpdateQuickCast", "QuickCast_UpdateQuickCast", UpdateQuickCast)
 
 local function SpecChanged()
-    quickCastTable = CellDB["quickCast"][Cell.vars.playerClass][Cell.vars.playerSpecID]
+    UpdateQuickCast()
     if init and qcPane:IsShown() then
         LoadDB()
     end
-    UpdateQuickCast()
 end
 Cell:RegisterCallback("SpecChanged", "QuickCast_SpecChanged", SpecChanged)

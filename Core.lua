@@ -312,39 +312,6 @@ function eventFrame:ADDON_LOADED(arg1)
         -- quickCast ------------------------------------------------------------------------------
         if type(CellDB["quickCast"]) ~= "table" then CellDB["quickCast"] = {} end
 
-        if type(CellDB["quickCast"][Cell.vars.playerClass]) ~= "table" then
-            CellDB["quickCast"][Cell.vars.playerClass] = {}
-
-            -- https://wow.gamepedia.com/SpecializationID
-            local indices = {}
-            for i = 1, GetNumSpecializationsForClassID(Cell.vars.playerClassID) do
-                tinsert(indices, i)
-            end
-            tinsert(indices, 5) -- "Initials" (no spec)
-            
-            for _, sepcIndex in pairs(indices) do
-                local specID = GetSpecializationInfoForClassID(Cell.vars.playerClassID, sepcIndex)
-                CellDB["quickCast"][Cell.vars.playerClass][specID] = {
-                    ["enabled"] = false,
-                    ["namePosition"] = "RIGHT",
-                    ["num"] = 4,
-                    ["orientation"] = "top-to-bottom",
-                    ["size"] = 25,
-                    ["spacing"] = 3,
-                    ["glowBuffsColor"] = {1, 1, 0, 1},
-                    ["glowBuffs"] = {},
-                    ["glowCastsColor"] = {1, 0, 1, 1},
-                    ["glowCasts"] = {},
-                    ["outerColor"] = {0.11, 0.74, 0.9},
-                    ["outerBuff"] = 0,
-                    ["innerColor"] = {0.95, 0.32, 0.37},
-                    ["innerBuff"] = 0,
-                    ["units"] = {},
-                    ["position"] = {},
-                }
-            end
-        end
-        
         -- appearance -----------------------------------------------------------------------------
         if type(CellDB["appearance"]) ~= "table" then
             -- get recommended scale
