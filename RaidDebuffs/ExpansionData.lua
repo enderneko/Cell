@@ -2,7 +2,7 @@
 -- File: Cell\RaidDebuffs\ExpansionData.lua
 -- Author: enderneko (enderneko-dev@outlook.com)
 -- Created : 2022-08-26 04:40:40 +08:00
--- Modified: 2023-08-20 19:58:25 +08:00
+-- Modified: 2023-08-24 17:57:36 +08:00
 ---------------------------------------------------------------------
 
 local _, Cell = ...
@@ -6389,12 +6389,12 @@ data.frFR = {
                 {
                     ["id"] = 2378,
                     ["image"] = 3284400,
-                    ["name"] = "Grande impératrice Shek’zara",
+                    ["name"] = "Grande impératrice Shek'zara",
                 }, -- [1]
                 {
                     ["id"] = 2381,
                     ["image"] = 3284401,
-                    ["name"] = "Vuk’laz le Brise-Terre",
+                    ["name"] = "Vuk'laz le Brise-Terre",
                 }, -- [2]
                 {
                     ["id"] = 2363,
@@ -6404,7 +6404,7 @@ data.frFR = {
                 {
                     ["id"] = 2362,
                     ["image"] = 3012061,
-                    ["name"] = "Ulmath, le Lieur d’âmes",
+                    ["name"] = "Ulmath, le Lieur d'âmes",
                 }, -- [4]
                 {
                     ["id"] = 2329,
@@ -6419,12 +6419,12 @@ data.frFR = {
                 {
                     ["id"] = 2139,
                     ["image"] = 2176755,
-                    ["name"] = "T’zane",
+                    ["name"] = "T'zane",
                 }, -- [7]
                 {
                     ["id"] = 2141,
                     ["image"] = 2176734,
-                    ["name"] = "Ji’arak",
+                    ["name"] = "Ji'arak",
                 }, -- [8]
                 {
                     ["id"] = 2197,
@@ -6471,7 +6471,7 @@ data.frFR = {
                 {
                     ["id"] = 2169,
                     ["image"] = 2176761,
-                    ["name"] = "Zek’voz, héraut de N’Zoth",
+                    ["name"] = "Zek'voz, héraut de N'Zoth",
                 }, -- [4]
                 {
                     ["id"] = 2166,
@@ -6491,14 +6491,14 @@ data.frFR = {
                 {
                     ["id"] = 2147,
                     ["image"] = 2176728,
-                    ["name"] = "G’huun",
+                    ["name"] = "G'huun",
                 }, -- [8]
             },
         }, -- [2]
         {
             ["id"] = 1176,
             ["image"] = 2482729,
-            ["name"] = "Bataille de Dazar’alor",
+            ["name"] = "Bataille de Dazar'alor",
             ["bosses"] = {
                 {
                     ["id"] = 2333,
@@ -6560,7 +6560,7 @@ data.frFR = {
                 {
                     ["id"] = 2332,
                     ["image"] = 2497794,
-                    ["name"] = "Uu’nat, héraut du Vide",
+                    ["name"] = "Uu'nat, héraut du Vide",
                 }, -- [2]
             },
         }, -- [4]
@@ -6582,7 +6582,7 @@ data.frFR = {
                 {
                     ["id"] = 2353,
                     ["image"] = 3012058,
-                    ["name"] = "Radiance d’Azshara",
+                    ["name"] = "Radiance d'Azshara",
                 }, -- [3]
                 {
                     ["id"] = 2354,
@@ -6602,7 +6602,7 @@ data.frFR = {
                 {
                     ["id"] = 2349,
                     ["image"] = 3012064,
-                    ["name"] = "Za’qul, héraut de Ny’alotha",
+                    ["name"] = "Za'qul, héraut de Ny'alotha",
                 }, -- [7]
                 {
                     ["id"] = 2361,
@@ -6614,12 +6614,12 @@ data.frFR = {
         {
             ["id"] = 1180,
             ["image"] = 3221463,
-            ["name"] = "Ny’alotha, la cité en éveil",
+            ["name"] = "Ny'alotha, la cité en éveil",
             ["bosses"] = {
                 {
                     ["id"] = 2368,
                     ["image"] = 3256385,
-                    ["name"] = "Irion, l’empereur noir",
+                    ["name"] = "Irion, l'empereur noir",
                 }, -- [1]
                 {
                     ["id"] = 2365,
@@ -6644,17 +6644,17 @@ data.frFR = {
                 {
                     ["id"] = 2367,
                     ["image"] = 3256383,
-                    ["name"] = "Shad’har l’Insatiable",
+                    ["name"] = "Shad'har l'Insatiable",
                 }, -- [6]
                 {
                     ["id"] = 2373,
                     ["image"] = 3256377,
-                    ["name"] = "Drest’agath",
+                    ["name"] = "Drest'agath",
                 }, -- [7]
                 {
                     ["id"] = 2374,
                     ["image"] = 3256379,
-                    ["name"] = "Il’gynoth, la corruption ressuscitée",
+                    ["name"] = "Il'gynoth, la corruption ressuscitée",
                 }, -- [8]
                 {
                     ["id"] = 2370,
@@ -6669,29 +6669,29 @@ data.frFR = {
                 {
                     ["id"] = 2366,
                     ["image"] = 3256376,
-                    ["name"] = "Carapace de N’Zoth",
+                    ["name"] = "Carapace de N'Zoth",
                 }, -- [11]
                 {
                     ["id"] = 2375,
                     ["image"] = 3256381,
-                    ["name"] = "N’Zoth le Corrupteur",
+                    ["name"] = "N'Zoth le Corrupteur",
                 }, -- [12]
             },
         }, -- [6]
         {
             ["id"] = 968,
             ["image"] = 1778892,
-            ["name"] = "Atal’Dazar",
+            ["name"] = "Atal'Dazar",
             ["bosses"] = {
                 {
                     ["id"] = 2082,
                     ["image"] = 1778348,
-                    ["name"] = "Prêtresse Alun’za",
+                    ["name"] = "Prêtresse Alun'za",
                 }, -- [1]
                 {
                     ["id"] = 2036,
                     ["image"] = 1778352,
-                    ["name"] = "Vol’kaal",
+                    ["name"] = "Vol'kaal",
                 }, -- [2]
                 {
                     ["id"] = 2083,
@@ -6740,12 +6740,12 @@ data.frFR = {
                 {
                     ["id"] = 2157,
                     ["image"] = 2176724,
-                    ["name"] = "Leaxa l’Aînée",
+                    ["name"] = "Leaxa l'Aînée",
                 }, -- [1]
                 {
                     ["id"] = 2131,
                     ["image"] = 2176719,
-                    ["name"] = "Gueule-de-pierre l’Infesté",
+                    ["name"] = "Gueule-de-pierre l'Infesté",
                 }, -- [2]
                 {
                     ["id"] = 2130,
@@ -6814,7 +6814,7 @@ data.frFR = {
                 {
                     ["id"] = 2355,
                     ["image"] = 3012049,
-                    ["name"] = "Unité d’oppression aérienne CT-8",
+                    ["name"] = "Unité d'oppression aérienne CT-8",
                 }, -- [4]
                 {
                     ["id"] = 2336,
@@ -6846,7 +6846,7 @@ data.frFR = {
                 {
                     ["id"] = 2102,
                     ["image"] = 1778351,
-                    ["name"] = "Cap’taine céleste Kragg",
+                    ["name"] = "Cap'taine céleste Kragg",
                 }, -- [1]
                 {
                     ["id"] = 2093,
@@ -6878,7 +6878,7 @@ data.frFR = {
                 {
                     ["id"] = 2171,
                     ["image"] = 2176738,
-                    ["name"] = "Mchimba l’Embaumeur",
+                    ["name"] = "Mchimba l'Embaumeur",
                 }, -- [2]
                 {
                     ["id"] = 2170,
@@ -6900,7 +6900,7 @@ data.frFR = {
                 {
                     ["id"] = 2153,
                     ["image"] = 2176712,
-                    ["name"] = "Aqu’sire",
+                    ["name"] = "Aqu'sire",
                 }, -- [1]
                 {
                     ["id"] = 2154,
@@ -6915,7 +6915,7 @@ data.frFR = {
                 {
                     ["id"] = 2156,
                     ["image"] = 2176759,
-                    ["name"] = "Vol’zith l’Insidieuse",
+                    ["name"] = "Vol'zith l'Insidieuse",
                 }, -- [4]
             },
         }, -- [14]
@@ -6932,7 +6932,7 @@ data.frFR = {
                 {
                     ["id"] = 2173,
                     ["image"] = 2176722,
-                    ["name"] = "Capitaine de l’effroi Boisclos",
+                    ["name"] = "Capitaine de l'effroi Boisclos",
                 }, -- [2]
                 {
                     ["id"] = 2134,
@@ -6942,7 +6942,7 @@ data.frFR = {
                 {
                     ["id"] = 2140,
                     ["image"] = 2176758,
-                    ["name"] = "Viq’Goth",
+                    ["name"] = "Viq'Goth",
                 }, -- [4]
             },
         }, -- [15]
@@ -7045,7 +7045,7 @@ data.frFR = {
                 {
                     ["id"] = 1526,
                     ["image"] = 1378978,
-                    ["name"] = "Golemagg l’Incinérateur",
+                    ["name"] = "Golemagg l'Incinérateur",
                 }, -- [8]
                 {
                     ["id"] = 1527,
@@ -7062,12 +7062,12 @@ data.frFR = {
         {
             ["id"] = 742,
             ["image"] = 1396580,
-            ["name"] = "Repaire de l’Aile noire",
+            ["name"] = "Repaire de l'Aile noire",
             ["bosses"] = {
                 {
                     ["id"] = 1529,
                     ["image"] = 1379008,
-                    ["name"] = "Tranchetripe l’Indompté",
+                    ["name"] = "Tranchetripe l'Indompté",
                 }, -- [1]
                 {
                     ["id"] = 1530,
@@ -7109,7 +7109,7 @@ data.frFR = {
         {
             ["id"] = 743,
             ["image"] = 1396591,
-            ["name"] = "Ruines d’Ahn’Qiraj",
+            ["name"] = "Ruines d'Ahn'Qiraj",
             ["bosses"] = {
                 {
                     ["id"] = 1537,
@@ -7139,14 +7139,14 @@ data.frFR = {
                 {
                     ["id"] = 1542,
                     ["image"] = 1385759,
-                    ["name"] = "Ossirian l’Intouché",
+                    ["name"] = "Ossirian l'Intouché",
                 }, -- [6]
             },
         }, -- [3]
         {
             ["id"] = 744,
             ["image"] = 1396593,
-            ["name"] = "Temple d’Ahn’Qiraj",
+            ["name"] = "Temple d'Ahn'Qiraj",
             ["bosses"] = {
                 {
                     ["id"] = 1543,
@@ -7166,7 +7166,7 @@ data.frFR = {
                 {
                     ["id"] = 1545,
                     ["image"] = 1385728,
-                    ["name"] = "Fankriss l’Inflexible",
+                    ["name"] = "Fankriss l'Inflexible",
                 }, -- [4]
                 {
                     ["id"] = 1548,
@@ -7191,7 +7191,7 @@ data.frFR = {
                 {
                     ["id"] = 1551,
                     ["image"] = 1385726,
-                    ["name"] = "C’Thun",
+                    ["name"] = "C'Thun",
                 }, -- [9]
             },
         }, -- [4]
@@ -7297,7 +7297,7 @@ data.frFR = {
         {
             ["id"] = 64,
             ["image"] = 522358,
-            ["name"] = "Donjon d’Ombrecroc",
+            ["name"] = "Donjon d'Ombrecroc",
             ["bosses"] = {
                 {
                     ["id"] = 96,
@@ -7307,7 +7307,7 @@ data.frFR = {
                 {
                     ["id"] = 97,
                     ["image"] = 522206,
-                    ["name"] = "Baron d’Argelaine",
+                    ["name"] = "Baron d'Argelaine",
                 }, -- [2]
                 {
                     ["id"] = 98,
@@ -7529,7 +7529,7 @@ data.frFR = {
         {
             ["id"] = 237,
             ["image"] = 608217,
-            ["name"] = "Le temple d’Atal’Hakkar",
+            ["name"] = "Le temple d'Atal'Hakkar",
             ["bosses"] = {
                 {
                     ["id"] = 457,
@@ -7640,7 +7640,7 @@ data.frFR = {
                 {
                     ["id"] = 688,
                     ["image"] = 630853,
-                    ["name"] = "Thalnos le Déchiqueteur d’âmes",
+                    ["name"] = "Thalnos le Déchiqueteur d'âmes",
                 }, -- [1]
                 {
                     ["id"] = 671,
@@ -7672,7 +7672,7 @@ data.frFR = {
                 {
                     ["id"] = 426,
                     ["image"] = 522214,
-                    ["name"] = "Subjugateur Kor’ul",
+                    ["name"] = "Subjugateur Kor'ul",
                 }, -- [3]
                 {
                     ["id"] = 1145,
@@ -7811,7 +7811,7 @@ data.frFR = {
                 {
                     ["id"] = 654,
                     ["image"] = 630816,
-                    ["name"] = "Maître d’armes Harlan",
+                    ["name"] = "Maître d'armes Harlan",
                 }, -- [2]
                 {
                     ["id"] = 656,
@@ -8006,7 +8006,7 @@ data.frFR = {
         {
             ["id"] = 241,
             ["image"] = 608230,
-            ["name"] = "Zul’Farrak",
+            ["name"] = "Zul'Farrak",
             ["bosses"] = {
                 {
                     ["id"] = 483,
@@ -8031,7 +8031,7 @@ data.frFR = {
                 {
                     ["id"] = 487,
                     ["image"] = 607723,
-                    ["name"] = "Nekrum et Sezz’ziz",
+                    ["name"] = "Nekrum et Sezz'ziz",
                 }, -- [5]
                 {
                     ["id"] = 489,
@@ -8070,7 +8070,7 @@ data.frFR = {
                 {
                     ["id"] = 1556,
                     ["image"] = 1385758,
-                    ["name"] = "L’Opéra",
+                    ["name"] = "L'Opéra",
                 }, -- [5]
                 {
                     ["id"] = 1557,
@@ -8080,7 +8080,7 @@ data.frFR = {
                 {
                     ["id"] = 1559,
                     ["image"] = 1379012,
-                    ["name"] = "Ombre d’Aran",
+                    ["name"] = "Ombre d'Aran",
                 }, -- [7]
                 {
                     ["id"] = 1560,
@@ -8095,7 +8095,7 @@ data.frFR = {
                 {
                     ["id"] = 1764,
                     ["image"] = 1385724,
-                    ["name"] = "Évènement de l’échiquier",
+                    ["name"] = "Évènement de l'échiquier",
                 }, -- [10]
                 {
                     ["id"] = 1563,
@@ -8141,17 +8141,17 @@ data.frFR = {
                 {
                     ["id"] = 1567,
                     ["image"] = 1385741,
-                    ["name"] = "Hydross l’Instable",
+                    ["name"] = "Hydross l'Instable",
                 }, -- [1]
                 {
                     ["id"] = 1568,
                     ["image"] = 1385768,
-                    ["name"] = "Le Rôdeur d’En bas",
+                    ["name"] = "Le Rôdeur d'En bas",
                 }, -- [2]
                 {
                     ["id"] = 1569,
                     ["image"] = 1385751,
-                    ["name"] = "Leotheras l’Aveugle",
+                    ["name"] = "Leotheras l'Aveugle",
                 }, -- [3]
                 {
                     ["id"] = 1570,
@@ -8173,12 +8173,12 @@ data.frFR = {
         {
             ["id"] = 749,
             ["image"] = 608218,
-            ["name"] = "L’Œil",
+            ["name"] = "L'Œil",
             ["bosses"] = {
                 {
                     ["id"] = 1573,
                     ["image"] = 1385712,
-                    ["name"] = "Al’ar",
+                    ["name"] = "Al'ar",
                 }, -- [1]
                 {
                     ["id"] = 1574,
@@ -8193,7 +8193,7 @@ data.frFR = {
                 {
                     ["id"] = 1576,
                     ["image"] = 607669,
-                    ["name"] = "Kael’thas Haut-Soleil",
+                    ["name"] = "Kael'thas Haut-Soleil",
                 }, -- [4]
             },
         }, -- [5]
@@ -8215,7 +8215,7 @@ data.frFR = {
                 {
                     ["id"] = 1579,
                     ["image"] = 1385745,
-                    ["name"] = "Kaz’rogal",
+                    ["name"] = "Kaz'rogal",
                 }, -- [3]
                 {
                     ["id"] = 1580,
@@ -8237,7 +8237,7 @@ data.frFR = {
                 {
                     ["id"] = 1582,
                     ["image"] = 1378986,
-                    ["name"] = "Grand seigneur de guerre Naj’entus",
+                    ["name"] = "Grand seigneur de guerre Naj'entus",
                 }, -- [1]
                 {
                     ["id"] = 1583,
@@ -8247,7 +8247,7 @@ data.frFR = {
                 {
                     ["id"] = 1584,
                     ["image"] = 1379011,
-                    ["name"] = "Ombre d’Akama",
+                    ["name"] = "Ombre d'Akama",
                 }, -- [3]
                 {
                     ["id"] = 1585,
@@ -8309,19 +8309,19 @@ data.frFR = {
                 {
                     ["id"] = 1595,
                     ["image"] = 1385757,
-                    ["name"] = "M’uru",
+                    ["name"] = "M'uru",
                 }, -- [5]
                 {
                     ["id"] = 1596,
                     ["image"] = 1385746,
-                    ["name"] = "Kil’jaeden",
+                    ["name"] = "Kil'jaeden",
                 }, -- [6]
             },
         }, -- [8]
         {
             ["id"] = 251,
             ["image"] = 608198,
-            ["name"] = "Contreforts de Hautebrande d’antan",
+            ["name"] = "Contreforts de Hautebrande d'antan",
             ["bosses"] = {
                 {
                     ["id"] = 538,
@@ -8446,7 +8446,7 @@ data.frFR = {
                 {
                     ["id"] = 544,
                     ["image"] = 607536,
-                    ["name"] = "Ambassadeur Gueule-d’Enfer",
+                    ["name"] = "Ambassadeur Gueule-d'Enfer",
                 }, -- [1]
                 {
                     ["id"] = 545,
@@ -8595,7 +8595,7 @@ data.frFR = {
         {
             ["id"] = 254,
             ["image"] = 608218,
-            ["name"] = "L’Arcatraz",
+            ["name"] = "L'Arcatraz",
             ["bosses"] = {
                 {
                     ["id"] = 548,
@@ -8664,7 +8664,7 @@ data.frFR = {
                 {
                     ["id"] = 533,
                     ["image"] = 607669,
-                    ["name"] = "Kael’thas Haut-Soleil",
+                    ["name"] = "Kael'thas Haut-Soleil",
                 }, -- [4]
             },
         }, -- [23]
@@ -8705,7 +8705,7 @@ data.frFR = {
                 {
                     ["id"] = 2506,
                     ["image"] = 4757691,
-                    ["name"] = "Basrikron, l’Aile de schiste",
+                    ["name"] = "Basrikron, l'Aile de schiste",
                 }, -- [2]
                 {
                     ["id"] = 2517,
@@ -8774,7 +8774,7 @@ data.frFR = {
         {
             ["id"] = 1208,
             ["image"] = 5149418,
-            ["name"] = "Aberrus, le creuset de l’Ombre",
+            ["name"] = "Aberrus, le creuset de l'Ombre",
             ["bosses"] = {
                 {
                     ["id"] = 2522,
@@ -8784,7 +8784,7 @@ data.frFR = {
                 {
                     ["id"] = 2529,
                     ["image"] = 5151374,
-                    ["name"] = "Chambre d’amalgamation",
+                    ["name"] = "Chambre d'amalgamation",
                 }, -- [2]
                 {
                     ["id"] = 2530,
@@ -8799,12 +8799,12 @@ data.frFR = {
                 {
                     ["id"] = 2525,
                     ["image"] = 5151372,
-                    ["name"] = "Rashok, l’Ancien",
+                    ["name"] = "Rashok, l'Ancien",
                 }, -- [5]
                 {
                     ["id"] = 2532,
                     ["image"] = 5151376,
-                    ["name"] = "Zskarn, l’Intendant vigilant",
+                    ["name"] = "Zskarn, l'Intendant vigilant",
                 }, -- [6]
                 {
                     ["id"] = 2527,
@@ -8826,7 +8826,7 @@ data.frFR = {
         {
             ["id"] = 1209,
             ["image"] = 5221768,
-            ["name"] = "Aube de l’Infini",
+            ["name"] = "Aube de l'Infini",
             ["bosses"] = {
                 {
                     ["id"] = 2521,
@@ -8873,7 +8873,7 @@ data.frFR = {
         {
             ["id"] = 1201,
             ["image"] = 4742929,
-            ["name"] = "Académie d’Algeth’ar",
+            ["name"] = "Académie d'Algeth'ar",
             ["bosses"] = {
                 {
                     ["id"] = 2509,
@@ -8927,7 +8927,7 @@ data.frFR = {
         {
             ["id"] = 1204,
             ["image"] = 4742926,
-            ["name"] = "Salles de l’Imprégnation",
+            ["name"] = "Salles de l'Imprégnation",
             ["bosses"] = {
                 {
                     ["id"] = 2504,
@@ -8942,7 +8942,7 @@ data.frFR = {
                 {
                     ["id"] = 2510,
                     ["image"] = 4741519,
-                    ["name"] = "Khajin l’Inflexible",
+                    ["name"] = "Khajin l'Inflexible",
                 }, -- [3]
                 {
                     ["id"] = 2511,
@@ -8959,7 +8959,7 @@ data.frFR = {
                 {
                     ["id"] = 2490,
                     ["image"] = 4741506,
-                    ["name"] = "Chargath, Fléau d’écailles",
+                    ["name"] = "Chargath, Fléau d'écailles",
                 }, -- [1]
                 {
                     ["id"] = 2489,
@@ -8981,7 +8981,7 @@ data.frFR = {
         {
             ["id"] = 1202,
             ["image"] = 4742927,
-            ["name"] = "Bassins de l’Essence rubis",
+            ["name"] = "Bassins de l'Essence rubis",
             ["bosses"] = {
                 {
                     ["id"] = 2488,
@@ -9003,7 +9003,7 @@ data.frFR = {
         {
             ["id"] = 1203,
             ["image"] = 4742829,
-            ["name"] = "Caveau d’Azur",
+            ["name"] = "Caveau d'Azur",
             ["bosses"] = {
                 {
                     ["id"] = 2492,
@@ -9030,7 +9030,7 @@ data.frFR = {
         {
             ["id"] = 1198,
             ["image"] = 4742924,
-            ["name"] = "L’offensive nokhud",
+            ["name"] = "L'offensive nokhud",
             ["bosses"] = {
                 {
                     ["id"] = 2498,
@@ -9057,7 +9057,7 @@ data.frFR = {
         {
             ["id"] = 1197,
             ["image"] = 4742930,
-            ["name"] = "Uldaman : l’héritage de Tyr",
+            ["name"] = "Uldaman : l'héritage de Tyr",
             ["bosses"] = {
                 {
                     ["id"] = 2475,
@@ -9141,7 +9141,7 @@ data.frFR = {
                 {
                     ["id"] = 1783,
                     ["image"] = 1411028,
-                    ["name"] = "Na’zak le démon",
+                    ["name"] = "Na'zak le démon",
                 }, -- [10]
                 {
                     ["id"] = 1749,
@@ -9151,29 +9151,29 @@ data.frFR = {
                 {
                     ["id"] = 1763,
                     ["image"] = 1411030,
-                    ["name"] = "Shar’thos",
+                    ["name"] = "Shar'thos",
                 }, -- [12]
                 {
                     ["id"] = 1885,
                     ["image"] = 1579941,
-                    ["name"] = "Si’vash",
+                    ["name"] = "Si'vash",
                 }, -- [13]
                 {
                     ["id"] = 1756,
                     ["image"] = 1411031,
-                    ["name"] = "Les faucheurs d’âmes",
+                    ["name"] = "Les faucheurs d'âmes",
                 }, -- [14]
                 {
                     ["id"] = 1796,
                     ["image"] = 1472455,
-                    ["name"] = "J’im le Flétri",
+                    ["name"] = "J'im le Flétri",
                 }, -- [15]
             },
         }, -- [1]
         {
             ["id"] = 768,
             ["image"] = 1452687,
-            ["name"] = "Le Cauchemar d’émeraude",
+            ["name"] = "Le Cauchemar d'émeraude",
             ["bosses"] = {
                 {
                     ["id"] = 1703,
@@ -9183,7 +9183,7 @@ data.frFR = {
                 {
                     ["id"] = 1738,
                     ["image"] = 1410960,
-                    ["name"] = "Il’gynoth, le Cœur de la Corruption",
+                    ["name"] = "Il'gynoth, le Cœur de la Corruption",
                 }, -- [2]
                 {
                     ["id"] = 1744,
@@ -9272,12 +9272,12 @@ data.frFR = {
                 {
                     ["id"] = 1761,
                     ["image"] = 1410939,
-                    ["name"] = "Grand botaniste Tel’arn",
+                    ["name"] = "Grand botaniste Tel'arn",
                 }, -- [7]
                 {
                     ["id"] = 1732,
                     ["image"] = 1410984,
-                    ["name"] = "Etraeus, l’augure stellaire",
+                    ["name"] = "Etraeus, l'augure stellaire",
                 }, -- [8]
                 {
                     ["id"] = 1743,
@@ -9287,7 +9287,7 @@ data.frFR = {
                 {
                     ["id"] = 1737,
                     ["image"] = 1410955,
-                    ["name"] = "Gul’dan",
+                    ["name"] = "Gul'dan",
                 }, -- [10]
             },
         }, -- [4]
@@ -9319,12 +9319,12 @@ data.frFR = {
                 {
                     ["id"] = 1861,
                     ["image"] = 1579939,
-                    ["name"] = "Maîtresse Sassz’ine",
+                    ["name"] = "Maîtresse Sassz'ine",
                 }, -- [5]
                 {
                     ["id"] = 1896,
                     ["image"] = 1579943,
-                    ["name"] = "L’Hôte désolé",
+                    ["name"] = "L'Hôte désolé",
                 }, -- [6]
                 {
                     ["id"] = 1897,
@@ -9339,7 +9339,7 @@ data.frFR = {
                 {
                     ["id"] = 1898,
                     ["image"] = 1385746,
-                    ["name"] = "Kil’jaeden",
+                    ["name"] = "Kil'jaeden",
                 }, -- [9]
             },
         }, -- [5]
@@ -9376,12 +9376,12 @@ data.frFR = {
                 {
                     ["id"] = 2009,
                     ["image"] = 1715211,
-                    ["name"] = "Imonar le Chasseur d’âmes",
+                    ["name"] = "Imonar le Chasseur d'âmes",
                 }, -- [6]
                 {
                     ["id"] = 2004,
                     ["image"] = 1715213,
-                    ["name"] = "Kin’garoth",
+                    ["name"] = "Kin'garoth",
                 }, -- [7]
                 {
                     ["id"] = 1983,
@@ -9401,14 +9401,14 @@ data.frFR = {
                 {
                     ["id"] = 2031,
                     ["image"] = 1715536,
-                    ["name"] = "Argus l’Annihilateur",
+                    ["name"] = "Argus l'Annihilateur",
                 }, -- [11]
             },
         }, -- [6]
         {
             ["id"] = 959,
             ["image"] = 1718212,
-            ["name"] = "Sites d’invasion",
+            ["name"] = "Sites d'invasion",
             ["bosses"] = {
                 {
                     ["id"] = 2010,
@@ -9460,12 +9460,12 @@ data.frFR = {
                 {
                     ["id"] = 1702,
                     ["image"] = 1410938,
-                    ["name"] = "Princesse de sang Thal’ena",
+                    ["name"] = "Princesse de sang Thal'ena",
                 }, -- [3]
                 {
                     ["id"] = 1686,
                     ["image"] = 1410969,
-                    ["name"] = "Ecorcheur d’esprit Kaahrj",
+                    ["name"] = "Ecorcheur d'esprit Kaahrj",
                 }, -- [4]
                 {
                     ["id"] = 1688,
@@ -9475,12 +9475,12 @@ data.frFR = {
                 {
                     ["id"] = 1696,
                     ["image"] = 1410935,
-                    ["name"] = "Anub’esset",
+                    ["name"] = "Anub'esset",
                 }, -- [6]
                 {
                     ["id"] = 1697,
                     ["image"] = 1410977,
-                    ["name"] = "Sael’orn",
+                    ["name"] = "Sael'orn",
                 }, -- [7]
                 {
                     ["id"] = 1711,
@@ -9497,7 +9497,7 @@ data.frFR = {
                 {
                     ["id"] = 1518,
                     ["image"] = 1410986,
-                    ["name"] = "L’amalgame d’âmes",
+                    ["name"] = "L'amalgame d'âmes",
                 }, -- [1]
                 {
                     ["id"] = 1653,
@@ -9512,7 +9512,7 @@ data.frFR = {
                 {
                     ["id"] = 1672,
                     ["image"] = 1410967,
-                    ["name"] = "Seigneur Kur’talos Corvaltus",
+                    ["name"] = "Seigneur Kur'talos Corvaltus",
                 }, -- [4]
             },
         }, -- [9]
@@ -9561,7 +9561,7 @@ data.frFR = {
                 {
                     ["id"] = 1468,
                     ["image"] = 1410937,
-                    ["name"] = "Scor’roc",
+                    ["name"] = "Scor'roc",
                 }, -- [3]
                 {
                     ["id"] = 1469,
@@ -9649,7 +9649,7 @@ data.frFR = {
         {
             ["id"] = 726,
             ["image"] = 1411857,
-            ["name"] = "L’Arcavia",
+            ["name"] = "L'Arcavia",
             ["bosses"] = {
                 {
                     ["id"] = 1497,
@@ -9669,7 +9669,7 @@ data.frFR = {
                 {
                     ["id"] = 1500,
                     ["image"] = 1410970,
-                    ["name"] = "Nal’tira",
+                    ["name"] = "Nal'tira",
                 }, -- [4]
                 {
                     ["id"] = 1501,
@@ -9681,7 +9681,7 @@ data.frFR = {
         {
             ["id"] = 716,
             ["image"] = 1498157,
-            ["name"] = "L’Œil d’Azshara",
+            ["name"] = "L'Œil d'Azshara",
             ["bosses"] = {
                 {
                     ["id"] = 1480,
@@ -9706,7 +9706,7 @@ data.frFR = {
                 {
                     ["id"] = 1492,
                     ["image"] = 1410993,
-                    ["name"] = "Courroux d’Azshara",
+                    ["name"] = "Courroux d'Azshara",
                 }, -- [5]
             },
         }, -- [16]
@@ -9733,7 +9733,7 @@ data.frFR = {
                 {
                     ["id"] = 1687,
                     ["image"] = 1410944,
-                    ["name"] = "Dargrul le roi d’en bas",
+                    ["name"] = "Dargrul le roi d'en bas",
                 }, -- [4]
             },
         }, -- [17]
@@ -9750,7 +9750,7 @@ data.frFR = {
                 {
                     ["id"] = 1826,
                     ["image"] = 1536494,
-                    ["name"] = "Opéra : De l’amour à la mer",
+                    ["name"] = "Opéra : De l'amour à la mer",
                 }, -- [2]
                 {
                     ["id"] = 1827,
@@ -9790,7 +9790,7 @@ data.frFR = {
                 {
                     ["id"] = 1838,
                     ["image"] = 1536497,
-                    ["name"] = "Viz’aduum l’Observateur",
+                    ["name"] = "Viz'aduum l'Observateur",
                 }, -- [10]
             },
         }, -- [18]
@@ -9849,7 +9849,7 @@ data.frFR = {
                 {
                     ["id"] = 1982,
                     ["image"] = 1715214,
-                    ["name"] = "L’ura",
+                    ["name"] = "L'ura",
                 }, -- [4]
             },
         }, -- [20]
@@ -9883,7 +9883,7 @@ data.frFR = {
                 {
                     ["id"] = 2456,
                     ["image"] = 4071436,
-                    ["name"] = "Mor’geth, Tourmenteur des damnés",
+                    ["name"] = "Mor'geth, Tourmenteur des damnés",
                 }, -- [5]
                 {
                     ["id"] = 2468,
@@ -9915,7 +9915,7 @@ data.frFR = {
                 {
                     ["id"] = 2418,
                     ["image"] = 3752156,
-                    ["name"] = "Artificier Xy’mox",
+                    ["name"] = "Artificier Xy'mox",
                 }, -- [4]
                 {
                     ["id"] = 2428,
@@ -9962,7 +9962,7 @@ data.frFR = {
                 {
                     ["id"] = 2442,
                     ["image"] = 4071426,
-                    ["name"] = "L’œil du Geôlier",
+                    ["name"] = "L'œil du Geôlier",
                 }, -- [2]
                 {
                     ["id"] = 2439,
@@ -9972,12 +9972,12 @@ data.frFR = {
                 {
                     ["id"] = 2444,
                     ["image"] = 4071439,
-                    ["name"] = "Vestige de Ner’zhul",
+                    ["name"] = "Vestige de Ner'zhul",
                 }, -- [4]
                 {
                     ["id"] = 2445,
                     ["image"] = 4071442,
-                    ["name"] = "Étripeur d’âme Dormazain",
+                    ["name"] = "Étripeur d'âme Dormazain",
                 }, -- [5]
                 {
                     ["id"] = 2443,
@@ -9997,7 +9997,7 @@ data.frFR = {
                 {
                     ["id"] = 2440,
                     ["image"] = 4071435,
-                    ["name"] = "Kel’Thuzad",
+                    ["name"] = "Kel'Thuzad",
                 }, -- [9]
                 {
                     ["id"] = 2441,
@@ -10019,17 +10019,17 @@ data.frFR = {
                 {
                     ["id"] = 2465,
                     ["image"] = 4465339,
-                    ["name"] = "Skolex, l’Insatiable vorace",
+                    ["name"] = "Skolex, l'Insatiable vorace",
                 }, -- [2]
                 {
                     ["id"] = 2470,
                     ["image"] = 4423749,
-                    ["name"] = "Artificier Xy’mox",
+                    ["name"] = "Artificier Xy'mox",
                 }, -- [3]
                 {
                     ["id"] = 2459,
                     ["image"] = 4465333,
-                    ["name"] = "Dausegne, l’Oracle déchu",
+                    ["name"] = "Dausegne, l'Oracle déchu",
                 }, -- [4]
                 {
                     ["id"] = 2460,
@@ -10054,7 +10054,7 @@ data.frFR = {
                 {
                     ["id"] = 2457,
                     ["image"] = 4465336,
-                    ["name"] = "Seigneurs de l’effroi",
+                    ["name"] = "Seigneurs de l'effroi",
                 }, -- [9]
                 {
                     ["id"] = 2467,
@@ -10086,14 +10086,14 @@ data.frFR = {
                 {
                     ["id"] = 2405,
                     ["image"] = 3752194,
-                    ["name"] = "Tred’ova",
+                    ["name"] = "Tred'ova",
                 }, -- [3]
             },
         }, -- [5]
         {
             ["id"] = 1186,
             ["image"] = 3759913,
-            ["name"] = "Flèches de l’Ascension",
+            ["name"] = "Flèches de l'Ascension",
             ["bosses"] = {
                 {
                     ["id"] = 2399,
@@ -10120,12 +10120,12 @@ data.frFR = {
         {
             ["id"] = 1188,
             ["image"] = 3759915,
-            ["name"] = "L’Autre côté",
+            ["name"] = "L'Autre côté",
             ["bosses"] = {
                 {
                     ["id"] = 2408,
                     ["image"] = 3752170,
-                    ["name"] = "Hakkar, l’écorcheur d’âmes",
+                    ["name"] = "Hakkar, l'écorcheur d'âmes",
                 }, -- [1]
                 {
                     ["id"] = 2409,
@@ -10135,12 +10135,12 @@ data.frFR = {
                 {
                     ["id"] = 2398,
                     ["image"] = 3753147,
-                    ["name"] = "Marchande Xy’exa",
+                    ["name"] = "Marchande Xy'exa",
                 }, -- [3]
                 {
                     ["id"] = 2410,
                     ["image"] = 3752184,
-                    ["name"] = "Mueh’zala",
+                    ["name"] = "Mueh'zala",
                 }, -- [4]
             },
         }, -- [7]
@@ -10201,7 +10201,7 @@ data.frFR = {
         {
             ["id"] = 1185,
             ["image"] = 3759908,
-            ["name"] = "Salles de l’Expiation",
+            ["name"] = "Salles de l'Expiation",
             ["bosses"] = {
                 {
                     ["id"] = 2406,
@@ -10260,7 +10260,7 @@ data.frFR = {
                 {
                     ["id"] = 2437,
                     ["image"] = 4071449,
-                    ["name"] = "Zo’phex la sentinelle",
+                    ["name"] = "Zo'phex la sentinelle",
                 }, -- [1]
                 {
                     ["id"] = 2454,
@@ -10275,12 +10275,12 @@ data.frFR = {
                 {
                     ["id"] = 2452,
                     ["image"] = 4071448,
-                    ["name"] = "Oasis d’Au’myza",
+                    ["name"] = "Oasis d'Au'myza",
                 }, -- [4]
                 {
                     ["id"] = 2451,
                     ["image"] = 4071440,
-                    ["name"] = "So’azmi",
+                    ["name"] = "So'azmi",
                 }, -- [5]
                 {
                     ["id"] = 2448,
@@ -10295,7 +10295,7 @@ data.frFR = {
                 {
                     ["id"] = 2455,
                     ["image"] = 4071441,
-                    ["name"] = "So’leah",
+                    ["name"] = "So'leah",
                 }, -- [8]
             },
         }, -- [12]
@@ -10307,7 +10307,7 @@ data.frFR = {
                 {
                     ["id"] = 2397,
                     ["image"] = 3752153,
-                    ["name"] = "L’affrontement",
+                    ["name"] = "L'affrontement",
                 }, -- [1]
                 {
                     ["id"] = 2401,
@@ -10317,17 +10317,17 @@ data.frFR = {
                 {
                     ["id"] = 2390,
                     ["image"] = 3752199,
-                    ["name"] = "Xav l’Invaincu",
+                    ["name"] = "Xav l'Invaincu",
                 }, -- [3]
                 {
                     ["id"] = 2389,
                     ["image"] = 3753154,
-                    ["name"] = "Kul’tharok",
+                    ["name"] = "Kul'tharok",
                 }, -- [4]
                 {
                     ["id"] = 2417,
                     ["image"] = 3752182,
-                    ["name"] = "Mordretha, l’impératrice immortelle",
+                    ["name"] = "Mordretha, l'impératrice immortelle",
                 }, -- [5]
             },
         }, -- [13]
@@ -10346,7 +10346,7 @@ data.frFR = {
                 {
                     ["id"] = 140,
                     ["image"] = 523207,
-                    ["name"] = "Occu’thar",
+                    ["name"] = "Occu'thar",
                 }, -- [2]
                 {
                     ["id"] = 339,
@@ -10358,7 +10358,7 @@ data.frFR = {
         {
             ["id"] = 73,
             ["image"] = 522351,
-            ["name"] = "Descente de l’Aile noire",
+            ["name"] = "Descente de l'Aile noire",
             ["bosses"] = {
                 {
                     ["id"] = 169,
@@ -10410,12 +10410,12 @@ data.frFR = {
                 {
                     ["id"] = 158,
                     ["image"] = 522224,
-                    ["name"] = "Conseil d’ascendants",
+                    ["name"] = "Conseil d'ascendants",
                 }, -- [3]
                 {
                     ["id"] = 167,
                     ["image"] = 522212,
-                    ["name"] = "Cho’gall",
+                    ["name"] = "Cho'gall",
                 }, -- [4]
             },
         }, -- [3]
@@ -10432,7 +10432,7 @@ data.frFR = {
                 {
                     ["id"] = 155,
                     ["image"] = 522191,
-                    ["name"] = "Al’Akir",
+                    ["name"] = "Al'Akir",
                 }, -- [2]
             },
         }, -- [4]
@@ -10444,7 +10444,7 @@ data.frFR = {
                 {
                     ["id"] = 192,
                     ["image"] = 522208,
-                    ["name"] = "Beth’tilac",
+                    ["name"] = "Beth'tilac",
                 }, -- [1]
                 {
                     ["id"] = 193,
@@ -10481,7 +10481,7 @@ data.frFR = {
         {
             ["id"] = 187,
             ["image"] = 571753,
-            ["name"] = "L’Âme des dragons",
+            ["name"] = "L'Âme des dragons",
             ["bosses"] = {
                 {
                     ["id"] = 311,
@@ -10491,12 +10491,12 @@ data.frFR = {
                 {
                     ["id"] = 324,
                     ["image"] = 536061,
-                    ["name"] = "Seigneur de guerre Zon’ozz",
+                    ["name"] = "Seigneur de guerre Zon'ozz",
                 }, -- [2]
                 {
                     ["id"] = 325,
                     ["image"] = 536062,
-                    ["name"] = "Yor’sahj l’Insomniaque",
+                    ["name"] = "Yor'sahj l'Insomniaque",
                 }, -- [3]
                 {
                     ["id"] = 317,
@@ -10560,7 +10560,7 @@ data.frFR = {
         {
             ["id"] = 69,
             ["image"] = 522357,
-            ["name"] = "Cité perdue des Tol’vir",
+            ["name"] = "Cité perdue des Tol'vir",
             ["bosses"] = {
                 {
                     ["id"] = 117,
@@ -10587,7 +10587,7 @@ data.frFR = {
         {
             ["id"] = 64,
             ["image"] = 522358,
-            ["name"] = "Donjon d’Ombrecroc",
+            ["name"] = "Donjon d'Ombrecroc",
             ["bosses"] = {
                 {
                     ["id"] = 96,
@@ -10597,7 +10597,7 @@ data.frFR = {
                 {
                     ["id"] = 97,
                     ["image"] = 522206,
-                    ["name"] = "Baron d’Argelaine",
+                    ["name"] = "Baron d'Argelaine",
                 }, -- [2]
                 {
                     ["id"] = 98,
@@ -10639,7 +10639,7 @@ data.frFR = {
                 {
                     ["id"] = 134,
                     ["image"] = 522222,
-                    ["name"] = "Erudax, le duc d’En bas",
+                    ["name"] = "Erudax, le duc d'En bas",
                 }, -- [4]
             },
         }, -- [10]
@@ -10759,7 +10759,7 @@ data.frFR = {
         {
             ["id"] = 186,
             ["image"] = 571755,
-            ["name"] = "L’Heure du Crépuscule",
+            ["name"] = "L'Heure du Crépuscule",
             ["bosses"] = {
                 {
                     ["id"] = 322,
@@ -10781,12 +10781,12 @@ data.frFR = {
         {
             ["id"] = 185,
             ["image"] = 571756,
-            ["name"] = "Puits d’éternité",
+            ["name"] = "Puits d'éternité",
             ["bosses"] = {
                 {
                     ["id"] = 290,
                     ["image"] = 536060,
-                    ["name"] = "Peroth’arn",
+                    ["name"] = "Peroth'arn",
                 }, -- [1]
                 {
                     ["id"] = 291,
@@ -10803,7 +10803,7 @@ data.frFR = {
         {
             ["id"] = 70,
             ["image"] = 522356,
-            ["name"] = "Salles de l’Origine",
+            ["name"] = "Salles de l'Origine",
             ["bosses"] = {
                 {
                     ["id"] = 124,
@@ -10850,7 +10850,7 @@ data.frFR = {
                 {
                     ["id"] = 101,
                     ["image"] = 522245,
-                    ["name"] = "Dame Naz’jar",
+                    ["name"] = "Dame Naz'jar",
                 }, -- [1]
                 {
                     ["id"] = 102,
@@ -10872,12 +10872,12 @@ data.frFR = {
         {
             ["id"] = 77,
             ["image"] = 522363,
-            ["name"] = "Zul’Aman",
+            ["name"] = "Zul'Aman",
             ["bosses"] = {
                 {
                     ["id"] = 186,
                     ["image"] = 522190,
-                    ["name"] = "Akil’zon",
+                    ["name"] = "Akil'zon",
                 }, -- [1]
                 {
                     ["id"] = 187,
@@ -10887,7 +10887,7 @@ data.frFR = {
                 {
                     ["id"] = 188,
                     ["image"] = 522242,
-                    ["name"] = "Jan’alai",
+                    ["name"] = "Jan'alai",
                 }, -- [3]
                 {
                     ["id"] = 189,
@@ -10909,7 +10909,7 @@ data.frFR = {
         {
             ["id"] = 76,
             ["image"] = 522364,
-            ["name"] = "Zul’Gurub",
+            ["name"] = "Zul'Gurub",
             ["bosses"] = {
                 {
                     ["id"] = 175,
@@ -10924,22 +10924,22 @@ data.frFR = {
                 {
                     ["id"] = 177,
                     ["image"] = 522230,
-                    ["name"] = "L’antre de la Folie - Gri’lek",
+                    ["name"] = "L'antre de la Folie - Gri'lek",
                 }, -- [3]
                 {
                     ["id"] = 178,
                     ["image"] = 522233,
-                    ["name"] = "L’antre de la Folie - Hazza’rah",
+                    ["name"] = "L'antre de la Folie - Hazza'rah",
                 }, -- [4]
                 {
                     ["id"] = 179,
                     ["image"] = 522263,
-                    ["name"] = "L’antre de la Folie - Renataki",
+                    ["name"] = "L'antre de la Folie - Renataki",
                 }, -- [5]
                 {
                     ["id"] = 180,
                     ["image"] = 522279,
-                    ["name"] = "L’antre de la Folie - Wushoolay",
+                    ["name"] = "L'antre de la Folie - Wushoolay",
                 }, -- [6]
                 {
                     ["id"] = 181,
@@ -10954,7 +10954,7 @@ data.frFR = {
                 {
                     ["id"] = 185,
                     ["image"] = 522243,
-                    ["name"] = "Jin’do le Briseur de dieux",
+                    ["name"] = "Jin'do le Briseur de dieux",
                 }, -- [9]
             },
         }, -- [20]
@@ -10993,7 +10993,7 @@ data.frFR = {
                 {
                     ["id"] = 858,
                     ["image"] = 901173,
-                    ["name"] = "Yu’lon, le Serpent de jade",
+                    ["name"] = "Yu'lon, le Serpent de jade",
                 }, -- [6]
                 {
                     ["id"] = 859,
@@ -11015,7 +11015,7 @@ data.frFR = {
         {
             ["id"] = 317,
             ["image"] = 632273,
-            ["name"] = "Caveaux Mogu’shan",
+            ["name"] = "Caveaux Mogu'shan",
             ["bosses"] = {
                 {
                     ["id"] = 679,
@@ -11030,7 +11030,7 @@ data.frFR = {
                 {
                     ["id"] = 682,
                     ["image"] = 630826,
-                    ["name"] = "Gara’jal le Lieur d’esprit",
+                    ["name"] = "Gara'jal le Lieur d'esprit",
                 }, -- [3]
                 {
                     ["id"] = 687,
@@ -11045,7 +11045,7 @@ data.frFR = {
                 {
                     ["id"] = 677,
                     ["image"] = 630836,
-                    ["name"] = "Volonté de l’empereur",
+                    ["name"] = "Volonté de l'empereur",
                 }, -- [6]
             },
         }, -- [2]
@@ -11057,12 +11057,12 @@ data.frFR = {
                 {
                     ["id"] = 745,
                     ["image"] = 630834,
-                    ["name"] = "Vizir impérial Zor’lok",
+                    ["name"] = "Vizir impérial Zor'lok",
                 }, -- [1]
                 {
                     ["id"] = 744,
                     ["image"] = 630817,
-                    ["name"] = "Seigneur des lames Ta’yak",
+                    ["name"] = "Seigneur des lames Ta'yak",
                 }, -- [2]
                 {
                     ["id"] = 713,
@@ -11072,17 +11072,17 @@ data.frFR = {
                 {
                     ["id"] = 741,
                     ["image"] = 630856,
-                    ["name"] = "Seigneur du Vent Mel’jarak",
+                    ["name"] = "Seigneur du Vent Mel'jarak",
                 }, -- [4]
                 {
                     ["id"] = 737,
                     ["image"] = 630815,
-                    ["name"] = "Sculpte-ambre Un’sok",
+                    ["name"] = "Sculpte-ambre Un'sok",
                 }, -- [5]
                 {
                     ["id"] = 743,
                     ["image"] = 630830,
-                    ["name"] = "Grande impératrice Shek’zeer",
+                    ["name"] = "Grande impératrice Shek'zeer",
                 }, -- [6]
             },
         }, -- [3]
@@ -11094,7 +11094,7 @@ data.frFR = {
                 {
                     ["id"] = 683,
                     ["image"] = 630844,
-                    ["name"] = "Protecteurs de l’Éternel",
+                    ["name"] = "Protecteurs de l'Éternel",
                 }, -- [1]
                 {
                     ["id"] = 742,
@@ -11121,7 +11121,7 @@ data.frFR = {
                 {
                     ["id"] = 827,
                     ["image"] = 796776,
-                    ["name"] = "Jin’rokh le Briseur",
+                    ["name"] = "Jin'rokh le Briseur",
                 }, -- [1]
                 {
                     ["id"] = 819,
@@ -11151,7 +11151,7 @@ data.frFR = {
                 {
                     ["id"] = 818,
                     ["image"] = 796772,
-                    ["name"] = "Durumu l’Oublié",
+                    ["name"] = "Durumu l'Oublié",
                 }, -- [7]
                 {
                     ["id"] = 820,
@@ -11183,7 +11183,7 @@ data.frFR = {
         {
             ["id"] = 369,
             ["image"] = 904981,
-            ["name"] = "Siège d’Orgrimmar",
+            ["name"] = "Siège d'Orgrimmar",
             ["bosses"] = {
                 {
                     ["id"] = 852,
@@ -11203,7 +11203,7 @@ data.frFR = {
                 {
                     ["id"] = 867,
                     ["image"] = 901168,
-                    ["name"] = "Sha de l’orgueil",
+                    ["name"] = "Sha de l'orgueil",
                 }, -- [4]
                 {
                     ["id"] = 868,
@@ -11218,7 +11218,7 @@ data.frFR = {
                 {
                     ["id"] = 856,
                     ["image"] = 901163,
-                    ["name"] = "Sombres chamans kor’krons",
+                    ["name"] = "Sombres chamans kor'krons",
                 }, -- [7]
                 {
                     ["id"] = 850,
@@ -11260,7 +11260,7 @@ data.frFR = {
         {
             ["id"] = 302,
             ["image"] = 632275,
-            ["name"] = "Brasserie Brune d’Orage",
+            ["name"] = "Brasserie Brune d'Orage",
             ["bosses"] = {
                 {
                     ["id"] = 668,
@@ -11314,7 +11314,7 @@ data.frFR = {
                 {
                     ["id"] = 688,
                     ["image"] = 630853,
-                    ["name"] = "Thalnos le Déchiqueteur d’âmes",
+                    ["name"] = "Thalnos le Déchiqueteur d'âmes",
                 }, -- [1]
                 {
                     ["id"] = 671,
@@ -11331,12 +11331,12 @@ data.frFR = {
         {
             ["id"] = 321,
             ["image"] = 632272,
-            ["name"] = "Palais Mogu’shan",
+            ["name"] = "Palais Mogu'shan",
             ["bosses"] = {
                 {
                     ["id"] = 708,
                     ["image"] = 630842,
-                    ["name"] = "L’épreuve du roi",
+                    ["name"] = "L'épreuve du roi",
                 }, -- [1]
                 {
                     ["id"] = 690,
@@ -11346,7 +11346,7 @@ data.frFR = {
                 {
                     ["id"] = 698,
                     ["image"] = 630859,
-                    ["name"] = "Xin le Maître d’armes",
+                    ["name"] = "Xin le Maître d'armes",
                 }, -- [3]
             },
         }, -- [10]
@@ -11358,17 +11358,17 @@ data.frFR = {
                 {
                     ["id"] = 655,
                     ["image"] = 630846,
-                    ["name"] = "Saboteur Kip’tilak",
+                    ["name"] = "Saboteur Kip'tilak",
                 }, -- [1]
                 {
                     ["id"] = 675,
                     ["image"] = 630851,
-                    ["name"] = "Frappeur Ga’dok",
+                    ["name"] = "Frappeur Ga'dok",
                 }, -- [2]
                 {
                     ["id"] = 676,
                     ["image"] = 630821,
-                    ["name"] = "Commandant Ri’mok",
+                    ["name"] = "Commandant Ri'mok",
                 }, -- [3]
                 {
                     ["id"] = 649,
@@ -11390,7 +11390,7 @@ data.frFR = {
                 {
                     ["id"] = 654,
                     ["image"] = 630816,
-                    ["name"] = "Maître d’armes Harlan",
+                    ["name"] = "Maître d'armes Harlan",
                 }, -- [2]
                 {
                     ["id"] = 656,
@@ -11439,22 +11439,22 @@ data.frFR = {
                 {
                     ["id"] = 693,
                     ["image"] = 630855,
-                    ["name"] = "Vizir Jin’bak",
+                    ["name"] = "Vizir Jin'bak",
                 }, -- [1]
                 {
                     ["id"] = 738,
                     ["image"] = 630822,
-                    ["name"] = "Commandant Vo’jak",
+                    ["name"] = "Commandant Vo'jak",
                 }, -- [2]
                 {
                     ["id"] = 692,
                     ["image"] = 630829,
-                    ["name"] = "Général Pa’valak",
+                    ["name"] = "Général Pa'valak",
                 }, -- [3]
                 {
                     ["id"] = 727,
                     ["image"] = 630857,
-                    ["name"] = "Chef d’escadre Ner’onok",
+                    ["name"] = "Chef d'escadre Ner'onok",
                 }, -- [4]
             },
         }, -- [14]
@@ -11500,7 +11500,7 @@ data.frFR = {
                 {
                     ["id"] = 1211,
                     ["image"] = 1044371,
-                    ["name"] = "Tarlna l’Éternel",
+                    ["name"] = "Tarlna l'Éternel",
                 }, -- [2]
                 {
                     ["id"] = 1262,
@@ -11547,12 +11547,12 @@ data.frFR = {
                 {
                     ["id"] = 1153,
                     ["image"] = 1044343,
-                    ["name"] = "Ko’ragh",
+                    ["name"] = "Ko'ragh",
                 }, -- [6]
                 {
                     ["id"] = 1197,
                     ["image"] = 1044349,
-                    ["name"] = "Imperator Mar’gok",
+                    ["name"] = "Imperator Mar'gok",
                 }, -- [7]
             },
         }, -- [2]
@@ -11569,7 +11569,7 @@ data.frFR = {
                 {
                     ["id"] = 1155,
                     ["image"] = 1044345,
-                    ["name"] = "Hans’gar et Franzok",
+                    ["name"] = "Hans'gar et Franzok",
                 }, -- [2]
                 {
                     ["id"] = 1122,
@@ -11584,7 +11584,7 @@ data.frFR = {
                 {
                     ["id"] = 1123,
                     ["image"] = 1044344,
-                    ["name"] = "Courbe-flamme Ka’graz",
+                    ["name"] = "Courbe-flamme Ka'graz",
                 }, -- [5]
                 {
                     ["id"] = 1147,
@@ -11651,12 +11651,12 @@ data.frFR = {
                 {
                     ["id"] = 1433,
                     ["image"] = 1134506,
-                    ["name"] = "Seigneur de l’ombre Iskar",
+                    ["name"] = "Seigneur de l'ombre Iskar",
                 }, -- [7]
                 {
                     ["id"] = 1427,
                     ["image"] = 1134507,
-                    ["name"] = "Socrethar l’Éternel",
+                    ["name"] = "Socrethar l'Éternel",
                 }, -- [8]
                 {
                     ["id"] = 1391,
@@ -11666,7 +11666,7 @@ data.frFR = {
                 {
                     ["id"] = 1447,
                     ["image"] = 1134510,
-                    ["name"] = "Xhul’horac",
+                    ["name"] = "Xhul'horac",
                 }, -- [10]
                 {
                     ["id"] = 1394,
@@ -11698,7 +11698,7 @@ data.frFR = {
                 {
                     ["id"] = 1186,
                     ["image"] = 1044370,
-                    ["name"] = "Lieuse d’âme Nyami",
+                    ["name"] = "Lieuse d'âme Nyami",
                 }, -- [2]
                 {
                     ["id"] = 1216,
@@ -11708,7 +11708,7 @@ data.frFR = {
                 {
                     ["id"] = 1225,
                     ["image"] = 1044373,
-                    ["name"] = "Teron’gor",
+                    ["name"] = "Teron'gor",
                 }, -- [4]
             },
         }, -- [5]
@@ -11757,7 +11757,7 @@ data.frFR = {
                 {
                     ["id"] = 1209,
                     ["image"] = 1044382,
-                    ["name"] = "Xeri’tac",
+                    ["name"] = "Xeri'tac",
                 }, -- [4]
                 {
                     ["id"] = 1210,
@@ -11789,7 +11789,7 @@ data.frFR = {
                 {
                     ["id"] = 889,
                     ["image"] = 1044347,
-                    ["name"] = "Gug’rokk",
+                    ["name"] = "Gug'rokk",
                 }, -- [4]
             },
         }, -- [8]
@@ -11828,7 +11828,7 @@ data.frFR = {
                 {
                     ["id"] = 1235,
                     ["image"] = 1044380,
-                    ["name"] = "Tranchechair Nok’gar",
+                    ["name"] = "Tranchechair Nok'gar",
                 }, -- [1]
                 {
                     ["id"] = 1236,
@@ -11855,7 +11855,7 @@ data.frFR = {
                 {
                     ["id"] = 1226,
                     ["image"] = 1044358,
-                    ["name"] = "Tord-minerai Gor’ashan",
+                    ["name"] = "Tord-minerai Gor'ashan",
                 }, -- [1]
                 {
                     ["id"] = 1227,
@@ -11870,7 +11870,7 @@ data.frFR = {
                 {
                     ["id"] = 1229,
                     ["image"] = 1044361,
-                    ["name"] = "Ragevolée l’Indomptable",
+                    ["name"] = "Ragevolée l'Indomptable",
                 }, -- [4]
                 {
                     ["id"] = 1234,
@@ -11882,7 +11882,7 @@ data.frFR = {
         {
             ["id"] = 537,
             ["image"] = 1041998,
-            ["name"] = "Terres sacrées d’Ombrelune",
+            ["name"] = "Terres sacrées d'Ombrelune",
             ["bosses"] = {
                 {
                     ["id"] = 1139,
@@ -11902,7 +11902,7 @@ data.frFR = {
                 {
                     ["id"] = 1160,
                     ["image"] = 1044356,
-                    ["name"] = "Ner’zhul",
+                    ["name"] = "Ner'zhul",
                 }, -- [4]
             },
         }, -- [12]
@@ -11911,7 +11911,7 @@ data.frFR = {
         {
             ["id"] = 753,
             ["image"] = 1396596,
-            ["name"] = "Caveau d’Archavon",
+            ["name"] = "Caveau d'Archavon",
             ["bosses"] = {
                 {
                     ["id"] = 1597,
@@ -11921,7 +11921,7 @@ data.frFR = {
                 {
                     ["id"] = 1598,
                     ["image"] = 1385727,
-                    ["name"] = "Emalon le Guetteur d’orage",
+                    ["name"] = "Emalon le Guetteur d'orage",
                 }, -- [2]
                 {
                     ["id"] = 1599,
@@ -11943,7 +11943,7 @@ data.frFR = {
                 {
                     ["id"] = 1601,
                     ["image"] = 1378964,
-                    ["name"] = "Anub’Rekhan",
+                    ["name"] = "Anub'Rekhan",
                 }, -- [1]
                 {
                     ["id"] = 1602,
@@ -11963,7 +11963,7 @@ data.frFR = {
                 {
                     ["id"] = 1605,
                     ["image"] = 1378984,
-                    ["name"] = "Heigan l’Impur",
+                    ["name"] = "Heigan l'Impur",
                 }, -- [5]
                 {
                     ["id"] = 1606,
@@ -12013,7 +12013,7 @@ data.frFR = {
                 {
                     ["id"] = 1615,
                     ["image"] = 1378989,
-                    ["name"] = "Kel’Thuzad",
+                    ["name"] = "Kel'Thuzad",
                 }, -- [15]
             },
         }, -- [2]
@@ -12032,7 +12032,7 @@ data.frFR = {
         {
             ["id"] = 756,
             ["image"] = 1396581,
-            ["name"] = "L’Œil de l’éternité",
+            ["name"] = "L'Œil de l'éternité",
             ["bosses"] = {
                 {
                     ["id"] = 1617,
@@ -12069,7 +12069,7 @@ data.frFR = {
                 {
                     ["id"] = 1641,
                     ["image"] = 1390439,
-                    ["name"] = "L’assemblée du Fer",
+                    ["name"] = "L'assemblée du Fer",
                 }, -- [5]
                 {
                     ["id"] = 1642,
@@ -12114,14 +12114,14 @@ data.frFR = {
                 {
                     ["id"] = 1650,
                     ["image"] = 1385713,
-                    ["name"] = "Algalon l’Observateur",
+                    ["name"] = "Algalon l'Observateur",
                 }, -- [14]
             },
         }, -- [5]
         {
             ["id"] = 757,
             ["image"] = 1396594,
-            ["name"] = "L’épreuve du croisé",
+            ["name"] = "L'épreuve du croisé",
             ["bosses"] = {
                 {
                     ["id"] = 1618,
@@ -12136,24 +12136,24 @@ data.frFR = {
                 {
                     ["id"] = 1620,
                     ["image"] = 1390442,
-                    ["name"] = "Champions de l’Alliance",
+                    ["name"] = "Champions de l'Alliance",
                 }, -- [3]
                 {
                     ["id"] = 1622,
                     ["image"] = 1390443,
-                    ["name"] = "Jumelles val’kyrs",
+                    ["name"] = "Jumelles val'kyrs",
                 }, -- [4]
                 {
                     ["id"] = 1623,
                     ["image"] = 607542,
-                    ["name"] = "Anub’arak",
+                    ["name"] = "Anub'arak",
                 }, -- [5]
             },
         }, -- [6]
         {
             ["id"] = 760,
             ["image"] = 1396589,
-            ["name"] = "Repaire d’Onyxia",
+            ["name"] = "Repaire d'Onyxia",
             ["bosses"] = {
                 {
                     ["id"] = 1651,
@@ -12210,7 +12210,7 @@ data.frFR = {
                 {
                     ["id"] = 1633,
                     ["image"] = 1378967,
-                    ["name"] = "Reine de sang Lana’thel",
+                    ["name"] = "Reine de sang Lana'thel",
                 }, -- [9]
                 {
                     ["id"] = 1634,
@@ -12244,7 +12244,7 @@ data.frFR = {
         {
             ["id"] = 271,
             ["image"] = 608192,
-            ["name"] = "Ahn’kahet : l’Ancien royaume",
+            ["name"] = "Ahn'kahet : l'Ancien royaume",
             ["bosses"] = {
                 {
                     ["id"] = 580,
@@ -12293,7 +12293,7 @@ data.frFR = {
         {
             ["id"] = 286,
             ["image"] = 608227,
-            ["name"] = "Cime d’Utgarde",
+            ["name"] = "Cime d'Utgarde",
             ["bosses"] = {
                 {
                     ["id"] = 641,
@@ -12320,7 +12320,7 @@ data.frFR = {
         {
             ["id"] = 273,
             ["image"] = 608201,
-            ["name"] = "Donjon de Drak’Tharon",
+            ["name"] = "Donjon de Drak'Tharon",
             ["bosses"] = {
                 {
                     ["id"] = 588,
@@ -12347,7 +12347,7 @@ data.frFR = {
         {
             ["id"] = 285,
             ["image"] = 608226,
-            ["name"] = "Donjon d’Utgarde",
+            ["name"] = "Donjon d'Utgarde",
             ["bosses"] = {
                 {
                     ["id"] = 638,
@@ -12558,7 +12558,7 @@ data.frFR = {
         {
             ["id"] = 282,
             ["image"] = 608222,
-            ["name"] = "L’Oculus",
+            ["name"] = "L'Oculus",
             ["bosses"] = {
                 {
                     ["id"] = 622,
@@ -12585,7 +12585,7 @@ data.frFR = {
         {
             ["id"] = 284,
             ["image"] = 608224,
-            ["name"] = "L’épreuve du champion",
+            ["name"] = "L'épreuve du champion",
             ["bosses"] = {
                 {
                     ["id"] = 834,
@@ -12612,7 +12612,7 @@ data.frFR = {
         {
             ["id"] = 279,
             ["image"] = 608219,
-            ["name"] = "L’Épuration de Stratholme",
+            ["name"] = "L'Épuration de Stratholme",
             ["bosses"] = {
                 {
                     ["id"] = 611,
@@ -12632,7 +12632,7 @@ data.frFR = {
                 {
                     ["id"] = 614,
                     ["image"] = 607708,
-                    ["name"] = "Mal’Ganis",
+                    ["name"] = "Mal'Ganis",
                 }, -- [4]
             },
         }, -- [24]
