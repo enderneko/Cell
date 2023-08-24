@@ -735,9 +735,9 @@ local function UnitButton_UpdateDebuffs(self)
         
         if duration then
             if Cell.vars.iconAnimation == "duration" then
-                local justApplied = self._debuffs_cache[auraInstanceID] and (self._debuffs_cache[auraInstanceID] < expirationTime) or false
+                local timeIncreased = self._debuffs_cache[auraInstanceID] and (expirationTime - self._debuffs_cache[auraInstanceID] >= 0.5) or false
                 local countIncreased = self._debuffs_count_cache[auraInstanceID] and (count > self._debuffs_count_cache[auraInstanceID]) or false
-                refreshing = justApplied or countIncreased
+                refreshing = timeIncreased or countIncreased
             elseif Cell.vars.iconAnimation == "stack" then
                 refreshing = self._debuffs_count_cache[auraInstanceID] and (count > self._debuffs_count_cache[auraInstanceID]) or false
             else
@@ -976,9 +976,9 @@ local function UnitButton_UpdateBuffs(self)
         
         if duration then
             if Cell.vars.iconAnimation == "duration" then
-                local justApplied = self._buffs_cache[auraInstanceID] and (self._buffs_cache[auraInstanceID] < expirationTime) or false
+                local timeIncreased = self._buffs_cache[auraInstanceID] and (expirationTime - self._buffs_cache[auraInstanceID] >= 0.5) or false
                 local countIncreased = self._buffs_count_cache[auraInstanceID] and (count > self._buffs_count_cache[auraInstanceID]) or false
-                refreshing = justApplied or countIncreased
+                refreshing = timeIncreased or countIncreased
             elseif Cell.vars.iconAnimation == "stack" then
                 refreshing = self._buffs_count_cache[auraInstanceID] and (count > self._buffs_count_cache[auraInstanceID]) or false
             else
