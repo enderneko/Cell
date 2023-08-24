@@ -18,7 +18,8 @@ local function HideCasts(b)
     b.indicators.targetedSpells:Hide()
 end
 
-local function ShowCasts(b, inListFound, start, duration, icon, num)
+local function ShowCasts(b, inListFound, start, duration, icon, isChanneling, num)
+    b.indicators.targetedSpells.cooldown:SetReverse(not isChanneling)
     b.indicators.targetedSpells:SetCooldown(start, duration, icon, num)
     -- glow if not 0
     if inListFound then
@@ -56,22 +57,22 @@ end
 
 local function UpdateCastsOnUnit(guid)
     local allCasts = 0
-    local startTime, endTime, spellId, icon
+    local startTime, endTime, spellId, icon, isChanneling
     local inListFound
 
     for _, castInfo in pairs(GetCastsOnUnit(guid)) do
         allCasts = allCasts + 1
 
         if not endTime then --! init
-            startTime, endTime, spellId, icon = castInfo["startTime"], castInfo["endTime"], castInfo["spellId"], castInfo["icon"]
+            startTime, endTime, spellId, icon, isChanneling = castInfo["startTime"], castInfo["endTime"], castInfo["spellId"], castInfo["icon"], castInfo["isChanneling"]
         else
             spellId = castInfo["spellId"]
             if Cell.vars.targetedSpellsList[spellId] then --! [IN LIST]
                 if not inListFound or endTime > castInfo["endTime"] then --! NOT FOUND BEFORE or SHORTER DURATION
-                    startTime, endTime, icon = castInfo["startTime"], castInfo["endTime"], castInfo["icon"]
+                    startTime, endTime, icon, isChanneling = castInfo["startTime"], castInfo["endTime"], castInfo["icon"], castInfo["isChanneling"]
                 end
             elseif not inListFound and endTime > castInfo["endTime"] then --! [NOT IN LIST] NOT FOUND BEFORE and SHORTER DURATION
-                startTime, endTime, icon = castInfo["startTime"], castInfo["endTime"], castInfo["icon"]
+                startTime, endTime, icon, isChanneling = castInfo["startTime"], castInfo["endTime"], castInfo["icon"], castInfo["isChanneling"]
             end
         end
 
@@ -83,7 +84,7 @@ local function UpdateCastsOnUnit(guid)
     if allCasts == 0 then
         F:HandleUnitButton("guid", guid, HideCasts)
     else
-        F:HandleUnitButton("guid", guid, ShowCasts, inListFound, startTime, endTime-startTime, icon, allCasts)
+        F:HandleUnitButton("guid", guid, ShowCasts, inListFound, startTime, endTime-startTime, icon, isChanneling, allCasts)
     end
 end
 
@@ -111,11 +112,13 @@ eventFrame:SetScript("OnEvent", function(_, event, sourceUnit)
 
         if event == "UNIT_SPELLCAST_START" or event == "UNIT_SPELLCAST_DELAYED"  or event == "UNIT_SPELLCAST_CHANNEL_START" or event == "UNIT_SPELLCAST_CHANNEL_UPDATE"
             or event == "UNIT_TARGET" or event == "NAME_PLATE_UNIT_ADDED" then
+            local isChanneling
             -- name, text, texture, startTimeMS, endTimeMS, isTradeSkill, castID, notInterruptible, spellId
             local name, _, texture, startTimeMS, endTimeMS, _, _, notInterruptible, spellId = UnitCastingInfo(sourceUnit)
             if not name then
                 -- name, text, texture, startTimeMS, endTimeMS, isTradeSkill, notInterruptible, spellId
                 name, _, texture, startTimeMS, endTimeMS, _, notInterruptible, spellId = UnitChannelInfo(sourceUnit)
+                isChanneling = true
             end
 
             -- print(name, spellId)
@@ -133,6 +136,7 @@ eventFrame:SetScript("OnEvent", function(_, event, sourceUnit)
                         ["spellId"] = spellId,
                         ["icon"] = texture,
                         ["targetGUID"] = targetGUID,
+                        ["isChanneling"] = isChanneling,
                         -- ["sourceUnit"] = sourceUnit,
                         -- ["targetUnit"] = targetUnit,
                     }
@@ -179,8 +183,9 @@ function I:CreateTargetedSpells(parent)
     parent.indicators.targetedSpells = frame
     frame:Hide()
 
-    -- frame.spellId
-    -- frame.spellCount
+    frame.cooldown:SetScript("OnCooldownDone", function()
+        frame:Hide()
+    end)
 
     function frame:SetCooldown(start, duration, icon, count)
         frame.duration:Hide()
