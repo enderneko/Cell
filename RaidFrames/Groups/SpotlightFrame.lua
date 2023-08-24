@@ -155,7 +155,7 @@ end
 -- assignment buttons
 -------------------------------------------------
 local function CreateAssignmentButton(index)
-    local b = Cell:CreateButton(spotlightFrame, NONE, "accent-hover", {20, 20}, false, false, nil, nil, "SecureHandlerAttributeTemplate,SecureHandlerClickTemplate")
+    local b = Cell:CreateButton(spotlightFrame, "|cffababab"..NONE, "accent-hover", {20, 20}, false, false, nil, nil, "SecureHandlerAttributeTemplate,SecureHandlerClickTemplate")
     b:GetFontString():SetNonSpaceWrap(true)
     b:GetFontString():SetWordWrap(true)
     b:SetToplevel(true)
@@ -193,7 +193,7 @@ local function CreateAssignmentButton(index)
 
     b:SetScript("OnAttributeChanged", function(self, name, value)
         if name ~= "text" then return end
-        b:SetText(value == "none" and NONE or value)
+        b:SetText(value == "none" and "|cffababab"..NONE or value)
     end)
 
     --! drag and set
@@ -296,9 +296,9 @@ for i = 1, 5 do
     b:HookScript("OnAttributeChanged", function(self, name, value)
         if name ~= "unit" then return end
         if type(value) == "string" then
-            placeholders[i].text:SetText("|cffA7A7A7"..value)
+            placeholders[i].text:SetText("|cffababab"..value)
         else
-            placeholders[i].text:SetText("|cffA7A7A7"..NONE)
+            placeholders[i].text:SetText("|cffababab"..NONE)
         end
     end)
 end
@@ -740,7 +740,7 @@ local function UpdateLayout(layout, which)
                     Cell.unitButtons.spotlight[i]:SetAttribute("refreshOnUpdate", true)
                 end
                 RegisterUnitWatch(Cell.unitButtons.spotlight[i])
-                assignmentButtons[i]:SetText(unit or NONE)
+                assignmentButtons[i]:SetText(unit or "|cffababab"..NONE)
             end
             spotlightFrame:Show()
         else
@@ -748,7 +748,7 @@ local function UpdateLayout(layout, which)
                 Cell.unitButtons.spotlight[i]:SetAttribute("unit", nil)
                 Cell.unitButtons.spotlight[i]:SetAttribute("refreshOnUpdate", nil)
                 UnregisterUnitWatch(Cell.unitButtons.spotlight[i])
-                assignmentButtons[i]:SetText(NONE)
+                assignmentButtons[i]:SetText("|cffababab"..NONE)
                 Cell.unitButtons.spotlight[i]:Hide()
             end
             spotlightFrame:Hide()
