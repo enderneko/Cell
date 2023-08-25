@@ -209,8 +209,7 @@ L["Glow"] = "發光"
 L["Glow Buffs"] = "增益發光"
 L["Glow Casts"] = "施法發光"
 L["Glow Color"] = "發光顏色"
---[[Translation missing --]]
---[[ L["Glow is only available to the spells in the list below"] = ""--]] 
+L["Glow is only available to the spells in the list below"] = "發光只對列表中的法術有效"
 L["Glow Options"] = "發光選項"
 L["Glow Type"] = "發光類型"
 L["Glow unit button when a group member sends a %s request"] = "當隊伍成員請求%s時，顯著標示他的單位按鈕"
@@ -467,8 +466,7 @@ L["Show Solo"] = "單人時要顯示"
 L["Show units you care about more in a separate frame"] = "在單獨的框架中顯示您更關心的單位"
 L["Show while in a party"] = "在隊伍中時顯示"
 L["Show while not in a group"] = "不在隊伍中時顯示"
---[[Translation missing --]]
---[[ L["showAllSpells"] = ""--]] 
+L["showAllSpells"] = "顯示所有法術"
 L["showDispelTypeIcons"] = "顯示驅散類型圖示"
 L["showDuration"] = "顯示持續時間文字"
 L["showGroupNumber"] = "顯示隊伍編號"
