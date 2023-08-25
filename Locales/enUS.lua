@@ -82,6 +82,12 @@ select(2, ...).L = setmetatable({
         <h1>Try disabling code snippets, if Cell doesn't work after update.</h1>
         <br/>
 
+        <h1>r192-release (Aug 25, 2023, 20:41 GMT+8)</h1>
+        <p>* Added indicator validator to ensure all indicators are in the right order.</p>
+        <p>* Fixed expansion data for frFR.</p>
+        <p>* Updated zhTW.</p>
+        <br/>
+        
         <h1>r191-release (Aug 22, 2023, 09:50 GMT+8)</h1>
         <p>* Updated expansion data for frFR (Thanks to Zuvila).</p>
         <p>* Updated Targeted Spells, Quick Cast.</p>
@@ -94,7 +100,7 @@ select(2, ...).L = setmetatable({
         <p>* Fixed indicators issues with Spotlight frames.</p>
         <p>* Updated Quick Cast, Spell Request.</p>
         <p>* Updated raid setup tooltip.</p>
-        <p>* Update zhTW.</p>
+        <p>* Updated zhTW.</p>
         <br/>
 
         <h1>r189-release (Aug 9, 2023, 08:27 GMT+8)</h1>

@@ -1,8 +1,9 @@
-[Full Changelog](https://github.com/enderneko/Cell/compare/r190-beta...09e6c50ac21a903bb952e8eda7be2b20a562df22)
+[Full Changelog](https://github.com/enderneko/Cell/compare/r191-release...2d550322947650d45bae3b0047c173eed3c79973)
 
-- Update expansion data for frFR (Thanks to Zuvila)
-- Update submenu of Utilities
+- Add indicator validation
+- Fix expansion data for frFR
+- Try fixing PotAK on Wrath
+- Fix icon refresh animation
 - Update Targeted Spells
-- Update Quick Cast alpha
-- Fix class tables (Wrath)
+- Clean up quick cast table
 - Update zhTW
