@@ -1995,14 +1995,14 @@ cleu:SetScript("OnEvent", function()
 
         -- https://wowpedia.fandom.com/wiki/Val%27anyr,_Hammer_of_Ancient_Kings
         if sourceGUID == Cell.vars.playerGUID then
-            --! NOTE: PotAK applied AFTER healing111
-            lastHealAmount = arg12
+            --! NOTE: PotAK applied AFTER healing
+            lastHealAmount = arg15
             lastHealGUID = destGUID --? AoE healing
             if blessing then
                 if not pakInfo[destGUID] then
-                    pakInfo[destGUID] = min(arg12 * 0.15, 20000)
+                    pakInfo[destGUID] = min(arg15 * 0.15, 20000)
                 else
-                    pakInfo[destGUID] = min(pakInfo[destGUID] + arg12 * 0.15, 20000)
+                    pakInfo[destGUID] = min(pakInfo[destGUID] + arg15 * 0.15, 20000)
                 end
                 UpdateShield(destGUID)
             end
@@ -2012,13 +2012,13 @@ cleu:SetScript("OnEvent", function()
         -- https://wowpedia.fandom.com/wiki/Val%27anyr,_Hammer_of_Ancient_Kings
         if sourceGUID == Cell.vars.playerGUID then
             --! NOTE: PotAK applied AFTER healing
-            lastHealAmount = arg12
+            lastHealAmount = arg15
             lastHealGUID = destGUID --? AoE healing
             if blessing then
                 if not pakInfo[destGUID] then
-                    pakInfo[destGUID] = min(arg12 * 0.15, 20000)
+                    pakInfo[destGUID] = min(arg15 * 0.15, 20000)
                 else
-                    pakInfo[destGUID] = min(pakInfo[destGUID] + arg12 * 0.15, 20000)
+                    pakInfo[destGUID] = min(pakInfo[destGUID] + arg15 * 0.15, 20000)
                 end
                 UpdateShield(destGUID)
             end
@@ -2070,8 +2070,10 @@ cleu:SetScript("OnEvent", function()
         if arg12 == 64411 and sourceGUID == Cell.vars.playerGUID then
             --! BLESSING START
             blessing = true
-            pakInfo[lastHealGUID] = lastHealAmount * 0.15
-            UpdateShield(lastHealGUID)
+            if lastHealAmount then
+                pakInfo[lastHealGUID] = min(lastHealAmount * 0.15, 20000)
+                UpdateShield(lastHealGUID)
+            end
         end
     end
 end)
