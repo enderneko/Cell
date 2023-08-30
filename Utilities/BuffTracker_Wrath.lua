@@ -272,13 +272,13 @@ local function CreateBuffButton(parent, size, spell1, spell2, icon, index)
     b:SetBackdrop({edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = P:Scale(1)})
     b:SetBackdropBorderColor(0, 0, 0, 1)
 
-    b:RegisterForClicks("LeftButtonDown", "RightButtonDown")
+    b:RegisterForClicks("LeftButtonUp", "RightButtonUp", "LeftButtonDown", "RightButtonDown") -- NOTE: ActionButtonUseKeyDown will affect this
     b:SetAttribute("type1", "spell")
     b:SetAttribute("spell", spell2 or spell1)
     b:SetAttribute("shift-type1", "spell")
     b:SetAttribute("shift-spell1", spell1)
     b:HookScript("OnClick", function(self, button, down)
-        if button == "RightButton" then
+        if button == "RightButton" and (down == GetCVarBool("ActionButtonUseKeyDown")) then
             local msg = F:GetUnaffectedString(index)
             if msg then
                 UpdateSendChannel()

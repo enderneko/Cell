@@ -59,12 +59,7 @@ Cell:RegisterCallback("ShowMover", "RaidButtons_ShowMover", ShowMover)
 -------------------------------------------------
 pullBtn = Cell:CreateStatusBarButton(buttonsFrame, L["Pull"], {60, 17}, 7, "SecureActionButtonTemplate")
 pullBtn:SetPoint("BOTTOMLEFT")
-if Cell.isRetail then
-    -- NOTE: ActionButtonUseKeyDown will affect this
-    pullBtn:RegisterForClicks("LeftButtonUp", "RightButtonUp", "LeftButtonDown", "RightButtonDown")
-else
-    pullBtn:RegisterForClicks("LeftButtonUp", "RightButtonUp")
-end
+pullBtn:RegisterForClicks("LeftButtonUp", "RightButtonUp", "LeftButtonDown", "RightButtonDown") -- NOTE: ActionButtonUseKeyDown will affect this
 pullBtn:Hide()
 
 -------------------------------------------------
