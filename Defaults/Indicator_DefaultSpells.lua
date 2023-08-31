@@ -378,7 +378,7 @@ local defensives = { -- true: track by name, false: track by id
 
     ["SHAMAN"] = {
         [108271] = true, -- 星界转移
-        [210918] = true, -- 灵体形态
+        [409293] = true, -- 掘地三尺
     },
 
     ["WARLOCK"] = {
