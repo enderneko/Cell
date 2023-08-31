@@ -161,6 +161,162 @@ local function ResetIndicatorTables()
     end
 end
 
+local function HandleIndicators(b)
+    -- NOTE: Remove old
+    I:RemoveAllCustomIndicators(b)
+
+    for _, t in pairs(Cell.vars.currentLayoutTable["indicators"]) do
+        local indicator = b.indicators[t["indicatorName"]] or I:CreateIndicator(b, t)
+        -- update position
+        if t["position"] then
+            P:ClearPoints(indicator)
+            P:Point(indicator, t["position"][1], b, t["position"][2], t["position"][3], t["position"][4])
+        end
+        -- update anchor
+        if t["anchor"] then
+            indicator:SetAnchor(t["anchor"])
+        end
+        -- update frameLevel
+        if t["frameLevel"] then
+            indicator:SetFrameLevel(indicator:GetParent():GetFrameLevel()+t["frameLevel"])
+        end
+        -- update size
+        if t["size"] then
+            -- NOTE: debuffs: ["size"] = {{normalSize}, {bigSize}}
+            if t["indicatorName"] == "debuffs" or t["indicatorName"] == "powerWordShield" then
+                indicator:SetSize(t["size"][1], t["size"][2])
+            else
+                P:Size(indicator, t["size"][1], t["size"][2])
+            end
+        end
+        -- update thickness
+        if t["thickness"] then
+            indicator:SetThickness(t["thickness"])
+        end
+        -- update border
+        if t["border"] then
+            indicator:SetBorder(t["border"])
+        end
+        -- update height
+        if t["height"] then
+            P:Height(indicator, t["height"])
+        end
+        -- update height
+        if t["textWidth"] then
+            indicator:UpdateTextWidth(t["textWidth"])
+        end
+        -- update alpha
+        if t["alpha"] then
+            indicator:SetAlpha(t["alpha"])
+        end
+        -- update orientation
+        if t["orientation"] then
+            indicator:SetOrientation(t["orientation"])
+        end
+        -- update font
+        if t["font"] then
+            indicator:SetFont(unpack(t["font"]))
+        end
+        -- update format
+        if t["format"] then
+            indicator:SetFormat(t["format"])
+            B:UpdateHealthText(b)
+        end
+        -- update color
+        if t["color"] then
+            indicator:SetColor(unpack(t["color"]))
+        end
+        -- update colors
+        if t["colors"] then
+            indicator:SetColors(t["colors"])
+        end
+        -- update texture
+        if t["texture"] then
+            indicator:SetTexture(t["texture"])
+        end
+        -- update dispel highlight
+        if t["highlightType"] then
+            indicator:UpdateHighlight(t["highlightType"])
+        end
+        -- update dispel icons
+        if type(t["showDispelTypeIcons"]) == "boolean" then
+            indicator:ShowIcons(t["showDispelTypeIcons"])
+        end
+        -- update duration
+        if type(t["showDuration"]) == "boolean" or type(t["showDuration"]) == "number" then
+            indicator:ShowDuration(t["showDuration"])
+        end
+        -- update stack
+        if type(t["showStack"]) == "boolean" then
+            indicator:ShowStack(t["showStack"])
+        end
+        -- update duration
+        if t["duration"] then
+            indicator:SetDuration(t["duration"])
+        end
+        -- update circled nums
+        if type(t["circledStackNums"]) == "boolean" then
+            indicator:SetCircledStackNums(t["circledStackNums"])
+        end
+        -- update groupNumber
+        if type(t["showGroupNumber"]) == "boolean" then
+            indicator:ShowGroupNumber(t["showGroupNumber"])
+        end
+        -- update vehicleNamePosition
+        if t["vehicleNamePosition"] then
+            indicator:UpdateVehicleNamePosition(t["vehicleNamePosition"])
+        end
+        -- update role texture
+        if t["roleTexture"] then
+            indicator:SetRoleTexture(t["roleTexture"])
+            indicator:HideDamager(t["hideDamager"])
+            UnitButton_UpdateRole(b)
+        end
+        -- tooltip
+        if type(t["showTooltip"]) == "boolean" then
+            indicator:ShowTooltip(t["showTooltip"])
+        end
+        -- speed
+        if t["speed"] then
+            indicator:SetSpeed(t["speed"])
+        end
+        -- update fadeOut
+        if type(t["fadeOut"]) == "boolean" then
+            indicator:SetFadeOut(t["fadeOut"])
+        end
+        -- update shape
+        if t["shape"] then
+            indicator:SetShape(t["shape"])
+        end
+
+        -- init
+        -- update name visibility
+        if t["indicatorName"] == "nameText" then
+            if t["enabled"] then
+                indicator:Show()
+            else
+                indicator:Hide()
+            end
+        elseif t["indicatorName"] == "playerRaidIcon" then
+            B:UpdatePlayerRaidIcon(b, t["enabled"])
+        elseif t["indicatorName"] == "targetRaidIcon" then
+            B:UpdateTargetRaidIcon(b, t["enabled"])
+        else
+            UpdateIndicatorParentVisibility(b, t["indicatorName"], t["enabled"])
+        end
+    
+        -- update pixel perfect for built-in widgets
+        -- if t["type"] == "built-in" then
+        --     if indicator.UpdatePixelPerfect then
+        --         indicator:UpdatePixelPerfect()
+        --     end
+        -- end
+    end
+    
+    --! update pixel perfect for widgets
+    B:UpdatePixelPerfect(b)
+end
+
 local function UpdateIndicators(layout, indicatorName, setting, value, value2)
     F:Debug("|cffff7777UpdateIndicators:|r ", layout, indicatorName, setting, value, value2)
 
@@ -185,6 +341,8 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
             F:Debug("NO UPDATE: only reset custom indicator tables")
             I:ResetCustomIndicatorTables()
             ResetIndicatorTables()
+            --! update shared buttons: npcs, spotlights
+            F:IterateSharedUnitButtons(HandleIndicators)
             return
         end
     end
@@ -194,161 +352,7 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
         ResetIndicatorTables()
 
         -- update indicators
-        F:IterateAllUnitButtons(function(b)
-            -- NOTE: Remove old
-            I:RemoveAllCustomIndicators(b)
-
-            for _, t in pairs(Cell.vars.currentLayoutTable["indicators"]) do
-                local indicator = b.indicators[t["indicatorName"]] or I:CreateIndicator(b, t)
-                -- update position
-                if t["position"] then
-                    P:ClearPoints(indicator)
-                    P:Point(indicator, t["position"][1], b, t["position"][2], t["position"][3], t["position"][4])
-                end
-                -- update anchor
-                if t["anchor"] then
-                    indicator:SetAnchor(t["anchor"])
-                end
-                -- update frameLevel
-                if t["frameLevel"] then
-                    indicator:SetFrameLevel(indicator:GetParent():GetFrameLevel()+t["frameLevel"])
-                end
-                -- update size
-                if t["size"] then
-                    -- NOTE: debuffs: ["size"] = {{normalSize}, {bigSize}}
-                    if t["indicatorName"] == "debuffs" or t["indicatorName"] == "powerWordShield" then
-                        indicator:SetSize(t["size"][1], t["size"][2])
-                    else
-                        P:Size(indicator, t["size"][1], t["size"][2])
-                    end
-                end
-                -- update thickness
-                if t["thickness"] then
-                    indicator:SetThickness(t["thickness"])
-                end
-                -- update border
-                if t["border"] then
-                    indicator:SetBorder(t["border"])
-                end
-                -- update height
-                if t["height"] then
-                    P:Height(indicator, t["height"])
-                end
-                -- update height
-                if t["textWidth"] then
-                    indicator:UpdateTextWidth(t["textWidth"])
-                end
-                -- update alpha
-                if t["alpha"] then
-                    indicator:SetAlpha(t["alpha"])
-                end
-                -- update orientation
-                if t["orientation"] then
-                    indicator:SetOrientation(t["orientation"])
-                end
-                -- update font
-                if t["font"] then
-                    indicator:SetFont(unpack(t["font"]))
-                end
-                -- update format
-                if t["format"] then
-                    indicator:SetFormat(t["format"])
-                    B:UpdateHealthText(b)
-                end
-                -- update color
-                if t["color"] then
-                    indicator:SetColor(unpack(t["color"]))
-                end
-                -- update colors
-                if t["colors"] then
-                    indicator:SetColors(t["colors"])
-                end
-                -- update texture
-                if t["texture"] then
-                    indicator:SetTexture(t["texture"])
-                end
-                -- update dispel highlight
-                if t["highlightType"] then
-                    indicator:UpdateHighlight(t["highlightType"])
-                end
-                -- update dispel icons
-                if type(t["showDispelTypeIcons"]) == "boolean" then
-                    indicator:ShowIcons(t["showDispelTypeIcons"])
-                end
-                -- update duration
-                if type(t["showDuration"]) == "boolean" or type(t["showDuration"]) == "number" then
-                    indicator:ShowDuration(t["showDuration"])
-                end
-                -- update stack
-                if type(t["showStack"]) == "boolean" then
-                    indicator:ShowStack(t["showStack"])
-                end
-                -- update duration
-                if t["duration"] then
-                    indicator:SetDuration(t["duration"])
-                end
-                -- update circled nums
-                if type(t["circledStackNums"]) == "boolean" then
-                    indicator:SetCircledStackNums(t["circledStackNums"])
-                end
-                -- update groupNumber
-                if type(t["showGroupNumber"]) == "boolean" then
-                    indicator:ShowGroupNumber(t["showGroupNumber"])
-                end
-                -- update vehicleNamePosition
-                if t["vehicleNamePosition"] then
-                    indicator:UpdateVehicleNamePosition(t["vehicleNamePosition"])
-                end
-                -- update role texture
-                if t["roleTexture"] then
-                    indicator:SetRoleTexture(t["roleTexture"])
-                    indicator:HideDamager(t["hideDamager"])
-                    UnitButton_UpdateRole(b)
-                end
-                -- tooltip
-                if type(t["showTooltip"]) == "boolean" then
-                    indicator:ShowTooltip(t["showTooltip"])
-                end
-                -- speed
-                if t["speed"] then
-                    indicator:SetSpeed(t["speed"])
-                end
-                -- update fadeOut
-                if type(t["fadeOut"]) == "boolean" then
-                    indicator:SetFadeOut(t["fadeOut"])
-                end
-                -- update shape
-                if t["shape"] then
-                    indicator:SetShape(t["shape"])
-                end
-
-                -- init
-                -- update name visibility
-                if t["indicatorName"] == "nameText" then
-                    if t["enabled"] then
-                        indicator:Show()
-                    else
-                        indicator:Hide()
-                    end
-                elseif t["indicatorName"] == "playerRaidIcon" then
-                    B:UpdatePlayerRaidIcon(b, t["enabled"])
-                elseif t["indicatorName"] == "targetRaidIcon" then
-                    B:UpdateTargetRaidIcon(b, t["enabled"])
-                else
-                    UpdateIndicatorParentVisibility(b, t["indicatorName"], t["enabled"])
-                end
-            
-                -- update pixel perfect for built-in widgets
-                -- if t["type"] == "built-in" then
-                --     if indicator.UpdatePixelPerfect then
-                --         indicator:UpdatePixelPerfect()
-                --     end
-                -- end
-            end
-            
-            --! update pixel perfect for widgets
-            B:UpdatePixelPerfect(b)
-        end, indicatorsInitialized) -- -- NOTE: indicatorsInitialized = false, update ALL GROUP TYPE; indicatorsInitialized = true, just update CURRENT GROUP TYPE
+        F:IterateAllUnitButtons(HandleIndicators, indicatorsInitialized) -- -- NOTE: indicatorsInitialized = false, update ALL GROUP TYPE; indicatorsInitialized = true, just update CURRENT GROUP TYPE
         indicatorsInitialized = true
     else
         -- changed in IndicatorsTab

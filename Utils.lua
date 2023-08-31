@@ -768,6 +768,18 @@ function F:IterateAllUnitButtons(func, updateCurrentGroupOnly)
     end
 end
 
+function F:IterateSharedUnitButtons(func)
+    -- npc
+    for _, b in ipairs(Cell.unitButtons.npc) do
+        func(b)
+    end
+
+    -- spotlight
+    for _, b in pairs(Cell.unitButtons.spotlight) do
+        func(b)
+    end
+end
+
 function F:GetUnitButtonByUnit(unit)
     if not unit then return end
 
