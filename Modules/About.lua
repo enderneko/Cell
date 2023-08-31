@@ -16,7 +16,7 @@ local UpdateFont
 -------------------------------------------------
 local descriptionPane
 local function CreateDescriptionPane()
-    descriptionPane = Cell:CreateTitledPane(aboutTab, "Cell", 422, 170)
+    descriptionPane = Cell:CreateTitledPane(aboutTab, "Cell", 422, 140)
     descriptionPane:SetPoint("TOPLEFT", aboutTab, "TOPLEFT", 5, -5)
 
     local changelogsBtn = Cell:CreateButton(descriptionPane, L["Changelogs"], "accent", {100, 17})
@@ -46,7 +46,7 @@ end
 -------------------------------------------------
 local function CreateAuthorPane()
     local authorPane = Cell:CreateTitledPane(aboutTab, L["Author"], 205, 50)
-    authorPane:SetPoint("TOPLEFT", aboutTab, "TOPLEFT", 5, -190)
+    authorPane:SetPoint("TOPLEFT", aboutTab, "TOPLEFT", 5, -165)
     
     authorText = authorPane:CreateFontString(nil, "OVERLAY")
     authorText:SetPoint("TOPLEFT", 5, -27)
@@ -62,7 +62,7 @@ end
 -------------------------------------------------
 local function CreateSlashPane()
     local slashPane = Cell:CreateTitledPane(aboutTab, L["Slash Commands"], 205, 50)
-    slashPane:SetPoint("TOPLEFT", aboutTab, "TOPLEFT", 222, -190)
+    slashPane:SetPoint("TOPLEFT", aboutTab, "TOPLEFT", 222, -165)
     
     local commandText = slashPane:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
     commandText:SetPoint("TOPLEFT", 5, -27)
@@ -73,8 +73,8 @@ end
 -- translators
 -------------------------------------------------
 local function CreateTranslatorsPane()
-    local translatorsPane = Cell:CreateTitledPane(aboutTab, L["Translators"], 205, 112)
-    translatorsPane:SetPoint("TOPLEFT", aboutTab, "TOPLEFT", 5, -255)
+    local translatorsPane = Cell:CreateTitledPane(aboutTab, L["Translators"], 205, 120)
+    translatorsPane:SetPoint("TOPLEFT", aboutTab, "TOPLEFT", 5, -235)
 
     translatorsTextCN = translatorsPane:CreateFontString(nil, "OVERLAY")
     translatorsTextCN.font = UNIT_NAME_FONT_CHINESE
@@ -108,8 +108,8 @@ end
 -- special thanks
 -------------------------------------------------
 local function CreateSpecialThanksPane()
-    local specialThanksPane = Cell:CreateTitledPane(aboutTab, L["Special Thanks"], 205, 112)
-    specialThanksPane:SetPoint("TOPLEFT", aboutTab, "TOPLEFT", 222, -255)
+    local specialThanksPane = Cell:CreateTitledPane(aboutTab, L["Special Thanks"], 205, 120)
+    specialThanksPane:SetPoint("TOPLEFT", aboutTab, "TOPLEFT", 222, -235)
 
     specialThanksText = specialThanksPane:CreateFontString(nil, "OVERLAY")
     specialThanksText.font = UNIT_NAME_FONT_CHINESE
@@ -310,7 +310,7 @@ end
 
 local function CreateLinksPane()
     local linksPane = Cell:CreateTitledPane(aboutTab, L["Links"], 422, 100)
-    linksPane:SetPoint("TOPLEFT", aboutTab, "TOPLEFT", 5, -385)
+    linksPane:SetPoint("TOPLEFT", aboutTab, "TOPLEFT", 5, -370)
 
     local linksEB = Cell:CreateEditBox(linksPane, 412, 20)
     linksEB:SetPoint("TOPLEFT", 5, -27)
@@ -378,7 +378,7 @@ end
 -------------------------------------------------
 local function CreateImportExportPane()
     local iePane = Cell:CreateTitledPane(aboutTab, L["Import & Export All Settings"], 422, 50)
-    iePane:SetPoint("TOPLEFT", 5, -500)
+    iePane:SetPoint("TOPLEFT", 5, -485)
 
     local importBtn = Cell:CreateButton(iePane, L["Import"], "accent-hover", {200, 20})
     importBtn:SetPoint("TOPLEFT", 5, -27)

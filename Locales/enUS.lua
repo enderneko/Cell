@@ -60,7 +60,7 @@ select(2, ...).L = setmetatable({
     ["INVERT"] = "Invert",
     ["Default"] = _G.DEFAULT,
 
-    ["ABOUT"] = "Cell is a unique raid frame addon inspired by CompactRaid.\nI love CompactRaid so much, but it seems to be abandoned. And I made Cell, hope you enjoy.\nSome ideas are from other great raid frame addons, such as Aptechka, Grid2 and VuhDo.\nCell is not meant to be a lightweight or powerful raid frame addon. It's easy to use and good enough for you (hope so).",
+    ["ABOUT"] = "Cell is a unique raid frame addon inspired by CompactRaid and Grid2. Some ideas are from other great addons, such as Aptechka and VuhDo.\nCell is not meant to be a lightweight or powerful raid frame addon. It aims to provide a good user experience.\nHope you enjoy.",
     ["RESET"] = "Cell requires a full reset after updating from a very old version",
     ["RESET_CHARACTER"] = "Cell requires a character profile reset after updating from a very old version",
     ["RESET_INCLUDES"] = "Only Click-Castings and Layout Auto Switch are included",
