@@ -82,6 +82,13 @@ select(2, ...).L = setmetatable({
         <h1>Try disabling code snippets, if Cell doesn't work after update.</h1>
         <br/>
 
+        <h1>r193-release (Sep 1, 2023, 05:57 GMT+8)</h1>
+        <p>* Fixed layout switch.</p>
+        <p>* Fixed Defensive Cooldowns indicator (Mirror Image).</p>
+        <p>* Fixed issues with CVar "ActionButtonUseKeyDown" on Wrath.</p>
+        <p>* Updated locales.</p>
+        <br/>
+
         <h1>r192-release (Aug 25, 2023, 20:41 GMT+8)</h1>
         <p>* Added indicator validator to ensure all indicators are in the right order.</p>
         <p>* Fixed expansion data for frFR.</p>
