@@ -1138,7 +1138,7 @@ local function UnitButton_UpdateBuffs(self)
     ForEachAura(self, "HELPFUL", HandleBuff)
 
     -- check Mirror Image
-    if self._mirror_image then
+    if self._mirror_image and I:IsDefensiveCooldown(55342) then -- exists and enabled
         if self._buffs.defensiveFound < indicatorNums["defensiveCooldowns"] then
             self._buffs.defensiveFound = self._buffs.defensiveFound + 1
             self.indicators.defensiveCooldowns[self._buffs.defensiveFound]:SetCooldown(self._mirror_image, 40, nil, 135994, 0)
@@ -1252,9 +1252,10 @@ cleu:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
 local function UpdateMirrorImage(b, event)
     if event == "SPELL_AURA_APPLIED" then
         b._mirror_image = GetTime()
-    elseif subEvent == "SPELL_AURA_REMOVED" then
+    elseif event == "SPELL_AURA_REMOVED" then
         b._mirror_image = nil
     end
+    UnitButton_UpdateBuffs(b)
 end
 
 cleu:SetScript("OnEvent", function()

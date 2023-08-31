@@ -343,6 +343,7 @@ local defensives = { -- true: track by name, false: track by id
     ["MAGE"] = {
         [45438] = true, -- 寒冰屏障
         [113862] = false, -- Greater Invisibility - 强化隐形术
+        [55342] = false, -- 镜像，使用 CLEU 而非 UNIT_AURA
     },
 
     ["MONK"] = {
