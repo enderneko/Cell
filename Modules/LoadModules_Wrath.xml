@@ -19,7 +19,6 @@
 	<Script file="Utilities.lua"/>
 	<Script file="About.lua"/>
 	<Script file="About_ImportExport.lua"/>
-	<Script file="About_Patrons.lua"/>
 	<Script file="Changelogs.lua"/>
 	<Script file="CodeSnippets.lua"/>
 </Ui>

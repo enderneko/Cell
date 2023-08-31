@@ -136,13 +136,10 @@ function A:CreateFadeIn(frame, fromAlpha, toAlpha, duration, delay, onFinished)
     
     if onFinished then
         fadeIn:SetScript("OnFinished", onFinished)
-    else
-        fadeIn:SetScript("OnFinished", function()
-            frame:Show()
-        end)
     end
 
     function frame:FadeIn()
+        frame:Show()
         fadeIn:Play()
     end
 end

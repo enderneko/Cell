@@ -125,6 +125,18 @@ end
 -------------------------------------------------
 -- patrons
 -------------------------------------------------
+local function GetPatrons()
+    local str = ""
+    local n = #Cell.patrons
+    for i = 1, n do
+        str = str .. Cell.patrons[i][1]
+        if i ~= n then
+            str = str .. "\n"
+        end
+    end
+    return str
+end
+
 local function CreateAnimation(frame)
     local fadeOut = frame:CreateAnimationGroup()
     frame.fadeOut = fadeOut
@@ -205,7 +217,7 @@ local function CreatePatronsPane()
     patronsText:SetPoint("TOPLEFT")
     patronsText:SetSpacing(5)
     patronsText:SetJustifyH("LEFT")
-    patronsText:SetText(F:GetPatrons())
+    patronsText:SetText(GetPatrons())
 
     -- update width
     local elapsedTime = 0

@@ -34,6 +34,7 @@ Indicators\TargetCounter.lua
 Indicators\TargetedSpells.lua
 Indicators\Consumables.lua
 Indicators\Custom_Wrath.lua
+Indicators\PatronIcon.lua
 
 RaidFrames\MainFrame.lua
 
