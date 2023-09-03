@@ -1,0 +1,9 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\FrameXML\UI.xsd">
+	<Script file="ExpansionData.lua"/>
+	<Script file="ExpansionData_deDE.lua"/>
+	<Script file="ExpansionData_frFR.lua"/>
+	<Script file="ExpansionData_koKR.lua"/>
+	<Script file="ExpansionData_zhCN.lua"/>
+	<Script file="ExpansionData_zhTW.lua"/>
+</Ui>

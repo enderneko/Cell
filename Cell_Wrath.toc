@@ -38,7 +38,7 @@ Indicators\PatronIcon.lua
 
 RaidFrames\MainFrame.lua
 
-RaidDebuffs\ExpansionData.lua
+RaidDebuffs\ExpansionData\LoadExpansionData.xml
 Modules\LoadModules_Wrath.xml
 Utilities\LoadUtilities_Wrath.xml
 RaidDebuffs\LoadRaidDebuffs_Wrath.xml
