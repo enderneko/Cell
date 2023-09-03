@@ -82,6 +82,11 @@ select(2, ...).L = setmetatable({
         <h1>Try disabling code snippets, if Cell doesn't work after update.</h1>
         <br/>
 
+        <h1>r194-release (Sep 3, 2023, 20:41 GMT+8)</h1>
+        <p>* Updated expansion data, which is used to match Raid Debuffs based on the instance you are in on Wrath. Currently, deDE, frFR, koKR, zhCN and zhTW are supported.</p>
+        <p>* Updated zhTW.</p>
+        <br/>
+
         <h1>r193-release (Sep 1, 2023, 05:57 GMT+8)</h1>
         <p>* Fixed layout switch.</p>
         <p>* Fixed Defensive Cooldowns indicator (Mirror Image).</p>

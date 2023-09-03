@@ -1,7 +1,5 @@
-[Full Changelog](https://github.com/enderneko/Cell/compare/r192-release...0a3d6c186d3340dd467e45612b5229bb063d871a)
+[Full Changelog](https://github.com/enderneko/Cell/compare/r193-release...e57db9770f8c7f5e9c446c5f4923fc821f3aaff4)
 
-- Fix layout switch
-- Update Defensives
-- Fix mirror image
-- Fix issues with ActionButtonUseKeyDown
-- Update locales
+- Update expansion data
+- Update zhTW
+- Update README
