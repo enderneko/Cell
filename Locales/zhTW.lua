@@ -17,7 +17,9 @@ L["A 0-40 integer is required."] = "需要 0 ~ 40 的整數。"
 L["A positive integer is required."] = "需要正整數。"
 L["A UI reload is required.\nDo it now?"] = "需要重新載入介面。\n是否要現在立即重新載入?"
 L["About"] = "關於"
--- L["ABOUT"] = ""
+L["ABOUT"] = [=[Cell 團隊框架的靈感來主要來自 CompactRaid 與 Grid2，同時也稍微參考了 Aptechka 和 VuhDo。
+Cell 不輕量，也並非全能，其目標是提供良好的用戶體驗。
+希望你能喜歡。]=]
 L["ACCEPTED"] = "已接受"
 L["Action"] = "動作"
 L["Add"] = "新增"
