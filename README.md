@@ -8,14 +8,10 @@
 [![cell on curseforge](https://img.shields.io/badge/dynamic/json?color=f16436&label=CurseForge&query=%24.downloads.total&url=https%3A%2F%2Fapi.cfwidget.com%2F409666&style=flat)](https://www.curseforge.com/wow/addons/cell)
 [![cell on wago](https://img.shields.io/badge/Wago-Cell-ad1319)](https://addons.wago.io/addons/cell)
 
-&nbsp;
-
-## Cell is a unique raid frame addon inspired by CompactRaid
-
-I love __CompactRaid__ so much, but it seems to be abandoned. And I made Cell, hope you enjoy.
-Some ideas are from other great raid frame addons, such as __Aptechka__, __Grid2__ and __VuhDo__.
-Cell is not meant to be a lightweight or powerful raid frame addon.
-It's easy to use and good enough for you (hope so).
+Cell is a unique raid frame addon inspired by __CompactRaid__ and __Grid2__.  
+Some ideas are from other great addons, such as __Aptechka__ and __VuhDo__.  
+Cell is not meant to be a lightweight or powerful raid frame addon. It aims to provide a good user experience.  
+Hope you enjoy.
 
 &nbsp;
 

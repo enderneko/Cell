@@ -1,7 +1,7 @@
 ## Interface: 100105
 ## Title: Cell
 ## Version: r193-release
-## Author: 篠崎
+## Author: enderneko
 ## X-Flavor: Mainline
 ## SavedVariables: CellDB
 ## AddonCompartmentFunc: Cell_OnAddonCompartmentClick

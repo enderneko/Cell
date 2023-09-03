@@ -1,7 +1,7 @@
 ## Interface: 30402
 ## Title: Cell
 ## Version: r193-release
-## Author: 篠崎
+## Author: enderneko
 ## X-Flavor: Wrath
 ## SavedVariables: CellDB
 ## SavedVariablesPerCharacter: CellCharacterDB
