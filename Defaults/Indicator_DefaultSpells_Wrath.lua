@@ -243,7 +243,9 @@ function I:UpdateDefensives(t)
 end
 
 local defensiveBlacklist = {
-    [67378] = true
+    [67378] = true,
+    [67354] = true,
+    [67380] = true,
 }
 
 function I:IsDefensiveCooldown(name, id)
