@@ -2,7 +2,7 @@
 -- File: Cell\RaidDebuffs\ExpansionData\ExpansionData.lua
 -- Author: enderneko (enderneko-dev@outlook.com)
 -- Created : 2022-08-26 04:40:40 +08:00
--- Modified: 2023-09-03 19:58:26 +08:00
+-- Modified: 2023-09-03 21:32:03 +08:00
 ---------------------------------------------------------------------
 
 local _, Cell = ...
@@ -19,7 +19,7 @@ Cell_ExpansionData = {
 -------------------------------------------------
 function F:GetExpansionList()
     if Cell_ExpansionData["locale"] ~= GetLocale() then
-        F:Print("Missing localized expansion data for "..GetLocale()..", Raid Debuffs may not work properly, please report to the author.")
+        F:Print("Missing localized expansion data for "..GetLocale()..", Raid Debuffs may not work properly, please report to author.")
     end
     return Cell_ExpansionData["expansions"]
 end
