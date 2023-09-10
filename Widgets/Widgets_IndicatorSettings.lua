@@ -50,10 +50,11 @@ local function CreateSetting_Enabled(parent)
         widget.cb = addon:CreateCheckButton(widget, L["Enabled"])
         widget.cb:SetPoint("TOPLEFT", 5, -8)
 
-        -- associate db
+        -- callback
         function widget:SetFunc(func)
             widget.cb.onClick = func
         end
+
         -- show db value
         function widget:SetDBValue(checked)
             widget.cb:SetChecked(checked)
@@ -122,7 +123,7 @@ local function CreateSetting_Position(parent, relativeToText)
             widget.func({widget.anchor:GetSelected(), widget.relativeTo:GetSelected(), widget.x:GetValue(), value})
         end
         
-        -- associate db
+        -- callback
         function widget:SetFunc(func)
             widget.func = func
         end
@@ -199,7 +200,7 @@ local function CreateSetting_PositionNoHCenter(parent, relativeToText)
             widget.func({widget.anchor:GetSelected(), widget.relativeTo:GetSelected(), widget.x:GetValue(), value})
         end
         
-        -- associate db
+        -- callback
         function widget:SetFunc(func)
             widget.func = func
         end
@@ -258,7 +259,7 @@ local function CreateSetting_Anchor(parent)
         widget.anchorText:SetText(L["Anchor To"])
         widget.anchorText:SetPoint("BOTTOMLEFT", widget.anchor, "TOPLEFT", 0, 1)
 
-        -- associate db
+        -- callback
         function widget:SetFunc(func)
             widget.func = func
         end
@@ -288,7 +289,7 @@ local function CreateSetting_FrameLevel(parent)
             widget.func(value)
         end
         
-        -- associate db
+        -- callback
         function widget:SetFunc(func)
             widget.func = func
         end
@@ -324,7 +325,7 @@ local function CreateSetting_Size(parent)
             widget.func({widget.width:GetValue(), value})
         end
 
-        -- associate db
+        -- callback
         function widget:SetFunc(func)
             widget.func = func
         end
@@ -361,7 +362,7 @@ local function CreateSetting_SizeBar(parent)
             widget.func({widget.width:GetValue(), value})
         end
 
-        -- associate db
+        -- callback
         function widget:SetFunc(func)
             widget.func = func
         end
@@ -392,7 +393,7 @@ local function CreateSetting_SizeSquare(parent)
             widget.func({value, value})
         end
         
-        -- associate db
+        -- callback
         function widget:SetFunc(func)
             widget.func = func
         end
@@ -422,7 +423,7 @@ local function CreateSetting_Thickness(parent)
             widget.func(value)
         end
         
-        -- associate db
+        -- callback
         function widget:SetFunc(func)
             widget.func = func
         end
@@ -458,7 +459,7 @@ local function CreateSetting_SizeNormalBig(parent)
             widget.func({{widget.sizeNormal:GetValue(), widget.sizeNormal:GetValue()}, {value, value}})
         end
         
-        -- associate db
+        -- callback
         function widget:SetFunc(func)
             widget.func = func
         end
@@ -495,7 +496,7 @@ local function CreateSetting_SizeAndBorder(parent)
             widget.func({widget.size:GetValue(), widget.size:GetValue(), value})
         end
         
-        -- associate db
+        -- callback
         function widget:SetFunc(func)
             widget.func = func
         end
@@ -526,7 +527,7 @@ local function CreateSetting_Height(parent)
             widget.func(value)
         end
         
-        -- associate db
+        -- callback
         function widget:SetFunc(func)
             widget.func = func
         end
@@ -707,7 +708,7 @@ local function CreateSetting_TextWidth(parent)
         widget.widthText:SetText(L["Text Width"])
         widget.widthText:SetPoint("BOTTOMLEFT", widget.textWidth, "TOPLEFT", 0, 1)
 
-        -- associate db
+        -- callback
         function widget:SetFunc(func)
             widget.func = func
         end
@@ -764,7 +765,7 @@ local function CreateSetting_Alpha(parent)
             widget.func(value)
         end
         
-        -- associate db
+        -- callback
         function widget:SetFunc(func)
             widget.func = func
         end
@@ -794,7 +795,7 @@ local function CreateSetting_Num(parent)
             widget.func(value)
         end
 
-        -- associate db
+        -- callback
         function widget:SetFunc(func)
             widget.func = func
         end
@@ -905,7 +906,7 @@ local function CreateSetting_Format(parent)
         widget.formatText:SetText(L["Format"])
         widget.formatText:SetPoint("BOTTOMLEFT", widget.format, "TOPLEFT", 0, 1)
 
-        -- associate db
+        -- callback
         function widget:SetFunc(func)
             widget.func = func
         end
@@ -1001,7 +1002,7 @@ local function CreateSetting_DurationVisibility(parent)
         widget.durationVisibilityText:SetText(L["showDuration"])
         widget.durationVisibilityText:SetPoint("BOTTOMLEFT", widget.durationVisibility, "TOPLEFT", 0, 1)
 
-        -- associate db
+        -- callback
         function widget:SetFunc(func)
             widget.func = func
         end
@@ -1058,7 +1059,7 @@ local function CreateSetting_Orientation(parent)
         widget.orientationText:SetText(L["Orientation"])
         widget.orientationText:SetPoint("BOTTOMLEFT", widget.orientation, "TOPLEFT", 0, 1)
 
-        -- associate db
+        -- callback
         function widget:SetFunc(func)
             widget.func = func
         end
@@ -1105,7 +1106,7 @@ local function CreateSetting_BarOrientation(parent)
         widget.orientationText:SetText(L["Orientation"])
         widget.orientationText:SetPoint("BOTTOMLEFT", widget.orientation, "TOPLEFT", 0, 1)
 
-        -- associate db
+        -- callback
         function widget:SetFunc(func)
             widget.func = func
         end
@@ -1165,7 +1166,7 @@ local function CreateSetting_VehicleNamePosition(parent)
             widget.func({widget.position:GetSelected(), value})
         end
 
-        -- associate db
+        -- callback
         function widget:SetFunc(func)
             widget.func = func
         end
@@ -1219,7 +1220,7 @@ local function CreateSetting_StatusPosition(parent)
             widget.func({widget.position:GetSelected(), value})
         end
 
-        -- associate db
+        -- callback
         function widget:SetFunc(func)
             widget.func = func
         end
@@ -1338,7 +1339,7 @@ local function CreateSetting_Font(parent)
         end)
         widget.color:SetPoint("TOPLEFT", widget.xOffset, "BOTTOMLEFT", 0, -30)
 
-        -- associate db
+        -- callback
         function widget:SetFunc(func)
             widget.func = func
         end
@@ -1430,7 +1431,7 @@ local function CreateSetting_FontNoOffset(parent)
         widget.fontSize:SetPoint("TOPLEFT", widget.font, "BOTTOMLEFT", 0, -25)
         widget.fontSize.afterValueChangedFn = widget.Update
 
-        -- associate db
+        -- callback
         function widget:SetFunc(func)
             widget.func = func
         end
@@ -1555,7 +1556,7 @@ local function CreateSetting_Generic_Font(parent, index)
         end)
         widget.color:SetPoint("TOPLEFT", widget.xOffset, "BOTTOMLEFT", 0, -30)
 
-        -- associate db
+        -- callback
         function widget:SetFunc(func)
             widget.func = func
         end
@@ -1610,7 +1611,7 @@ local function CreateSetting_Color(parent)
         end)
         colorPicker:SetPoint("TOPLEFT", 5, -8)
 
-        -- associate db
+        -- callback
         function widget:SetFunc(func)
             widget.func = func
         end
@@ -1644,7 +1645,7 @@ local function CreateSetting_ColorAlpha(parent)
         end)
         colorPicker:SetPoint("TOPLEFT", 5, -8)
 
-        -- associate db
+        -- callback
         function widget:SetFunc(func)
             widget.func = func
         end
@@ -1790,7 +1791,7 @@ local function CreateSetting_Colors(parent)
         secText:SetPoint("LEFT", secEditBox, "RIGHT", 5, 0)
         secText:SetText(L["sec"])
 
-        -- associate db
+        -- callback
         function widget:SetFunc(func)
             -- widget.func = func
         end
@@ -1917,7 +1918,7 @@ local function CreateSetting_CustomColors(parent)
         end)
         widget.colorPicker2:SetPoint("LEFT", widget.colorPicker1, "RIGHT", 5, 0)
 
-        -- associate db
+        -- callback
         function widget:SetFunc(func)
             widget.func = func
         end
@@ -1993,7 +1994,7 @@ local function CreateSetting_NameColor(parent)
         end)
         widget.nameColorPicker:SetPoint("LEFT", widget.nameColorDropdown, "RIGHT", 5, 0)
 
-        -- associate db
+        -- callback
         function widget:SetFunc(func)
             widget.func = func
         end
@@ -2024,7 +2025,7 @@ local function CreateSetting_StatusColors(parent)
             widget.colorsTable["AFK"][2] = g 
             widget.colorsTable["AFK"][3] = b
             widget.colorsTable["AFK"][4] = a
-            widget.func(nil, "statusColors")
+            widget.func()
         end)
         afkColor:SetPoint("TOPLEFT", 5, -7)
         
@@ -2033,7 +2034,7 @@ local function CreateSetting_StatusColors(parent)
             widget.colorsTable["OFFLINE"][2] = g 
             widget.colorsTable["OFFLINE"][3] = b
             widget.colorsTable["OFFLINE"][4] = a
-            widget.func(nil, "statusColors")
+            widget.func()
         end)
         offlineColor:SetPoint("TOPLEFT", afkColor, "TOPRIGHT", 70, 0)
         
@@ -2042,7 +2043,7 @@ local function CreateSetting_StatusColors(parent)
             widget.colorsTable["DEAD"][2] = g 
             widget.colorsTable["DEAD"][3] = b
             widget.colorsTable["DEAD"][4] = a
-            widget.func(nil, "statusColors")
+            widget.func()
         end)
         deadColor:SetPoint("TOPLEFT", offlineColor, "TOPRIGHT", 70, 0)
 
@@ -2051,7 +2052,7 @@ local function CreateSetting_StatusColors(parent)
             widget.colorsTable["GHOST"][2] = g 
             widget.colorsTable["GHOST"][3] = b
             widget.colorsTable["GHOST"][4] = a
-            widget.func(nil, "statusColors")
+            widget.func()
         end)
         ghostColor:SetPoint("TOPLEFT", afkColor, "BOTTOMLEFT", 0, -8)
 
@@ -2060,7 +2061,7 @@ local function CreateSetting_StatusColors(parent)
             widget.colorsTable["FEIGN"][2] = g 
             widget.colorsTable["FEIGN"][3] = b
             widget.colorsTable["FEIGN"][4] = a
-            widget.func(nil, "statusColors")
+            widget.func()
         end)
         feignColor:SetPoint("TOPLEFT", ghostColor, "TOPRIGHT", 70, 0)
 
@@ -2069,7 +2070,7 @@ local function CreateSetting_StatusColors(parent)
             widget.colorsTable["DRINKING"][2] = g 
             widget.colorsTable["DRINKING"][3] = b
             widget.colorsTable["DRINKING"][4] = a
-            widget.func(nil, "statusColors")
+            widget.func()
         end)
         drinkingColor:SetPoint("TOPLEFT", feignColor, "TOPRIGHT", 70, 0)
 
@@ -2078,7 +2079,7 @@ local function CreateSetting_StatusColors(parent)
             widget.colorsTable["PENDING"][2] = g 
             widget.colorsTable["PENDING"][3] = b
             widget.colorsTable["PENDING"][4] = a
-            widget.func(nil, "statusColors")
+            widget.func()
         end)
         pendingColor:SetPoint("TOPLEFT", ghostColor, "BOTTOMLEFT", 0, -8)
         pendingColor:SetEnabled(Cell.isRetail)
@@ -2088,7 +2089,7 @@ local function CreateSetting_StatusColors(parent)
             widget.colorsTable["ACCEPTED"][2] = g 
             widget.colorsTable["ACCEPTED"][3] = b
             widget.colorsTable["ACCEPTED"][4] = a
-            widget.func(nil, "statusColors")
+            widget.func()
         end)
         acceptedColor:SetPoint("TOPLEFT", pendingColor, "TOPRIGHT", 70, 0)
         acceptedColor:SetEnabled(Cell.isRetail)
@@ -2098,7 +2099,7 @@ local function CreateSetting_StatusColors(parent)
             widget.colorsTable["DECLINED"][2] = g 
             widget.colorsTable["DECLINED"][3] = b
             widget.colorsTable["DECLINED"][4] = a
-            widget.func(nil, "statusColors")
+            widget.func()
         end)
         declinedColor:SetPoint("TOPLEFT", acceptedColor, "TOPRIGHT", 70, 0)
         declinedColor:SetEnabled(Cell.isRetail)
@@ -2126,10 +2127,10 @@ local function CreateSetting_StatusColors(parent)
             acceptedColor:SetColor(widget.colorsTable["ACCEPTED"])
             declinedColor:SetColor(widget.colorsTable["DECLINED"])
 
-            widget.func(nil, "statusColors")
+            widget.func()
         end)
         
-        -- associate db
+        -- callback
         function widget:SetFunc(func)
             widget.func = func
         end
@@ -2166,7 +2167,7 @@ local function CreateSetting_CheckButton(parent)
         widget.cb = addon:CreateCheckButton(widget, "checkbutton")
         widget.cb:SetPoint("TOPLEFT", 5, -8)
 
-        -- associate db
+        -- callback
         function widget:SetFunc(func)
             widget.cb.onClick = function(checked)
                 func(checked)
@@ -2201,7 +2202,7 @@ local function CreateSetting_CheckButton2(parent)
         widget.cb = addon:CreateCheckButton(widget, "checkbutton2")
         widget.cb:SetPoint("TOPLEFT", 5, -8)
 
-        -- associate db
+        -- callback
         function widget:SetFunc(func)
             widget.cb.onClick = function(checked)
                 func(checked)
@@ -2236,7 +2237,7 @@ local function CreateSetting_CheckButton3(parent)
         widget.cb = addon:CreateCheckButton(widget, "checkbutton3")
         widget.cb:SetPoint("TOPLEFT", 5, -8)
 
-        -- associate db
+        -- callback
         function widget:SetFunc(func)
             widget.cb.onClick = function(checked)
                 func(checked)
@@ -2309,7 +2310,7 @@ local function CreateSetting_Duration(parent)
         end
         widget.durationDecimalDropdown:SetItems(items)
 
-        -- associate db
+        -- callback
         function widget:SetFunc(func)
             -- NOTE: to notify indicator update
             widget.func = func
@@ -2423,7 +2424,7 @@ local function CreateSetting_RoleTexture(parent)
         widget.texture3:SetPoint("BOTTOMLEFT", widget.text3, "BOTTOMRIGHT", 3, 0)
         widget.texture3:SetSize(16, 16)
 
-        -- associate db
+        -- callback
         function widget:SetFunc(func)
             widget.func = func
         end
@@ -2643,7 +2644,7 @@ local function CreateSetting_Glow(parent)
         end, nil, true)
         widget.glowScale:SetPoint("TOPLEFT", widget.glowLines, "BOTTOMLEFT", 0, -40)
 
-        -- associate db
+        -- callback
         function widget:SetFunc(func)
             widget.func = func
         end
@@ -2759,7 +2760,7 @@ local function CreateSetting_Texture(parent)
         end)
         widget.colorPicker:SetPoint("TOPLEFT", widget.rotation, "TOPRIGHT", 25, 0)
 
-        -- associate db
+        -- callback
         function widget:SetFunc(func)
             widget.func = func
         end
@@ -3119,7 +3120,7 @@ local function CreateSetting_Auras(parent)
         widget.text = widget:CreateFontString(nil, "OVERLAY", font_name)
         widget.text:SetPoint("BOTTOMLEFT", widget.frame, "TOPLEFT", 0, 1)
 
-        -- associate db
+        -- callback
         function widget:SetFunc(func)
             widget.frame.func = func
         end
@@ -3159,7 +3160,7 @@ local function CreateSetting_Auras2(parent)
         widget.text = widget:CreateFontString(nil, "OVERLAY", font_name)
         widget.text:SetPoint("BOTTOMLEFT", widget.frame, "TOPLEFT", 0, 1)
 
-        -- associate db
+        -- callback
         function widget:SetFunc(func)
             widget.frame.func = func
         end
@@ -3490,7 +3491,7 @@ end
 --         widget.text = widget:CreateFontString(nil, "OVERLAY", font_name)
 --         widget.text:SetPoint("BOTTOMLEFT", widget.frame, "TOPLEFT", 0, 1)
 
---         -- associate db
+--         -- callback
 --         function widget:SetFunc(func)
 --             widget.frame.func = func
 --         end
@@ -3668,7 +3669,7 @@ local function CreateSetting_BuiltIns(parent)
         widget.text:SetText(L["Built-in Spells"])
 
 
-        -- associate db
+        -- callback
         function widget:SetFunc(func)
             builtInUpdater = func
         end
@@ -4099,7 +4100,7 @@ local function CreateSetting_ConsumablesList(parent)
         widget.frame:Show()
         addon:StylizeFrame(widget.frame, {0.15, 0.15, 0.15, 1})
 
-        -- associate db
+        -- callback
         function widget:SetFunc(func)
             widget.frame.func = func
         end
@@ -4272,7 +4273,7 @@ local function CreateSetting_Thresholds(parent)
         widget.frame:Show()
         addon:StylizeFrame(widget.frame, {0.15, 0.15, 0.15, 1})
 
-        -- associate db
+        -- callback
         function widget:SetFunc(func)
             widget.frame.func = func
         end
@@ -4389,7 +4390,7 @@ local function CreateSetting_HighlightType(parent)
         end)
         ]]
 
-        -- associate db
+        -- callback
         function widget:SetFunc(func)
             widget.func = func
         end
@@ -4422,7 +4423,7 @@ local function CreateSetting_PrivateAuraOptions(parent)
         widget.cb2 = addon:CreateCheckButton(widget, L["Show countdown number"])
         widget.cb2:SetPoint("TOPLEFT", widget.cb1, "BOTTOMLEFT", 0, -7)
 
-        -- associate db
+        -- callback
         function widget:SetFunc(func)
             widget.cb1.onClick = function(checked)
                 widget.cb2:SetEnabled(checked)
@@ -4555,7 +4556,7 @@ local function CreateSetting_Shape(parent)
         widget.shapeText:SetText(L["Shape"])
         widget.shapeText:SetPoint("BOTTOMLEFT", widget.buttons[shapes[1]], "TOPLEFT", 0, 2)
 
-        -- associate db
+        -- callback
         function widget:SetFunc(func)
             widget.func = func
         end
