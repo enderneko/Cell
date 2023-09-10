@@ -1477,7 +1477,7 @@ if Cell.isRetail then
         ["crowdControls"] = {"enabled", "builtInCrowdControls", "customCrowdControls", "num:3", "orientation", "size-border", "position", "frameLevel", "font1:stackFont", "font2:durationFont"},
         ["consumables"] = {"enabled", "consumablesPreview", "consumablesList"},
         ["healthThresholds"] = {"enabled", "thresholds", "thickness"},
-        ["missingBuffs"] = {I:GetMissingBuffsString().."|cffb7b7b7"..(L["%s in Utilities must be enabled to make this indicator work."]:format(Cell:GetAccentColorString()..L["Buff Tracker"].."|r")), "enabled", "checkbutton:buffByMe", "num:5", "orientation", "size-square", "position", "frameLevel"},
+        ["missingBuffs"] = {I:GetMissingBuffsString().."|cffb7b7b7"..(L["%s in Utilities must be enabled to make this indicator work."]:format(Cell:GetAccentColorString()..L["Buff Tracker"].."|r")), "enabled", "missingBuffsFilters", "num:5", "orientation", "size-square", "position", "frameLevel"},
     }
 elseif Cell.isWrath then
     indicatorSettings = {
@@ -1512,7 +1512,7 @@ elseif Cell.isWrath then
         ["targetCounter"] = {"|cffff2727"..L["HIGH CPU USAGE"].."!|r |cffb7b7b7"..L["Check all visible enemy nameplates. Battleground/Arena only."], "enabled", "color", "position", "frameLevel", "font-noOffset"},
         ["consumables"] = {"enabled", "consumablesPreview", "consumablesList"},
         ["healthThresholds"] = {"enabled", "thresholds", "thickness"},
-        ["missingBuffs"] = {"|cffb7b7b7"..(L["%s in Utilities must be enabled to make this indicator work."]:format(Cell:GetAccentColorString()..L["Buff Tracker"].."|r")).." "..(L["If you are a paladin or warrior, and the unit has no buffs from you, a %s icon will be displayed."]:format("|T254882:14:14:0:0:14:14:1:13:1:13|t")), "enabled", "checkbutton:buffByMe", "num:5", "orientation", "size-square", "position", "frameLevel"},
+        ["missingBuffs"] = {"|cffb7b7b7"..(L["%s in Utilities must be enabled to make this indicator work."]:format(Cell:GetAccentColorString()..L["Buff Tracker"].."|r")).." "..(L["If you are a paladin or warrior, and the unit has no buffs from you, a %s icon will be displayed."]:format("|T254882:14:14:0:0:14:14:1:13:1:13|t")), "enabled", "missingBuffsFilters", "num:5", "orientation", "size-square", "position", "frameLevel"},
     }
 end
 
@@ -1523,9 +1523,10 @@ local function ShowIndicatorSettings(id)
     settingsFrame.scrollFrame:ResetHeight()
 
     local notifiedLayout = F:GetNotifiedLayoutName(currentLayout)
-    local indicatorName = currentLayoutTable["indicators"][id]["indicatorName"]
-    local indicatorType = currentLayoutTable["indicators"][id]["type"]
-    -- texplore(currentLayoutTable["indicators"][id])
+    local indicatorTable = currentLayoutTable["indicators"][id]
+    local indicatorName = indicatorTable["indicatorName"]
+    local indicatorType = indicatorTable["type"]
+    -- texplore(indicatorTable)
 
     local settingsTable
     if indicatorType == "built-in" then
@@ -1550,7 +1551,7 @@ local function ShowIndicatorSettings(id)
             settingsTable = {"enabled", "checkbutton3:fadeOut", "auras", "texture", "size", "position", "frameLevel"}
         end
        
-        if currentLayoutTable["indicators"][id]["auraType"] == "buff" then
+        if indicatorTable["auraType"] == "buff" then
             -- castByMe
             tinsert(settingsTable, 2, "checkbutton:castByMe")
             -- NOTE: trackByName (spell has a lot of RANKS!)
@@ -1591,9 +1592,9 @@ local function ShowIndicatorSettings(id)
         
         -- enabled
         if currentSetting == "enabled" then
-            w:SetDBValue(currentLayoutTable["indicators"][id][currentSetting])
+            w:SetDBValue(indicatorTable[currentSetting])
             w:SetFunc(function(value)
-                currentLayoutTable["indicators"][id][currentSetting] = value
+                indicatorTable[currentSetting] = value
                 Cell:Fire("UpdateIndicators", notifiedLayout, indicatorName, currentSetting, value)
                 -- show enabled/disabled status
                 if value then
@@ -1606,36 +1607,36 @@ local function ShowIndicatorSettings(id)
         -- checkbutton
         elseif string.find(currentSetting, "^checkbutton") then
             local _, setting, tooltip = string.split(":", currentSetting)
-            w:SetDBValue(setting, currentLayoutTable["indicators"][id][setting], tooltip)
+            w:SetDBValue(setting, indicatorTable[setting], tooltip)
             w:SetFunc(function(value)
-                currentLayoutTable["indicators"][id][setting] = value
+                indicatorTable[setting] = value
                 Cell:Fire("UpdateIndicators", notifiedLayout, indicatorName, "checkbutton", setting, value) -- indicatorName, setting, value, value2
             end)
 
         -- font
         elseif currentSetting == "font" or currentSetting == "font-noOffset" then
-            w:SetDBValue(currentLayoutTable["indicators"][id]["font"])
+            w:SetDBValue(indicatorTable["font"])
             w:SetFunc(function()
                 -- NOTE: values already changed in widget
-                Cell:Fire("UpdateIndicators", notifiedLayout, indicatorName, "font", currentLayoutTable["indicators"][id]["font"])
+                Cell:Fire("UpdateIndicators", notifiedLayout, indicatorName, "font", indicatorTable["font"])
             end)
 
         -- font1, font2
         elseif string.find(currentSetting, "^font%d") then
             local index, setting = strmatch(currentSetting, "^font(%d):(.+)")
             index = tonumber(index)
-            w:SetDBValue(currentLayoutTable["indicators"][id]["font"][index], setting)
+            w:SetDBValue(indicatorTable["font"][index], setting)
             w:SetFunc(function()
                 -- NOTE: values already changed in widget
-                Cell:Fire("UpdateIndicators", notifiedLayout, indicatorName, "font", currentLayoutTable["indicators"][id]["font"])
+                Cell:Fire("UpdateIndicators", notifiedLayout, indicatorName, "font", indicatorTable["font"])
             end)
 
         -- auras
         elseif currentSetting == "auras" then
-            w:SetDBValue(L[F:UpperFirst(currentLayoutTable["indicators"][id]["auraType"]).." List"], currentLayoutTable["indicators"][id]["auras"], indicatorType == "icons", indicatorType == "icons")
+            w:SetDBValue(L[F:UpperFirst(indicatorTable["auraType"]).." List"], indicatorTable["auras"], indicatorType == "icons", indicatorType == "icons")
             w:SetFunc(function(value)
                 -- NOTE: already changed in widget
-                Cell:Fire("UpdateIndicators", notifiedLayout, indicatorName, "auras", currentLayoutTable["indicators"][id]["auraType"], value)
+                Cell:Fire("UpdateIndicators", notifiedLayout, indicatorName, "auras", indicatorTable["auraType"], value)
             end)
         
         -- debuffBlacklist
@@ -1726,9 +1727,9 @@ local function ShowIndicatorSettings(id)
 
         -- consumablesPreview
         elseif currentSetting == "consumablesPreview" then
-            w:SetDBValue(currentLayoutTable["indicators"][id]["speed"])
+            w:SetDBValue(indicatorTable["speed"])
             w:SetFunc(function(value)
-                currentLayoutTable["indicators"][id]["speed"] = value
+                indicatorTable["speed"] = value
                 Cell:Fire("UpdateIndicators", notifiedLayout, indicatorName, "speed", value)
             end)
 
@@ -1759,39 +1760,50 @@ local function ShowIndicatorSettings(id)
 
         -- size-border
         elseif currentSetting == "size-border" then
-            w:SetDBValue(currentLayoutTable["indicators"][id]["size"], currentLayoutTable["indicators"][id]["border"])
+            w:SetDBValue(indicatorTable["size"], indicatorTable["border"])
             w:SetFunc(function(value)
-                currentLayoutTable["indicators"][id]["size"][1] = value[1]
-                currentLayoutTable["indicators"][id]["size"][2] = value[2]
-                currentLayoutTable["indicators"][id]["border"] = value[3]
+                indicatorTable["size"][1] = value[1]
+                indicatorTable["size"][2] = value[2]
+                indicatorTable["border"] = value[3]
                 Cell:Fire("UpdateIndicators", notifiedLayout, indicatorName, currentSetting, value)
             end)
 
         -- customColors
         elseif currentSetting == "customColors" then
-            w:SetDBValue(currentLayoutTable["indicators"][id]["auraType"], currentLayoutTable["indicators"][id]["colors"])
+            w:SetDBValue(indicatorTable["auraType"], indicatorTable["colors"])
             w:SetFunc(function(value)
-                currentLayoutTable["indicators"][id]["colors"] = value
+                indicatorTable["colors"] = value
                 Cell:Fire("UpdateIndicators", notifiedLayout, indicatorName, "colors", value)
             end)
 
         -- statusColors
         elseif currentSetting == "statusColors" then
-            w:SetDBValue(currentLayoutTable["indicators"][id]["colors"])
+            w:SetDBValue(indicatorTable["colors"])
             w:SetFunc(function()
                 Cell:Fire("UpdateIndicators", notifiedLayout, indicatorName, "statusColors")
             end)
 
         -- num:X
         elseif string.find(currentSetting, "num") then
-            w:SetDBValue(currentLayoutTable["indicators"][id]["num"], tonumber(select(2,string.split(":", currentSetting))))
-            currentSetting = "num"
+            w:SetDBValue(indicatorTable["num"], tonumber(select(2,string.split(":", currentSetting))))
+            w:SetFunc(function(value)
+                indicatorTable["num"] = value
+                Cell:Fire("UpdateIndicators", notifiedLayout, indicatorName, "num", value)
+            end)
+
+        -- missingBuffsFilters
+        elseif currentSetting == "missingBuffsFilters" then
+            w:SetDBValue(indicatorTable["filters"])
+            w:SetFunc(function()
+                -- NOTE: already changed in widget
+                Cell:Fire("UpdateIndicators", notifiedLayout, indicatorName, "missingBuffsFilters")
+            end)
         
         -- common
         else
-            w:SetDBValue(currentLayoutTable["indicators"][id][currentSetting])
+            w:SetDBValue(indicatorTable[currentSetting])
             w:SetFunc(function(value)
-                currentLayoutTable["indicators"][id][currentSetting] = value
+                indicatorTable[currentSetting] = value
                 Cell:Fire("UpdateIndicators", notifiedLayout, indicatorName, currentSetting, value)
             end)
         end

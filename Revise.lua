@@ -2247,6 +2247,40 @@ function F:Revise()
         end
     end
 
+    -- r195-release
+    if CellDB["revise"] and dbRevision < 195 then
+        local filters
+        
+        if Cell.isRetail then
+            filters = {
+                ["PWF"] = true,
+                ["MotW"] = true,
+                ["AB"] = true,
+                ["BS"] = true,
+                ["BotB"] = true,
+            }
+        else
+            filters = {
+                ["PWF"] = true,
+                ["DS"] = true,
+                ["SP"] = true,
+                ["AB"] = true,
+                ["MotW"] = true,
+                ["PALADIN"] = true,
+                ["WARRIOR"] = true,
+            }
+        end
+
+        for _, layout in pairs(CellDB["layouts"]) do
+            local index = Cell.defaults.indicatorIndices.missingBuffs
+            if type(layout["indicators"][index]["filters"]) ~= "table" then
+                layout["indicators"][index]["filters"] = F:Copy(filters)
+                layout["indicators"][index]["filters"]["buffByMe"] = layout["indicators"][index]["buffByMe"]
+                layout["indicators"][index]["buffByMe"] = nil
+            end
+        end
+    end
+
     -- ----------------------------------------------------------------------- --
     --            update from old versions, validate all indicators            --
     -- ----------------------------------------------------------------------- --

@@ -133,7 +133,7 @@ local function ResetIndicatorTables()
         -- update missingBuffs
         if t["indicatorName"] == "missingBuffs" then
             I:UpdateMissingBuffsNum(t["num"], true)
-            I:UpdateMissingBuffsFilter(t["buffByMe"], true)
+            I:UpdateMissingBuffsFilters(t["filters"], true)
             I:EnableMissingBuffs(t["enabled"])
         end
         -- update custom
@@ -557,6 +557,8 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                 b.indicators[indicatorName]:ShowDuration(value)
                 UnitButton_UpdateAuras(b)
             end, true)
+        elseif setting == "missingBuffsFilters" then
+            I:UpdateMissingBuffsFilters()
         elseif setting == "checkbutton" then
             if value == "showGroupNumber" then
                 F:IterateAllUnitButtons(function(b)
@@ -608,8 +610,6 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                     b.indicators[indicatorName]:HideDamager(value2)
                     UnitButton_UpdateRole(b)
                 end, true)
-            elseif value == "buffByMe" then
-                I:UpdateMissingBuffsFilter(value2)
             elseif value == "fadeOut" then
                 F:IterateAllUnitButtons(function(b)
                     b.indicators[indicatorName]:SetFadeOut(value2)

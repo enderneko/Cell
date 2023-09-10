@@ -417,15 +417,42 @@ function I:ConvertConsumables(db)
 end
 
 -------------------------------------------------
--- missing buffs
+-- missing buffs, for indicator settings only
 -------------------------------------------------
+local buffsOrder = {"PWF", "AB", "DS", "MotW", "BoK", "BoM", "BoW", "BoS", "BS", "CS", "SP"}
+local abbrToIndex = {}
+
 local missingBuffs = {
-    1243, -- PWF
-    1126, -- MotW
-    1459, -- AB
-    14752, -- DS
-    976, -- SP
+    ["PWF"] = 1243,
+    ["AB"] = 1459,
+    ["DS"] = 14752,
+    ["MotW"] = 1126,
+    ["BoK"] = 20217,
+    ["BoM"] = 19740,
+    ["BoW"] = 19742,
+    ["BoS"] = 20911,
+    ["BS"] = 6673,
+    ["CS"] = 469,
+    ["SP"] = 976,
 }
+
+do
+    local temp = {}
+    for _, k in pairs(buffsOrder) do
+        local id = missingBuffs[k]
+        local name, _, icon = GetSpellInfo(id)
+        if name then
+            tinsert(temp, {
+                ["id"] = id,
+                ["name"] = name,
+                ["icon"] = icon,
+                ["index"] = k,
+            })
+            abbrToIndex[k] = #temp
+        end
+    end
+    missingBuffs = temp
+end
 
 function I:GetDefaultMissingBuffs()
     return missingBuffs
@@ -433,11 +460,38 @@ end
 
 function I:GetMissingBuffsString()
     local s = ""
-    for _, id in pairs(missingBuffs) do
-        local icon = select(3, GetSpellInfo(id))
-        if icon then
-            s = s .. "|T" .. icon .. ":14:14:0:0:14:14:1:13:1:13|t "
-        end
+    for _, t in pairs(missingBuffs) do
+        s = s.."|T"..t["icon"]..":14:14:0:0:14:14:1:13:1:13|t".." "
     end
     return s
+end
+
+function I:GetMissingBuffsFilters()
+    local indicies = {
+        "PWF",
+        "DS",
+        "SP",
+        "AB",
+        "MotW",
+        {"PALADIN", {"BoK", "BoM", "BoW", "BoS"}},
+        {"WARRIOR", {"BS", "CS"}},
+    }
+
+    local ret = {}
+    for _, v in pairs(indicies) do
+        if type(v) == "string" then
+            local icon = missingBuffs[abbrToIndex[v]]["icon"]
+            local name = missingBuffs[abbrToIndex[v]]["name"]
+            local index = missingBuffs[abbrToIndex[v]]["index"]
+            tinsert(ret, {"|T"..icon..":14:14:0:0:14:14:1:13:1:13|t "..name, index})
+        else -- table
+            local icons = ""
+            for _, abbr in pairs(v[2]) do
+                local icon = missingBuffs[abbrToIndex[abbr]]["icon"]
+                icons = icons.."|T"..icon..":14:14:0:0:14:14:1:13:1:13|t "
+            end
+            tinsert(ret, {icons..F:GetLocalizedClassName(v[1]), v[1]})
+        end
+    end
+    return ret
 end

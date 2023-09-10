@@ -933,15 +933,34 @@ function I:ConvertConsumables(db)
 end
 
 -------------------------------------------------
--- missing buffs
+-- missing buffs, for indicator settings only
 -------------------------------------------------
+local buffsOrder = {"PWF", "MotW", "AB", "BS", "BotB"} 
+
 local missingBuffs = {
-    21562, -- PWF
-    1126, -- MotW
-    1459, -- AB
-    6673, -- BS
-    364342, -- BotB
+    ["PWF"] = 21562,
+    ["MotW"] = 1126,
+    ["AB"] = 1459,
+    ["BS"] = 6673,
+    ["BotB"] = 364342,
 }
+
+do
+    local temp = {}
+    for _, k in pairs(buffsOrder) do
+        local id = missingBuffs[k]
+        local name, _, icon = GetSpellInfo(id)
+        if name then
+            tinsert(temp, {
+                ["id"] = id,
+                ["name"] = name,
+                ["icon"] = icon,
+                ["index"] = k,
+            })
+        end
+    end
+    missingBuffs = temp
+end
 
 function I:GetDefaultMissingBuffs()
     return missingBuffs
@@ -949,13 +968,18 @@ end
 
 function I:GetMissingBuffsString()
     local s = ""
-    for _, id in pairs(missingBuffs) do
-        local icon = select(3, GetSpellInfo(id))
-        if icon then
-            s = s .. "|T" .. icon .. ":14:14:0:0:14:14:1:13:1:13|t "
-        end
+    for _, t in pairs(missingBuffs) do
+        s = s.."|T"..t["icon"]..":14:14:0:0:14:14:1:13:1:13|t".." "
     end
     return s
+end
+
+function I:GetMissingBuffsFilters()
+    local ret = {}
+    for _, t in pairs(missingBuffs) do
+        tinsert(ret, {"|T"..t["icon"]..":14:14:0:0:14:14:1:13:1:13|t "..t["name"], t["index"]})
+    end
+    return ret
 end
 
 -------------------------------------------------

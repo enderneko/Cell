@@ -4574,6 +4574,63 @@ local function CreateSetting_Shape(parent)
     return widget
 end
 
+local function CreateSetting_MissingBuffsFilters(parent)
+    local widget
+
+    if not settingWidgets["missingBuffsFilters"] then
+        widget = addon:CreateFrame("CellIndicatorSettings_MissingBuffsFilters", parent, 240, 30)
+        settingWidgets["missingBuffsFilters"] = widget
+
+        widget.buffByMe = addon:CreateCheckButton(widget, L["buffByMe"])
+        widget.buffByMe:SetPoint("TOPLEFT", 5, -8)
+
+        local buffs = I:GetMissingBuffsFilters()
+        local indexToCB = {}
+
+        for i, t in ipairs(buffs) do
+            widget[i] = addon:CreateCheckButton(widget, t[1])
+            indexToCB[t[2]] = widget[i]
+
+            if i == 1 then
+                widget[i]:SetPoint("TOPLEFT", widget.buffByMe, "BOTTOMLEFT", 0, -16)
+            else
+                widget[i]:SetPoint("TOPLEFT", widget[i-1], "BOTTOMLEFT", 0, -8)
+            end
+        end
+
+        P:Height(widget, (#buffs+1)*(14+8)+8+8)
+
+        -- callback
+        function widget:SetFunc(func)
+            widget.buffByMe.onClick = function(checked)
+                widget.filters.buffByMe = checked
+                func()
+            end
+            
+            for k, cb in pairs(indexToCB) do
+                cb.onClick = function(checked)
+                    widget.filters[k] = checked
+                    func()
+                end
+            end
+        end
+
+        -- show db value
+        function widget:SetDBValue(filters)
+            widget.filters = filters
+            widget.buffByMe:SetChecked(filters["buffByMe"])
+            for k, cb in pairs(indexToCB) do
+                cb:SetChecked(filters[k])
+            end
+        end
+    else
+        widget = settingWidgets["missingBuffsFilters"]
+    end
+
+    widget:Show()
+    return widget
+end
+
 -----------------------------------------
 -- create
 -----------------------------------------
@@ -4684,6 +4741,8 @@ function addon:CreateIndicatorSettings(parent, settingsTable)
             tinsert(widgetsTable, CreateSetting_PrivateAuraOptions(parent))
         elseif setting == "shape" then
             tinsert(widgetsTable, CreateSetting_Shape(parent))
+        elseif setting == "missingBuffsFilters" then
+            tinsert(widgetsTable, CreateSetting_MissingBuffsFilters(parent))
         else -- tips
             tinsert(widgetsTable, CreateSetting_Tips(parent, setting))
         end

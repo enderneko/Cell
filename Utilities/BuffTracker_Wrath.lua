@@ -518,7 +518,7 @@ local function CheckUnit(unit, updateBtn)
                     
                     -- NOTE: don't check paladin/warrior shit here
                     if not strfind(k, "^Bo") and k ~= "BS" and k ~= "CS" then
-                        I:ShowMissingBuff(unit, buffs[k][1]["icon"], Cell.vars.playerClass == buffs[k]["provider"])
+                        I:ShowMissingBuff(unit, k, buffs[k][1]["icon"], Cell.vars.playerClass == buffs[k]["provider"])
                     end
                 else
                     unaffected[k][unit] = nil
@@ -529,11 +529,11 @@ local function CheckUnit(unit, updateBtn)
         -- NOTE: check shits
         if Cell.vars.playerClass == "PALADIN" then
             if not HasMyBuff(unit, paladinBuffs) then
-                I:ShowMissingBuff(unit, 254882, true)
+                I:ShowMissingBuff(unit, "PALADIN", 254882, true)
             end
         elseif Cell.vars.playerClass == "WARRIOR" then
             if not HasMyBuff(unit, warriorBuffs) then
-                I:ShowMissingBuff(unit, 254882, true)
+                I:ShowMissingBuff(unit, "WARRIOR", 254882, true)
             end
         end
         

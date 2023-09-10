@@ -1731,7 +1731,7 @@ function I:CreateMissingBuffs(parent)
     end
 end
 
-local missingBuffsEnabled, missingBuffsNum, missingBuffsOnlyMine = false, 0, false
+local missingBuffsEnabled, missingBuffsNum, missingBuffsFilters = false, 0, {}
 function I:EnableMissingBuffs(enabled)
     missingBuffsEnabled = enabled
 
@@ -1748,8 +1748,8 @@ function I:UpdateMissingBuffsNum(num, noUpdate)
     end
 end
 
-function I:UpdateMissingBuffsFilter(buffByMe, noUpdate)
-    missingBuffsOnlyMine = buffByMe
+function I:UpdateMissingBuffsFilters(filters, noUpdate)
+    if filters then missingBuffsFilters = filters end
 
     if not noUpdate and missingBuffsEnabled and CellDB["tools"]["buffTracker"][1] then
         CellBuffTrackerFrame:GROUP_ROSTER_UPDATE(true)
@@ -1787,9 +1787,10 @@ local function ShowMissingBuff(b, index, icon, buffByMe)
     end
 end
 
-function I:ShowMissingBuff(unit, icon, buffByMe)
+function I:ShowMissingBuff(unit, buff, icon, buffByMe)
     if not missingBuffsEnabled then return end
-    if missingBuffsOnlyMine and not buffByMe then return end
+    if missingBuffsFilters["buffByMe"] and not buffByMe then return end
+    if not missingBuffsFilters[buff] then return end
     
     missingBuffsCounter[unit] = (missingBuffsCounter[unit] or 0) + 1
 
