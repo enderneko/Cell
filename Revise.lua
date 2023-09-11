@@ -2249,6 +2249,10 @@ function F:Revise()
 
     -- r195-release
     if CellDB["revise"] and dbRevision < 195 then
+        if not strfind(CellDB["snippets"][0]["code"], "CELL_BORDER_SIZE") then
+            CellDB["snippets"][0]["code"] = CellDB["snippets"][0]["code"].."\n\n-- border thickness: unit button and icon (number)\nCELL_BORDER_SIZE = 1"
+        end
+
         local filters
         
         if Cell.isRetail then

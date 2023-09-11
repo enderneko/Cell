@@ -11,8 +11,6 @@ local LibTranslit = LibStub("LibTranslit-1.0")
 
 CELL_FADE_OUT_HEALTH_PERCENT = nil
 
--- local LibCLHealth = LibStub("LibCombatLogHealth-1.0")
-
 local UnitGUID = UnitGUID
 -- local UnitHealth = LibCLHealth.UnitHealth
 local UnitClassBase = UnitClassBase
@@ -1462,15 +1460,15 @@ local function ShowPowerBar(b)
     P:ClearPoints(b.widget.healthBar)
     P:ClearPoints(b.widget.powerBar)
     if b.orientation == "horizontal" or b.orientation == "vertical_health" then
-        P:Point(b.widget.healthBar, "TOPLEFT", b, "TOPLEFT", 1, -1)
-        P:Point(b.widget.healthBar, "BOTTOMRIGHT", b, "BOTTOMRIGHT", -1, b.powerSize + 2)
-        P:Point(b.widget.powerBar, "TOPLEFT", b.widget.healthBar, "BOTTOMLEFT", 0, -1)
-        P:Point(b.widget.powerBar, "BOTTOMRIGHT", b, "BOTTOMRIGHT", -1, 1)
+        P:Point(b.widget.healthBar, "TOPLEFT", b, "TOPLEFT", CELL_BORDER_SIZE, -CELL_BORDER_SIZE)
+        P:Point(b.widget.healthBar, "BOTTOMRIGHT", b, "BOTTOMRIGHT", -CELL_BORDER_SIZE, b.powerSize + CELL_BORDER_SIZE * 2)
+        P:Point(b.widget.powerBar, "TOPLEFT", b.widget.healthBar, "BOTTOMLEFT", 0, -CELL_BORDER_SIZE)
+        P:Point(b.widget.powerBar, "BOTTOMRIGHT", b, "BOTTOMRIGHT", -CELL_BORDER_SIZE, CELL_BORDER_SIZE)
     else
-        P:Point(b.widget.healthBar, "TOPLEFT", b, "TOPLEFT", 1, -1)
-        P:Point(b.widget.healthBar, "BOTTOMRIGHT", b, "BOTTOMRIGHT", -(b.powerSize + 2), 1)
-        P:Point(b.widget.powerBar, "TOPLEFT", b.widget.healthBar, "TOPRIGHT", 1, 0)
-        P:Point(b.widget.powerBar, "BOTTOMRIGHT", b, "BOTTOMRIGHT", -1, 1)
+        P:Point(b.widget.healthBar, "TOPLEFT", b, "TOPLEFT", CELL_BORDER_SIZE, -CELL_BORDER_SIZE)
+        P:Point(b.widget.healthBar, "BOTTOMRIGHT", b, "BOTTOMRIGHT", -(b.powerSize + CELL_BORDER_SIZE * 2), CELL_BORDER_SIZE)
+        P:Point(b.widget.powerBar, "TOPLEFT", b.widget.healthBar, "TOPRIGHT", CELL_BORDER_SIZE, 0)
+        P:Point(b.widget.powerBar, "BOTTOMRIGHT", b, "BOTTOMRIGHT", -CELL_BORDER_SIZE, CELL_BORDER_SIZE)
     end
 
     if b:IsVisible() then
@@ -1490,8 +1488,8 @@ local function HidePowerBar(b)
     b.widget.gapTexture:Hide()
 
     P:ClearPoints(b.widget.healthBar)
-    P:Point(b.widget.healthBar, "TOPLEFT", b, "TOPLEFT", 1, -1)
-    P:Point(b.widget.healthBar, "BOTTOMRIGHT", b, "BOTTOMRIGHT", -1, 1)
+    P:Point(b.widget.healthBar, "TOPLEFT", b, "TOPLEFT", CELL_BORDER_SIZE, -CELL_BORDER_SIZE)
+    P:Point(b.widget.healthBar, "BOTTOMRIGHT", b, "BOTTOMRIGHT", -CELL_BORDER_SIZE, CELL_BORDER_SIZE)
 end
 
 -------------------------------------------------

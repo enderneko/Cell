@@ -418,6 +418,8 @@ function F:GetDefaultSnippet()
             "-- Add Evoker spell Cauterizing Flame into dispel checker (boolean)\n"..
             "CELL_DISPEL_EVOKER_CAUTERIZING_FLAME = false\n\n"..
             "-- remove raid setup details from the tooltip of the Raid button (boolean)\n"..
-            "CELL_TOOLTIP_REMOVE_RAID_SETUP_DETAILS = false"
+            "CELL_TOOLTIP_REMOVE_RAID_SETUP_DETAILS = false\n\n"..
+            "-- border thickness: unit button and icon (number)\n"..
+            "CELL_BORDER_SIZE = 1"
     }
 end

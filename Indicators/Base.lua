@@ -4,6 +4,8 @@ local F = Cell.funcs
 local I = Cell.iFuncs
 local P = Cell.pixelPerfectFuncs
 
+CELL_BORDER_SIZE = 1
+
 -------------------------------------------------
 -- SetFont
 -------------------------------------------------
@@ -307,8 +309,8 @@ function I:CreateAura_BarIcon(name, parent)
     local icon = frame:CreateTexture(name.."Icon", "ARTWORK")
     frame.icon = icon
     icon:SetTexCoord(0.12, 0.88, 0.12, 0.88)
-    P:Point(icon, "TOPLEFT", frame, "TOPLEFT", 1, -1)
-    P:Point(icon, "BOTTOMRIGHT", frame, "BOTTOMRIGHT", -1, 1)
+    P:Point(icon, "TOPLEFT", frame, "TOPLEFT", CELL_BORDER_SIZE, -CELL_BORDER_SIZE)
+    P:Point(icon, "BOTTOMRIGHT", frame, "BOTTOMRIGHT", -CELL_BORDER_SIZE, CELL_BORDER_SIZE)
     -- icon:SetDrawLayer("ARTWORK", 1)
 
     local cooldown = CreateFrame("StatusBar", name.."CooldownBar", frame)
@@ -333,7 +335,7 @@ function I:CreateAura_BarIcon(name, parent)
 
     local spark = cooldown:CreateTexture(nil, "OVERLAY")
     frame.spark = spark
-    P:Height(spark, 1)
+    P:Height(spark, CELL_BORDER_SIZE)
     spark:SetBlendMode("ADD")
     spark:SetPoint("TOPLEFT", cooldown:GetStatusBarTexture(), "BOTTOMLEFT")
     spark:SetPoint("TOPRIGHT", cooldown:GetStatusBarTexture(), "BOTTOMRIGHT")
