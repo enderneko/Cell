@@ -79,7 +79,8 @@ select(2, ...).L = setmetatable({
     ["SNIPPETS_TIPS"] = "[Double-Click] to rename. [Shift-Click] to delete. All checked snippets will be automatically invoked at the end of Cell initialization process (in ADDON_LOADED event).",
 
     ["CHANGELOGS"] = [[
-        <h1>Try disabling code snippets, if Cell doesn't work after update.</h1>
+        <h1>r195-release (Sep 12, 2023, 06:52 GMT+8)</h1>
+        <p>* Updated Missing Buffs indicator.</p>
         <br/>
 
         <h1>r194-release (Sep 3, 2023, 20:41 GMT+8)</h1>

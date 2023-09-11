@@ -45,6 +45,7 @@ local patrons = {
     {"微樓聽雨-銀翼要塞 (TW)", "weiloutingyu"},
     {"往事 (爱发电)", "wangshi"},
     {"哄哄 (爱发电)", "honghong"},
+    {"acm447 (爱发电)", "acm447"},
 }
 
 -- sort

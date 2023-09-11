@@ -748,7 +748,8 @@ L["Click to view older changelogs"] = "点击查看远古更新记录"
 -- <br/>
 
 L["CHANGELOGS"] = [[
-    <h1>如果更新后发现Cell不能正常工作，尝试禁用代码片段。</h1>
+    <h1>r195-release (Sep 12, 2023, 06:52 GMT+8)</h1>
+    <p>* 更新“缺失增益”指示器。</p>
     <br/>
 
     <h1>r194-release (Sep 3, 2023, 20:41 GMT+8)</h1>
