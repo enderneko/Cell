@@ -2681,7 +2681,7 @@ function B:SetOrientation(button, orientation, rotateTexture)
         P:ClearPoints(gapTexture)
         P:Point(gapTexture, "BOTTOMLEFT", powerBar, "TOPLEFT")
         P:Point(gapTexture, "BOTTOMRIGHT", powerBar, "TOPRIGHT")
-        P:Height(gapTexture, 1)
+        P:Height(gapTexture, CELL_BORDER_SIZE)
         
         -- update incomingHeal
         P:ClearPoints(incomingHeal)
@@ -2783,7 +2783,7 @@ function B:SetOrientation(button, orientation, rotateTexture)
             P:ClearPoints(gapTexture)
             P:Point(gapTexture, "TOPRIGHT", powerBar, "TOPLEFT")
             P:Point(gapTexture, "BOTTOMRIGHT", powerBar, "BOTTOMLEFT")
-            P:Width(gapTexture, 1)
+            P:Width(gapTexture, CELL_BORDER_SIZE)
         else -- vertical_health
             -- update powerBarLoss
             P:ClearPoints(powerBarLoss)
@@ -2794,7 +2794,7 @@ function B:SetOrientation(button, orientation, rotateTexture)
             P:ClearPoints(gapTexture)
             P:Point(gapTexture, "BOTTOMLEFT", powerBar, "TOPLEFT")
             P:Point(gapTexture, "BOTTOMRIGHT", powerBar, "TOPRIGHT")
-            P:Height(gapTexture, 1)
+            P:Height(gapTexture, CELL_BORDER_SIZE)
         end
         
         -- update incomingHeal
@@ -2970,7 +2970,7 @@ end
 
 -- pixel perfect
 function B:UpdatePixelPerfect(button, updateIndicators)
-    button:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8x8", edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = P:Scale(1)})
+    button:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8x8", edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = P:Scale(CELL_BORDER_SIZE)})
     button:SetBackdropColor(0, 0, 0, CellDB["appearance"]["bgAlpha"])
     button:SetBackdropBorderColor(0, 0, 0, 1)
     P:Resize(button)
@@ -3071,7 +3071,7 @@ function F:UnitButton_OnLoad(button)
     -- background:SetVertexColor(0, 0, 0, 1)
 
     -- backdrop
-    button:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8x8", edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = P:Scale(1)})
+    button:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8x8", edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = P:Scale(CELL_BORDER_SIZE)})
     button:SetBackdropColor(0, 0, 0, 1)
     button:SetBackdropBorderColor(0, 0, 0, 1)
     
