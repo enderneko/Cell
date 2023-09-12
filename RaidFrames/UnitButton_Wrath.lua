@@ -10,6 +10,7 @@ local HealComm = LibStub("LibHealComm-4.0", true)
 local LibTranslit = LibStub("LibTranslit-1.0")
 
 CELL_FADE_OUT_HEALTH_PERCENT = nil
+CELL_BORDER_COLOR = {0, 0, 0, 1}
 
 local UnitGUID = UnitGUID
 local UnitClassBase = UnitClassBase
@@ -2580,6 +2581,8 @@ function B:SetOrientation(button, orientation, rotateTexture)
     local shieldBar = button.widget.shieldBar
     local overShieldGlow = button.widget.overShieldGlow
 
+    gapTexture:SetColorTexture(unpack(CELL_BORDER_COLOR))
+
     button.orientation = orientation
     if orientation == "vertical_health" then
         healthBar:SetOrientation("vertical")
@@ -2894,7 +2897,7 @@ end
 function B:UpdatePixelPerfect(button, updateIndicators)
     button:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8x8", edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = P:Scale(CELL_BORDER_SIZE)})
     button:SetBackdropColor(0, 0, 0, CellDB["appearance"]["bgAlpha"])
-    button:SetBackdropBorderColor(0, 0, 0, 1)
+    button:SetBackdropBorderColor(unpack(CELL_BORDER_COLOR))
     P:Resize(button)
 
     P:Repoint(button.widget.healthBar)
@@ -2961,7 +2964,7 @@ function F:UnitButton_OnLoad(button)
     -- backdrop
     button:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8x8", edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = P:Scale(CELL_BORDER_SIZE)})
     button:SetBackdropColor(0, 0, 0, 1)
-    button:SetBackdropBorderColor(0, 0, 0, 1)
+    button:SetBackdropBorderColor(unpack(CELL_BORDER_COLOR))
     
     -- healthbar
     local healthBar = CreateFrame("StatusBar", name.."HealthBar", button)
@@ -2993,7 +2996,7 @@ function F:UnitButton_OnLoad(button)
     -- P:Point(gapTexture, "BOTTOMLEFT", powerBar, "TOPLEFT")
     -- P:Point(gapTexture, "BOTTOMRIGHT", powerBar, "TOPRIGHT")
     -- P:Height(gapTexture, 1)
-    gapTexture:SetColorTexture(0, 0, 0, 1)
+    gapTexture:SetColorTexture(unpack(CELL_BORDER_COLOR))
 
     -- power loss
     local powerBarLoss = button:CreateTexture(name.."PowerBarLoss", "ARTWORK", nil , -7)

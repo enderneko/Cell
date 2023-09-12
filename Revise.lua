@@ -2285,6 +2285,13 @@ function F:Revise()
         end
     end
 
+    -- r196-release
+    if CellDB["revise"] and dbRevision < 196 then
+        if not strfind(CellDB["snippets"][0]["code"], "CELL_BORDER_COLOR") then
+            CellDB["snippets"][0]["code"] = CellDB["snippets"][0]["code"].."\n\n-- unit button border color ({r, g, b, a}, number: 0-1)\nCELL_BORDER_COLOR = {0, 0, 0, 1}"
+        end
+    end
+
     -- ----------------------------------------------------------------------- --
     --            update from old versions, validate all indicators            --
     -- ----------------------------------------------------------------------- --

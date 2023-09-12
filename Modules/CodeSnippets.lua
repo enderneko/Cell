@@ -420,6 +420,8 @@ function F:GetDefaultSnippet()
             "-- remove raid setup details from the tooltip of the Raid button (boolean)\n"..
             "CELL_TOOLTIP_REMOVE_RAID_SETUP_DETAILS = false\n\n"..
             "-- border thickness: unit button and icon (number)\n"..
-            "CELL_BORDER_SIZE = 1"
+            "CELL_BORDER_SIZE = 1\n\n"..
+            "-- unit button border color ({r, g, b, a}, number: 0-1)\n"..
+            "CELL_BORDER_COLOR = {0, 0, 0, 1}"
     }
 end
