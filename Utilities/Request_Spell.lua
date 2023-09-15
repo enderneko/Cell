@@ -658,6 +658,10 @@ local function GetValue(progress, start, delta)
     return start + ((math.sin(angle) + 1) / 2) * delta
 end
 
+-- local function GetSineValue(progress, scale)
+--     return math.sin(progress * 2 * math.pi) * scale
+-- end
+
 function U:CreateSpellRequestIcon(parent)
     local srIcon = CreateFrame("Frame", parent:GetName().."SpellRequestIcon", parent.widget.srGlowFrame)
     parent.widget.srIcon = srIcon
@@ -675,8 +679,10 @@ function U:CreateSpellRequestIcon(parent)
         -- srIcon:SetBackdropColor(unpack(color))
         srIcon.icon:SetTexture(tex)
 
+        -- reset
         srIcon:SetScale(1)
         srIcon:SetAlpha(1)
+        P:Repoint(srIcon)
         srIcon.elapsed = 0
         
         LCG.ButtonGlow_Start(srIcon, color)
@@ -696,6 +702,17 @@ function U:CreateSpellRequestIcon(parent)
                 if srIcon.elapsed >= 1 then
                     srIcon.elapsed = 0
                 end
+            end)
+        elseif type == "bounce" then
+            srIcon:SetScript("OnUpdate", function(self, elapsed)
+                srIcon.elapsed = (srIcon.elapsed or 0) + elapsed * 2
+                srIcon:SetPoint(
+                    CellDB["spellRequest"]["sharedIconOptions"][3],
+                    parent.widget.srGlowFrame, 
+                    CellDB["spellRequest"]["sharedIconOptions"][4], 
+                    CellDB["spellRequest"]["sharedIconOptions"][5], 
+                    CellDB["spellRequest"]["sharedIconOptions"][6] + GetValue(srIcon.elapsed / 1, 0, 7)
+                )
             end)
         elseif type == "blink" then
             srIcon:SetScript("OnUpdate", function(self, elapsed)

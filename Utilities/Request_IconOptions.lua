@@ -151,6 +151,15 @@ local function CreateIconOptionsFrame()
             end
         },
         {
+            ["text"] = L["Bounce"],
+            ["value"] = "bounce",
+            ["onClick"] = function()
+                CellDB["spellRequest"]["sharedIconOptions"][1] = "bounce"
+                UpdateIconPreview()
+                Cell:Fire("UpdateRequests", "spellRequest_icon")
+            end
+        },
+        {
             ["text"] = L["Blink"],
             ["value"] = "blink",
             ["onClick"] = function()
