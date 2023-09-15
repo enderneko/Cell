@@ -2445,6 +2445,8 @@ local function UnitButton_OnHide(self)
 end
 
 local function UnitButton_OnEnter(self)
+    if not IsEncounterInProgress() then UnitButton_UpdateStatusText(self) end
+    
     if highlightEnabled then self.widget.mouseoverHighlight:Show() end
     
     local unit = self.state.displayedUnit
