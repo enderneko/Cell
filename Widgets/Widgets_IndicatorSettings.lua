@@ -3578,8 +3578,13 @@ local function CreateSpellButtons(parent, class, spells, disableds)
             builtInUpdater()
         end)
 
-        local icon = select(3, GetSpellInfo(spellId))
-        spellButtons[buttonIndex].icon:SetTexture(icon)
+        if spellId == 45438 then
+            -- 深寒凝冰 覆盖了 寒冰屏障
+            spellButtons[buttonIndex].icon:SetTexture(135841)
+        else
+            local icon = select(3, GetSpellInfo(spellId))
+            spellButtons[buttonIndex].icon:SetTexture(icon)
+        end
         
         UpdateSpellButton(spellButtons[buttonIndex], class, disableds[spellId])
         
