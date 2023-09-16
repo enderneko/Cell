@@ -1587,7 +1587,6 @@ function F:Revise()
             end
         end
     end
-    ]=]
 
     -- r150-release
     if CellDB["revise"] and dbRevision < 150 then
@@ -2198,6 +2197,7 @@ function F:Revise()
             end
         end
     end
+    ]=]
 
     -- r190-beta
     if CellDB["revise"] and dbRevision < 190 then
