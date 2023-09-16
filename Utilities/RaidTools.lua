@@ -8,7 +8,7 @@ local LCG = LibStub("LibCustomGlow-1.0")
 -- raid tools
 -------------------------------------------------
 local rtPane
-local resCB, reportCB, buffCB, readyPullCB, pullDropdown, secEditBox, marksBarCB, marksDropdown, fadeOutToolsCB
+local resCB, reportCB, buffCB, readyPullCB, pullDropdown, secEditBox, marksBarCB, marksDropdown, marksShowSoloCB, fadeOutToolsCB
 
 local function CreateRTPane()
     rtPane = Cell:CreateTitledPane(Cell.frames.utilitiesTab, L["Raid Tools"].." |cFF777777"..L["only in group"], 422, 167)
@@ -149,6 +149,7 @@ local function CreateRTPane()
     marksBarCB = Cell:CreateCheckButton(rtPane, L["Marks Bar"], function(checked, self)
         CellDB["tools"]["marks"][1] = checked
         marksDropdown:SetEnabled(checked)
+        marksShowSoloCB:SetEnabled(checked)
         Cell:Fire("UpdateTools", "marks")
     end, L["Marks Bar"], L["Only show when you have permission to do this"], L["marksTips"])
     marksBarCB:SetPoint("TOPLEFT", readyPullCB, "BOTTOMLEFT", 0, -43)
@@ -161,7 +162,7 @@ local function CreateRTPane()
             ["text"] = L["Target Marks"].." ("..L["Horizontal"]..")",
             ["value"] = "target_h",
             ["onClick"] = function()
-                CellDB["tools"]["marks"][2] = "target_h"
+                CellDB["tools"]["marks"][3] = "target_h"
                 Cell:Fire("UpdateTools", "marks")
             end,
         },
@@ -169,7 +170,7 @@ local function CreateRTPane()
             ["text"] = L["Target Marks"].." ("..L["Vertical"]..")",
             ["value"] = "target_v",
             ["onClick"] = function()
-                CellDB["tools"]["marks"][2] = "target_v"
+                CellDB["tools"]["marks"][3] = "target_v"
                 Cell:Fire("UpdateTools", "marks")
             end,
         },
@@ -178,7 +179,7 @@ local function CreateRTPane()
             ["value"] = "world_h",
             ["disabled"] = Cell.isWrath,
             ["onClick"] = function()
-                CellDB["tools"]["marks"][2] = "world_h"
+                CellDB["tools"]["marks"][3] = "world_h"
                 Cell:Fire("UpdateTools", "marks")
             end,
         },
@@ -187,7 +188,7 @@ local function CreateRTPane()
             ["value"] = "world_v",
             ["disabled"] = Cell.isWrath,
             ["onClick"] = function()
-                CellDB["tools"]["marks"][2] = "world_v"
+                CellDB["tools"]["marks"][3] = "world_v"
                 Cell:Fire("UpdateTools", "marks")
             end,
         },
@@ -196,7 +197,7 @@ local function CreateRTPane()
             ["value"] = "both_h",
             ["disabled"] = Cell.isWrath,
             ["onClick"] = function()
-                CellDB["tools"]["marks"][2] = "both_h"
+                CellDB["tools"]["marks"][3] = "both_h"
                 Cell:Fire("UpdateTools", "marks")
             end,
         },
@@ -205,22 +206,28 @@ local function CreateRTPane()
             ["value"] = "both_v",
             ["disabled"] = Cell.isWrath,
             ["onClick"] = function()
-                CellDB["tools"]["marks"][2] = "both_v"
+                CellDB["tools"]["marks"][3] = "both_v"
                 Cell:Fire("UpdateTools", "marks")
             end,
         }
     })
+
+    marksShowSoloCB = Cell:CreateCheckButton(rtPane, L["Show Solo"], function(checked, self)
+        CellDB["tools"]["marks"][2] = checked
+        Cell:Fire("UpdateTools", "marks")
+    end)
+    marksShowSoloCB:SetPoint("TOPLEFT", marksDropdown, "BOTTOMLEFT", 0, -8)
 
     -- fadeOut
     fadeOutToolsCB = Cell:CreateCheckButton(rtPane, L["Fade Out These Buttons"], function(checked, self)
         CellDB["tools"]["fadeOut"] = checked
         Cell:Fire("UpdateTools", "fadeOut")
     end)
-    fadeOutToolsCB:SetPoint("TOPLEFT", marksBarCB, "BOTTOMLEFT", 0, -43)
+    fadeOutToolsCB:SetPoint("TOPLEFT", marksBarCB, "BOTTOMLEFT", 0, -70)
 
     local region = CreateFrame("Frame", nil, rtPane)
     region:SetPoint("TOPLEFT", buffCB, -5, 5)
-    region:SetPoint("BOTTOM", marksDropdown, 0, -5)
+    region:SetPoint("BOTTOM", marksShowSoloCB, 0, -5)
     region:SetPoint("RIGHT", -5, 0)
 
     fadeOutToolsCB:HookScript("OnEnter", function()
@@ -239,6 +246,7 @@ local function ShowUtilitySettings(which)
     if which == "raidTools" then
         if not init then
             CreateRTPane()
+            F:ApplyCombatProtectionToFrame(rtPane, -4, 4, 4, -4)
         end
         
         rtPane:Show()
@@ -259,7 +267,8 @@ local function ShowUtilitySettings(which)
 
         marksDropdown:SetEnabled(CellDB["tools"]["marks"][1])
         marksBarCB:SetChecked(CellDB["tools"]["marks"][1])
-        marksDropdown:SetSelectedValue(CellDB["tools"]["marks"][2])
+        marksDropdown:SetSelectedValue(CellDB["tools"]["marks"][3])
+        marksShowSoloCB:SetChecked(CellDB["tools"]["marks"][2])
 
         fadeOutToolsCB:SetChecked(CellDB["tools"]["fadeOut"])
         

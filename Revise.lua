@@ -2289,6 +2289,10 @@ function F:Revise()
                 end
             end
         end
+
+        if type(CellDB["tools"]["marks"][2]) ~= "boolean" then
+            tinsert(CellDB["tools"]["marks"], 2, false)
+        end
     end
 
     -- ----------------------------------------------------------------------- --

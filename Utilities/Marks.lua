@@ -19,7 +19,7 @@ marksFrame:SetScript("OnDragStart", function()
 end)
 marksFrame:SetScript("OnDragStop", function()
     marksFrame:StopMovingOrSizing()
-    P:SavePosition(marksFrame, CellDB["tools"]["marks"][3])
+    P:SavePosition(marksFrame, CellDB["tools"]["marks"][4])
 end)
 
 -------------------------------------------------
@@ -37,9 +37,9 @@ local function ShowMover(show)
         marksFrame.moverText:Show()
         Cell:StylizeFrame(marksFrame, {0, 1, 0, 0.4}, {0, 0, 0, 0})
         if not F:HasPermission(true) then -- button not shown
-            if strfind(CellDB["tools"]["marks"][2], "^target") then
+            if strfind(CellDB["tools"]["marks"][3], "^target") then
                 marks:Show()
-            elseif strfind(CellDB["tools"]["marks"][2], "^world") then
+            elseif strfind(CellDB["tools"]["marks"][3], "^world") then
                 worldMarks:Show()
             else
                 marks:Show()
@@ -52,7 +52,9 @@ local function ShowMover(show)
         marksFrame.moverText:Hide()
         Cell:StylizeFrame(marksFrame, {0, 0, 0, 0}, {0, 0, 0, 0})
         if not F:HasPermission(true) then -- button should not shown
-            marks:Hide()
+            if not (Cell.vars.groupType == "solo" and CellDB["tools"]["marks"][2]) then
+                marks:Hide()
+            end
             worldMarks:Hide()
         end
         marksFrame:SetAlpha(CellDB["tools"]["fadeOut"] and 0 or 1)
@@ -333,14 +335,14 @@ local function CheckPermission()
     else
         marksFrame:UnregisterEvent("PLAYER_REGEN_ENABLED")
         if CellDB["tools"]["marks"][1] then
-            if strfind(CellDB["tools"]["marks"][2], "^target") then
+            if strfind(CellDB["tools"]["marks"][3], "^target") then
                 if marksFrame.moverText:IsShown() or Cell.vars.hasPartyMarkPermission then
                     marks:Show()
                 else
                     marks:Hide()
                 end
                 
-            elseif strfind(CellDB["tools"]["marks"][2], "^world") then
+            elseif strfind(CellDB["tools"]["marks"][3], "^world") then
                 if marksFrame.moverText:IsShown() or Cell.vars.hasPartyMarkPermission then
                     worldMarks:Show()
                 else
@@ -356,7 +358,13 @@ local function CheckPermission()
                     worldMarks:Hide()
                 end
             end
-            Rearrange(CellDB["tools"]["marks"][2])
+
+            -- override
+            if Cell.vars.groupType == "solo" and CellDB["tools"]["marks"][2] then
+                marks:Show()
+            end
+
+            Rearrange(CellDB["tools"]["marks"][3])
         else
             marks:Hide()
             worldMarks:Hide()
@@ -386,7 +394,7 @@ local function UpdateTools(which)
     end
 
     if not which then -- position
-        P:LoadPosition(marksFrame, CellDB["tools"]["marks"][3])
+        P:LoadPosition(marksFrame, CellDB["tools"]["marks"][4])
     end
 end
 Cell:RegisterCallback("UpdateTools", "RaidMarks_UpdateTools", UpdateTools)

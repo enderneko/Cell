@@ -191,7 +191,7 @@ function eventFrame:ADDON_LOADED(arg1)
                 ["buffTracker"] = {false, {}, 27},
                 ["deathReport"] = {false, 10},
                 ["readyAndPull"] = {false, {"default", 7}, {}},
-                ["marks"] = {false, "target_h", {}},
+                ["marks"] = {false, false, "target_h", {}},
                 ["fadeOut"] = false,
             }
         end
@@ -778,7 +778,7 @@ function SlashCmdList.CELL(msg, editbox)
             CellDB["tools"]["readyAndPull"][3] = {}
             Cell.frames.raidMarksFrame:ClearAllPoints()
             Cell.frames.raidMarksFrame:SetPoint("BOTTOMRIGHT", UIParent, "CENTER")
-            CellDB["tools"]["marks"][3] = {}
+            CellDB["tools"]["marks"][4] = {}
 
         elseif rest == "all" then
             Cell.frames.anchorFrame:ClearAllPoints()

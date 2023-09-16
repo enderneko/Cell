@@ -182,9 +182,9 @@ end
 -- InCombatLockdown
 -------------------------------------------------
 local protectedFrames = {}
-function F:ApplyCombatProtectionToFrame(f)
+function F:ApplyCombatProtectionToFrame(f, x1, y1, x2, y2)
     tinsert(protectedFrames, f)
-    Cell:CreateCombatMask(f)
+    Cell:CreateCombatMask(f, x1, y1, x2, y2)
     
     if InCombatLockdown() then
         f.combatMask:Show()

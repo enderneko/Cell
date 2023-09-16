@@ -737,7 +737,7 @@ local function ShowUtilitySettings(which)
             CreateGlowBuffsPane()
             CreateGlowCastsPane()
 
-            F:ApplyCombatProtectionToFrame(qcPane)
+            F:ApplyCombatProtectionToFrame(qcPane, -4, 4, 4, -4)
 
             qcPane:SetScript("OnShow", function()
                 for i, p in pairs(previewButtons) do

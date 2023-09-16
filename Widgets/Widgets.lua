@@ -1752,12 +1752,12 @@ function addon:CreateMask(parent, text, points) -- points = {topleftX, topleftY,
     parent.mask:Show()
 end
 
-function addon:CreateCombatMask(parent)
+function addon:CreateCombatMask(parent, x1, y1, x2, y2)
     local mask = CreateFrame("Frame", nil, parent, "BackdropTemplate")
     parent.combatMask = mask
 
-    mask:SetPoint("TOPLEFT", P:Scale(1), P:Scale(-1))
-    mask:SetPoint("BOTTOMRIGHT", P:Scale(-1), P:Scale(1))
+    mask:SetPoint("TOPLEFT", P:Scale(x1 or 1), P:Scale(y1 or -1))
+    mask:SetPoint("BOTTOMRIGHT", P:Scale(x2 or -1), P:Scale(y2 or 1))
 
     addon:StylizeFrame(mask, {0.17, 0.15, 0.15, 0.8}, {0, 0, 0, 0})
     -- mask:SetFrameStrata("DIALOG")
