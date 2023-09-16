@@ -1,7 +1,8 @@
-[Full Changelog](https://github.com/enderneko/Cell/compare/r194-release...45e4a50a1cafed1036be60531812deeb979642f7)
+[Full Changelog](https://github.com/enderneko/Cell/compare/r195-release...f185ed068b9622c4e113aa03d3cf79d37fd267b5)
 
-- Add CELL_BORDER_SIZE
-- Update Missing Buffs indicator
-- Update defensive blacklist on wrath
-- Fix blz hider
-- Bump up version
+- Update Quick Cast
+- Add bounce effect to Spell Request icon
+- Hook UnitButton_UpdateStatusText to OnEnter
+- Versions <= r188 are no longer supported
+- Add CELL_BORDER_COLOR
+- Fix CELL_BORDER_SIZE

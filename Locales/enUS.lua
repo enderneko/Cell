@@ -79,6 +79,12 @@ select(2, ...).L = setmetatable({
     ["SNIPPETS_TIPS"] = "[Double-Click] to rename. [Shift-Click] to delete. All checked snippets will be automatically invoked at the end of Cell initialization process (in ADDON_LOADED event).",
 
     ["CHANGELOGS"] = [[
+        <h1>r196-release (Sep 16, 2023, 09:32 GMT+8)</h1>
+        <p>* Updated Quick Cast and Spell Request.</p>
+        <p>* Fix Status Text indicator.</p>
+        <p>+ Code Snippets vars: CELL_BORDER_SIZE, CELL_BORDER_COLOR.</p>
+        <br/>
+
         <h1>r195-release (Sep 12, 2023, 06:52 GMT+8)</h1>
         <p>* Updated Missing Buffs indicator.</p>
         <br/>
@@ -234,6 +240,11 @@ select(2, ...).L = setmetatable({
         <p>* Updated zhTW.</p>
         <br/>
 
+        <p><a href="older">Click to view older changelogs</a></p>
+        <br/>
+    ]],
+
+    ["OLDER_CHANGELOGS"] = [[
         <h1>r169-release (May 20, 2023, 04:18 GMT+8)</h1>
         <h2>Retail</h2>
         <p>+ New indicator: Private Auras.</p>
@@ -351,11 +362,6 @@ select(2, ...).L = setmetatable({
         <p>* Bug fixes.</p>
         <br/>
 
-        <p><a href="older">Click to view older changelogs</a></p>
-        <br/>
-    ]],
-
-    ["OLDER_CHANGELOGS"] = [[
         <h1>r149-release (Nov 29, 2022, 06:35 GMT+8)</h1>
         <p>* Added NPC button size options.</p>
         <p>* Added a bar orientation option "Vertical B".</p>

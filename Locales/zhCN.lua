@@ -751,6 +751,12 @@ L["Click to view older changelogs"] = "点击查看远古更新记录"
 -- <br/>
 
 L["CHANGELOGS"] = [[
+    <h1>r196-release (Sep 16, 2023, 09:32 GMT+8)</h1>
+    <p>* 更新“快捷施法”与“法术请求”。</p>
+    <p>* 修复“状态文字”指示器。</p>
+    <p>+ 代码片段变量：CELL_BORDER_SIZE，CELL_BORDER_COLOR。</p>
+    <br/>
+
     <h1>r195-release (Sep 12, 2023, 06:52 GMT+8)</h1>
     <p>* 更新“缺失增益”指示器。</p>
     <br/>
@@ -906,6 +912,11 @@ L["CHANGELOGS"] = [[
     <p>* 更新繁中。</p>
     <br/>
 
+    <p><a href="older">]]..L["Click to view older changelogs"]..[[</a></p>
+    <br/>
+]]
+
+L["OLDER_CHANGELOGS"] = [[
     <h1>r169-release (May 20, 2023, 04:18 GMT+8)</h1>
     <h2>正式服</h2>
     <p>+ 新指示器：个人光环。</p>
@@ -1024,11 +1035,6 @@ L["CHANGELOGS"] = [[
     <p>* 修复几处bug。</p>
     <br/>
 
-    <p><a href="older">]]..L["Click to view older changelogs"]..[[</a></p>
-    <br/>
-]]
-
-L["OLDER_CHANGELOGS"] = [[
     <h1>r149-release (Nov 29, 2022, 06:35 GMT+8)</h1>
     <p>* 添加 NPC 按钮尺寸选项。</p>
     <p>* 添加条方向选项“纵向 B”。</p>
