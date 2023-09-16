@@ -2230,23 +2230,6 @@ function F:Revise()
         end
     end
 
-    -- r192-release
-    if CellDB["revise"] and dbRevision < 192 then
-        if Cell.isRetail then
-            for c, ct in pairs(CellDB["quickCast"]) do
-                for s, st in pairs(ct) do
-                    if not st["enabled"] and st["outerBuff"] == 0 and st["innerBuff"] == 0 then
-                        ct[s] = nil
-                    end
-                end
-
-                if F:Getn(ct) == 0 then
-                    CellDB["quickCast"][c] = nil
-                end
-            end
-        end
-    end
-
     -- r195-release
     if CellDB["revise"] and dbRevision < 195 then
         if not strfind(CellDB["snippets"][0]["code"], "CELL_BORDER_SIZE") then
@@ -2289,6 +2272,22 @@ function F:Revise()
     if CellDB["revise"] and dbRevision < 196 then
         if not strfind(CellDB["snippets"][0]["code"], "CELL_BORDER_COLOR") then
             CellDB["snippets"][0]["code"] = CellDB["snippets"][0]["code"].."\n\n-- unit button border color ({r, g, b, a}, number: 0-1)\nCELL_BORDER_COLOR = {0, 0, 0, 1}"
+        end
+    end
+
+    -- r197-release
+    if CellDB["revise"] and dbRevision < 197 then
+        if Cell.isRetail then
+            for c, ct in pairs(CellDB["quickCast"]) do
+                for s, st in pairs(ct) do
+                    if type(st["spacing"]) == "number" then
+                        st["spacingX"] = st["spacing"]
+                        st["spacingY"] = st["spacing"]
+                        st["spacing"] = nil
+                        st["lines"] = 6
+                    end
+                end
+            end
         end
     end
 

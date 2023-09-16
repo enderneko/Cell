@@ -311,6 +311,17 @@ function eventFrame:ADDON_LOADED(arg1)
 
         -- quickCast ------------------------------------------------------------------------------
         if type(CellDB["quickCast"]) ~= "table" then CellDB["quickCast"] = {} end
+        -- remove unused quick cast table
+        for c, ct in pairs(CellDB["quickCast"]) do
+            for s, st in pairs(ct) do
+                if not st["enabled"] and st["outerBuff"] == 0 and st["innerBuff"] == 0 then
+                    ct[s] = nil
+                end
+            end
+            if F:Getn(ct) == 0 then
+                CellDB["quickCast"][c] = nil
+            end
+        end
 
         -- appearance -----------------------------------------------------------------------------
         if type(CellDB["appearance"]) ~= "table" then
