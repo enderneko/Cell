@@ -355,6 +355,9 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
         -- update indicators
         F:IterateAllUnitButtons(HandleIndicators, indicatorsInitialized) -- -- NOTE: indicatorsInitialized = false, update ALL GROUP TYPE; indicatorsInitialized = true, just update CURRENT GROUP TYPE
         indicatorsInitialized = true
+
+        -- update auras when indicators update finished
+        F:IterateAllUnitButtons(UnitButton_UpdateAuras, true)
     else
         -- changed in IndicatorsTab
         if setting == "enabled" then
@@ -2148,9 +2151,8 @@ UnitButton_UpdateAll = function(self)
     UnitButton_UpdateReadyCheck(self)
     UnitButton_UpdateThreat(self)
     UnitButton_UpdateThreatBar(self)
-    UnitButton_UpdateAuras(self)
     I.UpdateStatusIcon_Resurrection(self)
-
+    
     if Cell.loaded and self.powerBarUpdateRequired then
         self.powerBarUpdateRequired = nil
         if ShouldShowPowerBar(self) then
@@ -2163,6 +2165,8 @@ UnitButton_UpdateAll = function(self)
         UnitButton_UpdatePowerMax(self)
         UnitButton_UpdatePower(self)
     end
+
+    UnitButton_UpdateAuras(self)
 end
 
 -------------------------------------------------
@@ -2234,7 +2238,7 @@ local function UnitButton_RegisterEvents(self)
     -- self:RegisterEvent("UNIT_PET")
     self:RegisterEvent("UNIT_PORTRAIT_UPDATE") -- pet summoned far away
     
-    UnitButton_UpdateAll(self)
+    pcall(UnitButton_UpdateAll, self)
 end
 
 local function UnitButton_UnregisterEvents(self)

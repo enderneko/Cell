@@ -351,6 +351,9 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
         -- update indicators
         F:IterateAllUnitButtons(HandleIndicators, indicatorsInitialized) -- -- NOTE: indicatorsInitialized = false, update ALL GROUP TYPE; indicatorsInitialized = true, just update CURRENT GROUP TYPE
         indicatorsInitialized = true
+
+        -- update auras when indicators update finished
+        F:IterateAllUnitButtons(UnitButton_UpdateAuras, true)
     else
         -- changed in IndicatorsTab
         if setting == "enabled" then
@@ -2185,7 +2188,6 @@ UnitButton_UpdateAll = function(self)
     UnitButton_UpdateThreat(self)
     UnitButton_UpdateThreatBar(self)
     -- UnitButton_UpdateStatusIcon(self)
-    UnitButton_UpdateAuras(self)
     I.UpdateStatusIcon_Resurrection(self)
 
     if Cell.loaded and self.powerBarUpdateRequired then
@@ -2200,6 +2202,8 @@ UnitButton_UpdateAll = function(self)
         UnitButton_UpdatePowerMax(self)
         UnitButton_UpdatePower(self)
     end
+
+    UnitButton_UpdateAuras(self)
 end
 
 -------------------------------------------------
@@ -2273,7 +2277,13 @@ local function UnitButton_RegisterEvents(self)
     -- self:RegisterEvent("UNIT_PET")
     self:RegisterEvent("UNIT_PORTRAIT_UPDATE") -- pet summoned far away
     
-    UnitButton_UpdateAll(self)
+    --! OnShow时立即执行，但UpdateIndicators可能并未执行完毕，导致在ResetCustomIndicators过程中指示器发生变化，进而报错
+    pcall(UnitButton_UpdateAll, self)
+    -- if not pcall(UnitButton_UpdateAll, self) then
+    --     C_Timer.After(1, function()
+    --         UnitButton_UpdateAuras(self)
+    --     end)
+    -- end
 end
 
 local function UnitButton_UnregisterEvents(self)
