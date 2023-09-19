@@ -70,8 +70,7 @@ L["BOTTOM"] = "下"
 L["BOTTOMLEFT"] = "左下"
 L["BOTTOMRIGHT"] = "右下"
 L["bottom-to-top"] = "從下到上"
---[[Translation missing --]]
---[[ L["Bounce"] = ""--]] 
+L["Bounce"] = "彈跳"
 L["BR"] = "戰復"
 L["Buff"] = "增益"
 L["Buff List"] = "增益清單"
@@ -110,8 +109,7 @@ L["Close"] = "關閉"
 L["Code Snippets"] = "程式碼片段"
 L["Color"] = "顏色"
 L["Color Duration Text"] = "著色持續時間文字"
---[[Translation missing --]]
---[[ L["Columns"] = ""--]] 
+L["Columns"] = "直行數"
 L["Common"] = "共用"
 L["Condition"] = "條件"
 L["Confirm"] = "確認"
@@ -440,8 +438,7 @@ L["Role Icon"] = "角色職責圖示"
 L["Rotate Texture"] = "旋轉材質"
 L["Rotation"] = "旋轉"
 L["Round Up Duration Text"] = "四捨五入持續時間文字"
---[[Translation missing --]]
---[[ L["Rows"] = ""--]] 
+L["Rows"] = "橫列數"
 L["Run"] = "執行"
 L["S"] = "專精天賦"
 L["Save"] = "儲存"
