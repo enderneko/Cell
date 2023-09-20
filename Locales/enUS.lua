@@ -79,6 +79,13 @@ select(2, ...).L = setmetatable({
     ["SNIPPETS_TIPS"] = "[Double-Click] to rename. [Shift-Click] to delete. All checked snippets will be automatically invoked at the end of Cell initialization process (in ADDON_LOADED event).",
 
     ["CHANGELOGS"] = [[
+        <h1>r197-release (Sep 20, 2023, 08:08 GMT+8)</h1>
+        <p>* Added a "Show Solo" option for Marks Bar.</p>
+        <p>* Added Ice Cold to Defensive CDs indicator.</p>
+        <p>* Updated ICC debuffs, thanks to 大胖宝.</p>
+        <p>* Updated zhTW.</p>
+        <br/>
+
         <h1>r196-release (Sep 16, 2023, 09:32 GMT+8)</h1>
         <p>* Updated Quick Cast and Spell Request.</p>
         <p>* Fix Status Text indicator.</p>

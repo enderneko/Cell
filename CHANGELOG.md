@@ -1,8 +1,7 @@
-[Full Changelog](https://github.com/enderneko/Cell/compare/r195-release...f185ed068b9622c4e113aa03d3cf79d37fd267b5)
+[Full Changelog](https://github.com/enderneko/Cell/compare/r196-release...241fcf4f1d71f3524c936a14bd43cc304d438a46)
 
-- Update Quick Cast
-- Add bounce effect to Spell Request icon
-- Hook UnitButton_UpdateStatusText to OnEnter
-- Versions <= r188 are no longer supported
-- Add CELL_BORDER_COLOR
-- Fix CELL_BORDER_SIZE
+- Fix the timing of UnitButton_UpdateAuras
+- Add show solo marks option
+- Add Ice Cold to defensives
+- Update ICC debuffs
+- Update zhTW
