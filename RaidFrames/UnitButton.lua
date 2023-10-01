@@ -311,7 +311,7 @@ local function HandleIndicators(b)
     end
 
     --! update pixel perfect for widgets
-    B:UpdatePixelPerfect(b)
+    B:UpdatePixelPerfect(b, true)
 end
 
 local function UpdateIndicators(layout, indicatorName, setting, value, value2)

@@ -221,6 +221,92 @@ local function CreateSetting_PositionNoHCenter(parent, relativeToText)
     return widget
 end
 
+local function CreateSetting_ShieldBarPosition(parent)
+    local widget
+
+    if not settingWidgets["shieldBarPosition"] then
+        widget = addon:CreateFrame("CellIndicatorSettings_PositionNoHCenter", parent, 240, 95)
+        settingWidgets["shieldBarPosition"] = widget
+
+        widget.anchor = addon:CreateDropdown(widget, 110)
+        widget.anchor:SetPoint("TOPLEFT", 5, -20)
+        local items = {}
+        for _, point in pairs(anchorPoints_noHCenter) do
+            tinsert(items, {
+                ["text"] = L[point],
+                ["value"] = point,
+                ["onClick"] = function()
+                    widget.func({point, widget.relativeTo:GetSelected(), widget.x:GetValue(), widget.y:GetValue()})
+                    addon:SetEnabled(true, widget.relativeToText, widget.relativeTo, widget.x, widget.y)
+                end,
+            })
+        end
+        tinsert(items, 1, {
+            ["text"] = L["Health Bar"],
+            ["value"] = "HEALTH_BAR",
+            ["onClick"] = function()
+                widget.func({"HEALTH_BAR", widget.relativeTo:GetSelected(), widget.x:GetValue(), widget.y:GetValue()})
+                addon:SetEnabled(false, widget.relativeToText, widget.relativeTo, widget.x, widget.y)
+            end,
+        })
+        widget.anchor:SetItems(items)
+
+        widget.anchorText = widget:CreateFontString(nil, "OVERLAY", font_name)
+        widget.anchorText:SetText(L["Anchor Point"])
+        widget.anchorText:SetPoint("BOTTOMLEFT", widget.anchor, "TOPLEFT", 0, 1)
+
+        widget.relativeTo = addon:CreateDropdown(widget, 110)
+        widget.relativeTo:SetPoint("LEFT", widget.anchor, "RIGHT", 25, 0)
+        items = {}
+        for _, point in pairs(anchorPoints_noHCenter) do
+            tinsert(items, {
+                ["text"] = L[point],
+                ["value"] = point,
+                ["onClick"] = function()
+                    widget.func({widget.anchor:GetSelected(), point, widget.x:GetValue(), widget.y:GetValue()})
+                end,
+            })
+        end
+        widget.relativeTo:SetItems(items)
+
+        widget.relativeToText = widget:CreateFontString(nil, "OVERLAY", font_name)
+        widget.relativeToText:SetText(L["To UnitButton's"])
+        widget.relativeToText:SetPoint("BOTTOMLEFT", widget.relativeTo, "TOPLEFT", 0, 1)
+        
+        widget.x = addon:CreateSlider(L["X Offset"], widget, -100, 100, 110, 1)
+        widget.x:SetPoint("TOPLEFT", widget.anchor, "BOTTOMLEFT", 0, -25)
+        widget.x.afterValueChangedFn = function(value)
+            widget.func({widget.anchor:GetSelected(), widget.relativeTo:GetSelected(), value, widget.y:GetValue()})
+        end
+        
+        widget.y = addon:CreateSlider(L["Y Offset"], widget, -100, 100, 110, 1)
+        widget.y:SetPoint("TOPLEFT", widget.relativeTo, "BOTTOMLEFT", 0, -25)
+        widget.y.afterValueChangedFn = function(value)
+            widget.func({widget.anchor:GetSelected(), widget.relativeTo:GetSelected(), widget.x:GetValue(), value})
+        end
+        
+        -- callback
+        function widget:SetFunc(func)
+            widget.func = func
+        end
+        
+        -- show db value
+        function widget:SetDBValue(positionTable)
+            widget.anchor:SetSelectedValue(positionTable[1])
+            widget.relativeTo:SetSelectedValue(positionTable[2])
+            widget.x:SetValue(positionTable[3])
+            widget.y:SetValue(positionTable[4])
+
+            addon:SetEnabled(positionTable[1] ~= "HEALTH_BAR", widget.relativeToText, widget.relativeTo, widget.x, widget.y)
+        end
+    else
+        widget = settingWidgets["shieldBarPosition"]
+    end
+    
+    widget:Show()
+    return widget
+end
+
 local function CreateSetting_Anchor(parent)
     local widget
 
@@ -4658,6 +4744,12 @@ function addon:CreateIndicatorSettings(parent, settingsTable)
             tinsert(widgetsTable, CreateSetting_PositionNoHCenter(parent, L["To UnitButton's"]))
         elseif setting == "namePosition" then
             tinsert(widgetsTable, CreateSetting_Position(parent, L["To HealthBar's"]))
+        elseif setting == "vehicleNamePosition" then
+            tinsert(widgetsTable, CreateSetting_VehicleNamePosition(parent))
+        elseif setting == "statusPosition" then
+            tinsert(widgetsTable, CreateSetting_StatusPosition(parent))
+        elseif setting == "shieldBarPosition" then
+            tinsert(widgetsTable, CreateSetting_ShieldBarPosition(parent))
         elseif setting == "anchor" then
             tinsert(widgetsTable, CreateSetting_Anchor(parent))
         elseif setting == "frameLevel" then
@@ -4678,10 +4770,6 @@ function addon:CreateIndicatorSettings(parent, settingsTable)
             tinsert(widgetsTable, CreateSetting_Height(parent))
         elseif setting == "textWidth" then
             tinsert(widgetsTable, CreateSetting_TextWidth(parent))
-        elseif setting == "vehicleNamePosition" then
-            tinsert(widgetsTable, CreateSetting_VehicleNamePosition(parent))
-        elseif setting == "statusPosition" then
-            tinsert(widgetsTable, CreateSetting_StatusPosition(parent))
         elseif setting == "alpha" then
             tinsert(widgetsTable, CreateSetting_Alpha(parent))
         elseif string.find(setting, "num") then

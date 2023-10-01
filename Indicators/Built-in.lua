@@ -1581,6 +1581,47 @@ end
 -------------------------------------------------
 -- shield bar
 -------------------------------------------------
+local function ShieldBar_SetHorizontalValue(bar, percent)
+    local maxWidth = bar.parentHealthBar:GetWidth()
+    local barWidth
+    if percent >= 1 then
+        barWidth = maxWidth
+    else
+        barWidth = maxWidth * percent
+    end
+    bar:SetWidth(barWidth)
+end
+
+local function ShieldBar_SetVerticalValue(bar, percent)
+    local maxHeight = bar.parentHealthBar:GetHeight()
+    local barHeight
+    if percent >= 1 then
+        barHeight = maxHeight
+    else
+        barHeight = maxHeight * percent
+    end
+    bar:SetHeight(barHeight)
+end
+
+local function ShieldBar_SetPoint(bar, point, anchorTo, anchorPoint, x, y)
+    -- if point == "HEALTH_BAR_HORIZONTAL" then
+    --     bar:_SetPoint("TOPLEFT", b.widget.healthBar)
+    --     bar:_SetPoint("BOTTOMLEFT", b.widget.healthBar)
+    --     bar.SetValue = ShieldBar_SetHorizontalValue
+    -- elseif point == "HEALTH_BAR_VERTICAL" then
+    --     bar:_SetPoint("TOPLEFT", b.widget.healthBar)
+    --     bar:_SetPoint("BOTTOMLEFT", b.widget.healthBar)
+    --     bar.SetValue = ShieldBar_SetVerticalValue
+    if point == "HEALTH_BAR" then
+        bar:_SetPoint("TOPLEFT", bar.parentHealthBar, P:Scale(-1), P:Scale(1))
+        bar:_SetPoint("BOTTOMLEFT", bar.parentHealthBar, P:Scale(-1), P:Scale(-1))
+        bar.SetValue = ShieldBar_SetHorizontalValue
+    else
+        bar:_SetPoint(point, anchorTo, anchorPoint, x, y)
+        bar.SetValue = ShieldBar_SetHorizontalValue
+    end
+end
+
 function I:CreateShieldBar(parent)
     local shieldBar = CreateFrame("Frame", parent:GetName().."ShieldBar", parent.widget.overlayFrame, "BackdropTemplate")
     parent.indicators.shieldBar = shieldBar
@@ -1593,20 +1634,15 @@ function I:CreateShieldBar(parent)
     P:Point(tex, "TOPLEFT", shieldBar, "TOPLEFT", 1, -1)
     P:Point(tex, "BOTTOMRIGHT", shieldBar, "BOTTOMRIGHT", -1, 1)
 
+    shieldBar._SetPoint = shieldBar.SetPoint
+    shieldBar.SetPoint = ShieldBar_SetPoint
+    shieldBar.SetValue = ShieldBar_SetHorizontalValue
+
+    shieldBar.parentHealthBar = parent.widget.healthBar
+
     function shieldBar:SetColor(r, g, b, a)
         tex:SetColorTexture(r, g, b)
         shieldBar:SetAlpha(a)
-    end
-
-    function shieldBar:SetValue(percent)
-        local maxWidth = parent.widget.healthBar:GetWidth()
-        local barWidth
-        if percent >= 1 then
-            barWidth = maxWidth
-        else
-            barWidth = maxWidth * percent
-        end
-        P:Width(shieldBar, barWidth)
     end
 
     function shieldBar:UpdatePixelPerfect()
