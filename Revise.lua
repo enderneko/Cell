@@ -2295,6 +2295,20 @@ function F:Revise()
         end
     end
 
+    -- r198-release
+    if CellDB["revise"] and dbRevision < 198 then
+        for _, layout in pairs(CellDB["layouts"]) do
+            local index = Cell.defaults.indicatorIndices.targetCounter
+            if type(layout["indicators"][index]["filters"]) ~= "table" then
+                layout["indicators"][index]["filters"] = {
+                    ["outdoor"] = false,
+                    ["pve"] = false,
+                    ["pvp"] = true,
+                }
+            end
+        end
+    end
+
     -- ----------------------------------------------------------------------- --
     --            update from old versions, validate all indicators            --
     -- ----------------------------------------------------------------------- --

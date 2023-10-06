@@ -4722,6 +4722,53 @@ local function CreateSetting_MissingBuffsFilters(parent)
     return widget
 end
 
+local function CreateSetting_TargetCounterFilters(parent)
+    local widget
+
+    if not settingWidgets["targetCounterFilters"] then
+        widget = addon:CreateFrame("CellIndicatorSettings_TargetCounterFilters", parent, 240, 74)
+        settingWidgets["targetCounterFilters"] = widget
+
+        widget.outdoor = addon:CreateCheckButton(widget, L["Outdoor"])
+        widget.outdoor:SetPoint("TOPLEFT", 5, -8)
+
+        widget.pve = addon:CreateCheckButton(widget, "PvE")
+        widget.pve:SetPoint("TOPLEFT", widget.outdoor, "BOTTOMLEFT", 0, -8)
+
+        widget.pvp = addon:CreateCheckButton(widget, "PvP")
+        widget.pvp:SetPoint("TOPLEFT", widget.pve, "BOTTOMLEFT", 0, -8)
+
+        -- callback
+        function widget:SetFunc(func)
+            widget.outdoor.onClick = function(checked)
+                widget.filters.outdoor = checked
+                func()
+            end
+            widget.pve.onClick = function(checked)
+                widget.filters.pve = checked
+                func()
+            end
+            widget.pvp.onClick = function(checked)
+                widget.filters.pvp = checked
+                func()
+            end
+        end
+
+        -- show db value
+        function widget:SetDBValue(filters)
+            widget.filters = filters
+            widget.outdoor:SetChecked(filters["outdoor"])
+            widget.pve:SetChecked(filters["pve"])
+            widget.pvp:SetChecked(filters["pvp"])
+        end
+    else
+        widget = settingWidgets["targetCounterFilters"]
+    end
+
+    widget:Show()
+    return widget
+end
+
 -----------------------------------------
 -- create
 -----------------------------------------
@@ -4836,6 +4883,8 @@ function addon:CreateIndicatorSettings(parent, settingsTable)
             tinsert(widgetsTable, CreateSetting_Shape(parent))
         elseif setting == "missingBuffsFilters" then
             tinsert(widgetsTable, CreateSetting_MissingBuffsFilters(parent))
+        elseif setting == "targetCounterFilters" then
+            tinsert(widgetsTable, CreateSetting_TargetCounterFilters(parent))
         else -- tips
             tinsert(widgetsTable, CreateSetting_Tips(parent, setting))
         end

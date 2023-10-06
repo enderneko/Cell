@@ -115,6 +115,7 @@ local function ResetIndicatorTables()
         end
         -- update targetCounter
         if t["indicatorName"] == "targetCounter" then
+            I:UpdateTargetCounterFilters(t["filters"], true)
             I:EnableTargetCounter(t["enabled"])
         end
         -- update targetedSpells
@@ -563,6 +564,8 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
             end, true)
         elseif setting == "missingBuffsFilters" then
             I:UpdateMissingBuffsFilters()
+        elseif setting == "targetCounterFilters" then
+            I:UpdateTargetCounterFilters()
         elseif setting == "checkbutton" then
             if value == "showGroupNumber" then
                 F:IterateAllUnitButtons(function(b)
