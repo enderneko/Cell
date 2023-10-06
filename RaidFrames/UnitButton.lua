@@ -92,7 +92,7 @@ end
 local indicatorsInitialized
 local previousLayout = {}
 
-local function ResetIndicatorTables()
+local function ResetIndicators()
     wipe(enabledIndicators)
     wipe(indicatorNums)
 
@@ -338,7 +338,7 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
         if previousLayout[Cell.vars.layoutGroupType] == Cell.vars.currentLayout then
             F:Debug("NO UPDATE: only reset custom indicator tables")
             I:ResetCustomIndicatorTables()
-            ResetIndicatorTables()
+            ResetIndicators()
             --! update shared buttons: npcs, spotlights
             F:IterateSharedUnitButtons(HandleIndicators)
             return
@@ -347,7 +347,7 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
     previousLayout[Cell.vars.layoutGroupType] = Cell.vars.currentLayout
 
     if not indicatorName then -- init
-        ResetIndicatorTables()
+        ResetIndicators()
 
         -- update indicators
         F:IterateAllUnitButtons(HandleIndicators, indicatorsInitialized) -- -- NOTE: indicatorsInitialized = false, update ALL GROUP TYPE; indicatorsInitialized = true, just update CURRENT GROUP TYPE
