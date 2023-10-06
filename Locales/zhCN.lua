@@ -751,6 +751,10 @@ L["Click to view older changelogs"] = "点击查看远古更新记录"
 -- <br/>
 
 L["CHANGELOGS"] = [[
+    <h1>r198-release (Oct 7, 2023, 06:54 GMT+8)</h1>
+    <p>* 更新指示器：目标计数，护盾条。</p>
+    <br/>
+
     <h1>r197-release (Sep 20, 2023, 08:08 GMT+8)</h1>
     <p>* 为标记工具条添加了“单人时显示”的选项。</p>
     <p>* 将“深寒凝冰”添加至减伤指示器。</p>

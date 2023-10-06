@@ -1,7 +1,4 @@
-[Full Changelog](https://github.com/enderneko/Cell/compare/r196-release...241fcf4f1d71f3524c936a14bd43cc304d438a46)
+[Full Changelog](https://github.com/enderneko/Cell/compare/r197-release...8eaa4d855902bf89773d05c9224ce1214d696f2e)
 
-- Fix the timing of UnitButton_UpdateAuras
-- Add show solo marks option
-- Add Ice Cold to defensives
-- Update ICC debuffs
-- Update zhTW
+- Update Target Counter
+- Update position options of Shield Bar indicator

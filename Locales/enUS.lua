@@ -79,6 +79,10 @@ select(2, ...).L = setmetatable({
     ["SNIPPETS_TIPS"] = "[Double-Click] to rename. [Shift-Click] to delete. All checked snippets will be automatically invoked at the end of Cell initialization process (in ADDON_LOADED event).",
 
     ["CHANGELOGS"] = [[
+        <h1>r198-release (Oct 7, 2023, 06:54 GMT+8)</h1>
+        <p>* Updated indicators: Target Counter, Shield Bar.</p>
+        <br/>
+
         <h1>r197-release (Sep 20, 2023, 08:08 GMT+8)</h1>
         <p>* Added a "Show Solo" option for Marks Bar.</p>
         <p>* Added Ice Cold to Defensive CDs indicator.</p>
