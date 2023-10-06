@@ -47,6 +47,7 @@ local patrons = {
     {"哄哄 (爱发电)", "honghong"},
     {"acm447 (爱发电)", "acm447"},
     {"K3cR (爱发电)", "k3cr"},
+    {"黑哥哥-世界之樹 (TW)", "heigege"},
 }
 
 -- sort
