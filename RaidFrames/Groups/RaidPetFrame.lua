@@ -150,6 +150,7 @@ header:SetAttribute("initialConfigFunction", [[
 function header:UpdateButtonUnits(bName, unit)
     if not unit then return end
     Cell.unitButtons.raidpet.units[unit] = _G[bName]
+    _G[bName].isRaidPet = true
 end
 
 header:SetAttribute("_initialAttributeNames", "refreshUnitChange")

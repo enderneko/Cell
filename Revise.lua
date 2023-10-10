@@ -2309,6 +2309,13 @@ function F:Revise()
         end
     end
 
+    -- r199-release
+    if CellDB["revise"] and dbRevision < 199 then
+        if not strfind(CellDB["snippets"][0]["code"], "CELL_SHOW_RAID_PET_OWNER_NAME") then
+            CellDB["snippets"][0]["code"] = CellDB["snippets"][0]["code"].."\n\n-- show raid pet owner name (\"VEHICLE\", \"NAME\", nil)\nCELL_SHOW_RAID_PET_OWNER_NAME = nil"
+        end
+    end
+
     -- ----------------------------------------------------------------------- --
     --            update from old versions, validate all indicators            --
     -- ----------------------------------------------------------------------- --

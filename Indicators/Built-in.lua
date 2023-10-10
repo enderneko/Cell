@@ -1032,6 +1032,16 @@ function I:CreateNameText(parent)
 
         F:UpdateTextWidth(nameText.name, name, nameText.width, parent.widget.healthBar)
 
+        if CELL_SHOW_RAID_PET_OWNER_NAME and parent.isRaidPet then
+            local owner = F:GetPlayerUnit(parent.state.unit)
+            owner = UnitName(owner)
+            if CELL_SHOW_RAID_PET_OWNER_NAME == "VEHICLE" then
+                F:UpdateTextWidth(nameText.vehicle, owner, nameText.width, parent.widget.healthBar)
+            elseif CELL_SHOW_RAID_PET_OWNER_NAME == "NAME" then
+                F:UpdateTextWidth(nameText.name, owner, nameText.width, parent.widget.healthBar)
+            end
+        end
+
         if nameText.name:GetText() then
             if nameText.isPreview then
                 if nameText.showGroupNumber then
