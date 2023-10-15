@@ -361,6 +361,7 @@ local defensives = { -- true: track by name, false: track by id
         [31850] = true, -- 炽热防御者
         [212641] = true, -- 远古列王守卫
         [205191] = true, -- 以眼还眼
+        [389539] = true, -- 戒卫
     },
 
     ["PRIEST"] = {
@@ -385,6 +386,7 @@ local defensives = { -- true: track by name, false: track by id
     ["WARLOCK"] = {
         [104773] = true, -- 不灭决心
         [212295] = true, -- 虚空守卫
+        [108416] = true, -- 黑暗契约
     },
 
     ["WARRIOR"] = {
