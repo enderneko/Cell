@@ -4769,6 +4769,60 @@ local function CreateSetting_TargetCounterFilters(parent)
     return widget
 end
 
+local function CreateSetting_CastBy(parent)
+    local widget
+
+    if not settingWidgets["castBy"] then
+        widget = addon:CreateFrame("CellIndicatorSettings_CastBy", parent, 240, 50)
+        settingWidgets["castBy"] = widget
+
+        widget.castBy = addon:CreateDropdown(widget, 245)
+        widget.castBy:SetPoint("TOPLEFT", 5, -20)
+        widget.castBy:SetItems({
+            {
+                ["text"] = L["Me"],
+                ["value"] = "me",
+                ["onClick"] = function()
+                    widget.func("me")
+                end,
+            },
+            {
+                ["text"] = L["Others"],
+                ["value"] = "others",
+                ["onClick"] = function()
+                    widget.func("others")
+                end,
+            },
+            {
+                ["text"] = L["Anyone"],
+                ["value"] = "anyone",
+                ["onClick"] = function()
+                    widget.func("anyone")
+                end,
+            },
+        })
+
+        widget.castByText = widget:CreateFontString(nil, "OVERLAY", font_name)
+        widget.castByText:SetText(L["Cast By"])
+        widget.castByText:SetPoint("BOTTOMLEFT", widget.castBy, "TOPLEFT", 0, 1)
+
+        -- callback
+        function widget:SetFunc(func)
+            widget.func = func
+        end
+        
+        -- show db value
+        function widget:SetDBValue(castBy)
+            widget.castBy:SetSelectedValue(castBy)
+        end
+    else
+        widget = settingWidgets["castBy"]
+    end
+
+    widget:Show()
+    return widget
+end
+
 -----------------------------------------
 -- create
 -----------------------------------------
@@ -4885,6 +4939,8 @@ function addon:CreateIndicatorSettings(parent, settingsTable)
             tinsert(widgetsTable, CreateSetting_MissingBuffsFilters(parent))
         elseif setting == "targetCounterFilters" then
             tinsert(widgetsTable, CreateSetting_TargetCounterFilters(parent))
+        elseif setting == "castBy" then
+            tinsert(widgetsTable, CreateSetting_CastBy(parent))
         else -- tips
             tinsert(widgetsTable, CreateSetting_Tips(parent, setting))
         end

@@ -2314,6 +2314,15 @@ function F:Revise()
         if not strfind(CellDB["snippets"][0]["code"], "CELL_SHOW_RAID_PET_OWNER_NAME") then
             CellDB["snippets"][0]["code"] = CellDB["snippets"][0]["code"].."\n\n-- show raid pet owner name (\"VEHICLE\", \"NAME\", nil)\nCELL_SHOW_RAID_PET_OWNER_NAME = nil"
         end
+
+        for _, layout in pairs(CellDB["layouts"]) do
+            for i, t in ipairs(layout["indicators"]) do
+                if type(t["castByMe"]) == "boolean" then
+                    t["castBy"] = t["castByMe"] and "me" or "anyone"
+                    t["castByMe"] = nil
+                end
+            end
+        end
     end
 
     -- ----------------------------------------------------------------------- --

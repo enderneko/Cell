@@ -1339,7 +1339,7 @@ local function CreateListPane()
             
             if indicatorAuraType == "buff" then
                 -- cast by me
-                currentLayoutTable["indicators"][last+1]["castByMe"] = true
+                currentLayoutTable["indicators"][last+1]["castBy"] = "me"
                 
                 -- wrath
                 if Cell.isWrath then
@@ -1552,8 +1552,8 @@ local function ShowIndicatorSettings(id)
         end
        
         if indicatorTable["auraType"] == "buff" then
-            -- castByMe
-            tinsert(settingsTable, 2, "checkbutton:castByMe")
+            -- castBy
+            tinsert(settingsTable, 2, "castBy")
             -- NOTE: trackByName (spell has a lot of RANKS!)
             if Cell.isWrath then
                 tinsert(settingsTable, 3, "checkbutton2:trackByName")
@@ -1850,9 +1850,9 @@ LoadIndicatorList = function()
             b.typeIcon:SetTexture("Interface\\AddOns\\Cell\\Media\\Indicators\\indicator-"..t["type"])
             -- b.typeIcon:SetAlpha(0.5)
             if t["auraType"] == "buff" then
-                b.typeIcon:SetVertexColor(0.9, 1, 0.9, 0.5)
+                b.typeIcon:SetVertexColor(0.75, 1, 0.75, 0.5)
             else -- debuff
-                b.typeIcon:SetVertexColor(1, 0.9, 0.9, 0.5)
+                b.typeIcon:SetVertexColor(1, 0.75, 0.75, 0.5)
             end
 
             b:GetFontString():ClearAllPoints()

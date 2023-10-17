@@ -53,14 +53,14 @@ function Cell.iFuncs:UpdateCustomIndicators(unitButton, auraType, spellId, spell
             
             if indicatorTable["auras"][spell] or indicatorTable["auras"][0] then -- is in indicator spell list
                 if auraType == "buff" then
-                    -- check castByMe
+                    -- check caster
                     local show
                     if ignoreSource[spellId] or ignoreSource[spellName] then
                         show = true
                     elseif filterOutOthers[spellId] or filterOutOthers[spellName] then
                         show = castByMe
                     else
-                        show = (indicatorTable["castByMe"] and castByMe) or (not indicatorTable["castByMe"])
+                        show = (indicatorTable["castBy"] == "me" and castByMe) or (indicatorTable["castBy"] == "anyone")
                     end
                     if show then
                         Update(unitButton.indicators[indicatorName], indicatorTable, unit, spell, start, duration, debuffType, icon, count, refreshing)

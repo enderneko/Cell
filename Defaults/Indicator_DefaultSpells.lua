@@ -784,7 +784,7 @@ function F:FirstRun()
             },
             ["showDuration"] = false,
             ["auraType"] = "buff",
-            ["castByMe"] = true,
+            ["castBy"] = "me",
             ["auras"] = spells,
         })
         Cell:Fire("UpdateIndicators", Cell.vars.currentLayout, indicatorName, "create", currentLayoutTable["indicators"][last+1])

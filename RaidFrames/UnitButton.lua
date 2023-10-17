@@ -141,9 +141,6 @@ local function ResetIndicators()
         if t["dispellableByMe"] ~= nil then
             indicatorCustoms[t["indicatorName"]] = t["dispellableByMe"]
         end
-        -- if t["castByMe"] ~= nil then
-        --     indicatorCustoms[t["indicatorName"]] = t["castByMe"]
-        -- end
         if t["hideIfEmptyOrFull"] ~= nil then
             indicatorCustoms[t["indicatorName"]] = t["hideIfEmptyOrFull"]
         end
@@ -696,7 +693,7 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                 b.indicators[indicatorName]:Hide()
                 UnitButton_UpdateAuras(b)
             end, true)
-        elseif setting == "debuffBlacklist" or setting == "dispelBlacklist" or setting == "defensives" or setting == "externals" or setting == "crowdControls" or setting == "bigDebuffs" or setting == "debuffTypeColor" then
+        elseif setting == "debuffBlacklist" or setting == "dispelBlacklist" or setting == "defensives" or setting == "externals" or setting == "crowdControls" or setting == "bigDebuffs" or setting == "debuffTypeColor" or setting == "castBy" then
             F:IterateAllUnitButtons(function(b)
                 UnitButton_UpdateAuras(b)
             end, true)

@@ -367,7 +367,7 @@ function F:FirstRun()
             },
             ["showDuration"] = false,
             ["auraType"] = "buff",
-            ["castByMe"] = true,
+            ["castBy"] = "me",
             ["trackByName"] = true,
             ["auras"] = spells,
         })

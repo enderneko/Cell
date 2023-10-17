@@ -49,7 +49,7 @@ function Cell.iFuncs:UpdateCustomIndicators(unitButton, auraInfo, refreshing)
     local duration = auraInfo.duration
     local start = (auraInfo.expirationTime or 0) - auraInfo.duration
     local spellId = auraInfo.spellId
-    local castByMe = auraInfo.sourceUnit == "player"
+    local castByMe = auraInfo.sourceUnit == "player" or auraInfo.sourceUnit == "pet"
 
 
 
@@ -57,8 +57,8 @@ function Cell.iFuncs:UpdateCustomIndicators(unitButton, auraInfo, refreshing)
         if enabledIndicators[indicatorName] and unitButton.indicators[indicatorName] then
             if indicatorTable["auras"][spellId] or indicatorTable["auras"][0] then -- is in indicator spell list
                 if auraType == "buff" then
-                    -- check castByMe
-                    if (indicatorTable["castByMe"] and castByMe) or (not indicatorTable["castByMe"]) then
+                    -- check caster
+                    if (indicatorTable["castBy"] == "me" and castByMe) or (indicatorTable["castBy"] == "others" and not castByMe) or (indicatorTable["castBy"] == "anyone") then
                         Update(unitButton.indicators[indicatorName], indicatorTable, unit, spellId, start, duration, debuffType, icon, count, refreshing)
                     end
                 else -- debuff

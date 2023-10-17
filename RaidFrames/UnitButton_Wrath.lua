@@ -142,9 +142,6 @@ local function ResetIndicators()
         if t["dispellableByMe"] ~= nil then
             indicatorCustoms[t["indicatorName"]] = t["dispellableByMe"]
         end
-        -- if t["castByMe"] ~= nil then
-        --     indicatorCustoms[t["indicatorName"]] = t["castByMe"]
-        -- end
         if t["hideIfEmptyOrFull"] ~= nil then
             indicatorCustoms[t["indicatorName"]] = t["hideIfEmptyOrFull"]
         end
@@ -1027,7 +1024,7 @@ local function UnitButton_UpdateBuffs(self)
             end
 
             -- user created indicators
-            I:UpdateCustomIndicators(self, "buff", spellId, name, expirationTime - duration, duration, nil, icon, count, refreshing, source == "player", arg16)
+            I:UpdateCustomIndicators(self, "buff", spellId, name, expirationTime - duration, duration, nil, icon, count, refreshing, source == "player" or source == "pet", arg16)
 
             -- check BG flags for statusIcon
             if spellId == 301091 then

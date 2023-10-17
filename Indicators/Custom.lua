@@ -30,19 +30,17 @@ local function UpdateTablesForIndicator(indicatorTable)
             ["isIcons"] = true,
             ["found"] = {},
             ["num"] = indicatorTable["num"],
-            -- ["castByMe"]
         }
     else
         customIndicators[auraType][indicatorName] = {
             ["auras"] = F:ConvertTable(indicatorTable["auras"]), -- auras to match
             ["top"] = {}, -- top aura details
             ["topOrder"] = {}, -- top aura order
-            -- ["castByMe"]
         }
     end
 
     if auraType == "buff" then
-        customIndicators[auraType][indicatorName]["castByMe"] = indicatorTable["castByMe"]
+        customIndicators[auraType][indicatorName]["castBy"] = indicatorTable["castBy"]
     end
 end
 
@@ -132,11 +130,11 @@ local function UpdateCustomIndicators(layout, indicatorName, setting, value, val
         elseif customIndicators["debuff"][indicatorName] then
             customIndicators["debuff"][indicatorName][value] = value2
         end
-    elseif setting == "num" then
+    else -- num, castBy
         if customIndicators["buff"][indicatorName] then
-            customIndicators["buff"][indicatorName]["num"] = value
+            customIndicators["buff"][indicatorName][setting] = value
         elseif customIndicators["debuff"][indicatorName] then
-            customIndicators["debuff"][indicatorName]["num"] = value
+            customIndicators["debuff"][indicatorName][setting] = value
         end
     end
 end
@@ -202,14 +200,14 @@ function I:UpdateCustomIndicators(unitButton, auraInfo, refreshing)
     local duration = auraInfo.duration
     local start = (auraInfo.expirationTime or 0) - auraInfo.duration
     local spellId = auraInfo.spellId
-    local castByMe = auraInfo.sourceUnit == "player"
+    local castByMe = auraInfo.sourceUnit == "player" or auraInfo.sourceUnit == "pet"
 
     for indicatorName, indicatorTable in pairs(customIndicators[auraType]) do
         if indicatorName and enabledIndicators[indicatorName] and unitButton.indicators[indicatorName] then
             if indicatorTable["auras"][spellId] or indicatorTable["auras"][0] then -- is in indicator spell list
                 if auraType == "buff" then
-                    -- check castByMe
-                    if (indicatorTable["castByMe"] and castByMe) or (not indicatorTable["castByMe"]) then
+                    -- check caster
+                    if (indicatorTable["castBy"] == "me" and castByMe) or (indicatorTable["castBy"] == "others" and not castByMe) or (indicatorTable["castBy"] == "anyone") then
                         Update(unitButton.indicators[indicatorName], indicatorTable, unit, spellId, start, duration, debuffType, icon, count, refreshing)
                     end
                 else -- debuff
