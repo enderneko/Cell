@@ -939,6 +939,16 @@ local function QuickCast_UpdateStatus(self)
     end
 end
 
+local function QuickCast_UpdateName(self)
+    local name = UnitName(self.unit)
+    name = Cell.vars.nicknameCustoms[name] or Cell.vars.nicknames[name] or name
+    if string.len(name) == string.utf8len(name) then -- en
+        self.nameText:SetText(string.utf8sub(name, 1, 3))
+    else
+        self.nameText:SetText(string.utf8sub(name, 1, 1))
+    end
+end
+
 local function QuickCast_OnEvent(self, event, unit, arg1, arg2)
     if unit and self.unit == unit then
         if event == "UNIT_AURA" then
@@ -949,6 +959,8 @@ local function QuickCast_OnEvent(self, event, unit, arg1, arg2)
             QuickCast_UpdateInRange(self, arg1)
         elseif event == "UNIT_FLAGS" then
             QuickCast_UpdateStatus(self)
+        elseif event == "UNIT_NAME_UPDATE" then
+            QuickCast_UpdateName(self)
         end
     else
         if event == "GROUP_ROSTER_UPDATE" or event == "PLAYER_ENTERING_WORLD" then
@@ -1247,13 +1259,9 @@ CreateQuickCastButton = function(parent, name, isPreview)
             b:SetBackdropBorderColor(_r, _g, _b, 0.9)
             nameText:SetTextColor(_r, _g, _b)
 
-            local name = UnitName(unit)
-            name = Cell.vars.nicknameCustoms[name] or Cell.vars.nicknames[name] or name
-            if string.len(name) == string.utf8len(name) then -- en
-                nameText:SetText(string.utf8sub(name, 1, 3))
-            else
-                nameText:SetText(string.utf8sub(name, 1, 1))
-            end
+            --! update name
+            b:RegisterEvent("UNIT_NAME_UPDATE")
+            QuickCast_UpdateName(b)
 
             --! check range now
             b:RegisterUnitEvent("UNIT_IN_RANGE_UPDATE", unit)
