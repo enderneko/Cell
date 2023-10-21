@@ -755,6 +755,13 @@ L["Click to view older changelogs"] = "点击查看远古更新记录"
 -- <br/>
 
 L["CHANGELOGS"] = [[
+    <h1>r199-release (Oct 21, 2023, 15:40 GMT+8)</h1>
+    <p>* 更新“减伤”指示器的内置法术。</p>
+    <p>* 为增益类型的自定义指示器添加了“来源”选项。</p>
+    <p>* 修复团队工具。</p>
+    <p>+ 代码片段变量：CELL_SHOW_RAID_PET_OWNER_NAME。</p>
+    <br/>
+
     <h1>r198-release (Oct 7, 2023, 06:54 GMT+8)</h1>
     <p>* 更新指示器：目标计数，护盾条。</p>
     <br/>
