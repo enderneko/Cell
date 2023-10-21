@@ -6,7 +6,7 @@ local F = Cell.funcs
 -------------------------------------------------
 -- dispelBlacklist
 -------------------------------------------------
--- supress dispel highlight
+-- suppress dispel highlight
 local dispelBlacklist = {}
 
 function I:GetDefaultDispelBlacklist()
@@ -208,11 +208,19 @@ local externals = { -- true: track by name, false: track by id
 
     ["MAGE"] = {
         [198158] = true, -- 群体隐形
+        [414660] = { -- 群体屏障
+            [414661] = false, -- 寒冰护体
+            [414662] = false, -- 烈焰护体
+            [414663] = false, -- 棱光护体
+            -- [11426] = false, -- 寒冰护体 (self)
+            -- [235313] = false, -- 烈焰护体 (self)
+            -- [235450] = false, -- 棱光护体 (self)
+        },
     },
 
     ["MONK"] = {
         [116849] = true, -- 作茧缚命
-        [202248] = true, -- 偏转冥想
+        [202248] = false, -- 偏转冥想
     },
 
     ["PALADIN"] = {
@@ -259,19 +267,30 @@ end
 local builtInExternals = {}
 local customExternals = {}
 
+local function UpdateExternals(id, trackByName)
+    if trackByName then
+        local name = GetSpellInfo(id)
+        if name then
+            builtInExternals[name] = true
+        end
+    else
+        builtInExternals[id] = true
+    end
+end
+
 function I:UpdateExternals(t)
     -- user disabled
     wipe(builtInExternals)
     for class, spells in pairs(externals) do
-        for id, trackByName in pairs(spells) do
+        for id, v in pairs(spells) do
             if not t["disabled"][id] then -- not disabled
-                if trackByName then
-                    local name = GetSpellInfo(id)
-                    if name then
-                        builtInExternals[name] = true
+                if type(v) == "table" then
+                    builtInExternals[id] = true -- for I:IsExternalCooldown()
+                    for subId, subTrackByName in pairs(v) do
+                        UpdateExternals(subId, subTrackByName)
                     end
                 else
-                    builtInExternals[id] = true
+                    UpdateExternals(id, v)
                 end
             end
         end
@@ -345,10 +364,11 @@ local defensives = { -- true: track by name, false: track by id
         [414658] = true, -- 深寒凝冰
         [113862] = false, -- Greater Invisibility - 强化隐形术
         [55342] = false, -- 镜像，使用 CLEU 而非 UNIT_AURA
+        [342246] = true, -- 操控时间
     },
 
     ["MONK"] = {
-        [115176] = true, -- 禅悟冥想
+        [115176] = false, -- 禅悟冥想
         [115203] = true, -- 壮胆酒
         [122278] = true, -- 躯不坏
         [122783] = true, -- 散魔功
