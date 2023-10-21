@@ -41,6 +41,8 @@ L["Anchor To"] = "對齊到"
 L["Anchored To"] = "對齊到"
 L["Animation"] = "動畫"
 L["Any Spells"] = "所有法術"
+--[[Translation missing --]]
+--[[ L["Anyone"] = ""--]] 
 L["AoE Healing"] = "範圍治療 (團補)"
 L["Appearance"] = "外觀"
 L["Arena"] = "競技場"
@@ -85,6 +87,8 @@ L["Button5"] = "按鍵 5"
 L["C"] = "職業天賦"
 L["Cancel"] = "取消"
 L["Can't change options in combat"] = "無法在戰鬥中更改設定"
+--[[Translation missing --]]
+--[[ L["Cast By"] = ""--]] 
 L["cast Inner spell"] = "施放內圈法術"
 L["cast Outer spell"] = "施放外圈法術"
 L["castByMe"] = "只顯示我施放的增益"
@@ -93,7 +97,7 @@ L["Cell will report first %d deaths during a raid encounter."] = "團隊首領�
 L["CENTER"] = "中"
 L["change mode / apply changes"] = "切換模式 / 套用變更"
 L["Changelogs"] = "更新資訊"
-L["Check all visible enemy nameplates. Battleground/Arena only."] = "檢查所有看見的敵方血條，只在戰場/競技場有效。"
+L["Check all visible enemy nameplates."] = "檢查所有看得見的敵方血條。"
 L["Check If Exists"] = "檢查增益是否存在"
 L["Check if your group members need some raid buffs"] = "檢查隊友是否需要某些團隊增益"
 L["circledStackNums"] = "用圓圈數字顯示層數"
@@ -303,6 +307,8 @@ L["Marks Bar"] = "標記工具列"
 L["marksTips"] = "\n|r目標標記\n左鍵: |cffffffff在目標上設置標記|r\n右鍵: |cffffffff將標記鎖定在目標上 (在你的隊伍中)|r"
 L["Max Buttons"] = "按鈕數量"
 L["Max Icons"] = "最大顯示數量"
+--[[Translation missing --]]
+--[[ L["Me"] = ""--]] 
 L["Menu"] = "選單"
 L["Menu Position"] = "選單位置"
 L["Middle"] = "中鍵"
@@ -348,6 +354,8 @@ L["Options"] = "選項"
 L["Options UI Accent Color"] = "選項介面強調色"
 L["Options UI Font Size"] = "設定選項介面文字大小"
 L["Orientation"] = "方向"
+--[[Translation missing --]]
+--[[ L["Others"] = ""--]] 
 L["Out of Range Alpha"] = "超出範圍透明度"
 L["Outdoor"] = "野外"
 L["Outer Buff"] = "外圈增益"
