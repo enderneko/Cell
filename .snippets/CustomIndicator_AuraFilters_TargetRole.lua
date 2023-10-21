@@ -1,15 +1,12 @@
--- WRATH ONLY, BUFFS ONLY
+-- WRATH ONLY, BUFFS ONLY 仅怀旧服
 
--- show buffs from anyone 无视来源
-local ignoreSource = {
-    -- ["spellName"] = true,
-    -- [spellId] = true,
-}
-
--- filter out buffs from others 仅显示我的
-local filterOutOthers = {
-    -- ["spellName"] = true,
-    -- [spellId] = true,
+-- filter by target role 按目标职责过滤
+local filters = {
+    -- ["spellName"] = {
+    --     ["TANK"] = true,
+    --     ["HEALER"] = true,
+    --     ["DAMAGER"] = true,
+    -- },
 }
 
 -------------------------------------------------
@@ -53,16 +50,11 @@ function Cell.iFuncs:UpdateCustomIndicators(unitButton, auraType, spellId, spell
             
             if indicatorTable["auras"][spell] or indicatorTable["auras"][0] then -- is in indicator spell list
                 if auraType == "buff" then
-                    -- check caster
-                    local show
-                    if ignoreSource[spellId] or ignoreSource[spellName] then
-                        show = true
-                    elseif filterOutOthers[spellId] or filterOutOthers[spellName] then
-                        show = castByMe
-                    else
-                        show = (indicatorTable["castBy"] == "me" and castByMe) or (indicatorTable["castBy"] == "anyone")
+                    local show = true
+                    if unitButton.state.role and unitButton.state.role ~= "NONE" and filters[spellName] then
+                        show = filters[spellName][unitButton.state.role]
                     end
-                    if show then
+                    if show and (indicatorTable["castBy"] == "me" and castByMe) or (indicatorTable["castBy"] == "anyone") then
                         Update(unitButton.indicators[indicatorName], indicatorTable, unit, spell, start, duration, debuffType, icon, count, refreshing)
                     end
                 else -- debuff
