@@ -344,8 +344,8 @@ local defensives = { -- true: track by name, false: track by id
         [22812] = true, -- 树皮术
         [61336] = true, -- 生存本能
         [200851] = true, -- 沉睡者之怒
-        -- [102558] = true, -- 化身：乌索克的守护者
-        -- [22842] = true, -- 狂暴回复
+        [102558] = true, -- 化身：乌索克的守护者
+        [22842] = true, -- 狂暴回复
     },
 
     ["EVOKER"] = {
@@ -382,6 +382,7 @@ local defensives = { -- true: track by name, false: track by id
         [212641] = true, -- 远古列王守卫
         [205191] = true, -- 以眼还眼
         [389539] = true, -- 戒卫
+        [184662] = true, -- 复仇之盾
     },
 
     ["PRIEST"] = {
