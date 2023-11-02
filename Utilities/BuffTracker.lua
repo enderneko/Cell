@@ -167,7 +167,7 @@ buffTrackerFrame:SetScript("OnDragStart", function()
 end)
 buffTrackerFrame:SetScript("OnDragStop", function()
     buffTrackerFrame:StopMovingOrSizing()
-    P:SavePosition(buffTrackerFrame, CellDB["tools"]["buffTracker"][2])
+    P:SavePosition(buffTrackerFrame, CellDB["tools"]["buffTracker"][4])
 end)
 
 -------------------------------------------------
@@ -179,8 +179,8 @@ buffTrackerFrame.moverText:SetText(L["Mover"])
 buffTrackerFrame.moverText:Hide()
 
 local fakeIconsFrame = CreateFrame("Frame", nil, buffTrackerFrame)
-P:Point(fakeIconsFrame, "BOTTOMLEFT", buffTrackerFrame)
-P:Point(fakeIconsFrame, "TOPRIGHT", buffTrackerFrame, "BOTTOMRIGHT", 0, 32)
+P:Point(fakeIconsFrame, "BOTTOMRIGHT", buffTrackerFrame)
+P:Point(fakeIconsFrame, "TOPLEFT", buffTrackerFrame, "TOPLEFT", 0, -18)
 fakeIconsFrame:EnableMouse(true)
 fakeIconsFrame:SetFrameLevel(buffTrackerFrame:GetFrameLevel()+10)
 fakeIconsFrame:Hide()
@@ -209,13 +209,6 @@ end
 do
     for _, k in ipairs(order) do
         tinsert(fakeIcons, CreateFakeIcon(buffs[k]["icon"]))
-        local i = #fakeIcons
-        
-        if i == 1 then
-            P:Point(fakeIcons[i], "BOTTOMLEFT")
-        else
-            P:Point(fakeIcons[i], "BOTTOMLEFT", fakeIcons[i-1], "BOTTOMRIGHT", 3, 0)
-        end
     end
 end
 
@@ -387,25 +380,55 @@ local function UpdateButtons()
     end
 end
 
-local function AnchorButtons()
+local function RepointButtons()
     if InCombatLockdown() then
         buffTrackerFrame:RegisterEvent("PLAYER_REGEN_ENABLED")
     else
+        local point, relativePoint, offsetX, offsetY, firstX, firstY
+        if CellDB["tools"]["buffTracker"][2] == "left-to-right" then
+            point, relativePoint = "BOTTOMLEFT", "BOTTOMRIGHT"
+            offsetX, offsetY = 3, 0
+            firstX, firstY = 0, 0
+        elseif CellDB["tools"]["buffTracker"][2] == "right-to-left" then
+            point, relativePoint = "BOTTOMRIGHT", "BOTTOMLEFT"
+            offsetX, offsetY = -3, 0
+            firstX, firstY = 0, 0
+        elseif CellDB["tools"]["buffTracker"][2] == "top-to-bottom" then
+            point, relativePoint = "TOPLEFT", "BOTTOMLEFT"
+            offsetX, offsetY = 0, -3
+            firstX, firstY = 0, -18
+        elseif CellDB["tools"]["buffTracker"][2] == "bottom-to-top" then
+            point, relativePoint = "BOTTOMLEFT", "TOPLEFT"
+            offsetX, offsetY = 0, 3
+            firstX, firstY = 0, 0
+        end
+
         local last
         for _, k in pairs(order) do
-            buttons[k]:ClearAllPoints()
+            P:ClearPoints(buttons[k])
             if available[k] then
                 buttons[k]:Show()
                 if last then
-                    buttons[k]:SetPoint("BOTTOMLEFT", last, "BOTTOMRIGHT", 3, 0)
+                    P:Point(buttons[k], point, last, relativePoint, offsetX, offsetY)
                 else
-                    buttons[k]:SetPoint("BOTTOMLEFT")
+                    P:Point(buttons[k], point, firstX, firstY)
                 end
                 last = buttons[k]
             else
                 buttons[k]:Hide()
                 buttons[k]:Reset()
             end
+        end
+
+        last = nil
+        for _, icon in pairs(fakeIcons) do
+            P:ClearPoints(icon)
+            if last then
+                P:Point(icon, point, last, relativePoint, offsetX, offsetY)
+            else
+                P:Point(icon, point, buffTrackerFrame, point, firstX, firstY)
+            end
+            last = icon
         end
     end
 end
@@ -423,7 +446,11 @@ local function ResizeButtons()
         end
 
         local n = F:Getn(buttons)
-        P:Size(buffTrackerFrame, n * size + (n - 1) * 3, size + 18)
+        if strfind(CellDB["tools"]["buffTracker"][2], "left") then
+            buffTrackerFrame:SetSize(n * P:Scale(size) + (n - 1) * P:Scale(3), P:Scale(size + 18))
+        else
+            buffTrackerFrame:SetSize(P:Scale(size), n * P:Scale(size) + (n - 1) * P:Scale(3) + P:Scale(18))
+        end
     end
 end
 
@@ -524,7 +551,7 @@ local function IterateAllUnits()
         end
     end
 
-    AnchorButtons()
+    RepointButtons()
     
     Reset("unaffected")
 
@@ -567,7 +594,7 @@ function buffTrackerFrame:GROUP_ROSTER_UPDATE(immediate)
         buffTrackerFrame:UnregisterEvent("UNIT_AURA")
 
         Reset()
-        AnchorButtons()
+        RepointButtons()
         return
     end
 
@@ -604,7 +631,7 @@ end
 
 function buffTrackerFrame:PLAYER_REGEN_ENABLED()
     buffTrackerFrame:UnregisterEvent("PLAYER_REGEN_ENABLED")
-    AnchorButtons()
+    RepointButtons()
     ResizeButtons()
 end
 
@@ -635,7 +662,6 @@ local function UpdateTools(which)
             
             Reset()
             myUnit = ""
-            AnchorButtons()
 
             enabled = false
             ShowMover(false)
@@ -646,6 +672,7 @@ local function UpdateTools(which)
             end
         end
 
+        RepointButtons()
         ResizeButtons()
     end
 
@@ -658,13 +685,13 @@ local function UpdateTools(which)
     end
 
     if not which then -- position
-        P:LoadPosition(buffTrackerFrame, CellDB["tools"]["buffTracker"][2])
+        P:LoadPosition(buffTrackerFrame, CellDB["tools"]["buffTracker"][4])
     end
 end
 Cell:RegisterCallback("UpdateTools", "BuffTracker_UpdateTools", UpdateTools)
 
 local function UpdatePixelPerfect()
-    P:Resize(buffTrackerFrame)
+    -- P:Resize(buffTrackerFrame)
 
     for _, i in pairs(fakeIcons) do
         i:UpdatePixelPerfect()

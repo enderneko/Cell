@@ -88,7 +88,7 @@ end
 -- show
 -------------------------------------------------
 local utilityHeight = {
-    ["raidTools"] = 300,
+    ["raidTools"] = 320,
     ["spellRequest"] = 400,
     ["dispelRequest"] = 420,
     ["quickCast"] = 510,
@@ -100,9 +100,8 @@ local function ShowTab(tab)
         if not init then
             init = true
             lastShown = "raidTools"
-            Cell:Fire("ShowUtilitySettings", "raidTools")
         end
-        P:Height(Cell.frames.optionsFrame, utilityHeight[lastShown])
+        Cell:Fire("ShowUtilitySettings", lastShown)
         utilitiesTab:Show()
     else
         utilitiesTab:Hide()

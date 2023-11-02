@@ -8,7 +8,7 @@ local LCG = LibStub("LibCustomGlow-1.0")
 -- raid tools
 -------------------------------------------------
 local rtPane
-local resCB, reportCB, buffCB, readyPullCB, pullDropdown, secEditBox, marksBarCB, marksDropdown, marksShowSoloCB, fadeOutToolsCB
+local resCB, reportCB, buffCB, buffDropdown, sizeEditBox, readyPullCB, pullDropdown, secEditBox, marksBarCB, marksDropdown, marksShowSoloCB, fadeOutToolsCB
 
 local function CreateRTPane()
     rtPane = Cell:CreateTitledPane(Cell.frames.utilitiesTab, L["Raid Tools"].." |cFF777777"..L["only in group"], 422, 167)
@@ -63,13 +63,80 @@ local function CreateRTPane()
     -- buff tracker
     buffCB = Cell:CreateCheckButton(rtPane, L["Buff Tracker"], function(checked, self)
         CellDB["tools"]["buffTracker"][1] = checked
+        buffDropdown:SetEnabled(checked)
+        sizeEditBox:SetEnabled(checked)
         Cell:Fire("UpdateTools", "buffTracker")
     end, L["Buff Tracker"].." |cffff7727"..L["MODERATE CPU USAGE"], L["Check if your group members need some raid buffs"], 
     Cell.isRetail and L["|cffffb5c5Left-Click:|r cast the spell"] or "|cffffb5c5(Shift)|r "..L["|cffffb5c5Left-Click:|r cast the spell"], 
-    L["|cffffb5c5Right-Click:|r report unaffected"], 
-    L["Use |cFFFFB5C5/cell buff X|r to set icon size"], 
-    "|cffffffff" .. L["Current"]..": |cFFFFB5C5"..CellDB["tools"]["buffTracker"][3])
+    L["|cffffb5c5Right-Click:|r report unaffected"])
+    -- L["Use |cFFFFB5C5/cell buff X|r to set icon size"], 
+    -- "|cffffffff" .. L["Current"]..": |cFFFFB5C5"..CellDB["tools"]["buffTracker"][3])
     buffCB:SetPoint("TOPLEFT", reportCB, "BOTTOMLEFT", 0, -15)
+
+    buffDropdown = Cell:CreateDropdown(rtPane, 120)
+    buffDropdown:SetPoint("TOPLEFT", buffCB, "BOTTOMRIGHT", 5, -5)
+    buffDropdown:SetItems({
+        {
+            ["text"] = L["left-to-right"],
+            ["value"] = "left-to-right",
+            ["onClick"] = function()
+                CellDB["tools"]["buffTracker"][2] = "left-to-right"
+                Cell:Fire("UpdateTools", "buffTracker")
+            end,
+        },
+        {
+            ["text"] = L["right-to-left"],
+            ["value"] = "right-to-left",
+            ["onClick"] = function()
+                CellDB["tools"]["buffTracker"][2] = "right-to-left"
+                Cell:Fire("UpdateTools", "buffTracker")
+            end,
+        },
+        {
+            ["text"] = L["top-to-bottom"],
+            ["value"] = "top-to-bottom",
+            ["onClick"] = function()
+                CellDB["tools"]["buffTracker"][2] = "top-to-bottom"
+                Cell:Fire("UpdateTools", "buffTracker")
+            end,
+        },
+        {
+            ["text"] = L["bottom-to-top"],
+            ["value"] = "bottom-to-top",
+            ["onClick"] = function()
+                CellDB["tools"]["buffTracker"][2] = "bottom-to-top"
+                Cell:Fire("UpdateTools", "buffTracker")
+            end,
+        },
+    })
+
+    sizeEditBox = Cell:CreateEditBox(rtPane, 38, 20, false, false, true)
+    sizeEditBox:SetPoint("TOPLEFT", buffDropdown, "TOPRIGHT", 5, 0)
+    sizeEditBox:SetMaxLetters(3)
+
+    sizeEditBox.confirmBtn = Cell:CreateButton(rtPane, "OK", "accent", {27, 20})
+    sizeEditBox.confirmBtn:SetPoint("TOPLEFT", sizeEditBox, "TOPRIGHT", P:Scale(-1), 0)
+    sizeEditBox.confirmBtn:Hide()
+    sizeEditBox.confirmBtn:SetScript("OnHide", function()
+        sizeEditBox.confirmBtn:Hide()
+    end)
+    sizeEditBox.confirmBtn:SetScript("OnClick", function()
+        CellDB["tools"]["buffTracker"][3] = tonumber(sizeEditBox:GetText())
+        Cell:Fire("UpdateTools", "buffTracker")
+        sizeEditBox.confirmBtn:Hide()
+        sizeEditBox:ClearFocus()
+    end)
+
+    sizeEditBox:SetScript("OnTextChanged", function(self, userChanged)
+        if userChanged then
+            local newSize = tonumber(self:GetText())
+            if newSize and newSize > 0 and newSize ~= CellDB["tools"]["buffTracker"][3] then
+                sizeEditBox.confirmBtn:Show()
+            else
+                sizeEditBox.confirmBtn:Hide()
+            end
+        end
+    end)
 
     -- ready & pull
     readyPullCB = Cell:CreateCheckButton(rtPane, L["ReadyCheck and PullTimer buttons"], function(checked, self)
@@ -78,10 +145,10 @@ local function CreateRTPane()
         secEditBox:SetEnabled(checked)
         Cell:Fire("UpdateTools", "buttons")
     end, L["ReadyCheck and PullTimer buttons"], L["Only show when you have permission to do this"], L["readyCheckTips"], L["pullTimerTips"])
-    readyPullCB:SetPoint("TOPLEFT", buffCB, "BOTTOMLEFT", 0, -15)
+    readyPullCB:SetPoint("TOPLEFT", buffCB, "BOTTOMLEFT", 0, -43)
     Cell:RegisterForCloseDropdown(readyPullCB)
 
-    pullDropdown = Cell:CreateDropdown(rtPane, 90)
+    pullDropdown = Cell:CreateDropdown(rtPane, 120)
     pullDropdown:SetPoint("TOPLEFT", readyPullCB, "BOTTOMRIGHT", 5, -5)
     pullDropdown:SetItems({
         {
@@ -251,19 +318,22 @@ local function ShowUtilitySettings(which)
         
         rtPane:Show()
         
-        if init then return end
+        -- if init then return end
         init = true
 
         -- raid tools
         resCB:SetChecked(CellDB["tools"]["showBattleRes"])
         reportCB:SetChecked(CellDB["tools"]["deathReport"][1])
+        
         buffCB:SetChecked(CellDB["tools"]["buffTracker"][1])
+        buffDropdown:SetSelectedValue(CellDB["tools"]["buffTracker"][2])
+        sizeEditBox:SetText(CellDB["tools"]["buffTracker"][3])
+        Cell:SetEnabled(CellDB["tools"]["buffTracker"][1], buffDropdown, sizeEditBox)
 
         readyPullCB:SetChecked(CellDB["tools"]["readyAndPull"][1])
         pullDropdown:SetSelectedValue(CellDB["tools"]["readyAndPull"][2][1])
         secEditBox:SetText(CellDB["tools"]["readyAndPull"][2][2])
-        pullDropdown:SetEnabled(CellDB["tools"]["readyAndPull"][1])
-        secEditBox:SetEnabled(CellDB["tools"]["readyAndPull"][1])
+        Cell:SetEnabled(CellDB["tools"]["readyAndPull"][1], pullDropdown, secEditBox)
 
         marksDropdown:SetEnabled(CellDB["tools"]["marks"][1])
         marksBarCB:SetChecked(CellDB["tools"]["marks"][1])

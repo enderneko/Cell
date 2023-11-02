@@ -2325,6 +2325,16 @@ function F:Revise()
         end
     end
 
+    -- r200-release
+    if CellDB["revise"] and dbRevision < 200 then
+        if #CellDB["tools"]["buffTracker"] ~= 4 then
+            -- move position from 2 to 4
+            CellDB["tools"]["buffTracker"][4] = CellDB["tools"]["buffTracker"][2]
+            -- add orientation
+            CellDB["tools"]["buffTracker"][2] = "left-to-right"
+        end
+    end
+
     -- ----------------------------------------------------------------------- --
     --            update from old versions, validate all indicators            --
     -- ----------------------------------------------------------------------- --
