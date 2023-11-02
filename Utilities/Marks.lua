@@ -8,7 +8,7 @@ local marks, worldMarks
 
 local marksFrame = CreateFrame("Frame", "CellRaidMarksFrame", Cell.frames.mainFrame, "SecureFrameTemplate,BackdropTemplate")
 Cell.frames.raidMarksFrame = marksFrame
-P:Size(marksFrame, 196, 40)
+marksFrame:SetSize(196, 40)
 marksFrame:SetPoint("BOTTOMRIGHT", UIParent, "CENTER")
 marksFrame:SetClampedToScreen(true)
 marksFrame:SetMovable(true)
@@ -258,22 +258,26 @@ end, unpack(buttons))
 -- functions
 -------------------------------------------------
 local function Rearrange(marksConfig)
+    local scaled20 = P:Scale(20)
+
     if strfind(marksConfig, "_h$") then
-        P:Size(marks, 196, 20)
-        P:Size(worldMarks, 196, 20)
+        local width = scaled20 * 9 + P:Scale(2) * 8
+
+        marks:SetSize(width, scaled20)
+        worldMarks:SetSize(width, scaled20)
 
         if strfind(marksConfig, "^target") then
-            P:Size(marksFrame, 196, 40)
+            marksFrame:SetSize(width, P:Scale(40))
             worldMarks:Hide()
             P:ClearPoints(marks)
             P:Point(marks, "BOTTOMLEFT")
         elseif strfind(marksConfig, "^world") then
-            P:Size(marksFrame, 196, 40)
+            marksFrame:SetSize(width, P:Scale(40))
             marks:Hide()
             P:ClearPoints(worldMarks)
             P:Point(worldMarks, "BOTTOMLEFT")
         else -- both
-            P:Size(marksFrame, 196, 60)
+            marksFrame:SetSize(width, P:Scale(60))
             P:ClearPoints(worldMarks)
             P:Point(worldMarks, "BOTTOMLEFT")
             P:ClearPoints(marks)
@@ -293,21 +297,23 @@ local function Rearrange(marksConfig)
             end
         end
     elseif strfind(marksConfig, "_v$") then
-        P:Size(marks, 20, 196)
-        P:Size(worldMarks, 20, 196)
+        local height = scaled20 * 9 + P:Scale(2) * 8
+
+        marks:SetSize(scaled20, height)
+        worldMarks:SetSize(scaled20, height)
 
         if strfind(marksConfig, "^target") then
-            P:Size(marksFrame, 20, 216)
+            marksFrame:SetSize(scaled20, height + scaled20)
             worldMarks:Hide()
             P:ClearPoints(marks)
             P:Point(marks, "BOTTOMLEFT")
         elseif strfind(marksConfig, "^world") then
-            P:Size(marksFrame, 20, 216)
+            marksFrame:SetSize(scaled20, height + scaled20)
             marks:Hide()
             P:ClearPoints(worldMarks)
             P:Point(worldMarks, "BOTTOMLEFT")
         else -- both
-            P:Size(marksFrame, 42, 216)
+            marksFrame:SetSize(P:Scale(40) + P:Scale(2), height + scaled20)
             P:ClearPoints(worldMarks)
             P:Point(worldMarks, "BOTTOMLEFT")
             P:ClearPoints(marks)
@@ -400,10 +406,10 @@ end
 Cell:RegisterCallback("UpdateTools", "RaidMarks_UpdateTools", UpdateTools)
 
 local function UpdatePixelPerfect()
-    P:Resize(marksFrame)
-    P:Resize(marks)
+    -- P:Resize(marksFrame)
+    -- P:Resize(marks)
+    -- P:Resize(worldMarks)
     P:Repoint(marks) -- only marks needs to repoint
-    P:Resize(worldMarks)
 
     for i = 1, 9 do
         markButtons[i]:UpdatePixelPerfect()
