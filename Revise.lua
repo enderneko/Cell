@@ -2333,6 +2333,10 @@ function F:Revise()
             -- add orientation
             CellDB["tools"]["buffTracker"][2] = "left-to-right"
         end
+        if #CellDB["tools"]["readyAndPull"] ~= 4 then
+            -- add style
+            tinsert(CellDB["tools"]["readyAndPull"], 2, "text_button")
+        end
     end
 
     -- ----------------------------------------------------------------------- --

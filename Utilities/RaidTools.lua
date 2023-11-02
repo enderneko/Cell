@@ -8,7 +8,7 @@ local LCG = LibStub("LibCustomGlow-1.0")
 -- raid tools
 -------------------------------------------------
 local rtPane
-local resCB, reportCB, buffCB, buffDropdown, sizeEditBox, readyPullCB, pullDropdown, secEditBox, marksBarCB, marksDropdown, marksShowSoloCB, fadeOutToolsCB
+local resCB, reportCB, buffCB, buffDropdown, sizeEditBox, readyPullCB, styleDropdown, pullDropdown, secEditBox, marksBarCB, marksDropdown, marksShowSoloCB, fadeOutToolsCB
 
 local function CreateRTPane()
     rtPane = Cell:CreateTitledPane(Cell.frames.utilitiesTab, L["Raid Tools"].." |cFF777777"..L["only in group"], 422, 167)
@@ -141,6 +141,7 @@ local function CreateRTPane()
     -- ready & pull
     readyPullCB = Cell:CreateCheckButton(rtPane, L["ReadyCheck and PullTimer buttons"], function(checked, self)
         CellDB["tools"]["readyAndPull"][1] = checked
+        styleDropdown:SetEnabled(checked)
         pullDropdown:SetEnabled(checked)
         secEditBox:SetEnabled(checked)
         Cell:Fire("UpdateTools", "buttons")
@@ -148,39 +149,68 @@ local function CreateRTPane()
     readyPullCB:SetPoint("TOPLEFT", buffCB, "BOTTOMLEFT", 0, -43)
     Cell:RegisterForCloseDropdown(readyPullCB)
 
-    pullDropdown = Cell:CreateDropdown(rtPane, 120)
-    pullDropdown:SetPoint("TOPLEFT", readyPullCB, "BOTTOMRIGHT", 5, -5)
+    styleDropdown = Cell:CreateDropdown(rtPane, 120)
+    styleDropdown:SetPoint("TOPLEFT", readyPullCB, "BOTTOMRIGHT", 5, -5)
+    styleDropdown:SetItems({
+        {
+            ["text"] = L["Ready"].." / "..L["Pull"],
+            ["value"] = "text_button",
+            ["onClick"] = function()
+                CellDB["tools"]["readyAndPull"][2] = "text_button"
+                Cell:Fire("UpdateTools", "readyAndPull")
+            end,
+        },
+        {
+            ["text"] = "|TInterface\\AddOns\\Cell\\Media\\Icons\\ready:14|t / |TInterface\\AddOns\\Cell\\Media\\Icons\\pull:14|t A",
+            ["value"] = "icon_button_h",
+            ["onClick"] = function()
+                CellDB["tools"]["readyAndPull"][2] = "icon_button_h"
+                Cell:Fire("UpdateTools", "readyAndPull")
+            end,
+        },
+        {
+            ["text"] = "|TInterface\\AddOns\\Cell\\Media\\Icons\\ready:14|t / |TInterface\\AddOns\\Cell\\Media\\Icons\\pull:14|t B",
+            ["value"] = "icon_button_v",
+            ["onClick"] = function()
+                CellDB["tools"]["readyAndPull"][2] = "icon_button_v"
+                Cell:Fire("UpdateTools", "readyAndPull")
+            end,
+        },
+    })
+
+    pullDropdown = Cell:CreateDropdown(rtPane, 109)
+    pullDropdown:SetPoint("TOPLEFT", styleDropdown, "TOPRIGHT", 5, 0)
     pullDropdown:SetItems({
         {
             ["text"] = L["Default"],
             ["value"] = "default",
             ["onClick"] = function()
-                CellDB["tools"]["readyAndPull"][2][1] = "default"
-                Cell:Fire("UpdateTools", "pullTimer")
+                CellDB["tools"]["readyAndPull"][3][1] = "default"
+                Cell:Fire("UpdateTools", "readyAndPull")
             end,
         },
         {
             ["text"] = "MRT",
             ["value"] = "mrt",
             ["onClick"] = function()
-                CellDB["tools"]["readyAndPull"][2][1] = "mrt"
-                Cell:Fire("UpdateTools", "pullTimer")
+                CellDB["tools"]["readyAndPull"][3][1] = "mrt"
+                Cell:Fire("UpdateTools", "readyAndPull")
             end,
         },
         {
             ["text"] = "DBM",
             ["value"] = "dbm",
             ["onClick"] = function()
-                CellDB["tools"]["readyAndPull"][2][1] = "dbm"
-                Cell:Fire("UpdateTools", "pullTimer")
+                CellDB["tools"]["readyAndPull"][3][1] = "dbm"
+                Cell:Fire("UpdateTools", "readyAndPull")
             end,
         },
         {
             ["text"] = "BigWigs",
             ["value"] = "bw",
             ["onClick"] = function()
-                CellDB["tools"]["readyAndPull"][2][1] = "bw"
-                Cell:Fire("UpdateTools", "pullTimer")
+                CellDB["tools"]["readyAndPull"][3][1] = "bw"
+                Cell:Fire("UpdateTools", "readyAndPull")
             end,
         },
     })
@@ -196,15 +226,15 @@ local function CreateRTPane()
         secEditBox.confirmBtn:Hide()
     end)
     secEditBox.confirmBtn:SetScript("OnClick", function()
-        CellDB["tools"]["readyAndPull"][2][2] = tonumber(secEditBox:GetText())
-        Cell:Fire("UpdateTools", "pullTimer")
+        CellDB["tools"]["readyAndPull"][3][2] = tonumber(secEditBox:GetText())
+        Cell:Fire("UpdateTools", "readyAndPull")
         secEditBox.confirmBtn:Hide()
     end)
 
     secEditBox:SetScript("OnTextChanged", function(self, userChanged)
         if userChanged then
             local newSec = tonumber(self:GetText())
-            if newSec and newSec > 0 and newSec ~= CellDB["tools"]["readyAndPull"][2][2] then
+            if newSec and newSec > 0 and newSec ~= CellDB["tools"]["readyAndPull"][3][2] then
                 secEditBox.confirmBtn:Show()
             else
                 secEditBox.confirmBtn:Hide()
@@ -331,9 +361,10 @@ local function ShowUtilitySettings(which)
         Cell:SetEnabled(CellDB["tools"]["buffTracker"][1], buffDropdown, sizeEditBox)
 
         readyPullCB:SetChecked(CellDB["tools"]["readyAndPull"][1])
-        pullDropdown:SetSelectedValue(CellDB["tools"]["readyAndPull"][2][1])
-        secEditBox:SetText(CellDB["tools"]["readyAndPull"][2][2])
-        Cell:SetEnabled(CellDB["tools"]["readyAndPull"][1], pullDropdown, secEditBox)
+        styleDropdown:SetSelectedValue(CellDB["tools"]["readyAndPull"][2])
+        pullDropdown:SetSelectedValue(CellDB["tools"]["readyAndPull"][3][1])
+        secEditBox:SetText(CellDB["tools"]["readyAndPull"][3][2])
+        Cell:SetEnabled(CellDB["tools"]["readyAndPull"][1], styleDropdown, pullDropdown, secEditBox)
 
         marksDropdown:SetEnabled(CellDB["tools"]["marks"][1])
         marksBarCB:SetChecked(CellDB["tools"]["marks"][1])

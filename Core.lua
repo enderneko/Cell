@@ -202,7 +202,7 @@ function eventFrame:ADDON_LOADED(arg1)
                 ["showBattleRes"] = true,
                 ["buffTracker"] = {false, "left-to-right", 32, {}},
                 ["deathReport"] = {false, 10},
-                ["readyAndPull"] = {false, {"default", 7}, {}},
+                ["readyAndPull"] = {false, "text_button", {"default", 7}, {}},
                 ["marks"] = {false, false, "both_h", {}},
                 ["fadeOut"] = false,
             }
@@ -741,14 +741,17 @@ function eventFrame:PLAYER_LOGIN()
     if CellDB["general"]["hideBlizzardRaid"] then F:HideBlizzardRaid() end
     -- lock & menu
     Cell:Fire("UpdateMenu")
-    -- update pixel perfect
-    Cell:Fire("UpdatePixelPerfect")
     -- update CLEU health
     Cell:Fire("UpdateCLEU")
     -- update builtIns and customs
     I:UpdateDefensives(CellDB["defensives"])
     I:UpdateExternals(CellDB["externals"])
     I:UpdateCrowdControls(CellDB["crowdControls"])
+    
+    -- update pixel perfect
+    C_Timer.After(1, function()
+        Cell:Fire("UpdatePixelPerfect")
+    end)
 end
 
 function eventFrame:UI_SCALE_CHANGED()
@@ -811,7 +814,7 @@ function SlashCmdList.CELL(msg, editbox)
             Cell.vars.currentLayoutTable["position"] = {}
             P:ClearPoints(Cell.frames.readyAndPullFrame)
             Cell.frames.readyAndPullFrame:SetPoint("TOPRIGHT", UIParent, "CENTER")
-            CellDB["tools"]["readyAndPull"][3] = {}
+            CellDB["tools"]["readyAndPull"][4] = {}
             P:ClearPoints(Cell.frames.raidMarksFrame)
             Cell.frames.raidMarksFrame:SetPoint("BOTTOMRIGHT", UIParent, "CENTER")
             CellDB["tools"]["marks"][4] = {}
