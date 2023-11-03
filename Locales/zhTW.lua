@@ -41,8 +41,7 @@ L["Anchor To"] = "對齊到"
 L["Anchored To"] = "對齊到"
 L["Animation"] = "動畫"
 L["Any Spells"] = "所有法術"
---[[Translation missing --]]
---[[ L["Anyone"] = ""--]] 
+L["Anyone"] = "任何人"
 L["AoE Healing"] = "範圍治療 (團補)"
 L["Appearance"] = "外觀"
 L["Arena"] = "競技場"
@@ -87,8 +86,7 @@ L["Button5"] = "按鍵 5"
 L["C"] = "職業天賦"
 L["Cancel"] = "取消"
 L["Can't change options in combat"] = "無法在戰鬥中更改設定"
---[[Translation missing --]]
---[[ L["Cast By"] = ""--]] 
+L["Cast By"] = "來源"
 L["cast Inner spell"] = "施放內圈法術"
 L["cast Outer spell"] = "施放外圈法術"
 L["castByMe"] = "只顯示我施放的增益"
@@ -307,8 +305,7 @@ L["Marks Bar"] = "標記工具列"
 L["marksTips"] = "\n|r目標標記\n左鍵: |cffffffff在目標上設置標記|r\n右鍵: |cffffffff將標記鎖定在目標上 (在你的隊伍中)|r"
 L["Max Buttons"] = "按鈕數量"
 L["Max Icons"] = "最大顯示數量"
---[[Translation missing --]]
---[[ L["Me"] = ""--]] 
+L["Me"] = "我"
 L["Menu"] = "選單"
 L["Menu Position"] = "選單位置"
 L["Middle"] = "中鍵"
@@ -354,8 +351,7 @@ L["Options"] = "選項"
 L["Options UI Accent Color"] = "選項介面強調色"
 L["Options UI Font Size"] = "設定選項介面文字大小"
 L["Orientation"] = "方向"
---[[Translation missing --]]
---[[ L["Others"] = ""--]] 
+L["Others"] = "其他人"
 L["Out of Range Alpha"] = "超出範圍透明度"
 L["Outdoor"] = "野外"
 L["Outer Buff"] = "外圈增益"
