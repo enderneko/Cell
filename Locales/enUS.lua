@@ -79,8 +79,14 @@ select(2, ...).L = setmetatable({
     ["SNIPPETS_TIPS"] = "[Double-Click] to rename. [Shift-Click] to delete. All checked snippets will be automatically invoked at the end of Cell initialization process (in ADDON_LOADED event).",
 
     ["CHANGELOGS"] = [[
+        <h1>r200-release (Nov 4, 2023, 08:04 GMT+8)</h1>
+        <p>* Updated Raid Tools.</p>
+        <p>* Updated Defensive CDs indicator.</p>
+        <p>* Updated zhTW.</p>
+        <br/>
+
         <h1>r199-release (Oct 21, 2023, 15:40 GMT+8)</h1>
-        <p>* Update spells of Defensives and Externals.</p>
+        <p>* Updated spells of Defensives and Externals.</p>
         <p>* Added "Cast By" option to custom buff indicators.</p>
         <p>* Fixed raid tools.</p>
         <p>+ Code Snippets var: CELL_SHOW_RAID_PET_OWNER_NAME.</p>
