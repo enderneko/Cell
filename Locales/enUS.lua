@@ -79,6 +79,11 @@ select(2, ...).L = setmetatable({
     ["SNIPPETS_TIPS"] = "[Double-Click] to rename. [Shift-Click] to delete. All checked snippets will be automatically invoked at the end of Cell initialization process (in ADDON_LOADED event).",
 
     ["CHANGELOGS"] = [[
+        <h1>r201-release (Nov 9, 2023, 05:04 GMT+8)</h1>
+        <p>* Updated Amirdrassil debuffs.</p>
+        <p>* Updated Health Text indicator.</p>
+        <br/>
+
         <h1>r200-release (Nov 4, 2023, 08:04 GMT+8)</h1>
         <p>* Updated Raid Tools.</p>
         <p>* Updated Defensive CDs indicator.</p>

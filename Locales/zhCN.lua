@@ -755,6 +755,11 @@ L["Click to view older changelogs"] = "点击查看远古更新记录"
 -- <br/>
 
 L["CHANGELOGS"] = [[
+    <h1>r201-release (Nov 9, 2023, 05:04 GMT+8)</h1>
+    <p>* 更新副本减益：阿梅达希尔，梦境之愿。</p>
+    <p>* 更新指示器：血量文字。</p>
+    <br/>
+
     <h1>r200-release (Nov 4, 2023, 08:04 GMT+8)</h1>
     <p>* 更新部分团队工具的配置选项。</p>
     <p>* 更新“减伤（自身）”。</p>
