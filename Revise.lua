@@ -2339,6 +2339,16 @@ function F:Revise()
         end
     end
 
+    -- r201-release
+    if CellDB["revise"] and dbRevision < 201 then
+        if Cell.isRetail then
+            -- 阿梅达希尔，梦境之愿
+            if not F:TContains(CellDB["targetedSpellsList"], 418637) then -- 狂怒冲锋
+                tinsert(CellDB["targetedSpellsList"], 418637)
+            end
+        end
+    end
+
     -- ----------------------------------------------------------------------- --
     --            update from old versions, validate all indicators            --
     -- ----------------------------------------------------------------------- --

@@ -817,7 +817,7 @@ local function HandleDebuffs(self, auraInfo, index)
         self._debuffs_cache[auraInstanceID] = expirationTime
         self._debuffs_count_cache[auraInstanceID] = count
 
-        if enabledIndicators["debuffs"] and duration <= 600 and not Cell.vars.debuffBlacklist[spellId] then
+        if enabledIndicators["debuffs"] and not Cell.vars.debuffBlacklist[spellId] then
             -- all debuffs / only dispellableByMe
             if not indicatorCustoms["debuffs"] or I:CanDispel(debuffType) then 
                 -- debuffs, may contain topDebuff and cc
