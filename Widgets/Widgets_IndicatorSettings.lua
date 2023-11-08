@@ -9,7 +9,7 @@ local LCG = LibStub("LibCustomGlow-1.0")
 -- Color
 -----------------------------------------
 local colors = {
-    grey = {s="|cFFB2B2B2", t={0.7, 0.7, 0.7}},
+    grey = {s="|cFFA7A7A7", t={0.7, 0.7, 0.7}},
     yellow = {s="|cFFFFD100", t= {1, 0.82, 0}},
     orange = {s="|cFFFFC0CB", t= {1, 0.65, 0}},
     firebrick = {s="|cFFFF3030", t={1, 0.19, 0.19}},
@@ -917,14 +917,14 @@ local function CreateSetting_Format(parent)
                 end,
             },
             {
-                ["text"] = "32%+25% |cFFB2B2B2+"..L["shields"],
+                ["text"] = "32%+25% |cFFA7A7A7+"..L["shields"],
                 ["value"] = "percentage-absorbs",
                 ["onClick"] = function()
                     widget.func("percentage-absorbs")
                 end,
             },
             {
-                ["text"] = "57% |cFFB2B2B2+"..L["shields"],
+                ["text"] = "57% |cFFA7A7A7+"..L["shields"],
                 ["value"] = "percentage-absorbs-merged",
                 ["onClick"] = function()
                     widget.func("percentage-absorbs-merged")
@@ -952,14 +952,14 @@ local function CreateSetting_Format(parent)
                 end,
             },
             {
-                ["text"] = F:FormatNumber(21377).."+"..F:FormatNumber(16384).." |cFFB2B2B2+"..L["shields"],
+                ["text"] = F:FormatNumber(21377).."+"..F:FormatNumber(16384).." |cFFA7A7A7+"..L["shields"],
                 ["value"] = "number-absorbs-short",
                 ["onClick"] = function()
                     widget.func("number-absorbs-short")
                 end,
             },
             {
-                ["text"] = F:FormatNumber(21377+16384).." |cFFB2B2B2+"..L["shields"],
+                ["text"] = F:FormatNumber(21377+16384).." |cFFA7A7A7+"..L["shields"],
                 ["value"] = "number-absorbs-merged-short",
                 ["onClick"] = function()
                     widget.func("number-absorbs-merged-short")
@@ -980,10 +980,31 @@ local function CreateSetting_Format(parent)
                 end,
             },
             {
-                ["text"] = F:FormatNumber(21377).." 32%",
+                ["text"] = F:FormatNumber(21377).." 32% |cFFA7A7A7HP",
                 ["value"] = "current-short-percentage",
                 ["onClick"] = function()
                     widget.func("current-short-percentage")
+                end,
+            },
+            {
+                ["text"] = "16384 |cFFA7A7A7"..L["shields"],
+                ["value"] = "absorbs-only",
+                ["onClick"] = function()
+                    widget.func("absorbs-only")
+                end,
+            },
+            {
+                ["text"] = F:FormatNumber(16384).." |cFFA7A7A7"..L["shields"],
+                ["value"] = "absorbs-only-short",
+                ["onClick"] = function()
+                    widget.func("absorbs-only-short")
+                end,
+            },
+            {
+                ["text"] = "25% |cFFA7A7A7"..L["shields"],
+                ["value"] = "absorbs-only-percentage",
+                ["onClick"] = function()
+                    widget.func("absorbs-only-percentage")
                 end,
             },
         })

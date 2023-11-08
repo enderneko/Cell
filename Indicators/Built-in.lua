@@ -1264,6 +1264,96 @@ end
 -------------------------------------------------
 -- health text
 -------------------------------------------------
+local function SetHealth_Percentage(self, current, max, totalAbsorbs)
+    self.text:SetFormattedText("%d%%", current/max*100)
+    self:SetWidth(self.text:GetStringWidth()+3)
+end
+
+local function SetHealth_Percentage_Absorbs(self, current, max, totalAbsorbs)
+    if totalAbsorbs == 0 then
+        self.text:SetFormattedText("%d%%", current/max*100)
+    else
+        self.text:SetFormattedText("%d%%+%d%%", current/max*100, totalAbsorbs/max*100)
+    end
+    self:SetWidth(self.text:GetStringWidth()+3)
+end
+
+local function SetHealth_Percentage_Absorbs_Merged(self, current, max, totalAbsorbs)
+    self.text:SetFormattedText("%d%%", (current+totalAbsorbs)/max*100)
+    self:SetWidth(self.text:GetStringWidth()+3)
+end
+
+local function SetHealth_Percentage_Deficit(self, current, max, totalAbsorbs)
+    self.text:SetFormattedText("%d%%", (current-max)/max*100)
+    self:SetWidth(self.text:GetStringWidth()+3)
+end
+
+local function SetHealth_Number(self, current, max, totalAbsorbs)
+    self.text:SetText(current)
+    self:SetWidth(self.text:GetStringWidth()+3)
+end
+
+local function SetHealth_Number_Short(self, current, max, totalAbsorbs)
+    self.text:SetText(F:FormatNumber(current))
+    self:SetWidth(self.text:GetStringWidth()+3)
+end
+
+local function SetHealth_Number_Absorbs_Short(self, current, max, totalAbsorbs)
+    if totalAbsorbs == 0 then
+        self.text:SetText(F:FormatNumber(current))
+    else
+        self.text:SetFormattedText("%s+%s", F:FormatNumber(current), F:FormatNumber(totalAbsorbs))
+    end
+    self:SetWidth(self.text:GetStringWidth()+3)
+end
+
+local function SetHealth_Number_Absorbs_Merged_Short(self, current, max, totalAbsorbs)
+    self.text:SetText(F:FormatNumber(current+totalAbsorbs))
+    self:SetWidth(self.text:GetStringWidth()+3)
+end
+
+local function SetHealth_Number_Deficit(self, current, max, totalAbsorbs)
+    self.text:SetText(current-max)
+    self:SetWidth(self.text:GetStringWidth()+3)
+end
+
+local function SetHealth_Number_Deficit_Short(self, current, max, totalAbsorbs)
+    self.text:SetText(F:FormatNumber(current-max))
+    self:SetWidth(self.text:GetStringWidth()+3)
+end
+
+local function SetHealth_Current_Short_Percentage(self, current, max, totalAbsorbs)
+    self.text:SetFormattedText("%s %d%%", F:FormatNumber(current), (current/max*100))
+    self:SetWidth(self.text:GetStringWidth()+3)
+end
+
+local function SetHealth_Absorbs_Only(self, current, max, totalAbsorbs)
+    if totalAbsorbs == 0 then
+        self.text:SetText("")
+    else
+        self.text:SetText(totalAbsorbs)
+    end
+    self:SetWidth(self.text:GetStringWidth()+3)
+end
+
+local function SetHealth_Absorbs_Only_Short(self, current, max, totalAbsorbs)
+    if totalAbsorbs == 0 then
+        self.text:SetText("")
+    else
+        self.text:SetText(F:FormatNumber(totalAbsorbs))
+    end
+    self:SetWidth(self.text:GetStringWidth()+3)
+end
+
+local function SetHealth_Absorbs_Only_Percentage(self, current, max, totalAbsorbs)
+    if totalAbsorbs == 0 then
+        self.text:SetText("")
+    else
+        self.text:SetFormattedText("%d%%", totalAbsorbs/max*100)
+    end
+    self:SetWidth(self.text:GetStringWidth()+3)
+end
+
 function I:CreateHealthText(parent)
     local healthText = CreateFrame("Frame", parent:GetName().."HealthText", parent.widget.overlayFrame)
     parent.indicators.healthText = healthText
@@ -1308,47 +1398,42 @@ function I:CreateHealthText(parent)
     end
 
     function healthText:SetFormat(format)
-        healthText.format = format
+        if format == "percentage" then
+            healthText.SetHealth = SetHealth_Percentage
+        elseif format == "percentage-absorbs" then
+            healthText.SetHealth = SetHealth_Percentage_Absorbs
+        elseif format == "percentage-absorbs-merged" then
+            healthText.SetHealth = SetHealth_Percentage_Absorbs_Merged
+        elseif format == "percentage-deficit" then
+            healthText.SetHealth = SetHealth_Percentage_Deficit
+        elseif format == "number" then
+            healthText.SetHealth = SetHealth_Number
+        elseif format == "number-short" then
+            healthText.SetHealth = SetHealth_Number_Short
+        elseif format == "number-absorbs-short" then
+            healthText.SetHealth = SetHealth_Number_Absorbs_Short
+        elseif format == "number-absorbs-merged-short" then
+            healthText.SetHealth = SetHealth_Number_Absorbs_Merged_Short
+        elseif format == "number-deficit" then
+            healthText.SetHealth = SetHealth_Number_Deficit
+        elseif format == "number-deficit-short" then
+            healthText.SetHealth = SetHealth_Number_Deficit_Short
+        elseif format == "current-short-percentage" then
+            healthText.SetHealth = SetHealth_Current_Short_Percentage
+        elseif format == "absorbs-only" then
+            healthText.SetHealth = SetHealth_Absorbs_Only
+        elseif format == "absorbs-only-short" then
+            healthText.SetHealth = SetHealth_Absorbs_Only_Short
+        elseif format == "absorbs-only-percentage" then
+            healthText.SetHealth = SetHealth_Absorbs_Only_Percentage
+        end
     end
 
     function healthText:SetColor(r, g, b)
         text:SetTextColor(r, g, b)
     end
 
-    function healthText:SetHealth(current, max, totalAbsorbs)
-        if healthText.format == "percentage" then
-            text:SetFormattedText("%d%%", current/max*100)
-        elseif healthText.format == "percentage-absorbs" then
-            if totalAbsorbs == 0 then
-                text:SetFormattedText("%d%%", current/max*100)
-            else
-                text:SetFormattedText("%d%%+%d%%", current/max*100, totalAbsorbs/max*100)
-            end
-        elseif healthText.format == "percentage-absorbs-merged" then
-            text:SetFormattedText("%d%%", (current+totalAbsorbs)/max*100)
-        elseif healthText.format == "percentage-deficit" then
-            text:SetFormattedText("%d%%", (current-max)/max*100)
-        elseif healthText.format == "number" then
-            text:SetText(current)
-        elseif healthText.format == "number-short" then
-            text:SetText(F:FormatNumber(current))
-        elseif healthText.format == "number-absorbs-short" then
-            if totalAbsorbs == 0 then
-                text:SetText(F:FormatNumber(current))
-            else
-                text:SetFormattedText("%s+%s", F:FormatNumber(current), F:FormatNumber(totalAbsorbs))
-            end
-        elseif healthText.format == "number-absorbs-merged-short" then
-            text:SetText(F:FormatNumber(current+totalAbsorbs))
-        elseif healthText.format == "number-deficit" then
-            text:SetText(current-max)
-        elseif healthText.format == "number-deficit-short" then
-            text:SetText(F:FormatNumber(current-max))
-        elseif healthText.format == "current-short-percentage" then
-            text:SetFormattedText("%s %d%%", F:FormatNumber(current), (current/max*100))
-        end
-        healthText:SetWidth(text:GetStringWidth()+3)
-    end
+    function healthText:SetHealth() end
 end
 
 -------------------------------------------------
