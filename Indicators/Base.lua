@@ -412,6 +412,14 @@ function I:CreateAura_BarIcon(name, parent)
         end
     end
 
+    function frame:ShowStack(show)
+        if show then
+            stack:Show()
+        else
+            stack:Hide()
+        end
+    end
+
     function frame:UpdatePixelPerfect()
         P:Resize(frame)
         P:Repoint(frame)
@@ -919,6 +927,12 @@ function I:CreateAura_Icons(name, parent, num)
     function icons:ShowDuration(show)
         for i = 1, num do
             icons[i]:ShowDuration(show)
+        end
+    end
+    
+    function icons:ShowStack(show)
+        for i = 1, num do
+            icons[i]:ShowStack(show)
         end
     end
 

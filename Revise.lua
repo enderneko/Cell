@@ -2348,6 +2348,20 @@ function F:Revise()
             end
         end
     end
+   
+    -- r202-release
+    if CellDB["revise"] and dbRevision < 202 then
+        -- custom indicator
+        for _, layout in pairs(CellDB["layouts"]) do
+            for _, indicator in pairs(layout["indicators"]) do
+                if indicator["type"] == "icon" or indicator["type"] == "icons" then
+                    if type(indicator["showStack"]) ~= "boolean" then
+                        indicator["showStack"] = true
+                    end
+                end
+            end
+        end
+    end
 
     -- ----------------------------------------------------------------------- --
     --            update from old versions, validate all indicators            --
