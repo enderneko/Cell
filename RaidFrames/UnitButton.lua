@@ -1488,7 +1488,7 @@ local function ShouldShowPowerBar(b)
         class = "VEHICLE"
     end
     
-    if class then
+    if class and Cell.vars.currentLayoutTable then
         if type(Cell.vars.currentLayoutTable["powerFilters"][class]) == "boolean" then
             return Cell.vars.currentLayoutTable["powerFilters"][class]
         else
@@ -2095,7 +2095,7 @@ UnitButton_UpdateNameColor = function(self)
 
     local nameText = self.indicators.nameText
 
-    if not Cell.loaded then
+    if not Cell.vars.currentLayoutTable then
         nameText:SetColor(1, 1, 1)
         return 
     end
