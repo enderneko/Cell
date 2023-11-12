@@ -747,11 +747,8 @@ function eventFrame:PLAYER_LOGIN()
     I:UpdateDefensives(CellDB["defensives"])
     I:UpdateExternals(CellDB["externals"])
     I:UpdateCrowdControls(CellDB["crowdControls"])
-    
     -- update pixel perfect
-    C_Timer.After(1, function()
-        Cell:Fire("UpdatePixelPerfect")
-    end)
+    Cell:Fire("UpdatePixelPerfect")
 end
 
 function eventFrame:UI_SCALE_CHANGED()

@@ -1504,6 +1504,11 @@ function I:CreateRoleIcon(parent)
     function roleIcon:HideDamager(hide)
         roleIcon.hideDamager = hide
     end
+
+    function roleIcon:UpdatePixelPerfect()
+        P:Resize(roleIcon)
+        P:Repoint(roleIcon)
+    end
 end
 
 -------------------------------------------------
@@ -1527,6 +1532,11 @@ function I:CreateLeaderIcon(parent)
         else
             leaderIcon:Hide()
         end
+    end
+
+    function leaderIcon:UpdatePixelPerfect()
+        P:Resize(leaderIcon)
+        P:Repoint(leaderIcon)
     end
 end
 
