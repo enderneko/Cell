@@ -300,6 +300,15 @@ for i = 1, 5 do
         else
             placeholders[i].text:SetText("|cffababab"..NONE)
         end
+
+        -- OmniCD
+        b.unit = value
+        if OmniCD and OmniCD[1].db.position.uf == "Cell-Spotlight" then
+            -- OmniCD[1].Party:GROUP_ROSTER_UPDATE(nil, true)
+            C_Timer.After(0.5, function()
+                OmniCD[1].Party:UpdatePosition()
+            end)
+        end
     end)
 end
 

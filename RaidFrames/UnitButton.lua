@@ -2491,7 +2491,8 @@ local function UnitButton_OnAttributeChanged(self, name, value)
             if string.match(value, "raid%d") then
                 local i = string.match(value, "%d")
                 _G["CellRaidFrameMember"..i] = self
-                self.unitid = value
+                self.unit = value
+                self.unitid = value -- REMOVE!
             end
 
             ResetAuraTables(self)

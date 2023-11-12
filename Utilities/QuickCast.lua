@@ -1291,6 +1291,13 @@ CreateQuickCastButton = function(parent, name, isPreview)
             outerCD:Hide()
             innerCD:Hide()
         end
+        
+        -- OmniCD
+        if OmniCD and OmniCD[1].db.position.uf == "Cell-QuickCast" then
+            C_Timer.After(0.5, function()
+                OmniCD[1].Party:UpdatePosition()
+            end)
+        end
     end
 
     --! NOTE: PLAYER_LOGIN or MANUALLY CALLED

@@ -13,7 +13,8 @@ header:SetAttribute("template", "CellUnitButtonTemplate")
 function header:UpdateButtonUnits(bName, unit)
     if not unit then return end
     
-    _G[bName].unitid = unit -- OmniCD
+    _G[bName].unit = unit -- OmniCD
+    _G[bName].unitid = unit -- REMOVE!
 
     local petUnit
     if unit == "player" then
@@ -88,7 +89,6 @@ for i, playerButton in ipairs({header:GetChildren()}) do
 
     -- OmniCD
     _G["CellPartyFrameMember"..i] = playerButton
-    -- playerButton.unitid = playerUnit
 end
 
 local init, previousLayout
