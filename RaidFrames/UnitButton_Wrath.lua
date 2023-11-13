@@ -161,6 +161,8 @@ local function ResetIndicators()
 end
 
 local function HandleIndicators(b)
+    b._indicatorReady = nil
+
     -- NOTE: Remove old
     I:RemoveAllCustomIndicators(b)
 
@@ -314,6 +316,8 @@ local function HandleIndicators(b)
     
     --! update pixel perfect for widgets
     B:UpdatePixelPerfect(b, true)
+
+    b._indicatorReady = 1
 end
 
 local function UpdateIndicators(layout, indicatorName, setting, value, value2)
@@ -2153,8 +2157,8 @@ UnitButton_UpdateAll = function(self)
     UnitButton_UpdateThreatBar(self)
     I.UpdateStatusIcon_Resurrection(self)
     
-    if Cell.loaded and self.powerBarUpdateRequired then
-        self.powerBarUpdateRequired = nil
+    if Cell.loaded and self._powerBarUpdateRequired then
+        self._powerBarUpdateRequired = nil
         if ShouldShowPowerBar(self) then
             ShowPowerBar(self)
         else
@@ -2173,7 +2177,7 @@ end
 -- unit button events
 -------------------------------------------------
 local function UnitButton_RegisterEvents(self)
-    self:RegisterEvent("PLAYER_ENTERING_WORLD")
+    -- self:RegisterEvent("PLAYER_ENTERING_WORLD")
     self:RegisterEvent("GROUP_ROSTER_UPDATE")
     
     self:RegisterEvent("UNIT_HEALTH")
@@ -2250,8 +2254,8 @@ local function UnitButton_OnEvent(self, event, unit)
     -- if UnitExists(unit) and (UnitIsUnit(unit, self.state.displayedUnit) or UnitIsUnit(unit, self.state.unit)) then
     if unit and (self.state.displayedUnit == unit or self.state.unit == unit) then
         if  event == "UNIT_ENTERED_VEHICLE" or event == "UNIT_EXITED_VEHICLE" or event == "UNIT_CONNECTION" then
-            self.updateRequired = 1
-            self.powerBarUpdateRequired = 1
+            self._updateRequired = 1
+            self._powerBarUpdateRequired = 1
         
         elseif event == "UNIT_NAME_UPDATE" then
             UnitButton_UpdateName(self)
@@ -2311,15 +2315,15 @@ local function UnitButton_OnEvent(self, event, unit)
 
         elseif event == "UNIT_PORTRAIT_UPDATE" then -- pet summoned far away
             if self.state.healthMax == 0 then
-                self.updateRequired = 1
-                self.powerBarUpdateRequired = 1
+                self._updateRequired = 1
+                self._powerBarUpdateRequired = 1
             end
         end
 
     else
-        if event == "PLAYER_ENTERING_WORLD" or event == "GROUP_ROSTER_UPDATE" then
-            self.updateRequired = 1
-            self.powerBarUpdateRequired = 1
+        if event == "GROUP_ROSTER_UPDATE" then
+            self._updateRequired = 1
+            self._powerBarUpdateRequired = 1
 
         elseif event == "PLAYER_REGEN_ENABLED" or event == "PLAYER_REGEN_DISABLED" then
             UnitButton_UpdateLeader(self, event)
@@ -2398,8 +2402,8 @@ Cell.vars.guids = {} -- guid to unitid
 Cell.vars.names = {} -- name to unitid
 
 local function UnitButton_OnShow(self)
-    self.updateRequired = nil -- prevent UnitButton_UpdateAll twice. when convert party <-> raid, GROUP_ROSTER_UPDATE fired.
-    self.powerBarUpdateRequired = 1
+    self._updateRequired = nil -- prevent UnitButton_UpdateAll twice. when convert party <-> raid, GROUP_ROSTER_UPDATE fired.
+    self._powerBarUpdateRequired = 1
     UnitButton_RegisterEvents(self)
 
     --[[
@@ -2478,8 +2482,8 @@ local function UnitButton_OnTick(self)
                 -- NOTE: displayed unit entity changed
                 F:RemoveElementsExceptKeys(self.state, "unit", "displayedUnit")
                 self.__displayedGuid = displayedGuid
-                self.updateRequired = 1
-                self.powerBarUpdateRequired = 1
+                self._updateRequired = 1
+                self._powerBarUpdateRequired = 1
             end
 
             local guid = UnitGUID(self.state.unit)
@@ -2513,8 +2517,8 @@ local function UnitButton_OnTick(self)
 
     UnitButton_UpdateInRange(self)
     
-    if self.updateRequired then
-        self.updateRequired = nil
+    if self._updateRequired and self._indicatorReady then
+        self._updateRequired = nil
         UnitButton_UpdateAll(self)
     end
 
