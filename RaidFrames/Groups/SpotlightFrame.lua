@@ -42,7 +42,7 @@ config:SetScript("OnDragStop", function()
     P:SavePosition(anchorFrame, Cell.vars.currentLayoutTable["spotlight"]["position"])
 end)
 config:SetAttribute("_onclick", [[
-    for i = 1, 5 do
+    for i = 1, 10 do
         local b = self:GetFrameRef("assignment"..i)
         if b:IsShown() then
             b:Hide()
@@ -256,7 +256,7 @@ end
 -------------------------------------------------
 local wrapFrame = CreateFrame("Frame", "CellSpotlightWrapFrame", nil, "SecureHandlerBaseTemplate")
 
-for i = 1, 5 do
+for i = 1, 10 do
     -- placeholder
     placeholders[i] = CreatePlaceHolder(i)
 
@@ -321,7 +321,7 @@ menu:SetClampedToScreen(true)
 menu:Hide()
 
 --! assignmentBtn -> spotlightButton
-for i = 1, 5 do
+for i = 1, 10 do
     -- assignmentBtn -> menu
     SecureHandlerSetFrameRef(assignmentButtons[i], "menu", menu)
     -- menu -> spotlightButton
@@ -334,7 +334,7 @@ end
 SecureHandlerSetFrameRef(menu, "config", config)
 SecureHandlerSetFrameRef(config, "menu", menu)
 -- menu:SetAttribute("_onhide", [[
---     for i = 1, 5 do
+--     for i = 1, 10 do
 --         self:GetFrameRef("assignment"..i):Hide()
 --     end
 -- ]])
@@ -475,6 +475,7 @@ end
 boss1target = Cell:CreateButton(menu, L["Boss1 Target"], "transparent-accent", {20, 20}, true, false, nil, nil, "SecureHandlerAttributeTemplate,SecureHandlerClickTemplate")
 P:Point(boss1target, "TOPLEFT", unittarget, "BOTTOMLEFT")
 P:Point(boss1target, "TOPRIGHT", unittarget, "BOTTOMRIGHT")
+boss1target:SetEnabled(Cell.isRetail)
 boss1target:SetAttribute("_onclick", [[
     local menu = self:GetParent()
     local index = menu:GetAttribute("index")
@@ -650,50 +651,66 @@ local function UpdateLayout(layout, which)
         end
 
         -- anchors
-        local point, anchorPoint, unitSpacing
+        local point, anchorPoint, groupPoint, unitSpacingX, unitSpacingY
         local menuAnchorPoint, menuX, menuY
         
-        if orientation == "vertical" then
+        if strfind(orientation, "^vertical") then
             if anchor == "BOTTOMLEFT" then
                 point, anchorPoint = "BOTTOMLEFT", "TOPLEFT"
-                unitSpacing = spacingX
+                groupPoint = "BOTTOMRIGHT"
+                unitSpacingX = spacingX
+                unitSpacingY = spacingY
                 menuAnchorPoint = "BOTTOMRIGHT"
                 menuX, menuY = 4, 0
             elseif anchor == "BOTTOMRIGHT" then
                 point, anchorPoint = "BOTTOMRIGHT", "TOPRIGHT"
-                unitSpacing = spacingX
+                groupPoint = "BOTTOMLEFT"
+                unitSpacingX = -spacingX
+                unitSpacingY = spacingY
                 menuAnchorPoint = "BOTTOMLEFT"
                 menuX, menuY = -4, 0
             elseif anchor == "TOPLEFT" then
                 point, anchorPoint = "TOPLEFT", "BOTTOMLEFT"
-                unitSpacing = -spacingX
+                groupPoint = "TOPRIGHT"
+                unitSpacingX = spacingX
+                unitSpacingY = -spacingY
                 menuAnchorPoint = "TOPRIGHT"
                 menuX, menuY = 4, 0
             elseif anchor == "TOPRIGHT" then
                 point, anchorPoint = "TOPRIGHT", "BOTTOMRIGHT"
-                unitSpacing = -spacingX
+                groupPoint = "TOPLEFT"
+                unitSpacingX = -spacingX
+                unitSpacingY = -spacingY
                 menuAnchorPoint = "TOPLEFT"
                 menuX, menuY = -4, 0
             end
         else
             if anchor == "BOTTOMLEFT" then
                 point, anchorPoint = "BOTTOMLEFT", "BOTTOMRIGHT"
-                unitSpacing = spacingX
+                groupPoint = "TOPLEFT"
+                unitSpacingX = spacingX
+                unitSpacingY = spacingY
                 menuAnchorPoint = "TOPLEFT"
                 menuX, menuY = 0, 4
             elseif anchor == "BOTTOMRIGHT" then
                 point, anchorPoint = "BOTTOMRIGHT", "BOTTOMLEFT"
-                unitSpacing = -spacingX
+                groupPoint = "TOPRIGHT"
+                unitSpacingX = -spacingX
+                unitSpacingY = spacingY
                 menuAnchorPoint = "TOPRIGHT"
                 menuX, menuY = 0, 4
             elseif anchor == "TOPLEFT" then
                 point, anchorPoint = "TOPLEFT", "TOPRIGHT"
-                unitSpacing = spacingX
+                groupPoint = "BOTTOMLEFT"
+                unitSpacingX = spacingX
+                unitSpacingY = -spacingY
                 menuAnchorPoint = "BOTTOMLEFT"
                 menuX, menuY = 0, -4
             elseif anchor == "TOPRIGHT" then
                 point, anchorPoint = "TOPRIGHT", "TOPLEFT"
-                unitSpacing = -spacingX
+                groupPoint = "BOTTOMRIGHT"
+                unitSpacingX = -spacingX
+                unitSpacingY = -spacingY
                 menuAnchorPoint = "BOTTOMRIGHT"
                 menuX, menuY = 0, -4
             end
@@ -709,10 +726,18 @@ local function UpdateLayout(layout, which)
         for i, f in pairs(placeholders) do
             f:ClearAllPoints()
             if last then
-                if orientation == "vertical" then
-                    f:SetPoint(point, last, anchorPoint, 0, unitSpacing)
+                if strfind(orientation, "^vertical") then
+                    if i == 6 and orientation == "vertical" then
+                        f:SetPoint(point, placeholders[1], groupPoint, unitSpacingX, 0)
+                    else
+                        f:SetPoint(point, last, anchorPoint, 0, unitSpacingY)
+                    end
                 else
-                    f:SetPoint(point, last, anchorPoint, unitSpacing, 0)
+                    if i == 6 and orientation == "horizontal" then
+                        f:SetPoint(point, placeholders[1], groupPoint, 0, unitSpacingY)
+                    else
+                        f:SetPoint(point, last, anchorPoint, unitSpacingX, 0)
+                    end
                 end
             else
                 f:SetPoint("TOPLEFT", spotlightFrame)
@@ -742,7 +767,7 @@ local function UpdateLayout(layout, which)
 
     if not which or which == "spotlight" then
         if layout["spotlight"]["enabled"] then
-            for i = 1, 5 do
+            for i = 1, 10 do
                 local unit = layout["spotlight"]["units"][i]
                 Cell.unitButtons.spotlight[i]:SetAttribute("unit", unit)
                 if unit and strfind(unit, "^.+target$") then
@@ -753,7 +778,7 @@ local function UpdateLayout(layout, which)
             end
             spotlightFrame:Show()
         else
-            for i = 1, 5 do
+            for i = 1, 10 do
                 Cell.unitButtons.spotlight[i]:SetAttribute("unit", nil)
                 Cell.unitButtons.spotlight[i]:SetAttribute("refreshOnUpdate", nil)
                 UnregisterUnitWatch(Cell.unitButtons.spotlight[i])

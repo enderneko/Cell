@@ -966,7 +966,7 @@ local function CreateSpotlightPreview()
     end)
 
     spotlightPreview.header = CreateFrame("Frame", "CellSpotlightPreviewFrameHeader", spotlightPreview)
-    for i = 1, 5 do
+    for i = 1, 10 do
         spotlightPreview.header[i] = spotlightPreview.header:CreateTexture(nil, "BACKGROUND")
         spotlightPreview.header[i]:SetColorTexture(0, 0, 0)
         spotlightPreview.header[i]:SetAlpha(0.555)
@@ -977,7 +977,7 @@ local function CreateSpotlightPreview()
         spotlightPreview.header[i].tex:SetPoint("TOPLEFT", spotlightPreview.header[i], "TOPLEFT", P:Scale(1), P:Scale(-1))
         spotlightPreview.header[i].tex:SetPoint("BOTTOMRIGHT", spotlightPreview.header[i], "BOTTOMRIGHT", P:Scale(-1), P:Scale(1))
 
-        spotlightPreview.header[i].tex:SetVertexColor(F:ConvertRGB(255, 0, 102, desaturation[i])) -- cyan
+        spotlightPreview.header[i].tex:SetVertexColor(F:ConvertRGB(255, 0, 102, i <= 5 and desaturation[i] or desaturation[i-5]))
         spotlightPreview.header[i].tex:SetAlpha(0.555)
     end
 end
@@ -1079,64 +1079,74 @@ local function UpdateSpotlightPreview()
     local header = spotlightPreview.header
     header:ClearAllPoints()
 
-    if orientation == "vertical" then
-        -- anchor
-        local point, anchorPoint, unitSpacing
+    local point, anchorPoint, groupPoint, unitSpacingX, unitSpacingY
+    if strfind(orientation, "^vertical") then
         if anchor == "BOTTOMLEFT" then
             point, anchorPoint = "BOTTOMLEFT", "TOPLEFT"
-            unitSpacing = spacingY
+            groupPoint = "BOTTOMRIGHT"
+            unitSpacingX = spacingX
+            unitSpacingY = spacingY
         elseif anchor == "BOTTOMRIGHT" then
             point, anchorPoint = "BOTTOMRIGHT", "TOPRIGHT"
-            unitSpacing = spacingY
+            groupPoint = "BOTTOMLEFT"
+            unitSpacingX = -spacingX
+            unitSpacingY = spacingY
         elseif anchor == "TOPLEFT" then
             point, anchorPoint = "TOPLEFT", "BOTTOMLEFT"
-            unitSpacing = -spacingY
+            groupPoint = "TOPRIGHT"
+            unitSpacingX = spacingX
+            unitSpacingY = -spacingY
         elseif anchor == "TOPRIGHT" then
             point, anchorPoint = "TOPRIGHT", "BOTTOMRIGHT"
-            unitSpacing = -spacingY
-        end
-
-        P:Size(header, width, height*5+abs(unitSpacing)*4)
-        header:SetPoint(point)
-        
-        for i = 1, 5 do
-            P:Size(header[i], width, height)
-            header[i]:ClearAllPoints()
-
-            if i == 1 then
-                header[i]:SetPoint(point)
-            else
-                header[i]:SetPoint(point, header[i-1], anchorPoint, 0, unitSpacing)
-            end
+            groupPoint = "TOPLEFT"
+            unitSpacingX = -spacingX
+            unitSpacingY = -spacingY
         end
     else
-        -- anchor
-        local point, anchorPoint, unitSpacing
         if anchor == "BOTTOMLEFT" then
             point, anchorPoint = "BOTTOMLEFT", "BOTTOMRIGHT"
-            unitSpacing = spacingX
+            groupPoint = "TOPLEFT"
+            unitSpacingX = spacingX
+            unitSpacingY = spacingY
         elseif anchor == "BOTTOMRIGHT" then
             point, anchorPoint = "BOTTOMRIGHT", "BOTTOMLEFT"
-            unitSpacing = -spacingX
+            groupPoint = "TOPRIGHT"
+            unitSpacingX = -spacingX
+            unitSpacingY = spacingY
         elseif anchor == "TOPLEFT" then
             point, anchorPoint = "TOPLEFT", "TOPRIGHT"
-            unitSpacing = spacingX
+            groupPoint = "BOTTOMLEFT"
+            unitSpacingX = spacingX
+            unitSpacingY = -spacingY
         elseif anchor == "TOPRIGHT" then
             point, anchorPoint = "TOPRIGHT", "TOPLEFT"
-            unitSpacing = -spacingX
+            groupPoint = "BOTTOMRIGHT"
+            unitSpacingX = -spacingX
+            unitSpacingY = -spacingY
         end
+    end
 
-        P:Size(header, width*5+abs(unitSpacing)*4, height)
-        header:SetPoint(point)
+    P:Size(header, width, height)
+    header:SetPoint(point)
 
-        for i = 1, 5 do
-            P:Size(header[i], width, height)
-            header[i]:ClearAllPoints()
-
-            if i == 1 then
-                header[i]:SetPoint(point)
+    for i = 1, 10 do
+        P:Size(header[i], width, height)
+        header[i]:ClearAllPoints()
+        if i == 1 then
+            header[i]:SetPoint(point)
+        else
+            if strfind(orientation, "^vertical") then
+                if i == 6 and orientation == "vertical" then
+                    header[i]:SetPoint(point, header[1], groupPoint, unitSpacingX, 0)
+                else
+                    header[i]:SetPoint(point, header[i-1], anchorPoint, 0, unitSpacingY)
+                end
             else
-                header[i]:SetPoint(point, header[i-1], anchorPoint, unitSpacing, 0)
+                if i == 6 and orientation == "horizontal" then
+                    header[i]:SetPoint(point, header[1], groupPoint, 0, unitSpacingY)
+                else
+                    header[i]:SetPoint(point, header[i-1], anchorPoint, unitSpacingX, 0)
+                end
             end
         end
     end
@@ -1949,7 +1959,7 @@ local orientationDropdown, anchorDropdown, spacingXSlider, spacingYSlider
 
 local sameSizeAsMainCB, sameArrangementAsMainCB
 local sortByRoleCB, hideSelfCB
-local separateNpcCB, showNpcCB, spotlightCB, partyPetsCB, raidPetsCB
+local separateNpcCB, showNpcCB, spotlightCB, spotlightOrientationDropdown, partyPetsCB, raidPetsCB
 
 local function UpdateSize()
     if selectedLayout == Cell.vars.currentLayout then
@@ -2125,7 +2135,7 @@ local function CreateLayoutSetupPane()
             orientationText:SetTextColor(0.4, 0.4, 0.4)
         end
     end)
-    
+
     -- anchor
     anchorDropdown = Cell:CreateDropdown(layoutSetupPane, 117)
     anchorDropdown:SetPoint("TOPLEFT", orientationDropdown, "TOPRIGHT", 30, 0)
@@ -2328,6 +2338,56 @@ local function CreateLayoutSetupPane()
     "|cffffb5c5"..L["Unit"]..", "..L["Unit's Pet"]..", "..L["Unit's Target"])
     spotlightCB:SetPoint("TOPLEFT", 5, -27)
 
+    -- spotlight orientation
+    spotlightOrientationDropdown = Cell:CreateDropdown(pages.spotlight, 117)
+    spotlightOrientationDropdown:SetPoint("TOPLEFT", widthSlider, "TOPRIGHT", 30, 0)
+    spotlightOrientationDropdown:SetItems({
+        {
+            ["text"] = L["Vertical"].." A",
+            ["value"] = "vertical",
+            ["onClick"] = function()
+                selectedLayoutTable[selectedPage]["orientation"] = "vertical"
+                UpdateArrangement()
+            end,
+        },
+        {
+            ["text"] = L["Vertical"].." B",
+            ["value"] = "vertical2",
+            ["onClick"] = function()
+                selectedLayoutTable[selectedPage]["orientation"] = "vertical2"
+                UpdateArrangement()
+            end,
+        },
+        {
+            ["text"] = L["Horizontal"].." A",
+            ["value"] = "horizontal",
+            ["onClick"] = function()
+                selectedLayoutTable[selectedPage]["orientation"] = "horizontal"
+                UpdateArrangement()
+            end,
+        },
+        {
+            ["text"] = L["Horizontal"].." B",
+            ["value"] = "horizontal2",
+            ["onClick"] = function()
+                selectedLayoutTable[selectedPage]["orientation"] = "horizontal2"
+                UpdateArrangement()
+            end,
+        },
+    })
+    
+    local spotlightOrientationText = layoutSetupPane:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
+    spotlightOrientationText:SetPoint("BOTTOMLEFT", spotlightOrientationDropdown, "TOPLEFT", 0, 1)
+    spotlightOrientationText:SetText(L["Orientation"])
+
+    hooksecurefunc(spotlightOrientationDropdown, "SetEnabled", function(self, enabled)
+        if enabled then
+            spotlightOrientationText:SetTextColor(1, 1, 1)
+        else
+            spotlightOrientationText:SetTextColor(0.4, 0.4, 0.4)
+        end
+    end)
+
     -- button group
     Cell:CreateButtonGroup({main, pet, npc, spotlight}, function(tab)
         selectedPage = tab
@@ -2355,6 +2415,12 @@ local function CreateLayoutSetupPane()
             sameSizeAsMainCB:Show()
             sameArrangementAsMainCB:Show()
             widthSlider:SetPoint("TOPLEFT", sameArrangementAsMainCB, 0, -50)
+        end
+
+        if tab == "spotlight" then
+            orientationDropdown:Hide()
+        else
+            orientationDropdown:Show()
         end
 
         -- show & hide
@@ -2478,6 +2544,7 @@ LoadPageDB = function(page)
 
     -- group arrangement
     orientationDropdown:SetSelectedValue(selectedLayoutTable[page]["orientation"])
+    spotlightOrientationDropdown:SetSelectedValue(selectedLayoutTable[page]["orientation"])
     anchorDropdown:SetSelectedValue(selectedLayoutTable[page]["anchor"])
 
     -- same as main
@@ -2498,6 +2565,7 @@ LoadPageDB = function(page)
         widthSlider:SetEnabled(not selectedLayoutTable[page]["sameSizeAsMain"])
         heightSlider:SetEnabled(not selectedLayoutTable[page]["sameSizeAsMain"])
         powerSizeSlider:SetEnabled(not selectedLayoutTable[page]["sameSizeAsMain"])
+        spotlightOrientationDropdown:SetEnabled(not selectedLayoutTable[page]["sameArrangementAsMain"])
         orientationDropdown:SetEnabled(not selectedLayoutTable[page]["sameArrangementAsMain"])
         anchorDropdown:SetEnabled(not selectedLayoutTable[page]["sameArrangementAsMain"])
         spacingXSlider:SetEnabled(not selectedLayoutTable[page]["sameArrangementAsMain"])
