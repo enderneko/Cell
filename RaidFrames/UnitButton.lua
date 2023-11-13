@@ -3131,6 +3131,14 @@ function F:UnitButton_OnLoad(button)
    
     InitAuraTables(button)
 
+    -- ping system
+    Mixin(button, PingableType_UnitFrameMixin)
+    button:SetAttribute("ping-receiver", true)
+
+    function button:GetTargetPingGUID()
+        return button.__unitGuid
+    end
+
     -- background
     -- local background = button:CreateTexture(name.."Background", "BORDER")
     -- button.widget.background = background

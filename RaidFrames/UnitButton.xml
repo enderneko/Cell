@@ -2,9 +2,10 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/ ..\FrameXML\UI.xsd">
     <Button name="CellUnitButtonTemplate" inherits="BackdropTemplate,SecureUnitButtonTemplate,SecureHandlerEnterLeaveTemplate,SecureHandlerShowHideTemplate" hidden="true" virtual="true">
         <Attributes>
-			<Attribute name="toggleForVehicle" type="boolean" value="true"/>
-			<!-- <Attribute name="allowVehicleTarget" type="boolean" value="true"/> -->
-		</Attributes>
+            <Attribute name="toggleForVehicle" type="boolean" value="true"/>
+            <!-- <Attribute name="allowVehicleTarget" type="boolean" value="true"/> -->
+            <!-- <Attribute name="ping-receiver" type="boolean" value="true"/> -->
+        </Attributes>
         <Scripts>
             <OnLoad>
                 Cell.funcs:UnitButton_OnLoad(self)
