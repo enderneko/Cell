@@ -253,8 +253,8 @@ local function CreateBuffButton(parent, size, spell, icon, index)
     b:SetBackdropBorderColor(0, 0, 0, 1)
 
     b:RegisterForClicks("LeftButtonUp", "RightButtonUp", "LeftButtonDown", "RightButtonDown") -- NOTE: ActionButtonUseKeyDown will affect this
-    b:SetAttribute("type1", "spell")
-    b:SetAttribute("spell", spell)
+    b:SetAttribute("type1", "macro")
+    b:SetAttribute("macrotext1", "/cast [@player] "..spell)
     b:HookScript("OnClick", function(self, button, down)
         if button == "RightButton" and (down == GetCVarBool("ActionButtonUseKeyDown")) then
             local msg = F:GetUnaffectedString(index)
