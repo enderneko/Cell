@@ -1,6 +1,7 @@
 local _, Cell = ...
 local L = Cell.L
 local F = Cell.funcs
+local B = Cell.bFuncs
 local P = Cell.pixelPerfectFuncs
 
 Cell.unitButtons = {
@@ -82,8 +83,13 @@ menuFrame:SetAllPoints(anchorFrame)
 local options = Cell:CreateButton(menuFrame, "", "red", {20, 10}, false, true)
 P:Point(options, "TOPLEFT", menuFrame)
 RegisterButtonEvents(options)
-options:SetScript("OnClick", function()
-    F:ShowOptionsFrame()
+options:RegisterForClicks("LeftButtonUp", "RightButtonUp")
+options:SetScript("OnClick", function(self, button)
+    if button == "LeftButton" then
+        F:ShowOptionsFrame()
+    elseif button == "RightButton" then
+        F:IterateAllUnitButtons(B.UpdateAll, true)
+    end
 end)
 options:HookScript("OnEnter", function()
     CellTooltip:SetOwner(options, "ANCHOR_NONE")
