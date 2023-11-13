@@ -79,6 +79,14 @@ select(2, ...).L = setmetatable({
     ["SNIPPETS_TIPS"] = "[Double-Click] to rename. [Shift-Click] to delete. All checked snippets will be automatically invoked at the end of Cell initialization process (in ADDON_LOADED event).",
 
     ["CHANGELOGS"] = [[
+        <h1>r202-release (Nov 14, 2023, 07:16 GMT+8)</h1>
+        <p>+ Added support for Ping System (Retail).</p>
+        <p>* Expanded Spotlight Frame to 10 buttons.</p>
+        <p>+ Added "Show stack text" option for custom icon(s) indicators.</p>
+        <p>* Updated OmniCD support (requires the upcoming OmniCD update): Spotlights and QuickCasts.</p>
+        <p>* Bug fixes.</p>
+        <br/>
+
         <h1>r201-release (Nov 9, 2023, 05:04 GMT+8)</h1>
         <p>* Updated Amirdrassil debuffs.</p>
         <p>* Updated Health Text indicator.</p>
@@ -92,7 +100,7 @@ select(2, ...).L = setmetatable({
 
         <h1>r199-release (Oct 21, 2023, 15:40 GMT+8)</h1>
         <p>* Updated spells of Defensives and Externals.</p>
-        <p>* Added "Cast By" option to custom buff indicators.</p>
+        <p>+ Added "Cast By" option to custom buff indicators.</p>
         <p>* Fixed raid tools.</p>
         <p>+ Code Snippets var: CELL_SHOW_RAID_PET_OWNER_NAME.</p>
         <br/>
