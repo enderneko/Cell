@@ -1884,13 +1884,13 @@ LoadIndicatorList = function()
 
         b:SetPoint("RIGHT")
         if last then
-            b:SetPoint("TOPLEFT", last, "BOTTOMLEFT", 0, 1)
+            b:SetPoint("TOPLEFT", last, "BOTTOMLEFT", 0, P:Scale(1))
         else
             b:SetPoint("TOPLEFT")
         end
         last = b
     end
-    listFrame.scrollFrame:SetContentHeight(20, #listButtons, -1)
+    listFrame.scrollFrame:SetContentHeight(P:Scale(20), #listButtons, -P:Scale(1))
 
     Cell:CreateButtonGroup(listButtons, ShowIndicatorSettings, function(id)
         local i = previewButton.indicators[currentLayoutTable["indicators"][id]["indicatorName"]]
