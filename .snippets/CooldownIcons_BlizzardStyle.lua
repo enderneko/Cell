@@ -161,6 +161,14 @@ function I:CreateAura_BarIcon(name, parent)
 
     frame.SetCooldown = BarIcon_SetCooldown
 
+    function frame:ShowStack(show)
+        if show then
+            stack:Show()
+        else
+            stack:Hide()
+        end
+    end
+
     function frame:ShowDuration(show)
         frame.showDuration = show
         if show then
