@@ -79,6 +79,14 @@ select(2, ...).L = setmetatable({
     ["SNIPPETS_TIPS"] = "[Double-Click] to rename. [Shift-Click] to delete. All checked snippets will be automatically invoked at the end of Cell initialization process (in ADDON_LOADED event).",
 
     ["CHANGELOGS"] = [[
+        <h1>If there are any issues after an update, check through all code snippets first.</h1>
+        <br/>
+
+        <h1>r203-release (Nov 14, 2023, 21:15 GMT+8)</h1>
+        <p>* Fixed Target Counter.</p>
+        <p>* Fixed a health bar issue occured when value is 0.</p>
+        <br/>
+
         <h1>r202-release (Nov 14, 2023, 07:16 GMT+8)</h1>
         <p>+ Added support for Ping System (Retail).</p>
         <p>* Expanded Spotlight Frame to 10 buttons.</p>
