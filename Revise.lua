@@ -2296,18 +2296,18 @@ function F:Revise()
     end
 
     -- r198-release
-    if CellDB["revise"] and dbRevision < 198 then
-        for _, layout in pairs(CellDB["layouts"]) do
-            local index = Cell.defaults.indicatorIndices.targetCounter
-            if type(layout["indicators"][index]["filters"]) ~= "table" then
-                layout["indicators"][index]["filters"] = {
-                    ["outdoor"] = false,
-                    ["pve"] = false,
-                    ["pvp"] = true,
-                }
-            end
-        end
-    end
+    -- if CellDB["revise"] and dbRevision < 198 then
+    --     for _, layout in pairs(CellDB["layouts"]) do
+    --         local index = Cell.defaults.indicatorIndices.targetCounter
+    --         if type(layout["indicators"][index]["filters"]) ~= "table" then
+    --             layout["indicators"][index]["filters"] = {
+    --                 ["outdoor"] = false,
+    --                 ["pve"] = false,
+    --                 ["pvp"] = true,
+    --             }
+    --         end
+    --     end
+    -- end
 
     -- r199-release
     if CellDB["revise"] and dbRevision < 199 then
@@ -2359,6 +2359,20 @@ function F:Revise()
                         indicator["showStack"] = true
                     end
                 end
+            end
+        end
+    end
+
+    -- r203-release
+    if CellDB["revise"] and dbRevision < 203 then
+        for _, layout in pairs(CellDB["layouts"]) do
+            local index = Cell.defaults.indicatorIndices.targetCounter
+            if type(layout["indicators"][index]["filters"]) ~= "table" then
+                layout["indicators"][index]["filters"] = {
+                    ["outdoor"] = false,
+                    ["pve"] = false,
+                    ["pvp"] = true,
+                }
             end
         end
     end

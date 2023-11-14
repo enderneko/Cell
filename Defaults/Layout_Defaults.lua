@@ -406,6 +406,11 @@ Cell.defaults.layout = {
             ["frameLevel"] = 15,
             ["font"] = {"Cell ".._G.DEFAULT, 15, "Outline"},
             ["color"] = {1, 0.1, 0.1},
+            ["filters"] = {
+                ["outdoor"] = false,
+                ["pve"] = false,
+                ["pvp"] = true,
+            },
         }, -- 25
         {
             ["name"] = "Crowd Controls",
