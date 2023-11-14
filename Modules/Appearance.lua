@@ -309,6 +309,9 @@ local function CreatePreviewButtons()
 
     previewButton.previewHealthText = previewButton.widget.overlayFrame:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
     previewButton.previewHealthText:SetPoint("CENTER")
+
+    previewButton.widget.healthBar:SetMinMaxSmoothedValue(0, 100)
+    previewButton.widget.healthBar:SetMinMaxValues(0, 100)
     
     local previewButtonBG = Cell:CreateFrame("CellAppearancePreviewButtonBG", appearanceTab)
     previewButtonBG:SetPoint("TOPLEFT", previewButton, 0, 20)
@@ -344,8 +347,8 @@ local function CreatePreviewButtons()
     local ticker
     previewButton:SetScript("OnShow", function()
         previewButton.perc = 1
-        previewButton.widget.healthBar:SetSmoothedValue(100)
         previewButton.widget.healthBar:SetValue(100)
+        -- previewButton.widget.healthBar:SetSmoothedValue(100)
         previewButton.previewHealthText:SetText("100%")
 
         local health, healthPercent, healthPercentOld, currentState = 100, 1, 1, 1
@@ -467,13 +470,6 @@ local function UpdatePreviewButton()
     P:Size(previewButton2, Cell.vars.currentLayoutTable["main"]["size"][1], Cell.vars.currentLayoutTable["main"]["size"][2])
     B:SetPowerSize(previewButton2, Cell.vars.currentLayoutTable["main"]["powerSize"])
 
-    -- value
-    if CellDB["appearance"]["barAnimation"] == "Smooth" then
-        previewButton.widget.healthBar:SetMinMaxSmoothedValue(0, 100)
-    else
-        previewButton.widget.healthBar:SetMinMaxValues(0, 100)
-    end
-    
     previewButton2.widget.healthBar:SetMinMaxValues(0, 100)
     previewButton2.widget.healthBar:SetValue(60)
     previewButton2.state.healthMax = 100

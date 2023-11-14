@@ -3172,6 +3172,13 @@ function F:UnitButton_OnLoad(button)
     healthBar:SetStatusBarTexture(Cell.vars.texture)
     healthBar:GetStatusBarTexture():SetDrawLayer("ARTWORK", -6)
     healthBar:SetFrameLevel(button:GetFrameLevel()+5)
+
+    -- FIXME: fix blizzard shits!
+    healthBar:SetScript("OnValueChanged", function(self, value)
+        if value == 0 then
+            healthBar:SetValue(0.1)
+        end
+    end)
     
     -- hp loss
     local healthBarLoss = button:CreateTexture(name.."HealthBarLoss", "ARTWORK", nil , -7)
