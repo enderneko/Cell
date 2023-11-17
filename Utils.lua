@@ -1405,17 +1405,48 @@ if playerClass == "EVOKER" then
                 end
             elseif UnitCanAttack("player", unit) then
                 -- print("CanAttack", unit)
-                if harmSpells[playerClass] then
-                    return IsSpellInRange(harmSpells[playerClass], unit) == 1
-                else
-                    return IsItemInRange(harmItems[playerClass], unit)
-                end
-            else
-                -- print("CheckInteractDistance", unit)
-                return CheckInteractDistance(unit, 4) -- 28 yards
+                return IsSpellInRange(harmSpells["EVOKER"], unit) == 1
             end
+           
+            -- print("InRange", unit)
+            return UnitInRange(unit)
         end
     end
+
+elseif Cell.isRetail then
+    function F:IsInRange(unit, check)
+        if not UnitIsVisible(unit) then
+            return false
+        end
+    
+        if UnitIsUnit("player", unit) then
+            return true
+        elseif not check and F:UnitInGroup(unit) then
+            -- NOTE: UnitInRange only works with group players/pets --! but not available for PLAYER PET when SOLO
+            local checked
+            inRange, checked = UnitInRange(unit)
+            if not checked then
+                return F:IsInRange(unit, true)
+            end
+            return inRange
+        else
+            if UnitCanAssist("player", unit) then
+                -- print("CanAssist", unit)
+                if friendSpells[playerClass] then
+                    return IsSpellInRange(friendSpells[playerClass], unit) == 1
+                end
+            elseif UnitCanAttack("player", unit) then
+                -- print("CanAttack", unit)
+                if harmSpells[playerClass] then
+                    return IsSpellInRange(harmSpells[playerClass], unit) == 1
+                end
+            end
+
+            -- print("InRange", unit)
+            return UnitInRange(unit)
+        end
+    end
+
 else
     function F:IsInRange(unit, check)
         if not UnitIsVisible(unit) then
