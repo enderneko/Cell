@@ -96,14 +96,18 @@ L["Show while not in a group"] = "当不在队伍时显示"
 L["To open options frame, use /cell options"] = "用 /cell options 来打开选项窗口"
 L["Show Party"] = "小队时显示"
 L["Show while in a party"] = "当在小队时显示"
-L["Translit Cyrillic to Latin"] = "将俄文转写为英文"
-L["Increase Health Update Rate"] = "增加血条刷新速率"
-L["Use CLEU events to increase health update rate"] = "使用战斗记录事件来增加血条刷新速率"
 L["Position"] = "位置"
 L["Lock Cell Frames"] = "把它给我锁死"
 L["Fade Out Menu"] = "淡出菜单"
 L["Fade out menu buttons on mouseout"] = "当鼠标移开时淡出菜单按钮"
 L["Menu Position"] = "菜单位置"
+L["Always Update Buffs"] = "总是更新增益"
+L["Always Update Debuffs"] = "总是更新减益"
+L["Ignore UNIT_AURA payloads"] = "无视 UNIT_AURA 事件的负载"
+L["This may help solve issues of indicators not updating correctly"] = "这可能有助于解决指示器不能正确更新的问题"
+L["Increase Health Update Rate"] = "增加血条刷新速率"
+L["Use CLEU events to increase health update rate"] = "使用战斗记录事件来增加血条刷新速率"
+L["Translit Cyrillic to Latin"] = "将俄文转写为英文"
 
 -------------------------------------------------
 -- nickname
@@ -756,6 +760,7 @@ L["Click to view older changelogs"] = "点击查看远古更新记录"
 
 L["CHANGELOGS"] = [[
     <h1>更新后如果有各种问题，先排查代码片段。</h1>
+    <p>（正式服）如果指示器不能正常刷新，尝试启用常规页面下的“总是更新增益/减益”选项。</p>
     <br/>
 
     <h1>r203-release (Nov 14, 2023, 21:15 GMT+8)</h1>

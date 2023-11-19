@@ -785,6 +785,7 @@ local function ResetDebuffVars(self)
     self._debuffs.resurrectionFound = false
     self._debuffs.raidDebuffsFound = false
     self._debuffs.crowdControlsFound = 0
+    self._debuffs.allFound = 0
 
     self.state.BGOrb = nil -- TODO: move to _debuffs
 end
@@ -803,7 +804,6 @@ local function HandleDebuffs(self, auraInfo, index)
     -- local attribute = auraInfo.points[1] -- UnitAura:arg16
 
     local refreshing = false
-    local startIndex = 1
 
     self._debuffs_indices[auraInstanceID] = index
     
@@ -825,8 +825,8 @@ local function HandleDebuffs(self, auraInfo, index)
             -- all debuffs / only dispellableByMe
             if not indicatorCustoms["debuffs"] or I:CanDispel(debuffType) then 
                 -- debuffs, may contain topDebuff and cc
-                if startIndex <= indicatorNums["debuffs"]+indicatorNums["raidDebuffs"]+indicatorNums["crowdControls"] then
-                    startIndex = startIndex + 1
+                if self._debuffs.allFound <= indicatorNums["debuffs"]+indicatorNums["raidDebuffs"]+indicatorNums["crowdControls"] then
+                    self._debuffs.allFound = self._debuffs.allFound + 1
                     if Cell.vars.bigDebuffs[spellId] then
                         self._debuffs_big[auraInstanceID] = refreshing
                     else
@@ -837,7 +837,7 @@ local function HandleDebuffs(self, auraInfo, index)
         end
         
         -- user created indicators
-        I:UpdateCustomIndicators(self, auraInfo)
+        I:UpdateCustomIndicators(self, auraInfo, refreshing)
 
         -- prepare raidDebuffs
         local order = I:GetDebuffOrder(name, spellId, count)
@@ -1371,21 +1371,21 @@ UnitButton_UpdateAuras = function(self, updateInfo)
         debuffsChanged = true
     else
         if updateInfo.addedAuras then
-            for _, aura in ipairs(updateInfo.addedAuras) do
+            for _, aura in pairs(updateInfo.addedAuras) do
                 if aura.isHelpful then buffsChanged = true end
                 if aura.isHarmful then debuffsChanged = true end
             end
         end
-    
+
         if updateInfo.updatedAuraInstanceIDs then
-            for _, auraInstanceID in ipairs(updateInfo.updatedAuraInstanceIDs) do
+            for _, auraInstanceID in pairs(updateInfo.updatedAuraInstanceIDs) do
                 if self._buffs_cache[auraInstanceID] then buffsChanged = true end
                 if self._debuffs_cache[auraInstanceID] then debuffsChanged = true end
             end
         end
-       
+
         if updateInfo.removedAuraInstanceIDs then
-            for _, auraInstanceID in ipairs(updateInfo.removedAuraInstanceIDs) do
+            for _, auraInstanceID in pairs(updateInfo.removedAuraInstanceIDs) do
                 if self._buffs_cache[auraInstanceID] then
                     self._buffs_cache[auraInstanceID] = nil
                     self._buffs_count_cache[auraInstanceID] = nil
@@ -1397,6 +1397,11 @@ UnitButton_UpdateAuras = function(self, updateInfo)
                     debuffsChanged = true
                 end
             end
+        end
+
+        if Cell.loaded then
+            if CellDB["general"]["alwaysUpdateBuffs"] then buffsChanged = true end
+            if CellDB["general"]["alwaysUpdateDebuffs"] then debuffsChanged = true end
         end
     end
     

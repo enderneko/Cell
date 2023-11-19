@@ -277,11 +277,29 @@ end
 -------------------------------------------------
 -- misc
 -------------------------------------------------
-local translitCB, useCleuCB
+local alwaysUpdateBuffsCB, alwaysUpdateDebuffsCB, useCleuCB, translitCB
 
 local function CreateMiscPane()
-    local miscPane = Cell:CreateTitledPane(generalTab, L["Misc"], 422, 70)
+    local miscPane = Cell:CreateTitledPane(generalTab, L["Misc"], 422, 85)
     miscPane:SetPoint("TOPLEFT", generalTab, 5, -420)
+
+    alwaysUpdateBuffsCB = Cell:CreateCheckButton(miscPane, L["Always Update Buffs"], function(checked, self)
+        CellDB["general"]["alwaysUpdateBuffs"] = checked
+    end, L["Ignore UNIT_AURA payloads"], L["This may help solve issues of indicators not updating correctly"])
+    alwaysUpdateBuffsCB:SetPoint("TOPLEFT", 5, -27)
+    alwaysUpdateBuffsCB:SetEnabled(Cell.isRetail)
+
+    alwaysUpdateDebuffsCB = Cell:CreateCheckButton(miscPane, L["Always Update Debuffs"], function(checked, self)
+        CellDB["general"]["alwaysUpdateDebuffs"] = checked
+    end, L["Ignore UNIT_AURA payloads"], L["This may help solve issues of indicators not updating correctly"])
+    alwaysUpdateDebuffsCB:SetPoint("TOPLEFT", 222, -27)
+    alwaysUpdateDebuffsCB:SetEnabled(Cell.isRetail)
+
+    useCleuCB = Cell:CreateCheckButton(miscPane, L["Increase Health Update Rate"], function(checked, self)
+        CellDB["general"]["useCleuHealthUpdater"] = checked
+        Cell:Fire("UpdateCLEU")
+    end, "|cffff2727"..L["HIGH CPU USAGE"].." (EXPERIMENTAL)", L["Use CLEU events to increase health update rate"])
+    useCleuCB:SetPoint("TOPLEFT", alwaysUpdateBuffsCB, "BOTTOMLEFT", 0, -7)
     
     translitCB = Cell:CreateCheckButton(miscPane, L["Translit Cyrillic to Latin"], function(checked, self)
         CellDB["general"]["translit"] = checked
@@ -289,13 +307,7 @@ local function CreateMiscPane()
             B.UpdateName(b)
         end, true)
     end)
-    translitCB:SetPoint("TOPLEFT", 5, -27)
-
-    useCleuCB = Cell:CreateCheckButton(miscPane, L["Increase Health Update Rate"], function(checked, self)
-        CellDB["general"]["useCleuHealthUpdater"] = checked
-        Cell:Fire("UpdateCLEU")
-    end, "|cffff2727"..L["HIGH CPU USAGE"].." (EXPERIMENTAL)", L["Use CLEU events to increase health update rate"])
-    useCleuCB:SetPoint("TOPLEFT", translitCB, "BOTTOMLEFT", 0, -7)
+    translitCB:SetPoint("TOPLEFT", useCleuCB, "BOTTOMLEFT", 0, -7)
 end
 
 -------------------------------------------------
@@ -361,8 +373,10 @@ local function ShowTab(tab)
         syncCB:SetChecked(CellDB["nicknames"]["sync"])
 
         -- misc
-        translitCB:SetChecked(CellDB["general"]["translit"])
+        alwaysUpdateBuffsCB:SetChecked(CellDB["general"]["alwaysUpdateBuffs"])
+        alwaysUpdateDebuffsCB:SetChecked(CellDB["general"]["alwaysUpdateDebuffs"])
         useCleuCB:SetChecked(CellDB["general"]["useCleuHealthUpdater"])
+        translitCB:SetChecked(CellDB["general"]["translit"])
 
     else
         generalTab:Hide()
