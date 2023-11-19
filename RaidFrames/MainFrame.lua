@@ -41,7 +41,7 @@ local hoverFrame = CreateFrame("Frame", nil, cellMainFrame, "BackdropTemplate")
 
 local anchorFrame = CreateFrame("Frame", "CellAnchorFrame", cellMainFrame)
 Cell.frames.anchorFrame = anchorFrame
-anchorFrame:SetPoint("TOPLEFT", UIParent, "CENTER")
+PixelUtil.SetPoint(anchorFrame, "TOPLEFT", UIParent, "CENTER", 1, -1)
 P:Size(anchorFrame, 20, 10)
 anchorFrame:SetMovable(true)
 anchorFrame:SetClampedToScreen(true)
@@ -528,7 +528,7 @@ local function MainFrame_UpdateLayout(layout, which)
     if not P:LoadPosition(anchorFrame, layout["main"]["position"]) then
         P:ClearPoints(anchorFrame)
         -- no position, use default
-        anchorFrame:SetPoint("TOPLEFT", UIParent, "CENTER")
+        PixelUtil.SetPoint(anchorFrame, "TOPLEFT", UIParent, "CENTER", 1, -1)
     end
 end
 Cell:RegisterCallback("UpdateLayout", "MainFrame_UpdateLayout", MainFrame_UpdateLayout)
