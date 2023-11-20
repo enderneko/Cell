@@ -2,7 +2,7 @@
 -- File: Cell\RaidDebuffs\RaidDebuffs_Legion.lua
 -- Author: enderneko (enderneko-dev@outlook.com)
 -- Created : 2022-08-05 16:05:39 +08:00
--- Modified: 2023-07-16 15:35:20 +08:00
+-- Modified: 2023-11-20 18:40:20 +08:00
 ---------------------------------------------------------------------
 
 local _, Cell = ...
@@ -837,11 +837,13 @@ local debuffs = {
 
     [740] = { -- 黑鸦堡垒
         ["general"] = {
+            225732, -- 击倒
         },
         [1518] = { -- 融合之魂
             194956, -- reap-soul
             195254, -- swirling-scythe
-            194966, -- soul-echoes
+            "194960", -- 灵魂回响（恐惧）
+            "194966", -- 灵魂回响
         },
         [1653] = { -- 伊莉萨娜·拉文凯斯
             197418, -- vengeful-shear
