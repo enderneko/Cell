@@ -1,4 +1,6 @@
-[Full Changelog](https://github.com/enderneko/Cell/compare/r202-release...128cab19957e04d44a640a09a9d98693b9594830)
+[Full Changelog](https://github.com/enderneko/Cell/compare/r203-release...1ea705a286d307b1704c2b8dfa08152b30296967)
 
-- Fix Target Counter defaults
-- Fix blz status bar (value = 0)
+- Add options to fix indicator updating issue
+- Update range checker
+- Update debuffs
+- Update initial positions

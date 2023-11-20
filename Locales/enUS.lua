@@ -83,6 +83,11 @@ select(2, ...).L = setmetatable({
         <p>(Retail) Enable "Always Update Buffs/Debuffs" in General tab, if indicators do not update correctly.</p>
         <br/>
 
+        <h1>r204-release (Nov 21, 2023, 07:02 GMT+8)</h1>
+        <p>* Updated range checker (Retail).</p>
+        <p>+ Added "Always Update Buffs/Debuffs" options (Retail).</p>
+        <br/>
+
         <h1>r203-release (Nov 14, 2023, 21:15 GMT+8)</h1>
         <p>* Fixed Target Counter.</p>
         <p>* Fixed a health bar issue occured when value is 0.</p>

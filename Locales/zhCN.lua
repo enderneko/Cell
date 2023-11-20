@@ -104,7 +104,7 @@ L["Menu Position"] = "菜单位置"
 L["Always Update Buffs"] = "总是更新增益"
 L["Always Update Debuffs"] = "总是更新减益"
 L["Ignore UNIT_AURA payloads"] = "无视 UNIT_AURA 事件的负载"
-L["This may help solve issues of indicators not updating correctly"] = "这可能有助于解决指示器不能正确更新的问题"
+L["This may help solve issues of indicators not updating correctly"] = "可能有助于解决指示器不能正确更新的问题"
 L["Increase Health Update Rate"] = "增加血条刷新速率"
 L["Use CLEU events to increase health update rate"] = "使用战斗记录事件来增加血条刷新速率"
 L["Translit Cyrillic to Latin"] = "将俄文转写为英文"
@@ -583,7 +583,7 @@ L["This will overwrite your debuffs"] = "这将覆盖你的副本减益"
 L["Raid Debuffs updated: %s."] = "已更新副本减益：%s。"
 L["Reset debuffs?"] = "重置减益？"
 L["Current Season"] = "当前赛季"
-L["Want to help improve Raid Debuffs?"] = "想要帮忙完善副本减益嘛？"
+L["Want to help improve Raid Debuffs?"] = "想要帮忙完善副本减益么？"
 L["Use %s addon"] = "用这个插件 %s"
 L["Then create a PR or submit a ticket on GitHub"] = "然后在GitHub上提交PR或Issue就可以啦"
 
@@ -761,6 +761,11 @@ L["Click to view older changelogs"] = "点击查看远古更新记录"
 L["CHANGELOGS"] = [[
     <h1>更新后如果有各种问题，先排查代码片段。</h1>
     <p>（正式服）如果指示器不能正常刷新，尝试启用常规页面下的“总是更新增益/减益”选项。</p>
+    <br/>
+
+    <h1>r204-release (Nov 21, 2023, 07:02 GMT+8)</h1>
+    <p>* 更新距离检查（正式服）。</p>
+    <p>+ 添加“总是更新增益/减益”选项（正式服）。</p>
     <br/>
 
     <h1>r203-release (Nov 14, 2023, 21:15 GMT+8)</h1>
