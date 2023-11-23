@@ -1292,12 +1292,7 @@ CreateQuickCastButton = function(parent, name, isPreview)
             innerCD:Hide()
         end
         
-        -- OmniCD
-        if OmniCD and OmniCD[1].db.position.uf == "Cell-QuickCast" then
-            C_Timer.After(0.5, function()
-                OmniCD[1].Party:UpdatePosition()
-            end)
-        end
+        F:UpdateOmniCDPosition("Cell-QuickCast")
     end
 
     --! NOTE: PLAYER_LOGIN or MANUALLY CALLED
@@ -1509,6 +1504,7 @@ local function UpdateQuickCast()
         innerBuff = nil
     end
 
+    F:UpdateOmniCDPosition("Cell-QuickCast")
 end
 Cell:RegisterCallback("UpdateQuickCast", "QuickCast_UpdateQuickCast", UpdateQuickCast)
 

@@ -14,7 +14,6 @@ function header:UpdateButtonUnits(bName, unit)
     if not unit then return end
     
     _G[bName].unit = unit -- OmniCD
-    _G[bName].unitid = unit -- REMOVE!
 
     local petUnit
     if unit == "player" then
