@@ -740,10 +740,12 @@ local function ShowUtilitySettings(which)
             F:ApplyCombatProtectionToFrame(qcPane, -4, 4, 4, -4)
 
             qcPane:SetScript("OnShow", function()
-                for i, p in pairs(previewButtons) do
-                    if quickCastTable and i <= quickCastTable["num"] then
-                        p.fadeOut:Stop()
-                        p:FadeIn()
+                if quickCastTable["enabled"] then
+                    for i, p in pairs(previewButtons) do
+                        if quickCastTable and i <= quickCastTable["num"] then
+                            p.fadeOut:Stop()
+                            p:FadeIn()
+                        end
                     end
                 end
             end)
@@ -940,6 +942,8 @@ local function QuickCast_UpdateStatus(self)
 end
 
 local function QuickCast_UpdateName(self)
+    if not self.unit then return end
+
     local name = UnitName(self.unit)
     name = Cell.vars.nicknameCustoms[name] or Cell.vars.nicknames[name] or name
     if string.len(name) == string.utf8len(name) then -- en
@@ -948,6 +952,14 @@ local function QuickCast_UpdateName(self)
         self.nameText:SetText(string.utf8sub(name, 1, 1))
     end
 end
+
+Cell:RegisterCallback("UpdateNicknames", "QuickCast_UpdateNicknames", function()
+    C_Timer.After(1, function()
+        for _, b in pairs(quickCastButtons) do
+            QuickCast_UpdateName(b)
+        end
+    end)
+end)
 
 local function QuickCast_OnEvent(self, event, unit, arg1, arg2)
     if unit and self.unit == unit then
