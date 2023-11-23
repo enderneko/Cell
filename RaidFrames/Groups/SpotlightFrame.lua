@@ -222,11 +222,25 @@ local function CreateAssignmentButton(index)
         if InCombatLockdown() then return end
 
         local f = GetMouseFocus()
-        if f and f.state and f.state.displayedUnit then
+        
+        if f == WorldFrame then
+            f = F:GetUnitButtonByGUID(UnitGUID("mouseover") or "")
+        end
+
+        if not f then return end -- cursor outside wow window
+
+        local unitId
+        if f.state and f.state.displayedUnit then -- Cell
+            unitId = f.state.displayedUnit
+        elseif f.unit then
+            unitId = f.unit
+        end
+        
+        if unitId then
             if targetFrame.type == "unit" then
-                unit:SetUnit(b:GetAttribute("index"), f.state.displayedUnit)
+                unit:SetUnit(b:GetAttribute("index"), unitId)
             elseif targetFrame.type == "pet" then
-                unitpet:SetUnit(b:GetAttribute("index"), f.state.displayedUnit)
+                unitpet:SetUnit(b:GetAttribute("index"), unitId)
             end
         end
     end)
