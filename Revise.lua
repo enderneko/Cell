@@ -2377,6 +2377,16 @@ function F:Revise()
         end
     end
 
+    -- r205-release
+    if CellDB["revise"] and dbRevision < 205 then
+        for _, layout in pairs(CellDB["layouts"]) do
+            local index = Cell.defaults.indicatorIndices.aggroBorder
+            if layout["indicators"][index]["frameLevel"] == 3 then
+                layout["indicators"][index]["frameLevel"] = 7
+            end
+        end
+    end
+
     -- ----------------------------------------------------------------------- --
     --            update from old versions, validate all indicators            --
     -- ----------------------------------------------------------------------- --
