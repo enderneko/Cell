@@ -2746,7 +2746,7 @@ local function CreateSetting_Glow(parent)
 
         -- glowScale
         widget.glowScale = addon:CreateSlider(L["Scale"], widget, 50, 500, 110, 1, function(value)
-            widget.glow[5] = value
+            widget.glow[5] = value/100
             widget.func(widget.glow)
         end, nil, true)
         widget.glowScale:SetPoint("TOPLEFT", widget.glowLines, "BOTTOMLEFT", 0, -40)
@@ -2757,7 +2757,10 @@ local function CreateSetting_Glow(parent)
         end
 
         -- show db value
-        function widget:SetDBValue(t)
+        function widget:SetDBValue(t, hideNone)
+            widget.glowType.items[1].disabled = hideNone
+            widget.glowType.items[5].disabled = Cell.isWrath
+
             -- {"Pixel", {0.95,0.95,0.32,1}, 9, 0.25, 8, 2},
             widget.glow = t
             widget.glowType:SetSelectedValue(t[1])
@@ -4932,7 +4935,7 @@ function addon:CreateIndicatorSettings(parent, settingsTable)
             tinsert(widgetsTable, CreateSetting_Duration(parent))
         elseif setting == "roleTexture" then
             tinsert(widgetsTable, CreateSetting_RoleTexture(parent))
-        elseif setting == "glow" or setting == "targetedSpellsGlow" then
+        elseif setting == "glow" or setting == "glowOptions" or setting == "targetedSpellsGlow" then
             tinsert(widgetsTable, CreateSetting_Glow(parent))
         elseif setting == "texture" then
             tinsert(widgetsTable, CreateSetting_Texture(parent))

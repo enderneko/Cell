@@ -63,6 +63,8 @@ function I:CreateIndicator(parent, indicatorTable, noTableUpdate)
         indicator = I:CreateAura_Color(parent:GetName()..indicatorName, parent)
     elseif indicatorTable["type"] == "texture" then
         indicator = I:CreateAura_Texture(parent:GetName()..indicatorName, parent.widget.overlayFrame)
+    elseif indicatorTable["type"] == "glow" then
+        indicator = I:CreateAura_Glow(parent:GetName()..indicatorName, parent)
     end
     parent.indicators[indicatorName] = indicator
     

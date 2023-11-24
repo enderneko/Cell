@@ -954,11 +954,13 @@ local function QuickCast_UpdateName(self)
 end
 
 Cell:RegisterCallback("UpdateNicknames", "QuickCast_UpdateNicknames", function()
-    C_Timer.After(1, function()
-        for _, b in pairs(quickCastButtons) do
-            QuickCast_UpdateName(b)
-        end
-    end)
+    if quickCastButtons then
+        C_Timer.After(1, function()
+            for _, b in pairs(quickCastButtons) do
+                QuickCast_UpdateName(b)
+            end
+        end)
+    end
 end)
 
 local function QuickCast_OnEvent(self, event, unit, arg1, arg2)

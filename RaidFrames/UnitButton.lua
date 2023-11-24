@@ -285,6 +285,10 @@ local function HandleIndicators(b)
         if type(t["fadeOut"]) == "boolean" then
             indicator:SetFadeOut(t["fadeOut"])
         end
+        -- update glow
+        if t["glowOptions"] then
+            indicator:UpdateGlowOptions(t["glowOptions"])
+        end
 
         -- init
         -- update name visibility
@@ -567,6 +571,11 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
             I:UpdateMissingBuffsFilters()
         elseif setting == "targetCounterFilters" then
             I:UpdateTargetCounterFilters()
+        elseif setting == "glowOptions" then
+            F:IterateAllUnitButtons(function(b)
+                b.indicators[indicatorName]:UpdateGlowOptions(value)
+                UnitButton_UpdateAuras(b)
+            end, true)
         elseif setting == "checkbutton" then
             if value == "showGroupNumber" then
                 F:IterateAllUnitButtons(function(b)
@@ -681,6 +690,10 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                 -- update fadeOut
                 if type(value["fadeOut"]) == "boolean" then
                     indicator:SetFadeOut(value["fadeOut"])
+                end
+                -- update glow
+                if value["glowOptions"] then
+                    indicator:UpdateGlowOptions(value["glowOptions"])
                 end
                 -- FirstRun: Healers
                 if value["auras"] and #value["auras"] ~= 0 then
