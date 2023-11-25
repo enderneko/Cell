@@ -2385,6 +2385,10 @@ function F:Revise()
                 layout["indicators"][index]["frameLevel"] = 7
             end
         end
+
+        if not CellDB["general"]["framePriority"] then
+            CellDB["general"]["framePriority"] = "normal_spotlight"
+        end
     end
 
     -- ----------------------------------------------------------------------- --

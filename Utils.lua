@@ -1835,3 +1835,32 @@ function F:UpdateOmniCDPosition(frame)
         end)
     end
 end
+
+-------------------------------------------------
+-- LibGetFrame
+-------------------------------------------------
+function Cell.GetUnitFrame(unit)
+    local normal, spotlights = F:GetUnitButtonByUnit(unit, true)
+    if CellDB["general"]["framePriority"] == "normal_spotlight" then
+        if normal then return normal end
+        return spotlights[1]
+    else -- "spotlight_normal"
+        if spotlights[1] then return spotlights[1] end
+        return normal
+    end
+end
+
+function F:OverrideLGF(override)
+    if not override then return end
+
+    -- override LGF
+    local LGF = LibStub("LibGetFrame-1.0", true)
+    if LGF then
+        LGF.GetUnitFrame = Cell.GetUnitFrame
+        LGF.GetFrame = Cell.GetUnitFrame
+    end
+    -- override WA
+    if WeakAuras then
+        WeakAuras.GetUnitFrame = Cell.GetUnitFrame
+    end
+end

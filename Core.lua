@@ -18,8 +18,8 @@ local L = Cell.L
 -- sharing version check
 Cell.MIN_VERSION = 189
 Cell.MIN_CLICKCASTINGS_VERSION = 189
-Cell.MIN_LAYOUTS_VERSION = 189
-Cell.MIN_INDICATORS_VERSION = 199
+Cell.MIN_LAYOUTS_VERSION = 203
+Cell.MIN_INDICATORS_VERSION = 203
 Cell.MIN_DEBUFFS_VERSION = 189
 
 --@debug@
@@ -181,8 +181,12 @@ function eventFrame:ADDON_LOADED(arg1)
                 ["locked"] = false,
                 ["fadeOut"] = false,
                 ["menuPosition"] = "top_bottom",
-                ["translit"] = false,
+                ["alwaysUpdateBuffs"] = false,
+                ["alwaysUpdateDebuffs"] = false,
+                ["overrideLGF"] = false,
+                ["framePriority"] = "normal_spotlight",
                 ["useCleuHealthUpdater"] = false,
+                ["translit"] = false,
             }
         end
 
@@ -749,6 +753,8 @@ function eventFrame:PLAYER_LOGIN()
     I:UpdateCrowdControls(CellDB["crowdControls"])
     -- update pixel perfect
     Cell:Fire("UpdatePixelPerfect")
+    -- overrideLGF
+    F:OverrideLGF(CellDB["general"]["overrideLGF"])
 end
 
 function eventFrame:UI_SCALE_CHANGED()
