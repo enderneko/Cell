@@ -294,13 +294,13 @@ for i = 1, 10 do
         self:GetFrameRef("placeholder"):Hide()
     ]])
     wrapFrame:WrapScript(b, "OnHide", [[
-        if self:GetAttribute("unit") then
+        if self:GetAttribute("unit") and not self:GetAttribute("hidePlaceholder") then
             self:GetFrameRef("placeholder"):Show()
         end
     ]])
     wrapFrame:WrapScript(b, "OnAttributeChanged", [[
         if name ~= "unit" then return end
-        if self:GetAttribute("unit") and not self:IsShown() then
+        if self:GetAttribute("unit") and not self:IsShown() and not self:GetAttribute("hidePlaceholder") then
             self:GetFrameRef("placeholder"):Show()
         else
             self:GetFrameRef("placeholder"):Hide()
@@ -776,6 +776,7 @@ local function UpdateLayout(layout, which)
         if layout["spotlight"]["enabled"] then
             for i = 1, 10 do
                 local unit = layout["spotlight"]["units"][i]
+                Cell.unitButtons.spotlight[i]:SetAttribute("hidePlaceholder", layout["spotlight"]["hidePlaceholder"])
                 Cell.unitButtons.spotlight[i]:SetAttribute("unit", unit)
                 if unit and strfind(unit, "^.+target$") then
                     Cell.unitButtons.spotlight[i]:SetAttribute("refreshOnUpdate", true)

@@ -305,6 +305,7 @@ L["Show friendly NPCs in a separate frame"] = "将友方 NPC 显示在一个单�
 L["You can move it in Preview mode"] = "你可以在“预览”模式中移动它"
 
 L["Enable Spotlight Frame"] = "启用特别关注框体"
+L["Hide Placeholder Frames"] = "隐藏占位框"
 L["Spotlight Frame"] = "特别关注框体"
 L["spotlightTips"] = "左键：|cffffffff菜单|r\n右键：|cffffffff清除|r\n左键拖动：|cffffffff设置为目标单位（非战斗中）|r\n右键拖动：|cffffffff设置为目标单位的宠物（非战斗中）|r"
 L["Show units you care about more in a separate frame"] = "将你特别关注的单位显示在一个单独的框体中"

@@ -1959,7 +1959,7 @@ local orientationDropdown, anchorDropdown, spacingXSlider, spacingYSlider
 
 local sameSizeAsMainCB, sameArrangementAsMainCB
 local sortByRoleCB, hideSelfCB
-local separateNpcCB, showNpcCB, spotlightCB, spotlightOrientationDropdown, partyPetsCB, raidPetsCB
+local showNpcCB, separateNpcCB, spotlightCB, hidePlaceholderCB, spotlightOrientationDropdown, partyPetsCB, raidPetsCB
 
 local function UpdateSize()
     if selectedLayout == Cell.vars.currentLayout then
@@ -2338,6 +2338,14 @@ local function CreateLayoutSetupPane()
     "|cffffb5c5"..L["Unit"]..", "..L["Unit's Pet"]..", "..L["Unit's Target"])
     spotlightCB:SetPoint("TOPLEFT", 5, -27)
 
+    hidePlaceholderCB = Cell:CreateCheckButton(pages.spotlight, L["Hide Placeholder Frames"], function(checked)
+        selectedLayoutTable["spotlight"]["hidePlaceholder"] = checked
+        if selectedLayout == Cell.vars.currentLayout then
+            Cell:Fire("UpdateLayout", selectedLayout, "spotlight")
+        end
+    end)
+    hidePlaceholderCB:SetPoint("TOPLEFT", spotlightCB, "BOTTOMLEFT", 0, -8)
+
     -- spotlight orientation
     spotlightOrientationDropdown = Cell:CreateDropdown(pages.spotlight, 117)
     spotlightOrientationDropdown:SetPoint("TOPLEFT", widthSlider, "TOPRIGHT", 30, 0)
@@ -2403,7 +2411,7 @@ local function CreateLayoutSetupPane()
         elseif tab == "npc" then
             sameSizeAsMainCB:SetPoint("TOPLEFT", separateNpcCB, "BOTTOMLEFT", 0, -14)
         elseif tab == "spotlight" then
-            sameSizeAsMainCB:SetPoint("TOPLEFT", spotlightCB, "BOTTOMLEFT", 0, -14)
+            sameSizeAsMainCB:SetPoint("TOPLEFT", hidePlaceholderCB, "BOTTOMLEFT", 0, -14)
         end
         
         widthSlider:ClearAllPoints()
@@ -2614,6 +2622,7 @@ LoadLayoutDB = function(layout)
     separateNpcCB:SetChecked(selectedLayoutTable["npc"]["separate"])
     separateNpcCB:SetEnabled(selectedLayoutTable["npc"]["enabled"])
     spotlightCB:SetChecked(selectedLayoutTable["spotlight"]["enabled"])
+    hidePlaceholderCB:SetChecked(selectedLayoutTable["spotlight"]["hidePlaceholder"])
 
     UpdateGroupFilter()
     UpdatePreviewButton()

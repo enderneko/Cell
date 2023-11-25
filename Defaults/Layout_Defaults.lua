@@ -78,6 +78,7 @@ Cell.defaults.layout = {
     },
     ["spotlight"] = {
         ["enabled"] = false,
+        ["hidePlaceholder"] = false,
         ["units"] = {},
         ["sameSizeAsMain"] = true,
         ["sameArrangementAsMain"] = true,
