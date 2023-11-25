@@ -2572,8 +2572,10 @@ end
 
 function B:SetTexture(button, tex)
     button.widget.healthBar:SetStatusBarTexture(tex)
+    button.widget.healthBar:GetStatusBarTexture():SetDrawLayer("ARTWORK", -6)
     button.widget.healthBarLoss:SetTexture(tex)
     button.widget.powerBar:SetStatusBarTexture(tex)
+    button.widget.powerBar:GetStatusBarTexture():SetDrawLayer("ARTWORK", -6)
     button.widget.powerBarLoss:SetTexture(tex)
     button.widget.incomingHeal:SetTexture(tex)
     button.widget.damageFlashTex:SetTexture(tex)
