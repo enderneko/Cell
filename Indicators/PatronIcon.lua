@@ -156,21 +156,18 @@ pool = CreateObjectPool(creationFunc, resetterFunc)
 -------------------------------------------------
 -- show
 -------------------------------------------------
-local function Display(unit)
-    local b = F:GetUnitButtonByUnit(unit)
-    if b then
-        local f = pool:Acquire()
-        f:SetParent(b.widget.overlayFrame)
-        -- f:SetFrameLevel(b:GetFrameLevel()+200)
-        f:SetPoint("CENTER", b, "BOTTOMLEFT")
+local function Display(b)
+    local f = pool:Acquire()
+    f:SetParent(b.widget.overlayFrame)
+    -- f:SetFrameLevel(b:GetFrameLevel()+200)
+    f:SetPoint("CENTER", b, "BOTTOMLEFT")
 
-        local size = max(min(b:GetHeight(), b:GetWidth()), 64)
-        f:SetSize(size, size)
-        
-        f:Display(ceil(b:GetWidth()/2), ceil(b:GetHeight()/2))
-        -- f:FadeIn()
-        -- C_Timer.After(3, f.FadeOut)
-    end
+    local size = max(min(b:GetHeight(), b:GetWidth()), 64)
+    f:SetSize(size, size)
+    
+    f:Display(ceil(b:GetWidth()/2), ceil(b:GetHeight()/2))
+    -- f:FadeIn()
+    -- C_Timer.After(3, f.FadeOut)
 end
 
 -- local function StopRainbow(unit)
@@ -215,16 +212,18 @@ eventFrame:RegisterEvent("FIRST_FRAME_RENDERED")
 local function Check()
     pool:ReleaseAll()
     
+    -- Cell.wowPatrons[Cell.vars.playerNameFull] = true
+
     if IsInGroup() then
         for unit in F:IterateGroupMembers() do
             local fullName = F:UnitFullName(unit)
             if Cell.wowPatrons[fullName] then
-                Display(unit)
+                F:HandleUnitButton("unit", unit, Display)
             end
         end
     else
         if Cell.wowPatrons[Cell.vars.playerNameFull] then
-            Display("player")
+            F:HandleUnitButton("unit", "player", Display)
         end
     end
 end

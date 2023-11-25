@@ -780,10 +780,11 @@ function F:IterateSharedUnitButtons(func)
     end
 end
 
-function F:GetUnitButtonByUnit(unit)
+local spotlights = {}
+function F:GetUnitButtonByUnit(unit, getSpotlights)
     if not unit then return end
 
-    local normal, spotlight1, spotlight2, spotlight3, spotlight4, spotlight5
+    local normal
 
     if Cell.vars.groupType == "raid" then
         if Cell.vars.inBattleground == 5 then
@@ -797,31 +798,26 @@ function F:GetUnitButtonByUnit(unit)
         normal = Cell.unitButtons.solo[unit] or Cell.unitButtons.npc.units[unit]
     end
 
-    for _, b in pairs(Cell.unitButtons.spotlight) do
-        if b.state.unit and UnitIsUnit(b.state.unit, unit) then
-            if not spotlight1 then
-                spotlight1 = b
-            elseif not spotlight2 then
-                spotlight2 = b
-            elseif not spotlight3 then
-                spotlight3 = b
-            elseif not spotlight4 then
-                spotlight4 = b
-            elseif not spotlight5 then
-                spotlight5 = b
+    if getSpotlights then
+        wipe(spotlights)
+        for _, b in pairs(Cell.unitButtons.spotlight) do
+            if b.state.unit and UnitIsUnit(b.state.unit, unit) then
+                tinsert(spotlights, b)
             end
         end
+
+        return normal, spotlights
     end
 
-    return normal, spotlight1, spotlight2, spotlight3, spotlight4, spotlight5
+    return normal
 end
 
-function F:GetUnitButtonByGUID(guid)
-    return F:GetUnitButtonByUnit(Cell.vars.guids[guid])
+function F:GetUnitButtonByGUID(guid, getSpotlights)
+    return F:GetUnitButtonByUnit(Cell.vars.guids[guid], getSpotlights)
 end
 
-function F:GetUnitButtonByName(name)
-    return F:GetUnitButtonByUnit(Cell.vars.names[name])
+function F:GetUnitButtonByName(name, getSpotlights)
+    return F:GetUnitButtonByUnit(Cell.vars.names[name], getSpotlights)
 end
 
 function F:HandleUnitButton(type, unit, func, ...)

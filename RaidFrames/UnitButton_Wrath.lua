@@ -1336,15 +1336,10 @@ local function UnitButton_UpdateTarget(self)
     end
 end
 
-local function CheckVehicleRoot(petUnit)
+local function CheckVehicleRoot(self, petUnit)
     if not petUnit then return end
 
-    local playerUnit
-    if petUnit == "pet" then
-        playerUnit = "player"
-    else
-        playerUnit = petUnit:gsub("pet", "")
-    end
+    local playerUnit = F:GetPlayerUnit(petUnit)
 
     local isRoot
     for i = 1, UnitVehicleSeatCount(playerUnit) do
@@ -1355,10 +1350,7 @@ local function CheckVehicleRoot(petUnit)
         end
     end
 
-    local b = F:GetUnitButtonByUnit(petUnit)
-    if b then
-        b.indicators.roleIcon:SetRole(isRoot and "VEHICLE" or "NONE")
-    end
+    self.indicators.roleIcon:SetRole(isRoot and "VEHICLE" or "NONE")
 end
 
 UnitButton_UpdateRole = function(self)
@@ -1374,7 +1366,7 @@ UnitButton_UpdateRole = function(self)
 
         --! check vehicle root
         if self.state.guid and strfind(self.state.guid, "^Vehicle") then
-            CheckVehicleRoot(unit)
+            CheckVehicleRoot(self, unit)
         end
     else
         roleIcon:Hide()

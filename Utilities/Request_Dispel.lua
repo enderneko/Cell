@@ -37,7 +37,7 @@ local function CreateDRPane()
     drTips:SetPoint("TOPLEFT", 5, -25)
     drTips:SetJustifyH("LEFT")
     drTips:SetSpacing(5)
-    drTips:SetText(L["Glow unit button when a group member sends a %s request"]:format(Cell:GetAccentColorString()..L["DISPEL"].."|r").."\n"..L["Spotlight frames are not supported"])
+    drTips:SetText(L["Glow unit button when a group member sends a %s request"]:format(Cell:GetAccentColorString()..L["DISPEL"].."|r"))
 
     -- enabled ----------------------------------------------------------------------
     drEnabledCB = Cell:CreateCheckButton(drPane, L["Enabled"], function(checked, self)

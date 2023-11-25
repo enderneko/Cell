@@ -153,8 +153,7 @@ local function CreateSRPane()
     srTips:SetJustifyH("LEFT")
     srTips:SetSpacing(5)
     srTips:SetText(L["Glow unit button when a group member sends a %s request"]:format(Cell:GetAccentColorString()..L["SPELL"].."|r").."\n"..
-        L["Shows only one spell request on a unit button at a time"].."\n"..
-        L["Spotlight frames are not supported"]
+        L["Shows only one spell request on a unit button at a time"]
     )
 
     -- enabled ----------------------------------------------------------------------

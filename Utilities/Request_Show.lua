@@ -191,7 +191,7 @@ local function CheckSRConditions(spellId, unit, sender)
     end
 end
 
-local function ShowSpellRequest(spellId, button)
+local function ShowSpellRequest(button, spellId)
     if button then
         local unit = button.state.unit
 
@@ -201,8 +201,8 @@ local function ShowSpellRequest(spellId, button)
             requestedSpells[srUnits[unit][1]] = nil
         end
         
-        --! save {spellId, buffId, button} for hiding
-        srUnits[unit] = {spellId, srSpells[spellId][2], button} 
+        --! save {spellId, buffId} for hiding
+        srUnits[unit] = {spellId, srSpells[spellId][2]} 
         requestedSpells[spellId] = unit
         
         if srSpells[spellId][1] == "icon" then
@@ -216,9 +216,6 @@ local function ShowSpellRequest(spellId, button)
                 requestedSpells[spellId] = nil
             end)
         end
-
-        -- notify
-        F:Notify("SPELL_REQ_RECEIVED", unit, spellId, srSpells[spellId][2], srTimeout)
     end
 end
 
@@ -232,7 +229,9 @@ Comm:RegisterComm("CELL_REQ_S", function(prefix, message, channel, sender)
             local me = GetUnitName("player")
             -- NOTE: to all provider / to me
             if (srResponseType == "all" and (not target or target == me)) or (srResponseType == "me" and target == me) then
-                ShowSpellRequest(spellId, F:GetUnitButtonByName(sender))
+                F:HandleUnitButton("name", sender, ShowSpellRequest, spellId)
+                -- notify WA
+                F:Notify("SPELL_REQ_RECEIVED", Cell.vars.names[sender], spellId, srSpells[spellId][2], srTimeout)
             end
         end
     end
@@ -248,7 +247,7 @@ function SR:CHAT_MSG_WHISPER(text, playerName, languageName, channelName, player
     for spellId, t in pairs(srSpells) do
         if strfind(strlower(text), strlower(t[3])) then
             if CheckSRConditions(spellId, Cell.vars.guids[guid], playerName) then
-                ShowSpellRequest(spellId, F:GetUnitButtonByGUID(guid))
+                F:HandleUnitButton("guid", guid, ShowSpellRequest, spellId)
             end
             break
         end
@@ -258,16 +257,18 @@ end
 --! hide glow when aura changes
 if Cell.isRetail then
     function SR:UNIT_AURA(unit, updatedAuras)
-        local srUnit = srUnits[unit] -- {spellId, buffId, button}
+        local srUnit = srUnits[unit] -- {spellId, buffId}
         if not srUnit then return end
         
         if updatedAuras and updatedAuras.addedAuras then
             for _, aura in pairs(updatedAuras.addedAuras) do
                 if srUnit[2] == aura.spellId then
                     F:Debug("SR_HIDE [UNIT_AURA]:", unit, srUnit[1])
-                    HideGlow(srUnit[3].widget.srGlowFrame)
-                    HideIcon(srUnit[3].widget.srIcon)
-                    -- notify
+                    F:HandleUnitButton("unit", unit, function(b)
+                        HideGlow(b.widget.srGlowFrame)
+                        HideIcon(b.widget.srIcon)
+                    end)
+                    -- notify WA
                     F:Notify("SPELL_REQ_APPLIED", unit, srUnit[1], srUnit[2])
                     -- clear
                     srUnits[unit] = nil
@@ -279,14 +280,16 @@ if Cell.isRetail then
     end
 else
     function SR:UNIT_AURA(unit)
-        local srUnit = srUnits[unit] -- {spellId, buffId, button}
+        local srUnit = srUnits[unit] -- {spellId, buffId}
         if not srUnit then return end
         
         if F:FindAuraById(unit, "BUFF", srUnit[2]) then
             F:Debug("SR_HIDE [UNIT_AURA]:", unit, srUnit[1])
-            HideGlow(srUnit[3].widget.srGlowFrame)
-            HideIcon(srUnit[3].widget.srIcon)
-            -- notify
+            F:HandleUnitButton("unit", unit, function(b)
+                HideGlow(b.widget.srGlowFrame)
+                HideIcon(b.widget.srIcon)
+            end)
+            -- notify WA
             F:Notify("SPELL_REQ_APPLIED", unit, srUnit[1], srUnit[2])
             -- clear
             srUnits[unit] = nil
@@ -404,11 +407,10 @@ local DR = CreateFrame("Frame")
 local function HideAllDRGlows()
     -- NOTE: hide all
     for unit in pairs(drUnits) do
-        local button = F:GetUnitButtonByUnit(unit)
-        if button then
-            HideGlow(button.widget.drGlowFrame)
-            HideText(button.widget.drText)
-        end
+        F:HandleUnitButton("guid", destGUID, function(b)
+            HideGlow(b.widget.drGlowFrame)
+            HideText(b.widget.drText)
+        end)
     end
     wipe(drUnits)
 end
@@ -422,11 +424,10 @@ DR:SetScript("OnEvent", function(self, event)
             if unit and drUnits[unit] and drUnits[unit][spellID] then
                 -- NOTE: one of debuffs removed, hide glow
                 drUnits[unit] = nil
-                local button = F:GetUnitButtonByGUID(destGUID)
-                if button then
-                    HideGlow(button.widget.drGlowFrame)
-                    HideText(button.widget.drText)
-                end
+                F:HandleUnitButton("guid", destGUID, function(b)
+                    HideGlow(b.widget.drGlowFrame)
+                    HideText(b.widget.drText)
+                end)
             end
         end
     else
@@ -458,18 +459,17 @@ Comm:RegisterComm("CELL_REQ_D", function(prefix, message, channel, sender)
         end
 
         if F:Getn(drUnits[unit]) ~= 0 then -- found
-            local button = F:GetUnitButtonByName(sender)
-            if button then
+            F:HandleUnitButton("name", sender, function(b)
                 if drDisplayType == "text" then
-                    ShowText(button.widget.drText, drTimeout, function()
+                    ShowText(b.widget.drText, drTimeout, function()
                         drUnits[unit] = nil
                     end)
                 else
-                    ShowGlow(button.widget.drGlowFrame, CellDB["dispelRequest"]["glowOptions"][1], CellDB["dispelRequest"]["glowOptions"][2], drTimeout, function()
+                    ShowGlow(b.widget.drGlowFrame, CellDB["dispelRequest"]["glowOptions"][1], CellDB["dispelRequest"]["glowOptions"][2], drTimeout, function()
                         drUnits[unit] = nil
                     end)
                 end
-            end
+            end)
         else
             drUnits[unit] = nil
         end
