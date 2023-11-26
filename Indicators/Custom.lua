@@ -203,7 +203,7 @@ function I:UpdateCustomIndicators(unitButton, auraInfo, refreshing)
 
     for indicatorName, indicatorTable in pairs(customIndicators[auraType]) do
         if indicatorName and enabledIndicators[indicatorName] and unitButton.indicators[indicatorName] then
-            if indicatorTable["auras"][spellId] or indicatorTable["auras"][0] then -- is in indicator spell list
+            if indicatorTable["auras"][spellId] or indicatorTable["auras"][0] or (indicatorTable["auras"][1] and duration ~= 0) then -- is in indicator spell list
                 if auraType == "buff" then
                     -- check caster
                     if (indicatorTable["castBy"] == "me" and castByMe) or (indicatorTable["castBy"] == "others" and not castByMe) or (indicatorTable["castBy"] == "anyone") then

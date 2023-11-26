@@ -2951,7 +2951,7 @@ local function CreateAuraButtons(parent, auraButtons, auraTable, noUpDownButtons
         popup:SetPoint("BOTTOMRIGHT", self)
         popup:ShowEditBox("")
         if isZeroValid then
-            parent.popupEditBox:SetTips("|cffababab"..L["Input spell id"]..", 0 = ".. L["all"])
+            parent.popupEditBox:SetTips("|cffababab"..L["Input spell id"]..", 0/1 = "..L["all"])
         else
             parent.popupEditBox:SetTips("|cffababab"..L["Input spell id"])
         end
@@ -3047,8 +3047,8 @@ local function CreateAuraButtons(parent, auraButtons, auraTable, noUpDownButtons
             end)
         end
         
-        if spell == 0 then
-            auraButtons[i].spellIdText:SetText("0")
+        if spell == 0 or spell == 1 then
+            auraButtons[i].spellIdText:SetText(spell)
             auraButtons[i].spellId = nil
             auraButtons[i].spellNameText:SetText("|cff22ff22"..L["all"])
             auraButtons[i].spellIconBg:Hide()
