@@ -22,11 +22,11 @@ local function UpdateFontString(b)
     fs:SetSpacing(3)
 end
 
-function F:ShowUtilityList()
+function F:ShowUtilityList(anchor)
     if not listFrame then
         listFrame = CreateFrame("Frame", nil, Cell.frames.optionsFrame, "BackdropTemplate")
         Cell:StylizeFrame(listFrame, {0,1,0,0.1}, {0,0,0,1})
-        listFrame:SetPoint("TOPLEFT", utilitiesTab, "TOPRIGHT", 1, 0)
+        listFrame:SetPoint("TOPLEFT", anchor, "TOPRIGHT", 1, 0)
         listFrame:SetFrameStrata("TOOLTIP")
         
         Cell:StylizeFrame(listFrame, nil, Cell:GetAccentColorTable())
@@ -67,6 +67,7 @@ function F:ShowUtilityList()
 
         local highlight = Cell:CreateButtonGroup({buttons["raidTools"], buttons["spellRequest"], buttons["dispelRequest"], buttons["quickCast"]}, function(id)
             lastShown = id
+            anchor:Click()
             Cell:Fire("ShowUtilitySettings", id)
             listFrame:Hide()
         end)

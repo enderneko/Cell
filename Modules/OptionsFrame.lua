@@ -97,12 +97,14 @@ local function CreateTabButtons()
             lastShownTab = tab
         end
         if tab == utilitiesBtn.id then
-            F:ShowUtilityList()
+            F:ShowUtilityList(utilitiesBtn)
         end
     end
 
     local function OnEnter(b)
-        if b.id ~= utilitiesBtn.id then
+        if b.id == utilitiesBtn.id then
+            F:ShowUtilityList(b)
+        else
             F:HideUtilityList()
         end
         if utilitiesBtn.timer then
