@@ -2187,13 +2187,13 @@ local function CreateLayoutSetupPane()
     end)
 
      -- spacing
-     spacingXSlider = Cell:CreateSlider(L["Unit Spacing"].." X", layoutSetupPane, 0, 50, 117, 1, function(value)
+    spacingXSlider = Cell:CreateSlider(L["Unit Spacing"].." X", layoutSetupPane, -1, 100, 117, 1, function(value)
         selectedLayoutTable[selectedPage]["spacingX"] = value
         UpdateArrangement()
     end)
     spacingXSlider:SetPoint("TOPLEFT", orientationDropdown, 0, -55)
 
-    spacingYSlider = Cell:CreateSlider(L["Unit Spacing"].." Y", layoutSetupPane, 0, 50, 117, 1, function(value)
+    spacingYSlider = Cell:CreateSlider(L["Unit Spacing"].." Y", layoutSetupPane, -1, 100, 117, 1, function(value)
         selectedLayoutTable[selectedPage]["spacingY"] = value
         UpdateArrangement()
     end)
