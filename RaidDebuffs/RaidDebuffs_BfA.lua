@@ -2,7 +2,7 @@
 -- File: Cell\RaidDebuffs\RaidDebuffs_BfA.lua
 -- Author: enderneko (enderneko-dev@outlook.com)
 -- Created : 2022-08-05 16:11:24 +08:00
--- Modified: 2023-07-16 15:30:43 +08:00
+-- Modified: 2023-11-27 12:02:57 +08:00
 ---------------------------------------------------------------------
 
 local _, Cell = ...
@@ -361,212 +361,215 @@ local debuffs = {
 
     [1023] = { -- 围攻伯拉勒斯
         [2133] = { -- 拜恩比吉中士
-            257459, -- On the Hook
-            257288, -- Heavy Slash
+            257459, -- 上钩了
+            257288, -- 沉重挥砍
         },
         [2173] = { -- 恐怖船长洛克伍德
-            256076, -- Gut Shot
+            256076, -- 一枪毙命
         },
         [2134] = { -- 哈达尔·黑渊
-            257882, -- Break Water
-            257862, -- Crashing Tide
+            257882, -- 激流破奔
+            257862, -- 毁灭之潮
         },
         [2140] = { -- 维克戈斯
-            274991, -- Putrid Waters
+            274991, -- 腐败之水
         },
     },
 
     [1022] = { -- 地渊孢林
         ["general"] = {
-            265533, -- Fauce sangrienta
-            265019, -- Tajo salvaje
-            265377, -- Trampa con gancho
-            265568, -- Presagio oscuro
-            266107, -- Sed de sangre
-            266265, -- Asalto malvado
-            272180, -- Descarga mortal
-            265468, -- Maldici�n fulminante
-            272609, -- Mirada enloquecedora
-            265511, -- Drenaje de esp�ritu
-            278961, -- Mente putrefacta
-            273599, -- Aliento podrido
+            265533, -- 鲜血之喉
+            265019, -- 狂野顺劈斩
+            265377, -- 抓钩诱捕
+            265568, -- 黑暗预兆
+            266107, -- 嗜血成性
+            266265, -- 邪恶拥抱
+            272180, -- 虚空喷吐
+            265468, -- 枯萎诅咒
+            272609, -- 疯狂凝视
+            265511, -- 灵魂抽取
+            278961, -- 衰落意志
+            273599, -- 腐败之息
         },
         [2157] = { -- 长者莉娅克萨
-            260685, -- Taint of G'huun
+            260685, -- 戈霍恩之蚀
         },
         [2131] = { -- 被感染的岩喉
-            260333, -- Tantrum
-            260455, -- Colmillos serrados
+            260333, -- 发脾气
+            260455, -- 锯齿利牙
         },
         [2130] = { -- 孢子召唤师赞查
-            259714, -- Decaying Spores
-            259718, -- Agitaci�n
-            273226, -- Esporas putrefactas
+            259714, -- 腐烂孢子
+            259718, -- 颠覆
+            273226, -- 腐烂孢子
         },
         [2158] = { -- 不羁畸变怪
-            269301, -- Putrid Blood
+            269301, -- 腐败之血
         },
     },
 
     [1030] = { -- 塞塔里斯神庙
         ["general"] = {
-            273563, -- Neurotoxina
-            272657, -- Aliento nocivo
-            272655, -- Arena asoladora
-            272696, -- Rel�mpagos embotellados
-            272699, -- Flema venenosa
-            268013, -- Choque de llamas
-            268007, -- Ataque al coraz�n
-            268008, -- Amuleto de serpiente
+            273563, -- 神经毒素
+            272657, -- 毒性吐息
+            272655, -- 黄沙冲刷
+            272696, -- 瓶中闪电
+            272699, -- 毒性喷吐
+            268013, -- 烈焰震击
+            268007, -- 心脏打击
+            268008, -- 毒蛇诱惑
         },
         [2142] = { -- 阿德里斯和阿斯匹克斯
-            263371, -- Conduction
-            263234, -- Arcing Blade
-            268993, -- Golpe bajo
-            263778, -- Fuerza de vendaval
-            225080, -- reincarnation
+            263371, -- 导电
+            263234, -- 弧光斩击
+            268993, -- 偷袭
+            263778, -- 狂风之力
+            225080, -- 复生
         },
         [2143] = { -- 米利克萨
-            267027, -- Cytotoxin
-            263958, -- A Knot of Snakes
-            261732, -- Blinding Sand
-            263927, -- Charco t�xico
+            267027, -- 细胞毒素
+            263958, -- 缠绕的蛇群
+            261732, -- 盲目之沙
+            263927, -- 剧毒之池
         },
         [2144] = { -- 加瓦兹特
-            266512, -- Consume Charge
-            266923, -- Galvanizar
+            266512, -- 放电
+            266923, -- 充电
         },
         [2145] = { -- 塞塔里斯的化身
-            269686, -- Plague
-            269670, -- Potenciaci�n
-            268024, -- Pulso
+            269686, -- 瘟疫
+            269670, -- 强化
+            268024, -- 脉冲
         },
     },
 
     [1002] = { -- 托尔达戈
         ["general"] = {
-            258864, -- Fuego de supresi�n
-            258313, -- Esposar
-            258079, -- Dentellada enorme
-            258075, -- Mordedura irritante
-            258058, -- Exprimir
-            265889, -- Golpe de antorcha
-            258128, -- Grito debilitante
-            225080, -- Reencarnaci�n
+            258864, -- 火力压制
+            258313, -- 手铐
+            258079, -- 巨口噬咬
+            258075, -- 瘙痒叮咬
+            258058, -- 挤压
+            265889, -- 火把攻击
+            258128, -- 衰弱怒吼
+            225080, -- 复生
         },
         [2097] = { -- 泥沙女王
-            257092, -- Sand Trap
-            260016, -- Mordedura irritante
+            257092, -- 流沙陷阱
+            260016, -- 瘙痒叮咬
         },
         [2098] = { -- 杰斯·豪里斯
-            257791, -- Howling Fear
-            257777, -- Chafarote entorpecedor
-            257793, -- Polvo de humo
-            260067, -- Vapuleo sa�oso
+            257791, -- 咆哮恐惧
+            257777, -- 断筋剃刀
+            257793, -- 烟雾弹
+            260067, -- 恶毒槌击
         },
         [2099] = { -- 骑士队长瓦莱莉
-            257028, -- Fuselighter
-            259711, -- A cal y canto
+            257028, -- 点火器
+            259711, -- 全面禁闭
         },
         [2096] = { -- 科古斯狱长
-            256198, -- Azerite Rounds: Incendiary
-            256038, -- Deadeye
-            256044, -- Deadeye
-            256200, -- Veneno Muerte Diestra
-            256105, -- R�faga explosiva
-            256201, -- Cartuchos incendiarios
+            256198, -- 艾泽里特子弹：爆炎弹
+            256038, -- 致命狙击
+            256044, -- 致命狙击
+            256200, -- 竭心毒剂
+            256105, -- 爆炸
+            256201, -- 爆炎弹
         },
     },
 
     [1012] = { -- 暴富矿区！！
         ["general"] = {
-            280604, -- Chorro helado
-            280605, -- Congelaci�n cerebral
-            263637, -- Tendedero
-            269298, -- Toxina de creaviudas
-            263202, -- Lanza de roca
-            268704, -- Temblor furioso
-            268846, -- Hoja de eco
-            263074, -- Mordedura degenerativa
-            262270, -- Compuesto c�ustico
-            262794, -- Latigazo de energ�a
-            262811, -- Gl�bulo parasitario
-            268797, -- Transmutar: enemigo en baba
-            269429, -- Disparo cargado
-            262377, -- Buscar y destruir
-            262348, -- Deflagraci�n de mina
-            269092, -- Tromba de artiller�a
-            262515, -- Buscacorazones de azerita
-            262513, -- Buscacorazones de azerita
+            280604, -- 冰镇汽水
+            280605, -- 脑部冻结
+            263637, -- 晾衣绳
+            269298, -- 寡妇蛛毒素
+            263202, -- 石枪
+            268704, -- 狂怒地震
+            268846, -- 回声之刃
+            263074, -- 溃烂撕咬
+            262270, -- 腐蚀性化合物
+            262794, -- 能量鞭笞
+            262811, -- 吸血球
+            268797, -- 转化：敌人变黏液
+            269429, -- 充能射击
+            262377, -- 搜寻并摧毁
+            262348, -- 地雷爆炸
+            269092, -- 炮弹弹幕
+            262515, -- 艾泽里特觅心者
+            262513, -- 艾泽里特觅心者
         },
         [2109] = { -- 投币式群体打击者
-            256137, -- Timed Detonation
-            257333, -- Shocking Claw
-            262347, -- Pulso est�tico
-            270882, -- Azerita llameante
+            256137, -- 定时爆炸
+            257333, -- 电击之爪
+            262347, -- 静电脉冲
+            270882, -- 炽燃的艾泽里特
         },
         [2114] = { -- 艾泽洛克
-            257582, -- Raging Gaze
-            258627, -- Resonant Quake
-            257544, -- Corte dentado
-            275907, -- Machaque tect�nico
+            257582, -- 愤怒凝视
+            258627, -- 地震回荡
+            257544, -- 锯齿切割
+            275907, -- 地质冲击
         },
         [2115] = { -- 瑞克莎·流火
-            258971, -- Azerite Catalyst
-            259940, -- Propellant Blast
-            259853, -- Quemadura qu�mica
+            258971, -- 艾泽里特催化剂
+            259940, -- 推进器冲击
+            259853, -- 化学灼烧
         },
         [2116] = { -- 商业大亨拉兹敦克
-            260811, -- Homing Missile
-            260829, -- Misil buscador
-            260838, -- Misil buscador
-            270277, -- Cohete rojo grande
+            260811, -- 自控导弹
+            260829, -- 自控导弹
+            260838, -- 自控导弹
+            270277, -- 大型红色火箭
         },
     },
 
     [1021] = { -- 维克雷斯庄园
         ["general"] = {
-            263905, -- Tajo marcador
-            265352, -- A�ublo de sapo
-            266036, -- Drenar esencia
-            264105, -- Se�al r�nica
-            264390, -- Hechizo de vinculaci�n
-            265346, -- Mirada p�lida
-            264050, -- Espina infectada
-            265761, -- Tromba espinosa
-            264153, -- Flema
-            265407, -- Campanilla para la cena
-            271178, -- Salto devastador
-            263943, -- Grabar
-            264520, -- Serpiente mutiladora
-            265881, -- Toque putrefacto
-            264378, -- Fragmentar alma
-            264407, -- Rostro horripilante
-            265880, -- Marca p�rfida
-            265882, -- Pavor persistente
-            266035, -- Astilla de hueso
-            263891, -- Espinas enredadoras
-            264556, -- Golpe desgarrador
-            278456, -- Infestar
+            263905, -- 符文劈斩
+            265352, -- 蟾蜍疫病
+            266036, -- 吸取精华
+            264105, -- 符文印记
+            264390, -- 法术禁锢
+            265346, -- 苍白注视
+            264050, -- 被感染的荆棘
+            265761, -- 荆棘弹幕
+            264153, -- 喷吐
+            265407, -- 用餐时间
+            271178, -- 掠食之跃
+            263943, -- 蚀刻
+            264520, -- 切裂蛇斩
+            265881, -- 腐烂之触
+            264378, -- 碎裂灵魂
+            264407, -- 恐惧面容
+            265880, -- 恐惧印记
+            265882, -- 萦绕恐惧
+            266035, -- 碎骨片
+            263891, -- 缠绕荆棘
+            264556, -- 刺裂打击
+            278456, -- 感染
+            264040, -- 荆棘树根
         },
         [2125] = { -- 毒心三姝
-            260741, -- Jagged Nettles
-            260926, -- Soul Manipulation
-            260703, -- Unstable Runic Mark
+            260741, -- 锯齿荨麻
+            260926, -- 灵魂操控
+            260703, -- 不稳定的符文印记
+            268086, -- 恐怖光环
         },
         [2126] = { -- 魂缚巨像
-            260551, -- Soul Thorns
+            260551, -- 灵魂荆棘
         },
         [2127] = { -- 贪食的拉尔
-            268231, -- Rotten Expulsion
+            268231, -- 腐物喷发
+            426590, -- 贪食胆汁
         },
         [2128] = { -- 维克雷斯勋爵和夫人
-            261439, -- Virulent Pathogen
-            261438, -- Golpe extenuante
-            261440, -- Patogeno virulento
+            261439, -- 恶性病原体
+            261438, -- 污秽攻击
+            261440, -- 恶性病原体
         },
         [2129] = { -- 高莱克·图尔
-            268203, -- Death Lens
+            268203, -- 死亡棱镜
         },
     },
 
@@ -605,94 +608,94 @@ local debuffs = {
 
     [1041] = { -- 诸王之眠
         [2165] = { -- 黄金风蛇
-            265773, -- Spit Gold
-            265914, -- Molten Gold
+            265773, -- 吐金
+            265914, -- 熔化的黄金
         },
         [2171] = { -- 殓尸者姆沁巴
-            267626, -- Dessication
-            267702, -- Entomb
-            267764, -- Struggle
-            267639, -- Burn Corruption
+            267626, -- 干枯
+            267702, -- 埋葬
+            267764, -- 挣扎
+            267639, -- 燃烧腐蚀
         },
         [2170] = { -- 部族议会
-            267273, -- Poison Nova
-            266238, -- Shattered Defenses
-            266231, -- Severing Axe
-            267257, -- Thundering Crash
+            267273, -- 毒性新星
+            266238, -- 粉碎防御
+            266231, -- 斩首之斧
+            267257, -- 雷鸣冲坠
         },
         [2172] = { -- 始皇达萨
-            268932, -- Quaking Leap
-            268586, -- Blade Combo
+            268932, -- 震地之跃
+            268586, -- 剑刃连击
         },
     },
 
     [968] = { -- 阿塔达萨
         ["general"] = {
-            253562, -- Fuego salvaje
-            254959, -- Quemar alma
-            260668, -- Transfusion
-            255567, -- Carga fren�tica
-            279118, -- Maleficio inestable
-            252692, -- Golpe embotador
-            252687, -- Golpe de Venolmillo
-            255041, -- Chirrido aterrorizador
-            255814, -- Acometida desgarradora
+            253562, -- 野火
+            254959, -- 灵魂燃烧
+            260668, -- 鲜血灌注
+            255567, -- 狂暴冲锋
+            252781, -- 不稳定的妖术
+            252692, -- 伏击之刺
+            252687, -- 毒牙攻击
+            255041, -- 惊骇尖啸
+            255814, -- 撕裂重殴
         },
         [2082] = { -- 女祭司阿伦扎
-            274195, -- Corrupted Blood
-            277072, -- Corrupted Gold
-            265914, -- Molten Gold
-            255835, -- Transfusion
-            255836, -- Transfusion
+            274195, -- 堕落之血
+            277072, -- 腐化的黄金
+            265914, -- 熔化的黄金
+            255835, -- 鲜血灌注
+            255836, -- 鲜血灌注
         },
         [2036] = { -- 沃卡尔
-            263927, -- Toxic Pool
-            250372, -- Lingering Nausea
-            255620, -- Erupci�n purulenta
+            263927, -- 剧毒之池
+            250372, -- 挥之不去的恶心感
+            255620, -- 脓疮爆发
         },
         [2083] = { -- 莱赞
-            255434, -- Serrated Teeth
-            255371, -- Terrifying Visage
-            257407, -- Pursuit
-            255421, -- Devour
+            255434, -- 锯齿
+            255371, -- 恐惧之面
+            257407, -- 追踪
+            255421, -- 吞噬
         },
         [2030] = { -- 亚兹玛
-            250096, -- Dolor atroz
-            259145, -- Soulrend
-            249919, -- Skewer
+            250096, -- 毁灭痛苦
+            259145, -- 碎魂
+            249919, -- 刺穿
         },
     },
 
     [1036] = { -- 风暴神殿
         ["general"] = {
-            268233, -- Choque electrizante
-            274633, -- Arremetida hendiente
-            268309, -- Oscuridad infinita
-            268315, -- Latigazo
-            268317, -- Desgarrar mente
-            268322, -- Toque de los ahogados
-            268391, -- Ataque mental
-            274720, -- Golpe abisal
-            276268, -- Golpe tumultuoso
-            268059, -- Ancla de vinculaci�n
-            268027, -- Mareas crecientes
-            268214, -- Grabar carne
+            268233, -- 电化震击
+            274633, -- 碎甲重击
+            268309, -- 无尽黑暗
+            268315, -- 鞭笞
+            268317, -- 撕裂大脑
+            268322, -- 溺毙者之触
+            268391, -- 心智突袭
+            274720, -- 深渊打击
+            276268, -- 沉重打击
+            268059, -- 束缚之锚
+            268027, -- 涨潮
+            268214, -- 割肉
         },
         [2153] = { -- 阿库希尔
-            264560, -- Choking Brine
-            264477, -- Grasp from the Depths
+            264560, -- 窒息海潮
+            264477, -- 深海之握
         },
         [2154] = { -- 海贤议会
-            267899, -- Hindering Cleave
-            267818, -- Viento cortante
+            267899, -- 妨害劈斩
+            267818, -- 切割冲击
         },
         [2155] = { -- 斯托颂勋爵
-            268896, -- Mind Rend
-            269104, -- Vac�o explosivo
-            269131, -- Dominamentes ancestral
+            268896, -- 心灵撕裂
+            269104, -- 爆炸虚空
+            269131, -- 上古摧心者
         },
         [2156] = { -- 低语者沃尔兹斯
-            267034, -- Whispers of Power
+            267034, -- 力量的低语
         },
     },
 
