@@ -20,6 +20,9 @@ Cell.unitButtons = {
     },
     ["arena"] = {},
     ["spotlight"] = {},
+    ["quickAssist"] = {
+        ["units"] = {},
+    },
 }
 
 -- local hoverTop, hoverBottom, hoverLeft, hoverRight

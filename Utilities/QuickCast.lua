@@ -796,8 +796,8 @@ local glowBuffs, glowCasts = {}, {}
 local outerBuff, innerBuff
 local borderSize, glowBuffsColor, glowCastsColor
 
-local quickCastFrame = CreateFrame("Frame", "_CellQuickCastFrame", Cell.frames.mainFrame, "SecureHandlerAttributeTemplate") -- TODO: rename
-quickCastFrame:SetPoint("TOPLEFT", UIParent, "CENTER")
+local quickCastFrame = CreateFrame("Frame", "CellQuickCastFrame", Cell.frames.mainFrame, "SecureHandlerAttributeTemplate")
+PixelUtil.SetPoint(quickCastFrame, "TOPLEFT", UIParent, "CENTER", -1, -1)
 quickCastFrame:SetSize(16, 16)
 quickCastFrame:SetClampedToScreen(true)
 quickCastFrame:SetMovable(true)

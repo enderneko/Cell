@@ -781,7 +781,7 @@ function addon:CreateButtonGroup(buttons, onClick, func1, func2, onEnter, onLeav
                     if b.HideTooltip then b.HideTooltip() end
                     if onLeave then onLeave(b) end
                 end)
-                if func1 then func1(b.id) end
+                if func1 then func1(b.id, b) end
             else
                 b:SetBackdropColor(unpack(b.color))
                 b:SetScript("OnEnter", function() 
@@ -794,7 +794,7 @@ function addon:CreateButtonGroup(buttons, onClick, func1, func2, onEnter, onLeav
                     b:SetBackdropColor(unpack(b.color))
                     if onLeave then onLeave(b) end
                 end)
-                if func2 then func2(b.id) end
+                if func2 then func2(b.id, b) end
             end
         end
     end

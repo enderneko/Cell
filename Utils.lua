@@ -68,7 +68,7 @@ function F:IterateClasses()
     return function()
         i = i + 1
         if i <= GetNumClasses() then
-            return sortedClasses[i], classFileToID[sortedClasses[i]]
+            return sortedClasses[i], classFileToID[sortedClasses[i]], i
         end
     end
 end
