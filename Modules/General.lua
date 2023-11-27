@@ -336,9 +336,7 @@ local function CreateMiscPane()
     
     translitCB = Cell:CreateCheckButton(miscPane, L["Translit Cyrillic to Latin"], function(checked, self)
         CellDB["general"]["translit"] = checked
-        F:IterateAllUnitButtons(function(b)
-            B.UpdateName(b)
-        end, true)
+        Cell:Fire("TranslitNames")
     end)
     translitCB:SetPoint("TOPLEFT", useCleuCB, "BOTTOMLEFT", 0, -9)
 end

@@ -4,7 +4,9 @@ local F = Cell.funcs
 local U = Cell.uFuncs
 local A = Cell.animations
 local P = Cell.pixelPerfectFuncs
+
 local LCG = LibStub("LibCustomGlow-1.0")
+local LibTranslit = LibStub("LibTranslit-1.0")
 
 -- ----------------------------------------------------------------------- --
 --                                quick cast                               --
@@ -944,8 +946,12 @@ end
 local function QuickCast_UpdateName(self)
     if not self.unit then return end
 
-    local name = UnitName(self.unit)
-    name = Cell.vars.nicknameCustoms[name] or Cell.vars.nicknames[name] or name
+    local name = F:GetNickname(UnitName(self.unit), F:UnitFullName(self.unit))
+
+    if CellDB["general"]["translit"] then
+        name = LibTranslit:Transliterate(name)
+    end
+
     if string.len(name) == string.utf8len(name) then -- en
         self.nameText:SetText(string.utf8sub(name, 1, 3))
     else
@@ -960,6 +966,14 @@ Cell:RegisterCallback("UpdateNicknames", "QuickCast_UpdateNicknames", function()
                 QuickCast_UpdateName(b)
             end
         end)
+    end
+end)
+
+Cell:RegisterCallback("TranslitNames", "QuickCast_TranslitNames", function()
+    if quickCastButtons then
+        for _, b in pairs(quickCastButtons) do
+            QuickCast_UpdateName(b)
+        end
     end
 end)
 

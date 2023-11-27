@@ -2,8 +2,10 @@ local _, Cell = ...
 local L = Cell.L
 local F = Cell.funcs
 local I = Cell.iFuncs
-local LCG = LibStub("LibCustomGlow-1.0")
 local P = Cell.pixelPerfectFuncs
+
+local LCG = LibStub("LibCustomGlow-1.0")
+local LibTranslit = LibStub("LibTranslit-1.0")
 
 -------------------------------------------------
 -- shared functions
@@ -1012,22 +1014,13 @@ function I:CreateNameText(parent)
             if CELL_NICKTAG_ENABLED and Cell.NickTag then
                 name = Cell.NickTag:GetNickname(parent.state.name, nil, true)
             end
-
-            if Cell.vars.nicknameCustomEnabled then
-                name = name or
-                       Cell.vars.nicknameCustoms[parent.state.fullName] or
-                       Cell.vars.nicknameCustoms[parent.state.name] or
-                       Cell.vars.nicknames[parent.state.fullName] or
-                       Cell.vars.nicknames[parent.state.name] or
-                       parent.state.name
-            else
-                name = name or
-                       Cell.vars.nicknames[parent.state.fullName] or
-                       Cell.vars.nicknames[parent.state.name] or
-                       parent.state.name
-            end
+            name = name or F:GetNickname(parent.state.name, parent.state.fullName)
         else
             name = parent.state.name
+        end
+
+        if Cell.loaded and CellDB["general"]["translit"] then
+            name = LibTranslit:Transliterate(name)
         end
 
         F:UpdateTextWidth(nameText.name, name, nameText.width, parent.widget.healthBar)
