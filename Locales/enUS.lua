@@ -83,8 +83,8 @@ select(2, ...).L = setmetatable({
         <p>(Retail) Enable "Always Update Buffs/Debuffs" in General tab, if indicators do not update correctly.</p>
         <br/>
 
-        <h1>r205-release (Nov 27, 2023, 12:22 GMT+8)</h1>
-        <p>* Updated raid debuffs, thanks to 钛锬(NGA) for collecting and providing debuffs.</p>
+        <h1>r205-release (Nov 27, 2023, 12:27 GMT+8)</h1>
+        <p>* Updated raid debuffs, thanks to 钛锬(NGA) and Ulu2005(GitHub) for collecting and providing debuffs.</p>
         <p>+ New custom indicator type: Glow.</p>
         <p>+ (Retail) Added "Track by name" option for custom buff indicator.</p>
         <p>+ Added "Hide Placeholder Frames" for Spotlights.</p>
