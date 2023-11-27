@@ -1,6 +1,11 @@
-[Full Changelog](https://github.com/enderneko/Cell/compare/r203-release...1ea705a286d307b1704c2b8dfa08152b30296967)
+[Full Changelog](https://github.com/enderneko/Cell/compare/r204-release...4ab1e41db71825942e6815295d550b8a1d0e3c14)
 
-- Add options to fix indicator updating issue
-- Update range checker
-- Update debuffs
-- Update initial positions
+- Update raid debuffs, thanks to 钛锬 (NGA)
+- New custom indicator type: glow
+- Add "Track by name" option for Retail
+- Add "Hide Placeholder Frames" option
+- Add Override LGF option
+- Add Spell/Dispel Request support for Spotlights
+- Make spotlight shortcuts available to Blizzard and ElvUI
+- Update frame level of Dispels and Color
+- Fix frame level of Aggro Border

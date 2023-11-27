@@ -1365,7 +1365,11 @@ local function CreateListPane()
             
             if indicatorAuraType == "buff" then
                 currentLayoutTable["indicators"][last+1]["castBy"] = "me"
-                currentLayoutTable["indicators"][last+1]["trackByName"] = true
+                if Cell.isRetail then
+                    currentLayoutTable["indicators"][last+1]["trackByName"] = false
+                else
+                    currentLayoutTable["indicators"][last+1]["trackByName"] = true
+                end
             end
 
             Cell:Fire("UpdateIndicators", F:GetNotifiedLayoutName(currentLayout), indicatorName, "create", currentLayoutTable["indicators"][last+1])
