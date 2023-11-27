@@ -174,7 +174,7 @@ end
 -------------------------------------------------
 -- update
 -------------------------------------------------
-local function Update(indicator, indicatorTable, unit, spellId, start, duration, debuffType, icon, count, refreshing)
+local function Update(indicator, indicatorTable, unit, spell, start, duration, debuffType, icon, count, refreshing)
     if indicatorTable["isIcons"] then
         if indicatorTable["found"][unit] < indicatorTable["num"] then
             indicatorTable["found"][unit] = indicatorTable["found"][unit] + 1
@@ -183,8 +183,8 @@ local function Update(indicator, indicatorTable, unit, spellId, start, duration,
             indicator:Show()
         end
     else
-        if indicatorTable["auras"][spellId] < indicatorTable["topOrder"][unit] then
-            indicatorTable["topOrder"][unit] = indicatorTable["auras"][spellId]
+        if indicatorTable["auras"][spell] < indicatorTable["topOrder"][unit] then
+            indicatorTable["topOrder"][unit] = indicatorTable["auras"][spell]
             indicatorTable["top"][unit]["start"] = start
             indicatorTable["top"][unit]["duration"] = duration
             indicatorTable["top"][unit]["debuffType"] = debuffType

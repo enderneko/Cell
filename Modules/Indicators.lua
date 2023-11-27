@@ -1364,13 +1364,8 @@ local function CreateListPane()
             end
             
             if indicatorAuraType == "buff" then
-                -- cast by me
                 currentLayoutTable["indicators"][last+1]["castBy"] = "me"
-                
-                -- wrath
-                if Cell.isWrath then
-                    currentLayoutTable["indicators"][last+1]["trackByName"] = true
-                end
+                currentLayoutTable["indicators"][last+1]["trackByName"] = true
             end
 
             Cell:Fire("UpdateIndicators", F:GetNotifiedLayoutName(currentLayout), indicatorName, "create", currentLayoutTable["indicators"][last+1])
@@ -1580,12 +1575,8 @@ local function ShowIndicatorSettings(id)
         end
        
         if indicatorTable["auraType"] == "buff" then
-            -- castBy
             tinsert(settingsTable, 2, "castBy")
-            -- NOTE: trackByName (spell has a lot of RANKS!)
-            if Cell.isWrath then
-                tinsert(settingsTable, 3, "checkbutton2:trackByName")
-            end
+            tinsert(settingsTable, 3, "checkbutton2:trackByName")
         end
        
         -- tips
