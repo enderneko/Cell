@@ -2350,18 +2350,18 @@ function F:Revise()
     end
    
     -- r202-release
-    if CellDB["revise"] and dbRevision < 202 then
-        -- custom indicator
-        for _, layout in pairs(CellDB["layouts"]) do
-            for _, indicator in pairs(layout["indicators"]) do
-                if indicator["type"] == "icon" or indicator["type"] == "icons" then
-                    if type(indicator["showStack"]) ~= "boolean" then
-                        indicator["showStack"] = true
-                    end
-                end
-            end
-        end
-    end
+    -- if CellDB["revise"] and dbRevision < 202 then
+    --     -- custom indicator
+    --     for _, layout in pairs(CellDB["layouts"]) do
+    --         for _, indicator in pairs(layout["indicators"]) do
+    --             if indicator["type"] == "icon" or indicator["type"] == "icons" then
+    --                 if type(indicator["showStack"]) ~= "boolean" then
+    --                     indicator["showStack"] = true
+    --                 end
+    --             end
+    --         end
+    --     end
+    -- end
 
     -- r203-release
     if CellDB["revise"] and dbRevision < 203 then
@@ -2388,6 +2388,20 @@ function F:Revise()
 
         if not CellDB["general"]["framePriority"] then
             CellDB["general"]["framePriority"] = "normal_spotlight"
+        end
+    end
+
+    -- r206-release
+    if CellDB["revise"] and dbRevision < 206 then
+        -- custom indicator
+        for _, layout in pairs(CellDB["layouts"]) do
+            for _, indicator in pairs(layout["indicators"]) do
+                if indicator["type"] == "icon" or indicator["type"] == "icons" then
+                    if type(indicator["showStack"]) ~= "boolean" then
+                        indicator["showStack"] = true
+                    end
+                end
+            end
         end
     end
 
