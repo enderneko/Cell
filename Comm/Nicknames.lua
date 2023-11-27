@@ -24,6 +24,22 @@ end
 Cell.vars.nicknames = {}
 Cell.vars.nicknameCustoms = {}
 
+function F:GetNickname(shortname, fullname)
+    local name
+    if Cell.vars.nicknameCustomEnabled then
+        name = Cell.vars.nicknameCustoms[fullname] or
+               Cell.vars.nicknameCustoms[shortname] or
+               Cell.vars.nicknames[fullname] or
+               Cell.vars.nicknames[shortname] or
+               shortname
+    else
+        name = Cell.vars.nicknames[fullname] or
+               Cell.vars.nicknames[shortname] or
+               shortname
+    end
+    return name or _G.UNKNOWNOBJECT
+end
+
 local nic_check, nic_send
 
 local function Update(b)

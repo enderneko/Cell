@@ -7,7 +7,6 @@ local U = Cell.uFuncs
 local P = Cell.pixelPerfectFuncs
 local A = Cell.animations
 local HealComm = LibStub("LibHealComm-4.0", true)
-local LibTranslit = LibStub("LibTranslit-1.0")
 
 CELL_FADE_OUT_HEALTH_PERCENT = nil
 CELL_BORDER_COLOR = {0, 0, 0, 1}
@@ -1768,11 +1767,6 @@ local function UnitButton_UpdateName(self)
     self.state.guid = UnitGUID(unit)
     self.state.isPlayer = UnitIsPlayer(unit)
 
-    if Cell.loaded and CellDB["general"]["translit"] then
-        self.state.name = LibTranslit:Transliterate(self.state.name)
-        self.state.fullName = LibTranslit:Transliterate(self.state.fullName)
-    end
-
     self.indicators.nameText:UpdateName()
 end
 
@@ -2135,6 +2129,15 @@ local function UpdateCLEU()
     end
 end
 Cell:RegisterCallback("UpdateCLEU", "UnitButton_UpdateCLEU", UpdateCLEU)
+
+-------------------------------------------------
+-- translit names
+-------------------------------------------------
+Cell:RegisterCallback("TranslitNames", "UnitButton_TranslitNames", function()
+    F:IterateAllUnitButtons(function(b)
+        UnitButton_UpdateName(b)
+    end, true)
+end)
 
 -------------------------------------------------
 -- update all

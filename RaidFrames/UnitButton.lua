@@ -7,7 +7,6 @@ local U = Cell.uFuncs
 local P = Cell.pixelPerfectFuncs
 local A = Cell.animations
 local LGI = LibStub:GetLibrary("LibGroupInfo")
-local LibTranslit = LibStub("LibTranslit-1.0")
 
 CELL_FADE_OUT_HEALTH_PERCENT = nil
 CELL_BORDER_COLOR = {0, 0, 0, 1}
@@ -1941,36 +1940,6 @@ local function UnitButton_UpdateThreatBar(self)
     end
 end
 
---[[
-local LRC = LibStub:GetLibrary("LibRangeCheck-2.0")
--- BUG: seems not right on a dead unit
--- local checker
--- LRC.RegisterCallback(Cell, LRC.CHECKERS_CHANGED, function()
---     if UnitClassBase("player") == "EVOKER" then
---         checker = LRC:GetSmartMaxChecker(30)
---     else
---         checker = LRC:GetSmartMaxChecker(40)
---     end
---     Cell.checker = checker
--- end)
-local checker
-if UnitClassBase("player") == "EVOKER" then
-    checker = function(unit)
-        local minRangeIfVisible, maxRangeIfVisible = LRC:GetRange(unit, true)
-        if F:UnitInGroup(unit) and UnitIsDeadOrGhost(unit) then
-            return (maxRangeIfVisible and maxRangeIfVisible <= 40) or false
-        else
-            return (maxRangeIfVisible and maxRangeIfVisible <= 30) or false
-        end
-    end
-else
-    checker = function(unit)
-        local minRangeIfVisible, maxRangeIfVisible = LRC:GetRange(unit, true)
-        return (maxRangeIfVisible and maxRangeIfVisible <= 40) or false
-    end
-end
-]]
-
 -- UNIT_IN_RANGE_UPDATE: unit, inRange
 local function UnitButton_UpdateInRange(self, ir)
     local unit = self.state.displayedUnit
@@ -2096,11 +2065,6 @@ local function UnitButton_UpdateName(self)
     self.state.class = UnitClassBase(unit)
     self.state.guid = UnitGUID(unit)
     self.state.isPlayer = UnitIsPlayer(unit)
-
-    if Cell.loaded and CellDB["general"]["translit"] then
-        self.state.name = LibTranslit:Transliterate(self.state.name)
-        self.state.fullName = LibTranslit:Transliterate(self.state.fullName)
-    end
 
     self.indicators.nameText:UpdateName()
 end
@@ -2229,6 +2193,15 @@ local function UpdateCLEU()
     end
 end
 Cell:RegisterCallback("UpdateCLEU", "UnitButton_UpdateCLEU", UpdateCLEU)
+
+-------------------------------------------------
+-- translit names
+-------------------------------------------------
+Cell:RegisterCallback("TranslitNames", "UnitButton_TranslitNames", function()
+    F:IterateAllUnitButtons(function(b)
+        UnitButton_UpdateName(b)
+    end, true)
+end)
 
 -------------------------------------------------
 -- update all
