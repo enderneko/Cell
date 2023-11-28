@@ -784,7 +784,7 @@ function F:FirstRun()
 
         local last = #currentLayoutTable["indicators"]
         if currentLayoutTable["indicators"][last]["type"] == "built-in" then
-            indicatorName = "indicator"..(last+1)
+            indicatorName = "indicator1"
         else
             indicatorName = "indicator"..(tonumber(strmatch(currentLayoutTable["indicators"][last]["indicatorName"], "%d+"))+1)
         end
@@ -803,6 +803,7 @@ function F:FirstRun()
                 {"Cell ".._G.DEFAULT, 11, "Outline", "TOPRIGHT", 2, 1, {1, 1, 1}},
                 {"Cell ".._G.DEFAULT, 11, "Outline", "BOTTOMRIGHT", 2, -1, {1, 1, 1}},
             },
+            ["showStack"] = true,
             ["showDuration"] = false,
             ["auraType"] = "buff",
             ["castBy"] = "me",
