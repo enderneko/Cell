@@ -266,8 +266,8 @@ local function RaidPetFrame_UpdateLayout(layout, which)
     if Cell.vars.groupType ~= "raid" and init then return end
     init = true
     
-    if previousLayout == layout and not which then return end
-    previousLayout = layout
+    -- if previousLayout == layout and not which then return end
+    -- previousLayout = layout
 
     layout = CellDB["layouts"][layout]
 
