@@ -180,13 +180,13 @@ if Cell.isRetail then
             -- self:SetBindingClick(true, "SHIFT-C", self, "shiftC")
 
             --! update click-casting unit
-            local attrs = self:GetAttribute("cell")
-            -- print(attrs)
-            if attrs then
-                for _, k in pairs(table.new(strsplit("|", attrs))) do
-                    self:SetAttribute(k, string.gsub(self:GetAttribute(k), "@%w+", "@"..self:GetAttribute("unit")))
-                end
-            end
+            -- local attrs = self:GetAttribute("cell")
+            -- -- print(attrs)
+            -- if attrs then
+            --     for _, k in pairs(table.new(strsplit("|", attrs))) do
+            --         self:SetAttribute(k, string.gsub(self:GetAttribute(k), "@%w+", "@"..self:GetAttribute("unit")))
+            --     end
+            -- end
 
             --! update togglemenu
             local menuKey = self:GetAttribute("menu")
@@ -428,17 +428,19 @@ local function ApplyClickCastings(b)
                 condition = F:IsResurrectionForDead(spellName) and ",dead" or ",nodead"
             end
 
+            local unit = Cell.isRetail and "@mouseover" or "@cell"
+
             -- "sMaRt" resurrection
             local sMaRt = ""
             if smartResurrection ~= "disabled" and not (F:IsResurrectionForDead(spellName) or F:IsSoulstone(spellName)) then
                 if strfind(smartResurrection, "^normal") then
                     if F:GetNormalResurrection(Cell.vars.playerClass) then
-                        sMaRt = sMaRt .. ";[@cell,dead,nocombat] "..F:GetNormalResurrection(Cell.vars.playerClass)
+                        sMaRt = sMaRt .. ";["..unit..",dead,nocombat] "..F:GetNormalResurrection(Cell.vars.playerClass)
                     end
                 end
                 if strfind(smartResurrection, "combat$") then
                     if F:GetCombatResurrection(Cell.vars.playerClass) then
-                        sMaRt = sMaRt .. ";[@cell,dead,combat] "..F:GetCombatResurrection(Cell.vars.playerClass)
+                        sMaRt = sMaRt .. ";["..unit..",dead,combat] "..F:GetCombatResurrection(Cell.vars.playerClass)
                     end
                 end
             end
@@ -446,15 +448,19 @@ local function ApplyClickCastings(b)
             if (alwaysTargeting == "left" and bindKey == "type1") or alwaysTargeting == "any" then
                 b:SetAttribute(bindKey, "macro")
                 local attr = string.gsub(bindKey, "type", "macrotext")
-                b:SetAttribute(attr, "/tar [@cell]\n/cast [@cell"..condition.."] "..spellName..sMaRt)
-                UpdatePlaceholder(b, attr)
+                b:SetAttribute(attr, "/tar ["..unit.."]\n/cast ["..unit..condition.."] "..spellName..sMaRt)
+                if not Cell.isRetail then UpdatePlaceholder(b, attr) end
             else
                 -- local attr = string.gsub(bindKey, "type", "spell")
                 -- b:SetAttribute(attr, spellName)
                 b:SetAttribute(bindKey, "macro")
                 local attr = string.gsub(bindKey, "type", "macrotext")
-                b:SetAttribute(attr, "/cast [@cell"..condition.."] "..spellName..sMaRt)
-                UpdatePlaceholder(b, attr)
+                if F:IsSoulstone(spellName) then
+                    b:SetAttribute(attr, "/tar ["..unit.."]\n/cast ["..unit.."] "..spellName.."\n/targetlasttarget")
+                else
+                    b:SetAttribute(attr, "/cast ["..unit..condition.."] "..spellName..sMaRt)
+                end
+                if not Cell.isRetail then UpdatePlaceholder(b, attr) end
             end
         elseif t[2] == "macro" then
             local attr = string.gsub(bindKey, "type", "macrotext")

@@ -3,6 +3,8 @@
     <Button name="CellUnitButtonTemplate" inherits="BackdropTemplate,SecureUnitButtonTemplate,SecureHandlerEnterLeaveTemplate,SecureHandlerShowHideTemplate" hidden="true" virtual="true">
         <Attributes>
             <Attribute name="toggleForVehicle" type="boolean" value="true"/>
+            <Attribute name="checkselfcast" type="boolean" value="false"/>
+            <Attribute name="checkfocuscast" type="boolean" value="false"/>
             <!-- <Attribute name="allowVehicleTarget" type="boolean" value="true"/> -->
             <!-- <Attribute name="ping-receiver" type="boolean" value="true"/> -->
         </Attributes>
