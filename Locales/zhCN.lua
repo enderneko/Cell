@@ -191,7 +191,7 @@ L["Always Targeting"] = "总是选中目标"
 L["Only available for Spells"] = "仅对法术有效"
 L["Left Spell"] = "左键法术"
 L["Any Spells"] = "所有法术"
-L["Smart Resurrection"] = "不智能复活"
+L["Smart Resurrection"] = "智能复活"
 L["Normal + Combat Res"] = "通常 + 战复"
 L["Replace click-castings of Spell type with resurrection spells on dead units"] = "对于挂掉的家伙，将法术类型的点击施法替换为复活法术"
 L["Current Profile"] = "当前配置"
@@ -705,6 +705,7 @@ L["Text Options"] = "文本选项"
 -------------------------------------------------
 -- quick cast
 -------------------------------------------------
+L["Quick Assist"] = "快捷辅助"
 L["Quick Cast"] = "快捷施法"
 L["Create several buttons for quick casting and buff monitoring"] = "创建几个快捷施法按钮，并具有简单的增益监控功能"
 L["These settings are spec-specific"] = "这些设置是每个专精独立的"
