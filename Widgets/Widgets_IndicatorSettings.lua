@@ -2724,7 +2724,7 @@ local function CreateSetting_Glow(parent)
         widget.glowDuration:SetPoint("TOPLEFT", widget.glowType, "BOTTOMLEFT", 0, -25)
 
         -- glowFrequency
-        widget.glowFrequency = addon:CreateSlider(L["Frequency"], widget, -2, 2, 110, 0.05, function(value)
+        widget.glowFrequency = addon:CreateSlider(L["Frequency"], widget, -2, 2, 110, 0.01, function(value)
             widget.glow[4] = value
             widget.func(widget.glow)
         end)
@@ -3880,7 +3880,7 @@ local function CreateSetting_ConsumablesPreview(parent)
             E = typeE,
         }
        
-        local speedSlider = addon:CreateSlider(_G.SPEED, widget, 0.5, 1.5, 145, 0.05)
+        local speedSlider = addon:CreateSlider(_G.SPEED, widget, 0.5, 1.5, 145, 0.01)
         speedSlider:SetPoint("TOPLEFT", typeE, "BOTTOMLEFT", 0, -25)
         speedSlider.afterValueChangedFn = function(value)
             widget.func(value)

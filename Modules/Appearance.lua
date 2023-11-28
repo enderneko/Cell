@@ -1058,28 +1058,28 @@ local function CreateUnitButtonStylePane()
     end)
     
     -- bar alpha
-    barAlpha = Cell:CreateSlider(L["Health Bar Alpha"], unitButtonPane, 0, 100, 141, 5, function(value)
+    barAlpha = Cell:CreateSlider(L["Health Bar Alpha"], unitButtonPane, 0, 100, 141, 1, function(value)
         CellDB["appearance"]["barAlpha"] = value/100
         Cell:Fire("UpdateAppearance", "alpha")
     end, nil, true)
     barAlpha:SetPoint("TOPLEFT", iconOptionsBtn, "BOTTOMLEFT", 0, -30)
     
     -- loss alpha
-    lossAlpha = Cell:CreateSlider(L["Health Loss Alpha"], unitButtonPane, 0, 100, 141, 5, function(value)
+    lossAlpha = Cell:CreateSlider(L["Health Loss Alpha"], unitButtonPane, 0, 100, 141, 1, function(value)
         CellDB["appearance"]["lossAlpha"] = value/100
         Cell:Fire("UpdateAppearance", "alpha")
     end, nil, true)
     lossAlpha:SetPoint("TOPLEFT", barAlpha, "BOTTOMLEFT", 0, -40)
     
     -- bg alpha
-    bgAlpha = Cell:CreateSlider(L["Background Alpha"], unitButtonPane, 0, 100, 141, 5, function(value)
+    bgAlpha = Cell:CreateSlider(L["Background Alpha"], unitButtonPane, 0, 100, 141, 1, function(value)
         CellDB["appearance"]["bgAlpha"] = value/100
         Cell:Fire("UpdateAppearance", "alpha")
     end, nil, true)
     bgAlpha:SetPoint("TOPLEFT", lossAlpha, "BOTTOMLEFT", 0, -40)
     
     -- out of range alpha
-    oorAlpha = Cell:CreateSlider(L["Out of Range Alpha"], unitButtonPane, 0, 100, 141, 5, function(value)
+    oorAlpha = Cell:CreateSlider(L["Out of Range Alpha"], unitButtonPane, 0, 100, 141, 1, function(value)
         CellDB["appearance"]["outOfRangeAlpha"] = value/100
         Cell:Fire("UpdateAppearance", "outOfRangeAlpha")
     end, nil, true)

@@ -1146,12 +1146,6 @@ function addon:CreateSlider(name, parent, low, high, width, step, onValueChanged
     currentEditBox:SetScript("OnEnterPressed", function(self)
         self:ClearFocus()
         local value = tonumber(self:GetText())
-        -- if isPercentage then
-        --     value = string.gsub(self:GetText(), "%%", "")
-        --     value = tonumber(value)
-        -- else
-        --     value = tonumber(self:GetText())
-        -- end
 
         if value == self.oldValue then return end
         if value then

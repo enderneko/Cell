@@ -2060,13 +2060,13 @@ local function CreateLayoutSetupPane()
     sameArrangementAsMainCB:Hide()
 
     -- width
-    widthSlider = Cell:CreateSlider(L["Width"], layoutSetupPane, 20, 300, 117, 2, function(value)
+    widthSlider = Cell:CreateSlider(L["Width"], layoutSetupPane, 20, 300, 117, 1, function(value)
         selectedLayoutTable[selectedPage]["size"][1] = value
         UpdateSize()
     end)
     
     -- height
-    heightSlider = Cell:CreateSlider(L["Height"], layoutSetupPane, 20, 300, 117, 2, function(value)
+    heightSlider = Cell:CreateSlider(L["Height"], layoutSetupPane, 20, 300, 117, 1, function(value)
         selectedLayoutTable[selectedPage]["size"][2] = value
         UpdateSize()
     end)

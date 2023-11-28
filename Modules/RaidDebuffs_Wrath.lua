@@ -1537,7 +1537,7 @@ local function CreateDetailsFrame()
     glowParticles:SetPoint("TOPLEFT", glowColor, "BOTTOMLEFT", 0, -25)
 
     -- glowFrequency
-    glowFrequency = Cell:CreateSlider(L["Frequency"], glowOptionsFrame, -2, 2, 117, 0.05, function(value)
+    glowFrequency = Cell:CreateSlider(L["Frequency"], glowOptionsFrame, -2, 2, 117, 0.01, function(value)
         SliderValueChanged(3, value)
     end)
     glowFrequency:SetPoint("TOPLEFT", glowLines, "BOTTOMLEFT", 0, -40)
