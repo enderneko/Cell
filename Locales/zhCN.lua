@@ -108,7 +108,6 @@ L["This may help solve issues of indicators not updating correctly"] = "可能�
 L["Override"] = "重写"
 L["Ensure that other addons get the right unit button"] = "确保其他插件获取到正确的单位按钮"
 L["This may cause unknown issues"] = "可能导致未知问题"
-L["Override LibGetFrame.GetUnitFrame"] = "重写 LibGetFrame.GetUnitFrame"
 L["For addons/WAs not dependent on LibGetFrame, use %s"] = "对于不依赖 LibGetFrame 的插件或WA，使用 %s"
 L["Increase Health Update Rate"] = "增加血条刷新速率"
 L["Use CLEU events to increase health update rate"] = "使用战斗记录事件来增加血条刷新速率"
