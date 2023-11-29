@@ -3122,7 +3122,7 @@ local startTimeCache = {}
 -- NOTE: prevent a nil method error
 local DumbFunc = function() end
 
-function F:UnitButton_OnLoad(button)
+function CellUnitButton_OnLoad(button)
     local name = button:GetName()
 
     button.widget = {}

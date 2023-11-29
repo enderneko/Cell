@@ -60,11 +60,11 @@ end)
 
 function F:UpdateLayout(layoutGroupType, updateIndicators)
     if InCombatLockdown() then
-        F:Debug("|cFF7CFC00F:UpdateLayout(\""..layoutGroupType.."\") DELAYED")
+        F:Debug("|cFF7CFC00F:UpdateLayout(\""..layoutGroupType.."\", "..(updateIndicators and "true" or "false")..") DELAYED")
         delayedLayoutGroupType, delayedUpdateIndicators = layoutGroupType, updateIndicators
         delayedFrame:RegisterEvent("PLAYER_REGEN_ENABLED")
     else
-        F:Debug("|cFF7CFC00F:UpdateLayout(\""..layoutGroupType.."\")")
+        F:Debug("|cFF7CFC00F:UpdateLayout(\""..layoutGroupType.."\", "..(updateIndicators and "true" or "false")..")")
         local layout
         if Cell.vars.layoutAutoSwitch[Cell.vars.playerSpecID] then
             layout = Cell.vars.layoutAutoSwitch[Cell.vars.playerSpecID][layoutGroupType]
