@@ -1138,11 +1138,46 @@ end
 -------------------------------------------------
 -- status text
 -------------------------------------------------
+local function StatusText_SetFont(self, font, size, flags)
+    self.flags = flags
+    font = F:GetFont(font)
+
+    if flags == "Shadow" then
+        self.text:SetFont(font, size, "")
+        self.text:SetShadowOffset(1, -1)
+        self.text:SetShadowColor(0, 0, 0, 1)
+        self.timer:SetFont(font, size, "")
+        self.timer:SetShadowOffset(1, -1)
+        self.timer:SetShadowColor(0, 0, 0, 1)
+    else
+        if flags == "None" then
+            flags = ""
+        elseif flags == "Outline" then
+            flags = "OUTLINE"
+        else
+            flags = "OUTLINE, MONOCHROME"
+        end
+        self.text:SetFont(font, size, flags)
+        self.text:SetShadowOffset(0, 0)
+        self.text:SetShadowColor(0, 0, 0, 0)
+        self.timer:SetFont(font, size, flags)
+        self.timer:SetShadowOffset(0, 0)
+        self.timer:SetShadowColor(0, 0, 0, 0)
+    end
+
+    self:SetHeight(self.text:GetHeight()+P:Scale(1)*2)
+end
+
 local startTimeCache = {}
 function I:CreateStatusText(parent)
     local statusText = CreateFrame("Frame", parent:GetName().."StatusText", parent.widget.overlayFrame)
     parent.indicators.statusText = statusText
     statusText:Hide()
+
+    statusText.bg = statusText:CreateTexture(nil, "ARTWORK")
+    statusText.bg:SetTexture("Interface\\Buttons\\WHITE8x8")
+    statusText.bg:SetGradient("HORIZONTAL", CreateColor(0, 0, 0, 0.777), CreateColor(0, 0, 0, 0))
+    statusText.bg:SetAllPoints(statusText)
 
     -- statusText:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8x8"})
     -- statusText:SetBackdropColor(0, 0, 0, 0.3)
@@ -1160,11 +1195,13 @@ function I:CreateStatusText(parent)
     function statusText:SetStatus(status)
         -- print("status: " .. (status or "nil"))
         statusText.status = status
-        text:SetText(L[status])
         if status then
+            text:SetText(L[status])
             text:SetTextColor(unpack(statusText.colors[status]))
             timer:SetTextColor(unpack(statusText.colors[status]))
-            statusText:SetHeight(text:GetHeight()+1)
+            statusText:SetHeight(text:GetHeight()+P:Scale(1)*2)
+        else
+            statusText:Hide()
         end
     end
 
@@ -1184,39 +1221,21 @@ function I:CreateStatusText(parent)
         timer:ClearAllPoints()
         timer:SetPoint(point.."RIGHT")
 
-        statusText:SetHeight(text:GetHeight()+1)
+        statusText:SetHeight(text:GetHeight()+P:Scale(1)*2)
     end
     
-    function statusText:SetFont(font, size, flags)
-        statusText.flags = flags
-        font = F:GetFont(font)
-
-        if flags == "Shadow" then
-            text:SetFont(font, size, "")
-            text:SetShadowOffset(1, -1)
-            text:SetShadowColor(0, 0, 0, 1)
-            timer:SetFont(font, size, "")
-            timer:SetShadowOffset(1, -1)
-            timer:SetShadowColor(0, 0, 0, 1)
-        else
-            if flags == "None" then
-                flags = ""
-            elseif flags == "Outline" then
-                flags = "OUTLINE"
-            else
-                flags = "OUTLINE, MONOCHROME"
-            end
-            text:SetFont(font, size, flags)
-            text:SetShadowOffset(0, 0)
-            text:SetShadowColor(0, 0, 0, 0)
-            timer:SetFont(font, size, flags)
-            timer:SetShadowOffset(0, 0)
-            timer:SetShadowColor(0, 0, 0, 0)
-        end
-    end
+    statusText.SetFont = StatusText_SetFont
 
     function statusText:SetShowTimer(show)
         statusText.showTimer = show
+    end
+
+    function statusText:ShowBackground(show)
+        if show then
+            statusText.bg:Show()
+        else
+            statusText.bg:Hide()
+        end
     end
 
     function statusText:ShowTimer()

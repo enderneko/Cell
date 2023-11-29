@@ -128,6 +128,7 @@ Cell.defaults.layout = {
             ["frameLevel"] = 30,
             ["font"] = {"Cell ".._G.DEFAULT, 11, "Shadow"},
             ["showTimer"] = true,
+            ["showBackground"] = true,
             ["colors"] = {
                 ["AFK"] = {1, 0.19, 0.19, 1},
                 ["OFFLINE"] = {1, 0.19, 0.19, 1},

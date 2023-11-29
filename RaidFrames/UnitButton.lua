@@ -262,9 +262,13 @@ local function HandleIndicators(b)
         if t["vehicleNamePosition"] then
             indicator:UpdateVehicleNamePosition(t["vehicleNamePosition"])
         end
-        -- update status text timer
+        -- update timer
         if type(t["showTimer"]) == "boolean" then
             indicator:SetShowTimer(t["showTimer"])
+        end
+        -- update background
+        if type(t["showBackground"]) == "boolean" then
+            indicator:ShowBackground(t["showBackground"])
         end
         -- update role texture
         if t["roleTexture"] then
@@ -588,6 +592,10 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                 F:IterateAllUnitButtons(function(b)
                     b.indicators[indicatorName]:SetShowTimer(value2)
                     UnitButton_UpdateStatusText(b)
+                end, true)
+            elseif value == "showBackground" then
+                F:IterateAllUnitButtons(function(b)
+                    b.indicators[indicatorName]:ShowBackground(value2)
                 end, true)
             elseif value == "hideIfEmptyOrFull" then
                 --! 血量文字指示器需要立即被刷新
@@ -1227,7 +1235,7 @@ local function UnitButton_UpdateBuffs(self)
     
     -- hide drinking
     if not self._buffs.drinkingFound and self.indicators.statusText:GetStatus() == "DRINKING" then
-        self.indicators.statusText:Hide()
+        -- self.indicators.statusText:Hide()
         self.indicators.statusText:SetStatus()
     end
 
@@ -2010,7 +2018,7 @@ end
 UnitButton_UpdateStatusText = function(self)
     local statusText = self.indicators.statusText
     if not enabledIndicators["statusText"] then
-        statusText:Hide()
+        -- statusText:Hide()
         statusText:SetStatus()
         return
     end
@@ -2059,7 +2067,7 @@ UnitButton_UpdateStatusText = function(self)
         statusText:Show()
         statusText:SetStatus("DRINKING")
     else
-        statusText:Hide()
+        -- statusText:Hide()
         statusText:HideTimer(true)
         statusText:SetStatus()
     end

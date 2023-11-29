@@ -616,9 +616,13 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                 if t["vehicleNamePosition"] then
                     indicator:UpdateVehicleNamePosition(t["vehicleNamePosition"])
                 end
-                -- update status text timer
+                -- update timer
                 if type(t["showTimer"]) == "boolean" then
                     indicator:SetShowTimer(t["showTimer"])
+                end
+                -- update background
+                if type(t["showBackground"]) == "boolean" then
+                    indicator:ShowBackground(t["showBackground"])
                 end
                 -- update role texture
                 if t["roleTexture"] then
@@ -808,6 +812,8 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                 indicator:SetShowTimer(value2)
                 indicator:Hide()
                 indicator:Show()
+            elseif value == "showBackground" then
+                indicator:ShowBackground(value2)
             elseif value == "showStack" then
                 indicator:ShowStack(value2)
             elseif value == "circledStackNums" then
@@ -1482,7 +1488,7 @@ local indicatorSettings
 if Cell.isRetail then
     indicatorSettings = {
         ["nameText"] = {"enabled", "nameColor", "textWidth", "checkbutton:showGroupNumber", "vehicleNamePosition", "namePosition", "frameLevel", "font-noOffset"},
-        ["statusText"] = {"enabled", "checkbutton:showTimer", "statusColors", "statusPosition", "frameLevel", "font-noOffset"},
+        ["statusText"] = {"enabled", "checkbutton:showTimer", "checkbutton2:showBackground", "statusColors", "statusPosition", "frameLevel", "font-noOffset"},
         ["healthText"] = {"enabled", "format", "checkbutton:hideIfEmptyOrFull", "color", "position", "frameLevel", "font-noOffset"},
         ["statusIcon"] = {
             -- "|A:dungeonskull:18:18|a "..
@@ -1523,7 +1529,7 @@ if Cell.isRetail then
 elseif Cell.isWrath then
     indicatorSettings = {
         ["nameText"] = {"enabled", "nameColor", "textWidth", "checkbutton:showGroupNumber", "vehicleNamePosition", "namePosition", "frameLevel", "font-noOffset"},
-        ["statusText"] = {"enabled", "checkbutton:showTimer", "statusColors", "statusPosition", "frameLevel", "font-noOffset"},
+        ["statusText"] = {"enabled", "checkbutton:showTimer", "checkbutton2:showBackground", "statusColors", "statusPosition", "frameLevel", "font-noOffset"},
         ["healthText"] = {"enabled", "format", "checkbutton:hideIfEmptyOrFull", "color", "position", "frameLevel", "font-noOffset"},
         ["statusIcon"] = {
             -- "|A:dungeonskull:18:18|a "..

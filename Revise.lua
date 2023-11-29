@@ -2408,6 +2408,10 @@ function F:Revise()
             if type(layout["indicators"][index]["showTimer"]) ~= "boolean" then
                 layout["indicators"][index]["showTimer"] = true
             end
+            -- add showBackground for statusText
+            if type(layout["indicators"][index]["showBackground"]) ~= "boolean" then
+                layout["indicators"][index]["showBackground"] = true
+            end
         end
     end
 
