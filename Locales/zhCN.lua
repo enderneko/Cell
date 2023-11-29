@@ -505,6 +505,7 @@ L["Click to preview"] = "点击预览"
 L["Debug Mode"] = "调试模式"
 
 L["showGroupNumber"] = "显示队伍编号"
+L["showTimer"] = "显示计时器"
 L["dispellableByMe"] = "只显示我能驱散的减益"
 L["showDispelTypeIcons"] = "显示驱散类型图标"
 L["castByMe"] = "只显示我施放的增益"

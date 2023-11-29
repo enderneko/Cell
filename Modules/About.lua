@@ -85,7 +85,7 @@ local function CreateTranslatorsPane()
     translatorsTextCN:SetPoint("TOPRIGHT", -5, -27)
     translatorsTextCN:SetSpacing(5)
     translatorsTextCN:SetJustifyH("LEFT")
-    translatorsTextCN:SetText("zhTW: RainbowUI, BNS333, 米利")
+    translatorsTextCN:SetText("zhTW: RainbowUI, BNS333, Mili")
 
     translatorsTextKR = translatorsPane:CreateFontString(nil, "OVERLAY")
     translatorsTextKR.font = UNIT_NAME_FONT_KOREAN

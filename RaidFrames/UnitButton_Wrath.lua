@@ -266,6 +266,10 @@ local function HandleIndicators(b)
         if t["vehicleNamePosition"] then
             indicator:UpdateVehicleNamePosition(t["vehicleNamePosition"])
         end
+        -- update status text timer
+        if type(t["showTimer"]) == "boolean" then
+            indicator:SetShowTimer(t["showTimer"])
+        end
         -- update role texture
         if t["roleTexture"] then
             indicator:SetRoleTexture(t["roleTexture"])
@@ -579,6 +583,11 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
             if value == "showGroupNumber" then
                 F:IterateAllUnitButtons(function(b)
                     b.indicators[indicatorName]:ShowGroupNumber(value2)
+                end, true)
+            elseif value == "showTimer" then
+                F:IterateAllUnitButtons(function(b)
+                    b.indicators[indicatorName]:SetShowTimer(value2)
+                    UnitButton_UpdateStatusText(b)
                 end, true)
             elseif value == "hideIfEmptyOrFull" then
                 --! 血量文字指示器需要立即被刷新

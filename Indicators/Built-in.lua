@@ -1215,7 +1215,16 @@ function I:CreateStatusText(parent)
         end
     end
 
+    function statusText:SetShowTimer(show)
+        statusText.showTimer = show
+    end
+
     function statusText:ShowTimer()
+        if not statusText.showTimer then
+            statusText:HideTimer(true)
+            return
+        end
+
         timer:Show()
         if not startTimeCache[parent.state.guid] then startTimeCache[parent.state.guid] = GetTime() end
         

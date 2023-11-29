@@ -154,6 +154,12 @@ local function InitIndicator(indicatorName)
         local maxCount = Cell.isRetail and 9 or 6
         local ticker
         indicator:SetScript("OnShow", function()
+            if indicator.showTimer then
+                indicator.timer:Show()
+            else
+                indicator.timer:Hide()
+            end
+
             indicator:SetStatus("AFK")
             indicator.timer:SetText("13m")
 
@@ -610,6 +616,10 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                 if t["vehicleNamePosition"] then
                     indicator:UpdateVehicleNamePosition(t["vehicleNamePosition"])
                 end
+                -- update status text timer
+                if type(t["showTimer"]) == "boolean" then
+                    indicator:SetShowTimer(t["showTimer"])
+                end
                 -- update role texture
                 if t["roleTexture"] then
                     indicator:SetRoleTexture(t["roleTexture"])
@@ -794,6 +804,10 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
         elseif setting == "checkbutton" then
             if value == "showGroupNumber" then
                 indicator:ShowGroupNumber(value2)
+            elseif value == "showTimer" then
+                indicator:SetShowTimer(value2)
+                indicator:Hide()
+                indicator:Show()
             elseif value == "showStack" then
                 indicator:ShowStack(value2)
             elseif value == "circledStackNums" then
@@ -1468,7 +1482,7 @@ local indicatorSettings
 if Cell.isRetail then
     indicatorSettings = {
         ["nameText"] = {"enabled", "nameColor", "textWidth", "checkbutton:showGroupNumber", "vehicleNamePosition", "namePosition", "frameLevel", "font-noOffset"},
-        ["statusText"] = {"enabled", "statusColors", "statusPosition", "frameLevel", "font-noOffset"},
+        ["statusText"] = {"enabled", "checkbutton:showTimer", "statusColors", "statusPosition", "frameLevel", "font-noOffset"},
         ["healthText"] = {"enabled", "format", "checkbutton:hideIfEmptyOrFull", "color", "position", "frameLevel", "font-noOffset"},
         ["statusIcon"] = {
             -- "|A:dungeonskull:18:18|a "..
@@ -1509,7 +1523,7 @@ if Cell.isRetail then
 elseif Cell.isWrath then
     indicatorSettings = {
         ["nameText"] = {"enabled", "nameColor", "textWidth", "checkbutton:showGroupNumber", "vehicleNamePosition", "namePosition", "frameLevel", "font-noOffset"},
-        ["statusText"] = {"enabled", "statusColors", "statusPosition", "frameLevel", "font-noOffset"},
+        ["statusText"] = {"enabled", "checkbutton:showTimer", "statusColors", "statusPosition", "frameLevel", "font-noOffset"},
         ["healthText"] = {"enabled", "format", "checkbutton:hideIfEmptyOrFull", "color", "position", "frameLevel", "font-noOffset"},
         ["statusIcon"] = {
             -- "|A:dungeonskull:18:18|a "..

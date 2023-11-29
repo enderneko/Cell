@@ -2393,14 +2393,20 @@ function F:Revise()
 
     -- r206-release
     if CellDB["revise"] and dbRevision < 206 then
-        -- custom indicator
         for _, layout in pairs(CellDB["layouts"]) do
+            -- fix showStack for custom indicators
             for _, indicator in pairs(layout["indicators"]) do
                 if indicator["type"] == "icon" or indicator["type"] == "icons" then
                     if type(indicator["showStack"]) ~= "boolean" then
                         indicator["showStack"] = true
                     end
                 end
+            end
+
+            -- add showTimer for statusText
+            local index = Cell.defaults.indicatorIndices.statusText
+            if type(layout["indicators"][index]["showTimer"]) ~= "boolean" then
+                layout["indicators"][index]["showTimer"] = true
             end
         end
     end
