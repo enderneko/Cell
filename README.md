@@ -5,8 +5,9 @@
 [![GitHub commit activity](https://img.shields.io/github/commit-activity/m/enderneko/Cell)](https://github.com/enderneko/Cell/commits/master)
 [![last commit](https://img.shields.io/github/last-commit/enderneko/Cell)](https://github.com/enderneko/Cell/commits/master)
 
-[![cell on curseforge](https://img.shields.io/badge/dynamic/json?color=f16436&label=CurseForge&query=%24.downloads.total&url=https%3A%2F%2Fapi.cfwidget.com%2F409666&style=flat)](https://www.curseforge.com/wow/addons/cell)
-[![cell on wago](https://img.shields.io/badge/Wago-Cell-ad1319)](https://addons.wago.io/addons/cell)
+[![Discord](https://img.shields.io/discord/1122747237546610760?label=Discord&color=5865F2)](https://discord.gg/9PSe3fKQGJ)
+[![Curseforge](https://img.shields.io/curseforge/dt/409666?label=CurseForge&color=F16436)](https://www.curseforge.com/wow/addons/cell)
+[![Wago](https://img.shields.io/badge/Wago-Cell-ad1319)](https://addons.wago.io/addons/cell)
 
 Cell is a nice raid frame addon inspired by several great addons, such as __CompactRaid__, __Grid2__, __Aptechka__ and __VuhDo__.  
 With a more human-friendly interface, Cell can provide a better user experience, better than ever.  
