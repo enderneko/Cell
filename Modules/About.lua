@@ -50,7 +50,7 @@ local function CreateAuthorPane()
     
     authorText = authorPane:CreateFontString(nil, "OVERLAY")
     authorText:SetPoint("TOPLEFT", 5, -27)
-    authorText.font = "Interface\\AddOns\\Cell\\Media\\font.ttf"
+    authorText.font = "Interface\\AddOns\\Cell\\Media\\Fonts\\font.ttf"
     authorText.size = 12
     UpdateFont(authorText)
 

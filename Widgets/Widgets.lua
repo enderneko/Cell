@@ -89,7 +89,7 @@ font_disable:SetShadowOffset(1, -1)
 font_disable:SetJustifyH("CENTER")
 
 local font_special = CreateFont(font_special_name)
-font_special:SetFont("Interface\\AddOns\\Cell\\Media\\font.ttf", 12, "")
+font_special:SetFont("Interface\\AddOns\\Cell\\Media\\Fonts\\font.ttf", 12, "")
 font_special:SetTextColor(1, 1, 1, 1)
 font_special:SetShadowColor(0, 0, 0)
 font_special:SetShadowOffset(1, -1)
@@ -116,7 +116,7 @@ function addon:UpdateOptionsFont(offset, useGameFont)
     if useGameFont then
         defaultFont = GameFontNormal:GetFont()
     else
-        defaultFont = "Interface\\AddOns\\Cell\\Media\\Accidental_Presidency.ttf"
+        defaultFont = "Interface\\AddOns\\Cell\\Media\\Fonts\\Accidental_Presidency.ttf"
     end
     fontSizeOffset = offset
 

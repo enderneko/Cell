@@ -1486,8 +1486,11 @@ end
 -- LibSharedMedia
 -------------------------------------------------
 Cell.vars.texture = "Interface\\AddOns\\Cell\\Media\\statusbar.tga"
+
 local LSM = LibStub("LibSharedMedia-3.0", true)
 LSM:Register("statusbar", "Cell ".._G.DEFAULT, Cell.vars.texture)
+LSM:Register("font", "visitor", [[Interface\Addons\Cell\Media\Fonts\visitor.ttf]], 255) 
+
 function F:GetBarTexture()
     --! update Cell.vars.texture for further use in UnitButton_OnLoad
     if LSM:IsValid("statusbar", CellDB["appearance"]["texture"]) then
@@ -1507,7 +1510,7 @@ function F:GetFont(font)
         if CellDB["appearance"]["useGameFont"] then
             return GameFontNormal:GetFont()
         else
-            return "Interface\\AddOns\\Cell\\Media\\Accidental_Presidency.ttf"
+            return "Interface\\AddOns\\Cell\\Media\\Fonts\\Accidental_Presidency.ttf"
         end
     end
 end
@@ -1518,7 +1521,7 @@ function F:GetFontItems()
     if CellDB["appearance"]["useGameFont"] then
         defaultFont = GameFontNormal:GetFont()
     else
-        defaultFont = "Interface\\AddOns\\Cell\\Media\\Accidental_Presidency.ttf"
+        defaultFont = "Interface\\AddOns\\Cell\\Media\\Fonts\\Accidental_Presidency.ttf"
     end
 
     local items = {}
