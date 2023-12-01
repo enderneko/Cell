@@ -588,11 +588,11 @@ local dispelNodeIDs = {
 
     -- SHAMAN ---------------
         -- 262 - Elemental
-        [262] = {["Curse"] = 81075},
+        [262] = {["Curse"] = 81075, ["Poison"] = 81093},
         -- 263 - Enhancement
-        [263] = {["Curse"] = 81077},
+        [263] = {["Curse"] = 81077, ["Poison"] = 81093},
         -- 264 - Restoration
-        [264] = {["Curse"] = 81073, ["Magic"] = true},
+        [264] = {["Curse"] = 81073, ["Magic"] = true, ["Poison"] = 81093},
     -------------------------
 
     -- WARLOCK --------------
