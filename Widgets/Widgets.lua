@@ -184,8 +184,12 @@ function addon:SetEnabled(isEnabled, ...)
             else
                 w:SetDesaturated(true)
             end      
-        else
+        elseif w.SetEnabled then
             w:SetEnabled(isEnabled)
+        elseif isEnabled then
+            w:Show()
+        else
+            w:Hide()
         end
     end
 end
@@ -540,8 +544,8 @@ function addon:CreateButton(parent, text, buttonColor, size, noBorder, noBackgro
     elseif buttonColor == "none" then
         color = {0, 0, 0, 0}
     else
-        color = {0.115, 0.115, 0.115, 0.7}
-        hoverColor = {0.5, 1, 0, 0.6}
+        color = {0.115, 0.115, 0.115, 1}
+        hoverColor = {0.23, 0.23, 0.23, 1}
     end
 
     -- keep color & hoverColor
@@ -619,7 +623,7 @@ function addon:CreateButton(parent, text, buttonColor, size, noBorder, noBackgro
     addon:SetTooltips(b, "ANCHOR_TOPLEFT", 0, 3, ...)
 
     -- texture
-    function b:SetTexture(tex, texSize, point, isAtlas)
+    function b:SetTexture(tex, texSize, point, isAtlas, noPushDownEffect)
         b.tex = b:CreateTexture(nil, "ARTWORK")
         b.tex:SetPoint(unpack(point))
         b.tex:SetSize(unpack(texSize))
@@ -636,16 +640,18 @@ function addon:CreateButton(parent, text, buttonColor, size, noBorder, noBackgro
             b:SetPushedTextOffset(0, 0)
         end
         -- push effect
-        b.onMouseDown = function()
-            b.tex:ClearAllPoints()
-            b.tex:SetPoint(point[1], point[2], point[3]-1)
+        if not noPushDownEffect then
+            b.onMouseDown = function()
+                b.tex:ClearAllPoints()
+                b.tex:SetPoint(point[1], point[2], point[3]-1)
+            end
+            b.onMouseUp = function()
+                b.tex:ClearAllPoints()
+                b.tex:SetPoint(unpack(point))
+            end
+            b:SetScript("OnMouseDown", b.onMouseDown)
+            b:SetScript("OnMouseUp", b.onMouseUp)
         end
-        b.onMouseUp = function()
-            b.tex:ClearAllPoints()
-            b.tex:SetPoint(unpack(point))
-        end
-        b:SetScript("OnMouseDown", b.onMouseDown)
-        b:SetScript("OnMouseUp", b.onMouseUp)
         -- enable / disable
         b:HookScript("OnEnable", function()
             b.tex:SetVertexColor(1, 1, 1)
@@ -2756,6 +2762,21 @@ function addon:CreateDropdown(parent, width, dropdownType, isMini)
     menu:EnableMouse(true)
     -- menu:SetFrameLevel(5)
     addon:StylizeFrame(menu, {0.115, 0.115, 0.115, 1})
+
+    -- label
+    function menu:SetLabel(label)
+        menu.label = menu:CreateFontString(nil, "OVERLAY", font_name)
+        menu.label:SetPoint("BOTTOMLEFT", menu, "TOPLEFT", 0, P:Scale(1))
+        menu.label:SetText(label)
+
+        hooksecurefunc(menu, "SetEnabled", function(self, enabled)
+            if enabled then
+                menu.label:SetTextColor(1, 1, 1)
+            else
+                menu.label:SetTextColor(0.4, 0.4, 0.4)
+            end
+        end)
+    end
     
     -- button: open/close menu list
     if isMini then

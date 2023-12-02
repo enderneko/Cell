@@ -7,6 +7,7 @@ local P = Cell.pixelPerfectFuncs
 local LCG = LibStub("LibCustomGlow-1.0")
 
 CELL_BORDER_SIZE = 1
+CELL_BORDER_COLOR = {0, 0, 0, 1}
 
 -------------------------------------------------
 -- SetFont
@@ -24,7 +25,7 @@ function I:SetFont(fs, anchorTo, font, size, flags, anchor, xOffset, yOffset, co
         elseif flags == "Outline" then
             flags = "OUTLINE"
         else
-            flags = "OUTLINE, MONOCHROME"
+            flags = "OUTLINE,MONOCHROME"
         end
         fs:SetFont(font, size, flags)
         fs:SetShadowOffset(0, 0)
@@ -451,7 +452,7 @@ local function Text_SetFont(frame, font, size, flags)
         elseif flags == "Outline" then
             flags = "OUTLINE"
         else
-            flags = "OUTLINE, MONOCHROME"
+            flags = "OUTLINE,MONOCHROME"
         end
         frame.text:SetFont(font, size, flags)
         frame.text:SetShadowOffset(0, 0)

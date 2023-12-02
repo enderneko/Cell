@@ -466,7 +466,7 @@ local function UpdatePosition()
 end
 
 local function UpdateMenu(which)
-    F:Debug("|cff00bfffUpdateMenu:|r " .. (which or "nil"))
+    F:Debug("|cff00bfffUpdateMenu:|r", which)
 
     if not which or which == "lock" then
         if CellDB["general"]["locked"] then
@@ -512,7 +512,7 @@ end
 Cell:RegisterCallback("UpdateMenu", "MainFrame_UpdateMenu", UpdateMenu)
 
 local function MainFrame_UpdateLayout(layout, which)
-    F:Debug("|cffff0066UpdateLayout:|r layout:" .. (layout or "nil") .. " which:" .. (which or "nil"))
+    F:Debug("|cffff0066UpdateLayout:|r layout:", layout, " which:", which)
 
     --! NOTE: a reload during pet battle prevents HEADER from CREATING CHILDs (unit buttons), this hide delay is a MUST  
     RegisterStateDriver(cellMainFrame, 'visibility', '[petbattle] hide; show')

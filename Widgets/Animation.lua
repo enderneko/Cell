@@ -134,6 +134,12 @@ function A:CreateFadeIn(frame, fromAlpha, toAlpha, duration, delay, onFinished)
     fadeIn.alpha:SetDuration(duration)
     if delay then fadeIn.alpha:SetStartDelay(delay) end
     
+    fadeIn:SetScript("OnPlay", function()
+        if frame.fadeOut then
+            frame.fadeOut:Stop()
+        end
+    end)
+
     if onFinished then
         fadeIn:SetScript("OnFinished", onFinished)
     end
@@ -152,6 +158,12 @@ function A:CreateFadeOut(frame, fromAlpha, toAlpha, duration, delay, onFinished)
     fadeOut.alpha:SetToAlpha(toAlpha)
     fadeOut.alpha:SetDuration(duration)
     if delay then fadeOut.alpha:SetStartDelay(delay) end
+
+    fadeOut:SetScript("OnPlay", function()
+        if frame.fadeIn then
+            frame.fadeIn:Stop()
+        end
+    end)
 
     if onFinished then
         fadeOut:SetScript("OnFinished", onFinished)

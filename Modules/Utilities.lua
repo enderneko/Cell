@@ -11,6 +11,7 @@ utilitiesTab:Hide()
 -------------------------------------------------
 -- list
 -------------------------------------------------
+local buttons = {}
 local listFrame, lastShown
 
 local function UpdateFontString(b)
@@ -27,7 +28,7 @@ function F:ShowUtilityList(anchor)
         listFrame = CreateFrame("Frame", nil, Cell.frames.optionsFrame, "BackdropTemplate")
         Cell:StylizeFrame(listFrame, {0,1,0,0.1}, {0,0,0,1})
         listFrame:SetPoint("TOPLEFT", anchor, "TOPRIGHT", 1, 0)
-        listFrame:SetFrameStrata("TOOLTIP")
+        listFrame:Hide()
         
         Cell:StylizeFrame(listFrame, nil, Cell:GetAccentColorTable())
 
@@ -38,8 +39,6 @@ function F:ShowUtilityList(anchor)
         dumbFS2:SetText(L["Dispel Request"])
 
         -- buttons
-        local buttons = {}
-
         buttons["raidTools"] = Cell:CreateButton(listFrame, L["Raid Tools"], "transparent-accent", {20, 20}, true)
         buttons["raidTools"].id = "raidTools"
         buttons["raidTools"]:SetPoint("TOPLEFT")
@@ -60,7 +59,6 @@ function F:ShowUtilityList(anchor)
             buttons["quickAssist"].id = "quickAssist"
             buttons["quickAssist"]:SetPoint("TOPLEFT", buttons["dispelRequest"], "BOTTOMLEFT")
             buttons["quickAssist"]:SetPoint("TOPRIGHT", buttons["dispelRequest"], "BOTTOMRIGHT")
-            buttons["quickAssist"]:SetEnabled(false)
 
             buttons["quickCast"] = Cell:CreateButton(listFrame, L["Quick Cast"], "transparent-accent", {20, 20}, true)
             buttons["quickCast"].id = "quickCast"
@@ -71,7 +69,7 @@ function F:ShowUtilityList(anchor)
             P:Size(listFrame, ceil(max(dumbFS1:GetStringWidth(), dumbFS2:GetStringWidth())) + 13, 20*3)
         end
 
-        local highlight = Cell:CreateButtonGroup({buttons["raidTools"], buttons["spellRequest"], buttons["dispelRequest"], buttons["quickAssist"], buttons["quickCast"]}, function(id)
+        local highlight = Cell:CreateButtonGroup(buttons, function(id)
             lastShown = id
             anchor:Click()
             Cell:Fire("ShowUtilitySettings", id)
@@ -80,7 +78,10 @@ function F:ShowUtilityList(anchor)
         highlight("raidTools")
     end
 
-    listFrame:Show()
+    if anchor:IsMouseOver() then
+        listFrame:SetFrameStrata("TOOLTIP")
+        listFrame:Show()
+    end
 end 
 
 function F:HideUtilityList()
@@ -120,3 +121,7 @@ Cell:RegisterCallback("ShowOptionsTab", "UtilitiesTab_ShowTab", ShowTab)
 Cell:RegisterCallback("ShowUtilitySettings", "UtilitiesTab_ShowUtilitySettings", function(which)
     P:Height(Cell.frames.optionsFrame, utilityHeight[which])
 end)
+
+function F:ShowQuickAssistTab()
+    buttons["quickAssist"]:Click()
+end

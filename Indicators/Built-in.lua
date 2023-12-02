@@ -952,7 +952,7 @@ function I:CreateNameText(parent)
             elseif flags == "Outline" then
                 flags = "OUTLINE"
             else
-                flags = "OUTLINE, MONOCHROME"
+                flags = "OUTLINE,MONOCHROME"
             end
             nameText.name:SetFont(font, size, flags)
             nameText.name:SetShadowOffset(0, 0)
@@ -1155,7 +1155,7 @@ local function StatusText_SetFont(self, font, size, flags)
         elseif flags == "Outline" then
             flags = "OUTLINE"
         else
-            flags = "OUTLINE, MONOCHROME"
+            flags = "OUTLINE,MONOCHROME"
         end
         self.text:SetFont(font, size, flags)
         self.text:SetShadowOffset(0, 0)
@@ -1396,7 +1396,7 @@ function I:CreateHealthText(parent)
             elseif flags == "Outline" then
                 flags = "OUTLINE"
             else
-                flags = "OUTLINE, MONOCHROME"
+                flags = "OUTLINE,MONOCHROME"
             end
             text:SetFont(font, size, flags)
             text:SetShadowOffset(0, 0)

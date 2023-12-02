@@ -10,7 +10,7 @@ partyFrame:SetAllPoints(Cell.frames.mainFrame)
 local header = CreateFrame("Frame", "CellPartyFrameHeader", partyFrame, "SecureGroupHeaderTemplate")
 header:SetAttribute("template", "CellUnitButtonTemplate")
 
-function header:UpdateButtonUnits(bName, unit)
+function header:UpdateButtonUnit(bName, unit)
     if not unit then return end
     
     _G[bName].unit = unit -- OmniCD
@@ -52,7 +52,7 @@ header:SetAttribute("_initialAttribute-refreshUnitChange", [[
         RegisterUnitWatch(petButton)
     end
 
-    header:CallMethod("UpdateButtonUnits", self:GetName(), unit)
+    header:CallMethod("UpdateButtonUnit", self:GetName(), unit)
 ]])
 
 header:SetAttribute("point", "TOP")
@@ -69,7 +69,7 @@ header:Show()
 header:SetAttribute("startingIndex", 1)
 
 -- init pet buttons
-for i, playerButton in ipairs({header:GetChildren()}) do
+for i, playerButton in ipairs(header) do
     -- playerButton.type = "main" -- layout setup
 
     local petButton = CreateFrame("Button", playerButton:GetName().."Pet", playerButton, "CellUnitButtonTemplate")
@@ -180,7 +180,7 @@ local function PartyFrame_UpdateLayout(layout, which)
     end
 
     if not which or strfind(which, "size$") or strfind(which, "power$") or which == "barOrientation" then
-        for i, playerButton in ipairs({header:GetChildren()}) do
+        for i, playerButton in ipairs(header) do
             local petButton = playerButton.petButton
 
             if not which or strfind(which, "size$") then
@@ -215,11 +215,11 @@ local function PartyFrame_UpdateLayout(layout, which)
     if not which or which == "pet" then
         header:SetAttribute("showPartyPets", layout["pet"]["partyEnabled"])
         if layout["pet"]["partyEnabled"] then
-            for i, playerButton in ipairs({header:GetChildren()}) do
+            for i, playerButton in ipairs(header) do
                 RegisterUnitWatch(playerButton.petButton)
             end
         else
-            for i, playerButton in ipairs({header:GetChildren()}) do
+            for i, playerButton in ipairs(header) do
                 UnregisterUnitWatch(playerButton.petButton)
                 playerButton.petButton:Hide()
             end

@@ -470,7 +470,7 @@ local function ApplyClickCastings(b)
 end
 
 local function UpdateClickCastings(noReload)
-    F:Debug("|cff77ff77UpdateClickCastings:|r useCommon: "..tostring(Cell.vars.clickCastings["useCommon"]))
+    F:Debug("|cff77ff77UpdateClickCastings:|r useCommon:", Cell.vars.clickCastings["useCommon"])
     clickCastingTable = Cell.vars.clickCastings["useCommon"] and Cell.vars.clickCastings["common"] or Cell.vars.clickCastings[Cell.vars.playerSpecID]
     
     -- FIXME: remove this determine statement

@@ -47,7 +47,7 @@ dumb:HookScript("OnLeave", function()
     CellTooltip:Hide()
 end)
 
-function raidPetFrame:UpdateAnchor()
+local function UpdateAnchor()
     local show
     if Cell.vars.currentLayoutTable["pet"]["raidEnabled"] then
         show = Cell.unitButtons.raidpet[1]:IsShown()
@@ -147,7 +147,7 @@ header:SetAttribute("initialConfigFunction", [[
     -- self:SetHeight(header:GetAttribute("buttonHeight") or 46)
 ]])
 
-function header:UpdateButtonUnits(bName, unit)
+function header:UpdateButtonUnit(bName, unit)
     if not unit then return end
     Cell.unitButtons.raidpet.units[unit] = _G[bName]
     _G[bName].isRaidPet = true
@@ -155,7 +155,7 @@ end
 
 header:SetAttribute("_initialAttributeNames", "refreshUnitChange")
 header:SetAttribute("_initialAttribute-refreshUnitChange", [[
-    self:GetParent():CallMethod("UpdateButtonUnits", self:GetName(), self:GetAttribute("unit"))
+    self:GetParent():CallMethod("UpdateButtonUnit", self:GetName(), self:GetAttribute("unit"))
 ]])
     
 header:SetAttribute("template", "CellUnitButtonTemplate")
@@ -175,17 +175,17 @@ end
 header:Show()
 header:SetAttribute("startingIndex", 1)
 
-for i, b in ipairs({header:GetChildren()}) do
+for i, b in ipairs(header) do
     Cell.unitButtons.raidpet[i] = b
     -- b.type = "pet" -- layout setup
 end
 
 -- update mover
 header[1]:HookScript("OnShow", function()
-    raidPetFrame:UpdateAnchor()
+    UpdateAnchor()
 end)
 header[1]:HookScript("OnHide", function()
-    raidPetFrame:UpdateAnchor()
+    UpdateAnchor()
 end)
 
 -------------------------------------------------
@@ -235,7 +235,7 @@ local function UpdatePosition()
         end
     end
 
-    raidPetFrame:UpdateAnchor()
+    UpdateAnchor()
 end
 
 local function UpdateMenu(which)
@@ -284,10 +284,10 @@ local function RaidPetFrame_UpdateLayout(layout, which)
 
         P:Size(raidPetFrame, width, height)
 
-        header:SetAttribute("buttonWidth", P:Scale(width))
-        header:SetAttribute("buttonHeight", P:Scale(height))
+        -- header:SetAttribute("buttonWidth", P:Scale(width))
+        -- header:SetAttribute("buttonHeight", P:Scale(height))
 
-        for i, b in ipairs({header:GetChildren()}) do
+        for i, b in ipairs(header) do
             if not which or strfind(which, "size$") then
                 P:Size(b, width, height)
             end
@@ -372,7 +372,7 @@ local function RaidPetFrame_UpdateLayout(layout, which)
         header:SetAttribute("columnAnchorPoint", headerColumnAnchorPoint)
 
         --! force update unitbutton's point
-        for i, b in ipairs({header:GetChildren()}) do
+        for i, b in ipairs(header) do
             b:ClearAllPoints()
         end
         header:SetAttribute("unitsPerColumn", 5)

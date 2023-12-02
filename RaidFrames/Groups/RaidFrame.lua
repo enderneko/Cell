@@ -134,7 +134,7 @@ local function CreateGroupHeader(group)
     header:Show()
     header:SetAttribute("startingIndex", 1)
 
-    -- for i, b in ipairs({header:GetChildren()}) do
+    -- for i, b in ipairs(header) do
     --     b.type = "main" -- layout setup
     -- end
 
@@ -211,7 +211,7 @@ local function RaidFrame_UpdateLayout(layout, which)
         local header = groupHeaders[group]
 
         if not which or which == "main-size" or which == "main-power" or which == "groupFilter" or which == "barOrientation" then
-            for j, b in ipairs({header:GetChildren()}) do
+            for j, b in ipairs(header) do
                 if not which or which == "main-size" or which == "groupFilter" then
                     P:Size(b, width, height)
                     b:ClearAllPoints()
@@ -226,10 +226,6 @@ local function RaidFrame_UpdateLayout(layout, which)
             end
 
             if not which or which == "main-size" or which == "groupFilter" then
-                --! important new button size depend on buttonWidth & buttonHeight
-                header:SetAttribute("buttonWidth", P:Scale(width))
-                header:SetAttribute("buttonHeight", P:Scale(height))
-
                 -- 确保按钮在“一定程度上”对齐
                 header:SetAttribute("minWidth", P:Scale(width))
                 header:SetAttribute("minHeight", P:Scale(height))
@@ -370,7 +366,7 @@ local function RaidFrame_UpdateLayout(layout, which)
 
         -- REVIEW: fix name width
         if which == "groupFilter" then
-            for j, b in ipairs({header:GetChildren()}) do
+            for j, b in ipairs(header) do
                 b.widget.healthBar:GetScript("OnSizeChanged")(b.widget.healthBar)
             end
             for k, arenaPet in ipairs(arenaPetButtons) do

@@ -9,7 +9,6 @@ local A = Cell.animations
 local HealComm = LibStub("LibHealComm-4.0", true)
 
 CELL_FADE_OUT_HEALTH_PERCENT = nil
-CELL_BORDER_COLOR = {0, 0, 0, 1}
 
 local UnitGUID = UnitGUID
 local UnitClassBase = UnitClassBase

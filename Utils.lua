@@ -73,6 +73,10 @@ function F:IterateClasses()
     end
 end
 
+function F:GetSortedClasses()
+    return F:Copy(sortedClasses)
+end
+
 -------------------------------------------------
 -- WotLK
 -------------------------------------------------
@@ -575,10 +579,10 @@ function F:TableToString(t, sep)
     return table.concat(t, sep)
 end
 
-function F:ConvertTable(t)
+function F:ConvertTable(t, value)
     local temp = {}
     for k, v in ipairs(t) do
-        temp[v] = k
+        temp[v] = value or k
     end
     return temp
 end

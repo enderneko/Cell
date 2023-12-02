@@ -9,7 +9,6 @@ local A = Cell.animations
 local LGI = LibStub:GetLibrary("LibGroupInfo")
 
 CELL_FADE_OUT_HEALTH_PERCENT = nil
-CELL_BORDER_COLOR = {0, 0, 0, 1}
 
 local UnitGUID = UnitGUID
 -- local UnitHealth = LibCLHealth.UnitHealth

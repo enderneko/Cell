@@ -663,7 +663,7 @@ end
 local inInstance
 function eventFrame:PLAYER_ENTERING_WORLD()
     -- eventFrame:UnregisterEvent("PLAYER_ENTERING_WORLD")
-    F:Debug("PLAYER_ENTERING_WORLD")
+    F:Debug("|cffbbbbbb=== PLAYER_ENTERING_WORLD ===")
     Cell.vars.inMythic = false
 
     local isIn, iType = IsInInstance()
@@ -701,7 +701,7 @@ end
 
 local prevSpec
 function eventFrame:PLAYER_LOGIN()
-    F:Debug("PLAYER_LOGIN")
+    F:Debug("|cffbbbbbb=== PLAYER_LOGIN ===")
     eventFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
     eventFrame:RegisterEvent("GROUP_ROSTER_UPDATE")
     eventFrame:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
@@ -774,7 +774,7 @@ end)
 -- PLAYER_SPECIALIZATION_CHANGED fires when level up, ACTIVE_TALENT_GROUP_CHANGED usually fire twice.
 -- NOTE: ACTIVE_TALENT_GROUP_CHANGED fires before PLAYER_LOGIN, but can't GetSpecializationInfo before PLAYER_LOGIN
 function eventFrame:ACTIVE_TALENT_GROUP_CHANGED()
-    F:Debug("ACTIVE_TALENT_GROUP_CHANGED")
+    F:Debug("|cffbbbbbb=== ACTIVE_TALENT_GROUP_CHANGED ===")
     -- not in combat & spec CHANGED
     if not InCombatLockdown() and (prevSpec and prevSpec ~= GetSpecialization() or forceRecheck) then
         prevSpec = GetSpecialization()

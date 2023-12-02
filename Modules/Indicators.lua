@@ -1884,7 +1884,7 @@ local function ShowIndicatorSettings(id)
 end
 
 LoadIndicatorList = function()
-    F:Debug("|cffff7777LoadIndicatorList:|r "..currentLayout)
+    F:Debug("|cffff7777LoadIndicatorList:|r", currentLayout)
     listFrame.scrollFrame:Reset()
     wipe(listButtons)
 

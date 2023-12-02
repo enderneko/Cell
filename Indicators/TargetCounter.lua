@@ -166,7 +166,7 @@ function I:CreateTargetCounter(parent)
             elseif flags == "Outline" then
                 flags = "OUTLINE"
             else
-                flags = "OUTLINE, MONOCHROME"
+                flags = "OUTLINE,MONOCHROME"
             end
             text:SetFont(font, size, flags)
             text:SetShadowOffset(0, 0)

@@ -132,13 +132,17 @@ end
 -- show & hide
 -------------------------------------------------
 local init
-function F:ShowOptionsFrame()
+local function Init()
     if not init then
         init = true
         P:Resize(optionsFrame)
         P:Reborder(optionsFrame)
         CreateTabButtons()
     end
+end
+
+function F:ShowOptionsFrame()
+    Init()
 
     if optionsFrame:IsShown() then
         optionsFrame:Hide()
@@ -149,11 +153,14 @@ function F:ShowOptionsFrame()
         generalBtn:Click()
     end
     
+    optionsFrame:Show()
+end
+
+optionsFrame:SetScript("OnShow", function()
     if not P:LoadPosition(optionsFrame, CellDB["optionsFramePosition"]) then
         P:PixelPerfectPoint(optionsFrame)
     end
-    optionsFrame:Show()
-end
+end)
 
 optionsFrame:SetScript("OnHide", function()
     -- stolen from dbm
@@ -170,14 +177,22 @@ end)
 
 -- for Raid Debuffs import
 function F:ShowRaidDebuffsTab()
+    Init()
     optionsFrame:Show()
     debuffsBtn:Click()
 end
 
 -- for layout import
 function F:ShowLayousTab()
+    Init()
     optionsFrame:Show()
     layoutsBtn:Click()
+end
+
+function F:ShowUtilitiesTab()
+    Init()
+    optionsFrame:Show()
+    utilitiesBtn:Click()
 end
 
 -------------------------------------------------

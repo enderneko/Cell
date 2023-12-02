@@ -613,7 +613,7 @@ end
 
 local inInstance
 function eventFrame:PLAYER_ENTERING_WORLD()
-    F:Debug("PLAYER_ENTERING_WORLD")
+    F:Debug("|cffbbbbbb=== PLAYER_ENTERING_WORLD ===")
 
     local isIn, iType = IsInInstance()
     instanceType = iType
@@ -670,7 +670,7 @@ local function CheckDivineAegis()
 end
 
 function eventFrame:PLAYER_LOGIN()
-    F:Debug("PLAYER_LOGIN")
+    F:Debug("|cffbbbbbb=== PLAYER_LOGIN ===")
     eventFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
     eventFrame:RegisterEvent("GROUP_ROSTER_UPDATE")
     eventFrame:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
@@ -737,7 +737,7 @@ function eventFrame:UI_SCALE_CHANGED()
 end
 
 function eventFrame:ACTIVE_TALENT_GROUP_CHANGED()
-    F:Debug("ACTIVE_TALENT_GROUP_CHANGED")
+    F:Debug("|cffbbbbbb=== ACTIVE_TALENT_GROUP_CHANGED ===")
     -- not in combat & spec CHANGED
     if not InCombatLockdown() and (Cell.vars.activeTalentGroup and Cell.vars.activeTalentGroup ~= GetActiveTalentGroup()) then
         Cell.vars.activeTalentGroup = GetActiveTalentGroup()
