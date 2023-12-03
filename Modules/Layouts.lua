@@ -1172,9 +1172,9 @@ local function UpdateSpotlightPreview()
 end
 
 -------------------------------------------------
--- OnHide
+-- hide previews
 -------------------------------------------------
-layoutsTab:SetScript("OnHide", function()
+local function HidePreviews()
     if layoutPreview.timer then
         layoutPreview.timer:Cancel()
         layoutPreview.timer = nil
@@ -1218,7 +1218,7 @@ layoutsTab:SetScript("OnHide", function()
     if not spotlightPreview.fadeOut:IsPlaying() then
         spotlightPreview.fadeOut:Play()
     end
-end)
+end
 
 -------------------------------------------------
 -- layout
@@ -2848,6 +2848,7 @@ layoutsTab:SetScript("OnHide", function()
     else
         layoutsTab:SetScript("OnShow", nil)
     end
+    HidePreviews()
 end)
 
 -------------------------------------------------
