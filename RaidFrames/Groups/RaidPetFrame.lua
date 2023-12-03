@@ -2,7 +2,10 @@ local _, Cell = ...
 local L = Cell.L
 local F = Cell.funcs
 local B = Cell.bFuncs
+local A = Cell.animations
 local P = Cell.pixelPerfectFuncs
+
+local tooltipPoint, tooltipRelativePoint, tooltipX, tooltipY
 
 local raidPetFrame = CreateFrame("Frame", "CellRaidPetFrame", Cell.frames.mainFrame, "SecureHandlerAttributeTemplate")
 Cell.frames.raidPetFrame = raidPetFrame
@@ -22,6 +25,8 @@ hoverFrame:SetPoint("TOP", anchorFrame, 0, 1)
 hoverFrame:SetPoint("BOTTOM", anchorFrame, 0, -1)
 hoverFrame:SetPoint("LEFT", anchorFrame, -1, 0)
 hoverFrame:SetPoint("RIGHT", anchorFrame, 1, 0)
+
+A:ApplyFadeInOutToMenu(anchorFrame, hoverFrame)
 
 local dumb = Cell:CreateButton(anchorFrame, nil, "accent", {20, 10}, false, true)
 dumb:Hide()
@@ -67,68 +72,6 @@ local function UpdateAnchor()
         dumb:Hide()
     end
 end
-
--------------------------------------------------
--- fadeIn & fadeOut
--------------------------------------------------
-local fadingIn, fadedIn, fadingOut, fadedOut
-anchorFrame.fadeIn = anchorFrame:CreateAnimationGroup()
-anchorFrame.fadeIn.alpha = anchorFrame.fadeIn:CreateAnimation("alpha")
-anchorFrame.fadeIn.alpha:SetFromAlpha(0)
-anchorFrame.fadeIn.alpha:SetToAlpha(1)
-anchorFrame.fadeIn.alpha:SetDuration(0.5)
-anchorFrame.fadeIn.alpha:SetSmoothing("OUT")
-anchorFrame.fadeIn:SetScript("OnPlay", function()
-    anchorFrame.fadeOut:Finish()
-    fadingIn = true
-end)
-anchorFrame.fadeIn:SetScript("OnFinished", function()
-    fadingIn = false
-    fadingOut = false
-    fadedIn = true
-    fadedOut = false
-    anchorFrame:SetAlpha(1)
-
-    if CellDB["general"]["fadeOut"] and not hoverFrame:IsMouseOver() then
-        anchorFrame.fadeOut:Play()
-    end
-end)
-
-anchorFrame.fadeOut = anchorFrame:CreateAnimationGroup()
-anchorFrame.fadeOut.alpha = anchorFrame.fadeOut:CreateAnimation("alpha")
-anchorFrame.fadeOut.alpha:SetFromAlpha(1)
-anchorFrame.fadeOut.alpha:SetToAlpha(0)
-anchorFrame.fadeOut.alpha:SetDuration(0.5)
-anchorFrame.fadeOut.alpha:SetSmoothing("OUT")
-anchorFrame.fadeOut:SetScript("OnPlay", function()
-    anchorFrame.fadeIn:Finish()
-    fadingOut = true
-end)
-anchorFrame.fadeOut:SetScript("OnFinished", function()
-    fadingIn = false
-    fadingOut = false
-    fadedIn = false
-    fadedOut = true
-    anchorFrame:SetAlpha(0)
-
-    if hoverFrame:IsMouseOver() then
-        anchorFrame.fadeIn:Play()
-    end
-end)
-
-hoverFrame:SetScript("OnEnter", function()
-    if not CellDB["general"]["fadeOut"] then return end
-    if not (fadingIn or fadedIn) then
-        anchorFrame.fadeIn:Play()
-    end
-end)
-hoverFrame:SetScript("OnLeave", function()
-    if not CellDB["general"]["fadeOut"] then return end
-    if hoverFrame:IsMouseOver() then return end
-    if not (fadingOut or fadedOut) then
-        anchorFrame.fadeOut:Play()
-    end
-end)
 
 -------------------------------------------------
 -- header

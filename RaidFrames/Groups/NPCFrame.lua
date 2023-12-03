@@ -2,6 +2,7 @@ local _, Cell = ...
 local L = Cell.L
 local F = Cell.funcs
 local B = Cell.bFuncs
+local A = Cell.animations
 local P = Cell.pixelPerfectFuncs
 
 local npcFrame = CreateFrame("Frame", "CellNPCFrame", Cell.frames.mainFrame, "SecureHandlerStateTemplate")
@@ -28,7 +29,7 @@ Cell.frames.separateNpcFrameAnchor = separateAnchor
 separateAnchor:SetMovable(true)
 separateAnchor:SetClampedToScreen(true)
 P:Size(separateAnchor, 20, 10)
-separateAnchor:SetPoint("TOPLEFT", UIParent, "CENTER")
+PixelUtil.SetPoint(separateAnchor, "TOPLEFT", UIParent, "CENTER", 1, -1)
 -- Cell:StylizeFrame(separateAnchor, {0, 1, 0, 0.4})
 
 local hoverFrame = CreateFrame("Frame", nil, npcFrame)
@@ -36,6 +37,8 @@ hoverFrame:SetPoint("TOP", separateAnchor, 0, 1)
 hoverFrame:SetPoint("BOTTOM", separateAnchor, 0, -1)
 hoverFrame:SetPoint("LEFT", separateAnchor, -1, 0)
 hoverFrame:SetPoint("RIGHT", separateAnchor, 1, 0)
+
+A:ApplyFadeInOutToMenu(separateAnchor, hoverFrame)
 
 local dumb = Cell:CreateButton(separateAnchor, nil, "accent", {20, 10}, false, true)
 dumb:Hide()
@@ -84,68 +87,6 @@ function npcFrame:UpdateSeparateAnchor()
         dumb:Hide()
     end
 end
-
--------------------------------------------------
--- fadeIn & fadeOut
--------------------------------------------------
-local fadingIn, fadedIn, fadingOut, fadedOut
-separateAnchor.fadeIn = separateAnchor:CreateAnimationGroup()
-separateAnchor.fadeIn.alpha = separateAnchor.fadeIn:CreateAnimation("alpha")
-separateAnchor.fadeIn.alpha:SetFromAlpha(0)
-separateAnchor.fadeIn.alpha:SetToAlpha(1)
-separateAnchor.fadeIn.alpha:SetDuration(0.5)
-separateAnchor.fadeIn.alpha:SetSmoothing("OUT")
-separateAnchor.fadeIn:SetScript("OnPlay", function()
-    separateAnchor.fadeOut:Finish()
-    fadingIn = true
-end)
-separateAnchor.fadeIn:SetScript("OnFinished", function()
-    fadingIn = false
-    fadingOut = false
-    fadedIn = true
-    fadedOut = false
-    separateAnchor:SetAlpha(1)
-
-    if CellDB["general"]["fadeOut"] and not hoverFrame:IsMouseOver() then
-        separateAnchor.fadeOut:Play()
-    end
-end)
-
-separateAnchor.fadeOut = separateAnchor:CreateAnimationGroup()
-separateAnchor.fadeOut.alpha = separateAnchor.fadeOut:CreateAnimation("alpha")
-separateAnchor.fadeOut.alpha:SetFromAlpha(1)
-separateAnchor.fadeOut.alpha:SetToAlpha(0)
-separateAnchor.fadeOut.alpha:SetDuration(0.5)
-separateAnchor.fadeOut.alpha:SetSmoothing("OUT")
-separateAnchor.fadeOut:SetScript("OnPlay", function()
-    separateAnchor.fadeIn:Finish()
-    fadingOut = true
-end)
-separateAnchor.fadeOut:SetScript("OnFinished", function()
-    fadingIn = false
-    fadingOut = false
-    fadedIn = false
-    fadedOut = true
-    separateAnchor:SetAlpha(0)
-
-    if hoverFrame:IsMouseOver() then
-        separateAnchor.fadeIn:Play()
-    end
-end)
-
-hoverFrame:SetScript("OnEnter", function()
-    if not CellDB["general"]["fadeOut"] then return end
-    if not (fadingIn or fadedIn) then
-        separateAnchor.fadeIn:Play()
-    end
-end)
-hoverFrame:SetScript("OnLeave", function()
-    if not CellDB["general"]["fadeOut"] then return end
-    if hoverFrame:IsMouseOver() then return end
-    if not (fadingOut or fadedOut) then
-        separateAnchor.fadeOut:Play()
-    end
-end)
 
 -------------------------------------------------
 -- NOTE: update each npc unit button

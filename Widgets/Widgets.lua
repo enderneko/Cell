@@ -1,7 +1,3 @@
------------------------------------------
--- LibWidgets
--- by KevinSK
------------------------------------------
 local addonName, addon = ...
 local L = addon.L
 local F = addon.funcs

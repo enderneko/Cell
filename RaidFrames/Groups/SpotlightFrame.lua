@@ -2,6 +2,7 @@ local _, Cell = ...
 local L = Cell.L
 local F = Cell.funcs
 local B = Cell.bFuncs
+local A = Cell.animations
 local P = Cell.pixelPerfectFuncs
 
 local LCG = LibStub("LibCustomGlow-1.0")
@@ -18,7 +19,7 @@ Cell.frames.spotlightFrame = spotlightFrame
 
 local anchorFrame = CreateFrame("Frame", "CellSpotlightAnchorFrame", spotlightFrame)
 Cell.frames.spotlightFrameAnchor = anchorFrame
-anchorFrame:SetPoint("TOPLEFT", UIParent, "CENTER")
+PixelUtil.SetPoint(anchorFrame, "TOPLEFT", UIParent, "CENTER", 1, -1)
 anchorFrame:SetMovable(true)
 anchorFrame:SetClampedToScreen(true)
 
@@ -28,6 +29,8 @@ hoverFrame:SetPoint("BOTTOM", anchorFrame, 0, -1)
 hoverFrame:SetPoint("LEFT", anchorFrame, -1, 0)
 hoverFrame:SetPoint("RIGHT", anchorFrame, 1, 0)
 -- Cell:StylizeFrame(hoverFrame, {1,0,0,0.3}, {0,0,0,0})
+
+A:ApplyFadeInOutToMenu(anchorFrame, hoverFrame)
 
 local config = Cell:CreateButton(anchorFrame, nil, "accent", {20, 10}, false, true, nil, nil, "SecureHandlerAttributeTemplate,SecureHandlerClickTemplate")
 config:SetFrameStrata("MEDIUM")
@@ -64,68 +67,6 @@ end)
 config:HookScript("OnLeave", function()
     hoverFrame:GetScript("OnLeave")(hoverFrame)
     CellTooltip:Hide()
-end)
-
--------------------------------------------------
--- fadeIn & fadeOut
--------------------------------------------------
-local fadingIn, fadedIn, fadingOut, fadedOut
-anchorFrame.fadeIn = anchorFrame:CreateAnimationGroup()
-anchorFrame.fadeIn.alpha = anchorFrame.fadeIn:CreateAnimation("alpha")
-anchorFrame.fadeIn.alpha:SetFromAlpha(0)
-anchorFrame.fadeIn.alpha:SetToAlpha(1)
-anchorFrame.fadeIn.alpha:SetDuration(0.5)
-anchorFrame.fadeIn.alpha:SetSmoothing("OUT")
-anchorFrame.fadeIn:SetScript("OnPlay", function()
-    anchorFrame.fadeOut:Finish()
-    fadingIn = true
-end)
-anchorFrame.fadeIn:SetScript("OnFinished", function()
-    fadingIn = false
-    fadingOut = false
-    fadedIn = true
-    fadedOut = false
-    anchorFrame:SetAlpha(1)
-
-    if CellDB["general"]["fadeOut"] and not hoverFrame:IsMouseOver() then
-        anchorFrame.fadeOut:Play()
-    end
-end)
-
-anchorFrame.fadeOut = anchorFrame:CreateAnimationGroup()
-anchorFrame.fadeOut.alpha = anchorFrame.fadeOut:CreateAnimation("alpha")
-anchorFrame.fadeOut.alpha:SetFromAlpha(1)
-anchorFrame.fadeOut.alpha:SetToAlpha(0)
-anchorFrame.fadeOut.alpha:SetDuration(0.5)
-anchorFrame.fadeOut.alpha:SetSmoothing("OUT")
-anchorFrame.fadeOut:SetScript("OnPlay", function()
-    anchorFrame.fadeIn:Finish()
-    fadingOut = true
-end)
-anchorFrame.fadeOut:SetScript("OnFinished", function()
-    fadingIn = false
-    fadingOut = false
-    fadedIn = false
-    fadedOut = true
-    anchorFrame:SetAlpha(0)
-
-    if hoverFrame:IsMouseOver() then
-        anchorFrame.fadeIn:Play()
-    end
-end)
-
-hoverFrame:SetScript("OnEnter", function()
-    if not CellDB["general"]["fadeOut"] then return end
-    if not (fadingIn or fadedIn) then
-        anchorFrame.fadeIn:Play()
-    end
-end)
-hoverFrame:SetScript("OnLeave", function()
-    if not CellDB["general"]["fadeOut"] then return end
-    if hoverFrame:IsMouseOver() then return end
-    if not (fadingOut or fadedOut) then
-        anchorFrame.fadeOut:Play()
-    end
 end)
 
 -------------------------------------------------

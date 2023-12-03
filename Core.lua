@@ -8,6 +8,7 @@ Cell.funcs = {}
 Cell.iFuncs = {}
 Cell.bFuncs = {}
 Cell.uFuncs = {}
+-- Cell.wFuncs = {} -- TODO: move widget functions
 Cell.animations = {}
 
 local F = Cell.funcs
