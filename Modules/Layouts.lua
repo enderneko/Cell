@@ -2087,16 +2087,16 @@ local function CreateLayoutSetupPane()
     orientationDropdown:SetPoint("TOPLEFT", widthSlider, "TOPRIGHT", 30, 0)
     orientationDropdown:SetItems({
         {
-            ["text"] = L["Vertical"],
-            ["value"] = "vertical",
+            ["text"] = L["Horizontal"],
+            ["value"] = "horizontal",
             ["onClick"] = function()
-                selectedLayoutTable[selectedPage]["orientation"] = "vertical"
+                selectedLayoutTable[selectedPage]["orientation"] = "horizontal"
                 UpdateArrangement()
-                
+
                 if selectedPage == "main" then
-                    rcSlider:SetName(L["Group Columns"])
-                    rcSlider:SetValue(selectedLayoutTable["main"]["columns"])
-                    if selectedLayoutTable["main"]["columns"] == 8 then
+                    rcSlider:SetLabel(L["Group Rows"])
+                    rcSlider:SetValue(selectedLayoutTable["main"]["rows"])
+                    if selectedLayoutTable["main"]["rows"] == 8 then
                         groupSpacingSlider:SetEnabled(false)
                     else
                         groupSpacingSlider:SetEnabled(true)
@@ -2105,16 +2105,16 @@ local function CreateLayoutSetupPane()
             end,
         },
         {
-            ["text"] = L["Horizontal"],
-            ["value"] = "horizontal",
+            ["text"] = L["Vertical"],
+            ["value"] = "vertical",
             ["onClick"] = function()
-                selectedLayoutTable[selectedPage]["orientation"] = "horizontal"
+                selectedLayoutTable[selectedPage]["orientation"] = "vertical"
                 UpdateArrangement()
-
+                
                 if selectedPage == "main" then
-                    rcSlider:SetName(L["Group Rows"])
-                    rcSlider:SetValue(selectedLayoutTable["main"]["rows"])
-                    if selectedLayoutTable["main"]["rows"] == 8 then
+                    rcSlider:SetLabel(L["Group Columns"])
+                    rcSlider:SetValue(selectedLayoutTable["main"]["columns"])
+                    if selectedLayoutTable["main"]["columns"] == 8 then
                         groupSpacingSlider:SetEnabled(false)
                     else
                         groupSpacingSlider:SetEnabled(true)
@@ -2590,7 +2590,7 @@ LoadLayoutDB = function(layout)
     layoutDropdown:SetSelectedValue(selectedLayout)
 
     if selectedLayoutTable["main"]["orientation"] == "vertical" then
-        rcSlider:SetName(L["Group Columns"])
+        rcSlider:SetLabel(L["Group Columns"])
         rcSlider:SetValue(selectedLayoutTable["main"]["columns"])
         if selectedLayoutTable["main"]["columns"] == 8 then
             groupSpacingSlider:SetEnabled(false)
@@ -2598,7 +2598,7 @@ LoadLayoutDB = function(layout)
             groupSpacingSlider:SetEnabled(true)
         end
     else
-        rcSlider:SetName(L["Group Rows"])
+        rcSlider:SetLabel(L["Group Rows"])
         rcSlider:SetValue(selectedLayoutTable["main"]["rows"])
         if selectedLayoutTable["main"]["rows"] == 8 then
             groupSpacingSlider:SetEnabled(false)

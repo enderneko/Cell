@@ -144,7 +144,7 @@ local function CreateQCPane()
             ["text"] = L["left-to-right"],
             ["value"] = "left-to-right",
             ["onClick"] = function()
-                qcLinesSlider:SetName(L["Columns"])
+                qcLinesSlider:SetLabel(L["Columns"])
                 quickCastTable["orientation"] = "left-to-right"
                 Cell:Fire("UpdateQuickCast")
             end
@@ -153,7 +153,7 @@ local function CreateQCPane()
             ["text"] = L["right-to-left"],
             ["value"] = "right-to-left",
             ["onClick"] = function()
-                qcLinesSlider:SetName(L["Columns"])
+                qcLinesSlider:SetLabel(L["Columns"])
                 quickCastTable["orientation"] = "right-to-left"
                 Cell:Fire("UpdateQuickCast")
             end
@@ -162,7 +162,7 @@ local function CreateQCPane()
             ["text"] = L["top-to-bottom"],
             ["value"] = "top-to-bottom",
             ["onClick"] = function()
-                qcLinesSlider:SetName(L["Rows"])
+                qcLinesSlider:SetLabel(L["Rows"])
                 quickCastTable["orientation"] = "top-to-bottom"
                 Cell:Fire("UpdateQuickCast")
             end
@@ -171,7 +171,7 @@ local function CreateQCPane()
             ["text"] = L["bottom-to-top"],
             ["value"] = "bottom-to-top",
             ["onClick"] = function()
-                qcLinesSlider:SetName(L["Rows"])
+                qcLinesSlider:SetLabel(L["Rows"])
                 quickCastTable["orientation"] = "bottom-to-top"
                 Cell:Fire("UpdateQuickCast")
             end
@@ -696,9 +696,9 @@ local function LoadDB()
     qcButtonsSlider:SetValue(quickCastTable["num"])
     qcOrientationDD:SetSelectedValue(quickCastTable["orientation"])
     if strfind(quickCastTable["orientation"], "top") then
-        qcLinesSlider:SetName(L["Rows"])
+        qcLinesSlider:SetLabel(L["Rows"])
     else
-        qcLinesSlider:SetName(L["Columns"])
+        qcLinesSlider:SetLabel(L["Columns"])
     end
     qcLinesSlider:SetValue(quickCastTable["lines"])
     qcSizeSlider:SetValue(quickCastTable["size"])

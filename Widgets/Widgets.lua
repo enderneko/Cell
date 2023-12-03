@@ -1133,12 +1133,12 @@ function addon:CreateSlider(name, parent, low, high, width, step, onValueChanged
 
     addon:StylizeFrame(slider, {0.115, 0.115, 0.115, 1})
     
-    local nameText = slider:CreateFontString(nil, "OVERLAY", font_name)
-    nameText:SetText(name)
-    nameText:SetPoint("BOTTOM", slider, "TOP", 0, 2)
+    local label = slider:CreateFontString(nil, "OVERLAY", font_name)
+    label:SetText(name)
+    label:SetPoint("BOTTOM", slider, "TOP", 0, 2)
 
-    function slider:SetName(n)
-        nameText:SetText(n)
+    function slider:SetLabel(n)
+        label:SetText(n)
     end
 
     local currentEditBox = addon:CreateEditBox(slider, 48, 14)
@@ -1267,7 +1267,7 @@ function addon:CreateSlider(name, parent, low, high, width, step, onValueChanged
     slider:SetValue(low) -- NOTE: needs to be after OnValueChanged
 
     slider:SetScript("OnDisable", function()
-        nameText:SetTextColor(0.4, 0.4, 0.4)
+        label:SetTextColor(0.4, 0.4, 0.4)
         currentEditBox:SetEnabled(false)
         slider:SetScript("OnEnter", nil)
         slider:SetScript("OnLeave", nil)
@@ -1277,7 +1277,7 @@ function addon:CreateSlider(name, parent, low, high, width, step, onValueChanged
     end)
     
     slider:SetScript("OnEnable", function()
-        nameText:SetTextColor(1, 1, 1)
+        label:SetTextColor(1, 1, 1)
         currentEditBox:SetEnabled(true)
         slider:SetScript("OnEnter", slider.onEnter)
         slider:SetScript("OnLeave", slider.onLeave)
