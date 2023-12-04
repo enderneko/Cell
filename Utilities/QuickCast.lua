@@ -359,6 +359,7 @@ local function CreateSpellButton(parent, func)
     local b = Cell:CreateButton(parent, " ", "accent-hover", {195, 20})
     b:SetTexture("Interface\\AddOns\\Cell\\Media\\Icons\\create", {16, 16}, {"LEFT", 2, 0})
     b:RegisterForClicks("LeftButtonUp", "RightButtonUp")
+    b:GetFontString():SetJustifyH("LEFT")
 
     b:SetScript("OnClick", function(self, button)
         if button == "LeftButton" then

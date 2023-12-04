@@ -764,8 +764,9 @@ local function CreateSetting_TextWidth(parent)
             widget.length2:SetText(length)
             widget.length2:ClearFocus()
             widget.length2.confirmBtn:Hide()
-            widget.func({"length", tonumber(widget.length:GetText()) or widget.lengthValue, length})
             widget.lengthValue2 = length
+            
+            widget.func({"length", tonumber(widget.length:GetText()) or widget.lengthValue, length})
         end)
 
         widget.length2:SetScript("OnTextChanged", function(self, userChanged)
@@ -1380,7 +1381,7 @@ local function CreateSetting_Font(parent)
             },
             {
                 ["text"] = L["Monochrome Outline"],
-                ["value"] = "Monochrome Outline",
+                ["value"] = "Monochrome,Outline",
                 ["onClick"] = widget.Update,
             },
         })

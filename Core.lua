@@ -22,6 +22,7 @@ Cell.MIN_CLICKCASTINGS_VERSION = 189
 Cell.MIN_LAYOUTS_VERSION = 206
 Cell.MIN_INDICATORS_VERSION = 206
 Cell.MIN_DEBUFFS_VERSION = 189
+Cell.MIN_QUICKASSIST_VERSION = 206
 
 --@debug@
 local debugMode = true
@@ -185,7 +186,7 @@ function eventFrame:ADDON_LOADED(arg1)
                 ["alwaysUpdateBuffs"] = false,
                 ["alwaysUpdateDebuffs"] = false,
                 ["overrideLGF"] = false,
-                ["framePriority"] = "normal_spotlight",
+                ["framePriority"] = "normal_spotlight_quickassist",
                 ["useCleuHealthUpdater"] = false,
                 ["translit"] = false,
             }
@@ -313,6 +314,9 @@ function eventFrame:ADDON_LOADED(arg1)
                 }
             }
         end
+
+        -- quickAssist ----------------------------------------------------------------------------
+        if type(CellDB["quickAssist"]) ~= "table" then CellDB["quickAssist"] = {} end
 
         -- quickCast ------------------------------------------------------------------------------
         if type(CellDB["quickCast"]) ~= "table" then CellDB["quickCast"] = {} end
@@ -523,6 +527,8 @@ function eventFrame:ADDON_LOADED(arg1)
         F:CheckWhatsNew()
         F:RunSnippets()
         Cell.loaded = true
+
+        Cell:Fire("AddonLoaded")
     end
 
     -- omnicd -------------------------------------------------------------------------------------
@@ -737,6 +743,8 @@ function eventFrame:PLAYER_LOGIN()
     Cell:Fire("UpdateTools")
     -- update requests
     Cell:Fire("UpdateRequests")
+    -- update quick assist
+    Cell:Fire("UpdateQuickAssist")
     -- update quick cast
     Cell:Fire("UpdateQuickCast")
     -- update raid debuff list
@@ -856,6 +864,10 @@ function SlashCmdList.CELL(msg, editbox)
             CellDB["snippets"] = {}
             CellDB["snippets"][0] = F:GetDefaultSnippet()
             ReloadUI()
+
+        elseif rest == "quickassist" then
+            CellDB["quickAssist"][Cell.vars.playerSpecID] = nil
+            ReloadUI()
         end
 
     elseif command == "report" then
@@ -892,6 +904,7 @@ function SlashCmdList.CELL(msg, editbox)
             "|cFFFFB5C5/cell reset clickcastings|r: "..L["reset all Click-Castings"]..".\n"..
             "|cFFFFB5C5/cell reset raiddebuffs|r: "..L["reset all Raid Debuffs"]..".\n"..
             "|cFFFFB5C5/cell reset snippets|r: "..L["reset all Code Snippets"]..".\n"..
+            "|cFFFFB5C5/cell reset quickassist|r: "..L["reset Quick Assist for current spec"]..".\n"..
             "|cFFFFB5C5/cell reset all|r: "..L["reset all Cell settings"].."."
         )
     end

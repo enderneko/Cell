@@ -25,10 +25,15 @@ local function Cooldowns_UpdateSize(self, iconsShown)
     if not (self.width and self.height and self.orientation) then return end -- not init
     
     if iconsShown then -- call from I:UnitButton_UpdateBuffs or preview
-        if self.orientation == "horizontal" then
-            self:_SetSize(self.width*iconsShown-P:Scale(iconsShown-1), self.height)
-        else
-            self:_SetSize(self.width, self.height*iconsShown-P:Scale(iconsShown-1))
+        for i = iconsShown + 1, #self do
+            self[i]:Hide()
+        end
+        if iconsShown ~= 0 then
+            if self.orientation == "horizontal" then
+                self:_SetSize(self.width*iconsShown-P:Scale(iconsShown-1), self.height)
+            else
+                self:_SetSize(self.width, self.height*iconsShown-P:Scale(iconsShown-1))
+            end
         end
     else
         for i = 1, #self do
@@ -47,10 +52,15 @@ local function Cooldowns_UpdateSize_WithSpacing(self, iconsShown)
     if not (self.width and self.height and self.orientation) then return end -- not init
     
     if iconsShown then -- call from I:UnitButton_UpdateBuffs or preview
-        if self.orientation == "horizontal" then
-            self:_SetSize(self.width * iconsShown + P:Scale(iconsShown - 1), self.height)
-        else
-            self:_SetSize(self.width, self.height * iconsShown + P:Scale(iconsShown - 1))
+        for i = iconsShown + 1, #self do
+            self[i]:Hide()
+        end
+        if iconsShown ~= 0 then
+            if self.orientation == "horizontal" then
+                self:_SetSize(self.width * iconsShown + P:Scale(iconsShown - 1), self.height)
+            else
+                self:_SetSize(self.width, self.height * iconsShown + P:Scale(iconsShown - 1))
+            end
         end
     else
         for i = 1, #self do
@@ -294,8 +304,14 @@ local function Debuffs_SetSize(self, normalSize, bigSize)
     self:UpdateSize()
 end
 
-local function Debuffs_UpdateSize(self)
+local function Debuffs_UpdateSize(self, iconsShown)
     if not (self.normalSize and self.bigSize and self.orientation) then return end -- not init
+
+    if iconsShown then
+        for i = iconsShown + 1, 10 do
+            self[i]:Hide()
+        end
+    end
 
     local size = 0
     for i = 1, 10 do

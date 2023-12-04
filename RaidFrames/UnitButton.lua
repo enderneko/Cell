@@ -987,11 +987,8 @@ local function UnitButton_UpdateDebuffs(self)
         -- end
 
         -- update raidDebuffs
-        if startIndex > 1 then
-            self.indicators.raidDebuffs:UpdateSize(startIndex - 1)
-        end
+        self.indicators.raidDebuffs:UpdateSize(startIndex - 1)
         for i = startIndex, 3 do
-            self.indicators.raidDebuffs[i]:Hide()
             self.indicators.raidDebuffs[i].index = nil
         end
 
@@ -1044,11 +1041,8 @@ local function UnitButton_UpdateDebuffs(self)
     end
 
     -- update debuffs
-    if startIndex > 1 then
-        self.indicators.debuffs:UpdateSize()
-    end
+    self.indicators.debuffs:UpdateSize(startIndex - 1)
     for i = startIndex, 10 do
-        self.indicators.debuffs[i]:Hide()
         self.indicators.debuffs[i].index = nil
     end
 
@@ -1056,12 +1050,7 @@ local function UnitButton_UpdateDebuffs(self)
     self.indicators.dispels:SetDispels(self._debuffs_dispel)
 
     -- update crowdControls
-    if self._debuffs.crowdControlsFound > 0 then
-        self.indicators.crowdControls:UpdateSize(self._debuffs.crowdControlsFound)
-    end
-    for i = self._debuffs.crowdControlsFound + 1, 3 do
-        self.indicators.crowdControls[i]:Hide()
-    end
+    self.indicators.crowdControls:UpdateSize(self._debuffs.crowdControlsFound)
 
     -- user created indicators
     I:ShowCustomIndicators(self, "debuff")
@@ -1204,28 +1193,13 @@ local function UnitButton_UpdateBuffs(self)
     end
     
     -- update defensiveCooldowns
-    if self._buffs.defensiveFound > 0 then
-        self.indicators.defensiveCooldowns:UpdateSize(self._buffs.defensiveFound)
-    end
-    for i = self._buffs.defensiveFound + 1, 5 do
-        self.indicators.defensiveCooldowns[i]:Hide()
-    end
+    self.indicators.defensiveCooldowns:UpdateSize(self._buffs.defensiveFound)
     
     -- update externalCooldowns
-    if self._buffs.externalFound > 0 then
-        self.indicators.externalCooldowns:UpdateSize(self._buffs.externalFound)
-    end
-    for i = self._buffs.externalFound + 1, 5 do
-        self.indicators.externalCooldowns[i]:Hide()
-    end
+    self.indicators.externalCooldowns:UpdateSize(self._buffs.externalFound)
     
     -- update allCooldowns
-    if self._buffs.allFound > 0 then
-        self.indicators.allCooldowns:UpdateSize(self._buffs.allFound)
-    end
-    for i = self._buffs.allFound + 1, 5 do
-        self.indicators.allCooldowns[i]:Hide()
-    end
+    self.indicators.allCooldowns:UpdateSize(self._buffs.allFound)
     
     -- hide tankActiveMitigation
     if not self._buffs.tankActiveMitigationFound then
@@ -3307,7 +3281,7 @@ function CellUnitButton_OnLoad(button)
     -- target highlight
     local targetHighlight = CreateFrame("Frame", name.."TargetHighlight", button, "BackdropTemplate")
     button.widget.targetHighlight = targetHighlight
-    targetHighlight:EnableMouse(false)
+    targetHighlight:SetIgnoreParentAlpha(true)
     targetHighlight:SetFrameLevel(button:GetFrameLevel()+6)
     -- targetHighlight:SetBackdrop({edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = P:Scale(1)})
     -- P:Point(targetHighlight, "TOPLEFT", button, "TOPLEFT", -1, 1)
@@ -3317,7 +3291,7 @@ function CellUnitButton_OnLoad(button)
     -- mouseover highlight
     local mouseoverHighlight = CreateFrame("Frame", name.."MouseoverHighlight", button, "BackdropTemplate")
     button.widget.mouseoverHighlight = mouseoverHighlight
-    mouseoverHighlight:EnableMouse(false)
+    mouseoverHighlight:SetIgnoreParentAlpha(true)
     mouseoverHighlight:SetFrameLevel(button:GetFrameLevel()+7)
     -- mouseoverHighlight:SetBackdrop({edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = P:Scale(1)})
     -- P:Point(mouseoverHighlight, "TOPLEFT", button, "TOPLEFT", -1, 1)

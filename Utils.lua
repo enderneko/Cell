@@ -603,6 +603,19 @@ function F:ConvertSpellTable(t, convertIdToName)
     return temp
 end
 
+function F:ConvertSpellTable_WithClass(t)
+    local temp = {}
+    for class, ct in pairs(t) do
+        for _, id in ipairs(ct) do
+            local name = GetSpellInfo(id)
+            if name then
+                temp[id] = true
+            end
+        end
+    end
+    return temp
+end
+
 function F:ConvertSpellDurationTable(t, convertIdToName)
     local temp = {}
     for _, v in ipairs(t) do
@@ -613,6 +626,20 @@ function F:ConvertSpellDurationTable(t, convertIdToName)
                 temp[name] = tonumber(duration)
             else
                 temp[tonumber(id)] = tonumber(duration)
+            end
+        end
+    end
+    return temp
+end
+
+function F:ConvertSpellDurationTable_WithClass(t)
+    local temp = {}
+    for class, ct in pairs(t) do
+        for k, v in ipairs(ct) do
+            local id, duration = strsplit(":", v)
+            local name, _, icon = GetSpellInfo(id)
+            if name then
+                temp[tonumber(id)] = {tonumber(duration), icon}
             end
         end
     end
@@ -1499,6 +1526,13 @@ function F:GetBarTexture()
         Cell.vars.texture = "Interface\\AddOns\\Cell\\Media\\statusbar.tga"
     end
     return Cell.vars.texture
+end
+
+function F:GetBarTextureByName(name)
+    if LSM:IsValid("statusbar", name) then
+        return LSM:Fetch("statusbar", name)
+    end
+    return "Interface\\AddOns\\Cell\\Media\\statusbar.tga"
 end
 
 function F:GetFont(font)

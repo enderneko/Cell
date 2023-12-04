@@ -911,7 +911,7 @@ function addon:CreateCheckButton(parent, label, onClick, ...)
 
     function cb:SetText(text)
         cb.label:SetText(text)
-        if strtrim(label) ~= "" then
+        if strtrim(text) ~= "" then
             cb:SetHitRectInsets(0, -cb.label:GetStringWidth()-5, 0, 0)
         else
             cb:SetHitRectInsets(0, 0, 0, 0)
@@ -2708,6 +2708,7 @@ end
 local listInit, list, highlightTexture
 list = CreateFrame("Frame", addonName.."DropdownList", UIParent, "BackdropTemplate")
 list:SetIgnoreParentScale(true)
+list:SetClampedToScreen(true)
 -- addon:StylizeFrame(list, {0.115, 0.115, 0.115, 1})
 list:Hide()
 
@@ -2989,7 +2990,7 @@ function addon:CreateDropdown(parent, width, dropdownType, isMini)
                     menu:SetSelected(item.text)
                 end
                 list:Hide()
-                if item.onClick then item.onClick(item.text) end
+                if item.onClick then item.onClick(item.text, item.value) end
             end)
 
             -- update point

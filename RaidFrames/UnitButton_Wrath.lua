@@ -894,11 +894,8 @@ local function UnitButton_UpdateDebuffs(self)
         end
 
         -- update raidDebuffs
-        if startIndex > 1 then
-            self.indicators.raidDebuffs:UpdateSize(startIndex - 1)
-        end
+        self.indicators.raidDebuffs:UpdateSize(startIndex - 1)
         for i = startIndex, 3 do
-            self.indicators.raidDebuffs[i]:Hide()
             self.indicators.raidDebuffs[i].index = nil
         end
 
@@ -951,11 +948,8 @@ local function UnitButton_UpdateDebuffs(self)
     end
 
     -- update debuffs
-    if startIndex > 1 then
-        self.indicators.debuffs:UpdateSize()
-    end
+    self.indicators.debuffs:UpdateSize(startIndex - 1)
     for i = startIndex, 10 do
-        self.indicators.debuffs[i]:Hide()
         self.indicators.debuffs[i].index = nil
     end
 
@@ -1078,28 +1072,13 @@ local function UnitButton_UpdateBuffs(self)
     end
 
     -- update defensiveCooldowns
-    if defensiveFound > 1 then
-        self.indicators.defensiveCooldowns:UpdateSize(defensiveFound - 1)
-    end
-    for i = defensiveFound, 5 do
-        self.indicators.defensiveCooldowns[i]:Hide()
-    end
+    self.indicators.defensiveCooldowns:UpdateSize(defensiveFound - 1)
     
     -- update externalCooldowns
-    if externalFound > 1 then
-        self.indicators.externalCooldowns:UpdateSize(externalFound - 1)
-    end
-    for i = externalFound, 5 do
-        self.indicators.externalCooldowns[i]:Hide()
-    end
+    self.indicators.externalCooldowns:UpdateSize(externalFound - 1)
     
     -- update allCooldowns
-    if allFound > 1 then
-        self.indicators.allCooldowns:UpdateSize(allFound - 1)
-    end
-    for i = allFound, 5 do
-        self.indicators.allCooldowns[i]:Hide()
-    end
+    self.indicators.allCooldowns:UpdateSize(allFound - 1)
     
     -- hide drinking
     if not drinkingFound and self.indicators.statusText:GetStatus() == "DRINKING" then

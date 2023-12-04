@@ -174,7 +174,7 @@ function eventFrame:ADDON_LOADED(arg1)
                 ["alwaysUpdateBuffs"] = false,
                 ["alwaysUpdateDebuffs"] = false,
                 ["overrideLGF"] = false,
-                ["framePriority"] = "normal_spotlight",
+                ["framePriority"] = "normal_spotlight_quickassist",
                 ["useCleuHealthUpdater"] = false,
                 ["translit"] = false,
             }

@@ -336,6 +336,11 @@ function I:CreateAura_BarIcon(name, parent)
         elapsedTime = elapsedTime + elapsed
     end)
 
+    -- for LCG.ButtonGlow_Start
+    function cooldown:GetCooldownDuration()
+        return 0
+    end
+
     local spark = cooldown:CreateTexture(nil, "OVERLAY")
     frame.spark = spark
     P:Height(spark, CELL_BORDER_SIZE)
@@ -850,10 +855,15 @@ function I:CreateAura_Icons(name, parent, num)
     function icons:UpdateSize(iconsShown)
         if not (icons.width and icons.height and icons.orientation) then return end -- not init
         if iconsShown then -- call from I:CheckCustomIndicators or preview
-            if icons.orientation == "horizontal" then
-                icons:_SetSize(icons.width*iconsShown, icons.height)
-            else
-                icons:_SetSize(icons.width, icons.height*iconsShown)
+            for i = iconsShown + 1, num do
+                icons[i]:Hide()
+            end
+            if iconsShown ~= 0 then
+                if icons.orientation == "horizontal" then
+                    icons:_SetSize(icons.width*iconsShown, icons.height)
+                else
+                    icons:_SetSize(icons.width, icons.height*iconsShown)
+                end
             end
         else
             for i = 1, num do

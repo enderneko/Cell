@@ -13,5 +13,9 @@
     <Script file="Request_GlowOptions.lua"/>
     <Script file="Request_IconOptions.lua"/>
     <Script file="Request_TextOptions.lua"/>
+    <Include file="QuickAssist.xml"/>
+    <Script file="QuickAssist.lua"/>
+    <Script file="QuickAssist_Config.lua"/>
+    <Script file="QuickAssist_ImportExport.lua"/>
     <Script file="QuickCast.lua"/>
 </Ui>
