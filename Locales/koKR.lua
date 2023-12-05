@@ -194,7 +194,7 @@ L["DRINKING"] = "음료"
 L["Edit"] = "편집"
 L["Edit spell"] = "주문 편집"
 --[[Translation missing --]]
---[[ L["EN"] = "EN"--]] 
+--[[ L["En"] = "En"--]] 
 L["Enable"] = "사용"
 --[[Translation missing --]]
 --[[ L["Enable Death Color"] = "Enable Death Color"--]] 
@@ -347,7 +347,7 @@ L["No"] = "아니요"
 L["No custom debuffs to export!"] = "내보낼 사용자 정의 약화 효과가 없습니다!"
 L["None"] = "없음"
 --[[Translation missing --]]
---[[ L["NON-EN"] = "NON-EN"--]] 
+--[[ L["Non-En"] = "Non-En"--]] 
 L["Normal"] = "Normal"
 L["NPC Button"] = "NPC 버튼"
 L["OFF"] = "끄기"

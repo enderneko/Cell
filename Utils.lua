@@ -879,14 +879,10 @@ function F:UpdateTextWidth(fs, text, width, relativeTo)
             end
         end
     elseif width[1] == "length" then
-        if Cell.isAsian then
-            if string.len(text) == string.utf8len(text) then -- en
-                fs:SetText(string.utf8sub(text, 1, width[3] or width[2]))
-            else
-                fs:SetText(string.utf8sub(text, 1, width[2]))
-            end
-        else
+        if string.len(text) == string.utf8len(text) then -- en
             fs:SetText(string.utf8sub(text, 1, width[2]))
+        else -- non-en
+            fs:SetText(string.utf8sub(text, 1, width[3]))
         end
     end
 end

@@ -2412,6 +2412,18 @@ function F:Revise()
             if type(layout["indicators"][index]["showBackground"]) ~= "boolean" then
                 layout["indicators"][index]["showBackground"] = true
             end
+
+            -- swap en/non-en length for name text
+            index = Cell.defaults.indicatorIndices.nameText
+            if layout["indicators"][index]["textWidth"][1] == "length" then
+                if not layout["indicators"][index]["textWidth"][3] then -- en cilents
+                    layout["indicators"][index]["textWidth"][3] = 3
+                else -- aisan cilents
+                    local temp = layout["indicators"][index]["textWidth"][2]
+                    layout["indicators"][index]["textWidth"][2] = layout["indicators"][index]["textWidth"][3]
+                    layout["indicators"][index]["textWidth"][3] = temp
+                end
+            end
         end
     end
 

@@ -666,19 +666,14 @@ local function CreateSetting_TextWidth(parent)
             {
                 ["text"] = L["Length"],
                 ["onClick"] = function()
+                    widget.func({"length", 5, 3})
+                    widget.percent:Hide()
                     widget.length:SetText(5)
                     widget.length:Show()
-                    widget.percent:Hide()
+                    widget.length2:SetText(3)
+                    widget.length2:Show()
                     widget.lengthValue = 5
-                    
-                    if Cell.isAsian then
-                        widget.length2:SetText(5)
-                        widget.length2:Show()
-                        widget.func({"length", 5, 5})
-                        widget.lengthValue2 = 5
-                    else
-                        widget.func({"length", 5})
-                    end
+                    widget.lengthValue2 = 3
                 end,
             },
         })
@@ -720,6 +715,10 @@ local function CreateSetting_TextWidth(parent)
         widget.length = addon:CreateEditBox(widget, 34, 20, false, false, true)
         widget.length:SetPoint("TOPLEFT", widget.textWidth, "TOPRIGHT", 25, 0)
 
+        widget.enText = widget.length:CreateFontString(nil, "OVERLAY", font_name)
+        widget.enText:SetText(L["En"])
+        widget.enText:SetPoint("BOTTOMLEFT", widget.length, "TOPLEFT", 0, 1)
+
         widget.length.confirmBtn = addon:CreateButton(widget.length, "OK", "accent", {27, 20})
         widget.length.confirmBtn:SetPoint("TOPLEFT", widget.length, "TOPRIGHT", -1, 0)
         widget.length.confirmBtn:Hide()
@@ -733,11 +732,7 @@ local function CreateSetting_TextWidth(parent)
             widget.length.confirmBtn:Hide()
             widget.lengthValue = length
             
-            if Cell.isAsian then
-                widget.func({"length", length, tonumber(widget.length2:GetText()) or widget.lengthValue2})
-            else
-                widget.func({"length", length})
-            end
+            widget.func({"length", length, tonumber(widget.length2:GetText()) or widget.lengthValue2})
         end)
 
         widget.length:SetScript("OnTextChanged", function(self, userChanged)
@@ -750,45 +745,39 @@ local function CreateSetting_TextWidth(parent)
                 end
             end
         end)
-
-        -- for Chinese/Korean clients, additional english name length
+        
         widget.length2 = addon:CreateEditBox(widget, 33, 20, false, false, true)
         widget.length2:SetPoint("TOPLEFT", widget.length, "TOPRIGHT", 25, 0)
+        
+        widget.nonEnText = widget.length2:CreateFontString(nil, "OVERLAY", font_name)
+        widget.nonEnText:SetText(L["Non-En"])
+        widget.nonEnText:SetPoint("BOTTOMLEFT", widget.length2, "TOPLEFT", 0, 1)
 
-        if Cell.isAsian then
-            widget.nonEnText = widget.length:CreateFontString(nil, "OVERLAY", font_name)
-            widget.nonEnText:SetText(L["NON-EN"])
-            widget.nonEnText:SetPoint("BOTTOMLEFT", widget.length, "TOPLEFT", 0, 1)
-            widget.enText = widget.length2:CreateFontString(nil, "OVERLAY", font_name)
-            widget.enText:SetText(L["EN"])
-            widget.enText:SetPoint("BOTTOMLEFT", widget.length2, "TOPLEFT", 0, 1)
-
-            widget.length2.confirmBtn = addon:CreateButton(widget.length2, "OK", "accent", {27, 20})
-            widget.length2.confirmBtn:SetPoint("TOPLEFT", widget.length2, "TOPRIGHT", -1, 0)
+        widget.length2.confirmBtn = addon:CreateButton(widget.length2, "OK", "accent", {27, 20})
+        widget.length2.confirmBtn:SetPoint("TOPLEFT", widget.length2, "TOPRIGHT", -1, 0)
+        widget.length2.confirmBtn:Hide()
+        widget.length2.confirmBtn:SetScript("OnHide", function()
             widget.length2.confirmBtn:Hide()
-            widget.length2.confirmBtn:SetScript("OnHide", function()
-                widget.length2.confirmBtn:Hide()
-            end)
-            widget.length2.confirmBtn:SetScript("OnClick", function()
-                local length = tonumber(widget.length2:GetText())
-                widget.length2:SetText(length)
-                widget.length2:ClearFocus()
-                widget.length2.confirmBtn:Hide()
-                widget.func({"length", tonumber(widget.length:GetText()) or widget.lengthValue, length})
-                widget.lengthValue2 = length
-            end)
+        end)
+        widget.length2.confirmBtn:SetScript("OnClick", function()
+            local length = tonumber(widget.length2:GetText())
+            widget.length2:SetText(length)
+            widget.length2:ClearFocus()
+            widget.length2.confirmBtn:Hide()
+            widget.func({"length", tonumber(widget.length:GetText()) or widget.lengthValue, length})
+            widget.lengthValue2 = length
+        end)
 
-            widget.length2:SetScript("OnTextChanged", function(self, userChanged)
-                if userChanged then
-                    local length = tonumber(self:GetText())
-                    if length and length ~= widget.lengthValue2 and length ~= 0 then
-                        widget.length2.confirmBtn:Show()
-                    else
-                        widget.length2.confirmBtn:Hide()
-                    end
+        widget.length2:SetScript("OnTextChanged", function(self, userChanged)
+            if userChanged then
+                local length = tonumber(self:GetText())
+                if length and length ~= widget.lengthValue2 and length ~= 0 then
+                    widget.length2.confirmBtn:Show()
+                else
+                    widget.length2.confirmBtn:Hide()
                 end
-            end)
-        end
+            end
+        end)
 
         widget.widthText = widget:CreateFontString(nil, "OVERLAY", font_name)
         widget.widthText:SetText(L["Text Width"])
@@ -817,15 +806,10 @@ local function CreateSetting_TextWidth(parent)
                 widget.length:SetText(width[2])
                 widget.lengthValue = width[2]
                 widget.length:Show()
+                widget.length2:SetText(width[3])
+                widget.lengthValue2 = width[3]
+                widget.length2:Show()
                 widget.percent:Hide()
-
-                if Cell.isAsian then
-                    widget.lengthValue2 = width[3] or width[2]
-                    widget.length2:SetText(width[3] or width[2])
-                    widget.length2:Show()
-                else
-                    widget.length2:Hide()
-                end
             end
         end
     else
