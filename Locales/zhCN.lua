@@ -21,6 +21,7 @@ L["reset all Layouts and Indicators"] = "重置所有布局与指示器"
 L["reset all Click-Castings"] = "重置所有点击施法"
 L["reset all Raid Debuffs"] = "重置所有副本减益"
 L["reset all Code Snippets"] = "重置所有代码片段"
+L["reset Quick Assist for current spec"] = "重置快速协助（当前专精）"
 L["reset all Cell settings"] = "重置所有Cell设置"
 
 -------------------------------------------------
@@ -73,6 +74,8 @@ L["ON"] = "开"
 L["OFF"] = "关"
 L["Disabled"] = "禁用"
 L["Confirm"] = "确认"
+L["Reset"] = "重置"
+L["Reset All"] = "全部重置"
 
 -------------------------------------------------
 -- general
@@ -172,7 +175,6 @@ L["LibHealComm needs to be installed"] = "需要自行安装 LibHealComm"
 L["Heal Absorb"] = "治疗吸收"
 L["Shield Texture"] = "护盾材质"
 L["Overshield Texture"] = "超过血量上限的护盾材质"
-L["Reset All"] = "全部重置"
 L["[Ctrl+Left-Click] to reset these settings"] = "[Ctrl+左键] 点击此按钮来重置这些设置"
 L["Debuff Type Color"] = "减益类型颜色"
 L["Curse"] = "诅咒"
@@ -703,6 +705,30 @@ L["Respond to all dispellable debuffs"] = "响应所有的可驱散减益"
 L["Respond to specific dispellable debuffs"] = "仅响应指定的可驱散减益"
 L["IDs separated by whitespaces"] = "用空格分隔多个法术ID"
 L["Text Options"] = "文本选项"
+
+-------------------------------------------------
+-- quick assist
+-------------------------------------------------
+L["Quick Assist"] = "快速协助"
+L["Setup"] = "设置"
+L["Style"] = "样式"
+L["Name List"] = "名字列表"
+L["Units Per Row"] = "每行单位数"
+L["Max Rows"] = "最大行数"
+L["Units Per Column"] = "每列单位数"
+L["Max Columns"] = "最大列数"
+L["Unit Filter"] = "单位过滤"
+L["Role Filter"] = "按职责"
+L["Class Filter"] = "按职业"
+L["Name Filter"] = "按名字"
+L["toggle"] = "切换"
+L["change the order"] = "调整顺序"
+L["Buffs Tracker"] = "增益监控"
+L["mine"] = "我的"
+L["Offensives Tracker"] = "爆发监控"
+L["Buffs"] = "增益"
+L["Casts"] = "施法"
+L["Reset Offensive Spells"] = "重置爆发法术"
 
 -------------------------------------------------
 -- quick cast
