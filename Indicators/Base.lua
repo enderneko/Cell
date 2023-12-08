@@ -997,7 +997,7 @@ local function Glow_SetCooldown(glow, start, duration)
         LCG.PixelGlow_Stop(glow)
         LCG.AutoCastGlow_Stop(glow)
         -- color, duration
-        LCG.ProcGlow_Start(glow, {color=glowOptions[2], glowOptions[3], startAnim=false})
+        LCG.ProcGlow_Start(glow, {color=glowOptions[2], duration=glowOptions[3], startAnim=false})
     else
         LCG.ButtonGlow_Stop(glow)
         LCG.PixelGlow_Stop(glow)

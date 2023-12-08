@@ -506,10 +506,14 @@ local function InitIndicator(indicatorName)
             end
             SetOnUpdate(indicator, nil, 134400, 0)
         elseif indicator.indicatorType == "glow" then
-            indicator:SetScript("OnShow", function()
-                indicator.fadeOut = false
-                indicator:SetCooldown(GetTime(), 13)
+            function indicator:SetFadeOut(fadeOut)
+                indicator.fadeOut = fadeOut
+                indicator.preview.elapsedTime = 13 -- update now!
+            end
+            hooksecurefunc(indicator, "UpdateGlowOptions", function()
+                indicator.preview.elapsedTime = 13 -- update now!
             end)
+            SetOnUpdate(indicator, nil, 134400, 0)
         else
             SetOnUpdate(indicator, nil, 134400, 5)
         end
@@ -829,6 +833,7 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                 InitIndicator(indicatorName)
             elseif value == "fadeOut" then
                 indicator:SetFadeOut(value2)
+                -- indicator:SetCooldown(GetTime(), 13)
             end
         elseif setting == "create" then
             indicator = I:CreateIndicator(previewButton, value, true)
