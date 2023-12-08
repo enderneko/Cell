@@ -1,11 +1,13 @@
-[Full Changelog](https://github.com/enderneko/Cell/compare/r204-release...4ab1e41db71825942e6815295d550b8a1d0e3c14)
+[Full Changelog](https://github.com/enderneko/Cell/compare/r205-release...eb1f361ff908127ad2ab42c74706574d4b084cc3)
 
-- Update raid debuffs, thanks to 钛锬 (NGA)
-- New custom indicator type: glow
-- Add "Track by name" option for Retail
-- Add "Hide Placeholder Frames" option
-- Add Override LGF option
-- Add Spell/Dispel Request support for Spotlights
-- Make spotlight shortcuts available to Blizzard and ElvUI
-- Update frame level of Dispels and Color
-- Fix frame level of Aggro Border
+- Implement QuickAssist
+- Update raid debuffs
+- Update Cell.GetUnitFrame
+- [Retail] Update dispel checker for Shaman
+- Add "Show Background" for Status Text indicator
+- Add "Show Timer" for Status Text indicator
+- Fix custom glow indicator
+- Fix layout preview
+- Fix ShowStack
+- Try fixing Soulstone click-casting
+- Update locales

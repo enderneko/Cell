@@ -85,6 +85,16 @@ select(2, ...).L = setmetatable({
         <p>(Retail) Enable "Always Update Buffs/Debuffs" in General tab, if indicators do not update correctly.</p>
         <br/>
 
+        <h1>r206-release (Dec 9, 2023, 00:50 GMT+8)</h1>
+        <p>+ (Retail) New utility: Quick Assist. Thanks 钛锬(NGA) for offensive spells and testing.</p>
+        <p>* Updated raid debuffs.</p>
+        <p>* Updated Cell.GetUnitFrame.</p>
+        <p>* (Retail) Updated dispel checker for Shaman.</p>
+        <p>+ Added "Show Background" and "Show Timer" for Status Text indicator.</p>
+        <p>* Updated locales.</p>
+        <p>* Bug fixes.</p>
+        <br/>
+
         <h1>r205-release (Nov 27, 2023, 12:27 GMT+8)</h1>
         <p>* Updated raid debuffs, thanks to 钛锬(NGA) and Ulu2005(GitHub) for collecting and providing debuffs.</p>
         <p>+ New custom indicator type: Glow.</p>
