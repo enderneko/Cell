@@ -11,41 +11,56 @@ local LCG = LibStub("LibCustomGlow-1.0")
 -- ----------------------------------------------------------------------- --
 local defaultOffensiveBuffs = {
     ["DEATHKNIGHT"] = {
-        -- spellId1 (number),
-        -- spellId2 (number),
+        47568, -- Empower Rune Weapon, 符文武器增效
     },
     ["DEMONHUNTER"] = {
     },
     ["DRUID"] = {
+        102543, -- Incarnation: Avatar of Ashamane, 化身：阿莎曼之灵
+        102560, -- Incarnation: Chosen of Elune, 化身：艾露恩之眷
     },
     ["EVOKER"] = {
+        375087, -- Dragonrage, 狂龙之怒
     },
     ["HUNTER"] = {
+        288613, -- Trueshot, 百发百中
+        360952, -- Coordinated Assault, 协同进攻
+        359844, -- Call of the Wild, 荒野的召唤
     },
     ["MAGE"] = {
+        12472, -- Icy Veins, 冰冷血脉
+        365362, -- Arcane Surge, 奥术涌动
     },
     ["MONK"] = {
     },
     ["PALADIN"] = {
+        31884, -- Avenging Wrath, 复仇之怒
+        231895, -- Crusade, 征伐
     },
     ["PRIEST"] = {
+        194249, -- Voidform, 虚空形态
     },
     ["ROGUE"] = {
+        121471, -- Shadow Blades, 暗影之刃
+        13750, -- Adrenaline Rush, 冲动
     },
     ["SHAMAN"] = {
+        333957, -- Feral Spirit, 野性狼魂
     },
     ["WARLOCK"] = {
     },
     ["WARRIOR"] = {
+        107574, -- Avatar, 天神下凡
     },
 }
 
 local defaultOffensiveCasts = {
     ["DEATHKNIGHT"] = {
-        -- "spellId1:duration1" (string),
-        -- "spellId2:duration2" (string),
+        "49206:25", -- Summon Gargoyle, 召唤石像鬼
+        "42650:30", -- Army of the Dead, 亡者大军
     },
     ["DEMONHUNTER"] = {
+        "191427:20", -- Metamorphosis, 恶魔变形
     },
     ["DRUID"] = {
     },
@@ -54,18 +69,25 @@ local defaultOffensiveCasts = {
     ["HUNTER"] = {
     },
     ["MAGE"] = {
+        "190319:12", -- Combustion, 燃烧
     },
     ["MONK"] = {
+        "123904:20", -- Invoke Xuen, the White Tiger, 白虎下凡
     },
     ["PALADIN"] = {
     },
     ["PRIEST"] = {
     },
     ["ROGUE"] = {
+        "360194:16", -- Deathmark, 死亡印记
     },
     ["SHAMAN"] = {
+        "192249:30", -- Storm Elemental, 风暴元素
     },
     ["WARLOCK"] = {
+        "1122:30", -- Summon Infernal, 召唤地狱火
+        "205180:20", -- Summon Darkglare, 召唤黑眼
+        "265187:15", -- Summon Demonic Tyrant, 召唤恶魔暴君
     },
     ["WARRIOR"] = {
     },
