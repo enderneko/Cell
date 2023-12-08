@@ -812,10 +812,10 @@ function F:IterateSharedUnitButtons(func)
 end
 
 local spotlights = {}
-function F:GetUnitButtonByUnit(unit, getSpotlights)
+function F:GetUnitButtonByUnit(unit, getSpotlights, getQuickAssist)
     if not unit then return end
 
-    local normal
+    local normal, quickAssist
 
     if Cell.vars.groupType == "raid" then
         if Cell.vars.inBattleground == 5 then
@@ -836,11 +836,13 @@ function F:GetUnitButtonByUnit(unit, getSpotlights)
                 tinsert(spotlights, b)
             end
         end
-
-        return normal, spotlights
+    end
+    
+    if getQuickAssist then
+        quickAssist = Cell.unitButtons.quickAssist.units[unit]
     end
 
-    return normal
+    return normal, spotlights, quickAssist
 end
 
 function F:GetUnitButtonByGUID(guid, getSpotlights)
@@ -1877,13 +1879,19 @@ end
 -- LibGetFrame
 -------------------------------------------------
 function Cell.GetUnitFrame(unit)
-    local normal, spotlights = F:GetUnitButtonByUnit(unit, true)
-    if CellDB["general"]["framePriority"] == "normal_spotlight" then
+    local normal, spotlights, quickAssist = F:GetUnitButtonByUnit(unit, true, true)
+    if CellDB["general"]["framePriority"] == "normal_spotlight_quickassist" then
+        if normal then return normal end
+        if spotlights[1] then return spotlights[1] end
+        return quickAssist
+    elseif CellDB["general"]["framePriority"] == "spotlight_normal_quickassist" then
+        if spotlights[1] then return spotlights[1] end
+        if normal then return normal end
+        return quickAssist
+    else -- "quickassist_normal_spotlight"
+        if quickAssist then return quickAssist end
         if normal then return normal end
         return spotlights[1]
-    else -- "spotlight_normal"
-        if spotlights[1] then return spotlights[1] end
-        return normal
     end
 end
 

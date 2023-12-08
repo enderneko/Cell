@@ -2425,6 +2425,12 @@ function F:Revise()
                 end
             end
         end
+
+        if CellDB["general"]["framePriority"] == "normal_spotlight" then
+            CellDB["general"]["framePriority"] = "normal_spotlight_quickassist"
+        elseif CellDB["general"]["framePriority"] == "spotlight_normal" then
+            CellDB["general"]["framePriority"] = "spotlight_normal_quickassist"
+        end
     end
 
     -- ----------------------------------------------------------------------- --

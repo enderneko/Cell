@@ -728,6 +728,8 @@ function eventFrame:PLAYER_LOGIN()
     I:UpdateExternals(CellDB["externals"])
     -- update pixel perfect
     Cell:Fire("UpdatePixelPerfect")
+    -- overrideLGF
+    F:OverrideLGF(CellDB["general"]["overrideLGF"])
 end
 
 function eventFrame:UI_SCALE_CHANGED()

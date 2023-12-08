@@ -309,21 +309,28 @@ local function CreateMiscPane()
     end, L["Ensure that other addons get the right unit button"], L["This may cause unknown issues"], L["For addons/WAs not dependent on LibGetFrame, use %s"]:format("|cffffb5c5Cell.GetUnitFrame(unit)"))
     overrideLGFCB:SetPoint("TOPLEFT", alwaysUpdateBuffsCB, "BOTTOMLEFT", 0, -9)
 
-    framePriorityDD = Cell:CreateDropdown(miscPane, 180)
+    framePriorityDD = Cell:CreateDropdown(miscPane, 250)
     framePriorityDD:SetPoint("TOPLEFT", overrideLGFCB, "BOTTOMRIGHT", 5, -5)
     framePriorityDD:SetItems({
         {
-            ["text"] = L["Main"].." > "..L["Spotlight"],
-            ["value"] = "normal_spotlight",
+            ["text"] = L["Main"].." > "..L["Spotlight"].." > "..L["Quick Assist"],
+            ["value"] = "normal_spotlight_quickassist",
             ["onClick"] = function()
-                CellDB["general"]["framePriority"] = "normal_spotlight"
+                CellDB["general"]["framePriority"] = "normal_spotlight_quickassist"
             end,
         },
         {
-            ["text"] = L["Spotlight"].." > "..L["Main"],
-            ["value"] = "spotlight_normal",
+            ["text"] = L["Spotlight"].." > "..L["Main"].." > "..L["Quick Assist"],
+            ["value"] = "spotlight_normal_quickassist",
             ["onClick"] = function()
-                CellDB["general"]["framePriority"] = "spotlight_normal"
+                CellDB["general"]["framePriority"] = "spotlight_normal_quickassist"
+            end,
+        },
+        {
+            ["text"] = L["Quick Assist"].." > "..L["Main"].." > "..L["Spotlight"],
+            ["value"] = "quickassist_normal_spotlight",
+            ["onClick"] = function()
+                CellDB["general"]["framePriority"] = "quickassist_normal_spotlight"
             end,
         },
     })
