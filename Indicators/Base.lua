@@ -820,7 +820,7 @@ function I:CreateAura_Texture(name, parent)
             end)
         else
             texture:SetScript("OnUpdate", nil)
-            tex:SetAlpha(1)
+            tex:SetAlpha(texture.colorAlpha)
         end
         texture:Show()
     end
@@ -837,6 +837,7 @@ function I:CreateAura_Texture(name, parent)
         end
         tex:SetRotation(texTbl[2] * math.pi / 180)
         tex:SetVertexColor(unpack(texTbl[3]))
+        texture.colorAlpha = texTbl[3][4]
     end
 
     return texture
