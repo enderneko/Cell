@@ -117,13 +117,20 @@ local defaultQuickAssistTable = {
         ["unitsPerColumn"] = 5,
         ["spacingX"] = 3,
         ["spacingY"] = 3,
-        ["filter"] = {
-            "role", 
-            F:Copy(defaultRoleFilter),
-            -- {["role"] = enabled,...}
-            -- {{"class", enabled},...}
-            -- {name,...}
-            false,
+        ["filters"] = {
+            ["active"] = 1,
+            {
+                "role", 
+                F:Copy(defaultRoleFilter),
+                -- {["role"] = enabled,...}
+                -- {{"class", enabled},...}
+                -- {name,...}
+                false,
+            },
+            {"role", F:Copy(defaultRoleFilter), false},
+            {"role", F:Copy(defaultRoleFilter), false},
+            {"role", F:Copy(defaultRoleFilter), false},
+            {"role", F:Copy(defaultRoleFilter), false},
         },
     },
     -- sytle
@@ -145,12 +152,17 @@ local defaultQuickAssistTable = {
     -- spells
     ["spells"] = {
         ["mine"] = {
-            ["clickCastings"] = {
-                [1] = {0, {1, 1, 1, 1}},
-                [2] = {-1, {0.95, 0.36, 0.71, 1}},
-                [3] = {-1, {0.23, 0.81, 0.67, 1}},
-                [4] = {-1, {0.61, 0.36, 0.9, 1}},
-                [5] = {-1, {0, 0.73, 0.98, 1}},
+            ["buffs"] = {
+                {0, "icon", {0.95, 0.36, 0.71, 1}},
+                {0, "icon", {0.23, 0.81, 0.67, 1}},
+                {0, "icon", {0.61, 0.36, 0.9, 1}},
+                {0, "icon", {0, 0.73, 0.98, 1}},
+                {0, "icon", {0.98, 0.34, 0.03, 1}},
+            },
+            ["bar"] = {
+                ["position"] = {"TOPRIGHT", "BOTTOMRIGHT", 0, 1},
+                ["orientation"] = "top-to-bottom",
+                ["size"] = {75, 4},
             },
             ["icon"] = {
                 ["position"] = {"BOTTOMRIGHT", "BOTTOMRIGHT", 0, 0},
@@ -170,6 +182,10 @@ local defaultQuickAssistTable = {
             ["enabled"] = true,
             ["buffs"] = F:Copy(defaultOffensiveBuffs),
             ["casts"] = F:Copy(defaultOffensiveCasts),
+            ["glow"] = {
+                ["fadeOut"] = false,
+                ["options"] = {"None", {0.95, 0.95, 0.32, 1}},
+            },
             ["icon"] = {
                 ["position"] = {"TOPLEFT", "TOPLEFT", 0, 0},
                 ["orientation"] = "left-to-right",
@@ -203,9 +219,9 @@ quickAssistTab:Hide()
 --                                  shared                                 --
 -- ----------------------------------------------------------------------- --
 local quickAssistTable, layoutTable, styleTable, spellTable
-local selectedClass
+local selectedFilter, selectedClass
 
-local LoadDB, LoadLayout, LoadStyle, LoadSpells, LoadList, LoadClickCasting, ShowFilter
+local LoadDB, LoadLayout, LoadStyle, LoadSpells, LoadList, LoadMyBuff, ShowFilter
 
 local anchorPoints = {"BOTTOM", "BOTTOMLEFT", "BOTTOMRIGHT", "CENTER", "LEFT", "RIGHT", "TOP", "TOPLEFT", "TOPRIGHT"}
 local orientations = {"left-to-right", "right-to-left", "top-to-bottom", "bottom-to-top"}
@@ -343,35 +359,52 @@ local function UpdatePreviewButton()
     previewButton.nameText.width = styleTable["name"]["width"]
     previewButton.nameText:UpdateName()
 
-    -- offensivesIndicator
-    local ot = spellTable["offensives"]["icon"]
-    local offensivesIndicator = previewButton.offensivesIndicator
+    -- offensiveIcons
+    local oit = spellTable["offensives"]["icon"]
+    local offensiveIcons = previewButton.offensiveIcons
     -- point
-    P:ClearPoints(offensivesIndicator)
-    P:Point(offensivesIndicator, ot["position"][1], b, ot["position"][2], ot["position"][3], ot["position"][4])
+    P:ClearPoints(offensiveIcons)
+    P:Point(offensiveIcons, oit["position"][1], b, oit["position"][2], oit["position"][3], oit["position"][4])
     -- size
-    P:Size(offensivesIndicator, ot["size"][1], ot["size"][2])
+    P:Size(offensiveIcons, oit["size"][1], oit["size"][2])
     -- orientation
-    offensivesIndicator:SetOrientation(ot["orientation"])
+    offensiveIcons:SetOrientation(oit["orientation"])
     -- font
-    offensivesIndicator:SetFont(unpack(ot["font"]))
-    offensivesIndicator:ShowDuration(ot["showDuration"])
-    offensivesIndicator:ShowStack(ot["showStack"])
+    offensiveIcons:SetFont(unpack(oit["font"]))
+    offensiveIcons:ShowDuration(oit["showDuration"])
+    offensiveIcons:ShowStack(oit["showStack"])
 
-    -- buffsIndicator
-    local bt = spellTable["mine"]["icon"]
-    local buffsIndicator = previewButton.buffsIndicator
+    -- offensiveGlow
+    local ogt = spellTable["offensives"]["glow"]
+    local offensiveGlow = previewButton.offensiveGlow
+    offensiveGlow:SetFadeOut(ogt["fadeOut"])
+    offensiveGlow:UpdateGlowOptions(ogt["options"])
+
+    -- buffIcons
+    local bit = spellTable["mine"]["icon"]
+    local buffIcons = previewButton.buffIcons
     -- point
-    P:ClearPoints(buffsIndicator)
-    P:Point(buffsIndicator, bt["position"][1], b, bt["position"][2], bt["position"][3], bt["position"][4])
+    P:ClearPoints(buffIcons)
+    P:Point(buffIcons, bit["position"][1], b, bit["position"][2], bit["position"][3], bit["position"][4])
     -- size
-    P:Size(buffsIndicator, bt["size"][1], bt["size"][2])
+    P:Size(buffIcons, bit["size"][1], bit["size"][2])
     -- orientation
-    buffsIndicator:SetOrientation(bt["orientation"])
+    buffIcons:SetOrientation(bit["orientation"])
     -- font
-    buffsIndicator:SetFont(unpack(bt["font"]))
-    buffsIndicator:ShowDuration(bt["showDuration"])
-    buffsIndicator:ShowStack(bt["showStack"])
+    buffIcons:SetFont(unpack(bit["font"]))
+    buffIcons:ShowDuration(bit["showDuration"])
+    buffIcons:ShowStack(bit["showStack"])
+
+    -- buffBars
+    local bbt = spellTable["mine"]["bar"]
+    local buffBars = previewButton.buffBars
+    -- point
+    P:ClearPoints(buffBars)
+    P:Point(buffBars, bbt["position"][1], b, bbt["position"][2], bbt["position"][3], bbt["position"][4])
+    -- size
+    P:Size(buffBars, bbt["size"][1], bbt["size"][2])
+    -- orientation
+    buffBars:SetOrientation(bbt["orientation"])
 
     -- show indicators
     previewButton.elapsed = 13
@@ -383,21 +416,26 @@ local function UpdatePreviewButton()
             if showIndicatorPreview then
                 -- offensives
                 if spellTable["offensives"]["enabled"] then
-                    self.offensivesIndicator:Show()
-                    self.offensivesIndicator[1]:SetCooldown(GetTime(), 13, nil, 135875, 0, false, ot["glowColor"], ot["glow"])
-                    self.offensivesIndicator[2]:SetCooldown(GetTime(), 13, nil, 135838, 0, false, ot["glowColor"], ot["glow"])
-                    self.offensivesIndicator:UpdateSize(2)
+                    self.offensiveIcons:Show()
+                    self.offensiveIcons[1]:SetCooldown(GetTime(), 13, nil, 135875, 0, false, oit["glowColor"], oit["glow"])
+                    self.offensiveIcons[2]:SetCooldown(GetTime(), 13, nil, 135838, 0, false, oit["glowColor"], oit["glow"])
+                    self.offensiveIcons:UpdateSize(2)
                 else
-                    self.offensivesIndicator:Hide()
+                    self.offensiveIcons:Hide()
                 end
+                offensiveGlow:SetCooldown(GetTime(), 13)
                 -- buffs
-                self.buffsIndicator:Show()
-                self.buffsIndicator[1]:SetCooldown(GetTime(), 13, nil, 5199639, 0, false, spellTable["mine"]["clickCastings"][2][2], bt["glow"])
-                self.buffsIndicator[2]:SetCooldown(GetTime(), 13, nil, 5061347, 0, false, spellTable["mine"]["clickCastings"][3][2], bt["glow"])
-                self.buffsIndicator:UpdateSize(2)
+                self.buffIcons:Show()
+                self.buffIcons[1]:SetCooldown(GetTime(), 13, nil, 5199639, 0, false, spellTable["mine"]["buffs"][1][3], bit["glow"])
+                self.buffIcons[2]:SetCooldown(GetTime(), 13, nil, 5061347, 0, false, spellTable["mine"]["buffs"][2][3], bit["glow"])
+                self.buffIcons:UpdateSize(2)
+                self.buffBars:Show()
+                self.buffBars[1]:SetCooldown(GetTime(), 13, spellTable["mine"]["buffs"][1][3])
+                self.buffBars[2]:SetCooldown(GetTime(), 13, spellTable["mine"]["buffs"][2][3])
+                self.buffBars:UpdateSize(2)
             else
-                self.offensivesIndicator:Hide()
-                self.buffsIndicator:Hide()
+                self.offensiveIcons:Hide()
+                self.buffIcons:Hide()
             end
         end
     end)
@@ -552,7 +590,7 @@ local targetColorPicker, mouseoverColorPicker, highlightSizeSlider
 local nameColorDropdown, nameCP, nameWidth, nameAnchorDropdown, nameXSlider, nameYSlider, nameFontDropdown, nameOutlineDropdown, nameSizeSilder
 
 -- spells
-local clickCastingButtons = {}
+local myBuffWidgets = {}
 local classButtons, buffButtons, castButtons = {}, {}, {}
 
 local buffsPane, buffsAddBtn, castsPane, castsAddBtn, offensivesEnabledCB
@@ -563,9 +601,7 @@ local function UpdateWidgets(enabled)
     Cell:SetEnabled(enabled, anchorDropdown, orientationDropdown, widthSlider, heightSlider, xSlider, ySlider, unitsSlider, maxSlider)
     Cell:SetEnabled(enabled, filterTypeDropdown, hideSelfCB, roleFilter, classFilter, nameFilter)
 
-    Cell:SetEnabled(enabled, iconNumSlider, iconAnchorDropdown, iconRelativeToDropdown, iconXSlider, iconYSlider)
-
-    for _, b in pairs(clickCastingButtons) do
+    for _, b in pairs(myBuffWidgets) do
         Cell:SetEnabled(enabled, b, b.text, b.cp)
     end
 
@@ -595,6 +631,7 @@ local function CreateQuickAssistPane()
 
         CellDB["quickAssist"][Cell.vars.playerSpecID]["enabled"] = checked
         LoadDB()
+        layoutBtn:GetScript("OnClick")()
 
         if checked then
             ShowLayoutPreview()
@@ -721,8 +758,8 @@ end
 
 -- role filter ----------------------------------------------------------- --
 local function UpdateRoleFilter(role)
-    layoutTable["filter"][2][role] = not layoutTable["filter"][2][role]
-    ShowFilter(layoutTable["filter"]) -- call SetRoles
+    layoutTable["filters"][selectedFilter][2][role] = not layoutTable["filters"][selectedFilter][2][role]
+    ShowFilter(selectedFilter) -- call SetRoles
     Cell:Fire("UpdateQuickAssist", "filter")
 end
 
@@ -792,13 +829,13 @@ local function CreateClassFilter(parent)
 
         buttons[class]:SetScript("OnClick", function()
             -- find class
-            for i, t in pairs(layoutTable["filter"][2]) do
+            for i, t in pairs(layoutTable["filters"][selectedFilter][2]) do
                 if t[1] == class then
                     t[2] = not t[2]
                     break
                 end
             end
-            f:SetClasses(layoutTable["filter"][2])
+            f:SetClasses(layoutTable["filters"][selectedFilter][2])
             Cell:Fire("UpdateQuickAssist", "filter")
         end)
 
@@ -821,7 +858,7 @@ local function CreateClassFilter(parent)
                 local b = GetMouseFocus()
                 if b and b._class then
                     local oldIndex, oldValue, newIndex
-                    for i, t in pairs(layoutTable["filter"][2]) do
+                    for i, t in pairs(layoutTable["filters"][selectedFilter][2]) do
                         if class == t[1] then
                             oldValue = t
                             oldIndex = i
@@ -832,12 +869,12 @@ local function CreateClassFilter(parent)
                     -- print(class, oldIndex, "->", b._class, newIndex)
                     
                     if oldIndex and oldValue and newIndex then
-                        tremove(layoutTable["filter"][2], oldIndex)
-                        tinsert(layoutTable["filter"][2], newIndex, oldValue)
+                        tremove(layoutTable["filters"][selectedFilter][2], oldIndex)
+                        tinsert(layoutTable["filters"][selectedFilter][2], newIndex, oldValue)
                         Cell:Fire("UpdateQuickAssist", "filter")
                     end
                 end
-                f:SetClasses(layoutTable["filter"][2])
+                f:SetClasses(layoutTable["filters"][selectedFilter][2])
             end)
         end)
     end
@@ -934,7 +971,7 @@ local function CreatePlayerList(parent, box)
     end
 
     playerListFrame:SetScript("OnShow", function()
-        names = F:Copy(layoutTable["filter"][2])
+        names = F:Copy(layoutTable["filters"][selectedFilter][2])
 
         local i = 1
         for unit in F:IterateGroupMembers() do
@@ -984,7 +1021,7 @@ local function CreateNameFilter(parent)
     nameListFrame:SetScript("OnShow", function()
         b:SetFrameLevel(parent:GetFrameLevel()+50)
         Cell:CreateMask(Cell.frames.utilitiesTab, nil, {1, -1, -1, 1})
-        box:SetText(table.concat(layoutTable["filter"][2], "\n"))
+        box:SetText(table.concat(layoutTable["filters"][selectedFilter][2], "\n"))
     end)
     
     nameListFrame:SetScript("OnHide", function()
@@ -1004,7 +1041,7 @@ local function CreateNameFilter(parent)
                 tremove(names, i)
             end
         end
-        layoutTable["filter"][2] = F:Copy(names)
+        layoutTable["filters"][selectedFilter][2] = F:Copy(names)
         nameListFrame:Hide()
         Cell:Fire("UpdateQuickAssist", "filter")
     end)
@@ -1084,6 +1121,9 @@ local function CreateClassOrderWidget(parent)
     return f
 end
 ]]
+
+local filterBtns = {}
+local HighlightFilter
 
 local function CreateLayoutPane()
     pages.layout = CreateFrame("Frame", nil, quickAssistTab)
@@ -1189,9 +1229,9 @@ local function CreateLayoutPane()
     end
 
     --* filter ---------------------------------------------------------------- --
-    local filterPane = Cell:CreateTitledPane(pages.layout, L["Unit Filter"], 422, 80)
+    local filterPane = Cell:CreateTitledPane(pages.layout, L["Unit Filter"], 422, 120)
     filterPane:SetPoint("TOPLEFT", 0, -267)
-    
+
     filterTypeDropdown = Cell:CreateDropdown(filterPane, 117)
     filterTypeDropdown:SetPoint("TOPLEFT", 5, -27)
     filterTypeDropdown:SetItems({
@@ -1199,10 +1239,10 @@ local function CreateLayoutPane()
             ["text"] = L["Role Filter"],
             ["value"] = "role",
             ["onClick"] = function()
-                if layoutTable["filter"][1] ~= "role" then
-                    layoutTable["filter"][1] = "role"
-                    layoutTable["filter"][2] = F:Copy(defaultRoleFilter)
-                    ShowFilter(layoutTable["filter"])
+                if layoutTable["filters"][selectedFilter][1] ~= "role" then
+                    layoutTable["filters"][selectedFilter][1] = "role"
+                    layoutTable["filters"][selectedFilter][2] = F:Copy(defaultRoleFilter)
+                    ShowFilter(selectedFilter)
                     Cell:Fire("UpdateQuickAssist", "filter")
                 end
             end,
@@ -1211,10 +1251,10 @@ local function CreateLayoutPane()
             ["text"] = L["Class Filter"],
             ["value"] = "class",
             ["onClick"] = function()
-                if layoutTable["filter"][1] ~= "class" then
-                    layoutTable["filter"][1] = "class"
-                    layoutTable["filter"][2] = F:Copy(defaultClassFilter)
-                    ShowFilter(layoutTable["filter"])
+                if layoutTable["filters"][selectedFilter][1] ~= "class" then
+                    layoutTable["filters"][selectedFilter][1] = "class"
+                    layoutTable["filters"][selectedFilter][2] = F:Copy(defaultClassFilter)
+                    ShowFilter(selectedFilter)
                     Cell:Fire("UpdateQuickAssist", "filter")
                 end
             end,
@@ -1223,10 +1263,10 @@ local function CreateLayoutPane()
             ["text"] = L["Name Filter"],
             ["value"] = "name",
             ["onClick"] = function()
-                if layoutTable["filter"][1] ~= "name" then
-                    layoutTable["filter"][1] = "name"
-                    layoutTable["filter"][2] = {}
-                    ShowFilter(layoutTable["filter"])
+                if layoutTable["filters"][selectedFilter][1] ~= "name" then
+                    layoutTable["filters"][selectedFilter][1] = "name"
+                    layoutTable["filters"][selectedFilter][2] = {}
+                    ShowFilter(selectedFilter)
                     Cell:Fire("UpdateQuickAssist", "filter")
                 end
             end,
@@ -1234,7 +1274,7 @@ local function CreateLayoutPane()
     })
 
     hideSelfCB = Cell:CreateCheckButton(filterPane, L["Hide Self (Party Only)"], function(checked, self)
-        layoutTable["filter"][3] = checked
+        layoutTable["filters"][selectedFilter][3] = checked
         Cell:Fire("UpdateQuickAssist", "filter")
     end)
     hideSelfCB:SetPoint("TOPLEFT", filterTypeDropdown, "TOPRIGHT", 30, -3)
@@ -1251,8 +1291,8 @@ local function CreateLayoutPane()
     filterResetBtn = Cell:CreateButton(classFilter, L["Reset"], "accent", {50, 20})
     filterResetBtn:SetPoint("TOPLEFT", classFilter, "BOTTOMLEFT", 0, -10)
     filterResetBtn:SetScript("OnClick", function()
-        layoutTable["filter"][2] = F:Copy(defaultClassFilter)
-        classFilter:SetClasses(layoutTable["filter"][2])
+        layoutTable["filters"][selectedFilter][2] = F:Copy(defaultClassFilter)
+        classFilter:SetClasses(layoutTable["filters"][selectedFilter][2])
         Cell:Fire("UpdateQuickAssist", "filter")
     end)
 
@@ -1260,6 +1300,24 @@ local function CreateLayoutPane()
     filterResetTips:SetPoint("LEFT", filterResetBtn, "RIGHT", 5, 0)
     filterResetTips:SetText("|cffababab"..L["Left-Click"]..": "..L["toggle"]..", "..L["Left-Drag"]..": "..L["change the order"])
     
+    for i = 5, 1, -1 do
+        filterBtns[i] = Cell:CreateButton(filterPane, i, "accent-hover", {37, 17})
+        filterBtns[i].id = i
+
+        if i == 5 then
+            filterBtns[i]:SetPoint("TOPRIGHT")
+        else
+            filterBtns[i]:SetPoint("TOPRIGHT", filterBtns[i+1], "TOPLEFT", P:Scale(1), 0)
+        end
+    end
+
+    HighlightFilter = Cell:CreateButtonGroup(filterBtns, function(id)
+        layoutTable["filters"]["active"] = id
+        selectedFilter = id
+        ShowFilter(selectedFilter)
+        Cell:Fire("UpdateQuickAssist", "filter")
+    end)
+
     --* order ----------------------------------------------------------------- --
     -- local orderPane = Cell:CreateTitledPane(pages.layout, L["Class Order"], 422, 80)
     -- orderPane:SetPoint("TOPLEFT", 0, P:Scale(-330))
@@ -1480,10 +1538,10 @@ local function CreateNameWidth(parent)
         elseif t[1] == "length" then
             dropdown:SetSelectedItem(3)
             lengthEB:SetText(t[2])
-            widget.lengthValue = t[2]
+            lengthEB.value = t[2]
             lengthEB:Show()
             lengthEB2:SetText(t[3])
-            widget.lengthValue2 = t[3]
+            lengthEB2.value = t[3]
             lengthEB2:Show()
             percentDropdown:Hide()
         end
@@ -1619,7 +1677,7 @@ local function CreateStylePane()
     end
 
     --* name ------------------------------------------------------------------ --
-    local namePane = Cell:CreateTitledPane(pages.style, L["Name Text"], 422, 80)
+    local namePane = Cell:CreateTitledPane(pages.style, L["Name Text"], 422, 175)
     namePane:SetPoint("TOPLEFT", 0, -210)
 
     nameColorDropdown = Cell:CreateDropdown(namePane, 117)
@@ -2100,16 +2158,424 @@ local function SetIconOptions_OnClick(b)
     end)
 end
 
--- click-casting --------------------------------------------------------- --
-local mouseKeyIDs = {
-    L["Left"],
-    L["Right"],
-    L["Middle"],
-    L["Button4"],
-    L["Button5"],
-}
+-- bar options ----------------------------------------------------------- --
+local barOptionsFrame
+local currentBarOptionBtn, currentBarIndex
 
-local function CreateClickCastingWidgets(parent, index)
+local function CreateBarOptions(parent)
+    barOptionsFrame = CreateFrame("Frame", nil, parent, "BackdropTemplate")
+    Cell:StylizeFrame(barOptionsFrame, nil, Cell:GetAccentColorTable())
+    barOptionsFrame:SetFrameLevel(parent:GetFrameLevel()+50)
+    barOptionsFrame:Hide()
+
+    barOptionsFrame:SetHeight(170)
+    barOptionsFrame:SetPoint("TOP", 0, -73)
+    barOptionsFrame:SetPoint("LEFT")
+    barOptionsFrame:SetPoint("RIGHT")
+
+    local barAnchorDropdown = Cell:CreateDropdown(barOptionsFrame, 117)
+    barAnchorDropdown:SetPoint("TOPLEFT", 5, -27)
+    barAnchorDropdown:SetLabel(L["Anchor Point"])
+    local items = {}
+    for _, point in pairs(anchorPoints) do
+        tinsert(items, {
+            ["text"] = L[point],
+            ["value"] = point,
+            ["onClick"] = function()
+                spellTable[currentBarIndex]["bar"]["position"][1] = point
+                Cell:Fire("UpdateQuickAssist", currentBarIndex.."-indicator")
+            end,
+        })
+    end
+    barAnchorDropdown:SetItems(items)
+    
+    local barRelativeToDropdown = Cell:CreateDropdown(barOptionsFrame, 117)
+    barRelativeToDropdown:SetPoint("TOPLEFT", barAnchorDropdown, "TOPRIGHT", 30, 0)
+    barRelativeToDropdown:SetLabel(L["To UnitButton's"])
+    items = {}
+    for _, point in pairs(anchorPoints) do
+        tinsert(items, {
+            ["text"] = L[point],
+            ["value"] = point,
+            ["onClick"] = function()
+                spellTable[currentBarIndex]["bar"]["position"][2] = point
+                Cell:Fire("UpdateQuickAssist", currentBarIndex.."-indicator")
+            end,
+        })
+    end
+    barRelativeToDropdown:SetItems(items)
+
+    local barOrientationDropdown = Cell:CreateDropdown(barOptionsFrame, 117)
+    barOrientationDropdown:SetPoint("TOPLEFT", barRelativeToDropdown, "TOPRIGHT", 30, 0)
+    barOrientationDropdown:SetLabel(L["Orientation"])
+    items = {}
+    for _, o in pairs(orientations) do
+        if strfind(o, "top") then
+            tinsert(items, {
+                ["text"] = L[o],
+                ["value"] = o,
+                ["onClick"] = function()
+                    spellTable[currentBarIndex]["bar"]["orientation"] = o
+                    Cell:Fire("UpdateQuickAssist", currentBarIndex.."-indicator")
+                end,
+            })
+        end
+    end
+    barOrientationDropdown:SetItems(items)
+
+    -- local barGlowDropdown = Cell:CreateDropdown(barOptionsFrame, 117)
+    -- barGlowDropdown:SetPoint("TOPLEFT", barOrientationDropdown, 0, -50)
+    -- barGlowDropdown:SetLabel(L["Glow"])
+    -- items = {}
+    -- for _, g in pairs(glows) do
+    --     tinsert(items, {
+    --         ["text"] = L[g],
+    --         ["value"] = g,
+    --         ["onClick"] = function()
+    --             spellTable[currentBarIndex]["bar"]["glow"] = g
+    --             Cell:Fire("UpdateQuickAssist", currentBarIndex.."-indicator")
+    --         end,
+    --     })
+    -- end
+    -- barGlowDropdown:SetItems(items)
+
+    -- local barGlowCP = Cell:CreateColorPicker(barOptionsFrame, L["Glow Color"], false, nil, function(r, g, b)
+    --     spellTable[currentBarIndex]["bar"]["glowColor"][1] = r
+    --     spellTable[currentBarIndex]["bar"]["glowColor"][2] = g
+    --     spellTable[currentBarIndex]["bar"]["glowColor"][3] = b
+    --     Cell:Fire("UpdateQuickAssist", currentBarIndex.."-indicator")
+    -- end)
+    -- barGlowCP:SetPoint("TOPLEFT", barGlowDropdown, 0, -50)
+
+    local barXSlider = Cell:CreateSlider(L["X Offset"], barOptionsFrame, -100, 100, 117, 1)
+    barXSlider:SetPoint("TOPLEFT", barAnchorDropdown, 0, -50)
+    barXSlider.afterValueChangedFn = function(value)
+        spellTable[currentBarIndex]["bar"]["position"][3] = value
+        Cell:Fire("UpdateQuickAssist", currentBarIndex.."-indicator")
+    end
+    
+    local barYSlider = Cell:CreateSlider(L["Y Offset"], barOptionsFrame, -100, 100, 117, 1)
+    barYSlider:SetPoint("TOPLEFT", barXSlider, "TOPRIGHT", 30, 0)
+    barYSlider.afterValueChangedFn = function(value)
+        spellTable[currentBarIndex]["bar"]["position"][4] = value
+        Cell:Fire("UpdateQuickAssist", currentBarIndex.."-indicator")
+    end
+
+    local barWidthSlider = Cell:CreateSlider(L["Width"], barOptionsFrame, 10, 300, 117, 1)
+    barWidthSlider:SetPoint("TOPLEFT", barXSlider, 0, -50)
+    barWidthSlider.afterValueChangedFn = function(value)
+        spellTable[currentBarIndex]["bar"]["size"][1] = value
+        Cell:Fire("UpdateQuickAssist", currentBarIndex.."-indicator")
+    end
+    
+    local barHeightSlider = Cell:CreateSlider(L["Height"], barOptionsFrame, 3, 50, 117, 1)
+    barHeightSlider:SetPoint("TOPLEFT", barWidthSlider, "TOPRIGHT", 30, 0)
+    barHeightSlider.afterValueChangedFn = function(value)
+        spellTable[currentBarIndex]["bar"]["size"][2] = value
+        Cell:Fire("UpdateQuickAssist", currentBarIndex.."-indicator")
+    end
+
+    function barOptionsFrame:Load(t)
+        barAnchorDropdown:SetSelectedValue(t["position"][1])
+        barRelativeToDropdown:SetSelectedValue(t["position"][2])
+        barOrientationDropdown:SetSelectedValue(t["orientation"])
+        barXSlider:SetValue(t["position"][3])
+        barYSlider:SetValue(t["position"][4])
+        barWidthSlider:SetValue(t["size"][1])
+        barHeightSlider:SetValue(t["size"][2])
+    end
+
+    barOptionsFrame:SetScript("OnShow", function()
+        currentBarOptionBtn:SetFrameLevel(parent:GetFrameLevel()+50)
+        Cell:CreateMask(Cell.frames.utilitiesTab, nil, {1, -1, -1, 1})
+        F:Debug("|cff33937FQuickAssist_ShowBarOptions:|r", currentBarIndex)
+    end)
+
+    barOptionsFrame:SetScript("OnHide", function()
+        currentBarOptionBtn:SetFrameLevel(currentBarOptionBtn.frameLevel)
+        barOptionsFrame:Hide()
+        Cell.frames.utilitiesTab.mask:Hide()
+    end)
+end
+
+local function SetBarOptions_OnClick(b)
+    b.frameLevel = b:GetFrameLevel()
+    b:SetScript("OnClick", function()
+        currentBarIndex = b.index
+        currentBarOptionBtn = b
+        if barOptionsFrame:IsShown() then
+            barOptionsFrame:Hide()
+        else
+            barOptionsFrame:Show()
+            barOptionsFrame:Load(spellTable[currentBarIndex]["bar"])
+        end
+    end)
+end
+
+-- glow options ---------------------------------------------------------- --
+local glowOptionsFrame
+local currentGlowOptionBtn, currentGlowIndex
+
+local function CreateGlowOptions(parent)
+    glowOptionsFrame = CreateFrame("Frame", nil, parent, "BackdropTemplate")
+    Cell:StylizeFrame(glowOptionsFrame, nil, Cell:GetAccentColorTable())
+    glowOptionsFrame:SetFrameLevel(parent:GetFrameLevel()+50)
+    glowOptionsFrame:Hide()
+
+    glowOptionsFrame:SetWidth(274)
+    glowOptionsFrame:SetPoint("TOP", 0, -73)
+    glowOptionsFrame:SetPoint("RIGHT")
+
+    local glowFadeOutCB = Cell:CreateCheckButton(glowOptionsFrame, L["fadeOut"], function(checked)
+        spellTable[currentGlowIndex]["glow"]["fadeOut"] = checked
+        Cell:Fire("UpdateQuickAssist", currentGlowIndex.."-indicator")
+    end)
+    glowFadeOutCB:SetPoint("TOPLEFT", 5, -10)
+
+    local glowType = Cell:CreateDropdown(glowOptionsFrame, 117)
+    glowType:SetLabel(L["Glow Type"])
+    glowType:SetPoint("TOPLEFT", glowFadeOutCB, "BOTTOMLEFT", 0, -25)
+
+    local glowColor = Cell:CreateColorPicker(glowOptionsFrame, L["Glow Color"], false, nil, function(r, g, b)
+        spellTable[currentGlowIndex]["glow"]["options"][2][1] = r
+        spellTable[currentGlowIndex]["glow"]["options"][2][2] = g
+        spellTable[currentGlowIndex]["glow"]["options"][2][3] = b
+        Cell:Fire("UpdateQuickAssist", currentGlowIndex.."-indicator")
+    end)
+    glowColor:SetPoint("LEFT", glowType, "RIGHT", 25, 0)
+
+    -- glowNumber
+    local glowLines = Cell:CreateSlider(L["Lines"], glowOptionsFrame, 1, 30, 117, 1, function(value)
+        spellTable[currentGlowIndex]["glow"]["options"][3] = value
+        Cell:Fire("UpdateQuickAssist", currentGlowIndex.."-indicator")
+    end)
+    glowLines:SetPoint("TOPLEFT", glowType, 0, -50)
+
+    local glowParticles = Cell:CreateSlider(L["Particles"], glowOptionsFrame, 1, 30, 117, 1, function(value)
+        spellTable[currentGlowIndex]["glow"]["options"][3] = value
+        Cell:Fire("UpdateQuickAssist", currentGlowIndex.."-indicator")
+    end)
+    glowParticles:SetPoint("TOPLEFT", glowType, 0, -50)
+    
+    -- glowDuration
+    local glowDuration = Cell:CreateSlider(L["Duration"], glowOptionsFrame, 0.1, 3, 117, 0.1, function(value)
+        spellTable[currentGlowIndex]["glow"]["options"][3] = value
+        Cell:Fire("UpdateQuickAssist", currentGlowIndex.."-indicator")
+    end)
+    glowDuration:SetPoint("TOPLEFT", glowType, 0, -50)
+
+    -- glowFrequency
+    local glowFrequency = Cell:CreateSlider(L["Frequency"], glowOptionsFrame, -2, 2, 117, 0.01, function(value)
+        spellTable[currentGlowIndex]["glow"]["options"][4] = value
+        Cell:Fire("UpdateQuickAssist", currentGlowIndex.."-indicator")
+    end)
+    glowFrequency:SetPoint("TOPLEFT", glowLines, "TOPRIGHT", 30, 0)
+
+    -- glowLength
+    local glowLength = Cell:CreateSlider(L["Length"], glowOptionsFrame, 1, 20, 117, 1, function(value)
+        spellTable[currentGlowIndex]["glow"]["options"][5] = value
+        Cell:Fire("UpdateQuickAssist", currentGlowIndex.."-indicator")
+    end)
+    glowLength:SetPoint("TOPLEFT", glowLines, "BOTTOMLEFT", 0, -40)
+
+    -- glowThickness
+    local glowThickness = Cell:CreateSlider(L["Thickness"], glowOptionsFrame, 1, 20, 117, 1, function(value)
+        spellTable[currentGlowIndex]["glow"]["options"][6] = value
+        Cell:Fire("UpdateQuickAssist", currentGlowIndex.."-indicator")
+    end)
+    glowThickness:SetPoint("TOPLEFT", glowLength, "TOPRIGHT", 30, 0)
+
+    -- glowScale
+    local glowScale = Cell:CreateSlider(L["Scale"], glowOptionsFrame, 50, 500, 117, 1, function(value)
+        spellTable[currentGlowIndex]["glow"]["options"][5] = value
+        Cell:Fire("UpdateQuickAssist", currentGlowIndex.."-indicator")
+    end, nil, true)
+    glowScale:SetPoint("TOPLEFT", glowLines, "BOTTOMLEFT", 0, -40)
+
+    glowType:SetItems({
+        {
+            ["text"] = L["None"],
+            ["value"] = "None",
+            ["onClick"] = function()
+                glowOptionsFrame:SetHeight(80)
+                glowColor:SetColor({0.95,0.95,0.32,1})
+                glowLines:Hide()
+                glowParticles:Hide()
+                glowDuration:Hide()
+                glowFrequency:Hide()
+                glowLength:Hide()
+                glowThickness:Hide()
+                glowScale:Hide()
+                spellTable[currentGlowIndex]["glow"]["options"] = {"None", {0.95,0.95,0.32,1}}
+                Cell:Fire("UpdateQuickAssist", currentGlowIndex.."-indicator")
+            end,
+        },
+        {
+            ["text"] = L["Normal"],
+            ["value"] = "Normal",
+            ["onClick"] = function()
+                glowOptionsFrame:SetHeight(80)
+                glowColor:SetColor({0.95,0.95,0.32,1})
+                glowLines:Hide()
+                glowParticles:Hide()
+                glowDuration:Hide()
+                glowFrequency:Hide()
+                glowLength:Hide()
+                glowThickness:Hide()
+                glowScale:Hide()
+                spellTable[currentGlowIndex]["glow"]["options"] = {"Normal", {0.95,0.95,0.32,1}}
+                Cell:Fire("UpdateQuickAssist", currentGlowIndex.."-indicator")
+            end,
+        },
+        {
+            ["text"] = L["Pixel"],
+            ["value"] = "Pixel",
+            ["onClick"] = function()
+                glowOptionsFrame:SetHeight(185)
+                glowColor:SetColor({0.95,0.95,0.32,1})
+                glowLines:Show()
+                glowLines:SetValue(9)
+                glowFrequency:Show()
+                glowFrequency:SetValue(0.25)
+                glowLength:Show()
+                glowLength:SetValue(8)
+                glowThickness:Show()
+                glowThickness:SetValue(2)
+                glowParticles:Hide()
+                glowDuration:Hide()
+                glowScale:Hide()
+                spellTable[currentGlowIndex]["glow"]["options"] = {"Pixel", {0.95,0.95,0.32,1}, 9, 0.25, 8, 2}
+                Cell:Fire("UpdateQuickAssist", currentGlowIndex.."-indicator")
+            end,
+        },
+        {
+            ["text"] = L["Shine"],
+            ["value"] = "Shine",
+            ["onClick"] = function()
+                glowOptionsFrame:SetHeight(185)
+                glowColor:SetColor({0.95,0.95,0.32,1})
+                glowParticles:Show()
+                glowParticles:SetValue(9)
+                glowFrequency:Show()
+                glowFrequency:SetValue(0.5)
+                glowScale:Show()
+                glowScale:SetValue(100)
+                glowLines:Hide()
+                glowDuration:Hide()
+                glowLength:Hide()
+                glowThickness:Hide()
+                spellTable[currentGlowIndex]["glow"]["options"] = {"Shine", {0.95,0.95,0.32,1}, 9, 0.5, 1}
+                Cell:Fire("UpdateQuickAssist", currentGlowIndex.."-indicator")
+            end,
+        },
+        {
+            ["text"] = L["Proc"],
+            ["value"] = "Proc",
+            ["onClick"] = function()
+                glowOptionsFrame:SetHeight(135)
+                glowColor:SetColor({0.95,0.95,0.32,1})
+                glowDuration:Show()
+                glowDuration:SetValue(1)
+                glowParticles:Hide()
+                glowFrequency:Hide()
+                glowScale:Hide()
+                glowLines:Hide()
+                glowLength:Hide()
+                glowThickness:Hide()
+                spellTable[currentGlowIndex]["glow"]["options"] = {"Proc", {0.95,0.95,0.32,1}, 1}
+                Cell:Fire("UpdateQuickAssist", currentGlowIndex.."-indicator")
+            end,
+        },
+    })
+
+    function glowOptionsFrame:Load(fadeOut, t)
+        glowFadeOutCB:SetChecked(fadeOut)
+        glowType:SetSelectedValue(t[1])
+        glowColor:SetColor(t[2])
+
+        if t[1] == "None" or t[1] == "Normal" then
+            glowLines:Hide()
+            glowParticles:Hide()
+            glowDuration:Hide()
+            glowFrequency:Hide()
+            glowLength:Hide()
+            glowThickness:Hide()
+            glowScale:Hide()
+            glowOptionsFrame:SetHeight(80)
+        else
+            if t[1] == "Pixel" then
+                glowLines:Show()
+                glowLines:SetValue(t[3])
+                glowFrequency:Show()
+                glowFrequency:SetValue(t[4])
+                glowLength:Show()
+                glowLength:SetValue(t[5])
+                glowThickness:Show()
+                glowThickness:SetValue(t[6])
+
+                glowParticles:Hide()
+                glowDuration:Hide()
+                glowScale:Hide()
+                glowOptionsFrame:SetHeight(185)
+
+            elseif t[1] == "Shine" then
+                glowParticles:Show()
+                glowParticles:SetValue(t[3])
+                glowFrequency:Show()
+                glowFrequency:SetValue(t[4])
+                glowScale:Show()
+                glowScale:SetValue(t[5]*100)
+
+                glowLines:Hide()
+                glowDuration:Hide()
+                glowLength:Hide()
+                glowThickness:Hide()
+                glowOptionsFrame:SetHeight(185)
+           
+            elseif t[1] == "Proc" then
+                glowDuration:Show()
+                glowDuration:SetValue(t[3])
+
+                glowLines:Hide()
+                glowParticles:Hide()
+                glowFrequency:Hide()
+                glowLength:Hide()
+                glowScale:Hide()
+                glowThickness:Hide()
+                glowOptionsFrame:SetHeight(135)
+            end
+        end
+    end
+
+    glowOptionsFrame:SetScript("OnShow", function()
+        currentGlowOptionBtn:SetFrameLevel(parent:GetFrameLevel()+50)
+        Cell:CreateMask(Cell.frames.utilitiesTab, nil, {1, -1, -1, 1})
+        F:Debug("|cff33937FQuickAssist_ShowGlowOptions:|r", currentGlowIndex)
+    end)
+
+    glowOptionsFrame:SetScript("OnHide", function()
+        currentGlowOptionBtn:SetFrameLevel(currentGlowOptionBtn.frameLevel)
+        barOptionsFrame:Hide()
+        Cell.frames.utilitiesTab.mask:Hide()
+    end)
+end
+
+local function SetGlowOptions_OnClick(b)
+    b.frameLevel = b:GetFrameLevel()
+    b:SetScript("OnClick", function()
+        currentGlowIndex = b.index
+        currentGlowOptionBtn = b
+        if glowOptionsFrame:IsShown() then
+            glowOptionsFrame:Hide()
+        else
+            glowOptionsFrame:Show()
+            glowOptionsFrame:Load(spellTable[currentGlowIndex]["glow"]["fadeOut"], spellTable[currentGlowIndex]["glow"]["options"])
+        end
+    end)
+end
+
+-- my buff --------------------------------------------------------------- --
+local function CreateMyBuffWidget(parent, index)
     local b = Cell:CreateButton(parent, " ", "accent-hover", {180, 20})
     b:SetTexture("Interface\\AddOns\\Cell\\Media\\Icons\\create", {16, 16}, {"LEFT", 2, 0})
     b:RegisterForClicks("LeftButtonUp", "RightButtonUp")
@@ -2121,21 +2587,14 @@ local function CreateClickCastingWidgets(parent, index)
                 local spellId = tonumber(text)
                 local spellName, _, spellIcon = GetSpellInfo(spellId)
 
-                if spellId == 0 then
-                    b.id = spellId
-                    b.icon = "Interface\\AddOns\\Cell\\Media\\Icons\\target"
-                    b:SetText(L["Target"])
-                    b.tex:SetTexture(b.icon)
-                    spellTable["mine"]["clickCastings"][index][1] = 0
-                    Cell:Fire("UpdateQuickAssist", "clickCastings")
-                elseif spellId and spellName then
+                if spellId and spellName then
                     b.id = spellId
                     b.icon = spellIcon
                     b:SetText(spellName)
                     b.tex:SetTexture(spellIcon)
                     b.tex:SetTexCoord(0.08, 0.92, 0.08, 0.92)
-                    spellTable["mine"]["clickCastings"][index][1] = spellId
-                    Cell:Fire("UpdateQuickAssist", "clickCastings")
+                    spellTable["mine"]["buffs"][index][1] = spellId
+                    Cell:Fire("UpdateQuickAssist", "mine")
                 else
                     F:Print(L["Invalid spell id."])
                 end
@@ -2143,15 +2602,15 @@ local function CreateClickCastingWidgets(parent, index)
             popup:ClearAllPoints()
             popup:SetAllPoints(b)
             popup:ShowEditBox("")
-            popup:SetTips("|cffababab"..L["Input spell id"].."\n".."0 = "..L["Target"])
+            popup:SetTips("|cffababab"..L["Input spell id"])
         else
             b.id = nil
             b.icon = nil
             b:SetText("")
             b.tex:SetTexture("Interface\\AddOns\\Cell\\Media\\Icons\\create")
             b.tex:SetTexCoord(0, 1, 0, 1)
-            spellTable["mine"]["clickCastings"][index][1] = -1
-            Cell:Fire("UpdateQuickAssist", "clickCastings")
+            spellTable["mine"]["buffs"][index][1] = 0
+            Cell:Fire("UpdateQuickAssist", "mine")
         end
     end)
 
@@ -2168,18 +2627,36 @@ local function CreateClickCastingWidgets(parent, index)
         CellSpellTooltip:Hide()
     end)
 
-    b.text = b:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
-    b.text:SetPoint("BOTTOMLEFT", b, "TOPLEFT", 0, 2)
-    b.text:SetText(mouseKeyIDs[index])
+    b.type = Cell:CreateDropdown(b, 55, nil, true)
+    b.type:SetPoint("BOTTOMLEFT", b, "TOPLEFT", 0, 2)
+    -- P:Height(b.type, 17)
+    b.type:SetItems({
+        {
+            ["text"] = L["Icon"],
+            ["value"] = "icon",
+            ["onClick"] = function()
+                spellTable["mine"]["buffs"][index][2] = "icon"
+                Cell:Fire("UpdateQuickAssist", "mine")
+            end
+        },
+        {
+            ["text"] = L["Bar"],
+            ["value"] = "bar",
+            ["onClick"] = function()
+                spellTable["mine"]["buffs"][index][2] = "bar"
+                Cell:Fire("UpdateQuickAssist", "mine")
+            end
+        },
+    })
 
-    b.cp = Cell:CreateColorPicker(b, "", true, nil, function(r, g, b, a)
-        spellTable["mine"]["clickCastings"][index][2][1] = r
-        spellTable["mine"]["clickCastings"][index][2][2] = g
-        spellTable["mine"]["clickCastings"][index][2][3] = b
-        spellTable["mine"]["clickCastings"][index][2][4] = a
-        Cell:Fire("UpdateQuickAssist", "clickCastings")
+    b.cp = Cell:CreateColorPicker(b, "", false, nil, function(r, g, b, a)
+        spellTable["mine"]["buffs"][index][3][1] = r
+        spellTable["mine"]["buffs"][index][3][2] = g
+        spellTable["mine"]["buffs"][index][3][3] = b
+        spellTable["mine"]["buffs"][index][3][4] = a
+        Cell:Fire("UpdateQuickAssist", "mine")
     end)
-    b.cp:SetPoint("BOTTOMRIGHT", b, "TOPRIGHT", 0, 2)
+    b.cp:SetPoint("BOTTOMLEFT", b.type, "BOTTOMRIGHT", 2, 3)
 
     return b
 end
@@ -2190,41 +2667,53 @@ local function CreateSpellsPane()
     pages.spell:Hide()
 
     CreateIconOptions(pages.spell)
+    CreateBarOptions(pages.spell)
+    CreateGlowOptions(pages.spell)
 
-    --* buff tracker (click-castings) ----------------------------------------- --
-    local buffTrackerBtn = Cell:CreateButton(pages.spell, L["Icon Options"], "accent-hover", {110, 20})
-    buffTrackerBtn:SetPoint("TOPLEFT", 5, -42)
-    buffTrackerBtn.index = "mine"
-    SetIconOptions_OnClick(buffTrackerBtn)
+    --* buff tracker ---------------------------------------------------------- --
+    local myIconsBtn = Cell:CreateButton(pages.spell, L["Icons"], "accent-hover", {80, 20})
+    myIconsBtn:SetPoint("TOPLEFT", 5, -42)
+    myIconsBtn.index = "mine"
+    SetIconOptions_OnClick(myIconsBtn)
+
+    local myBarsBtn = Cell:CreateButton(pages.spell, L["Bars"], "accent-hover", {80, 20})
+    myBarsBtn:SetPoint("TOPLEFT", myIconsBtn, "TOPRIGHT", P:Scale(-1), 0)
+    myBarsBtn.index = "mine"
+    SetBarOptions_OnClick(myBarsBtn)
 
     local buffTrackerText = pages.spell:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
-    buffTrackerText:SetPoint("BOTTOMLEFT", buffTrackerBtn, "TOPLEFT", 0, 1)
+    buffTrackerText:SetPoint("BOTTOMLEFT", myIconsBtn, "TOPLEFT", 0, 1)
     buffTrackerText:SetText(L["Buffs Tracker"].." ("..L["mine"]..")")
 
     for i = 1, 5 do
-        clickCastingButtons[i] = CreateClickCastingWidgets(pages.spell, i)
+        myBuffWidgets[i] = CreateMyBuffWidget(pages.spell, i)
         if i == 1 then
-            clickCastingButtons[i]:SetPoint("TOPLEFT", buffTrackerBtn, 0, -56)
+            myBuffWidgets[i]:SetPoint("TOPLEFT", myIconsBtn, 0, -60)
         else
-            clickCastingButtons[i]:SetPoint("TOPLEFT", clickCastingButtons[i-1], 0, -55)
+            myBuffWidgets[i]:SetPoint("TOPLEFT", myBuffWidgets[i-1], 0, -57)
         end
     end
 
     --* offensives tracker ---------------------------------------------------- --
-    local offensivesTrackerBtn = Cell:CreateButton(pages.spell, L["Icon Options"], "accent-hover", {110, 20})
-    offensivesTrackerBtn:SetPoint("TOPLEFT", 222, -42)
-    offensivesTrackerBtn.index = "offensives"
-    SetIconOptions_OnClick(offensivesTrackerBtn)
+    local offensiveIconsBtn = Cell:CreateButton(pages.spell, L["Icons"], "accent-hover", {80, 20})
+    offensiveIconsBtn:SetPoint("TOPLEFT", 222, -42)
+    offensiveIconsBtn.index = "offensives"
+    SetIconOptions_OnClick(offensiveIconsBtn)
+
+    local offensiveGlowsBtn = Cell:CreateButton(pages.spell, L["Glows"], "accent-hover", {80, 20})
+    offensiveGlowsBtn:SetPoint("TOPLEFT", offensiveIconsBtn, "TOPRIGHT", P:Scale(-1), 0)
+    offensiveGlowsBtn.index = "offensives"
+    SetGlowOptions_OnClick(offensiveGlowsBtn)
 
     local offensivesTrackerText = pages.spell:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
-    offensivesTrackerText:SetPoint("BOTTOMLEFT", offensivesTrackerBtn, "TOPLEFT", 0, 1)
+    offensivesTrackerText:SetPoint("BOTTOMLEFT", offensiveIconsBtn, "TOPLEFT", 0, 1)
     offensivesTrackerText:SetText(L["Offensives Tracker"])
 
     offensivesEnabledCB = Cell:CreateCheckButton(pages.spell, L["Enabled"], function(checked)
         spellTable["offensives"]["enabled"] = checked
         Cell:Fire("UpdateQuickAssist", "offensives")
     end)
-    offensivesEnabledCB:SetPoint("TOPLEFT", offensivesTrackerBtn, "TOPRIGHT", 5, -3)
+    offensivesEnabledCB:SetPoint("TOPLEFT", offensiveIconsBtn, "BOTTOMLEFT", 0, -12)
 
     for class, _, i in F:IterateClasses() do
         classButtons[i] = Cell:CreateButton(pages.spell, nil, "accent-hover", {24, 24})
@@ -2245,7 +2734,7 @@ local function CreateSpellsPane()
         -- end
         
         if i == 1 then
-            classButtons[i]:SetPoint("TOPLEFT", offensivesTrackerBtn, 0, -40)
+            classButtons[i]:SetPoint("TOPLEFT", offensiveIconsBtn, 0, -60)
         elseif i % 7 == 1 then
             classButtons[i]:SetPoint("TOPLEFT", classButtons[i-7], "BOTTOMLEFT", 0, -2)
         else
@@ -2266,8 +2755,8 @@ local function CreateSpellsPane()
     end)
 
     --* buffs ----------------------------------------------------------------- --
-    buffsPane = Cell:CreateTitledPane(pages.spell, L["Buffs"], 205, 100)
-    buffsPane:SetPoint("TOPLEFT", 217, -150)
+    buffsPane = Cell:CreateTitledPane(pages.spell, L["Buffs"], 205, 85)
+    buffsPane:SetPoint("TOPLEFT", 217, -165)
     Cell:CreateTipsButton(buffsPane, 17, "BOTTOMRIGHT", "UNIT_AURA")
 
     buffsAddBtn = Cell:CreateButton(buffsPane, nil, "accent-hover", {24, 24})
@@ -2297,8 +2786,8 @@ local function CreateSpellsPane()
     end)
     
     --* casts ----------------------------------------------------------------- --
-    castsPane = Cell:CreateTitledPane(pages.spell, L["Casts"], 205, 100)
-    castsPane:SetPoint("TOPLEFT", 217, -260)
+    castsPane = Cell:CreateTitledPane(pages.spell, L["Casts"], 205, 85)
+    castsPane:SetPoint("TOPLEFT", 217, -265)
     Cell:CreateTipsButton(castsPane, 17, "BOTTOMRIGHT", "UNIT_SPELLCAST_SUCCEEDED")
 
     castsAddBtn = Cell:CreateButton(castsPane, nil, "accent-hover", {24, 24})
@@ -2385,7 +2874,9 @@ end
 -- ----------------------------------------------------------------------- --
 --                                   load                                  --
 -- ----------------------------------------------------------------------- --
-ShowFilter = function(t)
+ShowFilter = function(index)
+    local t = layoutTable["filters"][index]
+
     filterTypeDropdown:SetSelectedValue(t[1])
     hideSelfCB:SetChecked(t[3])
     
@@ -2429,7 +2920,9 @@ LoadLayout = function()
     unitsSlider:SetValue(layoutTable["unitsPerColumn"])
     maxSlider:SetValue(layoutTable["maxColumns"])
 
-    ShowFilter(layoutTable["filter"])
+    selectedFilter = layoutTable["filters"]["active"]
+    ShowFilter(selectedFilter)
+    HighlightFilter(selectedFilter)
     -- classOrderWidget:Load(layoutTable["order"])
 end
 
@@ -2459,17 +2952,13 @@ LoadStyle = function()
     nameOutlineDropdown:SetSelectedValue(styleTable["name"]["font"][3])
 end
 
-LoadClickCasting = function(b, t)
+LoadMyBuff = function(b, t)
     b.id = nil
     b.icon = nil
     
-    if t[1] == -1 then -- no setting
+    if t[1] == 0 then -- no setting
         b:SetText("")
         b.tex:SetTexture("Interface\\AddOns\\Cell\\Media\\Icons\\create")
-        b.tex:SetTexCoord(0, 1, 0, 1)
-    elseif t[1] == 0 then -- target
-        b:SetText(L["Target"])
-        b.tex:SetTexture("Interface\\AddOns\\Cell\\Media\\Icons\\target")
         b.tex:SetTexCoord(0, 1, 0, 1)
     else
         local name, _, icon = GetSpellInfo(t[1])
@@ -2485,7 +2974,8 @@ LoadClickCasting = function(b, t)
         b.tex:SetTexCoord(0.08, 0.92, 0.08, 0.92)
     end
 
-    b.cp:SetColor(t[2])
+    b.type:SetSelectedValue(t[2])
+    b.cp:SetColor(t[3])
 end
 
 -- list shared
@@ -2584,7 +3074,7 @@ end
 
 LoadSpells = function()
     for i = 1, 5 do
-        LoadClickCasting(clickCastingButtons[i], spellTable["mine"]["clickCastings"][i])
+        LoadMyBuff(myBuffWidgets[i], spellTable["mine"]["buffs"][i])
     end
 
     classButtons[1]:GetScript("OnClick")()
@@ -2592,8 +3082,6 @@ LoadSpells = function()
 end
 
 LoadDB = function()
-    layoutBtn:GetScript("OnClick")()
-
     quickAssistTable = CellDB["quickAssist"][Cell.vars.playerSpecID]
 
     if not quickAssistTable or not quickAssistTable["enabled"] then
@@ -2631,7 +3119,7 @@ local function ShowUtilitySettings(which)
             CreateLayoutPane()
             CreateStylePane()
             CreateSpellsPane()
-            -- CreatePreviewFrame()
+            layoutBtn:GetScript("OnClick")()
 
             F:ApplyCombatProtectionToFrame(quickAssistTab)
         end
@@ -2648,6 +3136,7 @@ Cell:RegisterCallback("ShowUtilitySettings", "QuickAssist_ShowUtilitySettings", 
 local function Reload()
     if init then
         LoadDB()
+        layoutBtn:GetScript("OnClick")()
         if quickAssistTab:IsVisible() then
             if quickAssistTable and quickAssistTable["enabled"] then
                 ShowLayoutPreview()

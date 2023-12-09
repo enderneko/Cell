@@ -960,6 +960,7 @@ local function QuickCast_UpdateName(self)
     end
 end
 
+-- FIXME: sync others name
 Cell:RegisterCallback("UpdateNicknames", "QuickCast_UpdateNicknames", function()
     if quickCastButtons then
         C_Timer.After(1, function()

@@ -982,6 +982,8 @@ local function Glow_SetCooldown(glow, start, duration)
         glow:SetScript("OnUpdate", nil)
         glow:SetAlpha(1)
     end
+    
+    glow:Show()
 
     local glowOptions = glow.glowOptions
     local glowType = glowOptions[1]
@@ -1014,10 +1016,9 @@ local function Glow_SetCooldown(glow, start, duration)
         LCG.PixelGlow_Stop(glow)
         LCG.AutoCastGlow_Stop(glow)
         LCG.ProcGlow_Stop(glow)
+        glow:Hide()
     end
-
-    glow:Show()
-end
+    end
 
 function I:CreateAura_Glow(name, parent)
     local glow = CreateFrame("Frame", name, parent)
@@ -1043,4 +1044,117 @@ function I:CreateAura_Glow(name, parent)
     end)
 
     return glow
+end
+
+-------------------------------------------------
+-- CreateAura_Bars
+-------------------------------------------------
+local function Bars_SetCooldown(bar, start, duration, color)
+    if duration == 0 then
+        bar:SetScript("OnUpdate", nil)
+        bar:SetMinMaxValues(0, 1)
+        bar:SetValue(1)
+    else
+        bar:SetMinMaxValues(0, duration)
+        bar:SetValue(GetTime()-start)
+        bar:SetScript("OnUpdate", function()
+            local remain = duration-(GetTime()-start)
+            bar:SetValue(remain)
+        end)
+    end
+
+    bar:SetStatusBarColor(color[1], color[2], color[3], 1)
+    bar:Show()
+end
+
+function I:CreateAura_Bars(name, parent, num)
+    local bars = CreateFrame("Frame", name, parent)
+    bars:Hide()
+    bars.indicatorType = "bars"
+
+    bars._SetSize = bars.SetSize
+
+    function bars:UpdateSize(barsShown)
+        if not (bars.width and bars.height) then return end -- not init
+        if barsShown then -- call from I:CheckCustomIndicators or preview
+            for i = barsShown + 1, num do
+                bars[i]:Hide()
+            end
+            if barsShown ~= 0 then
+                bars:_SetSize(bars.width, bars.height*barsShown-P:Scale(1)*(barsShown-1))
+            end
+        else
+            for i = 1, num do
+                if bars[i]:IsShown() then
+                    bars:_SetSize(bars.width, bars.height*i-P:Scale(1)*(i-1))
+                else
+                    break
+                end
+            end
+        end
+    end
+
+    function bars:SetSize(width, height)
+        bars.width = width
+        bars.height = height
+
+        for i = 1, num do
+            bars[i]:SetSize(width, height)
+        end
+
+        bars:UpdateSize()
+    end
+
+    function bars:SetOrientation(orientation)
+        local point1, point2, offset
+        if orientation == "top-to-bottom" then
+            point1 = "TOPLEFT"
+            point2 = "BOTTOMLEFT"
+            offset = 1
+        elseif orientation == "bottom-to-top" then
+            point1 = "BOTTOMLEFT"
+            point2 = "TOPLEFT"
+            offset = -1
+        end
+        
+        for i = 1, num do
+            P:ClearPoints(bars[i])
+            if i == 1 then
+                P:Point(bars[i], point1)
+            else
+                P:Point(bars[i], point1, bars[i-1], point2, 0, offset)
+            end
+        end
+
+        bars:UpdateSize()
+    end
+
+    for i = 1, num do
+        local name = name.."Bar"..i
+        local bar = I:CreateAura_Bar(name, bars)
+        bars[i] = bar
+
+        bar.stack:Hide()
+        bar.SetCooldown = Bars_SetCooldown
+    end
+
+    bars._Hide = bars.Hide
+    function bars:Hide(hideAll)
+        bars:_Hide()
+        if hideAll then
+            for i = 1, num do
+                bars[i]:Hide()
+            end
+        end
+    end
+
+    function bars:UpdatePixelPerfect()
+        -- P:Resize(bars)
+        P:Repoint(bars)
+        for i = 1, num do
+            bars[i]:UpdatePixelPerfect()
+        end
+    end
+
+    return bars
 end

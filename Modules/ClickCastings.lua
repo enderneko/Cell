@@ -503,7 +503,7 @@ local function UpdateClickCastings(noReload)
         
         -- load db and set attribute
         ApplyClickCastings(b)
-    end)
+    end, false, true)
     previousClickCastings = F:Copy(clickCastingTable)
 end
 Cell:RegisterCallback("UpdateClickCastings", "UpdateClickCastings", UpdateClickCastings)

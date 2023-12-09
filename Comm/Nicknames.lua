@@ -58,6 +58,11 @@ local function UpdateName(who)
         end
         F:HandleUnitButton("name", who, Update)
     end
+    -- update quickAssist
+    local unit = Cell.vars.names[who]
+    if unit and Cell.unitButtons.quickAssist.units[unit] then
+        Cell.unitButtons.quickAssist.units[unit].nameText:UpdateName()
+    end
 end
 
 local function CheckNicknames()
@@ -231,7 +236,7 @@ f:SetScript("OnEvent", function()
     
     if not CELL_NICKTAG_ENABLED then return end
 
-    local nickTag = LibStub:GetLibrary("NickTag-1.0")
+    local nickTag = LibStub:GetLibrary("NickTag-1.0", true)
     if nickTag then
         Cell.NickTag = nickTag
 

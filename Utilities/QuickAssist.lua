@@ -10,8 +10,9 @@ local LCG = LibStub("LibCustomGlow-1.0")
 local LibTranslit = LibStub("LibTranslit-1.0")
 
 local quickAssistTable, layoutTable, styleTable, spellTable, quickAssistReady
-local myBuffs, offensiveBuffs, offensiveCasts = {}, {}, {}
-local offensivesEnabled, offensivesGlowType, offensivesGlowColor, buffsGlowType
+local myBuffs_icon, myBuffs_bar = {}, {}
+local offensiveBuffs, offensiveCasts = {}, {}
+local offensivesEnabled, offensiveIconGlowType, offensiveIconGlowColor, buffsGlowType
 local tooltipPoint, tooltipRelativePoint, tooltipX, tooltipY
 
 -- ----------------------------------------------------------------------- --
@@ -90,24 +91,24 @@ end
 -- ----------------------------------------------------------------------- --
 --                           apply click-castings                          --
 -- ----------------------------------------------------------------------- --
-local function ClearClickCastings(b)
-    for i = 1, 5 do
-        b:SetAttribute("type"..i, nil)
-    end
-end
+-- local function ClearClickCastings(b)
+--     for i = 1, 5 do
+--         b:SetAttribute("type"..i, nil)
+--     end
+-- end
 
-local function ApplyClickCastings(b)
-    for i, t in pairs(spellTable["mine"]["clickCastings"]) do
-        if t[1] == 0 then
-            b:SetAttribute("type"..i, "target")
-        elseif t[1] ~= -1 then
-            local spellName = GetSpellInfo(t[1])
+-- local function ApplyClickCastings(b)
+--     for i, t in pairs(spellTable["mine"]["clickCastings"]) do
+--         if t[1] == 0 then
+--             b:SetAttribute("type"..i, "target")
+--         elseif t[1] ~= -1 then
+--             local spellName = GetSpellInfo(t[1])
 
-            b:SetAttribute("type"..i, "macro")
-            b:SetAttribute("macrotext"..i, "/cast [@mouseover] "..spellName)
-        end
-    end
-end
+--             b:SetAttribute("type"..i, "macro")
+--             b:SetAttribute("macrotext"..i, "/cast [@mouseover] "..spellName)
+--         end
+--     end
+-- end
 
 -------------------------------------------------
 -- aura tables
@@ -184,19 +185,25 @@ local function HandleBuff(self, auraInfo)
             refreshing = false
         end
         
-        if (myBuffs[name] and source == "player") or offensiveBuffs[spellId] then
+        if (source == "player" and (myBuffs_icon[name] or myBuffs_bar[name])) or offensiveBuffs[spellId] then
             self._buffs_cache[auraInstanceID] = expirationTime
             self._buffs_count_cache[auraInstanceID] = count
         end
         
-        if myBuffs[name] and source == "player" and self._buffsFound < 5 then
-            self._buffsFound = self._buffsFound + 1
-            self.buffsIndicator[self._buffsFound]:SetCooldown(start, duration, nil, icon, count, refreshing, myBuffs[name], buffsGlowType)
+        if myBuffs_icon[name] and source == "player" and self._buffIconsFound < 5 then
+            self._buffIconsFound = self._buffIconsFound + 1
+            self.buffIcons[self._buffIconsFound]:SetCooldown(start, duration, nil, icon, count, refreshing, myBuffs_icon[name], buffsGlowType)
+        end
+        
+        if myBuffs_bar[name] and source == "player" and self._buffBarsFound < 5 then
+            self._buffBarsFound = self._buffBarsFound + 1
+            self.buffBars[self._buffBarsFound]:SetCooldown(start, duration, myBuffs_bar[name])
         end
 
         if offensiveBuffs[spellId] and self._offensivesFound < 5 then
             self._offensivesFound = self._offensivesFound + 1
-            self.offensivesIndicator[self._offensivesFound]:SetCooldown(start, duration, nil, icon, count, refreshing, offensivesGlowColor, offensivesGlowType)
+            self.offensiveIcons[self._offensivesFound]:SetCooldown(start, duration, nil, icon, count, refreshing, offensiveIconGlowColor, offensiveIconGlowType)
+            self.offensiveGlow:SetCooldown(start, duration)
         end
     end
 end
@@ -240,23 +247,28 @@ local function QuickAssist_UpdateAuras(self, updateInfo)
     end
     
     if buffsChanged then
-        self._buffsFound = 0
+        self._buffIconsFound = 0
+        self._buffBarsFound = 0
         self._offensivesFound = 0
 
-        -- update myBuffs and offensiveBuffs
+        self.offensiveGlow:Hide()
+
+        -- update myBuffs_icon and offensiveBuffs
         ForEachAura(self, "HELPFUL", HandleBuff)
-        self.buffsIndicator:UpdateSize(self._buffsFound)
+        self.buffIcons:UpdateSize(self._buffIconsFound)
+        self.buffBars:UpdateSize(self._buffBarsFound)
 
         -- update offensiveCasts
         if offensivesEnabled then
             for spellId, start in pairs(self._casts) do
                 if self._offensivesFound < 5 then
                     self._offensivesFound = self._offensivesFound + 1
-                    self.offensivesIndicator[self._offensivesFound]:SetCooldown(start, offensiveCasts[spellId][1], nil, offensiveCasts[spellId][2], 0, false, offensivesGlowColor, offensivesGlowType)
+                    self.offensiveIcons[self._offensivesFound]:SetCooldown(start, offensiveCasts[spellId][1], nil, offensiveCasts[spellId][2], 0, false, offensiveIconGlowColor, offensiveIconGlowType)
+                    self.offensiveGlow:SetCooldown(start, offensiveCasts[spellId][1])
                 end
             end
         end
-        self.offensivesIndicator:UpdateSize(self._offensivesFound)
+        self.offensiveIcons:UpdateSize(self._offensivesFound)
     end
 end
 
@@ -531,6 +543,18 @@ local function QuickAssist_OnSizeChanged(self)
     self.nameText:UpdateName()
 end
 
+local function QuickAssist_OnAttributeChanged(self, name, value)
+    if name == "unit" then
+        self.unit = value
+        self:RegisterUnitEvent("UNIT_IN_RANGE_UPDATE", value)
+        ResetAuraTables(self)
+
+        if value then
+            Cell.unitButtons.quickAssist.units[value] = self
+        end
+    end
+end
+
 -- ----------------------------------------------------------------------- --
 --                                  OnLoad                                 --
 -- ----------------------------------------------------------------------- --
@@ -616,6 +640,7 @@ function CellQuickAssist_OnLoad(button)
     overlayFrame:SetAllPoints(button)
 
     -- script
+    button:SetScript("OnAttributeChanged", QuickAssist_OnAttributeChanged) -- init
     button:SetScript("OnShow", QuickAssist_OnShow)
     button:SetScript("OnHide", QuickAssist_OnHide)
     button:SetScript("OnEnter", QuickAssist_OnEnter)
@@ -631,27 +656,27 @@ end
 -- ----------------------------------------------------------------------- --
 local header = CreateFrame("Frame", "CellQuickAssistHeader", quickAssistFrame, "SecureGroupHeaderTemplate")
 
-function header:UpdateButtonUnit(bName, unit)
-    local b = _G[bName]
-    b.unit = unit
-    b:RegisterUnitEvent("UNIT_IN_RANGE_UPDATE", unit)
-    ResetAuraTables(b)
+-- function header:UpdateButtonUnit(bName, unit)
+--     local b = _G[bName]
+--     b.unit = unit
+--     b:RegisterUnitEvent("UNIT_IN_RANGE_UPDATE", unit)
+--     ResetAuraTables(b)
 
-    if not unit then return end
+--     if not unit then return end
 
-    Cell.unitButtons.quickAssist.units[unit] = b
-end
+--     Cell.unitButtons.quickAssist.units[unit] = b
+-- end
+
+-- header:SetAttribute("_initialAttributeNames", "refreshUnitChange")
+-- header:SetAttribute("_initialAttribute-refreshUnitChange", [[
+--     self:GetParent():CallMethod("UpdateButtonUnit", self:GetName(), self:GetAttribute("unit"))
+-- ]])
 
 -- header:SetAttribute("initialConfigFunction", [[
 --     local header = self:GetParent()
 --     self:SetWidth(header:GetAttribute("minWidth") or 70)
 --     self:SetHeight(header:GetAttribute("minHeight") or 25)
 -- ]])
-    
-header:SetAttribute("_initialAttributeNames", "refreshUnitChange")
-header:SetAttribute("_initialAttribute-refreshUnitChange", [[
-    self:GetParent():CallMethod("UpdateButtonUnit", self:GetName(), self:GetAttribute("unit"))
-]])
 
 header:SetAttribute("template", "CellQuickAssistButtonTemplate")
 
@@ -890,12 +915,14 @@ local function UpdateQuickAssist(which)
         -- header:SetAttribute("groupBy", nil)         
         -- header:SetAttribute("groupFilter", nil)
         -- header:SetAttribute("roleFilter", nil)
+
+        local selectedFilter = layoutTable["filters"]["active"]
         
-        header:SetAttribute("showPlayer", not layoutTable["filter"][3])
+        header:SetAttribute("showPlayer", not layoutTable["filters"][selectedFilter][3])
         
-        if layoutTable["filter"][1] == "role" then
+        if layoutTable["filters"][selectedFilter][1] == "role" then
             local groupFilter = {}
-            for k, v in pairs(layoutTable["filter"][2]) do
+            for k, v in pairs(layoutTable["filters"][selectedFilter][2]) do
                 if v then
                     tinsert(groupFilter, k)
                 end
@@ -907,9 +934,9 @@ local function UpdateQuickAssist(which)
             header:SetAttribute("sortMethod", "NAME")
             header:SetAttribute("groupFilter", groupFilter)
 
-        elseif layoutTable["filter"][1] == "class" then
+        elseif layoutTable["filters"][selectedFilter][1] == "class" then
             local groupFilter = {}
-            for k, v in pairs(layoutTable["filter"][2]) do
+            for k, v in pairs(layoutTable["filters"][selectedFilter][2]) do
                 if v[2] then
                     tinsert(groupFilter, v[1])
                 end
@@ -921,9 +948,9 @@ local function UpdateQuickAssist(which)
             header:SetAttribute("sortMethod", "NAME")
             header:SetAttribute("groupFilter", groupFilter)
 
-        elseif layoutTable["filter"][1] == "name" then
+        elseif layoutTable["filters"][selectedFilter][1] == "name" then
             header:SetAttribute("sortMethod", "NAMELIST")
-            header:SetAttribute("nameList", table.concat(layoutTable["filter"][2], ","))
+            header:SetAttribute("nameList", table.concat(layoutTable["filters"][selectedFilter][2], ","))
             header:SetAttribute("groupingOrder", "")
             header:SetAttribute("groupFilter", nil)
             header:SetAttribute("groupBy", nil)
@@ -1011,41 +1038,60 @@ local function UpdateQuickAssist(which)
         end
     end
 
-    if not which or which == "clickCastings" then
-        wipe(myBuffs)
+    if not which or which == "mine" then
+        wipe(myBuffs_icon)
+        wipe(myBuffs_bar)
 
-        for _, t in pairs(spellTable["mine"]["clickCastings"]) do
+        for _, t in pairs(spellTable["mine"]["buffs"]) do
             if t[1] > 0 then
                 local spellName = GetSpellInfo(t[1])
                 if spellName then
-                    myBuffs[spellName] = t[2]
+                    if t[2] == "icon" then
+                        myBuffs_icon[spellName] = t[3]
+                    else -- bar
+                        myBuffs_bar[spellName] = t[3]
+                    end
                 end
             end
         end
 
-        for i = 1, 40 do
-            ClearClickCastings(header[i])
-            ApplyClickCastings(header[i])
-        end
+        -- for i = 1, 40 do
+        --     ClearClickCastings(header[i])
+        --     ApplyClickCastings(header[i])
+        -- end
     end
 
     if not which or which == "mine-indicator" then
-        local t = spellTable["mine"]["icon"]
+        local bit = spellTable["mine"]["icon"]
+        buffsGlowType = bit["glow"]
+
+        local bbt = spellTable["mine"]["bar"]
+
         for i = 1, 40 do
-            local indicator = header[i].buffsIndicator
+            -- icon
+            local indicator = header[i].buffIcons
             -- point
             P:ClearPoints(indicator)
-            P:Point(indicator, t["position"][1], b, t["position"][2], t["position"][3], t["position"][4])
+            P:Point(indicator, bit["position"][1], header[i], bit["position"][2], bit["position"][3], bit["position"][4])
             -- size
-            P:Size(indicator, t["size"][1], t["size"][2])
+            P:Size(indicator, bit["size"][1], bit["size"][2])
             -- orientation
-            indicator:SetOrientation(t["orientation"])
+            indicator:SetOrientation(bit["orientation"])
             -- font
-            indicator:SetFont(unpack(t["font"]))
-            indicator:ShowDuration(t["showDuration"])
-            indicator:ShowStack(t["showStack"])
+            indicator:SetFont(unpack(bit["font"]))
+            indicator:ShowDuration(bit["showDuration"])
+            indicator:ShowStack(bit["showStack"])
+
+            -- bar
+            indicator = header[i].buffBars
+            -- point
+            P:ClearPoints(indicator)
+            P:Point(indicator, bbt["position"][1], header[i], bbt["position"][2], bbt["position"][3], bbt["position"][4])
+            -- size
+            P:Size(indicator, bbt["size"][1], bbt["size"][2])
+            -- orientation
+            indicator:SetOrientation(bbt["orientation"])
         end
-        buffsGlowType = t["glow"]
     end
 
     if not which or which == "offensives" then
@@ -1061,26 +1107,35 @@ local function UpdateQuickAssist(which)
     end
 
     if not which or which == "offensives-indicator" then
-        local t = spellTable["offensives"]["icon"]
+        local oit = spellTable["offensives"]["icon"]
+        offensiveIconGlowType = oit["glow"]
+        offensiveIconGlowColor = oit["glowColor"]
+
+        local ogt = spellTable["offensives"]["glow"]
+
         for i = 1, 40 do
-            local indicator = header[i].offensivesIndicator
+            -- icon
+            local indicator = header[i].offensiveIcons
             -- point
             P:ClearPoints(indicator)
-            P:Point(indicator, t["position"][1], b, t["position"][2], t["position"][3], t["position"][4])
+            P:Point(indicator, oit["position"][1], header[i], oit["position"][2], oit["position"][3], oit["position"][4])
             -- size
-            P:Size(indicator, t["size"][1], t["size"][2])
+            P:Size(indicator, oit["size"][1], oit["size"][2])
             -- orientation
-            indicator:SetOrientation(t["orientation"])
+            indicator:SetOrientation(oit["orientation"])
             -- font
-            indicator:SetFont(unpack(t["font"]))
-            indicator:ShowDuration(t["showDuration"])
-            indicator:ShowStack(t["showStack"])
+            indicator:SetFont(unpack(oit["font"]))
+            indicator:ShowDuration(oit["showDuration"])
+            indicator:ShowStack(oit["showStack"])
+            
+            -- glow
+            indicator = header[i].offensiveGlow
+            indicator:SetFadeOut(ogt["fadeOut"])
+            indicator:UpdateGlowOptions(ogt["options"])
         end
-        offensivesGlowType = t["glow"]
-        offensivesGlowColor = t["glowColor"]
     end
 
-    if which == "clickCastings" or which == "offensives" or which == "mine-indicator" or which == "offensives-indicator" then
+    if which == "mine" or which == "offensives" or which == "mine-indicator" or which == "offensives-indicator" then
         for i = 1, 40 do
             QuickAssist_UpdateAuras(header[i])
         end
@@ -1094,20 +1149,20 @@ end
 Cell:RegisterCallback("SpecChanged", "QuickAssist_SpecChanged", SpecChanged)
 
 local function QuickAssist_CreateIndicators(button)
-    -- buffs indicator
-    local buffsIndicator = I:CreateAura_Icons(button:GetName().."Buffs", button.overlayFrame, 5)
-    button.buffsIndicator = buffsIndicator
-    buffsIndicator:Show()
+    -- buffs indicator (icon)
+    local buffIcons = I:CreateAura_Icons(button:GetName().."BuffIcons", button.overlayFrame, 5)
+    button.buffIcons = buffIcons
+    buffIcons:Show()
     -- indicator color
     for i = 1, 5 do
-        if buffsIndicator[i].cooldown:IsObjectType("StatusBar") then
-            buffsIndicator[i].cooldown:GetStatusBarTexture():SetAlpha(1)
-            buffsIndicator[i].tex = buffsIndicator[i]:CreateTexture(nil, "OVERLAY")
-            buffsIndicator[i].tex:SetAllPoints(buffsIndicator[i].icon)
+        if buffIcons[i].cooldown:IsObjectType("StatusBar") then
+            buffIcons[i].cooldown:GetStatusBarTexture():SetAlpha(1)
+            buffIcons[i].tex = buffIcons[i]:CreateTexture(nil, "OVERLAY")
+            buffIcons[i].tex:SetAllPoints(buffIcons[i].icon)
 
-            hooksecurefunc(buffsIndicator[i], "SetCooldown", function(self, _, _, _, _, _, _, color, glow)
+            hooksecurefunc(buffIcons[i], "SetCooldown", function(self, _, _, _, _, _, _, color, glow)
                 self.tex:SetColorTexture(unpack(color))
-                self.spark:SetColorTexture(unpack(color))
+                self.spark:SetColorTexture(color[1], color[2], color[3], 1) -- ignore alpha
                 -- elseif self.cooldown:IsObjectType("Cooldown") then
                 --     self.cooldown:SetSwipeTexture(0)
                 --     self.cooldown:SetSwipeColor(unpack(color))
@@ -1116,15 +1171,24 @@ local function QuickAssist_CreateIndicators(button)
         end
     end
 
-    -- offensives indicator
-    local offensivesIndicator = I:CreateAura_Icons(button:GetName().."Offensives", button.overlayFrame, 5)
-    button.offensivesIndicator = offensivesIndicator
-    offensivesIndicator:Show()
+    -- buffs indicator (bar)
+    local buffBars = I:CreateAura_Bars(button:GetName().."BuffBars", button.overlayFrame, 5)
+    button.buffBars = buffBars
+    buffBars:Show()
+
+    -- offensives indicator (icon)
+    local offensiveIcons = I:CreateAura_Icons(button:GetName().."OffensiveIcons", button.overlayFrame, 5)
+    button.offensiveIcons = offensiveIcons
+    offensiveIcons:Show()
     for i = 1, 5 do
-        hooksecurefunc(offensivesIndicator[i], "SetCooldown", function(self, _, _, _, _, _, _, color, glow)
+        hooksecurefunc(offensiveIcons[i], "SetCooldown", function(self, _, _, _, _, _, _, color, glow)
             ShowGlow(self, glow, color)
         end)
     end
+    
+    -- offensives indicator (glow)
+    local offensiveGlow = I:CreateAura_Glow(button:GetName().."OffensiveGlow", button)
+    button.offensiveGlow = offensiveGlow
 end
 U.QuickAssist_CreateIndicators = QuickAssist_CreateIndicators
 
@@ -1132,6 +1196,14 @@ local function AddonLoaded()
     for i = 1, 40 do
         QuickAssist_CreateIndicators(header[i])
     end
+    -- for i = 1, 5 do
+    --     filterBtns[i] = Cell:CreateButton(quickAssistFrame, i, "accent-hover", {37, 17})
+    --     filterBtns[i].id = i
+    -- end
+    -- HighlightFilter = Cell:CreateButtonGroup(filterBtns, function(id)
+    --     layoutTable["filters"]["active"] = id
+    --     Cell:Fire("UpdateQuickAssist", "filter")
+    -- end)
 end
 Cell:RegisterCallback("AddonLoaded", "QuickAssist_AddonLoaded", AddonLoaded)
 

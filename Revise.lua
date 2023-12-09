@@ -2433,6 +2433,55 @@ function F:Revise()
         end
     end
 
+    -- r207-release
+    if CellDB["revise"] and dbRevision < 207 then
+        -- for spec, t in pairs(CellDB["quickAssist"]) do
+        --     t["spells"]["mine"]["clickCastings"] = t["spells"]["mine"]["buffs"]
+        --     t["spells"]["mine"]["buffs"] = nil
+        -- end
+
+        if Cell.isRetail then
+            for spec, t in pairs(CellDB["quickAssist"]) do
+                -- clickCastings -> buffs
+                if not t["spells"]["mine"]["buffs"] then
+                    t["spells"]["mine"]["buffs"] = t["spells"]["mine"]["clickCastings"]
+                    t["spells"]["mine"]["clickCastings"] = nil
+                    for _, st in pairs(t["spells"]["mine"]["buffs"]) do
+                        if st[1] == -1 then st[1] = 0 end
+                        tinsert(st, 2, "icon")
+                    end
+                end
+                -- add bar options
+                if not t["spells"]["mine"]["bar"] then
+                    t["spells"]["mine"]["bar"] = {
+                        ["position"] = {"TOPRIGHT", "BOTTOMRIGHT", 0, 1},
+                        ["orientation"] = "top-to-bottom",
+                        ["size"] = {75, 4},
+                    }
+                end
+                -- add glow options
+                if not t["spells"]["offensives"]["glow"] then
+                    t["spells"]["offensives"]["glow"] = {
+                        ["fadeOut"] = false,
+                        ["options"] = {"None", {0.95,0.95,0.32,1}},
+                    }
+                end
+                -- add filters
+                if not t["layout"]["filters"] then
+                    t["layout"]["filters"] = {
+                        t["layout"]["filter"],
+                        {"role", {["TANK"] = false, ["HEALER"] = false, ["DAMAGER"] = true}, false},
+                        {"role", {["TANK"] = false, ["HEALER"] = false, ["DAMAGER"] = true}, false},
+                        {"role", {["TANK"] = false, ["HEALER"] = false, ["DAMAGER"] = true}, false},
+                        {"role", {["TANK"] = false, ["HEALER"] = false, ["DAMAGER"] = true}, false},
+                        ["active"] = 1,
+                    }
+                    t["layout"]["filter"] = nil
+                end
+            end
+        end
+    end
+
     -- ----------------------------------------------------------------------- --
     --            update from old versions, validate all indicators            --
     -- ----------------------------------------------------------------------- --

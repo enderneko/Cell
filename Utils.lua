@@ -748,7 +748,7 @@ end
 -------------------------------------------------
 -- unit buttons
 -------------------------------------------------
-function F:IterateAllUnitButtons(func, updateCurrentGroupOnly)
+function F:IterateAllUnitButtons(func, updateCurrentGroupOnly, updateQuickAssist)
     -- solo
     if not updateCurrentGroupOnly or (updateCurrentGroupOnly and Cell.vars.groupType == "solo") then
         for _, b in pairs(Cell.unitButtons.solo) do
@@ -796,6 +796,12 @@ function F:IterateAllUnitButtons(func, updateCurrentGroupOnly)
     -- spotlight
     for _, b in pairs(Cell.unitButtons.spotlight) do
         func(b)
+    end
+
+    if Cell.isRetail and updateQuickAssist then
+        for i = 1, 40 do
+            func(Cell.unitButtons.quickAssist[i])
+        end
     end
 end
 

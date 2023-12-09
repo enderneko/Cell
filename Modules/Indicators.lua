@@ -1322,7 +1322,7 @@ local function CreateListPane()
                     ["indicatorName"] = indicatorName,
                     ["type"] = indicatorType,
                     ["enabled"] = true,
-                    ["position"] = {"TOPRIGHT", "TOPRIGHT", -1, 2},
+                    ["position"] = {"BOTTOMRIGHT", "TOPRIGHT", 0, -1},
                     ["frameLevel"] = 5,
                     ["size"] = {18, 4},
                     ["colors"] = {{0,1,0}, {1,1,0,0.5}, {1,0,0,3}},
