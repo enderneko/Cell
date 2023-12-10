@@ -14,7 +14,7 @@
 	<Script file="Indicators_Export.lua"/>
 	<Script file="Indicators_Import.lua"/>
 	<Script file="Indicators_TextureSelector.lua"/>
-	<Script file="RaidDebuffs_Wrath.lua"/>
+	<Script file="RaidDebuffs_Classic.lua"/>
 	<Script file="RaidDebuffs_ImportExport.lua"/>
 	<Script file="Utilities.lua"/>
 	<Script file="About.lua"/>

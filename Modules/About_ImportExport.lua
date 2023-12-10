@@ -22,8 +22,9 @@ local function DoImport()
     -- deal with invalid
     if Cell.isRetail then
         imported["appearance"]["useLibHealComm"] = false
-    elseif Cell.isWrath then
+    elseif Cell.isVanilla or Cell.isWrath then
         imported["quickCast"] = nil
+        imported["quickAssist"] = nil
         imported["appearance"]["healAbsorb"][1] = false
     end
 
@@ -65,8 +66,11 @@ local function DoImport()
         imported["clickCastings"] = nil
 
     elseif imported["characterDB"] and imported["characterDB"]["clickCastings"] then
-        if Cell.isWrath and imported["characterDB"]["clickCastings"]["class"] == Cell.vars.playerClass then -- WRATH -> WRATH, same class
+        if (Cell.isVanilla or Cell.isWrath) and imported["characterDB"]["clickCastings"]["class"] == Cell.vars.playerClass then -- WRATH -> WRATH, same class
             clickCastings = imported["characterDB"]["clickCastings"]
+            if Cell.isVanilla then -- no dual spec system
+                clickCastings["useCommon"] = true
+            end
         else -- WRATH -> RETAIL
             clickCastings = nil
         end
@@ -84,9 +88,9 @@ local function DoImport()
         imported["layoutAutoSwitch"] = nil
 
     elseif imported["characterDB"] and imported["characterDB"]["layoutAutoSwitch"] then
-        if Cell.isWrath then -- WRATH -> WRATH
+        if Cell.isVanilla or Cell.isWrath then -- WRATH -> WRATH
             layoutAutoSwitch = imported["characterDB"]["layoutAutoSwitch"]
-        else -- WRATH -> RETAIL
+        else -- CLASSIC -> RETAIL
             layoutAutoSwitch = nil
         end
         imported["characterDB"]["layoutAutoSwitch"] = nil
@@ -317,7 +321,7 @@ function F:ShowExportFrame()
 
     includeNicknamesCB:SetChecked(false)
     includeNicknamesCB:Show()
-    if Cell.isWrath then
+    if Cell.isVanilla or Cell.isWrath then
         includeCharacterCB:SetChecked(false)
         includeCharacterCB:Show()
     end

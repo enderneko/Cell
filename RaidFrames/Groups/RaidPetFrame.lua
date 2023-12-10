@@ -240,7 +240,7 @@ local function RaidPetFrame_UpdateLayout(layout, which)
                 B:SetOrientation(b, layout["barOrientation"][1], layout["barOrientation"][2])
             end
            
-            if not which or strfind(which, "power$") or which == "barOrientation" then
+            if not which or strfind(which, "power$") or which == "barOrientation" or which == "powerFilter" then
                 B:SetPowerSize(b, powerSize)
             end
         end

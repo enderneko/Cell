@@ -100,16 +100,16 @@ local function CreateIndicatorsImportFrame()
                     I:UpdateCustomDefensives(CellDB[k])
                 elseif k == "customExternals" then
                     I:UpdateCustomExternals(CellDB[k])
-                elseif k == "cleuAuras" then
-                    if Cell.isRetail then
-                        I:UpdateCleuAuras(CellDB[k])
-                    elseif Cell.isWrath then
-                        CellDB[k] = nil
-                    end
-                elseif k == "cleuGlow" then
-                    if Cell.isWrath then
-                        CellDB[k] = nil
-                    end
+                -- elseif k == "cleuAuras" then
+                --     if Cell.isRetail then
+                --         I:UpdateCleuAuras(CellDB[k])
+                --     elseif Cell.isWrath then
+                --         CellDB[k] = nil
+                --     end
+                -- elseif k == "cleuGlow" then
+                --     if Cell.isWrath then
+                --         CellDB[k] = nil
+                --     end
                 elseif k == "targetedSpellsList" then
                     Cell.vars.targetedSpellsList = F:ConvertTable(CellDB[k])
                 elseif k == "targetedSpellsGlow" then

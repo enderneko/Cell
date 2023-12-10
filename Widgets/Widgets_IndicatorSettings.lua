@@ -2744,7 +2744,7 @@ local function CreateSetting_Glow(parent)
         -- show db value
         function widget:SetDBValue(t, hideNone)
             widget.glowType.items[1].disabled = hideNone
-            widget.glowType.items[5].disabled = Cell.isWrath
+            widget.glowType.items[5].disabled = Cell.isVanilla or Cell.isWrath
 
             -- {"Pixel", {0.95,0.95,0.32,1}, 9, 0.25, 8, 2},
             widget.glow = t

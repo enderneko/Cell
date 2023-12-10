@@ -2,7 +2,7 @@
 -- File: Cell\RaidDebuffs\ExpansionData\ExpansionData.lua
 -- Author: enderneko (enderneko-dev@outlook.com)
 -- Created : 2022-08-26 04:40:40 +08:00
--- Modified: 2023-09-03 21:32:03 +08:00
+-- Modified: 2023-12-10 13:21:27 +08:00
 ---------------------------------------------------------------------
 
 local _, Cell = ...
@@ -17,6 +17,23 @@ Cell_ExpansionData = {
 -------------------------------------------------
 -- functions
 -------------------------------------------------
+Cell:RegisterCallback("AddonLoaded", "UpdateExpansionData", function()
+    local index
+    if Cell.isVanilla then
+        index = 1
+    elseif Cell.isWrath then
+        index = 3
+    end
+    
+    for i = 1, #Cell_ExpansionData["expansions"] - index do
+        -- print("remove", Cell_ExpansionData.expansions[1])
+        -- remove data
+        Cell_ExpansionData["data"][Cell_ExpansionData.expansions[1]] = nil
+        -- remove expansions
+        tremove(Cell_ExpansionData["expansions"], 1)
+    end
+end)
+
 function F:GetExpansionList()
     if Cell_ExpansionData["locale"] ~= GetLocale() then
         F:Print("Missing localized expansion data for "..GetLocale()..", Raid Debuffs may not work properly, please report to author.")
@@ -32,13 +49,13 @@ end
 -- expansions
 -------------------------------------------------
 Cell_ExpansionData.expansions = {
-    -- "Dragonflight",
-    -- "Shadowlands",
-    -- "Battle for Azeroth",
-    -- "Legion",
-    -- "Warlords of Draenor",
-    -- "Mists of Pandaria",
-    -- "Cataclysm",
+    "Dragonflight",
+    "Shadowlands",
+    "Battle for Azeroth",
+    "Legion",
+    "Warlords of Draenor",
+    "Mists of Pandaria",
+    "Cataclysm",
     "Wrath of the Lich King",
     "Burning Crusade",
     "Classic",

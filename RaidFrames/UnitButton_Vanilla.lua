@@ -34,7 +34,6 @@ local UnitHasVehicleUI = UnitHasVehicleUI
 -- local UnitUsingVehicle = UnitUsingVehicle
 local UnitIsCharmed = UnitIsCharmed
 local UnitIsPlayer = UnitIsPlayer
-local UnitGroupRolesAssigned = UnitGroupRolesAssigned
 local UnitThreatSituation = UnitThreatSituation
 local GetThreatStatusColor = GetThreatStatusColor
 local UnitExists = UnitExists
@@ -48,18 +47,15 @@ local IsInRaid = IsInRaid
 local UnitDetailedThreatSituation = UnitDetailedThreatSituation
 local CombatLogGetCurrentEventInfo = CombatLogGetCurrentEventInfo
 
-local barAnimationType, highlightEnabled, predictionEnabled, shieldEnabled, overshieldEnabled
-
-local POWER_WORD_SHIELD
+local barAnimationType, highlightEnabled, predictionEnabled
 
 -------------------------------------------------
 -- unit button func declarations
 -------------------------------------------------
 local UnitButton_UpdateAll
-local UnitButton_UpdateAuras, UnitButton_UpdateRole, UnitButton_UpdateLeader, UnitButton_UpdateStatusText
+local UnitButton_UpdateAuras, UnitButton_UpdateAssignment, UnitButton_UpdateLeader, UnitButton_UpdateStatusText
 local UnitButton_UpdateHealthColor, UnitButton_UpdateNameColor
 local UnitButton_UpdatePowerMax, UnitButton_UpdatePower, UnitButton_UpdatePowerType
-local UnitButton_UpdateShieldAbsorbs
 
 -------------------------------------------------
 -- unit button init indicators
@@ -94,11 +90,7 @@ local function ResetIndicators()
     for _, t in pairs(Cell.vars.currentLayoutTable["indicators"]) do
         -- update enabled
         if t["enabled"] then
-            if t["indicatorName"] == "powerWordShield" then
-                enabledIndicators[t["indicatorName"]] = Cell.vars.playerClass == "PRIEST"
-            else
-                enabledIndicators[t["indicatorName"]] = true
-            end
+            enabledIndicators[t["indicatorName"]] = true
         end
         -- update num
         if t["num"] then
@@ -149,12 +141,6 @@ local function ResetIndicators()
         if t["hideInCombat"] ~= nil then
             indicatorCustoms[t["indicatorName"]] = t["hideInCombat"]
         end
-        if t["shieldByMe"] ~= nil then
-            indicatorCustoms[t["indicatorName"]] = t["shieldByMe"]
-        end
-        if t["onlyShowOvershields"] ~= nil then
-            indicatorCustoms[t["indicatorName"]] = t["onlyShowOvershields"]
-        end
     end
 end
 
@@ -182,7 +168,7 @@ local function HandleIndicators(b)
         -- update size
         if t["size"] then
             -- NOTE: debuffs: ["size"] = {{normalSize}, {bigSize}}
-            if t["indicatorName"] == "debuffs" or t["indicatorName"] == "powerWordShield" then
+            if t["indicatorName"] == "debuffs" then
                 indicator:SetSize(t["size"][1], t["size"][2])
             else
                 P:Size(indicator, t["size"][1], t["size"][2])
@@ -272,12 +258,6 @@ local function HandleIndicators(b)
         -- update background
         if type(t["showBackground"]) == "boolean" then
             indicator:ShowBackground(t["showBackground"])
-        end
-        -- update role texture
-        if t["roleTexture"] then
-            indicator:SetRoleTexture(t["roleTexture"])
-            indicator:HideDamager(t["hideDamager"])
-            UnitButton_UpdateRole(b)
         end
         -- tooltip
         if type(t["showTooltip"]) == "boolean" then
@@ -383,9 +363,9 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                 I:EnableTargetedSpells(value)
             elseif indicatorName == "consumables" then
                 I:EnableConsumables(value)
-            elseif indicatorName == "roleIcon" then
+            elseif indicatorName == "partyAssignmentIcon" then
                 F:IterateAllUnitButtons(function(b)
-                    UnitButton_UpdateRole(b)
+                    UnitButton_UpdateAssignment(b)
                 end, true)
             elseif indicatorName == "leaderIcon" then
                 F:IterateAllUnitButtons(function(b)
@@ -414,10 +394,6 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
             elseif indicatorName == "healthText" then
                 F:IterateAllUnitButtons(function(b)
                     B:UpdateHealthText(b)
-                end, true)
-            elseif indicatorName == "shieldBar" then
-                F:IterateAllUnitButtons(function(b)
-                    B:UpdateShield(b)
                 end, true)
             elseif indicatorName == "healthThresholds" then
                 if value then
@@ -543,12 +519,6 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                     UnitButton_UpdateAuras(b)
                 end, true)
             end
-        elseif setting == "roleTexture" then
-            F:IterateAllUnitButtons(function(b)
-                local indicator = b.indicators[indicatorName]
-                indicator:SetRoleTexture(value)
-                UnitButton_UpdateRole(b)
-            end, true)
         elseif setting == "texture" then
             F:IterateAllUnitButtons(function(b)
                 local indicator = b.indicators[indicatorName]
@@ -607,13 +577,6 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                 F:IterateAllUnitButtons(function(b)
                     UnitButton_UpdateLeader(b)
                 end, true)
-            elseif value == "shieldByMe" then
-                indicatorCustoms[indicatorName] = value2
-            elseif value == "onlyShowOvershields" then
-                indicatorCustoms[indicatorName] = value2
-                F:IterateAllUnitButtons(function(b)
-                    UnitButton_UpdateShieldAbsorbs(b)
-                end, true)
             elseif value == "showDispelTypeIcons" then
                 F:IterateAllUnitButtons(function(b)
                     b.indicators[indicatorName]:ShowIcons(value2)
@@ -636,11 +599,6 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                 F:IterateAllUnitButtons(function(b)
                     b.indicators[indicatorName]:SetCircledStackNums(value2)
                     UnitButton_UpdateAuras(b)
-                end, true)
-            elseif value == "hideDamager" then
-                F:IterateAllUnitButtons(function(b)
-                    b.indicators[indicatorName]:HideDamager(value2)
-                    UnitButton_UpdateRole(b)
                 end, true)
             elseif value == "fadeOut" then
                 F:IterateAllUnitButtons(function(b)
@@ -842,11 +800,6 @@ local function UnitButton_UpdateDebuffs(self)
                 end
             end
 
-            if enabledIndicators["powerWordShield"] and spellId == 6788 then
-                wsFound = true
-                self.indicators.powerWordShield:SetWeakenedSoulCooldown(expirationTime - duration, duration, source == "player")
-            end
-
             -- BG orbs
             -- if spellId == 121164 then
             --     self.state.BGOrb = "blue"
@@ -959,13 +912,6 @@ local function UnitButton_UpdateDebuffs(self)
     -- user created indicators
     I:ShowCustomIndicators(self, "debuff")
 
-    -- hide ws
-    if enabledIndicators["powerWordShield"] then
-        if not wsFound then
-            self.indicators.powerWordShield:SetWeakenedSoulCooldown()
-        end
-    end
-    
     -- update debuffs_cache
     for auraInstanceID, expirationTime in pairs(self._debuffs_cache) do
         -- lost or expired
@@ -1060,11 +1006,6 @@ local function UnitButton_UpdateBuffs(self)
                 self.state.BGFlag = "horde"
             end
 
-            if enabledIndicators["powerWordShield"] and POWER_WORD_SHIELD[spellId] and (not indicatorCustoms["powerWordShield"] or source == "player") then
-                pwsFound = true
-                self.indicators.powerWordShield:SetShieldCooldown(expirationTime - duration, duration)
-            end
-            
             self._buffs_current[auraInstanceID] = i
             self._buffs_cache[auraInstanceID] = expirationTime
             self._buffs_count_cache[auraInstanceID] = count
@@ -1086,13 +1027,6 @@ local function UnitButton_UpdateBuffs(self)
         self.indicators.statusText:SetStatus()
     end
 
-    -- hide pws
-    if enabledIndicators["powerWordShield"] then
-        if not pwsFound then
-            self.indicators.powerWordShield:SetShieldCooldown()
-        end
-    end
-    
     -- update buffs_cache
     for auraInstanceID, expirationTime in pairs(self._buffs_cache) do
         -- lost or expired
@@ -1158,12 +1092,6 @@ end
 -------------------------------------------------
 -- functions
 -------------------------------------------------
-local pwsInfo = {} -- Power Word: Shield
-local daInfo = {} -- Divine Aegis
--- 64413: Protection of Ancient Kings
--- 64411: Blessing of Ancient Kings
-local pakInfo = {}
-
 local function UpdateUnitHealthState(self, diff)
     local unit = self.state.displayedUnit
     local guid = self.state.guid
@@ -1174,11 +1102,7 @@ local function UpdateUnitHealthState(self, diff)
 
     self.state.health = health
     self.state.healthMax = healthMax
-    if guid then
-        self.state.totalAbsorbs = (pwsInfo[guid] or 0) + (daInfo[guid] or 0) + (pakInfo[guid] or 0)
-    else
-        self.state.totalAbsorbs = 0
-    end
+    self.state.totalAbsorbs = 0
 
     if healthMax == 0 then
         self.state.healthPercent = 0
@@ -1224,30 +1148,19 @@ end
 -------------------------------------------------
 -- power filter funcs
 -------------------------------------------------
-local function GetRole(b)
-    if b.state.role and b.state.role ~= "NONE" then
-        return b.state.role
-    end
-
-    -- FIXME:
-    return "DAMAGER"
-end
-
 local function ShouldShowPowerBar(b)
     if not (b:IsVisible() or b.isPreview) then return end
     if not b.powerSize or b.powerSize == 0 then return end
     
-    -- NOTE: no role while solo, so always show power bar
-    if not b.state.guid or Cell.vars.groupType == "solo" then
+    if not b.state.guid  then
         return true
     end
 
-    local class, role
+    local class
     if b.state.inVehicle then
         class = "VEHICLE"
     elseif string.find(b.state.guid, "^Player") then
         class = b.state.class
-        role = GetRole(b)
     elseif string.find(b.state.guid, "^Pet") then
         class = "PET"
     elseif string.find(b.state.guid, "^Creature") then
@@ -1257,15 +1170,7 @@ local function ShouldShowPowerBar(b)
     end
     
     if class then
-        if type(Cell.vars.currentLayoutTable["powerFilters"][class]) == "boolean" then
-            return Cell.vars.currentLayoutTable["powerFilters"][class]
-        else
-            if role and type(Cell.vars.currentLayoutTable["powerFilters"][class][role]) == "boolean" then
-                return Cell.vars.currentLayoutTable["powerFilters"][class][role]
-            else
-                return true -- show power if role not found
-            end
-        end
+        return Cell.vars.currentLayoutTable["powerFilters"][class]
     end
 
     return true
@@ -1347,23 +1252,20 @@ local function CheckVehicleRoot(self, petUnit)
     self.indicators.roleIcon:SetRole(isRoot and "VEHICLE" or "NONE")
 end
 
-UnitButton_UpdateRole = function(self)
+UnitButton_UpdateAssignment = function(self)
     local unit = self.state.unit
     if not unit then return end
 
-    local role = UnitGroupRolesAssigned(unit)
-    self.state.role = role
-    
-    local roleIcon = self.indicators.roleIcon
-    if enabledIndicators["roleIcon"] then
-        roleIcon:SetRole(role)
+    local partyAssignmentIcon = self.indicators.partyAssignmentIcon
+    if enabledIndicators["partyAssignmentIcon"] then
+        partyAssignmentIcon:UpdateAssignment(unit)
 
         --! check vehicle root
         if self.state.guid and strfind(self.state.guid, "^Vehicle") then
             CheckVehicleRoot(self, unit)
         end
     else
-        roleIcon:Hide()
+        partyAssignmentIcon:Hide()
     end
 end
 
@@ -1879,212 +1781,6 @@ function F:EnableLibHealComm(enabled)
 end
 
 -------------------------------------------------
--- shields
--------------------------------------------------
-UnitButton_UpdateShieldAbsorbs = function(self)
-    local unit = self.state.displayedUnit
-    if not unit then return end
-
-    UpdateUnitHealthState(self)
-
-    if self.state.totalAbsorbs > 0 then
-        local shieldPercent = self.state.totalAbsorbs / self.state.healthMax
-
-        if enabledIndicators["shieldBar"] then
-            if indicatorCustoms["shieldBar"] then
-                -- onlyShowOvershields
-                local overshieldPercent = (self.state.totalAbsorbs + self.state.health - self.state.healthMax) / self.state.healthMax
-                if overshieldPercent > 0 then
-                    self.indicators.shieldBar:Show()
-                    self.indicators.shieldBar:SetValue(overshieldPercent)
-                else
-                    self.indicators.shieldBar:Hide()
-                end
-            else
-                self.indicators.shieldBar:Show()
-                self.indicators.shieldBar:SetValue(shieldPercent)
-            end
-        else
-            self.indicators.shieldBar:Hide()
-        end
-        
-        self.widget.shieldBar:SetValue(shieldPercent)
-    else
-        self.indicators.shieldBar:Hide()
-        self.widget.shieldBar:Hide()
-        self.widget.overShieldGlow:Hide()
-    end
-end
-
-local function UnitButton_UpdatePowerWordShield(self, current, max, resetMax)
-    if not enabledIndicators["powerWordShield"] then return end
-
-    self.indicators.powerWordShield:UpdateShield(current, max, resetMax)
-end
-
-local function _UpdateShield(b, current, max, resetMax)
-    UnitButton_UpdateShieldAbsorbs(b)
-    UnitButton_UpdatePowerWordShield(b, current, max, resetMax)
-end
-
-local function UpdateShield(guid, max, resetMax)
-    F:HandleUnitButton("guid", guid, _UpdateShield, pwsInfo[guid] or 0, max, resetMax)
-end
-
-POWER_WORD_SHIELD = {
-    [17] = true, -- rank 1
-	[592] = true, -- rank 2
-	[600] = true, -- rank 3
-	[3747] = true, -- rank 4
-	[6056] = true, -- rank 5
-	[6066] = true, -- rank 6
-	[10898] = true, -- rank 7
-	[10899] = true, -- rank 8
-	[10900] = true, -- rank 9
-	[10901] = true, -- rank 10
-	[25217] = true, -- rank 11
-	[25218] = true, -- rank 12
-	[48065] = true, -- rank 13
-	[48066] = true, -- rank 14
-}
-
-local cleu = CreateFrame("Frame")
-cleu:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
-
-local UnitLevel = UnitLevel
--- local totalAbsorbed = 0
-local lastHealAmount, lastHealGUID
-local blessing
-local lastHealTimeStamp = {}
-
-cleu:SetScript("OnEvent", function()
-    local timestamp, subEvent, _, sourceGUID, sourceName, sourceFlags, sourceRaidFlags, destGUID, destName, destFlags, destRaidFlags, arg12, arg13, arg14, arg15, arg16, arg17, arg18, arg19, arg20, arg21, arg22 = CombatLogGetCurrentEventInfo()
-    
-    -- thanks to momo2366 https://github.com/enderneko/Cell/issues/43
-    if subEvent == "SPELL_HEAL" then
-        -- spellId, spellName, spellSchool, amount, overhealing, absorbed, critical
-        if arg12 == 56160 then -- Glyph of Power Word: Shield
-            --! IMPORTANT, when override PWS from others, SPELL_AURA_REMOVED comes after SPELL_HEAL
-            lastHealTimeStamp[destGUID] = timestamp
-            
-            if arg18 then
-                pwsInfo[destGUID] = arg15 / 1.5 / 0.2
-            else
-                pwsInfo[destGUID] = arg15 / 0.2
-            end
-
-            -- totalAbsorbed = 0
-            -- print(timestamp, arg18, "healed:", arg15, "shield:", pwsInfo[destGUID])
-
-            if not indicatorCustoms["powerWordShield"] or sourceGUID == Cell.vars.playerGUID then
-                UpdateShield(destGUID, pwsInfo[destGUID])
-            else
-                UpdateShield(destGUID, nil, true) -- reset powerWordShield max
-            end
-        end
-        
-        -- Divine Aegis (mine)
-        -- https://wowpedia.fandom.com/wiki/Patch_3.1.0
-        --* Divine Aegis effects will now stack, however the amount absorbed cannot exceed 125*level (of the target). It will also now take into account total healing including overhealing.
-        if sourceGUID == Cell.vars.playerGUID and Cell.vars.divineAegisMultiplier and arg18 then -- arg18: critical
-            local maxDA = Cell.vars.guids[destGUID] and 125 * UnitLevel(Cell.vars.guids[destGUID]) or 10000
-            if not daInfo[destGUID] then
-                daInfo[destGUID] = min(arg15 * Cell.vars.divineAegisMultiplier, maxDA)
-                -- totalAbsorbed = 0
-                -- print(arg18, "healed:", arg15, "max:", maxDA, "shield:", daInfo[destGUID])
-            else
-                -- print(arg18, "healed:", arg15, "max:", maxDA, "shield:", daInfo[destGUID] + currentDA, "("..daInfo[destGUID].."+"..currentDA..")")
-                daInfo[destGUID] = min(daInfo[destGUID] + arg15 * Cell.vars.divineAegisMultiplier, maxDA)
-            end
-            UpdateShield(destGUID)
-        end
-
-        -- https://wowpedia.fandom.com/wiki/Val%27anyr,_Hammer_of_Ancient_Kings
-        if sourceGUID == Cell.vars.playerGUID then
-            --! NOTE: PotAK applied AFTER healing
-            lastHealAmount = arg15
-            lastHealGUID = destGUID --? AoE healing
-            if blessing then
-                if not pakInfo[destGUID] then
-                    pakInfo[destGUID] = min(arg15 * 0.15, 20000)
-                else
-                    pakInfo[destGUID] = min(pakInfo[destGUID] + arg15 * 0.15, 20000)
-                end
-                UpdateShield(destGUID)
-            end
-        end
-
-    elseif subEvent == "SPELL_PERIODIC_HEAL" then
-        -- https://wowpedia.fandom.com/wiki/Val%27anyr,_Hammer_of_Ancient_Kings
-        if sourceGUID == Cell.vars.playerGUID then
-            --! NOTE: PotAK applied AFTER healing
-            lastHealAmount = arg15
-            lastHealGUID = destGUID --? AoE healing
-            if blessing then
-                if not pakInfo[destGUID] then
-                    pakInfo[destGUID] = min(arg15 * 0.15, 20000)
-                else
-                    pakInfo[destGUID] = min(pakInfo[destGUID] + arg15 * 0.15, 20000)
-                end
-                UpdateShield(destGUID)
-            end
-        end
-
-    elseif subEvent == "SPELL_ABSORBED" then
-        -- [spellID, spellName, spellSchool], casterGUID, casterName, casterFlags, casterRaidFlags, absorbSpellId, absorbSpellName, absorbSpellSchool, amount, critical
-        local absorbSpellId, absorbAmount
-        if arg21 then -- spell
-            absorbSpellId, absorbAmount = arg19, arg22
-        else -- swing
-            absorbSpellId, absorbAmount = arg16, arg19
-        end
-
-        -- totalAbsorbed = totalAbsorbed + absorbAmount
-        -- print("ABSORBED", "current:", absorbAmount, "total:", totalAbsorbed)
-        
-        -- update shields left
-        if POWER_WORD_SHIELD[absorbSpellId] then
-            pwsInfo[destGUID] = (pwsInfo[destGUID] or 0) - absorbAmount
-        elseif absorbSpellId == 47753 then
-            daInfo[destGUID] = (daInfo[destGUID] or 0) - absorbAmount
-        elseif absorbSpellId == 64413 then
-            pakInfo[destGUID] = (pakInfo[destGUID] or 0) - absorbAmount
-        end
-        UpdateShield(destGUID)
-    
-    elseif subEvent == "SPELL_AURA_REMOVED" then
-        if POWER_WORD_SHIELD[arg12] then
-            if timestamp ~= lastHealTimeStamp[destGUID] then
-                -- print("PWS removed", timestamp)
-                pwsInfo[destGUID] = nil
-            end
-            UpdateShield(destGUID)
-        elseif sourceGUID == Cell.vars.playerGUID then
-            if arg12 == 47753 then -- Divine Aegis NOTE: mine only
-                daInfo[destGUID] = nil
-            elseif arg12 == 64413 then
-                pakInfo[destGUID] = nil
-            elseif arg12 == 64411 then
-                --! BLESSING END
-                blessing = false
-            end
-            UpdateShield(destGUID)
-        end
-
-    elseif subEvent == "SPELL_AURA_APPLIED" then
-        -- NOTE: 10% chance whenever a hot or direct spell heals, with a 45 sec internal cooldown
-        if arg12 == 64411 and sourceGUID == Cell.vars.playerGUID then
-            --! BLESSING START
-            blessing = true
-            if lastHealAmount then
-                pakInfo[lastHealGUID] = min(lastHealAmount * 0.15, 20000)
-                UpdateShield(lastHealGUID)
-            end
-        end
-    end
-end)
-
--------------------------------------------------
 -- cleu health updater
 -------------------------------------------------
 local cleuHealthUpdater = CreateFrame("Frame", "CellCleuHealthUpdater")
@@ -2151,9 +1847,8 @@ UnitButton_UpdateAll = function(self)
     UnitButton_UpdateTarget(self)
     UnitButton_UpdatePlayerRaidIcon(self)
     UnitButton_UpdateTargetRaidIcon(self)
-    UnitButton_UpdateShieldAbsorbs(self)
     UnitButton_UpdateInRange(self)
-    UnitButton_UpdateRole(self)
+    UnitButton_UpdateAssignment(self)
     UnitButton_UpdateLeader(self)
     UnitButton_UpdateReadyCheck(self)
     UnitButton_UpdateThreat(self)
@@ -2269,12 +1964,10 @@ local function UnitButton_OnEvent(self, event, unit)
             UnitButton_UpdateHealthMax(self)
             UnitButton_UpdateHealth(self)
             UnitButton_UpdateHealPrediction(self)
-            UnitButton_UpdateShieldAbsorbs(self)
             
         elseif event == "UNIT_HEALTH" or event == "UNIT_HEALTH_FREQUENT" then
             UnitButton_UpdateHealth(self)
             UnitButton_UpdateHealPrediction(self)
-            UnitButton_UpdateShieldAbsorbs(self)
             -- UnitButton_UpdateStatusText(self)
     
         elseif event == "UNIT_HEAL_PREDICTION" then
@@ -2385,14 +2078,6 @@ local function UnitButton_OnAttributeChanged(self, name, value)
             end
 
             ResetAuraTables(self)
-
-            -- reset shields
-            local guid = UnitGUID(value)
-            if guid then
-                pwsInfo[guid] = nil
-                daInfo[guid] = nil
-                pakInfo[guid] = nil
-            end
         end
     end
 end
@@ -2433,13 +2118,6 @@ local function UnitButton_OnHide(self)
     UnitButton_UnregisterEvents(self)
 
     ResetAuraTables(self)
-    
-    -- reset shields
-    if self.__displayedGuid then
-        pwsInfo[self.__displayedGuid] = nil
-        daInfo[self.__displayedGuid] = nil
-        pakInfo[self.__displayedGuid] = nil
-    end
     
     -- NOTE: update Cell.vars.guids
     -- print("hide", self.state.unit, self.__unitGuid, self.__unitName)
@@ -2558,14 +2236,7 @@ end
 
 function B:UpdateShields(button)
     predictionEnabled = CellDB["appearance"]["healPrediction"][1]
-    absorbEnabled = CellDB["appearance"]["healAbsorb"][1]
-    shieldEnabled = CellDB["appearance"]["shield"][1]
-    overshieldEnabled = CellDB["appearance"]["overshield"]
-
-    button.widget.shieldBar:SetVertexColor(CellDB["appearance"]["shield"][2][1], CellDB["appearance"]["shield"][2][2], CellDB["appearance"]["shield"][2][3], CellDB["appearance"]["shield"][2][4])
-
     UnitButton_UpdateHealPrediction(button)
-    UnitButton_UpdateShieldAbsorbs(button)
 end
 
 function B:SetTexture(button, tex)
@@ -2593,8 +2264,6 @@ function B:SetOrientation(button, orientation, rotateTexture)
     local incomingHeal = button.widget.incomingHeal
     local damageFlashTex = button.widget.damageFlashTex
     local gapTexture = button.widget.gapTexture
-    local shieldBar = button.widget.shieldBar
-    local overShieldGlow = button.widget.overShieldGlow
 
     gapTexture:SetColorTexture(unpack(CELL_BORDER_COLOR))
 
@@ -2616,14 +2285,11 @@ function B:SetOrientation(button, orientation, rotateTexture)
         F:RotateTexture(powerBarLoss, 90)
         F:RotateTexture(incomingHeal, 90)
         F:RotateTexture(damageFlashTex, 90)
-        -- F:RotateTexture(shieldBar, 90)
     else
         F:RotateTexture(healthBarLoss, 0)
         F:RotateTexture(powerBarLoss, 0)
         F:RotateTexture(incomingHeal, 0)
-        F:RotateTexture(overShieldGlow, 0)
         F:RotateTexture(damageFlashTex, 0)
-        -- F:RotateTexture(shieldBar, 0)
     end
     
     if orientation == "horizontal" then
@@ -2668,47 +2334,6 @@ function B:SetOrientation(button, orientation, rotateTexture)
                 incomingHeal:Show()
             end
         end
-        
-        -- update shieldBar
-        P:ClearPoints(shieldBar)
-        P:Point(shieldBar, "TOPLEFT", healthBar:GetStatusBarTexture(), "TOPRIGHT")
-        P:Point(shieldBar, "BOTTOMLEFT", healthBar:GetStatusBarTexture(), "BOTTOMRIGHT")
-        function shieldBar:SetValue(shieldPercent)
-            local barWidth = healthBar:GetWidth()
-            if shieldPercent + button.state.healthPercent > 1 then -- overshield
-                local p = 1 - button.state.healthPercent
-                if p ~= 0 then
-                    if shieldEnabled then
-                        shieldBar:SetWidth(p * barWidth)
-                        shieldBar:Show()
-                    else
-                        shieldBar:Hide()
-                    end
-                else
-                    shieldBar:Hide()
-                end
-                if overshieldEnabled then
-                    overShieldGlow:Show()
-                else
-                    overShieldGlow:Hide()
-                end
-            else
-                if shieldEnabled then
-                    shieldBar:SetWidth(shieldPercent * barWidth)
-                    shieldBar:Show()
-                else
-                    shieldBar:Hide()
-                end
-                overShieldGlow:Hide()
-            end
-        end
-        
-        -- update overShieldGlow
-        P:ClearPoints(overShieldGlow)
-        P:Point(overShieldGlow, "BOTTOMLEFT", healthBar, "BOTTOMRIGHT", -4, 0)
-        P:Point(overShieldGlow, "TOPLEFT", healthBar, "TOPRIGHT", -4, 0)
-        P:Width(overShieldGlow, 8)
-        F:RotateTexture(overShieldGlow, 0)
         
         -- update damageFlashTex
         P:ClearPoints(damageFlashTex)
@@ -2767,47 +2392,6 @@ function B:SetOrientation(button, orientation, rotateTexture)
                 incomingHeal:Show()
             end
         end
-        
-        -- update shieldBar
-        P:ClearPoints(shieldBar)
-        P:Point(shieldBar, "BOTTOMLEFT", healthBar:GetStatusBarTexture(), "TOPLEFT")
-        P:Point(shieldBar, "BOTTOMRIGHT", healthBar:GetStatusBarTexture(), "TOPRIGHT")
-        function shieldBar:SetValue(shieldPercent)
-            local barHeight = healthBar:GetHeight()
-            if shieldPercent + button.state.healthPercent > 1 then -- overshield
-                local p = 1 - button.state.healthPercent
-                if p ~= 0 then
-                    if shieldEnabled then
-                        shieldBar:SetHeight(p * barHeight)
-                        shieldBar:Show()
-                    else
-                        shieldBar:Hide()
-                    end
-                else
-                    shieldBar:Hide()
-                end
-                if overshieldEnabled then
-                    overShieldGlow:Show()
-                else
-                    overShieldGlow:Hide()
-                end
-            else
-                if shieldEnabled then
-                    shieldBar:SetHeight(shieldPercent * barHeight)
-                    shieldBar:Show()
-                else
-                    shieldBar:Hide()
-                end
-                overShieldGlow:Hide()
-            end
-        end
-        
-        -- update overShieldGlow
-        P:ClearPoints(overShieldGlow)
-        P:Point(overShieldGlow, "BOTTOMLEFT", healthBar, "TOPLEFT", 0, -4)
-        P:Point(overShieldGlow, "BOTTOMRIGHT", healthBar, "TOPRIGHT", 0, -4)
-        P:Height(overShieldGlow, 8)
-        F:RotateTexture(overShieldGlow, 90)
         
         -- update damageFlashTex
         P:ClearPoints(damageFlashTex)
@@ -2903,11 +2487,6 @@ function B:UpdateStatusText(button)
     UnitButton_UpdateStatusText(button)
 end
 
--- shields
-function B:UpdateShield(button)
-    UnitButton_UpdateShieldAbsorbs(button)
-end
-
 -- pixel perfect
 function B:UpdatePixelPerfect(button, updateIndicators)
     button:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8x8", edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = P:Scale(CELL_BORDER_SIZE)})
@@ -2923,8 +2502,6 @@ function B:UpdatePixelPerfect(button, updateIndicators)
     P:Resize(button.widget.gapTexture)
 
     P:Repoint(button.widget.incomingHeal)
-    P:Repoint(button.widget.shieldBar)
-    P:Repoint(button.widget.overShieldGlow)
     P:Repoint(button.widget.damageFlashTex)
     
     B:UpdateHighlightSize(button)
@@ -3040,8 +2617,6 @@ function CellUnitButton_OnLoad(button)
     -- shield bar
     local shieldBar = healthBar:CreateTexture(name.."ShieldBar", "ARTWORK", nil, -7)
     button.widget.shieldBar = shieldBar
-    -- P:Point(shieldBar, "TOPLEFT", healthBar:GetStatusBarTexture(), "TOPRIGHT")
-    -- P:Point(shieldBar, "BOTTOMLEFT", healthBar:GetStatusBarTexture(), "BOTTOMRIGHT")
     shieldBar:SetTexture("Interface\\AddOns\\Cell\\Media\\shield.tga", "REPEAT", "REPEAT")
     shieldBar:SetHorizTile(true)
     shieldBar:SetVertTile(true)
@@ -3054,9 +2629,6 @@ function CellUnitButton_OnLoad(button)
     button.widget.overShieldGlow = overShieldGlow
     overShieldGlow:SetTexture("Interface\\RaidFrame\\Shield-Overshield")
     overShieldGlow:SetBlendMode("ADD")
-    -- P:Point(overShieldGlow, "BOTTOMLEFT", healthBar, "BOTTOMRIGHT", -4, 0)
-    -- P:Point(overShieldGlow, "TOPLEFT", healthBar, "TOPRIGHT", -4, 0)
-    -- overShieldGlow:SetWidth(8)
     overShieldGlow:Hide()
 
     -- bar animation
@@ -3166,14 +2738,13 @@ function CellUnitButton_OnLoad(button)
     I:CreateStatusText(button)
     I:CreateHealthText(button)
     I:CreateStatusIcon(button)
-    I:CreateRoleIcon(button)
+    I:CreatePartyAssignmentIcon(button)
     I:CreateLeaderIcon(button)
     I:CreateReadyCheckIcon(button)
     I:CreateAggroBlink(button)
     I:CreateAggroBorder(button)
     I:CreatePlayerRaidIcon(button)
     I:CreateTargetRaidIcon(button)
-    I:CreateShieldBar(button)
     I:CreateAoEHealing(button)
     I:CreateDefensiveCooldowns(button)
     I:CreateExternalCooldowns(button)
@@ -3186,7 +2757,6 @@ function CellUnitButton_OnLoad(button)
     I:CreateConsumables(button)
     I:CreateHealthThresholds(button)
     I:CreateMissingBuffs(button)
-    I:CreatePowerWordShield(button)
     U:CreateSpellRequestIcon(button)
     U:CreateDispelRequestText(button)
 

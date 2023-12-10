@@ -2,7 +2,7 @@
 -- File: Cell\RaidDebuffs\ExpansionData\ExpansionData_zhTW.lua
 -- Author: enderneko (enderneko-dev@outlook.com)
 -- Created : 2023-09-03 19:55:43 +08:00
--- Modified: 2023-09-03 19:56:27 +08:00
+-- Modified: 2023-12-10 11:33:42 +08:00
 ---------------------------------------------------------------------
 
 if not LOCALE_zhTW then return end
@@ -10,13 +10,13 @@ if not LOCALE_zhTW then return end
 Cell_ExpansionData.locale = "zhTW"
 
 Cell_ExpansionData.expansions = {
-    -- "巨龍崛起",
-    -- "暗影之境",
-    -- "決戰艾澤拉斯",
-    -- "軍臨天下",
-    -- "德拉諾之霸",
-    -- "潘達利亞之謎",
-    -- "浩劫與重生",
+    "巨龍崛起",
+    "暗影之境",
+    "決戰艾澤拉斯",
+    "軍臨天下",
+    "德拉諾之霸",
+    "潘達利亞之謎",
+    "浩劫與重生",
     "巫妖王之怒",
     "燃燒的遠征",
     "艾澤拉斯",

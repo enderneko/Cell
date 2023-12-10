@@ -274,7 +274,7 @@ local function CreateRTPane()
         {
             ["text"] = L["World Marks"].." ("..L["Horizontal"]..")",
             ["value"] = "world_h",
-            ["disabled"] = Cell.isWrath,
+            ["disabled"] = Cell.isVanilla or Cell.isWrath,
             ["onClick"] = function()
                 CellDB["tools"]["marks"][3] = "world_h"
                 Cell:Fire("UpdateTools", "marks")
@@ -283,7 +283,7 @@ local function CreateRTPane()
         {
             ["text"] = L["World Marks"].." ("..L["Vertical"]..")",
             ["value"] = "world_v",
-            ["disabled"] = Cell.isWrath,
+            ["disabled"] = Cell.isVanilla or Cell.isWrath,
             ["onClick"] = function()
                 CellDB["tools"]["marks"][3] = "world_v"
                 Cell:Fire("UpdateTools", "marks")
@@ -292,7 +292,7 @@ local function CreateRTPane()
         {
             ["text"] = L["Both"].." ("..L["Horizontal"]..")",
             ["value"] = "both_h",
-            ["disabled"] = Cell.isWrath,
+            ["disabled"] = Cell.isVanilla or Cell.isWrath,
             ["onClick"] = function()
                 CellDB["tools"]["marks"][3] = "both_h"
                 Cell:Fire("UpdateTools", "marks")
@@ -301,7 +301,7 @@ local function CreateRTPane()
         {
             ["text"] = L["Both"].." ("..L["Vertical"]..")",
             ["value"] = "both_v",
-            ["disabled"] = Cell.isWrath,
+            ["disabled"] = Cell.isVanilla or Cell.isWrath,
             ["onClick"] = function()
                 CellDB["tools"]["marks"][3] = "both_v"
                 Cell:Fire("UpdateTools", "marks")

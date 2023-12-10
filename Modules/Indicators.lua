@@ -229,6 +229,22 @@ local function InitIndicator(indicatorName)
                 indicator:SetRole(indicator.roles[indicator.role])
             end
         end)
+  
+    elseif indicatorName == "partyAssignmentIcon" then
+        -- texture type cannot glow by LCG
+        indicator.preview = indicator.preview or CreateFrame("Frame", nil, previewButton)
+        indicator.preview:SetAllPoints(indicator)
+        indicator.roles = {"Interface\\GroupFrame\\UI-Group-MainTankIcon", "Interface\\GroupFrame\\UI-Group-MainAssistIcon"}
+        indicator.role = 1
+        indicator.elapsed = 0
+        indicator.preview:SetScript("OnUpdate", function(self, elapsed)
+            indicator.elapsed = indicator.elapsed + elapsed
+            if indicator.elapsed >= 1.5 then
+                indicator.elapsed = 0
+                indicator.role = (indicator.role + 1 > 2) and 1 or indicator.role + 1
+                indicator:SetTexture(indicator.roles[indicator.role])
+            end
+        end)
         
     elseif indicatorName == "leaderIcon" then
         indicator:SetTexture("Interface\\GroupFrame\\UI-Group-LeaderIcon")
@@ -1553,6 +1569,39 @@ elseif Cell.isWrath then
         ["aggroBar"] = {"enabled", "size-bar", "position", "frameLevel"},
         ["shieldBar"] = {"enabled", "checkbutton:onlyShowOvershields", "color-alpha", "height", "shieldBarPosition", "frameLevel"},
         ["powerWordShield"] = {L["To show shield value, |cffff2727Glyph of Power Word: Shield|r is required"], "enabled", "checkbutton:shieldByMe", "shape", "size-square", "position", "frameLevel"},
+        ["aoeHealing"] = {"enabled", "color", "height"},
+        ["externalCooldowns"] = {L["Even if disabled, the settings below affect \"Externals + Defensives\" indicator"], "enabled", "builtInExternals", "customExternals", "durationVisibility", "num:5", "orientation", "size", "position", "frameLevel", "font1:stackFont", "font2:durationFont"},
+        ["defensiveCooldowns"] = {L["Even if disabled, the settings below affect \"Externals + Defensives\" indicator"], "enabled", "builtInDefensives", "customDefensives", "durationVisibility", "num:5", "orientation", "size", "position", "frameLevel", "font1:stackFont", "font2:durationFont"},
+        ["allCooldowns"] = {"enabled", "durationVisibility", "num:5", "orientation", "size", "position", "frameLevel", "font1:stackFont", "font2:durationFont"},
+        ["dispels"] = {"enabled", "checkbutton:dispellableByMe", "highlightType", "dispelBlacklist", "checkbutton2:showDispelTypeIcons", "orientation", "size-square", "position", "frameLevel"},
+        ["debuffs"] = {"enabled", "checkbutton:dispellableByMe", "debuffBlacklist", "bigDebuffs", "durationVisibility", "checkbutton3:showTooltip:"..L["This will make these icons not click-through-able"].."|"..L["Tooltips need to be enabled in General tab"], "num:10", "orientation", "size-normal-big", "position", "frameLevel", "font1:stackFont", "font2:durationFont"},
+        ["raidDebuffs"] = {"|cffb7b7b7"..L["You can config debuffs in %s"]:format(Cell:GetAccentColorString()..L["Raid Debuffs"].."|r"), "enabled", "checkbutton:onlyShowTopGlow", "checkbutton2:showTooltip:"..L["This will make these icons not click-through-able"].."|"..L["Tooltips need to be enabled in General tab"], "num:3", "orientation", "size-border", "position", "frameLevel", "font1:stackFont", "font2:durationFont"},
+        ["targetedSpells"] = {"enabled", "checkbutton:showAllSpells:"..L["Glow is only available to the spells in the list below"], "targetedSpellsList", "targetedSpellsGlow", "size-border", "position", "frameLevel", "font"},
+        ["targetCounter"] = {"|cffff2727"..L["HIGH CPU USAGE"].."!|r |cffb7b7b7"..L["Check all visible enemy nameplates."], "enabled", "targetCounterFilters", "color", "position", "frameLevel", "font-noOffset"},
+        ["consumables"] = {"enabled", "consumablesPreview", "consumablesList"},
+        ["healthThresholds"] = {"enabled", "thresholds", "thickness"},
+        ["missingBuffs"] = {"|cffb7b7b7"..(L["%s in Utilities must be enabled to make this indicator work."]:format(Cell:GetAccentColorString()..L["Buff Tracker"].."|r")).." "..(L["If you are a paladin or warrior, and the unit has no buffs from you, a %s icon will be displayed."]:format("|T254882:14:14:0:0:14:14:1:13:1:13|t")), "enabled", "missingBuffsFilters", "num:5", "orientation", "size-square", "position", "frameLevel"},
+    }
+elseif Cell.isVanilla then
+    indicatorSettings = {
+        ["nameText"] = {"enabled", "nameColor", "textWidth", "checkbutton:showGroupNumber", "vehicleNamePosition", "namePosition", "frameLevel", "font-noOffset"},
+        ["statusText"] = {"enabled", "checkbutton:showTimer", "checkbutton2:showBackground", "statusColors", "statusPosition", "frameLevel", "font-noOffset"},
+        ["healthText"] = {"enabled", "format", "checkbutton:hideIfEmptyOrFull", "color", "position", "frameLevel", "font-noOffset"},
+        ["statusIcon"] = {
+            -- "|A:dungeonskull:18:18|a "..
+            "|TInterface\\LFGFrame\\LFG-Eye:18:18:0:0:512:256:72:120:72:120|t "..
+            "|TInterface\\RaidFrame\\Raid-Icon-Rez:18:18|t "..
+            "|TInterface\\TargetingFrame\\UI-PhasingIcon:18:18:0:0:31:31:3:28:3:28|t "..
+            "|A:horde_icon_and_flag-dynamicIcon:18:18|a "..
+            "|A:alliance_icon_and_flag-dynamicIcon:18:18|a ", "enabled", "size-square", "position", "frameLevel"},
+        ["partyAssignmentIcon"] = {"enabled", "size-square", "position"},
+        ["leaderIcon"] = {"enabled", "checkbutton:hideInCombat", "size-square", "position"},
+        ["readyCheckIcon"] = {"size-square", "frameLevel"},
+        ["playerRaidIcon"] = {"enabled", "size-square", "alpha", "position", "frameLevel"},
+        ["targetRaidIcon"] = {"enabled", "size-square", "alpha", "position", "frameLevel"},
+        ["aggroBlink"] = {"enabled", "size", "position", "frameLevel"},
+        ["aggroBorder"] = {"enabled", "thickness", "frameLevel"},
+        ["aggroBar"] = {"enabled", "size-bar", "position", "frameLevel"},
         ["aoeHealing"] = {"enabled", "color", "height"},
         ["externalCooldowns"] = {L["Even if disabled, the settings below affect \"Externals + Defensives\" indicator"], "enabled", "builtInExternals", "customExternals", "durationVisibility", "num:5", "orientation", "size", "position", "frameLevel", "font1:stackFont", "font2:durationFont"},
         ["defensiveCooldowns"] = {L["Even if disabled, the settings below affect \"Externals + Defensives\" indicator"], "enabled", "builtInDefensives", "customDefensives", "durationVisibility", "num:5", "orientation", "size", "position", "frameLevel", "font1:stackFont", "font2:durationFont"},

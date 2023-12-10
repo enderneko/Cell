@@ -4,6 +4,6 @@
 	<Script file="Widgets.lua"/>
 	<Script file="Widgets_IndicatorSettings.lua"/>
 	<Script file="ColorPicker.lua"/>
-	<Include file="TooltipTemplate_Wrath.xml"/>
+	<Include file="TooltipTemplate_Classic.xml"/>
 	<Script file="Tooltip.lua"/>
 </Ui>

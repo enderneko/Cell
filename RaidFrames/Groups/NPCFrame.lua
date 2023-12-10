@@ -461,7 +461,7 @@ local function NPCFrame_UpdateLayout(layout, which)
         end
     end
     
-    if not which or strfind(which, "power$") or which == "barOrientation" then
+    if not which or strfind(which, "power$") or which == "barOrientation" or which == "powerFilter" then
         for _, b in ipairs(Cell.unitButtons.npc) do
             if layout["npc"]["sameSizeAsMain"] then
                 B:SetPowerSize(b, layout["main"]["powerSize"])

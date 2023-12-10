@@ -422,17 +422,19 @@ local function UpdatePreviewShields(r, g, b)
         end
     end
 
-    if CellDB["appearance"]["shield"][1] then
-        previewButton2.widget.shieldBar:SetValue(0.4)
-        previewButton2.widget.shieldBar:SetVertexColor(CellDB["appearance"]["shield"][2][1], CellDB["appearance"]["shield"][2][2], CellDB["appearance"]["shield"][2][3], CellDB["appearance"]["shield"][2][4])
-    else
-        previewButton2.widget.shieldBar:Hide()
-    end
+    if Cell.isRetail or Cell.isWrath then
+        if CellDB["appearance"]["shield"][1] then
+            previewButton2.widget.shieldBar:SetValue(0.4)
+            previewButton2.widget.shieldBar:SetVertexColor(CellDB["appearance"]["shield"][2][1], CellDB["appearance"]["shield"][2][2], CellDB["appearance"]["shield"][2][3], CellDB["appearance"]["shield"][2][4])
+        else
+            previewButton2.widget.shieldBar:Hide()
+        end
 
-    if CellDB["appearance"]["overshield"] then
-        previewButton2.widget.overShieldGlow:Show()
-    else
-        previewButton2.widget.overShieldGlow:Hide()
+        if CellDB["appearance"]["overshield"] then
+            previewButton2.widget.overShieldGlow:Show()
+        else
+            previewButton2.widget.overShieldGlow:Hide()
+        end
     end
 end
 
@@ -1121,7 +1123,7 @@ local function CreateUnitButtonStylePane()
         F:EnableLibHealComm(checked)
     end, L["LibHealComm needs to be installed"])
     useLibCB:SetPoint("TOPLEFT", predCustomCB, "BOTTOMLEFT", 0, -7)
-    useLibCB:SetEnabled(Cell.isWrath)
+    useLibCB:SetEnabled(Cell.isVanilla or Cell.isWrath)
     
     -- heal absorb
     absorbCB = Cell:CreateCheckButton(unitButtonPane, "", function(checked, self)
@@ -1148,6 +1150,7 @@ local function CreateUnitButtonStylePane()
         Cell:Fire("UpdateAppearance", "shields")
     end)
     shieldCB:SetPoint("TOPLEFT", absorbCB, "BOTTOMLEFT", 0, -7)
+    shieldCB:SetEnabled(not Cell.isVanilla)
 
     shieldColorPicker = Cell:CreateColorPicker(unitButtonPane, L["Shield Texture"], true, function(r, g, b, a)
         CellDB["appearance"]["shield"][2][1] = r
@@ -1164,6 +1167,7 @@ local function CreateUnitButtonStylePane()
         Cell:Fire("UpdateAppearance", "shields")
     end)
     oversCB:SetPoint("TOPLEFT", shieldCB, "BOTTOMLEFT", 0, -7)
+    oversCB:SetEnabled(not Cell.isVanilla)
     
     -- reset
     local resetBtn = Cell:CreateButton(unitButtonPane, L["Reset All"], "accent", {77, 17}, nil, nil, nil, nil, nil, L["Reset All"], L["[Ctrl+LeftClick] to reset these settings"])

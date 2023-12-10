@@ -2,7 +2,7 @@
 -- File: Cell\RaidDebuffs\ExpansionData\ExpansionData_frFR.lua
 -- Author: enderneko (enderneko-dev@outlook.com)
 -- Created : 2023-09-03 19:52:19 +08:00
--- Modified: 2023-09-03 19:53:31 +08:00
+-- Modified: 2023-12-10 11:33:30 +08:00
 ---------------------------------------------------------------------
 
 if not LOCALE_frFR then return end
@@ -10,13 +10,13 @@ if not LOCALE_frFR then return end
 Cell_ExpansionData.locale = "frFR"
 
 Cell_ExpansionData.expansions = {
-    -- "Dragonflight",
-    -- "Shadowlands",
-    -- "Battle for Azeroth",
-    -- "Legion",
-    -- "Warlords of Draenor",
-    -- "Mists of Pandaria",
-    -- "Cataclysm",
+    "Dragonflight",
+    "Shadowlands",
+    "Battle for Azeroth",
+    "Legion",
+    "Warlords of Draenor",
+    "Mists of Pandaria",
+    "Cataclysm",
     "Wrath of the Lich King",
     "Burning Crusade",
     "Donjons classiques",

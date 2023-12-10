@@ -1,8 +1,8 @@
-## Interface: 30403
+## Interface: 11500
 ## Title: Cell
-## Version: r206-release
+## Version: r206-beta
 ## Author: enderneko
-## X-Flavor: Wrath
+## X-Flavor: Vanilla
 ## SavedVariables: CellDB
 ## SavedVariablesPerCharacter: CellCharacterDB
 
@@ -17,12 +17,12 @@ Locales\koKR.lua
 
 Libs\LoadLibs_Classic.xml
 
-Core_Wrath.lua
+Core_Vanilla.lua
 Utils.lua
 Revise.lua
 Comm\LoadComm.xml
 Widgets\LoadWidgets_Classic.xml
-Defaults\LoadDefaults_Wrath.xml
+Defaults\LoadDefaults_Vanilla.xml
 
 HideBlizzard.lua
 
@@ -40,10 +40,10 @@ RaidFrames\MainFrame.lua
 
 RaidDebuffs\ExpansionData\LoadExpansionData.xml
 Modules\LoadModules_Classic.xml
-Utilities\LoadUtilities_Wrath.xml
-RaidDebuffs\LoadRaidDebuffs_Wrath.xml
+Utilities\LoadUtilities_Vanilla.xml
+RaidDebuffs\LoadRaidDebuffs_Vanilla.xml
 
-RaidFrames\UnitButton_Wrath.lua
+RaidFrames\UnitButton_Vanilla.lua
 RaidFrames\UnitButton.xml
 RaidFrames\Groups\SoloFrame.lua
 RaidFrames\Groups\PartyFrame.lua

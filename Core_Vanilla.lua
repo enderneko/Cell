@@ -77,27 +77,12 @@ function F:UpdateLayout(layoutGroupType, updateIndicators)
     end
 end
 
-local bgMaxPlayers = {
-    [2197] = 40, -- 科尔拉克的复仇
-}
-
 -- layout auto switch
 local instanceType
 local function PreUpdateLayout()
     if instanceType == "pvp" then
-        local name, _, _, _, _, _, _, id = GetInstanceInfo()
-        if bgMaxPlayers[id] then
-            if bgMaxPlayers[id] <= 15 then
-                Cell.vars.inBattleground = 15
-                F:UpdateLayout("battleground15", true)
-            else
-                Cell.vars.inBattleground = 40
-                F:UpdateLayout("battleground40", true)
-            end
-        else
-            Cell.vars.inBattleground = 15
-            F:UpdateLayout("battleground15", true)
-        end
+        Cell.vars.inBattleground = true
+        F:UpdateLayout("battleground", true)
     elseif instanceType == "arena" then
         Cell.vars.inBattleground = 5 -- treat as bg 5
         F:UpdateLayout("arena", true)
@@ -106,8 +91,8 @@ local function PreUpdateLayout()
         if Cell.vars.groupType == "solo" or Cell.vars.groupType == "party" then
             F:UpdateLayout("party", true)
         else -- raid
-            if Cell.vars.raidType then
-                F:UpdateLayout(Cell.vars.raidType, true)
+            if Cell.vars.inInstance then
+                F:UpdateLayout("raid_instance", true)
             else
                 F:UpdateLayout("raid_outdoor", true)
             end
@@ -115,7 +100,6 @@ local function PreUpdateLayout()
     end
 end
 Cell:RegisterCallback("GroupTypeChanged", "Core_GroupTypeChanged", PreUpdateLayout)
-Cell:RegisterCallback("ActiveTalentGroupChanged", "Core_ActiveTalentGroupChanged", PreUpdateLayout)
 
 -------------------------------------------------
 -- events
@@ -380,20 +364,16 @@ function eventFrame:ADDON_LOADED(arg1)
                 [1] = {
                     ["party"] = "default",
                     ["raid_outdoor"] = "default",
-                    ["raid10"] = "default",
-                    ["raid25"] = "default",
+                    ["raid_instance"] = "default",
                     ["arena"] = "default",
-                    ["battleground15"] = "default",
-                    ["battleground40"] = "default",
+                    ["battleground"] = "default",
                 },
                 [2] = {
                     ["party"] = "default",
                     ["raid_outdoor"] = "default",
-                    ["raid10"] = "default",
-                    ["raid25"] = "default",
+                    ["raid_instance"] = "default",
                     ["arena"] = "default",
-                    ["battleground15"] = "default",
-                    ["battleground40"] = "default",
+                    ["battleground"] = "default",
                 },
             }
         end
@@ -406,10 +386,8 @@ function eventFrame:ADDON_LOADED(arg1)
                 end
             end
 
-            if not t["raid10"] then t["raid10"] = "default" end
-            if not t["raid25"] then t["raid25"] = "default" end
-            if not t["battleground15"] then t["battleground15"] = "default" end
-            if not t["battleground40"] then t["battleground40"] = "default" end
+            if not t["raid_instance"] then t["raid_instance"] = "default" end
+            if not t["battleground"] then t["battleground"] = "default" end
         end
 
         Cell.vars.layoutAutoSwitch = CellCharacterDB["layoutAutoSwitch"]
@@ -625,34 +603,12 @@ function eventFrame:PLAYER_ENTERING_WORLD()
 
     local isIn, iType = IsInInstance()
     instanceType = iType
-    Cell.vars.raidType = nil
+    Cell.vars.inInstance = isIn
 
     if isIn then
         F:Debug("|cffff1111Entered Instance:|r", iType)
         PreUpdateLayout()
         inInstance = true
-
-        -- NOTE: delayed raid difficulty check
-        if Cell.vars.groupType == "raid" and iType == "raid" then
-            C_Timer.After(0.5, function()
-                --! can't get difficultyID, difficultyName immediately after entering an instance
-                local _, _, difficultyID, difficultyName, maxPlayers = GetInstanceInfo()
-                -- if difficultyID == 3 or difficultyID == 5 or difficultyID == 175 or difficultyID == 193 then
-                --     Cell.vars.raidType = "raid10"
-                -- elseif difficultyID == 4 or difficultyID == 6 or difficultyID == 176 or difficultyID == 194 then
-                --     Cell.vars.raidType = "raid25"
-                -- end
-                if maxPlayers == 10 then
-                    Cell.vars.raidType = "raid10"
-                elseif maxPlayers == 25 then
-                    Cell.vars.raidType = "raid25"
-                end
-                if Cell.vars.raidType then
-                    PreUpdateLayout()
-                end
-            end)
-        end
-
     elseif inInstance then -- left insntance
         F:Debug("|cffff1111Left Instance|r")
         PreUpdateLayout()
@@ -664,47 +620,22 @@ function eventFrame:PLAYER_ENTERING_WORLD()
     end
 end
 
-local function CheckDivineAegis()
-    if Cell.vars.playerClass == "PRIEST" then
-        local rank = select(5, GetTalentInfo(1, 22))
-        if rank == 1 then
-            Cell.vars.divineAegisMultiplier = 0.1
-        elseif rank == 2 then
-            Cell.vars.divineAegisMultiplier = 0.2
-        elseif rank == 3 then
-            Cell.vars.divineAegisMultiplier = 0.3
-        end
-    end
-end
-
 function eventFrame:PLAYER_LOGIN()
     F:Debug("|cffbbbbbb=== PLAYER_LOGIN ===")
     eventFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
     eventFrame:RegisterEvent("GROUP_ROSTER_UPDATE")
-    eventFrame:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
-    eventFrame:RegisterEvent("PLAYER_TALENT_UPDATE")
     eventFrame:RegisterEvent("UI_SCALE_CHANGED")
 
     Cell.vars.playerNameShort = GetUnitName("player")
     Cell.vars.playerNameFull = F:UnitFullName("player")
 
-    CheckDivineAegis()
-
-    --! init bgMaxPlayers
-    for i = 1, GetNumBattlegroundTypes() do
-        local bgName, _, _, _, _, _, bgId, maxPlayers = GetBattlegroundInfo(i)
-        bgMaxPlayers[bgId] = maxPlayers
-    end
-
     Cell.vars.playerGUID = UnitGUID("player")
 
     -- update spec vars
-    if not Cell.vars.activeTalentGroup then
-        Cell.vars.activeTalentGroup = GetActiveTalentGroup()
-        Cell.vars.playerSpecRole = Cell.vars.activeTalentGroup
-        Cell.vars.playerSpecID = Cell.vars.activeTalentGroup
-    end
-
+    Cell.vars.activeTalentGroup = 1
+    Cell.vars.playerSpecRole = Cell.vars.activeTalentGroup
+    Cell.vars.playerSpecID = Cell.vars.activeTalentGroup
+    
     --! init Cell.vars.currentLayout and Cell.vars.currentLayoutTable 
     eventFrame:GROUP_ROSTER_UPDATE()
     -- update visibility
@@ -744,27 +675,6 @@ function eventFrame:UI_SCALE_CHANGED()
     Cell:Fire("UpdatePixelPerfect")
     Cell:Fire("UpdateAppearance", "scale")
     PreUpdateLayout()
-end
-
-function eventFrame:ACTIVE_TALENT_GROUP_CHANGED()
-    F:Debug("|cffbbbbbb=== ACTIVE_TALENT_GROUP_CHANGED ===")
-    -- not in combat & spec CHANGED
-    if not InCombatLockdown() and (Cell.vars.activeTalentGroup and Cell.vars.activeTalentGroup ~= GetActiveTalentGroup()) then
-        Cell.vars.activeTalentGroup = GetActiveTalentGroup()
-        Cell.vars.playerSpecRole = Cell.vars.activeTalentGroup
-        Cell.vars.playerSpecID = Cell.vars.activeTalentGroup
-
-        Cell:Fire("UpdateClickCastings")
-        F:Debug("|cffffbb77ActiveTalentGroupChanged:|r", Cell.vars.activeTalentGroup)
-        Cell:Fire("ActiveTalentGroupChanged", Cell.vars.activeTalentGroup)
-
-        CheckDivineAegis()
-    end
-end
-
--- check Divine Aegis
-function eventFrame:PLAYER_TALENT_UPDATE()
-    CheckDivineAegis()
 end
 
 eventFrame:SetScript("OnEvent", function(self, event, ...)
@@ -843,16 +753,6 @@ function SlashCmdList.CELL(msg, editbox)
             F:Print(L["A 0-40 integer is required."])
         end
    
-    -- elseif command == "buff" then
-    --     rest = tonumber(rest:format("%d"))
-    --     if rest and rest > 0 then
-    --         CellDB["tools"]["buffTracker"][3] = rest
-    --         F:Print(string.format(L["Buff Tracker icon size is set to %d."], rest))
-    --         Cell:Fire("UpdateTools", "buffTracker")
-    --     else
-    --         F:Print(L["A positive integer is required."])
-    --     end
-
     else
         F:Print(L["Available slash commands"]..":\n"..
             "|cFFFFB5C5/cell options|r, |cFFFFB5C5/cell opt|r: "..L["show Cell options frame"]..".\n"..

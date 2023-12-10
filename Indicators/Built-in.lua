@@ -1549,6 +1549,32 @@ function I:CreateRoleIcon(parent)
 end
 
 -------------------------------------------------
+-- party assignment icon
+-------------------------------------------------
+function I:CreatePartyAssignmentIcon(parent)
+    local partyAssignmentIcon = parent.widget.overlayFrame:CreateTexture(parent:GetName().."PartyAssignmentIcon", "ARTWORK", nil, -7)
+    parent.indicators.partyAssignmentIcon = partyAssignmentIcon
+    partyAssignmentIcon:Hide()
+
+    function partyAssignmentIcon:UpdateAssignment(unit)
+        if GetPartyAssignment("MAINTANK", unit) then
+            partyAssignmentIcon:SetTexture("Interface\\GroupFrame\\UI-Group-MainTankIcon")
+            partyAssignmentIcon:Show()
+        elseif GetPartyAssignment("MAINASSIST", unit) then
+            partyAssignmentIcon:SetTexture("Interface\\GroupFrame\\UI-Group-MainAssistIcon")
+            partyAssignmentIcon:Show()
+        else
+            partyAssignmentIcon:Hide()
+        end
+    end
+    
+    function partyAssignmentIcon:UpdatePixelPerfect()
+        P:Resize(partyAssignmentIcon)
+        P:Repoint(partyAssignmentIcon)
+    end
+end
+
+-------------------------------------------------
 -- leader icon
 -------------------------------------------------
 function I:CreateLeaderIcon(parent)

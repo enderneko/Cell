@@ -8,7 +8,7 @@ function F:Revise()
     F:Debug("DBRevision:", dbRevision)
 
     local charaDbRevision
-    if Cell.isWrath then
+    if Cell.isVanilla or Cell.isWrath then
         charaDbRevision = CellCharacterDB["revise"] and tonumber(string.match(CellCharacterDB["revise"], "%d+")) or 0
         F:Debug("CharaDBRevision:", charaDbRevision)
     end
@@ -2486,7 +2486,7 @@ function F:Revise()
     end
 
     CellDB["revise"] = Cell.version
-    if Cell.isWrath then
+    if Cell.isVanilla or Cell.isWrath then
         CellCharacterDB["revise"] = Cell.version
     end
 end

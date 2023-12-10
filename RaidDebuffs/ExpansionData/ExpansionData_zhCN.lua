@@ -2,7 +2,7 @@
 -- File: Cell\RaidDebuffs\ExpansionData\ExpansionData_zhCN.lua
 -- Author: enderneko (enderneko-dev@outlook.com)
 -- Created : 2023-09-03 19:53:55 +08:00
--- Modified: 2023-09-03 20:12:11 +08:00
+-- Modified: 2023-12-10 11:33:39 +08:00
 ---------------------------------------------------------------------
 
 if not LOCALE_zhCN then return end
@@ -10,13 +10,13 @@ if not LOCALE_zhCN then return end
 Cell_ExpansionData.locale = "zhCN"
 
 Cell_ExpansionData.expansions = {
-    -- "巨龙时代",
-    -- "暗影国度",
-    -- "争霸艾泽拉斯",
-    -- "军团再临",
-    -- "德拉诺之王",
-    -- "熊猫人之谜",
-    -- "大地的裂变",
+    "巨龙时代",
+    "暗影国度",
+    "争霸艾泽拉斯",
+    "军团再临",
+    "德拉诺之王",
+    "熊猫人之谜",
+    "大地的裂变",
     "巫妖王之怒",
     "燃烧的远征",
     "经典旧世",

@@ -192,7 +192,7 @@ local function RaidFrame_UpdateLayout(layout, which)
         end
     end
 
-    if not which or strfind(which, "size$") or strfind(which, "power$") or which == "barOrientation" then
+    if not which or strfind(which, "size$") or strfind(which, "power$") or which == "barOrientation" or which == "powerFilter" then
         for i, arenaPet in ipairs(arenaPetButtons) do
             -- NOTE: SetOrientation BEFORE SetPowerSize
             B:SetOrientation(arenaPet, layout["barOrientation"][1], layout["barOrientation"][2])
@@ -210,7 +210,7 @@ local function RaidFrame_UpdateLayout(layout, which)
     for i, group in ipairs(shownGroups) do
         local header = groupHeaders[group]
 
-        if not which or which == "main-size" or which == "main-power" or which == "groupFilter" or which == "barOrientation" then
+        if not which or which == "main-size" or which == "main-power" or which == "groupFilter" or which == "barOrientation" or which == "powerFilter" then
             for j, b in ipairs(header) do
                 if not which or which == "main-size" or which == "groupFilter" then
                     P:Size(b, width, height)
@@ -220,7 +220,7 @@ local function RaidFrame_UpdateLayout(layout, which)
                 if not which or which == "barOrientation" then
                     B:SetOrientation(b, layout["barOrientation"][1], layout["barOrientation"][2])
                 end
-                if not which or which == "power" or which == "groupFilter" or which == "barOrientation" then
+                if not which or which == "powerFilter" or which == "groupFilter" or which == "barOrientation" then
                     B:SetPowerSize(b, layout["main"]["powerSize"])
                 end
             end

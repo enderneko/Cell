@@ -2,7 +2,7 @@
 -- File: Cell\RaidDebuffs\ExpansionData\ExpansionData_deDE.lua
 -- Author: enderneko (enderneko-dev@outlook.com)
 -- Created : 2023-09-03 19:32:02 +08:00
--- Modified: 2023-09-03 20:05:32 +08:00
+-- Modified: 2023-12-10 11:33:26 +08:00
 ---------------------------------------------------------------------
 
 if not LOCALE_deDE then return end
@@ -10,13 +10,13 @@ if not LOCALE_deDE then return end
 Cell_ExpansionData.locale = "deDE"
 
 Cell_ExpansionData.expansions = {
-    -- "Dragonflight",
-    -- "Schattenlande",
-    -- "Battle for Azeroth",
-    -- "Legion",
-    -- "Warlords of Draenor",
-    -- "Mists of Pandaria",
-    -- "Cataclysm",
+    "Dragonflight",
+    "Schattenlande",
+    "Battle for Azeroth",
+    "Legion",
+    "Warlords of Draenor",
+    "Mists of Pandaria",
+    "Cataclysm",
     "Wrath of the Lich King",
     "Burning Crusade",
     "Classic",

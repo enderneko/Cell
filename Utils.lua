@@ -10,7 +10,7 @@ Cell.vars.playerFaction = UnitFactionGroup("player")
 Cell.isAsian = LOCALE_zhCN or LOCALE_zhTW or LOCALE_koKR
 
 Cell.isRetail = WOW_PROJECT_ID == WOW_PROJECT_MAINLINE
-Cell.isClassic = WOW_PROJECT_ID == WOW_PROJECT_CLASSIC
+Cell.isVanilla = WOW_PROJECT_ID == WOW_PROJECT_CLASSIC
 -- Cell.isBCC = WOW_PROJECT_ID == WOW_PROJECT_BURNING_CRUSADE_CLASSIC and LE_EXPANSION_LEVEL_CURRENT == LE_EXPANSION_BURNING_CRUSADE
 -- Cell.isWrath = WOW_PROJECT_ID == WOW_PROJECT_WRATH_CLASSIC and LE_EXPANSION_LEVEL_CURRENT == LE_EXPANSION_WRATH_OF_THE_LICH_KING
 Cell.isWrath = WOW_PROJECT_ID == WOW_PROJECT_WRATH_CLASSIC
@@ -1351,7 +1351,7 @@ local harmSpells = {
     ["MAGE"] = 116,
     ["MONK"] = 117952,
     ["PALADIN"] = 20271,
-    ["PRIEST"] = 589,
+    ["PRIEST"] = Cell.isRetail and 589 or 585,
     -- ["ROGUE"] = ,
     ["SHAMAN"] = Cell.isRetail and 188196 or 403,
     ["WARLOCK"] = 686,
@@ -1503,10 +1503,10 @@ else
                 else
                     return IsItemInRange(harmItems[playerClass], unit)
                 end
-            else
-                -- print("CheckInteractDistance", unit)
-                return CheckInteractDistance(unit, 4) -- 28 yards
             end
+            
+            -- print("CheckInteractDistance", unit)
+            return CheckInteractDistance(unit, 4) -- 28 yards
         end
     end
 end

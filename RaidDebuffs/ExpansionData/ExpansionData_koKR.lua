@@ -2,7 +2,7 @@
 -- File: Cell\RaidDebuffs\ExpansionData\ExpansionData_koKR.lua
 -- Author: enderneko (enderneko-dev@outlook.com)
 -- Created : 2023-09-03 19:57:01 +08:00
--- Modified: 2023-09-03 19:58:17 +08:00
+-- Modified: 2023-12-10 11:33:34 +08:00
 ---------------------------------------------------------------------
 
 if not LOCALE_koKR then return end
@@ -10,13 +10,13 @@ if not LOCALE_koKR then return end
 Cell_ExpansionData.locale = "koKR"
 
 Cell_ExpansionData.expansions = {
-    -- "용군단",
-    -- "어둠땅",
-    -- "격전의 아제로스",
-    -- "군단",
-    -- "드레노어의 전쟁군주",
-    -- "판다리아의 안개",
-    -- "대격변",
+    "용군단",
+    "어둠땅",
+    "격전의 아제로스",
+    "군단",
+    "드레노어의 전쟁군주",
+    "판다리아의 안개",
+    "대격변",
     "리치 왕의 분노",
     "불타는 성전",
     "오리지널",

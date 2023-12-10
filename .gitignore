@@ -11,5 +11,5 @@ Libs/*
 !Libs/utf8.lua
 !Libs/LibGroupInfo.lua
 !Libs/LoadLibs.xml
-!Libs/LoadLibs_Wrath.xml
+!Libs/LoadLibs_Classic.xml
 !Libs/LibTranslit-1.0

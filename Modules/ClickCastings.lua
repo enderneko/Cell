@@ -519,6 +519,7 @@ local function CreateProfilePane()
     
     profileDropdown = Cell:CreateDropdown(profilePane, 412)
     profileDropdown:SetPoint("TOPLEFT", profilePane, "TOPLEFT", 5, -27)
+    profileDropdown:SetEnabled(not Cell.isVanilla)
     
     profileDropdown:SetItems({
         {
@@ -989,7 +990,7 @@ local function ShowActionsMenu(index, b)
             },
         }
 
-        if Cell.isWrath and Cell.vars.playerClass == "WARLOCK" then
+        if (Cell.isVanilla or Cell.isWrath) and Cell.vars.playerClass == "WARLOCK" then
             tinsert(items, {
                 ["text"] = GetSpellInfo(20707),
                 ["onClick"] = function()
