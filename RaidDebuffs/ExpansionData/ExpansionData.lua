@@ -2,7 +2,7 @@
 -- File: Cell\RaidDebuffs\ExpansionData\ExpansionData.lua
 -- Author: enderneko (enderneko-dev@outlook.com)
 -- Created : 2022-08-26 04:40:40 +08:00
--- Modified: 2023-12-10 13:21:27 +08:00
+-- Modified: 2023-12-11 16:42:47 +08:00
 ---------------------------------------------------------------------
 
 local _, Cell = ...
@@ -6345,3 +6345,31 @@ Cell_ExpansionData.data = {
         }, -- [25]
     },
 }
+
+-------------------------------------------------
+-- vanilla
+-------------------------------------------------
+-- if Cell.isVanilla then
+    -- IDs are Encounter Journal ID on Retail, no need to modify
+
+    -- override specific instance, all bosses must be listed
+    -- Cell_ExpansionData.data["Classic"][(number: instanceIndex)] = {
+    --     ["id"] = (number: EJ instance id),
+    --     ["image"] = (number: instance image),
+    --     ["name"] = (string: instance name),
+    --     ["bosses"] = {
+    --         {
+    --             ["id"] = (number: boss id),
+    --             ["image"] = (number: boss image),
+    --             ["name"] = (string: boss name),
+    --         },
+    --     },
+    -- }
+
+    -- override specific boss
+    -- Cell_ExpansionData.data["Classic"][(number: instanceIndex)]["bosses"][(number: bossIndex)] = {
+    --     ["id"] = (number: EJ boss id),
+    --     ["image"] = (number: boss image),
+    --     ["name"] = (string: boss name),
+    -- }
+-- end
