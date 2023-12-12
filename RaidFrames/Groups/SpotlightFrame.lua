@@ -8,7 +8,10 @@ local P = Cell.pixelPerfectFuncs
 local LCG = LibStub("LibCustomGlow-1.0")
 
 local placeholders, assignmentButtons = {}, {}
-local menu, target, targettarget, focus, focustarget, unit, unitpet, unittarget, boss1target, clear
+local menu, target, targettarget, focus, focustarget, unit, unitname, unitpet, unittarget, tank, boss1target, clear
+local tanks, names = {}, {}
+local UpdateTanks, UpdateNames
+local tankUpdateRequired, nameUpdateRequired
 local tooltipPoint, tooltipRelativePoint, tooltipX, tooltipY
 local NONE = strlower(_G.NONE)
 -------------------------------------------------
@@ -61,7 +64,17 @@ config:HookScript("OnEnter", function()
     CellTooltip:SetOwner(config, "ANCHOR_NONE")
     CellTooltip:SetPoint(tooltipPoint, config, tooltipRelativePoint, tooltipX, tooltipY)
     CellTooltip:AddLine(L["Spotlight Frame"])
-    CellTooltip:AddLine(L["spotlightTips"])
+
+    local tips = {
+        {L["Left-Click"]..":", L["menu"]},
+        {L["Right-Click"]..":", L["clear"]},
+        {L["Left-Drag"]..":", L["set unit"].." ("..L["not in combat"]..")"},
+        {"Shift+"..L["Left-Drag"]..":", L["set unit's name"].." ("..L["not in combat"]..")"},
+        {L["Right-Drag"]..":", L["set unit's pet"].." ("..L["not in combat"]..")"},
+    }
+    for i = 1, 5 do
+        CellTooltip:AddDoubleLine("|cffffb5c5"..tips[i][1], "|cffffffff"..tips[i][2])
+    end
     CellTooltip:Show()
 end)
 config:HookScript("OnLeave", function()
@@ -148,8 +161,13 @@ local function CreateAssignmentButton(index)
         LCG.PixelGlow_Start(b, Cell:GetAccentColorTable(), 9, 0.25, 8, 2)
 
         if button == "LeftButton" then
-            targetFrame.label:SetText(L["Unit"])
-            targetFrame.type = "unit"
+            if IsShiftKeyDown() then
+                targetFrame.label:SetText(L["Unit's Name"])
+                targetFrame.type = "name"
+            else
+                targetFrame.label:SetText(L["Unit"])
+                targetFrame.type = "unit"
+            end
         else
             targetFrame.label:SetText(L["Unit's Pet"])
             targetFrame.type = "pet"
@@ -180,6 +198,8 @@ local function CreateAssignmentButton(index)
         if unitId then
             if targetFrame.type == "unit" then
                 unit:SetUnit(b:GetAttribute("index"), unitId)
+            elseif targetFrame.type == "name" then
+                unitname:SetUnit(b:GetAttribute("index"), unitId)
             elseif targetFrame.type == "pet" then
                 unitpet:SetUnit(b:GetAttribute("index"), unitId)
             end
@@ -360,19 +380,50 @@ unit:SetAttribute("_onclick", [[
     menu:Hide()
 ]])
 function unit:SetUnit(index, target)
-    local unit = F:GetTargetUnitID(target)
-    if unit then
-        Cell.unitButtons.spotlight[index]:SetAttribute("unit", unit)
-        assignmentButtons[index]:SetText(unit)
-        menu:Save(index, unit)
+    local unitId = F:GetTargetUnitID(target)
+    if unitId then
+        Cell.unitButtons.spotlight[index]:SetAttribute("unit", unitId)
+        assignmentButtons[index]:SetText(unitId)
+        menu:Save(index, unitId)
+    else
+        F:Print(L["Invalid unit."])
+    end
+end
+
+unitname = Cell:CreateButton(menu, L["Unit's Name"], "transparent-accent", {20, 20}, true, false, nil, nil, "SecureHandlerAttributeTemplate,SecureHandlerClickTemplate")
+P:Point(unitname, "TOPLEFT", unit, "BOTTOMLEFT")
+P:Point(unitname, "TOPRIGHT", unit, "BOTTOMRIGHT")
+unitname:SetAttribute("_onclick", [[
+    local menu = self:GetParent()
+    local index = menu:GetAttribute("index")
+    menu:GetFrameRef("spotlight"..index):SetAttribute("refreshOnUpdate", nil)
+    self:CallMethod("SetUnit", index, "target")
+    menu:Hide()
+]])
+function unitname:SetUnit(index, target)
+    local unitId = F:GetTargetUnitID(target)
+    if unitId and UnitIsPlayer(unitId) then
+        local name = GetUnitName(unitId, true)
+        Cell.unitButtons.spotlight[index]:SetAttribute("unit", unitId)
+        assignmentButtons[index]:SetText(name)
+        menu:Save(index, ":"..name)
+        
+        local previous = names[name]
+        names[name] = index
+        
+        if previous and previous ~= index then -- exists, remove previous
+            Cell.unitButtons.spotlight[previous]:SetAttribute("unit", nil)
+            assignmentButtons[previous]:SetText("|cffababab"..NONE)
+            menu:Save(previous, nil)
+        end
     else
         F:Print(L["Invalid unit."])
     end
 end
 
 unitpet = Cell:CreateButton(menu, L["Unit's Pet"], "transparent-accent", {20, 20}, true, false, nil, nil, "SecureHandlerAttributeTemplate,SecureHandlerClickTemplate")
-P:Point(unitpet, "TOPLEFT", unit, "BOTTOMLEFT")
-P:Point(unitpet, "TOPRIGHT", unit, "BOTTOMRIGHT")
+P:Point(unitpet, "TOPLEFT", unitname, "BOTTOMLEFT")
+P:Point(unitpet, "TOPRIGHT", unitname, "BOTTOMRIGHT")
 unitpet:SetAttribute("_onclick", [[
     local menu = self:GetParent()
     local index = menu:GetAttribute("index")
@@ -381,11 +432,11 @@ unitpet:SetAttribute("_onclick", [[
     menu:Hide()
 ]])
 function unitpet:SetUnit(index, target)
-    local unit = F:GetTargetPetID(target)
-    if unit then
-        Cell.unitButtons.spotlight[index]:SetAttribute("unit", unit)
-        assignmentButtons[index]:SetText(unit)
-        menu:Save(index, unit)
+    local unitId = F:GetTargetPetID(target)
+    if unitId then
+        Cell.unitButtons.spotlight[index]:SetAttribute("unit", unitId)
+        assignmentButtons[index]:SetText(unitId)
+        menu:Save(index, unitId)
     else
         F:Print(L["Invalid unit."])
     end
@@ -402,27 +453,46 @@ unittarget:SetAttribute("_onclick", [[
     menu:Hide()
 ]])
 function unittarget:SetUnit(index, target)
-    local unit = F:GetTargetUnitID(target)
-    if unit then
-        if unit == "player" then
-            unit = "target"
+    local unitId = F:GetTargetUnitID(target)
+    if unitId then
+        if unitId == "player" then
+            unitId = "target"
             Cell.unitButtons.spotlight[index]:SetAttribute("refreshOnUpdate", nil)
         else
-            unit = unit.."target"
+            unitId = unitId.."target"
             -- NOTE: no EVENT for this kind of targets， use OnUpdate
             Cell.unitButtons.spotlight[index]:SetAttribute("refreshOnUpdate", true)
         end
-        Cell.unitButtons.spotlight[index]:SetAttribute("unit", unit)
-        assignmentButtons[index]:SetText(unit)
-        menu:Save(index, unit)
+        Cell.unitButtons.spotlight[index]:SetAttribute("unit", unitId)
+        assignmentButtons[index]:SetText(unitId)
+        menu:Save(index, unitId)
     else
         F:Print(L["Invalid unit."])
     end
 end
 
+tank = Cell:CreateButton(menu, _G.TANK, "transparent-accent", {20, 20}, true, false, nil, nil, "SecureHandlerAttributeTemplate,SecureHandlerClickTemplate")
+P:Point(tank, "TOPLEFT", unittarget, "BOTTOMLEFT")
+P:Point(tank, "TOPRIGHT", unittarget, "BOTTOMRIGHT")
+tank:SetEnabled(not Cell.isVanilla)
+tank:SetAttribute("_onclick", [[
+    local menu = self:GetParent()
+    local index = menu:GetAttribute("index")
+    menu:GetFrameRef("spotlight"..index):SetAttribute("refreshOnUpdate", nil)
+    menu:GetFrameRef("assignment"..index):SetAttribute("text", "tank")
+    self:CallMethod("SetUnit", index)
+    menu:Hide()
+]])
+function tank:SetUnit(index)
+    tanks[index] = true
+    tankUpdateRequired = true
+    UpdateTanks()
+    menu:Save(index, "tank")
+end
+
 boss1target = Cell:CreateButton(menu, L["Boss1 Target"], "transparent-accent", {20, 20}, true, false, nil, nil, "SecureHandlerAttributeTemplate,SecureHandlerClickTemplate")
-P:Point(boss1target, "TOPLEFT", unittarget, "BOTTOMLEFT")
-P:Point(boss1target, "TOPRIGHT", unittarget, "BOTTOMRIGHT")
+P:Point(boss1target, "TOPLEFT", tank, "BOTTOMLEFT")
+P:Point(boss1target, "TOPRIGHT", tank, "BOTTOMRIGHT")
 boss1target:SetEnabled(Cell.isRetail)
 boss1target:SetAttribute("_onclick", [[
     local menu = self:GetParent()
@@ -451,22 +521,119 @@ clear:SetAttribute("_onclick", [[
     menu:CallMethod("Save", index, nil)
 ]])
 
+-------------------------------------------------
+-- functions
+-------------------------------------------------
+UpdateTanks = function()
+    if not tankUpdateRequired then return end
+
+    -- search for tanks
+    local units = {}
+    for unit in F:IterateGroupMembers() do
+        if UnitGroupRolesAssigned(unit) == "TANK" then
+            tinsert(units, unit)
+        end
+    end
+
+    -- assign
+    local n = 1
+    for index = 1, 10 do
+        if InCombatLockdown() then
+            tankUpdateRequired = true
+            return
+        end
+        
+        if tanks[index] then
+            if units[n] then
+                Cell.unitButtons.spotlight[index]:SetAttribute("unit", units[n])
+            else
+                Cell.unitButtons.spotlight[index]:SetAttribute("unit", nil)
+            end
+            n = n + 1
+        end        
+    end
+
+    tankUpdateRequired = nil
+end
+
+UpdateNames = function()
+    if not nameUpdateRequired then return end
+
+    -- search for names
+    local found = {}
+    for unit in F:IterateGroupMembers() do
+        if InCombatLockdown() then
+            nameUpdateRequired = true
+            return 
+        end
+        local name = GetUnitName(unit, true)
+        if names[name] then
+            Cell.unitButtons.spotlight[names[name]]:SetAttribute("unit", unit)
+            found[name] = true
+        end
+    end
+    
+    -- hide not found
+    for name, index in pairs(names) do
+        if InCombatLockdown() then
+            nameUpdateRequired = true
+            return
+        end
+        if not found[name] then
+            Cell.unitButtons.spotlight[index]:SetAttribute("unit", nil)
+        end
+    end
+
+    nameUpdateRequired = nil
+end
+
+local timer
+local function UpdateAll()
+    timer = nil
+    tankUpdateRequired = true
+    UpdateTanks()
+    nameUpdateRequired = true
+    UpdateNames()
+end
+
+menu:RegisterEvent("GROUP_ROSTER_UPDATE")
 menu:RegisterEvent("PLAYER_REGEN_ENABLED")
 menu:RegisterEvent("PLAYER_REGEN_DISABLED")
 menu:SetScript("OnEvent", function(self, event)
-    if event == "PLAYER_REGEN_DISABLED" then
+    if event == "GROUP_ROSTER_UPDATE" then
+        if timer then
+            timer:Cancel()
+        end
+        timer = C_Timer.NewTimer(1, UpdateAll)
+    elseif event == "PLAYER_REGEN_DISABLED" then
         unit:SetEnabled(false)
+        unitname:SetEnabled(false)
         unittarget:SetEnabled(false)
         unitpet:SetEnabled(false)
-    else
+        tank:SetEnabled(false)
+    elseif event == "PLAYER_REGEN_ENABLED" then
         unit:SetEnabled(true)
+        unitname:SetEnabled(true)
         unittarget:SetEnabled(true)
         unitpet:SetEnabled(true)
+        tank:SetEnabled(not Cell.isVanilla)
+        UpdateTanks()
+        UpdateNames()
     end
 end)
 
 function menu:Save(index, unit)
     Cell.vars.currentLayoutTable["spotlight"]["units"][index] = unit
+
+    -- clear
+    if unit ~= "tank" then
+        tanks[index] = nil
+    end
+    for n, i in pairs(names) do
+        if i == index then
+            names[n] = nil
+        end
+    end
 end
 
 -- update width to show full text
@@ -476,7 +643,7 @@ local dumbFS2 = menu:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
 dumbFS2:SetText(L["Unit's Target"])
 
 function menu:UpdatePixelPerfect()
-    P:Size(menu, ceil(max(dumbFS1:GetStringWidth(), dumbFS2:GetStringWidth())) + 13, 20*9+2)
+    P:Size(menu, ceil(max(dumbFS1:GetStringWidth(), dumbFS2:GetStringWidth())) + 13, 20*11+2)
 
     Cell:StylizeFrame(menu, nil, Cell:GetAccentColorTable())
     target:UpdatePixelPerfect()
@@ -488,7 +655,7 @@ function menu:UpdatePixelPerfect()
 end
 
 -------------------------------------------------
--- functions
+-- callbacks
 -------------------------------------------------
 local function UpdatePosition()
     local layout = Cell.vars.currentLayoutTable
@@ -714,17 +881,32 @@ local function UpdateLayout(layout, which)
     end
 
     if not which or which == "spotlight" then
+        wipe(tanks)
+        wipe(names)
+
         if layout["spotlight"]["enabled"] then
             for i = 1, 10 do
                 local unit = layout["spotlight"]["units"][i]
                 Cell.unitButtons.spotlight[i]:SetAttribute("hidePlaceholder", layout["spotlight"]["hidePlaceholder"])
-                Cell.unitButtons.spotlight[i]:SetAttribute("unit", unit)
-                if unit and strfind(unit, "^.+target$") then
-                    Cell.unitButtons.spotlight[i]:SetAttribute("refreshOnUpdate", true)
+                
+                if unit == "tank" then -- tank
+                    tanks[i] = true
+                elseif unit and strfind(unit, "^:") then -- name
+                    unit = strsub(unit, 2)
+                    names[unit] = i
+                else -- unitid
+                    Cell.unitButtons.spotlight[i]:SetAttribute("unit", unit)
+                    if unit and strfind(unit, "^.+target$") then
+                        Cell.unitButtons.spotlight[i]:SetAttribute("refreshOnUpdate", true)
+                    end
                 end
                 RegisterUnitWatch(Cell.unitButtons.spotlight[i])
                 assignmentButtons[i]:SetText(unit or "|cffababab"..NONE)
             end
+            tankUpdateRequired = true
+            UpdateTanks()
+            nameUpdateRequired = true
+            UpdateNames()
             spotlightFrame:Show()
         else
             for i = 1, 10 do
