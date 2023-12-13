@@ -243,7 +243,7 @@ Cell.defaults.layout = {
             ["type"] = "built-in",
             ["enabled"] = false,
             ["frameLevel"] = 7,
-            ["thickness"] = 3,
+            ["thickness"] = 2,
         }, -- 13
         {
             ["name"] = "Shield Bar",

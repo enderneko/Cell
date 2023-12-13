@@ -238,7 +238,7 @@ Cell.defaults.layout = {
             ["type"] = "built-in",
             ["enabled"] = true,
             ["frameLevel"] = 7,
-            ["thickness"] = 3,
+            ["thickness"] = 2,
         }, -- 13
         {
             ["name"] = "AoE Healing",
