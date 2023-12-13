@@ -2114,6 +2114,53 @@ function F:UpdateRaidDebuffs(instanceId, bossId, data, which)
 end
 
 -------------------------------------------------
+-- notice
+-------------------------------------------------
+local function CreateNoticeFrame()
+    if CellDB["raidDebuffsNoticeViewed"] then return end
+    
+    local noticeFrame = CreateFrame("Frame", nil, debuffsTab, "BackdropTemplate")
+    noticeFrame:SetAllPoints(debuffsTab)
+    noticeFrame:EnableMouse(true)
+    noticeFrame:SetFrameLevel(debuffsTab:GetFrameLevel()+25)
+    Cell:StylizeFrame(noticeFrame, {0.1, 0.1, 0.1, 0.99})
+
+    local content = noticeFrame:CreateFontString(nil, "OVERLAY")
+    content:SetFont(UNIT_NAME_FONT_CHINESE, 12 + CellDB["appearance"]["optionsFontSizeOffset"], "")
+    content:SetTextColor(1, 1, 1, 1)
+    content:SetShadowColor(0, 0, 0)
+    content:SetShadowOffset(1, -1)
+    content:SetText([[
+|cffe52b50Raid Debuffs issues|r
+The instance/boss list is generated automatically on Retail.
+For this reason, there can be some mistake.
+But there's no plan to correct it by myself.
+It's unnecessary in most cases, since the debuffs will work as expected.
+If you'd like to fix it, go check |cfffff2b2Cell\RaidDebuffs\ExpansionData\ExpansionData.lua|r (at the end of the file), then create a PR on GitHub.
+
+
+|cffe52b50副本减益中存在的问题|r
+副本/首领列表是在正式服上自动生成的。
+因此，其中有些并不与怀旧服完全一致。
+对于此类错误，我自己不打算修复。
+因为在大多数情况下，这并不影响副本减益正常运作。
+如果你想修复它，查看 |cfffff2b2Cell\RaidDebuffs\ExpansionData\ExpansionData.lua|r 这个文件的末尾，然后在 GitHub 上提交。
+]])
+    content:SetPoint("LEFT", 20, 0)
+    content:SetPoint("RIGHT", -20, 0)
+    content:SetJustifyH("LEFT")
+    content:SetSpacing(5)
+
+    local closeBtn = Cell:CreateButton(noticeFrame, "OK", "accent", {205, 20})
+    closeBtn:SetPoint("BOTTOMLEFT")
+    closeBtn:SetPoint("BOTTOMRIGHT")
+    closeBtn:SetScript("OnClick", function()
+        noticeFrame:Hide()
+        CellDB["raidDebuffsNoticeViewed"] = true
+    end)
+end
+
+-------------------------------------------------
 -- show
 -------------------------------------------------
 local init
@@ -2126,6 +2173,7 @@ local function ShowTab(tab)
             CreateBossesFrame()
             CreateDebuffsFrame()
             CreateDetailsFrame()
+            if Cell.isVanilla then CreateNoticeFrame() end
         end
 
         debuffsTab:Show()

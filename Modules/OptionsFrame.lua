@@ -81,7 +81,7 @@ local function CreateTabButtons()
     
     local tabHeight = {
         ["general"] = 569,
-        ["appearance"] = 635,
+        ["appearance"] = 640,
         ["layouts"] = 525,
         ["clickCastings"] = 592,
         ["indicators"] = 512,

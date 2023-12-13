@@ -119,7 +119,7 @@ local function CreateSpecialThanksPane()
     specialThanksText:SetPoint("TOPLEFT", 5, -27)
     specialThanksText:SetSpacing(5)
     specialThanksText:SetJustifyH("LEFT")
-    specialThanksText:SetText("warbaby (爱不易)\n钛锬 (NGA)\nJFunkGaming (YouTube)")
+    specialThanksText:SetText("warbaby (爱不易)\n钛锬 (NGA)\nJFunkGaming (YouTube)\nBruds (Discord)")
 end
 
 -------------------------------------------------
