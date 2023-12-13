@@ -81,10 +81,8 @@ L["Buff List"] = "增益清單"
 L["Buff Tracker"] = "增益監控"
 L["Buff Tracker icon size is set to %d."] = "將增益監控的圖示大小設為 %d。"
 L["buffByMe"] = "只顯示我能施放的增益"
---[[Translation missing --]]
---[[ L["Buffs"] = ""--]] 
---[[Translation missing --]]
---[[ L["Buffs Tracker"] = ""--]] 
+L["Buffs"] = "增益"
+L["Buffs Tracker"] = "增益監控"
 L["Bug Report & Suggestion"] = "回報 Bug & 建議"
 L["Built-in Spells"] = "內建法術"
 L["built-in(s)"] = "內建"
@@ -97,14 +95,12 @@ L["Cast By"] = "來源"
 L["cast Inner spell"] = "施放內圈法術"
 L["cast Outer spell"] = "施放外圈法術"
 L["castByMe"] = "只顯示我施放的增益"
---[[Translation missing --]]
---[[ L["Casts"] = ""--]] 
+L["Casts"] = "施法"
 L["Cell will report all deaths during a raid encounter."] = "團隊首領戰時，Cell 會通報全部的死亡訊息。"
 L["Cell will report first %d deaths during a raid encounter."] = "團隊首領戰時，Cell 會通報前 %d 個死亡訊息。"
 L["CENTER"] = "中"
 L["change mode / apply changes"] = "切換模式 / 套用變更"
---[[Translation missing --]]
---[[ L["change the order"] = ""--]] 
+L["change the order"] = "調整順序"
 L["Changelogs"] = "更新資訊"
 L["Check all visible enemy nameplates."] = "檢查所有看得見的敵方血條。"
 L["Check If Exists"] = "檢查增益是否存在"
@@ -112,8 +108,9 @@ L["Check if your group members need some raid buffs"] = "檢查隊友是否需�
 L["circledStackNums"] = "用圓圈數字顯示層數"
 L["Class Color"] = "職業顏色"
 L["Class Color (dark)"] = "職業顏色 (暗)"
+L["Class Filter"] = "依職業"
 --[[Translation missing --]]
---[[ L["Class Filter"] = ""--]] 
+--[[ L["clear"] = ""--]] 
 L["Clear"] = "清除"
 L["clear unit"] = "清空單位"
 L["cleuAurasTips"] = "通過戰鬥記錄事件找出看不到的法術效果"
@@ -124,7 +121,7 @@ L["Close"] = "關閉"
 L["Code Snippets"] = "程式碼片段"
 L["Color"] = "顏色"
 L["Color Duration Text"] = "著色持續時間文字"
-L["Columns"] = "直行數"
+L["Columns"] = "列數"
 L["Common"] = "共用"
 L["Condition"] = "條件"
 L["Confirm"] = "確認"
@@ -237,9 +234,9 @@ L["Glow Type"] = "發光類型"
 L["Glow unit button when a group member sends a %s request"] = "當隊伍成員請求%s時，顯著標示他的單位按鈕"
 L["Glows"] = "發光"
 L["Gradient"] = "漸層"
-L["Group Columns"] = "隊伍直行數"
+L["Group Columns"] = "隊伍列數"
 L["Group Filters"] = "過濾隊伍"
-L["Group Rows"] = "隊伍橫列數"
+L["Group Rows"] = "隊伍行數"
 L["Group Spacing"] = "隊伍間距"
 L["Half"] = "半高"
 L["Heal Absorb"] = "治療吸收"
@@ -323,17 +320,16 @@ L["many"] = "很多"
 L["Marks Bar"] = "標記工具列"
 L["marksTips"] = "\n|r目標標記\n左鍵: |cffffffff在目標上設置標記|r\n右鍵: |cffffffff將標記鎖定在目標上 (在你的隊伍中)|r"
 L["Max Buttons"] = "按鈕數量"
---[[Translation missing --]]
---[[ L["Max Columns"] = ""--]] 
+L["Max Columns"] = "最大列數"
 L["Max Icons"] = "最大顯示數量"
---[[Translation missing --]]
---[[ L["Max Rows"] = ""--]] 
+L["Max Rows"] = "最大行數"
 L["Me"] = "我"
 L["Menu"] = "選單"
+--[[Translation missing --]]
+--[[ L["menu"] = ""--]] 
 L["Menu Position"] = "選單位置"
 L["Middle"] = "中鍵"
---[[Translation missing --]]
---[[ L["mine"] = ""--]] 
+L["mine"] = "我的"
 L["Misc"] = "其他"
 L["Missing Buff"] = "缺少增益"
 L["Missing Buffs"] = "缺少增益"
@@ -344,10 +340,8 @@ L["move"] = "移動"
 L["Mover"] = "拖曳我"
 L["My Nickname"] = "我的暱稱"
 L["Name Color"] = "名字顏色"
---[[Translation missing --]]
---[[ L["Name Filter"] = ""--]] 
---[[Translation missing --]]
---[[ L["Name List"] = ""--]] 
+L["Name Filter"] = "依名字"
+L["Name List"] = "名字列表"
 L["Name or Name-Server"] = "角色ID 或 角色ID-伺服器名稱"
 L["Name Text"] = "名字"
 L["Name Width / UnitButton Width"] = "名字寬度 / 單位按鈕寬度"
@@ -365,9 +359,10 @@ L["None"] = "無"
 L["Non-En"] = "中"
 L["Normal"] = "一般"
 L["Normal + Combat Res"] = "一般 + 戰復"
-L["OFF"] = "關"
 --[[Translation missing --]]
---[[ L["Offensives Tracker"] = ""--]] 
+--[[ L["not in combat"] = ""--]] 
+L["OFF"] = "關"
+L["Offensives Tracker"] = "爆發監控"
 L["OFFLINE"] = "離線"
 L["ON"] = "開"
 L["Only available for Spells"] = "只對法術有效"
@@ -419,8 +414,7 @@ L["Pull in %d sec"] = "開怪還有 %d 秒"
 L["Pull timer cancelled"] = "開怪計時器已取消"
 L["pullTimerTips"] = "\n|r開怪倒數\n左鍵: |cffffffff開始倒數計時|r\n右鍵: |cffffffff取消倒數計時|r"
 L["PW:S"] = "真言術：盾"
---[[Translation missing --]]
---[[ L["Quick Assist"] = ""--]] 
+L["Quick Assist"] = "快速協助"
 L["Quick Cast"] = "快速施法"
 L["Raid"] = "團隊"
 L["Raid Debuffs"] = "副本減益"
@@ -449,8 +443,7 @@ L["Request"] = "請求"
 L["Require font support"] = "需要字體支援"
 L["Require reload of the UI"] = "需要重新載入介面"
 L["RESET"] = "從非常舊的版本更新之後，需要重置 Cell"
---[[Translation missing --]]
---[[ L["Reset"] = ""--]] 
+L["Reset"] = "重置"
 L["Reset All"] = "全部重置"
 L["reset all Cell settings"] = "重置 Cell 的全部設定"
 L["reset all Click-Castings"] = "重置滑鼠點擊施法的全部設定"
@@ -459,10 +452,8 @@ L["reset all Layouts and Indicators"] = "重置版面配置和指示器的全部
 L["reset all Raid Debuffs"] = "重置全部的團隊減益"
 L["reset Cell position"] = "重置 Cell 的位置"
 L["Reset debuffs?"] = "是否要重置減益?"
---[[Translation missing --]]
---[[ L["Reset Offensive Spells"] = ""--]] 
---[[Translation missing --]]
---[[ L["reset Quick Assist for current spec"] = ""--]] 
+L["Reset Offensive Spells"] = "重置爆發法術"
+L["reset Quick Assist for current spec"] = "重置快速協助 (當前專精)"
 L["RESET_CHARACTER"] = "從過舊的版本更新，需要重置角色設定檔"
 L["RESET_INCLUDES"] = "只包括滑鼠點擊施法和自動切換版面配置"
 L["RESET_YES_NO"] = "|cff22ff22是|r - 重置 Cell\n|cffff2222否|r - 我自己搞定"
@@ -478,13 +469,12 @@ L["Right-Click"] = "右鍵"
 L["Right-Drag"] = "右鍵拖曳"
 L["right-to-left"] = "從右到左"
 L["Role"] = "角色職責"
---[[Translation missing --]]
---[[ L["Role Filter"] = ""--]] 
+L["Role Filter"] = "依職責"
 L["Role Icon"] = "角色職責圖示"
 L["Rotate Texture"] = "旋轉材質"
 L["Rotation"] = "旋轉"
 L["Round Up Duration Text"] = "四捨五入持續時間文字"
-L["Rows"] = "橫列數"
+L["Rows"] = "行數"
 L["Run"] = "執行"
 L["S"] = "專精天賦"
 L["Save"] = "儲存"
@@ -496,7 +486,10 @@ L["Secondary Talents"] = "次要天賦"
 L["Separate NPC Frame"] = "分離 NPC 框架"
 L["set unit"] = "設定單位"
 --[[Translation missing --]]
---[[ L["Setup"] = ""--]] 
+--[[ L["set unit's name"] = ""--]] 
+--[[Translation missing --]]
+--[[ L["set unit's pet"] = ""--]] 
+L["Setup"] = "設定"
 L["Shadow"] = "陰影"
 L["Shape"] = "形狀"
 L["Share"] = "分享"
@@ -550,14 +543,12 @@ L["Spells"] = "法術"
 L["Spotlight"] = "特別關注"
 L["Spotlight Frame"] = "特別關注框架"
 L["Spotlight frames are not supported"] = "不支援特別關注框架"
-L["spotlightTips"] = "左鍵: |cffffffff選單|r\n右鍵: |cffffffff清除|r\n左鍵拖曳: |cffffffff設為目標單位 (非戰鬥中)|r\n右鍵拖曳: |cffffffff設為目標單位的寵物 (非戰鬥中)|r"
 L["stackFont"] = "層數字體"
 L["Status Icon"] = "狀態圖示"
 L["Status Text"] = "狀態文字"
 L["Status Text Position"] = "狀態文字位置"
 L["Strata"] = "層級"
---[[Translation missing --]]
---[[ L["Style"] = ""--]] 
+L["Style"] = "樣式"
 L["Sync Nicknames with Others"] = "與其他人同步暱稱"
 L["Sync Status"] = "同步狀態"
 L["Sync With"] = "同步"
@@ -597,8 +588,7 @@ L["To open options frame, use /cell options"] = "輸入 /cell options 打開設�
 L["To show shield value, |cffff2727Glyph of Power Word: Shield|r is required"] = "需要有|cffff2727真言術：盾雕紋|r才能顯示護盾值"
 L["To transfer across realm, you need to be in the same group"] = "必須在同一個隊伍中才能垮伺服器傳輸。"
 L["To UnitButton's"] = "對齊到單位按鈕的"
---[[Translation missing --]]
---[[ L["toggle"] = ""--]] 
+L["toggle"] = "切換"
 L["togglemenu"] = "選單"
 L["togglemenu_nocombat"] = "選單 (非戰鬥中)"
 L["Tooltips"] = "滑鼠提示"
@@ -618,13 +608,10 @@ L["Uncategorized"] = "未分類"
 L["Unit"] = "單位"
 L["Unit Button"] = "單位按鈕"
 L["Unit Button Style"] = "單位按鈕樣式"
---[[Translation missing --]]
---[[ L["Unit Filter"] = ""--]] 
+L["Unit Filter"] = "單位過濾"
 L["Unit Spacing"] = "單位間距"
---[[Translation missing --]]
---[[ L["Units Per Column"] = ""--]] 
---[[Translation missing --]]
---[[ L["Units Per Row"] = ""--]] 
+L["Units Per Column"] = "每列單位數"
+L["Units Per Row"] = "每行單位數"
 L["Unit's Pet"] = "單位的寵物"
 L["Unit's Target"] = "指定單位的目標"
 L["Unlimited"] = "無限制"
