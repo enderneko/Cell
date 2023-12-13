@@ -1592,7 +1592,7 @@ local function CheckVehicleRoot(self, petUnit)
         end
     end
 
-    self.indicators.roleIcon:SetRole(isRoot and "VEHICLE" or "NONE")
+    self.indicators.roleIcon:SetRole(isRoot and "VEHICLE-ROOT" or "VEHICLE")
 end
 
 UnitButton_UpdateRole = function(self)

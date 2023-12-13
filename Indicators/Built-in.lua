@@ -1489,6 +1489,7 @@ function I:CreateRoleIcon(parent)
     -- roleIcon:SetSize(11, 11)
     
     function roleIcon:SetRole(role)
+        roleIcon:SetVertexColor(1, 1, 1)
         if role == "TANK" or role == "HEALER" or (not roleIcon.hideDamager and role == "DAMAGER") then
             if roleIcon.texture == "default" then
                 -- roleIcon:SetTexture("Interface\\AddOns\\Cell\\Media\\Roles\\UI-LFG-ICON-PORTRAITROLES.blp")
@@ -1518,13 +1519,12 @@ function I:CreateRoleIcon(parent)
                 roleIcon:SetTexCoord(0, 1, 0, 1)
             end
             roleIcon:Show()
+        elseif role == "VEHICLE-ROOT" then
+            roleIcon:SetTexture("Interface\\AddOns\\Cell\\Media\\Roles\\VEHICLE")
+            roleIcon:Show()
         elseif role == "VEHICLE" then
-            roleIcon:SetTexture("interface/minimap/objecticonsatlas")
-            if Cell.isRetail then
-                roleIcon:SetTexCoord(0.2392578125, 0.2705078125, 0.4697265625, 0.5009765625)
-            else
-                roleIcon:SetTexCoord(0.39453125, 0.45703125, 0.859375, 0.921875)
-            end
+            roleIcon:SetTexture("Interface\\AddOns\\Cell\\Media\\Roles\\VEHICLE")
+            roleIcon:SetVertexColor(0.6, 0.6, 1)
             roleIcon:Show()
         else
             roleIcon:Hide()
