@@ -12,6 +12,7 @@ clickCastingsTab:Hide()
 
 local listPane
 local bindingsFrame
+local listButtons = {}
 local clickCastingTable
 local loaded
 local LoadProfile
@@ -25,9 +26,15 @@ local function CheckChanges()
     if F:Getn(deleted) == 0 and F:Getn(changed) == 0 then
         saveBtn:SetEnabled(false)
         discardBtn:SetEnabled(false)
+        for _, b in pairs(listButtons) do
+            b.unmovable = nil
+        end
     else
         saveBtn:SetEnabled(true)
         discardBtn:SetEnabled(true)
+        for _, b in pairs(listButtons) do
+            b.unmovable = true
+        end
     end
 end
 
@@ -1132,15 +1139,11 @@ local function CreateListPane()
     local newBtn = Cell:CreateButton(listPane, L["New"], "blue-hover", {141, 20})
     newBtn:SetPoint("TOPLEFT", bindingsFrame, "BOTTOMLEFT", 0, P:Scale(1))
     newBtn:SetScript("OnClick", function()
-        local b = CreateBindingListButton("", "notBound", "general", "target", #clickCastingTable+1)
+        local index = #clickCastingTable+1
+        local b = CreateBindingListButton("", "notBound", "general", "target", index)
         tinsert(clickCastingTable, EncodeDB("", "notBound", "general", "target"))
 
-        if last then
-            b:SetPoint("TOP", last, "BOTTOM", 0, -5)
-        else
-            b:SetPoint("TOP")
-        end
-        last = b
+        b:SetPoint("TOP", 0, P:Scale(-20)*(index-1)+P:Scale(-5)*(index-1))
 
         menu:Hide()
         bindingButton:Hide()
@@ -1237,9 +1240,22 @@ CreateBindingListButton = function(modifier, bindKey, bindType, bindAction, i)
         bindActionDisplay = bindAction
     end
 
-    local b = Cell:CreateBindingListButton(bindingsFrame.scrollFrame.content, modifierDisplay, bindKeyDisplay, L[F:UpperFirst(bindType)], bindActionDisplay)
+    if not listButtons[i] then
+        listButtons[i] = Cell:CreateBindingListButton(bindingsFrame.scrollFrame.content, "", "", "", "")
+    end
+    local b = listButtons[i]
+    b:SetParent(bindingsFrame.scrollFrame.content)
+    b:SetAlpha(1)
+    b:SetChanged(false)
+    b:Show()
+    
+    b.keyGrid:SetText(modifierDisplay..bindKeyDisplay)
+    b.typeGrid:SetText(L[F:UpperFirst(bindType)])
+    b.actionGrid:SetText(bindActionDisplay)
+    
     b.modifier, b.bindKey, b.bindType, b.bindAction = modifier, bindKey, bindType, bindAction
     b.bindSpell = bindSpell
+    b.clickCastingIndex = i
 
     b:SetPoint("LEFT", 5, 0)
     b:SetPoint("RIGHT", -5, 0)
@@ -1307,18 +1323,27 @@ LoadProfile = function(isCommon)
         local modifier, bindKey, bindType, bindAction = DecodeDB(t)
         local b = CreateBindingListButton(modifier, bindKey, bindType, bindAction, i)
 
-        if last then
-            b:SetPoint("TOP", last, "BOTTOM", 0, -5)
-        else
-            b:SetPoint("TOP")
-        end
-        last = b
+        b:SetPoint("TOP", 0, P:Scale(-20)*(i-1)+P:Scale(-5)*(i-1))
+    end
+    -- hide unused
+    for i = #clickCastingTable+1, #listButtons do
+        listButtons[i]:Hide()
     end
     -- F:Debug("-- Load clickCastings end ----------------")
     bindingsFrame.scrollFrame:SetContentHeight(20, #clickCastingTable, 5)
     menu:Hide()
     wipe(deleted)
     wipe(changed)
+end
+
+function F:SwapClickCastings(from, to)
+    F:Debug(from, "->", to)
+    if from and to then
+        local temp = clickCastingTable[from]
+        tremove(clickCastingTable, from)
+        tinsert(clickCastingTable, to, temp)
+    end
+    LoadProfile(Cell.vars.clickCastings["useCommon"])
 end
 
 -------------------------------------------------
@@ -1388,7 +1413,7 @@ clickCastingsTab:SetScript("OnShow", function()
     
     local isCommon = Cell.vars.clickCastings["useCommon"]
     profileDropdown:SetSelectedItem(isCommon and 1 or 2)
-    UpdateCurrentText(isCommon)
+    -- UpdateCurrentText(isCommon)
     LoadProfile(isCommon)
 
     smartResDropdown:SetSelectedValue(Cell.vars.clickCastings["smartResurrection"])

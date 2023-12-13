@@ -3115,6 +3115,28 @@ local function CreateGrid(parent, text, width)
         parent:Unhighlight()
     end)
 
+    grid:RegisterForDrag("LeftButton")
+    
+    grid:SetScript("OnDragStart", function(self)
+        if parent.unmovable then return end
+        parent:Unhighlight()
+        parent:SetFrameStrata("TOOLTIP")
+        parent:StartMoving()
+        parent:SetUserPlaced(false)
+    end)
+    
+    grid:SetScript("OnDragStop", function(self)
+        if parent.unmovable then return end
+        parent:StopMovingOrSizing()
+        parent:SetFrameStrata("LOW")
+        -- self:Hide() --! Hide() will cause OnDragStop trigger TWICE!!!
+        C_Timer.After(0.05, function()
+            local b = GetMouseFocus()
+            if b then b = b:GetParent() end
+            F:SwapClickCastings(parent.clickCastingIndex, b and b.clickCastingIndex)
+        end)
+    end)
+
     return grid
 end
 
@@ -3125,6 +3147,7 @@ function addon:CreateBindingListButton(parent, modifier, bindKey, bindType, bind
     b:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8x8", edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = P:Scale(1)})
     b:SetBackdropColor(0.115, 0.115, 0.115, 1) 
     b:SetBackdropBorderColor(0, 0, 0, 1)
+    b:SetMovable(true)
 
     function b:Highlight()
         b:SetBackdropColor(accentColor.t[1], accentColor.t[2], accentColor.t[3], 0.1)

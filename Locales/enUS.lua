@@ -85,7 +85,7 @@ select(2, ...).L = setmetatable({
         <br/>
 
         <h1>r207-release (Dec 13, 2023, 17:02 GMT+8)</h1>
-        <p>* (Retail) Updated Quick Assist, removed standalone click-castings, added bars/glows and filter switcher.</p>
+        <p>* (Retail) Updated Quick Assist, removed stand-alone click-castings, added bars/glows and filter switcher.</p>
         <p>+ Updated Spotlights, added "Tank" and "Unit's Name".</p>
         <p>+ Updated support for 1.15 Classic.</p>
         <p>+ Added "Change Over Time" option for custom Color indicators.</p>
