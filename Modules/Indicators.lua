@@ -514,7 +514,7 @@ local function InitIndicator(indicatorName)
             -- texture type cannot glow by LCG
             indicator.preview = indicator.preview or CreateFrame("Frame", nil, previewButton)
             indicator.preview:SetAllPoints(indicator)
-            indicator:SetCooldown(nil, nil, "Curse")
+            SetOnUpdate(indicator)
         elseif indicator.indicatorType == "texture" then
             function indicator:SetFadeOut(fadeOut)
                 indicator.fadeOut = fadeOut
@@ -780,8 +780,9 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
             end
         elseif setting == "color" then
             indicator:SetColor(unpack(value))
-        elseif setting == "colors" then
+        elseif setting == "customColors" then
             indicator:SetColors(value)
+            indicator.preview.elapsedTime = 13 -- update now!
         elseif setting == "nameColor" then
             indicator:UpdatePreviewColor(value)
         elseif setting == "vehicleNamePosition" then
@@ -1878,8 +1879,8 @@ local function ShowIndicatorSettings(id)
         elseif currentSetting == "customColors" then
             w:SetDBValue(indicatorTable["auraType"], indicatorTable["colors"])
             w:SetFunc(function(value)
-                indicatorTable["colors"] = value
-                Cell:Fire("UpdateIndicators", notifiedLayout, indicatorName, "colors", value)
+                -- NOTE: already changed in widget
+                Cell:Fire("UpdateIndicators", notifiedLayout, indicatorName, "customColors", value)
             end)
 
         -- statusColors

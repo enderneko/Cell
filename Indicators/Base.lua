@@ -614,7 +614,7 @@ local function Rect_SetCooldown(frame, start, duration, debuffType, texture, cou
             elseif remain <= duration * frame.colors[2][4] then
                 frame.tex:SetColorTexture(frame.colors[2][1], frame.colors[2][2], frame.colors[2][3])
             else
-                frame.tex:SetColorTexture(unpack(frame.colors[1]))
+                frame.tex:SetColorTexture(frame.colors[1][1], frame.colors[1][2], frame.colors[1][3])
             end
         end)
     end
@@ -687,7 +687,7 @@ local function Bar_SetCooldown(bar, start, duration, debuffType, texture, count)
             elseif remain <= duration * bar.colors[2][4] then
                 bar:SetStatusBarColor(bar.colors[2][1], bar.colors[2][2], bar.colors[2][3])
             else
-                bar:SetStatusBarColor(unpack(bar.colors[1]))
+                bar:SetStatusBarColor(bar.colors[1][1], bar.colors[1][2], bar.colors[1][3])
             end
         end)
     end
@@ -724,27 +724,52 @@ end
 -------------------------------------------------
 -- CreateAura_Color
 -------------------------------------------------
+local function Color_SetCooldown(color, start, duration, debuffType)
+    if color.type == "change-over-time" then
+        if duration == 0 then
+            color.solidTex:SetVertexColor(unpack(color.colors[4]))
+            color:SetScript("OnUpdate", nil)
+        else
+            color:SetScript("OnUpdate", function()
+                local remain = duration-(GetTime()-start)
+                -- update color
+                if remain <= color.colors[6][4] then
+                    color.solidTex:SetVertexColor(color.colors[6][1], color.colors[6][2], color.colors[6][3])
+                elseif remain <= duration * color.colors[5][4] then
+                    color.solidTex:SetVertexColor(color.colors[5][1], color.colors[5][2], color.colors[5][3])
+                else
+                    color.solidTex:SetVertexColor(color.colors[4][1], color.colors[4][2], color.colors[4][3])
+                end
+            end)
+        end
+    elseif color.type == "debuff-type" and debuffType then
+        solidTex:SetVertexColor(CellDB["debuffTypeColor"][debuffType]["r"], CellDB["debuffTypeColor"][debuffType]["g"], CellDB["debuffTypeColor"][debuffType]["b"], 1)
+    end
+    color:Show()
+end
+
 function I:CreateAura_Color(name, parent)
     local color = CreateFrame("Frame", name, parent)
     color:Hide()
     color.indicatorType = "color"
 
     local solidTex = color:CreateTexture(nil, "OVERLAY", nil, -5)
+    color.solidTex = solidTex
     solidTex:SetTexture(Cell.vars.texture)
     solidTex:SetAllPoints(color)
     solidTex:Hide()
+
+    solidTex:SetScript("OnShow", function()
+        -- update texture
+        solidTex:SetTexture(Cell.vars.texture)
+    end)
    
     local gradientTex = color:CreateTexture(nil, "OVERLAY", nil, -5)
     gradientTex:SetTexture("Interface\\Buttons\\WHITE8x8")
     gradientTex:SetAllPoints(color)
     gradientTex:Hide()
 
-    function color:SetCooldown(start, duration, debuffType, texture, count, refreshing)
-        if color.type == "debuff-type" and debuffType then
-            solidTex:SetVertexColor(CellDB["debuffTypeColor"][debuffType]["r"], CellDB["debuffTypeColor"][debuffType]["g"], CellDB["debuffTypeColor"][debuffType]["b"], color.alpha)
-        end
-        color:Show()
-    end
+    color.SetCooldown = Color_SetCooldown
 
     function color:SetAnchor(anchorTo)
         color:ClearAllPoints()
@@ -765,26 +790,32 @@ function I:CreateAura_Color(name, parent)
 
     function color:SetColors(colors)
         color.type = colors[1]
+        color.colors = colors
 
         if colors[1] == "solid" then
+            color:SetScript("OnUpdate", nil)
             solidTex:SetVertexColor(colors[2][1], colors[2][2], colors[2][3], colors[2][4])
-            solidTex:SetTexture(Cell.vars.texture)
             solidTex:Show()
             gradientTex:Hide()
         elseif colors[1] == "gradient-vertical" then
+            color:SetScript("OnUpdate", nil)
             gradientTex:SetGradient("VERTICAL", CreateColor(colors[2][1], colors[2][2], colors[2][3], colors[2][4]), CreateColor(colors[3][1], colors[3][2], colors[3][3], colors[3][4]))
             gradientTex:Show()
             solidTex:Hide()
         elseif colors[1] == "gradient-horizontal" then
+            color:SetScript("OnUpdate", nil)
             gradientTex:SetGradient("HORIZONTAL", CreateColor(colors[2][1], colors[2][2], colors[2][3], colors[2][4]), CreateColor(colors[3][1], colors[3][2], colors[3][3], colors[3][4]))
             gradientTex:Show()
             solidTex:Hide()
         elseif colors[1] == "debuff-type" then
+            color:SetScript("OnUpdate", nil)
             solidTex:SetVertexColor(colors[2][1], colors[2][2], colors[2][3], colors[2][4])
-            solidTex:SetTexture(Cell.vars.texture)
             solidTex:Show()
             gradientTex:Hide()
-            color.alpha = colors[2][4]
+        elseif colors[1] == "change-over-time" then
+            solidTex:SetVertexColor(colors[4][1], colors[4][2], colors[4][3], colors[4][4])
+            solidTex:Show()
+            gradientTex:Hide()
         end
     end
         

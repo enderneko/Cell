@@ -491,7 +491,7 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                 local indicator = b.indicators[indicatorName]
                 indicator:SetColor(unpack(value))
             end, true)
-        elseif setting == "colors" then --! NOTE: for customColors。 其他的colors不调用widget.func，不发出通知，因为这些指示器都使用OnUpdate更新颜色。
+        elseif setting == "customColors" then --! 其他的colors不调用widget.func，不发出通知，因为这些指示器都使用OnUpdate更新颜色。
             F:IterateAllUnitButtons(function(b)
                 local indicator = b.indicators[indicatorName]
                 indicator:SetColors(value)

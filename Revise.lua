@@ -2435,11 +2435,6 @@ function F:Revise()
 
     -- r207-release
     if CellDB["revise"] and dbRevision < 207 then
-        -- for spec, t in pairs(CellDB["quickAssist"]) do
-        --     t["spells"]["mine"]["clickCastings"] = t["spells"]["mine"]["buffs"]
-        --     t["spells"]["mine"]["buffs"] = nil
-        -- end
-
         if Cell.isRetail then
             for spec, t in pairs(CellDB["quickAssist"]) do
                 -- clickCastings -> buffs
@@ -2477,6 +2472,17 @@ function F:Revise()
                         ["active"] = 1,
                     }
                     t["layout"]["filter"] = nil
+                end
+            end
+        end
+
+        -- add change-over-time to custom Color indicator
+        for _, layout in pairs(CellDB["layouts"]) do
+            for _, indicator in pairs(layout["indicators"]) do
+                if indicator["type"] == "color" and #indicator["colors"] ~= 6 then
+                    indicator["colors"][4] = {0,1,0} -- normal
+                    indicator["colors"][5] = {1,1,0,0.5} -- percent
+                    indicator["colors"][6] = {1,0,0,3} -- second
                 end
             end
         end
