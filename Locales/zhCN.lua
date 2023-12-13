@@ -497,6 +497,7 @@ L["Half"] = "半高"
 L["Solid"] = "纯色"
 L["Vertical Gradient"] = "垂直渐变"
 L["Horizontal Gradient"] = "水平渐变"
+L["Change Over Time"] = "随时间变化"
 L["Debuff Type"] = "减益类型"
 L["Rotation"] = "旋转"
 L["Even if disabled, the settings below affect \"Externals + Defensives\" indicator"] = "即使被禁用，下列设置也会对“减伤 (全部)”指示器生效"
@@ -800,6 +801,16 @@ L["Click to view older changelogs"] = "点击查看远古更新记录"
 L["CHANGELOGS"] = [[
     <h1>更新后如果有各种问题，先排查代码片段。</h1>
     <p>（正式服）如果指示器不能正常刷新，尝试启用常规页面下的“总是更新增益/减益”选项。</p>
+    <br/>
+
+    <h1>r207-release (Dec 13, 2023, 17:02 GMT+8)</h1>
+    <p>* 更新正式服的快速协助功能，移除独立点击施法，添加进度条组/发光，现在支持多个过滤器预设。</p>
+    <p>+ 更新特别关注框体，添加“坦克”与“指定单位的名字”。</p>
+    <p>+ 添加对 1.15 怀旧服的支持。</p>
+    <p>+ 为自定义颜色指示器添加了“随时间变化”的选项。</p>
+    <p>+ 为载具添加了职责指示器的图标。</p>
+    <p>* 修复对 LibHealComm 的支持。</p>
+    <p>* 更新本地化。</p>
     <br/>
 
     <h1>r206-release (Dec 9, 2023, 00:50 GMT+8)</h1>

@@ -100,6 +100,8 @@ L["Cell will report all deaths during a raid encounter."] = "團隊首領戰時�
 L["Cell will report first %d deaths during a raid encounter."] = "團隊首領戰時，Cell 會通報前 %d 個死亡訊息。"
 L["CENTER"] = "中"
 L["change mode / apply changes"] = "切換模式 / 套用變更"
+--[[Translation missing --]]
+--[[ L["Change Over Time"] = ""--]] 
 L["change the order"] = "調整順序"
 L["Changelogs"] = "更新資訊"
 L["Check all visible enemy nameplates."] = "檢查所有看得見的敵方血條。"
@@ -612,6 +614,8 @@ L["Unit Filter"] = "單位過濾"
 L["Unit Spacing"] = "單位間距"
 L["Units Per Column"] = "每列單位數"
 L["Units Per Row"] = "每行單位數"
+--[[Translation missing --]]
+--[[ L["Unit's Name"] = ""--]] 
 L["Unit's Pet"] = "單位的寵物"
 L["Unit's Target"] = "指定單位的目標"
 L["Unlimited"] = "無限制"

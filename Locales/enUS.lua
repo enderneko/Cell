@@ -84,6 +84,16 @@ select(2, ...).L = setmetatable({
         <p>(Retail) Enable "Always Update Buffs/Debuffs" in General tab, if indicators do not update correctly.</p>
         <br/>
 
+        <h1>r207-release (Dec 13, 2023, 17:02 GMT+8)</h1>
+        <p>* (Retail) Updated Quick Assist, removed standalone click-castings, added bars/glows and filter switcher.</p>
+        <p>+ Updated Spotlights, added "Tank" and "Unit's Name".</p>
+        <p>+ Updated support for 1.15 Classic.</p>
+        <p>+ Added "Change Over Time" option for custom Color indicators.</p>
+        <p>+ Added role icon for vehicles.</p>
+        <p>* Fixed LibHealComm support.</p>
+        <p>* Updated locales.</p>
+        <br/>
+
         <h1>r206-release (Dec 9, 2023, 00:50 GMT+8)</h1>
         <p>+ (Retail) New utility: Quick Assist. Thanks 钛锬(NGA) for offensive spells and testing.</p>
         <p>* Updated raid debuffs.</p>

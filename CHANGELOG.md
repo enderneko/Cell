@@ -1,13 +1,11 @@
-[Full Changelog](https://github.com/enderneko/Cell/compare/r205-release...eb1f361ff908127ad2ab42c74706574d4b084cc3)
+[Full Changelog](https://github.com/enderneko/Cell/compare/r206-release...349959922d1e2626a3962096fc57ad802854bddd)
 
-- Implement QuickAssist
-- Update raid debuffs
-- Update Cell.GetUnitFrame
-- [Retail] Update dispel checker for Shaman
-- Add "Show Background" for Status Text indicator
-- Add "Show Timer" for Status Text indicator
-- Fix custom glow indicator
-- Fix layout preview
-- Fix ShowStack
-- Try fixing Soulstone click-casting
-- Update locales
+- Add support for 1.15
+- Update Spotlights
+- Update Quick Assist
+- Add "Change Over Time" for custom Color indicator
+- Add "vehicle" role icon
+- Fix LibHealComm support
+- Update zhTW
+- Update Aggro border defaults
+- Fix texture indicator alpha
