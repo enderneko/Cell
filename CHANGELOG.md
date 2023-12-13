@@ -1,11 +1,4 @@
-[Full Changelog](https://github.com/enderneko/Cell/compare/r206-release...349959922d1e2626a3962096fc57ad802854bddd)
+[Full Changelog](https://github.com/enderneko/Cell/compare/r207-release...a0430346338e0e0402b8988d68d63dd7d98e8947)
 
-- Add support for 1.15
-- Update Spotlights
-- Update Quick Assist
-- Add "Change Over Time" for custom Color indicator
-- Add "vehicle" role icon
-- Fix LibHealComm support
-- Update zhTW
-- Update Aggro border defaults
-- Fix texture indicator alpha
+- Add rearrangement for click-casting list
+- Fix click-castings for Quick Assist
