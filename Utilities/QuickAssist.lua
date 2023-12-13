@@ -641,10 +641,10 @@ function CellQuickAssist_OnLoad(button)
 
     -- script
     button:SetScript("OnAttributeChanged", QuickAssist_OnAttributeChanged) -- init
-    button:SetScript("OnShow", QuickAssist_OnShow)
-    button:SetScript("OnHide", QuickAssist_OnHide)
-    button:SetScript("OnEnter", QuickAssist_OnEnter)
-    button:SetScript("OnLeave", QuickAssist_OnLeave)
+    button:HookScript("OnShow", QuickAssist_OnShow)
+    button:HookScript("OnHide", QuickAssist_OnHide) -- click-castings: _onhide
+    button:HookScript("OnEnter", QuickAssist_OnEnter) -- click-castings: _onenter
+    button:HookScript("OnLeave", QuickAssist_OnLeave) -- click-castings: _onleave
     button:SetScript("OnUpdate", QuickAssist_OnUpdate)
     button:SetScript("OnSizeChanged", QuickAssist_OnSizeChanged)
     button:SetScript("OnEvent", QuickAssist_OnEvent)
