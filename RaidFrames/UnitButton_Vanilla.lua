@@ -6,7 +6,8 @@ local I = Cell.iFuncs
 local U = Cell.uFuncs
 local P = Cell.pixelPerfectFuncs
 local A = Cell.animations
-local HealComm = LibStub("LibHealComm-4.0", true)
+
+local HealComm
 
 CELL_FADE_OUT_HEALTH_PERCENT = nil
 
@@ -1765,6 +1766,7 @@ end
 Cell.HealComm.HealComm_UpdateHealPrediction = HealComm_UpdateHealPrediction
 
 function F:EnableLibHealComm(enabled)
+    HealComm = LibStub("LibHealComm-4.0", true)
     if not HealComm then return end
 
     useLibHealComm = enabled

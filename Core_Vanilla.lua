@@ -305,7 +305,6 @@ function eventFrame:ADDON_LOADED(arg1)
             CellDB["appearance"]["scale"] = scale
         end
         P:SetRelativeScale(CellDB["appearance"]["scale"])
-        F:EnableLibHealComm(CellDB["appearance"]["useLibHealComm"])
 
         -- color ---------------------------------------------------------------------------------
         if CellDB["appearance"]["accentColor"] then -- version < r103
@@ -668,6 +667,8 @@ function eventFrame:PLAYER_LOGIN()
     Cell:Fire("UpdatePixelPerfect")
     -- overrideLGF
     F:OverrideLGF(CellDB["general"]["overrideLGF"])
+    -- LibHealComm
+    F:EnableLibHealComm(CellDB["appearance"]["useLibHealComm"])
 end
 
 function eventFrame:UI_SCALE_CHANGED()
