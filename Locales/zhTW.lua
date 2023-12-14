@@ -100,8 +100,7 @@ L["Cell will report all deaths during a raid encounter."] = "團隊首領戰時�
 L["Cell will report first %d deaths during a raid encounter."] = "團隊首領戰時，Cell 會通報前 %d 個死亡訊息。"
 L["CENTER"] = "中"
 L["change mode / apply changes"] = "切換模式 / 套用變更"
---[[Translation missing --]]
---[[ L["Change Over Time"] = ""--]] 
+L["Change Over Time"] = "隨時間變化"
 L["change the order"] = "調整順序"
 L["Changelogs"] = "更新資訊"
 L["Check all visible enemy nameplates."] = "檢查所有看得見的敵方血條。"
@@ -111,8 +110,7 @@ L["circledStackNums"] = "用圓圈數字顯示層數"
 L["Class Color"] = "職業顏色"
 L["Class Color (dark)"] = "職業顏色 (暗)"
 L["Class Filter"] = "依職業"
---[[Translation missing --]]
---[[ L["clear"] = ""--]] 
+L["clear"] = "清除"
 L["Clear"] = "清除"
 L["clear unit"] = "清空單位"
 L["cleuAurasTips"] = "通過戰鬥記錄事件找出看不到的法術效果"
@@ -327,8 +325,7 @@ L["Max Icons"] = "最大顯示數量"
 L["Max Rows"] = "最大行數"
 L["Me"] = "我"
 L["Menu"] = "選單"
---[[Translation missing --]]
---[[ L["menu"] = ""--]] 
+L["menu"] = "選單"
 L["Menu Position"] = "選單位置"
 L["Middle"] = "中鍵"
 L["mine"] = "我的"
@@ -361,8 +358,7 @@ L["None"] = "無"
 L["Non-En"] = "中"
 L["Normal"] = "一般"
 L["Normal + Combat Res"] = "一般 + 戰復"
---[[Translation missing --]]
---[[ L["not in combat"] = ""--]] 
+L["not in combat"] = "非戰鬥中"
 L["OFF"] = "關"
 L["Offensives Tracker"] = "爆發監控"
 L["OFFLINE"] = "離線"
@@ -487,10 +483,8 @@ L["sec"] = "秒"
 L["Secondary Talents"] = "次要天賦"
 L["Separate NPC Frame"] = "分離 NPC 框架"
 L["set unit"] = "設定單位"
---[[Translation missing --]]
---[[ L["set unit's name"] = ""--]] 
---[[Translation missing --]]
---[[ L["set unit's pet"] = ""--]] 
+L["set unit's name"] = "設為目標單位的名字"
+L["set unit's pet"] = "設為目標單位的寵物"
 L["Setup"] = "設定"
 L["Shadow"] = "陰影"
 L["Shape"] = "形狀"
@@ -612,10 +606,9 @@ L["Unit Button"] = "單位按鈕"
 L["Unit Button Style"] = "單位按鈕樣式"
 L["Unit Filter"] = "單位過濾"
 L["Unit Spacing"] = "單位間距"
+L["Unit's Name"] = "指定單位的名字"
 L["Units Per Column"] = "每列單位數"
 L["Units Per Row"] = "每行單位數"
---[[Translation missing --]]
---[[ L["Unit's Name"] = ""--]] 
 L["Unit's Pet"] = "單位的寵物"
 L["Unit's Target"] = "指定單位的目標"
 L["Unlimited"] = "無限制"
