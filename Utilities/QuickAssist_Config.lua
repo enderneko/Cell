@@ -1122,7 +1122,7 @@ local function CreateClassOrderWidget(parent)
 end
 ]]
 
-local filterBtns = {}
+local filterButtons = {}
 local HighlightFilter
 
 local function CreateLayoutPane()
@@ -1300,18 +1300,19 @@ local function CreateLayoutPane()
     filterResetTips:SetPoint("LEFT", filterResetBtn, "RIGHT", 5, 0)
     filterResetTips:SetText("|cffababab"..L["Left-Click"]..": "..L["toggle"]..", "..L["Left-Drag"]..": "..L["change the order"])
     
+    local romanNumerals = {"I", "II", "III", "IV", "V"}
     for i = 5, 1, -1 do
-        filterBtns[i] = Cell:CreateButton(filterPane, i, "accent-hover", {37, 17})
-        filterBtns[i].id = i
+        filterButtons[i] = Cell:CreateButton(filterPane, romanNumerals[i], "accent-hover", {37, 17})
+        filterButtons[i].id = i
 
         if i == 5 then
-            filterBtns[i]:SetPoint("TOPRIGHT")
+            filterButtons[i]:SetPoint("TOPRIGHT")
         else
-            filterBtns[i]:SetPoint("TOPRIGHT", filterBtns[i+1], "TOPLEFT", P:Scale(1), 0)
+            filterButtons[i]:SetPoint("TOPRIGHT", filterButtons[i+1], "TOPLEFT", P:Scale(1), 0)
         end
     end
 
-    HighlightFilter = Cell:CreateButtonGroup(filterBtns, function(id)
+    HighlightFilter = Cell:CreateButtonGroup(filterButtons, function(id)
         layoutTable["filters"]["active"] = id
         selectedFilter = id
         ShowFilter(selectedFilter)
