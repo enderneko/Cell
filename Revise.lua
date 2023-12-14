@@ -2475,7 +2475,10 @@ function F:Revise()
                 end
             end
         end
+    end
 
+    -- r209-release
+    if CellDB["revise"] and dbRevision < 209 then
         -- add change-over-time to custom Color indicator
         for _, layout in pairs(CellDB["layouts"]) do
             for _, indicator in pairs(layout["indicators"]) do

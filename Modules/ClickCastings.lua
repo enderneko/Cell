@@ -1336,7 +1336,7 @@ LoadProfile = function(isCommon)
     wipe(changed)
 end
 
-function F:SwapClickCastings(from, to)
+function F:MoveClickCastings(from, to)
     F:Debug(from, "->", to)
     if from and to then
         local temp = clickCastingTable[from]

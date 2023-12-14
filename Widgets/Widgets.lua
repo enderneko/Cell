@@ -3133,7 +3133,7 @@ local function CreateGrid(parent, text, width)
         C_Timer.After(0.05, function()
             local b = GetMouseFocus()
             if b then b = b:GetParent() end
-            F:SwapClickCastings(parent.clickCastingIndex, b and b.clickCastingIndex)
+            F:MoveClickCastings(parent.clickCastingIndex, b and b.clickCastingIndex)
         end)
     end)
 
