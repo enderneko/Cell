@@ -1,4 +1,6 @@
-[Full Changelog](https://github.com/enderneko/Cell/compare/r207-release...a0430346338e0e0402b8988d68d63dd7d98e8947)
+[Full Changelog](https://github.com/enderneko/Cell/compare/r208-release...d3a026ac1da2a64a098a3e9be2189b2338b011ae)
 
-- Add rearrangement for click-casting list
-- Fix click-castings for Quick Assist
+- Fix indicator defaults (color)
+- Little fix of Options UI
+- Update filter buttons
+- Update zhTW

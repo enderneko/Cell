@@ -84,6 +84,11 @@ select(2, ...).L = setmetatable({
         <p>(Retail) Enable "Always Update Buffs/Debuffs" in General tab, if indicators do not update correctly.</p>
         <br/>
 
+        <h1>r209-release (Dec 14, 2023, 11:20 GMT+8)</h1>
+        <p>* Fixed issues with newly created custom Color indicators.</p>
+        <p>* Updated zhTW.</p>
+        <br/>
+        
         <h1>r208-release (Dec 14, 2023, 00:43 GMT+8)</h1>
         <p>* The order of click-casting items can now be adjusted by dragging them.</p>
         <p>* Fixed click-castings for Quick Assist.</p>
