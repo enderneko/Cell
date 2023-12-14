@@ -1149,7 +1149,7 @@ local function CreateListPane()
         bindingButton:Hide()
 
         -- scroll
-        bindingsFrame.scrollFrame:SetContentHeight(20, #clickCastingTable, 5)
+        bindingsFrame.scrollFrame:SetContentHeight(P:Scale(20), #clickCastingTable, P:Scale(5))
         bindingsFrame.scrollFrame:ScrollToBottom()
     end)
 
@@ -1330,7 +1330,7 @@ LoadProfile = function(isCommon)
         listButtons[i]:Hide()
     end
     -- F:Debug("-- Load clickCastings end ----------------")
-    bindingsFrame.scrollFrame:SetContentHeight(20, #clickCastingTable, 5)
+    bindingsFrame.scrollFrame:SetContentHeight(P:Scale(20), #clickCastingTable, P:Scale(5))
     menu:Hide()
     wipe(deleted)
     wipe(changed)

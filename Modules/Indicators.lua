@@ -1360,11 +1360,11 @@ local settingsFrame
 
 local function CreateSettingsPane()
     local settingsPane = Cell:CreateTitledPane(indicatorsTab, L["Indicator Settings"], 274, 502)
-    settingsPane:SetPoint("TOPLEFT", 153, -5)
+    settingsPane:SetPoint("TOPLEFT", 153, P:Scale(-5))
 
     -- settings frame
     settingsFrame = Cell:CreateFrame("IndicatorsTab_SettingsFrame", settingsPane, 10, 10, true)
-    settingsFrame:SetPoint("TOPLEFT", 0, -25)
+    settingsFrame:SetPoint("TOPLEFT", 0, P:Scale(-25))
     settingsFrame:SetPoint("BOTTOMRIGHT")
     settingsFrame:Show()
     
@@ -1540,7 +1540,7 @@ local function ShowIndicatorSettings(id)
     local height = 0
     for i, w in pairs(widgets) do
         if last then
-            w:SetPoint("TOPLEFT", last, "BOTTOMLEFT", 0, -10)
+            w:SetPoint("TOPLEFT", last, "BOTTOMLEFT", 0, P:Scale(-10))
         else
             w:SetPoint("TOPLEFT")
         end
@@ -1792,7 +1792,7 @@ local function ShowIndicatorSettings(id)
         height = height + w:GetHeight()
     end
 
-    settingsFrame.scrollFrame:SetContentHeight(height + (#widgets-1)*10)
+    settingsFrame.scrollFrame:SetContentHeight(height + (#widgets-1)*P:Scale(10))
 
     if string.find(indicatorName, "indicator") then
         renameBtn:SetEnabled(true)

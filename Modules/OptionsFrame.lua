@@ -7,8 +7,7 @@ local lastShownTab
 
 local optionsFrame = Cell:CreateFrame("CellOptionsFrame", Cell.frames.mainFrame, 432, 401)
 Cell.frames.optionsFrame = optionsFrame
--- optionsFrame:SetPoint("BOTTOMLEFT", Cell.frames.mainFrame, "TOPLEFT", 0, 16)
-optionsFrame:SetPoint("CENTER", UIParent)
+PixelUtil.SetPoint(optionsFrame, "CENTER", UIParent, "CENTER", 1, -1)
 optionsFrame:SetFrameStrata("DIALOG")
 optionsFrame:SetFrameLevel(520)
 optionsFrame:SetClampedToScreen(true)
@@ -242,3 +241,11 @@ optionsFrame:SetScript("OnEvent", function(self, event)
         end
     end
 end)
+
+-------------------------------------------------
+-- callbacks
+-------------------------------------------------
+local function UpdatePixelPerfect()
+    P:Resize(optionsFrame)
+end
+Cell:RegisterCallback("UpdatePixelPerfect", "OptionsFrame_UpdatePixelPerfect", UpdatePixelPerfect)
