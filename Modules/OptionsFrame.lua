@@ -164,7 +164,7 @@ end)
 optionsFrame:SetScript("OnHide", function()
     -- stolen from dbm
     if not InCombatLockdown() and not UnitAffectingCombat("player") and not IsFalling() then
-        F:Debug("|cffff7777collectgarbage")
+        F:Debug("|cffbbbbbbCellOptionsFrame_OnHide: |cffff7777collectgarbage")
         collectgarbage("collect")
         -- UpdateAddOnMemoryUsage() -- stuck like hell
     end

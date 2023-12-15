@@ -108,11 +108,11 @@ local eventFrame = CreateFrame("Frame")
 eventFrame:RegisterEvent("VARIABLES_LOADED")
 eventFrame:RegisterEvent("ADDON_LOADED")
 eventFrame:RegisterEvent("PLAYER_LOGIN")
-eventFrame:RegisterEvent("LOADING_SCREEN_ENABLED")
+eventFrame:RegisterEvent("LOADING_SCREEN_DISABLED")
 
-function eventFrame:LOADING_SCREEN_ENABLED()
+function eventFrame:LOADING_SCREEN_DISABLED()
     if not InCombatLockdown() and not UnitAffectingCombat("player") then
-        F:Debug("|cffff7777collectgarbage")
+        F:Debug("|cffbbbbbbLOADING_SCREEN_DISABLED: |cffff7777collectgarbage")
         collectgarbage("collect")
     end
 end
