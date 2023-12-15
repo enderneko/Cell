@@ -1,6 +1,8 @@
-[Full Changelog](https://github.com/enderneko/Cell/compare/r208-release...d3a026ac1da2a64a098a3e9be2189b2338b011ae)
+[Full Changelog](https://github.com/enderneko/Cell/compare/r209-release...0d2e06b7c43dc6ee4c42e69fea4b687940968bd9)
 
-- Fix indicator defaults (color)
-- Little fix of Options UI
-- Update filter buttons
-- Update zhTW
+- Implemented Bleed color
+- Fix Quick Assist config
+- Fix Quick Assist preview
+- Fix collectgarbage
+- Fix PW:S indicator
+- Adjust indicator color/time/value update frequency

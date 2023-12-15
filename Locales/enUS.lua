@@ -84,6 +84,12 @@ select(2, ...).L = setmetatable({
         <p>(Retail) Enable "Always Update Buffs/Debuffs" in General tab, if indicators do not update correctly.</p>
         <br/>
 
+        <h1>r210-release (Dec 15, 2023, 23:55 GMT+8)</h1>
+        <p>+ Implemented Bleed debuff type (using data from https://wago.tools/db2/SpellEffect, EffectMechanic=15).</p>
+        <p>* Fixed Quick Assist config/preview.</p>
+        <p>* (Wrath) Fixed PW:S indicator.</p>
+        <br/>
+
         <h1>r209-release (Dec 14, 2023, 11:20 GMT+8)</h1>
         <p>* Fixed issues with newly created custom Color indicators.</p>
         <p>* Updated zhTW.</p>
