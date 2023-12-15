@@ -2033,6 +2033,8 @@ cleu:SetScript("OnEvent", function()
         end
 
     elseif subEvent == "SPELL_ABSORBED" then
+        if not F:IsFriend(destFlags) then return end
+
         -- [spellID, spellName, spellSchool], casterGUID, casterName, casterFlags, casterRaidFlags, absorbSpellId, absorbSpellName, absorbSpellSchool, amount, critical
         local absorbSpellId, absorbAmount
         if arg21 then -- spell

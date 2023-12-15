@@ -2089,18 +2089,17 @@ function I:CreatePowerWordShield(parent)
     end
 
     function powerWordShield:UpdateShield(value, max, resetMax)
-        -- print("UpdateShield:", value, max, resetMax)
-
         if resetMax then
             powerWordShield.max = nil
         elseif max then
             powerWordShield.max = max
         end
+        -- print("remain:", value, "max:", powerWordShield.max, resetMax and "(reset)" or "")
 
         shieldCooldown:ClearAllPoints()
         weakendedSoulCooldown:ClearAllPoints()
 
-        if value ~= 0 and powerWordShield.max then
+        if value > 0 and powerWordShield.max then
             shieldAmount:SetCooldown(GetTime()-(powerWordShield.max-value), powerWordShield.max)
             shieldAmount:Pause()
             shieldCooldown:SetPoint("CENTER")
