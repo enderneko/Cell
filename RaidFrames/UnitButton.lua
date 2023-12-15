@@ -838,6 +838,9 @@ local function HandleDebuffs(self, auraInfo, index)
     local refreshing = false
 
     self._debuffs_indices[auraInstanceID] = index
+
+    -- check Bleed
+    debuffType = I:CheckDebuffType(debuffType, spellId)
     
     if duration then
         if Cell.vars.iconAnimation == "duration" then

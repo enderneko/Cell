@@ -339,9 +339,46 @@ local function InitIndicator(indicatorName)
             {["Disease"]=true},
             {["Magic"]=true},
             {["Poison"]=true},
+            {["Bleed"]=true},
         }
 
         -- override
+        indicator.SetDispels = function(self, dispelTypes)
+            local r, g, b = 0, 0, 0
+            local found
+        
+            self.highlight:Hide()
+        
+            local i = 1
+            for dispelType, showHighlight in pairs(dispelTypes) do
+                -- highlight
+                if not found and self.highlightType ~= "none" and dispelType and showHighlight then
+                    found = true
+                    local r, g, b = I:GetDebuffTypeColor(dispelType)
+                    if self.highlightType == "entire" then
+                        self.highlight:SetVertexColor(r, g, b, 0.5)
+                    elseif self.highlightType == "current" then
+                        self.highlight:SetVertexColor(r, g, b, 1)
+                    elseif self.highlightType == "gradient" or self.highlightType == "gradient-half" then
+                        self.highlight:SetGradient("VERTICAL", CreateColor(r, g, b, 1), CreateColor(r, g, b, 0))
+                    end
+                    if indicator.isVisible then self.highlight:Show() end
+                end
+                -- icons
+                if self.showIcons then
+                    self[i]:SetDispel(dispelType)
+                    i = i + 1
+                end
+            end
+        
+            self:UpdateSize(i)
+        
+            -- hide unused
+            for j = i, 5 do
+                self[j]:Hide()
+            end
+        end
+
         indicator.UpdateHighlight = function(self, highlightType)
             indicator.highlightType = highlightType
     
@@ -351,36 +388,31 @@ local function InitIndicator(indicatorName)
                 indicator.highlight:ClearAllPoints()
                 indicator.highlight:SetAllPoints(previewButton.widget.healthBar)
                 indicator.highlight:SetTexture("Interface\\Buttons\\WHITE8x8")
-                indicator.highlight:Show()
             elseif highlightType == "gradient-half" then
                 indicator.highlight:ClearAllPoints()
                 indicator.highlight:SetPoint("BOTTOMLEFT", previewButton.widget.healthBar)
                 indicator.highlight:SetPoint("TOPRIGHT", previewButton.widget.healthBar, "RIGHT")
                 indicator.highlight:SetTexture("Interface\\Buttons\\WHITE8x8")
-                indicator.highlight:Show()
             elseif highlightType == "entire" then
                 indicator.highlight:ClearAllPoints()
                 indicator.highlight:SetAllPoints(previewButton.widget.healthBar)
                 indicator.highlight:SetTexture("Interface\\Buttons\\WHITE8x8")
-                indicator.highlight:Show()
             elseif highlightType == "current" then
                 indicator.highlight:ClearAllPoints()
                 indicator.highlight:SetAllPoints(previewButton.widget.healthBar:GetStatusBarTexture())
                 indicator.highlight:SetTexture(Cell.vars.texture)
-                indicator.highlight:Show()
             end
 
             -- preview
-            indicator.elapsed = 0
+            indicator.elapsed = 1
             indicator.current = 1
-            indicator:SetDispels(debuffTypes[indicator.current])
             indicator:SetScript("OnUpdate", function(self, elapsed)
                 indicator.elapsed = indicator.elapsed + elapsed
                 if indicator.elapsed >= 1 then
                     indicator.elapsed = 0
-                    indicator.current = indicator.current + 1
-                    if indicator.current == 5 then indicator.current = 1 end
                     indicator:SetDispels(debuffTypes[indicator.current])
+                    indicator.current = indicator.current + 1
+                    if indicator.current == 6 then indicator.current = 1 end
                 end
             end)
         end
@@ -724,6 +756,11 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                 indicator:Show()
                 if indicator.preview then indicator.preview:Show() end
                 if indicator.isTargetedSpells then indicator:ShowGlowPreview() end
+                if indicator.isDispels then
+                    indicator.elapsed = 1
+                    indicator.current = 1
+                    indicator.isVisible = true
+                end
             else
                 indicator.enabled = false
                 indicator:Hide()
@@ -1891,7 +1928,8 @@ LoadIndicatorList = function()
                 i.blink.alpha:SetFromAlpha(1)
             else
                 i:SetAlpha(i.alpha or 1)
-                if i.isDispels then
+                if i.isDispels and i.enabled then
+                    i.isVisible = true
                     i.highlight:Show()
                 end
             end
@@ -1917,6 +1955,7 @@ LoadIndicatorList = function()
         else
             i:SetAlpha(CellDB["indicatorPreviewAlpha"])
             if i.isDispels then
+                i.isVisible = false
                 i.highlight:Hide()
             end
         end

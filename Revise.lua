@@ -2491,6 +2491,13 @@ function F:Revise()
         end
     end
 
+    -- r210-release
+    if CellDB["revise"] and dbRevision < 210 then
+        if not CellDB["debuffTypeColor"]["Bleed"] then
+            CellDB["debuffTypeColor"]["Bleed"] = {r=1, g=0.2, b=0.6}
+        end
+    end
+
     -- ----------------------------------------------------------------------- --
     --            update from old versions, validate all indicators            --
     -- ----------------------------------------------------------------------- --

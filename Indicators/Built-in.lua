@@ -510,14 +510,27 @@ local function Dispels_UpdateSize(self, iconsShown)
 end
 
 local function Dispels_SetDispels(self, dispelTypes)
-    local r, g, b, a = 0, 0, 0, 0
+    local r, g, b = 0, 0, 0
+    local found
+
+    self.highlight:Hide()
 
     local i = 1
     for dispelType, showHighlight in pairs(dispelTypes) do
-        if a == 0 and dispelType and showHighlight then
-            r, g, b = I:GetDebuffTypeColor(dispelType)
-            a = 1
+        -- highlight
+        if not found and self.highlightType ~= "none" and dispelType and showHighlight then
+            found = true
+            local r, g, b = I:GetDebuffTypeColor(dispelType)
+            if self.highlightType == "entire" then
+                self.highlight:SetVertexColor(r, g, b, 0.5)
+            elseif self.highlightType == "current" then
+                self.highlight:SetVertexColor(r, g, b, 1)
+            elseif self.highlightType == "gradient" or self.highlightType == "gradient-half" then
+                self.highlight:SetGradient("VERTICAL", CreateColor(r, g, b, 1), CreateColor(r, g, b, 0))
+            end
+            self.highlight:Show()
         end
+        -- icons
         if self.showIcons then
             self[i]:SetDispel(dispelType)
             i = i + 1
@@ -527,17 +540,8 @@ local function Dispels_SetDispels(self, dispelTypes)
     self:UpdateSize(i)
 
     -- hide unused
-    for j = i, 4 do
+    for j = i, 5 do
         self[j]:Hide()
-    end
-
-    -- highlight
-    if self.highlightType == "entire" then
-        self.highlight:SetVertexColor(r, g, b, a ~= 0 and 0.5 or 0)
-    elseif self.highlightType == "current" then
-        self.highlight:SetVertexColor(r, g, b, a)
-    else -- gradient and gradient-half
-        self.highlight:SetGradient("VERTICAL", CreateColor(r, g, b, a), CreateColor(r, g, b, 0))
     end
 end
 
@@ -588,13 +592,11 @@ function I:CreateDispels(parent)
     parent.indicators.dispels = dispels
     dispels:Hide()
 
+    dispels:SetScript("OnHide", function()
+        dispels.highlight:Hide()
+    end)
+
     dispels.highlight = parent.widget.healthBar:CreateTexture(parent:GetName().."DispelHighlight", "OVERLAY")
-    -- dispels.highlight:SetAllPoints(parent.widget.healthBar)
-    -- dispels.highlight:SetPoint("BOTTOMLEFT", parent.widget.healthBar)
-    -- dispels.highlight:SetPoint("BOTTOMRIGHT", parent.widget.healthBar)
-    -- dispels.highlight:SetPoint("TOP", parent.widget.healthBar)
-    -- dispels.highlight:SetTexture("Interface\\Buttons\\WHITE8x8")
-    -- dispels.highlight:SetVertexColor(0, 0, 0, 0)
     dispels.highlight:Hide()
 
     dispels._SetSize = dispels.SetSize
@@ -614,39 +616,28 @@ function I:CreateDispels(parent)
             dispels.highlight:ClearAllPoints()
             dispels.highlight:SetAllPoints(parent.widget.healthBar)
             dispels.highlight:SetTexture("Interface\\Buttons\\WHITE8x8")
-            dispels.highlight:Show()
         elseif highlightType == "gradient-half" then
             dispels.highlight:ClearAllPoints()
             dispels.highlight:SetPoint("BOTTOMLEFT", parent.widget.healthBar)
             dispels.highlight:SetPoint("TOPRIGHT", parent.widget.healthBar, "RIGHT")
             dispels.highlight:SetTexture("Interface\\Buttons\\WHITE8x8")
-            dispels.highlight:Show()
         elseif highlightType == "entire" then
             dispels.highlight:ClearAllPoints()
             dispels.highlight:SetAllPoints(parent.widget.healthBar)
             dispels.highlight:SetTexture("Interface\\Buttons\\WHITE8x8")
-            dispels.highlight:Show()
         elseif highlightType == "current" then
             dispels.highlight:ClearAllPoints()
             dispels.highlight:SetAllPoints(parent.widget.healthBar:GetStatusBarTexture())
             dispels.highlight:SetTexture(Cell.vars.texture)
-            dispels.highlight:Show()
         end
     end
 
-    for i = 1, 4 do
+    for i = 1, 5 do
         local icon = dispels:CreateTexture(parent:GetName().."Dispel"..i, "ARTWORK")
         tinsert(dispels, icon)
         icon:Hide()
 
-        -- if i == 1 then
-        --     icon:SetPoint("TOPLEFT")
-        -- else
-        --     icon:SetPoint("TOPRIGHT", dispels[i-1], "TOPLEFT", 7, 0)
-        -- end
-
-        -- icon:SetTexCoord(0.15, 0.85, 0.15, 0.85)
-        icon:SetDrawLayer("ARTWORK", 5-i)
+        icon:SetDrawLayer("ARTWORK", 6-i)
 
         function icon:SetDispel(dispelType)
             -- icon:SetTexture("Interface\\RaidFrame\\Raid-Icon-Debuff"..dispelType)

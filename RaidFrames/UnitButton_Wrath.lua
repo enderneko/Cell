@@ -773,6 +773,9 @@ local function UnitButton_UpdateDebuffs(self)
         end
         
         local auraInstanceID = (source or "") .. spellId
+
+        -- check Bleed
+        debuffType = I:CheckDebuffType(debuffType, spellId)
         
         if duration then
             if Cell.vars.iconAnimation == "duration" then

@@ -208,6 +208,11 @@ function I:UpdateCustomIndicators(unitButton, auraInfo, refreshing)
     local spellName = auraInfo.name 
     local castByMe = auraInfo.sourceUnit == "player" or auraInfo.sourceUnit == "pet"
 
+    -- check Bleed
+    if auraInfo.isHarmful then
+        debuffType = I:CheckDebuffType(debuffType, spellId)
+    end
+
     for indicatorName, indicatorTable in pairs(customIndicators[auraType]) do
         if indicatorName and enabledIndicators[indicatorName] and unitButton.indicators[indicatorName] then
             local spell  --* trackByName
