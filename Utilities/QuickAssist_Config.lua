@@ -423,7 +423,7 @@ local function UpdatePreviewButton()
                 else
                     self.offensiveIcons:Hide()
                 end
-                offensiveGlow:SetCooldown(GetTime(), 13)
+                self.offensiveGlow:SetCooldown(GetTime(), 13)
                 -- buffs
                 self.buffIcons:Show()
                 self.buffIcons[1]:SetCooldown(GetTime(), 13, nil, 5199639, 0, false, spellTable["mine"]["buffs"][1][3], bit["glow"])
@@ -436,6 +436,8 @@ local function UpdatePreviewButton()
             else
                 self.offensiveIcons:Hide()
                 self.buffIcons:Hide()
+                self.buffBars:Hide()
+                self.offensiveGlow:Hide()
             end
         end
     end)
@@ -453,7 +455,7 @@ local function UpdateLayoutPreview()
     if not layoutPreviewFrame then
         layoutPreviewFrame = CreateFrame("Frame", "CellQuickAssistPreviewFrame", CellQuickAssistFrame)
         layoutPreviewFrame:SetAllPoints(CellQuickAssistFrame)
-        layoutPreviewFrame:SetFrameLevel(CellQuickAssistFrame:GetFrameLevel())
+        layoutPreviewFrame:SetFrameLevel(1)
         layoutPreviewFrame:Hide()
 
         A:CreateFadeIn(layoutPreviewFrame, 0, 1, 0.5)
@@ -464,10 +466,21 @@ local function UpdateLayoutPreview()
             layoutPreviewButtons[i]:SetBackdrop({bgFile="Interface\\Buttons\\WHITE8x8", edgeFile="Interface\\Buttons\\WHITE8x8", edgeSize=P:Scale(1)})
             layoutPreviewButtons[i]:SetBackdropColor(0, 0, 0, 0.5)
             layoutPreviewButtons[i]:SetBackdropBorderColor(0, 0, 0, 1)
-            -- layoutPreviewButtons[i]:EnableMouse(true)
+            layoutPreviewButtons[i]:EnableMouse(true)
             layoutPreviewButtons[i].text = layoutPreviewButtons[i]:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
             layoutPreviewButtons[i].text:SetPoint("CENTER")
             layoutPreviewButtons[i].text:SetText(i)
+            -- drag
+            layoutPreviewButtons[i]:RegisterForDrag("LeftButton")
+            layoutPreviewButtons[i]:SetScript("OnDragStart", function()
+                CellQuickAssistAnchorFrame:StartMoving()
+                CellQuickAssistAnchorFrame:SetUserPlaced(false)
+            end)
+            
+            layoutPreviewButtons[i]:SetScript("OnDragStop", function()
+                CellQuickAssistAnchorFrame:StopMovingOrSizing()
+                P:SavePosition(CellQuickAssistAnchorFrame, layoutTable["position"])
+            end)
         end
     end
 
@@ -927,7 +940,7 @@ end
 local function CreatePlayerList(parent, box)
     -- playerlist
     local playerListFrame = CreateFrame("Frame", nil, parent)
-    playerListFrame:SetSize(50, 17)
+    playerListFrame:SetSize(70, 17)
     playerListFrame:SetPoint("TOP")
     playerListFrame:SetPoint("LEFT", CellOptionsFrame, "RIGHT", 5, 0)
 
@@ -3114,19 +3127,21 @@ local init
 local function ShowUtilitySettings(which)
     if which == "quickAssist" then
         if not init then
-            init = true
             CreateQuickAssistPane()
             CreateSetupPane()
             CreateLayoutPane()
             CreateStylePane()
             CreateSpellsPane()
-            layoutBtn:GetScript("OnClick")()
-
+            
             F:ApplyCombatProtectionToFrame(quickAssistTab)
         end
         
-        quickAssistTab:Show()
         LoadDB()
+        if not init then
+            init = true
+            layoutBtn:GetScript("OnClick")()
+        end
+        quickAssistTab:Show()
         
     elseif init then
         quickAssistTab:Hide()
