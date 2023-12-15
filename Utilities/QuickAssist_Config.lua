@@ -596,6 +596,7 @@ local layoutBtn, styleBtn, spellBtn
 -- layout
 local anchorDropdown, orientationDropdown, widthSlider, heightSlider, xSlider, ySlider, unitsSlider, maxSlider
 local filterTypeDropdown, hideSelfCB, roleFilter, classFilter, nameFilter, nameListFrame, filterResetBtn, filterResetTips
+local filterButtons = {}
 
 -- style
 local hpColorDropdown, hpCP, lossColorDropdown, bgCP, textureDropdown, alphaSlider
@@ -610,12 +611,13 @@ local buffsPane, buffsAddBtn, castsPane, castsAddBtn, offensivesEnabledCB
 
 local function UpdateWidgets(enabled)
     Cell:SetEnabled(enabled, layoutBtn, styleBtn, spellBtn)
-    -- layout
+    
+    -- NOTE: switch to layout on disable
     Cell:SetEnabled(enabled, anchorDropdown, orientationDropdown, widthSlider, heightSlider, xSlider, ySlider, unitsSlider, maxSlider)
     Cell:SetEnabled(enabled, filterTypeDropdown, hideSelfCB, roleFilter, classFilter, nameFilter)
 
-    for _, b in pairs(myBuffWidgets) do
-        Cell:SetEnabled(enabled, b, b.text, b.cp)
+    for _, b in pairs(filterButtons) do
+        Cell:SetEnabled(enabled, b)
     end
 
     qaPopup:Hide()
@@ -1135,7 +1137,6 @@ local function CreateClassOrderWidget(parent)
 end
 ]]
 
-local filterButtons = {}
 local HighlightFilter
 
 local function CreateLayoutPane()
