@@ -49,6 +49,7 @@ local patrons = {
     {"花爺 (爱发电)", "huaye"},
     {"黑哥哥-世界之樹 (TW)", "heigege"},
     {"得闲饮茶 (爱发电)", "dexianyincha"},
+    {"Kuro (Ko-fi)", "kuro"},
 }
 
 -- sort
