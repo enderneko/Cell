@@ -2431,6 +2431,8 @@ local function UnitButton_OnEvent(self, event, unit, arg)
             UnitButton_FinishReadyCheck(self)
         
         elseif event == "ZONE_CHANGED_NEW_AREA" then
+            -- F:Debug("|cffbbbbbb=== ZONE_CHANGED_NEW_AREA ===")
+            -- self._updateRequired = 1
             UnitButton_UpdateStatusText(self)
 
         -- elseif event == "VOICE_CHAT_CHANNEL_ACTIVATED" or event == "VOICE_CHAT_CHANNEL_DEACTIVATED" then
@@ -2439,14 +2441,14 @@ local function UnitButton_OnEvent(self, event, unit, arg)
     end
 end
 
--- local function EnterLeaveInstance()
---     print("EnterLeaveInstance")
---     C_Timer.After(1, function()
---         F:IterateAllUnitButtons(UnitButton_UpdateAll)
---     end)
--- end
--- Cell:RegisterCallback("EnterInstance", "UnitButton_EnterInstance", EnterLeaveInstance)
--- Cell:RegisterCallback("LeaveInstance", "UnitButton_LeaveInstance", EnterLeaveInstance)
+local function EnterLeaveInstance()
+    C_Timer.After(1, function()
+        F:Debug("|cffff1111*** EnterLeaveInstance:|r UnitButton_UpdateAll")
+        F:IterateAllUnitButtons(UnitButton_UpdateAll, true)
+    end)
+end
+Cell:RegisterCallback("EnterInstance", "UnitButton_EnterInstance", EnterLeaveInstance)
+Cell:RegisterCallback("LeaveInstance", "UnitButton_LeaveInstance", EnterLeaveInstance)
 
 local function UnitButton_OnAttributeChanged(self, name, value)
     if name == "unit" then

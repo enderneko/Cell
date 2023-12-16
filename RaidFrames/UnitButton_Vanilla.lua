@@ -2055,6 +2055,15 @@ local function UnitButton_OnEvent(self, event, unit)
     end
 end
 
+local function EnterLeaveInstance()
+    C_Timer.After(1, function()
+        F:Debug("|cffff1111*** EnterLeaveInstance:|r UnitButton_UpdateAll")
+        F:IterateAllUnitButtons(UnitButton_UpdateAll, true)
+    end)
+end
+Cell:RegisterCallback("EnterInstance", "UnitButton_EnterInstance", EnterLeaveInstance)
+Cell:RegisterCallback("LeaveInstance", "UnitButton_LeaveInstance", EnterLeaveInstance)
+
 local function UnitButton_OnAttributeChanged(self, name, value)
     if name == "unit" and not self:GetAttribute("oldUnit") then
         if not value or value ~= self.state.unit then
