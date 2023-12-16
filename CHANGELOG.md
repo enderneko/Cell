@@ -1,8 +1,6 @@
-[Full Changelog](https://github.com/enderneko/Cell/compare/r209-release...0d2e06b7c43dc6ee4c42e69fea4b687940968bd9)
+[Full Changelog](https://github.com/enderneko/Cell/compare/r210-release...ff6942e5c940585c4fbe820b774d984bc950f209)
 
-- Implemented Bleed color
-- Fix Quick Assist config
-- Fix Quick Assist preview
-- Fix collectgarbage
-- Fix PW:S indicator
-- Adjust indicator color/time/value update frequency
+- Remove CELL_DISPEL_EVOKER_CAUTERIZING_FLAME
+- UpdateAll on enter/leave instance
+- Change timing of collectgarbage()
+- Update zhTW

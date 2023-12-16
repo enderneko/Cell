@@ -804,6 +804,12 @@ L["CHANGELOGS"] = [[
     <p>（正式服）如果指示器不能正常刷新，尝试启用常规页面下的“总是更新增益/减益”选项。</p>
     <br/>
 
+    <h1>r211-release (Dec 16, 2023, 17:57 GMT+8)</h1>
+    <p>* 更新驱散检查，移除代码片段变量 CELL_DISPEL_EVOKER_CAUTERIZING_FLAME。</p>
+    <p>* 当进入/离开副本时，所有可见的单位按钮都将刷新。</p>
+    <p>* 更新繁中。</p>
+    <br/>
+
     <h1>r210-release (Dec 15, 2023, 23:55 GMT+8)</h1>
     <p>+ 新增“流血”减益类型（数据来自https://wago.tools/db2/SpellEffect，EffectMechanic为15）。</p>
     <p>* 修复快速协助的设置与预览。</p>

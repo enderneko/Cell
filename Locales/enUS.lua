@@ -84,6 +84,12 @@ select(2, ...).L = setmetatable({
         <p>(Retail) Enable "Always Update Buffs/Debuffs" in General tab, if indicators do not update correctly.</p>
         <br/>
 
+        <h1>r211-release (Dec 16, 2023, 17:57 GMT+8)</h1>
+        <p>* Updated dispel checker, removed snippet var: CELL_DISPEL_EVOKER_CAUTERIZING_FLAME.</p>
+        <p>* When enter/leave instance, all visible unit buttons will be refreshed.</p>
+        <p>* Updated zhTW.</p>
+        <br/>
+
         <h1>r210-release (Dec 15, 2023, 23:55 GMT+8)</h1>
         <p>+ Implemented Bleed debuff type (using data from https://wago.tools/db2/SpellEffect, EffectMechanic=15).</p>
         <p>* Fixed Quick Assist config/preview.</p>
