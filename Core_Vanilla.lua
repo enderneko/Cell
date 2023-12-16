@@ -108,14 +108,6 @@ local eventFrame = CreateFrame("Frame")
 eventFrame:RegisterEvent("VARIABLES_LOADED")
 eventFrame:RegisterEvent("ADDON_LOADED")
 eventFrame:RegisterEvent("PLAYER_LOGIN")
-eventFrame:RegisterEvent("LOADING_SCREEN_DISABLED")
-
-function eventFrame:LOADING_SCREEN_DISABLED()
-    if not InCombatLockdown() and not UnitAffectingCombat("player") then
-        F:Debug("|cffbbbbbbLOADING_SCREEN_DISABLED: |cffff7777collectgarbage")
-        collectgarbage("collect")
-    end
-end
 
 function eventFrame:VARIABLES_LOADED()
     SetCVar("predictedHealth", 1)
@@ -605,13 +597,18 @@ function eventFrame:PLAYER_ENTERING_WORLD()
     Cell.vars.inInstance = isIn
 
     if isIn then
-        F:Debug("|cffff1111Entered Instance:|r", iType)
+        F:Debug("|cffff1111*** Entered Instance:|r", iType)
         PreUpdateLayout()
         inInstance = true
     elseif inInstance then -- left insntance
-        F:Debug("|cffff1111Left Instance|r")
+        F:Debug("|cffff1111*** Left Instance|r")
         PreUpdateLayout()
         inInstance = false
+
+        if not InCombatLockdown() and not UnitAffectingCombat("player") then
+            F:Debug("|cffbbbbbb--- LeaveInstance: |cffff7777collectgarbage")
+            collectgarbage("collect")
+        end
     end
 
     if CellDB["firstRun"] then

@@ -161,14 +161,14 @@ optionsFrame:SetScript("OnShow", function()
     end
 end)
 
-optionsFrame:SetScript("OnHide", function()
-    -- stolen from dbm
-    if not InCombatLockdown() and not UnitAffectingCombat("player") and not IsFalling() then
-        F:Debug("|cffbbbbbbCellOptionsFrame_OnHide: |cffff7777collectgarbage")
-        collectgarbage("collect")
-        -- UpdateAddOnMemoryUsage() -- stuck like hell
-    end
-end)
+-- optionsFrame:SetScript("OnHide", function()
+--     -- stolen from dbm
+--     if not InCombatLockdown() and not UnitAffectingCombat("player") and not IsFalling() then
+--         F:Debug("|cffbbbbbbCellOptionsFrame_OnHide: |cffff7777collectgarbage")
+--         collectgarbage("collect")
+--         -- UpdateAddOnMemoryUsage() -- stuck like hell
+--     end
+-- end)
 
 -- optionsFrame:SetScript("OnShow", function()
 --     P:PixelPerfectPoint(optionsFrame)
