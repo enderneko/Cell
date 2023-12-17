@@ -2579,6 +2579,7 @@ function B:UpdateShields(button)
     overshieldEnabled = CellDB["appearance"]["overshield"]
 
     button.widget.shieldBar:SetVertexColor(CellDB["appearance"]["shield"][2][1], CellDB["appearance"]["shield"][2][2], CellDB["appearance"]["shield"][2][3], CellDB["appearance"]["shield"][2][4])
+    button.widget.overShieldGlow:SetVertexColor(CellDB["appearance"]["shield"][2][1], CellDB["appearance"]["shield"][2][2], CellDB["appearance"]["shield"][2][3], 1)
 
     UnitButton_UpdateHealPrediction(button)
     UnitButton_UpdateShieldAbsorbs(button)
@@ -2632,14 +2633,11 @@ function B:SetOrientation(button, orientation, rotateTexture)
         F:RotateTexture(powerBarLoss, 90)
         F:RotateTexture(incomingHeal, 90)
         F:RotateTexture(damageFlashTex, 90)
-        -- F:RotateTexture(shieldBar, 90)
     else
         F:RotateTexture(healthBarLoss, 0)
         F:RotateTexture(powerBarLoss, 0)
         F:RotateTexture(incomingHeal, 0)
-        F:RotateTexture(overShieldGlow, 0)
         F:RotateTexture(damageFlashTex, 0)
-        -- F:RotateTexture(shieldBar, 0)
     end
     
     if orientation == "horizontal" then
@@ -2721,9 +2719,9 @@ function B:SetOrientation(button, orientation, rotateTexture)
         
         -- update overShieldGlow
         P:ClearPoints(overShieldGlow)
-        P:Point(overShieldGlow, "BOTTOMLEFT", healthBar, "BOTTOMRIGHT", -4, 0)
-        P:Point(overShieldGlow, "TOPLEFT", healthBar, "TOPRIGHT", -4, 0)
-        P:Width(overShieldGlow, 8)
+        P:Point(overShieldGlow, "TOPRIGHT")
+        P:Point(overShieldGlow, "BOTTOMRIGHT")
+        P:Width(overShieldGlow, 4)
         F:RotateTexture(overShieldGlow, 0)
         
         -- update damageFlashTex
@@ -2820,9 +2818,9 @@ function B:SetOrientation(button, orientation, rotateTexture)
         
         -- update overShieldGlow
         P:ClearPoints(overShieldGlow)
-        P:Point(overShieldGlow, "BOTTOMLEFT", healthBar, "TOPLEFT", 0, -4)
-        P:Point(overShieldGlow, "BOTTOMRIGHT", healthBar, "TOPRIGHT", 0, -4)
-        P:Height(overShieldGlow, 8)
+        P:Point(overShieldGlow, "TOPLEFT")
+        P:Point(overShieldGlow, "TOPRIGHT")
+        P:Height(overShieldGlow, 4)
         F:RotateTexture(overShieldGlow, 90)
         
         -- update damageFlashTex
@@ -2940,8 +2938,10 @@ function B:UpdatePixelPerfect(button, updateIndicators)
 
     P:Repoint(button.widget.incomingHeal)
     P:Repoint(button.widget.shieldBar)
-    P:Repoint(button.widget.overShieldGlow)
     P:Repoint(button.widget.damageFlashTex)
+
+    P:Resize(button.widget.overShieldGlow)
+    P:Repoint(button.widget.overShieldGlow)
     
     B:UpdateHighlightSize(button)
 
@@ -3068,11 +3068,8 @@ function CellUnitButton_OnLoad(button)
     -- over-shield glow
     local overShieldGlow = healthBar:CreateTexture(name.."OverShieldGlow", "OVERLAY")
     button.widget.overShieldGlow = overShieldGlow
-    overShieldGlow:SetTexture("Interface\\RaidFrame\\Shield-Overshield")
+    overShieldGlow:SetTexture("Interface\\AddOns\\Cell\\Media\\overshield")
     overShieldGlow:SetBlendMode("ADD")
-    -- P:Point(overShieldGlow, "BOTTOMLEFT", healthBar, "BOTTOMRIGHT", -4, 0)
-    -- P:Point(overShieldGlow, "TOPLEFT", healthBar, "TOPRIGHT", -4, 0)
-    -- overShieldGlow:SetWidth(8)
     overShieldGlow:Hide()
 
     -- bar animation

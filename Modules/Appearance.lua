@@ -429,8 +429,9 @@ local function UpdatePreviewShields(r, g, b)
         else
             previewButton2.widget.shieldBar:Hide()
         end
-
+        
         if CellDB["appearance"]["overshield"] then
+            previewButton2.widget.overShieldGlow:SetVertexColor(CellDB["appearance"]["shield"][2][1], CellDB["appearance"]["shield"][2][2], CellDB["appearance"]["shield"][2][3], 1)
             previewButton2.widget.overShieldGlow:Show()
         else
             previewButton2.widget.overShieldGlow:Hide()
