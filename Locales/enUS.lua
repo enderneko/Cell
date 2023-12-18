@@ -84,6 +84,11 @@ select(2, ...).L = setmetatable({
         <p>(Retail) Enable "Always Update Buffs/Debuffs" in General tab, if indicators do not update correctly.</p>
         <br/>
 
+        <h1>r212-release (Dec 18, 2023, 19:54 GMT+8)</h1>
+        <p>* Fixed a issue that newly created indicators did not show up when solo or in a party.</p>
+        <p>* Updated overshield texture. Now it uses the color of shield texture.</p>
+        <br/>
+
         <h1>r211-release (Dec 16, 2023, 17:57 GMT+8)</h1>
         <p>* Updated dispel checker, removed snippet var: CELL_DISPEL_EVOKER_CAUTERIZING_FLAME.</p>
         <p>* When enter/leave instance, all visible unit buttons will be refreshed.</p>

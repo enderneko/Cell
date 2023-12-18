@@ -1,6 +1,4 @@
-[Full Changelog](https://github.com/enderneko/Cell/compare/r210-release...ff6942e5c940585c4fbe820b774d984bc950f209)
+[Full Changelog](https://github.com/enderneko/Cell/compare/r211-release...e2b743e3c200d2198f22daac5842f2fe4d1e27a7)
 
-- Remove CELL_DISPEL_EVOKER_CAUTERIZING_FLAME
-- UpdateAll on enter/leave instance
-- Change timing of collectgarbage()
-- Update zhTW
+- Fix newly created indicator issue
+- Update texture of overShieldGlow and overAbsorbGlow
