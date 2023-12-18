@@ -50,6 +50,8 @@ local patrons = {
     {"黑哥哥-世界之樹 (TW)", "heigege"},
     {"得闲饮茶 (爱发电)", "dexianyincha"},
     {"Kuro (Ko-fi)", "kuro"},
+    {"Nodwa-Blackhand (EU)", "nodwa"},
+    {"Deijava-Illidan (US)", "deijava"},
 }
 
 -- sort
@@ -61,7 +63,7 @@ end)
 -- patrons (wow IDs)
 -------------------------------------------------
 local tests = {
-    ["Devevoker-Lycanthoth"] = true,
+    ["Komugi-Fyrakk"] = true,
     ["Celldev-Lycanthoth"] = true,
     ["Programming-Lycanthoth"] = true,
     ["Programming-影之哀伤"] = true,
