@@ -15,6 +15,7 @@ indicatorsTab:SetAllPoints(Cell.frames.optionsFrame)
 local selected, currentLayout, currentLayoutTable
 local LoadIndicatorList
 local listButtons = {}
+local ListHighlightFn
 
 -------------------------------------------------
 -- preview
@@ -785,6 +786,7 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
             else
                 P:Size(indicator, value[1], value[2])
             end
+            ListHighlightFn(selected) -- NOTE: update glow
         elseif setting == "size-border" then
             P:Size(indicator, value[1], value[2])
             indicator:SetBorder(value[3])
@@ -1907,7 +1909,7 @@ LoadIndicatorList = function()
     end
     listFrame.scrollFrame:SetContentHeight(P:Scale(20), #listButtons, -P:Scale(1))
 
-    Cell:CreateButtonGroup(listButtons, ShowIndicatorSettings, function(id)
+    ListHighlightFn = Cell:CreateButtonGroup(listButtons, ShowIndicatorSettings, function(id)
         local i = previewButton.indicators[currentLayoutTable["indicators"][id]["indicatorName"]]
         if i.indicatorType == "glow" then
             i:Show()

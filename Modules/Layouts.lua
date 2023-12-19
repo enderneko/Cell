@@ -2136,20 +2136,20 @@ local function CreateLayoutSetupPane()
     sameArrangementAsMainCB:Hide()
 
     -- width
-    widthSlider = Cell:CreateSlider(L["Width"], layoutSetupPane, 20, 300, 117, 1, function(value)
+    widthSlider = Cell:CreateSlider(L["Width"], layoutSetupPane, 20, 500, 117, 1, function(value)
         selectedLayoutTable[selectedPage]["size"][1] = value
         UpdateSize()
     end)
     
     -- height
-    heightSlider = Cell:CreateSlider(L["Height"], layoutSetupPane, 20, 300, 117, 1, function(value)
+    heightSlider = Cell:CreateSlider(L["Height"], layoutSetupPane, 20, 500, 117, 1, function(value)
         selectedLayoutTable[selectedPage]["size"][2] = value
         UpdateSize()
     end)
     heightSlider:SetPoint("TOPLEFT", widthSlider, 0, -55)
     
     -- power height
-    powerSizeSlider = Cell:CreateSlider(L["Power Size"], layoutSetupPane, 0, 20, 117, 1, function(value)
+    powerSizeSlider = Cell:CreateSlider(L["Power Size"], layoutSetupPane, 0, 100, 117, 1, function(value)
         selectedLayoutTable[selectedPage]["powerSize"] = value
         if selectedLayout == Cell.vars.currentLayout then
             Cell:Fire("UpdateLayout", selectedLayout, selectedPage.."-power")
@@ -2263,13 +2263,13 @@ local function CreateLayoutSetupPane()
     end)
 
      -- spacing
-    spacingXSlider = Cell:CreateSlider(L["Unit Spacing"].." X", layoutSetupPane, -1, 100, 117, 1, function(value)
+    spacingXSlider = Cell:CreateSlider(L["Unit Spacing"].." X", layoutSetupPane, -1, 500, 117, 1, function(value)
         selectedLayoutTable[selectedPage]["spacingX"] = value
         UpdateArrangement()
     end)
     spacingXSlider:SetPoint("TOPLEFT", orientationDropdown, 0, -55)
 
-    spacingYSlider = Cell:CreateSlider(L["Unit Spacing"].." Y", layoutSetupPane, -1, 100, 117, 1, function(value)
+    spacingYSlider = Cell:CreateSlider(L["Unit Spacing"].." Y", layoutSetupPane, -1, 500, 117, 1, function(value)
         selectedLayoutTable[selectedPage]["spacingY"] = value
         UpdateArrangement()
     end)
@@ -2318,7 +2318,7 @@ local function CreateLayoutSetupPane()
     rcSlider:SetPoint("TOPLEFT", spacingXSlider, 0, -55)
     
     -- group spacing
-    groupSpacingSlider = Cell:CreateSlider(L["Group Spacing"], pages.main, 0, 50, 117, 1, function(value)
+    groupSpacingSlider = Cell:CreateSlider(L["Group Spacing"], pages.main, 0, 500, 117, 1, function(value)
         selectedLayoutTable["main"]["groupSpacing"] = value
         if selectedLayout == Cell.vars.currentLayout then
             Cell:Fire("UpdateLayout", selectedLayout, "groupSpacing")

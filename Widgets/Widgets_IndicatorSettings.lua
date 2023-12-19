@@ -111,13 +111,13 @@ local function CreateSetting_Position(parent, relativeToText)
         widget.relativeToText:SetText(L["To UnitButton's"])
         widget.relativeToText:SetPoint("BOTTOMLEFT", widget.relativeTo, "TOPLEFT", 0, 1)
         
-        widget.x = addon:CreateSlider(L["X Offset"], widget, -100, 100, 110, 1)
+        widget.x = addon:CreateSlider(L["X Offset"], widget, -150, 150, 110, 1)
         widget.x:SetPoint("TOPLEFT", widget.anchor, "BOTTOMLEFT", 0, -25)
         widget.x.afterValueChangedFn = function(value)
             widget.func({widget.anchor:GetSelected(), widget.relativeTo:GetSelected(), value, widget.y:GetValue()})
         end
         
-        widget.y = addon:CreateSlider(L["Y Offset"], widget, -100, 100, 110, 1)
+        widget.y = addon:CreateSlider(L["Y Offset"], widget, -150, 150, 110, 1)
         widget.y:SetPoint("TOPLEFT", widget.relativeTo, "BOTTOMLEFT", 0, -25)
         widget.y.afterValueChangedFn = function(value)
             widget.func({widget.anchor:GetSelected(), widget.relativeTo:GetSelected(), widget.x:GetValue(), value})
@@ -188,13 +188,13 @@ local function CreateSetting_PositionNoHCenter(parent, relativeToText)
         widget.relativeToText:SetText(L["To UnitButton's"])
         widget.relativeToText:SetPoint("BOTTOMLEFT", widget.relativeTo, "TOPLEFT", 0, 1)
         
-        widget.x = addon:CreateSlider(L["X Offset"], widget, -100, 100, 110, 1)
+        widget.x = addon:CreateSlider(L["X Offset"], widget, -150, 150, 110, 1)
         widget.x:SetPoint("TOPLEFT", widget.anchor, "BOTTOMLEFT", 0, -25)
         widget.x.afterValueChangedFn = function(value)
             widget.func({widget.anchor:GetSelected(), widget.relativeTo:GetSelected(), value, widget.y:GetValue()})
         end
         
-        widget.y = addon:CreateSlider(L["Y Offset"], widget, -100, 100, 110, 1)
+        widget.y = addon:CreateSlider(L["Y Offset"], widget, -150, 150, 110, 1)
         widget.y:SetPoint("TOPLEFT", widget.relativeTo, "BOTTOMLEFT", 0, -25)
         widget.y.afterValueChangedFn = function(value)
             widget.func({widget.anchor:GetSelected(), widget.relativeTo:GetSelected(), widget.x:GetValue(), value})
@@ -273,13 +273,13 @@ local function CreateSetting_ShieldBarPosition(parent)
         widget.relativeToText:SetText(L["To UnitButton's"])
         widget.relativeToText:SetPoint("BOTTOMLEFT", widget.relativeTo, "TOPLEFT", 0, 1)
         
-        widget.x = addon:CreateSlider(L["X Offset"], widget, -100, 100, 110, 1)
+        widget.x = addon:CreateSlider(L["X Offset"], widget, -150, 150, 110, 1)
         widget.x:SetPoint("TOPLEFT", widget.anchor, "BOTTOMLEFT", 0, -25)
         widget.x.afterValueChangedFn = function(value)
             widget.func({widget.anchor:GetSelected(), widget.relativeTo:GetSelected(), value, widget.y:GetValue()})
         end
         
-        widget.y = addon:CreateSlider(L["Y Offset"], widget, -100, 100, 110, 1)
+        widget.y = addon:CreateSlider(L["Y Offset"], widget, -150, 150, 110, 1)
         widget.y:SetPoint("TOPLEFT", widget.relativeTo, "BOTTOMLEFT", 0, -25)
         widget.y.afterValueChangedFn = function(value)
             widget.func({widget.anchor:GetSelected(), widget.relativeTo:GetSelected(), widget.x:GetValue(), value})
@@ -399,13 +399,13 @@ local function CreateSetting_Size(parent)
         widget = addon:CreateFrame("CellIndicatorSettings_Size", parent, 240, 50)
         settingWidgets["size"] = widget
 
-        widget.width = addon:CreateSlider(L["Width"], widget, 1, 64, 110, 1)
+        widget.width = addon:CreateSlider(L["Width"], widget, 1, 100, 110, 1)
         widget.width:SetPoint("TOPLEFT", widget, 5, -20)
         widget.width.afterValueChangedFn = function(value)
             widget.func({value, widget.height:GetValue()})
         end
         
-        widget.height = addon:CreateSlider(L["Height"], widget, 1, 64, 110, 1)
+        widget.height = addon:CreateSlider(L["Height"], widget, 1, 100, 110, 1)
         widget.height:SetPoint("LEFT", widget.width, "RIGHT", 25, 0)
         widget.height.afterValueChangedFn = function(value)
             widget.func({widget.width:GetValue(), value})
@@ -436,13 +436,13 @@ local function CreateSetting_SizeBar(parent)
         widget = addon:CreateFrame("CellIndicatorSettings_Size", parent, 240, 50)
         settingWidgets["size-bar"] = widget
 
-        widget.width = addon:CreateSlider(L["Width"], widget, 10, 300, 110, 1)
+        widget.width = addon:CreateSlider(L["Width"], widget, 3, 500, 110, 1)
         widget.width:SetPoint("TOPLEFT", widget, 5, -20)
         widget.width.afterValueChangedFn = function(value)
             widget.func({value, widget.height:GetValue()})
         end
         
-        widget.height = addon:CreateSlider(L["Height"], widget, 3, 50, 110, 1)
+        widget.height = addon:CreateSlider(L["Height"], widget, 3, 500, 110, 1)
         widget.height:SetPoint("LEFT", widget.width, "RIGHT", 25, 0)
         widget.height.afterValueChangedFn = function(value)
             widget.func({widget.width:GetValue(), value})
@@ -473,7 +473,7 @@ local function CreateSetting_SizeSquare(parent)
         widget = addon:CreateFrame("CellIndicatorSettings_SizeSquare", parent, 240, 50)
         settingWidgets["size-square"] = widget
 
-        widget.size = addon:CreateSlider(L["Size"], widget, 1, 64, 110, 1)
+        widget.size = addon:CreateSlider(L["Size"], widget, 1, 100, 110, 1)
         widget.size:SetPoint("TOPLEFT", widget, 5, -20)
         widget.size.afterValueChangedFn = function(value)
             widget.func({value, value})
@@ -533,13 +533,13 @@ local function CreateSetting_SizeNormalBig(parent)
         widget = addon:CreateFrame("CellIndicatorSettings_SizeNormalBig", parent, 240, 50)
         settingWidgets["size-normal-big"] = widget
 
-        widget.sizeNormal = addon:CreateSlider(L["Size"], widget, 1, 64, 110, 1)
+        widget.sizeNormal = addon:CreateSlider(L["Size"], widget, 1, 100, 110, 1)
         widget.sizeNormal:SetPoint("TOPLEFT", widget, 5, -20)
         widget.sizeNormal.afterValueChangedFn = function(value)
             widget.func({{value, value}, {widget.sizeBig:GetValue(), widget.sizeBig:GetValue()}})
         end
 
-        widget.sizeBig = addon:CreateSlider(L["Size (Big)"], widget, 1, 64, 110, 1)
+        widget.sizeBig = addon:CreateSlider(L["Size (Big)"], widget, 1, 100, 110, 1)
         widget.sizeBig:SetPoint("LEFT", widget.sizeNormal, "RIGHT", 25, 0)
         widget.sizeBig.afterValueChangedFn = function(value)
             widget.func({{widget.sizeNormal:GetValue(), widget.sizeNormal:GetValue()}, {value, value}})
@@ -570,7 +570,7 @@ local function CreateSetting_SizeAndBorder(parent)
         widget = addon:CreateFrame("CellIndicatorSettings_SizeAndBorder", parent, 240, 50)
         settingWidgets["size-border"] = widget
 
-        widget.size = addon:CreateSlider(L["Size"], widget, 1, 64, 110, 1)
+        widget.size = addon:CreateSlider(L["Size"], widget, 1, 100, 110, 1)
         widget.size:SetPoint("TOPLEFT", widget, 5, -20)
         widget.size.afterValueChangedFn = function(value)
             widget.func({value, value, widget.border:GetValue()})
@@ -1306,7 +1306,7 @@ local function CreateSetting_StatusPosition(parent)
         widget.positionText:SetText(L["Status Text Position"])
         widget.positionText:SetPoint("BOTTOMLEFT", widget.position, "TOPLEFT", 0, 1)
 
-        widget.yOffset = addon:CreateSlider(L["Y Offset"], widget, -50, 50, 110, 1)
+        widget.yOffset = addon:CreateSlider(L["Y Offset"], widget, -150, 150, 110, 1)
         widget.yOffset:SetPoint("TOPLEFT", widget.position, "TOPRIGHT", 25, 0)
         widget.yOffset.afterValueChangedFn = function(value)
             widget.func({widget.position:GetSelected(), value})
@@ -1391,7 +1391,7 @@ local function CreateSetting_Font(parent)
         widget.outlineText:SetPoint("BOTTOMLEFT", widget.outline, "TOPLEFT", 0, 1)
 
         -- size
-        widget.fontSize = addon:CreateSlider(L["Size"], widget, 5, 30, 110, 1)
+        widget.fontSize = addon:CreateSlider(L["Size"], widget, 5, 50, 110, 1)
         widget.fontSize:SetPoint("TOPLEFT", widget.font, "BOTTOMLEFT", 0, -25)
         widget.fontSize.afterValueChangedFn = widget.Update
 
@@ -1413,12 +1413,12 @@ local function CreateSetting_Font(parent)
         widget.anchorText:SetPoint("BOTTOMLEFT", widget.anchor, "TOPLEFT", 0, 1)
 
         -- x
-        widget.xOffset = addon:CreateSlider(L["X Offset"], widget, -20, 20, 110, 1)
+        widget.xOffset = addon:CreateSlider(L["X Offset"], widget, -50, 50, 110, 1)
         widget.xOffset:SetPoint("TOPLEFT", widget.fontSize, "BOTTOMLEFT", 0, -40)
         widget.xOffset.afterValueChangedFn = widget.Update
         
         -- y
-        widget.yOffset = addon:CreateSlider(L["Y Offset"], widget, -20, 20, 110, 1)
+        widget.yOffset = addon:CreateSlider(L["Y Offset"], widget, -50, 50, 110, 1)
         widget.yOffset:SetPoint("TOPLEFT", widget.xOffset, "TOPRIGHT", 25, 0)
         widget.yOffset.afterValueChangedFn = widget.Update
 
@@ -1519,7 +1519,7 @@ local function CreateSetting_FontNoOffset(parent)
         widget.outlineText:SetText(L["Outline"])
         widget.outlineText:SetPoint("BOTTOMLEFT", widget.outline, "TOPLEFT", 0, 1)
 
-        widget.fontSize = addon:CreateSlider(L["Size"], widget, 5, 30, 110, 1)
+        widget.fontSize = addon:CreateSlider(L["Size"], widget, 5, 50, 110, 1)
         widget.fontSize:SetPoint("TOPLEFT", widget.font, "BOTTOMLEFT", 0, -25)
         widget.fontSize.afterValueChangedFn = widget.Update
 
@@ -1608,7 +1608,7 @@ local function CreateSetting_Generic_Font(parent, index)
         widget.outlineText:SetPoint("BOTTOMLEFT", widget.outline, "TOPLEFT", 0, 1)
 
         -- size
-        widget.fontSize = addon:CreateSlider(L["Size"], widget, 5, 30, 110, 1)
+        widget.fontSize = addon:CreateSlider(L["Size"], widget, 5, 50, 110, 1)
         widget.fontSize:SetPoint("TOPLEFT", widget.font, "BOTTOMLEFT", 0, -25)
         widget.fontSize.afterValueChangedFn = widget.Update
 

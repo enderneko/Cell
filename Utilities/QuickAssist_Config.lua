@@ -1795,7 +1795,7 @@ local function CreateStylePane()
     end
     nameOutlineDropdown:SetItems(items)
 
-    nameSizeSilder = Cell:CreateSlider(L["Size"], namePane, 5, 30, 117, 1)
+    nameSizeSilder = Cell:CreateSlider(L["Size"], namePane, 5, 50, 117, 1)
     nameSizeSilder:SetPoint("TOPLEFT", nameOutlineDropdown, "TOPRIGHT", 30, 0)
     nameSizeSilder.afterValueChangedFn = function(value)
         styleTable["name"]["font"][2] = value
@@ -1913,14 +1913,14 @@ local function CreateIconOptions(parent)
         Cell:Fire("UpdateQuickAssist", currentIconIndex.."-indicator")
     end
 
-    local iconWidthSlider = Cell:CreateSlider(L["Width"], iconTab, 5, 50, 117, 1)
+    local iconWidthSlider = Cell:CreateSlider(L["Width"], iconTab, 5, 100, 117, 1)
     iconWidthSlider:SetPoint("TOPLEFT", iconXSlider, 0, -50)
     iconWidthSlider.afterValueChangedFn = function(value)
         spellTable[currentIconIndex]["icon"]["size"][1] = value
         Cell:Fire("UpdateQuickAssist", currentIconIndex.."-indicator")
     end
     
-    local iconHeightSlider = Cell:CreateSlider(L["Height"], iconTab, 5, 50, 117, 1)
+    local iconHeightSlider = Cell:CreateSlider(L["Height"], iconTab, 5, 100, 117, 1)
     iconHeightSlider:SetPoint("TOPLEFT", iconWidthSlider, "TOPRIGHT", 30, 0)
     iconHeightSlider.afterValueChangedFn = function(value)
         spellTable[currentIconIndex]["icon"]["size"][2] = value
@@ -2283,7 +2283,7 @@ local function CreateBarOptions(parent)
         Cell:Fire("UpdateQuickAssist", currentBarIndex.."-indicator")
     end
     
-    local barHeightSlider = Cell:CreateSlider(L["Height"], barOptionsFrame, 3, 50, 117, 1)
+    local barHeightSlider = Cell:CreateSlider(L["Height"], barOptionsFrame, 3, 300, 117, 1)
     barHeightSlider:SetPoint("TOPLEFT", barWidthSlider, "TOPRIGHT", 30, 0)
     barHeightSlider.afterValueChangedFn = function(value)
         spellTable[currentBarIndex]["bar"]["size"][2] = value
