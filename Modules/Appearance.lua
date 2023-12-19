@@ -312,6 +312,9 @@ local function CreatePreviewButtons()
 
     previewButton.widget.healthBar:SetMinMaxSmoothedValue(0, 100)
     previewButton.widget.healthBar:SetMinMaxValues(0, 100)
+
+    previewButton.widget.powerBar:SetMinMaxValues(0, 1)
+    previewButton.widget.powerBar:SetValue(1)
     
     local previewButtonBG = Cell:CreateFrame("CellAppearancePreviewButtonBG", appearanceTab)
     previewButtonBG:SetPoint("TOPLEFT", previewButton, 0, 20)
@@ -331,6 +334,9 @@ local function CreatePreviewButtons()
     previewButton2:SetScript("OnLeave", nil)
     previewButton2:SetScript("OnUpdate", nil)
     previewButton2:Show()
+
+    previewButton2.widget.powerBar:SetMinMaxValues(0, 1)
+    previewButton2.widget.powerBar:SetValue(1)
 
     local previewButtonBG2 = Cell:CreateFrame("CellAppearancePreviewButtonBG2", appearanceTab)
     previewButtonBG2:SetPoint("TOPLEFT", previewButton2, 0, 20)

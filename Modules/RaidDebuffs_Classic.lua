@@ -1060,6 +1060,11 @@ local function CreatePreviewButton()
     previewButton:SetScript("OnUpdate", nil)
     previewButton:Hide()
 
+    previewButton.widget.healthBar:SetMinMaxValues(0, 1)
+    previewButton.widget.healthBar:SetValue(1)
+    previewButton.widget.powerBar:SetMinMaxValues(0, 1)
+    previewButton.widget.powerBar:SetValue(1)
+
     local previewButtonBG = Cell:CreateFrame("CellRaidDebuffsPreviewButtonBG", previewButton)
     previewButtonBG:SetPoint("TOPLEFT", previewButton, 0, 20)
     previewButtonBG:SetPoint("BOTTOMRIGHT", previewButton, "TOPRIGHT")

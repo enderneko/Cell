@@ -28,6 +28,10 @@ local function CreatePreviewButton()
     previewButton:SetScript("OnUpdate", nil)
     previewButton:Show()
 
+    previewButton.widget.healthBar:SetMinMaxValues(0, 1)
+    previewButton.widget.healthBar:SetValue(1)
+    previewButton.widget.powerBar:SetMinMaxValues(0, 1)
+    previewButton.widget.powerBar:SetValue(1)
     previewButton.isPreview = true
     
     local previewButtonBG = Cell:CreateFrame("CellLayoutsPreviewButtonBG", layoutsTab)

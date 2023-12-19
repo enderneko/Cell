@@ -22,6 +22,11 @@ local function CreatePreviewButton()
     previewButton:SetScript("OnShow", nil)
     previewButton:SetScript("OnHide", nil)
     previewButton:SetScript("OnUpdate", nil)
+
+    previewButton.widget.healthBar:SetMinMaxValues(0, 1)
+    previewButton.widget.healthBar:SetValue(1)
+    previewButton.widget.powerBar:SetMinMaxValues(0, 1)
+    previewButton.widget.powerBar:SetValue(1)
     
     local previewButtonBG = Cell:CreateFrame("CellIconPreviewButtonBG", previewButton)
     previewButtonBG:SetPoint("TOPLEFT", previewButton, 0, 20)
