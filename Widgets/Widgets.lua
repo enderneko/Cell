@@ -896,6 +896,13 @@ function addon:CreateColorPicker(parent, label, hasOpacity, onChange, onConfirm)
     --     ColorPickerFrame:Hide()
     --     ColorPickerFrame:Show()
     -- end
+
+    cp.hasOpacity = hasOpacity
+
+    function cp:EnableAlpha(enable)
+        addon:HideColorPicker()
+        cp.hasOpacity = enable
+    end
     
     cp:SetScript("OnClick", function()
         addon:ShowColorPicker(function(r, g, b, a)
@@ -907,7 +914,7 @@ function addon:CreateColorPicker(parent, label, hasOpacity, onChange, onConfirm)
             if onChange then
                 onChange(r, g, b, a)
             end
-        end, onConfirm, hasOpacity, unpack(cp.color))
+        end, onConfirm, cp.hasOpacity, unpack(cp.color))
     end)
 
     cp.color = {1, 1, 1, 1}

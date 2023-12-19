@@ -2652,6 +2652,8 @@ local function CreateMyBuffWidget(parent, index)
             ["onClick"] = function()
                 spellTable["mine"]["buffs"][index][2] = "icon"
                 Cell:Fire("UpdateQuickAssist", "mine")
+                b.cp:EnableAlpha(true)
+                b.cp:SetColor(spellTable["mine"]["buffs"][index][3])
             end
         },
         {
@@ -2659,12 +2661,15 @@ local function CreateMyBuffWidget(parent, index)
             ["value"] = "bar",
             ["onClick"] = function()
                 spellTable["mine"]["buffs"][index][2] = "bar"
+                spellTable["mine"]["buffs"][index][3][4] = 1 -- reset alpha
                 Cell:Fire("UpdateQuickAssist", "mine")
+                b.cp:EnableAlpha(false)
+                b.cp:SetColor(spellTable["mine"]["buffs"][index][3])
             end
         },
     })
 
-    b.cp = Cell:CreateColorPicker(b, "", false, nil, function(r, g, b, a)
+    b.cp = Cell:CreateColorPicker(b, "", false, function(r, g, b, a)
         spellTable["mine"]["buffs"][index][3][1] = r
         spellTable["mine"]["buffs"][index][3][2] = g
         spellTable["mine"]["buffs"][index][3][3] = b
@@ -2991,6 +2996,7 @@ LoadMyBuff = function(b, t)
 
     b.type:SetSelectedValue(t[2])
     b.cp:SetColor(t[3])
+    b.cp:EnableAlpha(t[2] == "icon")
 end
 
 -- list shared

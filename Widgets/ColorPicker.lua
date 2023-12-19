@@ -498,3 +498,9 @@ function addon:ShowColorPicker(callback, onConfirm, hasAlpha, r, g, b, a)
     P:PixelPerfectPoint(colorPicker)
     colorPicker:Show()
 end
+
+function addon:HideColorPicker()
+    if colorPicker then
+        colorPicker:Hide()
+    end
+end
