@@ -80,22 +80,6 @@ local function BorderIcon_SetCooldown(frame, start, duration, debuffType, textur
             local remain = duration-(GetTime()-start)
             if remain < 0 then remain = 0 end
 
-            -- format
-            if remain > 60 then
-                fmt, remain = "%dm", remain/60
-            else
-                if Cell.vars.iconDurationRoundUp then
-                    fmt, remain = "%d", ceil(remain)
-                else
-                    if remain < Cell.vars.iconDurationDecimal then
-                        fmt = "%.1f"
-                    else
-                        fmt = "%d"
-                    end
-                end
-            end
-            frame.duration:SetFormattedText(fmt, remain)
-
             self.elapsed = self.elapsed + elapsed
             if self.elapsed >= 0.1 then
                 self.elapsed = 0
@@ -112,6 +96,22 @@ local function BorderIcon_SetCooldown(frame, start, duration, debuffType, textur
                     frame.duration:SetTextColor(frame.duration.r, frame.duration.g, frame.duration.b)
                 end
             end
+
+            -- format
+            if remain > 60 then
+                fmt, remain = "%dm", remain/60
+            else
+                if Cell.vars.iconDurationRoundUp then
+                    fmt, remain = "%d", ceil(remain)
+                else
+                    if remain < Cell.vars.iconDurationDecimal then
+                        fmt = "%.1f"
+                    else
+                        fmt = "%d"
+                    end
+                end
+            end
+            frame.duration:SetFormattedText(fmt, remain)
         end)
     end
 
@@ -255,22 +255,6 @@ local function BarIcon_SetCooldown(frame, start, duration, debuffType, texture, 
                     return
                 end
 
-                -- format
-                if remain > 60 then
-                    fmt, remain = "%dm", remain/60
-                else
-                    if Cell.vars.iconDurationRoundUp then
-                        fmt, remain = "%d", ceil(remain)
-                    else
-                        if remain < Cell.vars.iconDurationDecimal then
-                            fmt = "%.1f"
-                        else
-                            fmt = "%d"
-                        end
-                    end
-                end
-                frame.duration:SetFormattedText(fmt, remain)
-
                 self.elapsed = self.elapsed + elapsed
                 if self.elapsed >= 0.1 then
                     self.elapsed = 0
@@ -287,6 +271,22 @@ local function BarIcon_SetCooldown(frame, start, duration, debuffType, texture, 
                         frame.duration:SetTextColor(frame.duration.r, frame.duration.g, frame.duration.b)
                     end
                 end
+
+                -- format
+                if remain > 60 then
+                    fmt, remain = "%dm", remain/60
+                else
+                    if Cell.vars.iconDurationRoundUp then
+                        fmt, remain = "%d", ceil(remain)
+                    else
+                        if remain < Cell.vars.iconDurationDecimal then
+                            fmt = "%.1f"
+                        else
+                            fmt = "%d"
+                        end
+                    end
+                end
+                frame.duration:SetFormattedText(fmt, remain)
             end)
         end
     end
@@ -507,6 +507,19 @@ local function Text_SetCooldown(frame, start, duration, debuffType, texture, cou
                 local remain = duration-(GetTime()-start)
                 if remain < 0 then remain = 0 end
 
+                self.elapsed = self.elapsed + elapsed
+                if self.elapsed >= 0.1 then
+                    self.elapsed = 0
+                    -- color
+                    if remain <= frame.colors[3][4] then
+                        frame.text:SetTextColor(frame.colors[3][1], frame.colors[3][2], frame.colors[3][3])
+                    elseif remain <= duration * frame.colors[2][4] then
+                        frame.text:SetTextColor(frame.colors[2][1], frame.colors[2][2], frame.colors[2][3])
+                    else
+                        frame.text:SetTextColor(frame.colors[1][1], frame.colors[1][2], frame.colors[1][3])
+                    end
+                end
+
                 -- format
                 local fmt2
                 if remain > 60 then
@@ -523,19 +536,6 @@ local function Text_SetCooldown(frame, start, duration, debuffType, texture, cou
                     end
                 end
                 frame.text:SetFormattedText(fmt2, count, remain)
-
-                self.elapsed = self.elapsed + elapsed
-                if self.elapsed >= 0.1 then
-                    self.elapsed = 0
-                    -- color
-                    if remain <= frame.colors[3][4] then
-                        frame.text:SetTextColor(frame.colors[3][1], frame.colors[3][2], frame.colors[3][3])
-                    elseif remain <= duration * frame.colors[2][4] then
-                        frame.text:SetTextColor(frame.colors[2][1], frame.colors[2][2], frame.colors[2][3])
-                    else
-                        frame.text:SetTextColor(frame.colors[1][1], frame.colors[1][2], frame.colors[1][3])
-                    end
-                end
             end)
         else
             count = count == 0 and 1 or count
