@@ -95,9 +95,6 @@ local function CreateTabButtons()
             Cell:Fire("ShowOptionsTab", tab)
             lastShownTab = tab
         end
-        if tab == utilitiesBtn.id then
-            F:ShowUtilityList(utilitiesBtn)
-        end
     end
 
     local function OnEnter(b)
@@ -137,6 +134,7 @@ local function Init()
         P:Resize(optionsFrame)
         P:Reborder(optionsFrame)
         CreateTabButtons()
+        F:CreateUtilityList(utilitiesBtn)
     end
 end
 
