@@ -179,7 +179,7 @@ local function PartyFrame_UpdateLayout(layout, which)
         header:SetAttribute("unitsPerColumn", 5)
     end
 
-    if not which or strfind(which, "size$") or strfind(which, "power$") or which == "barOrientation" then
+    if not which or strfind(which, "size$") or strfind(which, "power$") or which == "barOrientation" or which == "powerFilter" then
         for i, playerButton in ipairs(header) do
             local petButton = playerButton.petButton
 

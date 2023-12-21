@@ -265,3 +265,7 @@ function F:ShowPowerFilters(l, lt)
         end
     end
 end
+
+function F:HidePowerFilters()
+    powerFilters:Hide()
+end

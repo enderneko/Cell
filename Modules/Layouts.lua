@@ -1733,7 +1733,7 @@ LoadAutoSwitchDropdowns = function()
                 Cell.vars.layoutAutoSwitch[autoSwitchIndex]["party"] = value
                 if Cell.vars.layoutGroupType == "party" then
                     F:UpdateLayout("party", true)
-                    LoadLayoutDB(Cell.vars.currentLayout)
+                    -- LoadLayoutDB(Cell.vars.currentLayout)
                     UpdateButtonStates()
                     -- UpdateEnabledLayoutText()
                 end
@@ -1752,7 +1752,7 @@ LoadAutoSwitchDropdowns = function()
                 Cell.vars.layoutAutoSwitch[autoSwitchIndex]["raid_outdoor"] = value
                 if Cell.vars.layoutGroupType == "raid_outdoor" then
                     F:UpdateLayout("raid_outdoor", true)
-                    LoadLayoutDB(Cell.vars.currentLayout)
+                    -- LoadLayoutDB(Cell.vars.currentLayout)
                     UpdateButtonStates()
                     -- UpdateEnabledLayoutText()
                 end
@@ -1772,7 +1772,7 @@ LoadAutoSwitchDropdowns = function()
                     Cell.vars.layoutAutoSwitch[autoSwitchIndex]["raid_instance"] = value
                     if Cell.vars.layoutGroupType == "raid_instance" then
                         F:UpdateLayout("raid_instance", true)
-                        LoadLayoutDB(Cell.vars.currentLayout)
+                        -- LoadLayoutDB(Cell.vars.currentLayout)
                         UpdateButtonStates()
                         -- UpdateEnabledLayoutText()
                     end
@@ -1791,7 +1791,7 @@ LoadAutoSwitchDropdowns = function()
                     Cell.vars.layoutAutoSwitch[autoSwitchIndex]["raid_mythic"] = value
                     if Cell.vars.layoutGroupType == "raid_mythic" then
                         F:UpdateLayout("raid_mythic", true)
-                        LoadLayoutDB(Cell.vars.currentLayout)
+                        -- LoadLayoutDB(Cell.vars.currentLayout)
                         UpdateButtonStates()
                         -- UpdateEnabledLayoutText()
                     end
@@ -1811,7 +1811,7 @@ LoadAutoSwitchDropdowns = function()
                     Cell.vars.layoutAutoSwitch[autoSwitchIndex]["raid10"] = value
                     if Cell.vars.layoutGroupType == "raid10" then
                         F:UpdateLayout("raid10", true)
-                        LoadLayoutDB(Cell.vars.currentLayout)
+                        -- LoadLayoutDB(Cell.vars.currentLayout)
                         UpdateButtonStates()
                         -- UpdateEnabledLayoutText()
                     end
@@ -1830,7 +1830,7 @@ LoadAutoSwitchDropdowns = function()
                     Cell.vars.layoutAutoSwitch[autoSwitchIndex]["raid25"] = value
                     if Cell.vars.layoutGroupType == "raid25" then
                         F:UpdateLayout("raid25", true)
-                        LoadLayoutDB(Cell.vars.currentLayout)
+                        -- LoadLayoutDB(Cell.vars.currentLayout)
                         UpdateButtonStates()
                         -- UpdateEnabledLayoutText()
                     end
@@ -1850,7 +1850,7 @@ LoadAutoSwitchDropdowns = function()
                     Cell.vars.layoutAutoSwitch[autoSwitchIndex]["raid_instance"] = value
                     if Cell.vars.layoutGroupType == "raid_instance" then
                         F:UpdateLayout("raid_instance", true)
-                        LoadLayoutDB(Cell.vars.currentLayout)
+                        -- LoadLayoutDB(Cell.vars.currentLayout)
                         UpdateButtonStates()
                         -- UpdateEnabledLayoutText()
                     end
@@ -1870,7 +1870,7 @@ LoadAutoSwitchDropdowns = function()
                 Cell.vars.layoutAutoSwitch[autoSwitchIndex]["arena"] = value
                 if Cell.vars.layoutGroupType == "arena" then
                     F:UpdateLayout("arena", true)
-                    LoadLayoutDB(Cell.vars.currentLayout)
+                    -- LoadLayoutDB(Cell.vars.currentLayout)
                     UpdateButtonStates()
                     -- UpdateEnabledLayoutText()
                 end
@@ -1890,7 +1890,7 @@ LoadAutoSwitchDropdowns = function()
                     Cell.vars.layoutAutoSwitch[autoSwitchIndex]["battleground"] = value
                     if Cell.vars.layoutGroupType == "battleground" then
                         F:UpdateLayout("battleground", true)
-                        LoadLayoutDB(Cell.vars.currentLayout)
+                        -- LoadLayoutDB(Cell.vars.currentLayout)
                         UpdateButtonStates()
                         -- UpdateEnabledLayoutText()
                     end
@@ -1910,7 +1910,7 @@ LoadAutoSwitchDropdowns = function()
                     Cell.vars.layoutAutoSwitch[autoSwitchIndex]["battleground15"] = value
                     if Cell.vars.layoutGroupType == "battleground15" then
                         F:UpdateLayout("battleground15", true)
-                        LoadLayoutDB(Cell.vars.currentLayout)
+                        -- LoadLayoutDB(Cell.vars.currentLayout)
                         UpdateButtonStates()
                         -- UpdateEnabledLayoutText()
                     end
@@ -1929,7 +1929,7 @@ LoadAutoSwitchDropdowns = function()
                     Cell.vars.layoutAutoSwitch[autoSwitchIndex]["battleground40"] = value
                     if Cell.vars.layoutGroupType == "battleground40" then
                         F:UpdateLayout("battleground40", true)
-                        LoadLayoutDB(Cell.vars.currentLayout)
+                        -- LoadLayoutDB(Cell.vars.currentLayout)
                         UpdateButtonStates()
                         -- UpdateEnabledLayoutText()
                     end
@@ -2753,13 +2753,15 @@ LoadLayoutAutoSwitchDB = function()
     arenaDropdown:SetSelectedValue(Cell.vars.layoutAutoSwitch[autoSwitchIndex]["arena"])
 end
 
-local function UpdateLayoutAutoSwitch(layout)
+local function UpdateLayoutAutoSwitch(layout, which)
     if not init then return end
+    if which then return end
 
-    if layout and layoutsTab:IsVisible() then
+    if layoutsTab:IsVisible() then
         -- NOTE: group type changed / spec changed
         LoadLayoutDB(Cell.vars.currentLayout, true)
         LoadLayoutAutoSwitchDB()
+        F:HidePowerFilters()
     end
 
     if Cell.vars.inBattleground then

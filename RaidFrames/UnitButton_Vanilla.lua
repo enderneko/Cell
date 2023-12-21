@@ -1372,17 +1372,12 @@ UnitButton_UpdatePowerMax = function(self)
     if not unit then return end
 
     local value = UnitPowerMax(unit)
-    if value > 0 then
-        if barAnimationType == "Smooth" then
-            self.widget.powerBar:SetMinMaxSmoothedValue(0, value)
-        else
-            self.widget.powerBar:SetMinMaxValues(0, value)
-        end
-        self.widget.powerBar:Show()
-        self.widget.powerBarLoss:Show()
+    if value < 0 then value = 0 end
+    
+    if barAnimationType == "Smooth" then
+        self.widget.powerBar:SetMinMaxSmoothedValue(0, value)
     else
-        self.widget.powerBar:Hide()
-        self.widget.powerBarLoss:Hide()
+        self.widget.powerBar:SetMinMaxValues(0, value)
     end
 end
 
@@ -2058,10 +2053,13 @@ local function UnitButton_OnEvent(self, event, unit)
     end
 end
 
+local timer
 local function EnterLeaveInstance()
-    C_Timer.After(1, function()
+    if timer then timer:Cancel() timer=nil end
+    timer = C_Timer.NewTimer(1, function()
         F:Debug("|cffff1111*** EnterLeaveInstance:|r UnitButton_UpdateAll")
         F:IterateAllUnitButtons(UnitButton_UpdateAll, true)
+        timer = nil
     end)
 end
 Cell:RegisterCallback("EnterInstance", "UnitButton_EnterInstance", EnterLeaveInstance)

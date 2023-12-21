@@ -220,7 +220,7 @@ local function RaidFrame_UpdateLayout(layout, which)
                 if not which or which == "barOrientation" then
                     B:SetOrientation(b, layout["barOrientation"][1], layout["barOrientation"][2])
                 end
-                if not which or which == "powerFilter" or which == "groupFilter" or which == "barOrientation" then
+                if not which or which == "main-power" or which == "groupFilter" or which == "barOrientation" or which == "powerFilter" then
                     B:SetPowerSize(b, layout["main"]["powerSize"])
                 end
             end
