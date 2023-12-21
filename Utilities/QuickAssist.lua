@@ -680,8 +680,8 @@ local header = CreateFrame("Frame", "CellQuickAssistHeader", quickAssistFrame, "
 
 header:SetAttribute("template", "CellQuickAssistButtonTemplate")
 
-header:SetAttribute("showRaid", true)
-header:SetAttribute("showParty", true)
+-- header:SetAttribute("showRaid", true)
+-- header:SetAttribute("showParty", true)
 
 --! to make needButtons == 40 cheat configureChildren in SecureGroupHeaders.lua
 header:SetAttribute("startingIndex", -39)
@@ -809,9 +809,9 @@ local function UpdateQuickAssist(which)
     F:Debug("|cff33937FUpdateQuickAssist:|r", which)
 
     quickAssistTable = CellDB["quickAssist"][Cell.vars.playerSpecID]
+    local groupType = Cell.vars.quickAssistGroupType
 
-    if not quickAssistTable or not quickAssistTable["enabled"] then
-        UnregisterAttributeDriver(quickAssistFrame, "state-visibility")
+    if not (quickAssistTable and quickAssistTable["enabled"]) then
         quickAssistFrame:Hide()
         layoutTable = nil
         styleTable = nil
@@ -821,7 +821,7 @@ local function UpdateQuickAssist(which)
         return
     end
 
-    RegisterAttributeDriver(quickAssistFrame, "state-visibility", "[@raid1,exists] show;[@party1,exists] show;hide")
+    quickAssistFrame:Show()
     layoutTable = quickAssistTable["layout"]
     styleTable = quickAssistTable["style"]
     spellTable = quickAssistTable["spells"]
@@ -911,49 +911,52 @@ local function UpdateQuickAssist(which)
     end
 
     if not which or which == "filter" then
-        -- header:SetAttribute("groupingOrder", nil)
-        -- header:SetAttribute("groupBy", nil)         
-        -- header:SetAttribute("groupFilter", nil)
-        -- header:SetAttribute("roleFilter", nil)
+        local selectedFilter = groupType and quickAssistTable["filterAutoSwitch"][groupType] or 0
 
-        local selectedFilter = layoutTable["filters"]["active"]
-        
-        header:SetAttribute("showPlayer", not layoutTable["filters"][selectedFilter][3])
-        
-        if layoutTable["filters"][selectedFilter][1] == "role" then
-            local groupFilter = {}
-            for k, v in pairs(layoutTable["filters"][selectedFilter][2]) do
-                if v then
-                    tinsert(groupFilter, k)
+        if selectedFilter == 0 then -- hide
+            header:SetAttribute("showRaid", false)
+            header:SetAttribute("showParty", false)
+            header:SetAttribute("showPlayer", false)
+        else
+            header:SetAttribute("showRaid", true)
+            header:SetAttribute("showParty", true)
+            header:SetAttribute("showPlayer", not quickAssistTable["filters"][selectedFilter][3])
+            
+            if quickAssistTable["filters"][selectedFilter][1] == "role" then
+                local groupFilter = {}
+                for k, v in pairs(quickAssistTable["filters"][selectedFilter][2]) do
+                    if v then
+                        tinsert(groupFilter, k)
+                    end
                 end
-            end
-            groupFilter = table.concat(groupFilter, ",")
-
-            header:SetAttribute("groupingOrder", "TANK,HEALER,DAMAGER")
-            header:SetAttribute("groupBy", "ASSIGNEDROLE")
-            header:SetAttribute("sortMethod", "NAME")
-            header:SetAttribute("groupFilter", groupFilter)
-
-        elseif layoutTable["filters"][selectedFilter][1] == "class" then
-            local groupFilter = {}
-            for k, v in pairs(layoutTable["filters"][selectedFilter][2]) do
-                if v[2] then
-                    tinsert(groupFilter, v[1])
+                groupFilter = table.concat(groupFilter, ",")
+    
+                header:SetAttribute("groupingOrder", "TANK,HEALER,DAMAGER")
+                header:SetAttribute("groupBy", "ASSIGNEDROLE")
+                header:SetAttribute("sortMethod", "NAME")
+                header:SetAttribute("groupFilter", groupFilter)
+    
+            elseif quickAssistTable["filters"][selectedFilter][1] == "class" then
+                local groupFilter = {}
+                for k, v in pairs(quickAssistTable["filters"][selectedFilter][2]) do
+                    if v[2] then
+                        tinsert(groupFilter, v[1])
+                    end
                 end
+                groupFilter = table.concat(groupFilter, ",")
+    
+                header:SetAttribute("groupingOrder", groupFilter)
+                header:SetAttribute("groupBy", "CLASS")
+                header:SetAttribute("sortMethod", "NAME")
+                header:SetAttribute("groupFilter", groupFilter)
+    
+            elseif quickAssistTable["filters"][selectedFilter][1] == "name" then
+                header:SetAttribute("sortMethod", "NAMELIST")
+                header:SetAttribute("nameList", table.concat(quickAssistTable["filters"][selectedFilter][2], ","))
+                header:SetAttribute("groupingOrder", "")
+                header:SetAttribute("groupFilter", nil)
+                header:SetAttribute("groupBy", nil)
             end
-            groupFilter = table.concat(groupFilter, ",")
-
-            header:SetAttribute("groupingOrder", groupFilter)
-            header:SetAttribute("groupBy", "CLASS")
-            header:SetAttribute("sortMethod", "NAME")
-            header:SetAttribute("groupFilter", groupFilter)
-
-        elseif layoutTable["filters"][selectedFilter][1] == "name" then
-            header:SetAttribute("sortMethod", "NAMELIST")
-            header:SetAttribute("nameList", table.concat(layoutTable["filters"][selectedFilter][2], ","))
-            header:SetAttribute("groupingOrder", "")
-            header:SetAttribute("groupFilter", nil)
-            header:SetAttribute("groupBy", nil)
         end
 
         F:UpdateOmniCDPosition("Cell-QuickAssist")
@@ -1143,11 +1146,6 @@ local function UpdateQuickAssist(which)
 end
 Cell:RegisterCallback("UpdateQuickAssist", "UpdateQuickAssist", UpdateQuickAssist)
 
-local function SpecChanged()
-    UpdateQuickAssist()
-end
-Cell:RegisterCallback("SpecChanged", "QuickAssist_SpecChanged", SpecChanged)
-
 local function QuickAssist_CreateIndicators(button)
     -- buffs indicator (icon)
     local buffIcons = I:CreateAura_Icons(button:GetName().."BuffIcons", button.overlayFrame, 5)
@@ -1196,14 +1194,6 @@ local function AddonLoaded()
     for i = 1, 40 do
         QuickAssist_CreateIndicators(header[i])
     end
-    -- for i = 1, 5 do
-    --     filterBtns[i] = Cell:CreateButton(quickAssistFrame, i, "accent-hover", {37, 17})
-    --     filterBtns[i].id = i
-    -- end
-    -- HighlightFilter = Cell:CreateButtonGroup(filterBtns, function(id)
-    --     layoutTable["filters"]["active"] = id
-    --     Cell:Fire("UpdateQuickAssist", "filter")
-    -- end)
 end
 Cell:RegisterCallback("AddonLoaded", "QuickAssist_AddonLoaded", AddonLoaded)
 
@@ -1217,3 +1207,42 @@ local function UpdatePixelPerfect()
     end
 end
 Cell:RegisterCallback("UpdatePixelPerfect", "QuickAssist_UpdatePixelPerfect", UpdatePixelPerfect)
+
+-- ----------------------------------------------------------------------- --
+--                            filter auto switch                           --
+-- ----------------------------------------------------------------------- --
+local delayedFrame = CreateFrame("Frame")
+delayedFrame:SetScript("OnEvent", function()
+    delayedFrame:UnregisterEvent("PLAYER_REGEN_ENABLED")
+    Cell:Fire("UpdateQuickAssist")
+end)
+
+local function PreUpdateQuickAssist()
+    if Cell.vars.instanceType == "pvp" then
+        Cell.vars.quickAssistGroupType = "battleground"
+    elseif Cell.vars.instanceType == "arena" then
+        Cell.vars.quickAssistGroupType = "arena"
+    else
+        if Cell.vars.groupType == "party" then
+            Cell.vars.quickAssistGroupType = "party"
+        elseif Cell.vars.groupType == "raid" then
+            if Cell.vars.inMythic then
+                Cell.vars.quickAssistGroupType = "mythic"
+            else
+                Cell.vars.quickAssistGroupType = "raid"
+            end
+        else
+            Cell.vars.quickAssistGroupType = nil
+        end
+    end
+
+    if InCombatLockdown() then
+        delayedFrame:RegisterEvent("PLAYER_REGEN_ENABLED")
+    else
+        Cell:Fire("UpdateQuickAssist")
+    end
+end
+Cell:RegisterCallback("EnterInstance", "QuickAssist_EnterInstance", PreUpdateQuickAssist)
+Cell:RegisterCallback("LeaveInstance", "QuickAssist_LeaveInstance", PreUpdateQuickAssist)
+Cell:RegisterCallback("GroupTypeChanged", "QuickAssist_GroupTypeChanged", PreUpdateQuickAssist)
+Cell:RegisterCallback("SpecChanged", "QuickAssist_SpecChanged", PreUpdateQuickAssist)

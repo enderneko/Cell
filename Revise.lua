@@ -2497,6 +2497,35 @@ function F:Revise()
             CellDB["debuffTypeColor"]["Bleed"] = {r=1, g=0.2, b=0.6}
         end
     end
+   
+    -- r213-release
+    if CellDB["revise"] and dbRevision < 213 then
+        if Cell.isRetail then
+            for spec, t in pairs(CellDB["quickAssist"]) do
+                if not t["filters"] then
+                    t["filters"] = t["layout"]["filters"]
+                    t["filters"]["active"] = nil
+                    t["filters"][6] = F:Copy(t["filters"][5])
+                    t["filters"][7] = F:Copy(t["filters"][5])
+                    t["layout"]["filters"] = nil
+                end
+                if not t["filterAutoSwitch"] then
+                    t["filterAutoSwitch"] = {
+                        ["party"] = 1,
+                        ["raid"] = 1,
+                        ["mythic"] = 1,
+                        ["arena"] = 1,
+                        ["battleground"] = 1,
+                    }
+                end
+                for _, ft in pairs(t["filters"]) do
+                    if ft[1] == "name" then
+                        ft[3] = false
+                    end
+                end
+            end
+        end
+    end
 
     -- ----------------------------------------------------------------------- --
     --            update from old versions, validate all indicators            --

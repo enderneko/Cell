@@ -90,7 +90,7 @@ local bgMaxPlayers = {
 -- layout auto switch
 local instanceType
 local function PreUpdateLayout()
-    if not Cell.vars.playerSpecRole then return end
+    if not (Cell.vars.playerSpecID and Cell.vars.playerSpecRole) then return end
 
     if instanceType == "pvp" then
         local name, _, _, _, _, _, _, id = GetInstanceInfo()
@@ -676,6 +676,7 @@ function eventFrame:PLAYER_ENTERING_WORLD()
     local isIn, iType = IsInInstance()
     instanceType = iType
     Cell.vars.inInstance = isIn
+    Cell.vars.instanceType = iType
 
     if isIn then
         F:Debug("|cffff1111*** Entered Instance:|r", iType)
@@ -689,6 +690,8 @@ function eventFrame:PLAYER_ENTERING_WORLD()
                 local difficultyID, difficultyName = select(3, GetInstanceInfo()) --! can't get difficultyID, difficultyName immediately after entering an instance
                 Cell.vars.inMythic = difficultyID == 16
                 if Cell.vars.inMythic then
+                    F:Debug("|cffff1111*** Entered Instance:|r", "raid-mythic")
+                    Cell:Fire("EnterInstance", iType)
                     PreUpdateLayout()
                 end
             end)
@@ -749,7 +752,7 @@ function eventFrame:PLAYER_LOGIN()
     -- update requests
     Cell:Fire("UpdateRequests")
     -- update quick assist
-    Cell:Fire("UpdateQuickAssist")
+    -- Cell:Fire("UpdateQuickAssist") -- NOTE: update in GroupTypeChanged/SpecChanged
     -- update quick cast
     Cell:Fire("UpdateQuickCast")
     -- update raid debuff list

@@ -117,21 +117,29 @@ local defaultQuickAssistTable = {
         ["unitsPerColumn"] = 5,
         ["spacingX"] = 3,
         ["spacingY"] = 3,
-        ["filters"] = {
-            ["active"] = 1,
-            {
-                "role", 
-                F:Copy(defaultRoleFilter),
-                -- {["role"] = enabled,...}
-                -- {{"class", enabled},...}
-                -- {name,...}
-                false,
-            },
-            {"role", F:Copy(defaultRoleFilter), false},
-            {"role", F:Copy(defaultRoleFilter), false},
-            {"role", F:Copy(defaultRoleFilter), false},
-            {"role", F:Copy(defaultRoleFilter), false},
+    },
+    ["filters"] = {
+        {
+            "role", 
+            F:Copy(defaultRoleFilter),
+            -- {["role"] = enabled,...}
+            -- {{"class", enabled},...}
+            -- {name,...}
+            false,
         },
+        {"role", F:Copy(defaultRoleFilter), false},
+        {"role", F:Copy(defaultRoleFilter), false},
+        {"role", F:Copy(defaultRoleFilter), false},
+        {"role", F:Copy(defaultRoleFilter), false},
+        {"role", F:Copy(defaultRoleFilter), false},
+        {"role", F:Copy(defaultRoleFilter), false},
+    },
+    ["filterAutoSwitch"] = {
+        ["party"] = 1,
+        ["raid"] = 1,
+        ["mythic"] = 1,
+        ["arena"] = 1,
+        ["battleground"] = 1,
     },
     -- sytle
     ["style"] = {
@@ -219,9 +227,9 @@ quickAssistTab:Hide()
 --                                  shared                                 --
 -- ----------------------------------------------------------------------- --
 local quickAssistTable, layoutTable, styleTable, spellTable
-local selectedFilter, selectedClass
+local selectedFilter, selectedClass, activeFilter
 
-local LoadDB, LoadLayout, LoadStyle, LoadSpells, LoadList, LoadMyBuff, ShowFilter
+local LoadDB, LoadLayout, LoadStyle, LoadSpells, LoadList, LoadMyBuff, ShowFilter, LoadAutoSwitch, UpdateAutoSwitch
 
 local anchorPoints = {"BOTTOM", "BOTTOMLEFT", "BOTTOMRIGHT", "CENTER", "LEFT", "RIGHT", "TOP", "TOPLEFT", "TOPRIGHT"}
 local orientations = {"left-to-right", "right-to-left", "top-to-bottom", "bottom-to-top"}
@@ -270,7 +278,7 @@ local function UpdatePreviewButton()
 
     if not previewButton then
         previewButton = CreateFrame("Button", "CellQuickAssistPreviewButton", quickAssistTab, "CellQuickAssistPreviewButtonTemplate")
-        previewButton:SetPoint("TOPLEFT", quickAssistTab, "TOPRIGHT", 5, -137)
+        previewButton:SetPoint("BOTTOMLEFT", quickAssistTab, "BOTTOMRIGHT", 5, 270)
         previewButton:UnregisterAllEvents()
         previewButton:SetScript("OnEnter", nil)
         previewButton:SetScript("OnLeave", nil)
@@ -597,6 +605,7 @@ local layoutBtn, styleBtn, spellBtn
 local anchorDropdown, orientationDropdown, widthSlider, heightSlider, xSlider, ySlider, unitsSlider, maxSlider
 local filterTypeDropdown, hideSelfCB, roleFilter, classFilter, nameFilter, nameListFrame, filterResetBtn, filterResetTips
 local filterButtons = {}
+local autoSwitchFrame, partyDropdown, raidDropdown, mythicDropdown, arenaDropdown, bgDropdown, partyText, raidText, mythicText, arenaText, bgText
 
 -- style
 local hpColorDropdown, hpCP, lossColorDropdown, bgCP, textureDropdown, alphaSlider
@@ -614,7 +623,7 @@ local function UpdateWidgets(enabled)
     
     -- NOTE: switch to layout on disable
     Cell:SetEnabled(enabled, anchorDropdown, orientationDropdown, widthSlider, heightSlider, xSlider, ySlider, unitsSlider, maxSlider)
-    Cell:SetEnabled(enabled, filterTypeDropdown, hideSelfCB, roleFilter, classFilter, nameFilter)
+    Cell:SetEnabled(enabled, autoSwitchFrame, filterTypeDropdown, hideSelfCB, roleFilter, classFilter, nameFilter)
 
     for _, b in pairs(filterButtons) do
         Cell:SetEnabled(enabled, b)
@@ -646,7 +655,7 @@ local function CreateQuickAssistPane()
 
         CellDB["quickAssist"][Cell.vars.playerSpecID]["enabled"] = checked
         LoadDB()
-        layoutBtn:GetScript("OnClick")()
+        UpdatePreviewButton()
 
         if checked then
             ShowLayoutPreview()
@@ -656,7 +665,6 @@ local function CreateQuickAssistPane()
         end
 
         Cell:Fire("UpdateQuickAssist")
-        -- UpdatePreview()
     end)
     qaEnabledCB:SetPoint("TOPLEFT", qaPane, 5, -75)
 
@@ -773,9 +781,11 @@ end
 
 -- role filter ----------------------------------------------------------- --
 local function UpdateRoleFilter(role)
-    layoutTable["filters"][selectedFilter][2][role] = not layoutTable["filters"][selectedFilter][2][role]
+    quickAssistTable["filters"][selectedFilter][2][role] = not quickAssistTable["filters"][selectedFilter][2][role]
     ShowFilter(selectedFilter) -- call SetRoles
-    Cell:Fire("UpdateQuickAssist", "filter")
+    if selectedFilter == activeFilter then
+        Cell:Fire("UpdateQuickAssist", "filter")
+    end
 end
 
 local ROLE_FILTER_SIZE = 100
@@ -844,14 +854,16 @@ local function CreateClassFilter(parent)
 
         buttons[class]:SetScript("OnClick", function()
             -- find class
-            for i, t in pairs(layoutTable["filters"][selectedFilter][2]) do
+            for i, t in pairs(quickAssistTable["filters"][selectedFilter][2]) do
                 if t[1] == class then
                     t[2] = not t[2]
                     break
                 end
             end
-            f:SetClasses(layoutTable["filters"][selectedFilter][2])
-            Cell:Fire("UpdateQuickAssist", "filter")
+            f:SetClasses(quickAssistTable["filters"][selectedFilter][2])
+            if selectedFilter == activeFilter then
+                Cell:Fire("UpdateQuickAssist", "filter")
+            end
         end)
 
         buttons[class]:SetScript("OnEnter", function(self) self:SetBackdropColor(F:GetClassColor(class)) end)
@@ -873,7 +885,7 @@ local function CreateClassFilter(parent)
                 local b = GetMouseFocus()
                 if b and b._class then
                     local oldIndex, oldValue, newIndex
-                    for i, t in pairs(layoutTable["filters"][selectedFilter][2]) do
+                    for i, t in pairs(quickAssistTable["filters"][selectedFilter][2]) do
                         if class == t[1] then
                             oldValue = t
                             oldIndex = i
@@ -884,12 +896,14 @@ local function CreateClassFilter(parent)
                     -- print(class, oldIndex, "->", b._class, newIndex)
                     
                     if oldIndex and oldValue and newIndex then
-                        tremove(layoutTable["filters"][selectedFilter][2], oldIndex)
-                        tinsert(layoutTable["filters"][selectedFilter][2], newIndex, oldValue)
-                        Cell:Fire("UpdateQuickAssist", "filter")
+                        tremove(quickAssistTable["filters"][selectedFilter][2], oldIndex)
+                        tinsert(quickAssistTable["filters"][selectedFilter][2], newIndex, oldValue)
+                        if selectedFilter == activeFilter then
+                            Cell:Fire("UpdateQuickAssist", "filter")
+                        end
                     end
                 end
-                f:SetClasses(layoutTable["filters"][selectedFilter][2])
+                f:SetClasses(quickAssistTable["filters"][selectedFilter][2])
             end)
         end)
     end
@@ -943,17 +957,16 @@ local function CreatePlayerList(parent, box)
     -- playerlist
     local playerListFrame = CreateFrame("Frame", nil, parent)
     playerListFrame:SetSize(70, 17)
-    playerListFrame:SetPoint("TOP")
-    playerListFrame:SetPoint("LEFT", CellOptionsFrame, "RIGHT", 5, 0)
+    playerListFrame:SetPoint("TOPLEFT", parent, "TOPRIGHT", 5, 0)
 
     for i = 1, 40 do
-        players[i] = Cell:CreateButton(playerListFrame, i, nil, {70, 17})
+        players[i] = Cell:CreateButton(playerListFrame, i, nil, {90, 18})
         players[i].label = players[i]:GetFontString()
         players[i].label:ClearAllPoints()
-        players[i].label:SetPoint("LEFT", 12, 0)
+        players[i].label:SetPoint("LEFT", P:Scale(13), 0)
 
         players[i].index = players[i]:CreateFontString(nil, "OVERLAY")
-        players[i].index:SetFont("Interface\\AddOns\\Cell\\Media\\Fonts\\Accidental_Presidency.ttf", 11)
+        players[i].index:SetFont("Interface\\AddOns\\Cell\\Media\\Fonts\\Accidental_Presidency.ttf", 12)
         players[i].index:SetShadowColor(0, 0, 0)
         players[i].index:SetShadowOffset(1, -1)
         players[i].index:SetPoint("LEFT", P:Scale(1), 0)
@@ -986,7 +999,7 @@ local function CreatePlayerList(parent, box)
     end
 
     playerListFrame:SetScript("OnShow", function()
-        names = F:Copy(layoutTable["filters"][selectedFilter][2])
+        names = F:Copy(quickAssistTable["filters"][selectedFilter][2])
 
         local i = 1
         for unit in F:IterateGroupMembers() do
@@ -996,7 +1009,7 @@ local function CreatePlayerList(parent, box)
             local class = UnitClassBase(unit)
 
             players[i].name = name
-            
+
             F:UpdateTextWidth(players[i].label, name, {"percentage", 0.8}, players[i])
             players[i].label:SetTextColor(F:GetClassColor(class))
 
@@ -1018,7 +1031,7 @@ local function CreateNameFilter(parent)
 
     nameListFrame = CreateFrame("Frame", nil, parent, "BackdropTemplate")
     Cell:StylizeFrame(nameListFrame, nil, Cell:GetAccentColorTable())
-    nameListFrame:SetPoint("BOTTOMLEFT", b, "BOTTOMRIGHT", 10, -5)
+    nameListFrame:SetPoint("BOTTOMLEFT", b, "TOPLEFT", 0, 5)
     nameListFrame:SetFrameLevel(parent:GetFrameLevel()+50)
     nameListFrame:SetSize(200, 280)
     nameListFrame:Hide()
@@ -1036,7 +1049,7 @@ local function CreateNameFilter(parent)
     nameListFrame:SetScript("OnShow", function()
         b:SetFrameLevel(parent:GetFrameLevel()+50)
         Cell:CreateMask(Cell.frames.utilitiesTab, nil, {1, -1, -1, 1})
-        box:SetText(table.concat(layoutTable["filters"][selectedFilter][2], "\n"))
+        box:SetText(table.concat(quickAssistTable["filters"][selectedFilter][2], "\n"))
     end)
     
     nameListFrame:SetScript("OnHide", function()
@@ -1056,9 +1069,11 @@ local function CreateNameFilter(parent)
                 tremove(names, i)
             end
         end
-        layoutTable["filters"][selectedFilter][2] = F:Copy(names)
+        quickAssistTable["filters"][selectedFilter][2] = F:Copy(names)
         nameListFrame:Hide()
-        Cell:Fire("UpdateQuickAssist", "filter")
+        if selectedFilter == activeFilter then
+            Cell:Fire("UpdateQuickAssist", "filter")
+        end
     end)
 
     local discardBtn = Cell:CreateButton(nameListFrame, L["Discard"], "red", {92, 20})
@@ -1138,6 +1153,7 @@ end
 ]]
 
 local HighlightFilter
+local romanNumerals = {"I", "II", "III", "IV", "V", "VI", "VII"}
 
 local function CreateLayoutPane()
     pages.layout = CreateFrame("Frame", nil, quickAssistTab)
@@ -1253,11 +1269,13 @@ local function CreateLayoutPane()
             ["text"] = L["Role Filter"],
             ["value"] = "role",
             ["onClick"] = function()
-                if layoutTable["filters"][selectedFilter][1] ~= "role" then
-                    layoutTable["filters"][selectedFilter][1] = "role"
-                    layoutTable["filters"][selectedFilter][2] = F:Copy(defaultRoleFilter)
+                if quickAssistTable["filters"][selectedFilter][1] ~= "role" then
+                    quickAssistTable["filters"][selectedFilter][1] = "role"
+                    quickAssistTable["filters"][selectedFilter][2] = F:Copy(defaultRoleFilter)
                     ShowFilter(selectedFilter)
-                    Cell:Fire("UpdateQuickAssist", "filter")
+                    if selectedFilter == activeFilter then
+                        Cell:Fire("UpdateQuickAssist", "filter")
+                    end
                 end
             end,
         },
@@ -1265,11 +1283,13 @@ local function CreateLayoutPane()
             ["text"] = L["Class Filter"],
             ["value"] = "class",
             ["onClick"] = function()
-                if layoutTable["filters"][selectedFilter][1] ~= "class" then
-                    layoutTable["filters"][selectedFilter][1] = "class"
-                    layoutTable["filters"][selectedFilter][2] = F:Copy(defaultClassFilter)
+                if quickAssistTable["filters"][selectedFilter][1] ~= "class" then
+                    quickAssistTable["filters"][selectedFilter][1] = "class"
+                    quickAssistTable["filters"][selectedFilter][2] = F:Copy(defaultClassFilter)
                     ShowFilter(selectedFilter)
-                    Cell:Fire("UpdateQuickAssist", "filter")
+                    if selectedFilter == activeFilter then
+                        Cell:Fire("UpdateQuickAssist", "filter")
+                    end
                 end
             end,
         },
@@ -1277,19 +1297,24 @@ local function CreateLayoutPane()
             ["text"] = L["Name Filter"],
             ["value"] = "name",
             ["onClick"] = function()
-                if layoutTable["filters"][selectedFilter][1] ~= "name" then
-                    layoutTable["filters"][selectedFilter][1] = "name"
-                    layoutTable["filters"][selectedFilter][2] = {}
+                if quickAssistTable["filters"][selectedFilter][1] ~= "name" then
+                    quickAssistTable["filters"][selectedFilter][1] = "name"
+                    quickAssistTable["filters"][selectedFilter][2] = {}
+                    quickAssistTable["filters"][selectedFilter][3] = false
                     ShowFilter(selectedFilter)
-                    Cell:Fire("UpdateQuickAssist", "filter")
+                    if selectedFilter == activeFilter then
+                        Cell:Fire("UpdateQuickAssist", "filter")
+                    end
                 end
             end,
         },
     })
 
     hideSelfCB = Cell:CreateCheckButton(filterPane, L["Hide Self (Party Only)"], function(checked, self)
-        layoutTable["filters"][selectedFilter][3] = checked
-        Cell:Fire("UpdateQuickAssist", "filter")
+        quickAssistTable["filters"][selectedFilter][3] = checked
+        if selectedFilter == activeFilter then
+            Cell:Fire("UpdateQuickAssist", "filter")
+        end
     end)
     hideSelfCB:SetPoint("TOPLEFT", filterTypeDropdown, "TOPRIGHT", 30, -3)
 
@@ -1305,21 +1330,22 @@ local function CreateLayoutPane()
     filterResetBtn = Cell:CreateButton(classFilter, L["Reset"], "accent", {50, 20})
     filterResetBtn:SetPoint("TOPLEFT", classFilter, "BOTTOMLEFT", 0, -10)
     filterResetBtn:SetScript("OnClick", function()
-        layoutTable["filters"][selectedFilter][2] = F:Copy(defaultClassFilter)
-        classFilter:SetClasses(layoutTable["filters"][selectedFilter][2])
-        Cell:Fire("UpdateQuickAssist", "filter")
+        quickAssistTable["filters"][selectedFilter][2] = F:Copy(defaultClassFilter)
+        classFilter:SetClasses(quickAssistTable["filters"][selectedFilter][2])
+        if selectedFilter == activeFilter then
+            Cell:Fire("UpdateQuickAssist", "filter")
+        end
     end)
 
     filterResetTips = classFilter:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
     filterResetTips:SetPoint("LEFT", filterResetBtn, "RIGHT", 5, 0)
     filterResetTips:SetText("|cffababab"..L["Left-Click"]..": "..L["toggle"]..", "..L["Left-Drag"]..": "..L["change the order"])
     
-    local romanNumerals = {"I", "II", "III", "IV", "V"}
-    for i = 5, 1, -1 do
+    for i = 7, 1, -1 do
         filterButtons[i] = Cell:CreateButton(filterPane, romanNumerals[i], "accent-hover", {37, 17})
         filterButtons[i].id = i
 
-        if i == 5 then
+        if i == 7 then
             filterButtons[i]:SetPoint("TOPRIGHT")
         else
             filterButtons[i]:SetPoint("TOPRIGHT", filterButtons[i+1], "TOPLEFT", P:Scale(1), 0)
@@ -1327,10 +1353,8 @@ local function CreateLayoutPane()
     end
 
     HighlightFilter = Cell:CreateButtonGroup(filterButtons, function(id)
-        layoutTable["filters"]["active"] = id
         selectedFilter = id
-        ShowFilter(selectedFilter)
-        Cell:Fire("UpdateQuickAssist", "filter")
+        ShowFilter(id)
     end)
 
     --* order ----------------------------------------------------------------- --
@@ -1346,6 +1370,93 @@ local function CreateLayoutPane()
     --     classOrderWidget:Load(layoutTable["order"])
     --     Cell:Fire("UpdateQuickAssist", "order")
     -- end)
+end
+
+-- ----------------------------------------------------------------------- --
+--                            filter auto switch                           --
+-- ----------------------------------------------------------------------- --
+local asterisk
+local function CreateAutoSwitchFrame()
+    autoSwitchFrame = Cell:CreateFrame("CellQuickAssistFilterAutoSwitchFrame", pages.layout, 160, 181)
+    autoSwitchFrame:SetPoint("BOTTOMLEFT", quickAssistTab, "BOTTOMRIGHT", 5, 0)
+    autoSwitchFrame:Show()
+
+    local autoSwitchPane = Cell:CreateTitledPane(autoSwitchFrame, L["Filter Auto Switch"], 150, 171)
+    autoSwitchPane:SetPoint("TOPLEFT", 5, -5)
+
+    asterisk = autoSwitchPane:CreateFontString(nil, "OVERLAY", "CELL_FONT_CLASS")
+    asterisk:SetText("*")
+    
+    local items = {}
+    for i = 0, 7 do
+        tinsert(items, {
+            ["text"] = i == 0 and "|cffc7c7c7"..L["Hide"] or romanNumerals[i],
+            ["value"] = i,
+            ["onClick"] = function(_, _, id)
+                quickAssistTable["filterAutoSwitch"][id] = i
+                if Cell.vars.quickAssistGroupType == id then
+                    if i == 0 then
+                        filterButtons[1]:GetScript("OnClick")()
+                        selectedFilter = 1
+                    else
+                        filterButtons[i]:GetScript("OnClick")()
+                        selectedFilter = i
+                    end
+                    Cell:Fire("UpdateQuickAssist", "filter")
+                end
+            end
+        })
+    end
+
+    -- party
+    partyDropdown = Cell:CreateDropdown(autoSwitchPane, 40, nil, true, true)
+    partyDropdown:SetPoint("TOPLEFT", 5, -27)
+    partyDropdown.id = "party"
+    partyDropdown:SetItems(items)
+
+    partyText = autoSwitchPane:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
+    partyText:SetPoint("LEFT", partyDropdown, "RIGHT", 5, 0)
+    partyText:SetText(_G.PARTY)
+    
+    -- raid
+    raidDropdown = Cell:CreateDropdown(autoSwitchPane, 40, nil, true, true)
+    raidDropdown:SetPoint("TOPLEFT", partyDropdown, "BOTTOMLEFT", 0, -10)
+    raidDropdown.id = "raid"
+    raidDropdown:SetItems(items)
+
+    raidText = autoSwitchPane:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
+    raidText:SetPoint("LEFT", raidDropdown, "RIGHT", 5, 0)
+    raidText:SetText(_G.RAID)
+
+    -- mythic
+    mythicDropdown = Cell:CreateDropdown(autoSwitchPane, 40, nil, true, true)
+    mythicDropdown:SetPoint("TOPLEFT", raidDropdown, "BOTTOMLEFT", 0, -10)
+    mythicDropdown.id = "mythic"
+    mythicDropdown:SetItems(items)
+
+    mythicText = autoSwitchPane:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
+    mythicText:SetPoint("LEFT", mythicDropdown, "RIGHT", 5, 0)
+    mythicText:SetText(_G.RAID.." ".._G.PLAYER_DIFFICULTY6)
+
+    -- arena
+    arenaDropdown = Cell:CreateDropdown(autoSwitchPane, 40, nil, true, true)
+    arenaDropdown:SetPoint("TOPLEFT", mythicDropdown, "BOTTOMLEFT", 0, -10)
+    arenaDropdown.id = "arena"
+    arenaDropdown:SetItems(items)
+    
+    arenaText = autoSwitchPane:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
+    arenaText:SetPoint("LEFT", arenaDropdown, "RIGHT", 5, 0)
+    arenaText:SetText(_G.ARENA)
+
+    -- battleground
+    bgDropdown = Cell:CreateDropdown(autoSwitchPane, 40, nil, true, true)
+    bgDropdown:SetPoint("TOPLEFT", arenaDropdown, "BOTTOMLEFT", 0, -10)
+    bgDropdown.id = "battleground"
+    bgDropdown:SetItems(items)
+
+    bgText = autoSwitchPane:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
+    bgText:SetPoint("LEFT", bgDropdown, "RIGHT", 5, 0)
+    bgText:SetText(_G.BATTLEGROUND)
 end
 
 -- ----------------------------------------------------------------------- --
@@ -2835,13 +2946,15 @@ local function CreateSpellsPane()
     end)
 
     -- reset ----------------------------------------------------------------- --
-    local resetBtn = Cell:CreateButton(pages.spell, L["Reset Offensive Spells"], "accent", {205, 17})
+    local resetBtn = Cell:CreateButton(pages.spell, L["Reset Offensive Spells"], "accent", {205, 17}, nil, nil, nil, nil, nil, L["Reset Offensive Spells"], L["[Ctrl+LeftClick] to reset these settings"])
     resetBtn:SetPoint("BOTTOMRIGHT")
     resetBtn:SetScript("OnClick", function()
-        spellTable["offensives"]["buffs"] = F:Copy(defaultOffensiveBuffs)
-        spellTable["offensives"]["casts"] = F:Copy(defaultOffensiveCasts)
-        classButtons[1]:GetScript("OnClick")()
-        Cell:Fire("UpdateQuickAssist", "offensives")
+        if IsControlKeyDown() then
+            spellTable["offensives"]["buffs"] = F:Copy(defaultOffensiveBuffs)
+            spellTable["offensives"]["casts"] = F:Copy(defaultOffensiveCasts)
+            classButtons[1]:GetScript("OnClick")()
+            Cell:Fire("UpdateQuickAssist", "offensives")
+        end
     end)
 
     -- tips ------------------------------------------------------------------ --
@@ -2895,7 +3008,7 @@ end
 --                                   load                                  --
 -- ----------------------------------------------------------------------- --
 ShowFilter = function(index)
-    local t = layoutTable["filters"][index]
+    local t = quickAssistTable["filters"][index]
 
     filterTypeDropdown:SetSelectedValue(t[1])
     hideSelfCB:SetChecked(t[3])
@@ -2919,6 +3032,14 @@ ShowFilter = function(index)
     end
 end
 
+LoadAutoSwitch = function(t)
+    partyDropdown:SetSelectedValue(t["party"])
+    raidDropdown:SetSelectedValue(t["raid"])
+    mythicDropdown:SetSelectedValue(t["mythic"])
+    arenaDropdown:SetSelectedValue(t["arena"])
+    bgDropdown:SetSelectedValue(t["battleground"])
+end
+
 LoadLayout = function()
     anchorDropdown:SetSelectedValue(layoutTable["anchor"])
     orientationDropdown:SetSelectedValue(layoutTable["orientation"])
@@ -2939,11 +3060,6 @@ LoadLayout = function()
 
     unitsSlider:SetValue(layoutTable["unitsPerColumn"])
     maxSlider:SetValue(layoutTable["maxColumns"])
-
-    selectedFilter = layoutTable["filters"]["active"]
-    ShowFilter(selectedFilter)
-    HighlightFilter(selectedFilter)
-    -- classOrderWidget:Load(layoutTable["order"])
 end
 
 LoadStyle = function()
@@ -3108,7 +3224,6 @@ LoadDB = function()
     if not quickAssistTable or not quickAssistTable["enabled"] then
         qaEnabledCB:SetChecked(false)
         UpdateWidgets(false)
-        UpdatePreviewButton()
         layoutTable = nil
         styleTable = nil
         spellTable = nil
@@ -3127,7 +3242,13 @@ LoadDB = function()
     LoadLayout()
     LoadStyle()
     LoadSpells()
-    UpdatePreviewButton()
+    
+    selectedFilter = Cell.vars.quickAssistGroupType and quickAssistTable["filterAutoSwitch"][Cell.vars.quickAssistGroupType] or 0
+    if selectedFilter == 0 then selectedFilter = 1 end
+    HighlightFilter(selectedFilter)
+    ShowFilter(selectedFilter)
+    LoadAutoSwitch(quickAssistTable["filterAutoSwitch"])
+    UpdateAutoSwitch()
 end
 
 local init
@@ -3139,17 +3260,20 @@ local function ShowUtilitySettings(which)
             CreateLayoutPane()
             CreateStylePane()
             CreateSpellsPane()
+            CreateAutoSwitchFrame()
             
             F:ApplyCombatProtectionToFrame(quickAssistTab)
+            F:ApplyCombatProtectionToFrame(autoSwitchFrame)
         end
         
-        LoadDB()
         if not init then
             init = true
             layoutBtn:GetScript("OnClick")()
         end
+        LoadDB()
         quickAssistTab:Show()
-        
+        UpdatePreviewButton()
+
     elseif init then
         quickAssistTab:Hide()
     end
@@ -3159,6 +3283,7 @@ Cell:RegisterCallback("ShowUtilitySettings", "QuickAssist_ShowUtilitySettings", 
 local function Reload()
     if init then
         LoadDB()
+        UpdatePreviewButton()
         layoutBtn:GetScript("OnClick")()
         if quickAssistTab:IsVisible() then
             if quickAssistTable and quickAssistTable["enabled"] then
@@ -3171,3 +3296,62 @@ local function Reload()
 end
 Cell:RegisterCallback("SpecChanged", "QuickAssistConfig_SpecChanged", Reload)
 Cell:RegisterCallback("ReloadQuickAssist", "ReloadQuickAssist", Reload)
+
+UpdateAutoSwitch = function()
+    if not (init and quickAssistTable and quickAssistTable["enabled"]) then return end
+    
+    activeFilter = Cell.vars.quickAssistGroupType and quickAssistTable["filterAutoSwitch"][Cell.vars.quickAssistGroupType] or 0
+
+    if activeFilter == 0 then
+        filterButtons[1]:GetScript("OnClick")()
+        selectedFilter = 1
+    else
+        filterButtons[activeFilter]:GetScript("OnClick")()
+        selectedFilter = activeFilter
+    end
+
+    asterisk:ClearAllPoints()
+    if Cell.vars.quickAssistGroupType == "party" then
+        asterisk:SetPoint("LEFT", partyText, "RIGHT")
+        partyText:SetTextColor(Cell:GetAccentColorRGB())
+        raidText:SetTextColor(1, 1, 1)
+        mythicText:SetTextColor(1, 1, 1)
+        arenaText:SetTextColor(1, 1, 1)
+        bgText:SetTextColor(1, 1, 1)
+    elseif Cell.vars.quickAssistGroupType == "raid" then
+        asterisk:SetPoint("LEFT", raidText, "RIGHT")
+        partyText:SetTextColor(1, 1, 1)
+        raidText:SetTextColor(Cell:GetAccentColorRGB())
+        mythicText:SetTextColor(1, 1, 1)
+        arenaText:SetTextColor(1, 1, 1)
+        bgText:SetTextColor(1, 1, 1)
+    elseif Cell.vars.quickAssistGroupType == "mythic" then
+        asterisk:SetPoint("LEFT", mythicText, "RIGHT")
+        partyText:SetTextColor(1, 1, 1)
+        raidText:SetTextColor(1, 1, 1)
+        mythicText:SetTextColor(Cell:GetAccentColorRGB())
+        arenaText:SetTextColor(1, 1, 1)
+        bgText:SetTextColor(1, 1, 1)
+    elseif Cell.vars.quickAssistGroupType == "arena" then
+        asterisk:SetPoint("LEFT", arenaText, "RIGHT")
+        partyText:SetTextColor(1, 1, 1)
+        raidText:SetTextColor(1, 1, 1)
+        mythicText:SetTextColor(1, 1, 1)
+        arenaText:SetTextColor(Cell:GetAccentColorRGB())
+        bgText:SetTextColor(1, 1, 1)
+    elseif Cell.vars.quickAssistGroupType == "battleground" then
+        asterisk:SetPoint("LEFT", bgText, "RIGHT")
+        partyText:SetTextColor(1, 1, 1)
+        raidText:SetTextColor(1, 1, 1)
+        mythicText:SetTextColor(1, 1, 1)
+        arenaText:SetTextColor(1, 1, 1)
+        bgText:SetTextColor(Cell:GetAccentColorRGB())
+    else -- solo
+        partyText:SetTextColor(1, 1, 1)
+        raidText:SetTextColor(1, 1, 1)
+        mythicText:SetTextColor(1, 1, 1)
+        arenaText:SetTextColor(1, 1, 1)
+        bgText:SetTextColor(1, 1, 1)
+    end
+end
+Cell:RegisterCallback("UpdateQuickAssist", "UpdateAutoSwitch", UpdateAutoSwitch)
