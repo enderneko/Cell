@@ -329,7 +329,7 @@ local function RaidPetFrame_UpdateLayout(layout, which)
     if not which or which == "pet" then
         if layout["pet"]["raidEnabled"] and Cell.vars.inBattleground ~= 5 then
             header:SetAttribute("showRaid", true)
-            RegisterAttributeDriver(raidPetFrame, "state-visibility", "[group:raid] show; [group:party] hide; hide")
+            RegisterAttributeDriver(raidPetFrame, "state-visibility", "[@raid1,exists] show;hide")
         else
             header:SetAttribute("showRaid", false)
             UnregisterAttributeDriver(raidPetFrame, "state-visibility")

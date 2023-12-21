@@ -319,7 +319,6 @@ npcFrame:SetAttribute("_onstate-groupstate", [[
     -- NOTE: update each npc button
     self:RunAttribute("pointUpdater", orientation, point, anchorPoint, unitSpacing)
 ]])
--- RegisterStateDriver(npcFrame, "groupstate", "[group:raid] raid; [group:party] party; solo")
 
 -------------------------------------------------
 -- update point when pet state changed
@@ -621,7 +620,8 @@ local function NPCFrame_UpdateLayout(layout, which)
                 -- load separate npc frame position
                 P:LoadPosition(separateAnchor, layout["npc"]["position"])
             else
-                RegisterStateDriver(npcFrame, "groupstate", "[group:raid] raid; [group:party] party; solo")
+                -- RegisterStateDriver(npcFrame, "groupstate", "[group:raid] raid;[group:party] party;solo")
+                RegisterStateDriver(npcFrame, "groupstate", "[@raid1,exists] raid;[@party1,exists] party;solo")
                 RegisterStateDriver(npcFrame, "petstate", "[@pet,exists] pet; [@partypet1,exists] pet1; [@partypet2,exists] pet2; [@partypet3,exists] pet3; [@partypet4,exists] pet4; nopet")
             end
         else
@@ -639,7 +639,8 @@ local function NPCFrame_UpdateVisibility(which)
     if not which or which == "solo" or which == "party" then
         local showSolo = CellDB["general"]["showSolo"] and "show" or "hide"
         local showParty = CellDB["general"]["showParty"] and "show" or "hide"
-        RegisterAttributeDriver(npcFrame, "state-visibility", "[group:raid] show; [group:party] "..showParty.."; "..showSolo)
+        -- RegisterAttributeDriver(npcFrame, "state-visibility", "[group:raid] show; [group:party] "..showParty.."; "..showSolo)
+        RegisterAttributeDriver(npcFrame, "state-visibility", "[@raid1,exists] show;[@party1,exists] "..showParty..";"..showSolo)
     end
 end
 Cell:RegisterCallback("UpdateVisibility", "NPCFrame_UpdateVisibility", NPCFrame_UpdateVisibility)

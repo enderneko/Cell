@@ -6,7 +6,6 @@ local P = Cell.pixelPerfectFuncs
 local soloFrame = CreateFrame("Frame", "CellSoloFrame", Cell.frames.mainFrame, "SecureFrameTemplate")
 Cell.frames.soloFrame = soloFrame
 soloFrame:SetAllPoints(Cell.frames.mainFrame)
--- RegisterAttributeDriver(soloFrame, "state-visibility", "[group] hide; show")
 
 local playerButton = CreateFrame("Button", soloFrame:GetName().."Player", soloFrame, "CellUnitButtonTemplate")
 -- playerButton.type = "main" -- layout setup
@@ -104,7 +103,7 @@ local function SoloFrame_UpdateVisibility(which)
 
     if not which or which == "solo" then
         if CellDB["general"]["showSolo"] then
-            RegisterAttributeDriver(soloFrame, "state-visibility", "[group] hide; show")
+            RegisterAttributeDriver(soloFrame, "state-visibility", "[@raid1,exists] hide;[@party1,exists] hide;show")
         else
             UnregisterAttributeDriver(soloFrame, "state-visibility")
             soloFrame:Hide()

@@ -821,7 +821,7 @@ local function UpdateQuickAssist(which)
         return
     end
 
-    RegisterAttributeDriver(quickAssistFrame, "state-visibility", "[group] show; hide")
+    RegisterAttributeDriver(quickAssistFrame, "state-visibility", "[@raid1,exists] show;[@party1,exists] show;hide")
     layoutTable = quickAssistTable["layout"]
     styleTable = quickAssistTable["style"]
     spellTable = quickAssistTable["spells"]

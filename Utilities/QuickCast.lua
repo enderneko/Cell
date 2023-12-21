@@ -1421,7 +1421,7 @@ local function UpdateQuickCast()
     glowCastsColor = quickCastTable["glowCastsColor"]
 
     if quickCastTable["enabled"] then
-        RegisterAttributeDriver(quickCastFrame, "state-visibility", "[group] show; hide")
+        RegisterAttributeDriver(quickCastFrame, "state-visibility", "[@raid1,exists] show;[@party1,exists] show;hide")
         targetFrame:UpdatePixelPerfect()
         -- quickCastFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
         -- quickCastFrame:RegisterEvent("GROUP_ROSTER_UPDATE")

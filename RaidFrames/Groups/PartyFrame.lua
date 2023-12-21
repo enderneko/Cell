@@ -248,7 +248,9 @@ local function PartyFrame_UpdateVisibility(which)
     if not which or which == "party" then
         header:SetAttribute("showParty", CellDB["general"]["showParty"])
         if CellDB["general"]["showParty"] then
-            RegisterAttributeDriver(partyFrame, "state-visibility", "[group:raid] hide; [group:party] show; hide")
+            --! [group] won't fire during combat
+            -- RegisterAttributeDriver(partyFrame, "state-visibility", "[group:raid] hide; [group:party] show; hide")
+            RegisterAttributeDriver(partyFrame, "state-visibility", "[@raid1,exists] hide;[@party1,exists] show;hide")
         else
             UnregisterAttributeDriver(partyFrame, "state-visibility")
             partyFrame:Hide()
@@ -256,3 +258,15 @@ local function PartyFrame_UpdateVisibility(which)
     end
 end
 Cell:RegisterCallback("UpdateVisibility", "PartyFrame_UpdateVisibility", PartyFrame_UpdateVisibility)
+
+-- local f = CreateFrame("Frame", nil, UIParent, "SecureFrameTemplate")
+-- RegisterAttributeDriver(f, "state-group", "[@raid1,exists] raid;[@party1,exists] party; solo")
+-- SecureHandlerWrapScript(f, "OnAttributeChanged", f, [[
+--     print(name, value)
+--     if name ~= "state-group" then return end
+-- ]])
+
+-- RegisterStateDriver(f, "groupstate", "[group:raid] raid; [group:party] party; solo")
+-- f:SetAttribute("_onstate-groupstate", [[
+--     print(stateid, newstate)
+-- ]])
