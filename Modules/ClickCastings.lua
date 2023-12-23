@@ -1041,6 +1041,30 @@ local function ShowActionsMenu(index, b)
                     peb:SetTips("|cffababab"..L["Input spell id"].."\n"..L["Enter: apply\nESC: discard"])
                     peb:ShowEditBox(b.bindSpell or "")
                     peb:SetNumeric(true)
+                    if not peb.tooltipAdded then
+                        peb.tooltipAdded = true
+                        peb:SetScript("OnTextChanged", function()
+                            local spellId = tonumber(peb:GetText())
+                            if not spellId then
+                                CellSpellTooltip:Hide()
+                                return
+                            end
+                    
+                            local name, _, icon = GetSpellInfo(spellId)
+                            if not name then
+                                CellSpellTooltip:Hide()
+                                return
+                            end
+                            
+                            CellSpellTooltip:SetOwner(peb, "ANCHOR_NONE")
+                            CellSpellTooltip:SetPoint("TOPLEFT", peb, "BOTTOMLEFT", 0, -1)
+                            CellSpellTooltip:SetSpellByID(spellId, icon)
+                            CellSpellTooltip:Show()
+                        end)
+                        peb:HookScript("OnHide", function()
+                            CellSpellTooltip:Hide()
+                        end)
+                    end
                 end,
             },
         }
