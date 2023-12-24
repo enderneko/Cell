@@ -6,6 +6,7 @@ local U = Cell.uFuncs
 local A = Cell.animations
 local P = Cell.pixelPerfectFuncs
 
+local LGI = LibStub:GetLibrary("LibGroupInfo")
 local LCG = LibStub("LibCustomGlow-1.0")
 local LibTranslit = LibStub("LibTranslit-1.0")
 
@@ -736,6 +737,110 @@ local function ShowGlow(indicator, glowType, glowColor)
 end
 
 -- ----------------------------------------------------------------------- --
+--                               spec filter                               --
+-- ----------------------------------------------------------------------- --
+local specFrame = CreateFrame("Frame")
+
+local specFilter
+local nameList = {}
+local nameToPriority = {}
+
+local function GetPriority(class, specId)
+    if not (class and specId) then return end
+    
+    local filter = specFilter[2]
+
+    local priority
+    for ci, ct in pairs(filter) do
+        if class == ct[1] then  -- class
+            priority = ci*10
+            for si, st in pairs(ct[2]) do
+                if specId == st[1] then  -- spec
+                    if st[2] then -- enabled
+                        priority = priority + si
+                    else
+                        priority = nil
+                    end
+                    break
+                end                
+            end
+            break
+        end
+    end
+
+    return priority
+end
+
+local function UpdateAllUnits()
+    if InCombatLockdown() then
+        specFrame:RegisterEvent("PLAYER_REGEN_ENABLED")
+        return
+    end
+
+    wipe(nameList)
+    wipe(nameToPriority)
+
+    for unit in F:IterateGroupMembers() do
+        if UnitIsConnected(unit) then
+            local name = GetUnitName(unit, true)
+            local guid = UnitGUID(unit)
+            local info = LGI:GetCachedInfo(guid)
+            if info then
+                nameToPriority[name] = GetPriority(info.class, info.specId)
+                -- print(name, nameToPriority[name], info.class, info.specId)
+            end
+            if nameToPriority[name] then
+                tinsert(nameList, name)
+            end
+        end
+    end
+
+    -- check hide self
+    if specFilter[3] then
+        F:TRemove(nameList, Cell.vars.playerNameShort)
+        nameToPriority[Cell.vars.playerNameShort] = nil
+    end
+
+    -- sort by class, spec, name
+    sort(nameList, function(a, b)
+        if nameToPriority[a] ~= nameToPriority[b] then
+            return nameToPriority[a] < nameToPriority[b]
+        else
+            return a < b
+        end
+    end)
+
+    -- texplore(nameList)
+    -- texplore(nameToPriority)
+
+    header:SetAttribute("groupingOrder", "")
+    header:SetAttribute("groupFilter", nil)
+    header:SetAttribute("groupBy", nil)
+    header:SetAttribute("nameList", F:TableToString(nameList, ","))
+    header:SetAttribute("sortMethod", "NAMELIST")
+end
+
+local timer
+function specFrame:PrepareUpdate(self, event)
+    specFrame:UnregisterEvent("PLAYER_REGEN_ENABLED")
+
+    if timer then timer:Cancel() end
+    timer = C_Timer.NewTimer(1, UpdateAllUnits)
+end
+specFrame:SetScript("OnEvent", specFrame.PrepareUpdate)
+
+local function EnableSpecFilter(enable)
+    if enable then
+        specFrame:PrepareUpdate()
+        specFrame:RegisterEvent("GROUP_ROSTER_UPDATE")
+        LGI.RegisterCallback(specFrame, "GroupInfo_Update", "PrepareUpdate")
+    else
+        specFrame:UnregisterAllEvents()
+        LGI.UnregisterCallback(specFrame, "GroupInfo_Update")
+    end
+end
+
+-- ----------------------------------------------------------------------- --
 --                                callbacks                                --
 -- ----------------------------------------------------------------------- --
 local function UpdatePosition()
@@ -912,6 +1017,9 @@ local function UpdateQuickAssist(which)
 
     if not which or which == "filter" then
         local selectedFilter = groupType and quickAssistTable["filterAutoSwitch"][groupType] or 0
+        
+        specFilter = nil
+        EnableSpecFilter(false)
 
         if selectedFilter == 0 then -- hide
             header:SetAttribute("showRaid", false)
@@ -949,6 +1057,10 @@ local function UpdateQuickAssist(which)
                 header:SetAttribute("groupBy", "CLASS")
                 header:SetAttribute("sortMethod", "NAME")
                 header:SetAttribute("groupFilter", groupFilter)
+
+            elseif quickAssistTable["filters"][selectedFilter][1] == "spec" then
+                specFilter = quickAssistTable["filters"][selectedFilter]
+                EnableSpecFilter(true)
     
             elseif quickAssistTable["filters"][selectedFilter][1] == "name" then
                 header:SetAttribute("sortMethod", "NAMELIST")

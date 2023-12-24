@@ -104,6 +104,127 @@ for class in F:IterateClasses() do
     tinsert(defaultClassFilter, {class, true})
 end
 
+local defaultSpecFilter = {
+    {
+        "DEATHKNIGHT",
+        {
+            {250, true}, -- Blood 鲜血
+            {251, true}, -- Frost 冰霜
+            {252, true}, -- Unholy 邪恶
+        },
+    },
+    {
+        "DEMONHUNTER",
+        {
+            {581, true}, -- Vengeance 复仇
+            {577, true}, -- Havoc 浩劫
+        },
+    },
+    {
+        "DRUID",
+        {
+            {104, true}, -- Guardian 守护
+            {105, true}, -- Restoration 恢复
+            {103, true}, -- Feral 野性
+            {102, true}, -- Balance 平衡
+        },
+    },
+    {
+        "EVOKER",
+        {
+            {1468, true}, -- Preservation 恩护
+            {1467, true}, -- Devastation 湮灭
+            {1473, true}, -- Augmentation 增辉
+        },
+    },
+    {
+        "HUNTER",
+        {
+            {255, true}, -- Survival 生存
+            {253, true}, -- Beast Mastery 野兽控制
+            {254, true}, -- Marksmanship 射击
+        },
+    },
+    {
+        "MAGE",
+        {
+            {62, true}, -- Arcane 奥术
+            {63, true}, -- Fire 火焰
+            {64, true}, -- Frost 冰霜
+        },
+    },
+    {
+        "MONK",
+        {
+            {268, true}, -- Brewmaster 酒仙
+            {270, true}, -- Mistweaver 织雾
+            {269, true}, -- Windwalker 踏风
+        },
+    },
+    {
+        "PALADIN",
+        {
+            {66, true}, -- Protection 防护
+            {65, true}, -- Holy 神圣
+            {70, true}, -- Retribution 惩戒
+        },
+    },
+    {
+        "PRIEST",
+        {
+            {256, true}, -- Discipline 戒律
+            {257, true}, -- Holy 神圣
+            {258, true}, -- Shadow 暗影
+        },
+    },
+    {
+        "ROGUE",
+        {
+            {259, true}, -- Assassination 奇袭
+            {260, true}, -- Combat 狂徒
+            {261, true}, -- Subtlety 敏锐
+        },
+    },
+    {
+        "SHAMAN",
+        {
+            {264, true}, -- Restoration 恢复
+            {263, true}, -- Enhancement 增强
+            {262, true}, -- Elemental 元素
+        },
+    },
+    {
+        "WARLOCK",
+        {
+            {265, true}, -- Affliction 痛苦
+            {266, true}, -- Demonology 恶魔
+            {267, true}, -- Destruction 毁灭
+        },
+    },
+    {
+        "WARRIOR",
+        {
+            {73, true}, -- Protection 防护
+            {71, true}, -- Arms 武器
+            {72, true}, -- Fury 狂怒
+        },
+    },
+}
+local specIcons = {}
+for _, t in pairs(defaultSpecFilter) do
+    for _, st in pairs(t[2]) do
+        specIcons[st[1]] = select(4, GetSpecializationInfoForSpecID(st[1]))
+    end
+end
+-- for class, classId in F:IterateClasses() do
+--     local t = {class, {}}
+--     for i = 1, GetNumSpecializationsForClassID(classId) do
+--         local id, _, _, icon = GetSpecializationInfoForClassID(classId, i)
+--         specIcons[id] = icon
+--         tinsert(t[2], {id, true})
+--     end
+--     tinsert(defaultSpecFilter, t)
+-- end
 
 local defaultQuickAssistTable = {
     ["enabled"] = false,
@@ -603,7 +724,7 @@ local layoutBtn, styleBtn, spellBtn
 
 -- layout
 local anchorDropdown, orientationDropdown, widthSlider, heightSlider, xSlider, ySlider, unitsSlider, maxSlider
-local filterTypeDropdown, hideSelfCB, roleFilter, classFilter, nameFilter, nameListFrame, filterResetBtn, filterResetTips
+local filterTypeDropdown, hideSelfCB, roleFilter, classFilter, specFilter, nameFilter, nameListFrame, filterResetBtn, filterResetTips
 local filterButtons = {}
 local autoSwitchFrame, partyDropdown, raidDropdown, mythicDropdown, arenaDropdown, bgDropdown, partyText, raidText, mythicText, arenaText, bgText
 
@@ -632,6 +753,8 @@ local function UpdateWidgets(enabled)
     qaPopup:Hide()
     qaPopup:Hide()
     nameListFrame:Hide()
+    filterResetBtn:Hide()
+    filterResetTips:Hide()
 end
 
 -- ----------------------------------------------------------------------- --
@@ -915,9 +1038,11 @@ local function CreateClassFilter(parent)
             if enabled then
                 buttons[class]:SetBackdropBorderColor(F:GetClassColor(class))
                 buttons[class].tex:SetDesaturated(false)
+                buttons[class]:SetAlpha(1)
             else
                 buttons[class]:SetBackdropBorderColor(0, 0, 0)
                 buttons[class].tex:SetDesaturated(true)
+                buttons[class]:SetAlpha(0.75)
             end
 
             -- order
@@ -1093,6 +1218,135 @@ local function CreateNameFilter(parent)
     return b
 end
 
+-- spec filter ----------------------------------------------------------- --
+local SPEC_FILTER_SIZE = 24
+local function CreateSpecFilter(parent)
+    local f = CreateFrame("Frame", nil, parent)
+    f:SetSize(412, P:Scale(SPEC_FILTER_SIZE)*4)
+    f:Hide()
+
+    local frames = {}
+    local buttons = {}
+
+    for _, ct in pairs(defaultSpecFilter) do
+        local class = ct[1]
+        
+        -- class frame
+        frames[class] = CreateFrame("Frame", nil, f)
+        frames[class]:SetSize(P:Scale(SPEC_FILTER_SIZE), P:Scale(SPEC_FILTER_SIZE)*#ct[2]+P:Scale(1)*(#ct[2]-1))
+        frames[class]._class = class
+
+        frames[class]:SetMovable(true)
+        
+        frames[class].onDragStart = function()
+            frames[class]:SetFrameStrata("TOOLTIP")
+            frames[class]:StartMoving()
+            frames[class]:SetUserPlaced(false)
+        end
+        
+        frames[class].onDragStop = function()
+            frames[class]:StopMovingOrSizing()
+            frames[class]:SetFrameStrata("LOW")
+            -- self:Hide() --! Hide() will cause OnDragStop trigger TWICE!!!
+            C_Timer.After(0.05, function()
+                local mf = GetMouseFocus()
+                if mf then mf = mf:GetParent() end
+                if mf and mf._class then
+                    local oldIndex, oldValue, newIndex
+                    for i, t in pairs(quickAssistTable["filters"][selectedFilter][2]) do
+                        if class == t[1] then
+                            oldValue = t
+                            oldIndex = i
+                        elseif mf._class == t[1] then
+                            newIndex = i
+                        end
+                    end
+                    -- print(class, oldIndex, "->", mf._class, newIndex)
+                    
+                    if oldIndex and oldValue and newIndex then
+                        tremove(quickAssistTable["filters"][selectedFilter][2], oldIndex)
+                        tinsert(quickAssistTable["filters"][selectedFilter][2], newIndex, oldValue)
+                        if selectedFilter == activeFilter then
+                            Cell:Fire("UpdateQuickAssist", "filter")
+                        end
+                    end
+                end
+                f:SetSpecs(quickAssistTable["filters"][selectedFilter][2])
+            end)
+        end
+
+        -- spec buttons
+        local last
+        for _, st in pairs(ct[2]) do
+            local spec = st[1]
+            buttons[spec] = Cell:CreateButton(frames[class], nil, "accent-hover", {SPEC_FILTER_SIZE, SPEC_FILTER_SIZE})
+            buttons[spec]:SetTexture(specIcons[spec], {SPEC_FILTER_SIZE-4, SPEC_FILTER_SIZE-4}, {"CENTER", 0, 0}, false, true)
+            buttons[spec].tex:SetTexCoord(0.12, 0.88, 0.12, 0.88)
+
+            buttons[spec]:SetScript("OnClick", function()
+                -- find spec
+                for _, t in pairs(quickAssistTable["filters"][selectedFilter][2]) do
+                    if t[1] == class then
+                        for _, _t in pairs(t[2]) do
+                            if _t[1] == spec then
+                                _t[2] = not _t[2]
+                                break
+                            end
+                        end
+                        break
+                    end
+                end
+                f:SetSpecs(quickAssistTable["filters"][selectedFilter][2])
+                if selectedFilter == activeFilter then
+                    Cell:Fire("UpdateQuickAssist", "filter")
+                end
+            end)
+    
+            buttons[spec]:SetScript("OnEnter", function(self) self:SetBackdropColor(F:GetClassColor(class)) end)
+
+            buttons[spec]:RegisterForDrag("LeftButton")
+            buttons[spec]:SetScript("OnDragStart", frames[class].onDragStart)
+            buttons[spec]:SetScript("OnDragStop", frames[class].onDragStop)
+
+
+            if last then
+                buttons[spec]:SetPoint("TOPLEFT", last, "BOTTOMLEFT", 0, P:Scale(-1))
+            else
+                buttons[spec]:SetPoint("TOPLEFT")
+            end
+            last = buttons[spec]
+        end
+    end
+
+    function f:SetSpecs(t)
+        for k, ct in pairs(t) do
+            local class = ct[1]
+            -- class order
+            frames[class]:SetFrameStrata("DIALOG")
+            frames[class]:ClearAllPoints()
+            frames[class]:SetPoint("TOPLEFT", (k-1)*(P:Scale(SPEC_FILTER_SIZE)+P:Scale(3)), 0)
+            frames[class]:Show()
+
+            -- spec state
+            for _, st in pairs(ct[2]) do
+                local spec, enabled = unpack(st)
+                if enabled then -- enabled
+                    buttons[spec]:SetBackdropBorderColor(F:GetClassColor(class))
+                    buttons[spec].tex:SetDesaturated(false)
+                    buttons[spec]:SetAlpha(1)
+                else
+                    buttons[spec]:SetBackdropBorderColor(0, 0, 0)
+                    buttons[spec].tex:SetDesaturated(true)
+                    buttons[spec]:SetAlpha(0.75)
+                end
+            end
+        end
+    end
+
+    return f
+end
+
+
 -- class order ----------------------------------------------------------- --
 --[[
 local ORDER_ICON_SIZE = 24
@@ -1211,7 +1465,7 @@ local function CreateLayoutPane()
     })
 
     widthSlider = Cell:CreateSlider(L["Width"], pages.layout, 20, 300, 117, 1)
-    widthSlider:SetPoint("TOPLEFT", anchorDropdown, 0, -60)
+    widthSlider:SetPoint("TOPLEFT", anchorDropdown, 0, -50)
     widthSlider.afterValueChangedFn = function(value)
         layoutTable["size"][1] = value
         Cell:Fire("UpdateQuickAssist", "layout")
@@ -1219,7 +1473,7 @@ local function CreateLayoutPane()
     end
 
     heightSlider = Cell:CreateSlider(L["Height"], pages.layout, 20, 300, 117, 1)
-    heightSlider:SetPoint("TOPLEFT", widthSlider, 0, -60)
+    heightSlider:SetPoint("TOPLEFT", widthSlider, 0, -50)
     heightSlider.afterValueChangedFn = function(value)
         layoutTable["size"][2] = value
         Cell:Fire("UpdateQuickAssist", "layout")
@@ -1227,7 +1481,7 @@ local function CreateLayoutPane()
     end
     
     xSlider = Cell:CreateSlider(L["Spacing"].." X", pages.layout, -1, 100, 117, 1)
-    xSlider:SetPoint("TOPLEFT", orientationDropdown, 0, -60)
+    xSlider:SetPoint("TOPLEFT", orientationDropdown, 0, -50)
     xSlider.afterValueChangedFn = function(value)
         layoutTable["spacingX"] = value
         Cell:Fire("UpdateQuickAssist", "layout")
@@ -1235,7 +1489,7 @@ local function CreateLayoutPane()
     end
 
     ySlider = Cell:CreateSlider(L["Spacing"].." Y", pages.layout, -1, 100, 117, 1)
-    ySlider:SetPoint("TOPLEFT", xSlider, 0, -60)
+    ySlider:SetPoint("TOPLEFT", xSlider, 0, -50)
     ySlider.afterValueChangedFn = function(value)
         layoutTable["spacingY"] = value
         Cell:Fire("UpdateQuickAssist", "layout")
@@ -1251,7 +1505,7 @@ local function CreateLayoutPane()
     end
 
     maxSlider = Cell:CreateSlider(L["Max Columns"], pages.layout, 1, 10, 117, 1)
-    maxSlider:SetPoint("TOPLEFT", unitsSlider, 0, -60)
+    maxSlider:SetPoint("TOPLEFT", unitsSlider, 0, -50)
     maxSlider.afterValueChangedFn = function(value)
         layoutTable["maxColumns"] = value
         Cell:Fire("UpdateQuickAssist", "layout")
@@ -1259,8 +1513,8 @@ local function CreateLayoutPane()
     end
 
     --* filter ---------------------------------------------------------------- --
-    local filterPane = Cell:CreateTitledPane(pages.layout, L["Unit Filter"], 422, 120)
-    filterPane:SetPoint("TOPLEFT", 0, -267)
+    local filterPane = Cell:CreateTitledPane(pages.layout, L["Unit Filter"], 422, 175)
+    filterPane:SetPoint("TOPLEFT", 0, -210)
 
     filterTypeDropdown = Cell:CreateDropdown(filterPane, 117)
     filterTypeDropdown:SetPoint("TOPLEFT", 5, -27)
@@ -1286,6 +1540,20 @@ local function CreateLayoutPane()
                 if quickAssistTable["filters"][selectedFilter][1] ~= "class" then
                     quickAssistTable["filters"][selectedFilter][1] = "class"
                     quickAssistTable["filters"][selectedFilter][2] = F:Copy(defaultClassFilter)
+                    ShowFilter(selectedFilter)
+                    if selectedFilter == activeFilter then
+                        Cell:Fire("UpdateQuickAssist", "filter")
+                    end
+                end
+            end,
+        },
+        {
+            ["text"] = L["Spec Filter"],
+            ["value"] = "spec",
+            ["onClick"] = function()
+                if quickAssistTable["filters"][selectedFilter][1] ~= "spec" then
+                    quickAssistTable["filters"][selectedFilter][1] = "spec"
+                    quickAssistTable["filters"][selectedFilter][2] = F:Copy(defaultSpecFilter)
                     ShowFilter(selectedFilter)
                     if selectedFilter == activeFilter then
                         Cell:Fire("UpdateQuickAssist", "filter")
@@ -1324,20 +1592,29 @@ local function CreateLayoutPane()
     classFilter = CreateClassFilter(filterPane)
     classFilter:SetPoint("TOPLEFT", filterTypeDropdown, "BOTTOMLEFT", 0, -10)
     
+    specFilter = CreateSpecFilter(filterPane)
+    specFilter:SetPoint("TOPLEFT", filterTypeDropdown, "BOTTOMLEFT", 0, -10)
+
     nameFilter = CreateNameFilter(filterPane)
     nameFilter:SetPoint("TOPLEFT", filterTypeDropdown, "BOTTOMLEFT", 0, -10)
 
-    filterResetBtn = Cell:CreateButton(classFilter, L["Reset"], "accent", {50, 20})
-    filterResetBtn:SetPoint("TOPLEFT", classFilter, "BOTTOMLEFT", 0, -10)
+    filterResetBtn = Cell:CreateButton(filterPane, L["Reset"], "accent", {50, 17})
+    filterResetBtn:SetPoint("BOTTOMLEFT")
     filterResetBtn:SetScript("OnClick", function()
-        quickAssistTable["filters"][selectedFilter][2] = F:Copy(defaultClassFilter)
-        classFilter:SetClasses(quickAssistTable["filters"][selectedFilter][2])
+        if quickAssistTable["filters"][selectedFilter][1] == "class" then
+            quickAssistTable["filters"][selectedFilter][2] = F:Copy(defaultClassFilter)
+            classFilter:SetClasses(quickAssistTable["filters"][selectedFilter][2])
+        elseif quickAssistTable["filters"][selectedFilter][1] == "spec" then
+            quickAssistTable["filters"][selectedFilter][2] = F:Copy(defaultSpecFilter)
+            specFilter:SetSpecs(quickAssistTable["filters"][selectedFilter][2])
+        end
+
         if selectedFilter == activeFilter then
             Cell:Fire("UpdateQuickAssist", "filter")
         end
     end)
 
-    filterResetTips = classFilter:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
+    filterResetTips = filterPane:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
     filterResetTips:SetPoint("LEFT", filterResetBtn, "RIGHT", 5, 0)
     filterResetTips:SetText("|cffababab"..L["Left-Click"]..": "..L["toggle"]..", "..L["Left-Drag"]..": "..L["change the order"])
     
@@ -1377,7 +1654,7 @@ end
 -- ----------------------------------------------------------------------- --
 local asterisk
 local function CreateAutoSwitchFrame()
-    autoSwitchFrame = Cell:CreateFrame("CellQuickAssistFilterAutoSwitchFrame", pages.layout, 160, 181)
+    autoSwitchFrame = Cell:CreateFrame("CellQuickAssistFilterAutoSwitchFrame", pages.layout, 160, 185)
     autoSwitchFrame:SetPoint("BOTTOMLEFT", quickAssistTab, "BOTTOMRIGHT", 5, 0)
     autoSwitchFrame:Show()
 
@@ -3015,17 +3292,31 @@ ShowFilter = function(index)
     
     roleFilter:Hide()
     classFilter:Hide()
+    specFilter:Hide()
     nameFilter:Hide()
     nameListFrame:Hide()
+    filterResetBtn:Hide()
+    filterResetTips:Hide()
 
     if t[1] == "role" then
         roleFilter:SetRoles(t[2])
         roleFilter:Show()
         hideSelfCB:Show()
+        hideSelfCB:SetText(L["Hide Self (Party Only)"])
     elseif t[1] == "class" then
         classFilter:SetClasses(t[2])
         classFilter:Show()
         hideSelfCB:Show()
+        filterResetBtn:Show()
+        filterResetTips:Show()
+        hideSelfCB:SetText(L["Hide Self (Party Only)"])
+    elseif t[1] == "spec" then
+        specFilter:SetSpecs(t[2])
+        specFilter:Show()
+        hideSelfCB:Show()
+        filterResetBtn:Show()
+        filterResetTips:Show()
+        hideSelfCB:SetText(L["Hide Self"])
     elseif t[1] == "name" then
         nameFilter:Show()
         hideSelfCB:Hide()
