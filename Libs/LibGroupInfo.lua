@@ -2,7 +2,7 @@
 -- File: Cell\Libs\LibGroupInfo.lua
 -- Author: enderneko (enderneko-dev@outlook.com)
 -- Created : 2022-07-29 15:04:31 +08:00
--- Modified: 2023-07-17 20:46:10 +08:00
+-- Modified: 2023-12-25 04:04:10 +08:00
 ---------------------------------------------------------------------
 
 local MAJOR, MINOR = "LibGroupInfo", 4
@@ -231,6 +231,7 @@ local function BuildAndNotify(unit)
         cache[guid].specName = specData[specId].name
         cache[guid].specRole = specData[specId].role
         cache[guid].specIcon = specData[specId].icon
+        cache[guid].inspected = true
     else
         cache[guid].specId = 0
     end
@@ -330,7 +331,7 @@ function frame:PLAYER_ENTERING_WORLD(isLogin, isReload)
         Query("player")
 
         -- update group
-        frame:GROUP_ROSTER_UPDATE()
+        frame:GROUP_ROSTER_UPDATE(true)
     end
 end
 
@@ -418,26 +419,30 @@ end
 -- GROUP_ROSTER_UPDATE: update queue
 ---------------------------------------------------------------------
 local wasInGroup
-function frame:GROUP_ROSTER_UPDATE()
+local function IterateAllUnits()
     cache[PLAYER_GUID].unit = "player"
+
+    local currentMembers = {[PLAYER_GUID] = true}
     
     if IsInRaid() then
         wasInGroup = true
         for i = 1, GetNumGroupMembers() do
             local unit = "raid"..i
             local guid = UnitGUID(unit)
-            if not (UnitIsUnit(unit, "player") or cache[guid] or queue[guid]) then
+            currentMembers[guid] = true
+            if not (UnitIsUnit(unit, "player") or (cache[guid] and cache[guid].inspected) or queue[guid]) then
                 AddToQueue(unit, guid)
             end
         end
         cache[PLAYER_GUID].unit = "raid"..UnitInRaid("player")
-        
+
     elseif IsInGroup() then
         wasInGroup = true
         for i = 1, GetNumGroupMembers()-1 do
             local unit = "party"..i
             local guid = UnitGUID(unit)
-            if not (cache[guid] or queue[guid]) then
+            currentMembers[guid] = true
+            if not ((cache[guid] and cache[guid].inspected) or queue[guid]) then
                 AddToQueue(unit, guid)
             end
         end
@@ -453,6 +458,26 @@ function frame:GROUP_ROSTER_UPDATE()
         wipe(queue)
         wipe(order)
     end
+
+    -- remove not in group
+    if wasInGroup then
+        for guid in pairs(cache) do
+            if not currentMembers[guid] then
+                cache[guid] = nil
+                queue[guid] = nil
+            end
+        end
+    end
+end
+
+local timer
+function frame:GROUP_ROSTER_UPDATE(immediate)
+    if immediate then
+        IterateAllUnits()
+    else
+        if timer then timer:Cancel() end
+        timer = C_Timer.NewTimer(1, IterateAllUnits)
+    end
 end
 
 ---------------------------------------------------------------------
@@ -466,6 +491,9 @@ function frame:PLAYER_SPECIALIZATION_CHANGED(unit)
         Query(unit)
     else
         local guid = UnitGUID(unit)
+        if cache[guid] then
+            cache[guid].inspected = nil
+        end
         if queue[guid] then
             queue[guid].attempts = 0 -- reset attempts if exists in queue
         else
@@ -482,9 +510,9 @@ end
 --     frame:PLAYER_SPECIALIZATION_CHANGED(unit)
 -- end
 
-function frame:PARTY_MEMBER_ENABLE(unit)
-    frame:PLAYER_SPECIALIZATION_CHANGED(unit)
-end
+-- function frame:PARTY_MEMBER_ENABLE(unit)
+--     frame:PLAYER_SPECIALIZATION_CHANGED(unit)
+-- end
 
 function frame:UNIT_LEVEL(unit)
     local guid = UnitGUID(unit)
