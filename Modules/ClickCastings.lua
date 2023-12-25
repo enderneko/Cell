@@ -441,8 +441,15 @@ local function ApplyClickCastings(b)
             local sMaRt = ""
             if smartResurrection ~= "disabled" and not (F:IsResurrectionForDead(spellName) or F:IsSoulstone(spellName)) then
                 if strfind(smartResurrection, "^normal") then
-                    if F:GetNormalResurrection(Cell.vars.playerClass) then
-                        sMaRt = sMaRt .. ";["..unit..",dead,nocombat] "..F:GetNormalResurrection(Cell.vars.playerClass)
+                    local normalResurrection = F:GetNormalResurrection(Cell.vars.playerClass)
+                    if normalResurrection then
+                        if Cell.isRetail then -- mass resurrections
+                            for condition, spell in pairs(normalResurrection) do
+                                sMaRt = sMaRt .. ";["..unit..",dead,nocombat,"..condition.."] "..spell
+                            end
+                        else
+                            sMaRt = sMaRt .. ";["..unit..",dead,nocombat] "..normalResurrection
+                        end
                     end
                 end
                 if strfind(smartResurrection, "combat$") then

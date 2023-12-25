@@ -421,17 +421,37 @@ end
 -- smart resurrection
 -------------------------------------------------
 local normalResurrection = {
-    ["DRUID"] = 50769,
-    ["EVOKER"] = 361227,
-    ["MONK"] = 115178,
-    ["PALADIN"] = 7328,
-    ["PRIEST"] = 2006,
-    ["SHAMAN"] = 2008,
+    ["DRUID"] = {
+        ["nospec:4"] = 50769, -- Revive - 起死回生
+        ["spec:4"] = 212040, -- Revitalize - 新生
+    },
+    ["EVOKER"] = {
+        ["nospec:2"] = 361227, -- Return - 生还
+        ["spec:2"] = 361178, -- Mass Return - 群体生还
+    },
+    ["MONK"] = {
+        ["nospec:2"] = 115178, -- Resuscitate - 轮回转世
+        ["spec:2"] = 212051, -- Reawaken - 死而复生
+    },
+    ["PALADIN"] = {
+        ["nospec:1"] = 7328, -- Redemption - 救赎
+        ["spec:1"] = 212056, -- Absolution - 宽恕
+    },
+    ["PRIEST"] = {
+        ["spec:3"] = 2006, -- Resurrection - 复活术
+        ["nospec:3"] = 212036, -- Mass Resurrection - 群体复活
+    },
+    ["SHAMAN"] = {
+        ["nospec:3"] = 2008, -- Ancestral Spirit - 先祖之魂
+        ["spec:3"] = 212048, -- Ancestral Vision - 先祖视界
+    },
 }
 
 do
-    for class, spell in pairs(normalResurrection) do
-        normalResurrection[class] = GetSpellInfo(spell)
+    for class, t in pairs(normalResurrection) do
+        for condition, spell in pairs(t) do
+            t[condition] = GetSpellInfo(spell)
+        end
     end
 end
 
