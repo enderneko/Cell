@@ -1,4 +1,12 @@
-[Full Changelog](https://github.com/enderneko/Cell/compare/r211-release...e2b743e3c200d2198f22daac5842f2fe4d1e27a7)
+[Full Changelog](https://github.com/enderneko/Cell/compare/r212-release...2253ffccfe2de14c156a736f1b27e570b9f23522)
 
-- Fix newly created indicator issue
-- Update texture of overShieldGlow and overAbsorbGlow
+- Implemented Spec Filter for Quick Assist
+- Implemented filter auto switch
+- Make alpha adjustable for Quick Assist icons
+- Increase optional size/offset
+- Update smart resurrection
+- Fix power bar
+- Fix utilities menu
+- Fix AttributeDriver
+- Fix icon duration text color
+- Fix previews

@@ -84,6 +84,15 @@ select(2, ...).L = setmetatable({
         <p>(Retail) Enable "Always Update Buffs/Debuffs" in General tab, if indicators do not update correctly.</p>
         <br/>
 
+        <h1>r213-release (Dec 26, 2023, 04:04 GMT+8)</h1>
+        <p>+ (Retail) Updated Quick Assist, new Spec Filter and Filter Auto Switch.</p>
+        <p>* (Retail) Updated Smart Resurrection, added support for mass resurrections.</p>
+        <p>* Increased maximum size for indicators.</p>
+        <p>* Fixed a power bar issue.</p>
+        <p>* Fixed utilities submenu.</p>
+        <p>* Fixed duration text color.</p>
+        <br/>
+
         <h1>r212-release (Dec 18, 2023, 19:54 GMT+8)</h1>
         <p>* Fixed a issue that newly created indicators did not show up when solo or in a party.</p>
         <p>* Updated overshield texture. Now it uses the color of shield texture.</p>
