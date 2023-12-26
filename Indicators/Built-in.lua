@@ -468,7 +468,7 @@ local function Dispels_SetSize(self, width, height)
     self.height = height
 
     self:_SetSize(width, height)
-    for i = 1, 4 do
+    for i = 1, 5 do
         self[i]:SetSize(width, height)
     end
 
@@ -493,7 +493,7 @@ local function Dispels_UpdateSize(self, iconsShown)
             height = self.height + (iconsShown - 1) * floor(self.height / 2)
         end
     else
-        for i = 1, 4 do
+        for i = 1, 5 do
             if self[i]:IsShown() then
                 if self.orientation == "horizontal"  then
                     width = self.width + (i - 1) * floor(self.width / 2)
@@ -509,38 +509,42 @@ local function Dispels_UpdateSize(self, iconsShown)
     self:_SetSize(width, height)
 end
 
+local dispelOrder = {"Magic", "Curse", "Disease", "Poison", "Bleed"}
 local function Dispels_SetDispels(self, dispelTypes)
     local r, g, b = 0, 0, 0
     local found
 
     self.highlight:Hide()
 
-    local i = 1
-    for dispelType, showHighlight in pairs(dispelTypes) do
-        -- highlight
-        if not found and self.highlightType ~= "none" and dispelType and showHighlight then
-            found = true
-            local r, g, b = I:GetDebuffTypeColor(dispelType)
-            if self.highlightType == "entire" then
-                self.highlight:SetVertexColor(r, g, b, 0.5)
-            elseif self.highlightType == "current" then
-                self.highlight:SetVertexColor(r, g, b, 1)
-            elseif self.highlightType == "gradient" or self.highlightType == "gradient-half" then
-                self.highlight:SetGradient("VERTICAL", CreateColor(r, g, b, 1), CreateColor(r, g, b, 0))
+    local i = 0
+    for _, dispelType in ipairs(dispelOrder) do
+        local showHighlight = dispelTypes[dispelType]
+        if type(showHighlight) == "boolean" then
+            -- highlight
+            if not found and self.highlightType ~= "none" and dispelType and showHighlight then
+                found = true
+                local r, g, b = I:GetDebuffTypeColor(dispelType)
+                if self.highlightType == "entire" then
+                    self.highlight:SetVertexColor(r, g, b, 0.5)
+                elseif self.highlightType == "current" then
+                    self.highlight:SetVertexColor(r, g, b, 1)
+                elseif self.highlightType == "gradient" or self.highlightType == "gradient-half" then
+                    self.highlight:SetGradient("VERTICAL", CreateColor(r, g, b, 1), CreateColor(r, g, b, 0))
+                end
+                self.highlight:Show()
             end
-            self.highlight:Show()
-        end
-        -- icons
-        if self.showIcons then
-            self[i]:SetDispel(dispelType)
-            i = i + 1
+            -- icons
+            if self.showIcons then
+                i = i + 1
+                self[i]:SetDispel(dispelType)
+            end
         end
     end
 
     self:UpdateSize(i)
 
     -- hide unused
-    for j = i, 5 do
+    for j = i+1, 5 do
         self[j]:Hide()
     end
 end
@@ -575,7 +579,7 @@ local function Dispels_SetOrientation(self, orientation)
         self.orientation = "vertical"
     end
     
-    for i = 1, 4 do
+    for i = 1, 5 do
         self[i]:ClearAllPoints()
         if i == 1 then
             self[i]:SetPoint(point)
