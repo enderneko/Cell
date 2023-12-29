@@ -174,7 +174,7 @@ Cell.defaults.layout = {
             ["indicatorName"] = "partyAssignmentIcon",
             ["type"] = "built-in",
             ["enabled"] = true,
-            ["position"] = {"TOPLEFT", "TOPLEFT", 0, 0},
+            ["position"] = {"TOPLEFT", "TOPLEFT", 1, -1},
             ["size"] = {11, 11},
         }, -- 6
         {
@@ -183,7 +183,7 @@ Cell.defaults.layout = {
             ["type"] = "built-in",
             ["enabled"] = true,
             ["hideInCombat"] = true,
-            ["position"] = {"TOPLEFT", "TOPLEFT", 0, -11},
+            ["position"] = {"TOPLEFT", "TOPLEFT", 1, -10},
             ["size"] = {11, 11},
         }, -- 7
         {
@@ -221,7 +221,7 @@ Cell.defaults.layout = {
             ["enabled"] = false,
             ["position"] = {"TOPLEFT", "TOPLEFT", 0, 0},
             ["frameLevel"] = 3,
-            ["size"] = {10, 10},
+            ["size"] = {11, 11},
         }, -- 11
         {
             ["name"] = "Aggro (bar)",
