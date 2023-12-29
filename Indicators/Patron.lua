@@ -169,6 +169,7 @@ local function Display(b)
     -- f:FadeIn()
     -- C_Timer.After(3, f.FadeOut)
 end
+-- CellPatronDisplay = Display
 
 -- local function StopRainbow(unit)
 --     local b = F:GetUnitButtonByUnit(unit)

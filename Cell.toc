@@ -35,7 +35,7 @@ Indicators\TargetCounter.lua
 Indicators\TargetedSpells.lua
 Indicators\Consumables.lua
 Indicators\Custom.lua
-Indicators\PatronIcon.lua
+Indicators\Patron.lua
 
 RaidFrames\MainFrame.lua
 

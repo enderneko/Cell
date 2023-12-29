@@ -8,7 +8,7 @@ Cell.frames.aboutTab = aboutTab
 aboutTab:SetAllPoints(Cell.frames.optionsFrame)
 aboutTab:Hide()
 
-local authorText, translatorsTextCN, translatorsTextKR, specialThanksText, patronsText
+local authorText, translatorsTextCN, translatorsTextKR, specialThanksText, patronsText1, patronsText2
 local UpdateFont
 
 -------------------------------------------------
@@ -125,11 +125,15 @@ end
 -------------------------------------------------
 -- patrons
 -------------------------------------------------
-local function GetPatrons()
+local function GetPatrons(t)
     local str = ""
-    local n = #Cell.patrons
+    local n = #t
     for i = 1, n do
-        str = str .. Cell.patrons[i][1]
+        local name = t[i][1]
+        name = name:gsub("%(.+%)", function(s)
+            return "|cff777777"..s.."|r"
+        end)
+        str = str .. name
         if i ~= n then
             str = str .. "\n"
         end
@@ -161,7 +165,16 @@ end
 
 local function CreateButton(w, h, tex)
     local patronsBtn = Cell:CreateButton(aboutTab, L["Patrons"], "accent", {w, h})
+    patronsBtn:SetToplevel(true)
     patronsBtn:SetPushedTextOffset(0, 0)
+
+    patronsBtn:SetScript("OnHide", function()
+        patronsBtn:SetBackdropColor(unpack(patronsBtn.color))
+    end)
+
+    patronsBtn:HookScript("OnEnter", function()
+        F:HideUtilityList()
+    end)
 
     Cell:StartRainbowText(patronsBtn:GetFontString())
 
@@ -204,28 +217,50 @@ local function CreatePatronsPane()
     bgTex:SetPoint("TOPLEFT", -5, 5)
     bgTex:SetPoint("BOTTOMRIGHT", 5, -5)
     bgTex:SetTexture("Interface\\Buttons\\WHITE8x8")
-    bgTex:SetGradient("HORIZONTAL", CreateColor(0.1, 0.1, 0.1, 1), CreateColor(0.1, 0.1, 0.1, 0.3))
+    bgTex:SetGradient("HORIZONTAL", CreateColor(0.1, 0.1, 0.1, 1), CreateColor(0.1, 0.1, 0.1, 0.7))
 
-    local patronsScroll = Cell:CreateScrollFrame(patronsPane, -27, 0)
-    patronsScroll:SetScrollStep(27)
+    local patronsFrame1 = CreateFrame("Frame", nil, patronsPane)
+    patronsFrame1:SetPoint("TOPLEFT", 0, -27)
+    patronsFrame1:SetPoint("BOTTOMLEFT")
+    patronsFrame1.scroll = Cell:CreateScrollFrame(patronsFrame1)
+    patronsFrame1.scroll:SetScrollStep(27)
 
-    patronsText = patronsScroll.content:CreateFontString(nil, "OVERLAY")
-    patronsText.font = UNIT_NAME_FONT_CHINESE
-    patronsText.size = 12
-    UpdateFont(patronsText)
+    patronsText1 = patronsFrame1.scroll.content:CreateFontString(nil, "OVERLAY")
+    patronsText1.font = UNIT_NAME_FONT_CHINESE
+    patronsText1.size = 13
+    UpdateFont(patronsText1)
 
-    patronsText:SetPoint("TOPLEFT")
-    patronsText:SetSpacing(5)
-    patronsText:SetJustifyH("LEFT")
-    patronsText:SetText(GetPatrons())
+    patronsText1:SetPoint("TOPLEFT")
+    patronsText1:SetSpacing(5)
+    patronsText1:SetJustifyH("LEFT")
+    patronsText1:SetText(GetPatrons(Cell.patrons1))
+
+    local patronsFrame2 = CreateFrame("Frame", nil, patronsPane)
+    patronsFrame2:SetPoint("TOPLEFT", patronsFrame1, "TOPRIGHT", 10, 0)
+    patronsFrame2:SetPoint("BOTTOMLEFT", patronsFrame1, "BOTTOMRIGHT")
+    patronsFrame2.scroll = Cell:CreateScrollFrame(patronsFrame2)
+    patronsFrame2.scroll:SetScrollStep(27)
+
+    patronsText2 = patronsFrame2.scroll.content:CreateFontString(nil, "OVERLAY")
+    patronsText2.font = UNIT_NAME_FONT_CHINESE
+    patronsText2.size = 13
+    UpdateFont(patronsText2)
+
+    patronsText2:SetPoint("TOPLEFT")
+    patronsText2:SetSpacing(5)
+    patronsText2:SetJustifyH("LEFT")
+    patronsText2:SetText(GetPatrons(Cell.patrons2))
 
     -- update width
     local elapsedTime = 0
     local function updateFunc(self, elapsed)
         elapsedTime = elapsedTime + elapsed
         
-        patronsPane:SetWidth(patronsText:GetWidth() + 10)
-        patronsScroll:SetContentHeight(patronsText:GetHeight() + 5)
+        patronsFrame1:SetWidth(patronsText1:GetWidth() + 10)
+        patronsFrame1.scroll:SetContentHeight(patronsText1:GetHeight() + 5)
+        patronsFrame2:SetWidth(patronsText2:GetWidth() + 10)
+        patronsFrame2.scroll:SetContentHeight(patronsText2:GetHeight() + 5)
+        patronsPane:SetWidth(patronsFrame1:GetWidth() + patronsFrame2:GetWidth() + 10)
         
         if elapsedTime >= 0.5 then
             patronsPane:SetScript("OnUpdate", nil)
@@ -237,7 +272,7 @@ local function CreatePatronsPane()
     end)
 
     -- button
-    local patronsBtn1 = CreateButton(17, 100, [[Interface\AddOns\Cell\Media\Icons\right]])
+    local patronsBtn1 = CreateButton(17, 157, [[Interface\AddOns\Cell\Media\Icons\right]])
     patronsBtn1:SetPoint("TOPLEFT", aboutTab, "TOPRIGHT", 1, -5)
     
     local label = patronsBtn1:GetFontString()
@@ -255,8 +290,10 @@ local function CreatePatronsPane()
     --     Cell:StartRainbowText(label)
     -- end
     
-    local patronsBtn2 = CreateButton(100, 17, [[Interface\AddOns\Cell\Media\Icons\left]])
-    patronsBtn2:SetPoint("TOPLEFT", aboutTab, "TOPRIGHT", 6, -5)
+    local patronsBtn2 = CreateButton(17, 17, [[Interface\AddOns\Cell\Media\Icons\left]])
+    -- patronsBtn2:SetPoint("TOPLEFT", aboutTab, "TOPRIGHT", 6, -5)
+    patronsBtn2:SetPoint("TOPLEFT", patronsPane)
+    patronsBtn2:SetPoint("TOPRIGHT", patronsPane, P:Scale(-20), 0)
     patronsBtn2:Hide()
 
     patronsBtn1:SetScript("OnClick", function()
@@ -426,5 +463,6 @@ function Cell:UpdateAboutFont()
     UpdateFont(translatorsTextCN)
     UpdateFont(translatorsTextKR)
     UpdateFont(specialThanksText)
-    UpdateFont(patronsText)
+    UpdateFont(patronsText1)
+    UpdateFont(patronsText2)
 end
