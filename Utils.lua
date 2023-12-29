@@ -1227,9 +1227,9 @@ end
 
 function F:UnitInGroup(unit, ignorePets)
     if ignorePets then
-        return UnitInParty(unit) or UnitInRaid(unit)
+        return UnitIsUnit(unit, "player") or UnitInParty(unit) or UnitInRaid(unit)
     else
-        return UnitPlayerOrPetInParty(unit) or UnitPlayerOrPetInRaid(unit)
+        return UnitIsUnit(unit, "player") or UnitIsUnit(unit, "pet") or UnitPlayerOrPetInParty(unit) or UnitPlayerOrPetInRaid(unit)
     end
 end
 

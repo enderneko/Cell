@@ -396,6 +396,7 @@ end
 function U:CreateDispelRequestText(parent)
     local drText = CreateFrame("Frame", parent:GetName().."DispelRequestText", parent.widget.drGlowFrame)
     parent.widget.drText = drText
+    drText:SetIgnoreParentAlpha(true)
     drText:Hide()
 
     local tex = drText:CreateTexture(nil, "ARTWORK")

@@ -51,7 +51,7 @@ local function ShowSpellOptions(index)
         srMacroEB:SetScript("OnTextChanged", function(self, userChanged)
             if userChanged then
                 CellDB["spellRequest"]["spells"][index]["keywords"] = strtrim(self:GetText())
-                Cell:Fire("UpdateRequests", "spellRequest")
+                Cell:Fire("UpdateRequests", "spellRequest_spells")
             end
         end)
     end
@@ -113,7 +113,8 @@ end
 local function UpdateSRWidgets()
     Cell:SetEnabled(CellDB["spellRequest"]["enabled"], waTips, srExistsCB, srKnownOnlyCB, srResponseDD, srResponseText, srTimeoutDD, srTimeoutText, srSpellsDD, srSpellsText, srAddBtn, srDeleteBtn)
     Cell:SetEnabled(CellDB["spellRequest"]["enabled"] and CellDB["spellRequest"]["knownSpellsOnly"], srFreeCDOnlyCB)
-    Cell:SetEnabled(CellDB["spellRequest"]["enabled"] and CellDB["spellRequest"]["knownSpellsOnly"] and CellDB["spellRequest"]["responseType"] ~= "all", srReplyCDCB, srReplyCastEB)
+    Cell:SetEnabled(CellDB["spellRequest"]["enabled"] and CellDB["spellRequest"]["knownSpellsOnly"] and CellDB["spellRequest"]["responseType"] ~= "all", srReplyCDCB)
+    Cell:SetEnabled(CellDB["spellRequest"]["enabled"] and CellDB["spellRequest"]["knownSpellsOnly"], srReplyCastEB)
 end
 
 local function CreateSRPane()
@@ -136,11 +137,11 @@ local function CreateSRPane()
         CellTooltip:SetPoint("TOPLEFT", waTips, "TOPRIGHT", 6, 0)
         CellTooltip:AddLine("WeakAuras Custom Events")
         CellTooltip:AddLine("|cffffffff"..[[eventName: "CELL_NOTIFY"]])
-        CellTooltip:AddLine("|cffffffff".."arg1:\n    \"SPELL_REQ_RECEIVED\"\n    \"SPELL_REQ_CAST\"\n    \"SPELL_REQ_APPLIED\"")
+        CellTooltip:AddLine("|cffffffff".."arg1:\n    \"SPELL_REQ_RECEIVED\"\n    \"SPELL_REQ_APPLIED\"")
         CellTooltip:AddLine("|cffffffff".."arg2: unitId")
-        CellTooltip:AddLine("|cffffffff".."arg3: spellId")
-        CellTooltip:AddLine("|cffffffff".."arg4: buffId")
-        CellTooltip:AddLine("|cffffffff".."arg5: timeout")
+        CellTooltip:AddLine("|cffffffff".."arg3: buffId")
+        CellTooltip:AddLine("|cffffffff".."arg4: timeout")
+        CellTooltip:AddLine("|cffffffff".."arg5: caster")
         CellTooltip:Show()
     end)
     waTips:HookScript("OnLeave", function()
@@ -236,6 +237,7 @@ local function CreateSRPane()
                 HideSpellOptions()
                 CellDB["spellRequest"]["responseType"] = "all"
                 Cell:Fire("UpdateRequests", "spellRequest")
+                UpdateSRWidgets()
             end
         },
         {
@@ -245,6 +247,7 @@ local function CreateSRPane()
                 HideSpellOptions()
                 CellDB["spellRequest"]["responseType"] = "me"
                 Cell:Fire("UpdateRequests", "spellRequest")
+                UpdateSRWidgets()
             end
         },
         {
@@ -254,6 +257,7 @@ local function CreateSRPane()
                 HideSpellOptions()
                 CellDB["spellRequest"]["responseType"] = "whisper"
                 Cell:Fire("UpdateRequests", "spellRequest")
+                UpdateSRWidgets()
             end
         },
     })
@@ -664,6 +668,7 @@ end
 function U:CreateSpellRequestIcon(parent)
     local srIcon = CreateFrame("Frame", parent:GetName().."SpellRequestIcon", parent.widget.srGlowFrame)
     parent.widget.srIcon = srIcon
+    srIcon:SetIgnoreParentAlpha(true)
     srIcon:Hide()
 
     -- srIcon:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8x8"})
