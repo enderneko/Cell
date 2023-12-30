@@ -29,6 +29,7 @@ local patrons1 = {
     {"Epriestin-TarrenMill (EU)", "epriestin"}, -- Sharelia (ko-fi)
     {"Nascente-TarrenMill (EU)", "nascente"}, -- Nascente-Tarren Mill (Ko-fi)
     {"月刃丶-世界之樹 (TW)", "yuerendian"}, -- Smile (爱发电)
+    {"Longmer-Illidan (US)", "longmer"}, -- 爱发电用户_4116d (爱发电)
 }
 
 local patrons2 = {
