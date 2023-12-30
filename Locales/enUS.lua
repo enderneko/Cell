@@ -84,6 +84,12 @@ select(2, ...).L = setmetatable({
         <p>(Retail) Enable "Always Update Buffs/Debuffs" in General tab, if indicators do not update correctly.</p>
         <br/>
 
+        <h1>r214-release (Dec 30, 2023, 20:35 GMT+8)</h1>
+        <p>* Fixed Spell Request, updated CELL_NOTIFY payloads.</p>
+        <p>* Updated the priority of dispel types: Magic &gt; Curse &gt; Disease &gt; Poison &gt; Bleed.</p>
+        <p>* Updated zhTW.</p>
+        <br/>
+       
         <h1>r213-release (Dec 26, 2023, 04:04 GMT+8)</h1>
         <p>+ (Retail) Updated Quick Assist, new Spec Filter and Filter Auto Switch.</p>
         <p>* (Retail) Updated Smart Resurrection, added support for mass resurrections.</p>
