@@ -258,8 +258,7 @@ L["Hide Blizzard Raid"] = "隱藏遊戲內建團隊框架"
 L["hide icon animation"] = "隱藏圖示動畫"
 L["Hide in Combat"] = "戰鬥中隱藏"
 L["Hide Placeholder Frames"] = "隱藏佔位框"
---[[Translation missing --]]
---[[ L["Hide Self"] = ""--]] 
+L["Hide Self"] = "隱藏自己"
 L["Hide Self (Party Only)"] = "隱藏自己 (僅限小隊)"
 L["hideDamager"] = "隱藏傷害輸出"
 L["hideIfEmptyOrFull"] = "死亡或滿血時隱藏"
@@ -532,8 +531,7 @@ L["Solo/Party"] = "單人/5人隊伍"
 L["Sort By Role (Party Only)"] = "依角色職責排序 (僅限小隊)"
 L["Spacing"] = "間距"
 L["Spec"] = "專精"
---[[Translation missing --]]
---[[ L["Spec Filter"] = ""--]] 
+L["Spec Filter"] = "依專精"
 L["Special Thanks"] = "特別感謝"
 L["SPELL"] = "法術"
 L["Spell"] = "法術"
