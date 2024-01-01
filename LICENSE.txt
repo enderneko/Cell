@@ -1,4 +1,4 @@
-Copyright © 2022 enderneko <enderneko-dev@outlook.com>.
+Copyright © 2024 enderneko <enderneko-dev@outlook.com>.
 
 The contents of this addon, excluding third-party resources, are copyrighted to its authors with all rights reserved.
 
