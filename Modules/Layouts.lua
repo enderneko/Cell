@@ -132,11 +132,12 @@ local function CreateLayoutPreview()
     layoutPreviewAnchor:RegisterForDrag("LeftButton")
     layoutPreviewAnchor:SetClampedToScreen(true)
     Cell:StylizeFrame(layoutPreviewAnchor, {0, 1, 0, 0.4})
-    layoutPreviewAnchor:Hide()
+
     layoutPreviewAnchor:SetScript("OnDragStart", function()
         layoutPreviewAnchor:StartMoving()
         layoutPreviewAnchor:SetUserPlaced(false)
     end)
+    
     layoutPreviewAnchor:SetScript("OnDragStop", function()
         layoutPreviewAnchor:StopMovingOrSizing()
         P:SavePosition(layoutPreviewAnchor, selectedLayoutTable["main"]["position"])
@@ -249,8 +250,6 @@ local function UpdateLayoutPreview()
     -- update layoutPreviewAnchor point
     if selectedLayout == Cell.vars.currentLayout then
         layoutPreviewAnchor:SetAllPoints(Cell.frames.anchorFrame)
-        layoutPreviewAnchor:Hide()
-        layoutPreviewName:Hide()
     else
         if #selectedLayoutTable["main"]["position"] == 2 then
             P:LoadPosition(layoutPreviewAnchor, selectedLayoutTable["main"]["position"])
@@ -258,10 +257,8 @@ local function UpdateLayoutPreview()
             layoutPreviewAnchor:ClearAllPoints()
             layoutPreviewAnchor:SetPoint("TOPLEFT", UIParent, "CENTER")
         end
-        layoutPreviewAnchor:Show()
-        layoutPreviewName:SetText(L["Layout"]..": "..selectedLayout)
-        layoutPreviewName:Show()
     end
+    layoutPreviewName:SetText(L["Layout"]..": "..selectedLayout)
 
     -- re-arrange
     local shownGroups = {}
@@ -2658,7 +2655,7 @@ LoadPageDB = function(page)
 end
 
 LoadLayoutDB = function(layout, dontShowPreview)
-    F:Debug("LoadLayoutDB: "..layout)
+    F:Debug("LoadLayoutDB:", layout, dontShowPreview)
 
     selectedLayout = layout
     selectedLayoutTable = CellDB["layouts"][layout]
@@ -2759,7 +2756,7 @@ local function UpdateLayoutAutoSwitch(layout, which)
 
     if layoutsTab:IsVisible() then
         -- NOTE: group type changed / spec changed
-        LoadLayoutDB(Cell.vars.currentLayout, true)
+        LoadLayoutDB(Cell.vars.currentLayout)
         LoadLayoutAutoSwitchDB()
         F:HidePowerFilters()
     end
