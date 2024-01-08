@@ -1183,6 +1183,7 @@ local startTimeCache = {}
 function I:CreateStatusText(parent)
     local statusText = CreateFrame("Frame", parent:GetName().."StatusText", parent.widget.overlayFrame)
     parent.indicators.statusText = statusText
+    statusText:SetIgnoreParentAlpha(true)
     statusText:Hide()
 
     statusText.bg = statusText:CreateTexture(nil, "ARTWORK")
