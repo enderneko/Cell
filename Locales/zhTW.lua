@@ -260,6 +260,12 @@ L["Hide in Combat"] = "戰鬥中隱藏"
 L["Hide Placeholder Frames"] = "隱藏佔位框"
 L["Hide Self"] = "隱藏自己"
 L["Hide Self (Party Only)"] = "隱藏自己 (僅限小隊)"
+--[[Translation missing --]]
+-- L["Healer"] = "Healer"
+--[[Translation missing --]]
+-- L["Tank"] = "Tank"
+--[[Translation missing --]]
+-- L["Damager"] = "DPS"
 L["hideDamager"] = "隱藏傷害輸出"
 L["hideIfEmptyOrFull"] = "死亡或滿血時隱藏"
 L["hideInCombat"] = "戰鬥中隱藏"

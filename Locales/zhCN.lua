@@ -534,6 +534,12 @@ L["showTooltip"] = "显示鼠标提示"
 L["This will make these icons not click-through-able"] = "将会使这些图标无法点击穿透"
 L["Tooltips need to be enabled in General tab"] = "需要先启用常规页面中的鼠标提示功能"
 L["Only one threshold is displayed at a time"] = "同一时间只显示一个阈值"
+--[[Translation missing --]]
+-- L["Healer"] = "Healer"
+--[[Translation missing --]]
+-- L["Tank"] = "Tank"
+--[[Translation missing --]]
+-- L["Damager"] = "DPS"
 L["hideDamager"] = "隐藏伤害输出"
 L["hideInCombat"] = "战斗中隐藏"
 L["fadeOut"] = "随时间淡出"

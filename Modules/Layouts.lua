@@ -2293,52 +2293,52 @@ local function CreateLayoutSetupPane()
     sortByRoleDropdown:SetPoint("TOPLEFT", sortByRoleCB, "BOTTOMRIGHT", 5, -5)
     sortByRoleDropdown:SetItems({
         {
-            ["text"] = L["Tank, DPS, Healer"],
+            ["text"] = L["Tank"] .. ", " .. L["Damager"] .. ", " .. L["Healer"],
             ["value"] = "TANK,DAMAGER,HEALER,NONE",
             ["onClick"] = function()
                 selectedLayoutTable["main"]["sortByRoleOrder"] = "TANK,DAMAGER,HEALER,NONE"
                 Cell:Fire("UpdateLayout", selectedLayout, "sort")
-                end,
+            end,
         },
         {
-            ["text"] = L["Tank, Healer, DPS"],
+            ["text"] = L["Tank"] .. ", " .. L["Healer"] .. ", " .. L["Damager"],
             ["value"] = "TANK,HEALER,DAMAGER,NONE",
             ["onClick"] = function()
                 selectedLayoutTable["main"]["sortByRoleOrder"] = "TANK,HEALER,DAMAGER,NONE"
                 Cell:Fire("UpdateLayout", selectedLayout, "sort")
-                end,
+            end,
         },
         {
-            ["text"] = L["Healer, DPS, Tank"],
+            ["text"] = L["Healer"] .. ", " .. L["Damager"] .. ", " .. L["Tank"],
             ["value"] = "HEALER,DAMAGER,TANK,NONE",
             ["onClick"] = function()
                 selectedLayoutTable["main"]["sortByRoleOrder"] = "HEALER,DAMAGER,TANK,NONE"
                 Cell:Fire("UpdateLayout", selectedLayout, "sort")
-                end,
+            end,
         },
         {
-            ["text"] = L["Healer, Tank, DPS"],
+            ["text"] = L["Healer"] .. ", " .. L["Tank"] .. ", " .. L["Damager"],
             ["value"] = "HEALER,TANK,DAMAGER,NONE",
             ["onClick"] = function()
                 selectedLayoutTable["main"]["sortByRoleOrder"] = "HEALER,TANK,DAMAGER,NONE"
                 Cell:Fire("UpdateLayout", selectedLayout, "sort")
-                end,
+            end,
         },
         {
-            ["text"] = L["DPS, Tank, Healer"],
+            ["text"] = L["Damager"] .. ", " .. L["Tank"] .. ", " .. L["Healer"],
             ["value"] = "DAMAGER,TANK,HEALER,NONE",
             ["onClick"] = function()
                 selectedLayoutTable["main"]["sortByRoleOrder"] = "DAMAGER,TANK,HEALER,NONE"
                 Cell:Fire("UpdateLayout", selectedLayout, "sort")
-                end,
+            end,
         },
         {
-            ["text"] = L["DPS, Healer, Tank"],
+            ["text"] = L["Damager"] .. ", " .. L["Healer"] .. ", " .. L["Tank"],
             ["value"] = "DAMAGER,HEALER,TANK,NONE",
             ["onClick"] = function()
                 selectedLayoutTable["main"]["sortByRoleOrder"] = "DAMAGER,HEALER,TANK,NONE"
                 Cell:Fire("UpdateLayout", selectedLayout, "sort")
-                end,
+            end,
         }
     })
 
