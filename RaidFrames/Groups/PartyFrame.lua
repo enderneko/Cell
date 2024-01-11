@@ -229,9 +229,9 @@ local function PartyFrame_UpdateLayout(layout, which)
     if not which or which == "sort" then
         if layout["main"]["sortByRole"] then
             header:SetAttribute("sortMethod", "NAME")
-            header:SetAttribute("groupingOrder", "TANK,HEALER,DAMAGER,NONE")
+            header:SetAttribute("groupingOrder", layout["main"]["sortByRoleOrder"])
             header:SetAttribute("groupBy", "ASSIGNEDROLE")
-        else
+        else 
             header:SetAttribute("sortMethod", "INDEX")
             header:SetAttribute("groupingOrder", "")
             header:SetAttribute("groupBy", nil)

@@ -1228,7 +1228,7 @@ end
 -------------------------------------------------
 local autoSwitchFrame
 local typeSwitch, currentProfileBox
-local layoutDropdown, partyDropdown, raidOutdoorDropdown, raidInstanceDropdown, raidMythicDropdown, arenaDropdown, bg15Dropdown, bg40Dropdown
+local layoutDropdown, sortByRoleDropdown, partyDropdown, raidOutdoorDropdown, raidInstanceDropdown, raidMythicDropdown, arenaDropdown, bg15Dropdown, bg40Dropdown
 local raid10Dropdown, raid25Dropdown -- wrath
 local bgDropdown -- vanilla
 local LoadLayoutDropdown, LoadAutoSwitchDropdowns
@@ -2031,7 +2031,7 @@ local rcSlider, groupSpacingSlider
 local orientationDropdown, anchorDropdown, spacingXSlider, spacingYSlider
 
 local sameSizeAsMainCB, sameArrangementAsMainCB
-local sortByRoleCB, hideSelfCB
+local sortByRoleCB, sortByRoleDropdown, hideSelfCB
 local showNpcCB, separateNpcCB, spotlightCB, hidePlaceholderCB, spotlightOrientationDropdown, partyPetsCB, raidPetsCB
 
 local function UpdateSize()
@@ -2283,16 +2283,71 @@ local function CreateLayoutSetupPane()
     -- sort by role
     sortByRoleCB = Cell:CreateCheckButton(pages.main, L["Sort By Role (Party Only)"], function(checked, self)
         selectedLayoutTable["main"]["sortByRole"] = checked
+        sortByRoleDropdown:SetEnabled(checked)
         Cell:Fire("UpdateLayout", selectedLayout, "sort")
     end)
     sortByRoleCB:SetPoint("TOPLEFT", 5, -27)
+    Cell:RegisterForCloseDropdown(sortByRoleCB)
+
+    sortByRoleDropdown = Cell:CreateDropdown(pages.main, 193)
+    sortByRoleDropdown:SetPoint("TOPLEFT", sortByRoleCB, "BOTTOMRIGHT", 5, -5)
+    sortByRoleDropdown:SetItems({
+        {
+            ["text"] = L["Tank, DPS, Healer"],
+            ["value"] = "TANK,DAMAGER,HEALER,NONE",
+            ["onClick"] = function()
+                selectedLayoutTable["main"]["sortByRoleOrder"] = "TANK,DAMAGER,HEALER,NONE"
+                Cell:Fire("UpdateLayout", selectedLayout, "sort")
+                end,
+        },
+        {
+            ["text"] = L["Tank, Healer, DPS"],
+            ["value"] = "TANK,HEALER,DAMAGER,NONE",
+            ["onClick"] = function()
+                selectedLayoutTable["main"]["sortByRoleOrder"] = "TANK,HEALER,DAMAGER,NONE"
+                Cell:Fire("UpdateLayout", selectedLayout, "sort")
+                end,
+        },
+        {
+            ["text"] = L["Healer, DPS, Tank"],
+            ["value"] = "HEALER,DAMAGER,TANK,NONE",
+            ["onClick"] = function()
+                selectedLayoutTable["main"]["sortByRoleOrder"] = "HEALER,DAMAGER,TANK,NONE"
+                Cell:Fire("UpdateLayout", selectedLayout, "sort")
+                end,
+        },
+        {
+            ["text"] = L["Healer, Tank, DPS"],
+            ["value"] = "HEALER,TANK,DAMAGER,NONE",
+            ["onClick"] = function()
+                selectedLayoutTable["main"]["sortByRoleOrder"] = "HEALER,TANK,DAMAGER,NONE"
+                Cell:Fire("UpdateLayout", selectedLayout, "sort")
+                end,
+        },
+        {
+            ["text"] = L["DPS, Tank, Healer"],
+            ["value"] = "DAMAGER,TANK,HEALER,NONE",
+            ["onClick"] = function()
+                selectedLayoutTable["main"]["sortByRoleOrder"] = "DAMAGER,TANK,HEALER,NONE"
+                Cell:Fire("UpdateLayout", selectedLayout, "sort")
+                end,
+        },
+        {
+            ["text"] = L["DPS, Healer, Tank"],
+            ["value"] = "DAMAGER,HEALER,TANK,NONE",
+            ["onClick"] = function()
+                selectedLayoutTable["main"]["sortByRoleOrder"] = "DAMAGER,HEALER,TANK,NONE"
+                Cell:Fire("UpdateLayout", selectedLayout, "sort")
+                end,
+        }
+    })
 
     -- hide self
     hideSelfCB = Cell:CreateCheckButton(pages.main, L["Hide Self (Party Only)"], function(checked, self)
         selectedLayoutTable["main"]["hideSelf"] = checked
         Cell:Fire("UpdateLayout", selectedLayout, "hideSelf")
     end)
-    hideSelfCB:SetPoint("TOPLEFT", sortByRoleCB, "BOTTOMLEFT", 0, -8)
+    hideSelfCB:SetPoint("RIGHT", sortByRoleCB, "LEFT", 220, 0)
 
     -- rows/columns
     rcSlider = Cell:CreateSlider("", pages.main, 1, 8, 117, 1, function(value)
@@ -2491,7 +2546,7 @@ local function CreateLayoutSetupPane()
         if tab == "main" then
             sameSizeAsMainCB:Hide()
             sameArrangementAsMainCB:Hide()
-            widthSlider:SetPoint("TOPLEFT", hideSelfCB, 0, -50)
+            widthSlider:SetPoint("TOPLEFT", sortByRoleDropdown, -20, -50)
         else
             sameSizeAsMainCB:Show()
             sameArrangementAsMainCB:Show()
@@ -2661,6 +2716,9 @@ LoadLayoutDB = function(layout, dontShowPreview)
     selectedLayoutTable = CellDB["layouts"][layout]
 
     layoutDropdown:SetSelectedValue(selectedLayout)
+
+    sortByRoleDropdown:SetEnabled(selectedLayoutTable["main"]["sortByRole"])
+    sortByRoleDropdown:SetSelectedValue(selectedLayoutTable["main"]["sortByRoleOrder"])
 
     if selectedLayoutTable["main"]["orientation"] == "vertical" then
         rcSlider:SetLabel(L["Group Columns"])
