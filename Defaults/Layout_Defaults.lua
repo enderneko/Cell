@@ -38,6 +38,7 @@ Cell.defaults.layout = {
     -- ["syncWith"] = "layoutName",
     ["main"] = {
         ["sortByRole"] = false,
+        ["sortByRoleOrder"] = "TANK,HEALER,DAMAGER,NONE",
         ["hideSelf"] = false,
         ["size"] = {66, 46},
         ["position"] = {},
