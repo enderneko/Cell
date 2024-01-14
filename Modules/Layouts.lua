@@ -2031,7 +2031,7 @@ local rcSlider, groupSpacingSlider
 local orientationDropdown, anchorDropdown, spacingXSlider, spacingYSlider
 
 local sameSizeAsMainCB, sameArrangementAsMainCB
-local sortByRoleCB, hideSelfCB
+local sortByRoleCB, roleOrderWidget, hideSelfCB
 local showNpcCB, separateNpcCB, spotlightCB, hidePlaceholderCB, spotlightOrientationDropdown, partyPetsCB, raidPetsCB
 
 local function UpdateSize()
@@ -2083,6 +2083,61 @@ local function UpdateArrangement()
     elseif selectedPage == "spotlight" then
         UpdateSpotlightPreview()
     end
+end
+
+-- TODO: move to Widgets.lua
+local function CreateRoleOrderWidget(parent)
+    local f = CreateFrame("Frame", nil, parent)
+    P:Size(f, 66, 20)
+
+    local buttons = {}
+    for _, role in pairs({"TANK", "HEALER", "DAMAGER"}) do
+        buttons[role] = Cell:CreateButton(f, nil, "accent-hover", {20, 20})
+        buttons[role]:SetTexture("Interface\\AddOns\\Cell\\Media\\Roles\\"..role.."32", {16, 16}, {"CENTER", 0, 0}, false, true)
+        buttons[role]._role = role
+        
+        buttons[role]:SetMovable(true)
+        buttons[role]:RegisterForDrag("LeftButton")
+        
+        buttons[role]:SetScript("OnDragStart", function(self)
+            self:SetFrameStrata("TOOLTIP")
+            self:StartMoving()
+            self:SetUserPlaced(false)
+        end)
+        
+        buttons[role]:SetScript("OnDragStop", function(self)
+            self:StopMovingOrSizing()
+            self:SetFrameStrata("LOW")
+            -- self:Hide() --! Hide() will cause OnDragStop trigger TWICE!!!
+            C_Timer.After(0.05, function()
+                local b = GetMouseFocus()
+                if b and b._role then
+                    local roleToIndex = F:ConvertTable(selectedLayoutTable["main"]["roleOrder"])
+                    -- print(self._role, "->", b._role)
+                    
+                    local oldIndex = roleToIndex[self._role]
+                    tremove(selectedLayoutTable["main"]["roleOrder"], oldIndex)
+
+                    local newIndex = roleToIndex[b._role]
+                    tinsert(selectedLayoutTable["main"]["roleOrder"], newIndex, self._role)
+
+                    Cell:Fire("UpdateLayout", selectedLayout, "sort")
+                end
+                f:Load(selectedLayoutTable["main"]["roleOrder"])
+            end)
+        end)
+    end
+
+    function f:Load(t)
+        for i, role in pairs(t) do
+            buttons[role]:SetFrameStrata("DIALOG")
+            buttons[role]:Show()
+            buttons[role]:ClearAllPoints()
+            buttons[role]:SetPoint("TOPLEFT", (i-1)*(P:Scale(20)+P:Scale(3)), 0)
+        end
+    end
+
+    return f
 end
 
 local function CreateLayoutSetupPane()
@@ -2283,9 +2338,19 @@ local function CreateLayoutSetupPane()
     -- sort by role
     sortByRoleCB = Cell:CreateCheckButton(pages.main, L["Sort By Role (Party Only)"], function(checked, self)
         selectedLayoutTable["main"]["sortByRole"] = checked
+        if checked then
+            roleOrderWidget:Show()
+        else
+            roleOrderWidget:Hide()
+        end
         Cell:Fire("UpdateLayout", selectedLayout, "sort")
     end)
     sortByRoleCB:SetPoint("TOPLEFT", 5, -27)
+    Cell:RegisterForCloseDropdown(sortByRoleCB)
+
+    -- role order
+    roleOrderWidget = CreateRoleOrderWidget(pages.main)
+    roleOrderWidget:SetPoint("TOPLEFT", sortByRoleCB, sortByRoleCB.label:GetWidth()+25, 3)
 
     -- hide self
     hideSelfCB = Cell:CreateCheckButton(pages.main, L["Hide Self (Party Only)"], function(checked, self)
@@ -2688,6 +2753,12 @@ LoadLayoutDB = function(layout, dontShowPreview)
     -- pages
     LoadPageDB(selectedPage)
     sortByRoleCB:SetChecked(selectedLayoutTable["main"]["sortByRole"])
+    if selectedLayoutTable["main"]["sortByRole"] then
+        roleOrderWidget:Show()
+    else
+        roleOrderWidget:Hide()
+    end
+    roleOrderWidget:Load(selectedLayoutTable["main"]["roleOrder"])
     hideSelfCB:SetChecked(selectedLayoutTable["main"]["hideSelf"])
     partyPetsCB:SetChecked(selectedLayoutTable["pet"]["partyEnabled"])
     raidPetsCB:SetChecked(selectedLayoutTable["pet"]["raidEnabled"])

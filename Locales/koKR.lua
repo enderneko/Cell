@@ -262,7 +262,7 @@ L["Hide Blizzard Frames"] = "블리자드 창 숨기기"
 L["Hide Blizzard Party"] = "블리자드 파티 숨기기"
 L["Hide Blizzard Raid"] = "블리자드 공격대 숨기기"
 --[[Translation missing --]]
---[[ L["hideDamager"] = "Hide Damager"--]] 
+-- [[ L["hideDamager"] = "Hide Damager"--]] 
 L["hideFull"] = "전체 숨김"
 L["HIGH CPU USAGE"] = "높은 CPU 사용량"
 L["Highlight Size"] = "강조 크기"
