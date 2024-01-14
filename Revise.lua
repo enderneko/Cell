@@ -2534,6 +2534,10 @@ function F:Revise()
                 layout["main"]["roleOrder"] = {"TANK", "HEALER", "DAMAGER"}
             end
         end
+
+        if not CellDB["general"]["alwaysUpdateDebuffs"] then
+            CellDB["general"]["alwaysUpdateDebuffs"] = true
+        end
     end
 
     -- ----------------------------------------------------------------------- --
