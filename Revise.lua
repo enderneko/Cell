@@ -2527,6 +2527,15 @@ function F:Revise()
         end
     end
 
+    -- r215-release
+    if CellDB["revise"] and dbRevision < 215 then
+        for _, layout in pairs(CellDB["layouts"]) do
+            if not layout["main"]["roleOrder"] then
+                layout["main"]["roleOrder"] = {"TANK", "HEALER", "DAMAGER"}
+            end
+        end
+    end
+
     -- ----------------------------------------------------------------------- --
     --            update from old versions, validate all indicators            --
     -- ----------------------------------------------------------------------- --

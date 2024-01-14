@@ -1228,7 +1228,7 @@ end
 -------------------------------------------------
 local autoSwitchFrame
 local typeSwitch, currentProfileBox
-local layoutDropdown, sortByRoleDropdown, partyDropdown, raidOutdoorDropdown, raidInstanceDropdown, raidMythicDropdown, arenaDropdown, bg15Dropdown, bg40Dropdown
+local layoutDropdown, partyDropdown, raidOutdoorDropdown, raidInstanceDropdown, raidMythicDropdown, arenaDropdown, bg15Dropdown, bg40Dropdown
 local raid10Dropdown, raid25Dropdown -- wrath
 local bgDropdown -- vanilla
 local LoadLayoutDropdown, LoadAutoSwitchDropdowns
@@ -2031,7 +2031,7 @@ local rcSlider, groupSpacingSlider
 local orientationDropdown, anchorDropdown, spacingXSlider, spacingYSlider
 
 local sameSizeAsMainCB, sameArrangementAsMainCB
-local sortByRoleCB, sortByRoleDropdown, hideSelfCB
+local sortByRoleCB, roleOrderWidget, hideSelfCB
 local showNpcCB, separateNpcCB, spotlightCB, hidePlaceholderCB, spotlightOrientationDropdown, partyPetsCB, raidPetsCB
 
 local function UpdateSize()
@@ -2083,6 +2083,61 @@ local function UpdateArrangement()
     elseif selectedPage == "spotlight" then
         UpdateSpotlightPreview()
     end
+end
+
+-- TODO: move to Widgets.lua
+local function CreateRoleOrderWidget(parent)
+    local f = CreateFrame("Frame", nil, parent)
+    P:Size(f, 66, 20)
+
+    local buttons = {}
+    for _, role in pairs({"TANK", "HEALER", "DAMAGER"}) do
+        buttons[role] = Cell:CreateButton(f, nil, "accent-hover", {20, 20})
+        buttons[role]:SetTexture("Interface\\AddOns\\Cell\\Media\\Roles\\"..role.."32", {16, 16}, {"CENTER", 0, 0}, false, true)
+        buttons[role]._role = role
+        
+        buttons[role]:SetMovable(true)
+        buttons[role]:RegisterForDrag("LeftButton")
+        
+        buttons[role]:SetScript("OnDragStart", function(self)
+            self:SetFrameStrata("TOOLTIP")
+            self:StartMoving()
+            self:SetUserPlaced(false)
+        end)
+        
+        buttons[role]:SetScript("OnDragStop", function(self)
+            self:StopMovingOrSizing()
+            self:SetFrameStrata("LOW")
+            -- self:Hide() --! Hide() will cause OnDragStop trigger TWICE!!!
+            C_Timer.After(0.05, function()
+                local b = GetMouseFocus()
+                if b and b._role then
+                    local roleToIndex = F:ConvertTable(selectedLayoutTable["main"]["roleOrder"])
+                    -- print(self._role, "->", b._role)
+                    
+                    local oldIndex = roleToIndex[self._role]
+                    tremove(selectedLayoutTable["main"]["roleOrder"], oldIndex)
+
+                    local newIndex = roleToIndex[b._role]
+                    tinsert(selectedLayoutTable["main"]["roleOrder"], newIndex, self._role)
+
+                    Cell:Fire("UpdateLayout", selectedLayout, "sort")
+                end
+                f:Load(selectedLayoutTable["main"]["roleOrder"])
+            end)
+        end)
+    end
+
+    function f:Load(t)
+        for i, role in pairs(t) do
+            buttons[role]:SetFrameStrata("DIALOG")
+            buttons[role]:Show()
+            buttons[role]:ClearAllPoints()
+            buttons[role]:SetPoint("TOPLEFT", (i-1)*(P:Scale(20)+P:Scale(3)), 0)
+        end
+    end
+
+    return f
 end
 
 local function CreateLayoutSetupPane()
@@ -2283,71 +2338,26 @@ local function CreateLayoutSetupPane()
     -- sort by role
     sortByRoleCB = Cell:CreateCheckButton(pages.main, L["Sort By Role (Party Only)"], function(checked, self)
         selectedLayoutTable["main"]["sortByRole"] = checked
-        sortByRoleDropdown:SetEnabled(checked)
+        if checked then
+            roleOrderWidget:Show()
+        else
+            roleOrderWidget:Hide()
+        end
         Cell:Fire("UpdateLayout", selectedLayout, "sort")
     end)
     sortByRoleCB:SetPoint("TOPLEFT", 5, -27)
     Cell:RegisterForCloseDropdown(sortByRoleCB)
 
-    sortByRoleDropdown = Cell:CreateDropdown(pages.main, 193)
-    sortByRoleDropdown:SetPoint("TOPLEFT", sortByRoleCB, "BOTTOMRIGHT", 5, -5)
-    sortByRoleDropdown:SetItems({
-        {
-            ["text"] = L["Tank"] .. ", " .. L["Damager"] .. ", " .. L["Healer"],
-            ["value"] = "TANK,DAMAGER,HEALER,NONE",
-            ["onClick"] = function()
-                selectedLayoutTable["main"]["sortByRoleOrder"] = "TANK,DAMAGER,HEALER,NONE"
-                Cell:Fire("UpdateLayout", selectedLayout, "sort")
-            end,
-        },
-        {
-            ["text"] = L["Tank"] .. ", " .. L["Healer"] .. ", " .. L["Damager"],
-            ["value"] = "TANK,HEALER,DAMAGER,NONE",
-            ["onClick"] = function()
-                selectedLayoutTable["main"]["sortByRoleOrder"] = "TANK,HEALER,DAMAGER,NONE"
-                Cell:Fire("UpdateLayout", selectedLayout, "sort")
-            end,
-        },
-        {
-            ["text"] = L["Healer"] .. ", " .. L["Damager"] .. ", " .. L["Tank"],
-            ["value"] = "HEALER,DAMAGER,TANK,NONE",
-            ["onClick"] = function()
-                selectedLayoutTable["main"]["sortByRoleOrder"] = "HEALER,DAMAGER,TANK,NONE"
-                Cell:Fire("UpdateLayout", selectedLayout, "sort")
-            end,
-        },
-        {
-            ["text"] = L["Healer"] .. ", " .. L["Tank"] .. ", " .. L["Damager"],
-            ["value"] = "HEALER,TANK,DAMAGER,NONE",
-            ["onClick"] = function()
-                selectedLayoutTable["main"]["sortByRoleOrder"] = "HEALER,TANK,DAMAGER,NONE"
-                Cell:Fire("UpdateLayout", selectedLayout, "sort")
-            end,
-        },
-        {
-            ["text"] = L["Damager"] .. ", " .. L["Tank"] .. ", " .. L["Healer"],
-            ["value"] = "DAMAGER,TANK,HEALER,NONE",
-            ["onClick"] = function()
-                selectedLayoutTable["main"]["sortByRoleOrder"] = "DAMAGER,TANK,HEALER,NONE"
-                Cell:Fire("UpdateLayout", selectedLayout, "sort")
-            end,
-        },
-        {
-            ["text"] = L["Damager"] .. ", " .. L["Healer"] .. ", " .. L["Tank"],
-            ["value"] = "DAMAGER,HEALER,TANK,NONE",
-            ["onClick"] = function()
-                selectedLayoutTable["main"]["sortByRoleOrder"] = "DAMAGER,HEALER,TANK,NONE"
-                Cell:Fire("UpdateLayout", selectedLayout, "sort")
-            end,
-        }
-    })
+    -- role order
+    roleOrderWidget = CreateRoleOrderWidget(pages.main)
+    roleOrderWidget:SetPoint("TOPLEFT", sortByRoleCB, sortByRoleCB.label:GetWidth()+25, 3)
 
     -- hide self
     hideSelfCB = Cell:CreateCheckButton(pages.main, L["Hide Self (Party Only)"], function(checked, self)
         selectedLayoutTable["main"]["hideSelf"] = checked
         Cell:Fire("UpdateLayout", selectedLayout, "hideSelf")
     end)
-    hideSelfCB:SetPoint("RIGHT", sortByRoleCB, "LEFT", 220, 0)
+    hideSelfCB:SetPoint("TOPLEFT", sortByRoleCB, "BOTTOMLEFT", 0, -8)
 
     -- rows/columns
     rcSlider = Cell:CreateSlider("", pages.main, 1, 8, 117, 1, function(value)
@@ -2546,7 +2556,7 @@ local function CreateLayoutSetupPane()
         if tab == "main" then
             sameSizeAsMainCB:Hide()
             sameArrangementAsMainCB:Hide()
-            widthSlider:SetPoint("TOPLEFT", sortByRoleDropdown, -20, -50)
+            widthSlider:SetPoint("TOPLEFT", hideSelfCB, 0, -50)
         else
             sameSizeAsMainCB:Show()
             sameArrangementAsMainCB:Show()
@@ -2717,9 +2727,6 @@ LoadLayoutDB = function(layout, dontShowPreview)
 
     layoutDropdown:SetSelectedValue(selectedLayout)
 
-    sortByRoleDropdown:SetEnabled(selectedLayoutTable["main"]["sortByRole"])
-    sortByRoleDropdown:SetSelectedValue(selectedLayoutTable["main"]["sortByRoleOrder"])
-
     if selectedLayoutTable["main"]["orientation"] == "vertical" then
         rcSlider:SetLabel(L["Group Columns"])
         rcSlider:SetValue(selectedLayoutTable["main"]["columns"])
@@ -2746,6 +2753,12 @@ LoadLayoutDB = function(layout, dontShowPreview)
     -- pages
     LoadPageDB(selectedPage)
     sortByRoleCB:SetChecked(selectedLayoutTable["main"]["sortByRole"])
+    if selectedLayoutTable["main"]["sortByRole"] then
+        roleOrderWidget:Show()
+    else
+        roleOrderWidget:Hide()
+    end
+    roleOrderWidget:Load(selectedLayoutTable["main"]["roleOrder"])
     hideSelfCB:SetChecked(selectedLayoutTable["main"]["hideSelf"])
     partyPetsCB:SetChecked(selectedLayoutTable["pet"]["partyEnabled"])
     raidPetsCB:SetChecked(selectedLayoutTable["pet"]["raidEnabled"])
