@@ -71,7 +71,7 @@ local function BorderIcon_SetCooldown(frame, start, duration, debuffType, textur
         frame.border:Hide()
         frame.cooldown:Show()
         frame.cooldown:SetSwipeColor(r, g, b)
-        frame.cooldown:SetCooldown(start, duration)
+        frame.cooldown:_SetCooldown(start, duration)
         frame.duration:Show()
 
         local fmt
@@ -141,8 +141,12 @@ function I:CreateAura_BorderIcon(name, parent, borderSize)
     cooldown:SetAllPoints(frame)
     cooldown:SetSwipeTexture("Interface\\Buttons\\WHITE8x8")
     cooldown:SetSwipeColor(1, 1, 1)
-    cooldown.noCooldownCount = true -- disable omnicc
     cooldown:SetHideCountdownNumbers(true)
+    -- disable omnicc
+    cooldown.noCooldownCount = true
+    -- prevent some addons from adding cooldown text
+    cooldown._SetCooldown = cooldown.SetCooldown
+    cooldown.SetCooldown = nil
 
     local iconFrame = CreateFrame("Frame", name.."IconFrame", frame)
     P:Point(iconFrame, "TOPLEFT", frame, "TOPLEFT", borderSize, -borderSize)
