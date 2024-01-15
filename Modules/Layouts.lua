@@ -59,7 +59,7 @@ local function UpdatePreviewButton(which, value)
             previewButton.indicators.nameText.isPreview = true
             previewButton.state.name = UnitName("player")
             previewButton.indicators.nameText:UpdateName()
-            previewButton.indicators.nameText:UpdatePreviewColor(iTable["nameColor"])
+            previewButton.indicators.nameText:UpdatePreviewColor(iTable["color"])
             previewButton.indicators.nameText:UpdateTextWidth(iTable["textWidth"])
             previewButton.indicators.nameText:SetFont(unpack(iTable["font"]))
             previewButton.indicators.nameText:ClearAllPoints()

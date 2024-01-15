@@ -123,7 +123,7 @@ Cell.defaults.layout = {
             ["position"] = {"CENTER", "CENTER", 0, 0},
             ["frameLevel"] = 1,
             ["font"] = {"Cell ".._G.DEFAULT, 13, "Shadow"},
-            ["nameColor"] = {"custom", {1, 1, 1}},
+            ["color"] = {"custom_color", {1, 1, 1}},
             ["vehicleNamePosition"] = {"TOP", 0},
             ["textWidth"] = {"percentage", 0.75},
             ["showGroupNumber"] = false,
@@ -329,6 +329,7 @@ Cell.defaults.layout = {
             ["position"] = {"TOPLEFT", "TOPLEFT", 10, 0},
             ["frameLevel"] = 2,
             ["size"] = {20, 6},
+            ["color"] = {"class_color", {0.25, 1, 0}},
         }, -- 19
         {
             ["name"] = "Dispels",

@@ -2530,11 +2530,29 @@ function F:Revise()
     -- r215-release
     if CellDB["revise"] and dbRevision < 215 then
         for _, layout in pairs(CellDB["layouts"]) do
+            -- add role order option
             if not layout["main"]["roleOrder"] then
                 layout["main"]["roleOrder"] = {"TANK", "HEALER", "DAMAGER"}
             end
+
+            -- add color for tankActiveMitigation
+            local index = Cell.defaults.indicatorIndices.tankActiveMitigation
+            if index and type(layout["indicators"][index]["color"]) ~= "table" then
+                layout["indicators"][index]["color"] = {"class_color", {0.25, 1, 0}}
+            end
+
+            -- rename nameColor to color
+            index = Cell.defaults.indicatorIndices.nameText
+            if type(layout["indicators"][index]["color"]) ~= "table" then
+                layout["indicators"][index]["color"] = layout["indicators"][index]["nameColor"]
+                if layout["indicators"][index]["color"][1] == "custom" then
+                    layout["indicators"][index]["color"][1] = "custom_color"
+                end
+                layout["indicators"][index]["nameColor"] = nil
+            end
         end
 
+        -- set alwaysUpdateDebuffs default to true
         if not CellDB["general"]["alwaysUpdateDebuffs"] then
             CellDB["general"]["alwaysUpdateDebuffs"] = true
         end

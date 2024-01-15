@@ -265,6 +265,7 @@ function I:CreateTankActiveMitigation(parent)
     bar:SetReverseFill(true)
 
     local tex = bar:CreateTexture(nil, "BORDER", nil, -1)
+    bar.tex = tex
     tex:SetColorTexture(F:GetClassColor(Cell.vars.playerClass))
     tex:SetPoint("TOPLEFT")
     tex:SetPoint("BOTTOMRIGHT", bar:GetStatusBarTexture(), "BOTTOMLEFT")
@@ -279,11 +280,20 @@ function I:CreateTankActiveMitigation(parent)
     end)
 
     function bar:SetCooldown(start, duration)
-        if not parent.state.class then parent.state.class = select(2, UnitClass(parent.state.unit)) end --? why sometimes parent.state.class == nil ???
-        tex:SetColorTexture(F:GetClassColor(parent.state.class))
+        if bar.cType == "class_color" then
+            if not parent.state.class then parent.state.class = UnitClassBase(parent.state.unit) end --? why sometimes parent.state.class == nil ???
+            tex:SetColorTexture(F:GetClassColor(parent.state.class))
+        else
+            tex:SetColorTexture(bar.cTable[1], bar.cTable[2], bar.cTable[3])
+        end
         bar:SetMinMaxValues(0, duration)
         bar:SetValue(GetTime()-start)
         bar:Show()
+    end
+
+    function bar:SetColor(cType, cTable)
+        bar.cType = cType
+        bar.cTable = cTable
     end
 end
 

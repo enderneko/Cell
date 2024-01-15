@@ -322,6 +322,7 @@ local function InitIndicator(indicatorName)
     elseif indicatorName == "tankActiveMitigation" then
         indicator.value = 0
         indicator:SetMinMaxValues(0, 100)
+        indicator:SetValue(0)
         indicator:SetScript("OnUpdate", function(self, elapsed)
             self.value = self.value + 1
             if self.value >= 100 then
@@ -329,6 +330,13 @@ local function InitIndicator(indicatorName)
             end
             self:SetValue(self.value)
         end)
+        function indicator:SetColor(cType, cTable)
+            if cType == "class_color" then
+                indicator.tex:SetColorTexture(F:GetClassColor(Cell.vars.playerClass))
+            else
+                indicator.tex:SetColorTexture(cTable[1], cTable[2], cTable[3])
+            end
+        end
 
     elseif indicatorName == "debuffs" then
         local types = {"", "Curse", "Disease", "Magic", "Poison", "", "Curse", "Disease", "Magic", "Poison"}
@@ -656,15 +664,15 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                 end
                 -- update color
                 if t["color"] then
-                    indicator:SetColor(unpack(t["color"]))
+                    if t["indicatorName"] == "nameText" then
+                        indicator:UpdatePreviewColor(t["color"])
+                    else
+                        indicator:SetColor(unpack(t["color"]))
+                    end
                 end
                 -- update colors
                 if t["colors"] then
                     indicator:SetColors(t["colors"])
-                end
-                -- update nameColor
-                if t["nameColor"] then
-                    indicator:UpdatePreviewColor(t["nameColor"])
                 end
                 -- update groupNumber
                 if type(t["showGroupNumber"]) == "boolean" then
@@ -823,12 +831,14 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                 indicator:Show()
             end
         elseif setting == "color" then
-            indicator:SetColor(unpack(value))
+            if indicatorName == "nameText" then
+                indicator:UpdatePreviewColor(value)
+            else
+                indicator:SetColor(unpack(value))
+            end
         elseif setting == "customColors" then
             indicator:SetColors(value)
             indicator.preview.elapsedTime = 13 -- update now!
-        elseif setting == "nameColor" then
-            indicator:UpdatePreviewColor(value)
         elseif setting == "vehicleNamePosition" then
             indicator:UpdateVehicleNamePosition(value)
         elseif setting == "statusColors" then
@@ -1419,7 +1429,7 @@ end
 local indicatorSettings
 if Cell.isRetail then
     indicatorSettings = {
-        ["nameText"] = {"enabled", "nameColor", "textWidth", "checkbutton:showGroupNumber", "vehicleNamePosition", "namePosition", "frameLevel", "font-noOffset"},
+        ["nameText"] = {"enabled", "color-class", "textWidth", "checkbutton:showGroupNumber", "vehicleNamePosition", "namePosition", "frameLevel", "font-noOffset"},
         ["statusText"] = {"enabled", "checkbutton:showTimer", "checkbutton2:showBackground", "statusColors", "statusPosition", "frameLevel", "font-noOffset"},
         ["healthText"] = {"enabled", "format", "checkbutton:hideIfEmptyOrFull", "color", "position", "frameLevel", "font-noOffset"},
         ["statusIcon"] = {
@@ -1446,7 +1456,7 @@ if Cell.isRetail then
         ["externalCooldowns"] = {L["Even if disabled, the settings below affect \"Externals + Defensives\" indicator"], "enabled", "builtInExternals", "customExternals", "durationVisibility", "num:5", "orientation", "size", "position", "frameLevel", "font1:stackFont", "font2:durationFont"},
         ["defensiveCooldowns"] = {L["Even if disabled, the settings below affect \"Externals + Defensives\" indicator"], "enabled", "builtInDefensives", "customDefensives", "durationVisibility", "num:5", "orientation", "size", "position", "frameLevel", "font1:stackFont", "font2:durationFont"},
         ["allCooldowns"] = {"enabled", "durationVisibility", "num:5", "orientation", "size", "position", "frameLevel", "font1:stackFont", "font2:durationFont"},
-        ["tankActiveMitigation"] = {"|cffb7b7b7"..I:GetTankActiveMitigationString(), "enabled", "size-bar", "position", "frameLevel"},
+        ["tankActiveMitigation"] = {"|cffb7b7b7"..I:GetTankActiveMitigationString(), "enabled", "color-class", "size-bar", "position", "frameLevel"},
         ["dispels"] = {"enabled", "checkbutton:dispellableByMe", "highlightType", "dispelBlacklist", "checkbutton2:showDispelTypeIcons", "orientation", "size-square", "position", "frameLevel"},
         ["debuffs"] = {"enabled", "checkbutton:dispellableByMe", "debuffBlacklist", "bigDebuffs", "durationVisibility", "checkbutton3:showTooltip:"..L["This will make these icons not click-through-able"].."|"..L["Tooltips need to be enabled in General tab"], "num:10", "orientation", "size-normal-big", "position", "frameLevel", "font1:stackFont", "font2:durationFont"},
         ["raidDebuffs"] = {"|cffb7b7b7"..L["You can config debuffs in %s"]:format(Cell:GetAccentColorString()..L["Raid Debuffs"].."|r"), "enabled", "checkbutton:onlyShowTopGlow", "checkbutton2:showTooltip:"..L["This will make these icons not click-through-able"].."|"..L["Tooltips need to be enabled in General tab"], "num:3", "orientation", "size-border", "position", "frameLevel", "font1:stackFont", "font2:durationFont"},
@@ -1460,7 +1470,7 @@ if Cell.isRetail then
     }
 elseif Cell.isWrath then
     indicatorSettings = {
-        ["nameText"] = {"enabled", "nameColor", "textWidth", "checkbutton:showGroupNumber", "vehicleNamePosition", "namePosition", "frameLevel", "font-noOffset"},
+        ["nameText"] = {"enabled", "color-class", "textWidth", "checkbutton:showGroupNumber", "vehicleNamePosition", "namePosition", "frameLevel", "font-noOffset"},
         ["statusText"] = {"enabled", "checkbutton:showTimer", "checkbutton2:showBackground", "statusColors", "statusPosition", "frameLevel", "font-noOffset"},
         ["healthText"] = {"enabled", "format", "checkbutton:hideIfEmptyOrFull", "color", "position", "frameLevel", "font-noOffset"},
         ["statusIcon"] = {
@@ -1495,7 +1505,7 @@ elseif Cell.isWrath then
     }
 elseif Cell.isVanilla then
     indicatorSettings = {
-        ["nameText"] = {"enabled", "nameColor", "textWidth", "checkbutton:showGroupNumber", "vehicleNamePosition", "namePosition", "frameLevel", "font-noOffset"},
+        ["nameText"] = {"enabled", "color-class", "textWidth", "checkbutton:showGroupNumber", "vehicleNamePosition", "namePosition", "frameLevel", "font-noOffset"},
         ["statusText"] = {"enabled", "checkbutton:showTimer", "checkbutton2:showBackground", "statusColors", "statusPosition", "frameLevel", "font-noOffset"},
         ["healthText"] = {"enabled", "format", "checkbutton:hideIfEmptyOrFull", "color", "position", "frameLevel", "font-noOffset"},
         ["statusIcon"] = {
@@ -1594,7 +1604,7 @@ local function ShowIndicatorSettings(id)
         local currentSetting = settingsTable[i]
         
         --! convert currentSetting to ACTUAL TABLE INDEX
-        if currentSetting == "color-alpha" then currentSetting = "color" end
+        if currentSetting == "color-alpha" or currentSetting == "color-class" then currentSetting = "color" end
         if currentSetting == "size-square" or currentSetting == "size-bar" or currentSetting == "size-normal-big" then currentSetting = "size" end
         if currentSetting == "namePosition" or currentSetting == "statusPosition" or currentSetting == "position-noHCenter" or currentSetting == "shieldBarPosition" then currentSetting = "position" end
         if currentSetting == "barOrientation" then currentSetting = "orientation" end

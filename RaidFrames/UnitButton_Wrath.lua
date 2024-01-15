@@ -223,7 +223,7 @@ local function HandleIndicators(b)
             B:UpdateHealthText(b)
         end
         -- update color
-        if t["color"] then
+        if t["color"] and t["indicatorName"] ~= "nameText" then
             indicator:SetColor(unpack(t["color"]))
         end
         -- update colors
@@ -515,18 +515,20 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                 B:UpdateHealthText(b)
             end, true)
         elseif setting == "color" then
-            F:IterateAllUnitButtons(function(b)
-                local indicator = b.indicators[indicatorName]
-                indicator:SetColor(unpack(value))
-            end, true)
+            if indicatorName == "nameText" then
+                F:IterateAllUnitButtons(function(b)
+                    UnitButton_UpdateNameColor(b)
+                end, true)
+            else
+                F:IterateAllUnitButtons(function(b)
+                    local indicator = b.indicators[indicatorName]
+                    indicator:SetColor(unpack(value))
+                end, true)
+            end
         elseif setting == "customColors" then --! NOTE: 其他的colors不调用widget.func，不发出通知，因为这些指示器都使用OnUpdate更新颜色。
             F:IterateAllUnitButtons(function(b)
                 local indicator = b.indicators[indicatorName]
                 indicator:SetColors(value)
-            end, true)
-        elseif setting == "nameColor" then
-            F:IterateAllUnitButtons(function(b)
-                UnitButton_UpdateNameColor(b)
             end, true)
         elseif setting == "vehicleNamePosition" then
             F:IterateAllUnitButtons(function(b)
@@ -1786,23 +1788,23 @@ UnitButton_UpdateNameColor = function(self)
         elseif UnitIsCharmed(unit) then
             nameText:SetColor(F:GetClassColor(self.state.class))
         else
-            if Cell.vars.currentLayoutTable["indicators"][1]["nameColor"][1] == "class_color" then
+            if Cell.vars.currentLayoutTable["indicators"][1]["color"][1] == "class_color" then
                 nameText:SetColor(F:GetClassColor(self.state.class))
             else
-                nameText:SetColor(unpack(Cell.vars.currentLayoutTable["indicators"][1]["nameColor"][2]))
+                nameText:SetColor(unpack(Cell.vars.currentLayoutTable["indicators"][1]["color"][2]))
             end
         end
     elseif string.find(unit, "pet") then -- pet
-        if Cell.vars.currentLayoutTable["indicators"][1]["nameColor"][1] == "class_color" then
+        if Cell.vars.currentLayoutTable["indicators"][1]["color"][1] == "class_color" then
             nameText:SetColor(0.5, 0.5, 1)
         else
-            nameText:SetColor(unpack(Cell.vars.currentLayoutTable["indicators"][1]["nameColor"][2]))
+            nameText:SetColor(unpack(Cell.vars.currentLayoutTable["indicators"][1]["color"][2]))
         end
     else -- npc
-        if Cell.vars.currentLayoutTable["indicators"][1]["nameColor"][1] == "class_color" then
+        if Cell.vars.currentLayoutTable["indicators"][1]["color"][1] == "class_color" then
             nameText:SetColor(0, 1, 0.2)
         else
-            nameText:SetColor(unpack(Cell.vars.currentLayoutTable["indicators"][1]["nameColor"][2]))
+            nameText:SetColor(unpack(Cell.vars.currentLayoutTable["indicators"][1]["color"][2]))
         end
     end
 end
