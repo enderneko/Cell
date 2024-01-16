@@ -24,6 +24,8 @@ L["ACCEPTED"] = "已接受"
 L["Action"] = "動作"
 L["Add"] = "新增"
 L["Add new spell"] = "加入新法術"
+--[[Translation missing --]]
+--[[ L["Added |T%d:0|t|cFFFF3030%s(%d)|r into debuff blacklist."] = ""--]] 
 L["AFK"] = "暫離"
 L["Aggro (bar)"] = "仇恨 (條)"
 L["Aggro (blink)"] = "仇恨 (閃爍)"
@@ -191,6 +193,8 @@ L["Enable"] = "啟用"
 L["Enable Death Color"] = "啟用死亡顏色"
 L["Enable Full Health Color"] = "啟用滿血顏色"
 L["Enable Spotlight Frame"] = "啟用特別關注框架"
+--[[Translation missing --]]
+--[[ L["enableBlacklistShortcut"] = "Blacklist: Alt+Ctrl+RightClick"--]] 
 L["Enabled"] = "啟用"
 L["enableHighlight"] = "顯著標示單位按鈕"
 L["Ensure that other addons get the right unit button"] = "確保其他插件獲取到正確的單位按鈕"

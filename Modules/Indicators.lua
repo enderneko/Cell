@@ -1427,6 +1427,8 @@ local function CreateSettingsPane()
 end
 
 local indicatorSettings
+local DEBUFFS_TOOLTIP1 = L["This will make these icons not click-through-able"].."|"..L["Tooltips need to be enabled in General tab"]
+local DEBUFFS_TOOLTIP2 = L["This will make these icons not click-through-able"]
 if Cell.isRetail then
     indicatorSettings = {
         ["nameText"] = {"enabled", "color-class", "textWidth", "checkbutton:showGroupNumber", "vehicleNamePosition", "namePosition", "frameLevel", "font-noOffset"},
@@ -1458,8 +1460,8 @@ if Cell.isRetail then
         ["allCooldowns"] = {"enabled", "durationVisibility", "num:5", "orientation", "size", "position", "frameLevel", "font1:stackFont", "font2:durationFont"},
         ["tankActiveMitigation"] = {"|cffb7b7b7"..I:GetTankActiveMitigationString(), "enabled", "color-class", "size-bar", "position", "frameLevel"},
         ["dispels"] = {"enabled", "checkbutton:dispellableByMe", "highlightType", "dispelBlacklist", "checkbutton2:showDispelTypeIcons", "orientation", "size-square", "position", "frameLevel"},
-        ["debuffs"] = {"enabled", "checkbutton:dispellableByMe", "debuffBlacklist", "bigDebuffs", "durationVisibility", "checkbutton3:showTooltip:"..L["This will make these icons not click-through-able"].."|"..L["Tooltips need to be enabled in General tab"], "num:10", "orientation", "size-normal-big", "position", "frameLevel", "font1:stackFont", "font2:durationFont"},
-        ["raidDebuffs"] = {"|cffb7b7b7"..L["You can config debuffs in %s"]:format(Cell:GetAccentColorString()..L["Raid Debuffs"].."|r"), "enabled", "checkbutton:onlyShowTopGlow", "checkbutton2:showTooltip:"..L["This will make these icons not click-through-able"].."|"..L["Tooltips need to be enabled in General tab"], "num:3", "orientation", "size-border", "position", "frameLevel", "font1:stackFont", "font2:durationFont"},
+        ["debuffs"] = {"enabled", "checkbutton:dispellableByMe", "debuffBlacklist", "bigDebuffs", "durationVisibility", "checkbutton2:showTooltip:"..DEBUFFS_TOOLTIP1, "checkbutton3:enableBlacklistShortcut:"..DEBUFFS_TOOLTIP2, "num:10", "orientation", "size-normal-big", "position", "frameLevel", "font1:stackFont", "font2:durationFont"},
+        ["raidDebuffs"] = {"|cffb7b7b7"..L["You can config debuffs in %s"]:format(Cell:GetAccentColorString()..L["Raid Debuffs"].."|r"), "enabled", "checkbutton:onlyShowTopGlow", "checkbutton2:showTooltip:"..DEBUFFS_TOOLTIP1, "num:3", "orientation", "size-border", "position", "frameLevel", "font1:stackFont", "font2:durationFont"},
         ["privateAuras"] = {"|cffb7b7b7"..L["Due to restrictions of the private aura system, this indicator can only use Blizzard style."], "enabled", "privateAuraOptions", "size-square", "position", "frameLevel"},
         ["targetedSpells"] = {"enabled", "checkbutton:showAllSpells:"..L["Glow is only available to the spells in the list below"], "targetedSpellsList", "targetedSpellsGlow", "size-border", "position", "frameLevel", "font"},
         ["targetCounter"] = {"|cffff2727"..L["HIGH CPU USAGE"].."!|r |cffb7b7b7"..L["Check all visible enemy nameplates."], "enabled", "targetCounterFilters", "color", "position", "frameLevel", "font-noOffset"},
@@ -1495,8 +1497,8 @@ elseif Cell.isWrath then
         ["defensiveCooldowns"] = {L["Even if disabled, the settings below affect \"Externals + Defensives\" indicator"], "enabled", "builtInDefensives", "customDefensives", "durationVisibility", "num:5", "orientation", "size", "position", "frameLevel", "font1:stackFont", "font2:durationFont"},
         ["allCooldowns"] = {"enabled", "durationVisibility", "num:5", "orientation", "size", "position", "frameLevel", "font1:stackFont", "font2:durationFont"},
         ["dispels"] = {"enabled", "checkbutton:dispellableByMe", "highlightType", "dispelBlacklist", "checkbutton2:showDispelTypeIcons", "orientation", "size-square", "position", "frameLevel"},
-        ["debuffs"] = {"enabled", "checkbutton:dispellableByMe", "debuffBlacklist", "bigDebuffs", "durationVisibility", "checkbutton3:showTooltip:"..L["This will make these icons not click-through-able"].."|"..L["Tooltips need to be enabled in General tab"], "num:10", "orientation", "size-normal-big", "position", "frameLevel", "font1:stackFont", "font2:durationFont"},
-        ["raidDebuffs"] = {"|cffb7b7b7"..L["You can config debuffs in %s"]:format(Cell:GetAccentColorString()..L["Raid Debuffs"].."|r"), "enabled", "checkbutton:onlyShowTopGlow", "checkbutton2:showTooltip:"..L["This will make these icons not click-through-able"].."|"..L["Tooltips need to be enabled in General tab"], "num:3", "orientation", "size-border", "position", "frameLevel", "font1:stackFont", "font2:durationFont"},
+        ["debuffs"] = {"enabled", "checkbutton:dispellableByMe", "debuffBlacklist", "bigDebuffs", "durationVisibility", "checkbutton2:showTooltip:"..DEBUFFS_TOOLTIP1, "checkbutton3:enableBlacklistShortcut:"..DEBUFFS_TOOLTIP2, "num:10", "orientation", "size-normal-big", "position", "frameLevel", "font1:stackFont", "font2:durationFont"},
+        ["raidDebuffs"] = {"|cffb7b7b7"..L["You can config debuffs in %s"]:format(Cell:GetAccentColorString()..L["Raid Debuffs"].."|r"), "enabled", "checkbutton:onlyShowTopGlow", "checkbutton2:showTooltip:"..DEBUFFS_TOOLTIP1, "num:3", "orientation", "size-border", "position", "frameLevel", "font1:stackFont", "font2:durationFont"},
         ["targetedSpells"] = {"enabled", "checkbutton:showAllSpells:"..L["Glow is only available to the spells in the list below"], "targetedSpellsList", "targetedSpellsGlow", "size-border", "position", "frameLevel", "font"},
         ["targetCounter"] = {"|cffff2727"..L["HIGH CPU USAGE"].."!|r |cffb7b7b7"..L["Check all visible enemy nameplates."], "enabled", "targetCounterFilters", "color", "position", "frameLevel", "font-noOffset"},
         ["consumables"] = {"enabled", "consumablesPreview", "consumablesList"},
@@ -1528,8 +1530,8 @@ elseif Cell.isVanilla then
         ["defensiveCooldowns"] = {L["Even if disabled, the settings below affect \"Externals + Defensives\" indicator"], "enabled", "builtInDefensives", "customDefensives", "durationVisibility", "num:5", "orientation", "size", "position", "frameLevel", "font1:stackFont", "font2:durationFont"},
         ["allCooldowns"] = {"enabled", "durationVisibility", "num:5", "orientation", "size", "position", "frameLevel", "font1:stackFont", "font2:durationFont"},
         ["dispels"] = {"enabled", "checkbutton:dispellableByMe", "highlightType", "dispelBlacklist", "checkbutton2:showDispelTypeIcons", "orientation", "size-square", "position", "frameLevel"},
-        ["debuffs"] = {"enabled", "checkbutton:dispellableByMe", "debuffBlacklist", "bigDebuffs", "durationVisibility", "checkbutton3:showTooltip:"..L["This will make these icons not click-through-able"].."|"..L["Tooltips need to be enabled in General tab"], "num:10", "orientation", "size-normal-big", "position", "frameLevel", "font1:stackFont", "font2:durationFont"},
-        ["raidDebuffs"] = {"|cffb7b7b7"..L["You can config debuffs in %s"]:format(Cell:GetAccentColorString()..L["Raid Debuffs"].."|r"), "enabled", "checkbutton:onlyShowTopGlow", "checkbutton2:showTooltip:"..L["This will make these icons not click-through-able"].."|"..L["Tooltips need to be enabled in General tab"], "num:3", "orientation", "size-border", "position", "frameLevel", "font1:stackFont", "font2:durationFont"},
+        ["debuffs"] = {"enabled", "checkbutton:dispellableByMe", "debuffBlacklist", "bigDebuffs", "durationVisibility", "checkbutton2:showTooltip:"..DEBUFFS_TOOLTIP1, "checkbutton3:enableBlacklistShortcut:"..DEBUFFS_TOOLTIP2, "num:10", "orientation", "size-normal-big", "position", "frameLevel", "font1:stackFont", "font2:durationFont"},
+        ["raidDebuffs"] = {"|cffb7b7b7"..L["You can config debuffs in %s"]:format(Cell:GetAccentColorString()..L["Raid Debuffs"].."|r"), "enabled", "checkbutton:onlyShowTopGlow", "checkbutton2:showTooltip:"..DEBUFFS_TOOLTIP1, "num:3", "orientation", "size-border", "position", "frameLevel", "font1:stackFont", "font2:durationFont"},
         ["targetedSpells"] = {"enabled", "checkbutton:showAllSpells:"..L["Glow is only available to the spells in the list below"], "targetedSpellsList", "targetedSpellsGlow", "size-border", "position", "frameLevel", "font"},
         ["targetCounter"] = {"|cffff2727"..L["HIGH CPU USAGE"].."!|r |cffb7b7b7"..L["Check all visible enemy nameplates."], "enabled", "targetCounterFilters", "color", "position", "frameLevel", "font-noOffset"},
         ["consumables"] = {"enabled", "consumablesPreview", "consumablesList"},
@@ -2035,6 +2037,14 @@ function F:ReloadIndicatorList()
         end)
     end
 end
+
+function F:ReloadIndicatorOptions(index)
+    if not init then return end
+    if selected == index then
+        listButtons[index]:Click()
+    end
+end
+
 
 local function UpdateLayout()
     if previewButton and currentLayout == Cell.vars.currentLayout then

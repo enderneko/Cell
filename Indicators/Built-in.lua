@@ -437,18 +437,49 @@ function I:CreateDebuffs(parent)
     debuffs.UpdatePixelPerfect = Debuffs_UpdatePixelPerfect
 
     function debuffs:ShowTooltip(show)
+        debuffs.showTooltip = show
+
         for i = 1, 10 do
             if show then
-                debuffs[i]:SetScript("OnEnter", function()
-                    F:ShowTooltips(parent, "spell", parent.state.displayedUnit, debuffs[i].index, "HARMFUL")
+                debuffs[i]:SetScript("OnEnter", function(self)
+                    F:ShowTooltips(parent, "spell", parent.state.displayedUnit, self.index, "HARMFUL")
                 end)
+                
                 debuffs[i]:SetScript("OnLeave", function()
                     GameTooltip:Hide()
                 end)
             else
                 debuffs[i]:SetScript("OnEnter", nil)
                 debuffs[i]:SetScript("OnLeave", nil)
-                debuffs[i]:EnableMouse(false)
+                if not debuffs.enableBlacklistShortcut then debuffs[i]:EnableMouse(false) end
+            end
+        end
+    end
+
+    function debuffs:EnableBlacklistShortcut(enabled)
+        debuffs.enableBlacklistShortcut = enabled
+
+        for i = 1, 10 do
+            if enabled then
+                debuffs[i]:SetScript("OnMouseUp", function(self, button, isInside)
+                    if button == "RightButton" and isInside and IsLeftAltKeyDown() and IsLeftControlKeyDown()
+                        and self.spellId and not F:TContains(CellDB["debuffBlacklist"], self.spellId) then
+                        -- print msg
+                        local name, _, icon = GetSpellInfo(self.spellId)
+                        if name and icon then
+                            F:Print(L["Added |T%d:0|t|cFFFF3030%s(%d)|r into debuff blacklist."]:format(icon, name, self.spellId))
+                        end
+                        -- update db
+                        tinsert(CellDB["debuffBlacklist"], self.spellId)
+                        Cell.vars.debuffBlacklist = F:ConvertTable(CellDB["debuffBlacklist"])
+                        Cell:Fire("UpdateIndicators", Cell.vars.currentLayout, "", "debuffBlacklist")
+                        -- refresh
+                        F:ReloadIndicatorOptions(Cell.defaults.indicatorIndices.debuffs)
+                    end
+                end)
+            else
+                debuffs[i]:SetScript("OnMouseUp", nil)
+                if not debuffs.showTooltip then debuffs[i]:EnableMouse(false) end
             end
         end
     end

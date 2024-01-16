@@ -279,6 +279,10 @@ local function HandleIndicators(b)
         if type(t["showTooltip"]) == "boolean" then
             indicator:ShowTooltip(t["showTooltip"])
         end
+        -- blacklist shortcut
+        if type(t["enableBlacklistShortcut"]) == "boolean" then
+            indicator:EnableBlacklistShortcut(t["enableBlacklistShortcut"])
+        end
         -- speed
         if t["speed"] then
             indicator:SetSpeed(t["speed"])
@@ -634,6 +638,10 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
             elseif value == "showTooltip" then
                 F:IterateAllUnitButtons(function(b)
                     b.indicators[indicatorName]:ShowTooltip(value2)
+                end, true)
+            elseif value == "enableBlacklistShortcut" then
+                F:IterateAllUnitButtons(function(b)
+                    b.indicators[indicatorName]:EnableBlacklistShortcut(value2)
                 end, true)
             elseif value == "circledStackNums" then
                 F:IterateAllUnitButtons(function(b)
@@ -1033,6 +1041,7 @@ local function UnitButton_UpdateDebuffs(self)
                 -- start, duration, debuffType, texture, count
                 self.indicators.debuffs[startIndex]:SetCooldown((auraInfo.expirationTime or 0) - auraInfo.duration, auraInfo.duration, auraInfo.dispelName or "", auraInfo.icon, auraInfo.applications, refreshing, true)
                 self.indicators.debuffs[startIndex].index = self._debuffs_indices[auraInstanceID] -- NOTE: for tooltip
+                self.indicators.debuffs[startIndex].spellId = auraInfo.spellId -- NOTE: for blacklist
                 startIndex = startIndex + 1
             end
         end
@@ -1043,6 +1052,7 @@ local function UnitButton_UpdateDebuffs(self)
                 -- start, duration, debuffType, texture, count
                 self.indicators.debuffs[startIndex]:SetCooldown((auraInfo.expirationTime or 0) - auraInfo.duration, auraInfo.duration, auraInfo.dispelName or "", auraInfo.icon, auraInfo.applications, refreshing)
                 self.indicators.debuffs[startIndex].index = self._debuffs_indices[auraInstanceID] -- NOTE: for tooltip
+                self.indicators.debuffs[startIndex].spellId = auraInfo.spellId -- NOTE: for blacklist
                 startIndex = startIndex + 1
             end
         end
@@ -1052,6 +1062,7 @@ local function UnitButton_UpdateDebuffs(self)
     self.indicators.debuffs:UpdateSize(startIndex - 1)
     for i = startIndex, 10 do
         self.indicators.debuffs[i].index = nil
+        self.indicators.debuffs[i].spellId = nil
     end
 
     -- update dispels

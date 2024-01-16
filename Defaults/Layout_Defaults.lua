@@ -354,6 +354,7 @@ Cell.defaults.layout = {
             ["size"] = {{13, 13}, {17, 17}},
             ["showDuration"] = false,
             ["showTooltip"] = false,
+            ["enableBlacklistShortcut"] = false,
             ["num"] = 3,
             ["font"] = {
                 {"Cell ".._G.DEFAULT, 11, "Outline", "TOPRIGHT", 2, 1, {1, 1, 1}},

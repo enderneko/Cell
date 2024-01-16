@@ -264,6 +264,10 @@ local function HandleIndicators(b)
         if type(t["showTooltip"]) == "boolean" then
             indicator:ShowTooltip(t["showTooltip"])
         end
+        -- blacklist shortcut
+        if type(t["enableBlacklistShortcut"]) == "boolean" then
+            indicator:EnableBlacklistShortcut(t["enableBlacklistShortcut"])
+        end
         -- speed
         if t["speed"] then
             indicator:SetSpeed(t["speed"])
@@ -601,6 +605,10 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                 F:IterateAllUnitButtons(function(b)
                     b.indicators[indicatorName]:ShowTooltip(value2)
                 end, true)
+            elseif value == "enableBlacklistShortcut" then
+                F:IterateAllUnitButtons(function(b)
+                    b.indicators[indicatorName]:EnableBlacklistShortcut(value2)
+                end, true)
             elseif value == "circledStackNums" then
                 F:IterateAllUnitButtons(function(b)
                     b.indicators[indicatorName]:SetCircledStackNums(value2)
@@ -889,21 +897,23 @@ local function UnitButton_UpdateDebuffs(self)
     if enabledIndicators["debuffs"] then
         -- bigDebuffs first
         for debuffIndex, refreshing in pairs(self._debuffs_big) do
-            local name, icon, count, debuffType, duration, expirationTime = UnitDebuff(unit, debuffIndex)
+            local name, icon, count, debuffType, duration, expirationTime, _, _, _, spellId = UnitDebuff(unit, debuffIndex)
             if name and not self._debuffs_raid_shown[debuffIndex] and startIndex <= indicatorNums["debuffs"] then
                 -- start, duration, debuffType, texture, count, refreshing
                 self.indicators.debuffs[startIndex]:SetCooldown(expirationTime - duration, duration, debuffType or "", icon, count, refreshing, true)
                 self.indicators.debuffs[startIndex].index = debuffIndex -- NOTE: for tooltip
+                self.indicators.debuffs[startIndex].spellId = spellId -- NOTE: for blacklist
                 startIndex = startIndex + 1
             end
         end
         -- then normal debuffs
         for debuffIndex, refreshing in pairs(self._debuffs_normal) do
-            local name, icon, count, debuffType, duration, expirationTime = UnitDebuff(unit, debuffIndex)
+            local name, icon, count, debuffType, duration, expirationTime, _, _, _, spellId = UnitDebuff(unit, debuffIndex)
             if name and not self._debuffs_raid_shown[debuffIndex] and startIndex <= indicatorNums["debuffs"] then
                 -- start, duration, debuffType, texture, count, refreshing
                 self.indicators.debuffs[startIndex]:SetCooldown(expirationTime - duration, duration, debuffType or "", icon, count, refreshing)
                 self.indicators.debuffs[startIndex].index = debuffIndex -- NOTE: for tooltip
+                self.indicators.debuffs[startIndex].spellId = spellId -- NOTE: for blacklist
                 startIndex = startIndex + 1
             end
         end
@@ -913,6 +923,7 @@ local function UnitButton_UpdateDebuffs(self)
     self.indicators.debuffs:UpdateSize(startIndex - 1)
     for i = startIndex, 10 do
         self.indicators.debuffs[i].index = nil
+        self.indicators.debuffs[i].spellId = nil
     end
 
     -- update dispels
