@@ -1018,8 +1018,8 @@ local function UpdateQuickAssist(which)
     if not which or which == "filter" then
         local selectedFilter = groupType and quickAssistTable["filterAutoSwitch"][groupType] or 0
         
-        specFilter = nil
         EnableSpecFilter(false)
+        specFilter = nil
 
         if selectedFilter == 0 then -- hide
             header:SetAttribute("showRaid", false)
