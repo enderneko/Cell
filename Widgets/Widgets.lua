@@ -401,7 +401,7 @@ local function ShowTooltips(widget, anchor, x, y, tooltips)
 end
 
 function addon:SetTooltips(widget, anchor, x, y, ...)
-    if not widget.tooltipsInited then
+    if not widget._tooltipsInited then
         widget._tooltipsInited = true
 
         widget:HookScript("OnEnter", function()

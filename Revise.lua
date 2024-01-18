@@ -2550,16 +2550,6 @@ function F:Revise()
                 end
                 layout["indicators"][index]["nameColor"] = nil
             end
-
-            -- add showAnimation option
-            for _, i in pairs(layout["indicators"]) do
-                if i.indicatorName == "externalCooldowns" or i.indicatorName == "defensiveCooldowns" or i.indicatorName == "allCooldowns" or i.indicatorName == "debuffs"
-                    or i.type == "icon" or i.type == "icons" then
-                    if type(i.showAnimation) ~= "boolean" then
-                        i.showAnimation = true
-                    end
-                end
-            end
         end
 
         -- set alwaysUpdateDebuffs default to true
@@ -2568,10 +2558,36 @@ function F:Revise()
         end
     end
 
-    -- r216-release
-    if CellDB["revise"] and dbRevision < 216 then
+    -- r217-release
+    if CellDB["revise"] and dbRevision < 217 then
+        for _, layout in pairs(CellDB["layouts"]) do
+            for _, i in pairs(layout["indicators"]) do
+                if i.indicatorName == "externalCooldowns" or i.indicatorName == "defensiveCooldowns" or i.indicatorName == "allCooldowns" or i.indicatorName == "debuffs"
+                    or i.type == "icon" or i.type == "icons" then
+                    
+                    -- add showAnimation option
+                    if type(i.showAnimation) ~= "boolean" then
+                        i.showAnimation = true
+                    end
+                    
+                    -- update showDuration
+                    if i.showDuration == 0 then
+                        i.showDuration = true
+                    end
+                end
+            end
+        end
+
         if Cell.isRetail then
             for spec, t in pairs(CellDB["quickAssist"]) do
+                -- update showDuration
+                if t["spells"]["mine"]["icon"]["showDuration"] == 0 then
+                    t["spells"]["mine"]["icon"]["showDuration"] = true
+                end
+                if t["spells"]["offensives"]["icon"]["showDuration"] == 0 then
+                    t["spells"]["offensives"]["icon"]["showDuration"] = true
+                end
+                -- add showAnimation
                 if type(t["spells"]["mine"]["icon"]["showAnimation"]) ~= "boolean" then
                     t["spells"]["mine"]["icon"]["showAnimation"] = true
                 end
