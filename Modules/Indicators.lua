@@ -703,6 +703,10 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                 if type(t["showDuration"]) == "boolean" or type(t["showDuration"]) == "number" then
                     indicator:ShowDuration(t["showDuration"])
                 end
+                -- update animation
+                if type(t["showAnimation"]) == "boolean" then
+                    indicator:ShowAnimation(t["showAnimation"])
+                end
                 -- update stack
                 if type(t["showStack"]) == "boolean" then
                     indicator:ShowStack(t["showStack"])
@@ -889,6 +893,13 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                 indicator:Show()
             elseif value == "showBackground" then
                 indicator:ShowBackground(value2)
+            elseif value == "showAnimation" then
+                indicator:ShowAnimation(value2)
+                if indicator.enabled then
+                    -- update through OnShow
+                    indicator:Hide()
+                    indicator:Show()
+                end
             elseif value == "showStack" then
                 indicator:ShowStack(value2)
             elseif value == "circledStackNums" then
@@ -957,8 +968,12 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                 indicator:SetTexture(value["texture"])
             end
             -- update duration
-            if type(value["showDuration"]) == "boolean" then
+            if type(value["showDuration"]) ~= "nil" then
                 indicator:ShowDuration(value["showDuration"])
+            end
+            -- update animation
+            if type(value["showAnimation"]) == "boolean" then
+                indicator:ShowAnimation(value["showAnimation"])
             end
             -- update stack
             if type(value["showStack"]) == "boolean" then
@@ -1455,12 +1470,12 @@ if Cell.isRetail then
         ["aggroBar"] = {"enabled", "size-bar", "position", "frameLevel"},
         ["shieldBar"] = {"enabled", "checkbutton:onlyShowOvershields", "color-alpha", "height", "shieldBarPosition", "frameLevel"},
         ["aoeHealing"] = {"enabled", "color", "height"},
-        ["externalCooldowns"] = {L["Even if disabled, the settings below affect \"Externals + Defensives\" indicator"], "enabled", "builtInExternals", "customExternals", "durationVisibility", "num:5", "orientation", "size", "position", "frameLevel", "font1:stackFont", "font2:durationFont"},
-        ["defensiveCooldowns"] = {L["Even if disabled, the settings below affect \"Externals + Defensives\" indicator"], "enabled", "builtInDefensives", "customDefensives", "durationVisibility", "num:5", "orientation", "size", "position", "frameLevel", "font1:stackFont", "font2:durationFont"},
-        ["allCooldowns"] = {"enabled", "durationVisibility", "num:5", "orientation", "size", "position", "frameLevel", "font1:stackFont", "font2:durationFont"},
+        ["externalCooldowns"] = {L["Even if disabled, the settings below affect \"Externals + Defensives\" indicator"], "enabled", "builtInExternals", "customExternals", "durationVisibility", "checkbutton:showAnimation", "num:5", "orientation", "size", "position", "frameLevel", "font1:stackFont", "font2:durationFont"},
+        ["defensiveCooldowns"] = {L["Even if disabled, the settings below affect \"Externals + Defensives\" indicator"], "enabled", "builtInDefensives", "customDefensives", "durationVisibility", "checkbutton:showAnimation", "num:5", "orientation", "size", "position", "frameLevel", "font1:stackFont", "font2:durationFont"},
+        ["allCooldowns"] = {"enabled", "durationVisibility", "checkbutton:showAnimation", "num:5", "orientation", "size", "position", "frameLevel", "font1:stackFont", "font2:durationFont"},
         ["tankActiveMitigation"] = {"|cffb7b7b7"..I:GetTankActiveMitigationString(), "enabled", "color-class", "size-bar", "position", "frameLevel"},
         ["dispels"] = {"enabled", "checkbutton:dispellableByMe", "highlightType", "dispelBlacklist", "checkbutton2:showDispelTypeIcons", "orientation", "size-square", "position", "frameLevel"},
-        ["debuffs"] = {"enabled", "checkbutton:dispellableByMe", "debuffBlacklist", "bigDebuffs", "durationVisibility", "checkbutton2:showTooltip:"..DEBUFFS_TOOLTIP1, "checkbutton3:enableBlacklistShortcut:"..DEBUFFS_TOOLTIP2, "num:10", "orientation", "size-normal-big", "position", "frameLevel", "font1:stackFont", "font2:durationFont"},
+        ["debuffs"] = {"enabled", "checkbutton:dispellableByMe", "debuffBlacklist", "bigDebuffs", "durationVisibility", "checkbutton2:showAnimation", "checkbutton3:showTooltip:"..DEBUFFS_TOOLTIP1, "checkbutton4:enableBlacklistShortcut:"..DEBUFFS_TOOLTIP2, "num:10", "orientation", "size-normal-big", "position", "frameLevel", "font1:stackFont", "font2:durationFont"},
         ["raidDebuffs"] = {"|cffb7b7b7"..L["You can config debuffs in %s"]:format(Cell:GetAccentColorString()..L["Raid Debuffs"].."|r"), "enabled", "checkbutton:onlyShowTopGlow", "checkbutton2:showTooltip:"..DEBUFFS_TOOLTIP1, "num:3", "orientation", "size-border", "position", "frameLevel", "font1:stackFont", "font2:durationFont"},
         ["privateAuras"] = {"|cffb7b7b7"..L["Due to restrictions of the private aura system, this indicator can only use Blizzard style."], "enabled", "privateAuraOptions", "size-square", "position", "frameLevel"},
         ["targetedSpells"] = {"enabled", "checkbutton:showAllSpells:"..L["Glow is only available to the spells in the list below"], "targetedSpellsList", "targetedSpellsGlow", "size-border", "position", "frameLevel", "font"},
@@ -1493,11 +1508,11 @@ elseif Cell.isWrath then
         ["shieldBar"] = {"enabled", "checkbutton:onlyShowOvershields", "color-alpha", "height", "shieldBarPosition", "frameLevel"},
         ["powerWordShield"] = {L["To show shield value, |cffff2727Glyph of Power Word: Shield|r is required"], "enabled", "checkbutton:shieldByMe", "shape", "size-square", "position", "frameLevel"},
         ["aoeHealing"] = {"enabled", "color", "height"},
-        ["externalCooldowns"] = {L["Even if disabled, the settings below affect \"Externals + Defensives\" indicator"], "enabled", "builtInExternals", "customExternals", "durationVisibility", "num:5", "orientation", "size", "position", "frameLevel", "font1:stackFont", "font2:durationFont"},
-        ["defensiveCooldowns"] = {L["Even if disabled, the settings below affect \"Externals + Defensives\" indicator"], "enabled", "builtInDefensives", "customDefensives", "durationVisibility", "num:5", "orientation", "size", "position", "frameLevel", "font1:stackFont", "font2:durationFont"},
-        ["allCooldowns"] = {"enabled", "durationVisibility", "num:5", "orientation", "size", "position", "frameLevel", "font1:stackFont", "font2:durationFont"},
+        ["externalCooldowns"] = {L["Even if disabled, the settings below affect \"Externals + Defensives\" indicator"], "enabled", "builtInExternals", "customExternals", "durationVisibility", "checkbutton:showAnimation", "num:5", "orientation", "size", "position", "frameLevel", "font1:stackFont", "font2:durationFont"},
+        ["defensiveCooldowns"] = {L["Even if disabled, the settings below affect \"Externals + Defensives\" indicator"], "enabled", "builtInDefensives", "customDefensives", "durationVisibility", "checkbutton:showAnimation", "num:5", "orientation", "size", "position", "frameLevel", "font1:stackFont", "font2:durationFont"},
+        ["allCooldowns"] = {"enabled", "durationVisibility", "checkbutton:showAnimation", "num:5", "orientation", "size", "position", "frameLevel", "font1:stackFont", "font2:durationFont"},
         ["dispels"] = {"enabled", "checkbutton:dispellableByMe", "highlightType", "dispelBlacklist", "checkbutton2:showDispelTypeIcons", "orientation", "size-square", "position", "frameLevel"},
-        ["debuffs"] = {"enabled", "checkbutton:dispellableByMe", "debuffBlacklist", "bigDebuffs", "durationVisibility", "checkbutton2:showTooltip:"..DEBUFFS_TOOLTIP1, "checkbutton3:enableBlacklistShortcut:"..DEBUFFS_TOOLTIP2, "num:10", "orientation", "size-normal-big", "position", "frameLevel", "font1:stackFont", "font2:durationFont"},
+        ["debuffs"] = {"enabled", "checkbutton:dispellableByMe", "debuffBlacklist", "bigDebuffs", "durationVisibility", "checkbutton2:showAnimation", "checkbutton3:showTooltip:"..DEBUFFS_TOOLTIP1, "checkbutton4:enableBlacklistShortcut:"..DEBUFFS_TOOLTIP2, "num:10", "orientation", "size-normal-big", "position", "frameLevel", "font1:stackFont", "font2:durationFont"},
         ["raidDebuffs"] = {"|cffb7b7b7"..L["You can config debuffs in %s"]:format(Cell:GetAccentColorString()..L["Raid Debuffs"].."|r"), "enabled", "checkbutton:onlyShowTopGlow", "checkbutton2:showTooltip:"..DEBUFFS_TOOLTIP1, "num:3", "orientation", "size-border", "position", "frameLevel", "font1:stackFont", "font2:durationFont"},
         ["targetedSpells"] = {"enabled", "checkbutton:showAllSpells:"..L["Glow is only available to the spells in the list below"], "targetedSpellsList", "targetedSpellsGlow", "size-border", "position", "frameLevel", "font"},
         ["targetCounter"] = {"|cffff2727"..L["HIGH CPU USAGE"].."!|r |cffb7b7b7"..L["Check all visible enemy nameplates."], "enabled", "targetCounterFilters", "color", "position", "frameLevel", "font-noOffset"},
@@ -1526,11 +1541,11 @@ elseif Cell.isVanilla then
         ["aggroBorder"] = {"enabled", "thickness", "frameLevel"},
         ["aggroBar"] = {"enabled", "size-bar", "position", "frameLevel"},
         ["aoeHealing"] = {"enabled", "color", "height"},
-        ["externalCooldowns"] = {L["Even if disabled, the settings below affect \"Externals + Defensives\" indicator"], "enabled", "builtInExternals", "customExternals", "durationVisibility", "num:5", "orientation", "size", "position", "frameLevel", "font1:stackFont", "font2:durationFont"},
-        ["defensiveCooldowns"] = {L["Even if disabled, the settings below affect \"Externals + Defensives\" indicator"], "enabled", "builtInDefensives", "customDefensives", "durationVisibility", "num:5", "orientation", "size", "position", "frameLevel", "font1:stackFont", "font2:durationFont"},
-        ["allCooldowns"] = {"enabled", "durationVisibility", "num:5", "orientation", "size", "position", "frameLevel", "font1:stackFont", "font2:durationFont"},
+        ["externalCooldowns"] = {L["Even if disabled, the settings below affect \"Externals + Defensives\" indicator"], "enabled", "builtInExternals", "customExternals", "durationVisibility", "checkbutton:showAnimation", "num:5", "orientation", "size", "position", "frameLevel", "font1:stackFont", "font2:durationFont"},
+        ["defensiveCooldowns"] = {L["Even if disabled, the settings below affect \"Externals + Defensives\" indicator"], "enabled", "builtInDefensives", "customDefensives", "durationVisibility", "checkbutton:showAnimation", "num:5", "orientation", "size", "position", "frameLevel", "font1:stackFont", "font2:durationFont"},
+        ["allCooldowns"] = {"enabled", "durationVisibility", "checkbutton:showAnimation", "num:5", "orientation", "size", "position", "frameLevel", "font1:stackFont", "font2:durationFont"},
         ["dispels"] = {"enabled", "checkbutton:dispellableByMe", "highlightType", "dispelBlacklist", "checkbutton2:showDispelTypeIcons", "orientation", "size-square", "position", "frameLevel"},
-        ["debuffs"] = {"enabled", "checkbutton:dispellableByMe", "debuffBlacklist", "bigDebuffs", "durationVisibility", "checkbutton2:showTooltip:"..DEBUFFS_TOOLTIP1, "checkbutton3:enableBlacklistShortcut:"..DEBUFFS_TOOLTIP2, "num:10", "orientation", "size-normal-big", "position", "frameLevel", "font1:stackFont", "font2:durationFont"},
+        ["debuffs"] = {"enabled", "checkbutton:dispellableByMe", "debuffBlacklist", "bigDebuffs", "durationVisibility", "checkbutton2:showAnimation", "checkbutton3:showTooltip:"..DEBUFFS_TOOLTIP1, "checkbutton4:enableBlacklistShortcut:"..DEBUFFS_TOOLTIP2, "num:10", "orientation", "size-normal-big", "position", "frameLevel", "font1:stackFont", "font2:durationFont"},
         ["raidDebuffs"] = {"|cffb7b7b7"..L["You can config debuffs in %s"]:format(Cell:GetAccentColorString()..L["Raid Debuffs"].."|r"), "enabled", "checkbutton:onlyShowTopGlow", "checkbutton2:showTooltip:"..DEBUFFS_TOOLTIP1, "num:3", "orientation", "size-border", "position", "frameLevel", "font1:stackFont", "font2:durationFont"},
         ["targetedSpells"] = {"enabled", "checkbutton:showAllSpells:"..L["Glow is only available to the spells in the list below"], "targetedSpellsList", "targetedSpellsGlow", "size-border", "position", "frameLevel", "font"},
         ["targetCounter"] = {"|cffff2727"..L["HIGH CPU USAGE"].."!|r |cffb7b7b7"..L["Check all visible enemy nameplates."], "enabled", "targetCounterFilters", "color", "position", "frameLevel", "font-noOffset"},
@@ -1560,7 +1575,7 @@ local function ShowIndicatorSettings(id)
         -- end
     else
         if indicatorType == "icon" then
-            settingsTable = {"enabled", "auras", "checkbutton3:showStack", "durationVisibility", CELL_RECTANGULAR_CUSTOM_INDICATOR_ICONS and "size" or "size-square", "position", "frameLevel", "font1:stackFont", "font2:durationFont"}
+            settingsTable = {"enabled", "auras", "checkbutton3:showStack", "durationVisibility", "checkbutton4:showAnimation", CELL_RECTANGULAR_CUSTOM_INDICATOR_ICONS and "size" or "size-square", "position", "frameLevel", "font1:stackFont", "font2:durationFont"}
         elseif indicatorType == "text" then
             settingsTable = {"enabled", "auras", "duration", "checkbutton3:circledStackNums:"..L["Require font support"], "colors", "position", "frameLevel", "font-noOffset"}
         elseif indicatorType == "bar" then
@@ -1568,7 +1583,7 @@ local function ShowIndicatorSettings(id)
         elseif indicatorType == "rect" then
             settingsTable = {"enabled", "auras", "colors", "checkbutton3:showStack", "size", "position", "frameLevel", "font"}
         elseif indicatorType == "icons" then
-            settingsTable = {"enabled", "auras", "checkbutton3:showStack", "durationVisibility", "num:10", "orientation", CELL_RECTANGULAR_CUSTOM_INDICATOR_ICONS and "size" or "size-square", "position", "frameLevel", "font1:stackFont", "font2:durationFont"}
+            settingsTable = {"enabled", "auras", "checkbutton3:showStack", "durationVisibility", "checkbutton4:showAnimation", "num:10", "orientation", CELL_RECTANGULAR_CUSTOM_INDICATOR_ICONS and "size" or "size-square", "position", "frameLevel", "font1:stackFont", "font2:durationFont"}
         elseif indicatorType == "color" then
             settingsTable = {"enabled", "auras", "customColors", "anchor"}
         elseif indicatorType == "texture" then

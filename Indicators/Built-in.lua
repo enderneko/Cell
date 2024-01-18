@@ -93,6 +93,12 @@ local function Cooldowns_ShowDuration(self, show)
     end
 end
 
+local function Cooldowns_ShowAnimation(self, show)
+    for i = 1, #self do
+        self[i]:ShowAnimation(show)
+    end
+end
+
 local function Cooldowns_UpdatePixelPerfect(self)
     P:Repoint(self)
     for i = 1, #self do
@@ -197,6 +203,7 @@ function I:CreateDefensiveCooldowns(parent)
     defensiveCooldowns.SetFont = Cooldowns_SetFont
     defensiveCooldowns.SetOrientation = Cooldowns_SetOrientation
     defensiveCooldowns.ShowDuration = Cooldowns_ShowDuration
+    defensiveCooldowns.ShowAnimation = Cooldowns_ShowAnimation
     defensiveCooldowns.UpdatePixelPerfect = Cooldowns_UpdatePixelPerfect
 
     for i = 1, 5 do
@@ -220,6 +227,7 @@ function I:CreateExternalCooldowns(parent)
     externalCooldowns.SetFont = Cooldowns_SetFont
     externalCooldowns.SetOrientation = Cooldowns_SetOrientation
     externalCooldowns.ShowDuration = Cooldowns_ShowDuration
+    externalCooldowns.ShowAnimation = Cooldowns_ShowAnimation
     externalCooldowns.UpdatePixelPerfect = Cooldowns_UpdatePixelPerfect
 
     for i = 1, 5 do
@@ -243,6 +251,7 @@ function I:CreateAllCooldowns(parent)
     allCooldowns.SetFont = Cooldowns_SetFont
     allCooldowns.SetOrientation = Cooldowns_SetOrientation
     allCooldowns.ShowDuration = Cooldowns_ShowDuration
+    allCooldowns.ShowAnimation = Cooldowns_ShowAnimation
     allCooldowns.UpdatePixelPerfect = Cooldowns_UpdatePixelPerfect
 
     for i = 1, 5 do
@@ -409,6 +418,12 @@ local function Debuffs_ShowDuration(self, show)
     end
 end
 
+local function Debuffs_ShowAnimation(self, show)
+    for i = 1, 10 do
+        self[i]:ShowAnimation(show)
+    end
+end
+
 local function Debuffs_UpdatePixelPerfect(self)
     P:Repoint(self)
     for i = 1, 10 do
@@ -434,6 +449,7 @@ function I:CreateDebuffs(parent)
     debuffs.SetOrientation = Debuffs_SetOrientation
 
     debuffs.ShowDuration = Debuffs_ShowDuration
+    debuffs.ShowAnimation = Debuffs_ShowAnimation
     debuffs.UpdatePixelPerfect = Debuffs_UpdatePixelPerfect
 
     function debuffs:ShowTooltip(show)

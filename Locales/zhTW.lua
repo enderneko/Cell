@@ -516,6 +516,8 @@ L["Show units you care about more in a separate frame"] = "在單獨的框架中
 L["Show while in a party"] = "在隊伍中時顯示"
 L["Show while not in a group"] = "不在隊伍中時顯示"
 L["showAllSpells"] = "顯示所有法術"
+--[[Translation missing --]]
+--[[ L["showAnimation"] = "Show animation"--]] 
 L["showBackground"] = "顯示背景"
 L["showDispelTypeIcons"] = "顯示驅散類型圖示"
 L["showDuration"] = "顯示持續時間文字"

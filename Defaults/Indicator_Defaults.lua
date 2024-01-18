@@ -22,6 +22,7 @@ function I:GetDefaultCustomIndicatorTable(name, indicatorName, type, auraType)
             },
             ["showStack"] = true,
             ["showDuration"] = false,
+            ["showAnimation"] = true,
             ["auraType"] = auraType,
             ["auras"] = {},
         }
@@ -92,6 +93,7 @@ function I:GetDefaultCustomIndicatorTable(name, indicatorName, type, auraType)
             },
             ["showStack"] = true,
             ["showDuration"] = false,
+            ["showAnimation"] = true,
             ["auraType"] = auraType,
             ["auras"] = {},
         }

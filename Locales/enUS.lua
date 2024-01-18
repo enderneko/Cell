@@ -28,6 +28,7 @@ select(2, ...).L = setmetatable({
     ["buffByMe"] = "Only show buffs I can apply",
     ["trackByName"] = "Track by name",
     ["showDuration"] = "Show duration text",
+    ["showAnimation"] = "Show animation",
     ["showStack"] = "Show stack text",
     ["showTooltip"] = "Show aura tooltip",
     ["enableHighlight"] = "Highlight unit button",

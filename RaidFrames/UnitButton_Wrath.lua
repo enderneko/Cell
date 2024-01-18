@@ -246,6 +246,10 @@ local function HandleIndicators(b)
         if type(t["showDuration"]) == "boolean" or type(t["showDuration"]) == "number" then
             indicator:ShowDuration(t["showDuration"])
         end
+        -- update animation
+        if type(t["showAnimation"]) == "boolean" then
+            indicator:ShowAnimation(t["showAnimation"])
+        end
         -- update stack
         if type(t["showStack"]) == "boolean" then
             indicator:ShowStack(t["showStack"])
@@ -634,6 +638,11 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                     b.indicators[indicatorName]:ShowStack(value2)
                     UnitButton_UpdateAuras(b)
                 end, true)
+            elseif value == "showAnimation" then
+                F:IterateAllUnitButtons(function(b)
+                    b.indicators[indicatorName]:ShowAnimation(value2)
+                    UnitButton_UpdateAuras(b)
+                end, true)
             elseif value == "trackByName" then
                 F:IterateAllUnitButtons(function(b)
                     UnitButton_UpdateAuras(b)
@@ -707,8 +716,12 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                     indicator:SetTexture(value["texture"])
                 end
                 -- update showDuration
-                if value["showDuration"] then
+                if type(value["showDuration"]) ~= "nil" then
                     indicator:ShowDuration(value["showDuration"])
+                end
+                -- update showAnimation
+                if type(value["showAnimation"]) == "boolean" then
+                    indicator:ShowAnimation(value["showAnimation"])
                 end
                 -- update showStack
                 if value["showStack"] then

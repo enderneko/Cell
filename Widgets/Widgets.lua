@@ -160,7 +160,7 @@ function addon:ColorFontStringWithAccentColor(fs)
 end
 
 function addon:WrapTextInAccentColor(text)
-    return WrapTextInColorCode(text, accentColor.s)
+    return WrapTextInColorCode(text, accentColor.s) -- FIXME: ("|c%s%s|r"):format(colorHexString, text)
 end
 
 -----------------------------------------

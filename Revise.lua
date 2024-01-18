@@ -2550,6 +2550,16 @@ function F:Revise()
                 end
                 layout["indicators"][index]["nameColor"] = nil
             end
+
+            -- add showAnimation option
+            for _, i in pairs(layout["indicators"]) do
+                if i.indicatorName == "externalCooldowns" or i.indicatorName == "defensiveCooldowns" or i.indicatorName == "allCooldowns" or i.indicatorName == "debuffs"
+                    or i.type == "icon" or i.type == "icons" then
+                    if type(i.showAnimation) ~= "boolean" then
+                        i.showAnimation = true
+                    end
+                end
+            end
         end
 
         -- set alwaysUpdateDebuffs default to true

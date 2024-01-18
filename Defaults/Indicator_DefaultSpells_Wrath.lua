@@ -367,6 +367,7 @@ function F:FirstRun()
             },
             ["showStack"] = true,
             ["showDuration"] = false,
+            ["showAnimation"] = true,
             ["auraType"] = "buff",
             ["castBy"] = "me",
             ["trackByName"] = true,

@@ -220,31 +220,28 @@ local function BarIcon_SetCooldown(frame, start, duration, debuffType, texture, 
         frame.duration:Hide()
         frame:SetScript("OnUpdate", nil)
     else
-        local threshold
-        if frame.showDuration == true then
-            frame.cooldown:Hide()
-            frame.duration:Show()
-            -- update threshold
-            threshold = duration
-        else -- false or number
+        if frame.showAnimation then
             -- init bar values
             frame.cooldown.elapsed = 0.1 -- update immediately
             frame.cooldown:SetMinMaxValues(0, duration)
             frame.cooldown:SetValue(GetTime()-start)
             frame.cooldown:Show()
-            -- update threshold and duration visibility
-            if not frame.showDuration then
-                frame.duration:Hide()
-            elseif frame.showDuration == 0 then
+        else
+            frame.cooldown:Hide()
+        end
+
+        local threshold
+        if frame.showDuration == false then
+            frame.duration:Hide()
+        else
+            if frame.showDuration == true then
                 threshold = duration
-                frame.duration:Show()
             elseif frame.showDuration >= 1 then
                 threshold = frame.showDuration
-                frame.duration:Show()
             else -- < 1
                 threshold = frame.showDuration * duration
-                frame.duration:Show()
             end
+            frame.duration:Show()
         end
 
         if frame.showDuration then
@@ -425,10 +422,17 @@ function I:CreateAura_BarIcon(name, parent)
         frame.showDuration = show
         if show then
             duration:Show()
-            cooldown:Hide()
         else
             duration:Hide()
+        end
+    end
+
+    function frame:ShowAnimation(show)
+        frame.showAnimation = show
+        if show then
             cooldown:Show()
+        else
+            cooldown:Hide()
         end
     end
 
@@ -1023,6 +1027,12 @@ function I:CreateAura_Icons(name, parent, num)
     function icons:ShowDuration(show)
         for i = 1, num do
             icons[i]:ShowDuration(show)
+        end
+    end
+   
+    function icons:ShowAnimation(show)
+        for i = 1, num do
+            icons[i]:ShowAnimation(show)
         end
     end
     
