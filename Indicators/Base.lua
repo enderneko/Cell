@@ -231,7 +231,7 @@ local function BarIcon_SetCooldown(frame, start, duration, debuffType, texture, 
         end
 
         local threshold
-        if frame.showDuration == false then
+        if not frame.showDuration then
             frame.duration:Hide()
         else
             if frame.showDuration == true then
