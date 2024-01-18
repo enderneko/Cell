@@ -24,8 +24,7 @@ L["ACCEPTED"] = "已接受"
 L["Action"] = "動作"
 L["Add"] = "新增"
 L["Add new spell"] = "加入新法術"
---[[Translation missing --]]
---[[ L["Added |T%d:0|t|cFFFF3030%s(%d)|r into debuff blacklist."] = ""--]] 
+L["Added |T%d:0|t|cFFFF3030%s(%d)|r into debuff blacklist."] = "已將 |T%d:0|t|cFFFF3030%s(%d)|r 加入減益黑名單。"
 L["AFK"] = "暫離"
 L["Aggro (bar)"] = "仇恨 (條)"
 L["Aggro (blink)"] = "仇恨 (閃爍)"
@@ -193,8 +192,7 @@ L["Enable"] = "啟用"
 L["Enable Death Color"] = "啟用死亡顏色"
 L["Enable Full Health Color"] = "啟用滿血顏色"
 L["Enable Spotlight Frame"] = "啟用特別關注框架"
---[[Translation missing --]]
---[[ L["enableBlacklistShortcut"] = "Blacklist: Alt+Ctrl+RightClick"--]] 
+L["enableBlacklistShortcut"] = "黑名單: Alt+Ctrl+右鍵"
 L["Enabled"] = "啟用"
 L["enableHighlight"] = "顯著標示單位按鈕"
 L["Ensure that other addons get the right unit button"] = "確保其他插件獲取到正確的單位按鈕"
@@ -516,8 +514,7 @@ L["Show units you care about more in a separate frame"] = "在單獨的框架中
 L["Show while in a party"] = "在隊伍中時顯示"
 L["Show while not in a group"] = "不在隊伍中時顯示"
 L["showAllSpells"] = "顯示所有法術"
---[[Translation missing --]]
---[[ L["showAnimation"] = "Show animation"--]] 
+L["showAnimation"] = "顯示動畫效果"
 L["showBackground"] = "顯示背景"
 L["showDispelTypeIcons"] = "顯示驅散類型圖示"
 L["showDuration"] = "顯示持續時間文字"
