@@ -86,6 +86,11 @@ select(2, ...).L = setmetatable({
         <p>(Retail) Enable "Always Update Buffs/Debuffs" in General tab, if indicators do not update correctly.</p>
         <br/>
 
+        <h1>r216-release (Jan 18, 2024, 12:31 GMT+8)</h1>
+        <p>* Fixed an icon preview issue in Appearance.</p>
+        <p>* Fixed icon animation of Quick Assist.</p>
+        <br/>
+
         <h1>r215-release (Jan 18, 2024, 11:31 GMT+8)</h1>
         <p>+ Implemented blacklist shortcut for Debuffs: Alt + Ctrl + LeftClick (disabled by default).</p>
         <p>+ Added "Show animation" option for some indicators.</p>
