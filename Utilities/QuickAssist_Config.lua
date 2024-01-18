@@ -300,6 +300,7 @@ local defaultQuickAssistTable = {
                 ["glow"] = "None",
                 ["showStack"] = true,
                 ["showDuration"] = false,
+                ["showAnimation"] = true,
                 ["font"] = {
                     {"Cell ".._G.DEFAULT, 11, "Outline", "TOPRIGHT", 2, 1, {1, 1, 1}},
                     {"Cell ".._G.DEFAULT, 11, "Outline", "BOTTOMRIGHT", 2, -1, {1, 1, 1}},
@@ -323,6 +324,7 @@ local defaultQuickAssistTable = {
                 ["glowColor"] = {1, 1, 1, 1},
                 ["showStack"] = true,
                 ["showDuration"] = false,
+                ["showAnimation"] = true,
                 ["font"] = {
                     {"Cell ".._G.DEFAULT, 11, "Outline", "TOPRIGHT", 2, 1, {1, 1, 1}},
                     {"Cell ".._G.DEFAULT, 11, "Outline", "BOTTOMRIGHT", 2, -1, {1, 1, 1}},
@@ -501,6 +503,7 @@ local function UpdatePreviewButton()
     -- font
     offensiveIcons:SetFont(unpack(oit["font"]))
     offensiveIcons:ShowDuration(oit["showDuration"])
+    offensiveIcons:ShowAnimation(oit["showAnimation"])
     offensiveIcons:ShowStack(oit["showStack"])
 
     -- offensiveGlow
@@ -522,6 +525,7 @@ local function UpdatePreviewButton()
     -- font
     buffIcons:SetFont(unpack(bit["font"]))
     buffIcons:ShowDuration(bit["showDuration"])
+    buffIcons:ShowAnimation(bit["showAnimation"])
     buffIcons:ShowStack(bit["showStack"])
 
     -- buffBars
@@ -2205,7 +2209,7 @@ local function CreateIconOptions(parent)
     iconOptionsFrame:SetFrameLevel(parent:GetFrameLevel()+50)
     iconOptionsFrame:Hide()
 
-    iconOptionsFrame:SetHeight(170)
+    iconOptionsFrame:SetHeight(190)
     iconOptionsFrame:SetPoint("TOP", 0, -90)
     iconOptionsFrame:SetPoint("LEFT")
     iconOptionsFrame:SetPoint("RIGHT")
@@ -2314,6 +2318,12 @@ local function CreateIconOptions(parent)
         spellTable[currentIconIndex]["icon"]["size"][2] = value
         Cell:Fire("UpdateQuickAssist", currentIconIndex.."-indicator")
     end
+    
+    local iconShowAnimationCB = Cell:CreateCheckButton(iconTab, L["showAnimation"], function(checked)
+        spellTable[currentIconIndex]["icon"]["showAnimation"] = checked
+        Cell:Fire("UpdateQuickAssist", currentIconIndex.."-indicator")
+    end)
+    iconShowAnimationCB:SetPoint("TOPLEFT", iconWidthSlider, 0, -40)
 
     function iconTab:Load(t)
         iconTab:Show()
@@ -2326,6 +2336,7 @@ local function CreateIconOptions(parent)
         iconYSlider:SetValue(t["position"][4])
         iconWidthSlider:SetValue(t["size"][1])
         iconHeightSlider:SetValue(t["size"][2])
+        iconShowAnimationCB:SetChecked(t["showAnimation"])
 
         if currentIconIndex == "offensives" then
             iconGlowCP:Show()
@@ -2348,7 +2359,7 @@ local function CreateIconOptions(parent)
     end)
     iconShowStackCB:SetPoint("TOPLEFT", 5, -27)
 
-    local iconDurationDropdown = Cell:CreateDropdown(fontTab, 220)
+    local iconDurationDropdown = Cell:CreateDropdown(fontTab, 117)
     iconDurationDropdown:SetPoint("TOPLEFT", 5, -27)
     iconDurationDropdown:SetLabel(L["showDuration"])
 
@@ -2364,13 +2375,8 @@ local function CreateIconOptions(parent)
             ["onClick"] = ShowDuration,
         },
         {
-            ["text"] = L["Always"].." ("..L["hide icon animation"]..")",
-            ["value"] = true,
-            ["onClick"] = ShowDuration,
-        },
-        {
             ["text"] = L["Always"],
-            ["value"] = 0,
+            ["value"] = true,
             ["onClick"] = ShowDuration,
         },
         {

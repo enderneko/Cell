@@ -254,6 +254,7 @@ local function CreatePreviewIcons()
         barIcon2.preview.elapsedTime = 0
         barIcon2:SetCooldown(GetTime(), 13, nil, 136085, 0)
     end)
+    barIcon2:ShowAnimation(true)
     barIcon2:Show()
 
     barIcon1 = I:CreateAura_BarIcon("CellAppearancePreviewIcon3", previewIconsBG)
@@ -261,6 +262,7 @@ local function CreatePreviewIcons()
     P:Size(barIcon1, 22, 22)
     barIcon1:SetPoint("BOTTOMRIGHT", barIcon2, "BOTTOMLEFT", P:Scale(-1), 0)
     barIcon1:ShowDuration(true)
+    barIcon1:ShowAnimation(true)
     SetOnUpdate(barIcon1, "", 132155, 5)
     barIcon1:Show()
 

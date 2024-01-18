@@ -1195,6 +1195,7 @@ local function UpdateQuickAssist(which)
             -- font
             indicator:SetFont(unpack(bit["font"]))
             indicator:ShowDuration(bit["showDuration"])
+            indicator:ShowAnimation(bit["showAnimation"])
             indicator:ShowStack(bit["showStack"])
 
             -- bar
@@ -1241,6 +1242,7 @@ local function UpdateQuickAssist(which)
             -- font
             indicator:SetFont(unpack(oit["font"]))
             indicator:ShowDuration(oit["showDuration"])
+            indicator:ShowAnimation(oit["showAnimation"])
             indicator:ShowStack(oit["showStack"])
             
             -- glow

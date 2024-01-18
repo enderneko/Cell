@@ -2568,6 +2568,20 @@ function F:Revise()
         end
     end
 
+    -- r216-release
+    if CellDB["revise"] and dbRevision < 216 then
+        if Cell.isRetail then
+            for spec, t in pairs(CellDB["quickAssist"]) do
+                if type(t["spells"]["mine"]["icon"]["showAnimation"]) ~= "boolean" then
+                    t["spells"]["mine"]["icon"]["showAnimation"] = true
+                end
+                if type(t["spells"]["offensives"]["icon"]["showAnimation"]) ~= "boolean" then
+                    t["spells"]["offensives"]["icon"]["showAnimation"] = true
+                end
+            end
+        end
+    end
+
     -- ----------------------------------------------------------------------- --
     --            update from old versions, validate all indicators            --
     -- ----------------------------------------------------------------------- --
