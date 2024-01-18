@@ -546,9 +546,11 @@ end
 
 local function QuickAssist_OnAttributeChanged(self, name, value)
     if name == "unit" then
-        self.unit = value
-        self:RegisterUnitEvent("UNIT_IN_RANGE_UPDATE", value)
-        ResetAuraTables(self)
+        if self.unit ~= value then
+            self.unit = value
+            self:RegisterUnitEvent("UNIT_IN_RANGE_UPDATE", value)
+            ResetAuraTables(self)
+        end
 
         if value then
             Cell.unitButtons.quickAssist.units[value] = self
