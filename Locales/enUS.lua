@@ -86,6 +86,11 @@ select(2, ...).L = setmetatable({
         <p>(Retail) Enable "Always Update Buffs/Debuffs" in General tab, if indicators do not update correctly.</p>
         <br/>
 
+        <h1>r217-release (Jan 18, 2024, 17:01 GMT+8)</h1>
+        <p>* Fixed duration text visibility.</p>
+        <p>* Updated zhTW.</p>
+        <br/>
+
         <h1>r216-release (Jan 18, 2024, 12:31 GMT+8)</h1>
         <p>* Fixed an icon preview issue in Appearance.</p>
         <p>* Fixed icon animation of Quick Assist.</p>
