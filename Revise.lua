@@ -2530,11 +2530,6 @@ function F:Revise()
     -- r215-release
     if CellDB["revise"] and dbRevision < 215 then
         for _, layout in pairs(CellDB["layouts"]) do
-            -- add role order option
-            if not layout["main"]["roleOrder"] then
-                layout["main"]["roleOrder"] = {"TANK", "HEALER", "DAMAGER"}
-            end
-
             -- add color for tankActiveMitigation
             local index = Cell.defaults.indicatorIndices.tankActiveMitigation
             if index and type(layout["indicators"][index]["color"]) ~= "table" then
@@ -2594,6 +2589,16 @@ function F:Revise()
                 if type(t["spells"]["offensives"]["icon"]["showAnimation"]) ~= "boolean" then
                     t["spells"]["offensives"]["icon"]["showAnimation"] = true
                 end
+            end
+        end
+    end
+
+    -- r218-release
+    if CellDB["revise"] and dbRevision < 218 then
+        for _, layout in pairs(CellDB["layouts"]) do
+            -- fix role order option
+            if not layout["main"]["roleOrder"] then
+                layout["main"]["roleOrder"] = {"TANK", "HEALER", "DAMAGER"}
             end
         end
     end
