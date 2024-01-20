@@ -1,5 +1,5 @@
-[Full Changelog](https://github.com/enderneko/Cell/compare/r216-release...e602f935173f6534f03bbb951f113989e218da1b)
+[Full Changelog](https://github.com/enderneko/Cell/compare/r217-release...6dc1b08c2a0a36c5bd6c4f0219f770764f7f7cf2)
 
-- Fix duration text visibility
-- Update zhTW
-- Update snippets
+- Fix party role order option (non-retail)
+- Fix frame visibility
+- Update BuffTracker_Vanilla.lua
