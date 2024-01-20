@@ -251,7 +251,8 @@ local function PartyFrame_UpdateVisibility(which)
         if CellDB["general"]["showParty"] then
             --! [group] won't fire during combat
             -- RegisterAttributeDriver(partyFrame, "state-visibility", "[group:raid] hide; [group:party] show; hide")
-            RegisterAttributeDriver(partyFrame, "state-visibility", "[@raid1,exists] hide;[@party1,exists] show;hide")
+            -- NOTE: [group:party] show: fix for premade, only player in party, but party1 not exists
+            RegisterAttributeDriver(partyFrame, "state-visibility", "[@raid1,exists] hide;[@party1,exists] show;[group:party] show;hide")
         else
             UnregisterAttributeDriver(partyFrame, "state-visibility")
             partyFrame:Hide()

@@ -103,7 +103,7 @@ local function SoloFrame_UpdateVisibility(which)
 
     if not which or which == "solo" then
         if CellDB["general"]["showSolo"] then
-            RegisterAttributeDriver(soloFrame, "state-visibility", "[@raid1,exists] hide;[@party1,exists] hide;show")
+            RegisterAttributeDriver(soloFrame, "state-visibility", "[@raid1,exists] hide;[@party1,exists] hide;[group] hide;show")
         else
             UnregisterAttributeDriver(soloFrame, "state-visibility")
             soloFrame:Hide()
