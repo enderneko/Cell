@@ -85,7 +85,7 @@ local order = {"PWF", "AB", "DS", "MotW", "BoK", "BoM", "BoW", "BoS", "BS", "SP"
 local requiredBuffs = {
     ["WARRIOR"] = {["PWF"]=true, ["MotW"]=true, ["BoK"]=true, ["BoM"]=true, ["BoS"]=true, ["BS"]=true, ["SP"]=true},
     ["PALADIN"] = {["PWF"]=true, ["AB"]=true, ["DS"]=true, ["MotW"]=true, ["BoK"]=true, ["BoM"]=true, ["BoW"]=true, ["BoS"]=true, ["BS"]=true, ["SP"]=true},
-    ["HUNTER"] = {["PWF"]=true, ["MotW"]=true, ["BoK"]=true, ["BoM"]=true, ["BoS"]=true, ["BS"]=true, ["SP"]=true},
+    ["HUNTER"] = {["PWF"]=true, ["AB"]=true, ["MotW"]=true, ["BoK"]=true, ["BoM"]=true, ["BoS"]=true, ["BS"]=true, ["SP"]=true},
     ["ROGUE"] = {["PWF"]=true, ["MotW"]=true, ["BoK"]=true, ["BoM"]=true, ["BoS"]=true, ["BS"]=true, ["SP"]=true},
     ["PRIEST"] = {["PWF"]=true, ["AB"]=true, ["DS"]=true, ["MotW"]=true, ["BoK"]=true, ["BoW"]=true, ["BoS"]=true, ["SP"]=true},
     ["DEATHKNIGHT"] = {["PWF"]=true, ["MotW"]=true, ["BoK"]=true, ["BoM"]=true, ["BoS"]=true, ["BS"]=true, ["SP"]=true},
