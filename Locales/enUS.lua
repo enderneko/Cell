@@ -86,6 +86,11 @@ select(2, ...).L = setmetatable({
         <p>(Retail) Enable "Always Update Buffs/Debuffs" in General tab, if indicators do not update correctly.</p>
         <br/>
 
+        <h1>r219-release (Jan 24, 2024, 10:56 GMT+8)</h1>
+        <p>* Fixed range check for Quick Assist (now uses OnUpdate).</p>
+        <p>+ Added custom Gradient Colors (Appearance).</p>
+        <br/>
+
         <h1>r218-release (Jan 20, 2024, 18:49 GMT+8)</h1>
         <p>* (Wrath/Vanilla) Fixed a layout issue.</p>
         <br/>
