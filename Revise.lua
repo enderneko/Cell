@@ -2602,6 +2602,13 @@ function F:Revise()
             end
         end
     end
+    
+    -- r219-release
+    if CellDB["revise"] and dbRevision < 219 then
+        if not CellDB["appearance"]["gradientColors"] then
+            CellDB["appearance"]["gradientColors"] = {{1,0,0}, {1,0.7,0}, {0.7,1,0}}
+        end
+    end
 
     -- ----------------------------------------------------------------------- --
     --            update from old versions, validate all indicators            --

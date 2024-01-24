@@ -192,7 +192,25 @@ function F:ConvertHEXToRGB(hex)
 end
 
 -- https://wowpedia.fandom.com/wiki/ColorGradient
-function F:ColorGradient(perc, r1,g1,b1, r2,g2,b2, r3,g3,b3)
+-- function F:ColorGradient(perc, r1,g1,b1, r2,g2,b2, r3,g3,b3)
+--     perc = perc or 1
+--     if perc >= 1 then
+--         return r3, g3, b3
+--     elseif perc <= 0 then
+--         return r1, g1, b1
+--     end
+ 
+--     local segment, relperc = math.modf(perc * 2)
+--     local rr1, rg1, rb1, rr2, rg2, rb2 = select((segment * 3) + 1, r1,g1,b1, r2,g2,b2, r3,g3,b3)
+ 
+--     return rr1 + (rr2 - rr1) * relperc, rg1 + (rg2 - rg1) * relperc, rb1 + (rb2 - rb1) * relperc
+-- end
+
+function F:ColorGradient(perc, c1, c2, c3)
+    local r1, g1, b1 = c1[1], c1[2], c1[3]
+    local r2, g2, b2 = c2[1], c2[2], c2[3]
+    local r3, g3, b3 = c3[1], c3[2], c3[3]
+
     perc = perc or 1
     if perc >= 1 then
         return r3, g3, b3
@@ -1045,12 +1063,12 @@ function F:GetHealthColor(percent, isDeadOrGhost, r, g, b)
         elseif CellDB["appearance"]["barColor"][1] == "class_color_dark" then
             barR, barG, barB = r*0.2, g*0.2, b*0.2
         elseif CellDB["appearance"]["barColor"][1] == "gradient" then
-            barR, barG, barB = F:ColorGradient(percent, 1,0,0, 1,0.7,0, 0.7,1,0)
+            barR, barG, barB = F:ColorGradient(percent, CellDB["appearance"]["gradientColors"][1], CellDB["appearance"]["gradientColors"][2], CellDB["appearance"]["gradientColors"][3])
         elseif CellDB["appearance"]["barColor"][1] == "gradient2" then
             if percent == 1 then
                 barR, barG, barB = r, g, b -- full: class color
             else
-                barR, barG, barB = F:ColorGradient(percent, 1,0,0, 1,0.7,0, 0.7,1,0)
+                barR, barG, barB = F:ColorGradient(percent, CellDB["appearance"]["gradientColors"][1], CellDB["appearance"]["gradientColors"][2], CellDB["appearance"]["gradientColors"][3])
             end
         else
             barR = CellDB["appearance"]["barColor"][2][1]
@@ -1070,12 +1088,12 @@ function F:GetHealthColor(percent, isDeadOrGhost, r, g, b)
         elseif CellDB["appearance"]["lossColor"][1] == "class_color_dark" then
             lossR, lossG, lossB = r*0.2, g*0.2, b*0.2
         elseif CellDB["appearance"]["lossColor"][1] == "gradient" then
-            lossR, lossG, lossB = F:ColorGradient(percent, 1,0,0, 1,0.7,0, 0.7,1,0)
+            lossR, lossG, lossB = F:ColorGradient(percent, CellDB["appearance"]["gradientColors"][1], CellDB["appearance"]["gradientColors"][2], CellDB["appearance"]["gradientColors"][3])
         elseif CellDB["appearance"]["lossColor"][1] == "gradient2" then
             if isDeadOrGhost then
                 lossR, lossG, lossB = r*0.2, g*0.2, b*0.2  -- dead: class color dark
             else
-                lossR, lossG, lossB = F:ColorGradient(percent, 1,0,0, 1,0.7,0, 0.7,1,0)
+                lossR, lossG, lossB = F:ColorGradient(percent, CellDB["appearance"]["gradientColors"][1], CellDB["appearance"]["gradientColors"][2], CellDB["appearance"]["gradientColors"][3])
             end
         else
             lossR = CellDB["appearance"]["lossColor"][2][1]
