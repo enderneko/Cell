@@ -344,8 +344,12 @@ local function CreateColorPicker()
 
     function picker:StartMoving(x, y, mouseX, mouseY)
         local scale = P:GetEffectiveScale()
+
+        local lastX, lastY
         self:SetScript("OnUpdate", function(self)
             local newMouseX, newMouseY = GetCursorPosition()
+            if newMouseX == lastX and newMouseY == lastY then return end
+            lastX, lastY = newMouseX, newMouseY
 
             local newX = x + (newMouseX - mouseX) / scale
             local newY = y + (newMouseY - mouseY) / scale
