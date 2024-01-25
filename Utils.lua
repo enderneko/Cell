@@ -1944,20 +1944,60 @@ end
 -------------------------------------------------
 -- LibGetFrame
 -------------------------------------------------
+-- function Cell.GetUnitFrame(unit)
+--     local normal, spotlights, quickAssist = F:GetUnitButtonByUnit(unit, true, true)
+--     if CellDB["general"]["framePriority"] == "normal_spotlight_quickassist" then
+--         if normal then return normal end
+--         if spotlights[1] then return spotlights[1] end
+--         return quickAssist
+--     elseif CellDB["general"]["framePriority"] == "spotlight_normal_quickassist" then
+--         if spotlights[1] then return spotlights[1] end
+--         if normal then return normal end
+--         return quickAssist
+--     else -- "quickassist_normal_spotlight"
+--         if quickAssist then return quickAssist end
+--         if normal then return normal end
+--         return spotlights[1]
+--     end
+-- end
+
+local WA_GetUnitFrame, LGF_GetUnitFrame
+
 function Cell.GetUnitFrame(unit)
     local normal, spotlights, quickAssist = F:GetUnitButtonByUnit(unit, true, true)
+    
     if CellDB["general"]["framePriority"] == "normal_spotlight_quickassist" then
-        if normal then return normal end
-        if spotlights[1] then return spotlights[1] end
-        return quickAssist
+        if normal and normal:IsVisible() then
+            frame = normal
+        elseif spotlights[1] and spotlights[1]:IsVisible() then
+            frame = spotlights[1]
+        else
+            frame = quickAssist
+        end
     elseif CellDB["general"]["framePriority"] == "spotlight_normal_quickassist" then
-        if spotlights[1] then return spotlights[1] end
-        if normal then return normal end
-        return quickAssist
+        if spotlights[1] and spotlights[1]:IsVisible() then
+            frame = spotlights[1]
+        elseif normal and normal:IsVisible() then
+            frame = normal
+        else
+            frame = quickAssist
+        end
     else -- "quickassist_normal_spotlight"
-        if quickAssist then return quickAssist end
-        if normal then return normal end
-        return spotlights[1]
+        if quickAssist and quickAssist:IsVisible() then
+            frame = quickAssist
+        elseif normal and normal:IsVisible() then
+            frame = normal
+        else
+            frame = spotlights[1]
+        end
+    end
+
+    if frame then
+        return frame
+    elseif WA_GetUnitFrame then
+        return WA_GetUnitFrame(unit)
+    elseif LGF_GetUnitFrame then
+        return LGF_GetUnitFrame(unit)
     end
 end
 
@@ -1967,11 +2007,13 @@ function F:OverrideLGF(override)
     -- override LGF
     local LGF = LibStub("LibGetFrame-1.0", true)
     if LGF then
+        LGF_GetUnitFrame = LGF.GetUnitFrame
         LGF.GetUnitFrame = Cell.GetUnitFrame
         LGF.GetFrame = Cell.GetUnitFrame
     end
     -- override WA
     if WeakAuras then
+        WA_GetUnitFrame = WeakAuras.GetUnitFrame
         WeakAuras.GetUnitFrame = Cell.GetUnitFrame
     end
 end
