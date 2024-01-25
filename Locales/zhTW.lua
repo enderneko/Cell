@@ -238,8 +238,7 @@ L["Glow Type"] = "發光類型"
 L["Glow unit button when a group member sends a %s request"] = "當隊伍成員請求%s時，顯著標示他的單位按鈕"
 L["Glows"] = "發光"
 L["Gradient"] = "漸層"
---[[Translation missing --]]
---[[ L["Gradient Colors"] = ""--]] 
+L["Gradient Colors"] = "漸層色"
 L["Group Columns"] = "隊伍列數"
 L["Group Filters"] = "過濾隊伍"
 L["Group Rows"] = "隊伍行數"
