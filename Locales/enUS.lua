@@ -86,6 +86,13 @@ select(2, ...).L = setmetatable({
         <p>(Retail) Enable "Always Update Buffs/Debuffs" in General tab, if indicators do not update correctly.</p>
         <br/>
 
+        <h1>r220-release (Jan 25, 2024, 19:06 GMT+8)</h1>
+        <p>* Fixed Spotlight config button.</p>
+        <p>* Updated range checker.</p>
+        <p>* Updated Cell.GetUnitFrame.</p>
+        <p>* Updated zhTW.</p>
+        <br/>
+        
         <h1>r219-release (Jan 24, 2024, 10:56 GMT+8)</h1>
         <p>* Fixed range check for Quick Assist (now uses OnUpdate).</p>
         <p>+ Added custom Gradient Colors (Appearance).</p>

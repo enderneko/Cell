@@ -1,4 +1,6 @@
-[Full Changelog](https://github.com/enderneko/Cell/compare/r218-release...3d86541b80b9d875029e24587caa516dbe43fa70)
+[Full Changelog](https://github.com/enderneko/Cell/compare/r219-release...d1cd3d33c1c475ea2aa95560f69289cf6a95ca88)
 
-- Fix range check on Quick Assist
-- Implement custom gradient colors
+- Update Cell.GetUnitFrame
+- Update range checker
+- Fix secure buttons
+- Update zhTW
