@@ -144,11 +144,11 @@ local function creationFunc()
         ag:Play()
     end
 
-	return f
+    return f
 end
 
 local function resetterFunc(_, f)
-	f:Hide()
+    f:Hide()
 end
 
 pool = CreateObjectPool(creationFunc, resetterFunc)
