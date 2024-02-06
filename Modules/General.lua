@@ -99,7 +99,7 @@ local function CreateTooltipsPane()
 
     hideTooltipsInCombatCB = Cell:CreateCheckButton(tooltipsPane, L["Hide in Combat"], function(checked, self)
         CellDB["general"]["hideTooltipsInCombat"] = checked
-    end)
+    end, L["Hide in Combat"], L["Hide tooltips for units"], L["This will not affect aura tooltips"])
     hideTooltipsInCombatCB:SetPoint("TOPLEFT", enableTooltipsCB, "BOTTOMLEFT", 0, -7)
 
     -- auras tooltips

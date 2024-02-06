@@ -2798,12 +2798,12 @@ function addon:CreateDropdown(parent, width, dropdownType, isMini, isHorizontal)
     end
 
     -- items = {
-    -- 	{
-    -- 		["text"] = (string),
-    -- 		["value"] = (obj),
-    -- 		["texture"] = (string),
-    -- 		["onClick"] = (function)
-    -- 	},
+    --     {
+    --         ["text"] = (string),
+    --         ["value"] = (obj),
+    --         ["texture"] = (string),
+    --         ["onClick"] = (function)
+    --     },
     -- }
     function menu:SetItems(items)
         menu.items = items

@@ -170,7 +170,7 @@ function F:ConvertRGBToHEX(r, g, b)
         while(value > 0)do
             local index = math.fmod(value, 16) + 1
             value = math.floor(value / 16)
-            hex = string.sub("0123456789ABCDEF", index, index) .. hex			
+            hex = string.sub("0123456789ABCDEF", index, index) .. hex
         end
 
         if(string.len(hex) == 0)then
@@ -225,7 +225,7 @@ function F:ColorGradient(perc, c1, c2, c3)
 end
 
 --! From ColorPickerAdvanced by Feyawen-Llane
---[[ Convert RGB to HSV	---------------------------------------------------
+--[[ Convert RGB to HSV ---------------------------------------------------
     Inputs:
         r = Red [0, 1]
         g = Green [0, 1]
@@ -277,7 +277,7 @@ function F:ConvertRGBToHSB(r, g, b)
     return H, S, B
 end
 
---[[ Convert HSB to RGB	---------------------------------------------------
+--[[ Convert HSB to RGB ---------------------------------------------------
     Inputs:
         h = Hue [0, 360]
         s = Saturation [0, 1]
