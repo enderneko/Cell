@@ -117,6 +117,7 @@ end
 local function InitAuraTables(self)
     -- vars
     self._casts = {}
+    self._timers = {}
 
     -- for icon animation only
     self._buffs_cache = {}
@@ -125,6 +126,7 @@ end
 
 local function ResetAuraTables(self)
     wipe(self._casts)
+    wipe(self._timers)
     wipe(self._buffs_cache)
     wipe(self._buffs_count_cache)
 end
@@ -262,11 +264,16 @@ local function QuickAssist_UpdateAuras(self, updateInfo)
         -- update offensiveCasts
         if offensivesEnabled then
             for spellId, start in pairs(self._casts) do
-                if self._offensivesFound < 5 then
-                    self._offensivesFound = self._offensivesFound + 1
-                    self.offensiveIcons[self._offensivesFound]:SetCooldown(start, offensiveCasts[spellId][1], nil, offensiveCasts[spellId][2], 0, false, offensiveIconGlowColor, offensiveIconGlowType)
-                    self.offensiveGlow:SetCooldown(start, offensiveCasts[spellId][1])
-                end
+                local duration = offensiveCasts[spellId][1]
+                -- if start + duration <= GetTime() then
+                --     self._casts[spellId] = nil
+                -- else
+                    if self._offensivesFound < 5 then
+                        self._offensivesFound = self._offensivesFound + 1
+                        self.offensiveIcons[self._offensivesFound]:SetCooldown(start, duration, nil, offensiveCasts[spellId][2], 0, false, offensiveIconGlowColor, offensiveIconGlowType)
+                        self.offensiveGlow:SetCooldown(start, duration)
+                    end
+                -- end
             end
         end
         self.offensiveIcons:UpdateSize(self._offensivesFound)
@@ -280,9 +287,10 @@ local function QuickAssist_UpdateCasts(self, spellId)
     self._casts[spellId] = GetTime()
     QuickAssist_UpdateAuras(self)
 
-    if self._timer then self._timer:Cancel() end
-    self._timer = C_Timer.NewTimer(offensiveCasts[spellId][1], function()
-        self._timer = nil
+    if self._timers[spellId] then self._timers[spellId]:Cancel() end
+    self._timers[spellId] = C_Timer.NewTimer(offensiveCasts[spellId][1], function()
+        -- print("TIMER:QuickAssist_UpdateAuras", spellId)
+        self._timers[spellId] = nil
         self._casts[spellId] = nil
         QuickAssist_UpdateAuras(self)
     end)
