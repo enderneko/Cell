@@ -6,6 +6,11 @@ local U = Cell.uFuncs
 local A = Cell.animations
 local P = Cell.pixelPerfectFuncs
 
+local UnitIsConnected = UnitIsConnected
+local InCombatLockdown = InCombatLockdown
+local GetUnitName = GetUnitName
+local UnitGUID = UnitGUID
+
 local LGI = LibStub:GetLibrary("LibGroupInfo")
 local LCG = LibStub("LibCustomGlow-1.0")
 local LibTranslit = LibStub("LibTranslit-1.0")
@@ -40,9 +45,17 @@ local config = Cell:CreateButton(anchorFrame, nil, "accent", {20, 10}, false, tr
 config:SetFrameStrata("MEDIUM")
 config:SetAllPoints(anchorFrame)
 config:RegisterForDrag("LeftButton")
-config:SetScript("OnClick", function()
-    F:ShowUtilitiesTab()
-    F:ShowQuickAssistTab()
+config:RegisterForClicks("LeftButtonUp", "RightButtonUp")
+config:SetScript("OnClick", function(self, button)
+    if button == "LeftButton" then
+        F:ShowUtilitiesTab()
+        F:ShowQuickAssistTab()
+    elseif button == "RightButton" then
+        if not InCombatLockdown() then
+            F:Print(L["Refreshing unit buttons (%s)..."]:format(L["Quick Assist"]))
+            LGI:ForceUpdate()
+        end
+    end
 end)
 
 config:SetScript("OnDragStart", function()
@@ -60,6 +73,8 @@ config:HookScript("OnEnter", function()
     CellTooltip:SetOwner(config, "ANCHOR_NONE")
     CellTooltip:SetPoint(tooltipPoint, config, tooltipRelativePoint, tooltipX, tooltipY)
     CellTooltip:AddLine(L["Quick Assist"])
+    CellTooltip:AddLine("|cffffb5c5"..L["Right-Click"]..": |cffffffff"..L["refresh unit buttons"])
+    CellTooltip:AddLine("|cffababab("..L["not in combat"]..")")
     CellTooltip:Show()
 end)
 
@@ -780,10 +795,8 @@ local nameToPriority = {}
 local function GetPriority(class, specId)
     if not (class and specId) then return end
     
-    local filter = specFilter[2]
-
     local priority
-    for ci, ct in pairs(filter) do
+    for ci, ct in pairs(specFilter[2]) do
         if class == ct[1] then  -- class
             priority = ci*10
             for si, st in pairs(ct[2]) do
@@ -853,7 +866,7 @@ local function UpdateAllUnits()
 end
 
 local timer
-function specFrame:PrepareUpdate(self, event)
+function specFrame:PrepareUpdate(self, ...)
     specFrame:UnregisterEvent("PLAYER_REGEN_ENABLED")
 
     if timer then timer:Cancel() end
