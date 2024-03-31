@@ -2,10 +2,10 @@
 -- File: Cell\Libs\LibGroupInfo.lua
 -- Author: enderneko (enderneko-dev@outlook.com)
 -- Created : 2022-07-29 15:04:31 +08:00
--- Modified: 2023-12-25 04:04:10 +08:00
+-- Modified: 2024-03-31 20:11:41 +08:00
 ---------------------------------------------------------------------
 
-local MAJOR, MINOR = "LibGroupInfo", 4
+local MAJOR, MINOR = "LibGroupInfo", 5
 local lib = LibStub:NewLibrary(MAJOR, MINOR)
 if not lib then return end -- already loaded
 
@@ -14,6 +14,7 @@ if not lib.callbacks then error(MAJOR.." requires CallbackHandler") end
 
 local UPDATE_EVENT = "GroupInfo_Update"
 local UPDATE_BASE_EVENT = "GroupInfo_UpdateBase"
+-- local QUEUE_EVENT = "GroupInfo_QueueStatus"
 
 local PLAYER_GUID
 local RETRY_INTERVAL = 1.5
@@ -133,6 +134,8 @@ local GetNormalizedRealmName = GetNormalizedRealmName
 local UnitLevel = UnitLevel
 local UnitRace = UnitRace
 local UnitSex = UnitSex
+local UnitFactionGroup = UnitFactionGroup
+local IsInInstance = IsInInstance
 local IsInRaid = IsInRaid
 local IsInGroup = IsInGroup
 local GetNumGroupMembers = GetNumGroupMembers
@@ -300,7 +303,7 @@ local function Query(unit)
 end
 
 ---------------------------------------------------------------------
--- login & reload
+-- login & reload & enter/leave instance
 ---------------------------------------------------------------------
 function frame:PLAYER_LOGIN()
     PLAYER_GUID = UnitGUID("player")
@@ -325,8 +328,31 @@ function frame:PLAYER_LOGIN()
     -- frame:RegisterEvent("PARTY_MEMBER_ENABLE")
 end
 
+local inInstance
 function frame:PLAYER_ENTERING_WORLD(isLogin, isReload)
-    if isLogin or isReload then
+    local isIn, iType = IsInInstance()
+    
+    local shouldUpdate
+
+    if isIn then -- enter
+        inInstance = true
+        shouldUpdate = true
+    elseif inInstance then -- leave
+        inInstance = nil
+        shouldUpdate = true
+    elseif isLogin or isReload then -- login/reload
+        shouldUpdate = true
+    end
+
+    if shouldUpdate then
+        frame:Hide()
+        wipe(lib.order)
+        wipe(lib.queue)
+        
+        for _, t in pairs(cache) do
+            t.inspected = nil
+        end
+        
         -- update self
         Query("player")
 
@@ -342,6 +368,7 @@ local order = {}
 lib.order = order
 local queue = {}
 lib.queue = queue
+
 local elapsedTime = 0
 frame:SetScript("OnUpdate", function(self, elapsed)
     elapsedTime = elapsedTime + elapsed
@@ -354,6 +381,8 @@ frame:SetScript("OnUpdate", function(self, elapsed)
                     queue[guid].status = "requesting"
                     queue[guid].attempts = queue[guid].attempts + 1
                     queue[guid].lastRequest = time()
+                    -- lib.callbacks:Fire(QUEUE_EVENT, guid, queue[guid].unit, "INSPECT_REQUESTING")
+                    Print("|cffffff33LGI:INSPECT_REQUESTING|r", guid, queue[guid].unit)
                     NotifyInspect(queue[guid].unit)
                 elseif queue[guid].status == "requesting" then -- give it another shot
                     if queue[guid].attempts < MAX_ATTEMPTS then
@@ -363,6 +392,8 @@ frame:SetScript("OnUpdate", function(self, elapsed)
                             NotifyInspect(queue[guid].unit)
                         end
                     else -- reach max attempts
+                        -- lib.callbacks:Fire(QUEUE_EVENT, guid, queue[guid].unit, "INSPECT_FAILED")
+                        Print("|cffffff33LGI:INSPECT_FAILED|r", guid, queue[guid].unit)
                         tremove(order, 1)
                         queue[guid] = nil
                     end
@@ -391,7 +422,7 @@ local function AddToQueue(unit, guid)
         end
     end
     
-    Print("|cffffff33LGI:|r", "AddToQueue", guid, unit)
+    Print("|cffffff33LGI:AddToQueue|r", guid, unit)
     queue[guid] = {
         ["unit"] = unit,
         ["attempts"] = 0,
@@ -409,7 +440,8 @@ end
 ---------------------------------------------------------------------
 function frame:INSPECT_READY(guid)
     if queue[guid] then
-        Print("|cffffff33LGI:|r", "INSPECT_READY", guid, queue[guid].unit)
+        Print("|cffffff33LGI:INSPECT_READY|r", guid, queue[guid].unit)
+        -- lib.callbacks:Fire(QUEUE_EVENT, guid, queue[guid].unit, "INSPECT_READY")
         Query(queue[guid].unit)
         queue[guid] = nil
     end
@@ -472,12 +504,25 @@ end
 
 local timer
 function frame:GROUP_ROSTER_UPDATE(immediate)
+    if timer then timer:Cancel() end
+    
     if immediate then
         IterateAllUnits()
     else
-        if timer then timer:Cancel() end
         timer = C_Timer.NewTimer(1, IterateAllUnits)
     end
+end
+
+local forceUpdateAvailable = true
+function lib:ForceUpdate()
+    if not forceUpdateAvailable then return end
+
+    forceUpdateAvailable = false
+    C_Timer.After(10, function()
+        forceUpdateAvailable = true
+    end)
+    
+    frame:PLAYER_ENTERING_WORLD(true)
 end
 
 ---------------------------------------------------------------------
