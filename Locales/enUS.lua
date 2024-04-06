@@ -86,6 +86,14 @@ select(2, ...).L = setmetatable({
         <p>(Retail) Enable "Always Update Buffs/Debuffs" in General tab, if indicators do not update correctly.</p>
         <br/>
 
+        <h1>r221-release (Apr 6, 2024, 22:00 GMT+8)</h1>
+        <p>+ Added multi-line support for custom "Icons" indicators.</p>
+        <p>* Updated color options for custom "Bar" indicators.</p>
+        <p>+ Added Right-Click refreshing feature for Main/QuickAssist option button.</p>
+        <p>* Improved reliability of LibGroupInfo (QuickAssist filters may work better).</p>
+        <p>* Fixed QuickAssist cooldown icons.</p>
+        <br/>
+
         <h1>r220-release (Jan 25, 2024, 19:06 GMT+8)</h1>
         <p>* Fixed Spotlight config button.</p>
         <p>* Updated range checker.</p>
