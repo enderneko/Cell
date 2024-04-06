@@ -710,6 +710,7 @@ local function Bar_SetCooldown(bar, start, duration, debuffType, texture, count)
         bar:SetMinMaxValues(0, 1)
         bar:SetValue(1)
         bar:SetStatusBarColor(unpack(bar.colors[1]))
+        bar:SetBackdropColor(unpack(bar.colors[4]))
     else
         bar:SetMinMaxValues(0, duration)
         bar.elapsed = 0.1 -- update immediately
@@ -722,13 +723,14 @@ local function Bar_SetCooldown(bar, start, duration, debuffType, texture, count)
             if self.elapsed >= 0.1 then
                 self.elapsed = 0
                 -- update color
-                if remain <= bar.colors[3][4] then
-                    bar:SetStatusBarColor(bar.colors[3][1], bar.colors[3][2], bar.colors[3][3])
-                elseif remain <= duration * bar.colors[2][4] then
-                    bar:SetStatusBarColor(bar.colors[2][1], bar.colors[2][2], bar.colors[2][3])
+                if bar.colors[3][1] and remain <= bar.colors[3][5] then
+                    bar:SetStatusBarColor(bar.colors[3][2], bar.colors[3][3], bar.colors[3][4])
+                elseif bar.colors[2][1] and remain <= duration * bar.colors[2][5] then
+                    bar:SetStatusBarColor(bar.colors[2][2], bar.colors[2][3], bar.colors[2][4])
                 else
                     bar:SetStatusBarColor(bar.colors[1][1], bar.colors[1][2], bar.colors[1][3])
                 end
+                bar:SetBackdropColor(bar.colors[4][1], bar.colors[4][2], bar.colors[4][3], bar.colors[4][4])
             end
         end)
     end

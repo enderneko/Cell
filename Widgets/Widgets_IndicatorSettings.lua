@@ -1932,6 +1932,155 @@ local function CreateSetting_Colors(parent)
     return widget
 end
 
+local function CreateSetting_BarColors(parent)
+    local widget
+
+    if not settingWidgets["colors-bg"] then
+        widget = addon:CreateFrame("CellIndicatorSettings_ColorsWithBG", parent, 240, 96)
+        settingWidgets["colors-bg"] = widget
+
+        local normalColor = addon:CreateColorPicker(widget, L["Normal"], false, function(r, g, b)
+            widget.colorsTable[1][1] = r
+            widget.colorsTable[1][2] = g 
+            widget.colorsTable[1][3] = b
+            -- widget.func(widget.colorsTable)
+        end)
+        normalColor:SetPoint("TOPLEFT", 5, -8)
+        
+        local percentColor, percentDropdown
+
+        local percentCB = addon:CreateCheckButton(widget, "", function(checked)
+            widget.colorsTable[2][1] = checked
+            Cell:SetEnabled(checked, percentColor, percentDropdown)
+        end)
+        percentCB:SetPoint("TOPLEFT", normalColor, "BOTTOMLEFT", 0, -8)
+        
+        percentColor = addon:CreateColorPicker(widget, L["Remaining Time <"], false, function(r, g, b)
+            widget.colorsTable[2][2] = r
+            widget.colorsTable[2][3] = g 
+            widget.colorsTable[2][4] = b
+            -- widget.func(widget.colorsTable)
+        end)
+        percentColor:SetPoint("TOPLEFT", percentCB, "TOPRIGHT", 2, 0)
+        
+        local secColor, secEditBox, secText
+
+        local secCB = addon:CreateCheckButton(widget, "", function(checked)
+            widget.colorsTable[3][1] = checked
+            Cell:SetEnabled(checked, secColor, secEditBox, secText)
+        end)
+        secCB:SetPoint("TOPLEFT", percentCB, "BOTTOMLEFT", 0, -8)
+
+        secColor = addon:CreateColorPicker(widget, L["Remaining Time <"], false, function(r, g, b)
+            widget.colorsTable[3][2] = r
+            widget.colorsTable[3][3] = g 
+            widget.colorsTable[3][4] = b
+            -- widget.func(widget.colorsTable)
+        end)
+        secColor:SetPoint("TOPLEFT", secCB, "TOPRIGHT", 2, 0)
+
+        local bgColor = addon:CreateColorPicker(widget, L["Background Color"], true, function(r, g, b, a)
+            widget.colorsTable[4][1] = r
+            widget.colorsTable[4][2] = g 
+            widget.colorsTable[4][3] = b
+            widget.colorsTable[4][4] = a
+            -- widget.func(widget.colorsTable)
+        end)
+        bgColor:SetPoint("TOPLEFT", secCB, "BOTTOMLEFT", 0, -8)
+
+        percentDropdown = addon:CreateDropdown(widget, 60)
+        percentDropdown:SetPoint("LEFT", percentColor.label, "RIGHT", 5, 0)
+        percentDropdown:SetItems({
+            {
+                ["text"] = "75%",
+                ["onClick"] = function()
+                    widget.colorsTable[2][4] = 0.75
+                end,
+            },
+            {
+                ["text"] = "50%",
+                ["onClick"] = function()
+                    widget.colorsTable[2][4] = 0.5
+                end,
+            },
+            {
+                ["text"] = "25%",
+                ["onClick"] = function()
+                    widget.colorsTable[2][4] = 0.25
+                end,
+            },
+            {
+                ["text"] = _G.NONE,
+                ["onClick"] = function()
+                    widget.colorsTable[2][4] = 0
+                end,
+            },
+        })
+        
+        secEditBox = addon:CreateEditBox(widget, 43, 20, false, false, true)
+        secEditBox:SetPoint("LEFT", secColor.label, "RIGHT", 5, 0)
+        secEditBox:SetMaxLetters(4)
+ 
+        secEditBox.confirmBtn = addon:CreateButton(widget, "OK", "accent", {27, 20})
+        secEditBox.confirmBtn:SetPoint("LEFT", secEditBox, "RIGHT", -1, 0)
+        secEditBox.confirmBtn:Hide()
+        secEditBox.confirmBtn:SetScript("OnHide", function()
+            secEditBox.confirmBtn:Hide()
+        end)
+        secEditBox.confirmBtn:SetScript("OnClick", function()
+            local newSec = tonumber(secEditBox:GetText())
+            widget.colorsTable[3][4] = newSec
+            secEditBox:SetText(newSec)
+            secEditBox:ClearFocus()
+            secEditBox.confirmBtn:Hide()
+        end)
+
+        secEditBox:SetScript("OnTextChanged", function(self, userChanged)
+            if userChanged then
+                local newSec = tonumber(self:GetText())
+                if newSec and newSec ~= widget.colorsTable[3][4] then
+                    secEditBox.confirmBtn:Show()
+                else
+                    secEditBox.confirmBtn:Hide()
+                end
+            end
+        end)
+
+        secText = widget:CreateFontString(nil, "OVERLAY", font_name)
+        secText:SetPoint("LEFT", secEditBox, "RIGHT", 5, 0)
+        secText:SetText(L["sec"])
+
+        -- callback
+        function widget:SetFunc(func)
+            -- widget.func = func
+        end
+        
+        -- show db value
+        function widget:SetDBValue(colorsTable)
+            widget.colorsTable = colorsTable
+
+            percentCB:SetChecked(colorsTable[2][1])
+            Cell:SetEnabled(colorsTable[2][1], percentColor, percentDropdown)
+            secCB:SetChecked(colorsTable[3][1])
+            Cell:SetEnabled(colorsTable[3][1], secColor, secEditBox, secText)
+
+            normalColor:SetColor(colorsTable[1])
+            percentColor:SetColor({colorsTable[2][2],colorsTable[2][3],colorsTable[2][4]})
+            secColor:SetColor({colorsTable[3][2],colorsTable[3][3],colorsTable[3][4]})
+            bgColor:SetColor({colorsTable[4][1],colorsTable[4][2],colorsTable[4][3],colorsTable[4][4]})
+
+            percentDropdown:SetSelected(colorsTable[2][5]~=0 and ((colorsTable[2][5]*100).."%") or _G.NONE)
+            -- secDropdown:SetSelected(colorsTable[3][4]~=0 and (colorsTable[3][4].." "..L["sec"]) or _G.NONE)
+            secEditBox:SetText(colorsTable[3][5])
+        end
+    else
+        widget = settingWidgets["colors-bg"]
+    end
+
+    widget:Show()
+    return widget
+end
+
 local function CreateSetting_CustomColors(parent)
     local widget
 
@@ -5117,6 +5266,8 @@ function addon:CreateIndicatorSettings(parent, settingsTable)
             tinsert(widgetsTable, CreateSetting_ColorAlpha(parent))
         elseif setting == "colors" then
             tinsert(widgetsTable, CreateSetting_Colors(parent))
+        elseif setting == "barColors" then
+            tinsert(widgetsTable, CreateSetting_BarColors(parent))
         elseif setting == "customColors" then
             tinsert(widgetsTable, CreateSetting_CustomColors(parent))
         elseif setting == "color-class" then

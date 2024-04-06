@@ -56,6 +56,8 @@ L["Autorun will be disabled for all code snippets"] = "將停用所有程式碼�
 L["Available slash commands"] = "可用的聊天指令"
 L["Awesome!"] = "超棒der!"
 L["Background Alpha"] = "背景透明度"
+--[[Translation missing --]]
+--[[ L["Background Color"] = ""--]] 
 L["Bar"] = "進度條"
 L["Bar Animation"] = "條列動畫"
 L["Bar Orientation"] = "條列方向"
@@ -263,6 +265,7 @@ L["Hide in Combat"] = "戰鬥中隱藏"
 L["Hide Placeholder Frames"] = "隱藏佔位框"
 L["Hide Self"] = "隱藏自己"
 L["Hide Self (Party Only)"] = "隱藏自己 (僅限小隊)"
+L["Hide tooltips for units"] = "隱藏單位的浮動提示資訊"
 L["hideDamager"] = "隱藏傷害輸出"
 L["hideIfEmptyOrFull"] = "死亡或滿血時隱藏"
 L["hideInCombat"] = "戰鬥中隱藏"
@@ -275,6 +278,8 @@ L["Horizontal Gradient"] = "水平漸層"
 L["Icon"] = "圖示"
 L["Icon Options"] = "圖示選項"
 L["Icons"] = "圖示群組"
+--[[Translation missing --]]
+--[[ L["Icons Per Line"] = ""--]] 
 L["IDs separated by whitespaces"] = "用空格分隔多個法術ID"
 L["If disabled, no check, no reply, just glow"] = "停用時，不檢查冷卻，也不回覆密語，只顯示發光。"
 L["If you are a paladin or warrior, and the unit has no buffs from you, a %s icon will be displayed."] = "如果你是聖騎士或戰士，且該單位沒有來自你的增益時，將會顯示%s圖示。"
@@ -434,6 +439,10 @@ L["Ready Check Icon"] = "準備確認圖示"
 L["ReadyCheck and PullTimer buttons"] = "準備確認和開怪倒數按鈕"
 L["readyCheckTips"] = "\n|r準備確認\n左鍵: |cffffffff準備確認|r\n右鍵: |cffffffff角色職責確認|r"
 L["Rect"] = "矩形"
+--[[Translation missing --]]
+--[[ L["refresh unit buttons"] = ""--]] 
+--[[Translation missing --]]
+--[[ L["Refreshing unit buttons (%s)..."] = ""--]] 
 L["Remaining Time <"] = "剩餘時間 <"
 L["Remove"] = "移除"
 L["Rename"] = "更名"
@@ -582,6 +591,7 @@ L["This may help solve issues of indicators not updating correctly"] = "可能�
 L["This may overwrite built-in indicators"] = "這可能會覆蓋掉內建的指示器"
 L["This setting will be ignored, if the %1$s option in %2$s tab is enabled"] = "如果啟用了%2$s標籤頁面中的%1$s選項，此設定將被忽略"
 L["This will make these icons not click-through-able"] = "這會讓這些圖示無法點擊穿透"
+L["This will not affect aura tooltips"] = "不影響增益/減益的浮動提示資訊"
 L["This will overwrite your debuffs"] = "將會取代你的減益"
 L["Timeout"] = "超時"
 L["Tip: Every layout has its own position setting"] = "提示: 每個版面配置都有各自的位置設定。"
@@ -612,6 +622,8 @@ L["Uncategorized"] = "未分類"
 L["Unit"] = "單位"
 L["Unit Button"] = "單位按鈕"
 L["Unit Button Style"] = "單位按鈕樣式"
+--[[Translation missing --]]
+--[[ L["Unit buttons refreshed (%s)."] = ""--]] 
 L["Unit Filter"] = "單位過濾"
 L["Unit Spacing"] = "單位間距"
 L["Unit's Name"] = "指定單位的名字"

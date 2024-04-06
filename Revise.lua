@@ -2618,6 +2618,12 @@ function F:Revise()
                     if not i.numPerLine then
                         i.numPerLine = i.num
                     end
+                elseif i.type == "bar" then
+                    if #i.colors ~= 4 then
+                        tinsert(i.colors, {0.07,0.07,0.07,0.9})
+                        tinsert(i.colors[2], 1, true)
+                        tinsert(i.colors[3], 1, true)
+                    end
                 end
             end
         end
