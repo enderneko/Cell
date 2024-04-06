@@ -30,10 +30,11 @@ local patrons1 = {
     {"Nascente-TarrenMill (EU)", "nascente"}, -- Nascente-Tarren Mill (Ko-fi)
     {"月刃丶-世界之樹 (TW)", "yuerendian"}, -- Smile (爱发电)
     {"Longmer-Illidan (US)", "longmer"}, -- 爱发电用户_4116d (爱发电)
+    {"Phæro-Antonidas (EU)", "phæro", "Callistò-Antonidas (EU)"}, -- Phæro (Ko-fi)
+    {"Synthatt-Illidan (US)", "synthatt"}, -- Synthatt (Ko-fi)
 }
 
 local patrons2 = {
-    -- {"nameInPatronList", "sortKey", "wowIDs"...}
     {"钛锬 (NGA)", "taitan"},
     {"黑色之城 (NGA)", "heisezhicheng"},
     {"flappysmurf (爱发电)", "flappysmurf"},
@@ -61,6 +62,7 @@ local patrons2 = {
     {"acm447 (爱发电)", "acm447"},
     {"花爺 (爱发电)", "huaye"},
     {"得闲饮茶 (爱发电)", "dexianyincha"},
+    {"Jane (Ko-fi)", "jane"},
 }
 
 -- sort
