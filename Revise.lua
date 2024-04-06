@@ -2610,6 +2610,19 @@ function F:Revise()
         end
     end
 
+    -- r221-release
+    if CellDB["revise"] and dbRevision < 221 then
+        for _, layout in pairs(CellDB["layouts"]) do
+            for _, i in pairs(layout["indicators"]) do
+                if i.type == "icons" then
+                    if not i.numPerLine then
+                        i.numPerLine = i.num
+                    end
+                end
+            end
+        end
+    end
+
     -- ----------------------------------------------------------------------- --
     --            update from old versions, validate all indicators            --
     -- ----------------------------------------------------------------------- --

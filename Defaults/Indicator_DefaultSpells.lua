@@ -707,6 +707,7 @@ local spells =  {
     -- druid
     8936, -- 愈合
     774, -- 回春术
+    155777, -- 回春术（萌芽）
     33763, -- 生命绽放
     188550, -- 生命绽放
     48438, -- 野性成长
@@ -799,6 +800,7 @@ function F:FirstRun()
             ["frameLevel"] = 5,
             ["size"] = {13, 13},
             ["num"] = 5,
+            ["numPerLine"] = 5,
             ["orientation"] = "right-to-left",
             ["font"] = {
                 {"Cell ".._G.DEFAULT, 11, "Outline", "TOPRIGHT", 2, 1, {1, 1, 1}},

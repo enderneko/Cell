@@ -926,128 +926,198 @@ end
 -------------------------------------------------
 -- CreateAura_Icons
 -------------------------------------------------
+local function Icons_UpdateFrameSize(icons, iconsShown)
+    local lines = ceil(iconsShown / icons.numPerLine)
+    
+    if icons.isHorizontal then
+        if lines > 1 then
+            icons:_SetSize(icons.width*icons.numPerLine, icons.height*lines)
+        else
+            icons:_SetSize(icons.width*iconsShown, icons.height)
+        end
+    else
+        if lines > 1 then
+            icons:_SetSize(icons.width*lines, icons.height*icons.numPerLine)
+        else
+            icons:_SetSize(icons.width, icons.height*iconsShown)
+        end
+    end
+end
+
+local function Icons_UpdateSize(icons, iconsShown)
+    if not (icons.width and icons.height and icons.orientation) then return end -- not init
+    
+    if iconsShown then -- call from I:CheckCustomIndicators or preview
+        for i = iconsShown + 1, icons.maxNum do
+            icons[i]:Hide()
+        end
+        if iconsShown ~= 0 then
+            Icons_UpdateFrameSize(icons, iconsShown)
+        end
+    else
+        for i = 1, icons.maxNum do
+            if icons[i]:IsShown() then
+                Icons_UpdateFrameSize(icons, i)
+            end
+        end
+    end
+end
+
+local function Icons_SetNumPerLine(icons, numPerLine)
+    icons.numPerLine = min(numPerLine, icons.maxNum)
+    
+
+    if icons.orientation then
+        icons:SetOrientation(icons.orientation)
+    end
+
+    icons:UpdateSize()
+end
+
+local function Icons_SetOrientation(icons, orientation)
+    icons.orientation = orientation
+
+    local anchor = icons:GetPoint()
+    assert(anchor, "[indicator] SetPoint must be called before SetOrientation")
+
+    icons.isHorizontal = not strfind(orientation, "top")
+
+    local point1, point2, newLinePoint2
+    if orientation == "left-to-right" then
+        if strfind(anchor, "^BOTTOM") then
+            point1 = "BOTTOMLEFT"
+            point2 = "BOTTOMRIGHT"
+            newLinePoint2 = "TOPLEFT"
+        else
+            point1 = "TOPLEFT"
+            point2 = "TOPRIGHT"
+            newLinePoint2 = "BOTTOMLEFT"
+        end
+        
+    elseif orientation == "right-to-left" then
+        if strfind(anchor, "^BOTTOM") then
+            point1 = "BOTTOMRIGHT"
+            point2 = "BOTTOMLEFT"
+            newLinePoint2 = "TOPRIGHT"
+        else
+            point1 = "TOPRIGHT"
+            point2 = "TOPLEFT"
+            newLinePoint2 = "BOTTOMRIGHT"
+        end
+
+    elseif orientation == "top-to-bottom" then
+        if strfind(anchor, "RIGHT$") then
+            point1 = "TOPRIGHT"
+            point2 = "BOTTOMRIGHT"
+            newLinePoint2 = "TOPLEFT"
+        else
+            point1 = "TOPLEFT"
+            point2 = "BOTTOMLEFT"
+            newLinePoint2 = "TOPRIGHT"
+        end
+        
+    elseif orientation == "bottom-to-top" then
+        if strfind(anchor, "RIGHT$") then
+            point1 = "BOTTOMRIGHT"
+            point2 = "TOPRIGHT"
+            newLinePoint2 = "BOTTOMLEFT"
+        else
+            point1 = "BOTTOMLEFT"
+            point2 = "TOPLEFT"
+            newLinePoint2 = "BOTTOMRIGHT"
+        end
+    end
+    
+    for i = 1, icons.maxNum do
+        P:ClearPoints(icons[i])
+        if i == 1 then
+            P:Point(icons[i], point1)
+        elseif i % icons.numPerLine == 1 then
+            P:Point(icons[i], point1, icons[i-icons.numPerLine], newLinePoint2)
+        else
+            P:Point(icons[i], point1, icons[i-1], point2)
+        end
+    end
+
+    icons:UpdateSize()
+end
+
+local function Icons_SetSize(icons, width, height)
+    icons.width = width
+    icons.height = height
+
+    for i = 1, icons.maxNum do
+        icons[i]:SetSize(width, height)
+    end
+
+    icons:UpdateSize()
+end
+
+local function Icons_Hide(icons, hideAll)
+    icons:_Hide()
+    if hideAll then
+        for i = 1, icons.maxNum do
+            icons[i]:Hide()
+        end
+    end
+end
+
+local function Icons_SetFont(icons, ...)
+    for i = 1, icons.maxNum do
+        icons[i]:SetFont(...)
+    end
+end
+
+local function Icons_ShowDuration(icons, show)
+    for i = 1, icons.maxNum do
+        icons[i]:ShowDuration(show)
+    end
+end
+
+local function Icons_ShowStack(icons, show)
+    for i = 1, icons.maxNum do
+        icons[i]:ShowStack(show)
+    end
+end
+
+local function Icons_ShowAnimation(icons, show)
+    for i = 1, icons.maxNum do
+        icons[i]:ShowAnimation(show)
+    end
+end
+
+local function Icons_UpdatePixelPerfect(icons)
+    P:Repoint(icons)
+    for i = 1, icons.maxNum do
+        icons[i]:UpdatePixelPerfect()
+    end
+end
+
 function I:CreateAura_Icons(name, parent, num)
     local icons = CreateFrame("Frame", name, parent)
     icons:Hide()
+
     icons.indicatorType = "icons"
-
+    icons.maxNum = num
+    icons.numPerLine = num
+    
     icons._SetSize = icons.SetSize
-
-    function icons:UpdateSize(iconsShown)
-        if not (icons.width and icons.height and icons.orientation) then return end -- not init
-        if iconsShown then -- call from I:CheckCustomIndicators or preview
-            for i = iconsShown + 1, num do
-                icons[i]:Hide()
-            end
-            if iconsShown ~= 0 then
-                if icons.orientation == "horizontal" then
-                    icons:_SetSize(icons.width*iconsShown, icons.height)
-                else
-                    icons:_SetSize(icons.width, icons.height*iconsShown)
-                end
-            end
-        else
-            for i = 1, num do
-                if icons[i]:IsShown() then
-                    if icons.orientation == "horizontal" then
-                        icons:_SetSize(icons.width*i, icons.height)
-                    else
-                        icons:_SetSize(icons.width, icons.height*i)
-                    end
-                end
-            end
-        end
-    end
-
-    function icons:SetSize(width, height)
-        icons.width = width
-        icons.height = height
-
-        for i = 1, num do
-            icons[i]:SetSize(width, height)
-        end
-
-        icons:UpdateSize()
-    end
-
-    function icons:SetFont(...)
-        for i = 1, num do
-            icons[i]:SetFont(...)
-        end
-    end
-
-    function icons:SetOrientation(orientation)
-        local point1, point2
-        if orientation == "left-to-right" then
-            point1 = "TOPLEFT"
-            point2 = "TOPRIGHT"
-            icons.orientation = "horizontal"
-        elseif orientation == "right-to-left" then
-            point1 = "TOPRIGHT"
-            point2 = "TOPLEFT"
-            icons.orientation = "horizontal"
-        elseif orientation == "top-to-bottom" then
-            point1 = "TOPLEFT"
-            point2 = "BOTTOMLEFT"
-            icons.orientation = "vertical"
-        elseif orientation == "bottom-to-top" then
-            point1 = "BOTTOMLEFT"
-            point2 = "TOPLEFT"
-            icons.orientation = "vertical"
-        end
-        
-        for i = 1, num do
-            P:ClearPoints(icons[i])
-            if i == 1 then
-                P:Point(icons[i], point1)
-            else
-                P:Point(icons[i], point1, icons[i-1], point2)
-            end
-        end
-
-        icons:UpdateSize()
-    end
+    icons.SetSize = Icons_SetSize
+    icons._Hide = icons.Hide
+    icons.Hide = Icons_Hide
+    icons.SetFont = Icons_SetFont
+    icons.UpdateSize = Icons_UpdateSize
+    icons.SetOrientation = Icons_SetOrientation
+    icons.SetNumPerLine = Icons_SetNumPerLine
+    icons.ShowDuration = Icons_ShowDuration
+    icons.ShowStack = Icons_ShowStack
+    icons.ShowAnimation = Icons_ShowAnimation
+    icons.UpdatePixelPerfect = Icons_UpdatePixelPerfect
 
     for i = 1, num do
         local name = name.."Icons"..i
         local frame = I:CreateAura_BarIcon(name, icons)
         icons[i] = frame
-    end
-
-    icons._Hide = icons.Hide
-    function icons:Hide(hideAll)
-        icons:_Hide()
-        if hideAll then
-            for i = 1, num do
-                icons[i]:Hide()
-            end
-        end
-    end
-
-    function icons:ShowDuration(show)
-        for i = 1, num do
-            icons[i]:ShowDuration(show)
-        end
-    end
-   
-    function icons:ShowAnimation(show)
-        for i = 1, num do
-            icons[i]:ShowAnimation(show)
-        end
-    end
-    
-    function icons:ShowStack(show)
-        for i = 1, num do
-            icons[i]:ShowStack(show)
-        end
-    end
-
-    function icons:UpdatePixelPerfect()
-        -- P:Resize(icons)
-        P:Repoint(icons)
-        for i = 1, num do
-            icons[i]:UpdatePixelPerfect()
-        end
     end
 
     return icons

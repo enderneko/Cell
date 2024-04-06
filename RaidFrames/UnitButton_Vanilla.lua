@@ -195,6 +195,10 @@ local function HandleIndicators(b)
         if t["alpha"] then
             indicator:SetAlpha(t["alpha"])
         end
+        -- update numPerLine
+        if t["numPerLine"] then
+            indicator:SetNumPerLine(t["numPerLine"])
+        end
         -- update orientation
         if t["orientation"] then
             indicator:SetOrientation(t["orientation"])
@@ -434,6 +438,10 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                 local indicator = b.indicators[indicatorName]
                 P:ClearPoints(indicator)
                 P:Point(indicator, value[1], b, value[2], value[3], value[4])
+                -- update arrangement
+                if indicator.indicatorType == "icons" then
+                    indicator:SetOrientation(indicator.orientation)
+                end
             end, true)
         elseif setting == "anchor" then
             F:IterateAllUnitButtons(function(b)
@@ -533,6 +541,11 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                     UnitButton_UpdateAuras(b)
                 end, true)
             end
+        elseif setting == "numPerLine" then
+            F:IterateAllUnitButtons(function(b)
+                local indicator = b.indicators[indicatorName]
+                indicator:SetNumPerLine(value)
+            end, true)
         elseif setting == "texture" then
             F:IterateAllUnitButtons(function(b)
                 local indicator = b.indicators[indicatorName]

@@ -86,6 +86,7 @@ function I:GetDefaultCustomIndicatorTable(name, indicatorName, type, auraType)
             ["frameLevel"] = 5,
             ["size"] = {13, 13},
             ["num"] = 3,
+            ["numPerLine"] = 3,
             ["orientation"] = "right-to-left",
             ["font"] = {
                 {"Cell ".._G.DEFAULT, 11, "Outline", "TOPRIGHT", 2, 1, {1, 1, 1}},

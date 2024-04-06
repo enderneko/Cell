@@ -884,6 +884,37 @@ local function CreateSetting_Num(parent)
     return widget
 end
 
+local function CreateSetting_NumPerLine(parent)
+    local widget
+
+    if not settingWidgets["numPerLine"] then
+        widget = addon:CreateFrame("CellIndicatorSettings_NumPerLine", parent, 240, 50)
+        settingWidgets["numPerLine"] = widget
+
+        widget.num = addon:CreateSlider(L["Icons Per Line"], widget, 1, 5, 110, 1)
+        widget.num:SetPoint("TOPLEFT", 5, -20)
+        widget.num.afterValueChangedFn = function(value)
+            widget.func(value)
+        end
+
+        -- callback
+        function widget:SetFunc(func)
+            widget.func = func
+        end
+        
+        -- show db value
+        function widget:SetDBValue(num, maxN)
+            widget.num:UpdateMinMaxValues(2, maxN)
+            widget.num:SetValue(num)
+        end
+    else
+        widget = settingWidgets["numPerLine"]
+    end
+
+    widget:Show()
+    return widget
+end
+
 local function CreateSetting_Format(parent)
     local widget
 
@@ -5062,8 +5093,10 @@ function addon:CreateIndicatorSettings(parent, settingsTable)
             tinsert(widgetsTable, CreateSetting_TextWidth(parent))
         elseif setting == "alpha" then
             tinsert(widgetsTable, CreateSetting_Alpha(parent))
-        elseif string.find(setting, "num") then
+        elseif string.find(setting, "^num:") then
             tinsert(widgetsTable, CreateSetting_Num(parent))
+        elseif string.find(setting, "^numPerLine:") then
+            tinsert(widgetsTable, CreateSetting_NumPerLine(parent))
         elseif setting == "format" then
             tinsert(widgetsTable, CreateSetting_Format(parent))
         elseif setting == "durationVisibility" then
