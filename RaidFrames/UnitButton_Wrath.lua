@@ -384,8 +384,8 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
         F:IterateAllUnitButtons(HandleIndicators, indicatorsInitialized) -- -- NOTE: indicatorsInitialized = false, update ALL GROUP TYPE; indicatorsInitialized = true, just update CURRENT GROUP TYPE
         indicatorsInitialized = true
 
-        -- update auras when indicators update finished
-        F:IterateAllUnitButtons(UnitButton_UpdateAuras, true)
+        -- update all when indicators update finished
+        F:IterateAllUnitButtons(UnitButton_UpdateAll, true)
     else
         -- changed in IndicatorsTab
         if setting == "enabled" then
