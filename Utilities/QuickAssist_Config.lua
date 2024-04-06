@@ -415,7 +415,7 @@ local function UpdatePreviewButton()
 
         previewButton.healthBar:SetPoint("TOPLEFT", previewButton, "TOPLEFT", P:Scale(1), P:Scale(-1))
         previewButton.healthBar:SetPoint("BOTTOMRIGHT", previewButton, "BOTTOMRIGHT", P:Scale(-1), P:Scale(1))
-        previewButton.healthBar:SetMinMaxValues(0, 1)
+        previewButton.healthBar:SetMinMaxValues(0, 2)
         previewButton.healthBar:SetValue(1)
 
         U.QuickAssist_CreateIndicators(previewButton)
