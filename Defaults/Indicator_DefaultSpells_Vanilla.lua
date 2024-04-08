@@ -215,7 +215,7 @@ local dispellable = {
     [8] = {["Curse"] = true},
         
     -- PALADIN --------------
-    [2] = {["Disease"] = true, ["Magic"] = true, ["Poison"] = true},
+    [2] = {["Disease"] = true, ["Magic"] = true, ["Poison"] = true, ["Bleed"] = true},
     
     -- PRIEST ---------------
     [5] = {["Disease"] = true, ["Magic"] = true},

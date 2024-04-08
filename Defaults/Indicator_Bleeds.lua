@@ -4,7 +4,7 @@ local I = Cell.iFuncs
 local bleedList
 
 function I:CheckDebuffType(debuffType, spellId)
-    if debuffType == "" and bleedList[spellId] then
+    if (not debuffType or debuffType == "") and bleedList[spellId] then
         return "Bleed"
     end
     return debuffType

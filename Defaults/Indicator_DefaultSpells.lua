@@ -570,11 +570,11 @@ local dispelNodeIDs = {
 
     -- PALADIN --------------
         -- 65 - Holy
-        [65] = {["Disease"] = 81508, ["Magic"] = true, ["Poison"] = 81508},
+        [65] = {["Disease"] = 81508, ["Magic"] = true, ["Poison"] = 81508, ["Bleed"] = 81616},
         -- 66 - Protection
-        [66] = {["Disease"] = 81507, ["Poison"] = 81507},
+        [66] = {["Disease"] = 81507, ["Poison"] = 81507, ["Bleed"] = 81616},
         -- 70 - Retribution
-        [70] = {["Disease"] = 81507, ["Poison"] = 81507},
+        [70] = {["Disease"] = 81507, ["Poison"] = 81507, ["Bleed"] = 81616},
     -------------------------
     
     -- PRIEST ---------------

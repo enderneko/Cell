@@ -264,27 +264,36 @@ local dispellable = {
     [8] = {["Curse"] = true},
         
     -- PALADIN --------------
-    [2] = {["Disease"] = true, ["Magic"] = true, ["Poison"] = true},
+    [2] = {["Disease"] = true, ["Magic"] = true, ["Poison"] = true, ["Bleed"] = true},
     
     -- PRIEST ---------------
-    -- NOTE: 全心全意天赋可以解自己的毒
+    -- TODO: 全心全意天赋可以解自己的毒
     [5] = {["Disease"] = true, ["Magic"] = true},
 
     -- SHAMAN ---------------
     [7] = {["Disease"] = true, ["Poison"] = true},
 }
 
+do
+    -- NOTE: 净化灵魂天赋可以解除诅咒
+    if UnitClassBase("player") == "SHAMAN" then
+        local eventFrame = CreateFrame("Frame")
+        eventFrame:RegisterEvent("PLAYER_TALENT_UPDATE")
+        eventFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
+        eventFrame:SetScript("OnEvent", function(self, event)
+            if event == "PLAYER_ENTERING_WORLD" then
+                eventFrame:UnregisterEvent("PLAYER_ENTERING_WORLD")
+            end
+            dispellable[7]["Curse"] = IsSpellKnown(51886)
+        end)
+    end
+end
+
 function I:CanDispel(dispelType)
     if not dispelType then return end
     
     if dispellable[Cell.vars.playerClassID] then
-        if Cell.vars.playerClassID == 7 then -- 萨满
-            -- NOTE: 净化灵魂天赋可以解除诅咒
-            dispellable[Cell.vars.playerClassID]["Curse"] = IsSpellKnown(51886)
-        end
         return dispellable[Cell.vars.playerClassID][dispelType]
-    else
-        return
     end
 end
 
