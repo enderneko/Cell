@@ -63,6 +63,7 @@ local patrons2 = {
     {"花爺 (爱发电)", "huaye"},
     {"得闲饮茶 (爱发电)", "dexianyincha"},
     {"Jane (Ko-fi)", "jane"},
+    {"qwe#6664 (KOOK)", "qwe#6664"},
 }
 
 -- sort
