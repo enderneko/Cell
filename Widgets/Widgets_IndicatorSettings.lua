@@ -3235,8 +3235,6 @@ local function CreateSetting_Texture(parent)
     return widget
 end
 
-local auraButtons1 = {}
-local auraButtons2 = {}
 local GetSpellInfo = GetSpellInfo
 local function CreateAuraButtons(parent, auraButtons, auraTable, noUpDownButtons, isZeroValid, updateHeightFunc)
     local n = #auraTable
@@ -3296,7 +3294,7 @@ local function CreateAuraButtons(parent, auraButtons, auraTable, noUpDownButtons
         popup:SetPoint("BOTTOMRIGHT", self)
         popup:ShowEditBox("")
         if isZeroValid then
-            parent.popupEditBox:SetTips("|cffababab"..L["Input spell id"]..", 0/1 = "..L["all"])
+            parent.popupEditBox:SetTips("|cffababab"..L["Input spell id"]..", 0 = "..L["all"])
         else
             parent.popupEditBox:SetTips("|cffababab"..L["Input spell id"])
         end
@@ -3392,7 +3390,7 @@ local function CreateAuraButtons(parent, auraButtons, auraTable, noUpDownButtons
             end)
         end
         
-        if spell == 0 or spell == 1 then
+        if spell == 0 then
             auraButtons[i].spellIdText:SetText(spell)
             auraButtons[i].spellId = nil
             auraButtons[i].spellNameText:SetText("|cff22ff22"..L["all"])
@@ -3559,21 +3557,149 @@ local function CreateAuraButtons(parent, auraButtons, auraTable, noUpDownButtons
     end
 end
 
-local function CreateSetting_Auras(parent)
+local function GetExportString(t)
+    local s = ""
+    local n = 0
+    for i, id in ipairs(t) do
+        local name = GetSpellInfo(id)
+        if name then
+            s = s .. (i == 1 and "" or "\n") .. id .. ", -- " .. name
+            n = n + 1
+        end
+    end
+    return s, n
+end
+
+local auraButtons = {}
+local auraImportExportFrame
+
+local function CreateSetting_Auras(parent, index)
     local widget
 
-    if not settingWidgets["auras"] then
-        widget = addon:CreateFrame("CellIndicatorSettings_Auras", parent, 240, 128)
-        settingWidgets["auras"] = widget
+    if not auraImportExportFrame then
+        auraImportExportFrame = addon:CreateFrame(nil, parent, 1, 200)
+        auraImportExportFrame:SetBackdropBorderColor(addon:GetAccentColorRGB())
+        auraImportExportFrame:EnableMouse(true)
+        auraImportExportFrame:Hide()
+        
+        function auraImportExportFrame:ShowUp()
+            auraImportExportFrame:SetParent(auraImportExportFrame.parent)
+            auraImportExportFrame:SetPoint("TOPLEFT")
+            auraImportExportFrame:SetPoint("TOPRIGHT")
+            auraImportExportFrame:SetFrameLevel(auraImportExportFrame.parent:GetFrameLevel()+10)
+            auraImportExportFrame:Show()
+        end
+
+        auraImportExportFrame:SetScript("OnHide", function()
+            auraImportExportFrame:Hide()
+        end)
+
+        auraImportExportFrame.textArea = Cell:CreateScrollEditBox(auraImportExportFrame, function(eb, userChanged)
+            if userChanged then
+                if auraImportExportFrame.isImport then
+                    local data = string.gsub(eb:GetText(), "[^%d]+", ",")
+                    if data ~= "" then
+                        auraImportExportFrame.data = F:StringToTable(data, ",", true)
+                        auraImportExportFrame.info:SetText(addon:GetAccentColorString()..L["Spells"]..":|r "..#auraImportExportFrame.data)
+                        auraImportExportFrame.importBtn:SetEnabled(true)
+                    else
+                        auraImportExportFrame.info:SetText(addon:GetAccentColorString()..L["Spells"]..":|r 0")
+                        auraImportExportFrame.importBtn:SetEnabled(false)
+                    end
+                else
+                    eb:SetText(auraImportExportFrame.exported)
+                    eb:SetCursorPosition(0)
+                    eb:HighlightText()
+                end
+            end
+        end)
+        addon:StylizeFrame(auraImportExportFrame.textArea.scrollFrame, {0, 0, 0, 0}, addon:GetAccentColorTable())
+        auraImportExportFrame.textArea:SetPoint("TOPLEFT", 5, -22)
+        auraImportExportFrame.textArea:SetPoint("BOTTOMRIGHT", -5, 5)
+        auraImportExportFrame.textArea.eb:SetAutoFocus(true)
+
+        auraImportExportFrame.textArea.eb:SetScript("OnEditFocusGained", function() auraImportExportFrame.textArea.eb:HighlightText() end)
+        auraImportExportFrame.textArea.eb:SetScript("OnMouseUp", function()
+            if not auraImportExportFrame.isImport then
+                auraImportExportFrame.textArea.eb:HighlightText()
+            end
+        end)
+
+        auraImportExportFrame.info = auraImportExportFrame:CreateFontString(nil, "OVERLAY", font_name)
+        auraImportExportFrame.info:SetPoint("BOTTOMLEFT", auraImportExportFrame.textArea, "TOPLEFT", 0, 3)
+
+        auraImportExportFrame.closeBtn = addon:CreateButton(auraImportExportFrame, "×", "red", {18, 18}, false, false, "CELL_FONT_SPECIAL", "CELL_FONT_SPECIAL")
+        auraImportExportFrame.closeBtn:SetPoint("BOTTOMRIGHT", auraImportExportFrame.textArea, "TOPRIGHT", 0, 1)
+        auraImportExportFrame.closeBtn:SetScript("OnClick", function() auraImportExportFrame:Hide() end)
+
+        auraImportExportFrame.importBtn = addon:CreateButton(auraImportExportFrame, L["Import"], "green", {57, 18})
+        auraImportExportFrame.importBtn:SetPoint("TOPRIGHT", auraImportExportFrame.closeBtn, "TOPLEFT", P:Scale(1), 0)
+        auraImportExportFrame.importBtn:SetScript("OnClick", function()
+            -- replace old
+            wipe(auraImportExportFrame.parent.t)
+            for _, id in pairs(auraImportExportFrame.data) do
+                tinsert(auraImportExportFrame.parent.t, id)
+            end
+            -- update list
+            auraImportExportFrame.parent:SetDBValue(auraImportExportFrame.parent.title, auraImportExportFrame.parent.t, auraImportExportFrame.parent.noUpDownButtons, auraImportExportFrame.parent.isZeroValid)
+            auraImportExportFrame:Hide()
+            -- event
+            auraImportExportFrame.parent.frame.func(auraImportExportFrame.parent.t)
+        end)
+    end
+
+    if not settingWidgets["auras"..index] then
+        widget = addon:CreateFrame("CellIndicatorSettings_Auras"..index, parent, 240, 128)
+        settingWidgets["auras"..index] = widget
 
         widget.frame = addon:CreateFrame(nil, widget, 20, 20)
-        widget.frame:SetPoint("TOPLEFT", 5, -20)
+        widget.frame:SetPoint("TOPLEFT", 5, -22)
         widget.frame:SetPoint("RIGHT", -5, 0)
         widget.frame:Show()
         addon:StylizeFrame(widget.frame, {0.15, 0.15, 0.15, 1})
 
         widget.text = widget:CreateFontString(nil, "OVERLAY", font_name)
-        widget.text:SetPoint("BOTTOMLEFT", widget.frame, "TOPLEFT", 0, 1)
+        widget.text:SetPoint("BOTTOMLEFT", widget.frame, "TOPLEFT", 0, 3)
+
+        widget.export = addon:CreateButton(widget, nil, "accent-hover", {21, 17}, nil, nil, nil, nil, nil, L["Export"])
+        widget.export:SetPoint("BOTTOMRIGHT", widget.frame, "TOPRIGHT", 0, 1)
+        widget.export:SetTexture("Interface\\AddOns\\Cell\\Media\\Icons\\export", {15, 15}, {"CENTER", 0, 0})
+        widget.export:SetScript("OnClick", function()
+            auraImportExportFrame.isImport = false
+            auraImportExportFrame.parent = widget
+            local n
+            auraImportExportFrame.exported, n = GetExportString(widget.t)
+            auraImportExportFrame.info:SetText(addon:GetAccentColorString()..L["Spells"]..":|r "..n)
+            auraImportExportFrame.textArea:SetText(auraImportExportFrame.exported)
+            auraImportExportFrame.importBtn:Hide()
+            auraImportExportFrame:ShowUp()
+        end)
+        
+        widget.import = addon:CreateButton(widget, nil, "accent-hover", {21, 17}, nil, nil, nil, nil, nil, L["Import"])
+        widget.import:SetPoint("BOTTOMRIGHT", widget.export, "BOTTOMLEFT", -1, 0)
+        widget.import:SetTexture("Interface\\AddOns\\Cell\\Media\\Icons\\import", {15, 15}, {"CENTER", 0, 0})
+        widget.import:SetScript("OnClick", function()
+            auraImportExportFrame.isImport = true
+            auraImportExportFrame.parent = widget
+            auraImportExportFrame.textArea:SetText("")
+            auraImportExportFrame.info:SetText(addon:GetAccentColorString()..L["Spells"]..":|r 0")
+            auraImportExportFrame.importBtn:Show()
+            auraImportExportFrame.importBtn:SetEnabled(false)
+            auraImportExportFrame:ShowUp()
+        end)
+
+        widget.clear = addon:CreateButton(widget, nil, "accent-hover", {21, 17}, nil, nil, nil, nil, nil, L["Clear"], "|cffffb5c5Ctrl+"..L["Left-Click"])
+        widget.clear:SetPoint("BOTTOMRIGHT", widget.import, "BOTTOMLEFT", -1, 0)
+        widget.clear:SetTexture("Interface\\AddOns\\Cell\\Media\\Icons\\trash", {15, 15}, {"CENTER", 0, 0})
+        widget.clear:SetScript("OnClick", function(self, button)
+            if button == "LeftButton" and IsControlKeyDown() then
+                wipe(widget.t)
+                -- update list
+                widget:SetDBValue(widget.title, widget.t, widget.noUpDownButtons, widget.isZeroValid)
+                -- event
+                widget.frame.func(widget.t)
+            end 
+        end)
 
         -- callback
         function widget:SetFunc(func)
@@ -3582,57 +3708,26 @@ local function CreateSetting_Auras(parent)
 
         -- show db value
         function widget:SetDBValue(title, t, noUpDownButtons, isZeroValid)
+            widget.title = title
+            widget.t = t
+            widget.noUpDownButtons = noUpDownButtons
+            widget.isZeroValid = isZeroValid
+
             widget.text:SetText(title)
-            CreateAuraButtons(widget.frame, auraButtons1, t, noUpDownButtons, isZeroValid, function(diff)
+
+            if not auraButtons[index] then auraButtons[index] = {} end
+
+            CreateAuraButtons(widget.frame, auraButtons[index], t, noUpDownButtons, isZeroValid, function(diff)
                 widget.frame:SetHeight((#t+1)*19+1)
-                widget:SetHeight((#t+1)*19+1 + 20 + 5)
+                widget:SetHeight((#t+1)*19+1 + 22 + 7)
                 if diff then parent:SetHeight(parent:GetHeight()+diff) end
             end)
+            
             widget.frame:SetHeight((#t+1)*19+1)
-            widget:SetHeight((#t+1)*19+1 + 20 + 5)
+            widget:SetHeight((#t+1)*19+1 + 22 + 7)
         end
     else
-        widget = settingWidgets["auras"]
-    end
-
-    widget:Show()
-    return widget
-end
-
-local function CreateSetting_Auras2(parent)
-    local widget
-
-    if not settingWidgets["auras2"] then
-        widget = addon:CreateFrame("CellIndicatorSettings_Auras2", parent, 240, 128)
-        settingWidgets["auras2"] = widget
-
-        widget.frame = addon:CreateFrame(nil, widget, 20, 20)
-        widget.frame:SetPoint("TOPLEFT", 5, -20)
-        widget.frame:SetPoint("RIGHT", -5, 0)
-        widget.frame:Show()
-        addon:StylizeFrame(widget.frame, {0.15, 0.15, 0.15, 1})
-
-        widget.text = widget:CreateFontString(nil, "OVERLAY", font_name)
-        widget.text:SetPoint("BOTTOMLEFT", widget.frame, "TOPLEFT", 0, 1)
-
-        -- callback
-        function widget:SetFunc(func)
-            widget.frame.func = func
-        end
-
-        -- show db value
-        function widget:SetDBValue(title, t, noUpDownButtons)
-            widget.text:SetText(title)
-            CreateAuraButtons(widget.frame, auraButtons2, t, noUpDownButtons, nil, function(diff)
-                widget.frame:SetHeight((#t+1)*19+1)
-                widget:SetHeight((#t+1)*19+1 + 20 + 5)
-                if diff then parent:SetHeight(parent:GetHeight()+diff) end
-            end)
-            widget.frame:SetHeight((#t+1)*19+1)
-            widget:SetHeight((#t+1)*19+1 + 20 + 5)
-        end
-    else
-        widget = settingWidgets["auras2"]
+        widget = settingWidgets["auras"..index]
     end
 
     widget:Show()
@@ -5291,9 +5386,9 @@ function addon:CreateIndicatorSettings(parent, settingsTable)
         elseif setting == "texture" then
             tinsert(widgetsTable, CreateSetting_Texture(parent))
         elseif setting == "auras" or setting == "debuffBlacklist" or setting == "dispelBlacklist" or setting == "targetedSpellsList" or setting == "customDefensives" or setting == "customExternals" or setting == "customCrowdControls" then
-            tinsert(widgetsTable, CreateSetting_Auras(parent))
+            tinsert(widgetsTable, CreateSetting_Auras(parent, 1))
         elseif setting == "auras2" or setting == "bigDebuffs" then
-            tinsert(widgetsTable, CreateSetting_Auras2(parent))
+            tinsert(widgetsTable, CreateSetting_Auras(parent, 2))
         -- elseif setting == "cleuAuras" then
         --     tinsert(widgetsTable, CreateSetting_CleuAuras(parent))
         elseif setting == "builtInDefensives" or setting == "builtInExternals" or setting == "builtInCrowdControls" then

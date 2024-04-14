@@ -88,7 +88,7 @@ options:SetScript("OnClick", function(self, button)
         F:ShowOptionsFrame()
     elseif button == "RightButton" then
         F:IterateAllUnitButtons(B.UpdateAll, true)
-        F:Print(L["Unit buttons refreshed (%s)."]:format(L["Main"]))
+        F:Print(L["Unit buttons refreshed (%s)."]:format(F:UpperFirst(L["all"])))
     end
 end)
 options:HookScript("OnEnter", function()
