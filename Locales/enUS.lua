@@ -44,6 +44,7 @@ select(2, ...).L = setmetatable({
     ["onlyShowOvershields"] = "Only show overshields",
     ["showAllSpells"] = "Show all spells",
     ["enableBlacklistShortcut"] = "Blacklist: Alt+Ctrl+RightClick",
+    ["smooth"] = "Smooth",
 
     ["BOTTOM"] = "Bottom",
     ["BOTTOMLEFT"] = "Bottom Left",

@@ -1951,7 +1951,7 @@ local function CreateSetting_BarColors(parent)
 
         local percentCB = addon:CreateCheckButton(widget, "", function(checked)
             widget.colorsTable[2][1] = checked
-            Cell:SetEnabled(checked, percentColor, percentDropdown)
+            addon:SetEnabled(checked, percentColor, percentDropdown)
         end)
         percentCB:SetPoint("TOPLEFT", normalColor, "BOTTOMLEFT", 0, -8)
         
@@ -1967,7 +1967,7 @@ local function CreateSetting_BarColors(parent)
 
         local secCB = addon:CreateCheckButton(widget, "", function(checked)
             widget.colorsTable[3][1] = checked
-            Cell:SetEnabled(checked, secColor, secEditBox, secText)
+            addon:SetEnabled(checked, secColor, secEditBox, secText)
         end)
         secCB:SetPoint("TOPLEFT", percentCB, "BOTTOMLEFT", 0, -8)
 
@@ -2060,9 +2060,9 @@ local function CreateSetting_BarColors(parent)
             widget.colorsTable = colorsTable
 
             percentCB:SetChecked(colorsTable[2][1])
-            Cell:SetEnabled(colorsTable[2][1], percentColor, percentDropdown)
+            addon:SetEnabled(colorsTable[2][1], percentColor, percentDropdown)
             secCB:SetChecked(colorsTable[3][1])
-            Cell:SetEnabled(colorsTable[3][1], secColor, secEditBox, secText)
+            addon:SetEnabled(colorsTable[3][1], secColor, secEditBox, secText)
 
             normalColor:SetColor(colorsTable[1])
             percentColor:SetColor({colorsTable[2][2],colorsTable[2][3],colorsTable[2][4]})
@@ -2075,6 +2075,138 @@ local function CreateSetting_BarColors(parent)
         end
     else
         widget = settingWidgets["colors-bg"]
+    end
+
+    widget:Show()
+    return widget
+end
+
+local function CreateSetting_OverlayColors(parent)
+    local widget
+
+    if not settingWidgets["overlayColors"] then
+        widget = addon:CreateFrame("CellIndicatorSettings_ColorsWithBG", parent, 240, 74)
+        settingWidgets["overlayColors"] = widget
+
+        local normalColor = addon:CreateColorPicker(widget, L["Normal"], true, function(r, g, b, a)
+            widget.colorsTable[1][1] = r
+            widget.colorsTable[1][2] = g 
+            widget.colorsTable[1][3] = b
+            widget.colorsTable[1][4] = a
+        end)
+        normalColor:SetPoint("TOPLEFT", 5, -8)
+        
+        local percentColor, percentDropdown
+
+        local percentCB = addon:CreateCheckButton(widget, "", function(checked)
+            widget.colorsTable[2][1] = checked
+            addon:SetEnabled(checked, percentColor, percentDropdown)
+        end)
+        percentCB:SetPoint("TOPLEFT", normalColor, "BOTTOMLEFT", 0, -8)
+        
+        percentColor = addon:CreateColorPicker(widget, L["Remaining Time <"], true, function(r, g, b, a)
+            widget.colorsTable[2][2] = r
+            widget.colorsTable[2][3] = g 
+            widget.colorsTable[2][4] = b
+            widget.colorsTable[2][5] = a
+        end)
+        percentColor:SetPoint("TOPLEFT", percentCB, "TOPRIGHT", 2, 0)
+        
+        local secColor, secEditBox, secText
+
+        local secCB = addon:CreateCheckButton(widget, "", function(checked)
+            widget.colorsTable[3][1] = checked
+            addon:SetEnabled(checked, secColor, secEditBox, secText)
+        end)
+        secCB:SetPoint("TOPLEFT", percentCB, "BOTTOMLEFT", 0, -8)
+
+        secColor = addon:CreateColorPicker(widget, L["Remaining Time <"], true, function(r, g, b, a)
+            widget.colorsTable[3][2] = r
+            widget.colorsTable[3][3] = g 
+            widget.colorsTable[3][4] = b
+            widget.colorsTable[3][5] = a
+        end)
+        secColor:SetPoint("TOPLEFT", secCB, "TOPRIGHT", 2, 0)
+
+        percentDropdown = addon:CreateDropdown(widget, 60)
+        percentDropdown:SetPoint("LEFT", percentColor.label, "RIGHT", 5, 0)
+        percentDropdown:SetItems({
+            {
+                ["text"] = "75%",
+                ["onClick"] = function()
+                    widget.colorsTable[2][6] = 0.75
+                end,
+            },
+            {
+                ["text"] = "50%",
+                ["onClick"] = function()
+                    widget.colorsTable[2][6] = 0.5
+                end,
+            },
+            {
+                ["text"] = "25%",
+                ["onClick"] = function()
+                    widget.colorsTable[2][6] = 0.25
+                end,
+            },
+        })
+        
+        secEditBox = addon:CreateEditBox(widget, 43, 20, false, false, true)
+        secEditBox:SetPoint("LEFT", secColor.label, "RIGHT", 5, 0)
+        secEditBox:SetMaxLetters(4)
+ 
+        secEditBox.confirmBtn = addon:CreateButton(widget, "OK", "accent", {27, 20})
+        secEditBox.confirmBtn:SetPoint("LEFT", secEditBox, "RIGHT", -1, 0)
+        secEditBox.confirmBtn:Hide()
+        secEditBox.confirmBtn:SetScript("OnHide", function()
+            secEditBox.confirmBtn:Hide()
+        end)
+        secEditBox.confirmBtn:SetScript("OnClick", function()
+            local newSec = tonumber(secEditBox:GetText())
+            widget.colorsTable[3][6] = newSec
+            secEditBox:SetText(newSec)
+            secEditBox:ClearFocus()
+            secEditBox.confirmBtn:Hide()
+        end)
+
+        secEditBox:SetScript("OnTextChanged", function(self, userChanged)
+            if userChanged then
+                local newSec = tonumber(self:GetText())
+                if newSec and newSec ~= widget.colorsTable[3][4] then
+                    secEditBox.confirmBtn:Show()
+                else
+                    secEditBox.confirmBtn:Hide()
+                end
+            end
+        end)
+
+        secText = widget:CreateFontString(nil, "OVERLAY", font_name)
+        secText:SetPoint("LEFT", secEditBox, "RIGHT", 5, 0)
+        secText:SetText(L["sec"])
+
+        -- callback
+        function widget:SetFunc(func)
+            -- widget.func = func
+        end
+        
+        -- show db value
+        function widget:SetDBValue(colorsTable)
+            widget.colorsTable = colorsTable
+
+            percentCB:SetChecked(colorsTable[2][1])
+            addon:SetEnabled(colorsTable[2][1], percentColor, percentDropdown)
+            secCB:SetChecked(colorsTable[3][1])
+            addon:SetEnabled(colorsTable[3][1], secColor, secEditBox, secText)
+
+            normalColor:SetColor(colorsTable[1])
+            percentColor:SetColor({colorsTable[2][2],colorsTable[2][3],colorsTable[2][4],colorsTable[2][5]})
+            secColor:SetColor({colorsTable[3][2],colorsTable[3][3],colorsTable[3][4],colorsTable[3][5]})
+
+            percentDropdown:SetSelectedValue(colorsTable[2][6])
+            secEditBox:SetText(colorsTable[3][6])
+        end
+    else
+        widget = settingWidgets["overlayColors"]
     end
 
     widget:Show()
@@ -3594,7 +3726,7 @@ local function CreateSetting_Auras(parent, index)
             auraImportExportFrame:Hide()
         end)
 
-        auraImportExportFrame.textArea = Cell:CreateScrollEditBox(auraImportExportFrame, function(eb, userChanged)
+        auraImportExportFrame.textArea = addon:CreateScrollEditBox(auraImportExportFrame, function(eb, userChanged)
             if userChanged then
                 if auraImportExportFrame.isImport then
                     local data = string.gsub(eb:GetText(), "[^%d]+", ",")
@@ -5056,7 +5188,7 @@ local function CreateSetting_Shape(parent)
             end
         end
 
-        widget.highlight = Cell:CreateButtonGroup(widget.buttons, function(shape)
+        widget.highlight = addon:CreateButtonGroup(widget.buttons, function(shape)
             widget.func(shape)
         end)
 
@@ -5363,6 +5495,8 @@ function addon:CreateIndicatorSettings(parent, settingsTable)
             tinsert(widgetsTable, CreateSetting_Colors(parent))
         elseif setting == "barColors" then
             tinsert(widgetsTable, CreateSetting_BarColors(parent))
+        elseif setting == "overlayColors" then
+            tinsert(widgetsTable, CreateSetting_OverlayColors(parent))
         elseif setting == "customColors" then
             tinsert(widgetsTable, CreateSetting_CustomColors(parent))
         elseif setting == "color-class" then

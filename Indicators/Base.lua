@@ -1326,3 +1326,69 @@ function I:CreateAura_Bars(name, parent, num)
 
     return bars
 end
+
+-------------------------------------------------
+-- CreateAura_Overlay
+-------------------------------------------------
+local function Overlay_SetCooldown(overlay, start, duration, debuffType, texture, count)
+    if duration == 0 then
+        overlay:SetScript("OnUpdate", nil)
+        overlay:_SetMinMaxValues(0, 1)
+        overlay:_SetValue(1)
+        overlay:SetStatusBarColor(unpack(overlay.colors[1]))
+    else
+        overlay:_SetMinMaxValues(0, duration)
+        overlay.elapsed = 0.1 -- update immediately
+        overlay:SetScript("OnUpdate", function(self, elapsed)
+            local remain = duration-(GetTime()-start)
+            if remain < 0 then remain = 0 end
+            overlay:_SetValue(remain)
+
+            self.elapsed = self.elapsed + elapsed
+            if self.elapsed >= 0.1 then
+                self.elapsed = 0
+                -- update color
+                if overlay.colors[3][1] and remain <= overlay.colors[3][6] then
+                    overlay:SetStatusBarColor(overlay.colors[3][2], overlay.colors[3][3], overlay.colors[3][4], overlay.colors[3][5])
+                elseif overlay.colors[2][1] and remain <= duration * overlay.colors[2][6] then
+                    overlay:SetStatusBarColor(overlay.colors[2][2], overlay.colors[2][3], overlay.colors[2][4], overlay.colors[2][5])
+                else
+                    overlay:SetStatusBarColor(overlay.colors[1][1], overlay.colors[1][2], overlay.colors[1][3], overlay.colors[1][4])
+                end
+            end
+        end)
+    end
+
+    overlay:Show()
+end
+
+function I:CreateAura_Overlay(name, parent)
+    local overlay = CreateFrame("StatusBar", name, parent.widget.healthBar)
+    overlay:SetStatusBarTexture("Interface\\Buttons\\WHITE8x8")
+    overlay:Hide()
+    overlay.indicatorType = "overlay"
+
+    Mixin(overlay, SmoothStatusBarMixin)
+    overlay:SetAllPoints()
+    -- overlay:SetBackdropColor(0, 0, 0, 0)
+
+    overlay.SetCooldown = Overlay_SetCooldown
+    overlay._SetMinMaxValues = overlay.SetMinMaxValues
+    overlay._SetValue = overlay.SetValue
+
+    function overlay:EnableSmooth(smooth)
+        if smooth then
+            overlay._SetMinMaxValues = overlay.SetMinMaxSmoothedValue
+            overlay._SetValue = overlay.SetSmoothedValue
+        else
+            overlay._SetMinMaxValues = overlay.SetMinMaxValues
+            overlay._SetValue = overlay.SetValue
+        end
+    end
+
+    function overlay:SetColors(colors)
+        overlay.colors = colors
+    end
+
+    return overlay
+end

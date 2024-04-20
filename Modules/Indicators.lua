@@ -754,6 +754,10 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                 if t["shape"] then
                     indicator:SetShape(t["shape"])
                 end
+                -- update smooth
+                if type(t["smooth"]) == "boolean" then
+                    indicator:EnableSmooth(t["smooth"])
+                end
 
                 -- after init
                 if t["enabled"] then
@@ -926,6 +930,8 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
             elseif value == "fadeOut" then
                 indicator:SetFadeOut(value2)
                 -- indicator:SetCooldown(GetTime(), 13)
+            elseif value == "smooth" then
+                indicator:EnableSmooth(value2)
             end
         elseif setting == "create" then
             indicator = I:CreateIndicator(previewButton, value, true)
@@ -1317,6 +1323,10 @@ local typeItems = {
         ["text"] = L["Glow"],
         ["value"] = "glow",
     },
+    {
+        ["text"] = L["Overlay"],
+        ["value"] = "overlay",
+    },
 }
 
 local auraTypeItems = {
@@ -1600,6 +1610,8 @@ local function ShowIndicatorSettings(id)
             settingsTable = {"enabled", "checkbutton3:fadeOut", "auras", "texture", "size", "position", "frameLevel"}
         elseif indicatorType == "glow" then
             settingsTable = {"enabled", "checkbutton3:fadeOut", "auras", "glowOptions", "frameLevel"}
+        elseif indicatorType == "overlay" then
+            settingsTable = {"enabled", "auras", "overlayColors", "checkbutton3:smooth", "barOrientation"}
         end
        
         if indicatorTable["auraType"] == "buff" then
@@ -1632,7 +1644,7 @@ local function ShowIndicatorSettings(id)
         
         --! convert currentSetting to ACTUAL TABLE INDEX
         if currentSetting == "color-alpha" or currentSetting == "color-class" then currentSetting = "color" end
-        if currentSetting == "barColors" then currentSetting = "colors" end
+        if currentSetting == "barColors" or currentSetting == "overlayColors" then currentSetting = "colors" end
         if currentSetting == "size-square" or currentSetting == "size-bar" or currentSetting == "size-normal-big" then currentSetting = "size" end
         if currentSetting == "namePosition" or currentSetting == "statusPosition" or currentSetting == "position-noHCenter" or currentSetting == "shieldBarPosition" then currentSetting = "position" end
         if currentSetting == "barOrientation" then currentSetting = "orientation" end

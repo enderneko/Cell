@@ -292,6 +292,10 @@ local function HandleIndicators(b)
         if t["glowOptions"] then
             indicator:UpdateGlowOptions(t["glowOptions"])
         end
+        -- update smooth
+        if type(t["smooth"]) == "boolean" then
+            indicator:EnableSmooth(t["smooth"])
+        end
 
         -- init
         -- update name visibility
@@ -640,6 +644,10 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                 F:IterateAllUnitButtons(function(b)
                     b.indicators[indicatorName]:SetFadeOut(value2)
                     UnitButton_UpdateAuras(b)
+                end, true)
+            elseif value == "smooth" then
+                F:IterateAllUnitButtons(function(b)
+                    b.indicators[indicatorName]:EnableSmooth(value2)
                 end, true)
             elseif value == "showAllSpells" then
                 I:ShowAllTargetedSpells(value2)

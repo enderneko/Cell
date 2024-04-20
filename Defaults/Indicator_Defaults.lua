@@ -135,6 +135,18 @@ function I:GetDefaultCustomIndicatorTable(name, indicatorName, type, auraType)
             ["glowOptions"] = {"Pixel", {0.95,0.95,0.32,1}, 9, 0.25, 8, 2},
             ["fadeOut"] = true,
         }
+    elseif type == "overlay" then
+        t = {
+            ["name"] = name,
+            ["indicatorName"] = indicatorName,
+            ["type"] = type,
+            ["enabled"] = true,
+            ["smooth"] = false,
+            ["colors"] = {{0,0.61,1,0.55}, {false,1,1,0,0.5,0.5}, {false,1,0,0,0.5,3}},
+            ["orientation"] = "horizontal",
+            ["auraType"] = auraType,
+            ["auras"] = {},
+        }
     end
     
     if auraType == "buff" then
