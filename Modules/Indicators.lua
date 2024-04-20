@@ -1599,7 +1599,7 @@ local function ShowIndicatorSettings(id)
         elseif indicatorType == "text" then
             settingsTable = {"enabled", "auras", "duration", "checkbutton3:circledStackNums:"..L["Require font support"], "colors", "position", "frameLevel", "font-noOffset"}
         elseif indicatorType == "bar" then
-            settingsTable = {"enabled", "auras", "barColors", "checkbutton3:showStack", "barOrientation", "size-bar", "position", "frameLevel", "font"}
+            settingsTable = {"enabled", "auras", "colors", "checkbutton3:showStack", "barOrientation", "size-bar", "position", "frameLevel", "font"}
         elseif indicatorType == "rect" then
             settingsTable = {"enabled", "auras", "colors", "checkbutton3:showStack", "size", "position", "frameLevel", "font"}
         elseif indicatorType == "icons" then
@@ -1644,7 +1644,7 @@ local function ShowIndicatorSettings(id)
         
         --! convert currentSetting to ACTUAL TABLE INDEX
         if currentSetting == "color-alpha" or currentSetting == "color-class" then currentSetting = "color" end
-        if currentSetting == "barColors" or currentSetting == "overlayColors" then currentSetting = "colors" end
+        if currentSetting == "overlayColors" then currentSetting = "colors" end
         if currentSetting == "size-square" or currentSetting == "size-bar" or currentSetting == "size-normal-big" then currentSetting = "size" end
         if currentSetting == "namePosition" or currentSetting == "statusPosition" or currentSetting == "position-noHCenter" or currentSetting == "shieldBarPosition" then currentSetting = "position" end
         if currentSetting == "barOrientation" then currentSetting = "orientation" end
@@ -1661,6 +1661,9 @@ local function ShowIndicatorSettings(id)
                     listButtons[id]:SetTextColor(1, 1, 1, 1)
                 else
                     listButtons[id]:SetTextColor(0.466, 0.466, 0.466, 1)
+                end
+                if listButtons[id].typeIcon then
+                    listButtons[id].typeIcon:SetAlpha(value and 0.55 or 0.15)
                 end
             end)
 
@@ -1925,9 +1928,9 @@ LoadIndicatorList = function()
             b.typeIcon:SetTexture("Interface\\AddOns\\Cell\\Media\\Indicators\\indicator-"..t["type"])
             -- b.typeIcon:SetAlpha(0.5)
             if t["auraType"] == "buff" then
-                b.typeIcon:SetVertexColor(0.75, 1, 0.75, 0.5)
+                b.typeIcon:SetVertexColor(0.75, 1, 0.75)
             else -- debuff
-                b.typeIcon:SetVertexColor(1, 0.75, 0.75, 0.5)
+                b.typeIcon:SetVertexColor(1, 0.75, 0.75)
             end
 
             b:GetFontString():ClearAllPoints()
@@ -1942,6 +1945,9 @@ LoadIndicatorList = function()
             b:SetTextColor(1, 1, 1, 1)
         else
             b:SetTextColor(0.466, 0.466, 0.466, 1)
+        end
+        if b.typeIcon then
+            b.typeIcon:SetAlpha(t["enabled"] and 0.55 or 0.15)
         end
 
         b.ShowTooltip = function()

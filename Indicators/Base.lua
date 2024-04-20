@@ -519,10 +519,10 @@ local function Text_SetCooldown(frame, start, duration, debuffType, texture, cou
                 if self.elapsed >= 0.1 then
                     self.elapsed = 0
                     -- color
-                    if remain <= frame.colors[3][4] then
-                        frame.text:SetTextColor(frame.colors[3][1], frame.colors[3][2], frame.colors[3][3])
-                    elseif remain <= duration * frame.colors[2][4] then
-                        frame.text:SetTextColor(frame.colors[2][1], frame.colors[2][2], frame.colors[2][3])
+                    if frame.colors[3][1] and remain <= frame.colors[3][5] then
+                        frame.text:SetTextColor(frame.colors[3][2], frame.colors[3][3], frame.colors[3][4])
+                    elseif frame.colors[2][1] and remain <= duration * frame.colors[2][5] then
+                        frame.text:SetTextColor(frame.colors[2][2], frame.colors[2][3], frame.colors[2][4])
                     else
                         frame.text:SetTextColor(frame.colors[1][1], frame.colors[1][2], frame.colors[1][3])
                     end
@@ -565,10 +565,10 @@ local function Text_SetCooldown(frame, start, duration, debuffType, texture, cou
                     
                     local remain = duration-(GetTime()-start)
                     -- update color
-                    if remain <= frame.colors[3][4] then
-                        frame.text:SetTextColor(frame.colors[3][1], frame.colors[3][2], frame.colors[3][3])
-                    elseif remain <= duration * frame.colors[2][4] then
-                        frame.text:SetTextColor(frame.colors[2][1], frame.colors[2][2], frame.colors[2][3])
+                    if frame.colors[3][1] and remain <= frame.colors[3][5] then
+                        frame.text:SetTextColor(frame.colors[3][2], frame.colors[3][3], frame.colors[3][4])
+                    elseif frame.colors[2][1] and remain <= duration * frame.colors[2][5] then
+                        frame.text:SetTextColor(frame.colors[2][2], frame.colors[2][3], frame.colors[2][4])
                     else
                         frame.text:SetTextColor(frame.colors[1][1], frame.colors[1][2], frame.colors[1][3])
                     end
@@ -643,10 +643,10 @@ local function Rect_SetCooldown(frame, start, duration, debuffType, texture, cou
 
                 local remain = duration-(GetTime()-start)
                 -- update color
-                if remain <= frame.colors[3][4] then
-                    frame.tex:SetColorTexture(frame.colors[3][1], frame.colors[3][2], frame.colors[3][3])
-                elseif remain <= duration * frame.colors[2][4] then
-                    frame.tex:SetColorTexture(frame.colors[2][1], frame.colors[2][2], frame.colors[2][3])
+                if frame.colors[3][1] and remain <= frame.colors[3][5] then
+                    frame.tex:SetColorTexture(frame.colors[3][2], frame.colors[3][3], frame.colors[3][4])
+                elseif frame.colors[2][1] and remain <= duration * frame.colors[2][5] then
+                    frame.tex:SetColorTexture(frame.colors[2][2], frame.colors[2][3], frame.colors[2][4])
                 else
                     frame.tex:SetColorTexture(frame.colors[1][1], frame.colors[1][2], frame.colors[1][3])
                 end

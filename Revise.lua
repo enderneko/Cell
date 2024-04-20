@@ -2629,6 +2629,20 @@ function F:Revise()
         end
     end
 
+    -- r222-release
+    if CellDB["revise"] and dbRevision < 222 then
+        for _, layout in pairs(CellDB["layouts"]) do
+            for _, i in pairs(layout["indicators"]) do
+                if i.type == "text" or i.type == "rect" then
+                    if #i.colors[2] ~= 5 then
+                        tinsert(i.colors[2], 1, true)
+                        tinsert(i.colors[3], 1, true)
+                    end
+                end
+            end
+        end
+    end
+
     -- ----------------------------------------------------------------------- --
     --            update from old versions, validate all indicators            --
     -- ----------------------------------------------------------------------- --
