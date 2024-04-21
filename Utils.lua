@@ -767,6 +767,9 @@ end
 -------------------------------------------------
 -- unit buttons
 -------------------------------------------------
+local combinedHeader = "CellRaidFrameHeader0"
+local separatedHeaders = {"CellRaidFrameHeader1", "CellRaidFrameHeader2", "CellRaidFrameHeader3", "CellRaidFrameHeader4", "CellRaidFrameHeader5", "CellRaidFrameHeader6", "CellRaidFrameHeader7", "CellRaidFrameHeader8"}
+
 function F:IterateAllUnitButtons(func, updateCurrentGroupOnly, updateQuickAssist)
     -- solo
     if not updateCurrentGroupOnly or (updateCurrentGroupOnly and Cell.vars.groupType == "solo") then
@@ -786,9 +789,15 @@ function F:IterateAllUnitButtons(func, updateCurrentGroupOnly, updateQuickAssist
 
     -- raid
     if not updateCurrentGroupOnly or (updateCurrentGroupOnly and Cell.vars.groupType == "raid") then
-        for index, header in pairs(Cell.unitButtons.raid) do
-            if index ~= "units" then
-                for _, b in ipairs(header) do
+        if not updateCurrentGroupOnly or Cell.vars.currentLayoutTable.main.combineGroups then
+            for _, b in ipairs(Cell.unitButtons.raid[combinedHeader]) do
+                func(b)
+            end
+        end
+
+        if not updateCurrentGroupOnly or not Cell.vars.currentLayoutTable.main.combineGroups then
+            for _, header in ipairs(separatedHeaders) do
+                for _, b in ipairs(Cell.unitButtons.raid[header]) do
                     func(b)
                 end
             end

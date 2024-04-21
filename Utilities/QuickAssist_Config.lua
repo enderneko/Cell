@@ -1582,7 +1582,7 @@ local function CreateLayoutPane()
         },
     })
 
-    hideSelfCB = Cell:CreateCheckButton(filterPane, L["Hide Self (Party Only)"], function(checked, self)
+    hideSelfCB = Cell:CreateCheckButton(filterPane, L["Hide Self"].." ("..L["Party"]..")", function(checked, self)
         quickAssistTable["filters"][selectedFilter][3] = checked
         if selectedFilter == activeFilter then
             Cell:Fire("UpdateQuickAssist", "filter")
@@ -3308,14 +3308,14 @@ ShowFilter = function(index)
         roleFilter:SetRoles(t[2])
         roleFilter:Show()
         hideSelfCB:Show()
-        hideSelfCB:SetText(L["Hide Self (Party Only)"])
+        hideSelfCB:SetText(L["Hide Self"].." ("..L["Party"]..")")
     elseif t[1] == "class" then
         classFilter:SetClasses(t[2])
         classFilter:Show()
         hideSelfCB:Show()
         filterResetBtn:Show()
         filterResetTips:Show()
-        hideSelfCB:SetText(L["Hide Self (Party Only)"])
+        hideSelfCB:SetText(L["Hide Self"].." ("..L["Party"]..")")
     elseif t[1] == "spec" then
         specFilter:SetSpecs(t[2])
         specFilter:Show()

@@ -5,15 +5,6 @@
       "title": "BACKLOG",
       "cards": [
         {
-          "id": "8a463907-8852-4603-9b9f-1557fd53d8d3",
-          "listId": "643431c7-e660-47b1-a44b-4e799b536d19",
-          "title": "Single raid group header",
-          "description": "",
-          "labels": [],
-          "checkboxes": [],
-          "comments": []
-        },
-        {
           "id": "156adfb0-8f70-4f1d-92e4-da39405f5746",
           "listId": "643431c7-e660-47b1-a44b-4e799b536d19",
           "title": "Quick Assist sharing feature",
@@ -50,7 +41,17 @@
     {
       "id": "fc9baa7c-c3e7-49a4-8526-816c794e5ed9",
       "title": "IN PROGRESS",
-      "cards": []
+      "cards": [
+        {
+          "id": "8a463907-8852-4603-9b9f-1557fd53d8d3",
+          "listId": "fc9baa7c-c3e7-49a4-8526-816c794e5ed9",
+          "title": "Single raid group header",
+          "description": "",
+          "labels": [],
+          "checkboxes": [],
+          "comments": []
+        }
+      ]
     },
     {
       "id": "7b0c4654-92fe-4b4e-9566-15e8c706d9c9",

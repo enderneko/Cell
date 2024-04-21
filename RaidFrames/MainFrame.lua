@@ -164,6 +164,17 @@ tools:SetAttribute("_onmousedown", [=[
 ]===]
 
 -------------------------------------------------
+-- LoadingBar
+-------------------------------------------------
+local loadingBar = CreateFrame("StatusBar", "CellLoadingBar", options)
+loadingBar:Hide()
+loadingBar:SetStatusBarTexture("Interface\\Buttons\\WHITE8x8")
+loadingBar:SetStatusBarColor(0.5, 1, 0)
+P:Height(loadingBar, 1)
+P:Point(loadingBar, "BOTTOMLEFT", options, 1, 1)
+P:Point(loadingBar, "BOTTOMRIGHT", options, -1, 1)
+
+-------------------------------------------------
 -- MemoryUsage
 -------------------------------------------------
 --@debug@
@@ -526,11 +537,15 @@ local function UpdateMenu(which)
 end
 Cell:RegisterCallback("UpdateMenu", "MainFrame_UpdateMenu", UpdateMenu)
 
+local init
 local function MainFrame_UpdateLayout(layout, which)
     F:Debug("|cffff0066UpdateLayout:|r layout:", layout, " which:", which)
 
-    --! NOTE: a reload during pet battle prevents HEADER from CREATING CHILDs (unit buttons), this hide delay is a MUST  
-    RegisterStateDriver(cellMainFrame, 'visibility', '[petbattle] hide; show')
+    if not init then
+        init = true
+        --! NOTE: a reload during pet battle prevents HEADER from CREATING CHILDs (unit buttons), this hide delay is a MUST  
+        RegisterStateDriver(cellMainFrame, 'visibility', '[petbattle] hide; show')
+    end
     
     layout = Cell.vars.currentLayoutTable
     
@@ -543,10 +558,12 @@ local function MainFrame_UpdateLayout(layout, which)
     end
 
     -- load position
-    if not P:LoadPosition(anchorFrame, layout["main"]["position"]) then
-        P:ClearPoints(anchorFrame)
-        -- no position, use default
-        PixelUtil.SetPoint(anchorFrame, "TOPLEFT", UIParent, "CENTER", 1, -1)
+    if not which then
+        if not P:LoadPosition(anchorFrame, layout["main"]["position"]) then
+            P:ClearPoints(anchorFrame)
+            -- no position, use default
+            PixelUtil.SetPoint(anchorFrame, "TOPLEFT", UIParent, "CENTER", 1, -1)
+        end
     end
 end
 Cell:RegisterCallback("UpdateLayout", "MainFrame_UpdateLayout", MainFrame_UpdateLayout)
@@ -558,6 +575,8 @@ local function UpdatePixelPerfect()
     P:Resize(anchorFrame)
     options:UpdatePixelPerfect()
     raid:UpdatePixelPerfect()
+    P:Repoint(loadingBar)
+    P:Resize(loadingBar)
 
     -- NOTE: update pixel perfect for each button moved to UpdateIndicators
     -- F:IterateAllUnitButtons(function(b)

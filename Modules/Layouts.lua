@@ -2031,7 +2031,7 @@ local rcSlider, groupSpacingSlider
 local orientationDropdown, anchorDropdown, spacingXSlider, spacingYSlider
 
 local sameSizeAsMainCB, sameArrangementAsMainCB
-local sortByRoleCB, roleOrderWidget, hideSelfCB
+local combineGroupsCB, sortByRoleCB, roleOrderWidget, hideSelfCB
 local showNpcCB, separateNpcCB, spotlightCB, hidePlaceholderCB, spotlightOrientationDropdown, partyPetsCB, raidPetsCB
 
 local function UpdateSize()
@@ -2335,8 +2335,16 @@ local function CreateLayoutSetupPane()
     pages.main:SetAllPoints(layoutSetupPane)
     pages.main:Hide()
 
+    -- combine groups
+    combineGroupsCB = Cell:CreateCheckButton(pages.main, L["Combine Groups"].." ("..L["Raid"]..")", function(checked, self)
+        selectedLayoutTable["main"]["combineGroups"] = checked
+        Cell:Fire("UpdateLayout", selectedLayout, "header")
+    end)
+    combineGroupsCB:SetPoint("TOPLEFT", 5, -27)
+    Cell:RegisterForCloseDropdown(combineGroupsCB)
+
     -- sort by role
-    sortByRoleCB = Cell:CreateCheckButton(pages.main, L["Sort By Role (Party Only)"], function(checked, self)
+    sortByRoleCB = Cell:CreateCheckButton(pages.main, L["Sort By Role"], function(checked, self)
         selectedLayoutTable["main"]["sortByRole"] = checked
         if checked then
             roleOrderWidget:Show()
@@ -2344,8 +2352,8 @@ local function CreateLayoutSetupPane()
             roleOrderWidget:Hide()
         end
         Cell:Fire("UpdateLayout", selectedLayout, "sort")
-    end)
-    sortByRoleCB:SetPoint("TOPLEFT", 5, -27)
+    end, L["Sort By Role"], L["%s is required"]:format("|cffffb5c5"..L["Combine Groups"].."|r").." ("..L["Raid"]..")", "|cffffb5c5"..L["Left-Drag"]..":|r "..L["change the order"])
+    sortByRoleCB:SetPoint("TOPLEFT", combineGroupsCB, "BOTTOMLEFT", 0, -10)
     Cell:RegisterForCloseDropdown(sortByRoleCB)
 
     -- role order
@@ -2353,11 +2361,11 @@ local function CreateLayoutSetupPane()
     roleOrderWidget:SetPoint("TOPLEFT", sortByRoleCB, sortByRoleCB.label:GetWidth()+25, 3)
 
     -- hide self
-    hideSelfCB = Cell:CreateCheckButton(pages.main, L["Hide Self (Party Only)"], function(checked, self)
+    hideSelfCB = Cell:CreateCheckButton(pages.main, L["Hide Self"].." ("..L["Party"]..")", function(checked, self)
         selectedLayoutTable["main"]["hideSelf"] = checked
         Cell:Fire("UpdateLayout", selectedLayout, "hideSelf")
     end)
-    hideSelfCB:SetPoint("TOPLEFT", sortByRoleCB, "BOTTOMLEFT", 0, -8)
+    hideSelfCB:SetPoint("TOPLEFT", sortByRoleCB, "BOTTOMLEFT", 0, -10)
 
     -- rows/columns
     rcSlider = Cell:CreateSlider("", pages.main, 1, 8, 117, 1, function(value)
@@ -2594,7 +2602,7 @@ local barOrientationDropdown, rotateTexCB
 
 local function CreateBarOrientationPane()
     local barOrientationPane = Cell:CreateTitledPane(layoutsTab, L["Bar Orientation"], 205, 80)
-    barOrientationPane:SetPoint("TOPLEFT", 5, -420)
+    barOrientationPane:SetPoint("TOPLEFT", 5, -425)
 
     local function SetOrientation(orientation)
         selectedLayoutTable["barOrientation"][1] = orientation
@@ -2654,7 +2662,7 @@ end
 -------------------------------------------------
 local function CreateMiscPane()
     local miscPane = Cell:CreateTitledPane(layoutsTab, L["Misc"], 205, 80)
-    miscPane:SetPoint("TOPLEFT", 222, -420)
+    miscPane:SetPoint("TOPLEFT", 222, -425)
 
     local powerFilterBtn = Cell:CreateButton(miscPane, L["Power Bar Filters"], "accent-hover", {195, 20})
     Cell.frames.layoutsTab.powerFilterBtn = powerFilterBtn
@@ -2752,6 +2760,7 @@ LoadLayoutDB = function(layout, dontShowPreview)
 
     -- pages
     LoadPageDB(selectedPage)
+    combineGroupsCB:SetChecked(selectedLayoutTable["main"]["combineGroups"])
     sortByRoleCB:SetChecked(selectedLayoutTable["main"]["sortByRole"])
     if selectedLayoutTable["main"]["sortByRole"] then
         roleOrderWidget:Show()

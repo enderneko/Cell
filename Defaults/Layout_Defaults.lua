@@ -37,6 +37,7 @@ Cell.defaults.indicatorIndices = {
 Cell.defaults.layout = {
     -- ["syncWith"] = "layoutName",
     ["main"] = {
+        ["combineGroups"] = false,
         ["sortByRole"] = false,
         ["roleOrder"] = {"TANK", "HEALER", "DAMAGER"},
         ["hideSelf"] = false,

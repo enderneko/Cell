@@ -303,9 +303,10 @@ L["Group Columns"] = "队伍列数"
 L["Group Rows"] = "队伍行数"
 L["Group Spacing"] = "队伍间距"
 
-L["Sort By Role (Party Only)"] = "按职责排序（仅小队）"
-L["Hide Self (Party Only)"] = "隐藏自己（仅小队）"
+L["Combine Groups"] = "合并队伍"
+L["Sort By Role"] = "按职责排序"
 L["Hide Self"] = "隐藏自己"
+L["%s is required"] = "需要%s"
 
 L["Use Same Size As Main"] = "使用与主框体相同的尺寸"
 L["Use Same Arrangement As Main"] = "使用与主框体相同的排列"

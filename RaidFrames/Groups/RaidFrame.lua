@@ -90,11 +90,44 @@ startingIndex = [NUMBER] - the index in the final sorted unit list at which to s
 columnSpacing = [NUMBER] - the amount of space between the rows/columns (Default: 0)
 columnAnchorPoint = [STRING] - the anchor point of each new column (ie. use LEFT for the columns to grow to the right)
 --]]
-local groupHeaders = {}
+
+-------------------------------------------------
+-- combinedHeader
+-------------------------------------------------
+local combinedHeader
+do
+    local headerName = "CellRaidFrameHeader0"
+    combinedHeader = CreateFrame("Frame", headerName, raidFrame, "SecureGroupHeaderTemplate")
+    Cell.unitButtons.raid[headerName] = combinedHeader
+
+    combinedHeader:SetAttribute("template", "CellUnitButtonTemplate")
+    combinedHeader:SetAttribute("columnAnchorPoint", "LEFT")
+    combinedHeader:SetAttribute("point", "TOP")
+    combinedHeader:SetAttribute("groupFilter", "1,2,3,4,5,6,7,8")
+    -- combinedHeader:SetAttribute("groupingOrder", "TANK,HEALER,DAMAGER,NONE")
+    -- combinedHeader:SetAttribute("groupBy", "ASSIGNEDROLE")
+    combinedHeader:SetAttribute("xOffset", 0)
+    combinedHeader:SetAttribute("yOffset", -1)
+    combinedHeader:SetAttribute("unitsPerColumn", 5)
+    combinedHeader:SetAttribute("maxColumns", 8)
+    -- combinedHeader:SetAttribute("showRaid", true)
+
+    combinedHeader:SetAttribute("startingIndex", -39)
+    combinedHeader:Show()
+    combinedHeader:SetAttribute("startingIndex", 1)
+
+    -- for npcFrame's point
+    raidFrame:SetFrameRef("singleheader", combinedHeader)
+end
+
+-------------------------------------------------
+-- separatedHeaders
+-------------------------------------------------
+local separatedHeaders = {}
 local function CreateGroupHeader(group)
     local headerName = "CellRaidFrameHeader"..group
     local header = CreateFrame("Frame", headerName, raidFrame, "SecureGroupHeaderTemplate")
-    groupHeaders[group] = header
+    separatedHeaders[group] = header
     Cell.unitButtons.raid[headerName] = header
 
     -- header:SetAttribute("initialConfigFunction", [[
@@ -109,10 +142,6 @@ local function CreateGroupHeader(group)
     header:SetAttribute("columnAnchorPoint", "LEFT")
     header:SetAttribute("point", "TOP")
     header:SetAttribute("groupFilter", group)
-    -- header:SetAttribute("groupFilter", "1,2,3,4,5,6,7,8")
-    -- header:SetAttribute("groupBy", "ASSIGNEDROLE")
-    -- header:SetAttribute("groupingOrder", "TANK,HEALER,DAMAGER,NONE")
-    -- header:SetAttribute("maxColumns", 8)
     header:SetAttribute("xOffset", 0)
     header:SetAttribute("yOffset", -1)
     header:SetAttribute("unitsPerColumn", 5)
@@ -161,6 +190,120 @@ for i = 1, (Cell.isRetail and 3 or 5) do
     Cell.unitButtons.arena["raidpet"..i] = arenaPetButtons[i]
 end
 
+-------------------------------------------------
+-- update
+-------------------------------------------------
+local function GetPoints(layout)
+    local orientation = layout["main"]["orientation"]
+    local anchor = layout["main"]["anchor"]
+    local spacingX = layout["main"]["spacingX"]
+    local spacingY = layout["main"]["spacingY"]
+
+    local point, anchorPoint, groupAnchorPoint, unitSpacing, groupSpacing, verticalSpacing, horizontalSpacing, headerPoint, headerColumnAnchorPoint
+
+    if orientation == "vertical" then
+        if anchor == "BOTTOMLEFT" then
+            point, anchorPoint, groupAnchorPoint = "BOTTOMLEFT", "TOPLEFT", "BOTTOMRIGHT"
+            headerPoint, headerColumnAnchorPoint = "BOTTOM", "LEFT"
+            unitSpacing = spacingY
+            groupSpacing = spacingX
+            unitSpacingX, unitSpacingY = spacingX, spacingY
+            verticalSpacing = spacingY+layout["main"]["groupSpacing"]
+        elseif anchor == "BOTTOMRIGHT" then
+            point, anchorPoint, groupAnchorPoint = "BOTTOMRIGHT", "TOPRIGHT", "BOTTOMLEFT"
+            headerPoint, headerColumnAnchorPoint = "BOTTOM", "RIGHT"
+            unitSpacing = spacingY
+            groupSpacing = -spacingX
+            unitSpacingX, unitSpacingY = spacingX, spacingY
+            verticalSpacing = spacingY+layout["main"]["groupSpacing"]
+        elseif anchor == "TOPLEFT" then
+            point, anchorPoint, groupAnchorPoint = "TOPLEFT", "BOTTOMLEFT", "TOPRIGHT"
+            headerPoint, headerColumnAnchorPoint = "TOP", "LEFT"
+            unitSpacing = -spacingY
+            groupSpacing = spacingX
+            unitSpacingX, unitSpacingY = spacingX, -spacingY
+            verticalSpacing = -spacingY-layout["main"]["groupSpacing"]
+        elseif anchor == "TOPRIGHT" then
+            point, anchorPoint, groupAnchorPoint = "TOPRIGHT", "BOTTOMRIGHT", "TOPLEFT"
+            headerPoint, headerColumnAnchorPoint = "TOP", "RIGHT"
+            unitSpacing = -spacingY
+            groupSpacing = -spacingX
+            unitSpacingX, unitSpacingY = spacingX, -spacingY
+            verticalSpacing = -spacingY-layout["main"]["groupSpacing"]
+        end
+    else
+        if anchor == "BOTTOMLEFT" then
+            point, anchorPoint, groupAnchorPoint = "BOTTOMLEFT", "BOTTOMRIGHT", "TOPLEFT"
+            headerPoint, headerColumnAnchorPoint = "LEFT", "BOTTOM"
+            unitSpacing = spacingX
+            groupSpacing = spacingY
+            unitSpacingX, unitSpacingY = spacingX, spacingY
+            horizontalSpacing = spacingX+layout["main"]["groupSpacing"]
+        elseif anchor == "BOTTOMRIGHT" then
+            point, anchorPoint, groupAnchorPoint = "BOTTOMRIGHT", "BOTTOMLEFT", "TOPRIGHT"
+            headerPoint, headerColumnAnchorPoint = "RIGHT", "BOTTOM"
+            unitSpacing = -spacingX
+            groupSpacing = spacingY
+            unitSpacingX, unitSpacingY = -spacingX, spacingY
+            horizontalSpacing = -spacingX-layout["main"]["groupSpacing"]
+        elseif anchor == "TOPLEFT" then
+            point, anchorPoint, groupAnchorPoint = "TOPLEFT", "TOPRIGHT", "BOTTOMLEFT"
+            headerPoint, headerColumnAnchorPoint = "LEFT", "TOP"
+            unitSpacing = spacingX
+            groupSpacing = -spacingY
+            unitSpacingX, unitSpacingY = spacingX, spacingY
+            horizontalSpacing = spacingX+layout["main"]["groupSpacing"]
+        elseif anchor == "TOPRIGHT" then
+            point, anchorPoint, groupAnchorPoint = "TOPRIGHT", "TOPLEFT", "BOTTOMRIGHT"
+            headerPoint, headerColumnAnchorPoint = "RIGHT", "TOP"
+            unitSpacing = -spacingX
+            groupSpacing = -spacingY
+            unitSpacingX, unitSpacingY = -spacingX, spacingY
+            horizontalSpacing = -spacingX-layout["main"]["groupSpacing"]
+        end
+    end
+
+    return point, anchorPoint, groupAnchorPoint, unitSpacing, groupSpacing, unitSpacingX, unitSpacingY, verticalSpacing, horizontalSpacing, headerPoint, headerColumnAnchorPoint
+end
+
+local function UpdateHeader(header, layout, which)
+    if not which or which == "header" or which == "main-size" or which == "main-power" or which == "groupFilter" or which == "barOrientation" or which == "powerFilter" then
+        local width, height = unpack(layout["main"]["size"])
+
+        for _, b in ipairs(header) do
+            if not which or which == "header" or which == "main-size" or which == "groupFilter" then
+                P:Size(b, width, height)
+                b:ClearAllPoints()
+            end
+            -- NOTE: SetOrientation BEFORE SetPowerSize
+            if not which or which == "header" or which == "barOrientation" then
+                B:SetOrientation(b, layout["barOrientation"][1], layout["barOrientation"][2])
+            end
+            if not which or which == "header" or which == "main-power" or which == "groupFilter" or which == "barOrientation" or which == "powerFilter" then
+                B:SetPowerSize(b, layout["main"]["powerSize"])
+            end
+        end
+
+        if not which or which == "header" or which == "main-size" or which == "groupFilter" then
+            -- 确保按钮在“一定程度上”对齐
+            header:SetAttribute("minWidth", P:Scale(width))
+            header:SetAttribute("minHeight", P:Scale(height))
+
+            P:Size(npcFrameAnchor, width, height) -- REVIEW: check same as main
+        end
+    end
+
+    -- REVIEW: fix name width
+    if which == "header" or which == "groupFilter" then
+        for j, b in ipairs(header) do
+            b.widget.healthBar:GetScript("OnSizeChanged")(b.widget.healthBar)
+        end
+        for k, arenaPet in ipairs(arenaPetButtons) do
+            arenaPet.widget.healthBar:GetScript("OnSizeChanged")(arenaPet.widget.healthBar)
+        end
+    end
+end
+
 local init, previousLayout
 local function RaidFrame_UpdateLayout(layout, which)
     if Cell.vars.groupType ~= "raid" and init then return end
@@ -182,17 +325,176 @@ local function RaidFrame_UpdateLayout(layout, which)
             arenaPet:Hide()
         end
     end
-
-    local width, height = unpack(layout["main"]["size"])
+    
+    local point, anchorPoint, groupAnchorPoint, unitSpacing, groupSpacing, unitSpacingX, unitSpacingY, verticalSpacing, horizontalSpacing, headerPoint, headerColumnAnchorPoint = GetPoints(layout)
+    
+    if not which or which == "main-arrangement" or which == "rows_columns" or which == "groupSpacing" or which == "groupFilter" then
+        -- arena pets
+        for k in ipairs(arenaPetButtons) do
+            arenaPetButtons[k]:ClearAllPoints()
+            if k == 1 then
+                arenaPetButtons[k]:SetPoint(point, npcFrameAnchor)
+            else
+                arenaPetButtons[k]:SetPoint(point, arenaPetButtons[k-1], anchorPoint, 0, unitSpacing)
+            end
+        end
+    end
 
     local shownGroups = {}
     for i, isShown in ipairs(layout["groupFilter"]) do
         if isShown then
+            UpdateHeader(separatedHeaders[i], layout, which)
             tinsert(shownGroups, i)
         end
     end
 
+    if layout["main"]["combineGroups"] then
+        UpdateHeader(combinedHeader, layout, which)
+        
+        if not which or which == "header" then
+            combinedHeader:SetAttribute("showRaid", true)
+            for _, header in ipairs(separatedHeaders) do
+                header:SetAttribute("showRaid", nil)
+            end
+        end
+
+        if not which or which == "header" or which == "main-arrangement" or which == "rows_columns" or which == "groupSpacing" then
+            combinedHeader:ClearAllPoints()
+            
+            if layout["main"]["orientation"] == "vertical" then
+                combinedHeader:SetAttribute("columnAnchorPoint", headerColumnAnchorPoint)
+                combinedHeader:SetAttribute("point", headerPoint)
+                combinedHeader:SetAttribute("xOffset", 0)
+                combinedHeader:SetAttribute("yOffset", unitSpacingY)
+                combinedHeader:SetAttribute("columnSpacing", unitSpacingX)
+            else
+                combinedHeader:SetAttribute("columnAnchorPoint", headerColumnAnchorPoint)
+                combinedHeader:SetAttribute("point", headerPoint)
+                combinedHeader:SetAttribute("xOffset", unitSpacingX)
+                combinedHeader:SetAttribute("yOffset", 0)
+                combinedHeader:SetAttribute("columnSpacing", unitSpacingY)
+            end
+
+            --! force update unitbutton's point
+            for _, b in ipairs(combinedHeader) do
+                b:ClearAllPoints()
+            end
+
+            combinedHeader:SetAttribute("unitsPerColumn", 5)
+            combinedHeader:SetPoint(point)
+    
+            raidFrame:SetAttribute("spacing", groupSpacing)
+            raidFrame:SetAttribute("orientation", layout["main"]["orientation"])
+            raidFrame:SetAttribute("anchor", layout["main"]["anchor"])
+            raidFrame:SetAttribute("visibility", 1) -- NOTE: trigger _onattributechanged to set npcFrameAnchor point!
+        end
+
+        if not which or which == "header" or which == "sort" then
+            if layout["main"]["sortByRole"] then
+                combinedHeader:SetAttribute("sortMethod", "NAME")
+                local order = table.concat(layout["main"]["roleOrder"], ",")..",NONE"
+                combinedHeader:SetAttribute("groupingOrder", order)
+                combinedHeader:SetAttribute("groupBy", "ASSIGNEDROLE")
+            else
+                combinedHeader:SetAttribute("sortMethod", "INDEX")
+                combinedHeader:SetAttribute("groupingOrder", "")
+                combinedHeader:SetAttribute("groupBy", nil)
+            end
+        end
+
+        if not which or which == "header" or which == "groupFilter" then
+            combinedHeader:SetAttribute("groupFilter", F:TableToString(shownGroups, ","))
+        end
+    
+    else
+        if not which or which == "header" then
+            combinedHeader:SetAttribute("showRaid", nil)
+            for _, header in ipairs(separatedHeaders) do
+                header:SetAttribute("showRaid", true)
+            end
+        end
+        
+        if not which or which == "header" or which == "main-arrangement" or which == "rows_columns" or which == "groupSpacing" or which == "groupFilter" then
+            for i, group in ipairs(shownGroups) do
+                local header = separatedHeaders[group]
+                header:ClearAllPoints()
+        
+                if layout["main"]["orientation"] == "vertical" then
+                    header:SetAttribute("columnAnchorPoint", headerColumnAnchorPoint)
+                    header:SetAttribute("point", headerPoint)
+                    header:SetAttribute("xOffset", 0)
+                    header:SetAttribute("yOffset", unitSpacing)
+        
+                    --! force update unitbutton's point
+                    for j = 1, 5 do
+                        header[j]:ClearAllPoints()
+                    end
+                    header:SetAttribute("unitsPerColumn", 5)
+                    
+                    if i == 1 then
+                        header:SetPoint(point)
+                    else
+                        if i / layout["main"]["columns"] > 1 then -- not the first row
+                            header:SetPoint(point, separatedHeaders[shownGroups[i-layout["main"]["columns"]]], anchorPoint, 0, verticalSpacing)
+                        else
+                            header:SetPoint(point, separatedHeaders[shownGroups[i-1]], groupAnchorPoint, groupSpacing, 0)
+                        end
+                    end
+                else
+                    header:SetAttribute("columnAnchorPoint", headerColumnAnchorPoint)
+                    header:SetAttribute("point", headerPoint)
+                    header:SetAttribute("xOffset", unitSpacing)
+                    header:SetAttribute("yOffset", 0)
+                
+                    --! force update unitbutton's point
+                    for j = 1, 5 do
+                        header[j]:ClearAllPoints()
+                    end
+                    header:SetAttribute("unitsPerColumn", 5)
+                
+                    if i == 1 then
+                        header:SetPoint(point)
+                        -- arena pets
+                        for k in ipairs(arenaPetButtons) do
+                            arenaPetButtons[k]:ClearAllPoints()
+                            if k == 1 then
+                                arenaPetButtons[k]:SetPoint(point, npcFrameAnchor)
+                            else
+                                arenaPetButtons[k]:SetPoint(point, arenaPetButtons[k-1], anchorPoint, unitSpacing, 0)
+                            end
+                        end
+                    else
+                        if i / layout["main"]["rows"] > 1 then -- not the first column
+                            header:SetPoint(point, separatedHeaders[shownGroups[i-layout["main"]["rows"]]], anchorPoint, horizontalSpacing, 0)
+                        else
+                            header:SetPoint(point, separatedHeaders[shownGroups[i-1]], groupAnchorPoint, 0, groupSpacing)
+                        end
+                    end
+                end
+        
+                raidFrame:SetAttribute("spacing", groupSpacing)
+                raidFrame:SetAttribute("orientation", layout["main"]["orientation"])
+                raidFrame:SetAttribute("anchor", layout["main"]["anchor"])
+                raidFrame:SetAttribute("visibility", 1) -- NOTE: trigger _onattributechanged to set npcFrameAnchor point!
+            end
+        end
+
+        -- show/hide groups
+        if not which or which == "header" or which == "groupFilter" then
+            for i = 1, 8 do
+                if layout["groupFilter"][i] then
+                    separatedHeaders[i]:Show()
+                else
+                    separatedHeaders[i]:Hide()
+                end
+            end
+        end
+    end
+
+    -- raid pets
     if not which or strfind(which, "size$") or strfind(which, "power$") or which == "barOrientation" or which == "powerFilter" then
+        local width, height = unpack(layout["main"]["size"])
+
         for i, arenaPet in ipairs(arenaPetButtons) do
             -- NOTE: SetOrientation BEFORE SetPowerSize
             B:SetOrientation(arenaPet, layout["barOrientation"][1], layout["barOrientation"][2])
@@ -203,185 +505,6 @@ local function RaidFrame_UpdateLayout(layout, which)
             else
                 P:Size(arenaPet, layout["pet"]["size"][1], layout["pet"]["size"][2])
                 B:SetPowerSize(arenaPet, layout["pet"]["powerSize"])
-            end
-        end
-    end
-
-    for i, group in ipairs(shownGroups) do
-        local header = groupHeaders[group]
-
-        if not which or which == "main-size" or which == "main-power" or which == "groupFilter" or which == "barOrientation" or which == "powerFilter" then
-            for j, b in ipairs(header) do
-                if not which or which == "main-size" or which == "groupFilter" then
-                    P:Size(b, width, height)
-                    b:ClearAllPoints()
-                end
-                -- NOTE: SetOrientation BEFORE SetPowerSize
-                if not which or which == "barOrientation" then
-                    B:SetOrientation(b, layout["barOrientation"][1], layout["barOrientation"][2])
-                end
-                if not which or which == "main-power" or which == "groupFilter" or which == "barOrientation" or which == "powerFilter" then
-                    B:SetPowerSize(b, layout["main"]["powerSize"])
-                end
-            end
-
-            if not which or which == "main-size" or which == "groupFilter" then
-                -- 确保按钮在“一定程度上”对齐
-                header:SetAttribute("minWidth", P:Scale(width))
-                header:SetAttribute("minHeight", P:Scale(height))
-
-                P:Size(npcFrameAnchor, width, height) -- REVIEW: check same as main
-            end
-        end
-
-        if not which or which == "main-arrangement" or which == "rows_columns" or which == "groupSpacing" or which == "groupFilter" then
-            header:ClearAllPoints()
-
-            local orientation = layout["main"]["orientation"]
-            local anchor = layout["main"]["anchor"]
-            local spacingX = layout["main"]["spacingX"]
-            local spacingY = layout["main"]["spacingY"]
-
-            -- anchor
-            local point, anchorPoint, groupAnchorPoint, unitSpacing, groupSpacing, verticalSpacing, horizontalSpacing, headerPoint, headerColumnAnchorPoint
-            if orientation == "vertical" then
-                if anchor == "BOTTOMLEFT" then
-                    point, anchorPoint, groupAnchorPoint = "BOTTOMLEFT", "TOPLEFT", "BOTTOMRIGHT"
-                    headerPoint, headerColumnAnchorPoint = "BOTTOM", "LEFT"
-                    unitSpacing = spacingY
-                    groupSpacing = spacingX
-                    verticalSpacing = spacingY+layout["main"]["groupSpacing"]
-                elseif anchor == "BOTTOMRIGHT" then
-                    point, anchorPoint, groupAnchorPoint = "BOTTOMRIGHT", "TOPRIGHT", "BOTTOMLEFT"
-                    headerPoint, headerColumnAnchorPoint = "BOTTOM", "RIGHT"
-                    unitSpacing = spacingY
-                    groupSpacing = -spacingX
-                    verticalSpacing = spacingY+layout["main"]["groupSpacing"]
-                elseif anchor == "TOPLEFT" then
-                    point, anchorPoint, groupAnchorPoint = "TOPLEFT", "BOTTOMLEFT", "TOPRIGHT"
-                    headerPoint, headerColumnAnchorPoint = "TOP", "LEFT"
-                    unitSpacing = -spacingY
-                    groupSpacing = spacingX
-                    verticalSpacing = -spacingY-layout["main"]["groupSpacing"]
-                elseif anchor == "TOPRIGHT" then
-                    point, anchorPoint, groupAnchorPoint = "TOPRIGHT", "BOTTOMRIGHT", "TOPLEFT"
-                    headerPoint, headerColumnAnchorPoint = "TOP", "RIGHT"
-                    unitSpacing = -spacingY
-                    groupSpacing = -spacingX
-                    verticalSpacing = -spacingY-layout["main"]["groupSpacing"]
-                end
-
-                header:SetAttribute("columnAnchorPoint", headerColumnAnchorPoint)
-                header:SetAttribute("point", headerPoint)
-                header:SetAttribute("xOffset", 0)
-                header:SetAttribute("yOffset", unitSpacing)
-
-                --! force update unitbutton's point
-                for j = 1, 5 do
-                    header[j]:ClearAllPoints()
-                end
-                header:SetAttribute("unitsPerColumn", 5)
-                
-                if i == 1 then
-                    header:SetPoint(point)
-                    -- arena pets
-                    for k in ipairs(arenaPetButtons) do
-                        arenaPetButtons[k]:ClearAllPoints()
-                        if k == 1 then
-                            arenaPetButtons[k]:SetPoint(point, npcFrameAnchor)
-                        else
-                            arenaPetButtons[k]:SetPoint(point, arenaPetButtons[k-1], anchorPoint, 0, unitSpacing)
-                        end
-                    end
-                else
-                    if i / layout["main"]["columns"] > 1 then -- not the first row
-                        header:SetPoint(point, groupHeaders[shownGroups[i-layout["main"]["columns"]]], anchorPoint, 0, verticalSpacing)
-                    else
-                        header:SetPoint(point, groupHeaders[shownGroups[i-1]], groupAnchorPoint, groupSpacing, 0)
-                    end
-                end
-            else
-                if anchor == "BOTTOMLEFT" then
-                    point, anchorPoint, groupAnchorPoint = "BOTTOMLEFT", "BOTTOMRIGHT", "TOPLEFT"
-                    headerPoint, headerColumnAnchorPoint = "LEFT", "BOTTOM"
-                    unitSpacing = spacingX
-                    groupSpacing = spacingY
-                    horizontalSpacing = spacingX+layout["main"]["groupSpacing"]
-                elseif anchor == "BOTTOMRIGHT" then
-                    point, anchorPoint, groupAnchorPoint = "BOTTOMRIGHT", "BOTTOMLEFT", "TOPRIGHT"
-                    headerPoint, headerColumnAnchorPoint = "RIGHT", "BOTTOM"
-                    unitSpacing = -spacingX
-                    groupSpacing = spacingY
-                    horizontalSpacing = -spacingX-layout["main"]["groupSpacing"]
-                elseif anchor == "TOPLEFT" then
-                    point, anchorPoint, groupAnchorPoint = "TOPLEFT", "TOPRIGHT", "BOTTOMLEFT"
-                    headerPoint, headerColumnAnchorPoint = "LEFT", "TOP"
-                    unitSpacing = spacingX
-                    groupSpacing = -spacingY
-                    horizontalSpacing = spacingX+layout["main"]["groupSpacing"]
-                elseif anchor == "TOPRIGHT" then
-                    point, anchorPoint, groupAnchorPoint = "TOPRIGHT", "TOPLEFT", "BOTTOMRIGHT"
-                    headerPoint, headerColumnAnchorPoint = "RIGHT", "TOP"
-                    unitSpacing = -spacingX
-                    groupSpacing = -spacingY
-                    horizontalSpacing = -spacingX-layout["main"]["groupSpacing"]
-                end
-
-                header:SetAttribute("columnAnchorPoint", headerColumnAnchorPoint)
-                header:SetAttribute("point", headerPoint)
-                header:SetAttribute("xOffset", unitSpacing)
-                header:SetAttribute("yOffset", 0)
-               
-                --! force update unitbutton's point
-                for j = 1, 5 do
-                    header[j]:ClearAllPoints()
-                end
-                header:SetAttribute("unitsPerColumn", 5)
-               
-                if i == 1 then
-                    header:SetPoint(point)
-                    -- arena pets
-                    for k in ipairs(arenaPetButtons) do
-                        arenaPetButtons[k]:ClearAllPoints()
-                        if k == 1 then
-                            arenaPetButtons[k]:SetPoint(point, npcFrameAnchor)
-                        else
-                            arenaPetButtons[k]:SetPoint(point, arenaPetButtons[k-1], anchorPoint, unitSpacing, 0)
-                        end
-                    end
-                else
-                    if i / layout["main"]["rows"] > 1 then -- not the first column
-                        header:SetPoint(point, groupHeaders[shownGroups[i-layout["main"]["rows"]]], anchorPoint, horizontalSpacing, 0)
-                    else
-                        header:SetPoint(point, groupHeaders[shownGroups[i-1]], groupAnchorPoint, 0, groupSpacing)
-                    end
-                end
-            end
-
-            raidFrame:SetAttribute("spacing", groupSpacing)
-            raidFrame:SetAttribute("orientation", orientation)
-            raidFrame:SetAttribute("anchor", anchor)
-            raidFrame:SetAttribute("visibility", 1) -- NOTE: trigger _onattributechanged to set npcFrameAnchor point!
-        end
-
-        -- REVIEW: fix name width
-        if which == "groupFilter" then
-            for j, b in ipairs(header) do
-                b.widget.healthBar:GetScript("OnSizeChanged")(b.widget.healthBar)
-            end
-            for k, arenaPet in ipairs(arenaPetButtons) do
-                arenaPet.widget.healthBar:GetScript("OnSizeChanged")(arenaPet.widget.healthBar)
-            end
-        end
-    end
-
-    -- show/hide groups
-    if not which or which == "groupFilter" then
-        for i = 1, 8 do
-            if layout["groupFilter"][i] then
-                groupHeaders[i]:Show()
-            else
-                groupHeaders[i]:Hide()
             end
         end
     end
