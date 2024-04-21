@@ -45,17 +45,7 @@
     {
       "id": "7915d51e-5603-44aa-aa3a-8dff734ea7c6",
       "title": "TODO",
-      "cards": [
-        {
-          "id": "6ed00584-0cb8-4aca-a222-2b9562a57d47",
-          "listId": "7915d51e-5603-44aa-aa3a-8dff734ea7c6",
-          "title": "Fix NPC health colors in Follower Dungeons",
-          "description": "",
-          "labels": [],
-          "checkboxes": [],
-          "comments": []
-        }
-      ]
+      "cards": []
     },
     {
       "id": "fc9baa7c-c3e7-49a4-8526-816c794e5ed9",
@@ -79,6 +69,15 @@
           "id": "faa7ea53-8b3c-4343-b1b2-d25cdeff49b8",
           "listId": "7b0c4654-92fe-4b4e-9566-15e8c706d9c9",
           "title": "\"Overlay\" indicator",
+          "description": "",
+          "labels": [],
+          "checkboxes": [],
+          "comments": []
+        },
+        {
+          "id": "6ed00584-0cb8-4aca-a222-2b9562a57d47",
+          "listId": "7b0c4654-92fe-4b4e-9566-15e8c706d9c9",
+          "title": "Fix NPC health colors in Follower Dungeons",
           "description": "",
           "labels": [],
           "checkboxes": [],

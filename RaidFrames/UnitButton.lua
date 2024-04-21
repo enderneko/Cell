@@ -37,6 +37,7 @@ local UnitHasVehicleUI = UnitHasVehicleUI
 -- local UnitUsingVehicle = UnitUsingVehicle
 local UnitIsCharmed = UnitIsCharmed
 local UnitIsPlayer = UnitIsPlayer
+local UnitInPartyIsAI = UnitInPartyIsAI
 local UnitGroupRolesAssigned = UnitGroupRolesAssigned
 local UnitThreatSituation = UnitThreatSituation
 local GetThreatStatusColor = GetThreatStatusColor
@@ -1551,7 +1552,12 @@ local function ShouldShowPowerBar(b)
     elseif string.find(b.state.guid, "^Pet") then
         class = "PET"
     elseif string.find(b.state.guid, "^Creature") then
-        class = "NPC"
+        if UnitInPartyIsAI(b.state.unit) then
+            class = b.state.class
+            role = GetRole(b)
+        else
+            class = "NPC"
+        end
     elseif string.find(b.state.guid, "^Vehicle") then
         class = "VEHICLE"
     end
@@ -2124,7 +2130,7 @@ UnitButton_UpdateNameColor = function(self)
         return 
     end
     
-    if UnitIsPlayer(unit) then -- player
+    if UnitIsPlayer(unit) or UnitInPartyIsAI(unit) then -- player
         if not UnitIsConnected(unit) then
             nameText:SetColor(F:GetClassColor(self.state.class))
         elseif UnitIsCharmed(unit) then
@@ -2166,7 +2172,7 @@ UnitButton_UpdateHealthColor = function(self)
         lossA =  CellDB["appearance"]["lossAlpha"]
     end
 
-    if UnitIsPlayer(unit) then -- player
+    if UnitIsPlayer(unit) or UnitInPartyIsAI(unit) then -- player
         if not UnitIsConnected(unit) then
             barR, barG, barB = 0.4, 0.4, 0.4
             lossR, lossG, lossB = 0.4, 0.4, 0.4
