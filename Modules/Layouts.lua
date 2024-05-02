@@ -247,12 +247,13 @@ local function UpdateLayoutPreview()
     end
 
     -- update layoutPreviewAnchor point
+    layoutPreviewAnchor:ClearAllPoints()
     if selectedLayout == Cell.vars.currentLayout then
+        layoutPreviewAnchor:EnableMouse(false)
         layoutPreviewAnchor:SetAllPoints(Cell.frames.anchorFrame)
     else
-        if #selectedLayoutTable["main"]["position"] == 2 then
-            P:LoadPosition(layoutPreviewAnchor, selectedLayoutTable["main"]["position"])
-        else
+        layoutPreviewAnchor:EnableMouse(true)
+        if not P:LoadPosition(layoutPreviewAnchor, selectedLayoutTable["main"]["position"]) then
             layoutPreviewAnchor:ClearAllPoints()
             layoutPreviewAnchor:SetPoint("TOPLEFT", UIParent, "CENTER")
         end
@@ -558,9 +559,7 @@ local function UpdateNPCPreview()
         P:LoadPosition(Cell.frames.separateNpcFrameAnchor, Cell.vars.currentLayoutTable["npc"]["position"])
     end
 
-    if #selectedLayoutTable["npc"]["position"] == 2 then
-        P:LoadPosition(npcPreviewAnchor, selectedLayoutTable["npc"]["position"])
-    else
+    if not P:LoadPosition(npcPreviewAnchor, selectedLayoutTable["npc"]["position"]) then
         npcPreviewAnchor:ClearAllPoints()
         npcPreviewAnchor:SetPoint("TOPLEFT", UIParent, "CENTER")
     end
@@ -809,9 +808,7 @@ local function UpdateRaidPetPreview()
         P:LoadPosition(CellRaidPetAnchorFrame, Cell.vars.currentLayoutTable["pet"]["position"])
     end
 
-    if #selectedLayoutTable["pet"]["position"] == 2 then
-        P:LoadPosition(raidPetPreviewAnchor, selectedLayoutTable["pet"]["position"])
-    else
+    if not P:LoadPosition(raidPetPreviewAnchor, selectedLayoutTable["pet"]["position"]) then
         raidPetPreviewAnchor:ClearAllPoints()
         raidPetPreviewAnchor:SetPoint("TOPLEFT", UIParent, "CENTER")
     end
@@ -2329,7 +2326,6 @@ local function CreateLayoutSetupPane()
     end)
     combineGroupsCB:SetPoint("TOPLEFT", 5, -27)
     Cell:RegisterForCloseDropdown(combineGroupsCB)
-    combineGroupsCB:SetEnabled(false) -- TODO:
 
     -- sort by role
     sortByRoleCB = Cell:CreateCheckButton(pages.main, L["Sort By Role"], function(checked, self)
