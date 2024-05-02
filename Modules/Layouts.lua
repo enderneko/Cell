@@ -1642,7 +1642,7 @@ local function CreateAutoSwitchPane()
         raidMythicText:SetPoint("BOTTOMLEFT", raidMythicDropdown, "TOPLEFT", 0, 1)
         raidMythicText:SetText(raidMythic)
     
-    elseif Cell.isWrath then
+    elseif Cell.isCata then
         -- raid10
         raid10Dropdown = Cell:CreateDropdown(autoSwitchPane, 140)
         raid10Dropdown:SetPoint("TOPLEFT", raidOutdoorDropdown, "BOTTOMLEFT", 0, -30)
@@ -1673,7 +1673,7 @@ local function CreateAutoSwitchPane()
     arenaDropdown = Cell:CreateDropdown(autoSwitchPane, 140)
     if Cell.isRetail then
         arenaDropdown:SetPoint("TOPLEFT", raidMythicDropdown, "BOTTOMLEFT", 0, -30)
-    elseif Cell.isWrath then
+    elseif Cell.isCata then
         arenaDropdown:SetPoint("TOPLEFT", raid25Dropdown, "BOTTOMLEFT", 0, -30)
     elseif Cell.isVanilla then
         arenaDropdown:SetPoint("TOPLEFT", raidInstanceDropdown, "BOTTOMLEFT", 0, -30)
@@ -1797,7 +1797,7 @@ LoadAutoSwitchDropdowns = function()
         end
         raidMythicDropdown:SetItems(raidMythicItems)
 
-    elseif Cell.isWrath then
+    elseif Cell.isCata then
         -- raid10Dropdown
         local raid10Items = {}
         for _, value in pairs(indices) do
@@ -2336,12 +2336,13 @@ local function CreateLayoutSetupPane()
     pages.main:Hide()
 
     -- combine groups
-    combineGroupsCB = Cell:CreateCheckButton(pages.main, L["Combine Groups"].." ("..L["Raid"]..")", function(checked, self)
+    combineGroupsCB = Cell:CreateCheckButton(pages.main, "<WIP> "..L["Combine Groups"].." ("..L["Raid"]..")", function(checked, self)
         selectedLayoutTable["main"]["combineGroups"] = checked
         Cell:Fire("UpdateLayout", selectedLayout, "header")
     end)
     combineGroupsCB:SetPoint("TOPLEFT", 5, -27)
     Cell:RegisterForCloseDropdown(combineGroupsCB)
+    combineGroupsCB:SetEnabled(false) -- TODO:
 
     -- sort by role
     sortByRoleCB = Cell:CreateCheckButton(pages.main, L["Sort By Role"], function(checked, self)
@@ -2804,7 +2805,7 @@ LoadLayoutAutoSwitchDB = function()
         bg15Dropdown:SetSelectedValue(Cell.vars.layoutAutoSwitch[autoSwitchIndex]["battleground15"])
         bg40Dropdown:SetSelectedValue(Cell.vars.layoutAutoSwitch[autoSwitchIndex]["battleground40"])
 
-    elseif Cell.isWrath then
+    elseif Cell.isCata then
         P:Height(autoSwitchFrame, 465)
         autoSwitchIndex = Cell.vars.playerSpecRole
         if autoSwitchIndex == 1 then
@@ -2904,7 +2905,7 @@ local function UpdateLayoutAutoSwitch(layout, which)
                         raidInstanceText:SetText(Cell:GetAccentColorString()..raidInstance.."*")
                         raidMythicText:SetText(raidMythic)
                     end
-                elseif Cell.isWrath then
+                elseif Cell.isCata then
                     if Cell.vars.raidType == "raid10" then
                         raid10Text:SetText(Cell:GetAccentColorString()..L["Raid"].." 10*")
                         raid25Text:SetText(L["Raid"].." 25")

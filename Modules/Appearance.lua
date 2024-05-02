@@ -430,7 +430,7 @@ local function UpdatePreviewShields(r, g, b)
         end
     end
 
-    if Cell.isRetail or Cell.isWrath then
+    if Cell.isRetail or Cell.isCata then
         if CellDB["appearance"]["shield"][1] then
             previewButton2.widget.shieldBar:SetValue(0.4)
             previewButton2.widget.shieldBar:SetVertexColor(CellDB["appearance"]["shield"][2][1], CellDB["appearance"]["shield"][2][2], CellDB["appearance"]["shield"][2][3], CellDB["appearance"]["shield"][2][4])
@@ -1162,7 +1162,7 @@ local function CreateUnitButtonStylePane()
         F:EnableLibHealComm(checked)
     end, L["LibHealComm needs to be installed"])
     useLibCB:SetPoint("TOPLEFT", predCustomCB, "BOTTOMLEFT", 0, -7)
-    useLibCB:SetEnabled(Cell.isVanilla or Cell.isWrath)
+    useLibCB:SetEnabled(Cell.isVanilla or Cell.isCata)
     
     -- heal absorb
     absorbCB = Cell:CreateCheckButton(unitButtonPane, "", function(checked, self)

@@ -2,7 +2,7 @@
 -- File: Cell\RaidDebuffs\ExpansionData\ExpansionData.lua
 -- Author: enderneko (enderneko-dev@outlook.com)
 -- Created : 2022-08-26 04:40:40 +08:00
--- Modified: 2023-12-11 16:42:47 +08:00
+-- Modified: 2024-05-02 12:45:43 +08:00
 ---------------------------------------------------------------------
 
 local _, Cell = ...
@@ -21,7 +21,7 @@ Cell:RegisterCallback("AddonLoaded", "UpdateExpansionData", function()
     local index
     if Cell.isVanilla then
         index = 1
-    elseif Cell.isWrath then
+    elseif Cell.isCata then
         index = 3
     end
     

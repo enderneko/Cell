@@ -175,7 +175,7 @@ local function CreateFilters()
         vehicleF:SetPoint("TOPLEFT", warriorF, "BOTTOMLEFT", 0, -5)
         npcF:SetPoint("TOPLEFT", petF, "BOTTOMLEFT", 0, -5)
         
-    elseif Cell.isWrath then
+    elseif Cell.isCata then
         P:Height(powerFilters, 180)
 
         dkF =  CreatePowerFilter(powerFilters, "DEATHKNIGHT", {"TANK", "DAMAGER"}, 135, 20)
@@ -254,7 +254,7 @@ function F:ShowPowerFilters(l, lt)
         vehicleF:Load()
         npcF:Load()
 
-        if Cell.isWrath or Cell.isRetail then
+        if Cell.isCata or Cell.isRetail then
             dkF:Load()
         end
 

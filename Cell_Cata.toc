@@ -2,7 +2,7 @@
 ## Title: Cell
 ## Version: r221-release
 ## Author: enderneko
-## X-Flavor: Wrath
+## X-Flavor: Cata
 ## SavedVariables: CellDB
 ## SavedVariablesPerCharacter: CellCharacterDB
 
@@ -17,12 +17,12 @@ Locales\koKR.lua
 
 Libs\LoadLibs_Classic.xml
 
-Core_Wrath.lua
+Core_Cata.lua
 Utils.lua
 Revise.lua
 Comm\LoadComm.xml
 Widgets\LoadWidgets_Classic.xml
-Defaults\LoadDefaults_Wrath.xml
+Defaults\LoadDefaults_Cata.xml
 
 HideBlizzard.lua
 
@@ -40,10 +40,10 @@ RaidFrames\MainFrame.lua
 
 RaidDebuffs\ExpansionData\LoadExpansionData.xml
 Modules\LoadModules_Classic.xml
-Utilities\LoadUtilities_Wrath.xml
-RaidDebuffs\LoadRaidDebuffs_Wrath.xml
+Utilities\LoadUtilities_Cata.xml
+RaidDebuffs\LoadRaidDebuffs_Cata.xml
 
-RaidFrames\UnitButton_Wrath.lua
+RaidFrames\UnitButton_Cata.lua
 RaidFrames\UnitButton.xml
 RaidFrames\Groups\SoloFrame.lua
 RaidFrames\Groups\PartyFrame.lua

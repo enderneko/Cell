@@ -8,7 +8,7 @@ function F:Revise()
     F:Debug("DBRevision:", dbRevision)
 
     local charaDbRevision
-    if Cell.isVanilla or Cell.isWrath then
+    if Cell.isVanilla or Cell.isCata then
         charaDbRevision = CellCharacterDB["revise"] and tonumber(string.match(CellCharacterDB["revise"], "%d+")) or 0
         F:Debug("CharaDBRevision:", charaDbRevision)
     end
@@ -1324,7 +1324,7 @@ function F:Revise()
     -- r117-release
     if CellDB["revise"] and dbRevision < 117 then
         -- enable shield in WotLK
-        if Cell.isWrath then
+        if Cell.isCata then
             CellDB["appearance"]["shield"] = true
             CellDB["appearance"]["overshield"] = true
         end
@@ -1333,7 +1333,7 @@ function F:Revise()
     -- r118-release
     if CellDB["revise"] and dbRevision < 118 then
         -- fix default value in Wrath Classic
-        if Cell.isWrath and CellDB["tools"]["marks"][2] == "both_h" then
+        if Cell.isCata and CellDB["tools"]["marks"][2] == "both_h" then
             CellDB["tools"]["marks"][2] = "target_h"
         end
 
@@ -1832,7 +1832,7 @@ function F:Revise()
                         ["indicatorName"] = "missingBuffs",
                         ["type"] = "built-in",
                         ["enabled"] = false,
-                        -- ["trackByName"] = Cell.isWrath,
+                        -- ["trackByName"] = Cell.isCata,
                         ["position"] = {"BOTTOMRIGHT", "BOTTOMRIGHT", 0, 4},
                         ["frameLevel"] = 10,
                         ["size"] = {13, 13},
@@ -1912,7 +1912,7 @@ function F:Revise()
             CellDB["snippets"][0]["code"] = CellDB["snippets"][0]["code"].."\n\n-- Use nicknames from Details! Damage Meter (boolean, NickTag-1.0 library)\nCELL_NICKTAG_ENABLED = false"
         end
 
-        if Cell.isWrath then
+        if Cell.isCata then
             local index = Cell.defaults.indicatorIndices.missingBuffs
             for _, layout in pairs(CellDB["layouts"]) do
                 if not layout["indicators"][index] or layout["indicators"][index]["indicatorName"] ~= "missingBuffs" then
@@ -2004,7 +2004,7 @@ function F:Revise()
 
     -- r178-release
     if CellDB["revise"] and dbRevision < 178 then
-        if Cell.isWrath then
+        if Cell.isCata then
             for _, layout in pairs(CellDB["layouts"]) do
                 local index = Cell.defaults.indicatorIndices.powerWordShield
                 if layout["indicators"][index]["indicatorName"] ~= "powerWordShield" then
@@ -2025,7 +2025,7 @@ function F:Revise()
 
     -- r181-release
     if CellDB["revise"] and dbRevision < 181 then
-        if Cell.isWrath then
+        if Cell.isCata then
             for _, layout in pairs(CellDB["layouts"]) do
                 local index = Cell.defaults.indicatorIndices.powerWordShield
                 if type(layout["indicators"][index]["shape"]) ~= "string" then
@@ -2037,7 +2037,7 @@ function F:Revise()
 
     -- r182-release
     if CellDB["revise"] and dbRevision < 182 then
-        if Cell.isWrath then
+        if Cell.isCata then
             if CellDB["clickCastings"] and CellDB["clickCastings"][Cell.vars.playerClass] then
                 if not CellCharacterDB["clickCastings"]["processed"] then
                     CellCharacterDB["clickCastings"] = CellDB["clickCastings"][Cell.vars.playerClass]
@@ -2158,7 +2158,7 @@ function F:Revise()
             CellDB["dispelRequest"]["type"] = "text"
         end
 
-        if Cell.isWrath then
+        if Cell.isCata then
             CellCharacterDB["clickCastings"]["class"] = Cell.vars.playerClass
         end
     end
@@ -2696,7 +2696,7 @@ function F:Revise()
     end
 
     CellDB["revise"] = Cell.version
-    if Cell.isVanilla or Cell.isWrath then
+    if Cell.isVanilla or Cell.isCata then
         CellCharacterDB["revise"] = Cell.version
     end
 end

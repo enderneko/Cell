@@ -415,7 +415,7 @@ local function ApplyClickCastings(b)
             b:SetAttribute("menu", bindKey)
         ------------------------------------------------------------------
         --* 已修复：实际上载具（宠物按钮）无法选中的原因是没有 SetAttribute("toggleForVehicle", false)
-        -- elseif Cell.isWrath and t[2] == "target" then
+        -- elseif Cell.isCata and t[2] == "target" then
         --     b:SetAttribute(bindKey, "macro")
         --     local attr = string.gsub(bindKey, "type", "macrotext")
         --     b:SetAttribute(attr, "/tar [@cell]")
@@ -1004,7 +1004,7 @@ local function ShowActionsMenu(index, b)
             },
         }
 
-        if (Cell.isVanilla or Cell.isWrath) and Cell.vars.playerClass == "WARLOCK" then
+        if (Cell.isVanilla or Cell.isCata) and Cell.vars.playerClass == "WARLOCK" then
             tinsert(items, {
                 ["text"] = GetSpellInfo(20707),
                 ["onClick"] = function()
@@ -1124,7 +1124,7 @@ local function UpdateCurrentText(isCommon)
     else
         if Cell.isRetail then
             listPane:SetTitle(L["Current Profile"]..": ".."|T"..Cell.vars.playerSpecIcon..":12:12:0:1:12:12:1:11:1:11|t "..Cell.vars.playerSpecName)
-        elseif Cell.isWrath then
+        elseif Cell.isCata then
             local name, icon = F:GetActiveTalentInfo()
             listPane:SetTitle(L["Current Profile"]..": ".."|T"..icon..":12:12:0:1:12:12:1:11:1:11|t "..name)
         end

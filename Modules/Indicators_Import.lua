@@ -103,11 +103,11 @@ local function CreateIndicatorsImportFrame()
                 -- elseif k == "cleuAuras" then
                 --     if Cell.isRetail then
                 --         I:UpdateCleuAuras(CellDB[k])
-                --     elseif Cell.isWrath then
+                --     elseif Cell.isCata then
                 --         CellDB[k] = nil
                 --     end
                 -- elseif k == "cleuGlow" then
-                --     if Cell.isWrath then
+                --     if Cell.isCata then
                 --         CellDB[k] = nil
                 --     end
                 elseif k == "targetedSpellsList" then
