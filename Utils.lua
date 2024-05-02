@@ -80,26 +80,34 @@ function F:GetSortedClasses()
 end
 
 -------------------------------------------------
--- WotLK
+-- Classic
 -------------------------------------------------
-function F:GetActiveTalentInfo()
-    local which = GetActiveTalentGroup() == 1 and L["Primary Talents"] or L["Secondary Talents"]
-
-    local maxPoints = 0
-    local specName, specIcon, specFileName
-
-    for i = 1, GetNumTalentTabs() do
-        local name, texture, pointsSpent, fileName = GetTalentTabInfo(i)
-        if pointsSpent > maxPoints then
-            maxPoints = pointsSpent
-            specIcon = texture
-            specFileName = fileName
-        elseif pointsSpent == maxPoints then
-            specIcon = 132148
-        end
+if Cell.isCata then
+    function F:GetActiveTalentInfo()
+        local which = GetActiveTalentGroup() == 1 and L["Primary Talents"] or L["Secondary Talents"]
+        return which, Cell.vars.playerSpecIcon, Cell.vars.playerSpecName
     end
 
-    return which, specIcon, specFileName
+elseif Cell.isVanilla then
+    function F:GetActiveTalentInfo()
+        local which = GetActiveTalentGroup() == 1 and L["Primary Talents"] or L["Secondary Talents"]
+
+        local maxPoints = 0
+        local specName, specIcon, specFileName
+
+        for i = 1, GetNumTalentTabs() do
+            local name, texture, pointsSpent, fileName = GetTalentTabInfo(i)
+            if pointsSpent > maxPoints then
+                maxPoints = pointsSpent
+                specIcon = texture
+                specName = name
+            elseif pointsSpent == maxPoints then
+                specIcon = 132148
+            end
+        end
+
+        return which, specIcon, specName
+    end
 end
 
 -- local specRoles = {

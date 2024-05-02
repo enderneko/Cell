@@ -66,10 +66,14 @@ function F:UpdateLayout(layoutGroupType, updateIndicators)
         delayedFrame:RegisterEvent("PLAYER_REGEN_ENABLED")
     else
         F:Debug("|cFF7CFC00F:UpdateLayout(\""..layoutGroupType.."\")")
-        local layout = Cell.vars.layoutAutoSwitch[Cell.vars.activeTalentGroup][layoutGroupType]
+
+        Cell.vars.layoutAutoSwitch = CellCharacterDB["layoutAutoSwitch"][Cell.vars.activeTalentGroup]
+
+        local layout = Cell.vars.layoutAutoSwitch[layoutGroupType]
         Cell.vars.currentLayout = layout
         Cell.vars.currentLayoutTable = CellDB["layouts"][layout]
         Cell.vars.layoutGroupType = layoutGroupType
+
         Cell:Fire("UpdateLayout", Cell.vars.currentLayout)
         if updateIndicators then
             Cell:Fire("UpdateIndicators")
@@ -349,39 +353,13 @@ function eventFrame:ADDON_LOADED(arg1)
             }
         end
 
-        -- init enabled layout
+        -- layoutAutoSwitch -----------------------------------------------------------------------
         if type(CellCharacterDB["layoutAutoSwitch"]) ~= "table" then
             CellCharacterDB["layoutAutoSwitch"] = {
-                [1] = {
-                    ["party"] = "default",
-                    ["raid_outdoor"] = "default",
-                    ["raid_instance"] = "default",
-                    ["arena"] = "default",
-                    ["battleground"] = "default",
-                },
-                [2] = {
-                    ["party"] = "default",
-                    ["raid_outdoor"] = "default",
-                    ["raid_instance"] = "default",
-                    ["arena"] = "default",
-                    ["battleground"] = "default",
-                },
+                [1] = F:Copy(Cell.defaults.layoutAutoSwitch),
+                [2] = F:Copy(Cell.defaults.layoutAutoSwitch),
             }
         end
-
-        -- validate layout
-        for talent, t in pairs(CellCharacterDB["layoutAutoSwitch"]) do
-            for groupType, layout in pairs(t) do
-                if not CellDB["layouts"][layout] then
-                    CellCharacterDB["layoutAutoSwitch"][talent][groupType] = "default"
-                end
-            end
-
-            if not t["raid_instance"] then t["raid_instance"] = "default" end
-            if not t["battleground"] then t["battleground"] = "default" end
-        end
-
-        Cell.vars.layoutAutoSwitch = CellCharacterDB["layoutAutoSwitch"]
 
         -- dispelBlacklist ------------------------------------------------------------------------
         if type(CellDB["dispelBlacklist"]) ~= "table" then
@@ -447,8 +425,19 @@ function eventFrame:ADDON_LOADED(arg1)
         F:Revise()
         F:CheckWhatsNew()
         F:RunSnippets()
-        Cell.loaded = true
 
+        -- validation -----------------------------------------------------------------------------
+
+         -- validate layout
+         for talent, t in pairs(CellCharacterDB["layoutAutoSwitch"]) do
+            for groupType, layout in pairs(t) do
+                if not CellDB["layouts"][layout] then
+                    CellCharacterDB["layoutAutoSwitch"][talent][groupType] = "default"
+                end
+            end
+        end
+
+        Cell.loaded = true
         Cell:Fire("AddonLoaded")
     end
 
@@ -629,7 +618,6 @@ function eventFrame:PLAYER_LOGIN()
 
     -- update spec vars
     Cell.vars.activeTalentGroup = 1
-    Cell.vars.playerSpecRole = Cell.vars.activeTalentGroup
     Cell.vars.playerSpecID = Cell.vars.activeTalentGroup
     
     --! init Cell.vars.currentLayout and Cell.vars.currentLayoutTable 

@@ -66,10 +66,14 @@ function F:UpdateLayout(layoutGroupType, updateIndicators)
         delayedFrame:RegisterEvent("PLAYER_REGEN_ENABLED")
     else
         F:Debug("|cFF7CFC00F:UpdateLayout(\""..layoutGroupType.."\")")
-        local layout = Cell.vars.layoutAutoSwitch[Cell.vars.activeTalentGroup][layoutGroupType]
+
+        Cell.vars.layoutAutoSwitch = CellCharacterDB["layoutAutoSwitch"][Cell.vars.activeTalentGroup]
+
+        local layout = Cell.vars.layoutAutoSwitch[layoutGroupType]
         Cell.vars.currentLayout = layout
         Cell.vars.currentLayoutTable = CellDB["layouts"][layout]
         Cell.vars.layoutGroupType = layoutGroupType
+        
         Cell:Fire("UpdateLayout", Cell.vars.currentLayout)
         if updateIndicators then
             Cell:Fire("UpdateIndicators")
@@ -326,7 +330,7 @@ function eventFrame:ADDON_LOADED(arg1)
 
         if type(CellCharacterDB["clickCastings"]) ~= "table" then
             CellCharacterDB["clickCastings"] = {
-                ["class"] = Cell.vars.playerClass, -- validate on import
+                ["class"] = Cell.vars.playerClass, -- NOTE: validate on import
                 ["useCommon"] = true,
                 ["smartResurrection"] = "disabled",
                 ["alwaysTargeting"] = {
@@ -365,45 +369,13 @@ function eventFrame:ADDON_LOADED(arg1)
             }
         end
 
-        -- init enabled layout
+        -- layoutAutoSwitch -----------------------------------------------------------------------
         if type(CellCharacterDB["layoutAutoSwitch"]) ~= "table" then
             CellCharacterDB["layoutAutoSwitch"] = {
-                [1] = {
-                    ["party"] = "default",
-                    ["raid_outdoor"] = "default",
-                    ["raid10"] = "default",
-                    ["raid25"] = "default",
-                    ["arena"] = "default",
-                    ["battleground15"] = "default",
-                    ["battleground40"] = "default",
-                },
-                [2] = {
-                    ["party"] = "default",
-                    ["raid_outdoor"] = "default",
-                    ["raid10"] = "default",
-                    ["raid25"] = "default",
-                    ["arena"] = "default",
-                    ["battleground15"] = "default",
-                    ["battleground40"] = "default",
-                },
+                [1] = F:Copy(Cell.defaults.layoutAutoSwitch),
+                [2] = F:Copy(Cell.defaults.layoutAutoSwitch),
             }
         end
-
-        -- validate layout
-        for talent, t in pairs(CellCharacterDB["layoutAutoSwitch"]) do
-            for groupType, layout in pairs(t) do
-                if not CellDB["layouts"][layout] then
-                    CellCharacterDB["layoutAutoSwitch"][talent][groupType] = "default"
-                end
-            end
-
-            if not t["raid10"] then t["raid10"] = "default" end
-            if not t["raid25"] then t["raid25"] = "default" end
-            if not t["battleground15"] then t["battleground15"] = "default" end
-            if not t["battleground40"] then t["battleground40"] = "default" end
-        end
-
-        Cell.vars.layoutAutoSwitch = CellCharacterDB["layoutAutoSwitch"]
 
         -- dispelBlacklist ------------------------------------------------------------------------
         if type(CellDB["dispelBlacklist"]) ~= "table" then
@@ -469,8 +441,18 @@ function eventFrame:ADDON_LOADED(arg1)
         F:Revise()
         F:CheckWhatsNew()
         F:RunSnippets()
-        Cell.loaded = true
 
+        -- validation -----------------------------------------------------------------------------
+        -- validate layout
+        for talent, t in pairs(CellCharacterDB["layoutAutoSwitch"]) do
+            for groupType, layout in pairs(t) do
+                if not CellDB["layouts"][layout] then
+                    CellCharacterDB["layoutAutoSwitch"][talent][groupType] = "default"
+                end
+            end
+        end
+
+        Cell.loaded = true
         Cell:Fire("AddonLoaded")
     end
 
@@ -673,6 +655,18 @@ local function CheckDivineAegis()
     end
 end
 
+local function UpdateSpecVars()
+    Cell.vars.activeTalentGroup = GetActiveTalentGroup()
+    Cell.vars.playerSpecID = Cell.vars.activeTalentGroup
+    Cell.vars.primaryTalentTree = GetPrimaryTalentTree()
+    if Cell.vars.primaryTalentTree then
+        _, Cell.vars.playerSpecName, _, Cell.vars.playerSpecIcon = GetTalentTabInfo(Cell.vars.primaryTalentTree)
+    else
+        Cell.vars.playerSpecName = L["No Spec"]
+        Cell.vars.playerSpecIcon = 134400
+    end
+end
+
 function eventFrame:PLAYER_LOGIN()
     F:Debug("|cffbbbbbb=== PLAYER_LOGIN ===")
     eventFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
@@ -695,11 +689,7 @@ function eventFrame:PLAYER_LOGIN()
     Cell.vars.playerGUID = UnitGUID("player")
 
     -- update spec vars
-    if not Cell.vars.activeTalentGroup then
-        Cell.vars.activeTalentGroup = GetActiveTalentGroup()
-        Cell.vars.playerSpecRole = Cell.vars.activeTalentGroup
-        Cell.vars.playerSpecID = Cell.vars.activeTalentGroup
-    end
+    UpdateSpecVars()
 
     --! init Cell.vars.currentLayout and Cell.vars.currentLayoutTable 
     eventFrame:GROUP_ROSTER_UPDATE()
@@ -747,10 +737,8 @@ end
 function eventFrame:ACTIVE_TALENT_GROUP_CHANGED()
     F:Debug("|cffbbbbbb=== ACTIVE_TALENT_GROUP_CHANGED ===")
     -- not in combat & spec CHANGED
-    if not InCombatLockdown() and (Cell.vars.activeTalentGroup and Cell.vars.activeTalentGroup ~= GetActiveTalentGroup()) then
-        Cell.vars.activeTalentGroup = GetActiveTalentGroup()
-        Cell.vars.playerSpecRole = Cell.vars.activeTalentGroup
-        Cell.vars.playerSpecID = Cell.vars.activeTalentGroup
+    if not InCombatLockdown() and (Cell.vars.activeTalentGroup ~= GetActiveTalentGroup()) then
+        UpdateSpecVars()
 
         Cell:Fire("UpdateClickCastings")
         F:Debug("|cffffbb77ActiveTalentGroupChanged:|r", Cell.vars.activeTalentGroup)

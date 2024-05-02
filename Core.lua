@@ -67,15 +67,20 @@ function F:UpdateLayout(layoutGroupType, updateIndicators)
         delayedFrame:RegisterEvent("PLAYER_REGEN_ENABLED")
     else
         F:Debug("|cFF7CFC00F:UpdateLayout(\""..layoutGroupType.."\", "..(updateIndicators and "true" or "false")..")")
-        local layout
-        if Cell.vars.layoutAutoSwitch[Cell.vars.playerSpecID] then
-            layout = Cell.vars.layoutAutoSwitch[Cell.vars.playerSpecID][layoutGroupType]
+        
+        if CellDB["layoutAutoSwitch"][Cell.vars.playerClass][Cell.vars.playerSpecID] then
+            Cell.vars.layoutAutoSwitchBy = "spec"
+            Cell.vars.layoutAutoSwitch = CellDB["layoutAutoSwitch"][Cell.vars.playerClass][Cell.vars.playerSpecID]
         else
-            layout = Cell.vars.layoutAutoSwitch[Cell.vars.playerSpecRole][layoutGroupType]
+            Cell.vars.layoutAutoSwitchBy = "role"
+            Cell.vars.layoutAutoSwitch = CellDB["layoutAutoSwitch"]["role"][Cell.vars.playerSpecRole]
         end
+
+        local layout = Cell.vars.layoutAutoSwitch[layoutGroupType]
         Cell.vars.currentLayout = layout
         Cell.vars.currentLayoutTable = CellDB["layouts"][layout]
         Cell.vars.layoutGroupType = layoutGroupType
+
         Cell:Fire("UpdateLayout", Cell.vars.currentLayout)
         if updateIndicators then
             Cell:Fire("UpdateIndicators")
@@ -380,14 +385,19 @@ function eventFrame:ADDON_LOADED(arg1)
             end
 
             -- https://wow.gamepedia.com/SpecializationID
-            local indices = {}
-            for i = 1, GetNumSpecializationsForClassID(Cell.vars.playerClassID) do
-                tinsert(indices, i)
+            local specs = {}
+            do
+                local specID
+                --! GetNumSpecializations / GetSpecializationInfo returns NOTHING at this time
+                for i = 1, GetNumSpecializationsForClassID(Cell.vars.playerClassID) do
+                    specID = GetSpecializationInfoForClassID(Cell.vars.playerClassID, i)
+                    tinsert(specs, specID)
+                end
+                specID = GetSpecializationInfoForClassID(Cell.vars.playerClassID, 5)
+                tinsert(specs, specID) -- "Initial" (no spec)
             end
-            tinsert(indices, 5) -- "Initials" (no spec)
-            
-            for _, sepcIndex in pairs(indices) do
-                local specID = GetSpecializationInfoForClassID(Cell.vars.playerClassID, sepcIndex)
+
+            for _, specID in pairs(specs) do
                 CellDB["clickCastings"][Cell.vars.playerClass]["alwaysTargeting"][specID] = "disabled"
                 CellDB["clickCastings"][Cell.vars.playerClass][specID] = {
                     {"type1", "target"},
@@ -408,49 +418,20 @@ function eventFrame:ADDON_LOADED(arg1)
             }
         end
 
-        -- init enabled layout
+        -- layoutAutoSwitch -----------------------------------------------------------------------
         if type(CellDB["layoutAutoSwitch"]) ~= "table" then
             CellDB["layoutAutoSwitch"] = {
-                ["TANK"] = {
-                    ["party"] = "default",
-                    ["raid_outdoor"] = "default",
-                    ["raid_instance"] = "default",
-                    ["raid_mythic"] = "default",
-                    ["arena"] = "default",
-                    ["battleground15"] = "default",
-                    ["battleground40"] = "default",
-                },
-                ["HEALER"] = {
-                    ["party"] = "default",
-                    ["raid_outdoor"] = "default",
-                    ["raid_instance"] = "default",
-                    ["raid_mythic"] = "default",
-                    ["arena"] = "default",
-                    ["battleground15"] = "default",
-                    ["battleground40"] = "default",
-                },
-                ["DAMAGER"] = {
-                    ["party"] = "default",
-                    ["raid_outdoor"] = "default",
-                    ["raid_instance"] = "default",
-                    ["raid_mythic"] = "default",
-                    ["arena"] = "default",
-                    ["battleground15"] = "default",
-                    ["battleground40"] = "default",
-                },
+                ["role"] = {
+                    ["TANK"] = F:Copy(Cell.defaults.layoutAutoSwitch),
+                    ["HEALER"] = F:Copy(Cell.defaults.layoutAutoSwitch),
+                    ["DAMAGER"] = F:Copy(Cell.defaults.layoutAutoSwitch),
+                }
             }
         end
 
-        -- validate layout
-        for role, t in pairs(CellDB["layoutAutoSwitch"]) do
-            for groupType, layout in pairs(t) do
-                if not CellDB["layouts"][layout] then
-                    CellDB["layoutAutoSwitch"][role][groupType] = "default"
-                end
-            end
+        if type(CellDB["layoutAutoSwitch"][Cell.vars.playerClass]) ~= "table" then
+            CellDB["layoutAutoSwitch"][Cell.vars.playerClass] = {}
         end
-
-        Cell.vars.layoutAutoSwitch = CellDB["layoutAutoSwitch"]
 
         -- dispelBlacklist ------------------------------------------------------------------------
         if type(CellDB["dispelBlacklist"]) ~= "table" then
@@ -526,8 +507,20 @@ function eventFrame:ADDON_LOADED(arg1)
         F:Revise()
         F:CheckWhatsNew()
         F:RunSnippets()
-        Cell.loaded = true
+        
+        -- validation -----------------------------------------------------------------------------
+        -- validate layout
+        for _, roleOrClass in pairs(CellDB["layoutAutoSwitch"]) do
+            for _, t in pairs(roleOrClass) do
+                for groupType, layout in pairs(t) do
+                    if not CellDB["layouts"][layout] then
+                        t[groupType] = "default"
+                    end
+                end
+            end
+        end
 
+        Cell.loaded = true
         Cell:Fire("AddonLoaded")
     end
 
@@ -731,10 +724,16 @@ function eventFrame:PLAYER_LOGIN()
         bgMaxPlayers[bgId] = maxPlayers
     end
 
-    if not prevSpec then prevSpec = GetSpecialization() end
     Cell.vars.playerGUID = UnitGUID("player")
+    
     -- update spec vars
+    if not prevSpec then prevSpec = GetSpecialization() end
     Cell.vars.playerSpecID, Cell.vars.playerSpecName, _, Cell.vars.playerSpecIcon, Cell.vars.playerSpecRole = GetSpecializationInfo(prevSpec)
+    if Cell.vars.playerSpecName == "" then
+        Cell.vars.playerSpecName = L["No Spec"]
+        Cell.vars.playerSpecIcon = 134400
+    end
+
     --! init Cell.vars.currentLayout and Cell.vars.currentLayoutTable 
     eventFrame:GROUP_ROSTER_UPDATE()
     -- update visibility

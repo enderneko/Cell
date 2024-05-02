@@ -2641,6 +2641,18 @@ function F:Revise()
                 end
             end
         end
+
+        -- update layoutAutoSwitch
+        if Cell.isRetail then
+            if not CellDB["layoutAutoSwitch"]["role"] then
+                CellDB["layoutAutoSwitch"]["role"] = {
+                    ["TANK"] = CellDB["layoutAutoSwitch"]["TANK"],
+                    ["HEALER"] = CellDB["layoutAutoSwitch"]["HEALER"],
+                    ["DAMAGER"] = CellDB["layoutAutoSwitch"]["DAMAGER"],
+                }
+                F:RemoveElementsExceptKeys(CellDB["layoutAutoSwitch"], "role", Cell.vars.playerClass)
+            end
+        end
     end
 
     -- ----------------------------------------------------------------------- --

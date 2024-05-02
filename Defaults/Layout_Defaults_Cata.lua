@@ -436,3 +436,13 @@ Cell.defaults.layout = {
         }, -- 26
     },
 }
+
+Cell.defaults.layoutAutoSwitch = {
+    ["party"] = "default",
+    ["raid_outdoor"] = "default",
+    ["raid10"] = "default",
+    ["raid25"] = "default",
+    ["arena"] = "default",
+    ["battleground15"] = "default",
+    ["battleground40"] = "default",
+}

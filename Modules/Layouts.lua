@@ -9,7 +9,6 @@ Cell.frames.layoutsTab = layoutsTab
 layoutsTab:SetAllPoints(Cell.frames.optionsFrame)
 layoutsTab:Hide()
 
-local autoSwitchIndex
 local selectedLayout, selectedLayoutTable
 local selectedPage = "main"
 -------------------------------------------------
@@ -1331,33 +1330,31 @@ local function CreateLayoutPane()
                 
                 -- update auto switch dropdowns
                 LoadAutoSwitchDropdowns()
-                for role, t in pairs(Cell.vars.layoutAutoSwitch) do
-                    for groupType, layout in pairs(t) do
-                        if layout == selectedLayout then
-                            -- NOTE: rename
-                            Cell.vars.layoutAutoSwitch[role][groupType] = name
-                            -- update its dropdown selection
-                            if groupType == "party" then
-                                partyDropdown:SetSelected(name)
-                            elseif groupType == "raid_outdoor" then
-                                raidOutdoorDropdown:SetSelected(name)
-                            elseif groupType == "raid_instance" then
-                                raidInstanceDropdown:SetSelected(name)
-                            elseif groupType == "raid_mythic" then
-                                raidMythicDropdown:SetSelected(name)
-                            elseif groupType == "raid10" then
-                                raid10Dropdown:SetSelected(name)
-                            elseif groupType == "raid25" then
-                                raid25Dropdown:SetSelected(name)
-                            elseif groupType == "arena" then
-                                arenaDropdown:SetSelected(name)
-                            elseif groupType == "battleground15" then
-                                bg15Dropdown:SetSelected(name)
-                            elseif groupType == "battleground40" then
-                                bg40Dropdown:SetSelected(name)
-                            elseif groupType == "battleground" then
-                                bgDropdown:SetSelected(name)
-                            end
+                for groupType, layout in pairs(Cell.vars.layoutAutoSwitch) do
+                    if layout == selectedLayout then
+                        -- NOTE: rename
+                        Cell.vars.layoutAutoSwitch[groupType] = name
+                        -- update its dropdown selection
+                        if groupType == "party" then
+                            partyDropdown:SetSelected(name)
+                        elseif groupType == "raid_outdoor" then
+                            raidOutdoorDropdown:SetSelected(name)
+                        elseif groupType == "raid_instance" then
+                            raidInstanceDropdown:SetSelected(name)
+                        elseif groupType == "raid_mythic" then
+                            raidMythicDropdown:SetSelected(name)
+                        elseif groupType == "raid10" then
+                            raid10Dropdown:SetSelected(name)
+                        elseif groupType == "raid25" then
+                            raid25Dropdown:SetSelected(name)
+                        elseif groupType == "arena" then
+                            arenaDropdown:SetSelected(name)
+                        elseif groupType == "battleground15" then
+                            bg15Dropdown:SetSelected(name)
+                        elseif groupType == "battleground40" then
+                            bg40Dropdown:SetSelected(name)
+                        elseif groupType == "battleground" then
+                            bgDropdown:SetSelected(name)
                         end
                     end
                 end
@@ -1411,33 +1408,31 @@ local function CreateLayoutPane()
 
             -- update auto switch dropdowns
             LoadAutoSwitchDropdowns()
-            for role, t in pairs(Cell.vars.layoutAutoSwitch) do
-                for groupType, layout in pairs(t) do
-                    if layout == selectedLayout then
-                        -- NOTE: set to default
-                        Cell.vars.layoutAutoSwitch[role][groupType] = "default"
-                        -- update its dropdown selection
-                        if groupType == "party" then
-                            partyDropdown:SetSelectedValue("default")
-                        elseif groupType == "raid_outdoor" then
-                            raidOutdoorDropdown:SetSelectedValue("default")
-                        elseif groupType == "raid_instance" then
-                            raidInstanceDropdown:SetSelectedValue("default")
-                        elseif groupType == "raid_mythic" then
-                            raidMythicDropdown:SetSelectedValue("default")
-                        elseif groupType == "raid10" then
-                            raid10Dropdown:SetSelectedValue("default")
-                        elseif groupType == "raid25" then
-                            raid25Dropdown:SetSelectedValue("default")
-                        elseif groupType == "arena" then
-                            arenaDropdown:SetSelectedValue("default")
-                        elseif groupType == "battleground15" then
-                            bg15Dropdown:SetSelectedValue("default")
-                        elseif groupType == "battleground40" then
-                            bg40Dropdown:SetSelectedValue("default")
-                        elseif groupType == "battleground" then
-                            bgDropdown:SetSelectedValue("default")
-                        end
+            for groupType, layout in pairs(Cell.vars.layoutAutoSwitch) do
+                if layout == selectedLayout then
+                    -- NOTE: set to default
+                    Cell.vars.layoutAutoSwitch[groupType] = "default"
+                    -- update its dropdown selection
+                    if groupType == "party" then
+                        partyDropdown:SetSelectedValue("default")
+                    elseif groupType == "raid_outdoor" then
+                        raidOutdoorDropdown:SetSelectedValue("default")
+                    elseif groupType == "raid_instance" then
+                        raidInstanceDropdown:SetSelectedValue("default")
+                    elseif groupType == "raid_mythic" then
+                        raidMythicDropdown:SetSelectedValue("default")
+                    elseif groupType == "raid10" then
+                        raid10Dropdown:SetSelectedValue("default")
+                    elseif groupType == "raid25" then
+                        raid25Dropdown:SetSelectedValue("default")
+                    elseif groupType == "arena" then
+                        arenaDropdown:SetSelectedValue("default")
+                    elseif groupType == "battleground15" then
+                        bg15Dropdown:SetSelectedValue("default")
+                    elseif groupType == "battleground40" then
+                        bg40Dropdown:SetSelectedValue("default")
+                    elseif groupType == "battleground" then
+                        bgDropdown:SetSelectedValue("default")
                     end
                 end
             end
@@ -1556,17 +1551,9 @@ local function CreateAutoSwitchPane()
         -- type switch
         typeSwitch = Cell:CreateSwitch(autoSwitchPane, {140, 20}, L["Role"], "role", L["Spec"], "spec", function(value)
             if value == "role" then
-                Cell.vars.layoutAutoSwitch[Cell.vars.playerSpecID] = nil
+                CellDB["layoutAutoSwitch"][Cell.vars.playerClass][Cell.vars.playerSpecID] = nil
             else
-                Cell.vars.layoutAutoSwitch[Cell.vars.playerSpecID] = {
-                    ["party"] = "default",
-                    ["raid_outdoor"] = "default",
-                    ["raid_instance"] = "default",
-                    ["raid_mythic"] = "default",
-                    ["arena"] = "default",
-                    ["battleground15"] = "default",
-                    ["battleground40"] = "default",
-                }
+                CellDB["layoutAutoSwitch"][Cell.vars.playerClass][Cell.vars.playerSpecID] = F:Copy(CellDB["layoutAutoSwitch"]["role"][Cell.vars.playerSpecRole])
             end
             Cell:Fire("LayoutAutoSwitchChanged")
             LoadLayoutAutoSwitchDB()
@@ -1727,7 +1714,7 @@ LoadAutoSwitchDropdowns = function()
             ["text"] = value == "default" and _G.DEFAULT or value,
             ["value"] = value,
             ["onClick"] = function()
-                Cell.vars.layoutAutoSwitch[autoSwitchIndex]["party"] = value
+                Cell.vars.layoutAutoSwitch["party"] = value
                 if Cell.vars.layoutGroupType == "party" then
                     F:UpdateLayout("party", true)
                     -- LoadLayoutDB(Cell.vars.currentLayout)
@@ -1746,7 +1733,7 @@ LoadAutoSwitchDropdowns = function()
             ["text"] = value == "default" and _G.DEFAULT or value,
             ["value"] = value,
             ["onClick"] = function()
-                Cell.vars.layoutAutoSwitch[autoSwitchIndex]["raid_outdoor"] = value
+                Cell.vars.layoutAutoSwitch["raid_outdoor"] = value
                 if Cell.vars.layoutGroupType == "raid_outdoor" then
                     F:UpdateLayout("raid_outdoor", true)
                     -- LoadLayoutDB(Cell.vars.currentLayout)
@@ -1766,7 +1753,7 @@ LoadAutoSwitchDropdowns = function()
                 ["text"] = value == "default" and _G.DEFAULT or value,
                 ["value"] = value,
                 ["onClick"] = function()
-                    Cell.vars.layoutAutoSwitch[autoSwitchIndex]["raid_instance"] = value
+                    Cell.vars.layoutAutoSwitch["raid_instance"] = value
                     if Cell.vars.layoutGroupType == "raid_instance" then
                         F:UpdateLayout("raid_instance", true)
                         -- LoadLayoutDB(Cell.vars.currentLayout)
@@ -1785,7 +1772,7 @@ LoadAutoSwitchDropdowns = function()
                 ["text"] = value == "default" and _G.DEFAULT or value,
                 ["value"] = value,
                 ["onClick"] = function()
-                    Cell.vars.layoutAutoSwitch[autoSwitchIndex]["raid_mythic"] = value
+                    Cell.vars.layoutAutoSwitch["raid_mythic"] = value
                     if Cell.vars.layoutGroupType == "raid_mythic" then
                         F:UpdateLayout("raid_mythic", true)
                         -- LoadLayoutDB(Cell.vars.currentLayout)
@@ -1805,7 +1792,7 @@ LoadAutoSwitchDropdowns = function()
                 ["text"] = value == "default" and _G.DEFAULT or value,
                 ["value"] = value,
                 ["onClick"] = function()
-                    Cell.vars.layoutAutoSwitch[autoSwitchIndex]["raid10"] = value
+                    Cell.vars.layoutAutoSwitch["raid10"] = value
                     if Cell.vars.layoutGroupType == "raid10" then
                         F:UpdateLayout("raid10", true)
                         -- LoadLayoutDB(Cell.vars.currentLayout)
@@ -1824,7 +1811,7 @@ LoadAutoSwitchDropdowns = function()
                 ["text"] = value == "default" and _G.DEFAULT or value,
                 ["value"] = value,
                 ["onClick"] = function()
-                    Cell.vars.layoutAutoSwitch[autoSwitchIndex]["raid25"] = value
+                    Cell.vars.layoutAutoSwitch["raid25"] = value
                     if Cell.vars.layoutGroupType == "raid25" then
                         F:UpdateLayout("raid25", true)
                         -- LoadLayoutDB(Cell.vars.currentLayout)
@@ -1844,7 +1831,7 @@ LoadAutoSwitchDropdowns = function()
                 ["text"] = value == "default" and _G.DEFAULT or value,
                 ["value"] = value,
                 ["onClick"] = function()
-                    Cell.vars.layoutAutoSwitch[autoSwitchIndex]["raid_instance"] = value
+                    Cell.vars.layoutAutoSwitch["raid_instance"] = value
                     if Cell.vars.layoutGroupType == "raid_instance" then
                         F:UpdateLayout("raid_instance", true)
                         -- LoadLayoutDB(Cell.vars.currentLayout)
@@ -1864,7 +1851,7 @@ LoadAutoSwitchDropdowns = function()
             ["text"] = value == "default" and _G.DEFAULT or value,
             ["value"] = value,
             ["onClick"] = function()
-                Cell.vars.layoutAutoSwitch[autoSwitchIndex]["arena"] = value
+                Cell.vars.layoutAutoSwitch["arena"] = value
                 if Cell.vars.layoutGroupType == "arena" then
                     F:UpdateLayout("arena", true)
                     -- LoadLayoutDB(Cell.vars.currentLayout)
@@ -1884,7 +1871,7 @@ LoadAutoSwitchDropdowns = function()
                 ["text"] = value == "default" and _G.DEFAULT or value,
                 ["value"] = value,
                 ["onClick"] = function()
-                    Cell.vars.layoutAutoSwitch[autoSwitchIndex]["battleground"] = value
+                    Cell.vars.layoutAutoSwitch["battleground"] = value
                     if Cell.vars.layoutGroupType == "battleground" then
                         F:UpdateLayout("battleground", true)
                         -- LoadLayoutDB(Cell.vars.currentLayout)
@@ -1904,7 +1891,7 @@ LoadAutoSwitchDropdowns = function()
                 ["text"] = value == "default" and _G.DEFAULT or value,
                 ["value"] = value,
                 ["onClick"] = function()
-                    Cell.vars.layoutAutoSwitch[autoSwitchIndex]["battleground15"] = value
+                    Cell.vars.layoutAutoSwitch["battleground15"] = value
                     if Cell.vars.layoutGroupType == "battleground15" then
                         F:UpdateLayout("battleground15", true)
                         -- LoadLayoutDB(Cell.vars.currentLayout)
@@ -1923,7 +1910,7 @@ LoadAutoSwitchDropdowns = function()
                 ["text"] = value == "default" and _G.DEFAULT or value,
                 ["value"] = value,
                 ["onClick"] = function()
-                    Cell.vars.layoutAutoSwitch[autoSwitchIndex]["battleground40"] = value
+                    Cell.vars.layoutAutoSwitch["battleground40"] = value
                     if Cell.vars.layoutGroupType == "battleground40" then
                         F:UpdateLayout("battleground40", true)
                         -- LoadLayoutDB(Cell.vars.currentLayout)
@@ -2791,44 +2778,40 @@ end
 LoadLayoutAutoSwitchDB = function()
     if Cell.isRetail then
         P:Height(autoSwitchFrame, 465)
-        if Cell.vars.layoutAutoSwitch[Cell.vars.playerSpecID] then
-            autoSwitchIndex = Cell.vars.playerSpecID
+        if Cell.vars.layoutAutoSwitchBy == "spec" then
             currentProfileBox.text:SetText("|T"..Cell.vars.playerSpecIcon..":12:12:0:0:12:12:1:11:1:11|t "..Cell.vars.playerSpecName)
         else
-            autoSwitchIndex = Cell.vars.playerSpecRole
-            currentProfileBox.text:SetText("|TInterface\\AddOns\\Cell\\Media\\Roles\\"..autoSwitchIndex..":12|t ".._G[autoSwitchIndex])
+            currentProfileBox.text:SetText("|TInterface\\AddOns\\Cell\\Media\\Roles\\"..Cell.vars.playerSpecRole..":12|t ".._G[Cell.vars.playerSpecRole])
         end
         
-        typeSwitch:SetSelected(Cell.vars.layoutAutoSwitch[Cell.vars.playerSpecID] and "spec" or "role")
-        raidInstanceDropdown:SetSelectedValue(Cell.vars.layoutAutoSwitch[autoSwitchIndex]["raid_instance"])
-        raidMythicDropdown:SetSelectedValue(Cell.vars.layoutAutoSwitch[autoSwitchIndex]["raid_mythic"])
-        bg15Dropdown:SetSelectedValue(Cell.vars.layoutAutoSwitch[autoSwitchIndex]["battleground15"])
-        bg40Dropdown:SetSelectedValue(Cell.vars.layoutAutoSwitch[autoSwitchIndex]["battleground40"])
+        typeSwitch:SetSelected(Cell.vars.layoutAutoSwitchBy)
+        raidInstanceDropdown:SetSelectedValue(Cell.vars.layoutAutoSwitch["raid_instance"])
+        raidMythicDropdown:SetSelectedValue(Cell.vars.layoutAutoSwitch["raid_mythic"])
+        bg15Dropdown:SetSelectedValue(Cell.vars.layoutAutoSwitch["battleground15"])
+        bg40Dropdown:SetSelectedValue(Cell.vars.layoutAutoSwitch["battleground40"])
 
     elseif Cell.isCata then
-        P:Height(autoSwitchFrame, 465)
-        autoSwitchIndex = Cell.vars.playerSpecRole
-        if autoSwitchIndex == 1 then
+        P:Height(autoSwitchFrame, 430)
+        if Cell.vars.activeTalentGroup == 1 then
             currentProfileBox.text:SetText("|TInterface\\AddOns\\Cell\\Media\\Icons\\1:13|t "..L["Primary Talents"])
         else
             currentProfileBox.text:SetText("|TInterface\\AddOns\\Cell\\Media\\Icons\\2:13|t "..L["Secondary Talents"])
         end
-        raid10Dropdown:SetSelectedValue(Cell.vars.layoutAutoSwitch[autoSwitchIndex]["raid10"])
-        raid25Dropdown:SetSelectedValue(Cell.vars.layoutAutoSwitch[autoSwitchIndex]["raid25"])
-        bg15Dropdown:SetSelectedValue(Cell.vars.layoutAutoSwitch[autoSwitchIndex]["battleground15"])
-        bg40Dropdown:SetSelectedValue(Cell.vars.layoutAutoSwitch[autoSwitchIndex]["battleground40"])
+        raid10Dropdown:SetSelectedValue(Cell.vars.layoutAutoSwitch["raid10"])
+        raid25Dropdown:SetSelectedValue(Cell.vars.layoutAutoSwitch["raid25"])
+        bg15Dropdown:SetSelectedValue(Cell.vars.layoutAutoSwitch["battleground15"])
+        bg40Dropdown:SetSelectedValue(Cell.vars.layoutAutoSwitch["battleground40"])
 
     elseif Cell.isVanilla then
         P:Height(autoSwitchFrame, 330)
-        autoSwitchIndex = Cell.vars.playerSpecRole
         currentProfileBox.text:SetText("|TInterface\\AddOns\\Cell\\Media\\Icons\\1:13|t "..L["Primary Talents"])
-        raidInstanceDropdown:SetSelectedValue(Cell.vars.layoutAutoSwitch[autoSwitchIndex]["raid_instance"])
-        bgDropdown:SetSelectedValue(Cell.vars.layoutAutoSwitch[autoSwitchIndex]["battleground"])
+        raidInstanceDropdown:SetSelectedValue(Cell.vars.layoutAutoSwitch["raid_instance"])
+        bgDropdown:SetSelectedValue(Cell.vars.layoutAutoSwitch["battleground"])
     end
 
-    partyDropdown:SetSelectedValue(Cell.vars.layoutAutoSwitch[autoSwitchIndex]["party"])
-    raidOutdoorDropdown:SetSelectedValue(Cell.vars.layoutAutoSwitch[autoSwitchIndex]["raid_outdoor"])
-    arenaDropdown:SetSelectedValue(Cell.vars.layoutAutoSwitch[autoSwitchIndex]["arena"])
+    partyDropdown:SetSelectedValue(Cell.vars.layoutAutoSwitch["party"])
+    raidOutdoorDropdown:SetSelectedValue(Cell.vars.layoutAutoSwitch["raid_outdoor"])
+    arenaDropdown:SetSelectedValue(Cell.vars.layoutAutoSwitch["arena"])
 end
 
 local function UpdateLayoutAutoSwitch(layout, which)
