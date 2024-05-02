@@ -21,78 +21,55 @@ local IsInRaid = IsInRaid
 -- buffs
 -------------------------------------------------
 local buffs = {
-    -- 1243: Power Word: Fortitude
-    -- 21562: Prayer of Fortitude
-    ["PWF"] = {1243, 21562, glowColor={F:GetClassColor("PRIEST")}, provider="PRIEST"},
+    -- 21562: Power Word: Fortitude
+    ["PWF"] = {id=21562, glowColor={F:GetClassColor("PRIEST")}, provider="PRIEST", level=14},
 
-    -- 14752: Divine Spirit
-    -- 27681: Prayer of Spirit
-    ["DS"] = {14752, 27681, glowColor={F:GetClassColor("PRIEST")}, provider="PRIEST"},
+    -- 27683: Shadow Protection
+    ["SP"] = {id=27683, glowColor={F:GetClassColor("PRIEST")}, provider="PRIEST", level=52},
 
-    -- 976: Shadow Protection
-    -- 27683: Prayer of Shadow Protection
-    ["SP"] = {976, 27683, glowColor={F:GetClassColor("PRIEST")}, provider="PRIEST"},
-
-    -- 1459: Arcane Intellect
-    -- 23028: Arcane Brilliance
-    ["AB"] = {1459, 23028, glowColor={F:GetClassColor("MAGE")}, provider="MAGE"},
+    -- 1459: Arcane Brilliance
+    ["AB"] = {id=1459, glowColor={F:GetClassColor("MAGE")}, provider="MAGE", level=58},
 
     -- 6673: Battle Shout
-    ["BS"] = {6673, glowColor={F:GetClassColor("WARRIOR")}, provider="WARRIOR"},
+    ["BS"] = {id=6673, glowColor={F:GetClassColor("WARRIOR")}, provider="WARRIOR", level=20},
 
     -- 469: Commanding Shout
-    ["CS"] = {469, glowColor={F:GetClassColor("WARRIOR")}, provider="WARRIOR"},
+    ["CS"] = {id=469, glowColor={F:GetClassColor("WARRIOR")}, provider="WARRIOR", level=68},
 
     -- 1126: Mark of the Wild
-    -- 21849: Gift of the Wild
-    ["MotW"] = {1126, 21849, glowColor={F:GetClassColor("DRUID")}, provider="DRUID"},
+    ["MotW"] = {id=1126, glowColor={F:GetClassColor("DRUID")}, provider="DRUID", level=30},
 
     -- 20217: Blessing of Kings
-    -- 25898: Greater Blessing of Kings
-    ["BoK"] = {20217, 25898, glowColor={F:GetClassColor("PALADIN")}, provider="PALADIN"},
+    ["BoK"] = {id=20217, glowColor={F:GetClassColor("PALADIN")}, provider="PALADIN", level=22},
 
     -- 19740: Blessing of Might
-    -- 25782: Greater Blessing of Might
-    ["BoM"] = {19740, 25782, glowColor={F:GetClassColor("PALADIN")}, provider="PALADIN"},
-
-    -- 19742: Blessing of Wisdom
-    -- 25894: Greater Blessing of Wisdom
-    ["BoW"] = {19742, 25894, glowColor={F:GetClassColor("PALADIN")}, provider="PALADIN"},
-
-    -- 20911: Blessing of Sanctuary
-    -- 25899: Greater Blessing of Sanctuary
-    ["BoS"] = {20911, 25899, glowColor={F:GetClassColor("PALADIN")}, provider="PALADIN"},
+    ["BoM"] = {id=19740, glowColor={F:GetClassColor("PALADIN")}, provider="PALADIN", level=56},
 }
 
 do
     for _, t in pairs(buffs) do
-        for i, id in ipairs(t) do
-            local name, _, icon = GetSpellInfo(id)
-            t[i] = {
-                -- ["id"] = id,
-                ["name"] = name,
-                ["icon"] = icon,
-            }
-        end
+        local name, _, icon = GetSpellInfo(t["id"])
+        t["name"] = name
+        t["icon"] = icon
     end
 end
 
-local order = {"PWF", "AB", "DS", "MotW", "BoK", "BoM", "BoW", "BoS", "BS", "CS", "SP"}
+local order = {"PWF", "AB", "MotW", "BoK", "BoM", "BS", "CS", "SP"}
 
 -------------------------------------------------
 -- required buffs
 -------------------------------------------------
 local requiredBuffs = {
-    ["WARRIOR"] = {["PWF"]=true, ["MotW"]=true, ["BoK"]=true, ["BoM"]=true, ["BoS"]=true, ["BS"]=true, ["CS"]=true, ["SP"]=true},
-    ["PALADIN"] = {["PWF"]=true, ["AB"]=true, ["DS"]=true, ["MotW"]=true, ["BoK"]=true, ["BoM"]=true, ["BoW"]=true, ["BoS"]=true, ["BS"]=true, ["CS"]=true, ["SP"]=true},
-    ["HUNTER"] = {["PWF"]=true, ["MotW"]=true, ["BoK"]=true, ["BoM"]=true, ["BoS"]=true, ["BS"]=true, ["CS"]=true, ["SP"]=true},
-    ["ROGUE"] = {["PWF"]=true, ["MotW"]=true, ["BoK"]=true, ["BoM"]=true, ["BoS"]=true, ["BS"]=true, ["CS"]=true, ["SP"]=true},
-    ["PRIEST"] = {["PWF"]=true, ["AB"]=true, ["DS"]=true, ["MotW"]=true, ["BoK"]=true, ["BoW"]=true, ["BoS"]=true, ["CS"]=true, ["SP"]=true},
-    ["DEATHKNIGHT"] = {["PWF"]=true, ["MotW"]=true, ["BoK"]=true, ["BoM"]=true, ["BoS"]=true, ["BS"]=true, ["CS"]=true, ["SP"]=true},
-    ["SHAMAN"] = {["PWF"]=true, ["AB"]=true, ["DS"]=true, ["MotW"]=true, ["BoK"]=true, ["BoM"]=true, ["BoW"]=true, ["BoS"]=true, ["BS"]=true, ["CS"]=true, ["SP"]=true},
-    ["MAGE"] = {["PWF"]=true, ["AB"]=true, ["MotW"]=true, ["BoK"]=true, ["BoW"]=true, ["BoS"]=true, ["CS"]=true, ["SP"]=true},
-    ["WARLOCK"] = {["PWF"]=true, ["AB"]=true, ["MotW"]=true, ["BoK"]=true, ["BoW"]=true, ["BoS"]=true, ["CS"]=true, ["SP"]=true},
-    ["DRUID"] = {["PWF"]=true, ["AB"]=true, ["DS"]=true, ["MotW"]=true, ["BoK"]=true, ["BoM"]=true, ["BoW"]=true, ["BoS"]=true, ["BS"]=true, ["CS"]=true, ["SP"]=true},
+    ["WARRIOR"] = {["PWF"]=true, ["MotW"]=true, ["BoK"]=true, ["BoM"]=true, ["BS"]=true, ["CS"]=true, ["SP"]=true},
+    ["PALADIN"] = {["PWF"]=true, ["AB"]=true, ["MotW"]=true, ["BoK"]=true, ["BoM"]=true, ["BS"]=true, ["CS"]=true, ["SP"]=true},
+    ["HUNTER"] = {["PWF"]=true, ["MotW"]=true, ["BoK"]=true, ["BoM"]=true, ["BS"]=true, ["CS"]=true, ["SP"]=true},
+    ["ROGUE"] = {["PWF"]=true, ["MotW"]=true, ["BoK"]=true, ["BoM"]=true, ["BS"]=true, ["CS"]=true, ["SP"]=true},
+    ["PRIEST"] = {["PWF"]=true, ["AB"]=true, ["MotW"]=true, ["BoK"]=true, ["CS"]=true, ["SP"]=true},
+    ["DEATHKNIGHT"] = {["PWF"]=true, ["MotW"]=true, ["BoK"]=true, ["BoM"]=true, ["BS"]=true, ["CS"]=true, ["SP"]=true},
+    ["SHAMAN"] = {["PWF"]=true, ["AB"]=true, ["MotW"]=true, ["BoK"]=true, ["BoM"]=true, ["BS"]=true, ["CS"]=true, ["SP"]=true},
+    ["MAGE"] = {["PWF"]=true, ["AB"]=true, ["MotW"]=true, ["BoK"]=true, ["CS"]=true, ["SP"]=true},
+    ["WARLOCK"] = {["PWF"]=true, ["AB"]=true, ["MotW"]=true, ["BoK"]=true, ["CS"]=true, ["SP"]=true},
+    ["DRUID"] = {["PWF"]=true, ["AB"]=true, ["MotW"]=true, ["BoK"]=true, ["BoM"]=true, ["BS"]=true, ["CS"]=true, ["SP"]=true},
 }
 
 -------------------------------------------------
@@ -105,12 +82,9 @@ local hasBuffProvider
 local available = {
     ["PWF"] = false,
     ["AB"] = false,
-    ["DS"] = false,
     ["MotW"] = false,
     ["BoK"] = false,
     ["BoM"] = false,
-    ["BoW"] = false,
-    ["BoS"] = false,
     ["BS"] = false,
     ["CS"] = false,
     ["SP"] = false,
@@ -119,12 +93,9 @@ local available = {
 local unaffected = {
     ["PWF"] = {},
     ["AB"] = {},
-    ["DS"] = {},
     ["MotW"] = {},
     ["BoK"] = {},
     ["BoM"] = {},
-    ["BoW"] = {},
-    ["BoS"] = {},
     ["BS"] = {},
     ["CS"] = {},
     ["SP"] = {},
@@ -147,7 +118,7 @@ end
 
 function F:GetUnaffectedString(spell)
     local list = unaffected[spell]
-    local buff = buffs[spell][1]["name"]
+    local buff = buffs[spell]["name"]
 
     local players = {}
     for unit in pairs(list) do
@@ -221,7 +192,7 @@ end
 
 do
     for _, k in ipairs(order) do
-        tinsert(fakeIcons, CreateFakeIcon(buffs[k][1]["icon"]))
+        tinsert(fakeIcons, CreateFakeIcon(buffs[k]["icon"]))
     end
 end
 
@@ -257,7 +228,7 @@ local function UpdateSendChannel()
     end
 end
 
-local function CreateBuffButton(parent, size, spell1, spell2, icon, index)
+local function CreateBuffButton(parent, size, spell, icon, index)
     local b = CreateFrame("Button", nil, parent, "SecureActionButtonTemplate,BackdropTemplate")
     if parent then b:SetFrameLevel(parent:GetFrameLevel()+1) end
     P:Size(b, size[1], size[2])
@@ -266,10 +237,8 @@ local function CreateBuffButton(parent, size, spell1, spell2, icon, index)
     b:SetBackdropBorderColor(0, 0, 0, 1)
 
     b:RegisterForClicks("LeftButtonUp", "RightButtonUp", "LeftButtonDown", "RightButtonDown") -- NOTE: ActionButtonUseKeyDown will affect this
-    b:SetAttribute("type1", "spell")
-    b:SetAttribute("spell", spell2 or spell1)
-    b:SetAttribute("shift-type1", "spell")
-    b:SetAttribute("shift-spell1", spell1)
+    b:SetAttribute("type1", "macro")
+    b:SetAttribute("macrotext1", "/cast [@player] "..spell)
     b:HookScript("OnClick", function(self, button, down)
         if button == "RightButton" and (down == GetCVarBool("ActionButtonUseKeyDown")) then
             local msg = F:GetUnaffectedString(index)
@@ -367,19 +336,19 @@ local buttons = {}
 
 do
     for _, k in ipairs(order) do
-        buttons[k] = CreateBuffButton(buffTrackerFrame, {32, 32}, buffs[k][1]["name"], buffs[k][2] and buffs[k][2]["name"], buffs[k][1]["icon"], k)
+        buttons[k] = CreateBuffButton(buffTrackerFrame, {32, 32}, buffs[k]["name"], buffs[k]["icon"], k)
         buttons[k]:Hide()
         buttons[k]:SetTooltips(unaffected[k])
     end
 end
 
-local paladinBuffs = {"BoK", "BoM", "BoW", "BoS"}
+local paladinBuffs = {"BoK", "BoM"}
 local warriorBuffs = {"BS", "CS"}
 local function UpdateButtons()
     -- NOTE: check paladin buffs
     local paladinBuffsFound = 0
     for _, k in pairs(paladinBuffs) do
-        if AuraUtil.FindAuraByName(buffs[k][1]["name"], "player", "BUFF") or (buffs[k][2] and AuraUtil.FindAuraByName(buffs[k][2]["name"], "player", "BUFF")) then
+        if AuraUtil.FindAuraByName(buffs[k]["name"], "player", "BUFF") then
             paladinBuffsFound = paladinBuffsFound + 1
         end
     end
@@ -387,7 +356,7 @@ local function UpdateButtons()
     -- NOTE: check warrior buffs
     local warriorBuffsFound = 0
     for _, k in pairs(warriorBuffs) do
-        if AuraUtil.FindAuraByName(buffs[k][1]["name"], "player", "BUFF") then
+        if AuraUtil.FindAuraByName(buffs[k]["name"], "player", "BUFF") then
             warriorBuffsFound = warriorBuffsFound + 1
         end
     end
@@ -516,16 +485,9 @@ end, unpack(fadeOuts))
 -------------------------------------------------
 local function HasMyBuff(unit, _buffs)
     for _, b in pairs(_buffs) do
-        local source = select(7, AuraUtil.FindAuraByName(buffs[b][1]["name"], unit, "BUFF,PLAYER"))
+        local source = select(7, AuraUtil.FindAuraByName(buffs[b]["name"], unit, "BUFF,PLAYER"))
         if source == "player" then
             return true
-        end
-
-        if buffs[b][2] then
-            source = select(7, AuraUtil.FindAuraByName(buffs[b][2]["name"], unit, "BUFF,PLAYER"))
-            if source == "player" then
-                return true
-            end
         end
     end
 end
@@ -540,12 +502,12 @@ local function CheckUnit(unit, updateBtn)
         local required = requiredBuffs[UnitClassBase(unit)]
         for k, v in pairs(available) do
             if v ~= false and required[k] then
-                if not (AuraUtil.FindAuraByName(buffs[k][1]["name"], unit, "BUFF") or (buffs[k][2] and AuraUtil.FindAuraByName(buffs[k][2]["name"], unit, "BUFF"))) then
+                if not (AuraUtil.FindAuraByName(buffs[k]["name"], unit, "BUFF")) then
                     unaffected[k][unit] = true
                     
                     -- NOTE: don't check paladin/warrior shit here
                     if not strfind(k, "^Bo") and k ~= "BS" and k ~= "CS" then
-                        I:ShowMissingBuff(unit, k, buffs[k][1]["icon"], Cell.vars.playerClass == buffs[k]["provider"])
+                        I:ShowMissingBuff(unit, k, buffs[k]["icon"], Cell.vars.playerClass == buffs[k]["provider"])
                     end
                 else
                     unaffected[k][unit] = nil
@@ -580,30 +542,46 @@ local function IterateAllUnits()
     for unit in F:IterateGroupMembers() do
         if UnitIsConnected(unit) and UnitIsVisible(unit) then
             if UnitClassBase(unit) == "PRIEST" then
-                available["PWF"] = true
-                available["DS"] = true
-                available["SP"] = true
-                hasBuffProvider = true
+                if UnitLevel(unit) >= buffs["PWF"]["level"] then
+                    available["PWF"] = true
+                    hasBuffProvider = true
+                end
+                if UnitLevel(unit) >= buffs["SP"]["level"] then
+                    available["SP"] = true
+                    hasBuffProvider = true
+                end
             
             elseif UnitClassBase(unit) == "MAGE" then
-                available["AB"] = true
-                hasBuffProvider = true
+                if UnitLevel(unit) >= buffs["AB"]["level"] then
+                    available["AB"] = true
+                    hasBuffProvider = true
+                end
             
             elseif UnitClassBase(unit) == "WARRIOR" then
-                available["BS"] = (available["BS"] or 0) + 1
-                available["CS"] = (available["CS"] or 0) + 1
-                hasBuffProvider = true
+                if UnitLevel(unit) >= buffs["BS"]["level"] then
+                    available["BS"] = (available["BS"] or 0) + 1
+                    hasBuffProvider = true
+                end
+                if UnitLevel(unit) >= buffs["CS"]["level"] then
+                    available["CS"] = (available["CS"] or 0) + 1
+                    hasBuffProvider = true
+                end
 
             elseif UnitClassBase(unit) == "PALADIN" then
-                available["BoK"] = (available["BoK"] or 0) + 1
-                available["BoM"] = (available["BoM"] or 0) + 1
-                available["BoW"] = (available["BoW"] or 0) + 1
-                available["BoS"] = (available["BoS"] or 0) + 1
-                hasBuffProvider = true
+                if UnitLevel(unit) >= buffs["BoK"]["level"] then
+                    available["BoK"] = (available["BoK"] or 0) + 1
+                    hasBuffProvider = true
+                end
+                if UnitLevel(unit) >= buffs["BoM"]["level"] then
+                    available["BoM"] = (available["BoM"] or 0) + 1
+                    hasBuffProvider = true
+                end
 
             elseif UnitClassBase(unit) == "DRUID" then
-                available["MotW"] = true
-                hasBuffProvider = true
+                if UnitLevel(unit) >= buffs["MotW"]["level"] then
+                    available["MotW"] = true
+                    hasBuffProvider = true
+                end
             end
 
             if UnitIsUnit("player", unit) then

@@ -2016,6 +2016,7 @@ end
 local function HideMissingBuffs(b)
     for i = 1, 5 do
         b.indicators.missingBuffs[i]:Hide()
+        LCG.ButtonGlow_Stop(b.indicators.missingBuffs[i])
     end
 end
 

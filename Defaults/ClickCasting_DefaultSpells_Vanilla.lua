@@ -145,7 +145,7 @@ local defaultSpells = {
     },
 }
 
-function F:GetSpellList(class)
+function F:GetClickCastingSpellList(class)
     local spells = defaultSpells[class]["common"] and F:Copy(defaultSpells[class]["common"]) or {}
     
     -- fill data

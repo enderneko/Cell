@@ -299,7 +299,7 @@ local defaultSpells = {
     },
 }
 
-function F:GetSpellList(class, spec)
+function F:GetClickCastingSpellList(class, spec)
     local spells = defaultSpells[class]["common"] and F:Copy(defaultSpells[class]["common"]) or {}
     
     -- check spec

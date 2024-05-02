@@ -1077,7 +1077,7 @@ local function ShowActionsMenu(index, b)
         }
 
         -- default spells
-        local spells = F:GetSpellList(Cell.vars.playerClass, Cell.vars.playerSpecID)
+        local spells = F:GetClickCastingSpellList(Cell.vars.playerClass, Cell.vars.playerSpecID)
         -- {icon, name, type(C/S/P), id}
         
         for _, t in ipairs(spells) do
