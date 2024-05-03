@@ -87,6 +87,17 @@ select(2, ...).L = setmetatable({
         <p>(Retail) Enable "Always Update Buffs/Debuffs" in General tab, if indicators do not update correctly.</p>
         <br/>
 
+        <h1>r222-release (May 4, 2024, 00:40 GMT+8)</h1>
+        <p>+ Updated for Cata.</p>
+        <p>+ Implemented "Combine Groups" (support sorting by role), check it out on Layouts tab.</p>
+        <p>+ New custom indicator type: Overlay (bar).</p>
+        <p>+ Added Clear/Import/Export for indicator aura list.</p>
+        <p>* Expanded Spotlight Frame to 15 buttons.</p>
+        <p>* Fixed colors of AI followers.</p>
+        <p>* Fixed colors for custom Text/Rect/Bar indicators.</p>
+        <p>* Updated zhTW.</p>
+        <br/>
+
         <h1>r221-release (Apr 6, 2024, 22:00 GMT+8)</h1>
         <p>+ Added multi-line support for custom "Icons" indicators.</p>
         <p>* Updated color options for custom "Bar" indicators.</p>

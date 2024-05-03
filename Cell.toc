@@ -1,6 +1,6 @@
 ## Interface: 100206
 ## Title: Cell
-## Version: r221-release
+## Version: r222-release
 ## Author: enderneko
 ## X-Flavor: Mainline
 ## SavedVariables: CellDB

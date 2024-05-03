@@ -1,9 +1,13 @@
-[Full Changelog](https://github.com/enderneko/Cell/compare/r220-release...0c723964ead272b52c5c9f787ba50bf223cd1457)
+# [r221-release-22-g0aedbb7](https://github.com/enderneko/Cell/tree/0aedbb774dbf5690276fd770a6d91bfe008d0102) (2024-05-03)
 
-- Add multi-line support for custom "Icons" indicators
-- Add Right-Click refreshing feature
-- Update color options for "Bar" indicators
-- Update menu strata
-- Improve reliability of LibGroupInfo
-- Fix "Casts" icons for QuickAssist
-- Fix indicator not updating issue when layout changes
+- Update for Cata.
+- Expanded Spotlight Frame to 15 buttons.
+- Implement "Combine Groups"
+- Fix layout dragging
+- Fix colors for AI followers
+- Fix colors for Text/Rect/Bar
+- New custom indicator type "Overlay"
+- Add Clear/Import/Export for aura list
+- Update LayoutAutoSwitch
+- Update dispel checker
+- Update zhTW
