@@ -48,8 +48,8 @@ Cell.defaults.layout = {
         ["anchor"] = "TOPLEFT",
         ["spacingX"] = 3,
         ["spacingY"] = 3,
-        ["columns"] = 8,
-        ["rows"] = 8,
+        ["maxColumns"] = 8,
+        ["unitsPerColumn"] = 5,
         ["groupSpacing"] = 0,
     },
     ["pet"] = {

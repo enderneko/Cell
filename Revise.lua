@@ -2632,6 +2632,21 @@ function F:Revise()
     -- r222-release
     if CellDB["revise"] and dbRevision < 222 then
         for _, layout in pairs(CellDB["layouts"]) do
+            -- add maxColumns, unitsPerColumn
+            if not layout["main"]["maxColumns"] then
+                if layout["main"]["orientation"] == "vertical" then
+                    layout["main"]["maxColumns"] = layout["main"]["columns"]
+                else
+                    layout["main"]["maxColumns"] = layout["main"]["rows"]
+                end
+                layout["main"]["columns"] = nil
+                layout["main"]["rows"] = nil
+            end
+            if not layout["main"]["unitsPerColumn"] then
+                layout["main"]["unitsPerColumn"] = 5
+            end
+
+            -- update text/rect color
             for _, i in pairs(layout["indicators"]) do
                 if i.type == "text" or i.type == "rect" then
                     if #i.colors[2] ~= 5 then

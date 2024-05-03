@@ -358,7 +358,7 @@ local function RaidFrame_UpdateLayout(layout, which)
             end
         end
 
-        if not which or which == "header" or which == "main-arrangement" or which == "rows_columns" or which == "groupSpacing" then
+        if not which or which == "header" or which == "main-arrangement" or which == "rows_columns" or which == "groupSpacing" or which == "unitsPerColumn" then
             combinedHeader:ClearAllPoints()
             
             if layout["main"]["orientation"] == "vertical" then
@@ -367,12 +367,14 @@ local function RaidFrame_UpdateLayout(layout, which)
                 combinedHeader:SetAttribute("xOffset", 0)
                 combinedHeader:SetAttribute("yOffset", unitSpacingY)
                 combinedHeader:SetAttribute("columnSpacing", unitSpacingX)
+                combinedHeader:SetAttribute("maxColumns", layout["main"]["maxColumns"])
             else
                 combinedHeader:SetAttribute("columnAnchorPoint", headerColumnAnchorPoint)
                 combinedHeader:SetAttribute("point", headerPoint)
                 combinedHeader:SetAttribute("xOffset", unitSpacingX)
                 combinedHeader:SetAttribute("yOffset", 0)
                 combinedHeader:SetAttribute("columnSpacing", unitSpacingY)
+                combinedHeader:SetAttribute("maxColumns", layout["main"]["maxColumns"])
             end
 
             --! force update unitbutton's point
@@ -380,7 +382,7 @@ local function RaidFrame_UpdateLayout(layout, which)
                 b:ClearAllPoints()
             end
 
-            combinedHeader:SetAttribute("unitsPerColumn", 5)
+            combinedHeader:SetAttribute("unitsPerColumn", layout["main"]["unitsPerColumn"])
             combinedHeader:SetPoint(point)
     
             raidFrame:SetAttribute("spacing", groupSpacing)
@@ -434,8 +436,8 @@ local function RaidFrame_UpdateLayout(layout, which)
                     if i == 1 then
                         header:SetPoint(point)
                     else
-                        if i / layout["main"]["columns"] > 1 then -- not the first row
-                            header:SetPoint(point, separatedHeaders[shownGroups[i-layout["main"]["columns"]]], anchorPoint, 0, verticalSpacing)
+                        if i / layout["main"]["maxColumns"] > 1 then -- not the first row
+                            header:SetPoint(point, separatedHeaders[shownGroups[i-layout["main"]["maxColumns"]]], anchorPoint, 0, verticalSpacing)
                         else
                             header:SetPoint(point, separatedHeaders[shownGroups[i-1]], groupAnchorPoint, groupSpacing, 0)
                         end
@@ -464,8 +466,8 @@ local function RaidFrame_UpdateLayout(layout, which)
                             end
                         end
                     else
-                        if i / layout["main"]["rows"] > 1 then -- not the first column
-                            header:SetPoint(point, separatedHeaders[shownGroups[i-layout["main"]["rows"]]], anchorPoint, horizontalSpacing, 0)
+                        if i / layout["main"]["maxColumns"] > 1 then -- not the first column
+                            header:SetPoint(point, separatedHeaders[shownGroups[i-layout["main"]["maxColumns"]]], anchorPoint, horizontalSpacing, 0)
                         else
                             header:SetPoint(point, separatedHeaders[shownGroups[i-1]], groupAnchorPoint, 0, groupSpacing)
                         end
