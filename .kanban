@@ -16,7 +16,7 @@
         {
           "id": "16df86de-862e-43e0-bb56-dc16bb7c4d4e",
           "listId": "643431c7-e660-47b1-a44b-4e799b536d19",
-          "title": "SoD buffs",
+          "title": "SoD buffs issue?",
           "description": "",
           "labels": [],
           "checkboxes": [],
@@ -27,7 +27,17 @@
     {
       "id": "7915d51e-5603-44aa-aa3a-8dff734ea7c6",
       "title": "TODO",
-      "cards": []
+      "cards": [
+        {
+          "id": "721cdc03-a153-4d63-92fd-37e63dfacfbc",
+          "listId": "7915d51e-5603-44aa-aa3a-8dff734ea7c6",
+          "title": "\"Show on\" for custom indicators",
+          "description": "",
+          "labels": [],
+          "checkboxes": [],
+          "comments": []
+        }
+      ]
     },
     {
       "id": "fc9baa7c-c3e7-49a4-8526-816c794e5ed9",
