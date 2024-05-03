@@ -751,6 +751,8 @@ end
 -- check Divine Aegis
 function eventFrame:PLAYER_TALENT_UPDATE()
     CheckDivineAegis()
+    UpdateSpecVars()
+    F:UpdateClickCastingProfileLabel()
 end
 
 eventFrame:SetScript("OnEvent", function(self, event, ...)

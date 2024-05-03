@@ -1452,3 +1452,9 @@ clickCastingsTab:SetScript("OnShow", function()
     menu:SetMenuParent(clickCastingsTab)
     -- texplore(changed)
 end)
+
+function F:UpdateClickCastingProfileLabel()
+    if loaded then
+        UpdateCurrentText(Cell.vars.clickCastings["useCommon"])
+    end
+end
