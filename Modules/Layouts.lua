@@ -1064,7 +1064,7 @@ local function CreateSpotlightPreview()
     end)
 
     spotlightPreview.header = CreateFrame("Frame", "CellSpotlightPreviewFrameHeader", spotlightPreview)
-    for i = 1, 10 do
+    for i = 1, 15 do
         spotlightPreview.header[i] = spotlightPreview.header:CreateTexture(nil, "BACKGROUND")
         spotlightPreview.header[i]:SetColorTexture(0, 0, 0)
         spotlightPreview.header[i]:SetAlpha(0.555)
@@ -1075,7 +1075,7 @@ local function CreateSpotlightPreview()
         spotlightPreview.header[i].tex:SetPoint("TOPLEFT", spotlightPreview.header[i], "TOPLEFT", P:Scale(1), P:Scale(-1))
         spotlightPreview.header[i].tex:SetPoint("BOTTOMRIGHT", spotlightPreview.header[i], "BOTTOMRIGHT", P:Scale(-1), P:Scale(1))
 
-        spotlightPreview.header[i].tex:SetVertexColor(F:ConvertRGB(255, 0, 102, i <= 5 and desaturation[i] or desaturation[i-5]))
+        spotlightPreview.header[i].tex:SetVertexColor(F:ConvertRGB(255, 0, 102, i % 5 == 0 and desaturation[5] or desaturation[i-floor(i/5)*5]))
         spotlightPreview.header[i].tex:SetAlpha(0.555)
     end
 end
@@ -1227,21 +1227,21 @@ local function UpdateSpotlightPreview()
     P:Size(header, width, height)
     header:SetPoint(point)
 
-    for i = 1, 10 do
+    for i = 1, 15 do
         P:Size(header[i], width, height)
         header[i]:ClearAllPoints()
         if i == 1 then
             header[i]:SetPoint(point)
         else
             if strfind(orientation, "^vertical") then
-                if i == 6 and orientation == "vertical" then
-                    header[i]:SetPoint(point, header[1], groupPoint, unitSpacingX, 0)
+                if i % 5 == 1 and orientation == "vertical" then
+                    header[i]:SetPoint(point, header[i-5], groupPoint, unitSpacingX, 0)
                 else
                     header[i]:SetPoint(point, header[i-1], anchorPoint, 0, unitSpacingY)
                 end
             else
-                if i == 6 and orientation == "horizontal" then
-                    header[i]:SetPoint(point, header[1], groupPoint, 0, unitSpacingY)
+                if i % 5 == 1 and orientation == "horizontal" then
+                    header[i]:SetPoint(point, header[i-5], groupPoint, 0, unitSpacingY)
                 else
                     header[i]:SetPoint(point, header[i-1], anchorPoint, unitSpacingX, 0)
                 end
@@ -2285,7 +2285,11 @@ local function CreateLayoutSetupPane()
     -- same arrangement as main
     sameArrangementAsMainCB = Cell:CreateCheckButton(layoutSetupPane, L["Use Same Arrangement As Main"], function(checked, self)
         selectedLayoutTable[selectedPage]["sameArrangementAsMain"] = checked
-        orientationDropdown:SetEnabled(not checked)
+        if selectedPage == "spotlight" then
+            spotlightOrientationDropdown:SetEnabled(not checked)
+        else
+            orientationDropdown:SetEnabled(not checked)
+        end
         anchorDropdown:SetEnabled(not checked)
         spacingXSlider:SetEnabled(not checked)
         spacingYSlider:SetEnabled(not checked)
@@ -2347,7 +2351,7 @@ local function CreateLayoutSetupPane()
         },
     })
     
-    local orientationText = layoutSetupPane:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
+    local orientationText = orientationDropdown:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
     orientationText:SetPoint("BOTTOMLEFT", orientationDropdown, "TOPLEFT", 0, 1)
     orientationText:SetText(L["Orientation"])
 
@@ -2639,7 +2643,7 @@ local function CreateLayoutSetupPane()
         },
     })
     
-    local spotlightOrientationText = layoutSetupPane:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
+    local spotlightOrientationText = spotlightOrientationDropdown:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
     spotlightOrientationText:SetPoint("BOTTOMLEFT", spotlightOrientationDropdown, "TOPLEFT", 0, 1)
     spotlightOrientationText:SetText(L["Orientation"])
 
@@ -2828,11 +2832,19 @@ LoadPageDB = function(page)
         widthSlider:SetEnabled(not selectedLayoutTable[page]["sameSizeAsMain"])
         heightSlider:SetEnabled(not selectedLayoutTable[page]["sameSizeAsMain"])
         powerSizeSlider:SetEnabled(not selectedLayoutTable[page]["sameSizeAsMain"])
-        spotlightOrientationDropdown:SetEnabled(not selectedLayoutTable[page]["sameArrangementAsMain"])
-        orientationDropdown:SetEnabled(not selectedLayoutTable[page]["sameArrangementAsMain"])
         anchorDropdown:SetEnabled(not selectedLayoutTable[page]["sameArrangementAsMain"])
         spacingXSlider:SetEnabled(not selectedLayoutTable[page]["sameArrangementAsMain"])
         spacingYSlider:SetEnabled(not selectedLayoutTable[page]["sameArrangementAsMain"])
+    end
+    
+    if page == "spotlight" then
+        orientationDropdown:Hide()
+        spotlightOrientationDropdown:Show()
+        spotlightOrientationDropdown:SetEnabled(not selectedLayoutTable[page]["sameArrangementAsMain"])
+    else
+        orientationDropdown:Show()
+        spotlightOrientationDropdown:Hide()
+        orientationDropdown:SetEnabled(not selectedLayoutTable[page]["sameArrangementAsMain"])
     end
 end
 
