@@ -32,6 +32,8 @@ local patrons1 = {
     {"Longmer-Illidan (US)", "longmer"}, -- 爱发电用户_4116d (爱发电)
     {"Phæro-Antonidas (EU)", "phæro", "Callistò-Antonidas (EU)"}, -- Phæro (Ko-fi)
     {"Synthatt-Illidan (US)", "synthatt"}, -- Synthatt (Ko-fi)
+    {"Holystora-Antonidas (EU)", "holystora"}, -- devo (Ko-fi)
+    {"Tithaya-Kel'Thuzad (US)", "tithaya"}, -- tithaya (Ko-fi)
 }
 
 local patrons2 = {
@@ -64,6 +66,7 @@ local patrons2 = {
     {"得闲饮茶 (爱发电)", "dexianyincha"},
     {"Jane (Ko-fi)", "jane"},
     {"qwe#6664 (KOOK)", "qwe#6664"},
+    {"Pandora (Ko-fi)", "pandora"},
 }
 
 -- sort
