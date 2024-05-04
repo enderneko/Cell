@@ -178,68 +178,89 @@ eventFrame:SetScript("OnEvent", function(_, event, sourceUnit)
     end
 end)
 
+-------------------------------------------------
+-- create
+-------------------------------------------------
+local function SetCooldown(frame, start, duration, icon, count)
+    frame.duration:Hide()
+
+    if count ~= 1 then
+        frame.stack:Show()
+        frame.stack:SetText(count)
+    else
+        frame.stack:Hide()
+    end
+
+    frame.border:Show()
+    frame.cooldown:Show()
+    frame.cooldown:SetSwipeColor(unpack(Cell.vars.targetedSpellsGlow[2]))
+    frame.cooldown:SetCooldown(start, duration)
+    frame.icon:SetTexture(icon)
+    frame:Show()
+end
+
+local function SetFont(frame, font, size, flags, anchor, xOffset, yOffset, color)
+    I:SetFont(frame.stack, frame, font, size, flags, anchor, xOffset, yOffset, color)
+end
+
+local function ShowGlowPreview(frame)
+    frame:ShowGlow(unpack(Cell.vars.targetedSpellsGlow))
+end
+
+local function HideGlowPreview(frame)
+    LCG.ButtonGlow_Stop(frame.tsGlowFrame)
+    LCG.PixelGlow_Stop(frame.tsGlowFrame)
+    LCG.AutoCastGlow_Stop(frame.tsGlowFrame)
+    LCG.ProcGlow_Stop(frame.tsGlowFrame)
+end
+
+local function ShowGlow(frame, glowType, color, arg1, arg2, arg3, arg4)
+    if glowType == "Normal" then
+        LCG.PixelGlow_Stop(frame.tsGlowFrame)
+        LCG.AutoCastGlow_Stop(frame.tsGlowFrame)
+        LCG.ProcGlow_Stop(frame.tsGlowFrame)
+        LCG.ButtonGlow_Start(frame.tsGlowFrame, color)
+    elseif glowType == "Pixel" then
+        LCG.ButtonGlow_Stop(frame.tsGlowFrame)
+        LCG.AutoCastGlow_Stop(frame.tsGlowFrame)
+        LCG.ProcGlow_Stop(frame.tsGlowFrame)
+        -- color, N, frequency, length, thickness
+        LCG.PixelGlow_Start(frame.tsGlowFrame, color, arg1, arg2, arg3, arg4)
+    elseif glowType == "Shine" then
+        LCG.ButtonGlow_Stop(frame.tsGlowFrame)
+        LCG.PixelGlow_Stop(frame.tsGlowFrame)
+        LCG.ProcGlow_Stop(frame.tsGlowFrame)
+        -- color, N, frequency, scale
+        LCG.AutoCastGlow_Start(frame.tsGlowFrame, color, arg1, arg2, arg3)
+    elseif glowType == "Proc" then
+        LCG.ButtonGlow_Stop(frame.tsGlowFrame)
+        LCG.PixelGlow_Stop(frame.tsGlowFrame)
+        LCG.AutoCastGlow_Stop(frame.tsGlowFrame)
+        -- color, duration
+        LCG.ProcGlow_Start(frame.tsGlowFrame, {color=color, duration=arg1, startAnim=false})
+    else
+        LCG.ButtonGlow_Stop(frame.tsGlowFrame)
+        LCG.PixelGlow_Stop(frame.tsGlowFrame)
+        LCG.AutoCastGlow_Stop(frame.tsGlowFrame)
+        LCG.ProcGlow_Stop(frame.tsGlowFrame)
+    end
+end
+
 function I:CreateTargetedSpells(parent)
     local frame = I:CreateAura_BorderIcon(parent:GetName().."TargetedSpells", parent.widget.overlayFrame, 2)
     parent.indicators.targetedSpells = frame
     frame:Hide()
 
+    frame.tsGlowFrame = parent.widget.tsGlowFrame
+    frame.ShowGlow = ShowGlow
+    frame.SetCooldown = SetCooldown
+    frame.SetFont = SetFont
+    frame.ShowGlowPreview = ShowGlowPreview
+    frame.HideGlowPreview = HideGlowPreview
+
     frame.cooldown:SetScript("OnCooldownDone", function()
         frame:Hide()
     end)
-
-    function frame:SetCooldown(start, duration, icon, count)
-        frame.duration:Hide()
-
-        if count ~= 1 then
-            frame.stack:Show()
-            frame.stack:SetText(count)
-        else
-            frame.stack:Hide()
-        end
-
-        frame.border:Show()
-        frame.cooldown:Show()
-        frame.cooldown:SetSwipeColor(unpack(Cell.vars.targetedSpellsGlow[2]))
-        frame.cooldown:SetCooldown(start, duration)
-        frame.icon:SetTexture(icon)
-        frame:Show()
-    end
-
-    function frame:SetFont(font, size, flags, anchor, xOffset, yOffset)
-        I:SetFont(frame.stack, frame, font, size, flags, anchor, xOffset, yOffset)
-    end
-
-    function frame:ShowGlow(glowType, color, arg1, arg2, arg3, arg4)
-        if glowType == "Normal" then
-            LCG.PixelGlow_Stop(parent.widget.tsGlowFrame)
-            LCG.AutoCastGlow_Stop(parent.widget.tsGlowFrame)
-            LCG.ProcGlow_Stop(parent.widget.tsGlowFrame)
-            LCG.ButtonGlow_Start(parent.widget.tsGlowFrame, color)
-        elseif glowType == "Pixel" then
-            LCG.ButtonGlow_Stop(parent.widget.tsGlowFrame)
-            LCG.AutoCastGlow_Stop(parent.widget.tsGlowFrame)
-            LCG.ProcGlow_Stop(parent.widget.tsGlowFrame)
-            -- color, N, frequency, length, thickness
-            LCG.PixelGlow_Start(parent.widget.tsGlowFrame, color, arg1, arg2, arg3, arg4)
-        elseif glowType == "Shine" then
-            LCG.ButtonGlow_Stop(parent.widget.tsGlowFrame)
-            LCG.PixelGlow_Stop(parent.widget.tsGlowFrame)
-            LCG.ProcGlow_Stop(parent.widget.tsGlowFrame)
-            -- color, N, frequency, scale
-            LCG.AutoCastGlow_Start(parent.widget.tsGlowFrame, color, arg1, arg2, arg3)
-        elseif glowType == "Proc" then
-            LCG.ButtonGlow_Stop(parent.widget.tsGlowFrame)
-            LCG.PixelGlow_Stop(parent.widget.tsGlowFrame)
-            LCG.AutoCastGlow_Stop(parent.widget.tsGlowFrame)
-            -- color, duration
-            LCG.ProcGlow_Start(parent.widget.tsGlowFrame, {color=color, duration=arg1, startAnim=false})
-        else
-            LCG.ButtonGlow_Stop(parent.widget.tsGlowFrame)
-            LCG.PixelGlow_Stop(parent.widget.tsGlowFrame)
-            LCG.AutoCastGlow_Stop(parent.widget.tsGlowFrame)
-            LCG.ProcGlow_Stop(parent.widget.tsGlowFrame)
-        end
-    end
 
     frame:SetScript("OnHide", function()
         LCG.ButtonGlow_Stop(parent.widget.tsGlowFrame)
@@ -247,19 +268,11 @@ function I:CreateTargetedSpells(parent)
         LCG.AutoCastGlow_Stop(parent.widget.tsGlowFrame)
         LCG.ProcGlow_Stop(parent.widget.tsGlowFrame)
     end)
-
-    function frame:ShowGlowPreview()
-        frame:ShowGlow(unpack(Cell.vars.targetedSpellsGlow))
-    end
-
-    function frame:HideGlowPreview()
-        LCG.ButtonGlow_Stop(parent.widget.tsGlowFrame)
-        LCG.PixelGlow_Stop(parent.widget.tsGlowFrame)
-        LCG.AutoCastGlow_Stop(parent.widget.tsGlowFrame)
-        LCG.ProcGlow_Stop(parent.widget.tsGlowFrame)
-    end
 end
 
+-------------------------------------------------
+-- functions
+-------------------------------------------------
 -- NOTE: in case there's a casting spell, hide!
 local function EnterLeaveInstance()
     F:IterateAllUnitButtons(function(b)
