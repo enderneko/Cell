@@ -3629,6 +3629,8 @@ local function CreateSetting_Auras(parent, index)
             -- update list
             auraImportExportFrame.parent:SetDBValue(auraImportExportFrame.parent.title, auraImportExportFrame.parent.t, auraImportExportFrame.parent.noUpDownButtons, auraImportExportFrame.parent.isZeroValid)
             auraImportExportFrame:Hide()
+            -- update height
+            addon:UpdateIndicatorSettingsHeight()
             -- event
             auraImportExportFrame.parent.frame.func(auraImportExportFrame.parent.t)
         end)
@@ -3682,6 +3684,8 @@ local function CreateSetting_Auras(parent, index)
                 wipe(widget.t)
                 -- update list
                 widget:SetDBValue(widget.title, widget.t, widget.noUpDownButtons, widget.isZeroValid)
+                -- update height
+                addon:UpdateIndicatorSettingsHeight()
                 -- event
                 widget.frame.func(widget.t)
             end 
@@ -5274,9 +5278,26 @@ local function CreateSetting_CastBy(parent)
 end
 
 -----------------------------------------
+-- update parent height
+-----------------------------------------
+local settingsParent
+function addon:UpdateIndicatorSettingsHeight()
+    local count, height = 0, 0
+    for _, w in pairs(settingWidgets) do
+        if w:IsShown() then
+            count = count + 1
+            height = height + w:GetHeight()
+        end
+    end
+    settingsParent:SetHeight(height + (count-1)*P:Scale(10))
+end
+
+-----------------------------------------
 -- create
 -----------------------------------------
 function addon:CreateIndicatorSettings(parent, settingsTable)
+    settingsParent = parent
+
     local widgetsTable = {}
 
     -- hide all

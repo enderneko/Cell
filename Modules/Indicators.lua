@@ -1630,7 +1630,6 @@ local function ShowIndicatorSettings(id)
     local widgets = Cell:CreateIndicatorSettings(settingsFrame.scrollFrame.content, settingsTable)
     
     local last
-    local height = 0
     for i, w in pairs(widgets) do
         if last then
             w:SetPoint("TOPLEFT", last, "BOTTOMLEFT", 0, P:Scale(-10))
@@ -1893,11 +1892,9 @@ local function ShowIndicatorSettings(id)
                 Cell:Fire("UpdateIndicators", notifiedLayout, indicatorName, currentSetting, value)
             end)
         end
-
-        height = height + w:GetHeight()
     end
 
-    settingsFrame.scrollFrame:SetContentHeight(height + (#widgets-1)*P:Scale(10))
+    Cell:UpdateIndicatorSettingsHeight()
 
     if string.find(indicatorName, "indicator") then
         renameBtn:SetEnabled(true)
