@@ -87,6 +87,10 @@ select(2, ...).L = setmetatable({
         <p>(Retail) Enable "Always Update Buffs/Debuffs" in General tab, if indicators do not update correctly.</p>
         <br/>
 
+        <h1>r223-release (May 6, 2024, 00:05 GMT+8)</h1>
+        <p>* Updated Cata debuffs.</p>
+        <br/>
+
         <h1>r222-release (May 4, 2024, 00:40 GMT+8)</h1>
         <p>+ Updated for Cata.</p>
         <p>+ Implemented "Combine Groups" (support sorting by role), check it out on Layouts tab.</p>
