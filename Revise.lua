@@ -2670,6 +2670,15 @@ function F:Revise()
         end
     end
 
+    -- r223-release
+    if CellDB["revise"] and dbRevision < 223 then
+        -- debuffBlacklist
+        if not F:TContains(CellDB["debuffBlacklist"], 89798) then -- 大冒险家奖励
+            tinsert(CellDB["debuffBlacklist"], 89798)
+            Cell.vars.debuffBlacklist = F:ConvertTable(CellDB["debuffBlacklist"])
+        end
+    end
+
     -- ----------------------------------------------------------------------- --
     --            update from old versions, validate all indicators            --
     -- ----------------------------------------------------------------------- --

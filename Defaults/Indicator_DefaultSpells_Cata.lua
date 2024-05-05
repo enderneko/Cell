@@ -20,6 +20,7 @@ local debuffBlacklist = {
     8326, -- 鬼魂
     57723, -- 筋疲力尽
     57724, -- 心满意足
+    89798, -- 大冒险家奖励
 }
 
 function I:GetDefaultDebuffBlacklist()

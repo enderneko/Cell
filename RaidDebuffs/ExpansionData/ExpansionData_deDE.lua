@@ -2,7 +2,7 @@
 -- File: Cell\RaidDebuffs\ExpansionData\ExpansionData_deDE.lua
 -- Author: enderneko (enderneko-dev@outlook.com)
 -- Created : 2023-09-03 19:32:02 +08:00
--- Modified: 2023-12-10 11:33:26 +08:00
+-- Modified: 2024-05-04 17:38:57 +08:00
 ---------------------------------------------------------------------
 
 if not LOCALE_deDE then return end
@@ -3545,6 +3545,11 @@ Cell_ExpansionData.data = {
                     ["image"] = 522212,
                     ["name"] = "Cho'gall",
                 }, -- [4]
+                {
+                    ["id"] = 168,
+                    ["image"] = 522270,
+                    ["name"] = "Sinestra",
+                }, -- [5]
             },
         }, -- [2]
         {

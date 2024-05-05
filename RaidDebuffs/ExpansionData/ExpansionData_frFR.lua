@@ -2,7 +2,7 @@
 -- File: Cell\RaidDebuffs\ExpansionData\ExpansionData_frFR.lua
 -- Author: enderneko (enderneko-dev@outlook.com)
 -- Created : 2023-09-03 19:52:19 +08:00
--- Modified: 2023-12-10 11:33:30 +08:00
+-- Modified: 2024-05-04 17:36:50 +08:00
 ---------------------------------------------------------------------
 
 if not LOCALE_frFR then return end
@@ -4060,6 +4060,11 @@ Cell_ExpansionData.data = {
                     ["image"] = 522212,
                     ["name"] = "Cho'gall",
                 }, -- [4]
+                {
+                    ["id"] = 168,
+                    ["image"] = 522270,
+                    ["name"] = "Sinestra",
+                }, -- [5]
             },
         }, -- [3]
         {

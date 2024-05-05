@@ -2,7 +2,7 @@
 -- File: Cell\RaidDebuffs\ExpansionData\ExpansionData_koKR.lua
 -- Author: enderneko (enderneko-dev@outlook.com)
 -- Created : 2023-09-03 19:57:01 +08:00
--- Modified: 2023-12-10 11:33:34 +08:00
+-- Modified: 2024-05-04 17:34:44 +08:00
 ---------------------------------------------------------------------
 
 if not LOCALE_koKR then return end
@@ -125,6 +125,11 @@ Cell_ExpansionData.data = {
                     ["image"] = 522212,
                     ["name"] = "초갈",
                 }, -- [4]
+                {
+                    ["id"] = 168,
+                    ["image"] = 522270,
+                    ["name"] = "시네스트라",
+                }, -- [5]
             },
         }, -- [4]
         {

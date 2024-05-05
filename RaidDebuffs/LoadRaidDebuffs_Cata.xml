@@ -3,4 +3,5 @@
 	<Script file="RaidDebuffs_Classic.lua"/>
 	<Script file="RaidDebuffs_TBC.lua"/>
 	<Script file="RaidDebuffs_WotLK.lua"/>
+	<Script file="RaidDebuffs_Cata.lua"/>
 </Ui>

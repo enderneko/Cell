@@ -2,7 +2,7 @@
 -- File: Cell\RaidDebuffs\ExpansionData\ExpansionData_zhCN.lua
 -- Author: enderneko (enderneko-dev@outlook.com)
 -- Created : 2023-09-03 19:53:55 +08:00
--- Modified: 2023-12-10 11:33:39 +08:00
+-- Modified: 2024-05-04 17:29:24 +08:00
 ---------------------------------------------------------------------
 
 if not LOCALE_zhCN then return end
@@ -2645,6 +2645,11 @@ Cell_ExpansionData.data = {
                     ["image"] = 522212,
                     ["name"] = "古加尔",
                 }, -- [4]
+                {
+                    ["id"] = 168,
+                    ["image"] = 522270,
+                    ["name"] = "希奈丝特拉",
+                }, -- [5]
             },
         }, -- [2]
         {

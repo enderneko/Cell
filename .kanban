@@ -36,6 +36,33 @@
           "labels": [],
           "checkboxes": [],
           "comments": []
+        },
+        {
+          "id": "a32ebae3-812a-45f6-8b49-67b5139960d3",
+          "listId": "7915d51e-5603-44aa-aa3a-8dff734ea7c6",
+          "title": "Spell list for AoE Healing indicator",
+          "description": "",
+          "labels": [],
+          "checkboxes": [],
+          "comments": []
+        },
+        {
+          "id": "9c20d26f-132d-4776-bae4-68465189ba2f",
+          "listId": "7915d51e-5603-44aa-aa3a-8dff734ea7c6",
+          "title": "Player always first",
+          "description": "",
+          "labels": [],
+          "checkboxes": [],
+          "comments": []
+        },
+        {
+          "id": "20898e44-20c9-463c-ad57-c206aaf9fe2c",
+          "listId": "7915d51e-5603-44aa-aa3a-8dff734ea7c6",
+          "title": "Global scaling for indicators",
+          "description": "",
+          "labels": [],
+          "checkboxes": [],
+          "comments": []
         }
       ]
     },
