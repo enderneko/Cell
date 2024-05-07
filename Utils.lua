@@ -1264,9 +1264,9 @@ end
 
 function F:UnitInGroup(unit, ignorePets)
     if ignorePets then
-        return UnitIsUnit(unit, "player") or UnitInParty(unit) or UnitInRaid(unit)
+        return UnitIsUnit(unit, "player") or UnitInParty(unit) or UnitInRaid(unit) or UnitInPartyIsAI(unit)
     else
-        return UnitIsUnit(unit, "player") or UnitIsUnit(unit, "pet") or UnitPlayerOrPetInParty(unit) or UnitPlayerOrPetInRaid(unit)
+        return UnitIsUnit(unit, "player") or UnitIsUnit(unit, "pet") or UnitPlayerOrPetInParty(unit) or UnitPlayerOrPetInRaid(unit) or UnitInPartyIsAI(unit)
     end
 end
 
@@ -1280,7 +1280,7 @@ function F:GetTargetUnitID(target)
 
     if not F:UnitInGroup(target) then return end
 
-    if UnitIsPlayer(target) then
+    if UnitIsPlayer(target) or UnitInPartyIsAI(target) then
         for unit in F:IterateGroupMembers() do
             if UnitIsUnit(target, unit) then
                 return unit
@@ -1302,7 +1302,7 @@ function F:GetTargetPetID(target)
 
     if not F:UnitInGroup(target) then return end
 
-    if UnitIsPlayer(target) then
+    if UnitIsPlayer(target) or UnitInPartyIsAI(target) then
         for unit in F:IterateGroupMembers() do
             if UnitIsUnit(target, unit) then
                 return F:GetPetUnit(unit)
