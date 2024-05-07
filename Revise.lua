@@ -2679,6 +2679,16 @@ function F:Revise()
         end
     end
 
+    -- r224-release
+    if CellDB["revise"] and dbRevision < 224 then
+        for _, layout in pairs(CellDB["layouts"]) do
+            local index = Cell.defaults.indicatorIndices.healthText
+            if #layout["indicators"][index]["color"] == 3 then
+                layout["indicators"][index]["color"] = {"custom_color", layout["indicators"][index]["color"]}
+            end
+        end
+    end
+
     -- ----------------------------------------------------------------------- --
     --            update from old versions, validate all indicators            --
     -- ----------------------------------------------------------------------- --

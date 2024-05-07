@@ -65,7 +65,8 @@ local UnitButton_UpdateShieldAbsorbs
 -------------------------------------------------
 -- unit button init indicators
 -------------------------------------------------
-local enabledIndicators, indicatorNums, indicatorCustoms = {}, {}, {}
+local enabledIndicators, indicatorNums = {}, {}
+local indicatorBooleans, indicatorColors = {}, {}
 
 local function UpdateIndicatorParentVisibility(b, indicatorName, enabled)
     if not (indicatorName == "debuffs" or
@@ -134,24 +135,27 @@ local function ResetIndicators()
             I:UpdateMissingBuffsFilters(t["filters"], true)
             I:EnableMissingBuffs(t["enabled"])
         end
-        -- update custom
+        -- update extra
+        if t["indicatorName"] == "nameText" or t["indicatorName"] == "healthText" then
+            indicatorColors[t["indicatorName"]] = t["color"]
+        end
         if t["dispellableByMe"] ~= nil then
-            indicatorCustoms[t["indicatorName"]] = t["dispellableByMe"]
+            indicatorBooleans[t["indicatorName"]] = t["dispellableByMe"]
         end
         if t["hideIfEmptyOrFull"] ~= nil then
-            indicatorCustoms[t["indicatorName"]] = t["hideIfEmptyOrFull"]
+            indicatorBooleans[t["indicatorName"]] = t["hideIfEmptyOrFull"]
         end
         if t["onlyShowTopGlow"] ~= nil then
-            indicatorCustoms[t["indicatorName"]] = t["onlyShowTopGlow"]
+            indicatorBooleans[t["indicatorName"]] = t["onlyShowTopGlow"]
         end
         if t["hideInCombat"] ~= nil then
-            indicatorCustoms[t["indicatorName"]] = t["hideInCombat"]
+            indicatorBooleans[t["indicatorName"]] = t["hideInCombat"]
         end
         if t["shieldByMe"] ~= nil then
-            indicatorCustoms[t["indicatorName"]] = t["shieldByMe"]
+            indicatorBooleans[t["indicatorName"]] = t["shieldByMe"]
         end
         if t["onlyShowOvershields"] ~= nil then
-            indicatorCustoms[t["indicatorName"]] = t["onlyShowOvershields"]
+            indicatorBooleans[t["indicatorName"]] = t["onlyShowOvershields"]
         end
     end
 end
@@ -224,7 +228,7 @@ local function HandleIndicators(b)
             B:UpdateHealthText(b)
         end
         -- update color
-        if t["color"] and t["indicatorName"] ~= "nameText" then
+        if t["color"] and t["indicatorName"] ~= "nameText" and t["indicatorName"] ~="healthText" then
             indicator:SetColor(unpack(t["color"]))
         end
         -- update colors
@@ -586,7 +590,8 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                 B:UpdateHealthText(b)
             end, true)
         elseif setting == "color" then
-            if indicatorName == "nameText" then
+            if indicatorName == "nameText" or indicatorName == "healthText" then
+                indicatorColors[indicatorName] = value
                 F:IterateAllUnitButtons(function(b)
                     UnitButton_UpdateNameColor(b)
                 end, true)
@@ -680,19 +685,19 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                 end, true)
             elseif value == "hideIfEmptyOrFull" then
                 --! 血量文字指示器需要立即被刷新
-                indicatorCustoms[indicatorName] = value2
+                indicatorBooleans[indicatorName] = value2
                 F:IterateAllUnitButtons(function(b)
                     B:UpdateHealthText(b)
                 end, true)
             elseif value == "hideInCombat" then
-                indicatorCustoms[indicatorName] = value2
+                indicatorBooleans[indicatorName] = value2
                 F:IterateAllUnitButtons(function(b)
                     UnitButton_UpdateLeader(b)
                 end, true)
             elseif value == "shieldByMe" then
-                indicatorCustoms[indicatorName] = value2
+                indicatorBooleans[indicatorName] = value2
             elseif value == "onlyShowOvershields" then
-                indicatorCustoms[indicatorName] = value2
+                indicatorBooleans[indicatorName] = value2
                 F:IterateAllUnitButtons(function(b)
                     UnitButton_UpdateShieldAbsorbs(b)
                 end, true)
@@ -745,7 +750,7 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
             elseif value == "showAllSpells" then
                 I:ShowAllTargetedSpells(value2)
             else
-                indicatorCustoms[indicatorName] = value2
+                indicatorBooleans[indicatorName] = value2
             end
         elseif setting == "create" then
             F:IterateAllUnitButtons(function(b)
@@ -887,7 +892,7 @@ local function UnitButton_UpdateDebuffs(self)
             end
 
             if enabledIndicators["debuffs"] and duration <= 600 and not Cell.vars.debuffBlacklist[spellId] then
-                if not indicatorCustoms["debuffs"] then -- all debuffs
+                if not indicatorBooleans["debuffs"] then -- all debuffs
                     if Cell.vars.bigDebuffs[spellId] then  -- isBigDebuff
                         self._debuffs_big[i] = refreshing
                         startIndex = startIndex + 1
@@ -919,7 +924,7 @@ local function UnitButton_UpdateDebuffs(self)
                 self._debuffs_raid_refreshing[i] = refreshing -- store all raidDebuffs
                 self._debuffs_raid_orders[i] = I:GetDebuffOrder(name, spellId, count)
 
-                if not indicatorCustoms["raidDebuffs"] then -- glow all matching debuffs
+                if not indicatorBooleans["raidDebuffs"] then -- glow all matching debuffs
                     glowType, glowOptions = I:GetDebuffGlow(name, spellId, count)
                     if glowType and glowType ~= "None" then
                         self._debuffs_glow_current[glowType] = glowOptions
@@ -934,7 +939,7 @@ local function UnitButton_UpdateDebuffs(self)
 
             if enabledIndicators["dispels"] and debuffType and debuffType ~= "" then
                 -- all dispels / only dispellableByMe
-                if not indicatorCustoms["dispels"] or I:CanDispel(debuffType) then
+                if not indicatorBooleans["dispels"] or I:CanDispel(debuffType) then
                     if Cell.vars.dispelBlacklist[spellId] then
                         -- no highlight
                         self._debuffs_dispel[debuffType] = false
@@ -1002,7 +1007,7 @@ local function UnitButton_UpdateDebuffs(self)
         end
 
         -- update glow
-        if not indicatorCustoms["raidDebuffs"] then
+        if not indicatorBooleans["raidDebuffs"] then
             if topGlowType and topGlowType ~= "None" then
                 -- to make sure top glow has highest priority
                 self._debuffs_glow_current[topGlowType] = topGlowOptions
@@ -1165,7 +1170,7 @@ local function UnitButton_UpdateBuffs(self)
                 self.state.BGFlag = "horde"
             end
 
-            if enabledIndicators["powerWordShield"] and POWER_WORD_SHIELD[spellId] and (not indicatorCustoms["powerWordShield"] or source == "player") then
+            if enabledIndicators["powerWordShield"] and POWER_WORD_SHIELD[spellId] and (not indicatorBooleans["powerWordShield"] or source == "player") then
                 pwsFound = true
                 self.indicators.powerWordShield:SetShieldCooldown(expirationTime - duration, duration)
             end
@@ -1311,7 +1316,7 @@ local function UpdateUnitHealthState(self, diff)
 
     if enabledIndicators["healthText"] and healthMax ~= 0 then
         if health == healthMax or self.state.isDeadOrGhost then
-            if not indicatorCustoms["healthText"] then
+            if not indicatorBooleans["healthText"] then
                 self.indicators.healthText:SetHealth(health, healthMax, self.state.totalAbsorbs)
                 self.indicators.healthText:Show()
             else
@@ -1479,7 +1484,7 @@ UnitButton_UpdateLeader = function(self, event)
     local leaderIcon = self.indicators.leaderIcon
 
     if enabledIndicators["leaderIcon"] then
-        if indicatorCustoms["leaderIcon"] and (InCombatLockdown() or event == "PLAYER_REGEN_DISABLED") then
+        if indicatorBooleans["leaderIcon"] and (InCombatLockdown() or event == "PLAYER_REGEN_DISABLED") then
             leaderIcon:Hide()
             return
         end
@@ -1872,35 +1877,51 @@ UnitButton_UpdateNameColor = function(self)
     self.state.class = UnitClassBase(unit) --! update class or it may be nil
 
     local nameText = self.indicators.nameText
+    local healthText = self.indicators.healthText
 
-    if not Cell.loaded then
+    if not Cell.vars.currentLayoutTable then
         nameText:SetColor(1, 1, 1)
-        return 
+        healthText:SetColor(1, 1, 1)
+        return
     end
     
     if UnitIsPlayer(unit) then -- player
-        if not UnitIsConnected(unit) then
+        if not UnitIsConnected(unit) or UnitIsCharmed(unit) then
             nameText:SetColor(F:GetClassColor(self.state.class))
-        elseif UnitIsCharmed(unit) then
-            nameText:SetColor(F:GetClassColor(self.state.class))
+            healthText:SetColor(F:GetClassColor(self.state.class))
         else
-            if Cell.vars.currentLayoutTable["indicators"][1]["color"][1] == "class_color" then
+            if indicatorColors["nameText"][1] == "class_color" then
                 nameText:SetColor(F:GetClassColor(self.state.class))
             else
-                nameText:SetColor(unpack(Cell.vars.currentLayoutTable["indicators"][1]["color"][2]))
+                nameText:SetColor(unpack(indicatorColors["nameText"][2]))
+            end
+            if indicatorColors["healthText"][1] == "class_color" then
+                healthText:SetColor(F:GetClassColor(self.state.class))
+            else
+                healthText:SetColor(unpack(indicatorColors["healthText"][2]))
             end
         end
     elseif string.find(unit, "pet") then -- pet
-        if Cell.vars.currentLayoutTable["indicators"][1]["color"][1] == "class_color" then
+        if indicatorColors["nameText"][1] == "class_color" then
             nameText:SetColor(0.5, 0.5, 1)
         else
-            nameText:SetColor(unpack(Cell.vars.currentLayoutTable["indicators"][1]["color"][2]))
+            nameText:SetColor(unpack(indicatorColors["nameText"][2]))
+        end
+        if indicatorColors["healthText"][1] == "class_color" then
+            healthText:SetColor(0.5, 0.5, 1)
+        else
+            healthText:SetColor(unpack(indicatorColors["healthText"][2]))
         end
     else -- npc
-        if Cell.vars.currentLayoutTable["indicators"][1]["color"][1] == "class_color" then
+        if indicatorColors["nameText"][1] == "class_color" then
             nameText:SetColor(0, 1, 0.2)
         else
-            nameText:SetColor(unpack(Cell.vars.currentLayoutTable["indicators"][1]["color"][2]))
+            nameText:SetColor(unpack(indicatorColors["nameText"][2]))
+        end
+        if indicatorColors["healthText"][1] == "class_color" then
+            healthText:SetColor(0, 1, 0.2)
+        else
+            healthText:SetColor(unpack(indicatorColors["healthText"][2]))
         end
     end
 end
@@ -1992,7 +2013,7 @@ UnitButton_UpdateShieldAbsorbs = function(self)
         local shieldPercent = self.state.totalAbsorbs / self.state.healthMax
 
         if enabledIndicators["shieldBar"] then
-            if indicatorCustoms["shieldBar"] then
+            if indicatorBooleans["shieldBar"] then
                 -- onlyShowOvershields
                 local overshieldPercent = (self.state.totalAbsorbs + self.state.health - self.state.healthMax) / self.state.healthMax
                 if overshieldPercent > 0 then
@@ -2077,7 +2098,7 @@ cleu:SetScript("OnEvent", function()
             -- totalAbsorbed = 0
             -- print(timestamp, arg18, "healed:", arg15, "shield:", pwsInfo[destGUID])
 
-            if not indicatorCustoms["powerWordShield"] or sourceGUID == Cell.vars.playerGUID then
+            if not indicatorBooleans["powerWordShield"] or sourceGUID == Cell.vars.playerGUID then
                 UpdateShield(destGUID, pwsInfo[destGUID])
             else
                 UpdateShield(destGUID, nil, true) -- reset powerWordShield max

@@ -1444,6 +1444,84 @@ local function SetHealth_Absorbs_Only_Percentage(self, current, max, totalAbsorb
     self:SetWidth(self.text:GetStringWidth()+3)
 end
 
+local function HealthText_SetFont(self, font, size, flags)
+    font = F:GetFont(font)
+
+    if flags == "Shadow" then
+        self.text:SetFont(font, size, "")
+        self.text:SetShadowOffset(1, -1)
+        self.text:SetShadowColor(0, 0, 0, 1)
+    else
+        if flags == "None" then
+            flags = ""
+        elseif flags == "Outline" then
+            flags = "OUTLINE"
+        else
+            flags = "OUTLINE,MONOCHROME"
+        end
+        self.text:SetFont(font, size, flags)
+        self.text:SetShadowOffset(0, 0)
+        self.text:SetShadowColor(0, 0, 0, 0)
+    end
+    self:SetSize(self.text:GetStringWidth()+3, size+3)
+end
+
+local function HealthText_SetPoint(self, point, relativeTo, relativePoint, x, y)
+    self.text:ClearAllPoints()
+    if string.find(point, "LEFT") then
+        self.text:SetPoint("LEFT")
+    elseif string.find(point, "RIGHT") then
+        self.text:SetPoint("RIGHT")
+    else
+        self.text:SetPoint("CENTER")
+    end
+    self:_SetPoint(point, relativeTo, relativePoint, x, y)
+end
+
+local function HealthText_SetFormat(self, format)
+    if format == "percentage" then
+        self.SetHealth = SetHealth_Percentage
+    elseif format == "percentage-absorbs" then
+        self.SetHealth = SetHealth_Percentage_Absorbs
+    elseif format == "percentage-absorbs-merged" then
+        self.SetHealth = SetHealth_Percentage_Absorbs_Merged
+    elseif format == "percentage-deficit" then
+        self.SetHealth = SetHealth_Percentage_Deficit
+    elseif format == "number" then
+        self.SetHealth = SetHealth_Number
+    elseif format == "number-short" then
+        self.SetHealth = SetHealth_Number_Short
+    elseif format == "number-absorbs-short" then
+        self.SetHealth = SetHealth_Number_Absorbs_Short
+    elseif format == "number-absorbs-merged-short" then
+        self.SetHealth = SetHealth_Number_Absorbs_Merged_Short
+    elseif format == "number-deficit" then
+        self.SetHealth = SetHealth_Number_Deficit
+    elseif format == "number-deficit-short" then
+        self.SetHealth = SetHealth_Number_Deficit_Short
+    elseif format == "current-short-percentage" then
+        self.SetHealth = SetHealth_Current_Short_Percentage
+    elseif format == "absorbs-only" then
+        self.SetHealth = SetHealth_Absorbs_Only
+    elseif format == "absorbs-only-short" then
+        self.SetHealth = SetHealth_Absorbs_Only_Short
+    elseif format == "absorbs-only-percentage" then
+        self.SetHealth = SetHealth_Absorbs_Only_Percentage
+    end
+end
+
+local function HealthText_SetColor(self, r, g, b)
+    self.text:SetTextColor(r, g, b)
+end
+
+local function HealthText_UpdatePreviewColor(self, color)
+    if color[1] == "class_color" then
+        self.text:SetTextColor(F:GetClassColor(Cell.vars.playerClass))
+    else
+        self.text:SetTextColor(unpack(color[2]))
+    end
+end
+
 function I:CreateHealthText(parent)
     local healthText = CreateFrame("Frame", parent:GetName().."HealthText", parent.widget.overlayFrame)
     parent.indicators.healthText = healthText
@@ -1452,76 +1530,12 @@ function I:CreateHealthText(parent)
     local text = healthText:CreateFontString(nil, "OVERLAY", "CELL_FONT_STATUS")
     healthText.text = text
 
-    function healthText:SetFont(font, size, flags)
-        font = F:GetFont(font)
-
-        if flags == "Shadow" then
-            text:SetFont(font, size, "")
-            text:SetShadowOffset(1, -1)
-            text:SetShadowColor(0, 0, 0, 1)
-        else
-            if flags == "None" then
-                flags = ""
-            elseif flags == "Outline" then
-                flags = "OUTLINE"
-            else
-                flags = "OUTLINE,MONOCHROME"
-            end
-            text:SetFont(font, size, flags)
-            text:SetShadowOffset(0, 0)
-            text:SetShadowColor(0, 0, 0, 0)
-        end
-        healthText:SetSize(text:GetStringWidth()+3, size+3)
-    end
-
+    healthText.SetFont = HealthText_SetFont
     healthText._SetPoint = healthText.SetPoint
-    function healthText:SetPoint(point, relativeTo, relativePoint, x, y)
-        text:ClearAllPoints()
-        if string.find(point, "LEFT") then
-            text:SetPoint("LEFT")
-        elseif string.find(point, "RIGHT") then
-            text:SetPoint("RIGHT")
-        else
-            text:SetPoint("CENTER")
-        end
-        healthText:_SetPoint(point, relativeTo, relativePoint, x, y)
-    end
-
-    function healthText:SetFormat(format)
-        if format == "percentage" then
-            healthText.SetHealth = SetHealth_Percentage
-        elseif format == "percentage-absorbs" then
-            healthText.SetHealth = SetHealth_Percentage_Absorbs
-        elseif format == "percentage-absorbs-merged" then
-            healthText.SetHealth = SetHealth_Percentage_Absorbs_Merged
-        elseif format == "percentage-deficit" then
-            healthText.SetHealth = SetHealth_Percentage_Deficit
-        elseif format == "number" then
-            healthText.SetHealth = SetHealth_Number
-        elseif format == "number-short" then
-            healthText.SetHealth = SetHealth_Number_Short
-        elseif format == "number-absorbs-short" then
-            healthText.SetHealth = SetHealth_Number_Absorbs_Short
-        elseif format == "number-absorbs-merged-short" then
-            healthText.SetHealth = SetHealth_Number_Absorbs_Merged_Short
-        elseif format == "number-deficit" then
-            healthText.SetHealth = SetHealth_Number_Deficit
-        elseif format == "number-deficit-short" then
-            healthText.SetHealth = SetHealth_Number_Deficit_Short
-        elseif format == "current-short-percentage" then
-            healthText.SetHealth = SetHealth_Current_Short_Percentage
-        elseif format == "absorbs-only" then
-            healthText.SetHealth = SetHealth_Absorbs_Only
-        elseif format == "absorbs-only-short" then
-            healthText.SetHealth = SetHealth_Absorbs_Only_Short
-        elseif format == "absorbs-only-percentage" then
-            healthText.SetHealth = SetHealth_Absorbs_Only_Percentage
-        end
-    end
-
-    function healthText:SetColor(r, g, b)
-        text:SetTextColor(r, g, b)
-    end
+    healthText.SetPoint = HealthText_SetPoint
+    healthText.SetFormat = HealthText_SetFormat
+    healthText.SetColor = HealthText_SetColor
+    healthText.UpdatePreviewColor = HealthText_UpdatePreviewColor
 
     function healthText:SetHealth() end
 end

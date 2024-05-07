@@ -151,7 +151,7 @@ Cell.defaults.layout = {
             ["position"] = {"TOP", "CENTER", 0, -5},
             ["frameLevel"] = 2,
             ["font"] = {"Cell ".._G.DEFAULT, 10, "Shadow"},
-            ["color"] = {1, 1, 1},
+            ["color"] = {"custom_color", {1, 1, 1}},
             ["format"] = "percentage",
             ["hideIfEmptyOrFull"] = true,
         }, -- 3
