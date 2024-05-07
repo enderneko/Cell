@@ -655,9 +655,11 @@ local function CheckDivineAegis()
     end
 end
 
-local function UpdateSpecVars()
-    Cell.vars.activeTalentGroup = GetActiveTalentGroup()
-    Cell.vars.playerSpecID = Cell.vars.activeTalentGroup
+local function UpdateSpecVars(exceptActiveTalentGroup)
+    if not exceptActiveTalentGroup then
+        Cell.vars.activeTalentGroup = GetActiveTalentGroup()
+        Cell.vars.playerSpecID = Cell.vars.activeTalentGroup
+    end
     Cell.vars.primaryTalentTree = GetPrimaryTalentTree()
     if Cell.vars.primaryTalentTree then
         _, Cell.vars.playerSpecName, _, Cell.vars.playerSpecIcon = GetTalentTabInfo(Cell.vars.primaryTalentTree)
@@ -751,7 +753,7 @@ end
 -- check Divine Aegis
 function eventFrame:PLAYER_TALENT_UPDATE()
     CheckDivineAegis()
-    UpdateSpecVars()
+    UpdateSpecVars(true)
     F:UpdateClickCastingProfileLabel()
 end
 
