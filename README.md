@@ -26,7 +26,8 @@ Hope you enjoy.
 - __Raid Debuffs:__ debuffs priority and glow.
 - __Useful Raid Tools:__ ready check, countdown, rebuff, death report, marks, battleres.
 - __Nice Options UI:__ I mean yes it's pretty darn good!
-- __Spotlight Frame:__ extra 5 unit buttons, can be set to Target, Target of Target, Focus, Unit or Unit's Pet.
+- __Spotlight Frame:__ extra 15 unit buttons, can be set to Target, Focus, Unit, Tank, etc.
+- __Quick Assist:__ for Augmentation Evokers!
 - __Compatibility:__ [BigDebuffs](https://www.curseforge.com/wow/addons/bigdebuffs), [Class Colors](https://www.curseforge.com/wow/addons/classcolors), [OmniCD](https://www.curseforge.com/wow/addons/omnicd) and of course, [WAs](https://wago.io/weakauras).
 
 &nbsp;
@@ -53,7 +54,6 @@ Check <https://github.com/enderneko/Cell/tree/master/.snippets> for more snippet
 
 ## Not supported and probably won't be included in the future
 
-- Sort raid by name/class/role
 - Custom border
 - Addons like Clique
 
