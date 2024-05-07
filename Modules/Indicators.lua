@@ -1623,6 +1623,7 @@ local function ShowIndicatorSettings(id)
         if indicatorTable["auraType"] == "buff" then
             tinsert(settingsTable, 2, "castBy")
             tinsert(settingsTable, 3, "checkbutton2:trackByName")
+            -- tinsert(settingsTable, 4, "showOn")
         end
        
         -- tips

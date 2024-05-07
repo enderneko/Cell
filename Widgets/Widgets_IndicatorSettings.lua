@@ -5282,6 +5282,74 @@ local function CreateSetting_CastBy(parent)
     return widget
 end
 
+local function CreateSetting_ShowOn(parent)
+    local widget
+
+    if not settingWidgets["showOn"] then
+        widget = addon:CreateFrame("CellIndicatorSettings_ShowOn", parent, 240, 50)
+        settingWidgets["showOn"] = widget
+
+        widget.showOn = addon:CreateDropdown(widget, 245)
+        widget.showOn:SetPoint("TOPLEFT", 5, -20)
+        widget.showOn:SetItems({
+            {
+                ["text"] = L["All"],
+                ["value"] = "all",
+                ["onClick"] = function()
+                    widget.func("all")
+                end,
+            },
+            {
+                ["text"] = L["Main"],
+                ["value"] = "main",
+                ["onClick"] = function()
+                    widget.func("main")
+                end,
+            },
+            {
+                ["text"] = L["Spotlight"],
+                ["value"] = "spotlight",
+                ["onClick"] = function()
+                    widget.func("spotlight")
+                end,
+            },
+            {
+                ["text"] = L["Pet"],
+                ["value"] = "pet",
+                ["onClick"] = function()
+                    widget.func("pet")
+                end,
+            },
+            {
+                ["text"] = L["NPC"],
+                ["value"] = "npc",
+                ["onClick"] = function()
+                    widget.func("npc")
+                end,
+            },
+        })
+
+        widget.showOnText = widget:CreateFontString(nil, "OVERLAY", font_name)
+        widget.showOnText:SetText(L["Show On"])
+        widget.showOnText:SetPoint("BOTTOMLEFT", widget.showOn, "TOPLEFT", 0, 1)
+
+        -- callback
+        function widget:SetFunc(func)
+            widget.func = func
+        end
+        
+        -- show db value
+        function widget:SetDBValue(showOn)
+            widget.showOn:SetSelectedValue(showOn)
+        end
+    else
+        widget = settingWidgets["showOn"]
+    end
+
+    widget:Show()
+    return widget
+end
+
 -----------------------------------------
 -- update parent height
 -----------------------------------------
@@ -5423,6 +5491,8 @@ function addon:CreateIndicatorSettings(parent, settingsTable)
             tinsert(widgetsTable, CreateSetting_TargetCounterFilters(parent))
         elseif setting == "castBy" then
             tinsert(widgetsTable, CreateSetting_CastBy(parent))
+        elseif setting == "showOn" then
+            tinsert(widgetsTable, CreateSetting_ShowOn(parent))
         else -- tips
             tinsert(widgetsTable, CreateSetting_Tips(parent, setting))
         end
