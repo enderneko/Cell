@@ -202,7 +202,7 @@ end
 
 local resurrection_click_castings = {
     ["DRUID"] = {
-        {"type-R", "spell", 20484},
+        {"type-altR", "spell", 20484},
     },
     ["PALADIN"] = {
         {"type-shiftR", "spell", 7328},

@@ -378,10 +378,10 @@ end
 
 local resurrection_click_castings = {
     ["DEATHKNIGHT"] = {
-        {"type-R", "spell", 61999},
+        {"type-altR", "spell", 61999},
     },
     ["DRUID"] = {
-        {"type-R", "spell", 20484},
+        {"type-altR", "spell", 20484},
         {"type-shiftR", "spell", 50769},
     },
     ["EVOKER"] = {
@@ -391,7 +391,7 @@ local resurrection_click_castings = {
         {"type-shiftR", "spell", 115178},
     },
     ["PALADIN"] = {
-        {"type-R", "spell", 391054},
+        {"type-altR", "spell", 391054},
         {"type-shiftR", "spell", 7328},
     },
     ["PRIEST"] = {
@@ -401,7 +401,7 @@ local resurrection_click_castings = {
         {"type-shiftR", "spell", 2008},
     },
     ["WARLOCK"] = {
-        {"type-R", "spell", 20707},
+        {"type-altR", "spell", 20707},
     },
 }
 

@@ -221,10 +221,10 @@ end
 
 local resurrection_click_castings = {
     ["DEATHKNIGHT"] = {
-        {"type-R", "spell", 61999},
+        {"type-altR", "spell", 61999},
     },
     ["DRUID"] = {
-        {"type-R", "spell", 20484},
+        {"type-altR", "spell", 20484},
         {"type-shiftR", "spell", 50769},
     },
     ["PALADIN"] = {
