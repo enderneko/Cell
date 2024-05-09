@@ -57,7 +57,7 @@ local UnitClassBase = function(unit)
     return select(2, UnitClass(unit))
 end
 
-local barAnimationType, highlightEnabled, predictionEnabled, absorbEnabled, shieldEnabled, overshieldEnabled
+local barAnimationType, highlightEnabled, predictionEnabled, shieldEnabled, overshieldEnabled, absorbEnabled, absorbInvertColor
 
 -------------------------------------------------
 -- unit button func declarations
@@ -2791,14 +2791,17 @@ end
 
 function B:UpdateShields(button)
     predictionEnabled = CellDB["appearance"]["healPrediction"][1]
-    absorbEnabled = CellDB["appearance"]["healAbsorb"][1]
     shieldEnabled = CellDB["appearance"]["shield"][1]
     overshieldEnabled = CellDB["appearance"]["overshield"]
+    absorbEnabled = CellDB["appearance"]["healAbsorb"][1]
+    absorbInvertColor = CellDB["appearance"]["healAbsorbInvertColor"]
 
     button.widget.shieldBar:SetVertexColor(CellDB["appearance"]["shield"][2][1], CellDB["appearance"]["shield"][2][2], CellDB["appearance"]["shield"][2][3], CellDB["appearance"]["shield"][2][4])
     button.widget.overShieldGlow:SetVertexColor(CellDB["appearance"]["shield"][2][1], CellDB["appearance"]["shield"][2][2], CellDB["appearance"]["shield"][2][3], 1)
-    button.widget.absorbsBar:SetVertexColor(CellDB["appearance"]["healAbsorb"][2][1], CellDB["appearance"]["healAbsorb"][2][2], CellDB["appearance"]["healAbsorb"][2][3], CellDB["appearance"]["healAbsorb"][2][4])
     button.widget.overAbsorbGlow:SetVertexColor(CellDB["appearance"]["healAbsorb"][2][1], CellDB["appearance"]["healAbsorb"][2][2], CellDB["appearance"]["healAbsorb"][2][3], 1)
+    if not absorbInvertColor then
+        button.widget.absorbsBar:SetVertexColor(CellDB["appearance"]["healAbsorb"][2][1], CellDB["appearance"]["healAbsorb"][2][2], CellDB["appearance"]["healAbsorb"][2][3], CellDB["appearance"]["healAbsorb"][2][4])
+    end
 
     UnitButton_UpdateHealPrediction(button)
     UnitButton_UpdateHealAbsorbs(button)
@@ -2949,6 +2952,9 @@ function B:SetOrientation(button, orientation, rotateTexture)
         P:Point(absorbsBar, "TOPRIGHT", healthBar:GetStatusBarTexture())
         P:Point(absorbsBar, "BOTTOMRIGHT", healthBar:GetStatusBarTexture())
         function absorbsBar:SetValue(absorbsPercent)
+            if absorbInvertColor then
+                absorbsBar:SetVertexColor(F:InvertColor(healthBar:GetStatusBarColor()))               
+            end
             local barWidth = healthBar:GetWidth()
             absorbsBar:SetWidth(absorbsPercent * barWidth)
             absorbsBar:Show()
@@ -3065,6 +3071,9 @@ function B:SetOrientation(button, orientation, rotateTexture)
         P:Point(absorbsBar, "TOPLEFT", healthBar:GetStatusBarTexture())
         P:Point(absorbsBar, "TOPRIGHT", healthBar:GetStatusBarTexture())
         function absorbsBar:SetValue(absorbsPercent)
+            if absorbInvertColor then
+                absorbsBar:SetVertexColor(F:InvertColor(healthBar:GetStatusBarColor()))               
+            end
             local barHeight = healthBar:GetHeight()
             absorbsBar:SetHeight(absorbsPercent * barHeight)
             absorbsBar:Show()
@@ -3392,8 +3401,8 @@ function CellUnitButton_OnLoad(button)
     absorbsBar:SetTexture("Interface\\AddOns\\Cell\\Media\\shield.tga", "REPEAT", "REPEAT")
     absorbsBar:SetHorizTile(true)
     absorbsBar:SetVertTile(true)
-    absorbsBar:SetVertexColor(1, 0.1, 0.1, 0.9)
-    absorbsBar:SetBlendMode("ADD")
+    absorbsBar:SetVertexColor(1, 0.1, 0.1, 1)
+    -- absorbsBar:SetBlendMode("ADD")
     absorbsBar:Hide()
     absorbsBar.SetValue = DumbFunc
 

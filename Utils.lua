@@ -341,6 +341,10 @@ function F:ConvertHSBToRGB(h, s, b)
     return R, G, B
 end
 
+function F:InvertColor(r, g, b)
+    return 1 - r, 1 - g, 1 - b
+end
+
 -------------------------------------------------
 -- number
 -------------------------------------------------
