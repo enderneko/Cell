@@ -442,8 +442,8 @@ local function UpdatePreviewShields(r, g, b)
             previewButton2.widget.shieldBar:Hide()
         end
         
-        if CellDB["appearance"]["overshield"] then
-            previewButton2.widget.overShieldGlow:SetVertexColor(CellDB["appearance"]["shield"][2][1], CellDB["appearance"]["shield"][2][2], CellDB["appearance"]["shield"][2][3], 1)
+        if CellDB["appearance"]["overshield"][1] then
+            previewButton2.widget.overShieldGlow:SetVertexColor(CellDB["appearance"]["overshield"][2][1], CellDB["appearance"]["overshield"][2][2], CellDB["appearance"]["overshield"][2][3], 1)
             previewButton2.widget.overShieldGlow:Show()
         else
             previewButton2.widget.overShieldGlow:Hide()
@@ -514,6 +514,7 @@ end
 local textureDropdown, barColorDropdown, barColorPicker, fullColorCB, fullColorPicker, lossColorDropdown, lossColorPicker, deathColorCB, deathColorPicker, powerColorDropdown, powerColorPicker, barAnimationDropdown, targetColorPicker, mouseoverColorPicker, highlightSize
 local gradientColorCB1, gradientColorCB2, gradientColorCB3
 local barAlpha, lossAlpha, bgAlpha, oorAlpha, predCB, absorbCB, invertColorCB, shieldCB, oversCB
+local predCustomCB, predColorPicker, absorbColorPicker, shieldColorPicker, oversColorPicker
 local iconOptionsBtn, iconOptionsFrame, iconAnimationDropdown, durationRoundUpCB, durationDecimalText1, durationDecimalText2, durationDecimalDropdown, durationColorCB, durationNormalCP, durationPercentCP, durationSecondCP, durationPercentDD, durationSecondEB, durationSecondText
 
 local LSM = LibStub("LibSharedMedia-3.0", true)
@@ -1232,11 +1233,20 @@ local function CreateUnitButtonStylePane()
     
     -- overshield
     oversCB = Cell:CreateCheckButton(unitButtonPane, "", function(checked, self)
-        CellDB["appearance"]["overshield"] = checked
+        CellDB["appearance"]["overshield"][1] = checked
+        oversColorPicker:SetEnabled(checked)
         Cell:Fire("UpdateAppearance", "shields")
     end)
     oversCB:SetPoint("TOPLEFT", shieldCB, "BOTTOMLEFT", 0, -7)
     oversCB:SetEnabled(not Cell.isVanilla)
+
+    oversColorPicker = Cell:CreateColorPicker(unitButtonPane, L["Overshield Texture"], false, function(r, g, b)
+        CellDB["appearance"]["overshield"][2][1] = r
+        CellDB["appearance"]["overshield"][2][2] = g
+        CellDB["appearance"]["overshield"][2][3] = b
+        Cell:Fire("UpdateAppearance", "shields")
+    end)
+    oversColorPicker:SetPoint("TOPLEFT", oversCB, "TOPRIGHT", 5, 0)
     
     -- reset
     local resetBtn = Cell:CreateButton(unitButtonPane, L["Reset All"], "accent", {77, 17}, nil, nil, nil, nil, nil, L["Reset All"], L["[Ctrl+LeftClick] to reset these settings"])
@@ -1359,7 +1369,7 @@ LoadButtonStyle = function()
     invertColorCB:SetChecked(CellDB["appearance"]["healAbsorbInvertColor"])
     UpdateHealAbsorbWidgets(CellDB["appearance"]["healAbsorbInvertColor"])
     shieldCB:SetChecked(CellDB["appearance"]["shield"][1])
-    oversCB:SetChecked(CellDB["appearance"]["overshield"])
+    oversCB:SetChecked(CellDB["appearance"]["overshield"][1])
 
     predCustomCB:SetChecked(CellDB["appearance"]["healPrediction"][2])
     predCustomCB:SetEnabled(CellDB["appearance"]["healPrediction"][1])
@@ -1369,6 +1379,8 @@ LoadButtonStyle = function()
     absorbColorPicker:SetColor(unpack(CellDB["appearance"]["healAbsorb"][2]))
     shieldColorPicker:SetEnabled(CellDB["appearance"]["shield"][1])
     shieldColorPicker:SetColor(unpack(CellDB["appearance"]["shield"][2]))
+    oversColorPicker:SetEnabled(CellDB["appearance"]["overshield"][1])
+    oversColorPicker:SetColor(unpack(CellDB["appearance"]["overshield"][2]))
 
     -- icon options
     iconAnimationDropdown:SetSelectedValue(CellDB["appearance"]["auraIconOptions"]["animation"])

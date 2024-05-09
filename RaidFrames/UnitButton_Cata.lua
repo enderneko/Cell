@@ -2691,10 +2691,10 @@ function B:UpdateShields(button)
     predictionEnabled = CellDB["appearance"]["healPrediction"][1]
     absorbEnabled = CellDB["appearance"]["healAbsorb"][1]
     shieldEnabled = CellDB["appearance"]["shield"][1]
-    overshieldEnabled = CellDB["appearance"]["overshield"]
+    overshieldEnabled = CellDB["appearance"]["overshield"][1]
 
     button.widget.shieldBar:SetVertexColor(CellDB["appearance"]["shield"][2][1], CellDB["appearance"]["shield"][2][2], CellDB["appearance"]["shield"][2][3], CellDB["appearance"]["shield"][2][4])
-    button.widget.overShieldGlow:SetVertexColor(CellDB["appearance"]["shield"][2][1], CellDB["appearance"]["shield"][2][2], CellDB["appearance"]["shield"][2][3], 1)
+    button.widget.overShieldGlow:SetVertexColor(CellDB["appearance"]["overshield"][2][1], CellDB["appearance"]["overshield"][2][2], CellDB["appearance"]["overshield"][2][3], 1)
 
     UnitButton_UpdateHealPrediction(button)
     UnitButton_UpdateShieldAbsorbs(button)

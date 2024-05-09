@@ -2693,6 +2693,12 @@ function F:Revise()
         if not strfind(CellDB["snippets"][0]["code"], "CELL_USE_LIBHEALCOMM") then
             CellDB["snippets"][0]["code"] = CellDB["snippets"][0]["code"].."\n\n-- use LibHealComm (boolean, non-retail)\nCELL_USE_LIBHEALCOMM = false"
         end
+
+        -- update overshield
+        if type(CellDB["appearance"]["overshield"]) ~= "table" then
+            local enabled = CellDB["appearance"]["overshield"] and true or false
+            CellDB["appearance"]["overshield"] = {enabled, {CellDB["appearance"]["shield"][2][1], CellDB["appearance"]["shield"][2][2], CellDB["appearance"]["shield"][2][3], 1}}
+        end
     end
 
     -- ----------------------------------------------------------------------- --

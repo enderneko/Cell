@@ -33,7 +33,7 @@ Cell.defaults.appearance = {
     ["healAbsorb"] = {Cell.isRetail, {1, 0.1, 0.1, 1}},
     ["healAbsorbInvertColor"] = false,
     ["shield"] = {not Cell.isVanilla, {1, 1, 1, 0.4}},
-    ["overshield"] = not Cell.isVanilla,
+    ["overshield"] = {not Cell.isVanilla, {1, 1, 1, 1}},
 }
 
 local buttonStyleIndices = {
