@@ -509,7 +509,7 @@ end
 -------------------------------------------------
 local textureDropdown, barColorDropdown, barColorPicker, fullColorCB, fullColorPicker, lossColorDropdown, lossColorPicker, deathColorCB, deathColorPicker, powerColorDropdown, powerColorPicker, barAnimationDropdown, targetColorPicker, mouseoverColorPicker, highlightSize
 local gradientColorCB1, gradientColorCB2, gradientColorCB3
-local barAlpha, lossAlpha, bgAlpha, oorAlpha, predCB, useLibCB, absorbCB, shieldCB, oversCB
+local barAlpha, lossAlpha, bgAlpha, oorAlpha, predCB, absorbCB, shieldCB, oversCB
 local predCustomCB, predColorPicker, absorbColorPicker, shieldColorPicker
 local iconOptionsBtn, iconOptionsFrame, iconAnimationDropdown, durationRoundUpCB, durationDecimalText1, durationDecimalText2, durationDecimalDropdown, durationColorCB, durationNormalCP, durationPercentCP, durationSecondCP, durationPercentDD, durationSecondEB, durationSecondText
 
@@ -1165,12 +1165,12 @@ local function CreateUnitButtonStylePane()
     predColorPicker:SetPoint("TOPLEFT", predCustomCB, "TOPRIGHT", 5, 0)
 
     -- heal prediction use LibHealComm
-    useLibCB = Cell:CreateCheckButton(unitButtonPane, _G.USE.." LibHealComm", function(checked, self)
-        CellDB["appearance"]["useLibHealComm"] = checked
-        F:EnableLibHealComm(checked)
-    end, L["LibHealComm needs to be installed"])
-    useLibCB:SetPoint("TOPLEFT", predCustomCB, "BOTTOMLEFT", 0, -7)
-    useLibCB:SetEnabled(Cell.isVanilla or Cell.isCata)
+    -- useLibCB = Cell:CreateCheckButton(unitButtonPane, _G.USE.." LibHealComm", function(checked, self)
+    --     CellDB["appearance"]["useLibHealComm"] = checked
+    --     F:EnableLibHealComm(checked)
+    -- end, L["LibHealComm needs to be installed"])
+    -- useLibCB:SetPoint("TOPLEFT", predCustomCB, "BOTTOMLEFT", 0, -7)
+    -- useLibCB:SetEnabled(Cell.isVanilla or Cell.isCata)
     
     -- heal absorb
     absorbCB = Cell:CreateCheckButton(unitButtonPane, "", function(checked, self)
@@ -1332,7 +1332,7 @@ LoadButtonStyle = function()
     bgAlpha:SetValue(CellDB["appearance"]["bgAlpha"]*100)
 
     predCB:SetChecked(CellDB["appearance"]["healPrediction"][1])
-    useLibCB:SetChecked(CellDB["appearance"]["useLibHealComm"])
+    -- useLibCB:SetChecked(CellDB["appearance"]["useLibHealComm"])
     absorbCB:SetChecked(CellDB["appearance"]["healAbsorb"][1])
     shieldCB:SetChecked(CellDB["appearance"]["shield"][1])
     oversCB:SetChecked(CellDB["appearance"]["overshield"])

@@ -653,7 +653,7 @@ function eventFrame:PLAYER_LOGIN()
     -- overrideLGF
     F:OverrideLGF(CellDB["general"]["overrideLGF"])
     -- LibHealComm
-    F:EnableLibHealComm(CellDB["appearance"]["useLibHealComm"])
+    -- F:EnableLibHealComm(CellDB["appearance"]["useLibHealComm"])
 end
 
 function eventFrame:UI_SCALE_CHANGED()

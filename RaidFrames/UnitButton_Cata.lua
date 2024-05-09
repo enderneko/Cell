@@ -1670,7 +1670,6 @@ local function UnitButton_UpdateHealth(self, diff)
     end
 end
 
-local useLibHealComm = false
 local function UnitButton_UpdateHealPrediction(self)
     if not predictionEnabled then
         self.widget.incomingHeal:Hide()
@@ -1682,7 +1681,7 @@ local function UnitButton_UpdateHealPrediction(self)
 
     local value = 0
 
-    if useLibHealComm and HealComm then
+    if CELL_USE_LIBHEALCOMM and HealComm then
         --! NOTE: use LibHealComm
         if self.__displayedGuid then
             local modifier = HealComm:GetHealModifier(self.__displayedGuid) or 1
@@ -1973,30 +1972,26 @@ end
 -------------------------------------------------
 -- LibHealComm
 -------------------------------------------------
-Cell.HealComm = {}
-local function HealComm_UpdateHealPrediction(_, event, casterGUID, spellID, healType, endTime, ...)
-    -- print(event, casterGUID, spellID, healType, endTime, ...)
-    -- update incomingHeal
-    for i = 1, select("#", ...) do
-        F:HandleUnitButton("guid", select(i, ...), UnitButton_UpdateHealPrediction)
-    end
-end
-Cell.HealComm.HealComm_UpdateHealPrediction = HealComm_UpdateHealPrediction
-
-function F:EnableLibHealComm(enabled)
+if CELL_USE_LIBHEALCOMM then
     HealComm = LibStub("LibHealComm-4.0", true)
-    if not HealComm then return end
 
-    useLibHealComm = enabled
-    if enabled then
+    if HealComm then
+        Cell.HealComm = {}
+        local function HealComm_UpdateHealPrediction(_, event, casterGUID, spellID, healType, endTime, ...)
+            -- print(event, casterGUID, spellID, healType, endTime, ...)
+            -- update incomingHeal
+            for i = 1, select("#", ...) do
+                F:HandleUnitButton("guid", select(i, ...), UnitButton_UpdateHealPrediction)
+            end
+        end
+        Cell.HealComm.HealComm_UpdateHealPrediction = HealComm_UpdateHealPrediction
+    
         HealComm.RegisterCallback(Cell.HealComm, "HealComm_HealStarted", "HealComm_UpdateHealPrediction")
         HealComm.RegisterCallback(Cell.HealComm, "HealComm_HealUpdated", "HealComm_UpdateHealPrediction")
         HealComm.RegisterCallback(Cell.HealComm, "HealComm_HealStopped", "HealComm_UpdateHealPrediction")
         HealComm.RegisterCallback(Cell.HealComm, "HealComm_HealDelayed", "HealComm_UpdateHealPrediction")
         HealComm.RegisterCallback(Cell.HealComm, "HealComm_ModifierChanged", "HealComm_UpdateHealPrediction")
         HealComm.RegisterCallback(Cell.HealComm, "HealComm_GUIDDisappeared", "HealComm_UpdateHealPrediction")
-    else
-        HealComm.UnregisterAllCallbacks(Cell.HealComm)
     end
 end
 
@@ -2402,7 +2397,7 @@ local function UnitButton_OnEvent(self, event, unit)
             -- UnitButton_UpdateStatusText(self)
     
         elseif event == "UNIT_HEAL_PREDICTION" then
-            if not useLibHealComm then
+            if not CELL_USE_LIBHEALCOMM then
                 UnitButton_UpdateHealPrediction(self)
             end
     

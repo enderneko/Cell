@@ -2681,11 +2681,17 @@ function F:Revise()
 
     -- r224-release
     if CellDB["revise"] and dbRevision < 224 then
+        -- update health text color option
         for _, layout in pairs(CellDB["layouts"]) do
             local index = Cell.defaults.indicatorIndices.healthText
             if #layout["indicators"][index]["color"] == 3 then
                 layout["indicators"][index]["color"] = {"custom_color", layout["indicators"][index]["color"]}
             end
+        end
+
+        -- move "use LibHealComm" to snippetVars
+        if not strfind(CellDB["snippets"][0]["code"], "CELL_USE_LIBHEALCOMM") then
+            CellDB["snippets"][0]["code"] = CellDB["snippets"][0]["code"].."\n\n-- use LibHealComm (boolean, non-retail)\nCELL_USE_LIBHEALCOMM = false"
         end
     end
 
