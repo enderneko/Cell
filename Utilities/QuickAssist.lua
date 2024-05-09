@@ -793,7 +793,8 @@ local nameList = {}
 local nameToPriority = {}
 
 local function GetPriority(class, specId)
-    if not (class and specId) then return end
+    if not class then return end
+    if not specId or specId == 0 then return end
     
     local priority
     for ci, ct in pairs(specFilter[2]) do

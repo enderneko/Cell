@@ -2,7 +2,7 @@
 -- File: Cell\Libs\LibGroupInfo.lua
 -- Author: enderneko (enderneko-dev@outlook.com)
 -- Created : 2022-07-29 15:04:31 +08:00
--- Modified: 2024-03-31 20:11:41 +08:00
+-- Modified: 2024-05-09 23:00:13 +08:00
 ---------------------------------------------------------------------
 
 local MAJOR, MINOR = "LibGroupInfo", 5
@@ -237,6 +237,10 @@ local function BuildAndNotify(unit)
         cache[guid].inspected = true
     else
         cache[guid].specId = 0
+        cache[guid].specName = nil
+        cache[guid].specRole = nil
+        cache[guid].specIcon = nil
+        cache[guid].inspected = nil
     end
         
     --! fire
