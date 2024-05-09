@@ -351,7 +351,12 @@ local function GetBindingSnippet()
                 elseif not bindingClicks[key] then
                     local m, k = DecodeKeyboard(key)
                     -- override keyboard to click
-                    bindingClicks[key] = [[self:SetBindingClick(true, "]]..strupper(m..k)..[[", self, "]]..key..[[")]]
+                    if k == [[\]] then
+                        key = key:gsub([[\]], [[\\]])
+                        bindingClicks[key] = [[self:SetBindingClick(true, "]]..strupper(m)..[[\\", self, "]]..key..[[")]]
+                    else
+                        bindingClicks[key] = [[self:SetBindingClick(true, "]]..strupper(m..k)..[[", self, "]]..key..[[")]]
+                    end
                 end
             end
         end
