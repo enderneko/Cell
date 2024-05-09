@@ -712,6 +712,14 @@ local function CreateIconOptionsFrame()
             end,
         },
         {
+            ["text"] = "30%",
+            ["value"] = 0.3,
+            ["onClick"] = function()
+                CellDB["appearance"]["auraIconOptions"]["durationColors"][2][4] = 0.3
+                Cell:Fire("UpdateAppearance", "icon")
+            end,
+        },
+        {
             ["text"] = "25%",
             ["value"] = 0.25,
             ["onClick"] = function()

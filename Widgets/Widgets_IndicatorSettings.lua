@@ -1085,6 +1085,13 @@ local function CreateSetting_DurationVisibility(parent)
                 end,
             },
             {
+                ["text"] = "< 30%",
+                ["value"] = 0.3,
+                ["onClick"] = function()
+                    widget.func(0.3)
+                end,
+            },
+            {
                 ["text"] = "< 25%",
                 ["value"] = 0.25,
                 ["onClick"] = function()
@@ -1853,6 +1860,13 @@ local function CreateSetting_Colors(parent)
                 end,
             },
             {
+                ["text"] = "30%",
+                ["value"] = 0.3,
+                ["onClick"] = function()
+                    widget.colorsTable[2][5] = 0.3
+                end,
+            },
+            {
                 ["text"] = "25%",
                 ["value"] = 0.25,
                 ["onClick"] = function()
@@ -1994,6 +2008,13 @@ local function CreateSetting_OverlayColors(parent)
                 ["value"] = 0.5,
                 ["onClick"] = function()
                     widget.colorsTable[2][6] = 0.5
+                end,
+            },
+            {
+                ["text"] = "30%",
+                ["value"] = 0.3,
+                ["onClick"] = function()
+                    widget.colorsTable[2][6] = 0.3
                 end,
             },
             {
@@ -2255,6 +2276,12 @@ local function CreateSetting_CustomColors(parent)
                 ["text"] = "50%",
                 ["onClick"] = function()
                     widget.colorTable[5][4] = 0.5
+                end,
+            },
+            {
+                ["text"] = "30%",
+                ["onClick"] = function()
+                    widget.colorTable[5][4] = 0.3
                 end,
             },
             {
