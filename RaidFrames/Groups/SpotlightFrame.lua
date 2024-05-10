@@ -870,7 +870,7 @@ local function UpdateLayout(layout, which)
         end
     end
     
-    if not which or strfind(which, "power$") or which == "barOrientation" then
+    if not which or strfind(which, "power$") or which == "barOrientation" or which == "powerFilter" then
         for _, b in pairs(Cell.unitButtons.spotlight) do
             if layout["spotlight"]["sameSizeAsMain"] then
                 B:SetPowerSize(b, layout["main"]["powerSize"])
