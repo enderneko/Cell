@@ -2841,19 +2841,19 @@ function CellUnitButton_OnLoad(button)
     --* srGlowFrame (Spell Request)
     local srGlowFrame = CreateFrame("Frame", name.."SRGlowFrame", button)
     button.widget.srGlowFrame = srGlowFrame
-    srGlowFrame:SetFrameLevel(button:GetFrameLevel()+120)
+    srGlowFrame:SetFrameLevel(button:GetFrameLevel()+240)
     srGlowFrame:SetAllPoints(button)
     
     --* drGlowFrame (Dispel Request)
     local drGlowFrame = CreateFrame("Frame", name.."DRGlowFrame", button)
     button.widget.drGlowFrame = drGlowFrame
-    drGlowFrame:SetFrameLevel(button:GetFrameLevel()+120)
+    drGlowFrame:SetFrameLevel(button:GetFrameLevel()+240)
     drGlowFrame:SetAllPoints(button)
 
     --* overlayFrame
     local overlayFrame = CreateFrame("Frame", name.."OverlayFrame", button)
     button.widget.overlayFrame = overlayFrame
-    overlayFrame:SetFrameLevel(button:GetFrameLevel()+8) -- button:GetFrameLevel() == 4
+    overlayFrame:SetFrameLevel(button:GetFrameLevel()+120)
     overlayFrame:SetAllPoints(button)
 
     -- aggro bar

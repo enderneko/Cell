@@ -78,10 +78,16 @@
           "labels": [],
           "checkboxes": [],
           "comments": []
-        },
+        }
+      ]
+    },
+    {
+      "id": "7b0c4654-92fe-4b4e-9566-15e8c706d9c9",
+      "title": "DONE",
+      "cards": [
         {
           "id": "aad84564-27cd-468d-83e9-39cf05279d5e",
-          "listId": "fc9baa7c-c3e7-49a4-8526-816c794e5ed9",
+          "listId": "7b0c4654-92fe-4b4e-9566-15e8c706d9c9",
           "title": "Fix NPC anchor for combined groups",
           "description": "",
           "labels": [],
@@ -90,19 +96,13 @@
         },
         {
           "id": "ee770a8f-4488-46b0-98d1-33f54e4fc7b0",
-          "listId": "fc9baa7c-c3e7-49a4-8526-816c794e5ed9",
+          "listId": "7b0c4654-92fe-4b4e-9566-15e8c706d9c9",
           "title": "Add 30% tp \"Show duration text\"",
           "description": "",
           "labels": [],
           "checkboxes": [],
           "comments": []
-        }
-      ]
-    },
-    {
-      "id": "7b0c4654-92fe-4b4e-9566-15e8c706d9c9",
-      "title": "DONE",
-      "cards": [
+        },
         {
           "id": "74db46a2-542e-4495-87b2-f81745a77572",
           "listId": "7b0c4654-92fe-4b4e-9566-15e8c706d9c9",

@@ -1611,13 +1611,13 @@ local function ShowIndicatorSettings(id)
         elseif indicatorType == "icons" then
             settingsTable = {"enabled", "auras", "checkbutton3:showStack", "durationVisibility", "checkbutton4:showAnimation", CELL_RECTANGULAR_CUSTOM_INDICATOR_ICONS and "size" or "size-square", "num:10", "numPerLine:10", "orientation", "position", "frameLevel", "font1:stackFont", "font2:durationFont"}
         elseif indicatorType == "color" then
-            settingsTable = {"enabled", "auras", "customColors", "anchor"}
+            settingsTable = {"enabled", "auras", "customColors", "anchor", "frameLevel"}
         elseif indicatorType == "texture" then
             settingsTable = {"enabled", "checkbutton3:fadeOut", "auras", "texture", "size", "position", "frameLevel"}
         elseif indicatorType == "glow" then
             settingsTable = {"enabled", "checkbutton3:fadeOut", "auras", "glowOptions", "frameLevel"}
         elseif indicatorType == "overlay" then
-            settingsTable = {"enabled", "auras", "overlayColors", "checkbutton3:smooth", "barOrientation"}
+            settingsTable = {"enabled", "auras", "overlayColors", "checkbutton3:smooth", "barOrientation", "frameLevel"}
         end
        
         if indicatorTable["auraType"] == "buff" then

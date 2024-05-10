@@ -2681,11 +2681,20 @@ function F:Revise()
 
     -- r224-release
     if CellDB["revise"] and dbRevision < 224 then
-        -- update health text color option
         for _, layout in pairs(CellDB["layouts"]) do
+            -- update health text color option
             local index = Cell.defaults.indicatorIndices.healthText
             if #layout["indicators"][index]["color"] == 3 then
                 layout["indicators"][index]["color"] = {"custom_color", layout["indicators"][index]["color"]}
+            end
+
+            -- add frameLevel to Color and Overlay
+            for _, i in pairs(layout["indicators"]) do
+                if i.type == "color" or i.type == "overlay" then
+                    if not i.frameLevel then
+                        i.frameLevel = 1
+                    end
+                end
             end
         end
 
