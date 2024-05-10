@@ -7,25 +7,32 @@ local raidFrame = CreateFrame("Frame", "CellRaidFrame", Cell.frames.mainFrame, "
 Cell.frames.raidFrame = raidFrame
 raidFrame:SetAllPoints(Cell.frames.mainFrame)
 
-local npcFrameAnchor = CreateFrame("Frame", "CellNPCFrameAnchor", raidFrame, "SecureFrameTemplate")
-npcFrameAnchor:Hide()
+local npcFrameAnchor = CreateFrame("Frame", "CellNPCFrameAnchor", raidFrame, "SecureFrameTemplate,BackDropTemplate")
 raidFrame:SetFrameRef("npcAnchor", npcFrameAnchor)
+-- npcFrameAnchor:Hide()
+-- Cell:StylizeFrame(npcFrameAnchor)
 
 raidFrame:SetAttribute("_onattributechanged", [[
-    if name ~= "visibility" then
+    if not (name == "combinegroups" or name == "visibility") then
         return
     end
 
-    local maxGroup
-    for i = 1, 8 do
-        if self:GetFrameRef("visibilityhelper"..i):IsVisible() then
-            maxGroup = i
+    local header
+    local combineGroups = self:GetAttribute("combineGroups")
+
+    if combineGroups then
+        header = self:GetFrameRef("combinedHeader")
+    else
+        local maxGroup
+        for i = 1, 8 do
+            if self:GetFrameRef("visibilityHelper"..i):IsVisible() then
+                maxGroup = i
+            end
         end
+        if not maxGroup then return end -- NOTE: empty subgroup will cause maxGroup == nil
+        header = self:GetFrameRef("subgroup"..maxGroup)
     end
 
-    if not maxGroup then return end -- NOTE: empty subgroup will cause maxGroup == nil
-    
-    local header = self:GetFrameRef("subgroup"..maxGroup)
     local npcFrameAnchor = self:GetFrameRef("npcAnchor")
     local spacing = self:GetAttribute("spacing") or 0
     local orientation = self:GetAttribute("orientation") or "vertical"
@@ -117,7 +124,7 @@ do
     combinedHeader:SetAttribute("startingIndex", 1)
 
     -- for npcFrame's point
-    raidFrame:SetFrameRef("singleheader", combinedHeader)
+    raidFrame:SetFrameRef("combinedHeader", combinedHeader)
 end
 
 -------------------------------------------------
@@ -172,7 +179,7 @@ local function CreateGroupHeader(group)
     
     local helper = CreateFrame("Frame", nil, header[1], "SecureHandlerShowHideTemplate")
     helper:SetFrameRef("raidframe", raidFrame)
-    raidFrame:SetFrameRef("visibilityhelper"..group, helper)
+    raidFrame:SetFrameRef("visibilityHelper"..group, helper)
     helper:SetAttribute("_onshow", [[ self:GetFrameRef("raidframe"):SetAttribute("visibility", 1) ]])
     helper:SetAttribute("_onhide", [[ self:GetFrameRef("raidframe"):SetAttribute("visibility", 0) ]])
 end
@@ -388,7 +395,7 @@ local function RaidFrame_UpdateLayout(layout, which)
             raidFrame:SetAttribute("spacing", groupSpacing)
             raidFrame:SetAttribute("orientation", layout["main"]["orientation"])
             raidFrame:SetAttribute("anchor", layout["main"]["anchor"])
-            raidFrame:SetAttribute("visibility", 1) -- NOTE: trigger _onattributechanged to set npcFrameAnchor point!
+            raidFrame:SetAttribute("combineGroups", true) -- NOTE: trigger _onattributechanged to set npcFrameAnchor point!
         end
 
         if not which or which == "header" or which == "sort" then
@@ -473,12 +480,12 @@ local function RaidFrame_UpdateLayout(layout, which)
                         end
                     end
                 end
-        
-                raidFrame:SetAttribute("spacing", groupSpacing)
-                raidFrame:SetAttribute("orientation", layout["main"]["orientation"])
-                raidFrame:SetAttribute("anchor", layout["main"]["anchor"])
-                raidFrame:SetAttribute("visibility", 1) -- NOTE: trigger _onattributechanged to set npcFrameAnchor point!
             end
+        
+            raidFrame:SetAttribute("spacing", groupSpacing)
+            raidFrame:SetAttribute("orientation", layout["main"]["orientation"])
+            raidFrame:SetAttribute("anchor", layout["main"]["anchor"])
+            raidFrame:SetAttribute("combineGroups", false) -- NOTE: trigger _onattributechanged to set npcFrameAnchor point!
         end
 
         -- show/hide groups
