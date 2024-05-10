@@ -34,6 +34,8 @@ local function CreatePreviewButton()
     previewButton:SetScript("OnUpdate", nil)
     previewButton:Show()
 
+    previewButton.state.class = Cell.vars.playerClass
+
     previewButton.widget.healthBar:SetMinMaxValues(0, 1)
     previewButton.widget.healthBar:SetValue(1)
     previewButton.widget.powerBar:SetMinMaxValues(0, 1)

@@ -791,8 +791,10 @@ local function Color_SetCooldown(color, start, duration, debuffType)
                 end
             end)
         end
+    elseif color.type == "class-color" then
+        color.solidTex:SetVertexColor(F:GetClassColor(color.parent.state.class))
     elseif color.type == "debuff-type" and debuffType then
-        solidTex:SetVertexColor(CellDB["debuffTypeColor"][debuffType]["r"], CellDB["debuffTypeColor"][debuffType]["g"], CellDB["debuffTypeColor"][debuffType]["b"], 1)
+        color.solidTex:SetVertexColor(CellDB["debuffTypeColor"][debuffType]["r"], CellDB["debuffTypeColor"][debuffType]["g"], CellDB["debuffTypeColor"][debuffType]["b"], 1)
     end
     color:Show()
 end
@@ -844,6 +846,10 @@ local function Color_SetColors(self, colors)
         self.gradientTex:Hide()
     elseif colors[1] == "change-over-time" then
         self.solidTex:SetVertexColor(colors[4][1], colors[4][2], colors[4][3], colors[4][4])
+        self.solidTex:Show()
+        self.gradientTex:Hide()
+    elseif colors[1] == "class-color" then
+        self:SetScript("OnUpdate", nil)
         self.solidTex:Show()
         self.gradientTex:Hide()
     end

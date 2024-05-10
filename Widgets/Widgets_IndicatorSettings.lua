@@ -2148,6 +2148,18 @@ local function CreateSetting_CustomColors(parent)
                     widget.func(widget.colorTable)
                 end
             },
+            {
+                ["text"] = L["Class Color"],
+                ["value"] = "class-color",
+                ["onClick"] = function()
+                    P:Height(widget, 50)
+                    widget.colorPicker1:Hide()
+                    widget.colorPicker2:Hide()
+                    widget.cotFrame:Hide()
+                    widget.colorTable[1] = "class-color"
+                    widget.func(widget.colorTable)
+                end
+            },
         }
         
         widget.debuffItems = {
@@ -2208,6 +2220,18 @@ local function CreateSetting_CustomColors(parent)
                     widget.colorPicker2:Hide()
                     widget.cotFrame:Show()
                     widget.colorTable[1] = "change-over-time"
+                    widget.func(widget.colorTable)
+                end
+            },
+            {
+                ["text"] = L["Class Color"],
+                ["value"] = "class-color",
+                ["onClick"] = function()
+                    P:Height(widget, 50)
+                    widget.colorPicker1:Hide()
+                    widget.colorPicker2:Hide()
+                    widget.cotFrame:Hide()
+                    widget.colorTable[1] = "class-color"
                     widget.func(widget.colorTable)
                 end
             },
@@ -2362,6 +2386,11 @@ local function CreateSetting_CustomColors(parent)
                 widget.colorPicker1:Hide()
                 widget.colorPicker2:Hide()
                 widget.cotFrame:Show()
+            elseif colorTable[1] == "class-color" then
+                P:Height(widget, 50)
+                widget.colorPicker1:Hide()
+                widget.colorPicker2:Hide()
+                widget.cotFrame:Hide()
             else -- gradient
                 P:Height(widget, 50)
                 widget.colorPicker1:Show()
