@@ -512,7 +512,7 @@ end
 -- unitbutton
 -------------------------------------------------
 local textureDropdown, barColorDropdown, barColorPicker, fullColorCB, fullColorPicker, lossColorDropdown, lossColorPicker, deathColorCB, deathColorPicker, powerColorDropdown, powerColorPicker, barAnimationDropdown, targetColorPicker, mouseoverColorPicker, highlightSize
-local gradientColorCB1, gradientColorCB2, gradientColorCB3
+local gradientColorsText, gradientColorCB1, gradientColorCB2, gradientColorCB3
 local barAlpha, lossAlpha, bgAlpha, oorAlpha, predCB, absorbCB, invertColorCB, shieldCB, oversCB
 local predCustomCB, predColorPicker, absorbColorPicker, shieldColorPicker, oversColorPicker
 local iconOptionsBtn, iconOptionsFrame, iconAnimationDropdown, durationRoundUpCB, durationDecimalText1, durationDecimalText2, durationDecimalDropdown, durationColorCB, durationNormalCP, durationPercentCP, durationSecondCP, durationPercentDD, durationSecondEB, durationSecondText
@@ -787,6 +787,47 @@ local function UpdateHealAbsorbWidgets(invert)
     end
 end
 
+local function UpdateColorPickers()
+    -- full color
+    if CellDB["appearance"]["barColor"][1] == "custom" then
+        fullColorCB:ClearAllPoints()
+        fullColorCB:SetPoint("TOPLEFT", barColorPicker, "TOPRIGHT", 2, 0)
+        barColorPicker:Show()
+    else
+        fullColorCB:ClearAllPoints()
+        fullColorCB:SetPoint("LEFT", barColorDropdown, "RIGHT", 5, 0)
+        barColorPicker:Hide()
+    end
+
+    -- death color
+    if CellDB["appearance"]["lossColor"][1] == "custom" then
+        deathColorCB:ClearAllPoints()
+        deathColorCB:SetPoint("TOPLEFT", lossColorPicker, "TOPRIGHT", 2, 0)
+        lossColorPicker:Show()
+    else
+        deathColorCB:ClearAllPoints()
+        deathColorCB:SetPoint("LEFT", lossColorDropdown, "RIGHT", 5, 0)
+        lossColorPicker:Hide()
+    end
+
+    -- gradient color
+    if CellDB["appearance"]["barColor"][1]:find("^gradient") or CellDB["appearance"]["lossColor"][1]:find("^gradient") then
+        targetColorPicker:ClearAllPoints()
+        targetColorPicker:SetPoint("TOPLEFT", gradientColorCB1, "BOTTOMLEFT", 0, -15)
+        gradientColorsText:Show()
+        gradientColorCB1:Show()
+        gradientColorCB2:Show()
+        gradientColorCB3:Show()
+    else
+        targetColorPicker:ClearAllPoints()
+        targetColorPicker:SetPoint("TOPLEFT", barAnimationDropdown, "BOTTOMLEFT", 0, -30)
+        gradientColorsText:Hide()
+        gradientColorCB1:Hide()
+        gradientColorCB2:Hide()
+        gradientColorCB3:Hide()
+    end
+end
+
 local function CreateUnitButtonStylePane()
     local unitButtonPane = Cell:CreateTitledPane(appearanceTab, L["Unit Button Style"], 422, 410)
     unitButtonPane:SetPoint("TOPLEFT", appearanceTab, "TOPLEFT", 5, -160)
@@ -808,7 +849,7 @@ local function CreateUnitButtonStylePane()
             ["value"] = "class_color",
             ["onClick"] = function()
                 CellDB["appearance"]["barColor"][1] = "class_color"
-                barColorPicker:SetEnabled(false)
+                UpdateColorPickers()
                 Cell:Fire("UpdateAppearance", "color")
             end,
         },
@@ -817,7 +858,7 @@ local function CreateUnitButtonStylePane()
             ["value"] = "class_color_dark",
             ["onClick"] = function()
                 CellDB["appearance"]["barColor"][1] = "class_color_dark"
-                barColorPicker:SetEnabled(false)
+                UpdateColorPickers()
                 Cell:Fire("UpdateAppearance", "color")
             end,
         },
@@ -826,7 +867,7 @@ local function CreateUnitButtonStylePane()
             ["value"] = "gradient",
             ["onClick"] = function()
                 CellDB["appearance"]["barColor"][1] = "gradient"
-                barColorPicker:SetEnabled(false)
+                UpdateColorPickers()
                 Cell:Fire("UpdateAppearance", "color")
             end,
         },
@@ -835,7 +876,7 @@ local function CreateUnitButtonStylePane()
             ["value"] = "gradient2",
             ["onClick"] = function()
                 CellDB["appearance"]["barColor"][1] = "gradient2"
-                barColorPicker:SetEnabled(false)
+                UpdateColorPickers()
                 Cell:Fire("UpdateAppearance", "color")
             end,
         },
@@ -844,7 +885,7 @@ local function CreateUnitButtonStylePane()
             ["value"] = "custom",
             ["onClick"] = function()
                 CellDB["appearance"]["barColor"][1] = "custom"
-                barColorPicker:SetEnabled(true)
+                UpdateColorPickers()
                 Cell:Fire("UpdateAppearance", "color")
             end,
         },
@@ -870,7 +911,7 @@ local function CreateUnitButtonStylePane()
         fullColorPicker:SetEnabled(checked)
         Cell:Fire("UpdateAppearance", "fullColor")
     end, L["Enable Full Health Color"])
-    fullColorCB:SetPoint("TOPLEFT", barColorPicker, "TOPRIGHT", 2, 0)
+    -- fullColorCB:SetPoint("TOPLEFT", barColorPicker, "TOPRIGHT", 2, 0)
 
     fullColorPicker = Cell:CreateColorPicker(unitButtonPane, "", false, function(r, g, b)
         CellDB["appearance"]["fullColor"][2][1] = r
@@ -891,7 +932,7 @@ local function CreateUnitButtonStylePane()
             ["value"] = "class_color",
             ["onClick"] = function()
                 CellDB["appearance"]["lossColor"][1] = "class_color"
-                lossColorPicker:SetEnabled(false)
+                UpdateColorPickers()
                 Cell:Fire("UpdateAppearance", "color")
             end,
         },
@@ -900,7 +941,7 @@ local function CreateUnitButtonStylePane()
             ["value"] = "class_color_dark",
             ["onClick"] = function()
                 CellDB["appearance"]["lossColor"][1] = "class_color_dark"
-                lossColorPicker:SetEnabled(false)
+                UpdateColorPickers()
                 Cell:Fire("UpdateAppearance", "color")
             end,
         },
@@ -909,7 +950,7 @@ local function CreateUnitButtonStylePane()
             ["value"] = "gradient",
             ["onClick"] = function()
                 CellDB["appearance"]["lossColor"][1] = "gradient"
-                lossColorPicker:SetEnabled(false)
+                UpdateColorPickers()
                 Cell:Fire("UpdateAppearance", "color")
             end,
         },
@@ -918,7 +959,7 @@ local function CreateUnitButtonStylePane()
             ["value"] = "gradient2",
             ["onClick"] = function()
                 CellDB["appearance"]["lossColor"][1] = "gradient2"
-                lossColorPicker:SetEnabled(false)
+                UpdateColorPickers()
                 Cell:Fire("UpdateAppearance", "color")
             end,
         },
@@ -927,7 +968,7 @@ local function CreateUnitButtonStylePane()
             ["value"] = "custom",
             ["onClick"] = function()
                 CellDB["appearance"]["lossColor"][1] = "custom"
-                lossColorPicker:SetEnabled(true)
+                UpdateColorPickers()
                 Cell:Fire("UpdateAppearance", "color")
             end,
         },
@@ -953,7 +994,7 @@ local function CreateUnitButtonStylePane()
         deathColorPicker:SetEnabled(checked)
         Cell:Fire("UpdateAppearance", "deathColor")
     end, L["Enable Death Color"])
-    deathColorCB:SetPoint("TOPLEFT", lossColorPicker, "TOPRIGHT", 2, 0)
+    -- deathColorCB:SetPoint("TOPLEFT", lossColorPicker, "TOPRIGHT", 2, 0)
 
     deathColorPicker = Cell:CreateColorPicker(unitButtonPane, "", false, function(r, g, b)
         CellDB["appearance"]["deathColor"][2][1] = r
@@ -1077,7 +1118,7 @@ local function CreateUnitButtonStylePane()
     end)
     gradientColorCB3:SetPoint("TOPLEFT", gradientColorCB2, "TOPRIGHT", 5, 0)
 
-    local gradientColorsText = unitButtonPane:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
+    gradientColorsText = unitButtonPane:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
     gradientColorsText:SetPoint("BOTTOMLEFT", gradientColorCB1, "TOPLEFT", 0, 1)
     gradientColorsText:SetText(L["Gradient Colors"])
 
@@ -1089,7 +1130,7 @@ local function CreateUnitButtonStylePane()
         CellDB["appearance"]["targetColor"][4] = a
         Cell:Fire("UpdateAppearance", "highlightColor")
     end)
-    targetColorPicker:SetPoint("TOPLEFT", gradientColorCB1, "BOTTOMLEFT", 0, -15)
+    -- targetColorPicker:SetPoint("TOPLEFT", gradientColorCB1, "BOTTOMLEFT", 0, -15)
     
     -- mouseover highlight
     mouseoverColorPicker = Cell:CreateColorPicker(unitButtonPane, L["Mouseover Highlight Color"], true, function(r, g, b, a)
@@ -1328,9 +1369,11 @@ end
 local init
 LoadButtonStyle = function()
     if not init then CheckTextures() end
+    
+    UpdateColorPickers()
+
     barColorDropdown:SetSelectedValue(CellDB["appearance"]["barColor"][1])
     barColorPicker:SetColor(CellDB["appearance"]["barColor"][2])
-    barColorPicker:SetEnabled(CellDB["appearance"]["barColor"][1] == "custom")
     
     fullColorCB:SetChecked(CellDB["appearance"]["fullColor"][1])
     fullColorPicker:SetColor(CellDB["appearance"]["fullColor"][2])
@@ -1338,7 +1381,6 @@ LoadButtonStyle = function()
 
     lossColorDropdown:SetSelectedValue(CellDB["appearance"]["lossColor"][1])
     lossColorPicker:SetColor(CellDB["appearance"]["lossColor"][2])
-    lossColorPicker:SetEnabled(CellDB["appearance"]["lossColor"][1] == "custom")
 
     deathColorCB:SetChecked(CellDB["appearance"]["deathColor"][1])
     deathColorPicker:SetColor(CellDB["appearance"]["deathColor"][2])
