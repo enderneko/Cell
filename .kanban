@@ -87,6 +87,15 @@
           "labels": [],
           "checkboxes": [],
           "comments": []
+        },
+        {
+          "id": "f9342937-2a2d-424a-a5e3-cd9147d2ecbd",
+          "listId": "fc9baa7c-c3e7-49a4-8526-816c794e5ed9",
+          "title": "Fix Targeted Spells",
+          "description": "",
+          "labels": [],
+          "checkboxes": [],
+          "comments": []
         }
       ]
     },
