@@ -880,9 +880,9 @@ local function RegisterDrag(frame)
             end
 
             local f = GetMouseFocus()
-            if f and f.state and f.state.displayedUnit and F:UnitInGroup(f.state.displayedUnit) then
-                quickCastTable["units"][frame.index] = f.state.displayedUnit
-                frame:SetUnit(f.state.displayedUnit, outerBuff, innerBuff)
+            if f and f.states and f.states.displayedUnit and F:UnitInGroup(f.states.displayedUnit) then
+                quickCastTable["units"][frame.index] = f.states.displayedUnit
+                frame:SetUnit(f.states.displayedUnit, outerBuff, innerBuff)
             end
         end
     end)

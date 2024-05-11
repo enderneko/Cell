@@ -27,10 +27,10 @@ local function CreatePreviewButton()
     previewButton:SetScript("OnUpdate", nil)
     previewButton:Show()
 
-    previewButton.widget.healthBar:SetMinMaxValues(0, 1)
-    previewButton.widget.healthBar:SetValue(1)
-    previewButton.widget.powerBar:SetMinMaxValues(0, 1)
-    previewButton.widget.powerBar:SetValue(1)
+    previewButton.widgets.healthBar:SetMinMaxValues(0, 1)
+    previewButton.widgets.healthBar:SetValue(1)
+    previewButton.widgets.powerBar:SetMinMaxValues(0, 1)
+    previewButton.widgets.powerBar:SetValue(1)
     previewButton.isPreview = true
     
     local previewButtonBG = Cell:CreateFrame("CellLayoutsPreviewButtonBG", layoutsTab)
@@ -56,7 +56,7 @@ local function UpdatePreviewButton(which, value)
         if iTable["enabled"] then
             previewButton.indicators.nameText:Show()
             previewButton.indicators.nameText.isPreview = true
-            previewButton.state.name = UnitName("player")
+            previewButton.states.name = UnitName("player")
             previewButton.indicators.nameText:UpdateName()
             previewButton.indicators.nameText:UpdatePreviewColor(iTable["color"])
             previewButton.indicators.nameText:UpdateTextWidth(iTable["textWidth"])
@@ -72,16 +72,16 @@ local function UpdatePreviewButton(which, value)
     end
 
     if not which or which == "appearance" then
-        previewButton.widget.healthBar:SetStatusBarTexture(Cell.vars.texture)
-        previewButton.widget.powerBar:SetStatusBarTexture(Cell.vars.texture)
+        previewButton.widgets.healthBar:SetStatusBarTexture(Cell.vars.texture)
+        previewButton.widgets.powerBar:SetStatusBarTexture(Cell.vars.texture)
 
         -- health color
         local r, g, b = F:GetHealthColor(1, false, F:GetClassColor(Cell.vars.playerClass))
-        previewButton.widget.healthBar:SetStatusBarColor(r, g, b, CellDB["appearance"]["barAlpha"])
+        previewButton.widgets.healthBar:SetStatusBarColor(r, g, b, CellDB["appearance"]["barAlpha"])
         
         -- power color
         r, g, b = F:GetPowerColor("player", Cell.vars.playerClass)
-        previewButton.widget.powerBar:SetStatusBarColor(r, g, b)
+        previewButton.widgets.powerBar:SetStatusBarColor(r, g, b)
 
         -- alpha
         previewButton:SetBackdropColor(0, 0, 0, CellDB["appearance"]["bgAlpha"])

@@ -544,7 +544,7 @@ local function MainFrame_UpdateLayout(layout, which)
     if not init then
         init = true
         --! NOTE: a reload during pet battle prevents HEADER from CREATING CHILDs (unit buttons), this hide delay is a MUST  
-        RegisterStateDriver(cellMainFrame, 'visibility', '[petbattle] hide; show')
+        RegisterStateDriver(cellMainFrame, "visibility", "[petbattle] hide; show")
     end
     
     layout = Cell.vars.currentLayoutTable

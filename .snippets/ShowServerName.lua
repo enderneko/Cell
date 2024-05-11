@@ -21,7 +21,7 @@ local function CreateServerName(parent)
     serverName:SetPoint("TOP", parent.indicators.nameText, "BOTTOM", 0, -1)
 
     hooksecurefunc(parent.indicators.nameText, "UpdateName", function()
-        serverName:SetText(GetServerName(parent.state.unit))
+        serverName:SetText(GetServerName(parent.states.unit))
     end)
 end
 

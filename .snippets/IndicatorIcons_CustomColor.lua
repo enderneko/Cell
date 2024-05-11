@@ -40,7 +40,7 @@ local function Update(indicator, indicatorTable, unit, spellId, start, duration,
 end
 
 function Cell.iFuncs:UpdateCustomIndicators(unitButton, auraInfo, refreshing)
-    local unit = unitButton.state.displayedUnit
+    local unit = unitButton.states.displayedUnit
 
     local auraType = auraInfo.isHelpful and "buff" or "debuff"
     local icon = auraInfo.icon
@@ -70,7 +70,7 @@ function Cell.iFuncs:UpdateCustomIndicators(unitButton, auraInfo, refreshing)
 end
 
 function Cell.iFuncs:ShowCustomIndicators(unitButton, auraType)
-    local unit = unitButton.state.displayedUnit
+    local unit = unitButton.states.displayedUnit
     for indicatorName, indicatorTable in pairs(customIndicators[auraType]) do
         if enabledIndicators[indicatorName] and unitButton.indicators[indicatorName] then
             if not indicatorTable["isIcons"] then

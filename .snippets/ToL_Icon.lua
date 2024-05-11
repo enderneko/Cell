@@ -24,7 +24,7 @@ frame:SetScript("OnEvent", function(self, event)
         if spellId == 234946 then
             local b = F:GetUnitButtonByGUID(destGUID)
             if b then
-                icon:SetParent(b.widget.overlayFrame)
+                icon:SetParent(b.widgets.overlayFrame)
                 icon:SetFrameLevel(5) -- 层级
                 icon:ClearAllPoints()
                 icon:SetPoint("TOP") -- 位置

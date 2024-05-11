@@ -189,8 +189,8 @@ local function CreateAssignmentButton(index)
         if not f then return end -- cursor outside wow window
 
         local unitId
-        if f.state and f.state.displayedUnit then -- Cell
-            unitId = f.state.displayedUnit
+        if f.states and f.states.displayedUnit then -- Cell
+            unitId = f.states.displayedUnit
         elseif f.unit then
             unitId = f.unit
         end

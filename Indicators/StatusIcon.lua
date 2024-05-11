@@ -14,7 +14,7 @@ eventFrame:SetScript("OnEvent", function(self, event, unit)
 end)
 
 local function DiedWithSoulstone(b)
-    b.state.hasSoulstone = true
+    b.states.hasSoulstone = true
     I.UpdateStatusIcon(b)
 end
 
@@ -52,7 +52,7 @@ end)
 -- create
 -------------------------------------------------
 function I:CreateStatusIcon(parent)
-    local statusIcon = CreateFrame("Frame", parent:GetName().."StatusIcon", parent.widget.overlayFrame)
+    local statusIcon = CreateFrame("Frame", parent:GetName().."StatusIcon", parent.widgets.overlayFrame)
     parent.indicators.statusIcon = statusIcon
     statusIcon:Hide()
 
@@ -78,7 +78,7 @@ function I:CreateStatusIcon(parent)
     end
     
     -- resurrection icon ----------------------------------
-    local resurrectionIcon = CreateFrame("Frame", parent:GetName().."ResurrectionIcon", parent.widget.overlayFrame)
+    local resurrectionIcon = CreateFrame("Frame", parent:GetName().."ResurrectionIcon", parent.widgets.overlayFrame)
     parent.indicators.resurrectionIcon = resurrectionIcon
     resurrectionIcon:SetAllPoints(statusIcon)
     resurrectionIcon:Hide()
@@ -140,8 +140,8 @@ end
 -- resurrection
 -------------------------------------------------
 function I.UpdateStatusIcon_Resurrection(button, start, duration)
-    local guid = button.state.guid
-    local unit = button.state.unit
+    local guid = button.states.guid
+    local unit = button.states.unit
     local resurrectionIcon = button.indicators.resurrectionIcon
 
     if not (guid or unit) then
@@ -184,7 +184,7 @@ end
 -------------------------------------------------
 if Cell.isRetail then
     function I.UpdateStatusIcon(button)
-        local unit = button.state.unit
+        local unit = button.states.unit
         if not unit then return end
         
         -- https://wow.gamepedia.com/API_UnitPhaseReason
@@ -205,7 +205,7 @@ if Cell.isRetail then
             icon:SetTexture("Interface\\RaidFrame\\Raid-Icon-Rez")
             icon:SetTexCoord(0, 1, 0, 1)
             icon:Show()
-        elseif button.state.hasRezDebuff or button.state.hasSoulstone then
+        elseif button.states.hasRezDebuff or button.states.hasSoulstone then
             icon:SetVertexColor(0.6, 1, 0.6, 1)
             icon:SetTexture("Interface\\RaidFrame\\Raid-Icon-Rez")
             icon:SetTexCoord(0, 1, 0, 1)
@@ -225,7 +225,7 @@ if Cell.isRetail then
                 C_Timer.After(6, function() I.UpdateStatusIcon(button) end)
             end
             icon:Show()
-        elseif UnitIsPlayer(unit) and phaseReason and not button.state.inVehicle then
+        elseif UnitIsPlayer(unit) and phaseReason and not button.states.inVehicle then
             if phaseReason == 3 then -- chromie, yellow
                 icon:SetVertexColor(1, 1, 0)
             elseif phaseReason == 2 then -- warmode, red
@@ -242,14 +242,14 @@ if Cell.isRetail then
         --     icon:SetTexture("Interface\\TargetingFrame\\UI-TargetingFrame-Skull")
         --     icon:SetTexCoord(0, 1, 0, 1)
         --     icon:Show()
-        elseif button.state.BGFlag then
+        elseif button.states.BGFlag then
             icon:SetVertexColor(1, 1, 1, 1)
-            icon:SetAtlas("nameplates-icon-flag-"..button.state.BGFlag)
+            icon:SetAtlas("nameplates-icon-flag-"..button.states.BGFlag)
             icon:SetTexCoord(0, 1, 0, 1)
             icon:Show()
-        elseif button.state.BGOrb then
+        elseif button.states.BGOrb then
             icon:SetVertexColor(1, 1, 1, 1)
-            icon:SetAtlas("nameplates-icon-orb-"..button.state.BGOrb)
+            icon:SetAtlas("nameplates-icon-orb-"..button.states.BGOrb)
             icon:SetTexCoord(0, 1, 0, 1)
             icon:Show()
         else
@@ -258,7 +258,7 @@ if Cell.isRetail then
     end
 else
     function I.UpdateStatusIcon(button)
-        local unit = button.state.unit
+        local unit = button.states.unit
         if not unit then return end
         
         local icon = button.indicators.statusIcon
@@ -274,12 +274,12 @@ else
             icon:SetTexture("Interface\\RaidFrame\\Raid-Icon-Rez")
             icon:SetTexCoord(0, 1, 0, 1)
             icon:Show()
-        elseif button.state.hasRezDebuff or button.state.hasSoulstone then
+        elseif button.states.hasRezDebuff or button.states.hasSoulstone then
             icon:SetVertexColor(0.6, 1, 0.6, 1)
             icon:SetTexture("Interface\\RaidFrame\\Raid-Icon-Rez")
             icon:SetTexCoord(0, 1, 0, 1)
             icon:Show()
-        elseif UnitIsPlayer(unit) and UnitIsConnected(unit) and not UnitInPhase(unit) and not button.state.inVehicle then
+        elseif UnitIsPlayer(unit) and UnitIsConnected(unit) and not UnitInPhase(unit) and not button.states.inVehicle then
             icon:SetTexture("Interface\\TargetingFrame\\UI-PhasingIcon")
             icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
             icon:Show()
@@ -287,9 +287,9 @@ else
         --     icon:SetTexture("Interface\\TargetingFrame\\UI-TargetingFrame-Skull")
         --     icon:SetTexCoord(0, 1, 0, 1)
         --     icon:Show()
-        elseif button.state.BGFlag then
+        elseif button.states.BGFlag then
             icon:SetVertexColor(1, 1, 1, 1)
-            icon:SetAtlas(button.state.BGFlag.."_icon_and_flag-dynamicIcon")
+            icon:SetAtlas(button.states.BGFlag.."_icon_and_flag-dynamicIcon")
             icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
             icon:Show()
         else

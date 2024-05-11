@@ -471,8 +471,8 @@ function I:CreateConsumables(parent, isPreview)
         end
     else
         parent.indicators.consumables = consumables
-        consumables:SetFrameLevel(parent.widget.healthBar:GetFrameLevel()+1)
-        consumables:SetAllPoints(parent.widget.healthBar)
+        consumables:SetFrameLevel(parent.widgets.healthBar:GetFrameLevel()+1)
+        consumables:SetAllPoints(parent.widgets.healthBar)
     end
 
     -- speed

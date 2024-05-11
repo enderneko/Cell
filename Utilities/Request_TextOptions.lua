@@ -21,10 +21,10 @@ local function CreatePreviewButton()
     previewButton:SetScript("OnHide", nil)
     previewButton:SetScript("OnUpdate", nil)
 
-    previewButton.widget.healthBar:SetMinMaxValues(0, 1)
-    previewButton.widget.healthBar:SetValue(1)
-    previewButton.widget.powerBar:SetMinMaxValues(0, 1)
-    previewButton.widget.powerBar:SetValue(1)
+    previewButton.widgets.healthBar:SetMinMaxValues(0, 1)
+    previewButton.widgets.healthBar:SetValue(1)
+    previewButton.widgets.powerBar:SetMinMaxValues(0, 1)
+    previewButton.widgets.powerBar:SetValue(1)
     
     local previewButtonBG = Cell:CreateFrame("CellTextPreviewButton", previewButton)
     previewButtonBG:SetPoint("TOPLEFT", previewButton, 0, 20)
@@ -47,7 +47,7 @@ local function UpdatePreviewButton()
     local iTable = Cell.vars.currentLayoutTable["indicators"][1]
     if iTable["enabled"] then
         previewButton.indicators.nameText:Show()
-        previewButton.state.name = UnitName("player")
+        previewButton.states.name = UnitName("player")
         previewButton.indicators.nameText:UpdateName()
         previewButton.indicators.nameText:UpdatePreviewColor(iTable["color"])
         previewButton.indicators.nameText:UpdateTextWidth(iTable["textWidth"])
@@ -62,16 +62,16 @@ local function UpdatePreviewButton()
     B:SetOrientation(previewButton, Cell.vars.currentLayoutTable["barOrientation"][1], Cell.vars.currentLayoutTable["barOrientation"][2])
     B:SetPowerSize(previewButton, Cell.vars.currentLayoutTable["main"]["powerSize"])
 
-    previewButton.widget.healthBar:SetStatusBarTexture(Cell.vars.texture)
-    previewButton.widget.powerBar:SetStatusBarTexture(Cell.vars.texture)
+    previewButton.widgets.healthBar:SetStatusBarTexture(Cell.vars.texture)
+    previewButton.widgets.powerBar:SetStatusBarTexture(Cell.vars.texture)
 
     -- health color
     local r, g, b = F:GetHealthColor(1, false, F:GetClassColor(Cell.vars.playerClass))
-    previewButton.widget.healthBar:SetStatusBarColor(r, g, b, CellDB["appearance"]["barAlpha"])
+    previewButton.widgets.healthBar:SetStatusBarColor(r, g, b, CellDB["appearance"]["barAlpha"])
     
     -- power color
     r, g, b = F:GetPowerColor("player", Cell.vars.playerClass)
-    previewButton.widget.powerBar:SetStatusBarColor(r, g, b)
+    previewButton.widgets.powerBar:SetStatusBarColor(r, g, b)
 
     -- alpha
     previewButton:SetBackdropColor(0, 0, 0, CellDB["appearance"]["bgAlpha"])
@@ -100,12 +100,12 @@ local textType, textAnchor, textAnchorTo, textColor, size, xOffset, yOffset
 
 local function UpdateTextPreview()
     local setting = CellDB["dispelRequest"]["textOptions"]
-    previewButton.widget.drText:SetType(setting[1])
-    previewButton.widget.drText:SetColor(setting[2])
-    P:Size(previewButton.widget.drText, setting[3] * 2, setting[3])
-    P:ClearPoints(previewButton.widget.drText)
-    P:Point(previewButton.widget.drText, setting[4], previewButton.widget.drGlowFrame, setting[5], setting[6], setting[7])
-    previewButton.widget.drText:Display()
+    previewButton.widgets.drText:SetType(setting[1])
+    previewButton.widgets.drText:SetColor(setting[2])
+    P:Size(previewButton.widgets.drText, setting[3] * 2, setting[3])
+    P:ClearPoints(previewButton.widgets.drText)
+    P:Point(previewButton.widgets.drText, setting[4], previewButton.widgets.drGlowFrame, setting[5], setting[6], setting[7])
+    previewButton.widgets.drText:Display()
 end
 
 local function LoadTextOptions()

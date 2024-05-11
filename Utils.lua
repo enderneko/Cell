@@ -879,7 +879,7 @@ function F:GetUnitButtonByUnit(unit, getSpotlights, getQuickAssist)
     if getSpotlights then
         wipe(spotlights)
         for _, b in pairs(Cell.unitButtons.spotlight) do
-            if b.state.unit and UnitIsUnit(b.state.unit, unit) then
+            if b.states.unit and UnitIsUnit(b.states.unit, unit) then
                 tinsert(spotlights, b)
             end
         end
@@ -931,7 +931,7 @@ function F:HandleUnitButton(type, unit, func, ...)
     end
     
     for _, b in pairs(Cell.unitButtons.spotlight) do
-        if b.state.unit and UnitIsUnit(b.state.unit, unit) then
+        if b.states.unit and UnitIsUnit(b.states.unit, unit) then
             func(b, ...)
             handled = true
         end

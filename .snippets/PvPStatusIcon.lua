@@ -9,21 +9,21 @@ local size = 11
 -- function codes
 -------------------------------------------------
 local function UpdatePvPStatusIcon(b, event)
-    local unit = b.state.unit
+    local unit = b.states.unit
     if not unit then return end
     
     if UnitIsPVP(unit) then
-        b.widget.pvpStatusIcon:SetAtlas("worldquest-icon-pvp-ffa")
-        b.widget.pvpStatusIcon:Show()
+        b.widgets.pvpStatusIcon:SetAtlas("worldquest-icon-pvp-ffa")
+        b.widgets.pvpStatusIcon:Show()
     else
-        b.widget.pvpStatusIcon:Hide()
+        b.widgets.pvpStatusIcon:Hide()
     end
 end
 
 Cell.funcs:IterateAllUnitButtons(function(b)
-    local pvpStatusIcon = b.widget.overlayFrame:CreateTexture(b:GetName().."PvPStatusIcon", "ARTWORK", nil, -7)
-    b.widget.pvpStatusIcon = pvpStatusIcon
-    pvpStatusIcon:SetPoint(point, b.widget.overlayFrame, relativePoint, x, y)
+    local pvpStatusIcon = b.widgets.overlayFrame:CreateTexture(b:GetName().."PvPStatusIcon", "ARTWORK", nil, -7)
+    b.widgets.pvpStatusIcon = pvpStatusIcon
+    pvpStatusIcon:SetPoint(point, b.widgets.overlayFrame, relativePoint, x, y)
     pvpStatusIcon:SetSize(size, size)
     pvpStatusIcon:Hide()
 

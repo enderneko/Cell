@@ -666,8 +666,8 @@ end
 -- end
 
 function U:CreateSpellRequestIcon(parent)
-    local srIcon = CreateFrame("Frame", parent:GetName().."SpellRequestIcon", parent.widget.srGlowFrame)
-    parent.widget.srIcon = srIcon
+    local srIcon = CreateFrame("Frame", parent:GetName().."SpellRequestIcon", parent.widgets.srGlowFrame)
+    parent.widgets.srIcon = srIcon
     srIcon:SetIgnoreParentAlpha(true)
     srIcon:Hide()
 
@@ -712,7 +712,7 @@ function U:CreateSpellRequestIcon(parent)
                 srIcon.elapsed = (srIcon.elapsed or 0) + elapsed * 2
                 srIcon:SetPoint(
                     CellDB["spellRequest"]["sharedIconOptions"][3],
-                    parent.widget.srGlowFrame, 
+                    parent.widgets.srGlowFrame, 
                     CellDB["spellRequest"]["sharedIconOptions"][4], 
                     CellDB["spellRequest"]["sharedIconOptions"][5], 
                     CellDB["spellRequest"]["sharedIconOptions"][6] + GetValue(srIcon.elapsed / 1, 0, 7)

@@ -8,9 +8,9 @@ F:IterateAllUnitButtons(function(b)
     local dispels = b.indicators.dispels
 
     dispels.highlight:ClearAllPoints()
-    dispels.highlight:SetPoint("BOTTOMLEFT", b.widget.healthBar)
-    dispels.highlight:SetPoint("BOTTOMRIGHT", b.widget.healthBar)
-    dispels.highlight:SetPoint("TOP", b.widget.healthBar)
+    dispels.highlight:SetPoint("BOTTOMLEFT", b.widgets.healthBar)
+    dispels.highlight:SetPoint("BOTTOMRIGHT", b.widgets.healthBar)
+    dispels.highlight:SetPoint("TOP", b.widgets.healthBar)
 
     function dispels:SetDispels(dispelTypes)
         local r, g, b, a = 0, 0, 0, 0
@@ -34,5 +34,5 @@ F:IterateAllUnitButtons(function(b)
     end
 
     -- 修改护盾材质
-    -- b.widget.shieldBar:SetTexture(Cell.vars.texture)
+    -- b.widgets.shieldBar:SetTexture(Cell.vars.texture)
 end)

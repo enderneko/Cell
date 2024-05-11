@@ -303,10 +303,10 @@ local function UpdateHeader(header, layout, which)
     -- REVIEW: fix name width
     if which == "header" or which == "groupFilter" then
         for j, b in ipairs(header) do
-            b.widget.healthBar:GetScript("OnSizeChanged")(b.widget.healthBar)
+            b.widgets.healthBar:GetScript("OnSizeChanged")(b.widgets.healthBar)
         end
         for k, arenaPet in ipairs(arenaPetButtons) do
-            arenaPet.widget.healthBar:GetScript("OnSizeChanged")(arenaPet.widget.healthBar)
+            arenaPet.widgets.healthBar:GetScript("OnSizeChanged")(arenaPet.widgets.healthBar)
         end
     end
 end

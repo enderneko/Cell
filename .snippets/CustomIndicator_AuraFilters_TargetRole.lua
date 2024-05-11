@@ -37,7 +37,7 @@ local function Update(indicator, indicatorTable, unit, spellId, start, duration,
 end
 
 function Cell.iFuncs:UpdateCustomIndicators(unitButton, auraType, spellId, spellName, start, duration, debuffType, icon, count, refreshing, castByMe)
-    local unit = unitButton.state.displayedUnit
+    local unit = unitButton.states.displayedUnit
 
     for indicatorName, indicatorTable in pairs(customIndicators[auraType]) do
         if indicatorName and enabledIndicators[indicatorName] and unitButton.indicators[indicatorName] then
@@ -51,8 +51,8 @@ function Cell.iFuncs:UpdateCustomIndicators(unitButton, auraType, spellId, spell
             if indicatorTable["auras"][spell] or indicatorTable["auras"][0] then -- is in indicator spell list
                 if auraType == "buff" then
                     local show = true
-                    if unitButton.state.role and unitButton.state.role ~= "NONE" and filters[spellName] then
-                        show = filters[spellName][unitButton.state.role]
+                    if unitButton.states.role and unitButton.states.role ~= "NONE" and filters[spellName] then
+                        show = filters[spellName][unitButton.states.role]
                     end
                     if show and (indicatorTable["castBy"] == "me" and castByMe) or (indicatorTable["castBy"] == "anyone") then
                         Update(unitButton.indicators[indicatorName], indicatorTable, unit, spell, start, duration, debuffType, icon, count, refreshing)
@@ -66,7 +66,7 @@ function Cell.iFuncs:UpdateCustomIndicators(unitButton, auraType, spellId, spell
 end
 
 function Cell.iFuncs:ShowCustomIndicators(unitButton, auraType)
-    local unit = unitButton.state.displayedUnit
+    local unit = unitButton.states.displayedUnit
     for indicatorName, indicatorTable in pairs(customIndicators[auraType]) do
         if indicatorName and enabledIndicators[indicatorName] and unitButton.indicators[indicatorName] then
             if not indicatorTable["isIcons"] then

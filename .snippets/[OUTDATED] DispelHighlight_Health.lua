@@ -19,7 +19,7 @@ F:IterateAllUnitButtons(function(b)
     local dispels = b.indicators.dispels
 
     dispels.highlight:ClearAllPoints()
-    dispels.highlight:SetAllPoints(b.widget.healthBar:GetStatusBarTexture())
+    dispels.highlight:SetAllPoints(b.widgets.healthBar:GetStatusBarTexture())
     if USE_SOLID_COLOR_TEXTURE then
         dispels.highlight:SetTexture("Interface\\Buttons\\WHITE8x8")
     else
@@ -48,5 +48,5 @@ F:IterateAllUnitButtons(function(b)
     end
 
     -- 修改护盾材质
-    -- b.widget.shieldBar:SetTexture(Cell.vars.texture)
+    -- b.widgets.shieldBar:SetTexture(Cell.vars.texture)
 end)

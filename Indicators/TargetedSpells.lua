@@ -143,7 +143,7 @@ eventFrame:SetScript("OnEvent", function(_, event, sourceUnit)
                     UpdateCastsOnUnit(targetGUID)
                     
                     -- NOTE: double check
-                    C_Timer.After(0.1, function()
+                    C_Timer.After(0.2, function()
                         local newSourceGUID = UnitGUID(sourceUnit) -- NOTE: if sourceUnit == "target", it can change
                         if newSourceGUID == sourceGUID and not UnitIsUnit(sourceUnit.."target", targetUnit) then
                             -- print("old:", sourceUnit, targetUnit)
@@ -247,11 +247,11 @@ local function ShowGlow(frame, glowType, color, arg1, arg2, arg3, arg4)
 end
 
 function I:CreateTargetedSpells(parent)
-    local frame = I:CreateAura_BorderIcon(parent:GetName().."TargetedSpells", parent.widget.overlayFrame, 2)
+    local frame = I:CreateAura_BorderIcon(parent:GetName().."TargetedSpells", parent.widgets.overlayFrame, 2)
     parent.indicators.targetedSpells = frame
     frame:Hide()
 
-    frame.tsGlowFrame = parent.widget.tsGlowFrame
+    frame.tsGlowFrame = parent.widgets.tsGlowFrame
     frame.ShowGlow = ShowGlow
     frame.SetCooldown = SetCooldown
     frame.SetFont = SetFont
@@ -263,10 +263,10 @@ function I:CreateTargetedSpells(parent)
     end)
 
     frame:SetScript("OnHide", function()
-        LCG.ButtonGlow_Stop(parent.widget.tsGlowFrame)
-        LCG.PixelGlow_Stop(parent.widget.tsGlowFrame)
-        LCG.AutoCastGlow_Stop(parent.widget.tsGlowFrame)
-        LCG.ProcGlow_Stop(parent.widget.tsGlowFrame)
+        LCG.ButtonGlow_Stop(parent.widgets.tsGlowFrame)
+        LCG.PixelGlow_Stop(parent.widgets.tsGlowFrame)
+        LCG.AutoCastGlow_Stop(parent.widgets.tsGlowFrame)
+        LCG.ProcGlow_Stop(parent.widgets.tsGlowFrame)
     end)
 end
 

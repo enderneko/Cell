@@ -792,7 +792,7 @@ local function Color_SetCooldown(color, start, duration, debuffType)
             end)
         end
     elseif color.type == "class-color" then
-        color.solidTex:SetVertexColor(F:GetClassColor(color.parent.state.class))
+        color.solidTex:SetVertexColor(F:GetClassColor(color.parent.states.class))
     elseif color.type == "debuff-type" and debuffType then
         color.solidTex:SetVertexColor(CellDB["debuffTypeColor"][debuffType]["r"], CellDB["debuffTypeColor"][debuffType]["g"], CellDB["debuffTypeColor"][debuffType]["b"], 1)
     end
@@ -807,15 +807,15 @@ local function Color_SetAnchor(color, anchorTo)
     color:ClearAllPoints()
     if anchorTo == "healthbar-current" then
         -- current hp texture
-        color:SetAllPoints(color.parent.widget.healthBar:GetStatusBarTexture())
+        color:SetAllPoints(color.parent.widgets.healthBar:GetStatusBarTexture())
         -- color:SetFrameLevel(parent:GetFrameLevel()+5)
     elseif anchorTo == "healthbar-entire" then
         -- entire hp bar
-        color:SetAllPoints(color.parent.widget.healthBar)
+        color:SetAllPoints(color.parent.widgets.healthBar)
         -- color:SetFrameLevel(parent:GetFrameLevel()+5)
     else -- unitbutton
-        P:Point(color, "TOPLEFT", color.parent.widget.overlayFrame, "TOPLEFT", 1, -1)
-        P:Point(color, "BOTTOMRIGHT", color.parent.widget.overlayFrame, "BOTTOMRIGHT", -1, 1)
+        P:Point(color, "TOPLEFT", color.parent.widgets.overlayFrame, "TOPLEFT", 1, -1)
+        P:Point(color, "BOTTOMRIGHT", color.parent.widgets.overlayFrame, "BOTTOMRIGHT", -1, 1)
         -- color:SetFrameLevel(parent:GetFrameLevel()+6)
     end
 end
@@ -1397,7 +1397,7 @@ local function Overlay_SetFrameLevel(overlay, frameLevel)
 end
 
 function I:CreateAura_Overlay(name, parent)
-    local overlay = CreateFrame("StatusBar", name, parent.widget.healthBar)
+    local overlay = CreateFrame("StatusBar", name, parent.widgets.healthBar)
     overlay:SetStatusBarTexture("Interface\\Buttons\\WHITE8x8")
     overlay:Hide()
     overlay.indicatorType = "overlay"

@@ -8,20 +8,20 @@ F:IterateAllUnitButtons(function(b)
         local name
         
         -- only check nickname for players
-        if b.state.isPlayer then
+        if b.states.isPlayer then
             if Cell.vars.nicknameCustomEnabled then
-                name = Cell.vars.nicknameCustoms[b.state.fullName] or Cell.vars.nicknameCustoms[b.state.name] or Cell.vars.nicknames[b.state.fullName] or Cell.vars.nicknames[b.state.name] or b.state.name
+                name = Cell.vars.nicknameCustoms[b.states.fullName] or Cell.vars.nicknameCustoms[b.states.name] or Cell.vars.nicknames[b.states.fullName] or Cell.vars.nicknames[b.states.name] or b.states.name
             else
-                name = Cell.vars.nicknames[b.state.fullName] or Cell.vars.nicknames[b.state.name] or b.state.name
+                name = Cell.vars.nicknames[b.states.fullName] or Cell.vars.nicknames[b.states.name] or b.states.name
             end
         else
-            name = b.state.name
+            name = b.states.name
         end
 
-        F:UpdateTextWidth(nameText.name, name, nameText.width, b.widget.healthBar)
+        F:UpdateTextWidth(nameText.name, name, nameText.width, b.widgets.healthBar)
 
         if IsInRaid() then
-            local raidIndex = UnitInRaid(b.state.unit)
+            local raidIndex = UnitInRaid(b.states.unit)
             if raidIndex and name then
                 local subgroup = select(3, GetRaidRosterInfo(raidIndex))
                 nameText.name:SetText("|cffffffff"..subgroup.."-|r"..nameText.name:GetText())

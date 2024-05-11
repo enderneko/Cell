@@ -34,12 +34,12 @@ local function CreatePreviewButton()
     previewButton:SetScript("OnUpdate", nil)
     previewButton:Show()
 
-    previewButton.state.class = Cell.vars.playerClass
+    previewButton.states.class = Cell.vars.playerClass
 
-    previewButton.widget.healthBar:SetMinMaxValues(0, 1)
-    previewButton.widget.healthBar:SetValue(1)
-    previewButton.widget.powerBar:SetMinMaxValues(0, 1)
-    previewButton.widget.powerBar:SetValue(1)
+    previewButton.widgets.healthBar:SetMinMaxValues(0, 1)
+    previewButton.widgets.healthBar:SetValue(1)
+    previewButton.widgets.powerBar:SetMinMaxValues(0, 1)
+    previewButton.widgets.powerBar:SetValue(1)
 
     previewButtonBG = Cell:CreateFrame("CellIndicatorsPreviewButtonBG", indicatorsTab)
     -- previewButtonBG:SetPoint("TOPLEFT", indicatorsTab, "TOPRIGHT", 5, -1)
@@ -109,16 +109,16 @@ local function UpdatePreviewButton()
 
     previewButton:UpdatePoint()
     
-    previewButton.widget.healthBar:SetStatusBarTexture(Cell.vars.texture)
-    previewButton.widget.powerBar:SetStatusBarTexture(Cell.vars.texture)
+    previewButton.widgets.healthBar:SetStatusBarTexture(Cell.vars.texture)
+    previewButton.widgets.powerBar:SetStatusBarTexture(Cell.vars.texture)
 
     -- health color
     local r, g, b = F:GetHealthColor(1, false, F:GetClassColor(Cell.vars.playerClass))
-    previewButton.widget.healthBar:SetStatusBarColor(r, g, b, CellDB["appearance"]["barAlpha"])
+    previewButton.widgets.healthBar:SetStatusBarColor(r, g, b, CellDB["appearance"]["barAlpha"])
     
     -- power color
     r, g, b = F:GetPowerColor("player", Cell.vars.playerClass)
-    previewButton.widget.powerBar:SetStatusBarColor(r, g, b)
+    previewButton.widgets.powerBar:SetStatusBarColor(r, g, b)
 
     -- alpha
     previewButton:SetBackdropColor(0, 0, 0, CellDB["appearance"]["bgAlpha"])
@@ -148,8 +148,8 @@ local function InitIndicator(indicatorName)
     if indicator.init then return end
 
     if indicatorName == "nameText" then
-        previewButton.state.name = UnitName("player")
-        previewButton.state.isPlayer = true
+        previewButton.states.name = UnitName("player")
+        previewButton.states.isPlayer = true
         indicator.isPreview = true
         indicator:UpdateName()
         indicator:UpdateVehicleName()
@@ -402,20 +402,20 @@ local function InitIndicator(indicatorName)
                 indicator.highlight:Hide()
             elseif highlightType == "gradient" then
                 indicator.highlight:ClearAllPoints()
-                indicator.highlight:SetAllPoints(previewButton.widget.healthBar)
+                indicator.highlight:SetAllPoints(previewButton.widgets.healthBar)
                 indicator.highlight:SetTexture("Interface\\Buttons\\WHITE8x8")
             elseif highlightType == "gradient-half" then
                 indicator.highlight:ClearAllPoints()
-                indicator.highlight:SetPoint("BOTTOMLEFT", previewButton.widget.healthBar)
-                indicator.highlight:SetPoint("TOPRIGHT", previewButton.widget.healthBar, "RIGHT")
+                indicator.highlight:SetPoint("BOTTOMLEFT", previewButton.widgets.healthBar)
+                indicator.highlight:SetPoint("TOPRIGHT", previewButton.widgets.healthBar, "RIGHT")
                 indicator.highlight:SetTexture("Interface\\Buttons\\WHITE8x8")
             elseif highlightType == "entire" then
                 indicator.highlight:ClearAllPoints()
-                indicator.highlight:SetAllPoints(previewButton.widget.healthBar)
+                indicator.highlight:SetAllPoints(previewButton.widgets.healthBar)
                 indicator.highlight:SetTexture("Interface\\Buttons\\WHITE8x8")
             elseif highlightType == "current" then
                 indicator.highlight:ClearAllPoints()
-                indicator.highlight:SetAllPoints(previewButton.widget.healthBar:GetStatusBarTexture())
+                indicator.highlight:SetAllPoints(previewButton.widgets.healthBar:GetStatusBarTexture())
                 indicator.highlight:SetTexture(Cell.vars.texture)
             end
 

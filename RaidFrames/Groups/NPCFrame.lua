@@ -153,11 +153,11 @@ for i = 1, 8 do
     --     RegisterUnitWatch(button)
 
     --     local bar = Cell:CreateStatusBar(nil, button, 10, 5, 1, false, nil, nil, "Interface\\Buttons\\WHITE8x8", {1, 1, 1, 1})
-    --     bar:SetFrameLevel(button.widget.healthBar:GetFrameLevel() + 1)
+    --     bar:SetFrameLevel(button.widgets.healthBar:GetFrameLevel() + 1)
     --     bar.border:Hide()
 
-    --     bar:SetPoint("BOTTOMLEFT", button.widget.healthBar)
-    --     bar:SetPoint("BOTTOMRIGHT", button.widget.healthBar)
+    --     bar:SetPoint("BOTTOMLEFT", button.widgets.healthBar)
+    --     bar:SetPoint("BOTTOMRIGHT", button.widgets.healthBar)
     --     bar:SetScript("OnUpdate", function()
     --         local health = UnitHealth("boss"..i)
     --         local healthMax = UnitHealthMax("boss"..i)
@@ -208,7 +208,7 @@ end)
 for i = 6, 8 do
     local button = Cell.unitButtons.npc[i]
     button.helper:HookScript("OnShow", function()
-        local guid = UnitGUID(button.state.unit)
+        local guid = UnitGUID(button.states.unit)
         if not guid then return end
 
         boss678_buttonToGuid[i] = guid
@@ -237,7 +237,7 @@ for i = 6, 8 do
         button.helper.elapsed3 = (button.helper.elapsed3 or 0) + elapsed
 
         if button.helper.elapsed >= 0.25 then
-            local guid = UnitGUID(button.state.unit)
+            local guid = UnitGUID(button.states.unit)
             -- check old guid
             if guid and boss678_buttonToGuid[i] ~= guid then --! unit changed
                 -- remove old
