@@ -160,7 +160,11 @@ function I:ResetCustomIndicators(unitButton, auraType)
         if enabledIndicators[indicatorName] and unitButton.indicators[indicatorName] then
             unitButton.indicators[indicatorName]:Hide(true)
             if indicatorTable["isIcons"] then
-                indicatorTable["found"][unit] = 0
+                if not indicatorTable["found"][unit] then
+                    indicatorTable["found"][unit] = {}
+                else
+                    wipe(indicatorTable["found"][unit])
+                end
             else
                 indicatorTable["topOrder"][unit] = 999
                 if not indicatorTable["top"][unit] then
@@ -178,12 +182,7 @@ end
 -------------------------------------------------
 local function Update(indicator, indicatorTable, unit, spell, start, duration, debuffType, icon, count, refreshing)
     if indicatorTable["isIcons"] then
-        if indicatorTable["found"][unit] < indicatorTable["num"] then
-            indicatorTable["found"][unit] = indicatorTable["found"][unit] + 1
-            indicator:UpdateSize(indicatorTable["found"][unit])
-            indicator[indicatorTable["found"][unit]]:SetCooldown(start, duration, debuffType, icon, count, refreshing)
-            indicator:Show()
-        end
+        tinsert(indicatorTable["found"][unit], {indicatorTable["auras"][spell], start, duration, debuffType, icon, count, refreshing})
     else
         if indicatorTable["auras"][spell] < indicatorTable["topOrder"][unit] then
             indicatorTable["topOrder"][unit] = indicatorTable["auras"][spell]
@@ -226,13 +225,28 @@ end
 -------------------------------------------------
 -- show
 -------------------------------------------------
+local sort = table.sort
+local function comparator(a, b)
+    return a[1] < b[1]
+end
+
 function I:ShowCustomIndicators(unitButton, auraType)
     local unit = unitButton.states.displayedUnit
     for indicatorName, indicatorTable in pairs(customIndicators[auraType]) do
-        if indicatorName and enabledIndicators[indicatorName] and unitButton.indicators[indicatorName] then
-            if not indicatorTable["isIcons"] then
+        if indicatorName and enabledIndicators[indicatorName] then
+            local indicator = unitButton.indicators[indicatorName]
+            if indicatorTable["isIcons"] then
+                local t = indicatorTable["found"][unit]
+                sort(t, comparator)
+                for i = 1, indicatorTable["num"] do
+                    if not t[i] then break end
+                    indicator[i]:SetCooldown(t[i][2], t[i][3], t[i][4], t[i][5], t[i][6], t[i][7])
+                    indicator:Show()
+                end
+                indicator:UpdateSize(#t)
+            else
                 if indicatorTable["top"][unit]["start"] then
-                    unitButton.indicators[indicatorName]:SetCooldown(
+                    indicator:SetCooldown(
                         indicatorTable["top"][unit]["start"], 
                         indicatorTable["top"][unit]["duration"], 
                         indicatorTable["top"][unit]["debuffType"], 

@@ -352,7 +352,7 @@ local function HandleIndicators(b)
     --! update pixel perfect for widgets
     B:UpdatePixelPerfect(b, true)
 
-    b._indicatorReady = 1
+    b._indicatorReady = true
 end
 
 -------------------------------------------------
@@ -1781,7 +1781,7 @@ local function UnitButton_UpdateHealPrediction(self)
 end
 
 UnitButton_UpdateAuras = function(self)
-    if not indicatorsInitialized then return end
+    if not self._indicatorReady then return end
 
     local unit = self.states.displayedUnit
     if not unit then return end

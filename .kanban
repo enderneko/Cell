@@ -5,18 +5,27 @@
       "title": "BACKLOG",
       "cards": [
         {
-          "id": "156adfb0-8f70-4f1d-92e4-da39405f5746",
+          "id": "16df86de-862e-43e0-bb56-dc16bb7c4d4e",
           "listId": "643431c7-e660-47b1-a44b-4e799b536d19",
-          "title": "Quick Assist sharing feature",
+          "title": "SoD buffs issue?",
           "description": "",
           "labels": [],
           "checkboxes": [],
           "comments": []
         },
         {
-          "id": "16df86de-862e-43e0-bb56-dc16bb7c4d4e",
+          "id": "721cdc03-a153-4d63-92fd-37e63dfacfbc",
           "listId": "643431c7-e660-47b1-a44b-4e799b536d19",
-          "title": "SoD buffs issue?",
+          "title": "\"Show on\" for custom indicators",
+          "description": "",
+          "labels": [],
+          "checkboxes": [],
+          "comments": []
+        },
+        {
+          "id": "a32ebae3-812a-45f6-8b49-67b5139960d3",
+          "listId": "643431c7-e660-47b1-a44b-4e799b536d19",
+          "title": "Spell list for AoE Healing indicator",
           "description": "",
           "labels": [],
           "checkboxes": [],
@@ -29,18 +38,9 @@
       "title": "TODO",
       "cards": [
         {
-          "id": "721cdc03-a153-4d63-92fd-37e63dfacfbc",
+          "id": "156adfb0-8f70-4f1d-92e4-da39405f5746",
           "listId": "7915d51e-5603-44aa-aa3a-8dff734ea7c6",
-          "title": "\"Show on\" for custom indicators",
-          "description": "",
-          "labels": [],
-          "checkboxes": [],
-          "comments": []
-        },
-        {
-          "id": "a32ebae3-812a-45f6-8b49-67b5139960d3",
-          "listId": "7915d51e-5603-44aa-aa3a-8dff734ea7c6",
-          "title": "Spell list for AoE Healing indicator",
+          "title": "Quick Assist sharing feature",
           "description": "",
           "labels": [],
           "checkboxes": [],
@@ -80,18 +80,18 @@
           "comments": []
         },
         {
-          "id": "f6206d8c-0f21-43d0-9c68-6bb246d030ed",
+          "id": "f9342937-2a2d-424a-a5e3-cd9147d2ecbd",
           "listId": "fc9baa7c-c3e7-49a4-8526-816c794e5ed9",
-          "title": "Power Text indicator",
+          "title": "Fix Targeted Spells",
           "description": "",
           "labels": [],
           "checkboxes": [],
           "comments": []
         },
         {
-          "id": "f9342937-2a2d-424a-a5e3-cd9147d2ecbd",
+          "id": "15b5c350-b9ad-406f-aa4f-5e9d6b8eae2f",
           "listId": "fc9baa7c-c3e7-49a4-8526-816c794e5ed9",
-          "title": "Fix Targeted Spells",
+          "title": "Icons (ordered)",
           "description": "",
           "labels": [],
           "checkboxes": [],
@@ -103,6 +103,15 @@
       "id": "7b0c4654-92fe-4b4e-9566-15e8c706d9c9",
       "title": "DONE",
       "cards": [
+        {
+          "id": "f6206d8c-0f21-43d0-9c68-6bb246d030ed",
+          "listId": "7b0c4654-92fe-4b4e-9566-15e8c706d9c9",
+          "title": "Power Text indicator",
+          "description": "",
+          "labels": [],
+          "checkboxes": [],
+          "comments": []
+        },
         {
           "id": "441d8a86-8d1c-4abd-aad2-a5f46525cc48",
           "listId": "7b0c4654-92fe-4b4e-9566-15e8c706d9c9",

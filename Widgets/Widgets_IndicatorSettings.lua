@@ -3521,22 +3521,22 @@ local function CreateAuraButtons(parent, auraButtons, auraTable, noUpDownButtons
             end)
             
             -- edit
-            auraButtons[i].edit = addon:CreateButton(auraButtons[i], "", "none", {18, 20}, true, true)
-            auraButtons[i].edit:SetPoint("RIGHT", auraButtons[i].del, "LEFT", 1, 0)
-            auraButtons[i].edit:SetTexture("Interface\\AddOns\\Cell\\Media\\Icons\\info", {16, 16}, {"CENTER", 0, 0})
-            auraButtons[i].edit.tex:SetVertexColor(0.6, 0.6, 0.6, 1)
-            auraButtons[i].edit:SetScript("OnEnter", function()
-                auraButtons[i]:GetScript("OnEnter")(auraButtons[i])
-                auraButtons[i].edit.tex:SetVertexColor(1, 1, 1, 1)
-            end)
-            auraButtons[i].edit:SetScript("OnLeave",  function()
-                auraButtons[i]:GetScript("OnLeave")(auraButtons[i])
-                auraButtons[i].edit.tex:SetVertexColor(0.6, 0.6, 0.6, 1)
-            end)
+            -- auraButtons[i].edit = addon:CreateButton(auraButtons[i], "", "none", {18, 20}, true, true)
+            -- auraButtons[i].edit:SetPoint("RIGHT", auraButtons[i].del, "LEFT", 1, 0)
+            -- auraButtons[i].edit:SetTexture("Interface\\AddOns\\Cell\\Media\\Icons\\info", {16, 16}, {"CENTER", 0, 0})
+            -- auraButtons[i].edit.tex:SetVertexColor(0.6, 0.6, 0.6, 1)
+            -- auraButtons[i].edit:SetScript("OnEnter", function()
+            --     auraButtons[i]:GetScript("OnEnter")(auraButtons[i])
+            --     auraButtons[i].edit.tex:SetVertexColor(1, 1, 1, 1)
+            -- end)
+            -- auraButtons[i].edit:SetScript("OnLeave",  function()
+            --     auraButtons[i]:GetScript("OnLeave")(auraButtons[i])
+            --     auraButtons[i].edit.tex:SetVertexColor(0.6, 0.6, 0.6, 1)
+            -- end)
 
             -- down
             auraButtons[i].down = addon:CreateButton(auraButtons[i], "", "none", {18, 20}, true, true)
-            auraButtons[i].down:SetPoint("RIGHT", auraButtons[i].edit, "LEFT", 1, 0)
+            auraButtons[i].down:SetPoint("RIGHT", auraButtons[i].del, "LEFT", 1, 0)
             auraButtons[i].down:SetTexture("Interface\\AddOns\\Cell\\Media\\Icons\\down", {16, 16}, {"CENTER", 0, 0})
             auraButtons[i].down.tex:SetVertexColor(0.6, 0.6, 0.6, 1)
             auraButtons[i].down:SetScript("OnEnter", function()
@@ -3641,16 +3641,16 @@ local function CreateAuraButtons(parent, auraButtons, auraTable, noUpDownButtons
 
         -- update spellNameText width
         if noUpDownButtons then
-            auraButtons[i].spellNameText:SetPoint("RIGHT", -35, 0)
+            auraButtons[i].spellNameText:SetPoint("RIGHT", auraButtons[i].del, "LEFT", -5, 0)
         else
-            auraButtons[i].spellNameText:SetPoint("RIGHT", -70, 0)
+            auraButtons[i].spellNameText:SetPoint("RIGHT", auraButtons[i].up, "LEFT", -5, 0)
         end
         
         auraButtons[i]:SetPoint("RIGHT")
         auraButtons[i]:Show()
 
         -- functions
-        auraButtons[i].edit:SetScript("OnClick", function()
+        auraButtons[i]:SetScript("OnClick", function()
             local popup = addon:CreatePopupEditBox(parent, function(text)
                 local spellId = tonumber(text)
                 if spellId == 0 then
@@ -3911,6 +3911,7 @@ local function CreateSetting_Auras(parent, index)
     return widget
 end
 
+--[=[
 local cleuAuraButtons = {}
 local function CreateCleuAuraButtons(parent, auraTable, updateHeightFunc)
     local n = #auraTable
@@ -4202,45 +4203,46 @@ local function CreateCleuAuraButtons(parent, auraTable, updateHeightFunc)
     end
 end
 
--- local function CreateSetting_CleuAuras(parent)
---     local widget
+local function CreateSetting_CleuAuras(parent)
+    local widget
 
---     if not settingWidgets["cleuAuras"] then
---         widget = addon:CreateFrame("CellIndicatorSettings_CleuAuras", parent, 240, 128)
---         settingWidgets["cleuAuras"] = widget
+    if not settingWidgets["cleuAuras"] then
+        widget = addon:CreateFrame("CellIndicatorSettings_CleuAuras", parent, 240, 128)
+        settingWidgets["cleuAuras"] = widget
 
---         widget.frame = addon:CreateFrame(nil, widget, 20, 20)
---         widget.frame:SetPoint("TOPLEFT", 5, -20)
---         widget.frame:SetPoint("RIGHT", -5, 0)
---         widget.frame:Show()
---         addon:StylizeFrame(widget.frame, {0.15, 0.15, 0.15, 1})
+        widget.frame = addon:CreateFrame(nil, widget, 20, 20)
+        widget.frame:SetPoint("TOPLEFT", 5, -20)
+        widget.frame:SetPoint("RIGHT", -5, 0)
+        widget.frame:Show()
+        addon:StylizeFrame(widget.frame, {0.15, 0.15, 0.15, 1})
 
---         widget.text = widget:CreateFontString(nil, "OVERLAY", font_name)
---         widget.text:SetPoint("BOTTOMLEFT", widget.frame, "TOPLEFT", 0, 1)
+        widget.text = widget:CreateFontString(nil, "OVERLAY", font_name)
+        widget.text:SetPoint("BOTTOMLEFT", widget.frame, "TOPLEFT", 0, 1)
 
---         -- callback
---         function widget:SetFunc(func)
---             widget.frame.func = func
---         end
+        -- callback
+        function widget:SetFunc(func)
+            widget.frame.func = func
+        end
 
---         -- show db value
---         function widget:SetDBValue(t)
---             widget.text:SetText(L["cleuAurasTips"])
---             CreateCleuAuraButtons(widget.frame, t, function(diff)
---                 widget.frame:SetHeight((#t+1)*19+1)
---                 widget:SetHeight((#t+1)*19+1 + 20 + 5)
---                 if diff then parent:SetHeight(parent:GetHeight()+diff) end
---             end)
---             widget.frame:SetHeight((#t+1)*19+1)
---             widget:SetHeight((#t+1)*19+1 + 20 + 5)
---         end
---     else
---         widget = settingWidgets["cleuAuras"]
---     end
+        -- show db value
+        function widget:SetDBValue(t)
+            widget.text:SetText(L["cleuAurasTips"])
+            CreateCleuAuraButtons(widget.frame, t, function(diff)
+                widget.frame:SetHeight((#t+1)*19+1)
+                widget:SetHeight((#t+1)*19+1 + 20 + 5)
+                if diff then parent:SetHeight(parent:GetHeight()+diff) end
+            end)
+            widget.frame:SetHeight((#t+1)*19+1)
+            widget:SetHeight((#t+1)*19+1 + 20 + 5)
+        end
+    else
+        widget = settingWidgets["cleuAuras"]
+    end
 
---     widget:Show()
---     return widget
--- end
+    widget:Show()
+    return widget
+end
+]=]
 
 -------------------------------------------------
 -- CreateSetting_BuiltIns

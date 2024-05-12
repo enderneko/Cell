@@ -1302,12 +1302,12 @@ local listFrame, renameBtn, deleteBtn
 
 local typeItems = {
     {
-        ["text"] = L["Icon"],
-        ["value"] = "icon",
-    },
-    {
         ["text"] = L["Icons"],
         ["value"] = "icons",
+    },
+    {
+        ["text"] = L["Icon"],
+        ["value"] = "icon",
     },
     {
         ["text"] = L["Bar"],
@@ -1716,7 +1716,7 @@ local function ShowIndicatorSettings(id)
 
         -- auras
         elseif currentSetting == "auras" then
-            w:SetDBValue(L[F:UpperFirst(indicatorTable["auraType"]).." List"], indicatorTable["auras"], indicatorType == "icons" or indicatorType == "glow", indicatorType == "icons")
+            w:SetDBValue(L[F:UpperFirst(indicatorTable["auraType"]).." List"], indicatorTable["auras"], indicatorType == "glow", indicatorType == "icons")
             w:SetFunc(function(value)
                 -- NOTE: already changed in widget
                 Cell:Fire("UpdateIndicators", notifiedLayout, indicatorName, "auras", indicatorTable["auraType"], value)
