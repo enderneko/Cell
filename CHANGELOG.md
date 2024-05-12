@@ -1,5 +1,23 @@
-[Full Changelog](https://github.com/enderneko/Cell/compare/r222-release...58cc42c504c5a067c927de5dbbcff26410ee0309)
+[Full Changelog](https://github.com/enderneko/Cell/compare/r223-release...36aa563775d079eda4154a5f30e887c300c58836)
 
-- Update Cata debuffs
-- Fix indicator settings scrolling range
-- Fix Targeted Spells
+- Implement Power Text indicator
+- Make Icons ORDERED
+- Add disable snippets dialog
+- Add ClassColor for custom Color indicator
+- Add FrameLevel for custom Color/Overlay indicators
+- Add InvertColor for HealAbsorb
+- Update Appearance options
+- Add 30% for duration text
+- Increase max size of icons
+- Update Overshield color
+- Update default resurrection click-castings
+- Update color for HealthText indicator
+- Update Targeted Spells
+- Fix npcAnchor for combinedGroups
+- Fix PowerFilter on switching specs when solo
+- Fix click-castings "\"
+- Fix layout auto switch for cata
+- Fix Spotlights for AI followers
+- Fix color of AI followers
+- Try fixing Spec Filter
+- [snippetVar] CELL_USE_LIBHEALCOMM

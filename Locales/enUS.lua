@@ -87,6 +87,21 @@ select(2, ...).L = setmetatable({
         <p>(Retail) Enable "Always Update Buffs/Debuffs" in General tab, if indicators do not update correctly.</p>
         <br/>
 
+        <h1>r224-release (May 13, 2024, 01:00 GMT+8)</h1>
+        <p>+ New indicator: Power Text.</p>
+        <p>* The custom Icons indicators now have an ordered spell list.</p>
+        <p>+ Added "Class Color" for custom Color indicators and Health Text indicator.</p>
+        <p>+ Added "Frame Level" for custom Color/Overlay indicators.</p>
+        <p>+ Added "Invert Color" for Heal Absorb.</p>
+        <p>+ Added a "30%" for some duration related options.</p>
+        <p>* Fixed anchor of NPC frame while using combined groups.</p>
+        <p>* Fixed Power Filters when solo.</p>
+        <p>* Fixed Layout Auto Switch for Cata.</p>
+        <p>* Fixed issues with AI followers.</p>
+        <p>* Fixed issues with AI followers.</p>
+        <p>* Moved "Use LibHealComm" to Code Snippets.</p>
+        <br/>
+
         <h1>r223-release (May 6, 2024, 00:05 GMT+8)</h1>
         <p>* Updated Cata debuffs.</p>
         <br/>
