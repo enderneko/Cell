@@ -86,6 +86,10 @@ select(2, ...).L = setmetatable({
         <h1>If there are any issues after an update, check through all code snippets first.</h1>
         <p>(Retail) Enable "Always Update Buffs/Debuffs" in General tab, if indicators do not update correctly.</p>
         <br/>
+        
+        <h1>r225-release (May 13, 2024, 03:50 GMT+8)</h1>
+        <p>* Bug fixes.</p>
+        <br/>
 
         <h1>r224-release (May 13, 2024, 01:00 GMT+8)</h1>
         <p>+ New indicator: Power Text.</p>
