@@ -58,7 +58,7 @@ local barAnimationType, highlightEnabled, predictionEnabled
 -------------------------------------------------
 local UnitButton_UpdateAll
 local UnitButton_UpdateAuras, UnitButton_UpdateAssignment, UnitButton_UpdateLeader, UnitButton_UpdateStatusText
-local UnitButton_UpdateHealthColor, UnitButton_UpdateNameColor
+local UnitButton_UpdateHealthColor, UnitButton_UpdateNameTextColor, UnitButton_UpdateHealthTextColor, UnitButton_UpdatePowerTextColor
 local UnitButton_UpdatePowerMax, UnitButton_UpdatePower, UnitButton_UpdatePowerType
 
 -------------------------------------------------
@@ -131,7 +131,7 @@ local function ResetIndicators()
             I:EnableMissingBuffs(t["enabled"])
         end
         -- update extra
-        if t["indicatorName"] == "nameText" or t["indicatorName"] == "healthText" then
+        if t["indicatorName"] == "nameText" or t["indicatorName"] == "healthText" or t["indicatorName"] == "powerText" then
             indicatorColors[t["indicatorName"]] = t["color"]
         end
         if t["dispellableByMe"] ~= nil then
@@ -214,10 +214,14 @@ local function HandleIndicators(b)
         -- update format
         if t["format"] then
             indicator:SetFormat(t["format"])
-            B:UpdateHealthText(b)
+            if t["indicatorName"] == "healthText" then 
+                B:UpdateHealthText(b)
+            elseif t["indicatorName"] == "powerText" then 
+                B:UpdatePowerText(b)
+            end
         end
         -- update color
-        if t["color"] and t["indicatorName"] ~= "nameText" and t["indicatorName"] ~="healthText" then
+        if t["color"] and type(t["color"][1]) == "number" then
             indicator:SetColor(unpack(t["color"]))
         end
         -- update colors
@@ -472,6 +476,10 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                 F:IterateAllUnitButtons(function(b)
                     B:UpdateHealthText(b)
                 end, true)
+            elseif indicatorName == "powerText" then
+                F:IterateAllUnitButtons(function(b)
+                    B:UpdatePowerText(b)
+                end, true)
             elseif indicatorName == "healthThresholds" then
                 if value then
                     I:UpdateHealthThresholds()
@@ -562,16 +570,34 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                 indicator:SetFont(unpack(value))
             end, true)
         elseif setting == "format" then
-            F:IterateAllUnitButtons(function(b)
-                local indicator = b.indicators[indicatorName]
-                indicator:SetFormat(value)
-                B:UpdateHealthText(b)
-            end, true)
+            if indicatorName == "healthText" then
+                F:IterateAllUnitButtons(function(b)
+                    local indicator = b.indicators[indicatorName]
+                    indicator:SetFormat(value)
+                    B:UpdateHealthText(b)
+                end, true)
+            elseif indicatorName == "powerText" then
+                F:IterateAllUnitButtons(function(b)
+                    local indicator = b.indicators[indicatorName]
+                    indicator:SetFormat(value)
+                    B:UpdatePowerText(b)
+                end, true)
+            end
         elseif setting == "color" then
-            if indicatorName == "nameText" or indicatorName == "healthText" then
+            if indicatorName == "nameText" then
                 indicatorColors[indicatorName] = value
                 F:IterateAllUnitButtons(function(b)
-                    UnitButton_UpdateNameColor(b)
+                    UnitButton_UpdateNameTextColor(b)
+                end, true)
+            elseif indicatorName == "healthText" then
+                indicatorColors[indicatorName] = value
+                F:IterateAllUnitButtons(function(b)
+                    UnitButton_UpdateHealthTextColor(b)
+                end, true)
+            elseif indicatorName == "powerText" then
+                indicatorColors[indicatorName] = value
+                F:IterateAllUnitButtons(function(b)
+                    UnitButton_UpdatePowerTextColor(b)
                 end, true)
             else
                 F:IterateAllUnitButtons(function(b)
@@ -656,11 +682,16 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                     b.indicators[indicatorName]:ShowBackground(value2)
                 end, true)
             elseif value == "hideIfEmptyOrFull" then
-                --! 血量文字指示器需要立即被刷新
                 indicatorBooleans[indicatorName] = value2
-                F:IterateAllUnitButtons(function(b)
-                    B:UpdateHealthText(b)
-                end, true)
+                if indicatorName == "healthText" then
+                    F:IterateAllUnitButtons(function(b)
+                        B:UpdateHealthText(b)
+                    end, true)
+                elseif indicatorName == "powerText" then
+                    F:IterateAllUnitButtons(function(b)
+                        B:UpdatePowerText(b)
+                    end, true)
+                end
             elseif value == "hideInCombat" then
                 indicatorBooleans[indicatorName] = value2
                 F:IterateAllUnitButtons(function(b)
@@ -1241,15 +1272,15 @@ local function UpdateUnitHealthState(self, diff)
     end
 
     if enabledIndicators["healthText"] and healthMax ~= 0 then
-        if health == healthMax or self.states.isDeadOrGhost then
-            if not indicatorBooleans["healthText"] then
-                self.indicators.healthText:SetHealth(health, healthMax, self.states.totalAbsorbs)
-                self.indicators.healthText:Show()
-            else
+        if indicatorBooleans["healthText"] then
+            if health == healthMax or self.states.isDeadOrGhost or self.states.isDead then
                 self.indicators.healthText:Hide()
+            else
+                self.indicators.healthText:SetValue(health, healthMax, self.states.totalAbsorbs)
+                self.indicators.healthText:Show()
             end
         else
-            self.indicators.healthText:SetHealth(health, healthMax, self.states.totalAbsorbs)
+            self.indicators.healthText:SetValue(health, healthMax, self.states.totalAbsorbs)
             self.indicators.healthText:Show()
         end
     else
@@ -1271,13 +1302,13 @@ local function ShouldShowPowerBar(b)
     local class
     if b.states.inVehicle then
         class = "VEHICLE"
-    elseif string.find(b.states.guid, "^Player") then
+    elseif F:IsPlayer(b.states.guid) then
         class = b.states.class
-    elseif string.find(b.states.guid, "^Pet") then
+    elseif F:IsPet(b.states.guid) then
         class = "PET"
-    elseif string.find(b.states.guid, "^Creature") then
+    elseif F:IsNPC(b.states.guid) then
         class = "NPC"
-    elseif string.find(b.states.guid, "^Vehicle") then
+    elseif F:IsVehicle(b.states.guid) then
         class = "VEHICLE"
     end
     
@@ -1472,29 +1503,68 @@ local function UnitButton_FinishReadyCheck(self)
     end)
 end
 
+local function UnitButton_UpdatePowerText(self)
+    if enabledIndicators["powerText"] and self.states.powerMax and self.states.power then
+        if indicatorBooleans["powerText"] then
+            if self.states.power == self.states.powerMax or self.states.power == 0 then
+                self.indicators.powerText:Hide()
+            else
+                self.indicators.powerText:SetValue(self.states.power, self.states.powerMax)
+                self.indicators.powerText:Show()
+            end
+        else
+            self.indicators.powerText:SetValue(self.states.power, self.states.powerMax)
+            self.indicators.powerText:Show()
+        end
+    else
+        self.indicators.powerText:Hide()
+    end
+end
+
+UnitButton_UpdatePowerTextColor = function(self)
+    local unit = self.states.displayedUnit
+    if not unit then return end
+    
+    if enabledIndicators["powerText"] then
+        if indicatorColors["powerText"][1] == "power_color" then
+            self.indicators.powerText:SetColor(F:GetPowerColor(unit))
+        elseif indicatorColors["powerText"][1] == "class_color" then
+            self.indicators.powerText:SetColor(F:GetUnitClassColor(unit))
+        else
+            self.indicators.powerText:SetColor(unpack(indicatorColors["powerText"][2]))
+        end
+    end
+end
+
 UnitButton_UpdatePowerMax = function(self)
     local unit = self.states.displayedUnit
     if not unit then return end
 
-    local value = UnitPowerMax(unit)
-    if value < 0 then value = 0 end
+    self.states.powerMax = UnitPowerMax(unit)
+    if self.states.powerMax < 0 then self.states.powerMax = 0 end
     
     if barAnimationType == "Smooth" then
-        self.widgets.powerBar:SetMinMaxSmoothedValue(0, value)
+        self.widgets.powerBar:SetMinMaxSmoothedValue(0, self.states.powerMax)
     else
-        self.widgets.powerBar:SetMinMaxValues(0, value)
+        self.widgets.powerBar:SetMinMaxValues(0, self.states.powerMax)
     end
+
+    UnitButton_UpdatePowerText(self)
 end
 
 UnitButton_UpdatePower = function(self)
     local unit = self.states.displayedUnit
     if not unit then return end
 
+    self.states.power = UnitPower(unit)
+
     if barAnimationType == "Smooth" then
-        self.widgets.powerBar:SetSmoothedValue(UnitPower(unit))
+        self.widgets.powerBar:SetSmoothedValue(self.states.power)
     else
-        self.widgets.powerBar:SetValue(UnitPower(unit))
+        self.widgets.powerBar:SetValue(self.states.power)
     end
+
+    UnitButton_UpdatePowerText(self)
 end
 
 UnitButton_UpdatePowerType = function(self)
@@ -1508,11 +1578,13 @@ UnitButton_UpdatePowerType = function(self)
         r, g, b = 0.5, 0.5, 0.5
         lossR, lossG, lossB = r*0.2, g*0.2, b*0.2
     else
-        r, g, b, lossR, lossG, lossB, self.states.powerType = F:GetPowerColor(unit, self.states.class)
+        r, g, b, lossR, lossG, lossB, self.states.powerType = F:GetPowerBarColor(unit, self.states.class)
     end
 
     self.widgets.powerBar:SetStatusBarColor(r, g, b)
     self.widgets.powerBarLoss:SetVertexColor(lossR, lossG, lossB)
+
+    UnitButton_UpdatePowerTextColor(self)
 end
 
 local function UnitButton_UpdateHealthMax(self)
@@ -1774,58 +1846,28 @@ local function UnitButton_UpdateName(self)
     self.indicators.nameText:UpdateName()
 end
 
-UnitButton_UpdateNameColor = function(self)
+UnitButton_UpdateNameTextColor = function(self)
     local unit = self.states.unit
     if not unit then return end
 
-    self.states.class = UnitClassBase(unit) --! update class or it may be nil
-
-    local nameText = self.indicators.nameText
-    local healthText = self.indicators.healthText
-
-    if not Cell.loaded then
-        nameText:SetColor(1, 1, 1)
-        healthText:SetColor(1, 1, 1)
-        return
+    if enabledIndicators["nameText"] then
+        if indicatorColors["nameText"][1] == "class_color" or not UnitIsConnected(unit) or UnitIsCharmed(unit) then
+            self.indicators.nameText:SetColor(F:GetUnitClassColor(unit))
+        else
+            self.indicators.nameText:SetColor(unpack(indicatorColors["nameText"][2]))
+        end
     end
-    
-    if UnitIsPlayer(unit) then -- player
-        if not UnitIsConnected(unit) or UnitIsCharmed(unit) then
-            nameText:SetColor(F:GetClassColor(self.states.class))
-            healthText:SetColor(F:GetClassColor(self.states.class))
-        else
-            if indicatorColors["nameText"][1] == "class_color" then
-                nameText:SetColor(F:GetClassColor(self.states.class))
-            else
-                nameText:SetColor(unpack(indicatorColors["nameText"][2]))
-            end
-            if indicatorColors["healthText"][1] == "class_color" then
-                healthText:SetColor(F:GetClassColor(self.states.class))
-            else
-                healthText:SetColor(unpack(indicatorColors["healthText"][2]))
-            end
-        end
-    elseif string.find(unit, "pet") then -- pet
-        if indicatorColors["nameText"][1] == "class_color" then
-            nameText:SetColor(0.5, 0.5, 1)
-        else
-            nameText:SetColor(unpack(indicatorColors["nameText"][2]))
-        end
+end
+
+UnitButton_UpdateHealthTextColor = function(self)
+    local unit = self.states.unit
+    if not unit then return end
+
+    if enabledIndicators["healthText"] then
         if indicatorColors["healthText"][1] == "class_color" then
-            healthText:SetColor(0.5, 0.5, 1)
+            self.indicators.healthText:SetColor(F:GetUnitClassColor(unit))
         else
-            healthText:SetColor(unpack(indicatorColors["healthText"][2]))
-        end
-    else -- npc
-        if indicatorColors["nameText"][1] == "class_color" then
-            nameText:SetColor(0, 1, 0.2)
-        else
-            nameText:SetColor(unpack(indicatorColors["nameText"][2]))
-        end
-        if indicatorColors["healthText"][1] == "class_color" then
-            healthText:SetColor(0, 1, 0.2)
-        else
-            healthText:SetColor(unpack(indicatorColors["healthText"][2]))
+            self.indicators.healthText:SetColor(unpack(indicatorColors["healthText"][2]))
         end
     end
 end
@@ -1834,7 +1876,7 @@ UnitButton_UpdateHealthColor = function(self)
     local unit = self.states.unit
     if not unit then return end
 
-    self.states.class = UnitClassBase(unit) --! update class or it may be nil
+    self.states.class = UnitClassBase(unit) --! update class
 
     local barR, barG, barB
     local lossR, lossG, lossB
@@ -1850,17 +1892,17 @@ UnitButton_UpdateHealthColor = function(self)
             barR, barG, barB = 0.4, 0.4, 0.4
             lossR, lossG, lossB = 0.4, 0.4, 0.4
         elseif UnitIsCharmed(unit) then
-            barR, barG, barB = 0.5, 0, 1
-            lossR, lossG, lossB = barR*0.2, barG*0.2, barB*0.2
+            barR, barG, barB, barA = 0.5, 0, 1, 1
+            lossR, lossG, lossB, lossA = barR*0.2, barG*0.2, barB*0.2, 1
         elseif self.states.inVehicle then
-            barR, barG, barB, lossR, lossG, lossB = F:GetHealthColor(self.states.healthPercent, self.states.isDeadOrGhost, 0, 1, 0.2)
+            barR, barG, barB, lossR, lossG, lossB = F:GetHealthBarColor(self.states.healthPercent, self.states.isDeadOrGhost or self.states.isDead, 0, 1, 0.2)
         else
-            barR, barG, barB, lossR, lossG, lossB = F:GetHealthColor(self.states.healthPercent, self.states.isDeadOrGhost, F:GetClassColor(self.states.class))
+            barR, barG, barB, lossR, lossG, lossB = F:GetHealthBarColor(self.states.healthPercent, self.states.isDeadOrGhost or self.states.isDead, F:GetClassColor(self.states.class))
         end
     elseif string.find(unit, "pet") then -- pet
-        barR, barG, barB, lossR, lossG, lossB = F:GetHealthColor(self.states.healthPercent, self.states.isDeadOrGhost, 0.5, 0.5, 1)
+        barR, barG, barB, lossR, lossG, lossB = F:GetHealthBarColor(self.states.healthPercent, self.states.isDeadOrGhost or self.states.isDead, 0.5, 0.5, 1)
     else -- npc
-        barR, barG, barB, lossR, lossG, lossB = F:GetHealthColor(self.states.healthPercent, self.states.isDeadOrGhost, 0, 1, 0.2)
+        barR, barG, barB, lossR, lossG, lossB = F:GetHealthBarColor(self.states.healthPercent, self.states.isDeadOrGhost or self.states.isDead, 0, 1, 0.2)
     end
 
     -- local r, g, b = RAID_CLASS_COLORS["DEATHKNIGHT"]:GetRGB()
@@ -1958,7 +2000,8 @@ UnitButton_UpdateAll = function(self)
 
     UnitButton_UpdateVehicleStatus(self)
     UnitButton_UpdateName(self)
-    UnitButton_UpdateNameColor(self)
+    UnitButton_UpdateNameTextColor(self)
+    UnitButton_UpdateHealthTextColor(self)
     UnitButton_UpdateHealthMax(self)
     UnitButton_UpdateHealth(self)
     UnitButton_UpdateHealPrediction(self)
@@ -2077,8 +2120,10 @@ local function UnitButton_OnEvent(self, event, unit)
         
         elseif event == "UNIT_NAME_UPDATE" then
             UnitButton_UpdateName(self)
-            UnitButton_UpdateNameColor(self)
+            UnitButton_UpdateNameTextColor(self)
             UnitButton_UpdateHealthColor(self)
+            UnitButton_UpdateHealthTextColor(self)
+            UnitButton_UpdatePowerTextColor(self)
         
         elseif event == "UNIT_MAXHEALTH" then
             UnitButton_UpdateHealthMax(self)
@@ -2117,7 +2162,7 @@ local function UnitButton_OnEvent(self, event, unit)
             UnitButton_UpdateStatusText(self)
             
         elseif event == "UNIT_FACTION" then -- mind control
-            UnitButton_UpdateNameColor(self)
+            UnitButton_UpdateNameTextColor(self)
             UnitButton_UpdateHealthColor(self) 
             
         elseif event == "UNIT_THREAT_SITUATION_UPDATE" then
@@ -2614,6 +2659,14 @@ function B:UpdateHealthText(button)
     end
 end
 
+-- powerText
+function B:UpdatePowerText(button)
+    if button.states.displayedUnit then
+        UnitButton_UpdatePowerText(button)
+        UnitButton_UpdatePowerTextColor(button)
+    end
+end
+
 -- statusText
 function B:UpdateStatusText(button)
     UnitButton_UpdateStatusText(button)
@@ -2873,6 +2926,7 @@ function CellUnitButton_OnLoad(button)
     I:CreateNameText(button)
     I:CreateStatusText(button)
     I:CreateHealthText(button)
+    I:CreatePowerText(button)
     I:CreateStatusIcon(button)
     I:CreatePartyAssignmentIcon(button)
     I:CreateLeaderIcon(button)

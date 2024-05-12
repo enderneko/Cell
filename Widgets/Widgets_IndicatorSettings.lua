@@ -915,12 +915,12 @@ local function CreateSetting_NumPerLine(parent)
     return widget
 end
 
-local function CreateSetting_Format(parent)
+local function CreateSetting_HealthFormat(parent)
     local widget
 
-    if not settingWidgets["format"] then
-        widget = addon:CreateFrame("CellIndicatorSettings_Format", parent, 240, 50)
-        settingWidgets["format"] = widget
+    if not settingWidgets["healthFormat"] then
+        widget = addon:CreateFrame("CellIndicatorSettings_HealthFormat", parent, 240, 50)
+        settingWidgets["healthFormat"] = widget
 
         widget.format = addon:CreateDropdown(widget, 245)
         widget.format:SetPoint("TOPLEFT", 5, -20)
@@ -1039,7 +1039,61 @@ local function CreateSetting_Format(parent)
             widget.format:SetSelectedValue(format)
         end
     else
-        widget = settingWidgets["format"]
+        widget = settingWidgets["healthFormat"]
+    end
+
+    widget:Show()
+    return widget
+end
+
+local function CreateSetting_PowerFormat(parent)
+    local widget
+
+    if not settingWidgets["powerFormat"] then
+        widget = addon:CreateFrame("CellIndicatorSettings_PowerFormat", parent, 240, 50)
+        settingWidgets["powerFormat"] = widget
+
+        widget.format = addon:CreateDropdown(widget, 245)
+        widget.format:SetPoint("TOPLEFT", 5, -20)
+        widget.format:SetItems({
+            {
+                ["text"] = "50%",
+                ["value"] = "percentage",
+                ["onClick"] = function()
+                    widget.func("percentage")
+                end,
+            },
+            {
+                ["text"] = "2048",
+                ["value"] = "number",
+                ["onClick"] = function()
+                    widget.func("number")
+                end,
+            },
+            {
+                ["text"] = F:FormatNumber(2048),
+                ["value"] = "number-short",
+                ["onClick"] = function()
+                    widget.func("number-short")
+                end,
+            },
+        })
+
+        widget.formatText = widget:CreateFontString(nil, "OVERLAY", font_name)
+        widget.formatText:SetText(L["Format"])
+        widget.formatText:SetPoint("BOTTOMLEFT", widget.format, "TOPLEFT", 0, 1)
+
+        -- callback
+        function widget:SetFunc(func)
+            widget.func = func
+        end
+        
+        -- show db value
+        function widget:SetDBValue(format)
+            widget.format:SetSelectedValue(format)
+        end
+    else
+        widget = settingWidgets["powerFormat"]
     end
 
     widget:Show()
@@ -2431,7 +2485,7 @@ local function CreateSetting_ClassColor(parent)
                 ["value"] = "class_color",
                 ["onClick"] = function()
                     widget.func({"class_color", widget.colorPicker:GetColor()})
-                    widget.colorPicker:SetEnabled(false)
+                    widget.colorPicker:Hide()
                 end,
             },
             {
@@ -2439,7 +2493,7 @@ local function CreateSetting_ClassColor(parent)
                 ["value"] = "custom_color",
                 ["onClick"] = function()
                     widget.func({"custom_color", widget.colorPicker:GetColor()})
-                    widget.colorPicker:SetEnabled(true)
+                    widget.colorPicker:Show()
                 end,
             },
         })
@@ -2462,10 +2516,82 @@ local function CreateSetting_ClassColor(parent)
         function widget:SetDBValue(cTable)
             widget.colorDropdown:SetSelectedValue(cTable[1])
             widget.colorPicker:SetColor(cTable[2])
-            widget.colorPicker:SetEnabled(cTable[1] == "custom_color")
+            if cTable[1] == "custom_color" then
+                widget.colorPicker:Show()
+            else
+                widget.colorPicker:Hide()
+            end
         end
     else
         widget = settingWidgets["classColor"]
+    end
+
+    widget:Show()
+    return widget
+end
+
+local function CreateSetting_PowerColor(parent)
+    local widget
+
+    if not settingWidgets["powerColor"] then
+        widget = addon:CreateFrame("CellIndicatorSettings_PowerColor", parent, 240, 50)
+        settingWidgets["powerColor"] = widget
+
+        widget.colorDropdown = addon:CreateDropdown(widget, 127)
+        widget.colorDropdown:SetPoint("TOPLEFT", 5, -20)
+        widget.colorDropdown:SetItems({
+            {
+                ["text"] = L["Power Color"],
+                ["value"] = "power_color",
+                ["onClick"] = function()
+                    widget.func({"power_color", widget.colorPicker:GetColor()})
+                    widget.colorPicker:Hide()
+                end,
+            },
+            {
+                ["text"] = L["Class Color"],
+                ["value"] = "class_color",
+                ["onClick"] = function()
+                    widget.func({"class_color", widget.colorPicker:GetColor()})
+                    widget.colorPicker:Hide()
+                end,
+            },
+            {
+                ["text"] = L["Custom Color"],
+                ["value"] = "custom_color",
+                ["onClick"] = function()
+                    widget.func({"custom_color", widget.colorPicker:GetColor()})
+                    widget.colorPicker:Show()
+                end,
+            },
+        })
+
+        local text = widget:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
+        text:SetPoint("BOTTOMLEFT", widget.colorDropdown, "TOPLEFT", 0, 1)
+        text:SetText(L["Color"])
+
+        widget.colorPicker = addon:CreateColorPicker(widget, "", false, function(r, g, b)
+            widget.func({widget.colorDropdown:GetSelected(), {r, g, b}})
+        end)
+        widget.colorPicker:SetPoint("LEFT", widget.colorDropdown, "RIGHT", 5, 0)
+
+        -- callback
+        function widget:SetFunc(func)
+            widget.func = func
+        end
+        
+        -- show db value
+        function widget:SetDBValue(cTable)
+            widget.colorDropdown:SetSelectedValue(cTable[1])
+            widget.colorPicker:SetColor(cTable[2])
+            if cTable[1] == "custom_color" then
+                widget.colorPicker:Show()
+            else
+                widget.colorPicker:Hide()
+            end
+        end
+    else
+        widget = settingWidgets["powerColor"]
     end
 
     widget:Show()
@@ -5477,8 +5603,10 @@ function addon:CreateIndicatorSettings(parent, settingsTable)
             tinsert(widgetsTable, CreateSetting_Num(parent))
         elseif string.find(setting, "^numPerLine:") then
             tinsert(widgetsTable, CreateSetting_NumPerLine(parent))
-        elseif setting == "format" then
-            tinsert(widgetsTable, CreateSetting_Format(parent))
+        elseif setting == "healthFormat" then
+            tinsert(widgetsTable, CreateSetting_HealthFormat(parent))
+        elseif setting == "powerFormat" then
+            tinsert(widgetsTable, CreateSetting_PowerFormat(parent))
         elseif setting == "durationVisibility" then
             tinsert(widgetsTable, CreateSetting_DurationVisibility(parent))
         elseif setting == "orientation" then
@@ -5503,6 +5631,8 @@ function addon:CreateIndicatorSettings(parent, settingsTable)
             tinsert(widgetsTable, CreateSetting_CustomColors(parent))
         elseif setting == "color-class" then
             tinsert(widgetsTable, CreateSetting_ClassColor(parent))
+        elseif setting == "color-power" then
+            tinsert(widgetsTable, CreateSetting_PowerColor(parent))
         elseif setting == "statusColors" then
             tinsert(widgetsTable, CreateSetting_StatusColors(parent))
         elseif string.find(setting, "checkbutton4") then

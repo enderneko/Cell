@@ -1356,7 +1356,7 @@ end
 -------------------------------------------------
 local function SetHealth_Percentage(self, current, max, totalAbsorbs)
     self.text:SetFormattedText("%d%%", current/max*100)
-    self:SetWidth(self.text:GetStringWidth()+3)
+    self:SetWidth(self.text:GetStringWidth())
 end
 
 local function SetHealth_Percentage_Absorbs(self, current, max, totalAbsorbs)
@@ -1365,27 +1365,27 @@ local function SetHealth_Percentage_Absorbs(self, current, max, totalAbsorbs)
     else
         self.text:SetFormattedText("%d%%+%d%%", current/max*100, totalAbsorbs/max*100)
     end
-    self:SetWidth(self.text:GetStringWidth()+3)
+    self:SetWidth(self.text:GetStringWidth())
 end
 
 local function SetHealth_Percentage_Absorbs_Merged(self, current, max, totalAbsorbs)
     self.text:SetFormattedText("%d%%", (current+totalAbsorbs)/max*100)
-    self:SetWidth(self.text:GetStringWidth()+3)
+    self:SetWidth(self.text:GetStringWidth())
 end
 
 local function SetHealth_Percentage_Deficit(self, current, max, totalAbsorbs)
     self.text:SetFormattedText("%d%%", (current-max)/max*100)
-    self:SetWidth(self.text:GetStringWidth()+3)
+    self:SetWidth(self.text:GetStringWidth())
 end
 
 local function SetHealth_Number(self, current, max, totalAbsorbs)
     self.text:SetText(current)
-    self:SetWidth(self.text:GetStringWidth()+3)
+    self:SetWidth(self.text:GetStringWidth())
 end
 
 local function SetHealth_Number_Short(self, current, max, totalAbsorbs)
     self.text:SetText(F:FormatNumber(current))
-    self:SetWidth(self.text:GetStringWidth()+3)
+    self:SetWidth(self.text:GetStringWidth())
 end
 
 local function SetHealth_Number_Absorbs_Short(self, current, max, totalAbsorbs)
@@ -1394,27 +1394,27 @@ local function SetHealth_Number_Absorbs_Short(self, current, max, totalAbsorbs)
     else
         self.text:SetFormattedText("%s+%s", F:FormatNumber(current), F:FormatNumber(totalAbsorbs))
     end
-    self:SetWidth(self.text:GetStringWidth()+3)
+    self:SetWidth(self.text:GetStringWidth())
 end
 
 local function SetHealth_Number_Absorbs_Merged_Short(self, current, max, totalAbsorbs)
     self.text:SetText(F:FormatNumber(current+totalAbsorbs))
-    self:SetWidth(self.text:GetStringWidth()+3)
+    self:SetWidth(self.text:GetStringWidth())
 end
 
 local function SetHealth_Number_Deficit(self, current, max, totalAbsorbs)
     self.text:SetText(current-max)
-    self:SetWidth(self.text:GetStringWidth()+3)
+    self:SetWidth(self.text:GetStringWidth())
 end
 
 local function SetHealth_Number_Deficit_Short(self, current, max, totalAbsorbs)
     self.text:SetText(F:FormatNumber(current-max))
-    self:SetWidth(self.text:GetStringWidth()+3)
+    self:SetWidth(self.text:GetStringWidth())
 end
 
 local function SetHealth_Current_Short_Percentage(self, current, max, totalAbsorbs)
     self.text:SetFormattedText("%s %d%%", F:FormatNumber(current), (current/max*100))
-    self:SetWidth(self.text:GetStringWidth()+3)
+    self:SetWidth(self.text:GetStringWidth())
 end
 
 local function SetHealth_Absorbs_Only(self, current, max, totalAbsorbs)
@@ -1423,7 +1423,7 @@ local function SetHealth_Absorbs_Only(self, current, max, totalAbsorbs)
     else
         self.text:SetText(totalAbsorbs)
     end
-    self:SetWidth(self.text:GetStringWidth()+3)
+    self:SetWidth(self.text:GetStringWidth())
 end
 
 local function SetHealth_Absorbs_Only_Short(self, current, max, totalAbsorbs)
@@ -1432,7 +1432,7 @@ local function SetHealth_Absorbs_Only_Short(self, current, max, totalAbsorbs)
     else
         self.text:SetText(F:FormatNumber(totalAbsorbs))
     end
-    self:SetWidth(self.text:GetStringWidth()+3)
+    self:SetWidth(self.text:GetStringWidth())
 end
 
 local function SetHealth_Absorbs_Only_Percentage(self, current, max, totalAbsorbs)
@@ -1441,7 +1441,7 @@ local function SetHealth_Absorbs_Only_Percentage(self, current, max, totalAbsorb
     else
         self.text:SetFormattedText("%d%%", totalAbsorbs/max*100)
     end
-    self:SetWidth(self.text:GetStringWidth()+3)
+    self:SetWidth(self.text:GetStringWidth())
 end
 
 local function HealthText_SetFont(self, font, size, flags)
@@ -1463,14 +1463,14 @@ local function HealthText_SetFont(self, font, size, flags)
         self.text:SetShadowOffset(0, 0)
         self.text:SetShadowColor(0, 0, 0, 0)
     end
-    self:SetSize(self.text:GetStringWidth()+3, size+3)
+    self:SetSize(self.text:GetStringWidth(), size)
 end
 
 local function HealthText_SetPoint(self, point, relativeTo, relativePoint, x, y)
     self.text:ClearAllPoints()
-    if string.find(point, "LEFT") then
+    if string.find(point, "LEFT$") then
         self.text:SetPoint("LEFT")
-    elseif string.find(point, "RIGHT") then
+    elseif string.find(point, "RIGHT$") then
         self.text:SetPoint("RIGHT")
     else
         self.text:SetPoint("CENTER")
@@ -1480,33 +1480,33 @@ end
 
 local function HealthText_SetFormat(self, format)
     if format == "percentage" then
-        self.SetHealth = SetHealth_Percentage
+        self.SetValue = SetHealth_Percentage
     elseif format == "percentage-absorbs" then
-        self.SetHealth = SetHealth_Percentage_Absorbs
+        self.SetValue = SetHealth_Percentage_Absorbs
     elseif format == "percentage-absorbs-merged" then
-        self.SetHealth = SetHealth_Percentage_Absorbs_Merged
+        self.SetValue = SetHealth_Percentage_Absorbs_Merged
     elseif format == "percentage-deficit" then
-        self.SetHealth = SetHealth_Percentage_Deficit
+        self.SetValue = SetHealth_Percentage_Deficit
     elseif format == "number" then
-        self.SetHealth = SetHealth_Number
+        self.SetValue = SetHealth_Number
     elseif format == "number-short" then
-        self.SetHealth = SetHealth_Number_Short
+        self.SetValue = SetHealth_Number_Short
     elseif format == "number-absorbs-short" then
-        self.SetHealth = SetHealth_Number_Absorbs_Short
+        self.SetValue = SetHealth_Number_Absorbs_Short
     elseif format == "number-absorbs-merged-short" then
-        self.SetHealth = SetHealth_Number_Absorbs_Merged_Short
+        self.SetValue = SetHealth_Number_Absorbs_Merged_Short
     elseif format == "number-deficit" then
-        self.SetHealth = SetHealth_Number_Deficit
+        self.SetValue = SetHealth_Number_Deficit
     elseif format == "number-deficit-short" then
-        self.SetHealth = SetHealth_Number_Deficit_Short
+        self.SetValue = SetHealth_Number_Deficit_Short
     elseif format == "current-short-percentage" then
-        self.SetHealth = SetHealth_Current_Short_Percentage
+        self.SetValue = SetHealth_Current_Short_Percentage
     elseif format == "absorbs-only" then
-        self.SetHealth = SetHealth_Absorbs_Only
+        self.SetValue = SetHealth_Absorbs_Only
     elseif format == "absorbs-only-short" then
-        self.SetHealth = SetHealth_Absorbs_Only_Short
+        self.SetValue = SetHealth_Absorbs_Only_Short
     elseif format == "absorbs-only-percentage" then
-        self.SetHealth = SetHealth_Absorbs_Only_Percentage
+        self.SetValue = SetHealth_Absorbs_Only_Percentage
     end
 end
 
@@ -1537,7 +1537,103 @@ function I:CreateHealthText(parent)
     healthText.SetColor = HealthText_SetColor
     healthText.UpdatePreviewColor = HealthText_UpdatePreviewColor
 
-    function healthText:SetHealth() end
+    function healthText:SetValue() end
+end
+
+-------------------------------------------------
+-- power text
+-------------------------------------------------
+local function SetPower_Percentage(self, current, max, totalAbsorbs)
+    self.text:SetFormattedText("%d%%", current/max*100)
+    self:SetWidth(self.text:GetStringWidth())
+end
+
+local function SetPower_Number(self, current, max, totalAbsorbs)
+    self.text:SetText(current)
+    self:SetWidth(self.text:GetStringWidth())
+end
+
+local function SetPower_Number_Short(self, current, max, totalAbsorbs)
+    self.text:SetText(F:FormatNumber(current))
+    self:SetWidth(self.text:GetStringWidth())
+end
+
+local function PowerText_SetFont(self, font, size, flags)
+    font = F:GetFont(font)
+
+    if flags == "Shadow" then
+        self.text:SetFont(font, size, "")
+        self.text:SetShadowOffset(1, -1)
+        self.text:SetShadowColor(0, 0, 0, 1)
+    else
+        if flags == "None" then
+            flags = ""
+        elseif flags == "Outline" then
+            flags = "OUTLINE"
+        else
+            flags = "OUTLINE,MONOCHROME"
+        end
+        self.text:SetFont(font, size, flags)
+        self.text:SetShadowOffset(0, 0)
+        self.text:SetShadowColor(0, 0, 0, 0)
+    end
+    self:SetSize(self.text:GetStringWidth(), size)
+end
+
+local function PowerText_SetPoint(self, point, relativeTo, relativePoint, x, y)
+    self.text:ClearAllPoints()
+    if string.find(point, "LEFT$") then
+        self.text:SetPoint("LEFT")
+    elseif string.find(point, "RIGHT$") then
+        self.text:SetPoint("RIGHT")
+    else
+        self.text:SetPoint("CENTER")
+    end
+    self:_SetPoint(point, relativeTo, relativePoint, x, y)
+end
+
+local function PowerText_SetFormat(self, format)
+    if format == "percentage" then
+        self.SetValue = SetPower_Percentage
+    elseif format == "number" then
+        self.SetValue = SetPower_Number
+    elseif format == "number-short" then
+        self.SetValue = SetPower_Number_Short
+    end
+end
+
+local function PowerText_SetColor(self, r, g, b)
+    self.text:SetTextColor(r, g, b)
+end
+
+local function PowerText_UpdatePreviewColor(self, color)
+    local r, g, b
+    if color[1] == "power_color" then
+        r, g, b = F:GetPowerColor("player")
+    elseif color[1] == "class_color" then
+        r, g, b = F:GetClassColor(Cell.vars.playerClass)
+    else
+        r, g, b = unpack(color[2])
+    end
+    self.text:SetTextColor(r, g, b)
+end
+
+function I:CreatePowerText(parent)
+    local powerText = CreateFrame("Frame", parent:GetName().."PowerText", parent.widgets.overlayFrame)
+    parent.indicators.powerText = powerText
+    powerText:Hide()
+
+    local text = powerText:CreateFontString(nil, "OVERLAY", "CELL_FONT_STATUS")
+    powerText.text = text
+
+    powerText.SetFont = PowerText_SetFont
+    powerText._SetPoint = powerText.SetPoint
+    powerText.SetPoint = PowerText_SetPoint
+    powerText.SetFormat = PowerText_SetFormat
+    powerText.SetColor = PowerText_SetColor
+    powerText.UpdatePreviewColor = PowerText_UpdatePreviewColor
+
+    function powerText:SetValue() end
 end
 
 -------------------------------------------------

@@ -391,7 +391,7 @@ local function CreatePreviewButtons()
             end
 
             -- update color
-            local r, g, b, lossR, lossG, lossB = F:GetHealthColor(healthPercent, health == 0, F:GetClassColor(Cell.vars.playerClass))
+            local r, g, b, lossR, lossG, lossB = F:GetHealthBarColor(healthPercent, health == 0, F:GetClassColor(Cell.vars.playerClass))
             previewButton.widgets.healthBar:SetStatusBarColor(r, g, b, CellDB["appearance"]["barAlpha"])
             previewButton.widgets.healthBarLoss:SetVertexColor(lossR, lossG, lossB, CellDB["appearance"]["lossAlpha"])
 
@@ -467,7 +467,7 @@ local function UpdatePreviewButton()
     previewButton2.widgets.damageFlashTex:SetTexture(Cell.vars.texture)
 
     -- power color
-    local r, g, b = F:GetPowerColor("player", Cell.vars.playerClass)
+    local r, g, b = F:GetPowerBarColor("player", Cell.vars.playerClass)
     previewButton.widgets.powerBar:SetStatusBarColor(r, g, b)
     previewButton2.widgets.powerBar:SetStatusBarColor(r, g, b)
 
@@ -493,11 +493,11 @@ local function UpdatePreviewButton()
 
     -- health color
     local r, g, b, lossR, lossG, lossB 
-    r, g, b, lossR, lossG, lossB = F:GetHealthColor(previewButton.perc or 1, previewButton.perc == 0, F:GetClassColor(Cell.vars.playerClass))
+    r, g, b, lossR, lossG, lossB = F:GetHealthBarColor(previewButton.perc or 1, previewButton.perc == 0, F:GetClassColor(Cell.vars.playerClass))
     previewButton.widgets.healthBar:SetStatusBarColor(r, g, b, CellDB["appearance"]["barAlpha"])
     previewButton.widgets.healthBarLoss:SetVertexColor(lossR, lossG, lossB, CellDB["appearance"]["lossAlpha"])
 
-    r, g, b, lossR, lossG, lossB = F:GetHealthColor(0.6, false, F:GetClassColor(Cell.vars.playerClass))
+    r, g, b, lossR, lossG, lossB = F:GetHealthBarColor(0.6, false, F:GetClassColor(Cell.vars.playerClass))
     previewButton2.widgets.healthBar:SetStatusBarColor(r, g, b, CellDB["appearance"]["barAlpha"])
     previewButton2.widgets.healthBarLoss:SetVertexColor(lossR, lossG, lossB, CellDB["appearance"]["lossAlpha"])
 

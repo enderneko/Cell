@@ -113,11 +113,11 @@ local function UpdatePreviewButton()
     previewButton.widgets.powerBar:SetStatusBarTexture(Cell.vars.texture)
 
     -- health color
-    local r, g, b = F:GetHealthColor(1, false, F:GetClassColor(Cell.vars.playerClass))
+    local r, g, b = F:GetHealthBarColor(1, false, F:GetClassColor(Cell.vars.playerClass))
     previewButton.widgets.healthBar:SetStatusBarColor(r, g, b, CellDB["appearance"]["barAlpha"])
     
     -- power color
-    r, g, b = F:GetPowerColor("player", Cell.vars.playerClass)
+    r, g, b = F:GetPowerBarColor("player", Cell.vars.playerClass)
     previewButton.widgets.powerBar:SetStatusBarColor(r, g, b)
 
     -- alpha
@@ -652,9 +652,13 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                     if indicator.UpdateSize then indicator:UpdateSize(t["num"]) end
                 end
                 -- update format
-                if t["format"] then -- healthText
+                if t["format"] then
                     indicator:SetFormat(t["format"])
-                    indicator:SetHealth(21377, 65535, 16384)
+                    if t["indicatorName"] == "healthText" then
+                        indicator:SetValue(21377, 65535, 16384)
+                    elseif t["indicatorName"] == "powerText" then
+                        indicator:SetValue(2048, 4096)
+                    end
                 end
                 -- update numPerLine
                 if t["numPerLine"] then
@@ -670,7 +674,7 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                 end
                 -- update color
                 if t["color"] then
-                    if t["indicatorName"] == "nameText" or t["indicatorName"] == "healthText" then
+                    if t["indicatorName"] == "nameText" or t["indicatorName"] == "healthText" or t["indicatorName"] == "powerText" then
                         indicator:UpdatePreviewColor(t["color"])
                     else
                         indicator:SetColor(unpack(t["color"]))
@@ -841,7 +845,11 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
             indicator:SetNumPerLine(value)
         elseif setting == "format" then
             indicator:SetFormat(value)
-            indicator:SetHealth(21377, 65535, 16384)
+            if indicatorName == "healthText" then
+                indicator:SetValue(21377, 65535, 16384)
+            elseif indicatorName == "powerText" then
+                indicator:SetValue(2048, 4096)
+            end
         elseif setting == "orientation" then
             indicator:SetOrientation(value)
         elseif setting == "font" then
@@ -851,7 +859,7 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                 indicator:Show()
             end
         elseif setting == "color" then
-            if indicatorName == "nameText" or indicatorName == "healthText" then
+            if indicatorName == "nameText" or indicatorName == "healthText" or indicatorName == "powerText" then
                 indicator:UpdatePreviewColor(value)
             else
                 indicator:SetColor(unpack(value))
@@ -1476,7 +1484,8 @@ if Cell.isRetail then
     indicatorSettings = {
         ["nameText"] = {"enabled", "color-class", "textWidth", "checkbutton:showGroupNumber", "vehicleNamePosition", "namePosition", "frameLevel", "font-noOffset"},
         ["statusText"] = {"enabled", "checkbutton:showTimer", "checkbutton2:showBackground", "statusColors", "statusPosition", "frameLevel", "font-noOffset"},
-        ["healthText"] = {"enabled", "color-class", "format", "checkbutton:hideIfEmptyOrFull", "position", "frameLevel", "font-noOffset"},
+        ["healthText"] = {"enabled", "color-class", "healthFormat", "checkbutton:hideIfEmptyOrFull", "position", "frameLevel", "font-noOffset"},
+        ["powerText"] = {"enabled", "color-power", "powerFormat", "checkbutton:hideIfEmptyOrFull", "position", "frameLevel", "font-noOffset"},
         ["statusIcon"] = {
             -- "|A:dungeonskull:18:18|a "..
             "|TInterface\\LFGFrame\\LFG-Eye:18:18:0:0:512:256:72:120:72:120|t "..
@@ -1517,7 +1526,8 @@ elseif Cell.isCata then
     indicatorSettings = {
         ["nameText"] = {"enabled", "color-class", "textWidth", "checkbutton:showGroupNumber", "vehicleNamePosition", "namePosition", "frameLevel", "font-noOffset"},
         ["statusText"] = {"enabled", "checkbutton:showTimer", "checkbutton2:showBackground", "statusColors", "statusPosition", "frameLevel", "font-noOffset"},
-        ["healthText"] = {"enabled", "color-class", "format", "checkbutton:hideIfEmptyOrFull", "position", "frameLevel", "font-noOffset"},
+        ["healthText"] = {"enabled", "color-class", "healthFormat", "checkbutton:hideIfEmptyOrFull", "position", "frameLevel", "font-noOffset"},
+        ["powerText"] = {"enabled", "color-power", "powerFormat", "checkbutton:hideIfEmptyOrFull", "position", "frameLevel", "font-noOffset"},
         ["statusIcon"] = {
             -- "|A:dungeonskull:18:18|a "..
             "|TInterface\\LFGFrame\\LFG-Eye:18:18:0:0:512:256:72:120:72:120|t "..
@@ -1552,7 +1562,8 @@ elseif Cell.isVanilla then
     indicatorSettings = {
         ["nameText"] = {"enabled", "color-class", "textWidth", "checkbutton:showGroupNumber", "vehicleNamePosition", "namePosition", "frameLevel", "font-noOffset"},
         ["statusText"] = {"enabled", "checkbutton:showTimer", "checkbutton2:showBackground", "statusColors", "statusPosition", "frameLevel", "font-noOffset"},
-        ["healthText"] = {"enabled", "color-class", "format", "checkbutton:hideIfEmptyOrFull", "position", "frameLevel", "font-noOffset"},
+        ["healthText"] = {"enabled", "color-class", "healthFormat", "checkbutton:hideIfEmptyOrFull", "position", "frameLevel", "font-noOffset"},
+        ["powerText"] = {"enabled", "color-power", "powerFormat", "checkbutton:hideIfEmptyOrFull", "position", "frameLevel", "font-noOffset"},
         ["statusIcon"] = {
             -- "|A:dungeonskull:18:18|a "..
             "|TInterface\\LFGFrame\\LFG-Eye:18:18:0:0:512:256:72:120:72:120|t "..
@@ -1651,12 +1662,13 @@ local function ShowIndicatorSettings(id)
         local currentSetting = settingsTable[i]
         
         --! convert currentSetting to ACTUAL TABLE INDEX
-        if currentSetting == "color-alpha" or currentSetting == "color-class" then currentSetting = "color" end
+        if currentSetting == "color-alpha" or currentSetting == "color-class" or currentSetting == "color-power" then currentSetting = "color" end
         if currentSetting == "overlayColors" then currentSetting = "colors" end
         if currentSetting == "size-square" or currentSetting == "size-bar" or currentSetting == "size-normal-big" then currentSetting = "size" end
         if currentSetting == "namePosition" or currentSetting == "statusPosition" or currentSetting == "position-noHCenter" or currentSetting == "shieldBarPosition" then currentSetting = "position" end
         if currentSetting == "barOrientation" then currentSetting = "orientation" end
         if currentSetting == "durationVisibility" then currentSetting = "showDuration" end
+        if currentSetting == "healthFormat" or currentSetting == "powerFormat" then currentSetting = "format" end
         
         -- enabled
         if currentSetting == "enabled" then

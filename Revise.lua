@@ -2197,7 +2197,6 @@ function F:Revise()
             end
         end
     end
-    ]=]
 
     -- r190-beta
     if CellDB["revise"] and dbRevision < 190 then
@@ -2324,6 +2323,7 @@ function F:Revise()
             end
         end
     end
+    ]=]
 
     -- r200-release
     if CellDB["revise"] and dbRevision < 200 then
@@ -2366,13 +2366,17 @@ function F:Revise()
     -- r203-release
     if CellDB["revise"] and dbRevision < 203 then
         for _, layout in pairs(CellDB["layouts"]) do
-            local index = Cell.defaults.indicatorIndices.targetCounter
-            if type(layout["indicators"][index]["filters"]) ~= "table" then
-                layout["indicators"][index]["filters"] = {
-                    ["outdoor"] = false,
-                    ["pve"] = false,
-                    ["pvp"] = true,
-                }
+            for i, t in pairs(layout["indicators"]) do
+                if t["indicatorName"] == "targetCounter" then
+                    if type(t["filters"]) ~= "table" then
+                        t["filters"] = {
+                            ["outdoor"] = false,
+                            ["pve"] = false,
+                            ["pvp"] = true,
+                        }
+                    end
+                    break
+                end
             end
         end
     end
@@ -2380,9 +2384,13 @@ function F:Revise()
     -- r205-release
     if CellDB["revise"] and dbRevision < 205 then
         for _, layout in pairs(CellDB["layouts"]) do
-            local index = Cell.defaults.indicatorIndices.aggroBorder
-            if layout["indicators"][index]["frameLevel"] == 3 then
-                layout["indicators"][index]["frameLevel"] = 7
+            for i, t in pairs(layout["indicators"]) do
+                if t["indicatorName"] == "aggroBorder" then
+                    if t["frameLevel"] == 3 then
+                        t["frameLevel"] = 7
+                    end
+                    break
+                end
             end
         end
 
@@ -2394,34 +2402,36 @@ function F:Revise()
     -- r206-release
     if CellDB["revise"] and dbRevision < 206 then
         for _, layout in pairs(CellDB["layouts"]) do
-            -- fix showStack for custom indicators
-            for _, indicator in pairs(layout["indicators"]) do
-                if indicator["type"] == "icon" or indicator["type"] == "icons" then
-                    if type(indicator["showStack"]) ~= "boolean" then
-                        indicator["showStack"] = true
+            for _, t in pairs(layout["indicators"]) do
+                -- fix showStack for custom indicators
+                if t["type"] == "icon" or t["type"] == "icons" then
+                    if type(t["showStack"]) ~= "boolean" then
+                        t["showStack"] = true
                     end
                 end
-            end
 
-            -- add showTimer for statusText
-            local index = Cell.defaults.indicatorIndices.statusText
-            if type(layout["indicators"][index]["showTimer"]) ~= "boolean" then
-                layout["indicators"][index]["showTimer"] = true
-            end
-            -- add showBackground for statusText
-            if type(layout["indicators"][index]["showBackground"]) ~= "boolean" then
-                layout["indicators"][index]["showBackground"] = true
-            end
+                if t["indicatorName"] == "statusText" then
+                    -- add showTimer for statusText
+                    if type(t["showTimer"]) ~= "boolean" then
+                        t["showTimer"] = true
+                    end
+                    -- add showBackground for statusText
+                    if type(t["showBackground"]) ~= "boolean" then
+                        t["showBackground"] = true
+                    end
+                end
 
-            -- swap en/non-en length for name text
-            index = Cell.defaults.indicatorIndices.nameText
-            if layout["indicators"][index]["textWidth"][1] == "length" then
-                if not layout["indicators"][index]["textWidth"][3] then -- en cilents
-                    layout["indicators"][index]["textWidth"][3] = 3
-                else -- aisan cilents
-                    local temp = layout["indicators"][index]["textWidth"][2]
-                    layout["indicators"][index]["textWidth"][2] = layout["indicators"][index]["textWidth"][3]
-                    layout["indicators"][index]["textWidth"][3] = temp
+                if t["indicatorName"] == "nameText" then
+                    -- swap en/non-en length for name text
+                    if t["textWidth"][1] == "length" then
+                        if not t["textWidth"][3] then -- en cilents
+                            t["textWidth"][3] = 3
+                        else -- aisan cilents
+                            local temp = t["textWidth"][2]
+                            t["textWidth"][2] = t["textWidth"][3]
+                            t["textWidth"][3] = temp
+                        end
+                    end
                 end
             end
         end
@@ -2530,20 +2540,24 @@ function F:Revise()
     -- r215-release
     if CellDB["revise"] and dbRevision < 215 then
         for _, layout in pairs(CellDB["layouts"]) do
-            -- add color for tankActiveMitigation
-            local index = Cell.defaults.indicatorIndices.tankActiveMitigation
-            if index and type(layout["indicators"][index]["color"]) ~= "table" then
-                layout["indicators"][index]["color"] = {"class_color", {0.25, 1, 0}}
-            end
-
-            -- rename nameColor to color
-            index = Cell.defaults.indicatorIndices.nameText
-            if type(layout["indicators"][index]["color"]) ~= "table" then
-                layout["indicators"][index]["color"] = layout["indicators"][index]["nameColor"]
-                if layout["indicators"][index]["color"][1] == "custom" then
-                    layout["indicators"][index]["color"][1] = "custom_color"
+            for i, t in pairs(layout["indicators"]) do
+                -- add color for tankActiveMitigation
+                if t["indicatorName"] == "tankActiveMitigation" then
+                    if type(t["color"]) ~= "table" then
+                        t["color"] = {"class_color", {0.25, 1, 0}}
+                    end
                 end
-                layout["indicators"][index]["nameColor"] = nil
+                
+                -- rename nameColor to color
+                if t["indicatorName"] == "nameText" then
+                    if type(t["color"]) ~= "table" then
+                        t["color"] = t["nameColor"]
+                        if t["color"][1] == "custom" then
+                            t["color"][1] = "custom_color"
+                        end
+                        t["nameColor"] = nil
+                    end
+                end
             end
         end
 
@@ -2682,19 +2696,37 @@ function F:Revise()
     -- r224-release
     if CellDB["revise"] and dbRevision < 224 then
         for _, layout in pairs(CellDB["layouts"]) do
-            -- update health text color option
-            local index = Cell.defaults.indicatorIndices.healthText
-            if #layout["indicators"][index]["color"] == 3 then
-                layout["indicators"][index]["color"] = {"custom_color", layout["indicators"][index]["color"]}
-            end
-
-            -- add frameLevel to Color and Overlay
-            for _, i in pairs(layout["indicators"]) do
-                if i.type == "color" or i.type == "overlay" then
-                    if not i.frameLevel then
-                        i.frameLevel = 1
+            for i, t in pairs(layout["indicators"]) do
+                -- update health text color option
+                if t["indicatorName"] == "healthText" then
+                    if #t["color"] == 3 then
+                        t["color"] = {"custom_color", t["color"]}
                     end
                 end
+
+                -- add frameLevel to Color and Overlay
+                if t["type"] == "color" or t["type"] == "overlay" then
+                    if not t["frameLevel"] then
+                        t["frameLevel"] = 1
+                    end
+                end
+            end
+            
+            -- add power text indicator
+            local index = Cell.defaults.indicatorIndices.powerText
+            if layout["indicators"][index]["indicatorName"] ~= "powerText" then
+                tinsert(layout["indicators"], index, {
+                    ["name"] = "Power Text",
+                    ["indicatorName"] = "powerText",
+                    ["type"] = "built-in",
+                    ["enabled"] = false,
+                    ["position"] = {"BOTTOMRIGHT", "BOTTOMRIGHT", 0, 3},
+                    ["frameLevel"] = 2,
+                    ["font"] = {"Cell ".._G.DEFAULT, 10, "Shadow"},
+                    ["color"] = {"custom_color", {1, 1, 1}},
+                    ["format"] = "number",
+                    ["hideIfEmptyOrFull"] = true,
+                })
             end
         end
 

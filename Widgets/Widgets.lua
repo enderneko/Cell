@@ -1890,7 +1890,7 @@ function addon:CreateNotificationPopup(parent, width, text, mask)
     end)
 
     -- parent.notificationPopup:SetFrameStrata("DIALOG")
-    parent.notificationPopup:SetFrameLevel(parent:GetFrameLevel() + 300)
+    parent.notificationPopup:SetFrameLevel(parent:GetFrameLevel() + 310)
     parent.notificationPopup:ClearAllPoints() -- prepare for SetPoint()
     parent.notificationPopup:Show()
 
