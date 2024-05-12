@@ -34,6 +34,8 @@ local patrons1 = {
     {"Synthatt-Illidan (US)", "synthatt"}, -- Synthatt (Ko-fi)
     {"Holystora-Antonidas (EU)", "holystora"}, -- devo (Ko-fi)
     {"Tithaya-Kel'Thuzad (US)", "tithaya"}, -- tithaya (Ko-fi)
+    {"Everessian-Ravencrest (EU)", "everessian"}, -- Martin van Vuuren (Ko-fi)
+    {"Shendreakah-Zul'jin (US)", "shendreakah"}, -- Shendreakah - Zul-jin (Ko-fi)
 }
 
 local patrons2 = {
