@@ -87,15 +87,6 @@
           "labels": [],
           "checkboxes": [],
           "comments": []
-        },
-        {
-          "id": "15b5c350-b9ad-406f-aa4f-5e9d6b8eae2f",
-          "listId": "fc9baa7c-c3e7-49a4-8526-816c794e5ed9",
-          "title": "Icons (ordered)",
-          "description": "",
-          "labels": [],
-          "checkboxes": [],
-          "comments": []
         }
       ]
     },
@@ -103,6 +94,15 @@
       "id": "7b0c4654-92fe-4b4e-9566-15e8c706d9c9",
       "title": "DONE",
       "cards": [
+        {
+          "id": "15b5c350-b9ad-406f-aa4f-5e9d6b8eae2f",
+          "listId": "7b0c4654-92fe-4b4e-9566-15e8c706d9c9",
+          "title": "Ordered Icons",
+          "description": "",
+          "labels": [],
+          "checkboxes": [],
+          "comments": []
+        },
         {
           "id": "f6206d8c-0f21-43d0-9c68-6bb246d030ed",
           "listId": "7b0c4654-92fe-4b4e-9566-15e8c706d9c9",

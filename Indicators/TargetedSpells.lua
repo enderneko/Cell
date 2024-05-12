@@ -30,7 +30,7 @@ local function ShowCasts(b, inListFound, start, duration, icon, isChanneling, nu
 end
 
 -------------------------------------------------
--- targeted spells
+-- update casts for guid
 -------------------------------------------------
 local casts, castsOnUnit = {}, {}
 local showAllSpells
@@ -88,6 +88,63 @@ local function UpdateCastsOnUnit(guid)
     end
 end
 
+-------------------------------------------------
+-- check if sourceUnit is casting
+-------------------------------------------------
+local function CheckUnitCast(sourceUnit)
+    if not UnitIsEnemy(sourceUnit, "player") then return end
+
+    local sourceGUID = UnitGUID(sourceUnit)
+    local targetGUID
+    local previousTarget, isChanneling
+
+    if casts[sourceGUID] then
+        previousTarget = casts[sourceGUID]["targetGUID"]
+        if casts[sourceGUID]["endTime"] <= GetTime() then
+            --! expired
+            casts[sourceGUID] = nil
+            UpdateCastsOnUnit(previousTarget)
+            previousTarget = nil
+        end
+    end
+
+    -- name, text, texture, startTimeMS, endTimeMS, isTradeSkill, castID, notInterruptible, spellId
+    local name, _, texture, startTimeMS, endTimeMS, _, _, notInterruptible, spellId = UnitCastingInfo(sourceUnit)
+    if not name then
+        -- name, text, texture, startTimeMS, endTimeMS, isTradeSkill, notInterruptible, spellId
+        name, _, texture, startTimeMS, endTimeMS, _, notInterruptible, spellId = UnitChannelInfo(sourceUnit)
+        isChanneling = true
+    end
+
+    -- print(sourceUnit, name, spellId)
+
+    if spellId and (Cell.vars.targetedSpellsList[spellId] or showAllSpells) then
+        local targetUnit = sourceUnit.."target"
+        targetUnit = F:GetTargetUnitID(targetUnit) -- units in group (players/pets), no npcs
+        if targetUnit then
+            targetGUID = UnitGUID(targetUnit)
+            casts[sourceGUID] = {
+                ["startTime"] = startTimeMS/1000,
+                ["endTime"] = endTimeMS/1000,
+                ["spellId"] = spellId,
+                ["icon"] = texture,
+                ["targetGUID"] = targetGUID,
+                ["isChanneling"] = isChanneling,
+                -- ["sourceUnit"] = sourceUnit,
+                -- ["targetUnit"] = targetUnit,
+            }
+            UpdateCastsOnUnit(targetGUID)
+        end
+    end
+
+    if previousTarget and previousTarget ~= targetGUID then
+        UpdateCastsOnUnit(previousTarget)
+    end
+end
+
+-------------------------------------------------
+-- events
+-------------------------------------------------
 local eventFrame = CreateFrame("Frame")
 eventFrame:SetScript("OnEvent", function(_, event, sourceUnit)
     if event == "ENCOUNTER_END" then
@@ -99,81 +156,20 @@ eventFrame:SetScript("OnEvent", function(_, event, sourceUnit)
         return
     end
 
-    if sourceUnit and UnitIsEnemy(sourceUnit, "player") then
-        local sourceGUID = UnitGUID(sourceUnit)
-        local previousTarget
+    if sourceUnit == "softenemy" then return end
 
-        -- check if expired
-        if casts[sourceGUID] and casts[sourceGUID]["endTime"] <= GetTime() then
+    if event == "PLAYER_TARGET_CHANGED" then
+        CheckUnitCast("target")
+
+    elseif event == "UNIT_SPELLCAST_START" or event == "UNIT_SPELLCAST_DELAYED"  or event == "UNIT_SPELLCAST_CHANNEL_START" or event == "NAME_PLATE_UNIT_ADDED" then
+        CheckUnitCast(sourceUnit)
+    
+    elseif event == "UNIT_SPELLCAST_STOP" or event == "UNIT_SPELLCAST_INTERRUPTED" or event == "UNIT_SPELLCAST_FAILED" or event == "UNIT_SPELLCAST_FAILED_QUIET" or event == "UNIT_SPELLCAST_CHANNEL_STOP" or event == "NAME_PLATE_UNIT_REMOVED" then
+        local sourceGUID = UnitGUID(sourceUnit)
+        if casts[sourceGUID] then
             previousTarget = casts[sourceGUID]["targetGUID"]
             casts[sourceGUID] = nil
             UpdateCastsOnUnit(previousTarget)
-        end
-
-        if event == "UNIT_SPELLCAST_START" or event == "UNIT_SPELLCAST_DELAYED"  or event == "UNIT_SPELLCAST_CHANNEL_START" or event == "UNIT_SPELLCAST_CHANNEL_UPDATE"
-            or event == "UNIT_TARGET" or event == "NAME_PLATE_UNIT_ADDED" then
-            local isChanneling
-            -- name, text, texture, startTimeMS, endTimeMS, isTradeSkill, castID, notInterruptible, spellId
-            local name, _, texture, startTimeMS, endTimeMS, _, _, notInterruptible, spellId = UnitCastingInfo(sourceUnit)
-            if not name then
-                -- name, text, texture, startTimeMS, endTimeMS, isTradeSkill, notInterruptible, spellId
-                name, _, texture, startTimeMS, endTimeMS, _, notInterruptible, spellId = UnitChannelInfo(sourceUnit)
-                isChanneling = true
-            end
-
-            -- print(name, spellId)
-
-            if casts[sourceGUID] then previousTarget = casts[sourceGUID]["targetGUID"] end
-
-            if spellId and (Cell.vars.targetedSpellsList[spellId] or showAllSpells) then
-                local targetUnit = sourceUnit.."target"
-                targetUnit = F:GetTargetUnitID(targetUnit) -- units in group (players/pets), no npcs
-                if targetUnit and UnitIsVisible(targetUnit) then
-                    local targetGUID = UnitGUID(targetUnit)
-                    casts[sourceGUID] = {
-                        ["startTime"] = startTimeMS/1000,
-                        ["endTime"] = endTimeMS/1000,
-                        ["spellId"] = spellId,
-                        ["icon"] = texture,
-                        ["targetGUID"] = targetGUID,
-                        ["isChanneling"] = isChanneling,
-                        -- ["sourceUnit"] = sourceUnit,
-                        -- ["targetUnit"] = targetUnit,
-                    }
-                    UpdateCastsOnUnit(targetGUID)
-                    
-                    -- NOTE: double check
-                    C_Timer.After(0.2, function()
-                        local newSourceGUID = UnitGUID(sourceUnit) -- NOTE: if sourceUnit == "target", it can change
-                        if newSourceGUID == sourceGUID and not UnitIsUnit(sourceUnit.."target", targetUnit) then
-                            -- print("old:", sourceUnit, targetUnit)
-                            if casts[sourceGUID] then
-                                -- update new
-                                local newTarget = F:GetTargetUnitID(sourceUnit.."target")
-                                if newTarget and UnitIsVisible(newTarget) then
-                                    -- print("new:", sourceUnit, newTarget)
-                                    newTarget = UnitGUID(newTarget)
-                                    casts[sourceGUID]["targetGUID"] = newTarget
-                                    UpdateCastsOnUnit(newTarget)
-                                else
-                                    casts[sourceGUID] = nil
-                                end
-                                -- update old
-                                UpdateCastsOnUnit(targetGUID)
-                            end
-                        end
-                    end)
-                end
-            end
-            if previousTarget then UpdateCastsOnUnit(previousTarget) end
-
-        elseif event == "UNIT_SPELLCAST_STOP" or event == "UNIT_SPELLCAST_INTERRUPTED" or event == "UNIT_SPELLCAST_FAILED" or event == "UNIT_SPELLCAST_FAILED_QUIET" or event == "UNIT_SPELLCAST_CHANNEL_STOP"
-            or event == "NAME_PLATE_UNIT_REMOVED" then
-            if casts[sourceGUID] then
-                previousTarget = casts[sourceGUID]["targetGUID"]
-                casts[sourceGUID] = nil
-                UpdateCastsOnUnit(previousTarget)
-            end
         end
     end
 end)
@@ -284,7 +280,7 @@ function I:EnableTargetedSpells(enabled)
     if enabled then
         -- UNIT_SPELLCAST_DELAYED UNIT_SPELLCAST_FAILED UNIT_SPELLCAST_FAILED_QUIET UNIT_SPELLCAST_INTERRUPTED UNIT_SPELLCAST_START UNIT_SPELLCAST_STOP
         -- UNIT_SPELLCAST_CHANNEL_START UNIT_SPELLCAST_CHANNEL_STOP UNIT_SPELLCAST_CHANNEL_UPDATE
-        -- UNIT_TARGET ENCOUNTER_END
+        -- PLAYER_TARGET_CHANGED ENCOUNTER_END
         
         eventFrame:RegisterEvent("UNIT_SPELLCAST_START")
         eventFrame:RegisterEvent("UNIT_SPELLCAST_STOP")
@@ -294,9 +290,9 @@ function I:EnableTargetedSpells(enabled)
         eventFrame:RegisterEvent("UNIT_SPELLCAST_INTERRUPTED")
         eventFrame:RegisterEvent("UNIT_SPELLCAST_CHANNEL_START")
         eventFrame:RegisterEvent("UNIT_SPELLCAST_CHANNEL_STOP")
-        eventFrame:RegisterEvent("UNIT_SPELLCAST_CHANNEL_UPDATE")
+        -- eventFrame:RegisterEvent("UNIT_SPELLCAST_CHANNEL_UPDATE")
         
-        -- eventFrame:RegisterEvent("UNIT_TARGET") --! Fired when the target of yourself, raid, and party members change, Should also work for 'pet' and 'focus'.
+        eventFrame:RegisterEvent("PLAYER_TARGET_CHANGED") --! Fired when the target of yourself, raid, and party members change, Should also work for 'pet' and 'focus'.
         eventFrame:RegisterEvent("NAME_PLATE_UNIT_ADDED")
         eventFrame:RegisterEvent("NAME_PLATE_UNIT_REMOVED")
         
