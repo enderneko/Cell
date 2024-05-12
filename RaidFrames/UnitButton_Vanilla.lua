@@ -221,7 +221,7 @@ local function HandleIndicators(b)
             end
         end
         -- update color
-        if t["color"] and type(t["color"][1]) == "number" then
+        if t["color"] and t["indicatorName"] ~= "nameText" and t["indicatorName"] ~="healthText" and t["indicatorName"] ~="powerText" then
             indicator:SetColor(unpack(t["color"]))
         end
         -- update colors
