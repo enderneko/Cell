@@ -427,3 +427,13 @@ function F:GetDefaultSnippet()
             "CELL_USE_LIBHEALCOMM = false"
     }
 end
+
+function F:DisableSnippets()
+    for i = 1, #CellDB["snippets"] do
+        CellDB["snippets"][i]["autorun"] = false
+    end
+
+    local popup = Cell:CreateNotificationPopup(Cell.frames.anchorFrame, 200, L["All snippets have been disabled, due to the version update"])
+    popup:SetPoint("TOPLEFT")
+    popup:Show()
+end

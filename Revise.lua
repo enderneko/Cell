@@ -2708,6 +2708,9 @@ function F:Revise()
             local enabled = CellDB["appearance"]["overshield"] and true or false
             CellDB["appearance"]["overshield"] = {enabled, {CellDB["appearance"]["shield"][2][1], CellDB["appearance"]["shield"][2][2], CellDB["appearance"]["shield"][2][3], 1}}
         end
+
+        -- disable snippets
+        F:DisableSnippets()
     end
 
     -- ----------------------------------------------------------------------- --

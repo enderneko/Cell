@@ -1827,11 +1827,74 @@ function addon:CreateConfirmPopup(parent, width, text, onAccept, onReject, mask,
     end)
 
     -- parent.confirmPopup:SetFrameStrata("DIALOG")
-    parent.confirmPopup:SetFrameLevel(parent:GetFrameLevel() + 50)
+    parent.confirmPopup:SetFrameLevel(parent:GetFrameLevel() + 300)
     parent.confirmPopup:ClearAllPoints() -- prepare for SetPoint()
     parent.confirmPopup:Show()
 
     return parent.confirmPopup
+end
+
+-----------------------------------------
+-- notification popup
+-----------------------------------------
+function addon:CreateNotificationPopup(parent, width, text, mask)
+    if not parent.notificationPopup then -- not init
+        parent.notificationPopup = CreateFrame("Frame", nil, parent, "BackdropTemplate")
+        parent.notificationPopup:SetSize(width, 100)
+        addon:StylizeFrame(parent.notificationPopup, {0.1, 0.1, 0.1, 0.95}, {accentColor.t[1], accentColor.t[2], accentColor.t[3], 1})
+        parent.notificationPopup:EnableMouse(true)
+        parent.notificationPopup:SetClampedToScreen(true)
+        parent.notificationPopup:Hide()
+        
+        parent.notificationPopup:SetScript("OnHide", function()
+            parent.notificationPopup:Hide()
+            -- hide mask
+            if mask and parent.mask then parent.mask:Hide() end
+        end)
+
+        parent.notificationPopup.text = parent.notificationPopup:CreateFontString(nil, "OVERLAY", font_title_name)
+        parent.notificationPopup.text:SetWordWrap(true)
+        parent.notificationPopup.text:SetSpacing(3)
+        parent.notificationPopup.text:SetJustifyH("CENTER")
+        parent.notificationPopup.text:SetPoint("TOPLEFT", 5, -8)
+        parent.notificationPopup.text:SetPoint("TOPRIGHT", -5, -8)
+
+        -- ok
+        parent.notificationPopup.button = addon:CreateButton(parent.notificationPopup, _G.OKAY, "green", {37, 17})
+        parent.notificationPopup.button:SetPoint("BOTTOMRIGHT")
+        parent.notificationPopup.button:SetBackdropBorderColor(accentColor.t[1], accentColor.t[2], accentColor.t[3], 1)
+    end
+
+    if mask then -- show mask?
+        if not parent.mask then
+            addon:CreateMask(parent, nil, {1, -1, -1, 1})
+        else
+            parent.mask:Show()
+        end
+    end
+
+    parent.notificationPopup.button:SetScript("OnClick", function()
+        if mask and parent.mask then parent.mask:Hide() end
+        parent.notificationPopup:Hide()
+    end)
+
+    parent.notificationPopup:SetWidth(width)
+    parent.notificationPopup.text:SetText(text)
+
+    -- update height
+    parent.notificationPopup:SetScript("OnUpdate", function(self, elapsed)
+        local newHeight = parent.notificationPopup.text:GetStringHeight() + 30
+        parent.notificationPopup:SetHeight(newHeight)
+        -- run OnUpdate once, stop updating height
+        parent.notificationPopup:SetScript("OnUpdate", nil)
+    end)
+
+    -- parent.notificationPopup:SetFrameStrata("DIALOG")
+    parent.notificationPopup:SetFrameLevel(parent:GetFrameLevel() + 300)
+    parent.notificationPopup:ClearAllPoints() -- prepare for SetPoint()
+    parent.notificationPopup:Show()
+
+    return parent.notificationPopup
 end
 
 -----------------------------------------

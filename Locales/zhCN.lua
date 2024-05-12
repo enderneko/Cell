@@ -808,6 +808,7 @@ L["Code Snippets"] = "代码片段"
 L["SNIPPETS_TIPS"] = "[双击]改名，[Shift+左键]删除。所有已勾选的代码片段将会在 Cell 初始化阶段的最后自动执行（即 ADDON_LOADED 事件中）。"
 L["Run"] = "执行"
 L["unnamed"] = "未命名"
+L["All snippets have been disabled, due to the version update"] = "由于版本更新，所有的代码片段已被禁用"
 
 -------------------------------------------------
 -- CHANGELOGS
