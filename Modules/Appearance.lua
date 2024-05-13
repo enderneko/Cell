@@ -826,6 +826,13 @@ local function UpdateColorPickers()
         gradientColorCB2:Hide()
         gradientColorCB3:Hide()
     end
+
+    -- power color
+    if CellDB["appearance"]["powerColor"][1] == "custom" then
+        powerColorPicker:Show()
+    else
+        powerColorPicker:Hide()
+    end
 end
 
 local function CreateUnitButtonStylePane()
@@ -1015,7 +1022,7 @@ local function CreateUnitButtonStylePane()
             ["value"] = "power_color",
             ["onClick"] = function()
                 CellDB["appearance"]["powerColor"][1] = "power_color"
-                powerColorPicker:SetEnabled(false)
+                UpdateColorPickers()
                 Cell:Fire("UpdateAppearance", "color")
             end,
         },
@@ -1024,7 +1031,7 @@ local function CreateUnitButtonStylePane()
             ["value"] = "power_color_dark",
             ["onClick"] = function()
                 CellDB["appearance"]["powerColor"][1] = "power_color_dark"
-                powerColorPicker:SetEnabled(false)
+                UpdateColorPickers()
                 Cell:Fire("UpdateAppearance", "color")
             end,
         },
@@ -1033,7 +1040,7 @@ local function CreateUnitButtonStylePane()
             ["value"] = "class_color",
             ["onClick"] = function()
                 CellDB["appearance"]["powerColor"][1] = "class_color"
-                powerColorPicker:SetEnabled(false)
+                UpdateColorPickers()
                 Cell:Fire("UpdateAppearance", "color")
             end,
         },
@@ -1042,7 +1049,7 @@ local function CreateUnitButtonStylePane()
             ["value"] = "custom",
             ["onClick"] = function()
                 CellDB["appearance"]["powerColor"][1] = "custom"
-                powerColorPicker:SetEnabled(true)
+                UpdateColorPickers()
                 Cell:Fire("UpdateAppearance", "color")
             end,
         },
@@ -1388,7 +1395,6 @@ LoadButtonStyle = function()
 
     powerColorDropdown:SetSelectedValue(CellDB["appearance"]["powerColor"][1])
     powerColorPicker:SetColor(CellDB["appearance"]["powerColor"][2])
-    powerColorPicker:SetEnabled(CellDB["appearance"]["powerColor"][1] == "custom")
 
     barAnimationDropdown:SetSelected(L[CellDB["appearance"]["barAnimation"]])
 
