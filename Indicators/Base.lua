@@ -72,47 +72,67 @@ local function BorderIcon_SetCooldown(frame, start, duration, debuffType, textur
         frame.cooldown:Show()
         frame.cooldown:SetSwipeColor(r, g, b)
         frame.cooldown:_SetCooldown(start, duration)
-        frame.duration:Show()
 
-        local fmt
-        frame.elapsed = 0.1 -- update immediately
-        frame:SetScript("OnUpdate", function(self, elapsed)
-            local remain = duration-(GetTime()-start)
-            if remain < 0 then remain = 0 end
-
-            self.elapsed = self.elapsed + elapsed
-            if self.elapsed >= 0.1 then
-                self.elapsed = 0
-                -- color
-                if Cell.vars.iconDurationColors then
-                    if remain < Cell.vars.iconDurationColors[3][4] then
-                        frame.duration:SetTextColor(Cell.vars.iconDurationColors[3][1], Cell.vars.iconDurationColors[3][2], Cell.vars.iconDurationColors[3][3])
-                    elseif remain < (Cell.vars.iconDurationColors[2][4] * duration) then
-                        frame.duration:SetTextColor(Cell.vars.iconDurationColors[2][1], Cell.vars.iconDurationColors[2][2], Cell.vars.iconDurationColors[2][3])
-                    else
-                        frame.duration:SetTextColor(Cell.vars.iconDurationColors[1][1], Cell.vars.iconDurationColors[1][2], Cell.vars.iconDurationColors[1][3])
-                    end
-                else
-                    frame.duration:SetTextColor(frame.duration.r, frame.duration.g, frame.duration.b)
-                end
+        local threshold
+        if not frame.showDuration then
+            frame.duration:Hide()
+        else
+            if frame.showDuration == true then
+                threshold = duration
+            elseif frame.showDuration >= 1 then
+                threshold = frame.showDuration
+            else -- < 1
+                threshold = frame.showDuration * duration
             end
+            frame.duration:Show()
+        end
 
-            -- format
-            if remain > 60 then
-                fmt, remain = "%dm", remain/60
-            else
-                if Cell.vars.iconDurationRoundUp then
-                    fmt, remain = "%d", ceil(remain)
-                else
-                    if remain < Cell.vars.iconDurationDecimal then
-                        fmt = "%.1f"
+        if frame.showDuration then
+            local fmt
+            frame.elapsed = 0.1 -- update immediately
+            frame:SetScript("OnUpdate", function(self, elapsed)
+                local remain = duration-(GetTime()-start)
+                if remain < 0 then remain = 0 end
+
+                if remain > threshold then
+                    frame.duration:SetText("")
+                    return
+                end
+
+                self.elapsed = self.elapsed + elapsed
+                if self.elapsed >= 0.1 then
+                    self.elapsed = 0
+                    -- color
+                    if Cell.vars.iconDurationColors then
+                        if remain < Cell.vars.iconDurationColors[3][4] then
+                            frame.duration:SetTextColor(Cell.vars.iconDurationColors[3][1], Cell.vars.iconDurationColors[3][2], Cell.vars.iconDurationColors[3][3])
+                        elseif remain < (Cell.vars.iconDurationColors[2][4] * duration) then
+                            frame.duration:SetTextColor(Cell.vars.iconDurationColors[2][1], Cell.vars.iconDurationColors[2][2], Cell.vars.iconDurationColors[2][3])
+                        else
+                            frame.duration:SetTextColor(Cell.vars.iconDurationColors[1][1], Cell.vars.iconDurationColors[1][2], Cell.vars.iconDurationColors[1][3])
+                        end
                     else
-                        fmt = "%d"
+                        frame.duration:SetTextColor(frame.duration.r, frame.duration.g, frame.duration.b)
                     end
                 end
-            end
-            frame.duration:SetFormattedText(fmt, remain)
-        end)
+
+                -- format
+                if remain > 60 then
+                    fmt, remain = "%dm", remain/60
+                else
+                    if Cell.vars.iconDurationRoundUp then
+                        fmt, remain = "%d", ceil(remain)
+                    else
+                        if remain < Cell.vars.iconDurationDecimal then
+                            fmt = "%.1f"
+                        else
+                            fmt = "%d"
+                        end
+                    end
+                end
+                frame.duration:SetFormattedText(fmt, remain)
+            end)
+        end
     end
 
     frame.icon:SetTexture(texture)
@@ -128,6 +148,15 @@ local function BorderIcon_SetBorder(frame, thickness)
     P:ClearPoints(frame.iconFrame)
     P:Point(frame.iconFrame, "TOPLEFT", frame, "TOPLEFT", thickness, -thickness)
     P:Point(frame.iconFrame, "BOTTOMRIGHT", frame, "BOTTOMRIGHT", -thickness, thickness)
+end
+
+local function BorderIcon_ShowDuration(frame, show)
+    frame.showDuration = show
+    if show then
+        frame.duration:Show()
+    else
+        frame.duration:Hide()
+    end
 end
 
 local function BorderIcon_UpdatePixelPerfect(frame)
@@ -203,6 +232,7 @@ function I:CreateAura_BorderIcon(name, parent, borderSize)
     frame.SetFont = BorderIcon_SetFont
     frame.SetBorder = BorderIcon_SetBorder
     frame.SetCooldown = BorderIcon_SetCooldown
+    frame.ShowDuration = BorderIcon_ShowDuration
     frame.UpdatePixelPerfect = BorderIcon_UpdatePixelPerfect
 
     return frame

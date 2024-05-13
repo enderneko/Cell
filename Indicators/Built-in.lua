@@ -412,30 +412,59 @@ local function Debuffs_SetOrientation(self, orientation)
     self:UpdateSize()
 end
 
-local function Debuffs_ShowDuration(self, show)
+local function Debuffs_ShowTooltip(debuffs, show)
+    debuffs.showTooltip = show
+
     for i = 1, 10 do
-        self[i]:ShowDuration(show)
+        if show then
+            debuffs[i]:SetScript("OnEnter", function(self)
+                F:ShowTooltips(debuffs.parent, "spell", debuffs.parent.states.displayedUnit, self.index, "HARMFUL")
+            end)
+            
+            debuffs[i]:SetScript("OnLeave", function()
+                GameTooltip:Hide()
+            end)
+        else
+            debuffs[i]:SetScript("OnEnter", nil)
+            debuffs[i]:SetScript("OnLeave", nil)
+            if not debuffs.enableBlacklistShortcut then debuffs[i]:EnableMouse(false) end
+        end
     end
 end
 
-local function Debuffs_ShowAnimation(self, show)
-    for i = 1, 10 do
-        self[i]:ShowAnimation(show)
-    end
-end
+local function Debuffs_EnableBlacklistShortcut(debuffs, enabled)
+    debuffs.enableBlacklistShortcut = enabled
 
-local function Debuffs_UpdatePixelPerfect(self)
-    P:Repoint(self)
     for i = 1, 10 do
-        self[i]:UpdatePixelPerfect()
+        if enabled then
+            debuffs[i]:SetScript("OnMouseUp", function(self, button, isInside)
+                if button == "RightButton" and isInside and IsLeftAltKeyDown() and IsLeftControlKeyDown()
+                    and self.spellId and not F:TContains(CellDB["debuffBlacklist"], self.spellId) then
+                    -- print msg
+                    local name, _, icon = GetSpellInfo(self.spellId)
+                    if name and icon then
+                        F:Print(L["Added |T%d:0|t|cFFFF3030%s(%d)|r into debuff blacklist."]:format(icon, name, self.spellId))
+                    end
+                    -- update db
+                    tinsert(CellDB["debuffBlacklist"], self.spellId)
+                    Cell.vars.debuffBlacklist = F:ConvertTable(CellDB["debuffBlacklist"])
+                    Cell:Fire("UpdateIndicators", Cell.vars.currentLayout, "", "debuffBlacklist")
+                    -- refresh
+                    F:ReloadIndicatorOptions(Cell.defaults.indicatorIndices.debuffs)
+                end
+            end)
+        else
+            debuffs[i]:SetScript("OnMouseUp", nil)
+            if not debuffs.showTooltip then debuffs[i]:EnableMouse(false) end
+        end
     end
 end
 
 function I:CreateDebuffs(parent)
     local debuffs = CreateFrame("Frame", parent:GetName().."DebuffParent", parent.widgets.overlayFrame)
     parent.indicators.debuffs = debuffs
-    -- debuffs:SetSize(11, 11)
     debuffs:Hide()
+    debuffs.parent = parent
 
     debuffs._SetSize = debuffs.SetSize
     debuffs.SetSize = Debuffs_SetSize
@@ -448,58 +477,13 @@ function I:CreateDebuffs(parent)
     debuffs.SetPoint = Debuffs_SetPoint
     debuffs.SetOrientation = Debuffs_SetOrientation
 
-    debuffs.ShowDuration = Debuffs_ShowDuration
-    debuffs.ShowAnimation = Debuffs_ShowAnimation
-    debuffs.UpdatePixelPerfect = Debuffs_UpdatePixelPerfect
+    debuffs.ShowDuration = Cooldowns_ShowDuration
+    debuffs.ShowAnimation = Cooldowns_ShowAnimation
+    debuffs.UpdatePixelPerfect = Cooldowns_UpdatePixelPerfect
 
-    function debuffs:ShowTooltip(show)
-        debuffs.showTooltip = show
-
-        for i = 1, 10 do
-            if show then
-                debuffs[i]:SetScript("OnEnter", function(self)
-                    F:ShowTooltips(parent, "spell", parent.states.displayedUnit, self.index, "HARMFUL")
-                end)
-                
-                debuffs[i]:SetScript("OnLeave", function()
-                    GameTooltip:Hide()
-                end)
-            else
-                debuffs[i]:SetScript("OnEnter", nil)
-                debuffs[i]:SetScript("OnLeave", nil)
-                if not debuffs.enableBlacklistShortcut then debuffs[i]:EnableMouse(false) end
-            end
-        end
-    end
-
-    function debuffs:EnableBlacklistShortcut(enabled)
-        debuffs.enableBlacklistShortcut = enabled
-
-        for i = 1, 10 do
-            if enabled then
-                debuffs[i]:SetScript("OnMouseUp", function(self, button, isInside)
-                    if button == "RightButton" and isInside and IsLeftAltKeyDown() and IsLeftControlKeyDown()
-                        and self.spellId and not F:TContains(CellDB["debuffBlacklist"], self.spellId) then
-                        -- print msg
-                        local name, _, icon = GetSpellInfo(self.spellId)
-                        if name and icon then
-                            F:Print(L["Added |T%d:0|t|cFFFF3030%s(%d)|r into debuff blacklist."]:format(icon, name, self.spellId))
-                        end
-                        -- update db
-                        tinsert(CellDB["debuffBlacklist"], self.spellId)
-                        Cell.vars.debuffBlacklist = F:ConvertTable(CellDB["debuffBlacklist"])
-                        Cell:Fire("UpdateIndicators", Cell.vars.currentLayout, "", "debuffBlacklist")
-                        -- refresh
-                        F:ReloadIndicatorOptions(Cell.defaults.indicatorIndices.debuffs)
-                    end
-                end)
-            else
-                debuffs[i]:SetScript("OnMouseUp", nil)
-                if not debuffs.showTooltip then debuffs[i]:EnableMouse(false) end
-            end
-        end
-    end
-
+    debuffs.ShowTooltip = Debuffs_ShowTooltip
+    debuffs.EnableBlacklistShortcut = Debuffs_EnableBlacklistShortcut
+    
     for i = 1, 10 do
         local name = parent:GetName().."Debuff"..i
         local frame = I:CreateAura_BarIcon(name, debuffs)
@@ -781,66 +765,84 @@ function I:GetDebuffGlow(spellName, spellId, count)
     end
 end
 
+local function RaidDebuffs_ShowGlow(self, glowType, glowOptions, noHiding)
+    if glowType == "Normal" then
+        if not noHiding then
+            LCG.PixelGlow_Stop(self.parent)
+            LCG.AutoCastGlow_Stop(self.parent)
+            LCG.ProcGlow_Stop(self.parent)
+        end
+        LCG.ButtonGlow_Start(self.parent, glowOptions[1])
+    elseif glowType == "Pixel" then
+        if not noHiding then
+            LCG.ButtonGlow_Stop(self.parent)
+            LCG.AutoCastGlow_Stop(self.parent)
+            LCG.ProcGlow_Stop(self.parent)
+        end
+        -- color, N, frequency, length, thickness
+        LCG.PixelGlow_Start(self.parent, glowOptions[1], glowOptions[2], glowOptions[3], glowOptions[4], glowOptions[5])
+    elseif glowType == "Shine" then
+        if not noHiding then
+            LCG.ButtonGlow_Stop(self.parent)
+            LCG.PixelGlow_Stop(self.parent)
+            LCG.ProcGlow_Stop(self.parent)
+        end
+        -- color, N, frequency, scale
+        LCG.AutoCastGlow_Start(self.parent, glowOptions[1], glowOptions[2], glowOptions[3], glowOptions[4])
+    elseif glowType == "Proc" then
+        if not noHiding then
+            LCG.ButtonGlow_Stop(self.parent)
+            LCG.PixelGlow_Stop(self.parent)
+            LCG.AutoCastGlow_Stop(self.parent)
+        end
+        -- color, duration
+        LCG.ProcGlow_Start(self.parent, {color=glowOptions[1], duration=glowOptions[2], startAnim=false})
+    else
+        LCG.ButtonGlow_Stop(self.parent)
+        LCG.PixelGlow_Stop(self.parent)
+        LCG.AutoCastGlow_Stop(self.parent)
+    end
+end
+
+function RaidDebuffs_HideGlow(self, glowType)
+    if not glowType then
+        -- hide all
+        LCG.ButtonGlow_Stop(self.parent)
+        LCG.PixelGlow_Stop(self.parent)
+        LCG.AutoCastGlow_Stop(self.parent)
+    else
+        if glowType == "Normal" then
+            LCG.ButtonGlow_Stop(self.parent)
+        elseif glowType == "Pixel" then
+            LCG.PixelGlow_Stop(self.parent)
+        elseif glowType == "Shine" then
+            LCG.AutoCastGlow_Stop(self.parent)
+        end
+    end
+end
+
+local function RaidDebuffs_ShowTooltip(raidDebuffs, show)
+    for i = 1, 3 do
+        if show then
+            raidDebuffs[i]:SetScript("OnEnter", function()
+                F:ShowTooltips(raidDebuffs.parent, "spell", raidDebuffs.parent.states.displayedUnit, raidDebuffs[i].index, "HARMFUL")
+            end)
+            raidDebuffs[i]:SetScript("OnLeave", function()
+                GameTooltip:Hide()
+            end)
+        else
+            raidDebuffs[i]:SetScript("OnEnter", nil)
+            raidDebuffs[i]:SetScript("OnLeave", nil)
+            raidDebuffs[i]:EnableMouse(false)
+        end
+    end
+end
+
 function I:CreateRaidDebuffs(parent)
     local raidDebuffs = CreateFrame("Frame", parent:GetName().."RaidDebuffParent", parent.widgets.overlayFrame)
     parent.indicators.raidDebuffs = raidDebuffs
     raidDebuffs:Hide()
-
-    function raidDebuffs:ShowGlow(glowType, glowOptions, noHiding)
-        if glowType == "Normal" then
-            if not noHiding then
-                LCG.PixelGlow_Stop(parent)
-                LCG.AutoCastGlow_Stop(parent)
-                LCG.ProcGlow_Stop(parent)
-            end
-            LCG.ButtonGlow_Start(parent, glowOptions[1])
-        elseif glowType == "Pixel" then
-            if not noHiding then
-                LCG.ButtonGlow_Stop(parent)
-                LCG.AutoCastGlow_Stop(parent)
-                LCG.ProcGlow_Stop(parent)
-            end
-            -- color, N, frequency, length, thickness
-            LCG.PixelGlow_Start(parent, glowOptions[1], glowOptions[2], glowOptions[3], glowOptions[4], glowOptions[5])
-        elseif glowType == "Shine" then
-            if not noHiding then
-                LCG.ButtonGlow_Stop(parent)
-                LCG.PixelGlow_Stop(parent)
-                LCG.ProcGlow_Stop(parent)
-            end
-            -- color, N, frequency, scale
-            LCG.AutoCastGlow_Start(parent, glowOptions[1], glowOptions[2], glowOptions[3], glowOptions[4])
-        elseif glowType == "Proc" then
-            if not noHiding then
-                LCG.ButtonGlow_Stop(parent)
-                LCG.PixelGlow_Stop(parent)
-                LCG.AutoCastGlow_Stop(parent)
-            end
-            -- color, duration
-            LCG.ProcGlow_Start(parent, {color=glowOptions[1], duration=glowOptions[2], startAnim=false})
-        else
-            LCG.ButtonGlow_Stop(parent)
-            LCG.PixelGlow_Stop(parent)
-            LCG.AutoCastGlow_Stop(parent)
-        end
-    end
-
-    function raidDebuffs:HideGlow(glowType)
-        if not glowType then
-            -- hide all
-            LCG.ButtonGlow_Stop(parent)
-            LCG.PixelGlow_Stop(parent)
-            LCG.AutoCastGlow_Stop(parent)
-        else
-            if glowType == "Normal" then
-                LCG.ButtonGlow_Stop(parent)
-            elseif glowType == "Pixel" then
-                LCG.PixelGlow_Stop(parent)
-            elseif glowType == "Shine" then
-                LCG.AutoCastGlow_Stop(parent)
-            end
-        end
-    end
+    raidDebuffs.parent = parent
 
     raidDebuffs:SetScript("OnHide", function()
         LCG.ButtonGlow_Stop(parent)
@@ -852,26 +854,14 @@ function I:CreateRaidDebuffs(parent)
     raidDebuffs.SetSize = Cooldowns_SetSize
     raidDebuffs.SetBorder = Cooldowns_SetBorder
     raidDebuffs.UpdateSize = Cooldowns_UpdateSize_WithSpacing
+    raidDebuffs.ShowDuration = Cooldowns_ShowDuration
     raidDebuffs.SetOrientation = Cooldowns_SetOrientation_WithSpacing
     raidDebuffs.SetFont = Cooldowns_SetFont
+    raidDebuffs.ShowGlow = RaidDebuffs_ShowGlow
+    raidDebuffs.HideGlow = RaidDebuffs_HideGlow
     raidDebuffs.UpdatePixelPerfect = Cooldowns_UpdatePixelPerfect
 
-    function raidDebuffs:ShowTooltip(show)
-        for i = 1, 3 do
-            if show then
-                raidDebuffs[i]:SetScript("OnEnter", function()
-                    F:ShowTooltips(parent, "spell", parent.states.displayedUnit, raidDebuffs[i].index, "HARMFUL")
-                end)
-                raidDebuffs[i]:SetScript("OnLeave", function()
-                    GameTooltip:Hide()
-                end)
-            else
-                raidDebuffs[i]:SetScript("OnEnter", nil)
-                raidDebuffs[i]:SetScript("OnLeave", nil)
-                raidDebuffs[i]:EnableMouse(false)
-            end
-        end
-    end
+    raidDebuffs.ShowTooltip = RaidDebuffs_ShowTooltip
 
     for i = 1, 3 do
         local frame = I:CreateAura_BorderIcon(parent:GetName().."RaidDebuff"..i, raidDebuffs, 2)

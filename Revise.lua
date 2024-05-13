@@ -2745,6 +2745,18 @@ function F:Revise()
         F:DisableSnippets()
     end
 
+    -- r226-release
+    if CellDB["revise"] and dbRevision < 226 then
+        for _, layout in pairs(CellDB["layouts"]) do
+            for _, i in pairs(layout["indicators"]) do
+                if i.indicatorName == "raidDebuffs" then
+                    i.showDuration = true
+                    break
+                end
+            end
+        end
+    end
+
     -- ----------------------------------------------------------------------- --
     --            update from old versions, validate all indicators            --
     -- ----------------------------------------------------------------------- --

@@ -384,6 +384,7 @@ Cell.defaults.layout = {
             ["size"] = {22, 22},
             ["border"] = 2,
             ["num"] = 1,
+            ["showDuration"] = true,
             ["font"] = {
                 {"Cell ".._G.DEFAULT, 11, "Outline", "TOPRIGHT", 2, 1, {1, 1, 1}},
                 {"Cell ".._G.DEFAULT, 11, "Outline", "BOTTOMRIGHT", 2, -1, {1, 1, 1}},
