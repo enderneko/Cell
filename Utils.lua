@@ -543,8 +543,10 @@ end
 
 function F:RemoveElementsExceptKeys(tbl, ...)
     local keys = {}
-    for _, v in ipairs({...}) do
-        keys[v] = true
+
+    for i = 1, select("#", ...) do
+        local k = select(i, ...)
+        keys[k] = true
     end
 
     for k in pairs(tbl) do
@@ -555,15 +557,9 @@ function F:RemoveElementsExceptKeys(tbl, ...)
 end
 
 function F:RemoveElementsByKeys(tbl, ...)
-    local keys = {}
-    for _, v in ipairs({...}) do
-        keys[v] = true
-    end
-
-    for k in pairs(tbl) do
-        if keys[k] then
-            tbl[k] = nil
-        end
+    for i = 1, select("#", ...) do
+        local k = select(i, ...)
+        tbl[k] = nil
     end
 end
 
@@ -1060,9 +1056,9 @@ function F:GetPowerColor(unit)
 
     local info = PowerBarColor[powerToken]
     if powerType == 0 then -- MANA
-        info = {r=0, g=.5, b=1} -- default mana color is too dark!
+        info = {r=0, g=0.5, b=1} -- default mana color is too dark!
     elseif powerType == 13 then -- INSANITY
-        info = {r=.6, g=.2, b=1}
+        info = {r=0.6, g=0.2, b=1}
     end
 
     if info then

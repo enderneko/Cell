@@ -124,6 +124,20 @@ local function BorderIcon_SetCooldown(frame, start, duration, debuffType, textur
     end
 end
 
+local function BorderIcon_SetBorder(frame, thickness)
+    P:ClearPoints(frame.iconFrame)
+    P:Point(frame.iconFrame, "TOPLEFT", frame, "TOPLEFT", thickness, -thickness)
+    P:Point(frame.iconFrame, "BOTTOMRIGHT", frame, "BOTTOMRIGHT", -thickness, thickness)
+end
+
+local function BorderIcon_UpdatePixelPerfect(frame)
+    P:Resize(frame)
+    P:Repoint(frame)
+    P:Repoint(frame.iconFrame)
+    P:Repoint(frame.stack)
+    P:Repoint(frame.duration)
+end
+
 function I:CreateAura_BorderIcon(name, parent, borderSize)
     local frame = CreateFrame("Frame", name, parent, "BackdropTemplate")
     frame:Hide()
@@ -149,6 +163,7 @@ function I:CreateAura_BorderIcon(name, parent, borderSize)
     cooldown.SetCooldown = nil
 
     local iconFrame = CreateFrame("Frame", name.."IconFrame", frame)
+    frame.iconFrame = iconFrame
     P:Point(iconFrame, "TOPLEFT", frame, "TOPLEFT", borderSize, -borderSize)
     P:Point(iconFrame, "BOTTOMRIGHT", frame, "BOTTOMRIGHT", -borderSize, borderSize)
     iconFrame:SetFrameLevel(cooldown:GetFrameLevel()+1)
@@ -159,8 +174,8 @@ function I:CreateAura_BorderIcon(name, parent, borderSize)
     icon:SetAllPoints(iconFrame)
 
     local textFrame = CreateFrame("Frame", nil, iconFrame)
-    textFrame:SetAllPoints(frame)
     frame.textFrame = textFrame
+    textFrame:SetAllPoints(frame)
 
     local stack = textFrame:CreateFontString(nil, "OVERLAY", "CELL_FONT_STATUS")
     frame.stack = stack
@@ -171,14 +186,6 @@ function I:CreateAura_BorderIcon(name, parent, borderSize)
     frame.duration = duration
     duration:SetJustifyH("RIGHT")
     P:Point(duration, "BOTTOMRIGHT", textFrame, "BOTTOMRIGHT", 2, -1)
-
-    function frame:SetBorder(thickness)
-        P:ClearPoints(iconFrame)
-        P:Point(iconFrame, "TOPLEFT", frame, "TOPLEFT", thickness, -thickness)
-        P:Point(iconFrame, "BOTTOMRIGHT", frame, "BOTTOMRIGHT", -thickness, thickness)
-    end
-
-    frame.SetFont = BorderIcon_SetFont
 
     local ag = frame:CreateAnimationGroup()
     frame.ag = ag
@@ -193,15 +200,10 @@ function I:CreateAura_BorderIcon(name, parent, borderSize)
     t2:SetOrder(2)
     t2:SetSmoothing("IN")
 
+    frame.SetFont = BorderIcon_SetFont
+    frame.SetBorder = BorderIcon_SetBorder
     frame.SetCooldown = BorderIcon_SetCooldown
-
-    function frame:UpdatePixelPerfect()
-        P:Resize(frame)
-        P:Repoint(frame)
-        P:Repoint(iconFrame)
-        P:Repoint(stack)
-        P:Repoint(duration)
-    end
+    frame.UpdatePixelPerfect = BorderIcon_UpdatePixelPerfect
 
     return frame
 end
@@ -312,6 +314,42 @@ local function BarIcon_SetCooldown(frame, start, duration, debuffType, texture, 
     end
 end
 
+local function BarIcon_ShowDuration(frame, show)
+    frame.showDuration = show
+    if show then
+        frame.duration:Show()
+    else
+        frame.duration:Hide()
+    end
+end
+
+local function BarIcon_ShowAnimation(frame, show)
+    frame.showAnimation = show
+    if show then
+        frame.cooldown:Show()
+    else
+        frame.cooldown:Hide()
+    end
+end
+
+local function BarIcon_ShowStack(frame, show)
+    if show then
+        frame.stack:Show()
+    else
+        frame.stack:Hide()
+    end
+end
+
+local function BarIcon_UpdatePixelPerfect(frame)
+    P:Resize(frame)
+    P:Repoint(frame)
+    P:Repoint(frame.icon)
+    P:Repoint(frame.cooldown)
+    P:Resize(frame.spark)
+    P:Repoint(frame.stack)
+    P:Repoint(frame.duration)
+end
+
 function I:CreateAura_BarIcon(name, parent)
     local frame = CreateFrame("Frame", name, parent, "BackdropTemplate")
     frame:Hide()
@@ -393,8 +431,6 @@ function I:CreateAura_BarIcon(name, parent)
     P:Point(duration, "BOTTOMRIGHT", textFrame, "BOTTOMRIGHT", 2, 0)
     duration:Hide()
 
-    frame.SetFont = BarIcon_SetFont
-
     local ag = frame:CreateAnimationGroup()
     frame.ag = ag
     local t1 = ag:CreateAnimation("Translation")
@@ -408,7 +444,12 @@ function I:CreateAura_BarIcon(name, parent)
     t2:SetOrder(2)
     t2:SetSmoothing("IN")
 
+    frame.SetFont = BarIcon_SetFont
     frame.SetCooldown = BarIcon_SetCooldown
+    frame.ShowDuration = BarIcon_ShowDuration
+    frame.ShowAnimation = BarIcon_ShowAnimation
+    frame.ShowStack = BarIcon_ShowStack
+    frame.UpdatePixelPerfect = BarIcon_UpdatePixelPerfect
 
     -- frame:SetScript("OnEnter", function()
         -- local f = frame
@@ -417,42 +458,6 @@ function I:CreateAura_BarIcon(name, parent)
         -- until f:IsObjectType("button")
         -- f:GetScript("OnEnter")(f)
     -- end)
-    
-    function frame:ShowDuration(show)
-        frame.showDuration = show
-        if show then
-            duration:Show()
-        else
-            duration:Hide()
-        end
-    end
-
-    function frame:ShowAnimation(show)
-        frame.showAnimation = show
-        if show then
-            cooldown:Show()
-        else
-            cooldown:Hide()
-        end
-    end
-
-    function frame:ShowStack(show)
-        if show then
-            stack:Show()
-        else
-            stack:Hide()
-        end
-    end
-
-    function frame:UpdatePixelPerfect()
-        P:Resize(frame)
-        P:Repoint(frame)
-        P:Repoint(icon)
-        P:Repoint(cooldown)
-        P:Resize(spark)
-        P:Repoint(stack)
-        P:Repoint(duration)
-    end
 
     return frame
 end
