@@ -102,7 +102,6 @@ select(2, ...).L = setmetatable({
         <p>* Fixed Power Filters when solo.</p>
         <p>* Fixed Layout Auto Switch for Cata.</p>
         <p>* Fixed issues with AI followers.</p>
-        <p>* Fixed issues with AI followers.</p>
         <p>* Moved "Use LibHealComm" to Code Snippets.</p>
         <br/>
 
