@@ -624,13 +624,6 @@ function CellQuickAssist_OnLoad(button)
     healthBar:SetStatusBarTexture(Cell.vars.texture)
     healthBar:SetFrameLevel(button:GetFrameLevel()+5)
 
-    -- FIXME: fix blizzard shits!
-    healthBar:SetScript("OnValueChanged", function(self, value)
-        if value == 0 then
-            healthBar:SetValue(0.1)
-        end
-    end)
-
     -- heathLoss
     local healthLoss = healthBar:CreateTexture(nil, "ARTWORK", nil , -7)
     button.healthLoss = healthLoss

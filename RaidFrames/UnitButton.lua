@@ -1915,11 +1915,7 @@ UnitButton_UpdatePower = function(self)
 
     self.states.power = UnitPower(unit)
 
-    if barAnimationType == "Smooth" then
-        self.widgets.powerBar:SetSmoothedValue(self.states.power)
-    else
-        self.widgets.powerBar:SetValue(self.states.power)
-    end
+    self.widgets.powerBar:SetBarValue(self.states.power)
 
     UnitButton_UpdatePowerText(self)
 end
@@ -1932,8 +1928,8 @@ UnitButton_UpdatePowerType = function(self)
     local a = Cell.loaded and CellDB["appearance"]["lossAlpha"] or 1
 
     if not UnitIsConnected(unit) then
-        r, g, b = 0.5, 0.5, 0.5
-        lossR, lossG, lossB = r*0.2, g*0.2, b*0.2
+        r, g, b = 0.4, 0.4, 0.4
+        lossR, lossG, lossB = 0.4, 0.4, 0.4
     else
         r, g, b, lossR, lossG, lossB, self.states.powerType = F:GetPowerBarColor(unit, self.states.class)
     end
@@ -1976,10 +1972,8 @@ local function UnitButton_UpdateHealth(self, diff)
         elseif diff <= -0.05 and diff >= -1 then --! player (just joined) UnitHealthMax(unit) may be 1 ====> diff == -maxHealth
             B:ShowFlash(self, abs(diff))
         end
-    elseif barAnimationType == "Smooth" then
-        self.widgets.healthBar:SetSmoothedValue(self.states.health)
     else
-        self.widgets.healthBar:SetValue(self.states.health)
+        self.widgets.healthBar:SetBarValue(self.states.health)
     end
 
     if Cell.vars.useGradientColor then
@@ -3251,6 +3245,17 @@ end
 -- animation
 function B:UpdateAnimation(button)
     barAnimationType = CellDB["appearance"]["barAnimation"]
+    
+    if barAnimationType == "Smooth" then
+        button.widgets.healthBar.SetBarValue = button.widgets.healthBar.SetSmoothedValue
+        button.widgets.powerBar.SetBarValue = button.widgets.powerBar.SetSmoothedValue
+    else
+        button.widgets.healthBar:ResetSmoothedValue()
+        button.widgets.healthBar.SetBarValue = button.widgets.healthBar.SetValue
+        button.widgets.powerBar:ResetSmoothedValue()
+        button.widgets.powerBar.SetBarValue = button.widgets.powerBar.SetValue
+    end
+    
     if barAnimationType ~= "Flash" then
         button.widgets.damageFlashAG:Finish()
     end
@@ -3392,13 +3397,13 @@ function CellUnitButton_OnLoad(button)
     healthBar:SetStatusBarTexture(Cell.vars.texture)
     healthBar:GetStatusBarTexture():SetDrawLayer("ARTWORK", -6)
     healthBar:SetFrameLevel(button:GetFrameLevel()+5)
+    healthBar.SetBarValue = healthBar.SetValue
 
-    -- FIXME: fix blizzard shits!
-    healthBar:SetScript("OnValueChanged", function(self, value)
-        if value == 0 then
-            healthBar:SetValue(0.1)
-        end
-    end)
+    -- healthBar:SetScript("OnValueChanged", function(self, value)
+    --     if value == 0 then
+    --         healthBar:SetValue(0.1)
+    --     end
+    -- end)
     
     -- hp loss
     local healthBarLoss = button:CreateTexture(name.."HealthBarLoss", "ARTWORK", nil , -7)
@@ -3415,6 +3420,7 @@ function CellUnitButton_OnLoad(button)
     powerBar:SetStatusBarTexture(Cell.vars.texture)
     powerBar:GetStatusBarTexture():SetDrawLayer("ARTWORK", -6)
     powerBar:SetFrameLevel(button:GetFrameLevel()+6)
+    powerBar.SetBarValue = powerBar.SetValue
 
     local gapTexture = button:CreateTexture(nil, "BORDER")
     button.widgets.gapTexture = gapTexture
