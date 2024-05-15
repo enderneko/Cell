@@ -3,82 +3,103 @@ local addonName, ns = ...
 -------------------------------------------------
 -- patrons (order by date)
 -------------------------------------------------
-local patrons1 = {
-    -- {"nameInPatronList", "sortKey", "wowIDs"...}
-    {"小兔姬-影之哀伤 (CN)", "xiaotuji", "渺渺-影之哀伤"},
-    {"夏木沐-伊森利恩 (CN)", "xiamumu"},
-    {"七月核桃丶-白银之手 (CN)", "qiyuehetaodian"},
-    {"芋包-影之哀伤 (CN)", "yubao"},
-    {"青乙-影之哀伤 (CN)", "qingyi"},
-    {"黑丨诺-影之哀伤 (CN)", "heishunuo"},
-    {"大领主王大发-莫格莱尼 (CN)", "dalingzhuwangdafa"},
-    {"Sjerry-死亡之翼 (CN)", "sjerry"},
-    {"貼饼子-匕首岭 (CN)", "tiebingzi"},
-    {"心耀-冰风岗 (CN)", "xinyao"},
-    {"秋末旷夜-凤凰之神 (CN)", "qiumokuangye"},
-    {"曾經活過-憤怒使者 (TW)", "cengjinghuoguo"},
-    {"音速豆奶-白银之手 (CN)", "yinsudounai"},
-    {"Hardpp-Illidan (US)", "hardpp", "六月的奶德-艾露恩"},
-    {"握握-暗影之月 (TW)", "wowo"},
-    {"Sonichunter-地獄吼 (TW)", "sonichunter", "Katoomba-地獄吼"},
-    {"微樓聽雨-銀翼要塞 (TW)", "weiloutingyu"},
-    {"黑哥哥-世界之樹 (TW)", "heigege"},
-    {"Kuroni-Blackhand (US)", "kuroni"}, -- Kuro (Ko-fi)
-    {"Nodwa-Blackhand (US)", "nodwa"}, -- Nodwa (Ko-fi)
-    {"Deijava-Illidan (US)", "deijava"}, -- Kyoman (Ko-fi)
-    {"Epriestin-TarrenMill (EU)", "epriestin"}, -- Sharelia (ko-fi)
-    {"Nascente-TarrenMill (EU)", "nascente"}, -- Nascente-Tarren Mill (Ko-fi)
-    {"月刃丶-世界之樹 (TW)", "yuerendian"}, -- Smile (爱发电)
-    {"Longmer-Illidan (US)", "longmer"}, -- 爱发电用户_4116d (爱发电)
-    {"Phæro-Antonidas (EU)", "phæro", "Callistò-Antonidas (EU)"}, -- Phæro (Ko-fi)
-    {"Synthatt-Illidan (US)", "synthatt"}, -- Synthatt (Ko-fi)
-    {"Holystora-Antonidas (EU)", "holystora"}, -- devo (Ko-fi)
-    {"Tithaya-Kel'Thuzad (US)", "tithaya"}, -- tithaya (Ko-fi)
-    {"Everessian-Ravencrest (EU)", "everessian"}, -- Martin van Vuuren (Ko-fi)
-    {"Shendreakah-Zul'jin (US)", "shendreakah"}, -- Shendreakah - Zul-jin (Ko-fi)
+local patrons1 = { -- wowIDs
+    -- {"wowID1", "wowID2"...}
+    {"小兔姬-影之哀伤 (CN)", "渺渺-影之哀伤 (CN)"}, -- 呆小七 (爱发电)
+    {"夏木沐-伊森利恩 (CN)"}, -- 夏木沐 (爱发电)
+    {"七月核桃丶-白银之手 (CN)"}, -- 爱发电用户_ac5d4
+    {"芋包-影之哀伤 (CN)", "月刃丶-世界之樹 (TW)"}, -- Smile (爱发电)
+    {"青乙-影之哀伤 (CN)"},
+    {"黑丨诺-影之哀伤 (CN)"},
+    {"大领主王大发-莫格莱尼 (CN)"}, -- Shawn (爱发电)
+    {"Sjerry-死亡之翼 (CN)"}, -- 爱发电用户_7957f
+    {"貼饼子-匕首岭 (CN)"},
+    {"心耀-冰风岗 (CN)"}, -- warbaby (爱不易)
+    {"秋末旷夜-凤凰之神 (CN)"}, -- 
+    {"曾經活過-憤怒使者 (TW)"}, -- ZzZ (爱发电)
+    {"音速豆奶-白银之手 (CN)"}, -- 爱发电用户_83f12
+    {"Hardpp-Illidan (US)", "六月的奶德-艾露恩 (CN)"}, -- 爱发电用户_15402
+    {"握握-暗影之月 (TW)"}, -- 爱发电用户_a3e3a
+    {"Sonichunter-地獄吼 (TW)", "Katoomba-地獄吼 (TW)"}, -- 爱发电用户_6db77
+    {"微樓聽雨-銀翼要塞 (TW)"}, -- 爱发电用户_8xs3
+    {"黑哥哥-世界之樹 (TW)"}, -- 爱发电用户_fdc1d
+    {"Kuroni-Blackhand (US)"}, -- Kuro (Ko-fi)
+    {"Nodwa-Blackhand (US)"}, -- Nodwa (Ko-fi)
+    {"Deijava-Illidan (US)"}, -- Kyoman (Ko-fi)
+    {"Epriestin-TarrenMill (EU)"}, -- Sharelia (ko-fi)
+    {"Nascente-TarrenMill (EU)"}, -- Nascente-Tarren Mill (Ko-fi)
+    {"Longmer-Illidan (US)"}, -- 爱发电用户_4116d (爱发电)
+    {"Phæro-Antonidas (EU)", "Callistò-Antonidas (EU)"}, -- Phæro (Ko-fi)
+    {"Synthatt-Illidan (US)"}, -- Synthatt (Ko-fi)
+    {"Holystora-Antonidas (EU)"}, -- devo (Ko-fi)
+    {"Tithaya-Kel'Thuzad (US)"}, -- tithaya (Ko-fi)
+    {"Everessian-Ravencrest (EU)"}, -- Martin van Vuuren (Ko-fi)
+    {"Shendreakah-Zul'jin (US)"}, -- Shendreakah - Zul-jin (Ko-fi)
+    {"Palymoo-Twistingnether (EU)"}, -- Palymoo-Twistingnether (EU) (Ko-fi)
 }
 
-local patrons2 = {
-    {"钛锬 (NGA)", "taitan"},
-    {"黑色之城 (NGA)", "heisezhicheng"},
-    {"flappysmurf (爱发电)", "flappysmurf"},
-    {"Mike (爱发电)", "mike"},
-    {"古月文武 (爱发电)", "guyuewenwu"},
-    {"CC (爱发电)", "cc"},
-    {"蓝色-理想 (NGA)", "lanse-lixiang"},
-    {"席慕容 (NGA)", "ximurong"},
-    {"星空 (爱发电)", "xingkong"},
-    {"年复一年路西法 (爱发电)", "nianfuyinianluxifa"},
-    {"阿哲 (爱发电)", "azhe"},
-    {"北方 (爱发电)", "beifang"},
-    {"warbaby (爱不易)", "warbaby"},
-    {"6ND8 (爱发电)", "6nd8"},
-    {"伊莉丝翠的眷顾 (爱发电)", "yilisicuidejuangu"},
-    {"批歪 (爱发电)", "piwai"},
-    {"月神之韧 (爱发电)", "yueshenzhiren"},
-    {"Si (爱发电)", "si"},
-    {"晓文 (爱发电)", "xiaowen"},
-    {"千雪之心 (爱发电)", "qianxuezhixin"},
-    {"朝 (爱发电)", "chao"},
-    {"ATOMS. ོ (爱发电)", "atoms"},
-    {"往事 (爱发电)", "wangshi"},
-    {"哄哄 (爱发电)", "honghong"},
-    {"acm447 (爱发电)", "acm447"},
-    {"花爺 (爱发电)", "huaye"},
-    {"得闲饮茶 (爱发电)", "dexianyincha"},
-    {"Jane (Ko-fi)", "jane"},
-    {"qwe#6664 (KOOK)", "qwe#6664"},
-    {"Pandora (Ko-fi)", "pandora"},
+local patrons2 = { -- 有些早期的发电记录已经丢失了……
+    {"钛锬", "NGA"}, -- 2021-11-15
+    {"呆小七", "爱发电"}, -- 2021-11-15
+    {"黑色之城", "NGA"}, -- 2022-03-16
+    {"flappysmurf", "爱发电"}, -- 2022-04-16
+    {"Mike", "爱发电"}, -- 2022-08-06
+    {"七月核桃丶", "爱发电"}, -- 2022-08-08 爱发电用户_ac5d4
+    {"Smile", "爱发电"}, -- 2022-08-11
+    {"黑诺", "爱发电"}, -- 2022-08-15
+    {"古月文武", "爱发电"},
+    {"CC", "爱发电"},
+    {"Shawn", "爱发电"}, -- 2022-09-16
+    {"蓝色-理想", "NGA"},
+    {"席慕容", "NGA"},
+    {"星空", "爱发电"}, -- 2022-10-19
+    {"年复一年路西法", "爱发电"}, -- 2022-10-20
+    {"阿哲", "爱发电"}, -- 2022-10-23
+    {"Sjerry", "爱发电"}, -- 2022-11-04 爱发电用户_7957f
+    {"warbaby", "爱不易"}, -- 2022-11-25
+    {"6ND8", "爱发电"}, -- 2022-11-16
+    {"伊莉丝翠的眷顾", "爱发电"}, -- 2022-11-18
+    {"批歪", "爱发电"},
+    {"音速豆奶", "爱发电"}, -- 2022-11-29 爱发电用户_83f12
+    {"ZzZ", "爱发电"}, -- 2022-12-10
+    {"月神之韧", "爱发电"}, -- 2023-01-01
+    {"Smile", "爱发电"}, -- 2023-01-05
+    {"Si", "爱发电"}, -- 2023-01-07
+    {"晓文", "爱发电"}, -- 2023-01-15
+    {"六月的奶德", "爱发电"}, -- 2023-01-26 爱发电用户_15402
+    {"握握", "爱发电"}, -- 2023-05-10 爱发电用户_a3e3a
+    {"千雪之心", "爱发电"}, -- 2023-05-25 爱发电用户_2a168
+    {"朝", "爱发电"}, -- 2023-06-16
+    {"Sonichunter", "爱发电"}, -- 2023-06-26
+    {"ATOMS. ོ", "爱发电"}, -- 2023-07-13 爱发电用户_4f365
+    {"微樓聽雨", "爱发电"}, -- 2023-07-20 爱发电用户_8xs3
+    {"往事", "爱发电"}, -- 2023-07-30
+    {"哄哄", "爱发电"}, -- 2023-08-15
+    {"acm447", "爱发电"}, -- 2023-08-15
+    {"花爺", "爱发电"}, -- 2023-09-13
+    {"黑哥哥", "爱发电"}, -- 2023-09-23 爱发电用户_fdc1d
+    {"得闲饮茶", "爱发电"}, -- 2023-12-03
+    {"北方", "爱发电"}, -- 2023-12-06
+    {"Kuro", "Ko-fi"}, -- 2023-12-15
+    {"Nodwa", "Ko-fi"}, -- 2023-12-18
+    {"Kyoman", "Ko-fi"}, -- 2023-12-22
+    {"Sharelia", "Ko-fi"}, -- 2023-12-25
+    {"Longmer", "爱发电"}, -- 2023-12-23 爱发电用户_4116d (爱发电)
+    {"Nascente", "Ko-fi"}, -- 2023-12-26
+    {"nas4", "爱发电"}, -- 2023-12-27 爱发电用户_nas4 (爱发电)
+    {"Phæro", "Ko-fi"}, -- 2024-02-10
+    {"Jane", "Ko-fi"}, -- 2024-02-11
+    {"拜拜", "爱发电"}, -- 2024-02-26 爱发电用户_bcb32
+    {"qwe#6664", "KOOK"}, -- 2024-02-26 爱发电用户_QBbY
+    {"Synthatt", "Ko-fi"}, -- 2024-03-26
+    {"devo", "Ko-fi"}, -- 2024-04-07
+    {"tithaya", "Ko-fi"}, -- 2024-04-18
+    {"Pandora", "Ko-fi"}, -- 2024-04-22
+    {"Martin van Vuuren", "Ko-fi"}, -- 2024-05-06
+    {"Shendreakah", "Ko-fi"}, -- 2024-05-12
+    {"Palymoo", "Ko-fi"}, -- 2024-05-12
+    {"Winkupo", "Ko-fi"}, -- 2024-05-14
 }
-
--- sort
-table.sort(patrons1, function(a, b)
-    return a[2] < b[2]
-end)
-
-table.sort(patrons2, function(a, b)
-    return a[2] < b[2]
-end)
 
 -------------------------------------------------
 -- patrons (wow IDs)
@@ -98,14 +119,8 @@ local wowPatrons = {}
 do
     for _, t in pairs(patrons1) do
         for i, name in pairs(t) do
-            if i == 1 then
-                local fullName = strmatch(t[i], "^(.+%-.+) %(%u%u%)$")
-                if fullName then
-                    wowPatrons[fullName] = true
-                end
-            elseif i ~= 2 then
-                wowPatrons[name] = true
-            end
+            local fullName = strmatch(t[i], "^(.+%-.+) %(%u%u%)$")
+            wowPatrons[fullName] = true
         end
     end
 end
