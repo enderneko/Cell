@@ -129,10 +129,24 @@ local function GetPatrons(t)
     local str = ""
     local n = #t
     for i = 1, n do
-        local name = t[i][1]
-        name = name:gsub("%(.+%)", function(s)
-            return "|cff777777"..s.."|r"
-        end)
+        for _, name in pairs(t[i]) do
+            name = name:gsub("%(.+%)", function(s)
+                return "|cff777777"..s.."|r"
+            end)
+            str = str .. name
+            if i ~= n then
+                str = str .. "\n"
+            end
+        end
+    end
+    return str
+end
+
+local function GetPatrons2(t)
+    local str = ""
+    local n = #t
+    for i = 1, n do
+        local name = t[i][1] .. " |cff777777("..t[i][2]..")|r"
         str = str .. name
         if i ~= n then
             str = str .. "\n"
@@ -208,12 +222,12 @@ local function CreatePatronsPane()
 
     CreateAnimation(patronsPane)
 
-    local sortIcon = patronsPane:CreateTexture(nil, "OVERLAY")
-    sortIcon:SetPoint("TOPRIGHT")
-    sortIcon:SetSize(16, 16)
-    sortIcon:SetTexture("Interface\\AddOns\\Cell\\Media\\Icons\\alphabetical_sorting")
+    local heartIcon = patronsPane:CreateTexture(nil, "OVERLAY")
+    heartIcon:SetPoint("TOPRIGHT")
+    heartIcon:SetSize(16, 16)
+    heartIcon:SetTexture("Interface\\AddOns\\Cell\\Media\\Icons\\sparkling_heart")
 
-    local bgTex = patronsPane:CreateTexture(nil, "BACKGROUND")
+    local bgTex = patronsPane:CreateTexture(nil, "BACKGROUND", nil, 0)
     bgTex:SetPoint("TOPLEFT", -5, 5)
     bgTex:SetPoint("BOTTOMRIGHT", 5, -5)
     bgTex:SetTexture("Interface\\Buttons\\WHITE8x8")
@@ -223,7 +237,7 @@ local function CreatePatronsPane()
     patronsFrame1:SetPoint("TOPLEFT", 0, -27)
     patronsFrame1:SetPoint("BOTTOMLEFT")
     patronsFrame1.scroll = Cell:CreateScrollFrame(patronsFrame1)
-    patronsFrame1.scroll:SetScrollStep(27)
+    patronsFrame1.scroll:SetScrollStep(50)
 
     patronsText1 = patronsFrame1.scroll.content:CreateFontString(nil, "OVERLAY")
     patronsText1.font = UNIT_NAME_FONT_CHINESE
@@ -239,7 +253,7 @@ local function CreatePatronsPane()
     patronsFrame2:SetPoint("TOPLEFT", patronsFrame1, "TOPRIGHT", 10, 0)
     patronsFrame2:SetPoint("BOTTOMLEFT", patronsFrame1, "BOTTOMRIGHT")
     patronsFrame2.scroll = Cell:CreateScrollFrame(patronsFrame2)
-    patronsFrame2.scroll:SetScrollStep(27)
+    patronsFrame2.scroll:SetScrollStep(50)
 
     patronsText2 = patronsFrame2.scroll.content:CreateFontString(nil, "OVERLAY")
     patronsText2.font = UNIT_NAME_FONT_CHINESE
@@ -249,7 +263,7 @@ local function CreatePatronsPane()
     patronsText2:SetPoint("TOPLEFT")
     patronsText2:SetSpacing(5)
     patronsText2:SetJustifyH("LEFT")
-    patronsText2:SetText(GetPatrons(Cell.patrons2))
+    patronsText2:SetText(GetPatrons2(Cell.patrons2))
 
     -- update width
     local elapsedTime = 0
@@ -261,7 +275,7 @@ local function CreatePatronsPane()
         patronsFrame2:SetWidth(patronsText2:GetWidth() + 10)
         patronsFrame2.scroll:SetContentHeight(patronsText2:GetHeight() + 5)
         patronsPane:SetWidth(patronsFrame1:GetWidth() + patronsFrame2:GetWidth() + 10)
-        
+
         if elapsedTime >= 0.5 then
             patronsPane:SetScript("OnUpdate", nil)
         end
@@ -349,61 +363,79 @@ local function CreateLinksPane()
     local linksPane = Cell:CreateTitledPane(aboutTab, L["Links"], 422, 100)
     linksPane:SetPoint("TOPLEFT", aboutTab, "TOPLEFT", 5, -370)
 
+    local current
+
     local linksEB = Cell:CreateEditBox(linksPane, 412, 20)
     linksEB:SetPoint("TOPLEFT", 5, -27)
     linksEB:SetText("https://github.com/enderneko/Cell")
     linksEB:SetScript("OnTextChanged", function(self, userChanged)
         if userChanged then
-            linksEB:SetText("https://github.com/enderneko/Cell")
+            linksEB:SetText(current)
             linksEB:HighlightText()
-        else
-            linksEB:ClearFocus()
         end
         linksEB:SetCursorPosition(0)
     end)
-    linksEB:SetScript("OnHide", function()
-        linksEB:SetText("https://github.com/enderneko/Cell")
+    linksEB:SetScript("OnMouseUp", function(self)
+        linksEB:HighlightText()
     end)
-
+    
     --! github
     local github = CreateLink(linksPane, "github", "Interface\\AddOns\\Cell\\Media\\Links\\github.tga", function()
-        linksEB:SetText("https://github.com/enderneko/Cell")
+        current = "https://github.com/enderneko/Cell"
+        linksEB:SetText(current)
+        linksEB:ClearFocus()
     end)
     github:SetPoint("TOPLEFT", linksEB, "BOTTOMLEFT", 0, -7)
 
+    linksEB:SetScript("OnShow", function()
+        github:GetScript("OnEnter")()
+    end)
+
     --! curseforge
     local curseforge = CreateLink(linksPane, "curseforge", "Interface\\AddOns\\Cell\\Media\\Links\\curseforge.tga", function()
-        linksEB:SetText("https://www.curseforge.com/wow/addons/cell")
+        current = "https://www.curseforge.com/wow/addons/cell"
+        linksEB:SetText(current)
+        linksEB:ClearFocus()
     end)
     curseforge:SetPoint("TOPLEFT", github, "TOPRIGHT", 7, 0)
 
     --! discord
     local discord = CreateLink(linksPane, "discord", "Interface\\AddOns\\Cell\\Media\\Links\\discord.tga", function()
-        linksEB:SetText("https://discord.gg/9PSe3fKQGJ")
+        current = "https://discord.gg/9PSe3fKQGJ"
+        linksEB:SetText(current)
+        linksEB:ClearFocus()
     end)
     discord:SetPoint("TOPLEFT", curseforge, "TOPRIGHT", 7, 0)
     
     --! kook
     local kook = CreateLink(linksPane, "kook", "Interface\\AddOns\\Cell\\Media\\Links\\kook.tga", function()
-        linksEB:SetText("https://kook.top/q4T7yp")
+        current = "https://kook.top/q4T7yp"
+        linksEB:SetText(current)
+        linksEB:ClearFocus()
     end)
     kook:SetPoint("TOPLEFT", discord, "TOPRIGHT", 7, 0)
 
     --! nga
     local nga = CreateLink(linksPane, "nga", "Interface\\AddOns\\Cell\\Media\\Links\\nga.tga", function()
-        linksEB:SetText("https://bbs.nga.cn/read.php?tid=23488341")
+        current = "https://bbs.nga.cn/read.php?tid=23488341"
+        linksEB:SetText(current)
+        linksEB:ClearFocus()
     end)
     nga:SetPoint("TOPLEFT", kook, "TOPRIGHT", 7, 0)
 
     --! afdian
     local afdian = CreateLink(linksPane, "afdian", "Interface\\AddOns\\Cell\\Media\\Links\\afdian.tga", function()
-        linksEB:SetText("https://afdian.net/@enderneko")
+        current = "https://afdian.net/a/enderneko"
+        linksEB:SetText(current)
+        linksEB:ClearFocus()
     end)
     afdian:SetPoint("TOPRIGHT", linksEB, "BOTTOMRIGHT", 0, -7)
     
     --! ko-fi
     local kofi = CreateLink(linksPane, "kofi", "Interface\\AddOns\\Cell\\Media\\Links\\ko-fi.tga", function()
-        linksEB:SetText("https://ko-fi.com/enderneko")
+        current = "https://ko-fi.com/enderneko"
+        linksEB:SetText(current)
+        linksEB:ClearFocus()
     end)
     kofi:SetPoint("TOPRIGHT", afdian, "TOPLEFT", -7, 0)
 end
