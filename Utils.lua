@@ -363,8 +363,8 @@ if Cell.isAsian then
             return string.format("%.3f"..symbol_1B, n/100000000)
         elseif abs(n) >= 10000 then
             return string.format("%.2f"..symbol_10K, n/10000)
-        elseif abs(n) >= 1000 then
-            return string.format("%.1f"..symbol_1K, n/1000)
+        -- elseif abs(n) >= 1000 then
+        --     return string.format("%.1f"..symbol_1K, n/1000)
         else
             return n
         end
