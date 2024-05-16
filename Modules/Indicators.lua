@@ -302,6 +302,7 @@ local function InitIndicator(indicatorName)
 
     elseif indicatorName == "shieldBar" then
         indicator:SetValue(0.5)
+        indicator.isShieldBar = true
 
     elseif indicatorName == "powerWordShield" then
         indicator:SetScript("OnShow", function()
@@ -2041,6 +2042,8 @@ LoadIndicatorList = function()
 
         if i.isAggroBlink then
             i.blink.alpha:SetFromAlpha(CellDB["indicatorPreviewAlpha"])
+        elseif i.isShieldBar then
+            i:SetAlpha(math.min(i.alpha, CellDB["indicatorPreviewAlpha"]))
         else
             i:SetAlpha(CellDB["indicatorPreviewAlpha"])
             if i.isDispels then

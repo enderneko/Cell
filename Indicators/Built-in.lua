@@ -1950,6 +1950,7 @@ function I:CreateShieldBar(parent)
     shieldBar:Hide()
     shieldBar:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8x8"})
     shieldBar:SetBackdropColor(0, 0, 0, 1)
+    shieldBar.alpha = 1
 
     local tex = shieldBar:CreateTexture(nil, "ARTWORK")
     P:Point(tex, "TOPLEFT", shieldBar, "TOPLEFT", 1, -1)
@@ -1964,6 +1965,7 @@ function I:CreateShieldBar(parent)
     function shieldBar:SetColor(r, g, b, a)
         tex:SetColorTexture(r, g, b)
         shieldBar:SetAlpha(a)
+        shieldBar.alpha = a
     end
 
     function shieldBar:UpdatePixelPerfect()
