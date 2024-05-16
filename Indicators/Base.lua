@@ -15,19 +15,21 @@ CELL_BORDER_COLOR = {0, 0, 0, 1}
 function I:SetFont(fs, anchorTo, font, size, flags, anchor, xOffset, yOffset, color)
     font = F:GetFont(font)
 
-    if flags == "Shadow" then
-        fs:SetFont(font, size, "")
+    local style
+    if flags == "Shadow" or flags == "" then
+        style = ""
+    elseif flags == "Outline" or flags == "Shadow Outline" then
+        style = "OUTLINE"
+    else
+        style = "OUTLINE,MONOCHROME"
+    end
+
+    if flags == "Shadow" or flags == "Shadow Outline" then
+        fs:SetFont(font, size, style)
         fs:SetShadowOffset(1, -1)
         fs:SetShadowColor(0, 0, 0, 1)
     else
-        if flags == "None" then
-            flags = ""
-        elseif flags == "Outline" then
-            flags = "OUTLINE"
-        else
-            flags = "OUTLINE,MONOCHROME"
-        end
-        fs:SetFont(font, size, flags)
+        fs:SetFont(font, size, style)
         fs:SetShadowOffset(0, 0)
         fs:SetShadowColor(0, 0, 0, 0)
     end

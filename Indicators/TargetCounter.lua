@@ -155,20 +155,21 @@ function I:CreateTargetCounter(parent)
 
     function targetCounter:SetFont(font, size, flags)
         font = F:GetFont(font)
-
-        if flags == "Shadow" then
-            text:SetFont(font, size, "")
+        local style
+        if flags == "Shadow" or flags == "" then
+            style = ""
+        elseif flags == "Outline" or flags == "Shadow Outline" then
+            style = "OUTLINE"
+        else
+            style = "OUTLINE,MONOCHROME"
+        end
+        
+        if flags == "Shadow" or flags == "Shadow Outline" then
+            text:SetFont(font, size, style)
             text:SetShadowOffset(1, -1)
             text:SetShadowColor(0, 0, 0, 1)
         else
-            if flags == "None" then
-                flags = ""
-            elseif flags == "Outline" then
-                flags = "OUTLINE"
-            else
-                flags = "OUTLINE,MONOCHROME"
-            end
-            text:SetFont(font, size, flags)
+            text:SetFont(font, size, style)
             text:SetShadowOffset(0, 0)
             text:SetShadowColor(0, 0, 0, 0)
         end

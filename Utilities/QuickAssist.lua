@@ -1133,19 +1133,21 @@ local function UpdateQuickAssist(which)
             local font, fontSize, fontFlags = unpack(styleTable["name"]["font"])
             font = F:GetFont(font)
 
-            if fontFlags == "Shadow" then
-                header[i].nameText:SetFont(font, fontSize, "")
+            local style
+            if fontFlags == "Shadow" or fontFlags == "" then
+                style = ""
+            elseif fontFlags == "Outline" or fontFlags == "Shadow Outline" then
+                style = "OUTLINE"
+            else
+                style = "OUTLINE,MONOCHROME"
+            end
+
+            if fontFlags == "Shadow" or fontFlags == "Shadow Outline" then
+                header[i].nameText:SetFont(font, fontSize, style)
                 header[i].nameText:SetShadowOffset(1, -1)
                 header[i].nameText:SetShadowColor(0, 0, 0, 1)
             else
-                if fontFlags == "None" then
-                    fontFlags = ""
-                elseif fontFlags == "Outline" then
-                    fontFlags = "OUTLINE"
-                else
-                    fontFlags = "OUTLINE,MONOCHROME"
-                end
-                header[i].nameText:SetFont(font, fontSize, fontFlags)
+                header[i].nameText:SetFont(font, fontSize, style)
                 header[i].nameText:SetShadowOffset(0, 0)
                 header[i].nameText:SetShadowColor(0, 0, 0, 0)
             end

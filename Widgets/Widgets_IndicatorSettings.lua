@@ -1465,6 +1465,11 @@ local function CreateSetting_Font(parent)
                 ["onClick"] = widget.Update,
             },
             {
+                ["text"] = L["Shadow Outline"],
+                ["value"] = "Shadow Outline",
+                ["onClick"] = widget.Update,
+            },
+            {
                 ["text"] = L["Monochrome Outline"],
                 ["value"] = "Monochrome,Outline",
                 ["onClick"] = widget.Update,
@@ -1594,6 +1599,11 @@ local function CreateSetting_FontNoOffset(parent)
                 ["onClick"] = widget.Update,
             },
             {
+                ["text"] = L["Shadow Outline"],
+                ["value"] = "Shadow Outline",
+                ["onClick"] = widget.Update,
+            },
+            {
                 ["text"] = L["Monochrome Outline"],
                 ["value"] = "Monochrome Outline",
                 ["onClick"] = widget.Update,
@@ -1680,6 +1690,11 @@ local function CreateSetting_Generic_Font(parent, index)
                 ["text"] = L["Outline"],
                 ["value"] = "Outline",
                 ["onClick"] = widget.Update
+            },
+            {
+                ["text"] = L["Shadow Outline"],
+                ["value"] = "Shadow Outline",
+                ["onClick"] = widget.Update,
             },
             {
                 ["text"] = L["Monochrome Outline"],

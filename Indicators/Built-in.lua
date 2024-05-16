@@ -997,25 +997,27 @@ function I:CreateNameText(parent)
         nameText.flags = flags
         font = F:GetFont(font)
 
-        if flags == "Shadow" then
-            nameText.name:SetFont(font, size, "")
+        local style
+        if flags == "Shadow" or flags == "" then
+            style = ""
+        elseif flags == "Outline" or flags == "Shadow Outline" then
+            style = "OUTLINE"
+        else
+            style = "OUTLINE,MONOCHROME"
+        end
+
+        if flags == "Shadow" or flags == "Shadow Outline" then
+            nameText.name:SetFont(font, size, style)
             nameText.name:SetShadowOffset(1, -1)
             nameText.name:SetShadowColor(0, 0, 0, 1)
-            nameText.vehicle:SetFont(font, size-2, "")
+            nameText.vehicle:SetFont(font, size-2, style)
             nameText.vehicle:SetShadowOffset(1, -1)
             nameText.vehicle:SetShadowColor(0, 0, 0, 1)
         else
-            if flags == "None" then
-                flags = ""
-            elseif flags == "Outline" then
-                flags = "OUTLINE"
-            else
-                flags = "OUTLINE,MONOCHROME"
-            end
-            nameText.name:SetFont(font, size, flags)
+            nameText.name:SetFont(font, size, style)
             nameText.name:SetShadowOffset(0, 0)
             nameText.name:SetShadowColor(0, 0, 0, 0)
-            nameText.vehicle:SetFont(font, size-2, flags)
+            nameText.vehicle:SetFont(font, size-2, style)
             nameText.vehicle:SetShadowOffset(0, 0)
             nameText.vehicle:SetShadowColor(0, 0, 0, 0)
         end
@@ -1180,7 +1182,7 @@ function I:CreateNameText(parent)
     end)
 
     function nameText:UpdatePixelPerfect()
-        if nameText.flags == "Shadow" then
+        if nameText.flags == "Shadow" or nameText.flags == "Shadow Outline" then
             -- NOTE: remove then add shadows back
             nameText.name:SetShadowOffset(0, 0)
             nameText.vehicle:SetShadowOffset(0, 0)
@@ -1200,25 +1202,27 @@ local function StatusText_SetFont(self, font, size, flags)
     self.flags = flags
     font = F:GetFont(font)
 
-    if flags == "Shadow" then
-        self.text:SetFont(font, size, "")
+    local style
+    if flags == "Shadow" or flags == "" then
+        style = ""
+    elseif flags == "Outline" or flags == "Shadow Outline" then
+        style = "OUTLINE"
+    else
+        style = "OUTLINE,MONOCHROME"
+    end
+
+    if flags == "Shadow" or flags == "Shadow Outline" then
+        self.text:SetFont(font, size, style)
         self.text:SetShadowOffset(1, -1)
         self.text:SetShadowColor(0, 0, 0, 1)
-        self.timer:SetFont(font, size, "")
+        self.timer:SetFont(font, size, style)
         self.timer:SetShadowOffset(1, -1)
         self.timer:SetShadowColor(0, 0, 0, 1)
     else
-        if flags == "None" then
-            flags = ""
-        elseif flags == "Outline" then
-            flags = "OUTLINE"
-        else
-            flags = "OUTLINE,MONOCHROME"
-        end
-        self.text:SetFont(font, size, flags)
+        self.text:SetFont(font, size, style)
         self.text:SetShadowOffset(0, 0)
         self.text:SetShadowColor(0, 0, 0, 0)
-        self.timer:SetFont(font, size, flags)
+        self.timer:SetFont(font, size, style)
         self.timer:SetShadowOffset(0, 0)
         self.timer:SetShadowColor(0, 0, 0, 0)
     end
@@ -1328,7 +1332,7 @@ function I:CreateStatusText(parent)
     end
 
     function statusText:UpdatePixelPerfect()
-        if statusText.flags == "Shadow" then
+        if statusText.flags == "Shadow" or statusText.flags == "Shadow Outline" then
             -- NOTE: remove then add shadows back
             text:SetShadowOffset(0, 0)
             timer:SetShadowOffset(0, 0)
@@ -1437,19 +1441,21 @@ end
 local function HealthText_SetFont(self, font, size, flags)
     font = F:GetFont(font)
 
-    if flags == "Shadow" then
-        self.text:SetFont(font, size, "")
+    local style
+    if flags == "Shadow" or flags == "" then
+        style = ""
+    elseif flags == "Outline" or flags == "Shadow Outline" then
+        style = "OUTLINE"
+    else
+        style = "OUTLINE,MONOCHROME"
+    end
+
+    if flags == "Shadow" or flags == "Shadow Outline" then
+        self.text:SetFont(font, size, style)
         self.text:SetShadowOffset(1, -1)
         self.text:SetShadowColor(0, 0, 0, 1)
     else
-        if flags == "None" then
-            flags = ""
-        elseif flags == "Outline" then
-            flags = "OUTLINE"
-        else
-            flags = "OUTLINE,MONOCHROME"
-        end
-        self.text:SetFont(font, size, flags)
+        self.text:SetFont(font, size, style)
         self.text:SetShadowOffset(0, 0)
         self.text:SetShadowColor(0, 0, 0, 0)
     end
@@ -1551,19 +1557,21 @@ end
 local function PowerText_SetFont(self, font, size, flags)
     font = F:GetFont(font)
 
-    if flags == "Shadow" then
-        self.text:SetFont(font, size, "")
+    local style
+    if flags == "Shadow" or flags == "" then
+        style = ""
+    elseif flags == "Outline" or flags == "Shadow Outline" then
+        style = "OUTLINE"
+    else
+        style = "OUTLINE,MONOCHROME"
+    end
+
+    if flags == "Shadow" or flags == "Shadow Outline" then
+        self.text:SetFont(font, size, style)
         self.text:SetShadowOffset(1, -1)
         self.text:SetShadowColor(0, 0, 0, 1)
     else
-        if flags == "None" then
-            flags = ""
-        elseif flags == "Outline" then
-            flags = "OUTLINE"
-        else
-            flags = "OUTLINE,MONOCHROME"
-        end
-        self.text:SetFont(font, size, flags)
+        self.text:SetFont(font, size, style)
         self.text:SetShadowOffset(0, 0)
         self.text:SetShadowColor(0, 0, 0, 0)
     end
