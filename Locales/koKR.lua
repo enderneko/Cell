@@ -486,6 +486,7 @@ L["sec"] = "초"
 --[[Translation missing --]]
 --[[ L["Separate NPC Frame"] = "Separate NPC Frame"--]] 
 L["Shadow"] = "그림자"
+L["Shadow Outline"] = "그림자 윤곽"
 L["Share"] = "공유"
 L["Shield Bar"] = "보호막 바"
 --[[Translation missing --]]

@@ -274,7 +274,7 @@ local defaultQuickAssistTable = {
         ["name"] = {
             ["color"] = {"class_color", {1, 1, 1}},
             ["width"] = {"percentage", 0.75},
-            ["font"] = {"Cell ".._G.DEFAULT, 12, "Outline"},
+            ["font"] = {"Cell ".._G.DEFAULT, 12, "Outline", false},
             ["position"] = {"CENTER", 0, 0},
         },
     },
@@ -302,8 +302,8 @@ local defaultQuickAssistTable = {
                 ["showDuration"] = false,
                 ["showAnimation"] = true,
                 ["font"] = {
-                    {"Cell ".._G.DEFAULT, 11, "Outline", "TOPRIGHT", 2, 1, {1, 1, 1}},
-                    {"Cell ".._G.DEFAULT, 11, "Outline", "BOTTOMRIGHT", 2, -1, {1, 1, 1}},
+                    {"Cell ".._G.DEFAULT, 11, "Outline", false, "TOPRIGHT", 2, 1, {1, 1, 1}},
+                    {"Cell ".._G.DEFAULT, 11, "Outline", false, "BOTTOMRIGHT", 2, -1, {1, 1, 1}},
                 },
             },
              
@@ -326,8 +326,8 @@ local defaultQuickAssistTable = {
                 ["showDuration"] = false,
                 ["showAnimation"] = true,
                 ["font"] = {
-                    {"Cell ".._G.DEFAULT, 11, "Outline", "TOPRIGHT", 2, 1, {1, 1, 1}},
-                    {"Cell ".._G.DEFAULT, 11, "Outline", "BOTTOMRIGHT", 2, -1, {1, 1, 1}},
+                    {"Cell ".._G.DEFAULT, 11, "Outline", false, "TOPRIGHT", 2, 1, {1, 1, 1}},
+                    {"Cell ".._G.DEFAULT, 11, "Outline", false, "BOTTOMRIGHT", 2, -1, {1, 1, 1}},
                 },
             },
         },
@@ -356,7 +356,7 @@ local LoadDB, LoadLayout, LoadStyle, LoadSpells, LoadList, LoadMyBuff, ShowFilte
 
 local anchorPoints = {"BOTTOM", "BOTTOMLEFT", "BOTTOMRIGHT", "CENTER", "LEFT", "RIGHT", "TOP", "TOPLEFT", "TOPRIGHT"}
 local orientations = {"left-to-right", "right-to-left", "top-to-bottom", "bottom-to-top"}
-local outlines = {"None", "Shadow", "Outline", "Monochrome,Outline"}
+local outlines = {"None", "Outline", "Monochrome"}
 local glows = {"None", "Normal", "Pixel", "Shine", "Proc"}
 
 -- ----------------------------------------------------------------------- --
@@ -466,22 +466,24 @@ local function UpdatePreviewButton()
     previewButton.nameText:ClearAllPoints()
     previewButton.nameText:SetPoint(unpack(styleTable["name"]["position"]))
 
-    local font, fontSize, fontFlags = unpack(styleTable["name"]["font"])
+    local font, fontSize, fontOutline, fontShadow = unpack(styleTable["name"]["font"])
     font = F:GetFont(font)
 
-    if fontFlags == "Shadow" then
-        previewButton.nameText:SetFont(font, fontSize, "")
+    local fontFlags
+    if fontOutline == "None" then
+        fontFlags = ""
+    elseif fontOutline == "Outline" then
+        fontFlags = "OUTLINE"
+    else
+        fontFlags = "OUTLINE,MONOCHROME"
+    end
+
+    previewButton.nameText:SetFont(font, fontSize, fontFlags)
+
+    if fontShadow then
         previewButton.nameText:SetShadowOffset(1, -1)
         previewButton.nameText:SetShadowColor(0, 0, 0, 1)
     else
-        if fontFlags == "None" then
-            fontFlags = ""
-        elseif fontFlags == "Outline" then
-            fontFlags = "OUTLINE"
-        else
-            fontFlags = "OUTLINE,MONOCHROME"
-        end
-        previewButton.nameText:SetFont(font, fontSize, fontFlags)
         previewButton.nameText:SetShadowOffset(0, 0)
         previewButton.nameText:SetShadowColor(0, 0, 0, 0)
     end
@@ -735,7 +737,7 @@ local autoSwitchFrame, partyDropdown, raidDropdown, mythicDropdown, arenaDropdow
 -- style
 local hpColorDropdown, hpCP, lossColorDropdown, bgCP, textureDropdown, alphaSlider
 local targetColorPicker, mouseoverColorPicker, highlightSizeSlider
-local nameColorDropdown, nameCP, nameWidth, nameAnchorDropdown, nameXSlider, nameYSlider, nameFontDropdown, nameOutlineDropdown, nameSizeSilder
+local nameColorDropdown, nameCP, nameWidth, nameAnchorDropdown, nameXSlider, nameYSlider, nameFontDropdown, nameOutlineDropdown, nameSizeSilder, nameShadowCB
 
 -- spells
 local myBuffWidgets = {}
@@ -2084,8 +2086,8 @@ local function CreateStylePane()
     end
 
     --* name ------------------------------------------------------------------ --
-    local namePane = Cell:CreateTitledPane(pages.style, L["Name Text"], 422, 175)
-    namePane:SetPoint("TOPLEFT", 0, -210)
+    local namePane = Cell:CreateTitledPane(pages.style, L["Name Text"], 422, 190)
+    namePane:SetPoint("TOPLEFT", 0, -195)
 
     nameColorDropdown = Cell:CreateDropdown(namePane, 117)
     nameColorDropdown:SetPoint("TOPLEFT", namePane, 5, -42)
@@ -2193,6 +2195,12 @@ local function CreateStylePane()
         styleTable["name"]["font"][2] = value
         Cell:Fire("UpdateQuickAssist", "style")
     end
+
+    nameShadowCB = Cell:CreateCheckButton(namePane, L["Shadow"], function(checked, self)
+        styleTable["name"]["font"][4] = checked
+        Cell:Fire("UpdateQuickAssist", "style")
+    end)
+    nameShadowCB:SetPoint("TOPLEFT", nameFontDropdown, "BOTTOMLEFT", 0, -10)
 end
 
 -- ----------------------------------------------------------------------- --
@@ -2452,6 +2460,12 @@ local function CreateIconOptions(parent)
         Cell:Fire("UpdateQuickAssist", currentIconIndex.."-indicator")
     end
 
+    local iconShadowCB = Cell:CreateCheckButton(fontTab, L["Shadow"], function(checked)
+        spellTable[currentIconIndex]["icon"]["font"][fontIndex][4] = checked
+        Cell:Fire("UpdateQuickAssist", currentIconIndex.."-indicator")
+    end)
+    iconShadowCB:SetPoint("TOPLEFT", iconFontOutlineDropdown, 0, 50)
+
     local iconFontAnchorDropdown = Cell:CreateDropdown(fontTab, 117)
     iconFontAnchorDropdown:SetPoint("TOPLEFT", iconFontDropdown, 0, -50)
     iconFontAnchorDropdown:SetLabel(L["Anchor Point"])
@@ -2462,7 +2476,7 @@ local function CreateIconOptions(parent)
             ["text"] = L[v],
             ["value"] = v,
             ["onClick"] = function()
-                spellTable[currentIconIndex]["icon"]["font"][fontIndex][4] = v
+                spellTable[currentIconIndex]["icon"]["font"][fontIndex][5] = v
                 Cell:Fire("UpdateQuickAssist", currentIconIndex.."-indicator")
             end,
         })
@@ -2472,24 +2486,24 @@ local function CreateIconOptions(parent)
     local iconFontXSlider = Cell:CreateSlider(L["X Offset"], fontTab, -50, 50, 117, 1)
     iconFontXSlider:SetPoint("TOPLEFT", iconFontAnchorDropdown, "TOPRIGHT", 30, 0)
     iconFontXSlider.afterValueChangedFn = function(value)
-        spellTable[currentIconIndex]["icon"]["font"][fontIndex][5] = value
+        spellTable[currentIconIndex]["icon"]["font"][fontIndex][6] = value
         Cell:Fire("UpdateQuickAssist", currentIconIndex.."-indicator")
     end
     
     local iconFontYSlider = Cell:CreateSlider(L["Y Offset"], fontTab, -50, 50, 117, 1)
     iconFontYSlider:SetPoint("TOPLEFT", iconFontXSlider, "TOPRIGHT", 30, 0)
     iconFontYSlider.afterValueChangedFn = function(value)
-        spellTable[currentIconIndex]["icon"]["font"][fontIndex][6] = value
+        spellTable[currentIconIndex]["icon"]["font"][fontIndex][7] = value
         Cell:Fire("UpdateQuickAssist", currentIconIndex.."-indicator")
     end
 
     local iconFontCP = Cell:CreateColorPicker(fontTab, L["Color"], false, nil, function(r, g, b)
-        spellTable[currentIconIndex]["icon"]["font"][fontIndex][7][1] = r
-        spellTable[currentIconIndex]["icon"]["font"][fontIndex][7][2] = g
-        spellTable[currentIconIndex]["icon"]["font"][fontIndex][7][3] = b
+        spellTable[currentIconIndex]["icon"]["font"][fontIndex][8][1] = r
+        spellTable[currentIconIndex]["icon"]["font"][fontIndex][8][2] = g
+        spellTable[currentIconIndex]["icon"]["font"][fontIndex][8][3] = b
         Cell:Fire("UpdateQuickAssist", currentIconIndex.."-indicator")
     end)
-    iconFontCP:SetPoint("TOPLEFT", iconFontSizeSlider, 0, 47)
+    iconFontCP:SetPoint("TOPLEFT", iconFontSizeSlider, 0, 50)
 
     function fontTab:Load(t, fIndex)
         fontTab:Show()
@@ -2507,10 +2521,11 @@ local function CreateIconOptions(parent)
         iconFontDropdown:SetFont(t[1])
         iconFontOutlineDropdown:SetSelectedValue(t[3])
         iconFontSizeSlider:SetValue(t[2])
-        iconFontAnchorDropdown:SetSelectedValue(t[4])
-        iconFontXSlider:SetValue(t[5])
-        iconFontYSlider:SetValue(t[6])
-        iconFontCP:SetColor(t[7])
+        iconShadowCB:SetChecked(t[4])
+        iconFontAnchorDropdown:SetSelectedValue(t[5])
+        iconFontXSlider:SetValue(t[6])
+        iconFontYSlider:SetValue(t[7])
+        iconFontCP:SetColor(t[8])
     end
 
     -- buttons --------------------------------------------------------------- --
@@ -3384,6 +3399,7 @@ LoadStyle = function()
     nameFontDropdown:SetFont(styleTable["name"]["font"][1])
     nameSizeSilder:SetValue(styleTable["name"]["font"][2])
     nameOutlineDropdown:SetSelectedValue(styleTable["name"]["font"][3])
+    nameShadowCB:SetChecked(styleTable["name"]["font"][4])
 end
 
 LoadMyBuff = function(b, t)
