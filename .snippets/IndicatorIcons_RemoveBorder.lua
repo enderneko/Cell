@@ -3,7 +3,7 @@
 -- remove icons border
 -- 删除图标指示器的边框
 -------------------------------------------------
-hooksecurefunc(Cell.iFuncs, "CreateAura_BarIcon", function(name, parent)
+hooksecurefunc(Cell.iFuncs, "CreateAura_BarIcon", function(name)
     local f = _G[name]
     hooksecurefunc(f, "SetCooldown", function()
         f:SetBackdropColor(0, 0, 0, 0)
