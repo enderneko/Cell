@@ -3259,21 +3259,22 @@ local function CreateSpellsPane()
         helpText:SetShadowColor(0, 0, 0)
         helpText:SetShadowOffset(1, -1)
         helpText:SetText([[
-            |cffe52b50It's better to use OmniCD to track offensive CDs|r
-            |cff00ff7fBut if you'd like to contribute to built-in offensive list:|r
-            1. open |cfffff2b2Cell\Utilities\QuickAssistConfig.lua|r
-            2. edit |cfffff2b2defaultOffensiveBuffs|r and |cfffff2b2defaultOffensiveCasts|r
-            3. create a PR on GitHub
-            *. fill the list by pressing "Reset Offensive Spells" button
+|cffe52b50It's better to use OmniCD to track offensive CDs|r
+|cff00ff7fBut if you'd like to contribute to built-in offensive list:|r
+1. open |cfffff2b2Cell\Utilities\QuickAssistConfig.lua|r
+2. edit |cfffff2b2defaultOffensiveBuffs|r and |cfffff2b2defaultOffensiveCasts|r
+3. create a PR on GitHub
+*. fill the list by pressing "Reset Offensive Spells" button
 
-            |cffe52b50用 OmniCD 来监控爆发是更好的选择|r
-            |cff00ff7f但如果你想要帮忙补充内置爆发法术列表：|r
-            1. 打开 |cfffff2b2Cell\Utilities\QuickAssistConfig.lua|r
-            2. 修改 |cfffff2b2defaultOffensiveBuffs|r 和 |cfffff2b2defaultOffensiveCasts|r
-            3. 在 GitHub 上提交 PR
-            *. 点击“重置爆发法术”按钮来刷新列表
+|cffe52b50用 OmniCD 来监控爆发是更好的选择|r
+|cff00ff7f但如果你想要帮忙补充内置爆发法术列表：|r
+1. 打开 |cfffff2b2Cell\Utilities\QuickAssistConfig.lua|r
+2. 修改 |cfffff2b2defaultOffensiveBuffs|r 和 |cfffff2b2defaultOffensiveCasts|r
+3. 在 GitHub 上提交 PR
+*. 点击“重置爆发法术”按钮来刷新列表
         ]])
-        helpText:SetPoint("LEFT")
+        helpText:SetPoint("LEFT", 10, 0)
+        helpText:SetPoint("RIGHT", -10, 0)
         helpText:SetJustifyH("LEFT")
         helpText:SetSpacing(5)
 
