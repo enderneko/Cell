@@ -196,8 +196,8 @@ local function UpdatePreviewIcons(layout, indicatorName, setting, value, value2)
 end]=]
 
 local previewIconsFont = {
-    {"Cell ".._G.DEFAULT, 11, "Outline", "TOPRIGHT", 2, 1},
-    {"Cell ".._G.DEFAULT, 11, "Outline", "BOTTOMRIGHT", 2, -1},
+    {"Cell ".._G.DEFAULT, 11, "Outline", false, "TOPRIGHT", 2, 1},
+    {"Cell ".._G.DEFAULT, 11, "Outline", false, "BOTTOMRIGHT", 2, -1},
 }
 
 local function CreatePreviewIcons()

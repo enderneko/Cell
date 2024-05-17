@@ -195,8 +195,8 @@ local function SetCooldown(frame, start, duration, icon, count)
     frame:Show()
 end
 
-local function SetFont(frame, font, size, flags, anchor, xOffset, yOffset, color)
-    I:SetFont(frame.stack, frame, font, size, flags, anchor, xOffset, yOffset, color)
+local function SetFont(frame, font, size, outline, shadow, anchor, xOffset, yOffset, color)
+    I:SetFont(frame.stack, frame, font, size, outline, shadow, anchor, xOffset, yOffset, color)
 end
 
 local function ShowGlowPreview(frame)

@@ -12,24 +12,24 @@ CELL_BORDER_COLOR = {0, 0, 0, 1}
 -------------------------------------------------
 -- SetFont
 -------------------------------------------------
-function I:SetFont(fs, anchorTo, font, size, flags, anchor, xOffset, yOffset, color)
+function I:SetFont(fs, anchorTo, font, size, outline, shadow, anchor, xOffset, yOffset, color)
     font = F:GetFont(font)
 
-    local style
-    if flags == "Shadow" or flags == "" then
-        style = ""
-    elseif flags == "Outline" or flags == "Shadow Outline" then
-        style = "OUTLINE"
+    local flags
+    if outline == "None" then
+        flags = ""
+    elseif outline == "Outline" then
+        flags = "OUTLINE"
     else
-        style = "OUTLINE,MONOCHROME"
+        flags = "OUTLINE,MONOCHROME"
     end
 
-    if flags == "Shadow" or flags == "Shadow Outline" then
-        fs:SetFont(font, size, style)
+    fs:SetFont(font, size, flags)
+
+    if shadow then
         fs:SetShadowOffset(1, -1)
         fs:SetShadowColor(0, 0, 0, 1)
     else
-        fs:SetFont(font, size, style)
         fs:SetShadowOffset(0, 0)
         fs:SetShadowColor(0, 0, 0, 0)
     end
@@ -497,22 +497,24 @@ end
 -------------------------------------------------
 -- CreateAura_Text
 -------------------------------------------------
-local function Text_SetFont(frame, font, size, flags)
+local function Text_SetFont(frame, font, size, outline, shadow)
     font = F:GetFont(font)
 
-    if flags == "Shadow" then
-        frame.text:SetFont(font, size, "")
+    local flags
+    if outline == "None" then
+        flags = ""
+    elseif outline == "Outline" then
+        flags = "OUTLINE"
+    else
+        flags = "OUTLINE,MONOCHROME"
+    end
+
+    frame.text:SetFont(font, size, flags)
+
+    if shadow then
         frame.text:SetShadowOffset(1, -1)
         frame.text:SetShadowColor(0, 0, 0, 1)
     else
-        if flags == "None" then
-            flags = ""
-        elseif flags == "Outline" then
-            flags = "OUTLINE"
-        else
-            flags = "OUTLINE,MONOCHROME"
-        end
-        frame.text:SetFont(font, size, flags)
         frame.text:SetShadowOffset(0, 0)
         frame.text:SetShadowColor(0, 0, 0, 0)
     end
@@ -663,8 +665,8 @@ end
 -------------------------------------------------
 -- CreateAura_Rect
 -------------------------------------------------
-local function Rect_SetFont(frame, font, size, flags, anchor, xOffset, yOffset, color)
-    I:SetFont(frame.stack, frame, font, size, flags, anchor, xOffset, yOffset, color)
+local function Rect_SetFont(frame, font, size, outline, shadow, anchor, xOffset, yOffset, color)
+    I:SetFont(frame.stack, frame, font, size, outline, shadow, anchor, xOffset, yOffset, color)
 end
 
 local function Rect_SetCooldown(frame, start, duration, debuffType, texture, count)
@@ -737,8 +739,8 @@ end
 -------------------------------------------------
 -- CreateAura_Bar
 -------------------------------------------------
-local function Bar_SetFont(frame, font, size, flags, anchor, xOffset, yOffset, color)
-    I:SetFont(frame.stack, frame, font, size, flags, anchor, xOffset, yOffset, color)
+local function Bar_SetFont(frame, font, size, outline, shadow, anchor, xOffset, yOffset, color)
+    I:SetFont(frame.stack, frame, font, size, outline, shadow, anchor, xOffset, yOffset, color)
 end
 
 local function Bar_SetCooldown(bar, start, duration, debuffType, texture, count)

@@ -153,27 +153,28 @@ function I:CreateTargetCounter(parent)
     -- stack:SetJustifyH("RIGHT")
     text:SetPoint("CENTER", 1, 0)
 
-    function targetCounter:SetFont(font, size, flags)
+    function targetCounter:SetFont(font, size, outline, shadow)
         font = F:GetFont(font)
-        local style
-        if flags == "Shadow" or flags == "" then
-            style = ""
-        elseif flags == "Outline" or flags == "Shadow Outline" then
-            style = "OUTLINE"
+
+        local flags
+        if outline == "None" then
+            flags = ""
+        elseif outline == "Outline" then
+            flags = "OUTLINE"
         else
-            style = "OUTLINE,MONOCHROME"
+            flags = "OUTLINE,MONOCHROME"
         end
-        
-        if flags == "Shadow" or flags == "Shadow Outline" then
-            text:SetFont(font, size, style)
+
+        text:SetFont(font, size, flags)
+
+        if shadow then
             text:SetShadowOffset(1, -1)
             text:SetShadowColor(0, 0, 0, 1)
         else
-            text:SetFont(font, size, style)
             text:SetShadowOffset(0, 0)
             text:SetShadowColor(0, 0, 0, 0)
         end
-
+        
         local point = targetCounter:GetPoint(1)
         text:ClearAllPoints()
         if string.find(point, "LEFT") then

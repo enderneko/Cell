@@ -1415,145 +1415,6 @@ local function CreateSetting_StatusPosition(parent)
     return widget
 end
 
-local function CreateSetting_Font(parent)
-    local widget
-
-    if not settingWidgets["font"] then
-        widget = addon:CreateFrame("CellIndicatorSettings_Font", parent, 240, 145)
-        settingWidgets["font"] = widget
-
-        widget.Update = function()
-            widget.fontTable[1] = widget.font:GetSelected() or "Cell ".._G.DEFAULT
-            widget.fontTable[2] = widget.fontSize:GetValue()
-            widget.fontTable[3] =  widget.outline:GetSelected()
-            widget.fontTable[4] = widget.anchor:GetSelected()
-            widget.fontTable[5] = widget.xOffset:GetValue()
-            widget.fontTable[6] = widget.yOffset:GetValue()
-            widget.func()
-        end
-
-        -- font
-        widget.font = addon:CreateDropdown(widget, 110, "font")
-        widget.font:SetPoint("TOPLEFT", 5, -20)
-        local items, fonts, defaultFontName, defaultFont = F:GetFontItems()
-        for _, item in pairs(items) do
-            item["onClick"] = widget.Update
-        end
-        widget.font:SetItems(items)
-
-        widget.fontText = widget:CreateFontString(nil, "OVERLAY", font_name)
-        widget.fontText:SetText(L["Font"])
-        widget.fontText:SetPoint("BOTTOMLEFT", widget.font, "TOPLEFT", 0, 1)
-
-        -- outline
-        widget.outline = addon:CreateDropdown(widget, 110)
-        widget.outline:SetPoint("TOPLEFT", widget.font, "TOPRIGHT", 25, 0)
-        widget.outline:SetItems({
-            {
-                ["text"] = L["None"],
-                ["value"] = "None",
-                ["onClick"] = widget.Update,
-            },
-            {
-                ["text"] = L["Shadow"],
-                ["value"] = "Shadow",
-                ["onClick"] = widget.Update,
-            },
-            {
-                ["text"] = L["Outline"],
-                ["value"] = "Outline",
-                ["onClick"] = widget.Update,
-            },
-            {
-                ["text"] = L["Shadow Outline"],
-                ["value"] = "Shadow Outline",
-                ["onClick"] = widget.Update,
-            },
-            {
-                ["text"] = L["Monochrome Outline"],
-                ["value"] = "Monochrome,Outline",
-                ["onClick"] = widget.Update,
-            },
-        })
-
-        widget.outlineText = widget:CreateFontString(nil, "OVERLAY", font_name)
-        widget.outlineText:SetText(L["Outline"])
-        widget.outlineText:SetPoint("BOTTOMLEFT", widget.outline, "TOPLEFT", 0, 1)
-
-        -- size
-        widget.fontSize = addon:CreateSlider(L["Size"], widget, 5, 50, 110, 1)
-        widget.fontSize:SetPoint("TOPLEFT", widget.font, "BOTTOMLEFT", 0, -25)
-        widget.fontSize.afterValueChangedFn = widget.Update
-
-        -- anchor
-        widget.anchor = addon:CreateDropdown(widget, 110)
-        widget.anchor:SetPoint("TOPLEFT", widget.fontSize, "TOPRIGHT", 25, 0)
-        local items = {}
-        for _, point in pairs(anchorPoints) do
-            tinsert(items, {
-                ["text"] = L[point],
-                ["value"] = point,
-                ["onClick"] = widget.Update,
-            })
-        end
-        widget.anchor:SetItems(items)
-
-        widget.anchorText = widget:CreateFontString(nil, "OVERLAY", font_name)
-        widget.anchorText:SetText(L["Anchor Point"])
-        widget.anchorText:SetPoint("BOTTOMLEFT", widget.anchor, "TOPLEFT", 0, 1)
-
-        -- x
-        widget.xOffset = addon:CreateSlider(L["X Offset"], widget, -50, 50, 110, 1)
-        widget.xOffset:SetPoint("TOPLEFT", widget.fontSize, "BOTTOMLEFT", 0, -40)
-        widget.xOffset.afterValueChangedFn = widget.Update
-        
-        -- y
-        widget.yOffset = addon:CreateSlider(L["Y Offset"], widget, -50, 50, 110, 1)
-        widget.yOffset:SetPoint("TOPLEFT", widget.xOffset, "TOPRIGHT", 25, 0)
-        widget.yOffset.afterValueChangedFn = widget.Update
-
-        -- color
-        widget.color = addon:CreateColorPicker(widget, L["Color"], false, function(r, g, b)
-            widget.fontTable[7][1] = r
-            widget.fontTable[7][2] = g 
-            widget.fontTable[7][3] = b
-            widget.func()
-        end)
-        widget.color:SetPoint("TOPLEFT", widget.xOffset, "BOTTOMLEFT", 0, -30)
-
-        -- callback
-        function widget:SetFunc(func)
-            widget.func = func
-        end
-        
-        -- show db value
-        function widget:SetDBValue(fontTable)
-            widget.fontTable = fontTable
-            widget.font:SetSelected(fontTable[1], fonts[fontTable[1]])
-            widget.fontSize:SetValue(fontTable[2])
-            widget.outline:SetSelectedValue(fontTable[3])
-            widget.anchor:SetSelectedValue(fontTable[4])
-            widget.xOffset:SetValue(fontTable[5])
-            widget.yOffset:SetValue(fontTable[6])
-            
-            -- color
-            if fontTable[7] then
-                widget.color:Show()
-                P:Height(widget, 175)
-                widget.color:SetColor(fontTable[7])
-            else
-                widget.color:Hide()
-                P:Height(widget, 145)
-            end
-        end
-    else
-        widget = settingWidgets["font"]
-    end
-
-    widget:Show()
-    return widget
-end
-
 local function CreateSetting_FontNoOffset(parent)
     local widget
 
@@ -1565,6 +1426,7 @@ local function CreateSetting_FontNoOffset(parent)
             widget.fontTable[1] = widget.font:GetSelected() or "Cell ".._G.DEFAULT
             widget.fontTable[2] = widget.fontSize:GetValue()
             widget.fontTable[3] =  widget.outline:GetSelected()
+            widget.fontTable[4] =  widget.shadow:GetChecked()
             widget.func()
         end
 
@@ -1589,23 +1451,13 @@ local function CreateSetting_FontNoOffset(parent)
                 ["onClick"] = widget.Update,
             },
             {
-                ["text"] = L["Shadow"],
-                ["value"] = "Shadow",
-                ["onClick"] = widget.Update,
-            },
-            {
                 ["text"] = L["Outline"],
                 ["value"] = "Outline",
                 ["onClick"] = widget.Update,
             },
             {
-                ["text"] = L["Shadow Outline"],
-                ["value"] = "Shadow Outline",
-                ["onClick"] = widget.Update,
-            },
-            {
-                ["text"] = L["Monochrome Outline"],
-                ["value"] = "Monochrome Outline",
+                ["text"] = L["Monochrome"],
+                ["value"] = "Monochrome",
                 ["onClick"] = widget.Update,
             },
         })
@@ -1618,6 +1470,9 @@ local function CreateSetting_FontNoOffset(parent)
         widget.fontSize:SetPoint("TOPLEFT", widget.font, "BOTTOMLEFT", 0, -25)
         widget.fontSize.afterValueChangedFn = widget.Update
 
+        widget.shadow = addon:CreateCheckButton(widget, L["Shadow"], widget.Update)
+        widget.shadow:SetPoint("TOPLEFT", widget.fontSize, "TOPRIGHT", 25, -3)
+
         -- callback
         function widget:SetFunc(func)
             widget.func = func
@@ -1629,6 +1484,7 @@ local function CreateSetting_FontNoOffset(parent)
             widget.font:SetSelected(fontTable[1], fonts[fontTable[1]])
             widget.fontSize:SetValue(fontTable[2])
             widget.outline:SetSelected(L[fontTable[3]])
+            widget.shadow:SetChecked(fontTable[4])
         end
     else
         widget = settingWidgets["font-noOffset"]
@@ -1638,20 +1494,21 @@ local function CreateSetting_FontNoOffset(parent)
     return widget
 end
 
-local function CreateSetting_Generic_Font(parent, index)
+local function CreateSetting_Font(parent, index)
     local widget
 
     if not settingWidgets[index] then
-        widget = addon:CreateFrame("CellIndicatorSettings_"..F:UpperFirst(index), parent, 240, 165)
+        widget = addon:CreateFrame("CellIndicatorSettings_"..F:UpperFirst(index), parent, 240, 145)
         settingWidgets[index] = widget
 
         widget.Update = function()
             widget.fontTable[1] = widget.font:GetSelected() or "Cell ".._G.DEFAULT
             widget.fontTable[2] = widget.fontSize:GetValue()
             widget.fontTable[3] =  widget.outline:GetSelected()
-            widget.fontTable[4] = widget.anchor:GetSelected()
-            widget.fontTable[5] = widget.xOffset:GetValue()
-            widget.fontTable[6] = widget.yOffset:GetValue()
+            widget.fontTable[4] = widget.shadow:GetChecked()
+            widget.fontTable[5] = widget.anchor:GetSelected()
+            widget.fontTable[6] = widget.xOffset:GetValue()
+            widget.fontTable[7] = widget.yOffset:GetValue()
             widget.func()
         end
 
@@ -1661,7 +1518,7 @@ local function CreateSetting_Generic_Font(parent, index)
 
         -- font
         widget.font = addon:CreateDropdown(widget, 110, "font")
-        widget.font:SetPoint("TOPLEFT", 5, -40)
+        -- widget.font:SetPoint("TOPLEFT", 5, -40)
         local items, fonts, defaultFontName, defaultFont = F:GetFontItems()
         for _, item in pairs(items) do
             item["onClick"] = widget.Update
@@ -1682,23 +1539,13 @@ local function CreateSetting_Generic_Font(parent, index)
                 ["onClick"] = widget.Update
             },
             {
-                ["text"] = L["Shadow"],
-                ["value"] = "Shadow",
-                ["onClick"] = widget.Update
-            },
-            {
                 ["text"] = L["Outline"],
                 ["value"] = "Outline",
                 ["onClick"] = widget.Update
             },
             {
-                ["text"] = L["Shadow Outline"],
-                ["value"] = "Shadow Outline",
-                ["onClick"] = widget.Update,
-            },
-            {
-                ["text"] = L["Monochrome Outline"],
-                ["value"] = "Monochrome Outline",
+                ["text"] = L["Monochrome"],
+                ["value"] = "Monochrome",
                 ["onClick"] = widget.Update
             },
         })
@@ -1712,9 +1559,13 @@ local function CreateSetting_Generic_Font(parent, index)
         widget.fontSize:SetPoint("TOPLEFT", widget.font, "BOTTOMLEFT", 0, -25)
         widget.fontSize.afterValueChangedFn = widget.Update
 
+        -- shadow
+        widget.shadow = addon:CreateCheckButton(widget, L["Shadow"], widget.Update)
+        widget.shadow:SetPoint("TOPLEFT", widget.fontSize, "TOPRIGHT", 25, -3)
+
         -- anchor
         widget.anchor = addon:CreateDropdown(widget, 110)
-        widget.anchor:SetPoint("TOPLEFT", widget.fontSize, "TOPRIGHT", 25, 0)
+        widget.anchor:SetPoint("TOPLEFT", widget.fontSize, "BOTTOMLEFT", 0, -45)
         local items = {}
         for _, point in pairs(anchorPoints) do
             tinsert(items, {
@@ -1731,22 +1582,22 @@ local function CreateSetting_Generic_Font(parent, index)
 
         -- x
         widget.xOffset = addon:CreateSlider(L["X Offset"], widget, -50, 50, 110, 1)
-        widget.xOffset:SetPoint("TOPLEFT", widget.fontSize, "BOTTOMLEFT", 0, -40)
+        widget.xOffset:SetPoint("TOPLEFT", widget.anchor, "TOPRIGHT", 25, 0)
         widget.xOffset.afterValueChangedFn = widget.Update
 
         -- y
         widget.yOffset = addon:CreateSlider(L["Y Offset"], widget, -50, 50, 110, 1)
-        widget.yOffset:SetPoint("TOPLEFT", widget.xOffset, "TOPRIGHT", 25, 0)
+        widget.yOffset:SetPoint("TOPLEFT", widget.xOffset, "BOTTOMLEFT", 0, -40)
         widget.yOffset.afterValueChangedFn = widget.Update
 
         -- color
         widget.color = addon:CreateColorPicker(widget, L["Color"], false, function(r, g, b)
-            widget.fontTable[7][1] = r
-            widget.fontTable[7][2] = g 
-            widget.fontTable[7][3] = b
+            widget.fontTable[8][1] = r
+            widget.fontTable[8][2] = g 
+            widget.fontTable[8][3] = b
             widget.func()
         end)
-        widget.color:SetPoint("TOPLEFT", widget.xOffset, "BOTTOMLEFT", 0, -30)
+        widget.color:SetPoint("TOPLEFT", widget.anchor, "BOTTOMLEFT", 0, -30)
 
         -- callback
         function widget:SetFunc(func)
@@ -1756,23 +1607,34 @@ local function CreateSetting_Generic_Font(parent, index)
         -- show db value
         function widget:SetDBValue(fontTable, title)
             widget.fontTable = fontTable
-            widget.title:SetText(L[title])
             widget.font:SetSelected(fontTable[1], fonts[fontTable[1]])
             widget.fontSize:SetValue(fontTable[2])
             widget.outline:SetSelectedValue(fontTable[3])
-            widget.anchor:SetSelectedValue(fontTable[4])
-            widget.xOffset:SetValue(fontTable[5])
-            widget.yOffset:SetValue(fontTable[6])
+            widget.shadow:SetChecked(fontTable[4])
+            widget.anchor:SetSelectedValue(fontTable[5])
+            widget.xOffset:SetValue(fontTable[6])
+            widget.yOffset:SetValue(fontTable[7])
             
+            local height = 200
+
+            -- title
+            if title then
+                widget.title:SetText(L[title])
+                widget.font:SetPoint("TOPLEFT", 5, -40)
+                height = height + 20
+            else
+                widget.font:SetPoint("TOPLEFT", 5, -20)
+            end
+
             -- color
-            if fontTable[7] then
+            if fontTable[8] then
                 widget.color:Show()
-                P:Height(widget, 195)
-                widget.color:SetColor(fontTable[7])
+                widget.color:SetColor(fontTable[8])
             else
                 widget.color:Hide()
-                P:Height(widget, 165)
             end
+
+            P:Height(widget, height)
 
             if title == "durationFont" then
                 addon:SetTooltips(widget.color, "ANCHOR_TOPLEFT", 0, 3, L["Color"], L["This setting will be ignored, if the %1$s option in %2$s tab is enabled"]:format(addon:GetAccentColorString().."\""..L["Color Duration Text"].."\"|r", L["Appearance"]))
@@ -5630,12 +5492,10 @@ function addon:CreateIndicatorSettings(parent, settingsTable)
             tinsert(widgetsTable, CreateSetting_Orientation(parent))
         elseif setting == "barOrientation" then
             tinsert(widgetsTable, CreateSetting_BarOrientation(parent))
-        elseif setting == "font" then
-            tinsert(widgetsTable, CreateSetting_Font(parent))
-        elseif string.find(setting, "^font%d") then
-            tinsert(widgetsTable, CreateSetting_Generic_Font(parent, string.match(setting, "^(font%d).+$")))
         elseif setting == "font-noOffset" then
             tinsert(widgetsTable, CreateSetting_FontNoOffset(parent))
+        elseif string.find(setting, "^font") then
+            tinsert(widgetsTable, CreateSetting_Font(parent, string.match(setting, "^(font%d?):?.*$")))
         elseif setting == "color" then
             tinsert(widgetsTable, CreateSetting_Color(parent))
         elseif setting == "color-alpha" then

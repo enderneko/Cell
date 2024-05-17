@@ -993,34 +993,33 @@ function I:CreateNameText(parent)
         nameText.vehicle:Hide()
     end)
 
-    function nameText:SetFont(font, size, flags)
-        nameText.flags = flags
+    function nameText:SetFont(font, size, outline, shadow)
         font = F:GetFont(font)
-
-        local style
-        if flags == "Shadow" or flags == "" then
-            style = ""
-        elseif flags == "Outline" or flags == "Shadow Outline" then
-            style = "OUTLINE"
+        
+        local flags
+        if outline == "None" then
+            flags = ""
+        elseif outline == "Outline" then
+            flags = "OUTLINE"
         else
-            style = "OUTLINE,MONOCHROME"
+            flags = "OUTLINE,MONOCHROME"
         end
-
-        if flags == "Shadow" or flags == "Shadow Outline" then
-            nameText.name:SetFont(font, size, style)
+        
+        nameText.name:SetFont(font, size, flags)
+        nameText.vehicle:SetFont(font, size-2, flags)
+        
+        if shadow then
             nameText.name:SetShadowOffset(1, -1)
             nameText.name:SetShadowColor(0, 0, 0, 1)
-            nameText.vehicle:SetFont(font, size-2, style)
             nameText.vehicle:SetShadowOffset(1, -1)
             nameText.vehicle:SetShadowColor(0, 0, 0, 1)
         else
-            nameText.name:SetFont(font, size, style)
             nameText.name:SetShadowOffset(0, 0)
             nameText.name:SetShadowColor(0, 0, 0, 0)
-            nameText.vehicle:SetFont(font, size-2, style)
             nameText.vehicle:SetShadowOffset(0, 0)
             nameText.vehicle:SetShadowColor(0, 0, 0, 0)
         end
+        nameText.shadow = shadow
 
         nameText:UpdateName()
         if parent.states.inVehicle or nameText.isPreview then
@@ -1182,7 +1181,7 @@ function I:CreateNameText(parent)
     end)
 
     function nameText:UpdatePixelPerfect()
-        if nameText.flags == "Shadow" or nameText.flags == "Shadow Outline" then
+        if nameText.shadow then
             -- NOTE: remove then add shadows back
             nameText.name:SetShadowOffset(0, 0)
             nameText.vehicle:SetShadowOffset(0, 0)
@@ -1198,35 +1197,34 @@ end
 -------------------------------------------------
 -- status text
 -------------------------------------------------
-local function StatusText_SetFont(self, font, size, flags)
-    self.flags = flags
+local function StatusText_SetFont(self, font, size, outline, shadow)
     font = F:GetFont(font)
-
-    local style
-    if flags == "Shadow" or flags == "" then
-        style = ""
-    elseif flags == "Outline" or flags == "Shadow Outline" then
-        style = "OUTLINE"
+    
+    local flags
+    if outline == "None" then
+        flags = ""
+    elseif outline == "Outline" then
+        flags = "OUTLINE"
     else
-        style = "OUTLINE,MONOCHROME"
+        flags = "OUTLINE,MONOCHROME"
     end
-
-    if flags == "Shadow" or flags == "Shadow Outline" then
-        self.text:SetFont(font, size, style)
+    
+    self.text:SetFont(font, size, flags)
+    self.timer:SetFont(font, size, flags)
+    
+    if shadow then
         self.text:SetShadowOffset(1, -1)
         self.text:SetShadowColor(0, 0, 0, 1)
-        self.timer:SetFont(font, size, style)
         self.timer:SetShadowOffset(1, -1)
         self.timer:SetShadowColor(0, 0, 0, 1)
     else
-        self.text:SetFont(font, size, style)
         self.text:SetShadowOffset(0, 0)
         self.text:SetShadowColor(0, 0, 0, 0)
-        self.timer:SetFont(font, size, style)
         self.timer:SetShadowOffset(0, 0)
         self.timer:SetShadowColor(0, 0, 0, 0)
     end
-
+    self.shadow = shadow
+    
     self:SetHeight(self.text:GetHeight()+P:Scale(1)*2)
 end
 
@@ -1332,7 +1330,7 @@ function I:CreateStatusText(parent)
     end
 
     function statusText:UpdatePixelPerfect()
-        if statusText.flags == "Shadow" or statusText.flags == "Shadow Outline" then
+        if statusText.shadow then
             -- NOTE: remove then add shadows back
             text:SetShadowOffset(0, 0)
             timer:SetShadowOffset(0, 0)
@@ -1438,27 +1436,28 @@ local function SetHealth_Absorbs_Only_Percentage(self, current, max, totalAbsorb
     self:SetWidth(self.text:GetStringWidth())
 end
 
-local function HealthText_SetFont(self, font, size, flags)
+local function HealthText_SetFont(self, font, size, outline, shadow)
     font = F:GetFont(font)
 
-    local style
-    if flags == "Shadow" or flags == "" then
-        style = ""
-    elseif flags == "Outline" or flags == "Shadow Outline" then
-        style = "OUTLINE"
+    local flags
+    if outline == "None" then
+        flags = ""
+    elseif outline == "Outline" then
+        flags = "OUTLINE"
     else
-        style = "OUTLINE,MONOCHROME"
+        flags = "OUTLINE,MONOCHROME"
     end
 
-    if flags == "Shadow" or flags == "Shadow Outline" then
-        self.text:SetFont(font, size, style)
+    self.text:SetFont(font, size, flags)
+    
+    if shadow then
         self.text:SetShadowOffset(1, -1)
         self.text:SetShadowColor(0, 0, 0, 1)
     else
-        self.text:SetFont(font, size, style)
         self.text:SetShadowOffset(0, 0)
         self.text:SetShadowColor(0, 0, 0, 0)
     end
+
     self:SetSize(self.text:GetStringWidth(), size)
 end
 
@@ -1554,27 +1553,28 @@ local function SetPower_Number_Short(self, current, max, totalAbsorbs)
     self:SetWidth(self.text:GetStringWidth())
 end
 
-local function PowerText_SetFont(self, font, size, flags)
+local function PowerText_SetFont(self, font, size, outline, shadow)
     font = F:GetFont(font)
 
-    local style
-    if flags == "Shadow" or flags == "" then
-        style = ""
-    elseif flags == "Outline" or flags == "Shadow Outline" then
-        style = "OUTLINE"
+    local flags
+    if outline == "None" then
+        flags = ""
+    elseif outline == "Outline" then
+        flags = "OUTLINE"
     else
-        style = "OUTLINE,MONOCHROME"
+        flags = "OUTLINE,MONOCHROME"
     end
 
-    if flags == "Shadow" or flags == "Shadow Outline" then
-        self.text:SetFont(font, size, style)
+    self.text:SetFont(font, size, flags)
+
+    if shadow then
         self.text:SetShadowOffset(1, -1)
         self.text:SetShadowColor(0, 0, 0, 1)
     else
-        self.text:SetFont(font, size, style)
         self.text:SetShadowOffset(0, 0)
         self.text:SetShadowColor(0, 0, 0, 0)
     end
+
     self:SetSize(self.text:GetStringWidth(), size)
 end
 

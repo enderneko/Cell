@@ -2751,7 +2751,31 @@ function F:Revise()
             for _, i in pairs(layout["indicators"]) do
                 if i.indicatorName == "raidDebuffs" then
                     i.showDuration = true
-                    break
+                end
+
+                -- separate "Shadow" from "Outline"
+                if type(i.font) == "table" then
+                    if type(i.font[1]) == "table" then
+                        if type(i.font[1][4]) ~= "boolean" then
+                            tinsert(i.font[1], 4, string.find(i.font[1][3], "Shadow") and true or false)
+                            tinsert(i.font[2], 4, string.find(i.font[2][3], "Shadow") and true or false)
+                        end
+                    else
+                        if type(i.font[4]) ~= "boolean" then
+                            tinsert(i.font, 4, string.find(i.font[3], "Shadow") and true or false)
+                        end
+                    end
+                end
+            end
+        end
+
+        -- separate "Shadow" from "Outline"
+        if Cell.isRetail then
+            for _, t in pairs(CellDB["quickAssist"]) do
+                if type(t.style.name.font[4]) ~= "boolean" then
+                    tinsert(t.style.name.font, 4, string.find(t.style.name.font[3], "Shadow") and true or false)
+                    tinsert(t.spells.mine.icon.font[1], 4, string.find(t.spells.mine.icon.font[1][3], "Shadow") and true or false)
+                    tinsert(t.spells.mine.icon.font[2], 4, string.find(t.spells.mine.icon.font[2][3], "Shadow") and true or false)
                 end
             end
         end
