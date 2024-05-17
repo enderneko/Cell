@@ -12,7 +12,7 @@ CELL_BORDER_COLOR = {0, 0, 0, 1}
 -------------------------------------------------
 -- SetFont
 -------------------------------------------------
-function I:SetFont(fs, anchorTo, font, size, outline, shadow, anchor, xOffset, yOffset, color)
+function I.SetFont(fs, anchorTo, font, size, outline, shadow, anchor, xOffset, yOffset, color)
     font = F:GetFont(font)
 
     local flags
@@ -51,14 +51,14 @@ end
 -- CreateAura_BorderIcon
 -------------------------------------------------
 local function BorderIcon_SetFont(frame, font1, font2)
-    I:SetFont(frame.stack, frame.textFrame, unpack(font1))
-    I:SetFont(frame.duration, frame.textFrame, unpack(font2))
+    I.SetFont(frame.stack, frame.textFrame, unpack(font1))
+    I.SetFont(frame.duration, frame.textFrame, unpack(font2))
 end
 
 local function BorderIcon_SetCooldown(frame, start, duration, debuffType, texture, count, refreshing)
     local r, g, b
     if debuffType then
-        r, g, b = I:GetDebuffTypeColor(debuffType)
+        r, g, b = I.GetDebuffTypeColor(debuffType)
     else
         r, g, b = 0, 0, 0
     end
@@ -169,7 +169,7 @@ local function BorderIcon_UpdatePixelPerfect(frame)
     P:Repoint(frame.duration)
 end
 
-function I:CreateAura_BorderIcon(name, parent, borderSize)
+function I.CreateAura_BorderIcon(name, parent, borderSize)
     local frame = CreateFrame("Frame", name, parent, "BackdropTemplate")
     frame:Hide()
     -- frame:SetSize(11, 11)
@@ -244,8 +244,8 @@ end
 -- CreateAura_BarIcon
 -------------------------------------------------
 local function BarIcon_SetFont(frame, font1, font2)
-    I:SetFont(frame.stack, frame.textFrame, unpack(font1))
-    I:SetFont(frame.duration, frame.textFrame, unpack(font2))
+    I.SetFont(frame.stack, frame.textFrame, unpack(font1))
+    I.SetFont(frame.duration, frame.textFrame, unpack(font2))
 end
 
 local function BarIcon_SetCooldown(frame, start, duration, debuffType, texture, count, refreshing)
@@ -328,7 +328,7 @@ local function BarIcon_SetCooldown(frame, start, duration, debuffType, texture, 
 
     local r, g, b
     if debuffType then
-        r, g, b = I:GetDebuffTypeColor(debuffType)
+        r, g, b = I.GetDebuffTypeColor(debuffType)
         frame.spark:SetColorTexture(r, g, b, 1)
     else
         r, g, b = 0, 0, 0
@@ -382,7 +382,7 @@ local function BarIcon_UpdatePixelPerfect(frame)
     P:Repoint(frame.duration)
 end
 
-function I:CreateAura_BarIcon(name, parent)
+function I.CreateAura_BarIcon(name, parent)
     local frame = CreateFrame("Frame", name, parent, "BackdropTemplate")
     frame:Hide()
     -- frame:SetSize(11, 11)
@@ -619,7 +619,7 @@ local function Text_SetCooldown(frame, start, duration, debuffType, texture, cou
     frame:Show()
 end
 
-function I:CreateAura_Text(name, parent)
+function I.CreateAura_Text(name, parent)
     local frame = CreateFrame("Frame", name, parent)
     frame:SetSize(11, 11)
     frame:Hide()
@@ -666,7 +666,7 @@ end
 -- CreateAura_Rect
 -------------------------------------------------
 local function Rect_SetFont(frame, font, size, outline, shadow, anchor, xOffset, yOffset, color)
-    I:SetFont(frame.stack, frame, font, size, outline, shadow, anchor, xOffset, yOffset, color)
+    I.SetFont(frame.stack, frame, font, size, outline, shadow, anchor, xOffset, yOffset, color)
 end
 
 local function Rect_SetCooldown(frame, start, duration, debuffType, texture, count)
@@ -697,7 +697,7 @@ local function Rect_SetCooldown(frame, start, duration, debuffType, texture, cou
     frame:Show()
 end
 
-function I:CreateAura_Rect(name, parent)
+function I.CreateAura_Rect(name, parent)
     local frame = CreateFrame("Frame", name, parent, "BackdropTemplate")
     -- frame:SetSize(11, 4)
     frame:Hide()
@@ -740,7 +740,7 @@ end
 -- CreateAura_Bar
 -------------------------------------------------
 local function Bar_SetFont(frame, font, size, outline, shadow, anchor, xOffset, yOffset, color)
-    I:SetFont(frame.stack, frame, font, size, outline, shadow, anchor, xOffset, yOffset, color)
+    I.SetFont(frame.stack, frame, font, size, outline, shadow, anchor, xOffset, yOffset, color)
 end
 
 local function Bar_SetCooldown(bar, start, duration, debuffType, texture, count)
@@ -778,7 +778,7 @@ local function Bar_SetCooldown(bar, start, duration, debuffType, texture, count)
     bar:Show()
 end
 
-function I:CreateAura_Bar(name, parent)
+function I.CreateAura_Bar(name, parent)
     local bar = Cell:CreateStatusBar(name, parent, 18, 4, 100)
     bar:Hide()
     bar.indicatorType = "bar"
@@ -894,7 +894,7 @@ local function Color_SetColors(self, colors)
     end
 end
 
-function I:CreateAura_Color(name, parent)
+function I.CreateAura_Color(name, parent)
     local color = CreateFrame("Frame", name, parent)
     color:Hide()
     color.indicatorType = "color"
@@ -929,7 +929,7 @@ end
 -------------------------------------------------
 -- CreateAura_Texture
 -------------------------------------------------
-function I:CreateAura_Texture(name, parent)
+function I.CreateAura_Texture(name, parent)
     local texture = CreateFrame("Frame", name, parent)
     texture:Hide()
     texture.indicatorType = "texture"
@@ -1004,7 +1004,7 @@ end
 local function Icons_UpdateSize(icons, iconsShown)
     if not (icons.width and icons.height and icons.orientation) then return end -- not init
     
-    if iconsShown then -- call from I:CheckCustomIndicators or preview
+    if iconsShown then -- call from I.CheckCustomIndicators or preview
         for i = iconsShown + 1, icons.maxNum do
             icons[i]:Hide()
         end
@@ -1150,7 +1150,7 @@ local function Icons_UpdatePixelPerfect(icons)
     end
 end
 
-function I:CreateAura_Icons(name, parent, num)
+function I.CreateAura_Icons(name, parent, num)
     local icons = CreateFrame("Frame", name, parent)
     icons:Hide()
 
@@ -1173,7 +1173,7 @@ function I:CreateAura_Icons(name, parent, num)
 
     for i = 1, num do
         local name = name.."Icons"..i
-        local frame = I:CreateAura_BarIcon(name, icons)
+        local frame = I.CreateAura_BarIcon(name, icons)
         icons[i] = frame
     end
 
@@ -1243,7 +1243,7 @@ local function Glow_SetCooldown(glow, start, duration)
     end
 end
 
-function I:CreateAura_Glow(name, parent)
+function I.CreateAura_Glow(name, parent)
     local glow = CreateFrame("Frame", name, parent)
     glow:SetAllPoints(parent)
     glow:Hide()
@@ -1290,7 +1290,7 @@ local function Bars_SetCooldown(bar, start, duration, color)
     bar:Show()
 end
 
-function I:CreateAura_Bars(name, parent, num)
+function I.CreateAura_Bars(name, parent, num)
     local bars = CreateFrame("Frame", name, parent)
     bars:Hide()
     bars.indicatorType = "bars"
@@ -1299,7 +1299,7 @@ function I:CreateAura_Bars(name, parent, num)
 
     function bars:UpdateSize(barsShown)
         if not (bars.width and bars.height) then return end -- not init
-        if barsShown then -- call from I:CheckCustomIndicators or preview
+        if barsShown then -- call from I.CheckCustomIndicators or preview
             for i = barsShown + 1, num do
                 bars[i]:Hide()
             end
@@ -1354,7 +1354,7 @@ function I:CreateAura_Bars(name, parent, num)
 
     for i = 1, num do
         local name = name.."Bar"..i
-        local bar = I:CreateAura_Bar(name, bars)
+        local bar = I.CreateAura_Bar(name, bars)
         bars[i] = bar
 
         bar.stack:Hide()
@@ -1435,7 +1435,7 @@ local function Overlay_SetFrameLevel(overlay, frameLevel)
     overlay:_SetFrameLevel(frameLevel + 10)
 end
 
-function I:CreateAura_Overlay(name, parent)
+function I.CreateAura_Overlay(name, parent)
     local overlay = CreateFrame("StatusBar", name, parent.widgets.healthBar)
     overlay:SetStatusBarTexture("Interface\\Buttons\\WHITE8x8")
     overlay:Hide()

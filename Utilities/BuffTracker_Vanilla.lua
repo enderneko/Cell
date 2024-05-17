@@ -518,7 +518,7 @@ local function HasMyBuff(unit, _buffs)
 end
 
 local function CheckUnit(unit, updateBtn)
-    I:HideMissingBuffs(unit)
+    I.HideMissingBuffs(unit)
 
     -- print("CheckUnit", unit)
     if not hasBuffProvider then return end
@@ -532,7 +532,7 @@ local function CheckUnit(unit, updateBtn)
                     
                     -- NOTE: don't check paladin/warrior shit here
                     if not strfind(k, "^Bo") then
-                        I:ShowMissingBuff(unit, k, buffs[k][1]["icon"], Cell.vars.playerClass == buffs[k]["provider"])
+                        I.ShowMissingBuff(unit, k, buffs[k][1]["icon"], Cell.vars.playerClass == buffs[k]["provider"])
                     end
                 else
                     unaffected[k][unit] = nil
@@ -543,7 +543,7 @@ local function CheckUnit(unit, updateBtn)
         -- NOTE: check shits
         if Cell.vars.playerClass == "PALADIN" then
             if not HasMyBuff(unit, paladinBuffs) then
-                I:ShowMissingBuff(unit, "PALADIN", 254882, true)
+                I.ShowMissingBuff(unit, "PALADIN", 254882, true)
             end
         end
         
@@ -722,7 +722,7 @@ local function UpdateTools(which)
 
             -- missingBuffs indicator
             for unit in F:IterateGroupMembers() do
-                I:HideMissingBuffs(unit, true)
+                I.HideMissingBuffs(unit, true)
             end
         end
 

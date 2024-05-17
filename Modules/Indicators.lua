@@ -370,7 +370,7 @@ local function InitIndicator(indicatorName)
                 -- highlight
                 if not found and self.highlightType ~= "none" and dispelType and showHighlight then
                     found = true
-                    local r, g, b = I:GetDebuffTypeColor(dispelType)
+                    local r, g, b = I.GetDebuffTypeColor(dispelType)
                     if self.highlightType == "entire" then
                         self.highlight:SetVertexColor(r, g, b, 0.5)
                     elseif self.highlightType == "current" then
@@ -538,7 +538,7 @@ local function InitIndicator(indicatorName)
             SetOnUpdate(indicator[i], nil, icons[i], 0)
         end
     elseif indicatorName == "missingBuffs" then
-        local buffs = I:GetDefaultMissingBuffs()
+        local buffs = I.GetDefaultMissingBuffs()
         for i = 1, 5 do
             indicator[i]:SetCooldown(0, 0, nil, buffs[i]["icon"], 0)
         end
@@ -590,9 +590,9 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
 
     if not indicatorName then -- init
         if not layout then --! call from UpdateIndicators() not from Cell:Fire("UpdateIndicators", ...)
-            I:RemoveAllCustomIndicators(previewButton)
+            I.RemoveAllCustomIndicators(previewButton)
             for _, t in pairs(currentLayoutTable["indicators"]) do
-                local indicator = previewButton.indicators[t["indicatorName"]] or I:CreateIndicator(previewButton, t, true)
+                local indicator = previewButton.indicators[t["indicatorName"]] or I.CreateIndicator(previewButton, t, true)
                 InitIndicator(t["indicatorName"])
                 -- update position
                 if t["position"] then
@@ -944,7 +944,7 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                 indicator:EnableSmooth(value2)
             end
         elseif setting == "create" then
-            indicator = I:CreateIndicator(previewButton, value, true)
+            indicator = I.CreateIndicator(previewButton, value, true)
             -- update position
             if value["position"] then
                 P:ClearPoints(indicator)
@@ -1030,7 +1030,7 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                 indicator.preview:Hide()
                 indicator.preview = nil
             end
-            I:RemoveIndicator(previewButton, indicatorName, value)
+            I.RemoveIndicator(previewButton, indicatorName, value)
         end
     end
 end
@@ -1379,7 +1379,7 @@ local function CreateListPane()
                 indicatorName = "indicator"..(tonumber(strmatch(currentLayoutTable["indicators"][last]["indicatorName"], "%d+"))+1)
             end
 
-            tinsert(currentLayoutTable["indicators"], I:GetDefaultCustomIndicatorTable(name, indicatorName, indicatorType, indicatorAuraType))
+            tinsert(currentLayoutTable["indicators"], I.GetDefaultCustomIndicatorTable(name, indicatorName, indicatorType, indicatorAuraType))
 
             Cell:Fire("UpdateIndicators", F:GetNotifiedLayoutName(currentLayout), indicatorName, "create", currentLayoutTable["indicators"][last+1])
             LoadIndicatorList()
@@ -1510,7 +1510,7 @@ if Cell.isRetail then
         ["externalCooldowns"] = {L["Even if disabled, the settings below affect \"Externals + Defensives\" indicator"], "enabled", "builtInExternals", "customExternals", "durationVisibility", "checkbutton:showAnimation", "size", "num:5", "orientation", "position", "frameLevel", "font1:stackFont", "font2:durationFont"},
         ["defensiveCooldowns"] = {L["Even if disabled, the settings below affect \"Externals + Defensives\" indicator"], "enabled", "builtInDefensives", "customDefensives", "durationVisibility", "checkbutton:showAnimation", "size", "num:5", "orientation", "position", "frameLevel", "font1:stackFont", "font2:durationFont"},
         ["allCooldowns"] = {"enabled", "durationVisibility", "checkbutton:showAnimation", "size", "num:5", "orientation", "position", "frameLevel", "font1:stackFont", "font2:durationFont"},
-        ["tankActiveMitigation"] = {"|cffb7b7b7"..I:GetTankActiveMitigationString(), "enabled", "color-class", "size-bar", "position", "frameLevel"},
+        ["tankActiveMitigation"] = {"|cffb7b7b7"..I.GetTankActiveMitigationString(), "enabled", "color-class", "size-bar", "position", "frameLevel"},
         ["dispels"] = {"enabled", "checkbutton:dispellableByMe", "highlightType", "dispelBlacklist", "checkbutton2:showDispelTypeIcons", "orientation", "size-square", "position", "frameLevel"},
         ["debuffs"] = {"enabled", "checkbutton:dispellableByMe", "debuffBlacklist", "bigDebuffs", "durationVisibility", "checkbutton2:showAnimation", "checkbutton3:showTooltip:"..DEBUFFS_TOOLTIP1, "checkbutton4:enableBlacklistShortcut:"..DEBUFFS_TOOLTIP2, "size-normal-big", "num:10", "orientation", "position", "frameLevel", "font1:stackFont", "font2:durationFont"},
         ["raidDebuffs"] = {"|cffb7b7b7"..L["You can config debuffs in %s"]:format(Cell:GetAccentColorString()..L["Raid Debuffs"].."|r"), "enabled", "checkbutton:onlyShowTopGlow", "durationVisibility", "checkbutton2:showTooltip:"..DEBUFFS_TOOLTIP1, "size-border", "num:3", "orientation", "position", "frameLevel", "font1:stackFont", "font2:durationFont"},
@@ -1520,7 +1520,7 @@ if Cell.isRetail then
         ["crowdControls"] = {"enabled", "builtInCrowdControls", "customCrowdControls", "size-border", "num:3", "orientation", "position", "frameLevel", "font1:stackFont", "font2:durationFont"},
         ["consumables"] = {"enabled", "consumablesPreview", "consumablesList"},
         ["healthThresholds"] = {"enabled", "thresholds", "thickness"},
-        ["missingBuffs"] = {I:GetMissingBuffsString().."|cffb7b7b7"..(L["%s in Utilities must be enabled to make this indicator work."]:format(Cell:GetAccentColorString()..L["Buff Tracker"].."|r")), "enabled", "missingBuffsFilters", "size-square", "num:5", "orientation", "position", "frameLevel"},
+        ["missingBuffs"] = {I.GetMissingBuffsString().."|cffb7b7b7"..(L["%s in Utilities must be enabled to make this indicator work."]:format(Cell:GetAccentColorString()..L["Buff Tracker"].."|r")), "enabled", "missingBuffsFilters", "size-square", "num:5", "orientation", "position", "frameLevel"},
     }
 elseif Cell.isCata then
     indicatorSettings = {
@@ -1742,9 +1742,9 @@ local function ShowIndicatorSettings(id)
 
         -- builtInDefensives
         elseif currentSetting == "builtInDefensives" then
-            w:SetDBValue(I:GetDefensives(), CellDB["defensives"]["disabled"])
+            w:SetDBValue(I.GetDefensives(), CellDB["defensives"]["disabled"])
             w:SetFunc(function()
-                I:UpdateDefensives(CellDB["defensives"])
+                I.UpdateDefensives(CellDB["defensives"])
                 Cell:Fire("UpdateIndicators", notifiedLayout, "", "defensives")
             end)
 
@@ -1753,15 +1753,15 @@ local function ShowIndicatorSettings(id)
             w:SetDBValue(_G.CUSTOM, CellDB["defensives"]["custom"], true)
             w:SetFunc(function(value)
                 CellDB["defensives"]["custom"] = value
-                I:UpdateDefensives(CellDB["defensives"])
+                I.UpdateDefensives(CellDB["defensives"])
                 Cell:Fire("UpdateIndicators", notifiedLayout, "", "defensives")
             end)
 
         -- builtInExternals
         elseif currentSetting == "builtInExternals" then
-            w:SetDBValue(I:GetExternals(), CellDB["externals"]["disabled"])
+            w:SetDBValue(I.GetExternals(), CellDB["externals"]["disabled"])
             w:SetFunc(function()
-                I:UpdateExternals(CellDB["externals"])
+                I.UpdateExternals(CellDB["externals"])
                 Cell:Fire("UpdateIndicators", notifiedLayout, "", "externals")
             end)
 
@@ -1770,15 +1770,15 @@ local function ShowIndicatorSettings(id)
             w:SetDBValue(_G.CUSTOM, CellDB["externals"]["custom"], true)
             w:SetFunc(function(value)
                 CellDB["externals"]["custom"] = value
-                I:UpdateExternals(CellDB["externals"])
+                I.UpdateExternals(CellDB["externals"])
                 Cell:Fire("UpdateIndicators", notifiedLayout, "", "externals")
             end)
 
         -- builtInCrowdControls
         elseif currentSetting == "builtInCrowdControls" then
-            w:SetDBValue(I:GetCrowdControls(), CellDB["crowdControls"]["disabled"])
+            w:SetDBValue(I.GetCrowdControls(), CellDB["crowdControls"]["disabled"])
             w:SetFunc(function()
-                I:UpdateCrowdControls(CellDB["crowdControls"])
+                I.UpdateCrowdControls(CellDB["crowdControls"])
                 Cell:Fire("UpdateIndicators", notifiedLayout, "", "crowdControls")
             end)
 
@@ -1787,7 +1787,7 @@ local function ShowIndicatorSettings(id)
             w:SetDBValue(_G.CUSTOM, CellDB["crowdControls"]["custom"], true)
             w:SetFunc(function(value)
                 CellDB["crowdControls"]["custom"] = value
-                I:UpdateCrowdControls(CellDB["crowdControls"])
+                I.UpdateCrowdControls(CellDB["crowdControls"])
                 Cell:Fire("UpdateIndicators", notifiedLayout, "", "crowdControls")
             end)
 
@@ -1796,7 +1796,7 @@ local function ShowIndicatorSettings(id)
         --     w:SetDBValue(CellDB["cleuAuras"])
         --     w:SetFunc(function(value)
         --         CellDB["cleuAuras"] = value
-        --         I:UpdateCleuAuras(value)
+        --         I.UpdateCleuAuras(value)
         --     end)
 
         -- bigDebuffs
@@ -1821,7 +1821,7 @@ local function ShowIndicatorSettings(id)
             w:SetDBValue(CellDB["consumables"])
             w:SetFunc(function(value)
                 CellDB["consumables"] = value
-                Cell.vars.consumables = I:ConvertConsumables(value)
+                Cell.vars.consumables = I.ConvertConsumables(value)
             end)
 
         -- targetedSpellsList

@@ -196,7 +196,7 @@ local function SetCooldown(frame, start, duration, icon, count)
 end
 
 local function SetFont(frame, font, size, outline, shadow, anchor, xOffset, yOffset, color)
-    I:SetFont(frame.stack, frame, font, size, outline, shadow, anchor, xOffset, yOffset, color)
+    I.SetFont(frame.stack, frame, font, size, outline, shadow, anchor, xOffset, yOffset, color)
 end
 
 local function ShowGlowPreview(frame)
@@ -242,8 +242,8 @@ local function ShowGlow(frame, glowType, color, arg1, arg2, arg3, arg4)
     end
 end
 
-function I:CreateTargetedSpells(parent)
-    local frame = I:CreateAura_BorderIcon(parent:GetName().."TargetedSpells", parent.widgets.overlayFrame, 2)
+function I.CreateTargetedSpells(parent)
+    local frame = I.CreateAura_BorderIcon(parent:GetName().."TargetedSpells", parent.widgets.overlayFrame, 2)
     parent.indicators.targetedSpells = frame
     frame:Hide()
 
@@ -276,7 +276,7 @@ local function EnterLeaveInstance()
     end)
 end
 
-function I:EnableTargetedSpells(enabled)
+function I.EnableTargetedSpells(enabled)
     if enabled then
         -- UNIT_SPELLCAST_DELAYED UNIT_SPELLCAST_FAILED UNIT_SPELLCAST_FAILED_QUIET UNIT_SPELLCAST_INTERRUPTED UNIT_SPELLCAST_START UNIT_SPELLCAST_STOP
         -- UNIT_SPELLCAST_CHANNEL_START UNIT_SPELLCAST_CHANNEL_STOP UNIT_SPELLCAST_CHANNEL_UPDATE
@@ -312,6 +312,6 @@ function I:EnableTargetedSpells(enabled)
     end
 end
 
-function I:ShowAllTargetedSpells(showAll)
+function I.ShowAllTargetedSpells(showAll)
     showAllSpells = showAll
 end

@@ -13,8 +13,8 @@ local COLOR = nil -- table: {r, g, b}, e.g. {1, 0.5, 0.5}
 local I = Cell.iFuncs
 
 local function Bar_SetFont(frame, font, size, outline, shadow, anchor, xOffset, yOffset, color)
-    I:SetFont(frame.stack, frame, font, size, outline, shadow, anchor, xOffset, yOffset, color)
-    I:SetFont(frame.duration, frame, font, size, outline, shadow, ANCHOR or anchor, X or xOffset, Y or yOffset, COLOR or color)
+    I.SetFont(frame.stack, frame, font, size, outline, shadow, anchor, xOffset, yOffset, color)
+    I.SetFont(frame.duration, frame, font, size, outline, shadow, ANCHOR or anchor, X or xOffset, Y or yOffset, COLOR or color)
 end
 
 local function Bar_SetCooldown(bar, start, duration, debuffType, texture, count)
@@ -56,7 +56,7 @@ local function Bar_SetCooldown(bar, start, duration, debuffType, texture, count)
     bar:Show()
 end
 
-function I:CreateAura_Bar(name, parent)
+function I.CreateAura_Bar(name, parent)
     local bar = Cell:CreateStatusBar(name, parent, 18, 4, 100)
     bar:Hide()
     bar.indicatorType = "bar"

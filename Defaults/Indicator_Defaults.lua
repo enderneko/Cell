@@ -5,7 +5,7 @@ local I = Cell.iFuncs
 -------------------------------------------------
 -- custom indicator
 -------------------------------------------------
-function I:GetDefaultCustomIndicatorTable(name, indicatorName, type, auraType)
+function I.GetDefaultCustomIndicatorTable(name, indicatorName, type, auraType)
     local t
     if type == "icon" then
         t = {
@@ -166,7 +166,7 @@ end
 -------------------------------------------------
 -- dispels: custom debuff type color
 -------------------------------------------------
-function I:GetDebuffTypeColor(debuffType)
+function I.GetDebuffTypeColor(debuffType)
     if debuffType and CellDB["debuffTypeColor"][debuffType] then
         return CellDB["debuffTypeColor"][debuffType]["r"], CellDB["debuffTypeColor"][debuffType]["g"], CellDB["debuffTypeColor"][debuffType]["b"]
     else
@@ -174,7 +174,7 @@ function I:GetDebuffTypeColor(debuffType)
     end
 end
 
-function I:SetDebuffTypeColor(debuffType, r, g, b)
+function I.SetDebuffTypeColor(debuffType, r, g, b)
     if debuffType and CellDB["debuffTypeColor"][debuffType] then
         CellDB["debuffTypeColor"][debuffType]["r"] = r
         CellDB["debuffTypeColor"][debuffType]["g"] = g
@@ -182,7 +182,7 @@ function I:SetDebuffTypeColor(debuffType, r, g, b)
     end
 end
 
-function I:ResetDebuffTypeColor()
+function I.ResetDebuffTypeColor()
     -- copy
     CellDB["debuffTypeColor"] = F:Copy(DebuffTypeColor)
     -- add Bleed

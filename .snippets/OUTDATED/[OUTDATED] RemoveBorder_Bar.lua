@@ -5,7 +5,7 @@ local I = Cell.iFuncs
 local P = Cell.pixelPerfectFuncs
 
 local function Bar_SetFont(frame, font, size, flags, anchor, xOffset, yOffset, color)
-    I:SetFont(frame.stack, frame, font, size, flags, anchor, xOffset, yOffset, color)
+    I.SetFont(frame.stack, frame, font, size, flags, anchor, xOffset, yOffset, color)
 end
 
 local function Bar_SetCooldown(bar, start, duration, debuffType, texture, count)
@@ -35,7 +35,7 @@ local function Bar_SetCooldown(bar, start, duration, debuffType, texture, count)
     bar:Show()
 end
 
-function I:CreateAura_Bar(name, parent)
+function I.CreateAura_Bar(name, parent)
     local bar = CreateFrame("StatusBar", name, parent, "BackdropTemplate")
     bar:SetStatusBarTexture("Interface\\Buttons\\WHITE8x8")
     P:Size(bar, 18, 4)

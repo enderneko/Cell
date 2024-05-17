@@ -1947,7 +1947,7 @@ if Cell.isRetail then
         local debuffs = {}
         AuraUtil.ForEachAura(unit, "HARMFUL", nil, function(name, icon, count, debuffType, duration, expirationTime, source, isStealable, nameplateShowPersonal, spellId)
             if spellIds[spellId] then
-                debuffs[spellId] = I:CheckDebuffType(debuffType, spellId)
+                debuffs[spellId] = I.CheckDebuffType(debuffType, spellId)
             end
         end)
         return debuffs
@@ -1957,7 +1957,7 @@ if Cell.isRetail then
         local debuffs = {}
         AuraUtil.ForEachAura(unit, "HARMFUL", nil, function(name, icon, count, debuffType, duration, expirationTime, source, isStealable, nameplateShowPersonal, spellId)
             if types == "all" or types[debuffType] then
-                debuffs[spellId] = I:CheckDebuffType(debuffType, spellId)
+                debuffs[spellId] = I.CheckDebuffType(debuffType, spellId)
             end
         end)
         return debuffs
@@ -1972,7 +1972,7 @@ else
             end
 
             if spellIds[spellId] then
-                debuffs[spellId] = I:CheckDebuffType(debuffType, spellId)
+                debuffs[spellId] = I.CheckDebuffType(debuffType, spellId)
             end
         end
         return debuffs
@@ -1987,7 +1987,7 @@ else
             end
 
             if types == "all" or types[debuffType] then
-                debuffs[spellId] = I:CheckDebuffType(s, spellId)
+                debuffs[spellId] = I.CheckDebuffType(s, spellId)
             end
         end
         return debuffs

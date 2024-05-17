@@ -24,7 +24,7 @@ end
 local function Cooldowns_UpdateSize(self, iconsShown)
     if not (self.width and self.height and self.orientation) then return end -- not init
     
-    if iconsShown then -- call from I:UnitButton_UpdateBuffs or preview
+    if iconsShown then -- call from I.UnitButton_UpdateBuffs or preview
         for i = iconsShown + 1, #self do
             self[i]:Hide()
         end
@@ -51,7 +51,7 @@ end
 local function Cooldowns_UpdateSize_WithSpacing(self, iconsShown)
     if not (self.width and self.height and self.orientation) then return end -- not init
     
-    if iconsShown then -- call from I:UnitButton_UpdateBuffs or preview
+    if iconsShown then -- call from I.UnitButton_UpdateBuffs or preview
         for i = iconsShown + 1, #self do
             self[i]:Hide()
         end
@@ -191,7 +191,7 @@ end
 -------------------------------------------------
 -- CreateDefensiveCooldowns
 -------------------------------------------------
-function I:CreateDefensiveCooldowns(parent)
+function I.CreateDefensiveCooldowns(parent)
     local defensiveCooldowns = CreateFrame("Frame", parent:GetName().."DefensiveCooldownParent", parent.widgets.overlayFrame)
     parent.indicators.defensiveCooldowns = defensiveCooldowns
     -- defensiveCooldowns:SetSize(20, 10)
@@ -208,7 +208,7 @@ function I:CreateDefensiveCooldowns(parent)
 
     for i = 1, 5 do
         local name = parent:GetName().."DefensiveCooldown"..i
-        local frame = I:CreateAura_BarIcon(name, defensiveCooldowns)
+        local frame = I.CreateAura_BarIcon(name, defensiveCooldowns)
         tinsert(defensiveCooldowns, frame)
     end
 end
@@ -216,7 +216,7 @@ end
 -------------------------------------------------
 -- CreateExternalCooldowns
 -------------------------------------------------
-function I:CreateExternalCooldowns(parent)
+function I.CreateExternalCooldowns(parent)
     local externalCooldowns = CreateFrame("Frame", parent:GetName().."ExternalCooldownParent", parent.widgets.overlayFrame)
     parent.indicators.externalCooldowns = externalCooldowns
     externalCooldowns:Hide()
@@ -232,7 +232,7 @@ function I:CreateExternalCooldowns(parent)
 
     for i = 1, 5 do
         local name = parent:GetName().."ExternalCooldown"..i
-        local frame = I:CreateAura_BarIcon(name, externalCooldowns)
+        local frame = I.CreateAura_BarIcon(name, externalCooldowns)
         tinsert(externalCooldowns, frame)
     end
 end
@@ -240,7 +240,7 @@ end
 -------------------------------------------------
 -- CreateAllCooldowns
 -------------------------------------------------
-function I:CreateAllCooldowns(parent)
+function I.CreateAllCooldowns(parent)
     local allCooldowns = CreateFrame("Frame", parent:GetName().."AllCooldownParent", parent.widgets.overlayFrame)
     parent.indicators.allCooldowns = allCooldowns
     allCooldowns:Hide()
@@ -256,7 +256,7 @@ function I:CreateAllCooldowns(parent)
 
     for i = 1, 5 do
         local name = parent:GetName().."ExternalCooldown"..i
-        local frame = I:CreateAura_BarIcon(name, allCooldowns)
+        local frame = I.CreateAura_BarIcon(name, allCooldowns)
         tinsert(allCooldowns, frame)
     end
 end
@@ -264,7 +264,7 @@ end
 -------------------------------------------------
 -- CreateTankActiveMitigation
 -------------------------------------------------
-function I:CreateTankActiveMitigation(parent)
+function I.CreateTankActiveMitigation(parent)
     local bar = Cell:CreateStatusBar(parent:GetName().."TanckActiveMitigation", parent.widgets.overlayFrame, 20, 6, 100)
     parent.indicators.tankActiveMitigation = bar
     bar:Hide()
@@ -460,7 +460,7 @@ local function Debuffs_EnableBlacklistShortcut(debuffs, enabled)
     end
 end
 
-function I:CreateDebuffs(parent)
+function I.CreateDebuffs(parent)
     local debuffs = CreateFrame("Frame", parent:GetName().."DebuffParent", parent.widgets.overlayFrame)
     parent.indicators.debuffs = debuffs
     debuffs:Hide()
@@ -486,7 +486,7 @@ function I:CreateDebuffs(parent)
     
     for i = 1, 10 do
         local name = parent:GetName().."Debuff"..i
-        local frame = I:CreateAura_BarIcon(name, debuffs)
+        local frame = I.CreateAura_BarIcon(name, debuffs)
         tinsert(debuffs, frame)
 
         frame._SetCooldown = frame.SetCooldown
@@ -564,7 +564,7 @@ local function Dispels_SetDispels(self, dispelTypes)
             -- highlight
             if not found and self.highlightType ~= "none" and dispelType and showHighlight then
                 found = true
-                local r, g, b = I:GetDebuffTypeColor(dispelType)
+                local r, g, b = I.GetDebuffTypeColor(dispelType)
                 if self.highlightType == "entire" then
                     self.highlight:SetVertexColor(r, g, b, 0.5)
                 elseif self.highlightType == "current" then
@@ -632,7 +632,7 @@ local function Dispels_SetOrientation(self, orientation)
     self:UpdateSize()
 end
 
-function I:CreateDispels(parent)
+function I.CreateDispels(parent)
     local dispels = CreateFrame("Frame", parent:GetName().."DispelParent", parent.widgets.overlayFrame)
     parent.indicators.dispels = dispels
     dispels:Hide()
@@ -730,7 +730,7 @@ local function CheckCondition(operator, checkedValue, currentValue)
     end
 end
 
-function I:GetDebuffOrder(spellName, spellId, count)
+function I.GetDebuffOrder(spellName, spellId, count)
     local t = currentAreaDebuffs[spellId] or currentAreaDebuffs[spellName]
     if not t then return end
 
@@ -745,7 +745,7 @@ function I:GetDebuffOrder(spellName, spellId, count)
     if show then return t["order"] end
 end
 
-function I:GetDebuffGlow(spellName, spellId, count)
+function I.GetDebuffGlow(spellName, spellId, count)
     local t = currentAreaDebuffs[spellId] or currentAreaDebuffs[spellName]
     if not t then return end
 
@@ -838,7 +838,7 @@ local function RaidDebuffs_ShowTooltip(raidDebuffs, show)
     end
 end
 
-function I:CreateRaidDebuffs(parent)
+function I.CreateRaidDebuffs(parent)
     local raidDebuffs = CreateFrame("Frame", parent:GetName().."RaidDebuffParent", parent.widgets.overlayFrame)
     parent.indicators.raidDebuffs = raidDebuffs
     raidDebuffs:Hide()
@@ -864,7 +864,7 @@ function I:CreateRaidDebuffs(parent)
     raidDebuffs.ShowTooltip = RaidDebuffs_ShowTooltip
 
     for i = 1, 3 do
-        local frame = I:CreateAura_BorderIcon(parent:GetName().."RaidDebuff"..i, raidDebuffs, 2)
+        local frame = I.CreateAura_BorderIcon(parent:GetName().."RaidDebuff"..i, raidDebuffs, 2)
         tinsert(raidDebuffs, frame)
         frame:SetScript("OnShow", raidDebuffs.UpdateSize)
         frame:SetScript("OnHide", raidDebuffs.UpdateSize)
@@ -917,7 +917,7 @@ local function PrivateAuras_UpdatePrivateAuraAnchor(self, unit)
     end
 end
 
-function I:CreatePrivateAuras(parent)
+function I.CreatePrivateAuras(parent)
     local privateAuras = CreateFrame("Frame", parent:GetName().."PrivateAuraParent", parent.widgets.overlayFrame)
     parent.indicators.privateAuras = privateAuras
     privateAuras:Hide()
@@ -940,7 +940,7 @@ end
 -------------------------------------------------
 -- player raid icon
 -------------------------------------------------
-function I:CreatePlayerRaidIcon(parent)
+function I.CreatePlayerRaidIcon(parent)
     -- local playerRaidIcon = parent.widgets.overlayFrame:CreateTexture(parent:GetName().."PlayerRaidIcon", "ARTWORK", nil, -7)
     -- parent.indicators.playerRaidIcon = playerRaidIcon
     -- playerRaidIcon:SetTexture("Interface\\TargetingFrame\\UI-RaidTargetingIcons")
@@ -955,7 +955,7 @@ end
 -------------------------------------------------
 -- target raid icon
 -------------------------------------------------
-function I:CreateTargetRaidIcon(parent)
+function I.CreateTargetRaidIcon(parent)
     local targetRaidIcon = CreateFrame("Frame", parent:GetName().."TargetRaidIcon", parent.widgets.overlayFrame)
     parent.indicators.targetRaidIcon = targetRaidIcon
     targetRaidIcon.tex = targetRaidIcon:CreateTexture(nil, "ARTWORK")
@@ -973,7 +973,7 @@ font_name:SetFont(GameFontNormal:GetFont(), 13, "")
 local font_status = CreateFont("CELL_FONT_STATUS")
 font_status:SetFont(GameFontNormal:GetFont(), 11, "")
 
-function I:CreateNameText(parent)
+function I.CreateNameText(parent)
     local nameText = CreateFrame("Frame", parent:GetName().."NameText", parent.widgets.overlayFrame)
     parent.indicators.nameText = nameText
     nameText:Hide()
@@ -1229,7 +1229,7 @@ local function StatusText_SetFont(self, font, size, outline, shadow)
 end
 
 local startTimeCache = {}
-function I:CreateStatusText(parent)
+function I.CreateStatusText(parent)
     local statusText = CreateFrame("Frame", parent:GetName().."StatusText", parent.widgets.overlayFrame)
     parent.indicators.statusText = statusText
     statusText:SetIgnoreParentAlpha(true)
@@ -1517,7 +1517,7 @@ local function HealthText_UpdatePreviewColor(self, color)
     end
 end
 
-function I:CreateHealthText(parent)
+function I.CreateHealthText(parent)
     local healthText = CreateFrame("Frame", parent:GetName().."HealthText", parent.widgets.overlayFrame)
     parent.indicators.healthText = healthText
     healthText:Hide()
@@ -1616,7 +1616,7 @@ local function PowerText_UpdatePreviewColor(self, color)
     self.text:SetTextColor(r, g, b)
 end
 
-function I:CreatePowerText(parent)
+function I.CreatePowerText(parent)
     local powerText = CreateFrame("Frame", parent:GetName().."PowerText", parent.widgets.overlayFrame)
     parent.indicators.powerText = powerText
     powerText:Hide()
@@ -1643,7 +1643,7 @@ local defaultRoleIcon = {
     DAMAGER = "Interface\\AddOns\\Cell\\Media\\Roles\\DAMAGER32",
 }
 
-function I:CreateRoleIcon(parent)
+function I.CreateRoleIcon(parent)
     local roleIcon = parent.widgets.overlayFrame:CreateTexture(parent:GetName().."RoleIcon", "ARTWORK", nil, -7)
     parent.indicators.roleIcon = roleIcon
     -- roleIcon:SetPoint("TOPLEFT", overlayFrame)
@@ -1712,7 +1712,7 @@ end
 -------------------------------------------------
 -- party assignment icon
 -------------------------------------------------
-function I:CreatePartyAssignmentIcon(parent)
+function I.CreatePartyAssignmentIcon(parent)
     local partyAssignmentIcon = parent.widgets.overlayFrame:CreateTexture(parent:GetName().."PartyAssignmentIcon", "ARTWORK", nil, -7)
     parent.indicators.partyAssignmentIcon = partyAssignmentIcon
     partyAssignmentIcon:Hide()
@@ -1738,7 +1738,7 @@ end
 -------------------------------------------------
 -- leader icon
 -------------------------------------------------
-function I:CreateLeaderIcon(parent)
+function I.CreateLeaderIcon(parent)
     local leaderIcon = parent.widgets.overlayFrame:CreateTexture(parent:GetName().."LeaderIcon", "ARTWORK", nil, -7)
     parent.indicators.leaderIcon = leaderIcon
     -- leaderIcon:SetPoint("TOPLEFT", roleIcon, "BOTTOM")
@@ -1783,7 +1783,7 @@ local READY_CHECK_STATUS = {
     notready = {t = "Interface\\AddOns\\Cell\\Media\\Icons\\readycheck-notready", c = {1, 0, 0, 1}},
 }
 
-function I:CreateReadyCheckIcon(parent)
+function I.CreateReadyCheckIcon(parent)
     local readyCheckIcon = CreateFrame("Frame", parent:GetName().."ReadyCheckIcon", parent.widgets.overlayFrame)
     parent.indicators.readyCheckIcon = readyCheckIcon
     -- readyCheckIcon:SetSize(16, 16)
@@ -1805,7 +1805,7 @@ end
 -------------------------------------------------
 -- aggro border
 -------------------------------------------------
-function I:CreateAggroBorder(parent)
+function I.CreateAggroBorder(parent)
     local aggroBorder = CreateFrame("Frame", parent:GetName().."AggroBorder", parent, "BackdropTemplate")
     parent.indicators.aggroBorder = aggroBorder
     P:Point(aggroBorder, "TOPLEFT", parent, "TOPLEFT", 1, -1)
@@ -1865,7 +1865,7 @@ end
 -------------------------------------------------
 -- aggro blink
 -------------------------------------------------
-function I:CreateAggroBlink(parent)
+function I.CreateAggroBlink(parent)
     local aggroBlink = CreateFrame("Frame", parent:GetName().."AggroBlink", parent.widgets.overlayFrame, "BackdropTemplate")
     parent.indicators.aggroBlink = aggroBlink
     -- aggroBlink:SetPoint("TOPLEFT")
@@ -1951,7 +1951,7 @@ local function ShieldBar_SetPoint(bar, point, anchorTo, anchorPoint, x, y)
     end
 end
 
-function I:CreateShieldBar(parent)
+function I.CreateShieldBar(parent)
     local shieldBar = CreateFrame("Frame", parent:GetName().."ShieldBar", parent.widgets.overlayFrame, "BackdropTemplate")
     parent.indicators.shieldBar = shieldBar
     -- shieldBar:SetSize(4, 4)
@@ -1984,7 +1984,7 @@ end
 -------------------------------------------------
 -- health threshold
 -------------------------------------------------
-function I:CreateHealthThresholds(parent)
+function I.CreateHealthThresholds(parent)
     local healthThresholds = CreateFrame("Frame", parent:GetName().."HealthThresholds", parent.widgets.healthBar)
     parent.indicators.healthThresholds = healthThresholds
     healthThresholds:SetAllPoints(parent.widgets.healthBar)
@@ -2063,7 +2063,7 @@ function I:CreateHealthThresholds(parent)
 end
 
 -- sort and save
-function I:UpdateHealthThresholds()
+function I.UpdateHealthThresholds()
     Cell.vars.healthThresholds = Cell.vars.currentLayoutTable.indicators[Cell.defaults.indicatorIndices.healthThresholds].thresholds
     F:Sort(Cell.vars.healthThresholds, 1, "ascending")
 end
@@ -2071,7 +2071,7 @@ end
 -------------------------------------------------
 -- missing buffs
 -------------------------------------------------
-function I:CreateMissingBuffs(parent)
+function I.CreateMissingBuffs(parent)
     local missingBuffs = CreateFrame("Frame", parent:GetName().."MissingBuffParent", parent.widgets.overlayFrame)
     parent.indicators.missingBuffs = missingBuffs
     missingBuffs:Hide()
@@ -2084,7 +2084,7 @@ function I:CreateMissingBuffs(parent)
 
     for i = 1, 5 do
         local name = parent:GetName().."MissingBuff"..i
-        local frame = I:CreateAura_BarIcon(name, missingBuffs)
+        local frame = I.CreateAura_BarIcon(name, missingBuffs)
         tinsert(missingBuffs, frame)
         frame:HookScript("OnSizeChanged", function()
             if frame.glow then
@@ -2097,7 +2097,7 @@ function I:CreateMissingBuffs(parent)
 end
 
 local missingBuffsEnabled, missingBuffsNum, missingBuffsFilters = false, 0, {}
-function I:EnableMissingBuffs(enabled)
+function I.EnableMissingBuffs(enabled)
     missingBuffsEnabled = enabled
 
     if enabled and CellDB["tools"]["buffTracker"][1] then
@@ -2105,7 +2105,7 @@ function I:EnableMissingBuffs(enabled)
     end
 end
 
-function I:UpdateMissingBuffsNum(num, noUpdate)
+function I.UpdateMissingBuffsNum(num, noUpdate)
     missingBuffsNum = num
 
     if not noUpdate and missingBuffsEnabled and CellDB["tools"]["buffTracker"][1] then
@@ -2113,7 +2113,7 @@ function I:UpdateMissingBuffsNum(num, noUpdate)
     end
 end
 
-function I:UpdateMissingBuffsFilters(filters, noUpdate)
+function I.UpdateMissingBuffsFilters(filters, noUpdate)
     if filters then missingBuffsFilters = filters end
 
     if not noUpdate and missingBuffsEnabled and CellDB["tools"]["buffTracker"][1] then
@@ -2128,7 +2128,7 @@ local function HideMissingBuffs(b)
 end
 
 local missingBuffsCounter = {}
-function I:HideMissingBuffs(unit, force)
+function I.HideMissingBuffs(unit, force)
     if not (missingBuffsEnabled or force) then return end
     
     missingBuffsCounter[unit] = nil
@@ -2152,7 +2152,7 @@ local function ShowMissingBuff(b, index, icon, buffByMe)
     end
 end
 
-function I:ShowMissingBuff(unit, buff, icon, buffByMe)
+function I.ShowMissingBuff(unit, buff, icon, buffByMe)
     if not missingBuffsEnabled then return end
     if missingBuffsFilters["buffByMe"] and not buffByMe then return end
     if not missingBuffsFilters[buff] then return end
@@ -2167,7 +2167,7 @@ end
 -------------------------------------------------
 -- power word : shield 怀旧服API太落后，蛋疼！
 -------------------------------------------------
-function I:CreatePowerWordShield(parent)
+function I.CreatePowerWordShield(parent)
     local powerWordShield = CreateFrame("Frame", parent:GetName().."PowerWordShield", parent.widgets.overlayFrame, "BackdropTemplate")
     parent.indicators.powerWordShield = powerWordShield
     powerWordShield:Hide()
@@ -2306,7 +2306,7 @@ end
 -------------------------------------------------
 -- crowd controls
 -------------------------------------------------
-function I:CreateCrowdControls(parent)
+function I.CreateCrowdControls(parent)
     local crowdControls = CreateFrame("Frame", parent:GetName().."CrowdControlsParent", parent.widgets.overlayFrame)
     parent.indicators.crowdControls = crowdControls
     crowdControls:Hide()
@@ -2320,7 +2320,7 @@ function I:CreateCrowdControls(parent)
     crowdControls.UpdatePixelPerfect = Cooldowns_UpdatePixelPerfect
 
     for i = 1, 3 do
-        local frame = I:CreateAura_BorderIcon(parent:GetName().."CrowdControl"..i, crowdControls, 2)
+        local frame = I.CreateAura_BorderIcon(parent:GetName().."CrowdControl"..i, crowdControls, 2)
         tinsert(crowdControls, frame)
         frame:SetScript("OnShow", crowdControls.UpdateSize)
         frame:SetScript("OnHide", crowdControls.UpdateSize)

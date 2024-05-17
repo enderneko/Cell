@@ -363,25 +363,25 @@ function eventFrame:ADDON_LOADED(arg1)
 
         -- dispelBlacklist ------------------------------------------------------------------------
         if type(CellDB["dispelBlacklist"]) ~= "table" then
-            CellDB["dispelBlacklist"] = I:GetDefaultDispelBlacklist()
+            CellDB["dispelBlacklist"] = I.GetDefaultDispelBlacklist()
         end
         Cell.vars.dispelBlacklist = F:ConvertTable(CellDB["dispelBlacklist"])
         
         -- debuffBlacklist ------------------------------------------------------------------------
         if type(CellDB["debuffBlacklist"]) ~= "table" then
-            CellDB["debuffBlacklist"] = I:GetDefaultDebuffBlacklist()
+            CellDB["debuffBlacklist"] = I.GetDefaultDebuffBlacklist()
         end
         Cell.vars.debuffBlacklist = F:ConvertTable(CellDB["debuffBlacklist"])
 
         -- bigDebuffs -----------------------------------------------------------------------------
         if type(CellDB["bigDebuffs"]) ~= "table" then
-            CellDB["bigDebuffs"] = I:GetDefaultBigDebuffs()
+            CellDB["bigDebuffs"] = I.GetDefaultBigDebuffs()
         end
         Cell.vars.bigDebuffs = F:ConvertTable(CellDB["bigDebuffs"])
                 
         -- debuffTypeColor -----------------------------------------------------------------------------
         if type(CellDB["debuffTypeColor"]) ~= "table" then
-            I:ResetDebuffTypeColor()
+            I.ResetDebuffTypeColor()
         end
 
         -- defensives/externals -------------------------------------------------------------------
@@ -403,20 +403,20 @@ function eventFrame:ADDON_LOADED(arg1)
 
         -- targetedSpells -------------------------------------------------------------------------
         if type(CellDB["targetedSpellsList"]) ~= "table" then
-            CellDB["targetedSpellsList"] = I:GetDefaultTargetedSpellsList()
+            CellDB["targetedSpellsList"] = I.GetDefaultTargetedSpellsList()
         end
         Cell.vars.targetedSpellsList = F:ConvertTable(CellDB["targetedSpellsList"])
         
         if type(CellDB["targetedSpellsGlow"]) ~= "table" then
-            CellDB["targetedSpellsGlow"] = I:GetDefaultTargetedSpellsGlow()
+            CellDB["targetedSpellsGlow"] = I.GetDefaultTargetedSpellsGlow()
         end
         Cell.vars.targetedSpellsGlow = CellDB["targetedSpellsGlow"]
 
         -- consumables ----------------------------------------------------------------------------
         if type(CellDB["consumables"]) ~= "table" then
-            CellDB["consumables"] = I:GetDefaultConsumables()
+            CellDB["consumables"] = I.GetDefaultConsumables()
         end
-        Cell.vars.consumables = I:ConvertConsumables(CellDB["consumables"])
+        Cell.vars.consumables = I.ConvertConsumables(CellDB["consumables"])
         
         -- misc -----------------------------------------------------------------------------------
         Cell.version = GetAddOnMetadata(addonName, "version")
@@ -646,8 +646,8 @@ function eventFrame:PLAYER_LOGIN()
     -- update CLEU
     Cell:Fire("UpdateCLEU")
     -- update builtIns and customs
-    I:UpdateDefensives(CellDB["defensives"])
-    I:UpdateExternals(CellDB["externals"])
+    I.UpdateDefensives(CellDB["defensives"])
+    I.UpdateExternals(CellDB["externals"])
     -- update pixel perfect
     Cell:Fire("UpdatePixelPerfect")
     -- overrideLGF

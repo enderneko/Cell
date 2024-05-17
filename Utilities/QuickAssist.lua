@@ -1303,7 +1303,7 @@ Cell:RegisterCallback("UpdateQuickAssist", "UpdateQuickAssist", UpdateQuickAssis
 
 local function QuickAssist_CreateIndicators(button)
     -- buffs indicator (icon)
-    local buffIcons = I:CreateAura_Icons(button:GetName().."BuffIcons", button.overlayFrame, 5)
+    local buffIcons = I.CreateAura_Icons(button:GetName().."BuffIcons", button.overlayFrame, 5)
     button.buffIcons = buffIcons
     buffIcons:Show()
     -- indicator color
@@ -1325,12 +1325,12 @@ local function QuickAssist_CreateIndicators(button)
     end
 
     -- buffs indicator (bar)
-    local buffBars = I:CreateAura_Bars(button:GetName().."BuffBars", button.overlayFrame, 5)
+    local buffBars = I.CreateAura_Bars(button:GetName().."BuffBars", button.overlayFrame, 5)
     button.buffBars = buffBars
     buffBars:Show()
 
     -- offensives indicator (icon)
-    local offensiveIcons = I:CreateAura_Icons(button:GetName().."OffensiveIcons", button.overlayFrame, 5)
+    local offensiveIcons = I.CreateAura_Icons(button:GetName().."OffensiveIcons", button.overlayFrame, 5)
     button.offensiveIcons = offensiveIcons
     offensiveIcons:Show()
     for i = 1, 5 do
@@ -1340,7 +1340,7 @@ local function QuickAssist_CreateIndicators(button)
     end
     
     -- offensives indicator (glow)
-    local offensiveGlow = I:CreateAura_Glow(button:GetName().."OffensiveGlow", button)
+    local offensiveGlow = I.CreateAura_Glow(button:GetName().."OffensiveGlow", button)
     button.offensiveGlow = offensiveGlow
 end
 U.QuickAssist_CreateIndicators = QuickAssist_CreateIndicators

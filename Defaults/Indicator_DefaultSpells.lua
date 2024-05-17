@@ -9,7 +9,7 @@ local F = Cell.funcs
 -- suppress dispel highlight
 local dispelBlacklist = {}
 
-function I:GetDefaultDispelBlacklist()
+function I.GetDefaultDispelBlacklist()
     return dispelBlacklist
 end
 
@@ -34,7 +34,7 @@ local debuffBlacklist = {
     213213, -- 伪装
 }
 
-function I:GetDefaultDebuffBlacklist()
+function I.GetDefaultDebuffBlacklist()
     -- local temp = {}
     -- for i, id in pairs(debuffBlacklist) do
     --     temp[i] = GetSpellInfo(id)
@@ -82,7 +82,7 @@ local bigDebuffs = {
     -- 358777, -- 痛苦之链
 }
 
-function I:GetDefaultBigDebuffs()
+function I.GetDefaultBigDebuffs()
     return bigDebuffs
 end
 
@@ -155,7 +155,7 @@ do
     aoeHealings = temp
 end
 
-function I:IsAoEHealing(nameOrID)
+function I.IsAoEHealing(nameOrID)
     if not nameOrID then return false end
     return aoeHealings[nameOrID] or aoeHealingIDs[nameOrID]
 end
@@ -180,7 +180,7 @@ do
     summonDuration = temp
 end
 
-function I:GetSummonDuration(spellName)
+function I.GetSummonDuration(spellName)
     return summonDuration[spellName]
 end
 
@@ -260,7 +260,7 @@ local externals = { -- true: track by name, false: track by id
     },
 }
 
-function I:GetExternals()
+function I.GetExternals()
     return externals
 end
 
@@ -278,14 +278,14 @@ local function UpdateExternals(id, trackByName)
     end
 end
 
-function I:UpdateExternals(t)
+function I.UpdateExternals(t)
     -- user disabled
     wipe(builtInExternals)
     for class, spells in pairs(externals) do
         for id, v in pairs(spells) do
             if not t["disabled"][id] then -- not disabled
                 if type(v) == "table" then
-                    builtInExternals[id] = true -- for I:IsExternalCooldown()
+                    builtInExternals[id] = true -- for I.IsExternalCooldown()
                     for subId, subTrackByName in pairs(v) do
                         UpdateExternals(subId, subTrackByName)
                     end
@@ -308,7 +308,7 @@ end
 
 local UnitIsUnit = UnitIsUnit
 local bos = GetSpellInfo(6940) -- 牺牲祝福
-function I:IsExternalCooldown(name, id, source, target)
+function I.IsExternalCooldown(name, id, source, target)
     if name == bos then
         if source and target then
             -- NOTE: hide bos on caster
@@ -419,14 +419,14 @@ local defensives = { -- true: track by name, false: track by id
     },
 }
 
-function I:GetDefensives()
+function I.GetDefensives()
     return defensives
 end
 
 local builtInDefensives = {}
 local customDefensives = {}
 
-function I:UpdateDefensives(t)
+function I.UpdateDefensives(t)
     -- user disabled
     wipe(builtInDefensives)
     for class, spells in pairs(defensives) do
@@ -454,7 +454,7 @@ function I:UpdateDefensives(t)
     end
 end
 
-function I:IsDefensiveCooldown(name, id)
+function I.IsDefensiveCooldown(name, id)
     return builtInDefensives[name] or builtInDefensives[id] or customDefensives[name]
 end
 
@@ -511,11 +511,11 @@ do
     tankActiveMitigations = temp
 end
 
-function I:IsTankActiveMitigation(name)
+function I.IsTankActiveMitigation(name)
     return tankActiveMitigations[name]
 end
 
-function I:GetTankActiveMitigationString()
+function I.GetTankActiveMitigationString()
     return table.concat(tankActiveMitigationNames, ", ").."."
 end
 
@@ -524,7 +524,7 @@ end
 -------------------------------------------------
 local dispellable = {}
 
-function I:CanDispel(dispelType)
+function I.CanDispel(dispelType)
     if not dispelType then return end
     return dispellable[dispelType]
 end
@@ -696,7 +696,7 @@ do
     drinks = temp
 end
 
-function I:IsDrinking(name)
+function I.IsDrinking(name)
     return drinks[name]
 end
 
@@ -828,7 +828,7 @@ end
 -------------------------------------------------
 -- local cleuAuras = {}
 
--- function I:UpdateCleuAuras(t)
+-- function I.UpdateCleuAuras(t)
 --     -- reset
 --     wipe(cleuAuras)
 --     -- insert
@@ -838,7 +838,7 @@ end
 --     end
 -- end
     
--- function I:CheckCleuAura(id)
+-- function I.CheckCleuAura(id)
 --     return cleuAuras[id]
 -- end
 
@@ -916,11 +916,11 @@ local targetedSpells = {
     382836, -- 残杀
 }
 
-function I:GetDefaultTargetedSpellsList()
+function I.GetDefaultTargetedSpellsList()
     return targetedSpells
 end
 
-function I:GetDefaultTargetedSpellsGlow()
+function I.GetDefaultTargetedSpellsGlow()
     return {"Pixel", {0.95,0.95,0.32,1}, 9, 0.25, 8, 2}
 end
 
@@ -951,11 +951,11 @@ local consumables = {
 }
 
 
-function I:GetDefaultConsumables()
+function I.GetDefaultConsumables()
     return consumables
 end
 
-function I:ConvertConsumables(db)
+function I.ConvertConsumables(db)
     local temp = {}
     for _, t in pairs(db) do
         temp[t[1]] = t[2]
@@ -993,11 +993,11 @@ do
     missingBuffs = temp
 end
 
-function I:GetDefaultMissingBuffs()
+function I.GetDefaultMissingBuffs()
     return missingBuffs
 end
 
-function I:GetMissingBuffsString()
+function I.GetMissingBuffsString()
     local s = ""
     for _, t in pairs(missingBuffs) do
         s = s.."|T"..t["icon"]..":14:14:0:0:14:14:1:13:1:13|t".." "
@@ -1005,7 +1005,7 @@ function I:GetMissingBuffsString()
     return s
 end
 
-function I:GetMissingBuffsFilters()
+function I.GetMissingBuffsFilters()
     local ret = {}
     for _, t in pairs(missingBuffs) do
         tinsert(ret, {"|T"..t["icon"]..":14:14:0:0:14:14:1:13:1:13|t "..t["name"], t["index"]})
@@ -1150,14 +1150,14 @@ local crowdControls = { -- true: track by name, false: track by id
     }
 }
 
-function I:GetCrowdControls()
+function I.GetCrowdControls()
     return crowdControls
 end
 
 local builtInCrowdControls = {}
 local customCrowdControls = {}
 
-function I:UpdateCrowdControls(t)
+function I.UpdateCrowdControls(t)
     -- user disabled
     wipe(builtInCrowdControls)
     for class, spells in pairs(crowdControls) do
@@ -1185,6 +1185,6 @@ function I:UpdateCrowdControls(t)
     end
 end
 
-function I:IsCrowdControls(name, id)
+function I.IsCrowdControls(name, id)
     return builtInCrowdControls[name] or builtInCrowdControls[id] or customCrowdControls[name]
 end

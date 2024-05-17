@@ -46,7 +46,7 @@ local function Display(b, sourceGUID)
 end
 
 F:IterateAllUnitButtons(function(b)
-    local swingTimer = I:CreateAura_Bar(b:GetName().."SwingTimer", b.widgets.overlayFrame)
+    local swingTimer = I.CreateAura_Bar(b:GetName().."SwingTimer", b.widgets.overlayFrame)
     b.swingTimer = swingTimer
     swingTimer:Hide()
     swingTimer:SetPoint(POINT1, P:Scale(POINT1_X), P:Scale(POINT1_Y))

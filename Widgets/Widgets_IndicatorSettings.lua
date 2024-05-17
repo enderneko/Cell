@@ -4310,7 +4310,7 @@ local function CreateConsumablePreview(parent, style)
     text:SetPoint("CENTER")
     text:SetText("Type "..style)
     
-    I:CreateConsumables(f, true)
+    I.CreateConsumables(f, true)
 
     function f:UpdateTicker(speed)
         f:SetScript("OnShow", function()
@@ -4962,28 +4962,28 @@ local function CreateSetting_HighlightType(parent)
         --[[
         -- curse
         widget.curseCP = addon:CreateColorPicker(widget, "|TInterface\\AddOns\\Cell\\Media\\Debuffs\\Curse:0|t "..L["Curse"], false, nil, function(r, g, b)
-            I:SetDebuffTypeColor("Curse", r, g, b)
+            I.SetDebuffTypeColor("Curse", r, g, b)
             widget.func(widget.highlightType:GetSelected())
         end)
         widget.curseCP:SetPoint("TOPLEFT", widget.highlightType, "BOTTOMLEFT", 0, -7)
 
         -- disease
         widget.diseaseCP = addon:CreateColorPicker(widget, "|TInterface\\AddOns\\Cell\\Media\\Debuffs\\Disease:0|t "..L["Disease"], false, nil, function(r, g, b)
-            I:SetDebuffTypeColor("Disease", r, g, b)
+            I.SetDebuffTypeColor("Disease", r, g, b)
             widget.func(widget.highlightType:GetSelected())
         end)
         widget.diseaseCP:SetPoint("TOPLEFT", widget.curseCP, "TOPRIGHT", 110, 0)
 
         -- magic
         widget.magicCP = addon:CreateColorPicker(widget, "|TInterface\\AddOns\\Cell\\Media\\Debuffs\\Magic:0|t "..L["Magic"], false, nil, function(r, g, b)
-            I:SetDebuffTypeColor("Magic", r, g, b)
+            I.SetDebuffTypeColor("Magic", r, g, b)
             widget.func(widget.highlightType:GetSelected())
         end)
         widget.magicCP:SetPoint("TOPLEFT", widget.curseCP, "BOTTOMLEFT", 0, -7)
 
         -- poison
         widget.poisonCP = addon:CreateColorPicker(widget, "|TInterface\\AddOns\\Cell\\Media\\Debuffs\\Poison:0|t "..L["Poison"], false, nil, function(r, g, b)
-            I:SetDebuffTypeColor("Poison", r, g, b)
+            I.SetDebuffTypeColor("Poison", r, g, b)
             widget.func(widget.highlightType:GetSelected())
         end)
         widget.poisonCP:SetPoint("TOPLEFT", widget.magicCP, "TOPRIGHT", 110, 0)
@@ -4992,11 +4992,11 @@ local function CreateSetting_HighlightType(parent)
         widget.resetBtn = addon:CreateButton(widget, L["Reset All"], "accent-hover", {70, 20})
         widget.resetBtn:SetPoint("TOPLEFT", widget.magicCP, "BOTTOMLEFT", 0, -7)
         widget.resetBtn:SetScript("OnClick", function()
-            I:ResetDebuffTypeColor()
-            widget.curseCP:SetColor(I:GetDebuffTypeColor("Curse"))
-            widget.diseaseCP:SetColor(I:GetDebuffTypeColor("Disease"))
-            widget.magicCP:SetColor(I:GetDebuffTypeColor("Magic"))
-            widget.poisonCP:SetColor(I:GetDebuffTypeColor("Poison"))
+            I.ResetDebuffTypeColor()
+            widget.curseCP:SetColor(I.GetDebuffTypeColor("Curse"))
+            widget.diseaseCP:SetColor(I.GetDebuffTypeColor("Disease"))
+            widget.magicCP:SetColor(I.GetDebuffTypeColor("Magic"))
+            widget.poisonCP:SetColor(I.GetDebuffTypeColor("Poison"))
             widget.func(widget.highlightType:GetSelected())
         end)
         ]]
@@ -5009,10 +5009,10 @@ local function CreateSetting_HighlightType(parent)
         -- show db value
         function widget:SetDBValue(highlightType)
             widget.highlightType:SetSelectedValue(highlightType)
-            -- widget.curseCP:SetColor(I:GetDebuffTypeColor("Curse"))
-            -- widget.diseaseCP:SetColor(I:GetDebuffTypeColor("Disease"))
-            -- widget.magicCP:SetColor(I:GetDebuffTypeColor("Magic"))
-            -- widget.poisonCP:SetColor(I:GetDebuffTypeColor("Poison"))
+            -- widget.curseCP:SetColor(I.GetDebuffTypeColor("Curse"))
+            -- widget.diseaseCP:SetColor(I.GetDebuffTypeColor("Disease"))
+            -- widget.magicCP:SetColor(I.GetDebuffTypeColor("Magic"))
+            -- widget.poisonCP:SetColor(I.GetDebuffTypeColor("Poison"))
         end
     else
         widget = settingWidgets["highlightType"]
@@ -5195,7 +5195,7 @@ local function CreateSetting_MissingBuffsFilters(parent)
         widget.buffByMe = addon:CreateCheckButton(widget, L["buffByMe"])
         widget.buffByMe:SetPoint("TOPLEFT", 5, -8)
 
-        local buffs = I:GetMissingBuffsFilters()
+        local buffs = I.GetMissingBuffsFilters()
         local indexToCB = {}
 
         for i, t in ipairs(buffs) do

@@ -121,7 +121,7 @@ function eventFrame:PLAYER_ENTERING_WORLD()
     end
 end
 
-function I:EnableTargetCounter(enabled)
+function I.EnableTargetCounter(enabled)
     if enabled then
         eventFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
         counterEnabled = true
@@ -133,7 +133,7 @@ function I:EnableTargetCounter(enabled)
     -- texplore(nameplateTargets)
 end
 
-function I:UpdateTargetCounterFilters(filters, noUpdate)
+function I.UpdateTargetCounterFilters(filters, noUpdate)
     if filters then zoneFilters = filters end
     if not noUpdate and counterEnabled then
         eventFrame:PLAYER_ENTERING_WORLD()
@@ -143,7 +143,7 @@ end
 -------------------------------------------------
 -- CreateTargetCounter
 -------------------------------------------------
-function I:CreateTargetCounter(parent)
+function I.CreateTargetCounter(parent)
     local targetCounter = CreateFrame("Frame", parent:GetName().."TargetCounter", parent)
     parent.indicators.targetCounter = targetCounter
     targetCounter:Hide()

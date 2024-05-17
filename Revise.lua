@@ -219,7 +219,7 @@ function F:Revise()
             end
         end
         -- reset CellDB["debuffBlacklist"]
-        CellDB["debuffBlacklist"] = I:GetDefaultDebuffBlacklist()
+        CellDB["debuffBlacklist"] = I.GetDefaultDebuffBlacklist()
         -- update click-castings
         -- self:SetBindingClick(true, "MOUSEWHEELUP", self, "Button6")
         -- self:SetBindingClick(true, "SHIFT-MOUSEWHEELUP", self, "Button7")
@@ -1695,7 +1695,7 @@ function F:Revise()
                     {"C3", {1, 1, 0}},
                 })
             end
-            Cell.vars.consumables = I:ConvertConsumables(CellDB["consumables"])
+            Cell.vars.consumables = I.ConvertConsumables(CellDB["consumables"])
 
             -- 英灵殿
             if not F:TContains(CellDB["targetedSpellsList"], 193659) then -- 邪炽冲刺
@@ -2757,12 +2757,27 @@ function F:Revise()
                 if type(i.font) == "table" then
                     if type(i.font[1]) == "table" then
                         if type(i.font[1][4]) ~= "boolean" then
-                            tinsert(i.font[1], 4, string.find(i.font[1][3], "Shadow") and true or false)
-                            tinsert(i.font[2], 4, string.find(i.font[2][3], "Shadow") and true or false)
+                            if string.find(i.font[1][3], "^Shadow") then
+                                i.font[1][3] = "None"
+                                tinsert(i.font[1], 4, true)
+                            else
+                                tinsert(i.font[1], 4, false)
+                            end
+                            if string.find(i.font[2][3], "^Shadow") then
+                                i.font[2][3] = "None"
+                                tinsert(i.font[2], 4, true)
+                            else
+                                tinsert(i.font[2], 4, false)
+                            end
                         end
                     else
                         if type(i.font[4]) ~= "boolean" then
-                            tinsert(i.font, 4, string.find(i.font[3], "Shadow") and true or false)
+                            if string.find(i.font[3], "^Shadow") then
+                                i.font[3] = "None"
+                                tinsert(i.font, 4, true)
+                            else
+                                tinsert(i.font, 4, false)
+                            end
                         end
                     end
                 end
@@ -2773,9 +2788,24 @@ function F:Revise()
         if Cell.isRetail then
             for _, t in pairs(CellDB["quickAssist"]) do
                 if type(t.style.name.font[4]) ~= "boolean" then
-                    tinsert(t.style.name.font, 4, string.find(t.style.name.font[3], "Shadow") and true or false)
-                    tinsert(t.spells.mine.icon.font[1], 4, string.find(t.spells.mine.icon.font[1][3], "Shadow") and true or false)
-                    tinsert(t.spells.mine.icon.font[2], 4, string.find(t.spells.mine.icon.font[2][3], "Shadow") and true or false)
+                    if string.find(t.style.name.font[3], "^Shadow") then
+                        t.style.name.font[3] = "None"
+                        tinsert(t.style.name.font, 4, true)
+                    else
+                        tinsert(t.style.name.font, 4, false)
+                    end
+                    if string.find(t.spells.mine.icon.font[1][3], "^Shadow") then
+                        t.spells.mine.icon.font[1][3] = "None"
+                        tinsert(t.spells.mine.icon.font[1], 4, true)
+                    else
+                        tinsert(t.spells.mine.icon.font[1], 4, false)
+                    end
+                    if string.find(t.spells.mine.icon.font[2][3], "^Shadow") then
+                        t.spells.mine.icon.font[2][3] = "None"
+                        tinsert(t.spells.mine.icon.font[2], 4, true)
+                    else
+                        tinsert(t.spells.mine.icon.font[2], 4, false)
+                    end
                 end
             end
         end
