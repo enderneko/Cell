@@ -1948,13 +1948,11 @@ function I:CreateShieldBar(parent)
     parent.indicators.shieldBar = shieldBar
     -- shieldBar:SetSize(4, 4)
     shieldBar:Hide()
-    shieldBar:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8x8"})
-    shieldBar:SetBackdropColor(0, 0, 0, 1)
-    shieldBar.alpha = 1
+    shieldBar:SetBackdrop({edgeFile="Interface\\Buttons\\WHITE8x8", edgeSize=P:Scale(1)})
+    shieldBar:SetBackdropBorderColor(0, 0, 0, 1)
 
-    local tex = shieldBar:CreateTexture(nil, "ARTWORK")
-    P:Point(tex, "TOPLEFT", shieldBar, "TOPLEFT", 1, -1)
-    P:Point(tex, "BOTTOMRIGHT", shieldBar, "BOTTOMRIGHT", -1, 1)
+    local tex = shieldBar:CreateTexture(nil, "BORDER", nil, -7)
+    tex:SetAllPoints()
 
     shieldBar._SetPoint = shieldBar.SetPoint
     shieldBar.SetPoint = ShieldBar_SetPoint
@@ -1963,15 +1961,13 @@ function I:CreateShieldBar(parent)
     shieldBar.parentHealthBar = parent.widgets.healthBar
 
     function shieldBar:SetColor(r, g, b, a)
-        tex:SetColorTexture(r, g, b)
-        shieldBar:SetAlpha(a)
-        shieldBar.alpha = a
+        tex:SetColorTexture(r, g, b, a)
     end
 
     function shieldBar:UpdatePixelPerfect()
         P:Resize(shieldBar)
         P:Repoint(shieldBar)
-        P:Repoint(tex)
+        P:Reborder(shieldBar)
     end
 end
 
