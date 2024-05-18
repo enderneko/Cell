@@ -2747,6 +2747,29 @@ function F:Revise()
 
     -- r226-release
     if CellDB["revise"] and dbRevision < 226 then
+        local function AddAlpha(t)
+            local temp = {}
+            temp[1] = t[1]
+            temp[2] = t[5]
+            temp[3] = {t[2], t[3], t[4], 1}
+            return temp
+        end
+        
+        local function AddAlpha2(t)
+            local temp = {}
+            temp[1] = t[4]
+            temp[2] = {t[1], t[2], t[3], 1}
+            return temp
+        end
+        
+        local function AddAlpha3(t)
+            local temp = {}
+            temp[1] = t[1]
+            temp[2] = t[6]
+            temp[3] = {t[2], t[3], t[4], t[5]}
+            return temp
+        end
+
         for _, layout in pairs(CellDB["layouts"]) do
             for _, i in pairs(layout["indicators"]) do
                 if i.indicatorName == "raidDebuffs" then
@@ -2781,6 +2804,43 @@ function F:Revise()
                         end
                     end
                 end
+
+                -- add alpha to "colors"
+                if i.colors then
+                    if i.type == "text" then
+                        if #i.colors[1] == 3 then
+                            i.colors[1][4] = 1
+                            i.colors[2] = AddAlpha(i.colors[2])
+                            i.colors[3] = AddAlpha(i.colors[3])
+                        end
+                    elseif i.type == "rect" then
+                        if #i.colors[1] == 3 then
+                            i.colors[1][4] = 1
+                            i.colors[2] = AddAlpha(i.colors[2])
+                            i.colors[3] = AddAlpha(i.colors[3])
+                            i.colors[4] = {0, 0, 0, 1}
+                        end
+                    elseif i.type == "bar" then
+                        if #i.colors[1] == 3 then
+                            i.colors[1][4] = 1
+                            i.colors[2] = AddAlpha(i.colors[2])
+                            i.colors[3] = AddAlpha(i.colors[3])
+                            i.colors[5] = i.colors[4]
+                            i.colors[4] = {0, 0, 0, 1}
+                        end
+                    elseif i.type == "color" then
+                        if #i.colors[4] == 3 then
+                            i.colors[4][4] = 1
+                            i.colors[5] = AddAlpha2(i.colors[5])
+                            i.colors[6] = AddAlpha2(i.colors[6])
+                        end
+                    elseif i.type == "overlay" then
+                        if #i.colors[2] == 6 then
+                            i.colors[2] = AddAlpha3(i.colors[2])
+                            i.colors[3] = AddAlpha3(i.colors[3])
+                        end
+                    end
+                end
             end
         end
 
@@ -2809,6 +2869,9 @@ function F:Revise()
                 end
             end
         end
+
+        -- disable snippets
+        F:DisableSnippets()
     end
 
     -- ----------------------------------------------------------------------- --

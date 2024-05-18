@@ -1567,9 +1567,7 @@ function addon:CreateStatusBar(name, parent, width, height, maxValue, smooth, fu
     function bar:UpdatePixelPerfect()
         P:Resize(bar)
         P:Repoint(bar)
-        bar:SetBackdrop({bgFile="Interface\\Buttons\\WHITE8x8", edgeFile="Interface\\Buttons\\WHITE8x8", edgeSize=P:Scale(1)})
-        bar:SetBackdropColor(0.07, 0.07, 0.07, 0.9)
-        bar:SetBackdropBorderColor(0, 0, 0, 1)
+        P:Reborder(bar)
     end
 
     return bar

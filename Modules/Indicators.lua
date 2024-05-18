@@ -864,7 +864,7 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
             else
                 indicator:SetColor(unpack(value))
             end
-        elseif setting == "customColors" then
+        elseif setting == "colors" then
             indicator:SetColors(value)
             indicator.preview.elapsedTime = 13 -- update now!
         elseif setting == "vehicleNamePosition" then
@@ -1663,7 +1663,7 @@ local function ShowIndicatorSettings(id)
         
         --! convert currentSetting to ACTUAL TABLE INDEX
         if currentSetting == "color-alpha" or currentSetting == "color-class" or currentSetting == "color-power" then currentSetting = "color" end
-        if currentSetting == "overlayColors" then currentSetting = "colors" end
+        if currentSetting == "customColors" or currentSetting == "overlayColors" then currentSetting = "colors" end
         if currentSetting == "size-square" or currentSetting == "size-bar" or currentSetting == "size-normal-big" then currentSetting = "size" end
         if currentSetting == "namePosition" or currentSetting == "statusPosition" or currentSetting == "position-noHCenter" or currentSetting == "shieldBarPosition" then currentSetting = "position" end
         if currentSetting == "barOrientation" then currentSetting = "orientation" end
@@ -1858,12 +1858,12 @@ local function ShowIndicatorSettings(id)
                 Cell:Fire("UpdateIndicators", notifiedLayout, indicatorName, currentSetting, value)
             end)
 
-        -- customColors
-        elseif currentSetting == "customColors" then
-            w:SetDBValue(indicatorTable["auraType"], indicatorTable["colors"])
+        -- colors
+        elseif currentSetting == "colors" then
+            w:SetDBValue(indicatorTable["colors"], indicatorTable["auraType"])
             w:SetFunc(function(value)
                 -- NOTE: already changed in widget
-                Cell:Fire("UpdateIndicators", notifiedLayout, indicatorName, "customColors", value)
+                Cell:Fire("UpdateIndicators", notifiedLayout, indicatorName, "colors", value)
             end)
 
         -- statusColors
