@@ -97,12 +97,12 @@ local function CreateIndicatorsImportFrame()
                 elseif k == "bigDebuffs" then
                     Cell.vars.bigDebuffs = F:ConvertTable(CellDB[k])
                 elseif k == "customDefensives" then
-                    I:UpdateCustomDefensives(CellDB[k])
+                    I.UpdateCustomDefensives(CellDB[k])
                 elseif k == "customExternals" then
-                    I:UpdateCustomExternals(CellDB[k])
+                    I.UpdateCustomExternals(CellDB[k])
                 -- elseif k == "cleuAuras" then
                 --     if Cell.isRetail then
-                --         I:UpdateCleuAuras(CellDB[k])
+                --         I.UpdateCleuAuras(CellDB[k])
                 --     elseif Cell.isCata then
                 --         CellDB[k] = nil
                 --     end
@@ -115,7 +115,7 @@ local function CreateIndicatorsImportFrame()
                 elseif k == "targetedSpellsGlow" then
                     Cell.vars.targetedSpellsGlow = CellDB[k]
                 elseif k == "consumables" then
-                    Cell.vars.consumables = I:ConvertConsumables(CellDB[k])
+                    Cell.vars.consumables = I.ConvertConsumables(CellDB[k])
                 end
             end
 

@@ -1130,26 +1130,28 @@ local function UpdateQuickAssist(which)
             header[i].nameText:ClearAllPoints()
             header[i].nameText:SetPoint(unpack(styleTable["name"]["position"]))
 
-            local font, fontSize, fontFlags = unpack(styleTable["name"]["font"])
+            local font, fontSize, fontOutline, fontShadow = unpack(styleTable["name"]["font"])
             font = F:GetFont(font)
 
-            if fontFlags == "Shadow" then
-                header[i].nameText:SetFont(font, fontSize, "")
+            local fontFlags
+            if fontOutline == "None" then
+                fontFlags = ""
+            elseif fontOutline == "Outline" then
+                fontFlags = "OUTLINE"
+            else
+                fontFlags = "OUTLINE,MONOCHROME"
+            end
+
+            header[i].nameText:SetFont(font, fontSize, fontFlags)
+
+            if fontShadow then
                 header[i].nameText:SetShadowOffset(1, -1)
                 header[i].nameText:SetShadowColor(0, 0, 0, 1)
             else
-                if fontFlags == "None" then
-                    fontFlags = ""
-                elseif fontFlags == "Outline" then
-                    fontFlags = "OUTLINE"
-                else
-                    fontFlags = "OUTLINE,MONOCHROME"
-                end
-                header[i].nameText:SetFont(font, fontSize, fontFlags)
                 header[i].nameText:SetShadowOffset(0, 0)
                 header[i].nameText:SetShadowColor(0, 0, 0, 0)
             end
-            
+
             header[i].nameText.width = styleTable["name"]["width"]
             header[i].nameText:UpdateName()
 
@@ -1301,7 +1303,7 @@ Cell:RegisterCallback("UpdateQuickAssist", "UpdateQuickAssist", UpdateQuickAssis
 
 local function QuickAssist_CreateIndicators(button)
     -- buffs indicator (icon)
-    local buffIcons = I:CreateAura_Icons(button:GetName().."BuffIcons", button.overlayFrame, 5)
+    local buffIcons = I.CreateAura_Icons(button:GetName().."BuffIcons", button.overlayFrame, 5)
     button.buffIcons = buffIcons
     buffIcons:Show()
     -- indicator color
@@ -1323,12 +1325,12 @@ local function QuickAssist_CreateIndicators(button)
     end
 
     -- buffs indicator (bar)
-    local buffBars = I:CreateAura_Bars(button:GetName().."BuffBars", button.overlayFrame, 5)
+    local buffBars = I.CreateAura_Bars(button:GetName().."BuffBars", button.overlayFrame, 5)
     button.buffBars = buffBars
     buffBars:Show()
 
     -- offensives indicator (icon)
-    local offensiveIcons = I:CreateAura_Icons(button:GetName().."OffensiveIcons", button.overlayFrame, 5)
+    local offensiveIcons = I.CreateAura_Icons(button:GetName().."OffensiveIcons", button.overlayFrame, 5)
     button.offensiveIcons = offensiveIcons
     offensiveIcons:Show()
     for i = 1, 5 do
@@ -1338,7 +1340,7 @@ local function QuickAssist_CreateIndicators(button)
     end
     
     -- offensives indicator (glow)
-    local offensiveGlow = I:CreateAura_Glow(button:GetName().."OffensiveGlow", button)
+    local offensiveGlow = I.CreateAura_Glow(button:GetName().."OffensiveGlow", button)
     button.offensiveGlow = offensiveGlow
 end
 U.QuickAssist_CreateIndicators = QuickAssist_CreateIndicators

@@ -164,11 +164,16 @@ function P:Resize(frame)
 end
 
 function P:Reborder(frame)
+    if not frame.backdropInfo then return end
+
     local _r, _g, _b, _a = frame:GetBackdropColor()
     local r, g, b, a = frame:GetBackdropBorderColor()
-    frame:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8x8", edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = P:Scale(1)})
-    frame:SetBackdropColor(_r, _g, _b, _a)
-    frame:SetBackdropBorderColor(r, g, b, a)
+
+    frame.backdropInfo.edgeSize = P:Scale(CELL_BORDER_SIZE or 1)
+    frame:ApplyBackdrop()
+
+    if _r then frame:SetBackdropColor(_r, _g, _b, _a) end
+    if r then frame:SetBackdropBorderColor(r, g, b, a) end
 end
 
 function P:Repoint(frame)

@@ -1,4 +1,8 @@
+-------------------------------------------------
+-- 2024-05-18 02:27:04 GMT+8
+-- show serverName below nameText
 -- 在单位按钮的角色名下方显示服务器名
+-------------------------------------------------
 local F = Cell.funcs
 
 local function GetServerName(unit)

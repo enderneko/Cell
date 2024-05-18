@@ -1415,140 +1415,6 @@ local function CreateSetting_StatusPosition(parent)
     return widget
 end
 
-local function CreateSetting_Font(parent)
-    local widget
-
-    if not settingWidgets["font"] then
-        widget = addon:CreateFrame("CellIndicatorSettings_Font", parent, 240, 145)
-        settingWidgets["font"] = widget
-
-        widget.Update = function()
-            widget.fontTable[1] = widget.font:GetSelected() or "Cell ".._G.DEFAULT
-            widget.fontTable[2] = widget.fontSize:GetValue()
-            widget.fontTable[3] =  widget.outline:GetSelected()
-            widget.fontTable[4] = widget.anchor:GetSelected()
-            widget.fontTable[5] = widget.xOffset:GetValue()
-            widget.fontTable[6] = widget.yOffset:GetValue()
-            widget.func()
-        end
-
-        -- font
-        widget.font = addon:CreateDropdown(widget, 110, "font")
-        widget.font:SetPoint("TOPLEFT", 5, -20)
-        local items, fonts, defaultFontName, defaultFont = F:GetFontItems()
-        for _, item in pairs(items) do
-            item["onClick"] = widget.Update
-        end
-        widget.font:SetItems(items)
-
-        widget.fontText = widget:CreateFontString(nil, "OVERLAY", font_name)
-        widget.fontText:SetText(L["Font"])
-        widget.fontText:SetPoint("BOTTOMLEFT", widget.font, "TOPLEFT", 0, 1)
-
-        -- outline
-        widget.outline = addon:CreateDropdown(widget, 110)
-        widget.outline:SetPoint("TOPLEFT", widget.font, "TOPRIGHT", 25, 0)
-        widget.outline:SetItems({
-            {
-                ["text"] = L["None"],
-                ["value"] = "None",
-                ["onClick"] = widget.Update,
-            },
-            {
-                ["text"] = L["Shadow"],
-                ["value"] = "Shadow",
-                ["onClick"] = widget.Update,
-            },
-            {
-                ["text"] = L["Outline"],
-                ["value"] = "Outline",
-                ["onClick"] = widget.Update,
-            },
-            {
-                ["text"] = L["Monochrome Outline"],
-                ["value"] = "Monochrome,Outline",
-                ["onClick"] = widget.Update,
-            },
-        })
-
-        widget.outlineText = widget:CreateFontString(nil, "OVERLAY", font_name)
-        widget.outlineText:SetText(L["Outline"])
-        widget.outlineText:SetPoint("BOTTOMLEFT", widget.outline, "TOPLEFT", 0, 1)
-
-        -- size
-        widget.fontSize = addon:CreateSlider(L["Size"], widget, 5, 50, 110, 1)
-        widget.fontSize:SetPoint("TOPLEFT", widget.font, "BOTTOMLEFT", 0, -25)
-        widget.fontSize.afterValueChangedFn = widget.Update
-
-        -- anchor
-        widget.anchor = addon:CreateDropdown(widget, 110)
-        widget.anchor:SetPoint("TOPLEFT", widget.fontSize, "TOPRIGHT", 25, 0)
-        local items = {}
-        for _, point in pairs(anchorPoints) do
-            tinsert(items, {
-                ["text"] = L[point],
-                ["value"] = point,
-                ["onClick"] = widget.Update,
-            })
-        end
-        widget.anchor:SetItems(items)
-
-        widget.anchorText = widget:CreateFontString(nil, "OVERLAY", font_name)
-        widget.anchorText:SetText(L["Anchor Point"])
-        widget.anchorText:SetPoint("BOTTOMLEFT", widget.anchor, "TOPLEFT", 0, 1)
-
-        -- x
-        widget.xOffset = addon:CreateSlider(L["X Offset"], widget, -50, 50, 110, 1)
-        widget.xOffset:SetPoint("TOPLEFT", widget.fontSize, "BOTTOMLEFT", 0, -40)
-        widget.xOffset.afterValueChangedFn = widget.Update
-        
-        -- y
-        widget.yOffset = addon:CreateSlider(L["Y Offset"], widget, -50, 50, 110, 1)
-        widget.yOffset:SetPoint("TOPLEFT", widget.xOffset, "TOPRIGHT", 25, 0)
-        widget.yOffset.afterValueChangedFn = widget.Update
-
-        -- color
-        widget.color = addon:CreateColorPicker(widget, L["Color"], false, function(r, g, b)
-            widget.fontTable[7][1] = r
-            widget.fontTable[7][2] = g 
-            widget.fontTable[7][3] = b
-            widget.func()
-        end)
-        widget.color:SetPoint("TOPLEFT", widget.xOffset, "BOTTOMLEFT", 0, -30)
-
-        -- callback
-        function widget:SetFunc(func)
-            widget.func = func
-        end
-        
-        -- show db value
-        function widget:SetDBValue(fontTable)
-            widget.fontTable = fontTable
-            widget.font:SetSelected(fontTable[1], fonts[fontTable[1]])
-            widget.fontSize:SetValue(fontTable[2])
-            widget.outline:SetSelectedValue(fontTable[3])
-            widget.anchor:SetSelectedValue(fontTable[4])
-            widget.xOffset:SetValue(fontTable[5])
-            widget.yOffset:SetValue(fontTable[6])
-            
-            -- color
-            if fontTable[7] then
-                widget.color:Show()
-                P:Height(widget, 175)
-                widget.color:SetColor(fontTable[7])
-            else
-                widget.color:Hide()
-                P:Height(widget, 145)
-            end
-        end
-    else
-        widget = settingWidgets["font"]
-    end
-
-    widget:Show()
-    return widget
-end
-
 local function CreateSetting_FontNoOffset(parent)
     local widget
 
@@ -1560,6 +1426,7 @@ local function CreateSetting_FontNoOffset(parent)
             widget.fontTable[1] = widget.font:GetSelected() or "Cell ".._G.DEFAULT
             widget.fontTable[2] = widget.fontSize:GetValue()
             widget.fontTable[3] =  widget.outline:GetSelected()
+            widget.fontTable[4] =  widget.shadow:GetChecked()
             widget.func()
         end
 
@@ -1584,18 +1451,13 @@ local function CreateSetting_FontNoOffset(parent)
                 ["onClick"] = widget.Update,
             },
             {
-                ["text"] = L["Shadow"],
-                ["value"] = "Shadow",
-                ["onClick"] = widget.Update,
-            },
-            {
                 ["text"] = L["Outline"],
                 ["value"] = "Outline",
                 ["onClick"] = widget.Update,
             },
             {
-                ["text"] = L["Monochrome Outline"],
-                ["value"] = "Monochrome Outline",
+                ["text"] = L["Monochrome"],
+                ["value"] = "Monochrome",
                 ["onClick"] = widget.Update,
             },
         })
@@ -1608,6 +1470,9 @@ local function CreateSetting_FontNoOffset(parent)
         widget.fontSize:SetPoint("TOPLEFT", widget.font, "BOTTOMLEFT", 0, -25)
         widget.fontSize.afterValueChangedFn = widget.Update
 
+        widget.shadow = addon:CreateCheckButton(widget, L["Shadow"], widget.Update)
+        widget.shadow:SetPoint("TOPLEFT", widget.fontSize, "TOPRIGHT", 25, -3)
+
         -- callback
         function widget:SetFunc(func)
             widget.func = func
@@ -1619,6 +1484,7 @@ local function CreateSetting_FontNoOffset(parent)
             widget.font:SetSelected(fontTable[1], fonts[fontTable[1]])
             widget.fontSize:SetValue(fontTable[2])
             widget.outline:SetSelected(L[fontTable[3]])
+            widget.shadow:SetChecked(fontTable[4])
         end
     else
         widget = settingWidgets["font-noOffset"]
@@ -1628,20 +1494,21 @@ local function CreateSetting_FontNoOffset(parent)
     return widget
 end
 
-local function CreateSetting_Generic_Font(parent, index)
+local function CreateSetting_Font(parent, index)
     local widget
 
     if not settingWidgets[index] then
-        widget = addon:CreateFrame("CellIndicatorSettings_"..F:UpperFirst(index), parent, 240, 165)
+        widget = addon:CreateFrame("CellIndicatorSettings_"..F:UpperFirst(index), parent, 240, 145)
         settingWidgets[index] = widget
 
         widget.Update = function()
             widget.fontTable[1] = widget.font:GetSelected() or "Cell ".._G.DEFAULT
             widget.fontTable[2] = widget.fontSize:GetValue()
             widget.fontTable[3] =  widget.outline:GetSelected()
-            widget.fontTable[4] = widget.anchor:GetSelected()
-            widget.fontTable[5] = widget.xOffset:GetValue()
-            widget.fontTable[6] = widget.yOffset:GetValue()
+            widget.fontTable[4] = widget.shadow:GetChecked()
+            widget.fontTable[5] = widget.anchor:GetSelected()
+            widget.fontTable[6] = widget.xOffset:GetValue()
+            widget.fontTable[7] = widget.yOffset:GetValue()
             widget.func()
         end
 
@@ -1651,7 +1518,7 @@ local function CreateSetting_Generic_Font(parent, index)
 
         -- font
         widget.font = addon:CreateDropdown(widget, 110, "font")
-        widget.font:SetPoint("TOPLEFT", 5, -40)
+        -- widget.font:SetPoint("TOPLEFT", 5, -40)
         local items, fonts, defaultFontName, defaultFont = F:GetFontItems()
         for _, item in pairs(items) do
             item["onClick"] = widget.Update
@@ -1672,18 +1539,13 @@ local function CreateSetting_Generic_Font(parent, index)
                 ["onClick"] = widget.Update
             },
             {
-                ["text"] = L["Shadow"],
-                ["value"] = "Shadow",
-                ["onClick"] = widget.Update
-            },
-            {
                 ["text"] = L["Outline"],
                 ["value"] = "Outline",
                 ["onClick"] = widget.Update
             },
             {
-                ["text"] = L["Monochrome Outline"],
-                ["value"] = "Monochrome Outline",
+                ["text"] = L["Monochrome"],
+                ["value"] = "Monochrome",
                 ["onClick"] = widget.Update
             },
         })
@@ -1697,9 +1559,13 @@ local function CreateSetting_Generic_Font(parent, index)
         widget.fontSize:SetPoint("TOPLEFT", widget.font, "BOTTOMLEFT", 0, -25)
         widget.fontSize.afterValueChangedFn = widget.Update
 
+        -- shadow
+        widget.shadow = addon:CreateCheckButton(widget, L["Shadow"], widget.Update)
+        widget.shadow:SetPoint("TOPLEFT", widget.fontSize, "TOPRIGHT", 25, -3)
+
         -- anchor
         widget.anchor = addon:CreateDropdown(widget, 110)
-        widget.anchor:SetPoint("TOPLEFT", widget.fontSize, "TOPRIGHT", 25, 0)
+        widget.anchor:SetPoint("TOPLEFT", widget.fontSize, "BOTTOMLEFT", 0, -45)
         local items = {}
         for _, point in pairs(anchorPoints) do
             tinsert(items, {
@@ -1716,22 +1582,22 @@ local function CreateSetting_Generic_Font(parent, index)
 
         -- x
         widget.xOffset = addon:CreateSlider(L["X Offset"], widget, -50, 50, 110, 1)
-        widget.xOffset:SetPoint("TOPLEFT", widget.fontSize, "BOTTOMLEFT", 0, -40)
+        widget.xOffset:SetPoint("TOPLEFT", widget.anchor, "TOPRIGHT", 25, 0)
         widget.xOffset.afterValueChangedFn = widget.Update
 
         -- y
         widget.yOffset = addon:CreateSlider(L["Y Offset"], widget, -50, 50, 110, 1)
-        widget.yOffset:SetPoint("TOPLEFT", widget.xOffset, "TOPRIGHT", 25, 0)
+        widget.yOffset:SetPoint("TOPLEFT", widget.xOffset, "BOTTOMLEFT", 0, -40)
         widget.yOffset.afterValueChangedFn = widget.Update
 
         -- color
         widget.color = addon:CreateColorPicker(widget, L["Color"], false, function(r, g, b)
-            widget.fontTable[7][1] = r
-            widget.fontTable[7][2] = g 
-            widget.fontTable[7][3] = b
+            widget.fontTable[8][1] = r
+            widget.fontTable[8][2] = g 
+            widget.fontTable[8][3] = b
             widget.func()
         end)
-        widget.color:SetPoint("TOPLEFT", widget.xOffset, "BOTTOMLEFT", 0, -30)
+        widget.color:SetPoint("TOPLEFT", widget.anchor, "BOTTOMLEFT", 0, -30)
 
         -- callback
         function widget:SetFunc(func)
@@ -1741,23 +1607,34 @@ local function CreateSetting_Generic_Font(parent, index)
         -- show db value
         function widget:SetDBValue(fontTable, title)
             widget.fontTable = fontTable
-            widget.title:SetText(L[title])
             widget.font:SetSelected(fontTable[1], fonts[fontTable[1]])
             widget.fontSize:SetValue(fontTable[2])
             widget.outline:SetSelectedValue(fontTable[3])
-            widget.anchor:SetSelectedValue(fontTable[4])
-            widget.xOffset:SetValue(fontTable[5])
-            widget.yOffset:SetValue(fontTable[6])
+            widget.shadow:SetChecked(fontTable[4])
+            widget.anchor:SetSelectedValue(fontTable[5])
+            widget.xOffset:SetValue(fontTable[6])
+            widget.yOffset:SetValue(fontTable[7])
             
+            local height = 200
+
+            -- title
+            if title then
+                widget.title:SetText(L[title])
+                widget.font:SetPoint("TOPLEFT", 5, -40)
+                height = height + 20
+            else
+                widget.font:SetPoint("TOPLEFT", 5, -20)
+            end
+
             -- color
-            if fontTable[7] then
+            if fontTable[8] then
                 widget.color:Show()
-                P:Height(widget, 195)
-                widget.color:SetColor(fontTable[7])
+                widget.color:SetColor(fontTable[8])
             else
                 widget.color:Hide()
-                P:Height(widget, 165)
             end
+
+            P:Height(widget, height)
 
             if title == "durationFont" then
                 addon:SetTooltips(widget.color, "ANCHOR_TOPLEFT", 0, 3, L["Color"], L["This setting will be ignored, if the %1$s option in %2$s tab is enabled"]:format(addon:GetAccentColorString().."\""..L["Color Duration Text"].."\"|r", L["Appearance"]))
@@ -1847,11 +1724,12 @@ local function CreateSetting_Colors(parent)
         widget = addon:CreateFrame("CellIndicatorSettings_Colors", parent, 240, 96)
         settingWidgets["colors"] = widget
 
-        local normalColor = addon:CreateColorPicker(widget, L["Normal"], false, function(r, g, b)
+        local normalColor = addon:CreateColorPicker(widget, L["Normal"], true, function(r, g, b, a)
             widget.colorsTable[1][1] = r
             widget.colorsTable[1][2] = g 
             widget.colorsTable[1][3] = b
-            -- widget.func(widget.colorsTable)
+            widget.colorsTable[1][4] = a
+            widget.func(widget.colorsTable)
         end)
         normalColor:SetPoint("TOPLEFT", 5, -8)
         
@@ -1863,11 +1741,12 @@ local function CreateSetting_Colors(parent)
         end)
         percentCB:SetPoint("TOPLEFT", normalColor, "BOTTOMLEFT", 0, -8)
         
-        percentColor = addon:CreateColorPicker(widget, L["Remaining Time <"], false, function(r, g, b)
-            widget.colorsTable[2][2] = r
-            widget.colorsTable[2][3] = g 
-            widget.colorsTable[2][4] = b
-            -- widget.func(widget.colorsTable)
+        percentColor = addon:CreateColorPicker(widget, L["Remaining Time <"], true, function(r, g, b, a)
+            widget.colorsTable[2][3][1] = r
+            widget.colorsTable[2][3][2] = g 
+            widget.colorsTable[2][3][3] = b
+            widget.colorsTable[2][3][4] = a
+            widget.func(widget.colorsTable)
         end)
         percentColor:SetPoint("TOPLEFT", percentCB, "TOPRIGHT", 2, 0)
         
@@ -1879,22 +1758,33 @@ local function CreateSetting_Colors(parent)
         end)
         secCB:SetPoint("TOPLEFT", percentCB, "BOTTOMLEFT", 0, -8)
 
-        secColor = addon:CreateColorPicker(widget, L["Remaining Time <"], false, function(r, g, b)
-            widget.colorsTable[3][2] = r
-            widget.colorsTable[3][3] = g 
-            widget.colorsTable[3][4] = b
-            -- widget.func(widget.colorsTable)
+        secColor = addon:CreateColorPicker(widget, L["Remaining Time <"], true, function(r, g, b, a)
+            widget.colorsTable[3][3][1] = r
+            widget.colorsTable[3][3][2] = g 
+            widget.colorsTable[3][3][3] = b
+            widget.colorsTable[3][3][4] = a
+            widget.func(widget.colorsTable)
         end)
         secColor:SetPoint("TOPLEFT", secCB, "TOPRIGHT", 2, 0)
 
-        local bgColor = addon:CreateColorPicker(widget, L["Background Color"], true, function(r, g, b, a)
+        local borderColor = addon:CreateColorPicker(widget, L["Border Color"], true, function(r, g, b, a)
             widget.colorsTable[4][1] = r
             widget.colorsTable[4][2] = g 
             widget.colorsTable[4][3] = b
             widget.colorsTable[4][4] = a
-            -- widget.func(widget.colorsTable)
+            widget.func(widget.colorsTable)
         end)
-        bgColor:SetPoint("TOPLEFT", secCB, "BOTTOMLEFT", 0, -8)
+        borderColor:SetPoint("TOPLEFT", secCB, "BOTTOMLEFT", 0, -8)
+        
+        local bgColor = addon:CreateColorPicker(widget, L["Background Color"], true, function(r, g, b, a)
+            widget.colorsTable[5][1] = r
+            widget.colorsTable[5][2] = g 
+            widget.colorsTable[5][3] = b
+            widget.colorsTable[5][4] = a
+            widget.func(widget.colorsTable)
+        end)
+        bgColor:SetPoint("TOPLEFT", borderColor, "BOTTOMLEFT", 0, -8)
+        
 
         percentDropdown = addon:CreateDropdown(widget, 60)
         percentDropdown:SetPoint("LEFT", percentColor.label, "RIGHT", 5, 0)
@@ -1903,28 +1793,32 @@ local function CreateSetting_Colors(parent)
                 ["text"] = "75%",
                 ["value"] = 0.75,
                 ["onClick"] = function()
-                    widget.colorsTable[2][5] = 0.75
+                    widget.colorsTable[2][2] = 0.75
+                    widget.func(widget.colorsTable)
                 end,
             },
             {
                 ["text"] = "50%",
                 ["value"] = 0.5,
                 ["onClick"] = function()
-                    widget.colorsTable[2][5] = 0.5
+                    widget.colorsTable[2][2] = 0.5
+                    widget.func(widget.colorsTable)
                 end,
             },
             {
                 ["text"] = "30%",
                 ["value"] = 0.3,
                 ["onClick"] = function()
-                    widget.colorsTable[2][5] = 0.3
+                    widget.colorsTable[2][2] = 0.3
+                    widget.func(widget.colorsTable)
                 end,
             },
             {
                 ["text"] = "25%",
                 ["value"] = 0.25,
                 ["onClick"] = function()
-                    widget.colorsTable[2][5] = 0.25
+                    widget.colorsTable[2][2] = 0.25
+                    widget.func(widget.colorsTable)
                 end,
             },
         })
@@ -1941,16 +1835,17 @@ local function CreateSetting_Colors(parent)
         end)
         secEditBox.confirmBtn:SetScript("OnClick", function()
             local newSec = tonumber(secEditBox:GetText())
-            widget.colorsTable[3][5] = newSec
+            widget.colorsTable[3][2] = newSec
             secEditBox:SetText(newSec)
             secEditBox:ClearFocus()
             secEditBox.confirmBtn:Hide()
+            widget.func(widget.colorsTable)
         end)
 
         secEditBox:SetScript("OnTextChanged", function(self, userChanged)
             if userChanged then
                 local newSec = tonumber(self:GetText())
-                if newSec and newSec ~= widget.colorsTable[3][5] then
+                if newSec and newSec ~= widget.colorsTable[3][2] then
                     secEditBox.confirmBtn:Show()
                 else
                     secEditBox.confirmBtn:Hide()
@@ -1964,7 +1859,7 @@ local function CreateSetting_Colors(parent)
 
         -- callback
         function widget:SetFunc(func)
-            -- widget.func = func
+            widget.func = func
         end
         
         -- show db value
@@ -1977,20 +1872,28 @@ local function CreateSetting_Colors(parent)
             addon:SetEnabled(colorsTable[3][1], secColor, secEditBox, secText)
 
             normalColor:SetColor(colorsTable[1])
-            percentColor:SetColor({colorsTable[2][2],colorsTable[2][3],colorsTable[2][4]})
-            secColor:SetColor({colorsTable[3][2],colorsTable[3][3],colorsTable[3][4]})
+            percentColor:SetColor(colorsTable[2][3])
+            secColor:SetColor(colorsTable[3][3])
 
-            if colorsTable[4] then
-                P:Height(widget, 96)
-                bgColor:SetColor({colorsTable[4][1],colorsTable[4][2],colorsTable[4][3],colorsTable[4][4]})
+            if colorsTable[4] and colorsTable[5] then
+                P:Height(widget, 118)
+                borderColor:SetColor(colorsTable[4])
+                borderColor:Show()
+                bgColor:SetColor(colorsTable[5])
                 bgColor:Show()
+            elseif colorsTable[4] then
+                P:Height(widget, 96)
+                borderColor:SetColor(colorsTable[4])
+                borderColor:Show()
+                bgColor:Hide()
             else
-                P:Height(widget, 74)
+                P:Height(widget, 75)
+                borderColor:Hide()
                 bgColor:Hide()
             end
 
-            percentDropdown:SetSelectedValue(colorsTable[2][5])
-            secEditBox:SetText(colorsTable[3][5])
+            percentDropdown:SetSelectedValue(colorsTable[2][2])
+            secEditBox:SetText(colorsTable[3][2])
         end
     else
         widget = settingWidgets["colors"]
@@ -2012,6 +1915,7 @@ local function CreateSetting_OverlayColors(parent)
             widget.colorsTable[1][2] = g 
             widget.colorsTable[1][3] = b
             widget.colorsTable[1][4] = a
+            widget.func(widget.colorsTable)
         end)
         normalColor:SetPoint("TOPLEFT", 5, -8)
         
@@ -2020,14 +1924,16 @@ local function CreateSetting_OverlayColors(parent)
         local percentCB = addon:CreateCheckButton(widget, "", function(checked)
             widget.colorsTable[2][1] = checked
             addon:SetEnabled(checked, percentColor, percentDropdown)
+            widget.func(widget.colorsTable)
         end)
         percentCB:SetPoint("TOPLEFT", normalColor, "BOTTOMLEFT", 0, -8)
         
         percentColor = addon:CreateColorPicker(widget, L["Remaining Time <"], true, function(r, g, b, a)
-            widget.colorsTable[2][2] = r
-            widget.colorsTable[2][3] = g 
-            widget.colorsTable[2][4] = b
-            widget.colorsTable[2][5] = a
+            widget.colorsTable[2][3][1] = r
+            widget.colorsTable[2][3][2] = g
+            widget.colorsTable[2][3][3] = b
+            widget.colorsTable[2][3][4] = a
+            widget.func(widget.colorsTable)
         end)
         percentColor:SetPoint("TOPLEFT", percentCB, "TOPRIGHT", 2, 0)
         
@@ -2036,14 +1942,16 @@ local function CreateSetting_OverlayColors(parent)
         local secCB = addon:CreateCheckButton(widget, "", function(checked)
             widget.colorsTable[3][1] = checked
             addon:SetEnabled(checked, secColor, secEditBox, secText)
+            widget.func(widget.colorsTable)
         end)
         secCB:SetPoint("TOPLEFT", percentCB, "BOTTOMLEFT", 0, -8)
 
         secColor = addon:CreateColorPicker(widget, L["Remaining Time <"], true, function(r, g, b, a)
-            widget.colorsTable[3][2] = r
-            widget.colorsTable[3][3] = g 
-            widget.colorsTable[3][4] = b
-            widget.colorsTable[3][5] = a
+            widget.colorsTable[3][3][1] = r
+            widget.colorsTable[3][3][2] = g
+            widget.colorsTable[3][3][3] = b
+            widget.colorsTable[3][3][4] = a
+            widget.func(widget.colorsTable)
         end)
         secColor:SetPoint("TOPLEFT", secCB, "TOPRIGHT", 2, 0)
 
@@ -2054,28 +1962,32 @@ local function CreateSetting_OverlayColors(parent)
                 ["text"] = "75%",
                 ["value"] = 0.75,
                 ["onClick"] = function()
-                    widget.colorsTable[2][6] = 0.75
+                    widget.colorsTable[2][2] = 0.75
+                    widget.func(widget.colorsTable)
                 end,
             },
             {
                 ["text"] = "50%",
                 ["value"] = 0.5,
                 ["onClick"] = function()
-                    widget.colorsTable[2][6] = 0.5
+                    widget.colorsTable[2][2] = 0.5
+                    widget.func(widget.colorsTable)
                 end,
             },
             {
                 ["text"] = "30%",
                 ["value"] = 0.3,
                 ["onClick"] = function()
-                    widget.colorsTable[2][6] = 0.3
+                    widget.colorsTable[2][2] = 0.3
+                    widget.func(widget.colorsTable)
                 end,
             },
             {
                 ["text"] = "25%",
                 ["value"] = 0.25,
                 ["onClick"] = function()
-                    widget.colorsTable[2][6] = 0.25
+                    widget.colorsTable[2][2] = 0.25
+                    widget.func(widget.colorsTable)
                 end,
             },
         })
@@ -2092,16 +2004,17 @@ local function CreateSetting_OverlayColors(parent)
         end)
         secEditBox.confirmBtn:SetScript("OnClick", function()
             local newSec = tonumber(secEditBox:GetText())
-            widget.colorsTable[3][6] = newSec
+            widget.colorsTable[3][2] = newSec
             secEditBox:SetText(newSec)
             secEditBox:ClearFocus()
             secEditBox.confirmBtn:Hide()
+            widget.func(widget.colorsTable)
         end)
 
         secEditBox:SetScript("OnTextChanged", function(self, userChanged)
             if userChanged then
                 local newSec = tonumber(self:GetText())
-                if newSec and newSec ~= widget.colorsTable[3][6] then
+                if newSec and newSec ~= widget.colorsTable[3][2] then
                     secEditBox.confirmBtn:Show()
                 else
                     secEditBox.confirmBtn:Hide()
@@ -2115,7 +2028,7 @@ local function CreateSetting_OverlayColors(parent)
 
         -- callback
         function widget:SetFunc(func)
-            -- widget.func = func
+            widget.func = func
         end
         
         -- show db value
@@ -2128,11 +2041,11 @@ local function CreateSetting_OverlayColors(parent)
             addon:SetEnabled(colorsTable[3][1], secColor, secEditBox, secText)
 
             normalColor:SetColor(colorsTable[1])
-            percentColor:SetColor({colorsTable[2][2],colorsTable[2][3],colorsTable[2][4],colorsTable[2][5]})
-            secColor:SetColor({colorsTable[3][2],colorsTable[3][3],colorsTable[3][4],colorsTable[3][5]})
+            percentColor:SetColor(colorsTable[2][3])
+            secColor:SetColor(colorsTable[3][3])
 
-            percentDropdown:SetSelectedValue(colorsTable[2][6])
-            secEditBox:SetText(colorsTable[3][6])
+            percentDropdown:SetSelectedValue(colorsTable[2][2])
+            secEditBox:SetText(colorsTable[3][2])
         end
     else
         widget = settingWidgets["overlayColors"]
@@ -2162,8 +2075,8 @@ local function CreateSetting_CustomColors(parent)
                     widget.colorPicker1:Show()
                     widget.colorPicker2:Hide()
                     widget.cotFrame:Hide()
-                    widget.colorTable[1] = "solid"
-                    widget.func(widget.colorTable)
+                    widget.colorsTable[1] = "solid"
+                    widget.func(widget.colorsTable)
                 end
             },
             {
@@ -2174,8 +2087,8 @@ local function CreateSetting_CustomColors(parent)
                     widget.colorPicker1:Show()
                     widget.colorPicker2:Show()
                     widget.cotFrame:Hide()
-                    widget.colorTable[1] = "gradient-vertical"
-                    widget.func(widget.colorTable)
+                    widget.colorsTable[1] = "gradient-vertical"
+                    widget.func(widget.colorsTable)
                 end
             },
             {
@@ -2186,8 +2099,8 @@ local function CreateSetting_CustomColors(parent)
                     widget.colorPicker1:Show()
                     widget.colorPicker2:Show()
                     widget.cotFrame:Hide()
-                    widget.colorTable[1] = "gradient-horizontal"
-                    widget.func(widget.colorTable)
+                    widget.colorsTable[1] = "gradient-horizontal"
+                    widget.func(widget.colorsTable)
                 end
             },
             {
@@ -2198,8 +2111,8 @@ local function CreateSetting_CustomColors(parent)
                     widget.colorPicker1:Hide()
                     widget.colorPicker2:Hide()
                     widget.cotFrame:Show()
-                    widget.colorTable[1] = "change-over-time"
-                    widget.func(widget.colorTable)
+                    widget.colorsTable[1] = "change-over-time"
+                    widget.func(widget.colorsTable)
                 end
             },
             {
@@ -2210,8 +2123,8 @@ local function CreateSetting_CustomColors(parent)
                     widget.colorPicker1:Hide()
                     widget.colorPicker2:Hide()
                     widget.cotFrame:Hide()
-                    widget.colorTable[1] = "class-color"
-                    widget.func(widget.colorTable)
+                    widget.colorsTable[1] = "class-color"
+                    widget.func(widget.colorsTable)
                 end
             },
         }
@@ -2225,8 +2138,8 @@ local function CreateSetting_CustomColors(parent)
                     widget.colorPicker1:Show()
                     widget.colorPicker2:Hide()
                     widget.cotFrame:Hide()
-                    widget.colorTable[1] = "solid"
-                    widget.func(widget.colorTable)
+                    widget.colorsTable[1] = "solid"
+                    widget.func(widget.colorsTable)
                 end
             },
             {
@@ -2237,8 +2150,8 @@ local function CreateSetting_CustomColors(parent)
                     widget.colorPicker1:Show()
                     widget.colorPicker2:Show()
                     widget.cotFrame:Hide()
-                    widget.colorTable[1] = "gradient-vertical"
-                    widget.func(widget.colorTable)
+                    widget.colorsTable[1] = "gradient-vertical"
+                    widget.func(widget.colorsTable)
                 end
             },
             {
@@ -2249,8 +2162,8 @@ local function CreateSetting_CustomColors(parent)
                     widget.colorPicker1:Show()
                     widget.colorPicker2:Show()
                     widget.cotFrame:Hide()
-                    widget.colorTable[1] = "gradient-horizontal"
-                    widget.func(widget.colorTable)
+                    widget.colorsTable[1] = "gradient-horizontal"
+                    widget.func(widget.colorsTable)
                 end
             },
             {
@@ -2261,8 +2174,8 @@ local function CreateSetting_CustomColors(parent)
                     widget.colorPicker1:Hide()
                     widget.colorPicker2:Hide()
                     widget.cotFrame:Hide()
-                    widget.colorTable[1] = "debuff-type"
-                    widget.func(widget.colorTable)
+                    widget.colorsTable[1] = "debuff-type"
+                    widget.func(widget.colorsTable)
                 end
             },
             {
@@ -2273,8 +2186,8 @@ local function CreateSetting_CustomColors(parent)
                     widget.colorPicker1:Hide()
                     widget.colorPicker2:Hide()
                     widget.cotFrame:Show()
-                    widget.colorTable[1] = "change-over-time"
-                    widget.func(widget.colorTable)
+                    widget.colorsTable[1] = "change-over-time"
+                    widget.func(widget.colorsTable)
                 end
             },
             {
@@ -2285,8 +2198,8 @@ local function CreateSetting_CustomColors(parent)
                     widget.colorPicker1:Hide()
                     widget.colorPicker2:Hide()
                     widget.cotFrame:Hide()
-                    widget.colorTable[1] = "class-color"
-                    widget.func(widget.colorTable)
+                    widget.colorsTable[1] = "class-color"
+                    widget.func(widget.colorsTable)
                 end
             },
         }
@@ -2296,20 +2209,20 @@ local function CreateSetting_CustomColors(parent)
         widget.colorText:SetPoint("BOTTOMLEFT", widget.color, "TOPLEFT", 0, 1)
 
         widget.colorPicker1 = addon:CreateColorPicker(widget, "", true, function(r, g, b, a)
-            widget.colorTable[2][1] = r
-            widget.colorTable[2][2] = g 
-            widget.colorTable[2][3] = b
-            widget.colorTable[2][4] = a
-            widget.func({widget.color:GetSelected(), widget.colorTable[2], widget.colorTable[3]})
+            widget.colorsTable[2][1] = r
+            widget.colorsTable[2][2] = g 
+            widget.colorsTable[2][3] = b
+            widget.colorsTable[2][4] = a
+            widget.func(widget.colorsTable)
         end)
         widget.colorPicker1:SetPoint("LEFT", widget.color, "RIGHT", 5, 0)
 
         widget.colorPicker2 = addon:CreateColorPicker(widget, "", true, function(r, g, b, a)
-            widget.colorTable[3][1] = r
-            widget.colorTable[3][2] = g 
-            widget.colorTable[3][3] = b
-            widget.colorTable[3][4] = a
-            widget.func({widget.color:GetSelected(), widget.colorTable[2], widget.colorTable[3]})
+            widget.colorsTable[3][1] = r
+            widget.colorsTable[3][2] = g 
+            widget.colorsTable[3][3] = b
+            widget.colorsTable[3][4] = a
+            widget.func(widget.colorsTable)
         end)
         widget.colorPicker2:SetPoint("LEFT", widget.colorPicker1, "RIGHT", 5, 0)
 
@@ -2317,27 +2230,30 @@ local function CreateSetting_CustomColors(parent)
         widget.cotFrame:SetSize(170, 50)
         widget.cotFrame:SetPoint("TOPLEFT", widget.color, "BOTTOMLEFT", 0, -8)
 
-        local normalColor = addon:CreateColorPicker(widget.cotFrame, L["Normal"], false, function(r, g, b)
-            widget.colorTable[4][1] = r
-            widget.colorTable[4][2] = g 
-            widget.colorTable[4][3] = b
-            -- widget.func(widget.colorsTable)
+        local normalColor = addon:CreateColorPicker(widget.cotFrame, L["Normal"], true, function(r, g, b, a)
+            widget.colorsTable[4][1] = r
+            widget.colorsTable[4][2] = g 
+            widget.colorsTable[4][3] = b
+            widget.colorsTable[4][4] = a
+            widget.func(widget.colorsTable)
         end)
         normalColor:SetPoint("TOPLEFT")
         
-        local percentColor = addon:CreateColorPicker(widget.cotFrame, L["Remaining Time <"], false, function(r, g, b)
-            widget.colorTable[5][1] = r
-            widget.colorTable[5][2] = g 
-            widget.colorTable[5][3] = b
-            -- widget.func(widget.colorsTable)
+        local percentColor = addon:CreateColorPicker(widget.cotFrame, L["Remaining Time <"], true, function(r, g, b, a)
+            widget.colorsTable[5][2][1] = r
+            widget.colorsTable[5][2][2] = g 
+            widget.colorsTable[5][2][3] = b
+            widget.colorsTable[5][2][4] = a
+            widget.func(widget.colorsTable)
         end)
         percentColor:SetPoint("TOPLEFT", normalColor, "BOTTOMLEFT", 0, -8)
         
-        local secColor = addon:CreateColorPicker(widget.cotFrame, L["Remaining Time <"], false, function(r, g, b)
-            widget.colorTable[6][1] = r
-            widget.colorTable[6][2] = g 
-            widget.colorTable[6][3] = b
-            -- widget.func(widget.colorsTable)
+        local secColor = addon:CreateColorPicker(widget.cotFrame, L["Remaining Time <"], true, function(r, g, b, a)
+            widget.colorsTable[6][2][1] = r
+            widget.colorsTable[6][2][2] = g 
+            widget.colorsTable[6][2][3] = b
+            widget.colorsTable[6][2][4] = a
+            widget.func(widget.colorsTable)
         end)
         secColor:SetPoint("TOPLEFT", percentColor, "BOTTOMLEFT", 0, -8)
 
@@ -2346,32 +2262,42 @@ local function CreateSetting_CustomColors(parent)
         percentDropdown:SetItems({
             {
                 ["text"] = "75%",
+                ["value"] = 0.75,
                 ["onClick"] = function()
-                    widget.colorTable[5][4] = 0.75
+                    widget.colorsTable[5][1] = 0.75
+                    widget.func(widget.colorsTable)
                 end,
             },
             {
                 ["text"] = "50%",
+                ["value"] = 0.5,
                 ["onClick"] = function()
-                    widget.colorTable[5][4] = 0.5
+                    widget.colorsTable[5][1] = 0.5
+                    widget.func(widget.colorsTable)
                 end,
             },
             {
                 ["text"] = "30%",
+                ["value"] = 0.3,
                 ["onClick"] = function()
-                    widget.colorTable[5][4] = 0.3
+                    widget.colorsTable[5][1] = 0.3
+                    widget.func(widget.colorsTable)
                 end,
             },
             {
                 ["text"] = "25%",
+                ["value"] = 0.25,
                 ["onClick"] = function()
-                    widget.colorTable[5][4] = 0.25
+                    widget.colorsTable[5][1] = 0.25
+                    widget.func(widget.colorsTable)
                 end,
             },
             {
                 ["text"] = _G.NONE,
+                ["value"] = 0,
                 ["onClick"] = function()
-                    widget.colorTable[5][4] = 0
+                    widget.colorsTable[5][1] = 0
+                    widget.func(widget.colorsTable)
                 end,
             },
         })
@@ -2388,16 +2314,17 @@ local function CreateSetting_CustomColors(parent)
         end)
         secEditBox.confirmBtn:SetScript("OnClick", function()
             local newSec = tonumber(secEditBox:GetText())
-            widget.colorTable[6][4] = newSec
+            widget.colorsTable[6][1] = newSec
             secEditBox:SetText(newSec)
             secEditBox:ClearFocus()
             secEditBox.confirmBtn:Hide()
+            widget.func(widget.colorsTable)
         end)
 
         secEditBox:SetScript("OnTextChanged", function(self, userChanged)
             if userChanged then
                 local newSec = tonumber(self:GetText())
-                if newSec and newSec ~= widget.colorTable[6][4] then
+                if newSec and newSec ~= widget.colorsTable[6][1] then
                     secEditBox.confirmBtn:Show()
                 else
                     secEditBox.confirmBtn:Hide()
@@ -2415,32 +2342,32 @@ local function CreateSetting_CustomColors(parent)
         end
         
         -- show db value
-        function widget:SetDBValue(auraType, colorTable)
-            widget.colorTable = colorTable
+        function widget:SetDBValue(colorsTable, auraType)
+            widget.colorsTable = colorsTable
 
             if auraType == "buff" then
                 widget.color:SetItems(widget.buffItems)
             else -- debuff
                 widget.color:SetItems(widget.debuffItems)
             end
-            widget.color:SetSelectedValue(colorTable[1])
+            widget.color:SetSelectedValue(colorsTable[1])
             
-            if colorTable[1] == "solid" then
+            if colorsTable[1] == "solid" then
                 P:Height(widget, 50)
                 widget.colorPicker1:Show()
                 widget.colorPicker2:Hide()
                 widget.cotFrame:Hide()
-            elseif colorTable[1] == "debuff-type" then
+            elseif colorsTable[1] == "debuff-type" then
                 P:Height(widget, 50)
                 widget.colorPicker1:Hide()
                 widget.colorPicker2:Hide()
                 widget.cotFrame:Hide()
-            elseif colorTable[1] == "change-over-time" then
+            elseif colorsTable[1] == "change-over-time" then
                 P:Height(widget, 117)
                 widget.colorPicker1:Hide()
                 widget.colorPicker2:Hide()
                 widget.cotFrame:Show()
-            elseif colorTable[1] == "class-color" then
+            elseif colorsTable[1] == "class-color" then
                 P:Height(widget, 50)
                 widget.colorPicker1:Hide()
                 widget.colorPicker2:Hide()
@@ -2452,15 +2379,15 @@ local function CreateSetting_CustomColors(parent)
                 widget.cotFrame:Hide()
             end
             
-            widget.colorPicker1:SetColor(colorTable[2])
-            widget.colorPicker2:SetColor(colorTable[3])
+            widget.colorPicker1:SetColor(colorsTable[2])
+            widget.colorPicker2:SetColor(colorsTable[3])
 
-            normalColor:SetColor(colorTable[4])
-            percentColor:SetColor({colorTable[5][1], colorTable[5][2], colorTable[5][3]})
-            secColor:SetColor({colorTable[6][1], colorTable[6][2], colorTable[6][3]})
+            normalColor:SetColor(colorsTable[4])
+            percentColor:SetColor(colorsTable[5][2])
+            secColor:SetColor(colorsTable[6][2])
 
-            percentDropdown:SetSelected(colorTable[5][4]~=0 and ((colorTable[5][4]*100).."%") or _G.NONE)
-            secEditBox:SetText(colorTable[6][4])
+            percentDropdown:SetSelectedValue(colorsTable[5][1])
+            secEditBox:SetText(colorsTable[6][1])
         end
     else
         widget = settingWidgets["customColors"]
@@ -4433,7 +4360,7 @@ local function CreateConsumablePreview(parent, style)
     text:SetPoint("CENTER")
     text:SetText("Type "..style)
     
-    I:CreateConsumables(f, true)
+    I.CreateConsumables(f, true)
 
     function f:UpdateTicker(speed)
         f:SetScript("OnShow", function()
@@ -5085,28 +5012,28 @@ local function CreateSetting_HighlightType(parent)
         --[[
         -- curse
         widget.curseCP = addon:CreateColorPicker(widget, "|TInterface\\AddOns\\Cell\\Media\\Debuffs\\Curse:0|t "..L["Curse"], false, nil, function(r, g, b)
-            I:SetDebuffTypeColor("Curse", r, g, b)
+            I.SetDebuffTypeColor("Curse", r, g, b)
             widget.func(widget.highlightType:GetSelected())
         end)
         widget.curseCP:SetPoint("TOPLEFT", widget.highlightType, "BOTTOMLEFT", 0, -7)
 
         -- disease
         widget.diseaseCP = addon:CreateColorPicker(widget, "|TInterface\\AddOns\\Cell\\Media\\Debuffs\\Disease:0|t "..L["Disease"], false, nil, function(r, g, b)
-            I:SetDebuffTypeColor("Disease", r, g, b)
+            I.SetDebuffTypeColor("Disease", r, g, b)
             widget.func(widget.highlightType:GetSelected())
         end)
         widget.diseaseCP:SetPoint("TOPLEFT", widget.curseCP, "TOPRIGHT", 110, 0)
 
         -- magic
         widget.magicCP = addon:CreateColorPicker(widget, "|TInterface\\AddOns\\Cell\\Media\\Debuffs\\Magic:0|t "..L["Magic"], false, nil, function(r, g, b)
-            I:SetDebuffTypeColor("Magic", r, g, b)
+            I.SetDebuffTypeColor("Magic", r, g, b)
             widget.func(widget.highlightType:GetSelected())
         end)
         widget.magicCP:SetPoint("TOPLEFT", widget.curseCP, "BOTTOMLEFT", 0, -7)
 
         -- poison
         widget.poisonCP = addon:CreateColorPicker(widget, "|TInterface\\AddOns\\Cell\\Media\\Debuffs\\Poison:0|t "..L["Poison"], false, nil, function(r, g, b)
-            I:SetDebuffTypeColor("Poison", r, g, b)
+            I.SetDebuffTypeColor("Poison", r, g, b)
             widget.func(widget.highlightType:GetSelected())
         end)
         widget.poisonCP:SetPoint("TOPLEFT", widget.magicCP, "TOPRIGHT", 110, 0)
@@ -5115,11 +5042,11 @@ local function CreateSetting_HighlightType(parent)
         widget.resetBtn = addon:CreateButton(widget, L["Reset All"], "accent-hover", {70, 20})
         widget.resetBtn:SetPoint("TOPLEFT", widget.magicCP, "BOTTOMLEFT", 0, -7)
         widget.resetBtn:SetScript("OnClick", function()
-            I:ResetDebuffTypeColor()
-            widget.curseCP:SetColor(I:GetDebuffTypeColor("Curse"))
-            widget.diseaseCP:SetColor(I:GetDebuffTypeColor("Disease"))
-            widget.magicCP:SetColor(I:GetDebuffTypeColor("Magic"))
-            widget.poisonCP:SetColor(I:GetDebuffTypeColor("Poison"))
+            I.ResetDebuffTypeColor()
+            widget.curseCP:SetColor(I.GetDebuffTypeColor("Curse"))
+            widget.diseaseCP:SetColor(I.GetDebuffTypeColor("Disease"))
+            widget.magicCP:SetColor(I.GetDebuffTypeColor("Magic"))
+            widget.poisonCP:SetColor(I.GetDebuffTypeColor("Poison"))
             widget.func(widget.highlightType:GetSelected())
         end)
         ]]
@@ -5132,10 +5059,10 @@ local function CreateSetting_HighlightType(parent)
         -- show db value
         function widget:SetDBValue(highlightType)
             widget.highlightType:SetSelectedValue(highlightType)
-            -- widget.curseCP:SetColor(I:GetDebuffTypeColor("Curse"))
-            -- widget.diseaseCP:SetColor(I:GetDebuffTypeColor("Disease"))
-            -- widget.magicCP:SetColor(I:GetDebuffTypeColor("Magic"))
-            -- widget.poisonCP:SetColor(I:GetDebuffTypeColor("Poison"))
+            -- widget.curseCP:SetColor(I.GetDebuffTypeColor("Curse"))
+            -- widget.diseaseCP:SetColor(I.GetDebuffTypeColor("Disease"))
+            -- widget.magicCP:SetColor(I.GetDebuffTypeColor("Magic"))
+            -- widget.poisonCP:SetColor(I.GetDebuffTypeColor("Poison"))
         end
     else
         widget = settingWidgets["highlightType"]
@@ -5318,7 +5245,7 @@ local function CreateSetting_MissingBuffsFilters(parent)
         widget.buffByMe = addon:CreateCheckButton(widget, L["buffByMe"])
         widget.buffByMe:SetPoint("TOPLEFT", 5, -8)
 
-        local buffs = I:GetMissingBuffsFilters()
+        local buffs = I.GetMissingBuffsFilters()
         local indexToCB = {}
 
         for i, t in ipairs(buffs) do
@@ -5615,12 +5542,10 @@ function addon:CreateIndicatorSettings(parent, settingsTable)
             tinsert(widgetsTable, CreateSetting_Orientation(parent))
         elseif setting == "barOrientation" then
             tinsert(widgetsTable, CreateSetting_BarOrientation(parent))
-        elseif setting == "font" then
-            tinsert(widgetsTable, CreateSetting_Font(parent))
-        elseif string.find(setting, "^font%d") then
-            tinsert(widgetsTable, CreateSetting_Generic_Font(parent, string.match(setting, "^(font%d).+$")))
         elseif setting == "font-noOffset" then
             tinsert(widgetsTable, CreateSetting_FontNoOffset(parent))
+        elseif string.find(setting, "^font") then
+            tinsert(widgetsTable, CreateSetting_Font(parent, string.match(setting, "^(font%d?):?.*$")))
         elseif setting == "color" then
             tinsert(widgetsTable, CreateSetting_Color(parent))
         elseif setting == "color-alpha" then

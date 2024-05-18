@@ -121,7 +121,7 @@ function eventFrame:PLAYER_ENTERING_WORLD()
     end
 end
 
-function I:EnableTargetCounter(enabled)
+function I.EnableTargetCounter(enabled)
     if enabled then
         eventFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
         counterEnabled = true
@@ -133,7 +133,7 @@ function I:EnableTargetCounter(enabled)
     -- texplore(nameplateTargets)
 end
 
-function I:UpdateTargetCounterFilters(filters, noUpdate)
+function I.UpdateTargetCounterFilters(filters, noUpdate)
     if filters then zoneFilters = filters end
     if not noUpdate and counterEnabled then
         eventFrame:PLAYER_ENTERING_WORLD()
@@ -143,7 +143,7 @@ end
 -------------------------------------------------
 -- CreateTargetCounter
 -------------------------------------------------
-function I:CreateTargetCounter(parent)
+function I.CreateTargetCounter(parent)
     local targetCounter = CreateFrame("Frame", parent:GetName().."TargetCounter", parent)
     parent.indicators.targetCounter = targetCounter
     targetCounter:Hide()
@@ -153,26 +153,28 @@ function I:CreateTargetCounter(parent)
     -- stack:SetJustifyH("RIGHT")
     text:SetPoint("CENTER", 1, 0)
 
-    function targetCounter:SetFont(font, size, flags)
+    function targetCounter:SetFont(font, size, outline, shadow)
         font = F:GetFont(font)
 
-        if flags == "Shadow" then
-            text:SetFont(font, size, "")
+        local flags
+        if outline == "None" then
+            flags = ""
+        elseif outline == "Outline" then
+            flags = "OUTLINE"
+        else
+            flags = "OUTLINE,MONOCHROME"
+        end
+
+        text:SetFont(font, size, flags)
+
+        if shadow then
             text:SetShadowOffset(1, -1)
             text:SetShadowColor(0, 0, 0, 1)
         else
-            if flags == "None" then
-                flags = ""
-            elseif flags == "Outline" then
-                flags = "OUTLINE"
-            else
-                flags = "OUTLINE,MONOCHROME"
-            end
-            text:SetFont(font, size, flags)
             text:SetShadowOffset(0, 0)
             text:SetShadowColor(0, 0, 0, 0)
         end
-
+        
         local point = targetCounter:GetPoint(1)
         text:ClearAllPoints()
         if string.find(point, "LEFT") then

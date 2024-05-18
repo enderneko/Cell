@@ -1,3 +1,8 @@
+-------------------------------------------------
+-- 2024-05-18 02:22:47 GMT+8
+-- raise frame level of OmniCD icons
+-- 提升 OmniCD 图标的层级
+-------------------------------------------------
 local f = CreateFrame("Frame")
 f:RegisterEvent("ADDON_LOADED")
 f:SetScript("OnEvent", function(self, event, arg)

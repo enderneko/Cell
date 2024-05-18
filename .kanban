@@ -32,18 +32,18 @@
           "comments": []
         },
         {
-          "id": "6f8a378c-dbc3-49f2-b172-d151e07230f8",
+          "id": "066404c8-81f4-4a52-9606-45fd4f7690c5",
           "listId": "643431c7-e660-47b1-a44b-4e799b536d19",
-          "title": "Snippet to remove border?",
+          "title": "BigDebuffs shortcut",
           "description": "",
           "labels": [],
           "checkboxes": [],
           "comments": []
         },
         {
-          "id": "066404c8-81f4-4a52-9606-45fd4f7690c5",
+          "id": "1f5eaefd-76a3-48eb-a1ba-12844a302d3e",
           "listId": "643431c7-e660-47b1-a44b-4e799b536d19",
-          "title": "BigDebuffs shortcut",
+          "title": "Feature to set position for each spotlight button",
           "description": "",
           "labels": [],
           "checkboxes": [],
@@ -90,6 +90,24 @@
           "labels": [],
           "checkboxes": [],
           "comments": []
+        },
+        {
+          "id": "96f7a5fd-3b3e-434e-bd14-9cb0b483b608",
+          "listId": "7915d51e-5603-44aa-aa3a-8dff734ea7c6",
+          "title": "Add RaidDebuffs to QuickAssist",
+          "description": "",
+          "labels": [],
+          "checkboxes": [],
+          "comments": []
+        },
+        {
+          "id": "dd2e1868-482f-4f16-9755-ab54c171f9b3",
+          "listId": "7915d51e-5603-44aa-aa3a-8dff734ea7c6",
+          "title": "\"Show Raid\" option",
+          "description": "",
+          "labels": [],
+          "checkboxes": [],
+          "comments": []
         }
       ]
     },
@@ -125,15 +143,6 @@
           "comments": []
         },
         {
-          "id": "eb44ccc2-c069-453b-ad4a-22585fd420bb",
-          "listId": "fc9baa7c-c3e7-49a4-8526-816c794e5ed9",
-          "title": "Bar color options (border & alpha)",
-          "description": "",
-          "labels": [],
-          "checkboxes": [],
-          "comments": []
-        },
-        {
           "id": "1cac7da6-3787-4e5c-9176-548a8a8199f0",
           "listId": "fc9baa7c-c3e7-49a4-8526-816c794e5ed9",
           "title": "Add \"existing time\" option to Raid Debuffs",
@@ -150,6 +159,24 @@
           "labels": [],
           "checkboxes": [],
           "comments": []
+        },
+        {
+          "id": "a711ba2d-5627-444a-b1a2-c563ce1663f7",
+          "listId": "fc9baa7c-c3e7-49a4-8526-816c794e5ed9",
+          "title": "Add \"Hide\" to layout auto switch",
+          "description": "",
+          "labels": [],
+          "checkboxes": [],
+          "comments": []
+        },
+        {
+          "id": "0fc1a21b-2116-482d-9185-8adb860a38bf",
+          "listId": "fc9baa7c-c3e7-49a4-8526-816c794e5ed9",
+          "title": "Overshields",
+          "description": "",
+          "labels": [],
+          "checkboxes": [],
+          "comments": []
         }
       ]
     },
@@ -157,6 +184,15 @@
       "id": "7b0c4654-92fe-4b4e-9566-15e8c706d9c9",
       "title": "DONE",
       "cards": [
+        {
+          "id": "eb44ccc2-c069-453b-ad4a-22585fd420bb",
+          "listId": "7b0c4654-92fe-4b4e-9566-15e8c706d9c9",
+          "title": "Add alphas",
+          "description": "",
+          "labels": [],
+          "checkboxes": [],
+          "comments": []
+        },
         {
           "id": "15b5c350-b9ad-406f-aa4f-5e9d6b8eae2f",
           "listId": "7b0c4654-92fe-4b4e-9566-15e8c706d9c9",

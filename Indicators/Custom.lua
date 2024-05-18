@@ -46,27 +46,27 @@ local function UpdateTablesForIndicator(indicatorTable)
     end
 end
 
-function I:CreateIndicator(parent, indicatorTable, noTableUpdate)
+function I.CreateIndicator(parent, indicatorTable, noTableUpdate)
     local indicatorName = indicatorTable["indicatorName"]
     local indicator
     if indicatorTable["type"] == "icon" then
-        indicator = I:CreateAura_BarIcon(parent:GetName()..indicatorName, parent.widgets.overlayFrame)
+        indicator = I.CreateAura_BarIcon(parent:GetName()..indicatorName, parent.widgets.overlayFrame)
     elseif indicatorTable["type"] == "text" then
-        indicator = I:CreateAura_Text(parent:GetName()..indicatorName, parent.widgets.overlayFrame)
+        indicator = I.CreateAura_Text(parent:GetName()..indicatorName, parent.widgets.overlayFrame)
     elseif indicatorTable["type"] == "bar" then
-        indicator = I:CreateAura_Bar(parent:GetName()..indicatorName, parent.widgets.overlayFrame)
+        indicator = I.CreateAura_Bar(parent:GetName()..indicatorName, parent.widgets.overlayFrame)
     elseif indicatorTable["type"] == "rect" then
-        indicator = I:CreateAura_Rect(parent:GetName()..indicatorName, parent.widgets.overlayFrame)
+        indicator = I.CreateAura_Rect(parent:GetName()..indicatorName, parent.widgets.overlayFrame)
     elseif indicatorTable["type"] == "icons" then
-        indicator = I:CreateAura_Icons(parent:GetName()..indicatorName, parent.widgets.overlayFrame, 10)
+        indicator = I.CreateAura_Icons(parent:GetName()..indicatorName, parent.widgets.overlayFrame, 10)
     elseif indicatorTable["type"] == "color" then
-        indicator = I:CreateAura_Color(parent:GetName()..indicatorName, parent)
+        indicator = I.CreateAura_Color(parent:GetName()..indicatorName, parent)
     elseif indicatorTable["type"] == "texture" then
-        indicator = I:CreateAura_Texture(parent:GetName()..indicatorName, parent.widgets.overlayFrame)
+        indicator = I.CreateAura_Texture(parent:GetName()..indicatorName, parent.widgets.overlayFrame)
     elseif indicatorTable["type"] == "glow" then
-        indicator = I:CreateAura_Glow(parent:GetName()..indicatorName, parent)
+        indicator = I.CreateAura_Glow(parent:GetName()..indicatorName, parent)
     elseif indicatorTable["type"] == "overlay" then
-        indicator = I:CreateAura_Overlay(parent:GetName()..indicatorName, parent)
+        indicator = I.CreateAura_Overlay(parent:GetName()..indicatorName, parent)
     end
     parent.indicators[indicatorName] = indicator
     
@@ -77,7 +77,7 @@ function I:CreateIndicator(parent, indicatorTable, noTableUpdate)
     return indicator
 end
 
-function I:RemoveIndicator(parent, indicatorName, auraType)
+function I.RemoveIndicator(parent, indicatorName, auraType)
     local indicator = parent.indicators[indicatorName]
     indicator:ClearAllPoints()
     indicator:Hide()
@@ -88,7 +88,7 @@ function I:RemoveIndicator(parent, indicatorName, auraType)
 end
 
 -- used for switching to a new layout
-function I:RemoveAllCustomIndicators(parent)
+function I.RemoveAllCustomIndicators(parent)
     if parent ~= CellIndicatorsPreviewButton then
         wipe(enabledIndicators)
         wipe(customIndicators["buff"])
@@ -105,7 +105,7 @@ function I:RemoveAllCustomIndicators(parent)
     end
 end
 
-function I:ResetCustomIndicatorTables()
+function I.ResetCustomIndicatorTables()
     -- clear
     wipe(enabledIndicators)
     wipe(customIndicators["buff"])
@@ -153,7 +153,7 @@ Cell:RegisterCallback("UpdateIndicators", "UpdateCustomIndicators", UpdateCustom
 -------------------------------------------------
 -- reset
 -------------------------------------------------
-function I:ResetCustomIndicators(unitButton, auraType)
+function I.ResetCustomIndicators(unitButton, auraType)
     local unit = unitButton.states.displayedUnit
 
     for indicatorName, indicatorTable in pairs(customIndicators[auraType]) do
@@ -196,7 +196,7 @@ local function Update(indicator, indicatorTable, unit, spell, start, duration, d
     end
 end
 
-function I:UpdateCustomIndicators(unitButton, auraInfo, refreshing)
+function I.UpdateCustomIndicators(unitButton, auraInfo, refreshing)
     local unit = unitButton.states.displayedUnit
 
     local auraType = auraInfo.isHelpful and "buff" or "debuff"
@@ -211,7 +211,7 @@ function I:UpdateCustomIndicators(unitButton, auraInfo, refreshing)
 
     -- check Bleed
     if auraInfo.isHarmful then
-        debuffType = I:CheckDebuffType(debuffType, spellId)
+        debuffType = I.CheckDebuffType(debuffType, spellId)
     end
 
     for indicatorName, indicatorTable in pairs(customIndicators[auraType]) do
@@ -245,7 +245,7 @@ local function comparator(a, b)
     return a[1] < b[1]
 end
 
-function I:ShowCustomIndicators(unitButton, auraType)
+function I.ShowCustomIndicators(unitButton, auraType)
     local unit = unitButton.states.displayedUnit
     for indicatorName, indicatorTable in pairs(customIndicators[auraType]) do
         if indicatorName and enabledIndicators[indicatorName] then

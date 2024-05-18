@@ -469,7 +469,7 @@ end, unpack(fadeOuts))
 -- check
 -------------------------------------------------
 local function CheckUnit(unit, updateBtn)
-    I:HideMissingBuffs(unit)
+    I.HideMissingBuffs(unit)
 
     -- print("CheckUnit", unit)
     if not hasBuffProvider then return end
@@ -484,14 +484,14 @@ local function CheckUnit(unit, updateBtn)
                 if required == k or k == "PWF" or k == "MotW" then
                     if not F:FindAuraById(unit, "BUFF", buffs[k]["id"]) then
                         unaffected[k][unit] = true
-                        I:ShowMissingBuff(unit, k, buffs[k]["icon"], Cell.vars.playerClass == buffs[k]["provider"])
+                        I.ShowMissingBuff(unit, k, buffs[k]["icon"], Cell.vars.playerClass == buffs[k]["provider"])
                     else
                         unaffected[k][unit] = nil
                     end
                 elseif k == "BotB" then
                     if not AuraUtil.FindAuraByName(buffs[k]["name"], unit, "HELPFUL") then
                         unaffected[k][unit] = true
-                        I:ShowMissingBuff(unit, k, buffs[k]["icon"], Cell.vars.playerClass == buffs[k]["provider"])
+                        I.ShowMissingBuff(unit, k, buffs[k]["icon"], Cell.vars.playerClass == buffs[k]["provider"])
                     else
                         unaffected[k][unit] = nil
                     end
@@ -668,7 +668,7 @@ local function UpdateTools(which)
 
             -- missingBuffs indicator
             for unit in F:IterateGroupMembers() do
-                I:HideMissingBuffs(unit, true)
+                I.HideMissingBuffs(unit, true)
             end
         end
 

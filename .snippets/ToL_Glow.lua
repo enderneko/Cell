@@ -1,4 +1,7 @@
+-------------------------------------------------
+-- 2022-06-03 20:29:22 GMT+8
 -- 光明尾迹（单位按钮高亮）
+-------------------------------------------------
 local F = Cell.funcs
 local LCG = LibStub("LibCustomGlow-1.0")
 local frame = CreateFrame("Frame")

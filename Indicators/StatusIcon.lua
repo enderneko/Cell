@@ -51,7 +51,7 @@ end)
 -------------------------------------------------
 -- create
 -------------------------------------------------
-function I:CreateStatusIcon(parent)
+function I.CreateStatusIcon(parent)
     local statusIcon = CreateFrame("Frame", parent:GetName().."StatusIcon", parent.widgets.overlayFrame)
     parent.indicators.statusIcon = statusIcon
     statusIcon:Hide()
@@ -301,7 +301,7 @@ end
 -------------------------------------------------
 -- enable
 -------------------------------------------------
-function I:EnableStatusIcon(enabled)
+function I.EnableStatusIcon(enabled)
     if enabled then
         eventFrame:RegisterEvent("INCOMING_RESURRECT_CHANGED")
         eventFrame:RegisterEvent("UNIT_PHASE")

@@ -392,7 +392,7 @@ Comm:RegisterComm("CELL_REQ_D", function(prefix, message, channel, sender)
         -- NOTE: filter dispellable by me
         if drDispellable then
             for spellId, debuffType in pairs(drUnits[unit]) do
-                if not I:CanDispel(debuffType) then
+                if not I.CanDispel(debuffType) then
                     drUnits[unit][spellId] = nil
                 end
             end

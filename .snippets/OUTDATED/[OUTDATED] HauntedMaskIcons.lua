@@ -8,7 +8,7 @@ local I = Cell.iFuncs
 local enabledIndicators = Cell.snippetVars.enabledIndicators
 local customIndicators = Cell.snippetVars.customIndicators
 
-function I:CheckCustomIndicators(unit, unitButton, auraType, spellId, start, duration, debuffType, texture, count, refreshing, castByMe, arg16)
+function I.CheckCustomIndicators(unit, unitButton, auraType, spellId, start, duration, debuffType, texture, count, refreshing, castByMe, arg16)
     if spellId == 356968 then
         if arg16 == 50 then
             texture = cdr_icon

@@ -9,7 +9,7 @@ local F = Cell.funcs
 -- supress dispel highlight
 local dispelBlacklist = {}
 
-function I:GetDefaultDispelBlacklist()
+function I.GetDefaultDispelBlacklist()
     return dispelBlacklist
 end
 
@@ -23,7 +23,7 @@ local debuffBlacklist = {
     89798, -- 大冒险家奖励
 }
 
-function I:GetDefaultDebuffBlacklist()
+function I.GetDefaultDebuffBlacklist()
     -- local temp = {}
     -- for i, id in pairs(debuffBlacklist) do
     --     temp[i] = GetSpellInfo(id)
@@ -39,7 +39,7 @@ local bigDebuffs = {
     46392, -- 专注打击
 }
 
-function I:GetDefaultBigDebuffs()
+function I.GetDefaultBigDebuffs()
     return bigDebuffs
 end
 
@@ -77,7 +77,7 @@ do
     aoeHealings = temp
 end
 
-function I:IsAoEHealing(name)
+function I.IsAoEHealing(name)
     if not name then return false end
     return aoeHealings[name]
 end
@@ -94,7 +94,7 @@ do
     summonDuration = temp
 end
 
-function I:GetSummonDuration(spellName)
+function I.GetSummonDuration(spellName)
     return summonDuration[spellName]
 end
 
@@ -129,14 +129,14 @@ local externals = { -- true: track by name, false: track by id
     },
 }
 
-function I:GetExternals()
+function I.GetExternals()
     return externals
 end
 
 local builtInExternals = {}
 local customExternals = {}
 
-function I:UpdateExternals(t)
+function I.UpdateExternals(t)
        -- user disabled
     wipe(builtInExternals)
     for class, spells in pairs(externals) do
@@ -164,7 +164,7 @@ function I:UpdateExternals(t)
     end
 end
 
-function I:IsExternalCooldown(name, id, source, target)
+function I.IsExternalCooldown(name, id, source, target)
     return builtInExternals[name] or builtInExternals[id] or customExternals[name]
 end
 
@@ -224,14 +224,14 @@ local defensives = { -- true: track by name, false: track by id
     },
 }
 
-function I:GetDefensives()
+function I.GetDefensives()
     return defensives
 end
 
 local builtInDefensives = {}
 local customDefensives = {}
 
-function I:UpdateDefensives(t)
+function I.UpdateDefensives(t)
     -- user disabled
     wipe(builtInDefensives)
     for class, spells in pairs(defensives) do
@@ -265,7 +265,7 @@ local defensiveBlacklist = {
     [67380] = true,
 }
 
-function I:IsDefensiveCooldown(name, id)
+function I.IsDefensiveCooldown(name, id)
     if defensiveBlacklist[id] then return end
     return builtInDefensives[name] or builtInDefensives[id] or customDefensives[name]
 end
@@ -306,7 +306,7 @@ do
     end
 end
 
-function I:CanDispel(dispelType)
+function I.CanDispel(dispelType)
     if not dispelType then return end
     
     if dispellable[Cell.vars.playerClassID] then
@@ -330,7 +330,7 @@ do
     drinks = temp
 end
 
-function I:IsDrinking(name)
+function I.IsDrinking(name)
     return drinks[name]
 end
 
@@ -389,8 +389,8 @@ function F:FirstRun()
             ["numPerLine"] = 5,
             ["orientation"] = "right-to-left",
             ["font"] = {
-                {"Cell ".._G.DEFAULT, 11, "Outline", "TOPRIGHT", 2, 1, {1, 1, 1}},
-                {"Cell ".._G.DEFAULT, 11, "Outline", "BOTTOMRIGHT", 2, -1, {1, 1, 1}},
+                {"Cell ".._G.DEFAULT, 11, "Outline", false, "TOPRIGHT", 2, 1, {1, 1, 1}},
+                {"Cell ".._G.DEFAULT, 11, "Outline", false, "BOTTOMRIGHT", 2, -1, {1, 1, 1}},
             },
             ["showStack"] = true,
             ["showDuration"] = false,
@@ -417,11 +417,11 @@ local targetedSpells = {
     
 }
 
-function I:GetDefaultTargetedSpellsList()
+function I.GetDefaultTargetedSpellsList()
     return targetedSpells
 end
 
-function I:GetDefaultTargetedSpellsGlow()
+function I.GetDefaultTargetedSpellsGlow()
     return {"Pixel", {0.95,0.95,0.32,1}, 9, 0.25, 8, 2}
 end
 
@@ -433,11 +433,11 @@ local consumables = {
 }
 
 
-function I:GetDefaultConsumables()
+function I.GetDefaultConsumables()
     return consumables
 end
 
-function I:ConvertConsumables(db)
+function I.ConvertConsumables(db)
     local temp = {}
     for _, t in pairs(db) do
         temp[t[1]] = t[2]
@@ -480,11 +480,11 @@ do
     missingBuffs = temp
 end
 
-function I:GetDefaultMissingBuffs()
+function I.GetDefaultMissingBuffs()
     return missingBuffs
 end
 
-function I:GetMissingBuffsString()
+function I.GetMissingBuffsString()
     local s = ""
     for _, t in pairs(missingBuffs) do
         s = s.."|T"..t["icon"]..":14:14:0:0:14:14:1:13:1:13|t".." "
@@ -492,7 +492,7 @@ function I:GetMissingBuffsString()
     return s
 end
 
-function I:GetMissingBuffsFilters()
+function I.GetMissingBuffsFilters()
     local indicies = {
         "PWF",
         "SP",

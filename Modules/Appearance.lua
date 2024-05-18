@@ -196,8 +196,8 @@ local function UpdatePreviewIcons(layout, indicatorName, setting, value, value2)
 end]=]
 
 local previewIconsFont = {
-    {"Cell ".._G.DEFAULT, 11, "Outline", "TOPRIGHT", 2, 1},
-    {"Cell ".._G.DEFAULT, 11, "Outline", "BOTTOMRIGHT", 2, -1},
+    {"Cell ".._G.DEFAULT, 11, "Outline", false, "TOPRIGHT", 2, 1},
+    {"Cell ".._G.DEFAULT, 11, "Outline", false, "BOTTOMRIGHT", 2, -1},
 }
 
 local function CreatePreviewIcons()
@@ -211,14 +211,14 @@ local function CreatePreviewIcons()
     previewText:SetPoint("TOP", 0, -3)
     previewText:SetText(Cell:GetAccentColorString()..L["Preview"].." 1")
 
-    borderIcon1 = I:CreateAura_BorderIcon("CellAppearancePreviewIcon1", previewIconsBG, 2)
+    borderIcon1 = I.CreateAura_BorderIcon("CellAppearancePreviewIcon1", previewIconsBG, 2)
     borderIcon1:SetFont(unpack(previewIconsFont))
     P:Size(borderIcon1, 22, 22)
     borderIcon1:SetPoint("BOTTOMLEFT")
     SetOnUpdate(borderIcon1, "Magic", 135819, 0)
     borderIcon1:Show()
 
-    borderIcon2 = I:CreateAura_BorderIcon("CellAppearancePreviewIcon2", previewIconsBG, 2)
+    borderIcon2 = I.CreateAura_BorderIcon("CellAppearancePreviewIcon2", previewIconsBG, 2)
     borderIcon2:SetFont(unpack(previewIconsFont))
     P:Size(borderIcon2, 22, 22)
     borderIcon2:SetPoint("BOTTOMLEFT", borderIcon1, "BOTTOMRIGHT", P:Scale(1), 0)
@@ -238,7 +238,7 @@ local function CreatePreviewIcons()
     end)
     borderIcon2:Show()
 
-    barIcon2 = I:CreateAura_BarIcon("CellAppearancePreviewIcon4", previewIconsBG)
+    barIcon2 = I.CreateAura_BarIcon("CellAppearancePreviewIcon4", previewIconsBG)
     barIcon2:SetFont(unpack(previewIconsFont))
     P:Size(barIcon2, 22, 22)
     barIcon2:SetPoint("BOTTOMRIGHT")
@@ -257,7 +257,7 @@ local function CreatePreviewIcons()
     barIcon2:ShowAnimation(true)
     barIcon2:Show()
 
-    barIcon1 = I:CreateAura_BarIcon("CellAppearancePreviewIcon3", previewIconsBG)
+    barIcon1 = I.CreateAura_BarIcon("CellAppearancePreviewIcon3", previewIconsBG)
     barIcon1:SetFont(unpack(previewIconsFont))
     P:Size(barIcon1, 22, 22)
     barIcon1:SetPoint("BOTTOMRIGHT", barIcon2, "BOTTOMLEFT", P:Scale(-1), 0)
@@ -267,25 +267,25 @@ local function CreatePreviewIcons()
     barIcon1:Show()
 
     -- display debuff type colors
-    -- curse_border = I:CreateAura_BorderIcon("CellAppearancePreviewIconCurse1", previewIconsBG, 2)
+    -- curse_border = I.CreateAura_BorderIcon("CellAppearancePreviewIconCurse1", previewIconsBG, 2)
     -- P:Size(curse_border, 22 ,22)
     -- curse_border:SetPoint("TOPLEFT", borderIcon1, "BOTTOMLEFT", 0, P:Scale(-1))
     -- curse_border:SetCooldown(0, 0, "Curse", 136139, 0)
     -- curse_border:Show()
     
-    -- disease_border = I:CreateAura_BorderIcon("CellAppearancePreviewIconDisease1", previewIconsBG, 2)
+    -- disease_border = I.CreateAura_BorderIcon("CellAppearancePreviewIconDisease1", previewIconsBG, 2)
     -- P:Size(disease_border, 22 ,22)
     -- disease_border:SetPoint("TOPLEFT", curse_border, "TOPRIGHT", P:Scale(1), 0)
     -- disease_border:SetCooldown(0, 0, "Disease", 136128, 0)
     -- disease_border:Show()
     
-    -- magic_border = I:CreateAura_BorderIcon("CellAppearancePreviewIconMagic1", previewIconsBG, 2)
+    -- magic_border = I.CreateAura_BorderIcon("CellAppearancePreviewIconMagic1", previewIconsBG, 2)
     -- P:Size(magic_border, 22 ,22)
     -- magic_border:SetPoint("TOPLEFT", disease_border, "TOPRIGHT", P:Scale(1), 0)
     -- magic_border:SetCooldown(0, 0, "Magic", 240443, 0)
     -- magic_border:Show()
     
-    -- poison_border = I:CreateAura_BorderIcon("CellAppearancePreviewIconPoison1", previewIconsBG, 2)
+    -- poison_border = I.CreateAura_BorderIcon("CellAppearancePreviewIconPoison1", previewIconsBG, 2)
     -- P:Size(poison_border, 22 ,22)
     -- poison_border:SetPoint("TOPLEFT", magic_border, "TOPRIGHT", P:Scale(1), 0)
     -- poison_border:SetCooldown(0, 0, "Poison", 136182, 0)
@@ -1324,35 +1324,35 @@ local function CreateDebuffTypeColorPane()
 
     -- curse
     curseCP = Cell:CreateColorPicker(dtcPane, "|TInterface\\AddOns\\Cell\\Media\\Debuffs\\Curse:0|t"..L["Curse"], false, nil, function(r, g, b)
-        I:SetDebuffTypeColor("Curse", r, g, b)
+        I.SetDebuffTypeColor("Curse", r, g, b)
         Cell:Fire("UpdateIndicators", F:GetNotifiedLayoutName(Cell.vars.currentLayout), "dispels", "debuffTypeColor")
     end)
     curseCP:SetPoint("TOPLEFT", 5, -27)
 
     -- disease
     diseaseCP = Cell:CreateColorPicker(dtcPane, "|TInterface\\AddOns\\Cell\\Media\\Debuffs\\Disease:0|t"..L["Disease"], false, nil, function(r, g, b)
-        I:SetDebuffTypeColor("Disease", r, g, b)
+        I.SetDebuffTypeColor("Disease", r, g, b)
         Cell:Fire("UpdateIndicators", F:GetNotifiedLayoutName(Cell.vars.currentLayout), "dispels", "debuffTypeColor")
     end)
     diseaseCP:SetPoint("TOPLEFT", curseCP, "TOPRIGHT", 95, 0)
 
     -- magic
     magicCP = Cell:CreateColorPicker(dtcPane, "|TInterface\\AddOns\\Cell\\Media\\Debuffs\\Magic:0|t"..L["Magic"], false, nil, function(r, g, b)
-        I:SetDebuffTypeColor("Magic", r, g, b)
+        I.SetDebuffTypeColor("Magic", r, g, b)
         Cell:Fire("UpdateIndicators", F:GetNotifiedLayoutName(Cell.vars.currentLayout), "dispels", "debuffTypeColor")
     end)
     magicCP:SetPoint("TOPLEFT", diseaseCP, "TOPRIGHT", 95, 0)
 
     -- poison
     poisonCP = Cell:CreateColorPicker(dtcPane, "|TInterface\\AddOns\\Cell\\Media\\Debuffs\\Poison:0|t"..L["Poison"], false, nil, function(r, g, b)
-        I:SetDebuffTypeColor("Poison", r, g, b)
+        I.SetDebuffTypeColor("Poison", r, g, b)
         Cell:Fire("UpdateIndicators", F:GetNotifiedLayoutName(Cell.vars.currentLayout), "dispels", "debuffTypeColor")
     end)
     poisonCP:SetPoint("TOPLEFT", magicCP, "TOPRIGHT", 95, 0)
    
     -- bleed
     bleedCP = Cell:CreateColorPicker(dtcPane, "|TInterface\\AddOns\\Cell\\Media\\Debuffs\\Bleed:0|t"..L["Bleed"], false, nil, function(r, g, b)
-        I:SetDebuffTypeColor("Bleed", r, g, b)
+        I.SetDebuffTypeColor("Bleed", r, g, b)
         Cell:Fire("UpdateIndicators", F:GetNotifiedLayoutName(Cell.vars.currentLayout), "dispels", "debuffTypeColor")
     end)
     bleedCP:SetPoint("TOPLEFT", curseCP, "BOTTOMLEFT", 0, -7)
@@ -1362,7 +1362,7 @@ local function CreateDebuffTypeColorPane()
     resetBtn:SetPoint("TOPRIGHT")
     resetBtn:SetScript("OnClick", function()
         if IsControlKeyDown() then
-            I:ResetDebuffTypeColor()
+            I.ResetDebuffTypeColor()
             LoadDebuffTypeColor()
             Cell:Fire("UpdateIndicators", F:GetNotifiedLayoutName(Cell.vars.currentLayout), "dispels", "debuffTypeColor")
         end
@@ -1445,11 +1445,11 @@ LoadButtonStyle = function()
 end
 
 LoadDebuffTypeColor = function()
-    curseCP:SetColor(I:GetDebuffTypeColor("Curse"))
-    diseaseCP:SetColor(I:GetDebuffTypeColor("Disease"))
-    magicCP:SetColor(I:GetDebuffTypeColor("Magic"))
-    poisonCP:SetColor(I:GetDebuffTypeColor("Poison"))
-    bleedCP:SetColor(I:GetDebuffTypeColor("Bleed"))
+    curseCP:SetColor(I.GetDebuffTypeColor("Curse"))
+    diseaseCP:SetColor(I.GetDebuffTypeColor("Disease"))
+    magicCP:SetColor(I.GetDebuffTypeColor("Magic"))
+    poisonCP:SetColor(I.GetDebuffTypeColor("Poison"))
+    bleedCP:SetColor(I.GetDebuffTypeColor("Bleed"))
 end
 
 LoadData = function()

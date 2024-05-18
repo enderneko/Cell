@@ -1,3 +1,5 @@
+-------------------------------------------------
+-- 2023-07-15 08:30:57 GMT+8
 -- PARTY ONLY, RETAIL ONLY
 -- sort units by SPEC_PRIORITY ↓↓↓
 -- slash command (not in combat): /csort
@@ -9,6 +11,7 @@
 -- 斜杠命令（非战斗中）：/csort, /px
 -- 必须重新执行排序，否则新成员不会显示
 -- 重载界面以恢复
+-------------------------------------------------
 
 local SPEC_PRIORITY = {
     -- Tank

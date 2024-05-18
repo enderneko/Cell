@@ -5,7 +5,7 @@ local I = Cell.iFuncs
 -------------------------------------------------
 -- custom indicator
 -------------------------------------------------
-function I:GetDefaultCustomIndicatorTable(name, indicatorName, type, auraType)
+function I.GetDefaultCustomIndicatorTable(name, indicatorName, type, auraType)
     local t
     if type == "icon" then
         t = {
@@ -17,8 +17,8 @@ function I:GetDefaultCustomIndicatorTable(name, indicatorName, type, auraType)
             ["frameLevel"] = 5,
             ["size"] = {13, 13},
             ["font"] = {
-                {"Cell ".._G.DEFAULT, 11, "Outline", "TOPRIGHT", 2, 1, {1, 1, 1}},
-                {"Cell ".._G.DEFAULT, 11, "Outline", "BOTTOMRIGHT", 2, -1, {1, 1, 1}},
+                {"Cell ".._G.DEFAULT, 11, "Outline", false, "TOPRIGHT", 2, 1, {1, 1, 1}},
+                {"Cell ".._G.DEFAULT, 11, "Outline", false, "BOTTOMRIGHT", 2, -1, {1, 1, 1}},
             },
             ["showStack"] = true,
             ["showDuration"] = false,
@@ -34,8 +34,8 @@ function I:GetDefaultCustomIndicatorTable(name, indicatorName, type, auraType)
             ["enabled"] = true,
             ["position"] = {"TOPRIGHT", "TOPRIGHT", 0, 3},
             ["frameLevel"] = 5,
-            ["font"] = {"Cell ".._G.DEFAULT, 12, "Outline"},
-            ["colors"] = {{0,1,0}, {false,1,1,0,0.5}, {false,1,0,0,3}},
+            ["font"] = {"Cell ".._G.DEFAULT, 12, "Outline", false},
+            ["colors"] = {{0, 1, 0, 1}, {false, 0.5, {1, 1, 0, 1}}, {false, 3, {1, 0, 0, 1}}},
             ["auraType"] = auraType,
             ["auras"] = {},
             ["duration"] = {
@@ -54,9 +54,9 @@ function I:GetDefaultCustomIndicatorTable(name, indicatorName, type, auraType)
             ["position"] = {"BOTTOMRIGHT", "TOPRIGHT", 0, -1},
             ["frameLevel"] = 5,
             ["size"] = {18, 4},
-            ["colors"] = {{0,1,0}, {false,1,1,0,0.5}, {false,1,0,0,3}, {0.07,0.07,0.07,0.9}},
+            ["colors"] = {{0, 1, 0, 1}, {false, 0.5, {1, 1, 0, 1}}, {false, 3, {1, 0, 0, 1}}, {0.07, 0.07, 0.07, 0.9}, {0, 0, 0, 1}},
             ["orientation"] = "horizontal",
-            ["font"] = {"Cell ".._G.DEFAULT, 11, "Outline", "CENTER", 0, 0, {1, 1, 1}},
+            ["font"] = {"Cell ".._G.DEFAULT, 11, "Outline", false, "CENTER", 0, 0, {1, 1, 1}},
             ["showStack"] = false,
             ["auraType"] = auraType,
             ["auras"] = {},
@@ -70,8 +70,8 @@ function I:GetDefaultCustomIndicatorTable(name, indicatorName, type, auraType)
             ["position"] = {"TOPRIGHT", "TOPRIGHT", 0, 2},
             ["frameLevel"] = 5,
             ["size"] = {11, 4},
-            ["colors"] = {{0,1,0}, {false,1,1,0,0.5}, {false,1,0,0,3}},
-            ["font"] = {"Cell ".._G.DEFAULT, 11, "Outline", "CENTER", 0, 0, {1, 1, 1}},
+            ["colors"] = {{0, 1, 0, 1}, {false, 0.5, {1, 1, 0, 1}}, {false, 3, {1, 0, 0, 1}}, {0, 0, 0, 1}},
+            ["font"] = {"Cell ".._G.DEFAULT, 11, "Outline", false, "CENTER", 0, 0, {1, 1, 1}},
             ["showStack"] = false,
             ["auraType"] = auraType,
             ["auras"] = {},
@@ -89,8 +89,8 @@ function I:GetDefaultCustomIndicatorTable(name, indicatorName, type, auraType)
             ["numPerLine"] = 3,
             ["orientation"] = "right-to-left",
             ["font"] = {
-                {"Cell ".._G.DEFAULT, 11, "Outline", "TOPRIGHT", 2, 1, {1, 1, 1}},
-                {"Cell ".._G.DEFAULT, 11, "Outline", "BOTTOMRIGHT", 2, -1, {1, 1, 1}},
+                {"Cell ".._G.DEFAULT, 11, "Outline", false, "TOPRIGHT", 2, 1, {1, 1, 1}},
+                {"Cell ".._G.DEFAULT, 11, "Outline", false, "BOTTOMRIGHT", 2, -1, {1, 1, 1}},
             },
             ["showStack"] = true,
             ["showDuration"] = false,
@@ -106,7 +106,7 @@ function I:GetDefaultCustomIndicatorTable(name, indicatorName, type, auraType)
             ["enabled"] = true,
             ["anchor"] = "healthbar-current",
             ["frameLevel"] = 1,
-            ["colors"] = {"gradient-vertical", {1, 0, 0.4, 1}, {0, 0, 0, 1}, {0,1,0}, {1,1,0,0.5}, {1,0,0,3}},
+            ["colors"] = {"gradient-vertical", {1, 0, 0.4, 1}, {0, 0, 0, 1}, {0, 1, 0, 1}, {0.5, {1, 1, 0, 1}}, {3, {1, 0, 0, 1}}},
             ["auraType"] = auraType,
             ["auras"] = {},
         }
@@ -144,7 +144,7 @@ function I:GetDefaultCustomIndicatorTable(name, indicatorName, type, auraType)
             ["enabled"] = true,
             ["smooth"] = false,
             ["frameLevel"] = 1,
-            ["colors"] = {{0,0.61,1,0.55}, {false,1,1,0,0.5,0.5}, {false,1,0,0,0.5,3}},
+            ["colors"] = {{0, 0.61, 1, 0.55}, {false, 0.5, {1, 1, 0, 0.5}}, {false, 3, {1, 0, 0, 0.5}}},
             ["orientation"] = "horizontal",
             ["auraType"] = auraType,
             ["auras"] = {},
@@ -166,7 +166,7 @@ end
 -------------------------------------------------
 -- dispels: custom debuff type color
 -------------------------------------------------
-function I:GetDebuffTypeColor(debuffType)
+function I.GetDebuffTypeColor(debuffType)
     if debuffType and CellDB["debuffTypeColor"][debuffType] then
         return CellDB["debuffTypeColor"][debuffType]["r"], CellDB["debuffTypeColor"][debuffType]["g"], CellDB["debuffTypeColor"][debuffType]["b"]
     else
@@ -174,7 +174,7 @@ function I:GetDebuffTypeColor(debuffType)
     end
 end
 
-function I:SetDebuffTypeColor(debuffType, r, g, b)
+function I.SetDebuffTypeColor(debuffType, r, g, b)
     if debuffType and CellDB["debuffTypeColor"][debuffType] then
         CellDB["debuffTypeColor"][debuffType]["r"] = r
         CellDB["debuffTypeColor"][debuffType]["g"] = g
@@ -182,7 +182,7 @@ function I:SetDebuffTypeColor(debuffType, r, g, b)
     end
 end
 
-function I:ResetDebuffTypeColor()
+function I.ResetDebuffTypeColor()
     -- copy
     CellDB["debuffTypeColor"] = F:Copy(DebuffTypeColor)
     -- add Bleed
