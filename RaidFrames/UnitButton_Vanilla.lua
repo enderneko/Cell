@@ -605,10 +605,11 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                     indicator:SetColor(unpack(value))
                 end, true)
             end
-        elseif setting == "customColors" then
+        elseif setting == "colors" then
             F:IterateAllUnitButtons(function(b)
                 local indicator = b.indicators[indicatorName]
-                indicator:SetColors(value)
+                indicator:SetColors(value) -- update color on next SetCooldown
+                UnitButton_UpdateAuras(b) -- call SetCooldown now
             end, true)
         elseif setting == "vehicleNamePosition" then
             F:IterateAllUnitButtons(function(b)
