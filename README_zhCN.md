@@ -73,6 +73,12 @@ Use __/cell__ for more information.
 
 &nbsp;
 
+## 本地化翻译
+
+如果你想要帮忙完善本地化，请访问<https://legacy.curseforge.com/wow/addons/cell/localization>，而不要直接提交PR。
+
+&nbsp;
+
 ## 其他
 
 Discord：<https://discord.gg/9PSe3fKQGJ>
