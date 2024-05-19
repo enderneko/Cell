@@ -152,15 +152,6 @@
           "comments": []
         },
         {
-          "id": "21c940ed-e054-4a05-90e0-0eee83d45004",
-          "listId": "fc9baa7c-c3e7-49a4-8526-816c794e5ed9",
-          "title": "Add \"Frame Level\" for Role Icon",
-          "description": "",
-          "labels": [],
-          "checkboxes": [],
-          "comments": []
-        },
-        {
           "id": "a711ba2d-5627-444a-b1a2-c563ce1663f7",
           "listId": "fc9baa7c-c3e7-49a4-8526-816c794e5ed9",
           "title": "Add \"Hide\" to layout auto switch",
@@ -184,6 +175,15 @@
       "id": "7b0c4654-92fe-4b4e-9566-15e8c706d9c9",
       "title": "DONE",
       "cards": [
+        {
+          "id": "21c940ed-e054-4a05-90e0-0eee83d45004",
+          "listId": "7b0c4654-92fe-4b4e-9566-15e8c706d9c9",
+          "title": "Add \"Frame Level\" for Role Icon",
+          "description": "",
+          "labels": [],
+          "checkboxes": [],
+          "comments": []
+        },
         {
           "id": "eb44ccc2-c069-453b-ad4a-22585fd420bb",
           "listId": "7b0c4654-92fe-4b4e-9566-15e8c706d9c9",

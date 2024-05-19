@@ -2806,10 +2806,7 @@ function CellUnitButton_OnLoad(button)
     -- incoming heal
     local incomingHeal = healthBar:CreateTexture(name.."IncomingHealBar", "ARTWORK", nil, -6)
     button.widgets.incomingHeal = incomingHeal
-    -- P:Point(incomingHeal, "TOPLEFT", healthBar:GetStatusBarTexture(), "TOPRIGHT")
-    -- P:Point(incomingHeal, "BOTTOMLEFT", healthBar:GetStatusBarTexture(), "BOTTOMRIGHT")
     incomingHeal:SetTexture(Cell.vars.texture)
-    -- incomingHeal:SetAlpha(0.4)
     incomingHeal:Hide()
     incomingHeal.SetValue = DumbFunc
 
@@ -2827,7 +2824,6 @@ function CellUnitButton_OnLoad(button)
     local overShieldGlow = healthBar:CreateTexture(name.."OverShieldGlow", "OVERLAY")
     button.widgets.overShieldGlow = overShieldGlow
     overShieldGlow:SetTexture("Interface\\RaidFrame\\Shield-Overshield")
-    overShieldGlow:SetBlendMode("ADD")
     overShieldGlow:Hide()
 
     -- bar animation
