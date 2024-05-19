@@ -434,6 +434,11 @@ function F:DisableSnippets()
     end
 
     local popup = Cell:CreateNotificationPopup(Cell.frames.anchorFrame, 200, L["All snippets have been disabled, due to the version update"])
-    popup:SetPoint("TOPLEFT")
-    popup:Show()
+    popup:RegisterEvent("PLAYER_ENTERING_WORLD")
+    popup:SetScript("OnEvent", function()
+        popup:UnregisterAllEvents()
+        popup:SetScript("OnEvent", nil)
+        popup:SetPoint(Cell.vars.currentLayoutTable.main.anchor)
+        popup:Show()
+    end)
 end
