@@ -221,8 +221,8 @@ local function InitIndicator(indicatorName)
         indicator:SetTexture("Interface\\RaidFrame\\Raid-Icon-Rez")
 
     elseif indicatorName == "roleIcon" then
-        indicator:SetTexture("Interface\\AddOns\\Cell\\Media\\UI-LFG-ICON-PORTRAITROLES.blp")
-        indicator:SetTexCoord(GetTexCoordsForRoleSmallCircle("DAMAGER"))
+        indicator.tex:SetTexture("Interface\\AddOns\\Cell\\Media\\UI-LFG-ICON-PORTRAITROLES.blp")
+        indicator.tex:SetTexCoord(GetTexCoordsForRoleSmallCircle("DAMAGER"))
         -- texture type cannot glow by LCG
         indicator.preview = indicator.preview or CreateFrame("Frame", nil, previewButton)
         indicator.preview:SetAllPoints(indicator)
@@ -1497,7 +1497,7 @@ if Cell.isRetail then
             "|A:nameplates-icon-orb-green:18:18|a "..
             "|A:nameplates-icon-orb-orange:18:18|a "..
             "|A:nameplates-icon-orb-purple:18:18|a ", "enabled", "size-square", "position", "frameLevel"},
-        ["roleIcon"] = {"enabled", "checkbutton:hideDamager", "size-square", "roleTexture", "position"},
+        ["roleIcon"] = {"enabled", "checkbutton:hideDamager", "size-square", "roleTexture", "position", "frameLevel"},
         ["leaderIcon"] = {"enabled", "checkbutton:hideInCombat", "size-square", "position"},
         ["readyCheckIcon"] = {"size-square", "frameLevel"},
         ["playerRaidIcon"] = {"enabled", "size-square", "alpha", "position", "frameLevel"},
@@ -1535,7 +1535,7 @@ elseif Cell.isCata then
             "|TInterface\\TargetingFrame\\UI-PhasingIcon:18:18:0:0:31:31:3:28:3:28|t "..
             "|A:horde_icon_and_flag-dynamicIcon:18:18|a "..
             "|A:alliance_icon_and_flag-dynamicIcon:18:18|a ", "enabled", "size-square", "position", "frameLevel"},
-        ["roleIcon"] = {"enabled", "checkbutton:hideDamager", "size-square", "roleTexture", "position"},
+        ["roleIcon"] = {"enabled", "checkbutton:hideDamager", "size-square", "roleTexture", "position", "frameLevel"},
         ["leaderIcon"] = {"enabled", "checkbutton:hideInCombat", "size-square", "position"},
         ["readyCheckIcon"] = {"size-square", "frameLevel"},
         ["playerRaidIcon"] = {"enabled", "size-square", "alpha", "position", "frameLevel"},

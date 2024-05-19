@@ -1637,76 +1637,86 @@ end
 -------------------------------------------------
 -- role icon
 -------------------------------------------------
+local GetTexCoordsForRoleSmallCircle = GetTexCoordsForRoleSmallCircle
+
 local defaultRoleIcon = {
     TANK = "Interface\\AddOns\\Cell\\Media\\Roles\\TANK32",
     HEALER = "Interface\\AddOns\\Cell\\Media\\Roles\\HEALER32",
     DAMAGER = "Interface\\AddOns\\Cell\\Media\\Roles\\DAMAGER32",
 }
 
+local function RoleIcon_SetRole(self, role)
+    self.tex:SetVertexColor(1, 1, 1)
+    if role == "TANK" or role == "HEALER" or (not self.hideDamager and role == "DAMAGER") then
+        if self.texture == "default" then
+            -- self.tex:SetTexture("Interface\\AddOns\\Cell\\Media\\Roles\\UI-LFG-ICON-PORTRAITROLES.blp")
+            -- self.tex:SetTexCoord(GetTexCoordsForRoleSmallCircle(role))
+            self.tex:SetTexture(defaultRoleIcon[role])
+            self.tex:SetTexCoord(0, 1, 0, 1)
+        elseif self.texture == "default2" then
+            self.tex:SetTexture("Interface\\AddOns\\Cell\\Media\\Roles\\UI-LFG-ICON-ROLES.blp")
+            self.tex:SetTexCoord(GetTexCoordsForRole(role))
+        elseif self.texture == "blizzard" then
+            self.tex:SetTexture("Interface\\LFGFRAME\\UI-LFG-ICON-PORTRAITROLES.blp")
+            self.tex:SetTexCoord(GetTexCoordsForRoleSmallCircle(role))
+        elseif self.texture == "blizzard2" then
+            self.tex:SetTexture("Interface\\LFGFRAME\\UI-LFG-ICON-ROLES.blp")
+            self.tex:SetTexCoord(GetTexCoordsForRole(role))
+        elseif self.texture == "ffxiv" then
+            self.tex:SetTexture("Interface\\AddOns\\Cell\\Media\\Roles\\FFXIV\\"..role)
+            self.tex:SetTexCoord(0, 1, 0, 1)
+        elseif self.texture == "miirgui" then
+            self.tex:SetTexture("Interface\\AddOns\\Cell\\Media\\Roles\\MiirGui\\"..role)
+            self.tex:SetTexCoord(0, 1, 0, 1)
+        elseif self.texture == "mattui" then
+            self.tex:SetTexture("Interface\\AddOns\\Cell\\Media\\Roles\\MattUI.blp")
+            self.tex:SetTexCoord(GetTexCoordsForRoleSmallCircle(role))
+        elseif self.texture == "custom" then
+            self.tex:SetTexture(self[role])
+            self.tex:SetTexCoord(0, 1, 0, 1)
+        end
+        self:Show()
+    elseif role == "VEHICLE-ROOT" then
+        self.tex:SetTexture("Interface\\AddOns\\Cell\\Media\\Roles\\VEHICLE")
+        self:Show()
+    elseif role == "VEHICLE" then
+        self.tex:SetTexture("Interface\\AddOns\\Cell\\Media\\Roles\\VEHICLE")
+        self.tex:SetVertexColor(0.6, 0.6, 1)
+        self:Show()
+    else
+        self:Hide()
+    end
+end
+
+local function RoleIcon_SetRoleTexture(self, t)
+    self.texture = t[1]
+    self.TANK = t[2]
+    self.HEALER = t[3]
+    self.DAMAGER = t[4]
+end
+
+local function RoleIcon_HideDamager(self, hide)
+    self.hideDamager = hide
+end
+
+local function RoleIcon_UpdatePixelPerfect(self)
+    P:Resize(self)
+    P:Repoint(self)
+end
+
 function I.CreateRoleIcon(parent)
-    local roleIcon = parent.widgets.overlayFrame:CreateTexture(parent:GetName().."RoleIcon", "ARTWORK", nil, -7)
+    local roleIcon = CreateFrame("Frame", parent:GetName().."RoleIcon", parent.widgets.overlayFrame)
     parent.indicators.roleIcon = roleIcon
     -- roleIcon:SetPoint("TOPLEFT", overlayFrame)
     -- roleIcon:SetSize(11, 11)
     
-    function roleIcon:SetRole(role)
-        roleIcon:SetVertexColor(1, 1, 1)
-        if role == "TANK" or role == "HEALER" or (not roleIcon.hideDamager and role == "DAMAGER") then
-            if roleIcon.texture == "default" then
-                -- roleIcon:SetTexture("Interface\\AddOns\\Cell\\Media\\Roles\\UI-LFG-ICON-PORTRAITROLES.blp")
-                -- roleIcon:SetTexCoord(GetTexCoordsForRoleSmallCircle(role))
-                roleIcon:SetTexture(defaultRoleIcon[role])
-                roleIcon:SetTexCoord(0, 1, 0, 1)
-            elseif roleIcon.texture == "default2" then
-                roleIcon:SetTexture("Interface\\AddOns\\Cell\\Media\\Roles\\UI-LFG-ICON-ROLES.blp")
-                roleIcon:SetTexCoord(GetTexCoordsForRole(role))
-            elseif roleIcon.texture == "blizzard" then
-                roleIcon:SetTexture("Interface\\LFGFRAME\\UI-LFG-ICON-PORTRAITROLES.blp")
-                roleIcon:SetTexCoord(GetTexCoordsForRoleSmallCircle(role))
-            elseif roleIcon.texture == "blizzard2" then
-                roleIcon:SetTexture("Interface\\LFGFRAME\\UI-LFG-ICON-ROLES.blp")
-                roleIcon:SetTexCoord(GetTexCoordsForRole(role))
-            elseif roleIcon.texture == "ffxiv" then
-                roleIcon:SetTexture("Interface\\AddOns\\Cell\\Media\\Roles\\FFXIV\\"..role)
-                roleIcon:SetTexCoord(0, 1, 0, 1)
-            elseif roleIcon.texture == "miirgui" then
-                roleIcon:SetTexture("Interface\\AddOns\\Cell\\Media\\Roles\\MiirGui\\"..role)
-                roleIcon:SetTexCoord(0, 1, 0, 1)
-            elseif roleIcon.texture == "mattui" then
-                roleIcon:SetTexture("Interface\\AddOns\\Cell\\Media\\Roles\\MattUI.blp")
-                roleIcon:SetTexCoord(GetTexCoordsForRoleSmallCircle(role))
-            elseif roleIcon.texture == "custom" then
-                roleIcon:SetTexture(roleIcon[role])
-                roleIcon:SetTexCoord(0, 1, 0, 1)
-            end
-            roleIcon:Show()
-        elseif role == "VEHICLE-ROOT" then
-            roleIcon:SetTexture("Interface\\AddOns\\Cell\\Media\\Roles\\VEHICLE")
-            roleIcon:Show()
-        elseif role == "VEHICLE" then
-            roleIcon:SetTexture("Interface\\AddOns\\Cell\\Media\\Roles\\VEHICLE")
-            roleIcon:SetVertexColor(0.6, 0.6, 1)
-            roleIcon:Show()
-        else
-            roleIcon:Hide()
-        end
-    end
+    roleIcon.tex = roleIcon:CreateTexture(nil, "ARTWORK")
+    roleIcon.tex:SetAllPoints()
 
-    function roleIcon:SetRoleTexture(t)
-        roleIcon.texture = t[1]
-        roleIcon.TANK = t[2]
-        roleIcon.HEALER = t[3]
-        roleIcon.DAMAGER = t[4]
-    end
-
-    function roleIcon:HideDamager(hide)
-        roleIcon.hideDamager = hide
-    end
-
-    function roleIcon:UpdatePixelPerfect()
-        P:Resize(roleIcon)
-        P:Repoint(roleIcon)
-    end
+    roleIcon.SetRole = RoleIcon_SetRole
+    roleIcon.SetRoleTexture = RoleIcon_SetRoleTexture
+    roleIcon.HideDamager = RoleIcon_HideDamager
+    roleIcon.UpdatePixelPerfect = RoleIcon_UpdatePixelPerfect
 end
 
 -------------------------------------------------

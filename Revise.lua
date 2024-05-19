@@ -2841,6 +2841,13 @@ function F:Revise()
                         end
                     end
                 end
+
+                -- add frameLevel
+                if i.indicatorName == "roleIcon" then
+                    if not i.frameLevel then
+                        i.frameLevel = 1
+                    end
+                end
             end
         end
 
