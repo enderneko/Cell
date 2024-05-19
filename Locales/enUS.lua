@@ -87,6 +87,13 @@ select(2, ...).L = setmetatable({
         <p>(Retail) Enable "Always Update Buffs/Debuffs" in General tab, if indicators do not update correctly.</p>
         <br/>
         
+        <h1>r226-release (May 20, 2024, 02:33 GMT+8)</h1>
+        <p>+ Implemented "Reverse Filling" for overshields.</p>
+        <p>+ Added "Frame Level" option for Role Icon indicator.</p>
+        <p>+ Added "Show Duration" for Raid Debuffs indicator.</p>
+        <p>* Updated color options for custom Text/Rect/Bar/Color/Overlay indicators (added ALPHAs).</p>
+        <br/>
+
         <h1>r225-release (May 13, 2024, 03:50 GMT+8)</h1>
         <p>* Bug fixes.</p>
         <br/>
