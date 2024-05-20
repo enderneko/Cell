@@ -19,7 +19,7 @@ SLASH_CELLSORT1 = "/csort"
 
 function SlashCmdList.CELLSORT()
     if InCombatLockdown() then return end
-    
+
     for i = 1, 8 do
         local header = _G["CellRaidFrameHeader"..i]
         header:SetAttribute("groupingOrder", "")
@@ -28,6 +28,6 @@ function SlashCmdList.CELLSORT()
         header:SetAttribute("sortMethod", "NAMELIST")
         header:SetAttribute("nameList", nameList[i])
     end
-    
+
     F:Print("re-sorted.")
 end

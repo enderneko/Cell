@@ -28,13 +28,13 @@ local function CreatePreviewButton()
     previewButton.widgets.healthBar:SetValue(1)
     previewButton.widgets.powerBar:SetMinMaxValues(0, 1)
     previewButton.widgets.powerBar:SetValue(1)
-    
+
     local previewButtonBG = Cell:CreateFrame("CellGlowsPreviewButtonBG", previewButton)
     previewButtonBG:SetPoint("TOPLEFT", previewButton, 0, 20)
     previewButtonBG:SetPoint("BOTTOMRIGHT", previewButton, "TOPRIGHT")
     Cell:StylizeFrame(previewButtonBG, {0.1, 0.1, 0.1, 0.77}, {0, 0, 0, 0})
     previewButtonBG:Show()
-    
+
     local previewText = previewButtonBG:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET_TITLE")
     previewText:SetPoint("TOP", 0, -3)
     previewText:SetText(Cell:GetAccentColorString()..L["Preview"])
@@ -71,7 +71,7 @@ local function UpdatePreviewButton()
     -- health color
     local r, g, b = F:GetHealthBarColor(1, false, F:GetClassColor(Cell.vars.playerClass))
     previewButton.widgets.healthBar:SetStatusBarColor(r, g, b, CellDB["appearance"]["barAlpha"])
-    
+
     -- power color
     r, g, b = F:GetPowerBarColor("player", Cell.vars.playerClass)
     previewButton.widgets.powerBar:SetStatusBarColor(r, g, b)
@@ -169,7 +169,7 @@ local function LoadGlowOptions()
         glowDuration:Hide()
         glowLength:Hide()
         glowThickness:Hide()
-        
+
         glowOffsetX:SetValue(glowOptions[2])
         glowOffsetY:SetValue(glowOptions[3])
         glowParticles:SetValue(glowOptions[4])
@@ -274,13 +274,13 @@ local function CreateGlowOptionsFrame()
         SliderValueChanged(2, value)
     end)
     glowOffsetX:SetPoint("TOPLEFT", glowColor, "BOTTOMLEFT", 0, -25)
-    
+
     -- y
     glowOffsetY = Cell:CreateSlider(L["Y Offset"], glowOptionsFrame, -100, 100, 117, 1, function(value)
         SliderValueChanged(3, value)
     end)
     glowOffsetY:SetPoint("TOPLEFT", glowOffsetX, "BOTTOMLEFT", 0, -40)
-    
+
     -- glowNumber
     glowLines = Cell:CreateSlider(L["Lines"], glowOptionsFrame, 1, 30, 117, 1, function(value)
         SliderValueChanged(4, value)

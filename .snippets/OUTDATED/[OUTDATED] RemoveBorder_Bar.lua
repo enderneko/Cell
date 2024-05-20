@@ -65,6 +65,6 @@ function I.CreateAura_Bar(name, parent)
         P:Resize(bar)
         P:Repoint(bar)
     end
-        
+
     return bar
 end

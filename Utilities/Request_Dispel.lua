@@ -45,7 +45,7 @@ local function CreateDRPane()
         UpdateDRWidgets()
         Cell:Fire("UpdateRequests", "dispelRequest")
         CellDropdownList:Hide()
-        
+
         U:HideGlowOptions()
         U:HideTextOptions()
         Cell:StopRainbowText(drTypeOptionsBtn:GetFontString())
@@ -176,13 +176,13 @@ local function CreateDRPane()
             CellSpellTooltip:Hide()
             return
         end
-        
+
         CellSpellTooltip:SetOwner(popup, "ANCHOR_NONE")
         CellSpellTooltip:SetPoint("TOPLEFT", popup, "BOTTOMLEFT", 0, -1)
         CellSpellTooltip:SetSpellByID(spellId, tex)
         CellSpellTooltip:Show()
     end)
-    
+
     popup:HookScript("OnHide", function()
         CellSpellTooltip:Hide()
     end)
@@ -306,7 +306,7 @@ LoadList = function(scrollToBottom)
             debuffItems[i].spellIdText:SetPoint("RIGHT", debuffItems[i], "LEFT", 80, 0)
             debuffItems[i].spellIdText:SetWordWrap(false)
             debuffItems[i].spellIdText:SetJustifyH("LEFT")
-            
+
             -- spellName text
             debuffItems[i].spellNameText = debuffItems[i]:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
             debuffItems[i].spellNameText:SetPoint("LEFT", debuffItems[i].spellIdText, "RIGHT", 5, 0)
@@ -336,7 +336,7 @@ LoadList = function(scrollToBottom)
                         CellSpellTooltip:Hide()
                         return
                     end
-                    
+
                     CellSpellTooltip:SetOwner(debuffItems[i], "ANCHOR_NONE")
                     CellSpellTooltip:SetPoint("TOPRIGHT", debuffItems[i], "TOPLEFT", -1, 0)
                     CellSpellTooltip:SetSpellByID(self.spellId, icon)
@@ -442,9 +442,9 @@ local function ShowUtilitySettings(which)
         if not init then
             CreateDRPane()
         end
-        
+
         drPane:Show()
-        
+
         if init then return end
         init = true
 

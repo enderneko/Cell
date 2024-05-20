@@ -28,7 +28,7 @@ function F:CreateUtilityList(anchor)
     Cell:StylizeFrame(listFrame, {0,1,0,0.1}, {0,0,0,1})
     listFrame:SetPoint("TOPLEFT", anchor, "TOPRIGHT", 1, 0)
     listFrame:Hide()
-    
+
     Cell:StylizeFrame(listFrame, nil, Cell:GetAccentColorTable())
 
     -- update width to show full text
@@ -42,12 +42,12 @@ function F:CreateUtilityList(anchor)
     buttons["raidTools"].id = "raidTools"
     buttons["raidTools"]:SetPoint("TOPLEFT")
     buttons["raidTools"]:SetPoint("TOPRIGHT")
-    
+
     buttons["spellRequest"] = Cell:CreateButton(listFrame, L["Spell Request"], "transparent-accent", {20, 20}, true)
     buttons["spellRequest"].id = "spellRequest"
     buttons["spellRequest"]:SetPoint("TOPLEFT", buttons["raidTools"], "BOTTOMLEFT")
     buttons["spellRequest"]:SetPoint("TOPRIGHT", buttons["raidTools"], "BOTTOMRIGHT")
-    
+
     buttons["dispelRequest"] = Cell:CreateButton(listFrame, L["Dispel Request"], "transparent-accent", {20, 20}, true)
     buttons["dispelRequest"].id = "dispelRequest"
     buttons["dispelRequest"]:SetPoint("TOPLEFT", buttons["spellRequest"], "BOTTOMLEFT")
@@ -80,7 +80,7 @@ end
 function F:ShowUtilityList()
     listFrame:SetFrameStrata("TOOLTIP")
     listFrame:Show()
-end 
+end
 
 function F:HideUtilityList()
     if listFrame then listFrame:Hide() end

@@ -107,13 +107,13 @@ end
 function A:ApplyFadeInOutToParent(parent, condition, ...)
     for _, f in pairs({...}) do
         f:SetHitRectInsets(-2, -2, -2, -2)
-        
+
         f:HookScript("OnEnter", function()
             if condition() then
                 A:FrameFadeIn(parent, 0.25, parent:GetAlpha(), 1)
             end
         end)
-        
+
         f:HookScript("OnLeave", function()
             if condition() then
                 A:FrameFadeOut(parent, 0.25, parent:GetAlpha(), 0)
@@ -133,7 +133,7 @@ function A:CreateFadeIn(frame, fromAlpha, toAlpha, duration, delay, onFinished)
     fadeIn.alpha:SetToAlpha(toAlpha)
     fadeIn.alpha:SetDuration(duration)
     if delay then fadeIn.alpha:SetStartDelay(delay) end
-    
+
     fadeIn:SetScript("OnPlay", function()
         if frame.fadeOut then
             frame.fadeOut:Stop()
@@ -199,12 +199,12 @@ function A:ApplyFadeInOutToMenu(anchorFrame, hoverFrame)
         fadedIn = true
         fadedOut = false
         anchorFrame:SetAlpha(1)
-    
+
         if CellDB["general"]["fadeOut"] and not hoverFrame:IsMouseOver() then
             anchorFrame.fadeOut:Play()
         end
     end)
-    
+
     anchorFrame.fadeOut = anchorFrame:CreateAnimationGroup()
     anchorFrame.fadeOut.alpha = anchorFrame.fadeOut:CreateAnimation("alpha")
     anchorFrame.fadeOut.alpha:SetFromAlpha(1)
@@ -221,12 +221,12 @@ function A:ApplyFadeInOutToMenu(anchorFrame, hoverFrame)
         fadedIn = false
         fadedOut = true
         anchorFrame:SetAlpha(0)
-    
+
         if hoverFrame:IsMouseOver() then
             anchorFrame.fadeIn:Play()
         end
     end)
-    
+
     hoverFrame:SetScript("OnEnter", function()
         if not CellDB["general"]["fadeOut"] then return end
         if not (fadingIn or fadedIn) then

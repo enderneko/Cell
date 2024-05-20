@@ -68,7 +68,7 @@ local function CreatePreviewButton()
         x = Round(x / CellDB["indicatorPreviewScale"])
         previewButton:SetPoint("TOPLEFT", indicatorsTab, "TOPRIGHT", x, y)
     end
-    
+
     local previewText = previewButtonBG:CreateFontString(nil, "OVERLAY", "CELL_FONT_CLASS_TITLE")
     previewText:SetPoint("TOP", 0, -3)
     previewText:SetText(L["Preview"])
@@ -108,14 +108,14 @@ local function UpdatePreviewButton()
     B:SetPowerSize(previewButton, currentLayoutTable["main"]["powerSize"])
 
     previewButton:UpdatePoint()
-    
+
     previewButton.widgets.healthBar:SetStatusBarTexture(Cell.vars.texture)
     previewButton.widgets.powerBar:SetStatusBarTexture(Cell.vars.texture)
 
     -- health color
     local r, g, b = F:GetHealthBarColor(1, false, F:GetClassColor(Cell.vars.playerClass))
     previewButton.widgets.healthBar:SetStatusBarColor(r, g, b, CellDB["appearance"]["barAlpha"])
-    
+
     -- power color
     r, g, b = F:GetPowerBarColor("player", Cell.vars.playerClass)
     previewButton.widgets.powerBar:SetStatusBarColor(r, g, b)
@@ -237,7 +237,7 @@ local function InitIndicator(indicatorName)
                 indicator:SetRole(indicator.roles[indicator.role])
             end
         end)
-  
+
     elseif indicatorName == "partyAssignmentIcon" then
         -- texture type cannot glow by LCG
         indicator.preview = indicator.preview or CreateFrame("Frame", nil, previewButton)
@@ -253,13 +253,13 @@ local function InitIndicator(indicatorName)
                 indicator:SetTexture(indicator.roles[indicator.role])
             end
         end)
-        
+
     elseif indicatorName == "leaderIcon" then
         indicator:SetTexture("Interface\\GroupFrame\\UI-Group-LeaderIcon")
         -- texture type cannot glow by LCG
         indicator.preview = indicator.preview or CreateFrame("Frame", nil, previewButton)
         indicator.preview:SetAllPoints(indicator)
-        
+
     elseif indicatorName == "readyCheckIcon" then
         local status = {"ready", "notready", "waiting"}
         indicator:SetScript("OnShow", function()
@@ -346,7 +346,7 @@ local function InitIndicator(indicatorName)
         for i = 1, 10 do
             SetOnUpdate(indicator[i], types[i], icons[i], i)
         end
-        
+
     elseif indicatorName == "dispels" then
         indicator.isDispels = true
 
@@ -362,9 +362,9 @@ local function InitIndicator(indicatorName)
         indicator.SetDispels = function(self, dispelTypes)
             local r, g, b = 0, 0, 0
             local found
-        
+
             self.highlight:Hide()
-        
+
             local i = 1
             for dispelType, showHighlight in pairs(dispelTypes) do
                 -- highlight
@@ -386,9 +386,9 @@ local function InitIndicator(indicatorName)
                     i = i + 1
                 end
             end
-        
+
             self:UpdateSize(i)
-        
+
             -- hide unused
             for j = i, 5 do
                 self[j]:Hide()
@@ -397,7 +397,7 @@ local function InitIndicator(indicatorName)
 
         indicator.UpdateHighlight = function(self, highlightType)
             indicator.highlightType = highlightType
-    
+
             if highlightType == "none" then
                 indicator.highlight:Hide()
             elseif highlightType == "gradient" then
@@ -473,7 +473,7 @@ local function InitIndicator(indicatorName)
         indicator.cooldown:SetReverse(true)
         indicator.cooldown:SetDrawEdge(false)
         indicator.cooldown:SetDrawBling(false)
-        
+
         local timer
         indicator:HookScript("OnShow", function()
             if timer then timer:Cancel() end
@@ -505,9 +505,9 @@ local function InitIndicator(indicatorName)
     elseif indicatorName == "crowdControls" then
         indicator.isCrowdControls = true
         local spells = {
-            {"Magic", "Interface\\Icons\\spell_nature_polymorph"}, 
-            {"Magic", "Interface\\Icons\\spell_shadow_psychicscream"}, 
-            {"", "Interface\\Icons\\spell_nature_earthbind"}, 
+            {"Magic", "Interface\\Icons\\spell_nature_polymorph"},
+            {"Magic", "Interface\\Icons\\spell_shadow_psychicscream"},
+            {"", "Interface\\Icons\\spell_nature_earthbind"},
         }
         for i = 1, 3 do
             indicator[i]:HookScript("OnShow", function()
@@ -1111,7 +1111,7 @@ local function UpdateSyncedLayouts()
 
     wipe(masters)
     wipe(slaves)
-    
+
     for layout, t in pairs(CellDB["layouts"]) do
         local master = t["syncWith"]
         if master then
@@ -1200,12 +1200,12 @@ LoadSyncDropdown = function()
             end
         end
         table.sort(indices)
-        
+
         -- NOTE: if current is not default, and default is not a slave
         if currentLayout ~= "default" and not slaves["default"] then
             tinsert(indices, 1, "default")
         end
-        
+
         -- make items
         local items = {}
         for _, layout in ipairs(indices) do
@@ -1230,7 +1230,7 @@ LoadSyncDropdown = function()
                 end
             })
         end
-   
+
         -- add "none"
         tinsert(items, 1, {
             ["text"] = L["None"],
@@ -1274,11 +1274,11 @@ local function CreateSyncPane()
     Cell:StylizeFrame(syncStatus, nil, Cell:GetAccentColorTable())
     syncStatus:SetSize(150, 30)
     syncStatus:SetPoint("TOPRIGHT", syncPane, "TOPLEFT", -10, 3)
-    
+
     syncStatus.title = syncStatus:CreateFontString(nil, "OVERLAY", "CELL_FONT_CLASS_TITLE")
     syncStatus.title:SetText(L["Sync Status"])
     syncStatus.title:SetPoint("BOTTOMLEFT", syncStatus, "TOPLEFT", 5, -18)
-    
+
     syncStatus.text = syncStatus:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
     syncStatus.text:SetPoint("TOPLEFT", syncStatus.title, "BOTTOMLEFT", 5, -5)
     syncStatus.text:SetJustifyH("LEFT")
@@ -1358,7 +1358,7 @@ local function CreateListPane()
     listFrame:SetPoint("TOPLEFT", 0, -25)
     listFrame:SetPoint("BOTTOMRIGHT", 0, 43)
     listFrame:Show()
-    
+
     Cell:CreateScrollFrame(listFrame)
     listFrame.scrollFrame:SetScrollStep(19)
 
@@ -1371,7 +1371,7 @@ local function CreateListPane()
             local name = strtrim(self.editBox:GetText())
             local indicatorName
             local indicatorType, indicatorAuraType = self.dropdown1:GetSelected(), self.dropdown2:GetSelected()
-            
+
             local last = #currentLayoutTable["indicators"]
             if currentLayoutTable["indicators"][last]["type"] == "built-in" then
                 indicatorName = "indicator1"
@@ -1472,7 +1472,7 @@ local function CreateSettingsPane()
     settingsFrame:SetPoint("TOPLEFT", 0, P:Scale(-25))
     settingsFrame:SetPoint("BOTTOMRIGHT")
     settingsFrame:Show()
-    
+
     Cell:CreateScrollFrame(settingsFrame)
     settingsFrame.scrollFrame:SetScrollStep(50)
 end
@@ -1632,13 +1632,13 @@ local function ShowIndicatorSettings(id)
         elseif indicatorType == "overlay" then
             settingsTable = {"enabled", "auras", "overlayColors", "checkbutton3:smooth", "barOrientation", "frameLevel"}
         end
-       
+
         if indicatorTable["auraType"] == "buff" then
             tinsert(settingsTable, 2, "castBy")
             tinsert(settingsTable, 3, "checkbutton2:trackByName")
             -- tinsert(settingsTable, 4, "showOn")
         end
-       
+
         -- tips
         if indicatorType == "icons" or indicatorType == "glow" then
             tinsert(settingsTable, 1, "|cffb7b7b7"..L["The spells list of a icons indicator is unordered (no priority)."].." "..L["Indicator settings are part of Layout settings which are account-wide."])
@@ -1648,7 +1648,7 @@ local function ShowIndicatorSettings(id)
     end
 
     local widgets = Cell:CreateIndicatorSettings(settingsFrame.scrollFrame.content, settingsTable)
-    
+
     local last
     for i, w in pairs(widgets) do
         if last then
@@ -1660,7 +1660,7 @@ local function ShowIndicatorSettings(id)
         last = w
 
         local currentSetting = settingsTable[i]
-        
+
         --! convert currentSetting to ACTUAL TABLE INDEX
         if currentSetting == "color-alpha" or currentSetting == "color-class" or currentSetting == "color-power" then currentSetting = "color" end
         if currentSetting == "customColors" or currentSetting == "overlayColors" then currentSetting = "colors" end
@@ -1669,7 +1669,7 @@ local function ShowIndicatorSettings(id)
         if currentSetting == "barOrientation" then currentSetting = "orientation" end
         if currentSetting == "durationVisibility" then currentSetting = "showDuration" end
         if currentSetting == "healthFormat" or currentSetting == "powerFormat" then currentSetting = "format" end
-        
+
         -- enabled
         if currentSetting == "enabled" then
             w:SetDBValue(indicatorTable[currentSetting])
@@ -1721,7 +1721,7 @@ local function ShowIndicatorSettings(id)
                 -- NOTE: already changed in widget
                 Cell:Fire("UpdateIndicators", notifiedLayout, indicatorName, "auras", indicatorTable["auraType"], value)
             end)
-        
+
         -- debuffBlacklist
         elseif currentSetting == "debuffBlacklist" then
             w:SetDBValue(L["Debuff Filter (blacklist)"], CellDB["debuffBlacklist"], true)
@@ -1840,7 +1840,7 @@ local function ShowIndicatorSettings(id)
                 Cell.vars.targetedSpellsGlow = CellDB["targetedSpellsGlow"]
                 CellIndicatorsPreviewButton.indicators.targetedSpells:ShowGlowPreview()
             end)
-        
+
         -- glowOptions
         elseif currentSetting == "glowOptions" then
             w:SetDBValue(indicatorTable["glowOptions"], true)
@@ -1880,7 +1880,7 @@ local function ShowIndicatorSettings(id)
                 indicatorTable["num"] = value
                 Cell:Fire("UpdateIndicators", notifiedLayout, indicatorName, "num", value)
             end)
-       
+
         -- numPerLine:X
         elseif string.find(currentSetting, "^numPerLine:") then
             w:SetDBValue(indicatorTable["numPerLine"], tonumber(select(2,string.split(":", currentSetting))))
@@ -1896,7 +1896,7 @@ local function ShowIndicatorSettings(id)
                 -- NOTE: already changed in widget
                 Cell:Fire("UpdateIndicators", notifiedLayout, indicatorName, "missingBuffsFilters")
             end)
-        
+
         -- targetCounterFilters
         elseif currentSetting == "targetCounterFilters" then
             w:SetDBValue(indicatorTable["filters"])
@@ -1904,7 +1904,7 @@ local function ShowIndicatorSettings(id)
                 -- NOTE: already changed in widget
                 Cell:Fire("UpdateIndicators", notifiedLayout, indicatorName, "targetCounterFilters")
             end)
-        
+
         -- common
         else
             w:SetDBValue(indicatorTable[currentSetting])
@@ -1957,7 +1957,7 @@ LoadIndicatorList = function()
         end
         tinsert(listButtons, b)
         b.id = i
-            
+
         -- show enabled/disabled status
         if t["enabled"] then
             b:SetTextColor(1, 1, 1, 1)
@@ -2062,7 +2062,7 @@ local function ShowTab(tab)
             CreatePreviewButton()
             CreateLayoutPane()
             CreateSyncPane()
-            CreateListPane()     
+            CreateListPane()
             CreateSettingsPane()
             -- texplore(masters)
             previewAlphaSlider:SetValue(CellDB["indicatorPreviewAlpha"])
@@ -2072,7 +2072,7 @@ local function ShowTab(tab)
 
         LoadLayoutDropdown()
         indicatorsTab:Show()
-        
+
         local noUpdateIndicators = currentLayout == Cell.vars.currentLayout
         currentLayout = Cell.vars.currentLayout
         currentLayoutTable = Cell.vars.currentLayoutTable
@@ -2081,7 +2081,7 @@ local function ShowTab(tab)
 
         UpdatePreviewButton()
         UpdateIndicators()
-        
+
         layoutDropdown:SetSelected(currentLayout == "default" and _G.DEFAULT or currentLayout)
         LoadIndicatorList()
         listButtons[1]:Click()

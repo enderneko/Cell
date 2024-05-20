@@ -43,7 +43,7 @@ cleuFrame:SetScript("OnEvent", function()
     elseif subEvent == "SPELL_RESURRECT" then
         local start, duration = GetTime(), 60
         rez[destGUID] = {start, duration}
-    
+
         F:HandleUnitButton("guid", destGUID, I.UpdateStatusIcon_Resurrection, start, duration)
     end
 end)
@@ -72,11 +72,11 @@ function I.CreateStatusIcon(parent)
     function statusIcon:SetAtlas(...)
         statusIcon.tex:SetAtlas(...)
     end
-    
+
     function statusIcon:SetVertexColor(...)
         statusIcon.tex:SetVertexColor(...)
     end
-    
+
     -- resurrection icon ----------------------------------
     local resurrectionIcon = CreateFrame("Frame", parent:GetName().."ResurrectionIcon", parent.widgets.overlayFrame)
     parent.indicators.resurrectionIcon = resurrectionIcon
@@ -88,7 +88,7 @@ function I.CreateStatusIcon(parent)
     resurrectionIcon.tex:SetDesaturated(true)
     resurrectionIcon.tex:SetVertexColor(0.4, 0.4, 0.4, 0.5)
     resurrectionIcon.tex:SetTexture("Interface\\RaidFrame\\Raid-Icon-Rez")
-    
+
     local bar = CreateFrame("StatusBar", nil, resurrectionIcon)
     bar:SetAllPoints(resurrectionIcon)
     bar:SetOrientation("VERTICAL")
@@ -103,19 +103,19 @@ function I.CreateStatusIcon(parent)
         end
         bar.elapsedTime = bar.elapsedTime + elapsed
     end)
-    
+
     local mask = resurrectionIcon:CreateMaskTexture()
     mask:SetTexture("Interface\\Buttons\\WHITE8x8", "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
     mask:SetPoint("TOPLEFT", bar:GetStatusBarTexture(), "BOTTOMLEFT")
     mask:SetPoint("BOTTOMRIGHT")
-    
+
     local maskIcon = bar:CreateTexture(nil, "ARTWORK")
     maskIcon:SetAllPoints(resurrectionIcon)
     maskIcon:SetTexture("Interface\\RaidFrame\\Raid-Icon-Rez")
     maskIcon:AddMaskTexture(mask)
-    
+
     function resurrectionIcon:SetTimer(start, duration)
-        resurrectionIcon:Hide() -- pause OnUpdate 
+        resurrectionIcon:Hide() -- pause OnUpdate
         bar:SetMinMaxValues(0, duration + 13) -- NOTE: texture gap (texcoord 0,1,0,1)
         bar:SetValue(GetTime()-start)
         resurrectionIcon:Show()
@@ -128,7 +128,7 @@ function I.CreateStatusIcon(parent)
         end
     end)
     -------------------------------------------------------
-    
+
     statusIcon._SetFrameLevel = statusIcon.SetFrameLevel
     function statusIcon:SetFrameLevel(level)
         statusIcon:_SetFrameLevel(level)
@@ -186,12 +186,12 @@ if Cell.isRetail then
     function I.UpdateStatusIcon(button)
         local unit = button.states.unit
         if not unit then return end
-        
+
         -- https://wow.gamepedia.com/API_UnitPhaseReason
         local phaseReason = UnitPhaseReason(unit)
-        
+
         local icon = button.indicators.statusIcon
-        
+
         -- Interface\FrameXML\CompactUnitFrame.lua, CompactUnitFrame_UpdateCenterStatusIcon
         if UnitInOtherParty(unit) then
             icon:SetVertexColor(1, 1, 1, 1)
@@ -260,9 +260,9 @@ else
     function I.UpdateStatusIcon(button)
         local unit = button.states.unit
         if not unit then return end
-        
+
         local icon = button.indicators.statusIcon
-    
+
         -- Interface\FrameXML\CompactUnitFrame.lua, CompactUnitFrame_UpdateCenterStatusIcon
         if UnitInOtherParty(unit) then
             icon:SetVertexColor(1, 1, 1, 1)

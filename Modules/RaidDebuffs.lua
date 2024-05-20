@@ -65,7 +65,7 @@ local function LoadBossList(instanceId, list)
         if not name or not id then
             break
         end
-        
+
         -- id, name, description, displayInfo, iconImage, uiModelSceneID = EJ_GetCreatureInfo(index [, encounterID])
         local image = select(5, EJ_GetCreatureInfo(1, id))
         tinsert(list, {["name"]=name, ["id"]=id, ["image"]=image})
@@ -138,7 +138,7 @@ local function LoadDungeonsForCurrentSeason()
 
         -- overwrite instanceNameMapping
         instanceNameMapping[name] = "Current Season"..":"..i..":"..journalInstanceID
-        
+
         LoadBossList(journalInstanceID, instanceTable["bosses"])
     end
 end
@@ -217,7 +217,7 @@ local function LoadBuiltIn(instanceId, bossId, bossTable)
             else
                 F:TInsert(loadedDebuffs[instanceId][bossId]["enabled"], {["id"]=spellId, ["order"]=#loadedDebuffs[instanceId][bossId]["enabled"]+1, ["condition"]={"None"}, ["built-in"]=true})
             end
-        else 
+        else
             -- NOTE: exists in both CellDB and built-in, mark it as built-in (not deletable)
             local found
             -- find in loadedDebuffs
@@ -408,7 +408,7 @@ local function CreateWidgets()
     -- showCurrentBtn:SetPoint("TOPRIGHT", -5, -7)
     showCurrentBtn:SetPoint("TOPRIGHT", helpBtn, "TOPLEFT", P:Scale(-5), 0)
     showCurrentBtn:SetTexture("DungeonSkull", {18, 18}, {"CENTER", 0, 0}, true)
-    
+
     showCurrentBtn:SetScript("OnClick", function()
         if IsInInstance() then
             OpenInstanceBoss(GetInstanceInfo())
@@ -472,7 +472,7 @@ local function CreateInstanceFrame()
     imageFrame.bg = imageFrame:CreateTexture(nil, "BACKGROUND")
     imageFrame.bg:SetTexture("Interface\\Buttons\\WHITE8x8")
     imageFrame.bg:SetGradient("HORIZONTAL", CreateColor(0.1, 0.1, 0.1, 0), CreateColor(0.1, 0.1, 0.1, 1))
-    
+
     imageFrame.tex = imageFrame:CreateTexture(nil, "ARTWORK")
     imageFrame.tex:SetSize(121, 64)
     imageFrame.tex:SetPoint("TOPRIGHT", -1, -1)
@@ -483,17 +483,17 @@ local function CreateInstanceFrame()
 
     imageFrame.bg:SetPoint("TOPLEFT", imageFrame, -2, 0)
     imageFrame.bg:SetPoint("BOTTOMRIGHT", instanceNameText, 0, -1)
-    
+
     ShowInstanceImage = function(image, b)
         imageFrame.tex:SetTexture(image)
         imageFrame.tex:SetTexCoord(0.015, 0.666, 0.03, 0.72)
         instanceNameText:SetText(b:GetFontString():GetText())
-       
+
         imageFrame:ClearAllPoints()
         imageFrame:SetPoint("BOTTOMRIGHT", b, "BOTTOMLEFT", -5, 2)
         imageFrame:Show()
     end
-    
+
     HideInstanceImage = function()
         imageFrame:Hide()
     end
@@ -511,7 +511,7 @@ ShowInstances = function(eName)
         end
 
         instanceButtons[i].id = iTable["id"].."-"..i -- send instanceId-instanceIndex to ShowBosses
-        
+
         -- open encounter journal
         instanceButtons[i]:SetScript("OnDoubleClick", function()
             OpenEncounterJournal(iTable["id"])
@@ -592,7 +592,7 @@ local function CreateBossesFrame()
     imageFrame.bg:SetTexture("Interface\\Buttons\\WHITE8x8")
     imageFrame.bg:SetGradient("HORIZONTAL", CreateColor(0.1, 0.1, 0.1, 0), CreateColor(0.1, 0.1, 0.1, 1))
     -- imageFrame.bg:SetAllPoints(imageFrame)
-    
+
     imageFrame.tex = imageFrame:CreateTexture(nil, "ARTWORK")
     imageFrame.tex:SetSize(128, 64)
     imageFrame.tex:SetPoint("TOPRIGHT")
@@ -603,7 +603,7 @@ local function CreateBossesFrame()
 
     imageFrame.bg:SetPoint("TOPLEFT", imageFrame, -2, 0)
     imageFrame.bg:SetPoint("BOTTOMRIGHT", bossNameText, 0, -1)
-    
+
     ShowBossImage = function(image, b)
         imageFrame.tex:SetTexture(image)
         bossNameText:SetText(b:GetFontString():GetText())
@@ -612,7 +612,7 @@ local function CreateBossesFrame()
         imageFrame:SetPoint("BOTTOMRIGHT", b, "BOTTOMLEFT", -5, 0)
         imageFrame:Show()
     end
-    
+
     HideBossImage = function()
         imageFrame:Hide()
     end
@@ -633,7 +633,7 @@ ShowBosses = function(instanceId, forceRefresh)
         bossButtons[0]:SetPoint("RIGHT")
     end
     bossButtons[0].id = iId
-    
+
     -- bosses
     for i, bTable in pairs(encounterJournalList[loadedExpansion][iIndex]["bosses"]) do
         if not bossButtons[i] then
@@ -721,7 +721,7 @@ ShowBosses = function(instanceId, forceRefresh)
 
     -- show General by default
     if forceRefresh then
-        -- if general is already shown        
+        -- if general is already shown
         if loadedBoss == iId then
             ShowDebuffs(iId, 1)
         else
@@ -770,7 +770,7 @@ local function CreateDebuffsFrame()
                     end
                 end
             end
-    
+
             -- update db
             if not CellDB["raidDebuffs"][loadedInstance] then CellDB["raidDebuffs"][loadedInstance] = {} end
             if isGeneral then
@@ -802,13 +802,13 @@ local function CreateDebuffsFrame()
                 CellSpellTooltip:Hide()
                 return
             end
-    
+
             local name, _, icon = GetSpellInfo(spellId)
             if not name then
                 CellSpellTooltip:Hide()
                 return
             end
-            
+
             CellSpellTooltip:SetOwner(popup, "ANCHOR_NONE")
             CellSpellTooltip:SetPoint("TOPLEFT", popup, "BOTTOMLEFT", 0, -1)
             CellSpellTooltip:SetSpellByID(spellId, icon)
@@ -816,7 +816,7 @@ local function CreateDebuffsFrame()
         end)
         popup:SetPoint("TOPLEFT", 117, -170)
     end)
-    
+
     delete = Cell:CreateButton(debuffsTab, L["Delete"], "accent-hover", {66, 20})
     delete:SetPoint("LEFT", create, "RIGHT", 5, 0)
     delete:SetEnabled(false)
@@ -1039,7 +1039,7 @@ local function CreateDebuffButton(i, sTable)
         debuffButtons[i]:GetFontString():SetPoint("LEFT", debuffButtons[i].icon, "RIGHT", 2, 0)
         debuffButtons[i]:GetFontString():SetPoint("RIGHT", -2, 0)
     end
-    
+
     debuffButtons[i]:Show()
 
     local name, _, icon = GetSpellInfo(sTable["id"])
@@ -1083,7 +1083,7 @@ end
 
 ShowDebuffs = function(bossId, buttonIndex)
     local bId, _ = F:SplitToNumber("-", bossId)
-    
+
     if loadedBoss == bId and not buttonIndex then return end
     loadedBoss = bId
 
@@ -1095,7 +1095,7 @@ ShowDebuffs = function(bossId, buttonIndex)
     delete:SetEnabled(false)
 
     debuffListFrame.scrollFrame:ResetScroll()
-    
+
     isGeneral = bId == loadedInstance
 
     currentBossTable = nil
@@ -1120,7 +1120,7 @@ ShowDebuffs = function(bossId, buttonIndex)
             CreateDebuffButton(n, sTable)
         end
     end
-    
+
     -- update scrollFrame content height
     debuffListFrame.scrollFrame:SetContentHeight(20, n, -1)
 
@@ -1197,7 +1197,7 @@ local function CreatePreviewButton()
     fadeOut:SetScript("OnPlay", function()
         if previewButton.fadeIn:IsPlaying() then
             previewButton.fadeIn:Stop()
-        end        
+        end
     end)
     previewButton.fadeOut:SetScript("OnFinished", function()
         previewButton:Hide()
@@ -1235,7 +1235,7 @@ local function UpdatePreviewButton()
     -- health color
     local r, g, b = F:GetHealthBarColor(1, false, F:GetClassColor(Cell.vars.playerClass))
     previewButton.widgets.healthBar:SetStatusBarColor(r, g, b, CellDB["appearance"]["barAlpha"])
-    
+
     -- power color
     r, g, b = F:GetPowerBarColor("player", Cell.vars.playerClass)
     previewButton.widgets.powerBar:SetStatusBarColor(r, g, b)
@@ -1263,7 +1263,7 @@ local function CreateDetailsFrame()
     detailsFrame:SetPoint("TOPLEFT", debuffListFrame, "TOPRIGHT", 5, 0)
     detailsFrame:SetPoint("BOTTOMRIGHT", -5, 24)
     detailsFrame:Show()
-    
+
     local isMouseOver
     detailsFrame:SetScript("OnUpdate", function()
         if detailsFrame:IsMouseOver() then
@@ -1278,38 +1278,38 @@ local function CreateDetailsFrame()
             end
         end
     end)
-    
+
     Cell:CreateScrollFrame(detailsFrame)
-    
+
     local detailsContentFrame = detailsFrame.scrollFrame.content
     -- local detailsContentFrame = CreateFrame("Frame", "RaidDebuffsTab_DebuffDetailsContent", detailsFrame)
     -- detailsContentFrame:SetAllPoints(detailsFrame)
-    
+
     -- spell icon
     local spellIconBG = detailsContentFrame:CreateTexture(nil, "ARTWORK")
     spellIconBG:SetSize(27, 27)
     spellIconBG:SetDrawLayer("ARTWORK", 6)
     spellIconBG:SetPoint("TOPLEFT", 5, -5)
     spellIconBG:SetColorTexture(0, 0, 0, 1)
-    
+
     spellIcon = detailsContentFrame:CreateTexture(nil, "ARTWORK")
     spellIcon:SetDrawLayer("ARTWORK", 7)
     spellIcon:SetTexCoord(0.08, 0.92, 0.08, 0.92)
     spellIcon:SetPoint("TOPLEFT", spellIconBG, 1, -1)
     spellIcon:SetPoint("BOTTOMRIGHT", spellIconBG, -1, 1)
-    
+
     -- spell name & id
     spellNameText = detailsContentFrame:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
     spellNameText:SetPoint("TOPLEFT", spellIconBG, "TOPRIGHT", 2, 0)
     spellNameText:SetPoint("RIGHT", -1, 0)
     spellNameText:SetJustifyH("LEFT")
     spellNameText:SetWordWrap(false)
-    
+
     spellIdText = detailsContentFrame:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
     spellIdText:SetPoint("BOTTOMLEFT", spellIconBG, "BOTTOMRIGHT", 2, 0)
     spellIdText:SetPoint("RIGHT")
     spellIdText:SetJustifyH("LEFT")
-    
+
     -- enable
     enabledCB = Cell:CreateCheckButton(detailsContentFrame, L["Enabled"], function(checked)
         local newOrder = checked and #currentBossTable["enabled"]+1 or 0
@@ -1332,7 +1332,7 @@ local function CreateDetailsFrame()
                 end
             end
         end
-        
+
         -- update loadedDebuffs
         local buttonIndex
         if checked then -- disabled -> enabled
@@ -1352,7 +1352,7 @@ local function CreateDetailsFrame()
             -- button to click
             buttonIndex = #currentBossTable["enabled"] + #currentBossTable["disabled"]
         end
-        
+
         -- update selectedButtonIndex
         -- selectedButtonIndex = buttonIndex
         -- reload
@@ -1365,7 +1365,7 @@ local function CreateDetailsFrame()
         Cell:Fire("RaidDebuffsChanged", instanceIdToName[loadedInstance])
     end)
     enabledCB:SetPoint("TOPLEFT", spellIconBG, "BOTTOMLEFT", 0, -10)
-    
+
     -- track by id
     trackByIdCB = Cell:CreateCheckButton(detailsContentFrame, L["Track by ID"], function(checked)
         -- update db
@@ -1377,16 +1377,16 @@ local function CreateDetailsFrame()
         else
             CellDB["raidDebuffs"][loadedInstance][tIndex][selectedSpellId][2] = checked
         end
-    
+
         -- update loadedDebuffs
         local t = selectedButtonIndex <= #currentBossTable["enabled"] and currentBossTable["enabled"][selectedButtonIndex] or currentBossTable["disabled"][selectedButtonIndex-#currentBossTable["enabled"]]
         t["trackByID"] = checked
-    
+
         -- notify debuff list changed
         Cell:Fire("RaidDebuffsChanged", instanceIdToName[loadedInstance])
     end)
     trackByIdCB:SetPoint("TOPLEFT", enabledCB, "BOTTOMLEFT", 0, -10)
-    
+
     --------------------------------------------------
     -- condition
     --------------------------------------------------
@@ -1690,13 +1690,13 @@ end
 --------------------------------------------------
 UpdateCondition = function(condition)
     local t = selectedButtonIndex <= #currentBossTable["enabled"] and currentBossTable["enabled"][selectedButtonIndex] or currentBossTable["disabled"][selectedButtonIndex-#currentBossTable["enabled"]]
-    
+
     -- update db
     if not CellDB["raidDebuffs"][loadedInstance] then CellDB["raidDebuffs"][loadedInstance] = {} end
     local tIndex = isGeneral and "general" or loadedBoss
     if not CellDB["raidDebuffs"][loadedInstance][tIndex] then CellDB["raidDebuffs"][loadedInstance][tIndex] = {} end
     if not CellDB["raidDebuffs"][loadedInstance][tIndex][selectedSpellId] then
-        CellDB["raidDebuffs"][loadedInstance][tIndex][selectedSpellId] = {t["order"], false, condition} 
+        CellDB["raidDebuffs"][loadedInstance][tIndex][selectedSpellId] = {t["order"], false, condition}
     else
         CellDB["raidDebuffs"][loadedInstance][tIndex][selectedSpellId][3] = condition
     end
@@ -2007,17 +2007,17 @@ end
 local timer
 ShowDetails = function(spell)
     local spellId, buttonIndex = F:SplitToNumber("-", spell)
-    
+
     if selectedSpellId == spellId then return end
     selectedSpellId, selectedButtonIndex = spellId, buttonIndex
-    
+
     -- local name, icon, desc = F:GetSpellInfo(spellId)
     local name, _, icon = GetSpellInfo(spellId)
     if not name then return end
 
     detailsFrame.scrollFrame:ResetScroll()
     detailsFrame.scrollFrame:Show()
-    
+
     selectedSpellIcon = icon
     selectedSpellName = name
 
@@ -2030,10 +2030,10 @@ ShowDetails = function(spell)
     -- timer = C_Timer.NewTimer(0.7, function()
     --     SetSpellDesc(select(3, F:GetSpellInfo(spellId)))
     -- end)
-    
+
     local isEnabled = selectedButtonIndex <= #currentBossTable["enabled"]
     enabledCB:SetChecked(isEnabled)
-    
+
     local spellTable
     if isEnabled then
         spellTable = currentBossTable["enabled"][buttonIndex]
@@ -2043,7 +2043,7 @@ ShowDetails = function(spell)
     trackByIdCB:SetChecked(spellTable["trackByID"])
 
     LoadCondition(spellTable["condition"])
-    
+
     local glowType = spellTable["glowType"] or "None"
     glowTypeDropdown:SetSelected(L[glowType])
 
@@ -2068,7 +2068,7 @@ end
 -------------------------------------------------
 OpenEncounterJournal = function(instanceId)
     if not IsAddOnLoaded("Blizzard_EncounterJournal") then LoadAddOn("Blizzard_EncounterJournal") end
-    
+
     local difficulty
     if IsInInstance() then
         difficulty = select(3,GetInstanceInfo())
@@ -2080,7 +2080,7 @@ OpenEncounterJournal = function(instanceId)
     EJ_ContentTab_Select(EncounterJournal.dungeonsTab:GetID())
     EncounterJournal_DisplayInstance(instanceId)
     EncounterJournal.lastInstance = instanceId
-    
+
     if not EJ_IsValidInstanceDifficulty(difficulty) then
         difficulty = (difficulty==14 and 1) or (difficulty==15 and 2) or (difficulty==16 and 23) or (difficulty==17 and 7) or 0
         if not EJ_IsValidInstanceDifficulty(difficulty) then
@@ -2098,7 +2098,7 @@ end
 function F:GetDebuffList(instanceName)
     local list = {}
     local eName, iIndex, iId = F:SplitToNumber(":", instanceNameMapping[instanceName])
-    
+
     if iId and loadedDebuffs[iId] then
         local n = 0
         -- check general
@@ -2297,7 +2297,7 @@ local init
 local function ShowTab(tab)
     if tab == "debuffs" then
         if not init then
-            init = true    
+            init = true
             CreateWidgets()
             CreateInstanceFrame()
             CreateBossesFrame()
@@ -2307,7 +2307,7 @@ local function ShowTab(tab)
 
         debuffsTab:Show()
         UpdatePreviewButton()
-        
+
         if not loadedExpansion then
             expansionDropdown:SetSelectedItem(2)
             LoadExpansion(tierNames[#tierNames-1])

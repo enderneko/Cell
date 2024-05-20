@@ -5,7 +5,7 @@ local size = 11
 local function UpdateAssignmentIcon(b, event)
     local unit = b.states.unit
     if not unit then return end
-    
+
     if InCombatLockdown() or event == "PLAYER_REGEN_DISABLED" then
         b.widgets.assignmentIcon:Hide()
     else

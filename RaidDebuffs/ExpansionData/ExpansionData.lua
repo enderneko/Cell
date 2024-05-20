@@ -24,7 +24,7 @@ Cell:RegisterCallback("AddonLoaded", "UpdateExpansionData", function()
     elseif Cell.isCata then
         index = 4
     end
-    
+
     for i = 1, #Cell_ExpansionData["expansions"] - index do
         -- print("remove", Cell_ExpansionData.expansions[1])
         -- remove data

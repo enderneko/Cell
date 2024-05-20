@@ -67,7 +67,7 @@ function F:UpdateLayout(layoutGroupType, updateIndicators)
         delayedFrame:RegisterEvent("PLAYER_REGEN_ENABLED")
     else
         F:Debug("|cFF7CFC00F:UpdateLayout(\""..layoutGroupType.."\", "..(updateIndicators and "true" or "false")..")")
-        
+
         if CellDB["layoutAutoSwitch"][Cell.vars.playerClass][Cell.vars.playerSpecID] then
             Cell.vars.layoutAutoSwitchBy = "spec"
             Cell.vars.layoutAutoSwitch = CellDB["layoutAutoSwitch"][Cell.vars.playerClass][Cell.vars.playerSpecID]
@@ -160,7 +160,7 @@ function eventFrame:ADDON_LOADED(arg1)
     if arg1 == addonName then
         -- cellLoaded = true
         eventFrame:UnregisterEvent("ADDON_LOADED")
-        
+
         if type(CellDB) ~= "table" then CellDB = {} end
 
         if type(CellDB["optionsFramePosition"]) ~= "table" then CellDB["optionsFramePosition"] = {} end
@@ -169,7 +169,7 @@ function eventFrame:ADDON_LOADED(arg1)
         if type(CellDB["indicatorPreviewScale"]) ~= "number" then CellDB["indicatorPreviewScale"] = 1 end
 
         if type(CellDB["customTextures"]) ~= "table" then CellDB["customTextures"] = {} end
-        
+
         if type(CellDB["snippets"]) ~= "table" then CellDB["snippets"] = {} end
         if not CellDB["snippets"][0] then CellDB["snippets"][0] = F:GetDefaultSnippet() end
 
@@ -223,7 +223,7 @@ function eventFrame:ADDON_LOADED(arg1)
         if type(CellDB["spellRequest"]) ~= "table" then
             local POWER_INFUSION, _, POWER_INFUSION_ICON = GetSpellInfo(10060)
             local INNERVATE, _, INNERVATE_ICON = GetSpellInfo(29166)
-            
+
             CellDB["spellRequest"] = {
                 ["enabled"] = false,
                 ["checkIfExists"] = true,
@@ -242,7 +242,7 @@ function eventFrame:ADDON_LOADED(arg1)
                     0, -- [6] y
                 },
                 ["spells"] = {
-                    { 
+                    {
                         ["spellId"] = 10060,
                         ["buffId"] = 10060,
                         ["keywords"] = POWER_INFUSION,
@@ -263,7 +263,7 @@ function eventFrame:ADDON_LOADED(arg1)
                         },
                         ["isBuiltIn"] = true
                     },
-                    { 
+                    {
                         ["spellId"] = 29166,
                         ["buffId"] = 29166,
                         ["keywords"] = INNERVATE,
@@ -299,7 +299,7 @@ function eventFrame:ADDON_LOADED(arg1)
                 ["type"] = "text",
                 ["textOptions"] = {
                     "A",
-                    {1, 0, 0, 1}, -- [1] color 
+                    {1, 0, 0, 1}, -- [1] color
                     32, -- [2] size
                     "TOPLEFT", -- [3] anchor
                     "TOPLEFT", -- [4] anchorTo
@@ -358,7 +358,7 @@ function eventFrame:ADDON_LOADED(arg1)
 
         -- color ---------------------------------------------------------------------------------
         if CellDB["appearance"]["accentColor"] then -- version < r103
-            if CellDB["appearance"]["accentColor"][1] == "custom" then 
+            if CellDB["appearance"]["accentColor"][1] == "custom" then
                 Cell:OverrideAccentColor(CellDB["appearance"]["accentColor"][2])
             end
         end
@@ -378,7 +378,7 @@ function eventFrame:ADDON_LOADED(arg1)
                     {"type2", "togglemenu"},
                 },
             }
-            
+
             -- add resurrections for "common"
             for _, t in pairs(F:GetResurrectionClickCastings(Cell.vars.playerClass)) do
                 tinsert(CellDB["clickCastings"][Cell.vars.playerClass]["common"], t)
@@ -444,13 +444,13 @@ function eventFrame:ADDON_LOADED(arg1)
             CellDB["debuffBlacklist"] = I.GetDefaultDebuffBlacklist()
         end
         Cell.vars.debuffBlacklist = F:ConvertTable(CellDB["debuffBlacklist"])
-        
+
         -- bigDebuffs -----------------------------------------------------------------------------
         if type(CellDB["bigDebuffs"]) ~= "table" then
             CellDB["bigDebuffs"] = I.GetDefaultBigDebuffs()
         end
         Cell.vars.bigDebuffs = F:ConvertTable(CellDB["bigDebuffs"])
-        
+
         -- debuffTypeColor -----------------------------------------------------------------------------
         if type(CellDB["debuffTypeColor"]) ~= "table" then
             I.ResetDebuffTypeColor()
@@ -459,7 +459,7 @@ function eventFrame:ADDON_LOADED(arg1)
         -- defensives/externals -------------------------------------------------------------------
         if type(CellDB["defensives"]) ~= "table" then CellDB["defensives"] = {["disabled"]={}, ["custom"]={}} end
         if type(CellDB["externals"]) ~= "table" then CellDB["externals"] = {["disabled"]={}, ["custom"]={}} end
-        
+
         -- raid debuffs ---------------------------------------------------------------------------
         if type(CellDB["raidDebuffs"]) ~= "table" then CellDB["raidDebuffs"] = {} end
         -- CellDB["raidDebuffs"] = {
@@ -479,13 +479,13 @@ function eventFrame:ADDON_LOADED(arg1)
         -- if type(CellDB["cleuGlow"]) ~= "table" then
         --     CellDB["cleuGlow"] = {"Pixel", {{0, 1, 1, 1}, 9, 0.25, 8, 2}}
         -- end
-        
+
         -- targetedSpells -------------------------------------------------------------------------
         if type(CellDB["targetedSpellsList"]) ~= "table" then
             CellDB["targetedSpellsList"] = I.GetDefaultTargetedSpellsList()
         end
         Cell.vars.targetedSpellsList = F:ConvertTable(CellDB["targetedSpellsList"])
-        
+
         if type(CellDB["targetedSpellsGlow"]) ~= "table" then
             CellDB["targetedSpellsGlow"] = I.GetDefaultTargetedSpellsGlow()
         end
@@ -502,12 +502,12 @@ function eventFrame:ADDON_LOADED(arg1)
 
         -- misc -----------------------------------------------------------------------------------
         Cell.version = GetAddOnMetadata(addonName, "version")
-        Cell.versionNum = tonumber(string.match(Cell.version, "%d+")) 
+        Cell.versionNum = tonumber(string.match(Cell.version, "%d+"))
         if not CellDB["revise"] then CellDB["firstRun"] = true end
         F:Revise()
         F:CheckWhatsNew()
         F:RunSnippets()
-        
+
         -- validation -----------------------------------------------------------------------------
         -- validate layout
         for _, roleOrClass in pairs(CellDB["layoutAutoSwitch"]) do
@@ -567,7 +567,7 @@ function eventFrame:GROUP_ROSTER_UPDATE()
             F:Debug("|cffffbb77GroupTypeChanged:|r raid")
             Cell:Fire("GroupTypeChanged", "raid")
         end
-        
+
         -- reset raid setup
         for _, t in pairs(Cell.vars.raidSetup) do
             for class in pairs(t) do
@@ -578,7 +578,7 @@ function eventFrame:GROUP_ROSTER_UPDATE()
                 end
             end
         end
-        
+
         -- update guid & raid setup
         for i = 1, GetNumGroupMembers() do
             -- update raid setup
@@ -724,7 +724,7 @@ function eventFrame:PLAYER_LOGIN()
     end
 
     Cell.vars.playerGUID = UnitGUID("player")
-    
+
     -- update spec vars
     Cell.vars.playerSpecID, Cell.vars.playerSpecName, _, Cell.vars.playerSpecIcon, Cell.vars.playerSpecRole = GetSpecializationInfo(GetSpecialization())
     if Cell.vars.playerSpecName == "" then
@@ -732,7 +732,7 @@ function eventFrame:PLAYER_LOGIN()
         Cell.vars.playerSpecIcon = 134400
     end
 
-    --! init Cell.vars.currentLayout and Cell.vars.currentLayoutTable 
+    --! init Cell.vars.currentLayout and Cell.vars.currentLayoutTable
     eventFrame:GROUP_ROSTER_UPDATE()
     -- update visibility
     Cell:Fire("UpdateVisibility")
@@ -799,13 +799,13 @@ function eventFrame:ACTIVE_TALENT_GROUP_CHANGED()
         checkSpecFrame:RegisterEvent("PLAYER_REGEN_ENABLED")
         return
     end
-    
+
     --  fires twice
     if timer then timer:Cancel() end
     timer = C_Timer.NewTimer(0.5, function()
         timer = nil
         F:Debug("|cffbbbbbb=== ACTIVE_TALENT_GROUP_CHANGED ===")
-        
+
         -- update spec vars
         Cell.vars.playerSpecID, Cell.vars.playerSpecName, _, Cell.vars.playerSpecIcon, Cell.vars.playerSpecRole = GetSpecializationInfo(GetSpecialization())
 
@@ -875,11 +875,11 @@ function SlashCmdList.CELL(msg, editbox)
         elseif rest == "clickcastings" then
             CellDB["clickCastings"] = nil
             ReloadUI()
-        
+
         elseif rest == "raiddebuffs" then
             CellDB["raidDebuffs"] = nil
             ReloadUI()
-        
+
         elseif rest == "snippets" then
             CellDB["snippets"] = {}
             CellDB["snippets"][0] = F:GetDefaultSnippet()

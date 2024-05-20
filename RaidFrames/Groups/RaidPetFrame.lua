@@ -57,7 +57,7 @@ local function UpdateAnchor()
     if Cell.vars.currentLayoutTable["pet"]["raidEnabled"] then
         show = Cell.unitButtons.raidpet[1]:IsShown()
     end
-    
+
     hoverFrame:EnableMouse(show)
     if show then
         dumb:Show()
@@ -84,7 +84,7 @@ header:SetAttribute("initialConfigFunction", [[
     self:SetAttribute("toggleForVehicle", false)
 
     -- RegisterUnitWatch(self)
-    
+
     -- local header = self:GetParent()
     -- self:SetWidth(header:GetAttribute("buttonWidth") or 66)
     -- self:SetHeight(header:GetAttribute("buttonHeight") or 46)
@@ -100,7 +100,7 @@ header:SetAttribute("_initialAttributeNames", "refreshUnitChange")
 header:SetAttribute("_initialAttribute-refreshUnitChange", [[
     self:GetParent():CallMethod("UpdateButtonUnit", self:GetName(), self:GetAttribute("unit"))
 ]])
-    
+
 header:SetAttribute("template", "CellUnitButtonTemplate")
 header:SetAttribute("point", "TOP")
 header:SetAttribute("columnAnchorPoint", "LEFT")
@@ -145,7 +145,7 @@ local function UpdatePosition()
     else
         anchor = Cell.vars.currentLayoutTable["pet"]["anchor"]
     end
-    
+
     if CellDB["general"]["menuPosition"] == "top_bottom" then
         P:Size(anchorFrame, 20, 10)
         if anchor == "BOTTOMLEFT" then
@@ -208,7 +208,7 @@ local init, previousLayout
 local function RaidPetFrame_UpdateLayout(layout, which)
     if Cell.vars.groupType ~= "raid" and init then return end
     init = true
-    
+
     -- if previousLayout == layout and not which then return end
     -- previousLayout = layout
 
@@ -216,7 +216,7 @@ local function RaidPetFrame_UpdateLayout(layout, which)
 
     if not which or strfind(which, "size$") or strfind(which, "power$") or which == "barOrientation" then
         local width, height, powerSize
-        
+
         if layout["pet"]["sameSizeAsMain"] then
             width, height = unpack(layout["main"]["size"])
             powerSize = layout["main"]["powerSize"]
@@ -239,7 +239,7 @@ local function RaidPetFrame_UpdateLayout(layout, which)
             if not which or which == "barOrientation" then
                 B:SetOrientation(b, layout["barOrientation"][1], layout["barOrientation"][2])
             end
-           
+
             if not which or strfind(which, "power$") or which == "barOrientation" or which == "powerFilter" then
                 B:SetPowerSize(b, powerSize)
             end
@@ -308,7 +308,7 @@ local function RaidPetFrame_UpdateLayout(layout, which)
             header:SetAttribute("xOffset", unitSpacing)
             header:SetAttribute("yOffset", 0)
         end
-        
+
         -- header:ClearAllPoints()
         -- header:SetPoint(point)
         header:SetAttribute("point", headerPoint)
@@ -321,7 +321,7 @@ local function RaidPetFrame_UpdateLayout(layout, which)
         header:SetAttribute("unitsPerColumn", 5)
         header:SetAttribute("maxColumns", 8)
     end
-    
+
     if not which or strfind(which, "arrangement$") then
         UpdatePosition()
     end

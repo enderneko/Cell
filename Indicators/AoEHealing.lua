@@ -53,7 +53,7 @@ function I.CreateAoEHealing(parent)
     aoeHealing.tex = aoeHealing:CreateTexture(nil, "ARTWORK")
     aoeHealing.tex:SetAllPoints(aoeHealing)
     aoeHealing.tex:SetTexture("Interface\\Buttons\\WHITE8x8")
-    
+
     local ag = aoeHealing:CreateAnimationGroup()
     local a1 = ag:CreateAnimation("Alpha")
     a1:SetFromAlpha(0)

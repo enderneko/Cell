@@ -6,7 +6,7 @@ F:IterateAllUnitButtons(function(b)
 
     function nameText:UpdateName()
         local name
-        
+
         -- only check nickname for players
         if b.states.isPlayer then
             if Cell.vars.nicknameCustomEnabled then

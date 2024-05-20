@@ -72,7 +72,7 @@ function npcFrame:UpdateSeparateAnchor()
             if show then break end
         end
     end
-    
+
     hoverFrame:EnableMouse(show)
     if show then
         dumb:Show()
@@ -177,7 +177,7 @@ for i = 1, 8 do
         local point = self:GetAttribute("point")
         local anchorPoint = self:GetAttribute("anchorPoint")
         local unitSpacing = self:GetAttribute("unitSpacing")
-        
+
         local npcFrame = self:GetFrameRef("npcFrame")
         self:RunFor(npcFrame, npcFrame:GetAttribute("pointUpdater"), orientation, point, anchorPoint, unitSpacing)
     ]])
@@ -187,7 +187,7 @@ end
 
 -------------------------------------------------
 -- FIXME: fix health updating boss678
--- ! BLIZZARD, FIX IT! 
+-- ! BLIZZARD, FIX IT!
 -------------------------------------------------
 local boss678_guidToButton = {}
 local boss678_buttonToGuid = {}
@@ -213,11 +213,11 @@ for i = 6, 8 do
 
         boss678_buttonToGuid[i] = guid
         boss678_guidToButton[guid] = button
-        
+
         -- update now
         B.UpdateAll(button)
     end)
-    
+
     button.helper:HookScript("OnHide", function()
         boss678_guidToButton[boss678_buttonToGuid[i] or ""] = nil
         boss678_buttonToGuid[i] = nil
@@ -272,7 +272,7 @@ end
 npcFrame:SetAttribute("_onstate-groupstate", [[
     -- print("groupstate", newstate)
     self:SetAttribute("group", newstate)
-    
+
     local petstate = self:GetAttribute("pet")
     local anchor = self:GetFrameRef(newstate)
     local orientation = self:GetAttribute("orientation")
@@ -287,30 +287,30 @@ npcFrame:SetAttribute("_onstate-groupstate", [[
     if orientation == "vertical" then
         if newstate == "raid" then
             self:SetPoint(point, anchor)
-    
+
         elseif newstate == "party" then
-            -- NOTE: at first time petstate == nil 
+            -- NOTE: at first time petstate == nil
             if petstate == "nopet" then
                 self:SetPoint(point, self:GetFrameRef("solo"), groupAnchorPoint, groupSpacing, 0)
             else
                 self:SetPoint(point, self:GetFrameRef("party"), groupAnchorPoint, groupSpacing, 0)
             end
-    
+
         else -- solo
             self:SetPoint(point, anchor, groupAnchorPoint, groupSpacing, 0)
         end
     else
         if newstate == "raid" then
             self:SetPoint(point, anchor)
-    
+
         elseif newstate == "party" then
-            -- NOTE: at first time petstate == nil 
+            -- NOTE: at first time petstate == nil
             if petstate == "nopet" then
                 self:SetPoint(point, self:GetFrameRef("solo"), groupAnchorPoint, 0, groupSpacing)
             else
                 self:SetPoint(point, self:GetFrameRef("party"), groupAnchorPoint, 0, groupSpacing)
             end
-    
+
         else -- solo
             self:SetPoint(point, anchor, groupAnchorPoint, 0, groupSpacing)
         end
@@ -359,7 +359,7 @@ npcFrame:SetAttribute("_onstate-petstate", [[
 -------------------------------------------------
 local function UpdatePosition()
     local layout = Cell.vars.currentLayoutTable
-    
+
     -- update npcFrame anchor if separate from main
     if layout["npc"]["separate"] then
         npcFrame:ClearAllPoints()
@@ -459,7 +459,7 @@ local function NPCFrame_UpdateLayout(layout, which)
             B:SetOrientation(b, layout["barOrientation"][1], layout["barOrientation"][2])
         end
     end
-    
+
     if not which or strfind(which, "power$") or which == "barOrientation" or which == "powerFilter" then
         for _, b in ipairs(Cell.unitButtons.npc) do
             if layout["npc"]["sameSizeAsMain"] then
@@ -521,14 +521,14 @@ local function NPCFrame_UpdateLayout(layout, which)
                 -- update whole NPCFrame point
                 if groupType == "raid" then
                     npcFrame:SetPoint(point, anchors["raid"])
-    
+
                 elseif groupType == "party" then
                     if npcFrame:GetAttribute("pet") == "nopet" then
                         npcFrame:SetPoint(point, anchors["solo"], groupAnchorPoint, groupSpacing, 0)
                     else
                         npcFrame:SetPoint(point, anchors["party"], groupAnchorPoint, groupSpacing, 0)
                     end
-            
+
                 else -- solo
                     npcFrame:SetPoint(point, anchors["solo"], groupAnchorPoint, groupSpacing, 0)
                 end
@@ -556,14 +556,14 @@ local function NPCFrame_UpdateLayout(layout, which)
                 -- update whole NPCFrame point
                 if groupType == "raid" then
                     npcFrame:SetPoint(point, anchors["raid"])
-    
+
                 elseif groupType == "party" then
                     if npcFrame:GetAttribute("pet") == "nopet" then
                         npcFrame:SetPoint(point, anchors["solo"], groupAnchorPoint, 0, groupSpacing)
                     else
                         npcFrame:SetPoint(point, anchors["party"], groupAnchorPoint, 0, groupSpacing)
                     end
-            
+
                 else -- solo
                     npcFrame:SetPoint(point, anchors["solo"], groupAnchorPoint, 0, groupSpacing)
                 end
@@ -577,7 +577,7 @@ local function NPCFrame_UpdateLayout(layout, which)
         npcFrame:SetAttribute("groupAnchorPoint", groupAnchorPoint)
         npcFrame:SetAttribute("unitSpacing", unitSpacing)
         npcFrame:SetAttribute("groupSpacing", groupSpacing)
-    
+
         local last
         for i = 1, 8 do
             local button = Cell.unitButtons.npc[i]
@@ -585,7 +585,7 @@ local function NPCFrame_UpdateLayout(layout, which)
             button.helper:SetAttribute("point", point)
             button.helper:SetAttribute("anchorPoint", anchorPoint)
             button.helper:SetAttribute("unitSpacing", unitSpacing)
-            
+
             -- update each npc button now
             if button:IsVisible() then
                 button:ClearAllPoints()

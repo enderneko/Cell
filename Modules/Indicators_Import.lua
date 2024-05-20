@@ -26,7 +26,7 @@ local function CreateIndicatorsImportFrame()
     importFrame:SetFrameLevel(Cell.frames.indicatorsTab:GetFrameLevel() + 50)
     Cell:StylizeFrame(importFrame, nil, Cell:GetAccentColorTable())
     importFrame:SetPoint("BOTTOMLEFT", P:Scale(1), 24)
-    
+
     -- title
     title = importFrame:CreateFontString(nil, "OVERLAY", "CELL_FONT_CLASS")
     title:SetPoint("TOPLEFT", 5, -5)
@@ -46,11 +46,11 @@ local function CreateIndicatorsImportFrame()
     importBtn:SetScript("OnClick", function()
         -- lower frame level
         importFrame:SetFrameLevel(Cell.frames.indicatorsTab:GetFrameLevel() + 20)
-    
+
         local text = L["Import"].." > "..Cell:GetAccentColorString()..toLayoutName.."|r\n"
             ..L["This may overwrite built-in indicators"].."\n"
             ..L["|cff1Aff1AYes|r - Overwrite"].."\n|cffff1A1A"..L["No"].."|r - "..L["Cancel"]
-    
+
         local popup = Cell:CreateConfirmPopup(Cell.frames.indicatorsTab, 250, text, function(self)
             local toLayoutTable = CellDB["layouts"][toLayout]
             -- last custom index
@@ -61,7 +61,7 @@ local function CreateIndicatorsImportFrame()
             else
                 lastIndex = tonumber(strmatch(toLayoutTable["indicators"][last]["indicatorName"], "%d+"))
             end
-    
+
             -- local toLayoutTable = { ["indicators"] = {} }
 
             -- indicators
@@ -91,7 +91,7 @@ local function CreateIndicatorsImportFrame()
                 end
 
                 CellDB[k] = v
-                
+
                 if k == "debuffBlacklist" then
                     Cell.vars.debuffBlacklist = F:ConvertTable(CellDB[k])
                 elseif k == "bigDebuffs" then
@@ -122,7 +122,7 @@ local function CreateIndicatorsImportFrame()
             -- fire events
             Cell:Fire("UpdateIndicators", toLayout)
             Cell:Fire("IndicatorsChanged", toLayout)
-    
+
             importFrame:Hide()
         end, function(self)
             importFrame:Hide()
@@ -131,7 +131,7 @@ local function CreateIndicatorsImportFrame()
 
         textArea.eb:ClearFocus()
     end)
-    
+
     local closeBtn = Cell:CreateButton(importFrame, L["Close"], "red", {67, 20})
     closeBtn:SetPoint("BOTTOMLEFT", importBtn, "BOTTOMRIGHT", P:Scale(-1), 0)
     closeBtn:SetScript("OnClick", function()
@@ -144,7 +144,7 @@ local function CreateIndicatorsImportFrame()
         importBtn:SetEnabled(false)
         listFrame.scrollFrame:Reset()
     end
-    
+
     textArea = Cell:CreateScrollEditBox(importFrame, function(eb, userChanged)
         if userChanged then
             listFrame.scrollFrame:Reset()
@@ -153,14 +153,14 @@ local function CreateIndicatorsImportFrame()
             local version, count, data = string.match(text, "^!CELL:(%d+):INDICATOR:(%d+)!(.+)$")
             version = tonumber(version)
             count = tonumber(count)
-    
+
             if version and count and data then
                 if version >= Cell.MIN_INDICATORS_VERSION then
                     local success
                     data = LibDeflate:DecodeForPrint(data) -- decode
                     success, data = pcall(LibDeflate.DecompressDeflate, LibDeflate, data) -- decompress
                     success, data = Serializer:Deserialize(data) -- deserialize
-                    
+
                     if success and data then
                         -- check data
                         local builtIn, custom = 0, 0
@@ -171,18 +171,18 @@ local function CreateIndicatorsImportFrame()
                                 custom = custom + 1
                             end
                         end
-                        
+
                         if builtIn + custom == count then
                             title:SetText(L["Import"].." > "..toLayoutName..": |cff90EE90"..builtIn.." "..L["built-in(s)"].."|r, |cffFFB5C5"..custom.." "..L["custom(s)"].."|r")
                             importBtn:SetEnabled(true)
                             imported = data
-                            
+
                             -- create buttons, update list
                             local last
                             for i, t in pairs(data["indicators"]) do
                                 local b
                                 if t["type"] == "built-in" then
-                                    local color = Cell.defaults.indicatorIndices[t.indicatorName] and "" or "|cff777777" 
+                                    local color = Cell.defaults.indicatorIndices[t.indicatorName] and "" or "|cff777777"
                                     b = Cell:CreateButton(listFrame.scrollFrame.content, color..L[t["name"]], "transparent-accent", {20, 20})
                                 else
                                     b = Cell:CreateButton(listFrame.scrollFrame.content, t["name"], "transparent-accent", {20, 20})
@@ -191,12 +191,12 @@ local function CreateIndicatorsImportFrame()
                                     b.typeIcon:SetSize(16, 16)
                                     b.typeIcon:SetTexture("Interface\\AddOns\\Cell\\Media\\Indicators\\indicator-"..t["type"])
                                     b.typeIcon:SetAlpha(0.5)
-                        
+
                                     b:GetFontString():ClearAllPoints()
                                     b:GetFontString():SetPoint("LEFT", 5, 0)
                                     b:GetFontString():SetPoint("RIGHT", b.typeIcon, "LEFT", -2, 0)
                                 end
-    
+
                                 b:HookScript("OnEnter", function()
                                     if b:GetFontString():IsTruncated() then
                                         CellTooltip:SetOwner(b, "ANCHOR_NONE")
@@ -205,11 +205,11 @@ local function CreateIndicatorsImportFrame()
                                         CellTooltip:Show()
                                     end
                                 end)
-                        
+
                                 b:HookScript("OnLeave", function()
                                     CellTooltip:Hide()
                                 end)
-    
+
                                 b:SetPoint("RIGHT")
                                 if last then
                                     b:SetPoint("TOPLEFT", last, "BOTTOMLEFT", 0, 1)
@@ -236,7 +236,7 @@ local function CreateIndicatorsImportFrame()
     Cell:StylizeFrame(textArea.scrollFrame, {0, 0, 0, 0}, Cell:GetAccentColorTable())
     textArea:SetPoint("TOPLEFT", listFrame, "TOPRIGHT", 5, 0)
     textArea:SetPoint("BOTTOMRIGHT", -5, 5)
-    
+
     -- highlight text
     textArea.eb:SetScript("OnEditFocusGained", function() textArea.eb:HighlightText() end)
     textArea.eb:SetScript("OnMouseUp", function()
@@ -253,7 +253,7 @@ local function CreateIndicatorsImportFrame()
         listFrame.scrollFrame:Reset()
         importBtn:SetEnabled(false)
     end)
-    
+
     importFrame:SetScript("OnShow", function()
         -- raise frame level
         importFrame:SetFrameLevel(Cell.frames.indicatorsTab:GetFrameLevel() + 50)

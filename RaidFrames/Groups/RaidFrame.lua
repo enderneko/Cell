@@ -77,8 +77,8 @@ showSolo = [BOOLEAN] -- true if the header should be shown while not in a group 
 nameList = [STRING] -- a comma separated list of player names (not used if 'groupFilter' is set)
 groupFilter = [1-8, STRING] -- a comma seperated list of raid group numbers and/or uppercase class names and/or uppercase roles
 roleFilter = [STRING] -- a comma seperated list of MT/MA/Tank/Healer/DPS role strings
-strictFiltering = [BOOLEAN] 
--- if true, then 
+strictFiltering = [BOOLEAN]
+-- if true, then
 ---- if only groupFilter is specified then characters must match both a group and a class from the groupFilter list
 ---- if only roleFilter is specified then characters must match at least one of the specified roles
 ---- if both groupFilter and roleFilters are specified then characters must match a group and a class from the groupFilter list and a role from the roleFilter list
@@ -164,7 +164,7 @@ local function CreateGroupHeader(group)
         numDisplayed = loopFinish - (loopStart - 1)
         local needButtons = max(1, numDisplayed); --! to make needButtons == 5
     ]]
-    
+
     --! to make needButtons == 5 cheat configureChildren in SecureGroupHeaders.lua
     header:SetAttribute("startingIndex", -4)
     header:Show()
@@ -176,7 +176,7 @@ local function CreateGroupHeader(group)
 
     -- for npcFrame's point
     raidFrame:SetFrameRef("subgroup"..group, header)
-    
+
     local helper = CreateFrame("Frame", nil, header[1], "SecureHandlerShowHideTemplate")
     helper:SetFrameRef("raidframe", raidFrame)
     raidFrame:SetFrameRef("visibilityHelper"..group, helper)
@@ -332,9 +332,9 @@ local function RaidFrame_UpdateLayout(layout, which)
             arenaPet:Hide()
         end
     end
-    
+
     local point, anchorPoint, groupAnchorPoint, unitSpacing, groupSpacing, unitSpacingX, unitSpacingY, verticalSpacing, horizontalSpacing, headerPoint, headerColumnAnchorPoint = GetPoints(layout)
-    
+
     if not which or which == "main-arrangement" or which == "rows_columns" or which == "groupSpacing" or which == "groupFilter" then
         -- arena pets
         for k in ipairs(arenaPetButtons) do
@@ -357,7 +357,7 @@ local function RaidFrame_UpdateLayout(layout, which)
 
     if layout["main"]["combineGroups"] then
         UpdateHeader(combinedHeader, layout, which)
-        
+
         if not which or which == "header" then
             combinedHeader:SetAttribute("showRaid", true)
             for _, header in ipairs(separatedHeaders) do
@@ -367,7 +367,7 @@ local function RaidFrame_UpdateLayout(layout, which)
 
         if not which or which == "header" or which == "main-arrangement" or which == "rows_columns" or which == "groupSpacing" or which == "unitsPerColumn" then
             combinedHeader:ClearAllPoints()
-            
+
             if layout["main"]["orientation"] == "vertical" then
                 combinedHeader:SetAttribute("columnAnchorPoint", headerColumnAnchorPoint)
                 combinedHeader:SetAttribute("point", headerPoint)
@@ -391,7 +391,7 @@ local function RaidFrame_UpdateLayout(layout, which)
 
             combinedHeader:SetAttribute("unitsPerColumn", layout["main"]["unitsPerColumn"])
             combinedHeader:SetPoint(point)
-    
+
             raidFrame:SetAttribute("spacing", groupSpacing)
             raidFrame:SetAttribute("orientation", layout["main"]["orientation"])
             raidFrame:SetAttribute("anchor", layout["main"]["anchor"])
@@ -414,7 +414,7 @@ local function RaidFrame_UpdateLayout(layout, which)
         if not which or which == "header" or which == "groupFilter" then
             combinedHeader:SetAttribute("groupFilter", F:TableToString(shownGroups, ","))
         end
-    
+
     else
         if not which or which == "header" then
             combinedHeader:SetAttribute("showRaid", nil)
@@ -422,24 +422,24 @@ local function RaidFrame_UpdateLayout(layout, which)
                 header:SetAttribute("showRaid", true)
             end
         end
-        
+
         if not which or which == "header" or which == "main-arrangement" or which == "rows_columns" or which == "groupSpacing" or which == "groupFilter" then
             for i, group in ipairs(shownGroups) do
                 local header = separatedHeaders[group]
                 header:ClearAllPoints()
-        
+
                 if layout["main"]["orientation"] == "vertical" then
                     header:SetAttribute("columnAnchorPoint", headerColumnAnchorPoint)
                     header:SetAttribute("point", headerPoint)
                     header:SetAttribute("xOffset", 0)
                     header:SetAttribute("yOffset", unitSpacing)
-        
+
                     --! force update unitbutton's point
                     for j = 1, 5 do
                         header[j]:ClearAllPoints()
                     end
                     header:SetAttribute("unitsPerColumn", 5)
-                    
+
                     if i == 1 then
                         header:SetPoint(point)
                     else
@@ -454,13 +454,13 @@ local function RaidFrame_UpdateLayout(layout, which)
                     header:SetAttribute("point", headerPoint)
                     header:SetAttribute("xOffset", unitSpacing)
                     header:SetAttribute("yOffset", 0)
-                
+
                     --! force update unitbutton's point
                     for j = 1, 5 do
                         header[j]:ClearAllPoints()
                     end
                     header:SetAttribute("unitsPerColumn", 5)
-                
+
                     if i == 1 then
                         header:SetPoint(point)
                         -- arena pets
@@ -481,7 +481,7 @@ local function RaidFrame_UpdateLayout(layout, which)
                     end
                 end
             end
-        
+
             raidFrame:SetAttribute("spacing", groupSpacing)
             raidFrame:SetAttribute("orientation", layout["main"]["orientation"])
             raidFrame:SetAttribute("anchor", layout["main"]["anchor"])

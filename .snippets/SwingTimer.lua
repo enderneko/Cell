@@ -28,7 +28,7 @@ local function Display(b, sourceGUID)
         b.swingTimer:Display(SOURCE)
         timers[sourceGUID] = b.swingTimer
         b.swingTimer.lock = true
-        
+
     -- if SOURCE not exists then check all nameplates
     elseif not (ONLY_SHOW_SOURCE or b.swingTimer.lock) then
         -- no UnitTokenFromGUID in classic
@@ -58,7 +58,7 @@ F:IterateAllUnitButtons(function(b)
         local speed = UnitAttackSpeed(sourceUnit)
         swingTimer:SetMinMaxValues(0, speed)
         swingTimer:SetValue(speed)
-        
+
         local start = GetTime()
         swingTimer:SetScript("OnUpdate", function()
             local remain = speed-(GetTime()-start)

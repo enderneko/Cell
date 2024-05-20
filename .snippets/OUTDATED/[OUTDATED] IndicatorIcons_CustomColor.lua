@@ -76,11 +76,11 @@ function Cell.iFuncs:ShowCustomIndicators(unitButton, auraType)
             if not indicatorTable["isIcons"] then
                 if indicatorTable["top"][unit]["start"] then
                     unitButton.indicators[indicatorName]:SetCooldown(
-                        indicatorTable["top"][unit]["start"], 
-                        indicatorTable["top"][unit]["duration"], 
-                        indicatorTable["top"][unit]["debuffType"], 
-                        indicatorTable["top"][unit]["texture"], 
-                        indicatorTable["top"][unit]["count"], 
+                        indicatorTable["top"][unit]["start"],
+                        indicatorTable["top"][unit]["duration"],
+                        indicatorTable["top"][unit]["debuffType"],
+                        indicatorTable["top"][unit]["texture"],
+                        indicatorTable["top"][unit]["count"],
                         indicatorTable["top"][unit]["refreshing"])
                     local spellId = indicatorTable["top"][unit]["spellId"]
                     if iconColor[spellId] then

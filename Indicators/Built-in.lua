@@ -23,7 +23,7 @@ end
 
 local function Cooldowns_UpdateSize(self, iconsShown)
     if not (self.width and self.height and self.orientation) then return end -- not init
-    
+
     if iconsShown then -- call from I.UnitButton_UpdateBuffs or preview
         for i = iconsShown + 1, #self do
             self[i]:Hide()
@@ -50,7 +50,7 @@ end
 
 local function Cooldowns_UpdateSize_WithSpacing(self, iconsShown)
     if not (self.width and self.height and self.orientation) then return end -- not init
-    
+
     if iconsShown then -- call from I.UnitButton_UpdateBuffs or preview
         for i = iconsShown + 1, #self do
             self[i]:Hide()
@@ -108,7 +108,7 @@ end
 
 local function Cooldowns_SetOrientation(self, orientation)
     local point1, point2, x, y
-    
+
     if orientation == "left-to-right" then
         point1 = "TOPLEFT"
         point2 = "TOPRIGHT"
@@ -134,7 +134,7 @@ local function Cooldowns_SetOrientation(self, orientation)
         x = 0
         y = -1
     end
-    
+
     for i = 1, #self do
         P:ClearPoints(self[i])
         if i == 1 then
@@ -175,7 +175,7 @@ local function Cooldowns_SetOrientation_WithSpacing(self, orientation)
         x = 0
         y = 1
     end
-    
+
     for i = 1, #self do
         P:ClearPoints(self[i])
         if i == 1 then
@@ -268,7 +268,7 @@ function I.CreateTankActiveMitigation(parent)
     local bar = Cell:CreateStatusBar(parent:GetName().."TanckActiveMitigation", parent.widgets.overlayFrame, 20, 6, 100)
     parent.indicators.tankActiveMitigation = bar
     bar:Hide()
-    
+
     bar:SetStatusBarTexture("Interface\\Buttons\\WHITE8x8")
     bar:GetStatusBarTexture():SetAlpha(0)
     bar:SetReverseFill(true)
@@ -399,7 +399,7 @@ local function Debuffs_SetOrientation(self, orientation)
         point1 = "BOTTOM"..h
         point2 = "TOP"..h
     end
-    
+
     for i = 1, 10 do
         P:ClearPoints(self[i])
         if i == 1 then
@@ -420,7 +420,7 @@ local function Debuffs_ShowTooltip(debuffs, show)
             debuffs[i]:SetScript("OnEnter", function(self)
                 F:ShowTooltips(debuffs.parent, "spell", debuffs.parent.states.displayedUnit, self.index, "HARMFUL")
             end)
-            
+
             debuffs[i]:SetScript("OnLeave", function()
                 GameTooltip:Hide()
             end)
@@ -483,7 +483,7 @@ function I.CreateDebuffs(parent)
 
     debuffs.ShowTooltip = Debuffs_ShowTooltip
     debuffs.EnableBlacklistShortcut = Debuffs_EnableBlacklistShortcut
-    
+
     for i = 1, 10 do
         local name = parent:GetName().."Debuff"..i
         local frame = I.CreateAura_BarIcon(name, debuffs)
@@ -514,7 +514,7 @@ local function Dispels_SetSize(self, width, height)
     end
 
     if self._orientation then
-        self:SetOrientation(self._orientation)            
+        self:SetOrientation(self._orientation)
     else
         self:UpdateSize()
     end
@@ -522,7 +522,7 @@ end
 
 local function Dispels_UpdateSize(self, iconsShown)
     if not (self.orientation and self.width and self.height) then return end
-        
+
     local width, height = self.width, self.height
     if iconsShown then -- SetDispels
         iconsShown = iconsShown - 1
@@ -619,7 +619,7 @@ local function Dispels_SetOrientation(self, orientation)
         y = floor(self.height / 2)
         self.orientation = "vertical"
     end
-    
+
     for i = 1, 5 do
         self[i]:ClearAllPoints()
         if i == 1 then
@@ -703,7 +703,7 @@ local function UpdateDebuffsForCurrentZone(instanceName)
     wipe(currentAreaDebuffs)
     local iName = F:GetInstanceName()
     if iName == "" then return end
-    
+
     if iName == instanceName or instanceName == nil then
         currentAreaDebuffs = F:GetDebuffList(iName)
         F:Debug("|cffff77AARaidDebuffsChanged:|r", iName)
@@ -979,7 +979,7 @@ function I.CreateNameText(parent)
     nameText:Hide()
 
     nameText.name = nameText:CreateFontString(parent:GetName().."NameText_Name", "OVERLAY", "CELL_FONT_NAME")
-    
+
     nameText.vehicle = nameText:CreateFontString(parent:GetName().."NameText_Vehicle", "OVERLAY", "CELL_FONT_STATUS")
     nameText.vehicle:SetTextColor(0.8, 0.8, 0.8, 1)
     nameText.vehicle:Hide()
@@ -995,7 +995,7 @@ function I.CreateNameText(parent)
 
     function nameText:SetFont(font, size, outline, shadow)
         font = F:GetFont(font)
-        
+
         local flags
         if outline == "None" then
             flags = ""
@@ -1004,10 +1004,10 @@ function I.CreateNameText(parent)
         else
             flags = "OUTLINE,MONOCHROME"
         end
-        
+
         nameText.name:SetFont(font, size, flags)
         nameText.vehicle:SetFont(font, size-2, flags)
-        
+
         if shadow then
             nameText.name:SetShadowOffset(1, -1)
             nameText.name:SetShadowColor(0, 0, 0, 1)
@@ -1067,7 +1067,7 @@ function I.CreateNameText(parent)
                 nameText.name.timer = nil
             end
         end
-        
+
         -- only check nickname for players
         if parent.states.isPlayer then
             if CELL_NICKTAG_ENABLED and Cell.NickTag then
@@ -1145,7 +1145,7 @@ function I.CreateNameText(parent)
 
     function nameText:UpdateTextWidth(width)
         nameText.width = width
-        
+
         nameText:UpdateName()
 
         if parent.states.inVehicle or nameText.isPreview then
@@ -1173,7 +1173,7 @@ function I.CreateNameText(parent)
     parent.widgets.healthBar:SetScript("OnSizeChanged", function()
         if parent.states.name then
             nameText:UpdateName()
-            
+
             if parent.states.inVehicle or nameText.isPreview then
                 nameText:UpdateVehicleName()
             end
@@ -1199,7 +1199,7 @@ end
 -------------------------------------------------
 local function StatusText_SetFont(self, font, size, outline, shadow)
     font = F:GetFont(font)
-    
+
     local flags
     if outline == "None" then
         flags = ""
@@ -1208,10 +1208,10 @@ local function StatusText_SetFont(self, font, size, outline, shadow)
     else
         flags = "OUTLINE,MONOCHROME"
     end
-    
+
     self.text:SetFont(font, size, flags)
     self.timer:SetFont(font, size, flags)
-    
+
     if shadow then
         self.text:SetShadowOffset(1, -1)
         self.text:SetShadowColor(0, 0, 0, 1)
@@ -1224,7 +1224,7 @@ local function StatusText_SetFont(self, font, size, outline, shadow)
         self.timer:SetShadowColor(0, 0, 0, 0)
     end
     self.shadow = shadow
-    
+
     self:SetHeight(self.text:GetHeight()+P:Scale(1)*2)
 end
 
@@ -1248,7 +1248,7 @@ function I.CreateStatusText(parent)
 
     local timer = statusText:CreateFontString(nil, "ARTWORK", "CELL_FONT_STATUS")
     statusText.timer = timer
-    
+
     function statusText:GetStatus()
         return statusText.status
     end
@@ -1269,7 +1269,7 @@ function I.CreateStatusText(parent)
     function statusText:SetColors(colors)
         statusText.colors = colors
     end
-    
+
     statusText._SetPoint = statusText.SetPoint
     function statusText:SetPoint(point, _, yOffset)
         statusText:ClearAllPoints()
@@ -1284,7 +1284,7 @@ function I.CreateStatusText(parent)
 
         statusText:SetHeight(text:GetHeight()+P:Scale(1)*2)
     end
-    
+
     statusText.SetFont = StatusText_SetFont
 
     function statusText:SetShowTimer(show)
@@ -1307,7 +1307,7 @@ function I.CreateStatusText(parent)
 
         timer:Show()
         if not startTimeCache[parent.states.guid] then startTimeCache[parent.states.guid] = GetTime() end
-        
+
         statusText.ticker = C_Timer.NewTicker(1, function()
             if not parent.states.guid and parent.states.unit then -- ElvUI AFK mode
                 parent.states.guid = UnitGUID(parent.states.unit)
@@ -1449,7 +1449,7 @@ local function HealthText_SetFont(self, font, size, outline, shadow)
     end
 
     self.text:SetFont(font, size, flags)
-    
+
     if shadow then
         self.text:SetShadowOffset(1, -1)
         self.text:SetShadowColor(0, 0, 0, 1)
@@ -1709,7 +1709,7 @@ function I.CreateRoleIcon(parent)
     parent.indicators.roleIcon = roleIcon
     -- roleIcon:SetPoint("TOPLEFT", overlayFrame)
     -- roleIcon:SetSize(11, 11)
-    
+
     roleIcon.tex = roleIcon:CreateTexture(nil, "ARTWORK")
     roleIcon.tex:SetAllPoints()
 
@@ -1738,7 +1738,7 @@ function I.CreatePartyAssignmentIcon(parent)
             partyAssignmentIcon:Hide()
         end
     end
-    
+
     function partyAssignmentIcon:UpdatePixelPerfect()
         P:Resize(partyAssignmentIcon)
         P:Repoint(partyAssignmentIcon)
@@ -1755,7 +1755,7 @@ function I.CreateLeaderIcon(parent)
     -- leaderIcon:SetPoint("TOPLEFT", 0, -11)
     -- leaderIcon:SetSize(11, 11)
     leaderIcon:Hide()
-    
+
     function leaderIcon:SetIcon(isLeader, isAssistant)
         if isLeader then
             leaderIcon:SetTexture("Interface\\GroupFrame\\UI-Group-LeaderIcon")
@@ -1800,10 +1800,10 @@ function I.CreateReadyCheckIcon(parent)
     readyCheckIcon:SetPoint("CENTER", parent.widgets.healthBar)
     readyCheckIcon:Hide()
     readyCheckIcon:SetIgnoreParentAlpha(true)
-    
+
     readyCheckIcon.tex = readyCheckIcon:CreateTexture(nil, "ARTWORK")
     readyCheckIcon.tex:SetAllPoints(readyCheckIcon)
-    
+
     function readyCheckIcon:SetStatus(status)
         readyCheckIcon.tex:SetTexture(READY_CHECK_STATUS[status].t)
         -- readyCheckIcon.tex:SetAtlas(READY_CHECK_STATUS[status].t)
@@ -1831,22 +1831,22 @@ function I.CreateAggroBorder(parent)
     top:SetPoint("TOPLEFT")
     top:SetPoint("TOPRIGHT")
     top:SetHeight(5)
-    
+
     bottom:SetTexture("Interface\\Buttons\\WHITE8x8")
     bottom:SetPoint("BOTTOMLEFT")
     bottom:SetPoint("BOTTOMRIGHT")
     bottom:SetHeight(5)
-    
+
     left:SetTexture("Interface\\Buttons\\WHITE8x8")
     left:SetPoint("TOPLEFT")
     left:SetPoint("BOTTOMLEFT")
     left:SetWidth(5)
-    
+
     right:SetTexture("Interface\\Buttons\\WHITE8x8")
     right:SetPoint("TOPRIGHT")
     right:SetPoint("BOTTOMRIGHT")
     right:SetWidth(5)
-    
+
     top:SetGradient("VERTICAL", CreateColor(1, 0.1, 0.1, 0.2), CreateColor(1, 0.1, 0.1, 1))
     bottom:SetGradient("VERTICAL", CreateColor(1, 0.1, 0.1, 1), CreateColor(1, 0.1, 0.1, 0.2))
     left:SetGradient("HORIZONTAL", CreateColor(1, 0.1, 0.1, 1), CreateColor(1, 0.1, 0.1, 0.2))
@@ -1894,11 +1894,11 @@ function I.CreateAggroBlink(parent)
     alpha:SetFromAlpha(1)
     alpha:SetToAlpha(0)
     alpha:SetDuration(0.5)
-    
+
     aggroBlink:SetScript("OnShow", function(self)
         self.blink:Play()
     end)
-    
+
     aggroBlink:SetScript("OnHide", function(self)
         self.blink:Stop()
     end)
@@ -1997,9 +1997,9 @@ function I.CreateHealthThresholds(parent)
     parent.indicators.healthThresholds = healthThresholds
     healthThresholds:SetAllPoints(parent.widgets.healthBar)
     healthThresholds:SetFrameLevel(parent.widgets.healthBar:GetFrameLevel()+1)
-    
+
     healthThresholds.tex = healthThresholds:CreateTexture(nil, "ARTWORK")
-    
+
     function healthThresholds:SetThickness(thickness)
         healthThresholds.thickness = thickness
         P:Size(healthThresholds.tex, thickness, thickness)
@@ -2016,7 +2016,7 @@ function I.CreateHealthThresholds(parent)
             healthThresholds.tex:SetPoint("RIGHT")
         end
     end
-    
+
     function healthThresholds:CheckThreshold(percent)
         local found
         for i, t in ipairs(Cell.vars.healthThresholds) do
@@ -2047,7 +2047,7 @@ function I.CreateHealthThresholds(parent)
                 P:Size(healthThresholds[i], healthThresholds.thickness, healthThresholds.thickness)
                 healthThresholds[i]:SetColorTexture(unpack(t[2]))
                 -- healthThresholds[i]:SetBlendMode("ADD")
-                
+
                 healthThresholds[i]:ClearAllPoints()
                 if healthThresholds.orientation == "horizontal" then
                     healthThresholds[i]:SetPoint("TOP")
@@ -2138,7 +2138,7 @@ end
 local missingBuffsCounter = {}
 function I.HideMissingBuffs(unit, force)
     if not (missingBuffsEnabled or force) then return end
-    
+
     missingBuffsCounter[unit] = nil
 
     F:HandleUnitButton("unit", unit, HideMissingBuffs)
@@ -2146,9 +2146,9 @@ end
 
 local function ShowMissingBuff(b, index, icon, buffByMe)
     b.indicators.missingBuffs:UpdateSize(index)
-    
+
     local f = b.indicators.missingBuffs[index]
-    
+
     f:SetCooldown(0, 0, nil, icon, 0)
 
     if buffByMe then
@@ -2164,7 +2164,7 @@ function I.ShowMissingBuff(unit, buff, icon, buffByMe)
     if not missingBuffsEnabled then return end
     if missingBuffsFilters["buffByMe"] and not buffByMe then return end
     if not missingBuffsFilters[buff] then return end
-    
+
     missingBuffsCounter[unit] = (missingBuffsCounter[unit] or 0) + 1
 
     if missingBuffsCounter[unit] > missingBuffsNum then return end
@@ -2239,7 +2239,7 @@ function I.CreatePowerWordShield(parent)
 
         powerWordShield:_SetSize(P:Scale(size), P:Scale(size))
         innerBG:SetSize(P:Scale(ceil(size/2)+2), P:Scale(ceil(size/2)+2))
-        
+
         shieldCooldown:SetSize(P:Scale(ceil(size/2)), P:Scale(ceil(size/2)))
         weakendedSoulCooldown:SetSize(P:Scale(ceil(size/2)), P:Scale(ceil(size/2)))
 
@@ -2298,7 +2298,7 @@ function I.CreatePowerWordShield(parent)
             Update()
         end
     end
-    
+
     function powerWordShield:SetWeakenedSoulCooldown(start, duration, isMine)
         if start and duration then
             powerWordShield:Show()
@@ -2318,7 +2318,7 @@ function I.CreateCrowdControls(parent)
     local crowdControls = CreateFrame("Frame", parent:GetName().."CrowdControlsParent", parent.widgets.overlayFrame)
     parent.indicators.crowdControls = crowdControls
     crowdControls:Hide()
-   
+
     crowdControls._SetSize = crowdControls.SetSize
     crowdControls.SetSize = Cooldowns_SetSize
     crowdControls.SetBorder = Cooldowns_SetBorder

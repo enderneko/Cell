@@ -190,7 +190,7 @@ local function CreateFakeIcon(spellIcon)
     local bg = fakeIconsFrame:CreateTexture(nil, "BORDER")
     bg:SetColorTexture(0, 0, 0, 1)
     P:Size(bg, 32, 32)
-    
+
     local icon = fakeIconsFrame:CreateTexture(nil, "ARTWORK")
     icon:SetTexture(spellIcon)
     icon:SetTexCoord(0.08, 0.92, 0.08, 0.92)
@@ -248,7 +248,7 @@ local function CreateBuffButton(parent, size, spell, icon, index)
     local b = CreateFrame("Button", nil, parent, "SecureActionButtonTemplate,BackdropTemplate")
     if parent then b:SetFrameLevel(parent:GetFrameLevel()+1) end
     P:Size(b, size[1], size[2])
-    
+
     b:SetBackdrop({edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = P:Scale(1)})
     b:SetBackdropBorderColor(0, 0, 0, 1)
 
@@ -505,7 +505,7 @@ local function CheckUnit(unit, updateBtn)
             t[unit] = nil
         end
     end
-    
+
     if updateBtn then UpdateButtons() end
 end
 
@@ -537,7 +537,7 @@ local function IterateAllUnits()
                     available["BS"] = true
                     hasBuffProvider = true
                 end
-                
+
             elseif UnitClassBase(unit) == "EVOKER" then
                 if UnitLevel(unit) >= buffs["BotB"]["level"] then
                     available["BotB"] = true
@@ -552,7 +552,7 @@ local function IterateAllUnits()
     end
 
     RepointButtons()
-    
+
     Reset("unaffected")
 
     for unit in F:IterateGroupMembers() do
@@ -567,7 +567,7 @@ end
 -------------------------------------------------
 function buffTrackerFrame:UnitUpdated(event, guid, unit, info)
     -- print(event, guid, unit, info.specId)
-    if unit == "player" then 
+    if unit == "player" then
         if UnitIsUnit("player", myUnit) then CheckUnit(myUnit, true) end
     elseif UnitIsPlayer(unit) then -- ignore pets
         CheckUnit(unit, true)
@@ -647,7 +647,7 @@ local function UpdateTools(which)
         if CellDB["tools"]["buffTracker"][1] then
             buffTrackerFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
             buffTrackerFrame:RegisterEvent("GROUP_ROSTER_UPDATE")
-            LGI.RegisterCallback(buffTrackerFrame, "GroupInfo_Update", "UnitUpdated") 
+            LGI.RegisterCallback(buffTrackerFrame, "GroupInfo_Update", "UnitUpdated")
 
             if not enabled and which == "buffTracker" then -- already in world, manually enabled
                 buffTrackerFrame:GROUP_ROSTER_UPDATE(true)
@@ -659,7 +659,7 @@ local function UpdateTools(which)
         else
             buffTrackerFrame:UnregisterAllEvents()
             LGI.UnregisterCallback(buffTrackerFrame, "GroupInfo_Update")
-            
+
             Reset()
             myUnit = ""
 

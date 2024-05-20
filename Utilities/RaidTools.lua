@@ -66,10 +66,10 @@ local function CreateRTPane()
         buffDropdown:SetEnabled(checked)
         sizeEditBox:SetEnabled(checked)
         Cell:Fire("UpdateTools", "buffTracker")
-    end, L["Buff Tracker"].." |cffff7727"..L["MODERATE CPU USAGE"], L["Check if your group members need some raid buffs"], 
-    Cell.isRetail and L["|cffffb5c5Left-Click:|r cast the spell"] or "|cffffb5c5(Shift)|r "..L["|cffffb5c5Left-Click:|r cast the spell"], 
+    end, L["Buff Tracker"].." |cffff7727"..L["MODERATE CPU USAGE"], L["Check if your group members need some raid buffs"],
+    Cell.isRetail and L["|cffffb5c5Left-Click:|r cast the spell"] or "|cffffb5c5(Shift)|r "..L["|cffffb5c5Left-Click:|r cast the spell"],
     L["|cffffb5c5Right-Click:|r report unaffected"])
-    -- L["Use |cFFFFB5C5/cell buff X|r to set icon size"], 
+    -- L["Use |cFFFFB5C5/cell buff X|r to set icon size"],
     -- "|cffffffff" .. L["Current"]..": |cFFFFB5C5"..CellDB["tools"]["buffTracker"][3])
     buffCB:SetPoint("TOPLEFT", reportCB, "BOTTOMLEFT", 0, -15)
 
@@ -345,16 +345,16 @@ local function ShowUtilitySettings(which)
             CreateRTPane()
             F:ApplyCombatProtectionToFrame(rtPane, -4, 4, 4, -4)
         end
-        
+
         rtPane:Show()
-        
+
         -- if init then return end
         init = true
 
         -- raid tools
         resCB:SetChecked(CellDB["tools"]["showBattleRes"])
         reportCB:SetChecked(CellDB["tools"]["deathReport"][1])
-        
+
         buffCB:SetChecked(CellDB["tools"]["buffTracker"][1])
         buffDropdown:SetSelectedValue(CellDB["tools"]["buffTracker"][2])
         sizeEditBox:SetText(CellDB["tools"]["buffTracker"][3])
@@ -372,7 +372,7 @@ local function ShowUtilitySettings(which)
         marksShowSoloCB:SetChecked(CellDB["tools"]["marks"][2])
 
         fadeOutToolsCB:SetChecked(CellDB["tools"]["fadeOut"])
-        
+
     elseif init then
         rtPane:Hide()
     end

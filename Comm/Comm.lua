@@ -105,7 +105,7 @@ end)
 function F:NotifyMarkLock(mark, name, class)
     name = F:GetClassColorStr(class)..name.."|r"
     F:Print(L["%s lock %s on %s."]:format(L["You"], F:GetMarkEscapeSequence(mark), name))
-    
+
     UpdateSendChannel()
     Comm:SendCommMessage("CELL_MARKS", Serialize({true, mark, name}), sendChannel, nil, "ALERT")
 end
@@ -143,13 +143,13 @@ local function UpdatePriority()
             pRealm = pRealm or GetRealmName()
             pName = pName.."-"..pRealm
             tinsert(players, pName)
-            
+
             for i = 1, GetNumGroupMembers()-1 do
                 local name, realm = UnitFullName("party"..i)
                 tinsert(players, name.."-"..(realm or pRealm))
             end
             table.sort(players)
-            
+
             for i, p in pairs(players) do
                 if p == pName then
                     myPriority = i
@@ -177,9 +177,9 @@ function F:CheckPriority()
 end
 
 Comm:RegisterComm("CELL_CPRIO", function(prefix, message, channel, sender)
-    if not myPriority then return end -- receive CELL_CPRIO just after GOURP_JOINED 
+    if not myPriority then return end -- receive CELL_CPRIO just after GOURP_JOINED
     highestPriority = 99
-    
+
     -- NOTE: wait for check requests
     if t_send then t_send:Cancel() end
     t_send = C_Timer.NewTimer(2, function()
@@ -307,7 +307,7 @@ Comm:RegisterComm("CELL_SEND_PROG", function(prefix, message, channel, sender)
             return
         end
     end
-    
+
     local done, total = strsplit("|", message)
     done, total = tonumber(done), tonumber(total)
 
@@ -383,13 +383,13 @@ local function ShowReceivingFrame(type, playerName, name1, name2)
             isRequesting = false
         end)
     end
-    
+
     Cell.frames.receivingFrame:SetOnRequest(function(b)
         isRequesting = true
         --! send request
         CrossRealmSendCommMessage("CELL_REQ", type..":"..name1..":"..(name2 or ""), playerName, "ALERT")
     end)
-    
+
     Cell.frames.receivingFrame:ShowFrame(type, playerName, name1, name2)
 end
 

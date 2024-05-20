@@ -10,10 +10,10 @@ local orientation
 -- events
 -------------------------------------------------
 -- CLEU: subevent, source, target, spellId, spellName
--- [15:10] SPELL_HEAL 秋静葉 秋静葉 6262 治疗石 
+-- [15:10] SPELL_HEAL 秋静葉 秋静葉 6262 治疗石
 -- [15:10] SPELL_CAST_SUCCESS 秋静葉 nil 6262 治疗石
--- [15:13] SPELL_HEAL 秋静葉 秋静葉 307192 灵魂治疗药水 
--- [15:13] SPELL_CAST_SUCCESS 秋静葉 nil 307192 灵魂治疗药水 
+-- [15:13] SPELL_HEAL 秋静葉 秋静葉 307192 灵魂治疗药水
+-- [15:13] SPELL_CAST_SUCCESS 秋静葉 nil 307192 灵魂治疗药水
 
 -- UNIT_SPELLCAST_SUCCEEDED
 -- unit, castGUID, spellID
@@ -52,7 +52,7 @@ local function CreateAnimationGroup_TypeA(parent)
     -- frame
     local f = CreateFrame("Frame", parent:GetName().."_TypeA", parent)
     f:Hide()
-    
+
     -- texture
     local tex = f:CreateTexture(nil, "ARTWORK")
     tex:SetAllPoints(f)
@@ -76,7 +76,7 @@ local function CreateAnimationGroup_TypeA(parent)
     t1:SetOrder(1)
     t1:SetSmoothing("OUT")
     t1:SetDuration(t1.duration)
-    
+
     local a2 = ag:CreateAnimation("Alpha")
     a2.duration = 0.5
     a2:SetFromAlpha(1)
@@ -142,7 +142,7 @@ local function CreateAnimationGroup_TypeB(parent)
     f:SetPoint("TOPRIGHT", parent, "TOPLEFT")
     f:SetWidth(WIDTH)
     f:Hide()
-    
+
     -- texture
     local tex = f:CreateTexture(nil, "ARTWORK")
     tex:SetPoint("BOTTOMRIGHT")
@@ -165,7 +165,7 @@ local function CreateAnimationGroup_TypeB(parent)
     t1.duration = 0.7
     t1:SetSmoothing("IN_OUT")
     t1:SetDuration(t1.duration)
-    
+
     -- local a2 = ag:CreateAnimation("Alpha")
     -- a2.duration = 0.3
     -- a2:SetFromAlpha(0.7)
@@ -223,7 +223,7 @@ local function CreateAnimationGroup_TypeC(parent, subType)
         f:SetPoint("TOPRIGHT", parent, "RIGHT")
 
     end
-    
+
     -- texture
     local tex = f:CreateTexture(nil, "ARTWORK")
     tex:SetAllPoints(f)
@@ -247,7 +247,7 @@ local function CreateAnimationGroup_TypeC(parent, subType)
     t1:SetOrder(1)
     t1:SetSmoothing("OUT")
     t1:SetDuration(t1.duration)
-    
+
     local a2 = ag:CreateAnimation("Alpha")
     a2.duration = 0.5
     a2:SetFromAlpha(1)
@@ -306,7 +306,7 @@ local function CreateAnimationGroup_TypeD(parent)
     tex:AddMaskTexture(mask)
 
     tex:AddMaskTexture(parent.mask)
-    
+
     -- animation
     local ag = f:CreateAnimationGroup()
 
@@ -373,7 +373,7 @@ local function CreateAnimationGroup_TypeE(parent)
     f:SetPoint("TOPRIGHT", parent, "TOPLEFT")
     f:SetPoint("BOTTOMRIGHT", parent, "BOTTOMLEFT")
     f:Hide()
-    
+
     -- texture
     local tex = f:CreateTexture(nil, "ARTWORK")
     tex:SetAllPoints(f)
@@ -394,7 +394,7 @@ local function CreateAnimationGroup_TypeE(parent)
     t1.duration = 0.8
     t1:SetSmoothing("IN_OUT")
     t1:SetDuration(t1.duration)
-    
+
     -- local a2 = ag:CreateAnimation("Alpha")
     -- a2:SetFromAlpha(0.7)
     -- a2:SetToAlpha(0)
@@ -442,14 +442,14 @@ local previewOrientation
 
 function I.CreateConsumables(parent, isPreview)
     local consumables = CreateFrame("Frame", parent:GetName().."ConsumablesParent", parent)
-    
+
     -- mask
     local mask = consumables:CreateMaskTexture()
     consumables.mask = mask
     mask:SetTexture("Interface/Tooltips/UI-Tooltip-Background", "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
     mask:SetAllPoints(consumables)
     mask:SetSnapToPixelGrid(true)
-    
+
     -- animation groups
     local animations = {}
     consumables.animations = animations

@@ -301,7 +301,7 @@ local defaultSpells = {
 
 function F:GetClickCastingSpellList(class, spec)
     local spells = defaultSpells[class]["common"] and F:Copy(defaultSpells[class]["common"]) or {}
-    
+
     -- check spec
     if spec and defaultSpells[class][spec] then
         for _, v in pairs(defaultSpells[class][spec]) do

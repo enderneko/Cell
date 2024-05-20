@@ -8,7 +8,7 @@ hiddenParent:Hide()
 
 local function HideFrame(frame)
     if not frame then return end
-    
+
     frame:UnregisterAllEvents()
     frame:Hide()
     frame:SetParent(hiddenParent)
@@ -79,7 +79,7 @@ function F:HideBlizzardRaid()
             end
         end)
     end
-    
+
     if CompactRaidFrameManager_SetSetting then
         CompactRaidFrameManager_SetSetting("IsShown", "0")
     end

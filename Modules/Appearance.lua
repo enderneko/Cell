@@ -20,7 +20,7 @@ local scaleSlider, strataDropdown, accentColorDropdown, accentColorPicker, optio
 local function CreateCellPane()
     local cellPane = Cell:CreateTitledPane(appearanceTab, "Cell", 422, 140)
     cellPane:SetPoint("TOPLEFT", appearanceTab, "TOPLEFT", 5, -5)
-    
+
     -- global scale
     scaleSlider = Cell:CreateSlider(L["Scale"], cellPane, 0.5, 4, 141, 0.01, nil, nil, nil, L["Scale"], L["Non-integer scaling may result in abnormal display of options UI"])
     scaleSlider:SetPoint("TOPLEFT", cellPane, "TOPLEFT", 5, -40)
@@ -28,7 +28,7 @@ local function CreateCellPane()
         CellDB["appearance"]["scale"] = value
         Cell:Fire("UpdateAppearance", "scale")
         Cell:Fire("UpdatePixelPerfect")
-    
+
         local popup = Cell:CreateConfirmPopup(appearanceTab, 200, L["A UI reload is required.\nDo it now?"], function()
             ReloadUI()
         end, nil, true)
@@ -39,7 +39,7 @@ local function CreateCellPane()
     -- options ui font size
     optionsFontSizeOffset = Cell:CreateSlider(L["Options UI Font Size"], cellPane, -5, 5, 141, 1)
     optionsFontSizeOffset:SetPoint("TOPLEFT", 222, -40)
-    
+
     optionsFontSizeOffset.afterValueChangedFn = function(value)
         CellDB["appearance"]["optionsFontSizeOffset"] = value
         Cell:UpdateOptionsFont(value, CellDB["appearance"]["useGameFont"])
@@ -272,19 +272,19 @@ local function CreatePreviewIcons()
     -- curse_border:SetPoint("TOPLEFT", borderIcon1, "BOTTOMLEFT", 0, P:Scale(-1))
     -- curse_border:SetCooldown(0, 0, "Curse", 136139, 0)
     -- curse_border:Show()
-    
+
     -- disease_border = I.CreateAura_BorderIcon("CellAppearancePreviewIconDisease1", previewIconsBG, 2)
     -- P:Size(disease_border, 22 ,22)
     -- disease_border:SetPoint("TOPLEFT", curse_border, "TOPRIGHT", P:Scale(1), 0)
     -- disease_border:SetCooldown(0, 0, "Disease", 136128, 0)
     -- disease_border:Show()
-    
+
     -- magic_border = I.CreateAura_BorderIcon("CellAppearancePreviewIconMagic1", previewIconsBG, 2)
     -- P:Size(magic_border, 22 ,22)
     -- magic_border:SetPoint("TOPLEFT", disease_border, "TOPRIGHT", P:Scale(1), 0)
     -- magic_border:SetCooldown(0, 0, "Magic", 240443, 0)
     -- magic_border:Show()
-    
+
     -- poison_border = I.CreateAura_BorderIcon("CellAppearancePreviewIconPoison1", previewIconsBG, 2)
     -- P:Size(poison_border, 22 ,22)
     -- poison_border:SetPoint("TOPLEFT", magic_border, "TOPRIGHT", P:Scale(1), 0)
@@ -317,17 +317,17 @@ local function CreatePreviewButtons()
 
     previewButton.widgets.powerBar:SetMinMaxValues(0, 1)
     previewButton.widgets.powerBar:SetValue(1)
-    
+
     local previewButtonBG = Cell:CreateFrame("CellAppearancePreviewButtonBG", appearanceTab)
     previewButtonBG:SetPoint("TOPLEFT", previewButton, 0, 20)
     previewButtonBG:SetPoint("BOTTOMRIGHT", previewButton, "TOPRIGHT")
     Cell:StylizeFrame(previewButtonBG, {0.1, 0.1, 0.1, 0.77}, {0, 0, 0, 0})
     previewButtonBG:Show()
-    
+
     local previewText = previewButtonBG:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET_TITLE")
     previewText:SetPoint("TOP", 0, -3)
     previewText:SetText(Cell:GetAccentColorString()..L["Preview"].." 2")
-    
+
     previewButton2 = CreateFrame("Button", "CellAppearancePreviewButton2", appearanceTab, "CellPreviewButtonTemplate")
     -- previewButton2.type = "main" -- layout setup
     previewButton2:SetPoint("TOPLEFT", previewButton, "BOTTOMLEFT", 0, -50)
@@ -345,7 +345,7 @@ local function CreatePreviewButtons()
     previewButtonBG2:SetPoint("BOTTOMRIGHT", previewButton2, "TOPRIGHT")
     Cell:StylizeFrame(previewButtonBG2, {0.1, 0.1, 0.1, 0.77}, {0, 0, 0, 0})
     previewButtonBG2:Show()
-    
+
     local previewText2 = previewButtonBG2:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET_TITLE")
     previewText2:SetPoint("TOP", 0, -3)
     previewText2:SetText(Cell:GetAccentColorString()..L["Preview"].." 3")
@@ -446,18 +446,18 @@ local function UpdatePreviewShields(r, g, b)
         end
 
         local reverseFilling = CellDB["appearance"]["shield"][1] and CellDB["appearance"]["overshieldReverseFill"]
-        
+
         if CellDB["appearance"]["overshield"][1] and not reverseFilling then
             previewButton2.widgets.overShieldGlow:SetVertexColor(unpack(CellDB["appearance"]["overshield"][2]))
             previewButton2.widgets.overShieldGlow:Show()
         else
             previewButton2.widgets.overShieldGlow:Hide()
         end
-        
+
         if reverseFilling then
             previewButton2.widgets.shieldBarR:SetVertexColor(unpack(CellDB["appearance"]["shield"][2]))
             previewButton2.widgets.shieldBarR:Show()
-            
+
             if CellDB["appearance"]["overshield"][1] then
                 previewButton2.widgets.overShieldGlowR:SetVertexColor(unpack(CellDB["appearance"]["overshield"][2]))
                 previewButton2.widgets.overShieldGlowR:Show()
@@ -494,7 +494,7 @@ local function UpdatePreviewButton()
     -- alpha
     previewButton:SetBackdropColor(0, 0, 0, CellDB["appearance"]["bgAlpha"])
     previewButton2:SetBackdropColor(0, 0, 0, CellDB["appearance"]["bgAlpha"])
-    
+
     -- barOrientation
     B:SetOrientation(previewButton, Cell.vars.currentLayoutTable["barOrientation"][1], Cell.vars.currentLayoutTable["barOrientation"][2])
     B:SetOrientation(previewButton2, Cell.vars.currentLayoutTable["barOrientation"][1], Cell.vars.currentLayoutTable["barOrientation"][2])
@@ -512,7 +512,7 @@ local function UpdatePreviewButton()
 
 
     -- health color
-    local r, g, b, lossR, lossG, lossB 
+    local r, g, b, lossR, lossG, lossB
     r, g, b, lossR, lossG, lossB = F:GetHealthBarColor(previewButton.perc or 1, previewButton.perc == 0, F:GetClassColor(Cell.vars.playerClass))
     previewButton.widgets.healthBar:SetStatusBarColor(r, g, b, CellDB["appearance"]["barAlpha"])
     previewButton.widgets.healthBarLoss:SetVertexColor(lossR, lossG, lossB, CellDB["appearance"]["lossAlpha"])
@@ -542,10 +542,10 @@ local function CheckTextures()
     local items = {}
     local textures, textureNames
     local defaultTexture, defaultTextureName = "Interface\\AddOns\\Cell\\Media\\statusbar.tga", "Cell ".._G.DEFAULT
-    
+
     -- if LSM then
         textures, textureNames = F:Copy(LSM:HashTable("statusbar")), F:Copy(LSM:List("statusbar"))
-       
+
         -- make default texture first
         F:TRemove(textureNames, defaultTextureName)
         tinsert(textureNames, 1, defaultTextureName)
@@ -636,7 +636,7 @@ local function CreateIconOptionsFrame()
             end,
         },
     })
-    
+
     local iconAnimationText = iconOptionsFrame:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
     iconAnimationText:SetPoint("BOTTOMLEFT", iconAnimationDropdown, "TOPLEFT", 0, 1)
     iconAnimationText:SetText(L["Play Icon Animation When"])
@@ -647,7 +647,7 @@ local function CreateIconOptionsFrame()
 
         CellDB["appearance"]["auraIconOptions"]["durationRoundUp"] = checked
         Cell:SetEnabled(not checked, durationDecimalText1, durationDecimalText2, durationDecimalDropdown)
-        
+
         Cell:Fire("UpdateAppearance", "icon")
     end)
     durationRoundUpCB:SetPoint("TOPLEFT", iconAnimationDropdown, "BOTTOMLEFT", 0, -22)
@@ -676,7 +676,7 @@ local function CreateIconOptionsFrame()
         })
     end
     durationDecimalDropdown:SetItems(items)
-    
+
     -- duration text color
     durationColorCB = Cell:CreateCheckButton(iconOptionsFrame, L["Color Duration Text"], function(checked, self)
         CellDropdownList:Hide()
@@ -687,7 +687,7 @@ local function CreateIconOptionsFrame()
 
         CellDB["appearance"]["auraIconOptions"]["durationColorEnabled"] = checked
         Cell:SetEnabled(checked, durationNormalCP, durationPercentCP, durationPercentDD, durationSecondCP, durationSecondEB, durationSecondText)
-        
+
         Cell:Fire("UpdateAppearance", "icon")
     end)
     durationColorCB:SetPoint("TOPLEFT", durationRoundUpCB, "BOTTOMLEFT", 0, -63)
@@ -699,7 +699,7 @@ local function CreateIconOptionsFrame()
         Cell:Fire("UpdateAppearance", "icon")
     end)
     durationNormalCP:SetPoint("TOPLEFT", durationColorCB, "BOTTOMLEFT", 0, -8)
-    
+
     durationPercentCP = Cell:CreateColorPicker(iconOptionsFrame, L["Remaining Time <"], false, function(r, g, b)
         CellDB["appearance"]["auraIconOptions"]["durationColors"][2][1] = r
         CellDB["appearance"]["auraIconOptions"]["durationColors"][2][2] = g
@@ -707,7 +707,7 @@ local function CreateIconOptionsFrame()
         Cell:Fire("UpdateAppearance", "icon")
     end)
     durationPercentCP:SetPoint("TOPLEFT", durationNormalCP, "BOTTOMLEFT", 0, -8)
-    
+
     durationSecondCP = Cell:CreateColorPicker(iconOptionsFrame, L["Remaining Time <"], false, function(r, g, b)
         CellDB["appearance"]["auraIconOptions"]["durationColors"][3][1] = r
         CellDB["appearance"]["auraIconOptions"]["durationColors"][3][2] = g
@@ -760,7 +760,7 @@ local function CreateIconOptionsFrame()
             end,
         },
     })
-    
+
     durationSecondEB = Cell:CreateEditBox(iconOptionsFrame, 43, 20, false, false, true)
     durationSecondEB:SetPoint("LEFT", durationSecondCP.label, "RIGHT", 5, 0)
     durationSecondEB:SetMaxLetters(4)
@@ -866,15 +866,15 @@ end
 local function CreateUnitButtonStylePane()
     local unitButtonPane = Cell:CreateTitledPane(appearanceTab, L["Unit Button Style"], 422, 410)
     unitButtonPane:SetPoint("TOPLEFT", appearanceTab, "TOPLEFT", 5, -160)
-    
+
     -- texture
     textureDropdown = Cell:CreateDropdown(unitButtonPane, 160, "texture")
     textureDropdown:SetPoint("TOPLEFT", unitButtonPane, "TOPLEFT", 5, -42)
-    
+
     local textureText = unitButtonPane:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
     textureText:SetPoint("BOTTOMLEFT", textureDropdown, "TOPLEFT", 0, 1)
     textureText:SetText(L["Texture"])
-    
+
     -- bar color
     barColorDropdown = Cell:CreateDropdown(unitButtonPane, 141)
     barColorDropdown:SetPoint("TOPLEFT", textureDropdown, "BOTTOMLEFT", 0, -30)
@@ -925,11 +925,11 @@ local function CreateUnitButtonStylePane()
             end,
         },
     })
-    
+
     local barColorText = unitButtonPane:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
     barColorText:SetPoint("BOTTOMLEFT", barColorDropdown, "TOPLEFT", 0, 1)
     barColorText:SetText(L["Health Bar Color"])
-    
+
     barColorPicker = Cell:CreateColorPicker(unitButtonPane, "", false, function(r, g, b)
         CellDB["appearance"]["barColor"][2][1] = r
         CellDB["appearance"]["barColor"][2][2] = g
@@ -957,7 +957,7 @@ local function CreateUnitButtonStylePane()
         end
     end)
     fullColorPicker:SetPoint("TOPLEFT", fullColorCB, "TOPRIGHT", 2, 0)
-    
+
     -- loss color
     lossColorDropdown = Cell:CreateDropdown(unitButtonPane, 141)
     lossColorDropdown:SetPoint("TOPLEFT", barColorDropdown, "BOTTOMLEFT", 0, -30)
@@ -1008,11 +1008,11 @@ local function CreateUnitButtonStylePane()
             end,
         },
     })
-    
+
     local lossColorText = unitButtonPane:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
     lossColorText:SetPoint("BOTTOMLEFT", lossColorDropdown, "TOPLEFT", 0, 1)
     lossColorText:SetText(L["Health Loss Color"])
-    
+
     lossColorPicker = Cell:CreateColorPicker(unitButtonPane, "", false, function(r, g, b)
         CellDB["appearance"]["lossColor"][2][1] = r
         CellDB["appearance"]["lossColor"][2][2] = g
@@ -1040,7 +1040,7 @@ local function CreateUnitButtonStylePane()
         end
     end)
     deathColorPicker:SetPoint("TOPLEFT", deathColorCB, "TOPRIGHT", 2, 0)
-    
+
     -- power color
     powerColorDropdown = Cell:CreateDropdown(unitButtonPane, 141)
     powerColorDropdown:SetPoint("TOPLEFT", lossColorDropdown, "BOTTOMLEFT", 0, -30)
@@ -1082,11 +1082,11 @@ local function CreateUnitButtonStylePane()
             end,
         },
     })
-    
+
     local powerColorText = unitButtonPane:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
     powerColorText:SetPoint("BOTTOMLEFT", powerColorDropdown, "TOPLEFT", 0, 1)
     powerColorText:SetText(L["Power Color"])
-    
+
     powerColorPicker = Cell:CreateColorPicker(unitButtonPane, "", false, function(r, g, b)
         CellDB["appearance"]["powerColor"][2][1] = r
         CellDB["appearance"]["powerColor"][2][2] = g
@@ -1096,7 +1096,7 @@ local function CreateUnitButtonStylePane()
         end
     end)
     powerColorPicker:SetPoint("LEFT", powerColorDropdown, "RIGHT", 5, 0)
-    
+
     -- bar animation
     barAnimationDropdown = Cell:CreateDropdown(unitButtonPane, 141)
     barAnimationDropdown:SetPoint("TOPLEFT", powerColorDropdown, "BOTTOMLEFT", 0, -30)
@@ -1123,11 +1123,11 @@ local function CreateUnitButtonStylePane()
             end,
         },
     })
-    
+
     local barAnimationText = unitButtonPane:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
     barAnimationText:SetPoint("BOTTOMLEFT", barAnimationDropdown, "TOPLEFT", 0, 1)
     barAnimationText:SetText(L["Bar Animation"])
-    
+
     -- gradient colors
     gradientColorCB1 = Cell:CreateColorPicker(unitButtonPane, nil, false, function(r, g, b)
         CellDB["appearance"]["gradientColors"][1][1] = r
@@ -1136,7 +1136,7 @@ local function CreateUnitButtonStylePane()
         Cell:Fire("UpdateAppearance", "color")
     end)
     gradientColorCB1:SetPoint("TOPLEFT", barAnimationDropdown, "BOTTOMLEFT", 0, -30)
-    
+
     gradientColorCB2 = Cell:CreateColorPicker(unitButtonPane, nil, false, function(r, g, b)
         CellDB["appearance"]["gradientColors"][2][1] = r
         CellDB["appearance"]["gradientColors"][2][2] = g
@@ -1144,7 +1144,7 @@ local function CreateUnitButtonStylePane()
         Cell:Fire("UpdateAppearance", "color")
     end)
     gradientColorCB2:SetPoint("TOPLEFT", gradientColorCB1, "TOPRIGHT", 5, 0)
-    
+
     gradientColorCB3 = Cell:CreateColorPicker(unitButtonPane, nil, false, function(r, g, b)
         CellDB["appearance"]["gradientColors"][3][1] = r
         CellDB["appearance"]["gradientColors"][3][2] = g
@@ -1166,7 +1166,7 @@ local function CreateUnitButtonStylePane()
         Cell:Fire("UpdateAppearance", "highlightColor")
     end)
     -- targetColorPicker:SetPoint("TOPLEFT", gradientColorCB1, "BOTTOMLEFT", 0, -15)
-    
+
     -- mouseover highlight
     mouseoverColorPicker = Cell:CreateColorPicker(unitButtonPane, L["Mouseover Highlight Color"], true, function(r, g, b, a)
         CellDB["appearance"]["mouseoverColor"][1] = r
@@ -1176,7 +1176,7 @@ local function CreateUnitButtonStylePane()
         Cell:Fire("UpdateAppearance", "highlightColor")
     end)
     mouseoverColorPicker:SetPoint("TOPLEFT", targetColorPicker, "BOTTOMLEFT", 0, -10)
-    
+
     -- highlight size
     highlightSize = Cell:CreateSlider(L["Highlight Size"], unitButtonPane, -5, 5, 141, 1)
     highlightSize:SetPoint("TOPLEFT", mouseoverColorPicker, "BOTTOMLEFT", 0, -25)
@@ -1184,7 +1184,7 @@ local function CreateUnitButtonStylePane()
         CellDB["appearance"]["highlightSize"] = value
         Cell:Fire("UpdateAppearance", "highlightSize")
     end
-    
+
     -- icon options
     iconOptionsBtn = Cell:CreateButton(unitButtonPane, L["Aura Icon Options"], "accent-hover", {160, 20})
     iconOptionsBtn:SetPoint("TOPLEFT", unitButtonPane, "TOPLEFT", 222, -42)
@@ -1195,35 +1195,35 @@ local function CreateUnitButtonStylePane()
             iconOptionsFrame:Show()
         end
     end)
-    
+
     -- bar alpha
     barAlpha = Cell:CreateSlider(L["Health Bar Alpha"], unitButtonPane, 0, 100, 141, 1, function(value)
         CellDB["appearance"]["barAlpha"] = value/100
         Cell:Fire("UpdateAppearance", "alpha")
     end, nil, true)
     barAlpha:SetPoint("TOPLEFT", iconOptionsBtn, "BOTTOMLEFT", 0, -30)
-    
+
     -- loss alpha
     lossAlpha = Cell:CreateSlider(L["Health Loss Alpha"], unitButtonPane, 0, 100, 141, 1, function(value)
         CellDB["appearance"]["lossAlpha"] = value/100
         Cell:Fire("UpdateAppearance", "alpha")
     end, nil, true)
     lossAlpha:SetPoint("TOPLEFT", barAlpha, "BOTTOMLEFT", 0, -40)
-    
+
     -- bg alpha
     bgAlpha = Cell:CreateSlider(L["Background Alpha"], unitButtonPane, 0, 100, 141, 1, function(value)
         CellDB["appearance"]["bgAlpha"] = value/100
         Cell:Fire("UpdateAppearance", "alpha")
     end, nil, true)
     bgAlpha:SetPoint("TOPLEFT", lossAlpha, "BOTTOMLEFT", 0, -40)
-    
+
     -- out of range alpha
     oorAlpha = Cell:CreateSlider(L["Out of Range Alpha"], unitButtonPane, 0, 100, 141, 1, function(value)
         CellDB["appearance"]["outOfRangeAlpha"] = value/100
         Cell:Fire("UpdateAppearance", "outOfRangeAlpha")
     end, nil, true)
     oorAlpha:SetPoint("TOPLEFT", bgAlpha, "BOTTOMLEFT", 0, -40)
-    
+
     -- heal prediction
     predCB = Cell:CreateCheckButton(unitButtonPane, L["Heal Prediction"], function(checked, self)
         CellDB["appearance"]["healPrediction"][1] = checked
@@ -1256,7 +1256,7 @@ local function CreateUnitButtonStylePane()
     -- end, L["LibHealComm needs to be installed"])
     -- useLibCB:SetPoint("TOPLEFT", predCustomCB, "BOTTOMLEFT", 0, -7)
     -- useLibCB:SetEnabled(Cell.isVanilla or Cell.isCata)
-    
+
     -- heal absorb
     absorbCB = Cell:CreateCheckButton(unitButtonPane, "", function(checked, self)
         CellDB["appearance"]["healAbsorb"][1] = checked
@@ -1282,7 +1282,7 @@ local function CreateUnitButtonStylePane()
         Cell:Fire("UpdateAppearance", "shields")
     end)
     invertColorCB:SetPoint("TOPLEFT", absorbCB, "BOTTOMRIGHT", 0, -7)
-    
+
     -- shield
     shieldCB = Cell:CreateCheckButton(unitButtonPane, "", function(checked, self)
         CellDB["appearance"]["shield"][1] = checked
@@ -1307,7 +1307,7 @@ local function CreateUnitButtonStylePane()
         Cell:Fire("UpdateAppearance", "shields")
     end)
     reverseCB:SetPoint("TOPLEFT", shieldCB, "BOTTOMRIGHT", 0, -7)
-    
+
     -- overshield
     oversCB = Cell:CreateCheckButton(unitButtonPane, "", function(checked, self)
         CellDB["appearance"]["overshield"][1] = checked
@@ -1332,11 +1332,11 @@ local function CreateUnitButtonStylePane()
     resetBtn:SetScript("OnClick", function()
         if IsControlKeyDown() then
             F:ResetButtonStyle()
-    
+
             -- load data
             textureDropdown:SetSelected("Cell ".._G.DEFAULT, "Interface\\AddOns\\Cell\\Media\\statusbar.tga")
             LoadButtonStyle()
-    
+
             Cell:Fire("UpdateAppearance", "reset")
         end
     end)
@@ -1379,7 +1379,7 @@ local function CreateDebuffTypeColorPane()
         Cell:Fire("UpdateIndicators", F:GetNotifiedLayoutName(Cell.vars.currentLayout), "dispels", "debuffTypeColor")
     end)
     poisonCP:SetPoint("TOPLEFT", magicCP, "TOPRIGHT", 95, 0)
-   
+
     -- bleed
     bleedCP = Cell:CreateColorPicker(dtcPane, "|TInterface\\AddOns\\Cell\\Media\\Debuffs\\Bleed:0|t"..L["Bleed"], false, nil, function(r, g, b)
         I.SetDebuffTypeColor("Bleed", r, g, b)
@@ -1406,13 +1406,13 @@ end
 local init
 LoadButtonStyle = function()
     if not init then CheckTextures() end
-    
+
     UpdateColorPickers()
     UpdateCheckButtons()
 
     barColorDropdown:SetSelectedValue(CellDB["appearance"]["barColor"][1])
     barColorPicker:SetColor(CellDB["appearance"]["barColor"][2])
-    
+
     fullColorCB:SetChecked(CellDB["appearance"]["fullColor"][1])
     fullColorPicker:SetColor(CellDB["appearance"]["fullColor"][2])
     fullColorPicker:SetEnabled(CellDB["appearance"]["fullColor"][1])
@@ -1486,7 +1486,7 @@ LoadData = function()
     accentColorPicker:SetEnabled(CellDB["appearance"]["accentColor"][1] == "custom")
     optionsFontSizeOffset:SetValue(CellDB["appearance"]["optionsFontSizeOffset"])
     useGameFontCB:SetChecked(CellDB["appearance"]["useGameFont"])
-    
+
     LoadButtonStyle()
     LoadDebuffTypeColor()
 end
@@ -1505,7 +1505,7 @@ local function ShowTab(tab)
         end
 
         appearanceTab:Show()
-        
+
         if init then return end
 
         UpdatePreviewButton()
@@ -1541,7 +1541,7 @@ Cell:RegisterCallback("UpdateIndicators", "AppearanceTab_UpdateIndicators", Upda
 -------------------------------------------------
 local function UpdateAppearance(which)
     F:Debug("|cff7f7fffUpdateAppearance:|r", which)
-    
+
     if not which or which == "texture" or which == "color" or which == "fullColor" or which == "deathColor" or which == "alpha" or which == "outOfRangeAlpha" or which == "shields" or which == "animation" or which == "highlightColor" or which == "highlightSize" or which == "reset" then
         local tex
         if not which or which == "texture" or which == "reset" then tex = F:GetBarTexture() end

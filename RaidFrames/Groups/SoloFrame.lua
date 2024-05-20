@@ -45,7 +45,7 @@ local function SoloFrame_UpdateLayout(layout, which)
         B:SetOrientation(playerButton, layout["barOrientation"][1], layout["barOrientation"][2])
         B:SetOrientation(petButton, layout["barOrientation"][1], layout["barOrientation"][2])
     end
-    
+
     if not which or strfind(which, "power$") or which == "barOrientation" or which == "powerFilter" then
         B:SetPowerSize(playerButton, layout["main"]["powerSize"])
         if layout["pet"]["sameSizeAsMain"] then

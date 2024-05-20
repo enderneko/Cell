@@ -59,7 +59,7 @@ local function CreateTabButtons()
     aboutBtn:SetPoint("BOTTOMLEFT", clickCastingsBtn, "BOTTOMRIGHT", P:Scale(-1), 0)
     closeBtn:SetPoint("BOTTOMLEFT", aboutBtn, "BOTTOMRIGHT", P:Scale(-1), 0)
     closeBtn:SetPoint("BOTTOMRIGHT", utilitiesBtn, "TOPRIGHT", 0, P:Scale(-1))
-    
+
     RegisterDragForOptionsFrame(generalBtn)
     RegisterDragForOptionsFrame(appearanceBtn)
     RegisterDragForOptionsFrame(layoutsBtn)
@@ -68,7 +68,7 @@ local function CreateTabButtons()
     RegisterDragForOptionsFrame(debuffsBtn)
     RegisterDragForOptionsFrame(utilitiesBtn)
     RegisterDragForOptionsFrame(aboutBtn)
-    
+
     generalBtn.id = "general"
     appearanceBtn.id = "appearance"
     layoutsBtn.id = "layouts"
@@ -77,7 +77,7 @@ local function CreateTabButtons()
     debuffsBtn.id = "debuffs"
     utilitiesBtn.id = "utilities"
     aboutBtn.id = "about"
-    
+
     local tabHeight = {
         ["general"] = 569,
         ["appearance"] = 665,
@@ -88,7 +88,7 @@ local function CreateTabButtons()
         ["utilities"] = 400,
         ["about"] = 540,
     }
-    
+
     local function ShowTab(tab)
         if lastShownTab ~= tab then
             P:Height(optionsFrame, tabHeight[tab])
@@ -120,7 +120,7 @@ local function CreateTabButtons()
             end)
         end
     end
-    
+
     Cell:CreateButtonGroup({generalBtn, appearanceBtn, layoutsBtn, clickCastingsBtn, indicatorsBtn, debuffsBtn, utilitiesBtn, aboutBtn}, ShowTab, nil, nil, OnEnter, OnLeave)
 end
 
@@ -149,7 +149,7 @@ function F:ShowOptionsFrame()
     if not lastShownTab then
         generalBtn:Click()
     end
-    
+
     optionsFrame:Show()
 end
 
@@ -199,7 +199,7 @@ local protectedFrames = {}
 function F:ApplyCombatProtectionToFrame(f, x1, y1, x2, y2)
     tinsert(protectedFrames, f)
     Cell:CreateCombatMask(f, x1, y1, x2, y2)
-    
+
     if InCombatLockdown() then
         f.combatMask:Show()
     end

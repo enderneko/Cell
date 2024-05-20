@@ -13,7 +13,7 @@ local size = 11
 local function UpdatePvPStatusIcon(b, event)
     local unit = b.states.unit
     if not unit then return end
-    
+
     if UnitIsPVP(unit) then
         b.widgets.pvpStatusIcon:SetAtlas("worldquest-icon-pvp-ffa")
         b.widgets.pvpStatusIcon:Show()

@@ -96,7 +96,7 @@ local function CreateCodeSnippetsFrame()
         discardBtn:SetEnabled(false)
         bottomPane.saveBtn:SetEnabled(false)
     end)
-    
+
     local saveBtn = Cell:CreateButton(bottomPane, L["Save"], "red", {200, 20})
     bottomPane.saveBtn = saveBtn
     saveBtn:SetPoint("BOTTOMLEFT", runBtn, "BOTTOMRIGHT", 10, 0)
@@ -146,10 +146,10 @@ local function CreateCodeSnippetsFrame()
             next = codePane.OriginalGetText(codePane.eb):find("[\n]", next + 1)
             line = line + 1
         end
-        
+
         lineNumber:SetText(line)
     end)
-    
+
     -- NOTE: indentation
     Cell.IndentationLib.enable(codePane.eb)
 
@@ -212,7 +212,7 @@ LoadList = function()
         if not buttons[i] then
             buttons[i] = Cell:CreateButton(topPane, "", "accent-hover", {156, 20})
             buttons[i].id = i -- for highlight
-            
+
             -- rename
             buttons[i]:SetScript("OnDoubleClick", function()
                 renameEB:ClearAllPoints()
@@ -227,7 +227,7 @@ LoadList = function()
                     buttons[i].label:SetText(i.."."..CellDB["snippets"][i]["name"])
                 end)
             end)
-            
+
             -- checkbox
             buttons[i].cb = Cell:CreateCheckButton(buttons[i], "", function(checked)
                 CellDB["snippets"][i]["autorun"] = checked
@@ -269,7 +269,7 @@ LoadList = function()
                     LoadList()
                 end
             end)
-            
+
             -- label
             buttons[i].label = buttons[i]:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
             buttons[i].label:SetPoint("LEFT", buttons[i].cb, "RIGHT", 3, 0)
@@ -290,7 +290,7 @@ LoadList = function()
                 CellTooltip:Hide()
             end
         end
-        
+
         buttons[i].cb:SetChecked(t["autorun"])
         buttons[i].label:SetText(i.."."..t["name"])
 
@@ -339,7 +339,7 @@ LoadList = function()
         rows = math.ceil((total+2) / 4)
     end
     topPane:SetHeight(rows*20 - (rows-1))
-    
+
     -- update scroll
     codePane.scrollFrame:UpdateSize()
 

@@ -60,7 +60,7 @@ local function StartTicker()
         -- check & calculate
         for unit in pairs(nameplates) do
             local target = UnitGUID(unit.."target")
-            
+
             if not target then -- no target
                 nameplateTargets[unit] = nil
             elseif not Cell.vars.guids[target] then -- target doesn't exists in player's group
@@ -99,7 +99,7 @@ function eventFrame:PLAYER_ENTERING_WORLD()
     end, true)
 
     local isIn, iType = IsInInstance()
-    
+
     local isValidZone
     if not isIn or iType == "none" then
         isValidZone = zoneFilters["outdoor"]
@@ -108,7 +108,7 @@ function eventFrame:PLAYER_ENTERING_WORLD()
     else -- party, raid, scenario
         isValidZone = zoneFilters["pve"]
     end
-    
+
     if counterEnabled and isValidZone then
         eventFrame:RegisterEvent("NAME_PLATE_UNIT_ADDED")
         eventFrame:RegisterEvent("NAME_PLATE_UNIT_REMOVED")
@@ -174,7 +174,7 @@ function I.CreateTargetCounter(parent)
             text:SetShadowOffset(0, 0)
             text:SetShadowColor(0, 0, 0, 0)
         end
-        
+
         local point = targetCounter:GetPoint(1)
         text:ClearAllPoints()
         if string.find(point, "LEFT") then

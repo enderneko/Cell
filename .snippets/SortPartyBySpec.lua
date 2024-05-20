@@ -3,7 +3,7 @@
 -- PARTY ONLY, RETAIL ONLY
 -- sort units by SPEC_PRIORITY ↓↓↓
 -- slash command (not in combat): /csort
--- new party members won't be shown, unless a re-sort is called 
+-- new party members won't be shown, unless a re-sort is called
 -- reload to restore
 
 -- 仅小队，仅正式服
@@ -67,7 +67,7 @@ local SPEC_PRIORITY = {
 -------------------------------------------------
 local function GetPriority(specId)
     if not specId then return 999 end
-    
+
     for i, s in pairs(SPEC_PRIORITY) do
         if specId == s then
             return i
@@ -94,7 +94,7 @@ function SlashCmdList.CELLSORT()
     for unit in F:IterateGroupMembers() do
         local name = UnitName(unit)
         tinsert(nameList, name)
-    
+
         local guid = UnitGUID(unit)
         local info = LGI:GetCachedInfo(guid)
         if info then

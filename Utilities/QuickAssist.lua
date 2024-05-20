@@ -88,7 +88,7 @@ local function UpdateAnchor()
     if layoutTable then
         show = Cell.unitButtons.quickAssist[1]:IsShown()
     end
-    
+
     hoverFrame:EnableMouse(show)
     if show then
         config:Show()
@@ -202,17 +202,17 @@ local function HandleBuff(self, auraInfo)
         else
             refreshing = false
         end
-        
+
         if (source == "player" and (myBuffs_icon[name] or myBuffs_bar[name])) or offensiveBuffs[spellId] then
             self._buffs_cache[auraInstanceID] = expirationTime
             self._buffs_count_cache[auraInstanceID] = count
         end
-        
+
         if myBuffs_icon[name] and source == "player" and self._buffIconsFound < 5 then
             self._buffIconsFound = self._buffIconsFound + 1
             self.buffIcons[self._buffIconsFound]:SetCooldown(start, duration, nil, icon, count, refreshing, myBuffs_icon[name], buffsGlowType)
         end
-        
+
         if myBuffs_bar[name] and source == "player" and self._buffBarsFound < 5 then
             self._buffBarsFound = self._buffBarsFound + 1
             self.buffBars[self._buffBarsFound]:SetCooldown(start, duration, myBuffs_bar[name])
@@ -263,7 +263,7 @@ local function QuickAssist_UpdateAuras(self, updateInfo)
             if CellDB["general"]["alwaysUpdateBuffs"] then buffsChanged = true end
         end
     end
-    
+
     if buffsChanged then
         self._buffIconsFound = 0
         self._buffBarsFound = 0
@@ -298,7 +298,7 @@ end
 local function QuickAssist_UpdateCasts(self, spellId)
     if not self.unit then return end
     if not offensiveCasts[spellId] then return end
-    
+
     self._casts[spellId] = GetTime()
     QuickAssist_UpdateAuras(self)
 
@@ -327,9 +327,9 @@ local function QuickAssist_UpdateNameColor(self)
 
     if not styleTable then
         self.nameText:SetTextColor(1, 1, 1)
-        return 
+        return
     end
-    
+
     if not UnitIsConnected(self.unit) then
         self.nameText:SetTextColor(F:GetClassColor(self.class))
     else
@@ -347,7 +347,7 @@ local function GetHealthColor(r, g, b)
     end
 
     local hpR, hpG, hpB, lossR, lossG, lossB
-    
+
     -- hp
     if styleTable["hpColor"][1] == "class_color" then
         hpR, hpG, hpB = r, g, b
@@ -385,7 +385,7 @@ local function QuickAssist_UpdateHealthColor(self)
     local hpR, hpG, hpB
     local lossR, lossG, lossB
     local hpA, lossA = 1, 1
-    
+
     if not UnitIsConnected(self.unit) then
         hpR, hpG, hpB = 0.4, 0.4, 0.4
         lossR, lossG, lossB = 0.4, 0.4, 0.4
@@ -470,13 +470,13 @@ end
 
 local function QuickAssist_RegisterEvents(self)
     self:RegisterEvent("GROUP_ROSTER_UPDATE")
-    
+
     self:RegisterEvent("UNIT_HEALTH")
     self:RegisterEvent("UNIT_MAXHEALTH")
-    
+
     self:RegisterEvent("UNIT_AURA")
     self:RegisterEvent("UNIT_SPELLCAST_SUCCEEDED")
-    
+
     self:RegisterEvent("UNIT_CONNECTION") -- offline
     self:RegisterEvent("UNIT_NAME_UPDATE") -- unknown target
 
@@ -498,17 +498,17 @@ local function QuickAssist_OnEvent(self, event, unit, arg, arg2)
 
         elseif event == "UNIT_SPELLCAST_SUCCEEDED" then
             QuickAssist_UpdateCasts(self, arg2)
-        
+
         elseif event == "UNIT_HEALTH" then
             QuickAssist_UpdateHealth(self)
-        
+
         elseif event == "UNIT_MAXHEALTH" then
             QuickAssist_UpdateHealthMax(self)
             QuickAssist_UpdateHealth(self)
 
         elseif event == "UNIT_CONNECTION" then
             self._updateRequired = 1
-        
+
         elseif event == "UNIT_NAME_UPDATE" then
             QuickAssist_UpdateName(self)
             QuickAssist_UpdateNameColor(self)
@@ -555,7 +555,7 @@ local function QuickAssist_OnTick(self)
     local e = (self.__tickCount or 0) + 1
     if e >= 2 then -- every 0.5 second
         e = 0
-        
+
         if self.unit then
             local guid = UnitGUID(self.unit)
             if guid ~= self.__guid then
@@ -620,7 +620,7 @@ function CellQuickAssist_OnLoad(button)
     -- healthBar
     local healthBar = CreateFrame("StatusBar", nil, button)
     button.healthBar = healthBar
-   
+
     healthBar:SetStatusBarTexture(Cell.vars.texture)
     healthBar:SetFrameLevel(button:GetFrameLevel()+5)
 
@@ -666,7 +666,7 @@ function CellQuickAssist_OnLoad(button)
     targetHighlight:SetIgnoreParentAlpha(true)
     targetHighlight:SetFrameLevel(button:GetFrameLevel()+6)
     targetHighlight:Hide()
-    
+
     -- mouseoverHighlight
     local mouseoverHighlight = CreateFrame("Frame", nil, button, "BackdropTemplate")
     button.mouseoverHighlight = mouseoverHighlight
@@ -788,7 +788,7 @@ local nameToPriority = {}
 local function GetPriority(class, specId)
     if not class then return end
     if not specId or specId == 0 then return end
-    
+
     local priority
     for ci, ct in pairs(specFilter[2]) do
         if class == ct[1] then  -- class
@@ -801,7 +801,7 @@ local function GetPriority(class, specId)
                         priority = nil
                     end
                     break
-                end                
+                end
             end
             break
         end
@@ -884,15 +884,15 @@ end
 -- ----------------------------------------------------------------------- --
 local function UpdatePosition()
     if not layoutTable then return end
-    
+
     local anchor = layoutTable["anchor"]
-    
+
     quickAssistFrame:ClearAllPoints()
     P:LoadPosition(anchorFrame, layoutTable["position"])
 
     if CellDB["general"]["menuPosition"] == "top_bottom" then
         P:Size(anchorFrame, 20, 10)
-        
+
         if anchor == "BOTTOMLEFT" then
             quickAssistFrame:SetPoint("BOTTOMLEFT", anchorFrame, "TOPLEFT", 0, 4)
             tooltipPoint, tooltipRelativePoint, tooltipX, tooltipY = "TOPLEFT", "BOTTOMLEFT", 0, -3
@@ -978,7 +978,7 @@ local function UpdateQuickAssist(which)
 
         local width, height = layoutTable["size"][1], layoutTable["size"][2]
         P:Size(quickAssistFrame, width, height)
-        
+
         header:SetAttribute("_ignore", true) --! NOTE: prevent multi-invoke SecureGroupHeader_OnAttributeChanged
 
         header:SetAttribute("minWidth", P:Scale(width))
@@ -1056,7 +1056,7 @@ local function UpdateQuickAssist(which)
 
     if not which or which == "filter" then
         local selectedFilter = groupType and quickAssistTable["filterAutoSwitch"][groupType] or 0
-        
+
         EnableSpecFilter(false)
         specFilter = nil
 
@@ -1068,7 +1068,7 @@ local function UpdateQuickAssist(which)
             header:SetAttribute("showRaid", true)
             header:SetAttribute("showParty", true)
             header:SetAttribute("showPlayer", not quickAssistTable["filters"][selectedFilter][3])
-            
+
             if quickAssistTable["filters"][selectedFilter][1] == "role" then
                 local groupFilter = {}
                 for k, v in pairs(quickAssistTable["filters"][selectedFilter][2]) do
@@ -1077,12 +1077,12 @@ local function UpdateQuickAssist(which)
                     end
                 end
                 groupFilter = table.concat(groupFilter, ",")
-    
+
                 header:SetAttribute("groupingOrder", "TANK,HEALER,DAMAGER")
                 header:SetAttribute("groupBy", "ASSIGNEDROLE")
                 header:SetAttribute("sortMethod", "NAME")
                 header:SetAttribute("groupFilter", groupFilter)
-    
+
             elseif quickAssistTable["filters"][selectedFilter][1] == "class" then
                 local groupFilter = {}
                 for k, v in pairs(quickAssistTable["filters"][selectedFilter][2]) do
@@ -1091,7 +1091,7 @@ local function UpdateQuickAssist(which)
                     end
                 end
                 groupFilter = table.concat(groupFilter, ",")
-    
+
                 header:SetAttribute("groupingOrder", groupFilter)
                 header:SetAttribute("groupBy", "CLASS")
                 header:SetAttribute("sortMethod", "NAME")
@@ -1100,7 +1100,7 @@ local function UpdateQuickAssist(which)
             elseif quickAssistTable["filters"][selectedFilter][1] == "spec" then
                 specFilter = quickAssistTable["filters"][selectedFilter]
                 EnableSpecFilter(true)
-    
+
             elseif quickAssistTable["filters"][selectedFilter][1] == "name" then
                 header:SetAttribute("sortMethod", "NAMELIST")
                 header:SetAttribute("nameList", table.concat(quickAssistTable["filters"][selectedFilter][2], ","))
@@ -1167,7 +1167,7 @@ local function UpdateQuickAssist(which)
             else
                 P:ClearPoints(targetHighlight)
                 P:ClearPoints(mouseoverHighlight)
-                
+
                 if size < 0 then
                     size = abs(size)
                     P:Point(targetHighlight, "TOPLEFT", header[i], "TOPLEFT")
@@ -1285,7 +1285,7 @@ local function UpdateQuickAssist(which)
             indicator:ShowDuration(oit["showDuration"])
             indicator:ShowAnimation(oit["showAnimation"])
             indicator:ShowStack(oit["showStack"])
-            
+
             -- glow
             indicator = header[i].offensiveGlow
             indicator:SetFadeOut(ogt["fadeOut"])
@@ -1338,7 +1338,7 @@ local function QuickAssist_CreateIndicators(button)
             ShowGlow(self, glow, color)
         end)
     end
-    
+
     -- offensives indicator (glow)
     local offensiveGlow = I.CreateAura_Glow(button:GetName().."OffensiveGlow", button)
     button.offensiveGlow = offensiveGlow

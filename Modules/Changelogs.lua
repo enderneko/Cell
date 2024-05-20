@@ -48,7 +48,7 @@ local function CreateChangelogsFrame()
         elseif linkData == "recent" then
             content:SetText("<html><body>" .. L["CHANGELOGS"] .. "</body></html>")
         end
-            
+
         local height = content:GetContentHeight()
         content:SetHeight(height)
         changelogsFrame.scrollFrame.content:SetHeight(height + 30)
