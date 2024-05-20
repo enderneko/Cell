@@ -2851,34 +2851,33 @@ function F:Revise()
             end
         end
 
-        -- separate "Shadow" from "Outline"
+        -- disable snippets
+        F:DisableSnippets()
+    end
+
+    -- r227-release
+    if CellDB["revise"] and dbRevision < 227 then
         if Cell.isRetail then
-            for _, t in pairs(CellDB["quickAssist"]) do
-                if type(t.style.name.font[4]) ~= "boolean" then
-                    if string.find(t.style.name.font[3], "^Shadow") then
-                        t.style.name.font[3] = "None"
-                        tinsert(t.style.name.font, 4, true)
+            -- QuickAssist: separate "Shadow" from "Outline"
+            local function FixShadow(t)
+                if type(t[4]) ~= "boolean" then
+                    if string.find(t[3], "^Shadow") then
+                        t[3] = "None"
+                        tinsert(t, 4, true)
                     else
-                        tinsert(t.style.name.font, 4, false)
-                    end
-                    if string.find(t.spells.mine.icon.font[1][3], "^Shadow") then
-                        t.spells.mine.icon.font[1][3] = "None"
-                        tinsert(t.spells.mine.icon.font[1], 4, true)
-                    else
-                        tinsert(t.spells.mine.icon.font[1], 4, false)
-                    end
-                    if string.find(t.spells.mine.icon.font[2][3], "^Shadow") then
-                        t.spells.mine.icon.font[2][3] = "None"
-                        tinsert(t.spells.mine.icon.font[2], 4, true)
-                    else
-                        tinsert(t.spells.mine.icon.font[2], 4, false)
+                        tinsert(t, 4, false)
                     end
                 end
             end
-        end
 
-        -- disable snippets
-        F:DisableSnippets()
+            for _, t in pairs(CellDB["quickAssist"]) do
+                FixShadow(t.style.name.font)
+                FixShadow(t.spells.mine.icon.font[1])
+                FixShadow(t.spells.mine.icon.font[2])
+                FixShadow(t.spells.offensives.icon.font[1])
+                FixShadow(t.spells.offensives.icon.font[2])
+            end
+        end
     end
 
     -- ----------------------------------------------------------------------- --
