@@ -78,7 +78,7 @@ select(2, ...).L = setmetatable({
     ["marksTips"] = "\n|rTarget marker\nLeft-Click: |cffffffffset raid marker on target|r\nRight-Click: |cfffffffflock raid marker on target (in your group)|r",
     ["cleuAurasTips"] = "Check CLEU events for invisible auras",
     ["raidRosterTips"] = "[Right-Click] promote/demote (assistant). [Alt+Right-Click] uninvite.",
-    
+
     ["RAID_DEBUFFS_TIPS"] = "Tips: [Drag & Drop] to change debuff order. [Double-Click] on instance name to open Encounter Journal. [Shift+Left Click] on instance/boss name to share debuffs. [Alt+Left Click] on instance/boss name to reset debuffs. The priority of General Debuffs is higher than Boss Debuffs.",
     ["SNIPPETS_TIPS"] = "[Double-Click] to rename. [Shift-Click] to delete. All checked snippets will be automatically invoked at the end of Cell initialization process (in ADDON_LOADED event).",
 
@@ -86,8 +86,16 @@ select(2, ...).L = setmetatable({
         <h1>If there are any issues after an update, check through all code snippets first.</h1>
         <p>(Retail) Enable "Always Update Buffs/Debuffs" in General tab, if indicators do not update correctly.</p>
         <br/>
-        
+
+        <h1>r227-release (May 21, 2024, 01:08 GMT+8)</h1>
+        <p>* Fixed Quick Assist.</p>
+        <p>+ Fixed a layout switch issue.</p>
+        <p>* Updated zhTW.</p>
+        <br/>
+
         <h1>r226-release (May 20, 2024, 02:33 GMT+8)</h1>
+        <p>* Added a separated "Shadow" option for fonts (#110).</p>
+        <p>* Fixed Shield Bar alpha in preview (#111).</p>
         <p>+ Implemented "Reverse Filling" for overshields.</p>
         <p>+ Added "Frame Level" option for Role Icon indicator.</p>
         <p>+ Added "Show Duration" for Raid Debuffs indicator.</p>
