@@ -89,7 +89,7 @@ select(2, ...).L = setmetatable({
 
         <h1>r227-release (May 21, 2024, 01:08 GMT+8)</h1>
         <p>* Fixed Quick Assist.</p>
-        <p>+ Fixed a layout switch issue.</p>
+        <p>* Fixed a layout switch issue.</p>
         <p>* Updated zhTW.</p>
         <br/>
 
