@@ -89,11 +89,11 @@ end
 
 -- used for switching to a new layout
 function I.RemoveAllCustomIndicators(parent)
-    if parent ~= CellIndicatorsPreviewButton then
-        wipe(enabledIndicators)
-        wipe(customIndicators["buff"])
-        wipe(customIndicators["debuff"])
-    end
+    -- if parent ~= CellIndicatorsPreviewButton then
+    --     wipe(enabledIndicators)
+    --     wipe(customIndicators["buff"])
+    --     wipe(customIndicators["debuff"])
+    -- end
 
     for indicatorName, indicator in pairs(parent.indicators) do
         if string.find(indicatorName, "^indicator") then

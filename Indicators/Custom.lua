@@ -69,7 +69,7 @@ function I.CreateIndicator(parent, indicatorTable, noTableUpdate)
         indicator = I.CreateAura_Overlay(parent:GetName()..indicatorName, parent)
     end
     parent.indicators[indicatorName] = indicator
-    
+
     if not noTableUpdate then
         UpdateTablesForIndicator(indicatorTable)
     end
@@ -89,11 +89,11 @@ end
 
 -- used for switching to a new layout
 function I.RemoveAllCustomIndicators(parent)
-    if parent ~= CellIndicatorsPreviewButton then
-        wipe(enabledIndicators)
-        wipe(customIndicators["buff"])
-        wipe(customIndicators["debuff"])
-    end
+    -- if parent ~= CellIndicatorsPreviewButton then
+    --     wipe(enabledIndicators)
+    --     wipe(customIndicators["buff"])
+    --     wipe(customIndicators["debuff"])
+    -- end
 
     for indicatorName, indicator in pairs(parent.indicators) do
         if string.find(indicatorName, "^indicator") then
@@ -206,7 +206,7 @@ function I.UpdateCustomIndicators(unitButton, auraInfo, refreshing)
     local duration = auraInfo.duration
     local start = (auraInfo.expirationTime or 0) - auraInfo.duration
     local spellId = auraInfo.spellId
-    local spellName = auraInfo.name 
+    local spellName = auraInfo.name
     local castByMe = auraInfo.sourceUnit == "player" or auraInfo.sourceUnit == "pet"
 
     -- check Bleed
@@ -222,7 +222,7 @@ function I.UpdateCustomIndicators(unitButton, auraInfo, refreshing)
             else
                 spell = spellId
             end
-            
+
             if indicatorTable["auras"][spell] or (indicatorTable["auras"][0] and duration ~= 0) then -- is in indicator spell list
                 if auraType == "buff" then
                     -- check caster
@@ -262,11 +262,11 @@ function I.ShowCustomIndicators(unitButton, auraType)
             else
                 if indicatorTable["top"][unit]["start"] then
                     indicator:SetCooldown(
-                        indicatorTable["top"][unit]["start"], 
-                        indicatorTable["top"][unit]["duration"], 
-                        indicatorTable["top"][unit]["debuffType"], 
-                        indicatorTable["top"][unit]["texture"], 
-                        indicatorTable["top"][unit]["count"], 
+                        indicatorTable["top"][unit]["start"],
+                        indicatorTable["top"][unit]["duration"],
+                        indicatorTable["top"][unit]["debuffType"],
+                        indicatorTable["top"][unit]["texture"],
+                        indicatorTable["top"][unit]["count"],
                         indicatorTable["top"][unit]["refreshing"])
                 end
             end

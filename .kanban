@@ -163,7 +163,7 @@
         {
           "id": "0fc1a21b-2116-482d-9185-8adb860a38bf",
           "listId": "fc9baa7c-c3e7-49a4-8526-816c794e5ed9",
-          "title": "Overshields",
+          "title": "Fix vertical overshields",
           "description": "",
           "labels": [],
           "checkboxes": [],

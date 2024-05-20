@@ -372,6 +372,7 @@ hooksecurefunc(updater, "Show", function()
 end)
 
 local function AddToQueue(b)
+    b._indicatorReady = nil
     tinsert(queue, b)
 end
 
@@ -418,15 +419,16 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
     previousLayout[INDEX] = Cell.vars.currentLayout
 
     if not indicatorName then -- init
+        I.ResetCustomIndicatorTables()
         ResetIndicators()
 
         if not indicatorsInitialized then
             -- update indicators
-            F:IterateAllUnitButtons(HandleIndicators, indicatorsInitialized) -- -- NOTE: indicatorsInitialized = false, update ALL GROUP TYPE; indicatorsInitialized = true, just update CURRENT GROUP TYPE
+            F:IterateAllUnitButtons(HandleIndicators) -- -- NOTE: indicatorsInitialized = false, update ALL GROUP TYPE; indicatorsInitialized = true, just update CURRENT GROUP TYPE
             -- update all when indicators update finished
             F:IterateAllUnitButtons(UnitButton_UpdateAll, true)
         else
-            F:IterateAllUnitButtons(AddToQueue, indicatorsInitialized)
+            F:IterateAllUnitButtons(AddToQueue, true)
             updater:Show()
         end
         indicatorsInitialized = true
@@ -2098,7 +2100,10 @@ local function UnitButton_RegisterEvents(self)
     -- self:RegisterEvent("UNIT_PET")
     self:RegisterEvent("UNIT_PORTRAIT_UPDATE") -- pet summoned far away
     
-    pcall(UnitButton_UpdateAll, self)
+    local success, result = pcall(UnitButton_UpdateAll, self)
+    if not success then
+        F:Debug("UnitButton_UpdateAll |cffff0000FAILED:|r", self:GetName(), result)
+    end
 end
 
 local function UnitButton_UnregisterEvents(self)
