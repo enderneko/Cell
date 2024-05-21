@@ -73,7 +73,7 @@ function F:UpdateLayout(layoutGroupType, updateIndicators)
         Cell.vars.currentLayout = layout
         Cell.vars.currentLayoutTable = CellDB["layouts"][layout]
         Cell.vars.layoutGroupType = layoutGroupType
-        
+
         Cell:Fire("UpdateLayout", Cell.vars.currentLayout)
         if updateIndicators then
             Cell:Fire("UpdateIndicators")
@@ -140,7 +140,7 @@ function eventFrame:ADDON_LOADED(arg1)
     if arg1 == addonName then
         -- cellLoaded = true
         eventFrame:UnregisterEvent("ADDON_LOADED")
-        
+
         if type(CellDB) ~= "table" then CellDB = {} end
         if type(CellCharacterDB) ~= "table" then CellCharacterDB = {} end
 
@@ -150,7 +150,7 @@ function eventFrame:ADDON_LOADED(arg1)
         if type(CellDB["indicatorPreviewScale"]) ~= "number" then CellDB["indicatorPreviewScale"] = 1 end
 
         if type(CellDB["customTextures"]) ~= "table" then CellDB["customTextures"] = {} end
-        
+
         if type(CellDB["snippets"]) ~= "table" then CellDB["snippets"] = {} end
         if not CellDB["snippets"][0] then CellDB["snippets"][0] = F:GetDefaultSnippet() end
 
@@ -202,7 +202,7 @@ function eventFrame:ADDON_LOADED(arg1)
         if type(CellDB["spellRequest"]) ~= "table" then
             local POWER_INFUSION, _, POWER_INFUSION_ICON = GetSpellInfo(10060)
             local INNERVATE, _, INNERVATE_ICON = GetSpellInfo(29166)
-            
+
             CellDB["spellRequest"] = {
                 ["enabled"] = false,
                 ["checkIfExists"] = true,
@@ -221,7 +221,7 @@ function eventFrame:ADDON_LOADED(arg1)
                     0, -- [6] y
                 },
                 ["spells"] = {
-                    { 
+                    {
                         ["spellId"] = 10060,
                         ["buffId"] = 10060,
                         ["keywords"] = POWER_INFUSION,
@@ -242,7 +242,7 @@ function eventFrame:ADDON_LOADED(arg1)
                         },
                         ["isBuiltIn"] = true
                     },
-                    { 
+                    {
                         ["spellId"] = 29166,
                         ["buffId"] = 29166,
                         ["keywords"] = INNERVATE,
@@ -278,7 +278,7 @@ function eventFrame:ADDON_LOADED(arg1)
                 ["type"] = "text",
                 ["textOptions"] = {
                     "A",
-                    {1, 0, 0, 1}, -- [1] color 
+                    {1, 0, 0, 1}, -- [1] color
                     32, -- [2] size
                     "TOPLEFT", -- [3] anchor
                     "TOPLEFT", -- [4] anchorTo
@@ -320,7 +320,7 @@ function eventFrame:ADDON_LOADED(arg1)
 
         -- color ---------------------------------------------------------------------------------
         if CellDB["appearance"]["accentColor"] then -- version < r103
-            if CellDB["appearance"]["accentColor"][1] == "custom" then 
+            if CellDB["appearance"]["accentColor"][1] == "custom" then
                 Cell:OverrideAccentColor(CellDB["appearance"]["accentColor"][2])
             end
         end
@@ -382,7 +382,7 @@ function eventFrame:ADDON_LOADED(arg1)
             CellDB["dispelBlacklist"] = I.GetDefaultDispelBlacklist()
         end
         Cell.vars.dispelBlacklist = F:ConvertTable(CellDB["dispelBlacklist"])
-        
+
         -- debuffBlacklist ------------------------------------------------------------------------
         if type(CellDB["debuffBlacklist"]) ~= "table" then
             CellDB["debuffBlacklist"] = I.GetDefaultDebuffBlacklist()
@@ -394,7 +394,7 @@ function eventFrame:ADDON_LOADED(arg1)
             CellDB["bigDebuffs"] = I.GetDefaultBigDebuffs()
         end
         Cell.vars.bigDebuffs = F:ConvertTable(CellDB["bigDebuffs"])
-                
+
         -- debuffTypeColor -----------------------------------------------------------------------------
         if type(CellDB["debuffTypeColor"]) ~= "table" then
             I.ResetDebuffTypeColor()
@@ -403,7 +403,7 @@ function eventFrame:ADDON_LOADED(arg1)
         -- defensives/externals -------------------------------------------------------------------
         if type(CellDB["defensives"]) ~= "table" then CellDB["defensives"] = {["disabled"]={}, ["custom"]={}} end
         if type(CellDB["externals"]) ~= "table" then CellDB["externals"] = {["disabled"]={}, ["custom"]={}} end
-        
+
         -- raid debuffs ---------------------------------------------------------------------------
         if type(CellDB["raidDebuffs"]) ~= "table" then CellDB["raidDebuffs"] = {} end
         -- CellDB["raidDebuffs"] = {
@@ -422,7 +422,7 @@ function eventFrame:ADDON_LOADED(arg1)
             CellDB["targetedSpellsList"] = I.GetDefaultTargetedSpellsList()
         end
         Cell.vars.targetedSpellsList = F:ConvertTable(CellDB["targetedSpellsList"])
-        
+
         if type(CellDB["targetedSpellsGlow"]) ~= "table" then
             CellDB["targetedSpellsGlow"] = I.GetDefaultTargetedSpellsGlow()
         end
@@ -433,10 +433,10 @@ function eventFrame:ADDON_LOADED(arg1)
             CellDB["consumables"] = I.GetDefaultConsumables()
         end
         Cell.vars.consumables = I.ConvertConsumables(CellDB["consumables"])
-        
+
         -- misc -----------------------------------------------------------------------------------
         Cell.version = GetAddOnMetadata(addonName, "version")
-        Cell.versionNum = tonumber(string.match(Cell.version, "%d+")) 
+        Cell.versionNum = tonumber(string.match(Cell.version, "%d+"))
         if not CellDB["revise"] then CellDB["firstRun"] = true end
         F:Revise()
         F:CheckWhatsNew()
@@ -693,7 +693,7 @@ function eventFrame:PLAYER_LOGIN()
     -- update spec vars
     UpdateSpecVars()
 
-    --! init Cell.vars.currentLayout and Cell.vars.currentLayoutTable 
+    --! init Cell.vars.currentLayout and Cell.vars.currentLayoutTable
     eventFrame:GROUP_ROSTER_UPDATE()
     -- update visibility
     Cell:Fire("UpdateVisibility")
@@ -808,11 +808,11 @@ function SlashCmdList.CELL(msg, editbox)
         elseif rest == "clickcastings" then
             CellCharacterDB["clickCastings"] = nil
             ReloadUI()
-        
+
         elseif rest == "raiddebuffs" then
             CellDB["raidDebuffs"] = nil
             ReloadUI()
-        
+
         elseif rest == "snippets" then
             CellDB["snippets"] = {}
             CellDB["snippets"][0] = F:GetDefaultSnippet()
@@ -832,7 +832,7 @@ function SlashCmdList.CELL(msg, editbox)
         else
             F:Print(L["A 0-40 integer is required."])
         end
-   
+
     -- elseif command == "buff" then
     --     rest = tonumber(rest:format("%d"))
     --     if rest and rest > 0 then

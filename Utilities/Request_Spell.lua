@@ -24,7 +24,7 @@ local function ShowSpellOptions(index)
     local responseType = CellDB["spellRequest"]["responseType"]
     local spellId = CellDB["spellRequest"]["spells"][index]["spellId"]
     local macroText, keywords
-    
+
     if responseType == "all" then
         srMacroText:SetText(L["Macro"])
         macroText = "/run C_ChatInfo.SendAddonMessage(\"CELL_REQ_S\",\""..spellId.."\",\"RAID\")"
@@ -58,11 +58,11 @@ local function ShowSpellOptions(index)
 
     canEdit = not CellDB["spellRequest"]["spells"][index]["isBuiltIn"] -- not built-in
     srDeleteBtn:SetEnabled(canEdit)
-    
+
     srMacroText:Show()
     srMacroEB:SetCursorPosition(0)
     srMacroEB:Show()
-    
+
     srType = CellDB["spellRequest"]["spells"][index]["type"]
 
     srTypeText:Show()
@@ -166,7 +166,7 @@ local function CreateSRPane()
     end)
     srEnabledCB:SetPoint("TOPLEFT", srPane, "TOPLEFT", 5, -100)
     ---------------------------------------------------------------------------------
-    
+
     -- check exists -----------------------------------------------------------------
     srExistsCB = Cell:CreateCheckButton(srPane, L["Check If Exists"], function(checked, self)
         CellDB["spellRequest"]["checkIfExists"] = checked
@@ -184,7 +184,7 @@ local function CreateSRPane()
     end, L["If disabled, no check, no reply, just glow"])
     srKnownOnlyCB:SetPoint("TOPLEFT", srEnabledCB, "BOTTOMLEFT", 0, -15)
     ---------------------------------------------------------------------------------
-    
+
     -- free cooldown ----------------------------------------------------------------
     srFreeCDOnlyCB = Cell:CreateCheckButton(srPane, L["Free Cooldown Only"], function(checked, self)
         CellDB["spellRequest"]["freeCooldownOnly"] = checked
@@ -289,7 +289,7 @@ local function CreateSRPane()
     srTimeoutText:SetPoint("BOTTOMLEFT", srTimeoutDD, "TOPLEFT", 0, 1)
     srTimeoutText:SetText(L["Timeout"])
     ---------------------------------------------------------------------------------
-    
+
     -- spells -----------------------------------------------------------------------
     srSpellsDD = Cell:CreateDropdown(srPane, 268)
     srSpellsDD:SetPoint("TOPLEFT", srResponseDD, "BOTTOMLEFT", 0, -37)
@@ -322,7 +322,7 @@ local function CreateSRPane()
     end)
     Cell:RegisterForCloseDropdown(srAddBtn)
     ---------------------------------------------------------------------------------
-    
+
     -- delete -----------------------------------------------------------------------
     srDeleteBtn = Cell:CreateButton(srPane, L["Delete"], "red-hover", {65, 20})
     srDeleteBtn:SetPoint("TOPLEFT", srAddBtn, "TOPRIGHT", 7, 0)
@@ -339,7 +339,7 @@ local function CreateSRPane()
     end)
     Cell:RegisterForCloseDropdown(srDeleteBtn)
     ---------------------------------------------------------------------------------
-    
+
     -- macro ------------------------------------------------------------------------
     srMacroEB = Cell:CreateEditBox(srPane, 412, 20)
     srMacroEB:SetPoint("TOPLEFT", srSpellsDD, "BOTTOMLEFT", 0, -27)
@@ -362,7 +362,7 @@ local function CreateSRPane()
         srMacroEB:HighlightText(0, 0)
     end)
     ---------------------------------------------------------------------------------
-    
+
     -- type -------------------------------------------------------------------------
     srTypeDD = Cell:CreateDropdown(srPane, 131)
     srTypeDD:SetPoint("TOPLEFT", srMacroEB, "BOTTOMLEFT", 0, -27)
@@ -688,12 +688,12 @@ function U:CreateSpellRequestIcon(parent)
         srIcon:SetAlpha(1)
         P:Repoint(srIcon)
         srIcon.elapsed = 0
-        
+
         LCG.ButtonGlow_Start(srIcon, color)
-        
+
         srIcon:Show()
     end
-    
+
     srIcon:SetScript("OnHide", function()
         LCG.ButtonGlow_Stop(srIcon)
     end)
@@ -712,9 +712,9 @@ function U:CreateSpellRequestIcon(parent)
                 srIcon.elapsed = (srIcon.elapsed or 0) + elapsed * 2
                 srIcon:SetPoint(
                     CellDB["spellRequest"]["sharedIconOptions"][3],
-                    parent.widgets.srGlowFrame, 
-                    CellDB["spellRequest"]["sharedIconOptions"][4], 
-                    CellDB["spellRequest"]["sharedIconOptions"][5], 
+                    parent.widgets.srGlowFrame,
+                    CellDB["spellRequest"]["sharedIconOptions"][4],
+                    CellDB["spellRequest"]["sharedIconOptions"][5],
                     CellDB["spellRequest"]["sharedIconOptions"][6] + GetValue(srIcon.elapsed / 1, 0, 7)
                 )
             end)
@@ -748,9 +748,9 @@ local function ShowUtilitySettings(which)
             CreateSRPane()
             CreateSpellEditFrame()
         end
-        
+
         srPane:Show()
-        
+
         if init then return end
         init = true
 
@@ -769,7 +769,7 @@ local function ShowUtilitySettings(which)
         UpdateSRWidgets()
         HideSpellOptions()
         LoadSpellsDropdown()
-        
+
     elseif init then
         srPane:Hide()
     end

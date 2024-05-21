@@ -120,7 +120,7 @@ LoadTextures = function()
                     b.delBtn:SetBackdropBorderColor(0, 0, 0, 1)
                 end
             end)
-            
+
             b.tex = b:CreateTexture(nil, "ARTWORK")
             b.tex:SetPoint("TOPLEFT", 5, -5)
             b.tex:SetPoint("BOTTOMRIGHT", -5, 5)
@@ -204,7 +204,7 @@ function F:ShowTextureSelector(selected, callback)
     if not textureSelector then
         CreateTextureSelector()
     end
-    
+
     Cell.frames.indicatorsTab.mask:Show()
     textureSelector:Show()
 

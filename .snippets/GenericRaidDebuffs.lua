@@ -29,7 +29,7 @@ function F:GetDebuffList(instanceName)
             list[id] = {["order"]=i, ["condition"]={"None"}}
         end
     end
-    
+
     if iId and loadedDebuffs[iId] then
         local n = 0
         -- check general

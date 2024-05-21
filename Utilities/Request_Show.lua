@@ -16,7 +16,7 @@ local function HideGlow(glowFrame)
     LCG.PixelGlow_Stop(glowFrame)
     LCG.AutoCastGlow_Stop(glowFrame)
     LCG.ProcGlow_Stop(glowFrame)
-    
+
     if glowFrame.timer then
         glowFrame.timer:Cancel()
         glowFrame.timer = nil
@@ -25,7 +25,7 @@ end
 
 local function ShowGlow(glowFrame, glowType, glowOptions, timeout, callback)
     F:Debug("|cffa2d2ffSHOW_GLOW:|r", glowFrame:GetName())
-    
+
     if glowType == "normal" then
         LCG.PixelGlow_Stop(glowFrame)
         LCG.AutoCastGlow_Stop(glowFrame)
@@ -77,7 +77,7 @@ end
 
 local function ShowIcon(icon, tex, iconColor, timeout, callback)
     F:Debug("|cffa2d2ffSHOW_ICON:|r", icon:GetName())
-    
+
     icon:Display(tex, iconColor)
 
     if icon.timer then
@@ -106,7 +106,7 @@ end
 
 local function ShowText(text, timeout, callback)
     F:Debug("|cffa2d2ffSHOW_TEXT:|r", text:GetName())
-    
+
     text:Display()
 
     if text.timer then
@@ -194,7 +194,7 @@ local function ShowSpellRequest(button, spellId)
 
         --! save requesterUnit and buffId
         srUnits[unit] = srSpells[spellId][2]
-        
+
         if srSpells[spellId][1] == "icon" then
             ShowIcon(button.widgets.srIcon, srSpells[spellId][4], srSpells[spellId][5], srTimeout, function()
                 srUnits[unit] = nil
@@ -289,7 +289,7 @@ local function SR_UpdateRequests(which)
         -- texplore(srUnits)
 
         srEnabled = CellDB["spellRequest"]["enabled"]
-        
+
         if srEnabled then
             srExists = CellDB["spellRequest"]["checkIfExists"]
             srKnown = CellDB["spellRequest"]["knownSpellsOnly"]
@@ -298,7 +298,7 @@ local function SR_UpdateRequests(which)
             srReplyCD = CellDB["spellRequest"]["replyCooldown"] and srResponseType ~= "all"
             srTimeout = CellDB["spellRequest"]["timeout"]
             srCastMsg = CellDB["spellRequest"]["replyAfterCast"]
-            
+
             if srResponseType == "whisper" then
                 SR:RegisterEvent("CHAT_MSG_WHISPER")
             else
@@ -388,7 +388,7 @@ Comm:RegisterComm("CELL_REQ_D", function(prefix, message, channel, sender)
             -- NOTE: get specific dispellable debuffs on unit
             drUnits[unit] = F:FindDebuffByIds(unit, drDebuffs)
         end
-       
+
         -- NOTE: filter dispellable by me
         if drDispellable then
             for spellId, debuffType in pairs(drUnits[unit]) do
@@ -419,7 +419,7 @@ end)
 local function DR_UpdateRequests(which)
     if not which or which == "dispelRequest" then
         HideAllDRGlows()
-        
+
         drEnabled = CellDB["dispelRequest"]["enabled"]
 
         if drEnabled then
@@ -439,7 +439,7 @@ local function DR_UpdateRequests(which)
         -- texplore(drDebuffs)
 
     end
-    
+
     if not which or which == "dispelRequest_text" then
         F:IterateAllUnitButtons(function(b)
             local setting = CellDB["dispelRequest"]["textOptions"]

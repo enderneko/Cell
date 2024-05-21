@@ -69,7 +69,7 @@ function I.CreateIndicator(parent, indicatorTable, noTableUpdate)
         indicator = I.CreateAura_Overlay(parent:GetName()..indicatorName, parent)
     end
     parent.indicators[indicatorName] = indicator
-    
+
     if not noTableUpdate then
         UpdateTablesForIndicator(indicatorTable)
     end
@@ -207,7 +207,7 @@ function I.UpdateCustomIndicators(unitButton, auraType, spellId, spellName, star
             else
                 spell = spellId
             end
-            
+
             if indicatorTable["auras"][spell] or indicatorTable["auras"][0] or (indicatorTable["auras"][1] and duration ~= 0) then -- is in indicator spell list
                 if auraType == "buff" then
                     -- check caster
@@ -247,11 +247,11 @@ function I.ShowCustomIndicators(unitButton, auraType)
             else
                 if indicatorTable["top"][unit]["start"] then
                     indicator:SetCooldown(
-                        indicatorTable["top"][unit]["start"], 
-                        indicatorTable["top"][unit]["duration"], 
-                        indicatorTable["top"][unit]["debuffType"], 
-                        indicatorTable["top"][unit]["texture"], 
-                        indicatorTable["top"][unit]["count"], 
+                        indicatorTable["top"][unit]["start"],
+                        indicatorTable["top"][unit]["duration"],
+                        indicatorTable["top"][unit]["debuffType"],
+                        indicatorTable["top"][unit]["texture"],
+                        indicatorTable["top"][unit]["count"],
                         indicatorTable["top"][unit]["refreshing"])
                 end
             end
@@ -340,11 +340,11 @@ function I.ShowCustomIndicators(unit, unitButton, auraType)
             else
                 if indicatorTable["top"][unit]["start"] then
                     unitButton.indicators[indicatorName]:SetCooldown(
-                        indicatorTable["top"][unit]["start"], 
-                        indicatorTable["top"][unit]["duration"], 
-                        indicatorTable["top"][unit]["debuffType"], 
-                        indicatorTable["top"][unit]["texture"], 
-                        indicatorTable["top"][unit]["count"], 
+                        indicatorTable["top"][unit]["start"],
+                        indicatorTable["top"][unit]["duration"],
+                        indicatorTable["top"][unit]["debuffType"],
+                        indicatorTable["top"][unit]["texture"],
+                        indicatorTable["top"][unit]["count"],
                         indicatorTable["top"][unit]["refreshing"])
                 else
                     unitButton.indicators[indicatorName]:Hide()

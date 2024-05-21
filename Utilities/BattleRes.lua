@@ -144,7 +144,7 @@ battleResFrame:SetScript("OnUpdate", function(self, elapsed)
     total = total + elapsed
     if total >= 0.25 then
         total = 0
-        
+
         -- Upon engaging a boss, all combat resurrection spells will have their cooldowns reset and begin with 1 charge.
         -- Charges will accumulate at a rate of 1 per (90/RaidSize) minutes.
         local charges, _, started, duration = GetSpellCharges(20484)
@@ -154,7 +154,7 @@ battleResFrame:SetScript("OnUpdate", function(self, elapsed)
             battleResFrame:RegisterEvent("SPELL_UPDATE_CHARGES")
             return
         end
-        
+
         local color = (charges > 0) and "|cffffffff" or "|cffff0000"
         local remaining = duration - (GetTime() - started)
         local m = floor(remaining / 60)
@@ -162,7 +162,7 @@ battleResFrame:SetScript("OnUpdate", function(self, elapsed)
 
         stack:SetText(("%s%d|r  "):format(color, charges))
         rTime:SetText(("%d:%02d"):format(m, s))
-        
+
         bar:SetMinMaxValues(0, duration)
         bar:SetValue(duration - remaining)
     end
@@ -180,7 +180,7 @@ end
 function battleResFrame:PLAYER_ENTERING_WORLD()
     battleResFrame:UnregisterEvent("SPELL_UPDATE_CHARGES")
     battleResFrame:Hide()
-    
+
     local _, instanceType, difficulty = GetInstanceInfo()
 
     if instanceType == "raid" then -- raid
@@ -189,7 +189,7 @@ function battleResFrame:PLAYER_ENTERING_WORLD()
         else
             battleResFrame:RegisterEvent("SPELL_UPDATE_CHARGES")
         end
-    
+
     elseif difficulty == 8 then -- challenge mode
         battleResFrame:Show()
     end
@@ -226,15 +226,15 @@ local function UpdatePosition()
     if anchor == "BOTTOMLEFT" then
         point, relativePoint = "TOPLEFT", "BOTTOMLEFT"
         onShow, onHide = -4, 10
-        
+
     elseif anchor == "BOTTOMRIGHT" then
         point, relativePoint = "TOPRIGHT", "BOTTOMRIGHT"
         onShow, onHide = -4, 10
-        
+
     elseif anchor == "TOPLEFT" then
         point, relativePoint = "BOTTOMLEFT", "TOPLEFT"
         onShow, onHide = 4, -10
-        
+
     elseif anchor == "TOPRIGHT" then
         point, relativePoint = "BOTTOMRIGHT", "TOPRIGHT"
         onShow, onHide = 4, -10

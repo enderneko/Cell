@@ -31,7 +31,7 @@ local function Bar_SetCooldown(bar, start, duration, debuffType, texture, count)
         bar:SetScript("OnUpdate", function()
             local remain = duration-(GetTime()-start)
             bar:SetValue(remain)
-            
+
             -- update color
             if remain <= bar.colors[3][4] then
                 bar:SetStatusBarColor(bar.colors[3][1], bar.colors[3][2], bar.colors[3][3])
@@ -78,6 +78,6 @@ function I.CreateAura_Bar(name, parent)
             bar.stack:Hide()
         end
     end
-        
+
     return bar
 end

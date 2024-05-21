@@ -35,6 +35,6 @@ frame:SetScript("OnEvent", function(self, event)
             else
                 icon:Hide()
             end
-        end    
+        end
     end
 end)

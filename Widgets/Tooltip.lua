@@ -19,7 +19,7 @@ local function CreateTooltip(name, hasIcon)
         iconBG:SetPoint("TOPRIGHT", tooltip, "TOPLEFT", -1, 0)
         iconBG:SetColorTexture(unpack(Cell:GetAccentColorTable()))
         iconBG:Hide()
-        
+
         local icon = tooltip:CreateTexture(nil, "ARTWORK")
         tooltip.icon = icon
         P:Point(icon, "TOPLEFT", iconBG, 1, -1)
@@ -84,7 +84,7 @@ end
 
 function F:ShowTooltips(anchor, tooltipType, unit, aura, filter)
     if not CellDB["general"]["enableTooltips"] or (tooltipType == "unit" and CellDB["general"]["hideTooltipsInCombat"] and InCombatLockdown()) then return end
-    
+
     if CellDB["general"]["tooltipsPosition"][2] == "Default" then
         GameTooltip_SetDefaultAnchor(GameTooltip, anchor)
     elseif CellDB["general"]["tooltipsPosition"][2] == "Cell" then

@@ -229,9 +229,9 @@ local function HandleIndicators(b)
         -- update format
         if t["format"] then
             indicator:SetFormat(t["format"])
-            if t["indicatorName"] == "healthText" then 
+            if t["indicatorName"] == "healthText" then
                 B:UpdateHealthText(b)
-            elseif t["indicatorName"] == "powerText" then 
+            elseif t["indicatorName"] == "powerText" then
                 B:UpdatePowerText(b)
             end
         end
@@ -341,7 +341,7 @@ local function HandleIndicators(b)
         else
             UpdateIndicatorParentVisibility(b, t["indicatorName"], t["enabled"])
         end
-    
+
         -- update pixel perfect for built-in widgets
         -- if t["type"] == "built-in" then
         --     if indicator.UpdatePixelPerfect then
@@ -349,7 +349,7 @@ local function HandleIndicators(b)
         --     end
         -- end
     end
-    
+
     --! update pixel perfect for widgets
     B:UpdatePixelPerfect(b, true)
 
@@ -437,7 +437,7 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
             return
         end
     end
-    
+
     previousLayout[INDEX] = Cell.vars.currentLayout
 
     if not indicatorName then -- init
@@ -454,7 +454,7 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
             updater:Show()
         end
         indicatorsInitialized = true
-        
+
     else
         -- changed in IndicatorsTab
         if setting == "enabled" then
@@ -896,7 +896,7 @@ Cell:RegisterCallback("UpdateIndicators", "UnitButton_UpdateIndicators", UpdateI
 -------------------------------------------------
 local function UnitButton_UpdateDebuffs(self)
     local unit = self.states.displayedUnit
-    
+
     -- self.states.BGOrb = nil
 
     -- user created indicators
@@ -912,12 +912,12 @@ local function UnitButton_UpdateDebuffs(self)
         if not name then
             break
         end
-        
+
         local auraInstanceID = (source or "") .. spellId
 
         -- check Bleed
         debuffType = I.CheckDebuffType(debuffType, spellId)
-        
+
         if duration then
             if Cell.vars.iconAnimation == "duration" then
                 local timeIncreased = self._debuffs_cache[auraInstanceID] and (expirationTime - self._debuffs_cache[auraInstanceID] >= 0.5) or false
@@ -951,7 +951,7 @@ local function UnitButton_UpdateDebuffs(self)
                     end
                 end
             end
-            
+
             -- user created indicators
             I.UpdateCustomIndicators(self, "debuff", spellId, name, expirationTime - duration, duration, debuffType or "", icon, count, refreshing)
 
@@ -1018,7 +1018,7 @@ local function UnitButton_UpdateDebuffs(self)
         table.sort(self._debuffs_raid, function(a, b)
             return self._debuffs_raid_orders[a] < self._debuffs_raid_orders[b]
         end)
-        
+
         -- show
         local topGlowType, topGlowOptions
         for i = 1, indicatorNums["raidDebuffs"] do
@@ -1103,7 +1103,7 @@ local function UnitButton_UpdateDebuffs(self)
 
     -- update dispels
     self.indicators.dispels:SetDispels(self._debuffs_dispel)
-    
+
     -- user created indicators
     I.ShowCustomIndicators(self, "debuff")
 
@@ -1113,11 +1113,11 @@ local function UnitButton_UpdateDebuffs(self)
             self.indicators.powerWordShield:SetWeakenedSoulCooldown()
         end
     end
-    
+
     -- update debuffs_cache
     for auraInstanceID, expirationTime in pairs(self._debuffs_cache) do
         -- lost or expired
-        if not self._debuffs_current[auraInstanceID] or (expirationTime ~= 0 and GetTime() >= expirationTime) then -- expirationTime == 0: no duration 
+        if not self._debuffs_current[auraInstanceID] or (expirationTime ~= 0 and GetTime() >= expirationTime) then -- expirationTime == 0: no duration
             self._debuffs_cache[auraInstanceID] = nil
             self._debuffs_count_cache[auraInstanceID] = nil
         end
@@ -1138,7 +1138,7 @@ end
 -------------------------------------------------
 local function UnitButton_UpdateBuffs(self)
     local unit = self.states.displayedUnit
-    
+
     self.states.BGFlag = nil
 
     -- user created indicators
@@ -1146,7 +1146,7 @@ local function UnitButton_UpdateBuffs(self)
 
     local refreshing = false
     local defensiveFound, externalFound, allFound, drinkingFound, pwsFound = 1, 1, 1, false, false
-    
+
     for i = 1, 40 do
         -- name, icon, count, debuffType, duration, expirationTime, source, isStealable, nameplateShowPersonal, spellId, canApplyAura, isBossDebuff, castByPlayer, nameplateShowAll, timeMod, ...
         local name, icon, count, debuffType, duration, expirationTime, source, _, _, spellId, _, _, _, _, _, arg16 = UnitBuff(unit, i)
@@ -1155,7 +1155,7 @@ local function UnitButton_UpdateBuffs(self)
         end
 
         local auraInstanceID = (source or "") .. spellId
-        
+
         if duration then
             if Cell.vars.iconAnimation == "duration" then
                 local timeIncreased = self._buffs_cache[auraInstanceID] and (expirationTime - self._buffs_cache[auraInstanceID] >= 0.5) or false
@@ -1212,7 +1212,7 @@ local function UnitButton_UpdateBuffs(self)
                 pwsFound = true
                 self.indicators.powerWordShield:SetShieldCooldown(expirationTime - duration, duration)
             end
-            
+
             self._buffs_current[auraInstanceID] = i
             self._buffs_cache[auraInstanceID] = expirationTime
             self._buffs_count_cache[auraInstanceID] = count
@@ -1221,13 +1221,13 @@ local function UnitButton_UpdateBuffs(self)
 
     -- update defensiveCooldowns
     self.indicators.defensiveCooldowns:UpdateSize(defensiveFound - 1)
-    
+
     -- update externalCooldowns
     self.indicators.externalCooldowns:UpdateSize(externalFound - 1)
-    
+
     -- update allCooldowns
     self.indicators.allCooldowns:UpdateSize(allFound - 1)
-    
+
     -- hide drinking
     if not drinkingFound and self.indicators.statusText:GetStatus() == "DRINKING" then
         -- self.indicators.statusText:Hide()
@@ -1240,7 +1240,7 @@ local function UnitButton_UpdateBuffs(self)
             self.indicators.powerWordShield:SetShieldCooldown()
         end
     end
-    
+
     -- update buffs_cache
     for auraInstanceID, expirationTime in pairs(self._buffs_cache) do
         -- lost or expired
@@ -1344,7 +1344,7 @@ local function UpdateUnitHealthState(self, diff)
             I.UpdateStatusIcon(self)
         end
     end
-    
+
     self.states.wasDeadOrGhost = self.states.isDeadOrGhost
     self.states.isDeadOrGhost = UnitIsDeadOrGhost(unit)
     if self.states.wasDeadOrGhost ~= self.states.isDeadOrGhost then
@@ -1384,7 +1384,7 @@ end
 local function ShouldShowPowerBar(b)
     if not (b:IsVisible() or b.isPreview) then return end
     if not b.powerSize or b.powerSize == 0 then return end
-    
+
     -- NOTE: no role while solo, so always show power bar
     if not b.states.guid or Cell.vars.groupType == "solo" then
         return true
@@ -1403,7 +1403,7 @@ local function ShouldShowPowerBar(b)
     elseif F:IsVehicle(b.states.guid) then
         class = "VEHICLE"
     end
-    
+
     if class then
         if type(Cell.vars.currentLayoutTable["powerFilters"][class]) == "boolean" then
             return Cell.vars.currentLayoutTable["powerFilters"][class]
@@ -1501,7 +1501,7 @@ UnitButton_UpdateRole = function(self)
 
     local role = UnitGroupRolesAssigned(unit)
     self.states.role = role
-    
+
     local roleIcon = self.indicators.roleIcon
     if enabledIndicators["roleIcon"] then
         roleIcon:SetRole(role)
@@ -1518,7 +1518,7 @@ end
 UnitButton_UpdateLeader = function(self, event)
     local unit = self.states.unit
     if not unit then return end
-    
+
     local leaderIcon = self.indicators.leaderIcon
 
     if enabledIndicators["leaderIcon"] then
@@ -1531,7 +1531,7 @@ UnitButton_UpdateLeader = function(self, event)
         self.states.isLeader = isLeader
         local isAssistant = UnitIsGroupAssistant(unit) and IsInRaid()
         self.states.isAssistant = isAssistant
-        
+
         leaderIcon:SetIcon(isLeader, isAssistant)
     else
         leaderIcon:Hide()
@@ -1581,7 +1581,7 @@ end
 local function UnitButton_UpdateReadyCheck(self)
     local unit = self.states.unit
     if not unit then return end
-    
+
     local status = GetReadyCheckStatus(unit)
     self.states.readyCheckStatus = status
 
@@ -1627,7 +1627,7 @@ end
 UnitButton_UpdatePowerTextColor = function(self)
     local unit = self.states.displayedUnit
     if not unit then return end
-    
+
     if enabledIndicators["powerText"] then
         if indicatorColors["powerText"][1] == "power_color" then
             self.indicators.powerText:SetColor(F:GetPowerColor(unit))
@@ -1645,7 +1645,7 @@ UnitButton_UpdatePowerMax = function(self)
 
     self.states.powerMax = UnitPowerMax(unit)
     if self.states.powerMax < 0 then self.states.powerMax = 0 end
-    
+
     if barAnimationType == "Smooth" then
         self.widgets.powerBar:SetMinMaxSmoothedValue(0, self.states.powerMax)
     else
@@ -1682,7 +1682,7 @@ UnitButton_UpdatePowerType = function(self)
 
     self.widgets.powerBar:SetStatusBarColor(r, g, b)
     self.widgets.powerBarLoss:SetVertexColor(lossR, lossG, lossB)
-    
+
     UnitButton_UpdatePowerTextColor(self)
 end
 
@@ -1709,7 +1709,7 @@ local function UnitButton_UpdateHealth(self, diff)
 
     UpdateUnitHealthState(self, diff)
     local healthPercent = self.states.healthPercent
-    
+
     if barAnimationType == "Flash" then
         self.widgets.healthBar:SetValue(self.states.health)
         local diff = healthPercent - (self.states.healthPercentOld or healthPercent)
@@ -1768,7 +1768,7 @@ local function UnitButton_UpdateHealPrediction(self)
         value = UnitGetIncomingHeals(unit) or 0
     end
 
-    if value == 0 then 
+    if value == 0 then
         self.widgets.incomingHeal:Hide()
         return
     end
@@ -1808,7 +1808,7 @@ local function UnitButton_UpdateThreat(self)
 end
 
 local function UnitButton_UpdateThreatBar(self)
-    if not enabledIndicators["aggroBar"] then 
+    if not enabledIndicators["aggroBar"] then
         self.indicators.aggroBar:Hide()
         return
     end
@@ -1874,7 +1874,7 @@ local function UnitButton_UpdateVehicleStatus(self)
         self.states.displayedUnit = self.states.unit
         self.indicators.nameText.vehicle:SetText("")
     end
-    
+
     if Cell.loaded then
         if ShouldShowPowerBar(self) then
             ShowPowerBar(self)
@@ -1977,7 +1977,7 @@ UnitButton_UpdateHealthColor = function(self)
     local barR, barG, barB
     local lossR, lossG, lossB
     local barA, lossA = 1, 1
-    
+
     if Cell.loaded then
         barA =  CellDB["appearance"]["barAlpha"]
         lossA =  CellDB["appearance"]["lossAlpha"]
@@ -2028,7 +2028,7 @@ if CELL_USE_LIBHEALCOMM then
             end
         end
         Cell.HealComm.HealComm_UpdateHealPrediction = HealComm_UpdateHealPrediction
-    
+
         HealComm.RegisterCallback(Cell.HealComm, "HealComm_HealStarted", "HealComm_UpdateHealPrediction")
         HealComm.RegisterCallback(Cell.HealComm, "HealComm_HealUpdated", "HealComm_UpdateHealPrediction")
         HealComm.RegisterCallback(Cell.HealComm, "HealComm_HealStopped", "HealComm_UpdateHealPrediction")
@@ -2067,7 +2067,7 @@ UnitButton_UpdateShieldAbsorbs = function(self)
         else
             self.indicators.shieldBar:Hide()
         end
-        
+
         self.widgets.shieldBar:SetValue(shieldPercent, self.states.healthPercent)
     else
         self.indicators.shieldBar:Hide()
@@ -2121,14 +2121,14 @@ local lastHealTimeStamp = {}
 
 cleu:SetScript("OnEvent", function()
     local timestamp, subEvent, _, sourceGUID, sourceName, sourceFlags, sourceRaidFlags, destGUID, destName, destFlags, destRaidFlags, arg12, arg13, arg14, arg15, arg16, arg17, arg18, arg19, arg20, arg21, arg22 = CombatLogGetCurrentEventInfo()
-    
+
     -- thanks to momo2366 https://github.com/enderneko/Cell/issues/43
     if subEvent == "SPELL_HEAL" then
         -- spellId, spellName, spellSchool, amount, overhealing, absorbed, critical
         if arg12 == 56160 then -- Glyph of Power Word: Shield
             --! IMPORTANT, when override PWS from others, SPELL_AURA_REMOVED comes after SPELL_HEAL
             lastHealTimeStamp[destGUID] = timestamp
-            
+
             if arg18 then
                 pwsInfo[destGUID] = arg15 / 1.5 / 0.2
             else
@@ -2144,7 +2144,7 @@ cleu:SetScript("OnEvent", function()
                 UpdateShield(destGUID, nil, true) -- reset powerWordShield max
             end
         end
-        
+
         -- Divine Aegis (mine)
         -- https://wowpedia.fandom.com/wiki/Patch_3.1.0
         --* Divine Aegis effects will now stack, however the amount absorbed cannot exceed 125*level (of the target). It will also now take into account total healing including overhealing.
@@ -2205,7 +2205,7 @@ cleu:SetScript("OnEvent", function()
 
         -- totalAbsorbed = totalAbsorbed + absorbAmount
         -- print("ABSORBED", "current:", absorbAmount, "total:", totalAbsorbed)
-        
+
         -- update shields left
         if POWER_WORD_SHIELD[absorbSpellId] then
             pwsInfo[destGUID] = (pwsInfo[destGUID] or 0) - absorbAmount
@@ -2215,7 +2215,7 @@ cleu:SetScript("OnEvent", function()
             pakInfo[destGUID] = (pakInfo[destGUID] or 0) - absorbAmount
         end
         UpdateShield(destGUID)
-    
+
     elseif subEvent == "SPELL_AURA_REMOVED" then
         if POWER_WORD_SHIELD[arg12] then
             if timestamp ~= lastHealTimeStamp[destGUID] then
@@ -2254,7 +2254,7 @@ end)
 local cleuHealthUpdater = CreateFrame("Frame", "CellCleuHealthUpdater")
 cleuHealthUpdater:SetScript("OnEvent", function()
     local _, subEvent, _, sourceGUID, sourceName, sourceFlags, sourceRaidFlags, destGUID, destName, destFlags, destRaidFlags, arg12, arg13, arg14, arg15, arg16, arg17, arg18, arg19, arg20, arg21, arg22 = CombatLogGetCurrentEventInfo()
-    
+
     if not F:IsFriend(destFlags) then return end
 
     local diff
@@ -2324,7 +2324,7 @@ UnitButton_UpdateAll = function(self)
     UnitButton_UpdateThreat(self)
     UnitButton_UpdateThreatBar(self)
     I.UpdateStatusIcon_Resurrection(self)
-    
+
     if Cell.loaded and self._powerBarUpdateRequired then
         self._powerBarUpdateRequired = nil
         if ShouldShowPowerBar(self) then
@@ -2347,27 +2347,27 @@ end
 local function UnitButton_RegisterEvents(self)
     -- self:RegisterEvent("PLAYER_ENTERING_WORLD")
     self:RegisterEvent("GROUP_ROSTER_UPDATE")
-    
+
     self:RegisterEvent("UNIT_HEALTH")
     self:RegisterEvent("UNIT_HEALTH_FREQUENT")
     self:RegisterEvent("UNIT_MAXHEALTH")
-    
+
     self:RegisterEvent("UNIT_POWER_FREQUENT")
     self:RegisterEvent("UNIT_MAXPOWER")
     self:RegisterEvent("UNIT_DISPLAYPOWER")
-    
+
     self:RegisterEvent("UNIT_AURA")
-    
+
     self:RegisterEvent("UNIT_HEAL_PREDICTION")
-    
+
     self:RegisterEvent("UNIT_THREAT_SITUATION_UPDATE")
     self:RegisterEvent("UNIT_THREAT_LIST_UPDATE")
     self:RegisterEvent("UNIT_ENTERED_VEHICLE")
     self:RegisterEvent("UNIT_EXITED_VEHICLE")
-    
+
     self:RegisterEvent("UNIT_FLAGS") -- afk
     self:RegisterEvent("UNIT_FACTION") -- mind control
-    
+
     self:RegisterEvent("UNIT_CONNECTION") -- offline
     self:RegisterEvent("PLAYER_FLAGS_CHANGED") -- afk
     self:RegisterEvent("UNIT_NAME_UPDATE") -- unknown target
@@ -2394,22 +2394,22 @@ local function UnitButton_RegisterEvents(self)
     else
         self:RegisterEvent("UNIT_TARGET")
     end
-    
+
     self:RegisterEvent("READY_CHECK")
     self:RegisterEvent("READY_CHECK_FINISHED")
     self:RegisterEvent("READY_CHECK_CONFIRM")
-    
+
     -- self:RegisterEvent("UNIT_PHASE") -- warmode, traditional sources of phasing such as progress through quest chains
     -- self:RegisterEvent("PARTY_MEMBER_DISABLE")
     -- self:RegisterEvent("PARTY_MEMBER_ENABLE")
     -- self:RegisterEvent("INCOMING_RESURRECT_CHANGED")
-    
+
     -- self:RegisterEvent("VOICE_CHAT_CHANNEL_ACTIVATED")
     -- self:RegisterEvent("VOICE_CHAT_CHANNEL_DEACTIVATED")
-    
+
     -- self:RegisterEvent("UNIT_PET")
     self:RegisterEvent("UNIT_PORTRAIT_UPDATE") -- pet summoned far away
-    
+
     local success, result = pcall(UnitButton_UpdateAll, self)
     if not success then
         F:Debug("UnitButton_UpdateAll |cffff0000FAILED:|r", self:GetName(), result)
@@ -2427,62 +2427,62 @@ local function UnitButton_OnEvent(self, event, unit)
         if  event == "UNIT_ENTERED_VEHICLE" or event == "UNIT_EXITED_VEHICLE" or event == "UNIT_CONNECTION" then
             self._updateRequired = 1
             self._powerBarUpdateRequired = 1
-        
+
         elseif event == "UNIT_NAME_UPDATE" then
             UnitButton_UpdateName(self)
             UnitButton_UpdateNameTextColor(self)
             UnitButton_UpdateHealthColor(self)
             UnitButton_UpdateHealthTextColor(self)
             UnitButton_UpdatePowerTextColor(self)
-        
+
         elseif event == "UNIT_MAXHEALTH" then
             UnitButton_UpdateHealthMax(self)
             UnitButton_UpdateHealth(self)
             UnitButton_UpdateHealPrediction(self)
             UnitButton_UpdateShieldAbsorbs(self)
-            
+
         elseif event == "UNIT_HEALTH" or event == "UNIT_HEALTH_FREQUENT" then
             UnitButton_UpdateHealth(self)
             UnitButton_UpdateHealPrediction(self)
             UnitButton_UpdateShieldAbsorbs(self)
             -- UnitButton_UpdateStatusText(self)
-    
+
         elseif event == "UNIT_HEAL_PREDICTION" then
             if not CELL_USE_LIBHEALCOMM then
                 UnitButton_UpdateHealPrediction(self)
             end
-    
+
         elseif event == "UNIT_MAXPOWER" then
             UnitButton_UpdatePowerMax(self)
             UnitButton_UpdatePower(self)
-    
+
         elseif event == "UNIT_POWER_FREQUENT" then
             UnitButton_UpdatePower(self)
-    
+
         elseif event == "UNIT_DISPLAYPOWER" then
             UnitButton_UpdatePowerMax(self)
             UnitButton_UpdatePower(self)
             UnitButton_UpdatePowerType(self)
-    
+
         elseif event == "UNIT_AURA" then
             UnitButton_UpdateAuras(self)
-    
+
         elseif event == "UNIT_TARGET" then
             UnitButton_UpdateTargetRaidIcon(self)
-            
+
         elseif event == "PLAYER_FLAGS_CHANGED" or event == "UNIT_FLAGS" then
             UnitButton_UpdateStatusText(self)
-            
+
         elseif event == "UNIT_FACTION" then -- mind control
             UnitButton_UpdateNameTextColor(self)
-            UnitButton_UpdateHealthColor(self) 
-            
+            UnitButton_UpdateHealthColor(self)
+
         elseif event == "UNIT_THREAT_SITUATION_UPDATE" then
             UnitButton_UpdateThreat(self)
 
         -- elseif event == "INCOMING_RESURRECT_CHANGED" or event == "UNIT_PHASE" or event == "PARTY_MEMBER_DISABLE" or event == "PARTY_MEMBER_ENABLE" then
         --     UnitButton_UpdateStatusIcon(self)
-    
+
         elseif event == "READY_CHECK_CONFIRM" then
             UnitButton_UpdateReadyCheck(self)
 
@@ -2500,24 +2500,24 @@ local function UnitButton_OnEvent(self, event, unit)
 
         elseif event == "PLAYER_REGEN_ENABLED" or event == "PLAYER_REGEN_DISABLED" then
             UnitButton_UpdateLeader(self, event)
-    
+
         elseif event == "PLAYER_TARGET_CHANGED" then
             UnitButton_UpdateTarget(self)
             UnitButton_UpdateThreatBar(self)
-        
+
         elseif event == "UNIT_THREAT_LIST_UPDATE" then
             UnitButton_UpdateThreatBar(self)
-    
+
         elseif event == "RAID_TARGET_UPDATE" then
             UnitButton_UpdatePlayerRaidIcon(self)
             UnitButton_UpdateTargetRaidIcon(self)
-    
+
         elseif event == "READY_CHECK" then
             UnitButton_UpdateReadyCheck(self)
-    
+
         elseif event == "READY_CHECK_FINISHED" then
             UnitButton_FinishReadyCheck(self)
-        
+
         elseif event == "ZONE_CHANGED_NEW_AREA" then
             UnitButton_UpdateStatusText(self)
 
@@ -2615,14 +2615,14 @@ local function UnitButton_OnHide(self)
     UnitButton_UnregisterEvents(self)
 
     ResetAuraTables(self)
-    
+
     -- reset shields
     if self.__displayedGuid then
         pwsInfo[self.__displayedGuid] = nil
         daInfo[self.__displayedGuid] = nil
         pakInfo[self.__displayedGuid] = nil
     end
-    
+
     -- NOTE: update Cell.vars.guids
     -- print("hide", self.states.unit, self.__unitGuid, self.__unitName)
     if self.__unitGuid then
@@ -2639,12 +2639,12 @@ end
 
 local function UnitButton_OnEnter(self)
     if not IsEncounterInProgress() then UnitButton_UpdateStatusText(self) end
-    
+
     if highlightEnabled then self.widgets.mouseoverHighlight:Show() end
-    
+
     local unit = self.states.displayedUnit
     if not unit then return end
-    
+
     F:ShowTooltips(self, "unit", unit)
 end
 
@@ -2659,7 +2659,7 @@ local function UnitButton_OnTick(self)
     local e = (self.__tickCount or 0) + 1
     if e >= 2 then -- every 0.5 second
         e = 0
-        
+
         if self.states.unit and self.states.displayedUnit then
             local displayedGuid = UnitGUID(self.states.displayedUnit)
             if displayedGuid ~= self.__displayedGuid then
@@ -2690,7 +2690,7 @@ local function UnitButton_OnTick(self)
                         -- NOTE: update on next tick
                         -- 国服可以起名为“未知目标”，干！就只多重试4次好了
                         self.__nameRetries = (self.__nameRetries or 0) + 1
-                        self.__unitGuid = nil 
+                        self.__unitGuid = nil
                     end
                 end
             end
@@ -2700,7 +2700,7 @@ local function UnitButton_OnTick(self)
     self.__tickCount = e
 
     UnitButton_UpdateInRange(self)
-    
+
     if self._updateRequired and self._indicatorReady then
         self._updateRequired = nil
         UnitButton_UpdateAll(self)
@@ -2726,7 +2726,7 @@ end
 -------------------------------------------------
 function B:SetPowerSize(button, size)
     button.powerSize = size
-    
+
     if size == 0 then
         HidePowerBar(button)
     else
@@ -2807,7 +2807,7 @@ local function ShieldBar_SetValue_Horizontal(self, shieldPercent, healthPercent)
         else
             self:Hide()
         end
-        
+
         if overshieldReverseFillEnabled then
             p = shieldPercent + healthPercent - 1
             if p > healthPercent then p = healthPercent end
@@ -2941,7 +2941,7 @@ function B:SetOrientation(button, orientation, rotateTexture)
     end
     healthBar:SetRotatesTexture(rotateTexture)
     powerBar:SetRotatesTexture(rotateTexture)
-    
+
     button.indicators.healthThresholds:SetOrientation(orientation)
 
     if rotateTexture then
@@ -2955,36 +2955,36 @@ function B:SetOrientation(button, orientation, rotateTexture)
         F:RotateTexture(incomingHeal, 0)
         F:RotateTexture(damageFlashTex, 0)
     end
-    
+
     if orientation == "horizontal" then
         -- update healthBarLoss
         P:ClearPoints(healthBarLoss)
         P:Point(healthBarLoss, "TOPRIGHT", healthBar)
         P:Point(healthBarLoss, "BOTTOMLEFT", healthBar:GetStatusBarTexture(), "BOTTOMRIGHT")
-        
+
         -- update powerBarLoss
         P:ClearPoints(powerBarLoss)
         P:Point(powerBarLoss, "TOPRIGHT", powerBar)
         P:Point(powerBarLoss, "BOTTOMLEFT", powerBar:GetStatusBarTexture(), "BOTTOMRIGHT")
-        
+
         -- update gapTexture
         P:ClearPoints(gapTexture)
         P:Point(gapTexture, "BOTTOMLEFT", powerBar, "TOPLEFT")
         P:Point(gapTexture, "BOTTOMRIGHT", powerBar, "TOPRIGHT")
         P:Height(gapTexture, CELL_BORDER_SIZE)
-        
+
         -- update incomingHeal
         incomingHeal.SetValue = IncomingHeal_SetValue_Horizontal
         P:ClearPoints(incomingHeal)
         P:Point(incomingHeal, "TOPLEFT", healthBar:GetStatusBarTexture(), "TOPRIGHT")
         P:Point(incomingHeal, "BOTTOMLEFT", healthBar:GetStatusBarTexture(), "BOTTOMRIGHT")
-        
+
         -- update shieldBar
         shieldBar.SetValue = ShieldBar_SetValue_Horizontal
         P:ClearPoints(shieldBar)
         P:Point(shieldBar, "TOPLEFT", healthBar:GetStatusBarTexture(), "TOPRIGHT")
         P:Point(shieldBar, "BOTTOMLEFT", healthBar:GetStatusBarTexture(), "BOTTOMRIGHT")
-        
+
         -- update shieldBarR
         P:ClearPoints(shieldBarR)
         P:Point(shieldBarR, "TOPRIGHT", healthBar:GetStatusBarTexture())
@@ -3003,7 +3003,7 @@ function B:SetOrientation(button, orientation, rotateTexture)
         P:Point(overShieldGlowR, "BOTTOMLEFT", shieldBarR, "BOTTOMLEFT", -4, 0)
         P:Width(overShieldGlowR, 8)
         F:RotateTexture(overShieldGlowR, 0)
-        
+
         -- update damageFlashTex
         damageFlashTex.SetValue = DamageFlashTex_SetValue_Horizontal
         P:ClearPoints(damageFlashTex)
@@ -3014,13 +3014,13 @@ function B:SetOrientation(button, orientation, rotateTexture)
         P:ClearPoints(healthBarLoss)
         P:Point(healthBarLoss, "TOPRIGHT", healthBar)
         P:Point(healthBarLoss, "BOTTOMLEFT", healthBar:GetStatusBarTexture(), "TOPLEFT")
-        
+
         if orientation == "vertical" then
             -- update powerBarLoss
             P:ClearPoints(powerBarLoss)
             P:Point(powerBarLoss, "TOPRIGHT", powerBar)
             P:Point(powerBarLoss, "BOTTOMLEFT", powerBar:GetStatusBarTexture(), "TOPLEFT")
-            
+
             -- update gapTexture
             P:ClearPoints(gapTexture)
             P:Point(gapTexture, "TOPRIGHT", powerBar, "TOPLEFT")
@@ -3031,26 +3031,26 @@ function B:SetOrientation(button, orientation, rotateTexture)
             P:ClearPoints(powerBarLoss)
             P:Point(powerBarLoss, "TOPRIGHT", powerBar)
             P:Point(powerBarLoss, "BOTTOMLEFT", powerBar:GetStatusBarTexture(), "BOTTOMRIGHT")
-            
+
             -- update gapTexture
             P:ClearPoints(gapTexture)
             P:Point(gapTexture, "BOTTOMLEFT", powerBar, "TOPLEFT")
             P:Point(gapTexture, "BOTTOMRIGHT", powerBar, "TOPRIGHT")
             P:Height(gapTexture, CELL_BORDER_SIZE)
         end
-        
+
         -- update incomingHeal
         incomingHeal.SetValue = IncomingHeal_SetValue_Vertical
         P:ClearPoints(incomingHeal)
         P:Point(incomingHeal, "BOTTOMLEFT", healthBar:GetStatusBarTexture(), "TOPLEFT")
         P:Point(incomingHeal, "BOTTOMRIGHT", healthBar:GetStatusBarTexture(), "TOPRIGHT")
-        
+
         -- update shieldBar
         shieldBar.SetValue = ShieldBar_SetValue_Vertical
         P:ClearPoints(shieldBar)
         P:Point(shieldBar, "BOTTOMLEFT", healthBar:GetStatusBarTexture(), "TOPLEFT")
         P:Point(shieldBar, "BOTTOMRIGHT", healthBar:GetStatusBarTexture(), "TOPRIGHT")
-        
+
         -- update shieldBarR
         P:ClearPoints(shieldBarR)
         P:Point(shieldBarR, "TOPLEFT", healthBar:GetStatusBarTexture())
@@ -3069,7 +3069,7 @@ function B:SetOrientation(button, orientation, rotateTexture)
         P:Point(overShieldGlowR, "BOTTOMLEFT", shieldBarR, "BOTTOMLEFT", 0, -4)
         P:Height(overShieldGlowR, 8)
         F:RotateTexture(overShieldGlowR, 90)
-        
+
         -- update damageFlashTex
         damageFlashTex.SetValue = DamageFlashTex_SetValue_Vertical
         P:ClearPoints(damageFlashTex)
@@ -3089,12 +3089,12 @@ end
 function B:UpdateHighlightSize(button)
     local targetHighlight = button.widgets.targetHighlight
     local mouseoverHighlight = button.widgets.mouseoverHighlight
-    
+
     local size = CellDB["appearance"]["highlightSize"]
-    
+
     if size ~= 0 then
         highlightEnabled = true
-        
+
         P:ClearPoints(targetHighlight)
         P:ClearPoints(mouseoverHighlight)
 
@@ -3187,7 +3187,7 @@ function B:UpdateAnimation(button)
         button.widgets.powerBar:ResetSmoothedValue()
         button.widgets.powerBar.SetBarValue = button.widgets.powerBar.SetValue
     end
-    
+
     if barAnimationType ~= "Flash" then
         button.widgets.damageFlashAG:Finish()
     end
@@ -3223,14 +3223,14 @@ function B:UpdatePixelPerfect(button, updateIndicators)
 
     P:Resize(button.widgets.overShieldGlow)
     P:Repoint(button.widgets.overShieldGlow)
-    
+
     B:UpdateHighlightSize(button)
 
     if updateIndicators then
         -- indicators
         for _, i in pairs(button.indicators) do
             if i.UpdatePixelPerfect then
-                i:UpdatePixelPerfect() 
+                i:UpdatePixelPerfect()
             end
         end
     else
@@ -3276,7 +3276,7 @@ function CellUnitButton_OnLoad(button)
     button:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8x8", edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = P:Scale(CELL_BORDER_SIZE)})
     button:SetBackdropColor(0, 0, 0, 1)
     button:SetBackdropBorderColor(unpack(CELL_BORDER_COLOR))
-    
+
     -- healthbar
     local healthBar = CreateFrame("StatusBar", name.."HealthBar", button)
     button.widgets.healthBar = healthBar
@@ -3368,7 +3368,7 @@ function CellUnitButton_OnLoad(button)
     -- damage flash animation group
     local damageFlashAG = damageFlashTex:CreateAnimationGroup()
     button.widgets.damageFlashAG = damageFlashAG
-    
+
     local alpha = damageFlashAG:CreateAnimation("Alpha")
     alpha:SetFromAlpha(0.7)
     alpha:SetToAlpha(0)
@@ -3394,7 +3394,7 @@ function CellUnitButton_OnLoad(button)
     -- P:Point(targetHighlight, "TOPLEFT", button, "TOPLEFT", -1, 1)
     -- P:Point(targetHighlight, "BOTTOMRIGHT", button, "BOTTOMRIGHT", 1, -1)
     targetHighlight:Hide()
-    
+
     -- mouseover highlight
     local mouseoverHighlight = CreateFrame("Frame", name.."MouseoverHighlight", button, "BackdropTemplate")
     button.widgets.mouseoverHighlight = mouseoverHighlight
@@ -3423,7 +3423,7 @@ function CellUnitButton_OnLoad(button)
     button.widgets.srGlowFrame = srGlowFrame
     srGlowFrame:SetFrameLevel(button:GetFrameLevel()+240)
     srGlowFrame:SetAllPoints(button)
-    
+
     --* drGlowFrame (Dispel Request)
     local drGlowFrame = CreateFrame("Frame", name.."DRGlowFrame", button)
     button.widgets.drGlowFrame = drGlowFrame

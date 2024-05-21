@@ -149,7 +149,7 @@ select(2, ...).L = setmetatable({
         <p>* Updated Cell.GetUnitFrame.</p>
         <p>* Updated zhTW.</p>
         <br/>
-        
+
         <h1>r219-release (Jan 24, 2024, 10:56 GMT+8)</h1>
         <p>* Fixed range check for Quick Assist (now uses OnUpdate).</p>
         <p>+ Added custom Gradient Colors (Appearance).</p>
@@ -184,7 +184,7 @@ select(2, ...).L = setmetatable({
         <p>* Updated the priority of dispel types: Magic &gt; Curse &gt; Disease &gt; Poison &gt; Bleed.</p>
         <p>* Updated zhTW.</p>
         <br/>
-       
+
         <h1>r213-release (Dec 26, 2023, 04:04 GMT+8)</h1>
         <p>+ (Retail) Updated Quick Assist, new Spec Filter and Filter Auto Switch.</p>
         <p>* (Retail) Updated Smart Resurrection, added support for mass resurrections.</p>
@@ -215,7 +215,7 @@ select(2, ...).L = setmetatable({
         <p>* Fixed issues with newly created custom Color indicators.</p>
         <p>* Updated zhTW.</p>
         <br/>
-        
+
         <h1>r208-release (Dec 14, 2023, 00:43 GMT+8)</h1>
         <p>* The order of click-casting items can now be adjusted by dragging them.</p>
         <p>* Fixed click-castings for Quick Assist.</p>
@@ -325,7 +325,7 @@ select(2, ...).L = setmetatable({
         <p>* Fixed expansion data for frFR.</p>
         <p>* Updated zhTW.</p>
         <br/>
-        
+
         <h1>r191-release (Aug 22, 2023, 09:50 GMT+8)</h1>
         <p>* Updated expansion data for frFR (Thanks to Zuvila).</p>
         <p>* Updated Targeted Spells, Quick Cast.</p>
@@ -356,14 +356,14 @@ select(2, ...).L = setmetatable({
         <p>+ Added "Premade Mode" to raid roster utility.</p>
         <p>* Fixed Dispel Request on Wrath.</p>
         <br/>
-        
+
         <h1>r186-release (Jul 24, 2023, 21:06 GMT+8)</h1>
         <p>* Fixed import &amp; export.</p>
         <p>* Updated Dispel/Spell Request.</p>
         <p>* Updated Health Text indicator.</p>
         <p>* Updated zhTW.</p>
         <br/>
-        
+
         <h1>r185-release (Jul 21, 2023, 20:57 GMT+8)</h1>
         <p>* Updated Options UI (wip).</p>
         <p>+ Added "Only show overshields" to Shield Bar indicator.</p>
@@ -428,7 +428,7 @@ select(2, ...).L = setmetatable({
         <p>* Fixed Power Bar Filters.</p>
         <p>* Fixed animation Type A of Consumables indicator (Wrath).</p>
         <br/>
-        
+
         <h1>r174-release (Jun 18, 2023, 17:25 GMT+8)</h1>
         <p>* Updated font options for some indicators. The stack font and duration font can be set separately. And if you use CooldownIcons_BlizzardStyle snippet, an update is required.</p>
         <p>* Health Text indicator: added options to show shield value.</p>
@@ -436,7 +436,7 @@ select(2, ...).L = setmetatable({
         <p>* Fixed Private Auras indicator.</p>
         <p>* Updated raid debuffs.</p>
         <br/>
-        
+
         <h1>r173-release (Jun 2, 2023, 18:36 GMT+8)</h1>
         <p>* Added a "Hide in combat" option for Leader Icon indicator.</p>
         <p>* Updated zhTW.</p>
@@ -736,11 +736,11 @@ select(2, ...).L = setmetatable({
         <h1>r122-release (Oct 14, 2022, 04:25 GMT+8)</h1>
         <p>* Fixed Click-Castings.</p>
         <br/>
-        
+
         <h1>r121-release (Oct 13, 2022, 14:40 GMT+8)</h1>
         <p>* Bug fixes.</p>
         <br/>
-        
+
         <h1>r120-release (Oct 12, 2022, 20:45 GMT+8)</h1>
         <p>* Fixed Click-Castings.</p>
         <p>* Updated locales.</p>
@@ -792,7 +792,7 @@ select(2, ...).L = setmetatable({
         <p>* Updated debuffs.</p>
         <p>* Fixed health bar color.</p>
         <br/>
-       
+
         <h1>r112-release (Sep 11, 2022, 19:00 GMT+8)</h1>
         <p>* Add custom auras support to Defensives and Externals.</p>
         <p>* Add Mirror Image to Defensives.</p>
@@ -820,7 +820,7 @@ select(2, ...).L = setmetatable({
         <h2>Wrath Classic</h2>
         <p>* Cell should work on Wrath Classic now (not all Retail features are available).</p>
         <br/>
-        
+
         <h1>r108-release (Aug 17, 2022, 18:20 GMT+8)</h1>
         <p>* Updated M+ debuffs.</p>
         <p>* Fixed several bugs.</p>
@@ -879,7 +879,7 @@ select(2, ...).L = setmetatable({
         <p>* Updated zhTW.</p>
         <p>* Bug fixes.</p>
         <br/>
-        
+
         <h1>r97-release (Apr 19, 2022, 20:10 GMT+8)</h1>
         <p>+ Added nicknames (beta).</p>
         <p>* Updated locales.</p>
@@ -1036,7 +1036,7 @@ select(2, ...).L = setmetatable({
         <h1>r73-release (Dec 8, 2021, 22:22 GMT+8)</h1>
         <p>* Defect fixes.</p>
         <br/>
-        
+
         <h1>r72-release (Dec 7, 2021, 15:20 GMT+8)</h1>
         <p>* Fixed Debuffs indicator delayed refreshing issue.</p>
         <p>* Updated zhTW.</p>
@@ -1110,7 +1110,7 @@ select(2, ...).L = setmetatable({
         <p>* Updated anchors of indicators.</p>
         <p>* Updated Death Report, Buff Tracker and Targeted Spells.</p>
         <br/>
-        
+
         <h1>r59-release (Aug 7, 2021, 18:23 GMT+8)</h1>
         <p>* Implemented Copy Indicators.</p>
         <p>* Updated Layout Auto Switch.</p>
@@ -1279,7 +1279,7 @@ select(2, ...).L = setmetatable({
 
         <h1>r26-release (Nov 23, 2020, 21:25 GMT+8)</h1>
         <h2>Click-Castings</h2>
-        <p>+ Keyboard/multi-button mouse support for Click-Castings comes.</p> 
+        <p>+ Keyboard/multi-button mouse support for Click-Castings comes.</p>
         <p>! Due to code changes, you might have to reconfigure Key Bindings.</p>
         <h2>Indicators</h2>
         <p>* Aura List has been updated. Now all custom indicators will check spell IDs instead of NAMEs.</p>

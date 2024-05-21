@@ -150,7 +150,7 @@ function I.GetDefaultCustomIndicatorTable(name, indicatorName, type, auraType)
             ["auras"] = {},
         }
     end
-    
+
     if auraType == "buff" then
         t["castBy"] = "me"
         if Cell.isRetail then

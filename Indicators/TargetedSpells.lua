@@ -163,7 +163,7 @@ eventFrame:SetScript("OnEvent", function(_, event, sourceUnit)
 
     elseif event == "UNIT_SPELLCAST_START" or event == "UNIT_SPELLCAST_DELAYED"  or event == "UNIT_SPELLCAST_CHANNEL_START" or event == "NAME_PLATE_UNIT_ADDED" then
         CheckUnitCast(sourceUnit)
-    
+
     elseif event == "UNIT_SPELLCAST_STOP" or event == "UNIT_SPELLCAST_INTERRUPTED" or event == "UNIT_SPELLCAST_FAILED" or event == "UNIT_SPELLCAST_FAILED_QUIET" or event == "UNIT_SPELLCAST_CHANNEL_STOP" or event == "NAME_PLATE_UNIT_REMOVED" then
         local sourceGUID = UnitGUID(sourceUnit)
         if casts[sourceGUID] then
@@ -281,7 +281,7 @@ function I.EnableTargetedSpells(enabled)
         -- UNIT_SPELLCAST_DELAYED UNIT_SPELLCAST_FAILED UNIT_SPELLCAST_FAILED_QUIET UNIT_SPELLCAST_INTERRUPTED UNIT_SPELLCAST_START UNIT_SPELLCAST_STOP
         -- UNIT_SPELLCAST_CHANNEL_START UNIT_SPELLCAST_CHANNEL_STOP UNIT_SPELLCAST_CHANNEL_UPDATE
         -- PLAYER_TARGET_CHANGED ENCOUNTER_END
-        
+
         eventFrame:RegisterEvent("UNIT_SPELLCAST_START")
         eventFrame:RegisterEvent("UNIT_SPELLCAST_STOP")
         eventFrame:RegisterEvent("UNIT_SPELLCAST_DELAYED")
@@ -291,21 +291,21 @@ function I.EnableTargetedSpells(enabled)
         eventFrame:RegisterEvent("UNIT_SPELLCAST_CHANNEL_START")
         eventFrame:RegisterEvent("UNIT_SPELLCAST_CHANNEL_STOP")
         -- eventFrame:RegisterEvent("UNIT_SPELLCAST_CHANNEL_UPDATE")
-        
+
         eventFrame:RegisterEvent("PLAYER_TARGET_CHANGED") --! Fired when the target of yourself, raid, and party members change, Should also work for 'pet' and 'focus'.
         eventFrame:RegisterEvent("NAME_PLATE_UNIT_ADDED")
         eventFrame:RegisterEvent("NAME_PLATE_UNIT_REMOVED")
-        
+
         eventFrame:RegisterEvent("ENCOUNTER_END")
-        
+
         Cell:RegisterCallback("EnterInstance", "TargetedSpells_EnterInstance", EnterLeaveInstance)
         Cell:RegisterCallback("LeaveInstance", "TargetedSpells_LeaveInstance", EnterLeaveInstance)
     else
         eventFrame:UnregisterAllEvents()
-        
+
         Cell:UnregisterCallback("EnterInstance", "TargetedSpells_EnterInstance")
         Cell:UnregisterCallback("LeaveInstance", "TargetedSpells_LeaveInstance")
-        
+
         F:IterateAllUnitButtons(function(b)
             b.indicators.targetedSpells:Hide()
         end)

@@ -33,7 +33,7 @@ function I.SetFont(fs, anchorTo, font, size, outline, shadow, anchor, xOffset, y
         fs:SetShadowOffset(0, 0)
         fs:SetShadowColor(0, 0, 0, 0)
     end
-    
+
     P:ClearPoints(fs)
     P:Point(fs, anchor, anchorTo, anchor, xOffset, yOffset)
 
@@ -175,7 +175,7 @@ function I.CreateAura_BorderIcon(name, parent, borderSize)
     -- frame:SetSize(11, 11)
     frame:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8x8"})
     frame:SetBackdropColor(0, 0, 0, 0.85)
-    
+
     local border = frame:CreateTexture(name.."Border", "BORDER")
     frame.border = border
     border:SetAllPoints(frame)
@@ -426,7 +426,7 @@ function I.CreateAura_BarIcon(name, parent)
     spark:SetBlendMode("ADD")
     spark:SetPoint("TOPLEFT", cooldown:GetStatusBarTexture(), "BOTTOMLEFT")
     spark:SetPoint("TOPRIGHT", cooldown:GetStatusBarTexture(), "BOTTOMRIGHT")
-    
+
     local mask = frame:CreateMaskTexture()
     mask:SetTexture("Interface\\Buttons\\WHITE8x8", "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
     mask:SetPoint("TOPLEFT")
@@ -603,7 +603,7 @@ local function Text_SetCooldown(frame, start, duration, debuffType, texture, cou
             else
                 fmt = "%d"
             end
-            
+
             -- update count
             frame.text:SetFormattedText(fmt, count)
 
@@ -612,7 +612,7 @@ local function Text_SetCooldown(frame, start, duration, debuffType, texture, cou
                 self.elapsed = self.elapsed + elapsed
                 if self.elapsed >= 0.1 then
                     self.elapsed = 0
-                    
+
                     local remain = duration-(GetTime()-start)
                     -- update color
                     Text_OnUpdateColor(frame, duration, remain)
@@ -664,7 +664,7 @@ function I.CreateAura_Text(name, parent)
         frame.state = nil
         frame.colors = colors
     end
-        
+
     return frame
 end
 
@@ -750,7 +750,7 @@ function I.CreateAura_Rect(name, parent)
         P:Reborder(frame)
         P:Repoint(frame)
     end
-        
+
     return frame
 end
 
@@ -824,7 +824,7 @@ function I.CreateAura_Bar(name, parent)
             bar.stack:Hide()
         end
     end
-        
+
     return bar
 end
 
@@ -943,7 +943,7 @@ function I.CreateAura_Color(name, parent)
         -- update texture
         solidTex:SetTexture(Cell.vars.texture)
     end)
-   
+
     local gradientTex = color:CreateTexture(nil, "OVERLAY", nil, -5)
     color.gradientTex = gradientTex
     gradientTex:SetTexture("Interface\\Buttons\\WHITE8x8")
@@ -955,7 +955,7 @@ function I.CreateAura_Color(name, parent)
     color.SetFrameLevel = Color_SetFrameLevel
     color.SetAnchor = Color_SetAnchor
     color.SetColors = Color_SetColors
-        
+
     return color
 end
 
@@ -966,7 +966,7 @@ function I.CreateAura_Texture(name, parent)
     local texture = CreateFrame("Frame", name, parent)
     texture:Hide()
     texture.indicatorType = "texture"
-    
+
     local tex = texture:CreateTexture(name, "OVERLAY")
     tex:SetAllPoints(texture)
 
@@ -998,7 +998,7 @@ function I.CreateAura_Texture(name, parent)
     function texture:SetFadeOut(fadeOut)
         texture.fadeOut = fadeOut
     end
-    
+
     function texture:SetTexture(texTbl) -- texture, rotation, color
         if strfind(strlower(texTbl[1]), "^interface") then
             tex:SetTexture(texTbl[1])
@@ -1018,7 +1018,7 @@ end
 -------------------------------------------------
 local function Icons_UpdateFrameSize(icons, iconsShown)
     local lines = ceil(iconsShown / icons.numPerLine)
-    
+
     if icons.isHorizontal then
         if lines > 1 then
             icons:_SetSize(icons.width*icons.numPerLine, icons.height*lines)
@@ -1036,7 +1036,7 @@ end
 
 local function Icons_UpdateSize(icons, iconsShown)
     if not (icons.width and icons.height and icons.orientation) then return end -- not init
-    
+
     if iconsShown then -- call from I.CheckCustomIndicators or preview
         for i = iconsShown + 1, icons.maxNum do
             icons[i]:Hide()
@@ -1055,7 +1055,7 @@ end
 
 local function Icons_SetNumPerLine(icons, numPerLine)
     icons.numPerLine = min(numPerLine, icons.maxNum)
-    
+
 
     if icons.orientation then
         icons:SetOrientation(icons.orientation)
@@ -1083,7 +1083,7 @@ local function Icons_SetOrientation(icons, orientation)
             point2 = "TOPRIGHT"
             newLinePoint2 = "BOTTOMLEFT"
         end
-        
+
     elseif orientation == "right-to-left" then
         if strfind(anchor, "^BOTTOM") then
             point1 = "BOTTOMRIGHT"
@@ -1105,7 +1105,7 @@ local function Icons_SetOrientation(icons, orientation)
             point2 = "BOTTOMLEFT"
             newLinePoint2 = "TOPRIGHT"
         end
-        
+
     elseif orientation == "bottom-to-top" then
         if strfind(anchor, "RIGHT$") then
             point1 = "BOTTOMRIGHT"
@@ -1117,7 +1117,7 @@ local function Icons_SetOrientation(icons, orientation)
             newLinePoint2 = "BOTTOMRIGHT"
         end
     end
-    
+
     for i = 1, icons.maxNum do
         P:ClearPoints(icons[i])
         if i == 1 then
@@ -1190,7 +1190,7 @@ function I.CreateAura_Icons(name, parent, num)
     icons.indicatorType = "icons"
     icons.maxNum = num
     icons.numPerLine = num
-    
+
     icons._SetSize = icons.SetSize
     icons.SetSize = Icons_SetSize
     icons._Hide = icons.Hide
@@ -1238,7 +1238,7 @@ local function Glow_SetCooldown(glow, start, duration)
         glow:SetScript("OnUpdate", nil)
         glow:SetAlpha(1)
     end
-    
+
     glow:Show()
 
     local glowOptions = glow.glowOptions
@@ -1281,7 +1281,7 @@ function I.CreateAura_Glow(name, parent)
     glow:SetAllPoints(parent)
     glow:Hide()
     glow.indicatorType = "glow"
-    
+
     glow.SetCooldown = Glow_SetCooldown
 
     function glow:SetFadeOut(fadeOut)
@@ -1372,7 +1372,7 @@ function I.CreateAura_Bars(name, parent, num)
             point2 = "TOPLEFT"
             offset = -1
         end
-        
+
         for i = 1, num do
             P:ClearPoints(bars[i])
             if i == 1 then

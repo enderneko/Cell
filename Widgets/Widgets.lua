@@ -143,7 +143,7 @@ function addon:OverrideAccentColor(cTable)
 
     accentColor.t[1], accentColor.t[2], accentColor.t[3] = unpack(cTable)
     accentColor.s = "|cFF"..F:ConvertRGBToHEX(F:ConvertRGB_256(unpack(cTable)))
-    
+
     font_class_title:SetTextColor(unpack(cTable))
     font_class:SetTextColor(unpack(cTable))
 end
@@ -182,13 +182,13 @@ function addon:SetEnabled(isEnabled, ...)
                 w:SetTextColor(1, 1, 1, 1)
             else
                 w:SetTextColor(0.4, 0.4, 0.4, 1)
-            end   
-        elseif w:IsObjectType("Texture") then   
+            end
+        elseif w:IsObjectType("Texture") then
             if isEnabled then
                 w:SetDesaturated(false)
             else
                 w:SetDesaturated(true)
-            end      
+            end
         elseif w.SetEnabled then
             w:SetEnabled(isEnabled)
         elseif isEnabled then
@@ -206,20 +206,20 @@ local colorSelect = CreateFrame("Colorselect")
 function addon:StartRainbowText(fs, reverse)
     -- save original
     fs.text = fs:GetText()
-    
+
     -- updater
     fs.rainbow = true
     if not fs.updater then
         fs.updater = CreateFrame("Frame", nil, fs:GetParent())
     end
-    
+
     local pos = 0
     local step = 360 / (#fs.text-1)
     local col
     local str
-    
+
     fs.updater:SetScript("OnUpdate", function(self, elapsed)
-        
+
         local hue = pos
         -- NOTE: lua 正则匹配中文，不知道会不会有问题
         str = fs.text:gsub("[%z\1-\127\194-\244][\128-\191]*", function(char)
@@ -234,7 +234,7 @@ function addon:StartRainbowText(fs, reverse)
         else
             pos = (pos-1) < 0 and 360 or pos - 1
         end
-    
+
         fs:SetText(str)
     end)
 end
@@ -351,7 +351,7 @@ function addon:CreateMovableFrame(title, name, width, height, frameStrata, frame
     f:SetPoint("CENTER")
     f:Hide()
     addon:StylizeFrame(f)
-    
+
     -- header
     local header = CreateFrame("Frame", nil, f, "BackdropTemplate")
     f.header = header
@@ -368,11 +368,11 @@ function addon:CreateMovableFrame(title, name, width, height, frameStrata, frame
     header:SetPoint("BOTTOM", f, "TOP", 0, -1)
     P:Height(header, 20)
     addon:StylizeFrame(header, {0.115, 0.115, 0.115, 1})
-    
+
     header.text = header:CreateFontString(nil, "OVERLAY", font_class_title_name)
     header.text:SetText(title)
     header.text:SetPoint("CENTER", header)
-    
+
     header.closeBtn = addon:CreateButton(header, "×", "red", {20, 20}, false, false, "CELL_FONT_SPECIAL", "CELL_FONT_SPECIAL")
     header.closeBtn:SetPoint("TOPRIGHT")
     header.closeBtn:SetScript("OnClick", function() f:Hide() end)
@@ -433,7 +433,7 @@ end
 -----------------------------------------
 function addon:ChangeSizeWithAnimation(frame, targetWidth, targetHeight, step, startFunc, endFunc, repoint)
     if startFunc then startFunc() end
-    
+
     local currentHeight = frame:GetHeight()
     local currentWidth = frame:GetWidth()
     targetWidth = targetWidth or currentWidth
@@ -442,7 +442,7 @@ function addon:ChangeSizeWithAnimation(frame, targetWidth, targetHeight, step, s
     step = step or 6
     local diffH = (targetHeight - currentHeight) / step
     local diffW = (targetWidth - currentWidth) / step
-    
+
     local animationTimer
     animationTimer = C_Timer.NewTicker(0.025, function()
         if diffW ~= 0 then
@@ -569,14 +569,14 @@ function addon:CreateButton(parent, text, buttonColor, size, noBorder, noBackgro
             s:SetTextColor(...)
         end
     end
-    
+
     if noBorder then
         b:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8x8"})
     else
         local n = P:Scale(1)
         b:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8x8", edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = n, insets = {left=n, right=n, top=n, bottom=n}})
     end
-    
+
     if buttonColor and string.find(buttonColor, "transparent") then -- drop down item
         -- b:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8x8"})
         if s then
@@ -600,11 +600,11 @@ function addon:CreateButton(parent, text, buttonColor, size, noBorder, noBackgro
     end
 
 
-    b:SetBackdropColor(unpack(color)) 
+    b:SetBackdropColor(unpack(color))
     b:SetDisabledFontObject(fontDisable or font_disable)
     b:SetNormalFontObject(fontNormal or font)
     b:SetHighlightFontObject(fontNormal or font)
-    
+
     if buttonColor ~= "none" then
         b:SetScript("OnEnter", function(self) self:SetBackdropColor(unpack(self.hoverColor)) end)
         b:SetScript("OnLeave", function(self) self:SetBackdropColor(unpack(self.color)) end)
@@ -712,12 +712,12 @@ function addon:CreateButtonGroup(buttons, onClick, func1, func2, onEnter, onLeav
                 if func1 then func1(b.id, b) end
             else
                 b:SetBackdropColor(unpack(b.color))
-                b:SetScript("OnEnter", function() 
+                b:SetScript("OnEnter", function()
                     if b.ShowTooltip then b.ShowTooltip(b) end
                     b:SetBackdropColor(unpack(b.hoverColor))
                     if onEnter then onEnter(b) end
                 end)
-                b:SetScript("OnLeave", function() 
+                b:SetScript("OnLeave", function()
                     if b.HideTooltip then b.HideTooltip() end
                     b:SetBackdropColor(unpack(b.color))
                     if onLeave then onLeave(b) end
@@ -787,19 +787,19 @@ end
 function addon:CreateCheckButton(parent, label, onClick, ...)
     -- InterfaceOptionsCheckButtonTemplate --> FrameXML\InterfaceOptionsPanels.xml line 19
     -- OptionsBaseCheckButtonTemplate -->  FrameXML\OptionsPanelTemplates.xml line 10
-    
+
     local cb = CreateFrame("CheckButton", nil, parent, "BackdropTemplate")
     cb.onClick = onClick
     cb:SetScript("OnClick", function(self)
         PlaySound(self:GetChecked() and SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON or SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_OFF)
         if cb.onClick then cb.onClick(self:GetChecked() and true or false, self) end
     end)
-    
+
     cb.label = cb:CreateFontString(nil, "OVERLAY", font_name)
     cb.label:SetText(label)
     cb.label:SetPoint("LEFT", cb, "RIGHT", P:Scale(5), 0)
     -- cb.label:SetTextColor(accentColor.t[1], accentColor.t[2], accentColor.t[3])
-    
+
     P:Size(cb, 14, 14)
     if strtrim(label) ~= "" then
         cb:SetHitRectInsets(0, -cb.label:GetStringWidth()-5, 0, 0)
@@ -818,7 +818,7 @@ function addon:CreateCheckButton(parent, label, onClick, ...)
     highlightTexture:SetColorTexture(accentColor.t[1], accentColor.t[2], accentColor.t[3], 0.1)
     highlightTexture:SetPoint("TOPLEFT", P:Scale(1), P:Scale(-1))
     highlightTexture:SetPoint("BOTTOMRIGHT", P:Scale(-1), P:Scale(1))
-    
+
     cb:SetCheckedTexture(checkedTexture)
     cb:SetHighlightTexture(highlightTexture, "ADD")
     -- cb:SetDisabledCheckedTexture([[Interface\AddOns\Cell\Media\CheckBox\CheckBox-DisabledChecked-16x16]])
@@ -873,7 +873,7 @@ function addon:CreateColorPicker(parent, label, hasOpacity, onChange, onConfirm)
     cp.mask:SetPoint("TOPLEFT", P:Scale(1), P:Scale(-1))
     cp.mask:SetPoint("BOTTOMRIGHT", P:Scale(-1), P:Scale(1))
     cp.mask:Hide()
-    
+
     -- local function ColorCallback(restore)
     --     local newR, newG, newB, newA
     --     if restore then
@@ -881,11 +881,11 @@ function addon:CreateColorPicker(parent, label, hasOpacity, onChange, onConfirm)
     --     else
     --         newA, newR, newG, newB = OpacitySliderFrame:GetValue(), ColorPickerFrame:GetColorRGB()
     --     end
-        
+
     --     newR, newG, newB, newA = tonumber(string.format("%.3f", newR)), tonumber(string.format("%.3f", newG)), tonumber(string.format("%.3f", newB)), newA and tonumber(string.format("%.3f", newA))
-        
+
     --     newA = hasOpacity and newA or 1
-        
+
     --     cp:SetBackdropColor(newR, newG, newB, newA)
     --     if func then
     --         func(newR, newG, newB, newA)
@@ -895,7 +895,7 @@ function addon:CreateColorPicker(parent, label, hasOpacity, onChange, onConfirm)
     --         cp.color[4] = newA
     --     end
     -- end
-    
+
     -- local function ShowColorPicker()
     --     ColorPickerFrame.hasOpacity = hasOpacity
     --     ColorPickerFrame.opacity = cp.color[4]
@@ -912,7 +912,7 @@ function addon:CreateColorPicker(parent, label, hasOpacity, onChange, onConfirm)
         addon:HideColorPicker()
         cp.hasOpacity = enable
     end
-    
+
     cp:SetScript("OnClick", function()
         addon:ShowColorPicker(function(r, g, b, a)
             cp:SetBackdropColor(r, g, b, a)
@@ -991,7 +991,7 @@ function addon:CreateScrollEditBox(parent, onTextChanged, scrollStep)
     local frame = CreateFrame("Frame", nil, parent)
     addon:CreateScrollFrame(frame)
     addon:StylizeFrame(frame.scrollFrame, {0.15, 0.15, 0.15, 0.9})
-    
+
     frame.eb = addon:CreateEditBox(frame.scrollFrame.content, 10, 20, true, true)
     frame.eb:SetPoint("TOPLEFT")
     frame.eb:SetPoint("RIGHT")
@@ -1061,7 +1061,7 @@ function addon:CreateSlider(name, parent, low, high, width, step, onValueChanged
     local unit = isPercentage and "%" or ""
 
     addon:StylizeFrame(slider, {0.115, 0.115, 0.115, 1})
-    
+
     local label = slider:CreateFontString(nil, "OVERLAY", font_name)
     label:SetText(name)
     label:SetPoint("BOTTOM", slider, "TOP", 0, 2)
@@ -1103,7 +1103,7 @@ function addon:CreateSlider(name, parent, low, high, width, step, onValueChanged
     lowText:SetTextColor(unpack(colors.grey.t))
     lowText:SetPoint("TOPLEFT", slider, "BOTTOMLEFT", 0, -1)
     lowText:SetPoint("BOTTOM", currentEditBox)
-    
+
     local highText = slider:CreateFontString(nil, "OVERLAY", font_name)
     slider.highText = highText
     highText:SetTextColor(unpack(colors.grey.t))
@@ -1132,7 +1132,7 @@ function addon:CreateSlider(name, parent, low, high, width, step, onValueChanged
 
     slider.onValueChangedFn = onValueChangedFn
     slider.afterValueChangedFn = afterValueChangedFn
-    
+
     -- if tooltip then slider.tooltipText = tooltip end
 
     local oldValue
@@ -1184,7 +1184,7 @@ function addon:CreateSlider(name, parent, low, high, width, step, onValueChanged
             value = oldValue - step
             value = value < low and low or value
         end
-        
+
         if value ~= oldValue then
             slider:SetValue(value)
             if slider.onValueChangedFn then slider.onValueChangedFn(value) end
@@ -1192,7 +1192,7 @@ function addon:CreateSlider(name, parent, low, high, width, step, onValueChanged
         end
     end)
     ]]
-    
+
     slider:SetValue(low) -- NOTE: needs to be after OnValueChanged
 
     slider:SetScript("OnDisable", function()
@@ -1204,7 +1204,7 @@ function addon:CreateSlider(name, parent, low, high, width, step, onValueChanged
         lowText:SetTextColor(0.4, 0.4, 0.4)
         highText:SetTextColor(0.4, 0.4, 0.4)
     end)
-    
+
     slider:SetScript("OnEnable", function()
         label:SetTextColor(1, 1, 1)
         currentEditBox:SetEnabled(true)
@@ -1223,7 +1223,7 @@ function addon:CreateSlider(name, parent, low, high, width, step, onValueChanged
         highText:SetText(maxV..unit)
     end
     slider:UpdateMinMaxValues(low, high)
-    
+
     return slider
 end
 
@@ -1234,12 +1234,12 @@ function addon:CreateSwitch(parent, size, leftText, leftValue, rightText, rightV
     local switch = CreateFrame("Frame", nil, parent, "BackdropTemplate")
     P:Size(switch, size[1], size[2])
     addon:StylizeFrame(switch, {0.115, 0.115, 0.115, 1})
-    
+
     local textLeft = switch:CreateFontString(nil, "OVERLAY", font_name)
     textLeft:SetPoint("LEFT", 2, 0)
     textLeft:SetPoint("RIGHT", switch, "CENTER", -1, 0)
     textLeft:SetText(leftText)
-    
+
     local textRight = switch:CreateFontString(nil, "OVERLAY", font_name)
     textRight:SetPoint("LEFT", switch, "CENTER", 1, 0)
     textRight:SetPoint("RIGHT", -2, 0)
@@ -1281,14 +1281,14 @@ function addon:CreateSwitch(parent, size, leftText, leftValue, rightText, rightV
             switch:SetSelected("LEFT", true)
         end
     end)
-    
+
     function switch:SetSelected(value, runFunc)
         if value == leftValue or value == "LEFT" then
             switch.selected = "LEFT"
             switch.selectedValue = leftValue
             UpdateHighlight("LEFT")
             t1:SetOffset(highlight:GetWidth(), 0)
-            
+
         elseif value == rightValue or value == "RIGHT" then
             switch.selected = "RIGHT"
             switch.selectedValue = rightValue
@@ -1328,7 +1328,7 @@ function addon:CreateTripleSwitch(parent, size, func)
     local switch = CreateFrame("Frame", nil, parent, "BackdropTemplate")
     P:Size(switch, size[1], size[2])
     addon:StylizeFrame(switch, {0.115, 0.115, 0.115, 1})
-    
+
     local highlight = switch:CreateTexture(nil, "ARTWORK")
     if class == "PRIEST" and not accentColorOverride then
         highlight:SetColorTexture(accentColor.t[1], accentColor.t[2], accentColor.t[3], 0.35)
@@ -1370,7 +1370,7 @@ function addon:CreateTripleSwitch(parent, size, func)
             switch:SetSelected("LEFT", true)
         end
     end)
-    
+
     function switch:SetSelected(value, runFunc)
         local width = size[1] - 2
 
@@ -1378,7 +1378,7 @@ function addon:CreateTripleSwitch(parent, size, func)
             switch.selected = "LEFT"
             UpdateHighlight("LEFT")
             t1:SetOffset(width/3, 0)
-            
+
         elseif value == "CENTER" then
             switch.selected = "CENTER"
             UpdateHighlight("CENTER")
@@ -1421,7 +1421,7 @@ function addon:CreateFourfoldSwitch(parent, size, func)
     local switch = CreateFrame("Frame", nil, parent, "BackdropTemplate")
     P:Size(switch, size[1], size[2])
     addon:StylizeFrame(switch, {0.115, 0.115, 0.115, 1})
-    
+
     local highlight = switch:CreateTexture(nil, "ARTWORK")
     if class == "PRIEST" and not accentColorOverride then
         highlight:SetColorTexture(accentColor.t[1], accentColor.t[2], accentColor.t[3], 0.35)
@@ -1460,7 +1460,7 @@ function addon:CreateFourfoldSwitch(parent, size, func)
         switch.isPlaying = false
         switch:SetSelected(switch.selected == 4 and 1 or switch.selected + 1, true)
     end)
-    
+
     function switch:SetSelected(value, runFunc)
         local width = size[1] - 2
 
@@ -1543,7 +1543,7 @@ function addon:CreateStatusBar(name, parent, width, height, maxValue, smooth, fu
             bar:SetMinMaxValues(0, m)
         end
     end
-    
+
     function bar:Reset()
         if smooth then
             bar:SetSmoothedValue(0)
@@ -1556,7 +1556,7 @@ function addon:CreateStatusBar(name, parent, width, height, maxValue, smooth, fu
         if showText then
             bar.text:SetText(format("%d%%", value / maxValue * 100))
         end
-        
+
         if func then func(value) end
     end)
 
@@ -1583,7 +1583,7 @@ function addon:CreateStatusBarButton(parent, text, size, maxValue, template)
     b:SetScript("OnLeave", function()
         b:SetBackdropBorderColor(0, 0, 0, 1)
     end)
-    
+
     local bar = CreateFrame("StatusBar", nil, b, "BackdropTemplate")
     b.bar = bar
     bar:SetPoint("TOPLEFT", b)
@@ -1597,7 +1597,7 @@ function addon:CreateStatusBarButton(parent, text, size, maxValue, template)
     bar:SetMinMaxValues(0, maxValue)
     bar:SetValue(0)
     bar:SetFrameLevel(parent:GetFrameLevel()+1)
-    
+
     function b:Start()
         bar:SetValue(select(2, bar:GetMinMaxValues()))
         bar:SetScript("OnUpdate", function(self, elapsed)
@@ -1637,7 +1637,7 @@ function addon:CreateStatusBarButton(parent, text, size, maxValue, template)
         currentBackdropColor = nil
         currentBackdropBorderColor = nil
     end
-    
+
     return b
 end
 
@@ -1712,7 +1712,7 @@ function addon:CreateConfirmPopup(parent, width, text, onAccept, onReject, mask,
         parent.confirmPopup:EnableMouse(true)
         parent.confirmPopup:SetClampedToScreen(true)
         parent.confirmPopup:Hide()
-        
+
         parent.confirmPopup:SetScript("OnHide", function()
             parent.confirmPopup:Hide()
             -- hide mask
@@ -1810,7 +1810,7 @@ function addon:CreateConfirmPopup(parent, width, text, onAccept, onReject, mask,
         if mask and parent.mask then parent.mask:Hide() end
         parent.confirmPopup:Hide()
     end)
-    
+
     parent.confirmPopup:SetWidth(width)
     parent.confirmPopup.text:SetText(text)
 
@@ -1843,7 +1843,7 @@ function addon:CreateNotificationPopup(parent, width, text, mask)
         parent.notificationPopup:EnableMouse(true)
         parent.notificationPopup:SetClampedToScreen(true)
         parent.notificationPopup:Hide()
-        
+
         parent.notificationPopup:SetScript("OnHide", function()
             parent.notificationPopup:Hide()
             -- hide mask
@@ -1910,7 +1910,7 @@ function addon:CreatePopupEditBox(parent, func, multiLine)
         eb:SetMaxLetters(255)
         eb:SetTextInsets(5, 5, 3, 4)
         addon:StylizeFrame(eb, {0.115, 0.115, 0.115, 1}, {accentColor.t[1], accentColor.t[2], accentColor.t[3], 1})
-        
+
         eb:SetScript("OnEscapePressed", function()
             eb:SetText("")
             eb:Hide()
@@ -1945,7 +1945,7 @@ function addon:CreatePopupEditBox(parent, func, multiLine)
             tipsBackground:Hide()
         end)
     end
-    
+
     parent.popupEditBox:SetScript("OnEnterPressed", function(self)
         if multiLine and IsShiftKeyDown() then -- new line
             self:Insert("\n")
@@ -1992,7 +1992,7 @@ function addon:CreateDualPopupEditBox(parent, leftTip, rightTip, isNumeric, func
         left:SetNumeric(isNumeric)
         left:SetTextInsets(5, 5, 3, 4)
         addon:StylizeFrame(left, {0.115, 0.115, 0.115, 1}, {accentColor.t[1], accentColor.t[2], accentColor.t[3], 1})
-        
+
         left:SetScript("OnEditFocusGained", function() left:HighlightText() end)
         left:SetScript("OnEditFocusLost", function() left:HighlightText(0, 0) end)
         left:SetScript("OnEscapePressed", function() f:Hide() end)
@@ -2012,7 +2012,7 @@ function addon:CreateDualPopupEditBox(parent, leftTip, rightTip, isNumeric, func
 
         left.tip = left:CreateFontString(nil, "OVERLAY", font_name)
         left.tip:SetPoint("LEFT", 5, 0)
-        
+
         -- right
         local right = CreateFrame("EditBox", nil, f, "BackdropTemplate")
         f.right = right
@@ -2068,7 +2068,7 @@ function addon:CreateDualPopupEditBox(parent, leftTip, rightTip, isNumeric, func
             left:SetFocus(true)
         end
     end
-    
+
     parent.dualPopupEditBox.left.tip:SetText("|cffababab"..leftTip)
     parent.dualPopupEditBox.right.tip:SetText("|cffababab"..rightTip)
 
@@ -2166,7 +2166,7 @@ local function CreateItemButtons(items, itemTable, itemParent, level)
             b:Hide()
             b:SetScript("OnHide", function(self) self:Hide() end)
         end
-        
+
         if item.children then
             -- create sub menu level+1
             if not menu[level+1] then
@@ -2185,7 +2185,7 @@ local function CreateItemButtons(items, itemTable, itemParent, level)
             b.childrenSymbol:Show()
 
             CreateItemButtons(item.children, b, menu[level+1], level+1) -- itemTable == b, insert children to its table
-            
+
             b:SetScript("OnEnter", function()
                 b:SetBackdropColor(unpack(b.hoverColor))
 
@@ -2237,7 +2237,7 @@ local function CreateItemButtons_Scroll(items, itemTable, limit)
             b = addon:CreateButton(menu.scrollFrame.content, item.text, "transparent-accent", {98 ,18}, true)
             tinsert(itemTable, b)
         end
-        
+
         b:Show()
         b:SetParent(menu.scrollFrame.content)
         b:ClearAllPoints()
@@ -2393,7 +2393,7 @@ function addon:CreateScrollTextFrame(parent, s, timePerScroll, scrollStep, delay
     alpha:SetFromAlpha(0)
     alpha:SetToAlpha(1)
     alpha:SetDuration(0.5)
-    
+
     local fadeOutIn = text:CreateAnimationGroup()
     local alpha1 = fadeOutIn:CreateAnimation("Alpha")
     alpha1:SetStartDelay(delayTime)
@@ -2411,7 +2411,7 @@ function addon:CreateScrollTextFrame(parent, s, timePerScroll, scrollStep, delay
     local maxHScrollRange
     local elapsedTime, delay, scroll = 0, 0, 0
     local wait, nextRound
-    
+
     alpha1:SetScript("OnFinished", function()
         frame:SetHorizontalScroll(0)
     end)
@@ -2494,14 +2494,14 @@ function addon:CreateScrollFrame(parent, top, bottom, color, border)
         scrollFrame:SetPoint("TOPLEFT", 0, top)
         scrollFrame:SetPoint("BOTTOMRIGHT", 0, bottom)
     end
-    
+
     -- content
     local content = CreateFrame("Frame", nil, scrollFrame, "BackdropTemplate")
     content:SetSize(scrollFrame:GetWidth(), 2)
     scrollFrame:SetScrollChild(content)
     scrollFrame.content = content
     -- content:SetFrameLevel(2)
-    
+
     -- scrollbar
     local scrollbar = CreateFrame("Frame", nil, scrollFrame, "BackdropTemplate")
     scrollbar:SetPoint("TOPLEFT", scrollFrame, "TOPRIGHT", 2, 0)
@@ -2509,7 +2509,7 @@ function addon:CreateScrollFrame(parent, top, bottom, color, border)
     scrollbar:Hide()
     addon:StylizeFrame(scrollbar, {0.1, 0.1, 0.1, 0.8})
     scrollFrame.scrollbar = scrollbar
-    
+
     -- scrollbar thumb
     local scrollThumb = CreateFrame("Frame", nil, scrollbar, "BackdropTemplate")
     scrollThumb:SetWidth(5) -- scrollbar's width is 5
@@ -2520,18 +2520,18 @@ function addon:CreateScrollFrame(parent, top, bottom, color, border)
     scrollThumb:SetMovable(true)
     scrollThumb:SetHitRectInsets(-5, -5, 0, 0) -- Frame:SetHitRectInsets(left, right, top, bottom)
     scrollFrame.scrollThumb = scrollThumb
-    
+
     -- reset content height manually ==> content:GetBoundsRect() make it right @OnUpdate
     function scrollFrame:ResetHeight()
         content:SetHeight(2)
     end
-    
+
     -- reset to top, useful when used with DropDownMenu (variable content height)
     function scrollFrame:ResetScroll()
         scrollFrame:SetVerticalScroll(0)
         scrollThumb:SetPoint("TOP")
     end
-    
+
     -- FIXME: GetVerticalScrollRange goes wrong in 9.0.1
     function scrollFrame:GetVerticalScrollRange()
         local range = content:GetHeight() - scrollFrame:GetHeight()
@@ -2576,7 +2576,7 @@ function addon:CreateScrollFrame(parent, top, bottom, color, border)
         end
     end)
     ]]
-    
+
     -- stores all widgets on content frame
     -- local autoWidthWidgets = {}
 
@@ -2594,11 +2594,11 @@ function addon:CreateScrollFrame(parent, top, bottom, color, border)
         scrollFrame:ResetScroll()
         scrollFrame:ClearContent()
     end
-    
+
     -- function scrollFrame:SetWidgetAutoWidth(widget)
     -- 	table.insert(autoWidthWidgets, widget)
     -- end
-    
+
     -- on width changed, make the same change to widgets
     scrollFrame:SetScript("OnSizeChanged", function()
         -- change widgets width (marked as auto width)
@@ -2633,7 +2633,7 @@ function addon:CreateScrollFrame(parent, top, bottom, color, border)
     -- DO NOT USE OnScrollRangeChanged to check whether it can scroll.
     -- "invisible" widgets should be hidden, then the scroll range is NOT accurate!
     -- scrollFrame:SetScript("OnScrollRangeChanged", function(self, xOffset, yOffset) end)
-    
+
     -- dragging and scrolling
     scrollThumb:SetScript("OnMouseDown", function(self, button)
         if button ~= 'LeftButton' then return end
@@ -2644,7 +2644,7 @@ function addon:CreateScrollFrame(parent, top, bottom, color, border)
         self:SetScript("OnUpdate", function(self)
             --------------------- y offset before dragging + mouse offset
             local newOffsetY = offsetY + (select(2, GetCursorPosition()) - mouseY) / uiScale
-            
+
             -- even scrollThumb:SetPoint is already done in OnVerticalScroll, but it's useful in some cases.
             if newOffsetY >= 0 then -- @top
                 scrollThumb:SetPoint("TOP")
@@ -2663,7 +2663,7 @@ function addon:CreateScrollFrame(parent, top, bottom, color, border)
     scrollThumb:SetScript("OnMouseUp", function(self)
         self:SetScript("OnUpdate", nil)
     end)
-    
+
     scrollFrame:SetScript("OnVerticalScroll", function(self, offset)
         if scrollFrame:GetVerticalScrollRange() ~= 0 then
             local scrollP = scrollFrame:GetVerticalScroll()/scrollFrame:GetVerticalScrollRange()
@@ -2677,12 +2677,12 @@ function addon:CreateScrollFrame(parent, top, bottom, color, border)
         scrollFrame:GetScript("OnVerticalScroll")(scrollFrame)
         scrollFrame:VerticalScroll(0)
     end
-    
+
     local step = 25
     function scrollFrame:SetScrollStep(s)
         step = s
     end
-    
+
     -- enable mouse wheel scroll
     scrollFrame:EnableMouseWheel(true)
     scrollFrame:SetScript("OnMouseWheel", function(self, delta)
@@ -2692,7 +2692,7 @@ function addon:CreateScrollFrame(parent, top, bottom, color, border)
             scrollFrame:VerticalScroll(step)
         end
     end)
-    
+
     return scrollFrame
 end
 
@@ -2768,7 +2768,7 @@ function addon:CreateDropdown(parent, width, dropdownType, isMini, isHorizontal)
             end
         end)
     end
-    
+
     -- button: open/close menu list
     if isMini then
         menu.button = addon:CreateButton(menu, "", "transparent-accent", {18 ,18})
@@ -2808,13 +2808,13 @@ function addon:CreateDropdown(parent, width, dropdownType, isMini, isHorizontal)
         menu.texture:SetPoint("BOTTOMRIGHT", P:Scale(-18), P:Scale(1))
         menu.texture:SetVertexColor(1, 1, 1, 0.7)
     end
-    
+
     -- keep all menu item buttons
     menu.items = {}
 
     -- index in items
     -- menu.selected
-    
+
     function menu:SetSelected(text, value)
         local valid
         for i, item in pairs(menu.items) do
@@ -3012,7 +3012,7 @@ function addon:CreateDropdown(parent, width, dropdownType, isMini, isHorizontal)
         -- update list size
         list.menu = menu -- menu's OnHide -> list:Hide
         list:ClearAllPoints()
-        
+
         if isMini and isHorizontal then
             list:SetPoint("TOPLEFT", menu, "TOPRIGHT", 2, 0)
             if #menu.items == 0 then
@@ -3053,7 +3053,7 @@ function addon:CreateDropdown(parent, width, dropdownType, isMini, isHorizontal)
             list:Hide()
         end
     end)
-    
+
     -- scripts
     menu.button:HookScript("OnClick", function()
         if list.menu ~= menu then -- list shown by other dropdown
@@ -3076,7 +3076,7 @@ function addon:CreateDropdown(parent, width, dropdownType, isMini, isHorizontal)
             list:Show()
         end
     end)
-    
+
     return menu
 end
 
@@ -3117,7 +3117,7 @@ function addon:CreateBindingButton(parent, width)
         parent.bindingButton.close:SetScript("OnClick", function()
             parent.bindingButton:Hide()
         end)
-        
+
         parent.bindingButton.text = parent.bindingButton:CreateFontString(nil, "OVERLAY", font_name)
         parent.bindingButton.text:SetPoint("LEFT")
         -- parent.bindingButton.text:SetPoint("RIGHT", parent.bindingButton.close, "LEFT")
@@ -3144,20 +3144,20 @@ function addon:CreateBindingButton(parent, width)
 
             if parent.bindingButton.func then parent.bindingButton.func(GetModifier(), key) end
         end)
-        
+
         -- mouse wheel
         parent.bindingButton:SetScript("OnMouseWheel", function(self, key)
             parent.bindingButton:Hide()
             if parent.bindingButton.func then parent.bindingButton.func(GetModifier(), (key==1) and "ScrollUp" or "ScrollDown") end
         end)
-        
+
         -- keyboard
         parent.bindingButton:SetScript("OnKeyDown", function(self, key)
             if key == "ESCAPE" or key == "LALT" or key == "RALT" or key == "LCTRL" or key == "RCTRL" or key == "LSHIFT" or key ==  "RSHIFT" then return end
             parent.bindingButton:Hide()
             if parent.bindingButton.func then parent.bindingButton.func(GetModifier(), key) end
         end)
-        
+
         function parent.bindingButton:SetFunc(func)
             parent.bindingButton.func = func
         end
@@ -3177,7 +3177,7 @@ local function CreateGrid(parent, text, width)
     grid:SetFrameLevel(6)
     grid:SetSize(width, P:Scale(20))
     grid:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8x8", edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = P:Scale(1)})
-    grid:SetBackdropColor(0, 0, 0, 0) 
+    grid:SetBackdropColor(0, 0, 0, 0)
     grid:SetBackdropBorderColor(0, 0, 0, 1)
 
     -- to avoid SetText("") -> GetFontString() == nil
@@ -3202,7 +3202,7 @@ local function CreateGrid(parent, text, width)
 
     grid:RegisterForClicks("LeftButtonUp", "RightButtonUp")
 
-    grid:SetScript("OnEnter", function() 
+    grid:SetScript("OnEnter", function()
         grid:SetBackdropColor(accentColor.t[1], accentColor.t[2], accentColor.t[3], 0.15)
         parent:Highlight()
     end)
@@ -3213,7 +3213,7 @@ local function CreateGrid(parent, text, width)
     end)
 
     grid:RegisterForDrag("LeftButton")
-    
+
     grid:SetScript("OnDragStart", function(self)
         if parent.unmovable then return end
         parent:Unhighlight()
@@ -3221,7 +3221,7 @@ local function CreateGrid(parent, text, width)
         parent:StartMoving()
         parent:SetUserPlaced(false)
     end)
-    
+
     grid:SetScript("OnDragStop", function(self)
         if parent.unmovable then return end
         parent:StopMovingOrSizing()
@@ -3242,7 +3242,7 @@ function addon:CreateBindingListButton(parent, modifier, bindKey, bindType, bind
     b:SetFrameLevel(5)
     P:Size(b, 100, 20)
     b:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8x8", edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = P:Scale(1)})
-    b:SetBackdropColor(0.115, 0.115, 0.115, 1) 
+    b:SetBackdropColor(0.115, 0.115, 0.115, 1)
     b:SetBackdropBorderColor(0, 0, 0, 1)
     b:SetMovable(true)
 
@@ -3377,7 +3377,7 @@ function addon:CreateReceivingFrame(parent)
     nameText:SetWordWrap(true)
 
     fromLabel:SetPoint("TOP", nameText, "BOTTOM", 0, -10)
-    
+
     local fromText = f:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
     fromText:SetPoint("TOPLEFT", fromLabel, "TOPRIGHT")
     fromText:SetPoint("RIGHT", -10, 0)
@@ -3414,7 +3414,7 @@ function addon:CreateReceivingFrame(parent)
 
     local importBtn = addon:CreateButton(f, L["Import"], "green", {125, 20})
     importBtn:SetPoint("BOTTOMLEFT")
-    
+
     local cancelBtn = addon:CreateButton(f, L["Cancel"], "red", {125, 20})
     cancelBtn:SetPoint("BOTTOMLEFT", importBtn, "BOTTOMRIGHT", -1, 0)
     cancelBtn:SetPoint("BOTTOMRIGHT")
@@ -3471,7 +3471,7 @@ function addon:CreateReceivingFrame(parent)
             progressBar:Show()
             addon:ChangeSizeWithAnimation(importBtn, 200, 20, 7)
             func(self)
-            
+
             infoMsg:Hide()
             -- NOTE: timeout in 10 sec if can't receive any data
             timeout = C_Timer.NewTimer(10, function()
@@ -3493,7 +3493,7 @@ function addon:CreateReceivingFrame(parent)
             func(self)
         end)
     end
-    
+
     function f:ShowProgress(done, total)
         progressBar:SetMaxValue(total)
         progressBar:SetSmoothedValue(done)
@@ -3512,7 +3512,7 @@ function addon:CreateReceivingFrame(parent)
         if status then
             if received["type"] == "Debuffs" then
                 local isCompatible = type(received["version"]) == "number" and received["version"] >= Cell.MIN_DEBUFFS_VERSION
-                
+
                 F:Debug("|cffFFDAB9RECEIVED DEBUFFS:|r ", received["instanceId"], received["bossId"], received["data"])
                 local builtIn, custom = F:CalcRaidDebuffs(received["instanceId"], received["bossId"], received["data"])
 
@@ -3524,7 +3524,7 @@ function addon:CreateReceivingFrame(parent)
                     F:ShowInstanceDebuffs(received["instanceId"], received["bossId"])
                     f:Hide()
                 end)
-                
+
                 C_Timer.After(0.5, function()
                     if isCompatible then
                         infoMsg:SetMsg(L["This will overwrite your debuffs"], dataText)

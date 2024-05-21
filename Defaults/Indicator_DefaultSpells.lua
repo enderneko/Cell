@@ -540,7 +540,7 @@ local dispelNodeIDs = {
         -- Restoration
         [105] = {["Curse"] = 82203, ["Magic"] = true, ["Poison"] = 82203},
     -------------------------
-    
+
     -- EVOKER ---------------
         -- 1467 - Devastation
         [1467] = {["Curse"] = 93294, ["Disease"] = 93294, ["Poison"] = {93306, 93294}, ["Bleed"] = 93294},
@@ -549,7 +549,7 @@ local dispelNodeIDs = {
         -- 1473 - Augmentation
         [1473] = {["Curse"] = 93294, ["Disease"] = 93294, ["Poison"] = {93306, 93294}, ["Bleed"] = 93294},
     -------------------------
-        
+
     -- MAGE -----------------
         -- 62 - Arcane
         [62] = {["Curse"] = 62116},
@@ -558,7 +558,7 @@ local dispelNodeIDs = {
         -- 64 - Frost
         [64] = {["Curse"] = 62116},
     -------------------------
-        
+
     -- MONK -----------------
         -- 268 - Brewmaster
         [268] = {["Disease"] = 81633, ["Poison"] = 81633},
@@ -576,7 +576,7 @@ local dispelNodeIDs = {
         -- 70 - Retribution
         [70] = {["Disease"] = 81507, ["Poison"] = 81507, ["Bleed"] = 81616},
     -------------------------
-    
+
     -- PRIEST ---------------
         -- 256 - Discipline
         [256] = {["Disease"] = 82705, ["Magic"] = true},
@@ -614,7 +614,7 @@ if UnitClassBase("player") == "WARLOCK" then
     local timer
     eventFrame:SetScript("OnEvent", function(self, event, unit)
         if unit ~= "player" then return end
-        
+
         if timer then
             timer:Cancel()
         end
@@ -623,9 +623,9 @@ if UnitClassBase("player") == "WARLOCK" then
             dispellable["Magic"] = IsSpellKnown(89808, true)
             -- texplore(dispellable)
         end)
-        
+
     end)
-else    
+else
     eventFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
     eventFrame:RegisterEvent("TRAIT_CONFIG_UPDATED")
     -- eventFrame:RegisterEvent("ACTIVE_PLAYER_SPECIALIZATION_CHANGED")
@@ -701,7 +701,7 @@ function I.IsDrinking(name)
 end
 
 -------------------------------------------------
--- healer 
+-- healer
 -------------------------------------------------
 local spells =  {
     -- druid
@@ -754,7 +754,7 @@ local spells =  {
     388010, -- 暮秋祝福
     388011, -- 凛冬祝福
     200654, -- 提尔的拯救
-    
+
     -- priest
     139, -- 恢复
     41635, -- 愈合祷言
@@ -762,7 +762,7 @@ local spells =  {
     194384, -- 救赎
     77489, -- 圣光回响
     372847, -- 光明之泉恢复
-    
+
     -- shaman
     974, -- 大地之盾
     383648, -- 大地之盾（天赋）
@@ -777,7 +777,7 @@ function F:FirstRun()
         local icon = select(3, GetSpellInfo(id))
         icons = icons .. "|T"..icon..":0|t"
         if i % 11 == 0 then
-            icons = icons .. "\n"    
+            icons = icons .. "\n"
         end
     end
 
@@ -790,7 +790,7 @@ function F:FirstRun()
         else
             indicatorName = "indicator"..(tonumber(strmatch(currentLayoutTable["indicators"][last]["indicatorName"], "%d+"))+1)
         end
-        
+
         tinsert(currentLayoutTable["indicators"], {
             ["name"] = "Healers",
             ["indicatorName"] = indicatorName,
@@ -837,7 +837,7 @@ end
 --         cleuAuras[c[1]] = {c[2], icon}
 --     end
 -- end
-    
+
 -- function I.CheckCleuAura(id)
 --     return cleuAuras[id]
 -- end
@@ -966,7 +966,7 @@ end
 -------------------------------------------------
 -- missing buffs, for indicator settings only
 -------------------------------------------------
-local buffsOrder = {"PWF", "MotW", "AB", "BS", "BotB"} 
+local buffsOrder = {"PWF", "MotW", "AB", "BS", "BotB"}
 
 local missingBuffs = {
     ["PWF"] = 21562,

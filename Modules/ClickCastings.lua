@@ -76,7 +76,7 @@ local function EncodeDB(modifier, bindKey, bindType, bindAction)
     if bindType == "spell" then
         attrType = "spell"
         attrAction = bindAction
-        
+
     elseif bindType == "macro" then
         attrType = "macro"
         attrAction = bindAction
@@ -107,7 +107,7 @@ end
 
 local function DecodeDB(t)
     local modifier, bindKey, bindType, bindAction
-    
+
     if t[1] ~= "notBound" then
         local dash, key
         modifier, dash, key = strmatch(t[1], "^(.*)type(-*)(.+)$")
@@ -162,7 +162,7 @@ wrapFrame:SetAttribute("_onstate-combatstate", [[
         if menuKey then
             if newstate == "true" then
                 mouseoverbutton:SetAttribute(menuKey, nil)
-            else                    
+            else
                 mouseoverbutton:SetAttribute(menuKey, "togglemenu")
             end
         end
@@ -200,7 +200,7 @@ if Cell.isRetail then
             if menuKey then
                 if PlayerInCombat() then
                     self:SetAttribute(menuKey, nil)
-                else                    
+                else
                     self:SetAttribute(menuKey, "togglemenu")
                 end
             end
@@ -211,7 +211,7 @@ if Cell.isRetail then
             if mouseoverbutton then mouseoverbutton:ClearBindings() end --! NOTE: 鼠标放在过远单位上->被挡住->移走->移至可用单位再移出，会发现之前的不可用单位的按键绑定仍未取消
             mouseoverbutton = self
         ]])
-        
+
         --! NOTE: if another frame shows in front of b, _onleave will NOT trigger. Use WrapScript to solve this issue.
         b:SetAttribute("_onleave", [[
             -- print("_onleave")
@@ -271,7 +271,7 @@ else
             if menuKey then
                 if PlayerInCombat() then
                     self:SetAttribute(menuKey, nil)
-                else                    
+                else
                     self:SetAttribute(menuKey, "togglemenu")
                 end
             end
@@ -282,7 +282,7 @@ else
             if mouseoverbutton then
                 --! NOTE: 鼠标放在过远单位上->被挡住->移走->移至可用单位再移出，会发现之前的不可用单位的按键绑定仍未取消
                 mouseoverbutton:ClearBindings()
-                
+
                 --! vehicle (previous button)
                 local oldUnit = mouseoverbutton:GetAttribute("oldUnit")
                 if oldUnit then
@@ -293,7 +293,7 @@ else
             end
             mouseoverbutton = self
         ]])
-        
+
         --! NOTE: if another frame shows in front of b, _onleave will NOT trigger. Use WrapScript to solve this issue.
         b:SetAttribute("_onleave", [[
             -- print("_onleave")
@@ -491,7 +491,7 @@ end
 local function UpdateClickCastings(noReload)
     F:Debug("|cff77ff77UpdateClickCastings:|r useCommon:", Cell.vars.clickCastings["useCommon"])
     clickCastingTable = Cell.vars.clickCastings["useCommon"] and Cell.vars.clickCastings["common"] or Cell.vars.clickCastings[Cell.vars.playerSpecID]
-    
+
     -- FIXME: remove this determine statement
     if Cell.vars.clickCastings["alwaysTargeting"] then
         alwaysTargeting = Cell.vars.clickCastings["alwaysTargeting"][Cell.vars.clickCastings["useCommon"] and "common" or Cell.vars.playerSpecID]
@@ -511,7 +511,7 @@ local function UpdateClickCastings(noReload)
 
     local snippet = GetBindingSnippet()
     F:Debug(snippet)
-    
+
     F:IterateAllUnitButtons(function(b)
         -- clear if attribute already set
         ClearClickCastings(b)
@@ -519,7 +519,7 @@ local function UpdateClickCastings(noReload)
         -- update bindingClicks
         b:SetAttribute("snippet", snippet)
         SetBindingClicks(b)
-        
+
         -- load db and set attribute
         ApplyClickCastings(b)
     end, false, true)
@@ -535,11 +535,11 @@ local profileDropdown
 local function CreateProfilePane()
     local profilePane = Cell:CreateTitledPane(clickCastingsTab, L["Profiles"], 422, 50)
     profilePane:SetPoint("TOPLEFT", 5, -5)
-    
+
     profileDropdown = Cell:CreateDropdown(profilePane, 412)
     profileDropdown:SetPoint("TOPLEFT", profilePane, "TOPLEFT", 5, -27)
     profileDropdown:SetEnabled(not Cell.isVanilla)
-    
+
     profileDropdown:SetItems({
         {
             ["text"] = L["Use common profile"],
@@ -619,7 +619,7 @@ local function CreateSmartResPane()
 
     smartResDropdown = Cell:CreateDropdown(smartResPane, 195)
     smartResDropdown:SetPoint("TOPLEFT", smartResPane, "TOPLEFT", 5, -27)
-    
+
     smartResDropdown:SetItems({
         {
             ["text"] = L["Disabled"],
@@ -667,12 +667,12 @@ end
 local function ShowBindingMenu(index, b)
     -- if already in deleted, do nothing
     if deleted[index] then return end
-    
+
     P:ClearPoints(bindingButton)
     P:Point(bindingButton, "TOPLEFT", b.keyGrid)
     bindingButton:Show()
     menu:Hide()
-    
+
     bindingButton:SetFunc(function(modifier, key)
         F:Debug(modifier, key)
         local modifierDisplay = modifiersDisplay[F:GetIndex(modifiers, modifier)]
@@ -710,7 +710,7 @@ local function ShowTypesMenu(index, b)
 
     -- if already in deleted, do nothing
     if deleted[index] then return end
-    
+
     local items = {
         {
             ["text"] = L["General"],
@@ -1061,13 +1061,13 @@ local function ShowActionsMenu(index, b)
                                 CellSpellTooltip:Hide()
                                 return
                             end
-                    
+
                             local name, _, icon = GetSpellInfo(spellId)
                             if not name then
                                 CellSpellTooltip:Hide()
                                 return
                             end
-                            
+
                             CellSpellTooltip:SetOwner(peb, "ANCHOR_NONE")
                             CellSpellTooltip:SetPoint("TOPLEFT", peb, "BOTTOMLEFT", 0, -1)
                             CellSpellTooltip:SetSpellByID(spellId, icon)
@@ -1084,7 +1084,7 @@ local function ShowActionsMenu(index, b)
         -- default spells
         local spells = F:GetClickCastingSpellList(Cell.vars.playerClass, Cell.vars.playerSpecID)
         -- {icon, name, type(C/S/P), id}
-        
+
         for _, t in ipairs(spells) do
             tinsert(items, {
                 --! CANNOT use "|T****|t", if too many items (over 10?), it will cause game stuck!! I don't know why!
@@ -1139,7 +1139,7 @@ end
 local function CreateListPane()
     listPane = Cell:CreateTitledPane(clickCastingsTab, L["Current Profile"], 422, 451)
     listPane:SetPoint("BOTTOMLEFT", clickCastingsTab, 5, 5)
-    
+
     local hint = Cell:CreateButton(listPane, nil, "accent-hover", {17, 17}, nil, nil, nil, nil, nil, L["Click-Castings"], L["clickcastingsHints"])
     hint:SetPoint("TOPRIGHT")
     hint.tex = hint:CreateTexture(nil, "ARTWORK")
@@ -1284,18 +1284,18 @@ CreateBindingListButton = function(modifier, bindKey, bindType, bindAction, i)
     b:SetAlpha(1)
     b:SetChanged(false)
     b:Show()
-    
+
     b.keyGrid:SetText(modifierDisplay..bindKeyDisplay)
     b.typeGrid:SetText(L[F:UpperFirst(bindType)])
     b.actionGrid:SetText(bindActionDisplay)
-    
+
     b.modifier, b.bindKey, b.bindType, b.bindAction = modifier, bindKey, bindType, bindAction
     b.bindSpell = bindSpell
     b.clickCastingIndex = i
 
     b:SetPoint("LEFT", 5, 0)
     b:SetPoint("RIGHT", -5, 0)
-    
+
     b:SetScript("OnClick", function(self, button, down)
         if button == "RightButton" then
             if deleted[i] then
@@ -1320,7 +1320,7 @@ CreateBindingListButton = function(modifier, bindKey, bindType, bindAction, i)
             ShowBindingMenu(i, b)
         end
     end)
-    
+
     b.typeGrid:SetScript("OnClick", function(self, button, down)
         if button == "RightButton" then
             b:GetScript("OnClick")(b, button, down)
@@ -1446,7 +1446,7 @@ clickCastingsTab:SetScript("OnShow", function()
     if loaded then return end
 
     loaded = true
-    
+
     local isCommon = Cell.vars.clickCastings["useCommon"]
     profileDropdown:SetSelectedItem(isCommon and 1 or 2)
     -- UpdateCurrentText(isCommon)

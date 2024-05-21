@@ -174,7 +174,7 @@ local function CreateFakeIcon(spellIcon)
     local bg = fakeIconsFrame:CreateTexture(nil, "BORDER")
     bg:SetColorTexture(0, 0, 0, 1)
     P:Size(bg, 32, 32)
-    
+
     local icon = fakeIconsFrame:CreateTexture(nil, "ARTWORK")
     icon:SetTexture(spellIcon)
     icon:SetTexCoord(0.08, 0.92, 0.08, 0.92)
@@ -232,7 +232,7 @@ local function CreateBuffButton(parent, size, spell, icon, index)
     local b = CreateFrame("Button", nil, parent, "SecureActionButtonTemplate,BackdropTemplate")
     if parent then b:SetFrameLevel(parent:GetFrameLevel()+1) end
     P:Size(b, size[1], size[2])
-    
+
     b:SetBackdrop({edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = P:Scale(1)})
     b:SetBackdropBorderColor(0, 0, 0, 1)
 
@@ -352,7 +352,7 @@ local function UpdateButtons()
             paladinBuffsFound = paladinBuffsFound + 1
         end
     end
-    
+
     -- NOTE: check warrior buffs
     local warriorBuffsFound = 0
     for _, k in pairs(warriorBuffs) do
@@ -504,7 +504,7 @@ local function CheckUnit(unit, updateBtn)
             if v ~= false and required[k] then
                 if not (AuraUtil.FindAuraByName(buffs[k]["name"], unit, "BUFF")) then
                     unaffected[k][unit] = true
-                    
+
                     -- NOTE: don't check paladin/warrior shit here
                     if not strfind(k, "^Bo") and k ~= "BS" and k ~= "CS" then
                         I.ShowMissingBuff(unit, k, buffs[k]["icon"], Cell.vars.playerClass == buffs[k]["provider"])
@@ -525,7 +525,7 @@ local function CheckUnit(unit, updateBtn)
                 I.ShowMissingBuff(unit, "WARRIOR", 254882, true)
             end
         end
-        
+
     else
         for k, t in pairs(unaffected) do
             t[unit] = nil
@@ -550,13 +550,13 @@ local function IterateAllUnits()
                     available["SP"] = true
                     hasBuffProvider = true
                 end
-            
+
             elseif UnitClassBase(unit) == "MAGE" then
                 if UnitLevel(unit) >= buffs["AB"]["level"] then
                     available["AB"] = true
                     hasBuffProvider = true
                 end
-            
+
             elseif UnitClassBase(unit) == "WARRIOR" then
                 if UnitLevel(unit) >= buffs["BS"]["level"] then
                     available["BS"] = (available["BS"] or 0) + 1
@@ -591,9 +591,9 @@ local function IterateAllUnits()
     end
 
     RepointButtons()
-    
+
     Reset("unaffected")
-    
+
     for unit in F:IterateGroupMembers() do
         CheckUnit(unit)
     end
@@ -605,7 +605,7 @@ end
 -- events
 -------------------------------------------------
 -- function buffTrackerFrame:UnitUpdated(event, guid, unit, info)
---     if unit == "player" then 
+--     if unit == "player" then
 --         if UnitIsUnit("player", myUnit) then CheckUnit(myUnit, true) end
 --     elseif UnitIsPlayer(unit) then -- ignore pets
 --         CheckUnit(unit, true)
@@ -697,7 +697,7 @@ local function UpdateTools(which)
         if CellDB["tools"]["buffTracker"][1] then
             buffTrackerFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
             buffTrackerFrame:RegisterEvent("GROUP_ROSTER_UPDATE")
-            -- LGI.RegisterCallback(buffTrackerFrame, "GroupInfo_UpdateBase", "UnitUpdated") 
+            -- LGI.RegisterCallback(buffTrackerFrame, "GroupInfo_UpdateBase", "UnitUpdated")
 
             if not enabled and which == "buffTracker" then -- already in world, manually enabled
                 buffTrackerFrame:GROUP_ROSTER_UPDATE(true)
@@ -709,7 +709,7 @@ local function UpdateTools(which)
         else
             buffTrackerFrame:UnregisterAllEvents()
             -- LGI.UnregisterCallback(buffTrackerFrame, "GroupInfo_UpdateBase")
-            
+
             Reset()
             myUnit = ""
 

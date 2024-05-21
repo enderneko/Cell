@@ -210,13 +210,13 @@ end
 local dispellable = {
     -- DRUID ----------------
     [11] = {["Curse"] = true, ["Poison"] = true},
-        
+
     -- MAGE -----------------
     [8] = {["Curse"] = true},
-        
+
     -- PALADIN --------------
     [2] = {["Disease"] = true, ["Magic"] = true, ["Poison"] = true, ["Bleed"] = true},
-    
+
     -- PRIEST ---------------
     [5] = {["Disease"] = true, ["Magic"] = true},
 
@@ -226,7 +226,7 @@ local dispellable = {
 
 function I.CanDispel(dispelType)
     if not dispelType then return end
-    
+
     if dispellable[Cell.vars.playerClassID] then
         return dispellable[Cell.vars.playerClassID][dispelType]
     end
@@ -252,7 +252,7 @@ function I.IsDrinking(name)
 end
 
 -------------------------------------------------
--- healer 
+-- healer
 -------------------------------------------------
 local spells =  {
     -- druid
@@ -271,7 +271,7 @@ function F:FirstRun()
         local icon = select(3, GetSpellInfo(id))
         icons = icons .. "|T"..icon..":0|t"
         if i % 11 == 0 then
-            icons = icons .. "\n"    
+            icons = icons .. "\n"
         end
     end
 
@@ -284,7 +284,7 @@ function F:FirstRun()
         else
             indicatorName = "indicator"..(tonumber(strmatch(currentLayoutTable["indicators"][last]["indicatorName"], "%d+"))+1)
         end
-        
+
         tinsert(currentLayoutTable["indicators"], {
             ["name"] = "Healers",
             ["indicatorName"] = indicatorName,
@@ -322,7 +322,7 @@ end
 -- targetedSpells
 -------------------------------------------------
 local targetedSpells = {
-    
+
 }
 
 function I.GetDefaultTargetedSpellsList()
@@ -337,7 +337,7 @@ end
 -- Consumables: Healing Potion & Healthstone
 -------------------------------------------------
 local consumables = {
-    
+
 }
 
 function I.GetDefaultConsumables()

@@ -17,32 +17,32 @@ local showSoloCB, showPartyCB, hideBlizzardPartyCB, hideBlizzardRaidCB
 local function CreateVisibilityPane()
     local visibilityPane = Cell:CreateTitledPane(generalTab, L["Visibility"], 205, 110)
     visibilityPane:SetPoint("TOPLEFT", generalTab, "TOPLEFT", 5, -5)
-    
+
     showSoloCB = Cell:CreateCheckButton(visibilityPane, L["Show Solo"], function(checked, self)
         CellDB["general"]["showSolo"] = checked
         Cell:Fire("UpdateVisibility", "solo")
     end, L["Show Solo"], L["Show while not in a group"], L["To open options frame, use /cell options"])
     showSoloCB:SetPoint("TOPLEFT", visibilityPane, "TOPLEFT", 5, -27)
-    
+
     showPartyCB = Cell:CreateCheckButton(visibilityPane, L["Show Party"], function(checked, self)
         CellDB["general"]["showParty"] = checked
         Cell:Fire("UpdateVisibility", "party")
     end, L["Show Party"], L["Show while in a party"], L["To open options frame, use /cell options"])
     showPartyCB:SetPoint("TOPLEFT", showSoloCB, "BOTTOMLEFT", 0, -7)
-    
+
     hideBlizzardPartyCB = Cell:CreateCheckButton(visibilityPane, L["Hide Blizzard Party"], function(checked, self)
         CellDB["general"]["hideBlizzardParty"] = checked
-    
+
         local popup = Cell:CreateConfirmPopup(generalTab, 200, L["A UI reload is required.\nDo it now?"], function()
             ReloadUI()
         end, nil, true)
         popup:SetPoint("TOPLEFT", generalTab, 117, -77)
     end, L["Hide Blizzard Frames"], L["Require reload of the UI"])
     hideBlizzardPartyCB:SetPoint("TOPLEFT", showPartyCB, "BOTTOMLEFT", 0, -7)
-   
+
     hideBlizzardRaidCB = Cell:CreateCheckButton(visibilityPane, L["Hide Blizzard Raid"], function(checked, self)
         CellDB["general"]["hideBlizzardRaid"] = checked
-    
+
         local popup = Cell:CreateConfirmPopup(generalTab, 200, L["A UI reload is required.\nDo it now?"], function()
             ReloadUI()
         end, nil, true)
@@ -171,13 +171,13 @@ local lockCB, fadeOutCB, menuPositionDD
 local function CreatePositionPane()
     local positionPane = Cell:CreateTitledPane(generalTab, L["Position"], 205, 120)
     positionPane:SetPoint("TOPLEFT", generalTab, 5, -145)
-    
+
     lockCB = Cell:CreateCheckButton(positionPane, L["Lock Cell Frames"], function(checked, self)
         CellDB["general"]["locked"] = checked
         Cell:Fire("UpdateMenu", "lock")
     end)
     lockCB:SetPoint("TOPLEFT", 5, -27)
-    
+
     fadeOutCB = Cell:CreateCheckButton(positionPane, L["Fade Out Menu"], function(checked, self)
         CellDB["general"]["fadeOut"] = checked
         Cell:Fire("UpdateMenu", "fadeOut")
@@ -340,7 +340,7 @@ local function CreateMiscPane()
         Cell:Fire("UpdateCLEU")
     end, "|cffff2727"..L["HIGH CPU USAGE"].." (EXPERIMENTAL)", L["Use CLEU events to increase health update rate"])
     useCleuCB:SetPoint("TOPLEFT", overrideLGFCB, "BOTTOMLEFT", 0, -37)
-    
+
     translitCB = Cell:CreateCheckButton(miscPane, L["Translit Cyrillic to Latin"], function(checked, self)
         CellDB["general"]["translit"] = checked
         Cell:Fire("TranslitNames")
@@ -365,7 +365,7 @@ local function ShowTab(tab)
             F:ApplyCombatProtectionToFrame(generalTab)
             Cell:CreateMask(generalTab, nil, {1, -1, -1, 1})
             generalTab.mask:Hide()
-        end 
+        end
 
         generalTab:Show()
 

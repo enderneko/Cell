@@ -11,8 +11,8 @@ function P:GetResolution()
     return GetPhysicalScreenSize()
 end
 
--- The UI P:Scale goes from 1 to 0.64. 
--- At 768y we see pixel-per-pixel accurate representation of our texture, 
+-- The UI P:Scale goes from 1 to 0.64.
+-- At 768y we see pixel-per-pixel accurate representation of our texture,
 -- and again at 1200y if at 0.64 scale.
 function P:GetPixelPerfectScale()
     local hRes, vRes = P:GetResolution()
@@ -32,7 +32,7 @@ end
 function P:PixelPerfectPoint(frame)
     local left = frame:GetLeft()
     local top = frame:GetTop()
-    
+
     frame:ClearAllPoints()
     frame:SetPoint("TOPLEFT", UIParent, "BOTTOMLEFT", math.floor(left + 0.5), math.floor(top + 0.5))
 end
@@ -129,7 +129,7 @@ end
 function P:Point(frame, ...)
     if not frame.points then frame.points = {} end
     local point, anchorTo, anchorPoint, x, y
-    
+
     local n = select("#", ...)
     if n == 1 then
         point = ...
@@ -157,7 +157,7 @@ end
 function P:Resize(frame)
     if frame.width then
         frame:SetWidth(P:Scale(frame.width))
-    end 
+    end
     if frame.height then
         frame:SetHeight(P:Scale(frame.height))
     end

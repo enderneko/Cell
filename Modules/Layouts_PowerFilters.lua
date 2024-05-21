@@ -29,7 +29,7 @@ if Cell.isVanilla then
         filter:SetTexture("classicon-"..strlower(class), {height-4, height-4}, {"LEFT", 2, 0}, true, true)
         P:Size(filter, width, height)
 
-        
+
         if class == "VEHICLE" or class == "PET" or class == "NPC" then
             filter:SetText(L[class])
             filter.classColor = {0, 1, 0.2}
@@ -37,7 +37,7 @@ if Cell.isVanilla then
             filter.classColor = {F:GetClassColor(class)}
             filter:SetText(F:GetLocalizedClassName(class))
         end
-    
+
         filter:SetScript("OnClick", function()
             selectedLayoutTable["powerFilters"][class] = not selectedLayoutTable["powerFilters"][class]
             UpdateButton(filter, selectedLayoutTable["powerFilters"][class])
@@ -45,12 +45,12 @@ if Cell.isVanilla then
             if selectedLayout == Cell.vars.currentLayout then
                 Cell:Fire("UpdateLayout", selectedLayout, "powerFilter")
             end
-        end) 
-    
+        end)
+
         function filter:Load()
             UpdateButton(filter, selectedLayoutTable["powerFilters"][class])
         end
-    
+
         return filter
     end
 
@@ -64,20 +64,20 @@ else
         --     b:SetScript("OnLeave", nil)
         -- else
         --     b:SetBackdropColor(unpack(b.color))
-        --     b:SetScript("OnEnter", function() 
+        --     b:SetScript("OnEnter", function()
         --         b:SetBackdropColor(unpack(b.hoverColor))
         --     end)
-        --     b:SetScript("OnLeave", function() 
+        --     b:SetScript("OnLeave", function()
         --         b:SetBackdropColor(unpack(b.color))
         --     end)
         -- end
     end
-    
+
     CreatePowerFilter = function(parent, class, buttons, width, height, color, bgColor)
         local filter = CreateFrame("Frame", nil, parent, "BackdropTemplate")
         Cell:StylizeFrame(filter, color, bgColor)
         P:Size(filter, width, height)
-    
+
         filter.text = filter:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
         filter.text:SetPoint("LEFT", 5, 0)
         if class == "VEHICLE" or class == "PET" or class == "NPC" then
@@ -85,21 +85,21 @@ else
         else
             filter.text:SetText("|c"..RAID_CLASS_COLORS[class].colorStr..F:GetLocalizedClassName(class))
         end
-    
+
         filter.buttons = {}
         local last
         for i = #buttons, 1, -1 do
             local b = Cell:CreateButton(filter, nil, "accent-hover", {height, height})
             filter.buttons[buttons[i]] = b
             b:SetTexture("Interface\\AddOns\\Cell\\Media\\Roles\\"..buttons[i], {height-4, height-4}, {"CENTER", 0, 0})
-    
+
             if last then
                 b:SetPoint("BOTTOMRIGHT", last, "BOTTOMLEFT", P:Scale(1), 0)
             else
                 b:SetPoint("BOTTOMRIGHT", filter)
             end
             last = b
-    
+
             b:SetScript("OnClick", function()
                 local selected
                 if type(selectedLayoutTable["powerFilters"][class]) == "boolean" then
@@ -114,9 +114,9 @@ else
                 if selectedLayout == Cell.vars.currentLayout then
                     Cell:Fire("UpdateLayout", selectedLayout, "powerFilter")
                 end
-            end) 
+            end)
         end
-    
+
         function filter:Load()
             if type(selectedLayoutTable["powerFilters"][class]) == "boolean" then
                 UpdateButton(filter.buttons["DAMAGER"], selectedLayoutTable["powerFilters"][class])
@@ -126,7 +126,7 @@ else
                 end
             end
         end
-    
+
         return filter
     end
 end
@@ -174,7 +174,7 @@ local function CreateFilters()
         petF:SetPoint("TOPLEFT", warlockF, "BOTTOMLEFT", 0, -5)
         vehicleF:SetPoint("TOPLEFT", warriorF, "BOTTOMLEFT", 0, -5)
         npcF:SetPoint("TOPLEFT", petF, "BOTTOMLEFT", 0, -5)
-        
+
     elseif Cell.isCata then
         P:Height(powerFilters, 180)
 
@@ -193,7 +193,7 @@ local function CreateFilters()
         petF:SetPoint("TOPLEFT", warlockF, "BOTTOMLEFT", 0, -5)
         vehicleF:SetPoint("TOPLEFT", warriorF, "BOTTOMLEFT", 0, -5)
         npcF:SetPoint("TOPLEFT", petF, "BOTTOMLEFT", 0, -5)
-    
+
     elseif Cell.isVanilla then
         P:Height(powerFilters, 155)
 
@@ -239,7 +239,7 @@ function F:ShowPowerFilters(l, lt)
         powerFilters:Show()
         Cell.frames.layoutsTab.powerFilterBtn:SetFrameLevel(Cell.frames.layoutsTab:GetFrameLevel() + 50)
         Cell.frames.layoutsTab.mask:Show()
-        
+
         -- load db
         druidF:Load()
         hunterF:Load()

@@ -2,7 +2,7 @@
 -- File: Cell\Libs\LibGroupInfo.lua
 -- Author: enderneko (enderneko-dev@outlook.com)
 -- Created : 2022-07-29 15:04:31 +08:00
--- Modified: 2024-05-09 23:00:13 +08:00
+-- Modified: 2024-05-21 21:10:58 +08:00
 ---------------------------------------------------------------------
 
 local MAJOR, MINOR = "LibGroupInfo", 5
@@ -212,7 +212,7 @@ local function BuildAndNotify(unit)
     UpdateBaseInfo(unit, guid)
 
     local specId, role
-    
+
     if UnitIsUnit(unit, "player") then
         local specIndex = GetSpecialization()
         specId, _, _, _, role = GetSpecializationInfo(specIndex)
@@ -227,7 +227,7 @@ local function BuildAndNotify(unit)
     end
 
     cache[guid].role = role
-    
+
     -- spec
     if specId and specData[specId] then
         cache[guid].specId = specId
@@ -242,7 +242,7 @@ local function BuildAndNotify(unit)
         cache[guid].specIcon = nil
         cache[guid].inspected = nil
     end
-        
+
     --! fire
     lib.callbacks:Fire(UPDATE_EVENT, guid, unit, cache[guid])
 end
@@ -265,7 +265,7 @@ local function BuildAndNotify_Wrath(unit)
                 ["name"] = name,
                 ["icon"] = texture,
             }
-            
+
             if pointsSpent > maxPoints then
                 maxPoints = pointsSpent
                 cache[guid].specName = name
@@ -280,7 +280,7 @@ local function BuildAndNotify_Wrath(unit)
                 ["name"] = name,
                 ["icon"] = texture,
             }
-            
+
             if pointsSpent > maxPoints then
                 maxPoints = pointsSpent
                 cache[guid].specName = name
@@ -298,7 +298,7 @@ local function Query(unit)
     if UnitIsDead("player") then return end
 
     if IsInGroup() and not (UnitInParty(unit) or UnitInRaid(unit)) then return end
-    
+
     if IS_RETAIL then
         BuildAndNotify(unit)
     else
@@ -311,7 +311,7 @@ end
 ---------------------------------------------------------------------
 function frame:PLAYER_LOGIN()
     PLAYER_GUID = UnitGUID("player")
-    
+
     if IS_RETAIL then
         cache[PLAYER_GUID] = {}
         CacheSpecData()
@@ -335,7 +335,7 @@ end
 local inInstance
 function frame:PLAYER_ENTERING_WORLD(isLogin, isReload)
     local isIn, iType = IsInInstance()
-    
+
     local shouldUpdate
 
     if isIn then -- enter
@@ -352,11 +352,11 @@ function frame:PLAYER_ENTERING_WORLD(isLogin, isReload)
         frame:Hide()
         wipe(lib.order)
         wipe(lib.queue)
-        
+
         for _, t in pairs(cache) do
             t.inspected = nil
         end
-        
+
         -- update self
         Query("player")
 
@@ -404,7 +404,7 @@ frame:SetScript("OnUpdate", function(self, elapsed)
                 end
             else -- INSPECT_READY
                 tremove(order, 1)
-            end 
+            end
         else -- none left
             frame:Hide()
             wipe(order)
@@ -425,7 +425,7 @@ local function AddToQueue(unit, guid)
             return
         end
     end
-    
+
     Print("|cffffff33LGI:AddToQueue|r", guid, unit)
     queue[guid] = {
         ["unit"] = unit,
@@ -459,7 +459,7 @@ local function IterateAllUnits()
     cache[PLAYER_GUID].unit = "player"
 
     local currentMembers = {[PLAYER_GUID] = true}
-    
+
     if IsInRaid() then
         wasInGroup = true
         for i = 1, GetNumGroupMembers() do
@@ -482,7 +482,7 @@ local function IterateAllUnits()
                 AddToQueue(unit, guid)
             end
         end
-        
+
     elseif wasInGroup then
         wasInGroup = nil
         for guid in pairs(cache) do
@@ -509,7 +509,7 @@ end
 local timer
 function frame:GROUP_ROSTER_UPDATE(immediate)
     if timer then timer:Cancel() end
-    
+
     if immediate then
         IterateAllUnits()
     else
@@ -525,7 +525,7 @@ function lib:ForceUpdate()
     C_Timer.After(10, function()
         forceUpdateAvailable = true
     end)
-    
+
     frame:PLAYER_ENTERING_WORLD(true)
 end
 

@@ -6,7 +6,7 @@ local P = addon.pixelPerfectFuncs
 local colorPicker
 local current, original, hueSaturationBG, hueSaturation, brightness, alpha, picker
 local rEB, gEB, bEB, aEB, h_EB, s_EB, b_EB, hexEB
-local confirmBtn, cancelBtn 
+local confirmBtn, cancelBtn
 
 local Callback
 
@@ -19,7 +19,7 @@ local H, S, B, A
 local function UpdateColor_RGBA(r, g, b, a)
     -- update current & original
     current:SetColor(r, g, b, a)
-    
+
     r, g, b = math.floor(r * 255), math.floor(g * 255), math.floor(b * 255)
 
     -- update editboxes
@@ -74,7 +74,7 @@ local function CreateEB(label, width, height, isNumeric, group)
         eb:HighlightText()
         eb.oldText = eb:GetText()
     end)
-    
+
     eb:SetScript("OnEditFocusLost", function()
         eb:HighlightText(0, 0)
         if eb:GetText() == "" then
@@ -122,7 +122,7 @@ local function CreateEB(label, width, height, isNumeric, group)
                 alpha:SetValue(1-A)
                 UpdateAll("hsb", H, S, B, A)
             end
-            
+
         else -- hex
             local text = strtrim(hexEB:GetText())
             -- print(text, hexEB.oldText)
@@ -167,12 +167,12 @@ local function CreateColorPicker()
     current.alpha = current:CreateTexture(nil, "ARTWORK")
     current.alpha:SetPoint("TOPLEFT", current.solid, "TOPRIGHT")
     current.alpha:SetPoint("BOTTOMRIGHT", P:Scale(-1), P:Scale(1))
-    
+
     function current:SetColor(r, g, b, a)
         current.solid:SetColorTexture(r, g, b)
         current.alpha:SetColorTexture(r, g, b, a)
     end
-    
+
     --------------------------------------------------
     -- original
     --------------------------------------------------
@@ -188,7 +188,7 @@ local function CreateColorPicker()
     original.alpha = original:CreateTexture(nil, "ARTWORK")
     original.alpha:SetPoint("TOPLEFT", original.solid, "TOPRIGHT")
     original.alpha:SetPoint("BOTTOMRIGHT", P:Scale(-1), P:Scale(1))
-    
+
     function original:SetColor(r, g, b, a)
         original.solid:SetColorTexture(r, g, b)
         original.alpha:SetColorTexture(r, g, b, a)
@@ -201,7 +201,7 @@ local function CreateColorPicker()
     addon:StylizeFrame(hueSaturationBG)
     P:Size(hueSaturationBG, 130, 130)
     hueSaturationBG:SetPoint("TOPLEFT", current, "BOTTOMLEFT", 0, -7)
-    
+
     hueSaturation = CreateFrame("Frame", nil, hueSaturationBG)
     hueSaturation:SetPoint("TOPLEFT", P:Scale(1), P:Scale(-1))
     hueSaturation:SetPoint("BOTTOMRIGHT", P:Scale(-1), P:Scale(1))
@@ -333,7 +333,7 @@ local function CreateColorPicker()
     picker = CreateFrame("Frame", name.."HSPicker", hueSaturation, "BackdropTemplate")
     P:Size(picker, 10, 10)
     picker:SetPoint("CENTER", hueSaturation, "BOTTOMLEFT")
-    
+
     picker.tex = picker:CreateTexture(nil, "ARTWORK")
     picker.tex:SetAllPoints(picker)
     picker.tex:SetTexture("Interface\\Buttons\\UI-ColorPicker-Buttons")
@@ -353,19 +353,19 @@ local function CreateColorPicker()
 
             local newX = x + (newMouseX - mouseX) / scale
             local newY = y + (newMouseY - mouseY) / scale
-            
+
             if newX < 0 then -- left
                 newX = 0
             elseif newX > hueSaturation:GetWidth() then -- right
                 newX = hueSaturation:GetWidth()
             end
-    
+
             if newY < 0 then -- top
                 newY = 0
             elseif newY > hueSaturation:GetHeight() then
                 newY = hueSaturation:GetHeight()
             end
-    
+
             picker:SetPoint("CENTER", hueSaturation, "BOTTOMLEFT", newX, newY)
 
             -- update HSV
@@ -394,10 +394,10 @@ local function CreateColorPicker()
         if button ~= 'LeftButton' then return end
         local hueSaturationX, hueSaturationY = hueSaturation:GetLeft(), hueSaturation:GetBottom()
         local mouseX, mouseY = GetCursorPosition()
-        
+
         local scale = P:GetEffectiveScale()
         mouseX, mouseY = mouseX/scale, mouseY/scale
-        
+
         -- start dragging
         local x, y = select(4, picker:GetPoint(1))
         picker:StartMoving(mouseX/scale-hueSaturationX, mouseY/scale-hueSaturationY, mouseX, mouseY)
@@ -417,7 +417,7 @@ local function CreateColorPicker()
     -- green
     gEB = CreateEB("G", 40, 20, true, "rgb")
     gEB:SetPoint("TOPLEFT", rEB, "TOPRIGHT", 7, 0)
-    
+
     -- blue
     bEB = CreateEB("B", 40, 20, true, "rgb")
     bEB:SetPoint("TOPLEFT", gEB, "TOPRIGHT", 7, 0)
@@ -447,7 +447,7 @@ local function CreateColorPicker()
     --------------------------------------------------
     confirmBtn = addon:CreateButton(colorPicker, L["Confirm"], "green", {97, 20})
     confirmBtn:SetPoint("BOTTOMLEFT", 7, 7)
-    
+
     cancelBtn = addon:CreateButton(colorPicker, L["Cancel"], "red", {97, 20})
     cancelBtn:SetPoint("BOTTOMRIGHT", -7, 7)
 end

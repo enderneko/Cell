@@ -50,7 +50,7 @@ function Cell.iFuncs:UpdateCustomIndicators(unitButton, auraType, spellId, spell
             else
                 spell = spellId
             end
-            
+
             if indicatorTable["auras"][spell] or indicatorTable["auras"][0] then -- is in indicator spell list
                 if auraType == "buff" then
                     local show
@@ -79,11 +79,11 @@ function Cell.iFuncs:ShowCustomIndicators(unitButton, auraType)
             if not indicatorTable["isIcons"] then
                 if indicatorTable["top"][unit]["start"] then
                     unitButton.indicators[indicatorName]:SetCooldown(
-                        indicatorTable["top"][unit]["start"], 
-                        indicatorTable["top"][unit]["duration"], 
-                        indicatorTable["top"][unit]["debuffType"], 
-                        indicatorTable["top"][unit]["texture"], 
-                        indicatorTable["top"][unit]["count"], 
+                        indicatorTable["top"][unit]["start"],
+                        indicatorTable["top"][unit]["duration"],
+                        indicatorTable["top"][unit]["debuffType"],
+                        indicatorTable["top"][unit]["texture"],
+                        indicatorTable["top"][unit]["count"],
                         indicatorTable["top"][unit]["refreshing"])
                 end
             end

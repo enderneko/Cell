@@ -47,7 +47,7 @@ end
 local function CreateAuthorPane()
     local authorPane = Cell:CreateTitledPane(aboutTab, L["Author"], 205, 50)
     authorPane:SetPoint("TOPLEFT", aboutTab, "TOPLEFT", 5, -165)
-    
+
     authorText = authorPane:CreateFontString(nil, "OVERLAY")
     authorText:SetPoint("TOPLEFT", 5, -27)
     authorText.font = "Interface\\AddOns\\Cell\\Media\\Fonts\\font.ttf"
@@ -63,7 +63,7 @@ end
 local function CreateSlashPane()
     local slashPane = Cell:CreateTitledPane(aboutTab, L["Slash Commands"], 205, 50)
     slashPane:SetPoint("TOPLEFT", aboutTab, "TOPLEFT", 222, -165)
-    
+
     local commandText = slashPane:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
     commandText:SetPoint("TOPLEFT", 5, -27)
     commandText:SetText("/cell")
@@ -200,7 +200,7 @@ local function CreateButton(w, h, tex)
     P:Size(icon1, iconSize, iconSize)
     icon1:SetTexture(tex)
     icon1:SetVertexColor(0.5, 0.5, 0.5)
-    
+
     local icon2 = patronsBtn:CreateTexture(nil, "ARTWORK")
     patronsBtn.icon2 = icon2
     P:Point(patronsBtn.icon2, "BOTTOMRIGHT", -1, 1)
@@ -269,7 +269,7 @@ local function CreatePatronsPane()
     local elapsedTime = 0
     local function updateFunc(self, elapsed)
         elapsedTime = elapsedTime + elapsed
-        
+
         patronsFrame1:SetWidth(patronsText1:GetWidth() + 10)
         patronsFrame1.scroll:SetContentHeight(patronsText1:GetHeight() + 5)
         patronsFrame2:SetWidth(patronsText2:GetWidth() + 10)
@@ -288,7 +288,7 @@ local function CreatePatronsPane()
     -- button
     local patronsBtn1 = CreateButton(17, 157, [[Interface\AddOns\Cell\Media\Icons\right]])
     patronsBtn1:SetPoint("TOPLEFT", aboutTab, "TOPRIGHT", 1, -5)
-    
+
     local label = patronsBtn1:GetFontString()
     -- if Cell.isRetail then
         label:ClearAllPoints()
@@ -303,7 +303,7 @@ local function CreatePatronsPane()
     --     label:SetText("P\na\nt\nr\no\nn\ns")
     --     Cell:StartRainbowText(label)
     -- end
-    
+
     local patronsBtn2 = CreateButton(17, 17, [[Interface\AddOns\Cell\Media\Icons\left]])
     -- patronsBtn2:SetPoint("TOPLEFT", aboutTab, "TOPRIGHT", 6, -5)
     patronsBtn2:SetPoint("TOPLEFT", patronsPane)
@@ -316,7 +316,7 @@ local function CreatePatronsPane()
         patronsBtn2.fadeIn:Play()
         patronsPane.fadeIn:Play()
     end)
-    
+
     patronsBtn2:SetScript("OnClick", function()
         if patronsBtn2.fadeOut:IsPlaying() or patronsBtn2.fadeIn:IsPlaying() then return end
         patronsBtn1.fadeIn:Play()
@@ -336,7 +336,7 @@ local function CreateLink(parent, id, icon, onEnter)
     f:SetBackdropColor(0, 0, 0, 1)
 
     links[id] = f
-    
+
     f.icon = f:CreateTexture(nil, "ARTWORK")
     P:Point(f.icon, "TOPLEFT", 1, -1)
     P:Point(f.icon, "BOTTOMRIGHT", -1, 1)
@@ -378,7 +378,7 @@ local function CreateLinksPane()
     linksEB:SetScript("OnMouseUp", function(self)
         linksEB:HighlightText()
     end)
-    
+
     --! github
     local github = CreateLink(linksPane, "github", "Interface\\AddOns\\Cell\\Media\\Links\\github.tga", function()
         current = "https://github.com/enderneko/Cell"
@@ -406,7 +406,7 @@ local function CreateLinksPane()
         linksEB:ClearFocus()
     end)
     discord:SetPoint("TOPLEFT", curseforge, "TOPRIGHT", 7, 0)
-    
+
     --! kook
     local kook = CreateLink(linksPane, "kook", "Interface\\AddOns\\Cell\\Media\\Links\\kook.tga", function()
         current = "https://kook.top/q4T7yp"
@@ -430,7 +430,7 @@ local function CreateLinksPane()
         linksEB:ClearFocus()
     end)
     afdian:SetPoint("TOPRIGHT", linksEB, "BOTTOMRIGHT", 0, -7)
-    
+
     --! ko-fi
     local kofi = CreateLink(linksPane, "kofi", "Interface\\AddOns\\Cell\\Media\\Links\\ko-fi.tga", function()
         current = "https://ko-fi.com/enderneko"
@@ -450,7 +450,7 @@ local function CreateImportExportPane()
     local importBtn = Cell:CreateButton(iePane, L["Import"], "accent-hover", {200, 20})
     importBtn:SetPoint("TOPLEFT", 5, -27)
     importBtn:SetScript("OnClick", F.ShowImportFrame)
-    
+
     local exportBtn = Cell:CreateButton(iePane, L["Export"], "accent-hover", {200, 20})
     exportBtn:SetPoint("TOPRIGHT", -5, -27)
     exportBtn:SetScript("OnClick", F.ShowExportFrame)
