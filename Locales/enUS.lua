@@ -96,7 +96,7 @@ select(2, ...).L = setmetatable({
         <h1>r226-release (May 20, 2024, 02:33 GMT+8)</h1>
         <p>* Added a separated "Shadow" option for fonts (#110).</p>
         <p>* Fixed Shield Bar alpha in preview (#111).</p>
-        <p>+ Implemented "Reverse Filling" for overshields.</p>
+        <p>+ Implemented "Reverse Fill" for overshields.</p>
         <p>+ Added "Frame Level" option for Role Icon indicator.</p>
         <p>+ Added "Show Duration" for Raid Debuffs indicator.</p>
         <p>* Updated color options for custom Text/Rect/Bar/Color/Overlay indicators (added ALPHAs).</p>

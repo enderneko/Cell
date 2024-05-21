@@ -61,7 +61,7 @@ local UnitClassBase = function(unit)
 end
 
 local barAnimationType, highlightEnabled, predictionEnabled
-local shieldEnabled, overshieldEnabled, overshieldReverseFillingEnabled
+local shieldEnabled, overshieldEnabled, overshieldReverseFillEnabled
 local absorbEnabled, absorbInvertColor
 
 -------------------------------------------------
@@ -2840,7 +2840,7 @@ function B:UpdateShields(button)
     predictionEnabled = CellDB["appearance"]["healPrediction"][1]
     shieldEnabled = CellDB["appearance"]["shield"][1]
     overshieldEnabled = CellDB["appearance"]["overshield"][1]
-    overshieldReverseFillingEnabled = shieldEnabled and CellDB["appearance"]["overshieldReverseFilling"]
+    overshieldReverseFillEnabled = shieldEnabled and CellDB["appearance"]["overshieldReverseFill"]
     absorbEnabled = CellDB["appearance"]["healAbsorb"][1]
     absorbInvertColor = CellDB["appearance"]["healAbsorbInvertColor"]
 
@@ -2912,7 +2912,7 @@ local function ShieldBar_SetValue_Horizontal(self, shieldPercent, healthPercent)
             self:Hide()
         end
 
-        if overshieldReverseFillingEnabled then
+        if overshieldReverseFillEnabled then
             p = shieldPercent + healthPercent - 1
             if p > healthPercent then p = healthPercent end
             self.shieldBarR:SetWidth(p * barWidth)
@@ -3000,7 +3000,7 @@ local function ShieldBar_SetValue_Vertical(self, shieldPercent, healthPercent)
             self:Hide()
         end
 
-        if overshieldReverseFillingEnabled then
+        if overshieldReverseFillEnabled then
             p = shieldPercent + healthPercent - 1
             if p > healthPercent then p = healthPercent end
             self.shieldBarR:SetHeight(p * barHeight)

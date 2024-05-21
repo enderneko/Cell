@@ -34,7 +34,7 @@ Cell.defaults.appearance = {
     ["healAbsorbInvertColor"] = false,
     ["shield"] = {not Cell.isVanilla, {1, 1, 1, 0.4}},
     ["overshield"] = {not Cell.isVanilla, {1, 1, 1, 1}},
-    ["overshieldReverseFilling"] = false,
+    ["overshieldReverseFill"] = false,
 }
 
 local buttonStyleIndices = {
@@ -58,7 +58,7 @@ local buttonStyleIndices = {
     "healAbsorbInvertColor",
     "shield",
     "overshield",
-    "overshieldReverseFilling"
+    "overshieldReverseFill"
 }
 
 function F:ResetButtonStyle()

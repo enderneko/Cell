@@ -53,7 +53,7 @@ local UnitDetailedThreatSituation = UnitDetailedThreatSituation
 local CombatLogGetCurrentEventInfo = CombatLogGetCurrentEventInfo
 
 local barAnimationType, highlightEnabled, predictionEnabled
-local shieldEnabled, overshieldEnabled, overshieldReverseFillingEnabled
+local shieldEnabled, overshieldEnabled, overshieldReverseFillEnabled
 
 local POWER_WORD_SHIELD
 
@@ -2743,7 +2743,7 @@ function B:UpdateShields(button)
     absorbEnabled = CellDB["appearance"]["healAbsorb"][1]
     shieldEnabled = CellDB["appearance"]["shield"][1]
     overshieldEnabled = CellDB["appearance"]["overshield"][1]
-    overshieldReverseFillingEnabled = shieldEnabled and CellDB["appearance"]["overshieldReverseFilling"]
+    overshieldReverseFillEnabled = shieldEnabled and CellDB["appearance"]["overshieldReverseFill"]
 
     button.widgets.shieldBar:SetVertexColor(unpack(CellDB["appearance"]["shield"][2]))
     button.widgets.shieldBarR:SetVertexColor(unpack(CellDB["appearance"]["shield"][2]))
@@ -2808,7 +2808,7 @@ local function ShieldBar_SetValue_Horizontal(self, shieldPercent, healthPercent)
             self:Hide()
         end
         
-        if overshieldReverseFillingEnabled then
+        if overshieldReverseFillEnabled then
             p = shieldPercent + healthPercent - 1
             if p > healthPercent then p = healthPercent end
             self.shieldBarR:SetWidth(p * barWidth)
@@ -2878,7 +2878,7 @@ local function ShieldBar_SetValue_Vertical(self, shieldPercent, healthPercent)
             self:Hide()
         end
 
-        if overshieldReverseFillingEnabled then
+        if overshieldReverseFillEnabled then
             p = shieldPercent + healthPercent - 1
             if p > healthPercent then p = healthPercent end
             self.shieldBarR:SetHeight(p * barHeight)

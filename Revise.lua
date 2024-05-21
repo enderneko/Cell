@@ -2880,6 +2880,14 @@ function F:Revise()
         end
     end
 
+    -- r228-release
+    if CellDB["revise"] and dbRevision < 228 then
+        if type(CellDB["appearance"]["overshieldReverseFill"]) ~= "boolean" then
+            CellDB["appearance"]["overshieldReverseFill"] = CellDB["appearance"]["overshieldReverseFilling"] or false
+            CellDB["appearance"]["overshieldReverseFilling"] = nil
+        end
+    end
+
     -- ----------------------------------------------------------------------- --
     --            update from old versions, validate all indicators            --
     -- ----------------------------------------------------------------------- --

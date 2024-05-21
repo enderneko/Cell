@@ -445,7 +445,7 @@ local function UpdatePreviewShields(r, g, b)
             previewButton2.widgets.shieldBar:Hide()
         end
 
-        local reverseFilling = CellDB["appearance"]["shield"][1] and CellDB["appearance"]["overshieldReverseFilling"]
+        local reverseFilling = CellDB["appearance"]["shield"][1] and CellDB["appearance"]["overshieldReverseFill"]
         
         if CellDB["appearance"]["overshield"][1] and not reverseFilling then
             previewButton2.widgets.overShieldGlow:SetVertexColor(unpack(CellDB["appearance"]["overshield"][2]))
@@ -1301,9 +1301,9 @@ local function CreateUnitButtonStylePane()
     end)
     shieldColorPicker:SetPoint("TOPLEFT", shieldCB, "TOPRIGHT", 5, 0)
 
-    -- overshield reverse filling
-    reverseCB = Cell:CreateCheckButton(unitButtonPane, L["Reverse Filling"], function(checked, self)
-        CellDB["appearance"]["overshieldReverseFilling"] = checked
+    -- overshield reverse fill
+    reverseCB = Cell:CreateCheckButton(unitButtonPane, L["Reverse Fill"], function(checked, self)
+        CellDB["appearance"]["overshieldReverseFill"] = checked
         Cell:Fire("UpdateAppearance", "shields")
     end)
     reverseCB:SetPoint("TOPLEFT", shieldCB, "BOTTOMRIGHT", 0, -7)
@@ -1448,7 +1448,7 @@ LoadButtonStyle = function()
     invertColorCB:SetChecked(CellDB["appearance"]["healAbsorbInvertColor"])
     shieldCB:SetChecked(CellDB["appearance"]["shield"][1])
     oversCB:SetChecked(CellDB["appearance"]["overshield"][1])
-    reverseCB:SetChecked(CellDB["appearance"]["overshieldReverseFilling"])
+    reverseCB:SetChecked(CellDB["appearance"]["overshieldReverseFill"])
 
     predCustomCB:SetChecked(CellDB["appearance"]["healPrediction"][2])
     predColorPicker:SetColor(unpack(CellDB["appearance"]["healPrediction"][3]))
