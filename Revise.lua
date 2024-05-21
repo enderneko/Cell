@@ -2886,6 +2886,29 @@ function F:Revise()
             CellDB["appearance"]["overshieldReverseFill"] = CellDB["appearance"]["overshieldReverseFilling"] or false
             CellDB["appearance"]["overshieldReverseFilling"] = nil
         end
+
+        -- add duration font for Bar/Rect
+        for _, layout in pairs(CellDB["layouts"]) do
+            for _, i in pairs(layout["indicators"]) do
+                if i.type == "bar" or i.type == "rect" then
+                    if #i.font ~= 2 then
+                        i.showDuration = false
+                        if i.showStack then
+                            local stackFont = i.font
+                            i.font = {
+                                stackFont,
+                                {"Cell ".._G.DEFAULT, 11, "Outline", false, "RIGHT", -1, 0, {1, 1, 1}},
+                            }
+                        else
+                            i.font = {
+                                {"Cell ".._G.DEFAULT, 11, "Outline", false, "LEFT", 1, 0, {1, 1, 1}},
+                                {"Cell ".._G.DEFAULT, 11, "Outline", false, "RIGHT", -1, 0, {1, 1, 1}},
+                            }
+                        end
+                    end
+                end
+            end
+        end
     end
 
     -- ----------------------------------------------------------------------- --

@@ -185,6 +185,15 @@
       "title": "DONE",
       "cards": [
         {
+          "id": "c13fce13-d498-4940-b821-f4c6b87459e7",
+          "listId": "7b0c4654-92fe-4b4e-9566-15e8c706d9c9",
+          "title": "Add \"Duration\" for Bar/Rect",
+          "description": "",
+          "labels": [],
+          "checkboxes": [],
+          "comments": []
+        },
+        {
           "id": "21c940ed-e054-4a05-90e0-0eee83d45004",
           "listId": "7b0c4654-92fe-4b4e-9566-15e8c706d9c9",
           "title": "Add \"Frame Level\" for Role Icon",

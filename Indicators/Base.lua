@@ -452,16 +452,8 @@ function I.CreateAura_BarIcon(name, parent)
     textFrame:SetAllPoints(frame)
     textFrame:SetFrameLevel(cooldown:GetFrameLevel()+1)
 
-    local stack = textFrame:CreateFontString(nil, "OVERLAY", "CELL_FONT_STATUS")
-    frame.stack = stack
-    stack:SetJustifyH("RIGHT")
-    P:Point(stack, "TOPRIGHT", textFrame, "TOPRIGHT", 2, 0)
-
-    local duration = textFrame:CreateFontString(nil, "OVERLAY", "CELL_FONT_STATUS")
-    frame.duration = duration
-    duration:SetJustifyH("RIGHT")
-    P:Point(duration, "BOTTOMRIGHT", textFrame, "BOTTOMRIGHT", 2, 0)
-    duration:Hide()
+    frame.stack = textFrame:CreateFontString(nil, "OVERLAY", "CELL_FONT_STATUS")
+    frame.duration = textFrame:CreateFontString(nil, "OVERLAY", "CELL_FONT_STATUS")
 
     local ag = frame:CreateAnimationGroup()
     frame.ag = ag
@@ -671,8 +663,9 @@ end
 -------------------------------------------------
 -- CreateAura_Rect
 -------------------------------------------------
-local function Rect_SetFont(frame, font, size, outline, shadow, anchor, xOffset, yOffset, color)
-    I.SetFont(frame.stack, frame, font, size, outline, shadow, anchor, xOffset, yOffset, color)
+local function Rect_SetFont(frame, font1, font2)
+    I.SetFont(frame.stack, frame, unpack(font1))
+    I.SetFont(frame.duration, frame, unpack(font2))
 end
 
 local function Rect_OnUpdateColor(frame, duration, remain)
@@ -696,17 +689,55 @@ local function Rect_SetCooldown(frame, start, duration, debuffType, texture, cou
     if duration == 0 then
         frame.tex:SetColorTexture(unpack(frame.colors[1]))
         frame:SetScript("OnUpdate", nil)
+        frame.duration:Hide()
     else
+        local threshold, fmt
+        if not frame.showDuration then
+            threshold = -1
+            frame.duration:Hide()
+        else
+            if frame.showDuration == true then
+                threshold = duration
+            elseif frame.showDuration >= 1 then
+                threshold = frame.showDuration
+            else -- < 1
+                threshold = frame.showDuration * duration
+            end
+            frame.duration:Show()
+        end
+
         frame.elapsed = 0.1 -- update immediately
         frame:SetScript("OnUpdate", function(self, elapsed)
+            local remain = duration-(GetTime()-start)
+            if remain < 0 then remain = 0 end
+
             self.elapsed = self.elapsed + elapsed
             if self.elapsed >= 0.1 then
                 self.elapsed = 0
-
-                local remain = duration-(GetTime()-start)
                 -- update color
                 Rect_OnUpdateColor(frame, duration, remain)
             end
+
+            if remain > threshold then
+                frame.duration:SetText("")
+                return
+            end
+
+            -- format
+            if remain > 60 then
+                fmt, remain = "%dm", remain/60
+            else
+                if Cell.vars.iconDurationRoundUp then
+                    fmt, remain = "%d", ceil(remain)
+                else
+                    if remain < Cell.vars.iconDurationDecimal then
+                        fmt = "%.1f"
+                    else
+                        fmt = "%d"
+                    end
+                end
+            end
+            frame.duration:SetFormattedText(fmt, remain)
         end)
     end
 
@@ -714,9 +745,37 @@ local function Rect_SetCooldown(frame, start, duration, debuffType, texture, cou
     frame:Show()
 end
 
+local function Rect_SetColors(frame, colors)
+    frame.state = nil
+    frame.colors = colors
+    frame:SetBackdropBorderColor(colors[4][1], colors[4][2], colors[4][3], colors[4][4])
+end
+
+local function Rect_ShowDuration(frame, show)
+    frame.showDuration = show
+    if show then
+        frame.duration:Show()
+    else
+        frame.duration:Hide()
+    end
+end
+
+local function Rect_ShowStack(frame, show)
+    if show then
+        frame.stack:Show()
+    else
+        frame.stack:Hide()
+    end
+end
+
+local function Rect_UpdatePixelPerfect(frame)
+    P:Resize(frame)
+    P:Reborder(frame)
+    P:Repoint(frame)
+end
+
 function I.CreateAura_Rect(name, parent)
     local frame = CreateFrame("Frame", name, parent, "BackdropTemplate")
-    -- frame:SetSize(11, 4)
     frame:Hide()
     frame.indicatorType = "rect"
     frame:SetBackdrop({edgeFile="Interface\\Buttons\\WHITE8x8", edgeSize=P:Scale(1)})
@@ -726,30 +785,15 @@ function I.CreateAura_Rect(name, parent)
     frame.tex = tex
     tex:SetAllPoints()
 
-    frame.stack = frame:CreateFontString(nil, "OVERLAY")
+    frame.stack = frame:CreateFontString(nil, "OVERLAY", "CELL_FONT_STATUS")
+    frame.duration = frame:CreateFontString(nil, "OVERLAY", "CELL_FONT_STATUS")
 
     frame.SetFont = Rect_SetFont
     frame.SetCooldown = Rect_SetCooldown
-
-    function frame:SetColors(colors)
-        frame.state = nil
-        frame.colors = colors
-        frame:SetBackdropBorderColor(colors[4][1], colors[4][2], colors[4][3], colors[4][4])
-    end
-
-    function frame:ShowStack(show)
-        if show then
-            frame.stack:Show()
-        else
-            frame.stack:Hide()
-        end
-    end
-
-    function frame:UpdatePixelPerfect()
-        P:Resize(frame)
-        P:Reborder(frame)
-        P:Repoint(frame)
-    end
+    frame.SetColors = Rect_SetColors
+    frame.ShowStack = Rect_ShowStack
+    frame.ShowDuration = Rect_ShowDuration
+    frame.UpdatePixelPerfect = Rect_UpdatePixelPerfect
 
     return frame
 end
@@ -757,16 +801,33 @@ end
 -------------------------------------------------
 -- CreateAura_Bar
 -------------------------------------------------
-local function Bar_SetFont(frame, font, size, outline, shadow, anchor, xOffset, yOffset, color)
-    I.SetFont(frame.stack, frame, font, size, outline, shadow, anchor, xOffset, yOffset, color)
+local function Bar_SetFont(bar, font1, font2)
+    I.SetFont(bar.stack, bar, unpack(font1))
+    I.SetFont(bar.duration, bar, unpack(font2))
 end
 
 local function Bar_SetCooldown(bar, start, duration, debuffType, texture, count)
     if duration == 0 then
         bar:SetScript("OnUpdate", nil)
+        bar.duration:Hide()
         bar:SetMinMaxValues(0, 1)
         bar:SetValue(1)
     else
+        local threshold, fmt
+        if not bar.showDuration then
+            threshold = -1
+            bar.duration:Hide()
+        else
+            if bar.showDuration == true then
+                threshold = duration
+            elseif bar.showDuration >= 1 then
+                threshold = bar.showDuration
+            else -- < 1
+                threshold = bar.showDuration * duration
+            end
+            bar.duration:Show()
+        end
+
         bar:SetMinMaxValues(0, duration)
         bar.elapsed = 0.1 -- update immediately
         bar:SetScript("OnUpdate", function(self, elapsed)
@@ -793,6 +854,27 @@ local function Bar_SetCooldown(bar, start, duration, debuffType, texture, count)
                     bar:SetStatusBarColor(bar.colors[1][1], bar.colors[1][2], bar.colors[1][3], bar.colors[1][4])
                 end
             end
+
+            if remain > threshold then
+                bar.duration:SetText("")
+                return
+            end
+
+            -- format
+            if remain > 60 then
+                fmt, remain = "%dm", remain/60
+            else
+                if Cell.vars.iconDurationRoundUp then
+                    fmt, remain = "%d", ceil(remain)
+                else
+                    if remain < Cell.vars.iconDurationDecimal then
+                        fmt = "%.1f"
+                    else
+                        fmt = "%d"
+                    end
+                end
+            end
+            bar.duration:SetFormattedText(fmt, remain)
         end)
     end
 
@@ -800,30 +882,44 @@ local function Bar_SetCooldown(bar, start, duration, debuffType, texture, count)
     bar:Show()
 end
 
+local function Bar_SetColors(bar, colors)
+    bar:SetBackdropBorderColor(colors[4][1], colors[4][2], colors[4][3], colors[4][4])
+    bar:SetBackdropColor(colors[5][1], colors[5][2], colors[5][3], colors[5][4])
+    bar.state = nil
+    bar.colors = colors
+end
+
+local function Bar_ShowDuration(bar, show)
+    bar.showDuration = show
+    if show then
+        bar.duration:Show()
+    else
+        bar.duration:Hide()
+    end
+end
+
+local function Bar_ShowStack(bar, show)
+    if show then
+        bar.stack:Show()
+    else
+        bar.stack:Hide()
+    end
+end
+
+
 function I.CreateAura_Bar(name, parent)
     local bar = Cell:CreateStatusBar(name, parent, 18, 4, 100)
     bar:Hide()
     bar.indicatorType = "bar"
 
-    bar.stack = bar:CreateFontString(nil, "OVERLAY")
+    bar.stack = bar:CreateFontString(nil, "OVERLAY", "CELL_FONT_STATUS")
+    bar.duration = bar:CreateFontString(nil, "OVERLAY", "CELL_FONT_STATUS")
 
     bar.SetFont = Bar_SetFont
     bar.SetCooldown = Bar_SetCooldown
-
-    function bar:SetColors(colors)
-        bar:SetBackdropBorderColor(colors[4][1], colors[4][2], colors[4][3], colors[4][4])
-        bar:SetBackdropColor(colors[5][1], colors[5][2], colors[5][3], colors[5][4])
-        bar.state = nil
-        bar.colors = colors
-    end
-
-    function bar:ShowStack(show)
-        if show then
-            bar.stack:Show()
-        else
-            bar.stack:Hide()
-        end
-    end
+    bar.ShowStack = Bar_ShowStack
+    bar.ShowDuration = Bar_ShowDuration
+    bar.SetColors = Bar_SetColors
 
     return bar
 end
@@ -1391,6 +1487,7 @@ function I.CreateAura_Bars(name, parent, num)
         bars[i] = bar
 
         bar.stack:Hide()
+        bar.duration:Hide()
         bar.SetCooldown = Bars_SetCooldown
     end
 

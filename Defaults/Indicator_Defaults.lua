@@ -56,8 +56,12 @@ function I.GetDefaultCustomIndicatorTable(name, indicatorName, type, auraType)
             ["size"] = {18, 4},
             ["colors"] = {{0, 1, 0, 1}, {false, 0.5, {1, 1, 0, 1}}, {false, 3, {1, 0, 0, 1}}, {0, 0, 0, 1}, {0.07, 0.07, 0.07, 0.9}},
             ["orientation"] = "horizontal",
-            ["font"] = {"Cell ".._G.DEFAULT, 11, "Outline", false, "CENTER", 0, 0, {1, 1, 1}},
+            ["font"] = {
+                {"Cell ".._G.DEFAULT, 11, "Outline", false, "LEFT", 1, 0, {1, 1, 1}},
+                {"Cell ".._G.DEFAULT, 11, "Outline", false, "RIGHT", -1, 0, {1, 1, 1}},
+            },
             ["showStack"] = false,
+            ["showDuration"] = false,
             ["auraType"] = auraType,
             ["auras"] = {},
         }
@@ -71,8 +75,12 @@ function I.GetDefaultCustomIndicatorTable(name, indicatorName, type, auraType)
             ["frameLevel"] = 5,
             ["size"] = {11, 4},
             ["colors"] = {{0, 1, 0, 1}, {false, 0.5, {1, 1, 0, 1}}, {false, 3, {1, 0, 0, 1}}, {0, 0, 0, 1}},
-            ["font"] = {"Cell ".._G.DEFAULT, 11, "Outline", false, "CENTER", 0, 0, {1, 1, 1}},
+            ["font"] = {
+                {"Cell ".._G.DEFAULT, 11, "Outline", false, "LEFT", 1, 0, {1, 1, 1}},
+                {"Cell ".._G.DEFAULT, 11, "Outline", false, "RIGHT", -1, 0, {1, 1, 1}},
+            },
             ["showStack"] = false,
+            ["showDuration"] = false,
             ["auraType"] = auraType,
             ["auras"] = {},
         }
