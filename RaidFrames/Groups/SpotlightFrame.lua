@@ -138,6 +138,7 @@ local function CreateAssignmentButton(index)
             local spotlight = menu:GetFrameRef("spotlight"..index)
             spotlight:SetAttribute("unit", nil)
             spotlight:SetAttribute("refreshOnUpdate", nil)
+            spotlight:SetAttribute("updateOnTargetChanged", nil)
             menu:GetFrameRef("assignment"..index):SetAttribute("text", "none")
             menu:Hide()
 
@@ -317,6 +318,7 @@ target:SetAttribute("_onclick", [[
     local spotlight = menu:GetFrameRef("spotlight"..index)
     spotlight:SetAttribute("unit", "target")
     spotlight:SetAttribute("refreshOnUpdate", nil)
+    spotlight:SetAttribute("updateOnTargetChanged", true)
     menu:GetFrameRef("assignment"..index):SetAttribute("text", "target")
     menu:Hide()
 
@@ -333,6 +335,7 @@ targettarget:SetAttribute("_onclick", [[
     local spotlight = menu:GetFrameRef("spotlight"..index)
     spotlight:SetAttribute("unit", "targettarget")
     spotlight:SetAttribute("refreshOnUpdate", true)
+    spotlight:SetAttribute("updateOnTargetChanged", nil)
     menu:GetFrameRef("assignment"..index):SetAttribute("text", "targettarget")
     menu:Hide()
 
@@ -348,6 +351,7 @@ focus:SetAttribute("_onclick", [[
     local spotlight = menu:GetFrameRef("spotlight"..index)
     spotlight:SetAttribute("unit", "focus")
     spotlight:SetAttribute("refreshOnUpdate", nil)
+    spotlight:SetAttribute("updateOnTargetChanged", nil)
     menu:GetFrameRef("assignment"..index):SetAttribute("text", "focus")
     menu:Hide()
 
@@ -363,6 +367,7 @@ focustarget:SetAttribute("_onclick", [[
     local spotlight = menu:GetFrameRef("spotlight"..index)
     spotlight:SetAttribute("unit", "focustarget")
     spotlight:SetAttribute("refreshOnUpdate", true)
+    spotlight:SetAttribute("updateOnTargetChanged", nil)
     menu:GetFrameRef("assignment"..index):SetAttribute("text", "focustarget")
     menu:Hide()
 
@@ -375,7 +380,9 @@ P:Point(unit, "TOPRIGHT", focustarget, "BOTTOMRIGHT")
 unit:SetAttribute("_onclick", [[
     local menu = self:GetParent()
     local index = menu:GetAttribute("index")
-    menu:GetFrameRef("spotlight"..index):SetAttribute("refreshOnUpdate", nil)
+    local spotlight = menu:GetFrameRef("spotlight"..index)
+    spotlight:SetAttribute("refreshOnUpdate", nil)
+    spotlight:SetAttribute("updateOnTargetChanged", nil)
     self:CallMethod("SetUnit", index, "target")
     menu:Hide()
 ]])
@@ -396,7 +403,9 @@ P:Point(unitname, "TOPRIGHT", unit, "BOTTOMRIGHT")
 unitname:SetAttribute("_onclick", [[
     local menu = self:GetParent()
     local index = menu:GetAttribute("index")
-    menu:GetFrameRef("spotlight"..index):SetAttribute("refreshOnUpdate", nil)
+    local spotlight = menu:GetFrameRef("spotlight"..index)
+    spotlight:SetAttribute("refreshOnUpdate", nil)
+    spotlight:SetAttribute("updateOnTargetChanged", nil)
     self:CallMethod("SetUnit", index, "target")
     menu:Hide()
 ]])
@@ -427,7 +436,9 @@ P:Point(unitpet, "TOPRIGHT", unitname, "BOTTOMRIGHT")
 unitpet:SetAttribute("_onclick", [[
     local menu = self:GetParent()
     local index = menu:GetAttribute("index")
-    menu:GetFrameRef("spotlight"..index):SetAttribute("refreshOnUpdate", nil)
+    local spotlight = menu:GetFrameRef("spotlight"..index)
+    spotlight:SetAttribute("refreshOnUpdate", nil)
+    spotlight:SetAttribute("updateOnTargetChanged", nil)
     self:CallMethod("SetUnit", index, "target")
     menu:Hide()
 ]])
@@ -448,7 +459,6 @@ P:Point(unittarget, "TOPRIGHT", unitpet, "BOTTOMRIGHT")
 unittarget:SetAttribute("_onclick", [[
     local menu = self:GetParent()
     local index = menu:GetAttribute("index")
-    menu:GetFrameRef("spotlight"..index):SetAttribute("refreshOnUpdate", true)
     self:CallMethod("SetUnit", index, "target")
     menu:Hide()
 ]])
@@ -458,10 +468,12 @@ function unittarget:SetUnit(index, target)
         if unitId == "player" then
             unitId = "target"
             Cell.unitButtons.spotlight[index]:SetAttribute("refreshOnUpdate", nil)
+            Cell.unitButtons.spotlight[index]:SetAttribute("updateOnTargetChanged", true)
         else
             unitId = unitId.."target"
             -- NOTE: no EVENT for this kind of targets， use OnUpdate
             Cell.unitButtons.spotlight[index]:SetAttribute("refreshOnUpdate", true)
+            Cell.unitButtons.spotlight[index]:SetAttribute("updateOnTargetChanged", nil)
         end
         Cell.unitButtons.spotlight[index]:SetAttribute("unit", unitId)
         assignmentButtons[index]:SetText(unitId)
@@ -478,7 +490,9 @@ tank:SetEnabled(not Cell.isVanilla)
 tank:SetAttribute("_onclick", [[
     local menu = self:GetParent()
     local index = menu:GetAttribute("index")
-    menu:GetFrameRef("spotlight"..index):SetAttribute("refreshOnUpdate", nil)
+    local spotlight = menu:GetFrameRef("spotlight"..index)
+    spotlight:SetAttribute("refreshOnUpdate", nil)
+    spotlight:SetAttribute("updateOnTargetChanged", nil)
     menu:GetFrameRef("assignment"..index):SetAttribute("text", "tank")
     self:CallMethod("SetUnit", index)
     menu:Hide()
@@ -500,6 +514,7 @@ boss1target:SetAttribute("_onclick", [[
     local spotlight = menu:GetFrameRef("spotlight"..index)
     spotlight:SetAttribute("unit", "boss1target")
     spotlight:SetAttribute("refreshOnUpdate", true)
+    spotlight:SetAttribute("updateOnTargetChanged", nil)
     menu:GetFrameRef("assignment"..index):SetAttribute("text", "boss1target")
     menu:Hide()
 
@@ -515,6 +530,7 @@ clear:SetAttribute("_onclick", [[
     local spotlight = menu:GetFrameRef("spotlight"..index)
     spotlight:SetAttribute("unit", nil)
     spotlight:SetAttribute("refreshOnUpdate", nil)
+    spotlight:SetAttribute("updateOnTargetChanged", nil)
     menu:GetFrameRef("assignment"..index):SetAttribute("text", "none")
     menu:Hide()
 
@@ -889,6 +905,9 @@ local function UpdateLayout(layout, which)
                 local unit = layout["spotlight"]["units"][i]
                 Cell.unitButtons.spotlight[i]:SetAttribute("hidePlaceholder", layout["spotlight"]["hidePlaceholder"])
 
+                Cell.unitButtons.spotlight[i]:SetAttribute("refreshOnUpdate", nil)
+                Cell.unitButtons.spotlight[i]:SetAttribute("updateOnTargetChanged", nil)
+
                 if unit == "tank" then -- tank
                     tanks[i] = true
                 elseif unit and strfind(unit, "^:") then -- name
@@ -898,6 +917,8 @@ local function UpdateLayout(layout, which)
                     Cell.unitButtons.spotlight[i]:SetAttribute("unit", unit)
                     if unit and strfind(unit, "^.+target$") then
                         Cell.unitButtons.spotlight[i]:SetAttribute("refreshOnUpdate", true)
+                    elseif unit == "target" then
+                        Cell.unitButtons.spotlight[i]:SetAttribute("updateOnTargetChanged", true)
                     end
                 end
                 RegisterUnitWatch(Cell.unitButtons.spotlight[i])
@@ -912,6 +933,7 @@ local function UpdateLayout(layout, which)
             for i = 1, 15 do
                 Cell.unitButtons.spotlight[i]:SetAttribute("unit", nil)
                 Cell.unitButtons.spotlight[i]:SetAttribute("refreshOnUpdate", nil)
+                Cell.unitButtons.spotlight[i]:SetAttribute("updateOnTargetChanged", nil)
                 UnregisterUnitWatch(Cell.unitButtons.spotlight[i])
                 assignmentButtons[i]:SetText("|cffababab"..NONE)
                 Cell.unitButtons.spotlight[i]:Hide()

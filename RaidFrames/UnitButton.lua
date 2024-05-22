@@ -2594,6 +2594,9 @@ local function UnitButton_OnEvent(self, event, unit, arg)
         elseif event == "PLAYER_TARGET_CHANGED" then
             UnitButton_UpdateTarget(self)
             UnitButton_UpdateThreatBar(self)
+            if self:GetAttribute("updateOnTargetChanged") then
+                UnitButton_UpdateAll(self)
+            end
 
         elseif event == "UNIT_THREAT_LIST_UPDATE" then
             UnitButton_UpdateThreatBar(self)
