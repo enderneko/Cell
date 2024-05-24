@@ -108,9 +108,9 @@ local function DoImport()
     F:FilterInvalidSpells(imported["targetedSpellsList"])
     F:FilterInvalidSpells(imported["cleuAuras"])
 
-    -- disable autorun for all snippets
-    for _, t in pairs(imported["snippets"]) do
-        t["autorun"] = false
+    -- disable autorun
+    for i = 1, #imported["snippets"] do
+        imported["snippets"][i]["autorun"] = false
     end
 
     -- texplore(imported)
