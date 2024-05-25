@@ -37,6 +37,7 @@ local patrons1 = { -- wowIDs
     {"Shendreakah-Zul'jin (US)"}, -- Shendreakah - Zul-jin (Ko-fi)
     {"Palymoo-Twistingnether (EU)"}, -- Palymoo-Twistingnether (EU) (Ko-fi)
     {"Skywarden-Terokkar (EU)"}, -- Serghei Iakovlev (Ko-fi)
+    {"Fourdigitiq-Blackrock (EU)"}, -- Rou (Ko-fi)
 }
 
 local patrons2 = { -- 有些早期的发电记录已经丢失了……
@@ -101,6 +102,7 @@ local patrons2 = { -- 有些早期的发电记录已经丢失了……
     {"Palymoo", "Ko-fi"}, -- 2024-05-12
     {"Winkupo", "Ko-fi"}, -- 2024-05-14
     {"Serghei Iakovlev", "Ko-fi"}, -- 2024-05-15
+    {"Rou", "Ko-fi"}, -- 2024-05-23
 }
 
 -------------------------------------------------
