@@ -2,7 +2,7 @@
 -- File: Cell\Libs\LibGroupInfo.lua
 -- Author: enderneko (enderneko-dev@outlook.com)
 -- Created : 2022-07-29 15:04:31 +08:00
--- Modified: 2024-05-21 21:10:58 +08:00
+-- Modified: 2024-05-24 21:38:37 +08:00
 ---------------------------------------------------------------------
 
 local MAJOR, MINOR = "LibGroupInfo", 5
@@ -179,6 +179,8 @@ local function CacheSpecData()
 end
 
 local function UpdateBaseInfo(unit, guid)
+    if not guid then return end
+
     if not cache[guid] then cache[guid] = {} end
     if IS_WRATH then
         if not cache[guid]["talents"] then
