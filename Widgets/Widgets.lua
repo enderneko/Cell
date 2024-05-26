@@ -3085,22 +3085,16 @@ end
 -----------------------------------------
 local function GetModifier()
     local modifier = "" -- "shift-", "ctrl-", "alt-", "ctrl-shift-", "alt-shift-", "alt-ctrl-", "alt-ctrl-shift-"
-    local alt, ctrl, shift = IsAltKeyDown(), IsControlKeyDown(), IsShiftKeyDown()
-    if alt and ctrl and shift then
-        modifier = "alt-ctrl-shift-"
-    elseif alt and ctrl then
-        modifier = "alt-ctrl-"
-    elseif alt and shift then
-        modifier = "alt-shift-"
-    elseif ctrl and shift then
-        modifier = "ctrl-shift-"
-    elseif alt then
-        modifier = "alt-"
-    elseif ctrl then
-        modifier = "ctrl-"
-    elseif shift then
-        modifier = "shift-"
-    end
+    local alt = IsAltKeyDown()
+    local ctrl = IsControlKeyDown()
+    local shift = IsShiftKeyDown()
+    local meta = IsMetaKeyDown()
+
+    if alt then modifier = "alt-" end
+    if ctrl then  modifier = modifier .. "ctrl-" end
+    if shift then modifier = modifier .. "shift-" end
+    if meta then modifier = modifier .. "meta-" end
+
     return modifier
 end
 
@@ -3153,7 +3147,11 @@ function addon:CreateBindingButton(parent, width)
 
         -- keyboard
         parent.bindingButton:SetScript("OnKeyDown", function(self, key)
-            if key == "ESCAPE" or key == "LALT" or key == "RALT" or key == "LCTRL" or key == "RCTRL" or key == "LSHIFT" or key ==  "RSHIFT" then return end
+            if key == "ESCAPE"
+            or key == "LALT" or key == "RALT"
+            or key == "LCTRL" or key == "RCTRL"
+            or key == "LSHIFT" or key ==  "RSHIFT"
+            or key == "LMETA" or key ==  "RMETA" then return end
             parent.bindingButton:Hide()
             if parent.bindingButton.func then parent.bindingButton.func(GetModifier(), key) end
         end)

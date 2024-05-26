@@ -44,8 +44,8 @@ end
 -- https://wow.gamepedia.com/SecureActionButtonTemplate
 -- {"shift-type1", "macro", "shift-macrotext1", "/cast [@mouseover] 回春术"}
 
-local modifiers = {"", "shift-", "ctrl-", "alt-", "ctrl-shift-", "alt-shift-", "alt-ctrl-", "alt-ctrl-shift-"}
-local modifiersDisplay = {"", "Shift|cff777777+|r", "Ctrl|cff777777+|r", "Alt|cff777777+|r", "Ctrl|cff777777+|rShift|cff777777+|r", "Alt|cff777777+|rShift|cff777777+|r", "Alt|cff777777+|rCtrl|cff777777+|r", "Alt|cff777777+|rCtrl|cff777777+|rShift|cff777777+|r"}
+-- local modifiers = {"", "shift-", "ctrl-", "alt-", "ctrl-shift-", "alt-shift-", "alt-ctrl-", "alt-ctrl-shift-"}
+-- local modifiersDisplay = {"", "Shift|cff777777+|r", "Ctrl|cff777777+|r", "Alt|cff777777+|r", "Ctrl|cff777777+|rShift|cff777777+|r", "Alt|cff777777+|rShift|cff777777+|r", "Alt|cff777777+|rCtrl|cff777777+|r", "Alt|cff777777+|rCtrl|cff777777+|rShift|cff777777+|r"}
 -- local keys = {"Left", "Right", "Middle", "Button4", "Button5", "ScrollUp", "ScrollDown"}
 local mouseKeyIDs = {
     ["Left"] = 1,
@@ -56,6 +56,22 @@ local mouseKeyIDs = {
     -- ["ScrollUp"] = 6,
     -- ["ScrollDown"]= 14,
 }
+
+local function GetBindingDisplay(modifier, key)
+    modifier = modifier:gsub("%-", "|cff777777+|r")
+    modifier = modifier:gsub("alt", "Alt")
+    modifier = modifier:gsub("ctrl", "Ctrl")
+    modifier = modifier:gsub("shift", "Shift")
+    modifier = modifier:gsub("meta", "Command")
+
+    if strfind(key, "^NUM") then
+        key = _G["KEY_"..key]
+    elseif strlen(key) ~= 1 then
+        key = L[key]
+    end
+
+    return modifier..key
+end
 
 -- shift-Left -> shift-type1
 local function GetAttributeKey(modifier, bindKey)
@@ -675,12 +691,7 @@ local function ShowBindingMenu(index, b)
 
     bindingButton:SetFunc(function(modifier, key)
         F:Debug(modifier, key)
-        local modifierDisplay = modifiersDisplay[F:GetIndex(modifiers, modifier)]
-        if strlen(key) == 1 then
-            b.keyGrid:SetText(modifierDisplay..key)
-        else
-            b.keyGrid:SetText(modifierDisplay..L[key])
-        end
+        b.keyGrid:SetText(GetBindingDisplay(modifier, key))
 
         changed[index] = changed[index] or {b}
         -- check modifier
@@ -1239,8 +1250,7 @@ local function CreateListPane()
         for index, t in pairs(changed) do
             t[1]:SetChanged(false)
 
-            local modifierDisplay = modifiersDisplay[F:GetIndex(modifiers, t[1].modifier)]
-            t[1].keyGrid:SetText(modifierDisplay..((t[1].bindKey=="P" or t[1].bindKey=="T") and t[1].bindKey or L[t[1].bindKey]))
+            t[1].keyGrid:SetText(GetBindingDisplay(t[1].modifier, t[1].bindKey))
             t[1].typeGrid:SetText(L[F:UpperFirst(t[1].bindType)])
             t[1].actionGrid:SetText(t[1].bindType == "general" and L[t[1].bindAction] or t[1].bindAction)
             -- restore icon
@@ -1262,9 +1272,6 @@ end
 -- bindings frame
 -------------------------------------------------
 CreateBindingListButton = function(modifier, bindKey, bindType, bindAction, i)
-    local modifierDisplay = modifiersDisplay[F:GetIndex(modifiers, modifier)]
-    local bindKeyDisplay = strlen(bindKey) == 1 and bindKey or L[bindKey]
-
     local bindActionDisplay, bindSpell
     if bindType == "general" then
         bindActionDisplay = L[bindAction]
@@ -1285,7 +1292,7 @@ CreateBindingListButton = function(modifier, bindKey, bindType, bindAction, i)
     b:SetChanged(false)
     b:Show()
 
-    b.keyGrid:SetText(modifierDisplay..bindKeyDisplay)
+    b.keyGrid:SetText(GetBindingDisplay(modifier, bindKey))
     b.typeGrid:SetText(L[F:UpperFirst(bindType)])
     b.actionGrid:SetText(bindActionDisplay)
 
