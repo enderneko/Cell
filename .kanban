@@ -50,15 +50,6 @@
           "comments": []
         },
         {
-          "id": "f9342937-2a2d-424a-a5e3-cd9147d2ecbd",
-          "listId": "643431c7-e660-47b1-a44b-4e799b536d19",
-          "title": "Fix Targeted Spells",
-          "description": "",
-          "labels": [],
-          "checkboxes": [],
-          "comments": []
-        },
-        {
           "id": "41a10cb7-15c8-4c33-82f9-19a6d9988b2c",
           "listId": "643431c7-e660-47b1-a44b-4e799b536d19",
           "title": "Global Profile? ",
@@ -179,9 +170,9 @@
           "comments": []
         },
         {
-          "id": "0a680052-11a5-4828-b02e-411be7dc9b65",
+          "id": "f9342937-2a2d-424a-a5e3-cd9147d2ecbd",
           "listId": "fc9baa7c-c3e7-49a4-8526-816c794e5ed9",
-          "title": "Add \"LayoutAutoSwitch\" into Layout import/export",
+          "title": "Fix Targeted Spells",
           "description": "",
           "labels": [],
           "checkboxes": [],

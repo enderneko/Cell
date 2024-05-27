@@ -279,7 +279,7 @@ end
 function I.EnableTargetedSpells(enabled)
     if enabled then
         -- UNIT_SPELLCAST_DELAYED UNIT_SPELLCAST_FAILED UNIT_SPELLCAST_FAILED_QUIET UNIT_SPELLCAST_INTERRUPTED UNIT_SPELLCAST_START UNIT_SPELLCAST_STOP
-        -- UNIT_SPELLCAST_CHANNEL_START UNIT_SPELLCAST_CHANNEL_STOP UNIT_SPELLCAST_CHANNEL_UPDATE
+        -- UNIT_SPELLCAST_CHANNEL_START UNIT_SPELLCAST_CHANNEL_STOP
         -- PLAYER_TARGET_CHANGED ENCOUNTER_END
 
         eventFrame:RegisterEvent("UNIT_SPELLCAST_START")
@@ -292,7 +292,7 @@ function I.EnableTargetedSpells(enabled)
         eventFrame:RegisterEvent("UNIT_SPELLCAST_CHANNEL_STOP")
         -- eventFrame:RegisterEvent("UNIT_SPELLCAST_CHANNEL_UPDATE")
 
-        eventFrame:RegisterEvent("PLAYER_TARGET_CHANGED") --! Fired when the target of yourself, raid, and party members change, Should also work for 'pet' and 'focus'.
+        eventFrame:RegisterEvent("PLAYER_TARGET_CHANGED")
         eventFrame:RegisterEvent("NAME_PLATE_UNIT_ADDED")
         eventFrame:RegisterEvent("NAME_PLATE_UNIT_REMOVED")
 
