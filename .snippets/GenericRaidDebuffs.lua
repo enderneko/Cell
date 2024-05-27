@@ -36,7 +36,7 @@ function F:GetDebuffList(instanceName)
         if loadedDebuffs[iId]["general"] then
             n = #loadedDebuffs[iId]["general"]["enabled"]
             for _, t in ipairs(loadedDebuffs[iId]["general"]["enabled"]) do
-                local spellName = GetSpellInfo(t["id"])
+                local spellName = F:GetSpellNameAndIcon(t["id"])
                 if spellName then
                     -- list[spellName/spellId] = {order, glowType, glowOptions}
                     if t["trackByID"] then
@@ -51,7 +51,7 @@ function F:GetDebuffList(instanceName)
         for bId, bTable in pairs(loadedDebuffs[iId]) do
             if bId ~= "general" then
                 for _, st in pairs(bTable["enabled"]) do
-                    local spellName = GetSpellInfo(st["id"])
+                    local spellName = F:GetSpellNameAndIcon(st["id"])
                     if spellName then -- check again
                         if st["trackByID"] then
                             list[st["id"]] = {["order"]=st["order"]+n+offset, ["condition"]=st["condition"], ["glowType"]=st["glowType"], ["glowOptions"]=st["glowOptions"], ["glowCondition"]=st["glowCondition"]}

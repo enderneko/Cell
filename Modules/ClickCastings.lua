@@ -3,8 +3,6 @@ local L = Cell.L
 local F = Cell.funcs
 local P = Cell.pixelPerfectFuncs
 
-local GetSpellInfo = GetSpellInfo
-
 local clickCastingsTab = Cell:CreateFrame("CellOptionsFrame_ClickCastingsTab", Cell.frames.optionsFrame, nil, nil, true)
 Cell.frames.clickCastingsTab = clickCastingsTab
 clickCastingsTab:SetAllPoints(Cell.frames.optionsFrame)
@@ -447,7 +445,7 @@ local function ApplyClickCastings(b)
         end
 
         if t[2] == "spell" then
-            local spellName = GetSpellInfo(t[3]) or ""
+            local spellName = F:GetSpellNameAndIcon(t[3]) or ""
 
             -- NOTE: spell 在无效/过远的目标上会处于“等待选中目标”的状态，即鼠标指针有一圈灰色材质。用 macrotext 可以解决这个问题
             -- NOTE: 但对于尸体状态（未释放）的目标，需要额外判断
@@ -1022,7 +1020,7 @@ local function ShowActionsMenu(index, b)
 
         if (Cell.isVanilla or Cell.isCata) and Cell.vars.playerClass == "WARLOCK" then
             tinsert(items, {
-                ["text"] = GetSpellInfo(20707),
+                ["text"] = F:GetSpellNameAndIcon(20707),
                 ["onClick"] = function()
                     changed[index] = changed[index] or {b}
                     local macrotext = "/stopcasting\n/target mouseover\n/use item:36895\n/targetlasttarget"
@@ -1049,7 +1047,7 @@ local function ShowActionsMenu(index, b)
                         text = tonumber(text) or ""
                         if b.bindSpell ~= text then
                             changed[index]["bindAction"] = text
-                            b.actionGrid:SetText(GetSpellInfo(text) or "|cFFFF3030"..L["Invalid"])
+                            b.actionGrid:SetText(F:GetSpellNameAndIcon(text) or "|cFFFF3030"..L["Invalid"])
                             b:ShowSpellIcon(text)
                         else
                             changed[index]["bindAction"] = nil
@@ -1073,7 +1071,7 @@ local function ShowActionsMenu(index, b)
                                 return
                             end
 
-                            local name, _, icon = GetSpellInfo(spellId)
+                            local name, icon = F:GetSpellNameAndIcon(spellId)
                             if not name then
                                 CellSpellTooltip:Hide()
                                 return
@@ -1277,7 +1275,7 @@ CreateBindingListButton = function(modifier, bindKey, bindType, bindAction, i)
         bindActionDisplay = L[bindAction]
     elseif bindType == "spell" then
         bindSpell = bindAction -- spellId
-        bindAction = GetSpellInfo(bindAction) or "|cFFFF3030"..L["Invalid"] -- spellName
+        bindAction = F:GetSpellNameAndIcon(bindAction) or "|cFFFF3030"..L["Invalid"] -- spellName
         bindActionDisplay = bindAction
     else
         bindActionDisplay = bindAction

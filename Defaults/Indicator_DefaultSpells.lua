@@ -37,7 +37,7 @@ local debuffBlacklist = {
 function I.GetDefaultDebuffBlacklist()
     -- local temp = {}
     -- for i, id in pairs(debuffBlacklist) do
-    --     temp[i] = GetSpellInfo(id)
+    --     temp[i] = F:GetSpellNameAndIcon(id)
     -- end
     -- return temp
     return debuffBlacklist
@@ -150,7 +150,7 @@ local aoeHealingIDs = {
 do
     local temp = {}
     for _, id in pairs(aoeHealings) do
-        temp[GetSpellInfo(id)] = true
+        temp[F:GetSpellNameAndIcon(id)] = true
     end
     aoeHealings = temp
 end
@@ -175,7 +175,7 @@ local summonDuration = {
 do
     local temp = {}
     for id, duration in pairs(summonDuration) do
-        temp[GetSpellInfo(id)] = duration
+        temp[F:GetSpellNameAndIcon(id)] = duration
     end
     summonDuration = temp
 end
@@ -269,7 +269,7 @@ local customExternals = {}
 
 local function UpdateExternals(id, trackByName)
     if trackByName then
-        local name = GetSpellInfo(id)
+        local name = F:GetSpellNameAndIcon(id)
         if name then
             builtInExternals[name] = true
         end
@@ -299,7 +299,7 @@ function I.UpdateExternals(t)
     -- user created
     wipe(customExternals)
     for _, id in pairs(t["custom"]) do
-        local name = GetSpellInfo(id)
+        local name = F:GetSpellNameAndIcon(id)
         if name then
             customExternals[name] = true
         end
@@ -307,7 +307,7 @@ function I.UpdateExternals(t)
 end
 
 local UnitIsUnit = UnitIsUnit
-local bos = GetSpellInfo(6940) -- 牺牲祝福
+local bos = F:GetSpellNameAndIcon(6940) -- 牺牲祝福
 function I.IsExternalCooldown(name, id, source, target)
     if name == bos then
         if source and target then
@@ -433,7 +433,7 @@ function I.UpdateDefensives(t)
         for id, trackByName in pairs(spells) do
             if not t["disabled"][id] then -- not disabled
                 if trackByName then
-                    local name = GetSpellInfo(id)
+                    local name = F:GetSpellNameAndIcon(id)
                     if name then
                         builtInDefensives[name] = true
                     end
@@ -447,7 +447,7 @@ function I.UpdateDefensives(t)
     -- user created
     wipe(customDefensives)
     for _, id in pairs(t["custom"]) do
-        local name = GetSpellInfo(id)
+        local name = F:GetSpellNameAndIcon(id)
         if name then
             customDefensives[name] = true
         end
@@ -484,29 +484,29 @@ local tankActiveMitigations = {
 
 local tankActiveMitigationNames = {
     -- death knight
-    -- F:GetClassColorStr("DEATHKNIGHT")..GetSpellInfo(77535).."|r", -- 鲜血护盾
-    F:GetClassColorStr("DEATHKNIGHT")..GetSpellInfo(195181).."|r", -- 白骨之盾
+    -- F:GetClassColorStr("DEATHKNIGHT")..F:GetSpellNameAndIcon(77535).."|r", -- 鲜血护盾
+    F:GetClassColorStr("DEATHKNIGHT")..F:GetSpellNameAndIcon(195181).."|r", -- 白骨之盾
 
     -- demon hunter
-    F:GetClassColorStr("DEMONHUNTER")..GetSpellInfo(203720).."|r", -- 恶魔尖刺
+    F:GetClassColorStr("DEMONHUNTER")..F:GetSpellNameAndIcon(203720).."|r", -- 恶魔尖刺
 
     -- druid
-    F:GetClassColorStr("DRUID")..GetSpellInfo(192081).."|r", -- 铁鬃
+    F:GetClassColorStr("DRUID")..F:GetSpellNameAndIcon(192081).."|r", -- 铁鬃
 
     -- monk
-    F:GetClassColorStr("MONK")..GetSpellInfo(215479).."|r", -- 铁骨酒
+    F:GetClassColorStr("MONK")..F:GetSpellNameAndIcon(215479).."|r", -- 铁骨酒
 
     -- paladin
-    F:GetClassColorStr("PALADIN")..GetSpellInfo(132403).."|r", -- 正义盾击
+    F:GetClassColorStr("PALADIN")..F:GetSpellNameAndIcon(132403).."|r", -- 正义盾击
 
     -- warrior
-    F:GetClassColorStr("WARRIOR")..GetSpellInfo(2565).."|r", -- 盾牌格挡
+    F:GetClassColorStr("WARRIOR")..F:GetSpellNameAndIcon(2565).."|r", -- 盾牌格挡
 }
 
 do
     local temp = {}
     for _, id in pairs(tankActiveMitigations) do
-        temp[GetSpellInfo(id)] = true
+        temp[F:GetSpellNameAndIcon(id)] = true
     end
     tankActiveMitigations = temp
 end
@@ -691,7 +691,7 @@ local drinks = {
 do
     local temp = {}
     for _, id in pairs(drinks) do
-        temp[GetSpellInfo(id)] = true
+        temp[F:GetSpellNameAndIcon(id)] = true
     end
     drinks = temp
 end
@@ -774,7 +774,7 @@ local spells =  {
 function F:FirstRun()
     local icons = "\n\n"
     for i, id in pairs(spells) do
-        local icon = select(3, GetSpellInfo(id))
+        local icon = select(2, F:GetSpellNameAndIcon(id))
         icons = icons .. "|T"..icon..":0|t"
         if i % 11 == 0 then
             icons = icons .. "\n"
@@ -833,7 +833,7 @@ end
 --     wipe(cleuAuras)
 --     -- insert
 --     for _, c in pairs(t) do
---         local icon = select(3, GetSpellInfo(c[1]))
+--         local icon = select(2, F:GetSpellNameAndIcon(c[1]))
 --         cleuAuras[c[1]] = {c[2], icon}
 --     end
 -- end
@@ -980,7 +980,7 @@ do
     local temp = {}
     for _, k in pairs(buffsOrder) do
         local id = missingBuffs[k]
-        local name, _, icon = GetSpellInfo(id)
+        local name, icon = F:GetSpellNameAndIcon(id)
         if name then
             tinsert(temp, {
                 ["id"] = id,
@@ -1164,7 +1164,7 @@ function I.UpdateCrowdControls(t)
         for id, trackByName in pairs(spells) do
             if not t["disabled"][id] then -- not disabled
                 if trackByName then
-                    local name = GetSpellInfo(id)
+                    local name = F:GetSpellNameAndIcon(id)
                     if name then
                         builtInCrowdControls[name] = true
                     end
@@ -1178,7 +1178,7 @@ function I.UpdateCrowdControls(t)
     -- user created
     wipe(customCrowdControls)
     for _, id in pairs(t["custom"]) do
-        local name = GetSpellInfo(id)
+        local name = F:GetSpellNameAndIcon(id)
         if name then
             customCrowdControls[name] = true
         end

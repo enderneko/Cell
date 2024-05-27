@@ -57,6 +57,10 @@ if Cell.isRetail then
     function F:GetSpellNameAndIcon(spellid)
         if C_Spell and C_Spell.GetSpellInfo then
             local info = C_Spell.GetSpellInfo(spellid)
+            if not info.icon then
+                info.icon = C_Spell.GetSpellTexture(spellid)
+            end
+
             return info.name, info.icon
         end
         
@@ -643,7 +647,7 @@ function F:ConvertSpellTable(t, convertIdToName)
 
     local temp = {}
     for k, v in ipairs(t) do
-        local name = GetSpellInfo(v)
+        local name = F:GetSpellNameAndIcon(v)
         if name then
             temp[name] = k
         end
@@ -655,7 +659,7 @@ function F:ConvertSpellTable_WithClass(t)
     local temp = {}
     for class, ct in pairs(t) do
         for _, id in ipairs(ct) do
-            local name = GetSpellInfo(id)
+            local name = F:GetSpellNameAndIcon(id)
             if name then
                 temp[id] = true
             end
@@ -668,7 +672,7 @@ function F:ConvertSpellDurationTable(t, convertIdToName)
     local temp = {}
     for _, v in ipairs(t) do
         local id, duration = strsplit(":", v)
-        local name = GetSpellInfo(id)
+        local name = F:GetSpellNameAndIcon(id)
         if name then
             if convertIdToName then
                 temp[name] = tonumber(duration)
@@ -685,7 +689,7 @@ function F:ConvertSpellDurationTable_WithClass(t)
     for class, ct in pairs(t) do
         for k, v in ipairs(ct) do
             local id, duration = strsplit(":", v)
-            local name, _, icon = GetSpellInfo(id)
+            local name, icon = F:GetSpellNameAndIcon(id)
             if name then
                 temp[tonumber(id)] = {tonumber(duration), icon}
             end
@@ -718,7 +722,7 @@ function F:FilterInvalidSpells(t)
         else -- consumables
             spellId = t[i][1]
         end
-        if not GetSpellInfo(spellId) then
+        if not F:GetSpellNameAndIcon(spellId) then
             tremove(t, i)
         end
     end
@@ -1524,10 +1528,10 @@ end
 -- do
 --     -- NOTE: convert ID to NAME then to INDEX
 --     for k, id in pairs(friendSpells) do
---         friendSpells[k] = FindSpellIndex(GetSpellInfo(id))
+--         friendSpells[k] = FindSpellIndex(F:GetSpellNameAndIcon(id))
 --     end
 --     for k, id in pairs(harmSpells) do
---         harmSpells[k] = FindSpellIndex(GetSpellInfo(id))
+--         harmSpells[k] = FindSpellIndex(F:GetSpellNameAndIcon(id))
 --     end
 -- end
 
@@ -1542,9 +1546,9 @@ rc:RegisterEvent("SPELLS_CHANGED")
 if playerClass == "EVOKER" then
     local spell_dead, spell_alive, spell_harm
     rc:SetScript("OnEvent", function()
-        spell_dead = FindSpellIndex(GetSpellInfo(361227))
-        spell_alive = FindSpellIndex(GetSpellInfo(361469))
-        spell_harm = FindSpellIndex(GetSpellInfo(361469))
+        spell_dead = FindSpellIndex(F:GetSpellNameAndIcon(361227))
+        spell_alive = FindSpellIndex(F:GetSpellNameAndIcon(361469))
+        spell_harm = FindSpellIndex(F:GetSpellNameAndIcon(361469))
     end)
 
     -- NOTE: UnitInRange for evoker is around 50y
@@ -1584,8 +1588,8 @@ if playerClass == "EVOKER" then
 else
     local spell_friend, spell_harm
     rc:SetScript("OnEvent", function()
-        spell_friend = FindSpellIndex(GetSpellInfo(friendSpells[playerClass]))
-        spell_harm = FindSpellIndex(GetSpellInfo(harmSpells[playerClass]))
+        spell_friend = FindSpellIndex(F:GetSpellNameAndIcon(friendSpells[playerClass]))
+        spell_harm = FindSpellIndex(F:GetSpellNameAndIcon(harmSpells[playerClass]))
     end)
 
     if Cell.isRetail then
@@ -1928,7 +1932,7 @@ local lines = {}
 function F:GetSpellInfo(spellId)
     wipe(lines)
 
-    local name, _, icon = GetSpellInfo(spellId)
+    local name, icon = F:GetSpellNameAndIcon(spellId)
     if not name then return end
 
     local data = C_TooltipInfo.GetSpellByID(spellId)

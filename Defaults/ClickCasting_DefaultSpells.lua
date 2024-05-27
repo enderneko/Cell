@@ -2,8 +2,6 @@ local _, Cell = ...
 local L = Cell.L
 local F = Cell.funcs
 
-local GetSpellInfo = GetSpellInfo
-
 -------------------------------------------------
 -- click-castings
 -------------------------------------------------
@@ -312,11 +310,11 @@ function F:GetClickCastingSpellList(class, spec)
     -- fill data
     for i, v in pairs(spells) do
         if type(v) == "number" then
-            local name, _, icon = GetSpellInfo(v)
+            local name, icon = F:GetSpellNameAndIcon(v)
             spells[i] = {icon, name, nil, v}
         else -- string
             local spellId, spellType = strmatch(v, "(%d+)(%a)")
-            local name, _, icon = GetSpellInfo(spellId)
+            local name, icon = F:GetSpellNameAndIcon(spellId)
             spells[i] = {icon, name, L[spellType], spellId}
         end
     end
@@ -362,12 +360,12 @@ local resurrections_for_dead = {
 do
     local temp = {}
     for _, id in pairs(resurrections_for_dead) do
-        temp[GetSpellInfo(id)] = true
+        temp[F:GetSpellNameAndIcon(id)] = true
     end
     resurrections_for_dead = temp
 end
 
-local spell_soulstone = GetSpellInfo(20707)
+local spell_soulstone = F:GetSpellNameAndIcon(20707)
 function F:IsSoulstone(spell)
     return spell == spell_soulstone
 end
@@ -408,7 +406,7 @@ local resurrection_click_castings = {
 -- do
 --     for class, t in pairs(resurrection_click_castings) do
 --         for _, clickCasting in pairs(t) do
---             clickCasting[3] = GetSpellInfo(clickCasting[3])
+--             clickCasting[3] = F:GetSpellNameAndIcon(clickCasting[3])
 --         end
 --     end
 -- end
@@ -450,7 +448,7 @@ local normalResurrection = {
 do
     for class, t in pairs(normalResurrection) do
         for condition, spell in pairs(t) do
-            t[condition] = GetSpellInfo(spell)
+            t[condition] = F:GetSpellNameAndIcon(spell)
         end
     end
 end
@@ -468,7 +466,7 @@ local combatResurrection = {
 
 do
     for class, spell in pairs(combatResurrection) do
-        combatResurrection[class] = GetSpellInfo(spell)
+        combatResurrection[class] = F:GetSpellNameAndIcon(spell)
     end
 end
 
