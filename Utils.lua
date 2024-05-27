@@ -1433,7 +1433,6 @@ local UnitCanAssist = UnitCanAssist
 local UnitCanAttack = UnitCanAttack
 local UnitCanCooperate = UnitCanCooperate
 local IsSpellInRange = IsSpellInRange
-local IsItemInRange = IsItemInRange
 local CheckInteractDistance = CheckInteractDistance
 local UnitIsDead = UnitIsDead
 local GetSpellTabInfo = GetSpellTabInfo
@@ -1626,8 +1625,7 @@ else
                 return true
             elseif not check and F:UnitInGroup(unit) then
                 -- NOTE: UnitInRange only works with group players/pets --! but not available for PLAYER PET when SOLO
-                local checked
-                inRange, checked = UnitInRange(unit)
+                local inRange, checked = UnitInRange(unit)
                 if not checked then
                     return F:IsInRange(unit, true)
                 end
@@ -1659,8 +1657,7 @@ else
                 return true
             elseif not check and F:UnitInGroup(unit) then
                 -- NOTE: UnitInRange only works with group players/pets --! but not available for PLAYER PET when SOLO
-                local checked
-                inRange, checked = UnitInRange(unit)
+                local inRange, checked = UnitInRange(unit)
                 if not checked then
                     return F:IsInRange(unit, true)
                 end
@@ -1671,14 +1668,14 @@ else
                     if spell_friend then
                         return UnitInSpellRange(spell_friend, unit)
                     else
-                        return IsItemInRange(friendItems[playerClass], unit)
+                        return C_Item.IsItemInRange(friendItems[playerClass], unit)
                     end
                 elseif UnitCanAttack("player", unit) then
                     -- print("CanAttack", unit)
                     if spell_harm then
                         return UnitInSpellRange(spell_harm, unit)
                     else
-                        return IsItemInRange(harmItems[playerClass], unit)
+                        return C_Item.IsItemInRange(harmItems[playerClass], unit)
                     end
                 end
 
