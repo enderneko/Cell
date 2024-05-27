@@ -1507,21 +1507,42 @@ local harmItems = {
     ["WARRIOR"] = 28767,
 }
 
-local function GetNumSpells()
-    local _, _, offset, numSpells = GetSpellTabInfo(GetNumSpellTabs())
-    return offset + numSpells
-end
-
 local function FindSpellIndex(spellName)
     if not spellName or spellName == "" then
         return nil
     end
-    for i = 1, GetNumSpells() do
-        local spell = GetSpellBookItemName(i, BOOKTYPE_SPELL)
-        if spell == spellName then
-            return i
+
+    if C_SpellBook and C_SpellBook.FindSpellBookSlotForSpell then
+        return select(1, C_SpellBook.FindSpellBookSlotForSpell(spellName))
+    end
+
+    local tabs = C_SpellBook and C_SpellBook.GetNumSpellBookSkillLines and C_SpellBook.GetNumSpellBookSkillLines() or GetNumSpellTabs()
+    local total = 0
+
+    if C_SpellBook and C_SpellBook.GetSpellBookSkillLineInfo then
+        local info = C_SpellBook.GetSpellBookSkillLineInfo(tabs)
+        total = info.itemIndexOffset+ info.numSpellBookItems
+    else
+        local _, _, offset, numSpells = GetSpellTabInfo(tabs)
+        total = offset + numSpells
+    end
+
+    if C_SpellBook and C_SpellBook.GetSpellBookItemName then
+        for i = 1, total do
+            local spell = C_SpellBook.GetSpellBookItemName(i, Enum.SpellBookSpellBank.Player)
+            if spell == spellName then
+                return i
+            end
+        end
+    else
+        for i = 1, total do
+            local spell = GetSpellBookItemName(i, BOOKTYPE_SPELL)
+            if spell == spellName then
+                return i
+            end
         end
     end
+    
     return nil
 end
 
@@ -1537,6 +1558,9 @@ end
 
 local function UnitInSpellRange(spellIndex, unit)
     if not spellIndex then return end
+    if Enum and Enum.SpellBookSpellBank then
+        return IsSpellInRange(spellIndex, unit) == 1
+    end
     return IsSpellInRange(spellIndex, BOOKTYPE_SPELL, unit) == 1
 end
 
