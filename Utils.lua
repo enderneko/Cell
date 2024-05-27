@@ -20,8 +20,7 @@ Cell.isCata = WOW_PROJECT_ID == WOW_PROJECT_CATACLYSM_CLASSIC
 -------------------------------------------------
 -- class
 -------------------------------------------------
-local localizedClass = {}
-FillLocalizedClassList(localizedClass)
+local localizedClass =  LocalizedClassList()
 
 local sortedClasses = {}
 local classFileToID = {}
