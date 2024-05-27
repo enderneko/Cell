@@ -941,7 +941,7 @@ local function ForEachAura(button, filter, func)
     local continuationToken
     repeat
         -- continuationToken is the first return value of UnitAuraSltos
-        continuationToken = ForEachAuraHelper(button, func, UnitAuraSlots(button.states.displayedUnit, filter, nil, continuationToken))
+        continuationToken = ForEachAuraHelper(button, func, C_UnitAuras.GetAuraSlots(button.states.displayedUnit, filter, nil, continuationToken))
     until continuationToken == nil
 end
 
