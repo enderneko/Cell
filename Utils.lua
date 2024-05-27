@@ -1966,8 +1966,6 @@ function F:GetSpellInfo(spellId)
     return name, icon, table.concat(lines, "\n")
 end
 
-
-
 -------------------------------------------------
 -- auras
 -------------------------------------------------
