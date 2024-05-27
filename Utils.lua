@@ -52,6 +52,28 @@ do
     sort(sortedClasses)
 end
 
+if Cell.isRetail then
+    ---@param spellid number
+    ---@return string, number
+    function F:GetSpellNameAndIcon(spellid)
+        if C_Spell and C_Spell.GetSpellInfo then
+            local info = C_Spell.GetSpellInfo(spellid)
+            return info.name, info.icon
+        end
+        
+        -- todo: remove once 11.0 prepatch hits
+        local name, _, icon = GetSpellInfo(spellid)
+        return name, icon
+    end
+else
+    ---@param spellid number
+    ---@return string, number
+    function F:GetSpellNameAndIcon(spellid)
+        local name, _, icon = GetSpellInfo(spellid)
+        return name, icon
+    end
+end
+
 function F:GetClassID(classFile)
     return classFileToID[classFile]
 end
@@ -615,7 +637,6 @@ function F:ConvertTable(t, value)
     return temp
 end
 
-local GetSpellInfo = GetSpellInfo
 function F:ConvertSpellTable(t, convertIdToName)
     if not convertIdToName then
         return F:ConvertTable(t)
@@ -1920,6 +1941,8 @@ function F:GetSpellInfo(spellId)
 
     return name, icon, table.concat(lines, "\n")
 end
+
+
 
 -------------------------------------------------
 -- auras
