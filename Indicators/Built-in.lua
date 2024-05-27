@@ -1637,7 +1637,6 @@ end
 -------------------------------------------------
 -- role icon
 -------------------------------------------------
-local GetTexCoordsForRoleSmallCircle = GetTexCoordsForRoleSmallCircle
 
 local defaultRoleIcon = {
     TANK = "Interface\\AddOns\\Cell\\Media\\Roles\\TANK32",
@@ -1645,23 +1644,53 @@ local defaultRoleIcon = {
     DAMAGER = "Interface\\AddOns\\Cell\\Media\\Roles\\DAMAGER32",
 }
 
+-- see https://www.townlong-yak.com/framexml/live/Blizzard_Deprecated/Deprecated_10_1_5.lua#43
+local function getSmallTextCoordsForRole(role)
+    if ( role == "TANK" ) then
+        return 0, 19/64, 22/64, 41/64;
+    elseif ( role == "HEALER" ) then
+        return 20/64, 39/64, 1/64, 20/64;
+    elseif ( role == "DAMAGER" ) then
+        return 20/64, 39/64, 22/64, 41/64;
+    else
+        error("Unknown role: "..tostring(role));
+    end
+end
+
+-- see https://www.townlong-yak.com/framexml/live/Blizzard_Deprecated/Deprecated_10_1_5.lua#11
+local function getTextCoordsForRole(role)
+    local textureHeight, textureWidth = 256, 256;
+    local roleHeight, roleWidth = 67, 67;
+    if ( role == "GUIDE" ) then
+        return GetTexCoordsByGrid(1, 1, textureWidth, textureHeight, roleWidth, roleHeight);
+    elseif ( role == "TANK" ) then
+        return GetTexCoordsByGrid(1, 2, textureWidth, textureHeight, roleWidth, roleHeight);
+    elseif ( role == "HEALER" ) then
+        return GetTexCoordsByGrid(2, 1, textureWidth, textureHeight, roleWidth, roleHeight);
+    elseif ( role == "DAMAGER" ) then
+        return GetTexCoordsByGrid(2, 2, textureWidth, textureHeight, roleWidth, roleHeight);
+    else
+        error("Unknown role: "..tostring(role));
+    end
+end;
+
 local function RoleIcon_SetRole(self, role)
     self.tex:SetVertexColor(1, 1, 1)
     if role == "TANK" or role == "HEALER" or (not self.hideDamager and role == "DAMAGER") then
         if self.texture == "default" then
             -- self.tex:SetTexture("Interface\\AddOns\\Cell\\Media\\Roles\\UI-LFG-ICON-PORTRAITROLES.blp")
-            -- self.tex:SetTexCoord(GetTexCoordsForRoleSmallCircle(role))
+            -- self.tex:SetTexCoord(getSmallTextCoordsForRole(role))
             self.tex:SetTexture(defaultRoleIcon[role])
             self.tex:SetTexCoord(0, 1, 0, 1)
         elseif self.texture == "default2" then
             self.tex:SetTexture("Interface\\AddOns\\Cell\\Media\\Roles\\UI-LFG-ICON-ROLES.blp")
-            self.tex:SetTexCoord(GetTexCoordsForRole(role))
+            self.tex:SetTexCoord(getTextCoordsForRole(role))
         elseif self.texture == "blizzard" then
             self.tex:SetTexture("Interface\\LFGFRAME\\UI-LFG-ICON-PORTRAITROLES.blp")
-            self.tex:SetTexCoord(GetTexCoordsForRoleSmallCircle(role))
+            self.tex:SetTexCoord(getSmallTextCoordsForRole(role))
         elseif self.texture == "blizzard2" then
             self.tex:SetTexture("Interface\\LFGFRAME\\UI-LFG-ICON-ROLES.blp")
-            self.tex:SetTexCoord(GetTexCoordsForRole(role))
+            self.tex:SetTexCoord(getTextCoordsForRole(role))
         elseif self.texture == "ffxiv" then
             self.tex:SetTexture("Interface\\AddOns\\Cell\\Media\\Roles\\FFXIV\\"..role)
             self.tex:SetTexCoord(0, 1, 0, 1)
@@ -1670,7 +1699,7 @@ local function RoleIcon_SetRole(self, role)
             self.tex:SetTexCoord(0, 1, 0, 1)
         elseif self.texture == "mattui" then
             self.tex:SetTexture("Interface\\AddOns\\Cell\\Media\\Roles\\MattUI.blp")
-            self.tex:SetTexCoord(GetTexCoordsForRoleSmallCircle(role))
+            self.tex:SetTexCoord(getSmallTextCoordsForRole(role))
         elseif self.texture == "custom" then
             self.tex:SetTexture(self[role])
             self.tex:SetTexCoord(0, 1, 0, 1)
