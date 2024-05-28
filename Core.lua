@@ -367,6 +367,18 @@ function eventFrame:ADDON_LOADED(arg1)
         if type(CellDB["clickCastings"]) ~= "table" then CellDB["clickCastings"] = {} end
 
         if type(CellDB["clickCastings"][Cell.vars.playerClass]) ~= "table" then
+            local defaultFrameTypes = {
+                ["Party"] = true,
+                ["Raid"] = true,
+                ["Spotlight"] = true,
+                ["Quick Assist"] = true,
+                ["Solo"] = true,
+                ["Pet"] = true,
+                ["Raid Pets"] = true,
+                ["Arena Pets"] = true,
+                ["NPC"] = true,
+            }
+
             CellDB["clickCastings"][Cell.vars.playerClass] = {
                 ["useCommon"] = true,
                 ["smartResurrection"] = "disabled",
@@ -374,8 +386,8 @@ function eventFrame:ADDON_LOADED(arg1)
                     ["common"] = "disabled",
                 },
                 ["common"] = {
-                    {"type1", "target"},
-                    {"type2", "togglemenu"},
+                    {"type1", "general", "target", defaultFrameTypes},
+                    {"type2", "general", "togglemenu", defaultFrameTypes},
                 },
             }
 
@@ -400,8 +412,8 @@ function eventFrame:ADDON_LOADED(arg1)
             for _, specID in pairs(specs) do
                 CellDB["clickCastings"][Cell.vars.playerClass]["alwaysTargeting"][specID] = "disabled"
                 CellDB["clickCastings"][Cell.vars.playerClass][specID] = {
-                    {"type1", "target"},
-                    {"type2", "togglemenu"},
+                    {"type1", "general", "target", defaultFrameTypes},
+                    {"type2", "general", "togglemenu", defaultFrameTypes},
                 }
                 -- add resurrections for each spec
                 for _, t in pairs(F:GetResurrectionClickCastings(Cell.vars.playerClass)) do

@@ -329,6 +329,18 @@ function eventFrame:ADDON_LOADED(arg1)
         Cell.vars.playerClass, Cell.vars.playerClassID = UnitClassBase("player")
 
         if type(CellCharacterDB["clickCastings"]) ~= "table" then
+            local defaultFrameTypes = {
+                ["Party"] = true,
+                ["Raid"] = true,
+                ["Spotlight"] = true,
+                ["Quick Assist"] = true,
+                ["Solo"] = true,
+                ["Pet"] = true,
+                ["Raid Pets"] = true,
+                ["Arena Pets"] = true,
+                ["NPC"] = true,
+            }
+
             CellCharacterDB["clickCastings"] = {
                 ["class"] = Cell.vars.playerClass, -- NOTE: validate on import
                 ["useCommon"] = true,
@@ -339,16 +351,16 @@ function eventFrame:ADDON_LOADED(arg1)
                     [2] = "disabled",
                 },
                 ["common"] = {
-                    {"type1", "target"},
-                    {"type2", "togglemenu"},
+                    {"type1", "general", "target", defaultFrameTypes},
+                    {"type2", "general", "togglemenu", defaultFrameTypes},
                 },
                 [1] = {
-                    {"type1", "target"},
-                    {"type2", "togglemenu"},
+                    {"type1", "general", "target", defaultFrameTypes},
+                    {"type2", "general", "togglemenu", defaultFrameTypes},
                 },
                 [2] = {
-                    {"type1", "target"},
-                    {"type2", "togglemenu"},
+                    {"type1", "general", "target", defaultFrameTypes},
+                    {"type2", "general", "togglemenu", defaultFrameTypes},
                 },
             }
 
