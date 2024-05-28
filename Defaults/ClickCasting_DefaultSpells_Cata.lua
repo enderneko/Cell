@@ -160,7 +160,7 @@ local defaultSpells = {
     },
 }
 
-local allFrameTypes = {
+local defaultFrameTypes = {
     ["Party"] = true,
     ["Raid"] = true,
     ["Spotlight"] = true,
@@ -232,20 +232,20 @@ end
 
 local resurrection_click_castings = {
     ["DEATHKNIGHT"] = {
-        {"type-altR", "spell", allFrameTypes, 61999},
+        {"type-altR", "spell", 61999, defaultFrameTypes},
     },
     ["DRUID"] = {
-        {"type-altR", "spell", allFrameTypes, 20484},
-        {"type-shiftR", "spell", allFrameTypes, 50769},
+        {"type-altR", "spell", 20484, defaultFrameTypes},
+        {"type-shiftR", "spell", 50769, defaultFrameTypes},
     },
     ["PALADIN"] = {
-        {"type-shiftR", "spell", allFrameTypes, 7328},
+        {"type-shiftR", "spell", 7328, defaultFrameTypes},
     },
     ["PRIEST"] = {
-        {"type-shiftR", "spell", allFrameTypes, 2006},
+        {"type-shiftR", "spell", 2006, defaultFrameTypes},
     },
     ["SHAMAN"] = {
-        {"type-shiftR", "spell", allFrameTypes, 2008},
+        {"type-shiftR", "spell", 2008, defaultFrameTypes},
     },
 }
 

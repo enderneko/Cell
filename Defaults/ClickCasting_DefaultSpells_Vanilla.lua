@@ -145,7 +145,7 @@ local defaultSpells = {
     },
 }
 
-local allFrameTypes = {
+local defaultFrameTypes = {
     ["Party"] = true,
     ["Raid"] = true,
     ["Spotlight"] = true,
@@ -213,16 +213,16 @@ end
 
 local resurrection_click_castings = {
     ["DRUID"] = {
-        {"type-altR", "spell", allFrameTypes, 20484},
+        {"type-altR", "spell", 20484, defaultFrameTypes},
     },
     ["PALADIN"] = {
-        {"type-shiftR", "spell", allFrameTypes, 7328},
+        {"type-shiftR", "spell", 7328, defaultFrameTypes},
     },
     ["PRIEST"] = {
-        {"type-shiftR", "spell", allFrameTypes, 2006},
+        {"type-shiftR", "spell", 2006, defaultFrameTypes},
     },
     ["SHAMAN"] = {
-        {"type-shiftR", "spell", allFrameTypes, 2008},
+        {"type-shiftR", "spell", 2008, defaultFrameTypes},
     },
 }
 
