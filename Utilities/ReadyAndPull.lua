@@ -73,7 +73,7 @@ local function Start(sec, sendToChat)
     isPullTickerRunning = true
     pullBtn:SetMaxValue(sec)
     pullBtn:Start()
-    
+
     -- update button text
     pullBtn:SetText(sec)
     if pullTicker then
@@ -107,7 +107,7 @@ end
 local function Stop()
     isPullTickerRunning = false
     pullBtn:Stop()
-           
+
     -- update button text
     pullBtn:SetText(L["Pull"])
     if pullTicker then

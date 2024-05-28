@@ -30,7 +30,7 @@ local function CreateClickCastingImportExportFrame()
     importExportFrame:SetFrameLevel(Cell.frames.clickCastingsTab:GetFrameLevel() + 50)
     P:Size(importExportFrame, 430, 170)
     importExportFrame:SetPoint("TOPLEFT", P:Scale(1), -160)
-    
+
     if not Cell.frames.clickCastingsTab.mask then
         Cell:CreateMask(Cell.frames.clickCastingsTab, nil, {1, -1, -1, 1})
         Cell.frames.clickCastingsTab.mask:Hide()
@@ -40,7 +40,7 @@ local function CreateClickCastingImportExportFrame()
     local closeBtn = Cell:CreateButton(importExportFrame, "×", "red", {18, 18}, false, false, "CELL_FONT_SPECIAL", "CELL_FONT_SPECIAL")
     closeBtn:SetPoint("TOPRIGHT", P:Scale(-5), P:Scale(-1))
     closeBtn:SetScript("OnClick", function() importExportFrame:Hide() end)
-    
+
     -- import
     importBtn = Cell:CreateButton(importExportFrame, L["Import"], "green", {57, 18})
     importBtn:Hide()
@@ -48,18 +48,18 @@ local function CreateClickCastingImportExportFrame()
     importBtn:SetScript("OnClick", function()
         -- lower frame level
         importExportFrame:SetFrameLevel(Cell.frames.clickCastingsTab:GetFrameLevel() + 20)
-    
+
         local popup = Cell:CreateConfirmPopup(Cell.frames.clickCastingsTab, 200, L["Overwrite Click-Casting"].."?", function(self)
             DoImport()
         end, nil, true)
         popup:SetPoint("TOPLEFT", importExportFrame, 117, -50)
         textArea.eb:ClearFocus()
     end)
-    
+
     -- title
     title = importExportFrame:CreateFontString(nil, "OVERLAY", "CELL_FONT_CLASS")
     title:SetPoint("TOPLEFT", 5, -5)
-    
+
     -- textArea
     textArea = Cell:CreateScrollEditBox(importExportFrame, function(eb, userChanged)
         if userChanged then
@@ -69,14 +69,14 @@ local function CreateClickCastingImportExportFrame()
                 -- check
                 local version, class, data = string.match(text, "^!CELL:(%d+):CLICKCASTING:([^:]+)!(.+)$")
                 version = tonumber(version)
-    
+
                 if class and version and data then
                     if version >= Cell.MIN_CLICKCASTINGS_VERSION then
                         local success
                         data = LibDeflate:DecodeForPrint(data) -- decode
                         success, data = pcall(LibDeflate.DecompressDeflate, LibDeflate, data) -- decompress
                         success, data = Serializer:Deserialize(data) -- deserialize
-                        
+
                         if success and data then
                             title:SetText(L["Import"]..": "..F:GetClassColorStr(class)..F:GetLocalizedClassName(class))
                             imported = data
@@ -103,7 +103,7 @@ local function CreateClickCastingImportExportFrame()
     Cell:StylizeFrame(textArea.scrollFrame, {0, 0, 0, 0}, Cell:GetAccentColorTable())
     textArea:SetPoint("TOPLEFT", P:Scale(5), P:Scale(-20))
     textArea:SetPoint("BOTTOMRIGHT", P:Scale(-5), P:Scale(5))
-    
+
     -- highlight text
     textArea.eb:SetScript("OnEditFocusGained", function() textArea.eb:HighlightText() end)
     textArea.eb:SetScript("OnMouseUp", function()
@@ -111,7 +111,7 @@ local function CreateClickCastingImportExportFrame()
             textArea.eb:HighlightText()
         end
     end)
-    
+
     importExportFrame:SetScript("OnHide", function()
         importExportFrame:Hide()
         isImport = false
@@ -120,7 +120,7 @@ local function CreateClickCastingImportExportFrame()
         -- hide mask
         Cell.frames.clickCastingsTab.mask:Hide()
     end)
-    
+
     importExportFrame:SetScript("OnShow", function()
         -- raise frame level
         importExportFrame:SetFrameLevel(Cell.frames.clickCastingsTab:GetFrameLevel() + 50)
@@ -131,7 +131,7 @@ end
 local init
 function F:ShowClickCastingImportFrame()
     if not init then
-        init = true    
+        init = true
         CreateClickCastingImportExportFrame()
     end
 
@@ -148,7 +148,7 @@ end
 
 function F:ShowClickCastingExportFrame(clickCastingTable)
     if not init then
-        init = true    
+        init = true
         CreateClickCastingImportExportFrame()
     end
 

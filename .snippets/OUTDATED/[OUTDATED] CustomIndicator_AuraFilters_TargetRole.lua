@@ -1,15 +1,12 @@
--- WRATH ONLY, BUFFS ONLY
+-- WRATH ONLY, BUFFS ONLY 仅怀旧服
 
--- show buffs from anyone 无视来源
-local ignoreSource = {
-    -- ["spellName"] = true,
-    -- [spellId] = true,
-}
-
--- filter out buffs from others 仅显示我的
-local filterOutOthers = {
-    -- ["spellName"] = true,
-    -- [spellId] = true,
+-- filter by target role 按目标职责过滤
+local filters = {
+    -- ["spellName"] = {
+    --     ["TANK"] = true,
+    --     ["HEALER"] = true,
+    --     ["DAMAGER"] = true,
+    -- },
 }
 
 -------------------------------------------------
@@ -50,18 +47,14 @@ function Cell.iFuncs:UpdateCustomIndicators(unitButton, auraType, spellId, spell
             else
                 spell = spellId
             end
-            
+
             if indicatorTable["auras"][spell] or indicatorTable["auras"][0] then -- is in indicator spell list
                 if auraType == "buff" then
-                    local show
-                    if ignoreSource[spellId] or ignoreSource[spellName] then
-                        show = true
-                    elseif filterOutOthers[spellId] or filterOutOthers[spellName] then
-                        show = castByMe
-                    else
-                        show = (indicatorTable["castBy"] == "me" and castByMe) or (indicatorTable["castBy"] == "anyone")
+                    local show = true
+                    if unitButton.states.role and unitButton.states.role ~= "NONE" and filters[spellName] then
+                        show = filters[spellName][unitButton.states.role]
                     end
-                    if show then
+                    if show and (indicatorTable["castBy"] == "me" and castByMe) or (indicatorTable["castBy"] == "anyone") then
                         Update(unitButton.indicators[indicatorName], indicatorTable, unit, spell, start, duration, debuffType, icon, count, refreshing)
                     end
                 else -- debuff
@@ -79,11 +72,11 @@ function Cell.iFuncs:ShowCustomIndicators(unitButton, auraType)
             if not indicatorTable["isIcons"] then
                 if indicatorTable["top"][unit]["start"] then
                     unitButton.indicators[indicatorName]:SetCooldown(
-                        indicatorTable["top"][unit]["start"], 
-                        indicatorTable["top"][unit]["duration"], 
-                        indicatorTable["top"][unit]["debuffType"], 
-                        indicatorTable["top"][unit]["texture"], 
-                        indicatorTable["top"][unit]["count"], 
+                        indicatorTable["top"][unit]["start"],
+                        indicatorTable["top"][unit]["duration"],
+                        indicatorTable["top"][unit]["debuffType"],
+                        indicatorTable["top"][unit]["texture"],
+                        indicatorTable["top"][unit]["count"],
                         indicatorTable["top"][unit]["refreshing"])
                 end
             end

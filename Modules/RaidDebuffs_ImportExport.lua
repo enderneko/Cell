@@ -31,19 +31,19 @@ local function CreateDebuffsImportExportFrame()
     local closeBtn = Cell:CreateButton(importExportFrame, "×", "red", {18, 18}, false, false, "CELL_FONT_SPECIAL", "CELL_FONT_SPECIAL")
     closeBtn:SetPoint("TOPRIGHT", -5, -1)
     closeBtn:SetScript("OnClick", function() importExportFrame:Hide() end)
-    
+
     -- title
     title = importExportFrame:CreateFontString(nil, "OVERLAY", "CELL_FONT_CLASS")
     title:SetPoint("TOPLEFT", 5, -5)
-    
+
     -- instance name
     instance = importExportFrame:CreateFontString(nil, "OVERLAY", "CELL_FONT_CLASS")
     instance:SetPoint("TOPLEFT", title, "BOTTOMLEFT", 0, -5)
-    
+
     -- boss name
     boss = importExportFrame:CreateFontString(nil, "OVERLAY", "CELL_FONT_CLASS")
     boss:SetPoint("TOPLEFT", instance, "BOTTOMLEFT", 0, -5)
-    
+
     -- which bosses
     whichBossesBtn = Cell:CreateButton(importExportFrame, L["Current Boss"], "blue", {111, 18})
     whichBossesBtn:SetPoint("TOPRIGHT", closeBtn, "TOPLEFT", 1, 0)
@@ -60,7 +60,7 @@ local function CreateDebuffsImportExportFrame()
             ShowData(currentInstanceId, currentBossId)
         end
     end)
-    
+
     -- import
     importBtn = Cell:CreateButton(importExportFrame, L["Import"], "green", {57, 18})
     importBtn:Hide()
@@ -68,7 +68,7 @@ local function CreateDebuffsImportExportFrame()
     importBtn:SetScript("OnClick", function()
         -- lower frame level
         importExportFrame:SetFrameLevel(Cell.frames.raidDebuffsTab:GetFrameLevel() + 20)
-    
+
         local text = L["This will overwrite your debuffs"].."\n"..
             L["|cff1Aff1AYes|r - Overwrite"].."\n|cffff1A1A"..L["No"].."|r - "..L["Cancel"]
         local popup = Cell:CreateConfirmPopup(Cell.frames.raidDebuffsTab, 200, text, function(self)
@@ -89,7 +89,7 @@ local function CreateDebuffsImportExportFrame()
 
         textArea.eb:ClearFocus()
     end)
-    
+
     -- textArea
     textArea = Cell:CreateScrollEditBox(importExportFrame, function(eb, userChanged)
         if userChanged then
@@ -98,12 +98,12 @@ local function CreateDebuffsImportExportFrame()
                 local text = eb:GetText()
                 -- check
                 local version, instanceId, bossId, data = string.match(text, "^!CELL:(%d+):DEBUFF:(%d+):(.+)!(.+)$")
-                
+
                 local error
                 if version and instanceId and bossId and data then
                     version = tonumber(version)
                     instanceId = tonumber(instanceId)
-    
+
                     local isValidBossId
                     if bossId == "all" then
                         bossId = nil
@@ -114,23 +114,23 @@ local function CreateDebuffsImportExportFrame()
                         bossId = tonumber(bossId)
                         if bossId then isValidBossId = true end
                     end
-    
+
                     local instanceName, bossName = F:GetInstanceAndBossName(instanceId, bossId)
-                    
+
                     if isValidBossId and instanceName then
                         if version >= Cell.MIN_DEBUFFS_VERSION then
                             local success
                             data = LibDeflate:DecodeForPrint(data) -- decode
                             success, data = pcall(LibDeflate.DecompressDeflate, LibDeflate, data) -- decompress
                             success, data = Serializer:Deserialize(data) -- deserialize
-                            
+
                             if success and data then
                                 local builtIn, custom = F:CalcRaidDebuffs(instanceId, bossId, data)
                                 title:SetText(L["Import"]..": ".."|cff90EE90"..builtIn.." "..L["built-in(s)"].."|r, |cffFFB5C5"..custom.." "..L["custom(s)"].."|r")
-                                
+
                                 instance:SetText(L["Instance Name"]..": |cffffffff"..instanceName)
                                 boss:SetText(L["Boss Name"]..": |cffffffff"..(bossName or L["All Bosses"]))
-                                
+
                                 imported["instanceId"] = instanceId
                                 imported["bossId"] = bossId
                                 imported["data"] = data
@@ -147,7 +147,7 @@ local function CreateDebuffsImportExportFrame()
                 else
                     error = L["Error"]
                 end
-    
+
                 if error then
                     title:SetText(L["Import"]..": |cffff2222"..error)
                     instance:SetText(L["Instance Name"]..": |cffff2222"..L["Error"])
@@ -164,7 +164,7 @@ local function CreateDebuffsImportExportFrame()
     Cell:StylizeFrame(textArea.scrollFrame, {0, 0, 0, 0}, Cell:GetAccentColorTable())
     textArea:SetPoint("TOPLEFT", 5, -60)
     textArea:SetPoint("BOTTOMRIGHT", -5, 5)
-    
+
     -- highlight text
     textArea.eb:SetScript("OnEditFocusGained", function() textArea.eb:HighlightText() end)
     textArea.eb:SetScript("OnMouseUp", function()
@@ -172,7 +172,7 @@ local function CreateDebuffsImportExportFrame()
             textArea.eb:HighlightText()
         end
     end)
-    
+
     importExportFrame:SetScript("OnHide", function()
         importExportFrame:Hide()
         isImport = false
@@ -180,7 +180,7 @@ local function CreateDebuffsImportExportFrame()
         imported = {}
         Cell.frames.raidDebuffsTab.mask:Hide()
     end)
-    
+
     importExportFrame:SetScript("OnShow", function()
         -- raise frame level
         importExportFrame:SetFrameLevel(Cell.frames.raidDebuffsTab:GetFrameLevel() + 50)
@@ -191,7 +191,7 @@ end
 local init
 function F:ShowRaidDebuffsImportFrame()
     if not init then
-        init = true    
+        init = true
         CreateDebuffsImportExportFrame()
     end
 
@@ -241,7 +241,7 @@ end
 
 function F:ShowRaidDebuffsExportFrame(instanceId, bossId)
     if not init then
-        init = true    
+        init = true
         CreateDebuffsImportExportFrame()
     end
 

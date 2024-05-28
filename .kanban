@@ -7,16 +7,7 @@
         {
           "id": "16df86de-862e-43e0-bb56-dc16bb7c4d4e",
           "listId": "643431c7-e660-47b1-a44b-4e799b536d19",
-          "title": "SoD buffs issue?",
-          "description": "",
-          "labels": [],
-          "checkboxes": [],
-          "comments": []
-        },
-        {
-          "id": "721cdc03-a153-4d63-92fd-37e63dfacfbc",
-          "listId": "643431c7-e660-47b1-a44b-4e799b536d19",
-          "title": "\"Show on\" for custom indicators",
+          "title": "SoD buffs issue",
           "description": "",
           "labels": [],
           "checkboxes": [],
@@ -26,6 +17,33 @@
           "id": "a32ebae3-812a-45f6-8b49-67b5139960d3",
           "listId": "643431c7-e660-47b1-a44b-4e799b536d19",
           "title": "Spell list for AoE Healing indicator",
+          "description": "",
+          "labels": [],
+          "checkboxes": [],
+          "comments": []
+        },
+        {
+          "id": "066404c8-81f4-4a52-9606-45fd4f7690c5",
+          "listId": "643431c7-e660-47b1-a44b-4e799b536d19",
+          "title": "BigDebuffs shortcut",
+          "description": "",
+          "labels": [],
+          "checkboxes": [],
+          "comments": []
+        },
+        {
+          "id": "1f5eaefd-76a3-48eb-a1ba-12844a302d3e",
+          "listId": "643431c7-e660-47b1-a44b-4e799b536d19",
+          "title": "Feature to set position for each spotlight button",
+          "description": "",
+          "labels": [],
+          "checkboxes": [],
+          "comments": []
+        },
+        {
+          "id": "41a10cb7-15c8-4c33-82f9-19a6d9988b2c",
+          "listId": "643431c7-e660-47b1-a44b-4e799b536d19",
+          "title": "Global Profile? ",
           "description": "",
           "labels": [],
           "checkboxes": [],
@@ -47,19 +65,73 @@
           "comments": []
         },
         {
-          "id": "9c20d26f-132d-4776-bae4-68465189ba2f",
+          "id": "20898e44-20c9-463c-ad57-c206aaf9fe2c",
           "listId": "7915d51e-5603-44aa-aa3a-8dff734ea7c6",
-          "title": "Player always first",
+          "title": "Global scaling of indicators",
           "description": "",
           "labels": [],
           "checkboxes": [],
           "comments": []
         },
         {
-          "id": "20898e44-20c9-463c-ad57-c206aaf9fe2c",
+          "id": "ebbee63f-809d-4ede-b96f-2378a88f1391",
           "listId": "7915d51e-5603-44aa-aa3a-8dff734ea7c6",
-          "title": "Global scaling for indicators",
+          "title": "Animation OnApplied",
           "description": "",
+          "labels": [],
+          "checkboxes": [],
+          "comments": []
+        },
+        {
+          "id": "96f7a5fd-3b3e-434e-bd14-9cb0b483b608",
+          "listId": "7915d51e-5603-44aa-aa3a-8dff734ea7c6",
+          "title": "Add RaidDebuffs to QuickAssist",
+          "description": "",
+          "labels": [],
+          "checkboxes": [],
+          "comments": []
+        },
+        {
+          "id": "dd2e1868-482f-4f16-9755-ab54c171f9b3",
+          "listId": "7915d51e-5603-44aa-aa3a-8dff734ea7c6",
+          "title": "\"Show Raid\" option",
+          "description": "",
+          "labels": [],
+          "checkboxes": [],
+          "comments": []
+        },
+        {
+          "id": "1cac7da6-3787-4e5c-9176-548a8a8199f0",
+          "listId": "7915d51e-5603-44aa-aa3a-8dff734ea7c6",
+          "title": "Add \"existing time\" option to Raid Debuffs",
+          "description": "",
+          "labels": [],
+          "checkboxes": [],
+          "comments": []
+        },
+        {
+          "id": "b6474dcc-f9ea-4d89-bf3e-788e4a4773e1",
+          "listId": "7915d51e-5603-44aa-aa3a-8dff734ea7c6",
+          "title": "Raid group header advanced sort",
+          "description": "player always first\nranged / melee dps",
+          "labels": [],
+          "checkboxes": [],
+          "comments": []
+        },
+        {
+          "id": "73a9c8e5-fd9e-43b8-baf7-582aade21de0",
+          "listId": "7915d51e-5603-44aa-aa3a-8dff734ea7c6",
+          "title": "Make each spotlight button \"positionable\"",
+          "description": "",
+          "labels": [],
+          "checkboxes": [],
+          "comments": []
+        },
+        {
+          "id": "abd28941-e6a1-4784-8465-e922be72f888",
+          "listId": "7915d51e-5603-44aa-aa3a-8dff734ea7c6",
+          "title": "Refactor Layouts",
+          "description": "Main/Spotlight/NPC/Pet can have their own layout",
           "labels": [],
           "checkboxes": [],
           "comments": []
@@ -80,6 +152,33 @@
           "comments": []
         },
         {
+          "id": "a711ba2d-5627-444a-b1a2-c563ce1663f7",
+          "listId": "fc9baa7c-c3e7-49a4-8526-816c794e5ed9",
+          "title": "Add \"Hide\" to layout auto switch",
+          "description": "",
+          "labels": [],
+          "checkboxes": [],
+          "comments": []
+        },
+        {
+          "id": "0fc1a21b-2116-482d-9185-8adb860a38bf",
+          "listId": "fc9baa7c-c3e7-49a4-8526-816c794e5ed9",
+          "title": "Fix vertical overshields",
+          "description": "",
+          "labels": [],
+          "checkboxes": [],
+          "comments": []
+        },
+        {
+          "id": "f0d002c6-9b6c-41fd-8abb-65b9944479ab",
+          "listId": "fc9baa7c-c3e7-49a4-8526-816c794e5ed9",
+          "title": "\"Dot\" indicator",
+          "description": "",
+          "labels": [],
+          "checkboxes": [],
+          "comments": []
+        },
+        {
           "id": "f9342937-2a2d-424a-a5e3-cd9147d2ecbd",
           "listId": "fc9baa7c-c3e7-49a4-8526-816c794e5ed9",
           "title": "Fix Targeted Spells",
@@ -94,6 +193,33 @@
       "id": "7b0c4654-92fe-4b4e-9566-15e8c706d9c9",
       "title": "DONE",
       "cards": [
+        {
+          "id": "c13fce13-d498-4940-b821-f4c6b87459e7",
+          "listId": "7b0c4654-92fe-4b4e-9566-15e8c706d9c9",
+          "title": "Add \"Duration\" for Bar/Rect",
+          "description": "",
+          "labels": [],
+          "checkboxes": [],
+          "comments": []
+        },
+        {
+          "id": "21c940ed-e054-4a05-90e0-0eee83d45004",
+          "listId": "7b0c4654-92fe-4b4e-9566-15e8c706d9c9",
+          "title": "Add \"Frame Level\" for Role Icon",
+          "description": "",
+          "labels": [],
+          "checkboxes": [],
+          "comments": []
+        },
+        {
+          "id": "eb44ccc2-c069-453b-ad4a-22585fd420bb",
+          "listId": "7b0c4654-92fe-4b4e-9566-15e8c706d9c9",
+          "title": "Add alphas",
+          "description": "",
+          "labels": [],
+          "checkboxes": [],
+          "comments": []
+        },
         {
           "id": "15b5c350-b9ad-406f-aa4f-5e9d6b8eae2f",
           "listId": "7b0c4654-92fe-4b4e-9566-15e8c706d9c9",

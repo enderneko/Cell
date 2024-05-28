@@ -1,5 +1,8 @@
+-------------------------------------------------
+-- 2024-05-18 02:08:12 GMT+8
 -- blizzard style cooldown animation
 -- 暴雪样式图标
+-------------------------------------------------
 local COLOR_BORDER_BY_DISPEL_TYPE = true
 local DRAW_EDGE = true
 
@@ -11,8 +14,8 @@ local I = Cell.iFuncs
 local P = Cell.pixelPerfectFuncs
 
 local function BarIcon_SetFont(frame, font1, font2)
-    I:SetFont(frame.stack, frame.textFrame, unpack(font1))
-    I:SetFont(frame.duration, frame.textFrame, unpack(font2))
+    I.SetFont(frame.stack, frame.textFrame, unpack(font1))
+    I.SetFont(frame.duration, frame.textFrame, unpack(font2))
 end
 
 local function BarIcon_SetCooldown(frame, start, duration, debuffType, texture, count, refreshing)
@@ -88,7 +91,7 @@ local function BarIcon_SetCooldown(frame, start, duration, debuffType, texture, 
 
     local r, g, b
     if COLOR_BORDER_BY_DISPEL_TYPE and debuffType then
-        r, g, b = I:GetDebuffTypeColor(debuffType)
+        r, g, b = I.GetDebuffTypeColor(debuffType)
     else
         r, g, b = 0, 0, 0
     end
@@ -103,7 +106,7 @@ local function BarIcon_SetCooldown(frame, start, duration, debuffType, texture, 
     end
 end
 
-function I:CreateAura_BarIcon(name, parent)
+function I.CreateAura_BarIcon(name, parent)
     local frame = CreateFrame("Frame", name, parent, "BackdropTemplate")
     frame:Hide()
     -- frame:SetSize(11, 11)

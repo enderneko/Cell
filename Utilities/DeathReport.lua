@@ -40,8 +40,8 @@ local function UpdateDeathLog(guid, ...)
         deathLogs[guid] = {}
     end
 
-    deathLogs[guid]["time"], deathLogs[guid]["type"], deathLogs[guid]["name"], deathLogs[guid]["ability"], 
-    deathLogs[guid]["school"], deathLogs[guid]["amount"], deathLogs[guid]["overkill"], deathLogs[guid]["resisted"], 
+    deathLogs[guid]["time"], deathLogs[guid]["type"], deathLogs[guid]["name"], deathLogs[guid]["ability"],
+    deathLogs[guid]["school"], deathLogs[guid]["amount"], deathLogs[guid]["overkill"], deathLogs[guid]["resisted"],
     deathLogs[guid]["blocked"], deathLogs[guid]["absorbed"], deathLogs[guid]["critical"], deathLogs[guid]["sourceName"] = ...
 
     deathLogs[guid]["reported"] = false
@@ -75,14 +75,14 @@ local function Report(guid)
 
     elseif deathLogs[guid]["type"] == "INSTAKILL" then
         Send(deathLogs[guid]["name"].." > "..L["instakill"])
-        
+
     elseif deathLogs[guid]["type"] == "ENVIRONMENTAL" then
         Send(deathLogs[guid]["name"].." > "..F:FormatNumber(deathLogs[guid]["amount"]).." ("..deathLogs[guid]["ability"]..")")
 
     else -- SPELL & RANGE & SWING
         -- local damageDetails = {}
         local damageDetails = ""
-        
+
         if deathLogs[guid]["overkill"] > 0 then
             -- tinsert(damageDetails, string.format(overkillFormat, F:FormatNumber(deathLogs[guid]["overkill"])))
             damageDetails = " ("..string.format(overkillFormat, F:FormatNumber(deathLogs[guid]["overkill"]))..") "
@@ -104,7 +104,7 @@ local function Report(guid)
 
         local sourceName = (deathLogs[guid]["sourceName"] and deathLogs[guid]["name"]~=deathLogs[guid]["sourceName"]) and (" ["..deathLogs[guid]["sourceName"].."]") or ""
         local ability
-    
+
         if deathLogs[guid]["type"] == "SPELL" then -- including RANGE
             -- tinsert(damageDetails, strlower(CombatLog_String_SchoolString(deathLogs[guid]["school"])))
             ability = deathLogs[guid]["ability"]
@@ -129,7 +129,7 @@ local frame = CreateFrame("Frame")
 function frame:PLAYER_ENTERING_WORLD()
     local isIn, iType = IsInInstance()
     instanceType = iType
-    
+
     if instanceType == "pvp" or instanceType == "arena" then
         frame:UnregisterEvent("ENCOUNTER_START")
         frame:UnregisterEvent("ENCOUNTER_END")
@@ -209,7 +209,7 @@ function frame:COMBAT_LOG_EVENT_UNFILTERED(...)
             amount, overkill, school, resisted, blocked, absorbed, critical = select(12, ...)
             UpdateDeathLog(destGUID, timestamp, "SWING", destName, nil, school, amount, overkill or -1, resisted, blocked, absorbed, critical, sourceName)
         end
-        
+
         if event == "SPELL_DAMAGE" or event == "SPELL_PERIODIC_DAMAGE" or event == "RANGE_DAMAGE" then
             if not blacklist[arg12] then
                 amount, overkill, school, resisted, blocked, absorbed, critical = select(15, ...)

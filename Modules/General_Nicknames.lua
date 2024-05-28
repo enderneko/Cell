@@ -121,13 +121,13 @@ local function CreateCustomNicknamesFrame()
         newItem:Hide()
         LoadList()
     end)
-    
+
     newItem.cancel = Cell:CreateButton(newItem, L["Cancel"], "red", {120, 20})
     newItem.cancel:SetPoint("TOPRIGHT", newItem.nickname, "BOTTOMRIGHT", 0, -5)
     newItem.cancel:SetScript("OnClick", function()
         newItem:Hide()
     end)
-    
+
     -- list scroll
     Cell:CreateScrollFrame(list)
     list.scrollFrame:SetScrollStep(19)

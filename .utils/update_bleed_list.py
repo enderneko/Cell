@@ -40,7 +40,7 @@ with open(lua_file, 'r+') as file:
             break
         if line.strip() == 'bleedList = {':
             break
-    
+
     # delete old
     file.seek(file.tell())
     file.truncate()

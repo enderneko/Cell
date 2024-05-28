@@ -423,7 +423,7 @@ Cell:RegisterCallback("GroupTypeChanged", "MainFrame_GroupTypeChanged", MainFram
 -------------------------------------------------
 local function UpdatePosition()
     local anchor = Cell.vars.currentLayoutTable["main"]["anchor"]
-    
+
     cellMainFrame:ClearAllPoints()
     P:ClearPoints(raid)
 
@@ -432,25 +432,25 @@ local function UpdatePosition()
         P:Size(options, 20, 10)
         P:Size(raid, 20, 10)
 
-        
+
         if anchor == "BOTTOMLEFT" then
             cellMainFrame:SetPoint("BOTTOMLEFT", anchorFrame, "TOPLEFT", 0, 4)
             P:Point(raid, "BOTTOMLEFT", options, "BOTTOMRIGHT", 1, 0)
             tooltipPoint, tooltipRelativePoint, tooltipX, tooltipY = "TOPLEFT", "BOTTOMLEFT", 0, -3
             -- hoverTop, hoverBottom, hoverLeft, hoverRight = 5, -20, -20, 20
-            
+
         elseif anchor == "BOTTOMRIGHT" then
             cellMainFrame:SetPoint("BOTTOMRIGHT", anchorFrame, "TOPRIGHT", 0, 4)
             P:Point(raid, "BOTTOMRIGHT", options, "BOTTOMLEFT", -1, 0)
             tooltipPoint, tooltipRelativePoint, tooltipX, tooltipY = "TOPRIGHT", "BOTTOMRIGHT", 0, -3
             -- hoverTop, hoverBottom, hoverLeft, hoverRight = 5, -20, -20, 20
-            
+
         elseif anchor == "TOPLEFT" then
             cellMainFrame:SetPoint("TOPLEFT", anchorFrame, "BOTTOMLEFT", 0, -4)
             P:Point(raid, "TOPLEFT", options, "TOPRIGHT", 1, 0)
             tooltipPoint, tooltipRelativePoint, tooltipX, tooltipY = "BOTTOMLEFT", "TOPLEFT", 0, 3
             -- hoverTop, hoverBottom, hoverLeft, hoverRight = 20, -5, -20, 20
-            
+
         elseif anchor == "TOPRIGHT" then
             cellMainFrame:SetPoint("TOPRIGHT", anchorFrame, "BOTTOMRIGHT", 0, -4)
             P:Point(raid, "TOPRIGHT", options, "TOPLEFT", -1, 0)
@@ -467,19 +467,19 @@ local function UpdatePosition()
             P:Point(raid, "BOTTOMLEFT", options, "TOPLEFT", 0, 1)
             tooltipPoint, tooltipRelativePoint, tooltipX, tooltipY = "BOTTOMRIGHT", "BOTTOMLEFT", -3, 0
             -- hoverTop, hoverBottom, hoverLeft, hoverRight = 20, -20, -20, 5
-            
+
         elseif anchor == "BOTTOMRIGHT" then
             cellMainFrame:SetPoint("BOTTOMRIGHT", anchorFrame, "BOTTOMLEFT", -4, 0)
             P:Point(raid, "BOTTOMRIGHT", options, "TOPRIGHT", 0, 1)
             tooltipPoint, tooltipRelativePoint, tooltipX, tooltipY = "BOTTOMLEFT", "BOTTOMRIGHT", 3, 0
             -- hoverTop, hoverBottom, hoverLeft, hoverRight = 20, -20, -5, 20
-            
+
         elseif anchor == "TOPLEFT" then
             cellMainFrame:SetPoint("TOPLEFT", anchorFrame, "TOPRIGHT", 4, 0)
             P:Point(raid, "TOPLEFT", options, "BOTTOMLEFT", 0, -1)
             tooltipPoint, tooltipRelativePoint, tooltipX, tooltipY = "TOPRIGHT", "TOPLEFT", -3, 0
             -- hoverTop, hoverBottom, hoverLeft, hoverRight = 20, -20, -20, 5
-            
+
         elseif anchor == "TOPRIGHT" then
             cellMainFrame:SetPoint("TOPRIGHT", anchorFrame, "TOPLEFT", -4, 0)
             P:Point(raid, "TOPRIGHT", options, "BOTTOMRIGHT", 0, -1)
@@ -543,12 +543,12 @@ local function MainFrame_UpdateLayout(layout, which)
 
     if not init then
         init = true
-        --! NOTE: a reload during pet battle prevents HEADER from CREATING CHILDs (unit buttons), this hide delay is a MUST  
+        --! NOTE: a reload during pet battle prevents HEADER from CREATING CHILDs (unit buttons), this hide delay is a MUST
         RegisterStateDriver(cellMainFrame, "visibility", "[petbattle] hide; show")
     end
-    
+
     layout = Cell.vars.currentLayoutTable
-    
+
     if not which or which == "main-size" then
         P:Size(cellMainFrame, unpack(layout["main"]["size"]))
     end

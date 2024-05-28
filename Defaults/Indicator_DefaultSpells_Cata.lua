@@ -9,7 +9,7 @@ local F = Cell.funcs
 -- supress dispel highlight
 local dispelBlacklist = {}
 
-function I:GetDefaultDispelBlacklist()
+function I.GetDefaultDispelBlacklist()
     return dispelBlacklist
 end
 
@@ -23,7 +23,7 @@ local debuffBlacklist = {
     89798, -- 大冒险家奖励
 }
 
-function I:GetDefaultDebuffBlacklist()
+function I.GetDefaultDebuffBlacklist()
     -- local temp = {}
     -- for i, id in pairs(debuffBlacklist) do
     --     temp[i] = GetSpellInfo(id)
@@ -39,7 +39,7 @@ local bigDebuffs = {
     46392, -- 专注打击
 }
 
-function I:GetDefaultBigDebuffs()
+function I.GetDefaultBigDebuffs()
     return bigDebuffs
 end
 
@@ -77,7 +77,7 @@ do
     aoeHealings = temp
 end
 
-function I:IsAoEHealing(name)
+function I.IsAoEHealing(name)
     if not name then return false end
     return aoeHealings[name]
 end
@@ -94,7 +94,7 @@ do
     summonDuration = temp
 end
 
-function I:GetSummonDuration(spellName)
+function I.GetSummonDuration(spellName)
     return summonDuration[spellName]
 end
 
@@ -129,14 +129,14 @@ local externals = { -- true: track by name, false: track by id
     },
 }
 
-function I:GetExternals()
+function I.GetExternals()
     return externals
 end
 
 local builtInExternals = {}
 local customExternals = {}
 
-function I:UpdateExternals(t)
+function I.UpdateExternals(t)
        -- user disabled
     wipe(builtInExternals)
     for class, spells in pairs(externals) do
@@ -164,7 +164,7 @@ function I:UpdateExternals(t)
     end
 end
 
-function I:IsExternalCooldown(name, id, source, target)
+function I.IsExternalCooldown(name, id, source, target)
     return builtInExternals[name] or builtInExternals[id] or customExternals[name]
 end
 
@@ -224,14 +224,14 @@ local defensives = { -- true: track by name, false: track by id
     },
 }
 
-function I:GetDefensives()
+function I.GetDefensives()
     return defensives
 end
 
 local builtInDefensives = {}
 local customDefensives = {}
 
-function I:UpdateDefensives(t)
+function I.UpdateDefensives(t)
     -- user disabled
     wipe(builtInDefensives)
     for class, spells in pairs(defensives) do
@@ -265,7 +265,7 @@ local defensiveBlacklist = {
     [67380] = true,
 }
 
-function I:IsDefensiveCooldown(name, id)
+function I.IsDefensiveCooldown(name, id)
     if defensiveBlacklist[id] then return end
     return builtInDefensives[name] or builtInDefensives[id] or customDefensives[name]
 end
@@ -273,46 +273,59 @@ end
 -------------------------------------------------
 -- dispels
 -------------------------------------------------
-local dispellable = {
+local dispellable = {}
+
+function I.CanDispel(dispelType)
+    if not dispelType then return end
+    return dispellable[dispelType]
+end
+
+local dispels = {
     -- DRUID ----------------
-    [11] = {["Curse"] = true, ["Poison"] = true},
-        
+    [11] = {["Curse"] = true, ["Magic"] = "3,15", ["Poison"] = true},
+
     -- MAGE -----------------
     [8] = {["Curse"] = true},
-        
+
     -- PALADIN --------------
-    [2] = {["Disease"] = true, ["Magic"] = true, ["Poison"] = true, ["Bleed"] = true},
-    
+    [2] = {["Disease"] = true, ["Magic"] = "1,7", ["Poison"] = true, ["Bleed"] = true},
+
     -- PRIEST ---------------
-    -- TODO: 全心全意天赋可以解自己的毒
+    -- TODO: 身心合一天赋可以解自己的毒
     [5] = {["Disease"] = true, ["Magic"] = true},
 
     -- SHAMAN ---------------
-    [7] = {["Disease"] = true, ["Poison"] = true},
+    [7] = {["Curse"] = true, ["Magic"] = "3,14"},
 }
 
-do
-    -- NOTE: 净化灵魂天赋可以解除诅咒
-    if UnitClassBase("player") == "SHAMAN" then
-        local eventFrame = CreateFrame("Frame")
-        eventFrame:RegisterEvent("PLAYER_TALENT_UPDATE")
-        eventFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
-        eventFrame:SetScript("OnEvent", function(self, event)
-            if event == "PLAYER_ENTERING_WORLD" then
-                eventFrame:UnregisterEvent("PLAYER_ENTERING_WORLD")
+local eventFrame = CreateFrame("Frame")
+eventFrame:RegisterEvent("PLAYER_TALENT_UPDATE")
+eventFrame:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
+eventFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
+
+local function UpdateDispellable()
+    wipe(dispellable)
+    if dispels[Cell.vars.playerClassID] then
+        for dispelType, value in pairs(dispels[Cell.vars.playerClassID]) do
+            if type(value) == "boolean" then
+                dispellable[dispelType] = value
+            elseif select(5, GetTalentInfo(strsplit(",", value))) == 1 then
+                dispellable[dispelType] = true
             end
-            dispellable[7]["Curse"] = IsSpellKnown(51886)
-        end)
+        end
     end
+    -- texplore(dispellable)
 end
 
-function I:CanDispel(dispelType)
-    if not dispelType then return end
-    
-    if dispellable[Cell.vars.playerClassID] then
-        return dispellable[Cell.vars.playerClassID][dispelType]
+local timer
+eventFrame:SetScript("OnEvent", function(self, event)
+    if event == "PLAYER_ENTERING_WORLD" then
+        eventFrame:UnregisterEvent("PLAYER_ENTERING_WORLD")
     end
-end
+
+    if timer then timer:Cancel() end
+    timer = C_Timer.NewTimer(1, UpdateDispellable)
+end)
 
 -------------------------------------------------
 -- drinking
@@ -330,12 +343,12 @@ do
     drinks = temp
 end
 
-function I:IsDrinking(name)
+function I.IsDrinking(name)
     return drinks[name]
 end
 
 -------------------------------------------------
--- healer 
+-- healer
 -------------------------------------------------
 local spells =  {
     -- druid
@@ -363,7 +376,7 @@ function F:FirstRun()
         local icon = select(3, GetSpellInfo(id))
         icons = icons .. "|T"..icon..":0|t"
         if i % 11 == 0 then
-            icons = icons .. "\n"    
+            icons = icons .. "\n"
         end
     end
 
@@ -376,7 +389,7 @@ function F:FirstRun()
         else
             indicatorName = "indicator"..(tonumber(strmatch(currentLayoutTable["indicators"][last]["indicatorName"], "%d+"))+1)
         end
-        
+
         tinsert(currentLayoutTable["indicators"], {
             ["name"] = "Healers",
             ["indicatorName"] = indicatorName,
@@ -389,8 +402,8 @@ function F:FirstRun()
             ["numPerLine"] = 5,
             ["orientation"] = "right-to-left",
             ["font"] = {
-                {"Cell ".._G.DEFAULT, 11, "Outline", "TOPRIGHT", 2, 1, {1, 1, 1}},
-                {"Cell ".._G.DEFAULT, 11, "Outline", "BOTTOMRIGHT", 2, -1, {1, 1, 1}},
+                {"Cell ".._G.DEFAULT, 11, "Outline", false, "TOPRIGHT", 2, 1, {1, 1, 1}},
+                {"Cell ".._G.DEFAULT, 11, "Outline", false, "BOTTOMRIGHT", 2, -1, {1, 1, 1}},
             },
             ["showStack"] = true,
             ["showDuration"] = false,
@@ -414,14 +427,14 @@ end
 -- targetedSpells
 -------------------------------------------------
 local targetedSpells = {
-    
+
 }
 
-function I:GetDefaultTargetedSpellsList()
+function I.GetDefaultTargetedSpellsList()
     return targetedSpells
 end
 
-function I:GetDefaultTargetedSpellsGlow()
+function I.GetDefaultTargetedSpellsGlow()
     return {"Pixel", {0.95,0.95,0.32,1}, 9, 0.25, 8, 2}
 end
 
@@ -429,15 +442,15 @@ end
 -- Consumables: Healing Potion & Healthstone
 -------------------------------------------------
 local consumables = {
-    
+
 }
 
 
-function I:GetDefaultConsumables()
+function I.GetDefaultConsumables()
     return consumables
 end
 
-function I:ConvertConsumables(db)
+function I.ConvertConsumables(db)
     local temp = {}
     for _, t in pairs(db) do
         temp[t[1]] = t[2]
@@ -480,11 +493,11 @@ do
     missingBuffs = temp
 end
 
-function I:GetDefaultMissingBuffs()
+function I.GetDefaultMissingBuffs()
     return missingBuffs
 end
 
-function I:GetMissingBuffsString()
+function I.GetMissingBuffsString()
     local s = ""
     for _, t in pairs(missingBuffs) do
         s = s.."|T"..t["icon"]..":14:14:0:0:14:14:1:13:1:13|t".." "
@@ -492,7 +505,7 @@ function I:GetMissingBuffsString()
     return s
 end
 
-function I:GetMissingBuffsFilters()
+function I.GetMissingBuffsFilters()
     local indicies = {
         "PWF",
         "SP",

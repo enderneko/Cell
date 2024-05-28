@@ -1,7 +1,9 @@
+-------------------------------------------------
+-- 2023-07-15 08:30:57 GMT+8
 -- PARTY ONLY, RETAIL ONLY
 -- sort units by SPEC_PRIORITY ↓↓↓
 -- slash command (not in combat): /csort
--- new party members won't be shown, unless a re-sort is called 
+-- new party members won't be shown, unless a re-sort is called
 -- reload to restore
 
 -- 仅小队，仅正式服
@@ -9,6 +11,7 @@
 -- 斜杠命令（非战斗中）：/csort, /px
 -- 必须重新执行排序，否则新成员不会显示
 -- 重载界面以恢复
+-------------------------------------------------
 
 local SPEC_PRIORITY = {
     -- Tank
@@ -64,7 +67,7 @@ local SPEC_PRIORITY = {
 -------------------------------------------------
 local function GetPriority(specId)
     if not specId then return 999 end
-    
+
     for i, s in pairs(SPEC_PRIORITY) do
         if specId == s then
             return i
@@ -91,7 +94,7 @@ function SlashCmdList.CELLSORT()
     for unit in F:IterateGroupMembers() do
         local name = UnitName(unit)
         tinsert(nameList, name)
-    
+
         local guid = UnitGUID(unit)
         local info = LGI:GetCachedInfo(guid)
         if info then

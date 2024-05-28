@@ -27,7 +27,7 @@ function F:Revise()
         end)
         return
     end
-    
+
     if CellCharacterDB and CellCharacterDB["revise"] and charaDbRevision < Cell.MIN_VERSION then -- update from an unsupported version
         local f = CreateFrame("Frame")
         f:RegisterEvent("PLAYER_ENTERING_WORLD")
@@ -123,7 +123,7 @@ function F:Revise()
         CellDB["disableTooltips"] = nil
         CellDB["showSolo"] = nil
     end
-    
+
     -- r15-release
     if not(CellDB["revise"]) or dbRevision < 15 then
         for _, layout in pairs(CellDB["layouts"]) do
@@ -219,7 +219,7 @@ function F:Revise()
             end
         end
         -- reset CellDB["debuffBlacklist"]
-        CellDB["debuffBlacklist"] = I:GetDefaultDebuffBlacklist()
+        CellDB["debuffBlacklist"] = I.GetDefaultDebuffBlacklist()
         -- update click-castings
         -- self:SetBindingClick(true, "MOUSEWHEELUP", self, "Button6")
         -- self:SetBindingClick(true, "SHIFT-MOUSEWHEELUP", self, "Button7")
@@ -478,7 +478,7 @@ function F:Revise()
             end
         end
     end
-    
+
     -- r38-release
     if CellDB["revise"] and dbRevision < 38 then
         if CellDB["raidTools"]["pullTimer"][1] == "ERT" then
@@ -770,7 +770,7 @@ function F:Revise()
             Cell.vars.debuffBlacklist = F:ConvertTable(CellDB["debuffBlacklist"])
         end
     end
-    
+
     -- r64-release
     if CellDB["revise"] and dbRevision < 64 then
         for _, layout in pairs(CellDB["layouts"]) do
@@ -829,7 +829,7 @@ function F:Revise()
             CellDB["appearance"]["iconAnimation"] = "duration"
         end
     end
-    
+
     -- r69-release
     if CellDB["revise"] and dbRevision < 69 then
         for _, layout in pairs(CellDB["layouts"]) do
@@ -858,7 +858,7 @@ function F:Revise()
         if type(CellDB["appearance"]["barAlpha"]) ~= "number" then
             CellDB["appearance"]["barAlpha"] = 1
         end
-        
+
         if type(CellDB["appearance"]["lossAlpha"]) ~= "number" then
             CellDB["appearance"]["lossAlpha"] = 1
         end
@@ -866,7 +866,7 @@ function F:Revise()
         if type(CellDB["appearance"]["lossColor"]) ~= "table" then
             CellDB["appearance"]["lossColor"] = CellDB["appearance"]["bgColor"]
             CellDB["appearance"]["bgColor"] = nil
-        end 
+        end
 
         if type(CellDB["appearance"]["healPrediction"]) ~= "boolean" then
             CellDB["appearance"]["healPrediction"] = true
@@ -898,7 +898,7 @@ function F:Revise()
                     ["DECLINED"] = {1, 0.19, 0.19},
                 }
             end
-            
+
             if not layout["powerFilters"] then
                 layout["powerFilters"] = {
                     ["DEATHKNIGHT"] = {["TANK"] = true, ["DAMAGER"] = true},
@@ -941,7 +941,7 @@ function F:Revise()
             CellDB["appearance"]["useGameFont"] = true
         end
     end
-    
+
     -- r79-release
     if CellDB["revise"] and dbRevision < 79 then
         -- update name text width
@@ -968,7 +968,7 @@ function F:Revise()
             end
         end
     end
-    
+
     -- r81-release
     if CellDB["revise"] and dbRevision < 81 then
         -- update marks
@@ -988,7 +988,7 @@ function F:Revise()
             CellDB["raidTools"]["showBuffTracker"] = nil
             CellDB["raidTools"]["buffTrackerPosition"] = nil
         end
-        
+
         -- update readyAndPull
         if type(CellDB["raidTools"]["readyAndPull"]) ~= "table" then
             CellDB["raidTools"]["readyAndPull"] = {CellDB["raidTools"]["showButtons"], CellDB["raidTools"]["pullTimer"], CellDB["raidTools"]["buttonsPosition"]}
@@ -998,7 +998,7 @@ function F:Revise()
             CellDB["raidTools"]["buttonsPosition"] = nil
         end
     end
-    
+
     -- r82-release
     if CellDB["revise"] and dbRevision < 82 then
         for _, layout in pairs(CellDB["layouts"]) do
@@ -1012,7 +1012,7 @@ function F:Revise()
             end
         end
     end
-    
+
     -- r87-release
     if CellDB["revise"] and dbRevision < 87 then
         -- rename raid tools
@@ -1195,7 +1195,7 @@ function F:Revise()
             [21] = "raidDebuffs",
             [22] = "targetedSpells"
         }
-        
+
         for _, layout in pairs(CellDB["layouts"]) do
             for i, t in pairs(layout["indicators"]) do
                 if i <= Cell.defaults.builtIns then -- built-ins
@@ -1285,7 +1285,7 @@ function F:Revise()
     if CellDB["revise"] and dbRevision < 99 then
         -- remove old nickname
         CellDB["general"]["nickname"] = nil
-        
+
         for _, layout in pairs(CellDB["layouts"]) do
             if layout["indicators"][1] and layout["indicators"][1]["indicatorName"] == "nameText" then
                 -- add Frame Level to Name Text indicator
@@ -1418,7 +1418,7 @@ function F:Revise()
                     ["color"] = {1, 1, 0, 1},
                 })
             end
-            
+
             -- add Consumables (r114)
             if not layout["indicators"][consumablesIndex] or layout["indicators"][consumablesIndex]["indicatorName"] ~= "consumables" then
                 tinsert(layout["indicators"], consumablesIndex, {
@@ -1429,17 +1429,17 @@ function F:Revise()
                     ["speed"] = 1,
                 })
             end
-            
+
             -- add speed to Consumables (r115)
             if not layout["indicators"][consumablesIndex]["speed"] then
                 layout["indicators"][consumablesIndex]["speed"] = 1
             end
-            
+
             -- add highlightType to Dispels (r115)
             if not layout["indicators"][dispelsIndex]["highlightType"] then
                 layout["indicators"][dispelsIndex]["highlightType"] = "gradient"
             end
-            
+
             -- add showDispelTypeIcons to Dispels (r115)
             if type(layout["indicators"][dispelsIndex]["showDispelTypeIcons"]) ~= "boolean" then
                 layout["indicators"][dispelsIndex]["showDispelTypeIcons"] = true
@@ -1464,7 +1464,7 @@ function F:Revise()
             CellDB["snippets"][0]["code"] = "-- snippets can be found at https://github.com/enderneko/Cell/tree/master/.snippets\n"..CellDB["snippets"][0]["code"]
         end
     end
-   
+
     -- r138-release
     if CellDB["revise"] and dbRevision < 138 then
         if Cell.isRetail then
@@ -1695,7 +1695,7 @@ function F:Revise()
                     {"C3", {1, 1, 0}},
                 })
             end
-            Cell.vars.consumables = I:ConvertConsumables(CellDB["consumables"])
+            Cell.vars.consumables = I.ConvertConsumables(CellDB["consumables"])
 
             -- 英灵殿
             if not F:TContains(CellDB["targetedSpellsList"], 193659) then -- 邪炽冲刺
@@ -1860,7 +1860,7 @@ function F:Revise()
             CellDB["appearance"]["strata"] = "MEDIUM"
         end
     end
-    
+
     -- r164-release
     if CellDB["revise"] and dbRevision < 164 then
         for class, t in pairs(CellDB["clickCastings"]) do
@@ -1888,7 +1888,7 @@ function F:Revise()
     if CellDB["revise"] and dbRevision < 169 then
         if Cell.isRetail then
             local privateAuras = Cell.defaults.indicatorIndices["privateAuras"]
-    
+
             for _, layout in pairs(CellDB["layouts"]) do
                 if layout["indicators"][privateAuras]["indicatorName"] ~= "privateAuras" then
                     tinsert(layout["indicators"], privateAuras, {
@@ -1950,7 +1950,7 @@ function F:Revise()
             end
         end
     end
-    
+
     -- r174-release
     if CellDB["revise"] and dbRevision < 174 then
         for _, layout in pairs(CellDB["layouts"]) do
@@ -2064,7 +2064,7 @@ function F:Revise()
                     ["rows"] = layout["rows"],
                     ["groupSpacing"] = layout["groupSpacing"],
                 }
-                
+
                 layout["pet"] = {
                     ["partyEnabled"] = layout["pet"][1],
                     ["raidEnabled"] = layout["pet"][2],
@@ -2138,23 +2138,23 @@ function F:Revise()
                 0, -- [5] x
                 0, -- [6] y
             }
-    
+
             for _, t in pairs(CellDB["spellRequest"]["spells"]) do
                 t["type"] = "icon"
                 t["icon"] = select(3, GetSpellInfo(t["spellId"]))
                 t["iconColor"] = t["glowOptions"][2][1]
             end
-            
+
             CellDB["dispelRequest"]["textOptions"] = {
                 "A",
-                {1, 0, 0, 1}, -- [1] color 
+                {1, 0, 0, 1}, -- [1] color
                 32, -- [2] size
                 "TOPLEFT", -- [3] anchor
                 "TOPLEFT", -- [4] anchorTo
                 -1, -- [5] x
                 5, -- [6] y
             }
-            
+
             CellDB["dispelRequest"]["type"] = "text"
         end
 
@@ -2183,7 +2183,7 @@ function F:Revise()
             end
         end
     end
-    
+
     -- r188-release
     if CellDB["revise"] and dbRevision < 188 then
         if Cell.isRetail and type(CellDB["quickCast"]) == "table" then
@@ -2236,7 +2236,7 @@ function F:Revise()
         end
 
         local filters
-        
+
         if Cell.isRetail then
             filters = {
                 ["PWF"] = true,
@@ -2348,7 +2348,7 @@ function F:Revise()
             end
         end
     end
-   
+
     -- r202-release
     -- if CellDB["revise"] and dbRevision < 202 then
     --     -- custom indicator
@@ -2507,7 +2507,7 @@ function F:Revise()
             CellDB["debuffTypeColor"]["Bleed"] = {r=1, g=0.2, b=0.6}
         end
     end
-   
+
     -- r213-release
     if CellDB["revise"] and dbRevision < 213 then
         if Cell.isRetail then
@@ -2547,7 +2547,7 @@ function F:Revise()
                         t["color"] = {"class_color", {0.25, 1, 0}}
                     end
                 end
-                
+
                 -- rename nameColor to color
                 if t["indicatorName"] == "nameText" then
                     if type(t["color"]) ~= "table" then
@@ -2573,12 +2573,12 @@ function F:Revise()
             for _, i in pairs(layout["indicators"]) do
                 if i.indicatorName == "externalCooldowns" or i.indicatorName == "defensiveCooldowns" or i.indicatorName == "allCooldowns" or i.indicatorName == "debuffs"
                     or i.type == "icon" or i.type == "icons" then
-                    
+
                     -- add showAnimation option
                     if type(i.showAnimation) ~= "boolean" then
                         i.showAnimation = true
                     end
-                    
+
                     -- update showDuration
                     if i.showDuration == 0 then
                         i.showDuration = true
@@ -2616,7 +2616,7 @@ function F:Revise()
             end
         end
     end
-    
+
     -- r219-release
     if CellDB["revise"] and dbRevision < 219 then
         if not CellDB["appearance"]["gradientColors"] then
@@ -2711,7 +2711,7 @@ function F:Revise()
                     end
                 end
             end
-            
+
             -- add power text indicator
             local index = Cell.defaults.indicatorIndices.powerText
             if layout["indicators"][index]["indicatorName"] ~= "powerText" then
@@ -2747,11 +2747,165 @@ function F:Revise()
 
     -- r226-release
     if CellDB["revise"] and dbRevision < 226 then
+        local function AddAlpha(t)
+            local temp = {}
+            temp[1] = t[1]
+            temp[2] = t[5]
+            temp[3] = {t[2], t[3], t[4], 1}
+            return temp
+        end
+
+        local function AddAlpha2(t)
+            local temp = {}
+            temp[1] = t[4]
+            temp[2] = {t[1], t[2], t[3], 1}
+            return temp
+        end
+
+        local function AddAlpha3(t)
+            local temp = {}
+            temp[1] = t[1]
+            temp[2] = t[6]
+            temp[3] = {t[2], t[3], t[4], t[5]}
+            return temp
+        end
+
         for _, layout in pairs(CellDB["layouts"]) do
             for _, i in pairs(layout["indicators"]) do
                 if i.indicatorName == "raidDebuffs" then
                     i.showDuration = true
-                    break
+                end
+
+                -- separate "Shadow" from "Outline"
+                if type(i.font) == "table" then
+                    if type(i.font[1]) == "table" then
+                        if type(i.font[1][4]) ~= "boolean" then
+                            if string.find(i.font[1][3], "^Shadow") then
+                                i.font[1][3] = "None"
+                                tinsert(i.font[1], 4, true)
+                            else
+                                tinsert(i.font[1], 4, false)
+                            end
+                            if string.find(i.font[2][3], "^Shadow") then
+                                i.font[2][3] = "None"
+                                tinsert(i.font[2], 4, true)
+                            else
+                                tinsert(i.font[2], 4, false)
+                            end
+                        end
+                    else
+                        if type(i.font[4]) ~= "boolean" then
+                            if string.find(i.font[3], "^Shadow") then
+                                i.font[3] = "None"
+                                tinsert(i.font, 4, true)
+                            else
+                                tinsert(i.font, 4, false)
+                            end
+                        end
+                    end
+                end
+
+                -- add alpha to "colors"
+                if i.colors then
+                    if i.type == "text" then
+                        if #i.colors[1] == 3 then
+                            i.colors[1][4] = 1
+                            i.colors[2] = AddAlpha(i.colors[2])
+                            i.colors[3] = AddAlpha(i.colors[3])
+                        end
+                    elseif i.type == "rect" then
+                        if #i.colors[1] == 3 then
+                            i.colors[1][4] = 1
+                            i.colors[2] = AddAlpha(i.colors[2])
+                            i.colors[3] = AddAlpha(i.colors[3])
+                            i.colors[4] = {0, 0, 0, 1}
+                        end
+                    elseif i.type == "bar" then
+                        if #i.colors[1] == 3 then
+                            i.colors[1][4] = 1
+                            i.colors[2] = AddAlpha(i.colors[2])
+                            i.colors[3] = AddAlpha(i.colors[3])
+                            i.colors[5] = i.colors[4]
+                            i.colors[4] = {0, 0, 0, 1}
+                        end
+                    elseif i.type == "color" then
+                        if #i.colors[4] == 3 then
+                            i.colors[4][4] = 1
+                            i.colors[5] = AddAlpha2(i.colors[5])
+                            i.colors[6] = AddAlpha2(i.colors[6])
+                        end
+                    elseif i.type == "overlay" then
+                        if #i.colors[2] == 6 then
+                            i.colors[2] = AddAlpha3(i.colors[2])
+                            i.colors[3] = AddAlpha3(i.colors[3])
+                        end
+                    end
+                end
+
+                -- add frameLevel
+                if i.indicatorName == "roleIcon" then
+                    if not i.frameLevel then
+                        i.frameLevel = 1
+                    end
+                end
+            end
+        end
+
+        -- disable snippets
+        F:DisableSnippets()
+    end
+
+    -- r227-release
+    if CellDB["revise"] and dbRevision < 227 then
+        if Cell.isRetail then
+            -- QuickAssist: separate "Shadow" from "Outline"
+            local function FixShadow(t)
+                if type(t[4]) ~= "boolean" then
+                    if string.find(t[3], "^Shadow") then
+                        t[3] = "None"
+                        tinsert(t, 4, true)
+                    else
+                        tinsert(t, 4, false)
+                    end
+                end
+            end
+
+            for _, t in pairs(CellDB["quickAssist"]) do
+                FixShadow(t.style.name.font)
+                FixShadow(t.spells.mine.icon.font[1])
+                FixShadow(t.spells.mine.icon.font[2])
+                FixShadow(t.spells.offensives.icon.font[1])
+                FixShadow(t.spells.offensives.icon.font[2])
+            end
+        end
+    end
+
+    -- r228-release
+    if CellDB["revise"] and dbRevision < 228 then
+        if type(CellDB["appearance"]["overshieldReverseFill"]) ~= "boolean" then
+            CellDB["appearance"]["overshieldReverseFill"] = CellDB["appearance"]["overshieldReverseFilling"] or false
+            CellDB["appearance"]["overshieldReverseFilling"] = nil
+        end
+
+        -- add duration font for Bar/Rect
+        for _, layout in pairs(CellDB["layouts"]) do
+            for _, i in pairs(layout["indicators"]) do
+                if i.type == "bar" or i.type == "rect" then
+                    if #i.font ~= 2 then
+                        i.showDuration = false
+                        if i.showStack then
+                            local stackFont = i.font
+                            i.font = {
+                                stackFont,
+                                {"Cell ".._G.DEFAULT, 11, "Outline", false, "RIGHT", -1, 0, {1, 1, 1}},
+                            }
+                        else
+                            i.font = {
+                                {"Cell ".._G.DEFAULT, 11, "Outline", false, "LEFT", 1, 0, {1, 1, 1}},
+                                {"Cell ".._G.DEFAULT, 11, "Outline", false, "RIGHT", -1, 0, {1, 1, 1}},
+                            }
+                        end
+                    end
                 end
             end
         end
@@ -2764,7 +2918,7 @@ function F:Revise()
         for layoutName, layout in pairs(CellDB["layouts"]) do
             local toValidate = F:Copy(Cell.defaults.indicatorIndices)
             local temp = {}
-            
+
             -- built-ins
             for i, t in ipairs(layout["indicators"]) do
                 local name = t["indicatorName"]
@@ -2794,7 +2948,7 @@ function F:Revise()
                     toValidate[name] = nil
                 end
             end
-            
+
             -- customs
             local index = 1
             for i, t in ipairs(layout["indicators"]) do

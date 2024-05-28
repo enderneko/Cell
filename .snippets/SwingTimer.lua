@@ -1,3 +1,8 @@
+-------------------------------------------------
+-- 2023-12-12 10:26:02 GMT+8
+-- add a swingTimer bar for each unitbutton
+-- 为单位按钮添加一个被普攻的计时条
+-------------------------------------------------
 local SOURCE = "target"
 local ONLY_SHOW_SOURCE = false
 
@@ -23,7 +28,7 @@ local function Display(b, sourceGUID)
         b.swingTimer:Display(SOURCE)
         timers[sourceGUID] = b.swingTimer
         b.swingTimer.lock = true
-        
+
     -- if SOURCE not exists then check all nameplates
     elseif not (ONLY_SHOW_SOURCE or b.swingTimer.lock) then
         -- no UnitTokenFromGUID in classic
@@ -41,7 +46,7 @@ local function Display(b, sourceGUID)
 end
 
 F:IterateAllUnitButtons(function(b)
-    local swingTimer = I:CreateAura_Bar(b:GetName().."SwingTimer", b.widgets.overlayFrame)
+    local swingTimer = I.CreateAura_Bar(b:GetName().."SwingTimer", b.widgets.overlayFrame)
     b.swingTimer = swingTimer
     swingTimer:Hide()
     swingTimer:SetPoint(POINT1, P:Scale(POINT1_X), P:Scale(POINT1_Y))
@@ -53,7 +58,7 @@ F:IterateAllUnitButtons(function(b)
         local speed = UnitAttackSpeed(sourceUnit)
         swingTimer:SetMinMaxValues(0, speed)
         swingTimer:SetValue(speed)
-        
+
         local start = GetTime()
         swingTimer:SetScript("OnUpdate", function()
             local remain = speed-(GetTime()-start)

@@ -162,11 +162,11 @@ local defaultSpells = {
 
 function F:GetClickCastingSpellList(class)
     local spells = defaultSpells[class]["common"] and F:Copy(defaultSpells[class]["common"]) or {}
-    
+
     -- fill data
     for i, v in pairs(spells) do
         local spellId, spellType
-        
+
         if type(v) == "number" then
             spellId = v
         else -- string

@@ -35,18 +35,18 @@ local function CreateIndicatorsCopyFrame()
     -- dropdowns
     fromDropdown = Cell:CreateDropdown(copyFrame, 126)
     fromDropdown:SetPoint("TOPLEFT", 5, -24)
-    
+
     toDropdown = Cell:CreateDropdown(copyFrame, 126)
     toDropdown:SetPoint("TOPLEFT", fromDropdown, "BOTTOMLEFT", 0, -22)
-    
+
     local fromText = copyFrame:CreateFontString(nil, "OVERLAY", "CELL_FONT_CLASS")
     fromText:SetPoint("BOTTOMLEFT", fromDropdown, "TOPLEFT", 0, 1)
     fromText:SetText(L["From"])
-    
+
     local toText = copyFrame:CreateFontString(nil, "OVERLAY", "CELL_FONT_CLASS")
     toText:SetPoint("BOTTOMLEFT", toDropdown, "TOPLEFT", 0, 1)
     toText:SetText(L["To"])
-    
+
     -- list
     fromList = CreateFrame("Frame", nil, copyFrame, "BackdropTemplate")
     Cell:StylizeFrame(fromList)
@@ -54,10 +54,10 @@ local function CreateIndicatorsCopyFrame()
     fromList:SetPoint("TOPRIGHT", toDropdown, "BOTTOMRIGHT", 0, -5)
     -- fromList:SetPoint("BOTTOM", 0, 34)
     fromList:SetHeight(286)
-    
+
     Cell:CreateScrollFrame(fromList)
     fromList.scrollFrame:SetScrollStep(19)
-    
+
     -- buttons
     copyBtn = Cell:CreateButton(copyFrame, L["Copy"], "green", {64, 20})
     copyBtn:SetPoint("BOTTOMLEFT", 5, 5)
@@ -65,7 +65,7 @@ local function CreateIndicatorsCopyFrame()
     copyBtn:SetScript("OnClick", function()
         local last = #CellDB["layouts"][to]["indicators"]
         last = tonumber(string.match(CellDB["layouts"][to]["indicators"][last]["indicatorName"], "%d+")) or last
-    
+
         for i in pairs(selectedIndicators) do
             if i <= Cell.defaults.builtIns then -- built-in
                 CellDB["layouts"][to]["indicators"][i] = F:Copy(CellDB["layouts"][from]["indicators"][i])
@@ -80,13 +80,13 @@ local function CreateIndicatorsCopyFrame()
         Cell:Fire("IndicatorsChanged", to)
         copyFrame:Hide()
     end)
-    
+
     closeBtn = Cell:CreateButton(copyFrame, L["Close"], "red", {63, 20})
     closeBtn:SetPoint("BOTTOMLEFT", copyBtn, "BOTTOMRIGHT", P:Scale(-1), 0)
     closeBtn:SetScript("OnClick", function()
         copyFrame:Hide()
     end)
-    
+
     allBtn = Cell:CreateButton(copyFrame, L["ALL"], "accent-hover", {64, 20})
     allBtn:SetPoint("BOTTOMLEFT", copyBtn, "TOPLEFT", 0, P:Scale(-1))
     allBtn:SetScript("OnClick", function()
@@ -95,7 +95,7 @@ local function CreateIndicatorsCopyFrame()
         end
         Validate()
     end)
-    
+
     invertBtn = Cell:CreateButton(copyFrame, L["INVERT"], "accent-hover", {63, 20})
     invertBtn:SetPoint("BOTTOMLEFT", closeBtn, "TOPLEFT", 0, P:Scale(-1))
     invertBtn:SetScript("OnClick", function()
@@ -113,7 +113,7 @@ local function CreateIndicatorsCopyFrame()
     copyFrame:SetScript("OnShow", function()
         Cell.frames.indicatorsTab.mask:Show()
     end)
-    
+
     copyFrame:SetScript("OnHide", function()
         copyFrame:Hide()
         Cell.frames.indicatorsTab.mask:Hide()
@@ -279,7 +279,7 @@ local function LoadToDropdown(from)
             end,
         })
     end
-    
+
     toDropdown:SetItems(toItems)
 end
 
@@ -296,7 +296,7 @@ local function LoadFromDropdown()
             LoadToDropdown("default")
         end,
     })
-    
+
     for l, t in pairs(CellDB["layouts"]) do
         if l ~= "default" then
             tinsert(fromItems, {

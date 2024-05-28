@@ -91,7 +91,7 @@ for i = 1, 9 do
     markButtons[i].texture = markButtons[i]:CreateTexture(nil, "ARTWORK")
     P:Point(markButtons[i].texture, "TOPLEFT", markButtons[i], "TOPLEFT", 2, -2)
     P:Point(markButtons[i].texture, "BOTTOMRIGHT", markButtons[i], "BOTTOMRIGHT", -2, 2)
-    
+
     if i == 9 then
         -- clear all marks
         markButtons[i].texture:SetTexture("Interface\\Buttons\\UI-GroupLoot-Pass-Up")
@@ -191,7 +191,7 @@ for i = 1, 9 do
     worldMarkButtons[i] = Cell:CreateButton(worldMarks, "", "accent-hover", {20, 20}, false, false, nil, nil, "SecureActionButtonTemplate")
     worldMarkButtons[i]:RegisterForClicks("LeftButtonUp", "LeftButtonDown") -- NOTE: ActionButtonUseKeyDown will affect this
     worldMarkButtons[i].texture = worldMarkButtons[i]:CreateTexture(nil, "ARTWORK")
-    
+
     if i == 9 then
         -- clear all marks
         P:Point(worldMarkButtons[i].texture, "TOPLEFT", worldMarkButtons[i], "TOPLEFT", 2, -2)
@@ -319,7 +319,7 @@ local function Rearrange(marksConfig)
             P:ClearPoints(marks)
             P:Point(marks, "BOTTOMLEFT", worldMarks, "BOTTOMRIGHT", 2, 0)
         end
-        
+
         -- repoint each button
         for i = 1, 9 do
             P:ClearPoints(markButtons[i])
@@ -347,7 +347,7 @@ local function CheckPermission()
                 else
                     marks:Hide()
                 end
-                
+
             elseif strfind(CellDB["tools"]["marks"][3], "^world") then
                 if marksFrame.moverText:IsShown() or Cell.vars.hasPartyMarkPermission then
                     worldMarks:Show()

@@ -6,13 +6,13 @@ Cell.funcs:IterateAllUnitButtons(function(b)
                 b.indicators.nameText.highlight:SetColorTexture(1, 0, 0, 0.5)
                 b.indicators.nameText.highlight:SetAllPoints(b.indicators.nameText)
                 b.indicators.nameText.highlight:Hide()
-            end  
-        
+            end
+
             if UnitIsUnit(value, "player") then
                 b.indicators.nameText.highlight:Show()
             else
                 b.indicators.nameText.highlight:Hide()
             end
-        end 
+        end
     end)
 end)

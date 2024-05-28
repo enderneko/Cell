@@ -124,7 +124,7 @@ Cell.defaults.layout = {
             ["enabled"] = true,
             ["position"] = {"CENTER", "CENTER", 0, 0},
             ["frameLevel"] = 1,
-            ["font"] = {"Cell ".._G.DEFAULT, 13, "Shadow"},
+            ["font"] = {"Cell ".._G.DEFAULT, 13, "None", true},
             ["color"] = {"custom_color", {1, 1, 1}},
             ["vehicleNamePosition"] = {"TOP", 0},
             ["textWidth"] = {"percentage", 0.75},
@@ -137,7 +137,7 @@ Cell.defaults.layout = {
             ["enabled"] = true,
             ["position"] = {"BOTTOM", 0},
             ["frameLevel"] = 30,
-            ["font"] = {"Cell ".._G.DEFAULT, 11, "Shadow"},
+            ["font"] = {"Cell ".._G.DEFAULT, 11, "None", true},
             ["showTimer"] = true,
             ["showBackground"] = true,
             ["colors"] = {
@@ -159,7 +159,7 @@ Cell.defaults.layout = {
             ["enabled"] = false,
             ["position"] = {"TOP", "CENTER", 0, -5},
             ["frameLevel"] = 2,
-            ["font"] = {"Cell ".._G.DEFAULT, 10, "Shadow"},
+            ["font"] = {"Cell ".._G.DEFAULT, 10, "None", true},
             ["color"] = {"custom_color", {1, 1, 1}},
             ["format"] = "percentage",
             ["hideIfEmptyOrFull"] = true,
@@ -171,7 +171,7 @@ Cell.defaults.layout = {
             ["enabled"] = false,
             ["position"] = {"BOTTOMRIGHT", "BOTTOMRIGHT", 0, 3},
             ["frameLevel"] = 2,
-            ["font"] = {"Cell ".._G.DEFAULT, 10, "Shadow"},
+            ["font"] = {"Cell ".._G.DEFAULT, 10, "None", true},
             ["color"] = {"custom_color", {1, 1, 1}},
             ["format"] = "number",
             ["hideIfEmptyOrFull"] = true,
@@ -204,6 +204,7 @@ Cell.defaults.layout = {
             ["position"] = {"TOPLEFT", "TOPLEFT", 0, 0},
             ["size"] = {11, 11},
             ["roleTexture"] = {"default", "Interface\\AddOns\\ElvUI\\Core\\Media\\Textures\\Tank.tga", "Interface\\AddOns\\ElvUI\\Core\\Media\\Textures\\Healer.tga", "Interface\\AddOns\\ElvUI\\Core\\Media\\Textures\\DPS.tga"},
+            ["frameLevel"] = 1,
         }, -- 7
         {
             ["name"] = "Leader Icon",
@@ -300,8 +301,8 @@ Cell.defaults.layout = {
             ["num"] = 2,
             ["orientation"] = "right-to-left",
             ["font"] = {
-                {"Cell ".._G.DEFAULT, 11, "Outline", "TOPRIGHT", 2, 1, {1, 1, 1}},
-                {"Cell ".._G.DEFAULT, 11, "Outline", "BOTTOMRIGHT", 2, -1, {1, 1, 1}},
+                {"Cell ".._G.DEFAULT, 11, "Outline", false, "TOPRIGHT", 2, 1, {1, 1, 1}},
+                {"Cell ".._G.DEFAULT, 11, "Outline", false, "BOTTOMRIGHT", 2, -1, {1, 1, 1}},
             },
         }, -- 17
         {
@@ -317,8 +318,8 @@ Cell.defaults.layout = {
             ["num"] = 2,
             ["orientation"] = "left-to-right",
             ["font"] = {
-                {"Cell ".._G.DEFAULT, 11, "Outline", "TOPRIGHT", 2, 1, {1, 1, 1}},
-                {"Cell ".._G.DEFAULT, 11, "Outline", "BOTTOMRIGHT", 2, -1, {1, 1, 1}},
+                {"Cell ".._G.DEFAULT, 11, "Outline", false, "TOPRIGHT", 2, 1, {1, 1, 1}},
+                {"Cell ".._G.DEFAULT, 11, "Outline", false, "BOTTOMRIGHT", 2, -1, {1, 1, 1}},
             },
         }, -- 18
         {
@@ -334,8 +335,8 @@ Cell.defaults.layout = {
             ["num"] = 2,
             ["orientation"] = "left-to-right",
             ["font"] = {
-                {"Cell ".._G.DEFAULT, 11, "Outline", "TOPRIGHT", 2, 1, {1, 1, 1}},
-                {"Cell ".._G.DEFAULT, 11, "Outline", "BOTTOMRIGHT", 2, -1, {1, 1, 1}},
+                {"Cell ".._G.DEFAULT, 11, "Outline", false, "TOPRIGHT", 2, 1, {1, 1, 1}},
+                {"Cell ".._G.DEFAULT, 11, "Outline", false, "BOTTOMRIGHT", 2, -1, {1, 1, 1}},
             },
         }, -- 19
         {
@@ -375,8 +376,8 @@ Cell.defaults.layout = {
             ["enableBlacklistShortcut"] = false,
             ["num"] = 3,
             ["font"] = {
-                {"Cell ".._G.DEFAULT, 11, "Outline", "TOPRIGHT", 2, 1, {1, 1, 1}},
-                {"Cell ".._G.DEFAULT, 11, "Outline", "BOTTOMRIGHT", 2, -1, {1, 1, 1}},
+                {"Cell ".._G.DEFAULT, 11, "Outline", false, "TOPRIGHT", 2, 1, {1, 1, 1}},
+                {"Cell ".._G.DEFAULT, 11, "Outline", false, "BOTTOMRIGHT", 2, -1, {1, 1, 1}},
             },
             ["dispellableByMe"] = false,
             ["orientation"] = "left-to-right",
@@ -393,8 +394,8 @@ Cell.defaults.layout = {
             ["num"] = 1,
             ["showDuration"] = true,
             ["font"] = {
-                {"Cell ".._G.DEFAULT, 11, "Outline", "TOPRIGHT", 2, 1, {1, 1, 1}},
-                {"Cell ".._G.DEFAULT, 11, "Outline", "BOTTOMRIGHT", 2, -1, {1, 1, 1}},
+                {"Cell ".._G.DEFAULT, 11, "Outline", false, "TOPRIGHT", 2, 1, {1, 1, 1}},
+                {"Cell ".._G.DEFAULT, 11, "Outline", false, "BOTTOMRIGHT", 2, -1, {1, 1, 1}},
             },
             ["onlyShowTopGlow"] = true,
             ["orientation"] = "left-to-right",
@@ -420,7 +421,7 @@ Cell.defaults.layout = {
             ["frameLevel"] = 50,
             ["size"] = {20, 20},
             ["border"] = 2,
-            ["font"] = {"Cell ".._G.DEFAULT, 12, "Outline", "TOPRIGHT", 2, 1, {1, 1, 1}},
+            ["font"] = {"Cell ".._G.DEFAULT, 12, "Outline", false, "TOPRIGHT", 2, 1, {1, 1, 1}},
         }, -- 25
         {
             ["name"] = "Target Counter",
@@ -429,7 +430,7 @@ Cell.defaults.layout = {
             ["enabled"] = false,
             ["position"] = {"TOP", "TOP", 0, 5},
             ["frameLevel"] = 15,
-            ["font"] = {"Cell ".._G.DEFAULT, 15, "Outline"},
+            ["font"] = {"Cell ".._G.DEFAULT, 15, "Outline", false},
             ["color"] = {1, 0.1, 0.1},
             ["filters"] = {
                 ["outdoor"] = false,
@@ -448,8 +449,8 @@ Cell.defaults.layout = {
             ["border"] = 2,
             ["num"] = 3,
             ["font"] = {
-                {"Cell ".._G.DEFAULT, 11, "Outline", "TOPRIGHT", 2, 1, {1, 1, 1}},
-                {"Cell ".._G.DEFAULT, 11, "Outline", "BOTTOMRIGHT", 2, -1, {1, 1, 1}},
+                {"Cell ".._G.DEFAULT, 11, "Outline", false, "TOPRIGHT", 2, 1, {1, 1, 1}},
+                {"Cell ".._G.DEFAULT, 11, "Outline", false, "BOTTOMRIGHT", 2, -1, {1, 1, 1}},
             },
             ["dispellableByMe"] = false,
             ["orientation"] = "left-to-right",

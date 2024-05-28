@@ -1,5 +1,7 @@
 -------------------------------------------------
--- config
+-- 2024-05-18 02:20:01 GMT+8
+-- pvp status icon
+-- pvp状态图标
 -------------------------------------------------
 -- relative to unit button
 local point, relativePoint, x, y = "CENTER", "BOTTOMRIGHT", -2, 3
@@ -11,7 +13,7 @@ local size = 11
 local function UpdatePvPStatusIcon(b, event)
     local unit = b.states.unit
     if not unit then return end
-    
+
     if UnitIsPVP(unit) then
         b.widgets.pvpStatusIcon:SetAtlas("worldquest-icon-pvp-ffa")
         b.widgets.pvpStatusIcon:Show()

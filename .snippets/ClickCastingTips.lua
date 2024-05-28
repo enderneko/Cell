@@ -1,4 +1,5 @@
 -------------------------------------------------
+-- 2024-05-18 02:08:24 GMT+8
 -- config
 -------------------------------------------------
 local point = "TOPRIGHT"
@@ -44,7 +45,7 @@ end
 
 local function DecodeDB(t)
     local modifier, bindKey, bindType, bindAction
-    
+
     if t[1] ~= "notBound" then
         local dash, key
         modifier, dash, key = strmatch(t[1], "^(.*)type(-*)(.+)$")
@@ -86,7 +87,7 @@ local function ShowTips()
         if bindType == "spell" then
             local modifierDisplay = modifiersDisplay[F:GetIndex(modifiers, modifier)]
             local bindKeyDisplay = strlen(bindKey) == 1 and bindKey or L[bindKey]
-            
+
             local bindActionDisplay, icon
             bindAction, _, icon = GetSpellInfo(bindAction)
             if bindAction then

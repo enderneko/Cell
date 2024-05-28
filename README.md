@@ -11,8 +11,8 @@
 
 [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/enderneko)
 
-Cell is a nice raid frame addon inspired by several great addons, such as __CompactRaid__, __Grid2__, __Aptechka__ and __VuhDo__.  
-With a more human-friendly interface, Cell can provide a better user experience, better than ever.  
+Cell is a nice raid frame addon inspired by several great addons, such as __CompactRaid__, __Grid2__, __Aptechka__ and __VuhDo__.
+With a more human-friendly interface, Cell can provide a better user experience, better than ever.
 Hope you enjoy.
 
 &nbsp;
@@ -65,9 +65,15 @@ Use __/cell__ for more information.
 
 &nbsp;
 
-## Want to help improve Raid Debuffs
+## Want to help improve Raid Debuffs?
 
 Use [Instance Spell Collector](https://legacy.curseforge.com/wow/addons/instance-spell-collector) to collect debuffs. Then create a PR or submit a ticket on GitHub.
+
+&nbsp;
+
+## Localization
+
+If you want to help with the localization, please visit <https://legacy.curseforge.com/wow/addons/cell/localization>, instead of creating a PR.
 
 &nbsp;
 

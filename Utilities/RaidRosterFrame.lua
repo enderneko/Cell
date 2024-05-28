@@ -60,7 +60,7 @@ local function CreateWidgets()
                     PremadeApply()
                 end
             end
-        
+
         else -- discard changes
             if isProcessing then
                 processingFrame:Hide()
@@ -70,7 +70,7 @@ local function CreateWidgets()
         end
     end)
 
-    Cell:SetTooltips(modeBtn, "ANCHOR_TOPRIGHT", 0, 2, 
+    Cell:SetTooltips(modeBtn, "ANCHOR_TOPRIGHT", 0, 2,
         "|cffff2727EXPERIMENTAL|r",
         L["No support for rearrangement of members within a same subgroup"],
         L["No guarantee of the order of members in each subgroup"],
@@ -178,7 +178,7 @@ PremadeSwap = function(grid1, grid2)
     grid1._point2 = grid2._point2 or grid2.point2
     grid2._point1 = tempPoint1
     grid2._point2 = tempPoint2
-    
+
     local anchor1 = grid1._subgroup and groups[grid1._subgroup] or groups[grid1.subgroup]
     local anchor2 = grid2._subgroup and groups[grid2._subgroup] or groups[grid2.subgroup]
 
@@ -188,7 +188,7 @@ PremadeSwap = function(grid1, grid2)
     grid1:ClearAllPoints()
     grid1:SetPoint(grid1._point1[1], anchor2, grid1._point1[2], grid1._point1[3])
     grid1:SetPoint(grid1._point2[1], anchor2, grid1._point2[2], grid1._point2[3])
-    
+
     grid2:ClearAllPoints()
     grid2:SetPoint(grid2._point1[1], anchor1, grid2._point1[2], grid2._point1[3])
     grid2:SetPoint(grid2._point2[1], anchor1, grid2._point2[2], grid2._point2[3])
@@ -221,7 +221,7 @@ end
 PremadeSet = function(grid, emptyGrid)
     -- premadeGroups[grid._subgroup or grid.subgroup] = premadeGroups[grid._subgroup or grid.subgroup] - 1
     -- premadeGroups[emptyGrid._subgroup or emptyGrid.subgroup] = premadeGroups[emptyGrid._subgroup or emptyGrid.subgroup] + 1
-    
+
     PremadeSwap(grid, emptyGrid)
 end
 
@@ -242,7 +242,7 @@ ProcessNext = function()
             local toIndex, toName = F:GetRaidInfoBySubgroupIndex(targetSubgroup, targetIndex)
 
             -- print(next, "raidIndex:", fromIndex, "subgroup:", fromSubgroup.."->"..targetSubgroup, "targetIndex:", targetIndex, "targetPlayer:", targetPlayer, targetPlayerTarget)
-            
+
             if toIndex and targetPlayerTarget == next then -- NOTE: unit to be swapped with exists, and requires a swap with "next"
                 if fromIndex ~= toIndex then
                     if not InCombatLockdown() then
@@ -306,7 +306,7 @@ local function CreateRaidRosterGrid(parent, index)
     grid.color = {0.5, 0.5, 0.5}
 
     grid:SetFrameLevel(7)
-    
+
     local roleIconBg = grid:CreateTexture(nil, "BORDER")
     roleIconBg:SetPoint("TOPLEFT", 2, -2)
     roleIconBg:SetSize(13, 13)
@@ -330,7 +330,7 @@ local function CreateRaidRosterGrid(parent, index)
             UninviteUnit(grid.name)
         else
             if not UnitIsGroupLeader("player") then return end
-            
+
             if UnitIsGroupLeader(grid.unit) then return end
 
             if UnitIsGroupAssistant(grid.unit) then
@@ -368,7 +368,7 @@ local function CreateRaidRosterGrid(parent, index)
         grid:SetBackdropColor(0.1, 0.1, 0.1, 0.5)
         grid.isMoving = nil
     end)
-    
+
     -- swap
     grid:SetScript("OnShow", function()
         grid:RegisterEvent("GLOBAL_MOUSE_UP")
@@ -452,7 +452,7 @@ local function CreateRaidRosterGrid(parent, index)
 
     function grid:Set(raidIndex)
         local name, _, subgroup, _, _, classFileName, _, _, _, _, _, combatRole = GetRaidRosterInfo(raidIndex)
-        
+
         if not name then
             -- unknown target, retry
             C_Timer.After(0.5, function()
@@ -460,12 +460,12 @@ local function CreateRaidRosterGrid(parent, index)
             end)
             return
         end
-        
 
-        
+
+
         -- save
         grid.fullName = name -- contains server name for cross-realm players
-        
+
         if string.find(name, "-") then
             name = strsplit("-", name)
         end
@@ -473,7 +473,7 @@ local function CreateRaidRosterGrid(parent, index)
         if CellDB["general"]["translit"] then
             name = LibTranslit:Transliterate(name)
         end
-        
+
         grid.hasUnit = true
         grid.raidIndex = raidIndex
         grid.unit = "raid"..raidIndex
@@ -534,7 +534,7 @@ local function CreateRosterContainer()
 
     for i = 1, 8 do
         groups[i] = CreateRaidRosterGroup(rosterContainer, i)
-    
+
         if i % 4 == 1 then
             groups[i]:SetPoint("TOPLEFT", 0, -20-(math.modf(i/4)*(groups[i]:GetHeight()+20)))
         else

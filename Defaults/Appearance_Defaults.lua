@@ -34,6 +34,7 @@ Cell.defaults.appearance = {
     ["healAbsorbInvertColor"] = false,
     ["shield"] = {not Cell.isVanilla, {1, 1, 1, 0.4}},
     ["overshield"] = {not Cell.isVanilla, {1, 1, 1, 1}},
+    ["overshieldReverseFill"] = false,
 }
 
 local buttonStyleIndices = {
@@ -46,6 +47,7 @@ local buttonStyleIndices = {
     "deathColor",
     "bgAlpha",
     "barAnimation",
+    "gradientColors",
     "auraIconOptions",
     "targetColor",
     "mouseoverColor",
@@ -53,8 +55,10 @@ local buttonStyleIndices = {
     "outOfRangeAlpha",
     "healPrediction",
     "healAbsorb",
+    "healAbsorbInvertColor",
     "shield",
     "overshield",
+    "overshieldReverseFill"
 }
 
 function F:ResetButtonStyle()

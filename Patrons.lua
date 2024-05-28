@@ -15,7 +15,7 @@ local patrons1 = { -- wowIDs
     {"Sjerry-死亡之翼 (CN)"}, -- 爱发电用户_7957f
     {"貼饼子-匕首岭 (CN)"},
     {"心耀-冰风岗 (CN)"}, -- warbaby (爱不易)
-    {"秋末旷夜-凤凰之神 (CN)"}, -- 
+    {"秋末旷夜-凤凰之神 (CN)"}, --
     {"曾經活過-憤怒使者 (TW)"}, -- ZzZ (爱发电)
     {"音速豆奶-白银之手 (CN)"}, -- 爱发电用户_83f12
     {"Hardpp-Illidan (US)", "六月的奶德-艾露恩 (CN)"}, -- 爱发电用户_15402
@@ -36,6 +36,8 @@ local patrons1 = { -- wowIDs
     {"Everessian-Ravencrest (EU)"}, -- Martin van Vuuren (Ko-fi)
     {"Shendreakah-Zul'jin (US)"}, -- Shendreakah - Zul-jin (Ko-fi)
     {"Palymoo-Twistingnether (EU)"}, -- Palymoo-Twistingnether (EU) (Ko-fi)
+    {"Skywarden-Terokkar (EU)"}, -- Serghei Iakovlev (Ko-fi)
+    {"Fourdigitiq-Blackrock (EU)"}, -- Rou (Ko-fi)
 }
 
 local patrons2 = { -- 有些早期的发电记录已经丢失了……
@@ -99,6 +101,8 @@ local patrons2 = { -- 有些早期的发电记录已经丢失了……
     {"Shendreakah", "Ko-fi"}, -- 2024-05-12
     {"Palymoo", "Ko-fi"}, -- 2024-05-12
     {"Winkupo", "Ko-fi"}, -- 2024-05-14
+    {"Serghei Iakovlev", "Ko-fi"}, -- 2024-05-15
+    {"Rou", "Ko-fi"}, -- 2024-05-23
 }
 
 -------------------------------------------------

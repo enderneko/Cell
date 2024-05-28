@@ -122,7 +122,7 @@ end
 --     ["HunterBeastMastery"] = "DAMAGER",
 --     ["HunterSurvival"] = "DAMAGER",
 --     ["HunterMarksmanship"] = "DAMAGER",
-    
+
 --     ["MageFrost"] = "DAMAGER",
 --     ["MageArcane"] = "DAMAGER",
 --     ["MageFire"] = "DAMAGER",
@@ -209,10 +209,10 @@ end
 --     elseif perc <= 0 then
 --         return r1, g1, b1
 --     end
- 
+
 --     local segment, relperc = math.modf(perc * 2)
 --     local rr1, rg1, rb1, rr2, rg2, rb2 = select((segment * 3) + 1, r1,g1,b1, r2,g2,b2, r3,g3,b3)
- 
+
 --     return rr1 + (rr2 - rr1) * relperc, rg1 + (rg2 - rg1) * relperc, rb1 + (rb2 - rb1) * relperc
 -- end
 
@@ -227,10 +227,10 @@ function F:ColorGradient(perc, c1, c2, c3)
     elseif perc <= 0 then
         return r1, g1, b1
     end
- 
+
     local segment, relperc = math.modf(perc * 2)
     local rr1, rg1, rb1, rr2, rg2, rb2 = select((segment * 3) + 1, r1,g1,b1, r2,g2,b2, r3,g3,b3)
- 
+
     return rr1 + (rr2 - rr1) * relperc, rg1 + (rg2 - rg1) * relperc, rb1 + (rb2 - rb1) * relperc
 end
 
@@ -250,14 +250,14 @@ function F:ConvertRGBToHSB(r, g, b)
     local colorMin = min(min(r, g), b)
     local delta = colorMax - colorMin
     local H, S, B
-    
+
     -- WoW's LUA doesn't handle floating point numbers very well (Somehow 1.000000 != 1.000000   WTF?)
     -- So we do this weird conversion of, Number to String back to Number, to make the IF..THEN work correctly!
     colorMax = tonumber(format("%f", colorMax))
     r = tonumber(format("%f", r))
     g = tonumber(format("%f", g))
     b = tonumber(format("%f", b))
-    
+
     if (delta > 0) then
         if (colorMax == r) then
             H = 60 * (((g - b) / delta) % 6)
@@ -266,24 +266,24 @@ function F:ConvertRGBToHSB(r, g, b)
         elseif (colorMax == b) then
             H = 60 * (((r - g) / delta) + 4)
         end
-        
+
         if (colorMax > 0) then
             S = delta / colorMax
         else
             S = 0
         end
-        
+
         B = colorMax
     else
         H = 0
         S = 0
         B = colorMax
     end
-    
+
     if (H < 0) then
         H = H + 360
     end
-    
+
     return H, S, B
 end
 
@@ -333,11 +333,11 @@ function F:ConvertHSBToRGB(h, s, b)
         G = 0
         B = 0
     end
-    
+
     R = R + M
     G = G + M
     B =  B + M
-    
+
     return R, G, B
 end
 
@@ -363,8 +363,8 @@ if Cell.isAsian then
             return string.format("%.3f"..symbol_1B, n/100000000)
         elseif abs(n) >= 10000 then
             return string.format("%.2f"..symbol_10K, n/10000)
-        elseif abs(n) >= 1000 then
-            return string.format("%.1f"..symbol_1K, n/1000)
+        -- elseif abs(n) >= 1000 then
+        --     return string.format("%.1f"..symbol_1K, n/1000)
         else
             return n
         end
@@ -403,7 +403,7 @@ end
 
 function F:SplitToNumber(sep, str)
     if not str then return end
-    
+
     local ret = {strsplit(sep, str)}
     for i, v in ipairs(ret) do
         ret[i] = tonumber(v) or ret[i] -- keep non number
@@ -433,9 +433,9 @@ function F:Utf8sub(str, startChar, numChars)
         startIndex = startIndex + Chsize(char)
         startChar = startChar - 1
     end
-    
+
     local currentIndex = startIndex
-    
+
     while numChars > 0 and currentIndex <= #str do
         local char = string.byte(str, currentIndex)
         currentIndex = currentIndex + Chsize(char)
@@ -454,7 +454,7 @@ function F:FitWidth(fs, text, alignment)
             else
                 fs:SetText(string.utf8sub(text, i).."...")
             end
-            
+
             if not fs:IsTruncated() then
                 break
             end
@@ -493,11 +493,11 @@ end
 function F:Copy(t)
     local newTbl = {}
     for k, v in pairs(t) do
-        if type(v) == "table" then  
+        if type(v) == "table" then
             newTbl[k] = F:Copy(v)
-        else  
-            newTbl[k] = v  
-        end  
+        else
+            newTbl[k] = v
+        end
     end
     return newTbl
 end
@@ -715,7 +715,7 @@ function F:UnitFullName(unit)
     if not unit or not UnitIsPlayer(unit) then return end
 
     local name = GetUnitName(unit, true)
-    
+
     --? name might be nil in some cases?
     if name and not string.find(name, "-") then
         local server = GetNormalizedRealmName()
@@ -724,7 +724,7 @@ function F:UnitFullName(unit)
             name = name.."-"..server
         end
     end
-    
+
     return name
 end
 
@@ -811,7 +811,7 @@ function F:IterateAllUnitButtons(func, updateCurrentGroupOnly, updateQuickAssist
                 end
             end
         end
-        
+
         -- arena pet
         for _, b in pairs(Cell.unitButtons.arena) do
             func(b)
@@ -880,7 +880,7 @@ function F:GetUnitButtonByUnit(unit, getSpotlights, getQuickAssist)
             end
         end
     end
-    
+
     if getQuickAssist then
         quickAssist = Cell.unitButtons.quickAssist.units[unit]
     end
@@ -925,7 +925,7 @@ function F:HandleUnitButton(type, unit, func, ...)
         func(normal, ...)
         handled = true
     end
-    
+
     for _, b in pairs(Cell.unitButtons.spotlight) do
         if b.states.unit and UnitIsUnit(b.states.unit, unit) then
             func(b, ...)
@@ -1083,7 +1083,7 @@ function F:GetPowerBarColor(unit, class)
     if not Cell.loaded then
         return r, g, b, r*0.2, g*0.2, b*0.2, t
     end
-    
+
     if CellDB["appearance"]["powerColor"][1] == "power_color_dark" then
         lossR, lossG, lossB = r, g, b
         r, g, b = r*0.2, g*0.2, b*0.2
@@ -1101,11 +1101,11 @@ end
 
 function F:GetHealthBarColor(percent, isDeadOrGhost, r, g, b)
     if not Cell.loaded then
-        return r, g, b, r*0.2, g*0.2, b*0.2      
+        return r, g, b, r*0.2, g*0.2, b*0.2
     end
 
     local barR, barG, barB, lossR, lossG, lossB
-    
+
     -- bar
     if percent == 1 and Cell.vars.useFullColor then
         barR = CellDB["appearance"]["fullColor"][2][1]
@@ -1532,7 +1532,7 @@ if playerClass == "EVOKER" then
         if not UnitIsVisible(unit) then
             return false
         end
-    
+
         if UnitIsUnit("player", unit) then
             return true
         -- elseif not check and F:UnitInGroup(unit) then
@@ -1556,7 +1556,7 @@ if playerClass == "EVOKER" then
                 -- print("CanAttack", unit)
                 return UnitInSpellRange(spell_harm, unit)
             end
-           
+
             -- print("InRange", unit)
             return UnitInRange(unit)
         end
@@ -1573,7 +1573,7 @@ else
             if not UnitIsVisible(unit) then
                 return false
             end
-        
+
             if UnitIsUnit("player", unit) then
                 return true
             elseif not check and F:UnitInGroup(unit) then
@@ -1606,7 +1606,7 @@ else
             if not UnitIsVisible(unit) then
                 return false
             end
-        
+
             if UnitIsUnit("player", unit) then
                 return true
             elseif not check and F:UnitInGroup(unit) then
@@ -1633,7 +1633,7 @@ else
                         return IsItemInRange(harmItems[playerClass], unit)
                     end
                 end
-                
+
                 -- print("CheckInteractDistance", unit)
                 return CheckInteractDistance(unit, 4) -- 28 yards
             end
@@ -1648,7 +1648,7 @@ Cell.vars.texture = "Interface\\AddOns\\Cell\\Media\\statusbar.tga"
 
 local LSM = LibStub("LibSharedMedia-3.0", true)
 LSM:Register("statusbar", "Cell ".._G.DEFAULT, Cell.vars.texture)
-LSM:Register("font", "visitor", [[Interface\Addons\Cell\Media\Fonts\visitor.ttf]], 255) 
+LSM:Register("font", "visitor", [[Interface\Addons\Cell\Media\Fonts\visitor.ttf]], 255)
 
 function F:GetBarTexture()
     --! update Cell.vars.texture for further use in UnitButton_OnLoad
@@ -1692,7 +1692,7 @@ function F:GetFontItems()
 
     local items = {}
     local fonts, fontNames
-    
+
     -- if LSM then
         fonts, fontNames = F:Copy(LSM:HashTable("font")), F:Copy(LSM:List("font"))
         -- insert default font
@@ -1722,7 +1722,7 @@ function F:GetFontItems()
     --         -- end,
     --     })
     -- end
-    return items, fonts, defaultFontName, defaultFont 
+    return items, fonts, defaultFontName, defaultFont
 end
 
 -------------------------------------------------
@@ -1740,7 +1740,7 @@ function F:GetTexCoord(width, height)
         local aspectRatio = (i % 2 == 1) and xRatio or yRatio
         texCoord[i] = (coord - 0.5) * aspectRatio + 0.5
     end
-    
+
     return texCoord
 end
 
@@ -1761,7 +1761,7 @@ function F:RotateTexture(texture, degrees)
     local LLx, LLy = CalculateCorner(degrees + 135)
     local ULx, ULy = CalculateCorner(degrees + 225)
     local URx, URy = CalculateCorner(degrees - 45)
-    
+
     texture:SetTexCoord(ULx, ULy, LLx, LLy, URx, URy, LRx, LRy)
 end
 
@@ -1821,12 +1821,12 @@ function F:GetTextures()
     local builtIns = #wowAtlases + #wowTextures + #shapes
 
     local t = {}
-    
+
     -- wow atlases
     for _, wa in pairs(wowAtlases) do
         tinsert(t, wa)
     end
-    
+
     -- wow textures
     for _, wt in pairs(wowTextures) do
         tinsert(t, wt)
@@ -1836,7 +1836,7 @@ function F:GetTextures()
     for _, s in pairs(shapes) do
         tinsert(t, "Interface\\AddOns\\Cell\\Media\\Shapes\\"..s..".tga")
     end
-    
+
     -- add weakauras textures
     if WeakAuras then
         builtIns = builtIns + #powaTextures
@@ -1907,7 +1907,7 @@ end
 local lines = {}
 function F:GetSpellInfo(spellId)
     wipe(lines)
-    
+
     local name, _, icon = GetSpellInfo(spellId)
     if not name then return end
 
@@ -1947,7 +1947,7 @@ if Cell.isRetail then
         local debuffs = {}
         AuraUtil.ForEachAura(unit, "HARMFUL", nil, function(name, icon, count, debuffType, duration, expirationTime, source, isStealable, nameplateShowPersonal, spellId)
             if spellIds[spellId] then
-                debuffs[spellId] = I:CheckDebuffType(debuffType, spellId)
+                debuffs[spellId] = I.CheckDebuffType(debuffType, spellId)
             end
         end)
         return debuffs
@@ -1957,7 +1957,7 @@ if Cell.isRetail then
         local debuffs = {}
         AuraUtil.ForEachAura(unit, "HARMFUL", nil, function(name, icon, count, debuffType, duration, expirationTime, source, isStealable, nameplateShowPersonal, spellId)
             if types == "all" or types[debuffType] then
-                debuffs[spellId] = I:CheckDebuffType(debuffType, spellId)
+                debuffs[spellId] = I.CheckDebuffType(debuffType, spellId)
             end
         end)
         return debuffs
@@ -1972,7 +1972,7 @@ else
             end
 
             if spellIds[spellId] then
-                debuffs[spellId] = I:CheckDebuffType(debuffType, spellId)
+                debuffs[spellId] = I.CheckDebuffType(debuffType, spellId)
             end
         end
         return debuffs
@@ -1987,7 +1987,7 @@ else
             end
 
             if types == "all" or types[debuffType] then
-                debuffs[spellId] = I:CheckDebuffType(s, spellId)
+                debuffs[spellId] = I.CheckDebuffType(s, spellId)
             end
         end
         return debuffs
@@ -2029,7 +2029,7 @@ local WA_GetUnitFrame, LGF_GetUnitFrame
 
 function Cell.GetUnitFrame(unit)
     local normal, spotlights, quickAssist = F:GetUnitButtonByUnit(unit, true, true)
-    
+
     if CellDB["general"]["framePriority"] == "normal_spotlight_quickassist" then
         if normal and normal:IsVisible() then
             frame = normal

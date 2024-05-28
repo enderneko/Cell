@@ -1,3 +1,5 @@
-[Full Changelog](https://github.com/enderneko/Cell/compare/r224-release...4d7beb9eb90e317efb45164903f5f7b5989f9a7f)
+[Full Changelog](https://github.com/enderneko/Cell/compare/r226-release...07499d9388070c25ad756c32d2b5dd94c3e226df)
 
-- Bug fixes
+- Fix QuickAssist font shadows
+- Fix indicator updates
+- Update zhTW

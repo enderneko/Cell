@@ -41,7 +41,7 @@ local function DoImport()
             else -- remove invalid spells from custom indicators
                 F:FilterInvalidSpells(layout["indicators"][i]["auras"])
             end
-        end        
+        end
     end
 
     -- add missing indicators
@@ -108,16 +108,16 @@ local function DoImport()
     F:FilterInvalidSpells(imported["targetedSpellsList"])
     F:FilterInvalidSpells(imported["cleuAuras"])
 
-    -- disable autorun for all snippets
-    for _, t in pairs(imported["snippets"]) do
-        t["autorun"] = false
+    -- disable autorun
+    for i = 1, #imported["snippets"] do
+        imported["snippets"][i]["autorun"] = false
     end
 
     -- texplore(imported)
 
     --! overwrite
     CellDB = imported
-    
+
     if Cell.isRetail then
         CellDB["clickCastings"] = clickCastings
         CellDB["layoutAutoSwitch"] = layoutAutoSwitch
@@ -158,7 +158,7 @@ local function CreateImportExportFrame()
     importExportFrame:SetFrameLevel(Cell.frames.aboutTab:GetFrameLevel() + 50)
     P:Size(importExportFrame, 430, 170)
     importExportFrame:SetPoint("BOTTOMLEFT", P:Scale(1), 27)
-    
+
     if not Cell.frames.aboutTab.mask then
         Cell:CreateMask(Cell.frames.aboutTab, nil, {1, -1, -1, 1})
         Cell.frames.aboutTab.mask:Hide()
@@ -176,7 +176,7 @@ local function CreateImportExportFrame()
     importBtn:SetScript("OnClick", function()
         -- lower frame level
         importExportFrame:SetFrameLevel(Cell.frames.aboutTab:GetFrameLevel() + 20)
-    
+
         local text = "|cFFFF7070"..L["All Cell settings will be overwritten!"].."|r\n"..
             "|cFFB7B7B7"..L["Autorun will be disabled for all code snippets"].."|r\n"..
             L["|cff1Aff1AYes|r - Overwrite"].."\n".."|cffff1A1A"..L["No"].."|r - "..L["Cancel"]
@@ -189,7 +189,7 @@ local function CreateImportExportFrame()
 
         textArea.eb:ClearFocus()
     end)
-    
+
     -- title
     title = importExportFrame:CreateFontString(nil, "OVERLAY", "CELL_FONT_CLASS")
     title:SetPoint("TOPLEFT", 5, -5)
@@ -201,7 +201,7 @@ local function CreateImportExportFrame()
     end)
     includeNicknamesCB:SetPoint("TOPLEFT", 5, -25)
     includeNicknamesCB:Hide()
-   
+
     -- export include character settings
     includeCharacterCB = Cell:CreateCheckButton(importExportFrame, L["Include Character Settings"], function(checked)
         exported = GetExportString(includeNicknamesCB:GetChecked(), checked)
@@ -210,7 +210,7 @@ local function CreateImportExportFrame()
     includeCharacterCB:SetPoint("TOPLEFT", includeNicknamesCB, "TOPRIGHT", 200, 0)
     includeCharacterCB:Hide()
     Cell:SetTooltips(includeCharacterCB, "ANCHOR_TOPLEFT", 0, 2, L["Click-Castings"]..", "..L["Layout Auto Switch"])
-    
+
     -- textArea
     textArea = Cell:CreateScrollEditBox(importExportFrame, function(eb, userChanged)
         if userChanged then
@@ -220,14 +220,14 @@ local function CreateImportExportFrame()
                 -- check
                 local version, data = string.match(text, "^!CELL:(%d+):ALL!(.+)$")
                 version = tonumber(version)
-    
+
                 if version and data then
                     if version >= Cell.MIN_VERSION then
                         local success
                         data = LibDeflate:DecodeForPrint(data) -- decode
                         success, data = pcall(LibDeflate.DecompressDeflate, LibDeflate, data) -- decompress
                         success, data = Serializer:Deserialize(data) -- deserialize
-                        
+
                         if success and data then
                             title:SetText(L["Import"]..": r"..version)
                             importBtn:SetEnabled(true)
@@ -254,7 +254,7 @@ local function CreateImportExportFrame()
     Cell:StylizeFrame(textArea.scrollFrame, {0, 0, 0, 0}, Cell:GetAccentColorTable())
     textArea:SetPoint("TOPLEFT", 5, -20)
     textArea:SetPoint("BOTTOMRIGHT", -5, 5)
-    
+
     -- highlight text
     textArea.eb:SetScript("OnEditFocusGained", function() textArea.eb:HighlightText() end)
     textArea.eb:SetScript("OnMouseUp", function()
@@ -262,7 +262,7 @@ local function CreateImportExportFrame()
             textArea.eb:HighlightText()
         end
     end)
-    
+
     importExportFrame:SetScript("OnHide", function()
         importExportFrame:Hide()
         isImport = false
@@ -271,7 +271,7 @@ local function CreateImportExportFrame()
         -- hide mask
         Cell.frames.aboutTab.mask:Hide()
     end)
-    
+
     importExportFrame:SetScript("OnShow", function()
         -- raise frame level
         importExportFrame:SetFrameLevel(Cell.frames.aboutTab:GetFrameLevel() + 50)
@@ -282,7 +282,7 @@ end
 local init
 function F:ShowImportFrame()
     if not init then
-        init = true    
+        init = true
         CreateImportExportFrame()
     end
 
@@ -304,7 +304,7 @@ end
 
 function F:ShowExportFrame()
     if not init then
-        init = true    
+        init = true
         CreateImportExportFrame()
     end
 

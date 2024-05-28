@@ -1,4 +1,7 @@
+-------------------------------------------------
+-- 2022-06-03 20:29:22 GMT+8
 -- 光明尾迹（单位按钮高亮）
+-------------------------------------------------
 local F = Cell.funcs
 local LCG = LibStub("LibCustomGlow-1.0")
 local frame = CreateFrame("Frame")
@@ -12,11 +15,11 @@ frame:SetScript("OnEvent", function(self, event)
                 if b.states.guid == destGUID then
                     LCG.PixelGlow_Start(b)
                 else
-                    LCG.PixelGlow_Stop(b) 
+                    LCG.PixelGlow_Stop(b)
                 end
             end, true)
         end
-        
+
         if spellId == 234946 then
             F:IterateAllUnitButtons(function(b)
                 if b.states.guid == destGUID then
@@ -25,6 +28,6 @@ frame:SetScript("OnEvent", function(self, event)
                     LCG.AutoCastGlow_Stop(b)
                 end
             end, true)
-        end    
+        end
     end
 end)

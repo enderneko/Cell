@@ -12,7 +12,7 @@ header:SetAttribute("template", "CellUnitButtonTemplate")
 
 function header:UpdateButtonUnit(bName, unit)
     if not unit then return end
-    
+
     _G[bName].unit = unit -- OmniCD
 
     local petUnit
@@ -78,10 +78,10 @@ for i, playerButton in ipairs(header) do
 
     --! button for pet/vehicle only, toggleForVehicle MUST be false
     petButton:SetAttribute("toggleForVehicle", false)
-    
+
     playerButton.petButton = petButton
     SecureHandlerSetFrameRef(playerButton, "petButton", petButton)
-    
+
     -- for IterateAllUnitButtons
     Cell.unitButtons.party["player"..i] = playerButton
     Cell.unitButtons.party["pet"..i] = petButton
@@ -200,7 +200,7 @@ local function PartyFrame_UpdateLayout(layout, which)
                 B:SetOrientation(playerButton, layout["barOrientation"][1], layout["barOrientation"][2])
                 B:SetOrientation(petButton, layout["barOrientation"][1], layout["barOrientation"][2])
             end
-           
+
             if not which or strfind(which, "power$") or which == "barOrientation" or which == "powerFilter" then
                 B:SetPowerSize(playerButton, layout["main"]["powerSize"])
                 if layout["pet"]["sameSizeAsMain"] then

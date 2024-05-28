@@ -1,4 +1,7 @@
+-------------------------------------------------
+-- 2022-06-03 20:29:22 GMT+8
 -- 光明尾迹
+-------------------------------------------------
 local F = Cell.funcs
 local P = Cell.pixelPerfectFuncs
 
@@ -32,6 +35,6 @@ frame:SetScript("OnEvent", function(self, event)
             else
                 icon:Hide()
             end
-        end    
+        end
     end
 end)

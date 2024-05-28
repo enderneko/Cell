@@ -36,17 +36,17 @@ local function CreateIndicatorsExportFrame()
     Cell:StylizeFrame(listParent, nil, Cell:GetAccentColorTable())
     listParent:SetPoint("BOTTOMLEFT", 5, 24)
     listParent:Show()
-    
+
     -- from
     from = listParent:CreateFontString(nil, "OVERLAY", "CELL_FONT_CLASS")
     from:SetPoint("TOPLEFT", 5, -5)
-    
+
     listFrame = CreateFrame("Frame", nil, listParent, "BackdropTemplate")
     Cell:StylizeFrame(listFrame)
     listFrame:SetPoint("TOPLEFT", 5, -20)
     listFrame:SetPoint("TOPRIGHT", -5, -5)
     listFrame:SetHeight(362)
-    
+
     Cell:CreateScrollFrame(listFrame)
     listFrame.scrollFrame:SetScrollStep(19)
 
@@ -54,17 +54,17 @@ local function CreateIndicatorsExportFrame()
     exportFrame = Cell:CreateFrame(nil, exportParent, 281, 197)
     Cell:StylizeFrame(exportFrame, nil, Cell:GetAccentColorTable())
     exportFrame:SetPoint("BOTTOMLEFT", listParent, "BOTTOMRIGHT", 5, 0)
-    
+
     -- title
     local title = exportFrame:CreateFontString(nil, "OVERLAY", "CELL_FONT_CLASS")
     title:SetPoint("TOPLEFT", 5, -5)
-    
+
     -- textArea
     textArea = Cell:CreateScrollEditBox(exportFrame)
     Cell:StylizeFrame(textArea.scrollFrame, {0, 0, 0, 0}, Cell:GetAccentColorTable())
     textArea:SetPoint("TOPLEFT", 5, -20)
     textArea:SetPoint("BOTTOMRIGHT", -5, 5)
-    
+
     -- highlight text
     textArea.eb:SetScript("OnEditFocusGained", function() textArea.eb:HighlightText() end)
     textArea.eb:SetScript("OnMouseUp", function()
@@ -72,20 +72,20 @@ local function CreateIndicatorsExportFrame()
             textArea.eb:HighlightText()
         end
     end)
-    
+
     -- list buttons
     exportBtn = Cell:CreateButton(listParent, L["Export"], "green", {64, 20})
     exportBtn:SetPoint("BOTTOMLEFT", 5, 5)
     exportBtn:SetEnabled(false)
     exportBtn:SetScript("OnClick", function()
         exportFrame:Show()
-        
+
         local builtIn, custom = 0, 0
         local data = {
             ["indicators"] = {},
             ["related"] = {},
         }
-    
+
         for index in pairs(selectedIndicators) do
             -- count
             if indicatorButtons[index].isBuiltIn then
@@ -93,10 +93,10 @@ local function CreateIndicatorsExportFrame()
             else
                 custom = custom + 1
             end
-            
+
             -- data.indicators
             data["indicators"][index] = CellDB["layouts"][fromLayout]["indicators"][index]
-            
+
             -- data.related
             local name = CellDB["layouts"][fromLayout]["indicators"][index]["indicatorName"]
             if name == "defensiveCooldowns" or name == "allCooldowns" then
@@ -105,7 +105,7 @@ local function CreateIndicatorsExportFrame()
             if name == "externalCooldowns" or name == "allCooldowns" then
                 data["related"]["customExternals"] = CellDB["customExternals"]
             end
-            
+
             if name == "debuffs" then
                 data["related"]["debuffBlacklist"] = CellDB["debuffBlacklist"]
                 data["related"]["bigDebuffs"] = CellDB["bigDebuffs"]
@@ -124,24 +124,24 @@ local function CreateIndicatorsExportFrame()
         -- texplore(data)
 
         title:SetText(L["Export"]..": ".."|cff90EE90"..builtIn.." "..L["built-in(s)"].."|r, |cffFFB5C5"..custom.." "..L["custom(s)"].."|r")
-    
+
         -- prepare string
         local prefix = "!CELL:"..Cell.versionNum..":INDICATOR:"..(builtIn+custom).."!"
-    
+
         local exported = Serializer:Serialize(data) -- serialize
         exported = LibDeflate:CompressDeflate(exported, deflateConfig) -- compress
         exported = LibDeflate:EncodeForPrint(exported) -- encode
         exported = prefix..exported
-    
+
         textArea:SetText(exported)
     end)
-    
+
     local closeBtn = Cell:CreateButton(listParent, L["Close"], "red", {63, 20})
     closeBtn:SetPoint("BOTTOMLEFT", exportBtn, "BOTTOMRIGHT", P:Scale(-1), 0)
     closeBtn:SetScript("OnClick", function()
         exportParent:Hide()
     end)
-    
+
     local allBtn = Cell:CreateButton(listParent, L["ALL"], "accent-hover", {64, 20})
     allBtn:SetPoint("BOTTOMLEFT", exportBtn, "TOPLEFT", 0, P:Scale(-1))
     allBtn:SetScript("OnClick", function()
@@ -150,7 +150,7 @@ local function CreateIndicatorsExportFrame()
         end
         Validate()
     end)
-    
+
     local invertBtn = Cell:CreateButton(listParent, L["INVERT"], "accent-hover", {63, 20})
     invertBtn:SetPoint("BOTTOMLEFT", closeBtn, "TOPLEFT", 0, P:Scale(-1))
     invertBtn:SetScript("OnClick", function()

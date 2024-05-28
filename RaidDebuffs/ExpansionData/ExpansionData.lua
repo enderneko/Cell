@@ -2,7 +2,7 @@
 -- File: Cell\RaidDebuffs\ExpansionData\ExpansionData.lua
 -- Author: enderneko (enderneko-dev@outlook.com)
 -- Created : 2022-08-26 04:40:40 +08:00
--- Modified: 2024-05-04 17:29:16 +08:00
+-- Modified: 2024-05-21 21:10:58 +08:00
 ---------------------------------------------------------------------
 
 local _, Cell = ...
@@ -24,7 +24,7 @@ Cell:RegisterCallback("AddonLoaded", "UpdateExpansionData", function()
     elseif Cell.isCata then
         index = 4
     end
-    
+
     for i = 1, #Cell_ExpansionData["expansions"] - index do
         -- print("remove", Cell_ExpansionData.expansions[1])
         -- remove data

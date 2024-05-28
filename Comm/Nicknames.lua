@@ -121,7 +121,7 @@ local function UpdateNicknames(which, value1, value2)
         Cell.vars.playerNickname = CellDB["nicknames"]["mine"] ~= "" and CellDB["nicknames"]["mine"] or nil
         Cell.vars.nicknameCustomEnabled = CellDB["nicknames"]["custom"]
         CheckSelf()
-        
+
         if CellDB["nicknames"]["sync"] then
             CheckNicknames()
             nickname:RegisterEvent("GROUP_ROSTER_UPDATE")
@@ -164,10 +164,10 @@ local function UpdateNicknames(which, value1, value2)
     -- player changed nickname
     if which == "mine" then
         Cell.vars.playerNickname = CellDB["nicknames"]["mine"] ~= "" and CellDB["nicknames"]["mine"] or nil
-        
+
         -- update self
         CheckSelf()
-        
+
         -- notify others
         if IsInGroup() and CellDB["nicknames"]["sync"] then
             UpdateSendChannel()
@@ -183,7 +183,7 @@ local function UpdateNicknames(which, value1, value2)
             UpdateName(playerName)
         end
     end
-    
+
     -- list
     if which == "list-add" then
         Cell.vars.nicknameCustoms[value1] = value2
@@ -233,7 +233,7 @@ local f = CreateFrame("Frame")
 f:RegisterEvent("PLAYER_LOGIN")
 f:SetScript("OnEvent", function()
     f:UnregisterAllEvents()
-    
+
     if not CELL_NICKTAG_ENABLED then return end
 
     local nickTag = LibStub:GetLibrary("NickTag-1.0", true)
@@ -246,7 +246,7 @@ f:SetScript("OnEvent", function()
                 b.indicators.nameText:UpdateName()
             end, true)
         end
-        
+
         local timer
         nickTag:RegisterCallback("NickTag_Update", function()
             if timer then
