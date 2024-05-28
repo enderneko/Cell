@@ -2194,6 +2194,10 @@ local function PopulateMenu(menu, items)
                     b:SetChecked(item.initialState or false)
                 end
 
+                if item.disabled then
+                    b:Disable()
+                end
+
                 if item.onClick then
                     b.onClick = item.onClick
                 end
@@ -2364,6 +2368,12 @@ local function CreateItemFrame(item, itemParent)
 
                 b:SetText("")
                 b:SetChecked(false)
+
+                if b.item then
+                    if b.item.disabled then
+                        b:Enable()
+                    end
+                end
 
                 b.onClick = nil
                 b.item = nil

@@ -333,7 +333,6 @@ function eventFrame:ADDON_LOADED(arg1)
                 ["Party"] = true,
                 ["Raid"] = true,
                 ["Spotlight"] = true,
-                ["Quick Assist"] = true,
                 ["Solo"] = true,
                 ["Pet"] = true,
                 ["Raid Pets"] = true,

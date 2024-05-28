@@ -598,7 +598,6 @@ local function UpdateClickCastings(noReload)
 
     for frameType, clickCastingTable in pairs(clickCastingTableByType) do
         local snippet = GetBindingSnippet(clickCastingTable)
-        F:Debug(snippet)
 
         F:IterateAllUnitButtonsByType(function(b)
             b:SetAttribute("snippet", snippet)
@@ -938,6 +937,7 @@ local function ShowFrameTypesMenu(index, b)
             ["text"] = L["Quick Assist"],
             ["type"] = "Checkbox",
             ["initialState"] = initialStates["Quick Assist"],
+            ["disabled"] = not Cell.isRetail,
             ["onClick"] = function(_, value)
                 changed[index] = changed[index] or { b }
                 changed[index]["bindFrameTypes"] = changed[index]["bindFrameTypes"] or CopyTable(b.bindFrameTypes)
@@ -1029,7 +1029,7 @@ local function ShowFrameTypesMenu(index, b)
     menu:SetItems(items)
     P:ClearPoints(menu)
     P:Point(menu, "TOPLEFT", b.frameTypesGrid, "BOTTOMLEFT", 0, -1)
-    menu:SetWidths(80)
+    menu:SetWidths(100)
     menu:ShowMenu()
     bindingButton:Hide()
 end
