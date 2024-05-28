@@ -2935,7 +2935,9 @@ function F:Revise()
                                 buttonTable[2] = "general"
                             end
 
-                            buttonTable[4] = defaultFrameTypes
+                            if not buttonTable[4] or type(buttonTable[4]) ~= "table" then
+                                buttonTable[4] = defaultFrameTypes
+                            end
                         end
                     end
                 end
