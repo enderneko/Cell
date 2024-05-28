@@ -57,6 +57,21 @@ local mouseKeyIDs = {
     -- ["ScrollDown"]= 14,
 }
 
+local defaultFrameTypes = {
+    ["Party"] = true,
+    ["Raid"] = true,
+    ["Spotlight"] = true,
+    ["Solo"] = true,
+    ["Pet"] = true,
+    ["Raid Pets"] = true,
+    ["Arena Pets"] = true,
+    ["NPC"] = true,
+}
+
+if Cell.isRetail then
+    defaultFrameTypes["Quick Assist"] = true
+end
+
 local function GetBindingDisplay(modifier, key)
     modifier = modifier:gsub("%-", "|cff777777+|r")
     modifier = modifier:gsub("alt", "Alt")
@@ -73,6 +88,29 @@ local function GetBindingDisplay(modifier, key)
     return modifier..key
 end
 
+local function GetFrameTypesDisplay(frameTypes)
+    if not F:TContains(frameTypes, false) then
+        return L["All"]
+    end
+
+    local result = ""
+
+    for key, selected in pairs(frameTypes) do
+        if key ~= nil and selected then
+            local localizedString = L[F:UpperFirst(key)]
+            if localizedString then
+                result = result .. (result ~= "" and ", " or "") .. localizedString
+            end
+        end
+    end
+
+    if result == "" then
+        return L["None"]
+    end
+
+    return result
+end
+
 -- shift-Left -> shift-type1
 local function GetAttributeKey(modifier, bindKey)
     if mouseKeyIDs[bindKey] then -- normal mouse button
@@ -87,7 +125,7 @@ local function GetAttributeKey(modifier, bindKey)
     end
 end
 
-local function EncodeDB(modifier, bindKey, bindType, bindAction)
+local function EncodeDB(modifier, bindKey, bindType, bindAction, bindFrameTypes)
     local attrType, attrAction
     if bindType == "spell" then
         attrType = "spell"
@@ -97,15 +135,25 @@ local function EncodeDB(modifier, bindKey, bindType, bindAction)
         attrType = "macro"
         attrAction = bindAction
 
-    else -- general
-        attrType = bindAction
-        -- attrAction = nil
+    else
+        attrType = "general"
+        attrAction = bindAction
     end
 
     if bindKey == "notBound" then
-        return {"notBound", attrType, attrAction}
+        return {
+            "notBound",
+            attrType,
+            attrAction,
+            bindFrameTypes
+        }
     else
-        return {GetAttributeKey(modifier, bindKey), attrType, attrAction}
+        return {
+            GetAttributeKey(modifier, bindKey),
+            attrType,
+            attrAction,
+            bindFrameTypes
+        }
     end
 end
 
@@ -122,7 +170,7 @@ local function DecodeKeyboard(fullKey)
 end
 
 local function DecodeDB(t)
-    local modifier, bindKey, bindType, bindAction
+    local modifier, bindKey, bindType, bindAction, bindFrameTypes
 
     if t[1] ~= "notBound" then
         local dash, key
@@ -143,15 +191,11 @@ local function DecodeDB(t)
         modifier, bindKey = "", "notBound"
     end
 
-    if not t[3] then
-        bindType = "general"
-        bindAction = t[2]
-    else
-        bindType = t[2]
-        bindAction = t[3]
-    end
+    bindType = t[2]
+    bindAction = t[3]
+    bindFrameTypes = t[4]
 
-    return modifier, bindKey, bindType, bindAction
+    return modifier, bindKey, bindType, bindAction, bindFrameTypes
 end
 
 -------------------------------------------------
@@ -347,7 +391,7 @@ local function GetMouseWheelBindKey(fullKey, noTypePrefix)
     end
 end
 
-local function GetBindingSnippet()
+local function GetBindingSnippet(clickCastingTable)
     local bindingClicks = {}
     for _, t in pairs(clickCastingTable) do
         if t[1] ~= "notBound" then
@@ -425,28 +469,29 @@ local function UpdatePlaceholder(b, attr)
     end
 end
 
-local function ApplyClickCastings(b)
+local function ApplyClickCastings(b, clickCastingTable)
     for i, t in pairs(clickCastingTable) do
         local bindKey = t[1]
         if strfind(bindKey, "SCROLL") then
             bindKey = GetMouseWheelBindKey(t[1])
         end
 
-        if t[2] == "togglemenu_nocombat" then
-            b:SetAttribute("menu", bindKey)
-        ------------------------------------------------------------------
-        --* 已修复：实际上载具（宠物按钮）无法选中的原因是没有 SetAttribute("toggleForVehicle", false)
-        -- elseif Cell.isCata and t[2] == "target" then
-        --     b:SetAttribute(bindKey, "macro")
-        --     local attr = string.gsub(bindKey, "type", "macrotext")
-        --     b:SetAttribute(attr, "/tar [@cell]")
-        --     UpdatePlaceholder(b, attr)
-        ------------------------------------------------------------------
-        else
-            b:SetAttribute(bindKey, t[2])
-        end
-
-        if t[2] == "spell" then
+        if t[2] == "general" then
+            if t[3] == "togglemenu_nocombat" then
+                b:SetAttribute("menu", bindKey)
+                ------------------------------------------------------------------
+                --* 已修复：实际上载具（宠物按钮）无法选中的原因是没有 SetAttribute("toggleForVehicle", false)
+                -- elseif Cell.isCata and t[2] == "target" then
+                --     b:SetAttribute(bindKey, "macro")
+                --     local attr = string.gsub(bindKey, "type", "macrotext")
+                --     b:SetAttribute(attr, "/tar [@cell]")
+                --     UpdatePlaceholder(b, attr)
+                ------------------------------------------------------------------
+                
+            else
+                b:SetAttribute(bindKey, t[3])
+            end
+        elseif t[2] == "spell" then
             local spellName = GetSpellInfo(t[3]) or ""
 
             -- NOTE: spell 在无效/过远的目标上会处于“等待选中目标”的状态，即鼠标指针有一圈灰色材质。用 macrotext 可以解决这个问题
@@ -504,6 +549,26 @@ local function ApplyClickCastings(b)
     end
 end
 
+local function GetClickCastingTableByTypes()
+    local result = {}
+
+    for _, t in pairs(clickCastingTable) do
+        local types = t[4]
+
+        for frameType, active in pairs(types) do
+            if active then
+                if not result[frameType] then
+                    result[frameType] = {}
+                end
+
+                table.insert(result[frameType], t)
+            end
+        end
+    end
+
+    return result
+end
+
 local function UpdateClickCastings(noReload)
     F:Debug("|cff77ff77UpdateClickCastings:|r useCommon:", Cell.vars.clickCastings["useCommon"])
     clickCastingTable = Cell.vars.clickCastings["useCommon"] and Cell.vars.clickCastings["common"] or Cell.vars.clickCastings[Cell.vars.playerSpecID]
@@ -525,20 +590,24 @@ local function UpdateClickCastings(noReload)
         end
     end
 
-    local snippet = GetBindingSnippet()
-    F:Debug(snippet)
-
     F:IterateAllUnitButtons(function(b)
-        -- clear if attribute already set
         ClearClickCastings(b)
-
-        -- update bindingClicks
-        b:SetAttribute("snippet", snippet)
-        SetBindingClicks(b)
-
-        -- load db and set attribute
-        ApplyClickCastings(b)
     end, false, true)
+
+    local clickCastingTableByType = GetClickCastingTableByTypes()
+
+    for frameType, clickCastingTable in pairs(clickCastingTableByType) do
+        local snippet = GetBindingSnippet(clickCastingTable)
+        F:Debug(snippet)
+
+        F:IterateAllUnitButtonsByType(function(b)
+            b:SetAttribute("snippet", snippet)
+            SetBindingClicks(b)
+
+            ApplyClickCastings(b, clickCastingTable)
+        end, frameType)
+    end
+
     previousClickCastings = F:Copy(clickCastingTable)
 end
 Cell:RegisterCallback("UpdateClickCastings", "UpdateClickCastings", UpdateClickCastings)
@@ -796,6 +865,171 @@ local function ShowTypesMenu(index, b)
     P:ClearPoints(menu)
     P:Point(menu, "TOPLEFT", b.typeGrid, "BOTTOMLEFT", 0, -1)
     menu:SetWidths(70)
+    menu:ShowMenu()
+    bindingButton:Hide()
+end
+
+local function ShowFrameTypesMenu(index, b)
+    local parent = select(2, menu:GetPoint(1))
+
+    if parent == b.frameTypesGrid and menu:IsShown() then
+        menu:Hide()
+        return
+    end
+
+    -- if already in deleted, do nothing
+    if deleted[index] then return end
+
+    local initialStates = {}
+
+    if changed[index] and changed[index]["bindFrameTypes"] then
+        initialStates = changed[index]["bindFrameTypes"]
+    else
+        initialStates = b.bindFrameTypes
+    end
+
+    local items = {
+        {
+            ["text"] = L["Party"],
+            ["type"] = "Checkbox",
+            ["initialState"] = initialStates["Party"],
+            ["onClick"] = function(_, value)
+                changed[index] = changed[index] or { b }
+                changed[index]["bindFrameTypes"] = changed[index]["bindFrameTypes"] or CopyTable(b.bindFrameTypes)
+
+                changed[index]["bindFrameTypes"]["Party"] = value
+
+                b.frameTypesGrid:SetText(GetFrameTypesDisplay(changed[index]["bindFrameTypes"]))
+                CheckChanged(index, b)
+                CheckChanges()
+            end,
+        },
+        {
+            ["text"] = L["Raid"],
+            ["type"] = "Checkbox",
+            ["initialState"] = initialStates["Raid"],
+            ["onClick"] = function(_, value)
+                changed[index] = changed[index] or { b }
+                changed[index]["bindFrameTypes"] = changed[index]["bindFrameTypes"] or CopyTable(b.bindFrameTypes)
+
+                changed[index]["bindFrameTypes"]["Raid"] = value
+
+                b.frameTypesGrid:SetText(GetFrameTypesDisplay(changed[index]["bindFrameTypes"]))
+                CheckChanged(index, b)
+                CheckChanges()
+            end,
+        },
+        {
+            ["text"] = L["Spotlight"],
+            ["type"] = "Checkbox",
+            ["initialState"] = initialStates["Spotlight"],
+            ["onClick"] = function(_, value)
+                changed[index] = changed[index] or { b }
+                changed[index]["bindFrameTypes"] = changed[index]["bindFrameTypes"] or CopyTable(b.bindFrameTypes)
+
+                changed[index]["bindFrameTypes"]["Spotlight"] = value
+
+                b.frameTypesGrid:SetText(GetFrameTypesDisplay(changed[index]["bindFrameTypes"]))
+                CheckChanged(index, b)
+                CheckChanges()
+            end,
+        },
+        {
+            ["text"] = L["Quick Assist"],
+            ["type"] = "Checkbox",
+            ["initialState"] = initialStates["Quick Assist"],
+            ["onClick"] = function(_, value)
+                changed[index] = changed[index] or { b }
+                changed[index]["bindFrameTypes"] = changed[index]["bindFrameTypes"] or CopyTable(b.bindFrameTypes)
+
+                changed[index]["bindFrameTypes"]["Quick Assist"] = value
+
+                b.frameTypesGrid:SetText(GetFrameTypesDisplay(changed[index]["bindFrameTypes"]))
+                CheckChanged(index, b)
+                CheckChanges()
+            end,
+        },
+        {
+            ["text"] = L["Solo"],
+            ["type"] = "Checkbox",
+            ["initialState"] = initialStates["Solo"],
+            ["onClick"] = function(_, value)
+                changed[index] = changed[index] or { b }
+                changed[index]["bindFrameTypes"] = changed[index]["bindFrameTypes"] or CopyTable(b.bindFrameTypes)
+
+                changed[index]["bindFrameTypes"]["Solo"] = value
+
+                b.frameTypesGrid:SetText(GetFrameTypesDisplay(changed[index]["bindFrameTypes"]))
+                CheckChanged(index, b)
+                CheckChanges()
+            end,
+        },
+        {
+            ["text"] = L["Pet"],
+            ["type"] = "Checkbox",
+            ["initialState"] = initialStates["Pet"],
+            ["onClick"] = function(_, value)
+                changed[index] = changed[index] or { b }
+                changed[index]["bindFrameTypes"] = changed[index]["bindFrameTypes"] or CopyTable(b.bindFrameTypes)
+
+                changed[index]["bindFrameTypes"]["Pet"] = value
+
+                b.frameTypesGrid:SetText(GetFrameTypesDisplay(changed[index]["bindFrameTypes"]))
+                CheckChanged(index, b)
+                CheckChanges()
+            end,
+        },
+        {
+            ["text"] = L["Raid Pets"],
+            ["type"] = "Checkbox",
+            ["initialState"] = initialStates["Raid Pets"],
+            ["onClick"] = function(_, value)
+                changed[index] = changed[index] or { b }
+                changed[index]["bindFrameTypes"] = changed[index]["bindFrameTypes"] or CopyTable(b.bindFrameTypes)
+
+                changed[index]["bindFrameTypes"]["Raid Pets"] = value
+
+                b.frameTypesGrid:SetText(GetFrameTypesDisplay(changed[index]["bindFrameTypes"]))
+                CheckChanged(index, b)
+                CheckChanges()
+            end,
+        },
+        {
+            ["text"] = L["Arena Pets"],
+            ["type"] = "Checkbox",
+            ["initialState"] = initialStates["Arena Pets"],
+            ["onClick"] = function(_, value)
+                changed[index] = changed[index] or { b }
+                changed[index]["bindFrameTypes"] = changed[index]["bindFrameTypes"] or CopyTable(b.bindFrameTypes)
+
+                changed[index]["bindFrameTypes"]["Arena Pets"] = value
+
+                b.frameTypesGrid:SetText(GetFrameTypesDisplay(changed[index]["bindFrameTypes"]))
+                CheckChanged(index, b)
+                CheckChanges()
+            end,
+        },
+        {
+            ["text"] = L["NPC"],
+            ["type"] = "Checkbox",
+            ["initialState"] = initialStates["NPC"],
+            ["onClick"] = function(_, value)
+                changed[index] = changed[index] or { b }
+                changed[index]["bindFrameTypes"] = changed[index]["bindFrameTypes"] or CopyTable(b.bindFrameTypes)
+
+                changed[index]["bindFrameTypes"]["NPC"] = value
+
+                b.frameTypesGrid:SetText(GetFrameTypesDisplay(changed[index]["bindFrameTypes"]))
+                CheckChanged(index, b)
+                CheckChanges()
+            end,
+        },
+    }
+
+    menu:SetItems(items)
+    P:ClearPoints(menu)
+    P:Point(menu, "TOPLEFT", b.frameTypesGrid, "BOTTOMLEFT", 0, -1)
+    menu:SetWidths(80)
     menu:ShowMenu()
     bindingButton:Hide()
 end
@@ -1187,8 +1421,8 @@ local function CreateListPane()
     newBtn:SetPoint("TOPLEFT", bindingsFrame, "BOTTOMLEFT", 0, P:Scale(1))
     newBtn:SetScript("OnClick", function()
         local index = #clickCastingTable+1
-        local b = CreateBindingListButton("", "notBound", "general", "target", index)
-        tinsert(clickCastingTable, EncodeDB("", "notBound", "general", "target"))
+        local b = CreateBindingListButton("", "notBound", "general", "target", defaultFrameTypes, index)
+        tinsert(clickCastingTable, EncodeDB("", "notBound", "general", "target", defaultFrameTypes))
 
         b:SetPoint("TOP", 0, P:Scale(-20)*(index-1)+P:Scale(-5)*(index-1))
 
@@ -1219,7 +1453,8 @@ local function CreateListPane()
             local bindKey = t["bindKey"] or b.bindKey
             local bindType = t["bindType"] or b.bindType
             local bindAction = t["bindAction"] or b.bindAction
-            clickCastingTable[index] = EncodeDB(modifier, bindKey, bindType, bindAction)
+            local bindFrameTypes = t["bindFrameTypes"] or b.bindFrameTypes
+            clickCastingTable[index] = EncodeDB(modifier, bindKey, bindType, bindAction, bindFrameTypes)
         end
 
         -- delete!
@@ -1252,6 +1487,7 @@ local function CreateListPane()
 
             t[1].keyGrid:SetText(GetBindingDisplay(t[1].modifier, t[1].bindKey))
             t[1].typeGrid:SetText(L[F:UpperFirst(t[1].bindType)])
+            t[1].frameTypesGrid:SetText(GetFrameTypesDisplay(t[1].bindFrameTypes))
             t[1].actionGrid:SetText(t[1].bindType == "general" and L[t[1].bindAction] or t[1].bindAction)
             -- restore icon
             if t[1].bindType == "spell" then
@@ -1271,20 +1507,20 @@ end
 -------------------------------------------------
 -- bindings frame
 -------------------------------------------------
-CreateBindingListButton = function(modifier, bindKey, bindType, bindAction, i)
+CreateBindingListButton = function(modifier, bindKey, bindType, bindAction, bindFrameTypes, i)
     local bindActionDisplay, bindSpell
     if bindType == "general" then
         bindActionDisplay = L[bindAction]
     elseif bindType == "spell" then
         bindSpell = bindAction -- spellId
-        bindAction = GetSpellInfo(bindAction) or "|cFFFF3030"..L["Invalid"] -- spellName
+        bindAction = GetSpellInfo(bindAction) or ("|cFFFF3030"..L["Invalid"]) -- spellName
         bindActionDisplay = bindAction
     else
         bindActionDisplay = bindAction
     end
 
     if not listButtons[i] then
-        listButtons[i] = Cell:CreateBindingListButton(bindingsFrame.scrollFrame.content, "", "", "", "")
+        listButtons[i] = Cell:CreateBindingListButton(bindingsFrame.scrollFrame.content, "", "", "", "", "")
     end
     local b = listButtons[i]
     b:SetParent(bindingsFrame.scrollFrame.content)
@@ -1294,9 +1530,10 @@ CreateBindingListButton = function(modifier, bindKey, bindType, bindAction, i)
 
     b.keyGrid:SetText(GetBindingDisplay(modifier, bindKey))
     b.typeGrid:SetText(L[F:UpperFirst(bindType)])
+    b.frameTypesGrid:SetText(GetFrameTypesDisplay(bindFrameTypes))
     b.actionGrid:SetText(bindActionDisplay)
 
-    b.modifier, b.bindKey, b.bindType, b.bindAction = modifier, bindKey, bindType, bindAction
+    b.modifier, b.bindKey, b.bindType, b.bindAction, b.bindFrameTypes = modifier, bindKey, bindType, bindAction, bindFrameTypes
     b.bindSpell = bindSpell
     b.clickCastingIndex = i
 
@@ -1336,6 +1573,14 @@ CreateBindingListButton = function(modifier, bindKey, bindType, bindAction, i)
         end
     end)
 
+    b.frameTypesGrid:SetScript("OnClick", function(self, button, down)
+        if button == "RightButton" then
+            b:GetScript("OnClick")(b, button, down)
+        else
+            ShowFrameTypesMenu(i, b)
+        end
+    end)
+
     b.actionGrid:SetScript("OnClick", function(self, button, down)
         if button == "RightButton" then
             b:GetScript("OnClick")(b, button, down)
@@ -1363,8 +1608,8 @@ LoadProfile = function(isCommon)
     -- F:Debug("-- Load clickCastings start --------------")
     for i, t in pairs(clickCastingTable) do
         -- F:Debug(table.concat(t, ","))
-        local modifier, bindKey, bindType, bindAction = DecodeDB(t)
-        local b = CreateBindingListButton(modifier, bindKey, bindType, bindAction, i)
+        local modifier, bindKey, bindType, bindAction, bindFrameTypes = DecodeDB(t)
+        local b = CreateBindingListButton(modifier, bindKey, bindType, bindAction, bindFrameTypes, i)
 
         b:SetPoint("TOP", 0, P:Scale(-20)*(i-1)+P:Scale(-5)*(i-1))
     end

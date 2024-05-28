@@ -842,6 +842,52 @@ function F:IterateAllUnitButtons(func, updateCurrentGroupOnly, updateQuickAssist
     end
 end
 
+function F:IterateAllUnitButtonsByType(func, frameType)
+    if frameType == "All" then
+        F:IterateAllUnitButtons(func, false, true)
+    elseif frameType == "Solo" then
+        func(Cell.unitButtons.solo.player)
+    elseif frameType == "Pet" then
+        func(Cell.unitButtons.solo.pet)
+    elseif frameType == "Party" then
+        for index, b in pairs(Cell.unitButtons.party) do
+            if index ~= "units" then
+                func(b)
+            end
+        end
+    elseif frameType == "Raid" then
+        for index, header in pairs(Cell.unitButtons.raid) do
+            if index ~= "units" then
+                for _, b in ipairs(header) do
+                    func(b)
+                end
+            end
+        end
+    elseif frameType == "Raid Pets" then
+        for index, b in pairs(Cell.unitButtons.raidpet) do
+            if index ~= "units" then
+                func(b)
+            end
+        end
+    elseif frameType == "Arena Pets" then
+        for _, b in pairs(Cell.unitButtons.arena) do
+            func(b)
+        end
+    elseif frameType == "NPC" then
+        for _, b in ipairs(Cell.unitButtons.npc) do
+            func(b)
+        end
+    elseif frameType == "Spotlight" then
+        for _, b in pairs(Cell.unitButtons.spotlight) do
+            func(b, "spotlight")
+        end
+    elseif frameType == "Quick Assist" and Cell.isRetail then
+        for i = 1, 40 do
+            func(Cell.unitButtons.quickAssist[i])
+        end
+    end
+end
+
 function F:IterateSharedUnitButtons(func)
     -- npc
     for _, b in ipairs(Cell.unitButtons.npc) do

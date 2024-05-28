@@ -2909,6 +2909,38 @@ function F:Revise()
                 end
             end
         end
+
+        if CellDB["clickCastings"] then
+            local defaultFrameTypes = {
+                ["Party"] = true,
+                ["Raid"] = true,
+                ["Spotlight"] = true,
+                ["Solo"] = true,
+                ["Pet"] = true,
+                ["Raid Pets"] = true,
+                ["Arena Pets"] = true,
+                ["NPC"] = true,
+            }
+
+            if Cell.isRetail then
+                defaultFrameTypes["Quick Assist"] = true
+            end
+
+            for _, specTable in pairs(CellDB["clickCastings"]) do
+                for specId, dbTable in pairs(specTable) do
+                    if type(dbTable) == "table" and specId ~= "alwaysTargeting" then
+                        for _, buttonTable in pairs(dbTable) do
+                            if not buttonTable[3] then
+                                buttonTable[3] = buttonTable[2]
+                                buttonTable[2] = "general"
+                            end
+
+                            buttonTable[4] = defaultFrameTypes
+                        end
+                    end
+                end
+            end
+        end
     end
 
     -- ----------------------------------------------------------------------- --

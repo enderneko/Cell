@@ -145,6 +145,17 @@ local defaultSpells = {
     },
 }
 
+local allFrameTypes = {
+    ["Party"] = true,
+    ["Raid"] = true,
+    ["Spotlight"] = true,
+    ["Solo"] = true,
+    ["Pet"] = true,
+    ["Raid Pets"] = true,
+    ["Arena Pets"] = true,
+    ["NPC"] = true,
+}
+
 function F:GetClickCastingSpellList(class)
     local spells = defaultSpells[class]["common"] and F:Copy(defaultSpells[class]["common"]) or {}
 
@@ -202,16 +213,16 @@ end
 
 local resurrection_click_castings = {
     ["DRUID"] = {
-        {"type-altR", "spell", 20484},
+        {"type-altR", "spell", allFrameTypes, 20484},
     },
     ["PALADIN"] = {
-        {"type-shiftR", "spell", 7328},
+        {"type-shiftR", "spell", allFrameTypes, 7328},
     },
     ["PRIEST"] = {
-        {"type-shiftR", "spell", 2006},
+        {"type-shiftR", "spell", allFrameTypes, 2006},
     },
     ["SHAMAN"] = {
-        {"type-shiftR", "spell", 2008},
+        {"type-shiftR", "spell", allFrameTypes, 2008},
     },
 }
 

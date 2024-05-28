@@ -2090,163 +2090,342 @@ end
 -----------------------------------------
 -- cascading menu
 -----------------------------------------
-local menu = addon:CreateFrame(addonName.."CascadingMenu", UIParent, 100, 20)
+local menu = addon:CreateFrame(addonName.."CascadingMenu", CellOptionsFrame, 100, 20)
 addon.menu = menu
+
 tinsert(UISpecialFrames, menu:GetName())
+
 menu:SetClampedToScreen(true)
 menu:SetBackdropColor(0.115, 0.115, 0.115, 0.977)
-menu:SetBackdropBorderColor(accentColor.t[1], accentColor.t[2], accentColor.t[3], 1)
+menu:SetBackdropBorderColor(Cell:GetAccentColorRGB())
 menu:SetFrameStrata("TOOLTIP")
-menu.items = {}
 
-function menu:UpdatePixelPerfect()
-    menu:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8x8", edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = P:Scale(1)})
-    menu:SetBackdropColor(0.115, 0.115, 0.115, 0.977)
-    menu:SetBackdropBorderColor(Cell:GetAccentColorRGB())
+menu.items = {}
+menu.visibleItems = {}
+
+menu.subMenus = {}
+
+menu:SetScript("OnHide", function(self)
+    self:Hide()
+
+    for _, pool in pairs(self.items) do
+        pool:ReleaseAll()
+    end
+
+    wipe(self.visibleItems)
+end)
+
+local function CreateSubMenu(level, parent)
+    local subMenu = addon:CreateFrame(addonName.."CascadingSubMenu"..level, parent, 100, 20)
+    subMenu:SetBackdropColor(0.115, 0.115, 0.115, 1)
+    subMenu:SetBackdropBorderColor(accentColor.t[1], accentColor.t[2], accentColor.t[3], 1)
+
+    subMenu.level = level
+
+    subMenu.items = {}
+    subMenu.visibleItems = {}
+
+    subMenu:SetScript("OnHide", function(self)
+        self:Hide()
+
+        for _, pool in pairs(self.items) do
+            pool:ReleaseAll()
+        end
+
+        wipe(self.visibleItems)
+    end)
+
+    return subMenu
 end
 
--- items: menu items table
--- itemTable: table to store item buttons --> menu/submenu
--- itemParent: menu/submenu
--- level: menu level, 0, 1, 2, 3, ...
-local function CreateItemButtons(items, itemTable, itemParent, level)
-    itemParent:SetScript("OnHide", function(self) self:Hide() end)
+local function PopulateMenu(menu, items)
+    for _, pool in pairs(menu.items) do
+        pool:ReleaseAll()
+    end
 
-    for i, item in pairs(items) do
+    wipe(menu.visibleItems)
+
+    for _, item in pairs(items) do
+        local itemType = item.type or "Button"
         local b
-        if itemTable[i] and itemTable[i]:GetObjectType() == "Button" then
-            b = itemTable[i]
-            b:SetText(item.text)
-        else
-            b = addon:CreateButton(itemParent, item.text, "transparent-accent", {98 ,18}, true)
-            tinsert(itemTable, b)
-        end
 
-        b:SetParent(itemParent)
-        b:ClearAllPoints()
-        if i == 1 then
-            b:SetPoint("TOPLEFT", 1, -1)
-            b:SetPoint("RIGHT", -1, 0)
-        else
-            b:SetPoint("TOPLEFT", itemTable[i-1], "BOTTOMLEFT")
-            b:SetPoint("RIGHT", itemTable[i-1])
-        end
+        if menu.items[itemType] then
+            if itemType == "Button" then
+                b = menu.items[itemType]:Acquire()
 
-        if item.textColor then
-            b:GetFontString():SetTextColor(unpack(item.textColor))
-        end
-
-        if item.icon then
-            if not b.icon then
-                b.iconBg = b:CreateTexture(nil, "BORDER")
-                P:Size(b.iconBg, 16, 16)
-                b.iconBg:SetPoint("TOPLEFT", P:Scale(5), P:Scale(-1))
-                b.iconBg:SetColorTexture(0, 0, 0, 1)
-
-                b.icon = b:CreateTexture(nil, "ARTWORK")
-                b.icon:SetPoint("TOPLEFT", b.iconBg, P:Scale(1), P:Scale(-1))
-                b.icon:SetPoint("BOTTOMRIGHT", b.iconBg, P:Scale(-1), P:Scale(1))
-                b.icon:SetTexCoord(0.08, 0.92, 0.08, 0.92)
-            end
-            b.icon:SetTexture(item.icon)
-            b.icon:Show()
-            b.iconBg:Show()
-            b:GetFontString():SetPoint("LEFT", b.iconBg, "RIGHT", P:Scale(2), 0)
-        else
-            if b.icon then
-                b.icon:Hide()
-                b.iconBg:Hide()
-            end
-            b:GetFontString():SetPoint("LEFT", P:Scale(5), 0)
-        end
-
-        if level == 0 then
-            b:Show()-- show valid top menu buttons
-        else
-            b:Hide()
-            b:SetScript("OnHide", function(self) self:Hide() end)
-        end
-
-        if item.children then
-            -- create sub menu level+1
-            if not menu[level+1] then
-                -- menu[level+1] parent == menu[level]
-                menu[level+1] = addon:CreateFrame(addonName.."CascadingSubMenu"..level, level == 0 and menu or menu[level], 100, 20)
-                menu[level+1]:SetBackdropColor(0.115, 0.115, 0.115, 1)
-                menu[level+1]:SetBackdropBorderColor(accentColor.t[1], accentColor.t[2], accentColor.t[3], 1)
-                -- menu[level+1]:SetScript("OnHide", function(self) self:Hide() end)
-            end
-
-            if not b.childrenSymbol then
-                b.childrenSymbol = b:CreateFontString(nil, "OVERLAY", font_name)
-                b.childrenSymbol:SetText("|cFF777777>")
-                b.childrenSymbol:SetPoint("RIGHT", -5, 0)
-            end
-            b.childrenSymbol:Show()
-
-            CreateItemButtons(item.children, b, menu[level+1], level+1) -- itemTable == b, insert children to its table
-
-            b:SetScript("OnEnter", function()
-                b:SetBackdropColor(unpack(b.hoverColor))
-
-                menu[level+1]:Hide()
-
-                menu[level+1]:ClearAllPoints()
-                menu[level+1]:SetPoint("TOPLEFT", b, "TOPRIGHT", 2, 1)
-                menu[level+1]:Show()
-
-                for _, b in ipairs(b) do
-                    b:Show()
+                if item.onClick then
+                    b.onClick = item.onClick
                 end
-            end)
 
-            -- clear parent menuItem's onClick
-            b:SetScript("OnClick", function()
-                PlaySound(SOUNDKIT.U_CHAT_SCROLL_BUTTON)
-            end)
-        else
-            if b.childrenSymbol then b.childrenSymbol:Hide() end
+                if item.text then
+                    b:SetText(item.text)
+                end
 
-            b:SetScript("OnEnter", function()
-                b:SetBackdropColor(unpack(b.hoverColor))
+                if item.textColor and b.fs then
+                    b.fs:SetTextColor(unpack(item.textColor))
+                end
 
-                if menu[level+1] then menu[level+1]:Hide() end
-            end)
+                if item.icon then
+                    b.icon:SetTexture(item.icon)
 
-            b:SetScript("OnClick", function()
-                PlaySound(SOUNDKIT.U_CHAT_SCROLL_BUTTON)
-                menu:Hide()
-                if item.onClick then item.onClick(item.text) end
-            end)
+                    b.icon:Show()
+                    b.iconBg:Show()
+
+                    b.fs:SetPoint("LEFT", b.iconBg, "RIGHT", P:Scale(2), 0)
+                end
+
+                if item.children then
+                    b.childrenSymbol:Show()
+                    b.children = item.children
+                end
+
+            elseif itemType == "Checkbox" then
+                b = menu.items[itemType]:Acquire()
+
+                if item.text then
+                    b:SetText(item.text)
+                end
+
+                if item.textColor then
+                    b.label:SetTextColor(unpack(item.textColor))
+                end
+
+                if item.initialState ~= nil then
+                    b:SetChecked(item.initialState or false)
+                end
+
+                if item.onClick then
+                    b.onClick = item.onClick
+                end
+            end
+        end
+
+        if b then
+            b:Show()
+            table.insert(menu.visibleItems, b)
+            b.item = item
+
+            local numVisibleItems = #menu.visibleItems
+
+            if numVisibleItems == 1 then
+                b:SetPoint("TOPLEFT", 1, -1)
+                b:SetPoint("RIGHT", -1, 0)
+            else
+                b:SetPoint("TOPLEFT", menu.visibleItems[numVisibleItems - 1], "BOTTOMLEFT")
+                b:SetPoint("RIGHT", menu.visibleItems[numVisibleItems - 1])
+            end
         end
     end
 
-    -- update menu/submenu height
-    itemParent:SetHeight(2 + #items*18)
+    menu:SetHeight(2 + #menu.visibleItems * 18)
 end
 
-local function CreateItemButtons_Scroll(items, itemTable, limit)
-    menu:SetScript("OnHide", function(self) self:Hide() end)
+local function CreateItemFrame(item, itemParent)
+    local itemType = item.type or "Button"
+    local b
 
+    if itemType == "Button" then
+        if not itemParent.items[itemType] then
+            local creationFunc = function(self)
+                local b = addon:CreateButton(self.parent, " ", "transparent-accent", {98, 18}, true)
+
+                if not b.icon then
+                    b.iconBg = b:CreateTexture(nil, "BORDER")
+                    P:Size(b.iconBg, 16, 16)
+                    b.iconBg:SetPoint("TOPLEFT", P:Scale(5), P:Scale(-1))
+                    b.iconBg:SetColorTexture(0, 0, 0, 1)
+                    b.iconBg:Hide()
+        
+                    b.icon = b:CreateTexture(nil, "ARTWORK")
+                    b.icon:SetPoint("TOPLEFT", b.iconBg, P:Scale(1), P:Scale(-1))
+                    b.icon:SetPoint("BOTTOMRIGHT", b.iconBg, P:Scale(-1), P:Scale(1))
+                    b.icon:SetTexCoord(0.08, 0.92, 0.08, 0.92)
+                    b.icon:Hide()
+                end
+
+                if not b.childrenSymbol then
+                    b.childrenSymbol = b:CreateFontString(nil, "OVERLAY", font_name)
+                    b.childrenSymbol:SetText("|cFF777777>|r")
+                    b.childrenSymbol:SetPoint("RIGHT", -5, 0)
+        
+                    b.childrenSymbol:Hide()
+                end
+
+                if b.fs then
+                    b.fs:SetPoint("LEFT", P:Scale(5), 0)
+                end
+
+                b:SetScript("OnEnter", function(self)
+                    b:SetBackdropColor(unpack(b.hoverColor))
+
+                    local parent = self:GetParent()
+                    local level = parent.level or 0
+
+                    local nextSubMenu = menu.subMenus[level + 1]
+
+                    if nextSubMenu then
+                        nextSubMenu:Hide()
+                    end
+
+                    if self.children and nextSubMenu then
+                        nextSubMenu:ClearAllPoints()
+                        nextSubMenu:SetPoint("TOPLEFT", b, "TOPRIGHT", 2, 1)
+                        nextSubMenu:Show()
+
+                        PopulateMenu(nextSubMenu, self.children)
+
+                        nextSubMenu:SetHeight(2 + #nextSubMenu.visibleItems * 18)
+                    end
+
+                end)
+
+                b:SetScript("OnClick", function(self)
+                    PlaySound(SOUNDKIT.U_CHAT_SCROLL_BUTTON)
+
+                    if not self.children then
+                        if self.onClick then
+                            self.onClick(self)
+                        end
+
+                        menu:Hide()
+                    end
+                end)
+
+                return b
+            end
+
+            local resetterFunc = function(_, b)
+                b:Hide()
+                b:ClearAllPoints()
+
+                b:SetText("")
+
+                if b.item then
+                    if b.item.icon then
+                        b.icon:Hide()
+                        b.iconBg:Hide()
+
+                        if b.fs then
+                            b.fs:SetPoint("LEFT", P:Scale(5), 0)
+                        end
+                    end
+
+                    if b.item.children then
+                        b.childrenSymbol:Hide()
+                    end
+                end
+
+                b.onClick = nil
+                b.children = nil
+                b.item = nil
+            end
+
+            itemParent.items[itemType] = CreateObjectPool(creationFunc, resetterFunc)
+            itemParent.items[itemType].parent = itemParent
+        end
+
+        b = itemParent.items[itemType]:Acquire()
+
+    elseif itemType == "Checkbox" then
+        if not itemParent.items[itemType] then
+            local creationFunc = function(self)
+                local b = addon:CreateCheckButton(self.parent, "")
+
+                P:Size(b, 98, 18)
+                b.label:ClearAllPoints()
+                b.label:SetPoint("LEFT", P:Scale(5), 0)
+
+                b:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8x8"})
+                b:SetBackdropColor(0.115, 0.115, 0.115, 0.9)
+                b:SetBackdropBorderColor(0, 0, 0, 0)
+
+                local checkedTexture = b:GetCheckedTexture()
+                checkedTexture:SetPoint("TOPLEFT", P:Scale(0), P:Scale(0))
+                checkedTexture:SetPoint("BOTTOMRIGHT", P:Scale(0), P:Scale(0))
+
+                local highlightTexture = b:GetHighlightTexture()
+                highlightTexture:SetPoint("TOPLEFT", P:Scale(0), P:Scale(0))
+                highlightTexture:SetPoint("BOTTOMRIGHT", P:Scale(0), P:Scale(0))
+
+                b:SetScript("OnClick", function(self)
+                    PlaySound(self:GetChecked() and SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON or SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_OFF)
+
+                    if self.onClick then
+                        self.onClick(self, self:GetChecked() and true or false)
+                    end
+                end)
+
+                return b
+            end
+
+            local resetterFunc = function(_, b)
+                b:Hide()
+                b:ClearAllPoints()
+
+                b:SetText("")
+                b:SetChecked(false)
+
+                b.onClick = nil
+                b.item = nil
+            end
+
+            itemParent.items[itemType] = CreateObjectPool(creationFunc, resetterFunc)
+            itemParent.items[itemType].parent = itemParent
+        end
+
+        b = itemParent.items[itemType]:Acquire()
+    end
+
+    if b then
+        b:Hide()
+    end
+
+    return b
+end
+
+local function InitializeItems(items, itemParent, level)
+    for _, item in pairs(items) do
+        CreateItemFrame(item, itemParent)
+
+        if item.children then
+            local subMenu = menu.subMenus[level + 1]
+
+            if not subMenu then
+                subMenu = CreateSubMenu(level + 1, level == 0 and menu or menu.subMenus[level])
+                menu.subMenus[level + 1] = subMenu
+            end
+
+            InitializeItems(item.children, subMenu, level + 1)
+        end
+    end
+
+    for _, pool in pairs(itemParent.items) do
+        pool:ReleaseAll()
+    end
+end
+
+local function InitializeButtons_Scroll(items, itemTable, limit)
     for i, item in pairs(items) do
         local b
-        if itemTable[i] and itemTable[i]:GetObjectType() == "Button" then
-            b = itemTable[i]
+        if itemTable.scrollFrame.items[i] and itemTable.scrollFrame.items[i]:GetObjectType() == "Button" then
+            b = itemTable.scrollFrame.items[i]
             b:SetText(item.text)
         else
-            b = addon:CreateButton(menu.scrollFrame.content, item.text, "transparent-accent", {98 ,18}, true)
-            tinsert(itemTable, b)
+            b = addon:CreateButton(menu.scrollFrame.content, item.text, "transparent-accent", {98, 18}, true)
+            tinsert(itemTable.scrollFrame.items, b)
         end
 
         b:Show()
         b:SetParent(menu.scrollFrame.content)
+
         b:ClearAllPoints()
+
         if i == 1 then
             b:SetPoint("TOPLEFT", 1, -1)
             b:SetPoint("RIGHT", -1, 0)
         else
-            b:SetPoint("TOPLEFT", itemTable[i-1], "BOTTOMLEFT")
-            b:SetPoint("RIGHT", itemTable[i-1])
+            b:SetPoint("TOPLEFT", itemTable.scrollFrame.items[i-1], "BOTTOMLEFT")
+            b:SetPoint("RIGHT", itemTable.scrollFrame.items[i-1])
         end
 
         if item.textColor then
@@ -2276,22 +2455,6 @@ local function CreateItemButtons_Scroll(items, itemTable, limit)
             end
             b:GetFontString():SetPoint("LEFT", P:Scale(5), 0)
         end
-
-        -- if item.marker then
-        --     if not b.marker then
-        --         b.marker = b:CreateTexture(nil, "OVERLAY")
-        --         P:Size(b.marker, 16, 16)
-        --         b.marker:SetAllPoints(b.iconBg)
-        --     end
-        --     b.marker:SetTexture("Interface\\AddOns\\Cell\\Media\\Icons\\icon_marker.tga")
-        --     b.marker:SetVertexColor(1, 1, 1, 0.77)
-        --     b.marker:SetBlendMode("ADD")
-        --     b.marker:Show()
-        -- else
-        --     if b.marker then
-        --         b.marker:Hide()
-        --     end
-        -- end
 
         if b.childrenSymbol then b.childrenSymbol:Hide() end
 
@@ -2317,53 +2480,71 @@ local function CreateItemButtons_Scroll(items, itemTable, limit)
 end
 
 function menu:SetItems(items, limit)
-    -- clear topmenu
-    for _, b in pairs({menu:GetChildren()}) do
-        if b:GetObjectType() == "Button" then
-            b:Hide()
+    for _, b in pairs(menu.visibleItems) do
+        b:Hide()
+    end
+
+    wipe(menu.visibleItems)
+
+    for _, subMenu in pairs(menu.subMenus) do
+        for _, pool in pairs(subMenu.items) do
+            pool:ReleaseAll()
         end
     end
 
     if not menu.scrollFrame then
         addon:CreateScrollFrame(menu)
         menu.scrollFrame:SetScrollStep(18)
+        menu.scrollFrame.items = {}
     end
+
     menu.scrollFrame:Reset()
 
-    -- create buttons -- items, itemTable, itemParent, level
     if limit then
         menu.scrollFrame:Show()
-        CreateItemButtons_Scroll(items, menu.items, limit)
+        InitializeButtons_Scroll(items, menu, limit)
     else
         menu.scrollFrame:Hide()
-        CreateItemButtons(items, menu.items, menu, 0)
+        InitializeItems(items, menu, 0)
+        PopulateMenu(menu, items)
     end
 end
 
 function menu:SetWidths(...)
     local widths = {...}
+
     P:Width(menu, widths[1])
+
     if #widths == 1 then
-        for _, m in ipairs(menu) do
-            P:Width(m, widths[1])
+        for _, subMenu in ipairs(menu.subMenus) do
+            P:Width(subMenu, widths[1])
         end
     else
-        for i, m in ipairs(menu) do
-            if widths[i+1] then P:Width(m, widths[i+1]) end
+        for _, subMenu in ipairs(menu.subMenus) do
+            if widths[i + 1] then
+                P:Width(subMenu, widths[i + 1])
+            end
         end
     end
 end
 
 function menu:ShowMenu()
-    for i, m in ipairs(menu) do
-        m:Hide()
+    for _, subMenu in ipairs(menu.subMenus) do
+        subMenu:Hide()
     end
+
     menu:Show()
 end
 
 function menu:SetMenuParent(parent)
     menu:SetParent(parent)
     menu:SetFrameStrata("TOOLTIP")
+end
+
+function menu:UpdatePixelPerfect()
+    menu:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8x8", edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = P:Scale(1)})
+    menu:SetBackdropColor(0.115, 0.115, 0.115, 0.977)
+    menu:SetBackdropBorderColor(Cell:GetAccentColorRGB())
 end
 
 -----------------------------------------
@@ -3235,7 +3416,7 @@ local function CreateGrid(parent, text, width)
     return grid
 end
 
-function addon:CreateBindingListButton(parent, modifier, bindKey, bindType, bindAction)
+function addon:CreateBindingListButton(parent, modifier, bindKey, bindType, bindAction, bindFrameTypes)
     local b = CreateFrame("Button", nil, parent, "BackdropTemplate")
     b:SetFrameLevel(5)
     P:Size(b, 100, 20)
@@ -3260,9 +3441,13 @@ function addon:CreateBindingListButton(parent, modifier, bindKey, bindType, bind
     b.typeGrid = typeGrid
     typeGrid:SetPoint("BOTTOMLEFT", keyGrid, "BOTTOMRIGHT", P:Scale(-1), 0)
 
+    local frameTypesGrid = CreateGrid(b, bindFrameTypes, 80)
+    b.frameTypesGrid = frameTypesGrid
+    frameTypesGrid:SetPoint("BOTTOMLEFT", typeGrid, "BOTTOMRIGHT", P:Scale(-1), 0)
+
     local actionGrid = CreateGrid(b, bindAction, 100)
     b.actionGrid = actionGrid
-    actionGrid:SetPoint("BOTTOMLEFT", typeGrid, "BOTTOMRIGHT", P:Scale(-1), 0)
+    actionGrid:SetPoint("BOTTOMLEFT", frameTypesGrid, "BOTTOMRIGHT", P:Scale(-1), 0)
     actionGrid:SetPoint("BOTTOMRIGHT")
 
     actionGrid:HookScript("OnEnter", function()
@@ -3310,6 +3495,7 @@ function addon:CreateBindingListButton(parent, modifier, bindKey, bindType, bind
     function b:SetBorderColor(...)
         keyGrid:SetBackdropBorderColor(...)
         typeGrid:SetBackdropBorderColor(...)
+        frameTypesGrid:SetBackdropBorderColor(...)
         actionGrid:SetBackdropBorderColor(...)
     end
 

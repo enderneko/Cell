@@ -299,6 +299,17 @@ local defaultSpells = {
     },
 }
 
+local allFrameTypes = {
+    ["Party"] = true,
+    ["Raid"] = true,
+    ["Spotlight"] = true,
+    ["Solo"] = true,
+    ["Pet"] = true,
+    ["Raid Pets"] = true,
+    ["Arena Pets"] = true,
+    ["NPC"] = true,
+}
+
 function F:GetClickCastingSpellList(class, spec)
     local spells = defaultSpells[class]["common"] and F:Copy(defaultSpells[class]["common"]) or {}
 
@@ -378,30 +389,30 @@ end
 
 local resurrection_click_castings = {
     ["DEATHKNIGHT"] = {
-        {"type-altR", "spell", 61999},
+        {"type-altR", "spell", allFrameTypes, 61999},
     },
     ["DRUID"] = {
-        {"type-altR", "spell", 20484},
-        {"type-shiftR", "spell", 50769},
+        {"type-altR", "spell", allFrameTypes, 20484},
+        {"type-shiftR", "spell", allFrameTypes, 50769},
     },
     ["EVOKER"] = {
-        {"type-shiftR", "spell", 361227},
+        {"type-shiftR", "spell", allFrameTypes, 361227},
     },
     ["MONK"] = {
-        {"type-shiftR", "spell", 115178},
+        {"type-shiftR", "spell", allFrameTypes, 115178},
     },
     ["PALADIN"] = {
-        {"type-altR", "spell", 391054},
-        {"type-shiftR", "spell", 7328},
+        {"type-altR", "spell", allFrameTypes, 391054},
+        {"type-shiftR", "spell", allFrameTypes, 7328},
     },
     ["PRIEST"] = {
-        {"type-shiftR", "spell", 2006},
+        {"type-shiftR", "spell", allFrameTypes, 2006},
     },
     ["SHAMAN"] = {
-        {"type-shiftR", "spell", 2008},
+        {"type-shiftR", "spell", allFrameTypes, 2008},
     },
     ["WARLOCK"] = {
-        {"type-altR", "spell", 20707},
+        {"type-altR", "spell", allFrameTypes, 20707},
     },
 }
 
