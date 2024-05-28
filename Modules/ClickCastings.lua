@@ -1273,7 +1273,7 @@ local function ShowActionsMenu(index, b)
             })
         end
 
-    else -- spell
+    elseif bindType == "spell" then
         items = {
             {
                 ["text"] = L["Edit"],
