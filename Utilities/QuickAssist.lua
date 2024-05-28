@@ -11,6 +11,11 @@ local InCombatLockdown = InCombatLockdown
 local GetUnitName = GetUnitName
 local UnitGUID = UnitGUID
 
+--! AI followers, wrong value returned by UnitClassBase
+local UnitClassBase = function(unit)
+    return select(2, UnitClass(unit))
+end
+
 local LGI = LibStub:GetLibrary("LibGroupInfo")
 local LCG = LibStub("LibCustomGlow-1.0")
 local LibTranslit = LibStub("LibTranslit-1.0")

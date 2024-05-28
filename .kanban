@@ -14,15 +14,6 @@
           "comments": []
         },
         {
-          "id": "721cdc03-a153-4d63-92fd-37e63dfacfbc",
-          "listId": "643431c7-e660-47b1-a44b-4e799b536d19",
-          "title": "\"Show on\" for custom indicators",
-          "description": "",
-          "labels": [],
-          "checkboxes": [],
-          "comments": []
-        },
-        {
           "id": "a32ebae3-812a-45f6-8b49-67b5139960d3",
           "listId": "643431c7-e660-47b1-a44b-4e799b536d19",
           "title": "Spell list for AoE Healing indicator",
@@ -123,6 +114,24 @@
           "listId": "7915d51e-5603-44aa-aa3a-8dff734ea7c6",
           "title": "Raid group header advanced sort",
           "description": "player always first\nranged / melee dps",
+          "labels": [],
+          "checkboxes": [],
+          "comments": []
+        },
+        {
+          "id": "73a9c8e5-fd9e-43b8-baf7-582aade21de0",
+          "listId": "7915d51e-5603-44aa-aa3a-8dff734ea7c6",
+          "title": "Make each spotlight button \"positionable\"",
+          "description": "",
+          "labels": [],
+          "checkboxes": [],
+          "comments": []
+        },
+        {
+          "id": "abd28941-e6a1-4784-8465-e922be72f888",
+          "listId": "7915d51e-5603-44aa-aa3a-8dff734ea7c6",
+          "title": "Refactor Layouts",
+          "description": "Main/Spotlight/NPC/Pet can have their own layout",
           "labels": [],
           "checkboxes": [],
           "comments": []
