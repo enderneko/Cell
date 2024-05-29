@@ -135,7 +135,7 @@ local function EncodeDB(modifier, bindKey, bindType, bindAction, bindFrameTypes)
         attrType = "macro"
         attrAction = bindAction
 
-    else
+    elseif bindType == "general" then
         attrType = "general"
         attrAction = bindAction
     end
