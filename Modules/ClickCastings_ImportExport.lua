@@ -12,6 +12,18 @@ local isImport, imported, exported = false, {}, ""
 local importExportFrame, importBtn, title, textArea
 
 local function DoImport()
+    if not Cell.isRetail then
+        for _, t in pairs(imported) do
+            local selectedFrameTypes = t[4]
+
+            if selectedFrameTypes and type(selectedFrameTypes) == "table" then
+                if selectedFrameTypes["Quick Assist"] then
+                    selectedFrameTypes["Quick Assist"] = nil
+                end
+            end
+        end
+    end
+
     if Cell.vars.clickCastings["useCommon"] then
         Cell.vars.clickCastings["common"] = imported
     else

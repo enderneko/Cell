@@ -126,32 +126,18 @@ local function GetAttributeKey(modifier, bindKey)
 end
 
 local function EncodeDB(modifier, bindKey, bindType, bindAction, bindFrameTypes)
-    local attrType, attrAction
-    if bindType == "spell" then
-        attrType = "spell"
-        attrAction = bindAction
-
-    elseif bindType == "macro" then
-        attrType = "macro"
-        attrAction = bindAction
-
-    elseif bindType == "general" then
-        attrType = "general"
-        attrAction = bindAction
-    end
-
     if bindKey == "notBound" then
         return {
             "notBound",
-            attrType,
-            attrAction,
+            bindType,
+            bindAction,
             bindFrameTypes
         }
     else
         return {
             GetAttributeKey(modifier, bindKey),
-            attrType,
-            attrAction,
+            bindType,
+            bindAction,
             bindFrameTypes
         }
     end
@@ -1366,7 +1352,6 @@ end
 -- list pane
 -------------------------------------------------
 local CreateBindingListButton
-local last
 
 local function UpdateCurrentText(isCommon)
     if isCommon then
@@ -1603,7 +1588,6 @@ LoadProfile = function(isCommon)
     targetingDropdown:SetSelectedValue(alwaysTargeting)
     UpdateCurrentText(isCommon)
 
-    last = nil
     bindingsFrame.scrollFrame:Reset()
     -- F:Debug("-- Load clickCastings start --------------")
     for i, t in pairs(clickCastingTable) do
