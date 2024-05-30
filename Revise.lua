@@ -2911,20 +2911,7 @@ function F:Revise()
         end
 
         if CellDB["clickCastings"] then
-            local defaultFrameTypes = {
-                ["Party"] = true,
-                ["Raid"] = true,
-                ["Spotlight"] = true,
-                ["Solo"] = true,
-                ["Pet"] = true,
-                ["Raid Pets"] = true,
-                ["Arena Pets"] = true,
-                ["NPC"] = true,
-            }
-
-            if Cell.isRetail then
-                defaultFrameTypes["Quick Assist"] = true
-            end
+            local defaultFrameTypes = F:GetDefaultFrameTypes()
 
             for _, specTable in pairs(CellDB["clickCastings"]) do
                 for specId, dbTable in pairs(specTable) do
