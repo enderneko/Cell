@@ -57,21 +57,6 @@ local mouseKeyIDs = {
     -- ["ScrollDown"]= 14,
 }
 
-local defaultFrameTypes = {
-    ["Party"] = true,
-    ["Raid"] = true,
-    ["Spotlight"] = true,
-    ["Solo"] = true,
-    ["Pet"] = true,
-    ["Raid Pets"] = true,
-    ["Arena Pets"] = true,
-    ["NPC"] = true,
-}
-
-if Cell.isRetail then
-    defaultFrameTypes["Quick Assist"] = true
-end
-
 local function GetBindingDisplay(modifier, key)
     modifier = modifier:gsub("%-", "|cff777777+|r")
     modifier = modifier:gsub("alt", "Alt")
@@ -1406,6 +1391,7 @@ local function CreateListPane()
     newBtn:SetPoint("TOPLEFT", bindingsFrame, "BOTTOMLEFT", 0, P:Scale(1))
     newBtn:SetScript("OnClick", function()
         local index = #clickCastingTable+1
+        local defaultFrameTypes = F:GetDefaultFrameTypes()
         local b = CreateBindingListButton("", "notBound", "general", "target", defaultFrameTypes, index)
         tinsert(clickCastingTable, EncodeDB("", "notBound", "general", "target", defaultFrameTypes))
 

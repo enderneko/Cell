@@ -12,14 +12,16 @@ local isImport, imported, exported = false, {}, ""
 local importExportFrame, importBtn, title, textArea
 
 local function DoImport()
-    if not Cell.isRetail then
-        for _, t in pairs(imported) do
-            local selectedFrameTypes = t[4]
+    local defaultFrameTypes = F:GetDefaultFrameTypes()
 
-            if selectedFrameTypes and type(selectedFrameTypes) == "table" then
-                if selectedFrameTypes["Quick Assist"] then
-                    selectedFrameTypes["Quick Assist"] = nil
-                end
+    for _, t in pairs(imported) do
+        local selectedFrameTypes = t[4]
+
+        if not selectedFrameTypes or type(selectedFrameTypes) ~= "table" then
+            t[4] = defaultFrameTypes
+
+            if not Cell.isRetail and selectedFrameTypes["Quick Assist"] then
+                t[4]["Quick Assist"] = false
             end
         end
     end

@@ -313,16 +313,7 @@ function eventFrame:ADDON_LOADED(arg1)
         Cell.vars.playerClass, Cell.vars.playerClassID = UnitClassBase("player")
 
         if type(CellCharacterDB["clickCastings"]) ~= "table" then
-            local defaultFrameTypes = {
-                ["Party"] = true,
-                ["Raid"] = true,
-                ["Spotlight"] = true,
-                ["Solo"] = true,
-                ["Pet"] = true,
-                ["Raid Pets"] = true,
-                ["Arena Pets"] = true,
-                ["NPC"] = true,
-            }
+            local defaultFrameTypes = F:GetDefaultFrameTypes()
 
             CellCharacterDB["clickCastings"] = {
                 ["class"] = Cell.vars.playerClass, -- validate on import

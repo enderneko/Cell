@@ -367,17 +367,7 @@ function eventFrame:ADDON_LOADED(arg1)
         if type(CellDB["clickCastings"]) ~= "table" then CellDB["clickCastings"] = {} end
 
         if type(CellDB["clickCastings"][Cell.vars.playerClass]) ~= "table" then
-            local defaultFrameTypes = {
-                ["Party"] = true,
-                ["Raid"] = true,
-                ["Spotlight"] = true,
-                ["Quick Assist"] = true,
-                ["Solo"] = true,
-                ["Pet"] = true,
-                ["Raid Pets"] = true,
-                ["Arena Pets"] = true,
-                ["NPC"] = true,
-            }
+            local defaultFrameTypes = F:GetDefaultFrameTypes()
 
             CellDB["clickCastings"][Cell.vars.playerClass] = {
                 ["useCommon"] = true,

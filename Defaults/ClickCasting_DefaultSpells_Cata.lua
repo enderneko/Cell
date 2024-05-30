@@ -160,16 +160,18 @@ local defaultSpells = {
     },
 }
 
-local defaultFrameTypes = {
-    ["Party"] = true,
-    ["Raid"] = true,
-    ["Spotlight"] = true,
-    ["Solo"] = true,
-    ["Pet"] = true,
-    ["Raid Pets"] = true,
-    ["Arena Pets"] = true,
-    ["NPC"] = true,
-}
+function F:GetDefaultFrameTypes()
+    return {
+        ["Party"] = true,
+        ["Raid"] = true,
+        ["Spotlight"] = true,
+        ["Solo"] = true,
+        ["Pet"] = true,
+        ["Raid Pets"] = true,
+        ["Arena Pets"] = true,
+        ["NPC"] = true,
+    }
+end
 
 function F:GetClickCastingSpellList(class)
     local spells = defaultSpells[class]["common"] and F:Copy(defaultSpells[class]["common"]) or {}
@@ -213,6 +215,8 @@ local resurrections_for_dead = {
     -- SHAMAN
     2008, -- 先祖之魂
 }
+
+local defaultFrameTypes = F:GetDefaultFrameTypes()
 
 do
     local temp = {}
