@@ -2910,9 +2910,9 @@ function F:Revise()
             end
         end
 
-        if CellDB["clickCastings"] then
-            local defaultFrameTypes = F:GetDefaultFrameTypes()
+        local defaultFrameTypes = F:GetDefaultFrameTypes()
 
+        if Cell.isRetail and CellDB["clickCastings"] then
             for _, specTable in pairs(CellDB["clickCastings"]) do
                 for specId, dbTable in pairs(specTable) do
                     if type(dbTable) == "table" and specId ~= "alwaysTargeting" then
@@ -2925,6 +2925,21 @@ function F:Revise()
                             if not buttonTable[4] or type(buttonTable[4]) ~= "table" then
                                 buttonTable[4] = defaultFrameTypes
                             end
+                        end
+                    end
+                end
+            end
+        elseif not Cell.isRetail and CellCharacterDB["clickCastings"] then
+            for key, dbTable in pairs(CellCharacterDB["clickCastings"]) do
+                if type(dbTable) == "table" and key ~= "alwaysTargeting" then
+                    for _, buttonTable in pairs(dbTable) do
+                        if not buttonTable[3] then
+                            buttonTable[3] = buttonTable[2]
+                            buttonTable[2] = "general"
+                        end
+
+                        if not buttonTable[4] or type(buttonTable[4]) ~= "table" then
+                            buttonTable[4] = defaultFrameTypes
                         end
                     end
                 end

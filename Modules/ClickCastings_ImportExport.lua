@@ -15,14 +15,14 @@ local function DoImport()
     local defaultFrameTypes = F:GetDefaultFrameTypes()
 
     for _, t in pairs(imported) do
-        local selectedFrameTypes = t[4]
-
-        if not selectedFrameTypes or type(selectedFrameTypes) ~= "table" then
+        if not t[4] or type(t[4]) ~= "table" then
             t[4] = defaultFrameTypes
+        end
 
-            if not Cell.isRetail and selectedFrameTypes["Quick Assist"] then
-                t[4]["Quick Assist"] = false
-            end
+        if not Cell.isRetail and t[4]["Quick Assist"] ~= nil then
+            t[4]["Quick Assist"] = nil
+        elseif Cell.isRetail and t[4]["Quick Assist"] == nil then
+            t[4]["Quick Assist"] = true
         end
     end
 
