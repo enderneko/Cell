@@ -132,6 +132,7 @@ function eventFrame:ADDON_LOADED(arg1)
 
         if type(CellDB["indicatorPreviewAlpha"]) ~= "number" then CellDB["indicatorPreviewAlpha"] = 0.5 end
         if type(CellDB["indicatorPreviewScale"]) ~= "number" then CellDB["indicatorPreviewScale"] = 1 end
+        if type(CellDB["indicatorPreviewShowAllActive"]) ~= "boolean" then CellDB["indicatorPreviewShowAllActive"] = true end
 
         if type(CellDB["customTextures"]) ~= "table" then CellDB["customTextures"] = {} end
 
