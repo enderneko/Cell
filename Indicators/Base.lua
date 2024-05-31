@@ -1155,9 +1155,9 @@ local function Icons_SetNumPerLine(icons, numPerLine)
 
     if icons.orientation then
         icons:SetOrientation(icons.orientation)
+    else
+        icons:UpdateSize()
     end
-
-    icons:UpdateSize()
 end
 
 local function Icons_SetOrientation(icons, orientation)

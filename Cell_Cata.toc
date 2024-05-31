@@ -34,7 +34,7 @@ Indicators\TargetCounter.lua
 Indicators\TargetedSpells.lua
 Indicators\Consumables.lua
 Indicators\Custom_Classic.lua
-Indicators\Patron.lua
+Indicators\Supporter.lua
 
 RaidFrames\MainFrame.lua
 
@@ -52,4 +52,4 @@ RaidFrames\Groups\RaidPetFrame.lua
 RaidFrames\Groups\NPCFrame.lua
 RaidFrames\Groups\SpotlightFrame.lua
 
-Patrons.lua
+Supporters.lua

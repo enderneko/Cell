@@ -1059,7 +1059,7 @@ function I.CreateNameText(parent)
     function nameText:UpdateName()
         local name
 
-        -- patron rainbow
+        -- supporter rainbow
         if nameText.name.rainbow then
             nameText.name.updater:SetScript("OnUpdate", nil)
             if nameText.name.timer then
