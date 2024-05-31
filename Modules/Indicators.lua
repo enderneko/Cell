@@ -20,7 +20,7 @@ local ListHighlightFn
 -------------------------------------------------
 -- preview
 -------------------------------------------------
-local previewButton, previewButtonBG, previewAlphaSlider, previewScaleSlider
+local previewButton, previewButtonBG, previewAlphaSlider, previewScaleSlider, previewIndicatorsShownToggle
 
 local function CreatePreviewButton()
     previewButton = CreateFrame("Button", "CellIndicatorsPreviewButton", indicatorsTab, "CellPreviewButtonTemplate")
@@ -93,6 +93,27 @@ local function CreatePreviewButton()
     previewScaleSlider.currentEditBox:Hide()
     previewScaleSlider.lowText:Hide()
     previewScaleSlider.highText:Hide()
+
+    -- preview show all active indicators
+    previewIndicatorsShownToggle = Cell:CreateCheckButton(previewButtonBG, L["Show All"], function(checked)
+        CellDB["indicatorPreviewShowAllActive"] = checked
+
+        for k, indicator in pairs(previewButton.indicators) do
+            if indicator.enabled and checked then
+                indicator:Show()
+                if indicator.preview then indicator.preview:Show() end
+            else
+                indicator:Hide()
+                if indicator.preview then indicator.preview:Hide() end
+            end
+        end
+
+        if not checked then
+            listButtons[selected]:Click()
+        end
+    end)
+    previewIndicatorsShownToggle:SetPoint("TOPLEFT", previewScaleSlider, "TOPRIGHT", 5, 3.5)
+    previewIndicatorsShownToggle:SetChecked(CellDB["indicatorPreviewShowAllActive"])
 
     -- local alphaText = settingsPane:CreateFontString(nil, "OVERLAY", "CELL_FONT_CLASS")
     -- alphaText:SetPoint("BOTTOM", settingsPane.line, "TOP", 0, P:Scale(2))
@@ -1993,6 +2014,15 @@ LoadIndicatorList = function()
 
     ListHighlightFn = Cell:CreateButtonGroup(listButtons, ShowIndicatorSettings, function(id)
         local i = previewButton.indicators[currentLayoutTable["indicators"][id]["indicatorName"]]
+
+        if not CellDB["indicatorPreviewShowAllActive"] then
+            -- show selected indicator
+            i:Show()
+            if i.preview then 
+                i.preview:Show() 
+            end
+        end
+
         if i.indicatorType == "glow" then
             i:Show()
             return
@@ -2025,6 +2055,15 @@ LoadIndicatorList = function()
         end
     end, function(id)
         local i = previewButton.indicators[currentLayoutTable["indicators"][id]["indicatorName"]]
+
+        if not CellDB["indicatorPreviewShowAllActive"] then
+            -- hide none selected indicators
+            i:Hide()
+            if i.preview then 
+                i.preview:Hide() 
+            end
+        end
+
         if i.indicatorType == "glow" then
             i:Hide()
             return
