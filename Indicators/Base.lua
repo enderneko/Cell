@@ -48,6 +48,51 @@ function I.SetFont(fs, anchorTo, font, size, outline, shadow, anchor, xOffset, y
 end
 
 -------------------------------------------------
+-- Icon_OnUpdate
+-------------------------------------------------
+local function Icon_OnUpdate(frame, elapsed)
+    frame._remain = frame._duration - (GetTime() - frame._start)
+    if frame._remain < 0 then frame._remain = 0 end
+
+    if frame._remain > frame._threshold then
+        frame.duration:SetText("")
+        return
+    end
+
+    frame._elapsed = frame._elapsed + elapsed
+    if frame._elapsed >= 0.1 then
+        frame._elapsed = 0
+        -- color
+        if Cell.vars.iconDurationColors then
+            if frame._remain < Cell.vars.iconDurationColors[3][4] then
+                frame.duration:SetTextColor(Cell.vars.iconDurationColors[3][1], Cell.vars.iconDurationColors[3][2], Cell.vars.iconDurationColors[3][3])
+            elseif frame._remain < (Cell.vars.iconDurationColors[2][4] * frame._duration) then
+                frame.duration:SetTextColor(Cell.vars.iconDurationColors[2][1], Cell.vars.iconDurationColors[2][2], Cell.vars.iconDurationColors[2][3])
+            else
+                frame.duration:SetTextColor(Cell.vars.iconDurationColors[1][1], Cell.vars.iconDurationColors[1][2], Cell.vars.iconDurationColors[1][3])
+            end
+        else
+            frame.duration:SetTextColor(frame.duration.r, frame.duration.g, frame.duration.b)
+        end
+    end
+
+    -- format
+    if frame._remain > 60 then
+        frame.duration:SetFormattedText("%dm", frame._remain / 60)
+    else
+        if Cell.vars.iconDurationRoundUp then
+            frame.duration:SetFormattedText("%d", ceil(frame._remain))
+        else
+            if frame._remain < Cell.vars.iconDurationDecimal then
+                frame.duration:SetFormattedText("%.1f", frame._remain)
+            else
+                frame.duration:SetFormattedText("%d", frame._remain)
+            end
+        end
+    end
+end
+
+-------------------------------------------------
 -- CreateAura_BorderIcon
 -------------------------------------------------
 local function BorderIcon_SetFont(frame, font1, font2)
@@ -69,71 +114,35 @@ local function BorderIcon_SetCooldown(frame, start, duration, debuffType, textur
         frame.cooldown:Hide()
         frame.duration:Hide()
         frame:SetScript("OnUpdate", nil)
+        frame._start = nil
+        frame._duration = nil
+        frame._remain = nil
+        frame._elapsed = nil
+        frame._threshold = nil
     else
         frame.border:Hide()
         frame.cooldown:Show()
         frame.cooldown:SetSwipeColor(r, g, b)
         frame.cooldown:_SetCooldown(start, duration)
 
-        local threshold
         if not frame.showDuration then
             frame.duration:Hide()
         else
             if frame.showDuration == true then
-                threshold = duration
+                frame._threshold = duration
             elseif frame.showDuration >= 1 then
-                threshold = frame.showDuration
+                frame._threshold = frame.showDuration
             else -- < 1
-                threshold = frame.showDuration * duration
+                frame._threshold = frame.showDuration * duration
             end
             frame.duration:Show()
         end
 
         if frame.showDuration then
-            local fmt
-            frame.elapsed = 0.1 -- update immediately
-            frame:SetScript("OnUpdate", function(self, elapsed)
-                local remain = duration-(GetTime()-start)
-                if remain < 0 then remain = 0 end
-
-                if remain > threshold then
-                    frame.duration:SetText("")
-                    return
-                end
-
-                self.elapsed = self.elapsed + elapsed
-                if self.elapsed >= 0.1 then
-                    self.elapsed = 0
-                    -- color
-                    if Cell.vars.iconDurationColors then
-                        if remain < Cell.vars.iconDurationColors[3][4] then
-                            frame.duration:SetTextColor(Cell.vars.iconDurationColors[3][1], Cell.vars.iconDurationColors[3][2], Cell.vars.iconDurationColors[3][3])
-                        elseif remain < (Cell.vars.iconDurationColors[2][4] * duration) then
-                            frame.duration:SetTextColor(Cell.vars.iconDurationColors[2][1], Cell.vars.iconDurationColors[2][2], Cell.vars.iconDurationColors[2][3])
-                        else
-                            frame.duration:SetTextColor(Cell.vars.iconDurationColors[1][1], Cell.vars.iconDurationColors[1][2], Cell.vars.iconDurationColors[1][3])
-                        end
-                    else
-                        frame.duration:SetTextColor(frame.duration.r, frame.duration.g, frame.duration.b)
-                    end
-                end
-
-                -- format
-                if remain > 60 then
-                    fmt, remain = "%dm", remain/60
-                else
-                    if Cell.vars.iconDurationRoundUp then
-                        fmt, remain = "%d", ceil(remain)
-                    else
-                        if remain < Cell.vars.iconDurationDecimal then
-                            fmt = "%.1f"
-                        else
-                            fmt = "%d"
-                        end
-                    end
-                end
-                frame.duration:SetFormattedText(fmt, remain)
-            end)
+            frame._start = start
+            frame._duration = duration
+            frame._elapsed = 0.1 -- update immediately
+            frame:SetScript("OnUpdate", Icon_OnUpdate)
         end
     end
 
@@ -253,6 +262,11 @@ local function BarIcon_SetCooldown(frame, start, duration, debuffType, texture, 
         frame.cooldown:Hide()
         frame.duration:Hide()
         frame:SetScript("OnUpdate", nil)
+        frame._start = nil
+        frame._duration = nil
+        frame._threshold = nil
+        frame._remain = nil
+        frame._elapsed = nil
     else
         if frame.showAnimation then
             -- init bar values
@@ -264,65 +278,24 @@ local function BarIcon_SetCooldown(frame, start, duration, debuffType, texture, 
             frame.cooldown:Hide()
         end
 
-        local threshold
         if not frame.showDuration then
             frame.duration:Hide()
         else
             if frame.showDuration == true then
-                threshold = duration
+                frame._threshold = duration
             elseif frame.showDuration >= 1 then
-                threshold = frame.showDuration
+                frame._threshold = frame.showDuration
             else -- < 1
-                threshold = frame.showDuration * duration
+                frame._threshold = frame.showDuration * duration
             end
             frame.duration:Show()
         end
 
         if frame.showDuration then
-            local fmt
-            frame.elapsed = 0.1 -- update immediately
-            frame:SetScript("OnUpdate", function(self, elapsed)
-                local remain = duration-(GetTime()-start)
-                if remain < 0 then remain = 0 end
-
-                if remain > threshold then
-                    frame.duration:SetText("")
-                    return
-                end
-
-                self.elapsed = self.elapsed + elapsed
-                if self.elapsed >= 0.1 then
-                    self.elapsed = 0
-                    -- color
-                    if Cell.vars.iconDurationColors then
-                        if remain < Cell.vars.iconDurationColors[3][4] then
-                            frame.duration:SetTextColor(Cell.vars.iconDurationColors[3][1], Cell.vars.iconDurationColors[3][2], Cell.vars.iconDurationColors[3][3])
-                        elseif remain < (Cell.vars.iconDurationColors[2][4] * duration) then
-                            frame.duration:SetTextColor(Cell.vars.iconDurationColors[2][1], Cell.vars.iconDurationColors[2][2], Cell.vars.iconDurationColors[2][3])
-                        else
-                            frame.duration:SetTextColor(Cell.vars.iconDurationColors[1][1], Cell.vars.iconDurationColors[1][2], Cell.vars.iconDurationColors[1][3])
-                        end
-                    else
-                        frame.duration:SetTextColor(frame.duration.r, frame.duration.g, frame.duration.b)
-                    end
-                end
-
-                -- format
-                if remain > 60 then
-                    fmt, remain = "%dm", remain/60
-                else
-                    if Cell.vars.iconDurationRoundUp then
-                        fmt, remain = "%d", ceil(remain)
-                    else
-                        if remain < Cell.vars.iconDurationDecimal then
-                            fmt = "%.1f"
-                        else
-                            fmt = "%d"
-                        end
-                    end
-                end
-                frame.duration:SetFormattedText(fmt, remain)
-            end)
+            frame._start = start
+            frame._duration = duration
+            frame._elapsed = 0.1 -- update immediately
+            frame:SetScript("OnUpdate", Icon_OnUpdate)
         end
     end
 
@@ -398,11 +371,10 @@ function I.CreateAura_BarIcon(name, parent)
 
     local cooldown = CreateFrame("StatusBar", name.."CooldownBar", frame)
     frame.cooldown = cooldown
-    cooldown:SetPoint("TOPLEFT", icon)
-    cooldown:SetPoint("BOTTOMRIGHT", icon)
+    P:Point(cooldown, "TOPLEFT", icon)
+    P:Point(cooldown, "BOTTOMRIGHT", icon, "BOTTOMRIGHT", 0, CELL_BORDER_SIZE)
     cooldown:SetOrientation("VERTICAL")
     cooldown:SetReverseFill(true)
-    -- cooldown:SetFillStyle("REVERSE")
     cooldown:SetStatusBarTexture("Interface\\Buttons\\WHITE8x8")
     cooldown:GetStatusBarTexture():SetAlpha(0)
 
@@ -420,7 +392,7 @@ function I.CreateAura_BarIcon(name, parent)
         return 0
     end
 
-    local spark = cooldown:CreateTexture(nil, "OVERLAY")
+    local spark = cooldown:CreateTexture(nil, "BORDER")
     frame.spark = spark
     P:Height(spark, CELL_BORDER_SIZE)
     spark:SetBlendMode("ADD")
@@ -523,13 +495,13 @@ local function Text_SetFont(frame, font, size, outline, shadow)
     frame:SetSize(size+3, size+3)
 end
 
-local function Text_OnUpdateColor(frame, duration, remain)
-    if frame.colors[3][1] and remain <= frame.colors[3][2] then
+local function Text_OnUpdateColor(frame)
+    if frame.colors[3][1] and frame._remain <= frame.colors[3][2] then
         if frame.state ~= 3 then
             frame.state = 3
             frame.text:SetTextColor(frame.colors[3][3][1], frame.colors[3][3][2], frame.colors[3][3][3], frame.colors[3][3][4])
         end
-    elseif frame.colors[2][1] and remain <= duration * frame.colors[2][2] then
+    elseif frame.colors[2][1] and frame._remain <= frame._duration * frame.colors[2][2] then
         if frame.state ~= 2 then
             frame.state = 2
             frame.text:SetTextColor(frame.colors[2][3][1], frame.colors[2][3][2], frame.colors[2][3][3], frame.colors[2][3][4])
@@ -540,6 +512,44 @@ local function Text_OnUpdateColor(frame, duration, remain)
     end
 end
 
+local function Text_OnUpdateDuration(frame, elapsed)
+    frame._remain = frame._duration - (GetTime() - frame._start)
+    if frame._remain < 0 then frame._remain = 0 end
+
+    frame._elapsed = frame._elapsed + elapsed
+    if frame._elapsed >= 0.1 then
+        frame._elapsed = 0
+        -- color
+        Text_OnUpdateColor(frame)
+    end
+
+    -- format
+    if frame._remain > 60 then
+        frame.text:SetFormattedText(frame._count.."%dm", frame._remain/60)
+    else
+        if frame.durationTbl[2] then
+            frame.text:SetFormattedText(frame._count.."%d", ceil(frame._remain))
+        else
+            if frame._remain < frame.durationTbl[3] then
+                frame.text:SetFormattedText(frame._count.."%.1f", frame._remain)
+            else
+                frame.text:SetFormattedText(frame._count.."%d", frame._remain)
+            end
+        end
+    end
+end
+
+local function Text_OnUpdate(frame, elapsed)
+    frame._elapsed = frame._elapsed + elapsed
+    if frame._elapsed >= 0.1 then
+        frame._elapsed = 0
+
+        frame._remain = frame._duration - (GetTime() - frame._start)
+        -- update color
+        Text_OnUpdateColor(frame)
+    end
+end
+
 local circled = {"①","②","③","④","⑤","⑥","⑦","⑧","⑨","⑩","⑪","⑫","⑬","⑭","⑮","⑯","⑰","⑱","⑲","⑳","㉑","㉒","㉓","㉔","㉕","㉖","㉗","㉘","㉙","㉚","㉛","㉜","㉝","㉞","㉟","㊱","㊲","㊳","㊴","㊵","㊶","㊷","㊸","㊹","㊺","㊻","㊼","㊽","㊾","㊿"}
 local function Text_SetCooldown(frame, start, duration, debuffType, texture, count)
     if duration == 0 then
@@ -547,69 +557,36 @@ local function Text_SetCooldown(frame, start, duration, debuffType, texture, cou
         count = frame.circledStackNums and circled[count] or count
         frame.text:SetText(count)
         frame:SetScript("OnUpdate", nil)
+        frame._count = nil
+        frame._start = nil
+        frame._duration = nil
+        frame._remain = nil
+        frame._elapsed = nil
     else
-        local fmt
+        frame._start = start
+        frame._duration = duration
+
         if frame.durationTbl[1] then
             if count == 0 then
-                fmt, count = "%s", ""
+                frame._count = ""
             elseif frame.circledStackNums then
-                fmt, count = "%s ", circled[count] .. " "
+                frame._count = circled[count].." "
             else
-                fmt = "%d "
+                frame._count = count.." "
             end
 
-            frame.elapsed = 0.1 -- update immediately
-            frame:SetScript("OnUpdate", function(self, elapsed)
-                local remain = duration-(GetTime()-start)
-                if remain < 0 then remain = 0 end
-
-                self.elapsed = self.elapsed + elapsed
-                if self.elapsed >= 0.1 then
-                    self.elapsed = 0
-                    -- color
-                    Text_OnUpdateColor(frame, duration, remain)
-                end
-
-                -- format
-                local fmt2
-                if remain > 60 then
-                    fmt2, remain = fmt .. "%dm", remain/60
-                else
-                    if frame.durationTbl[2] then
-                        fmt2, remain = fmt .. "%d", ceil(remain)
-                    else
-                        if remain < frame.durationTbl[3] then
-                            fmt2 = fmt .. "%.1f"
-                        else
-                            fmt2 = fmt .. "%d"
-                        end
-                    end
-                end
-                frame.text:SetFormattedText(fmt2, count, remain)
-            end)
+            frame._elapsed = 0.1 -- update immediately
+            frame:SetScript("OnUpdate", Text_OnUpdateDuration)
         else
             count = count == 0 and 1 or count
             if frame.circledStackNums then
-                fmt = circled[count]
-                count = nil
+                frame.text:SetText(circled[count])
             else
-                fmt = "%d"
+                frame.text:SetText(count)
             end
 
-            -- update count
-            frame.text:SetFormattedText(fmt, count)
-
-            frame.elapsed = 0.1 -- update immediately
-            frame:SetScript("OnUpdate", function(self, elapsed)
-                self.elapsed = self.elapsed + elapsed
-                if self.elapsed >= 0.1 then
-                    self.elapsed = 0
-
-                    local remain = duration-(GetTime()-start)
-                    -- update color
-                    Text_OnUpdateColor(frame, duration, remain)
-                end
-            end)
+            frame._elapsed = 0.1 -- update immediately
+            frame:SetScript("OnUpdate", Text_OnUpdate)
         end
     end
 
@@ -668,13 +645,13 @@ local function Rect_SetFont(frame, font1, font2)
     I.SetFont(frame.duration, frame, unpack(font2))
 end
 
-local function Rect_OnUpdateColor(frame, duration, remain)
-    if frame.colors[3][1] and remain <= frame.colors[3][2] then
+local function Rect_OnUpdateColor(frame)
+    if frame.colors[3][1] and frame._remain <= frame.colors[3][2] then
         if frame.state ~= 3 then
             frame.state = 3
             frame.tex:SetColorTexture(frame.colors[3][3][1], frame.colors[3][3][2], frame.colors[3][3][3], frame.colors[3][3][4])
         end
-    elseif frame.colors[2][1] and remain <= duration * frame.colors[2][2] then
+    elseif frame.colors[2][1] and frame._remain <= frame._duration * frame.colors[2][2] then
         if frame.state ~= 2 then
             frame.state = 2
             frame.tex:SetColorTexture(frame.colors[2][3][1], frame.colors[2][3][2], frame.colors[2][3][3], frame.colors[2][3][4])
@@ -685,60 +662,67 @@ local function Rect_OnUpdateColor(frame, duration, remain)
     end
 end
 
+local function Rect_OnUpdate(frame, elapsed)
+    frame._remain = frame._duration - (GetTime() - frame._start)
+    if frame._remain < 0 then frame._remain = 0 end
+
+    frame._elapsed = frame._elapsed + elapsed
+    if frame._elapsed >= 0.1 then
+        frame._elapsed = 0
+        -- update color
+        Rect_OnUpdateColor(frame)
+    end
+
+    if frame._remain > frame._threshold then
+        frame.duration:SetText("")
+        return
+    end
+
+    -- format
+    if frame._remain > 60 then
+        frame.duration:SetFormattedText("%dm", frame._remain / 60)
+    else
+        if Cell.vars.iconDurationRoundUp then
+            frame.duration:SetFormattedText("%d", ceil(frame._remain))
+        else
+            if frame._remain < Cell.vars.iconDurationDecimal then
+                frame.duration:SetFormattedText("%.1f", frame._remain)
+            else
+                frame.duration:SetFormattedText("%d", frame._remain)
+            end
+        end
+    end
+end
+
 local function Rect_SetCooldown(frame, start, duration, debuffType, texture, count)
     if duration == 0 then
         frame.tex:SetColorTexture(unpack(frame.colors[1]))
         frame:SetScript("OnUpdate", nil)
         frame.duration:Hide()
+        frame._start = nil
+        frame._duration = nil
+        frame._remain = nil
+        frame._elapsed = nil
+        frame._threshold = nil
     else
-        local threshold, fmt
         if not frame.showDuration then
-            threshold = -1
+            frame._threshold = -1
             frame.duration:Hide()
         else
             if frame.showDuration == true then
-                threshold = duration
+                frame._threshold = duration
             elseif frame.showDuration >= 1 then
-                threshold = frame.showDuration
+                frame._threshold = frame.showDuration
             else -- < 1
-                threshold = frame.showDuration * duration
+                frame._threshold = frame.showDuration * duration
             end
             frame.duration:Show()
         end
 
-        frame.elapsed = 0.1 -- update immediately
-        frame:SetScript("OnUpdate", function(self, elapsed)
-            local remain = duration-(GetTime()-start)
-            if remain < 0 then remain = 0 end
-
-            self.elapsed = self.elapsed + elapsed
-            if self.elapsed >= 0.1 then
-                self.elapsed = 0
-                -- update color
-                Rect_OnUpdateColor(frame, duration, remain)
-            end
-
-            if remain > threshold then
-                frame.duration:SetText("")
-                return
-            end
-
-            -- format
-            if remain > 60 then
-                fmt, remain = "%dm", remain/60
-            else
-                if Cell.vars.iconDurationRoundUp then
-                    fmt, remain = "%d", ceil(remain)
-                else
-                    if remain < Cell.vars.iconDurationDecimal then
-                        fmt = "%.1f"
-                    else
-                        fmt = "%d"
-                    end
-                end
-            end
-            frame.duration:SetFormattedText(fmt, remain)
-        end)
+        frame._start = start
+        frame._duration = duration
+        frame._elapsed = 0.1 -- update immediately
+        frame:SetScript("OnUpdate", Rect_OnUpdate)
     end
 
     frame.stack:SetText((count == 0 or count == 1) and "" or count)
@@ -806,76 +790,83 @@ local function Bar_SetFont(bar, font1, font2)
     I.SetFont(bar.duration, bar, unpack(font2))
 end
 
+local function Bar_OnUpdate(bar, elapsed)
+    bar._remain = bar._duration - (GetTime() - bar._start)
+    if bar._remain < 0 then bar._remain = 0 end
+    bar:SetValue(bar._remain)
+
+    bar._elapsed = bar._elapsed + elapsed
+    if bar._elapsed >= 0.1 then
+        bar._elapsed = 0
+        -- update color
+        if bar.colors[3][1] and bar._remain <= bar.colors[3][2] then
+            if bar.state ~= 3 then
+                bar.state = 3
+                bar:SetStatusBarColor(bar.colors[3][3][1], bar.colors[3][3][2], bar.colors[3][3][3], bar.colors[3][3][4])
+            end
+        elseif bar.colors[2][1] and bar._remain <= bar._duration * bar.colors[2][2] then
+            if bar.state ~= 2 then
+                bar.state = 2
+                bar:SetStatusBarColor(bar.colors[2][3][1], bar.colors[2][3][2], bar.colors[2][3][3], bar.colors[2][3][4])
+            end
+        elseif bar.state ~= 1 then
+            bar.state = 1
+            bar:SetStatusBarColor(bar.colors[1][1], bar.colors[1][2], bar.colors[1][3], bar.colors[1][4])
+        end
+    end
+
+    if bar._remain > bar._threshold then
+        bar.duration:SetText("")
+        return
+    end
+
+    -- format
+    if bar._remain > 60 then
+        bar.duration:SetFormattedText("%dm", bar._remain / 60)
+    else
+        if Cell.vars.iconDurationRoundUp then
+            bar.duration:SetFormattedText("%d", ceil(bar._remain))
+        else
+            if bar._remain < Cell.vars.iconDurationDecimal then
+                bar.duration:SetFormattedText("%.1f", bar._remain)
+            else
+                bar.duration:SetFormattedText("%d", bar._remain)
+            end
+        end
+    end
+end
+
 local function Bar_SetCooldown(bar, start, duration, debuffType, texture, count)
     if duration == 0 then
         bar:SetScript("OnUpdate", nil)
         bar.duration:Hide()
         bar:SetMinMaxValues(0, 1)
         bar:SetValue(1)
+        bar._start = nil
+        bar._duration = nil
+        bar._threshold = nil
+        bar._remain = nil
+        bar._elapsed = nil
     else
-        local threshold, fmt
         if not bar.showDuration then
-            threshold = -1
+            bar._threshold = -1
             bar.duration:Hide()
         else
             if bar.showDuration == true then
-                threshold = duration
+                bar._threshold = duration
             elseif bar.showDuration >= 1 then
-                threshold = bar.showDuration
+                bar._threshold = bar.showDuration
             else -- < 1
-                threshold = bar.showDuration * duration
+                bar._threshold = bar.showDuration * duration
             end
             bar.duration:Show()
         end
 
         bar:SetMinMaxValues(0, duration)
-        bar.elapsed = 0.1 -- update immediately
-        bar:SetScript("OnUpdate", function(self, elapsed)
-            local remain = duration-(GetTime()-start)
-            if remain < 0 then remain = 0 end
-            bar:SetValue(remain)
-
-            self.elapsed = self.elapsed + elapsed
-            if self.elapsed >= 0.1 then
-                self.elapsed = 0
-                -- update color
-                if bar.colors[3][1] and remain <= bar.colors[3][2] then
-                    if bar.state ~= 3 then
-                        bar.state = 3
-                        bar:SetStatusBarColor(bar.colors[3][3][1], bar.colors[3][3][2], bar.colors[3][3][3], bar.colors[3][3][4])
-                    end
-                elseif bar.colors[2][1] and remain <= duration * bar.colors[2][2] then
-                    if bar.state ~= 2 then
-                        bar.state = 2
-                        bar:SetStatusBarColor(bar.colors[2][3][1], bar.colors[2][3][2], bar.colors[2][3][3], bar.colors[2][3][4])
-                    end
-                elseif bar.state ~= 1 then
-                    bar.state = 1
-                    bar:SetStatusBarColor(bar.colors[1][1], bar.colors[1][2], bar.colors[1][3], bar.colors[1][4])
-                end
-            end
-
-            if remain > threshold then
-                bar.duration:SetText("")
-                return
-            end
-
-            -- format
-            if remain > 60 then
-                fmt, remain = "%dm", remain/60
-            else
-                if Cell.vars.iconDurationRoundUp then
-                    fmt, remain = "%d", ceil(remain)
-                else
-                    if remain < Cell.vars.iconDurationDecimal then
-                        fmt = "%.1f"
-                    else
-                        fmt = "%d"
-                    end
-                end
-            end
-            bar.duration:SetFormattedText(fmt, remain)
-        end)
+        bar._start = start
+        bar._duration = duration
+        bar._elapsed = 0.1 -- update immediately
+        bar:SetScript("OnUpdate", Bar_OnUpdate)
     end
 
     bar.stack:SetText((count == 0 or count == 1) and "" or count)
@@ -927,36 +918,44 @@ end
 -------------------------------------------------
 -- CreateAura_Color
 -------------------------------------------------
+local function Color_OnUpdate(color, elapsed)
+    color._elapsed = color._elapsed + elapsed
+    if color._elapsed >= 0.1 then
+        color._elapsed = 0
+
+        color._remain = color._duration - (GetTime() - color._start)
+        -- update color
+        if color._remain <= color.colors[6][1] then
+            if color.state ~= 3 then
+                color.state = 3
+                color.solidTex:SetVertexColor(color.colors[6][2][1], color.colors[6][2][2], color.colors[6][2][3], color.colors[6][2][4])
+            end
+        elseif color._remain <= color._duration * color.colors[5][1] then
+            if color.state ~= 2 then
+                color.state = 2
+                color.solidTex:SetVertexColor(color.colors[5][2][1], color.colors[5][2][2], color.colors[5][2][3], color.colors[5][2][4])
+            end
+        elseif color.state ~= 1 then
+            color.state = 1
+            color.solidTex:SetVertexColor(color.colors[4][1], color.colors[4][2], color.colors[4][3], color.colors[4][4])
+        end
+    end
+end
+
 local function Color_SetCooldown(color, start, duration, debuffType)
     if color.type == "change-over-time" then
         if duration == 0 then
             color.solidTex:SetVertexColor(unpack(color.colors[4]))
             color:SetScript("OnUpdate", nil)
+            color._start = nil
+            color._duration = nil
+            color._remain = nil
+            color._elapsed = nil
         else
-            color.elapsed = 0.1 -- update immediately
-            color:SetScript("OnUpdate", function(self, elapsed)
-                self.elapsed = self.elapsed + elapsed
-                if self.elapsed >= 0.1 then
-                    self.elapsed = 0
-
-                    local remain = duration-(GetTime()-start)
-                    -- update color
-                    if remain <= color.colors[6][1] then
-                        if color.state ~= 3 then
-                            color.state = 3
-                            color.solidTex:SetVertexColor(color.colors[6][2][1], color.colors[6][2][2], color.colors[6][2][3], color.colors[6][2][4])
-                        end
-                    elseif remain <= duration * color.colors[5][1] then
-                        if color.state ~= 2 then
-                            color.state = 2
-                            color.solidTex:SetVertexColor(color.colors[5][2][1], color.colors[5][2][2], color.colors[5][2][3], color.colors[5][2][4])
-                        end
-                    elseif color.state ~= 1 then
-                        color.state = 1
-                        color.solidTex:SetVertexColor(color.colors[4][1], color.colors[4][2], color.colors[4][3], color.colors[4][4])
-                    end
-                end
-            end)
+            color._start = start
+            color._duration = duration
+            color._elapsed = 0.1 -- update immediately
+            color:SetScript("OnUpdate", Color_OnUpdate)
         end
     elseif color.type == "class-color" then
         color.solidTex:SetVertexColor(F:GetClassColor(color.parent.states.class))
@@ -1058,35 +1057,39 @@ end
 -------------------------------------------------
 -- CreateAura_Texture
 -------------------------------------------------
+local function Texture_OnUpdate(texture, elapsed)
+    texture._elapsed = texture._elapsed + elapsed
+    if texture._elapsed >= 0.1 then
+        texture._elapsed = 0
+
+        texture._remain = texture._duration - (GetTime() - texture._start)
+        if texture._remain < 0 then texture._remain = 0 end
+        texture.tex:SetAlpha(texture._remain / texture._duration * 0.9 + 0.1)
+    end
+end
+
 function I.CreateAura_Texture(name, parent)
     local texture = CreateFrame("Frame", name, parent)
     texture:Hide()
     texture.indicatorType = "texture"
 
     local tex = texture:CreateTexture(name, "OVERLAY")
+    texture.tex = tex
     tex:SetAllPoints(texture)
 
     function texture:SetCooldown(start, duration)
         if texture.fadeOut then
-            texture.elapsed = 0.1 -- update immediately
-            texture:SetScript("OnUpdate", function(self, elapsed)
-                self.elapsed = self.elapsed + elapsed
-                if self.elapsed >= 0.1 then
-                    self.elapsed = 0
-
-                    local remain = duration - (GetTime() - start)
-                    if remain <= 0 then
-                        tex:SetAlpha(0.2)
-                    elseif remain >= duration then
-                        tex:SetAlpha(1)
-                    else
-                        tex:SetAlpha(remain / duration * 0.8 + 0.2)
-                    end
-                end
-            end)
+            texture._start = start
+            texture._duration = duration
+            texture._elapsed = 0.1 -- update immediately
+            texture:SetScript("OnUpdate", Texture_OnUpdate)
         else
             texture:SetScript("OnUpdate", nil)
             tex:SetAlpha(texture.colorAlpha)
+            texture._start = nil
+            texture._duration = nil
+            texture._remain = nil
+            texture._elapsed = nil
         end
         texture:Show()
     end
@@ -1155,9 +1158,9 @@ local function Icons_SetNumPerLine(icons, numPerLine)
 
     if icons.orientation then
         icons:SetOrientation(icons.orientation)
+    else
+        icons:UpdateSize()
     end
-
-    icons:UpdateSize()
 end
 
 local function Icons_SetOrientation(icons, orientation)
@@ -1312,27 +1315,30 @@ end
 -------------------------------------------------
 -- CreateAura_Glow
 -------------------------------------------------
+local function Glow_OnUpdate(glow, elapsed)
+    glow._elapsed = glow._elapsed + elapsed
+    if glow._elapsed >= 0.1 then
+        glow._elapsed = 0
+
+        glow._remain = glow._duration - (GetTime() - glow._start)
+        if glow._remain < 0 then glow._remain = 0 end
+        glow:SetAlpha(glow._remain / glow._duration * 0.9 + 0.1)
+    end
+end
+
 local function Glow_SetCooldown(glow, start, duration)
     if glow.fadeOut then
-        glow.elapsed = 0.1 -- update immediately
-        glow:SetScript("OnUpdate", function(self, elapsed)
-            self.elapsed = self.elapsed + elapsed
-            if self.elapsed >= 0.1 then
-                self.elapsed = 0
-
-                local remain = duration-(GetTime()-start)
-                if remain <= 0 then
-                    glow:SetAlpha(0.2)
-                elseif remain >= duration then
-                    glow:SetAlpha(1)
-                else
-                    glow:SetAlpha(remain / duration * 0.8 + 0.2)
-                end
-            end
-        end)
+        glow._start = start
+        glow._duration = duration
+        glow._elapsed = 0.1 -- update immediately
+        glow:SetScript("OnUpdate", Glow_OnUpdate)
     else
         glow:SetScript("OnUpdate", nil)
         glow:SetAlpha(1)
+        glow._start = nil
+        glow._duration = nil
+        glow._remain = nil
+        glow._elapsed = nil
     end
 
     glow:Show()
@@ -1401,18 +1407,25 @@ end
 -------------------------------------------------
 -- CreateAura_Bars
 -------------------------------------------------
+local function Bars_OnUpdate(bar, elapsed)
+    bar._remain = bar._duration - (GetTime() - bar._start)
+    if bar._remain < 0 then bar._remain = 0 end
+    bar:SetValue(bar._remain)
+end
+
 local function Bars_SetCooldown(bar, start, duration, color)
     if duration == 0 then
         bar:SetScript("OnUpdate", nil)
         bar:SetMinMaxValues(0, 1)
         bar:SetValue(1)
+        bar._start = nil
+        bar._duration = nil
+        bar._remain = nil
     else
+        bar._start = start
+        bar._duration = duration
         bar:SetMinMaxValues(0, duration)
-        bar:SetScript("OnUpdate", function(self, elapsed)
-            local remain = duration-(GetTime()-start)
-            if remain < 0 then remain = 0 end
-            bar:SetValue(remain)
-        end)
+        bar:SetScript("OnUpdate", Bars_OnUpdate)
     end
 
     bar:SetStatusBarColor(color[1], color[2], color[3], 1)
@@ -1515,40 +1528,48 @@ end
 -------------------------------------------------
 -- CreateAura_Overlay
 -------------------------------------------------
+local function Overlay_OnUpdate(overlay, elapsed)
+    overlay._remain = overlay._duration - (GetTime() - overlay._start)
+    if overlay._remain < 0 then overlay._remain = 0 end
+    overlay:_SetValue(overlay._remain)
+
+    overlay._elapsed = overlay._elapsed + elapsed
+    if overlay._elapsed >= 0.1 then
+        overlay._elapsed = 0
+        -- update color
+        if overlay.colors[3][1] and overlay._remain <= overlay.colors[3][2] then
+            if overlay.state ~= 3 then
+                overlay.state = 3
+                overlay:SetStatusBarColor(overlay.colors[3][3][1], overlay.colors[3][3][2], overlay.colors[3][3][3], overlay.colors[3][3][4])
+            end
+        elseif overlay.colors[2][1] and overlay._remain <= overlay._duration * overlay.colors[2][2] then
+            if overlay.state ~= 2 then
+                overlay.state = 2
+                overlay:SetStatusBarColor(overlay.colors[2][3][1], overlay.colors[2][3][2], overlay.colors[2][3][3], overlay.colors[2][3][4])
+            end
+        elseif overlay.state ~= 1 then
+            overlay.state = 1
+            overlay:SetStatusBarColor(overlay.colors[1][1], overlay.colors[1][2], overlay.colors[1][3], overlay.colors[1][4])
+        end
+    end
+end
+
 local function Overlay_SetCooldown(overlay, start, duration, debuffType, texture, count)
     if duration == 0 then
         overlay:SetScript("OnUpdate", nil)
         overlay:_SetMinMaxValues(0, 1)
         overlay:_SetValue(1)
         overlay:SetStatusBarColor(unpack(overlay.colors[1]))
+        overlay._start = nil
+        overlay._duration = nil
+        overlay._remain = nil
+        overlay._elapsed = nil
     else
         overlay:_SetMinMaxValues(0, duration)
-        overlay.elapsed = 0.1 -- update immediately
-        overlay:SetScript("OnUpdate", function(self, elapsed)
-            local remain = duration-(GetTime()-start)
-            if remain < 0 then remain = 0 end
-            overlay:_SetValue(remain)
-
-            self.elapsed = self.elapsed + elapsed
-            if self.elapsed >= 0.1 then
-                self.elapsed = 0
-                -- update color
-                if overlay.colors[3][1] and remain <= overlay.colors[3][2] then
-                    if overlay.state ~= 3 then
-                        overlay.state = 3
-                        overlay:SetStatusBarColor(overlay.colors[3][3][1], overlay.colors[3][3][2], overlay.colors[3][3][3], overlay.colors[3][3][4])
-                    end
-                elseif overlay.colors[2][1] and remain <= duration * overlay.colors[2][2] then
-                    if overlay.state ~= 2 then
-                        overlay.state = 2
-                        overlay:SetStatusBarColor(overlay.colors[2][3][1], overlay.colors[2][3][2], overlay.colors[2][3][3], overlay.colors[2][3][4])
-                    end
-                elseif overlay.state ~= 1 then
-                    overlay.state = 1
-                    overlay:SetStatusBarColor(overlay.colors[1][1], overlay.colors[1][2], overlay.colors[1][3], overlay.colors[1][4])
-                end
-            end
-        end)
+        overlay._start = start
+        overlay._duration = duration
+        overlay._elapsed = 0.1 -- update immediately
+        overlay:SetScript("OnUpdate", Overlay_OnUpdate)
     end
 
     overlay:Show()

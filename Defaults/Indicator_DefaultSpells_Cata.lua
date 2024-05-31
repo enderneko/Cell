@@ -273,46 +273,59 @@ end
 -------------------------------------------------
 -- dispels
 -------------------------------------------------
-local dispellable = {
+local dispellable = {}
+
+function I.CanDispel(dispelType)
+    if not dispelType then return end
+    return dispellable[dispelType]
+end
+
+local dispels = {
     -- DRUID ----------------
-    [11] = {["Curse"] = true, ["Poison"] = true},
+    [11] = {["Curse"] = true, ["Magic"] = "3,15", ["Poison"] = true},
 
     -- MAGE -----------------
     [8] = {["Curse"] = true},
 
     -- PALADIN --------------
-    [2] = {["Disease"] = true, ["Magic"] = true, ["Poison"] = true, ["Bleed"] = true},
+    [2] = {["Disease"] = true, ["Magic"] = "1,7", ["Poison"] = true, ["Bleed"] = true},
 
     -- PRIEST ---------------
-    -- TODO: 全心全意天赋可以解自己的毒
+    -- TODO: 身心合一天赋可以解自己的毒
     [5] = {["Disease"] = true, ["Magic"] = true},
 
     -- SHAMAN ---------------
-    [7] = {["Disease"] = true, ["Poison"] = true},
+    [7] = {["Curse"] = true, ["Magic"] = "3,14"},
 }
 
-do
-    -- NOTE: 净化灵魂天赋可以解除诅咒
-    if UnitClassBase("player") == "SHAMAN" then
-        local eventFrame = CreateFrame("Frame")
-        eventFrame:RegisterEvent("PLAYER_TALENT_UPDATE")
-        eventFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
-        eventFrame:SetScript("OnEvent", function(self, event)
-            if event == "PLAYER_ENTERING_WORLD" then
-                eventFrame:UnregisterEvent("PLAYER_ENTERING_WORLD")
+local eventFrame = CreateFrame("Frame")
+eventFrame:RegisterEvent("PLAYER_TALENT_UPDATE")
+eventFrame:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
+eventFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
+
+local function UpdateDispellable()
+    wipe(dispellable)
+    if dispels[Cell.vars.playerClassID] then
+        for dispelType, value in pairs(dispels[Cell.vars.playerClassID]) do
+            if type(value) == "boolean" then
+                dispellable[dispelType] = value
+            elseif select(5, GetTalentInfo(strsplit(",", value))) == 1 then
+                dispellable[dispelType] = true
             end
-            dispellable[7]["Curse"] = IsSpellKnown(51886)
-        end)
+        end
     end
+    -- texplore(dispellable)
 end
 
-function I.CanDispel(dispelType)
-    if not dispelType then return end
-
-    if dispellable[Cell.vars.playerClassID] then
-        return dispellable[Cell.vars.playerClassID][dispelType]
+local timer
+eventFrame:SetScript("OnEvent", function(self, event)
+    if event == "PLAYER_ENTERING_WORLD" then
+        eventFrame:UnregisterEvent("PLAYER_ENTERING_WORLD")
     end
-end
+
+    if timer then timer:Cancel() end
+    timer = C_Timer.NewTimer(1, UpdateDispellable)
+end)
 
 -------------------------------------------------
 -- drinking

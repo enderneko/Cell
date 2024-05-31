@@ -8,7 +8,7 @@ Cell.frames.aboutTab = aboutTab
 aboutTab:SetAllPoints(Cell.frames.optionsFrame)
 aboutTab:Hide()
 
-local authorText, translatorsTextCN, translatorsTextKR, specialThanksText, patronsText1, patronsText2
+local authorText, translatorsTextCN, translatorsTextKR, specialThanksText, supportersText1, supportersText2
 local UpdateFont
 
 -------------------------------------------------
@@ -123,9 +123,9 @@ local function CreateSpecialThanksPane()
 end
 
 -------------------------------------------------
--- patrons
+-- supporters
 -------------------------------------------------
-local function GetPatrons(t)
+local function GetSupporters(t)
     local str = ""
     local n = #t
     for i = 1, n do
@@ -142,7 +142,7 @@ local function GetPatrons(t)
     return str
 end
 
-local function GetPatrons2(t)
+local function Getsupporters2(t)
     local str = ""
     local n = #t
     for i = 1, n do
@@ -178,118 +178,118 @@ local function CreateAnimation(frame)
 end
 
 local function CreateButton(w, h, tex)
-    local patronsBtn = Cell:CreateButton(aboutTab, L["Patrons"], "accent", {w, h})
-    patronsBtn:SetToplevel(true)
-    patronsBtn:SetPushedTextOffset(0, 0)
+    local supportersBtn = Cell:CreateButton(aboutTab, L["Supporters"], "accent", {w, h})
+    supportersBtn:SetToplevel(true)
+    supportersBtn:SetPushedTextOffset(0, 0)
 
-    patronsBtn:SetScript("OnHide", function()
-        patronsBtn:SetBackdropColor(unpack(patronsBtn.color))
+    supportersBtn:SetScript("OnHide", function()
+        supportersBtn:SetBackdropColor(unpack(supportersBtn.color))
     end)
 
-    patronsBtn:HookScript("OnEnter", function()
+    supportersBtn:HookScript("OnEnter", function()
         F:HideUtilityList()
     end)
 
-    Cell:StartRainbowText(patronsBtn:GetFontString())
+    Cell:StartRainbowText(supportersBtn:GetFontString())
 
     local iconSize = min(w, h) - 2
 
-    local icon1 = patronsBtn:CreateTexture(nil, "ARTWORK")
-    patronsBtn.icon1 = icon1
-    P:Point(patronsBtn.icon1, "TOPLEFT", 1, -1)
+    local icon1 = supportersBtn:CreateTexture(nil, "ARTWORK")
+    supportersBtn.icon1 = icon1
+    P:Point(supportersBtn.icon1, "TOPLEFT", 1, -1)
     P:Size(icon1, iconSize, iconSize)
     icon1:SetTexture(tex)
     icon1:SetVertexColor(0.5, 0.5, 0.5)
 
-    local icon2 = patronsBtn:CreateTexture(nil, "ARTWORK")
-    patronsBtn.icon2 = icon2
-    P:Point(patronsBtn.icon2, "BOTTOMRIGHT", -1, 1)
+    local icon2 = supportersBtn:CreateTexture(nil, "ARTWORK")
+    supportersBtn.icon2 = icon2
+    P:Point(supportersBtn.icon2, "BOTTOMRIGHT", -1, 1)
     P:Size(icon2, iconSize, iconSize)
     icon2:SetTexture(tex)
     icon2:SetVertexColor(0.5, 0.5, 0.5)
 
-    CreateAnimation(patronsBtn)
+    CreateAnimation(supportersBtn)
 
-    return patronsBtn
+    return supportersBtn
 end
 
-local function CreatePatronsPane()
+local function CreateSupportersPane()
     -- pane
-    local patronsPane = Cell:CreateTitledPane(aboutTab, "", 100, 100)
-    patronsPane:SetPoint("TOPLEFT", aboutTab, "TOPRIGHT", 6, -5)
-    patronsPane:SetPoint("BOTTOMLEFT", aboutTab, "BOTTOMRIGHT", 6, 5)
-    patronsPane:Hide()
+    local supportersPane = Cell:CreateTitledPane(aboutTab, "", 100, 100)
+    supportersPane:SetPoint("TOPLEFT", aboutTab, "TOPRIGHT", 6, -5)
+    supportersPane:SetPoint("BOTTOMLEFT", aboutTab, "BOTTOMRIGHT", 6, 5)
+    supportersPane:Hide()
 
-    CreateAnimation(patronsPane)
+    CreateAnimation(supportersPane)
 
-    local heartIcon = patronsPane:CreateTexture(nil, "OVERLAY")
+    local heartIcon = supportersPane:CreateTexture(nil, "OVERLAY")
     heartIcon:SetPoint("TOPRIGHT")
     heartIcon:SetSize(16, 16)
     heartIcon:SetTexture("Interface\\AddOns\\Cell\\Media\\Icons\\sparkling_heart")
 
-    local bgTex = patronsPane:CreateTexture(nil, "BACKGROUND", nil, 0)
+    local bgTex = supportersPane:CreateTexture(nil, "BACKGROUND", nil, 0)
     bgTex:SetPoint("TOPLEFT", -5, 5)
     bgTex:SetPoint("BOTTOMRIGHT", 5, -5)
     bgTex:SetTexture("Interface\\Buttons\\WHITE8x8")
     bgTex:SetGradient("HORIZONTAL", CreateColor(0.1, 0.1, 0.1, 1), CreateColor(0.1, 0.1, 0.1, 0.7))
 
-    local patronsFrame1 = CreateFrame("Frame", nil, patronsPane)
-    patronsFrame1:SetPoint("TOPLEFT", 0, -27)
-    patronsFrame1:SetPoint("BOTTOMLEFT")
-    patronsFrame1.scroll = Cell:CreateScrollFrame(patronsFrame1)
-    patronsFrame1.scroll:SetScrollStep(50)
+    local supportersFrame1 = CreateFrame("Frame", nil, supportersPane)
+    supportersFrame1:SetPoint("TOPLEFT", 0, -27)
+    supportersFrame1:SetPoint("BOTTOMLEFT")
+    supportersFrame1.scroll = Cell:CreateScrollFrame(supportersFrame1)
+    supportersFrame1.scroll:SetScrollStep(50)
 
-    patronsText1 = patronsFrame1.scroll.content:CreateFontString(nil, "OVERLAY")
-    patronsText1.font = UNIT_NAME_FONT_CHINESE
-    patronsText1.size = 13
-    UpdateFont(patronsText1)
+    supportersText1 = supportersFrame1.scroll.content:CreateFontString(nil, "OVERLAY")
+    supportersText1.font = UNIT_NAME_FONT_CHINESE
+    supportersText1.size = 13
+    UpdateFont(supportersText1)
 
-    patronsText1:SetPoint("TOPLEFT")
-    patronsText1:SetSpacing(5)
-    patronsText1:SetJustifyH("LEFT")
-    patronsText1:SetText(GetPatrons(Cell.patrons1))
+    supportersText1:SetPoint("TOPLEFT")
+    supportersText1:SetSpacing(5)
+    supportersText1:SetJustifyH("LEFT")
+    supportersText1:SetText(GetSupporters(Cell.supporters1))
 
-    local patronsFrame2 = CreateFrame("Frame", nil, patronsPane)
-    patronsFrame2:SetPoint("TOPLEFT", patronsFrame1, "TOPRIGHT", 10, 0)
-    patronsFrame2:SetPoint("BOTTOMLEFT", patronsFrame1, "BOTTOMRIGHT")
-    patronsFrame2.scroll = Cell:CreateScrollFrame(patronsFrame2)
-    patronsFrame2.scroll:SetScrollStep(50)
+    local supportersFrame2 = CreateFrame("Frame", nil, supportersPane)
+    supportersFrame2:SetPoint("TOPLEFT", supportersFrame1, "TOPRIGHT", 10, 0)
+    supportersFrame2:SetPoint("BOTTOMLEFT", supportersFrame1, "BOTTOMRIGHT")
+    supportersFrame2.scroll = Cell:CreateScrollFrame(supportersFrame2)
+    supportersFrame2.scroll:SetScrollStep(50)
 
-    patronsText2 = patronsFrame2.scroll.content:CreateFontString(nil, "OVERLAY")
-    patronsText2.font = UNIT_NAME_FONT_CHINESE
-    patronsText2.size = 13
-    UpdateFont(patronsText2)
+    supportersText2 = supportersFrame2.scroll.content:CreateFontString(nil, "OVERLAY")
+    supportersText2.font = UNIT_NAME_FONT_CHINESE
+    supportersText2.size = 13
+    UpdateFont(supportersText2)
 
-    patronsText2:SetPoint("TOPLEFT")
-    patronsText2:SetSpacing(5)
-    patronsText2:SetJustifyH("LEFT")
-    patronsText2:SetText(GetPatrons2(Cell.patrons2))
+    supportersText2:SetPoint("TOPLEFT")
+    supportersText2:SetSpacing(5)
+    supportersText2:SetJustifyH("LEFT")
+    supportersText2:SetText(Getsupporters2(Cell.supporters2))
 
     -- update width
     local elapsedTime = 0
     local function updateFunc(self, elapsed)
         elapsedTime = elapsedTime + elapsed
 
-        patronsFrame1:SetWidth(patronsText1:GetWidth() + 10)
-        patronsFrame1.scroll:SetContentHeight(patronsText1:GetHeight() + 5)
-        patronsFrame2:SetWidth(patronsText2:GetWidth() + 10)
-        patronsFrame2.scroll:SetContentHeight(patronsText2:GetHeight() + 5)
-        patronsPane:SetWidth(patronsFrame1:GetWidth() + patronsFrame2:GetWidth() + 10)
+        supportersFrame1:SetWidth(supportersText1:GetWidth() + 10)
+        supportersFrame1.scroll:SetContentHeight(supportersText1:GetHeight() + 5)
+        supportersFrame2:SetWidth(supportersText2:GetWidth() + 10)
+        supportersFrame2.scroll:SetContentHeight(supportersText2:GetHeight() + 5)
+        supportersPane:SetWidth(supportersFrame1:GetWidth() + supportersFrame2:GetWidth() + 10)
 
         if elapsedTime >= 0.5 then
-            patronsPane:SetScript("OnUpdate", nil)
+            supportersPane:SetScript("OnUpdate", nil)
         end
     end
-    patronsPane:SetScript("OnShow", function()
+    supportersPane:SetScript("OnShow", function()
         elapsedTime = 0
-        patronsPane:SetScript("OnUpdate", updateFunc)
+        supportersPane:SetScript("OnUpdate", updateFunc)
     end)
 
     -- button
-    local patronsBtn1 = CreateButton(17, 157, [[Interface\AddOns\Cell\Media\Icons\right]])
-    patronsBtn1:SetPoint("TOPLEFT", aboutTab, "TOPRIGHT", 1, -5)
+    local supportersBtn1 = CreateButton(17, 157, [[Interface\AddOns\Cell\Media\Icons\right]])
+    supportersBtn1:SetPoint("TOPLEFT", aboutTab, "TOPRIGHT", 1, -5)
 
-    local label = patronsBtn1:GetFontString()
+    local label = supportersBtn1:GetFontString()
     -- if Cell.isRetail then
         label:ClearAllPoints()
         label:SetPoint("CENTER", 6, -5)
@@ -304,24 +304,24 @@ local function CreatePatronsPane()
     --     Cell:StartRainbowText(label)
     -- end
 
-    local patronsBtn2 = CreateButton(17, 17, [[Interface\AddOns\Cell\Media\Icons\left]])
-    -- patronsBtn2:SetPoint("TOPLEFT", aboutTab, "TOPRIGHT", 6, -5)
-    patronsBtn2:SetPoint("TOPLEFT", patronsPane)
-    patronsBtn2:SetPoint("TOPRIGHT", patronsPane, P:Scale(-20), 0)
-    patronsBtn2:Hide()
+    local supportersBtn2 = CreateButton(17, 17, [[Interface\AddOns\Cell\Media\Icons\left]])
+    -- supportersBtn2:SetPoint("TOPLEFT", aboutTab, "TOPRIGHT", 6, -5)
+    supportersBtn2:SetPoint("TOPLEFT", supportersPane)
+    supportersBtn2:SetPoint("TOPRIGHT", supportersPane, P:Scale(-20), 0)
+    supportersBtn2:Hide()
 
-    patronsBtn1:SetScript("OnClick", function()
-        if patronsBtn1.fadeOut:IsPlaying() or patronsBtn1.fadeIn:IsPlaying() then return end
-        patronsBtn1.fadeOut:Play()
-        patronsBtn2.fadeIn:Play()
-        patronsPane.fadeIn:Play()
+    supportersBtn1:SetScript("OnClick", function()
+        if supportersBtn1.fadeOut:IsPlaying() or supportersBtn1.fadeIn:IsPlaying() then return end
+        supportersBtn1.fadeOut:Play()
+        supportersBtn2.fadeIn:Play()
+        supportersPane.fadeIn:Play()
     end)
 
-    patronsBtn2:SetScript("OnClick", function()
-        if patronsBtn2.fadeOut:IsPlaying() or patronsBtn2.fadeIn:IsPlaying() then return end
-        patronsBtn1.fadeIn:Play()
-        patronsBtn2.fadeOut:Play()
-        patronsPane.fadeOut:Play()
+    supportersBtn2:SetScript("OnClick", function()
+        if supportersBtn2.fadeOut:IsPlaying() or supportersBtn2.fadeIn:IsPlaying() then return end
+        supportersBtn1.fadeIn:Play()
+        supportersBtn2.fadeOut:Play()
+        supportersPane.fadeOut:Play()
     end)
 end
 
@@ -471,7 +471,7 @@ local function ShowTab(tab)
             CreateTranslatorsPane()
             CreateLinksPane()
             CreateImportExportPane()
-            CreatePatronsPane()
+            CreateSupportersPane()
         end
         aboutTab:Show()
         descriptionPane:SetTitle("Cell "..Cell.version)
@@ -495,6 +495,6 @@ function Cell:UpdateAboutFont()
     UpdateFont(translatorsTextCN)
     UpdateFont(translatorsTextKR)
     UpdateFont(specialThanksText)
-    UpdateFont(patronsText1)
-    UpdateFont(patronsText2)
+    UpdateFont(supportersText1)
+    UpdateFont(supportersText2)
 end

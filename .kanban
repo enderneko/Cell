@@ -14,15 +14,6 @@
           "comments": []
         },
         {
-          "id": "721cdc03-a153-4d63-92fd-37e63dfacfbc",
-          "listId": "643431c7-e660-47b1-a44b-4e799b536d19",
-          "title": "\"Show on\" for custom indicators",
-          "description": "",
-          "labels": [],
-          "checkboxes": [],
-          "comments": []
-        },
-        {
           "id": "a32ebae3-812a-45f6-8b49-67b5139960d3",
           "listId": "643431c7-e660-47b1-a44b-4e799b536d19",
           "title": "Spell list for AoE Healing indicator",
@@ -44,15 +35,6 @@
           "id": "1f5eaefd-76a3-48eb-a1ba-12844a302d3e",
           "listId": "643431c7-e660-47b1-a44b-4e799b536d19",
           "title": "Feature to set position for each spotlight button",
-          "description": "",
-          "labels": [],
-          "checkboxes": [],
-          "comments": []
-        },
-        {
-          "id": "f9342937-2a2d-424a-a5e3-cd9147d2ecbd",
-          "listId": "643431c7-e660-47b1-a44b-4e799b536d19",
-          "title": "Fix Targeted Spells",
           "description": "",
           "labels": [],
           "checkboxes": [],
@@ -135,6 +117,24 @@
           "labels": [],
           "checkboxes": [],
           "comments": []
+        },
+        {
+          "id": "73a9c8e5-fd9e-43b8-baf7-582aade21de0",
+          "listId": "7915d51e-5603-44aa-aa3a-8dff734ea7c6",
+          "title": "Make each spotlight button \"positionable\"",
+          "description": "",
+          "labels": [],
+          "checkboxes": [],
+          "comments": []
+        },
+        {
+          "id": "abd28941-e6a1-4784-8465-e922be72f888",
+          "listId": "7915d51e-5603-44aa-aa3a-8dff734ea7c6",
+          "title": "Refactor Layouts",
+          "description": "Main/Spotlight/NPC/Pet can have their own layout",
+          "labels": [],
+          "checkboxes": [],
+          "comments": []
         }
       ]
     },
@@ -179,9 +179,18 @@
           "comments": []
         },
         {
-          "id": "0a680052-11a5-4828-b02e-411be7dc9b65",
+          "id": "f9342937-2a2d-424a-a5e3-cd9147d2ecbd",
           "listId": "fc9baa7c-c3e7-49a4-8526-816c794e5ed9",
-          "title": "Add \"LayoutAutoSwitch\" into Layout import/export",
+          "title": "Fix Targeted Spells",
+          "description": "",
+          "labels": [],
+          "checkboxes": [],
+          "comments": []
+        },
+        {
+          "id": "7abeed76-478d-4313-b46d-550f537ede54",
+          "listId": "fc9baa7c-c3e7-49a4-8526-816c794e5ed9",
+          "title": "Add spacing for Icons",
           "description": "",
           "labels": [],
           "checkboxes": [],
