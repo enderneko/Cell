@@ -632,3 +632,5 @@ L["You"] = "당신"
 L["You can config debuffs in %s"] = "%s에서 약화 효과를 설정할 수 있습니다."
 L["You can move it in Preview mode"] = "미리보기 모드에서 옮길 수 있습니다."
 L["You don't have permission to do this"] = "이 작업을 수행할 수 있는 권한이 없습니다."
+--[[Translation missing --]]
+-- L["Show All"]

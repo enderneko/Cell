@@ -668,3 +668,5 @@ L["You can config debuffs in %s"] = "你可以在 %s 中設定減益法術"
 L["You can move it in Preview mode"] = "可以在 \"預覽\" 模式中移動它"
 L["You can't do that while in combat."] = "你不可以在戰鬥中這麼做。"
 L["You don't have permission to do this"] = "你沒有權限這樣做"
+--[[Translation missing --]]
+-- L["Show All"]

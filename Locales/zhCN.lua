@@ -587,6 +587,9 @@ L["If you are a paladin or warrior, and the unit has no buffs from you, a %s ico
 
 L["Would you like Cell to create a \"Healers\" indicator (icons)?"] = "需要 Cell 为你创建一个 “Healers” 指示器（图标组）？"
 
+--[[Translation missing --]]
+-- L["Show All"]
+
 -------------------------------------------------
 -- raid debuffs
 -------------------------------------------------
