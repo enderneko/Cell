@@ -20,7 +20,7 @@ local ListHighlightFn
 -------------------------------------------------
 -- preview
 -------------------------------------------------
-local previewButton, previewButtonBG, previewAlphaSlider, previewScaleSlider, previewIndicatorsShownToggle
+local previewButton, previewButtonBG, previewAlphaSlider, previewScaleSlider, previewIndicatorsShowAllToggle
 
 local function CreatePreviewButton()
     previewButton = CreateFrame("Button", "CellIndicatorsPreviewButton", indicatorsTab, "CellPreviewButtonTemplate")
@@ -95,7 +95,7 @@ local function CreatePreviewButton()
     previewScaleSlider.highText:Hide()
 
     -- preview show all active indicators
-    previewIndicatorsShownToggle = Cell:CreateCheckButton(previewButtonBG, L["Show All"], function(checked)
+    previewIndicatorsShowAllToggle = Cell:CreateCheckButton(previewButtonBG, L["Show All"], function(checked)
         CellDB["indicatorPreviewShowAllActive"] = checked
 
         for k, indicator in pairs(previewButton.indicators) do
@@ -112,8 +112,8 @@ local function CreatePreviewButton()
             listButtons[selected]:Click()
         end
     end)
-    previewIndicatorsShownToggle:SetPoint("TOPLEFT", previewScaleSlider, "TOPRIGHT", 5, 3.5)
-    previewIndicatorsShownToggle:SetChecked(CellDB["indicatorPreviewShowAllActive"])
+    previewIndicatorsShowAllToggle:SetPoint("TOPLEFT", previewScaleSlider, "TOPRIGHT", 5, 3.5)
+    previewIndicatorsShowAllToggle:SetChecked(CellDB["indicatorPreviewShowAllActive"])
 
     -- local alphaText = settingsPane:CreateFontString(nil, "OVERLAY", "CELL_FONT_CLASS")
     -- alphaText:SetPoint("BOTTOM", settingsPane.line, "TOP", 0, P:Scale(2))
