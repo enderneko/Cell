@@ -2,7 +2,7 @@
 -- File: Cell\RaidDebuffs\ExpansionData\ExpansionData.lua
 -- Author: enderneko (enderneko-dev@outlook.com)
 -- Created : 2022-08-26 04:40:40 +08:00
--- Modified: 2024-05-21 21:10:58 +08:00
+-- Modified: 2024-06-01 20:00 +08:00
 ---------------------------------------------------------------------
 
 local _, Cell = ...
@@ -1054,6 +1054,11 @@ Cell_ExpansionData.data = {
                     ["image"] = 522210,
                     ["name"] = "\"Captain\" Cookie",
                 }, -- [5]
+                {
+                    ["id"] = 95,
+                    ["image"] = 522278,
+                    ["name"] = "Vanessa VanCleef",
+                }, -- [6]
             },
         }, -- [7]
         {
@@ -4277,6 +4282,11 @@ Cell_ExpansionData.data = {
                     ["image"] = 522210,
                     ["name"] = "\"Captain\" Cookie",
                 }, -- [5]
+                {
+                    ["id"] = 95,
+                    ["image"] = 522278,
+                    ["name"] = "Vanessa VanCleef",
+                }, -- [6]
             },
         }, -- [8]
         {

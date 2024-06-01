@@ -2,7 +2,7 @@
 -- File: Cell\RaidDebuffs\ExpansionData\ExpansionData_frFR.lua
 -- Author: enderneko (enderneko-dev@outlook.com)
 -- Created : 2023-09-03 19:52:19 +08:00
--- Modified: 2024-05-04 17:36:50 +08:00
+-- Modified: 2024-06-01 19:56 +08:00
 ---------------------------------------------------------------------
 
 if not LOCALE_frFR then return end
@@ -1226,6 +1226,11 @@ Cell_ExpansionData.data = {
                     ["image"] = 522210,
                     ["name"] = "« Capitaine » Macaron",
                 }, -- [5]
+                {
+                    ["id"] = 95,
+                    ["image"] = 522278,
+                    ["name"] = "Vanessa VanCleef",
+                }, -- [6]
             },
         }, -- [14]
         {
@@ -4402,6 +4407,11 @@ Cell_ExpansionData.data = {
                     ["image"] = 522210,
                     ["name"] = "« Capitaine » Macaron",
                 }, -- [5]
+                {
+                    ["id"] = 95,
+                    ["image"] = 522278,
+                    ["name"] = "Vanessa VanCleef",
+                }, -- [6]
             },
         }, -- [14]
         {

@@ -2,7 +2,7 @@
 -- File: Cell\RaidDebuffs\ExpansionData\ExpansionData_zhTW.lua
 -- Author: enderneko (enderneko-dev@outlook.com)
 -- Created : 2023-09-03 19:55:43 +08:00
--- Modified: 2024-05-04 17:31:48 +08:00
+-- Modified: 2024-06-01 19:51 +08:00
 ---------------------------------------------------------------------
 
 if not LOCALE_zhTW then return end
@@ -623,6 +623,11 @@ Cell_ExpansionData.data = {
                     ["image"] = 522210,
                     ["name"] = "『船長』餅乾",
                 }, -- [5]
+                {
+                    ["id"] = 95,
+                    ["image"] = 522278,
+                    ["name"] = "凡妮莎‧范克里夫",
+                }, -- [6]
             },
         }, -- [13]
         {
@@ -4262,6 +4267,11 @@ Cell_ExpansionData.data = {
                     ["image"] = 522210,
                     ["name"] = "『船長』餅乾",
                 }, -- [5]
+                {
+                    ["id"] = 95,
+                    ["image"] = 522278,
+                    ["name"] = "凡妮莎‧范克里夫",
+                }, -- [6]
             },
         }, -- [11]
         {
