@@ -641,7 +641,7 @@ function I.CreateDispels(parent)
         dispels.highlight:Hide()
     end)
 
-    dispels.highlight = parent.widgets.healthBar:CreateTexture(parent:GetName().."DispelHighlight", "OVERLAY")
+    dispels.highlight = parent.widgets.overlayFrame:CreateTexture(parent:GetName().."DispelHighlight", "OVERLAY")
     dispels.highlight:Hide()
 
     dispels._SetSize = dispels.SetSize
