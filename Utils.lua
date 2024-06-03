@@ -843,19 +843,19 @@ function F:IterateAllUnitButtons(func, updateCurrentGroupOnly, updateQuickAssist
 end
 
 function F:IterateAllUnitButtonsByType(func, frameType)
-    if frameType == "All" then
+    if frameType == "all" then
         F:IterateAllUnitButtons(func, false, true)
-    elseif frameType == "Solo" then
+    elseif frameType == "solo" then
         func(Cell.unitButtons.solo.player)
-    elseif frameType == "Pet" then
+    elseif frameType == "pet" then
         func(Cell.unitButtons.solo.pet)
-    elseif frameType == "Party" then
+    elseif frameType == "party" then
         for index, b in pairs(Cell.unitButtons.party) do
             if index ~= "units" then
                 func(b)
             end
         end
-    elseif frameType == "Raid" then
+    elseif frameType == "raid" then
         for index, header in pairs(Cell.unitButtons.raid) do
             if index ~= "units" then
                 for _, b in ipairs(header) do
@@ -863,25 +863,25 @@ function F:IterateAllUnitButtonsByType(func, frameType)
                 end
             end
         end
-    elseif frameType == "Raid Pets" then
+    elseif frameType == "raidPets" then
         for index, b in pairs(Cell.unitButtons.raidpet) do
             if index ~= "units" then
                 func(b)
             end
         end
-    elseif frameType == "Arena Pets" then
+    elseif frameType == "arenaPets" then
         for _, b in pairs(Cell.unitButtons.arena) do
             func(b)
         end
-    elseif frameType == "NPC" then
+    elseif frameType == "npc" then
         for _, b in ipairs(Cell.unitButtons.npc) do
             func(b)
         end
-    elseif frameType == "Spotlight" then
+    elseif frameType == "spotlight" then
         for _, b in pairs(Cell.unitButtons.spotlight) do
-            func(b, "spotlight")
+            func(b)
         end
-    elseif frameType == "Quick Assist" and Cell.isRetail then
+    elseif frameType == "quickAssist" and Cell.isRetail then
         for i = 1, 40 do
             func(Cell.unitButtons.quickAssist[i])
         end

@@ -17,10 +17,10 @@ local function DoImport()
             t[4] = F:GetDefaultFrameTypes()
         end
 
-        if not Cell.isRetail and t[4]["Quick Assist"] ~= nil then
-            t[4]["Quick Assist"] = nil
-        elseif Cell.isRetail and t[4]["Quick Assist"] == nil then
-            t[4]["Quick Assist"] = true
+        if not Cell.isRetail and t[4]["quickAssist"] ~= nil then
+            t[4]["quickAssist"] = nil
+        elseif Cell.isRetail and t[4]["quickAssist"] == nil then
+            t[4]["quickAssist"] = true
         end
     end
 

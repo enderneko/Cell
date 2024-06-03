@@ -301,15 +301,15 @@ local defaultSpells = {
 
 function F:GetDefaultFrameTypes()
     return {
-        ["Party"] = true,
-        ["Raid"] = true,
-        ["Spotlight"] = true,
-        ["Quick Assist"] = true,
-        ["Solo"] = true,
-        ["Pet"] = true,
-        ["Raid Pets"] = true,
-        ["Arena Pets"] = true,
-        ["NPC"] = true,
+        ["party"] = true,
+        ["raid"] = true,
+        ["spotlight"] = true,
+        ["quickAssist"] = true,
+        ["solo"] = true,
+        ["pet"] = true,
+        ["raidPets"] = true,
+        ["arenaPets"] = true,
+        ["npc"] = true,
     }
 end
 

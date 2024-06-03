@@ -82,7 +82,28 @@ local function GetFrameTypesDisplay(frameTypes)
 
     for key, selected in pairs(frameTypes) do
         if key ~= nil and selected then
-            local localizedString = L[F:UpperFirst(key)]
+            local localizedString
+
+            if key == "party" then
+                localizedString = L["Party"]
+            elseif key == "raid" then
+                localizedString = L["Raid"]
+            elseif key == "spotlight" then
+                localizedString = L["Spotlight"]
+            elseif key == "quickAssist" then
+                localizedString = L["Quick Assist"]
+            elseif key == "solo" then
+                localizedString = L["Solo"]
+            elseif key == "pet" then
+                localizedString = L["Pet"]
+            elseif key == "raidPets" then
+                localizedString = L["Raid Pets"]
+            elseif key == "arenaPets" then
+                localizedString = L["Arena Pets"]
+            elseif key == "npc" then
+                localizedString = L["NPC"]
+            end
+
             if localizedString then
                 result = result .. (result ~= "" and ", " or "") .. localizedString
             end
@@ -862,12 +883,12 @@ local function ShowFrameTypesMenu(index, b)
         {
             ["text"] = L["Party"],
             ["type"] = "Checkbox",
-            ["initialState"] = initialStates["Party"],
+            ["initialState"] = initialStates["party"],
             ["onClick"] = function(_, value)
                 changed[index] = changed[index] or { b }
                 changed[index]["bindFrameTypes"] = changed[index]["bindFrameTypes"] or CopyTable(b.bindFrameTypes)
 
-                changed[index]["bindFrameTypes"]["Party"] = value
+                changed[index]["bindFrameTypes"]["party"] = value
 
                 b.frameTypesGrid:SetText(GetFrameTypesDisplay(changed[index]["bindFrameTypes"]))
                 CheckChanged(index, b)
@@ -877,12 +898,12 @@ local function ShowFrameTypesMenu(index, b)
         {
             ["text"] = L["Raid"],
             ["type"] = "Checkbox",
-            ["initialState"] = initialStates["Raid"],
+            ["initialState"] = initialStates["raid"],
             ["onClick"] = function(_, value)
                 changed[index] = changed[index] or { b }
                 changed[index]["bindFrameTypes"] = changed[index]["bindFrameTypes"] or CopyTable(b.bindFrameTypes)
 
-                changed[index]["bindFrameTypes"]["Raid"] = value
+                changed[index]["bindFrameTypes"]["raid"] = value
 
                 b.frameTypesGrid:SetText(GetFrameTypesDisplay(changed[index]["bindFrameTypes"]))
                 CheckChanged(index, b)
@@ -892,12 +913,12 @@ local function ShowFrameTypesMenu(index, b)
         {
             ["text"] = L["Spotlight"],
             ["type"] = "Checkbox",
-            ["initialState"] = initialStates["Spotlight"],
+            ["initialState"] = initialStates["spotlight"],
             ["onClick"] = function(_, value)
                 changed[index] = changed[index] or { b }
                 changed[index]["bindFrameTypes"] = changed[index]["bindFrameTypes"] or CopyTable(b.bindFrameTypes)
 
-                changed[index]["bindFrameTypes"]["Spotlight"] = value
+                changed[index]["bindFrameTypes"]["spotlight"] = value
 
                 b.frameTypesGrid:SetText(GetFrameTypesDisplay(changed[index]["bindFrameTypes"]))
                 CheckChanged(index, b)
@@ -907,13 +928,13 @@ local function ShowFrameTypesMenu(index, b)
         {
             ["text"] = L["Quick Assist"],
             ["type"] = "Checkbox",
-            ["initialState"] = initialStates["Quick Assist"],
+            ["initialState"] = initialStates["quickAssist"],
             ["disabled"] = not Cell.isRetail,
             ["onClick"] = function(_, value)
                 changed[index] = changed[index] or { b }
                 changed[index]["bindFrameTypes"] = changed[index]["bindFrameTypes"] or CopyTable(b.bindFrameTypes)
 
-                changed[index]["bindFrameTypes"]["Quick Assist"] = value
+                changed[index]["bindFrameTypes"]["quickAssist"] = value
 
                 b.frameTypesGrid:SetText(GetFrameTypesDisplay(changed[index]["bindFrameTypes"]))
                 CheckChanged(index, b)
@@ -923,12 +944,12 @@ local function ShowFrameTypesMenu(index, b)
         {
             ["text"] = L["Solo"],
             ["type"] = "Checkbox",
-            ["initialState"] = initialStates["Solo"],
+            ["initialState"] = initialStates["solo"],
             ["onClick"] = function(_, value)
                 changed[index] = changed[index] or { b }
                 changed[index]["bindFrameTypes"] = changed[index]["bindFrameTypes"] or CopyTable(b.bindFrameTypes)
 
-                changed[index]["bindFrameTypes"]["Solo"] = value
+                changed[index]["bindFrameTypes"]["solo"] = value
 
                 b.frameTypesGrid:SetText(GetFrameTypesDisplay(changed[index]["bindFrameTypes"]))
                 CheckChanged(index, b)
@@ -938,12 +959,12 @@ local function ShowFrameTypesMenu(index, b)
         {
             ["text"] = L["Pet"],
             ["type"] = "Checkbox",
-            ["initialState"] = initialStates["Pet"],
+            ["initialState"] = initialStates["pet"],
             ["onClick"] = function(_, value)
                 changed[index] = changed[index] or { b }
                 changed[index]["bindFrameTypes"] = changed[index]["bindFrameTypes"] or CopyTable(b.bindFrameTypes)
 
-                changed[index]["bindFrameTypes"]["Pet"] = value
+                changed[index]["bindFrameTypes"]["pet"] = value
 
                 b.frameTypesGrid:SetText(GetFrameTypesDisplay(changed[index]["bindFrameTypes"]))
                 CheckChanged(index, b)
@@ -953,12 +974,12 @@ local function ShowFrameTypesMenu(index, b)
         {
             ["text"] = L["Raid Pets"],
             ["type"] = "Checkbox",
-            ["initialState"] = initialStates["Raid Pets"],
+            ["initialState"] = initialStates["raidPets"],
             ["onClick"] = function(_, value)
                 changed[index] = changed[index] or { b }
                 changed[index]["bindFrameTypes"] = changed[index]["bindFrameTypes"] or CopyTable(b.bindFrameTypes)
 
-                changed[index]["bindFrameTypes"]["Raid Pets"] = value
+                changed[index]["bindFrameTypes"]["raidPets"] = value
 
                 b.frameTypesGrid:SetText(GetFrameTypesDisplay(changed[index]["bindFrameTypes"]))
                 CheckChanged(index, b)
@@ -968,12 +989,12 @@ local function ShowFrameTypesMenu(index, b)
         {
             ["text"] = L["Arena Pets"],
             ["type"] = "Checkbox",
-            ["initialState"] = initialStates["Arena Pets"],
+            ["initialState"] = initialStates["arenaPets"],
             ["onClick"] = function(_, value)
                 changed[index] = changed[index] or { b }
                 changed[index]["bindFrameTypes"] = changed[index]["bindFrameTypes"] or CopyTable(b.bindFrameTypes)
 
-                changed[index]["bindFrameTypes"]["Arena Pets"] = value
+                changed[index]["bindFrameTypes"]["arenaPets"] = value
 
                 b.frameTypesGrid:SetText(GetFrameTypesDisplay(changed[index]["bindFrameTypes"]))
                 CheckChanged(index, b)
@@ -983,12 +1004,12 @@ local function ShowFrameTypesMenu(index, b)
         {
             ["text"] = L["NPC"],
             ["type"] = "Checkbox",
-            ["initialState"] = initialStates["NPC"],
+            ["initialState"] = initialStates["npc"],
             ["onClick"] = function(_, value)
                 changed[index] = changed[index] or { b }
                 changed[index]["bindFrameTypes"] = changed[index]["bindFrameTypes"] or CopyTable(b.bindFrameTypes)
 
-                changed[index]["bindFrameTypes"]["NPC"] = value
+                changed[index]["bindFrameTypes"]["npc"] = value
 
                 b.frameTypesGrid:SetText(GetFrameTypesDisplay(changed[index]["bindFrameTypes"]))
                 CheckChanged(index, b)
