@@ -67,6 +67,8 @@ function I.CreateIndicator(parent, indicatorTable, noTableUpdate)
         indicator = I.CreateAura_Glow(parent:GetName()..indicatorName, parent)
     elseif indicatorTable["type"] == "overlay" then
         indicator = I.CreateAura_Overlay(parent:GetName()..indicatorName, parent)
+    elseif indicatorTable["type"] == "block" then
+        indicator = I.CreateAura_Block(parent:GetName()..indicatorName, parent.widgets.overlayFrame)
     end
     parent.indicators[indicatorName] = indicator
 

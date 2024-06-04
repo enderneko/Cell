@@ -1337,6 +1337,10 @@ local typeItems = {
         ["text"] = L["Overlay"],
         ["value"] = "overlay",
     },
+    {
+        ["text"] = L["Block"],
+        ["value"] = "block",
+    },
 }
 
 local auraTypeItems = {
@@ -1631,6 +1635,8 @@ local function ShowIndicatorSettings(id)
             settingsTable = {"enabled", "checkbutton3:fadeOut", "auras", "glowOptions", "frameLevel"}
         elseif indicatorType == "overlay" then
             settingsTable = {"enabled", "auras", "overlayColors", "checkbutton3:smooth", "barOrientation", "frameLevel"}
+        elseif indicatorType == "block" then
+            settingsTable = {"enabled", "auras", "colors", "checkbutton3:showStack", "durationVisibility", "size", "position", "frameLevel", "font1:stackFont", "font2:durationFont"}
         end
 
         if indicatorTable["auraType"] == "buff" then

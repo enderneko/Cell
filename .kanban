@@ -48,6 +48,15 @@
           "labels": [],
           "checkboxes": [],
           "comments": []
+        },
+        {
+          "id": "8f8372e3-eaba-4af9-af65-c2ce7d5ec0a5",
+          "listId": "643431c7-e660-47b1-a44b-4e799b536d19",
+          "title": "Replace all WHITE8x8",
+          "description": "",
+          "labels": [],
+          "checkboxes": [],
+          "comments": []
         }
       ]
     },

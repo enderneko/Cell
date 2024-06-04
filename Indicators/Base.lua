@@ -48,6 +48,23 @@ function I.SetFont(fs, anchorTo, font, size, outline, shadow, anchor, xOffset, y
 end
 
 -------------------------------------------------
+-- Shared
+-------------------------------------------------
+local function Shared_SetFont(frame, font1, font2)
+    I.SetFont(frame.stack, frame.textFrame, unpack(font1))
+    I.SetFont(frame.duration, frame.textFrame, unpack(font2))
+end
+
+local function Shared_ShowStack(frame, show)
+    frame.stack:SetShown(show)
+end
+
+local function Shared_ShowDuration(frame, show)
+    frame.showDuration = show
+    frame.duration:SetShown(show)
+end
+
+-------------------------------------------------
 -- Icon_OnUpdate
 -------------------------------------------------
 local function Icon_OnUpdate(frame, elapsed)
@@ -95,11 +112,6 @@ end
 -------------------------------------------------
 -- CreateAura_BorderIcon
 -------------------------------------------------
-local function BorderIcon_SetFont(frame, font1, font2)
-    I.SetFont(frame.stack, frame.textFrame, unpack(font1))
-    I.SetFont(frame.duration, frame.textFrame, unpack(font2))
-end
-
 local function BorderIcon_SetCooldown(frame, start, duration, debuffType, texture, count, refreshing)
     local r, g, b
     if debuffType then
@@ -240,7 +252,7 @@ function I.CreateAura_BorderIcon(name, parent, borderSize)
     t2:SetOrder(2)
     t2:SetSmoothing("IN")
 
-    frame.SetFont = BorderIcon_SetFont
+    frame.SetFont = Shared_SetFont
     frame.SetBorder = BorderIcon_SetBorder
     frame.SetCooldown = BorderIcon_SetCooldown
     frame.ShowDuration = BorderIcon_ShowDuration
@@ -252,11 +264,6 @@ end
 -------------------------------------------------
 -- CreateAura_BarIcon
 -------------------------------------------------
-local function BarIcon_SetFont(frame, font1, font2)
-    I.SetFont(frame.stack, frame.textFrame, unpack(font1))
-    I.SetFont(frame.duration, frame.textFrame, unpack(font2))
-end
-
 local function BarIcon_SetCooldown(frame, start, duration, debuffType, texture, count, refreshing)
     if duration == 0 then
         frame.cooldown:Hide()
@@ -319,29 +326,12 @@ local function BarIcon_SetCooldown(frame, start, duration, debuffType, texture, 
     end
 end
 
-local function BarIcon_ShowDuration(frame, show)
-    frame.showDuration = show
-    if show then
-        frame.duration:Show()
-    else
-        frame.duration:Hide()
-    end
-end
-
 local function BarIcon_ShowAnimation(frame, show)
     frame.showAnimation = show
     if show then
         frame.cooldown:Show()
     else
         frame.cooldown:Hide()
-    end
-end
-
-local function BarIcon_ShowStack(frame, show)
-    if show then
-        frame.stack:Show()
-    else
-        frame.stack:Hide()
     end
 end
 
@@ -440,11 +430,11 @@ function I.CreateAura_BarIcon(name, parent)
     t2:SetOrder(2)
     t2:SetSmoothing("IN")
 
-    frame.SetFont = BarIcon_SetFont
+    frame.SetFont = Shared_SetFont
     frame.SetCooldown = BarIcon_SetCooldown
-    frame.ShowDuration = BarIcon_ShowDuration
+    frame.ShowDuration = Shared_ShowDuration
+    frame.ShowStack = Shared_ShowStack
     frame.ShowAnimation = BarIcon_ShowAnimation
-    frame.ShowStack = BarIcon_ShowStack
     frame.UpdatePixelPerfect = BarIcon_UpdatePixelPerfect
 
     -- frame:SetScript("OnEnter", function()
@@ -735,23 +725,6 @@ local function Rect_SetColors(frame, colors)
     frame:SetBackdropBorderColor(colors[4][1], colors[4][2], colors[4][3], colors[4][4])
 end
 
-local function Rect_ShowDuration(frame, show)
-    frame.showDuration = show
-    if show then
-        frame.duration:Show()
-    else
-        frame.duration:Hide()
-    end
-end
-
-local function Rect_ShowStack(frame, show)
-    if show then
-        frame.stack:Show()
-    else
-        frame.stack:Hide()
-    end
-end
-
 local function Rect_UpdatePixelPerfect(frame)
     P:Resize(frame)
     P:Reborder(frame)
@@ -775,8 +748,8 @@ function I.CreateAura_Rect(name, parent)
     frame.SetFont = Rect_SetFont
     frame.SetCooldown = Rect_SetCooldown
     frame.SetColors = Rect_SetColors
-    frame.ShowStack = Rect_ShowStack
-    frame.ShowDuration = Rect_ShowDuration
+    frame.ShowStack = Shared_ShowStack
+    frame.ShowDuration = Shared_ShowDuration
     frame.UpdatePixelPerfect = Rect_UpdatePixelPerfect
 
     return frame
@@ -880,24 +853,6 @@ local function Bar_SetColors(bar, colors)
     bar.colors = colors
 end
 
-local function Bar_ShowDuration(bar, show)
-    bar.showDuration = show
-    if show then
-        bar.duration:Show()
-    else
-        bar.duration:Hide()
-    end
-end
-
-local function Bar_ShowStack(bar, show)
-    if show then
-        bar.stack:Show()
-    else
-        bar.stack:Hide()
-    end
-end
-
-
 function I.CreateAura_Bar(name, parent)
     local bar = Cell:CreateStatusBar(name, parent, 18, 4, 100)
     bar:Hide()
@@ -908,8 +863,8 @@ function I.CreateAura_Bar(name, parent)
 
     bar.SetFont = Bar_SetFont
     bar.SetCooldown = Bar_SetCooldown
-    bar.ShowStack = Bar_ShowStack
-    bar.ShowDuration = Bar_ShowDuration
+    bar.ShowStack = Shared_ShowStack
+    bar.ShowDuration = Shared_ShowDuration
     bar.SetColors = Bar_SetColors
 
     return bar
@@ -1613,4 +1568,151 @@ function I.CreateAura_Overlay(name, parent)
     overlay.SetColors = Overlay_SetColors
 
     return overlay
+end
+
+-------------------------------------------------
+-- CreateAura_Block
+-------------------------------------------------
+local function Block_OnUpdate(frame, elapsed)
+    frame._remain = frame._duration - (GetTime() - frame._start)
+    if frame._remain < 0 then frame._remain = 0 end
+
+    frame._elapsed = frame._elapsed + elapsed
+    if frame._elapsed >= 0.1 then
+        frame._elapsed = 0
+        -- update color
+        if frame.colors[3][1] and frame._remain <= frame.colors[3][2] then
+            if frame.state ~= 3 then
+                frame.state = 3
+                frame:SetBackdropColor(frame.colors[3][3][1], frame.colors[3][3][2], frame.colors[3][3][3], frame.colors[3][3][4])
+            end
+        elseif frame.colors[2][1] and frame._remain <= frame._duration * frame.colors[2][2] then
+            if frame.state ~= 2 then
+                frame.state = 2
+                frame:SetBackdropColor(frame.colors[2][3][1], frame.colors[2][3][2], frame.colors[2][3][3], frame.colors[2][3][4])
+            end
+        elseif frame.state ~= 1 then
+            frame.state = 1
+            frame:SetBackdropColor(frame.colors[1][1], frame.colors[1][2], frame.colors[1][3], frame.colors[1][4])
+        end
+    end
+
+    if frame._remain > frame._threshold then
+        frame.duration:SetText("")
+        return
+    end
+
+    -- format
+    if frame._remain > 60 then
+        frame.duration:SetFormattedText("%dm", frame._remain / 60)
+    else
+        if Cell.vars.iconDurationRoundUp then
+            frame.duration:SetFormattedText("%d", ceil(frame._remain))
+        else
+            if frame._remain < Cell.vars.iconDurationDecimal then
+                frame.duration:SetFormattedText("%.1f", frame._remain)
+            else
+                frame.duration:SetFormattedText("%d", frame._remain)
+            end
+        end
+    end
+end
+
+local function Block_SetCooldown(frame, start, duration, debuffType, texture, count)
+    local r, g, b
+    if debuffType then
+        r, g, b = I.GetDebuffTypeColor(debuffType)
+    else
+        r, g, b = 0, 0, 0
+    end
+
+    if duration == 0 then
+        frame.cooldown:Hide()
+        frame.duration:Hide()
+        frame:SetScript("OnUpdate", nil)
+        frame._start = nil
+        frame._duration = nil
+        frame._remain = nil
+        frame._elapsed = nil
+        frame._threshold = nil
+    else
+        frame.cooldown:Show()
+        frame.cooldown:SetSwipeColor(r, g, b)
+        frame.cooldown:_SetCooldown(start, duration)
+
+        if not frame.showDuration then
+            frame._threshold = -1
+            frame.duration:Hide()
+        else
+            if frame.showDuration == true then
+                frame._threshold = duration
+            elseif frame.showDuration >= 1 then
+                frame._threshold = frame.showDuration
+            else -- < 1
+                frame._threshold = frame.showDuration * duration
+            end
+            frame.duration:Show()
+        end
+
+        frame._start = start
+        frame._duration = duration
+        frame._elapsed = 0.1 -- update immediately
+        frame:SetScript("OnUpdate", Block_OnUpdate)
+    end
+
+    frame.stack:SetText((count == 0 or count == 1) and "" or count)
+    frame:Show()
+end
+
+local function Block_SetColors(frame, colors)
+    frame:SetBackdropBorderColor(colors[4][1], colors[4][2], colors[4][3], colors[4][4])
+    frame.state = nil
+    frame.colors = colors
+end
+
+local function Block_UpdatePixelPerfect(frame)
+    P:Resize(frame)
+    P:Repoint(frame)
+    P:Repoint(frame.cooldown)
+    P:Repoint(frame.stack)
+    P:Repoint(frame.duration)
+end
+
+function I.CreateAura_Block(name, parent)
+    local frame = CreateFrame("Frame", name, parent, "BackdropTemplate")
+    frame:Hide()
+    frame:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8x8", edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = P:Scale(1)})
+
+    local cooldown = CreateFrame("Cooldown", nil, frame, "CooldownFrameTemplate")
+    frame.cooldown = cooldown
+    P:Point(cooldown, "TOPLEFT", 1, -1)
+    P:Point(cooldown, "BOTTOMRIGHT", -1, 1)
+
+    cooldown:SetReverse(true)
+    cooldown.noCooldownCount = true -- disable omnicc
+    cooldown:SetHideCountdownNumbers(true)
+    cooldown:SetDrawEdge(false)
+    -- prevent some addons from adding cooldown text
+    cooldown._SetCooldown = cooldown.SetCooldown
+    cooldown.SetCooldown = nil
+
+    local textFrame = CreateFrame("Frame", nil, frame)
+    frame.textFrame = textFrame
+    textFrame:SetAllPoints(frame)
+    textFrame:SetFrameLevel(cooldown:GetFrameLevel()+1)
+
+    local stack = textFrame:CreateFontString(nil, "OVERLAY", "CELL_FONT_STATUS")
+    frame.stack = stack
+
+    local duration = textFrame:CreateFontString(nil, "OVERLAY", "CELL_FONT_STATUS")
+    frame.duration = duration
+
+    frame.SetFont = Shared_SetFont
+    frame.SetColors = Block_SetColors
+    frame.ShowStack = Shared_ShowStack
+    frame.ShowDuration = Shared_ShowDuration
+    frame.SetCooldown = Block_SetCooldown
+    frame.UpdatePixelPerfect = Block_UpdatePixelPerfect
+
+    return frame
 end
