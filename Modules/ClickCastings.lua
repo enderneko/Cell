@@ -783,8 +783,8 @@ local function ShowTypesMenu(index, b)
                 else
                     changed[index]["bindType"] = nil
                     changed[index]["bindAction"] = nil
-                    b.actionGrid:SetText(b.bindAction)
-                    b:ShowSpellIcon(b.bindSpell)
+                    b.actionGrid:SetText(b.bindActionDisplay)
+                    b:ShowSpellIcon(b.bindAction)
                 end
                 CheckChanged(index, b)
                 CheckChanges()
@@ -1047,14 +1047,24 @@ local function ShowActionsMenu(index, b)
                     local peb = Cell:CreatePopupEditBox(clickCastingsTab, function(text)
                         changed[index] = changed[index] or {b}
                         text = tonumber(text) or ""
-                        if b.bindSpell ~= text then
+                        if b.bindAction ~= text then
                             changed[index]["bindAction"] = text
-                            b.actionGrid:SetText(GetSpellInfo(text) or "|cFFFF3030"..L["Invalid"])
-                            b:ShowSpellIcon(text)
+                            if text == "" then
+                                b.actionGrid:SetText("")
+                                b:HideSpellIcon()
+                            else
+                                b.actionGrid:SetText(GetSpellInfo(text) or "|cFFFF3030"..L["Invalid"])
+                                b:ShowSpellIcon(text)
+                            end
                         else
                             changed[index]["bindAction"] = nil
-                            b.actionGrid:SetText(b.bindAction)
-                            b:ShowSpellIcon(b.bindSpell)
+                            if text == "" then
+                                b.actionGrid:SetText("")
+                                b:HideSpellIcon()
+                            else
+                                b.actionGrid:SetText(b.bindActionDisplay)
+                                b:ShowSpellIcon(b.bindAction)
+                            end
                         end
                         CheckChanged(index, b)
                         CheckChanges()
@@ -1062,7 +1072,7 @@ local function ShowActionsMenu(index, b)
                     P:Point(peb, "TOPLEFT", b.actionGrid)
                     P:Point(peb, "BOTTOMRIGHT", b.actionGrid)
                     peb:SetTips("|cffababab"..L["Input spell id"].."\n"..L["Enter: apply\nESC: discard"])
-                    peb:ShowEditBox(b.bindSpell or "")
+                    peb:ShowEditBox(b.bindAction or "")
                     peb:SetNumeric(true)
                     if not peb.tooltipAdded then
                         peb.tooltipAdded = true
@@ -1104,14 +1114,14 @@ local function ShowActionsMenu(index, b)
                 ["icon"] = t[1],
                 ["onClick"] = function()
                     changed[index] = changed[index] or {b}
-                    if b.bindSpell ~= t[4] then
+                    if b.bindAction ~= t[4] then
                         changed[index]["bindAction"] = t[4]
                         b.actionGrid:SetText(t[2])
                         b:ShowSpellIcon(t[4])
                     else
                         changed[index]["bindAction"] = nil
-                        b.actionGrid:SetText(b.bindAction)
-                        b:ShowSpellIcon(b.bindSpell)
+                        b.actionGrid:SetText(b.bindActionDisplay)
+                        b:ShowSpellIcon(b.bindAction)
                     end
                     CheckChanged(index, b)
                     CheckChanges()
@@ -1220,6 +1230,7 @@ local function CreateListPane()
             local bindType = t["bindType"] or b.bindType
             local bindAction = t["bindAction"] or b.bindAction
             clickCastingTable[index] = EncodeDB(modifier, bindKey, bindType, bindAction)
+            -- texplore(clickCastingTable[index])
         end
 
         -- delete!
@@ -1252,10 +1263,10 @@ local function CreateListPane()
 
             t[1].keyGrid:SetText(GetBindingDisplay(t[1].modifier, t[1].bindKey))
             t[1].typeGrid:SetText(L[F:UpperFirst(t[1].bindType)])
-            t[1].actionGrid:SetText(t[1].bindType == "general" and L[t[1].bindAction] or t[1].bindAction)
+            t[1].actionGrid:SetText(t[1].bindActionDisplay)
             -- restore icon
             if t[1].bindType == "spell" then
-                t[1]:ShowSpellIcon(t[1].bindSpell)
+                t[1]:ShowSpellIcon(t[1].bindAction)
             else
                 t[1]:HideSpellIcon()
             end
@@ -1272,17 +1283,6 @@ end
 -- bindings frame
 -------------------------------------------------
 CreateBindingListButton = function(modifier, bindKey, bindType, bindAction, i)
-    local bindActionDisplay, bindSpell
-    if bindType == "general" then
-        bindActionDisplay = L[bindAction]
-    elseif bindType == "spell" then
-        bindSpell = bindAction -- spellId
-        bindAction = GetSpellInfo(bindAction) or "|cFFFF3030"..L["Invalid"] -- spellName
-        bindActionDisplay = bindAction
-    else
-        bindActionDisplay = bindAction
-    end
-
     if not listButtons[i] then
         listButtons[i] = Cell:CreateBindingListButton(bindingsFrame.scrollFrame.content, "", "", "", "")
     end
@@ -1292,13 +1292,33 @@ CreateBindingListButton = function(modifier, bindKey, bindType, bindAction, i)
     b:SetChanged(false)
     b:Show()
 
+    b.modifier, b.bindKey, b.bindType, b.bindAction = modifier, bindKey, bindType, bindAction
+    b.clickCastingIndex = i
+
+    if bindType == "general" then
+        b.bindActionDisplay = L[bindAction]
+        b:HideSpellIcon()
+    elseif bindType == "spell" then
+        if bindAction ~= "" then
+            if type(bindAction) ~= "number" then
+                b.bindActionDisplay = "|cFFFF3030"..L["Invalid"]
+                b:ShowSpellIcon()
+            else
+                b.bindActionDisplay = GetSpellInfo(bindAction) or "|cFFFF3030"..L["Invalid"]
+                b:ShowSpellIcon(bindAction)
+            end
+        else
+            b.bindActionDisplay = ""
+            b:HideSpellIcon()
+        end
+    else
+        b.bindActionDisplay = bindAction
+        b:HideSpellIcon()
+    end
+
     b.keyGrid:SetText(GetBindingDisplay(modifier, bindKey))
     b.typeGrid:SetText(L[F:UpperFirst(bindType)])
-    b.actionGrid:SetText(bindActionDisplay)
-
-    b.modifier, b.bindKey, b.bindType, b.bindAction = modifier, bindKey, bindType, bindAction
-    b.bindSpell = bindSpell
-    b.clickCastingIndex = i
+    b.actionGrid:SetText(b.bindActionDisplay)
 
     b:SetPoint("LEFT", 5, 0)
     b:SetPoint("RIGHT", -5, 0)
@@ -1343,13 +1363,6 @@ CreateBindingListButton = function(modifier, bindKey, bindType, bindAction, i)
             ShowActionsMenu(i, b)
         end
     end)
-
-    -- spell icon
-    if bindType == "spell" then
-        b:ShowSpellIcon(bindSpell)
-    else
-        b:HideSpellIcon()
-    end
 
     return b
 end
