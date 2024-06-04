@@ -54,6 +54,7 @@ local GetAuraDataByAuraInstanceID = C_UnitAuras.GetAuraDataByAuraInstanceID
 local IsInRaid = IsInRaid
 local UnitDetailedThreatSituation = UnitDetailedThreatSituation
 local CombatLogGetCurrentEventInfo = CombatLogGetCurrentEventInfo
+local GetAuraSlots = C_UnitAuras.GetAuraSlots
 
 --! for AI followers, UnitClassBase is buggy
 local UnitClassBase = function(unit)
@@ -921,7 +922,7 @@ unitButton = {
 -- ForEachAura
 -------------------------------------------------
 local function ForEachAuraHelper(button, func, continuationToken, ...)
-    -- continuationToken is the first return value of UnitAuraSlots()
+    -- continuationToken is the first return value of GetAuraSlots()
     local n = select('#', ...)
     local index = 1
     for i = 1, n do
@@ -937,12 +938,16 @@ local function ForEachAuraHelper(button, func, continuationToken, ...)
     return continuationToken
 end
 
+-- local function ForEachAura(button, filter, func)
+--     local continuationToken
+--     repeat
+--         -- continuationToken is the first return value of UnitAuraSltos
+--         continuationToken = ForEachAuraHelper(button, func, GetAuraSlots(button.states.displayedUnit, filter, nil, continuationToken))
+--     until continuationToken == nil
+-- end
+
 local function ForEachAura(button, filter, func)
-    local continuationToken
-    repeat
-        -- continuationToken is the first return value of UnitAuraSltos
-        continuationToken = ForEachAuraHelper(button, func, UnitAuraSlots(button.states.displayedUnit, filter, nil, continuationToken))
-    until continuationToken == nil
+    ForEachAuraHelper(button, func, GetAuraSlots(button.states.displayedUnit, filter))
 end
 
 -------------------------------------------------
@@ -2253,7 +2258,8 @@ UnitButton_UpdateNameTextColor = function(self)
     if not unit then return end
 
     if enabledIndicators["nameText"] then
-        if indicatorColors["nameText"][1] == "class_color" or not UnitIsConnected(unit) or UnitIsCharmed(unit) then
+        if indicatorColors["nameText"][1] == "class_color" or not UnitIsConnected(unit)
+        or ((UnitIsPlayer(unit) or UnitInPartyIsAI(unit)) and UnitIsCharmed(unit)) then
             self.indicators.nameText:SetColor(F:GetUnitClassColor(unit))
         else
             self.indicators.nameText:SetColor(unpack(indicatorColors["nameText"][2]))

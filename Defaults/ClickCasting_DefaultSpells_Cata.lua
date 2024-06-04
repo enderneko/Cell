@@ -184,6 +184,7 @@ function F:GetClickCastingSpellList(class)
             spellId = v
         else -- string
             spellId, spellType = strmatch(v, "(%d+)(%a)")
+            spellId = tonumber(spellId)
             spellType = L[spellType]
         end
 

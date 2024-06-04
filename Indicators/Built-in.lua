@@ -641,7 +641,7 @@ function I.CreateDispels(parent)
         dispels.highlight:Hide()
     end)
 
-    dispels.highlight = parent.widgets.healthBar:CreateTexture(parent:GetName().."DispelHighlight", "OVERLAY")
+    dispels.highlight = parent.widgets.overlayFrame:CreateTexture(parent:GetName().."DispelHighlight", "OVERLAY")
     dispels.highlight:Hide()
 
     dispels._SetSize = dispels.SetSize
@@ -1059,7 +1059,7 @@ function I.CreateNameText(parent)
     function nameText:UpdateName()
         local name
 
-        -- patron rainbow
+        -- supporter rainbow
         if nameText.name.rainbow then
             nameText.name.updater:SetScript("OnUpdate", nil)
             if nameText.name.timer then

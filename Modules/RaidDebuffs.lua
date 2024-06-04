@@ -104,7 +104,7 @@ local function LoadList()
         tinsert(Cell_DevExpansionNames, 1, name)
         --@end-debug@
 
-        if tier ~= num then -- don't load raid for "Mythic+ Dungeon"
+        if tier ~= (num - 1) then -- don't load raid for "Current Season"
             LoadInstanceList(tier, "raid", encounterJournalList[name])
         end
         LoadInstanceList(tier, "party", encounterJournalList[name])
@@ -2309,8 +2309,8 @@ local function ShowTab(tab)
         UpdatePreviewButton()
 
         if not loadedExpansion then
-            expansionDropdown:SetSelectedItem(2)
-            LoadExpansion(tierNames[#tierNames-1])
+            expansionDropdown:SetSelectedItem(1)
+            LoadExpansion(tierNames[#tierNames])
         end
     else
         debuffsTab:Hide()

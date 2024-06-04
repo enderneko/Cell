@@ -169,7 +169,7 @@ local function Display(b)
     -- f:FadeIn()
     -- C_Timer.After(3, f.FadeOut)
 end
--- CellPatronDisplay = Display
+-- CellSupporterDisplay = Display
 
 -- local function StopRainbow(unit)
 --     local b = F:GetUnitButtonByUnit(unit)
@@ -213,17 +213,17 @@ eventFrame:RegisterEvent("FIRST_FRAME_RENDERED")
 local function Check()
     pool:ReleaseAll()
 
-    -- Cell.wowPatrons[Cell.vars.playerNameFull] = true
+    -- Cell.wowSupporters[Cell.vars.playerNameFull] = true
 
     if IsInGroup() then
         for unit in F:IterateGroupMembers() do
             local fullName = F:UnitFullName(unit)
-            if Cell.wowPatrons[fullName] then
+            if Cell.wowSupporters[fullName] then
                 F:HandleUnitButton("unit", unit, Display)
             end
         end
     else
-        if Cell.wowPatrons[Cell.vars.playerNameFull] then
+        if Cell.wowSupporters[Cell.vars.playerNameFull] then
             F:HandleUnitButton("unit", "player", Display)
         end
     end

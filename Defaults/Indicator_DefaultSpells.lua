@@ -396,7 +396,7 @@ local defensives = { -- true: track by name, false: track by id
     ["ROGUE"] = {
         [1966] = true, -- 佯攻
         [5277] = true, -- 闪避
-        [31224] = true, -- 暗影斗篷
+        [31224] = false, -- 暗影斗篷
     },
 
     ["SHAMAN"] = {

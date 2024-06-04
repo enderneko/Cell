@@ -2,7 +2,7 @@
 -- File: Cell\RaidDebuffs\ExpansionData\ExpansionData_deDE.lua
 -- Author: enderneko (enderneko-dev@outlook.com)
 -- Created : 2023-09-03 19:32:02 +08:00
--- Modified: 2024-05-04 17:38:57 +08:00
+-- Modified: 2024-06-01 19:58 +08:00
 ---------------------------------------------------------------------
 
 if not LOCALE_deDE then return end
@@ -1545,6 +1545,11 @@ Cell_ExpansionData.data = {
                     ["image"] = 522210,
                     ["name"] = "\"Kapitän\" Krümel",
                 }, -- [5]
+                {
+                    ["id"] = 95,
+                    ["image"] = 522278,
+                    ["name"] = "Vanessa van Cleef",
+                }, -- [6]
             },
         }, -- [21]
         {
@@ -4037,6 +4042,11 @@ Cell_ExpansionData.data = {
                     ["image"] = 522210,
                     ["name"] = "\"Kapitän\" Krümel",
                 }, -- [5]
+                {
+                    ["id"] = 95,
+                    ["image"] = 522278,
+                    ["name"] = "Vanessa van Cleef",
+                }, -- [6]
             },
         }, -- [18]
         {
