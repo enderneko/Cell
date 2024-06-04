@@ -1457,7 +1457,6 @@ local function CreateListPane()
             local bindAction = t["bindAction"] or b.bindAction
             local bindFrameTypes = t["bindFrameTypes"] or b.bindFrameTypes
             clickCastingTable[index] = EncodeDB(modifier, bindKey, bindType, bindAction, bindFrameTypes)
-
         end
 
         -- delete!
@@ -1492,7 +1491,7 @@ local function CreateListPane()
             t[1].typeGrid:SetText(L[F:UpperFirst(t[1].bindType)])
             t[1].frameTypesGrid:SetText(GetFrameTypesDisplay(t[1].bindFrameTypes))
             t[1].actionGrid:SetText(t[1].bindActionDisplay)
-        
+
             -- restore icon
             if t[1].bindType == "spell" then
                 t[1]:ShowSpellIcon(t[1].bindAction)
@@ -1521,13 +1520,7 @@ CreateBindingListButton = function(modifier, bindKey, bindType, bindAction, bind
     b:SetChanged(false)
     b:Show()
 
-    b.keyGrid:SetText(GetBindingDisplay(modifier, bindKey))
-    b.typeGrid:SetText(L[F:UpperFirst(bindType)])
-    b.frameTypesGrid:SetText(GetFrameTypesDisplay(bindFrameTypes))
-    b.actionGrid:SetText(bindActionDisplay)
-
     b.modifier, b.bindKey, b.bindType, b.bindAction, b.bindFrameTypes = modifier, bindKey, bindType, bindAction, bindFrameTypes
-
     b.clickCastingIndex = i
 
     if bindType == "general" then
@@ -1539,7 +1532,7 @@ CreateBindingListButton = function(modifier, bindKey, bindType, bindAction, bind
                 b.bindActionDisplay = "|cFFFF3030"..L["Invalid"]
                 b:ShowSpellIcon()
             else
-                b.bindActionDisplay = GetSpellInfo(bindAction) or "|cFFFF3030"..L["Invalid"]
+                b.bindActionDisplay = GetSpellInfo(bindAction) or ("|cFFFF3030"..L["Invalid"])
                 b:ShowSpellIcon(bindAction)
             end
         else
