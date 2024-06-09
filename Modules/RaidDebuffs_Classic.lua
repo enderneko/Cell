@@ -108,7 +108,7 @@ Cell.snippetVars.loadedDebuffs = loadedDebuffs
 --     glowCondition = (table),
 -- }
 
-local indices = {"order", "trackByID", "condition", "glowType", "glowOptions", "glowCondition"}
+local indices = {"order", "trackByID", "condition", "glowType", "glowOptions", "glowCondition", "useElapsedTime"}
 
 local function LoadDB(instanceId, bossId, bossTable)
     if not loadedDebuffs[instanceId][bossId] then loadedDebuffs[instanceId][bossId] = {["enabled"]={}, ["disabled"]={}} end
@@ -1164,7 +1164,7 @@ end
 -------------------------------------------------
 -- debuff details frame
 -------------------------------------------------
-local detailsFrame, spellIcon, spellNameText, spellIdText, enabledCB, trackByIdCB
+local detailsFrame, spellIcon, spellNameText, spellIdText, enabledCB, trackByIdCB, useElapsedTimeCB
 local conditionDropDown, conditionFrame, conditionOperator, conditionValue
 local glowTypeText, glowTypeDropdown, glowOptionsFrame, glowConditionType, glowConditionOperator, glowConditionValue, glowColor, glowLines, glowParticles, glowFrequency, glowLength, glowThickness, glowScale
 
@@ -1310,12 +1310,38 @@ local function CreateDetailsFrame()
     end)
     trackByIdCB:SetPoint("TOPLEFT", enabledCB, "BOTTOMLEFT", 0, -10)
 
+    -- use elapsed time
+    useElapsedTimeCB = Cell:CreateCheckButton(detailsContentFrame, L["Use Elapsed Time"], function(checked)
+        -- update db
+        if not CellDB["raidDebuffs"][loadedInstance] then CellDB["raidDebuffs"][loadedInstance] = {} end
+        local tIndex = isGeneral and "general" or loadedBoss
+        if not CellDB["raidDebuffs"][loadedInstance][tIndex] then CellDB["raidDebuffs"][loadedInstance][tIndex] = {} end
+        if not CellDB["raidDebuffs"][loadedInstance][tIndex][selectedSpellId] then
+            CellDB["raidDebuffs"][loadedInstance][tIndex][selectedSpellId] = {
+                ["order"] = selectedButtonIndex <= #currentBossTable["enabled"] and selectedButtonIndex or 0,
+                ["trackByID"] = false,
+                ["condition"] = {"None"},
+                ["useElapsedTime"] = checked
+            }
+        else
+            CellDB["raidDebuffs"][loadedInstance][tIndex][selectedSpellId]["useElapsedTime"] = checked
+        end
+
+        -- update loadedDebuffs
+        local t = selectedButtonIndex <= #currentBossTable["enabled"] and currentBossTable["enabled"][selectedButtonIndex] or currentBossTable["disabled"][selectedButtonIndex-#currentBossTable["enabled"]]
+        t["useElapsedTime"] = checked
+
+        -- notify debuff list changed
+        Cell:Fire("RaidDebuffsChanged", instanceIdToName[loadedInstance])
+    end, L["Use Elapsed Time"], L["Display elapsed time since debuff applied"], L["Only affects duration text"])
+    useElapsedTimeCB:SetPoint("TOPLEFT", trackByIdCB, "BOTTOMLEFT", 0, -10)
+
     --------------------------------------------------
     -- condition
     --------------------------------------------------
     local conditionText = detailsContentFrame:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
     conditionText:SetText(L["Condition"])
-    conditionText:SetPoint("TOPLEFT", trackByIdCB, "BOTTOMLEFT", 0, -10)
+    conditionText:SetPoint("TOPLEFT", useElapsedTimeCB, "BOTTOMLEFT", 0, -10)
 
     -- conditionDropDown TODO: 同时持有另一个debuff
     conditionDropDown = Cell:CreateDropdown(detailsContentFrame, 117)
@@ -1640,7 +1666,7 @@ LoadCondition = function(condition)
     end
 
     -- update scroll
-    detailsFrame.scrollFrame:SetContentHeight(185+glowOptionsHeight+glowConditionHeight+conditionHeight)
+    detailsFrame.scrollFrame:SetContentHeight(200+glowOptionsHeight+glowConditionHeight+conditionHeight)
     detailsFrame.scrollFrame:ResetScroll()
 end
 
@@ -1801,7 +1827,7 @@ LoadGlowOptions = function(glowType, glowOptions)
         glowOptionsFrame:Hide()
         ShowGlowPreview("None")
         glowOptionsHeight = 0
-        detailsFrame.scrollFrame:SetContentHeight(185+conditionHeight)
+        detailsFrame.scrollFrame:SetContentHeight(200+conditionHeight)
         detailsFrame.scrollFrame:ResetScroll()
         return
     end
@@ -1844,7 +1870,7 @@ LoadGlowOptions = function(glowType, glowOptions)
 
     glowOptionsFrame:Show()
 
-    detailsFrame.scrollFrame:SetContentHeight(185+glowOptionsHeight+glowConditionHeight+conditionHeight)
+    detailsFrame.scrollFrame:SetContentHeight(200+glowOptionsHeight+glowConditionHeight+conditionHeight)
     detailsFrame.scrollFrame:ResetScroll()
 end
 
@@ -1866,7 +1892,7 @@ LoadGlowCondition = function(glowCondition)
         glowColor:SetPoint("TOPLEFT", glowConditionType, "BOTTOMLEFT", 0, -10)
         glowConditionHeight = 40
     end
-    detailsFrame.scrollFrame:SetContentHeight(185+glowOptionsHeight+glowConditionHeight+conditionHeight)
+    detailsFrame.scrollFrame:SetContentHeight(200+glowOptionsHeight+glowConditionHeight+conditionHeight)
     detailsFrame.scrollFrame:ResetScroll()
 end
 
@@ -1919,8 +1945,9 @@ ShowDetails = function(spell)
     else
         spellTable = currentBossTable["disabled"][buttonIndex-#currentBossTable["enabled"]]
     end
-    trackByIdCB:SetChecked(spellTable["trackByID"])
 
+    trackByIdCB:SetChecked(spellTable["trackByID"])
+    useElapsedTimeCB:SetChecked(spellTable["useElapsedTime"])
     LoadCondition(spellTable["condition"])
 
     local glowType = spellTable["glowType"] or "None"
@@ -1986,25 +2013,31 @@ function F:GetDebuffList(instanceName)
                 local spellName = GetSpellInfo(t["id"])
                 if spellName then
                     -- list[spellName/spellId] = {order, glowType, glowOptions}
-                    if t["trackByID"] then
-                        list[t["id"]] = {["order"]=t["order"], ["condition"]=t["condition"], ["glowType"]=t["glowType"], ["glowOptions"]=t["glowOptions"], ["glowCondition"]=t["glowCondition"]}
-                    else
-                        list[spellName] = {["order"]=t["order"], ["condition"]=t["condition"], ["glowType"]=t["glowType"], ["glowOptions"]=t["glowOptions"], ["glowCondition"]=t["glowCondition"]}
-                    end
+                    list[t["trackByID"] and t["id"] or spellName] = {
+                        ["order"] = t["order"],
+                        ["condition"] = t["condition"],
+                        ["glowType"] = t["glowType"],
+                        ["glowOptions"] = t["glowOptions"],
+                        ["glowCondition"] = t["glowCondition"],
+                        ["useElapsedTime"] = t["useElapsedTime"],
+                    }
                 end
             end
         end
         -- check boss
         for bId, bTable in pairs(loadedDebuffs[iId]) do
             if bId ~= "general" then
-                for _, st in pairs(bTable["enabled"]) do
-                    local spellName = GetSpellInfo(st["id"])
+                for _, t in pairs(bTable["enabled"]) do
+                    local spellName = GetSpellInfo(t["id"])
                     if spellName then -- check again
-                        if st["trackByID"] then
-                            list[st["id"]] = {["order"]=st["order"]+n, ["condition"]=st["condition"], ["glowType"]=st["glowType"], ["glowOptions"]=st["glowOptions"], ["glowCondition"]=st["glowCondition"]}
-                        else
-                            list[spellName] = {["order"]=st["order"]+n, ["condition"]=st["condition"], ["glowType"]=st["glowType"], ["glowOptions"]=st["glowOptions"], ["glowCondition"]=st["glowCondition"]}
-                        end
+                        list[t["trackByID"] and t["id"] or spellName] = {
+                            ["order"] = t["order"]+n,
+                            ["condition"] = t["condition"],
+                            ["glowType"] = t["glowType"],
+                            ["glowOptions"] = t["glowOptions"],
+                            ["glowCondition"] = t["glowCondition"],
+                            ["useElapsedTime"] = t["useElapsedTime"],
+                        }
                     end
                 end
             end

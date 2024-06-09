@@ -765,6 +765,13 @@ function I.GetDebuffGlow(spellName, spellId, count)
     end
 end
 
+function I.IsDebuffUseElapsedTime(spellName, spellId)
+    local t = currentAreaDebuffs[spellId] or currentAreaDebuffs[spellName]
+    if not t then return end
+
+    return t["useElapsedTime"]
+end
+
 local function RaidDebuffs_ShowGlow(self, glowType, glowOptions, noHiding)
     if glowType == "Normal" then
         if not noHiding then

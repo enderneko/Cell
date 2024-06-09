@@ -1045,7 +1045,15 @@ local function UnitButton_UpdateDebuffs(self)
             if self._debuffs_raid[i] then -- self._debuffs_raid[i] -> index
                 local name, icon, count, debuffType, duration, expirationTime, source, isStealable, nameplateShowPersonal, spellId = UnitDebuff(unit, self._debuffs_raid[i])
                 if name then
-                    self.indicators.raidDebuffs[i]:SetCooldown(expirationTime - duration, duration, debuffType or "", icon, count, self._debuffs_raid_refreshing[self._debuffs_raid[i]])
+                    self.indicators.raidDebuffs[i]:SetCooldown(
+                        expirationTime - duration,
+                        duration,
+                        debuffType or "",
+                        icon,
+                        count,
+                        self._debuffs_raid_refreshing[self._debuffs_raid[i]],
+                        I.IsDebuffUseElapsedTime(name, spellId)
+                    )
                     self.indicators.raidDebuffs[i].index = self._debuffs_raid[i] -- NOTE: for tooltip
                     startIndex = startIndex + 1
                     -- store debuffs indices shown by raidDebuffs indicator

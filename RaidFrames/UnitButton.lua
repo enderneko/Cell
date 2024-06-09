@@ -1143,7 +1143,15 @@ local function UnitButton_UpdateDebuffs(self)
             if self._debuffs_raid[i] then -- self._debuffs_raid[i] -> auraInstanceID
                 local auraInfo = GetAuraDataByAuraInstanceID(unit, self._debuffs_raid[i])
                 if auraInfo then
-                    self.indicators.raidDebuffs[i]:SetCooldown((auraInfo.expirationTime or 0) - auraInfo.duration, auraInfo.duration, auraInfo.dispelName or "", auraInfo.icon, auraInfo.applications, self._debuffs_raid_refreshing[self._debuffs_raid[i]])
+                    self.indicators.raidDebuffs[i]:SetCooldown(
+                        (auraInfo.expirationTime or 0) - auraInfo.duration,
+                        auraInfo.duration,
+                        auraInfo.dispelName or "",
+                        auraInfo.icon,
+                        auraInfo.applications,
+                        self._debuffs_raid_refreshing[self._debuffs_raid[i]],
+                        I.IsDebuffUseElapsedTime(auraInfo.name, auraInfo.spellId)
+                    )
                     self.indicators.raidDebuffs[i].index = self._debuffs_indices[self._debuffs_raid[i]] -- NOTE: for tooltip
                     startIndex = startIndex + 1
                     -- store debuffs auraInstanceIDs shown by raidDebuffs indicator

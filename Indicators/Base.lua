@@ -109,10 +109,47 @@ local function Icon_OnUpdate(frame, elapsed)
     end
 end
 
+local function Icon_OnUpdate_ElapsedTime(frame, elapsed)
+    frame._remain = frame._duration - (GetTime() - frame._start)
+    if frame._remain < 0 then frame._remain = 0 end
+
+    if frame._remain > frame._threshold then
+        frame.duration:SetText("")
+        return
+    end
+
+    frame._elapsed = frame._elapsed + elapsed
+    if frame._elapsed >= 0.1 then
+        frame._elapsed = 0
+        -- color
+        if Cell.vars.iconDurationColors then
+            if frame._remain < Cell.vars.iconDurationColors[3][4] then
+                frame.duration:SetTextColor(Cell.vars.iconDurationColors[3][1], Cell.vars.iconDurationColors[3][2], Cell.vars.iconDurationColors[3][3])
+            elseif frame._remain < (Cell.vars.iconDurationColors[2][4] * frame._duration) then
+                frame.duration:SetTextColor(Cell.vars.iconDurationColors[2][1], Cell.vars.iconDurationColors[2][2], Cell.vars.iconDurationColors[2][3])
+            else
+                frame.duration:SetTextColor(Cell.vars.iconDurationColors[1][1], Cell.vars.iconDurationColors[1][2], Cell.vars.iconDurationColors[1][3])
+            end
+        else
+            frame.duration:SetTextColor(frame.duration.r, frame.duration.g, frame.duration.b)
+        end
+    end
+
+    -- format
+    frame._elapsedTime = GetTime() - frame._start
+    if frame._elapsedTime > frame._duration then frame._elapsedTime = frame._duration end
+
+    if frame._elapsedTime > 60 then
+        frame.duration:SetFormattedText("%dm", frame._elapsedTime / 60)
+    else
+        frame.duration:SetFormattedText("%d", frame._elapsedTime)
+    end
+end
+
 -------------------------------------------------
 -- CreateAura_BorderIcon
 -------------------------------------------------
-local function BorderIcon_SetCooldown(frame, start, duration, debuffType, texture, count, refreshing)
+local function BorderIcon_SetCooldown(frame, start, duration, debuffType, texture, count, refreshing, useElapsedTime)
     local r, g, b
     if debuffType then
         r, g, b = I.GetDebuffTypeColor(debuffType)
@@ -131,6 +168,7 @@ local function BorderIcon_SetCooldown(frame, start, duration, debuffType, textur
         frame._remain = nil
         frame._elapsed = nil
         frame._threshold = nil
+        frame._elapsedTime = nil
     else
         frame.border:Hide()
         frame.cooldown:Show()
@@ -154,7 +192,7 @@ local function BorderIcon_SetCooldown(frame, start, duration, debuffType, textur
             frame._start = start
             frame._duration = duration
             frame._elapsed = 0.1 -- update immediately
-            frame:SetScript("OnUpdate", Icon_OnUpdate)
+            frame:SetScript("OnUpdate", useElapsedTime and Icon_OnUpdate_ElapsedTime or Icon_OnUpdate)
         end
     end
 
