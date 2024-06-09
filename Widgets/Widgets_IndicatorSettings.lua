@@ -496,6 +496,46 @@ local function CreateSetting_SizeSquare(parent)
     return widget
 end
 
+local function CreateSetting_Spacing(parent)
+    local widget
+
+    if not settingWidgets["spacing"] then
+        widget = addon:CreateFrame("CellIndicatorSettings_Spacing", parent, 240, 50)
+        settingWidgets["spacing"] = widget
+
+        widget.x = addon:CreateSlider(L["Spacing"].." X", widget, 0, 50, 110, 1)
+        widget.x:SetPoint("TOPLEFT", widget, 5, -20)
+        widget.x.afterValueChangedFn = function(value)
+            widget.spacing[1] = value
+            widget.func(widget.spacing)
+        end
+
+        widget.y = addon:CreateSlider(L["Spacing"].." Y", widget, 0, 50, 110, 1)
+        widget.y:SetPoint("LEFT", widget.x, "RIGHT", 25, 0)
+        widget.y.afterValueChangedFn = function(value)
+            widget.spacing[2] = value
+            widget.func(widget.spacing)
+        end
+
+        -- callback
+        function widget:SetFunc(func)
+            widget.func = func
+        end
+
+        -- show db value
+        function widget:SetDBValue(spacing)
+            widget.spacing = spacing
+            widget.x:SetValue(spacing[1])
+            widget.y:SetValue(spacing[2])
+        end
+    else
+        widget = settingWidgets["spacing"]
+    end
+
+    widget:Show()
+    return widget
+end
+
 local function CreateSetting_Thickness(parent)
     local widget
 
@@ -5520,6 +5560,8 @@ function addon:CreateIndicatorSettings(parent, settingsTable)
             tinsert(widgetsTable, CreateSetting_SizeBar(parent))
         elseif setting == "size-border" then
             tinsert(widgetsTable, CreateSetting_SizeAndBorder(parent))
+        elseif setting == "spacing" then
+            tinsert(widgetsTable, CreateSetting_Spacing(parent))
         elseif setting == "thickness" then
             tinsert(widgetsTable, CreateSetting_Thickness(parent))
         elseif setting == "height" then

@@ -664,6 +664,10 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                 if t["numPerLine"] then
                     indicator:SetNumPerLine(t["numPerLine"])
                 end
+                -- update spacing
+                if t["spacing"] then
+                    indicator:SetSpacing(t["spacing"])
+                end
                 -- update orientation
                 if t["orientation"] then
                     indicator:SetOrientation(t["orientation"])
@@ -850,6 +854,8 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
             elseif indicatorName == "powerText" then
                 indicator:SetValue(2048, 4096)
             end
+        elseif setting == "spacing" then
+            indicator:SetSpacing(value)
         elseif setting == "orientation" then
             indicator:SetOrientation(value)
         elseif setting == "font" then
@@ -972,6 +978,14 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                     end
                 end
                 if indicator.UpdateSize then indicator:UpdateSize(value["num"]) end
+            end
+            -- update numPerLine
+            if value["numPerLine"] then
+                indicator:SetNumPerLine(value["numPerLine"])
+            end
+            -- update spacing
+            if value["spacing"] then
+                indicator:SetSpacing(value["spacing"])
             end
             -- update orientation
             if value["orientation"] then
@@ -1626,7 +1640,7 @@ local function ShowIndicatorSettings(id)
         elseif indicatorType == "rect" then
             settingsTable = {"enabled", "auras", "colors", "checkbutton3:showStack", "durationVisibility", "size", "position", "frameLevel", "font1:stackFont", "font2:durationFont"}
         elseif indicatorType == "icons" then
-            settingsTable = {"enabled", "auras", "checkbutton3:showStack", "durationVisibility", "checkbutton4:showAnimation", CELL_RECTANGULAR_CUSTOM_INDICATOR_ICONS and "size" or "size-square", "num:10", "numPerLine:10", "orientation", "position", "frameLevel", "font1:stackFont", "font2:durationFont"}
+            settingsTable = {"enabled", "auras", "checkbutton3:showStack", "durationVisibility", "checkbutton4:showAnimation", CELL_RECTANGULAR_CUSTOM_INDICATOR_ICONS and "size" or "size-square", "num:10", "numPerLine:10", "spacing", "orientation", "position", "frameLevel", "font1:stackFont", "font2:durationFont"}
         elseif indicatorType == "color" then
             settingsTable = {"enabled", "auras", "customColors", "anchor", "frameLevel"}
         elseif indicatorType == "texture" then

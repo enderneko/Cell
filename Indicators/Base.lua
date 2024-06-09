@@ -1070,40 +1070,30 @@ end
 -------------------------------------------------
 -- CreateAura_Icons
 -------------------------------------------------
-local function Icons_UpdateFrameSize(icons, iconsShown)
-    local lines = ceil(iconsShown / icons.numPerLine)
+local function Icons_UpdateSize(icons, numAuras)
+    if not (icons.width and icons.orientation and icons.spacingX) then return end -- not init
 
-    if icons.isHorizontal then
-        if lines > 1 then
-            icons:_SetSize(icons.width*icons.numPerLine, icons.height*lines)
-        else
-            icons:_SetSize(icons.width*iconsShown, icons.height)
-        end
-    else
-        if lines > 1 then
-            icons:_SetSize(icons.width*lines, icons.height*icons.numPerLine)
-        else
-            icons:_SetSize(icons.width, icons.height*iconsShown)
-        end
-    end
-end
-
-local function Icons_UpdateSize(icons, iconsShown)
-    if not (icons.width and icons.height and icons.orientation) then return end -- not init
-
-    if iconsShown then -- call from I.CheckCustomIndicators or preview
-        for i = iconsShown + 1, icons.maxNum do
+    if numAuras then -- call from I.CheckCustomIndicators or preview
+        for i = numAuras + 1, icons.maxNum do
             icons[i]:Hide()
         end
-        if iconsShown ~= 0 then
-            Icons_UpdateFrameSize(icons, iconsShown)
-        end
     else
+        numAuras = 0
         for i = 1, icons.maxNum do
             if icons[i]:IsShown() then
-                Icons_UpdateFrameSize(icons, i)
+                numAuras = i
             end
         end
+    end
+
+    -- set size
+    local lines = ceil(numAuras / icons.numPerLine)
+    numAuras = min(numAuras, icons.numPerLine)
+
+    if icons.isHorizontal then
+        P:SetGridSize(icons, icons.width, icons.height, icons.spacingX, icons.spacingY, numAuras, lines)
+    else
+        P:SetGridSize(icons, icons.width, icons.height, icons.spacingX, icons.spacingY, lines, numAuras)
     end
 end
 
@@ -1113,8 +1103,8 @@ local function Icons_SetNumPerLine(icons, numPerLine)
 
     if icons.orientation then
         icons:SetOrientation(icons.orientation)
-    else
-        icons:UpdateSize()
+    -- else
+    --     icons:UpdateSize()
     end
 end
 
@@ -1123,53 +1113,80 @@ local function Icons_SetOrientation(icons, orientation)
 
     local anchor = icons:GetPoint()
     assert(anchor, "[indicator] SetPoint must be called before SetOrientation")
+    assert(icons.spacingX, "[indicator] spacing not set")
 
     icons.isHorizontal = not strfind(orientation, "top")
 
-    local point1, point2, newLinePoint2
+    local point1, point2, x, y
+    local newLinePoint2, newLineX, newLineY
+
     if orientation == "left-to-right" then
         if strfind(anchor, "^BOTTOM") then
             point1 = "BOTTOMLEFT"
             point2 = "BOTTOMRIGHT"
             newLinePoint2 = "TOPLEFT"
+            y = 0
+            newLineY = icons.spacingY
         else
             point1 = "TOPLEFT"
             point2 = "TOPRIGHT"
             newLinePoint2 = "BOTTOMLEFT"
+            y = 0
+            newLineY = -icons.spacingY
         end
+        x = icons.spacingX
+        newLineX = 0
 
     elseif orientation == "right-to-left" then
         if strfind(anchor, "^BOTTOM") then
             point1 = "BOTTOMRIGHT"
             point2 = "BOTTOMLEFT"
             newLinePoint2 = "TOPRIGHT"
+            y = 0
+            newLineY = icons.spacingY
         else
             point1 = "TOPRIGHT"
             point2 = "TOPLEFT"
             newLinePoint2 = "BOTTOMRIGHT"
+            y = 0
+            newLineY = -icons.spacingY
         end
+        x = -icons.spacingX
+        newLineX = 0
 
     elseif orientation == "top-to-bottom" then
         if strfind(anchor, "RIGHT$") then
             point1 = "TOPRIGHT"
             point2 = "BOTTOMRIGHT"
             newLinePoint2 = "TOPLEFT"
+            x = 0
+            newLineX = -icons.spacingX
         else
             point1 = "TOPLEFT"
             point2 = "BOTTOMLEFT"
             newLinePoint2 = "TOPRIGHT"
+            x = 0
+            newLineX = icons.spacingX
         end
+        y = -icons.spacingY
+        newLineY = 0
 
     elseif orientation == "bottom-to-top" then
         if strfind(anchor, "RIGHT$") then
             point1 = "BOTTOMRIGHT"
             point2 = "TOPRIGHT"
             newLinePoint2 = "BOTTOMLEFT"
+            x = 0
+            newLineX = -icons.spacingX
         else
             point1 = "BOTTOMLEFT"
             point2 = "TOPLEFT"
             newLinePoint2 = "BOTTOMRIGHT"
+            x = 0
+            newLineX = icons.spacingX
         end
+        y = icons.spacingY
+        newLineY = 0
     end
 
     for i = 1, icons.maxNum do
@@ -1177,9 +1194,9 @@ local function Icons_SetOrientation(icons, orientation)
         if i == 1 then
             P:Point(icons[i], point1)
         elseif i % icons.numPerLine == 1 then
-            P:Point(icons[i], point1, icons[i-icons.numPerLine], newLinePoint2)
+            P:Point(icons[i], point1, icons[i-icons.numPerLine], newLinePoint2, newLineX, newLineY)
         else
-            P:Point(icons[i], point1, icons[i-1], point2)
+            P:Point(icons[i], point1, icons[i-1], point2, x, y)
         end
     end
 
@@ -1195,6 +1212,15 @@ local function Icons_SetSize(icons, width, height)
     end
 
     icons:UpdateSize()
+end
+
+local function Icons_SetSpacing(icons, spacing)
+    icons.spacingX = spacing[1]
+    icons.spacingY = spacing[2]
+
+    if icons.orientation then
+        icons:SetOrientation(icons.orientation)
+    end
 end
 
 local function Icons_Hide(icons, hideAll)
@@ -1252,6 +1278,7 @@ function I.CreateAura_Icons(name, parent, num)
     icons.SetFont = Icons_SetFont
     icons.UpdateSize = Icons_UpdateSize
     icons.SetOrientation = Icons_SetOrientation
+    icons.SetSpacing = Icons_SetSpacing
     icons.SetNumPerLine = Icons_SetNumPerLine
     icons.ShowDuration = Icons_ShowDuration
     icons.ShowStack = Icons_ShowStack

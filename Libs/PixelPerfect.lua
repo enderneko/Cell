@@ -17,7 +17,7 @@ end
 function P:GetPixelPerfectScale()
     local hRes, vRes = P:GetResolution()
     if vRes then
-        return 768/vRes
+        return 768 / vRes
     else -- windowed mode before 8.0, or maybe something goes wrong?
         return 1
     end
@@ -126,6 +126,28 @@ function P:Height(frame, height)
     frame:SetHeight(P:Scale(height))
 end
 
+function P:SetGridSize(region, gridWidth, gridHeight, gridSpacingH, gridSpacingV, columns, rows)
+    region._size_grid = true
+    region._gridWidth = gridWidth
+    region._gridHeight = gridHeight
+    region._gridSpacingH = gridSpacingH
+    region._gridSpacingV = gridSpacingV
+    region._rows = rows
+    region._columns = columns
+
+    if columns == 0 then
+        region:SetWidth(0.001)
+    else
+        region:SetWidth(P:Scale(gridWidth) * columns + P:Scale(gridSpacingH) * (columns - 1))
+    end
+
+    if rows == 0 then
+        region:SetHeight(0.001)
+    else
+        region:SetHeight(P:Scale(gridHeight) * rows + P:Scale(gridSpacingV) * (rows - 1))
+    end
+end
+
 function P:Point(frame, ...)
     if not frame.points then frame.points = {} end
     local point, anchorTo, anchorPoint, x, y
@@ -155,11 +177,15 @@ end
 -- scale changed
 --------------------------------------------
 function P:Resize(frame)
-    if frame.width then
-        frame:SetWidth(P:Scale(frame.width))
-    end
-    if frame.height then
-        frame:SetHeight(P:Scale(frame.height))
+    if frame._size_grid then
+        P:SetGridSize(frame, frame._gridWidth, frame._gridHeight, frame._gridSpacingH, frame._gridSpacingV, frame._columns, frame._rows)
+    else
+        if frame.width then
+            frame:SetWidth(P:Scale(frame.width))
+        end
+        if frame.height then
+            frame:SetHeight(P:Scale(frame.height))
+        end
     end
 end
 
@@ -212,3 +238,50 @@ function P:LoadPosition(frame, positionTable)
     P:Point(frame, "TOPLEFT", UIParent, "BOTTOMLEFT", positionTable[1], positionTable[2])
     return true
 end
+
+---------------------------------------------------------------------
+-- pixel perfect (ElvUI)
+---------------------------------------------------------------------
+local function CheckPixelSnap(frame, snap)
+    if (frame and not frame:IsForbidden()) and frame.PixelSnapDisabled and snap then
+        frame.PixelSnapDisabled = nil
+    end
+end
+
+local function DisablePixelSnap(frame)
+    if (frame and not frame:IsForbidden()) and not frame.PixelSnapDisabled then
+        if frame.SetSnapToPixelGrid then
+            frame:SetSnapToPixelGrid(false)
+            frame:SetTexelSnappingBias(0)
+            frame.PixelSnapDisabled = true
+        elseif frame.GetStatusBarTexture then
+            local texture = frame:GetStatusBarTexture()
+            if type(texture) == "table" and texture.SetSnapToPixelGrid then
+                texture:SetSnapToPixelGrid(false)
+                texture:SetTexelSnappingBias(0)
+                frame.PixelSnapDisabled = true
+            end
+        end
+    end
+end
+
+local function UpdateMetatable(obj)
+    local t = getmetatable(obj).__index
+
+    if not obj.DisabledPixelSnap and (t.SetSnapToPixelGrid or t.SetStatusBarTexture or t.SetColorTexture or t.SetVertexColor or t.CreateTexture or t.SetTexCoord or t.SetTexture) then
+        if t.SetSnapToPixelGrid then hooksecurefunc(t, "SetSnapToPixelGrid", CheckPixelSnap) end
+        if t.SetStatusBarTexture then hooksecurefunc(t, "SetStatusBarTexture", DisablePixelSnap) end
+        if t.SetColorTexture then hooksecurefunc(t, "SetColorTexture", DisablePixelSnap) end
+        if t.SetVertexColor then hooksecurefunc(t, "SetVertexColor", DisablePixelSnap) end
+        if t.CreateTexture then hooksecurefunc(t, "CreateTexture", DisablePixelSnap) end
+        if t.SetTexCoord then hooksecurefunc(t, "SetTexCoord", DisablePixelSnap) end
+        if t.SetTexture then hooksecurefunc(t, "SetTexture", DisablePixelSnap) end
+
+        t.DisabledPixelSnap = true
+    end
+end
+
+local obj = CreateFrame("Frame")
+UpdateMetatable(CreateFrame("StatusBar"))
+UpdateMetatable(obj:CreateTexture())
+UpdateMetatable(obj:CreateMaskTexture())

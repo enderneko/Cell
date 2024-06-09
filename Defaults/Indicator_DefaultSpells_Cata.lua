@@ -401,6 +401,7 @@ function F:FirstRun()
             ["num"] = 5,
             ["numPerLine"] = 5,
             ["orientation"] = "right-to-left",
+            ["spacing"] = {0, 0},
             ["font"] = {
                 {"Cell ".._G.DEFAULT, 11, "Outline", false, "TOPRIGHT", 2, 1, {1, 1, 1}},
                 {"Cell ".._G.DEFAULT, 11, "Outline", false, "BOTTOMRIGHT", 2, -1, {1, 1, 1}},

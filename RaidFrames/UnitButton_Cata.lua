@@ -218,6 +218,10 @@ local function HandleIndicators(b)
         if t["numPerLine"] then
             indicator:SetNumPerLine(t["numPerLine"])
         end
+        -- update spacing
+        if t["spacing"] then
+            indicator:SetSpacing(t["spacing"])
+        end
         -- update orientation
         if t["orientation"] then
             indicator:SetOrientation(t["orientation"])
@@ -587,6 +591,11 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                 local indicator = b.indicators[indicatorName]
                 indicator:SetAlpha(value)
             end, true)
+        elseif setting == "spacing" then
+            F:IterateAllUnitButtons(function(b)
+                local indicator = b.indicators[indicatorName]
+                indicator:SetSpacing(value)
+            end, true)
         elseif setting == "orientation" then
             F:IterateAllUnitButtons(function(b)
                 local indicator = b.indicators[indicatorName]
@@ -809,6 +818,14 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                 -- update size
                 if value["frameLevel"] then
                     indicator:SetFrameLevel(indicator:GetParent():GetFrameLevel()+value["frameLevel"])
+                end
+                -- update numPerLine
+                if value["numPerLine"] then
+                    indicator:SetNumPerLine(value["numPerLine"])
+                end
+                -- update spacing
+                if value["spacing"] then
+                    indicator:SetSpacing(value["spacing"])
                 end
                 -- update orientation
                 if value["orientation"] then
