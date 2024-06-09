@@ -2912,6 +2912,12 @@ function F:Revise()
                     if type(i.spacing) ~= "table" then
                         i.spacing = {0, 0}
                     end
+
+                elseif i.indicatorName == "targetedSpells" then
+                    if not i.num then
+                        i.num = 1
+                        i.orientation = "left-to-right"
+                    end
                 end
             end
         end

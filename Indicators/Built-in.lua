@@ -10,7 +10,7 @@ local LibTranslit = LibStub("LibTranslit-1.0")
 -------------------------------------------------
 -- shared functions
 -------------------------------------------------
-local function Cooldowns_SetSize(self, width, height)
+function I.Cooldowns_SetSize(self, width, height)
     self.width = width
     self.height = height
 
@@ -21,7 +21,7 @@ local function Cooldowns_SetSize(self, width, height)
     self:UpdateSize()
 end
 
-local function Cooldowns_UpdateSize(self, iconsShown)
+function I.Cooldowns_UpdateSize(self, iconsShown)
     if not (self.width and self.height and self.orientation) then return end -- not init
 
     if iconsShown then -- call from I.UnitButton_UpdateBuffs or preview
@@ -48,7 +48,7 @@ local function Cooldowns_UpdateSize(self, iconsShown)
     end
 end
 
-local function Cooldowns_UpdateSize_WithSpacing(self, iconsShown)
+function I.Cooldowns_UpdateSize_WithSpacing(self, iconsShown)
     if not (self.width and self.height and self.orientation) then return end -- not init
 
     if iconsShown then -- call from I.UnitButton_UpdateBuffs or preview
@@ -75,38 +75,38 @@ local function Cooldowns_UpdateSize_WithSpacing(self, iconsShown)
     end
 end
 
-local function Cooldowns_SetBorder(self, border)
+function I.Cooldowns_SetBorder(self, border)
     for i = 1, #self do
         self[i]:SetBorder(border)
     end
 end
 
-local function Cooldowns_SetFont(self, ...)
+function I.Cooldowns_SetFont(self, ...)
     for i = 1, #self do
         self[i]:SetFont(...)
     end
 end
 
-local function Cooldowns_ShowDuration(self, show)
+function I.Cooldowns_ShowDuration(self, show)
     for i = 1, #self do
         self[i]:ShowDuration(show)
     end
 end
 
-local function Cooldowns_ShowAnimation(self, show)
+function I.Cooldowns_ShowAnimation(self, show)
     for i = 1, #self do
         self[i]:ShowAnimation(show)
     end
 end
 
-local function Cooldowns_UpdatePixelPerfect(self)
+function I.Cooldowns_UpdatePixelPerfect(self)
     P:Repoint(self)
     for i = 1, #self do
         self[i]:UpdatePixelPerfect()
     end
 end
 
-local function Cooldowns_SetOrientation(self, orientation)
+function I.Cooldowns_SetOrientation(self, orientation)
     local point1, point2, x, y
 
     if orientation == "left-to-right" then
@@ -147,7 +147,7 @@ local function Cooldowns_SetOrientation(self, orientation)
     self:UpdateSize()
 end
 
-local function Cooldowns_SetOrientation_WithSpacing(self, orientation)
+function I.Cooldowns_SetOrientation_WithSpacing(self, orientation)
     local point1, point2, x, y
 
     if orientation == "left-to-right" then
@@ -198,13 +198,13 @@ function I.CreateDefensiveCooldowns(parent)
     defensiveCooldowns:Hide()
 
     defensiveCooldowns._SetSize = defensiveCooldowns.SetSize
-    defensiveCooldowns.SetSize = Cooldowns_SetSize
-    defensiveCooldowns.UpdateSize = Cooldowns_UpdateSize
-    defensiveCooldowns.SetFont = Cooldowns_SetFont
-    defensiveCooldowns.SetOrientation = Cooldowns_SetOrientation
-    defensiveCooldowns.ShowDuration = Cooldowns_ShowDuration
-    defensiveCooldowns.ShowAnimation = Cooldowns_ShowAnimation
-    defensiveCooldowns.UpdatePixelPerfect = Cooldowns_UpdatePixelPerfect
+    defensiveCooldowns.SetSize = I.Cooldowns_SetSize
+    defensiveCooldowns.UpdateSize = I.Cooldowns_UpdateSize
+    defensiveCooldowns.SetFont = I.Cooldowns_SetFont
+    defensiveCooldowns.SetOrientation = I.Cooldowns_SetOrientation
+    defensiveCooldowns.ShowDuration = I.Cooldowns_ShowDuration
+    defensiveCooldowns.ShowAnimation = I.Cooldowns_ShowAnimation
+    defensiveCooldowns.UpdatePixelPerfect = I.Cooldowns_UpdatePixelPerfect
 
     for i = 1, 5 do
         local name = parent:GetName().."DefensiveCooldown"..i
@@ -222,13 +222,13 @@ function I.CreateExternalCooldowns(parent)
     externalCooldowns:Hide()
 
     externalCooldowns._SetSize = externalCooldowns.SetSize
-    externalCooldowns.SetSize = Cooldowns_SetSize
-    externalCooldowns.UpdateSize = Cooldowns_UpdateSize
-    externalCooldowns.SetFont = Cooldowns_SetFont
-    externalCooldowns.SetOrientation = Cooldowns_SetOrientation
-    externalCooldowns.ShowDuration = Cooldowns_ShowDuration
-    externalCooldowns.ShowAnimation = Cooldowns_ShowAnimation
-    externalCooldowns.UpdatePixelPerfect = Cooldowns_UpdatePixelPerfect
+    externalCooldowns.SetSize = I.Cooldowns_SetSize
+    externalCooldowns.UpdateSize = I.Cooldowns_UpdateSize
+    externalCooldowns.SetFont = I.Cooldowns_SetFont
+    externalCooldowns.SetOrientation = I.Cooldowns_SetOrientation
+    externalCooldowns.ShowDuration = I.Cooldowns_ShowDuration
+    externalCooldowns.ShowAnimation = I.Cooldowns_ShowAnimation
+    externalCooldowns.UpdatePixelPerfect = I.Cooldowns_UpdatePixelPerfect
 
     for i = 1, 5 do
         local name = parent:GetName().."ExternalCooldown"..i
@@ -246,13 +246,13 @@ function I.CreateAllCooldowns(parent)
     allCooldowns:Hide()
 
     allCooldowns._SetSize = allCooldowns.SetSize
-    allCooldowns.SetSize = Cooldowns_SetSize
-    allCooldowns.UpdateSize = Cooldowns_UpdateSize
-    allCooldowns.SetFont = Cooldowns_SetFont
-    allCooldowns.SetOrientation = Cooldowns_SetOrientation
-    allCooldowns.ShowDuration = Cooldowns_ShowDuration
-    allCooldowns.ShowAnimation = Cooldowns_ShowAnimation
-    allCooldowns.UpdatePixelPerfect = Cooldowns_UpdatePixelPerfect
+    allCooldowns.SetSize = I.Cooldowns_SetSize
+    allCooldowns.UpdateSize = I.Cooldowns_UpdateSize
+    allCooldowns.SetFont = I.Cooldowns_SetFont
+    allCooldowns.SetOrientation = I.Cooldowns_SetOrientation
+    allCooldowns.ShowDuration = I.Cooldowns_ShowDuration
+    allCooldowns.ShowAnimation = I.Cooldowns_ShowAnimation
+    allCooldowns.UpdatePixelPerfect = I.Cooldowns_UpdatePixelPerfect
 
     for i = 1, 5 do
         local name = parent:GetName().."ExternalCooldown"..i
@@ -477,9 +477,9 @@ function I.CreateDebuffs(parent)
     debuffs.SetPoint = Debuffs_SetPoint
     debuffs.SetOrientation = Debuffs_SetOrientation
 
-    debuffs.ShowDuration = Cooldowns_ShowDuration
-    debuffs.ShowAnimation = Cooldowns_ShowAnimation
-    debuffs.UpdatePixelPerfect = Cooldowns_UpdatePixelPerfect
+    debuffs.ShowDuration = I.Cooldowns_ShowDuration
+    debuffs.ShowAnimation = I.Cooldowns_ShowAnimation
+    debuffs.UpdatePixelPerfect = I.Cooldowns_UpdatePixelPerfect
 
     debuffs.ShowTooltip = Debuffs_ShowTooltip
     debuffs.EnableBlacklistShortcut = Debuffs_EnableBlacklistShortcut
@@ -851,23 +851,23 @@ function I.CreateRaidDebuffs(parent)
     end)
 
     raidDebuffs._SetSize = raidDebuffs.SetSize
-    raidDebuffs.SetSize = Cooldowns_SetSize
-    raidDebuffs.SetBorder = Cooldowns_SetBorder
-    raidDebuffs.UpdateSize = Cooldowns_UpdateSize_WithSpacing
-    raidDebuffs.ShowDuration = Cooldowns_ShowDuration
-    raidDebuffs.SetOrientation = Cooldowns_SetOrientation_WithSpacing
-    raidDebuffs.SetFont = Cooldowns_SetFont
+    raidDebuffs.SetSize = I.Cooldowns_SetSize
+    raidDebuffs.SetBorder = I.Cooldowns_SetBorder
+    raidDebuffs.UpdateSize = I.Cooldowns_UpdateSize_WithSpacing
+    raidDebuffs.ShowDuration = I.Cooldowns_ShowDuration
+    raidDebuffs.SetOrientation = I.Cooldowns_SetOrientation_WithSpacing
+    raidDebuffs.SetFont = I.Cooldowns_SetFont
     raidDebuffs.ShowGlow = RaidDebuffs_ShowGlow
     raidDebuffs.HideGlow = RaidDebuffs_HideGlow
-    raidDebuffs.UpdatePixelPerfect = Cooldowns_UpdatePixelPerfect
+    raidDebuffs.UpdatePixelPerfect = I.Cooldowns_UpdatePixelPerfect
 
     raidDebuffs.ShowTooltip = RaidDebuffs_ShowTooltip
 
     for i = 1, 3 do
         local frame = I.CreateAura_BorderIcon(parent:GetName().."RaidDebuff"..i, raidDebuffs, 2)
         tinsert(raidDebuffs, frame)
-        frame:SetScript("OnShow", raidDebuffs.UpdateSize)
-        frame:SetScript("OnHide", raidDebuffs.UpdateSize)
+        -- frame:SetScript("OnShow", raidDebuffs.UpdateSize)
+        -- frame:SetScript("OnHide", raidDebuffs.UpdateSize)
     end
 end
 
@@ -2085,10 +2085,10 @@ function I.CreateMissingBuffs(parent)
     missingBuffs:Hide()
 
     missingBuffs._SetSize = missingBuffs.SetSize
-    missingBuffs.SetSize = Cooldowns_SetSize
-    missingBuffs.UpdateSize = Cooldowns_UpdateSize
-    missingBuffs.SetOrientation = Cooldowns_SetOrientation
-    missingBuffs.UpdatePixelPerfect = Cooldowns_UpdatePixelPerfect
+    missingBuffs.SetSize = I.Cooldowns_SetSize
+    missingBuffs.UpdateSize = I.Cooldowns_UpdateSize
+    missingBuffs.SetOrientation = I.Cooldowns_SetOrientation
+    missingBuffs.UpdatePixelPerfect = I.Cooldowns_UpdatePixelPerfect
 
     for i = 1, 5 do
         local name = parent:GetName().."MissingBuff"..i
@@ -2320,17 +2320,17 @@ function I.CreateCrowdControls(parent)
     crowdControls:Hide()
 
     crowdControls._SetSize = crowdControls.SetSize
-    crowdControls.SetSize = Cooldowns_SetSize
-    crowdControls.SetBorder = Cooldowns_SetBorder
-    crowdControls.UpdateSize = Cooldowns_UpdateSize_WithSpacing
-    crowdControls.SetOrientation = Cooldowns_SetOrientation_WithSpacing
-    crowdControls.SetFont = Cooldowns_SetFont
-    crowdControls.UpdatePixelPerfect = Cooldowns_UpdatePixelPerfect
+    crowdControls.SetSize = I.Cooldowns_SetSize
+    crowdControls.SetBorder = I.Cooldowns_SetBorder
+    crowdControls.UpdateSize = I.Cooldowns_UpdateSize_WithSpacing
+    crowdControls.SetOrientation = I.Cooldowns_SetOrientation_WithSpacing
+    crowdControls.SetFont = I.Cooldowns_SetFont
+    crowdControls.UpdatePixelPerfect = I.Cooldowns_UpdatePixelPerfect
 
     for i = 1, 3 do
         local frame = I.CreateAura_BorderIcon(parent:GetName().."CrowdControl"..i, crowdControls, 2)
         tinsert(crowdControls, frame)
-        frame:SetScript("OnShow", crowdControls.UpdateSize)
-        frame:SetScript("OnHide", crowdControls.UpdateSize)
+        -- frame:SetScript("OnShow", crowdControls.UpdateSize)
+        -- frame:SetScript("OnHide", crowdControls.UpdateSize)
     end
 end

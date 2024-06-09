@@ -400,11 +400,13 @@ Cell.defaults.layout = {
             ["type"] = "built-in",
             ["enabled"] = true,
             ["showAllSpells"] = false,
-            ["position"] = {"CENTER", "TOPLEFT", 7, -7},
+            ["position"] = {"TOPLEFT", "TOPLEFT", -4, 4},
             ["frameLevel"] = 50,
             ["size"] = {20, 20},
             ["border"] = 2,
+            ["num"] = 1,
             ["font"] = {"Cell ".._G.DEFAULT, 12, "Outline", false, "TOPRIGHT", 2, 1, {1, 1, 1}},
+            ["orientation"] = "left-to-right",
         }, -- 24
         {
             ["name"] = "Target Counter",

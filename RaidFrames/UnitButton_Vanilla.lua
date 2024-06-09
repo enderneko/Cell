@@ -113,8 +113,9 @@ local function ResetIndicators()
         end
         -- update targetedSpells
         if t["indicatorName"] == "targetedSpells" then
-            I.EnableTargetedSpells(t["enabled"])
+            I.UpdateTargetedSpellsNum(t["num"])
             I.ShowAllTargetedSpells(t["showAllSpells"])
+            I.EnableTargetedSpells(t["enabled"])
         end
         -- update consumables
         if t["indicatorName"] == "consumables" then
@@ -635,6 +636,8 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
             indicatorNums[indicatorName] = value
             if indicatorName == "missingBuffs" then
                 I.UpdateMissingBuffsNum(value)
+            elseif indicatorName == "targetedSpells" then
+                I.UpdateTargetedSpellsNum(value)
             else
                 -- refresh
                 F:IterateAllUnitButtons(function(b)
