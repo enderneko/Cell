@@ -161,15 +161,6 @@
       "title": "IN PROGRESS",
       "cards": [
         {
-          "id": "4ac8d40c-fb52-4873-857c-cd6985729cdf",
-          "listId": "fc9baa7c-c3e7-49a4-8526-816c794e5ed9",
-          "title": "Cata raid debuffs",
-          "description": "",
-          "labels": [],
-          "checkboxes": [],
-          "comments": []
-        },
-        {
           "id": "a711ba2d-5627-444a-b1a2-c563ce1663f7",
           "listId": "fc9baa7c-c3e7-49a4-8526-816c794e5ed9",
           "title": "Add \"Hide\" to layout auto switch",
@@ -186,33 +177,6 @@
           "labels": [],
           "checkboxes": [],
           "comments": []
-        },
-        {
-          "id": "f0d002c6-9b6c-41fd-8abb-65b9944479ab",
-          "listId": "fc9baa7c-c3e7-49a4-8526-816c794e5ed9",
-          "title": "\"Dot\" indicator",
-          "description": "",
-          "labels": [],
-          "checkboxes": [],
-          "comments": []
-        },
-        {
-          "id": "f9342937-2a2d-424a-a5e3-cd9147d2ecbd",
-          "listId": "fc9baa7c-c3e7-49a4-8526-816c794e5ed9",
-          "title": "Fix Targeted Spells",
-          "description": "",
-          "labels": [],
-          "checkboxes": [],
-          "comments": []
-        },
-        {
-          "id": "7abeed76-478d-4313-b46d-550f537ede54",
-          "listId": "fc9baa7c-c3e7-49a4-8526-816c794e5ed9",
-          "title": "Add spacing for Icons",
-          "description": "",
-          "labels": [],
-          "checkboxes": [],
-          "comments": []
         }
       ]
     },
@@ -220,6 +184,42 @@
       "id": "7b0c4654-92fe-4b4e-9566-15e8c706d9c9",
       "title": "DONE",
       "cards": [
+        {
+          "id": "f9342937-2a2d-424a-a5e3-cd9147d2ecbd",
+          "listId": "7b0c4654-92fe-4b4e-9566-15e8c706d9c9",
+          "title": "Fix Targeted Spells",
+          "description": "",
+          "labels": [],
+          "checkboxes": [],
+          "comments": []
+        },
+        {
+          "id": "4ac8d40c-fb52-4873-857c-cd6985729cdf",
+          "listId": "7b0c4654-92fe-4b4e-9566-15e8c706d9c9",
+          "title": "Cata raid debuffs",
+          "description": "",
+          "labels": [],
+          "checkboxes": [],
+          "comments": []
+        },
+        {
+          "id": "f0d002c6-9b6c-41fd-8abb-65b9944479ab",
+          "listId": "7b0c4654-92fe-4b4e-9566-15e8c706d9c9",
+          "title": "\"Block\" indicator",
+          "description": "",
+          "labels": [],
+          "checkboxes": [],
+          "comments": []
+        },
+        {
+          "id": "7abeed76-478d-4313-b46d-550f537ede54",
+          "listId": "7b0c4654-92fe-4b4e-9566-15e8c706d9c9",
+          "title": "Add spacing for Icons",
+          "description": "",
+          "labels": [],
+          "checkboxes": [],
+          "comments": []
+        },
         {
           "id": "c13fce13-d498-4940-b821-f4c6b87459e7",
           "listId": "7b0c4654-92fe-4b4e-9566-15e8c706d9c9",

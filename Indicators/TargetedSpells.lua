@@ -5,11 +5,15 @@ local I = Cell.iFuncs
 local LCG = LibStub("LibCustomGlow-1.0")
 
 local UnitIsVisible = UnitIsVisible
+local UnitExists = UnitExists
 local UnitGUID = UnitGUID
 local UnitIsUnit = UnitIsUnit
 local UnitIsEnemy = UnitIsEnemy
 local UnitCastingInfo = UnitCastingInfo
 local UnitChannelInfo = UnitChannelInfo
+
+local recheck = {}
+local eventFrame = CreateFrame("Frame")
 
 -------------------------------------------------
 -- show / hide
@@ -56,6 +60,8 @@ local function GetCastsOnUnit(guid)
 end
 
 local function UpdateCastsOnUnit(guid)
+    if not guid then return end
+
     local allCasts = 0
     local startTime, endTime, spellId, icon, isChanneling
     local inListFound
@@ -91,8 +97,8 @@ end
 -------------------------------------------------
 -- check if sourceUnit is casting
 -------------------------------------------------
-local function CheckUnitCast(sourceUnit)
-    if not UnitIsEnemy(sourceUnit, "player") then return end
+local function CheckUnitCast(sourceUnit, isRecheck)
+    if not UnitIsEnemy("player", sourceUnit) then return end
 
     local sourceGUID = UnitGUID(sourceUnit)
     local targetGUID
@@ -119,21 +125,41 @@ local function CheckUnitCast(sourceUnit)
     -- print(sourceUnit, name, spellId)
 
     if spellId and (Cell.vars.targetedSpellsList[spellId] or showAllSpells) then
-        local targetUnit = sourceUnit.."target"
-        targetUnit = F:GetTargetUnitID(targetUnit) -- units in group (players/pets), no npcs
-        if targetUnit then
-            targetGUID = UnitGUID(targetUnit)
+        if casts[sourceGUID] then
+            casts[sourceGUID]["startTime"] = startTimeMS/1000
+            casts[sourceGUID]["endTime"] = endTimeMS/1000
+            casts[sourceGUID]["spellId"] = spellId
+            casts[sourceGUID]["icon"] = texture
+        else
             casts[sourceGUID] = {
                 ["startTime"] = startTimeMS/1000,
                 ["endTime"] = endTimeMS/1000,
                 ["spellId"] = spellId,
                 ["icon"] = texture,
-                ["targetGUID"] = targetGUID,
                 ["isChanneling"] = isChanneling,
+                -- ["targetGUID"] = targetGUID,
                 -- ["sourceUnit"] = sourceUnit,
                 -- ["targetUnit"] = targetUnit,
+                ["recheck"] = 0,
             }
-            UpdateCastsOnUnit(targetGUID)
+        end
+
+        local targetUnit = sourceUnit.."target"
+        targetUnit = F:GetTargetUnitID(targetUnit) -- units in group (players/pets), no npcs
+        if targetUnit then targetGUID = UnitGUID(targetUnit) end
+
+        -- update spell target
+        casts[sourceGUID]["targetUnit"] = targetUnit
+        casts[sourceGUID]["targetGUID"] = targetGUID
+        casts[sourceGUID]["nonNameplate"] = not strfind(sourceUnit, "^nameplate")
+
+        UpdateCastsOnUnit(targetGUID)
+
+        if not isRecheck then
+            if not recheck[sourceGUID] or not (strfind(sourceUnit, "target$") or strfind(sourceUnit, "^nameplate")) then
+                recheck[sourceGUID] = sourceUnit
+            end
+            eventFrame:Show()
         end
     end
 
@@ -143,9 +169,43 @@ local function CheckUnitCast(sourceUnit)
 end
 
 -------------------------------------------------
+-- recheck
+-------------------------------------------------
+eventFrame:Hide()
+eventFrame:SetScript("OnUpdate", function(self, elapsed)
+    self.elapsed = (self.elapsed or 0) + elapsed
+    if self.elapsed >= 0.05 then
+        self.elapsed = 0
+
+        local empty = true
+
+        for guid, unit in pairs(recheck) do
+            if casts[guid] then
+                casts[guid]["recheck"] = casts[guid]["recheck"] + 1
+                if casts[guid]["recheck"] >= 11 then
+                    recheck[guid] = nil
+                else
+                    empty = false
+                    local recheckRequired = (not casts[guid]["targetUnit"] and UnitExists(unit.."target")) or (casts[guid]["targetUnit"] and not UnitIsUnit(unit.."target", casts[guid]["targetUnit"]))
+                    if recheckRequired then
+                        -- print(unit, casts[guid]["recheck"], recheckRequired)
+                        CheckUnitCast(unit, true)
+                    end
+                end
+            else
+                recheck[guid] = nil
+            end
+        end
+
+        if empty then
+            eventFrame:Hide()
+        end
+    end
+end)
+
+-------------------------------------------------
 -- events
 -------------------------------------------------
-local eventFrame = CreateFrame("Frame")
 eventFrame:SetScript("OnEvent", function(_, event, sourceUnit)
     if event == "ENCOUNTER_END" then
         wipe(casts)
@@ -156,17 +216,25 @@ eventFrame:SetScript("OnEvent", function(_, event, sourceUnit)
         return
     end
 
-    if sourceUnit == "softenemy" then return end
+    if sourceUnit and strfind(sourceUnit, "^soft") then return end
 
     if event == "PLAYER_TARGET_CHANGED" then
         CheckUnitCast("target")
 
-    elseif event == "UNIT_SPELLCAST_START" or event == "UNIT_SPELLCAST_DELAYED"  or event == "UNIT_SPELLCAST_CHANNEL_START" or event == "NAME_PLATE_UNIT_ADDED" then
+    elseif event == "UNIT_SPELLCAST_START" or event == "UNIT_SPELLCAST_CHANNEL_START" or event == "UNIT_SPELLCAST_DELAYED" or event == "UNIT_SPELLCAST_CHANNEL_UPDATE" or event == "NAME_PLATE_UNIT_ADDED" then
         CheckUnitCast(sourceUnit)
 
-    elseif event == "UNIT_SPELLCAST_STOP" or event == "UNIT_SPELLCAST_INTERRUPTED" or event == "UNIT_SPELLCAST_FAILED" or event == "UNIT_SPELLCAST_FAILED_QUIET" or event == "UNIT_SPELLCAST_CHANNEL_STOP" or event == "NAME_PLATE_UNIT_REMOVED" then
+    elseif event == "UNIT_SPELLCAST_STOP" or event == "UNIT_SPELLCAST_INTERRUPTED" or event == "UNIT_SPELLCAST_FAILED" or event == "UNIT_SPELLCAST_CHANNEL_STOP" then
         local sourceGUID = UnitGUID(sourceUnit)
         if casts[sourceGUID] then
+            previousTarget = casts[sourceGUID]["targetGUID"]
+            casts[sourceGUID] = nil
+            UpdateCastsOnUnit(previousTarget)
+        end
+
+    elseif event == "NAME_PLATE_UNIT_REMOVED" then
+        local sourceGUID = UnitGUID(sourceUnit)
+        if casts[sourceGUID] and not casts[sourceGUID]["nonNameplate"] then
             previousTarget = casts[sourceGUID]["targetGUID"]
             casts[sourceGUID] = nil
             UpdateCastsOnUnit(previousTarget)
@@ -278,7 +346,7 @@ end
 
 function I.EnableTargetedSpells(enabled)
     if enabled then
-        -- UNIT_SPELLCAST_DELAYED UNIT_SPELLCAST_FAILED UNIT_SPELLCAST_FAILED_QUIET UNIT_SPELLCAST_INTERRUPTED UNIT_SPELLCAST_START UNIT_SPELLCAST_STOP
+        -- UNIT_SPELLCAST_DELAYED UNIT_SPELLCAST_FAILED UNIT_SPELLCAST_INTERRUPTED UNIT_SPELLCAST_START UNIT_SPELLCAST_STOP
         -- UNIT_SPELLCAST_CHANNEL_START UNIT_SPELLCAST_CHANNEL_STOP
         -- PLAYER_TARGET_CHANGED ENCOUNTER_END
 
@@ -286,11 +354,10 @@ function I.EnableTargetedSpells(enabled)
         eventFrame:RegisterEvent("UNIT_SPELLCAST_STOP")
         eventFrame:RegisterEvent("UNIT_SPELLCAST_DELAYED")
         eventFrame:RegisterEvent("UNIT_SPELLCAST_FAILED")
-        eventFrame:RegisterEvent("UNIT_SPELLCAST_FAILED_QUIET")
         eventFrame:RegisterEvent("UNIT_SPELLCAST_INTERRUPTED")
         eventFrame:RegisterEvent("UNIT_SPELLCAST_CHANNEL_START")
         eventFrame:RegisterEvent("UNIT_SPELLCAST_CHANNEL_STOP")
-        -- eventFrame:RegisterEvent("UNIT_SPELLCAST_CHANNEL_UPDATE")
+        eventFrame:RegisterEvent("UNIT_SPELLCAST_CHANNEL_UPDATE")
 
         eventFrame:RegisterEvent("PLAYER_TARGET_CHANGED")
         eventFrame:RegisterEvent("NAME_PLATE_UNIT_ADDED")

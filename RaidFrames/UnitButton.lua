@@ -2324,7 +2324,7 @@ UnitButton_UpdateHealthColor = function(self)
         else
             barR, barG, barB, lossR, lossG, lossB = F:GetHealthBarColor(self.states.healthPercent, self.states.isDeadOrGhost or self.states.isDead, F:GetClassColor(self.states.class))
         end
-    elseif F:IsPet(self.states.guid) then -- pet
+    elseif F:IsPet(self.states.guid, self.states.unit) then -- pet
         barR, barG, barB, lossR, lossG, lossB = F:GetHealthBarColor(self.states.healthPercent, self.states.isDeadOrGhost or self.states.isDead, 0.5, 0.5, 1)
     else -- npc
         barR, barG, barB, lossR, lossG, lossB = F:GetHealthBarColor(self.states.healthPercent, self.states.isDeadOrGhost or self.states.isDead, 0, 1, 0.2)

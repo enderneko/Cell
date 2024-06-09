@@ -1040,7 +1040,7 @@ function F:GetUnitClassColor(unit, class, guid)
 
     if UnitIsPlayer(unit) or UnitInPartyIsAI(unit) then -- player
         return F:GetClassColor(class)
-    elseif F:IsPet(guid) then -- pet
+    elseif F:IsPet(guid, unit) then -- pet
         return 0.5, 0.5, 1
     else -- npc / vehicle
         return 0, 1, 0.2
@@ -1348,7 +1348,10 @@ function F:IsPlayer(guid)
     end
 end
 
-function F:IsPet(guid)
+function F:IsPet(guid, unit)
+    if unit then
+        return strfind(unit, "pet%d*$")
+    end
     if guid then
         return string.find(guid, "^Pet")
     end
