@@ -2915,6 +2915,22 @@ function F:Revise()
                 end
             end
         end
+
+        -- update RaidDebuffs structure
+        local indices = {"order", "trackByID", "condition", "glowType", "glowOptions", "glowCondition"}
+        for instanceId, iTable in pairs(CellDB["raidDebuffs"]) do
+            for bossId, bTable in pairs(iTable) do
+                for spellId, sTable in pairs(bTable) do
+                    if #sTable ~= 0 then
+                        local old = F:Copy(sTable)
+                        wipe(sTable)
+                        for i, index in pairs(indices) do
+                            sTable[index] = old[i]
+                        end
+                    end
+                end
+            end
+        end
     end
 
     -- ----------------------------------------------------------------------- --

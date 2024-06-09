@@ -119,15 +119,6 @@
           "comments": []
         },
         {
-          "id": "1cac7da6-3787-4e5c-9176-548a8a8199f0",
-          "listId": "7915d51e-5603-44aa-aa3a-8dff734ea7c6",
-          "title": "Add \"existing time\" option to Raid Debuffs",
-          "description": "",
-          "labels": [],
-          "checkboxes": [],
-          "comments": []
-        },
-        {
           "id": "b6474dcc-f9ea-4d89-bf3e-788e4a4773e1",
           "listId": "7915d51e-5603-44aa-aa3a-8dff734ea7c6",
           "title": "Raid group header advanced sort",
@@ -173,6 +164,15 @@
           "id": "0fc1a21b-2116-482d-9185-8adb860a38bf",
           "listId": "fc9baa7c-c3e7-49a4-8526-816c794e5ed9",
           "title": "Fix vertical overshields",
+          "description": "",
+          "labels": [],
+          "checkboxes": [],
+          "comments": []
+        },
+        {
+          "id": "1cac7da6-3787-4e5c-9176-548a8a8199f0",
+          "listId": "fc9baa7c-c3e7-49a4-8526-816c794e5ed9",
+          "title": "Add \"existing time\" option to Raid Debuffs",
           "description": "",
           "labels": [],
           "checkboxes": [],
