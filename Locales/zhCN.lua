@@ -396,6 +396,7 @@ L["syncTips"] = "在这里设置主布局\n从布局的所有指示器将与主�
 L["All indicators of %s will be replaced with those in %s"] = "%s 布局的所有指示器将被 %s 布局的替换"
 L["Indicators"] = "指示器"
 L["Preview"] = "预览"
+L["Show All"] = "显示全部"
 L["Create"] = "创建"
 L["Copy"] = "复制"
 L["Copy indicators from one layout to another"]= "将指示器从一个布局复制到另一个布局"
