@@ -167,7 +167,7 @@ function eventFrame:ADDON_LOADED(arg1)
 
         if type(CellDB["indicatorPreview"]) ~= "table" then
             CellDB["indicatorPreview"] = {
-                ["scale"] = 3,
+                ["scale"] = 2,
                 ["showAll"] = false,
             }
         end
