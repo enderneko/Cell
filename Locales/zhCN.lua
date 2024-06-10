@@ -396,6 +396,7 @@ L["syncTips"] = "在这里设置主布局\n从布局的所有指示器将与主�
 L["All indicators of %s will be replaced with those in %s"] = "%s 布局的所有指示器将被 %s 布局的替换"
 L["Indicators"] = "指示器"
 L["Preview"] = "预览"
+L["Show All"] = "显示全部"
 L["Create"] = "创建"
 L["Copy"] = "复制"
 L["Copy indicators from one layout to another"]= "将指示器从一个布局复制到另一个布局"
@@ -586,9 +587,6 @@ L["%s in Utilities must be enabled to make this indicator work."] = "要使用�
 L["If you are a paladin or warrior, and the unit has no buffs from you, a %s icon will be displayed."] = "如果你是圣骑士或战士，且该单位没有来自你的增益时，将会显示一个%s图标。"
 
 L["Would you like Cell to create a \"Healers\" indicator (icons)?"] = "需要 Cell 为你创建一个 “Healers” 指示器（图标组）？"
-
---[[Translation missing --]]
--- L["Show All"]
 
 -------------------------------------------------
 -- raid debuffs

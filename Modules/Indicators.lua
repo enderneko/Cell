@@ -20,7 +20,7 @@ local ListHighlightFn
 -------------------------------------------------
 -- preview
 -------------------------------------------------
-local previewButton, previewButtonBG, previewAlphaSlider, previewScaleSlider, previewIndicatorsShowAllToggle
+local previewButton, previewButtonBG, previewAlphaSlider, previewScaleSlider, previewShowAllCB
 
 local function CreatePreviewButton()
     previewButton = CreateFrame("Button", "CellIndicatorsPreviewButton", indicatorsTab, "CellPreviewButtonTemplate")
@@ -55,9 +55,9 @@ local function CreatePreviewButton()
         previewButtonBG:SetPoint("TOPLEFT", indicatorsTab, "TOPRIGHT", 5, -1)
 
         local x = 10
-        local y = Round(-70 / CellDB["indicatorPreviewScale"])
+        local y = Round(-70 / CellDB["indicatorPreview"]["scale"])
 
-        if (previewButton.width * CellDB["indicatorPreviewScale"]) <= 105 then
+        if (previewButton.width * CellDB["indicatorPreview"]["scale"]) <= 105 then
             x = Round((115-previewButton.width)/2)+5
             previewButtonBG:SetPoint("BOTTOM", previewButton, 0, -5)
             P:Width(previewButtonBG, 115)
@@ -65,7 +65,7 @@ local function CreatePreviewButton()
             previewButtonBG:SetPoint("BOTTOMRIGHT", previewButton, 5, -5)
         end
 
-        x = Round(x / CellDB["indicatorPreviewScale"])
+        x = Round(x / CellDB["indicatorPreview"]["scale"])
         previewButton:SetPoint("TOPLEFT", indicatorsTab, "TOPRIGHT", x, y)
     end
 
@@ -74,51 +74,32 @@ local function CreatePreviewButton()
     previewText:SetText(L["Preview"])
 
     -- preview alpha
-    previewAlphaSlider = Cell:CreateSlider(L["Alpha"], previewButtonBG, 0, 1, 50, 0.1, nil, function(value)
-        CellDB["indicatorPreviewAlpha"] = value
-        listButtons[selected]:Click()
-    end)
-    previewAlphaSlider:SetPoint("TOPLEFT", 5, -35)
-    previewAlphaSlider.currentEditBox:Hide()
-    previewAlphaSlider.lowText:Hide()
-    previewAlphaSlider.highText:Hide()
+    -- previewAlphaSlider = Cell:CreateSlider(L["Alpha"], previewButtonBG, 0, 1, 50, 0.1, nil, function(value)
+    --     CellDB["indicatorPreview"]["alpha"] = value
+    --     listButtons[selected]:Click()
+    -- end)
+    -- previewAlphaSlider:SetPoint("TOPLEFT", 5, -35)
+    -- previewAlphaSlider.currentEditBox:Hide()
+    -- previewAlphaSlider.lowText:Hide()
+    -- previewAlphaSlider.highText:Hide()
 
     -- preview scale
     previewScaleSlider = Cell:CreateSlider(L["Scale"], previewButtonBG, 1, 5, 50, 1, nil, function(value)
-        CellDB["indicatorPreviewScale"] = value
+        CellDB["indicatorPreview"]["scale"] = value
         previewButton:SetScale(value)
         previewButton:UpdatePoint()
     end)
-    previewScaleSlider:SetPoint("TOPLEFT", previewAlphaSlider, "TOPRIGHT", 5, 0)
+    previewScaleSlider:SetPoint("TOPLEFT", 5, -35)
     previewScaleSlider.currentEditBox:Hide()
     previewScaleSlider.lowText:Hide()
     previewScaleSlider.highText:Hide()
 
     -- preview show all active indicators
-    previewIndicatorsShowAllToggle = Cell:CreateCheckButton(previewButtonBG, L["Show All"], function(checked)
-        CellDB["indicatorPreviewShowAllActive"] = checked
-
-        for k, indicator in pairs(previewButton.indicators) do
-            if indicator.enabled and checked then
-                indicator:Show()
-                if indicator.preview then indicator.preview:Show() end
-            else
-                indicator:Hide()
-                if indicator.preview then indicator.preview:Hide() end
-            end
-        end
-
-        if not checked then
-            listButtons[selected]:Click()
-        end
+    previewShowAllCB = Cell:CreateCheckButton(previewButtonBG, L["Show All"], function(checked)
+        CellDB["indicatorPreview"]["showAll"] = checked
+        listButtons[selected]:Click()
     end)
-    previewIndicatorsShowAllToggle:SetPoint("TOPLEFT", previewScaleSlider, "TOPRIGHT", 5, 3.5)
-    previewIndicatorsShowAllToggle:SetChecked(CellDB["indicatorPreviewShowAllActive"])
-
-    -- local alphaText = settingsPane:CreateFontString(nil, "OVERLAY", "CELL_FONT_CLASS")
-    -- alphaText:SetPoint("BOTTOM", settingsPane.line, "TOP", 0, P:Scale(2))
-    -- alphaText:SetPoint("RIGHT", previewAlphaSlider, "LEFT", -5, 0)
-    -- alphaText:SetText(L["Alpha"])
+    previewShowAllCB:SetPoint("TOPLEFT", previewScaleSlider, "TOPRIGHT", 7, 2)
 
     Cell:Fire("CreatePreview", previewButton)
 end
@@ -298,8 +279,8 @@ local function InitIndicator(indicatorName)
             end
         end)
 
-    elseif indicatorName == "aggroBlink" then
-        indicator.isAggroBlink = true
+    -- elseif indicatorName == "aggroBlink" then
+    --     indicator.isAggroBlink = true
 
     elseif indicatorName == "aggroBorder" then
         indicator.isAggroBorder = true
@@ -659,7 +640,7 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                 -- update alpha
                 if t["alpha"] then
                     indicator:SetAlpha(t["alpha"])
-                    indicator.alpha = t["alpha"]
+                    -- indicator.alpha = t["alpha"]
                 end
                 -- update num
                 if t["num"] then
@@ -852,7 +833,7 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
             indicator:UpdateTextWidth(value)
         elseif setting == "alpha" then
             indicator:SetAlpha(value)
-            indicator.alpha = value
+            -- indicator.alpha = value
         elseif setting == "num" then
             for i, frame in ipairs(indicator) do
                 if i <= value then
@@ -2015,22 +1996,18 @@ LoadIndicatorList = function()
     ListHighlightFn = Cell:CreateButtonGroup(listButtons, ShowIndicatorSettings, function(id)
         local i = previewButton.indicators[currentLayoutTable["indicators"][id]["indicatorName"]]
 
-        if not CellDB["indicatorPreviewShowAllActive"] then
-            -- show selected indicator
-            i:Show()
-            if i.preview then 
-                i.preview:Show() 
-            end
-        end
+        -- always show selected indicator
+        i:Show()
+        if i.preview then i.preview:Show() end
 
         if i.indicatorType == "glow" then
-            i:Show()
+            -- i:Show()
             return
         end
 
         if i:IsObjectType("Texture") or i:IsObjectType("FontString") then
             LCG.PixelGlow_Start(i.preview)
-            i:SetAlpha(i.alpha or 1)
+            -- i:SetAlpha(i.alpha or 1)
         else
             if i.isRaidDebuffs or i.isPrivateAuras or i.isCrowdControls then
                 LCG.PixelGlow_Start(i, nil, nil, nil, nil, nil, 2, 2)
@@ -2043,25 +2020,23 @@ LoadIndicatorList = function()
                 LCG.PixelGlow_Start(i)
             end
 
-            if i.isAggroBlink then
-                i.blink.alpha:SetFromAlpha(1)
-            else
-                i:SetAlpha(i.alpha or 1)
-                if i.isDispels and i.enabled then
-                    i.isVisible = true
-                    i.highlight:Show()
-                end
+            -- i:SetAlpha(i.alpha or 1)
+            if i.isDispels and i.enabled then
+                i.isVisible = true
+                i.highlight:Show()
             end
         end
     end, function(id)
         local i = previewButton.indicators[currentLayoutTable["indicators"][id]["indicatorName"]]
 
-        if not CellDB["indicatorPreviewShowAllActive"] then
+        if CellDB["indicatorPreview"]["showAll"] and i.enabled then
+            -- show all enabled if showAll
+            i:Show()
+            if i.preview then i.preview:Show() end
+        else
             -- hide none selected indicators
             i:Hide()
-            if i.preview then 
-                i.preview:Hide() 
-            end
+            if i.preview then i.preview:Hide() end
         end
 
         if i.indicatorType == "glow" then
@@ -2078,16 +2053,11 @@ LoadIndicatorList = function()
             end
         end
 
-        if i.isAggroBlink then
-            i.blink.alpha:SetFromAlpha(CellDB["indicatorPreviewAlpha"])
-        else
-            i:SetAlpha(CellDB["indicatorPreviewAlpha"])
-            if i.isDispels then
-                i.isVisible = false
-                i.highlight:Hide()
-            end
+        if i.isDispels then
+            i.isVisible = false
+            i.highlight:Hide()
         end
-    end)
+end)
 end
 
 -------------------------------------------------
@@ -2104,9 +2074,9 @@ local function ShowTab(tab)
             CreateListPane()
             CreateSettingsPane()
             -- texplore(masters)
-            previewAlphaSlider:SetValue(CellDB["indicatorPreviewAlpha"])
-            previewScaleSlider:SetValue(CellDB["indicatorPreviewScale"])
-            previewButton:SetScale(CellDB["indicatorPreviewScale"])
+            previewScaleSlider:SetValue(CellDB["indicatorPreview"]["scale"])
+            previewShowAllCB:SetChecked(CellDB["indicatorPreview"]["showAll"])
+            previewButton:SetScale(CellDB["indicatorPreview"]["scale"])
         end
 
         LoadLayoutDropdown()
