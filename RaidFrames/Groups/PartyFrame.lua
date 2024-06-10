@@ -228,7 +228,7 @@ local function PartyFrame_UpdateLayout(layout, which)
 
     if not which or which == "sort" then
         if layout["main"]["sortByRole"] then
-            header:SetAttribute("sortMethod", "NAME")
+            header:SetAttribute("sortMethod", "INDEX")
             local order = table.concat(layout["main"]["roleOrder"], ",")..",NONE"
             header:SetAttribute("groupingOrder", order)
             header:SetAttribute("groupBy", "ASSIGNEDROLE")

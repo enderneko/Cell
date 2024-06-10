@@ -2314,7 +2314,7 @@ local function CreateLayoutSetupPane()
             roleOrderWidget:Hide()
         end
         Cell:Fire("UpdateLayout", selectedLayout, "sort")
-    end, L["Sort By Role"], L["%s is required"]:format("|cffffb5c5"..L["Combine Groups"].."|r").." ("..L["Raid"]..")", "|cffffb5c5"..L["Left-Drag"]..":|r "..L["change the order"])
+    end, L["Sort By Role"], "|cffffb5c5"..L["Left-Drag"]..":|r "..L["change the order"]) -- L["%s is required"]:format("|cffffb5c5"..L["Combine Groups"].."|r").." ("..L["Raid"]..")"
     sortByRoleCB:SetPoint("TOPLEFT", combineGroupsCB, "BOTTOMLEFT", 0, -10)
     Cell:RegisterForCloseDropdown(sortByRoleCB)
 

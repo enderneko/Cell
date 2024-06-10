@@ -488,6 +488,23 @@ local function RaidFrame_UpdateLayout(layout, which)
             raidFrame:SetAttribute("combineGroups", false) -- NOTE: trigger _onattributechanged to set npcFrameAnchor point!
         end
 
+        if not which or which == "header" or which == "sort" then
+            if layout["main"]["sortByRole"] then
+                for i = 1, 8 do
+                    separatedHeaders[i]:SetAttribute("sortMethod", "INDEX")
+                    local order = table.concat(layout["main"]["roleOrder"], ",")..",NONE"
+                    separatedHeaders[i]:SetAttribute("groupingOrder", order)
+                    separatedHeaders[i]:SetAttribute("groupBy", "ASSIGNEDROLE")
+                end
+            else
+                for i = 1, 8 do
+                    separatedHeaders[i]:SetAttribute("sortMethod", "INDEX")
+                    separatedHeaders[i]:SetAttribute("groupingOrder", "")
+                    separatedHeaders[i]:SetAttribute("groupBy", nil)
+                end
+            end
+        end
+
         -- show/hide groups
         if not which or which == "header" or which == "groupFilter" then
             for i = 1, 8 do
