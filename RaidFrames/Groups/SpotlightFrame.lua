@@ -285,7 +285,8 @@ end
 -- menu
 -------------------------------------------------
 menu = CreateFrame("Frame", "CellSpotlightAssignmentMenu", spotlightFrame, "BackdropTemplate,SecureHandlerAttributeTemplate,SecureHandlerShowHideTemplate")
-menu:SetFrameStrata("TOOLTIP")
+menu:SetFrameStrata("FULLSCREEN_DIALOG")
+menu:SetToplevel(true)
 menu:SetClampedToScreen(true)
 menu:Hide()
 
@@ -971,8 +972,12 @@ Cell:RegisterCallback("UpdatePixelPerfect", "SpotlightFrame_UpdatePixelPerfect",
 
 local function UpdateAppearance(which)
     if not which or which == "strata" then
-        C_Timer.After(1, function()
+        C_Timer.After(0.5, function()
             targetFrame:SetFrameStrata("TOOLTIP")
+            if not InCombatLockdown() then
+                menu:SetFrameStrata("FULLSCREEN_DIALOG")
+                menu:SetToplevel(true)
+            end
         end)
     end
 end
