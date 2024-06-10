@@ -171,7 +171,7 @@ local function CreateDRPane()
             return
         end
 
-        local name, _, tex = GetSpellInfo(spellId)
+        local name, tex = F:GetSpellNameAndIcon(spellId)
         if not name then
             CellSpellTooltip:Hide()
             return
@@ -192,7 +192,7 @@ local function CreateDRPane()
     debuffItems[0]:SetScript("OnClick", function(self)
         local popup = Cell:CreatePopupEditBox(drDebuffsList, function(text)
             local spellId = tonumber(text)
-            local spellName = GetSpellInfo(spellId)
+            local spellName = F:GetSpellNameAndIcon(spellId)
             if spellId and spellName then
                 -- update db
                 tinsert(CellDB["dispelRequest"]["debuffs"], spellId)
@@ -331,7 +331,7 @@ LoadList = function(scrollToBottom)
             -- tooltip
             debuffItems[i]:HookScript("OnEnter", function(self)
                 if not drDebuffsList.popupEditBox:IsShown() then
-                    local name, _, icon = GetSpellInfo(self.spellId)
+                    local name, icon = F:GetSpellNameAndIcon(self.spellId)
                     if not name then
                         CellSpellTooltip:Hide()
                         return
@@ -350,7 +350,7 @@ LoadList = function(scrollToBottom)
             end)
         end
 
-        local name, _, icon = GetSpellInfo(id)
+        local name, icon = F:GetSpellNameAndIcon(id)
 
         debuffItems[i].spellId = id
         debuffItems[i].spellIdText:SetText(id)

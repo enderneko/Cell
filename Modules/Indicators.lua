@@ -224,7 +224,7 @@ local function InitIndicator(indicatorName)
 
     elseif indicatorName == "roleIcon" then
         indicator.tex:SetTexture("Interface\\AddOns\\Cell\\Media\\UI-LFG-ICON-PORTRAITROLES.blp")
-        indicator.tex:SetTexCoord(GetTexCoordsForRoleSmallCircle("DAMAGER"))
+        indicator.tex:SetTexCoord(20/64, 39/64, 22/64, 41/64)
         -- texture type cannot glow by LCG
         indicator.preview = indicator.preview or CreateFrame("Frame", nil, previewButton)
         indicator.preview:SetAllPoints(indicator)

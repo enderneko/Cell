@@ -123,7 +123,7 @@ end
 --         if t[1] == 0 then
 --             b:SetAttribute("type"..i, "target")
 --         elseif t[1] ~= -1 then
---             local spellName = GetSpellInfo(t[1])
+--             local spellName = F:GetSpellNameAndIcon(t[1])
 
 --             b:SetAttribute("type"..i, "macro")
 --             b:SetAttribute("macrotext"..i, "/cast [@mouseover] "..spellName)
@@ -1205,7 +1205,7 @@ local function UpdateQuickAssist(which)
 
         for _, t in pairs(spellTable["mine"]["buffs"]) do
             if t[1] > 0 then
-                local spellName = GetSpellInfo(t[1])
+                local spellName = F:GetSpellNameAndIcon(t[1])
                 if spellName then
                     if t[2] == "icon" then
                         myBuffs_icon[spellName] = t[3]
