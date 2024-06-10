@@ -93,8 +93,8 @@ function I.GetDefaultCustomIndicatorTable(name, indicatorName, type, auraType)
             ["position"] = {"TOPRIGHT", "TOPRIGHT", 0, 3},
             ["frameLevel"] = 5,
             ["size"] = {13, 13},
-            ["num"] = 3,
-            ["numPerLine"] = 3,
+            ["num"] = 5,
+            ["numPerLine"] = 5,
             ["orientation"] = "right-to-left",
             ["spacing"] = {0, 0},
             ["font"] = {
@@ -168,6 +168,28 @@ function I.GetDefaultCustomIndicatorTable(name, indicatorName, type, auraType)
             ["frameLevel"] = 5,
             ["size"] = {10, 10},
             ["colors"] = {{0, 1, 0, 1}, {false, 0.5, {1, 1, 0, 1}}, {false, 3, {1, 0, 0, 1}}, {0, 0, 0, 1}},
+            ["font"] = {
+                {"Cell " .. _G.DEFAULT, 11, "Outline", false, "TOPRIGHT", 2, 1, {1, 1, 1}},
+                {"Cell " .. _G.DEFAULT, 11, "Outline", false, "BOTTOMRIGHT", 2, -1, {1, 1, 1}},
+            },
+            ["showStack"] = false,
+            ["showDuration"] = false,
+            ["auraType"] = auraType,
+            ["auras"] = {},
+        }
+    elseif type == "blocks" then
+        t = {
+            ["name"] = name,
+            ["indicatorName"] = indicatorName,
+            ["type"] = type,
+            ["enabled"] = true,
+            ["position"] = {"TOPRIGHT", "TOPRIGHT", 0, 3},
+            ["frameLevel"] = 5,
+            ["size"] = {10, 10},
+            ["num"] = 5,
+            ["numPerLine"] = 5,
+            ["orientation"] = "right-to-left",
+            ["spacing"] = {0, 0},
             ["font"] = {
                 {"Cell " .. _G.DEFAULT, 11, "Outline", false, "TOPRIGHT", 2, 1, {1, 1, 1}},
                 {"Cell " .. _G.DEFAULT, 11, "Outline", false, "BOTTOMRIGHT", 2, -1, {1, 1, 1}},

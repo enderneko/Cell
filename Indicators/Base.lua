@@ -1684,12 +1684,12 @@ local function Block_OnUpdate(frame, elapsed)
 end
 
 local function Block_SetCooldown(frame, start, duration, debuffType, texture, count)
-    local r, g, b
-    if debuffType then
-        r, g, b = I.GetDebuffTypeColor(debuffType)
-    else
-        r, g, b = 0, 0, 0
-    end
+    -- local r, g, b
+    -- if debuffType then
+    --     r, g, b = I.GetDebuffTypeColor(debuffType)
+    -- else
+    --     r, g, b = 0, 0, 0
+    -- end
 
     if duration == 0 then
         frame.cooldown:Hide()
@@ -1702,7 +1702,7 @@ local function Block_SetCooldown(frame, start, duration, debuffType, texture, co
         frame._threshold = nil
     else
         frame.cooldown:Show()
-        frame.cooldown:SetSwipeColor(r, g, b)
+        -- frame.cooldown:SetSwipeColor(r, g, b)
         frame.cooldown:_SetCooldown(start, duration)
 
         if not frame.showDuration then
@@ -1780,4 +1780,100 @@ function I.CreateAura_Block(name, parent)
     frame.UpdatePixelPerfect = Block_UpdatePixelPerfect
 
     return frame
+end
+
+-------------------------------------------------
+-- CreateAura_Blocks
+-------------------------------------------------
+local function Blocks_OnUpdate(frame, elapsed)
+    frame._remain = frame._duration - (GetTime() - frame._start)
+    if frame._remain < 0 then frame._remain = 0 end
+
+    if frame._remain > frame._threshold then
+        frame.duration:SetText("")
+        return
+    end
+
+    -- format
+    if frame._remain > 60 then
+        frame.duration:SetFormattedText("%dm", frame._remain / 60)
+    else
+        if Cell.vars.iconDurationRoundUp then
+            frame.duration:SetFormattedText("%d", ceil(frame._remain))
+        else
+            if frame._remain < Cell.vars.iconDurationDecimal then
+                frame.duration:SetFormattedText("%.1f", frame._remain)
+            else
+                frame.duration:SetFormattedText("%d", frame._remain)
+            end
+        end
+    end
+end
+
+local function Blocks_SetCooldown(frame, start, duration, debuffType, texture, count, color)
+    if duration == 0 then
+        frame.cooldown:Hide()
+        frame.duration:Hide()
+        frame:SetScript("OnUpdate", nil)
+        frame._start = nil
+        frame._duration = nil
+        frame._remain = nil
+        frame._threshold = nil
+    else
+        frame.cooldown:Show()
+        frame.cooldown:_SetCooldown(start, duration)
+
+        if not frame.showDuration then
+            frame._threshold = -1
+            frame.duration:Hide()
+        else
+            if frame.showDuration == true then
+                frame._threshold = duration
+            elseif frame.showDuration >= 1 then
+                frame._threshold = frame.showDuration
+            else -- < 1
+                frame._threshold = frame.showDuration * duration
+            end
+            frame.duration:Show()
+        end
+
+        frame._start = start
+        frame._duration = duration
+        frame:SetScript("OnUpdate", Blocks_OnUpdate)
+    end
+
+    frame.stack:SetText((count == 0 or count == 1) and "" or count)
+    frame:Show()
+end
+
+function I.CreateAura_Blocks(name, parent, num)
+    local blocks = CreateFrame("Frame", name, parent)
+    blocks:Hide()
+
+    blocks.indicatorType = "blocks"
+    blocks.maxNum = num
+    blocks.numPerLine = num
+
+    blocks._SetSize = blocks.SetSize
+    blocks.SetSize = Icons_SetSize
+    blocks._Hide = blocks.Hide
+    blocks.Hide = Icons_Hide
+    blocks.SetFont = Icons_SetFont
+    blocks.UpdateSize = Icons_UpdateSize
+    blocks.SetOrientation = Icons_SetOrientation
+    blocks.SetSpacing = Icons_SetSpacing
+    blocks.SetNumPerLine = Icons_SetNumPerLine
+    blocks.ShowDuration = Icons_ShowDuration
+    blocks.ShowStack = Icons_ShowStack
+    blocks.UpdatePixelPerfect = Icons_UpdatePixelPerfect
+
+    for i = 1, num do
+        local name = name.."Icons"..i
+        local frame = I.CreateAura_Block(name, blocks)
+        blocks[i] = frame
+        frame.SetCooldown = Blocks_SetCooldown
+        frame:SetBackdropBorderColor(0, 0, 0, 1) -- TODO: custom color
+    end
+
+    return blocks
 end

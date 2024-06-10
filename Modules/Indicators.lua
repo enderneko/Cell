@@ -547,7 +547,7 @@ local function InitIndicator(indicatorName)
             indicator[i]:SetCooldown(0, 0, nil, buffs[i]["icon"], 0)
         end
     elseif string.find(indicatorName, "indicator") then
-        if indicator.indicatorType == "icons" then
+        if indicator.indicatorType == "icons" or indicator.indicatorType == "blocks" then
             for i = 1, 10 do
                 SetOnUpdate(indicator[i], nil, 134400, i)
             end
@@ -595,7 +595,7 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
     if not indicatorName then -- init
         if not layout then --! call from UpdateIndicators() not from Cell:Fire("UpdateIndicators", ...)
             I.RemoveAllCustomIndicators(previewButton)
-            for _, t in pairs(currentLayoutTable["indicators"]) do
+            for i, t in pairs(currentLayoutTable["indicators"]) do
                 local indicator = previewButton.indicators[t["indicatorName"]] or I.CreateIndicator(previewButton, t, true)
                 InitIndicator(t["indicatorName"])
                 -- update position
@@ -774,12 +774,11 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                 end
 
                 -- after init
-                if t["enabled"] then
-                    indicator.enabled = true
+                indicator.enabled = t["enabled"]
+                if (CellDB["indicatorPreview"]["showAll"] and t["enabled"]) or i == selected then
                     indicator:Show()
                     if indicator.preview then indicator.preview:Show() end
                 else
-                    indicator.enabled = false
                     indicator:Hide()
                     if indicator.preview then indicator.preview:Hide() end
                 end
@@ -1359,6 +1358,10 @@ local typeItems = {
         ["text"] = L["Block"],
         ["value"] = "block",
     },
+    -- {
+    --     ["text"] = L["Blocks"],
+    --     ["value"] = "blocks",
+    -- },
 }
 
 local auraTypeItems = {
@@ -1655,6 +1658,8 @@ local function ShowIndicatorSettings(id)
             settingsTable = {"enabled", "auras", "overlayColors", "checkbutton3:smooth", "barOrientation", "frameLevel"}
         elseif indicatorType == "block" then
             settingsTable = {"enabled", "auras", "colors", "checkbutton3:showStack", "durationVisibility", "size", "position", "frameLevel", "font1:stackFont", "font2:durationFont"}
+        elseif indicatorType == "blocks" then
+            settingsTable = {"enabled", "auras", "checkbutton3:showStack", "durationVisibility", "size", "num:10", "numPerLine:10", "spacing", "orientation", "position", "frameLevel", "font1:stackFont", "font2:durationFont"}
         end
 
         if indicatorTable["auraType"] == "buff" then
