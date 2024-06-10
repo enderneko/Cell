@@ -1805,8 +1805,17 @@ end
 local function GetDropdownItems(indices, groupType)
     local items = {}
     for _, value in pairs(indices) do
+        local name
+        if value == "default" then
+            name = _G.DEFAULT
+        elseif value == "hide" then
+            name = L["Hide"]
+        else
+            name = value
+        end
+
         table.insert(items, {
-            ["text"] = value == "default" and _G.DEFAULT or value,
+            ["text"] = name,
             ["value"] = value,
             ["onClick"] = function()
                 Cell.vars.layoutAutoSwitch[groupType] = value
@@ -1830,7 +1839,8 @@ LoadAutoSwitchDropdowns = function()
         end
     end
     table.sort(indices)
-    tinsert(indices, 1, "default") -- make default first
+    -- tinsert(indices, 1, "hide") -- make hide first
+    tinsert(indices, 1, "default") -- make default second
 
     -- soloDropdown
     soloDropdown:SetItems(GetDropdownItems(indices, "solo"))

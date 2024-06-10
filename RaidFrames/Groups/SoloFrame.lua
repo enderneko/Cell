@@ -25,6 +25,14 @@ local function SoloFrame_UpdateLayout(layout, which)
     if Cell.vars.groupType ~= "solo" and init then return end
     init = true
 
+    -- if layout == "hide" then
+    --     UnregisterAttributeDriver(soloFrame, "state-visibility")
+    --     soloFrame:Hide()
+    --     return
+    -- else
+    --     RegisterAttributeDriver(soloFrame, "state-visibility", "[@raid1,exists] hide;[@party1,exists] hide;[group] hide;show")
+    -- end
+
     -- if previousLayout == layout and not which then return end
     -- previousLayout = layout
 
