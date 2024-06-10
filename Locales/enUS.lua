@@ -87,6 +87,29 @@ select(2, ...).L = setmetatable({
         <p>(Retail) Enable "Always Update Buffs/Debuffs" in General tab, if indicators do not update correctly.</p>
         <br/>
 
+        <h1>r228-release (Jun 10, 2024, 23:38 GMT+8)</h1>
+        <h2>Click-Castings</h2>
+        <p>* Fixed Click-Castings issues, some settings may be "Invalid", just re-set them.</p>
+        <h2>Indicators</h2>
+        <p>* Updated indicator preview, added "Show All", removed "Alpha" (#125).</p>
+        <p>* Updated BleedList (#119).</p>
+        <p>+ Added "Spacing" for Icons indicators.</p>
+        <p>+ New custom indicator: (color) Block.</p>
+        <p>+ Added duration text for Rect/Bar.</p>
+        <p>* Updated Targeted Spells, now it supports up to 3 icons and is more stable.</p>
+        <p>* Increased frame level of Dispel Highlight.</p>
+        <p>* Fixed dispel checker on Cata.</p>
+        <h2>Raid Debuffs</h2>
+        <p>+ Added "Use Elapsed Time" option for Raid Debuffs.</p>
+        <p>* Updated Cata Raid Debuffs.</p>
+        <h2>Layouts</h2>
+        <p>+ Added "Solo" for Layout Auto Switch.</p>
+        <p>* Updated "Sort by Role", now it supports separated group headers.</p>
+        <p>* Fixed frame level of Spotlight menu.</p>
+        <h2>Misc</h2>
+        <p>* Improved usability of Custom Nicknames.</p>
+        <br/>
+
         <h1>r227-release (May 21, 2024, 01:08 GMT+8)</h1>
         <p>* Fixed Quick Assist.</p>
         <p>* Fixed a layout switch issue.</p>

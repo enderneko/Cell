@@ -66,6 +66,15 @@
           "labels": [],
           "checkboxes": [],
           "comments": []
+        },
+        {
+          "id": "0fc1a21b-2116-482d-9185-8adb860a38bf",
+          "listId": "643431c7-e660-47b1-a44b-4e799b536d19",
+          "title": "Fix vertical overshields",
+          "description": "",
+          "labels": [],
+          "checkboxes": [],
+          "comments": []
         }
       ]
     },
@@ -126,15 +135,6 @@
           "labels": [],
           "checkboxes": [],
           "comments": []
-        },
-        {
-          "id": "abd28941-e6a1-4784-8465-e922be72f888",
-          "listId": "7915d51e-5603-44aa-aa3a-8dff734ea7c6",
-          "title": "Refactor Layouts",
-          "description": "Main/Spotlight/NPC/Pet can have their own layout",
-          "labels": [],
-          "checkboxes": [],
-          "comments": []
         }
       ]
     },
@@ -161,9 +161,27 @@
           "comments": []
         },
         {
-          "id": "0fc1a21b-2116-482d-9185-8adb860a38bf",
+          "id": "abd28941-e6a1-4784-8465-e922be72f888",
           "listId": "fc9baa7c-c3e7-49a4-8526-816c794e5ed9",
-          "title": "Fix vertical overshields",
+          "title": "Refactor Layouts",
+          "description": "Main/Spotlight/NPC/Pet can have their own layout",
+          "labels": [],
+          "checkboxes": [],
+          "comments": []
+        },
+        {
+          "id": "1f228346-3228-4c81-a796-2deb4500e1c8",
+          "listId": "fc9baa7c-c3e7-49a4-8526-816c794e5ed9",
+          "title": "Class Spells for Click-Castings",
+          "description": "",
+          "labels": [],
+          "checkboxes": [],
+          "comments": []
+        },
+        {
+          "id": "f6f4f2da-e189-4f63-bcad-2d04bd0430f1",
+          "listId": "fc9baa7c-c3e7-49a4-8526-816c794e5ed9",
+          "title": "Icon for Block type indicator",
           "description": "",
           "labels": [],
           "checkboxes": [],
