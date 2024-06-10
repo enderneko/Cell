@@ -34,8 +34,22 @@ local function CreateCustomNicknamesFrame()
         else
             list.mask:Show()
         end
-    end, L["Only visible to me"])
+    end)
     customCB:SetPoint("TOPLEFT", 10, -10)
+
+    customCB:HookScript("OnEnter", function()
+        CellTooltip:SetOwner(customCB, "ANCHOR_NONE")
+        CellTooltip:SetPoint("BOTTOMLEFT", customCB, "TOPLEFT", 0, 1)
+        CellTooltip:AddLine(L["Custom Nicknames"])
+        CellTooltip:AddLine("|cffffffff"..L["Only visible to me"])
+        CellTooltip:AddDoubleLine("|cffffb5c5"..L["Left-Click"]..":", "|cffffffff"..strlower(L["Edit"]))
+        CellTooltip:AddDoubleLine("|cffffb5c5Shift+"..L["Left-Click"]..":", "|cffffffff"..strlower(L["Delete"]))
+        CellTooltip:Show()
+    end)
+
+    customCB:HookScript("OnLeave", function()
+        CellTooltip:Hide()
+    end)
 
     -- list
     list = Cell:CreateFrame(nil, customNicknamesFrame)
@@ -50,6 +64,18 @@ local function CreateCustomNicknamesFrame()
     newItem = Cell:CreateFrame(nil, list)
     newItem:SetFrameLevel(list:GetFrameLevel() + 10)
     newItem:SetAllPoints(list)
+    newItem:SetScript("OnEvent", function()
+        local name = F:UnitFullName("target")
+        if name then
+            newItem.playerName:SetText(name)
+        end
+    end)
+    newItem:SetScript("OnShow", function()
+        newItem:RegisterEvent("PLAYER_TARGET_CHANGED")
+    end)
+    newItem:SetScript("OnHide", function()
+        newItem:UnregisterEvent("PLAYER_TARGET_CHANGED")
+    end)
 
     newItem.playerName = Cell:CreateEditBox(newItem, 20, 20)
     newItem.playerName:SetPoint("LEFT", 5, 0)
@@ -60,26 +86,19 @@ local function CreateCustomNicknamesFrame()
     newItem.playerName.tip:SetPoint("LEFT", 5, 0)
     newItem.playerName.tip:SetText(L["Name or Name-Server"])
     newItem.playerName:SetScript("OnTextChanged", function(self, userChanged)
-        if userChanged then
-            local text = strtrim(newItem.playerName:GetText())
+        local text = strtrim(newItem.playerName:GetText())
 
-            if text == "" then
-                newItem.playerName.tip:Show()
-                newItem.playerName.isValid = false
-                newItem.playerName.text = nil
-            else
-                newItem.playerName.tip:Hide()
-                if not Cell.vars.nicknameCustoms[text] then
-                    newItem.playerName.isValid = true
-                    newItem.playerName.text = text
-                else
-                    newItem.playerName.isValid = false
-                    newItem.playerName.text = nil
-                end
-            end
-
-            newItem.add:SetEnabled(newItem.playerName.isValid and newItem.nickname.isValid)
+        if text == "" then
+            newItem.playerName.tip:Show()
+            newItem.playerName.isValid = false
+            newItem.playerName.text = nil
+        else
+            newItem.playerName.tip:Hide()
+            newItem.playerName.isValid = true
+            newItem.playerName.text = text
         end
+
+        newItem.add:SetEnabled(newItem.playerName.isValid and newItem.nickname.isValid)
     end)
     newItem.playerName:SetScript("OnTabPressed", function()
         newItem.nickname:SetFocus()
@@ -93,21 +112,19 @@ local function CreateCustomNicknamesFrame()
     newItem.nickname.tip:SetPoint("LEFT", 5, 0)
     newItem.nickname.tip:SetText(L["Nickname"])
     newItem.nickname:SetScript("OnTextChanged", function(self, userChanged)
-        if userChanged then
-            local text = strtrim(newItem.nickname:GetText())
+        local text = strtrim(newItem.nickname:GetText())
 
-            if text == "" then
-                newItem.nickname.tip:Show()
-                newItem.nickname.isValid = false
-                newItem.nickname.text = nil
-            else
-                newItem.nickname.tip:Hide()
-                newItem.nickname.isValid = true
-                newItem.nickname.text = text
-            end
-
-            newItem.add:SetEnabled(newItem.playerName.isValid and newItem.nickname.isValid)
+        if text == "" then
+            newItem.nickname.tip:Show()
+            newItem.nickname.isValid = false
+            newItem.nickname.text = nil
+        else
+            newItem.nickname.tip:Hide()
+            newItem.nickname.isValid = true
+            newItem.nickname.text = text
         end
+
+        newItem.add:SetEnabled(newItem.playerName.isValid and newItem.nickname.isValid)
     end)
     newItem.nickname:SetScript("OnTabPressed", function()
         newItem.playerName:SetFocus()
@@ -116,8 +133,13 @@ local function CreateCustomNicknamesFrame()
     newItem.add = Cell:CreateButton(newItem, L["Add"], "green", {120, 20})
     newItem.add:SetPoint("TOPLEFT", newItem.nickname, "BOTTOMLEFT", 0, -5)
     newItem.add:SetScript("OnClick", function()
-        tinsert(CellDB["nicknames"]["list"], newItem.playerName.text..":"..newItem.nickname.text)
-        Cell:Fire("UpdateNicknames", "list-add", newItem.playerName.text, newItem.nickname.text)
+        if newItem.updateIndex then
+            CellDB["nicknames"]["list"][newItem.updateIndex] = newItem.playerName.text..":"..newItem.nickname.text
+            Cell:Fire("UpdateNicknames", "list-update", newItem.playerName.text, newItem.nickname.text)
+        else
+            tinsert(CellDB["nicknames"]["list"], newItem.playerName.text..":"..newItem.nickname.text)
+            Cell:Fire("UpdateNicknames", "list-add", newItem.playerName.text, newItem.nickname.text)
+        end
         newItem:Hide()
         LoadList()
     end)
@@ -127,6 +149,13 @@ local function CreateCustomNicknamesFrame()
     newItem.cancel:SetScript("OnClick", function()
         newItem:Hide()
     end)
+
+    newItem.tip = newItem:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
+    newItem.tip:SetPoint("LEFT", 5, 0)
+    newItem.tip:SetPoint("RIGHT", -5, 0)
+    newItem.tip:SetPoint("BOTTOM", newItem.playerName, "TOP", 0, 10)
+    newItem.tip:SetText(L["Target a player to autofill the name"])
+    newItem.tip:SetTextColor(0.7, 0.7, 0.7, 1)
 
     -- list scroll
     Cell:CreateScrollFrame(list)
@@ -142,6 +171,8 @@ local function CreateCustomNicknamesFrame()
         newItem.nickname.tip:Show()
         newItem.nickname.isValid = nil
         newItem.add:SetEnabled(false)
+        newItem.add:SetText(L["Add"])
+        newItem.updateIndex = nil
         newItem:Show()
     end)
 end
@@ -160,41 +191,48 @@ LoadList = function()
     for i, v in ipairs(CellDB["nicknames"]["list"]) do
         if not customs[i] then
             customs[i] = Cell:CreateButton(list.scrollFrame.content, "", "accent-hover", {20, 20})
+
             -- playerName
             customs[i].playerName = customs[i]:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
             customs[i].playerName:SetPoint("LEFT", 5, 0)
-            customs[i].playerName:SetWidth(130)
+            customs[i].playerName:SetPoint("RIGHT", customs[i], "CENTER", -5, 0)
             customs[i].playerName:SetJustifyH("LEFT")
             customs[i].playerName:SetWordWrap(false)
+
             -- separator1
             customs[i].separator1 = customs[i]:CreateTexture(nil, "ARTWORK")
-            customs[i].separator1:SetPoint("LEFT", 140, 0)
+            customs[i].separator1:SetPoint("TOP")
+            customs[i].separator1:SetPoint("BOTTOM")
             customs[i].separator1:SetColorTexture(0, 0, 0, 1)
-            P:Size(customs[i].separator1, 1, 20)
+            P:Size(customs[i].separator1, 1, 1)
+
             -- nickname
             customs[i].nickname = customs[i]:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
-            customs[i].nickname:SetPoint("LEFT", 145, 0)
-            customs[i].nickname:SetPoint("RIGHT", -22, 0)
+            customs[i].nickname:SetPoint("LEFT", customs[i], "CENTER", 5, 0)
+            customs[i].nickname:SetPoint("RIGHT", -5, 0)
             customs[i].nickname:SetJustifyH("LEFT")
             customs[i].nickname:SetWordWrap(false)
+
             -- separator2
-            customs[i].separator2 = customs[i]:CreateTexture(nil, "ARTWORK")
-            customs[i].separator2:SetPoint("RIGHT", -17, 0)
-            customs[i].separator2:SetColorTexture(0, 0, 0, 1)
-            P:Size(customs[i].separator2, 1, 20)
+            -- customs[i].separator2 = customs[i]:CreateTexture(nil, "ARTWORK")
+            -- customs[i].separator2:SetPoint("RIGHT", -17, 0)
+            -- customs[i].separator2:SetColorTexture(0, 0, 0, 1)
+            -- P:Size(customs[i].separator2, 1, 20)
+
             -- del
-            customs[i].del = Cell:CreateButton(customs[i], "", "none", {18, 20}, true, true)
-            customs[i].del:SetTexture("Interface\\AddOns\\Cell\\Media\\Icons\\delete", {16, 16}, {"CENTER", 0, 0})
-            customs[i].del:SetPoint("RIGHT")
-            customs[i].del.tex:SetVertexColor(0.6, 0.6, 0.6, 1)
-            customs[i].del:SetScript("OnEnter", function()
-                customs[i]:GetScript("OnEnter")(customs[i])
-                customs[i].del.tex:SetVertexColor(1, 1, 1, 1)
-            end)
-            customs[i].del:SetScript("OnLeave",  function()
-                customs[i]:GetScript("OnLeave")(customs[i])
-                customs[i].del.tex:SetVertexColor(0.6, 0.6, 0.6, 1)
-            end)
+            -- customs[i].del = Cell:CreateButton(customs[i], "", "none", {18, 20}, true, true)
+            -- customs[i].del:SetTexture("Interface\\AddOns\\Cell\\Media\\Icons\\delete", {16, 16}, {"CENTER", 0, 0})
+            -- customs[i].del:SetPoint("RIGHT")
+            -- customs[i].del.tex:SetVertexColor(0.6, 0.6, 0.6, 1)
+            -- customs[i].del:SetScript("OnEnter", function()
+            --     customs[i]:GetScript("OnEnter")(customs[i])
+            --     customs[i].del.tex:SetVertexColor(1, 1, 1, 1)
+            -- end)
+            -- customs[i].del:SetScript("OnLeave",  function()
+            --     customs[i]:GetScript("OnLeave")(customs[i])
+            --     customs[i].del.tex:SetVertexColor(0.6, 0.6, 0.6, 1)
+            -- end)
+
             -- edit
             -- customs[i].edit = Cell:CreateButton(customs[i], "", "none", {18, 20}, true, true)
             -- customs[i].edit:SetPoint("RIGHT", customs[i].del, "LEFT", 1, 0)
@@ -214,10 +252,27 @@ LoadList = function()
         customs[i].playerName:SetText(playerName)
         customs[i].nickname:SetText(nickname)
 
-        customs[i].del:SetScript("OnClick", function()
-            tremove(CellDB["nicknames"]["list"], i)
-            Cell:Fire("UpdateNicknames", "list-delete", playerName)
-            LoadList()
+        -- customs[i].del:SetScript("OnClick", function()
+        --     tremove(CellDB["nicknames"]["list"], i)
+        --     Cell:Fire("UpdateNicknames", "list-delete", playerName)
+        --     LoadList()
+        -- end)
+
+        customs[i]:SetScript("OnClick", function(self, button)
+            if IsShiftKeyDown() then
+                tremove(CellDB["nicknames"]["list"], i)
+                Cell:Fire("UpdateNicknames", "list-delete", playerName)
+                LoadList()
+            else
+                newItem.playerName:SetText(playerName)
+                newItem.playerName.isValid = true
+                newItem.nickname:SetText(nickname)
+                newItem.nickname.isValid = true
+                newItem.add:SetEnabled(true)
+                newItem.add:SetText(L["Update"])
+                newItem.updateIndex = i
+                newItem:Show()
+            end
         end)
 
         customs[i]:SetParent(list.scrollFrame.content)

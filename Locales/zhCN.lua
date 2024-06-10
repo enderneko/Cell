@@ -136,6 +136,7 @@ L["Awesome!"] = "太棒了！"
 L["Sync Nicknames with Others"] = "与他人同步昵称"
 L["Custom Nicknames"] = "自定义昵称"
 L["Only visible to me"] = "仅对自己可见"
+L["Target a player to autofill the name"] = "选中玩家可以自动填入名字"
 
 -------------------------------------------------
 -- appearance

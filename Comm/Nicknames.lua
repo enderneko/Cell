@@ -185,7 +185,7 @@ local function UpdateNicknames(which, value1, value2)
     end
 
     -- list
-    if which == "list-add" then
+    if which == "list-add" or which == "list-update" then
         Cell.vars.nicknameCustoms[value1] = value2
         UpdateName(value1)
     end
