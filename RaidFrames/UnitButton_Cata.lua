@@ -343,6 +343,8 @@ local function HandleIndicators(b)
             B:UpdatePlayerRaidIcon(b, t["enabled"])
         elseif t["indicatorName"] == "targetRaidIcon" then
             B:UpdateTargetRaidIcon(b, t["enabled"])
+        elseif t["indicatorName"] == "readyCheckIcon" then
+            B:UpdateReadyCheckIcon(b, t["enabled"])
         else
             UpdateIndicatorParentVisibility(b, t["indicatorName"], t["enabled"])
         end
@@ -488,6 +490,10 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
             elseif indicatorName == "targetRaidIcon" then
                 F:IterateAllUnitButtons(function(b)
                     B:UpdateTargetRaidIcon(b, value)
+                end, true)
+            elseif indicatorName == "readyCheckIcon" then
+                F:IterateAllUnitButtons(function(b)
+                    B:UpdateReadyCheckIcon(b, value)
                 end, true)
             elseif indicatorName == "nameText" then
                 F:IterateAllUnitButtons(function(b)
@@ -1613,7 +1619,7 @@ local function UnitButton_UpdateReadyCheck(self)
     local status = GetReadyCheckStatus(unit)
     self.states.readyCheckStatus = status
 
-    if status then
+    if enabledIndicators["readyCheckIcon"] and status then
         -- self.widgets.readyCheckHighlight:SetVertexColor(unpack(READYCHECK_STATUS[status].c))
         -- self.widgets.readyCheckHighlight:Show()
         self.indicators.readyCheckIcon:SetStatus(status)
@@ -1624,6 +1630,8 @@ local function UnitButton_UpdateReadyCheck(self)
 end
 
 local function UnitButton_FinishReadyCheck(self)
+    if not enabledIndicators["readyCheckIcon"] then return end
+
     if self.states.readyCheckStatus == "waiting" then
         -- self.widgets.readyCheckHighlight:SetVertexColor(unpack(READYCHECK_STATUS.notready.c))
         self.indicators.readyCheckIcon:SetStatus("notready")
@@ -2412,20 +2420,21 @@ local function UnitButton_RegisterEvents(self)
         if enabledIndicators["playerRaidIcon"] then
             self:RegisterEvent("RAID_TARGET_UPDATE")
         end
-    else
-        self:RegisterEvent("RAID_TARGET_UPDATE")
-    end
-    if Cell.loaded then
         if enabledIndicators["targetRaidIcon"] then
             self:RegisterEvent("UNIT_TARGET")
         end
+        if enabledIndicators["readyCheckIcon"] then
+            self:RegisterEvent("READY_CHECK")
+            self:RegisterEvent("READY_CHECK_FINISHED")
+            self:RegisterEvent("READY_CHECK_CONFIRM")
+        end
     else
+        self:RegisterEvent("RAID_TARGET_UPDATE")
         self:RegisterEvent("UNIT_TARGET")
+        self:RegisterEvent("READY_CHECK")
+        self:RegisterEvent("READY_CHECK_FINISHED")
+        self:RegisterEvent("READY_CHECK_CONFIRM")
     end
-
-    self:RegisterEvent("READY_CHECK")
-    self:RegisterEvent("READY_CHECK_FINISHED")
-    self:RegisterEvent("READY_CHECK_CONFIRM")
 
     -- self:RegisterEvent("UNIT_PHASE") -- warmode, traditional sources of phasing such as progress through quest chains
     -- self:RegisterEvent("PARTY_MEMBER_DISABLE")
@@ -3174,6 +3183,21 @@ function B:UpdateTargetRaidIcon(button, enabled)
         button:RegisterEvent("UNIT_TARGET")
     else
         button:UnregisterEvent("UNIT_TARGET")
+    end
+end
+
+-- readyCheckIcon
+function B:UpdateReadyCheckIcon(button, enabled)
+    if not button:IsShown() then return end
+    UnitButton_UpdateReadyCheck(button)
+    if enabled then
+        button:RegisterEvent("READY_CHECK")
+        button:RegisterEvent("READY_CHECK_FINISHED")
+        button:RegisterEvent("READY_CHECK_CONFIRM")
+    else
+        button:UnregisterEvent("READY_CHECK")
+        button:UnregisterEvent("READY_CHECK_FINISHED")
+        button:UnregisterEvent("READY_CHECK_CONFIRM")
     end
 end
 
