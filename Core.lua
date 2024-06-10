@@ -116,7 +116,9 @@ local function PreUpdateLayout()
         F:UpdateLayout("arena", true)
     else
         Cell.vars.inBattleground = false
-        if Cell.vars.groupType == "solo" or Cell.vars.groupType == "party" then
+        if Cell.vars.groupType == "solo" then
+            F:UpdateLayout("solo", true)
+        elseif Cell.vars.groupType == "party" then
             F:UpdateLayout("party", true)
         else -- raid
             if Cell.vars.inMythic then

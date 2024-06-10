@@ -2937,6 +2937,19 @@ function F:Revise()
                 end
             end
         end
+
+        -- add "solo" for layout auto switch
+        if Cell.isRetail then
+            for role, t in pairs(CellDB["layoutAutoSwitch"]) do
+                for _, st in pairs(t) do
+                    if not st.solo then st.solo = st.party end
+                end
+            end
+        else
+            for _, t in pairs(CellCharacterDB["layoutAutoSwitch"]) do
+                if not t.solo then t.solo = t.party end
+            end
+        end
     end
 
     -- ----------------------------------------------------------------------- --

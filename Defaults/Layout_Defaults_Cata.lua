@@ -455,6 +455,7 @@ Cell.defaults.layout = {
 }
 
 Cell.defaults.layoutAutoSwitch = {
+    ["solo"] = "default",
     ["party"] = "default",
     ["raid_outdoor"] = "default",
     ["raid10"] = "default",
