@@ -1109,7 +1109,7 @@ end
 -- CreateAura_Icons
 -------------------------------------------------
 local function Icons_UpdateSize(icons, numAuras)
-    if not (icons.width and icons.orientation and icons.spacingX) then return end -- not init
+    if not (icons.width and icons.orientation) then return end -- not init
 
     if numAuras then -- call from I.CheckCustomIndicators or preview
         for i = numAuras + 1, icons.maxNum do
@@ -1151,7 +1151,6 @@ local function Icons_SetOrientation(icons, orientation)
 
     local anchor = icons:GetPoint()
     assert(anchor, "[indicator] SetPoint must be called before SetOrientation")
-    assert(icons.spacingX, "[indicator] spacing not set")
 
     icons.isHorizontal = not strfind(orientation, "top")
 
@@ -1308,6 +1307,8 @@ function I.CreateAura_Icons(name, parent, num)
     icons.indicatorType = "icons"
     icons.maxNum = num
     icons.numPerLine = num
+    icons.spacingX = 0
+    icons.spacingY = 0
 
     icons._SetSize = icons.SetSize
     icons.SetSize = Icons_SetSize
