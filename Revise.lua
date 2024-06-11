@@ -2948,7 +2948,7 @@ function F:Revise()
         end
     end
 
-    if CellCharacterDB and CellCharacterDB["revise"] and charaDbRevision < 228 then
+    if CellCharacterDB and CellCharacterDB["revise"] and charaDbRevision < 229 then
         for _, t in pairs(CellCharacterDB["layoutAutoSwitch"]) do
             if not t.solo then t.solo = t.party end
         end

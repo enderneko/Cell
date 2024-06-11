@@ -87,6 +87,12 @@ select(2, ...).L = setmetatable({
         <p>(Retail) Enable "Always Update Buffs/Debuffs" in General tab, if indicators do not update correctly.</p>
         <br/>
 
+        <h1>r229-release (Jun 11, 2024, 20:11 GMT+8)</h1>
+        <p>* Bug fixes.</p>
+        <p>* Updated zhTW.</p>
+        <p>+ Added ptBR (by cathtail).</p>
+        <br/>
+
         <h1>r228-release (Jun 10, 2024, 23:38 GMT+8)</h1>
         <h2>Click-Castings</h2>
         <p>* Fixed Click-Castings issues, some settings may be "Invalid", just re-set them.</p>
