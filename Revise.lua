@@ -2945,10 +2945,12 @@ function F:Revise()
                     if not st.solo then st.solo = st.party end
                 end
             end
-        else
-            for _, t in pairs(CellCharacterDB["layoutAutoSwitch"]) do
-                if not t.solo then t.solo = t.party end
-            end
+        end
+    end
+
+    if CellCharacterDB and CellCharacterDB["revise"] and charaDbRevision < 229 then
+        for _, t in pairs(CellCharacterDB["layoutAutoSwitch"]) do
+            if not t.solo then t.solo = t.party end
         end
     end
 
