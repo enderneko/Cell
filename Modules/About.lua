@@ -76,6 +76,7 @@ local function CreateTranslatorsPane()
     local translatorsPane = Cell:CreateTitledPane(aboutTab, L["Translators"], 205, 120)
     translatorsPane:SetPoint("TOPLEFT", aboutTab, "TOPLEFT", 5, -235)
 
+    -- zhTW
     translatorsTextCN = translatorsPane:CreateFontString(nil, "OVERLAY")
     translatorsTextCN.font = UNIT_NAME_FONT_CHINESE
     translatorsTextCN.size = 13
@@ -87,21 +88,31 @@ local function CreateTranslatorsPane()
     translatorsTextCN:SetJustifyH("LEFT")
     translatorsTextCN:SetText("zhTW: RainbowUI, BNS333, Mili")
 
+    -- koKR
     translatorsTextKR = translatorsPane:CreateFontString(nil, "OVERLAY")
     translatorsTextKR.font = UNIT_NAME_FONT_KOREAN
     translatorsTextKR.size = 12
     UpdateFont(translatorsTextKR)
 
-    if translatorsTextCN:GetNumLines() == 1 then
-        translatorsTextKR:SetPoint("TOPLEFT", 5, -45)
-        translatorsTextKR:SetPoint("TOPRIGHT", -5, -45)
-    else
-        translatorsTextKR:SetPoint("TOPLEFT", 5, -73)
-        translatorsTextKR:SetPoint("TOPRIGHT", -5, -73)
-    end
+    translatorsTextKR:SetPoint("LEFT", 5, 0)
+    translatorsTextKR:SetPoint("RIGHT", -5, 0)
+    translatorsTextKR:SetPoint("TOP", translatorsTextCN, "BOTTOM", 0, -5)
     translatorsTextKR:SetSpacing(5)
     translatorsTextKR:SetJustifyH("LEFT")
     translatorsTextKR:SetText("koKR: naragok79, netaras, 부패질")
+
+    -- ptBR
+    translatorsTextPT = translatorsPane:CreateFontString(nil, "OVERLAY")
+    translatorsTextPT.font = UNIT_NAME_FONT_ROMAN
+    translatorsTextPT.size = 12
+    UpdateFont(translatorsTextPT)
+
+    translatorsTextPT:SetPoint("LEFT", 5, 0)
+    translatorsTextPT:SetPoint("RIGHT", -5, 0)
+    translatorsTextPT:SetPoint("TOP", translatorsTextKR, "BOTTOM", 0, -5)
+    translatorsTextPT:SetSpacing(5)
+    translatorsTextPT:SetJustifyH("LEFT")
+    translatorsTextPT:SetText("ptBR: cathtail")
 end
 
 -------------------------------------------------
