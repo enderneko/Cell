@@ -3291,7 +3291,7 @@ function addon:CreateBindingListButton(parent, modifier, bindKey, bindType, bind
     spellIcon:Hide()
 
     function b:ShowSpellIcon(spell)
-        spellIcon:SetTexture(GetSpellTexture(spell) or 134400)
+        spellIcon:SetTexture(C_SPELL.GetSpellTexture(spell) or 134400)
         spellIconBg:Show()
         spellIcon:Show()
         -- actionGrid.text:ClearAllPoints()
