@@ -11,10 +11,7 @@
 ## X-Wago-ID: qv63LLKb
 ## X-WoWI-ID: 26244
 
-Locales\enUS.lua
-Locales\zhCN.lua
-Locales\zhTW.lua
-Locales\koKR.lua
+Locales\LoadLocales.xml
 
 Libs\LoadLibs.xml
 
