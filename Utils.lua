@@ -1559,7 +1559,7 @@ end
 -- end
 
 local function UnitInSpellRange(spellIndex, unit)
-    if not spellIndex then return end
+    if not IsSpellInRange or not spellIndex then return end
     if Enum and Enum.SpellBookSpellBank then
         return IsSpellInRange(spellIndex, unit) == 1
     end
