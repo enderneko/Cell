@@ -445,7 +445,7 @@ local function ApplyClickCastings(b)
             b:SetAttribute(bindKey, t[2])
         end
 
-        if Cell.isTWW then
+        if Cell.isTWW and t[2] == "spell" then
             local spellName = F:GetSpellNameAndIcon(t[3]) or ""
             local attr = string.gsub(bindKey, "type", t[2])
             b:SetAttribute(attr, spellName)
@@ -482,7 +482,7 @@ local function ApplyClickCastings(b)
                     end
                 end
             end
-            
+
             if (alwaysTargeting == "left" and bindKey == "type1") or alwaysTargeting == "any" then
                 b:SetAttribute(bindKey, "macro")
                 local attr = string.gsub(bindKey, "type", "macrotext")
@@ -591,7 +591,8 @@ local function CreateTargetingPane()
     targetingDropdown = Cell:CreateDropdown(targetingPane, 195)
     targetingDropdown:SetPoint("TOPLEFT", targetingPane, "TOPLEFT", 5, -27)
 
-    targetingDropdown:SetItems({
+    
+    local items = {
         {
             ["text"] = L["Disabled"],
             ["value"] = "disabled",
@@ -601,8 +602,11 @@ local function CreateTargetingPane()
                 alwaysTargeting = "disabled"
                 Cell:Fire("UpdateClickCastings", true)
             end,
-        },
-        {
+        }
+    }
+    
+    if not Cell.isTWW then
+        table.insert(items, {
             ["text"] = L["Left Spell"],
             ["value"] = "left",
             ["onClick"] = function()
@@ -611,8 +615,8 @@ local function CreateTargetingPane()
                 alwaysTargeting = "left"
                 Cell:Fire("UpdateClickCastings", true)
             end,
-        },
-        {
+        })
+        table.insert(items, {
             ["text"] = L["Any Spells"],
             ["value"] = "any",
             ["onClick"] = function()
@@ -621,8 +625,9 @@ local function CreateTargetingPane()
                 alwaysTargeting = "any"
                 Cell:Fire("UpdateClickCastings", true)
             end,
-        },
-    })
+        })
+    end
+    targetingDropdown:SetItems(items)
     Cell:SetTooltips(targetingDropdown, "ANCHOR_TOPLEFT", 0, 2, L["Always Targeting"], L["Only available for Spells"])
 end
 
@@ -638,32 +643,40 @@ local function CreateSmartResPane()
     smartResDropdown = Cell:CreateDropdown(smartResPane, 195)
     smartResDropdown:SetPoint("TOPLEFT", smartResPane, "TOPLEFT", 5, -27)
 
-    smartResDropdown:SetItems({
+    local items = {
         {
             ["text"] = L["Disabled"],
             ["value"] = "disabled",
             ["onClick"] = function()
                 Cell.vars.clickCastings["smartResurrection"] = "disabled"
                 Cell:Fire("UpdateClickCastings", true)
-            end
-        },
-        {
-            ["text"] = L["Normal"],
-            ["value"] = "normal",
-            ["onClick"] = function()
-                Cell.vars.clickCastings["smartResurrection"] = "normal"
-                Cell:Fire("UpdateClickCastings", true)
-            end
-        },
-        {
-            ["text"] = L["Normal + Combat Res"],
-            ["value"] = "normal+combat",
-            ["onClick"] = function()
-                Cell.vars.clickCastings["smartResurrection"] = "normal+combat"
-                Cell:Fire("UpdateClickCastings", true)
-            end
-        },
-    })
+            end,
+        }
+    }
+    if not Cell.isTWW then
+        table.insert(items,
+            {
+                ["text"] = L["Normal"],
+                ["value"] = "normal",
+                ["onClick"] = function()
+                    Cell.vars.clickCastings["smartResurrection"] = "normal"
+                    Cell:Fire("UpdateClickCastings", true)
+                end,
+            }
+        )
+
+        table.insert(items, {
+                ["text"] = L["Normal + Combat Res"],
+                ["value"] = "normal+combat",
+                ["onClick"] = function()
+                    Cell.vars.clickCastings["smartResurrection"] = "normal+combat"
+                    Cell:Fire("UpdateClickCastings", true)
+                end,
+            }
+        )
+            
+    end
+    smartResDropdown:SetItems(items)
     Cell:SetTooltips(smartResDropdown, "ANCHOR_TOPLEFT", 0, 2, L["Smart Resurrection"], L["Replace click-castings of Spell type with resurrection spells on dead units"])
 end
 
@@ -746,8 +759,10 @@ local function ShowTypesMenu(index, b)
                 CheckChanges()
                 b:HideSpellIcon()
             end,
-        },
-        {
+        }
+    }
+    if not Cell.isTWW then
+        table.insert(items, {
             ["text"] = L["Macro"],
             ["onClick"] = function()
                 b.typeGrid:SetText(L["Macro"])
@@ -768,31 +783,31 @@ local function ShowTypesMenu(index, b)
                 CheckChanges()
                 b:HideSpellIcon()
             end,
-        },
-        {
-            ["text"] = L["Spell"],
-            ["onClick"] = function()
-                b.typeGrid:SetText(L["Spell"])
-                if clickCastingsTab.popupEditBox then clickCastingsTab.popupEditBox:Hide() end
+        })
+    end
+    table.insert(items, {
+        ["text"] = L["Spell"],
+        ["onClick"] = function()
+            b.typeGrid:SetText(L["Spell"])
+            if clickCastingsTab.popupEditBox then clickCastingsTab.popupEditBox:Hide() end
 
-                changed[index] = changed[index] or {b}
-                -- check type
-                if b.bindType ~= "spell" then
-                    changed[index]["bindType"] = "spell"
-                    changed[index]["bindAction"] = ""
-                    b.actionGrid:SetText("")
-                    b:HideSpellIcon()
-                else
-                    changed[index]["bindType"] = nil
-                    changed[index]["bindAction"] = nil
-                    b.actionGrid:SetText(b.bindActionDisplay)
-                    b:ShowSpellIcon(b.bindAction)
-                end
-                CheckChanged(index, b)
-                CheckChanges()
-            end,
-        },
-    }
+            changed[index] = changed[index] or {b}
+            -- check type
+            if b.bindType ~= "spell" then
+                changed[index]["bindType"] = "spell"
+                changed[index]["bindAction"] = ""
+                b.actionGrid:SetText("")
+                b:HideSpellIcon()
+            else
+                changed[index]["bindType"] = nil
+                changed[index]["bindAction"] = nil
+                b.actionGrid:SetText(b.bindActionDisplay)
+                b:ShowSpellIcon(b.bindAction)
+            end
+            CheckChanged(index, b)
+            CheckChanges()
+        end,
+    })
 
     menu:SetItems(items)
     P:ClearPoints(menu)
