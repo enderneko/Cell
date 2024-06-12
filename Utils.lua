@@ -794,7 +794,10 @@ local blizzardFrames = {
 function F:IterateAllUnitButtons(func, updateCurrentGroupOnly, updateQuickAssist, updateBlizzardFrames)
     if updateBlizzardFrames then
         for _, b in pairs(blizzardFrames) do
-            func(_G[b])
+            local frame = _G[b]
+            if frame then
+                func(frame)
+            end
         end
     end
         -- solo
