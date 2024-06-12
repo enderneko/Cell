@@ -920,7 +920,7 @@ local function RegisterForDrag(b)
     b:SetScript("OnDragStop", function(self)
         self:SetAlpha(1)
         dragged:Hide()
-        local newB = GetMouseFoci()
+        local newB = F:GetMouseFoci()
         -- move on a debuff button & not on currently moving button & not disabled
         if newB:GetParent() == debuffListFrame.scrollFrame.content and newB ~= self and newB.enabled then
             local temp, from, to = self, self.index, newB.index

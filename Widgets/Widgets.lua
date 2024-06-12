@@ -3226,7 +3226,7 @@ local function CreateGrid(parent, text, width)
         parent:SetFrameStrata("LOW")
         -- self:Hide() --! Hide() will cause OnDragStop trigger TWICE!!!
         C_Timer.After(0.05, function()
-            local b = GetMouseFoci()
+            local b = F:GetMouseFoci()
             if b then b = b:GetParent() end
             F:MoveClickCastings(parent.clickCastingIndex, b and b.clickCastingIndex)
         end)

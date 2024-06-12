@@ -2097,3 +2097,11 @@ function F:OverrideLGF(override)
         WeakAuras.GetUnitFrame = Cell.GetUnitFrame
     end
 end
+
+function F:GetMouseFoci()
+    if Cell.isTWW then
+        return GetMouseFoci()
+    else
+        return GetMouseFocus()
+    end
+end
