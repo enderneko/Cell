@@ -335,6 +335,8 @@ local function CreatePreviewButtons()
     previewButton2:SetScript("OnEnter", nil)
     previewButton2:SetScript("OnLeave", nil)
     previewButton2:SetScript("OnUpdate", nil)
+    previewButton2:SetScript("OnShow", nil)
+    previewButton2:SetScript("OnHide", nil)
     previewButton2:Show()
 
     previewButton2.widgets.powerBar:SetMinMaxValues(0, 1)
@@ -480,8 +482,10 @@ local function UpdatePreviewButton()
     previewButton.widgets.damageFlashTex:SetTexture(Cell.vars.texture)
 
     previewButton2.widgets.healthBar:SetStatusBarTexture(Cell.vars.texture)
+    previewButton2.widgets.healthBar:GetStatusBarTexture():SetDrawLayer("ARTWORK", -7) --! VERY IMPORTANT
     previewButton2.widgets.healthBarLoss:SetTexture(Cell.vars.texture)
     previewButton2.widgets.powerBar:SetStatusBarTexture(Cell.vars.texture)
+    previewButton2.widgets.powerBar:GetStatusBarTexture():SetDrawLayer("ARTWORK", -7) --! VERY IMPORTANT
     previewButton2.widgets.powerBarLoss:SetTexture(Cell.vars.texture)
     previewButton2.widgets.incomingHeal:SetTexture(Cell.vars.texture)
     previewButton2.widgets.damageFlashTex:SetTexture(Cell.vars.texture)
