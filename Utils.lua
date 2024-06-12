@@ -778,9 +778,26 @@ end
 -------------------------------------------------
 local combinedHeader = "CellRaidFrameHeader0"
 local separatedHeaders = {"CellRaidFrameHeader1", "CellRaidFrameHeader2", "CellRaidFrameHeader3", "CellRaidFrameHeader4", "CellRaidFrameHeader5", "CellRaidFrameHeader6", "CellRaidFrameHeader7", "CellRaidFrameHeader8"}
-
-function F:IterateAllUnitButtons(func, updateCurrentGroupOnly, updateQuickAssist)
-    -- solo
+local blizzardFrames = {
+    "PlayerFrame", 
+    "TargetFrame", 
+    "PetFrame", 
+    "PartyMemberFrame1",
+    "PartyMemberFrame2",
+    "PartyMemberFrame3",
+    "PartyMemberFrame4",
+    "PartyMemberFrame1PetFrame",
+    "PartyMemberFrame2PetFrame",
+    "PartyMemberFrame3PetFrame",
+    "PartyMemberFrame4PetFrame",
+}
+function F:IterateAllUnitButtons(func, updateCurrentGroupOnly, updateQuickAssist, updateBlizzardFrames)
+    if updateBlizzardFrames then
+        for _, b in pairs(blizzardFrames) do
+            func(_G[b])
+        end
+    end
+        -- solo
     if not updateCurrentGroupOnly or (updateCurrentGroupOnly and Cell.vars.groupType == "solo") then
         for _, b in pairs(Cell.unitButtons.solo) do
             func(b)
