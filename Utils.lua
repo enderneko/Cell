@@ -779,9 +779,9 @@ end
 local combinedHeader = "CellRaidFrameHeader0"
 local separatedHeaders = {"CellRaidFrameHeader1", "CellRaidFrameHeader2", "CellRaidFrameHeader3", "CellRaidFrameHeader4", "CellRaidFrameHeader5", "CellRaidFrameHeader6", "CellRaidFrameHeader7", "CellRaidFrameHeader8"}
 local blizzardFrames = {
-    "PlayerFrame", 
-    "TargetFrame", 
-    "PetFrame", 
+    "PlayerFrame",
+    "TargetFrame",
+    "PetFrame",
     "PartyMemberFrame1",
     "PartyMemberFrame2",
     "PartyMemberFrame3",
