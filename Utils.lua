@@ -1596,9 +1596,9 @@ if Cell.isRetail then
         else
             if UnitCanAssist("player", unit) or UnitCanCooperate("player", unit) then
                 if UnitIsDead(unit) then
-                    return UnitInSpellRange(spell_dead, unit) -- 40y
+                    return UnitInSpellRange(spell_dead, unit) -- resurrection range, need separately for evoker
                 else
-                    return UnitInSpellRange(spell_friend, unit) -- 25/30y
+                    return UnitInSpellRange(spell_friend, unit) -- normal heal range
                 end
             elseif UnitCanAttack("player", unit) then
                 if spell_harm then
