@@ -16,7 +16,7 @@ Cell.isVanilla = WOW_PROJECT_ID == WOW_PROJECT_CLASSIC
 -- Cell.isWrath = WOW_PROJECT_ID == WOW_PROJECT_WRATH_CLASSIC and LE_EXPANSION_LEVEL_CURRENT == LE_EXPANSION_WRATH_OF_THE_LICH_KING
 Cell.isWrath = WOW_PROJECT_ID == WOW_PROJECT_WRATH_CLASSIC
 Cell.isCata = WOW_PROJECT_ID == WOW_PROJECT_CATACLYSM_CLASSIC
-
+Cell.isTWW = LE_EXPANSION_LEVEL_CURRENT == LE_EXPANSION_WAR_WITHIN
 -------------------------------------------------
 -- class
 -------------------------------------------------
@@ -1935,38 +1935,6 @@ function F:GetInstanceName()
 
         return ""
     end
-end
-
--------------------------------------------------
--- spell description
--------------------------------------------------
--- https://wow.gamepedia.com/UIOBJECT_GameTooltip
--- local function EnumerateTooltipLines_helper(...)
---     for i = 1, select("#", ...) do
---        local region = select(i, ...)
---        if region and region:GetObjectType() == "FontString" then
---           local text = region:GetText() -- string or nil
---           print(region:GetName(), text)
---        end
---     end
--- end
-
--- https://wowpedia.fandom.com/wiki/Patch_10.0.2/API_changes
-local lines = {}
-function F:GetSpellInfo(spellId)
-    wipe(lines)
-
-    local name, _, icon = GetSpellInfo(spellId)
-    if not name then return end
-
-    local data = C_TooltipInfo.GetSpellByID(spellId)
-    for i, line in ipairs(data.lines) do
-        TooltipUtil.SurfaceArgs(line)
-        -- line.leftText
-        -- line.rightText
-    end
-
-    return name, icon, table.concat(lines, "\n")
 end
 
 -------------------------------------------------

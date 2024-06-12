@@ -399,6 +399,8 @@ local function ClearClickCastings(b)
         b:SetAttribute(bindKey, nil)
         local attr = string.gsub(bindKey, "type", "spell")
         b:SetAttribute(attr, nil)
+        attr = string.gsub(bindKey, "type", "macro")
+        b:SetAttribute(attr, nil)
         attr = string.gsub(bindKey, "type", "macrotext")
         b:SetAttribute(attr, nil)
         -- if t[2] == "spell" then
@@ -443,7 +445,11 @@ local function ApplyClickCastings(b)
             b:SetAttribute(bindKey, t[2])
         end
 
-        if t[2] == "spell" then
+        if Cell.isTWW then
+            local spellName = F:GetSpellNameAndIcon(t[3]) or ""
+            local attr = string.gsub(bindKey, "type", t[2])
+            b:SetAttribute(attr, spellName)
+        elseif t[2] == "spell" then
             local spellName = F:GetSpellNameAndIcon(t[3]) or ""
 
             -- NOTE: spell 在无效/过远的目标上会处于“等待选中目标”的状态，即鼠标指针有一圈灰色材质。用 macrotext 可以解决这个问题
@@ -476,16 +482,22 @@ local function ApplyClickCastings(b)
                     end
                 end
             end
-
+            
             if (alwaysTargeting == "left" and bindKey == "type1") or alwaysTargeting == "any" then
-                b:SetAttribute(bindKey, "spell")
-                local attr = string.gsub(bindKey, "type", "spell")
-                b:SetAttribute(attr, spellName)
+                b:SetAttribute(bindKey, "macro")
+                local attr = string.gsub(bindKey, "type", "macrotext")
+                b:SetAttribute(attr, "/tar ["..unit.."]\n/cast ["..unit..condition.."] "..spellName..sMaRt)
                 if not Cell.isRetail then UpdatePlaceholder(b, attr) end
             else
-                local attr = string.gsub(bindKey, "type", "spell")
-                b:SetAttribute(attr, spellName)
-                if not Cell.isRetail then UpdatePlaceholder(b, attr) end
+                -- local attr = string.gsub(bindKey, "type", "spell")
+                -- b:SetAttribute(attr, spellName)
+                b:SetAttribute(bindKey, "macro")
+                local attr = string.gsub(bindKey, "type", "macrotext")
+                if F:IsSoulstone(spellName) then
+                    b:SetAttribute(attr, "/tar ["..unit.."]\n/cast ["..unit.."] "..spellName.."\n/targetlasttarget")
+                else
+                    b:SetAttribute(attr, "/cast ["..unit..condition.."] "..spellName..sMaRt)
+                end
             end
         elseif t[2] == "macro" then
             local attr = string.gsub(bindKey, "type", "macrotext")

@@ -410,7 +410,7 @@ local resurrection_click_castings = {
 -- do
 --     for class, t in pairs(resurrection_click_castings) do
 --         for _, clickCasting in pairs(t) do
---             clickCasting[3] = GetSpellInfo(clickCasting[3])
+--             clickCasting[3] = F:GetSpellNameAndIcon(clickCasting[3])
 --         end
 --     end
 -- end
