@@ -491,7 +491,7 @@ local function RaidFrame_UpdateLayout(layout, which)
         if not which or which == "header" or which == "sort" then
             if layout["main"]["sortByRole"] then
                 for i = 1, 8 do
-                    separatedHeaders[i]:SetAttribute("sortMethod", "INDEX")
+                    separatedHeaders[i]:SetAttribute("sortMethod", "NAME")
                     local order = table.concat(layout["main"]["roleOrder"], ",")..",NONE"
                     separatedHeaders[i]:SetAttribute("groupingOrder", order)
                     separatedHeaders[i]:SetAttribute("groupBy", "ASSIGNEDROLE")
