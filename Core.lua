@@ -24,8 +24,8 @@ Cell.MIN_INDICATORS_VERSION = 228
 Cell.MIN_DEBUFFS_VERSION = 228
 Cell.MIN_QUICKASSIST_VERSION = 227
 
---[==[@debug@
-local debugMode = true
+--@debug@
+-- local debugMode = true
 --@end-debug@]==]
 function F:Debug(arg, ...)
     if debugMode then

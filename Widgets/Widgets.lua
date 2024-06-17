@@ -3290,13 +3290,25 @@ function addon:CreateBindingListButton(parent, modifier, bindKey, bindType, bind
     spellIcon:SetTexCoord(0.08, 0.92, 0.08, 0.92)
     spellIcon:Hide()
 
-    function b:ShowSpellIcon(spell)
-        spellIcon:SetTexture(select(2, F:GetSpellNameAndIcon(spell)) or 134400)
+    function b:ShowIcon(texture)
+        spellIcon:SetTexture(texture or 134400)
         spellIconBg:Show()
         spellIcon:Show()
         -- actionGrid.text:ClearAllPoints()
         actionGrid.text:SetPoint("LEFT", spellIconBg, "RIGHT", P:Scale(2), 0)
         -- actionGrid.text:SetPoint("RIGHT", P:Scale(-5), 0)
+    end
+
+    function b:ShowSpellIcon(spell)
+        b:ShowIcon(select(2, F:GetSpellNameAndIcon(spell)))
+    end
+
+    function b:ShowItemIcon(itemslot)
+        b:ShowIcon(GetInventoryItemTexture("player", itemslot))
+    end
+
+    function b:ShowMacroIcon(macro)
+        b:ShowIcon(select(2, GetMacroInfo(macro)))
     end
 
     function b:HideSpellIcon()

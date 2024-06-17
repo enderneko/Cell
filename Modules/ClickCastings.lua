@@ -89,9 +89,15 @@ local function EncodeDB(modifier, bindKey, bindType, bindAction)
     if bindType == "spell" then
         attrType = "spell"
         attrAction = bindAction
-
     elseif bindType == "macro" then
         attrType = "macro"
+        attrAction = bindAction
+    elseif bindType == "click" then
+        attrType = "click"
+        attrAction = bindAction
+
+    elseif bindType == "item" then
+        attrType = "item"
         attrAction = bindAction
 
     else -- general
@@ -403,6 +409,10 @@ local function ClearClickCastings(b)
         b:SetAttribute(attr, nil)
         attr = string.gsub(bindKey, "type", "macrotext")
         b:SetAttribute(attr, nil)
+        attr = string.gsub(bindKey, "type", "click")
+        b:SetAttribute(attr, nil)
+        attr = string.gsub(bindKey, "type", "item")
+        b:SetAttribute(attr, nil)
         -- if t[2] == "spell" then
         --     local attr = string.gsub(bindKey, "type", "spell")
         --     b:SetAttribute(attr, nil)
@@ -500,7 +510,15 @@ local function ApplyClickCastings(b)
                 end
             end
         elseif t[2] == "macro" then
-            local attr = string.gsub(bindKey, "type", "macrotext")
+            local attr = ""
+            if Cell.isTWW then
+                attr = string.gsub(bindKey, "type", "macro")
+            else
+                attr = string.gsub(bindKey, "type", "macrotext")
+            end
+            b:SetAttribute(attr, t[3])
+        else
+            local attr = string.gsub(bindKey, "type", t[2])
             b:SetAttribute(attr, t[3])
         end
     end
@@ -540,7 +558,7 @@ local function UpdateClickCastings(noReload)
 
         -- load db and set attribute
         ApplyClickCastings(b)
-    end, false, true)
+    end, false, true, true)
     previousClickCastings = F:Copy(clickCastingTable)
 end
 Cell:RegisterCallback("UpdateClickCastings", "UpdateClickCastings", UpdateClickCastings)
@@ -606,7 +624,7 @@ local function CreateTargetingPane()
     }
     
     if not Cell.isTWW then
-        table.insert(items, {
+        tinsert(items, {
             ["text"] = L["Left Spell"],
             ["value"] = "left",
             ["onClick"] = function()
@@ -616,7 +634,7 @@ local function CreateTargetingPane()
                 Cell:Fire("UpdateClickCastings", true)
             end,
         })
-        table.insert(items, {
+        tinsert(items, {
             ["text"] = L["Any Spells"],
             ["value"] = "any",
             ["onClick"] = function()
@@ -654,7 +672,7 @@ local function CreateSmartResPane()
         }
     }
     if not Cell.isTWW then
-        table.insert(items,
+        tinsert(items,
             {
                 ["text"] = L["Normal"],
                 ["value"] = "normal",
@@ -665,7 +683,7 @@ local function CreateSmartResPane()
             }
         )
 
-        table.insert(items, {
+        tinsert(items, {
                 ["text"] = L["Normal + Combat Res"],
                 ["value"] = "normal+combat",
                 ["onClick"] = function()
@@ -759,10 +777,7 @@ local function ShowTypesMenu(index, b)
                 CheckChanges()
                 b:HideSpellIcon()
             end,
-        }
-    }
-    if not Cell.isTWW then
-        table.insert(items, {
+        }, {
             ["text"] = L["Macro"],
             ["onClick"] = function()
                 b.typeGrid:SetText(L["Macro"])
@@ -774,40 +789,84 @@ local function ShowTypesMenu(index, b)
                     changed[index]["bindType"] = "macro"
                     changed[index]["bindAction"] = ""
                     b.actionGrid:SetText("")
+                    b:HideSpellIcon()
                 else
                     changed[index]["bindType"] = nil
                     changed[index]["bindAction"] = nil
                     b.actionGrid:SetText(b.bindAction)
+                    b:ShowMacroIcon(b.bindAction)
                 end
                 CheckChanged(index, b)
                 CheckChanges()
-                b:HideSpellIcon()
             end,
-        })
-    end
-    table.insert(items, {
-        ["text"] = L["Spell"],
-        ["onClick"] = function()
-            b.typeGrid:SetText(L["Spell"])
-            if clickCastingsTab.popupEditBox then clickCastingsTab.popupEditBox:Hide() end
+        }, {
+            ["text"] = L["Spell"],
+            ["onClick"] = function()
+                b.typeGrid:SetText(L["Spell"])
+                if clickCastingsTab.popupEditBox then clickCastingsTab.popupEditBox:Hide() end
 
-            changed[index] = changed[index] or {b}
-            -- check type
-            if b.bindType ~= "spell" then
-                changed[index]["bindType"] = "spell"
-                changed[index]["bindAction"] = ""
-                b.actionGrid:SetText("")
-                b:HideSpellIcon()
-            else
-                changed[index]["bindType"] = nil
-                changed[index]["bindAction"] = nil
-                b.actionGrid:SetText(b.bindActionDisplay)
-                b:ShowSpellIcon(b.bindAction)
-            end
-            CheckChanged(index, b)
-            CheckChanges()
-        end,
-    })
+                changed[index] = changed[index] or {b}
+                -- check type
+                if b.bindType ~= "spell" then
+                    changed[index]["bindType"] = "spell"
+                    changed[index]["bindAction"] = ""
+                    b.actionGrid:SetText("")
+                    b:HideSpellIcon()
+                else
+                    changed[index]["bindType"] = nil
+                    changed[index]["bindAction"] = nil
+                    b.actionGrid:SetText(b.bindActionDisplay)
+                    b:ShowSpellIcon(b.bindAction)
+                end
+                CheckChanged(index, b)
+                CheckChanges()
+            end,
+        }, {
+            ["text"] = L["Item"],
+            ["onClick"] = function()
+                b.typeGrid:SetText(L["Item"])
+                if clickCastingsTab.popupEditBox then clickCastingsTab.popupEditBox:Hide() end
+
+                changed[index] = changed[index] or {b}
+                -- check type
+                if b.bindType ~= "item" then
+                    changed[index]["bindType"] = "item"
+                    changed[index]["bindAction"] = ""
+                    b.actionGrid:SetText("")
+                    b:HideSpellIcon()
+                else
+                    changed[index]["bindType"] = nil
+                    changed[index]["bindAction"] = nil
+                    b.actionGrid:SetText(b.bindActionDisplay)
+                    b:ShowItemIcon(b.bindAction)
+                end
+                CheckChanged(index, b)
+                CheckChanges()
+            end,
+        }, {
+            ["text"] = L["Click"],
+            ["onClick"] = function()
+                b.typeGrid:SetText(L["Click"])
+                if clickCastingsTab.popupEditBox then clickCastingsTab.popupEditBox:Hide() end
+
+                changed[index] = changed[index] or {b}
+                -- check type
+                if b.bindType ~= "click" then
+                    changed[index]["bindType"] = "click"
+                    changed[index]["bindAction"] = ""
+                    b.actionGrid:SetText("")
+                    b:HideSpellIcon()
+                else
+                    changed[index]["bindType"] = nil
+                    changed[index]["bindAction"] = nil
+                    b.actionGrid:SetText(b.bindActionDisplay)
+                    b:ShowSpellIcon(b.bindAction)
+                end
+                CheckChanged(index, b)
+                CheckChanges()
+            end,
+        }
+    }
 
     menu:SetItems(items)
     P:ClearPoints(menu)
@@ -916,8 +975,9 @@ local function ShowActionsMenu(index, b)
         }
 
     elseif bindType == "macro" then
-        items = {
-            {
+        items = {}
+        if not Cell.isTWW then
+            tinsert(items, {
                 ["text"] = L["Edit"],
                 ["onClick"] = function()
                     local peb = Cell:CreatePopupEditBox(clickCastingsTab, function(text)
@@ -954,8 +1014,8 @@ local function ShowActionsMenu(index, b)
                     end
                     peb:SetNumeric(false)
                 end,
-            },
-            {
+            })
+            tinsert(items, {
                 ["text"] = L["Extra Action Button"],
                 ["onClick"] = function()
                     changed[index] = changed[index] or {b}
@@ -970,8 +1030,8 @@ local function ShowActionsMenu(index, b)
                     CheckChanged(index, b)
                     CheckChanges()
                 end,
-            },
-            {
+            })
+            tinsert(items, {
                 ["text"] = _G.INVTYPE_TRINKET.." 1",
                 ["onClick"] = function()
                     changed[index] = changed[index] or {b}
@@ -986,8 +1046,8 @@ local function ShowActionsMenu(index, b)
                     CheckChanged(index, b)
                     CheckChanges()
                 end,
-            },
-            {
+            })
+            tinsert(items, {
                 ["text"] = _G.INVTYPE_TRINKET.." 2",
                 ["onClick"] = function()
                     changed[index] = changed[index] or {b}
@@ -1002,8 +1062,8 @@ local function ShowActionsMenu(index, b)
                     CheckChanged(index, b)
                     CheckChanges()
                 end,
-            },
-            {
+            })
+            tinsert(items, {
                 ["text"] = _G.INVTYPE_WRIST,
                 ["onClick"] = function()
                     changed[index] = changed[index] or {b}
@@ -1018,8 +1078,8 @@ local function ShowActionsMenu(index, b)
                     CheckChanged(index, b)
                     CheckChanges()
                 end,
-            },
-            {
+            })
+            tinsert(items, {
                 ["text"] = _G.INVTYPE_HAND,
                 ["onClick"] = function()
                     changed[index] = changed[index] or {b}
@@ -1034,8 +1094,8 @@ local function ShowActionsMenu(index, b)
                     CheckChanged(index, b)
                     CheckChanges()
                 end,
-            },
-        }
+            })
+        end
 
         if (Cell.isVanilla or Cell.isCata) and Cell.vars.playerClass == "WARLOCK" then
             tinsert(items, {
@@ -1055,6 +1115,73 @@ local function ShowActionsMenu(index, b)
                 end,
             })
         end
+        if Cell.isTWW then
+            for idx=1,138 do
+                local name, iconTexture, _ = GetMacroInfo(idx)
+                if name then
+                    tinsert(items, {
+                        ["text"] = name,
+                        ["icon"] = iconTexture,
+                        ["onClick"] = function()
+                            changed[index] = changed[index] or {b}
+                            if b.bindAction ~= name then
+                                changed[index]["bindAction"] = name
+                            else
+                                changed[index]["bindAction"] = nil
+                            end
+                            b.actionGrid:SetText(name)
+                            b:ShowMacroIcon(name)
+                            CheckChanged(index, b)
+                            CheckChanges()
+                        end,
+                    })
+                end
+            end
+        end
+
+    elseif bindType == "item" then
+        items = {}
+        for slot=1,17 do
+            local itemId = GetInventoryItemID("player", slot)
+            if itemId and C_Item.IsUsableItem(itemId) then
+                local text = GetInventoryItemLink("player", slot)
+                tinsert(items,
+            {
+                ["text"] = text,
+                ["icon"] = GetInventoryItemTexture("player", slot),
+                ["onClick"] = function()
+                    changed[index] = changed[index] or {b}
+                    if b.bindAction ~= slot then
+                        changed[index]["bindAction"] = slot
+                    else
+                        changed[index]["bindAction"] = nil
+                    end
+                    b.actionGrid:SetText(text)
+                    b:ShowItemIcon(b.bindAction)
+                    CheckChanged(index, b)
+                    CheckChanges()
+                end,
+            })
+            end
+        end
+        
+
+    elseif bindType == "click" then
+        items = {{
+                ["text"] = "ExtraActionButton1",
+                ["onClick"] = function()
+                    changed[index] = changed[index] or {b}
+                    if b.bindAction ~= "ExtraActionButton1" then
+                        changed[index]["bindAction"] = "ExtraActionButton1"
+                        b.actionGrid:SetText("ExtraActionButton1")
+                    else
+                        changed[index]["bindAction"] = nil
+                        b.actionGrid:SetText(b.bindAction)
+                    end
+                    CheckChanged(index, b)
+                    CheckChanges()
+                end,
+        }}
 
     else -- spell
         items = {
@@ -1284,6 +1411,10 @@ local function CreateListPane()
             -- restore icon
             if t[1].bindType == "spell" then
                 t[1]:ShowSpellIcon(t[1].bindAction)
+            elseif t[1].bindType == "item" then
+                t[1]:ShowItemIcon(t[1].bindAction)
+            elseif t[1].bindType == "macro" and Cell.isTWW then
+                t[1]:ShowMacroIcon(t[1].bindAction)
             else
                 t[1]:HideSpellIcon()
             end
@@ -1328,6 +1459,12 @@ CreateBindingListButton = function(modifier, bindKey, bindType, bindAction, i)
             b.bindActionDisplay = ""
             b:HideSpellIcon()
         end
+    elseif bindType == "item" then
+        b.bindActionDisplay = GetInventoryItemLink("player", bindAction)
+        b:ShowItemIcon(bindAction)
+    elseif bindType == "macro" and Cell.isTWW then
+        b.bindActionDisplay = GetMacroInfo(bindAction)
+        b:ShowMacroIcon(bindAction)
     else
         b.bindActionDisplay = bindAction
         b:HideSpellIcon()
