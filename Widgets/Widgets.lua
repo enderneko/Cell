@@ -3300,7 +3300,11 @@ function addon:CreateBindingListButton(parent, modifier, bindKey, bindType, bind
     end
 
     function b:ShowSpellIcon(spell)
-        b:ShowIcon(select(2, F:GetSpellNameAndIcon(spell)))
+        local icon = nil
+        if spell then
+            icon = select(2, F:GetSpellNameAndIcon(spell))
+        end
+        b:ShowIcon(icon)
     end
 
     function b:ShowItemIcon(itemslot)
