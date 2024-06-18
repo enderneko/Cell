@@ -778,7 +778,7 @@ end
 -------------------------------------------------
 local combinedHeader = "CellRaidFrameHeader0"
 local separatedHeaders = {"CellRaidFrameHeader1", "CellRaidFrameHeader2", "CellRaidFrameHeader3", "CellRaidFrameHeader4", "CellRaidFrameHeader5", "CellRaidFrameHeader6", "CellRaidFrameHeader7", "CellRaidFrameHeader8"}
-local blizzardFrames = {
+Cell.blizzardFrames = {
     "PlayerFrame",
     "TargetFrame",
     "PetFrame",
@@ -791,6 +791,23 @@ local blizzardFrames = {
     "PartyMemberFrame3PetFrame",
     "PartyMemberFrame4PetFrame",
 }
+Cell.clickCastCellFrames = {}
+Cell.clickCastFrames = {}
+Cell.clickCastFrameQueue = {}
+
+function F:RegisterFrame(frame, isCell)
+    Cell.clickCastFrames[frame] = true
+    if isCell then
+        Cell.clickCastCellFrames[frame] = true
+    end
+    Cell.clickCastFrameQueue[frame] = true  -- put into queue
+end
+
+function F:UnregisterFrame(frame, isCell)
+    Cell.clickCastFrames[frame] = nil       -- ignore
+    Cell.clickCastFrameQueue[frame] = nil -- mark for only cleanup
+end
+
 function F:IterateAllUnitButtons(func, updateCurrentGroupOnly, updateQuickAssist, updateBlizzardFrames)
     if updateBlizzardFrames then
         for _, b in pairs(blizzardFrames) do
