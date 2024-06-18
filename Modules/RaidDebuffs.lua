@@ -2092,7 +2092,7 @@ ShowDetails = function(spell)
     -- -- to ensure desc
     -- if timer then timer:Cancel() end
     -- timer = C_Timer.NewTimer(0.7, function()
-    --     SetSpellDesc(select(3, F:F:GetSpellNameAndIcon(spellId)))
+    --     SetSpellDesc(select(3, F:GetSpellNameAndIcon(spellId)))
     -- end)
 
     local isEnabled = selectedButtonIndex <= #currentBossTable["enabled"]
