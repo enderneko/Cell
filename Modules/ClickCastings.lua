@@ -524,7 +524,7 @@ local function ApplyClickCastings(b)
     end
 end
 
-local function UpdateClickCastings(noReload)
+local function UpdateClickCastings(noReload, onlyqueued)
     F:Debug("|cff77ff77UpdateClickCastings:|r useCommon:", Cell.vars.clickCastings["useCommon"])
     clickCastingTable = Cell.vars.clickCastings["useCommon"] and Cell.vars.clickCastings["common"] or Cell.vars.clickCastings[Cell.vars.playerSpecID]
 
@@ -547,21 +547,31 @@ local function UpdateClickCastings(noReload)
 
     local snippet = GetBindingSnippet()
     F:Debug(snippet)
-
-    F:IterateAllUnitButtons(function(b)
+    local clickFrames = Cell.clickCastFrames
+    if onlyqueued then
+        clickFrames = Cell.clickCastFrameQueue
+    end
+    for b, val in pairs(clickFrames) do
+        Cell.clickCastFrameQueue[b] = nil
         -- clear if attribute already set
         ClearClickCastings(b)
-
-        -- update bindingClicks
-        b:SetAttribute("snippet", snippet)
-        SetBindingClicks(b)
-
-        -- load db and set attribute
-        ApplyClickCastings(b)
-    end, false, true, true)
+        if val then
+            -- update bindingClicks
+            b:SetAttribute("snippet", snippet)
+            SetBindingClicks(b)
+    
+            -- load db and set attribute
+            ApplyClickCastings(b)
+        end
+    end
     previousClickCastings = F:Copy(clickCastingTable)
 end
 Cell:RegisterCallback("UpdateClickCastings", "UpdateClickCastings", UpdateClickCastings)
+
+local function UpdateQueuedClickCastings()
+    UpdateClickCastings(true, true)
+end
+Cell:RegisterCallback("UpdateQueuedClickCastings", "UpdateQueuedClickCastings", UpdateQueuedClickCastings)
 
 -------------------------------------------------
 -- profiles dropdown

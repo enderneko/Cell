@@ -803,7 +803,22 @@ end
 local combinedHeader = "CellRaidFrameHeader0"
 local separatedHeaders = {"CellRaidFrameHeader1", "CellRaidFrameHeader2", "CellRaidFrameHeader3", "CellRaidFrameHeader4", "CellRaidFrameHeader5", "CellRaidFrameHeader6", "CellRaidFrameHeader7", "CellRaidFrameHeader8"}
 
-function F:IterateAllUnitButtons(func, updateCurrentGroupOnly, updateQuickAssist)
+Cell.clickCastFrames = {}
+Cell.clickCastFrameQueue = {}
+
+function F:RegisterFrame(frame)
+    Cell.clickCastFrames[frame] = true
+    Cell.clickCastFrameQueue[frame] = true  -- put into queue
+    Cell:Fire("UpdateQueuedClickCastings")
+end
+
+function F:UnregisterFrame(frame)
+    Cell.clickCastFrames[frame] = nil       -- ignore
+    Cell.clickCastFrameQueue[frame] = false -- mark for only cleanup
+    Cell:Fire("UpdateQueuedClickCastings")
+end
+
+function F:IterateAllUnitButtons(func, updateCurrentGroupOnly, updateQuickAssist, updateBlizzardFrames)
     -- solo
     if not updateCurrentGroupOnly or (updateCurrentGroupOnly and Cell.vars.groupType == "solo") then
         for _, b in pairs(Cell.unitButtons.solo) do
