@@ -809,14 +809,6 @@ function F:UnregisterFrame(frame, isCell)
 end
 
 function F:IterateAllUnitButtons(func, updateCurrentGroupOnly, updateQuickAssist, updateBlizzardFrames)
-    if updateBlizzardFrames then
-        for _, b in pairs(blizzardFrames) do
-            local frame = _G[b]
-            if frame then
-                func(frame)
-            end
-        end
-    end
         -- solo
     if not updateCurrentGroupOnly or (updateCurrentGroupOnly and Cell.vars.groupType == "solo") then
         for _, b in pairs(Cell.unitButtons.solo) do
