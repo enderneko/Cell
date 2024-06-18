@@ -2930,12 +2930,13 @@ local function CreateSetting_RoleTexture(parent)
         widget.texture:SetPoint("TOPLEFT", 5, -20)
 
         local blizzard = F:UpperFirst(SLASH_TEXTTOSPEECH_BLIZZARD)
-        local indices = {"default", "default2", "blizzard", "blizzard2", "ffxiv", "miirgui", "mattui", "custom"}
+        local indices = {"default", "default2", "blizzard", "blizzard2", "blizzard3", "ffxiv", "miirgui", "mattui", "custom"}
         local options = {
             ["default"] = _G.DEFAULT,
             ["default2"] = _G.DEFAULT.." 2",
             ["blizzard"] = blizzard,
             ["blizzard2"] = blizzard.." 2",
+            ["blizzard3"] = blizzard.." 3",
             ["ffxiv"] = "FFXIV",
             ["miirgui"] = "MiirGui",
             ["mattui"] = "MattUI",

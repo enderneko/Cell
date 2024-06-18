@@ -1,20 +1,20 @@
 ---------------------------------------------------------------------
 -- File: Cell\Libs\LibGroupInfo.lua
 -- Author: enderneko (enderneko-dev@outlook.com)
--- Created : 2022-07-29 15:04:31 +08:00
--- Modified: 2024-05-24 21:38:37 +08:00
+-- Created : 2022-07-29 15:04 +08:00
+-- Modified: 2024-06-18 10:50 +08:00
 ---------------------------------------------------------------------
 
-local MAJOR, MINOR = "LibGroupInfo", 5
+local MAJOR, MINOR = "LibGroupInfo", 6
 local lib = LibStub:NewLibrary(MAJOR, MINOR)
 if not lib then return end -- already loaded
 
 lib.callbacks = LibStub("CallbackHandler-1.0"):New(lib)
 if not lib.callbacks then error(MAJOR.." requires CallbackHandler") end
 
-local UPDATE_EVENT = "GroupInfo_Update"
-local UPDATE_BASE_EVENT = "GroupInfo_UpdateBase"
--- local QUEUE_EVENT = "GroupInfo_QueueStatus"
+local UPDATE_EVENT = "GroupInfo_Update" -- guid, unit, cache[guid]
+local UPDATE_BASE_EVENT = "GroupInfo_UpdateBase" -- guid, unit, cache[guid]
+local QUEUE_EVENT = "GroupInfo_QueueStatus"
 
 local PLAYER_GUID
 local RETRY_INTERVAL = 1.5
@@ -30,7 +30,24 @@ local function Print(...)
 end
 
 -- store inspect data
-local cache = {}
+local cache = {
+    -- [guid] = {
+    --     unit = (string),
+    --     name = (string),
+    --     realm = (string),
+    --     class = (string, EN uppercase),
+    --     level = (number),
+    --     race = (string, EN),
+    --     gender = ("unknown", "male", "female"),
+    --     faction = ("Alliance", "Horde", "Neutral", nil),
+    --     assignedRole = ("TANK", "HEALER", "DAMAGER", "NONE"),
+    --     specId = (number),
+    --     specName = (string),
+    --     specRole = ("TANK", "MELEE", "RANGED", "DAMAGER", "HEALER"),
+    --     specIcon = (number),
+    --     inspected = (boolean),
+    -- }
+}
 lib.cache = cache
 
 function lib:GetCachedInfo(guid)
@@ -352,8 +369,8 @@ function frame:PLAYER_ENTERING_WORLD(isLogin, isReload)
 
     if shouldUpdate then
         frame:Hide()
-        wipe(lib.order)
         wipe(lib.queue)
+        wipe(lib.queueGUIDs)
 
         for _, t in pairs(cache) do
             t.inspected = nil
@@ -370,47 +387,49 @@ end
 ---------------------------------------------------------------------
 -- inspection queue
 ---------------------------------------------------------------------
-local order = {}
-lib.order = order
 local queue = {}
 lib.queue = queue
+local queueGUIDs = {}
+lib.queueGUIDs = queueGUIDs
 
 local elapsedTime = 0
 frame:SetScript("OnUpdate", function(self, elapsed)
     elapsedTime = elapsedTime + elapsed
     if elapsedTime >= 0.25 then
         elapsedTime = 0
-        local guid = order[1]
+        local guid = queue[1]
         if guid then
-            if queue[guid] then
-                if queue[guid].status == "waiting" then
-                    queue[guid].status = "requesting"
-                    queue[guid].attempts = queue[guid].attempts + 1
-                    queue[guid].lastRequest = time()
-                    -- lib.callbacks:Fire(QUEUE_EVENT, guid, queue[guid].unit, "INSPECT_REQUESTING")
-                    Print("|cffffff33LGI:INSPECT_REQUESTING|r", guid, queue[guid].unit)
-                    NotifyInspect(queue[guid].unit)
-                elseif queue[guid].status == "requesting" then -- give it another shot
-                    if queue[guid].attempts < MAX_ATTEMPTS then
-                        if time() - queue[guid].lastRequest >= RETRY_INTERVAL then
-                            queue[guid].attempts = queue[guid].attempts + 1
-                            queue[guid].lastRequest = time()
-                            NotifyInspect(queue[guid].unit)
+            if queueGUIDs[guid] then
+                if queueGUIDs[guid].status == "waiting" then
+                    queueGUIDs[guid].status = "requesting"
+                    queueGUIDs[guid].attempts = queueGUIDs[guid].attempts + 1
+                    queueGUIDs[guid].lastRequest = GetTime()
+                    Print("|cffffff33LGI:INSPECT_REQUESTING|r", guid, queueGUIDs[guid].unit)
+                    lib.callbacks:Fire(QUEUE_EVENT, guid, queueGUIDs[guid].unit, "INSPECT_REQUESTING")
+                    NotifyInspect(queueGUIDs[guid].unit)
+                elseif queueGUIDs[guid].status == "requesting" then -- give it another shot
+                    if queueGUIDs[guid].attempts < MAX_ATTEMPTS then
+                        if GetTime() - queueGUIDs[guid].lastRequest >= RETRY_INTERVAL then
+                            queueGUIDs[guid].attempts = queueGUIDs[guid].attempts + 1
+                            queueGUIDs[guid].lastRequest = GetTime()
+                            Print("|cffffff33LGI:INSPECT_RETRYING|r", guid, queueGUIDs[guid].unit)
+                            lib.callbacks:Fire(QUEUE_EVENT, guid, queueGUIDs[guid].unit, "INSPECT_RETRYING")
+                            NotifyInspect(queueGUIDs[guid].unit)
                         end
                     else -- reach max attempts
-                        -- lib.callbacks:Fire(QUEUE_EVENT, guid, queue[guid].unit, "INSPECT_FAILED")
-                        Print("|cffffff33LGI:INSPECT_FAILED|r", guid, queue[guid].unit)
-                        tremove(order, 1)
-                        queue[guid] = nil
+                        Print("|cffffff33LGI:INSPECT_FAILED|r", guid, queueGUIDs[guid].unit)
+                        lib.callbacks:Fire(QUEUE_EVENT, guid, queueGUIDs[guid].unit, "INSPECT_FAILED")
+                        tremove(queue, 1)
+                        queueGUIDs[guid] = nil
                     end
                 end
             else -- INSPECT_READY
-                tremove(order, 1)
+                tremove(queue, 1)
             end
         else -- none left
             frame:Hide()
-            wipe(order)
             wipe(queue)
+            wipe(queueGUIDs)
         end
     end
 end)
@@ -429,12 +448,14 @@ local function AddToQueue(unit, guid)
     end
 
     Print("|cffffff33LGI:AddToQueue|r", guid, unit)
-    queue[guid] = {
+    lib.callbacks:Fire(QUEUE_EVENT, guid, unit, "INSPECT_WAITING")
+
+    queueGUIDs[guid] = {
         ["unit"] = unit,
         ["attempts"] = 0,
         ["status"] = "waiting",
     }
-    tinsert(order, guid)
+    tinsert(queue, guid)
 
     if not InCombatLockdown() then
         frame:Show()
@@ -445,11 +466,11 @@ end
 -- INSPECT_READY: ready to query
 ---------------------------------------------------------------------
 function frame:INSPECT_READY(guid)
-    if queue[guid] then
-        Print("|cffffff33LGI:INSPECT_READY|r", guid, queue[guid].unit)
-        -- lib.callbacks:Fire(QUEUE_EVENT, guid, queue[guid].unit, "INSPECT_READY")
-        Query(queue[guid].unit)
-        queue[guid] = nil
+    if queueGUIDs[guid] then
+        Print("|cffffff33LGI:INSPECT_READY|r", guid, queueGUIDs[guid].unit)
+        lib.callbacks:Fire(QUEUE_EVENT, guid, queueGUIDs[guid].unit, "INSPECT_READY")
+        Query(queueGUIDs[guid].unit)
+        queueGUIDs[guid] = nil
     end
 end
 
@@ -468,7 +489,7 @@ local function IterateAllUnits()
             local unit = "raid"..i
             local guid = UnitGUID(unit)
             currentMembers[guid] = true
-            if not (UnitIsUnit(unit, "player") or (cache[guid] and cache[guid].inspected) or queue[guid]) then
+            if not (UnitIsUnit(unit, "player") or (cache[guid] and cache[guid].inspected) or queueGUIDs[guid]) then
                 AddToQueue(unit, guid)
             end
         end
@@ -480,7 +501,7 @@ local function IterateAllUnits()
             local unit = "party"..i
             local guid = UnitGUID(unit)
             currentMembers[guid] = true
-            if not ((cache[guid] and cache[guid].inspected) or queue[guid]) then
+            if not ((cache[guid] and cache[guid].inspected) or queueGUIDs[guid]) then
                 AddToQueue(unit, guid)
             end
         end
@@ -493,8 +514,8 @@ local function IterateAllUnits()
             end
         end
         frame:Hide()
+        wipe(queueGUIDs)
         wipe(queue)
-        wipe(order)
     end
 
     -- remove not in group
@@ -502,7 +523,7 @@ local function IterateAllUnits()
         for guid in pairs(cache) do
             if not currentMembers[guid] then
                 cache[guid] = nil
-                queue[guid] = nil
+                queueGUIDs[guid] = nil
             end
         end
     end
@@ -545,8 +566,8 @@ function frame:PLAYER_SPECIALIZATION_CHANGED(unit)
         if cache[guid] then
             cache[guid].inspected = nil
         end
-        if queue[guid] then
-            queue[guid].attempts = 0 -- reset attempts if exists in queue
+        if queueGUIDs[guid] then
+            queueGUIDs[guid].attempts = 0 -- reset attempts if exists in queue
         else
             AddToQueue(unit, guid)
         end
@@ -590,7 +611,7 @@ end
 -- combat check
 ---------------------------------------------------------------------
 function frame:PLAYER_REGEN_ENABLED()
-    if #order ~= 0 then
+    if #queue ~= 0 then
         frame:Show()
     end
 end
