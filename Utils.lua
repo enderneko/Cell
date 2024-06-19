@@ -1496,6 +1496,11 @@ if C_SpellBook and C_SpellBook.FindSpellBookSlotForSpell then
         return C_SpellBook.FindSpellBookSlotForSpell(spellName)
     end
 else
+    local function GetNumSpells()
+        local _, _, offset, numSpells = GetSpellTabInfo(GetNumSpellTabs())
+        return offset + numSpells
+    end
+
     FindSpellIndex = function(spellName)
         if not spellName or spellName == "" then return end
         for i = 1, GetNumSpells() do
