@@ -77,6 +77,15 @@ If you want to help with the localization, please visit <https://legacy.cursefor
 
 &nbsp;
 
+## Guides & Sharing
+
+- [ULTIMATE Cell Raid Frames AddOn Setup GUIDE for HEALERS (Reat TV)](https://www.youtube.com/watch?v=ntXko7htO2I)
+- [Healer UI & Addon Guide for Dragonflight Season 4 (yumytv)](https://www.youtube.com/watch?v=XcXvXxFipOE)
+- [Addon Spotlight: How to set up Cell + OmniCD for Augmentation Evoker (JFunkGaming)](https://www.youtube.com/watch?v=PMvtgJv-808)
+- [团队框架插件 Cell 配置流程分享 (钛锬)](https://bbs.nga.cn/read.php?tid=32921170)
+
+&nbsp;
+
 ## Misc
 
 Discord: <https://discord.gg/9PSe3fKQGJ>
