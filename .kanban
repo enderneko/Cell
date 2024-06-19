@@ -168,15 +168,6 @@
           "labels": [],
           "checkboxes": [],
           "comments": []
-        },
-        {
-          "id": "f9342937-2a2d-424a-a5e3-cd9147d2ecbd",
-          "listId": "fc9baa7c-c3e7-49a4-8526-816c794e5ed9",
-          "title": "Fix Targeted Spells",
-          "description": "",
-          "labels": [],
-          "checkboxes": [],
-          "comments": []
         }
       ]
     },
@@ -185,18 +176,18 @@
       "title": "DONE",
       "cards": [
         {
-          "id": "1cac7da6-3787-4e5c-9176-548a8a8199f0",
+          "id": "f9342937-2a2d-424a-a5e3-cd9147d2ecbd",
           "listId": "7b0c4654-92fe-4b4e-9566-15e8c706d9c9",
-          "title": "Add \"existing time\" option to Raid Debuffs",
+          "title": "Fix Targeted Spells",
           "description": "",
           "labels": [],
           "checkboxes": [],
           "comments": []
         },
         {
-          "id": "f9342937-2a2d-424a-a5e3-cd9147d2ecbd",
+          "id": "1cac7da6-3787-4e5c-9176-548a8a8199f0",
           "listId": "7b0c4654-92fe-4b4e-9566-15e8c706d9c9",
-          "title": "Fix Targeted Spells",
+          "title": "Add \"existing time\" option to Raid Debuffs",
           "description": "",
           "labels": [],
           "checkboxes": [],
