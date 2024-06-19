@@ -3226,7 +3226,7 @@ local function CreateGrid(parent, text, width)
         parent:SetFrameStrata("LOW")
         -- self:Hide() --! Hide() will cause OnDragStop trigger TWICE!!!
         C_Timer.After(0.05, function()
-            local b = GetMouseFocus()
+            local b = F:GetMouseFoci()
             if b then b = b:GetParent() end
             F:MoveClickCastings(parent.clickCastingIndex, b and b.clickCastingIndex)
         end)
@@ -3290,13 +3290,29 @@ function addon:CreateBindingListButton(parent, modifier, bindKey, bindType, bind
     spellIcon:SetTexCoord(0.08, 0.92, 0.08, 0.92)
     spellIcon:Hide()
 
-    function b:ShowSpellIcon(spell)
-        spellIcon:SetTexture(GetSpellTexture(spell) or 134400)
+    function b:ShowIcon(texture)
+        spellIcon:SetTexture(texture or 134400)
         spellIconBg:Show()
         spellIcon:Show()
         -- actionGrid.text:ClearAllPoints()
         actionGrid.text:SetPoint("LEFT", spellIconBg, "RIGHT", P:Scale(2), 0)
         -- actionGrid.text:SetPoint("RIGHT", P:Scale(-5), 0)
+    end
+
+    function b:ShowSpellIcon(spell)
+        local icon = nil
+        if spell then
+            icon = select(2, F:GetSpellNameAndIcon(spell))
+        end
+        b:ShowIcon(icon)
+    end
+
+    function b:ShowItemIcon(itemslot)
+        b:ShowIcon(GetInventoryItemTexture("player", itemslot))
+    end
+
+    function b:ShowMacroIcon(macro)
+        b:ShowIcon(select(2, GetMacroInfo(macro)))
     end
 
     function b:HideSpellIcon()

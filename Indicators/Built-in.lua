@@ -1671,6 +1671,36 @@ local function GetTexCoordsForRoleSmall(role)
     end
 end
 
+-- see https://www.townlong-yak.com/framexml/live/Blizzard_Deprecated/Deprecated_10_1_5.lua#43
+local function getSmallTextCoordsForRole(role)
+    if ( role == "TANK" ) then
+        return 0, 19/64, 22/64, 41/64;
+    elseif ( role == "HEALER" ) then
+        return 20/64, 39/64, 1/64, 20/64;
+    elseif ( role == "DAMAGER" ) then
+        return 20/64, 39/64, 22/64, 41/64;
+    else
+        error("Unknown role: "..tostring(role));
+    end
+end
+
+-- see https://www.townlong-yak.com/framexml/live/Blizzard_Deprecated/Deprecated_10_1_5.lua#11
+local function getTextCoordsForRole(role)
+    local textureHeight, textureWidth = 256, 256;
+    local roleHeight, roleWidth = 67, 67;
+    if ( role == "GUIDE" ) then
+        return GetTexCoordsByGrid(1, 1, textureWidth, textureHeight, roleWidth, roleHeight);
+    elseif ( role == "TANK" ) then
+        return GetTexCoordsByGrid(1, 2, textureWidth, textureHeight, roleWidth, roleHeight);
+    elseif ( role == "HEALER" ) then
+        return GetTexCoordsByGrid(2, 1, textureWidth, textureHeight, roleWidth, roleHeight);
+    elseif ( role == "DAMAGER" ) then
+        return GetTexCoordsByGrid(2, 2, textureWidth, textureHeight, roleWidth, roleHeight);
+    else
+        error("Unknown role: "..tostring(role));
+    end
+end;
+
 local function RoleIcon_SetRole(self, role)
     self.tex:SetTexCoord(0, 1, 0, 1)
     self.tex:SetVertexColor(1, 1, 1)
