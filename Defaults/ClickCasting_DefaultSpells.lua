@@ -309,13 +309,18 @@ function F:GetClickCastingSpellList(class, spec)
 
     -- fill data
     for i, v in pairs(spells) do
+        local spellId, spellType
+
         if type(v) == "number" then
-            spells[i] = {icon, name, nil, v}
+            spellId = v
         else -- string
-            local spellId, spellType = strmatch(v, "(%d+)(%a)")
-            local name, icon = F:GetSpellNameAndIcon(spellId)
-            spells[i] = {icon, name, L[spellType], spellId}
+            spellId, spellType = strmatch(v, "(%d+)(%a)")
+            spellId = tonumber(spellId)
+            spellType = L[spellType]
         end
+
+        local name, icon = F:GetSpellNameAndIcon(spellId)
+        spells[i] = {icon, name, spellType, spellId}
     end
 
     -- texplore(spells)

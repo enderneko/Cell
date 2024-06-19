@@ -713,6 +713,29 @@ function eventFrame:PLAYER_ENTERING_WORLD()
     end
 end
 
+-- REVIEW:
+-- local function RegisterGlobalClickCastings()
+--     ClickCastFrames = ClickCastFrames or {}
+
+--     if ClickCastFrames then
+--         for frame, options in pairs(ClickCastFrames) do
+--             F:RegisterFrame(frame)
+--         end
+--     end
+
+--     ClickCastFrames = setmetatable({}, {__newindex = function(t, k, v)
+--         if v == nil or v == false then
+--             F:UnregisterFrame(k)
+--         else
+--             F:RegisterFrame(k)
+--         end
+--     end})
+
+--     F:IterateAllUnitButtons(function (b)
+--         ClickCastFrames[b] = true
+--     end)
+-- end
+
 function eventFrame:PLAYER_LOGIN()
     F:Debug("|cffbbbbbb=== PLAYER_LOGIN ===")
     eventFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
@@ -742,6 +765,8 @@ function eventFrame:PLAYER_LOGIN()
     eventFrame:GROUP_ROSTER_UPDATE()
     -- update visibility
     Cell:Fire("UpdateVisibility")
+    -- REVIEW: register unitframes for click casting
+    -- RegisterGlobalClickCastings()
     -- update click-castings
     Cell:Fire("UpdateClickCastings")
     -- update indicators

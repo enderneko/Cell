@@ -1011,7 +1011,7 @@ local function CreateClassFilter(parent)
             self:SetFrameStrata("LOW")
             -- self:Hide() --! Hide() will cause OnDragStop trigger TWICE!!!
             C_Timer.After(0.05, function()
-                local b = GetMouseFocus()
+                local b = F:GetMouseFocus()
                 if b and b._class then
                     local oldIndex, oldValue, newIndex
                     for i, t in pairs(quickAssistTable["filters"][selectedFilter][2]) do
@@ -1255,7 +1255,7 @@ local function CreateSpecFilter(parent)
             frames[class]:SetFrameStrata("LOW")
             -- self:Hide() --! Hide() will cause OnDragStop trigger TWICE!!!
             C_Timer.After(0.05, function()
-                local mf = GetMouseFocus()
+                local mf = F:GetMouseFocus()
                 if mf then mf = mf:GetParent() end
                 if mf and mf._class then
                     local oldIndex, oldValue, newIndex
@@ -1381,7 +1381,7 @@ local function CreateClassOrderWidget(parent)
             self:SetFrameStrata("LOW")
             -- self:Hide() --! Hide() will cause OnDragStop trigger TWICE!!!
             C_Timer.After(0.05, function()
-                local b = GetMouseFocus()
+                local b = F:GetMouseFocus()
                 if b and b._class then
                     local classToIndex = F:ConvertTable(layoutTable["order"])
                     -- print(self._class, "->", b._class)
