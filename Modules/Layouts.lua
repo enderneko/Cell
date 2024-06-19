@@ -2077,7 +2077,7 @@ local function CreateRoleOrderWidget(parent)
             self:SetFrameStrata("LOW")
             -- self:Hide() --! Hide() will cause OnDragStop trigger TWICE!!!
             C_Timer.After(0.05, function()
-                local b = F:GetMouseFoci()
+                local b = F:GetMouseFocus()
                 if b and b._role then
                     local roleToIndex = F:ConvertTable(selectedLayoutTable["main"]["roleOrder"])
                     -- print(self._role, "->", b._role)

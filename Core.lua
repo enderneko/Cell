@@ -25,8 +25,8 @@ Cell.MIN_DEBUFFS_VERSION = 228
 Cell.MIN_QUICKASSIST_VERSION = 227
 
 --@debug@
--- local debugMode = true
---@end-debug@]==]
+local debugMode = true
+--@end-debug@
 function F:Debug(arg, ...)
     if debugMode then
         if type(arg) == "string" or type(arg) == "number" then
@@ -713,27 +713,28 @@ function eventFrame:PLAYER_ENTERING_WORLD()
     end
 end
 
-local function registerGlobalClickCastings()
-    ClickCastFrames = ClickCastFrames or {}
+-- REVIEW:
+-- local function RegisterGlobalClickCastings()
+--     ClickCastFrames = ClickCastFrames or {}
 
-    if ClickCastFrames then
-        for frame, options in pairs(ClickCastFrames) do
-            F:RegisterFrame(frame)
-        end
-    end
+--     if ClickCastFrames then
+--         for frame, options in pairs(ClickCastFrames) do
+--             F:RegisterFrame(frame)
+--         end
+--     end
 
-    ClickCastFrames = setmetatable({}, {__newindex = function(t, k, v)
-        if v == nil or v == false then
-            F:UnregisterFrame(k)
-        else
-            F:RegisterFrame(k)
-        end
-    end})
-    
-    F:IterateAllUnitButtons(function (b)
-        ClickCastFrames[b] = true
-    end)
-end
+--     ClickCastFrames = setmetatable({}, {__newindex = function(t, k, v)
+--         if v == nil or v == false then
+--             F:UnregisterFrame(k)
+--         else
+--             F:RegisterFrame(k)
+--         end
+--     end})
+
+--     F:IterateAllUnitButtons(function (b)
+--         ClickCastFrames[b] = true
+--     end)
+-- end
 
 function eventFrame:PLAYER_LOGIN()
     F:Debug("|cffbbbbbb=== PLAYER_LOGIN ===")
@@ -764,8 +765,8 @@ function eventFrame:PLAYER_LOGIN()
     eventFrame:GROUP_ROSTER_UPDATE()
     -- update visibility
     Cell:Fire("UpdateVisibility")
-    -- register unitframes for click casting
-    registerGlobalClickCastings()
+    -- REVIEW: register unitframes for click casting
+    -- RegisterGlobalClickCastings()
     -- update click-castings
     Cell:Fire("UpdateClickCastings")
     -- update indicators

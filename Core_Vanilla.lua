@@ -23,9 +23,9 @@ Cell.MIN_LAYOUTS_VERSION = 228
 Cell.MIN_INDICATORS_VERSION = 228
 Cell.MIN_DEBUFFS_VERSION = 228
 
---[==[@debug@
+--@debug@
 local debugMode = true
---@end-debug@]==]
+--@end-debug@
 function F:Debug(arg, ...)
     if debugMode then
         if type(arg) == "string" or type(arg) == "number" then

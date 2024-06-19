@@ -177,7 +177,7 @@ P:Point(loadingBar, "BOTTOMRIGHT", options, -1, 1)
 -------------------------------------------------
 -- MemoryUsage
 -------------------------------------------------
---[==[@debug@
+--@debug@
 -- local memUsage = CreateFrame("Frame", nil, cellMainFrame)
 -- memUsage:SetSize(10, 10)
 -- memUsage:SetPoint("LEFT", raid, "RIGHT", 5, 0)
@@ -191,7 +191,7 @@ P:Point(loadingBar, "BOTTOMRIGHT", options, -1, 1)
 --         self.elapsed = 0
 --     end
 -- end)
---@end-debug@]==]
+--@end-debug@
 
 -------------------------------------------------
 -- fadeIn & fadeOut
