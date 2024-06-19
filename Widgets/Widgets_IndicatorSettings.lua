@@ -3376,7 +3376,6 @@ local function CreateSetting_Texture(parent)
     return widget
 end
 
-local GetSpellInfo = GetSpellInfo
 local function CreateAuraButtons(parent, auraButtons, auraTable, noUpDownButtons, isZeroValid, updateHeightFunc)
     local n = #auraTable
 
@@ -3392,7 +3391,7 @@ local function CreateAuraButtons(parent, auraButtons, auraTable, noUpDownButtons
                 return
             end
 
-            local name, _, tex = GetSpellInfo(spellId)
+            local name, tex = F:GetSpellNameAndIcon(spellId)
             if not name then
                 CellSpellTooltip:Hide()
                 return
@@ -3420,7 +3419,7 @@ local function CreateAuraButtons(parent, auraButtons, auraTable, noUpDownButtons
     auraButtons[0]:SetScript("OnClick", function(self)
         local popup = addon:CreatePopupEditBox(parent, function(text)
             local spellId = tonumber(text)
-            local spellName = GetSpellInfo(spellId)
+            local spellName = F:GetSpellNameAndIcon(spellId)
             if (spellId and spellName) or (spellId == 0 and isZeroValid) then
                 -- update db
                 tinsert(auraTable, spellId)
@@ -3538,7 +3537,7 @@ local function CreateAuraButtons(parent, auraButtons, auraTable, noUpDownButtons
             auraButtons[i].spellIconBg:Hide()
             auraButtons[i].spellIcon:Hide()
         else
-            local name, _, icon = GetSpellInfo(spell)
+            local name, icon = F:GetSpellNameAndIcon(spell)
             auraButtons[i].spellIdText:SetText(spell)
             auraButtons[i].spellId = spell
             auraButtons[i].spellTex = icon
@@ -3554,7 +3553,7 @@ local function CreateAuraButtons(parent, auraButtons, auraTable, noUpDownButtons
             -- spell tooltip
             auraButtons[i]:HookScript("OnEnter", function(self)
                 if not parent.popupEditBox:IsShown() then
-                    local name = GetSpellInfo(self.spellId)
+                    local name = F:GetSpellNameAndIcon(self.spellId)
                     if not name then
                         CellSpellTooltip:Hide()
                         return
@@ -3632,7 +3631,7 @@ local function CreateAuraButtons(parent, auraButtons, auraTable, noUpDownButtons
                         F:Print(L["Invalid spell id."])
                     end
                 else
-                    local spellName, _, spellIcon = GetSpellInfo(spellId)
+                    local spellName, spellIcon = F:GetSpellNameAndIcon(spellId)
                     if spellId and spellName then
                         -- update text
                         auraButtons[i].spellIdText:SetText(spellId)
@@ -3702,7 +3701,7 @@ local function GetExportString(t)
     local s = ""
     local n = 0
     for i, id in ipairs(t) do
-        local name = GetSpellInfo(id)
+        local name = F:GetSpellNameAndIcon(id)
         if name then
             s = s .. (i == 1 and "" or "\n") .. id .. ", -- " .. name
             n = n + 1
@@ -3919,7 +3918,7 @@ local function CreateCleuAuraButtons(parent, auraTable, updateHeightFunc)
                 return
             end
 
-            local name = GetSpellInfo(spellId)
+            local name = F:GetSpellNameAndIcon(spellId)
             if not name then
                 CellSpellTooltip:Hide()
                 Validate()
@@ -4079,7 +4078,7 @@ local function CreateCleuAuraButtons(parent, auraTable, updateHeightFunc)
             end)
         end
 
-        local name, _, icon = GetSpellInfo(t[1])
+        local name, icon = F:GetSpellNameAndIcon(t[1])
         cleuAuraButtons[i].spellIdText:SetText(t[1])
         cleuAuraButtons[i].spellNameText:SetText(name or L["Invalid"])
         cleuAuraButtons[i].durationText:SetText(t[2])
@@ -4098,7 +4097,7 @@ local function CreateCleuAuraButtons(parent, auraTable, updateHeightFunc)
         cleuAuraButtons[i]:HookScript("OnEnter", function(self)
             if parent.inputs:IsShown() then return end
 
-            local name = GetSpellInfo(self.spellId)
+            local name = F:GetSpellNameAndIcon(self.spellId)
             if not name then
                 CellSpellTooltip:Hide()
                 return
@@ -4135,7 +4134,7 @@ local function CreateCleuAuraButtons(parent, auraTable, updateHeightFunc)
             parent.inputs.okBtn:SetScript("OnClick", function()
                 local spellId = tonumber(parent.inputs.spellEB:GetText())
                 local duration = tonumber(parent.inputs.durationEB:GetText())
-                local spellName, _, spellIcon = GetSpellInfo(spellId)
+                local spellName, spellIcon = F:GetSpellNameAndIcon(spellId)
                 -- update text
                 cleuAuraButtons[i].spellIdText:SetText(spellId)
                 cleuAuraButtons[i].spellNameText:SetText(spellName)
@@ -4279,7 +4278,7 @@ local function CreateSpellButtons(parent, class, spells, disableds)
             -- 深寒凝冰 覆盖了 寒冰屏障
             spellButtons[buttonIndex].icon:SetTexture(135841)
         else
-            local icon = select(3, GetSpellInfo(spellId))
+            local icon = select(2, F:GetSpellNameAndIcon(spellId))
             spellButtons[buttonIndex].icon:SetTexture(icon)
         end
 
@@ -4518,7 +4517,7 @@ local function CreateConsumableButtons(parent, spellTable, updateHeightFunc)
                 return
             end
 
-            local name = GetSpellInfo(spellId)
+            local name = F:GetSpellNameAndIcon(spellId)
             if not name then
                 CellSpellTooltip:Hide()
                 return
@@ -4546,7 +4545,7 @@ local function CreateConsumableButtons(parent, spellTable, updateHeightFunc)
     consumableButtons[0]:SetScript("OnClick", function(self)
         local popup = addon:CreatePopupEditBox(parent, function(text)
             local spellId = tonumber(text)
-            local spellName = GetSpellInfo(spellId)
+            local spellName = F:GetSpellNameAndIcon(spellId)
             if spellId and spellName then
                 -- update db
                 tinsert(spellTable, {
@@ -4677,7 +4676,7 @@ local function CreateConsumableButtons(parent, spellTable, updateHeightFunc)
         end
 
         -- fill data
-        local name, _, icon = GetSpellInfo(spell[1])
+        local name, icon = F:GetSpellNameAndIcon(spell[1])
         consumableButtons[i].spellIdText:SetText(spell[1])
         consumableButtons[i].spellId = spell[1]
         consumableButtons[i].spellNameText:SetText(name or L["Invalid"])
@@ -4698,7 +4697,7 @@ local function CreateConsumableButtons(parent, spellTable, updateHeightFunc)
         -- spell tooltip
         consumableButtons[i]:HookScript("OnEnter", function(self)
             if not parent.popupEditBox:IsShown() then
-                local name = GetSpellInfo(self.spellId)
+                local name = F:GetSpellNameAndIcon(self.spellId)
                 if not name then
                     CellSpellTooltip:Hide()
                     return
@@ -4730,7 +4729,7 @@ local function CreateConsumableButtons(parent, spellTable, updateHeightFunc)
         consumableButtons[i].edit:SetScript("OnClick", function()
             local popup = addon:CreatePopupEditBox(parent, function(text)
                 local spellId = tonumber(text)
-                local spellName, _, spellIcon = GetSpellInfo(spellId)
+                local spellName, spellIcon = F:GetSpellNameAndIcon(spellId)
                 if spellId and spellName then
                     -- update text
                     consumableButtons[i].spellIdText:SetText(spellId)

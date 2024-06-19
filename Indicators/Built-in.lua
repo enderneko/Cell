@@ -441,7 +441,7 @@ local function Debuffs_EnableBlacklistShortcut(debuffs, enabled)
                 if button == "RightButton" and isInside and IsLeftAltKeyDown() and IsLeftControlKeyDown()
                     and self.spellId and not F:TContains(CellDB["debuffBlacklist"], self.spellId) then
                     -- print msg
-                    local name, _, icon = GetSpellInfo(self.spellId)
+                    local name, icon = F:GetSpellNameAndIcon(self.spellId)
                     if name and icon then
                         F:Print(L["Added |T%d:0|t|cFFFF3030%s(%d)|r into debuff blacklist."]:format(icon, name, self.spellId))
                     end
