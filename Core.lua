@@ -227,8 +227,8 @@ function eventFrame:ADDON_LOADED(arg1)
 
         -- spellRequest ---------------------------------------------------------------------------
         if type(CellDB["spellRequest"]) ~= "table" then
-            local POWER_INFUSION, _, POWER_INFUSION_ICON = GetSpellInfo(10060)
-            local INNERVATE, _, INNERVATE_ICON = GetSpellInfo(29166)
+            local POWER_INFUSION, POWER_INFUSION_ICON = F:GetSpellNameAndIcon(10060)
+            local INNERVATE, INNERVATE_ICON = F:GetSpellNameAndIcon(29166)
 
             CellDB["spellRequest"] = {
                 ["enabled"] = false,
@@ -746,6 +746,7 @@ local function registerGlobalClickCastings()
     Cell:Fire("UpdateClickCastings")
 end
 
+
 function eventFrame:PLAYER_LOGIN()
     F:Debug("|cffbbbbbb=== PLAYER_LOGIN ===")
     eventFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
@@ -775,6 +776,8 @@ function eventFrame:PLAYER_LOGIN()
     eventFrame:GROUP_ROSTER_UPDATE()
     -- update visibility
     Cell:Fire("UpdateVisibility")
+    -- REVIEW: register unitframes for click casting
+    -- RegisterGlobalClickCastings()
     -- update click-castings
     registerGlobalClickCastings()
     -- update indicators

@@ -89,7 +89,7 @@ local function ShowTips()
             local bindKeyDisplay = strlen(bindKey) == 1 and bindKey or L[bindKey]
 
             local bindActionDisplay, icon
-            bindAction, _, icon = GetSpellInfo(bindAction)
+            bindAction, icon = F:GetSpellNameAndIcon(bindAction)
             if bindAction then
                 bindActionDisplay = bindAction.." |T"..icon..":0|t"
             else

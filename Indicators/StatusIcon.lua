@@ -19,7 +19,7 @@ local function DiedWithSoulstone(b)
 end
 
 local rez = {}
-local SOULSTONE = GetSpellInfo(20707)
+local SOULSTONE = F:GetSpellNameAndIcon(20707)
 local soulstones = {}
 
 local cleuFrame = CreateFrame("Frame")

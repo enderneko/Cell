@@ -755,7 +755,7 @@ local function CreateDebuffsFrame()
     create:SetScript("OnClick", function()
         local popup = Cell:CreateConfirmPopup(debuffsTab, 200, L["Create new debuff (id)"], function(self)
             local id = tonumber(self.editBox:GetText()) or 0
-            local name = GetSpellInfo(id)
+            local name = F:GetSpellNameAndIcon(id)
             if not name then
                 F:Print(L["Invalid spell id."])
                 return
@@ -816,7 +816,7 @@ local function CreateDebuffsFrame()
                 return
             end
 
-            local name, _, icon = GetSpellInfo(spellId)
+            local name, icon = F:GetSpellNameAndIcon(spellId)
             if not name then
                 CellSpellTooltip:Hide()
                 return
@@ -920,7 +920,7 @@ local function RegisterForDrag(b)
     b:SetScript("OnDragStop", function(self)
         self:SetAlpha(1)
         dragged:Hide()
-        local newB = GetMouseFocus()
+        local newB = F:GetMouseFocus()
         -- move on a debuff button & not on currently moving button & not disabled
         if newB:GetParent() == debuffListFrame.scrollFrame.content and newB ~= self and newB.enabled then
             local temp, from, to = self, self.index, newB.index
@@ -1063,7 +1063,7 @@ local function CreateDebuffButton(i, sTable)
 
     debuffButtons[i]:Show()
 
-    local name, _, icon = GetSpellInfo(sTable["id"])
+    local name, icon = F:GetSpellNameAndIcon(sTable["id"])
     if name then
         debuffButtons[i].icon:SetTexture(icon)
         debuffButtons[i].spellIcon = icon
@@ -2077,7 +2077,7 @@ ShowDetails = function(spell)
     selectedSpellId, selectedButtonIndex = spellId, buttonIndex
 
     -- local name, icon, desc = F:GetSpellInfo(spellId)
-    local name, _, icon = GetSpellInfo(spellId)
+    local name, icon = F:GetSpellNameAndIcon(spellId)
     if not name then return end
 
     detailsFrame.scrollFrame:ResetScroll()
@@ -2171,7 +2171,7 @@ function F:GetDebuffList(instanceName)
         if loadedDebuffs[iId]["general"] then
             n = #loadedDebuffs[iId]["general"]["enabled"]
             for _, t in ipairs(loadedDebuffs[iId]["general"]["enabled"]) do
-                local spellName = GetSpellInfo(t["id"])
+                local spellName = F:GetSpellNameAndIcon(t["id"])
                 if spellName then
                     -- list[spellName/spellId] = {order, glowType, glowOptions}
                     list[t["trackByID"] and t["id"] or spellName] = {
@@ -2189,7 +2189,7 @@ function F:GetDebuffList(instanceName)
         for bId, bTable in pairs(loadedDebuffs[iId]) do
             if bId ~= "general" then
                 for _, t in pairs(bTable["enabled"]) do
-                    local spellName = GetSpellInfo(t["id"])
+                    local spellName = F:GetSpellNameAndIcon(t["id"])
                     if spellName then -- check again
                         list[t["trackByID"] and t["id"] or spellName] = {
                             ["order"] = t["order"]+n,

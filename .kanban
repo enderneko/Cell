@@ -43,15 +43,6 @@
         {
           "id": "41a10cb7-15c8-4c33-82f9-19a6d9988b2c",
           "listId": "643431c7-e660-47b1-a44b-4e799b536d19",
-          "title": "Global Profile? ",
-          "description": "",
-          "labels": [],
-          "checkboxes": [],
-          "comments": []
-        },
-        {
-          "id": "8f8372e3-eaba-4af9-af65-c2ce7d5ec0a5",
-          "listId": "643431c7-e660-47b1-a44b-4e799b536d19",
           "title": "Replace all WHITE8x8",
           "description": "",
           "labels": [],
@@ -177,15 +168,6 @@
           "labels": [],
           "checkboxes": [],
           "comments": []
-        },
-        {
-          "id": "f6f4f2da-e189-4f63-bcad-2d04bd0430f1",
-          "listId": "fc9baa7c-c3e7-49a4-8526-816c794e5ed9",
-          "title": "Icon for Block type indicator",
-          "description": "",
-          "labels": [],
-          "checkboxes": [],
-          "comments": []
         }
       ]
     },
@@ -194,18 +176,18 @@
       "title": "DONE",
       "cards": [
         {
-          "id": "1cac7da6-3787-4e5c-9176-548a8a8199f0",
+          "id": "f9342937-2a2d-424a-a5e3-cd9147d2ecbd",
           "listId": "7b0c4654-92fe-4b4e-9566-15e8c706d9c9",
-          "title": "Add \"existing time\" option to Raid Debuffs",
+          "title": "Fix Targeted Spells",
           "description": "",
           "labels": [],
           "checkboxes": [],
           "comments": []
         },
         {
-          "id": "f9342937-2a2d-424a-a5e3-cd9147d2ecbd",
+          "id": "1cac7da6-3787-4e5c-9176-548a8a8199f0",
           "listId": "7b0c4654-92fe-4b4e-9566-15e8c706d9c9",
-          "title": "Fix Targeted Spells",
+          "title": "Add \"existing time\" option to Raid Debuffs",
           "description": "",
           "labels": [],
           "checkboxes": [],

@@ -441,7 +441,7 @@ local function Debuffs_EnableBlacklistShortcut(debuffs, enabled)
                 if button == "RightButton" and isInside and IsLeftAltKeyDown() and IsLeftControlKeyDown()
                     and self.spellId and not F:TContains(CellDB["debuffBlacklist"], self.spellId) then
                     -- print msg
-                    local name, _, icon = GetSpellInfo(self.spellId)
+                    local name, icon = F:GetSpellNameAndIcon(self.spellId)
                     if name and icon then
                         F:Print(L["Added |T%d:0|t|cFFFF3030%s(%d)|r into debuff blacklist."]:format(icon, name, self.spellId))
                     end
@@ -641,7 +641,7 @@ function I.CreateDispels(parent)
         dispels.highlight:Hide()
     end)
 
-    dispels.highlight = parent.widgets.overlayFrame:CreateTexture(parent:GetName().."DispelHighlight", "OVERLAY")
+    dispels.highlight = parent:CreateTexture(parent:GetName().."DispelHighlight", "OVERLAY")
     dispels.highlight:Hide()
 
     dispels._SetSize = dispels.SetSize
@@ -658,23 +658,28 @@ function I.CreateDispels(parent)
         if highlightType == "none" then
             dispels.highlight:Hide()
         elseif highlightType == "gradient" then
+            dispels.highlight:SetParent(parent.widgets.overlayFrame)
             dispels.highlight:ClearAllPoints()
             dispels.highlight:SetAllPoints(parent.widgets.healthBar)
             dispels.highlight:SetTexture("Interface\\Buttons\\WHITE8x8")
         elseif highlightType == "gradient-half" then
+            dispels.highlight:SetParent(parent.widgets.overlayFrame)
             dispels.highlight:ClearAllPoints()
             dispels.highlight:SetPoint("BOTTOMLEFT", parent.widgets.healthBar)
             dispels.highlight:SetPoint("TOPRIGHT", parent.widgets.healthBar, "RIGHT")
             dispels.highlight:SetTexture("Interface\\Buttons\\WHITE8x8")
         elseif highlightType == "entire" then
+            dispels.highlight:SetParent(parent.widgets.overlayFrame)
             dispels.highlight:ClearAllPoints()
             dispels.highlight:SetAllPoints(parent.widgets.healthBar)
             dispels.highlight:SetTexture("Interface\\Buttons\\WHITE8x8")
         elseif highlightType == "current" then
+            dispels.highlight:SetParent(parent.widgets.healthBar)
             dispels.highlight:ClearAllPoints()
             dispels.highlight:SetAllPoints(parent.widgets.healthBar:GetStatusBarTexture())
             dispels.highlight:SetTexture(Cell.vars.texture)
         end
+        dispels.highlight:SetDrawLayer("ARTWORK", 0)
     end
 
     for i = 1, 5 do
@@ -1644,43 +1649,56 @@ end
 -------------------------------------------------
 -- role icon
 -------------------------------------------------
-local GetTexCoordsForRoleSmallCircle = GetTexCoordsForRoleSmallCircle
+local ICON_PATH = "Interface\\AddOns\\Cell\\Media\\Roles\\"
 
-local defaultRoleIcon = {
-    TANK = "Interface\\AddOns\\Cell\\Media\\Roles\\TANK32",
-    HEALER = "Interface\\AddOns\\Cell\\Media\\Roles\\HEALER32",
-    DAMAGER = "Interface\\AddOns\\Cell\\Media\\Roles\\DAMAGER32",
-}
+local function GetTexCoordsForRole(role)
+    if role == "TANK" then
+        return 0, 67/256, 67/256, 134/256
+    elseif role == "HEALER" then
+        return 67/256, 134/256, 0, 67/256
+    elseif role == "DAMAGER" then
+        return 67/256, 134/256, 67/256, 134/256
+    end
+end
+
+local function GetTexCoordsForRoleSmall(role)
+    if role == "TANK" then
+        return 0, 19/64, 22/64, 41/64
+    elseif role == "HEALER" then
+        return 20/64, 39/64, 1/64, 20/64
+    elseif role == "DAMAGER" then
+        return 20/64, 39/64, 22/64, 41/64
+    end
+end
 
 local function RoleIcon_SetRole(self, role)
+    self.tex:SetTexCoord(0, 1, 0, 1)
     self.tex:SetVertexColor(1, 1, 1)
+
     if role == "TANK" or role == "HEALER" or (not self.hideDamager and role == "DAMAGER") then
+        self.tex:SetTexture("Interface\\AddOns\\Cell\\Media\\Roles\\" .. self.texture .. "\\" .. role)
         if self.texture == "default" then
-            -- self.tex:SetTexture("Interface\\AddOns\\Cell\\Media\\Roles\\UI-LFG-ICON-PORTRAITROLES.blp")
-            -- self.tex:SetTexCoord(GetTexCoordsForRoleSmallCircle(role))
-            self.tex:SetTexture(defaultRoleIcon[role])
-            self.tex:SetTexCoord(0, 1, 0, 1)
+            self.tex:SetTexture(ICON_PATH .. "Default_" .. role)
         elseif self.texture == "default2" then
-            self.tex:SetTexture("Interface\\AddOns\\Cell\\Media\\Roles\\UI-LFG-ICON-ROLES.blp")
+            self.tex:SetTexture(ICON_PATH .. "Default2_ROLES")
             self.tex:SetTexCoord(GetTexCoordsForRole(role))
         elseif self.texture == "blizzard" then
-            self.tex:SetTexture("Interface\\LFGFRAME\\UI-LFG-ICON-PORTRAITROLES.blp")
-            self.tex:SetTexCoord(GetTexCoordsForRoleSmallCircle(role))
+            self.tex:SetTexture(ICON_PATH .. "Blizzard_ROLES")
+            self.tex:SetTexCoord(GetTexCoordsForRoleSmall(role))
         elseif self.texture == "blizzard2" then
-            self.tex:SetTexture("Interface\\LFGFRAME\\UI-LFG-ICON-ROLES.blp")
+            self.tex:SetTexture(ICON_PATH .. "Blizzard2_ROLES")
             self.tex:SetTexCoord(GetTexCoordsForRole(role))
+        elseif self.texture == "blizzard3" then
+            self.tex:SetTexture(ICON_PATH .. "Blizzard3_" .. role)
         elseif self.texture == "ffxiv" then
-            self.tex:SetTexture("Interface\\AddOns\\Cell\\Media\\Roles\\FFXIV\\"..role)
-            self.tex:SetTexCoord(0, 1, 0, 1)
+            self.tex:SetTexture(ICON_PATH .. "FFXIV_" .. role)
         elseif self.texture == "miirgui" then
-            self.tex:SetTexture("Interface\\AddOns\\Cell\\Media\\Roles\\MiirGui\\"..role)
-            self.tex:SetTexCoord(0, 1, 0, 1)
+            self.tex:SetTexture(ICON_PATH .. "MiirGui_" .. role)
         elseif self.texture == "mattui" then
-            self.tex:SetTexture("Interface\\AddOns\\Cell\\Media\\Roles\\MattUI.blp")
-            self.tex:SetTexCoord(GetTexCoordsForRoleSmallCircle(role))
+            self.tex:SetTexture(ICON_PATH .. "MattUI_ROLES")
+            self.tex:SetTexCoord(GetTexCoordsForRoleSmall(role))
         elseif self.texture == "custom" then
             self.tex:SetTexture(self[role])
-            self.tex:SetTexCoord(0, 1, 0, 1)
         end
         self:Show()
     elseif role == "VEHICLE-ROOT" then
@@ -1784,15 +1802,15 @@ end
 -------------------------------------------------
 -- ready check icon
 -------------------------------------------------
--- READY_CHECK_WAITING_TEXTURE = "Interface\\RaidFrame\\ReadyCheck-Waiting";
--- READY_CHECK_READY_TEXTURE = "Interface\\RaidFrame\\ReadyCheck-Ready";
--- READY_CHECK_NOT_READY_TEXTURE = "Interface\\RaidFrame\\ReadyCheck-NotReady";
--- READY_CHECK_AFK_TEXTURE = "Interface\\RaidFrame\\ReadyCheck-NotReady";
+-- READY_CHECK_WAITING_TEXTURE = "Interface\\RaidFrame\\ReadyCheck-Waiting"
+-- READY_CHECK_READY_TEXTURE = "Interface\\RaidFrame\\ReadyCheck-Ready"
+-- READY_CHECK_NOT_READY_TEXTURE = "Interface\\RaidFrame\\ReadyCheck-NotReady"
+-- READY_CHECK_AFK_TEXTURE = "Interface\\RaidFrame\\ReadyCheck-NotReady"
 -- ↓↓↓ since 10.1.5
--- READY_CHECK_WAITING_TEXTURE = "UI-LFG-PendingMark";
--- READY_CHECK_READY_TEXTURE = "UI-LFG-ReadyMark";
--- READY_CHECK_NOT_READY_TEXTURE = "UI-LFG-DeclineMark";
--- READY_CHECK_AFK_TEXTURE = "UI-LFG-DeclineMark";
+-- READY_CHECK_WAITING_TEXTURE = "UI-LFG-PendingMark"
+-- READY_CHECK_READY_TEXTURE = "UI-LFG-ReadyMark"
+-- READY_CHECK_NOT_READY_TEXTURE = "UI-LFG-DeclineMark"
+-- READY_CHECK_AFK_TEXTURE = "UI-LFG-DeclineMark"
 
 local READY_CHECK_STATUS = {
     ready = {t = "Interface\\AddOns\\Cell\\Media\\Icons\\readycheck-ready", c = {0, 1, 0, 1}},

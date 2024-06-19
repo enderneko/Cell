@@ -181,7 +181,7 @@ local function CreateAssignmentButton(index)
 
         if InCombatLockdown() then return end
 
-        local f = GetMouseFocus()
+        local f = F:GetMouseFocus()
 
         if f == WorldFrame then
             f = F:GetUnitButtonByGUID(UnitGUID("mouseover") or "")

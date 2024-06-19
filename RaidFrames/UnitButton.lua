@@ -2906,10 +2906,10 @@ end
 
 function B:SetTexture(button, tex)
     button.widgets.healthBar:SetStatusBarTexture(tex)
-    button.widgets.healthBar:GetStatusBarTexture():SetDrawLayer("ARTWORK", -6)
+    button.widgets.healthBar:GetStatusBarTexture():SetDrawLayer("ARTWORK", -7) --! VERY IMPORTANT
     button.widgets.healthBarLoss:SetTexture(tex)
     button.widgets.powerBar:SetStatusBarTexture(tex)
-    button.widgets.powerBar:GetStatusBarTexture():SetDrawLayer("ARTWORK", -6)
+    button.widgets.powerBar:GetStatusBarTexture():SetDrawLayer("ARTWORK", -7) --! VERY IMPORTANT
     button.widgets.powerBarLoss:SetTexture(tex)
     button.widgets.incomingHeal:SetTexture(tex)
     button.widgets.damageFlashTex:SetTexture(tex)
@@ -3489,38 +3489,19 @@ B.UpdateName = UnitButton_UpdateName
 -- local startTimeCache, statusCache = {}, {}
 local startTimeCache = {}
 
--- Layer(statusTextFrame) -- frameLevel:27 ----------
--- ARTWORK
---	statusText, timerText
--------------------------------------------------
--- Layer(overlayFrame) -- frameLevel:7 ----------
--- OVERLAY
---	-7 readyCheckIcon, statusIcon
--- ARTWORK
---	top nameText, statusText, timerText
---	-7 playerRaidIcon, roleIcon, leaderIcon
--------------------------------------------------
-
--- Layer(healthBar) -- frameLevel:5 -----------------
--- ARTWORK
---	-5 overShieldGlow
---	-6 incomingHeal, damageFlash, absorbsBar
---	-7 shieldBar
--------------------------------------------------
-
--- Layer(button) -- frameLevel:3 -----------------
+-- Layers ---------------------------------------
 -- OVERLAY
 -- ARTWORK
---	-6 healthBar, powerBar
---	-7 healthBarBackground, powerBarBackground
+--  -2 overAbsorbGlow
+--  -3 absorbsBar
+--  -4 overShieldGlow, overShieldGlowR
+--  -5 shieldBar, shieldBarR
+--	-6 incomingHeal, damageFlashTex
+--	-7 healthBar, healthBarLoss
 -- BORDER
---	0 background(button)
+--  0 gapTexture
 -- BACKGROUND
---	0 readyCheckHighlight
---	-1 mouseoverHighlight
---	-2 targetHighlight
 -------------------------------------------------
--- BACKGROUND BORDER ARTWORK OVERLAY HIGHLIGHT
 
 -- NOTE: prevent a nil method error
 local DumbFunc = function() end
@@ -3560,7 +3541,7 @@ function CellUnitButton_OnLoad(button)
     -- P:Point(healthBar, "TOPLEFT", button, "TOPLEFT", 1, -1)
     -- P:Point(healthBar, "BOTTOMRIGHT", button, "BOTTOMRIGHT", -1, 4)
     healthBar:SetStatusBarTexture(Cell.vars.texture)
-    healthBar:GetStatusBarTexture():SetDrawLayer("ARTWORK", -6)
+    healthBar:GetStatusBarTexture():SetDrawLayer("ARTWORK", -7)
     healthBar:SetFrameLevel(button:GetFrameLevel()+5)
     healthBar.SetBarValue = healthBar.SetValue
 
@@ -3583,7 +3564,7 @@ function CellUnitButton_OnLoad(button)
     -- P:Point(powerBar, "TOPLEFT", healthBar, "BOTTOMLEFT", 0, -1)
     -- P:Point(powerBar, "BOTTOMRIGHT", button, "BOTTOMRIGHT", -1, 1)
     powerBar:SetStatusBarTexture(Cell.vars.texture)
-    powerBar:GetStatusBarTexture():SetDrawLayer("ARTWORK", -6)
+    powerBar:GetStatusBarTexture():SetDrawLayer("ARTWORK", -7)
     powerBar:SetFrameLevel(button:GetFrameLevel()+6)
     powerBar.SetBarValue = powerBar.SetValue
 
@@ -3609,7 +3590,7 @@ function CellUnitButton_OnLoad(button)
     incomingHeal.SetValue = DumbFunc
 
     -- shield bar
-    local shieldBar = healthBar:CreateTexture(name.."ShieldBar", "ARTWORK", nil, -7)
+    local shieldBar = healthBar:CreateTexture(name.."ShieldBar", "ARTWORK", nil, -5)
     button.widgets.shieldBar = shieldBar
     shieldBar:SetTexture("Interface\\AddOns\\Cell\\Media\\shield", "REPEAT", "REPEAT")
     shieldBar:SetHorizTile(true)
@@ -3617,7 +3598,7 @@ function CellUnitButton_OnLoad(button)
     shieldBar:Hide()
     shieldBar.SetValue = DumbFunc
 
-    local shieldBarR = healthBar:CreateTexture(name.."ShieldBarR", "OVERLAY", nil, 1)
+    local shieldBarR = healthBar:CreateTexture(name.."ShieldBarR", "ARTWORK", nil, -5)
     button.widgets.shieldBarR = shieldBarR
     shieldBarR:SetTexture("Interface\\AddOns\\Cell\\Media\\shield", "REPEAT", "REPEAT")
     shieldBarR:SetHorizTile(true)
@@ -3626,7 +3607,7 @@ function CellUnitButton_OnLoad(button)
     shieldBar.shieldBarR = shieldBarR
 
     -- over-shield glow
-    local overShieldGlow = healthBar:CreateTexture(name.."OverShieldGlow", "OVERLAY")
+    local overShieldGlow = healthBar:CreateTexture(name.."OverShieldGlow", "ARTWORK", nil, -4)
     button.widgets.overShieldGlow = overShieldGlow
     overShieldGlow:SetTexture("Interface\\AddOns\\Cell\\Media\\overshield")
     -- overShieldGlow:SetBlendMode("ADD")
@@ -3634,7 +3615,7 @@ function CellUnitButton_OnLoad(button)
     shieldBar.overShieldGlow = overShieldGlow
 
     -- over-shield glow reversed
-    local overShieldGlowR = healthBar:CreateTexture(name.."OverShieldGlowR", "OVERLAY", nil, 2)
+    local overShieldGlowR = healthBar:CreateTexture(name.."OverShieldGlowR", "ARTWORK", nil, -4)
     button.widgets.overShieldGlowR = overShieldGlowR
     overShieldGlowR:SetTexture("Interface\\AddOns\\Cell\\Media\\overshield_reversed")
     -- overShieldGlowR:SetBlendMode("ADD")
@@ -3642,14 +3623,14 @@ function CellUnitButton_OnLoad(button)
     shieldBar.overShieldGlowR = overShieldGlowR
 
     -- over-absorb glow
-    local overAbsorbGlow = healthBar:CreateTexture(name.."OverAbsorbGlow", "OVERLAY", nil, 7)
+    local overAbsorbGlow = healthBar:CreateTexture(name.."OverAbsorbGlow", "ARTWORK", nil, -2)
     button.widgets.overAbsorbGlow = overAbsorbGlow
     overAbsorbGlow:SetTexture("Interface\\AddOns\\Cell\\Media\\overabsorb")
     -- overAbsorbGlow:SetBlendMode("ADD")
     overAbsorbGlow:Hide()
 
     -- absorbs bar
-    local absorbsBar = healthBar:CreateTexture(name.."AbsorbsBar", "OVERLAY", nil, 5)
+    local absorbsBar = healthBar:CreateTexture(name.."AbsorbsBar", "ARTWORK", nil, 1)
     button.widgets.absorbsBar = absorbsBar
     absorbsBar:SetTexture("Interface\\AddOns\\Cell\\Media\\shield.tga", "REPEAT", "REPEAT")
     absorbsBar:SetHorizTile(true)

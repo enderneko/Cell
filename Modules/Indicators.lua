@@ -112,7 +112,9 @@ local function UpdatePreviewButton()
     previewButton:UpdatePoint()
 
     previewButton.widgets.healthBar:SetStatusBarTexture(Cell.vars.texture)
+    previewButton.widgets.healthBar:GetStatusBarTexture():SetDrawLayer("ARTWORK", -7) --! VERY IMPORTANT
     previewButton.widgets.powerBar:SetStatusBarTexture(Cell.vars.texture)
+    previewButton.widgets.powerBar:GetStatusBarTexture():SetDrawLayer("ARTWORK", -7) --! VERY IMPORTANT
 
     -- health color
     local r, g, b = F:GetHealthBarColor(1, false, F:GetClassColor(Cell.vars.playerClass))
@@ -223,8 +225,6 @@ local function InitIndicator(indicatorName)
         indicator:SetTexture("Interface\\RaidFrame\\Raid-Icon-Rez")
 
     elseif indicatorName == "roleIcon" then
-        indicator.tex:SetTexture("Interface\\AddOns\\Cell\\Media\\UI-LFG-ICON-PORTRAITROLES.blp")
-        indicator.tex:SetTexCoord(GetTexCoordsForRoleSmallCircle("DAMAGER"))
         -- texture type cannot glow by LCG
         indicator.preview = indicator.preview or CreateFrame("Frame", nil, previewButton)
         indicator.preview:SetAllPoints(indicator)
@@ -397,29 +397,12 @@ local function InitIndicator(indicatorName)
             end
         end
 
-        indicator.UpdateHighlight = function(self, highlightType)
-            indicator.highlightType = highlightType
+        if not indicator._UpdateHighlight then
+            indicator._UpdateHighlight = indicator.UpdateHighlight
+        end
 
-            if highlightType == "none" then
-                indicator.highlight:Hide()
-            elseif highlightType == "gradient" then
-                indicator.highlight:ClearAllPoints()
-                indicator.highlight:SetAllPoints(previewButton.widgets.healthBar)
-                indicator.highlight:SetTexture("Interface\\Buttons\\WHITE8x8")
-            elseif highlightType == "gradient-half" then
-                indicator.highlight:ClearAllPoints()
-                indicator.highlight:SetPoint("BOTTOMLEFT", previewButton.widgets.healthBar)
-                indicator.highlight:SetPoint("TOPRIGHT", previewButton.widgets.healthBar, "RIGHT")
-                indicator.highlight:SetTexture("Interface\\Buttons\\WHITE8x8")
-            elseif highlightType == "entire" then
-                indicator.highlight:ClearAllPoints()
-                indicator.highlight:SetAllPoints(previewButton.widgets.healthBar)
-                indicator.highlight:SetTexture("Interface\\Buttons\\WHITE8x8")
-            elseif highlightType == "current" then
-                indicator.highlight:ClearAllPoints()
-                indicator.highlight:SetAllPoints(previewButton.widgets.healthBar:GetStatusBarTexture())
-                indicator.highlight:SetTexture(Cell.vars.texture)
-            end
+        indicator.UpdateHighlight = function(self, highlightType)
+            indicator:_UpdateHighlight(highlightType)
 
             -- preview
             indicator.elapsed = 1

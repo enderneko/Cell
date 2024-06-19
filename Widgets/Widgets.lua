@@ -2309,7 +2309,9 @@ local function CreateItemButtons_Scroll(items, itemTable, limit)
     -- update height
     local n = #items
     menu.scrollFrame:SetContentHeight(P:Scale(2) + n * P:Scale(18))
-    if n <= limit then
+    if n == 0 then
+        menu:SetHeight(P:Scale(5))
+    elseif n <= limit then
         menu:SetHeight(P:Scale(2) + n * P:Scale(18))
     else
         menu:SetHeight(P:Scale(2) + limit * P:Scale(18))
@@ -3226,7 +3228,7 @@ local function CreateGrid(parent, text, width)
         parent:SetFrameStrata("LOW")
         -- self:Hide() --! Hide() will cause OnDragStop trigger TWICE!!!
         C_Timer.After(0.05, function()
-            local b = GetMouseFocus()
+            local b = F:GetMouseFocus()
             if b then b = b:GetParent() end
             F:MoveClickCastings(parent.clickCastingIndex, b and b.clickCastingIndex)
         end)
@@ -3290,8 +3292,8 @@ function addon:CreateBindingListButton(parent, modifier, bindKey, bindType, bind
     spellIcon:SetTexCoord(0.08, 0.92, 0.08, 0.92)
     spellIcon:Hide()
 
-    function b:ShowSpellIcon(spell)
-        spellIcon:SetTexture(GetSpellTexture(spell) or 134400)
+    function b:ShowIcon(texture)
+        spellIcon:SetTexture(texture or 134400)
         spellIconBg:Show()
         spellIcon:Show()
         -- actionGrid.text:ClearAllPoints()
@@ -3299,7 +3301,23 @@ function addon:CreateBindingListButton(parent, modifier, bindKey, bindType, bind
         -- actionGrid.text:SetPoint("RIGHT", P:Scale(-5), 0)
     end
 
-    function b:HideSpellIcon()
+    function b:ShowSpellIcon(spell)
+        local icon = nil
+        if spell then
+            icon = select(2, F:GetSpellNameAndIcon(spell))
+        end
+        b:ShowIcon(icon)
+    end
+
+    function b:ShowItemIcon(itemslot)
+        b:ShowIcon(GetInventoryItemTexture("player", itemslot))
+    end
+
+    function b:ShowMacroIcon(macro)
+        b:ShowIcon(select(2, GetMacroInfo(GetMacroIndexByName(macro))))
+    end
+
+    function b:HideIcon()
         spellIconBg:Hide()
         spellIcon:Hide()
         -- actionGrid.text:ClearAllPoints()
