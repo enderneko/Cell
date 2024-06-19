@@ -24,6 +24,7 @@ local localizedClass
 if Cell.isRetail then
     localizedClass = LocalizedClassList()
 else
+    localizedClass = {}
     FillLocalizedClassList(localizedClass)
 end
 
