@@ -98,7 +98,7 @@ end
 local function LoadSpellsDropdown()
     local items = {}
     for i, t in pairs(CellDB["spellRequest"]["spells"]) do
-        local name, _, icon = GetSpellInfo(t["spellId"])
+        local name, icon = F:GetSpellNameAndIcon(t["spellId"])
         tinsert(items, {
             ["text"] = "|T"..icon..":0::0:0:16:16:1:15:1:15|t "..name,
             ["value"] = t["spellId"],
@@ -327,7 +327,7 @@ local function CreateSRPane()
     srDeleteBtn = Cell:CreateButton(srPane, L["Delete"], "red-hover", {65, 20})
     srDeleteBtn:SetPoint("TOPLEFT", srAddBtn, "TOPRIGHT", 7, 0)
     srDeleteBtn:SetScript("OnClick", function()
-        local name, _, icon = GetSpellInfo(CellDB["spellRequest"]["spells"][srSelectedSpell]["spellId"])
+        local name, icon = F:GetSpellNameAndIcon(CellDB["spellRequest"]["spells"][srSelectedSpell]["spellId"])
         local spellEditFrame = Cell:CreateConfirmPopup(Cell.frames.utilitiesTab, 200, L["Delete spell?"].."\n".."|T"..icon..":0::0:0:16:16:1:15:1:15|t "..name, function(self)
             tremove(CellDB["spellRequest"]["spells"], srSelectedSpell)
             srSpellsDD:RemoveCurrentItem()
@@ -476,7 +476,7 @@ local function CreateSpellEditFrame()
             return
         end
 
-        local name, _, icon = GetSpellInfo(id)
+        local name, icon = F:GetSpellNameAndIcon(id)
         if not name then
             CellSpellTooltip:Hide()
             spellId = nil
@@ -523,7 +523,7 @@ local function CreateSpellEditFrame()
             return
         end
 
-        local name = GetSpellInfo(id)
+        local name = F:GetSpellNameAndIcon(id)
         if not name then
             buffId = nil
             addBtn:SetEnabled(false)
