@@ -2067,7 +2067,7 @@ LoadIndicatorList = function()
             i.isVisible = false
             i.highlight:Hide()
         end
-end)
+    end)
 end
 
 -------------------------------------------------
