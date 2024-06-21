@@ -2258,11 +2258,12 @@ UnitButton_UpdateStatusText = function(self)
         local status = C_IncomingSummon.IncomingSummonStatus(unit)
         if status == Enum.SummonStatus.Pending then
             statusText:SetStatus("PENDING")
-        elseif status == Enum.SummonStatus.Accepted then
-            statusText:SetStatus("ACCEPTED")
-            C_Timer.After(6, function() UnitButton_UpdateStatusText(self) end)
-        elseif status == Enum.SummonStatus.Declined then
-            statusText:SetStatus("DECLINED")
+        else
+            if status == Enum.SummonStatus.Accepted then
+                statusText:SetStatus("ACCEPTED")
+            elseif status == Enum.SummonStatus.Declined then
+                statusText:SetStatus("DECLINED")
+            end
             C_Timer.After(6, function() UnitButton_UpdateStatusText(self) end)
         end
     elseif statusText:GetStatus() == "DRINKING" then
