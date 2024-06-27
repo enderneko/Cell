@@ -2352,6 +2352,7 @@ function I.CreateCrowdControls(parent)
     crowdControls.SetSize = I.Cooldowns_SetSize
     crowdControls.SetBorder = I.Cooldowns_SetBorder
     crowdControls.UpdateSize = I.Cooldowns_UpdateSize_WithSpacing
+    crowdControls.ShowDuration = I.Cooldowns_ShowDuration
     crowdControls.SetOrientation = I.Cooldowns_SetOrientation_WithSpacing
     crowdControls.SetFont = I.Cooldowns_SetFont
     crowdControls.UpdatePixelPerfect = I.Cooldowns_UpdatePixelPerfect
