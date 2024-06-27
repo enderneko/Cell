@@ -1842,7 +1842,7 @@ end
 -------------------------------------------------
 function F:GetMouseFocus()
     if Cell.isTWW then
-        return GetMouseFoci()
+        return GetMouseFoci()[1]   -- Latest Beta build changed this to return the table under key `1`
     else
         return GetMouseFocus()
     end
