@@ -349,7 +349,7 @@ local function HideGlow(frame)
 end
 
 function I.CreateTargetedSpells(parent)
-    local targetedSpells = CreateFrame("Frame", parent:GetName().."TargetedSpellsParent", parent.widgets.overlayFrame)
+    local targetedSpells = CreateFrame("Frame", parent:GetName().."TargetedSpellsParent", parent.widgets.highLevelFrame)
     parent.indicators.targetedSpells = targetedSpells
     targetedSpells:Hide()
 

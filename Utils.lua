@@ -1425,7 +1425,7 @@ function F:HasPermission(isPartyMarkPermission)
 end
 
 -------------------------------------------------
--- range checker
+-- range check
 -------------------------------------------------
 local UnitIsVisible = UnitIsVisible
 local UnitInRange = UnitInRange
@@ -1433,6 +1433,7 @@ local UnitCanAssist = UnitCanAssist
 local UnitCanAttack = UnitCanAttack
 local UnitCanCooperate = UnitCanCooperate
 local IsSpellInRange = (C_Spell and C_Spell.IsSpellInRange) and C_Spell.IsSpellInRange or IsSpellInRange
+local IsItemInRange = C_Item.IsItemInRange
 local CheckInteractDistance = CheckInteractDistance
 local UnitIsDead = UnitIsDead
 local GetSpellTabInfo = GetSpellTabInfo
@@ -1510,28 +1511,28 @@ local harmItems = {
     ["WARRIOR"] = 28767,
 }
 
-local FindSpellIndex
-if C_SpellBook and C_SpellBook.FindSpellBookSlotForSpell then
-    FindSpellIndex = function(spellName)
-        if not spellName or spellName == "" then return end
-        return C_SpellBook.FindSpellBookSlotForSpell(spellName)
-    end
-else
-    local function GetNumSpells()
-        local _, _, offset, numSpells = GetSpellTabInfo(GetNumSpellTabs())
-        return offset + numSpells
-    end
+-- local FindSpellIndex
+-- if C_SpellBook and C_SpellBook.FindSpellBookSlotForSpell then
+--     FindSpellIndex = function(spellName)
+--         if not spellName or spellName == "" then return end
+--         return C_SpellBook.FindSpellBookSlotForSpell(spellName)
+--     end
+-- else
+--     local function GetNumSpells()
+--         local _, _, offset, numSpells = GetSpellTabInfo(GetNumSpellTabs())
+--         return offset + numSpells
+--     end
 
-    FindSpellIndex = function(spellName)
-        if not spellName or spellName == "" then return end
-        for i = 1, GetNumSpells() do
-            local spell = GetSpellBookItemName(i, BOOKTYPE_SPELL)
-            if spell == spellName then
-                return i
-            end
-        end
-    end
-end
+--     FindSpellIndex = function(spellName)
+--         if not spellName or spellName == "" then return end
+--         for i = 1, GetNumSpells() do
+--             local spell = GetSpellBookItemName(i, BOOKTYPE_SPELL)
+--             if spell == spellName then
+--                 return i
+--             end
+--         end
+--     end
+-- end
 
 local UnitInSpellRange
 if C_Spell and C_Spell.IsSpellInRange then
@@ -1608,14 +1609,14 @@ else
                 if spell_friend then
                     return UnitInSpellRange(spell_friend, unit)
                 else
-                    return C_Item.IsItemInRange(friendItems[playerClass], unit)
+                    return IsItemInRange(friendItems[playerClass], unit)
                 end
             elseif UnitCanAttack("player", unit) then
                 -- print("CanAttack", unit)
                 if spell_harm then
                     return UnitInSpellRange(spell_harm, unit)
                 else
-                    return C_Item.IsItemInRange(harmItems[playerClass], unit)
+                    return IsItemInRange(harmItems[playerClass], unit)
                 end
             end
 

@@ -36,7 +36,7 @@ local supporters1 = { -- wowIDs
     {"Everessian-Ravencrest (EU)"}, -- Martin van Vuuren (Ko-fi)
     {"Shendreakah-Zul'jin (US)"}, -- Shendreakah - Zul-jin (Ko-fi)
     {"Palymoo-Twistingnether (EU)"}, -- Palymoo-Twistingnether (EU) (Ko-fi)
-    {"Skywarden-Terokkar (EU)"}, -- Serghei Iakovlev (Ko-fi)
+    {"Skywarden-Sylvanas (EU)"}, -- Serghei Iakovlev (Ko-fi)
     {"Fourdigitiq-Blackrock (EU)"}, -- Rou (Ko-fi)
     {"Leako-Draenor (EU)"}, -- Leako (Ko-fi)
 }

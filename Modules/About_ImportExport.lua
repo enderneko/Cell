@@ -222,7 +222,7 @@ local function CreateImportExportFrame()
                 version = tonumber(version)
 
                 if version and data then
-                    if version >= Cell.MIN_VERSION then
+                    if version >= Cell.MIN_VERSION and version <= Cell.versionNum then
                         local success
                         data = LibDeflate:DecodeForPrint(data) -- decode
                         success, data = pcall(LibDeflate.DecompressDeflate, LibDeflate, data) -- decompress

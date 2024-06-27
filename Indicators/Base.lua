@@ -12,6 +12,16 @@ CELL_BORDER_COLOR = {0, 0, 0, 1}
 -------------------------------------------------
 -- SetFont
 -------------------------------------------------
+local function JustifyText(text, point)
+    if strfind(point, "LEFT$") then
+        text:SetJustifyH("LEFT")
+    elseif strfind(point, "RIGHT$") then
+        text:SetJustifyH("RIGHT")
+    else
+        text:SetJustifyH("CENTER")
+    end
+end
+
 function I.SetFont(fs, anchorTo, font, size, outline, shadow, anchor, xOffset, yOffset, color)
     font = F:GetFont(font)
 
@@ -36,6 +46,7 @@ function I.SetFont(fs, anchorTo, font, size, outline, shadow, anchor, xOffset, y
 
     P:ClearPoints(fs)
     P:Point(fs, anchor, anchorTo, anchor, xOffset, yOffset)
+    JustifyText(fs, anchor)
 
     if color then
         fs.r = color[1]
@@ -267,15 +278,8 @@ function I.CreateAura_BorderIcon(name, parent, borderSize)
     frame.textFrame = textFrame
     textFrame:SetAllPoints(frame)
 
-    local stack = textFrame:CreateFontString(nil, "OVERLAY", "CELL_FONT_STATUS")
-    frame.stack = stack
-    stack:SetJustifyH("RIGHT")
-    P:Point(stack, "TOPRIGHT", textFrame, "TOPRIGHT", 2, 1)
-
-    local duration = textFrame:CreateFontString(nil, "OVERLAY", "CELL_FONT_STATUS")
-    frame.duration = duration
-    duration:SetJustifyH("RIGHT")
-    P:Point(duration, "BOTTOMRIGHT", textFrame, "BOTTOMRIGHT", 2, -1)
+    frame.stack = textFrame:CreateFontString(nil, "OVERLAY", "CELL_FONT_STATUS")
+    frame.duration = textFrame:CreateFontString(nil, "OVERLAY", "CELL_FONT_STATUS")
 
     local ag = frame:CreateAnimationGroup()
     frame.ag = ag
@@ -511,16 +515,33 @@ local function Text_SetFont(frame, font, size, outline, shadow)
         frame.text:SetShadowColor(0, 0, 0, 0)
     end
 
-    local point = frame:GetPoint(1)
+    frame:SetSize(size+3, size+3)
+end
+
+local function Text_SetPoint(frame, point, relativeTo, relativePoint, x, y)
     frame.text:ClearAllPoints()
-    if string.find(point, "LEFT") then
+    if strfind(point, "LEFT$") then
         frame.text:SetPoint("LEFT")
-    elseif string.find(point, "RIGHT") then
+    elseif strfind(point, "RIGHT$") then
         frame.text:SetPoint("RIGHT")
     else
         frame.text:SetPoint("CENTER")
     end
-    frame:SetSize(size+3, size+3)
+    frame:_SetPoint(point, relativeTo, relativePoint, x, y)
+    JustifyText(frame.text, point)
+end
+
+local function Text_SetDuration(frame, durationTbl)
+    frame.durationTbl = durationTbl
+end
+
+local function Text_SetCircledStackNums(frame, circled)
+    frame.circledStackNums = circled
+end
+
+local function Text_SetColors(frame, colors)
+    frame.state = nil
+    frame.colors = colors
 end
 
 local function Text_OnUpdateColor(frame)
@@ -629,38 +650,15 @@ function I.CreateAura_Text(name, parent)
 
     local text = frame:CreateFontString(nil, "OVERLAY", "CELL_FONT_STATUS")
     frame.text = text
-    -- stack:SetJustifyH("RIGHT")
     text:SetPoint("CENTER", 1, 0)
 
     frame.SetFont = Text_SetFont
-
     frame._SetPoint = frame.SetPoint
-    function frame:SetPoint(point, relativeTo, relativePoint, x, y)
-        text:ClearAllPoints()
-        if string.find(point, "LEFT") then
-            text:SetPoint("LEFT")
-        elseif string.find(point, "RIGHT") then
-            text:SetPoint("RIGHT")
-        else
-            text:SetPoint("CENTER")
-        end
-        frame:_SetPoint(point, relativeTo, relativePoint, x, y)
-    end
-
+    frame.SetPoint = Text_SetPoint
     frame.SetCooldown = Text_SetCooldown
-
-    function frame:SetDuration(durationTbl)
-        frame.durationTbl = durationTbl
-    end
-
-    function frame:SetCircledStackNums(circled)
-        frame.circledStackNums = circled
-    end
-
-    function frame:SetColors(colors)
-        frame.state = nil
-        frame.colors = colors
-    end
+    frame.SetDuration = Text_SetDuration
+    frame.SetCircledStackNums = Text_SetCircledStackNums
+    frame.SetColors = Text_SetColors
 
     return frame
 end
@@ -967,16 +965,15 @@ local function Color_SetAnchor(color, anchorTo)
     if anchorTo == "healthbar-current" then
         -- current hp texture
         color:SetAllPoints(color.parent.widgets.healthBar:GetStatusBarTexture())
-        -- color:SetFrameLevel(parent:GetFrameLevel()+5)
     elseif anchorTo == "healthbar-entire" then
         -- entire hp bar
         color:SetAllPoints(color.parent.widgets.healthBar)
-        -- color:SetFrameLevel(parent:GetFrameLevel()+5)
     else -- unitbutton
-        P:Point(color, "TOPLEFT", color.parent.widgets.overlayFrame, "TOPLEFT", 1, -1)
-        P:Point(color, "BOTTOMRIGHT", color.parent.widgets.overlayFrame, "BOTTOMRIGHT", -1, 1)
-        -- color:SetFrameLevel(parent:GetFrameLevel()+6)
+        P:Point(color, "TOPLEFT", color.parent, "TOPLEFT", CELL_BORDER_SIZE, -CELL_BORDER_SIZE)
+        P:Point(color, "BOTTOMRIGHT", color.parent, "BOTTOMRIGHT", -CELL_BORDER_SIZE, CELL_BORDER_SIZE)
     end
+
+    color:SetFrameLevel(color:GetParent():GetFrameLevel() + color.configs.frameLevel)
 end
 
 local function Color_SetColors(self, colors)
@@ -1021,7 +1018,7 @@ function I.CreateAura_Color(name, parent)
     color.indicatorType = "color"
     color.parent = parent
 
-    local solidTex = color:CreateTexture(nil, "OVERLAY", nil, -5)
+    local solidTex = color:CreateTexture(nil, "ARTWORK")
     color.solidTex = solidTex
     solidTex:SetTexture(Cell.vars.texture)
     solidTex:SetAllPoints(color)
@@ -1032,7 +1029,7 @@ function I.CreateAura_Color(name, parent)
         solidTex:SetTexture(Cell.vars.texture)
     end)
 
-    local gradientTex = color:CreateTexture(nil, "OVERLAY", nil, -5)
+    local gradientTex = color:CreateTexture(nil, "ARTWORK")
     color.gradientTex = gradientTex
     gradientTex:SetTexture("Interface\\Buttons\\WHITE8x8")
     gradientTex:SetAllPoints(color)

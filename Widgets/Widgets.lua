@@ -1748,6 +1748,7 @@ function addon:CreateConfirmPopup(parent, width, text, onAccept, onReject, mask,
         end
         parent.confirmPopup.editBox:Show()
         -- disable yes if editBox empty
+        parent.confirmPopup.button1:SetEnabled(false)
         parent.confirmPopup.editBox:SetScript("OnTextChanged", function()
             if not parent.confirmPopup.editBox:GetText() or strtrim(parent.confirmPopup.editBox:GetText()) == "" then
                 parent.confirmPopup.button1:SetEnabled(false)

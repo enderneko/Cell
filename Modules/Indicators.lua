@@ -580,6 +580,8 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
             I.RemoveAllCustomIndicators(previewButton)
             for i, t in pairs(currentLayoutTable["indicators"]) do
                 local indicator = previewButton.indicators[t["indicatorName"]] or I.CreateIndicator(previewButton, t, true)
+                indicator.configs = t
+
                 InitIndicator(t["indicatorName"])
                 -- update position
                 if t["position"] then
@@ -1525,7 +1527,7 @@ if Cell.isRetail then
         ["privateAuras"] = {"|cffb7b7b7"..L["Due to restrictions of the private aura system, this indicator can only use Blizzard style."], "enabled", "privateAuraOptions", "size-square", "position", "frameLevel"},
         ["targetedSpells"] = {"enabled", "checkbutton:showAllSpells:"..L["Glow is only available to the spells in the list below"], "targetedSpellsList", "targetedSpellsGlow", "size-border", "num:3", "orientation", "position", "frameLevel", "font"},
         ["targetCounter"] = {"|cffff2727"..L["HIGH CPU USAGE"].."!|r |cffb7b7b7"..L["Check all visible enemy nameplates."], "enabled", "targetCounterFilters", "color", "position", "frameLevel", "font-noOffset"},
-        ["crowdControls"] = {"enabled", "builtInCrowdControls", "customCrowdControls", "size-border", "num:3", "orientation", "position", "frameLevel", "font1:stackFont", "font2:durationFont"},
+        ["crowdControls"] = {"enabled", "builtInCrowdControls", "customCrowdControls", "durationVisibility", "size-border", "num:3", "orientation", "position", "frameLevel", "font1:stackFont", "font2:durationFont"},
         ["consumables"] = {"enabled", "consumablesPreview", "consumablesList"},
         ["healthThresholds"] = {"enabled", "thresholds", "thickness"},
         ["missingBuffs"] = {I.GetMissingBuffsString().."|cffb7b7b7"..(L["%s in Utilities must be enabled to make this indicator work."]:format(Cell:GetAccentColorString()..L["Buff Tracker"].."|r")), "enabled", "missingBuffsFilters", "size-square", "num:5", "orientation", "position", "frameLevel"},
@@ -1632,7 +1634,7 @@ local function ShowIndicatorSettings(id)
         elseif indicatorType == "icons" then
             settingsTable = {"enabled", "auras", "checkbutton3:showStack", "durationVisibility", "checkbutton4:showAnimation", CELL_RECTANGULAR_CUSTOM_INDICATOR_ICONS and "size" or "size-square", "num:10", "numPerLine:10", "spacing", "orientation", "position", "frameLevel", "font1:stackFont", "font2:durationFont"}
         elseif indicatorType == "color" then
-            settingsTable = {"enabled", "auras", "customColors", "anchor", "frameLevel"}
+            settingsTable = {"enabled", "auras", "customColors", "anchor", "frameLevel:50"}
         elseif indicatorType == "texture" then
             settingsTable = {"enabled", "checkbutton3:fadeOut", "auras", "texture", "size", "position", "frameLevel"}
         elseif indicatorType == "glow" then
@@ -1901,6 +1903,14 @@ local function ShowIndicatorSettings(id)
                 Cell:Fire("UpdateIndicators", notifiedLayout, indicatorName, "numPerLine", value)
             end)
 
+        -- frameLevel:X
+        elseif string.find(currentSetting, "^frameLevel") then
+            w:SetDBValue(indicatorTable["frameLevel"], tonumber(select(2,string.split(":", currentSetting)) or 100))
+            w:SetFunc(function(value)
+                indicatorTable["frameLevel"] = value
+                Cell:Fire("UpdateIndicators", notifiedLayout, indicatorName, "frameLevel", value)
+            end)
+
         -- missingBuffsFilters
         elseif currentSetting == "missingBuffsFilters" then
             w:SetDBValue(indicatorTable["filters"])
@@ -2067,7 +2077,7 @@ LoadIndicatorList = function()
             i.isVisible = false
             i.highlight:Hide()
         end
-end)
+    end)
 end
 
 -------------------------------------------------

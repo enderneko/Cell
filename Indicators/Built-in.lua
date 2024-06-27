@@ -192,7 +192,7 @@ end
 -- CreateDefensiveCooldowns
 -------------------------------------------------
 function I.CreateDefensiveCooldowns(parent)
-    local defensiveCooldowns = CreateFrame("Frame", parent:GetName().."DefensiveCooldownParent", parent.widgets.overlayFrame)
+    local defensiveCooldowns = CreateFrame("Frame", parent:GetName().."DefensiveCooldownParent", parent.widgets.highLevelFrame)
     parent.indicators.defensiveCooldowns = defensiveCooldowns
     -- defensiveCooldowns:SetSize(20, 10)
     defensiveCooldowns:Hide()
@@ -217,7 +217,7 @@ end
 -- CreateExternalCooldowns
 -------------------------------------------------
 function I.CreateExternalCooldowns(parent)
-    local externalCooldowns = CreateFrame("Frame", parent:GetName().."ExternalCooldownParent", parent.widgets.overlayFrame)
+    local externalCooldowns = CreateFrame("Frame", parent:GetName().."ExternalCooldownParent", parent.widgets.highLevelFrame)
     parent.indicators.externalCooldowns = externalCooldowns
     externalCooldowns:Hide()
 
@@ -241,7 +241,7 @@ end
 -- CreateAllCooldowns
 -------------------------------------------------
 function I.CreateAllCooldowns(parent)
-    local allCooldowns = CreateFrame("Frame", parent:GetName().."AllCooldownParent", parent.widgets.overlayFrame)
+    local allCooldowns = CreateFrame("Frame", parent:GetName().."AllCooldownParent", parent.widgets.highLevelFrame)
     parent.indicators.allCooldowns = allCooldowns
     allCooldowns:Hide()
 
@@ -265,7 +265,7 @@ end
 -- CreateTankActiveMitigation
 -------------------------------------------------
 function I.CreateTankActiveMitigation(parent)
-    local bar = Cell:CreateStatusBar(parent:GetName().."TanckActiveMitigation", parent.widgets.overlayFrame, 20, 6, 100)
+    local bar = Cell:CreateStatusBar(parent:GetName().."TanckActiveMitigation", parent.widgets.highLevelFrame, 20, 6, 100)
     parent.indicators.tankActiveMitigation = bar
     bar:Hide()
 
@@ -461,7 +461,7 @@ local function Debuffs_EnableBlacklistShortcut(debuffs, enabled)
 end
 
 function I.CreateDebuffs(parent)
-    local debuffs = CreateFrame("Frame", parent:GetName().."DebuffParent", parent.widgets.overlayFrame)
+    local debuffs = CreateFrame("Frame", parent:GetName().."DebuffParent", parent.widgets.highLevelFrame)
     parent.indicators.debuffs = debuffs
     debuffs:Hide()
     debuffs.parent = parent
@@ -632,55 +632,59 @@ local function Dispels_SetOrientation(self, orientation)
     self:UpdateSize()
 end
 
+local function Dispels_UpdateHighlight(self, highlightType)
+    self.highlightType = highlightType
+
+    if highlightType == "none" then
+        self.highlight:Hide()
+    elseif highlightType == "gradient" then
+        -- self.highlight:SetParent(self.parent.widgets.highLevelFrame)
+        self.highlight:ClearAllPoints()
+        self.highlight:SetAllPoints(self.parent.widgets.healthBar)
+        self.highlight:SetTexture("Interface\\Buttons\\WHITE8x8")
+        self.highlight:SetDrawLayer("ARTWORK", 0)
+    elseif highlightType == "gradient-half" then
+        -- self.highlight:SetParent(self.parent.widgets.highLevelFrame)
+        self.highlight:ClearAllPoints()
+        self.highlight:SetPoint("BOTTOMLEFT", self.parent.widgets.healthBar)
+        self.highlight:SetPoint("TOPRIGHT", self.parent.widgets.healthBar, "RIGHT")
+        self.highlight:SetTexture("Interface\\Buttons\\WHITE8x8")
+        self.highlight:SetDrawLayer("ARTWORK", 0)
+    elseif highlightType == "entire" then
+        -- self.highlight:SetParent(self.parent.widgets.highLevelFrame)
+        self.highlight:ClearAllPoints()
+        self.highlight:SetAllPoints(self.parent.widgets.healthBar)
+        self.highlight:SetTexture("Interface\\Buttons\\WHITE8x8")
+        self.highlight:SetDrawLayer("ARTWORK", 0)
+    elseif highlightType == "current" then
+        -- self.highlight:SetParent(self.parent.widgets.healthBar)
+        self.highlight:ClearAllPoints()
+        self.highlight:SetAllPoints(self.parent.widgets.healthBar:GetStatusBarTexture())
+        self.highlight:SetTexture(Cell.vars.texture)
+        self.highlight:SetDrawLayer("ARTWORK", -7)
+    end
+end
+
 function I.CreateDispels(parent)
-    local dispels = CreateFrame("Frame", parent:GetName().."DispelParent", parent.widgets.overlayFrame)
+    local dispels = CreateFrame("Frame", parent:GetName().."DispelParent", parent.widgets.highLevelFrame)
     parent.indicators.dispels = dispels
+    dispels.parent = parent
     dispels:Hide()
 
     dispels:SetScript("OnHide", function()
         dispels.highlight:Hide()
     end)
 
-    dispels.highlight = parent:CreateTexture(parent:GetName().."DispelHighlight", "OVERLAY")
+    dispels.highlight = parent.widgets.midLevelFrame:CreateTexture(parent:GetName().."DispelHighlight")
     dispels.highlight:Hide()
 
     dispels._SetSize = dispels.SetSize
     dispels.SetSize = Dispels_SetSize
     dispels.UpdateSize = Dispels_UpdateSize
     dispels.SetDispels = Dispels_SetDispels
-    -- dispels.UpdateHighlight = Dispels_UpdateHighlight
+    dispels.UpdateHighlight = Dispels_UpdateHighlight
     dispels.ShowIcons = Dispels_ShowIcons
     dispels.SetOrientation = Dispels_SetOrientation
-
-    function dispels:UpdateHighlight(highlightType)
-        dispels.highlightType = highlightType
-
-        if highlightType == "none" then
-            dispels.highlight:Hide()
-        elseif highlightType == "gradient" then
-            dispels.highlight:SetParent(parent.widgets.overlayFrame)
-            dispels.highlight:ClearAllPoints()
-            dispels.highlight:SetAllPoints(parent.widgets.healthBar)
-            dispels.highlight:SetTexture("Interface\\Buttons\\WHITE8x8")
-        elseif highlightType == "gradient-half" then
-            dispels.highlight:SetParent(parent.widgets.overlayFrame)
-            dispels.highlight:ClearAllPoints()
-            dispels.highlight:SetPoint("BOTTOMLEFT", parent.widgets.healthBar)
-            dispels.highlight:SetPoint("TOPRIGHT", parent.widgets.healthBar, "RIGHT")
-            dispels.highlight:SetTexture("Interface\\Buttons\\WHITE8x8")
-        elseif highlightType == "entire" then
-            dispels.highlight:SetParent(parent.widgets.overlayFrame)
-            dispels.highlight:ClearAllPoints()
-            dispels.highlight:SetAllPoints(parent.widgets.healthBar)
-            dispels.highlight:SetTexture("Interface\\Buttons\\WHITE8x8")
-        elseif highlightType == "current" then
-            dispels.highlight:SetParent(parent.widgets.healthBar)
-            dispels.highlight:ClearAllPoints()
-            dispels.highlight:SetAllPoints(parent.widgets.healthBar:GetStatusBarTexture())
-            dispels.highlight:SetTexture(Cell.vars.texture)
-        end
-        dispels.highlight:SetDrawLayer("ARTWORK", 0)
-    end
 
     for i = 1, 5 do
         local icon = dispels:CreateTexture(parent:GetName().."Dispel"..i, "ARTWORK")
@@ -851,7 +855,7 @@ local function RaidDebuffs_ShowTooltip(raidDebuffs, show)
 end
 
 function I.CreateRaidDebuffs(parent)
-    local raidDebuffs = CreateFrame("Frame", parent:GetName().."RaidDebuffParent", parent.widgets.overlayFrame)
+    local raidDebuffs = CreateFrame("Frame", parent:GetName().."RaidDebuffParent", parent.widgets.highLevelFrame)
     parent.indicators.raidDebuffs = raidDebuffs
     raidDebuffs:Hide()
     raidDebuffs.parent = parent
@@ -930,7 +934,7 @@ local function PrivateAuras_UpdatePrivateAuraAnchor(self, unit)
 end
 
 function I.CreatePrivateAuras(parent)
-    local privateAuras = CreateFrame("Frame", parent:GetName().."PrivateAuraParent", parent.widgets.overlayFrame)
+    local privateAuras = CreateFrame("Frame", parent:GetName().."PrivateAuraParent", parent.widgets.highLevelFrame)
     parent.indicators.privateAuras = privateAuras
     privateAuras:Hide()
 
@@ -953,10 +957,10 @@ end
 -- player raid icon
 -------------------------------------------------
 function I.CreatePlayerRaidIcon(parent)
-    -- local playerRaidIcon = parent.widgets.overlayFrame:CreateTexture(parent:GetName().."PlayerRaidIcon", "ARTWORK", nil, -7)
+    -- local playerRaidIcon = parent.widgets.highLevelFrame:CreateTexture(parent:GetName().."PlayerRaidIcon", "ARTWORK", nil, -7)
     -- parent.indicators.playerRaidIcon = playerRaidIcon
     -- playerRaidIcon:SetTexture("Interface\\TargetingFrame\\UI-RaidTargetingIcons")
-    local playerRaidIcon = CreateFrame("Frame", parent:GetName().."PlayerRaidIcon", parent.widgets.overlayFrame)
+    local playerRaidIcon = CreateFrame("Frame", parent:GetName().."PlayerRaidIcon", parent.widgets.highLevelFrame)
     parent.indicators.playerRaidIcon = playerRaidIcon
     playerRaidIcon.tex = playerRaidIcon:CreateTexture(nil, "ARTWORK")
     playerRaidIcon.tex:SetTexture("Interface\\TargetingFrame\\UI-RaidTargetingIcons")
@@ -968,7 +972,7 @@ end
 -- target raid icon
 -------------------------------------------------
 function I.CreateTargetRaidIcon(parent)
-    local targetRaidIcon = CreateFrame("Frame", parent:GetName().."TargetRaidIcon", parent.widgets.overlayFrame)
+    local targetRaidIcon = CreateFrame("Frame", parent:GetName().."TargetRaidIcon", parent.widgets.highLevelFrame)
     parent.indicators.targetRaidIcon = targetRaidIcon
     targetRaidIcon.tex = targetRaidIcon:CreateTexture(nil, "ARTWORK")
     targetRaidIcon.tex:SetTexture("Interface\\TargetingFrame\\UI-RaidTargetingIcons")
@@ -986,7 +990,7 @@ local font_status = CreateFont("CELL_FONT_STATUS")
 font_status:SetFont(GameFontNormal:GetFont(), 11, "")
 
 function I.CreateNameText(parent)
-    local nameText = CreateFrame("Frame", parent:GetName().."NameText", parent.widgets.overlayFrame)
+    local nameText = CreateFrame("Frame", parent:GetName().."NameText", parent.widgets.highLevelFrame)
     parent.indicators.nameText = nameText
     nameText:Hide()
 
@@ -1242,7 +1246,7 @@ end
 
 local startTimeCache = {}
 function I.CreateStatusText(parent)
-    local statusText = CreateFrame("Frame", parent:GetName().."StatusText", parent.widgets.overlayFrame)
+    local statusText = CreateFrame("Frame", parent:GetName().."StatusText", parent.widgets.highLevelFrame)
     parent.indicators.statusText = statusText
     statusText:SetIgnoreParentAlpha(true)
     statusText:Hide()
@@ -1530,7 +1534,7 @@ local function HealthText_UpdatePreviewColor(self, color)
 end
 
 function I.CreateHealthText(parent)
-    local healthText = CreateFrame("Frame", parent:GetName().."HealthText", parent.widgets.overlayFrame)
+    local healthText = CreateFrame("Frame", parent:GetName().."HealthText", parent.widgets.highLevelFrame)
     parent.indicators.healthText = healthText
     healthText:Hide()
 
@@ -1629,7 +1633,7 @@ local function PowerText_UpdatePreviewColor(self, color)
 end
 
 function I.CreatePowerText(parent)
-    local powerText = CreateFrame("Frame", parent:GetName().."PowerText", parent.widgets.overlayFrame)
+    local powerText = CreateFrame("Frame", parent:GetName().."PowerText", parent.widgets.highLevelFrame)
     parent.indicators.powerText = powerText
     powerText:Hide()
 
@@ -1730,9 +1734,9 @@ local function RoleIcon_UpdatePixelPerfect(self)
 end
 
 function I.CreateRoleIcon(parent)
-    local roleIcon = CreateFrame("Frame", parent:GetName().."RoleIcon", parent.widgets.overlayFrame)
+    local roleIcon = CreateFrame("Frame", parent:GetName().."RoleIcon", parent.widgets.highLevelFrame)
     parent.indicators.roleIcon = roleIcon
-    -- roleIcon:SetPoint("TOPLEFT", overlayFrame)
+    -- roleIcon:SetPoint("TOPLEFT", highLevelFrame)
     -- roleIcon:SetSize(11, 11)
 
     roleIcon.tex = roleIcon:CreateTexture(nil, "ARTWORK")
@@ -1748,7 +1752,7 @@ end
 -- party assignment icon
 -------------------------------------------------
 function I.CreatePartyAssignmentIcon(parent)
-    local partyAssignmentIcon = parent.widgets.overlayFrame:CreateTexture(parent:GetName().."PartyAssignmentIcon", "ARTWORK", nil, -7)
+    local partyAssignmentIcon = parent.widgets.highLevelFrame:CreateTexture(parent:GetName().."PartyAssignmentIcon", "ARTWORK", nil, -7)
     parent.indicators.partyAssignmentIcon = partyAssignmentIcon
     partyAssignmentIcon:Hide()
 
@@ -1774,7 +1778,7 @@ end
 -- leader icon
 -------------------------------------------------
 function I.CreateLeaderIcon(parent)
-    local leaderIcon = parent.widgets.overlayFrame:CreateTexture(parent:GetName().."LeaderIcon", "ARTWORK", nil, -7)
+    local leaderIcon = parent.widgets.highLevelFrame:CreateTexture(parent:GetName().."LeaderIcon", "ARTWORK", nil, -7)
     parent.indicators.leaderIcon = leaderIcon
     -- leaderIcon:SetPoint("TOPLEFT", roleIcon, "BOTTOM")
     -- leaderIcon:SetPoint("TOPLEFT", 0, -11)
@@ -1819,7 +1823,7 @@ local READY_CHECK_STATUS = {
 }
 
 function I.CreateReadyCheckIcon(parent)
-    local readyCheckIcon = CreateFrame("Frame", parent:GetName().."ReadyCheckIcon", parent.widgets.overlayFrame)
+    local readyCheckIcon = CreateFrame("Frame", parent:GetName().."ReadyCheckIcon", parent.widgets.highLevelFrame)
     parent.indicators.readyCheckIcon = readyCheckIcon
     -- readyCheckIcon:SetSize(16, 16)
     readyCheckIcon:SetPoint("CENTER", parent.widgets.healthBar)
@@ -1901,7 +1905,7 @@ end
 -- aggro blink
 -------------------------------------------------
 function I.CreateAggroBlink(parent)
-    local aggroBlink = CreateFrame("Frame", parent:GetName().."AggroBlink", parent.widgets.overlayFrame, "BackdropTemplate")
+    local aggroBlink = CreateFrame("Frame", parent:GetName().."AggroBlink", parent.widgets.highLevelFrame, "BackdropTemplate")
     parent.indicators.aggroBlink = aggroBlink
     -- aggroBlink:SetPoint("TOPLEFT")
     -- aggroBlink:SetSize(10, 10)
@@ -1987,7 +1991,7 @@ local function ShieldBar_SetPoint(bar, point, anchorTo, anchorPoint, x, y)
 end
 
 function I.CreateShieldBar(parent)
-    local shieldBar = CreateFrame("Frame", parent:GetName().."ShieldBar", parent.widgets.overlayFrame, "BackdropTemplate")
+    local shieldBar = CreateFrame("Frame", parent:GetName().."ShieldBar", parent.widgets.highLevelFrame, "BackdropTemplate")
     parent.indicators.shieldBar = shieldBar
     -- shieldBar:SetSize(4, 4)
     shieldBar:Hide()
@@ -2105,7 +2109,7 @@ end
 -- missing buffs
 -------------------------------------------------
 function I.CreateMissingBuffs(parent)
-    local missingBuffs = CreateFrame("Frame", parent:GetName().."MissingBuffParent", parent.widgets.overlayFrame)
+    local missingBuffs = CreateFrame("Frame", parent:GetName().."MissingBuffParent", parent.widgets.highLevelFrame)
     parent.indicators.missingBuffs = missingBuffs
     missingBuffs:Hide()
 
@@ -2201,7 +2205,7 @@ end
 -- power word : shield 怀旧服API太落后，蛋疼！
 -------------------------------------------------
 function I.CreatePowerWordShield(parent)
-    local powerWordShield = CreateFrame("Frame", parent:GetName().."PowerWordShield", parent.widgets.overlayFrame, "BackdropTemplate")
+    local powerWordShield = CreateFrame("Frame", parent:GetName().."PowerWordShield", parent.widgets.highLevelFrame, "BackdropTemplate")
     parent.indicators.powerWordShield = powerWordShield
     powerWordShield:Hide()
 
@@ -2340,7 +2344,7 @@ end
 -- crowd controls
 -------------------------------------------------
 function I.CreateCrowdControls(parent)
-    local crowdControls = CreateFrame("Frame", parent:GetName().."CrowdControlsParent", parent.widgets.overlayFrame)
+    local crowdControls = CreateFrame("Frame", parent:GetName().."CrowdControlsParent", parent.widgets.highLevelFrame)
     parent.indicators.crowdControls = crowdControls
     crowdControls:Hide()
 
@@ -2348,6 +2352,7 @@ function I.CreateCrowdControls(parent)
     crowdControls.SetSize = I.Cooldowns_SetSize
     crowdControls.SetBorder = I.Cooldowns_SetBorder
     crowdControls.UpdateSize = I.Cooldowns_UpdateSize_WithSpacing
+    crowdControls.ShowDuration = I.Cooldowns_ShowDuration
     crowdControls.SetOrientation = I.Cooldowns_SetOrientation_WithSpacing
     crowdControls.SetFont = I.Cooldowns_SetFont
     crowdControls.UpdatePixelPerfect = I.Cooldowns_UpdatePixelPerfect
