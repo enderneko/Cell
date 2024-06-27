@@ -337,7 +337,7 @@ local defensives = { -- true: track by name, false: track by id
     ["DEMONHUNTER"] = {
         [196555] = true, -- 虚空行走
         [198589] = true, -- 疾影
-        [187827] = true, -- 恶魔变形
+        [187827] = false, -- 恶魔变形 162264(DPS)
     },
 
     ["DRUID"] = {
