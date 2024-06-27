@@ -381,7 +381,8 @@ local function CreateSetting_FrameLevel(parent)
         end
 
         -- show db value
-        function widget:SetDBValue(frameLevel)
+        function widget:SetDBValue(frameLevel, maxFrameLevel)
+            widget.frameLevel:UpdateMinMaxValues(1, maxFrameLevel)
             widget.frameLevel:SetValue(frameLevel)
         end
     else
@@ -5548,7 +5549,7 @@ function addon:CreateIndicatorSettings(parent, settingsTable)
             tinsert(widgetsTable, CreateSetting_ShieldBarPosition(parent))
         elseif setting == "anchor" then
             tinsert(widgetsTable, CreateSetting_Anchor(parent))
-        elseif setting == "frameLevel" then
+        elseif strfind(setting, "^frameLevel") then
             tinsert(widgetsTable, CreateSetting_FrameLevel(parent))
         elseif setting == "size" then
             tinsert(widgetsTable, CreateSetting_Size(parent))

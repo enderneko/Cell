@@ -158,6 +158,8 @@ local function HandleIndicators(b)
 
     for _, t in pairs(Cell.vars.currentLayoutTable["indicators"]) do
         local indicator = b.indicators[t["indicatorName"]] or I.CreateIndicator(b, t)
+        indicator.configs = t
+
         -- update position
         if t["position"] then
             P:ClearPoints(indicator)

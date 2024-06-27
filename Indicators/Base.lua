@@ -967,16 +967,15 @@ local function Color_SetAnchor(color, anchorTo)
     if anchorTo == "healthbar-current" then
         -- current hp texture
         color:SetAllPoints(color.parent.widgets.healthBar:GetStatusBarTexture())
-        -- color:SetFrameLevel(parent:GetFrameLevel()+5)
     elseif anchorTo == "healthbar-entire" then
         -- entire hp bar
         color:SetAllPoints(color.parent.widgets.healthBar)
-        -- color:SetFrameLevel(parent:GetFrameLevel()+5)
     else -- unitbutton
-        P:Point(color, "TOPLEFT", color.parent.widgets.overlayFrame, "TOPLEFT", 1, -1)
-        P:Point(color, "BOTTOMRIGHT", color.parent.widgets.overlayFrame, "BOTTOMRIGHT", -1, 1)
-        -- color:SetFrameLevel(parent:GetFrameLevel()+6)
+        P:Point(color, "TOPLEFT", color.parent, "TOPLEFT", CELL_BORDER_SIZE, -CELL_BORDER_SIZE)
+        P:Point(color, "BOTTOMRIGHT", color.parent, "BOTTOMRIGHT", -CELL_BORDER_SIZE, CELL_BORDER_SIZE)
     end
+
+    color:SetFrameLevel(color:GetParent():GetFrameLevel() + color.configs.frameLevel)
 end
 
 local function Color_SetColors(self, colors)
@@ -1021,7 +1020,7 @@ function I.CreateAura_Color(name, parent)
     color.indicatorType = "color"
     color.parent = parent
 
-    local solidTex = color:CreateTexture(nil, "OVERLAY", nil, -5)
+    local solidTex = color:CreateTexture(nil, "ARTWORK")
     color.solidTex = solidTex
     solidTex:SetTexture(Cell.vars.texture)
     solidTex:SetAllPoints(color)
@@ -1032,7 +1031,7 @@ function I.CreateAura_Color(name, parent)
         solidTex:SetTexture(Cell.vars.texture)
     end)
 
-    local gradientTex = color:CreateTexture(nil, "OVERLAY", nil, -5)
+    local gradientTex = color:CreateTexture(nil, "ARTWORK")
     color.gradientTex = gradientTex
     gradientTex:SetTexture("Interface\\Buttons\\WHITE8x8")
     gradientTex:SetAllPoints(color)

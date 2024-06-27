@@ -2954,6 +2954,20 @@ function F:Revise()
         end
     end
 
+    -- r230-release
+    if CellDB["revise"] and dbRevision < 230 then
+        for _, layout in pairs(CellDB["layouts"]) do
+            for _, i in pairs(layout["indicators"]) do
+                if i.type == "color" then
+                    -- limit frameLevel to 50
+                    if i.frameLevel > 50 then
+                        i.frameLevel = 50
+                    end
+                end
+            end
+        end
+    end
+
     -- ----------------------------------------------------------------------- --
     --            update from old versions, validate all indicators            --
     -- ----------------------------------------------------------------------- --

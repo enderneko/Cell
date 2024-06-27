@@ -642,24 +642,27 @@ local function Dispels_UpdateHighlight(self, highlightType)
         self.highlight:ClearAllPoints()
         self.highlight:SetAllPoints(self.parent.widgets.healthBar)
         self.highlight:SetTexture("Interface\\Buttons\\WHITE8x8")
+        self.highlight:SetDrawLayer("ARTWORK", 0)
     elseif highlightType == "gradient-half" then
         -- self.highlight:SetParent(self.parent.widgets.highLevelFrame)
         self.highlight:ClearAllPoints()
         self.highlight:SetPoint("BOTTOMLEFT", self.parent.widgets.healthBar)
         self.highlight:SetPoint("TOPRIGHT", self.parent.widgets.healthBar, "RIGHT")
         self.highlight:SetTexture("Interface\\Buttons\\WHITE8x8")
+        self.highlight:SetDrawLayer("ARTWORK", 0)
     elseif highlightType == "entire" then
         -- self.highlight:SetParent(self.parent.widgets.highLevelFrame)
         self.highlight:ClearAllPoints()
         self.highlight:SetAllPoints(self.parent.widgets.healthBar)
         self.highlight:SetTexture("Interface\\Buttons\\WHITE8x8")
+        self.highlight:SetDrawLayer("ARTWORK", 0)
     elseif highlightType == "current" then
         -- self.highlight:SetParent(self.parent.widgets.healthBar)
         self.highlight:ClearAllPoints()
         self.highlight:SetAllPoints(self.parent.widgets.healthBar:GetStatusBarTexture())
         self.highlight:SetTexture(Cell.vars.texture)
+        self.highlight:SetDrawLayer("ARTWORK", -7)
     end
-    self.highlight:SetDrawLayer("ARTWORK", 0)
 end
 
 function I.CreateDispels(parent)
@@ -672,7 +675,7 @@ function I.CreateDispels(parent)
         dispels.highlight:Hide()
     end)
 
-    dispels.highlight = parent.widgets.highLevelFrame:CreateTexture(parent:GetName().."DispelHighlight", "OVERLAY")
+    dispels.highlight = parent.widgets.midLevelFrame:CreateTexture(parent:GetName().."DispelHighlight")
     dispels.highlight:Hide()
 
     dispels._SetSize = dispels.SetSize

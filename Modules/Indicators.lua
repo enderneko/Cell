@@ -580,6 +580,8 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
             I.RemoveAllCustomIndicators(previewButton)
             for i, t in pairs(currentLayoutTable["indicators"]) do
                 local indicator = previewButton.indicators[t["indicatorName"]] or I.CreateIndicator(previewButton, t, true)
+                indicator.configs = t
+
                 InitIndicator(t["indicatorName"])
                 -- update position
                 if t["position"] then
@@ -1632,7 +1634,7 @@ local function ShowIndicatorSettings(id)
         elseif indicatorType == "icons" then
             settingsTable = {"enabled", "auras", "checkbutton3:showStack", "durationVisibility", "checkbutton4:showAnimation", CELL_RECTANGULAR_CUSTOM_INDICATOR_ICONS and "size" or "size-square", "num:10", "numPerLine:10", "spacing", "orientation", "position", "frameLevel", "font1:stackFont", "font2:durationFont"}
         elseif indicatorType == "color" then
-            settingsTable = {"enabled", "auras", "customColors", "anchor", "frameLevel"}
+            settingsTable = {"enabled", "auras", "customColors", "anchor", "frameLevel:50"}
         elseif indicatorType == "texture" then
             settingsTable = {"enabled", "checkbutton3:fadeOut", "auras", "texture", "size", "position", "frameLevel"}
         elseif indicatorType == "glow" then
@@ -1899,6 +1901,14 @@ local function ShowIndicatorSettings(id)
             w:SetFunc(function(value)
                 indicatorTable["numPerLine"] = value
                 Cell:Fire("UpdateIndicators", notifiedLayout, indicatorName, "numPerLine", value)
+            end)
+
+        -- frameLevel:X
+        elseif string.find(currentSetting, "^frameLevel") then
+            w:SetDBValue(indicatorTable["frameLevel"], tonumber(select(2,string.split(":", currentSetting)) or 100))
+            w:SetFunc(function(value)
+                indicatorTable["frameLevel"] = value
+                Cell:Fire("UpdateIndicators", notifiedLayout, indicatorName, "frameLevel", value)
             end)
 
         -- missingBuffsFilters
