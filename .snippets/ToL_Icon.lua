@@ -1,5 +1,5 @@
 -------------------------------------------------
--- 2022-06-03 20:29:22 GMT+8
+-- 2024-06-27 14:00:54 GMT+8
 -- 光明尾迹
 -------------------------------------------------
 local F = Cell.funcs
@@ -27,7 +27,7 @@ frame:SetScript("OnEvent", function(self, event)
         if spellId == 234946 then
             local b = F:GetUnitButtonByGUID(destGUID)
             if b then
-                icon:SetParent(b.widgets.overlayFrame)
+                icon:SetParent(b.widgets.highLevelFrame)
                 icon:SetFrameLevel(5) -- 层级
                 icon:ClearAllPoints()
                 icon:SetPoint("TOP") -- 位置
