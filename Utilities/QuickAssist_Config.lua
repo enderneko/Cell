@@ -924,17 +924,17 @@ local function CreateRoleFilter(parent)
     f:Hide()
 
     local tank = Cell:CreateButton(f, _G.TANK, "blue-hover", {ROLE_FILTER_SIZE, 20})
-    tank:SetTexture("Interface\\AddOns\\Cell\\Media\\Roles\\TANK", {16, 16}, {"LEFT", 2, 0})
+    tank:SetTexture(F:GetDefaultRoleIcon("TANK"), {16, 16}, {"LEFT", 2, 0})
     tank:SetPoint("TOPLEFT")
     tank:SetScript("OnClick", function() UpdateRoleFilter("TANK") end)
 
     local healer = Cell:CreateButton(f, _G.HEALER, "green-hover", {ROLE_FILTER_SIZE, 20})
-    healer:SetTexture("Interface\\AddOns\\Cell\\Media\\Roles\\HEALER", {16, 16}, {"LEFT", 2, 0})
+    healer:SetTexture(F:GetDefaultRoleIcon("HEALER"), {16, 16}, {"LEFT", 2, 0})
     healer:SetPoint("TOPLEFT", tank, "TOPRIGHT", P:Scale(-1), 0)
     healer:SetScript("OnClick", function() UpdateRoleFilter("HEALER") end)
 
     local damager = Cell:CreateButton(f, _G.DAMAGER, "red-hover", {ROLE_FILTER_SIZE, 20})
-    damager:SetTexture("Interface\\AddOns\\Cell\\Media\\Roles\\DAMAGER", {16, 16}, {"LEFT", 2, 0})
+    damager:SetTexture(F:GetDefaultRoleIcon("DAMAGER"), {16, 16}, {"LEFT", 2, 0})
     damager:SetPoint("TOPLEFT", healer, "TOPRIGHT", P:Scale(-1), 0)
     damager:SetScript("OnClick", function() UpdateRoleFilter("DAMAGER") end)
 

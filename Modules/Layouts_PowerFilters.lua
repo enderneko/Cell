@@ -91,7 +91,7 @@ else
         for i = #buttons, 1, -1 do
             local b = Cell:CreateButton(filter, nil, "accent-hover", {height, height})
             filter.buttons[buttons[i]] = b
-            b:SetTexture("Interface\\AddOns\\Cell\\Media\\Roles\\"..buttons[i], {height-4, height-4}, {"CENTER", 0, 0})
+            b:SetTexture(F:GetDefaultRoleIcon(buttons[i]), {height-4, height-4}, {"CENTER", 0, 0})
 
             if last then
                 b:SetPoint("BOTTOMRIGHT", last, "BOTTOMLEFT", P:Scale(1), 0)

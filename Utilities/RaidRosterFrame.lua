@@ -418,7 +418,7 @@ local function CreateRaidRosterGrid(parent, index)
         if role == "NONE" then
             roleIcon:SetTexture(134400)
         else
-            roleIcon:SetTexture("Interface\\AddOns\\Cell\\Media\\Roles\\"..grid.role)
+            roleIcon:SetTexture(F:GetDefaultRoleIcon(grid.role))
         end
 
         if grid.isLeader then

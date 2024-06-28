@@ -17,6 +17,7 @@ Cell.isVanilla = WOW_PROJECT_ID == WOW_PROJECT_CLASSIC
 Cell.isWrath = WOW_PROJECT_ID == WOW_PROJECT_WRATH_CLASSIC
 Cell.isCata = WOW_PROJECT_ID == WOW_PROJECT_CATACLYSM_CLASSIC
 Cell.isTWW = LE_EXPANSION_LEVEL_CURRENT == LE_EXPANSION_WAR_WITHIN
+
 -------------------------------------------------
 -- class
 -------------------------------------------------
@@ -1836,6 +1837,16 @@ function F:GetTextures()
     end
 
     return builtIns, t
+end
+
+function F:GetDefaultRoleIcon(role)
+    if not role or role == "NONE" then return "" end
+    return "Interface\\AddOns\\Cell\\Media\\Roles\\Default_" .. role
+end
+
+function F:GetDefaultRoleIconEscapeSequence(role, size)
+    if not role or role == "NONE" then return "" end
+    return "|TInterface\\AddOns\\Cell\\Media\\Roles\\Default_" .. role .. ":" .. (size or 0) .. "|t"
 end
 
 -------------------------------------------------

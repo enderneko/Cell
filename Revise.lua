@@ -2966,6 +2966,9 @@ function F:Revise()
                 end
             end
         end
+
+        -- disable snippets
+        F:DisableSnippets()
     end
 
     -- ----------------------------------------------------------------------- --

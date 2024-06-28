@@ -1680,7 +1680,6 @@ local function RoleIcon_SetRole(self, role)
     self.tex:SetVertexColor(1, 1, 1)
 
     if role == "TANK" or role == "HEALER" or (not self.hideDamager and role == "DAMAGER") then
-        self.tex:SetTexture("Interface\\AddOns\\Cell\\Media\\Roles\\" .. self.texture .. "\\" .. role)
         if self.texture == "default" then
             self.tex:SetTexture(ICON_PATH .. "Default_" .. role)
         elseif self.texture == "default2" then
@@ -1706,10 +1705,10 @@ local function RoleIcon_SetRole(self, role)
         end
         self:Show()
     elseif role == "VEHICLE-ROOT" then
-        self.tex:SetTexture("Interface\\AddOns\\Cell\\Media\\Roles\\VEHICLE")
+        self.tex:SetTexture(ICON_PATH .. "VEHICLE")
         self:Show()
     elseif role == "VEHICLE" then
-        self.tex:SetTexture("Interface\\AddOns\\Cell\\Media\\Roles\\VEHICLE")
+        self.tex:SetTexture(ICON_PATH .. "VEHICLE")
         self.tex:SetVertexColor(0.6, 0.6, 1)
         self:Show()
     else
