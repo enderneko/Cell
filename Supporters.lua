@@ -39,6 +39,7 @@ local supporters1 = { -- wowIDs
     {"Skywarden-Sylvanas (EU)"}, -- Serghei Iakovlev (Ko-fi)
     {"Fourdigitiq-Blackrock (EU)"}, -- Rou (Ko-fi)
     {"Leako-Draenor (EU)"}, -- Leako (Ko-fi)
+    {"Asuranpala-Draenor (EU)"}, -- AsuranDex (Ko-fi)
 }
 
 local supporters2 = { -- 有些早期的发电记录已经丢失了……
@@ -106,6 +107,7 @@ local supporters2 = { -- 有些早期的发电记录已经丢失了……
     {"Rou", "Ko-fi"}, -- 2024-05-23
     {"Leako", "Ko-fi"}, -- 2024-05-30
     {"lfence", "Ko-fi"}, -- 2024-06-03
+    {"AsuranDex", "Ko-fi"}, -- 2024-06-24
 }
 
 -------------------------------------------------
