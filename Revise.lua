@@ -2967,6 +2967,11 @@ function F:Revise()
             end
         end
 
+        -- CELL_COOLDOWN_STYLE
+        if not strfind(CellDB["snippets"][0]["code"], "CELL_COOLDOWN_STYLE") then
+            CellDB["snippets"][0]["code"] = CellDB["snippets"][0]["code"].."\n\n-- cooldown style for icon/block indicators (\"VERTICAL\", \"CLOCK\")\nCELL_COOLDOWN_STYLE = \"VERTICAL\""
+        end
+
         -- disable snippets
         F:DisableSnippets()
     end

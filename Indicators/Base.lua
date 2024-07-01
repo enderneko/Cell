@@ -8,6 +8,7 @@ local LCG = LibStub("LibCustomGlow-1.0")
 
 CELL_BORDER_SIZE = 1
 CELL_BORDER_COLOR = {0, 0, 0, 1}
+CELL_COOLDOWN_STYLE = "VERTICAL"
 
 -------------------------------------------------
 -- SetFont
@@ -62,8 +63,8 @@ end
 -- Shared
 -------------------------------------------------
 local function Shared_SetFont(frame, font1, font2)
-    I.SetFont(frame.stack, frame.textFrame, unpack(font1))
-    I.SetFont(frame.duration, frame.textFrame, unpack(font2))
+    I.SetFont(frame.stack, frame, unpack(font1))
+    I.SetFont(frame.duration, frame, unpack(font2))
 end
 
 local function Shared_ShowStack(frame, show)
@@ -73,6 +74,184 @@ end
 local function Shared_ShowDuration(frame, show)
     frame.showDuration = show
     frame.duration:SetShown(show)
+end
+
+-------------------------------------------------
+-- VerticalCooldown
+-------------------------------------------------
+local function ReCalcTexCoord(self, width, height)
+    self.icon:SetTexCoord(unpack(F:GetTexCoord(width, height)))
+end
+
+local function VerticalCooldown_OnUpdate(self, elapsed)
+    self.elapsed = self.elapsed + elapsed
+    if self.elapsed >= 0.1 then
+        self:SetValue(self:GetValue() + self.elapsed)
+        self.elapsed = 0
+    end
+end
+
+-- for LCG.ButtonGlow_Start
+local function VerticalCooldown_GetCooldownDuration()
+    return 0
+end
+
+local function VerticalCooldown_ShowCooldown(self, start, duration, _, icon, debuffType)
+    if debuffType then
+        self.spark:SetColorTexture(I.GetDebuffTypeColor(debuffType))
+    else
+        self.spark:SetColorTexture(0.5, 0.5, 0.5)
+    end
+
+    if self.icon then
+        self.icon:SetTexture(icon)
+    end
+
+    self.elapsed = 0.1 -- update immediately
+    self:SetMinMaxValues(0, duration)
+    self:SetValue(GetTime() - start)
+    self:Show()
+end
+
+local function Shared_CreateCooldown_Vertical(frame)
+    local cooldown = CreateFrame("StatusBar", nil, frame)
+    frame.cooldown = cooldown
+    cooldown:Hide()
+
+    cooldown.GetCooldownDuration = VerticalCooldown_GetCooldownDuration
+    cooldown.ShowCooldown = VerticalCooldown_ShowCooldown
+    cooldown:SetScript("OnUpdate", VerticalCooldown_OnUpdate)
+
+    P:Point(cooldown, "TOPLEFT", frame.icon)
+    P:Point(cooldown, "BOTTOMRIGHT", frame.icon, "BOTTOMRIGHT", 0, CELL_BORDER_SIZE)
+    cooldown:SetOrientation("VERTICAL")
+    cooldown:SetReverseFill(true)
+    cooldown:SetStatusBarTexture("Interface\\Buttons\\WHITE8x8")
+
+    local texture = cooldown:GetStatusBarTexture()
+    texture:SetAlpha(0)
+
+    local spark = cooldown:CreateTexture(nil, "BORDER")
+    cooldown.spark = spark
+    P:Height(spark, 1)
+    spark:SetBlendMode("ADD")
+    spark:SetPoint("TOPLEFT", texture, "BOTTOMLEFT")
+    spark:SetPoint("TOPRIGHT", texture, "BOTTOMRIGHT")
+
+    local mask = cooldown:CreateMaskTexture()
+    mask:SetTexture("Interface\\Buttons\\WHITE8x8", "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
+    mask:SetPoint("TOPLEFT")
+    mask:SetPoint("BOTTOMRIGHT", texture)
+
+    local icon = cooldown:CreateTexture(nil, "ARTWORK")
+    cooldown.icon = icon
+    icon:SetTexCoord(0.12, 0.88, 0.12, 0.88)
+    icon:SetDesaturated(true)
+    icon:SetAllPoints(frame.icon)
+    icon:SetVertexColor(0.5, 0.5, 0.5, 1)
+    icon:AddMaskTexture(mask)
+    cooldown:SetScript("OnSizeChanged", ReCalcTexCoord)
+end
+
+local function Shared_CreateCooldown_Vertical_NoIcon(frame)
+    local cooldown = CreateFrame("StatusBar", nil, frame)
+    frame.cooldown = cooldown
+    cooldown:Hide()
+
+    cooldown.GetCooldownDuration = VerticalCooldown_GetCooldownDuration
+    cooldown.ShowCooldown = VerticalCooldown_ShowCooldown
+    cooldown:SetScript("OnUpdate", VerticalCooldown_OnUpdate)
+
+    P:Point(cooldown, "TOPLEFT", frame, CELL_BORDER_SIZE, -CELL_BORDER_SIZE)
+    P:Point(cooldown, "BOTTOMRIGHT", frame, -CELL_BORDER_SIZE, CELL_BORDER_SIZE + CELL_BORDER_SIZE)
+    cooldown:SetOrientation("VERTICAL")
+    cooldown:SetReverseFill(true)
+    cooldown:SetStatusBarTexture("Interface\\Buttons\\WHITE8x8")
+
+    local texture = cooldown:GetStatusBarTexture()
+    texture:SetVertexColor(0, 0, 0, 0.8)
+
+    local spark = cooldown:CreateTexture(nil, "BORDER")
+    cooldown.spark = spark
+    P:Height(spark, 1)
+    spark:SetBlendMode("ADD")
+    spark:SetPoint("TOPLEFT", texture, "BOTTOMLEFT")
+    spark:SetPoint("TOPRIGHT", texture, "BOTTOMRIGHT")
+end
+
+-------------------------------------------------
+-- ClockCooldown
+-------------------------------------------------
+local function Shared_CreateCooldown_Clock(frame)
+    local cooldown = CreateFrame("Cooldown", nil, frame)
+    frame.cooldown = cooldown
+    cooldown:Hide()
+
+    cooldown:SetAllPoints(frame.icon)
+    cooldown:SetReverse(true)
+    cooldown:SetDrawEdge(false)
+    cooldown:SetSwipeTexture("Interface\\Buttons\\WHITE8x8")
+    cooldown:SetSwipeColor(0, 0, 0, 0.8)
+    -- cooldown:SetEdgeTexture([[Interface\Cooldown\UI-HUD-ActionBar-SecondaryCooldown]])
+
+    -- cooldown text
+    cooldown:SetHideCountdownNumbers(true)
+    -- disable omnicc
+    cooldown.noCooldownCount = true
+    -- prevent some dirty addons from adding cooldown text
+    cooldown.ShowCooldown = cooldown.SetCooldown
+    cooldown.SetCooldown = nil
+end
+
+local function Shared_CreateCooldown_Clock_NoIcon(frame)
+    local cooldown = CreateFrame("Cooldown", nil, frame)
+    frame.cooldown = cooldown
+    cooldown:Hide()
+
+    P:Point(cooldown, "TOPLEFT", frame, CELL_BORDER_SIZE, -CELL_BORDER_SIZE)
+    P:Point(cooldown, "BOTTOMRIGHT", frame, -CELL_BORDER_SIZE, CELL_BORDER_SIZE)
+    cooldown:SetReverse(true)
+    cooldown:SetDrawEdge(false)
+    cooldown:SetSwipeTexture("Interface\\Buttons\\WHITE8x8")
+    cooldown:SetSwipeColor(0, 0, 0, 0.8)
+    -- cooldown:SetEdgeTexture([[Interface\Cooldown\UI-HUD-ActionBar-SecondaryCooldown]])
+
+    -- cooldown text
+    cooldown:SetHideCountdownNumbers(true)
+    -- disable omnicc
+    cooldown.noCooldownCount = true
+    -- prevent some dirty addons from adding cooldown text
+    cooldown.ShowCooldown = cooldown.SetCooldown
+    cooldown.SetCooldown = nil
+end
+
+
+-------------------------------------------------
+-- SetCooldownStyle
+-------------------------------------------------
+local function Shared_SetCooldownStyle(frame, style, noIcon)
+    if frame.style == style then return end
+
+    if frame.cooldown then
+        frame.cooldown:SetParent(nil)
+        frame.cooldown:Hide()
+    end
+
+    frame.style = style
+
+    if style == "CLOCK" then
+        if noIcon then
+            Shared_CreateCooldown_Clock_NoIcon(frame)
+        else
+            Shared_CreateCooldown_Clock(frame)
+        end
+    else
+        if noIcon then
+            Shared_CreateCooldown_Vertical_NoIcon(frame)
+        else
+            Shared_CreateCooldown_Vertical(frame)
+        end
+    end
 end
 
 -------------------------------------------------
@@ -274,12 +453,8 @@ function I.CreateAura_BorderIcon(name, parent, borderSize)
     icon:SetTexCoord(0.12, 0.88, 0.12, 0.88)
     icon:SetAllPoints(iconFrame)
 
-    local textFrame = CreateFrame("Frame", nil, iconFrame)
-    frame.textFrame = textFrame
-    textFrame:SetAllPoints(frame)
-
-    frame.stack = textFrame:CreateFontString(nil, "OVERLAY", "CELL_FONT_STATUS")
-    frame.duration = textFrame:CreateFontString(nil, "OVERLAY", "CELL_FONT_STATUS")
+    frame.stack = iconFrame:CreateFontString(nil, "OVERLAY", "CELL_FONT_STATUS")
+    frame.duration = iconFrame:CreateFontString(nil, "OVERLAY", "CELL_FONT_STATUS")
 
     local ag = frame:CreateAnimationGroup()
     frame.ag = ag
@@ -318,13 +493,13 @@ local function BarIcon_SetCooldown(frame, start, duration, debuffType, texture, 
         frame._elapsed = nil
     else
         if frame.showAnimation then
-            -- init bar values
-            frame.cooldown.elapsed = 0.1 -- update immediately
-            frame.cooldown:SetMinMaxValues(0, duration)
-            frame.cooldown:SetValue(GetTime()-start)
-            frame.cooldown:Show()
+            frame.cooldown:ShowCooldown(start, duration, nil, texture, debuffType)
+            frame.duration:SetParent(frame.cooldown)
+            frame.stack:SetParent(frame.cooldown)
         else
             frame.cooldown:Hide()
+            frame.duration:SetParent(frame)
+            frame.stack:SetParent(frame)
         end
 
         if not frame.showDuration then
@@ -348,18 +523,13 @@ local function BarIcon_SetCooldown(frame, start, duration, debuffType, texture, 
         end
     end
 
-    local r, g, b
     if debuffType then
-        r, g, b = I.GetDebuffTypeColor(debuffType)
-        frame.spark:SetColorTexture(r, g, b, 1)
+        frame:SetBackdropColor(I.GetDebuffTypeColor(debuffType))
     else
-        r, g, b = 0, 0, 0
-        frame.spark:SetColorTexture(0.5, 0.5, 0.5, 1)
+        frame:SetBackdropColor(0, 0, 0)
     end
 
-    frame:SetBackdropColor(r, g, b, 1)
     frame.icon:SetTexture(texture)
-    frame.maskIcon:SetTexture(texture)
     frame.stack:SetText((count == 0 or count == 1) and "" or count)
     frame:Show()
 
@@ -381,10 +551,12 @@ local function BarIcon_UpdatePixelPerfect(frame)
     P:Resize(frame)
     P:Repoint(frame)
     P:Repoint(frame.icon)
-    P:Repoint(frame.cooldown)
-    P:Resize(frame.spark)
     P:Repoint(frame.stack)
     P:Repoint(frame.duration)
+    P:Repoint(frame.cooldown)
+    if frame.cooldown.spark then
+        P:Resize(frame.cooldown.spark)
+    end
 end
 
 function I.CreateAura_BarIcon(name, parent)
@@ -401,63 +573,8 @@ function I.CreateAura_BarIcon(name, parent)
     P:Point(icon, "BOTTOMRIGHT", frame, "BOTTOMRIGHT", -CELL_BORDER_SIZE, CELL_BORDER_SIZE)
     -- icon:SetDrawLayer("ARTWORK", 1)
 
-    local cooldown = CreateFrame("StatusBar", name.."CooldownBar", frame)
-    frame.cooldown = cooldown
-    P:Point(cooldown, "TOPLEFT", icon)
-    P:Point(cooldown, "BOTTOMRIGHT", icon, "BOTTOMRIGHT", 0, CELL_BORDER_SIZE)
-    cooldown:SetOrientation("VERTICAL")
-    cooldown:SetReverseFill(true)
-    cooldown:SetStatusBarTexture("Interface\\Buttons\\WHITE8x8")
-    cooldown:GetStatusBarTexture():SetAlpha(0)
-
-    cooldown.elapsed = 0.1 -- update immediately
-    cooldown:SetScript("OnUpdate", function(self, elapsed)
-        self.elapsed = self.elapsed + elapsed
-        if self.elapsed >= 0.1 then
-            cooldown:SetValue(cooldown:GetValue() + self.elapsed)
-            self.elapsed = 0
-        end
-    end)
-
-    -- for LCG.ButtonGlow_Start
-    function cooldown:GetCooldownDuration()
-        return 0
-    end
-
-    local spark = cooldown:CreateTexture(nil, "BORDER")
-    frame.spark = spark
-    P:Height(spark, CELL_BORDER_SIZE)
-    spark:SetBlendMode("ADD")
-    spark:SetPoint("TOPLEFT", cooldown:GetStatusBarTexture(), "BOTTOMLEFT")
-    spark:SetPoint("TOPRIGHT", cooldown:GetStatusBarTexture(), "BOTTOMRIGHT")
-
-    local mask = frame:CreateMaskTexture()
-    mask:SetTexture("Interface\\Buttons\\WHITE8x8", "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
-    mask:SetPoint("TOPLEFT")
-    mask:SetPoint("BOTTOMRIGHT", cooldown:GetStatusBarTexture())
-
-    local maskIcon = cooldown:CreateTexture(name.."MaskIcon", "ARTWORK")
-    frame.maskIcon = maskIcon
-    maskIcon:SetTexCoord(0.12, 0.88, 0.12, 0.88)
-    maskIcon:SetDesaturated(true)
-    maskIcon:SetAllPoints(icon)
-    -- maskIcon:SetDrawLayer("ARTWORK", 0)
-    maskIcon:SetVertexColor(0.5, 0.5, 0.5, 1)
-    maskIcon:AddMaskTexture(mask)
-
-    frame:SetScript("OnSizeChanged", function(self, width, height)
-        -- keep aspect ratio
-        icon:SetTexCoord(unpack(F:GetTexCoord(width, height)))
-        maskIcon:SetTexCoord(unpack(F:GetTexCoord(width, height)))
-    end)
-
-    local textFrame = CreateFrame("Frame", nil, frame)
-    frame.textFrame = textFrame
-    textFrame:SetAllPoints(frame)
-    textFrame:SetFrameLevel(cooldown:GetFrameLevel()+1)
-
-    frame.stack = textFrame:CreateFontString(nil, "OVERLAY", "CELL_FONT_STATUS")
-    frame.duration = textFrame:CreateFontString(nil, "OVERLAY", "CELL_FONT_STATUS")
+    frame.stack = frame:CreateFontString(nil, "OVERLAY", "CELL_FONT_STATUS")
+    frame.duration = frame:CreateFontString(nil, "OVERLAY", "CELL_FONT_STATUS")
 
     local ag = frame:CreateAnimationGroup()
     frame.ag = ag
@@ -478,6 +595,8 @@ function I.CreateAura_BarIcon(name, parent)
     frame.ShowStack = Shared_ShowStack
     frame.ShowAnimation = BarIcon_ShowAnimation
     frame.UpdatePixelPerfect = BarIcon_UpdatePixelPerfect
+
+    Shared_SetCooldownStyle(frame, CELL_COOLDOWN_STYLE)
 
     -- frame:SetScript("OnEnter", function()
         -- local f = frame
@@ -1699,9 +1818,8 @@ local function Block_SetCooldown(frame, start, duration, debuffType, texture, co
         frame._elapsed = nil
         frame._threshold = nil
     else
-        frame.cooldown:Show()
         -- frame.cooldown:SetSwipeColor(r, g, b)
-        frame.cooldown:_SetCooldown(start, duration)
+        frame.cooldown:ShowCooldown(start, duration)
 
         if not frame.showDuration then
             frame._threshold = -1
@@ -1740,39 +1858,23 @@ end
 local function Block_UpdatePixelPerfect(frame)
     P:Resize(frame)
     P:Repoint(frame)
-    P:Repoint(frame.cooldown)
     P:Repoint(frame.stack)
     P:Repoint(frame.duration)
+    P:Repoint(frame.cooldown)
+    if frame.cooldown.spark then
+        P:Resize(frame.cooldown.spark)
+    end
 end
 
 function I.CreateAura_Block(name, parent)
     local frame = CreateFrame("Frame", name, parent, "BackdropTemplate")
     frame:Hide()
-    frame:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8x8", edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = P:Scale(1)})
+    frame:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8x8", edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = P:Scale(CELL_BORDER_SIZE)})
 
-    local cooldown = CreateFrame("Cooldown", nil, frame, "CooldownFrameTemplate")
-    frame.cooldown = cooldown
-    P:Point(cooldown, "TOPLEFT", 1, -1)
-    P:Point(cooldown, "BOTTOMRIGHT", -1, 1)
+    Shared_SetCooldownStyle(frame, CELL_COOLDOWN_STYLE, true)
 
-    cooldown:SetReverse(true)
-    cooldown.noCooldownCount = true -- disable omnicc
-    cooldown:SetHideCountdownNumbers(true)
-    cooldown:SetDrawEdge(false)
-    -- prevent some addons from adding cooldown text
-    cooldown._SetCooldown = cooldown.SetCooldown
-    cooldown.SetCooldown = nil
-
-    local textFrame = CreateFrame("Frame", nil, frame)
-    frame.textFrame = textFrame
-    textFrame:SetAllPoints(frame)
-    textFrame:SetFrameLevel(cooldown:GetFrameLevel()+1)
-
-    local stack = textFrame:CreateFontString(nil, "OVERLAY", "CELL_FONT_STATUS")
-    frame.stack = stack
-
-    local duration = textFrame:CreateFontString(nil, "OVERLAY", "CELL_FONT_STATUS")
-    frame.duration = duration
+    frame.stack = frame.cooldown:CreateFontString(nil, "OVERLAY", "CELL_FONT_STATUS")
+    frame.duration = frame.cooldown:CreateFontString(nil, "OVERLAY", "CELL_FONT_STATUS")
 
     frame.SetFont = Shared_SetFont
     frame.SetColors = Block_SetColors
@@ -1835,8 +1937,7 @@ local function Blocks_SetCooldown(frame, start, duration, debuffType, texture, c
         frame._remain = nil
         frame._threshold = nil
     else
-        frame.cooldown:Show()
-        frame.cooldown:_SetCooldown(start, duration)
+        frame.cooldown:ShowCooldown(start, duration)
 
         if not frame.showDuration then
             frame._threshold = -1

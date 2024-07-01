@@ -1320,7 +1320,7 @@ local function QuickAssist_CreateIndicators(button)
 
             hooksecurefunc(buffIcons[i], "SetCooldown", function(self, _, _, _, _, _, _, color, glow)
                 self.tex:SetColorTexture(unpack(color))
-                self.spark:SetColorTexture(color[1], color[2], color[3], 1) -- ignore alpha
+                -- self.spark:SetColorTexture(color[1], color[2], color[3], 1) -- ignore alpha
                 -- elseif self.cooldown:IsObjectType("Cooldown") then
                 --     self.cooldown:SetSwipeTexture(0)
                 --     self.cooldown:SetSwipeColor(unpack(color))
