@@ -461,6 +461,7 @@ L["Icons"] = "图标组"
 L["Bars"] = "进度条组"
 L["Overlay"] = "叠加层"
 L["Block"] = "色块"
+L["Blocks"] = "色块组"
 
 L["Enabled"] = "启用"
 L["Anchor Point"] = "锚点"
@@ -587,6 +588,7 @@ L["Check all visible enemy nameplates."] = "检查所有可见的敌方姓名板
 L["cleuAurasTips"] = "通过战斗记录事件匹配不可见的法术效果"
 L["%s in Utilities must be enabled to make this indicator work."] = "要使用此指示器，必须先启用工具页面下的%s功能。"
 L["If you are a paladin or warrior, and the unit has no buffs from you, a %s icon will be displayed."] = "如果你是圣骑士或战士，且该单位没有来自你的增益时，将会显示一个%s图标。"
+L["Play animation when the unit uses a specific spell/item. The list is global shared, not layout-specific."] = "当单位使用特定的法术/物品时，播放动画。这个列表是全局共享的，而非每个布局独立。"
 
 L["Would you like Cell to create a \"Healers\" indicator (icons)?"] = "需要 Cell 为你创建一个 “Healers” 指示器（图标组）？"
 

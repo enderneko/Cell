@@ -636,6 +636,24 @@ function F:ConvertSpellTable(t, convertIdToName)
     return temp
 end
 
+function F:ConvertSpellTable_WithColor(t, convertIdToName)
+    local temp = {}
+    for k, st in ipairs(t) do
+        local index
+
+        if convertIdToName then
+            index = F:GetSpellNameAndIcon(st[1])
+        else
+            index = st[1]
+        end
+
+        if index then
+            temp[index] = {k, st[2]}
+        end
+    end
+    return temp
+end
+
 function F:ConvertSpellTable_WithClass(t)
     local temp = {}
     for class, ct in pairs(t) do

@@ -1681,7 +1681,7 @@ local function Block_OnUpdate(frame, elapsed)
     end
 end
 
-local function Block_SetCooldown(frame, start, duration, debuffType, texture, count)
+local function Block_SetCooldown(frame, start, duration, debuffType, texture, count, refreshing)
     -- local r, g, b
     -- if debuffType then
     --     r, g, b = I.GetDebuffTypeColor(debuffType)
@@ -1725,6 +1725,10 @@ local function Block_SetCooldown(frame, start, duration, debuffType, texture, co
 
     frame.stack:SetText((count == 0 or count == 1) and "" or count)
     frame:Show()
+
+    if refreshing then
+        frame.ag:Play()
+    end
 end
 
 local function Block_SetColors(frame, colors)
@@ -1777,6 +1781,19 @@ function I.CreateAura_Block(name, parent)
     frame.SetCooldown = Block_SetCooldown
     frame.UpdatePixelPerfect = Block_UpdatePixelPerfect
 
+    local ag = frame:CreateAnimationGroup()
+    frame.ag = ag
+    local t1 = ag:CreateAnimation("Translation")
+    t1:SetOffset(0, 5)
+    t1:SetDuration(0.1)
+    t1:SetOrder(1)
+    t1:SetSmoothing("OUT")
+    local t2 = ag:CreateAnimation("Translation")
+    t2:SetOffset(0, -5)
+    t2:SetDuration(0.1)
+    t2:SetOrder(2)
+    t2:SetSmoothing("IN")
+
     return frame
 end
 
@@ -1808,7 +1825,7 @@ local function Blocks_OnUpdate(frame, elapsed)
     end
 end
 
-local function Blocks_SetCooldown(frame, start, duration, debuffType, texture, count, color)
+local function Blocks_SetCooldown(frame, start, duration, debuffType, texture, count, refreshing, color)
     if duration == 0 then
         frame.cooldown:Hide()
         frame.duration:Hide()
@@ -1840,8 +1857,13 @@ local function Blocks_SetCooldown(frame, start, duration, debuffType, texture, c
         frame:SetScript("OnUpdate", Blocks_OnUpdate)
     end
 
+    frame:SetBackdropColor(color[1], color[2], color[3], color[4])
     frame.stack:SetText((count == 0 or count == 1) and "" or count)
     frame:Show()
+
+    if refreshing then
+        frame.ag:Play()
+    end
 end
 
 function I.CreateAura_Blocks(name, parent, num)
@@ -1870,7 +1892,7 @@ function I.CreateAura_Blocks(name, parent, num)
         local frame = I.CreateAura_Block(name, blocks)
         blocks[i] = frame
         frame.SetCooldown = Blocks_SetCooldown
-        frame:SetBackdropBorderColor(0, 0, 0, 1) -- TODO: custom color
+        frame:SetBackdropBorderColor(0, 0, 0, 1)
     end
 
     return blocks

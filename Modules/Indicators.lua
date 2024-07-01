@@ -131,18 +131,19 @@ local function UpdatePreviewButton()
 end
 
 -- indicator preview onupdate
+local blocks_color = {1, 0.26667, 0.4}
 local function SetOnUpdate(indicator, type, icon, stack)
     indicator.preview = indicator.preview or CreateFrame("Frame", nil, indicator)
     indicator.preview:SetScript("OnUpdate", function(self, elapsed)
         self.elapsedTime = (self.elapsedTime or 0) + elapsed
         if self.elapsedTime >= 13 then
             self.elapsedTime = 0
-            indicator:SetCooldown(GetTime(), 13, type, icon, stack)
+            indicator:SetCooldown(GetTime(), 13, type, icon, stack, false, blocks_color)
         end
     end)
     indicator:SetScript("OnShow", function()
         indicator.preview.elapsedTime = 0
-        indicator:SetCooldown(GetTime(), 13, type, icon, stack)
+        indicator:SetCooldown(GetTime(), 13, type, icon, stack, false, blocks_color)
     end)
 end
 
@@ -1312,12 +1313,24 @@ local typeItems = {
         ["value"] = "icon",
     },
     {
-        ["text"] = L["Bar"],
-        ["value"] = "bar",
+        ["text"] = L["Blocks"],
+        ["value"] = "blocks",
+    },
+    {
+        ["text"] = L["Block"],
+        ["value"] = "block",
     },
     {
         ["text"] = L["Rect"],
         ["value"] = "rect",
+    },
+    {
+        ["text"] = L["Bar"],
+        ["value"] = "bar",
+    },
+    {
+        ["text"] = L["Overlay"],
+        ["value"] = "overlay",
     },
     {
         ["text"] = L["Text"],
@@ -1328,25 +1341,13 @@ local typeItems = {
         ["value"] = "color",
     },
     {
-        ["text"] = L["Texture"],
-        ["value"] = "texture",
-    },
-    {
         ["text"] = L["Glow"],
         ["value"] = "glow",
     },
     {
-        ["text"] = L["Overlay"],
-        ["value"] = "overlay",
+        ["text"] = L["Texture"],
+        ["value"] = "texture",
     },
-    {
-        ["text"] = L["Block"],
-        ["value"] = "block",
-    },
-    -- {
-    --     ["text"] = L["Blocks"],
-    --     ["value"] = "blocks",
-    -- },
 }
 
 local auraTypeItems = {
@@ -1528,7 +1529,7 @@ if Cell.isRetail then
         ["targetedSpells"] = {"enabled", "checkbutton:showAllSpells:"..L["Glow is only available to the spells in the list below"], "targetedSpellsList", "targetedSpellsGlow", "size-border", "num:3", "orientation", "position", "frameLevel", "font"},
         ["targetCounter"] = {"|cffff2727"..L["HIGH CPU USAGE"].."!|r |cffb7b7b7"..L["Check all visible enemy nameplates."], "enabled", "targetCounterFilters", "color", "position", "frameLevel", "font-noOffset"},
         ["crowdControls"] = {"enabled", "builtInCrowdControls", "customCrowdControls", "durationVisibility", "size-border", "num:3", "orientation", "position", "frameLevel", "font1:stackFont", "font2:durationFont"},
-        ["consumables"] = {"enabled", "consumablesPreview", "consumablesList"},
+        ["consumables"] = {"|cffb7b7b7"..L["Play animation when the unit uses a specific spell/item. The list is global shared, not layout-specific."], "enabled", "consumablesPreview", "consumablesList"},
         ["healthThresholds"] = {"enabled", "thresholds", "thickness"},
         ["missingBuffs"] = {I.GetMissingBuffsString().."|cffb7b7b7"..(L["%s in Utilities must be enabled to make this indicator work."]:format(Cell:GetAccentColorString()..L["Buff Tracker"].."|r")), "enabled", "missingBuffsFilters", "size-square", "num:5", "orientation", "position", "frameLevel"},
     }
@@ -1564,7 +1565,7 @@ elseif Cell.isCata then
         ["raidDebuffs"] = {"|cffb7b7b7"..L["You can config debuffs in %s"]:format(Cell:GetAccentColorString()..L["Raid Debuffs"].."|r"), "enabled", "checkbutton:onlyShowTopGlow", "durationVisibility", "checkbutton2:showTooltip:"..DEBUFFS_TOOLTIP1, "size-border", "num:3", "orientation", "position", "frameLevel", "font1:stackFont", "font2:durationFont"},
         ["targetedSpells"] = {"enabled", "checkbutton:showAllSpells:"..L["Glow is only available to the spells in the list below"], "targetedSpellsList", "targetedSpellsGlow", "size-border", "num:3", "orientation", "position", "frameLevel", "font"},
         ["targetCounter"] = {"|cffff2727"..L["HIGH CPU USAGE"].."!|r |cffb7b7b7"..L["Check all visible enemy nameplates."], "enabled", "targetCounterFilters", "color", "position", "frameLevel", "font-noOffset"},
-        ["consumables"] = {"enabled", "consumablesPreview", "consumablesList"},
+        ["consumables"] = {"|cffb7b7b7"..L["Play animation when the unit uses a specific spell/item. The list is global shared, not layout-specific."], "enabled", "consumablesPreview", "consumablesList"},
         ["healthThresholds"] = {"enabled", "thresholds", "thickness"},
         ["missingBuffs"] = {"|cffb7b7b7"..(L["%s in Utilities must be enabled to make this indicator work."]:format(Cell:GetAccentColorString()..L["Buff Tracker"].."|r")).." "..(L["If you are a paladin or warrior, and the unit has no buffs from you, a %s icon will be displayed."]:format("|T254882:14:14:0:0:14:14:1:13:1:13|t")), "enabled", "missingBuffsFilters", "size-square", "num:5", "orientation", "position", "frameLevel"},
     }
@@ -1598,7 +1599,7 @@ elseif Cell.isVanilla then
         ["raidDebuffs"] = {"|cffb7b7b7"..L["You can config debuffs in %s"]:format(Cell:GetAccentColorString()..L["Raid Debuffs"].."|r"), "enabled", "checkbutton:onlyShowTopGlow", "durationVisibility", "checkbutton2:showTooltip:"..DEBUFFS_TOOLTIP1, "size-border", "num:3", "orientation", "position", "frameLevel", "font1:stackFont", "font2:durationFont"},
         ["targetedSpells"] = {"enabled", "checkbutton:showAllSpells:"..L["Glow is only available to the spells in the list below"], "targetedSpellsList", "targetedSpellsGlow", "size-border", "num:3", "orientation", "position", "frameLevel", "font"},
         ["targetCounter"] = {"|cffff2727"..L["HIGH CPU USAGE"].."!|r |cffb7b7b7"..L["Check all visible enemy nameplates."], "enabled", "targetCounterFilters", "color", "position", "frameLevel", "font-noOffset"},
-        ["consumables"] = {"enabled", "consumablesPreview", "consumablesList"},
+        ["consumables"] = {"|cffb7b7b7"..L["Play animation when the unit uses a specific spell/item. The list is global shared, not layout-specific."], "enabled", "consumablesPreview", "consumablesList"},
         ["healthThresholds"] = {"enabled", "thresholds", "thickness"},
         ["missingBuffs"] = {"|cffb7b7b7"..(L["%s in Utilities must be enabled to make this indicator work."]:format(Cell:GetAccentColorString()..L["Buff Tracker"].."|r")).." "..(L["If you are a paladin or warrior, and the unit has no buffs from you, a %s icon will be displayed."]:format("|T254882:14:14:0:0:14:14:1:13:1:13|t")), "enabled", "missingBuffsFilters", "size-square", "num:5", "orientation", "position", "frameLevel"},
     }
@@ -1654,7 +1655,7 @@ local function ShowIndicatorSettings(id)
         end
 
         -- tips
-        if indicatorType == "icons" or indicatorType == "glow" then
+        if indicatorType == "glow" then
             tinsert(settingsTable, 1, "|cffb7b7b7"..L["The spells list of a icons indicator is unordered (no priority)."].." "..L["Indicator settings are part of Layout settings which are account-wide."])
         else
             tinsert(settingsTable, 1, "|cffb7b7b7"..L["The priority of spells decreases from top to bottom."].." "..L["Indicator settings are part of Layout settings which are account-wide."])
@@ -1730,7 +1731,7 @@ local function ShowIndicatorSettings(id)
 
         -- auras
         elseif currentSetting == "auras" then
-            w:SetDBValue(L[F:UpperFirst(indicatorTable["auraType"]).." List"], indicatorTable["auras"], indicatorType == "glow", indicatorType == "icons")
+            w:SetDBValue(L[F:UpperFirst(indicatorTable["auraType"]).." List"], indicatorTable["auras"], indicatorType == "glow", indicatorType == "icons", indicatorType == "blocks")
             w:SetFunc(function(value)
                 -- NOTE: already changed in widget
                 Cell:Fire("UpdateIndicators", notifiedLayout, indicatorName, "auras", indicatorTable["auraType"], value)
