@@ -1950,69 +1950,126 @@ local function ShowIndicatorSettings(id)
     selected = id
 end
 
+local function MoveIndicator(id1, id2)
+    local scroll = listFrame.scrollFrame:GetVerticalScroll()
+
+    if selected == id1 then
+        selected = id2
+        ListHighlightFn(id2)
+    elseif selected == id2 then
+        selected = id1
+        ListHighlightFn(id1)
+    end
+
+    if id2 then
+        local temp = currentLayoutTable["indicators"][id1]
+        currentLayoutTable["indicators"][id1] = currentLayoutTable["indicators"][id2]
+        currentLayoutTable["indicators"][id2] = temp
+    end
+
+    LoadIndicatorList()
+    listFrame.scrollFrame:SetVerticalScroll(scroll)
+end
+
 LoadIndicatorList = function()
     F:Debug("|cffff7777LoadIndicatorList:|r", currentLayout)
     listFrame.scrollFrame:Reset()
-    wipe(listButtons)
 
-    local last
+    local n = 0
     for i, t in pairs(currentLayoutTable["indicators"]) do
-        local b
+        if not listButtons[i] then
+            listButtons[i] = Cell:CreateButton(listFrame.scrollFrame.content, " ", "transparent-accent", {20, 20})
+            listButtons[i].typeIcon = listButtons[i]:CreateTexture(nil, "ARTWORK")
+            listButtons[i].typeIcon:SetPoint("RIGHT", -2, 0)
+            P:Size(listButtons[i].typeIcon, 16, 16)
+
+            listButtons[i].ShowTooltip = function()
+                if listButtons[i]:GetFontString():IsTruncated() then
+                    CellTooltip:SetOwner(listButtons[i], "ANCHOR_NONE")
+                    CellTooltip:SetPoint("RIGHT", listButtons[i], "LEFT")
+                    CellTooltip:AddLine(listButtons[i]:GetText())
+                    CellTooltip:Show()
+                end
+            end
+
+            listButtons[i].HideTooltip = function()
+                CellTooltip:Hide()
+            end
+
+            listButtons[i]:SetMovable(true)
+            listButtons[i]:RegisterForDrag("LeftButton")
+
+            listButtons[i]:SetScript("OnDragStart", function(self)
+                if self.isBuiltIn then return end
+                if listButtons[i + 1] then
+                    listButtons[i + 1]:ClearAllPoints()
+                end
+                self.oldStrata = self:GetFrameStrata()
+                self:SetFrameStrata("TOOLTIP")
+                self:StartMoving()
+                self:SetUserPlaced(false)
+            end)
+
+            listButtons[i]:SetScript("OnDragStop", function(self)
+                if self.isBuiltIn then return end
+                self:StopMovingOrSizing()
+                self:SetFrameStrata("LOW")
+                -- self:Hide() --! Hide() will cause OnDragStop trigger TWICE!!!
+                C_Timer.After(0.05, function()
+                    local b = F:GetMouseFocus()
+                    self:SetFrameStrata(self.oldStrata)
+                    self.oldStrata = nil
+                    MoveIndicator(self.id, (b and b.typeIcon and not b.isBuiltIn) and b.id)
+                end)
+            end)
+        end
+
+        local b = listButtons[i]
+
         if t["type"] == "built-in" then
-            b = Cell:CreateButton(listFrame.scrollFrame.content, L[t["name"]], "transparent-accent", {20, 20})
+            b.isBuiltIn = true
+            b:SetText(L[t["name"]])
+            b:GetFontString():ClearAllPoints()
+            b:GetFontString():SetPoint("LEFT", 5, 0)
+            b:GetFontString():SetPoint("RIGHT", -5, 0)
+            b.typeIcon:Hide()
         else
-            b = Cell:CreateButton(listFrame.scrollFrame.content, t["name"], "transparent-accent", {20, 20})
-            -- b = Cell:CreateButton(listFrame.scrollFrame.content, t["name"].." |cff7f7f7f("..L[t["auraType"]]..")", "transparent-accent", {20, 20})
-            b.typeIcon = b:CreateTexture(nil, "ARTWORK")
-            b.typeIcon:SetPoint("RIGHT", -2, 0)
-            P:Size(b.typeIcon, 16, 16)
+            b.isBuiltIn = false
+            b:SetText(t["name"])
+            b:GetFontString():ClearAllPoints()
+            b:GetFontString():SetPoint("LEFT", 5, 0)
+            b:GetFontString():SetPoint("RIGHT", b.typeIcon, "LEFT", -2, 0)
+            b.typeIcon:Show()
             b.typeIcon:SetTexture("Interface\\AddOns\\Cell\\Media\\Indicators\\indicator-"..t["type"])
-            -- b.typeIcon:SetAlpha(0.5)
             if t["auraType"] == "buff" then
                 b.typeIcon:SetVertexColor(0.75, 1, 0.75)
             else -- debuff
                 b.typeIcon:SetVertexColor(1, 0.75, 0.75)
             end
-
-            b:GetFontString():ClearAllPoints()
-            b:GetFontString():SetPoint("LEFT", 5, 0)
-            b:GetFontString():SetPoint("RIGHT", b.typeIcon, "LEFT", -2, 0)
         end
-        tinsert(listButtons, b)
+
         b.id = i
+        n = i
 
         -- show enabled/disabled status
         if t["enabled"] then
             b:SetTextColor(1, 1, 1, 1)
+            b.typeIcon:SetAlpha(0.55)
         else
             b:SetTextColor(0.466, 0.466, 0.466, 1)
-        end
-        if b.typeIcon then
-            b.typeIcon:SetAlpha(t["enabled"] and 0.55 or 0.15)
+            b.typeIcon:SetAlpha(0.15)
         end
 
-        b.ShowTooltip = function()
-            if b:GetFontString():IsTruncated() then
-                CellTooltip:SetOwner(b, "ANCHOR_NONE")
-                CellTooltip:SetPoint("RIGHT", b, "LEFT")
-                CellTooltip:AddLine(b:GetText())
-                CellTooltip:Show()
-            end
-        end
-
-        b.HideTooltip = function()
-            CellTooltip:Hide()
-        end
-
+        b:SetParent(listFrame.scrollFrame.content)
         b:SetPoint("RIGHT")
-        if last then
-            b:SetPoint("TOPLEFT", last, "BOTTOMLEFT", 0, P:Scale(1))
-        else
+        if i == 1 then
             b:SetPoint("TOPLEFT")
+        else
+            b:SetPoint("TOPLEFT", listButtons[i - 1], "BOTTOMLEFT", 0, P:Scale(1))
         end
-        last = b
+        b:Show()
     end
-    listFrame.scrollFrame:SetContentHeight(P:Scale(20), #listButtons, -P:Scale(1))
+    listFrame.scrollFrame:SetContentHeight(P:Scale(20), n, -P:Scale(1))
 
     ListHighlightFn = Cell:CreateButtonGroup(listButtons, ShowIndicatorSettings, function(id)
         local i = previewButton.indicators[currentLayoutTable["indicators"][id]["indicatorName"]]
@@ -2048,6 +2105,8 @@ LoadIndicatorList = function()
             end
         end
     end, function(id)
+        if not currentLayoutTable["indicators"][id] then return end
+
         local i = previewButton.indicators[currentLayoutTable["indicators"][id]["indicatorName"]]
 
         if CellDB["indicatorPreview"]["showAll"] and i.enabled then
