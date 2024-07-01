@@ -106,7 +106,7 @@ local function DoImport()
     F:FilterInvalidSpells(imported["customDefensives"])
     F:FilterInvalidSpells(imported["customExternals"])
     F:FilterInvalidSpells(imported["targetedSpellsList"])
-    F:FilterInvalidSpells(imported["cleuAuras"])
+    -- F:FilterInvalidSpells(imported["cleuAuras"])
 
     -- disable autorun
     for i = 1, #imported["snippets"] do

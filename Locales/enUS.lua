@@ -87,6 +87,20 @@ select(2, ...).L = setmetatable({
         <p>(Retail) Enable "Always Update Buffs/Debuffs" in General tab, if indicators do not update correctly.</p>
         <br/>
 
+        <h1>r230-beta (Jul 2, 2024, 00:27 GMT+8)</h1>
+        <p>* Updated for TWW (#139,#120), not fully compatible though.</p>
+        <p>* Updated bleedList (#119).</p>
+        <p>+ Introduced new snippet var "CELL_COOLDOWN_STYLE", the old snippet "CooldownIcons_BlizzardStyle" is now OUTDATED.</p>
+        <p>+ Custom indicators can be reordered by dragging and dropping now.</p>
+        <p>+ New custom indicator type "Blocks" ("CELL_COOLDOWN_STYLE" can affect this type of indicators).</p>
+        <p>+ Added "Show Duration" for Crowd Controls indicator.</p>
+        <p>* Updated frame level of Dispels and "Color" indicators.</p>
+        <p>* Updated range check.</p>
+        <p>* Updated texture of Role Icon indicator.</p>
+        <p>* Fixed "Text" alignment.</p>
+        <p>* Fixed "Dispels" check for Cata.</p>
+        <br/>
+
         <h1>r229-release (Jun 11, 2024, 20:11 GMT+8)</h1>
         <p>* Bug fixes.</p>
         <p>* Updated zhTW.</p>
