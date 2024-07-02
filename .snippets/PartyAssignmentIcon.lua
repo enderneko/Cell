@@ -1,3 +1,9 @@
+-------------------------------------------------
+-- 2024-06-27 13:59:49 GMT+8
+-- party assignment icon
+-- 主助理/主坦克 图标
+-------------------------------------------------
+
 -- relative to Leader Icon indicator
 local point, relativePoint, x, y = "TOPLEFT", "BOTTOMLEFT", 0, 2
 local size = 11
@@ -22,7 +28,7 @@ local function UpdateAssignmentIcon(b, event)
 end
 
 Cell.funcs:IterateAllUnitButtons(function(b)
-    local assignmentIcon = b.widgets.overlayFrame:CreateTexture(b:GetName().."AssignmentIcon", "ARTWORK", nil, -7)
+    local assignmentIcon = b.widgets.highLevelFrame:CreateTexture(b:GetName().."AssignmentIcon", "ARTWORK", nil, -7)
     b.widgets.assignmentIcon = assignmentIcon
     assignmentIcon:SetPoint(point, b.indicators.leaderIcon, relativePoint, x, y)
     assignmentIcon:SetSize(size, size)

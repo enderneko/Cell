@@ -175,6 +175,8 @@ local function HandleIndicators(b)
 
     for _, t in pairs(Cell.vars.currentLayoutTable["indicators"]) do
         local indicator = b.indicators[t["indicatorName"]] or I.CreateIndicator(b, t)
+        indicator.configs = t
+
         -- update position
         if t["position"] then
             P:ClearPoints(indicator)
@@ -916,33 +918,6 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
     end
 end
 Cell:RegisterCallback("UpdateIndicators", "UnitButton_UpdateIndicators", UpdateIndicators)
-
--------------------------------------------------
--- unit button
--------------------------------------------------
---[[
-unitButton = {
-    state = {
-        class, color, inRange, isAssistant, isLeader, name, role,
-        unit, displayedUnit, health, healthMax, healthPercent, powerType
-    },
-    widget = {
-        background, mouseoverHighlight, targetHighlight, readyCheckHighlight,
-        healthBar, healthBarBackground, absorbsBar, shieldBar, incomingHeal, damageFlashTex, overShieldGlow,
-        powerBar, powerBarBackground,
-        statusTextFrame, statusText, timerText
-        overlayFrame, nameText
-        aggroBlink, leaderIcon, statusIcon, readyCheckIcon, roleIcon,
-    },
-    func = {
-        ShowFlash, HideFlash,
-        ShowTimer, HideTimer, UpdateTimer,
-    },
-    indicators = {},
-    updateRequired,
-    __updateElapsed,
-}
-]]
 
 -------------------------------------------------
 -- ForEachAura
@@ -2258,11 +2233,12 @@ UnitButton_UpdateStatusText = function(self)
         local status = C_IncomingSummon.IncomingSummonStatus(unit)
         if status == Enum.SummonStatus.Pending then
             statusText:SetStatus("PENDING")
-        elseif status == Enum.SummonStatus.Accepted then
-            statusText:SetStatus("ACCEPTED")
-            C_Timer.After(6, function() UnitButton_UpdateStatusText(self) end)
-        elseif status == Enum.SummonStatus.Declined then
-            statusText:SetStatus("DECLINED")
+        else
+            if status == Enum.SummonStatus.Accepted then
+                statusText:SetStatus("ACCEPTED")
+            elseif status == Enum.SummonStatus.Declined then
+                statusText:SetStatus("DECLINED")
+            end
             C_Timer.After(6, function() UnitButton_UpdateStatusText(self) end)
         end
     elseif statusText:GetStatus() == "DRINKING" then
@@ -3589,8 +3565,38 @@ function CellUnitButton_OnLoad(button)
     incomingHeal:Hide()
     incomingHeal.SetValue = DumbFunc
 
+    --* tsGlowFrame (Targeted Spells)
+    local tsGlowFrame = CreateFrame("Frame", name.."TSGlowFrame", button)
+    button.widgets.tsGlowFrame = tsGlowFrame
+    tsGlowFrame:SetAllPoints(button)
+
+    --* srGlowFrame (Spell Request)
+    local srGlowFrame = CreateFrame("Frame", name.."SRGlowFrame", button)
+    button.widgets.srGlowFrame = srGlowFrame
+    srGlowFrame:SetFrameLevel(button:GetFrameLevel()+300)
+    srGlowFrame:SetAllPoints(button)
+
+    --* drGlowFrame (Dispel Request)
+    local drGlowFrame = CreateFrame("Frame", name.."DRGlowFrame", button)
+    button.widgets.drGlowFrame = drGlowFrame
+    drGlowFrame:SetFrameLevel(button:GetFrameLevel()+300)
+    drGlowFrame:SetAllPoints(button)
+
+    --* highLevelFrame
+    local highLevelFrame = CreateFrame("Frame", name.."HighLevelFrame", button)
+    button.widgets.highLevelFrame = highLevelFrame
+    highLevelFrame:SetFrameLevel(button:GetFrameLevel()+150)
+    highLevelFrame:SetAllPoints(button)
+
+    --* midLevelFrame
+    local midLevelFrame = CreateFrame("Frame", name.."MidLevelFrame", button)
+    button.widgets.midLevelFrame = midLevelFrame
+    midLevelFrame:SetFrameLevel(button:GetFrameLevel()+70)
+    midLevelFrame:SetPoint("TOPLEFT", healthBar)
+    midLevelFrame:SetPoint("BOTTOMRIGHT", healthBar)
+
     -- shield bar
-    local shieldBar = healthBar:CreateTexture(name.."ShieldBar", "ARTWORK", nil, -5)
+    local shieldBar = midLevelFrame:CreateTexture(name.."ShieldBar", "ARTWORK", nil, -5)
     button.widgets.shieldBar = shieldBar
     shieldBar:SetTexture("Interface\\AddOns\\Cell\\Media\\shield", "REPEAT", "REPEAT")
     shieldBar:SetHorizTile(true)
@@ -3598,7 +3604,7 @@ function CellUnitButton_OnLoad(button)
     shieldBar:Hide()
     shieldBar.SetValue = DumbFunc
 
-    local shieldBarR = healthBar:CreateTexture(name.."ShieldBarR", "ARTWORK", nil, -5)
+    local shieldBarR = midLevelFrame:CreateTexture(name.."ShieldBarR", "ARTWORK", nil, -5)
     button.widgets.shieldBarR = shieldBarR
     shieldBarR:SetTexture("Interface\\AddOns\\Cell\\Media\\shield", "REPEAT", "REPEAT")
     shieldBarR:SetHorizTile(true)
@@ -3607,7 +3613,7 @@ function CellUnitButton_OnLoad(button)
     shieldBar.shieldBarR = shieldBarR
 
     -- over-shield glow
-    local overShieldGlow = healthBar:CreateTexture(name.."OverShieldGlow", "ARTWORK", nil, -4)
+    local overShieldGlow = midLevelFrame:CreateTexture(name.."OverShieldGlow", "ARTWORK", nil, -4)
     button.widgets.overShieldGlow = overShieldGlow
     overShieldGlow:SetTexture("Interface\\AddOns\\Cell\\Media\\overshield")
     -- overShieldGlow:SetBlendMode("ADD")
@@ -3615,7 +3621,7 @@ function CellUnitButton_OnLoad(button)
     shieldBar.overShieldGlow = overShieldGlow
 
     -- over-shield glow reversed
-    local overShieldGlowR = healthBar:CreateTexture(name.."OverShieldGlowR", "ARTWORK", nil, -4)
+    local overShieldGlowR = midLevelFrame:CreateTexture(name.."OverShieldGlowR", "ARTWORK", nil, -4)
     button.widgets.overShieldGlowR = overShieldGlowR
     overShieldGlowR:SetTexture("Interface\\AddOns\\Cell\\Media\\overshield_reversed")
     -- overShieldGlowR:SetBlendMode("ADD")
@@ -3623,14 +3629,14 @@ function CellUnitButton_OnLoad(button)
     shieldBar.overShieldGlowR = overShieldGlowR
 
     -- over-absorb glow
-    local overAbsorbGlow = healthBar:CreateTexture(name.."OverAbsorbGlow", "ARTWORK", nil, -2)
+    local overAbsorbGlow = midLevelFrame:CreateTexture(name.."OverAbsorbGlow", "ARTWORK", nil, -2)
     button.widgets.overAbsorbGlow = overAbsorbGlow
     overAbsorbGlow:SetTexture("Interface\\AddOns\\Cell\\Media\\overabsorb")
     -- overAbsorbGlow:SetBlendMode("ADD")
     overAbsorbGlow:Hide()
 
     -- absorbs bar
-    local absorbsBar = healthBar:CreateTexture(name.."AbsorbsBar", "ARTWORK", nil, 1)
+    local absorbsBar = midLevelFrame:CreateTexture(name.."AbsorbsBar", "ARTWORK", nil, 1)
     button.widgets.absorbsBar = absorbsBar
     absorbsBar:SetTexture("Interface\\AddOns\\Cell\\Media\\shield.tga", "REPEAT", "REPEAT")
     absorbsBar:SetHorizTile(true)
@@ -3701,33 +3707,9 @@ function CellUnitButton_OnLoad(button)
     -- readyCheckHighlight:SetTexture("Interface\\Buttons\\WHITE8x8")
     -- readyCheckHighlight:Hide()
 
-    --* tsGlowFrame (Targeted Spells)
-    local tsGlowFrame = CreateFrame("Frame", name.."TSGlowFrame", button)
-    button.widgets.tsGlowFrame = tsGlowFrame
-    tsGlowFrame:SetAllPoints(button)
-
-    --* srGlowFrame (Spell Request)
-    local srGlowFrame = CreateFrame("Frame", name.."SRGlowFrame", button)
-    button.widgets.srGlowFrame = srGlowFrame
-    srGlowFrame:SetFrameLevel(button:GetFrameLevel()+240)
-    srGlowFrame:SetAllPoints(button)
-
-    --* drGlowFrame (Dispel Request)
-    local drGlowFrame = CreateFrame("Frame", name.."DRGlowFrame", button)
-    button.widgets.drGlowFrame = drGlowFrame
-    drGlowFrame:SetFrameLevel(button:GetFrameLevel()+240)
-    drGlowFrame:SetAllPoints(button)
-
-    --* overlayFrame
-    local overlayFrame = CreateFrame("Frame", name.."OverlayFrame", button)
-    button.widgets.overlayFrame = overlayFrame
-    overlayFrame:SetFrameLevel(button:GetFrameLevel()+120)
-    overlayFrame:SetAllPoints(button)
-
     -- aggro bar
-    local aggroBar = Cell:CreateStatusBar(name.."AggroBar", overlayFrame, 20, 4, 100, true)
+    local aggroBar = Cell:CreateStatusBar(name.."AggroBar", highLevelFrame, 20, 4, 100, true)
     button.indicators.aggroBar = aggroBar
-    -- aggroBar:SetPoint("BOTTOMLEFT", overlayFrame, "TOPLEFT", 1, 0)
     aggroBar:Hide()
 
     -- indicators

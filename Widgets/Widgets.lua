@@ -913,6 +913,9 @@ function addon:CreateColorPicker(parent, label, hasOpacity, onChange, onConfirm)
         cp.hasOpacity = enable
     end
 
+    cp.onChange = onChange
+    cp.onConfirm = onConfirm
+
     cp:SetScript("OnClick", function()
         addon:ShowColorPicker(function(r, g, b, a)
             cp:SetBackdropColor(r, g, b, a)
@@ -920,10 +923,10 @@ function addon:CreateColorPicker(parent, label, hasOpacity, onChange, onConfirm)
             cp.color[2] = g
             cp.color[3] = b
             cp.color[4] = a
-            if onChange then
-                onChange(r, g, b, a)
+            if cp.onChange then
+                cp.onChange(r, g, b, a)
             end
-        end, onConfirm, cp.hasOpacity, unpack(cp.color))
+        end, cp.onConfirm, cp.hasOpacity, unpack(cp.color))
     end)
 
     cp.color = {1, 1, 1, 1}
@@ -1748,6 +1751,7 @@ function addon:CreateConfirmPopup(parent, width, text, onAccept, onReject, mask,
         end
         parent.confirmPopup.editBox:Show()
         -- disable yes if editBox empty
+        parent.confirmPopup.button1:SetEnabled(false)
         parent.confirmPopup.editBox:SetScript("OnTextChanged", function()
             if not parent.confirmPopup.editBox:GetText() or strtrim(parent.confirmPopup.editBox:GetText()) == "" then
                 parent.confirmPopup.button1:SetEnabled(false)
@@ -3027,11 +3031,11 @@ function addon:CreateDropdown(parent, width, dropdownType, isMini, isHorizontal)
             list:SetPoint("TOPLEFT", menu, "BOTTOMLEFT", 0, -2)
             if #menu.items == 0 then
                 list:SetSize(menu:GetWidth(), P:Scale(5))
-            elseif #menu.items <= 10 then
+            elseif #menu.items <= 11 then
                 list:SetSize(menu:GetWidth(), P:Scale(2) + #menu.items*P:Scale(18))
                 list.scrollFrame:SetContentHeight(P:Scale(2) + #menu.items*P:Scale(18))
             else
-                list:SetSize(menu:GetWidth(), P:Scale(2) + 10*P:Scale(18))
+                list:SetSize(menu:GetWidth(), P:Scale(2) + 11*P:Scale(18))
                 -- update list scrollFrame
                 list.scrollFrame:SetContentHeight(P:Scale(2) + #menu.items*P:Scale(18))
             end

@@ -46,12 +46,6 @@ __如果更新后遇到各种问题，先检查/禁用代码片段。__
 2. 新建 -> 粘贴 -> 保存 -> 勾选自动运行
 3. 重载界面
 
-### 暴雪冷却样式的图标
-
-<https://raw.githubusercontent.com/enderneko/Cell/master/.snippets/CooldownIcons_BlizzardStyle.lua>
-
-![暴雪冷却样式的图标](https://github.com/enderneko/Cell/raw/master/.snippets/CooldownIcons_BlizzardStyle.gif)
-
 &nbsp;
 
 ## 不支持的功能（未来可能也不会考虑做）

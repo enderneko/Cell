@@ -17,6 +17,7 @@ Cell.isVanilla = WOW_PROJECT_ID == WOW_PROJECT_CLASSIC
 Cell.isWrath = WOW_PROJECT_ID == WOW_PROJECT_WRATH_CLASSIC
 Cell.isCata = WOW_PROJECT_ID == WOW_PROJECT_CATACLYSM_CLASSIC
 Cell.isTWW = LE_EXPANSION_LEVEL_CURRENT == LE_EXPANSION_WAR_WITHIN
+
 -------------------------------------------------
 -- class
 -------------------------------------------------
@@ -630,6 +631,24 @@ function F:ConvertSpellTable(t, convertIdToName)
         local name = F:GetSpellNameAndIcon(v)
         if name then
             temp[name] = k
+        end
+    end
+    return temp
+end
+
+function F:ConvertSpellTable_WithColor(t, convertIdToName)
+    local temp = {}
+    for k, st in ipairs(t) do
+        local index
+
+        if convertIdToName then
+            index = F:GetSpellNameAndIcon(st[1])
+        else
+            index = st[1]
+        end
+
+        if index then
+            temp[index] = {k, st[2]}
         end
     end
     return temp
@@ -1437,7 +1456,7 @@ function F:HasPermission(isPartyMarkPermission)
 end
 
 -------------------------------------------------
--- range checker
+-- range check
 -------------------------------------------------
 local UnitIsVisible = UnitIsVisible
 local UnitInRange = UnitInRange
@@ -1445,6 +1464,7 @@ local UnitCanAssist = UnitCanAssist
 local UnitCanAttack = UnitCanAttack
 local UnitCanCooperate = UnitCanCooperate
 local IsSpellInRange = (C_Spell and C_Spell.IsSpellInRange) and C_Spell.IsSpellInRange or IsSpellInRange
+local IsItemInRange = C_Item.IsItemInRange
 local CheckInteractDistance = CheckInteractDistance
 local UnitIsDead = UnitIsDead
 local GetSpellTabInfo = GetSpellTabInfo
@@ -1522,28 +1542,28 @@ local harmItems = {
     ["WARRIOR"] = 28767,
 }
 
-local FindSpellIndex
-if C_SpellBook and C_SpellBook.FindSpellBookSlotForSpell then
-    FindSpellIndex = function(spellName)
-        if not spellName or spellName == "" then return end
-        return C_SpellBook.FindSpellBookSlotForSpell(spellName)
-    end
-else
-    local function GetNumSpells()
-        local _, _, offset, numSpells = GetSpellTabInfo(GetNumSpellTabs())
-        return offset + numSpells
-    end
+-- local FindSpellIndex
+-- if C_SpellBook and C_SpellBook.FindSpellBookSlotForSpell then
+--     FindSpellIndex = function(spellName)
+--         if not spellName or spellName == "" then return end
+--         return C_SpellBook.FindSpellBookSlotForSpell(spellName)
+--     end
+-- else
+--     local function GetNumSpells()
+--         local _, _, offset, numSpells = GetSpellTabInfo(GetNumSpellTabs())
+--         return offset + numSpells
+--     end
 
-    FindSpellIndex = function(spellName)
-        if not spellName or spellName == "" then return end
-        for i = 1, GetNumSpells() do
-            local spell = GetSpellBookItemName(i, BOOKTYPE_SPELL)
-            if spell == spellName then
-                return i
-            end
-        end
-    end
-end
+--     FindSpellIndex = function(spellName)
+--         if not spellName or spellName == "" then return end
+--         for i = 1, GetNumSpells() do
+--             local spell = GetSpellBookItemName(i, BOOKTYPE_SPELL)
+--             if spell == spellName then
+--                 return i
+--             end
+--         end
+--     end
+-- end
 
 local UnitInSpellRange
 if C_Spell and C_Spell.IsSpellInRange then
@@ -1620,14 +1640,14 @@ else
                 if spell_friend then
                     return UnitInSpellRange(spell_friend, unit)
                 else
-                    return C_Item.IsItemInRange(friendItems[playerClass], unit)
+                    return IsItemInRange(friendItems[playerClass], unit)
                 end
             elseif UnitCanAttack("player", unit) then
                 -- print("CanAttack", unit)
                 if spell_harm then
                     return UnitInSpellRange(spell_harm, unit)
                 else
-                    return C_Item.IsItemInRange(harmItems[playerClass], unit)
+                    return IsItemInRange(harmItems[playerClass], unit)
                 end
             end
 
@@ -1849,12 +1869,22 @@ function F:GetTextures()
     return builtIns, t
 end
 
+function F:GetDefaultRoleIcon(role)
+    if not role or role == "NONE" then return "" end
+    return "Interface\\AddOns\\Cell\\Media\\Roles\\Default_" .. role
+end
+
+function F:GetDefaultRoleIconEscapeSequence(role, size)
+    if not role or role == "NONE" then return "" end
+    return "|TInterface\\AddOns\\Cell\\Media\\Roles\\Default_" .. role .. ":" .. (size or 0) .. "|t"
+end
+
 -------------------------------------------------
 -- frame
 -------------------------------------------------
 function F:GetMouseFocus()
     if Cell.isTWW then
-        return GetMouseFoci()
+        return GetMouseFoci()[1]   -- Latest Beta build changed this to return the table under key `1`
     else
         return GetMouseFocus()
     end

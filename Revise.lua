@@ -2954,6 +2954,28 @@ function F:Revise()
         end
     end
 
+    -- r230-release
+    if CellDB["revise"] and dbRevision < 230 then
+        for _, layout in pairs(CellDB["layouts"]) do
+            for _, i in pairs(layout["indicators"]) do
+                if i.type == "color" then
+                    -- limit frameLevel to 50
+                    if i.frameLevel > 50 then
+                        i.frameLevel = 50
+                    end
+                end
+            end
+        end
+
+        -- CELL_COOLDOWN_STYLE
+        if not strfind(CellDB["snippets"][0]["code"], "CELL_COOLDOWN_STYLE") then
+            CellDB["snippets"][0]["code"] = CellDB["snippets"][0]["code"].."\n\n-- cooldown style for icon/block indicators (\"VERTICAL\", \"CLOCK\")\nCELL_COOLDOWN_STYLE = \"VERTICAL\""
+        end
+
+        -- disable snippets
+        F:DisableSnippets()
+    end
+
     -- ----------------------------------------------------------------------- --
     --            update from old versions, validate all indicators            --
     -- ----------------------------------------------------------------------- --

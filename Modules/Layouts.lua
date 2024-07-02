@@ -1661,7 +1661,11 @@ local function CreateAutoSwitchPane()
             CellTooltip:SetOwner(typeSwitch, "ANCHOR_NONE")
             CellTooltip:SetPoint("TOPLEFT", typeSwitch, "TOPRIGHT", 15, 0)
             CellTooltip:AddLine(L["Layout Auto Switch"])
-            CellTooltip:AddLine(L["Role"]..": |cffffffff"..strlower(L["Use common profile"]).." |TInterface\\AddOns\\Cell\\Media\\Roles\\TANK:12|t |TInterface\\AddOns\\Cell\\Media\\Roles\\HEALER:12|t |TInterface\\AddOns\\Cell\\Media\\Roles\\DAMAGER:12|t")
+            CellTooltip:AddLine(L["Role"]..": |cffffffff"..strlower(L["Use common profile"]) .. " " ..
+                F:GetDefaultRoleIconEscapeSequence("TANK", 12) .. " " ..
+                F:GetDefaultRoleIconEscapeSequence("HEALER", 12) .. " " ..
+                F:GetDefaultRoleIconEscapeSequence("DAMAGER", 12)
+            )
             CellTooltip:AddLine(L["Spec"]..": |cffffffff"..L["use separate profile for current spec"])
             CellTooltip:Show()
         end)
@@ -2060,7 +2064,7 @@ local function CreateRoleOrderWidget(parent)
     local buttons = {}
     for _, role in pairs({"TANK", "HEALER", "DAMAGER"}) do
         buttons[role] = Cell:CreateButton(f, nil, "accent-hover", {20, 20})
-        buttons[role]:SetTexture("Interface\\AddOns\\Cell\\Media\\Roles\\"..role.."32", {16, 16}, {"CENTER", 0, 0}, false, true)
+        buttons[role]:SetTexture(F:GetDefaultRoleIcon(role), {16, 16}, {"CENTER", 0, 0}, false, true)
         buttons[role]._role = role
 
         buttons[role]:SetMovable(true)
@@ -2764,7 +2768,7 @@ LoadLayoutAutoSwitchDB = function()
         if Cell.vars.layoutAutoSwitchBy == "spec" then
             currentProfileBox.text:SetText("|T"..Cell.vars.playerSpecIcon..":12:12:0:0:12:12:1:11:1:11|t "..Cell.vars.playerSpecName)
         else
-            currentProfileBox.text:SetText("|TInterface\\AddOns\\Cell\\Media\\Roles\\"..Cell.vars.playerSpecRole..":12|t ".._G[Cell.vars.playerSpecRole])
+            currentProfileBox.text:SetText(F:GetDefaultRoleIconEscapeSequence(Cell.vars.playerSpecRole, 12).." ".._G[Cell.vars.playerSpecRole])
         end
 
         typeSwitch:SetSelected(Cell.vars.layoutAutoSwitchBy)

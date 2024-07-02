@@ -461,6 +461,7 @@ L["Icons"] = "图标组"
 L["Bars"] = "进度条组"
 L["Overlay"] = "叠加层"
 L["Block"] = "色块"
+L["Blocks"] = "色块组"
 
 L["Enabled"] = "启用"
 L["Anchor Point"] = "锚点"
@@ -587,6 +588,7 @@ L["Check all visible enemy nameplates."] = "检查所有可见的敌方姓名板
 L["cleuAurasTips"] = "通过战斗记录事件匹配不可见的法术效果"
 L["%s in Utilities must be enabled to make this indicator work."] = "要使用此指示器，必须先启用工具页面下的%s功能。"
 L["If you are a paladin or warrior, and the unit has no buffs from you, a %s icon will be displayed."] = "如果你是圣骑士或战士，且该单位没有来自你的增益时，将会显示一个%s图标。"
+L["Play animation when the unit uses a specific spell/item. The list is global shared, not layout-specific."] = "当单位使用特定的法术/物品时，播放动画。这个列表是全局共享的，而非每个布局独立。"
 
 L["Would you like Cell to create a \"Healers\" indicator (icons)?"] = "需要 Cell 为你创建一个 “Healers” 指示器（图标组）？"
 
@@ -836,6 +838,20 @@ L["Click to view older changelogs"] = "点击查看远古更新记录"
 L["CHANGELOGS"] = [[
     <h1>更新后如果有各种问题，先排查代码片段。</h1>
     <p>（正式服）如果指示器不能正常刷新，尝试启用常规页面下的“总是更新增益/减益”选项。</p>
+    <br/>
+
+    <h1>r230-beta (Jul 2, 2024, 00:27 GMT+8)</h1>
+    <p>* 适配地心之战（#139，#120），但又没有完全适配。</p>
+    <p>* 更新流血列表（#119）。</p>
+    <p>+ 引入新的代码片段变量“CELL_COOLDOWN_STYLE”，旧的“暴雪样式冷却图标”已过期。</p>
+    <p>+ 自定义指示器现在可以通过拖拽调整顺序辣。</p>
+    <p>+ 新指示器类型“色块组”（“CELL_COOLDOWN_STYLE”同样会影响该指示器）。</p>
+    <p>+ 为“群体控制”指示器添加了“显示持续时间文本”的选项。</p>
+    <p>* 更新“驱散”和“颜色”指示器的层级。</p>
+    <p>* 更新距离检查。</p>
+    <p>* 更新“职责图标”指示器的材质。</p>
+    <p>* 修复“文本”指示器的对齐问题。</p>
+    <p>* 修复大灾变的驱散检查。</p>
     <br/>
 
     <h1>r229-release (Jun 11, 2024, 20:11 GMT+8)</h1>

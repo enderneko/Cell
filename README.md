@@ -44,12 +44,6 @@ Check <https://github.com/enderneko/Cell/tree/master/.snippets> for more snippet
 2. New -> Paste -> Save -> Tick the AutoRun box
 3. Reload
 
-### Blizzard style cooldowns
-
-<https://raw.githubusercontent.com/enderneko/Cell/master/.snippets/CooldownIcons_BlizzardStyle.lua>
-
-![Blizzard Style Cooldowns](https://github.com/enderneko/Cell/raw/master/.snippets/CooldownIcons_BlizzardStyle.gif)
-
 &nbsp;
 
 ## Not supported and probably won't be included in the future
@@ -74,6 +68,15 @@ Use [Instance Spell Collector](https://legacy.curseforge.com/wow/addons/instance
 ## Localization
 
 If you want to help with the localization, please visit <https://legacy.curseforge.com/wow/addons/cell/localization>, instead of creating a PR.
+
+&nbsp;
+
+## Guides & Sharing
+
+- [ULTIMATE Cell Raid Frames AddOn Setup GUIDE for HEALERS (Reat TV)](https://www.youtube.com/watch?v=ntXko7htO2I)
+- [Healer UI & Addon Guide for Dragonflight Season 4 (yumytv)](https://www.youtube.com/watch?v=XcXvXxFipOE)
+- [Addon Spotlight: How to set up Cell + OmniCD for Augmentation Evoker (JFunkGaming)](https://www.youtube.com/watch?v=PMvtgJv-808)
+- [团队框架插件 Cell 配置流程分享 (钛锬)](https://bbs.nga.cn/read.php?tid=32921170)
 
 &nbsp;
 

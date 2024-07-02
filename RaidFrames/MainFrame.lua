@@ -301,9 +301,9 @@ end
 -------------------------------------------------
 -- raid setup
 -------------------------------------------------
-local tankIcon = "|TInterface\\AddOns\\Cell\\Media\\Roles\\TANK:0|t"
-local healerIcon = "|TInterface\\AddOns\\Cell\\Media\\Roles\\HEALER:0|t"
-local damagerIcon = "|TInterface\\AddOns\\Cell\\Media\\Roles\\DAMAGER:0|t"
+local tankIcon = F:GetDefaultRoleIconEscapeSequence("TANK")
+local healerIcon = F:GetDefaultRoleIconEscapeSequence("HEALER")
+local damagerIcon = F:GetDefaultRoleIconEscapeSequence("DAMAGER")
 
 -- local GetGroupMemberCountsForDisplay = GetGroupMemberCountsForDisplay
 -- if not GetGroupMemberCountsForDisplay then

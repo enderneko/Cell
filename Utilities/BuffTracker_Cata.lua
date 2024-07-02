@@ -28,7 +28,7 @@ local buffs = {
     ["SP"] = {id=27683, glowColor={F:GetClassColor("PRIEST")}, provider="PRIEST", level=52},
 
     -- 1459: Arcane Brilliance
-    ["AB"] = {id=1459, glowColor={F:GetClassColor("MAGE")}, provider="MAGE", level=58},
+    ["AB"] = {id=1459, id2=79058, glowColor={F:GetClassColor("MAGE")}, provider="MAGE", level=58},
 
     -- 6673: Battle Shout
     ["BS"] = {id=6673, glowColor={F:GetClassColor("WARRIOR")}, provider="WARRIOR", level=20},
@@ -51,6 +51,10 @@ do
         local name, icon = F:GetSpellNameAndIcon(t["id"])
         t["name"] = name
         t["icon"] = icon
+
+        if t["id2"] then
+            t["name2"] = F:GetSpellNameAndIcon(t["id2"])
+        end
     end
 end
 
@@ -502,7 +506,7 @@ local function CheckUnit(unit, updateBtn)
         local required = requiredBuffs[UnitClassBase(unit)]
         for k, v in pairs(available) do
             if v ~= false and required[k] then
-                if not (AuraUtil.FindAuraByName(buffs[k]["name"], unit, "BUFF")) then
+                if not (AuraUtil.FindAuraByName(buffs[k]["name"], unit, "BUFF") or (buffs[k]["name2"] and AuraUtil.FindAuraByName(buffs[k]["name2"], unit, "BUFF"))) then
                     unaffected[k][unit] = true
 
                     -- NOTE: don't check paladin/warrior shit here

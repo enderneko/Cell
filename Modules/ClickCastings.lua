@@ -18,18 +18,18 @@ local alwaysTargeting, smartResurrection, hookBlizzardFrames
 -------------------------------------------------
 -- changes
 -------------------------------------------------
-local saveBtn, discardBtn
+local saveBtn, cancelBtn
 local deleted, changed = {}, {}
 local function CheckChanges()
     if F:Getn(deleted) == 0 and F:Getn(changed) == 0 then
         saveBtn:SetEnabled(false)
-        discardBtn:SetEnabled(false)
+        cancelBtn:SetEnabled(false)
         for _, b in pairs(listButtons) do
             b.unmovable = nil
         end
     else
         saveBtn:SetEnabled(true)
-        discardBtn:SetEnabled(true)
+        cancelBtn:SetEnabled(true)
         for _, b in pairs(listButtons) do
             b.unmovable = true
         end
@@ -1362,7 +1362,7 @@ local function CreateListPane()
     Cell:CreateScrollFrame(bindingsFrame, -5, 5)
     bindingsFrame.scrollFrame:SetScrollStep(25)
 
-    -- new & save & discard
+    -- new & save & cancel
     local newBtn = Cell:CreateButton(listPane, L["New"], "blue-hover", {141, 20})
     newBtn:SetPoint("TOPLEFT", bindingsFrame, "BOTTOMLEFT", 0, P:Scale(1))
     newBtn:SetScript("OnClick", function()
@@ -1418,10 +1418,10 @@ local function CreateListPane()
         if clickCastingsTab.popupEditBox then clickCastingsTab.popupEditBox:Hide() end
     end)
 
-    discardBtn = Cell:CreateButton(listPane, L["Discard"], "red-hover", {141, 20})
-    discardBtn:SetPoint("TOPLEFT", saveBtn, "TOPRIGHT", P:Scale(-1), 0)
-    discardBtn:SetEnabled(false)
-    discardBtn:SetScript("OnClick", function()
+    cancelBtn = Cell:CreateButton(listPane, L["Cancel"], "red-hover", {141, 20})
+    cancelBtn:SetPoint("TOPLEFT", saveBtn, "TOPRIGHT", P:Scale(-1), 0)
+    cancelBtn:SetEnabled(false)
+    cancelBtn:SetScript("OnClick", function()
         -- deleted
         for index, b in pairs(deleted) do
             b:SetAlpha(1)

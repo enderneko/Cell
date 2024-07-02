@@ -17,7 +17,7 @@ local function CreateTooltip(name, hasIcon)
         tooltip.iconBG = iconBG
         iconBG:SetSize(35, 35)
         iconBG:SetPoint("TOPRIGHT", tooltip, "TOPLEFT", -1, 0)
-        iconBG:SetColorTexture(unpack(Cell:GetAccentColorTable()))
+        iconBG:SetColorTexture(Cell:GetAccentColorRGB())
         iconBG:Hide()
 
         local icon = tooltip:CreateTexture(nil, "ARTWORK")
@@ -68,7 +68,10 @@ local function CreateTooltip(name, hasIcon)
         tooltip:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8x8", edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = P:Scale(1)})
         tooltip:SetBackdropColor(0.1, 0.1, 0.1, 0.9)
         tooltip:SetBackdropBorderColor(Cell:GetAccentColorRGB())
-        if hasIcon then P:Repoint(tooltip.icon) end
+        if hasIcon then
+            P:Repoint(tooltip.icon)
+            tooltip.iconBG:SetColorTexture(Cell:GetAccentColorRGB())
+        end
     end
 end
 
