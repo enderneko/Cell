@@ -44,12 +44,6 @@ Check <https://github.com/enderneko/Cell/tree/master/.snippets> for more snippet
 2. New -> Paste -> Save -> Tick the AutoRun box
 3. Reload
 
-### Blizzard style cooldowns
-
-<https://raw.githubusercontent.com/enderneko/Cell/master/.snippets/CooldownIcons_BlizzardStyle.lua>
-
-![Blizzard Style Cooldowns](https://github.com/enderneko/Cell/raw/master/.snippets/CooldownIcons_BlizzardStyle.gif)
-
 &nbsp;
 
 ## Not supported and probably won't be included in the future
