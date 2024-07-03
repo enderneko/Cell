@@ -19,7 +19,7 @@ local orientation
 -- unit, castGUID, spellID
 
 local function Display(b, ...)
-    b.indicators.consumables:Display(...)
+    b.indicators.actions:Display(...)
 end
 
 local eventFrame = CreateFrame("Frame")
@@ -27,13 +27,13 @@ eventFrame:SetScript("OnEvent", function(self, event, unit, castGUID, spellID)
     -- filter out players not in your group
     if not (UnitInRaid(unit) or UnitInParty(unit) or unit == "player" or unit == "pet") then return end
 
-    if Cell.vars.consumablesDebugModeEnabled then
+    if Cell.vars.actionsDebugModeEnabled then
         local name = F:GetSpellNameAndIcon(spellID)
         print("|cFFFF3030[Cell]|r |cFFB2B2B2"..event..":|r", unit, "|cFF00FF00"..(spellID or "nil").."|r", name)
     end
 
-    if Cell.vars.consumables[spellID] then
-        F:HandleUnitButton("unit", unit, Display, unpack(Cell.vars.consumables[spellID]))
+    if Cell.vars.actions[spellID] then
+        F:HandleUnitButton("unit", unit, Display, unpack(Cell.vars.actions[spellID]))
     end
 end)
 
@@ -440,71 +440,71 @@ end
 local previews = {}
 local previewOrientation
 
-function I.CreateConsumables(parent, isPreview)
-    local consumables = CreateFrame("Frame", parent:GetName().."ConsumablesParent", parent)
+function I.CreateActions(parent, isPreview)
+    local actions = CreateFrame("Frame", parent:GetName().."ActionsParent", parent)
 
     -- mask
-    local mask = consumables:CreateMaskTexture()
-    consumables.mask = mask
+    local mask = actions:CreateMaskTexture()
+    actions.mask = mask
     mask:SetTexture("Interface/Tooltips/UI-Tooltip-Background", "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
-    mask:SetAllPoints(consumables)
+    mask:SetAllPoints(actions)
     mask:SetSnapToPixelGrid(true)
 
     -- animation groups
     local animations = {}
-    consumables.animations = animations
-    animations.A = CreateAnimationGroup_TypeA(consumables)
-    animations.B = CreateAnimationGroup_TypeB(consumables)
-    animations.C1 = CreateAnimationGroup_TypeC(consumables, 1)
-    animations.C2 = CreateAnimationGroup_TypeC(consumables, 2)
-    animations.C3 = CreateAnimationGroup_TypeC(consumables, 3)
-    animations.D = CreateAnimationGroup_TypeD(consumables)
-    animations.E = CreateAnimationGroup_TypeE(consumables)
+    actions.animations = animations
+    animations.A = CreateAnimationGroup_TypeA(actions)
+    animations.B = CreateAnimationGroup_TypeB(actions)
+    animations.C1 = CreateAnimationGroup_TypeC(actions, 1)
+    animations.C2 = CreateAnimationGroup_TypeC(actions, 2)
+    animations.C3 = CreateAnimationGroup_TypeC(actions, 3)
+    animations.D = CreateAnimationGroup_TypeD(actions)
+    animations.E = CreateAnimationGroup_TypeE(actions)
 
     if isPreview then
-        parent.consumables = consumables
+        parent.actions = actions
         tinsert(previews, parent)
-        consumables:SetPoint("TOPLEFT", 1, -1)
-        consumables:SetPoint("BOTTOMRIGHT", -1, 1)
+        actions:SetPoint("TOPLEFT", 1, -1)
+        actions:SetPoint("BOTTOMRIGHT", -1, 1)
         for _, a in pairs(animations) do
             a:UpdateOrientation()
         end
     else
-        parent.indicators.consumables = consumables
-        consumables:SetFrameLevel(parent.widgets.healthBar:GetFrameLevel()+1)
-        consumables:SetAllPoints(parent.widgets.healthBar)
+        parent.indicators.actions = actions
+        actions:SetFrameLevel(parent.widgets.healthBar:GetFrameLevel()+1)
+        actions:SetAllPoints(parent.widgets.healthBar)
     end
 
     -- speed
-    function consumables:SetSpeed(speed)
+    function actions:SetSpeed(speed)
         for _, a in pairs(animations) do
             a:SetSpeedMultiplier(speed)
         end
     end
 
     -- show
-    function consumables:Display(animationType, color)
+    function actions:Display(animationType, color)
         animations[animationType]:Display(unpack(color))
     end
 end
 
-function I.UpdateConsumablesOrientation(parent, barOrientation)
+function I.UpdateActionsOrientation(parent, barOrientation)
     orientation = barOrientation
-    for _, a in pairs(parent.indicators.consumables.animations) do
+    for _, a in pairs(parent.indicators.actions.animations) do
         a:UpdateOrientation()
     end
 
     if previewOrientation ~= barOrientation then
         previewOrientation = barOrientation
         for _, p in pairs(previews) do
-            for _, a in pairs(p.consumables.animations) do
+            for _, a in pairs(p.actions.animations) do
                 a:UpdateOrientation()
             end
         end
     end
 end
 
-function I.EnableConsumables(enabled)
+function I.EnableActions(enabled)
     if enabled then
         eventFrame:RegisterEvent("UNIT_SPELLCAST_SUCCEEDED")
     else

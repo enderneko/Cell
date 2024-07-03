@@ -926,9 +926,9 @@ function I.GetDefaultTargetedSpellsGlow()
 end
 
 -------------------------------------------------
--- Consumables: Healing Potion & Healthstone
+-- Actions: Healing Potion & Healthstone ...
 -------------------------------------------------
-local consumables = {
+local actions = {
     {
         6262, -- 治疗石
         {"A", {0.4, 1, 0}},
@@ -952,11 +952,11 @@ local consumables = {
 }
 
 
-function I.GetDefaultConsumables()
-    return consumables
+function I.GetDefaultActions()
+    return actions
 end
 
-function I.ConvertConsumables(db)
+function I.ConvertActions(db)
     local temp = {}
     for _, t in pairs(db) do
         temp[t[1]] = t[2]

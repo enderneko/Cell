@@ -718,7 +718,7 @@ function F:FilterInvalidSpells(t)
         local spellId
         if type(t[i]) == "number" then
             spellId = t[i]
-        else -- consumables
+        else -- table
             spellId = t[i][1]
         end
         if not F:GetSpellNameAndIcon(spellId) then

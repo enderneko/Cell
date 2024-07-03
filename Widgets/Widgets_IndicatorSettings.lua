@@ -4433,7 +4433,7 @@ local function CreateSetting_BuiltIns(parent)
 end
 
 local function CreateConsumablePreview(parent, style)
-    local f = CreateFrame("Frame", "CellIndicatorSettings_ConsumablesPreview_Type"..style, parent, "BackdropTemplate")
+    local f = CreateFrame("Frame", "CellIndicatorSettings_ActionsPreview_Type"..style, parent, "BackdropTemplate")
     f:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8x8", edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = P:Scale(1)})
     f:SetBackdropColor(0.2, 0.2, 0.2, 1)
     f:SetBackdropBorderColor(0, 0, 0, 1)
@@ -4442,13 +4442,13 @@ local function CreateConsumablePreview(parent, style)
     text:SetPoint("CENTER")
     text:SetText("Type "..style)
 
-    I.CreateConsumables(f, true)
+    I.CreateActions(f, true)
 
     function f:UpdateTicker(speed)
         f:SetScript("OnShow", function()
-            f.consumables:Display(style, {1, 1, 1})
+            f.actions:Display(style, {1, 1, 1})
             f.ticker = C_Timer.NewTicker(2/speed, function()
-                f.consumables:Display(style, {1, 1, 1})
+                f.actions:Display(style, {1, 1, 1})
             end)
         end)
 
@@ -4463,12 +4463,12 @@ local function CreateConsumablePreview(parent, style)
     return f
 end
 
-local function CreateSetting_ConsumablesPreview(parent)
+local function CreateSetting_ActionsPreview(parent)
     local widget
 
-    if not settingWidgets["consumablesPreview"] then
-        widget = addon:CreateFrame("CellIndicatorSettings_ConsumablesPreview", parent, 240, 220)
-        settingWidgets["consumablesPreview"] = widget
+    if not settingWidgets["actionsPreview"] then
+        widget = addon:CreateFrame("CellIndicatorSettings_ActionsPreview", parent, 240, 220)
+        settingWidgets["actionsPreview"] = widget
 
         local typeA = CreateConsumablePreview(widget, "A")
         typeA:SetSize(70, 50)
@@ -4515,7 +4515,7 @@ local function CreateSetting_ConsumablesPreview(parent)
 
             for _, f in pairs(previews) do
                 f:UpdateTicker(value)
-                f.consumables:SetSpeed(value)
+                f.actions:SetSpeed(value)
                 f:Hide()
                 f:Show()
             end
@@ -4526,7 +4526,7 @@ local function CreateSetting_ConsumablesPreview(parent)
 
             for _, f in pairs(previews) do
                 f:UpdateTicker(speed)
-                f.consumables:SetSpeed(speed)
+                f.actions:SetSpeed(speed)
                 f:Hide()
                 f:Show()
             end
@@ -4536,7 +4536,7 @@ local function CreateSetting_ConsumablesPreview(parent)
             widget.func = func
         end
     else
-        widget = settingWidgets["consumablesPreview"]
+        widget = settingWidgets["actionsPreview"]
     end
 
     widget:Show()
@@ -4656,7 +4656,7 @@ local function CreateConsumableButtons(parent, spellTable, updateHeightFunc)
                 tinsert(items, {
                     ["text"] = style,
                     ["onClick"] = function()
-                        CellIndicatorsPreviewButton.indicators.consumables:Display(style, consumableButtons[i].animationColor)
+                        CellIndicatorsPreviewButton.indicators.actions:Display(style, consumableButtons[i].animationColor)
                         consumableButtons[i].animationType = style
                         -- update db
                         spellTable[i][2][1] = style
@@ -4673,7 +4673,7 @@ local function CreateConsumableButtons(parent, spellTable, updateHeightFunc)
                 spellTable[i][2][2][3] = b
                 parent.func(spellTable)
                 consumableButtons[i].animationColor = {r, g, b}
-                CellIndicatorsPreviewButton.indicators.consumables:Display(consumableButtons[i].animationType, consumableButtons[i].animationColor)
+                CellIndicatorsPreviewButton.indicators.actions:Display(consumableButtons[i].animationType, consumableButtons[i].animationColor)
             end)
             consumableButtons[i].colorPicker:SetPoint("TOPLEFT", consumableButtons[i].styleDropdown, "TOPRIGHT", 2, -1)
             consumableButtons[i].colorPicker:HookScript("OnEnter", function()
@@ -4713,7 +4713,7 @@ local function CreateConsumableButtons(parent, spellTable, updateHeightFunc)
 
             -- preview
             consumableButtons[i]:SetScript("OnClick", function(self, button)
-                CellIndicatorsPreviewButton.indicators.consumables:Display(consumableButtons[i].animationType, consumableButtons[i].animationColor)
+                CellIndicatorsPreviewButton.indicators.actions:Display(consumableButtons[i].animationType, consumableButtons[i].animationColor)
             end)
         end
 
@@ -4812,12 +4812,12 @@ local function CreateConsumableButtons(parent, spellTable, updateHeightFunc)
     end
 end
 
-local function CreateSetting_ConsumablesList(parent)
+local function CreateSetting_ActionsList(parent)
     local widget
 
-    if not settingWidgets["consumablesList"] then
-        widget = addon:CreateFrame("CellIndicatorSettings_ConsumablesList", parent, 240, 128)
-        settingWidgets["consumablesList"] = widget
+    if not settingWidgets["actionsList"] then
+        widget = addon:CreateFrame("CellIndicatorSettings_ActionsList", parent, 240, 128)
+        settingWidgets["actionsList"] = widget
 
         widget.text = widget:CreateFontString(nil, "OVERLAY", font_name)
         widget.text:SetPoint("TOPLEFT", 7, -7)
@@ -4834,7 +4834,7 @@ local function CreateSetting_ConsumablesList(parent)
                 self.enabled = true
                 LCG.PixelGlow_Start(widget.debug, {0,1,0,1}, 9, 0.25, 8, 1)
             end
-            Cell.vars.consumablesDebugModeEnabled = self.enabled
+            Cell.vars.actionsDebugModeEnabled = self.enabled
         end)
 
         widget.frame = addon:CreateFrame(nil, widget, 20, 20)
@@ -4859,7 +4859,7 @@ local function CreateSetting_ConsumablesList(parent)
             widget:SetHeight((#t+1)*19+1 + 27 + 5)
         end
     else
-        widget = settingWidgets["consumablesList"]
+        widget = settingWidgets["actionsList"]
     end
 
     widget:Show()
@@ -5670,10 +5670,10 @@ function addon:CreateIndicatorSettings(parent, settingsTable)
         --     tinsert(widgetsTable, CreateSetting_CleuAuras(parent))
         elseif setting == "builtInDefensives" or setting == "builtInExternals" or setting == "builtInCrowdControls" then
             tinsert(widgetsTable, CreateSetting_BuiltIns(parent))
-        elseif setting == "consumablesPreview" then
-            tinsert(widgetsTable, CreateSetting_ConsumablesPreview(parent))
-        elseif setting == "consumablesList" then
-            tinsert(widgetsTable, CreateSetting_ConsumablesList(parent))
+        elseif setting == "actionsPreview" then
+            tinsert(widgetsTable, CreateSetting_ActionsPreview(parent))
+        elseif setting == "actionsList" then
+            tinsert(widgetsTable, CreateSetting_ActionsList(parent))
         elseif setting == "highlightType" then
             tinsert(widgetsTable, CreateSetting_HighlightType(parent))
         elseif setting == "thresholds" then

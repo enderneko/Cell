@@ -29,7 +29,7 @@ Indicators\StatusIcon.lua
 Indicators\AoEHealing.lua
 Indicators\TargetCounter.lua
 Indicators\TargetedSpells.lua
-Indicators\Consumables.lua
+Indicators\Actions.lua
 Indicators\Custom_Classic.lua
 Indicators\Supporter.lua
 

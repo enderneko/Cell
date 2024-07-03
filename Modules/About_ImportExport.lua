@@ -102,7 +102,7 @@ local function DoImport()
     -- remove invalid spells
     F:FilterInvalidSpells(imported["debuffBlacklist"])
     F:FilterInvalidSpells(imported["bigDebuffs"])
-    F:FilterInvalidSpells(imported["consumables"])
+    F:FilterInvalidSpells(imported["actions"])
     F:FilterInvalidSpells(imported["customDefensives"])
     F:FilterInvalidSpells(imported["customExternals"])
     F:FilterInvalidSpells(imported["targetedSpellsList"])

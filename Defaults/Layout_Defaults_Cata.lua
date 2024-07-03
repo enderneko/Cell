@@ -29,7 +29,7 @@ Cell.defaults.indicatorIndices = {
     ["raidDebuffs"] = 23,
     ["targetedSpells"] = 24,
     ["targetCounter"] = 25,
-    ["consumables"] = 26,
+    ["actions"] = 26,
     ["missingBuffs"] = 27,
 }
 
@@ -424,8 +424,8 @@ Cell.defaults.layout = {
             },
         }, -- 25
         {
-            ["name"] = "Consumables",
-            ["indicatorName"] = "consumables",
+            ["name"] = "Actions",
+            ["indicatorName"] = "actions",
             ["type"] = "built-in",
             ["enabled"] = true,
             ["speed"] = 1,

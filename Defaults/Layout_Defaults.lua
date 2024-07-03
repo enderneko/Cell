@@ -31,7 +31,7 @@ Cell.defaults.indicatorIndices = {
     ["targetedSpells"] = 25,
     ["targetCounter"] = 26,
     ["crowdControls"] = 27,
-    ["consumables"] = 28,
+    ["actions"] = 28,
     ["missingBuffs"] = 29,
 }
 
@@ -459,8 +459,8 @@ Cell.defaults.layout = {
             ["orientation"] = "left-to-right",
         }, -- 27
         {
-            ["name"] = "Consumables",
-            ["indicatorName"] = "consumables",
+            ["name"] = "Actions",
+            ["indicatorName"] = "actions",
             ["type"] = "built-in",
             ["enabled"] = true,
             ["speed"] = 1,
