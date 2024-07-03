@@ -817,6 +817,8 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
         elseif setting == "create" then
             F:IterateAllUnitButtons(function(b)
                 local indicator = I.CreateIndicator(b, value)
+                indicator.configs = value
+
                 -- update position
                 if value["position"] then
                     P:ClearPoints(indicator)

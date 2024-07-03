@@ -940,6 +940,8 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
             end
         elseif setting == "create" then
             indicator = I.CreateIndicator(previewButton, value, true)
+            indicator.configs = value
+
             -- update position
             if value["position"] then
                 P:ClearPoints(indicator)
@@ -1953,15 +1955,15 @@ end
 local function MoveIndicator(id1, id2)
     local scroll = listFrame.scrollFrame:GetVerticalScroll()
 
-    if selected == id1 then
-        selected = id2
-        ListHighlightFn(id2)
-    elseif selected == id2 then
-        selected = id1
-        ListHighlightFn(id1)
-    end
-
     if id2 then
+        if selected == id1 then
+            selected = id2
+            ListHighlightFn(id2)
+        elseif selected == id2 then
+            selected = id1
+            ListHighlightFn(id1)
+        end
+
         local temp = currentLayoutTable["indicators"][id1]
         currentLayoutTable["indicators"][id1] = currentLayoutTable["indicators"][id2]
         currentLayoutTable["indicators"][id2] = temp
