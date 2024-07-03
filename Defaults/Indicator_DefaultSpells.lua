@@ -775,9 +775,11 @@ function F:FirstRun()
     local icons = "\n\n"
     for i, id in pairs(spells) do
         local icon = select(2, F:GetSpellNameAndIcon(id))
-        icons = icons .. "|T"..icon..":0|t"
-        if i % 11 == 0 then
-            icons = icons .. "\n"
+        if icon then
+            icons = icons .. "|T"..icon..":0|t"
+            if i % 11 == 0 then
+                icons = icons .. "\n"
+            end
         end
     end
 
