@@ -117,9 +117,9 @@ local function ResetIndicators()
             I.ShowAllTargetedSpells(t["showAllSpells"])
             I.EnableTargetedSpells(t["enabled"])
         end
-        -- update consumables
-        if t["indicatorName"] == "consumables" then
-            I.EnableConsumables(t["enabled"])
+        -- update actions
+        if t["indicatorName"] == "actions" then
+            I.EnableActions(t["enabled"])
         end
         -- update healthThresholds
         if t["indicatorName"] == "healthThresholds" then
@@ -453,8 +453,8 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                 I.EnableTargetCounter(value)
             elseif indicatorName == "targetedSpells" then
                 I.EnableTargetedSpells(value)
-            elseif indicatorName == "consumables" then
-                I.EnableConsumables(value)
+            elseif indicatorName == "actions" then
+                I.EnableActions(value)
             elseif indicatorName == "partyAssignmentIcon" then
                 F:IterateAllUnitButtons(function(b)
                     UnitButton_UpdateAssignment(b)
@@ -769,6 +769,8 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
         elseif setting == "create" then
             F:IterateAllUnitButtons(function(b)
                 local indicator = I.CreateIndicator(b, value)
+                indicator.configs = value
+
                 -- update position
                 if value["position"] then
                     P:ClearPoints(indicator)
@@ -862,7 +864,7 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                 UnitButton_UpdateAuras(b)
             end, true)
         elseif setting == "speed" then
-            -- only Consumables indicator has this option for now
+            -- only Actions indicator has this option for now
             F:IterateAllUnitButtons(function(b)
                 b.indicators[indicatorName]:SetSpeed(value)
             end, true)
@@ -2619,8 +2621,8 @@ function B:SetOrientation(button, orientation, rotateTexture)
         end
     end
 
-    -- update consumables
-    I.UpdateConsumablesOrientation(button, orientation)
+    -- update actions
+    I.UpdateActionsOrientation(button, orientation)
 end
 
 function B:UpdateHighlightColor(button)
@@ -3016,7 +3018,7 @@ function CellUnitButton_OnLoad(button)
     I.CreateRaidDebuffs(button)
     I.CreateTargetCounter(button)
     I.CreateTargetedSpells(button)
-    I.CreateConsumables(button)
+    I.CreateActions(button)
     I.CreateHealthThresholds(button)
     I.CreateMissingBuffs(button)
     U:CreateSpellRequestIcon(button)

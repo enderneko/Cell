@@ -54,6 +54,7 @@ local mouseKeyIDs = {
     -- ["ScrollUp"] = 6,
     -- ["ScrollDown"]= 14,
 }
+
 local function GetBindingDisplay(modifier, key)
     modifier = modifier:gsub("%-", "|cff777777+|r")
     modifier = modifier:gsub("alt", "Alt")

@@ -19,8 +19,8 @@ local L = Cell.L
 -- sharing version check
 Cell.MIN_VERSION = 200
 Cell.MIN_CLICKCASTINGS_VERSION = 228
-Cell.MIN_LAYOUTS_VERSION = 228
-Cell.MIN_INDICATORS_VERSION = 228
+Cell.MIN_LAYOUTS_VERSION = 231
+Cell.MIN_INDICATORS_VERSION = 231
 Cell.MIN_DEBUFFS_VERSION = 228
 
 --@debug@
@@ -435,11 +435,11 @@ function eventFrame:ADDON_LOADED(arg1)
         end
         Cell.vars.targetedSpellsGlow = CellDB["targetedSpellsGlow"]
 
-        -- consumables ----------------------------------------------------------------------------
-        if type(CellDB["consumables"]) ~= "table" then
-            CellDB["consumables"] = I.GetDefaultConsumables()
+        -- actions --------------------------------------------------------------------------------
+        if type(CellDB["actions"]) ~= "table" then
+            CellDB["actions"] = I.GetDefaultActions()
         end
-        Cell.vars.consumables = I.ConvertConsumables(CellDB["consumables"])
+        Cell.vars.actions = I.ConvertActions(CellDB["actions"])
 
         -- misc -----------------------------------------------------------------------------------
         Cell.version = GetAddOnMetadata(addonName, "version")

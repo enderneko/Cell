@@ -543,7 +543,7 @@ local function InitIndicator(indicatorName)
                 indicator:SetCooldown(GetTime(), 13, nil, 134400, 5)
                 indicator.preview.elapsedTime = 0
                 C_Timer.After(0.2, function()
-                    indicator:SetWidth(indicator.text:GetStringWidth() + 6)
+                    indicator:SetWidth(indicator.text:GetStringWidth())
                 end)
             end)
         elseif indicator.indicatorType == "color" then
@@ -940,6 +940,8 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
             end
         elseif setting == "create" then
             indicator = I.CreateIndicator(previewButton, value, true)
+            indicator.configs = value
+
             -- update position
             if value["position"] then
                 P:ClearPoints(indicator)
@@ -1384,17 +1386,14 @@ local function CreateListPane()
             local indicatorType, indicatorAuraType = self.dropdown1:GetSelected(), self.dropdown2:GetSelected()
 
             local last = #currentLayoutTable["indicators"]
-            if currentLayoutTable["indicators"][last]["type"] == "built-in" then
-                indicatorName = "indicator1"
-            else
-                indicatorName = "indicator"..(tonumber(strmatch(currentLayoutTable["indicators"][last]["indicatorName"], "%d+"))+1)
-            end
+            indicatorName = "indicator" .. (last - Cell.defaults.builtIns + 1)
 
             tinsert(currentLayoutTable["indicators"], I.GetDefaultCustomIndicatorTable(name, indicatorName, indicatorType, indicatorAuraType))
-
             Cell:Fire("UpdateIndicators", F:GetNotifiedLayoutName(currentLayout), indicatorName, "create", currentLayoutTable["indicators"][last+1])
+
             LoadIndicatorList()
             listButtons[last+1]:Click()
+
             -- check scroll
             if last+1 > 15 then
                 listFrame.scrollFrame:ScrollToBottom()
@@ -1529,7 +1528,7 @@ if Cell.isRetail then
         ["targetedSpells"] = {"enabled", "checkbutton:showAllSpells:"..L["Glow is only available to the spells in the list below"], "targetedSpellsList", "targetedSpellsGlow", "size-border", "num:3", "orientation", "position", "frameLevel", "font"},
         ["targetCounter"] = {"|cffff2727"..L["HIGH CPU USAGE"].."!|r |cffb7b7b7"..L["Check all visible enemy nameplates."], "enabled", "targetCounterFilters", "color", "position", "frameLevel", "font-noOffset"},
         ["crowdControls"] = {"enabled", "builtInCrowdControls", "customCrowdControls", "durationVisibility", "size-border", "num:3", "orientation", "position", "frameLevel", "font1:stackFont", "font2:durationFont"},
-        ["consumables"] = {"|cffb7b7b7"..L["Play animation when the unit uses a specific spell/item. The list is global shared, not layout-specific."], "enabled", "consumablesPreview", "consumablesList"},
+        ["actions"] = {"|cffb7b7b7"..L["Play animation when the unit uses a specific spell/item. The list is global shared, not layout-specific."], "enabled", "actionsPreview", "actionsList"},
         ["healthThresholds"] = {"enabled", "thresholds", "thickness"},
         ["missingBuffs"] = {I.GetMissingBuffsString().."|cffb7b7b7"..(L["%s in Utilities must be enabled to make this indicator work."]:format(Cell:GetAccentColorString()..L["Buff Tracker"].."|r")), "enabled", "missingBuffsFilters", "size-square", "num:5", "orientation", "position", "frameLevel"},
     }
@@ -1565,7 +1564,7 @@ elseif Cell.isCata then
         ["raidDebuffs"] = {"|cffb7b7b7"..L["You can config debuffs in %s"]:format(Cell:GetAccentColorString()..L["Raid Debuffs"].."|r"), "enabled", "checkbutton:onlyShowTopGlow", "durationVisibility", "checkbutton2:showTooltip:"..DEBUFFS_TOOLTIP1, "size-border", "num:3", "orientation", "position", "frameLevel", "font1:stackFont", "font2:durationFont"},
         ["targetedSpells"] = {"enabled", "checkbutton:showAllSpells:"..L["Glow is only available to the spells in the list below"], "targetedSpellsList", "targetedSpellsGlow", "size-border", "num:3", "orientation", "position", "frameLevel", "font"},
         ["targetCounter"] = {"|cffff2727"..L["HIGH CPU USAGE"].."!|r |cffb7b7b7"..L["Check all visible enemy nameplates."], "enabled", "targetCounterFilters", "color", "position", "frameLevel", "font-noOffset"},
-        ["consumables"] = {"|cffb7b7b7"..L["Play animation when the unit uses a specific spell/item. The list is global shared, not layout-specific."], "enabled", "consumablesPreview", "consumablesList"},
+        ["actions"] = {"|cffb7b7b7"..L["Play animation when the unit uses a specific spell/item. The list is global shared, not layout-specific."], "enabled", "actionsPreview", "actionsList"},
         ["healthThresholds"] = {"enabled", "thresholds", "thickness"},
         ["missingBuffs"] = {"|cffb7b7b7"..(L["%s in Utilities must be enabled to make this indicator work."]:format(Cell:GetAccentColorString()..L["Buff Tracker"].."|r")).." "..(L["If you are a paladin or warrior, and the unit has no buffs from you, a %s icon will be displayed."]:format("|T254882:14:14:0:0:14:14:1:13:1:13|t")), "enabled", "missingBuffsFilters", "size-square", "num:5", "orientation", "position", "frameLevel"},
     }
@@ -1599,7 +1598,7 @@ elseif Cell.isVanilla then
         ["raidDebuffs"] = {"|cffb7b7b7"..L["You can config debuffs in %s"]:format(Cell:GetAccentColorString()..L["Raid Debuffs"].."|r"), "enabled", "checkbutton:onlyShowTopGlow", "durationVisibility", "checkbutton2:showTooltip:"..DEBUFFS_TOOLTIP1, "size-border", "num:3", "orientation", "position", "frameLevel", "font1:stackFont", "font2:durationFont"},
         ["targetedSpells"] = {"enabled", "checkbutton:showAllSpells:"..L["Glow is only available to the spells in the list below"], "targetedSpellsList", "targetedSpellsGlow", "size-border", "num:3", "orientation", "position", "frameLevel", "font"},
         ["targetCounter"] = {"|cffff2727"..L["HIGH CPU USAGE"].."!|r |cffb7b7b7"..L["Check all visible enemy nameplates."], "enabled", "targetCounterFilters", "color", "position", "frameLevel", "font-noOffset"},
-        ["consumables"] = {"|cffb7b7b7"..L["Play animation when the unit uses a specific spell/item. The list is global shared, not layout-specific."], "enabled", "consumablesPreview", "consumablesList"},
+        ["actions"] = {"|cffb7b7b7"..L["Play animation when the unit uses a specific spell/item. The list is global shared, not layout-specific."], "enabled", "actionsPreview", "actionsList"},
         ["healthThresholds"] = {"enabled", "thresholds", "thickness"},
         ["missingBuffs"] = {"|cffb7b7b7"..(L["%s in Utilities must be enabled to make this indicator work."]:format(Cell:GetAccentColorString()..L["Buff Tracker"].."|r")).." "..(L["If you are a paladin or warrior, and the unit has no buffs from you, a %s icon will be displayed."]:format("|T254882:14:14:0:0:14:14:1:13:1:13|t")), "enabled", "missingBuffsFilters", "size-square", "num:5", "orientation", "position", "frameLevel"},
     }
@@ -1731,7 +1730,7 @@ local function ShowIndicatorSettings(id)
 
         -- auras
         elseif currentSetting == "auras" then
-            w:SetDBValue(L[F:UpperFirst(indicatorTable["auraType"]).." List"], indicatorTable["auras"], indicatorType == "glow", indicatorType == "icons", indicatorType == "blocks")
+            w:SetDBValue(L[F:UpperFirst(indicatorTable["auraType"]).." List"], indicatorTable["auras"], indicatorType == "glow", indicatorType == "icons", indicatorType == "blocks" and "single")
             w:SetFunc(function(value)
                 -- NOTE: already changed in widget
                 Cell:Fire("UpdateIndicators", notifiedLayout, indicatorName, "auras", indicatorTable["auraType"], value)
@@ -1823,20 +1822,20 @@ local function ShowIndicatorSettings(id)
                 Cell:Fire("UpdateIndicators", notifiedLayout, "", "bigDebuffs")
             end)
 
-        -- consumablesPreview
-        elseif currentSetting == "consumablesPreview" then
+        -- actionsPreview
+        elseif currentSetting == "actionsPreview" then
             w:SetDBValue(indicatorTable["speed"])
             w:SetFunc(function(value)
                 indicatorTable["speed"] = value
                 Cell:Fire("UpdateIndicators", notifiedLayout, indicatorName, "speed", value)
             end)
 
-        -- consumablesList
-        elseif currentSetting == "consumablesList" then
-            w:SetDBValue(CellDB["consumables"])
+        -- actionsList
+        elseif currentSetting == "actionsList" then
+            w:SetDBValue(CellDB["actions"])
             w:SetFunc(function(value)
-                CellDB["consumables"] = value
-                Cell.vars.consumables = I.ConvertConsumables(value)
+                CellDB["actions"] = value
+                Cell.vars.actions = I.ConvertActions(value)
             end)
 
         -- targetedSpellsList
@@ -1950,25 +1949,34 @@ local function ShowIndicatorSettings(id)
     selected = id
 end
 
-local function MoveIndicator(id1, id2)
+local function MoveIndicator(from, to)
     local scroll = listFrame.scrollFrame:GetVerticalScroll()
 
-    if selected == id1 then
-        selected = id2
-        ListHighlightFn(id2)
-    elseif selected == id2 then
-        selected = id1
-        ListHighlightFn(id1)
-    end
+    if to and from ~= to then
+        F:Debug(from, "->", to)
 
-    if id2 then
-        local temp = currentLayoutTable["indicators"][id1]
-        currentLayoutTable["indicators"][id1] = currentLayoutTable["indicators"][id2]
-        currentLayoutTable["indicators"][id2] = temp
+        if selected == from then
+            selected = to
+        else
+            if from > to then
+                if selected == to or (selected < from and selected > to) then
+                    selected = selected + 1
+                end
+            else
+                if selected == to or (selected < to and selected > from) then
+                    selected = selected - 1
+                end
+            end
+        end
+
+        local temp = currentLayoutTable["indicators"][from]
+        tremove(currentLayoutTable["indicators"], from)
+        tinsert(currentLayoutTable["indicators"], to, temp)
     end
 
     LoadIndicatorList()
     listFrame.scrollFrame:SetVerticalScroll(scroll)
+    ListHighlightFn(selected)
 end
 
 LoadIndicatorList = function()

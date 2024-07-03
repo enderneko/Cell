@@ -718,7 +718,7 @@ function F:FilterInvalidSpells(t)
         local spellId
         if type(t[i]) == "number" then
             spellId = t[i]
-        else -- consumables
+        else -- table
             spellId = t[i][1]
         end
         if not F:GetSpellNameAndIcon(spellId) then
@@ -1949,6 +1949,7 @@ if Cell.isRetail then
     function F:GetSpellNameAndIcon(spellId)
         if C_Spell and C_Spell.GetSpellInfo then
             local info = C_Spell.GetSpellInfo(spellId)
+            if not info then return end
 
             if not info.iconID then -- FIXME:
                 info.iconID = C_Spell.GetSpellTexture(spellId)

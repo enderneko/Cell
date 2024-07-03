@@ -109,16 +109,16 @@ local function CreateIndicatorsExportFrame()
             if name == "debuffs" then
                 data["related"]["debuffBlacklist"] = CellDB["debuffBlacklist"]
                 data["related"]["bigDebuffs"] = CellDB["bigDebuffs"]
-            elseif name == "raidDebuffs" then
-                if Cell.isRetail then
-                    data["related"]["cleuAuras"] = CellDB["cleuAuras"]
-                    data["related"]["cleuGlow"] = CellDB["cleuGlow"]
-                end
+            -- elseif name == "raidDebuffs" then
+            --     if Cell.isRetail then
+            --         data["related"]["cleuAuras"] = CellDB["cleuAuras"]
+            --         data["related"]["cleuGlow"] = CellDB["cleuGlow"]
+            --     end
             elseif name == "targetedSpells" then
                 data["related"]["targetedSpellsList"] = CellDB["targetedSpellsList"]
                 data["related"]["targetedSpellsGlow"] = CellDB["targetedSpellsGlow"]
-            elseif name == "consumables" then
-                data["related"]["consumables"] = CellDB["consumables"]
+            elseif name == "actions" then
+                data["related"]["actions"] = CellDB["actions"]
             end
         end
         -- texplore(data)

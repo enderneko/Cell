@@ -114,8 +114,8 @@ local function CreateIndicatorsImportFrame()
                     Cell.vars.targetedSpellsList = F:ConvertTable(CellDB[k])
                 elseif k == "targetedSpellsGlow" then
                     Cell.vars.targetedSpellsGlow = CellDB[k]
-                elseif k == "consumables" then
-                    Cell.vars.consumables = I.ConvertConsumables(CellDB[k])
+                elseif k == "actions" then
+                    Cell.vars.actions = I.ConvertActions(CellDB[k])
                 end
             end
 

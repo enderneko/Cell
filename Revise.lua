@@ -2954,7 +2954,7 @@ function F:Revise()
         end
     end
 
-    -- r230-release
+    -- r230-beta
     if CellDB["revise"] and dbRevision < 230 then
         for _, layout in pairs(CellDB["layouts"]) do
             for _, i in pairs(layout["indicators"]) do
@@ -2974,6 +2974,25 @@ function F:Revise()
 
         -- disable snippets
         F:DisableSnippets()
+    end
+
+    -- r231-release
+    if CellDB["revise"] and dbRevision < 231 then
+        -- consumables -> actions
+        if CellDB["consumables"] then
+            CellDB["actions"] = CellDB["consumables"]
+            CellDB["consumables"] = nil
+
+            for _, layout in pairs(CellDB["layouts"]) do
+                for _, i in pairs(layout["indicators"]) do
+                    if i.indicatorName == "consumables" then
+                        i.name = "Actions"
+                        i.indicatorName = "actions"
+                        break
+                    end
+                end
+            end
+        end
     end
 
     -- ----------------------------------------------------------------------- --
@@ -3013,18 +3032,18 @@ function F:Revise()
                     toValidate[name] = nil
                 end
             end
-
-            -- customs
-            local index = 1
-            for i, t in ipairs(layout["indicators"]) do
-                if t["type"] ~= "built-in" then
-                    t["indicatorName"] = "indicator"..index
-                    tinsert(temp, t)
-                    index = index + 1
-                end
-            end
-
             layout["indicators"] = temp
+        end
+    end
+
+    --! update custom indicator names
+    for _, layout in pairs(CellDB["layouts"]) do
+        local index = 1
+        for i, t in ipairs(layout["indicators"]) do
+            if t["type"] ~= "built-in" then
+                t["indicatorName"] = "indicator"..index
+                index = index + 1
+            end
         end
     end
 

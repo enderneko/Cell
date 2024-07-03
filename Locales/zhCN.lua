@@ -436,6 +436,7 @@ L["Private Auras"] = "个人光环" -- 私有光环？
 L["Targeted Spells"] = "被法术选中"
 L["Target Counter"] = "目标计数"
 L["Crowd Controls"] = "群体控制"
+L["Actions"] = "动作"
 L["Consumables"] = "消耗品"
 L["Health Thresholds"] = "血量阈值"
 L["Missing Buffs"] = "缺失增益"

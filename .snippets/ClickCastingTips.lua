@@ -1,5 +1,6 @@
 -------------------------------------------------
--- 2024-05-18 02:08:24 GMT+8
+-- 2024-07-03 19:50:03 GMT+8
+-- show tips for click-casting bindings (spell only)
 -- config
 -------------------------------------------------
 local point = "TOPRIGHT"
@@ -21,8 +22,6 @@ tooltip:SetBackdropColor(0.1, 0.1, 0.1, 0.9)
 tooltip:SetBackdropBorderColor(Cell:GetAccentColorRGB())
 tooltip:SetOwner(UIParent, "ANCHOR_NONE")
 
-local modifiers = {"", "shift-", "ctrl-", "alt-", "ctrl-shift-", "alt-shift-", "alt-ctrl-", "alt-ctrl-shift-"}
-local modifiersDisplay = {"", "Shift|cff777777+|r", "Ctrl|cff777777+|r", "Alt|cff777777+|r", "Ctrl|cff777777+|rShift|cff777777+|r", "Alt|cff777777+|rShift|cff777777+|r", "Alt|cff777777+|rCtrl|cff777777+|r", "Alt|cff777777+|rCtrl|cff777777+|rShift|cff777777+|r"}
 local mouseKeyIDs = {
     ["Left"] = 1,
     ["Right"] = 2,
@@ -30,6 +29,22 @@ local mouseKeyIDs = {
     ["Button4"] = 4,
     ["Button5"] = 5,
 }
+
+local function GetBindingDisplay(modifier, key)
+    modifier = modifier:gsub("%-", "|cff777777+|r")
+    modifier = modifier:gsub("alt", "Alt")
+    modifier = modifier:gsub("ctrl", "Ctrl")
+    modifier = modifier:gsub("shift", "Shift")
+    modifier = modifier:gsub("meta", "Command")
+
+    if strfind(key, "^NUM") then
+        key = _G["KEY_"..key]
+    elseif strlen(key) ~= 1 then
+        key = L[key]
+    end
+
+    return modifier..key
+end
 
 local function DecodeKeyboard(fullKey)
     fullKey = string.gsub(fullKey, "alt", "alt-")
@@ -85,9 +100,6 @@ local function ShowTips()
         local modifier, bindKey, bindType, bindAction = DecodeDB(t)
 
         if bindType == "spell" then
-            local modifierDisplay = modifiersDisplay[F:GetIndex(modifiers, modifier)]
-            local bindKeyDisplay = strlen(bindKey) == 1 and bindKey or L[bindKey]
-
             local bindActionDisplay, icon
             bindAction, icon = F:GetSpellNameAndIcon(bindAction)
             if bindAction then
@@ -95,7 +107,7 @@ local function ShowTips()
             else
                 bindActionDisplay = "|cFFFF3030"..L["Invalid"]
             end
-            tooltip:AddDoubleLine(modifierDisplay..bindKeyDisplay, "|cFFFFFFFF"..bindActionDisplay)
+            tooltip:AddDoubleLine(GetBindingDisplay(modifier, bindKey), "|cFFFFFFFF"..bindActionDisplay)
         end
 
     end
