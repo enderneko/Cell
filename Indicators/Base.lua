@@ -21,6 +21,14 @@ local function JustifyText(text, point)
     else
         text:SetJustifyH("CENTER")
     end
+
+    if strfind(point, "^TOP") then
+        text:SetJustifyV("TOP")
+    elseif strfind(point, "^BOTTOM") then
+        text:SetJustifyV("BOTTOM")
+    else
+        text:SetJustifyV("MIDDLE")
+    end
 end
 
 function I.SetFont(fs, anchorTo, font, size, outline, shadow, anchor, xOffset, yOffset, color)
@@ -634,18 +642,12 @@ local function Text_SetFont(frame, font, size, outline, shadow)
         frame.text:SetShadowColor(0, 0, 0, 0)
     end
 
-    frame:SetSize(size+3, size+3)
+    frame:SetSize(size, size)
 end
 
 local function Text_SetPoint(frame, point, relativeTo, relativePoint, x, y)
     frame.text:ClearAllPoints()
-    if strfind(point, "LEFT$") then
-        frame.text:SetPoint("LEFT")
-    elseif strfind(point, "RIGHT$") then
-        frame.text:SetPoint("RIGHT")
-    else
-        frame.text:SetPoint("CENTER")
-    end
+    frame.text:SetPoint(point)
     frame:_SetPoint(point, relativeTo, relativePoint, x, y)
     JustifyText(frame.text, point)
 end
@@ -763,7 +765,6 @@ end
 
 function I.CreateAura_Text(name, parent)
     local frame = CreateFrame("Frame", name, parent)
-    frame:SetSize(11, 11)
     frame:Hide()
     frame.indicatorType = "text"
 

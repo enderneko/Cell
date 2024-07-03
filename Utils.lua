@@ -1937,9 +1937,8 @@ if Cell.isRetail then
     function F:GetSpellNameAndIcon(spellId)
         if C_Spell and C_Spell.GetSpellInfo then
             local info = C_Spell.GetSpellInfo(spellId)
-            if not info then
-                return nil, nil
-            end
+            if not info then return end
+
             if not info.iconID then -- FIXME:
                 info.iconID = C_Spell.GetSpellTexture(spellId)
             end

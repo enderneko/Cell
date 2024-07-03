@@ -543,7 +543,7 @@ local function InitIndicator(indicatorName)
                 indicator:SetCooldown(GetTime(), 13, nil, 134400, 5)
                 indicator.preview.elapsedTime = 0
                 C_Timer.After(0.2, function()
-                    indicator:SetWidth(indicator.text:GetStringWidth() + 6)
+                    indicator:SetWidth(indicator.text:GetStringWidth())
                 end)
             end)
         elseif indicator.indicatorType == "color" then
@@ -1386,17 +1386,14 @@ local function CreateListPane()
             local indicatorType, indicatorAuraType = self.dropdown1:GetSelected(), self.dropdown2:GetSelected()
 
             local last = #currentLayoutTable["indicators"]
-            if currentLayoutTable["indicators"][last]["type"] == "built-in" then
-                indicatorName = "indicator1"
-            else
-                indicatorName = "indicator"..(tonumber(strmatch(currentLayoutTable["indicators"][last]["indicatorName"], "%d+"))+1)
-            end
+            indicatorName = "indicator" .. (last - Cell.defaults.builtIns + 1)
 
             tinsert(currentLayoutTable["indicators"], I.GetDefaultCustomIndicatorTable(name, indicatorName, indicatorType, indicatorAuraType))
-
             Cell:Fire("UpdateIndicators", F:GetNotifiedLayoutName(currentLayout), indicatorName, "create", currentLayoutTable["indicators"][last+1])
+
             LoadIndicatorList()
             listButtons[last+1]:Click()
+
             -- check scroll
             if last+1 > 15 then
                 listFrame.scrollFrame:ScrollToBottom()
@@ -1952,25 +1949,34 @@ local function ShowIndicatorSettings(id)
     selected = id
 end
 
-local function MoveIndicator(id1, id2)
+local function MoveIndicator(from, to)
     local scroll = listFrame.scrollFrame:GetVerticalScroll()
 
-    if id2 then
-        if selected == id1 then
-            selected = id2
-            ListHighlightFn(id2)
-        elseif selected == id2 then
-            selected = id1
-            ListHighlightFn(id1)
+    if to and from ~= to then
+        F:Debug(from, "->", to)
+
+        if selected == from then
+            selected = to
+        else
+            if from > to then
+                if selected == to or (selected < from and selected > to) then
+                    selected = selected + 1
+                end
+            else
+                if selected == to or (selected < to and selected > from) then
+                    selected = selected - 1
+                end
+            end
         end
 
-        local temp = currentLayoutTable["indicators"][id1]
-        currentLayoutTable["indicators"][id1] = currentLayoutTable["indicators"][id2]
-        currentLayoutTable["indicators"][id2] = temp
+        local temp = currentLayoutTable["indicators"][from]
+        tremove(currentLayoutTable["indicators"], from)
+        tinsert(currentLayoutTable["indicators"], to, temp)
     end
 
     LoadIndicatorList()
     listFrame.scrollFrame:SetVerticalScroll(scroll)
+    ListHighlightFn(selected)
 end
 
 LoadIndicatorList = function()

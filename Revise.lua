@@ -3013,18 +3013,18 @@ function F:Revise()
                     toValidate[name] = nil
                 end
             end
-
-            -- customs
-            local index = 1
-            for i, t in ipairs(layout["indicators"]) do
-                if t["type"] ~= "built-in" then
-                    t["indicatorName"] = "indicator"..index
-                    tinsert(temp, t)
-                    index = index + 1
-                end
-            end
-
             layout["indicators"] = temp
+        end
+    end
+
+    --! update custom indicator names
+    for _, layout in pairs(CellDB["layouts"]) do
+        local index = 1
+        for i, t in ipairs(layout["indicators"]) do
+            if t["type"] ~= "built-in" then
+                t["indicatorName"] = "indicator"..index
+                index = index + 1
+            end
         end
     end
 
