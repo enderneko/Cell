@@ -231,6 +231,8 @@ L["ScrollDown"] = "滚轮下"
 
 L["Macro"] = "宏"
 L["Spell"] = "法术"
+L["Item"] = "物品"
+L["Custom"] = "自定义"
 L["target"] = "目标"
 L["focus"] = "焦点"
 L["assist"] = "协助"
