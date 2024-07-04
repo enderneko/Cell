@@ -3743,6 +3743,7 @@ local function GetExportString(t)
     local s = ""
     local n = 0
     for i, id in ipairs(t) do
+        if type(id) == "table" then id = id[1] end
         local name = F:GetSpellNameAndIcon(id)
         if name then
             s = s .. (i == 1 and "" or "\n") .. id .. ", -- " .. name
@@ -3768,7 +3769,7 @@ local function CreateSetting_Auras(parent, index)
             auraImportExportFrame:SetParent(auraImportExportFrame.parent)
             auraImportExportFrame:SetPoint("TOPLEFT")
             auraImportExportFrame:SetPoint("TOPRIGHT")
-            auraImportExportFrame:SetFrameLevel(auraImportExportFrame.parent:GetFrameLevel()+10)
+            auraImportExportFrame:SetToplevel(true)
             auraImportExportFrame:Show()
         end
 
@@ -3857,6 +3858,10 @@ local function CreateSetting_Auras(parent, index)
             auraImportExportFrame.textArea:SetText(auraImportExportFrame.exported)
             auraImportExportFrame.importBtn:Hide()
             auraImportExportFrame:ShowUp()
+            -- hide editbox
+            if widget.frame.popupEditBox then
+                widget.frame.popupEditBox:Hide()
+            end
         end)
 
         widget.import = addon:CreateButton(widget, nil, "accent-hover", {21, 17}, nil, nil, nil, nil, nil, L["Import"])
@@ -3870,6 +3875,10 @@ local function CreateSetting_Auras(parent, index)
             auraImportExportFrame.importBtn:Show()
             auraImportExportFrame.importBtn:SetEnabled(false)
             auraImportExportFrame:ShowUp()
+            -- hide editbox
+            if widget.frame.popupEditBox then
+                widget.frame.popupEditBox:Hide()
+            end
         end)
 
         widget.clear = addon:CreateButton(widget, nil, "accent-hover", {21, 17}, nil, nil, nil, nil, nil, L["Clear"], "|cffffb5c5Ctrl+"..L["Left-Click"])
@@ -3884,6 +3893,10 @@ local function CreateSetting_Auras(parent, index)
                 addon:UpdateIndicatorSettingsHeight()
                 -- event
                 widget.frame.func(widget.t)
+                -- hide editbox
+                if widget.frame.popupEditBox then
+                    widget.frame.popupEditBox:Hide()
+                end
             end
         end)
 
