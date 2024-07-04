@@ -1756,7 +1756,7 @@ end
 -------------------------------------------------
 -- CreateAura_Block
 -------------------------------------------------
-local function Block_OnUpdate(frame, elapsed)
+local function Block_OnUpdate_Duration(frame, elapsed)
     frame._remain = frame._duration - (GetTime() - frame._start)
     if frame._remain < 0 then frame._remain = 0 end
 
@@ -1764,19 +1764,19 @@ local function Block_OnUpdate(frame, elapsed)
     if frame._elapsed >= 0.1 then
         frame._elapsed = 0
         -- update color
-        if frame.colors[3][1] and frame._remain <= frame.colors[3][2] then
+        if frame.colors[4][1] and frame._remain <= frame.colors[4][2] then
             if frame.state ~= 3 then
                 frame.state = 3
-                frame:SetBackdropColor(frame.colors[3][3][1], frame.colors[3][3][2], frame.colors[3][3][3], frame.colors[3][3][4])
+                frame:SetBackdropColor(frame.colors[4][3][1], frame.colors[4][3][2], frame.colors[4][3][3], frame.colors[4][3][4])
             end
-        elseif frame.colors[2][1] and frame._remain <= frame._duration * frame.colors[2][2] then
+        elseif frame.colors[3][1] and frame._remain <= frame._duration * frame.colors[3][2] then
             if frame.state ~= 2 then
                 frame.state = 2
-                frame:SetBackdropColor(frame.colors[2][3][1], frame.colors[2][3][2], frame.colors[2][3][3], frame.colors[2][3][4])
+                frame:SetBackdropColor(frame.colors[3][3][1], frame.colors[3][3][2], frame.colors[3][3][3], frame.colors[3][3][4])
             end
         elseif frame.state ~= 1 then
             frame.state = 1
-            frame:SetBackdropColor(frame.colors[1][1], frame.colors[1][2], frame.colors[1][3], frame.colors[1][4])
+            frame:SetBackdropColor(frame.colors[2][1], frame.colors[2][2], frame.colors[2][3], frame.colors[2][4])
         end
     end
 
@@ -1801,7 +1801,7 @@ local function Block_OnUpdate(frame, elapsed)
     end
 end
 
-local function Block_SetCooldown(frame, start, duration, debuffType, texture, count, refreshing)
+local function Block_SetCooldown_Duration(frame, start, duration, debuffType, texture, count, refreshing)
     -- local r, g, b
     -- if debuffType then
     --     r, g, b = I.GetDebuffTypeColor(debuffType)
@@ -1839,7 +1839,81 @@ local function Block_SetCooldown(frame, start, duration, debuffType, texture, co
         frame._start = start
         frame._duration = duration
         frame._elapsed = 0.1 -- update immediately
-        frame:SetScript("OnUpdate", Block_OnUpdate)
+        frame:SetScript("OnUpdate", Block_OnUpdate_Duration)
+    end
+
+    frame.stack:SetText((count == 0 or count == 1) and "" or count)
+    frame:Show()
+
+    if refreshing then
+        frame.ag:Play()
+    end
+end
+
+local function Block_OnUpdate_Stack(frame, elapsed)
+    frame._remain = frame._duration - (GetTime() - frame._start)
+    if frame._remain < 0 then frame._remain = 0 end
+
+    if frame._remain > frame._threshold then
+        frame.duration:SetText("")
+        return
+    end
+
+    -- format
+    if frame._remain > 60 then
+        frame.duration:SetFormattedText("%dm", frame._remain / 60)
+    else
+        if Cell.vars.iconDurationRoundUp then
+            frame.duration:SetFormattedText("%d", ceil(frame._remain))
+        else
+            if frame._remain < Cell.vars.iconDurationDecimal then
+                frame.duration:SetFormattedText("%.1f", frame._remain)
+            else
+                frame.duration:SetFormattedText("%d", frame._remain)
+            end
+        end
+    end
+end
+
+local function Block_SetCooldown_Stack(frame, start, duration, debuffType, texture, count, refreshing)
+    if duration == 0 then
+        frame.cooldown:Hide()
+        frame.duration:Hide()
+        frame:SetScript("OnUpdate", nil)
+        frame._start = nil
+        frame._duration = nil
+        frame._remain = nil
+        frame._threshold = nil
+    else
+        -- frame.cooldown:SetSwipeColor(r, g, b)
+        frame.cooldown:ShowCooldown(start, duration)
+
+        if not frame.showDuration then
+            frame._threshold = -1
+            frame.duration:Hide()
+        else
+            if frame.showDuration == true then
+                frame._threshold = duration
+            elseif frame.showDuration >= 1 then
+                frame._threshold = frame.showDuration
+            else -- < 1
+                frame._threshold = frame.showDuration * duration
+            end
+            frame.duration:Show()
+        end
+
+        frame._start = start
+        frame._duration = duration
+        frame:SetScript("OnUpdate", Block_OnUpdate_Stack)
+    end
+
+    -- update color
+    if frame.colors[4][1] and count >= frame.colors[4][2] then
+        frame:SetBackdropColor(frame.colors[4][3][1], frame.colors[4][3][2], frame.colors[4][3][3], frame.colors[4][3][4])
+    elseif frame.colors[3][1] and count >= frame.colors[3][2] then
+        frame:SetBackdropColor(frame.colors[3][3][1], frame.colors[3][3][2], frame.colors[3][3][3], frame.colors[3][3][4])
+    else
+        frame:SetBackdropColor(frame.colors[2][1], frame.colors[2][2], frame.colors[2][3], frame.colors[2][4])
     end
 
     frame.stack:SetText((count == 0 or count == 1) and "" or count)
@@ -1851,7 +1925,12 @@ local function Block_SetCooldown(frame, start, duration, debuffType, texture, co
 end
 
 local function Block_SetColors(frame, colors)
-    frame:SetBackdropBorderColor(colors[4][1], colors[4][2], colors[4][3], colors[4][4])
+    if colors[1] == "duration" then
+        frame.SetCooldown = Block_SetCooldown_Duration
+    else
+        frame.SetCooldown = Block_SetCooldown_Stack
+    end
+    frame:SetBackdropBorderColor(colors[5][1], colors[5][2], colors[5][3], colors[5][4])
     frame.state = nil
     frame.colors = colors
 end
@@ -1881,7 +1960,7 @@ function I.CreateAura_Block(name, parent)
     frame.SetColors = Block_SetColors
     frame.ShowStack = Shared_ShowStack
     frame.ShowDuration = Shared_ShowDuration
-    frame.SetCooldown = Block_SetCooldown
+    frame.SetCooldown = Block_SetCooldown_Duration
     frame.UpdatePixelPerfect = Block_UpdatePixelPerfect
 
     local ag = frame:CreateAnimationGroup()

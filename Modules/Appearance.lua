@@ -663,7 +663,7 @@ local function CreateIconOptionsFrame()
 
     durationDecimalText2 = iconOptionsFrame:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
     durationDecimalText2:SetPoint("TOPLEFT", durationDecimalText1, "BOTTOMLEFT", 0, -5)
-    durationDecimalText2:SetText(L["Remaining Time <"])
+    durationDecimalText2:SetText(L["Remaining Time"].." <")
 
     durationDecimalDropdown = Cell:CreateDropdown(iconOptionsFrame, 60)
     durationDecimalDropdown:SetPoint("LEFT", durationDecimalText2, "RIGHT", 5, 0)
@@ -704,7 +704,7 @@ local function CreateIconOptionsFrame()
     end)
     durationNormalCP:SetPoint("TOPLEFT", durationColorCB, "BOTTOMLEFT", 0, -8)
 
-    durationPercentCP = Cell:CreateColorPicker(iconOptionsFrame, L["Remaining Time <"], false, function(r, g, b)
+    durationPercentCP = Cell:CreateColorPicker(iconOptionsFrame, L["Remaining Time"].." <", false, function(r, g, b)
         CellDB["appearance"]["auraIconOptions"]["durationColors"][2][1] = r
         CellDB["appearance"]["auraIconOptions"]["durationColors"][2][2] = g
         CellDB["appearance"]["auraIconOptions"]["durationColors"][2][3] = b
@@ -712,7 +712,7 @@ local function CreateIconOptionsFrame()
     end)
     durationPercentCP:SetPoint("TOPLEFT", durationNormalCP, "BOTTOMLEFT", 0, -8)
 
-    durationSecondCP = Cell:CreateColorPicker(iconOptionsFrame, L["Remaining Time <"], false, function(r, g, b)
+    durationSecondCP = Cell:CreateColorPicker(iconOptionsFrame, L["Remaining Time"].." <", false, function(r, g, b)
         CellDB["appearance"]["auraIconOptions"]["durationColors"][3][1] = r
         CellDB["appearance"]["auraIconOptions"]["durationColors"][3][2] = g
         CellDB["appearance"]["auraIconOptions"]["durationColors"][3][3] = b

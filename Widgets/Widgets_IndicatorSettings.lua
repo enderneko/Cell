@@ -1782,7 +1782,7 @@ local function CreateSetting_Colors(parent)
         end)
         percentCB:SetPoint("TOPLEFT", normalColor, "BOTTOMLEFT", 0, -8)
 
-        percentColor = addon:CreateColorPicker(widget, L["Remaining Time <"], true, function(r, g, b, a)
+        percentColor = addon:CreateColorPicker(widget, L["Remaining Time"].." <", true, function(r, g, b, a)
             widget.colorsTable[2][3][1] = r
             widget.colorsTable[2][3][2] = g
             widget.colorsTable[2][3][3] = b
@@ -1799,7 +1799,7 @@ local function CreateSetting_Colors(parent)
         end)
         secCB:SetPoint("TOPLEFT", percentCB, "BOTTOMLEFT", 0, -8)
 
-        secColor = addon:CreateColorPicker(widget, L["Remaining Time <"], true, function(r, g, b, a)
+        secColor = addon:CreateColorPicker(widget, L["Remaining Time"].." <", true, function(r, g, b, a)
             widget.colorsTable[3][3][1] = r
             widget.colorsTable[3][3][2] = g
             widget.colorsTable[3][3][3] = b
@@ -1944,6 +1944,333 @@ local function CreateSetting_Colors(parent)
     return widget
 end
 
+local function CreateSetting_BlockColors(parent)
+    local widget
+
+    if not settingWidgets["blockColors"] then
+        widget = addon:CreateFrame("CellIndicatorSettings_BlockColors", parent, 240, 136)
+        settingWidgets["blockColors"] = widget
+
+        -- colorBy
+        local colorBy = addon:CreateDropdown(widget, 260)
+        colorBy:SetPoint("TOPLEFT", 5, -20)
+
+        colorByText = widget:CreateFontString(nil, "OVERLAY", font_name)
+        colorByText:SetText(L["Color By"])
+        colorByText:SetPoint("BOTTOMLEFT", colorBy, "TOPLEFT", 0, 1)
+
+        local normalColor = addon:CreateColorPicker(widget, L["Normal"], true, function(r, g, b, a)
+            widget.colorsTable[2][1] = r
+            widget.colorsTable[2][2] = g
+            widget.colorsTable[2][3] = b
+            widget.colorsTable[2][4] = a
+            widget.func(widget.colorsTable)
+        end)
+        normalColor:SetPoint("TOPLEFT", colorBy, "BOTTOMLEFT", 0, -8)
+
+        -- duration pane --------------------------------------------------------------------------
+        local durationPane = CreateFrame("Frame", nil, widget)
+        P:Size(durationPane, 260, 36)
+        durationPane:SetPoint("TOPLEFT", normalColor, "BOTTOMLEFT", 0, -8)
+
+        local percentColor, percentDropdown
+
+        local percentCB = addon:CreateCheckButton(durationPane, "", function(checked)
+            widget.colorsTable[3][1] = checked
+            addon:SetEnabled(checked, percentColor, percentDropdown)
+        end)
+        percentCB:SetPoint("TOPLEFT")
+
+        percentColor = addon:CreateColorPicker(durationPane, L["Remaining Time"].." <", true, function(r, g, b, a)
+            widget.colorsTable[3][3][1] = r
+            widget.colorsTable[3][3][2] = g
+            widget.colorsTable[3][3][3] = b
+            widget.colorsTable[3][3][4] = a
+            widget.func(widget.colorsTable)
+        end)
+        percentColor:SetPoint("TOPLEFT", percentCB, "TOPRIGHT", 2, 0)
+
+        local secColor, secEditBox, secText
+
+        local secCB = addon:CreateCheckButton(durationPane, "", function(checked)
+            widget.colorsTable[3][1] = checked
+            addon:SetEnabled(checked, secColor, secEditBox, secText)
+        end)
+        secCB:SetPoint("TOPLEFT", percentCB, "BOTTOMLEFT", 0, -8)
+
+        secColor = addon:CreateColorPicker(durationPane, L["Remaining Time"].." <", true, function(r, g, b, a)
+            widget.colorsTable[4][3][1] = r
+            widget.colorsTable[4][3][2] = g
+            widget.colorsTable[4][3][3] = b
+            widget.colorsTable[4][3][4] = a
+            widget.func(widget.colorsTable)
+        end)
+        secColor:SetPoint("TOPLEFT", secCB, "TOPRIGHT", 2, 0)
+
+        percentDropdown = addon:CreateDropdown(durationPane, 60)
+        percentDropdown:SetPoint("LEFT", percentColor.label, "RIGHT", 5, 0)
+        percentDropdown:SetItems({
+            {
+                ["text"] = "75%",
+                ["value"] = 0.75,
+                ["onClick"] = function()
+                    widget.colorsTable[2][2] = 0.75
+                    widget.func(widget.colorsTable)
+                end,
+            },
+            {
+                ["text"] = "50%",
+                ["value"] = 0.5,
+                ["onClick"] = function()
+                    widget.colorsTable[2][2] = 0.5
+                    widget.func(widget.colorsTable)
+                end,
+            },
+            {
+                ["text"] = "30%",
+                ["value"] = 0.3,
+                ["onClick"] = function()
+                    widget.colorsTable[2][2] = 0.3
+                    widget.func(widget.colorsTable)
+                end,
+            },
+            {
+                ["text"] = "25%",
+                ["value"] = 0.25,
+                ["onClick"] = function()
+                    widget.colorsTable[2][2] = 0.25
+                    widget.func(widget.colorsTable)
+                end,
+            },
+        })
+
+        secEditBox = addon:CreateEditBox(durationPane, 43, 20, false, false, true)
+        secEditBox:SetPoint("LEFT", secColor.label, "RIGHT", 5, 0)
+        secEditBox:SetMaxLetters(4)
+
+        secEditBox.confirmBtn = addon:CreateButton(durationPane, "OK", "accent", {27, 20})
+        secEditBox.confirmBtn:SetPoint("LEFT", secEditBox, "RIGHT", -1, 0)
+        secEditBox.confirmBtn:Hide()
+        secEditBox.confirmBtn:SetScript("OnHide", function()
+            secEditBox.confirmBtn:Hide()
+        end)
+        secEditBox.confirmBtn:SetScript("OnClick", function()
+            local newSec = tonumber(secEditBox:GetText())
+            widget.colorsTable[3][2] = newSec
+            secEditBox:SetText(newSec)
+            secEditBox:ClearFocus()
+            secEditBox.confirmBtn:Hide()
+            widget.func(widget.colorsTable)
+        end)
+
+        secEditBox:SetScript("OnTextChanged", function(self, userChanged)
+            if userChanged then
+                local newSec = tonumber(self:GetText())
+                if newSec and newSec ~= widget.colorsTable[3][2] then
+                    secEditBox.confirmBtn:Show()
+                else
+                    secEditBox.confirmBtn:Hide()
+                end
+            end
+        end)
+
+        secText = durationPane:CreateFontString(nil, "OVERLAY", font_name)
+        secText:SetPoint("LEFT", secEditBox, "RIGHT", 5, 0)
+        secText:SetText(L["sec"])
+
+        -- stack pane -----------------------------------------------------------------------------
+        local stackPane = CreateFrame("Frame", nil, widget)
+        P:Size(stackPane, 260, 36)
+        stackPane:SetPoint("TOPLEFT", normalColor, "BOTTOMLEFT", 0, -8)
+
+        local stackColor1, stackEB1
+
+        local stackCB1 = addon:CreateCheckButton(stackPane, "", function(checked)
+            widget.colorsTable[3][1] = checked
+            addon:SetEnabled(checked, stackColor1, stackEB1)
+            widget.func(widget.colorsTable)
+        end)
+        stackCB1:SetPoint("TOPLEFT")
+
+        stackColor1 = addon:CreateColorPicker(stackPane, L["Stack"].." >=", true, function(r, g, b, a)
+            widget.colorsTable[3][3][1] = r
+            widget.colorsTable[3][3][2] = g
+            widget.colorsTable[3][3][3] = b
+            widget.colorsTable[3][3][4] = a
+            widget.func(widget.colorsTable)
+        end)
+        stackColor1:SetPoint("TOPLEFT", stackCB1, "TOPRIGHT", 2, 0)
+
+        local stackColor2, stackEB2
+
+        local stackCB2 = addon:CreateCheckButton(stackPane, "", function(checked)
+            widget.colorsTable[4][1] = checked
+            addon:SetEnabled(checked, stackColor2, stackEB2)
+            widget.func(widget.colorsTable)
+        end)
+        stackCB2:SetPoint("TOPLEFT", stackCB1, "BOTTOMLEFT", 0, -8)
+
+        stackColor2 = addon:CreateColorPicker(stackPane, L["Stack"].." >=", true, function(r, g, b, a)
+            widget.colorsTable[4][3][1] = r
+            widget.colorsTable[4][3][2] = g
+            widget.colorsTable[4][3][3] = b
+            widget.colorsTable[4][3][4] = a
+            widget.func(widget.colorsTable)
+        end)
+        stackColor2:SetPoint("TOPLEFT", stackCB2, "TOPRIGHT", 2, 0)
+
+        stackEB1 = addon:CreateEditBox(stackPane, 43, 20, false, false, true)
+        stackEB1:SetPoint("LEFT", stackColor1.label, "RIGHT", 5, 0)
+        stackEB1:SetMaxLetters(3)
+
+        stackEB1.confirmBtn = addon:CreateButton(stackPane, "OK", "accent", {27, 20})
+        stackEB1.confirmBtn:SetPoint("LEFT", stackEB1, "RIGHT", -1, 0)
+        stackEB1.confirmBtn:Hide()
+        stackEB1.confirmBtn:SetScript("OnHide", function()
+            stackEB1.confirmBtn:Hide()
+        end)
+        stackEB1.confirmBtn:SetScript("OnClick", function()
+            local newStack = tonumber(stackEB1:GetText())
+            widget.colorsTable[3][2] = newStack
+            stackEB1:SetText(newStack)
+            stackEB1:ClearFocus()
+            stackEB1.confirmBtn:Hide()
+            widget.func(widget.colorsTable)
+        end)
+
+        stackEB1:SetScript("OnTextChanged", function(self, userChanged)
+            if userChanged then
+                local newStack = tonumber(self:GetText())
+                if newStack and newStack ~= widget.colorsTable[3][2] then
+                    stackEB1.confirmBtn:Show()
+                else
+                    stackEB1.confirmBtn:Hide()
+                end
+            end
+        end)
+
+        stackEB2 = addon:CreateEditBox(stackPane, 43, 20, false, false, true)
+        stackEB2:SetPoint("LEFT", stackColor2.label, "RIGHT", 5, 0)
+        stackEB2:SetMaxLetters(3)
+
+        stackEB2.confirmBtn = addon:CreateButton(stackPane, "OK", "accent", {27, 20})
+        stackEB2.confirmBtn:SetPoint("LEFT", stackEB2, "RIGHT", -1, 0)
+        stackEB2.confirmBtn:Hide()
+        stackEB2.confirmBtn:SetScript("OnHide", function()
+            stackEB2.confirmBtn:Hide()
+        end)
+        stackEB2.confirmBtn:SetScript("OnClick", function()
+            local newStack = tonumber(stackEB2:GetText())
+            widget.colorsTable[4][2] = newStack
+            stackEB2:SetText(newStack)
+            stackEB2:ClearFocus()
+            stackEB2.confirmBtn:Hide()
+            widget.func(widget.colorsTable)
+        end)
+
+        stackEB2:SetScript("OnTextChanged", function(self, userChanged)
+            if userChanged then
+                local newStack = tonumber(self:GetText())
+                if newStack and newStack ~= widget.colorsTable[4][2] then
+                    stackEB2.confirmBtn:Show()
+                else
+                    stackEB2.confirmBtn:Hide()
+                end
+            end
+        end)
+
+        -- control
+        colorBy:SetItems({
+            {
+                ["text"] = L["Duration"],
+                ["value"] = "duration",
+                ["onClick"] = function()
+                    if widget.colorsTable[1] == "duration" then return end
+                    durationPane:Show()
+                    stackPane:Hide()
+                    widget.colorsTable[1] = "duration"
+                    widget.colorsTable[3][1] = false
+                    widget.colorsTable[4][1] = false
+                    widget.colorsTable[3][2] = 0.5
+                    widget.colorsTable[4][2] = 3
+                    widget.func(widget.colorsTable)
+                    widget:SetDBValue(widget.colorsTable)
+                end,
+            },
+            {
+                ["text"] = L["Stack"],
+                ["value"] = "stack",
+                ["onClick"] = function()
+                    if widget.colorsTable[1] == "stack" then return end
+                    durationPane:Hide()
+                    stackPane:Show()
+                    widget.colorsTable[1] = "stack"
+                    widget.colorsTable[3][1] = false
+                    widget.colorsTable[4][1] = false
+                    widget.colorsTable[3][2] = 2
+                    widget.colorsTable[4][2] = 3
+                    widget.func(widget.colorsTable)
+                    widget:SetDBValue(widget.colorsTable)
+                end,
+            },
+        })
+
+        -- border color
+        local borderColor = addon:CreateColorPicker(widget, L["Border Color"], true, function(r, g, b, a)
+            widget.colorsTable[5][1] = r
+            widget.colorsTable[5][2] = g
+            widget.colorsTable[5][3] = b
+            widget.colorsTable[5][4] = a
+            widget.func(widget.colorsTable)
+        end)
+        borderColor:SetPoint("TOPLEFT", stackPane, "BOTTOMLEFT", 0, -8)
+
+        -- callback
+        function widget:SetFunc(func)
+            widget.func = func
+        end
+
+        -- show db value
+        function widget:SetDBValue(colorsTable)
+            widget.colorsTable = colorsTable
+
+            colorBy:SetSelectedValue(colorsTable[1])
+            if colorsTable[1] == "duration" then
+                durationPane:Show()
+                stackPane:Hide()
+            else
+                durationPane:Hide()
+                stackPane:Show()
+            end
+
+            normalColor:SetColor(colorsTable[2])
+            borderColor:SetColor(colorsTable[5])
+
+            addon:SetEnabled(colorsTable[3][1], percentColor, percentDropdown, stackColor1, stackEB1)
+            addon:SetEnabled(colorsTable[4][1], secColor, secEditBox, secText, stackColor2, stackEB2)
+
+            percentCB:SetChecked(colorsTable[3][1])
+            percentColor:SetColor(colorsTable[3][3])
+            percentDropdown:SetSelectedValue(colorsTable[3][2])
+            secCB:SetChecked(colorsTable[4][1])
+            secColor:SetColor(colorsTable[4][3])
+            secEditBox:SetText(colorsTable[4][2])
+
+            stackCB1:SetChecked(colorsTable[3][1])
+            stackColor1:SetColor(colorsTable[3][3])
+            stackEB1:SetText(colorsTable[3][2])
+            stackCB2:SetChecked(colorsTable[4][1])
+            stackColor2:SetColor(colorsTable[4][3])
+            stackEB2:SetText(colorsTable[4][2])
+        end
+    else
+        widget = settingWidgets["blockColors"]
+    end
+
+    widget:Show()
+    return widget
+end
+
 local function CreateSetting_OverlayColors(parent)
     local widget
 
@@ -1969,7 +2296,7 @@ local function CreateSetting_OverlayColors(parent)
         end)
         percentCB:SetPoint("TOPLEFT", normalColor, "BOTTOMLEFT", 0, -8)
 
-        percentColor = addon:CreateColorPicker(widget, L["Remaining Time <"], true, function(r, g, b, a)
+        percentColor = addon:CreateColorPicker(widget, L["Remaining Time"].." <", true, function(r, g, b, a)
             widget.colorsTable[2][3][1] = r
             widget.colorsTable[2][3][2] = g
             widget.colorsTable[2][3][3] = b
@@ -1987,7 +2314,7 @@ local function CreateSetting_OverlayColors(parent)
         end)
         secCB:SetPoint("TOPLEFT", percentCB, "BOTTOMLEFT", 0, -8)
 
-        secColor = addon:CreateColorPicker(widget, L["Remaining Time <"], true, function(r, g, b, a)
+        secColor = addon:CreateColorPicker(widget, L["Remaining Time"].." <", true, function(r, g, b, a)
             widget.colorsTable[3][3][1] = r
             widget.colorsTable[3][3][2] = g
             widget.colorsTable[3][3][3] = b
@@ -2280,7 +2607,7 @@ local function CreateSetting_CustomColors(parent)
         end)
         normalColor:SetPoint("TOPLEFT")
 
-        local percentColor = addon:CreateColorPicker(widget.cotFrame, L["Remaining Time <"], true, function(r, g, b, a)
+        local percentColor = addon:CreateColorPicker(widget.cotFrame, L["Remaining Time"].." <", true, function(r, g, b, a)
             widget.colorsTable[5][2][1] = r
             widget.colorsTable[5][2][2] = g
             widget.colorsTable[5][2][3] = b
@@ -2289,7 +2616,7 @@ local function CreateSetting_CustomColors(parent)
         end)
         percentColor:SetPoint("TOPLEFT", normalColor, "BOTTOMLEFT", 0, -8)
 
-        local secColor = addon:CreateColorPicker(widget.cotFrame, L["Remaining Time <"], true, function(r, g, b, a)
+        local secColor = addon:CreateColorPicker(widget.cotFrame, L["Remaining Time"].." <", true, function(r, g, b, a)
             widget.colorsTable[6][2][1] = r
             widget.colorsTable[6][2][2] = g
             widget.colorsTable[6][2][3] = b
@@ -2880,7 +3207,7 @@ local function CreateSetting_Duration(parent)
 
         widget.durationDecimalText2 = widget:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
         widget.durationDecimalText2:SetPoint("TOPLEFT", widget.durationDecimalText1, "BOTTOMLEFT", 0, -5)
-        widget.durationDecimalText2:SetText(L["Remaining Time <"])
+        widget.durationDecimalText2:SetText(L["Remaining Time"].." <")
 
         widget.durationDecimalDropdown = addon:CreateDropdown(widget, 60)
         widget.durationDecimalDropdown:SetPoint("LEFT", widget.durationDecimalText2, "RIGHT", 5, 0)
@@ -5650,6 +5977,8 @@ function addon:CreateIndicatorSettings(parent, settingsTable)
             tinsert(widgetsTable, CreateSetting_ColorAlpha(parent))
         elseif setting == "colors" then
             tinsert(widgetsTable, CreateSetting_Colors(parent))
+        elseif setting == "blockColors" then
+            tinsert(widgetsTable, CreateSetting_BlockColors(parent))
         elseif setting == "overlayColors" then
             tinsert(widgetsTable, CreateSetting_OverlayColors(parent))
         elseif setting == "customColors" then

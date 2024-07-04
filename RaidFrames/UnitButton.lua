@@ -873,7 +873,7 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                     indicator:ShowAnimation(value["showAnimation"])
                 end
                 -- update showStack
-                if value["showStack"] then
+                if type(value["showStack"]) ~= "nil" then
                     indicator:ShowStack(value["showStack"])
                 end
                 -- update duration

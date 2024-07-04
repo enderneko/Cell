@@ -1007,7 +1007,7 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                 indicator:ShowAnimation(value["showAnimation"])
             end
             -- update stack
-            if type(value["showStack"]) == "boolean" then
+            if type(value["showStack"]) ~= "nil" then
                 indicator:ShowStack(value["showStack"])
             end
             -- update duration
@@ -1642,7 +1642,7 @@ local function ShowIndicatorSettings(id)
         elseif indicatorType == "overlay" then
             settingsTable = {"enabled", "auras", "overlayColors", "checkbutton3:smooth", "barOrientation", "frameLevel"}
         elseif indicatorType == "block" then
-            settingsTable = {"enabled", "auras", "colors", "checkbutton3:showStack", "durationVisibility", "size", "position", "frameLevel", "font1:stackFont", "font2:durationFont"}
+            settingsTable = {"enabled", "auras", "blockColors", "checkbutton3:showStack", "durationVisibility", "size", "position", "frameLevel", "font1:stackFont", "font2:durationFont"}
         elseif indicatorType == "blocks" then
             settingsTable = {"enabled", "auras", "checkbutton3:showStack", "durationVisibility", "size", "num:10", "numPerLine:10", "spacing", "orientation", "position", "frameLevel", "font1:stackFont", "font2:durationFont"}
         end
@@ -1677,7 +1677,7 @@ local function ShowIndicatorSettings(id)
 
         --! convert currentSetting to ACTUAL TABLE INDEX
         if currentSetting == "color-alpha" or currentSetting == "color-class" or currentSetting == "color-power" then currentSetting = "color" end
-        if currentSetting == "customColors" or currentSetting == "overlayColors" then currentSetting = "colors" end
+        if currentSetting == "customColors" or currentSetting == "overlayColors" or currentSetting == "blockColors" then currentSetting = "colors" end
         if currentSetting == "size-square" or currentSetting == "size-bar" or currentSetting == "size-normal-big" then currentSetting = "size" end
         if currentSetting == "namePosition" or currentSetting == "statusPosition" or currentSetting == "position-noHCenter" or currentSetting == "shieldBarPosition" then currentSetting = "position" end
         if currentSetting == "barOrientation" then currentSetting = "orientation" end

@@ -3007,6 +3007,17 @@ function F:Revise()
                 end
             end
         end
+
+        -- update block, add "colorType"
+        for _, layout in pairs(CellDB["layouts"]) do
+            for _, i in pairs(layout["indicators"]) do
+                if i.type == "block" then
+                    if #i.colors == 4 then
+                        tinsert(i.colors, 1, "duration")
+                    end
+                end
+            end
+        end
     end
 
     -- ----------------------------------------------------------------------- --
