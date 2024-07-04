@@ -477,8 +477,6 @@ local function ApplyClickCastings(b)
         if t[2] == "spell" then
             local spellName = F:GetSpellNameAndIcon(t[3]) or ""
 
-            -- NOTE: spell 在无效/过远的目标上会处于“等待选中目标”的状态，即鼠标指针有一圈灰色材质。用 macrotext 可以解决这个问题
-            -- NOTE: 但对于尸体状态（未释放）的目标，需要额外判断
             local condition = ""
             if not F:IsSoulstone(spellName) then
                 condition = F:IsResurrectionForDead(spellName) and ",dead" or ",nodead"
@@ -493,8 +491,8 @@ local function ApplyClickCastings(b)
                     local normalResurrection = F:GetNormalResurrection(Cell.vars.playerClass)
                     if normalResurrection then
                         if Cell.isRetail then -- mass resurrections
-                            for condition, spell in pairs(normalResurrection) do
-                                sMaRt = sMaRt .. ";["..unit..",dead,nocombat,"..condition.."] "..spell
+                            for cond, spell in pairs(normalResurrection) do
+                                sMaRt = sMaRt .. ";["..unit..",dead,nocombat,"..cond.."] "..spell
                             end
                         else
                             sMaRt = sMaRt .. ";["..unit..",dead,nocombat] "..normalResurrection
@@ -508,13 +506,16 @@ local function ApplyClickCastings(b)
                 end
             end
 
+            --! NOTE: cancels the "blue glowing hand" cursor (cancel the target selection)
+            local fix = "\n/stopspelltarget"
+
             if (alwaysTargeting == "left" and bindKey == "type1") or alwaysTargeting == "any" then
                 b:SetAttribute(bindKey, "macro")
                 local attr = string.gsub(bindKey, "type", "macrotext")
-                b:SetAttribute(attr, "/tar ["..unit.."]\n/cast ["..unit..condition.."] "..spellName..sMaRt)
+                b:SetAttribute(attr, "/tar ["..unit.."]\n/cast ["..unit..condition.."] "..spellName..sMaRt..fix)
                 if not Cell.isRetail then UpdatePlaceholder(b, attr) end
             else
-                -- NOTE: "spell" is not ideal
+                -- NOTE: "spell" is not ideal, 在无效/过远的目标上会处于“等待选中目标”的状态，即鼠标指针有一圈灰/蓝色材质
                 -- local attr = string.gsub(bindKey, "type", "spell")
                 -- b:SetAttribute(attr, spellName)
                 b:SetAttribute(bindKey, "macro")
@@ -522,7 +523,7 @@ local function ApplyClickCastings(b)
                 if F:IsSoulstone(spellName) then
                     b:SetAttribute(attr, "/tar ["..unit.."]\n/cast ["..unit.."] "..spellName.."\n/targetlasttarget")
                 else
-                    b:SetAttribute(attr, "/cast ["..unit..condition.."] "..spellName..sMaRt)
+                    b:SetAttribute(attr, "/cast ["..unit..condition.."] "..spellName..sMaRt..fix)
                 end
             end
         elseif t[2] == "macro" then
@@ -532,8 +533,6 @@ local function ApplyClickCastings(b)
             b:SetAttribute(bindKey, "macro")
             local attr = string.gsub(bindKey, "type", "macrotext")
             b:SetAttribute(attr, t[3])
-        elseif t[2] == "item" then
-
         else
             local attr = string.gsub(bindKey, "type", t[2])
             b:SetAttribute(attr, t[3])
