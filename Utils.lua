@@ -535,12 +535,13 @@ function F:TRemove(t, v)
 end
 
 function F:TMergeOverwrite(...)
-    local tbls = {...}
-    if #tbls == 0 then return {} end
+    local n = select("#", ...)
+    if n == 0 then return {} end
 
-    local temp = F:Copy(tbls[1])
-    for i = 2, #tbls do
-        for k, v in pairs(tbls[i]) do
+    local temp = F:Copy(...)
+    for i = 2, n do
+        local t = select(i, ...)
+        for k, v in pairs(t) do
             temp[k] = v
         end
     end

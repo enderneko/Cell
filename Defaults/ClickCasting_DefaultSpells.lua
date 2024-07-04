@@ -225,7 +225,7 @@ local defaultSpells = {
             "33206S", -- Pain Suppression - 痛苦压制
             "47536S", -- Rapture - 全神贯注
             "314867S", -- Shadow Covenant - 暗影盟约
-            "421453S", -- Ultimate Penitence - ??? 
+            "421453S", -- Ultimate Penitence - ???
         },
         -- 257 - Holy
         [257] = {
@@ -319,6 +319,8 @@ function F:GetClickCastingSpellList(class, spec)
         end
     end
 
+    local invalid
+
     -- fill data
     for i, v in pairs(spells) do
         local spellId, spellType
@@ -332,7 +334,20 @@ function F:GetClickCastingSpellList(class, spec)
         end
 
         local name, icon = F:GetSpellNameAndIcon(spellId)
-        spells[i] = {icon, name, spellType, spellId}
+        if name then
+            spells[i] = {icon, name, spellType, spellId}
+        else
+            F:Debug("|cffff0000[INVALID]|r click-casting spell:", spellId)
+            if not invalid then invalid = {} end
+            tinsert(invalid, i)
+        end
+    end
+
+    -- check invalid ids
+    if invalid then
+        for i = #invalid, 1, -1 do
+            tremove(spells, invalid[i])
+        end
     end
 
     -- texplore(spells)
