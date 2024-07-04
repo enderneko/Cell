@@ -1313,7 +1313,12 @@ local function CreateListPane()
     listPane = Cell:CreateTitledPane(clickCastingsTab, L["Current Profile"], 422, 451)
     listPane:SetPoint("BOTTOMLEFT", clickCastingsTab, 5, 5)
 
-    local hint = Cell:CreateButton(listPane, nil, "accent-hover", {17, 17}, nil, nil, nil, nil, nil, L["Click-Castings"], L["clickcastingsHints"])
+    local hint = Cell:CreateButton(listPane, nil, "accent-hover", {17, 17}, nil, nil, nil, nil, nil,
+        L["Click-Castings"],
+        "|cffffb5c5"..L["Left-Click"]..":|r "..strlower(L["Edit"]),
+        "|cffffb5c5"..L["Right-Click"]..":|r "..strlower(L["Delete"]),
+        "|cffffb5c5"..L["Left-Drag"]..":|r "..L["change the order"]
+    )
     hint:SetPoint("TOPRIGHT")
     hint.tex = hint:CreateTexture(nil, "ARTWORK")
     hint.tex:SetAllPoints(hint)

@@ -217,7 +217,6 @@ L["Secondary Talents"] = "副天赋"
 L["New"] = "新建"
 L["Save"] = "保存"
 L["Discard"] = "撤销"
-L["clickcastingsHints"] = "左键：编辑\n右键：删除"
 L["Conflicts Detected!"] = "发现冲突！"
 L["Remove"] = "移除"
 
