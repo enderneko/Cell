@@ -1364,7 +1364,7 @@ local auraTypeItems = {
 }
 
 local function CreateListPane()
-    local listPane = Cell:CreateTitledPane(indicatorsTab, L["Indicators"], 136, 392)
+    local listPane = Cell:CreateTitledPane(indicatorsTab, L["Indicators"], 136, 487)
     listPane:SetPoint("TOPLEFT", 5, -115)
 
     listFrame = Cell:CreateFrame("IndicatorsTab_ListFrame", listPane)
@@ -1474,7 +1474,7 @@ end
 local settingsFrame
 
 local function CreateSettingsPane()
-    local settingsPane = Cell:CreateTitledPane(indicatorsTab, L["Indicator Settings"], 274, 502)
+    local settingsPane = Cell:CreateTitledPane(indicatorsTab, L["Indicator Settings"], 274, 597)
     settingsPane:SetPoint("TOPLEFT", 153, P:Scale(-5))
 
     -- settings frame

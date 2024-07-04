@@ -32,7 +32,7 @@ local function CreateIndicatorsExportFrame()
     end
 
     -- list
-    local listParent = Cell:CreateFrame(nil, exportParent, 136, 430)
+    local listParent = Cell:CreateFrame(nil, exportParent, 136, 525)
     Cell:StylizeFrame(listParent, nil, Cell:GetAccentColorTable())
     listParent:SetPoint("BOTTOMLEFT", 5, 24)
     listParent:Show()
@@ -45,13 +45,13 @@ local function CreateIndicatorsExportFrame()
     Cell:StylizeFrame(listFrame)
     listFrame:SetPoint("TOPLEFT", 5, -20)
     listFrame:SetPoint("TOPRIGHT", -5, -5)
-    listFrame:SetHeight(362)
+    listFrame:SetHeight(457)
 
     Cell:CreateScrollFrame(listFrame)
     listFrame.scrollFrame:SetScrollStep(19)
 
     -- export area
-    exportFrame = Cell:CreateFrame(nil, exportParent, 281, 197)
+    exportFrame = Cell:CreateFrame(nil, exportParent, 281, 273)
     Cell:StylizeFrame(exportFrame, nil, Cell:GetAccentColorTable())
     exportFrame:SetPoint("BOTTOMLEFT", listParent, "BOTTOMRIGHT", 5, 0)
 
