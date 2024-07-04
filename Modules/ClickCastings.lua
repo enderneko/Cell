@@ -42,6 +42,26 @@ end
 -- https://wow.gamepedia.com/SecureActionButtonTemplate
 -- {"shift-type1", "macro", "shift-macrotext1", "/cast [@mouseover] 回春术"}
 
+local slotNames = {
+    [1] = _G.INVTYPE_HEAD,
+    [2] = _G.INVTYPE_NECK,
+    [3] = _G.INVTYPE_SHOULDER,
+    [4] = _G.INVTYPE_BODY,
+    [5] = _G.INVTYPE_CHEST,
+    [6] = _G.INVTYPE_WAIST,
+    [7] = _G.INVTYPE_LEGS,
+    [8] = _G.INVTYPE_FEET,
+    [9] = _G.INVTYPE_WRIST,
+    [10] = _G.INVTYPE_HAND,
+    [11] = _G.INVTYPE_FINGER .. " 1",
+    [12] = _G.INVTYPE_FINGER .. " 2",
+    [13] = _G.INVTYPE_TRINKET .. " 1",
+    [14] = _G.INVTYPE_TRINKET .. " 2",
+    [15] = _G.INVTYPE_CLOAK,
+    [16] = _G.INVTYPE_WEAPONMAINHAND,
+    [17] = _G.INVTYPE_WEAPONOFFHAND,
+}
+
 -- local modifiers = {"", "shift-", "ctrl-", "alt-", "ctrl-shift-", "alt-shift-", "alt-ctrl-", "alt-ctrl-shift-"}
 -- local modifiersDisplay = {"", "Shift|cff777777+|r", "Ctrl|cff777777+|r", "Alt|cff777777+|r", "Ctrl|cff777777+|rShift|cff777777+|r", "Alt|cff777777+|rShift|cff777777+|r", "Alt|cff777777+|rCtrl|cff777777+|r", "Alt|cff777777+|rCtrl|cff777777+|rShift|cff777777+|r"}
 -- local keys = {"Left", "Right", "Middle", "Button4", "Button5", "ScrollUp", "ScrollDown"}
@@ -93,12 +113,9 @@ local function EncodeDB(modifier, bindKey, bindType, bindAction)
     elseif bindType == "macro" then
         attrType = "macro"
         attrAction = bindAction
-    elseif bindType == "macrotext" then
+    elseif bindType == "custom" then
         attrType = "macrotext"
         attrAction = bindAction
-    -- elseif bindType == "click" then
-    --     attrType = "click"
-    --     attrAction = bindAction
     elseif bindType == "item" then
         attrType = "item"
         attrAction = bindAction
@@ -497,28 +514,26 @@ local function ApplyClickCastings(b)
                 b:SetAttribute(attr, "/tar ["..unit.."]\n/cast ["..unit..condition.."] "..spellName..sMaRt)
                 if not Cell.isRetail then UpdatePlaceholder(b, attr) end
             else
+                -- NOTE: "spell" is not ideal
                 -- local attr = string.gsub(bindKey, "type", "spell")
                 -- b:SetAttribute(attr, spellName)
-                if not sMaRt and not condition then
-                    local attr = string.gsub(bindKey, "type", "spell")
-                    b:SetAttribute(attr, spellName)
+                b:SetAttribute(bindKey, "macro")
+                local attr = string.gsub(bindKey, "type", "macrotext")
+                if F:IsSoulstone(spellName) then
+                    b:SetAttribute(attr, "/tar ["..unit.."]\n/cast ["..unit.."] "..spellName.."\n/targetlasttarget")
                 else
-                    b:SetAttribute(bindKey, "macro")
-                    local attr = string.gsub(bindKey, "type", "macrotext")
-                    if F:IsSoulstone(spellName) then
-                        b:SetAttribute(attr, "/tar ["..unit.."]\n/cast ["..unit.."] "..spellName.."\n/targetlasttarget")
-                    else
-                        b:SetAttribute(attr, "/cast ["..unit..condition.."] "..spellName..sMaRt)
-                    end
+                    b:SetAttribute(attr, "/cast ["..unit..condition.."] "..spellName..sMaRt)
                 end
             end
         elseif t[2] == "macro" then
             local attr = string.gsub(bindKey, "type", "macro")
             b:SetAttribute(attr, GetMacroIndexByName(t[3]))
-        elseif t[2] == "macrotext" then
+        elseif t[2] == "custom" then
             b:SetAttribute(bindKey, "macro")
             local attr = string.gsub(bindKey, "type", "macrotext")
             b:SetAttribute(attr, t[3])
+        elseif t[2] == "item" then
+
         else
             local attr = string.gsub(bindKey, "type", t[2])
             b:SetAttribute(attr, t[3])
@@ -794,6 +809,28 @@ local function ShowTypesMenu(index, b)
                 b:HideIcon()
             end,
         }, {
+            ["text"] = L["Spell"],
+            ["onClick"] = function()
+                b.typeGrid:SetText(L["Spell"])
+                if clickCastingsTab.popupEditBox then clickCastingsTab.popupEditBox:Hide() end
+
+                changed[index] = changed[index] or {b}
+                -- check type
+                if b.bindType ~= "spell" then
+                    changed[index]["bindType"] = "spell"
+                    changed[index]["bindAction"] = ""
+                    b.actionGrid:SetText("")
+                    b:HideIcon()
+                else
+                    changed[index]["bindType"] = nil
+                    changed[index]["bindAction"] = nil
+                    b.actionGrid:SetText(b.bindActionDisplay)
+                    b:ShowSpellIcon(b.bindAction)
+                end
+                CheckChanged(index, b)
+                CheckChanges()
+            end,
+        }, {
             ["text"] = L["Macro"],
             ["onClick"] = function()
                 b.typeGrid:SetText(L["Macro"])
@@ -823,8 +860,8 @@ local function ShowTypesMenu(index, b)
 
                 changed[index] = changed[index] or {b}
                 -- check type
-                if b.bindType ~= "macrotext" then
-                    changed[index]["bindType"] = "macrotext"
+                if b.bindType ~= "custom" then
+                    changed[index]["bindType"] = "custom"
                     changed[index]["bindAction"] = ""
                     b.actionGrid:SetText("")
                     b:HideIcon()
@@ -832,29 +869,7 @@ local function ShowTypesMenu(index, b)
                     changed[index]["bindType"] = nil
                     changed[index]["bindAction"] = nil
                     b.actionGrid:SetText(b.bindAction)
-                    b:ShowMacroIcon(b.bindAction)
-                end
-                CheckChanged(index, b)
-                CheckChanges()
-            end,
-        }, {
-            ["text"] = L["Spell"],
-            ["onClick"] = function()
-                b.typeGrid:SetText(L["Spell"])
-                if clickCastingsTab.popupEditBox then clickCastingsTab.popupEditBox:Hide() end
-
-                changed[index] = changed[index] or {b}
-                -- check type
-                if b.bindType ~= "spell" then
-                    changed[index]["bindType"] = "spell"
-                    changed[index]["bindAction"] = ""
-                    b.actionGrid:SetText("")
                     b:HideIcon()
-                else
-                    changed[index]["bindType"] = nil
-                    changed[index]["bindAction"] = nil
-                    b.actionGrid:SetText(b.bindActionDisplay)
-                    b:ShowSpellIcon(b.bindAction)
                 end
                 CheckChanged(index, b)
                 CheckChanges()
@@ -1013,7 +1028,7 @@ local function ShowActionsMenu(index, b)
             },
         }
 
-    elseif bindType == "macrotext" then
+    elseif bindType == "custom" then
         items = {}
         tinsert(items, {
             ["text"] = L["Edit"],
@@ -1035,13 +1050,13 @@ local function ShowActionsMenu(index, b)
                 P:Height(peb, 20)
                 -- peb:SetPoint("BOTTOMRIGHT", b.actionGrid)
                 peb:SetTips("|cffababab"..L["Shift+Enter: add a new line"].."\n"..L["Enter: apply\nESC: discard"])
-                if b.bindType == "macrotext" then
+                if b.bindType == "custom" then
                     if changed[index] and changed[index]["bindAction"] then
                         peb:ShowEditBox(changed[index]["bindAction"])
                     else
                         peb:ShowEditBox(b.bindAction)
                     end
-                elseif changed[index] and changed[index]["bindType"] == "macrotext" then
+                elseif changed[index] and changed[index]["bindType"] == "custom" then
                     if changed[index]["bindAction"] then
                         peb:ShowEditBox(changed[index]["bindAction"])
                     else
@@ -1114,10 +1129,31 @@ local function ShowActionsMenu(index, b)
 
     elseif bindType == "item" then
         items = {}
+
+        for _, slot in ipairs({13, 14, 6, 9, 10}) do
+            tinsert(items, {
+                ["text"] = slotNames[slot],
+                ["onClick"] = function()
+                    changed[index] = changed[index] or {b}
+                    if b.bindAction ~= slot then
+                        changed[index]["bindAction"] = slot
+                    else
+                        changed[index]["bindAction"] = nil
+                    end
+                    b.actionGrid:SetText(slotNames[slot])
+                    b:ShowItemIcon(slot)
+                    CheckChanged(index, b)
+                    CheckChanges()
+                end,
+            })
+        end
+
         for slot = 1, 17 do
             local itemId = GetInventoryItemID("player", slot)
-            if itemId and C_Item.IsUsableItem(itemId) then
-                local text = GetInventoryItemLink("player", slot)
+            if itemId then -- and C_Item.IsUsableItem(itemId) then
+                local text = GetInventoryItemLink("player", slot) or ""
+                text = string.gsub(text, "[%[%]]", "")
+
                 tinsert(items, {
                     ["text"] = text,
                     ["icon"] = GetInventoryItemTexture("player", slot),
@@ -1128,8 +1164,8 @@ local function ShowActionsMenu(index, b)
                         else
                             changed[index]["bindAction"] = nil
                         end
-                        b.actionGrid:SetText(text)
-                        b:ShowItemIcon(b.bindAction)
+                        b.actionGrid:SetText(slotNames[slot])
+                        b:ShowItemIcon(slot)
                         CheckChanged(index, b)
                         CheckChanges()
                     end,
@@ -1433,8 +1469,13 @@ CreateBindingListButton = function(modifier, bindKey, bindType, bindAction, i)
             b:HideIcon()
         end
     elseif bindType == "item" then
-        b.bindActionDisplay = GetInventoryItemLink("player", bindAction)
-        b:ShowItemIcon(bindAction)
+        if bindAction ~= "" then
+            b.bindActionDisplay = slotNames[bindAction]
+            b:ShowItemIcon(bindAction)
+        else
+            b.bindActionDisplay = ""
+            b:HideIcon()
+        end
     elseif bindType == "macro" then
         -- NOTE: GetMacroInfo("name") seems no returns
         local name, icon = GetMacroInfo(GetMacroIndexByName(bindAction))
@@ -1444,7 +1485,7 @@ CreateBindingListButton = function(modifier, bindKey, bindType, bindAction, i)
             b.bindActionDisplay = "|cFFFF3030"..L["Invalid"]
         end
         b:ShowIcon(icon)
-    elseif bindType == "macrotext" then
+    elseif bindType == "custom" then
         b.bindActionDisplay = bindAction
         b:HideIcon()
         b.typeGrid:SetText(L["Custom"])

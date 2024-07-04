@@ -2993,6 +2993,20 @@ function F:Revise()
                 end
             end
         end
+
+        -- click-castings macro -> macrotext
+        local db = Cell.isRetail and CellDB["clickCastings"] or CellCharacterDB["clickCastings"]
+        for _, classT in pairs(db) do
+            for k, t in pairs(classT) do
+                if type(k) == "number" or k == "common" then
+                    for _, binding in pairs(t) do
+                        if binding[2] == "macro" and binding[3] and strfind(strtrim(binding[3]), "^[/#]") then
+                            binding[2] = "custom"
+                        end
+                    end
+                end
+            end
+        end
     end
 
     -- ----------------------------------------------------------------------- --
