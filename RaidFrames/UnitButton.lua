@@ -980,7 +980,7 @@ local function ResetDebuffVars(self)
     self._debuffs.resurrectionFound = false
     self._debuffs.raidDebuffsFound = false
     self._debuffs.crowdControlsFound = 0
-    self._debuffs.allFound = 0
+    -- self._debuffs.allFound = 0
 
     self.states.BGOrb = nil -- TODO: move to _debuffs
 end
@@ -1023,14 +1023,14 @@ local function HandleDebuffs(self, auraInfo, index)
             -- all debuffs / only dispellableByMe
             if not indicatorBooleans["debuffs"] or I.CanDispel(debuffType) then
                 -- debuffs, may contain topDebuff and cc
-                if self._debuffs.allFound <= indicatorNums["debuffs"]+indicatorNums["raidDebuffs"]+indicatorNums["crowdControls"] then
-                    self._debuffs.allFound = self._debuffs.allFound + 1
+                -- if self._debuffs.allFound <= indicatorNums["debuffs"]+indicatorNums["raidDebuffs"]+indicatorNums["crowdControls"] then
+                    -- self._debuffs.allFound = self._debuffs.allFound + 1
                     if Cell.vars.bigDebuffs[spellId] then
                         self._debuffs_big[auraInstanceID] = refreshing
                     else
                         self._debuffs_normal[auraInstanceID] = refreshing
                     end
-                end
+                -- end
             end
         end
 
@@ -1073,6 +1073,9 @@ local function HandleDebuffs(self, auraInfo, index)
             self._debuffs.crowdControlsFound = self._debuffs.crowdControlsFound + 1
             self._debuffs_cc[auraInstanceID] = true
             self.indicators.crowdControls[self._debuffs.crowdControlsFound]:SetCooldown(start, duration, debuffType, icon, count, refreshing)
+            -- remove from debuffs
+            self._debuffs_big[auraInstanceID] = nil
+            self._debuffs_normal[auraInstanceID] = nil
         end
 
         -- resurrections: 图腾复生/复生
@@ -1133,8 +1136,9 @@ local function UnitButton_UpdateDebuffs(self)
         local topGlowType, topGlowOptions
         -- for i = 1+offset, indicatorNums["raidDebuffs"] do
         for i = 1, indicatorNums["raidDebuffs"] do
-            if self._debuffs_raid[i] then -- self._debuffs_raid[i] -> auraInstanceID
-                local auraInfo = GetAuraDataByAuraInstanceID(unit, self._debuffs_raid[i])
+            local auraInstanceID = self._debuffs_raid[i]
+            if auraInstanceID then
+                local auraInfo = GetAuraDataByAuraInstanceID(unit, auraInstanceID)
                 if auraInfo then
                     self.indicators.raidDebuffs[i]:SetCooldown(
                         (auraInfo.expirationTime or 0) - auraInfo.duration,
@@ -1142,13 +1146,16 @@ local function UnitButton_UpdateDebuffs(self)
                         auraInfo.dispelName or "",
                         auraInfo.icon,
                         auraInfo.applications,
-                        self._debuffs_raid_refreshing[self._debuffs_raid[i]],
+                        self._debuffs_raid_refreshing[auraInstanceID],
                         I.IsDebuffUseElapsedTime(auraInfo.name, auraInfo.spellId)
                     )
-                    self.indicators.raidDebuffs[i].index = self._debuffs_indices[self._debuffs_raid[i]] -- NOTE: for tooltip
+                    self.indicators.raidDebuffs[i].index = self._debuffs_indices[auraInstanceID] -- NOTE: for tooltip
                     startIndex = startIndex + 1
                     -- store debuffs auraInstanceIDs shown by raidDebuffs indicator
-                    self._debuffs_raid_shown[self._debuffs_raid[i]] = true
+                    -- self._debuffs_raid_shown[auraInstanceID] = true
+                    -- remove from debuffs
+                    self._debuffs_big[auraInstanceID] = nil
+                    self._debuffs_normal[auraInstanceID] = nil
 
                     if i == 1 then -- top
                         topGlowType, topGlowOptions = I.GetDebuffGlow(auraInfo.name, auraInfo.spellId, auraInfo.applications)
@@ -1197,7 +1204,7 @@ local function UnitButton_UpdateDebuffs(self)
         -- bigDebuffs first
         for auraInstanceID, refreshing in pairs(self._debuffs_big) do
             local auraInfo = GetAuraDataByAuraInstanceID(unit, auraInstanceID)
-            if auraInfo and not (self._debuffs_raid_shown[auraInstanceID] or self._debuffs_cc[auraInstanceID]) and startIndex <= indicatorNums["debuffs"] then
+            if auraInfo and startIndex <= indicatorNums["debuffs"] then
                 -- start, duration, debuffType, texture, count
                 self.indicators.debuffs[startIndex]:SetCooldown((auraInfo.expirationTime or 0) - auraInfo.duration, auraInfo.duration, auraInfo.dispelName or "", auraInfo.icon, auraInfo.applications, refreshing, true)
                 self.indicators.debuffs[startIndex].index = self._debuffs_indices[auraInstanceID] -- NOTE: for tooltip
@@ -1208,7 +1215,7 @@ local function UnitButton_UpdateDebuffs(self)
         -- then normal debuffs
         for auraInstanceID, refreshing in pairs(self._debuffs_normal) do
             local auraInfo = GetAuraDataByAuraInstanceID(unit, auraInstanceID)
-            if auraInfo and not (self._debuffs_raid_shown[auraInstanceID] or self._debuffs_cc[auraInstanceID]) and startIndex <= indicatorNums["debuffs"] then
+            if auraInfo and startIndex <= indicatorNums["debuffs"] then
                 -- start, duration, debuffType, texture, count
                 self.indicators.debuffs[startIndex]:SetCooldown((auraInfo.expirationTime or 0) - auraInfo.duration, auraInfo.duration, auraInfo.dispelName or "", auraInfo.icon, auraInfo.applications, refreshing)
                 self.indicators.debuffs[startIndex].index = self._debuffs_indices[auraInstanceID] -- NOTE: for tooltip
@@ -1244,7 +1251,7 @@ local function UnitButton_UpdateDebuffs(self)
     wipe(self._debuffs_raid)
     wipe(self._debuffs_raid_refreshing)
     wipe(self._debuffs_raid_orders)
-    wipe(self._debuffs_raid_shown)
+    -- wipe(self._debuffs_raid_shown)
 end
 
 -------------------------------------------------
@@ -1420,7 +1427,7 @@ local function InitAuraTables(self)
     self._debuffs_raid = {} -- {id1, id2, ...}
     self._debuffs_raid_refreshing = {} -- [auraInstanceID] = refreshing
     self._debuffs_raid_orders = {} -- [auraInstanceID] = order
-    self._debuffs_raid_shown = {} -- [auraInstanceID] = true, currently shown by raidDebuffs indicator
+    -- self._debuffs_raid_shown = {} -- [auraInstanceID] = true, currently shown by raidDebuffs indicator
     self._debuffs_glow_current = {}
     self._debuffs_glow_cache = {}
 end
@@ -1440,7 +1447,7 @@ local function ResetAuraTables(self)
     wipe(self._debuffs_raid)
     wipe(self._debuffs_raid_refreshing)
     wipe(self._debuffs_raid_orders)
-    wipe(self._debuffs_raid_shown)
+    -- wipe(self._debuffs_raid_shown)
 
     -- raid debuffs glow
     wipe(self._debuffs_glow_current)
