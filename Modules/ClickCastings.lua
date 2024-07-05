@@ -392,6 +392,9 @@ local function GetBindingSnippet()
                     if k == [[\]] then
                         key = key:gsub([[\]], [[\\]])
                         bindingClicks[key] = [[self:SetBindingClick(true, "]]..strupper(m)..[[\\", self, "]]..key..[[")]]
+                    elseif k == [["]] then
+                        key = key:gsub([["]], [[\"]])
+                        bindingClicks[key] = [[self:SetBindingClick(true, "]]..strupper(m)..[[\"", self, "]]..key..[[")]]
                     else
                         bindingClicks[key] = [[self:SetBindingClick(true, "]]..strupper(m..k)..[[", self, "]]..key..[[")]]
                     end
