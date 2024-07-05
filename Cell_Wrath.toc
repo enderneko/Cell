@@ -1,8 +1,8 @@
-## Interface: 40400
+## Interface: 30403
 ## Title: Cell
 ## Version: r230-beta
 ## Author: enderneko
-## X-Flavor: Cata
+## X-Flavor: Wrath
 ## SavedVariables: CellDB
 ## SavedVariablesPerCharacter: CellCharacterDB
 
@@ -14,12 +14,12 @@ Locales\LoadLocales.xml
 
 Libs\LoadLibs_Classic.xml
 
-Core_Cata.lua
+Core_Wrath.lua
 Utils.lua
 Revise.lua
 Comm\LoadComm.xml
 Widgets\LoadWidgets_Classic.xml
-Defaults\LoadDefaults_Cata.xml
+Defaults\LoadDefaults_Wrath.xml
 
 HideBlizzard.lua
 
@@ -37,8 +37,8 @@ RaidFrames\MainFrame.lua
 
 RaidDebuffs\ExpansionData\LoadExpansionData.xml
 Modules\LoadModules_Classic.xml
-Utilities\LoadUtilities_Cata.xml
-RaidDebuffs\LoadRaidDebuffs_Cata.xml
+Utilities\LoadUtilities_Wrath.xml
+RaidDebuffs\LoadRaidDebuffs_Wrath.xml
 
 RaidFrames\UnitButton_Cata_Wrath.lua
 RaidFrames\UnitButton.xml

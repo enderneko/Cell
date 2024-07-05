@@ -94,7 +94,7 @@ if Cell.isCata then
         return which, Cell.vars.playerSpecIcon, Cell.vars.playerSpecName
     end
 
-elseif Cell.isVanilla then
+elseif Cell.isWrath or Cell.isVanilla then
     function F:GetActiveTalentInfo()
         local which = GetActiveTalentGroup() == 1 and L["Primary Talents"] or L["Secondary Talents"]
 
@@ -106,13 +106,13 @@ elseif Cell.isVanilla then
             if pointsSpent > maxPoints then
                 maxPoints = pointsSpent
                 specIcon = texture
-                specName = name
-            elseif pointsSpent == maxPoints then
-                specIcon = 132148
+                specName = fileName
+            -- elseif pointsSpent == maxPoints then
+            --     specIcon = 132148
             end
         end
 
-        return which, specIcon, specName
+        return which, specIcon or 134400, specName or L["No Spec"]
     end
 end
 
@@ -535,12 +535,13 @@ function F:TRemove(t, v)
 end
 
 function F:TMergeOverwrite(...)
-    local tbls = {...}
-    if #tbls == 0 then return {} end
+    local n = select("#", ...)
+    if n == 0 then return {} end
 
-    local temp = F:Copy(tbls[1])
-    for i = 2, #tbls do
-        for k, v in pairs(tbls[i]) do
+    local temp = F:Copy(...)
+    for i = 2, n do
+        local t = select(i, ...)
+        for k, v in pairs(t) do
             temp[k] = v
         end
     end
@@ -1487,7 +1488,7 @@ local friendSpells = {
     ["ROGUE"] = 2764,
     ["SHAMAN"] = Cell.isRetail and 8004 or 331,
     ["WARLOCK"] = 20707,
-    -- ["WARRIOR"] = ,
+    ["WARRIOR"] = 3411,
 }
 
 local deadSpells = {
@@ -1500,11 +1501,11 @@ local harmSpells = {
     ["DRUID"] = 5176,
     ["EVOKER"] = 361469,
     ["HUNTER"] = 75,
-    ["MAGE"] = 116,
+    ["MAGE"] = Cell.isRetail and 116 or 133,
     ["MONK"] = 117952,
     ["PALADIN"] = 20271,
     ["PRIEST"] = Cell.isRetail and 589 or 585,
-    -- ["ROGUE"] = ,
+    ["ROGUE"] = 114014,
     ["SHAMAN"] = Cell.isRetail and 188196 or 403,
     ["WARLOCK"] = 686,
     ["WARRIOR"] = 355,

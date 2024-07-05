@@ -1105,14 +1105,14 @@ local function CreateSetting_PowerFormat(parent)
                 end,
             },
             {
-                ["text"] = "2048",
+                ["text"] = "25000",
                 ["value"] = "number",
                 ["onClick"] = function()
                     widget.func("number")
                 end,
             },
             {
-                ["text"] = F:FormatNumber(2048),
+                ["text"] = F:FormatNumber(25000),
                 ["value"] = "number-short",
                 ["onClick"] = function()
                     widget.func("number-short")
@@ -1782,7 +1782,7 @@ local function CreateSetting_Colors(parent)
         end)
         percentCB:SetPoint("TOPLEFT", normalColor, "BOTTOMLEFT", 0, -8)
 
-        percentColor = addon:CreateColorPicker(widget, L["Remaining Time <"], true, function(r, g, b, a)
+        percentColor = addon:CreateColorPicker(widget, L["Remaining Time"].." <", true, function(r, g, b, a)
             widget.colorsTable[2][3][1] = r
             widget.colorsTable[2][3][2] = g
             widget.colorsTable[2][3][3] = b
@@ -1799,7 +1799,7 @@ local function CreateSetting_Colors(parent)
         end)
         secCB:SetPoint("TOPLEFT", percentCB, "BOTTOMLEFT", 0, -8)
 
-        secColor = addon:CreateColorPicker(widget, L["Remaining Time <"], true, function(r, g, b, a)
+        secColor = addon:CreateColorPicker(widget, L["Remaining Time"].." <", true, function(r, g, b, a)
             widget.colorsTable[3][3][1] = r
             widget.colorsTable[3][3][2] = g
             widget.colorsTable[3][3][3] = b
@@ -1944,6 +1944,333 @@ local function CreateSetting_Colors(parent)
     return widget
 end
 
+local function CreateSetting_BlockColors(parent)
+    local widget
+
+    if not settingWidgets["blockColors"] then
+        widget = addon:CreateFrame("CellIndicatorSettings_BlockColors", parent, 240, 136)
+        settingWidgets["blockColors"] = widget
+
+        -- colorBy
+        local colorBy = addon:CreateDropdown(widget, 260)
+        colorBy:SetPoint("TOPLEFT", 5, -20)
+
+        colorByText = widget:CreateFontString(nil, "OVERLAY", font_name)
+        colorByText:SetText(L["Color By"])
+        colorByText:SetPoint("BOTTOMLEFT", colorBy, "TOPLEFT", 0, 1)
+
+        local normalColor = addon:CreateColorPicker(widget, L["Normal"], true, function(r, g, b, a)
+            widget.colorsTable[2][1] = r
+            widget.colorsTable[2][2] = g
+            widget.colorsTable[2][3] = b
+            widget.colorsTable[2][4] = a
+            widget.func(widget.colorsTable)
+        end)
+        normalColor:SetPoint("TOPLEFT", colorBy, "BOTTOMLEFT", 0, -8)
+
+        -- duration pane --------------------------------------------------------------------------
+        local durationPane = CreateFrame("Frame", nil, widget)
+        P:Size(durationPane, 260, 36)
+        durationPane:SetPoint("TOPLEFT", normalColor, "BOTTOMLEFT", 0, -8)
+
+        local percentColor, percentDropdown
+
+        local percentCB = addon:CreateCheckButton(durationPane, "", function(checked)
+            widget.colorsTable[3][1] = checked
+            addon:SetEnabled(checked, percentColor, percentDropdown)
+        end)
+        percentCB:SetPoint("TOPLEFT")
+
+        percentColor = addon:CreateColorPicker(durationPane, L["Remaining Time"].." <", true, function(r, g, b, a)
+            widget.colorsTable[3][3][1] = r
+            widget.colorsTable[3][3][2] = g
+            widget.colorsTable[3][3][3] = b
+            widget.colorsTable[3][3][4] = a
+            widget.func(widget.colorsTable)
+        end)
+        percentColor:SetPoint("TOPLEFT", percentCB, "TOPRIGHT", 2, 0)
+
+        local secColor, secEditBox, secText
+
+        local secCB = addon:CreateCheckButton(durationPane, "", function(checked)
+            widget.colorsTable[3][1] = checked
+            addon:SetEnabled(checked, secColor, secEditBox, secText)
+        end)
+        secCB:SetPoint("TOPLEFT", percentCB, "BOTTOMLEFT", 0, -8)
+
+        secColor = addon:CreateColorPicker(durationPane, L["Remaining Time"].." <", true, function(r, g, b, a)
+            widget.colorsTable[4][3][1] = r
+            widget.colorsTable[4][3][2] = g
+            widget.colorsTable[4][3][3] = b
+            widget.colorsTable[4][3][4] = a
+            widget.func(widget.colorsTable)
+        end)
+        secColor:SetPoint("TOPLEFT", secCB, "TOPRIGHT", 2, 0)
+
+        percentDropdown = addon:CreateDropdown(durationPane, 60)
+        percentDropdown:SetPoint("LEFT", percentColor.label, "RIGHT", 5, 0)
+        percentDropdown:SetItems({
+            {
+                ["text"] = "75%",
+                ["value"] = 0.75,
+                ["onClick"] = function()
+                    widget.colorsTable[2][2] = 0.75
+                    widget.func(widget.colorsTable)
+                end,
+            },
+            {
+                ["text"] = "50%",
+                ["value"] = 0.5,
+                ["onClick"] = function()
+                    widget.colorsTable[2][2] = 0.5
+                    widget.func(widget.colorsTable)
+                end,
+            },
+            {
+                ["text"] = "30%",
+                ["value"] = 0.3,
+                ["onClick"] = function()
+                    widget.colorsTable[2][2] = 0.3
+                    widget.func(widget.colorsTable)
+                end,
+            },
+            {
+                ["text"] = "25%",
+                ["value"] = 0.25,
+                ["onClick"] = function()
+                    widget.colorsTable[2][2] = 0.25
+                    widget.func(widget.colorsTable)
+                end,
+            },
+        })
+
+        secEditBox = addon:CreateEditBox(durationPane, 43, 20, false, false, true)
+        secEditBox:SetPoint("LEFT", secColor.label, "RIGHT", 5, 0)
+        secEditBox:SetMaxLetters(4)
+
+        secEditBox.confirmBtn = addon:CreateButton(durationPane, "OK", "accent", {27, 20})
+        secEditBox.confirmBtn:SetPoint("LEFT", secEditBox, "RIGHT", -1, 0)
+        secEditBox.confirmBtn:Hide()
+        secEditBox.confirmBtn:SetScript("OnHide", function()
+            secEditBox.confirmBtn:Hide()
+        end)
+        secEditBox.confirmBtn:SetScript("OnClick", function()
+            local newSec = tonumber(secEditBox:GetText())
+            widget.colorsTable[3][2] = newSec
+            secEditBox:SetText(newSec)
+            secEditBox:ClearFocus()
+            secEditBox.confirmBtn:Hide()
+            widget.func(widget.colorsTable)
+        end)
+
+        secEditBox:SetScript("OnTextChanged", function(self, userChanged)
+            if userChanged then
+                local newSec = tonumber(self:GetText())
+                if newSec and newSec ~= widget.colorsTable[3][2] then
+                    secEditBox.confirmBtn:Show()
+                else
+                    secEditBox.confirmBtn:Hide()
+                end
+            end
+        end)
+
+        secText = durationPane:CreateFontString(nil, "OVERLAY", font_name)
+        secText:SetPoint("LEFT", secEditBox, "RIGHT", 5, 0)
+        secText:SetText(L["sec"])
+
+        -- stack pane -----------------------------------------------------------------------------
+        local stackPane = CreateFrame("Frame", nil, widget)
+        P:Size(stackPane, 260, 36)
+        stackPane:SetPoint("TOPLEFT", normalColor, "BOTTOMLEFT", 0, -8)
+
+        local stackColor1, stackEB1
+
+        local stackCB1 = addon:CreateCheckButton(stackPane, "", function(checked)
+            widget.colorsTable[3][1] = checked
+            addon:SetEnabled(checked, stackColor1, stackEB1)
+            widget.func(widget.colorsTable)
+        end)
+        stackCB1:SetPoint("TOPLEFT")
+
+        stackColor1 = addon:CreateColorPicker(stackPane, L["Stack"].." >=", true, function(r, g, b, a)
+            widget.colorsTable[3][3][1] = r
+            widget.colorsTable[3][3][2] = g
+            widget.colorsTable[3][3][3] = b
+            widget.colorsTable[3][3][4] = a
+            widget.func(widget.colorsTable)
+        end)
+        stackColor1:SetPoint("TOPLEFT", stackCB1, "TOPRIGHT", 2, 0)
+
+        local stackColor2, stackEB2
+
+        local stackCB2 = addon:CreateCheckButton(stackPane, "", function(checked)
+            widget.colorsTable[4][1] = checked
+            addon:SetEnabled(checked, stackColor2, stackEB2)
+            widget.func(widget.colorsTable)
+        end)
+        stackCB2:SetPoint("TOPLEFT", stackCB1, "BOTTOMLEFT", 0, -8)
+
+        stackColor2 = addon:CreateColorPicker(stackPane, L["Stack"].." >=", true, function(r, g, b, a)
+            widget.colorsTable[4][3][1] = r
+            widget.colorsTable[4][3][2] = g
+            widget.colorsTable[4][3][3] = b
+            widget.colorsTable[4][3][4] = a
+            widget.func(widget.colorsTable)
+        end)
+        stackColor2:SetPoint("TOPLEFT", stackCB2, "TOPRIGHT", 2, 0)
+
+        stackEB1 = addon:CreateEditBox(stackPane, 43, 20, false, false, true)
+        stackEB1:SetPoint("LEFT", stackColor1.label, "RIGHT", 5, 0)
+        stackEB1:SetMaxLetters(3)
+
+        stackEB1.confirmBtn = addon:CreateButton(stackPane, "OK", "accent", {27, 20})
+        stackEB1.confirmBtn:SetPoint("LEFT", stackEB1, "RIGHT", -1, 0)
+        stackEB1.confirmBtn:Hide()
+        stackEB1.confirmBtn:SetScript("OnHide", function()
+            stackEB1.confirmBtn:Hide()
+        end)
+        stackEB1.confirmBtn:SetScript("OnClick", function()
+            local newStack = tonumber(stackEB1:GetText())
+            widget.colorsTable[3][2] = newStack
+            stackEB1:SetText(newStack)
+            stackEB1:ClearFocus()
+            stackEB1.confirmBtn:Hide()
+            widget.func(widget.colorsTable)
+        end)
+
+        stackEB1:SetScript("OnTextChanged", function(self, userChanged)
+            if userChanged then
+                local newStack = tonumber(self:GetText())
+                if newStack and newStack ~= widget.colorsTable[3][2] then
+                    stackEB1.confirmBtn:Show()
+                else
+                    stackEB1.confirmBtn:Hide()
+                end
+            end
+        end)
+
+        stackEB2 = addon:CreateEditBox(stackPane, 43, 20, false, false, true)
+        stackEB2:SetPoint("LEFT", stackColor2.label, "RIGHT", 5, 0)
+        stackEB2:SetMaxLetters(3)
+
+        stackEB2.confirmBtn = addon:CreateButton(stackPane, "OK", "accent", {27, 20})
+        stackEB2.confirmBtn:SetPoint("LEFT", stackEB2, "RIGHT", -1, 0)
+        stackEB2.confirmBtn:Hide()
+        stackEB2.confirmBtn:SetScript("OnHide", function()
+            stackEB2.confirmBtn:Hide()
+        end)
+        stackEB2.confirmBtn:SetScript("OnClick", function()
+            local newStack = tonumber(stackEB2:GetText())
+            widget.colorsTable[4][2] = newStack
+            stackEB2:SetText(newStack)
+            stackEB2:ClearFocus()
+            stackEB2.confirmBtn:Hide()
+            widget.func(widget.colorsTable)
+        end)
+
+        stackEB2:SetScript("OnTextChanged", function(self, userChanged)
+            if userChanged then
+                local newStack = tonumber(self:GetText())
+                if newStack and newStack ~= widget.colorsTable[4][2] then
+                    stackEB2.confirmBtn:Show()
+                else
+                    stackEB2.confirmBtn:Hide()
+                end
+            end
+        end)
+
+        -- control
+        colorBy:SetItems({
+            {
+                ["text"] = L["Duration"],
+                ["value"] = "duration",
+                ["onClick"] = function()
+                    if widget.colorsTable[1] == "duration" then return end
+                    durationPane:Show()
+                    stackPane:Hide()
+                    widget.colorsTable[1] = "duration"
+                    widget.colorsTable[3][1] = false
+                    widget.colorsTable[4][1] = false
+                    widget.colorsTable[3][2] = 0.5
+                    widget.colorsTable[4][2] = 3
+                    widget.func(widget.colorsTable)
+                    widget:SetDBValue(widget.colorsTable)
+                end,
+            },
+            {
+                ["text"] = L["Stack"],
+                ["value"] = "stack",
+                ["onClick"] = function()
+                    if widget.colorsTable[1] == "stack" then return end
+                    durationPane:Hide()
+                    stackPane:Show()
+                    widget.colorsTable[1] = "stack"
+                    widget.colorsTable[3][1] = false
+                    widget.colorsTable[4][1] = false
+                    widget.colorsTable[3][2] = 2
+                    widget.colorsTable[4][2] = 3
+                    widget.func(widget.colorsTable)
+                    widget:SetDBValue(widget.colorsTable)
+                end,
+            },
+        })
+
+        -- border color
+        local borderColor = addon:CreateColorPicker(widget, L["Border Color"], true, function(r, g, b, a)
+            widget.colorsTable[5][1] = r
+            widget.colorsTable[5][2] = g
+            widget.colorsTable[5][3] = b
+            widget.colorsTable[5][4] = a
+            widget.func(widget.colorsTable)
+        end)
+        borderColor:SetPoint("TOPLEFT", stackPane, "BOTTOMLEFT", 0, -8)
+
+        -- callback
+        function widget:SetFunc(func)
+            widget.func = func
+        end
+
+        -- show db value
+        function widget:SetDBValue(colorsTable)
+            widget.colorsTable = colorsTable
+
+            colorBy:SetSelectedValue(colorsTable[1])
+            if colorsTable[1] == "duration" then
+                durationPane:Show()
+                stackPane:Hide()
+            else
+                durationPane:Hide()
+                stackPane:Show()
+            end
+
+            normalColor:SetColor(colorsTable[2])
+            borderColor:SetColor(colorsTable[5])
+
+            addon:SetEnabled(colorsTable[3][1], percentColor, percentDropdown, stackColor1, stackEB1)
+            addon:SetEnabled(colorsTable[4][1], secColor, secEditBox, secText, stackColor2, stackEB2)
+
+            percentCB:SetChecked(colorsTable[3][1])
+            percentColor:SetColor(colorsTable[3][3])
+            percentDropdown:SetSelectedValue(colorsTable[3][2])
+            secCB:SetChecked(colorsTable[4][1])
+            secColor:SetColor(colorsTable[4][3])
+            secEditBox:SetText(colorsTable[4][2])
+
+            stackCB1:SetChecked(colorsTable[3][1])
+            stackColor1:SetColor(colorsTable[3][3])
+            stackEB1:SetText(colorsTable[3][2])
+            stackCB2:SetChecked(colorsTable[4][1])
+            stackColor2:SetColor(colorsTable[4][3])
+            stackEB2:SetText(colorsTable[4][2])
+        end
+    else
+        widget = settingWidgets["blockColors"]
+    end
+
+    widget:Show()
+    return widget
+end
+
 local function CreateSetting_OverlayColors(parent)
     local widget
 
@@ -1969,7 +2296,7 @@ local function CreateSetting_OverlayColors(parent)
         end)
         percentCB:SetPoint("TOPLEFT", normalColor, "BOTTOMLEFT", 0, -8)
 
-        percentColor = addon:CreateColorPicker(widget, L["Remaining Time <"], true, function(r, g, b, a)
+        percentColor = addon:CreateColorPicker(widget, L["Remaining Time"].." <", true, function(r, g, b, a)
             widget.colorsTable[2][3][1] = r
             widget.colorsTable[2][3][2] = g
             widget.colorsTable[2][3][3] = b
@@ -1987,7 +2314,7 @@ local function CreateSetting_OverlayColors(parent)
         end)
         secCB:SetPoint("TOPLEFT", percentCB, "BOTTOMLEFT", 0, -8)
 
-        secColor = addon:CreateColorPicker(widget, L["Remaining Time <"], true, function(r, g, b, a)
+        secColor = addon:CreateColorPicker(widget, L["Remaining Time"].." <", true, function(r, g, b, a)
             widget.colorsTable[3][3][1] = r
             widget.colorsTable[3][3][2] = g
             widget.colorsTable[3][3][3] = b
@@ -2280,7 +2607,7 @@ local function CreateSetting_CustomColors(parent)
         end)
         normalColor:SetPoint("TOPLEFT")
 
-        local percentColor = addon:CreateColorPicker(widget.cotFrame, L["Remaining Time <"], true, function(r, g, b, a)
+        local percentColor = addon:CreateColorPicker(widget.cotFrame, L["Remaining Time"].." <", true, function(r, g, b, a)
             widget.colorsTable[5][2][1] = r
             widget.colorsTable[5][2][2] = g
             widget.colorsTable[5][2][3] = b
@@ -2289,7 +2616,7 @@ local function CreateSetting_CustomColors(parent)
         end)
         percentColor:SetPoint("TOPLEFT", normalColor, "BOTTOMLEFT", 0, -8)
 
-        local secColor = addon:CreateColorPicker(widget.cotFrame, L["Remaining Time <"], true, function(r, g, b, a)
+        local secColor = addon:CreateColorPicker(widget.cotFrame, L["Remaining Time"].." <", true, function(r, g, b, a)
             widget.colorsTable[6][2][1] = r
             widget.colorsTable[6][2][2] = g
             widget.colorsTable[6][2][3] = b
@@ -2880,7 +3207,7 @@ local function CreateSetting_Duration(parent)
 
         widget.durationDecimalText2 = widget:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
         widget.durationDecimalText2:SetPoint("TOPLEFT", widget.durationDecimalText1, "BOTTOMLEFT", 0, -5)
-        widget.durationDecimalText2:SetText(L["Remaining Time <"])
+        widget.durationDecimalText2:SetText(L["Remaining Time"].." <")
 
         widget.durationDecimalDropdown = addon:CreateDropdown(widget, 60)
         widget.durationDecimalDropdown:SetPoint("LEFT", widget.durationDecimalText2, "RIGHT", 5, 0)
@@ -3743,6 +4070,7 @@ local function GetExportString(t)
     local s = ""
     local n = 0
     for i, id in ipairs(t) do
+        if type(id) == "table" then id = id[1] end
         local name = F:GetSpellNameAndIcon(id)
         if name then
             s = s .. (i == 1 and "" or "\n") .. id .. ", -- " .. name
@@ -3768,7 +4096,7 @@ local function CreateSetting_Auras(parent, index)
             auraImportExportFrame:SetParent(auraImportExportFrame.parent)
             auraImportExportFrame:SetPoint("TOPLEFT")
             auraImportExportFrame:SetPoint("TOPRIGHT")
-            auraImportExportFrame:SetFrameLevel(auraImportExportFrame.parent:GetFrameLevel()+10)
+            auraImportExportFrame:SetToplevel(true)
             auraImportExportFrame:Show()
         end
 
@@ -3857,6 +4185,10 @@ local function CreateSetting_Auras(parent, index)
             auraImportExportFrame.textArea:SetText(auraImportExportFrame.exported)
             auraImportExportFrame.importBtn:Hide()
             auraImportExportFrame:ShowUp()
+            -- hide editbox
+            if widget.frame.popupEditBox then
+                widget.frame.popupEditBox:Hide()
+            end
         end)
 
         widget.import = addon:CreateButton(widget, nil, "accent-hover", {21, 17}, nil, nil, nil, nil, nil, L["Import"])
@@ -3870,6 +4202,10 @@ local function CreateSetting_Auras(parent, index)
             auraImportExportFrame.importBtn:Show()
             auraImportExportFrame.importBtn:SetEnabled(false)
             auraImportExportFrame:ShowUp()
+            -- hide editbox
+            if widget.frame.popupEditBox then
+                widget.frame.popupEditBox:Hide()
+            end
         end)
 
         widget.clear = addon:CreateButton(widget, nil, "accent-hover", {21, 17}, nil, nil, nil, nil, nil, L["Clear"], "|cffffb5c5Ctrl+"..L["Left-Click"])
@@ -3884,6 +4220,10 @@ local function CreateSetting_Auras(parent, index)
                 addon:UpdateIndicatorSettingsHeight()
                 -- event
                 widget.frame.func(widget.t)
+                -- hide editbox
+                if widget.frame.popupEditBox then
+                    widget.frame.popupEditBox:Hide()
+                end
             end
         end)
 
@@ -5422,6 +5762,77 @@ local function CreateSetting_TargetCounterFilters(parent)
     return widget
 end
 
+local function CreateSetting_DispelFilters(parent)
+    local widget
+
+    if not settingWidgets["dispelFilters"] then
+        widget = addon:CreateFrame("CellIndicatorSettings_DispelFilters", parent, 240, 96)
+        settingWidgets["dispelFilters"] = widget
+
+        widget.dispellableByMe = addon:CreateCheckButton(widget, L["dispellableByMe"])
+        widget.dispellableByMe:SetPoint("TOPLEFT", 5, -8)
+
+        widget.curse = addon:CreateCheckButton(widget, "|TInterface\\AddOns\\Cell\\Media\\Debuffs\\Curse:0|t"..L["Curse"])
+        widget.curse:SetPoint("TOPLEFT", widget.dispellableByMe, "BOTTOMLEFT", 0, -8)
+
+        widget.disease = addon:CreateCheckButton(widget, "|TInterface\\AddOns\\Cell\\Media\\Debuffs\\Disease:0|t"..L["Disease"])
+        widget.disease:SetPoint("TOPLEFT", widget.curse, 135, 0)
+
+        widget.magic = addon:CreateCheckButton(widget, "|TInterface\\AddOns\\Cell\\Media\\Debuffs\\Magic:0|t"..L["Magic"])
+        widget.magic:SetPoint("TOPLEFT", widget.curse, "BOTTOMLEFT", 0, -8)
+
+        widget.poison = addon:CreateCheckButton(widget, "|TInterface\\AddOns\\Cell\\Media\\Debuffs\\Poison:0|t"..L["Poison"])
+        widget.poison:SetPoint("TOPLEFT", widget.magic, 135, 0)
+
+        widget.bleed = addon:CreateCheckButton(widget, "|TInterface\\AddOns\\Cell\\Media\\Debuffs\\Bleed:0|t"..L["Bleed"])
+        widget.bleed:SetPoint("TOPLEFT", widget.magic, "BOTTOMLEFT", 0, -8)
+
+        -- callback
+        function widget:SetFunc(func)
+            widget.dispellableByMe.onClick = function(checked)
+                widget.filters.dispellableByMe = checked
+                func()
+            end
+            widget.curse.onClick = function(checked)
+                widget.filters.Curse = checked
+                func()
+            end
+            widget.disease.onClick = function(checked)
+                widget.filters.Disease = checked
+                func()
+            end
+            widget.magic.onClick = function(checked)
+                widget.filters.Magic = checked
+                func()
+            end
+            widget.poison.onClick = function(checked)
+                widget.filters.Poison = checked
+                func()
+            end
+            widget.bleed.onClick = function(checked)
+                widget.filters.Bleed = checked
+                func()
+            end
+        end
+
+        -- show db value
+        function widget:SetDBValue(filters)
+            widget.filters = filters
+            widget.dispellableByMe:SetChecked(filters.dispellableByMe)
+            widget.curse:SetChecked(filters.Curse)
+            widget.disease:SetChecked(filters.Disease)
+            widget.magic:SetChecked(filters.Magic)
+            widget.poison:SetChecked(filters.Poison)
+            widget.bleed:SetChecked(filters.Bleed)
+        end
+    else
+        widget = settingWidgets["dispelFilters"]
+    end
+
+    widget:Show()
+    return widget
+end
+
 local function CreateSetting_CastBy(parent)
     local widget
 
@@ -5562,6 +5973,59 @@ end
 -----------------------------------------
 -- create
 -----------------------------------------
+local builders = {
+    ["enabled"] = CreateSetting_Enabled,
+    ["vehicleNamePosition"] = CreateSetting_VehicleNamePosition,
+    ["statusPosition"] = CreateSetting_StatusPosition,
+    ["shieldBarPosition"] = CreateSetting_ShieldBarPosition,
+    ["anchor"] = CreateSetting_Anchor,
+    ["size"] = CreateSetting_Size,
+    ["size-normal-big"] = CreateSetting_SizeNormalBig,
+    ["size-square"] = CreateSetting_SizeSquare,
+    ["size-bar"] = CreateSetting_SizeBar,
+    ["size-border"] = CreateSetting_SizeAndBorder,
+    ["spacing"] = CreateSetting_Spacing,
+    ["thickness"] = CreateSetting_Thickness,
+    ["height"] = CreateSetting_Height,
+    ["textWidth"] = CreateSetting_TextWidth,
+    ["alpha"] = CreateSetting_Alpha,
+    ["healthFormat"] = CreateSetting_HealthFormat,
+    ["powerFormat"] = CreateSetting_PowerFormat,
+    ["durationVisibility"] = CreateSetting_DurationVisibility,
+    ["orientation"] = CreateSetting_Orientation,
+    ["barOrientation"] = CreateSetting_BarOrientation,
+    ["font-noOffset"] = CreateSetting_FontNoOffset,
+    ["color"] = CreateSetting_Color,
+    ["color-alpha"] = CreateSetting_ColorAlpha,
+    ["colors"] = CreateSetting_Colors,
+    ["blockColors"] = CreateSetting_BlockColors,
+    ["overlayColors"] = CreateSetting_OverlayColors,
+    ["customColors"] = CreateSetting_CustomColors,
+    ["color-class"] = CreateSetting_ClassColor,
+    ["color-power"] = CreateSetting_PowerColor,
+    ["statusColors"] = CreateSetting_StatusColors,
+    ["duration"] = CreateSetting_Duration,
+    ["roleTexture"] = CreateSetting_RoleTexture,
+    ["glow"] = CreateSetting_Glow,
+    ["glowOptions"] = CreateSetting_Glow,
+    ["targetedSpellsGlow"] = CreateSetting_Glow,
+    ["texture"] = CreateSetting_Texture,
+    ["builtInDefensives"] = CreateSetting_BuiltIns,
+    ["builtInExternals"] = CreateSetting_BuiltIns,
+    ["builtInCrowdControls"] = CreateSetting_BuiltIns,
+    ["actionsPreview"] = CreateSetting_ActionsPreview,
+    ["actionsList"] = CreateSetting_ActionsList,
+    ["highlightType"] = CreateSetting_HighlightType,
+    ["thresholds"] = CreateSetting_Thresholds,
+    ["privateAuraOptions"] = CreateSetting_PrivateAuraOptions,
+    ["shape"] = CreateSetting_Shape,
+    ["missingBuffsFilters"] = CreateSetting_MissingBuffsFilters,
+    ["targetCounterFilters"] = CreateSetting_TargetCounterFilters,
+    ["dispelFilters"] = CreateSetting_DispelFilters,
+    ["castBy"] = CreateSetting_CastBy,
+    ["showOn"] = CreateSetting_ShowOn,
+}
+
 function addon:CreateIndicatorSettings(parent, settingsTable)
     settingsParent = parent
 
@@ -5575,122 +6039,36 @@ function addon:CreateIndicatorSettings(parent, settingsTable)
 
     -- return and show
     for _, setting in pairs(settingsTable) do
-        if setting == "enabled" then
-            tinsert(widgetsTable, CreateSetting_Enabled(parent))
+        if builders[setting] then
+            tinsert(widgetsTable, builders[setting](parent))
         elseif setting == "position" then
             tinsert(widgetsTable, CreateSetting_Position(parent, L["To UnitButton's"]))
         elseif setting == "position-noHCenter" then
             tinsert(widgetsTable, CreateSetting_PositionNoHCenter(parent, L["To UnitButton's"]))
         elseif setting == "namePosition" then
             tinsert(widgetsTable, CreateSetting_Position(parent, L["To HealthBar's"]))
-        elseif setting == "vehicleNamePosition" then
-            tinsert(widgetsTable, CreateSetting_VehicleNamePosition(parent))
-        elseif setting == "statusPosition" then
-            tinsert(widgetsTable, CreateSetting_StatusPosition(parent))
-        elseif setting == "shieldBarPosition" then
-            tinsert(widgetsTable, CreateSetting_ShieldBarPosition(parent))
-        elseif setting == "anchor" then
-            tinsert(widgetsTable, CreateSetting_Anchor(parent))
         elseif strfind(setting, "^frameLevel") then
             tinsert(widgetsTable, CreateSetting_FrameLevel(parent))
-        elseif setting == "size" then
-            tinsert(widgetsTable, CreateSetting_Size(parent))
-        elseif setting == "size-normal-big" then
-            tinsert(widgetsTable, CreateSetting_SizeNormalBig(parent))
-        elseif setting == "size-square" then
-            tinsert(widgetsTable, CreateSetting_SizeSquare(parent))
-        elseif setting == "size-bar" then
-            tinsert(widgetsTable, CreateSetting_SizeBar(parent))
-        elseif setting == "size-border" then
-            tinsert(widgetsTable, CreateSetting_SizeAndBorder(parent))
-        elseif setting == "spacing" then
-            tinsert(widgetsTable, CreateSetting_Spacing(parent))
-        elseif setting == "thickness" then
-            tinsert(widgetsTable, CreateSetting_Thickness(parent))
-        elseif setting == "height" then
-            tinsert(widgetsTable, CreateSetting_Height(parent))
-        elseif setting == "textWidth" then
-            tinsert(widgetsTable, CreateSetting_TextWidth(parent))
-        elseif setting == "alpha" then
-            tinsert(widgetsTable, CreateSetting_Alpha(parent))
         elseif string.find(setting, "^num:") then
             tinsert(widgetsTable, CreateSetting_Num(parent))
         elseif string.find(setting, "^numPerLine:") then
             tinsert(widgetsTable, CreateSetting_NumPerLine(parent))
-        elseif setting == "healthFormat" then
-            tinsert(widgetsTable, CreateSetting_HealthFormat(parent))
-        elseif setting == "powerFormat" then
-            tinsert(widgetsTable, CreateSetting_PowerFormat(parent))
-        elseif setting == "durationVisibility" then
-            tinsert(widgetsTable, CreateSetting_DurationVisibility(parent))
-        elseif setting == "orientation" then
-            tinsert(widgetsTable, CreateSetting_Orientation(parent))
-        elseif setting == "barOrientation" then
-            tinsert(widgetsTable, CreateSetting_BarOrientation(parent))
-        elseif setting == "font-noOffset" then
-            tinsert(widgetsTable, CreateSetting_FontNoOffset(parent))
         elseif string.find(setting, "^font") then
             tinsert(widgetsTable, CreateSetting_Font(parent, string.match(setting, "^(font%d?):?.*$")))
-        elseif setting == "color" then
-            tinsert(widgetsTable, CreateSetting_Color(parent))
-        elseif setting == "color-alpha" then
-            tinsert(widgetsTable, CreateSetting_ColorAlpha(parent))
-        elseif setting == "colors" then
-            tinsert(widgetsTable, CreateSetting_Colors(parent))
-        elseif setting == "overlayColors" then
-            tinsert(widgetsTable, CreateSetting_OverlayColors(parent))
-        elseif setting == "customColors" then
-            tinsert(widgetsTable, CreateSetting_CustomColors(parent))
-        elseif setting == "color-class" then
-            tinsert(widgetsTable, CreateSetting_ClassColor(parent))
-        elseif setting == "color-power" then
-            tinsert(widgetsTable, CreateSetting_PowerColor(parent))
-        elseif setting == "statusColors" then
-            tinsert(widgetsTable, CreateSetting_StatusColors(parent))
-        elseif string.find(setting, "checkbutton4") then
+        elseif string.find(setting, "^checkbutton4") then
             tinsert(widgetsTable, CreateSetting_CheckButton4(parent))
-        elseif string.find(setting, "checkbutton3") then
+        elseif string.find(setting, "^checkbutton3") then
             tinsert(widgetsTable, CreateSetting_CheckButton3(parent))
-        elseif string.find(setting, "checkbutton2") then
+        elseif string.find(setting, "^checkbutton2") then
             tinsert(widgetsTable, CreateSetting_CheckButton2(parent))
-        elseif string.find(setting, "checkbutton") then
+        elseif string.find(setting, "^checkbutton") then
             tinsert(widgetsTable, CreateSetting_CheckButton(parent))
-        elseif setting == "duration" then
-            tinsert(widgetsTable, CreateSetting_Duration(parent))
-        elseif setting == "roleTexture" then
-            tinsert(widgetsTable, CreateSetting_RoleTexture(parent))
-        elseif setting == "glow" or setting == "glowOptions" or setting == "targetedSpellsGlow" then
-            tinsert(widgetsTable, CreateSetting_Glow(parent))
-        elseif setting == "texture" then
-            tinsert(widgetsTable, CreateSetting_Texture(parent))
         elseif setting == "auras" or setting == "debuffBlacklist" or setting == "dispelBlacklist" or setting == "targetedSpellsList" or setting == "customDefensives" or setting == "customExternals" or setting == "customCrowdControls" then
             tinsert(widgetsTable, CreateSetting_Auras(parent, 1))
         elseif setting == "auras2" or setting == "bigDebuffs" then
             tinsert(widgetsTable, CreateSetting_Auras(parent, 2))
         -- elseif setting == "cleuAuras" then
         --     tinsert(widgetsTable, CreateSetting_CleuAuras(parent))
-        elseif setting == "builtInDefensives" or setting == "builtInExternals" or setting == "builtInCrowdControls" then
-            tinsert(widgetsTable, CreateSetting_BuiltIns(parent))
-        elseif setting == "actionsPreview" then
-            tinsert(widgetsTable, CreateSetting_ActionsPreview(parent))
-        elseif setting == "actionsList" then
-            tinsert(widgetsTable, CreateSetting_ActionsList(parent))
-        elseif setting == "highlightType" then
-            tinsert(widgetsTable, CreateSetting_HighlightType(parent))
-        elseif setting == "thresholds" then
-            tinsert(widgetsTable, CreateSetting_Thresholds(parent))
-        elseif setting == "privateAuraOptions" then
-            tinsert(widgetsTable, CreateSetting_PrivateAuraOptions(parent))
-        elseif setting == "shape" then
-            tinsert(widgetsTable, CreateSetting_Shape(parent))
-        elseif setting == "missingBuffsFilters" then
-            tinsert(widgetsTable, CreateSetting_MissingBuffsFilters(parent))
-        elseif setting == "targetCounterFilters" then
-            tinsert(widgetsTable, CreateSetting_TargetCounterFilters(parent))
-        elseif setting == "castBy" then
-            tinsert(widgetsTable, CreateSetting_CastBy(parent))
-        elseif setting == "showOn" then
-            tinsert(widgetsTable, CreateSetting_ShowOn(parent))
         else -- tips
             tinsert(widgetsTable, CreateSetting_Tips(parent, setting))
         end

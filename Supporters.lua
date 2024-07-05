@@ -33,7 +33,14 @@ local supporters1 = { -- wowIDs
     {"Synthatt-Illidan (US)"}, -- Synthatt (Ko-fi)
     {"Holystora-Antonidas (EU)"}, -- devo (Ko-fi)
     {"Tithaya-Kel'Thuzad (US)"}, -- tithaya (Ko-fi)
-    {"Everessian-Ravencrest (EU)"}, -- Martin van Vuuren (Ko-fi)
+    {
+        "Everessian-Ravencrest (EU)",
+        "Thornar-Ravencrest (EU)",
+        "Shylanelle-Ravencrest (EU)",
+        "Alenlin-Ravencrest (EU)",
+        "Kulresh-Ravencrest (EU)",
+        "Kyrkhoc-TarrenMill (EU)",
+    }, -- Martin van Vuuren (Ko-fi)
     {"Shendreakah-Zul'jin (US)"}, -- Shendreakah - Zul-jin (Ko-fi)
     {"Palymoo-Twistingnether (EU)"}, -- Palymoo-Twistingnether (EU) (Ko-fi)
     {"Skywarden-Sylvanas (EU)"}, -- Serghei Iakovlev (Ko-fi)

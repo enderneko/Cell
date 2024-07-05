@@ -22,7 +22,7 @@ local function CreateIndicatorsImportFrame()
         Cell.frames.indicatorsTab.mask:Hide()
     end
 
-    importFrame = Cell:CreateFrame("CellOptionsFrame_IndicatorsImport", Cell.frames.indicatorsTab, 430, 221)
+    importFrame = Cell:CreateFrame("CellOptionsFrame_IndicatorsImport", Cell.frames.indicatorsTab, 430, 297)
     importFrame:SetFrameLevel(Cell.frames.indicatorsTab:GetFrameLevel() + 50)
     Cell:StylizeFrame(importFrame, nil, Cell:GetAccentColorTable())
     importFrame:SetPoint("BOTTOMLEFT", P:Scale(1), 24)
@@ -56,11 +56,7 @@ local function CreateIndicatorsImportFrame()
             -- last custom index
             local lastIndex
             local last = #toLayoutTable["indicators"]
-            if toLayoutTable["indicators"][last]["type"] == "built-in" then
-                lastIndex = 0
-            else
-                lastIndex = tonumber(strmatch(toLayoutTable["indicators"][last]["indicatorName"], "%d+"))
-            end
+            lastIndex = last - Cell.defaults.builtIns
 
             -- local toLayoutTable = { ["indicators"] = {} }
 

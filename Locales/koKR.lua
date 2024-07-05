@@ -425,7 +425,7 @@ L["ReadyCheck and PullTimer buttons"] = "전투준비 및 풀링 타이머 버�
 --[[Translation missing --]]
 --[[ L["readyCheckTips"] = "\n|rReady Check\nLeft-Click: |cffffffffinitiate a ready check|r\nRight-Click: |cffffffffstart a role check|r"--]]
 L["Rect"] = "모서리"
-L["Remaining Time <"] = "남은 시간 <"
+L["Remaining Time"] = "남은 시간"
 --[[Translation missing --]]
 --[[ L["Remove"] = "Remove"--]]
 L["Rename"] = "이름 변경"

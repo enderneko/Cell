@@ -42,6 +42,26 @@ end
 -- https://wow.gamepedia.com/SecureActionButtonTemplate
 -- {"shift-type1", "macro", "shift-macrotext1", "/cast [@mouseover] 回春术"}
 
+local slotNames = {
+    [1] = _G.INVTYPE_HEAD,
+    [2] = _G.INVTYPE_NECK,
+    [3] = _G.INVTYPE_SHOULDER,
+    [4] = _G.INVTYPE_BODY,
+    [5] = _G.INVTYPE_CHEST,
+    [6] = _G.INVTYPE_WAIST,
+    [7] = _G.INVTYPE_LEGS,
+    [8] = _G.INVTYPE_FEET,
+    [9] = _G.INVTYPE_WRIST,
+    [10] = _G.INVTYPE_HAND,
+    [11] = _G.INVTYPE_FINGER .. " 1",
+    [12] = _G.INVTYPE_FINGER .. " 2",
+    [13] = _G.INVTYPE_TRINKET .. " 1",
+    [14] = _G.INVTYPE_TRINKET .. " 2",
+    [15] = _G.INVTYPE_CLOAK,
+    [16] = _G.INVTYPE_WEAPONMAINHAND,
+    [17] = _G.INVTYPE_WEAPONOFFHAND,
+}
+
 -- local modifiers = {"", "shift-", "ctrl-", "alt-", "ctrl-shift-", "alt-shift-", "alt-ctrl-", "alt-ctrl-shift-"}
 -- local modifiersDisplay = {"", "Shift|cff777777+|r", "Ctrl|cff777777+|r", "Alt|cff777777+|r", "Ctrl|cff777777+|rShift|cff777777+|r", "Alt|cff777777+|rShift|cff777777+|r", "Alt|cff777777+|rCtrl|cff777777+|r", "Alt|cff777777+|rCtrl|cff777777+|rShift|cff777777+|r"}
 -- local keys = {"Left", "Right", "Middle", "Button4", "Button5", "ScrollUp", "ScrollDown"}
@@ -93,9 +113,9 @@ local function EncodeDB(modifier, bindKey, bindType, bindAction)
     elseif bindType == "macro" then
         attrType = "macro"
         attrAction = bindAction
-    -- elseif bindType == "click" then
-    --     attrType = "click"
-    --     attrAction = bindAction
+    elseif bindType == "custom" then
+        attrType = "macrotext"
+        attrAction = bindAction
     elseif bindType == "item" then
         attrType = "item"
         attrAction = bindAction
@@ -372,6 +392,9 @@ local function GetBindingSnippet()
                     if k == [[\]] then
                         key = key:gsub([[\]], [[\\]])
                         bindingClicks[key] = [[self:SetBindingClick(true, "]]..strupper(m)..[[\\", self, "]]..key..[[")]]
+                    elseif k == [["]] then
+                        key = key:gsub([["]], [[\"]])
+                        bindingClicks[key] = [[self:SetBindingClick(true, "]]..strupper(m)..[[\"", self, "]]..key..[[")]]
                     else
                         bindingClicks[key] = [[self:SetBindingClick(true, "]]..strupper(m..k)..[[", self, "]]..key..[[")]]
                     end
@@ -454,15 +477,9 @@ local function ApplyClickCastings(b)
             b:SetAttribute(bindKey, t[2])
         end
 
-        if Cell.isTWW and t[2] == "spell" then
-            local spellName = F:GetSpellNameAndIcon(t[3]) or ""
-            local attr = string.gsub(bindKey, "type", t[2])
-            b:SetAttribute(attr, spellName)
-        elseif t[2] == "spell" then
+        if t[2] == "spell" then
             local spellName = F:GetSpellNameAndIcon(t[3]) or ""
 
-            -- NOTE: spell 在无效/过远的目标上会处于“等待选中目标”的状态，即鼠标指针有一圈灰色材质。用 macrotext 可以解决这个问题
-            -- NOTE: 但对于尸体状态（未释放）的目标，需要额外判断
             local condition = ""
             if not F:IsSoulstone(spellName) then
                 condition = F:IsResurrectionForDead(spellName) and ",dead" or ",nodead"
@@ -477,8 +494,8 @@ local function ApplyClickCastings(b)
                     local normalResurrection = F:GetNormalResurrection(Cell.vars.playerClass)
                     if normalResurrection then
                         if Cell.isRetail then -- mass resurrections
-                            for condition, spell in pairs(normalResurrection) do
-                                sMaRt = sMaRt .. ";["..unit..",dead,nocombat,"..condition.."] "..spell
+                            for cond, spell in pairs(normalResurrection) do
+                                sMaRt = sMaRt .. ";["..unit..",dead,nocombat,"..cond.."] "..spell
                             end
                         else
                             sMaRt = sMaRt .. ";["..unit..",dead,nocombat] "..normalResurrection
@@ -492,12 +509,16 @@ local function ApplyClickCastings(b)
                 end
             end
 
+            --! NOTE: cancels the "blue glowing hand" cursor (cancel the target selection)
+            local fix = "\n/stopspelltarget"
+
             if (alwaysTargeting == "left" and bindKey == "type1") or alwaysTargeting == "any" then
                 b:SetAttribute(bindKey, "macro")
                 local attr = string.gsub(bindKey, "type", "macrotext")
-                b:SetAttribute(attr, "/tar ["..unit.."]\n/cast ["..unit..condition.."] "..spellName..sMaRt)
+                b:SetAttribute(attr, "/tar ["..unit.."]\n/cast ["..unit..condition.."] "..spellName..sMaRt..fix)
                 if not Cell.isRetail then UpdatePlaceholder(b, attr) end
             else
+                -- NOTE: "spell" is not ideal, 在无效/过远的目标上会处于“等待选中目标”的状态，即鼠标指针有一圈灰/蓝色材质
                 -- local attr = string.gsub(bindKey, "type", "spell")
                 -- b:SetAttribute(attr, spellName)
                 b:SetAttribute(bindKey, "macro")
@@ -505,17 +526,17 @@ local function ApplyClickCastings(b)
                 if F:IsSoulstone(spellName) then
                     b:SetAttribute(attr, "/tar ["..unit.."]\n/cast ["..unit.."] "..spellName.."\n/targetlasttarget")
                 else
-                    b:SetAttribute(attr, "/cast ["..unit..condition.."] "..spellName..sMaRt)
+                    b:SetAttribute(attr, "/cast ["..unit..condition.."] "..spellName..sMaRt..fix)
                 end
+                if not Cell.isRetail then UpdatePlaceholder(b, attr) end
             end
         elseif t[2] == "macro" then
-            if Cell.isTWW then
-                local attr = string.gsub(bindKey, "type", "macro")
-                b:SetAttribute(attr, GetMacroIndexByName(t[3]))
-            else
-                local attr = string.gsub(bindKey, "type", "macrotext")
-                b:SetAttribute(attr, t[3])
-            end
+            local attr = string.gsub(bindKey, "type", "macro")
+            b:SetAttribute(attr, GetMacroIndexByName(t[3]))
+        elseif t[2] == "custom" then
+            b:SetAttribute(bindKey, "macro")
+            local attr = string.gsub(bindKey, "type", "macrotext")
+            b:SetAttribute(attr, t[3])
         else
             local attr = string.gsub(bindKey, "type", t[2])
             b:SetAttribute(attr, t[3])
@@ -645,11 +666,8 @@ local function CreateTargetingPane()
                 alwaysTargeting = "disabled"
                 Cell:Fire("UpdateClickCastings", true)
             end,
-        }
-    }
-
-    if not Cell.isTWW then
-        tinsert(items, {
+        },
+        {
             ["text"] = L["Left Spell"],
             ["value"] = "left",
             ["onClick"] = function()
@@ -658,8 +676,8 @@ local function CreateTargetingPane()
                 alwaysTargeting = "left"
                 Cell:Fire("UpdateClickCastings", true)
             end,
-        })
-        tinsert(items, {
+        },
+        {
             ["text"] = L["Any Spells"],
             ["value"] = "any",
             ["onClick"] = function()
@@ -668,8 +686,8 @@ local function CreateTargetingPane()
                 alwaysTargeting = "any"
                 Cell:Fire("UpdateClickCastings", true)
             end,
-        })
-    end
+        }
+    }
 
     targetingDropdown:SetItems(items)
     Cell:SetTooltips(targetingDropdown, "ANCHOR_TOPLEFT", 0, 2, L["Always Targeting"], L["Only available for Spells"])
@@ -695,31 +713,25 @@ local function CreateSmartResPane()
                 Cell.vars.clickCastings["smartResurrection"] = "disabled"
                 Cell:Fire("UpdateClickCastings", true)
             end,
+        },
+        {
+            ["text"] = L["Normal"],
+            ["value"] = "normal",
+            ["onClick"] = function()
+                Cell.vars.clickCastings["smartResurrection"] = "normal"
+                Cell:Fire("UpdateClickCastings", true)
+            end,
+        } ,
+        {
+            ["text"] = L["Normal + Combat Res"],
+            ["value"] = "normal+combat",
+            ["onClick"] = function()
+                Cell.vars.clickCastings["smartResurrection"] = "normal+combat"
+                Cell:Fire("UpdateClickCastings", true)
+            end,
         }
     }
-    if not Cell.isTWW then
-        tinsert(items,
-            {
-                ["text"] = L["Normal"],
-                ["value"] = "normal",
-                ["onClick"] = function()
-                    Cell.vars.clickCastings["smartResurrection"] = "normal"
-                    Cell:Fire("UpdateClickCastings", true)
-                end,
-            }
-        )
 
-        tinsert(items, {
-                ["text"] = L["Normal + Combat Res"],
-                ["value"] = "normal+combat",
-                ["onClick"] = function()
-                    Cell.vars.clickCastings["smartResurrection"] = "normal+combat"
-                    Cell:Fire("UpdateClickCastings", true)
-                end,
-            }
-        )
-
-    end
     smartResDropdown:SetItems(items)
     Cell:SetTooltips(smartResDropdown, "ANCHOR_TOPLEFT", 0, 2, L["Smart Resurrection"], L["Replace click-castings of Spell type with resurrection spells on dead units"])
 end
@@ -804,6 +816,28 @@ local function ShowTypesMenu(index, b)
                 b:HideIcon()
             end,
         }, {
+            ["text"] = L["Spell"],
+            ["onClick"] = function()
+                b.typeGrid:SetText(L["Spell"])
+                if clickCastingsTab.popupEditBox then clickCastingsTab.popupEditBox:Hide() end
+
+                changed[index] = changed[index] or {b}
+                -- check type
+                if b.bindType ~= "spell" then
+                    changed[index]["bindType"] = "spell"
+                    changed[index]["bindAction"] = ""
+                    b.actionGrid:SetText("")
+                    b:HideIcon()
+                else
+                    changed[index]["bindType"] = nil
+                    changed[index]["bindAction"] = nil
+                    b.actionGrid:SetText(b.bindActionDisplay)
+                    b:ShowSpellIcon(b.bindAction)
+                end
+                CheckChanged(index, b)
+                CheckChanges()
+            end,
+        }, {
             ["text"] = L["Macro"],
             ["onClick"] = function()
                 b.typeGrid:SetText(L["Macro"])
@@ -826,23 +860,23 @@ local function ShowTypesMenu(index, b)
                 CheckChanges()
             end,
         }, {
-            ["text"] = L["Spell"],
+            ["text"] = L["Custom"],
             ["onClick"] = function()
-                b.typeGrid:SetText(L["Spell"])
+                b.typeGrid:SetText(L["Custom"])
                 if clickCastingsTab.popupEditBox then clickCastingsTab.popupEditBox:Hide() end
 
                 changed[index] = changed[index] or {b}
                 -- check type
-                if b.bindType ~= "spell" then
-                    changed[index]["bindType"] = "spell"
+                if b.bindType ~= "custom" then
+                    changed[index]["bindType"] = "custom"
                     changed[index]["bindAction"] = ""
                     b.actionGrid:SetText("")
                     b:HideIcon()
                 else
                     changed[index]["bindType"] = nil
                     changed[index]["bindAction"] = nil
-                    b.actionGrid:SetText(b.bindActionDisplay)
-                    b:ShowSpellIcon(b.bindAction)
+                    b.actionGrid:SetText(b.bindAction)
+                    b:HideIcon()
                 end
                 CheckChanged(index, b)
                 CheckChanges()
@@ -1001,130 +1035,64 @@ local function ShowActionsMenu(index, b)
             },
         }
 
-    elseif bindType == "macro" then
+    elseif bindType == "custom" then
         items = {}
-        if not Cell.isTWW then
-            tinsert(items, {
-                ["text"] = L["Edit"],
-                ["onClick"] = function()
-                    local peb = Cell:CreatePopupEditBox(clickCastingsTab, function(text)
-                        changed[index] = changed[index] or {b}
-                        if b.bindAction ~= text then
-                            changed[index]["bindAction"] = text
-                            b.actionGrid:SetText(text)
-                        else
-                            changed[index]["bindAction"] = nil
-                            b.actionGrid:SetText(b.bindAction)
-                        end
-                        CheckChanged(index, b)
-                        CheckChanges()
-                    end, true)
-                    peb:SetPoint("TOPLEFT", b.actionGrid)
-                    peb:SetPoint("TOPRIGHT", b.actionGrid)
-                    P:Height(peb, 20)
-                    -- peb:SetPoint("BOTTOMRIGHT", b.actionGrid)
-                    peb:SetTips("|cffababab"..L["Shift+Enter: add a new line"].."\n"..L["Enter: apply\nESC: discard"])
-                    if b.bindType == "macro" then
-                        if changed[index] and changed[index]["bindAction"] then
-                            peb:ShowEditBox(changed[index]["bindAction"])
-                        else
-                            peb:ShowEditBox(b.bindAction)
-                        end
-                    elseif changed[index] and changed[index]["bindType"] == "macro" then
-                        if changed[index]["bindAction"] then
-                            peb:ShowEditBox(changed[index]["bindAction"])
-                        else
-                            peb:ShowEditBox("")
-                        end
+        tinsert(items, {
+            ["text"] = L["Edit"],
+            ["onClick"] = function()
+                local peb = Cell:CreatePopupEditBox(clickCastingsTab, function(text)
+                    changed[index] = changed[index] or {b}
+                    if b.bindAction ~= text then
+                        changed[index]["bindAction"] = text
+                        b.actionGrid:SetText(text)
+                    else
+                        changed[index]["bindAction"] = nil
+                        b.actionGrid:SetText(b.bindAction)
+                    end
+                    CheckChanged(index, b)
+                    CheckChanges()
+                end, true)
+                peb:SetPoint("TOPLEFT", b.actionGrid)
+                peb:SetPoint("TOPRIGHT", b.actionGrid)
+                P:Height(peb, 20)
+                -- peb:SetPoint("BOTTOMRIGHT", b.actionGrid)
+                peb:SetTips("|cffababab"..L["Shift+Enter: add a new line"].."\n"..L["Enter: apply\nESC: discard"])
+                if b.bindType == "custom" then
+                    if changed[index] and changed[index]["bindAction"] then
+                        peb:ShowEditBox(changed[index]["bindAction"])
+                    else
+                        peb:ShowEditBox(b.bindAction)
+                    end
+                elseif changed[index] and changed[index]["bindType"] == "custom" then
+                    if changed[index]["bindAction"] then
+                        peb:ShowEditBox(changed[index]["bindAction"])
                     else
                         peb:ShowEditBox("")
                     end
-                    peb:SetNumeric(false)
-                end,
-            })
-            tinsert(items, {
-                ["text"] = L["Extra Action Button"],
-                ["onClick"] = function()
-                    changed[index] = changed[index] or {b}
-                    local macrotext = "/stopcasting\n/target mouseover\n/click ExtraActionButton1\n/targetlasttarget"
-                    if b.bindAction ~= macrotext then
-                        changed[index]["bindAction"] = macrotext
-                        b.actionGrid:SetText(macrotext)
-                    else
-                        changed[index]["bindAction"] = nil
-                        b.actionGrid:SetText(b.bindAction)
-                    end
-                    CheckChanged(index, b)
-                    CheckChanges()
-                end,
-            })
-            tinsert(items, {
-                ["text"] = _G.INVTYPE_TRINKET.." 1",
-                ["onClick"] = function()
-                    changed[index] = changed[index] or {b}
-                    local macrotext = "/use [@mouseover] 13"
-                    if b.bindAction ~= macrotext then
-                        changed[index]["bindAction"] = macrotext
-                        b.actionGrid:SetText(macrotext)
-                    else
-                        changed[index]["bindAction"] = nil
-                        b.actionGrid:SetText(b.bindAction)
-                    end
-                    CheckChanged(index, b)
-                    CheckChanges()
-                end,
-            })
-            tinsert(items, {
-                ["text"] = _G.INVTYPE_TRINKET.." 2",
-                ["onClick"] = function()
-                    changed[index] = changed[index] or {b}
-                    local macrotext = "/use [@mouseover] 14"
-                    if b.bindAction ~= macrotext then
-                        changed[index]["bindAction"] = macrotext
-                        b.actionGrid:SetText(macrotext)
-                    else
-                        changed[index]["bindAction"] = nil
-                        b.actionGrid:SetText(b.bindAction)
-                    end
-                    CheckChanged(index, b)
-                    CheckChanges()
-                end,
-            })
-            tinsert(items, {
-                ["text"] = _G.INVTYPE_WRIST,
-                ["onClick"] = function()
-                    changed[index] = changed[index] or {b}
-                    local macrotext = "/use [@mouseover] 9"
-                    if b.bindAction ~= macrotext then
-                        changed[index]["bindAction"] = macrotext
-                        b.actionGrid:SetText(macrotext)
-                    else
-                        changed[index]["bindAction"] = nil
-                        b.actionGrid:SetText(b.bindAction)
-                    end
-                    CheckChanged(index, b)
-                    CheckChanges()
-                end,
-            })
-            tinsert(items, {
-                ["text"] = _G.INVTYPE_HAND,
-                ["onClick"] = function()
-                    changed[index] = changed[index] or {b}
-                    local macrotext = "/use [@mouseover] 10"
-                    if b.bindAction ~= macrotext then
-                        changed[index]["bindAction"] = macrotext
-                        b.actionGrid:SetText(macrotext)
-                    else
-                        changed[index]["bindAction"] = nil
-                        b.actionGrid:SetText(b.bindAction)
-                    end
-                    CheckChanged(index, b)
-                    CheckChanges()
-                end,
-            })
-        end
+                else
+                    peb:ShowEditBox("")
+                end
+                peb:SetNumeric(false)
+            end,
+        })
+        tinsert(items, {
+            ["text"] = L["Extra Action Button"],
+            ["onClick"] = function()
+                changed[index] = changed[index] or {b}
+                local macrotext = "/stopcasting\n/target mouseover\n/click ExtraActionButton1\n/targetlasttarget"
+                if b.bindAction ~= macrotext then
+                    changed[index]["bindAction"] = macrotext
+                    b.actionGrid:SetText(macrotext)
+                else
+                    changed[index]["bindAction"] = nil
+                    b.actionGrid:SetText(b.bindAction)
+                end
+                CheckChanged(index, b)
+                CheckChanges()
+            end,
+        })
 
-        if (Cell.isVanilla or Cell.isCata) and Cell.vars.playerClass == "WARLOCK" then
+        if (Cell.isVanilla or Cell.isWrath or Cell.isCata) and Cell.vars.playerClass == "WARLOCK" then
             tinsert(items, {
                 ["text"] = F:GetSpellNameAndIcon(20707),
                 ["onClick"] = function()
@@ -1142,37 +1110,57 @@ local function ShowActionsMenu(index, b)
                 end,
             })
         end
-
-        if Cell.isTWW then
-            for _, i in pairs(F:GetMacroIndices()) do
-                local name, icon = GetMacroInfo(i)
-                if name then
-                    tinsert(items, {
-                        ["text"] = name,
-                        ["icon"] = icon,
-                        ["onClick"] = function()
-                            changed[index] = changed[index] or {b}
-                            if b.bindAction ~= name then
-                                changed[index]["bindAction"] = name
-                            else
-                                changed[index]["bindAction"] = nil
-                            end
-                            b.actionGrid:SetText(name)
-                            b:ShowIcon(icon)
-                            CheckChanged(index, b)
-                            CheckChanges()
-                        end,
-                    })
-                end
+    elseif bindType == "macro" then
+        items = {}
+        for _, i in pairs(F:GetMacroIndices()) do
+            local name, icon = GetMacroInfo(i)
+            if name then
+                tinsert(items, {
+                    ["text"] = name,
+                    ["icon"] = icon,
+                    ["onClick"] = function()
+                        changed[index] = changed[index] or {b}
+                        if b.bindAction ~= name then
+                            changed[index]["bindAction"] = name
+                        else
+                            changed[index]["bindAction"] = nil
+                        end
+                        b.actionGrid:SetText(name)
+                        b:ShowIcon(icon)
+                        CheckChanged(index, b)
+                        CheckChanges()
+                    end,
+                })
             end
         end
 
     elseif bindType == "item" then
         items = {}
+
+        for _, slot in ipairs({13, 14, 6, 9, 10}) do
+            tinsert(items, {
+                ["text"] = slotNames[slot],
+                ["onClick"] = function()
+                    changed[index] = changed[index] or {b}
+                    if b.bindAction ~= slot then
+                        changed[index]["bindAction"] = slot
+                    else
+                        changed[index]["bindAction"] = nil
+                    end
+                    b.actionGrid:SetText(slotNames[slot])
+                    b:ShowItemIcon(slot)
+                    CheckChanged(index, b)
+                    CheckChanges()
+                end,
+            })
+        end
+
         for slot = 1, 17 do
             local itemId = GetInventoryItemID("player", slot)
-            if itemId and C_Item.IsUsableItem(itemId) then
-                local text = GetInventoryItemLink("player", slot)
+            if itemId then -- and C_Item.IsUsableItem(itemId) then
+                local text = GetInventoryItemLink("player", slot) or ""
+                text = string.gsub(text, "[%[%]]", "")
+
                 tinsert(items, {
                     ["text"] = text,
                     ["icon"] = GetInventoryItemTexture("player", slot),
@@ -1183,8 +1171,8 @@ local function ShowActionsMenu(index, b)
                         else
                             changed[index]["bindAction"] = nil
                         end
-                        b.actionGrid:SetText(text)
-                        b:ShowItemIcon(b.bindAction)
+                        b.actionGrid:SetText(slotNames[slot])
+                        b:ShowItemIcon(slot)
                         CheckChanged(index, b)
                         CheckChanges()
                     end,
@@ -1321,7 +1309,7 @@ local function UpdateCurrentText(isCommon)
     else
         if Cell.isRetail then
             listPane:SetTitle(L["Current Profile"]..": ".."|T"..Cell.vars.playerSpecIcon..":12:12:0:1:12:12:1:11:1:11|t "..Cell.vars.playerSpecName)
-        elseif Cell.isCata then
+        elseif Cell.isCata or Cell.isWrath then
             local name, icon = F:GetActiveTalentInfo()
             listPane:SetTitle(L["Current Profile"]..": ".."|T"..icon..":12:12:0:1:12:12:1:11:1:11|t "..name)
         end
@@ -1332,7 +1320,12 @@ local function CreateListPane()
     listPane = Cell:CreateTitledPane(clickCastingsTab, L["Current Profile"], 422, 451)
     listPane:SetPoint("BOTTOMLEFT", clickCastingsTab, 5, 5)
 
-    local hint = Cell:CreateButton(listPane, nil, "accent-hover", {17, 17}, nil, nil, nil, nil, nil, L["Click-Castings"], L["clickcastingsHints"])
+    local hint = Cell:CreateButton(listPane, nil, "accent-hover", {17, 17}, nil, nil, nil, nil, nil,
+        L["Click-Castings"],
+        "|cffffb5c5"..L["Left-Click"]..":|r "..strlower(L["Edit"]),
+        "|cffffb5c5"..L["Right-Click"]..":|r "..strlower(L["Delete"]),
+        "|cffffb5c5"..L["Left-Drag"]..":|r "..L["change the order"]
+    )
     hint:SetPoint("TOPRIGHT")
     hint.tex = hint:CreateTexture(nil, "ARTWORK")
     hint.tex:SetAllPoints(hint)
@@ -1440,7 +1433,7 @@ local function CreateListPane()
                 t[1]:ShowSpellIcon(t[1].bindAction)
             elseif t[1].bindType == "item" then
                 t[1]:ShowItemIcon(t[1].bindAction)
-            elseif t[1].bindType == "macro" and Cell.isTWW then
+            elseif t[1].bindType == "macro" then
                 t[1]:ShowMacroIcon(t[1].bindAction)
             else
                 t[1]:HideIcon()
@@ -1470,6 +1463,7 @@ CreateBindingListButton = function(modifier, bindKey, bindType, bindAction, i)
     b.modifier, b.bindKey, b.bindType, b.bindAction = modifier, bindKey, bindType, bindAction
     b.clickCastingIndex = i
 
+    b.typeGrid:SetText(L[F:UpperFirst(bindType)])
     if bindType == "general" then
         b.bindActionDisplay = L[bindAction]
         b:HideIcon()
@@ -1487,27 +1481,29 @@ CreateBindingListButton = function(modifier, bindKey, bindType, bindAction, i)
             b:HideIcon()
         end
     elseif bindType == "item" then
-        b.bindActionDisplay = GetInventoryItemLink("player", bindAction)
-        b:ShowItemIcon(bindAction)
-    elseif bindType == "macro" then
-        if Cell.isTWW then
-            local icon
-            -- NOTE: GetMacroInfo("name") seems no returns
-            local name, icon = GetMacroInfo(GetMacroIndexByName(bindAction))
-            if name then
-                b.bindActionDisplay = name
-            else
-                b.bindActionDisplay = "|cFFFF3030"..L["Invalid"]
-            end
-            b:ShowIcon(icon)
+        if bindAction ~= "" then
+            b.bindActionDisplay = slotNames[bindAction]
+            b:ShowItemIcon(bindAction)
         else
-            b.bindActionDisplay = bindAction
+            b.bindActionDisplay = ""
             b:HideIcon()
         end
+    elseif bindType == "macro" then
+        -- NOTE: GetMacroInfo("name") seems no returns
+        local name, icon = GetMacroInfo(GetMacroIndexByName(bindAction))
+        if name then
+            b.bindActionDisplay = name
+        else
+            b.bindActionDisplay = "|cFFFF3030"..L["Invalid"]
+        end
+        b:ShowIcon(icon)
+    elseif bindType == "custom" then
+        b.bindActionDisplay = bindAction
+        b:HideIcon()
+        b.typeGrid:SetText(L["Custom"])
     end
 
     b.keyGrid:SetText(GetBindingDisplay(modifier, bindKey))
-    b.typeGrid:SetText(L[F:UpperFirst(bindType)])
     b.actionGrid:SetText(b.bindActionDisplay)
 
     b:SetPoint("LEFT", 5, 0)

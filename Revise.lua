@@ -8,7 +8,7 @@ function F:Revise()
     F:Debug("DBRevision:", dbRevision)
 
     local charaDbRevision
-    if Cell.isVanilla or Cell.isCata then
+    if CellCharacterDB then
         charaDbRevision = CellCharacterDB["revise"] and tonumber(string.match(CellCharacterDB["revise"], "%d+")) or 0
         F:Debug("CharaDBRevision:", charaDbRevision)
     end
@@ -2993,6 +2993,56 @@ function F:Revise()
                 end
             end
         end
+
+        -- click-castings macro -> macrotext
+        if Cell.isRetail then
+            for _, classT in pairs(CellDB["clickCastings"]) do
+                for k, t in pairs(classT) do
+                    if type(k) == "number" or k == "common" then
+                        for _, binding in pairs(t) do
+                            if binding[2] == "macro" and binding[3] and strfind(strtrim(binding[3]), "^[/#]") then
+                                binding[2] = "custom"
+                            end
+                        end
+                    end
+                end
+            end
+        else
+            for _, t in pairs(CellCharacterDB["clickCastings"]) do
+                if type(k) == "number" or k == "common" then
+                    for _, binding in pairs(t) do
+                        if binding[2] == "macro" and binding[3] and strfind(strtrim(binding[3]), "^[/#]") then
+                            binding[2] = "custom"
+                        end
+                    end
+                end
+            end
+        end
+
+        for _, layout in pairs(CellDB["layouts"]) do
+            for _, i in pairs(layout["indicators"]) do
+                if i.type == "block" then
+                    -- update block, add "colorBy"
+                    if #i.colors == 4 then
+                        tinsert(i.colors, 1, "duration")
+                    end
+
+                elseif i.indicatorName == "dispels" then
+                    -- update Dispels filters
+                    if not i.filters then
+                        i.filters = {
+                            ["dispellableByMe"] = i.dispellableByMe,
+                            ["Curse"] = true,
+                            ["Disease"] = true,
+                            ["Magic"] = true,
+                            ["Poison"] = true,
+                            ["Bleed"] = true,
+                        }
+                    end
+                    i.dispellableByMe = nil
+                end
+            end
+        end
     end
 
     -- ----------------------------------------------------------------------- --
@@ -3048,7 +3098,7 @@ function F:Revise()
     end
 
     CellDB["revise"] = Cell.version
-    if Cell.isVanilla or Cell.isCata then
+    if CellCharacterDB then
         CellCharacterDB["revise"] = Cell.version
     end
 end

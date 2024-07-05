@@ -18,6 +18,7 @@ local UnitClassBase = UnitClassBase
 local UnitHealth = UnitHealth
 local UnitHealthMax = UnitHealthMax
 -- local UnitGetIncomingHeals = UnitGetIncomingHeals
+local UnitIsFriend = UnitIsFriend
 local UnitIsUnit = UnitIsUnit
 local UnitIsPlayer = UnitIsPlayer
 local UnitIsConnected = UnitIsConnected
@@ -143,6 +144,9 @@ local function ResetIndicators()
         -- update extra
         if t["indicatorName"] == "nameText" or t["indicatorName"] == "healthText" or t["indicatorName"] == "powerText" then
             indicatorColors[t["indicatorName"]] = t["color"]
+        end
+        if t["indicatorName"] == "dispels" then
+            indicatorBooleans["dispels"] = t["filters"]
         end
         if t["dispellableByMe"] ~= nil then
             indicatorBooleans[t["indicatorName"]] = t["dispellableByMe"]
@@ -717,6 +721,10 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
             I.UpdateMissingBuffsFilters()
         elseif setting == "targetCounterFilters" then
             I.UpdateTargetCounterFilters()
+        elseif setting == "dispelFilters" then
+            F:IterateAllUnitButtons(function(b)
+                UnitButton_UpdateAuras(b)
+            end, true)
         elseif setting == "glowOptions" then
             F:IterateAllUnitButtons(function(b)
                 b.indicators[indicatorName]:UpdateGlowOptions(value)
@@ -869,7 +877,7 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                     indicator:ShowAnimation(value["showAnimation"])
                 end
                 -- update showStack
-                if value["showStack"] then
+                if type(value["showStack"]) ~= "nil" then
                     indicator:ShowStack(value["showStack"])
                 end
                 -- update duration
@@ -960,24 +968,11 @@ local function UnitButton_UpdateDebuffs(self)
             end
 
             if enabledIndicators["debuffs"] and duration <= 600 and not Cell.vars.debuffBlacklist[spellId] then
-                if not indicatorBooleans["debuffs"] then -- all debuffs
+                if not indicatorBooleans["debuffs"] or I.CanDispel(debuffType) then
                     if Cell.vars.bigDebuffs[spellId] then  -- isBigDebuff
                         self._debuffs_big[i] = refreshing
-                        startIndex = startIndex + 1
-                    elseif startIndex <= indicatorNums["debuffs"]+indicatorNums["raidDebuffs"] then -- normal debuffs, may contain topDebuff
+                    else
                         self._debuffs_normal[i] = refreshing
-                        startIndex = startIndex + 1
-                    end
-
-                elseif I.CanDispel(debuffType) then -- only dispellableByMe
-                    if Cell.vars.bigDebuffs[spellId] then  -- isBigDebuff
-                        self._debuffs_big[i] = refreshing
-                        startIndex = startIndex + 1
-                    elseif startIndex <= indicatorNums["debuffs"]+indicatorNums["raidDebuffs"] then -- normal debuffs, may contain topDebuff
-                        if I.CanDispel(debuffType) then
-                            self._debuffs_normal[i] = refreshing
-                            startIndex = startIndex + 1
-                        end
                     end
                 end
             end
@@ -1007,12 +1002,14 @@ local function UnitButton_UpdateDebuffs(self)
 
             if enabledIndicators["dispels"] and debuffType and debuffType ~= "" then
                 -- all dispels / only dispellableByMe
-                if not indicatorBooleans["dispels"] or I.CanDispel(debuffType) then
-                    if Cell.vars.dispelBlacklist[spellId] then
-                        -- no highlight
-                        self._debuffs_dispel[debuffType] = false
-                    else
-                        self._debuffs_dispel[debuffType] = true
+                if not indicatorBooleans["dispels"]["dispellableByMe"] or I.CanDispel(debuffType) then
+                    if indicatorBooleans["dispels"][debuffType] then
+                        if Cell.vars.dispelBlacklist[spellId] then
+                            -- no highlight
+                            self._debuffs_dispel[debuffType] = false
+                        else
+                            self._debuffs_dispel[debuffType] = true
+                        end
                     end
                 end
             end
@@ -1052,7 +1049,8 @@ local function UnitButton_UpdateDebuffs(self)
         -- show
         local topGlowType, topGlowOptions
         for i = 1, indicatorNums["raidDebuffs"] do
-            if self._debuffs_raid[i] then -- self._debuffs_raid[i] -> index
+            local index = self._debuffs_raid[i]
+            if index then
                 local name, icon, count, debuffType, duration, expirationTime, source, isStealable, nameplateShowPersonal, spellId = UnitDebuff(unit, self._debuffs_raid[i])
                 if name then
                     self.indicators.raidDebuffs[i]:SetCooldown(
@@ -1061,13 +1059,16 @@ local function UnitButton_UpdateDebuffs(self)
                         debuffType or "",
                         icon,
                         count,
-                        self._debuffs_raid_refreshing[self._debuffs_raid[i]],
+                        self._debuffs_raid_refreshing[index],
                         I.IsDebuffUseElapsedTime(name, spellId)
                     )
-                    self.indicators.raidDebuffs[i].index = self._debuffs_raid[i] -- NOTE: for tooltip
+                    self.indicators.raidDebuffs[i].index = index -- NOTE: for tooltip
                     startIndex = startIndex + 1
                     -- store debuffs indices shown by raidDebuffs indicator
-                    self._debuffs_raid_shown[self._debuffs_raid[i]] = true
+                    -- self._debuffs_raid_shown[index] = true
+                    -- remove from debuffs
+                    self._debuffs_big[index] = nil
+                    self._debuffs_normal[index] = nil
 
                     if i == 1 then -- top
                         topGlowType, topGlowOptions = I.GetDebuffGlow(name, spellId, count)
@@ -1111,7 +1112,7 @@ local function UnitButton_UpdateDebuffs(self)
         -- bigDebuffs first
         for debuffIndex, refreshing in pairs(self._debuffs_big) do
             local name, icon, count, debuffType, duration, expirationTime, _, _, _, spellId = UnitDebuff(unit, debuffIndex)
-            if name and not self._debuffs_raid_shown[debuffIndex] and startIndex <= indicatorNums["debuffs"] then
+            if name and startIndex <= indicatorNums["debuffs"] then
                 -- start, duration, debuffType, texture, count, refreshing
                 self.indicators.debuffs[startIndex]:SetCooldown(expirationTime - duration, duration, debuffType or "", icon, count, refreshing, true)
                 self.indicators.debuffs[startIndex].index = debuffIndex -- NOTE: for tooltip
@@ -1122,7 +1123,7 @@ local function UnitButton_UpdateDebuffs(self)
         -- then normal debuffs
         for debuffIndex, refreshing in pairs(self._debuffs_normal) do
             local name, icon, count, debuffType, duration, expirationTime, _, _, _, spellId = UnitDebuff(unit, debuffIndex)
-            if name and not self._debuffs_raid_shown[debuffIndex] and startIndex <= indicatorNums["debuffs"] then
+            if name and startIndex <= indicatorNums["debuffs"] then
                 -- start, duration, debuffType, texture, count, refreshing
                 self.indicators.debuffs[startIndex]:SetCooldown(expirationTime - duration, duration, debuffType or "", icon, count, refreshing)
                 self.indicators.debuffs[startIndex].index = debuffIndex -- NOTE: for tooltip
@@ -1140,7 +1141,9 @@ local function UnitButton_UpdateDebuffs(self)
     end
 
     -- update dispels
-    self.indicators.dispels:SetDispels(self._debuffs_dispel)
+    if F:UnitInGroup(unit) or UnitIsFriend("player", unit) then
+        self.indicators.dispels:SetDispels(self._debuffs_dispel)
+    end
 
     -- user created indicators
     I.ShowCustomIndicators(self, "debuff")
@@ -1168,7 +1171,7 @@ local function UnitButton_UpdateDebuffs(self)
     wipe(self._debuffs_raid)
     wipe(self._debuffs_raid_refreshing)
     wipe(self._debuffs_raid_orders)
-    wipe(self._debuffs_raid_shown)
+    -- wipe(self._debuffs_raid_shown)
 end
 
 -------------------------------------------------
@@ -1311,7 +1314,7 @@ local function InitAuraTables(self)
     self._debuffs_raid = {} -- {index1, index2, ...}
     self._debuffs_raid_refreshing = {} -- [auraInstanceID] = refreshing
     self._debuffs_raid_orders = {} -- [auraInstanceID] = order
-    self._debuffs_raid_shown = {} -- [auraInstanceID] = true, currently shown by raidDebuffs indicator
+    -- self._debuffs_raid_shown = {} -- [auraInstanceID] = true, currently shown by raidDebuffs indicator
     self._debuffs_glow_current = {}
     self._debuffs_glow_cache = {}
 end
@@ -1331,7 +1334,7 @@ local function ResetAuraTables(self)
     wipe(self._debuffs_raid)
     wipe(self._debuffs_raid_refreshing)
     wipe(self._debuffs_raid_orders)
-    wipe(self._debuffs_raid_shown)
+    -- wipe(self._debuffs_raid_shown)
 
     -- raid debuffs glow
     wipe(self._debuffs_glow_current)

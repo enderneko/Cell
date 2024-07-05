@@ -13,6 +13,7 @@ select(2, ...).L = setmetatable({
     ["T"] = "Talent",
     ["C"] = "Class Talent",
     ["S"] = "Spec Talent",
+    ["H"] = "Hero Talent",
     ["P"] = "PvP Talent",
     ["notBound"] = "|cff777777".._G.NOT_BOUND,
 
@@ -71,7 +72,6 @@ select(2, ...).L = setmetatable({
     ["RESET_INCLUDES"] = "Only Click-Castings and Layout Auto Switch are included",
     ["RESET_YES_NO"] = "|cff22ff22Yes|r - Reset Cell\n|cffff2222No|r - I'll fix it myself",
 
-    ["clickcastingsHints"] = "Left-Click: edit\nRight-Click: delete",
     ["syncTips"] = "Set the master layout here\nAll indicators of slave layout are fully in-sync with the master\nIt's a two-way sync, but all indicators of slave layout will be lost when set a master",
     ["readyCheckTips"] = "\n|rReady Check\nLeft-Click: |cffffffffinitiate a ready check|r\nRight-Click: |cffffffffstart a role check|r",
     ["pullTimerTips"] = "\n|rPull Timer\nLeft-Click: |cffffffffstart timer|r\nRight-Click: |cffffffffcancel timer|r",

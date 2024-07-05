@@ -647,7 +647,7 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                     if t["indicatorName"] == "healthText" then
                         indicator:SetValue(21377, 65535, 16384)
                     elseif t["indicatorName"] == "powerText" then
-                        indicator:SetValue(2048, 4096)
+                        indicator:SetValue(25000, 50000)
                     end
                 end
                 -- update numPerLine
@@ -841,7 +841,7 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
             if indicatorName == "healthText" then
                 indicator:SetValue(21377, 65535, 16384)
             elseif indicatorName == "powerText" then
-                indicator:SetValue(2048, 4096)
+                indicator:SetValue(25000, 50000)
             end
         elseif setting == "spacing" then
             indicator:SetSpacing(value)
@@ -1007,7 +1007,7 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                 indicator:ShowAnimation(value["showAnimation"])
             end
             -- update stack
-            if type(value["showStack"]) == "boolean" then
+            if type(value["showStack"]) ~= "nil" then
                 indicator:ShowStack(value["showStack"])
             end
             -- update duration
@@ -1364,7 +1364,7 @@ local auraTypeItems = {
 }
 
 local function CreateListPane()
-    local listPane = Cell:CreateTitledPane(indicatorsTab, L["Indicators"], 136, 392)
+    local listPane = Cell:CreateTitledPane(indicatorsTab, L["Indicators"], 136, 487)
     listPane:SetPoint("TOPLEFT", 5, -115)
 
     listFrame = Cell:CreateFrame("IndicatorsTab_ListFrame", listPane)
@@ -1474,7 +1474,7 @@ end
 local settingsFrame
 
 local function CreateSettingsPane()
-    local settingsPane = Cell:CreateTitledPane(indicatorsTab, L["Indicator Settings"], 274, 502)
+    local settingsPane = Cell:CreateTitledPane(indicatorsTab, L["Indicator Settings"], 274, 597)
     settingsPane:SetPoint("TOPLEFT", 153, P:Scale(-5))
 
     -- settings frame
@@ -1521,7 +1521,7 @@ if Cell.isRetail then
         ["defensiveCooldowns"] = {L["Even if disabled, the settings below affect \"Externals + Defensives\" indicator"], "enabled", "builtInDefensives", "customDefensives", "durationVisibility", "checkbutton:showAnimation", "size", "num:5", "orientation", "position", "frameLevel", "font1:stackFont", "font2:durationFont"},
         ["allCooldowns"] = {"enabled", "durationVisibility", "checkbutton:showAnimation", "size", "num:5", "orientation", "position", "frameLevel", "font1:stackFont", "font2:durationFont"},
         ["tankActiveMitigation"] = {"|cffb7b7b7"..I.GetTankActiveMitigationString(), "enabled", "color-class", "size-bar", "position", "frameLevel"},
-        ["dispels"] = {"enabled", "checkbutton:dispellableByMe", "highlightType", "dispelBlacklist", "checkbutton2:showDispelTypeIcons", "orientation", "size-square", "position", "frameLevel"},
+        ["dispels"] = {"enabled", "dispelFilters", "highlightType", "dispelBlacklist", "checkbutton2:showDispelTypeIcons", "orientation", "size-square", "position", "frameLevel"},
         ["debuffs"] = {"enabled", "checkbutton:dispellableByMe", "debuffBlacklist", "bigDebuffs", "durationVisibility", "checkbutton2:showAnimation", "checkbutton3:showTooltip:"..DEBUFFS_TOOLTIP1, "checkbutton4:enableBlacklistShortcut:"..DEBUFFS_TOOLTIP2, "size-normal-big", "num:10", "orientation", "position", "frameLevel", "font1:stackFont", "font2:durationFont"},
         ["raidDebuffs"] = {"|cffb7b7b7"..L["You can config debuffs in %s"]:format(Cell:GetAccentColorString()..L["Raid Debuffs"].."|r"), "enabled", "checkbutton:onlyShowTopGlow", "durationVisibility", "checkbutton2:showTooltip:"..DEBUFFS_TOOLTIP1, "size-border", "num:3", "orientation", "position", "frameLevel", "font1:stackFont", "font2:durationFont"},
         ["privateAuras"] = {"|cffb7b7b7"..L["Due to restrictions of the private aura system, this indicator can only use Blizzard style."], "enabled", "privateAuraOptions", "size-square", "position", "frameLevel"},
@@ -1532,7 +1532,7 @@ if Cell.isRetail then
         ["healthThresholds"] = {"enabled", "thresholds", "thickness"},
         ["missingBuffs"] = {I.GetMissingBuffsString().."|cffb7b7b7"..(L["%s in Utilities must be enabled to make this indicator work."]:format(Cell:GetAccentColorString()..L["Buff Tracker"].."|r")), "enabled", "missingBuffsFilters", "size-square", "num:5", "orientation", "position", "frameLevel"},
     }
-elseif Cell.isCata then
+elseif Cell.isCata or Cell.isWrath then
     indicatorSettings = {
         ["nameText"] = {"enabled", "color-class", "textWidth", "checkbutton:showGroupNumber", "vehicleNamePosition", "namePosition", "frameLevel", "font-noOffset"},
         ["statusText"] = {"enabled", "checkbutton:showTimer", "checkbutton2:showBackground", "statusColors", "statusPosition", "frameLevel", "font-noOffset"},
@@ -1559,7 +1559,7 @@ elseif Cell.isCata then
         ["externalCooldowns"] = {L["Even if disabled, the settings below affect \"Externals + Defensives\" indicator"], "enabled", "builtInExternals", "customExternals", "durationVisibility", "checkbutton:showAnimation", "size", "num:5", "orientation", "position", "frameLevel", "font1:stackFont", "font2:durationFont"},
         ["defensiveCooldowns"] = {L["Even if disabled, the settings below affect \"Externals + Defensives\" indicator"], "enabled", "builtInDefensives", "customDefensives", "durationVisibility", "checkbutton:showAnimation", "size", "num:5", "orientation", "position", "frameLevel", "font1:stackFont", "font2:durationFont"},
         ["allCooldowns"] = {"enabled", "durationVisibility", "checkbutton:showAnimation", "size", "num:5", "orientation", "position", "frameLevel", "font1:stackFont", "font2:durationFont"},
-        ["dispels"] = {"enabled", "checkbutton:dispellableByMe", "highlightType", "dispelBlacklist", "checkbutton2:showDispelTypeIcons", "orientation", "size-square", "position", "frameLevel"},
+        ["dispels"] = {"enabled", "dispelFilters", "highlightType", "dispelBlacklist", "checkbutton2:showDispelTypeIcons", "orientation", "size-square", "position", "frameLevel"},
         ["debuffs"] = {"enabled", "checkbutton:dispellableByMe", "debuffBlacklist", "bigDebuffs", "durationVisibility", "checkbutton2:showAnimation", "checkbutton3:showTooltip:"..DEBUFFS_TOOLTIP1, "checkbutton4:enableBlacklistShortcut:"..DEBUFFS_TOOLTIP2, "size-normal-big", "num:10", "orientation", "position", "frameLevel", "font1:stackFont", "font2:durationFont"},
         ["raidDebuffs"] = {"|cffb7b7b7"..L["You can config debuffs in %s"]:format(Cell:GetAccentColorString()..L["Raid Debuffs"].."|r"), "enabled", "checkbutton:onlyShowTopGlow", "durationVisibility", "checkbutton2:showTooltip:"..DEBUFFS_TOOLTIP1, "size-border", "num:3", "orientation", "position", "frameLevel", "font1:stackFont", "font2:durationFont"},
         ["targetedSpells"] = {"enabled", "checkbutton:showAllSpells:"..L["Glow is only available to the spells in the list below"], "targetedSpellsList", "targetedSpellsGlow", "size-border", "num:3", "orientation", "position", "frameLevel", "font"},
@@ -1593,7 +1593,7 @@ elseif Cell.isVanilla then
         ["externalCooldowns"] = {L["Even if disabled, the settings below affect \"Externals + Defensives\" indicator"], "enabled", "builtInExternals", "customExternals", "durationVisibility", "checkbutton:showAnimation", "size", "num:5", "orientation", "position", "frameLevel", "font1:stackFont", "font2:durationFont"},
         ["defensiveCooldowns"] = {L["Even if disabled, the settings below affect \"Externals + Defensives\" indicator"], "enabled", "builtInDefensives", "customDefensives", "durationVisibility", "checkbutton:showAnimation", "size", "num:5", "orientation", "position", "frameLevel", "font1:stackFont", "font2:durationFont"},
         ["allCooldowns"] = {"enabled", "durationVisibility", "checkbutton:showAnimation", "size", "num:5", "orientation", "position", "frameLevel", "font1:stackFont", "font2:durationFont"},
-        ["dispels"] = {"enabled", "checkbutton:dispellableByMe", "highlightType", "dispelBlacklist", "checkbutton2:showDispelTypeIcons", "orientation", "size-square", "position", "frameLevel"},
+        ["dispels"] = {"enabled", "dispelFilters", "highlightType", "dispelBlacklist", "checkbutton2:showDispelTypeIcons", "orientation", "size-square", "position", "frameLevel"},
         ["debuffs"] = {"enabled", "checkbutton:dispellableByMe", "debuffBlacklist", "bigDebuffs", "durationVisibility", "checkbutton2:showAnimation", "checkbutton3:showTooltip:"..DEBUFFS_TOOLTIP1, "checkbutton4:enableBlacklistShortcut:"..DEBUFFS_TOOLTIP2, "size-normal-big", "num:10", "orientation", "position", "frameLevel", "font1:stackFont", "font2:durationFont"},
         ["raidDebuffs"] = {"|cffb7b7b7"..L["You can config debuffs in %s"]:format(Cell:GetAccentColorString()..L["Raid Debuffs"].."|r"), "enabled", "checkbutton:onlyShowTopGlow", "durationVisibility", "checkbutton2:showTooltip:"..DEBUFFS_TOOLTIP1, "size-border", "num:3", "orientation", "position", "frameLevel", "font1:stackFont", "font2:durationFont"},
         ["targetedSpells"] = {"enabled", "checkbutton:showAllSpells:"..L["Glow is only available to the spells in the list below"], "targetedSpellsList", "targetedSpellsGlow", "size-border", "num:3", "orientation", "position", "frameLevel", "font"},
@@ -1642,7 +1642,7 @@ local function ShowIndicatorSettings(id)
         elseif indicatorType == "overlay" then
             settingsTable = {"enabled", "auras", "overlayColors", "checkbutton3:smooth", "barOrientation", "frameLevel"}
         elseif indicatorType == "block" then
-            settingsTable = {"enabled", "auras", "colors", "checkbutton3:showStack", "durationVisibility", "size", "position", "frameLevel", "font1:stackFont", "font2:durationFont"}
+            settingsTable = {"enabled", "auras", "blockColors", "checkbutton3:showStack", "durationVisibility", "size", "position", "frameLevel", "font1:stackFont", "font2:durationFont"}
         elseif indicatorType == "blocks" then
             settingsTable = {"enabled", "auras", "checkbutton3:showStack", "durationVisibility", "size", "num:10", "numPerLine:10", "spacing", "orientation", "position", "frameLevel", "font1:stackFont", "font2:durationFont"}
         end
@@ -1677,7 +1677,7 @@ local function ShowIndicatorSettings(id)
 
         --! convert currentSetting to ACTUAL TABLE INDEX
         if currentSetting == "color-alpha" or currentSetting == "color-class" or currentSetting == "color-power" then currentSetting = "color" end
-        if currentSetting == "customColors" or currentSetting == "overlayColors" then currentSetting = "colors" end
+        if currentSetting == "customColors" or currentSetting == "overlayColors" or currentSetting == "blockColors" then currentSetting = "colors" end
         if currentSetting == "size-square" or currentSetting == "size-bar" or currentSetting == "size-normal-big" then currentSetting = "size" end
         if currentSetting == "namePosition" or currentSetting == "statusPosition" or currentSetting == "position-noHCenter" or currentSetting == "shieldBarPosition" then currentSetting = "position" end
         if currentSetting == "barOrientation" then currentSetting = "orientation" end
@@ -1911,20 +1911,12 @@ local function ShowIndicatorSettings(id)
                 Cell:Fire("UpdateIndicators", notifiedLayout, indicatorName, "frameLevel", value)
             end)
 
-        -- missingBuffsFilters
-        elseif currentSetting == "missingBuffsFilters" then
+        -- missingBuffsFilters / targetCounterFilters / dispelFilters
+        elseif currentSetting == "missingBuffsFilters" or currentSetting == "targetCounterFilters" or currentSetting == "dispelFilters" then
             w:SetDBValue(indicatorTable["filters"])
             w:SetFunc(function()
                 -- NOTE: already changed in widget
-                Cell:Fire("UpdateIndicators", notifiedLayout, indicatorName, "missingBuffsFilters")
-            end)
-
-        -- targetCounterFilters
-        elseif currentSetting == "targetCounterFilters" then
-            w:SetDBValue(indicatorTable["filters"])
-            w:SetFunc(function()
-                -- NOTE: already changed in widget
-                Cell:Fire("UpdateIndicators", notifiedLayout, indicatorName, "targetCounterFilters")
+                Cell:Fire("UpdateIndicators", notifiedLayout, indicatorName, currentSetting)
             end)
 
         -- common
