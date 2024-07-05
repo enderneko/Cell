@@ -19,6 +19,7 @@ local UnitHealthMax = UnitHealthMax
 local UnitGetIncomingHeals = UnitGetIncomingHeals
 local UnitGetTotalAbsorbs = UnitGetTotalAbsorbs
 local UnitGetTotalHealAbsorbs = UnitGetTotalHealAbsorbs
+local UnitIsFriend = UnitIsFriend
 local UnitIsUnit = UnitIsUnit
 local UnitIsPlayer = UnitIsPlayer
 local UnitIsConnected = UnitIsConnected
@@ -1216,7 +1217,9 @@ local function UnitButton_UpdateDebuffs(self)
     end
 
     -- update dispels
-    self.indicators.dispels:SetDispels(self._debuffs_dispel)
+    if F:UnitInGroup(unit) or UnitIsFriend("player", unit) then
+        self.indicators.dispels:SetDispels(self._debuffs_dispel)
+    end
 
     -- update crowdControls
     self.indicators.crowdControls:UpdateSize(self._debuffs.crowdControlsFound)

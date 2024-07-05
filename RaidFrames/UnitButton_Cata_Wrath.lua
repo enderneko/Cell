@@ -18,6 +18,7 @@ local UnitClassBase = UnitClassBase
 local UnitHealth = UnitHealth
 local UnitHealthMax = UnitHealthMax
 -- local UnitGetIncomingHeals = UnitGetIncomingHeals
+local UnitIsFriend = UnitIsFriend
 local UnitIsUnit = UnitIsUnit
 local UnitIsPlayer = UnitIsPlayer
 local UnitIsConnected = UnitIsConnected
@@ -1140,7 +1141,9 @@ local function UnitButton_UpdateDebuffs(self)
     end
 
     -- update dispels
-    self.indicators.dispels:SetDispels(self._debuffs_dispel)
+    if F:UnitInGroup(unit) or UnitIsFriend("player", unit) then
+        self.indicators.dispels:SetDispels(self._debuffs_dispel)
+    end
 
     -- user created indicators
     I.ShowCustomIndicators(self, "debuff")
