@@ -8,7 +8,7 @@ function F:Revise()
     F:Debug("DBRevision:", dbRevision)
 
     local charaDbRevision
-    if Cell.isVanilla or Cell.isCata then
+    if CellCharacterDB then
         charaDbRevision = CellCharacterDB["revise"] and tonumber(string.match(CellCharacterDB["revise"], "%d+")) or 0
         F:Debug("CharaDBRevision:", charaDbRevision)
     end
@@ -2995,9 +2995,20 @@ function F:Revise()
         end
 
         -- click-castings macro -> macrotext
-        local db = Cell.isRetail and CellDB["clickCastings"] or CellCharacterDB["clickCastings"]
-        for _, classT in pairs(db) do
-            for k, t in pairs(classT) do
+        if Cell.isRetail then
+            for _, classT in pairs(CellDB["clickCastings"]) do
+                for k, t in pairs(classT) do
+                    if type(k) == "number" or k == "common" then
+                        for _, binding in pairs(t) do
+                            if binding[2] == "macro" and binding[3] and strfind(strtrim(binding[3]), "^[/#]") then
+                                binding[2] = "custom"
+                            end
+                        end
+                    end
+                end
+            end
+        else
+            for _, t in pairs(CellCharacterDB["clickCastings"]) do
                 if type(k) == "number" or k == "common" then
                     for _, binding in pairs(t) do
                         if binding[2] == "macro" and binding[3] and strfind(strtrim(binding[3]), "^[/#]") then
@@ -3073,7 +3084,7 @@ function F:Revise()
     end
 
     CellDB["revise"] = Cell.version
-    if Cell.isVanilla or Cell.isCata then
+    if CellCharacterDB then
         CellCharacterDB["revise"] = Cell.version
     end
 end

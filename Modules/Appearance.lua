@@ -439,7 +439,7 @@ local function UpdatePreviewShields(r, g, b)
         end
     end
 
-    if Cell.isRetail or Cell.isCata then
+    if Cell.isRetail or Cell.isWrath or Cell.isCata then
         if CellDB["appearance"]["shield"][1] then
             previewButton2.widgets.shieldBar:SetValue(0.6, 0.6)
             previewButton2.widgets.shieldBar:SetVertexColor(unpack(CellDB["appearance"]["shield"][2]))

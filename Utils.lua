@@ -94,7 +94,7 @@ if Cell.isCata then
         return which, Cell.vars.playerSpecIcon, Cell.vars.playerSpecName
     end
 
-elseif Cell.isVanilla then
+elseif Cell.isWrath or Cell.isVanilla then
     function F:GetActiveTalentInfo()
         local which = GetActiveTalentGroup() == 1 and L["Primary Talents"] or L["Secondary Talents"]
 
@@ -106,13 +106,13 @@ elseif Cell.isVanilla then
             if pointsSpent > maxPoints then
                 maxPoints = pointsSpent
                 specIcon = texture
-                specName = name
-            elseif pointsSpent == maxPoints then
-                specIcon = 132148
+                specName = fileName
+            -- elseif pointsSpent == maxPoints then
+            --     specIcon = 132148
             end
         end
 
-        return which, specIcon, specName
+        return which, specIcon or 134400, specName or L["No Spec"]
     end
 end
 
