@@ -1476,7 +1476,7 @@ local friendSpells = {
     ["ROGUE"] = 2764,
     ["SHAMAN"] = Cell.isRetail and 8004 or 331,
     ["WARLOCK"] = 20707,
-    -- ["WARRIOR"] = ,
+    ["WARRIOR"] = 3411,
 }
 
 local deadSpells = {
@@ -1489,11 +1489,11 @@ local harmSpells = {
     ["DRUID"] = 5176,
     ["EVOKER"] = 361469,
     ["HUNTER"] = 75,
-    ["MAGE"] = 116,
+    ["MAGE"] = Cell.isRetail and 116 or 133,
     ["MONK"] = 117952,
     ["PALADIN"] = 20271,
     ["PRIEST"] = Cell.isRetail and 589 or 585,
-    -- ["ROGUE"] = ,
+    ["ROGUE"] = 114014,
     ["SHAMAN"] = Cell.isRetail and 188196 or 403,
     ["WARLOCK"] = 686,
     ["WARRIOR"] = 355,

@@ -528,6 +528,7 @@ local function ApplyClickCastings(b)
                 else
                     b:SetAttribute(attr, "/cast ["..unit..condition.."] "..spellName..sMaRt..fix)
                 end
+                if not Cell.isRetail then UpdatePlaceholder(b, attr) end
             end
         elseif t[2] == "macro" then
             local attr = string.gsub(bindKey, "type", "macro")
