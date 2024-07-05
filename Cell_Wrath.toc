@@ -40,7 +40,7 @@ Modules\LoadModules_Classic.xml
 Utilities\LoadUtilities_Wrath.xml
 RaidDebuffs\LoadRaidDebuffs_Wrath.xml
 
-RaidFrames\UnitButton_Wrath.lua
+RaidFrames\UnitButton_Cata_Wrath.lua
 RaidFrames\UnitButton.xml
 RaidFrames\Groups\SoloFrame.lua
 RaidFrames\Groups\PartyFrame.lua

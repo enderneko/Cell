@@ -5762,6 +5762,77 @@ local function CreateSetting_TargetCounterFilters(parent)
     return widget
 end
 
+local function CreateSetting_DispelFilters(parent)
+    local widget
+
+    if not settingWidgets["dispelFilters"] then
+        widget = addon:CreateFrame("CellIndicatorSettings_DispelFilters", parent, 240, 96)
+        settingWidgets["dispelFilters"] = widget
+
+        widget.dispellableByMe = addon:CreateCheckButton(widget, L["dispellableByMe"])
+        widget.dispellableByMe:SetPoint("TOPLEFT", 5, -8)
+
+        widget.curse = addon:CreateCheckButton(widget, "|TInterface\\AddOns\\Cell\\Media\\Debuffs\\Curse:0|t"..L["Curse"])
+        widget.curse:SetPoint("TOPLEFT", widget.dispellableByMe, "BOTTOMLEFT", 0, -8)
+
+        widget.disease = addon:CreateCheckButton(widget, "|TInterface\\AddOns\\Cell\\Media\\Debuffs\\Disease:0|t"..L["Disease"])
+        widget.disease:SetPoint("TOPLEFT", widget.curse, 135, 0)
+
+        widget.magic = addon:CreateCheckButton(widget, "|TInterface\\AddOns\\Cell\\Media\\Debuffs\\Magic:0|t"..L["Magic"])
+        widget.magic:SetPoint("TOPLEFT", widget.curse, "BOTTOMLEFT", 0, -8)
+
+        widget.poison = addon:CreateCheckButton(widget, "|TInterface\\AddOns\\Cell\\Media\\Debuffs\\Poison:0|t"..L["Poison"])
+        widget.poison:SetPoint("TOPLEFT", widget.magic, 135, 0)
+
+        widget.bleed = addon:CreateCheckButton(widget, "|TInterface\\AddOns\\Cell\\Media\\Debuffs\\Bleed:0|t"..L["Bleed"])
+        widget.bleed:SetPoint("TOPLEFT", widget.magic, "BOTTOMLEFT", 0, -8)
+
+        -- callback
+        function widget:SetFunc(func)
+            widget.dispellableByMe.onClick = function(checked)
+                widget.filters.dispellableByMe = checked
+                func()
+            end
+            widget.curse.onClick = function(checked)
+                widget.filters.Curse = checked
+                func()
+            end
+            widget.disease.onClick = function(checked)
+                widget.filters.Disease = checked
+                func()
+            end
+            widget.magic.onClick = function(checked)
+                widget.filters.Magic = checked
+                func()
+            end
+            widget.poison.onClick = function(checked)
+                widget.filters.Poison = checked
+                func()
+            end
+            widget.bleed.onClick = function(checked)
+                widget.filters.Bleed = checked
+                func()
+            end
+        end
+
+        -- show db value
+        function widget:SetDBValue(filters)
+            widget.filters = filters
+            widget.dispellableByMe:SetChecked(filters.dispellableByMe)
+            widget.curse:SetChecked(filters.Curse)
+            widget.disease:SetChecked(filters.Disease)
+            widget.magic:SetChecked(filters.Magic)
+            widget.poison:SetChecked(filters.Poison)
+            widget.bleed:SetChecked(filters.Bleed)
+        end
+    else
+        widget = settingWidgets["dispelFilters"]
+    end
+
+    widget:Show()
+    return widget
+end
+
 local function CreateSetting_CastBy(parent)
     local widget
 
@@ -5902,6 +5973,59 @@ end
 -----------------------------------------
 -- create
 -----------------------------------------
+local builders = {
+    ["enabled"] = CreateSetting_Enabled,
+    ["vehicleNamePosition"] = CreateSetting_VehicleNamePosition,
+    ["statusPosition"] = CreateSetting_StatusPosition,
+    ["shieldBarPosition"] = CreateSetting_ShieldBarPosition,
+    ["anchor"] = CreateSetting_Anchor,
+    ["size"] = CreateSetting_Size,
+    ["size-normal-big"] = CreateSetting_SizeNormalBig,
+    ["size-square"] = CreateSetting_SizeSquare,
+    ["size-bar"] = CreateSetting_SizeBar,
+    ["size-border"] = CreateSetting_SizeAndBorder,
+    ["spacing"] = CreateSetting_Spacing,
+    ["thickness"] = CreateSetting_Thickness,
+    ["height"] = CreateSetting_Height,
+    ["textWidth"] = CreateSetting_TextWidth,
+    ["alpha"] = CreateSetting_Alpha,
+    ["healthFormat"] = CreateSetting_HealthFormat,
+    ["powerFormat"] = CreateSetting_PowerFormat,
+    ["durationVisibility"] = CreateSetting_DurationVisibility,
+    ["orientation"] = CreateSetting_Orientation,
+    ["barOrientation"] = CreateSetting_BarOrientation,
+    ["font-noOffset"] = CreateSetting_FontNoOffset,
+    ["color"] = CreateSetting_Color,
+    ["color-alpha"] = CreateSetting_ColorAlpha,
+    ["colors"] = CreateSetting_Colors,
+    ["blockColors"] = CreateSetting_BlockColors,
+    ["overlayColors"] = CreateSetting_OverlayColors,
+    ["customColors"] = CreateSetting_CustomColors,
+    ["color-class"] = CreateSetting_ClassColor,
+    ["color-power"] = CreateSetting_PowerColor,
+    ["statusColors"] = CreateSetting_StatusColors,
+    ["duration"] = CreateSetting_Duration,
+    ["roleTexture"] = CreateSetting_RoleTexture,
+    ["glow"] = CreateSetting_Glow,
+    ["glowOptions"] = CreateSetting_Glow,
+    ["targetedSpellsGlow"] = CreateSetting_Glow,
+    ["texture"] = CreateSetting_Texture,
+    ["builtInDefensives"] = CreateSetting_BuiltIns,
+    ["builtInExternals"] = CreateSetting_BuiltIns,
+    ["builtInCrowdControls"] = CreateSetting_BuiltIns,
+    ["actionsPreview"] = CreateSetting_ActionsPreview,
+    ["actionsList"] = CreateSetting_ActionsList,
+    ["highlightType"] = CreateSetting_HighlightType,
+    ["thresholds"] = CreateSetting_Thresholds,
+    ["privateAuraOptions"] = CreateSetting_PrivateAuraOptions,
+    ["shape"] = CreateSetting_Shape,
+    ["missingBuffsFilters"] = CreateSetting_MissingBuffsFilters,
+    ["targetCounterFilters"] = CreateSetting_TargetCounterFilters,
+    ["dispelFilters"] = CreateSetting_DispelFilters,
+    ["castBy"] = CreateSetting_CastBy,
+    ["showOn"] = CreateSetting_ShowOn,
+}
+
 function addon:CreateIndicatorSettings(parent, settingsTable)
     settingsParent = parent
 
@@ -5915,124 +6039,36 @@ function addon:CreateIndicatorSettings(parent, settingsTable)
 
     -- return and show
     for _, setting in pairs(settingsTable) do
-        if setting == "enabled" then
-            tinsert(widgetsTable, CreateSetting_Enabled(parent))
+        if builders[setting] then
+            tinsert(widgetsTable, builders[setting](parent))
         elseif setting == "position" then
             tinsert(widgetsTable, CreateSetting_Position(parent, L["To UnitButton's"]))
         elseif setting == "position-noHCenter" then
             tinsert(widgetsTable, CreateSetting_PositionNoHCenter(parent, L["To UnitButton's"]))
         elseif setting == "namePosition" then
             tinsert(widgetsTable, CreateSetting_Position(parent, L["To HealthBar's"]))
-        elseif setting == "vehicleNamePosition" then
-            tinsert(widgetsTable, CreateSetting_VehicleNamePosition(parent))
-        elseif setting == "statusPosition" then
-            tinsert(widgetsTable, CreateSetting_StatusPosition(parent))
-        elseif setting == "shieldBarPosition" then
-            tinsert(widgetsTable, CreateSetting_ShieldBarPosition(parent))
-        elseif setting == "anchor" then
-            tinsert(widgetsTable, CreateSetting_Anchor(parent))
         elseif strfind(setting, "^frameLevel") then
             tinsert(widgetsTable, CreateSetting_FrameLevel(parent))
-        elseif setting == "size" then
-            tinsert(widgetsTable, CreateSetting_Size(parent))
-        elseif setting == "size-normal-big" then
-            tinsert(widgetsTable, CreateSetting_SizeNormalBig(parent))
-        elseif setting == "size-square" then
-            tinsert(widgetsTable, CreateSetting_SizeSquare(parent))
-        elseif setting == "size-bar" then
-            tinsert(widgetsTable, CreateSetting_SizeBar(parent))
-        elseif setting == "size-border" then
-            tinsert(widgetsTable, CreateSetting_SizeAndBorder(parent))
-        elseif setting == "spacing" then
-            tinsert(widgetsTable, CreateSetting_Spacing(parent))
-        elseif setting == "thickness" then
-            tinsert(widgetsTable, CreateSetting_Thickness(parent))
-        elseif setting == "height" then
-            tinsert(widgetsTable, CreateSetting_Height(parent))
-        elseif setting == "textWidth" then
-            tinsert(widgetsTable, CreateSetting_TextWidth(parent))
-        elseif setting == "alpha" then
-            tinsert(widgetsTable, CreateSetting_Alpha(parent))
         elseif string.find(setting, "^num:") then
             tinsert(widgetsTable, CreateSetting_Num(parent))
         elseif string.find(setting, "^numPerLine:") then
             tinsert(widgetsTable, CreateSetting_NumPerLine(parent))
-        elseif setting == "healthFormat" then
-            tinsert(widgetsTable, CreateSetting_HealthFormat(parent))
-        elseif setting == "powerFormat" then
-            tinsert(widgetsTable, CreateSetting_PowerFormat(parent))
-        elseif setting == "durationVisibility" then
-            tinsert(widgetsTable, CreateSetting_DurationVisibility(parent))
-        elseif setting == "orientation" then
-            tinsert(widgetsTable, CreateSetting_Orientation(parent))
-        elseif setting == "barOrientation" then
-            tinsert(widgetsTable, CreateSetting_BarOrientation(parent))
-        elseif setting == "font-noOffset" then
-            tinsert(widgetsTable, CreateSetting_FontNoOffset(parent))
         elseif string.find(setting, "^font") then
             tinsert(widgetsTable, CreateSetting_Font(parent, string.match(setting, "^(font%d?):?.*$")))
-        elseif setting == "color" then
-            tinsert(widgetsTable, CreateSetting_Color(parent))
-        elseif setting == "color-alpha" then
-            tinsert(widgetsTable, CreateSetting_ColorAlpha(parent))
-        elseif setting == "colors" then
-            tinsert(widgetsTable, CreateSetting_Colors(parent))
-        elseif setting == "blockColors" then
-            tinsert(widgetsTable, CreateSetting_BlockColors(parent))
-        elseif setting == "overlayColors" then
-            tinsert(widgetsTable, CreateSetting_OverlayColors(parent))
-        elseif setting == "customColors" then
-            tinsert(widgetsTable, CreateSetting_CustomColors(parent))
-        elseif setting == "color-class" then
-            tinsert(widgetsTable, CreateSetting_ClassColor(parent))
-        elseif setting == "color-power" then
-            tinsert(widgetsTable, CreateSetting_PowerColor(parent))
-        elseif setting == "statusColors" then
-            tinsert(widgetsTable, CreateSetting_StatusColors(parent))
-        elseif string.find(setting, "checkbutton4") then
+        elseif string.find(setting, "^checkbutton4") then
             tinsert(widgetsTable, CreateSetting_CheckButton4(parent))
-        elseif string.find(setting, "checkbutton3") then
+        elseif string.find(setting, "^checkbutton3") then
             tinsert(widgetsTable, CreateSetting_CheckButton3(parent))
-        elseif string.find(setting, "checkbutton2") then
+        elseif string.find(setting, "^checkbutton2") then
             tinsert(widgetsTable, CreateSetting_CheckButton2(parent))
-        elseif string.find(setting, "checkbutton") then
+        elseif string.find(setting, "^checkbutton") then
             tinsert(widgetsTable, CreateSetting_CheckButton(parent))
-        elseif setting == "duration" then
-            tinsert(widgetsTable, CreateSetting_Duration(parent))
-        elseif setting == "roleTexture" then
-            tinsert(widgetsTable, CreateSetting_RoleTexture(parent))
-        elseif setting == "glow" or setting == "glowOptions" or setting == "targetedSpellsGlow" then
-            tinsert(widgetsTable, CreateSetting_Glow(parent))
-        elseif setting == "texture" then
-            tinsert(widgetsTable, CreateSetting_Texture(parent))
         elseif setting == "auras" or setting == "debuffBlacklist" or setting == "dispelBlacklist" or setting == "targetedSpellsList" or setting == "customDefensives" or setting == "customExternals" or setting == "customCrowdControls" then
             tinsert(widgetsTable, CreateSetting_Auras(parent, 1))
         elseif setting == "auras2" or setting == "bigDebuffs" then
             tinsert(widgetsTable, CreateSetting_Auras(parent, 2))
         -- elseif setting == "cleuAuras" then
         --     tinsert(widgetsTable, CreateSetting_CleuAuras(parent))
-        elseif setting == "builtInDefensives" or setting == "builtInExternals" or setting == "builtInCrowdControls" then
-            tinsert(widgetsTable, CreateSetting_BuiltIns(parent))
-        elseif setting == "actionsPreview" then
-            tinsert(widgetsTable, CreateSetting_ActionsPreview(parent))
-        elseif setting == "actionsList" then
-            tinsert(widgetsTable, CreateSetting_ActionsList(parent))
-        elseif setting == "highlightType" then
-            tinsert(widgetsTable, CreateSetting_HighlightType(parent))
-        elseif setting == "thresholds" then
-            tinsert(widgetsTable, CreateSetting_Thresholds(parent))
-        elseif setting == "privateAuraOptions" then
-            tinsert(widgetsTable, CreateSetting_PrivateAuraOptions(parent))
-        elseif setting == "shape" then
-            tinsert(widgetsTable, CreateSetting_Shape(parent))
-        elseif setting == "missingBuffsFilters" then
-            tinsert(widgetsTable, CreateSetting_MissingBuffsFilters(parent))
-        elseif setting == "targetCounterFilters" then
-            tinsert(widgetsTable, CreateSetting_TargetCounterFilters(parent))
-        elseif setting == "castBy" then
-            tinsert(widgetsTable, CreateSetting_CastBy(parent))
-        elseif setting == "showOn" then
-            tinsert(widgetsTable, CreateSetting_ShowOn(parent))
         else -- tips
             tinsert(widgetsTable, CreateSetting_Tips(parent, setting))
         end

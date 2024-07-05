@@ -136,6 +136,9 @@ local function ResetIndicators()
         if t["indicatorName"] == "nameText" or t["indicatorName"] == "healthText" or t["indicatorName"] == "powerText" then
             indicatorColors[t["indicatorName"]] = t["color"]
         end
+        if t["indicatorName"] == "dispels" then
+            indicatorBooleans["dispels"] = t["filters"]
+        end
         if t["dispellableByMe"] ~= nil then
             indicatorBooleans[t["indicatorName"]] = t["dispellableByMe"]
         end
@@ -686,6 +689,10 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
             I.UpdateMissingBuffsFilters()
         elseif setting == "targetCounterFilters" then
             I.UpdateTargetCounterFilters()
+        elseif setting == "dispelFilters" then
+            F:IterateAllUnitButtons(function(b)
+                UnitButton_UpdateAuras(b)
+            end, true)
         elseif setting == "glowOptions" then
             F:IterateAllUnitButtons(function(b)
                 b.indicators[indicatorName]:UpdateGlowOptions(value)
@@ -964,12 +971,14 @@ local function UnitButton_UpdateDebuffs(self)
 
             if enabledIndicators["dispels"] and debuffType and debuffType ~= "" then
                 -- all dispels / only dispellableByMe
-                if not indicatorBooleans["dispels"] or I.CanDispel(debuffType) then
-                    if Cell.vars.dispelBlacklist[spellId] then
-                        -- no highlight
-                        self._debuffs_dispel[debuffType] = false
-                    else
-                        self._debuffs_dispel[debuffType] = true
+                if not indicatorBooleans["dispels"]["dispellableByMe"] or I.CanDispel(debuffType) then
+                    if indicatorBooleans["dispels"][debuffType] then
+                        if Cell.vars.dispelBlacklist[spellId] then
+                            -- no highlight
+                            self._debuffs_dispel[debuffType] = false
+                        else
+                            self._debuffs_dispel[debuffType] = true
+                        end
                     end
                 end
             end

@@ -3019,13 +3019,27 @@ function F:Revise()
             end
         end
 
-        -- update block, add "colorType"
         for _, layout in pairs(CellDB["layouts"]) do
             for _, i in pairs(layout["indicators"]) do
                 if i.type == "block" then
+                    -- update block, add "colorBy"
                     if #i.colors == 4 then
                         tinsert(i.colors, 1, "duration")
                     end
+
+                elseif i.indicatorName == "dispels" then
+                    -- update Dispels filters
+                    if not i.filters then
+                        i.filters = {
+                            ["dispellableByMe"] = i.dispellableByMe,
+                            ["Curse"] = true,
+                            ["Disease"] = true,
+                            ["Magic"] = true,
+                            ["Poison"] = true,
+                            ["Bleed"] = true,
+                        }
+                    end
+                    i.dispellableByMe = nil
                 end
             end
         end
