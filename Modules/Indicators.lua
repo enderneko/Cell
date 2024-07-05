@@ -647,7 +647,7 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                     if t["indicatorName"] == "healthText" then
                         indicator:SetValue(21377, 65535, 16384)
                     elseif t["indicatorName"] == "powerText" then
-                        indicator:SetValue(2048, 4096)
+                        indicator:SetValue(25000, 50000)
                     end
                 end
                 -- update numPerLine
@@ -841,7 +841,7 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
             if indicatorName == "healthText" then
                 indicator:SetValue(21377, 65535, 16384)
             elseif indicatorName == "powerText" then
-                indicator:SetValue(2048, 4096)
+                indicator:SetValue(25000, 50000)
             end
         elseif setting == "spacing" then
             indicator:SetSpacing(value)

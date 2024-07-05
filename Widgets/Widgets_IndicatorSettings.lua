@@ -1105,14 +1105,14 @@ local function CreateSetting_PowerFormat(parent)
                 end,
             },
             {
-                ["text"] = "2048",
+                ["text"] = "25000",
                 ["value"] = "number",
                 ["onClick"] = function()
                     widget.func("number")
                 end,
             },
             {
-                ["text"] = F:FormatNumber(2048),
+                ["text"] = F:FormatNumber(25000),
                 ["value"] = "number-short",
                 ["onClick"] = function()
                     widget.func("number-short")
