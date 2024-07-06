@@ -9,7 +9,7 @@ aboutTab:SetAllPoints(Cell.frames.optionsFrame)
 aboutTab:Hide()
 
 local authorText, specialThanksText, supportersText1, supportersText2
-local translatorsTextCN, translatorsTextKR, translatorsTextPT, translatorsTextDE
+local translatorsTextCN, translatorsTextKR, translatorsTextPT, translatorsTextDE, translatorsTextRU
 local UpdateFont
 
 -------------------------------------------------
@@ -127,6 +127,19 @@ local function CreateTranslatorsPane()
     translatorsTextDE:SetSpacing(5)
     translatorsTextDE:SetJustifyH("LEFT")
     translatorsTextDE:SetText("deDE: CheersItsJulian")
+
+    -- ruRU
+    translatorsTextRU = translatorsPane:CreateFontString(nil, "OVERLAY")
+    translatorsTextRU.font = UNIT_NAME_FONT_ROMAN
+    translatorsTextRU.size = 12
+    UpdateFont(translatorsTextRU)
+
+    translatorsTextRU:SetPoint("LEFT", 5, 0)
+    translatorsTextRU:SetPoint("RIGHT", -5, 0)
+    translatorsTextRU:SetPoint("TOP", translatorsTextDE, "BOTTOM", 0, -5)
+    translatorsTextRU:SetSpacing(5)
+    translatorsTextRU:SetJustifyH("LEFT")
+    translatorsTextRU:SetText("ruRU: SkywardenSylvanas")
 end
 
 -------------------------------------------------
@@ -526,6 +539,7 @@ function Cell:UpdateAboutFont()
     UpdateFont(translatorsTextKR)
     UpdateFont(translatorsTextPT)
     UpdateFont(translatorsTextDE)
+    UpdateFont(translatorsTextRU)
     UpdateFont(specialThanksText)
     UpdateFont(supportersText1)
     UpdateFont(supportersText2)
