@@ -170,7 +170,15 @@ local function ResetIndicators()
 end
 
 local function HandleIndicators(b)
-    b._indicatorReady = nil
+    b._indicatorsReady = nil
+
+    if not b._indicatorsCreated then
+        b._indicatorsCreated = true
+        I.CreateDefensiveCooldowns(b)
+        I.CreateExternalCooldowns(b)
+        I.CreateAllCooldowns(b)
+        I.CreateDebuffs(b)
+    end
 
     -- NOTE: Remove old
     I.RemoveAllCustomIndicators(b)
@@ -366,7 +374,7 @@ local function HandleIndicators(b)
     --! update pixel perfect for widgets
     B:UpdatePixelPerfect(b, true)
 
-    b._indicatorReady = true
+    b._indicatorsReady = true
 end
 
 -------------------------------------------------
@@ -406,7 +414,7 @@ hooksecurefunc(updater, "Show", function()
 end)
 
 local function AddToQueue(b)
-    b._indicatorReady = nil
+    b._indicatorsReady = nil
     tinsert(queue, b)
 end
 
@@ -1822,7 +1830,7 @@ local function UnitButton_UpdateHealPrediction(self)
 end
 
 UnitButton_UpdateAuras = function(self)
-    if not self._indicatorReady then return end
+    if not self._indicatorsReady then return end
 
     local unit = self.states.displayedUnit
     if not unit then return end
@@ -2745,7 +2753,7 @@ local function UnitButton_OnTick(self)
 
     UnitButton_UpdateInRange(self)
 
-    if self._updateRequired and self._indicatorReady then
+    if self._updateRequired and self._indicatorsReady then
         self._updateRequired = nil
         UnitButton_UpdateAll(self)
     end
@@ -3536,11 +3544,11 @@ function CellUnitButton_OnLoad(button)
     I.CreateTargetRaidIcon(button)
     I.CreateShieldBar(button)
     I.CreateAoEHealing(button)
-    I.CreateDefensiveCooldowns(button)
-    I.CreateExternalCooldowns(button)
-    I.CreateAllCooldowns(button)
+    -- I.CreateDefensiveCooldowns(button)
+    -- I.CreateExternalCooldowns(button)
+    -- I.CreateAllCooldowns(button)
+    -- I.CreateDebuffs(button)
     I.CreateDispels(button)
-    I.CreateDebuffs(button)
     I.CreateRaidDebuffs(button)
     I.CreateTargetCounter(button)
     I.CreateTargetedSpells(button)

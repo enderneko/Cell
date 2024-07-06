@@ -583,7 +583,16 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
 
     if not indicatorName then -- init
         if not layout then --! call from UpdateIndicators() not from Cell:Fire("UpdateIndicators", ...)
+            if not previewButton._indicatorsCreated then
+                previewButton._indicatorsCreated = true
+                I.CreateDefensiveCooldowns(previewButton)
+                I.CreateExternalCooldowns(previewButton)
+                I.CreateAllCooldowns(previewButton)
+                I.CreateDebuffs(previewButton)
+            end
+
             I.RemoveAllCustomIndicators(previewButton)
+
             for i, t in pairs(currentLayoutTable["indicators"]) do
                 local indicator = previewButton.indicators[t["indicatorName"]] or I.CreateIndicator(previewButton, t, true)
                 indicator.configs = t
