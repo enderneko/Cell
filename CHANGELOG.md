@@ -1,19 +1,21 @@
-# [r229-release-60-g1a57acd](https://github.com/enderneko/Cell/tree/1a57acddb434634f87b0ec6454f6a1bf8f22d20b) (2024-07-01)
+[Full Changelog](https://github.com/enderneko/Cell/compare/r230-beta...caff8f96a7d1dae9f7b96a6306a4ed0198f41121)
 
-[Full Changelog](https://github.com/enderneko/Cell/compare/r229-release...1a57acddb434634f87b0ec6454f6a1bf8f22d20b)
+- Fix error on import (#142)
+- Macrotexts are working again (#144)
+- Update healer spelllist for TWW (#145)
 
-- Update for TWW (#139,#120)
-- Update bleedList (#119)
-- Make indicator list items draggable
-- Introduce CELL_COOLDOWN_STYLE
-- Implemented Blocks
-- Add "Show Duration" for CC indicator
-- Update frame level of "Color" indicators
-- Update Range Check
-- Update LibGroupInfo
-- Update Role Icon texture
-- Justify indicator texts
-- Fix ConfirmPopup button1
-- Fix localizedClass
-- Fix dispel checker for cata
-- Use ID for DH meta in Defensives
+- Rename Consumables to Actions
+- Added deDE (by CheersItsJulian)
+- Update locales
+- Update indicator preview
+- Update Dispels filters
+- Update for CN WotLK
+- Update aura import/export frame
+- Update click-casting tips
+- Update THANKS
+- Hide Dispels for enemies
+- Implement "Stack/Duration" color for "Block"
+- Increase size of Indicators tab
+- Fix BigDebuffs not showing issue
+- Fix " for click-castings
+- Fix "blue glowing hand" cursor

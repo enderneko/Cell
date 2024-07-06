@@ -87,6 +87,17 @@ select(2, ...).L = setmetatable({
         <p>(Retail) Enable "Always Update Buffs/Debuffs" in General tab, if indicators do not update correctly.</p>
         <br/>
 
+        <h1>r231-release (Jul 6, 2024, 21:00 GMT+8)</h1>
+        <p>* Updated for TWW (#142,#144,#145).</p>
+        <p>* Updated for CN WotLK.</p>
+        <p>* Renamed "Consumables" to "Actions".</p>
+        <p>* Updated locales. Added deDE (by CheersItsJulian), ruRU (by SkywardenSylvanas).</p>
+        <p>+ Added "Filters" for Dispels indicator.</p>
+        <p>+ Added "Color By Duration/Stack" for "Block" indicators.</p>
+        <p>* Fixed BigDebuffs.</p>
+        <p>* Fixed Click-Castings.</p>
+        <br/>
+
         <h1>r230-beta (Jul 2, 2024, 00:27 GMT+8)</h1>
         <p>* Updated for TWW (#139,#120), not fully compatible though.</p>
         <p>* Updated bleedList (#119).</p>
