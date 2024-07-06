@@ -3082,6 +3082,14 @@ function F:Revise()
                     toValidate[name] = nil
                 end
             end
+
+            -- customs
+            for i, t in ipairs(layout["indicators"]) do
+                if t["type"] ~= "built-in" then
+                    tinsert(temp, t)
+                end
+            end
+
             layout["indicators"] = temp
         end
     end
