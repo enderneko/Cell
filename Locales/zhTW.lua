@@ -16,7 +16,8 @@ L["+ Stack"] = "層數增加時"
 L["+ Stack & Duration"] = "層數與持續時間增加時"
 L["A 0-40 integer is required."] = "需要 0 ~ 40 的整數。"
 L["A positive integer is required."] = "需要正整數。"
-L["A UI reload is required.\nDo it now?"] = "需要重新載入介面。\n是否要現在立即重新載入?"
+L["A UI reload is required.\nDo it now?"] = [=[需要重新載入介面。
+是否要現在立即重新載入?]=]
 L["About"] = "關於"
 L["ABOUT"] = [=[Cell 團隊框架的靈感來主要來自 CompactRaid 與 Grid2，同時也稍微參考了 Aptechka 和 VuhDo。
 Cell 不輕量，也並非全能，其目標是提供良好的用戶體驗。
@@ -72,6 +73,7 @@ L["Bleed"] = "流血"
 L["Blink"] = "閃爍"
 L["Blizzard Frames"] = "遊戲內建框架"
 L["Block"] = "色塊"
+L["Blocks"] = "色塊組"
 L["Border"] = "邊框"
 L["Border Color"] = "邊框顏色"
 L["Boss Name"] = "首領名稱"
@@ -123,10 +125,11 @@ L["clear unit"] = "清空單位"
 L["cleuAurasTips"] = "通過戰鬥記錄事件找出看不到的法術效果"
 L["Click to preview"] = "點一下預覽"
 L["Click-Castings"] = "滑鼠點擊施法"
-L["clickcastingsHints"] = "左鍵: 編輯\n右鍵: 刪除"
 L["Close"] = "關閉"
 L["Code Snippets"] = "程式碼片段"
 L["Color"] = "顏色"
+--[[Translation missing --]]
+--[[ L["Color By"] = ""--]]
 L["Color Duration Text"] = "著色持續時間文字"
 L["Columns"] = "列數"
 L["Combine Groups"] = "合併隊伍"
@@ -153,6 +156,8 @@ L["Curse"] = "詛咒"
 L["Cursor"] = "滑鼠游標"
 L["Cursor Left"] = "滑鼠游標左側"
 L["Cursor Right"] = "滑鼠游標右側"
+--[[Translation missing --]]
+--[[ L["Custom"] = ""--]]
 L["Custom Color"] = "自訂顏色"
 L["Custom indicators will not be overwritten, even with same name"] = "即使名稱相同，自訂指示器也不會被覆蓋掉"
 L["Custom Nicknames"] = "自訂暱稱"
@@ -203,7 +208,8 @@ L["enableBlacklistShortcut"] = "黑名單: Alt+Ctrl+右鍵"
 L["Enabled"] = "啟用"
 L["enableHighlight"] = "顯著標示單位按鈕"
 L["Ensure that other addons get the right unit button"] = "確保其他插件獲取到正確的單位按鈕"
-L["Enter: apply\nESC: discard"] = "Enter: 套用\nESC: 取消"
+L["Enter: apply\nESC: discard"] = [=[Enter: 套用
+ESC: 取消]=]
 L["Entire"] = "整個"
 L["Error"] = "錯誤"
 L["Even if disabled, the settings below affect \"Externals + Defensives\" indicator"] = "就算被停用，下列的設定也會對 \"減傷 (全部)\" 指示器生效"
@@ -309,6 +315,8 @@ L["Invalid unit."] = "無效單位。"
 L["INVERT"] = "反向選擇"
 L["Invert Color"] = "使用反色"
 L["It will be renamed if this layout name already exists"] = "如果該版面配置名稱已經存在，將自動重新命名"
+--[[Translation missing --]]
+--[[ L["Item"] = ""--]]
 L["Known Spells Only"] = "只限已學會的法術"
 L["Layout"] = "版面配置"
 L["Layout Auto Switch"] = "自動切換版面配置"
@@ -333,7 +341,10 @@ L["Magic"] = "魔法"
 L["Main"] = "主框架"
 L["many"] = "很多"
 L["Marks Bar"] = "標記工具列"
-L["marksTips"] = "\n|r目標標記\n左鍵: |cffffffff在目標上設置標記|r\n右鍵: |cffffffff將標記鎖定在目標上 (在你的隊伍中)|r"
+L["marksTips"] = [=[
+|r目標標記
+左鍵: |cffffffff在目標上設置標記|r
+右鍵: |cffffffff將標記鎖定在目標上 (在你的隊伍中)|r]=]
 L["Max Buttons"] = "按鈕數量"
 L["Max Columns"] = "最大列數"
 L["Max Icons"] = "最大顯示數量"
@@ -412,6 +423,7 @@ L["Pet"] = "寵物"
 L["PET"] = "寵物"
 L["Pixel"] = "像素"
 L["Pixel Perfect"] = "完美細緻模式"
+L["Play animation when the unit uses a specific spell/item. The list is global shared, not layout-specific."] = "當單位使用特定的法術/物品時，播放動畫。這個清單是整體共用的，而非每個版面配置專用。"
 L["Play Icon Animation When"] = "播放圖示動畫於"
 L["Poison"] = "中毒"
 L["Position"] = "位置"
@@ -429,7 +441,10 @@ L["Profiles"] = "設定檔"
 L["Pull"] = "倒數"
 L["Pull in %d sec"] = "開怪還有 %d 秒"
 L["Pull timer cancelled"] = "開怪計時器已取消"
-L["pullTimerTips"] = "\n|r開怪倒數\n左鍵: |cffffffff開始倒數計時|r\n右鍵: |cffffffff取消倒數計時|r"
+L["pullTimerTips"] = [=[
+|r開怪倒數
+左鍵: |cffffffff開始倒數計時|r
+右鍵: |cffffffff取消倒數計時|r]=]
 L["PW:S"] = "真言術：盾"
 L["Quick Assist"] = "快速協助"
 L["Quick Cast"] = "快速施法"
@@ -445,11 +460,15 @@ L["raidRosterTips"] = "[右鍵] 助理，[Alt+右鍵] 移除。"
 L["Ready"] = "團確"
 L["Ready Check Icon"] = "準備確認圖示"
 L["ReadyCheck and PullTimer buttons"] = "準備確認和開怪倒數按鈕"
-L["readyCheckTips"] = "\n|r準備確認\n左鍵: |cffffffff準備確認|r\n右鍵: |cffffffff角色職責確認|r"
+L["readyCheckTips"] = [=[
+|r準備確認
+左鍵: |cffffffff準備確認|r
+右鍵: |cffffffff角色職責確認|r
+]=]
 L["Rect"] = "矩形"
 L["refresh unit buttons"] = "重新整理單位按鈕"
 L["Refreshing unit buttons (%s)..."] = "正在重新整理單位按鈕 (%s)..."
-L["Remaining Time"] = "剩餘時間"
+L["Remaining Time"] = "剩餘時間 <"
 L["Remove"] = "移除"
 L["Rename"] = "更名"
 L["Rename indicator"] = "重新命名指示器"
@@ -475,7 +494,8 @@ L["Reset Offensive Spells"] = "重置爆發法術"
 L["reset Quick Assist for current spec"] = "重置快速協助 (當前專精)"
 L["RESET_CHARACTER"] = "從過舊的版本更新，需要重置角色設定檔"
 L["RESET_INCLUDES"] = "只包括滑鼠點擊施法和自動切換版面配置"
-L["RESET_YES_NO"] = "|cff22ff22是|r - 重置 Cell\n|cffff2222否|r - 我自己搞定"
+L["RESET_YES_NO"] = [=[|cff22ff22是|r - 重置 Cell
+|cffff2222否|r - 我自己搞定]=]
 L["Respond to all dispellable debuffs"] = "回應所有的可驅散減益"
 L["Respond to all requests from group members"] = "回應所有隊伍成員的請求"
 L["Respond to requests that are only sent to me"] = "只回應對我發送的請求"
