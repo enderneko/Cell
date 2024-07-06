@@ -97,7 +97,8 @@ local function CreatePreviewButton()
     -- preview show all active indicators
     previewShowAllCB = Cell:CreateCheckButton(previewButtonBG, L["Show All"], function(checked)
         CellDB["indicatorPreview"]["showAll"] = checked
-        listButtons[selected]:Click()
+        -- listButtons[selected]:Click()
+        ListHighlightFn(selected)
     end)
     previewShowAllCB:SetPoint("TOPLEFT", previewScaleSlider, "TOPRIGHT", 7, 2)
 
@@ -131,19 +132,18 @@ local function UpdatePreviewButton()
 end
 
 -- indicator preview onupdate
-local blocks_color = {1, 0.26667, 0.4}
-local function SetOnUpdate(indicator, type, icon, stack)
+local function SetOnUpdate(indicator, type, icon, stack, extra)
     indicator.preview = indicator.preview or CreateFrame("Frame", nil, indicator)
     indicator.preview:SetScript("OnUpdate", function(self, elapsed)
         self.elapsedTime = (self.elapsedTime or 0) + elapsed
         if self.elapsedTime >= 13 then
             self.elapsedTime = 0
-            indicator:SetCooldown(GetTime(), 13, type, icon, stack, false, blocks_color)
+            indicator:SetCooldown(GetTime(), 13, type, icon, stack, false, extra)
         end
     end)
     indicator:SetScript("OnShow", function()
         indicator.preview.elapsedTime = 0
-        indicator:SetCooldown(GetTime(), 13, type, icon, stack, false, blocks_color)
+        indicator:SetCooldown(GetTime(), 13, type, icon, stack, false, extra)
     end)
 end
 
@@ -531,9 +531,14 @@ local function InitIndicator(indicatorName)
             indicator[i]:SetCooldown(0, 0, nil, buffs[i]["icon"], 0)
         end
     elseif string.find(indicatorName, "indicator") then
-        if indicator.indicatorType == "icons" or indicator.indicatorType == "blocks" then
+        if indicator.indicatorType == "icons" then
             for i = 1, 10 do
                 SetOnUpdate(indicator[i], nil, 134400, i)
+            end
+        elseif indicator.indicatorType == "blocks" then
+            local blocks_color = {1, 0.26667, 0.4}
+            for i = 1, 10 do
+                SetOnUpdate(indicator[i], nil, 134400, i, blocks_color)
             end
         elseif indicator.indicatorType == "text" then
             indicator.isCustomText = true -- mark for custom glow
@@ -761,13 +766,13 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
 
                 -- after init
                 indicator.enabled = t["enabled"]
-                if (CellDB["indicatorPreview"]["showAll"] and t["enabled"]) or i == selected then
-                    indicator:Show()
-                    if indicator.preview then indicator.preview:Show() end
-                else
-                    indicator:Hide()
-                    if indicator.preview then indicator.preview:Hide() end
-                end
+                -- if (CellDB["indicatorPreview"]["showAll"] and t["enabled"]) or i == selected then
+                --     indicator:Show()
+                --     if indicator.preview then indicator.preview:Show() end
+                -- else
+                --     indicator:Hide()
+                --     if indicator.preview then indicator.preview:Hide() end
+                -- end
             end
             -- pixel perfect
             B:UpdatePixelPerfect(previewButton, true)
@@ -776,22 +781,23 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
         local indicator = previewButton.indicators[indicatorName]
         -- changed in IndicatorsTab
         if setting == "enabled" then
-            if value then
-                indicator.enabled = true
-                indicator:Show()
-                if indicator.preview then indicator.preview:Show() end
-                if indicator.isTargetedSpells then indicator:ShowGlowPreview() end
-                if indicator.isDispels then
-                    indicator.elapsed = 1
-                    indicator.current = 1
-                    indicator.isVisible = true
-                end
-            else
-                indicator.enabled = false
-                indicator:Hide()
-                if indicator.preview then indicator.preview:Hide() end
-                if indicator.isTargetedSpells then indicator:HideGlowPreview() end
-            end
+            indicator.enabled = value
+            -- if value then
+            --     indicator.enabled = true
+            --     indicator:Show()
+            --     if indicator.preview then indicator.preview:Show() end
+            --     if indicator.isTargetedSpells then indicator:ShowGlowPreview() end
+            --     if indicator.isDispels then
+            --         indicator.elapsed = 1
+            --         indicator.current = 1
+            --         indicator.isVisible = true
+            --     end
+            -- else
+            --     indicator.enabled = false
+            --     indicator:Hide()
+            --     if indicator.preview then indicator.preview:Hide() end
+            --     if indicator.isTargetedSpells then indicator:HideGlowPreview() end
+            -- end
         elseif setting == "position" then
             P:ClearPoints(indicator)
             P:Point(indicator, value[1], previewButton, value[2], value[3], value[4])
@@ -2083,25 +2089,32 @@ LoadIndicatorList = function()
             return
         end
 
-        if i:IsObjectType("Texture") or i:IsObjectType("FontString") then
-            LCG.PixelGlow_Start(i.preview)
-            -- i:SetAlpha(i.alpha or 1)
-        else
-            if i.isRaidDebuffs or i.isPrivateAuras or i.isCrowdControls then
-                LCG.PixelGlow_Start(i, nil, nil, nil, nil, nil, 2, 2)
-            elseif i.isTargetedSpells then
-                LCG.PixelGlow_Start(i, nil, nil, nil, nil, nil, 2, 2)
-                if currentLayoutTable["indicators"][id]["enabled"] then i:ShowGlowPreview() end
-            elseif i.isAggroBorder then
-                LCG.PixelGlow_Start(i, nil, nil, nil, nil, nil, 2, 2)
-            else
-                LCG.PixelGlow_Start(i)
-            end
+        if i.isDispels then
+            i.isVisible = true
+            i.highlight:Show()
+        elseif i.isTargetedSpells then
+            i:ShowGlowPreview()
+        end
 
-            -- i:SetAlpha(i.alpha or 1)
-            if i.isDispels and i.enabled then
-                i.isVisible = true
-                i.highlight:Show()
+        if CellDB["indicatorPreview"]["showAll"] then
+            if i:IsObjectType("Texture") or i:IsObjectType("FontString") then
+                LCG.PixelGlow_Start(i.preview)
+            else
+                if i.isRaidDebuffs or i.isPrivateAuras or i.isCrowdControls then
+                    LCG.PixelGlow_Start(i, nil, nil, nil, nil, nil, 2, 2)
+                elseif i.isTargetedSpells then
+                    LCG.PixelGlow_Start(i, nil, nil, nil, nil, nil, 2, 2)
+                elseif i.isAggroBorder then
+                    LCG.PixelGlow_Start(i, nil, nil, nil, nil, nil, 2, 2)
+                else
+                    LCG.PixelGlow_Start(i)
+                end
+            end
+        else
+            if i:IsObjectType("Texture") or i:IsObjectType("FontString") then
+                LCG.PixelGlow_Stop(i.preview)
+            else
+                LCG.PixelGlow_Stop(i)
             end
         end
     end, function(id)

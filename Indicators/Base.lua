@@ -1949,6 +1949,8 @@ end
 function I.CreateAura_Block(name, parent)
     local frame = CreateFrame("Frame", name, parent, "BackdropTemplate")
     frame:Hide()
+    frame.indicatorType = "block"
+
     frame:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8x8", edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = P:Scale(CELL_BORDER_SIZE)})
 
     Shared_SetCooldownStyle(frame, CELL_COOLDOWN_STYLE, true)
