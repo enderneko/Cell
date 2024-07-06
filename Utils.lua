@@ -2117,7 +2117,7 @@ function Cell.GetUnitFrame(unit)
     end
 
     if frame then
-        return frame
+        return frame.widgets.highLevelFrame
     elseif WA_GetUnitFrame then
         return WA_GetUnitFrame(unit)
     elseif LGF_GetUnitFrame then
