@@ -3364,7 +3364,7 @@ function CellUnitButton_OnLoad(button)
     healthBar.SetBarValue = healthBar.SetValue
     healthBar:SetStatusBarTexture(Cell.vars.texture)
     healthBar:GetStatusBarTexture():SetDrawLayer("ARTWORK", -7)
-    healthBar:SetFrameLevel(button:GetFrameLevel()+5)
+    healthBar:SetFrameLevel(button:GetFrameLevel()+1)
 
     -- hp loss
     local healthBarLoss = button:CreateTexture(name.."HealthBarLoss", "ARTWORK", nil , -7)
@@ -3379,7 +3379,7 @@ function CellUnitButton_OnLoad(button)
     powerBar.SetBarValue = powerBar.SetValue
     powerBar:SetStatusBarTexture(Cell.vars.texture)
     powerBar:GetStatusBarTexture():SetDrawLayer("ARTWORK", -7)
-    powerBar:SetFrameLevel(button:GetFrameLevel()+6)
+    powerBar:SetFrameLevel(button:GetFrameLevel()+2)
 
     local gapTexture = button:CreateTexture(nil, "BORDER")
     button.widgets.gapTexture = gapTexture
@@ -3500,7 +3500,7 @@ function CellUnitButton_OnLoad(button)
     local targetHighlight = CreateFrame("Frame", name.."TargetHighlight", button, "BackdropTemplate")
     button.widgets.targetHighlight = targetHighlight
     targetHighlight:EnableMouse(false)
-    targetHighlight:SetFrameLevel(button:GetFrameLevel()+6)
+    targetHighlight:SetFrameLevel(button:GetFrameLevel()+3)
     -- targetHighlight:SetBackdrop({edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = P:Scale(1)})
     -- P:Point(targetHighlight, "TOPLEFT", button, "TOPLEFT", -1, 1)
     -- P:Point(targetHighlight, "BOTTOMRIGHT", button, "BOTTOMRIGHT", 1, -1)
@@ -3510,7 +3510,7 @@ function CellUnitButton_OnLoad(button)
     local mouseoverHighlight = CreateFrame("Frame", name.."MouseoverHighlight", button, "BackdropTemplate")
     button.widgets.mouseoverHighlight = mouseoverHighlight
     mouseoverHighlight:EnableMouse(false)
-    mouseoverHighlight:SetFrameLevel(button:GetFrameLevel()+7)
+    mouseoverHighlight:SetFrameLevel(button:GetFrameLevel()+4)
     -- mouseoverHighlight:SetBackdrop({edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = P:Scale(1)})
     -- P:Point(mouseoverHighlight, "TOPLEFT", button, "TOPLEFT", -1, 1)
     -- P:Point(mouseoverHighlight, "BOTTOMRIGHT", button, "BOTTOMRIGHT", 1, -1)

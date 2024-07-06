@@ -258,7 +258,7 @@ Cell.defaults.layout = {
             ["indicatorName"] = "aggroBorder",
             ["type"] = "built-in",
             ["enabled"] = false,
-            ["frameLevel"] = 7,
+            ["frameLevel"] = 3,
             ["thickness"] = 2,
         }, -- 14
         {

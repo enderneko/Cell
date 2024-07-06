@@ -1077,7 +1077,7 @@ local function Color_SetCooldown(color, start, duration, debuffType)
 end
 
 local function Color_SetFrameLevel(color, frameLevel)
-    color:_SetFrameLevel(frameLevel + 10)
+    color:_SetFrameLevel(frameLevel + 1)
 end
 
 local function Color_SetAnchor(color, anchorTo)
