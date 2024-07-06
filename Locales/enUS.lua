@@ -87,6 +87,10 @@ select(2, ...).L = setmetatable({
         <p>(Retail) Enable "Always Update Buffs/Debuffs" in General tab, if indicators do not update correctly.</p>
         <br/>
 
+        <h1>r232-release (Jul 7, 2024, 02:40 GMT+8)</h1>
+        <p>* Fixed a critical issue that removes all custom indicators.</p>
+        <br/>
+
         <h1>r231-release (Jul 6, 2024, 21:00 GMT+8)</h1>
         <p>* Updated for TWW (#142,#144,#145).</p>
         <p>* Updated for CN WotLK.</p>
