@@ -47,6 +47,8 @@ local supporters1 = { -- wowIDs
     {"Fourdigitiq-Blackrock (EU)"}, -- Rou (Ko-fi)
     {"Leako-Draenor (EU)"}, -- Leako (Ko-fi)
     {"Asuranpala-Draenor (EU)"}, -- AsuranDex (Ko-fi)
+    {"Poolparty-Khaz'goroth (US)"}, -- Poolparty (Ko-fi)
+    {"Tenspiritak-Drakthul (EU)"}, -- Tenspiritak (Ko-fi)
 }
 
 local supporters2 = { -- 有些早期的发电记录已经丢失了……
@@ -116,6 +118,8 @@ local supporters2 = { -- 有些早期的发电记录已经丢失了……
     {"lfence", "Ko-fi"}, -- 2024-06-03
     {"AsuranDex", "Ko-fi"}, -- 2024-06-24
     {"Likle", "Ko-fi"}, -- 2024-07-03
+    {"Poolparty", "Ko-fi"}, -- 2024-07-07
+    {"Tenspiritak", "Ko-fi"}, -- 2024-07-07
 }
 
 -------------------------------------------------
