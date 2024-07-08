@@ -2169,7 +2169,7 @@ local function UnitButton_UpdateInRange(self, ir)
     local unit = self.states.displayedUnit
     if not unit then return end
 
-    local inRange = F:IsInRange(unit)
+    local inRange = F:IsInRange(unit, true)
 
     self.states.inRange = inRange
     if Cell.loaded then

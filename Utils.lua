@@ -1453,13 +1453,14 @@ local UnitCanAssist = UnitCanAssist
 local UnitCanAttack = UnitCanAttack
 local UnitCanCooperate = UnitCanCooperate
 local IsSpellInRange = (C_Spell and C_Spell.IsSpellInRange) and C_Spell.IsSpellInRange or IsSpellInRange
-local IsItemInRange = C_Item.IsItemInRange
+local IsItemInRange = (C_Spell and C_Item.IsItemInRange) and C_Item.IsItemInRange or IsItemInRange
 local CheckInteractDistance = CheckInteractDistance
 local UnitIsDead = UnitIsDead
-local GetSpellTabInfo = GetSpellTabInfo
-local GetNumSpellTabs = GetNumSpellTabs
-local GetSpellBookItemName = GetSpellBookItemName
-local BOOKTYPE_SPELL = BOOKTYPE_SPELL
+local IsSpellKnown = IsSpellKnown
+-- local GetSpellTabInfo = GetSpellTabInfo
+-- local GetNumSpellTabs = GetNumSpellTabs
+-- local GetSpellBookItemName = GetSpellBookItemName
+-- local BOOKTYPE_SPELL = BOOKTYPE_SPELL
 
 local playerClass = UnitClassBase("player")
 
@@ -1473,7 +1474,7 @@ local friendSpells = {
     ["MONK"] = 116670,
     ["PALADIN"] = Cell.isRetail and 19750 or 635,
     ["PRIEST"] = Cell.isRetail and 2061 or 2050,
-    ["ROGUE"] = 2764,
+    ["ROGUE"] = Cell.isWrath and 57934,
     ["SHAMAN"] = Cell.isRetail and 8004 or 331,
     ["WARLOCK"] = 20707,
     ["WARRIOR"] = 3411,
@@ -1493,37 +1494,37 @@ local harmSpells = {
     ["MONK"] = 117952,
     ["PALADIN"] = 20271,
     ["PRIEST"] = Cell.isRetail and 589 or 585,
-    ["ROGUE"] = 114014,
+    ["ROGUE"] = 1752,
     ["SHAMAN"] = Cell.isRetail and 188196 or 403,
     ["WARLOCK"] = 686,
     ["WARRIOR"] = 355,
 }
 
-local friendItems = {
-    ["DEATHKNIGHT"] = 34471,
-    ["DEMONHUNTER"] = 34471,
-    ["DRUID"] = 34471,
-    ["EVOKER"] = 1180, -- 30y
-    ["HUNTER"] = 34471,
-    ["MAGE"] = 34471,
-    ["MONK"] = 34471,
-    ["PALADIN"] = 34471,
-    ["PRIEST"] = 34471,
-    ["ROGUE"] = 34471,
-    ["SHAMAN"] = 34471,
-    ["WARLOCK"] = 34471,
-    ["WARRIOR"] = 34471,
-}
+-- local friendItems = {
+--     ["DEATHKNIGHT"] = 34471,
+--     ["DEMONHUNTER"] = 34471,
+--     ["DRUID"] = 34471,
+--     ["EVOKER"] = 1180, -- 30y
+--     ["HUNTER"] = 34471,
+--     ["MAGE"] = 34471,
+--     ["MONK"] = 34471,
+--     ["PALADIN"] = 34471,
+--     ["PRIEST"] = 34471,
+--     ["ROGUE"] = 34471,
+--     ["SHAMAN"] = 34471,
+--     ["WARLOCK"] = 34471,
+--     ["WARRIOR"] = 34471,
+-- }
 
 local harmItems = {
-    ["DEATHKNIGHT"] = 28767,
+    ["DEATHKNIGHT"] = 28767, -- 40y
     ["DEMONHUNTER"] = 28767,
     ["DRUID"] = 28767,
     ["EVOKER"] = 24268, -- 25y
     ["HUNTER"] = 28767,
     ["MAGE"] = 28767,
     ["MONK"] = 28767,
-    ["PALADIN"] = 28767,
+    ["PALADIN"] = 835, -- 30y
     ["PRIEST"] = 28767,
     ["ROGUE"] = 28767,
     ["SHAMAN"] = 28767,
@@ -1570,9 +1571,10 @@ rc:RegisterEvent("SPELLS_CHANGED")
 
 local spell_friend, spell_harm, spell_dead
 rc:SetScript("OnEvent", function()
-    spell_friend = F:GetSpellNameAndIcon(friendSpells[playerClass])
-    spell_harm = F:GetSpellNameAndIcon(harmSpells[playerClass])
-    if deadSpells[playerClass] then
+    spell_friend = IsSpellKnown(friendSpells[playerClass]) and F:GetSpellNameAndIcon(friendSpells[playerClass])
+    spell_harm = IsSpellKnown(harmSpells[playerClass]) and F:GetSpellNameAndIcon(harmSpells[playerClass])
+    -- print("friend:", spell_friend or "nil", "harm:", spell_harm or "nil")
+    if deadSpells[playerClass] and IsSpellKnown(deadSpells[playerClass]) then
         spell_dead = F:GetSpellNameAndIcon(deadSpells[playerClass])
     end
 end)
@@ -1593,19 +1595,22 @@ if Cell.isRetail then
             end
             return inRange
         else
-            if UnitCanAssist("player", unit) or UnitCanCooperate("player", unit) then
+            if UnitCanAssist("player", unit) then
                 if spell_dead and UnitIsDead(unit) then
                     return UnitInSpellRange(spell_dead, unit) -- resurrection range, need separately for evoker
                 elseif spell_friend then
                     return UnitInSpellRange(spell_friend, unit) -- normal heal range
                 end
+                return UnitInRange(unit)
+
             elseif UnitCanAttack("player", unit) then
                 if spell_harm then
                     return UnitInSpellRange(spell_harm, unit)
                 end
+                return IsItemInRange(harmItems[playerClass], unit)
+                -- return CheckInteractDistance(unit, 4) -- 28 yards
             end
 
-            return UnitInRange(unit)
         end
     end
 else
@@ -1628,20 +1633,18 @@ else
                 -- print("CanAssist", unit)
                 if spell_friend then
                     return UnitInSpellRange(spell_friend, unit)
-                else
-                    return IsItemInRange(friendItems[playerClass], unit)
                 end
+                return UnitInRange(unit)
+
             elseif UnitCanAttack("player", unit) then
                 -- print("CanAttack", unit)
                 if spell_harm then
                     return UnitInSpellRange(spell_harm, unit)
-                else
-                    return IsItemInRange(harmItems[playerClass], unit)
                 end
+                return IsItemInRange(harmItems[playerClass], unit)
+                -- print("CheckInteractDistance", unit)
+                -- return CheckInteractDistance(unit, 4) -- 28 yards
             end
-
-            -- print("CheckInteractDistance", unit)
-            return CheckInteractDistance(unit, 4) -- 28 yards
         end
     end
 end
