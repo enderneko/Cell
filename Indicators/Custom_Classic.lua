@@ -267,7 +267,7 @@ function I.ShowCustomIndicators(unitButton, auraType)
                 end
                 indicator:UpdateSize(#t)
             else
-                if indicatorTable["top"][unit]["start"] then
+                if indicatorTable["top"][unit] and indicatorTable["top"][unit]["start"] then
                     indicator:SetCooldown(
                         indicatorTable["top"][unit]["start"],
                         indicatorTable["top"][unit]["duration"],
