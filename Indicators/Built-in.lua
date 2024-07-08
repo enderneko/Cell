@@ -567,7 +567,7 @@ local function Dispels_SetDispels(self, dispelTypes)
                 local r, g, b = I.GetDebuffTypeColor(dispelType)
                 if self.highlightType == "entire" then
                     self.highlight:SetVertexColor(r, g, b, 0.5)
-                elseif self.highlightType == "current" then
+                elseif self.highlightType == "current" or self.highlightType == "current+" then
                     self.highlight:SetVertexColor(r, g, b, 1)
                 elseif self.highlightType == "gradient" or self.highlightType == "gradient-half" then
                     self.highlight:SetGradient("VERTICAL", CreateColor(r, g, b, 1), CreateColor(r, g, b, 0))
@@ -634,6 +634,7 @@ end
 
 local function Dispels_UpdateHighlight(self, highlightType)
     self.highlightType = highlightType
+    self.highlight:SetBlendMode("BLEND")
 
     if highlightType == "none" then
         self.highlight:Hide()
@@ -662,6 +663,13 @@ local function Dispels_UpdateHighlight(self, highlightType)
         self.highlight:SetAllPoints(self.parent.widgets.healthBar:GetStatusBarTexture())
         self.highlight:SetTexture(Cell.vars.texture)
         self.highlight:SetDrawLayer("ARTWORK", -7)
+    elseif highlightType == "current+" then
+        -- self.highlight:SetParent(self.parent.widgets.healthBar)
+        self.highlight:ClearAllPoints()
+        self.highlight:SetAllPoints(self.parent.widgets.healthBar:GetStatusBarTexture())
+        self.highlight:SetTexture(Cell.vars.texture)
+        self.highlight:SetDrawLayer("ARTWORK", -7)
+        self.highlight:SetBlendMode("ADD")
     end
 end
 

@@ -5426,6 +5426,13 @@ local function CreateSetting_HighlightType(parent)
                     widget.func("current")
                 end,
             },
+            {
+                ["text"] = L["Solid"].." - "..L["Health Bar"].." ("..L["Current"].."+)",
+                ["value"] = "current+",
+                ["onClick"] = function()
+                    widget.func("current+")
+                end,
+            },
         })
 
         widget.highlightTypeText = widget:CreateFontString(nil, "OVERLAY", font_name)
