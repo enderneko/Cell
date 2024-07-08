@@ -510,7 +510,7 @@ local function ApplyClickCastings(b)
             end
 
             --! NOTE: cancels the "blue glowing hand" cursor (cancel the target selection)
-            local fix = "\n/stopspelltarget"
+            local fix = t[3] == 370665 and "" or "\n/stopspelltarget"
 
             if (alwaysTargeting == "left" and bindKey == "type1") or alwaysTargeting == "any" then
                 b:SetAttribute(bindKey, "macro")
