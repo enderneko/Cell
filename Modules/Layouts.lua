@@ -133,12 +133,21 @@ local function CreateLayoutPreview()
     Cell:StylizeFrame(layoutPreviewAnchor, {0, 1, 0, 0.4})
 
     layoutPreviewAnchor:SetScript("OnDragStart", function()
+        if selectedLayout == Cell.vars.currentLayout then
+            Cell.frames.anchorFrame:StartMoving()
+            Cell.frames.anchorFrame:SetUserPlaced(false)
+        else
         layoutPreviewAnchor:StartMoving()
         layoutPreviewAnchor:SetUserPlaced(false)
+        end
     end)
 
     layoutPreviewAnchor:SetScript("OnDragStop", function()
+        if selectedLayout == Cell.vars.currentLayout then
+            Cell.frames.anchorFrame:StopMovingOrSizing()
+        else
         layoutPreviewAnchor:StopMovingOrSizing()
+        end
         P:SavePosition(layoutPreviewAnchor, selectedLayoutTable["main"]["position"])
     end)
 
@@ -275,10 +284,8 @@ local function UpdateLayoutPreview()
     -- update layoutPreviewAnchor point
     layoutPreviewAnchor:ClearAllPoints()
     if selectedLayout == Cell.vars.currentLayout then
-        layoutPreviewAnchor:EnableMouse(false)
         layoutPreviewAnchor:SetAllPoints(Cell.frames.anchorFrame)
     else
-        layoutPreviewAnchor:EnableMouse(true)
         if not P:LoadPosition(layoutPreviewAnchor, selectedLayoutTable["main"]["position"]) then
             layoutPreviewAnchor:ClearAllPoints()
             layoutPreviewAnchor:SetPoint("TOPLEFT", UIParent, "CENTER")
