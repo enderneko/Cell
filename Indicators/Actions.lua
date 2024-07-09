@@ -28,7 +28,7 @@ eventFrame:SetScript("OnEvent", function(self, event, unit, castGUID, spellID)
     if not (UnitInRaid(unit) or UnitInParty(unit) or unit == "player" or unit == "pet") then return end
 
     if Cell.vars.actionsDebugModeEnabled then
-        local name = F:GetSpellNameAndIcon(spellID)
+        local name = F:GetSpellInfo(spellID)
         print("|cFFFF3030[Cell]|r |cFFB2B2B2"..event..":|r", unit, "|cFF00FF00"..(spellID or "nil").."|r", name)
     end
 

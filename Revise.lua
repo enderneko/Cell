@@ -2141,7 +2141,7 @@ function F:Revise()
 
             for _, t in pairs(CellDB["spellRequest"]["spells"]) do
                 t["type"] = "icon"
-                t["icon"] = select(2, F:GetSpellNameAndIcon(t["spellId"]))
+                t["icon"] = select(2, F:GetSpellInfo(t["spellId"]))
                 t["iconColor"] = t["glowOptions"][2][1]
             end
 

@@ -67,7 +67,7 @@ local buffs = {
 do
     for _, t in pairs(buffs) do
         for i, id in ipairs(t) do
-            local name, icon = F:GetSpellNameAndIcon(id)
+            local name, icon = F:GetSpellInfo(id)
             t[i] = {
                 -- ["id"] = id,
                 ["name"] = name,

@@ -101,7 +101,7 @@ local function ShowTips()
 
         if bindType == "spell" then
             local bindActionDisplay, icon
-            bindAction, icon = F:GetSpellNameAndIcon(bindAction)
+            bindAction, icon = F:GetSpellInfo(bindAction)
             if bindAction then
                 bindActionDisplay = bindAction.." |T"..icon..":0|t"
             else

@@ -824,7 +824,7 @@ local function CreateQuickAssistPane()
             return
         end
 
-        local name, icon = F:GetSpellNameAndIcon(spellId)
+        local name, icon = F:GetSpellInfo(spellId)
         if not name then
             CellSpellTooltip:Hide()
             return
@@ -849,7 +849,7 @@ local function CreateQuickAssistPane()
             return
         end
 
-        local name, icon = F:GetSpellNameAndIcon(spellId)
+        local name, icon = F:GetSpellInfo(spellId)
         if not name then
             CellSpellTooltip:Hide()
             return
@@ -3009,7 +3009,7 @@ local function CreateMyBuffWidget(parent, index)
         if button == "LeftButton" then
             local popup = Cell:CreatePopupEditBox(qaPane, function(text)
                 local spellId = tonumber(text)
-                local spellName, spellIcon = F:GetSpellNameAndIcon(spellId)
+                local spellName, spellIcon = F:GetSpellInfo(spellId)
 
                 if spellId and spellName then
                     b.id = spellId
@@ -3194,7 +3194,7 @@ local function CreateSpellsPane()
     buffsAddBtn:SetScript("OnClick", function()
         local popup = Cell:CreatePopupEditBox(qaPane, function(text)
             local spellId = tonumber(text)
-            local spellName = F:GetSpellNameAndIcon(spellId)
+            local spellName = F:GetSpellInfo(spellId)
             if spellId and spellName then
                 if not spellTable["offensives"]["buffs"][selectedClass] then
                     spellTable["offensives"]["buffs"][selectedClass] = {}
@@ -3224,7 +3224,7 @@ local function CreateSpellsPane()
     castsAddBtn:SetTexture("Interface\\AddOns\\Cell\\Media\\Icons\\create", {20, 20}, {"CENTER", 0, 0})
     castsAddBtn:SetScript("OnClick", function()
         local popup = Cell:CreateDualPopupEditBox(qaPane, "ID", L["Duration"], true, function(spellId, duration)
-            local spellName = F:GetSpellNameAndIcon(spellId)
+            local spellName = F:GetSpellInfo(spellId)
             if spellId and spellName and duration then
                 if not spellTable["offensives"]["casts"][selectedClass] then
                     spellTable["offensives"]["casts"][selectedClass] = {}
@@ -3411,7 +3411,7 @@ LoadMyBuff = function(b, t)
         b.tex:SetTexture("Interface\\AddOns\\Cell\\Media\\Icons\\create")
         b.tex:SetTexCoord(0, 1, 0, 1)
     else
-        local name, icon = F:GetSpellNameAndIcon(t[1])
+        local name, icon = F:GetSpellInfo(t[1])
         if name and icon then
             b:SetText(name)
             b.tex:SetTexture(icon)
@@ -3481,7 +3481,7 @@ LoadList = function(parent, buttons, addBtn, t, separator)
             buttons[i].duration:SetText(duration)
         end
 
-        local name, icon = F:GetSpellNameAndIcon(id)
+        local name, icon = F:GetSpellInfo(id)
         if not name then icon = 134400 end
         buttons[i].id = id
         buttons[i].icon = icon

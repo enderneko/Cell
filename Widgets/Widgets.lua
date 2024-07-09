@@ -3308,7 +3308,7 @@ function addon:CreateBindingListButton(parent, modifier, bindKey, bindType, bind
     function b:ShowSpellIcon(spell)
         local icon = nil
         if spell then
-            icon = select(2, F:GetSpellNameAndIcon(spell))
+            icon = select(2, F:GetSpellInfo(spell))
         end
         b:ShowIcon(icon)
     end

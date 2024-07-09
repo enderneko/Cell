@@ -478,7 +478,7 @@ local function ApplyClickCastings(b)
         end
 
         if t[2] == "spell" then
-            local spellName = F:GetSpellNameAndIcon(t[3]) or ""
+            local spellName = F:GetSpellInfo(t[3]) or ""
 
             local condition = ""
             if not F:IsSoulstone(spellName) then
@@ -1090,7 +1090,7 @@ local function ShowActionsMenu(index, b)
 
         if (Cell.isVanilla or Cell.isWrath or Cell.isCata) and Cell.vars.playerClass == "WARLOCK" then
             tinsert(items, {
-                ["text"] = F:GetSpellNameAndIcon(20707),
+                ["text"] = F:GetSpellInfo(20707),
                 ["onClick"] = function()
                     changed[index] = changed[index] or {b}
                     local macrotext = "/stopcasting\n/target mouseover\n/use item:36895\n/targetlasttarget"
@@ -1207,7 +1207,7 @@ local function ShowActionsMenu(index, b)
                                 b.actionGrid:SetText("")
                                 b:HideIcon()
                             else
-                                b.actionGrid:SetText(F:GetSpellNameAndIcon(text) or "|cFFFF3030"..L["Invalid"])
+                                b.actionGrid:SetText(F:GetSpellInfo(text) or "|cFFFF3030"..L["Invalid"])
                                 b:ShowSpellIcon(text)
                             end
                         else
@@ -1237,7 +1237,7 @@ local function ShowActionsMenu(index, b)
                                 return
                             end
 
-                            local name, icon = F:GetSpellNameAndIcon(spellId)
+                            local name, icon = F:GetSpellInfo(spellId)
                             if not name then
                                 CellSpellTooltip:Hide()
                                 return
@@ -1469,7 +1469,7 @@ CreateBindingListButton = function(modifier, bindKey, bindType, bindAction, i)
                 b.bindActionDisplay = "|cFFFF3030"..L["Invalid"]
                 b:ShowSpellIcon()
             else
-                b.bindActionDisplay = F:GetSpellNameAndIcon(bindAction) or "|cFFFF3030"..L["Invalid"]
+                b.bindActionDisplay = F:GetSpellInfo(bindAction) or "|cFFFF3030"..L["Invalid"]
                 b:ShowSpellIcon(bindAction)
             end
         else

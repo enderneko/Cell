@@ -333,7 +333,7 @@ function F:GetClickCastingSpellList(class, spec)
             spellType = L[spellType]
         end
 
-        local name, icon = F:GetSpellNameAndIcon(spellId)
+        local name, icon = F:GetSpellInfo(spellId)
         if name then
             spells[i] = {icon, name, spellType, spellId}
         else
@@ -391,12 +391,12 @@ local resurrections_for_dead = {
 do
     local temp = {}
     for _, id in pairs(resurrections_for_dead) do
-        temp[F:GetSpellNameAndIcon(id)] = true
+        temp[F:GetSpellInfo(id)] = true
     end
     resurrections_for_dead = temp
 end
 
-local spell_soulstone = F:GetSpellNameAndIcon(20707)
+local spell_soulstone = F:GetSpellInfo(20707)
 function F:IsSoulstone(spell)
     return spell == spell_soulstone
 end
@@ -437,7 +437,7 @@ local resurrection_click_castings = {
 -- do
 --     for class, t in pairs(resurrection_click_castings) do
 --         for _, clickCasting in pairs(t) do
---             clickCasting[3] = F:GetSpellNameAndIcon(clickCasting[3])
+--             clickCasting[3] = F:GetSpellInfo(clickCasting[3])
 --         end
 --     end
 -- end
@@ -479,7 +479,7 @@ local normalResurrection = {
 do
     for class, t in pairs(normalResurrection) do
         for condition, spell in pairs(t) do
-            t[condition] = F:GetSpellNameAndIcon(spell)
+            t[condition] = F:GetSpellInfo(spell)
         end
     end
 end
@@ -497,7 +497,7 @@ local combatResurrection = {
 
 do
     for class, spell in pairs(combatResurrection) do
-        combatResurrection[class] = F:GetSpellNameAndIcon(spell)
+        combatResurrection[class] = F:GetSpellInfo(spell)
     end
 end
 

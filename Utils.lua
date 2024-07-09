@@ -629,7 +629,7 @@ function F:ConvertSpellTable(t, convertIdToName)
 
     local temp = {}
     for k, v in ipairs(t) do
-        local name = F:GetSpellNameAndIcon(v)
+        local name = F:GetSpellInfo(v)
         if name then
             temp[name] = k
         end
@@ -643,7 +643,7 @@ function F:ConvertSpellTable_WithColor(t, convertIdToName)
         local index
 
         if convertIdToName then
-            index = F:GetSpellNameAndIcon(st[1])
+            index = F:GetSpellInfo(st[1])
         else
             index = st[1]
         end
@@ -659,7 +659,7 @@ function F:ConvertSpellTable_WithClass(t)
     local temp = {}
     for class, ct in pairs(t) do
         for _, id in ipairs(ct) do
-            local name = F:GetSpellNameAndIcon(id)
+            local name = F:GetSpellInfo(id)
             if name then
                 temp[id] = true
             end
@@ -672,7 +672,7 @@ function F:ConvertSpellDurationTable(t, convertIdToName)
     local temp = {}
     for _, v in ipairs(t) do
         local id, duration = strsplit(":", v)
-        local name = F:GetSpellNameAndIcon(id)
+        local name = F:GetSpellInfo(id)
         if name then
             if convertIdToName then
                 temp[name] = tonumber(duration)
@@ -689,7 +689,7 @@ function F:ConvertSpellDurationTable_WithClass(t)
     for class, ct in pairs(t) do
         for k, v in ipairs(ct) do
             local id, duration = strsplit(":", v)
-            local name, icon = F:GetSpellNameAndIcon(id)
+            local name, icon = F:GetSpellInfo(id)
             if name then
                 temp[tonumber(id)] = {tonumber(duration), icon}
             end
@@ -722,7 +722,7 @@ function F:FilterInvalidSpells(t)
         else -- table
             spellId = t[i][1]
         end
-        if not F:GetSpellNameAndIcon(spellId) then
+        if not F:GetSpellInfo(spellId) then
             tremove(t, i)
         end
     end
@@ -1934,10 +1934,10 @@ end
 
 -- https://wowpedia.fandom.com/wiki/Patch_10.0.2/API_changes
 local lines = {}
-function F:GetSpellInfo(spellId)
+function F:GetSpellTooltipInfo(spellId)
     wipe(lines)
 
-    local name, icon = F:GetSpellNameAndIcon(spellId)
+    local name, icon = F:GetSpellInfo(spellId)
     if not name then return end
 
     local data = C_TooltipInfo.GetSpellByID(spellId)
@@ -1951,7 +1951,7 @@ function F:GetSpellInfo(spellId)
 end
 
 if Cell.isRetail then
-    function F:GetSpellNameAndIcon(spellId)
+    function F:GetSpellInfo(spellId)
         if C_Spell and C_Spell.GetSpellInfo then
             local info = C_Spell.GetSpellInfo(spellId)
             if not info then return end
@@ -1968,7 +1968,7 @@ if Cell.isRetail then
         return name, icon
     end
 else
-    function F:GetSpellNameAndIcon(spellId)
+    function F:GetSpellInfo(spellId)
         local name, _, icon = GetSpellInfo(spellId)
         return name, icon
     end

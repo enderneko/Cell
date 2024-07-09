@@ -223,7 +223,7 @@ local function CreateQCPane()
             return
         end
 
-        local name, icon = F:GetSpellNameAndIcon(spellId)
+        local name, icon = F:GetSpellInfo(spellId)
         if not name then
             CellSpellTooltip:Hide()
             return
@@ -365,7 +365,7 @@ local function CreateSpellButton(parent, func)
         if button == "LeftButton" then
             local popup = Cell:CreatePopupEditBox(qcPane, function(text)
                 local spellId = tonumber(text)
-                local spellName, spellIcon = F:GetSpellNameAndIcon(spellId)
+                local spellName, spellIcon = F:GetSpellInfo(spellId)
                 if spellId and spellName then
                     b.id = spellId
                     b.icon = spellIcon
@@ -515,7 +515,7 @@ local function LoadGlowList(parent, buttons, addBtn, anchorTo, t, separator)
             buttons[i].duration:SetText(duration)
         end
 
-        local name, icon = F:GetSpellNameAndIcon(id)
+        local name, icon = F:GetSpellInfo(id)
         if not name then icon = 134400 end
         buttons[i].id = id
         buttons[i].icon = icon
@@ -583,7 +583,7 @@ local function CreateGlowBuffsPane()
     qcGlowBuffsAddBtn:SetScript("OnClick", function()
         local popup = Cell:CreatePopupEditBox(qcPane, function(text)
             local spellId = tonumber(text)
-            local spellName = F:GetSpellNameAndIcon(spellId)
+            local spellName = F:GetSpellInfo(spellId)
             if spellId and spellName then
                 tinsert(quickCastTable["glowBuffs"], spellId)
                 LoadGlowList(qcGlowBuffsPane, qcGlowBuffsButtons, qcGlowBuffsAddBtn, qcGlowBuffsCP, quickCastTable["glowBuffs"])
@@ -628,7 +628,7 @@ local function CreateGlowCastsPane()
             return
         end
 
-        local name, icon = F:GetSpellNameAndIcon(spellId)
+        local name, icon = F:GetSpellInfo(spellId)
         if not name then
             CellSpellTooltip:Hide()
             return
@@ -649,7 +649,7 @@ local function CreateGlowCastsPane()
     qcGlowCastsAddBtn:SetTexture("Interface\\AddOns\\Cell\\Media\\Icons\\create", {16, 16}, {"CENTER", 0, 0})
     qcGlowCastsAddBtn:SetScript("OnClick", function()
         local popup = Cell:CreateDualPopupEditBox(qcGlowCastsPane, "ID", L["Duration"], true, function(spellId, duration)
-            local spellName = F:GetSpellNameAndIcon(spellId)
+            local spellName = F:GetSpellInfo(spellId)
             if spellId and spellName and duration then
                 tinsert(quickCastTable["glowCasts"], spellId..":"..duration)
                 LoadGlowList(qcGlowCastsPane, qcGlowCastsButtons, qcGlowCastsAddBtn, qcGlowCastsCP, quickCastTable["glowCasts"], ":")
@@ -677,7 +677,7 @@ local function LoadSpellButton(b, value)
         b.tex:SetTexture("Interface\\AddOns\\Cell\\Media\\Icons\\create")
         b.tex:SetTexCoord(0, 1, 0, 1)
     else
-        local name, icon = F:GetSpellNameAndIcon(value)
+        local name, icon = F:GetSpellInfo(value)
         if name and icon then
             b:SetText(name)
             b.tex:SetTexture(icon)
@@ -1440,8 +1440,8 @@ local function UpdateQuickCast()
         -- prepare buffs
         glowBuffs = F:ConvertSpellTable(quickCastTable["glowBuffs"], true)
         glowCasts = F:ConvertSpellDurationTable(quickCastTable["glowCasts"])
-        outerBuff = F:GetSpellNameAndIcon(quickCastTable["outerBuff"])
-        innerBuff = F:GetSpellNameAndIcon(quickCastTable["innerBuff"])
+        outerBuff = F:GetSpellInfo(quickCastTable["outerBuff"])
+        innerBuff = F:GetSpellInfo(quickCastTable["innerBuff"])
 
         -- create
         if not quickCastButtons then

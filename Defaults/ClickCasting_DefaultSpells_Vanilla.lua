@@ -158,7 +158,7 @@ function F:GetClickCastingSpellList(class)
             spellType = L[spellType]
         end
 
-        local name, icon = F:GetSpellNameAndIcon(spellId)
+        local name, icon = F:GetSpellInfo(spellId)
         spells[i] = {icon, name, spellType, spellId}
     end
 
@@ -186,7 +186,7 @@ local resurrections_for_dead = {
 do
     local temp = {}
     for _, id in pairs(resurrections_for_dead) do
-        temp[F:GetSpellNameAndIcon(id)] = true
+        temp[F:GetSpellInfo(id)] = true
     end
     resurrections_for_dead = temp
 end
@@ -229,7 +229,7 @@ local normalResurrection = {
 
 do
     for class, spell in pairs(normalResurrection) do
-        normalResurrection[class] = F:GetSpellNameAndIcon(spell)
+        normalResurrection[class] = F:GetSpellInfo(spell)
     end
 end
 
@@ -243,7 +243,7 @@ local combatResurrection = {
 
 do
     for class, spell in pairs(combatResurrection) do
-        combatResurrection[class] = F:GetSpellNameAndIcon(spell)
+        combatResurrection[class] = F:GetSpellInfo(spell)
     end
 end
 

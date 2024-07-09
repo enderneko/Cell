@@ -26,7 +26,7 @@ local debuffBlacklist = {
 function I.GetDefaultDebuffBlacklist()
     -- local temp = {}
     -- for i, id in pairs(debuffBlacklist) do
-    --     temp[i] = F:GetSpellNameAndIcon(id)
+    --     temp[i] = F:GetSpellInfo(id)
     -- end
     -- return temp
     return debuffBlacklist
@@ -72,7 +72,7 @@ local aoeHealings = {
 do
     local temp = {}
     for _, id in pairs(aoeHealings) do
-        temp[F:GetSpellNameAndIcon(id)] = true
+        temp[F:GetSpellInfo(id)] = true
     end
     aoeHealings = temp
 end
@@ -89,7 +89,7 @@ local summonDuration = {
 do
     local temp = {}
     for id, duration in pairs(summonDuration) do
-        temp[F:GetSpellNameAndIcon(id)] = duration
+        temp[F:GetSpellInfo(id)] = duration
     end
     summonDuration = temp
 end
@@ -143,7 +143,7 @@ function I.UpdateExternals(t)
         for id, trackByName in pairs(spells) do
             if not t["disabled"][id] then -- not disabled
                 if trackByName then
-                    local name = F:GetSpellNameAndIcon(id)
+                    local name = F:GetSpellInfo(id)
                     if name then
                         builtInExternals[name] = true
                     end
@@ -157,7 +157,7 @@ function I.UpdateExternals(t)
     -- user created
     wipe(customExternals)
     for _, id in pairs(t["custom"]) do
-        local name = F:GetSpellNameAndIcon(id)
+        local name = F:GetSpellInfo(id)
         if name then
             customExternals[name] = true
         end
@@ -238,7 +238,7 @@ function I.UpdateDefensives(t)
         for id, trackByName in pairs(spells) do
             if not t["disabled"][id] then -- not disabled
                 if trackByName then
-                    local name = F:GetSpellNameAndIcon(id)
+                    local name = F:GetSpellInfo(id)
                     if name then
                         builtInDefensives[name] = true
                     end
@@ -252,7 +252,7 @@ function I.UpdateDefensives(t)
     -- user created
     wipe(customDefensives)
     for _, id in pairs(t["custom"]) do
-        local name = F:GetSpellNameAndIcon(id)
+        local name = F:GetSpellInfo(id)
         if name then
             customDefensives[name] = true
         end
@@ -338,7 +338,7 @@ local drinks = {
 do
     local temp = {}
     for _, id in pairs(drinks) do
-        temp[F:GetSpellNameAndIcon(id)] = true
+        temp[F:GetSpellInfo(id)] = true
     end
     drinks = temp
 end
@@ -373,7 +373,7 @@ local spells =  {
 function F:FirstRun()
     local icons = "\n\n"
     for i, id in pairs(spells) do
-        local icon = select(2, F:GetSpellNameAndIcon(id))
+        local icon = select(2, F:GetSpellInfo(id))
         icons = icons .. "|T"..icon..":0|t"
         if i % 11 == 0 then
             icons = icons .. "\n"
@@ -480,7 +480,7 @@ do
     local temp = {}
     for _, k in pairs(buffsOrder) do
         local id = missingBuffs[k]
-        local name, icon = F:GetSpellNameAndIcon(id)
+        local name, icon = F:GetSpellInfo(id)
         if name then
             tinsert(temp, {
                 ["id"] = id,

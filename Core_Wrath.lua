@@ -206,8 +206,8 @@ function eventFrame:ADDON_LOADED(arg1)
 
         -- spellRequest ---------------------------------------------------------------------------
         if type(CellDB["spellRequest"]) ~= "table" then
-            local POWER_INFUSION, POWER_INFUSION_ICON = F:GetSpellNameAndIcon(10060)
-            local INNERVATE, INNERVATE_ICON = F:GetSpellNameAndIcon(29166)
+            local POWER_INFUSION, POWER_INFUSION_ICON = F:GetSpellInfo(10060)
+            local INNERVATE, INNERVATE_ICON = F:GetSpellInfo(29166)
 
             CellDB["spellRequest"] = {
                 ["enabled"] = false,
