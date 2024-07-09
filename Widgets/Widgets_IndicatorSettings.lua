@@ -1993,7 +1993,7 @@ local function CreateSetting_BlockColors(parent)
         local secColor, secEditBox, secText
 
         local secCB = addon:CreateCheckButton(durationPane, "", function(checked)
-            widget.colorsTable[3][1] = checked
+            widget.colorsTable[4][1] = checked
             addon:SetEnabled(checked, secColor, secEditBox, secText)
         end)
         secCB:SetPoint("TOPLEFT", percentCB, "BOTTOMLEFT", 0, -8)
@@ -2014,7 +2014,7 @@ local function CreateSetting_BlockColors(parent)
                 ["text"] = "75%",
                 ["value"] = 0.75,
                 ["onClick"] = function()
-                    widget.colorsTable[2][2] = 0.75
+                    widget.colorsTable[3][2] = 0.75
                     widget.func(widget.colorsTable)
                 end,
             },
@@ -2022,7 +2022,7 @@ local function CreateSetting_BlockColors(parent)
                 ["text"] = "50%",
                 ["value"] = 0.5,
                 ["onClick"] = function()
-                    widget.colorsTable[2][2] = 0.5
+                    widget.colorsTable[3][2] = 0.5
                     widget.func(widget.colorsTable)
                 end,
             },
@@ -2030,7 +2030,7 @@ local function CreateSetting_BlockColors(parent)
                 ["text"] = "30%",
                 ["value"] = 0.3,
                 ["onClick"] = function()
-                    widget.colorsTable[2][2] = 0.3
+                    widget.colorsTable[3][2] = 0.3
                     widget.func(widget.colorsTable)
                 end,
             },
@@ -2038,7 +2038,7 @@ local function CreateSetting_BlockColors(parent)
                 ["text"] = "25%",
                 ["value"] = 0.25,
                 ["onClick"] = function()
-                    widget.colorsTable[2][2] = 0.25
+                    widget.colorsTable[3][2] = 0.25
                     widget.func(widget.colorsTable)
                 end,
             },
@@ -2056,7 +2056,7 @@ local function CreateSetting_BlockColors(parent)
         end)
         secEditBox.confirmBtn:SetScript("OnClick", function()
             local newSec = tonumber(secEditBox:GetText())
-            widget.colorsTable[3][2] = newSec
+            widget.colorsTable[4][2] = newSec
             secEditBox:SetText(newSec)
             secEditBox:ClearFocus()
             secEditBox.confirmBtn:Hide()
@@ -2119,6 +2119,7 @@ local function CreateSetting_BlockColors(parent)
         end)
         stackColor2:SetPoint("TOPLEFT", stackCB2, "TOPRIGHT", 2, 0)
 
+        -- eb
         stackEB1 = addon:CreateEditBox(stackPane, 43, 20, false, false, true)
         stackEB1:SetPoint("LEFT", stackColor1.label, "RIGHT", 5, 0)
         stackEB1:SetMaxLetters(3)
