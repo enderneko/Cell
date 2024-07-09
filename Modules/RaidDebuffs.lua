@@ -813,15 +813,18 @@ local function CreateDebuffsFrame()
             local spellId = tonumber(popup.editBox:GetText())
             if not spellId then
                 CellSpellTooltip:Hide()
+                popup.button1:SetEnabled(false)
                 return
             end
 
             local name, icon = F:GetSpellInfo(spellId)
             if not name then
                 CellSpellTooltip:Hide()
+                popup.button1:SetEnabled(false)
                 return
             end
 
+            popup.button1:SetEnabled(true)
             CellSpellTooltip:SetOwner(popup, "ANCHOR_NONE")
             CellSpellTooltip:SetPoint("TOPLEFT", popup, "BOTTOMLEFT", 0, -1)
             CellSpellTooltip:SetSpellByID(spellId, icon)
