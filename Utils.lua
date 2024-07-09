@@ -1462,6 +1462,15 @@ local IsSpellKnown = IsSpellKnown
 -- local GetSpellBookItemName = GetSpellBookItemName
 -- local BOOKTYPE_SPELL = BOOKTYPE_SPELL
 
+local UnitInSamePhase
+if Cell.isRetail then
+    UnitInSamePhase = function(unit)
+        return not UnitPhaseReason(unit)
+    end
+else
+    UnitInSamePhase = UnitInPhase
+end
+
 local playerClass = UnitClassBase("player")
 
 local friendSpells = {
@@ -1469,7 +1478,7 @@ local friendSpells = {
     -- ["DEMONHUNTER"] = ,
     ["DRUID"] = Cell.isRetail and 8936 or 5185,
     ["EVOKER"] = 361469,
-    ["HUNTER"] = 136,
+    -- ["HUNTER"] = 136,
     ["MAGE"] = 1459,
     ["MONK"] = 116670,
     ["PALADIN"] = Cell.isRetail and 19750 or 635,
@@ -1481,7 +1490,11 @@ local friendSpells = {
 }
 
 local deadSpells = {
-    ["EVOKER"] = 361227,
+    ["EVOKER"] = 361227, -- resurrection range, need separately for evoker
+}
+
+local petSpells = {
+    ["HUNTER"] = 136,
 }
 
 local harmSpells = {
@@ -1569,83 +1582,83 @@ end
 local rc = CreateFrame("Frame")
 rc:RegisterEvent("SPELLS_CHANGED")
 
-local spell_friend, spell_harm, spell_dead
+local spell_friend, spell_pet, spell_harm, spell_dead
 rc:SetScript("OnEvent", function()
-    spell_friend = IsSpellKnown(friendSpells[playerClass]) and F:GetSpellNameAndIcon(friendSpells[playerClass])
-    spell_harm = IsSpellKnown(harmSpells[playerClass]) and F:GetSpellNameAndIcon(harmSpells[playerClass])
-    -- print("friend:", spell_friend or "nil", "harm:", spell_harm or "nil")
-    if deadSpells[playerClass] and IsSpellKnown(deadSpells[playerClass]) then
-        spell_dead = F:GetSpellNameAndIcon(deadSpells[playerClass])
+    if friendSpells[playerClass] and IsSpellKnown(friendSpells[playerClass]) then
+        spell_friend = F:GetSpellInfo(friendSpells[playerClass])
     end
+    if petSpells[playerClass] and IsSpellKnown(petSpells[playerClass]) then
+        spell_pet = F:GetSpellInfo(petSpells[playerClass])
+    end
+    if harmSpells[playerClass] and IsSpellKnown(harmSpells[playerClass]) then
+        spell_harm = F:GetSpellInfo(harmSpells[playerClass])
+    end
+    if deadSpells[playerClass] and IsSpellKnown(deadSpells[playerClass]) then
+        spell_dead = F:GetSpellInfo(deadSpells[playerClass])
+    end
+    F:Debug(
+        "[RANGE CHECK]",
+        "\nfriend:", spell_friend or "nil",
+        "\npet:", spell_pet or "nil",
+        "\nharm:", spell_harm or "nil",
+        "\ndead:", spell_dead or "nil"
+    )
 end)
 
-if Cell.isRetail then
-    function F:IsInRange(unit, check)
-        if not UnitIsVisible(unit) then
-            return false
-        end
-
-        if UnitIsUnit("player", unit) then
-            return true
-        elseif not check and F:UnitInGroup(unit) then
-            -- NOTE: UnitInRange only works with group players/pets --! but not available for PLAYER PET when SOLO
-            local inRange, checked = UnitInRange(unit)
-            if not checked then
-                return F:IsInRange(unit, true)
-            end
-            return inRange
-        else
-            if UnitCanAssist("player", unit) then
-                if spell_dead and UnitIsDead(unit) then
-                    return UnitInSpellRange(spell_dead, unit) -- resurrection range, need separately for evoker
-                elseif spell_friend then
-                    return UnitInSpellRange(spell_friend, unit) -- normal heal range
-                end
-                return UnitInRange(unit)
-
-            elseif UnitCanAttack("player", unit) then
-                if spell_harm then
-                    return UnitInSpellRange(spell_harm, unit)
-                end
-                return IsItemInRange(harmItems[playerClass], unit)
-                -- return CheckInteractDistance(unit, 4) -- 28 yards
-            end
-
-        end
+function F:IsInRange(unit)
+    if not UnitIsVisible(unit) then
+        return false
     end
-else
-    function F:IsInRange(unit, check)
-        if not UnitIsVisible(unit) then
-            return false
-        end
 
-        if UnitIsUnit("player", unit) then
-            return true
-        elseif not check and F:UnitInGroup(unit) then
-            -- NOTE: UnitInRange only works with group players/pets --! but not available for PLAYER PET when SOLO
+    if UnitIsUnit("player", unit) then
+        return true
+
+    -- elseif not check and F:UnitInGroup(unit) then
+    --     -- NOTE: UnitInRange only works with group players/pets --! but not available for PLAYER PET when SOLO
+    --     local inRange, checked = UnitInRange(unit)
+    --     if not checked then
+    --         return F:IsInRange(unit, true)
+    --     end
+    --     return inRange
+
+    else
+        if UnitCanAssist("player", unit) then
+            if not (UnitIsConnected(unit) and UnitInSamePhase(unit)) then
+                return false
+            end
+
+            if UnitIsDead(unit) then
+                if spell_dead then
+                    return UnitInSpellRange(spell_dead, unit)
+                end
+            elseif spell_friend then
+                return UnitInSpellRange(spell_friend, unit)
+            end
+
             local inRange, checked = UnitInRange(unit)
-            if not checked then
-                return F:IsInRange(unit, true)
+            if checked then
+                return inRange
             end
-            return inRange
-        else
-            if UnitCanAssist("player", unit) then
-                -- print("CanAssist", unit)
-                if spell_friend then
-                    return UnitInSpellRange(spell_friend, unit)
-                end
-                return UnitInRange(unit)
 
-            elseif UnitCanAttack("player", unit) then
-                -- print("CanAttack", unit)
-                if spell_harm then
-                    return UnitInSpellRange(spell_harm, unit)
-                end
-                return IsItemInRange(harmItems[playerClass], unit)
-                -- print("CheckInteractDistance", unit)
-                -- return CheckInteractDistance(unit, 4) -- 28 yards
+            if UnitIsUnit(unit, "pet") and spell_pet then
+                -- no spell_friend, use spell_pet
+                return UnitInSpellRange(spell_pet, unit)
             end
+
+        elseif UnitCanAttack("player", unit) then
+            if UnitIsDead(unit) then
+                return CheckInteractDistance(unit, 4) -- 28 yards
+            elseif spell_harm then
+                return UnitInSpellRange(spell_harm, unit)
+            end
+            return IsItemInRange(harmItems[playerClass], unit)
         end
+
+        if not InCombatLockdown() then
+            return CheckInteractDistance(unit, 4) -- 28 yards
+        end
+
+        return true
     end
 end
 
