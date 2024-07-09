@@ -2131,7 +2131,7 @@ local function UnitButton_UpdateThreat(self)
     if not unit or not UnitExists(unit) then return end
 
     local status = UnitThreatSituation(unit)
-    if status and status >= 2 then
+    if status and status >= 1 then
         if enabledIndicators["aggroBlink"] then
             self.indicators.aggroBlink:ShowAggro(GetThreatStatusColor(status))
         end
