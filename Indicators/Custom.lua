@@ -150,7 +150,7 @@ local function UpdateCustomIndicators(layout, indicatorName, setting, value, val
         if customIndicators["buff"][indicatorName] then
             customIndicators["buff"][indicatorName][value] = value2
             if value == "trackByName" then
-                if customIndicators[value][indicatorName]["isBlocks"] then
+                if customIndicators["buff"][indicatorName]["isBlocks"] then
                     customIndicators["buff"][indicatorName]["auras"] = F:ConvertSpellTable_WithColor(customIndicators["buff"][indicatorName]["_auras"], value2)
                 else
                     customIndicators["buff"][indicatorName]["auras"] = F:ConvertSpellTable(customIndicators["buff"][indicatorName]["_auras"], value2)
