@@ -134,7 +134,7 @@ end
 
 --! Type B
 local function CreateAnimationGroup_TypeB(parent)
-    local WIDTH = 10
+    local WIDTH = 20
 
     -- frame
     local f = CreateFrame("Frame", parent:GetName().."_TypeB", parent)
@@ -441,7 +441,7 @@ local previews = {}
 local previewOrientation
 
 function I.CreateActions(parent, isPreview)
-    local actions = CreateFrame("Frame", parent:GetName().."ActionsParent", parent)
+    local actions = CreateFrame("Frame", parent:GetName().."ActionsParent", isPreview and parent or parent.widgets.highLevelFrame)
 
     -- mask
     local mask = actions:CreateMaskTexture()
@@ -471,7 +471,6 @@ function I.CreateActions(parent, isPreview)
         end
     else
         parent.indicators.actions = actions
-        actions:SetFrameLevel(parent.widgets.healthBar:GetFrameLevel()+1)
         actions:SetAllPoints(parent.widgets.healthBar)
     end
 
