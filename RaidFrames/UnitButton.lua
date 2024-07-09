@@ -2998,7 +2998,7 @@ end
 
 local function AbsorbsBar_SetValue_Horizontal(self, absorbsPercent, healthPercent)
     if absorbInvertColor then
-        local r, g, b = F:InvertColor(self:GetParent():GetStatusBarColor())
+        local r, g, b = F:InvertColor(self.healthBar:GetStatusBarColor())
         self:SetVertexColor(r, g, b)
         self.overAbsorbGlow:SetVertexColor(r, g, b)
     end
@@ -3086,10 +3086,11 @@ end
 
 local function AbsorbsBar_SetValue_Vertical(self, absorbsPercent, healthPercent)
     if absorbInvertColor then
-        local r, g, b = F:InvertColor(self:GetParent():GetStatusBarColor())
+        local r, g, b = F:InvertColor(self.healthBar:GetStatusBarColor())
         self:SetVertexColor(r, g, b)
         self.overAbsorbGlow:SetVertexColor(r, g, b)
     end
+
     local barHeight = self:GetParent():GetHeight()
     if absorbsPercent > healthPercent then
         self:SetHeight(healthPercent * barHeight)
@@ -3621,8 +3622,7 @@ function CellUnitButton_OnLoad(button)
     local midLevelFrame = CreateFrame("Frame", name.."MidLevelFrame", button)
     button.widgets.midLevelFrame = midLevelFrame
     midLevelFrame:SetFrameLevel(button:GetFrameLevel()+70)
-    midLevelFrame:SetPoint("TOPLEFT", healthBar)
-    midLevelFrame:SetPoint("BOTTOMRIGHT", healthBar)
+    midLevelFrame:SetAllPoints(healthBar)
 
     -- shield bar
     local shieldBar = midLevelFrame:CreateTexture(name.."ShieldBar", "ARTWORK", nil, -5)
@@ -3667,6 +3667,7 @@ function CellUnitButton_OnLoad(button)
     -- absorbs bar
     local absorbsBar = midLevelFrame:CreateTexture(name.."AbsorbsBar", "ARTWORK", nil, 1)
     button.widgets.absorbsBar = absorbsBar
+    absorbsBar.healthBar = healthBar
     absorbsBar:SetTexture("Interface\\AddOns\\Cell\\Media\\shield.tga", "REPEAT", "REPEAT")
     absorbsBar:SetHorizTile(true)
     absorbsBar:SetVertTile(true)
