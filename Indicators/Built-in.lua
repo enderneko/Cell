@@ -1701,6 +1701,8 @@ local function RoleIcon_SetRole(self, role)
             self.tex:SetTexCoord(GetTexCoordsForRole(role))
         elseif self.texture == "blizzard3" then
             self.tex:SetTexture(ICON_PATH .. "Blizzard3_" .. role)
+        elseif self.texture == "blizzard4" then
+            self.tex:SetTexture(ICON_PATH .. "Blizzard4_" .. role)
         elseif self.texture == "ffxiv" then
             self.tex:SetTexture(ICON_PATH .. "FFXIV_" .. role)
         elseif self.texture == "miirgui" then

@@ -3259,16 +3259,18 @@ local function CreateSetting_RoleTexture(parent)
         widget.texture:SetPoint("TOPLEFT", 5, -20)
 
         local blizzard = F:UpperFirst(SLASH_TEXTTOSPEECH_BLIZZARD)
-        local indices = {"default", "default2", "blizzard", "blizzard2", "blizzard3", "ffxiv", "miirgui", "mattui", "custom"}
+        local indices = {"default", "default2", "blizzard", "blizzard2", "blizzard3", "blizzard4", "ffxiv", "miirgui", "mattui", "custom"}
+        local ICON_PATH = " |TInterface\\AddOns\\Cell\\Media\\Roles\\Preview_%s:0:4|t"
         local options = {
-            ["default"] = _G.DEFAULT,
-            ["default2"] = _G.DEFAULT.." 2",
-            ["blizzard"] = blizzard,
-            ["blizzard2"] = blizzard.." 2",
-            ["blizzard3"] = blizzard.." 3",
-            ["ffxiv"] = "FFXIV",
-            ["miirgui"] = "MiirGui",
-            ["mattui"] = "MattUI",
+            ["default"] = _G.DEFAULT..format(ICON_PATH, "Default"),
+            ["default2"] = _G.DEFAULT.." 2"..format(ICON_PATH, "Default2"),
+            ["blizzard"] = blizzard..format(ICON_PATH, "Blizzard"),
+            ["blizzard2"] = blizzard.." 2"..format(ICON_PATH, "Blizzard2"),
+            ["blizzard3"] = blizzard.." 3"..format(ICON_PATH, "Blizzard3"),
+            ["blizzard4"] = blizzard.." 4"..format(ICON_PATH, "Blizzard4"),
+            ["ffxiv"] = "FFXIV"..format(ICON_PATH, "FFXIV"),
+            ["miirgui"] = "MiirGui"..format(ICON_PATH, "MiirGui"),
+            ["mattui"] = "MattUI"..format(ICON_PATH, "MattUI"),
             ["custom"] = _G.CUSTOM,
         }
 
