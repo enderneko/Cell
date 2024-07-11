@@ -344,7 +344,7 @@ local function UpdateLayoutPreview()
         end
     end
 
-    if selectedLayoutTable["main"]["combineGroups"] then
+    if selectedLayoutTable["main"]["combineGroups"] and previewMode ~= 1 then
         -- hide separatedHeaders
         for i = 1, 8 do
             layoutPreview.separatedHeaders[i]:Hide()
@@ -360,10 +360,9 @@ local function UpdateLayoutPreview()
         local units = maxColumns * unitsPerColumn
 
         -- party preview
-        if previewMode == 1 then
-            units = min(5, units)
-        end
-
+        -- if previewMode == 1 then
+        --     units = min(5, units)
+        -- end
 
         if selectedLayoutTable["main"]["orientation"] == "vertical" then
             P:Size(layoutPreview.combinedHeader,
