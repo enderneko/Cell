@@ -42,12 +42,10 @@ eventFrame:SetScript("OnEvent", function()
 end)
 
 function I.CreateAoEHealing(parent)
-    local aoeHealing = CreateFrame("Frame", parent:GetName().."AoEHealing", parent.widgets.healthBar)
+    local aoeHealing = CreateFrame("Frame", parent:GetName().."AoEHealing", parent.widgets.highLevelFrame)
     parent.indicators.aoeHealing = aoeHealing
     aoeHealing:SetPoint("TOPLEFT", parent.widgets.healthBar)
     aoeHealing:SetPoint("TOPRIGHT", parent.widgets.healthBar)
-    aoeHealing:SetFrameLevel(parent.widgets.healthBar:GetFrameLevel()+1)
-    -- aoeHealing:SetHeight(15)
     aoeHealing:Hide()
 
     aoeHealing.tex = aoeHealing:CreateTexture(nil, "ARTWORK")
