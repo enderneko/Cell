@@ -4610,6 +4610,7 @@ local function UpdateSpellButton(btn, class, isDisabled)
     if isDisabled then
         btn:SetBackdropColor(0.6, 0.6, 0.6, 0.85)
         btn.icon:SetDesaturated(true)
+        btn:SetAlpha(0.5)
     else
         if class == "UNCATEGORIZED" then
             btn:SetBackdropColor(0.75, 0.75, 0.75, 0.85)
@@ -4618,6 +4619,7 @@ local function UpdateSpellButton(btn, class, isDisabled)
             btn:SetBackdropColor(r, g, b, 0.85)
         end
         btn.icon:SetDesaturated(false)
+        btn:SetAlpha(1)
     end
 end
 
