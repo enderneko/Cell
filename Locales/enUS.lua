@@ -87,6 +87,21 @@ select(2, ...).L = setmetatable({
         <p>(Retail) Enable "Always Update Buffs/Debuffs" in General tab, if indicators do not update correctly.</p>
         <br/>
 
+        <h1>r233-release (Jul 11, 2024, 16:10 GMT+8)</h1>
+        <p>+ Added a dispel highlight option "current+".</p>
+        <p>* Fixed click-casting for evoker spell "Rescue".</p>
+        <p>* Fixed layout preview.</p>
+        <p>* Fixed creation of raid debuffs.</p>
+        <p>* Fixed "Invert Color" option.</p>
+        <p>* Fixed "Track by name" option.</p>
+        <p>* Fixed color options for Block indicators.</p>
+        <p>* Fixed a wrong PWS id.</p>
+        <p>* Updated range check.</p>
+        <p>* Updated frame level of Actions indicator.</p>
+        <p>* Updated buff tracker for CN WotLK.</p>
+        <p>* Updated locales.</p>
+        <br/>
+
         <h1>r232-release (Jul 7, 2024, 02:40 GMT+8)</h1>
         <p>* Fixed a critical issue that removes all custom indicators.</p>
         <br/>

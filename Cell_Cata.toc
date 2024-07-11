@@ -1,6 +1,6 @@
 ## Interface: 40400
 ## Title: Cell
-## Version: r232-release
+## Version: r233-release
 ## Author: enderneko
 ## X-Flavor: Cata
 ## SavedVariables: CellDB
