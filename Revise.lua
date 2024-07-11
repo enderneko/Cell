@@ -3045,6 +3045,11 @@ function F:Revise()
         end
     end
 
+    -- r234-release
+    if CellDB["revise"] and dbRevision < 234 then
+        CellDB["general"]["overrideLGF"] = true
+    end
+
     -- ----------------------------------------------------------------------- --
     --            update from old versions, validate all indicators            --
     -- ----------------------------------------------------------------------- --

@@ -159,7 +159,7 @@ function eventFrame:ADDON_LOADED(arg1)
                 ["menuPosition"] = "top_bottom",
                 ["alwaysUpdateBuffs"] = false,
                 ["alwaysUpdateDebuffs"] = true,
-                ["overrideLGF"] = false,
+                ["overrideLGF"] = true,
                 ["framePriority"] = "normal_spotlight_quickassist",
                 ["useCleuHealthUpdater"] = false,
                 ["translit"] = false,
