@@ -135,6 +135,8 @@ end)
 ---------------------------------
 -- Update
 ---------------------------------
+local GetSpellCharges = C_Spell.GetSpellCharges or GetSpellCharges
+
 local total = 0
 -- local isMovable = false
 
