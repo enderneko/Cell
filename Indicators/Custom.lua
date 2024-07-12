@@ -26,6 +26,7 @@ local function UpdateTablesForIndicator(indicatorTable)
     -- NOTE: icons is different from other custom indicators, more like the Debuffs indicator
     if indicatorTable["type"] == "icons" then
         customIndicators[auraType][indicatorName] = {
+            ["name"] = indicatorTable["name"],
             ["auras"] = F:ConvertSpellTable(indicatorTable["auras"], indicatorTable["trackByName"]), -- auras to match
             ["isIcons"] = true,
             ["found"] = {},
@@ -33,6 +34,7 @@ local function UpdateTablesForIndicator(indicatorTable)
         }
     elseif indicatorTable["type"] == "blocks" then
         customIndicators[auraType][indicatorName] = {
+            ["name"] = indicatorTable["name"],
             ["auras"] = F:ConvertSpellTable_WithColor(indicatorTable["auras"], indicatorTable["trackByName"]), -- auras to match
             ["isBlocks"] = true,
             ["found"] = {},
@@ -40,6 +42,7 @@ local function UpdateTablesForIndicator(indicatorTable)
         }
     else
         customIndicators[auraType][indicatorName] = {
+            ["name"] = indicatorTable["name"],
             ["auras"] = F:ConvertSpellTable(indicatorTable["auras"], indicatorTable["trackByName"]), -- auras to match
             ["top"] = {}, -- top aura details
             ["topOrder"] = {}, -- top aura order
@@ -269,8 +272,8 @@ end
 function I.ShowCustomIndicators(unitButton, auraType)
     local unit = unitButton.states.displayedUnit
     for indicatorName, indicatorTable in pairs(customIndicators[auraType]) do
-        if indicatorName and enabledIndicators[indicatorName] then
-            local indicator = unitButton.indicators[indicatorName]
+        local indicator = unitButton.indicators[indicatorName]
+        if indicator and enabledIndicators[indicatorName] then
             if indicatorTable["isIcons"] or indicatorTable["isBlocks"] then
                 local t = indicatorTable["found"][unit]
                 sort(t, comparator)
