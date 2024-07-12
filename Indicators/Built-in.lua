@@ -1834,8 +1834,6 @@ local READY_CHECK_STATUS = {
 function I.CreateReadyCheckIcon(parent)
     local readyCheckIcon = CreateFrame("Frame", parent:GetName().."ReadyCheckIcon", parent.widgets.highLevelFrame)
     parent.indicators.readyCheckIcon = readyCheckIcon
-    -- readyCheckIcon:SetSize(16, 16)
-    readyCheckIcon:SetPoint("CENTER", parent.widgets.healthBar)
     readyCheckIcon:Hide()
     readyCheckIcon:SetIgnoreParentAlpha(true)
 

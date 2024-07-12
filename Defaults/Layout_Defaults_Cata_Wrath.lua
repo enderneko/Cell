@@ -212,6 +212,7 @@ Cell.defaults.layout = {
             ["indicatorName"] = "readyCheckIcon",
             ["type"] = "built-in",
             ["enabled"] = true,
+            ["position"] = {"CENTER", "CENTER", 0, 0},
             ["frameLevel"] = 100,
             ["size"] = {16, 16},
         }, -- 9
