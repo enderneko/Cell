@@ -766,7 +766,7 @@ local function UpdatePixelPerfect()
     -- P:Resize(buffTrackerFrame)
 
     for _, i in pairs(fakeIcons) do
-        I.UpdatePixelPerfect()
+        i:UpdatePixelPerfect()
     end
 
     for _, b in pairs(buttons) do
