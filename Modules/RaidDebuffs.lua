@@ -94,6 +94,8 @@ local function LoadInstanceList(tier, instanceType, list)
     end
 end
 
+local CURRENT_SEASON_INDEX = Cell.isTWW and 12 or 10
+
 local function LoadList()
     local currentTier = EJ_GetCurrentTier()
 
@@ -106,7 +108,7 @@ local function LoadList()
         tinsert(Cell_DevExpansionNames, 1, name)
         --@end-debug@
 
-        if tier ~= (num - 1) then -- don't load raid for "Current Season"
+        if tier ~= CURRENT_SEASON_INDEX then -- don't load raid for "Current Season"
             LoadInstanceList(tier, "raid", encounterJournalList[name])
         end
         LoadInstanceList(tier, "party", encounterJournalList[name])
