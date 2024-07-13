@@ -1474,19 +1474,19 @@ end
 local playerClass = UnitClassBase("player")
 
 local friendSpells = {
-    ["DEATHKNIGHT"] = 61999,
+    -- ["DEATHKNIGHT"] = 47541,
     -- ["DEMONHUNTER"] = ,
-    ["DRUID"] = Cell.isRetail and 8936 or 5185,
-    ["EVOKER"] = 361469,
+    ["DRUID"] = (Cell.isWrath or Cell.isVanilla) and 5185 or 8936, -- 治疗之触 / 愈合
+    ["EVOKER"] = 361469, -- 活化烈焰
     -- ["HUNTER"] = 136,
-    ["MAGE"] = 1459,
-    ["MONK"] = 116670,
-    ["PALADIN"] = Cell.isRetail and 19750 or 635,
-    ["PRIEST"] = Cell.isRetail and 2061 or 2050,
-    ["ROGUE"] = Cell.isWrath and 57934,
-    ["SHAMAN"] = Cell.isRetail and 8004 or 331,
-    ["WARLOCK"] = 20707,
-    ["WARRIOR"] = 3411,
+    ["MAGE"] = 1459, -- 奥术智慧 / 奥术光辉
+    ["MONK"] = 116670, -- 活血术
+    ["PALADIN"] = Cell.isRetail and 19750 or 635, -- 圣光闪现 / 圣光术
+    ["PRIEST"] = (Cell.isWrath or Cell.isVanilla) and 2050 or 2061, -- 次级治疗术 / 快速治疗
+    -- ["ROGUE"] = Cell.isWrath and 57934,
+    ["SHAMAN"] = Cell.isRetail and 8004 or 331, -- 治疗之涌 / 治疗波
+    ["WARLOCK"] = 5697, -- 无尽呼吸
+    -- ["WARRIOR"] = 3411,
 }
 
 local deadSpells = {
@@ -1531,18 +1531,18 @@ local harmSpells = {
 
 local harmItems = {
     ["DEATHKNIGHT"] = 28767, -- 40y
-    ["DEMONHUNTER"] = 28767,
-    ["DRUID"] = 28767,
+    ["DEMONHUNTER"] = 28767, -- 40y
+    ["DRUID"] = 28767, -- 40y
     ["EVOKER"] = 24268, -- 25y
-    ["HUNTER"] = 28767,
-    ["MAGE"] = 28767,
-    ["MONK"] = 28767,
+    ["HUNTER"] = 28767, -- 40y
+    ["MAGE"] = 28767, -- 40y
+    ["MONK"] = 28767, -- 40y
     ["PALADIN"] = 835, -- 30y
-    ["PRIEST"] = 28767,
-    ["ROGUE"] = 28767,
-    ["SHAMAN"] = 28767,
-    ["WARLOCK"] = 28767,
-    ["WARRIOR"] = 28767,
+    ["PRIEST"] = 28767, -- 40y
+    ["ROGUE"] = 28767, -- 40y
+    ["SHAMAN"] = 28767, -- 40y
+    ["WARLOCK"] = 28767, -- 40y
+    ["WARRIOR"] = 28767, -- 40y
 }
 
 -- local FindSpellIndex
@@ -1659,6 +1659,92 @@ function F:IsInRange(unit)
         end
 
         return true
+    end
+end
+
+-------------------------------------------------
+-- RangeCheck debug
+-------------------------------------------------
+local debug = CreateFrame("Frame", nil, UIParent, "BackdropTemplate")
+debug:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8x8"})
+debug:SetBackdropColor(0.1, 0.1, 0.1, 0.9)
+debug:SetBackdropBorderColor(0, 0, 0, 1)
+debug:SetSize(1, 1)
+debug:SetPoint("LEFT", 300, 0)
+debug:Hide()
+
+debug.text = debug:CreateFontString(nil, "OVERLAY")
+debug.text:SetFont(GameFontNormal:GetFont(), 13, "")
+debug.text:SetShadowColor(0, 0, 0)
+debug.text:SetShadowOffset(1, -1)
+debug.text:SetJustifyH("LEFT")
+debug.text:SetSpacing(5)
+debug.text:SetPoint("LEFT", 5, 0)
+
+local function GetResult1()
+    local inRange, checked = UnitInRange("target")
+
+    return "UnitID: " .. (F:GetTargetUnitID("target") or "target") ..
+        "\n|cffffff00F.IsInRange:|r " .. (F:IsInRange("target") and "true" or "false") ..
+        "\nUnitInRange: " .. (checked and "checked" or "unchecked") .. " " .. (inRange and "true" or "false") ..
+        "\nUnitIsVisible: " .. (UnitIsVisible("target") and "true" or "false") ..
+        "\n\nUnitCanAssist: " .. (UnitCanAssist("player", "target") and "true" or "false") ..
+        "\nUnitCanAttack: " .. (UnitCanAttack("player", "target") and "true" or "false") ..
+        "\n\nUnitIsConnected: " .. (UnitIsConnected("target") and "true" or "false") ..
+        "\nUnitInSamePhase: " .. (UnitInSamePhase("target") and "true" or "false") ..
+        "\nUnitIsDead: " .. (UnitIsDead("target") and "true" or "false") ..
+        "\n\nspell_friend: " .. (spell_friend and (spell_friend .. " " .. (UnitInSpellRange(spell_friend, "target") and "true" or "false")) or "none") ..
+        "\nspell_dead: " .. (spell_dead and (spell_dead .. " " .. (UnitInSpellRange(spell_dead, "target") and "true" or "false")) or "none") ..
+        "\nspell_pet: " .. (spell_pet and (spell_pet .. " " .. (UnitInSpellRange(spell_pet, "target") and "true" or "false")) or "none") ..
+        "\nspell_harm: " .. (spell_harm and (spell_harm .. " " .. (UnitInSpellRange(spell_harm, "target") and "true" or "false")) or "none")
+end
+
+local function GetResult2()
+    if UnitCanAttack("player", "target") then
+        return "IsItemInRange: " .. (IsItemInRange(harmItems[playerClass], "target") and "true" or "false") ..
+            "\nCheckInteractDistance(28y): " .. (CheckInteractDistance("target", 4) and "true" or "false")
+    else
+        return "IsItemInRange: " .. (InCombatLockdown() and "notAvailable" or (IsItemInRange(harmItems[playerClass], "target") and "true" or "false")) ..
+            "\nCheckInteractDistance(28y): " .. (InCombatLockdown() and "notAvailable" or (CheckInteractDistance("target", 4) and "true" or "false"))
+    end
+end
+
+debug:SetScript("OnUpdate", function(self, elapsed)
+    self.elapsed = (self.elapsed or 0) + elapsed
+    if self.elapsed >= 0.25 then
+        self.elapsed = 0
+        local result = GetResult1() .. "\n\n" .. GetResult2()
+        result = string.gsub(result, "none", "|cffabababnone|r")
+        result = string.gsub(result, "true", "|cff00ff00true|r")
+        result = string.gsub(result, "false", "|cffff0000false|r")
+        result = string.gsub(result, " checked", " |cff00ff00checked|r")
+        result = string.gsub(result, "unchecked", "|cffff0000unchecked|r")
+
+        debug.text:SetText("|cffff0066Cell Range Check (Target)|r\n\n" .. result)
+
+        debug:SetSize(debug.text:GetStringWidth() + 10, debug.text:GetStringHeight() + 20)
+    end
+end)
+
+debug:SetScript("OnEvent", function()
+    if not UnitExists("target") then
+        debug:Hide()
+        return
+    end
+
+    debug:Show()
+end)
+
+SLASH_CELLRC1 = "/cellrc"
+function SlashCmdList.CELLRC()
+    if debug:IsEventRegistered("PLAYER_TARGET_CHANGED") then
+        debug:UnregisterEvent("PLAYER_TARGET_CHANGED")
+        debug:Hide()
+    else
+        debug:RegisterEvent("PLAYER_TARGET_CHANGED")
+        if UnitExists("target") then
+            debug:Show()
+        end
     end
 end
 
