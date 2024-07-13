@@ -1,20 +1,12 @@
-[Full Changelog](https://github.com/enderneko/Cell/compare/r232-release...d6d3625807e91b24fd4a4c939a33d481dc57e881)
+[Full Changelog](https://github.com/enderneko/Cell/compare/r233-release...9996f97ec00718c7f4a643a6fb4702dcfd806b96)
 
-- Add "Blizzard 4" for Role Icon indicator
-- Add desc for AoE Healing
-- Add "current+" for Dispel Highlight
-- Fix click-casting for "Rescue"
-- Fix layout preview
+- Fix GetSpellCharges
 - Fix wrath buff tracker
-- Fix raid debuff creation
-- Fix frame level of Actions
-- Fix "Invert Color"
-- Fix "Track by name"
-- Fix block color options
-- Fix PWS id
-- Update range check
+- Fix empty expansion
+- Prevent nil indicator error
+- Increase frame level of AoE Healing
+- Add position for ReadyCheckIcon
+- OverrideLGF by default
+- Update range check (not fix)
+- Update README_zhCN.md
 - Update locales
-- Update built-in spells list button alpha
-- Update frame levels
-- Lower aggro level
-- GetSpellNameAndIcon -> GetSpellInfo

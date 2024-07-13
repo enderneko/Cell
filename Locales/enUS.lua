@@ -87,6 +87,14 @@ select(2, ...).L = setmetatable({
         <p>(Retail) Enable "Always Update Buffs/Debuffs" in General tab, if indicators do not update correctly.</p>
         <br/>
 
+        <h1>r234-release (Jul 13, 2024, 17:37 GMT+8)</h1>
+        <p>+ Added "position" for Ready Check Icon indicator.</p>
+        <p>* "Override LibGetFrame" is now enabled by default.</p>
+        <p>* Increased the frame level of AoE Healing indicator.</p>
+        <p>* Update range check.</p>
+        <p>* Updated deDE, zhTW.</p>
+        <br/>
+
         <h1>r233-release (Jul 11, 2024, 16:10 GMT+8)</h1>
         <p>+ Added a dispel highlight option "current+".</p>
         <p>* Fixed click-casting for evoker spell "Rescue".</p>
