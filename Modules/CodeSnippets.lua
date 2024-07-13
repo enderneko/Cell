@@ -87,25 +87,25 @@ local function CreateCodeSnippetsFrame()
         end
     end)
 
-    local discardBtn = Cell:CreateButton(bottomPane, L["Discard"], "red", {200, 20})
-    bottomPane.discardBtn = discardBtn
-    discardBtn:SetPoint("BOTTOMRIGHT")
-    discardBtn:SetEnabled(false)
-    discardBtn:SetScript("OnClick", function()
+    local cancelBtn = Cell:CreateButton(bottomPane, L["Cancel"], "red", {200, 20})
+    bottomPane.cancelBtn = cancelBtn
+    cancelBtn:SetPoint("BOTTOMRIGHT")
+    cancelBtn:SetEnabled(false)
+    cancelBtn:SetScript("OnClick", function()
         codePane:SetText(CellDB["snippets"][selected]["code"])
-        discardBtn:SetEnabled(false)
+        cancelBtn:SetEnabled(false)
         bottomPane.saveBtn:SetEnabled(false)
     end)
 
     local saveBtn = Cell:CreateButton(bottomPane, L["Save"], "red", {200, 20})
     bottomPane.saveBtn = saveBtn
     saveBtn:SetPoint("BOTTOMLEFT", runBtn, "BOTTOMRIGHT", 10, 0)
-    saveBtn:SetPoint("BOTTOMRIGHT", discardBtn, "BOTTOMLEFT", -10, 0)
+    saveBtn:SetPoint("BOTTOMRIGHT", cancelBtn, "BOTTOMLEFT", -10, 0)
     saveBtn:SetEnabled(false)
     saveBtn:SetScript("OnClick", function()
         CellDB["snippets"][selected]["code"] = codePane:GetText()
         saveBtn:SetEnabled(false)
-        bottomPane.discardBtn:SetEnabled(false)
+        bottomPane.cancelBtn:SetEnabled(false)
     end)
 
     -- current line number
@@ -125,7 +125,7 @@ local function CreateCodeSnippetsFrame()
     codePane.eb:HookScript("OnTextChanged", function(self, userChanged)
         local changed =  CellDB["snippets"][selected]["code"] ~= codePane:GetText()
         saveBtn:SetEnabled(changed)
-        discardBtn:SetEnabled(changed)
+        cancelBtn:SetEnabled(changed)
     end)
 
     codePane.eb:SetScript("OnEditFocusGained", function()
@@ -358,7 +358,7 @@ LoadSnippet = function(index)
         codePane:SetEnabled(true)
         bottomPane.runBtn:SetEnabled(true)
         bottomPane.saveBtn:SetEnabled(false)
-        bottomPane.discardBtn:SetEnabled(false)
+        bottomPane.cancelBtn:SetEnabled(false)
         renameEB:Hide()
         errorPopup:Hide()
     end
