@@ -15,6 +15,8 @@ debuffsTab:Hide()
 local loadedExpansion, loadedInstance, loadedBoss, isGeneral
 local tierNames = {}
 local currentBossTable, selectedButtonIndex, selectedSpellId, selectedSpellName, selectedSpellIcon
+-- frames
+local instancesFrame, bossesFrame, debuffListFrame, detailsFrame
 -- functions
 local LoadExpansion, ShowInstances, ShowBosses, ShowDebuffs, ShowDetails, ShowInstanceImage, HideInstanceImage, ShowBossImage, HideBossImage, OpenEncounterJournal
 -- buttons
@@ -377,6 +379,7 @@ local function CreateWidgets()
         local eName = EJ_GetTierInfo(i)
         tinsert(expansionItems, {
             ["text"] = eName,
+            ["disabled"] = #encounterJournalList[eName] == 0,
             ["onClick"] = function()
                 LoadExpansion(eName)
             end,
@@ -461,8 +464,6 @@ end
 -------------------------------------------------
 -- instances frame
 -------------------------------------------------
-local instancesFrame
-
 local function CreateInstanceFrame()
     instancesFrame = Cell:CreateFrame("RaidDebuffsTab_Instances", debuffsTab, 127, 229)
     instancesFrame:SetPoint("TOPLEFT", expansionDropdown, "BOTTOMLEFT", 0, -5)
@@ -580,8 +581,6 @@ end
 -------------------------------------------------
 -- bosses frame
 -------------------------------------------------
-local bossesFrame
-
 local function CreateBossesFrame()
     bossesFrame = Cell:CreateFrame("RaidDebuffsTab_Bosses", debuffsTab, 127, 229)
     bossesFrame:SetPoint("TOPLEFT", instancesFrame, "BOTTOMLEFT", 0, -5)
@@ -740,7 +739,7 @@ end
 -------------------------------------------------
 -- debuff list frame
 -------------------------------------------------
-local debuffListFrame, dragged, delete
+local dragged, delete
 
 local function CreateDebuffsFrame()
     debuffListFrame = Cell:CreateFrame("RaidDebuffsTab_Debuffs", debuffsTab, 137, 438)
@@ -1273,7 +1272,7 @@ end
 -------------------------------------------------
 -- debuff details frame
 -------------------------------------------------
-local detailsFrame, spellIcon, spellNameText, spellIdText, enabledCB, trackByIdCB, useElapsedTimeCB
+local spellIcon, spellNameText, spellIdText, enabledCB, trackByIdCB, useElapsedTimeCB
 local conditionDropDown, conditionFrame, conditionOperator, conditionValue
 local glowTypeText, glowTypeDropdown, glowOptionsFrame, glowConditionType, glowConditionOperator, glowConditionValue, glowColor, glowLines, glowParticles, glowDuration, glowFrequency, glowLength, glowThickness, glowScale
 
