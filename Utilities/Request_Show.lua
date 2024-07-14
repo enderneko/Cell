@@ -133,8 +133,25 @@ local srUnits = {
 }
 
 local SR = CreateFrame("Frame")
-
 local COOLDOWN_TIME = _G.ITEM_COOLDOWN_TIME
+
+local GetSpellCooldown = C_Spell.GetSpellCooldown or GetSpellCooldown
+local GetCooldown
+if C_Spell.GetSpellCooldown then
+    GetCooldown = function(spellId)
+        local info = GetSpellCooldown(spellId)
+        if info then
+            return info.startTime, info.duration
+        end
+    end
+else
+    GetCooldown = function()
+        return GetSpellCooldown(spellId)
+    end
+end
+
+local GetSpellLink = C_Spell.GetSpellLink or GetSpellLink
+
 local function CheckSRConditions(spellId, unit, sender)
     F:Debug("|cffcdb4dbCheckSRConditions:|r", spellId, unit, sender)
 
@@ -152,14 +169,14 @@ local function CheckSRConditions(spellId, unit, sender)
             --     SendChatMessage(srDeadMsg, "WHISPER", nil, sender)
             -- end
 
-            local start, duration, enabled, modRate = GetSpellCooldown(spellId)
+            local start, duration = GetCooldown(spellId)
             local cdLeft = start + duration - GetTime()
 
             if srFreeCD then -- NOTE: require free cd
                 if start == 0 or duration == 0 then
                     return true
                 else
-                    local _, gcd = GetSpellCooldown(61304) --! check gcd
+                    local _, gcd = GetCooldown(61304) --! check gcd
                     if duration == gcd then -- spell ready
                         return true
                     else
@@ -172,7 +189,7 @@ local function CheckSRConditions(spellId, unit, sender)
             else -- NOTE: no require free cd
                 if srReplyCD then -- reply cd if cd
                     if start > 0 and duration > 0 then
-                        local _, gcd = GetSpellCooldown(61304) --! check gcd
+                        local _, gcd = GetCooldown(61304) --! check gcd
                         if duration ~= gcd then
                             SendChatMessage(GetSpellLink(spellId).." "..format(COOLDOWN_TIME, F:SecondsToTime(cdLeft)), "WHISPER", nil, sender)
                         end
