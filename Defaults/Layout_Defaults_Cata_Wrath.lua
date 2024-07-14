@@ -196,7 +196,7 @@ Cell.defaults.layout = {
             ["position"] = {"TOPLEFT", "TOPLEFT", 0, 0},
             ["size"] = {11, 11},
             ["roleTexture"] = {"default", "Interface\\AddOns\\ElvUI\\Core\\Media\\Textures\\Tank.tga", "Interface\\AddOns\\ElvUI\\Core\\Media\\Textures\\Healer.tga", "Interface\\AddOns\\ElvUI\\Core\\Media\\Textures\\DPS.tga"},
-            ["frameLevel"] = 1,
+            ["frameLevel"] = 5,
         }, -- 7
         {
             ["name"] = "Leader Icon",
@@ -222,7 +222,7 @@ Cell.defaults.layout = {
             ["type"] = "built-in",
             ["enabled"] = true,
             ["position"] = {"TOP", "TOP", 0, 3},
-            ["frameLevel"] = 2,
+            ["frameLevel"] = 5,
             ["size"] = {14, 14},
             ["alpha"] = 0.77,
         }, -- 10
@@ -232,7 +232,7 @@ Cell.defaults.layout = {
             ["type"] = "built-in",
             ["enabled"] = false,
             ["position"] = {"TOP", "TOP", -14, 3},
-            ["frameLevel"] = 2,
+            ["frameLevel"] = 5,
             ["size"] = {14, 14},
             ["alpha"] = 0.77,
         }, -- 11
@@ -242,7 +242,7 @@ Cell.defaults.layout = {
             ["type"] = "built-in",
             ["enabled"] = true,
             ["position"] = {"TOPLEFT", "TOPLEFT", 0, 0},
-            ["frameLevel"] = 3,
+            ["frameLevel"] = 7,
             ["size"] = {11, 11},
         }, -- 12
         {
@@ -268,7 +268,7 @@ Cell.defaults.layout = {
             ["type"] = "built-in",
             ["enabled"] = false,
             ["position"] = {"BOTTOMLEFT", "BOTTOMLEFT", 0, 0},
-            ["frameLevel"] = 2,
+            ["frameLevel"] = 5,
             ["height"] = 4,
             ["color"] = {1, 1, 0, 1},
             ["onlyShowOvershields"] = false,
@@ -369,7 +369,7 @@ Cell.defaults.layout = {
             ["type"] = "built-in",
             ["enabled"] = true,
             ["position"] = {"BOTTOMLEFT", "BOTTOMLEFT", 1, 4},
-            ["frameLevel"] = 2,
+            ["frameLevel"] = 5,
             ["size"] = {{13, 13}, {17, 17}},
             ["showDuration"] = false,
             ["showAnimation"] = true,

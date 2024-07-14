@@ -2170,23 +2170,6 @@ end
 -------------------------------------------------
 -- LibGetFrame
 -------------------------------------------------
--- function Cell.GetUnitFrame(unit)
---     local normal, spotlights, quickAssist = F:GetUnitButtonByUnit(unit, true, true)
---     if CellDB["general"]["framePriority"] == "normal_spotlight_quickassist" then
---         if normal then return normal end
---         if spotlights[1] then return spotlights[1] end
---         return quickAssist
---     elseif CellDB["general"]["framePriority"] == "spotlight_normal_quickassist" then
---         if spotlights[1] then return spotlights[1] end
---         if normal then return normal end
---         return quickAssist
---     else -- "quickassist_normal_spotlight"
---         if quickAssist then return quickAssist end
---         if normal then return normal end
---         return spotlights[1]
---     end
--- end
-
 local WA_GetUnitFrame, LGF_GetUnitFrame
 
 function Cell.GetUnitFrame(unit)
