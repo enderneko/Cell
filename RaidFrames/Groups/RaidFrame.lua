@@ -342,7 +342,11 @@ local function RaidFrame_UpdateLayout(layout, which)
             if k == 1 then
                 arenaPetButtons[k]:SetPoint(point, npcFrameAnchor)
             else
-                arenaPetButtons[k]:SetPoint(point, arenaPetButtons[k-1], anchorPoint, 0, unitSpacing)
+                if layout["main"]["orientation"] == "vertical" then
+                    arenaPetButtons[k]:SetPoint(point, arenaPetButtons[k-1], anchorPoint, 0, unitSpacing)
+                else
+                    arenaPetButtons[k]:SetPoint(point, arenaPetButtons[k-1], anchorPoint, unitSpacing, 0)
+                end
             end
         end
     end
@@ -443,8 +447,12 @@ local function RaidFrame_UpdateLayout(layout, which)
                     if i == 1 then
                         header:SetPoint(point)
                     else
-                        if i / layout["main"]["maxColumns"] > 1 then -- not the first row
-                            header:SetPoint(point, separatedHeaders[shownGroups[i-layout["main"]["maxColumns"]]], anchorPoint, 0, verticalSpacing)
+                        local headersPerRow = layout["main"]["maxColumns"]
+                        local headerCol = i % layout["main"]["maxColumns"]
+                        headerCol = headerCol == 0 and headersPerRow or headerCol
+
+                        if headerCol == 1 then -- first column on each row
+                            header:SetPoint(point, separatedHeaders[shownGroups[i-headersPerRow]], anchorPoint, 0, verticalSpacing)
                         else
                             header:SetPoint(point, separatedHeaders[shownGroups[i-1]], groupAnchorPoint, groupSpacing, 0)
                         end
@@ -463,18 +471,13 @@ local function RaidFrame_UpdateLayout(layout, which)
 
                     if i == 1 then
                         header:SetPoint(point)
-                        -- arena pets
-                        for k in ipairs(arenaPetButtons) do
-                            arenaPetButtons[k]:ClearAllPoints()
-                            if k == 1 then
-                                arenaPetButtons[k]:SetPoint(point, npcFrameAnchor)
-                            else
-                                arenaPetButtons[k]:SetPoint(point, arenaPetButtons[k-1], anchorPoint, unitSpacing, 0)
-                            end
-                        end
                     else
-                        if i / layout["main"]["maxColumns"] > 1 then -- not the first column
-                            header:SetPoint(point, separatedHeaders[shownGroups[i-layout["main"]["maxColumns"]]], anchorPoint, horizontalSpacing, 0)
+                        local headersPerCol = layout["main"]["maxColumns"]
+                        local headerRow = i % layout["main"]["maxColumns"]
+                        headerRow = headerRow == 0 and headersPerCol or headerRow
+
+                        if headerRow == 1 then -- first row on each column
+                            header:SetPoint(point, separatedHeaders[shownGroups[i-headersPerCol]], anchorPoint, horizontalSpacing, 0)
                         else
                             header:SetPoint(point, separatedHeaders[shownGroups[i-1]], groupAnchorPoint, 0, groupSpacing)
                         end
