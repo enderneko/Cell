@@ -192,7 +192,7 @@ end
 -- CreateDefensiveCooldowns
 -------------------------------------------------
 function I.CreateDefensiveCooldowns(parent)
-    local defensiveCooldowns = CreateFrame("Frame", parent:GetName().."DefensiveCooldownParent", parent.widgets.highLevelFrame)
+    local defensiveCooldowns = CreateFrame("Frame", parent:GetName().."DefensiveCooldownParent", parent.widgets.indicatorFrame)
     parent.indicators.defensiveCooldowns = defensiveCooldowns
     -- defensiveCooldowns:SetSize(20, 10)
     defensiveCooldowns:Hide()
@@ -217,7 +217,7 @@ end
 -- CreateExternalCooldowns
 -------------------------------------------------
 function I.CreateExternalCooldowns(parent)
-    local externalCooldowns = CreateFrame("Frame", parent:GetName().."ExternalCooldownParent", parent.widgets.highLevelFrame)
+    local externalCooldowns = CreateFrame("Frame", parent:GetName().."ExternalCooldownParent", parent.widgets.indicatorFrame)
     parent.indicators.externalCooldowns = externalCooldowns
     externalCooldowns:Hide()
 
@@ -241,7 +241,7 @@ end
 -- CreateAllCooldowns
 -------------------------------------------------
 function I.CreateAllCooldowns(parent)
-    local allCooldowns = CreateFrame("Frame", parent:GetName().."AllCooldownParent", parent.widgets.highLevelFrame)
+    local allCooldowns = CreateFrame("Frame", parent:GetName().."AllCooldownParent", parent.widgets.indicatorFrame)
     parent.indicators.allCooldowns = allCooldowns
     allCooldowns:Hide()
 
@@ -265,7 +265,7 @@ end
 -- CreateTankActiveMitigation
 -------------------------------------------------
 function I.CreateTankActiveMitigation(parent)
-    local bar = Cell:CreateStatusBar(parent:GetName().."TanckActiveMitigation", parent.widgets.highLevelFrame, 20, 6, 100)
+    local bar = Cell:CreateStatusBar(parent:GetName().."TanckActiveMitigation", parent.widgets.indicatorFrame, 20, 6, 100)
     parent.indicators.tankActiveMitigation = bar
     bar:Hide()
 
@@ -461,7 +461,7 @@ local function Debuffs_EnableBlacklistShortcut(debuffs, enabled)
 end
 
 function I.CreateDebuffs(parent)
-    local debuffs = CreateFrame("Frame", parent:GetName().."DebuffParent", parent.widgets.highLevelFrame)
+    local debuffs = CreateFrame("Frame", parent:GetName().."DebuffParent", parent.widgets.indicatorFrame)
     parent.indicators.debuffs = debuffs
     debuffs:Hide()
     debuffs.parent = parent
@@ -639,20 +639,20 @@ local function Dispels_UpdateHighlight(self, highlightType)
     if highlightType == "none" then
         self.highlight:Hide()
     elseif highlightType == "gradient" then
-        -- self.highlight:SetParent(self.parent.widgets.highLevelFrame)
+        -- self.highlight:SetParent(self.parent.widgets.indicatorFrame)
         self.highlight:ClearAllPoints()
         self.highlight:SetAllPoints(self.parent.widgets.healthBar)
         self.highlight:SetTexture("Interface\\Buttons\\WHITE8x8")
         self.highlight:SetDrawLayer("ARTWORK", 0)
     elseif highlightType == "gradient-half" then
-        -- self.highlight:SetParent(self.parent.widgets.highLevelFrame)
+        -- self.highlight:SetParent(self.parent.widgets.indicatorFrame)
         self.highlight:ClearAllPoints()
         self.highlight:SetPoint("BOTTOMLEFT", self.parent.widgets.healthBar)
         self.highlight:SetPoint("TOPRIGHT", self.parent.widgets.healthBar, "RIGHT")
         self.highlight:SetTexture("Interface\\Buttons\\WHITE8x8")
         self.highlight:SetDrawLayer("ARTWORK", 0)
     elseif highlightType == "entire" then
-        -- self.highlight:SetParent(self.parent.widgets.highLevelFrame)
+        -- self.highlight:SetParent(self.parent.widgets.indicatorFrame)
         self.highlight:ClearAllPoints()
         self.highlight:SetAllPoints(self.parent.widgets.healthBar)
         self.highlight:SetTexture("Interface\\Buttons\\WHITE8x8")
@@ -674,7 +674,7 @@ local function Dispels_UpdateHighlight(self, highlightType)
 end
 
 function I.CreateDispels(parent)
-    local dispels = CreateFrame("Frame", parent:GetName().."DispelParent", parent.widgets.highLevelFrame)
+    local dispels = CreateFrame("Frame", parent:GetName().."DispelParent", parent.widgets.indicatorFrame)
     parent.indicators.dispels = dispels
     dispels.parent = parent
     dispels:Hide()
@@ -863,7 +863,7 @@ local function RaidDebuffs_ShowTooltip(raidDebuffs, show)
 end
 
 function I.CreateRaidDebuffs(parent)
-    local raidDebuffs = CreateFrame("Frame", parent:GetName().."RaidDebuffParent", parent.widgets.highLevelFrame)
+    local raidDebuffs = CreateFrame("Frame", parent:GetName().."RaidDebuffParent", parent.widgets.indicatorFrame)
     parent.indicators.raidDebuffs = raidDebuffs
     raidDebuffs:Hide()
     raidDebuffs.parent = parent
@@ -942,7 +942,7 @@ local function PrivateAuras_UpdatePrivateAuraAnchor(self, unit)
 end
 
 function I.CreatePrivateAuras(parent)
-    local privateAuras = CreateFrame("Frame", parent:GetName().."PrivateAuraParent", parent.widgets.highLevelFrame)
+    local privateAuras = CreateFrame("Frame", parent:GetName().."PrivateAuraParent", parent.widgets.indicatorFrame)
     parent.indicators.privateAuras = privateAuras
     privateAuras:Hide()
 
@@ -965,10 +965,10 @@ end
 -- player raid icon
 -------------------------------------------------
 function I.CreatePlayerRaidIcon(parent)
-    -- local playerRaidIcon = parent.widgets.highLevelFrame:CreateTexture(parent:GetName().."PlayerRaidIcon", "ARTWORK", nil, -7)
+    -- local playerRaidIcon = parent.widgets.indicatorFrame:CreateTexture(parent:GetName().."PlayerRaidIcon", "ARTWORK", nil, -7)
     -- parent.indicators.playerRaidIcon = playerRaidIcon
     -- playerRaidIcon:SetTexture("Interface\\TargetingFrame\\UI-RaidTargetingIcons")
-    local playerRaidIcon = CreateFrame("Frame", parent:GetName().."PlayerRaidIcon", parent.widgets.highLevelFrame)
+    local playerRaidIcon = CreateFrame("Frame", parent:GetName().."PlayerRaidIcon", parent.widgets.indicatorFrame)
     parent.indicators.playerRaidIcon = playerRaidIcon
     playerRaidIcon.tex = playerRaidIcon:CreateTexture(nil, "ARTWORK")
     playerRaidIcon.tex:SetTexture("Interface\\TargetingFrame\\UI-RaidTargetingIcons")
@@ -980,7 +980,7 @@ end
 -- target raid icon
 -------------------------------------------------
 function I.CreateTargetRaidIcon(parent)
-    local targetRaidIcon = CreateFrame("Frame", parent:GetName().."TargetRaidIcon", parent.widgets.highLevelFrame)
+    local targetRaidIcon = CreateFrame("Frame", parent:GetName().."TargetRaidIcon", parent.widgets.indicatorFrame)
     parent.indicators.targetRaidIcon = targetRaidIcon
     targetRaidIcon.tex = targetRaidIcon:CreateTexture(nil, "ARTWORK")
     targetRaidIcon.tex:SetTexture("Interface\\TargetingFrame\\UI-RaidTargetingIcons")
@@ -998,7 +998,7 @@ local font_status = CreateFont("CELL_FONT_STATUS")
 font_status:SetFont(GameFontNormal:GetFont(), 11, "")
 
 function I.CreateNameText(parent)
-    local nameText = CreateFrame("Frame", parent:GetName().."NameText", parent.widgets.highLevelFrame)
+    local nameText = CreateFrame("Frame", parent:GetName().."NameText", parent.widgets.indicatorFrame)
     parent.indicators.nameText = nameText
     nameText:Hide()
 
@@ -1254,7 +1254,7 @@ end
 
 local startTimeCache = {}
 function I.CreateStatusText(parent)
-    local statusText = CreateFrame("Frame", parent:GetName().."StatusText", parent.widgets.highLevelFrame)
+    local statusText = CreateFrame("Frame", parent:GetName().."StatusText", parent.widgets.indicatorFrame)
     parent.indicators.statusText = statusText
     statusText:SetIgnoreParentAlpha(true)
     statusText:Hide()
@@ -1542,7 +1542,7 @@ local function HealthText_UpdatePreviewColor(self, color)
 end
 
 function I.CreateHealthText(parent)
-    local healthText = CreateFrame("Frame", parent:GetName().."HealthText", parent.widgets.highLevelFrame)
+    local healthText = CreateFrame("Frame", parent:GetName().."HealthText", parent.widgets.indicatorFrame)
     parent.indicators.healthText = healthText
     healthText:Hide()
 
@@ -1641,7 +1641,7 @@ local function PowerText_UpdatePreviewColor(self, color)
 end
 
 function I.CreatePowerText(parent)
-    local powerText = CreateFrame("Frame", parent:GetName().."PowerText", parent.widgets.highLevelFrame)
+    local powerText = CreateFrame("Frame", parent:GetName().."PowerText", parent.widgets.indicatorFrame)
     parent.indicators.powerText = powerText
     powerText:Hide()
 
@@ -1743,9 +1743,9 @@ local function RoleIcon_UpdatePixelPerfect(self)
 end
 
 function I.CreateRoleIcon(parent)
-    local roleIcon = CreateFrame("Frame", parent:GetName().."RoleIcon", parent.widgets.highLevelFrame)
+    local roleIcon = CreateFrame("Frame", parent:GetName().."RoleIcon", parent.widgets.indicatorFrame)
     parent.indicators.roleIcon = roleIcon
-    -- roleIcon:SetPoint("TOPLEFT", highLevelFrame)
+    -- roleIcon:SetPoint("TOPLEFT", indicatorFrame)
     -- roleIcon:SetSize(11, 11)
 
     roleIcon.tex = roleIcon:CreateTexture(nil, "ARTWORK")
@@ -1761,7 +1761,7 @@ end
 -- party assignment icon
 -------------------------------------------------
 function I.CreatePartyAssignmentIcon(parent)
-    local partyAssignmentIcon = parent.widgets.highLevelFrame:CreateTexture(parent:GetName().."PartyAssignmentIcon", "ARTWORK", nil, -7)
+    local partyAssignmentIcon = parent.widgets.indicatorFrame:CreateTexture(parent:GetName().."PartyAssignmentIcon", "ARTWORK", nil, -7)
     parent.indicators.partyAssignmentIcon = partyAssignmentIcon
     partyAssignmentIcon:Hide()
 
@@ -1787,7 +1787,7 @@ end
 -- leader icon
 -------------------------------------------------
 function I.CreateLeaderIcon(parent)
-    local leaderIcon = parent.widgets.highLevelFrame:CreateTexture(parent:GetName().."LeaderIcon", "ARTWORK", nil, -7)
+    local leaderIcon = parent.widgets.indicatorFrame:CreateTexture(parent:GetName().."LeaderIcon", "ARTWORK", nil, -7)
     parent.indicators.leaderIcon = leaderIcon
     -- leaderIcon:SetPoint("TOPLEFT", roleIcon, "BOTTOM")
     -- leaderIcon:SetPoint("TOPLEFT", 0, -11)
@@ -1832,7 +1832,7 @@ local READY_CHECK_STATUS = {
 }
 
 function I.CreateReadyCheckIcon(parent)
-    local readyCheckIcon = CreateFrame("Frame", parent:GetName().."ReadyCheckIcon", parent.widgets.highLevelFrame)
+    local readyCheckIcon = CreateFrame("Frame", parent:GetName().."ReadyCheckIcon", parent.widgets.indicatorFrame)
     parent.indicators.readyCheckIcon = readyCheckIcon
     readyCheckIcon:Hide()
     readyCheckIcon:SetIgnoreParentAlpha(true)
@@ -1912,7 +1912,7 @@ end
 -- aggro blink
 -------------------------------------------------
 function I.CreateAggroBlink(parent)
-    local aggroBlink = CreateFrame("Frame", parent:GetName().."AggroBlink", parent.widgets.highLevelFrame, "BackdropTemplate")
+    local aggroBlink = CreateFrame("Frame", parent:GetName().."AggroBlink", parent.widgets.indicatorFrame, "BackdropTemplate")
     parent.indicators.aggroBlink = aggroBlink
     -- aggroBlink:SetPoint("TOPLEFT")
     -- aggroBlink:SetSize(10, 10)
@@ -1998,7 +1998,7 @@ local function ShieldBar_SetPoint(bar, point, anchorTo, anchorPoint, x, y)
 end
 
 function I.CreateShieldBar(parent)
-    local shieldBar = CreateFrame("Frame", parent:GetName().."ShieldBar", parent.widgets.highLevelFrame, "BackdropTemplate")
+    local shieldBar = CreateFrame("Frame", parent:GetName().."ShieldBar", parent.widgets.indicatorFrame, "BackdropTemplate")
     parent.indicators.shieldBar = shieldBar
     -- shieldBar:SetSize(4, 4)
     shieldBar:Hide()
@@ -2116,7 +2116,7 @@ end
 -- missing buffs
 -------------------------------------------------
 function I.CreateMissingBuffs(parent)
-    local missingBuffs = CreateFrame("Frame", parent:GetName().."MissingBuffParent", parent.widgets.highLevelFrame)
+    local missingBuffs = CreateFrame("Frame", parent:GetName().."MissingBuffParent", parent.widgets.indicatorFrame)
     parent.indicators.missingBuffs = missingBuffs
     missingBuffs:Hide()
 
@@ -2212,7 +2212,7 @@ end
 -- power word : shield 怀旧服API太落后，蛋疼！
 -------------------------------------------------
 function I.CreatePowerWordShield(parent)
-    local powerWordShield = CreateFrame("Frame", parent:GetName().."PowerWordShield", parent.widgets.highLevelFrame, "BackdropTemplate")
+    local powerWordShield = CreateFrame("Frame", parent:GetName().."PowerWordShield", parent.widgets.indicatorFrame, "BackdropTemplate")
     parent.indicators.powerWordShield = powerWordShield
     powerWordShield:Hide()
 
@@ -2351,7 +2351,7 @@ end
 -- crowd controls
 -------------------------------------------------
 function I.CreateCrowdControls(parent)
-    local crowdControls = CreateFrame("Frame", parent:GetName().."CrowdControlsParent", parent.widgets.highLevelFrame)
+    local crowdControls = CreateFrame("Frame", parent:GetName().."CrowdControlsParent", parent.widgets.indicatorFrame)
     parent.indicators.crowdControls = crowdControls
     crowdControls:Hide()
 

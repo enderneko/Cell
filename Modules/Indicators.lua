@@ -1655,7 +1655,7 @@ local function ShowIndicatorSettings(id)
         elseif indicatorType == "glow" then
             settingsTable = {"enabled", "checkbutton3:fadeOut", "auras", "glowOptions", "frameLevel"}
         elseif indicatorType == "overlay" then
-            settingsTable = {"enabled", "auras", "overlayColors", "checkbutton3:smooth", "barOrientation", "frameLevel"}
+            settingsTable = {"enabled", "auras", "overlayColors", "checkbutton3:smooth", "barOrientation", "frameLevel:50"}
         elseif indicatorType == "block" then
             settingsTable = {"enabled", "auras", "blockColors", "checkbutton3:showStack", "durationVisibility", "size", "position", "frameLevel", "font1:stackFont", "font2:durationFont"}
         elseif indicatorType == "blocks" then

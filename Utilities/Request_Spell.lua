@@ -666,7 +666,7 @@ end
 -- end
 
 function U:CreateSpellRequestIcon(parent)
-    local srIcon = CreateFrame("Frame", parent:GetName().."SpellRequestIcon", parent.widgets.srGlowFrame)
+    local srIcon = CreateFrame("Frame", parent:GetName().."SpellRequestIcon", parent.widgets.indicatorFrame)
     parent.widgets.srIcon = srIcon
     srIcon:SetIgnoreParentAlpha(true)
     srIcon:Hide()

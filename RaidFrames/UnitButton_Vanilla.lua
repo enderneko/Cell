@@ -2896,35 +2896,41 @@ function CellUnitButton_OnLoad(button)
     incomingHeal:Hide()
     incomingHeal.SetValue = DumbFunc
 
-    --* tsGlowFrame (Targeted Spells)
-    local tsGlowFrame = CreateFrame("Frame", name.."TSGlowFrame", button)
-    button.widgets.tsGlowFrame = tsGlowFrame
-    tsGlowFrame:SetAllPoints(button)
-
-    --* srGlowFrame (Spell Request)
-    local srGlowFrame = CreateFrame("Frame", name.."SRGlowFrame", button)
-    button.widgets.srGlowFrame = srGlowFrame
-    srGlowFrame:SetFrameLevel(button:GetFrameLevel()+300)
-    srGlowFrame:SetAllPoints(button)
-
-    --* drGlowFrame (Dispel Request)
-    local drGlowFrame = CreateFrame("Frame", name.."DRGlowFrame", button)
-    button.widgets.drGlowFrame = drGlowFrame
-    drGlowFrame:SetFrameLevel(button:GetFrameLevel()+300)
-    drGlowFrame:SetAllPoints(button)
+    --* indicatorFrame
+    local indicatorFrame = CreateFrame("Frame", name.."IndicatorFrame", button)
+    button.widgets.indicatorFrame = indicatorFrame
+    indicatorFrame:SetFrameLevel(button:GetFrameLevel()+200)
+    indicatorFrame:SetAllPoints(button)
 
     --* highLevelFrame
     local highLevelFrame = CreateFrame("Frame", name.."HighLevelFrame", button)
     button.widgets.highLevelFrame = highLevelFrame
-    highLevelFrame:SetFrameLevel(button:GetFrameLevel()+150)
+    highLevelFrame:SetFrameLevel(button:GetFrameLevel()+170)
     highLevelFrame:SetAllPoints(button)
+
+     --* tsGlowFrame (Targeted Spells)
+     local tsGlowFrame = CreateFrame("Frame", name.."TSGlowFrame", button)
+     button.widgets.tsGlowFrame = tsGlowFrame
+     tsGlowFrame:SetFrameLevel(button:GetFrameLevel()+150)
+     tsGlowFrame:SetAllPoints(button)
+
+     --* srGlowFrame (Spell Request)
+     local srGlowFrame = CreateFrame("Frame", name.."SRGlowFrame", button)
+     button.widgets.srGlowFrame = srGlowFrame
+     srGlowFrame:SetFrameLevel(button:GetFrameLevel()+150)
+     srGlowFrame:SetAllPoints(button)
+
+     --* drGlowFrame (Dispel Request)
+     local drGlowFrame = CreateFrame("Frame", name.."DRGlowFrame", button)
+     button.widgets.drGlowFrame = drGlowFrame
+     drGlowFrame:SetFrameLevel(button:GetFrameLevel()+150)
+     drGlowFrame:SetAllPoints(button)
 
     --* midLevelFrame
     local midLevelFrame = CreateFrame("Frame", name.."MidLevelFrame", button)
     button.widgets.midLevelFrame = midLevelFrame
-    midLevelFrame:SetFrameLevel(button:GetFrameLevel()+70)
-    midLevelFrame:SetPoint("TOPLEFT", healthBar)
-    midLevelFrame:SetPoint("BOTTOMRIGHT", healthBar)
+    midLevelFrame:SetFrameLevel(button:GetFrameLevel()+120)
+    midLevelFrame:SetAllPoints(healthBar)
 
     -- shield bar
     local shieldBar = midLevelFrame:CreateTexture(name.."ShieldBar", "ARTWORK", nil, -5)

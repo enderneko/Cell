@@ -52,7 +52,7 @@ end)
 -- create
 -------------------------------------------------
 function I.CreateStatusIcon(parent)
-    local statusIcon = CreateFrame("Frame", parent:GetName().."StatusIcon", parent.widgets.highLevelFrame)
+    local statusIcon = CreateFrame("Frame", parent:GetName().."StatusIcon", parent.widgets.indicatorFrame)
     parent.indicators.statusIcon = statusIcon
     statusIcon:Hide()
 
@@ -78,7 +78,7 @@ function I.CreateStatusIcon(parent)
     end
 
     -- resurrection icon ----------------------------------
-    local resurrectionIcon = CreateFrame("Frame", parent:GetName().."ResurrectionIcon", parent.widgets.highLevelFrame)
+    local resurrectionIcon = CreateFrame("Frame", parent:GetName().."ResurrectionIcon", parent.widgets.indicatorFrame)
     parent.indicators.resurrectionIcon = resurrectionIcon
     resurrectionIcon:SetAllPoints(statusIcon)
     resurrectionIcon:Hide()

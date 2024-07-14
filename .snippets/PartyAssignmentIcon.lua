@@ -28,7 +28,7 @@ local function UpdateAssignmentIcon(b, event)
 end
 
 Cell.funcs:IterateAllUnitButtons(function(b)
-    local assignmentIcon = b.widgets.highLevelFrame:CreateTexture(b:GetName().."AssignmentIcon", "ARTWORK", nil, -7)
+    local assignmentIcon = b.widgets.indicatorFrame:CreateTexture(b:GetName().."AssignmentIcon", "ARTWORK", nil, -7)
     b.widgets.assignmentIcon = assignmentIcon
     assignmentIcon:SetPoint(point, b.indicators.leaderIcon, relativePoint, x, y)
     assignmentIcon:SetSize(size, size)

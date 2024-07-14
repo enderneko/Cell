@@ -1076,8 +1076,9 @@ local function Color_SetCooldown(color, start, duration, debuffType)
     color:Show()
 end
 
+-- +6 ~ +55
 local function Color_SetFrameLevel(color, frameLevel)
-    color:_SetFrameLevel(frameLevel + 1)
+    color:_SetFrameLevel(frameLevel + 5)
 end
 
 local function Color_SetAnchor(color, anchorTo)
@@ -1093,7 +1094,7 @@ local function Color_SetAnchor(color, anchorTo)
         P:Point(color, "BOTTOMRIGHT", color.parent, "BOTTOMRIGHT", -CELL_BORDER_SIZE, CELL_BORDER_SIZE)
     end
 
-    color:SetFrameLevel(color:GetParent():GetFrameLevel() + color.configs.frameLevel)
+    -- color:SetFrameLevel(color:GetParent():GetFrameLevel() + color.configs.frameLevel)
 end
 
 local function Color_SetColors(self, colors)
@@ -1728,8 +1729,9 @@ local function Overlay_SetColors(overlay, colors)
     overlay.colors = colors
 end
 
+-- +56 ~ +110
 local function Overlay_SetFrameLevel(overlay, frameLevel)
-    overlay:_SetFrameLevel(frameLevel + 10)
+    overlay:_SetFrameLevel(frameLevel + 55)
 end
 
 function I.CreateAura_Overlay(name, parent)

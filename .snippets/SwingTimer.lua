@@ -46,13 +46,13 @@ local function Display(b, sourceGUID)
 end
 
 F:IterateAllUnitButtons(function(b)
-    local swingTimer = I.CreateAura_Bar(b:GetName().."SwingTimer", b.widgets.highLevelFrame)
+    local swingTimer = I.CreateAura_Bar(b:GetName().."SwingTimer", b.widgets.indicatorFrame)
     b.swingTimer = swingTimer
     swingTimer:Hide()
     swingTimer:SetPoint(POINT1, P:Scale(POINT1_X), P:Scale(POINT1_Y))
     swingTimer:SetPoint(POINT2, P:Scale(POINT2_X), P:Scale(POINT2_Y))
     swingTimer:SetStatusBarColor(unpack(COLOR))
-    swingTimer:SetFrameLevel(b.widgets.highLevelFrame:GetFrameLevel()+FRAME_LEVEL)
+    swingTimer:SetFrameLevel(b.widgets.indicatorFrame:GetFrameLevel()+FRAME_LEVEL)
 
     function swingTimer:Display(sourceUnit)
         local speed = UnitAttackSpeed(sourceUnit)

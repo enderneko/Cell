@@ -3056,6 +3056,12 @@ function F:Revise()
                         i.position = {"CENTER", "CENTER", 0, 0}
                     end
                 end
+
+                if i.type == "overlay" then
+                    if i.frameLevel > 50 then
+                        i.frameLevel = 50
+                    end
+                end
             end
         end
     end

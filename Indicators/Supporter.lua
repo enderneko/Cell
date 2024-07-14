@@ -158,7 +158,7 @@ pool = CreateObjectPool(creationFunc, resetterFunc)
 -------------------------------------------------
 local function Display(b)
     local f = pool:Acquire()
-    f:SetParent(b.widgets.highLevelFrame)
+    f:SetParent(b.widgets.indicatorFrame)
     -- f:SetFrameLevel(b:GetFrameLevel()+200)
     f:SetPoint("CENTER", b, "BOTTOMLEFT")
 

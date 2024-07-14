@@ -42,7 +42,7 @@ eventFrame:SetScript("OnEvent", function()
 end)
 
 function I.CreateAoEHealing(parent)
-    local aoeHealing = CreateFrame("Frame", parent:GetName().."AoEHealing", parent.widgets.highLevelFrame)
+    local aoeHealing = CreateFrame("Frame", parent:GetName().."AoEHealing", parent.widgets.indicatorFrame)
     parent.indicators.aoeHealing = aoeHealing
     aoeHealing:SetPoint("TOPLEFT", parent.widgets.healthBar)
     aoeHealing:SetPoint("TOPRIGHT", parent.widgets.healthBar)

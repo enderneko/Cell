@@ -441,7 +441,7 @@ local previews = {}
 local previewOrientation
 
 function I.CreateActions(parent, isPreview)
-    local actions = CreateFrame("Frame", parent:GetName().."ActionsParent", isPreview and parent or parent.widgets.highLevelFrame)
+    local actions = CreateFrame("Frame", parent:GetName().."ActionsParent", isPreview and parent or parent.widgets.indicatorFrame)
 
     -- mask
     local mask = actions:CreateMaskTexture()

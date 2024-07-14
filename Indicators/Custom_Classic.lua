@@ -57,27 +57,27 @@ function I.CreateIndicator(parent, indicatorTable, noTableUpdate)
     local indicatorName = indicatorTable["indicatorName"]
     local indicator
     if indicatorTable["type"] == "icon" then
-        indicator = I.CreateAura_BarIcon(parent:GetName()..indicatorName, parent.widgets.highLevelFrame)
+        indicator = I.CreateAura_BarIcon(parent:GetName()..indicatorName, parent.widgets.indicatorFrame)
     elseif indicatorTable["type"] == "text" then
-        indicator = I.CreateAura_Text(parent:GetName()..indicatorName, parent.widgets.highLevelFrame)
+        indicator = I.CreateAura_Text(parent:GetName()..indicatorName, parent.widgets.indicatorFrame)
     elseif indicatorTable["type"] == "bar" then
-        indicator = I.CreateAura_Bar(parent:GetName()..indicatorName, parent.widgets.highLevelFrame)
+        indicator = I.CreateAura_Bar(parent:GetName()..indicatorName, parent.widgets.indicatorFrame)
     elseif indicatorTable["type"] == "rect" then
-        indicator = I.CreateAura_Rect(parent:GetName()..indicatorName, parent.widgets.highLevelFrame)
+        indicator = I.CreateAura_Rect(parent:GetName()..indicatorName, parent.widgets.indicatorFrame)
     elseif indicatorTable["type"] == "icons" then
-        indicator = I.CreateAura_Icons(parent:GetName()..indicatorName, parent.widgets.highLevelFrame, 10)
+        indicator = I.CreateAura_Icons(parent:GetName()..indicatorName, parent.widgets.indicatorFrame, 10)
     elseif indicatorTable["type"] == "color" then
         indicator = I.CreateAura_Color(parent:GetName()..indicatorName, parent)
     elseif indicatorTable["type"] == "texture" then
-        indicator = I.CreateAura_Texture(parent:GetName()..indicatorName, parent.widgets.highLevelFrame)
+        indicator = I.CreateAura_Texture(parent:GetName()..indicatorName, parent.widgets.indicatorFrame)
     elseif indicatorTable["type"] == "glow" then
         indicator = I.CreateAura_Glow(parent:GetName()..indicatorName, parent)
     elseif indicatorTable["type"] == "overlay" then
         indicator = I.CreateAura_Overlay(parent:GetName()..indicatorName, parent)
     elseif indicatorTable["type"] == "block" then
-        indicator = I.CreateAura_Block(parent:GetName()..indicatorName, parent.widgets.highLevelFrame)
+        indicator = I.CreateAura_Block(parent:GetName()..indicatorName, parent.widgets.indicatorFrame)
     elseif indicatorTable["type"] == "blocks" then
-        indicator = I.CreateAura_Blocks(parent:GetName()..indicatorName, parent.widgets.highLevelFrame, 10)
+        indicator = I.CreateAura_Blocks(parent:GetName()..indicatorName, parent.widgets.indicatorFrame, 10)
     end
     parent.indicators[indicatorName] = indicator
 

@@ -309,7 +309,7 @@ local function CreatePreviewButtons()
     previewButton:SetScript("OnUpdate", nil)
     previewButton:Show()
 
-    previewButton.previewHealthText = previewButton.widgets.highLevelFrame:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
+    previewButton.previewHealthText = previewButton.widgets.indicatorFrame:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
     previewButton.previewHealthText:SetPoint("CENTER")
 
     previewButton.widgets.healthBar:SetMinMaxSmoothedValue(0, 100)
