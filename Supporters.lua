@@ -49,6 +49,7 @@ local supporters1 = { -- wowIDs
     {"Asuranpala-Draenor (EU)"}, -- AsuranDex (Ko-fi)
     {"Poolparty-Khaz'goroth (US)"}, -- Poolparty (Ko-fi)
     {"Tenspiritak-Drakthul (EU)"}, -- Tenspiritak (Ko-fi)
+    {"Darrágh-Blackrock (EU)"}, -- Jim (Ko-fi)
 }
 
 local supporters2 = { -- 有些早期的发电记录已经丢失了……
@@ -120,6 +121,8 @@ local supporters2 = { -- 有些早期的发电记录已经丢失了……
     {"Likle", "Ko-fi"}, -- 2024-07-03
     {"Poolparty", "Ko-fi"}, -- 2024-07-07
     {"Tenspiritak", "Ko-fi"}, -- 2024-07-07
+    {"Jim", "Ko-fi"}, -- 2024-07-13
+    {"Cerrmor-Stormrage", "Ko-fi"}, -- 2024-07-15
 }
 
 -------------------------------------------------
