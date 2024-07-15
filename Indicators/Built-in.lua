@@ -424,10 +424,17 @@ local function Debuffs_ShowTooltip(debuffs, show)
             debuffs[i]:SetScript("OnLeave", function()
                 GameTooltip:Hide()
             end)
+
+            -- https://warcraft.wiki.gg/wiki/API_ScriptRegion_EnableMouse
+            debuffs[i]:SetMouseClickEnabled(false)
         else
             debuffs[i]:SetScript("OnEnter", nil)
             debuffs[i]:SetScript("OnLeave", nil)
-            if not debuffs.enableBlacklistShortcut then debuffs[i]:EnableMouse(false) end
+            if debuffs.enableBlacklistShortcut then
+                debuffs[i]:SetMouseMotionEnabled(false)
+            else
+                debuffs[i]:EnableMouse(false)
+            end
         end
     end
 end
@@ -455,7 +462,11 @@ local function Debuffs_EnableBlacklistShortcut(debuffs, enabled)
             end)
         else
             debuffs[i]:SetScript("OnMouseUp", nil)
-            if not debuffs.showTooltip then debuffs[i]:EnableMouse(false) end
+            if debuffs.showTooltip then
+                debuffs[i]:SetMouseClickEnabled(false)
+            else
+                debuffs[i]:EnableMouse(false)
+            end
         end
     end
 end
