@@ -6,6 +6,7 @@ local I = Cell.iFuncs
 -------------------------------------------------
 -- custom indicators
 -------------------------------------------------
+local currentLayout
 local enabledIndicators = {}
 local customIndicators = {
     ["buff"] = {},
@@ -126,6 +127,9 @@ function I.ResetCustomIndicatorTables()
     for i = Cell.defaults.builtIns + 1, #Cell.vars.currentLayoutTable.indicators do
         UpdateTablesForIndicator(Cell.vars.currentLayoutTable.indicators[i])
     end
+
+    -- update currentLayout
+    currentLayout = Cell.vars.currentLayout
 end
 
 local function UpdateCustomIndicators(layout, indicatorName, setting, value, value2)
@@ -252,6 +256,8 @@ local function comparator(a, b)
 end
 
 function I.ShowCustomIndicators(unitButton, auraType)
+    if Cell.vars.currentLayout ~= currentLayout then return end
+
     local unit = unitButton.states.displayedUnit
     for indicatorName, indicatorTable in pairs(customIndicators[auraType]) do
         local indicator = unitButton.indicators[indicatorName]
