@@ -409,7 +409,7 @@ function F:GetDefaultSnippet()
             "-- use \"/run CellDB['snippets'][0]=nil ReloadUI()\" to reset this snippet\n\n"..
             "-- cooldown style for icon/block indicators (\"VERTICAL\", \"CLOCK\")\n"..
             "CELL_COOLDOWN_STYLE = \"VERTICAL\"\n\n"..
-            "-- fade out unit button if hp percent < (number: 0-1)\n"..
+            "-- fade out unit button if hp percent > (number: 0-1)\n"..
             "CELL_FADE_OUT_HEALTH_PERCENT = nil\n\n"..
             "-- add summon icons to Status Icon indicator (boolean, retail only)\n"..
             "CELL_SUMMON_ICONS_ENABLED = false\n\n"..
