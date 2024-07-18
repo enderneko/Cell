@@ -88,7 +88,11 @@ end
 -- VerticalCooldown
 -------------------------------------------------
 local function ReCalcTexCoord(self, width, height)
-    self.icon:SetTexCoord(unpack(F:GetTexCoord(width, height)))
+    local texCoord = F:GetTexCoord(width, height)
+    self.icon:SetTexCoord(unpack(texCoord))
+    if self.cooldown.icon then
+        self.cooldown.icon:SetTexCoord(unpack(texCoord))
+    end
 end
 
 local function VerticalCooldown_OnUpdate(self, elapsed)
@@ -153,12 +157,11 @@ local function Shared_CreateCooldown_Vertical(frame)
 
     local icon = cooldown:CreateTexture(nil, "ARTWORK")
     cooldown.icon = icon
-    icon:SetTexCoord(0.12, 0.88, 0.12, 0.88)
+    -- icon:SetTexCoord(0.12, 0.88, 0.12, 0.88)
     icon:SetDesaturated(true)
     icon:SetAllPoints(frame.icon)
     icon:SetVertexColor(0.5, 0.5, 0.5, 1)
     icon:AddMaskTexture(mask)
-    cooldown:SetScript("OnSizeChanged", ReCalcTexCoord)
 end
 
 local function Shared_CreateCooldown_Vertical_NoIcon(frame)
@@ -195,27 +198,6 @@ local function Shared_CreateCooldown_Clock(frame)
     frame.cooldown = cooldown
     cooldown:Hide()
 
-    cooldown:SetAllPoints(frame.icon)
-    cooldown:SetReverse(true)
-    cooldown:SetDrawEdge(false)
-    cooldown:SetSwipeTexture("Interface\\Buttons\\WHITE8x8")
-    cooldown:SetSwipeColor(0, 0, 0, 0.8)
-    -- cooldown:SetEdgeTexture([[Interface\Cooldown\UI-HUD-ActionBar-SecondaryCooldown]])
-
-    -- cooldown text
-    cooldown:SetHideCountdownNumbers(true)
-    -- disable omnicc
-    cooldown.noCooldownCount = true
-    -- prevent some dirty addons from adding cooldown text
-    cooldown.ShowCooldown = cooldown.SetCooldown
-    cooldown.SetCooldown = nil
-end
-
-local function Shared_CreateCooldown_Clock_NoIcon(frame)
-    local cooldown = CreateFrame("Cooldown", nil, frame)
-    frame.cooldown = cooldown
-    cooldown:Hide()
-
     P:Point(cooldown, "TOPLEFT", frame, CELL_BORDER_SIZE, -CELL_BORDER_SIZE)
     P:Point(cooldown, "BOTTOMRIGHT", frame, -CELL_BORDER_SIZE, CELL_BORDER_SIZE)
     cooldown:SetReverse(true)
@@ -233,7 +215,6 @@ local function Shared_CreateCooldown_Clock_NoIcon(frame)
     cooldown.SetCooldown = nil
 end
 
-
 -------------------------------------------------
 -- SetCooldownStyle
 -------------------------------------------------
@@ -248,11 +229,7 @@ local function Shared_SetCooldownStyle(frame, style, noIcon)
     frame.style = style
 
     if style == "CLOCK" then
-        if noIcon then
-            Shared_CreateCooldown_Clock_NoIcon(frame)
-        else
-            Shared_CreateCooldown_Clock(frame)
-        end
+        Shared_CreateCooldown_Clock(frame)
     else
         if noIcon then
             Shared_CreateCooldown_Vertical_NoIcon(frame)
@@ -576,7 +553,7 @@ function I.CreateAura_BarIcon(name, parent)
 
     local icon = frame:CreateTexture(name.."Icon", "ARTWORK")
     frame.icon = icon
-    icon:SetTexCoord(0.12, 0.88, 0.12, 0.88)
+    -- icon:SetTexCoord(0.12, 0.88, 0.12, 0.88)
     P:Point(icon, "TOPLEFT", frame, "TOPLEFT", CELL_BORDER_SIZE, -CELL_BORDER_SIZE)
     P:Point(icon, "BOTTOMRIGHT", frame, "BOTTOMRIGHT", -CELL_BORDER_SIZE, CELL_BORDER_SIZE)
     -- icon:SetDrawLayer("ARTWORK", 1)
@@ -605,6 +582,8 @@ function I.CreateAura_BarIcon(name, parent)
     frame.UpdatePixelPerfect = BarIcon_UpdatePixelPerfect
 
     Shared_SetCooldownStyle(frame, CELL_COOLDOWN_STYLE)
+
+    frame:SetScript("OnSizeChanged", ReCalcTexCoord)
 
     -- frame:SetScript("OnEnter", function()
         -- local f = frame
