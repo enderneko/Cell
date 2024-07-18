@@ -1153,7 +1153,7 @@ local function ShowActionsMenu(index, b)
 
         for slot = 1, 17 do
             local itemId = GetInventoryItemID("player", slot)
-            if itemId then -- and C_Item.IsUsableItem(itemId) then
+            if itemId and C_Item.IsUsableItem(itemId) then
                 local text = GetInventoryItemLink("player", slot) or ""
                 text = string.gsub(text, "[%[%]]", "")
 
