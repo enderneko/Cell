@@ -1263,20 +1263,127 @@ local function StatusText_SetFont(self, font, size, outline, shadow)
     self:SetHeight(self.text:GetHeight()+P:Scale(1)*2)
 end
 
+local function StatusText_GetStatus(self)
+    return self.status
+end
+
+local function StatusText_SetStatus(self, status)
+    -- print("status: " .. (status or "nil"))
+    self.status = status
+    if status then
+        self.text:SetText(L[status])
+        self.text:SetTextColor(unpack(self.colors[status]))
+        self.timer:SetTextColor(unpack(self.colors[status]))
+        self:SetHeight(self.text:GetHeight()+P:Scale(1)*2)
+    else
+        self:Hide()
+    end
+end
+
+local function StatusText_SetColors(self, colors)
+    self.colors = colors
+end
+
+local function StatusText_SetShowTimer(self, show)
+    self.showTimer = show
+end
+
+local function StatusText_ShowBackground(self, show)
+    if show then
+        self.bg:Show()
+    else
+        self.bg:Hide()
+    end
+end
+
+local function StatusText_SetPosition(self, point, yOffset, justify)
+    self:ClearAllPoints()
+    self:SetPoint("LEFT", self.parent.widgets.healthBar)
+    self:SetPoint("RIGHT", self.parent.widgets.healthBar)
+    self:SetPoint(point, self.parent.widgets.healthBar, 0, P:Scale(yOffset))
+
+    self.text:ClearAllPoints()
+    self.timer:ClearAllPoints()
+    if justify == "justify" then
+        self.text:SetPoint("LEFT")
+        self.text:SetJustifyH("LEFT")
+        self.timer:SetPoint("RIGHT")
+        self.timer:SetJustifyH("RIGHT")
+        self.bg:SetGradient("HORIZONTAL", CreateColor(0, 0, 0, 0.777), CreateColor(0, 0, 0, 0))
+    elseif justify == "left" then
+        self.text:SetPoint("LEFT")
+        self.text:SetJustifyH("LEFT")
+        self.timer:SetPoint("LEFT", self.text, "RIGHT", 2, 0)
+        self.timer:SetJustifyH("LEFT")
+        self.bg:SetGradient("HORIZONTAL", CreateColor(0, 0, 0, 0.777), CreateColor(0, 0, 0, 0))
+    else
+        self.text:SetPoint("RIGHT")
+        self.text:SetJustifyH("RIGHT")
+        self.timer:SetPoint("RIGHT", self.text, "LEFT", -2, 0)
+        self.timer:SetJustifyH("RIGHT")
+        self.bg:SetGradient("HORIZONTAL", CreateColor(0, 0, 0, 0), CreateColor(0, 0, 0, 0.777))
+    end
+
+    self:SetHeight(self.text:GetHeight()+P:Scale(1)*2)
+end
+
 local startTimeCache = {}
+local function StatusText_ShowTimer(self)
+    if not self.showTimer then
+        self:HideTimer(true)
+        return
+    end
+
+    self.timer:Show()
+
+    if not startTimeCache[self.parent.states.guid] then startTimeCache[self.parent.states.guid] = GetTime() end
+
+    self.ticker = C_Timer.NewTicker(1, function()
+        if not self.parent.states.guid and self.parent.states.unit then -- ElvUI AFK mode
+            self.parent.states.guid = UnitGUID(self.parent.states.unit)
+        end
+        if self.parent.states.guid and startTimeCache[self.parent.states.guid] then
+            self.timer:SetFormattedText(F:FormatTime(GetTime() - startTimeCache[self.parent.states.guid]))
+        else
+            self.timer:SetText("")
+        end
+    end)
+end
+
+local function StatusText_HideTimer(self, reset)
+    self.timer:Hide()
+    self.timer:SetText("")
+    if reset then
+        if self.ticker then self.ticker:Cancel() end
+        startTimeCache[self.parent.states.guid] = nil
+    end
+end
+
+local function StatusText_UpdatePixelPerfect(self)
+    if self.shadow then
+        -- NOTE: remove then add shadows back
+        self.text:SetShadowOffset(0, 0)
+        self.timer:SetShadowOffset(0, 0)
+
+        self.text:SetShadowOffset(1, -1)
+        self.text:SetShadowColor(0, 0, 0, 1)
+        self.timer:SetShadowOffset(1, -1)
+        self.timer:SetShadowColor(0, 0, 0, 1)
+    end
+end
+
 function I.CreateStatusText(parent)
     local statusText = CreateFrame("Frame", parent:GetName().."StatusText", parent.widgets.indicatorFrame)
     parent.indicators.statusText = statusText
     statusText:SetIgnoreParentAlpha(true)
     statusText:Hide()
 
+    statusText.parent = parent
+
     statusText.bg = statusText:CreateTexture(nil, "ARTWORK")
     statusText.bg:SetTexture("Interface\\Buttons\\WHITE8x8")
-    statusText.bg:SetGradient("HORIZONTAL", CreateColor(0, 0, 0, 0.777), CreateColor(0, 0, 0, 0))
+    -- statusText.bg:SetGradient("HORIZONTAL", CreateColor(0, 0, 0, 0.777), CreateColor(0, 0, 0, 0))
     statusText.bg:SetAllPoints(statusText)
-
-    -- statusText:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8x8"})
-    -- statusText:SetBackdropColor(0, 0, 0, 0.3)
 
     local text = statusText:CreateFontString(nil, "ARTWORK", "CELL_FONT_STATUS")
     statusText.text = text
@@ -1284,98 +1391,16 @@ function I.CreateStatusText(parent)
     local timer = statusText:CreateFontString(nil, "ARTWORK", "CELL_FONT_STATUS")
     statusText.timer = timer
 
-    function statusText:GetStatus()
-        return statusText.status
-    end
-
-    function statusText:SetStatus(status)
-        -- print("status: " .. (status or "nil"))
-        statusText.status = status
-        if status then
-            text:SetText(L[status])
-            text:SetTextColor(unpack(statusText.colors[status]))
-            timer:SetTextColor(unpack(statusText.colors[status]))
-            statusText:SetHeight(text:GetHeight()+P:Scale(1)*2)
-        else
-            statusText:Hide()
-        end
-    end
-
-    function statusText:SetColors(colors)
-        statusText.colors = colors
-    end
-
-    statusText._SetPoint = statusText.SetPoint
-    function statusText:SetPoint(point, _, yOffset)
-        statusText:ClearAllPoints()
-        statusText:_SetPoint("LEFT", parent.widgets.healthBar)
-        statusText:_SetPoint("RIGHT", parent.widgets.healthBar)
-        statusText:_SetPoint(point, parent.widgets.healthBar, 0, yOffset)
-
-        text:ClearAllPoints()
-        text:SetPoint(point.."LEFT")
-        timer:ClearAllPoints()
-        timer:SetPoint(point.."RIGHT")
-
-        statusText:SetHeight(text:GetHeight()+P:Scale(1)*2)
-    end
-
+    statusText.GetStatus = StatusText_GetStatus
+    statusText.SetStatus = StatusText_SetStatus
+    statusText.SetColors = StatusText_SetColors
+    statusText.SetPosition = StatusText_SetPosition
     statusText.SetFont = StatusText_SetFont
-
-    function statusText:SetShowTimer(show)
-        statusText.showTimer = show
-    end
-
-    function statusText:ShowBackground(show)
-        if show then
-            statusText.bg:Show()
-        else
-            statusText.bg:Hide()
-        end
-    end
-
-    function statusText:ShowTimer()
-        if not statusText.showTimer then
-            statusText:HideTimer(true)
-            return
-        end
-
-        timer:Show()
-        if not startTimeCache[parent.states.guid] then startTimeCache[parent.states.guid] = GetTime() end
-
-        statusText.ticker = C_Timer.NewTicker(1, function()
-            if not parent.states.guid and parent.states.unit then -- ElvUI AFK mode
-                parent.states.guid = UnitGUID(parent.states.unit)
-            end
-            if parent.states.guid and startTimeCache[parent.states.guid] then
-                timer:SetFormattedText(F:FormatTime(GetTime() - startTimeCache[parent.states.guid]))
-            else
-                timer:SetText("")
-            end
-        end)
-    end
-
-    function statusText:HideTimer(reset)
-        timer:Hide()
-        timer:SetText("")
-        if reset then
-            if statusText.ticker then statusText.ticker:Cancel() end
-            startTimeCache[parent.states.guid] = nil
-        end
-    end
-
-    function statusText:UpdatePixelPerfect()
-        if statusText.shadow then
-            -- NOTE: remove then add shadows back
-            text:SetShadowOffset(0, 0)
-            timer:SetShadowOffset(0, 0)
-
-            text:SetShadowOffset(1, -1)
-            text:SetShadowColor(0, 0, 0, 1)
-            timer:SetShadowOffset(1, -1)
-            timer:SetShadowColor(0, 0, 0, 1)
-        end
-    end
+    statusText.SetShowTimer = StatusText_SetShowTimer
+    statusText.ShowBackground = StatusText_ShowBackground
+    statusText.ShowTimer = StatusText_ShowTimer
+    statusText.HideTimer = StatusText_HideTimer
+    statusText.UpdatePixelPerfect = StatusText_UpdatePixelPerfect
 end
 
 -------------------------------------------------

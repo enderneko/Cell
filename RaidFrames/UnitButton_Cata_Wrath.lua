@@ -189,8 +189,12 @@ local function HandleIndicators(b)
 
         -- update position
         if t["position"] then
-            P:ClearPoints(indicator)
-            P:Point(indicator, t["position"][1], b, t["position"][2], t["position"][3], t["position"][4])
+            if t["indicatorName"] == "statusText" then
+                indicator:SetPosition(t["position"][1], t["position"][2], t["position"][3])
+            else
+                P:ClearPoints(indicator)
+                P:Point(indicator, t["position"][1], b, t["position"][2], t["position"][3], t["position"][4])
+            end
         end
         -- update anchor
         if t["anchor"] then
@@ -558,8 +562,12 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
         elseif setting == "position" then
             F:IterateAllUnitButtons(function(b)
                 local indicator = b.indicators[indicatorName]
-                P:ClearPoints(indicator)
-                P:Point(indicator, value[1], b, value[2], value[3], value[4])
+                if indicatorName == "statusText" then
+                    indicator:SetPosition(value[1], value[2], value[3])
+                else
+                    P:ClearPoints(indicator)
+                    P:Point(indicator, value[1], b, value[2], value[3], value[4])
+                end
                 -- update arrangement
                 if indicator.indicatorType == "icons" then
                     indicator:SetOrientation(indicator.orientation)

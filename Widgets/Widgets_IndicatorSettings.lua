@@ -1406,7 +1406,7 @@ local function CreateSetting_StatusPosition(parent)
     local widget
 
     if not settingWidgets["statusPosition"] then
-        widget = addon:CreateFrame("CellIndicatorSettings_StatusPosition", parent, 240, 50)
+        widget = addon:CreateFrame("CellIndicatorSettings_StatusPosition", parent, 240, 95)
         settingWidgets["statusPosition"] = widget
 
         widget.position = addon:CreateDropdown(widget, 110)
@@ -1416,14 +1416,14 @@ local function CreateSetting_StatusPosition(parent)
                 ["text"] = L["TOP"],
                 ["value"] = "TOP",
                 ["onClick"] = function()
-                    widget.func({"TOP", widget.yOffset:GetValue()})
+                    widget.func({"TOP", widget.yOffset:GetValue(), widget.justify:GetSelected()})
                 end,
             },
             {
                 ["text"] = L["BOTTOM"],
                 ["value"] = "BOTTOM",
                 ["onClick"] = function()
-                    widget.func({"BOTTOM", widget.yOffset:GetValue()})
+                    widget.func({"BOTTOM", widget.yOffset:GetValue(), widget.justify:GetSelected()})
                 end,
             },
         })
@@ -1432,10 +1432,36 @@ local function CreateSetting_StatusPosition(parent)
         widget.positionText:SetText(L["Status Text Position"])
         widget.positionText:SetPoint("BOTTOMLEFT", widget.position, "TOPLEFT", 0, 1)
 
+        widget.justify = addon:CreateDropdown(widget, 110)
+        widget.justify:SetPoint("TOPLEFT", widget.position, "TOPRIGHT", 25, 0)
+        widget.justify:SetItems({
+            {
+                ["text"] = "<<< >>>",
+                ["value"] = "justify",
+                ["onClick"] = function()
+                    widget.func({widget.position:GetSelected(), widget.yOffset:GetValue(), "justify"})
+                end,
+            },
+            {
+                ["text"] = "<<<",
+                ["value"] = "left",
+                ["onClick"] = function()
+                    widget.func({widget.position:GetSelected(), widget.yOffset:GetValue(), "left"})
+                end,
+            },
+            {
+                ["text"] = ">>>",
+                ["value"] = "right",
+                ["onClick"] = function()
+                    widget.func({widget.position:GetSelected(), widget.yOffset:GetValue(), "right"})
+                end,
+            },
+        })
+
         widget.yOffset = addon:CreateSlider(L["Y Offset"], widget, -150, 150, 110, 1)
-        widget.yOffset:SetPoint("TOPLEFT", widget.position, "TOPRIGHT", 25, 0)
+        widget.yOffset:SetPoint("TOPLEFT", widget.position, "BOTTOMLEFT", 0, -25)
         widget.yOffset.afterValueChangedFn = function(value)
-            widget.func({widget.position:GetSelected(), value})
+            widget.func({widget.position:GetSelected(), value, widget.justify:GetSelected()})
         end
 
         -- callback
@@ -1445,8 +1471,9 @@ local function CreateSetting_StatusPosition(parent)
 
         -- show db value
         function widget:SetDBValue(pTable)
-            widget.position:SetSelected(L[pTable[1]])
+            widget.position:SetSelectedValue(pTable[1])
             widget.yOffset:SetValue(pTable[2])
+            widget.justify:SetSelectedValue(pTable[3])
         end
     else
         widget = settingWidgets["statusPosition"]

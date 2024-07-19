@@ -3064,6 +3064,19 @@ function F:Revise()
         end
     end
 
+    -- r235-release
+    if CellDB["revise"] and dbRevision < 235 then
+        for _, layout in pairs(CellDB["layouts"]) do
+            for _, i in pairs(layout["indicators"]) do
+                if i.indicatorName == "statusText" then
+                    if #i.position ~= 3 then
+                        i.position[3] = "justify"
+                    end
+                end
+            end
+        end
+    end
+
     -- ----------------------------------------------------------------------- --
     --            update from old versions, validate all indicators            --
     -- ----------------------------------------------------------------------- --

@@ -600,8 +600,12 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                 InitIndicator(t["indicatorName"])
                 -- update position
                 if t["position"] then
-                    P:ClearPoints(indicator)
-                    P:Point(indicator, t["position"][1], previewButton, t["position"][2], t["position"][3], t["position"][4])
+                    if t["indicatorName"] == "statusText" then
+                        indicator:SetPosition(t["position"][1], t["position"][2], t["position"][3])
+                    else
+                        P:ClearPoints(indicator)
+                        P:Point(indicator, t["position"][1], previewButton, t["position"][2], t["position"][3], t["position"][4])
+                    end
                 end
                 -- update anchor
                 if t["anchor"] then
@@ -808,8 +812,12 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
             --     if indicator.isTargetedSpells then indicator:HideGlowPreview() end
             -- end
         elseif setting == "position" then
-            P:ClearPoints(indicator)
-            P:Point(indicator, value[1], previewButton, value[2], value[3], value[4])
+            if indicatorName == "statusText" then
+                indicator:SetPosition(value[1], value[2], value[3])
+            else
+                P:ClearPoints(indicator)
+                P:Point(indicator, value[1], previewButton, value[2], value[3], value[4])
+            end
             -- update arrangement
             if indicator.indicatorType == "icons" then
                 indicator:SetOrientation(indicator.orientation)
