@@ -277,6 +277,7 @@ for i = 1, 15 do
             placeholders[i].text:SetText("|cffababab"..NONE)
         end
 
+        self.unit = value
         F:UpdateOmniCDPosition("Cell-Spotlight")
     end)
 end
