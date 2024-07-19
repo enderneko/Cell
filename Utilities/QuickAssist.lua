@@ -627,7 +627,7 @@ function CellQuickAssist_OnLoad(button)
     button.healthBar = healthBar
 
     healthBar:SetStatusBarTexture(Cell.vars.texture)
-    healthBar:SetFrameLevel(button:GetFrameLevel()+5)
+    healthBar:SetFrameLevel(button:GetFrameLevel()+1)
 
     -- heathLoss
     local healthLoss = healthBar:CreateTexture(nil, "ARTWORK", nil , -7)
@@ -669,21 +669,27 @@ function CellQuickAssist_OnLoad(button)
     local targetHighlight = CreateFrame("Frame", nil, button, "BackdropTemplate")
     button.targetHighlight = targetHighlight
     targetHighlight:SetIgnoreParentAlpha(true)
-    targetHighlight:SetFrameLevel(button:GetFrameLevel()+6)
+    targetHighlight:SetFrameLevel(button:GetFrameLevel()+2)
     targetHighlight:Hide()
 
     -- mouseoverHighlight
     local mouseoverHighlight = CreateFrame("Frame", nil, button, "BackdropTemplate")
     button.mouseoverHighlight = mouseoverHighlight
     mouseoverHighlight:SetIgnoreParentAlpha(true)
-    mouseoverHighlight:SetFrameLevel(button:GetFrameLevel()+7)
+    mouseoverHighlight:SetFrameLevel(button:GetFrameLevel()+3)
     mouseoverHighlight:Hide()
 
     -- overlayFrame
-    local overlayFrame = CreateFrame("Frame", button:GetName().."OverlayFrame", button)
-    button.overlayFrame = overlayFrame
-    overlayFrame:SetFrameLevel(button:GetFrameLevel()+8)
-    overlayFrame:SetAllPoints(button)
+    -- local overlayFrame = CreateFrame("Frame", button:GetName().."OverlayFrame", button)
+    -- button.overlayFrame = overlayFrame
+    -- overlayFrame:SetFrameLevel(button:GetFrameLevel()+10)
+    -- overlayFrame:SetAllPoints(button)
+
+    -- indicatorFrame
+    local indicatorFrame = CreateFrame("Frame", button:GetName().."IndicatorFrame", button)
+    button.indicatorFrame = indicatorFrame
+    indicatorFrame:SetFrameLevel(button:GetFrameLevel()+10)
+    indicatorFrame:SetAllPoints(button)
 
     -- script
     button:SetScript("OnAttributeChanged", QuickAssist_OnAttributeChanged) -- init
@@ -1308,7 +1314,7 @@ Cell:RegisterCallback("UpdateQuickAssist", "UpdateQuickAssist", UpdateQuickAssis
 
 local function QuickAssist_CreateIndicators(button)
     -- buffs indicator (icon)
-    local buffIcons = I.CreateAura_Icons(button:GetName().."BuffIcons", button.overlayFrame, 5)
+    local buffIcons = I.CreateAura_Icons(button:GetName().."BuffIcons", button.indicatorFrame, 5)
     button.buffIcons = buffIcons
     buffIcons:Show()
     -- indicator color
@@ -1330,12 +1336,12 @@ local function QuickAssist_CreateIndicators(button)
     end
 
     -- buffs indicator (bar)
-    local buffBars = I.CreateAura_Bars(button:GetName().."BuffBars", button.overlayFrame, 5)
+    local buffBars = I.CreateAura_Bars(button:GetName().."BuffBars", button.indicatorFrame, 5)
     button.buffBars = buffBars
     buffBars:Show()
 
     -- offensives indicator (icon)
-    local offensiveIcons = I.CreateAura_Icons(button:GetName().."OffensiveIcons", button.overlayFrame, 5)
+    local offensiveIcons = I.CreateAura_Icons(button:GetName().."OffensiveIcons", button.indicatorFrame, 5)
     button.offensiveIcons = offensiveIcons
     offensiveIcons:Show()
     for i = 1, 5 do
