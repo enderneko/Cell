@@ -470,6 +470,7 @@ local function BarIcon_SetCooldown(frame, start, duration, debuffType, texture, 
     if duration == 0 then
         frame.cooldown:Hide()
         frame.duration:Hide()
+        frame.stack:SetParent(frame)
         frame:SetScript("OnUpdate", nil)
         frame._start = nil
         frame._duration = nil
