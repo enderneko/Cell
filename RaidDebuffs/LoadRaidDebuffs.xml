@@ -10,4 +10,5 @@
 	<Script file="RaidDebuffs_BfA.lua"/>
 	<Script file="RaidDebuffs_SL.lua"/>
 	<Script file="RaidDebuffs_DF.lua"/>
+	<Script file="RaidDebuffs_TWW.lua"/>
 </Ui>
