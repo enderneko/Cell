@@ -1514,12 +1514,12 @@ function I.CreateAura_Glow(name, parent)
         glow.glowOptions = options
     end
 
-    glow:SetScript("OnHide", function()
-        LCG.ButtonGlow_Stop(glow)
-        LCG.PixelGlow_Stop(glow)
-        LCG.AutoCastGlow_Stop(glow)
-        LCG.ProcGlow_Stop(glow)
-    end)
+    -- glow:SetScript("OnHide", function()
+    --     LCG.ButtonGlow_Stop(glow)
+    --     LCG.PixelGlow_Stop(glow)
+    --     LCG.AutoCastGlow_Stop(glow)
+    --     LCG.ProcGlow_Stop(glow)
+    -- end)
 
     return glow
 end
