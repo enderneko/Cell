@@ -1826,7 +1826,7 @@ UnitButton_UpdateRole = function(self)
         roleIcon:SetRole(role)
 
         --! check vehicle root
-        if self.states.guid and strfind(self.states.guid, "^Vehicle") then
+        if self.states.guid and strfind(self.states.guid, "^Vehicle") and not UnitInPartyIsAI(unit) then
             CheckVehicleRoot(self, unit)
         end
     else
