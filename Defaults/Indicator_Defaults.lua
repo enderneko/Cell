@@ -199,6 +199,18 @@ function I.GetDefaultCustomIndicatorTable(name, indicatorName, type, auraType)
             ["auraType"] = auraType,
             ["auras"] = {},
         }
+    elseif type == "border" then
+        t = {
+            ["name"] = name,
+            ["indicatorName"] = indicatorName,
+            ["type"] = type,
+            ["enabled"] = true,
+            ["thickness"] = 3,
+            ["frameLevel"] = 10,
+            ["auraType"] = auraType,
+            ["auras"] = {},
+            ["fadeOut"] = true,
+        }
     end
 
     if auraType == "buff" then

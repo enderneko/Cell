@@ -3031,7 +3031,7 @@ function addon:CreateDropdown(parent, width, dropdownType, isMini, isHorizontal)
             list:SetPoint("TOPLEFT", menu, "BOTTOMLEFT", 0, -2)
             if #menu.items == 0 then
                 list:SetSize(menu:GetWidth(), P:Scale(5))
-            elseif #menu.items <= 11 then
+            elseif #menu.items <= 15 then
                 list:SetSize(menu:GetWidth(), P:Scale(2) + #menu.items*P:Scale(18))
                 list.scrollFrame:SetContentHeight(P:Scale(2) + #menu.items*P:Scale(18))
             else

@@ -1751,6 +1751,8 @@ end
 -- LibSharedMedia
 -------------------------------------------------
 Cell.vars.texture = "Interface\\AddOns\\Cell\\Media\\statusbar.tga"
+Cell.vars.emptyTexture = "Interface\\AddOns\\Cell\\Media\\empty.tga"
+Cell.vars.whiteTexture = "Interface\\AddOns\\Cell\\Media\\white.tga"
 
 local LSM = LibStub("LibSharedMedia-3.0", true)
 LSM:Register("statusbar", "Cell ".._G.DEFAULT, Cell.vars.texture)

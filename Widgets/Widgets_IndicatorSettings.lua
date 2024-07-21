@@ -3575,7 +3575,7 @@ local function CreateSetting_Glow(parent)
         widget.glowFrequency:SetPoint("TOPLEFT", widget.glowLines, "TOPRIGHT", 25, 0)
 
         -- glowLength
-        widget.glowLength = addon:CreateSlider(L["Length"], widget, 1, 20, 110, 1, function(value)
+        widget.glowLength = addon:CreateSlider(L["Length"], widget, 1, 50, 110, 1, function(value)
             widget.glow[5] = value
             widget.func(widget.glow)
         end)
@@ -3734,7 +3734,7 @@ local function CreateSetting_Texture(parent)
     return widget
 end
 
-local function CreateAuraButtons(parent, auraButtons, auraTable, noUpDownButtons, isZeroValid, colorPickerType, updateHeightFunc)
+local function CreateAuraButtons(parent, auraButtons, auraTable, noUpDownButtons, isZeroValid, hasColorPicker, updateHeightFunc)
     local n = #auraTable
 
     -- tooltip
@@ -3780,13 +3780,13 @@ local function CreateAuraButtons(parent, auraButtons, auraTable, noUpDownButtons
             local spellName = F:GetSpellInfo(spellId)
             if (spellId and spellName) or (spellId == 0 and isZeroValid) then
                 -- update db
-                if colorPickerType == "single" then
+                if hasColorPicker then
                     tinsert(auraTable, {spellId, {1, 0.26667, 0.4, 1}})
                 else
                     tinsert(auraTable, spellId)
                 end
                 parent.func(auraTable)
-                CreateAuraButtons(parent, auraButtons, auraTable, noUpDownButtons, isZeroValid, colorPickerType, updateHeightFunc)
+                CreateAuraButtons(parent, auraButtons, auraTable, noUpDownButtons, isZeroValid, hasColorPicker, updateHeightFunc)
                 updateHeightFunc(19)
             else
                 F:Print(L["Invalid spell id."])
@@ -3904,7 +3904,7 @@ local function CreateAuraButtons(parent, auraButtons, auraTable, noUpDownButtons
         end
 
         local color
-        if colorPickerType then
+        if hasColorPicker then
             color = spell[2]
             spell = spell[1]
         end
@@ -3988,7 +3988,7 @@ local function CreateAuraButtons(parent, auraButtons, auraTable, noUpDownButtons
         -- update spellNameText width
         if noUpDownButtons then
             auraButtons[i].spellNameText:SetPoint("RIGHT", auraButtons[i].del, "LEFT", -5, 0)
-        elseif colorPickerType then
+        elseif hasColorPicker then
             auraButtons[i].spellNameText:SetPoint("RIGHT", auraButtons[i].colorPicker, "LEFT", -5, 0)
         else
             auraButtons[i].spellNameText:SetPoint("RIGHT", auraButtons[i].up, "LEFT", -5, 0)
@@ -4020,7 +4020,7 @@ local function CreateAuraButtons(parent, auraButtons, auraTable, noUpDownButtons
                         auraButtons[i].spellTex = spellIcon
                         auraButtons[i].spellNameText:SetText(spellName)
                         -- update db
-                        if colorPickerType then
+                        if hasColorPicker then
                             auraTable[i][1] = spellId
                         else
                             auraTable[i] = spellId
@@ -4049,7 +4049,7 @@ local function CreateAuraButtons(parent, auraButtons, auraTable, noUpDownButtons
         auraButtons[i].del:SetScript("OnClick", function()
             tremove(auraTable, i)
             parent.func(auraTable)
-            CreateAuraButtons(parent, auraButtons, auraTable, noUpDownButtons, isZeroValid, colorPickerType, updateHeightFunc)
+            CreateAuraButtons(parent, auraButtons, auraTable, noUpDownButtons, isZeroValid, hasColorPicker, updateHeightFunc)
             updateHeightFunc(-19)
         end)
 
@@ -4058,7 +4058,7 @@ local function CreateAuraButtons(parent, auraButtons, auraTable, noUpDownButtons
             auraTable[i-1] = auraTable[i]
             auraTable[i] = temp
             parent.func(auraTable)
-            CreateAuraButtons(parent, auraButtons, auraTable, noUpDownButtons, isZeroValid, colorPickerType, updateHeightFunc)
+            CreateAuraButtons(parent, auraButtons, auraTable, noUpDownButtons, isZeroValid, hasColorPicker, updateHeightFunc)
         end)
 
         auraButtons[i].down:SetScript("OnClick", function()
@@ -4066,10 +4066,10 @@ local function CreateAuraButtons(parent, auraButtons, auraTable, noUpDownButtons
             auraTable[i+1] = auraTable[i]
             auraTable[i] = temp
             parent.func(auraTable)
-            CreateAuraButtons(parent, auraButtons, auraTable, noUpDownButtons, isZeroValid, colorPickerType, updateHeightFunc)
+            CreateAuraButtons(parent, auraButtons, auraTable, noUpDownButtons, isZeroValid, hasColorPicker, updateHeightFunc)
         end)
 
-        if colorPickerType == "single" then
+        if hasColorPicker then
             auraButtons[i].colorPicker:Show()
             auraButtons[i].colorPicker:SetColor(color)
             auraButtons[i].colorPicker.onConfirm = function(r, g, b, a)
@@ -4245,7 +4245,7 @@ local function CreateSetting_Auras(parent, index)
             if button == "LeftButton" and IsControlKeyDown() then
                 wipe(widget.t)
                 -- update list
-                widget:SetDBValue(widget.title, widget.t, widget.noUpDownButtons, widget.isZeroValid, widget.colorPickerType)
+                widget:SetDBValue(widget.title, widget.t, widget.noUpDownButtons, widget.isZeroValid, widget.hasColorPicker)
                 -- update height
                 addon:UpdateIndicatorSettingsHeight()
                 -- event
@@ -4263,18 +4263,18 @@ local function CreateSetting_Auras(parent, index)
         end
 
         -- show db value
-        function widget:SetDBValue(title, t, noUpDownButtons, isZeroValid, colorPickerType)
+        function widget:SetDBValue(title, t, noUpDownButtons, isZeroValid, hasColorPicker)
             widget.title = title
             widget.t = t
             widget.noUpDownButtons = noUpDownButtons
             widget.isZeroValid = isZeroValid
-            widget.colorPickerType = colorPickerType
+            widget.hasColorPicker = hasColorPicker
 
             widget.text:SetText(title)
 
             if not auraButtons[index] then auraButtons[index] = {} end
 
-            CreateAuraButtons(widget.frame, auraButtons[index], t, noUpDownButtons, isZeroValid, colorPickerType, function(diff)
+            CreateAuraButtons(widget.frame, auraButtons[index], t, noUpDownButtons, isZeroValid, hasColorPicker, function(diff)
                 widget.frame:SetHeight((#t+1)*19+1)
                 widget:SetHeight((#t+1)*19+1 + 22 + 7)
                 if diff then parent:SetHeight(parent:GetHeight()+diff) end

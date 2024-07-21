@@ -1181,6 +1181,7 @@ function I.CreateAura_Texture(name, parent)
             texture._duration = nil
             texture._remain = nil
             texture._elapsed = nil
+            tex:SetAlpha(1)
         end
         texture:Show()
     end
@@ -2061,4 +2062,90 @@ function I.CreateAura_Blocks(name, parent, num)
     end
 
     return blocks
+end
+
+-------------------------------------------------
+-- CreateAura_Border
+-------------------------------------------------
+local function Border_OnUpdate(border, elapsed)
+    border._elapsed = border._elapsed + elapsed
+    if border._elapsed >= 0.1 then
+        border._elapsed = 0
+
+        border._remain = border._duration - (GetTime() - border._start)
+        if border._remain < 0 then border._remain = 0 end
+        border:SetAlpha(border._remain / border._duration * 0.9 + 0.1)
+    end
+end
+
+local function Border_SetFadeOut(border, fadeOut)
+    border.fadeOut = fadeOut
+end
+
+local function Border_SetCooldown(border, start, duration, _, _, _, _, color)
+    if border.fadeOut then
+        border._start = start
+        border._duration = duration
+        border._elapsed = 0.1 -- update immediately
+        border:SetScript("OnUpdate", Border_OnUpdate)
+    else
+        border:SetScript("OnUpdate", nil)
+        border._start = nil
+        border._duration = nil
+        border._remain = nil
+        border._elapsed = nil
+        border:SetAlpha(1)
+    end
+    border.tex:SetVertexColor(color[1], color[2], color[3], color[4])
+    border:Show()
+end
+
+local function Border_UpdatePixelPerfect(border)
+    P:Repoint(border)
+    P:Repoint(border.mask)
+    P:Repoint(border.mask2)
+end
+
+local function Border_SetThickness(border, thickness)
+    P:ClearPoints(border.mask)
+    P:Point(border.mask, "TOPLEFT", thickness, -thickness)
+    P:Point(border.mask, "BOTTOMRIGHT", -thickness, thickness)
+    P:ClearPoints(border.mask2)
+    P:Point(border.mask2, "TOPLEFT", thickness+CELL_BORDER_SIZE, -thickness-CELL_BORDER_SIZE)
+    P:Point(border.mask2, "BOTTOMRIGHT", -thickness-CELL_BORDER_SIZE, thickness+CELL_BORDER_SIZE)
+end
+
+function I.CreateAura_Border(name, parent)
+    local border = CreateFrame("Frame", name, parent)
+    border:Hide()
+    border.indicatorType = "border"
+
+    P:Point(border, "TOPLEFT", CELL_BORDER_SIZE, -CELL_BORDER_SIZE)
+    P:Point(border, "BOTTOMRIGHT", -CELL_BORDER_SIZE, CELL_BORDER_SIZE)
+
+    local mask = border:CreateMaskTexture()
+    border.mask = mask
+    mask:SetTexture(Cell.vars.emptyTexture, "CLAMPTOWHITE","CLAMPTOWHITE")
+
+    local tex = border:CreateTexture(nil, "ARTWORK")
+    border.tex = tex
+    tex:SetAllPoints()
+    tex:SetTexture(Cell.vars.whiteTexture)
+    tex:AddMaskTexture(mask)
+
+    local mask2 = border:CreateMaskTexture()
+    border.mask2 = mask2
+    mask2:SetTexture(Cell.vars.emptyTexture, "CLAMPTOWHITE","CLAMPTOWHITE")
+
+    local tex2 = border:CreateTexture(nil, "ARTWORK", nil, -1)
+    tex2:SetAllPoints()
+    tex2:SetColorTexture(0, 0, 0)
+    tex2:AddMaskTexture(mask2)
+
+    border.SetCooldown = Border_SetCooldown
+    border.SetFadeOut = Border_SetFadeOut
+    border.SetThickness = Border_SetThickness
+    border.UpdatePixelPerfect = Border_UpdatePixelPerfect
+
+    return border
 end

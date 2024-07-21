@@ -861,7 +861,11 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                 if value["size"] then
                     P:Size(indicator, value["size"][1], value["size"][2])
                 end
-                -- update size
+                -- update thickness
+                if value["thickness"] then
+                    indicator:SetThickness(value["thickness"])
+                end
+                -- update frameLevel
                 if value["frameLevel"] then
                     indicator:SetFrameLevel(indicator:GetParent():GetFrameLevel()+value["frameLevel"])
                 end
@@ -3611,32 +3615,32 @@ function CellUnitButton_OnLoad(button)
     --* indicatorFrame
     local indicatorFrame = CreateFrame("Frame", name.."IndicatorFrame", button)
     button.widgets.indicatorFrame = indicatorFrame
-    indicatorFrame:SetFrameLevel(button:GetFrameLevel()+200)
+    indicatorFrame:SetFrameLevel(button:GetFrameLevel()+220)
     indicatorFrame:SetAllPoints(button)
+
+    --* tsGlowFrame (Targeted Spells)
+    local tsGlowFrame = CreateFrame("Frame", name.."TSGlowFrame", button)
+    button.widgets.tsGlowFrame = tsGlowFrame
+    tsGlowFrame:SetFrameLevel(button:GetFrameLevel()+200)
+    tsGlowFrame:SetAllPoints(button)
+
+    --* srGlowFrame (Spell Request)
+    local srGlowFrame = CreateFrame("Frame", name.."SRGlowFrame", button)
+    button.widgets.srGlowFrame = srGlowFrame
+    srGlowFrame:SetFrameLevel(button:GetFrameLevel()+200)
+    srGlowFrame:SetAllPoints(button)
+
+    --* drGlowFrame (Dispel Request)
+    local drGlowFrame = CreateFrame("Frame", name.."DRGlowFrame", button)
+    button.widgets.drGlowFrame = drGlowFrame
+    drGlowFrame:SetFrameLevel(button:GetFrameLevel()+200)
+    drGlowFrame:SetAllPoints(button)
 
     --* highLevelFrame
     local highLevelFrame = CreateFrame("Frame", name.."HighLevelFrame", button)
     button.widgets.highLevelFrame = highLevelFrame
-    highLevelFrame:SetFrameLevel(button:GetFrameLevel()+170)
+    highLevelFrame:SetFrameLevel(button:GetFrameLevel()+140)
     highLevelFrame:SetAllPoints(button)
-
-     --* tsGlowFrame (Targeted Spells)
-     local tsGlowFrame = CreateFrame("Frame", name.."TSGlowFrame", button)
-     button.widgets.tsGlowFrame = tsGlowFrame
-     tsGlowFrame:SetFrameLevel(button:GetFrameLevel()+150)
-     tsGlowFrame:SetAllPoints(button)
-
-     --* srGlowFrame (Spell Request)
-     local srGlowFrame = CreateFrame("Frame", name.."SRGlowFrame", button)
-     button.widgets.srGlowFrame = srGlowFrame
-     srGlowFrame:SetFrameLevel(button:GetFrameLevel()+150)
-     srGlowFrame:SetAllPoints(button)
-
-     --* drGlowFrame (Dispel Request)
-     local drGlowFrame = CreateFrame("Frame", name.."DRGlowFrame", button)
-     button.widgets.drGlowFrame = drGlowFrame
-     drGlowFrame:SetFrameLevel(button:GetFrameLevel()+150)
-     drGlowFrame:SetAllPoints(button)
 
     --* midLevelFrame
     local midLevelFrame = CreateFrame("Frame", name.."MidLevelFrame", button)
@@ -3758,7 +3762,7 @@ function CellUnitButton_OnLoad(button)
     -- readyCheckHighlight:Hide()
 
     -- aggro bar
-    local aggroBar = Cell:CreateStatusBar(name.."AggroBar", highLevelFrame, 20, 4, 100, true)
+    local aggroBar = Cell:CreateStatusBar(name.."AggroBar", indicatorFrame, 20, 4, 100, true)
     button.indicators.aggroBar = aggroBar
     aggroBar:Hide()
 
