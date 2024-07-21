@@ -3075,6 +3075,11 @@ function F:Revise()
                 end
             end
         end
+
+        if #CellDB["appearance"]["gradientColors"] ~= 5 then
+            CellDB["appearance"]["gradientColors"][4] = 0.05
+            CellDB["appearance"]["gradientColors"][5] = 0.95
+        end
     end
 
     -- ----------------------------------------------------------------------- --
