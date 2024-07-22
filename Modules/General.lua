@@ -12,7 +12,7 @@ generalTab:Hide()
 -------------------------------------------------
 -- visibility
 -------------------------------------------------
-local showSoloCB, showPartyCB, hideBlizzardPartyCB, hideBlizzardRaidCB
+local showSoloCB, showPartyCB, showRaidCB, hideBlizzardPartyCB, hideBlizzardRaidCB
 
 local function CreateVisibilityPane()
     local visibilityPane = Cell:CreateTitledPane(generalTab, L["Visibility"], 205, 110)
@@ -30,6 +30,12 @@ local function CreateVisibilityPane()
     end, L["Show Party"], L["Show while in a party"], L["To open options frame, use /cell options"])
     showPartyCB:SetPoint("TOPLEFT", showSoloCB, "BOTTOMLEFT", 0, -7)
 
+    showRaidCB = Cell:CreateCheckButton(visibilityPane, L["Show Raid"], function(checked, self)
+        CellDB["general"]["showRaid"] = checked
+        Cell:Fire("UpdateVisibility", "raid")
+    end, L["Show Raid"], L["Show while in a raid"], L["To open options frame, use /cell options"])
+    showRaidCB:SetPoint("TOPLEFT", showPartyCB, "BOTTOMLEFT", 0, -7)
+
     hideBlizzardPartyCB = Cell:CreateCheckButton(visibilityPane, L["Hide Blizzard Party"], function(checked, self)
         CellDB["general"]["hideBlizzardParty"] = checked
 
@@ -38,7 +44,7 @@ local function CreateVisibilityPane()
         end, nil, true)
         popup:SetPoint("TOPLEFT", generalTab, 117, -77)
     end, L["Hide Blizzard Frames"], L["Require reload of the UI"])
-    hideBlizzardPartyCB:SetPoint("TOPLEFT", showPartyCB, "BOTTOMLEFT", 0, -7)
+    hideBlizzardPartyCB:SetPoint("TOPLEFT", showRaidCB, "BOTTOMLEFT", 0, -7)
 
     hideBlizzardRaidCB = Cell:CreateCheckButton(visibilityPane, L["Hide Blizzard Raid"], function(checked, self)
         CellDB["general"]["hideBlizzardRaid"] = checked
@@ -388,6 +394,7 @@ local function ShowTab(tab)
         -- visibility
         showSoloCB:SetChecked(CellDB["general"]["showSolo"])
         showPartyCB:SetChecked(CellDB["general"]["showParty"])
+        showRaidCB:SetChecked(CellDB["general"]["showRaid"])
         hideBlizzardPartyCB:SetChecked(CellDB["general"]["hideBlizzardParty"])
         hideBlizzardRaidCB:SetChecked(CellDB["general"]["hideBlizzardRaid"])
 
