@@ -63,7 +63,7 @@ Use __/cell__ for more information.
 
 ## 想要帮忙完善副本减益？
 
-使用 [Instance Spell Collector](https://legacy.curseforge.com/wow/addons/instance-spell-collector) 收集副本减益，然后在 GitHub 上提交 PR 或 issue 就行啦。
+使用 [Instance Spell Collector](https://www.curseforge.com/wow/addons/instance-spell-collector) 收集副本减益，然后在 GitHub 上提交 PR 或 issue 就行啦。
 
 &nbsp;
 
