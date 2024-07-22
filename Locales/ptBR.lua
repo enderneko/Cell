@@ -537,6 +537,10 @@ L["Show Party"] = "Mostrar grupo"
 L["Show Party/Arena Pets"] = "Mostrar Pets de Grupo/Arena"
 L["Show Raid Pets"] = "Mostrar pets de Raid"
 L["Show Solo"] = "Mostrar quando sozinho"
+--[[Translation missing --]]
+--[[ L["Show Raid"] = "" ]]
+--[[Translation missing --]]
+--[[ L["Show while in a raid"] = "" ]]
 L["Show units you care about more in a separate frame"] = "Mostre as unidades mais importantes para você em um quadro separado"
 L["Show while in a party"] = "Mostrar durante um grupo"
 L["Show while not in a group"] = "Mostrar quando não estiver em um grupo"

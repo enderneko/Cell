@@ -1022,6 +1022,10 @@ L["Role Icon"] = "Иконка роли"
 --[[ L["Show Raid Pets"] = "Show Raid Pets"--]]
 L["Show Solo"] = "Отображать соло"
 --[[Translation missing --]]
+--[[ L["Show Raid"] = "" ]]
+--[[Translation missing --]]
+--[[ L["Show while in a raid"] = "" ]]
+--[[Translation missing --]]
 --[[ L["Show units you care about more in a separate frame"] = "Show units you care about more in a separate frame"--]]
 --[[Translation missing --]]
 --[[ L["Show while in a party"] = "Show while in a party"--]]

@@ -769,6 +769,10 @@ L["Show Party/Arena Pets"] = "파티/투기장 소환수 표시"
 L["Show Raid Pets"] = "공격대 소환수 표시"
 L["Show Solo"] = "솔로잉시 표시"
 --[[Translation missing --]]
+--[[ L["Show Raid"] = "" ]]
+--[[Translation missing --]]
+--[[ L["Show while in a raid"] = "" ]]
+--[[Translation missing --]]
 --[[ L["Show units you care about more in a separate frame"] = "Show units you care about more in a separate frame"--]]
 L["Show while in a party"] = "파티시에만 표시합니다."
 L["Show while not in a group"] = "솔로잉시 표시합니다."

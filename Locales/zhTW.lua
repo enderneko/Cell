@@ -546,6 +546,10 @@ L["Show Party"] = "5人隊伍時要顯示"
 L["Show Party/Arena Pets"] = "顯示隊伍/競技場寵物"
 L["Show Raid Pets"] = "顯示團隊寵物"
 L["Show Solo"] = "單人時要顯示"
+--[[Translation missing --]]
+--[[ L["Show Raid"] = "" ]]
+--[[Translation missing --]]
+--[[ L["Show while in a raid"] = "" ]]
 L["Show units you care about more in a separate frame"] = "在單獨的框架中顯示您更關心的單位"
 L["Show while in a party"] = "在隊伍中時顯示"
 L["Show while not in a group"] = "不在隊伍中時顯示"
