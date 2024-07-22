@@ -10,6 +10,8 @@ local UnitIsConnected = UnitIsConnected
 local InCombatLockdown = InCombatLockdown
 local GetUnitName = GetUnitName
 local UnitGUID = UnitGUID
+local GetAuraSlots = C_UnitAuras.GetAuraSlots
+local GetAuraDataBySlot = C_UnitAuras.GetAuraDataBySlot
 
 --! AI followers, wrong value returned by UnitClassBase
 local UnitClassBase = function(unit)
@@ -157,26 +159,19 @@ end
 local function ForEachAuraHelper(button, func, continuationToken, ...)
     -- continuationToken is the first return value of UnitAuraSlots()
     local n = select('#', ...)
-    local index = 1
     for i = 1, n do
         local slot = select(i, ...)
-        local auraInfo = C_UnitAuras.GetAuraDataBySlot(button.unit, slot)
-        local done = func(button, auraInfo, index)
+        local auraInfo = GetAuraDataBySlot(button.unit, slot)
+        local done = func(button, auraInfo, i)
         if done then
             -- if func returns true then no further slots are needed, so don't return continuationToken
             return nil
         end
-        index = index + 1
     end
-    return continuationToken
 end
 
 local function ForEachAura(button, filter, func)
-    local continuationToken
-    repeat
-        -- continuationToken is the first return value of UnitAuraSltos
-        continuationToken = ForEachAuraHelper(button, func, UnitAuraSlots(button.unit, filter, nil, continuationToken))
-    until continuationToken == nil
+    ForEachAuraHelper(button, func, GetAuraSlots(button.unit, filter))
 end
 
 -- ----------------------------------------------------------------------- --

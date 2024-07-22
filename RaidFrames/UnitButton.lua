@@ -961,27 +961,16 @@ Cell:RegisterCallback("UpdateIndicators", "UnitButton_UpdateIndicators", UpdateI
 local function ForEachAuraHelper(button, func, continuationToken, ...)
     -- continuationToken is the first return value of GetAuraSlots()
     local n = select('#', ...)
-    local index = 1
     for i = 1, n do
         local slot = select(i, ...)
         local auraInfo = GetAuraDataBySlot(button.states.displayedUnit, slot)
-        local done = func(button, auraInfo, index)
+        local done = func(button, auraInfo, i)
         if done then
             -- if func returns true then no further slots are needed, so don't return continuationToken
             return nil
         end
-        index = index + 1
     end
-    return continuationToken
 end
-
--- local function ForEachAura(button, filter, func)
---     local continuationToken
---     repeat
---         -- continuationToken is the first return value of UnitAuraSltos
---         continuationToken = ForEachAuraHelper(button, func, GetAuraSlots(button.states.displayedUnit, filter, nil, continuationToken))
---     until continuationToken == nil
--- end
 
 local function ForEachAura(button, filter, func)
     ForEachAuraHelper(button, func, GetAuraSlots(button.states.displayedUnit, filter))
