@@ -51,11 +51,12 @@ local InCombatLockdown = InCombatLockdown
 local UnitPhaseReason = UnitPhaseReason
 -- local UnitBuff = UnitBuff
 -- local UnitDebuff = UnitDebuff
-local GetAuraDataByAuraInstanceID = C_UnitAuras.GetAuraDataByAuraInstanceID
 local IsInRaid = IsInRaid
 local UnitDetailedThreatSituation = UnitDetailedThreatSituation
 local CombatLogGetCurrentEventInfo = CombatLogGetCurrentEventInfo
+local GetAuraDataByAuraInstanceID = C_UnitAuras.GetAuraDataByAuraInstanceID
 local GetAuraSlots = C_UnitAuras.GetAuraSlots
+local GetAuraDataBySlot = C_UnitAuras.GetAuraDataBySlot
 
 --! for AI followers, UnitClassBase is buggy
 local UnitClassBase = function(unit)
@@ -963,7 +964,7 @@ local function ForEachAuraHelper(button, func, continuationToken, ...)
     local index = 1
     for i = 1, n do
         local slot = select(i, ...)
-        local auraInfo = C_UnitAuras.GetAuraDataBySlot(button.states.displayedUnit, slot)
+        local auraInfo = GetAuraDataBySlot(button.states.displayedUnit, slot)
         local done = func(button, auraInfo, index)
         if done then
             -- if func returns true then no further slots are needed, so don't return continuationToken
