@@ -1766,7 +1766,7 @@ local function UnitButton_UpdateHealthMax(self)
         self.widgets.healthBar:SetMinMaxValues(0, self.states.healthMax)
     end
 
-    if Cell.vars.useGradientColor then
+    if Cell.vars.useGradientColor or Cell.vars.useFullColor then
         UnitButton_UpdateHealthColor(self)
     end
 end
@@ -1790,7 +1790,7 @@ local function UnitButton_UpdateHealth(self, diff)
         self.widgets.healthBar:SetBarValue(self.states.health)
     end
 
-    if Cell.vars.useGradientColor then
+    if Cell.vars.useGradientColor or Cell.vars.useFullColor then
         UnitButton_UpdateHealthColor(self)
     end
 
