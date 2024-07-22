@@ -273,6 +273,22 @@ local function GetPoints(layout)
     return point, anchorPoint, groupAnchorPoint, unitSpacing, groupSpacing, unitSpacingX, unitSpacingY, verticalSpacing, horizontalSpacing, headerPoint, headerColumnAnchorPoint
 end
 
+local function UpdateHeadersShowRaidAttribute()
+    local shouldShowRaid = CellDB["general"]["showRaid"]
+
+    if Cell.vars.currentLayoutTable["main"]["combineGroups"] then
+        combinedHeader:SetAttribute("showRaid", shouldShowRaid)
+        for _, header in ipairs(separatedHeaders) do
+            header:SetAttribute("showRaid", nil)
+        end
+    else
+        combinedHeader:SetAttribute("showRaid", nil)
+        for _, header in ipairs(separatedHeaders) do
+            header:SetAttribute("showRaid", shouldShowRaid)
+        end
+    end
+end
+
 local function UpdateHeader(header, layout, which)
     if not which or which == "header" or which == "main-size" or which == "main-power" or which == "groupFilter" or which == "barOrientation" or which == "powerFilter" then
         local width, height = unpack(layout["main"]["size"])
@@ -359,15 +375,12 @@ local function RaidFrame_UpdateLayout(layout, which)
         end
     end
 
+    if not which or which == "header" then
+        UpdateHeadersShowRaidAttribute()
+    end
+
     if layout["main"]["combineGroups"] then
         UpdateHeader(combinedHeader, layout, which)
-
-        if not which or which == "header" then
-            combinedHeader:SetAttribute("showRaid", true)
-            for _, header in ipairs(separatedHeaders) do
-                header:SetAttribute("showRaid", nil)
-            end
-        end
 
         if not which or which == "header" or which == "main-arrangement" or which == "rows_columns" or which == "groupSpacing" or which == "unitsPerColumn" then
             combinedHeader:ClearAllPoints()
@@ -420,13 +433,6 @@ local function RaidFrame_UpdateLayout(layout, which)
         end
 
     else
-        if not which or which == "header" then
-            combinedHeader:SetAttribute("showRaid", nil)
-            for _, header in ipairs(separatedHeaders) do
-                header:SetAttribute("showRaid", true)
-            end
-        end
-
         if not which or which == "header" or which == "main-arrangement" or which == "rows_columns" or which == "groupSpacing" or which == "groupFilter" then
             for i, group in ipairs(shownGroups) do
                 local header = separatedHeaders[group]
