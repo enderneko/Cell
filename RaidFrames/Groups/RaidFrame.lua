@@ -545,3 +545,17 @@ local function RaidFrame_UpdateLayout(layout, which)
     end
 end
 Cell:RegisterCallback("UpdateLayout", "RaidFrame_UpdateLayout", RaidFrame_UpdateLayout)
+
+local function RaidFrame_UpdateVisibility(which)
+    if not which or which == "raid" then
+        UpdateHeadersShowRaidAttribute()
+
+        if CellDB["general"]["showRaid"] then
+            RegisterAttributeDriver(raidFrame, "state-visibility", "show")
+        else
+            UnregisterAttributeDriver(raidFrame, "state-visibility")
+            raidFrame:Hide()
+        end
+    end
+end
+Cell:RegisterCallback("UpdateVisibility", "RaidFrame_UpdateVisibility", RaidFrame_UpdateVisibility)
