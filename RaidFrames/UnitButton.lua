@@ -2024,7 +2024,7 @@ local function UnitButton_UpdateHealth(self, diff)
     if barAnimationType == "Flash" then
         self.widgets.healthBar:SetValue(self.states.health)
         local diff = healthPercent - (self.states.healthPercentOld or healthPercent)
-        if diff >= 0 then
+        if diff >= 0 or self.states.healthMax == 0 then
             B:HideFlash(self)
         elseif diff <= -0.05 and diff >= -1 then --! player (just joined) UnitHealthMax(unit) may be 1 ====> diff == -maxHealth
             B:ShowFlash(self, abs(diff))
