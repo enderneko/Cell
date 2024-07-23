@@ -1219,6 +1219,8 @@ local function Icons_UpdateSize(icons, numAuras)
         for i = 1, icons.maxNum do
             if icons[i]:IsShown() then
                 numAuras = i
+            else
+                break
             end
         end
     end
