@@ -384,8 +384,12 @@ local function MainFrame_UpdateVisibility()
         else
             menuFrame:Hide()
         end
-    else -- raid: always show
-        menuFrame:Show()
+    else 
+        if CellDB["general"]["showRaid"] then
+            menuFrame:Show()
+        else
+            menuFrame:Hide()
+        end
     end
 end
 Cell:RegisterCallback("UpdateVisibility", "MainFrame_UpdateVisibility", MainFrame_UpdateVisibility)

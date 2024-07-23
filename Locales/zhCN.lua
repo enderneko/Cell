@@ -108,6 +108,10 @@ L["Show while not in a group"] = "当不在队伍时显示"
 L["To open options frame, use /cell options"] = "用 /cell options 来打开选项窗口"
 L["Show Party"] = "小队时显示"
 L["Show while in a party"] = "当在小队时显示"
+--[[Translation missing --]]
+--[[ L["Show Raid"] = "" ]]
+--[[Translation missing --]]
+--[[ L["Show while in a raid"] = "" ]]
 L["Position"] = "位置"
 L["Lock Cell Frames"] = "把它给我锁死"
 L["Fade Out Menu"] = "淡出菜单"

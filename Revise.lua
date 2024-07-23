@@ -3080,6 +3080,10 @@ function F:Revise()
             CellDB["appearance"]["gradientColors"][4] = 0.05
             CellDB["appearance"]["gradientColors"][5] = 0.95
         end
+
+        if type(CellDB["general"]["showRaid"]) ~= "boolean" then
+            CellDB["general"]["showRaid"] = true
+        end
     end
 
     -- ----------------------------------------------------------------------- --
