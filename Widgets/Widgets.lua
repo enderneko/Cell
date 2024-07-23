@@ -7,8 +7,6 @@ local LCG = LibStub("LibCustomGlow-1.0")
 -----------------------------------------
 -- Color
 -----------------------------------------
-local RAID_CLASS_COLORS = CUSTOM_CLASS_COLORS or RAID_CLASS_COLORS
-
 local colors = {
     grey = {s="|cFFB2B2B2", t={0.7, 0.7, 0.7}},
     yellow = {s="|cFFFFD100", t= {1, 0.82, 0}},

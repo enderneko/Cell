@@ -2361,7 +2361,6 @@ UnitButton_UpdateHealthColor = function(self)
         barR, barG, barB, lossR, lossG, lossB = F:GetHealthBarColor(self.states.healthPercent, self.states.isDeadOrGhost or self.states.isDead, 0, 1, 0.2)
     end
 
-    -- local r, g, b = RAID_CLASS_COLORS["DEATHKNIGHT"]:GetRGB()
     self.widgets.healthBar:SetStatusBarColor(barR, barG, barB, barA)
     self.widgets.healthBarLoss:SetVertexColor(lossR, lossG, lossB, lossA)
 

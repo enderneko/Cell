@@ -83,7 +83,7 @@ else
         if class == "VEHICLE" or class == "PET" or class == "NPC" then
             filter.text:SetText("|cff00ff33"..L[class])
         else
-            filter.text:SetText("|c"..RAID_CLASS_COLORS[class].colorStr..F:GetLocalizedClassName(class))
+            filter.text:SetText(F:GetClassColorStr(class)..F:GetLocalizedClassName(class))
         end
 
         filter.buttons = {}

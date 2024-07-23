@@ -1058,10 +1058,10 @@ local UnitInPartyIsAI = UnitInPartyIsAI or function() end
 -------------------------------------------------
 -- frame colors
 -------------------------------------------------
-local RAID_CLASS_COLORS = CUSTOM_CLASS_COLORS or RAID_CLASS_COLORS
+local RAID_CLASS_COLORS = RAID_CLASS_COLORS
 function F:GetClassColor(class)
     if class and class ~= "" and RAID_CLASS_COLORS[class] then
-        if CUSTOM_CLASS_COLORS then
+        if CUSTOM_CLASS_COLORS and CUSTOM_CLASS_COLORS[class] then
             return CUSTOM_CLASS_COLORS[class].r, CUSTOM_CLASS_COLORS[class].g, CUSTOM_CLASS_COLORS[class].b
         else
             return RAID_CLASS_COLORS[class]:GetRGB()
@@ -1073,7 +1073,11 @@ end
 
 function F:GetClassColorStr(class)
     if class and class ~= "" and RAID_CLASS_COLORS[class] then
-        return "|c"..RAID_CLASS_COLORS[class].colorStr
+        if CUSTOM_CLASS_COLORS and CUSTOM_CLASS_COLORS[class] then
+            return "|c"..CUSTOM_CLASS_COLORS[class].colorStr
+        else
+            return "|c"..RAID_CLASS_COLORS[class].colorStr
+        end
     else
         return "|cffffffff"
     end
