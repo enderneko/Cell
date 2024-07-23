@@ -3542,6 +3542,10 @@ function CellUnitButton_OnLoad(button)
     -- background:SetTexture("Interface\\BUTTONS\\WHITE8X8.BLP")
     -- background:SetVertexColor(0, 0, 0, 1)
 
+    -- NOTE: SecureUnitButton has no OnActionButtonPressAndHoldRelease
+    -- button:SetAttribute("pressAndHoldAction", true)
+    -- button:SetAttribute("typerelease", "macro")
+
     -- backdrop
     button:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8x8", edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = P:Scale(CELL_BORDER_SIZE)})
     button:SetBackdropColor(0, 0, 0, 1)
