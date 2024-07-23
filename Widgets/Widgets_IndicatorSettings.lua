@@ -4806,7 +4806,7 @@ local function CreateSetting_BuiltIns(parent)
     return widget
 end
 
-local function CreateConsumablePreview(parent, style)
+local function CreateActionPreview(parent, style)
     local f = CreateFrame("Frame", "CellIndicatorSettings_ActionsPreview_Type"..style, parent, "BackdropTemplate")
     f:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8x8", edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = P:Scale(1)})
     f:SetBackdropColor(0.2, 0.2, 0.2, 1)
@@ -4844,31 +4844,31 @@ local function CreateSetting_ActionsPreview(parent)
         widget = addon:CreateFrame("CellIndicatorSettings_ActionsPreview", parent, 240, 220)
         settingWidgets["actionsPreview"] = widget
 
-        local typeA = CreateConsumablePreview(widget, "A")
+        local typeA = CreateActionPreview(widget, "A")
         typeA:SetSize(70, 50)
         typeA:SetPoint("TOPLEFT", 5, -5)
 
-        local typeB = CreateConsumablePreview(widget, "B")
+        local typeB = CreateActionPreview(widget, "B")
         typeB:SetSize(70, 50)
         typeB:SetPoint("TOPLEFT", typeA, "TOPRIGHT", 5, 0)
 
-        local typeD = CreateConsumablePreview(widget, "D")
+        local typeD = CreateActionPreview(widget, "D")
         typeD:SetSize(70, 50)
         typeD:SetPoint("TOPLEFT", typeB, "TOPRIGHT", 5, 0)
 
-        local typeC1 = CreateConsumablePreview(widget, "C1")
+        local typeC1 = CreateActionPreview(widget, "C1")
         typeC1:SetSize(70, 50)
         typeC1:SetPoint("TOPLEFT", typeA, "BOTTOMLEFT", 0, -5)
 
-        local typeC2 = CreateConsumablePreview(widget, "C2")
+        local typeC2 = CreateActionPreview(widget, "C2")
         typeC2:SetSize(70, 50)
         typeC2:SetPoint("TOPLEFT", typeC1, "TOPRIGHT", 5, 0)
 
-        local typeC3 = CreateConsumablePreview(widget, "C3")
+        local typeC3 = CreateActionPreview(widget, "C3")
         typeC3:SetSize(70, 50)
         typeC3:SetPoint("TOPLEFT", typeC2, "TOPRIGHT", 5, 0)
 
-        local typeE = CreateConsumablePreview(widget, "E")
+        local typeE = CreateActionPreview(widget, "E")
         typeE:SetSize(70, 50)
         typeE:SetPoint("TOPLEFT", typeC1, "BOTTOMLEFT", 0, -5)
 
@@ -4917,8 +4917,8 @@ local function CreateSetting_ActionsPreview(parent)
     return widget
 end
 
-local consumableButtons = {}
-local function CreateConsumableButtons(parent, spellTable, updateHeightFunc)
+local actionButtons = {}
+local function CreateActionButtons(parent, spellTable, updateHeightFunc)
     local n = #spellTable
 
     -- tooltip
@@ -4951,14 +4951,14 @@ local function CreateConsumableButtons(parent, spellTable, updateHeightFunc)
     end
 
     -- new
-    if not consumableButtons[0] then
-        consumableButtons[0] = addon:CreateButton(parent, "", "transparent-accent", {20, 20})
-        consumableButtons[0]:SetTexture("Interface\\AddOns\\Cell\\Media\\Icons\\new", {16, 16}, {"RIGHT", -1, 0})
-        consumableButtons[0]:SetPoint("BOTTOMLEFT")
-        consumableButtons[0]:SetPoint("RIGHT")
+    if not actionButtons[0] then
+        actionButtons[0] = addon:CreateButton(parent, "", "transparent-accent", {20, 20})
+        actionButtons[0]:SetTexture("Interface\\AddOns\\Cell\\Media\\Icons\\new", {16, 16}, {"RIGHT", -1, 0})
+        actionButtons[0]:SetPoint("BOTTOMLEFT")
+        actionButtons[0]:SetPoint("RIGHT")
     end
 
-    consumableButtons[0]:SetScript("OnClick", function(self)
+    actionButtons[0]:SetScript("OnClick", function(self)
         local popup = addon:CreatePopupEditBox(parent, function(text)
             local spellId = tonumber(text)
             local spellName = F:GetSpellInfo(spellId)
@@ -4969,7 +4969,7 @@ local function CreateConsumableButtons(parent, spellTable, updateHeightFunc)
                     {"A", {1, 1, 1}}
                 })
                 parent.func(spellTable)
-                CreateConsumableButtons(parent, spellTable, updateHeightFunc)
+                CreateActionButtons(parent, spellTable, updateHeightFunc)
                 updateHeightFunc(19)
             else
                 F:Print(L["Invalid spell id."])
@@ -4984,45 +4984,45 @@ local function CreateConsumableButtons(parent, spellTable, updateHeightFunc)
 
     for i, spell in ipairs(spellTable) do
         -- creation
-        if not consumableButtons[i] then
-            consumableButtons[i] = addon:CreateButton(parent, "", "transparent-accent", {20, 20})
+        if not actionButtons[i] then
+            actionButtons[i] = addon:CreateButton(parent, "", "transparent-accent", {20, 20})
 
             -- spellIcon
-            consumableButtons[i].spellIconBg = consumableButtons[i]:CreateTexture(nil, "BORDER")
-            consumableButtons[i].spellIconBg:SetSize(16, 16)
-            consumableButtons[i].spellIconBg:SetPoint("TOPLEFT", 2, -2)
-            consumableButtons[i].spellIconBg:SetColorTexture(0, 0, 0, 1)
-            consumableButtons[i].spellIconBg:Hide()
+            actionButtons[i].spellIconBg = actionButtons[i]:CreateTexture(nil, "BORDER")
+            actionButtons[i].spellIconBg:SetSize(16, 16)
+            actionButtons[i].spellIconBg:SetPoint("TOPLEFT", 2, -2)
+            actionButtons[i].spellIconBg:SetColorTexture(0, 0, 0, 1)
+            actionButtons[i].spellIconBg:Hide()
 
-            consumableButtons[i].spellIcon = consumableButtons[i]:CreateTexture(nil, "OVERLAY")
-            consumableButtons[i].spellIcon:SetPoint("TOPLEFT", consumableButtons[i].spellIconBg, 1, -1)
-            consumableButtons[i].spellIcon:SetPoint("BOTTOMRIGHT", consumableButtons[i].spellIconBg, -1, 1)
-            consumableButtons[i].spellIcon:SetTexCoord(0.08, 0.92, 0.08, 0.92)
-            consumableButtons[i].spellIcon:Hide()
+            actionButtons[i].spellIcon = actionButtons[i]:CreateTexture(nil, "OVERLAY")
+            actionButtons[i].spellIcon:SetPoint("TOPLEFT", actionButtons[i].spellIconBg, 1, -1)
+            actionButtons[i].spellIcon:SetPoint("BOTTOMRIGHT", actionButtons[i].spellIconBg, -1, 1)
+            actionButtons[i].spellIcon:SetTexCoord(0.08, 0.92, 0.08, 0.92)
+            actionButtons[i].spellIcon:Hide()
 
             -- spellId text
-            consumableButtons[i].spellIdText = consumableButtons[i]:CreateFontString(nil, "OVERLAY", font_name)
-            consumableButtons[i].spellIdText:SetPoint("LEFT", consumableButtons[i].spellIconBg, "RIGHT", 5, 0)
-            consumableButtons[i].spellIdText:SetPoint("RIGHT", consumableButtons[i], "LEFT", 80, 0)
-            consumableButtons[i].spellIdText:SetWordWrap(false)
-            consumableButtons[i].spellIdText:SetJustifyH("LEFT")
+            actionButtons[i].spellIdText = actionButtons[i]:CreateFontString(nil, "OVERLAY", font_name)
+            actionButtons[i].spellIdText:SetPoint("LEFT", actionButtons[i].spellIconBg, "RIGHT", 5, 0)
+            actionButtons[i].spellIdText:SetPoint("RIGHT", actionButtons[i], "LEFT", 80, 0)
+            actionButtons[i].spellIdText:SetWordWrap(false)
+            actionButtons[i].spellIdText:SetJustifyH("LEFT")
 
             -- spellName text
-            consumableButtons[i].spellNameText = consumableButtons[i]:CreateFontString(nil, "OVERLAY", font_name)
-            consumableButtons[i].spellNameText:SetPoint("LEFT", consumableButtons[i].spellIdText, "RIGHT", 5, 0)
-            consumableButtons[i].spellNameText:SetPoint("RIGHT", -90, 0)
-            consumableButtons[i].spellNameText:SetWordWrap(false)
-            consumableButtons[i].spellNameText:SetJustifyH("LEFT")
+            actionButtons[i].spellNameText = actionButtons[i]:CreateFontString(nil, "OVERLAY", font_name)
+            actionButtons[i].spellNameText:SetPoint("LEFT", actionButtons[i].spellIdText, "RIGHT", 5, 0)
+            actionButtons[i].spellNameText:SetPoint("RIGHT", -90, 0)
+            actionButtons[i].spellNameText:SetWordWrap(false)
+            actionButtons[i].spellNameText:SetJustifyH("LEFT")
 
             -- style dropdown
-            consumableButtons[i].styleDropdown = addon:CreateDropdown(consumableButtons[i], 30, nil, true)
-            P:Height(consumableButtons[i].styleDropdown, 16)
-            consumableButtons[i].styleDropdown:SetPoint("TOPLEFT", consumableButtons[i], 180, -2)
-            consumableButtons[i].styleDropdown.button:HookScript("OnEnter", function()
-                consumableButtons[i]:GetScript("OnEnter")(consumableButtons[i])
+            actionButtons[i].styleDropdown = addon:CreateDropdown(actionButtons[i], 30, nil, true)
+            P:Height(actionButtons[i].styleDropdown, 16)
+            actionButtons[i].styleDropdown:SetPoint("TOPLEFT", actionButtons[i], 180, -2)
+            actionButtons[i].styleDropdown.button:HookScript("OnEnter", function()
+                actionButtons[i]:GetScript("OnEnter")(actionButtons[i])
             end)
-            consumableButtons[i].styleDropdown.button:HookScript("OnLeave", function()
-                consumableButtons[i]:GetScript("OnLeave")(consumableButtons[i])
+            actionButtons[i].styleDropdown.button:HookScript("OnLeave", function()
+                actionButtons[i]:GetScript("OnLeave")(actionButtons[i])
             end)
 
             local items = {}
@@ -5030,68 +5030,68 @@ local function CreateConsumableButtons(parent, spellTable, updateHeightFunc)
                 tinsert(items, {
                     ["text"] = style,
                     ["onClick"] = function()
-                        CellIndicatorsPreviewButton.indicators.actions:Display(style, consumableButtons[i].animationColor)
-                        consumableButtons[i].animationType = style
+                        CellIndicatorsPreviewButton.indicators.actions:Display(style, actionButtons[i].animationColor)
+                        actionButtons[i].animationType = style
                         -- update db
                         spellTable[i][2][1] = style
                         parent.func(spellTable)
                     end,
                 })
             end
-            consumableButtons[i].styleDropdown:SetItems(items)
+            actionButtons[i].styleDropdown:SetItems(items)
 
             -- color
-            consumableButtons[i].colorPicker = addon:CreateColorPicker(consumableButtons[i], "", false, nil, function(r, g, b, a)
+            actionButtons[i].colorPicker = addon:CreateColorPicker(actionButtons[i], "", false, nil, function(r, g, b, a)
                 spellTable[i][2][2][1] = r
                 spellTable[i][2][2][2] = g
                 spellTable[i][2][2][3] = b
                 parent.func(spellTable)
-                consumableButtons[i].animationColor = {r, g, b}
-                CellIndicatorsPreviewButton.indicators.actions:Display(consumableButtons[i].animationType, consumableButtons[i].animationColor)
+                actionButtons[i].animationColor = {r, g, b}
+                CellIndicatorsPreviewButton.indicators.actions:Display(actionButtons[i].animationType, actionButtons[i].animationColor)
             end)
-            consumableButtons[i].colorPicker:SetPoint("TOPLEFT", consumableButtons[i].styleDropdown, "TOPRIGHT", 2, -1)
-            consumableButtons[i].colorPicker:HookScript("OnEnter", function()
-                consumableButtons[i]:GetScript("OnEnter")(consumableButtons[i])
+            actionButtons[i].colorPicker:SetPoint("TOPLEFT", actionButtons[i].styleDropdown, "TOPRIGHT", 2, -1)
+            actionButtons[i].colorPicker:HookScript("OnEnter", function()
+                actionButtons[i]:GetScript("OnEnter")(actionButtons[i])
             end)
-            consumableButtons[i].colorPicker:HookScript("OnLeave", function()
-                consumableButtons[i]:GetScript("OnLeave")(consumableButtons[i])
+            actionButtons[i].colorPicker:HookScript("OnLeave", function()
+                actionButtons[i]:GetScript("OnLeave")(actionButtons[i])
             end)
 
             -- del
-            consumableButtons[i].del = addon:CreateButton(consumableButtons[i], "", "none", {18, 20}, true, true)
-            consumableButtons[i].del:SetTexture("Interface\\AddOns\\Cell\\Media\\Icons\\delete", {16, 16}, {"CENTER", 0, 0})
-            consumableButtons[i].del:SetPoint("RIGHT")
-            consumableButtons[i].del.tex:SetVertexColor(0.6, 0.6, 0.6, 1)
-            consumableButtons[i].del:SetScript("OnEnter", function()
-                consumableButtons[i]:GetScript("OnEnter")(consumableButtons[i])
-                consumableButtons[i].del.tex:SetVertexColor(1, 1, 1, 1)
+            actionButtons[i].del = addon:CreateButton(actionButtons[i], "", "none", {18, 20}, true, true)
+            actionButtons[i].del:SetTexture("Interface\\AddOns\\Cell\\Media\\Icons\\delete", {16, 16}, {"CENTER", 0, 0})
+            actionButtons[i].del:SetPoint("RIGHT")
+            actionButtons[i].del.tex:SetVertexColor(0.6, 0.6, 0.6, 1)
+            actionButtons[i].del:SetScript("OnEnter", function()
+                actionButtons[i]:GetScript("OnEnter")(actionButtons[i])
+                actionButtons[i].del.tex:SetVertexColor(1, 1, 1, 1)
             end)
-            consumableButtons[i].del:SetScript("OnLeave",  function()
-                consumableButtons[i]:GetScript("OnLeave")(consumableButtons[i])
-                consumableButtons[i].del.tex:SetVertexColor(0.6, 0.6, 0.6, 1)
+            actionButtons[i].del:SetScript("OnLeave",  function()
+                actionButtons[i]:GetScript("OnLeave")(actionButtons[i])
+                actionButtons[i].del.tex:SetVertexColor(0.6, 0.6, 0.6, 1)
             end)
 
             -- edit
-            consumableButtons[i].edit = addon:CreateButton(consumableButtons[i], "", "none", {18, 20}, true, true)
-            consumableButtons[i].edit:SetPoint("RIGHT", consumableButtons[i].del, "LEFT", 1, 0)
-            consumableButtons[i].edit:SetTexture("Interface\\AddOns\\Cell\\Media\\Icons\\info", {16, 16}, {"CENTER", 0, 0})
-            consumableButtons[i].edit.tex:SetVertexColor(0.6, 0.6, 0.6, 1)
-            consumableButtons[i].edit:SetScript("OnEnter", function()
-                consumableButtons[i]:GetScript("OnEnter")(consumableButtons[i])
-                consumableButtons[i].edit.tex:SetVertexColor(1, 1, 1, 1)
+            actionButtons[i].edit = addon:CreateButton(actionButtons[i], "", "none", {18, 20}, true, true)
+            actionButtons[i].edit:SetPoint("RIGHT", actionButtons[i].del, "LEFT", 1, 0)
+            actionButtons[i].edit:SetTexture("Interface\\AddOns\\Cell\\Media\\Icons\\info", {16, 16}, {"CENTER", 0, 0})
+            actionButtons[i].edit.tex:SetVertexColor(0.6, 0.6, 0.6, 1)
+            actionButtons[i].edit:SetScript("OnEnter", function()
+                actionButtons[i]:GetScript("OnEnter")(actionButtons[i])
+                actionButtons[i].edit.tex:SetVertexColor(1, 1, 1, 1)
             end)
-            consumableButtons[i].edit:SetScript("OnLeave",  function()
-                consumableButtons[i]:GetScript("OnLeave")(consumableButtons[i])
-                consumableButtons[i].edit.tex:SetVertexColor(0.6, 0.6, 0.6, 1)
+            actionButtons[i].edit:SetScript("OnLeave",  function()
+                actionButtons[i]:GetScript("OnLeave")(actionButtons[i])
+                actionButtons[i].edit.tex:SetVertexColor(0.6, 0.6, 0.6, 1)
             end)
 
             -- preview
-            consumableButtons[i]:SetScript("OnClick", function(self, button)
-                CellIndicatorsPreviewButton.indicators.actions:Display(consumableButtons[i].animationType, consumableButtons[i].animationColor)
+            actionButtons[i]:SetScript("OnClick", function(self, button)
+                CellIndicatorsPreviewButton.indicators.actions:Display(actionButtons[i].animationType, actionButtons[i].animationColor)
             end)
 
             -- spell tooltip
-            consumableButtons[i]:HookScript("OnEnter", function(self)
+            actionButtons[i]:HookScript("OnEnter", function(self)
                 if not parent.popupEditBox:IsShown() then
                     local name = F:GetSpellInfo(self.spellId)
                     if not name then
@@ -5099,13 +5099,13 @@ local function CreateConsumableButtons(parent, spellTable, updateHeightFunc)
                         return
                     end
 
-                    CellSpellTooltip:SetOwner(consumableButtons[i], "ANCHOR_NONE")
-                    CellSpellTooltip:SetPoint("TOPRIGHT", consumableButtons[i], "TOPLEFT", -1, 0)
+                    CellSpellTooltip:SetOwner(actionButtons[i], "ANCHOR_NONE")
+                    CellSpellTooltip:SetPoint("TOPRIGHT", actionButtons[i], "TOPLEFT", -1, 0)
                     CellSpellTooltip:SetSpellByID(self.spellId)
                     CellSpellTooltip:Show()
                 end
             end)
-            consumableButtons[i]:HookScript("OnLeave", function()
+            actionButtons[i]:HookScript("OnLeave", function()
                 if not parent.popupEditBox:IsShown() then
                     CellSpellTooltip:Hide()
                 end
@@ -5114,75 +5114,75 @@ local function CreateConsumableButtons(parent, spellTable, updateHeightFunc)
 
         -- fill data
         local name, icon = F:GetSpellInfo(spell[1])
-        consumableButtons[i].spellIdText:SetText(spell[1])
-        consumableButtons[i].spellId = spell[1]
-        consumableButtons[i].spellNameText:SetText(name or L["Invalid"])
+        actionButtons[i].spellIdText:SetText(spell[1])
+        actionButtons[i].spellId = spell[1]
+        actionButtons[i].spellNameText:SetText(name or L["Invalid"])
         if icon then
-            consumableButtons[i].spellIcon:SetTexture(icon)
-            consumableButtons[i].spellIconBg:Show()
-            consumableButtons[i].spellIcon:Show()
+            actionButtons[i].spellIcon:SetTexture(icon)
+            actionButtons[i].spellIconBg:Show()
+            actionButtons[i].spellIcon:Show()
         else
-            consumableButtons[i].spellIconBg:Hide()
-            consumableButtons[i].spellIcon:Hide()
+            actionButtons[i].spellIconBg:Hide()
+            actionButtons[i].spellIcon:Hide()
         end
 
-        consumableButtons[i].animationType = spell[2][1]
-        consumableButtons[i].styleDropdown:SetSelected(spell[2][1])
-        consumableButtons[i].animationColor = spell[2][2]
-        consumableButtons[i].colorPicker:SetColor(spell[2][2])
+        actionButtons[i].animationType = spell[2][1]
+        actionButtons[i].styleDropdown:SetSelected(spell[2][1])
+        actionButtons[i].animationColor = spell[2][2]
+        actionButtons[i].colorPicker:SetColor(spell[2][2])
 
         -- points
-        consumableButtons[i]:ClearAllPoints()
+        actionButtons[i]:ClearAllPoints()
         if i == 1 then -- first
-            consumableButtons[i]:SetPoint("TOPLEFT")
+            actionButtons[i]:SetPoint("TOPLEFT")
         else
-            consumableButtons[i]:SetPoint("TOPLEFT", consumableButtons[i-1], "BOTTOMLEFT", 0, 1)
+            actionButtons[i]:SetPoint("TOPLEFT", actionButtons[i-1], "BOTTOMLEFT", 0, 1)
         end
-        consumableButtons[i]:SetPoint("RIGHT")
-        consumableButtons[i]:Show()
+        actionButtons[i]:SetPoint("RIGHT")
+        actionButtons[i]:Show()
 
         -- functions
-        consumableButtons[i].edit:SetScript("OnClick", function()
+        actionButtons[i].edit:SetScript("OnClick", function()
             local popup = addon:CreatePopupEditBox(parent, function(text)
                 local spellId = tonumber(text)
                 local spellName, spellIcon = F:GetSpellInfo(spellId)
                 if spellId and spellName then
                     -- update text
-                    consumableButtons[i].spellIdText:SetText(spellId)
-                    consumableButtons[i].spellId = spellId
-                    consumableButtons[i].spellNameText:SetText(spellName)
+                    actionButtons[i].spellIdText:SetText(spellId)
+                    actionButtons[i].spellId = spellId
+                    actionButtons[i].spellNameText:SetText(spellName)
                     -- update db
                     spellTable[i][1] = spellId
                     parent.func(spellTable)
                     if spellIcon then
-                        consumableButtons[i].spellIcon:SetTexture(spellIcon)
-                        consumableButtons[i].spellIconBg:Show()
-                        consumableButtons[i].spellIcon:Show()
+                        actionButtons[i].spellIcon:SetTexture(spellIcon)
+                        actionButtons[i].spellIconBg:Show()
+                        actionButtons[i].spellIcon:Show()
                     else
-                        consumableButtons[i].spellIconBg:Hide()
-                        consumableButtons[i].spellIcon:Hide()
+                        actionButtons[i].spellIconBg:Hide()
+                        actionButtons[i].spellIcon:Hide()
                     end
                 else
                     F:Print(L["Invalid spell id."])
                 end
             end)
-            popup:SetPoint("TOPLEFT", consumableButtons[i])
-            popup:SetPoint("BOTTOMRIGHT", consumableButtons[i])
-            popup:ShowEditBox(consumableButtons[i].spellId or "")
+            popup:SetPoint("TOPLEFT", actionButtons[i])
+            popup:SetPoint("BOTTOMRIGHT", actionButtons[i])
+            popup:ShowEditBox(actionButtons[i].spellId or "")
             parent.popupEditBox:SetTips("|cffababab"..L["Input spell id"])
         end)
 
-        consumableButtons[i].del:SetScript("OnClick", function()
+        actionButtons[i].del:SetScript("OnClick", function()
             tremove(spellTable, i)
             parent.func(spellTable)
-            CreateConsumableButtons(parent, spellTable, updateHeightFunc)
+            CreateActionButtons(parent, spellTable, updateHeightFunc)
             updateHeightFunc(-19)
         end)
     end
 
-    for i = n+1, #consumableButtons do
-        consumableButtons[i]:Hide()
-        consumableButtons[i]:ClearAllPoints()
+    for i = n+1, #actionButtons do
+        actionButtons[i]:Hide()
+        actionButtons[i]:ClearAllPoints()
     end
 end
 
@@ -5224,7 +5224,7 @@ local function CreateSetting_ActionsList(parent)
 
         -- show db value
         function widget:SetDBValue(t)
-            CreateConsumableButtons(widget.frame, t, function(diff)
+            CreateActionButtons(widget.frame, t, function(diff)
                 widget.frame:SetHeight((#t+1)*19+1)
                 widget:SetHeight((#t+1)*19+1 + 27 + 5)
                 if diff then parent:SetHeight(parent:GetHeight()+diff) end
