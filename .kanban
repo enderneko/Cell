@@ -41,15 +41,6 @@
           "comments": []
         },
         {
-          "id": "41a10cb7-15c8-4c33-82f9-19a6d9988b2c",
-          "listId": "643431c7-e660-47b1-a44b-4e799b536d19",
-          "title": "Replace all WHITE8x8",
-          "description": "",
-          "labels": [],
-          "checkboxes": [],
-          "comments": []
-        },
-        {
           "id": "f8590391-546b-45b7-9696-c79e7f83e555",
           "listId": "643431c7-e660-47b1-a44b-4e799b536d19",
           "title": "Replace Widgets & PixelPerfect with AW",
@@ -66,26 +57,11 @@
           "labels": [],
           "checkboxes": [],
           "comments": []
-        }
-      ]
-    },
-    {
-      "id": "7915d51e-5603-44aa-aa3a-8dff734ea7c6",
-      "title": "TODO",
-      "cards": [
-        {
-          "id": "156adfb0-8f70-4f1d-92e4-da39405f5746",
-          "listId": "7915d51e-5603-44aa-aa3a-8dff734ea7c6",
-          "title": "Quick Assist sharing feature",
-          "description": "",
-          "labels": [],
-          "checkboxes": [],
-          "comments": []
         },
         {
-          "id": "20898e44-20c9-463c-ad57-c206aaf9fe2c",
-          "listId": "7915d51e-5603-44aa-aa3a-8dff734ea7c6",
-          "title": "Global scaling of indicators",
+          "id": "96f7a5fd-3b3e-434e-bd14-9cb0b483b608",
+          "listId": "643431c7-e660-47b1-a44b-4e799b536d19",
+          "title": "Add RaidDebuffs to QuickAssist",
           "description": "",
           "labels": [],
           "checkboxes": [],
@@ -93,7 +69,7 @@
         },
         {
           "id": "ebbee63f-809d-4ede-b96f-2378a88f1391",
-          "listId": "7915d51e-5603-44aa-aa3a-8dff734ea7c6",
+          "listId": "643431c7-e660-47b1-a44b-4e799b536d19",
           "title": "Animation OnApplied",
           "description": "",
           "labels": [],
@@ -101,14 +77,29 @@
           "comments": []
         },
         {
-          "id": "96f7a5fd-3b3e-434e-bd14-9cb0b483b608",
-          "listId": "7915d51e-5603-44aa-aa3a-8dff734ea7c6",
-          "title": "Add RaidDebuffs to QuickAssist",
+          "id": "156adfb0-8f70-4f1d-92e4-da39405f5746",
+          "listId": "643431c7-e660-47b1-a44b-4e799b536d19",
+          "title": "Quick Assist sharing feature",
           "description": "",
           "labels": [],
           "checkboxes": [],
           "comments": []
         },
+        {
+          "id": "73a9c8e5-fd9e-43b8-baf7-582aade21de0",
+          "listId": "643431c7-e660-47b1-a44b-4e799b536d19",
+          "title": "Make each spotlight button \"positionable\"",
+          "description": "",
+          "labels": [],
+          "checkboxes": [],
+          "comments": []
+        }
+      ]
+    },
+    {
+      "id": "7915d51e-5603-44aa-aa3a-8dff734ea7c6",
+      "title": "TODO",
+      "cards": [
         {
           "id": "b6474dcc-f9ea-4d89-bf3e-788e4a4773e1",
           "listId": "7915d51e-5603-44aa-aa3a-8dff734ea7c6",
@@ -119,18 +110,18 @@
           "comments": []
         },
         {
-          "id": "73a9c8e5-fd9e-43b8-baf7-582aade21de0",
+          "id": "a711ba2d-5627-444a-b1a2-c563ce1663f7",
           "listId": "7915d51e-5603-44aa-aa3a-8dff734ea7c6",
-          "title": "Make each spotlight button \"positionable\"",
+          "title": "Add \"Hide\" to layout auto switch",
           "description": "",
           "labels": [],
           "checkboxes": [],
           "comments": []
         },
         {
-          "id": "2fe23d38-0478-4a81-a726-ba21321daad4",
+          "id": "1f228346-3228-4c81-a796-2deb4500e1c8",
           "listId": "7915d51e-5603-44aa-aa3a-8dff734ea7c6",
-          "title": "Show changes since last installed version only",
+          "title": "Class Spells for Click-Castings",
           "description": "",
           "labels": [],
           "checkboxes": [],
@@ -143,24 +134,6 @@
       "title": "IN PROGRESS",
       "cards": [
         {
-          "id": "a711ba2d-5627-444a-b1a2-c563ce1663f7",
-          "listId": "fc9baa7c-c3e7-49a4-8526-816c794e5ed9",
-          "title": "Add \"Hide\" to layout auto switch",
-          "description": "",
-          "labels": [],
-          "checkboxes": [],
-          "comments": []
-        },
-        {
-          "id": "dd2e1868-482f-4f16-9755-ab54c171f9b3",
-          "listId": "fc9baa7c-c3e7-49a4-8526-816c794e5ed9",
-          "title": "\"Show Raid\" option",
-          "description": "",
-          "labels": [],
-          "checkboxes": [],
-          "comments": []
-        },
-        {
           "id": "abd28941-e6a1-4784-8465-e922be72f888",
           "listId": "fc9baa7c-c3e7-49a4-8526-816c794e5ed9",
           "title": "Refactor Layouts",
@@ -170,10 +143,10 @@
           "comments": []
         },
         {
-          "id": "1f228346-3228-4c81-a796-2deb4500e1c8",
+          "id": "60bbeb92-2645-4703-b511-bf6ee0615520",
           "listId": "fc9baa7c-c3e7-49a4-8526-816c794e5ed9",
-          "title": "Class Spells for Click-Castings",
-          "description": "",
+          "title": "Fix raid group anchors ",
+          "description": "when first group of each row/column not full",
           "labels": [],
           "checkboxes": [],
           "comments": []
@@ -184,6 +157,24 @@
       "id": "7b0c4654-92fe-4b4e-9566-15e8c706d9c9",
       "title": "DONE",
       "cards": [
+        {
+          "id": "dd2e1868-482f-4f16-9755-ab54c171f9b3",
+          "listId": "7b0c4654-92fe-4b4e-9566-15e8c706d9c9",
+          "title": "\"Show Raid\" option",
+          "description": "",
+          "labels": [],
+          "checkboxes": [],
+          "comments": []
+        },
+        {
+          "id": "41a10cb7-15c8-4c33-82f9-19a6d9988b2c",
+          "listId": "7b0c4654-92fe-4b4e-9566-15e8c706d9c9",
+          "title": "Replace all WHITE8x8",
+          "description": "",
+          "labels": [],
+          "checkboxes": [],
+          "comments": []
+        },
         {
           "id": "f9342937-2a2d-424a-a5e3-cd9147d2ecbd",
           "listId": "7b0c4654-92fe-4b4e-9566-15e8c706d9c9",
@@ -351,7 +342,17 @@
   ],
   "archive": {
     "lists": [],
-    "cards": []
+    "cards": [
+      {
+        "id": "20898e44-20c9-463c-ad57-c206aaf9fe2c",
+        "listId": "643431c7-e660-47b1-a44b-4e799b536d19",
+        "title": "Global scaling of indicators",
+        "description": "",
+        "labels": [],
+        "checkboxes": [],
+        "comments": []
+      }
+    ]
   },
   "settings": {
     "labels": [

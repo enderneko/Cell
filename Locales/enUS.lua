@@ -87,6 +87,22 @@ select(2, ...).L = setmetatable({
         <p>(Retail) Enable "Always Update Buffs/Debuffs" in General tab, if indicators do not update correctly.</p>
         <br/>
 
+        <h1>r235-release (Jul 23, 2024, 20:00 GMT+8)</h1>
+        <p>+ Added "Show Raid" option (PR #176).</p>
+        <p>* Fixed full health color (PR #175).</p>
+        <p>* (TWW) Fixed BR timer, QuickAssist, Spell/Dispel Request.</p>
+        <p>* Fixed icon aspect ratio.</p>
+        <p>* Fixed raid debuff creation on classic.</p>
+        <p>* Fixed vehicle icon.</p>
+        <p>* Fixed stack text.</p>
+        <p>* Fixed size of indicator group.</p>
+        <p>* Updated gradient color options for health bar.</p>
+        <p>* Updated LibGetFrame related functions (Cell.GetUnitFrame -> Cell.GetUnitFramesForLGF).</p>
+        <p>+ Added an option to adjust StatusText alignment.</p>
+        <p>+ Added expansion data for ruRU.</p>
+        <p>+ New custom indicator type: Border.</p>
+        <br/>
+
         <h1>r234-release (Jul 13, 2024, 17:37 GMT+8)</h1>
         <p>+ Added "position" for Ready Check Icon indicator.</p>
         <p>* "Override LibGetFrame" is now enabled by default.</p>

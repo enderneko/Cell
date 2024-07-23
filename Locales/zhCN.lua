@@ -108,6 +108,7 @@ L["Show while not in a group"] = "当不在队伍时显示"
 L["To open options frame, use /cell options"] = "用 /cell options 来打开选项窗口"
 L["Show Party"] = "小队时显示"
 L["Show while in a party"] = "当在小队时显示"
+-- 不要本地化此文本，因为这些选项即将被移除
 --[[Translation missing --]]
 --[[ L["Show Raid"] = "" ]]
 --[[Translation missing --]]
@@ -846,6 +847,22 @@ L["Click to view older changelogs"] = "点击查看远古更新记录"
 L["CHANGELOGS"] = [[
     <h1>更新后如果有各种问题，先排查代码片段。</h1>
     <p>（正式服）如果指示器不能正常刷新，尝试启用常规页面下的“总是更新增益/减益”选项。</p>
+    <br/>
+
+    <h1>r235-release (Jul 23, 2024, 20:00 GMT+8)</h1>
+    <p>+ 添加“Show Raid”选项（PR #176）。嗯，你问我为什么没本地化？这是好心人帮加的功能，但这一票“XX时显示”的选项在未来的版本中会被移除，因此不想本地化了。</p>
+    <p>* 修复满血颜色（PR #175）。</p>
+    <p>* （地心之战）修复战复计时、快速协助、法术/驱散请求。</p>
+    <p>* 修复指示器图标宽高比。</p>
+    <p>* 修复怀旧服副本减益无法创建的问题。</p>
+    <p>* 修复载具图标。</p>
+    <p>* 修复层数文本。</p>
+    <p>* 修复图标/色块组指示器的尺寸。</p>
+    <p>* 更新血条渐变色相关的选项。</p>
+    <p>* 更新 LibGetFrame 相关功能（Cell.GetUnitFrame -> Cell.GetUnitFramesForLGF）。</p>
+    <p>+ 为“状态文字”指示器添加了调节对齐方式的选项。</p>
+    <p>+ 添加俄语环境下的副本数据。</p>
+    <p>+ 新自定义指示器类型：边框。</p>
     <br/>
 
     <h1>r234-release (Jul 13, 2024, 17:37 GMT+8)</h1>

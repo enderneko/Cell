@@ -205,7 +205,7 @@ function I.GetDefaultCustomIndicatorTable(name, indicatorName, type, auraType)
             ["indicatorName"] = indicatorName,
             ["type"] = type,
             ["enabled"] = true,
-            ["thickness"] = 3,
+            ["thickness"] = 2,
             ["frameLevel"] = 10,
             ["auraType"] = auraType,
             ["auras"] = {},

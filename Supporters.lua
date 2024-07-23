@@ -126,6 +126,7 @@ local supporters2 = { -- 有些早期的发电记录已经丢失了……
     {"Jim", "Ko-fi"}, -- 2024-07-13
     {"Cerrmor-Stormrage", "Ko-fi"}, -- 2024-07-15
     {"Drumonji-Blackhand", "Ko-fi"}, -- 2024-07-19
+    {"Intuition", "Ko-fi"}, -- 2024-07-23
 }
 
 -------------------------------------------------
