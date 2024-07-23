@@ -150,6 +150,15 @@
           "labels": [],
           "checkboxes": [],
           "comments": []
+        },
+        {
+          "id": "65017c0e-525a-42ed-adf7-7a396547406c",
+          "listId": "fc9baa7c-c3e7-49a4-8526-816c794e5ed9",
+          "title": "Bars and max duration option",
+          "description": "",
+          "labels": [],
+          "checkboxes": [],
+          "comments": []
         }
       ]
     },
