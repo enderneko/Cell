@@ -1424,7 +1424,7 @@ function I.CreateAura_Icons(name, parent, num)
     icons.UpdatePixelPerfect = Icons_UpdatePixelPerfect
 
     for i = 1, num do
-        local name = name.."Icons"..i
+        local name = name.."Icon"..i
         local frame = I.CreateAura_BarIcon(name, icons)
         icons[i] = frame
     end
