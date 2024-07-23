@@ -339,8 +339,10 @@ local function CreatePreviewButtons()
     previewButton2:SetScript("OnHide", nil)
     previewButton2:Show()
 
-    previewButton2.widgets.powerBar:SetMinMaxValues(0, 1)
-    previewButton2.widgets.powerBar:SetValue(1)
+    previewButton2.widgets.healthBar:SetMinMaxValues(0, 100)
+    previewButton2.widgets.healthBar:SetValue(60)
+    previewButton2.states.healthMax = 100
+    previewButton2.states.healthPercent = 0.6
 
     local previewButtonBG2 = Cell:CreateFrame("CellAppearancePreviewButtonBG2", appearanceTab)
     previewButtonBG2:SetPoint("TOPLEFT", previewButton2, 0, 20)
@@ -473,59 +475,63 @@ local function UpdatePreviewShields(r, g, b)
     end
 end
 
-local function UpdatePreviewButton()
-    previewButton.widgets.healthBar:SetStatusBarTexture(Cell.vars.texture)
-    previewButton.widgets.healthBarLoss:SetTexture(Cell.vars.texture)
-    previewButton.widgets.powerBar:SetStatusBarTexture(Cell.vars.texture)
-    previewButton.widgets.powerBarLoss:SetTexture(Cell.vars.texture)
-    previewButton.widgets.incomingHeal:SetTexture(Cell.vars.texture)
-    previewButton.widgets.damageFlashTex:SetTexture(Cell.vars.texture)
+local function UpdatePreviewButton(which)
+    if not which or which == "texture" or which == "reset" then
+        previewButton.widgets.healthBar:SetStatusBarTexture(Cell.vars.texture)
+        previewButton.widgets.healthBarLoss:SetTexture(Cell.vars.texture)
+        previewButton.widgets.powerBar:SetStatusBarTexture(Cell.vars.texture)
+        previewButton.widgets.powerBarLoss:SetTexture(Cell.vars.texture)
+        previewButton.widgets.incomingHeal:SetTexture(Cell.vars.texture)
+        previewButton.widgets.damageFlashTex:SetTexture(Cell.vars.texture)
 
-    previewButton2.widgets.healthBar:SetStatusBarTexture(Cell.vars.texture)
-    previewButton2.widgets.healthBar:GetStatusBarTexture():SetDrawLayer("ARTWORK", -7) --! VERY IMPORTANT
-    previewButton2.widgets.healthBarLoss:SetTexture(Cell.vars.texture)
-    previewButton2.widgets.powerBar:SetStatusBarTexture(Cell.vars.texture)
-    previewButton2.widgets.powerBar:GetStatusBarTexture():SetDrawLayer("ARTWORK", -7) --! VERY IMPORTANT
-    previewButton2.widgets.powerBarLoss:SetTexture(Cell.vars.texture)
-    previewButton2.widgets.incomingHeal:SetTexture(Cell.vars.texture)
-    previewButton2.widgets.damageFlashTex:SetTexture(Cell.vars.texture)
+        previewButton2.widgets.healthBar:SetStatusBarTexture(Cell.vars.texture)
+        previewButton2.widgets.healthBar:GetStatusBarTexture():SetDrawLayer("ARTWORK", -7) --! VERY IMPORTANT
+        previewButton2.widgets.healthBarLoss:SetTexture(Cell.vars.texture)
+        previewButton2.widgets.powerBar:SetStatusBarTexture(Cell.vars.texture)
+        previewButton2.widgets.powerBar:GetStatusBarTexture():SetDrawLayer("ARTWORK", -7) --! VERY IMPORTANT
+        previewButton2.widgets.powerBarLoss:SetTexture(Cell.vars.texture)
+        previewButton2.widgets.incomingHeal:SetTexture(Cell.vars.texture)
+        previewButton2.widgets.damageFlashTex:SetTexture(Cell.vars.texture)
+    end
 
-    -- power color
-    local r, g, b = F:GetPowerBarColor("player", Cell.vars.playerClass)
-    previewButton.widgets.powerBar:SetStatusBarColor(r, g, b)
-    previewButton2.widgets.powerBar:SetStatusBarColor(r, g, b)
+    if not which or which == "color" or which == "alpha" or which == "reset" then
+        -- power color
+        local r, g, b = F:GetPowerBarColor("player", Cell.vars.playerClass)
+        previewButton.widgets.powerBar:SetStatusBarColor(r, g, b)
+        previewButton2.widgets.powerBar:SetStatusBarColor(r, g, b)
 
-    -- alpha
-    previewButton:SetBackdropColor(0, 0, 0, CellDB["appearance"]["bgAlpha"])
-    previewButton2:SetBackdropColor(0, 0, 0, CellDB["appearance"]["bgAlpha"])
+        -- health color
+        local r, g, b, lossR, lossG, lossB
+        r, g, b, lossR, lossG, lossB = F:GetHealthBarColor(previewButton.perc or 1, previewButton.perc == 0, F:GetClassColor(Cell.vars.playerClass))
+        previewButton.widgets.healthBar:SetStatusBarColor(r, g, b, CellDB["appearance"]["barAlpha"])
+        previewButton.widgets.healthBarLoss:SetVertexColor(lossR, lossG, lossB, CellDB["appearance"]["lossAlpha"])
 
-    -- barOrientation
-    B:SetOrientation(previewButton, Cell.vars.currentLayoutTable["barOrientation"][1], Cell.vars.currentLayoutTable["barOrientation"][2])
-    B:SetOrientation(previewButton2, Cell.vars.currentLayoutTable["barOrientation"][1], Cell.vars.currentLayoutTable["barOrientation"][2])
+        r, g, b, lossR, lossG, lossB = F:GetHealthBarColor(0.6, false, F:GetClassColor(Cell.vars.playerClass))
+        previewButton2.widgets.healthBar:SetStatusBarColor(r, g, b, CellDB["appearance"]["barAlpha"])
+        previewButton2.widgets.healthBarLoss:SetVertexColor(lossR, lossG, lossB, CellDB["appearance"]["lossAlpha"])
+    end
 
-    -- size
-    P:Size(previewButton, Cell.vars.currentLayoutTable["main"]["size"][1], Cell.vars.currentLayoutTable["main"]["size"][2])
-    B:SetPowerSize(previewButton, Cell.vars.currentLayoutTable["main"]["powerSize"])
-    P:Size(previewButton2, Cell.vars.currentLayoutTable["main"]["size"][1], Cell.vars.currentLayoutTable["main"]["size"][2])
-    B:SetPowerSize(previewButton2, Cell.vars.currentLayoutTable["main"]["powerSize"])
+    if not which or which == "alpha" or which == "reset" then
+        -- alpha
+        previewButton:SetBackdropColor(0, 0, 0, CellDB["appearance"]["bgAlpha"])
+        previewButton2:SetBackdropColor(0, 0, 0, CellDB["appearance"]["bgAlpha"])
+    end
 
-    previewButton2.widgets.healthBar:SetMinMaxValues(0, 100)
-    previewButton2.widgets.healthBar:SetValue(60)
-    previewButton2.states.healthMax = 100
-    previewButton2.states.healthPercent = 0.6
+    if not which or which == "layout" then
+        -- barOrientation
+        B:SetOrientation(previewButton, Cell.vars.currentLayoutTable["barOrientation"][1], Cell.vars.currentLayoutTable["barOrientation"][2])
+        B:SetOrientation(previewButton2, Cell.vars.currentLayoutTable["barOrientation"][1], Cell.vars.currentLayoutTable["barOrientation"][2])
 
+        -- size
+        P:Size(previewButton, Cell.vars.currentLayoutTable["main"]["size"][1], Cell.vars.currentLayoutTable["main"]["size"][2])
+        B:SetPowerSize(previewButton, Cell.vars.currentLayoutTable["main"]["powerSize"])
+        P:Size(previewButton2, Cell.vars.currentLayoutTable["main"]["size"][1], Cell.vars.currentLayoutTable["main"]["size"][2])
+        B:SetPowerSize(previewButton2, Cell.vars.currentLayoutTable["main"]["powerSize"])
+    end
 
-    -- health color
-    local r, g, b, lossR, lossG, lossB
-    r, g, b, lossR, lossG, lossB = F:GetHealthBarColor(previewButton.perc or 1, previewButton.perc == 0, F:GetClassColor(Cell.vars.playerClass))
-    previewButton.widgets.healthBar:SetStatusBarColor(r, g, b, CellDB["appearance"]["barAlpha"])
-    previewButton.widgets.healthBarLoss:SetVertexColor(lossR, lossG, lossB, CellDB["appearance"]["lossAlpha"])
-
-    r, g, b, lossR, lossG, lossB = F:GetHealthBarColor(0.6, false, F:GetClassColor(Cell.vars.playerClass))
-    previewButton2.widgets.healthBar:SetStatusBarColor(r, g, b, CellDB["appearance"]["barAlpha"])
-    previewButton2.widgets.healthBarLoss:SetVertexColor(lossR, lossG, lossB, CellDB["appearance"]["lossAlpha"])
-
-    UpdatePreviewShields(r, g, b)
+    if not which or which == "shields" or which == "reset" then
+        UpdatePreviewShields(r, g, b)
+    end
 
     previewButton.loaded = true
 
@@ -1569,7 +1575,7 @@ Cell:RegisterCallback("ShowOptionsTab", "AppearanceTab_ShowTab", ShowTab)
 -------------------------------------------------
 local function UpdateLayout()
     if init and previewButton.loaded then
-        UpdatePreviewButton()
+        UpdatePreviewButton("layout")
     end
 end
 Cell:RegisterCallback("UpdateLayout", "AppearanceTab_UpdateLayout", UpdateLayout)
@@ -1684,7 +1690,7 @@ local function UpdateAppearance(which)
 
     -- preview
     if which ~= "highlightColor" and which ~= "highlightSize" and init and previewButton:IsVisible() then
-        UpdatePreviewButton()
+        UpdatePreviewButton(which)
     end
 end
 Cell:RegisterCallback("UpdateAppearance", "UpdateAppearance", UpdateAppearance)
