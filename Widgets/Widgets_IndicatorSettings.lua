@@ -3901,6 +3901,27 @@ local function CreateAuraButtons(parent, auraButtons, auraTable, noUpDownButtons
             auraButtons[i].colorPicker:HookScript("OnLeave", function()
                 auraButtons[i]:GetScript("OnLeave")(auraButtons[i])
             end)
+
+            -- spell tooltip
+            auraButtons[i]:HookScript("OnEnter", function(self)
+                if parent.popupEditBox:IsShown() then return end
+
+                local name = F:GetSpellInfo(self.spellId)
+                if not name then
+                    CellSpellTooltip:Hide()
+                    return
+                end
+
+                CellSpellTooltip:SetOwner(auraButtons[i], "ANCHOR_NONE")
+                CellSpellTooltip:SetPoint("TOPRIGHT", auraButtons[i], "TOPLEFT", -1, 0)
+                CellSpellTooltip:SetSpellByID(self.spellId, self.spellTex)
+                CellSpellTooltip:Show()
+            end)
+            auraButtons[i]:HookScript("OnLeave", function()
+                if not parent.popupEditBox:IsShown() then
+                    CellSpellTooltip:Hide()
+                end
+            end)
         end
 
         local color
@@ -3929,26 +3950,6 @@ local function CreateAuraButtons(parent, auraButtons, auraTable, noUpDownButtons
                 auraButtons[i].spellIconBg:Hide()
                 auraButtons[i].spellIcon:Hide()
             end
-            -- spell tooltip
-            auraButtons[i]:HookScript("OnEnter", function(self)
-                if not parent.popupEditBox:IsShown() then
-                    local name = F:GetSpellInfo(self.spellId)
-                    if not name then
-                        CellSpellTooltip:Hide()
-                        return
-                    end
-
-                    CellSpellTooltip:SetOwner(auraButtons[i], "ANCHOR_NONE")
-                    CellSpellTooltip:SetPoint("TOPRIGHT", auraButtons[i], "TOPLEFT", -1, 0)
-                    CellSpellTooltip:SetSpellByID(self.spellId, self.spellTex)
-                    CellSpellTooltip:Show()
-                end
-            end)
-            auraButtons[i]:HookScript("OnLeave", function()
-                if not parent.popupEditBox:IsShown() then
-                    CellSpellTooltip:Hide()
-                end
-            end)
         end
 
         -- points
@@ -4489,6 +4490,26 @@ local function CreateCleuAuraButtons(parent, auraTable, updateHeightFunc)
                 cleuAuraButtons[i]:GetScript("OnLeave")(cleuAuraButtons[i])
                 cleuAuraButtons[i].edit.tex:SetVertexColor(0.6, 0.6, 0.6, 1)
             end)
+
+            -- spell tooltip
+            cleuAuraButtons[i]:HookScript("OnEnter", function(self)
+                if parent.inputs:IsShown() then return end
+
+                local name = F:GetSpellInfo(self.spellId)
+                if not name then
+                    CellSpellTooltip:Hide()
+                    return
+                end
+
+                CellSpellTooltip:SetOwner(cleuAuraButtons[i], "ANCHOR_NONE")
+                CellSpellTooltip:SetPoint("TOPRIGHT", cleuAuraButtons[i], "TOPLEFT", -1, 0)
+                CellSpellTooltip:SetSpellByID(self.spellId)
+                CellSpellTooltip:Show()
+            end)
+            cleuAuraButtons[i]:HookScript("OnLeave", function()
+                if parent.inputs:IsShown() then return end
+                CellSpellTooltip:Hide()
+            end)
         end
 
         local name, icon = F:GetSpellInfo(t[1])
@@ -4505,26 +4526,6 @@ local function CreateCleuAuraButtons(parent, auraTable, updateHeightFunc)
         end
         cleuAuraButtons[i].spellId = t[1]
         cleuAuraButtons[i].duration = t[2]
-
-        -- spell tooltip
-        cleuAuraButtons[i]:HookScript("OnEnter", function(self)
-            if parent.inputs:IsShown() then return end
-
-            local name = F:GetSpellInfo(self.spellId)
-            if not name then
-                CellSpellTooltip:Hide()
-                return
-            end
-
-            CellSpellTooltip:SetOwner(cleuAuraButtons[i], "ANCHOR_NONE")
-            CellSpellTooltip:SetPoint("TOPRIGHT", cleuAuraButtons[i], "TOPLEFT", -1, 0)
-            CellSpellTooltip:SetSpellByID(self.spellId)
-            CellSpellTooltip:Show()
-        end)
-        cleuAuraButtons[i]:HookScript("OnLeave", function()
-            if parent.inputs:IsShown() then return end
-            CellSpellTooltip:Hide()
-        end)
 
         -- points
         cleuAuraButtons[i]:ClearAllPoints()
@@ -5088,6 +5089,27 @@ local function CreateConsumableButtons(parent, spellTable, updateHeightFunc)
             consumableButtons[i]:SetScript("OnClick", function(self, button)
                 CellIndicatorsPreviewButton.indicators.actions:Display(consumableButtons[i].animationType, consumableButtons[i].animationColor)
             end)
+
+            -- spell tooltip
+            consumableButtons[i]:HookScript("OnEnter", function(self)
+                if not parent.popupEditBox:IsShown() then
+                    local name = F:GetSpellInfo(self.spellId)
+                    if not name then
+                        CellSpellTooltip:Hide()
+                        return
+                    end
+
+                    CellSpellTooltip:SetOwner(consumableButtons[i], "ANCHOR_NONE")
+                    CellSpellTooltip:SetPoint("TOPRIGHT", consumableButtons[i], "TOPLEFT", -1, 0)
+                    CellSpellTooltip:SetSpellByID(self.spellId)
+                    CellSpellTooltip:Show()
+                end
+            end)
+            consumableButtons[i]:HookScript("OnLeave", function()
+                if not parent.popupEditBox:IsShown() then
+                    CellSpellTooltip:Hide()
+                end
+            end)
         end
 
         -- fill data
@@ -5108,27 +5130,6 @@ local function CreateConsumableButtons(parent, spellTable, updateHeightFunc)
         consumableButtons[i].styleDropdown:SetSelected(spell[2][1])
         consumableButtons[i].animationColor = spell[2][2]
         consumableButtons[i].colorPicker:SetColor(spell[2][2])
-
-        -- spell tooltip
-        consumableButtons[i]:HookScript("OnEnter", function(self)
-            if not parent.popupEditBox:IsShown() then
-                local name = F:GetSpellInfo(self.spellId)
-                if not name then
-                    CellSpellTooltip:Hide()
-                    return
-                end
-
-                CellSpellTooltip:SetOwner(consumableButtons[i], "ANCHOR_NONE")
-                CellSpellTooltip:SetPoint("TOPRIGHT", consumableButtons[i], "TOPLEFT", -1, 0)
-                CellSpellTooltip:SetSpellByID(self.spellId)
-                CellSpellTooltip:Show()
-            end
-        end)
-        consumableButtons[i]:HookScript("OnLeave", function()
-            if not parent.popupEditBox:IsShown() then
-                CellSpellTooltip:Hide()
-            end
-        end)
 
         -- points
         consumableButtons[i]:ClearAllPoints()
