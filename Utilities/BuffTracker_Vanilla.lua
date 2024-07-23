@@ -260,7 +260,7 @@ local function CreateBuffButton(parent, size, spell1, spell2, icon, index)
     if parent then b:SetFrameLevel(parent:GetFrameLevel()+1) end
     P:Size(b, size[1], size[2])
 
-    b:SetBackdrop({edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = P:Scale(1)})
+    b:SetBackdrop({edgeFile = Cell.vars.whiteTexture, edgeSize = P:Scale(1)})
     b:SetBackdropBorderColor(0, 0, 0, 1)
 
     b:RegisterForClicks("LeftButtonUp", "RightButtonUp", "LeftButtonDown", "RightButtonDown") -- NOTE: ActionButtonUseKeyDown will affect this
@@ -351,7 +351,7 @@ local function CreateBuffButton(parent, size, spell1, spell2, icon, index)
     function b:UpdatePixelPerfect()
         P:Resize(b)
         P:Repoint(b)
-        b:SetBackdrop({edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = P:Scale(1)})
+        b:SetBackdrop({edgeFile = Cell.vars.whiteTexture, edgeSize = P:Scale(1)})
         b:SetBackdropBorderColor(0, 0, 0, 1)
 
         P:Repoint(b.texture)

@@ -3181,8 +3181,8 @@ function B:UpdateHighlightSize(button)
         end
 
         -- update thickness
-        targetHighlight:SetBackdrop({edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = P:Scale(size)})
-        mouseoverHighlight:SetBackdrop({edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = P:Scale(size)})
+        targetHighlight:SetBackdrop({edgeFile = Cell.vars.whiteTexture, edgeSize = P:Scale(size)})
+        mouseoverHighlight:SetBackdrop({edgeFile = Cell.vars.whiteTexture, edgeSize = P:Scale(size)})
 
         -- update color
         targetHighlight:SetBackdropBorderColor(unpack(CellDB["appearance"]["targetColor"]))
@@ -3288,7 +3288,7 @@ end
 
 -- pixel perfect
 function B:UpdatePixelPerfect(button, updateIndicators)
-    button:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8x8", edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = P:Scale(CELL_BORDER_SIZE)})
+    button:SetBackdrop({bgFile = Cell.vars.whiteTexture, edgeFile = Cell.vars.whiteTexture, edgeSize = P:Scale(CELL_BORDER_SIZE)})
     button:SetBackdropColor(0, 0, 0, CellDB["appearance"]["bgAlpha"])
     button:SetBackdropBorderColor(unpack(CELL_BORDER_COLOR))
     if not InCombatLockdown() then P:Resize(button) end
@@ -3366,11 +3366,11 @@ function CellUnitButton_OnLoad(button)
     -- local background = button:CreateTexture(name.."Background", "BORDER")
     -- button.widgets.background = background
     -- background:SetAllPoints(button)
-    -- background:SetTexture("Interface\\BUTTONS\\WHITE8X8.BLP")
+    -- background:SetTexture(Cell.vars.whiteTexture)
     -- background:SetVertexColor(0, 0, 0, 1)
 
     -- backdrop
-    button:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8x8", edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = P:Scale(CELL_BORDER_SIZE)})
+    button:SetBackdrop({bgFile = Cell.vars.whiteTexture, edgeFile = Cell.vars.whiteTexture, edgeSize = P:Scale(CELL_BORDER_SIZE)})
     button:SetBackdropColor(0, 0, 0, 1)
     button:SetBackdropBorderColor(unpack(CELL_BORDER_COLOR))
 
@@ -3491,7 +3491,7 @@ function CellUnitButton_OnLoad(button)
     -- flash
     local damageFlashTex = healthBar:CreateTexture(name.."DamageFlash", "ARTWORK", nil, -6)
     button.widgets.damageFlashTex = damageFlashTex
-    damageFlashTex:SetTexture("Interface\\BUTTONS\\WHITE8X8")
+    damageFlashTex:SetTexture(Cell.vars.whiteTexture)
     damageFlashTex:SetVertexColor(1, 1, 1, 0.7)
     -- P:Point(damageFlashTex, "TOPLEFT", healthBar:GetStatusBarTexture(), "TOPRIGHT")
     -- P:Point(damageFlashTex, "BOTTOMLEFT", healthBar:GetStatusBarTexture(), "BOTTOMRIGHT")
@@ -3523,7 +3523,7 @@ function CellUnitButton_OnLoad(button)
     button.widgets.targetHighlight = targetHighlight
     targetHighlight:EnableMouse(false)
     targetHighlight:SetFrameLevel(button:GetFrameLevel()+3)
-    -- targetHighlight:SetBackdrop({edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = P:Scale(1)})
+    -- targetHighlight:SetBackdrop({edgeFile = Cell.vars.whiteTexture, edgeSize = P:Scale(1)})
     -- P:Point(targetHighlight, "TOPLEFT", button, "TOPLEFT", -1, 1)
     -- P:Point(targetHighlight, "BOTTOMRIGHT", button, "BOTTOMRIGHT", 1, -1)
     targetHighlight:Hide()
@@ -3533,7 +3533,7 @@ function CellUnitButton_OnLoad(button)
     button.widgets.mouseoverHighlight = mouseoverHighlight
     mouseoverHighlight:EnableMouse(false)
     mouseoverHighlight:SetFrameLevel(button:GetFrameLevel()+4)
-    -- mouseoverHighlight:SetBackdrop({edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = P:Scale(1)})
+    -- mouseoverHighlight:SetBackdrop({edgeFile = Cell.vars.whiteTexture, edgeSize = P:Scale(1)})
     -- P:Point(mouseoverHighlight, "TOPLEFT", button, "TOPLEFT", -1, 1)
     -- P:Point(mouseoverHighlight, "BOTTOMRIGHT", button, "BOTTOMRIGHT", 1, -1)
     mouseoverHighlight:Hide()
@@ -3543,7 +3543,7 @@ function CellUnitButton_OnLoad(button)
     -- button.widgets.readyCheckHighlight = readyCheckHighlight
     -- readyCheckHighlight:SetPoint("TOPLEFT", -1, 1)
     -- readyCheckHighlight:SetPoint("BOTTOMRIGHT", 1, -1)
-    -- readyCheckHighlight:SetTexture("Interface\\Buttons\\WHITE8x8")
+    -- readyCheckHighlight:SetTexture(Cell.vars.whiteTexture)
     -- readyCheckHighlight:Hide()
 
     -- aggro bar

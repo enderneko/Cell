@@ -187,7 +187,7 @@ local function CreateLayoutPreview()
             -- header[j]:SetSize(30, 20)
 
             header[j].tex = header:CreateTexture(nil, "ARTWORK")
-            header[j].tex:SetTexture("Interface\\Buttons\\WHITE8x8")
+            header[j].tex:SetTexture(Cell.vars.whiteTexture)
             header[j].tex:SetPoint("TOPLEFT", header[j], "TOPLEFT", P:Scale(1), P:Scale(-1))
             header[j].tex:SetPoint("BOTTOMRIGHT", header[j], "BOTTOMRIGHT", P:Scale(-1), P:Scale(1))
 
@@ -227,7 +227,7 @@ local function CreateLayoutPreview()
         f:SetAlpha(0.555)
 
         f.tex = layoutPreview.combinedHeader:CreateTexture(nil, "ARTWORK")
-        f.tex:SetTexture("Interface\\Buttons\\WHITE8x8")
+        f.tex:SetTexture(Cell.vars.whiteTexture)
         f.tex:SetPoint("TOPLEFT", f, "TOPLEFT", P:Scale(1), P:Scale(-1))
         f.tex:SetPoint("BOTTOMRIGHT", f, "BOTTOMRIGHT", P:Scale(-1), P:Scale(1))
         f.tex:SetVertexColor(F:ConvertRGB(255, 0, 0, 1 + ((1 - i) * 0.02)))
@@ -568,7 +568,7 @@ local function CreateNPCPreview()
         npcPreview.header[i]:SetAlpha(0.555)
 
         npcPreview.header[i].tex = npcPreview.header:CreateTexture(nil, "ARTWORK")
-        npcPreview.header[i].tex:SetTexture("Interface\\Buttons\\WHITE8x8")
+        npcPreview.header[i].tex:SetTexture(Cell.vars.whiteTexture)
 
         npcPreview.header[i].tex:SetPoint("TOPLEFT", npcPreview.header[i], "TOPLEFT", P:Scale(1), P:Scale(-1))
         npcPreview.header[i].tex:SetPoint("BOTTOMRIGHT", npcPreview.header[i], "BOTTOMRIGHT", P:Scale(-1), P:Scale(1))
@@ -817,7 +817,7 @@ local function CreateRaidPetPreview()
         raidPetPreview.header[i]:SetAlpha(0.555)
 
         raidPetPreview.header[i].tex = raidPetPreview.header:CreateTexture(nil, "ARTWORK")
-        raidPetPreview.header[i].tex:SetTexture("Interface\\Buttons\\WHITE8x8")
+        raidPetPreview.header[i].tex:SetTexture(Cell.vars.whiteTexture)
 
         raidPetPreview.header[i].tex:SetPoint("TOPLEFT", raidPetPreview.header[i], "TOPLEFT", P:Scale(1), P:Scale(-1))
         raidPetPreview.header[i].tex:SetPoint("BOTTOMRIGHT", raidPetPreview.header[i], "BOTTOMRIGHT", P:Scale(-1), P:Scale(1))
@@ -1076,7 +1076,7 @@ local function CreateSpotlightPreview()
         spotlightPreview.header[i]:SetAlpha(0.555)
 
         spotlightPreview.header[i].tex = spotlightPreview.header:CreateTexture(nil, "ARTWORK")
-        spotlightPreview.header[i].tex:SetTexture("Interface\\Buttons\\WHITE8x8")
+        spotlightPreview.header[i].tex:SetTexture(Cell.vars.whiteTexture)
 
         spotlightPreview.header[i].tex:SetPoint("TOPLEFT", spotlightPreview.header[i], "TOPLEFT", P:Scale(1), P:Scale(-1))
         spotlightPreview.header[i].tex:SetPoint("BOTTOMRIGHT", spotlightPreview.header[i], "BOTTOMRIGHT", P:Scale(-1), P:Scale(1))

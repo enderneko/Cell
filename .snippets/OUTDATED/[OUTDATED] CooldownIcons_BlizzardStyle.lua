@@ -110,7 +110,7 @@ function I.CreateAura_BarIcon(name, parent)
     local frame = CreateFrame("Frame", name, parent, "BackdropTemplate")
     frame:Hide()
     -- frame:SetSize(11, 11)
-    frame:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8x8"})
+    frame:SetBackdrop({bgFile = Cell.vars.whiteTexture})
     frame:SetBackdropColor(0, 0, 0, 1)
 
     local icon = frame:CreateTexture(name.."Icon", "ARTWORK")

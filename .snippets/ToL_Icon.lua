@@ -6,7 +6,7 @@ local F = Cell.funcs
 local P = Cell.pixelPerfectFuncs
 
 local icon = CreateFrame("Frame", nil, CellMainFrame, "BackdropTemplate")
-icon:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8x8"})
+icon:SetBackdrop({bgFile = Cell.vars.whiteTexture})
 icon:SetBackdropColor(0, 0, 0, 1)
 icon:SetSize(13, 13) -- 尺寸
 icon:Hide()

@@ -17,7 +17,7 @@ local F = Cell.funcs
 local P = Cell.pixelPerfectFuncs
 
 local tooltip = CreateFrame("GameTooltip", "CellClickCastingTips", CellMainFrame, "CellTooltipTemplate,BackdropTemplate")
-tooltip:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8x8", edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = P:Scale(1)})
+tooltip:SetBackdrop({bgFile = Cell.vars.whiteTexture, edgeFile = Cell.vars.whiteTexture, edgeSize = P:Scale(1)})
 tooltip:SetBackdropColor(0.1, 0.1, 0.1, 0.9)
 tooltip:SetBackdropBorderColor(Cell:GetAccentColorRGB())
 tooltip:SetOwner(UIParent, "ANCHOR_NONE")

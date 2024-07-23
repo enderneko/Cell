@@ -4656,7 +4656,7 @@ local function CreateSpellButtons(parent, class, spells, disableds)
     for spellId in pairs(spells) do
         if not spellButtons[buttonIndex] then
             spellButtons[buttonIndex] = CreateFrame("Button", "CellIndicatorSettings_BuiltIns_SpellButton"..buttonIndex, parent:GetParent(), "BackdropTemplate")
-            spellButtons[buttonIndex]:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8x8"})
+            spellButtons[buttonIndex]:SetBackdrop({bgFile = Cell.vars.whiteTexture})
             P:Size(spellButtons[buttonIndex], 20, 20)
 
             spellButtons[buttonIndex].icon = spellButtons[buttonIndex]:CreateTexture(nil, "ARTWORK")
@@ -4808,7 +4808,7 @@ end
 
 local function CreateActionPreview(parent, style)
     local f = CreateFrame("Frame", "CellIndicatorSettings_ActionsPreview_Type"..style, parent, "BackdropTemplate")
-    f:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8x8", edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = P:Scale(1)})
+    f:SetBackdrop({bgFile = Cell.vars.whiteTexture, edgeFile = Cell.vars.whiteTexture, edgeSize = P:Scale(1)})
     f:SetBackdropColor(0.2, 0.2, 0.2, 1)
     f:SetBackdropBorderColor(0, 0, 0, 1)
 

@@ -1015,7 +1015,7 @@ end
 -- ----------------------------------------------------------------------- --
 local function CreatePreviewButton(b)
     local p = CreateFrame("Frame", nil, CellMainFrame, "BackdropTemplate")
-    p:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8x8"})
+    p:SetBackdrop({bgFile = Cell.vars.whiteTexture})
     p:SetBackdropColor(0.5, 0.5, 0.5, 0.7)
     p:SetAllPoints(b)
     p:SetFrameStrata("LOW")
@@ -1095,9 +1095,9 @@ CreateQuickCastButton = function(parent, name, isPreview)
     local outerCD = CreateFrame("Cooldown", name.."OuterCD", b, "BackdropTemplate,CooldownFrameTemplate")
     b.outerCD = outerCD
     outerCD:SetFrameLevel(b:GetFrameLevel() + 1)
-    outerCD:SetSwipeTexture("Interface\\Buttons\\WHITE8x8")
+    outerCD:SetSwipeTexture(Cell.vars.whiteTexture)
     outerCD:SetDrawEdge(true)
-    -- outerCD:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8x8"})
+    -- outerCD:SetBackdrop({bgFile = Cell.vars.whiteTexture})
     -- outerCD:SetBackdropColor(0, 0, 0, 0.5)
     outerCD.noCooldownCount = true -- disable omnicc
     outerCD:SetHideCountdownNumbers(true)
@@ -1116,9 +1116,9 @@ CreateQuickCastButton = function(parent, name, isPreview)
     local innerCD = CreateFrame("Cooldown", name.."InnerCD", b, "BackdropTemplate,CooldownFrameTemplate")
     b.innerCD = innerCD
     innerCD:SetFrameLevel(b:GetFrameLevel() + 2)
-    innerCD:SetSwipeTexture("Interface\\Buttons\\WHITE8x8")
+    innerCD:SetSwipeTexture(Cell.vars.whiteTexture)
     innerCD:SetDrawEdge(true)
-    innerCD:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8x8"})
+    innerCD:SetBackdrop({bgFile = Cell.vars.whiteTexture})
     innerCD:SetBackdropColor(0, 0, 0, 0.4)
     innerCD.noCooldownCount = true -- disable omnicc
     innerCD:SetHideCountdownNumbers(true)
@@ -1211,7 +1211,7 @@ CreateQuickCastButton = function(parent, name, isPreview)
         b:_SetSize(P:Scale(size), P:Scale(size))
 
         borderSize = floor(size/8)
-        b:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8x8", edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = P:Scale(borderSize)})
+        b:SetBackdrop({bgFile = Cell.vars.whiteTexture, edgeFile = Cell.vars.whiteTexture, edgeSize = P:Scale(borderSize)})
         b:SetBackdropColor(b._r*0.2, b._g*0.2, b._b*0.2, 0.7)
         b:SetBackdropBorderColor(b._r, b._g, b._b, 0.9)
 

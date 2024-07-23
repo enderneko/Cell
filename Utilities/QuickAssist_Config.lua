@@ -410,7 +410,7 @@ local function UpdatePreviewButton()
         previewButton:SetScript("OnUpdate", nil)
         previewButton:Show()
 
-        previewButton:SetBackdrop({edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = P:Scale(CELL_BORDER_SIZE)})
+        previewButton:SetBackdrop({edgeFile = Cell.vars.whiteTexture, edgeSize = P:Scale(CELL_BORDER_SIZE)})
         previewButton:SetBackdropBorderColor(unpack(CELL_BORDER_COLOR))
 
         previewButton.healthBar:SetPoint("TOPLEFT", previewButton, "TOPLEFT", P:Scale(1), P:Scale(-1))
@@ -598,7 +598,7 @@ local function UpdateLayoutPreview()
 
         for i = 1, 40 do
             layoutPreviewButtons[i] = CreateFrame("Frame", nil, layoutPreviewFrame, "BackdropTemplate")
-            layoutPreviewButtons[i]:SetBackdrop({bgFile="Interface\\Buttons\\WHITE8x8", edgeFile="Interface\\Buttons\\WHITE8x8", edgeSize=P:Scale(1)})
+            layoutPreviewButtons[i]:SetBackdrop({bgFile=Cell.vars.whiteTexture, edgeFile=Cell.vars.whiteTexture, edgeSize=P:Scale(1)})
             layoutPreviewButtons[i]:SetBackdropColor(0, 0, 0, 0.5)
             layoutPreviewButtons[i]:SetBackdropBorderColor(0, 0, 0, 1)
             layoutPreviewButtons[i]:EnableMouse(true)

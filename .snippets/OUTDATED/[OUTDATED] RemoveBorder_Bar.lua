@@ -37,9 +37,9 @@ end
 
 function I.CreateAura_Bar(name, parent)
     local bar = CreateFrame("StatusBar", name, parent, "BackdropTemplate")
-    bar:SetStatusBarTexture("Interface\\Buttons\\WHITE8x8")
+    bar:SetStatusBarTexture(Cell.vars.whiteTexture)
     P:Size(bar, 18, 4)
-    bar:SetBackdrop({bgFile="Interface\\Buttons\\WHITE8x8"})
+    bar:SetBackdrop({bgFile=Cell.vars.whiteTexture})
     bar:SetBackdropColor(0.07, 0.07, 0.07, 0.7)
     bar:Hide()
     bar.indicatorType = "bar"

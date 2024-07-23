@@ -634,7 +634,7 @@ function CellQuickAssist_OnLoad(button)
     local deadTex = healthBar:CreateTexture(nil, "OVERLAY")
     button.deadTex = deadTex
     deadTex:SetAllPoints(healthBar)
-    deadTex:SetTexture("Interface\\Buttons\\WHITE8x8")
+    deadTex:SetTexture(Cell.vars.whiteTexture)
     deadTex:SetGradient("VERTICAL", CreateColor(0.545, 0, 0, 1), CreateColor(0, 0, 0, 1))
     deadTex:Hide()
 
@@ -1191,8 +1191,8 @@ local function UpdateQuickAssist(which)
             end
 
             -- update thickness
-            targetHighlight:SetBackdrop({edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = P:Scale(size)})
-            mouseoverHighlight:SetBackdrop({edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = P:Scale(size)})
+            targetHighlight:SetBackdrop({edgeFile = Cell.vars.whiteTexture, edgeSize = P:Scale(size)})
+            mouseoverHighlight:SetBackdrop({edgeFile = Cell.vars.whiteTexture, edgeSize = P:Scale(size)})
 
             -- update color
             targetHighlight:SetBackdropBorderColor(unpack(styleTable["targetColor"]))
@@ -1360,7 +1360,7 @@ Cell:RegisterCallback("AddonLoaded", "QuickAssist_AddonLoaded", AddonLoaded)
 
 local function UpdatePixelPerfect()
     for i = 1, 40 do
-        header[i]:SetBackdrop({edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = P:Scale(CELL_BORDER_SIZE)})
+        header[i]:SetBackdrop({edgeFile = Cell.vars.whiteTexture, edgeSize = P:Scale(CELL_BORDER_SIZE)})
         header[i]:SetBackdropBorderColor(unpack(CELL_BORDER_COLOR))
 
         header[i].healthBar:SetPoint("TOPLEFT", header[i], "TOPLEFT", P:Scale(1), P:Scale(-1))

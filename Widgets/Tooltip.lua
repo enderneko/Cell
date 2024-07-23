@@ -7,7 +7,7 @@ local P = Cell.pixelPerfectFuncs
 -----------------------------------------
 local function CreateTooltip(name, hasIcon)
     local tooltip = CreateFrame("GameTooltip", name, nil, "CellTooltipTemplate,BackdropTemplate")
-    tooltip:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8x8", edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = 1})
+    tooltip:SetBackdrop({bgFile = Cell.vars.whiteTexture, edgeFile = Cell.vars.whiteTexture, edgeSize = 1})
     tooltip:SetBackdropColor(0.1, 0.1, 0.1, 0.9)
     tooltip:SetBackdropBorderColor(Cell:GetAccentColorRGB())
     tooltip:SetOwner(UIParent, "ANCHOR_NONE")
@@ -65,7 +65,7 @@ local function CreateTooltip(name, hasIcon)
     end)
 
     function tooltip:UpdatePixelPerfect()
-        tooltip:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8x8", edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = P:Scale(1)})
+        tooltip:SetBackdrop({bgFile = Cell.vars.whiteTexture, edgeFile = Cell.vars.whiteTexture, edgeSize = P:Scale(1)})
         tooltip:SetBackdropColor(0.1, 0.1, 0.1, 0.9)
         tooltip:SetBackdropBorderColor(Cell:GetAccentColorRGB())
         if hasIcon then

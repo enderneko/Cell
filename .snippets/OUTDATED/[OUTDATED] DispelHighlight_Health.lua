@@ -21,7 +21,7 @@ F:IterateAllUnitButtons(function(b)
     dispels.highlight:ClearAllPoints()
     dispels.highlight:SetAllPoints(b.widgets.healthBar:GetStatusBarTexture())
     if USE_SOLID_COLOR_TEXTURE then
-        dispels.highlight:SetTexture("Interface\\Buttons\\WHITE8x8")
+        dispels.highlight:SetTexture(Cell.vars.whiteTexture)
     else
         dispels.highlight:SetTexture(Cell.vars.texture)
     end

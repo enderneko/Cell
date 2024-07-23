@@ -1674,7 +1674,7 @@ end
 -- RangeCheck debug
 -------------------------------------------------
 local debug = CreateFrame("Frame", nil, UIParent, "BackdropTemplate")
-debug:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8x8"})
+debug:SetBackdrop({bgFile = Cell.vars.whiteTexture})
 debug:SetBackdropColor(0.1, 0.1, 0.1, 0.9)
 debug:SetBackdropBorderColor(0, 0, 0, 1)
 debug:SetSize(1, 1)

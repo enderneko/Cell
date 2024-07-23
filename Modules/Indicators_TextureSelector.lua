@@ -104,7 +104,7 @@ LoadTextures = function()
             b = CreateFrame("Button", nil, scrollFrame.content, "BackdropTemplate")
             buttons[i] = b
             P:Size(b, 50, 50)
-            b:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8x8", edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = P:Scale(1)})
+            b:SetBackdrop({bgFile = Cell.vars.whiteTexture, edgeFile = Cell.vars.whiteTexture, edgeSize = P:Scale(1)})
             b:SetBackdropColor(0.115, 0.115, 0.115, 1)
             b:SetBackdropBorderColor(0, 0, 0, 1)
             b:SetScript("OnEnter", function()

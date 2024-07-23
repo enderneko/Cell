@@ -370,7 +370,7 @@ local function CreateInstanceFrame()
     -- instance image frame
     local imageFrame = Cell:CreateFrame("RaidDebuffsTab_InstanceImage", debuffsTab, 128, 64, true)
     imageFrame.bg = imageFrame:CreateTexture(nil, "BACKGROUND")
-    imageFrame.bg:SetTexture("Interface\\Buttons\\WHITE8x8")
+    imageFrame.bg:SetTexture(Cell.vars.whiteTexture)
     imageFrame.bg:SetGradient("HORIZONTAL", CreateColor(0.1, 0.1, 0.1, 0), CreateColor(0.1, 0.1, 0.1, 1))
 
     imageFrame.tex = imageFrame:CreateTexture(nil, "ARTWORK")
@@ -489,7 +489,7 @@ local function CreateBossesFrame()
     -- boss image frame
     local imageFrame = Cell:CreateFrame("RaidDebuffsTab_BossImage", debuffsTab, 128, 64, true)
     imageFrame.bg = imageFrame:CreateTexture(nil, "BACKGROUND")
-    imageFrame.bg:SetTexture("Interface\\Buttons\\WHITE8x8")
+    imageFrame.bg:SetTexture(Cell.vars.whiteTexture)
     imageFrame.bg:SetGradient("HORIZONTAL", CreateColor(0.1, 0.1, 0.1, 0), CreateColor(0.1, 0.1, 0.1, 1))
     -- imageFrame.bg:SetAllPoints(imageFrame)
 

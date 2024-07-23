@@ -672,7 +672,7 @@ function U:CreateSpellRequestIcon(parent)
     srIcon:SetFrameLevel(parent.widgets.indicatorFrame:GetFrameLevel()+110)
     srIcon:Hide()
 
-    -- srIcon:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8x8"})
+    -- srIcon:SetBackdrop({bgFile = Cell.vars.whiteTexture})
     -- srIcon:SetBackdropColor(0, 0, 0, 1)
 
     srIcon.icon = srIcon:CreateTexture(nil, "ARTWORK")

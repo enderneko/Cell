@@ -168,7 +168,7 @@ tools:SetAttribute("_onmousedown", [=[
 -------------------------------------------------
 local loadingBar = CreateFrame("StatusBar", "CellLoadingBar", options)
 loadingBar:Hide()
-loadingBar:SetStatusBarTexture("Interface\\Buttons\\WHITE8x8")
+loadingBar:SetStatusBarTexture(Cell.vars.whiteTexture)
 loadingBar:SetStatusBarColor(0.5, 1, 0)
 P:Height(loadingBar, 1)
 P:Point(loadingBar, "BOTTOMLEFT", options, 1, 1)
@@ -324,10 +324,10 @@ local function GetRaidSetupDetail(role)
 
             for i = 1, Cell.vars.raidSetup[role][class] do
                 if line ~= "  " then
-                    line = line .. "|TInterface\\Buttons\\WHITE8x8:10:1:0:0:1:10:1:1:1:10:0:0:0|t"
+                    line = line .. "|TInterface\\AddOns\\Cell\\Media\\white:10:1:0:0:1:10:1:1:1:10:0:0:0|t"
                 end
 
-                line = line .. "|TInterface\\Buttons\\WHITE8x8:10:2:0:0:2:10:1:2:1:10:"..r..":"..g..":"..b.."|t"
+                line = line .. "|TInterface\\AddOns\\Cell\\Media\\white:10:2:0:0:2:10:1:2:1:10:"..r..":"..g..":"..b.."|t"
             end
         end
     end
@@ -384,7 +384,7 @@ local function MainFrame_UpdateVisibility()
         else
             menuFrame:Hide()
         end
-    else 
+    else
         if CellDB["general"]["showRaid"] then
             menuFrame:Show()
         else

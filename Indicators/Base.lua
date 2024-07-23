@@ -138,7 +138,7 @@ local function Shared_CreateCooldown_Vertical(frame)
     P:Point(cooldown, "BOTTOMRIGHT", frame.icon, "BOTTOMRIGHT", 0, CELL_BORDER_SIZE)
     cooldown:SetOrientation("VERTICAL")
     cooldown:SetReverseFill(true)
-    cooldown:SetStatusBarTexture("Interface\\Buttons\\WHITE8x8")
+    cooldown:SetStatusBarTexture(Cell.vars.whiteTexture)
 
     local texture = cooldown:GetStatusBarTexture()
     texture:SetAlpha(0)
@@ -151,7 +151,7 @@ local function Shared_CreateCooldown_Vertical(frame)
     spark:SetPoint("TOPRIGHT", texture, "BOTTOMRIGHT")
 
     local mask = cooldown:CreateMaskTexture()
-    mask:SetTexture("Interface\\Buttons\\WHITE8x8", "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
+    mask:SetTexture(Cell.vars.whiteTexture, "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
     mask:SetPoint("TOPLEFT")
     mask:SetPoint("BOTTOMRIGHT", texture)
 
@@ -177,7 +177,7 @@ local function Shared_CreateCooldown_Vertical_NoIcon(frame)
     P:Point(cooldown, "BOTTOMRIGHT", frame, -CELL_BORDER_SIZE, CELL_BORDER_SIZE + CELL_BORDER_SIZE)
     cooldown:SetOrientation("VERTICAL")
     cooldown:SetReverseFill(true)
-    cooldown:SetStatusBarTexture("Interface\\Buttons\\WHITE8x8")
+    cooldown:SetStatusBarTexture(Cell.vars.whiteTexture)
 
     local texture = cooldown:GetStatusBarTexture()
     texture:SetVertexColor(0, 0, 0, 0.8)
@@ -202,7 +202,7 @@ local function Shared_CreateCooldown_Clock(frame)
     P:Point(cooldown, "BOTTOMRIGHT", frame, -CELL_BORDER_SIZE, CELL_BORDER_SIZE)
     cooldown:SetReverse(true)
     cooldown:SetDrawEdge(false)
-    cooldown:SetSwipeTexture("Interface\\Buttons\\WHITE8x8")
+    cooldown:SetSwipeTexture(Cell.vars.whiteTexture)
     cooldown:SetSwipeColor(0, 0, 0, 0.8)
     -- cooldown:SetEdgeTexture([[Interface\Cooldown\UI-HUD-ActionBar-SecondaryCooldown]])
 
@@ -407,7 +407,7 @@ function I.CreateAura_BorderIcon(name, parent, borderSize)
     local frame = CreateFrame("Frame", name, parent, "BackdropTemplate")
     frame:Hide()
     -- frame:SetSize(11, 11)
-    frame:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8x8"})
+    frame:SetBackdrop({bgFile = Cell.vars.whiteTexture})
     frame:SetBackdropColor(0, 0, 0, 0.85)
 
     local border = frame:CreateTexture(name.."Border", "BORDER")
@@ -418,7 +418,7 @@ function I.CreateAura_BorderIcon(name, parent, borderSize)
     local cooldown = CreateFrame("Cooldown", name.."Cooldown", frame)
     frame.cooldown = cooldown
     cooldown:SetAllPoints(frame)
-    cooldown:SetSwipeTexture("Interface\\Buttons\\WHITE8x8")
+    cooldown:SetSwipeTexture(Cell.vars.whiteTexture)
     cooldown:SetSwipeColor(1, 1, 1)
     cooldown:SetHideCountdownNumbers(true)
     -- disable omnicc
@@ -549,7 +549,7 @@ function I.CreateAura_BarIcon(name, parent)
     local frame = CreateFrame("Frame", name, parent, "BackdropTemplate")
     frame:Hide()
     -- frame:SetSize(11, 11)
-    frame:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8x8"})
+    frame:SetBackdrop({bgFile = Cell.vars.whiteTexture})
     frame:SetBackdropColor(0, 0, 0, 1)
 
     local icon = frame:CreateTexture(name.."Icon", "ARTWORK")
@@ -871,7 +871,7 @@ function I.CreateAura_Rect(name, parent)
     local frame = CreateFrame("Frame", name, parent, "BackdropTemplate")
     frame:Hide()
     frame.indicatorType = "rect"
-    frame:SetBackdrop({edgeFile="Interface\\Buttons\\WHITE8x8", edgeSize=P:Scale(1)})
+    frame:SetBackdrop({edgeFile=Cell.vars.whiteTexture, edgeSize=P:Scale(1)})
     frame:SetBackdropBorderColor(0, 0, 0, 1)
 
     local tex = frame:CreateTexture(nil, "BORDER", nil, -7)
@@ -1132,7 +1132,7 @@ function I.CreateAura_Color(name, parent)
 
     local gradientTex = color:CreateTexture(nil, "ARTWORK")
     color.gradientTex = gradientTex
-    gradientTex:SetTexture("Interface\\Buttons\\WHITE8x8")
+    gradientTex:SetTexture(Cell.vars.whiteTexture)
     gradientTex:SetAllPoints(color)
     gradientTex:Hide()
 
@@ -1717,7 +1717,7 @@ end
 
 function I.CreateAura_Overlay(name, parent)
     local overlay = CreateFrame("StatusBar", name, parent.widgets.healthBar)
-    overlay:SetStatusBarTexture("Interface\\Buttons\\WHITE8x8")
+    overlay:SetStatusBarTexture(Cell.vars.whiteTexture)
     overlay:Hide()
     overlay.indicatorType = "overlay"
 
@@ -1934,7 +1934,7 @@ function I.CreateAura_Block(name, parent)
     frame:Hide()
     frame.indicatorType = "block"
 
-    frame:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8x8", edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = P:Scale(CELL_BORDER_SIZE)})
+    frame:SetBackdrop({bgFile = Cell.vars.whiteTexture, edgeFile = Cell.vars.whiteTexture, edgeSize = P:Scale(CELL_BORDER_SIZE)})
 
     Shared_SetCooldownStyle(frame, CELL_COOLDOWN_STYLE, true)
 

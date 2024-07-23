@@ -56,7 +56,7 @@ local function CreateAnimationGroup_TypeA(parent)
     -- texture
     local tex = f:CreateTexture(nil, "ARTWORK")
     tex:SetAllPoints(f)
-    tex:SetTexture("Interface\\Buttons\\WHITE8x8")
+    tex:SetTexture(Cell.vars.whiteTexture)
 
     tex:AddMaskTexture(parent.mask)
 
