@@ -56,6 +56,7 @@ local function DoImport(isOverwrite)
         Cell:Fire("LayoutImported", name)
         importExportFrame:Hide()
     end
+    F:Print(L["Layout imported: %s."]:format(name))
 end
 
 local function CreateLayoutImportExportFrame()
@@ -111,7 +112,7 @@ local function CreateLayoutImportExportFrame()
                 imported = {}
                 local text = eb:GetText()
                 -- check
-                local version, name, data = string.match(text, "^!CELL:(%d+):LAYOUT:([^:]+)!(.+)$")
+                local version, name, data = string.match(text, "^!CELL:(%d+):LAYOUT:(.+)!(.+)$")
                 version = tonumber(version)
 
                 if name and version and data then

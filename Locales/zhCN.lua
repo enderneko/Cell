@@ -349,6 +349,12 @@ L["set unit's name"] = "设置为目标单位的名字"
 L["set unit's pet"] = "设置为目标单位的宠物"
 L["not in combat"] = "非战斗中"
 
+L["Invalid layout name."] = "无效布局名称。"
+L["Layout imported: %s."] = "已导入布局：%s。"
+L["Layout added: %s."] = "已创建布局：%s。"
+L["Layout deleted: %s."] = "已删除布局：%s。"
+L["Layout renamed: %s to %s."] = "重命名布局 %s 为 %s。"
+
 -- L["Group Arrangement"] = "队伍排列"
 -- L["Button Size"] = "按钮尺寸"
 -- L["Pet Button"] = "宠物按钮"
@@ -391,7 +397,6 @@ L["|cff1Aff1AYes|r - Overwrite"] = "|cff1Aff1A是|r - 覆盖"
 L["|cffff1A1ANo|r - Create New"] = "|cffff1A1A否|r - 新建"
 L["Error"] = "错误"
 L["Incompatible Version"] = "版本不兼容"
-L["Layout imported: %s."] = "已导入布局：%s。"
 
 -------------------------------------------------
 -- indicators
@@ -847,6 +852,11 @@ L["Click to view older changelogs"] = "点击查看远古更新记录"
 L["CHANGELOGS"] = [[
     <h1>更新后如果有各种问题，先排查代码片段。</h1>
     <p>（正式服）如果指示器不能正常刷新，尝试启用常规页面下的“总是更新增益/减益”选项。</p>
+    <br/>
+
+    <h1>r236-release (Jul 24, 2024, 02:18 GMT+8)</h1>
+    <p>* 修复“外观”页面。</p>
+    <p>* 布局名称现在不能包含“:”与“!”。</p>
     <br/>
 
     <h1>r235-release (Jul 23, 2024, 20:00 GMT+8)</h1>

@@ -67,7 +67,7 @@ local function CreateClickCastingImportExportFrame()
                 imported = {}
                 local text = eb:GetText()
                 -- check
-                local version, class, data = string.match(text, "^!CELL:(%d+):CLICKCASTING:([^:]+)!(.+)$")
+                local version, class, data = string.match(text, "^!CELL:(%d+):CLICKCASTING:(.+)!(.+)$")
                 version = tonumber(version)
 
                 if class and version and data then

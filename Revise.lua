@@ -3086,6 +3086,36 @@ function F:Revise()
         end
     end
 
+    -- r236-release
+    -- if CellDB["revise"] and dbRevision < 236 then
+    --     for layout, t in pairs(CellDB["layouts"]) do
+    --         local name = string.gsub(layout, ":", "_")
+    --         name = string.gsub(name, "!", "*")
+    --         if name ~= layout then
+    --             CellDB["layouts"][name] = t
+    --             CellDB["layouts"][layout] = nil
+    --         end
+    --     end
+
+    --     if Cell.isRetail then
+    --         for _, roleOrClass in pairs(CellDB["layoutAutoSwitch"]) do
+    --             for _, t in pairs(roleOrClass) do
+    --                 for groupType, layout in pairs(t) do
+    --                     t[groupType] = string.gsub(t[groupType], ":", "_")
+    --                     t[groupType] = string.gsub(t[groupType], "!", "*")
+    --                 end
+    --             end
+    --         end
+    --     else
+    --         for talent, t in pairs(CellCharacterDB["layoutAutoSwitch"]) do
+    --             for groupType, layout in pairs(t) do
+    --                 t[groupType] = string.gsub(t[groupType], ":", "_")
+    --                 t[groupType] = string.gsub(t[groupType], "!", "*")
+    --             end
+    --         end
+    --     end
+    -- end
+
     -- ----------------------------------------------------------------------- --
     --            update from old versions, validate all indicators            --
     -- ----------------------------------------------------------------------- --

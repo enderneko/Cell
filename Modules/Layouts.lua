@@ -1340,6 +1340,13 @@ local LoadLayoutDB, UpdateButtonStates, LoadLayoutAutoSwitchDB
 --     enabledLayoutText:SetText("|cFF777777"..L["Current"]..": "..(Cell.vars.currentLayout == "default" and _G.DEFAULT or Cell.vars.currentLayout))
 -- end
 
+local function IsValidLayoutName(name)
+    return name and name ~= ""
+        and strlower(name) ~= "default"and name ~= _G.DEFAULT
+        -- and not strfind(name, ":") and not strfind(name, "!")
+        and not CellDB["layouts"][name]
+end
+
 local function CreateLayoutPane()
     local layoutPane = Cell:CreateTitledPane(layoutsTab, L["Layout"], 205, 80)
     layoutPane:SetPoint("TOPLEFT", 5, -5)
@@ -1362,7 +1369,7 @@ local function CreateLayoutPane()
             local name = strtrim(self.editBox:GetText())
             local inherit = self.dropdown1:GetSelected()
 
-            if name ~= "" and strlower(name) ~= "default" and name ~= _G.DEFAULT and strlower(name) ~= "none" and not CellDB["layouts"][name] then
+            if IsValidLayoutName(name) then
                 -- update db copy current layout
                 if inherit == "cell-default-layout" then
                     CellDB["layouts"][name] = F:Copy(Cell.defaults.layout)
@@ -1382,7 +1389,7 @@ local function CreateLayoutPane()
                 LoadAutoSwitchDropdowns()
                 LoadLayoutDB(name)
                 UpdateButtonStates()
-                F:Print(L["Layout added: "]..name..".")
+                F:Print(L["Layout added: %s."]:format(name))
             else
                 F:Print(L["Invalid layout name."])
             end
@@ -1424,11 +1431,11 @@ local function CreateLayoutPane()
     renameBtn:SetScript("OnClick", function()
         local popup = Cell:CreateConfirmPopup(layoutsTab, 200, L["Rename layout"].." "..selectedLayout, function(self)
             local name = strtrim(self.editBox:GetText())
-            if name ~= "" and strlower(name) ~= "default" and name ~= _G.DEFAULT and not CellDB["layouts"][name] then
+            if IsValidLayoutName(name) then
                 -- update db
                 CellDB["layouts"][name] = CellDB["layouts"][selectedLayout]
                 CellDB["layouts"][selectedLayout] = nil
-                F:Print(L["Layout renamed: "].." "..selectedLayout.." "..L["to"].." "..name..".")
+                F:Print(L["Layout renamed: %s to %s."]:format(selectedLayout, name))
 
                 -- update auto switch dropdowns
                 LoadAutoSwitchDropdowns()
@@ -1506,7 +1513,7 @@ local function CreateLayoutPane()
         local popup = Cell:CreateConfirmPopup(layoutsTab, 200, L["Delete layout"].." "..selectedLayout.."?", function(self)
             -- update db
             CellDB["layouts"][selectedLayout] = nil
-            F:Print(L["Layout deleted: "]..selectedLayout..".")
+            F:Print(L["Layout deleted: %s."]:format(selectedLayout))
 
             -- update auto switch dropdowns
             LoadAutoSwitchDropdowns()
@@ -2897,6 +2904,7 @@ local function LayoutImported(name)
         -- update dropdown
         layoutDropdown:AddItem({
             ["text"] = name,
+            ["value"] = name,
             ["onClick"] = function()
                 LoadLayoutDB(name)
                 UpdateButtonStates()

@@ -19,7 +19,7 @@ local L = Cell.L
 -- sharing version check
 Cell.MIN_VERSION = 200
 Cell.MIN_CLICKCASTINGS_VERSION = 228
-Cell.MIN_LAYOUTS_VERSION = 235
+Cell.MIN_LAYOUTS_VERSION = 236
 Cell.MIN_INDICATORS_VERSION = 235
 Cell.MIN_DEBUFFS_VERSION = 228
 
@@ -433,12 +433,11 @@ function eventFrame:ADDON_LOADED(arg1)
         F:RunSnippets()
 
         -- validation -----------------------------------------------------------------------------
-
-         -- validate layout
-         for talent, t in pairs(CellCharacterDB["layoutAutoSwitch"]) do
+        -- validate layout
+        for talent, t in pairs(CellCharacterDB["layoutAutoSwitch"]) do
             for groupType, layout in pairs(t) do
                 if not CellDB["layouts"][layout] then
-                    CellCharacterDB["layoutAutoSwitch"][talent][groupType] = "default"
+                    t[groupType] = "default"
                 end
             end
         end
