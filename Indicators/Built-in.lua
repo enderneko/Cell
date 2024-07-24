@@ -2065,10 +2065,9 @@ end
 -- health threshold
 -------------------------------------------------
 function I.CreateHealthThresholds(parent)
-    local healthThresholds = CreateFrame("Frame", parent:GetName().."HealthThresholds", parent.widgets.healthBar)
+    local healthThresholds = CreateFrame("Frame", parent:GetName().."HealthThresholds", parent.widgets.highLevelFrame)
     parent.indicators.healthThresholds = healthThresholds
     healthThresholds:SetAllPoints(parent.widgets.healthBar)
-    healthThresholds:SetFrameLevel(parent.widgets.healthBar:GetFrameLevel()+1)
 
     healthThresholds.tex = healthThresholds:CreateTexture(nil, "ARTWORK")
 
