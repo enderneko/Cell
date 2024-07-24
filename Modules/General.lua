@@ -329,7 +329,7 @@ local function CreateMiscPane()
 
     local framePriorityText = framePriorityDD:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
     framePriorityText:SetPoint("BOTTOMLEFT", framePriorityDD, "TOPLEFT", 0, 1)
-    framePriorityText:SetText(L["Frame priority for LibGetFrame"])
+    framePriorityText:SetText(L["Frame priorities for LibGetFrame"])
 
     useCleuCB = Cell:CreateCheckButton(miscPane, L["Increase Health Update Rate"], function(checked, self)
         CellDB["general"]["useCleuHealthUpdater"] = checked
@@ -410,7 +410,6 @@ local function ShowTab(tab)
         -- misc
         alwaysUpdateBuffsCB:SetChecked(CellDB["general"]["alwaysUpdateBuffs"])
         alwaysUpdateDebuffsCB:SetChecked(CellDB["general"]["alwaysUpdateDebuffs"])
-        framePriorityDD:SetEnabled(CellDB["general"]["overrideLGF"])
         framePriorityDD:SetSelectedValue(CellDB["general"]["framePriority"])
         useCleuCB:SetChecked(CellDB["general"]["useCleuHealthUpdater"])
         translitCB:SetChecked(CellDB["general"]["translit"])
