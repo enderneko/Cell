@@ -87,9 +87,10 @@ select(2, ...).L = setmetatable({
         <p>(Retail) Enable "Always Update Buffs/Debuffs" in General tab, if indicators do not update correctly.</p>
         <br/>
 
-        <h1>r236-release (Jul 24, 2024, 02:18 GMT+8)</h1>
-        <p>* Fixed appearance tab.</p>
-        <p>* Layout names cannot contain ":" or "!" now.</p>
+        <h1>r236-release (Jul 24, 2024, 16:10 GMT+8)</h1>
+        <p>* Fixed appearance/layout tab.</p>
+        <p>* Updated locales.</p>
+        <p>* Updated world marks for cata.</p>
         <br/>
 
         <h1>r235-release (Jul 23, 2024, 20:00 GMT+8)</h1>

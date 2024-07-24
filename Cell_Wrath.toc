@@ -1,6 +1,6 @@
 ## Interface: 30403
 ## Title: Cell
-## Version: r235-release
+## Version: r236-release
 ## Author: enderneko
 ## X-Flavor: Wrath
 ## SavedVariables: CellDB
