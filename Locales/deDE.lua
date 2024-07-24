@@ -203,7 +203,6 @@ L["Enable Spotlight Frame"] = "Spotlight Frame aktivieren"
 L["enableBlacklistShortcut"] = "Blockliste: Alt+Strg+Rechtsklick"
 L["Enabled"] = "Aktiviert"
 L["enableHighlight"] = "Taste \"Einheit\" hervorheben"
-L["Ensure that other addons get the right unit button"] = "Sicherstellen, dass andere Addons die richtige Einheitstaste erhalten"
 L["Enter: apply\nESC: discard"] = "Eingabe: Anwenden\nESC: Verwerfen"
 L["Entire"] = "Gesamt(e)"
 L["Error"] = "Fehler"
@@ -226,9 +225,10 @@ L["Focus Target"] = "Fokus Ziel"
 L["Font"] = "Schriftart"
 L["Font Outline"] = "Schriftart Umriss"
 L["Font Size"] = "Schriftgröße"
-L["For addons/WAs not dependent on LibGetFrame, use %s"] = "Für Addons/WAs, die nicht von LibGetFrame abhängig sind, verwende %s"
 L["Format"] = "Format"
 L["Frame Level"] = "Frame Level"
+--[[Translation missing --]]
+--[[ L["Frame priorities for LibGetFrame"] = ""--]]
 L["Free Cooldown Only"] = "Nur freie Cooldowns"
 L["Frequency"] = "Frequenz"
 L["Friendly NPC Frame"] = "Freundlicher NPC-Frame"
@@ -305,6 +305,8 @@ L["instakill"] = "instakill"
 L["Instance Name"] = "Instanz Name"
 L["Instant Mode"] = "Sofortmodus"
 L["Invalid"] = "Ungültig"
+--[[Translation missing --]]
+--[[ L["Invalid layout name."] = ""--]]
 L["Invalid spell id."] = "Ungültige Zauberspruch-ID."
 L["Invalid unit."] = "Ungültige Einheit."
 L["INVERT"] = "Invertieren"
@@ -313,8 +315,14 @@ L["It will be renamed if this layout name already exists"] = "Es wird umbenannt,
 L["Item"] = "Item"
 L["Known Spells Only"] = "Nur bekannte Zauber"
 L["Layout"] = "Layout"
+--[[Translation missing --]]
+--[[ L["Layout added: %s."] = ""--]]
 L["Layout Auto Switch"] = "Layout Auto Switch"
+--[[Translation missing --]]
+--[[ L["Layout deleted: %s."] = ""--]]
 L["Layout imported: %s."] = "Layout importiert: %s."
+--[[Translation missing --]]
+--[[ L["Layout renamed: %s to %s."] = ""--]]
 L["Layout Setup"] = "Layout Setup"
 L["Layouts"] = "Layouts"
 L["Leader Icon"] = "Anführer Symbol"
@@ -400,7 +408,6 @@ L["Outdoor"] = "Außenbereich"
 L["Outer Buff"] = "Äußerer Stärkungszauber"
 L["Outline"] = "Umriss"
 L["Overlay"] = "Overlay"
-L["Override"] = "Überschreiben"
 L["Overshield Texture"] = "Überschild Textur"
 L["Overwrite Click-Casting"] = "Click-Casting überschreiben"
 L["Overwrite Layout"] = "Layout überschreiben"
@@ -529,14 +536,14 @@ L["Show friendly NPCs in a separate frame"] = "Freundliche NPCs in einem separat
 L["Show NPC Frame"] = "NPC-Frame anzeigen"
 L["Show Party"] = "In Gruppe anzeigen"
 L["Show Party/Arena Pets"] = "Begleiter in Gruppen/Arena anzeigen"
+--[[Translation missing --]]
+--[[ L["Show Raid"] = ""--]]
 L["Show Raid Pets"] = "Schlachtzugsbegleiter (Pet) anzeigen"
 L["Show Solo"] = "Alleine anzeigen"
---[[Translation missing --]]
---[[ L["Show Raid"] = "" ]]
---[[Translation missing --]]
---[[ L["Show while in a raid"] = "" ]]
 L["Show units you care about more in a separate frame"] = "Zeigt Einheiten, die besonders wichtig sind, in einem separaten Frame an"
 L["Show while in a party"] = "Während einer Gruppe anzeigen"
+--[[Translation missing --]]
+--[[ L["Show while in a raid"] = ""--]]
 L["Show while not in a group"] = "Anzeigen, wenn man sich nicht in einer Gruppe befindet"
 L["showAllSpells"] = "Alle Zaubersprüche anzeigen"
 L["showAnimation"] = "Animation anzeigen"
@@ -604,7 +611,6 @@ L["Then create a PR or submit a ticket on GitHub"] = "Dann erstelle einen PR ode
 L["These \"reset\" commands below affect all your characters in this account"] = "Die folgenden \"Reset\"-Befehle wirken sich auf alle Charaktere in diesem Konto aus"
 L["These settings are spec-specific"] = "Diese Einstellungen sind Spezialisierungs-spezifisch"
 L["Thickness"] = "Stärke"
-L["This may cause unknown issues"] = "Dies kann zu unbekannten Problemen führen"
 L["This may help solve issues of indicators not updating correctly"] = "Dies kann helfen, Probleme mit nicht korrekt aktualisierten Indikatoren zu lösen."
 L["This may overwrite built-in indicators"] = "Dies kann eingebaute Indikatoren überschreiben"
 L["This setting will be ignored, if the %1$s option in %2$s tab is enabled"] = "Diese Einstellung wird ignoriert, wenn die Option %1$s in der Registerkarte %2$s aktiviert ist"

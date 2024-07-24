@@ -206,7 +206,6 @@ L["Enable Spotlight Frame"] = "啟用特別關注框架"
 L["enableBlacklistShortcut"] = "黑名單: Alt+Ctrl+右鍵"
 L["Enabled"] = "啟用"
 L["enableHighlight"] = "顯著標示單位按鈕"
-L["Ensure that other addons get the right unit button"] = "確保其他插件獲取到正確的單位按鈕"
 L["Enter: apply\nESC: discard"] = [=[Enter: 套用
 ESC: 取消]=]
 L["Entire"] = "整個"
@@ -230,9 +229,10 @@ L["Focus Target"] = "專注目標的目標"
 L["Font"] = "字體"
 L["Font Outline"] = "文字樣式"
 L["Font Size"] = "文字大小"
-L["For addons/WAs not dependent on LibGetFrame, use %s"] = "對於不依賴 LibGetFrame 的插件或 WA，使用 %s"
 L["Format"] = "格式"
 L["Frame Level"] = "框架層級"
+--[[Translation missing --]]
+--[[ L["Frame priorities for LibGetFrame"] = ""--]]
 L["Free Cooldown Only"] = "只有當法術不在冷卻中時"
 L["Frequency"] = "速度"
 L["Friendly NPC Frame"] = "友方 NPC 框架"
@@ -309,6 +309,8 @@ L["instakill"] = "秒殺"
 L["Instance Name"] = "副本名稱"
 L["Instant Mode"] = "即時模式"
 L["Invalid"] = "無效"
+--[[Translation missing --]]
+--[[ L["Invalid layout name."] = ""--]]
 L["Invalid spell id."] = "無效的法術 ID。"
 L["Invalid unit."] = "無效單位。"
 L["INVERT"] = "反向選擇"
@@ -317,8 +319,14 @@ L["It will be renamed if this layout name already exists"] = "如果該版面配
 L["Item"] = "物品"
 L["Known Spells Only"] = "只限已學會的法術"
 L["Layout"] = "版面配置"
+--[[Translation missing --]]
+--[[ L["Layout added: %s."] = ""--]]
 L["Layout Auto Switch"] = "自動切換版面配置"
+--[[Translation missing --]]
+--[[ L["Layout deleted: %s."] = ""--]]
 L["Layout imported: %s."] = "已匯入版面配置: %s。"
+--[[Translation missing --]]
+--[[ L["Layout renamed: %s to %s."] = ""--]]
 L["Layout Setup"] = "版面配置設定"
 L["Layouts"] = "版面配置"
 L["Leader Icon"] = "隊長圖示"
@@ -407,7 +415,6 @@ L["Outdoor"] = "野外"
 L["Outer Buff"] = "外圈增益"
 L["Outline"] = "外框"
 L["Overlay"] = "疊層"
-L["Override"] = "取代"
 L["Overshield Texture"] = "超過血量上限的護盾材質"
 L["Overwrite Click-Casting"] = "覆蓋點擊施法"
 L["Overwrite Layout"] = "取代版面配置"
@@ -544,14 +551,14 @@ L["Show friendly NPCs in a separate frame"] = "將友方 NPC 顯示在一個獨�
 L["Show NPC Frame"] = "顯示 NPC 框架"
 L["Show Party"] = "5人隊伍時要顯示"
 L["Show Party/Arena Pets"] = "顯示隊伍/競技場寵物"
+--[[Translation missing --]]
+--[[ L["Show Raid"] = ""--]]
 L["Show Raid Pets"] = "顯示團隊寵物"
 L["Show Solo"] = "單人時要顯示"
---[[Translation missing --]]
---[[ L["Show Raid"] = "" ]]
---[[Translation missing --]]
---[[ L["Show while in a raid"] = "" ]]
 L["Show units you care about more in a separate frame"] = "在單獨的框架中顯示您更關心的單位"
 L["Show while in a party"] = "在隊伍中時顯示"
+--[[Translation missing --]]
+--[[ L["Show while in a raid"] = ""--]]
 L["Show while not in a group"] = "不在隊伍中時顯示"
 L["showAllSpells"] = "顯示所有法術"
 L["showAnimation"] = "顯示動畫效果"
@@ -619,7 +626,6 @@ L["Then create a PR or submit a ticket on GitHub"] = "然後在 GitHub 上提交
 L["These \"reset\" commands below affect all your characters in this account"] = "以下的 \"重置\" 指令會影響此帳號中的所有角色"
 L["These settings are spec-specific"] = "這些設定是每個專精專用的"
 L["Thickness"] = "粗細"
-L["This may cause unknown issues"] = "可能會導致未知的問題"
 L["This may help solve issues of indicators not updating correctly"] = "可能有助於解決指示器不能正確更新的問題"
 L["This may overwrite built-in indicators"] = "這可能會覆蓋掉內建的指示器"
 L["This setting will be ignored, if the %1$s option in %2$s tab is enabled"] = "如果啟用了%2$s標籤頁面中的%1$s選項，此設定將被忽略"

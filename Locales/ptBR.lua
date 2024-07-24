@@ -190,6 +190,8 @@ L["Dispel Request"] = "Solicitação de Dispel"
 L["Dispellable By Me"] = "Dispelável por mim"
 L["dispellableByMe"] = "Mostrar apenas debuffs dispeláveis por mim"
 L["Dispels"] = "Dispels"
+--[[Translation missing --]]
+--[[ L["Display a gradient texture when the unit receives a heal from your certain AoE healing spells."] = ""--]]
 L["Display elapsed time since debuff applied"] = "Mostrar o tempo decorrido desde que o debuff foi aplicado"
 L["Display One Decimal Place When"] = "Exibir uma casa decimal quando"
 L["Do nothing if requested spell/buff already exists on requester"] = "Não fazer nada se o feitiço/buff solicitado já existir no solicitante"
@@ -206,7 +208,6 @@ L["Enable Spotlight Frame"] = "Habilitar o Frame de Spotlight"
 L["enableBlacklistShortcut"] = "Lista negra: Alt+Ctrl+RightClick"
 L["Enabled"] = "Habilitado"
 L["enableHighlight"] = "Destacar o botão de unidade"
-L["Ensure that other addons get the right unit button"] = "Certifique-se de que outros addon obtenham o botão de unidade correto"
 L["Enter: apply\nESC: discard"] = "Enter: aplicar\nESC: descartar"
 L["Entire"] = "Inteiro"
 L["Error"] = "Erro"
@@ -229,9 +230,10 @@ L["Focus Target"] = "Alvo do Foco"
 L["Font"] = "Fonte"
 L["Font Outline"] = "Contorno da Fonte"
 L["Font Size"] = "Tamanho da Fonte"
-L["For addons/WAs not dependent on LibGetFrame, use %s"] = "Para addons/WAs não dependentes de LibGetFrame, use %s"
 L["Format"] = "Formato"
 L["Frame Level"] = "Nível do Frame"
+--[[Translation missing --]]
+--[[ L["Frame priorities for LibGetFrame"] = ""--]]
 L["Free Cooldown Only"] = "Apenas Cooldown Livre"
 L["Frequency"] = "Frequência"
 L["Friendly NPC Frame"] = "Frame de NPC amigável"
@@ -309,6 +311,8 @@ L["instakill"] = "instakill"
 L["Instance Name"] = "Nome da Instância"
 L["Instant Mode"] = "Modo Instantâneo"
 L["Invalid"] = "Inválido"
+--[[Translation missing --]]
+--[[ L["Invalid layout name."] = ""--]]
 L["Invalid spell id."] = "ID de Feitiço Inválido."
 L["Invalid unit."] = "Unidade Inválida."
 L["INVERT"] = "Inverter"
@@ -318,8 +322,14 @@ L["It will be renamed if this layout name already exists"] = "Será renomeado se
 --[[ L["Item"] = ""--]]
 L["Known Spells Only"] = "Apenas feitiços conhecidos"
 L["Layout"] = "Layout"
+--[[Translation missing --]]
+--[[ L["Layout added: %s."] = ""--]]
 L["Layout Auto Switch"] = "Troca Automática de Layout"
+--[[Translation missing --]]
+--[[ L["Layout deleted: %s."] = ""--]]
 L["Layout imported: %s."] = "Layout importado: %s."
+--[[Translation missing --]]
+--[[ L["Layout renamed: %s to %s."] = ""--]]
 L["Layout Setup"] = "Setup de Layout"
 L["Layouts"] = "Layouts"
 L["Leader Icon"] = "Ícone de Líder"
@@ -405,7 +415,6 @@ L["Outdoor"] = "Outdoor"
 L["Outer Buff"] = "Buff Externo"
 L["Outline"] = "Contorno"
 L["Overlay"] = "Overlay"
-L["Override"] = "Sobrepor"
 L["Overshield Texture"] = "Textura de Overshield"
 L["Overwrite Click-Casting"] = "Sobrescrever Lançar com Clique"
 L["Overwrite Layout"] = "Substituir Layout"
@@ -535,14 +544,14 @@ L["Show friendly NPCs in a separate frame"] = "Mostre NPCs amigáveis ​​em u
 L["Show NPC Frame"] = "Mostrar o Frame de NPC"
 L["Show Party"] = "Mostrar grupo"
 L["Show Party/Arena Pets"] = "Mostrar Pets de Grupo/Arena"
+--[[Translation missing --]]
+--[[ L["Show Raid"] = ""--]]
 L["Show Raid Pets"] = "Mostrar pets de Raid"
 L["Show Solo"] = "Mostrar quando sozinho"
---[[Translation missing --]]
---[[ L["Show Raid"] = "" ]]
---[[Translation missing --]]
---[[ L["Show while in a raid"] = "" ]]
 L["Show units you care about more in a separate frame"] = "Mostre as unidades mais importantes para você em um quadro separado"
 L["Show while in a party"] = "Mostrar durante um grupo"
+--[[Translation missing --]]
+--[[ L["Show while in a raid"] = ""--]]
 L["Show while not in a group"] = "Mostrar quando não estiver em um grupo"
 L["showAllSpells"] = "Mostrar todos os feitiços"
 L["showAnimation"] = "Mostrar animação"
@@ -610,7 +619,6 @@ L["Then create a PR or submit a ticket on GitHub"] = "Em seguida, crie um PR ou 
 L["These \"reset\" commands below affect all your characters in this account"] = "Os comandos de “redefinição” abaixo afetam todos os seus personagens nesta conta"
 L["These settings are spec-specific"] = "Essas configurações são específicas das especializações"
 L["Thickness"] = "Grossura"
-L["This may cause unknown issues"] = "Isso pode causar problemas desconhecidos"
 L["This may help solve issues of indicators not updating correctly"] = "Isso pode ajudar a resolver problemas de indicadores que não são atualizados corretamente"
 L["This may overwrite built-in indicators"] = "Isso pode substituir os indicadores integrados"
 L["This setting will be ignored, if the %1$s option in %2$s tab is enabled"] = "Esta configuração será ignorada se a opção %1$s na aba %2$s estiver habilitada"

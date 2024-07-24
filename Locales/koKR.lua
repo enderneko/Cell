@@ -262,6 +262,8 @@ L["Discard"] = "취소"
 L["dispellableByMe"] = "자신이 해제 가능한 약화 효과만"
 L["Dispels"] = "해제 가능 디버프"
 --[[Translation missing --]]
+--[[ L["Display a gradient texture when the unit receives a heal from your certain AoE healing spells."] = ""--]]
+--[[Translation missing --]]
 --[[ L["Display elapsed time since debuff applied"] = ""--]]
 --[[Translation missing --]]
 --[[ L["Display One Decimal Place When"] = "Display One Decimal Place When"--]]
@@ -286,8 +288,6 @@ L["Enable Death Color"] = "죽음 색상 사용"
 --[[ L["enableBlacklistShortcut"] = "Blacklist: Alt+Ctrl+RightClick"--]]
 L["Enabled"] = "사용"
 L["enableHighlight"] = "강조 사용"
---[[Translation missing --]]
---[[ L["Ensure that other addons get the right unit button"] = ""--]]
 L["Enter: apply\nESC: discard"] = "Enter: 적용 ESC: 취소"
 L["Entire"] = "전체"
 L["Error"] = "오류"
@@ -318,10 +318,10 @@ L["focus"] = "주시 대상"
 L["Font"] = "글자"
 L["Font Outline"] = "글자 테두리"
 L["Font Size"] = "글자 크기"
---[[Translation missing --]]
---[[ L["For addons/WAs not dependent on LibGetFrame, use %s"] = ""--]]
 L["Format"] = "형식"
 L["Frame Level"] = "창 우선순위"
+--[[Translation missing --]]
+--[[ L["Frame priorities for LibGetFrame"] = ""--]]
 --[[Translation missing --]]
 --[[ L["Free Cooldown Only"] = "Free Cooldown Only"--]]
 L["Frequency"] = "빈도"
@@ -429,6 +429,8 @@ L["Instance Name"] = "인스턴스 이름"
 --[[Translation missing --]]
 --[[ L["Instant Mode"] = ""--]]
 L["Invalid"] = "유효하지 않음"
+--[[Translation missing --]]
+--[[ L["Invalid layout name."] = ""--]]
 L["Invalid spell id."] = "잘못된 주문 ID입니다."
 L["Invalid unit."] = "잘못된 유닛입니다."
 --[[Translation missing --]]
@@ -441,9 +443,15 @@ L["It will be renamed if this layout name already exists"] = "이 배치 이름�
 --[[Translation missing --]]
 --[[ L["Known Spells Only"] = "Known Spells Only"--]]
 L["Layout"] = "배치"
+--[[Translation missing --]]
+--[[ L["Layout added: %s."] = ""--]]
 L["Layout Auto Switch"] = "배치 자동 전환"
 --[[Translation missing --]]
+--[[ L["Layout deleted: %s."] = ""--]]
+--[[Translation missing --]]
 --[[ L["Layout imported: %s."] = "Layout imported: %s."--]]
+--[[Translation missing --]]
+--[[ L["Layout renamed: %s to %s."] = ""--]]
 --[[Translation missing --]]
 --[[ L["Layout Setup"] = "Layout Setup"--]]
 L["Layouts"] = "배치"
@@ -567,8 +575,6 @@ L["Outdoor"] = "실외"
 L["Outline"] = "테두리"
 --[[Translation missing --]]
 --[[ L["Overlay"] = ""--]]
---[[Translation missing --]]
---[[ L["Override"] = ""--]]
 --[[Translation missing --]]
 --[[ L["Overshield Texture"] = "Overshield Texture"--]]
 --[[Translation missing --]]
@@ -766,15 +772,15 @@ L["Show Current Instance"] = "현재 인스턴스 표시"
 L["Show NPC Frame"] = "NPC 창 표시"
 L["Show Party"] = "파티시 표시"
 L["Show Party/Arena Pets"] = "파티/투기장 소환수 표시"
+--[[Translation missing --]]
+--[[ L["Show Raid"] = ""--]]
 L["Show Raid Pets"] = "공격대 소환수 표시"
 L["Show Solo"] = "솔로잉시 표시"
 --[[Translation missing --]]
---[[ L["Show Raid"] = "" ]]
---[[Translation missing --]]
---[[ L["Show while in a raid"] = "" ]]
---[[Translation missing --]]
 --[[ L["Show units you care about more in a separate frame"] = "Show units you care about more in a separate frame"--]]
 L["Show while in a party"] = "파티시에만 표시합니다."
+--[[Translation missing --]]
+--[[ L["Show while in a raid"] = ""--]]
 L["Show while not in a group"] = "솔로잉시 표시합니다."
 --[[Translation missing --]]
 --[[ L["showAllSpells"] = "Show all spells"--]]
@@ -876,8 +882,6 @@ L["These \"reset\" commands below affect all your characters in this account"] =
 --[[Translation missing --]]
 --[[ L["These settings are spec-specific"] = ""--]]
 L["Thickness"] = "두께"
---[[Translation missing --]]
---[[ L["This may cause unknown issues"] = ""--]]
 --[[Translation missing --]]
 --[[ L["This may help solve issues of indicators not updating correctly"] = ""--]]
 --[[Translation missing --]]
