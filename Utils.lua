@@ -2048,23 +2048,21 @@ end
 
 if Cell.isRetail then
     function F:GetSpellInfo(spellId)
+        if not spellId then return end
         if C_Spell and C_Spell.GetSpellInfo then
             local info = C_Spell.GetSpellInfo(spellId)
             if not info then return end
 
-            if not info.iconID then -- FIXME:
+            if not info.iconID then -- when?
                 info.iconID = C_Spell.GetSpellTexture(spellId)
             end
 
             return info.name, info.iconID
         end
-
-        -- TODO: remove once 11.0 prepatch hits
-        local name, _, icon = GetSpellInfo(spellId)
-        return name, icon
     end
 else
     function F:GetSpellInfo(spellId)
+        if not spellId then return end
         local name, _, icon = GetSpellInfo(spellId)
         return name, icon
     end

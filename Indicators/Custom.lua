@@ -292,7 +292,11 @@ end
 -------------------------------------------------
 local sort = table.sort
 local function comparator(a, b)
-    return a[1] < b[1]
+    if a[1] and b[1] then
+        return a[1] < b[1]
+    else
+        return a[2] <= b[2]
+    end
 end
 
 function I.ShowCustomIndicators(unitButton, auraType)
