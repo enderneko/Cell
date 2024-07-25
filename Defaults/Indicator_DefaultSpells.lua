@@ -96,11 +96,11 @@ local aoeHealings = {
 
     -- evoker
     355916, -- Emerald Blossom - 翡翠之花
-    361361, -- Fluttering Seedlings -- 婆娑幼苗
+    361361, -- Fluttering Seedlings - 婆娑幼苗
     363534, -- Rewind - 回溯
     367230, -- Spiritbloom - 精神之花
-    370984, -- Emerald Communion    -- 翡翠交融
-    371441, -- Life-Giver's Flame   -- 赐命者之焰
+    370984, -- Emerald Communion - 翡翠交融
+    371441, -- Life-Giver's Flame - 赐命者之焰
     371879, -- Cycle of Life - 生生不息
 
     -- monk
@@ -108,39 +108,39 @@ local aoeHealings = {
     123986, -- Chi Burst - 真气爆裂
     115310, -- Revival - 还魂术
     -- 191837, -- Essence Font - 精华之泉
-    322118, -- Invoke Yu'lon, the Jade Serpent -- 青龙下凡 (SUMMON)
-    443028, -- Celestial Conduit    --
+    322118, -- Invoke Yu'lon, the Jade Serpent - 青龙下凡 (SUMMON)
+    443028, -- Celestial Conduit - 天神御身
 
     -- paladin
-    85222,  -- Light of Dawn - 黎明之光
+    85222, -- Light of Dawn - 黎明之光
     119952, -- Arcing Light - 弧形圣光
     114165, -- Holy Prism - 神圣棱镜
-    200654, -- Tyr's Deliverance    -- 提尔的拯救
-    216371, -- Avenging Crusader    -- 复仇十字军
+    200654, -- Tyr's Deliverance - 提尔的拯救
+    216371, -- Avenging Crusader - 复仇十字军
 
     -- priest
     120517, -- Halo - 光晕
-    34861,  -- Holy Word: Sanctify  -- 圣言术：灵
-    596,    -- Prayer of Healing    -- 治疗祷言
-    64843,  -- Divine Hymn - 神圣赞美诗
+    34861, -- Holy Word: Sanctify - 圣言术：灵
+    596, -- Prayer of Healing - 治疗祷言
+    64843, -- Divine Hymn - 神圣赞美诗
     110744, -- Divine Star - 神圣之星
-    204883, -- Circle of Healing    -- 治疗之环
+    204883, -- Circle of Healing - 治疗之环
     281265, -- Holy Nova - 神圣新星
     314867, -- Shadow Covenant - 暗影盟约
-    15290,  -- Vampiric Embrace - 吸血鬼的拥抱
+    15290, -- Vampiric Embrace - 吸血鬼的拥抱
     372787, -- Divine Word: Sanctuary-- 神言术：佑
 
     -- shaman
-    1064,   -- Chain Heal - 治疗链
-    73920,  -- Healing Rain - 治疗之雨
-    108280, -- Healing Tide Totem   -- 治疗之潮图腾 (SUMMON)
-    52042,  -- Healing Stream Totem -- 治疗之泉图腾 (SUMMON)
+    1064, -- Chain Heal - 治疗链
+    73920, -- Healing Rain - 治疗之雨
+    108280, -- Healing Tide Totem - 治疗之潮图腾 (SUMMON)
+    52042, -- Healing Stream Totem - 治疗之泉图腾 (SUMMON)
     197995, -- Wellspring - 奔涌之流
     157503, -- Cloudburst - 暴雨图腾
-    114911, -- Ancestral Guidance   -- 先祖指引
-    382311, -- Ancestral Awakening  -- 先祖复苏
+    114911, -- Ancestral Guidance - 先祖指引
+    382311, -- Ancestral Awakening - 先祖复苏
     207778, -- Downpour - 倾盆大雨
-    114083, -- Restorative Mists    -- 恢复迷雾 (升腾)
+    114083, -- Restorative Mists - 恢复迷雾 (升腾)
 }
 
 local aoeHealingIDs = {
@@ -221,8 +221,8 @@ local externals = { -- true: track by name, false: track by id
     },
 
     ["MONK"] = {
-        [116849] = true,    -- Life Cocoon - 作茧缚命
-        [202248] = false,   -- Guided Meditation - 偏转冥想
+        [116849] = true, -- Life Cocoon - 作茧缚命
+        [202248] = false, -- Guided Meditation - 偏转冥想
     },
 
     ["PALADIN"] = {
@@ -709,12 +709,12 @@ end
 -------------------------------------------------
 local spells =  {
     -- druid
-    8936,   -- Regrowth - 愈合
-    774,    -- Rejuvenation - 回春术
+    8936, -- Regrowth - 愈合
+    774, -- Rejuvenation - 回春术
     155777, -- Rejuvenation (Germination) - 回春术（萌芽）
-    33763,  -- Lifebloom - 生命绽放
+    33763, -- Lifebloom - 生命绽放
     188550, -- Lifebloom - 生命绽放
-    48438,  -- Wild Growth - 野性成长
+    48438, -- Wild Growth - 野性成长
     102351, -- Cenarion Ward - 塞纳里奥结界
     102352, -- Cenarion Ward - 塞纳里奥结界
     391891, -- Adaptive Swarm - 激变蜂群
