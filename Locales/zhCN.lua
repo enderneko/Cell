@@ -1148,6 +1148,11 @@ L["CHANGELOGS"] = [[
     <p>* 更新繁中。</p>
     <br/>
 
+    <p><a href="older">]]..L["Click to view older changelogs"]..[[</a></p>
+    <br/>
+]]
+
+L["OLDER_CHANGELOGS"] = [[
     <h1>r199-release (Oct 21, 2023, 15:40 GMT+8)</h1>
     <p>* 更新“减伤”指示器的内置法术。</p>
     <p>+ 为增益类型的自定义指示器添加了“来源”选项。</p>
@@ -1327,11 +1332,6 @@ L["CHANGELOGS"] = [[
     <p>* 更新繁中。</p>
     <br/>
 
-    <p><a href="older">]]..L["Click to view older changelogs"]..[[</a></p>
-    <br/>
-]]
-
-L["OLDER_CHANGELOGS"] = [[
     <h1>r169-release (May 20, 2023, 04:18 GMT+8)</h1>
     <h2>正式服</h2>
     <p>+ 新指示器：个人光环。</p>

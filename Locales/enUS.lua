@@ -383,6 +383,11 @@ select(2, ...).L = setmetatable({
         <p>* Updated zhTW.</p>
         <br/>
 
+        <p><a href="older">Click to view older changelogs</a></p>
+        <br/>
+    ]],
+
+    ["OLDER_CHANGELOGS"] = [[
         <h1>r199-release (Oct 21, 2023, 15:40 GMT+8)</h1>
         <p>* Updated spells of Defensives and Externals.</p>
         <p>+ Added "Cast By" option to custom buff indicators.</p>
@@ -562,11 +567,6 @@ select(2, ...).L = setmetatable({
         <p>* Updated zhTW.</p>
         <br/>
 
-        <p><a href="older">Click to view older changelogs</a></p>
-        <br/>
-    ]],
-
-    ["OLDER_CHANGELOGS"] = [[
         <h1>r169-release (May 20, 2023, 04:18 GMT+8)</h1>
         <h2>Retail</h2>
         <p>+ New indicator: Private Auras.</p>
