@@ -485,6 +485,7 @@ Cell.defaults.layout = {
                 ["AB"] = true,
                 ["BS"] = true,
                 ["BotB"] = true,
+                ["SF"] = true,
             },
             ["position"] = {"BOTTOMRIGHT", "BOTTOMRIGHT", 0, 4},
             ["frameLevel"] = 10,

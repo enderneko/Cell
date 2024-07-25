@@ -21,11 +21,18 @@ local IsInRaid = IsInRaid
 -- buffs
 -------------------------------------------------
 local buffs = {
-    ["PWF"] = {id=21562, glowColor={F:GetClassColor("PRIEST")}, provider="PRIEST", level=6}, -- Power Word: Fortitude
-    ["MotW"] = {id=1126, glowColor={F:GetClassColor("DRUID")}, provider="DRUID", level=9}, -- Mark of the Wild
-    ["AB"] = {id=1459, glowColor={F:GetClassColor("MAGE")}, provider="MAGE", level=8}, -- Arcane Brilliance
-    ["BS"] = {id=6673, glowColor={F:GetClassColor("WARRIOR")}, provider="WARRIOR", level=10}, -- Battle Shout
-    ["BotB"] = {id=364342, glowColor={F:GetClassColor("EVOKER")}, provider="EVOKER", level=60}, -- Blessing of the Bronze
+    -- Power Word: Fortitude - 真言术：韧
+    ["PWF"] = {id = 21562, glowColor = {F:GetClassColor("PRIEST")}, provider = "PRIEST", level = 6},
+    -- Mark of the Wild - 野性印记
+    ["MotW"] = {id = 1126, glowColor = {F:GetClassColor("DRUID")}, provider = "DRUID", level = 9},
+    -- Arcane Brilliance - 奥术智慧
+    ["AB"] = {id = 1459, glowColor = {F:GetClassColor("MAGE")}, provider = "MAGE", level = 8},
+    -- Battle Shout - 战斗怒吼
+    ["BS"] = {id = 6673, glowColor = {F:GetClassColor("WARRIOR")}, provider = "WARRIOR", level = 10},
+    -- Blessing of the Bronze - 青铜龙的祝福
+    ["BotB"] = {id = 364342, glowColor = {F:GetClassColor("EVOKER")}, provider = "EVOKER", level = 30},
+    -- Skyfury - 天怒
+    ["SF"] = {id = 462854, glowColor = {F:GetClassColor("SHAMAN")}, provider = "SHAMAN", level = 16},
 }
 
 do
@@ -36,7 +43,12 @@ do
     end
 end
 
-local order = {"PWF", "MotW", "AB", "BS", "BotB"}
+local order = {"PWF", "MotW", "SF", "AB", "BS", "BotB"}
+local requiredByEveryone = {
+    ["PWF"] = true,
+    ["MotW"] = true,
+    ["SF"] = true,
+}
 
 -------------------------------------------------
 -- required buffs
@@ -104,6 +116,7 @@ local hasBuffProvider
 local available = {
     ["PWF"] = false,
     ["MotW"] = false,
+    ["SF"] = false,
     ["AB"] = false,
     ["BS"] = false,
     ["BotB"] = false,
@@ -112,6 +125,7 @@ local available = {
 local unaffected = {
     ["PWF"] = {},
     ["MotW"] = {},
+    ["SF"] = {},
     ["AB"] = {},
     ["BS"] = {},
     ["BotB"] = {},
@@ -145,9 +159,9 @@ function F:GetUnaffectedString(spell)
     if #players == 0 then
         return
     elseif #players <= 10 then
-        return L["Missing Buff"].." ("..buff.."): "..table.concat(players, ", ")
+        return L["Missing Buff"] .. " (" .. buff .. "): " .. table.concat(players, ", ")
     else
-        return L["Missing Buff"].." ("..buff.."): "..L["many"]
+        return L["Missing Buff"] .. " (" .. buff .. "): " .. L["many"]
     end
 end
 
@@ -182,7 +196,7 @@ local fakeIconsFrame = CreateFrame("Frame", nil, buffTrackerFrame)
 P:Point(fakeIconsFrame, "BOTTOMRIGHT", buffTrackerFrame)
 P:Point(fakeIconsFrame, "TOPLEFT", buffTrackerFrame, "TOPLEFT", 0, -18)
 fakeIconsFrame:EnableMouse(true)
-fakeIconsFrame:SetFrameLevel(buffTrackerFrame:GetFrameLevel()+10)
+fakeIconsFrame:SetFrameLevel(buffTrackerFrame:GetFrameLevel() + 10)
 fakeIconsFrame:Hide()
 
 local fakeIcons = {}
@@ -246,7 +260,7 @@ end
 
 local function CreateBuffButton(parent, size, spell, icon, index)
     local b = CreateFrame("Button", nil, parent, "SecureActionButtonTemplate,BackdropTemplate")
-    if parent then b:SetFrameLevel(parent:GetFrameLevel()+1) end
+    if parent then b:SetFrameLevel(parent:GetFrameLevel() + 1) end
     P:Size(b, size[1], size[2])
 
     b:SetBackdrop({edgeFile = Cell.vars.whiteTexture, edgeSize = P:Scale(1)})
@@ -254,7 +268,7 @@ local function CreateBuffButton(parent, size, spell, icon, index)
 
     b:RegisterForClicks("LeftButtonUp", "RightButtonUp", "LeftButtonDown", "RightButtonDown") -- NOTE: ActionButtonUseKeyDown will affect this
     b:SetAttribute("type1", "macro")
-    b:SetAttribute("macrotext1", "/cast [@player] "..spell)
+    b:SetAttribute("macrotext1", "/cast [@player] " .. spell)
     b:HookScript("OnClick", function(self, button, down)
         if button == "RightButton" and (down == GetCVarBool("ActionButtonUseKeyDown")) then
             local msg = F:GetUnaffectedString(index)
@@ -291,7 +305,7 @@ local function CreateBuffButton(parent, size, spell, icon, index)
                     local class = UnitClassBase(unit)
                     local name = UnitName(unit)
                     if class and name then
-                        CellTooltip:AddLine(F:GetClassColorStr(class)..name.."|r")
+                        CellTooltip:AddLine(F:GetClassColorStr(class) .. name .. "|r")
                     end
                 end
                 CellTooltip:Show()
@@ -481,7 +495,7 @@ local function CheckUnit(unit, updateBtn)
 
         for k, v in pairs(available) do
             if v then
-                if required == k or k == "PWF" or k == "MotW" then
+                if required == k or requiredByEveryone[k] then
                     if not F:FindAuraById(unit, "BUFF", buffs[k]["id"]) then
                         unaffected[k][unit] = true
                         I.ShowMissingBuff(unit, k, buffs[k]["icon"], Cell.vars.playerClass == buffs[k]["provider"])
@@ -520,10 +534,14 @@ local function IterateAllUnits()
                     available["PWF"] = true
                     hasBuffProvider = true
                 end
-
             elseif UnitClassBase(unit) == "DRUID" then
                 if UnitLevel(unit) >= buffs["MotW"]["level"] then
                     available["MotW"] = true
+                    hasBuffProvider = true
+                end
+            elseif UnitClassBase(unit) == "SHAMAN" then
+                if UnitLevel(unit) >= buffs["SF"]["level"] then
+                    available["SF"] = true
                     hasBuffProvider = true
                 end
             elseif UnitClassBase(unit) == "MAGE" then
@@ -531,13 +549,11 @@ local function IterateAllUnits()
                     available["AB"] = true
                     hasBuffProvider = true
                 end
-
             elseif UnitClassBase(unit) == "WARRIOR" then
                 if UnitLevel(unit) >= buffs["BS"]["level"] then
                     available["BS"] = true
                     hasBuffProvider = true
                 end
-
             elseif UnitClassBase(unit) == "EVOKER" then
                 if UnitLevel(unit) >= buffs["BotB"]["level"] then
                     available["BotB"] = true
@@ -623,7 +639,7 @@ function buffTrackerFrame:UNIT_AURA(unit)
             CheckUnit(unit, true)
         end
     else
-        if string.match(unit, "party%d") or unit=="player" then
+        if string.match(unit, "party%d") or unit == "player" then
             CheckUnit(unit, true)
         end
     end
