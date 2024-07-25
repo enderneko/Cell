@@ -107,8 +107,8 @@ local aoeHealings = {
     115098, -- Chi Wave - 真气波
     123986, -- Chi Burst - 真气爆裂
     115310, -- Revival - 还魂术
-    -- 191837, -- Essence Font - 精华之泉
     322118, -- Invoke Yu'lon, the Jade Serpent - 青龙下凡 (SUMMON)
+    388193, -- 碧火踏 - Jadefire Stomp
     443028, -- Celestial Conduit - 天神御身
 
     -- paladin
@@ -745,12 +745,13 @@ local spells =  {
     -- monk
     119611, -- Renewing Mist - 复苏之雾
     124682, -- Enveloping Mist - 氤氲之雾
-    -- 191840, -- Essence Font - 精华之泉
     325209, -- Enveloping Breath - 氤氲之息
+    406139, -- Chi Cocoon - 真气之茧
     -- 386276, -- 骨尘酒
-    -- 343737, -- 抚慰之息
+    -- 115175, -- 抚慰之雾
+    -- 198533, -- 抚慰之雾
     -- 387766, -- 滋养真气
-    196725, -- Refreshing Jade Wind - 碧愈疾风
+    -- 196725, -- Refreshing Jade Wind - 碧愈疾风
     450805, -- Purified Spirit - 净化之魂
 
     -- paladin
@@ -775,7 +776,7 @@ local spells =  {
     194384, -- Atonement - 救赎
     77489, -- Echo of Light - 圣光回响
     372847, -- Blessed Bolt - 光明之泉恢复
-    443526, -- Premonition of Solace
+    443526, -- Premonition of Solace -- 慰藉预兆
 
     -- shaman
     974, -- Earth Shield - 大地之盾
@@ -784,8 +785,8 @@ local spells =  {
     382024, -- Earthliving Weapon - 大地生命武器
     375986, -- Primordial Wave - 始源之潮
     444490, -- Hydrobubble - 源水气泡
-    73920, -- Healing Rain - 治疗之雨
-    456366, -- Healing Rain - 治疗之雨
+    -- 73920, -- Healing Rain - 治疗之雨
+    -- 456366, -- Healing Rain - 治疗之雨
 }
 
 function F:FirstRun()
