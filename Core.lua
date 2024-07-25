@@ -703,7 +703,7 @@ function eventFrame:PLAYER_ENTERING_WORLD()
         inInstance = false
 
         if not InCombatLockdown() and not UnitAffectingCombat("player") then
-            F:Debug("|cffbbbbbb--- LeaveInstance: |cffff7777collectgarbage")
+            F:Debug("|cffbbbbbb--- LeftInstance: |cffff7777collectgarbage")
             collectgarbage("collect")
         end
     end
