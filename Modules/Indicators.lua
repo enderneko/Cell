@@ -2237,7 +2237,7 @@ function F:ReloadIndicatorList()
     if indicatorsTab:IsShown() then
         LoadIndicatorList()
         listFrame.scrollFrame:ScrollToBottom()
-        listButtons[#listButtons]:Click()
+        listButtons[#currentLayoutTable["indicators"]]:Click()
     else
         indicatorsTab:SetScript("OnShow", function()
             indicatorsTab:SetScript("OnShow", nil)
