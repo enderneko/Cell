@@ -326,6 +326,13 @@ local function CreateSetting_Anchor(parent)
                 end
             },
             {
+                ["text"] = L["Health Bar"].." ("..L["Loss"]..")",
+                ["value"] = "healthbar-loss",
+                ["onClick"] = function()
+                    widget.func("healthbar-loss")
+                end
+            },
+            {
                 ["text"] = L["Health Bar"].." ("..L["Entire"]..")",
                 ["value"] = "healthbar-entire",
                 ["onClick"] = function()

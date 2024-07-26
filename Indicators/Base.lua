@@ -1066,6 +1066,9 @@ local function Color_SetAnchor(color, anchorTo)
     if anchorTo == "healthbar-current" then
         -- current hp texture
         color:SetAllPoints(color.parent.widgets.healthBar:GetStatusBarTexture())
+    elseif anchorTo == "healthbar-loss" then
+        -- lost texture
+        color:SetAllPoints(color.parent.widgets.healthBarLoss)
     elseif anchorTo == "healthbar-entire" then
         -- entire hp bar
         color:SetAllPoints(color.parent.widgets.healthBar)

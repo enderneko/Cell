@@ -118,8 +118,9 @@ local function UpdatePreviewButton()
     previewButton.widgets.powerBar:GetStatusBarTexture():SetDrawLayer("ARTWORK", -7) --! VERY IMPORTANT
 
     -- health color
-    local r, g, b = F:GetHealthBarColor(1, false, F:GetClassColor(Cell.vars.playerClass))
+    local r, g, b, lossR, lossG, lossB = F:GetHealthBarColor(1, false, F:GetClassColor(Cell.vars.playerClass))
     previewButton.widgets.healthBar:SetStatusBarColor(r, g, b, CellDB["appearance"]["barAlpha"])
+    previewButton.widgets.healthBarLoss:SetVertexColor(lossR, lossG, lossB, CellDB["appearance"]["lossAlpha"])
 
     -- power color
     r, g, b = F:GetPowerBarColor("player", Cell.vars.playerClass)
@@ -1653,6 +1654,12 @@ local function ShowIndicatorSettings(id)
     local indicatorName = indicatorTable["indicatorName"]
     local indicatorType = indicatorTable["type"]
     -- texplore(indicatorTable)
+
+    if indicatorType == "color" then
+        previewButton.widgets.healthBar:SetValue(0.5)
+    else
+        previewButton.widgets.healthBar:SetValue(1)
+    end
 
     local settingsTable
     if indicatorType == "built-in" then
