@@ -145,7 +145,7 @@ if C_Spell.GetSpellCooldown then
         end
     end
 else
-    GetCooldown = function()
+    GetCooldown = function(spellId)
         return GetSpellCooldown(spellId)
     end
 end
