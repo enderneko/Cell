@@ -52,6 +52,8 @@ local supporters1 = { -- wowIDs
     {"Darrágh-Blackrock (EU)"}, -- Jim (Ko-fi)
     {"Cerrmor-Stormrage (US)"}, -- (Ko-fi)
     {"Drumonji-Blackhand (EU)"}, -- (Ko-fi)
+    {"Gordonfreems-Illidan (US)"}, -- Gordon Freeman (Ko-fi)
+    {"Saphiren-Azralon (US)"}, -- Saphiren (Ko-fi)
 }
 
 local supporters2 = { -- 有些早期的发电记录已经丢失了……
