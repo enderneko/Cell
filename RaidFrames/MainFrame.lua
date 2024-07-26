@@ -53,9 +53,9 @@ local function RegisterButtonEvents(frame)
     frame:SetScript("OnDragStop", function()
         anchorFrame:StopMovingOrSizing()
         P:SavePosition(anchorFrame, Cell.vars.currentLayoutTable["main"]["position"])
-        -- if not InCombatLockdown() then
-            -- P:PixelPerfectPoint(anchorFrame)
-        -- end
+        if not InCombatLockdown() then
+            P:PixelPerfectPoint(anchorFrame)
+        end
     end)
 
     frame:HookScript("OnEnter", function()
