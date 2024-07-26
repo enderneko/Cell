@@ -1154,6 +1154,7 @@ function F:GetHealthBarColor(percent, isDeadOrGhost, r, g, b)
     end
 
     local barR, barG, barB, lossR, lossG, lossB
+    percent = percent or 1
 
     -- bar
     if percent == 1 and Cell.vars.useFullColor then
@@ -1168,7 +1169,7 @@ function F:GetHealthBarColor(percent, isDeadOrGhost, r, g, b)
         elseif CellDB["appearance"]["barColor"][1] == "gradient" then
             barR, barG, barB = F:ColorGradient(percent, CellDB["appearance"]["gradientColors"][1], CellDB["appearance"]["gradientColors"][2], CellDB["appearance"]["gradientColors"][3], CellDB["appearance"]["gradientColors"][4], CellDB["appearance"]["gradientColors"][5])
         elseif CellDB["appearance"]["barColor"][1] == "gradient2" then
-            if percent == 1 then
+            if percent >= CellDB["appearance"]["gradientColors"][5] then
                 barR, barG, barB = r, g, b -- full: class color
             else
                 barR, barG, barB = F:ColorGradient(percent, CellDB["appearance"]["gradientColors"][1], CellDB["appearance"]["gradientColors"][2], CellDB["appearance"]["gradientColors"][3], CellDB["appearance"]["gradientColors"][4], CellDB["appearance"]["gradientColors"][5])
