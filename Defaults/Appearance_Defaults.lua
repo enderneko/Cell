@@ -18,6 +18,7 @@ Cell.defaults.appearance = {
     ["bgAlpha"] = 1,
     ["barAnimation"] = "Flash",
     ["gradientColors"] = {{1,0,0}, {1,0.7,0}, {0.7,1,0}, 0.05, 0.95},
+    ["gradientColorsLoss"] = {{1,0,0}, {1,0.7,0}, {0.7,1,0}, 0.05, 0.95},
     ["auraIconOptions"] = {
         ["animation"] = "duration",
         ["durationRoundUp"] = false,
@@ -48,6 +49,7 @@ local buttonStyleIndices = {
     "bgAlpha",
     "barAnimation",
     "gradientColors",
+    "gradientColorsLoss",
     "auraIconOptions",
     "targetColor",
     "mouseoverColor",
