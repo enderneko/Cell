@@ -3116,6 +3116,13 @@ function F:Revise()
     --     end
     -- end
 
+    -- r237-release
+    if CellDB["revise"] and dbRevision < 237 then
+        if not CellDB["appearance"]["gradientColorsLoss"] then
+            CellDB["appearance"]["gradientColorsLoss"] = F:Copy(Cell.defaults.appearance.gradientColorsLoss)
+        end
+    end
+
     -- ----------------------------------------------------------------------- --
     --            update from old versions, validate all indicators            --
     -- ----------------------------------------------------------------------- --

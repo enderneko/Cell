@@ -541,8 +541,8 @@ end
 -- unitbutton
 -------------------------------------------------
 local textureDropdown, barColorDropdown, barColorPicker, fullColorCB, fullColorPicker, lossColorDropdown, lossColorPicker, deathColorCB, deathColorPicker, powerColorDropdown, powerColorPicker, barAnimationDropdown, targetColorPicker, mouseoverColorPicker, highlightSize
-local gradientColorsText, gradientColorCB1, gradientColorCB2, gradientColorCB3, gradientColorDropdown1, gradientColorDropdown2
-local gradientColorsLossText, gradientColorLossCB1, gradientColorLossCB2, gradientColorLossCB3, gradientColorLossDropdown1, gradientColorLossDropdown2
+local gradientColorCB1, gradientColorCB2, gradientColorCB3, gradientColorDropdown1, gradientColorDropdown2
+local gradientColorLossCB1, gradientColorLossCB2, gradientColorLossCB3, gradientColorLossDropdown1, gradientColorLossDropdown2
 local barAlpha, lossAlpha, bgAlpha, oorAlpha, predCB, absorbCB, invertColorCB, shieldCB, oversCB, reverseCB
 local predCustomCB, predColorPicker, absorbColorPicker, shieldColorPicker, oversColorPicker
 local iconOptionsBtn, iconOptionsFrame, iconAnimationDropdown, durationRoundUpCB, durationDecimalText1, durationDecimalText2, durationDecimalDropdown, durationColorCB, durationNormalCP, durationPercentCP, durationSecondCP, durationPercentDD, durationSecondEB, durationSecondText
@@ -850,20 +850,15 @@ local function UpdateColorPickers()
 
     -- gradient color
     if CellDB["appearance"]["barColor"][1]:find("^gradient") then
-        if CellDB["appearance"]["barColor"][1] == "gradient2" then
-            gradientColorCB3:Hide()
-        else
-            gradientColorCB3:Show()
-        end
-        gradientColorsText:Show()
         gradientColorCB1:Show()
         gradientColorCB2:Show()
+        gradientColorCB3:Show()
+        gradientColorCB3:SetEnabled(CellDB["appearance"]["barColor"][1] == "gradient")
         gradientColorDropdown1:Show()
         gradientColorDropdown2:Show()
         lossColorDropdown:ClearAllPoints()
         lossColorDropdown:SetPoint("TOPLEFT", gradientColorCB1, "BOTTOMLEFT", 0, -30)
     else
-        gradientColorsText:Hide()
         gradientColorCB1:Hide()
         gradientColorCB2:Hide()
         gradientColorCB3:Hide()
@@ -874,20 +869,15 @@ local function UpdateColorPickers()
     end
 
     if CellDB["appearance"]["lossColor"][1]:find("^gradient") then
-        if CellDB["appearance"]["lossColor"][1] == "gradient2" then
-            gradientColorLossCB3:Hide()
-        else
-            gradientColorLossCB3:Show()
-        end
-        gradientColorsLossText:Show()
         gradientColorLossCB1:Show()
         gradientColorLossCB2:Show()
+        gradientColorLossCB3:Show()
+        gradientColorLossCB1:SetEnabled(CellDB["appearance"]["lossColor"][1] == "gradient")
         gradientColorLossDropdown1:Show()
         gradientColorLossDropdown2:Show()
         powerColorDropdown:ClearAllPoints()
         powerColorDropdown:SetPoint("TOPLEFT", gradientColorLossCB1, "BOTTOMLEFT", 0, -30)
     else
-        gradientColorsLossText:Hide()
         gradientColorLossCB1:Hide()
         gradientColorLossCB2:Hide()
         gradientColorLossCB3:Hide()
@@ -958,6 +948,15 @@ local function CreateUnitButtonStylePane()
             end,
         },
         {
+            ["text"] = L["Gradient"].." C",
+            ["value"] = "gradient3",
+            ["onClick"] = function()
+                CellDB["appearance"]["barColor"][1] = "gradient3"
+                UpdateColorPickers()
+                Cell:Fire("UpdateAppearance", "color")
+            end,
+        },
+        {
             ["text"] = L["Custom Color"],
             ["value"] = "custom",
             ["onClick"] = function()
@@ -967,6 +966,18 @@ local function CreateUnitButtonStylePane()
             end,
         },
     })
+    barColorDropdown:HookScript("OnEnter", function()
+        CellTooltip:SetOwner(barColorDropdown, "ANCHOR_NONE")
+        CellTooltip:SetPoint("BOTTOMLEFT", barColorDropdown, "TOPLEFT", 0, 1)
+        CellTooltip:AddLine(L["Gradient Colors"].." |cff7777770% -> 100%")
+        CellTooltip:AddDoubleLine("|cffffb5c5"..L["Gradient"].." A:", "|cffffffff"..L["Color"].."1 |cff777777->|r "..L["Color"].."2 |cff777777->|r "..L["Color"].."3")
+        CellTooltip:AddDoubleLine("|cffffb5c5"..L["Gradient"].." B:", "|cffffffff"..L["Color"].."1 |cff777777->|r "..L["Color"].."2 |cff777777->|r "..L["Class Color"])
+        CellTooltip:AddDoubleLine("|cffffb5c5"..L["Gradient"].." C:", "|cffffffff"..L["Color"].."1 |cff777777->|r "..L["Color"].."2 |cff777777->|r "..L["Class Color (dark)"])
+        CellTooltip:Show()
+    end)
+    barColorDropdown:HookScript("OnLeave", function()
+        CellTooltip:Hide()
+    end)
 
     local barColorText = unitButtonPane:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
     barColorText:SetPoint("BOTTOMLEFT", barColorDropdown, "TOPLEFT", 0, 1)
@@ -1007,7 +1018,7 @@ local function CreateUnitButtonStylePane()
         CellDB["appearance"]["gradientColors"][1][3] = b
         Cell:Fire("UpdateAppearance", "color")
     end)
-    gradientColorCB1:SetPoint("TOPLEFT", barColorDropdown, "BOTTOMLEFT", 0, -30)
+    gradientColorCB1:SetPoint("TOPLEFT", barColorDropdown, "BOTTOMLEFT", 0, -5)
 
     gradientColorDropdown1 = Cell:CreateDropdown(unitButtonPane, 50, nil, true)
     gradientColorDropdown1:SetPoint("LEFT", gradientColorCB1, "RIGHT", 5, 0)
@@ -1061,11 +1072,6 @@ local function CreateUnitButtonStylePane()
         gradientColorDropdown2:SetItems(items)
     end
 
-    gradientColorsText = unitButtonPane:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
-    gradientColorsText:SetPoint("LEFT", gradientColorCB1)
-    gradientColorsText:SetPoint("BOTTOM", gradientColorDropdown1, "TOP", 0, 1)
-    gradientColorsText:SetText(L["Gradient Colors"])
-
     -- loss color
     lossColorDropdown = Cell:CreateDropdown(unitButtonPane, 141)
     -- lossColorDropdown:SetPoint("TOPLEFT", gradientColorCB1, "BOTTOMLEFT", 0, -30)
@@ -1107,6 +1113,15 @@ local function CreateUnitButtonStylePane()
             end,
         },
         {
+            ["text"] = L["Gradient"].." C",
+            ["value"] = "gradient3",
+            ["onClick"] = function()
+                CellDB["appearance"]["lossColor"][1] = "gradient3"
+                UpdateColorPickers()
+                Cell:Fire("UpdateAppearance", "color")
+            end,
+        },
+        {
             ["text"] = L["Custom Color"],
             ["value"] = "custom",
             ["onClick"] = function()
@@ -1116,6 +1131,18 @@ local function CreateUnitButtonStylePane()
             end,
         },
     })
+    lossColorDropdown:HookScript("OnEnter", function()
+        CellTooltip:SetOwner(lossColorDropdown, "ANCHOR_NONE")
+        CellTooltip:SetPoint("BOTTOMLEFT", lossColorDropdown, "TOPLEFT", 0, 1)
+        CellTooltip:AddLine(L["Gradient Colors"].." |cff7777770% -> 100%")
+        CellTooltip:AddDoubleLine("|cffffb5c5"..L["Gradient"].." A:", "|cffffffff"..L["Color"].."1 |cff777777->|r "..L["Color"].."2 |cff777777->|r "..L["Color"].."3")
+        CellTooltip:AddDoubleLine("|cffffb5c5"..L["Gradient"].." B:", "|cffffffff"..L["Class Color"].." |cff777777->|r "..L["Color"].."2 |cff777777->|r "..L["Color"].."3")
+        CellTooltip:AddDoubleLine("|cffffb5c5"..L["Gradient"].." C:", "|cffffffff"..L["Class Color (dark)"].." |cff777777->|r "..L["Color"].."2 |cff777777->|r "..L["Color"].."3")
+        CellTooltip:Show()
+    end)
+    lossColorDropdown:HookScript("OnLeave", function()
+        CellTooltip:Hide()
+    end)
 
     local lossColorText = unitButtonPane:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
     lossColorText:SetPoint("BOTTOMLEFT", lossColorDropdown, "TOPLEFT", 0, 1)
@@ -1138,7 +1165,7 @@ local function CreateUnitButtonStylePane()
         CellDB["appearance"]["gradientColorsLoss"][1][3] = b
         Cell:Fire("UpdateAppearance", "color")
     end)
-    gradientColorLossCB1:SetPoint("TOPLEFT", lossColorDropdown, "BOTTOMLEFT", 0, -30)
+    gradientColorLossCB1:SetPoint("TOPLEFT", lossColorDropdown, "BOTTOMLEFT", 0, -5)
 
     gradientColorLossDropdown1 = Cell:CreateDropdown(unitButtonPane, 50, nil, true)
     gradientColorLossDropdown1:SetPoint("LEFT", gradientColorLossCB1, "RIGHT", 5, 0)
@@ -1191,11 +1218,6 @@ local function CreateUnitButtonStylePane()
         end
         gradientColorLossDropdown2:SetItems(items)
     end
-
-    gradientColorsLossText = unitButtonPane:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
-    gradientColorsLossText:SetPoint("LEFT", gradientColorCB1)
-    gradientColorsLossText:SetPoint("BOTTOM", gradientColorLossDropdown1, "TOP", 0, 1)
-    gradientColorsLossText:SetText(L["Gradient Colors"])
 
     -- death color
     deathColorCB = Cell:CreateCheckButton(unitButtonPane, "", function(checked, self)
@@ -1580,7 +1602,7 @@ LoadButtonStyle = function()
     gradientColorCB3:SetColor(c[3][1], c[3][2], c[3][3])
     gradientColorDropdown1:SetSelectedValue(c[4])
     gradientColorDropdown2:SetSelectedValue(c[5])
-    
+
     local d = CellDB["appearance"]["gradientColorsLoss"]
     gradientColorLossCB1:SetColor(d[1][1], d[1][2], d[1][3])
     gradientColorLossCB2:SetColor(d[2][1], d[2][2], d[2][3])
