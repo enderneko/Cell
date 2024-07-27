@@ -1520,7 +1520,7 @@ local function UpdateMassBarrier(b, event)
 end
 
 cleu:SetScript("OnEvent", function()
-    local _, subEvent, _, sourceGUID, sourceName, sourceFlags, sourceRaidFlags, destGUID, destName, destFlags, destRaidFlags, spellId, spellName = CombatLogGetCurrentEventInfo()
+    local _, subEvent, _, sourceGUID, _, sourceFlags, _, _, _, destFlags, _, spellId = CombatLogGetCurrentEventInfo()
 
     -- mirror image
     if spellId == 55342 and F:IsFriend(sourceFlags) then
