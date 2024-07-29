@@ -114,7 +114,7 @@ local function EncodeDB(modifier, bindKey, bindType, bindAction)
         attrType = "macro"
         attrAction = bindAction
     elseif bindType == "custom" then
-        attrType = "macrotext"
+        attrType = "custom"
         attrAction = bindAction
     elseif bindType == "item" then
         attrType = "item"
@@ -849,8 +849,13 @@ local function ShowTypesMenu(index, b)
                 else
                     changed[index]["bindType"] = nil
                     changed[index]["bindAction"] = nil
-                    b.actionGrid:SetText(b.bindAction)
-                    b:ShowMacroIcon(b.bindAction)
+                    if b.bindAction == "" then
+                        b.actionGrid:SetText("")
+                        b:HideIcon()
+                    else
+                        b.actionGrid:SetText(b.bindActionDisplay)
+                        b:ShowMacroIcon(b.bindAction)
+                    end
                 end
                 CheckChanged(index, b)
                 CheckChanges()
@@ -1460,6 +1465,7 @@ CreateBindingListButton = function(modifier, bindKey, bindType, bindAction, i)
     b.clickCastingIndex = i
 
     b.typeGrid:SetText(L[F:UpperFirst(bindType)])
+
     if bindType == "general" then
         b.bindActionDisplay = L[bindAction]
         b:HideIcon()
@@ -1489,10 +1495,14 @@ CreateBindingListButton = function(modifier, bindKey, bindType, bindAction, i)
         local name, icon = GetMacroInfo(GetMacroIndexByName(bindAction))
         if name then
             b.bindActionDisplay = name
-        else
-            b.bindActionDisplay = "|cFFFF3030"..L["Invalid"]
+            b:ShowIcon(icon)
+        elseif bindAction ~= "" then -- maybe deleted
+            b.bindActionDisplay = bindAction
+            b:ShowIcon()
+        else -- not bound
+            b.bindActionDisplay = ""
+            b:HideIcon()
         end
-        b:ShowIcon(icon)
     elseif bindType == "custom" then
         b.bindActionDisplay = bindAction
         b:HideIcon()
