@@ -2562,9 +2562,9 @@ function F:Revise()
         end
 
         -- set alwaysUpdateDebuffs default to true
-        if not CellDB["general"]["alwaysUpdateDebuffs"] then
-            CellDB["general"]["alwaysUpdateDebuffs"] = true
-        end
+        -- if not CellDB["general"]["alwaysUpdateDebuffs"] then
+        --     CellDB["general"]["alwaysUpdateDebuffs"] = true
+        -- end
     end
 
     -- r217-release
