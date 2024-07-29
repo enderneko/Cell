@@ -5,6 +5,8 @@ local F = Cell.funcs
 local UnitIsFeignDeath = UnitIsFeignDeath
 local IsInGroup = IsInGroup
 local IsEncounterInProgress = IsEncounterInProgress
+local GetSpellLink = C_Spell.GetSpellLink or GetSpellLink
+
 ----------------------------------------------------
 -- vars
 ----------------------------------------------------
