@@ -3209,8 +3209,8 @@ function B:SetOrientation(button, orientation, rotateTexture)
 
         -- update overShieldGlowR
         P:ClearPoints(overShieldGlowR)
-        P:Point(overShieldGlowR, "TOPLEFT", shieldBarR, "TOPLEFT", -4, 0)
-        P:Point(overShieldGlowR, "BOTTOMLEFT", shieldBarR, "BOTTOMLEFT", -4, 0)
+        P:Point(overShieldGlowR, "TOP", shieldBarR, "TOPLEFT", 0, 0)
+        P:Point(overShieldGlowR, "BOTTOM", shieldBarR, "BOTTOMLEFT", 0, 0)
         P:Width(overShieldGlowR, 8)
         F:RotateTexture(overShieldGlowR, 0)
 
@@ -3286,10 +3286,10 @@ function B:SetOrientation(button, orientation, rotateTexture)
         P:Height(overShieldGlow, 4)
         F:RotateTexture(overShieldGlow, 90)
 
-        -- update overShieldGlowR TODO: fix vertical height
+        -- update overShieldGlowR
         P:ClearPoints(overShieldGlowR)
-        P:Point(overShieldGlowR, "TOPRIGHT", shieldBarR, "TOPRIGHT", 0, -4)
-        P:Point(overShieldGlowR, "BOTTOMLEFT", shieldBarR, "BOTTOMLEFT", 0, -4)
+        P:Point(overShieldGlowR, "LEFT", shieldBarR, "BOTTOMLEFT", 0, 0)
+        P:Point(overShieldGlowR, "RIGHT", shieldBarR, "BOTTOMRIGHT", 0, 0)
         P:Height(overShieldGlowR, 8)
         F:RotateTexture(overShieldGlowR, 90)
 
