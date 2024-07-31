@@ -54,6 +54,8 @@ local supporters1 = { -- wowIDs
     {"Drumonji-Blackhand (EU)"}, -- (Ko-fi)
     {"Gordonfreems-Illidan (US)"}, -- Gordon Freeman (Ko-fi)
     {"Saphiren-Azralon (US)"}, -- Saphiren (Ko-fi)
+    {"Evangeleena-Outland (EU)"}, -- Milda (Ko-fi)
+    {"Æleluia-Hyjal (EU)"}, -- eXtRa (Ko-fi)
 }
 
 local supporters2 = { -- 有些早期的发电记录已经丢失了……
@@ -131,6 +133,9 @@ local supporters2 = { -- 有些早期的发电记录已经丢失了……
     {"Intuition", "Ko-fi"}, -- 2024-07-23
     {"Gordon Freeman", "Ko-fi"}, -- 2024-07-25
     {"Saphiren", "Ko-fi"}, -- 2024-07-25
+    {"Milda", "Ko-fi"}, -- 2024-07-30
+    {"eXtRa", "Ko-fi"}, -- 2024-07-31
+    {"男月月", "Ko-fi"}, -- 2024-07-31
 }
 
 -------------------------------------------------
