@@ -565,11 +565,11 @@ local dispelNodeIDs = {
 
     -- MONK -----------------
         -- 268 - Brewmaster
-        [268] = {["Disease"] = 81633, ["Poison"] = 81633},
+        [268] = {["Disease"] = 101090, ["Poison"] = 101090},
         -- 269 - Windwalker
-        [269] = {["Disease"] = 80606, ["Poison"] = 80606},
+        [269] = {["Disease"] = 101150, ["Poison"] = 101150},
         -- 270 - Mistweaver
-        [270] = {["Disease"] = 81634, ["Magic"] = true, ["Poison"] = 81634},
+        [270] = {["Disease"] = 101089, ["Magic"] = true, ["Poison"] = 101089},
     -------------------------
 
     -- PALADIN --------------
@@ -592,11 +592,11 @@ local dispelNodeIDs = {
 
     -- SHAMAN ---------------
         -- 262 - Elemental
-        [262] = {["Curse"] = 81075, ["Poison"] = 81093},
+        [262] = {["Curse"] = 103608, ["Poison"] = 103609},
         -- 263 - Enhancement
-        [263] = {["Curse"] = 81077, ["Poison"] = 81093},
+        [263] = {["Curse"] = 103608, ["Poison"] = 103609},
         -- 264 - Restoration
-        [264] = {["Curse"] = 81073, ["Magic"] = true, ["Poison"] = 81093},
+        [264] = {["Curse"] = 81073, ["Magic"] = true, ["Poison"] = 103609},
     -------------------------
 
     -- WARLOCK --------------
