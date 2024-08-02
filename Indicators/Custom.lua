@@ -246,7 +246,7 @@ local function Update(indicator, indicatorTable, unit, spell, start, duration, d
     end
 end
 
-function I.UpdateCustomIndicators(unitButton, auraInfo, refreshing)
+function I.UpdateCustomIndicators(unitButton, auraInfo)
     local unit = unitButton.states.displayedUnit
 
     local auraType = auraInfo.isHelpful and "buff" or "debuff"
@@ -255,32 +255,30 @@ function I.UpdateCustomIndicators(unitButton, auraInfo, refreshing)
     local count = auraInfo.applications
     local duration = auraInfo.duration
     local start = (auraInfo.expirationTime or 0) - auraInfo.duration
-    local spellId = auraInfo.spellId
-    local spellName = auraInfo.name
     local castByMe = auraInfo.sourceUnit == "player" or auraInfo.sourceUnit == "pet"
 
     -- check Bleed
     if auraInfo.isHarmful then
-        debuffType = I.CheckDebuffType(debuffType, spellId)
+        debuffType = I.CheckDebuffType(debuffType, auraInfo.spellId)
     end
 
     for indicatorName, indicatorTable in pairs(customIndicators[auraType]) do
         if indicatorName and enabledIndicators[indicatorName] and unitButton.indicators[indicatorName] then
             local spell  --* trackByName
             if indicatorTable["trackByName"] then
-                spell = spellName
+                spell = auraInfo.name
             else
-                spell = spellId
+                spell = auraInfo.spellId
             end
 
             if indicatorTable["auras"][spell] or (indicatorTable["auras"][0] and duration ~= 0) then -- is in indicator spell list
                 if auraType == "buff" then
                     -- check caster
                     if (indicatorTable["castBy"] == "me" and castByMe) or (indicatorTable["castBy"] == "others" and not castByMe) or (indicatorTable["castBy"] == "anyone") then
-                        Update(unitButton.indicators[indicatorName], indicatorTable, unit, spell, start, duration, debuffType, icon, count, refreshing)
+                        Update(unitButton.indicators[indicatorName], indicatorTable, unit, spell, start, duration, debuffType, icon, count, auraInfo.refreshing)
                     end
                 else -- debuff
-                    Update(unitButton.indicators[indicatorName], indicatorTable, unit, spell, start, duration, debuffType, icon, count, refreshing)
+                    Update(unitButton.indicators[indicatorName], indicatorTable, unit, spell, start, duration, debuffType, icon, count, auraInfo.refreshing)
                 end
             end
         end
