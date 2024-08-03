@@ -567,12 +567,16 @@ local function Dispels_SetDispels(self, dispelTypes)
     local found
 
     self.highlight:Hide()
+    LCG.PixelGlow_Stop(self.parent)
 
     local i = 0
     for _, dispelType in ipairs(dispelOrder) do
         local showHighlight = dispelTypes[dispelType]
         if type(showHighlight) == "boolean" then
             -- highlight
+            if not showHighlight or self.highlightType ~= "glow" then
+                LCG.PixelGlow_Stop(self.parent)
+            end
             if not found and self.highlightType ~= "none" and dispelType and showHighlight then
                 found = true
                 local r, g, b = I.GetDebuffTypeColor(dispelType)
@@ -582,8 +586,12 @@ local function Dispels_SetDispels(self, dispelTypes)
                     self.highlight:SetVertexColor(r, g, b, 1)
                 elseif self.highlightType == "gradient" or self.highlightType == "gradient-half" then
                     self.highlight:SetGradient("VERTICAL", CreateColor(r, g, b, 1), CreateColor(r, g, b, 0))
+                elseif self.highlightType == "glow" then
+                    -- Use 3 pixel thickness and offset by 1 pixel
+                    -- These are reasonable defaults but could make it configurable in future enhancement
+                    LCG.PixelGlow_Start(self.parent, {r, g, b, 1}, nil, nil, nil, 3, 1, 1)
                 end
-                self.highlight:Show()
+                if self.highlightType ~= "glow" then self.highlight:Show() end
             end
             -- icons
             if self.showIcons then
@@ -649,6 +657,7 @@ local function Dispels_UpdateHighlight(self, highlightType)
 
     if highlightType == "none" then
         self.highlight:Hide()
+        LCG.PixelGlow_Stop(self.parent)
     elseif highlightType == "gradient" then
         -- self.highlight:SetParent(self.parent.widgets.indicatorFrame)
         self.highlight:ClearAllPoints()
@@ -681,6 +690,9 @@ local function Dispels_UpdateHighlight(self, highlightType)
         self.highlight:SetTexture(Cell.vars.texture)
         self.highlight:SetDrawLayer("ARTWORK", -7)
         self.highlight:SetBlendMode("ADD")
+    elseif highlightType == "glow" then
+        LCG.PixelGlow_Stop(self.parent)
+        self.highlight:Hide()
     end
 end
 
@@ -692,6 +704,7 @@ function I.CreateDispels(parent)
 
     dispels:SetScript("OnHide", function()
         dispels.highlight:Hide()
+        LCG.PixelGlow_Stop(parent)
     end)
 
     dispels.highlight = parent.widgets.midLevelFrame:CreateTexture(parent:GetName().."DispelHighlight")

@@ -5473,6 +5473,13 @@ local function CreateSetting_HighlightType(parent)
                     widget.func("current+")
                 end,
             },
+            {
+                ["text"] = L["Glow - Pixel"],
+                ["value"] = "glow",
+                ["onClick"] = function()
+                    widget.func("glow")
+                end,
+            },
         })
 
         widget.highlightTypeText = widget:CreateFontString(nil, "OVERLAY", font_name)

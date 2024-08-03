@@ -368,6 +368,7 @@ local function InitIndicator(indicatorName)
             local found
 
             self.highlight:Hide()
+            LCG.PixelGlow_Stop(self.parent)
 
             local i = 1
             for dispelType, showHighlight in pairs(dispelTypes) do
@@ -381,8 +382,13 @@ local function InitIndicator(indicatorName)
                         self.highlight:SetVertexColor(r, g, b, 1)
                     elseif self.highlightType == "gradient" or self.highlightType == "gradient-half" then
                         self.highlight:SetGradient("VERTICAL", CreateColor(r, g, b, 1), CreateColor(r, g, b, 0))
+                    elseif self.highlightType == "glow" then
+                        -- Use 3 pixel thickness and offset by 1 pixel
+                        -- These are reasonable defaults but could make it configurable in future enhancement
+                        LCG.PixelGlow_Start(self.parent, {r, g, b, 1}, nil, nil, nil, 3, 1, 1)
+                        self.highlight:Hide()
                     end
-                    if indicator.isVisible then self.highlight:Show() end
+                    if indicator.isVisible and self.highlightType ~= "glow" then self.highlight:Show() end
                 end
                 -- icons
                 if self.showIcons then
