@@ -598,6 +598,236 @@ function I.CreateAura_BarIcon(name, parent)
 end
 
 -------------------------------------------------
+-- CreateAura_Icons
+-------------------------------------------------
+local function Icons_UpdateSize(icons, numAuras)
+    if not (icons.width and icons.orientation) then return end -- not init
+
+    if numAuras then -- call from I.CheckCustomIndicators or preview
+        for i = numAuras + 1, icons.maxNum do
+            icons[i]:Hide()
+        end
+    else
+        numAuras = 0
+        for i = 1, icons.maxNum do
+            if icons[i]:IsShown() then
+                numAuras = i
+            else
+                break
+            end
+        end
+    end
+
+    -- set size
+    local lines = ceil(numAuras / icons.numPerLine)
+    numAuras = min(numAuras, icons.numPerLine)
+
+    if icons.isHorizontal then
+        P:SetGridSize(icons, icons.width, icons.height, icons.spacingX, icons.spacingY, numAuras, lines)
+    else
+        P:SetGridSize(icons, icons.width, icons.height, icons.spacingX, icons.spacingY, lines, numAuras)
+    end
+end
+
+local function Icons_SetNumPerLine(icons, numPerLine)
+    icons.numPerLine = min(numPerLine, icons.maxNum)
+
+
+    if icons.orientation then
+        icons:SetOrientation(icons.orientation)
+    -- else
+    --     icons:UpdateSize()
+    end
+end
+
+local function Icons_SetOrientation(icons, orientation)
+    icons.orientation = orientation
+
+    local anchor = icons:GetPoint()
+    assert(anchor, "[indicator] SetPoint must be called before SetOrientation")
+
+    icons.isHorizontal = not strfind(orientation, "top")
+
+    local point1, point2, x, y
+    local newLinePoint2, newLineX, newLineY
+
+    if orientation == "left-to-right" then
+        if strfind(anchor, "^BOTTOM") then
+            point1 = "BOTTOMLEFT"
+            point2 = "BOTTOMRIGHT"
+            newLinePoint2 = "TOPLEFT"
+            y = 0
+            newLineY = icons.spacingY
+        else
+            point1 = "TOPLEFT"
+            point2 = "TOPRIGHT"
+            newLinePoint2 = "BOTTOMLEFT"
+            y = 0
+            newLineY = -icons.spacingY
+        end
+        x = icons.spacingX
+        newLineX = 0
+
+    elseif orientation == "right-to-left" then
+        if strfind(anchor, "^BOTTOM") then
+            point1 = "BOTTOMRIGHT"
+            point2 = "BOTTOMLEFT"
+            newLinePoint2 = "TOPRIGHT"
+            y = 0
+            newLineY = icons.spacingY
+        else
+            point1 = "TOPRIGHT"
+            point2 = "TOPLEFT"
+            newLinePoint2 = "BOTTOMRIGHT"
+            y = 0
+            newLineY = -icons.spacingY
+        end
+        x = -icons.spacingX
+        newLineX = 0
+
+    elseif orientation == "top-to-bottom" then
+        if strfind(anchor, "RIGHT$") then
+            point1 = "TOPRIGHT"
+            point2 = "BOTTOMRIGHT"
+            newLinePoint2 = "TOPLEFT"
+            x = 0
+            newLineX = -icons.spacingX
+        else
+            point1 = "TOPLEFT"
+            point2 = "BOTTOMLEFT"
+            newLinePoint2 = "TOPRIGHT"
+            x = 0
+            newLineX = icons.spacingX
+        end
+        y = -icons.spacingY
+        newLineY = 0
+
+    elseif orientation == "bottom-to-top" then
+        if strfind(anchor, "RIGHT$") then
+            point1 = "BOTTOMRIGHT"
+            point2 = "TOPRIGHT"
+            newLinePoint2 = "BOTTOMLEFT"
+            x = 0
+            newLineX = -icons.spacingX
+        else
+            point1 = "BOTTOMLEFT"
+            point2 = "TOPLEFT"
+            newLinePoint2 = "BOTTOMRIGHT"
+            x = 0
+            newLineX = icons.spacingX
+        end
+        y = icons.spacingY
+        newLineY = 0
+    end
+
+    for i = 1, icons.maxNum do
+        P:ClearPoints(icons[i])
+        if i == 1 then
+            P:Point(icons[i], point1)
+        elseif i % icons.numPerLine == 1 then
+            P:Point(icons[i], point1, icons[i-icons.numPerLine], newLinePoint2, newLineX, newLineY)
+        else
+            P:Point(icons[i], point1, icons[i-1], point2, x, y)
+        end
+    end
+
+    icons:UpdateSize()
+end
+
+local function Icons_SetSize(icons, width, height)
+    icons.width = width
+    icons.height = height
+
+    for i = 1, icons.maxNum do
+        icons[i]:SetSize(width, height)
+    end
+
+    icons:UpdateSize()
+end
+
+local function Icons_SetSpacing(icons, spacing)
+    icons.spacingX = spacing[1]
+    icons.spacingY = spacing[2]
+
+    if icons.orientation then
+        icons:SetOrientation(icons.orientation)
+    end
+end
+
+local function Icons_Hide(icons, hideAll)
+    icons:_Hide()
+    if hideAll then
+        for i = 1, icons.maxNum do
+            icons[i]:Hide()
+        end
+    end
+end
+
+local function Icons_SetFont(icons, ...)
+    for i = 1, icons.maxNum do
+        icons[i]:SetFont(...)
+    end
+end
+
+local function Icons_ShowDuration(icons, show)
+    for i = 1, icons.maxNum do
+        icons[i]:ShowDuration(show)
+    end
+end
+
+local function Icons_ShowStack(icons, show)
+    for i = 1, icons.maxNum do
+        icons[i]:ShowStack(show)
+    end
+end
+
+local function Icons_ShowAnimation(icons, show)
+    for i = 1, icons.maxNum do
+        icons[i]:ShowAnimation(show)
+    end
+end
+
+local function Icons_UpdatePixelPerfect(icons)
+    P:Repoint(icons)
+    for i = 1, icons.maxNum do
+        icons[i]:UpdatePixelPerfect()
+    end
+end
+
+function I.CreateAura_Icons(name, parent, num)
+    local icons = CreateFrame("Frame", name, parent)
+    icons:Hide()
+
+    icons.indicatorType = "icons"
+    icons.maxNum = num
+    icons.numPerLine = num
+    icons.spacingX = 0
+    icons.spacingY = 0
+
+    icons._SetSize = icons.SetSize
+    icons.SetSize = Icons_SetSize
+    icons._Hide = icons.Hide
+    icons.Hide = Icons_Hide
+    icons.SetFont = Icons_SetFont
+    icons.UpdateSize = Icons_UpdateSize
+    icons.SetOrientation = Icons_SetOrientation
+    icons.SetSpacing = Icons_SetSpacing
+    icons.SetNumPerLine = Icons_SetNumPerLine
+    icons.ShowDuration = Icons_ShowDuration
+    icons.ShowStack = Icons_ShowStack
+    icons.ShowAnimation = Icons_ShowAnimation
+    icons.UpdatePixelPerfect = Icons_UpdatePixelPerfect
+
+    for i = 1, num do
+        local name = name.."Icon"..i
+        local frame = I.CreateAura_BarIcon(name, icons)
+        icons[i] = frame
+    end
+
+    return icons
+end
+
+-------------------------------------------------
 -- CreateAura_Text
 -------------------------------------------------
 local function Text_SetFont(frame, font, size, outline, shadow)
@@ -1205,236 +1435,6 @@ function I.CreateAura_Texture(name, parent)
     end
 
     return texture
-end
-
--------------------------------------------------
--- CreateAura_Icons
--------------------------------------------------
-local function Icons_UpdateSize(icons, numAuras)
-    if not (icons.width and icons.orientation) then return end -- not init
-
-    if numAuras then -- call from I.CheckCustomIndicators or preview
-        for i = numAuras + 1, icons.maxNum do
-            icons[i]:Hide()
-        end
-    else
-        numAuras = 0
-        for i = 1, icons.maxNum do
-            if icons[i]:IsShown() then
-                numAuras = i
-            else
-                break
-            end
-        end
-    end
-
-    -- set size
-    local lines = ceil(numAuras / icons.numPerLine)
-    numAuras = min(numAuras, icons.numPerLine)
-
-    if icons.isHorizontal then
-        P:SetGridSize(icons, icons.width, icons.height, icons.spacingX, icons.spacingY, numAuras, lines)
-    else
-        P:SetGridSize(icons, icons.width, icons.height, icons.spacingX, icons.spacingY, lines, numAuras)
-    end
-end
-
-local function Icons_SetNumPerLine(icons, numPerLine)
-    icons.numPerLine = min(numPerLine, icons.maxNum)
-
-
-    if icons.orientation then
-        icons:SetOrientation(icons.orientation)
-    -- else
-    --     icons:UpdateSize()
-    end
-end
-
-local function Icons_SetOrientation(icons, orientation)
-    icons.orientation = orientation
-
-    local anchor = icons:GetPoint()
-    assert(anchor, "[indicator] SetPoint must be called before SetOrientation")
-
-    icons.isHorizontal = not strfind(orientation, "top")
-
-    local point1, point2, x, y
-    local newLinePoint2, newLineX, newLineY
-
-    if orientation == "left-to-right" then
-        if strfind(anchor, "^BOTTOM") then
-            point1 = "BOTTOMLEFT"
-            point2 = "BOTTOMRIGHT"
-            newLinePoint2 = "TOPLEFT"
-            y = 0
-            newLineY = icons.spacingY
-        else
-            point1 = "TOPLEFT"
-            point2 = "TOPRIGHT"
-            newLinePoint2 = "BOTTOMLEFT"
-            y = 0
-            newLineY = -icons.spacingY
-        end
-        x = icons.spacingX
-        newLineX = 0
-
-    elseif orientation == "right-to-left" then
-        if strfind(anchor, "^BOTTOM") then
-            point1 = "BOTTOMRIGHT"
-            point2 = "BOTTOMLEFT"
-            newLinePoint2 = "TOPRIGHT"
-            y = 0
-            newLineY = icons.spacingY
-        else
-            point1 = "TOPRIGHT"
-            point2 = "TOPLEFT"
-            newLinePoint2 = "BOTTOMRIGHT"
-            y = 0
-            newLineY = -icons.spacingY
-        end
-        x = -icons.spacingX
-        newLineX = 0
-
-    elseif orientation == "top-to-bottom" then
-        if strfind(anchor, "RIGHT$") then
-            point1 = "TOPRIGHT"
-            point2 = "BOTTOMRIGHT"
-            newLinePoint2 = "TOPLEFT"
-            x = 0
-            newLineX = -icons.spacingX
-        else
-            point1 = "TOPLEFT"
-            point2 = "BOTTOMLEFT"
-            newLinePoint2 = "TOPRIGHT"
-            x = 0
-            newLineX = icons.spacingX
-        end
-        y = -icons.spacingY
-        newLineY = 0
-
-    elseif orientation == "bottom-to-top" then
-        if strfind(anchor, "RIGHT$") then
-            point1 = "BOTTOMRIGHT"
-            point2 = "TOPRIGHT"
-            newLinePoint2 = "BOTTOMLEFT"
-            x = 0
-            newLineX = -icons.spacingX
-        else
-            point1 = "BOTTOMLEFT"
-            point2 = "TOPLEFT"
-            newLinePoint2 = "BOTTOMRIGHT"
-            x = 0
-            newLineX = icons.spacingX
-        end
-        y = icons.spacingY
-        newLineY = 0
-    end
-
-    for i = 1, icons.maxNum do
-        P:ClearPoints(icons[i])
-        if i == 1 then
-            P:Point(icons[i], point1)
-        elseif i % icons.numPerLine == 1 then
-            P:Point(icons[i], point1, icons[i-icons.numPerLine], newLinePoint2, newLineX, newLineY)
-        else
-            P:Point(icons[i], point1, icons[i-1], point2, x, y)
-        end
-    end
-
-    icons:UpdateSize()
-end
-
-local function Icons_SetSize(icons, width, height)
-    icons.width = width
-    icons.height = height
-
-    for i = 1, icons.maxNum do
-        icons[i]:SetSize(width, height)
-    end
-
-    icons:UpdateSize()
-end
-
-local function Icons_SetSpacing(icons, spacing)
-    icons.spacingX = spacing[1]
-    icons.spacingY = spacing[2]
-
-    if icons.orientation then
-        icons:SetOrientation(icons.orientation)
-    end
-end
-
-local function Icons_Hide(icons, hideAll)
-    icons:_Hide()
-    if hideAll then
-        for i = 1, icons.maxNum do
-            icons[i]:Hide()
-        end
-    end
-end
-
-local function Icons_SetFont(icons, ...)
-    for i = 1, icons.maxNum do
-        icons[i]:SetFont(...)
-    end
-end
-
-local function Icons_ShowDuration(icons, show)
-    for i = 1, icons.maxNum do
-        icons[i]:ShowDuration(show)
-    end
-end
-
-local function Icons_ShowStack(icons, show)
-    for i = 1, icons.maxNum do
-        icons[i]:ShowStack(show)
-    end
-end
-
-local function Icons_ShowAnimation(icons, show)
-    for i = 1, icons.maxNum do
-        icons[i]:ShowAnimation(show)
-    end
-end
-
-local function Icons_UpdatePixelPerfect(icons)
-    P:Repoint(icons)
-    for i = 1, icons.maxNum do
-        icons[i]:UpdatePixelPerfect()
-    end
-end
-
-function I.CreateAura_Icons(name, parent, num)
-    local icons = CreateFrame("Frame", name, parent)
-    icons:Hide()
-
-    icons.indicatorType = "icons"
-    icons.maxNum = num
-    icons.numPerLine = num
-    icons.spacingX = 0
-    icons.spacingY = 0
-
-    icons._SetSize = icons.SetSize
-    icons.SetSize = Icons_SetSize
-    icons._Hide = icons.Hide
-    icons.Hide = Icons_Hide
-    icons.SetFont = Icons_SetFont
-    icons.UpdateSize = Icons_UpdateSize
-    icons.SetOrientation = Icons_SetOrientation
-    icons.SetSpacing = Icons_SetSpacing
-    icons.SetNumPerLine = Icons_SetNumPerLine
-    icons.ShowDuration = Icons_ShowDuration
-    icons.ShowStack = Icons_ShowStack
-    icons.ShowAnimation = Icons_ShowAnimation
-    icons.UpdatePixelPerfect = Icons_UpdatePixelPerfect
-
-    for i = 1, num do
-        local name = name.."Icon"..i
-        local frame = I.CreateAura_BarIcon(name, icons)
-        icons[i] = frame
-    end
-
-    return icons
 end
 
 -------------------------------------------------
