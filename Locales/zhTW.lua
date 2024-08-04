@@ -37,6 +37,8 @@ L["All Bosses"] = "所有首領"
 L["All Cell settings will be overwritten!"] = "Cell 的所有設定都會被覆蓋掉!"
 L["All indicators of %s will be replaced with those in %s"] = "%s 版面配置的所有指示器都將會被替換成 %s 版面配置中的"
 L["All snippets have been disabled, due to the version update"] = "由於版本更新，所有程式碼片段都已被停用。"
+--[[Translation missing --]]
+--[[ L["Allow smaller value"] = ""--]]
 L["Alpha"] = "透明度"
 L["Always"] = "總是"
 L["Always Targeting"] = "總是選取目標"
@@ -192,6 +194,7 @@ L["Dispels"] = "驅散"
 L["Display a gradient texture when the unit receives a heal from your certain AoE healing spells."] = "當單位受到你的特定群體治療法術的治療時，顯示漸層材質。"
 L["Display elapsed time since debuff applied"] = "顯示得到減益後經過的時間"
 L["Display One Decimal Place When"] = "圖示持續時間顯示一位小數於"
+L["Displayed Per Line"] = "每行/列圖示數量"
 L["Do nothing if requested spell/buff already exists on requester"] = "若增益已存在於請求者身上，則不發光"
 L["DRINKING"] = "喝水"
 L["Due to restrictions of the private aura system, this indicator can only use Blizzard style."] = "由於個人光環系統的限制，該指示器只能使用暴雪樣式。"
@@ -231,8 +234,7 @@ L["Font Outline"] = "文字樣式"
 L["Font Size"] = "文字大小"
 L["Format"] = "格式"
 L["Frame Level"] = "框架層級"
---[[Translation missing --]]
---[[ L["Frame priorities for LibGetFrame"] = ""--]]
+L["Frame priorities for LibGetFrame"] = "指定 LibGetFrame 取得單位按鈕的優先順序"
 L["Free Cooldown Only"] = "只有當法術不在冷卻中時"
 L["Frequency"] = "速度"
 L["Friendly NPC Frame"] = "友方 NPC 框架"
@@ -287,7 +289,6 @@ L["Horizontal Gradient"] = "水平漸層"
 L["Icon"] = "圖示"
 L["Icon Options"] = "圖示選項"
 L["Icons"] = "圖示群組"
-L["Icons Per Line"] = "每行/列圖示數量"
 L["IDs separated by whitespaces"] = "用空格分隔多個法術ID"
 L["If disabled, no check, no reply, just glow"] = "停用時，不檢查冷卻，也不回覆密語，只顯示發光。"
 L["If you are a paladin or warrior, and the unit has no buffs from you, a %s icon will be displayed."] = "如果你是聖騎士或戰士，且該單位沒有來自你的增益時，將會顯示%s圖示。"
@@ -309,8 +310,7 @@ L["instakill"] = "秒殺"
 L["Instance Name"] = "副本名稱"
 L["Instant Mode"] = "即時模式"
 L["Invalid"] = "無效"
---[[Translation missing --]]
---[[ L["Invalid layout name."] = ""--]]
+L["Invalid layout name."] = "無效的版面配置名稱。"
 L["Invalid spell id."] = "無效的法術 ID。"
 L["Invalid unit."] = "無效單位。"
 L["INVERT"] = "反向選擇"
@@ -319,14 +319,11 @@ L["It will be renamed if this layout name already exists"] = "如果該版面配
 L["Item"] = "物品"
 L["Known Spells Only"] = "只限已學會的法術"
 L["Layout"] = "版面配置"
---[[Translation missing --]]
---[[ L["Layout added: %s."] = ""--]]
+L["Layout added: %s."] = "已建立版面配置: %s。"
 L["Layout Auto Switch"] = "自動切換版面配置"
---[[Translation missing --]]
---[[ L["Layout deleted: %s."] = ""--]]
+L["Layout deleted: %s."] = "已刪除版面配置: %s"
 L["Layout imported: %s."] = "已匯入版面配置: %s。"
---[[Translation missing --]]
---[[ L["Layout renamed: %s to %s."] = ""--]]
+L["Layout renamed: %s to %s."] = "已重新命名版面配置: %s 為 %s。"
 L["Layout Setup"] = "版面配置設定"
 L["Layouts"] = "版面配置"
 L["Leader Icon"] = "隊長圖示"
@@ -353,7 +350,7 @@ L["marksTips"] = [=[
 右鍵: |cffffffff將標記鎖定在目標上 (在你的隊伍中)|r]=]
 L["Max Buttons"] = "按鈕數量"
 L["Max Columns"] = "最大列數"
-L["Max Icons"] = "最大顯示數量"
+L["Max Displayed"] = "最大顯示數量"
 L["Max Rows"] = "最大行數"
 L["Me"] = "我"
 L["Menu"] = "選單"
@@ -529,6 +526,8 @@ L["ScrollUp"] = "滾輪往上"
 L["sec"] = "秒"
 L["Secondary Talents"] = "次要天賦"
 L["Separate NPC Frame"] = "分離 NPC 框架"
+--[[Translation missing --]]
+--[[ L["Set Bar Max Value"] = ""--]]
 L["set unit"] = "設定單位"
 L["set unit's name"] = "設為目標單位的名字"
 L["set unit's pet"] = "設為目標單位的寵物"
@@ -551,14 +550,12 @@ L["Show friendly NPCs in a separate frame"] = "將友方 NPC 顯示在一個獨�
 L["Show NPC Frame"] = "顯示 NPC 框架"
 L["Show Party"] = "5人隊伍時要顯示"
 L["Show Party/Arena Pets"] = "顯示隊伍/競技場寵物"
---[[Translation missing --]]
---[[ L["Show Raid"] = ""--]]
+L["Show Raid"] = "團隊時要顯示"
 L["Show Raid Pets"] = "顯示團隊寵物"
 L["Show Solo"] = "單人時要顯示"
 L["Show units you care about more in a separate frame"] = "在單獨的框架中顯示您更關心的單位"
 L["Show while in a party"] = "在隊伍中時顯示"
---[[Translation missing --]]
---[[ L["Show while in a raid"] = ""--]]
+L["Show while in a raid"] = "在團隊中時顯示"
 L["Show while not in a group"] = "不在隊伍中時顯示"
 L["showAllSpells"] = "顯示所有法術"
 L["showAnimation"] = "顯示動畫效果"

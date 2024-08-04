@@ -34,6 +34,8 @@ L["All Bosses"] = "Alle Bosse"
 L["All Cell settings will be overwritten!"] = "Alle Cell Einstellungen werden überschrieben!"
 L["All indicators of %s will be replaced with those in %s"] = "Alle Indikatoren von %s werden durch die Indikatoren in %s ersetzt."
 L["All snippets have been disabled, due to the version update"] = "Alle Snippets sind aufgrund der Versionsaktualisierung deaktiviert worden."
+--[[Translation missing --]]
+--[[ L["Allow smaller value"] = ""--]]
 L["Alpha"] = "Alpha"
 L["Always"] = "Immer"
 L["Always Targeting"] = "Immer anvisieren"
@@ -189,6 +191,7 @@ L["Dispels"] = "Dispels"
 L["Display a gradient texture when the unit receives a heal from your certain AoE healing spells."] = "Zeige eine Gradiententextur an, wenn ein Gruppenmitglied eine Heilung von bestimmten AoE-Heilzaubern erhält."
 L["Display elapsed time since debuff applied"] = "Anzeige der verstrichenen Zeit seit Anwendung des Schwächungszaubers"
 L["Display One Decimal Place When"] = "Eine Nachkommastelle anzeigen, wenn"
+L["Displayed Per Line"] = "Symbole pro Zeile"
 L["Do nothing if requested spell/buff already exists on requester"] = "Nichts tun, wenn der angeforderte Zauber bereits auf dem Anfrager existiert"
 L["DRINKING"] = "TRINKEN"
 L["Due to restrictions of the private aura system, this indicator can only use Blizzard style."] = "Aufgrund der Einschränkungen des privaten Aurasystems kann dieser Indikator nur den Blizzard-Stil verwenden."
@@ -227,8 +230,7 @@ L["Font Outline"] = "Schriftart Umriss"
 L["Font Size"] = "Schriftgröße"
 L["Format"] = "Format"
 L["Frame Level"] = "Frame Level"
---[[Translation missing --]]
---[[ L["Frame priorities for LibGetFrame"] = ""--]]
+L["Frame priorities for LibGetFrame"] = "Rahmenprioritäten für LibGetFrame"
 L["Free Cooldown Only"] = "Nur freie Cooldowns"
 L["Frequency"] = "Frequenz"
 L["Friendly NPC Frame"] = "Freundlicher NPC-Frame"
@@ -283,7 +285,6 @@ L["Horizontal Gradient"] = "Horizontaler Farbverlauf"
 L["Icon"] = "Symbol"
 L["Icon Options"] = "Symbol Optionen"
 L["Icons"] = "Symbole"
-L["Icons Per Line"] = "Symbole pro Zeile"
 L["IDs separated by whitespaces"] = "Durch Leerzeichen getrennte IDs"
 L["If disabled, no check, no reply, just glow"] = "Wenn deaktiviert, keine Prüfung, keine Antwort, nur Glühen"
 L["If you are a paladin or warrior, and the unit has no buffs from you, a %s icon will be displayed."] = "Wenn du ein Paladin oder Krieger bist und die Einheit keinen Buff von dir hat, wird ein %s Symbol angezeigt."
@@ -305,8 +306,7 @@ L["instakill"] = "instakill"
 L["Instance Name"] = "Instanz Name"
 L["Instant Mode"] = "Sofortmodus"
 L["Invalid"] = "Ungültig"
---[[Translation missing --]]
---[[ L["Invalid layout name."] = ""--]]
+L["Invalid layout name."] = "Ungültiger Layout Name"
 L["Invalid spell id."] = "Ungültige Zauberspruch-ID."
 L["Invalid unit."] = "Ungültige Einheit."
 L["INVERT"] = "Invertieren"
@@ -315,14 +315,11 @@ L["It will be renamed if this layout name already exists"] = "Es wird umbenannt,
 L["Item"] = "Item"
 L["Known Spells Only"] = "Nur bekannte Zauber"
 L["Layout"] = "Layout"
---[[Translation missing --]]
---[[ L["Layout added: %s."] = ""--]]
+L["Layout added: %s."] = "Layout hinzugefügt: %s."
 L["Layout Auto Switch"] = "Layout Auto Switch"
---[[Translation missing --]]
---[[ L["Layout deleted: %s."] = ""--]]
+L["Layout deleted: %s."] = "Layout gelöscht: %s."
 L["Layout imported: %s."] = "Layout importiert: %s."
---[[Translation missing --]]
---[[ L["Layout renamed: %s to %s."] = ""--]]
+L["Layout renamed: %s to %s."] = "Layout umbenannt von: %s zu %s."
 L["Layout Setup"] = "Layout Setup"
 L["Layouts"] = "Layouts"
 L["Leader Icon"] = "Anführer Symbol"
@@ -346,7 +343,7 @@ L["Marks Bar"] = "Markierungsleiste"
 L["marksTips"] = "\n|rZielmarkierung\nLinks-Klick: |cffffffffSchlachtzugsmarkierung auf Ziel setzen|r\nRechts-Klick: |cffffffffSchlachtzugsmarkierung auf das Ziel setzen (in deiner Gruppe)|r"
 L["Max Buttons"] = "Max Tasten"
 L["Max Columns"] = "Max Spalten"
-L["Max Icons"] = "Max Symbole"
+L["Max Displayed"] = "Max Symbole"
 L["Max Rows"] = "Max. Zeilen"
 L["Me"] = "Ich"
 L["Menu"] = "Menü"
@@ -514,6 +511,8 @@ L["ScrollUp"] = "ScrollUp"
 L["sec"] = "sek"
 L["Secondary Talents"] = "Sekundäre Talente"
 L["Separate NPC Frame"] = "Separater NPC Frame"
+--[[Translation missing --]]
+--[[ L["Set Bar Max Value"] = ""--]]
 L["set unit"] = "eingestellte Einheit"
 L["set unit's name"] = "Name der Einheit festlegen"
 L["set unit's pet"] = "Begleiter der Einheit einstellen"
@@ -536,14 +535,12 @@ L["Show friendly NPCs in a separate frame"] = "Freundliche NPCs in einem separat
 L["Show NPC Frame"] = "NPC-Frame anzeigen"
 L["Show Party"] = "In Gruppe anzeigen"
 L["Show Party/Arena Pets"] = "Begleiter in Gruppen/Arena anzeigen"
---[[Translation missing --]]
---[[ L["Show Raid"] = ""--]]
+L["Show Raid"] = "In Raid anzeigen"
 L["Show Raid Pets"] = "Schlachtzugsbegleiter (Pet) anzeigen"
 L["Show Solo"] = "Alleine anzeigen"
 L["Show units you care about more in a separate frame"] = "Zeigt Einheiten, die besonders wichtig sind, in einem separaten Frame an"
 L["Show while in a party"] = "Während einer Gruppe anzeigen"
---[[Translation missing --]]
---[[ L["Show while in a raid"] = ""--]]
+L["Show while in a raid"] = "Innerhalb eines Raids anzeigen"
 L["Show while not in a group"] = "Anzeigen, wenn man sich nicht in einer Gruppe befindet"
 L["showAllSpells"] = "Alle Zaubersprüche anzeigen"
 L["showAnimation"] = "Animation anzeigen"
