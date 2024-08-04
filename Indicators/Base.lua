@@ -1530,15 +1530,15 @@ function I.CreateAura_Glow(name, parent)
 end
 
 -------------------------------------------------
--- CreateAura_Bars
+-- CreateAura_QuickAssistBars
 -------------------------------------------------
-local function Bars_OnUpdate(bar, elapsed)
+local function QuickAssistBars_OnUpdate(bar, elapsed)
     bar._remain = bar._duration - (GetTime() - bar._start)
     if bar._remain < 0 then bar._remain = 0 end
     bar:SetValue(bar._remain)
 end
 
-local function Bars_SetCooldown(bar, start, duration, color)
+local function QuickAssistBars_SetCooldown(bar, start, duration, color)
     if duration == 0 then
         bar:SetScript("OnUpdate", nil)
         bar:SetMinMaxValues(0, 1)
@@ -1550,74 +1550,98 @@ local function Bars_SetCooldown(bar, start, duration, color)
         bar._start = start
         bar._duration = duration
         bar:SetMinMaxValues(0, duration)
-        bar:SetScript("OnUpdate", Bars_OnUpdate)
+        bar:SetScript("OnUpdate", QuickAssistBars_OnUpdate)
     end
 
     bar:SetStatusBarColor(color[1], color[2], color[3], 1)
     bar:Show()
 end
 
-function I.CreateAura_Bars(name, parent, num)
+local function QuickAssistBars_UpdateSize(bars, barsShown)
+    if not (bars.width and bars.height) then return end -- not init
+    if barsShown then -- call from I.CheckCustomIndicators or preview
+        for i = barsShown + 1, bars.num do
+            bars[i]:Hide()
+        end
+        if barsShown ~= 0 then
+            bars:_SetSize(bars.width, bars.height*barsShown-P:Scale(1)*(barsShown-1))
+        end
+    else
+        for i = 1, bars.num do
+            if bars[i]:IsShown() then
+                bars:_SetSize(bars.width, bars.height*i-P:Scale(1)*(i-1))
+            else
+                break
+            end
+        end
+    end
+end
+
+local function QuickAssistBars_SetSize(bars, width, height)
+    bars.width = width
+    bars.height = height
+
+    for i = 1, bars.num do
+        bars[i]:SetSize(width, height)
+    end
+
+    bars:UpdateSize()
+end
+
+local function QuickAssistBars_SetOrientation(bars, orientation)
+    local point1, point2, offset
+    if orientation == "top-to-bottom" then
+        point1 = "TOPLEFT"
+        point2 = "BOTTOMLEFT"
+        offset = 1
+    elseif orientation == "bottom-to-top" then
+        point1 = "BOTTOMLEFT"
+        point2 = "TOPLEFT"
+        offset = -1
+    end
+
+    for i = 1, bars.num do
+        P:ClearPoints(bars[i])
+        if i == 1 then
+            P:Point(bars[i], point1)
+        else
+            P:Point(bars[i], point1, bars[i-1], point2, 0, offset)
+        end
+    end
+
+    bars:UpdateSize()
+end
+
+local function QuickAssistBars_Hide(bars, hideAll)
+    bars:_Hide()
+    if hideAll then
+        for i = 1, bars.num do
+            bars[i]:Hide()
+        end
+    end
+end
+
+local function QuickAssistBars_UpdatePixelPerfect(bars)
+    -- P:Resize(bars)
+    P:Repoint(bars)
+    for i = 1, bars.num do
+        bars[i]:UpdatePixelPerfect()
+    end
+end
+
+function I.CreateAura_QuickAssistBars(name, parent, num)
     local bars = CreateFrame("Frame", name, parent)
     bars:Hide()
     bars.indicatorType = "bars"
+    bars.num = num
 
     bars._SetSize = bars.SetSize
-
-    function bars:UpdateSize(barsShown)
-        if not (bars.width and bars.height) then return end -- not init
-        if barsShown then -- call from I.CheckCustomIndicators or preview
-            for i = barsShown + 1, num do
-                bars[i]:Hide()
-            end
-            if barsShown ~= 0 then
-                bars:_SetSize(bars.width, bars.height*barsShown-P:Scale(1)*(barsShown-1))
-            end
-        else
-            for i = 1, num do
-                if bars[i]:IsShown() then
-                    bars:_SetSize(bars.width, bars.height*i-P:Scale(1)*(i-1))
-                else
-                    break
-                end
-            end
-        end
-    end
-
-    function bars:SetSize(width, height)
-        bars.width = width
-        bars.height = height
-
-        for i = 1, num do
-            bars[i]:SetSize(width, height)
-        end
-
-        bars:UpdateSize()
-    end
-
-    function bars:SetOrientation(orientation)
-        local point1, point2, offset
-        if orientation == "top-to-bottom" then
-            point1 = "TOPLEFT"
-            point2 = "BOTTOMLEFT"
-            offset = 1
-        elseif orientation == "bottom-to-top" then
-            point1 = "BOTTOMLEFT"
-            point2 = "TOPLEFT"
-            offset = -1
-        end
-
-        for i = 1, num do
-            P:ClearPoints(bars[i])
-            if i == 1 then
-                P:Point(bars[i], point1)
-            else
-                P:Point(bars[i], point1, bars[i-1], point2, 0, offset)
-            end
-        end
-
-        bars:UpdateSize()
-    end
+    bars.SetSize = QuickAssistBars_SetSize
+    bars.UpdateSize = QuickAssistBars_UpdateSize
+    bars.SetOrientation = QuickAssistBars_SetOrientation
+    bars._Hide = bars.Hide
+    bars.Hide = QuickAssistBars_Hide
+    bars.UpdatePixelPerfect = QuickAssistBars_UpdatePixelPerfect
 
     for i = 1, num do
         local name = name.."Bar"..i
@@ -1626,25 +1650,7 @@ function I.CreateAura_Bars(name, parent, num)
 
         bar.stack:Hide()
         bar.duration:Hide()
-        bar.SetCooldown = Bars_SetCooldown
-    end
-
-    bars._Hide = bars.Hide
-    function bars:Hide(hideAll)
-        bars:_Hide()
-        if hideAll then
-            for i = 1, num do
-                bars[i]:Hide()
-            end
-        end
-    end
-
-    function bars:UpdatePixelPerfect()
-        -- P:Resize(bars)
-        P:Repoint(bars)
-        for i = 1, num do
-            bars[i]:UpdatePixelPerfect()
-        end
+        bar.SetCooldown = QuickAssistBars_SetCooldown
     end
 
     return bars

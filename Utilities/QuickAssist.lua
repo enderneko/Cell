@@ -1331,7 +1331,7 @@ local function QuickAssist_CreateIndicators(button)
     end
 
     -- buffs indicator (bar)
-    local buffBars = I.CreateAura_Bars(button:GetName().."BuffBars", button.indicatorFrame, 5)
+    local buffBars = I.CreateAura_QuickAssistBars(button:GetName().."BuffBars", button.indicatorFrame, 5)
     button.buffBars = buffBars
     buffBars:Show()
 
