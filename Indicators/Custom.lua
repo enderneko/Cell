@@ -31,7 +31,7 @@ local function UpdateTablesForIndicator(indicatorTable)
             ["found"] = {},
             ["num"] = indicatorTable["num"],
         }
-    elseif indicatorTable["type"] == "blocks" then
+    elseif indicatorTable["type"] == "bars" or indicatorTable["type"] == "blocks" then
         customIndicators[auraType][indicatorName] = {
             ["auras"] = F:ConvertSpellTable_WithColor(indicatorTable["auras"], indicatorTable["trackByName"]), -- auras to match
             ["hasColor"] = true,
@@ -71,6 +71,8 @@ function I.CreateIndicator(parent, indicatorTable, noTableUpdate)
         indicator = I.CreateAura_Text(parent:GetName()..indicatorName, parent.widgets.indicatorFrame)
     elseif indicatorTable["type"] == "bar" then
         indicator = I.CreateAura_Bar(parent:GetName()..indicatorName, parent.widgets.indicatorFrame)
+    elseif indicatorTable["type"] == "bars" then
+        indicator = I.CreateAura_Bars(parent:GetName()..indicatorName, parent.widgets.indicatorFrame, 10)
     elseif indicatorTable["type"] == "rect" then
         indicator = I.CreateAura_Rect(parent:GetName()..indicatorName, parent.widgets.indicatorFrame)
     elseif indicatorTable["type"] == "icons" then

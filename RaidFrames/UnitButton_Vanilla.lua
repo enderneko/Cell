@@ -327,6 +327,10 @@ local function HandleIndicators(b)
         if type(t["smooth"]) == "boolean" then
             indicator:EnableSmooth(t["smooth"])
         end
+        -- max value
+        if t["maxValue"] then
+            indicator:SetMaxValue(t["maxValue"])
+        end
 
         -- init
         -- update name visibility
@@ -682,7 +686,7 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                 local indicator = b.indicators[indicatorName]
                 indicator:SetTexture(value)
             end, true)
-        elseif setting == "duration" then
+        elseif setting == "duration" or setting == "dispelFilters" then
             F:IterateAllUnitButtons(function(b)
                 UnitButton_UpdateAuras(b)
             end, true)
@@ -705,8 +709,9 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
             I.UpdateMissingBuffsFilters()
         elseif setting == "targetCounterFilters" then
             I.UpdateTargetCounterFilters()
-        elseif setting == "dispelFilters" then
+        elseif setting == "maxValue" then
             F:IterateAllUnitButtons(function(b)
+                b.indicators[indicatorName]:SetMaxValue(value)
                 UnitButton_UpdateAuras(b)
             end, true)
         elseif setting == "glowOptions" then

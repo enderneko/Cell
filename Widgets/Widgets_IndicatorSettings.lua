@@ -407,43 +407,6 @@ local function CreateSetting_Size(parent)
         widget = addon:CreateFrame("CellIndicatorSettings_Size", parent, 240, 50)
         settingWidgets["size"] = widget
 
-        widget.width = addon:CreateSlider(L["Width"], widget, 1, 200, 110, 1)
-        widget.width:SetPoint("TOPLEFT", widget, 5, -20)
-        widget.width.afterValueChangedFn = function(value)
-            widget.func({value, widget.height:GetValue()})
-        end
-
-        widget.height = addon:CreateSlider(L["Height"], widget, 1, 200, 110, 1)
-        widget.height:SetPoint("LEFT", widget.width, "RIGHT", 25, 0)
-        widget.height.afterValueChangedFn = function(value)
-            widget.func({widget.width:GetValue(), value})
-        end
-
-        -- callback
-        function widget:SetFunc(func)
-            widget.func = func
-        end
-
-        -- show db value
-        function widget:SetDBValue(sizeTable)
-            widget.width:SetValue(sizeTable[1])
-            widget.height:SetValue(sizeTable[2])
-        end
-    else
-        widget = settingWidgets["size"]
-    end
-
-    widget:Show()
-    return widget
-end
-
-local function CreateSetting_SizeBar(parent)
-    local widget
-
-    if not settingWidgets["size-bar"] then
-        widget = addon:CreateFrame("CellIndicatorSettings_SizeBar", parent, 240, 50)
-        settingWidgets["size-bar"] = widget
-
         widget.width = addon:CreateSlider(L["Width"], widget, 3, 500, 110, 1)
         widget.width:SetPoint("TOPLEFT", widget, 5, -20)
         widget.width.afterValueChangedFn = function(value)
@@ -467,12 +430,49 @@ local function CreateSetting_SizeBar(parent)
             widget.height:SetValue(sizeTable[2])
         end
     else
-        widget = settingWidgets["size-bar"]
+        widget = settingWidgets["size"]
     end
 
     widget:Show()
     return widget
 end
+
+-- local function CreateSetting_SizeBar(parent)
+--     local widget
+
+--     if not settingWidgets["size-bar"] then
+--         widget = addon:CreateFrame("CellIndicatorSettings_SizeBar", parent, 240, 50)
+--         settingWidgets["size-bar"] = widget
+
+--         widget.width = addon:CreateSlider(L["Width"], widget, 3, 500, 110, 1)
+--         widget.width:SetPoint("TOPLEFT", widget, 5, -20)
+--         widget.width.afterValueChangedFn = function(value)
+--             widget.func({value, widget.height:GetValue()})
+--         end
+
+--         widget.height = addon:CreateSlider(L["Height"], widget, 3, 500, 110, 1)
+--         widget.height:SetPoint("LEFT", widget.width, "RIGHT", 25, 0)
+--         widget.height.afterValueChangedFn = function(value)
+--             widget.func({widget.width:GetValue(), value})
+--         end
+
+--         -- callback
+--         function widget:SetFunc(func)
+--             widget.func = func
+--         end
+
+--         -- show db value
+--         function widget:SetDBValue(sizeTable)
+--             widget.width:SetValue(sizeTable[1])
+--             widget.height:SetValue(sizeTable[2])
+--         end
+--     else
+--         widget = settingWidgets["size-bar"]
+--     end
+
+--     widget:Show()
+--     return widget
+-- end
 
 local function CreateSetting_SizeSquare(parent)
     local widget
@@ -511,14 +511,14 @@ local function CreateSetting_Spacing(parent)
         widget = addon:CreateFrame("CellIndicatorSettings_Spacing", parent, 240, 50)
         settingWidgets["spacing"] = widget
 
-        widget.x = addon:CreateSlider(L["Spacing"].." X", widget, 0, 50, 110, 1)
+        widget.x = addon:CreateSlider(L["Spacing"].." X", widget, -1, 50, 110, 1)
         widget.x:SetPoint("TOPLEFT", widget, 5, -20)
         widget.x.afterValueChangedFn = function(value)
             widget.spacing[1] = value
             widget.func(widget.spacing)
         end
 
-        widget.y = addon:CreateSlider(L["Spacing"].." Y", widget, 0, 50, 110, 1)
+        widget.y = addon:CreateSlider(L["Spacing"].." Y", widget, -1, 50, 110, 1)
         widget.y:SetPoint("LEFT", widget.x, "RIGHT", 25, 0)
         widget.y.afterValueChangedFn = function(value)
             widget.spacing[2] = value
@@ -908,7 +908,7 @@ local function CreateSetting_Num(parent)
         widget = addon:CreateFrame("CellIndicatorSettings_Num", parent, 240, 50)
         settingWidgets["num"] = widget
 
-        widget.num = addon:CreateSlider(L["Max Icons"], widget, 1, 5, 110, 1)
+        widget.num = addon:CreateSlider(L["Max Displayed"], widget, 1, 5, 110, 1)
         widget.num:SetPoint("TOPLEFT", 5, -20)
         widget.num.afterValueChangedFn = function(value)
             widget.func(value)
@@ -939,7 +939,7 @@ local function CreateSetting_NumPerLine(parent)
         widget = addon:CreateFrame("CellIndicatorSettings_NumPerLine", parent, 240, 50)
         settingWidgets["numPerLine"] = widget
 
-        widget.num = addon:CreateSlider(L["Icons Per Line"], widget, 1, 5, 110, 1)
+        widget.num = addon:CreateSlider(L["Displayed Per Line"], widget, 1, 5, 110, 1)
         widget.num:SetPoint("TOPLEFT", 5, -20)
         widget.num.afterValueChangedFn = function(value)
             widget.func(value)
@@ -5934,56 +5934,114 @@ local function CreateSetting_CastBy(parent)
     return widget
 end
 
-local function CreateSetting_ShowOn(parent)
+-- local function CreateSetting_ShowOn(parent)
+--     local widget
+
+--     if not settingWidgets["showOn"] then
+--         widget = addon:CreateFrame("CellIndicatorSettings_ShowOn", parent, 240, 50)
+--         settingWidgets["showOn"] = widget
+
+--         widget.showOn = addon:CreateDropdown(widget, 245)
+--         widget.showOn:SetPoint("TOPLEFT", 5, -20)
+--         widget.showOn:SetItems({
+--             {
+--                 ["text"] = L["All"],
+--                 ["value"] = "all",
+--                 ["onClick"] = function()
+--                     widget.func("all")
+--                 end,
+--             },
+--             {
+--                 ["text"] = L["Main"],
+--                 ["value"] = "main",
+--                 ["onClick"] = function()
+--                     widget.func("main")
+--                 end,
+--             },
+--             {
+--                 ["text"] = L["Spotlight"],
+--                 ["value"] = "spotlight",
+--                 ["onClick"] = function()
+--                     widget.func("spotlight")
+--                 end,
+--             },
+--             {
+--                 ["text"] = L["Pet"],
+--                 ["value"] = "pet",
+--                 ["onClick"] = function()
+--                     widget.func("pet")
+--                 end,
+--             },
+--             {
+--                 ["text"] = L["NPC"],
+--                 ["value"] = "npc",
+--                 ["onClick"] = function()
+--                     widget.func("npc")
+--                 end,
+--             },
+--         })
+
+--         widget.showOnText = widget:CreateFontString(nil, "OVERLAY", font_name)
+--         widget.showOnText:SetText(L["Show On"])
+--         widget.showOnText:SetPoint("BOTTOMLEFT", widget.showOn, "TOPLEFT", 0, 1)
+
+--         -- callback
+--         function widget:SetFunc(func)
+--             widget.func = func
+--         end
+
+--         -- show db value
+--         function widget:SetDBValue(showOn)
+--             widget.showOn:SetSelectedValue(showOn)
+--         end
+--     else
+--         widget = settingWidgets["showOn"]
+--     end
+
+--     widget:Show()
+--     return widget
+-- end
+
+local function CreateSetting_MaxValue(parent)
     local widget
 
-    if not settingWidgets["showOn"] then
-        widget = addon:CreateFrame("CellIndicatorSettings_ShowOn", parent, 240, 50)
-        settingWidgets["showOn"] = widget
+    if not settingWidgets["maxValue"] then
+        widget = addon:CreateFrame("CellIndicatorSettings_MaxValue", parent, 240, 70)
+        settingWidgets["maxValue"] = widget
 
-        widget.showOn = addon:CreateDropdown(widget, 245)
-        widget.showOn:SetPoint("TOPLEFT", 5, -20)
-        widget.showOn:SetItems({
+        widget.maxValue = addon:CreateDropdown(widget, 245)
+        widget.maxValue:SetPoint("TOPLEFT", 5, -20)
+        local items = {
             {
-                ["text"] = L["All"],
-                ["value"] = "all",
+                ["text"] = L["Disabled"],
+                ["value"] = 0,
                 ["onClick"] = function()
-                    widget.func("all")
+                    widget.allowSmaller:SetEnabled(false)
+                    widget.func({0, widget.allowSmaller:GetChecked()})
                 end,
-            },
-            {
-                ["text"] = L["Main"],
-                ["value"] = "main",
+            }
+        }
+        local values = {5, 10, 15, 20, 25, 30}
+        for _, v in pairs(values) do
+            tinsert(items, {
+                ["text"] = v .. " " .. L["sec"],
+                ["value"] = v,
                 ["onClick"] = function()
-                    widget.func("main")
+                    widget.allowSmaller:SetEnabled(true)
+                    widget.func({v, widget.allowSmaller:GetChecked()})
                 end,
-            },
-            {
-                ["text"] = L["Spotlight"],
-                ["value"] = "spotlight",
-                ["onClick"] = function()
-                    widget.func("spotlight")
-                end,
-            },
-            {
-                ["text"] = L["Pet"],
-                ["value"] = "pet",
-                ["onClick"] = function()
-                    widget.func("pet")
-                end,
-            },
-            {
-                ["text"] = L["NPC"],
-                ["value"] = "npc",
-                ["onClick"] = function()
-                    widget.func("npc")
-                end,
-            },
-        })
+            })
+        end
+        widget.maxValue:SetItems(items)
 
-        widget.showOnText = widget:CreateFontString(nil, "OVERLAY", font_name)
-        widget.showOnText:SetText(L["Show On"])
-        widget.showOnText:SetPoint("BOTTOMLEFT", widget.showOn, "TOPLEFT", 0, 1)
+        widget.maxValueText = widget:CreateFontString(nil, "OVERLAY", font_name)
+        widget.maxValueText:SetText(L["Set Bar Max Value"])
+        widget.maxValueText:SetPoint("BOTTOMLEFT", widget.maxValue, "TOPLEFT", 0, 1)
+
+        widget.allowSmaller = addon:CreateCheckButton(widget, L["Allow smaller value"], function(checked)
+            widget.func({widget.maxValue:GetSelected(), checked})
+        end)
+        widget.allowSmaller:SetPoint("TOPLEFT", widget.maxValue, "BOTTOMLEFT", 0, -8)
 
         -- callback
         function widget:SetFunc(func)
@@ -5991,11 +6049,13 @@ local function CreateSetting_ShowOn(parent)
         end
 
         -- show db value
-        function widget:SetDBValue(showOn)
-            widget.showOn:SetSelectedValue(showOn)
+        function widget:SetDBValue(maxValue)
+            widget.maxValue:SetSelectedValue(maxValue[1])
+            widget.allowSmaller:SetChecked(maxValue[2])
+            widget.allowSmaller:SetEnabled(maxValue[1] ~= 0)
         end
     else
-        widget = settingWidgets["showOn"]
+        widget = settingWidgets["maxValue"]
     end
 
     widget:Show()
@@ -6029,7 +6089,7 @@ local builders = {
     ["size"] = CreateSetting_Size,
     ["size-normal-big"] = CreateSetting_SizeNormalBig,
     ["size-square"] = CreateSetting_SizeSquare,
-    ["size-bar"] = CreateSetting_SizeBar,
+    -- ["size-bar"] = CreateSetting_SizeBar,
     ["size-border"] = CreateSetting_SizeAndBorder,
     ["spacing"] = CreateSetting_Spacing,
     ["thickness"] = CreateSetting_Thickness,
@@ -6070,7 +6130,8 @@ local builders = {
     ["targetCounterFilters"] = CreateSetting_TargetCounterFilters,
     ["dispelFilters"] = CreateSetting_DispelFilters,
     ["castBy"] = CreateSetting_CastBy,
-    ["showOn"] = CreateSetting_ShowOn,
+    -- ["showOn"] = CreateSetting_ShowOn,
+    ["maxValue"] = CreateSetting_MaxValue,
 }
 
 function addon:CreateIndicatorSettings(parent, settingsTable)

@@ -65,6 +65,29 @@ function I.GetDefaultCustomIndicatorTable(name, indicatorName, type, auraType)
             ["auraType"] = auraType,
             ["auras"] = {},
         }
+    elseif type == "bars" then
+        t = {
+            ["name"] = name,
+            ["indicatorName"] = indicatorName,
+            ["type"] = type,
+            ["enabled"] = true,
+            ["position"] = {"TOPRIGHT", "TOPRIGHT", 0, 0},
+            ["frameLevel"] = 5,
+            ["size"] = {18, 4},
+            ["num"] = 3,
+            ["numPerLine"] = 3,
+            ["orientation"] = "top-to-bottom",
+            ["spacing"] = {-1, -1},
+            ["font"] = {
+                {"Cell " .. _G.DEFAULT, 11, "Outline", false, "TOPRIGHT", 2, 1, {1, 1, 1}},
+                {"Cell " .. _G.DEFAULT, 11, "Outline", false, "BOTTOMRIGHT", 2, -1, {1, 1, 1}},
+            },
+            ["showStack"] = false,
+            ["showDuration"] = false,
+            ["maxValue"] = {0, true},
+            ["auraType"] = auraType,
+            ["auras"] = {},
+        }
     elseif type == "rect" then
         t = {
             ["name"] = name,
@@ -189,7 +212,7 @@ function I.GetDefaultCustomIndicatorTable(name, indicatorName, type, auraType)
             ["num"] = 5,
             ["numPerLine"] = 5,
             ["orientation"] = "right-to-left",
-            ["spacing"] = {0, 0},
+            ["spacing"] = {-1, -1},
             ["font"] = {
                 {"Cell " .. _G.DEFAULT, 11, "Outline", false, "TOPRIGHT", 2, 1, {1, 1, 1}},
                 {"Cell " .. _G.DEFAULT, 11, "Outline", false, "BOTTOMRIGHT", 2, -1, {1, 1, 1}},

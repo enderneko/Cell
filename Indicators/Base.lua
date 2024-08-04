@@ -1237,6 +1237,120 @@ function I.CreateAura_Bar(name, parent)
 end
 
 -------------------------------------------------
+-- CreateAura_Bars
+-------------------------------------------------
+local function Bars_OnUpdate(bar, elapsed)
+    bar._remain = bar._duration - (GetTime() - bar._start)
+    if bar._remain < 0 then bar._remain = 0 end
+    bar:SetValue(bar._remain)
+
+    if bar._remain > bar._threshold then
+        bar.duration:SetText("")
+        return
+    end
+
+    -- format
+    if bar._remain > 60 then
+        bar.duration:SetFormattedText("%dm", bar._remain / 60)
+    else
+        if Cell.vars.iconDurationRoundUp then
+            bar.duration:SetFormattedText("%d", ceil(bar._remain))
+        else
+            if bar._remain < Cell.vars.iconDurationDecimal then
+                bar.duration:SetFormattedText("%.1f", bar._remain)
+            else
+                bar.duration:SetFormattedText("%d", bar._remain)
+            end
+        end
+    end
+end
+
+local function Bars_SetCooldown(bar, start, duration, debuffType, texture, count, refreshing, color)
+    if duration == 0 then
+        bar:SetScript("OnUpdate", nil)
+        bar:SetMinMaxValues(0, 1)
+        bar:SetValue(1)
+        bar.duration:Hide()
+        bar._start = nil
+        bar._duration = nil
+        bar._remain = nil
+        bar._threshold = nil
+    else
+        if not bar.showDuration then
+            bar._threshold = -1
+            bar.duration:Hide()
+        else
+            if bar.showDuration == true then
+                bar._threshold = duration
+            elseif bar.showDuration >= 1 then
+                bar._threshold = bar.showDuration
+            else -- < 1
+                bar._threshold = bar.showDuration * duration
+            end
+            bar.duration:Show()
+        end
+
+        if bar.parent.maxValue then
+            bar:SetMinMaxValues(0, bar.parent.allowSmaller and min(bar.parent.maxValue, duration) or bar.parent.maxValue)
+        else
+            bar:SetMinMaxValues(0, duration)
+        end
+        bar._start = start
+        bar._duration = duration
+        bar:SetScript("OnUpdate", Bars_OnUpdate)
+    end
+
+    bar:SetStatusBarColor(color[1], color[2], color[3], color[4])
+    bar:SetBackdropColor(color[1] * 0.2, color[2] * 0.2, color[3] * 0.2, color[4])
+    bar.stack:SetText((count == 0 or count == 1) and "" or count)
+    bar:Show()
+end
+
+local function Bars_SetMaxValue(bars, maxValue)
+    if maxValue == 0 then
+        bars.maxValue = nil
+        bars.allowSmaller = nil
+    else
+        bars.maxValue = maxValue[1]
+        bars.allowSmaller = maxValue[2]
+    end
+end
+
+function I.CreateAura_Bars(name, parent, num)
+    local bars = CreateFrame("Frame", name, parent)
+    bars:Hide()
+
+    bars.indicatorType = "bars"
+    bars.maxNum = num
+    bars.numPerLine = num
+
+    bars._SetSize = bars.SetSize
+    bars.SetSize = Icons_SetSize
+    bars._Hide = bars.Hide
+    bars.Hide = Icons_Hide
+    bars.SetFont = Icons_SetFont
+    bars.UpdateSize = Icons_UpdateSize
+    bars.SetOrientation = Icons_SetOrientation
+    bars.SetSpacing = Icons_SetSpacing
+    bars.SetNumPerLine = Icons_SetNumPerLine
+    bars.ShowDuration = Icons_ShowDuration
+    bars.ShowStack = Icons_ShowStack
+    bars.SetMaxValue = Bars_SetMaxValue
+    bars.UpdatePixelPerfect = Icons_UpdatePixelPerfect
+
+    for i = 1, num do
+        local name = name.."Icons"..i
+        local frame = I.CreateAura_Bar(name, bars)
+        bars[i] = frame
+        frame.parent = bars
+        frame.SetCooldown = Bars_SetCooldown
+        frame:SetBackdropBorderColor(0, 0, 0, 1)
+    end
+
+    return bars
+end
+
+-------------------------------------------------
 -- CreateAura_Color
 -------------------------------------------------
 local function Color_OnUpdate(color, elapsed)
