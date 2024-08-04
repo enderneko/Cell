@@ -14,7 +14,7 @@ local listButtons = {}
 local clickCastingTable
 local loaded
 local LoadProfile
-local alwaysTargeting, smartResurrection
+local alwaysTargeting, smartResurrection, hookBlizzardFrames
 -------------------------------------------------
 -- changes
 -------------------------------------------------
@@ -556,6 +556,7 @@ local function UpdateClickCastings(noReload, onlyqueued)
     end
 
     smartResurrection = Cell.vars.clickCastings["smartResurrection"]
+    hookBlizzardFrames = Cell.vars.clickCastings["hookBlizzardFrames"]
 
     if not noReload then
         if clickCastingsTab:IsVisible() then
@@ -568,34 +569,25 @@ local function UpdateClickCastings(noReload, onlyqueued)
     local snippet = GetBindingSnippet()
     F:Debug(snippet)
 
-    -- REVIEW:
-    -- local clickFrames = Cell.clickCastFrames
-    -- if onlyqueued then
-    --     clickFrames = Cell.clickCastFrameQueue
-    -- end
-    -- for b, val in pairs(clickFrames) do
-    --     Cell.clickCastFrameQueue[b] = nil
-    --     -- clear if attribute already set
-    --     ClearClickCastings(b)
-    --     if val then
-    --         -- update bindingClicks
-    --         b:SetAttribute("snippet", snippet)
-    --         SetBindingClicks(b)
-
-    --         -- load db and set attribute
-    --         ApplyClickCastings(b)
-    --     end
-    -- end
-
-    F:IterateAllUnitButtons(function(b)
+    local clickFrames = Cell.clickCastFrames
+    if not hookBlizzardFrames then
+        clickFrames = Cell.clickCastCellFrames
+    end
+    for b, _ in pairs(Cell.clickCastFrames) do
         -- clear if attribute already set
         ClearClickCastings(b)
-        -- update bindingClicks
-        b:SetAttribute("snippet", snippet)
-        SetBindingClicks(b)
-        -- load db and set attribute
-        ApplyClickCastings(b)
-    end, false, true)
+    end
+    for b, val in pairs(clickFrames) do
+        Cell.clickCastFrameQueue[b] = nil
+        if val then
+            -- update bindingClicks
+            b:SetAttribute("snippet", snippet)
+            SetBindingClicks(b)
+    
+            -- load db and set attribute
+            ApplyClickCastings(b)
+        end
+    end
 
     previousClickCastings = F:Copy(clickCastingTable)
 end
@@ -616,7 +608,7 @@ local function CreateProfilePane()
     profilePane:SetPoint("TOPLEFT", 5, -5)
 
     profileDropdown = Cell:CreateDropdown(profilePane, 412)
-    profileDropdown:SetPoint("TOPLEFT", profilePane, "TOPLEFT", 5, -27)
+    profileDropdown:SetPoint("TOPLEFT", profilePane, "TOPLEFT", 5, -22)
     profileDropdown:SetEnabled(not Cell.isVanilla)
 
     profileDropdown:SetItems({
@@ -640,6 +632,18 @@ local function CreateProfilePane()
 end
 
 
+local hookBlizzFrames
+-------------------------------------------------
+-- Hook click casting to blizzard frames
+-------------------------------------------------
+local function CreateHookBlizzardFramesCB()
+    hookBlizzFrames = Cell:CreateCheckButton(clickCastingsTab, "Hook to Blizzard Frames", function(checked)
+        Cell.vars.clickCastings["hookBlizzardFrames"] = checked
+        Cell:Fire("UpdateClickCastings")
+    end)
+    hookBlizzFrames:SetPoint("TOPLEFT", profileDropdown, 0, -22)
+end
+
 -------------------------------------------------
 -- always targeting
 -------------------------------------------------
@@ -647,10 +651,10 @@ local targetingDropdown
 
 local function CreateTargetingPane()
     local targetingPane = Cell:CreateTitledPane(clickCastingsTab, L["Always Targeting"], 205, 50)
-    targetingPane:SetPoint("TOPLEFT", clickCastingsTab, "TOPLEFT", 5, -70)
+    targetingPane:SetPoint("TOPLEFT", hookBlizzFrames, "TOPLEFT", 5, -22)
 
     targetingDropdown = Cell:CreateDropdown(targetingPane, 195)
-    targetingDropdown:SetPoint("TOPLEFT", targetingPane, "TOPLEFT", 5, -27)
+    targetingDropdown:SetPoint("TOPLEFT", targetingPane, "TOPLEFT", 5, -22)
 
     local items = {
         {
@@ -696,10 +700,10 @@ local smartResDropdown
 
 local function CreateSmartResPane()
     local smartResPane = Cell:CreateTitledPane(clickCastingsTab, L["Smart Resurrection"], 205, 50)
-    smartResPane:SetPoint("TOPLEFT", clickCastingsTab, "TOPLEFT", 222, -70)
+    smartResPane:SetPoint("TOPLEFT", hookBlizzFrames, "TOPLEFT", 222, -22)
 
     smartResDropdown = Cell:CreateDropdown(smartResPane, 195)
-    smartResDropdown:SetPoint("TOPLEFT", smartResPane, "TOPLEFT", 5, -27)
+    smartResDropdown:SetPoint("TOPLEFT", smartResPane, "TOPLEFT", 5, -22)
 
     local items = {
         {
@@ -1640,6 +1644,7 @@ local function ShowTab(tab)
         if not init then
             init = true
             CreateProfilePane()
+            CreateHookBlizzardFramesCB()
             CreateTargetingPane()
             CreateSmartResPane()
             CreateListPane()

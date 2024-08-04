@@ -807,24 +807,36 @@ end
 -------------------------------------------------
 local combinedHeader = "CellRaidFrameHeader0"
 local separatedHeaders = {"CellRaidFrameHeader1", "CellRaidFrameHeader2", "CellRaidFrameHeader3", "CellRaidFrameHeader4", "CellRaidFrameHeader5", "CellRaidFrameHeader6", "CellRaidFrameHeader7", "CellRaidFrameHeader8"}
+Cell.blizzardFrames = {
+    "PlayerFrame",
+    "TargetFrame",
+    "PetFrame",
+    "PartyMemberFrame1",
+    "PartyMemberFrame2",
+    "PartyMemberFrame3",
+    "PartyMemberFrame4",
+    "PartyMemberFrame1PetFrame",
+    "PartyMemberFrame2PetFrame",
+    "PartyMemberFrame3PetFrame",
+    "PartyMemberFrame4PetFrame",
+}
+Cell.clickCastCellFrames = {}
+Cell.clickCastFrames = {}
+Cell.clickCastFrameQueue = {}
 
--- REVIEW:
--- Cell.clickCastFrames = {}
--- Cell.clickCastFrameQueue = {}
+function F:RegisterFrame(frame, isCell)
+    Cell.clickCastFrames[frame] = true
+    if isCell then
+        Cell.clickCastCellFrames[frame] = true
+    end
+    Cell.clickCastFrameQueue[frame] = true  -- put into queue
+end
 
--- function F:RegisterFrame(frame)
---     Cell.clickCastFrames[frame] = true
---     Cell.clickCastFrameQueue[frame] = true  -- put into queue
---     Cell:Fire("UpdateQueuedClickCastings")
--- end
+function F:UnregisterFrame(frame, isCell)
+    Cell.clickCastFrames[frame] = nil       -- ignore
+    Cell.clickCastFrameQueue[frame] = nil -- mark for only cleanup
+end
 
--- function F:UnregisterFrame(frame)
---     Cell.clickCastFrames[frame] = nil       -- ignore
---     Cell.clickCastFrameQueue[frame] = false -- mark for only cleanup
---     Cell:Fire("UpdateQueuedClickCastings")
--- end
-
--- REVIEW: updateBlizzardFrames
 function F:IterateAllUnitButtons(func, updateCurrentGroupOnly, updateQuickAssist, updateBlizzardFrames)
     -- solo
     if not updateCurrentGroupOnly or (updateCurrentGroupOnly and Cell.vars.groupType == "solo") then

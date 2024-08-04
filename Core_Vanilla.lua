@@ -322,6 +322,7 @@ function eventFrame:ADDON_LOADED(arg1)
             CellCharacterDB["clickCastings"] = {
                 ["class"] = Cell.vars.playerClass, -- validate on import
                 ["useCommon"] = true,
+                ["hookBlizzardFrames"] = false,
                 ["smartResurrection"] = "disabled",
                 ["alwaysTargeting"] = {
                     ["common"] = "disabled",
@@ -610,6 +611,38 @@ function eventFrame:PLAYER_ENTERING_WORLD()
     end
 end
 
+local function registerGlobalClickCastings()
+    ClickCastFrames = ClickCastFrames or {}
+
+    if ClickCastFrames then
+        for frame, options in pairs(ClickCastFrames) do
+            F:RegisterFrame(frame, false)
+        end
+    end
+
+    ClickCastFrames = setmetatable({}, {__newindex = function(t, k, v)
+        if v == nil or v == false then
+            F:UnregisterFrame(k, false)
+            Cell:Fire("UpdateClickCastings")
+        else
+            F:RegisterFrame(k, false)
+            Cell:Fire("UpdateClickCastings")
+        end
+    end})
+
+    for _, name in pairs(Cell.blizzardFrames) do
+        local frame = _G[name]
+        if frame then
+            F:RegisterFrame(frame, false)
+        end
+    end
+    
+    F:IterateAllUnitButtons(function (b)
+        F:RegisterFrame(b, true)
+    end)
+    Cell:Fire("UpdateClickCastings")
+end
+
 function eventFrame:PLAYER_LOGIN()
     F:Debug("|cffbbbbbb=== PLAYER_LOGIN ===")
     eventFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
@@ -630,7 +663,7 @@ function eventFrame:PLAYER_LOGIN()
     -- update visibility
     Cell:Fire("UpdateVisibility")
     -- update click-castings
-    Cell:Fire("UpdateClickCastings")
+    registerGlobalClickCastings()
     -- update indicators
     -- Cell:Fire("UpdateIndicators") -- NOTE: already update in GROUP_ROSTER_UPDATE -> GroupTypeChanged -> F:UpdateLayout
     -- update texture and font
