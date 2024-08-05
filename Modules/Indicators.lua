@@ -590,7 +590,7 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
     if not indicatorsTab:IsShown() then return end
 
     if not indicatorName then -- init
-        if not layout then --! call from UpdateIndicators() not from Cell:Fire("UpdateIndicators", ...)
+        if layout == true then --! call from UpdateIndicators(true) not from Cell:Fire("UpdateIndicators", ...)
             if not previewButton._indicatorsCreated then
                 previewButton._indicatorsCreated = true
                 I.CreateDefensiveCooldowns(previewButton)
@@ -1109,7 +1109,7 @@ LoadLayoutDropdown = function()
                 currentLayoutTable = CellDB["layouts"][value]
 
                 LoadSyncDropdown()
-                UpdateIndicators()
+                UpdateIndicators(true)
                 UpdatePreviewButton()
                 LoadIndicatorList()
                 listButtons[1]:Click()
@@ -1260,7 +1260,7 @@ LoadSyncDropdown = function()
                         --! notify unitbuttons to update current indicators
                         Cell:Fire("UpdateIndicators", currentLayout)
                         --! update indicators preview
-                        UpdateIndicators()
+                        UpdateIndicators(true)
                         LoadIndicatorList()
                         listButtons[1]:Click()
                     end, function()
@@ -1282,7 +1282,7 @@ LoadSyncDropdown = function()
                 --! notify unitbuttons to update current indicators
                 Cell:Fire("UpdateIndicators", currentLayout)
                 --! update indicators preview
-                UpdateIndicators()
+                UpdateIndicators(true)
                 LoadIndicatorList()
                 listButtons[1]:Click()
             end
@@ -2233,7 +2233,7 @@ local function ShowTab(tab)
         if noUpdateIndicators then return end
 
         UpdatePreviewButton()
-        UpdateIndicators()
+        UpdateIndicators(true)
 
         layoutDropdown:SetSelected(currentLayout == "default" and _G.DEFAULT or currentLayout)
         LoadIndicatorList()
@@ -2254,7 +2254,7 @@ function F:ReloadIndicatorList()
     else
         indicatorsTab:SetScript("OnShow", function()
             indicatorsTab:SetScript("OnShow", nil)
-            UpdateIndicators()
+            UpdateIndicators(true)
             LoadIndicatorList()
             listButtons[1]:Click()
         end)
@@ -2288,7 +2288,7 @@ local function IndicatorsChanged(layout)
     if currentLayout == layout then
         F:Debug("Reload Indicator List:", layout)
         -- update indicators for preview button
-        UpdateIndicators()
+        UpdateIndicators(true)
         -- reload list
         LoadIndicatorList()
         listButtons[1]:Click()
