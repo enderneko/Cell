@@ -374,17 +374,25 @@ local queue = {}
 updater:SetScript("OnUpdate", function()
     local b = queue[1]
     if b then
-        if not b._status then
-            -- print("processing", GetTime(), b:GetName())
+        if b._status == "waiting_for_init" then
+            -- print("processing_init", GetTime(), b:GetName())
             b._status = "processing"
             HandleIndicators(b)
-            UnitButton_UpdateAll(b)
-            b._status = "finished"
-        elseif b._status == "finished" then
+            UnitButton_UpdateAuras(b)
+            b._status = "done"
+        elseif b._status == "waiting_for_update" then
+            -- print("processing_update", GetTime(), b:GetName())
+            b._indicatorsReady = true
+            b._status = "processing"
+            UnitButton_UpdateAuras(b)
+            b._status = "done"
+        elseif b._status == "done" then
             CellLoadingBar.current = (CellLoadingBar.current or 0) + 1
             CellLoadingBar:SetValue(CellLoadingBar.current)
             tremove(queue, 1)
             b._status = nil
+        elseif b._status ~= "processing" then -- re-queue
+            b._status = "waiting_for_init"
         end
     else
         CellLoadingBar:Hide()
@@ -400,8 +408,15 @@ hooksecurefunc(updater, "Show", function()
     CellLoadingBar:Show()
 end)
 
-local function AddToQueue(b)
+local function AddToInitQueue(b)
     b._indicatorsReady = nil
+    b._status = "waiting_for_init"
+    tinsert(queue, b)
+end
+
+local function AddToUpdateQueue(b)
+    b._indicatorsReady = nil
+    b._status = "waiting_for_update"
     tinsert(queue, b)
 end
 
@@ -438,13 +453,15 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
             F:Debug("NO UPDATE: only reset custom indicator tables")
             I.ResetCustomIndicatorTables()
             ResetIndicators()
+            --! update main _indicatorsReady
+            F:IterateAllUnitButtons(AddToUpdateQueue, true, nil, true)
             --! update shared buttons: npcs, spotlights
-            -- F:IterateSharedUnitButtons(HandleIndicators)
-            F:IterateSharedUnitButtons(AddToQueue)
+            F:IterateSharedUnitButtons(AddToInitQueue)
             updater:Show()
             return
         end
     end
+
     previousLayout[INDEX] = Cell.vars.currentLayout
 
     if not indicatorName then -- init
@@ -457,7 +474,7 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
             -- update all when indicators update finished
             F:IterateAllUnitButtons(UnitButton_UpdateAll, true)
         else
-            F:IterateAllUnitButtons(AddToQueue, true)
+            F:IterateAllUnitButtons(AddToInitQueue, true)
             updater:Show()
         end
         indicatorsInitialized = true
@@ -801,6 +818,7 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                 indicatorBooleans[indicatorName] = value2
             end
         elseif setting == "create" then
+            I.UpdateIndicatorTable(value)
             F:IterateAllUnitButtons(function(b)
                 local indicator = I.CreateIndicator(b, value)
                 indicator.configs = value

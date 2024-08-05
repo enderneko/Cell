@@ -152,9 +152,9 @@
           "comments": []
         },
         {
-          "id": "65017c0e-525a-42ed-adf7-7a396547406c",
+          "id": "49fa23b6-7197-45c5-b107-97210fb53fde",
           "listId": "fc9baa7c-c3e7-49a4-8526-816c794e5ed9",
-          "title": "Bars and max duration option",
+          "title": "Use ObjectPool to create indicators",
           "description": "",
           "labels": [],
           "checkboxes": [],
@@ -166,6 +166,15 @@
       "id": "7b0c4654-92fe-4b4e-9566-15e8c706d9c9",
       "title": "DONE",
       "cards": [
+        {
+          "id": "65017c0e-525a-42ed-adf7-7a396547406c",
+          "listId": "7b0c4654-92fe-4b4e-9566-15e8c706d9c9",
+          "title": "Bars and max duration option",
+          "description": "",
+          "labels": [],
+          "checkboxes": [],
+          "comments": []
+        },
         {
           "id": "dd2e1868-482f-4f16-9755-ab54c171f9b3",
           "listId": "7b0c4654-92fe-4b4e-9566-15e8c706d9c9",

@@ -824,8 +824,7 @@ local separatedHeaders = {"CellRaidFrameHeader1", "CellRaidFrameHeader2", "CellR
 --     Cell:Fire("UpdateQueuedClickCastings")
 -- end
 
--- REVIEW: updateBlizzardFrames
-function F:IterateAllUnitButtons(func, updateCurrentGroupOnly, updateQuickAssist, updateBlizzardFrames)
+function F:IterateAllUnitButtons(func, updateCurrentGroupOnly, updateQuickAssists, skipShared)
     -- solo
     if not updateCurrentGroupOnly or (updateCurrentGroupOnly and Cell.vars.groupType == "solo") then
         for _, b in pairs(Cell.unitButtons.solo) do
@@ -871,17 +870,19 @@ function F:IterateAllUnitButtons(func, updateCurrentGroupOnly, updateQuickAssist
         end
     end
 
-    -- npc
-    for _, b in ipairs(Cell.unitButtons.npc) do
-        func(b)
+    if not skipShared then
+        -- npc
+        for _, b in ipairs(Cell.unitButtons.npc) do
+            func(b)
+        end
+
+        -- spotlight
+        for _, b in pairs(Cell.unitButtons.spotlight) do
+            func(b)
+        end
     end
 
-    -- spotlight
-    for _, b in pairs(Cell.unitButtons.spotlight) do
-        func(b)
-    end
-
-    if Cell.isRetail and updateQuickAssist then
+    if Cell.isRetail and updateQuickAssists then
         for i = 1, 40 do
             func(Cell.unitButtons.quickAssist[i])
         end

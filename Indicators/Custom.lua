@@ -16,7 +16,7 @@ Cell.snippetVars.enabledIndicators = enabledIndicators
 Cell.snippetVars.customIndicators = customIndicators
 
 --! init enabledIndicators & customIndicators
-local function UpdateTablesForIndicator(indicatorTable)
+function I.UpdateIndicatorTable(indicatorTable)
     local indicatorName = indicatorTable["indicatorName"]
     local auraType = indicatorTable["auraType"]
 
@@ -53,6 +53,7 @@ local function UpdateTablesForIndicator(indicatorTable)
     end
 
     customIndicators[auraType][indicatorName]["name"] = indicatorTable["name"]
+    customIndicators[auraType][indicatorName]["type"] = indicatorTable["type"]
 
     if auraType == "buff" then
         customIndicators[auraType][indicatorName]["castBy"] = indicatorTable["castBy"]
@@ -61,7 +62,7 @@ local function UpdateTablesForIndicator(indicatorTable)
     end
 end
 
-function I.CreateIndicator(parent, indicatorTable, noTableUpdate)
+function I.CreateIndicator(parent, indicatorTable)
     local indicatorName = indicatorTable["indicatorName"]
     local indicator
     if indicatorTable["type"] == "icon" then
@@ -92,10 +93,6 @@ function I.CreateIndicator(parent, indicatorTable, noTableUpdate)
         indicator = I.CreateAura_Border(parent:GetName()..indicatorName, parent.widgets.highLevelFrame)
     end
     parent.indicators[indicatorName] = indicator
-
-    if not noTableUpdate then
-        UpdateTablesForIndicator(indicatorTable)
-    end
 
     return indicator
 end
@@ -136,7 +133,7 @@ function I.ResetCustomIndicatorTables()
 
     -- update customs
     for i = Cell.defaults.builtIns + 1, #Cell.vars.currentLayoutTable.indicators do
-        UpdateTablesForIndicator(Cell.vars.currentLayoutTable.indicators[i])
+        I.UpdateIndicatorTable(Cell.vars.currentLayoutTable.indicators[i])
     end
 end
 

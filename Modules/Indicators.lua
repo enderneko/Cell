@@ -602,7 +602,7 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
             I.RemoveAllCustomIndicators(previewButton)
 
             for i, t in pairs(currentLayoutTable["indicators"]) do
-                local indicator = previewButton.indicators[t["indicatorName"]] or I.CreateIndicator(previewButton, t, true)
+                local indicator = previewButton.indicators[t["indicatorName"]] or I.CreateIndicator(previewButton, t)
                 indicator.configs = t
 
                 InitIndicator(t["indicatorName"])
@@ -970,7 +970,7 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                 indicator:EnableSmooth(value2)
             end
         elseif setting == "create" then
-            indicator = I.CreateIndicator(previewButton, value, true)
+            indicator = I.CreateIndicator(previewButton, value)
             indicator.configs = value
 
             -- update position
