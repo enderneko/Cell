@@ -403,8 +403,9 @@ end)
 
 hooksecurefunc(updater, "Show", function()
     CellLoadingBar.total = #queue
+    CellLoadingBar.current = 0
     CellLoadingBar:SetMinMaxValues(0, CellLoadingBar.total)
-    CellLoadingBar:SetValue(CellLoadingBar.current or 0)
+    CellLoadingBar:SetValue(CellLoadingBar.current)
     CellLoadingBar:Show()
 end)
 
@@ -2398,6 +2399,7 @@ local function UnitButton_OnHide(self)
         self.__unitName = nil
     end
     self.__displayedGuid = nil
+    self._updateRequired = nil
     F:RemoveElementsExceptKeys(self.states, "unit", "displayedUnit")
 end
 
@@ -2430,8 +2432,10 @@ local function UnitButton_OnTick(self)
                 -- NOTE: displayed unit entity changed
                 F:RemoveElementsExceptKeys(self.states, "unit", "displayedUnit")
                 self.__displayedGuid = displayedGuid
-                self._updateRequired = 1
-                self._powerBarUpdateRequired = 1
+                if displayedGuid then --? clearing unit may come before hiding
+                    self._updateRequired = 1
+                    self._powerBarUpdateRequired = 1
+                end
             end
 
             local guid = UnitGUID(self.states.unit)
