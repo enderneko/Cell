@@ -1894,42 +1894,59 @@ end
 -------------------------------------------------
 -- LibGetFrame
 -------------------------------------------------
-function Cell.GetUnitFramesForLGF(unit, frames, priorities)
-    frames = frames or {}
+local frame_priorities = {}
+local spotlightPriorityEnabled
+local quickAssistPriorityEnabled
 
-    local normal, spotlights, quickAssist = F:GetUnitButtonByUnit(unit, true, true)
+function F:UpdateFramePriority()
+    wipe(frame_priorities)
+    spotlightPriorityEnabled = nil
+    quickAssistPriorityEnabled = nil
 
-    if normal and normal:IsVisible() and normal.widgets and normal.widgets.highLevelFrame then
-        frames[normal.widgets.highLevelFrame] = "CellNormalUnitFrame"
-    end
-
-    if spotlights then
-        for _, spotlight in pairs(spotlights) do
-            if not strfind(spotlight.unit, "target$") and spotlight.widgets and spotlight.widgets.highLevelFrame then
-                frames[spotlight.widgets.highLevelFrame] = "CellSpotlightUnitFrame"
-                break
+    for i = #CellDB["general"]["framePriority"], 1, -1 do
+        local t = CellDB["general"]["framePriority"][i]
+        if t[2] then
+            if t[1] == "Main" then
+                tinsert(frame_priorities, "^CellNormalUnitFrame$")
+            elseif t[1] == "Spotlight" then
+                tinsert(frame_priorities, "^CellSpotlightUnitFrame$")
+                spotlightPriorityEnabled = true
+            else
+                tinsert(frame_priorities, "^CellQuickAssistUnitFrame$")
+                quickAssistPriorityEnabled = true
             end
         end
     end
 
-    if quickAssist and quickAssist:IsVisible() then
+    F:Debug(frame_priorities)
+end
+
+function Cell.GetUnitFramesForLGF(unit, frames, priorities)
+    frames = frames or {}
+
+    local normal, spotlights, quickAssist = F:GetUnitButtonByUnit(unit, spotlightPriorityEnabled, quickAssistPriorityEnabled)
+
+    if normal then
+        frames[normal.widgets.highLevelFrame] = "CellNormalUnitFrame"
+    end
+
+    if spotlights then
+        -- for _, spotlight in pairs(spotlights) do
+        --     if not strfind(spotlight.unit, "target$") and spotlight.widgets and spotlight.widgets.highLevelFrame then
+        --         frames[spotlight.widgets.highLevelFrame] = "CellSpotlightUnitFrame"
+        --         break
+        --     end
+        -- end
+        --! just use the first (can be "XXtarget", whatever)
+        frames[spotlights[1].widgets.highLevelFrame] = "CellSpotlightUnitFrame"
+    end
+
+    if quickAssist then
         frames[quickAssist] = "CellQuickAssistUnitFrame"
     end
 
-    if CellDB["general"]["framePriority"] == "normal_spotlight_quickassist" then
-        tinsert(priorities, 1, "^CellNormalUnitFrame$")
-        tinsert(priorities, 2, "^CellSpotlightUnitFrame$")
-        tinsert(priorities, 3, "^CellQuickAssistUnitFrame$")
-
-    elseif CellDB["general"]["framePriority"] == "spotlight_normal_quickassist" then
-        tinsert(priorities, 1, "^CellSpotlightUnitFrame$")
-        tinsert(priorities, 2, "^CellNormalUnitFrame$")
-        tinsert(priorities, 3, "^CellQuickAssistUnitFrame$")
-
-    else -- "quickassist_normal_spotlight"
-        tinsert(priorities, 1, "^CellQuickAssistUnitFrame$")
-        tinsert(priorities, 2, "^CellNormalUnitFrame$")
-        tinsert(priorities, 3, "^CellSpotlightUnitFrame$")
+    for _, p in ipairs(frame_priorities) do
+        tinsert(priorities, 1, p)
     end
 
     return frames

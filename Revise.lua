@@ -3121,6 +3121,14 @@ function F:Revise()
         if not CellDB["appearance"]["gradientColorsLoss"] then
             CellDB["appearance"]["gradientColorsLoss"] = F:Copy(Cell.defaults.appearance.gradientColorsLoss)
         end
+
+        if type(CellDB["general"]["framePriority"]) ~= "table" then
+            CellDB["general"]["framePriority"] = {
+                {"Main", true},
+                {"Spotlight", false},
+                {"Quick Assist", false},
+            }
+        end
     end
 
     -- ----------------------------------------------------------------------- --

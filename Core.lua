@@ -31,6 +31,8 @@ function F:Debug(arg, ...)
     if debugMode then
         if type(arg) == "string" or type(arg) == "number" then
             print(arg, ...)
+        elseif type(arg) == "table" then
+            DevTools_Dump(arg)
         elseif type(arg) == "function" then
             arg(...)
         elseif arg == nil then
@@ -198,7 +200,11 @@ function eventFrame:ADDON_LOADED(arg1)
                 ["menuPosition"] = "top_bottom",
                 ["alwaysUpdateBuffs"] = false,
                 ["alwaysUpdateDebuffs"] = false,
-                ["framePriority"] = "normal_spotlight_quickassist",
+                ["framePriority"] = {
+                    {"Main", true},
+                    {"Spotlight", false},
+                    {"Quick Assist", false},
+                },
                 ["useCleuHealthUpdater"] = false,
                 ["translit"] = false,
             }

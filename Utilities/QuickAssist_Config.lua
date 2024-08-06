@@ -1012,7 +1012,7 @@ local function CreateClassFilter(parent)
             -- self:Hide() --! Hide() will cause OnDragStop trigger TWICE!!!
             C_Timer.After(0.05, function()
                 local b = F:GetMouseFocus()
-                if b and b._class then
+                if b ~= self and b and b._class then
                     local oldIndex, oldValue, newIndex
                     for i, t in pairs(quickAssistTable["filters"][selectedFilter][2]) do
                         if class == t[1] then
@@ -1250,14 +1250,14 @@ local function CreateSpecFilter(parent)
             frames[class]:SetUserPlaced(false)
         end
 
-        frames[class].onDragStop = function()
+        frames[class].onDragStop = function(self)
             frames[class]:StopMovingOrSizing()
             frames[class]:SetFrameStrata("LOW")
             -- self:Hide() --! Hide() will cause OnDragStop trigger TWICE!!!
             C_Timer.After(0.05, function()
                 local mf = F:GetMouseFocus()
                 if mf then mf = mf:GetParent() end
-                if mf and mf._class then
+                if mf ~= self and mf and mf._class then
                     local oldIndex, oldValue, newIndex
                     for i, t in pairs(quickAssistTable["filters"][selectedFilter][2]) do
                         if class == t[1] then
