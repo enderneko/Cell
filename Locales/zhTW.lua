@@ -97,8 +97,8 @@ L["Buffs Tracker"] = "增益監控"
 L["Bug Report & Suggestion"] = "回報 Bug & 建議"
 L["Built-in Spells"] = "內建法術"
 L["built-in(s)"] = "內建"
-L["Button4"] = "按鍵 4"
-L["Button5"] = "按鍵 5"
+--[[Translation missing --]]
+--[[ L["Button"] = ""--]]
 L["C"] = "職業天賦"
 L["Cancel"] = "取消"
 L["Can't change options in combat"] = "無法在戰鬥中更改設定"
@@ -257,6 +257,8 @@ L["Group Columns"] = "隊伍列數"
 L["Group Filters"] = "過濾隊伍"
 L["Group Rows"] = "隊伍行數"
 L["Group Spacing"] = "隊伍間距"
+--[[Translation missing --]]
+--[[ L["H"] = "Hero Talent"--]]
 L["Half"] = "半高"
 L["Heal Absorb"] = "治療吸收"
 L["Heal Prediction"] = "治療預估"
