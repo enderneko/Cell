@@ -480,6 +480,12 @@ local function ApplyClickCastings(b)
         if t[2] == "spell" then
             local spellName = F:GetSpellInfo(t[3]) or ""
 
+            --! NOTE: only Necrolord shamans have this issue
+            -- https://www.wowhead.com/spell=375982/primordial-wave#comments:id=5484251
+            if t[3] == 428332 then
+                spellName = spellName .. "(" .. EXPANSION_NAME8 .. ")"
+            end
+
             local condition = ""
             if not F:IsSoulstone(spellName) then
                 condition = F:IsResurrectionForDead(spellName) and ",dead" or ",nodead"
