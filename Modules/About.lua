@@ -468,7 +468,7 @@ local function CreateLinksPane()
 
     --! afdian
     local afdian = CreateLink(linksPane, "afdian", "Interface\\AddOns\\Cell\\Media\\Links\\afdian.tga", function()
-        current = "https://afdian.net/a/enderneko"
+        current = "https://afdian.com/a/enderneko"
         linksEB:SetText(current)
         linksEB:ClearFocus()
     end)
