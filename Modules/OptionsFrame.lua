@@ -86,7 +86,7 @@ local function CreateTabButtons()
         ["indicators"] = 607,
         ["debuffs"] = 521,
         ["utilities"] = 400,
-        ["about"] = 600,
+        ["about"] = 610,
     }
 
     local function ShowTab(tab)

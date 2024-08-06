@@ -159,8 +159,9 @@ local function CreateSpecialThanksPane()
     specialThanksText:SetSpacing(5)
     specialThanksText:SetJustifyH("LEFT")
     specialThanksText:SetText(
-        "|cffffff00Reat TV(YouTube), 钛锬(NGA), warbaby(爱不易)|r\n"..
-        "|cffff0000YouTube:|r AutomaticJak, JFunkGaming, yumytv\n"..
+        "|cffffff00Reat TV(YouTube), 钛锬, warbaby(爱不易)|r\n"..
+        "|cffff0000Wago:|r Ora\n"..
+        "|cffff3333YouTube:|r AutomaticJak, JFunkGaming, yumytv\n"..
         "|cff5662f6Discord:|r aba, BinarySunshine, Bruds, clankz., DreadMesh, Gharr, honeyhoney, leaKsi, Missgunst, Serghei, Vollmerino, Xepheris"
     )
 end
@@ -404,7 +405,7 @@ end
 
 local function CreateLinksPane()
     local linksPane = Cell:CreateTitledPane(aboutTab, L["Links"], 422, 100)
-    linksPane:SetPoint("TOPLEFT", aboutTab, "TOPLEFT", 5, -430)
+    linksPane:SetPoint("TOPLEFT", aboutTab, "TOPLEFT", 5, -440)
 
     local current
 
@@ -488,7 +489,7 @@ end
 -------------------------------------------------
 local function CreateImportExportPane()
     local iePane = Cell:CreateTitledPane(aboutTab, L["Import & Export All Settings"], 422, 50)
-    iePane:SetPoint("TOPLEFT", 5, -545)
+    iePane:SetPoint("TOPLEFT", 5, -555)
 
     local importBtn = Cell:CreateButton(iePane, L["Import"], "accent-hover", {200, 20})
     importBtn:SetPoint("TOPLEFT", 5, -27)
