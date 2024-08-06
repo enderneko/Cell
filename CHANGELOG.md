@@ -1,6 +1,23 @@
-[Full Changelog](https://github.com/enderneko/Cell/compare/r235-release...1d2c1dcb75b8369b35f2f56ff7d39502fac71391)
+[Full Changelog](https://github.com/enderneko/Cell/compare/r236-release...05e71fcf90f502cddff090c38051e130cb9931bc)
 
-- Fix layout related
-- Fix appearance tab
-- Enable world marks for cata
+- Update some indicators for TWW (#165)
+- Update gradient colors (#181)
+- Implement Bars
+- New snippet var CELL_RANGE_CHECK_*
+- Add "Health Bar (Loss)" to Color anchorTo
+- Add Skyfury to Buff Tracker
+- Update default click-castings
+- Update layer of healthThresholds
+- Optimize Cell.GetUnitFramesForLGF
+- Fix "Custom" click-castings
+- Fix compatibility with wow mouse
+- Fix Primordial Wave for Necrolord Shaman
+- Fix layout-indicator switch
+- Fix indicator preview
+- Fix tww dispel check
+- Fix SR on classic
+- Fix overShieldGlowR
+- Fix GetSpellLink
+- Fix "/cell healers"
+- Fix indicator "0" error
 - Update locales
