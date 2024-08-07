@@ -819,7 +819,6 @@ end
 -------------------------------------------------
 -- ACTIVE_TALENT_GROUP_CHANGED
 -------------------------------------------------
-local timer
 local checkSpecFrame = CreateFrame("Frame")
 checkSpecFrame:SetScript("OnEvent", function()
     eventFrame:ACTIVE_TALENT_GROUP_CHANGED()
@@ -829,6 +828,7 @@ end)
 -- PLAYER_SPECIALIZATION_CHANGED fires when level up
 -- ACTIVE_PLAYER_SPECIALIZATION_CHANGED only fires when player manually change spec
 -- NOTE: ACTIVE_TALENT_GROUP_CHANGED fires before PLAYER_LOGIN, but can't GetSpecializationInfo before PLAYER_LOGIN
+local prevSpec
 function eventFrame:ACTIVE_TALENT_GROUP_CHANGED()
     -- not in combat
     if InCombatLockdown() then
@@ -837,13 +837,13 @@ function eventFrame:ACTIVE_TALENT_GROUP_CHANGED()
     end
 
     --  fires twice
-    if timer then timer:Cancel() end
-    timer = C_Timer.NewTimer(0.5, function()
-        timer = nil
+    local spec = GetSpecialization()
+    if prevSpec ~= spec then
+        prevSpec = spec
         F:Debug("|cffbbbbbb=== ACTIVE_TALENT_GROUP_CHANGED ===")
 
         -- update spec vars
-        Cell.vars.playerSpecID, Cell.vars.playerSpecName, _, Cell.vars.playerSpecIcon, Cell.vars.playerSpecRole = GetSpecializationInfo(GetSpecialization())
+        Cell.vars.playerSpecID, Cell.vars.playerSpecName, _, Cell.vars.playerSpecIcon, Cell.vars.playerSpecRole = GetSpecializationInfo(spec)
 
         if not Cell.vars.playerSpecID then
             -- NOTE: when join in battleground, spec auto switched, during loading, can't get info from GetSpecializationInfo, until PLAYER_ENTERING_WORLD
@@ -858,7 +858,7 @@ function eventFrame:ACTIVE_TALENT_GROUP_CHANGED()
             end
             Cell:Fire("SpecChanged", Cell.vars.playerSpecID, Cell.vars.playerSpecRole)
         end
-    end)
+    end
 end
 
 eventFrame:SetScript("OnEvent", function(self, event, ...)
