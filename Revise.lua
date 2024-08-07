@@ -2982,14 +2982,13 @@ function F:Revise()
         if CellDB["consumables"] then
             CellDB["actions"] = CellDB["consumables"]
             CellDB["consumables"] = nil
-
-            for _, layout in pairs(CellDB["layouts"]) do
-                for _, i in pairs(layout["indicators"]) do
-                    if i.indicatorName == "consumables" then
-                        i.name = "Actions"
-                        i.indicatorName = "actions"
-                        break
-                    end
+        end
+        for _, layout in pairs(CellDB["layouts"]) do
+            for _, i in pairs(layout["indicators"]) do
+                if i.indicatorName == "consumables" then
+                    i.name = "Actions"
+                    i.indicatorName = "actions"
+                    break
                 end
             end
         end
@@ -3086,36 +3085,6 @@ function F:Revise()
         end
     end
 
-    -- r236-release
-    -- if CellDB["revise"] and dbRevision < 236 then
-    --     for layout, t in pairs(CellDB["layouts"]) do
-    --         local name = string.gsub(layout, ":", "_")
-    --         name = string.gsub(name, "!", "*")
-    --         if name ~= layout then
-    --             CellDB["layouts"][name] = t
-    --             CellDB["layouts"][layout] = nil
-    --         end
-    --     end
-
-    --     if Cell.isRetail then
-    --         for _, roleOrClass in pairs(CellDB["layoutAutoSwitch"]) do
-    --             for _, t in pairs(roleOrClass) do
-    --                 for groupType, layout in pairs(t) do
-    --                     t[groupType] = string.gsub(t[groupType], ":", "_")
-    --                     t[groupType] = string.gsub(t[groupType], "!", "*")
-    --                 end
-    --             end
-    --         end
-    --     else
-    --         for talent, t in pairs(CellCharacterDB["layoutAutoSwitch"]) do
-    --             for groupType, layout in pairs(t) do
-    --                 t[groupType] = string.gsub(t[groupType], ":", "_")
-    --                 t[groupType] = string.gsub(t[groupType], "!", "*")
-    --             end
-    --         end
-    --     end
-    -- end
-
     -- r237-release
     if CellDB["revise"] and dbRevision < 237 then
         if not CellDB["appearance"]["gradientColorsLoss"] then
@@ -3144,9 +3113,9 @@ function F:Revise()
                 local name = t["indicatorName"]
                 if t["type"] == "built-in" and toValidate[name] then
                     if i == toValidate[name] then
-                        -- copy valid indicator
-                        -- print(layoutName, "RIGHT", i, name)
-                        tinsert(temp, t)
+                        -- copy correct indicator
+                        -- print(layoutName, "CORRECT_FOUND", i, name)
+                        tinsert(temp, i, t)
                     else
                         -- search for correct indicator
                         local found
@@ -3154,18 +3123,29 @@ function F:Revise()
                             if name == layout["indicators"][j]["indicatorName"] then
                                 -- print(layoutName, "WRONG_FOUND", j, "->", toValidate[name], name)
                                 found = true
-                                tinsert(temp, layout["indicators"][j])
+                                tinsert(temp, toValidate[name], layout["indicators"][j])
                                 break
                             end
                         end
                         -- not found, copy from Defaults
                         if not found then
                             -- print(layoutName, "WRONG_NOT_FOUND", i, name)
-                            tinsert(temp, Cell.defaults.layout.indicators[toValidate[name]])
+                            tinsert(temp, toValidate[name], F:Copy(Cell.defaults.layout.indicators[toValidate[name]]))
                         end
                     end
                     -- remove validated
                     toValidate[name] = nil
+                end
+            end
+
+            -- fix missing indicators
+            for name, index in pairs(toValidate) do
+                if temp[index] then --? possible?
+                    -- print(layoutName, "FIXED_MISSING_REPLACE", index, name)
+                    temp[index] = F:Copy(Cell.defaults.layout.indicators[index])
+                else
+                    -- print(layoutName, "FIXED_MISSING_INSERT", index, name)
+                    tinsert(temp, index, F:Copy(Cell.defaults.layout.indicators[index]))
                 end
             end
 
