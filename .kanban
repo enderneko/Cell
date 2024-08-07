@@ -126,6 +126,24 @@
           "labels": [],
           "checkboxes": [],
           "comments": []
+        },
+        {
+          "id": "b7c2be9a-ade0-40a3-8b5f-a8c25e9d97c1",
+          "listId": "7915d51e-5603-44aa-aa3a-8dff734ea7c6",
+          "title": "Reversed health bar",
+          "description": "",
+          "labels": [],
+          "checkboxes": [],
+          "comments": []
+        },
+        {
+          "id": "9c356d02-9218-463c-ad83-e137293a05ce",
+          "listId": "7915d51e-5603-44aa-aa3a-8dff734ea7c6",
+          "title": "Raid group orientation",
+          "description": "",
+          "labels": [],
+          "checkboxes": [],
+          "comments": []
         }
       ]
     },
@@ -164,6 +182,15 @@
           "id": "1c1c5f20-93c7-47b4-a470-510198f9dea0",
           "listId": "fc9baa7c-c3e7-49a4-8526-816c794e5ed9",
           "title": "spec Enable",
+          "description": "",
+          "labels": [],
+          "checkboxes": [],
+          "comments": []
+        },
+        {
+          "id": "de0f55f3-cb55-4d5b-9eff-ec182a2d9120",
+          "listId": "fc9baa7c-c3e7-49a4-8526-816c794e5ed9",
+          "title": "Load indicator based on spec",
           "description": "",
           "labels": [],
           "checkboxes": [],
