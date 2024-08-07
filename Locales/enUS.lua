@@ -87,6 +87,11 @@ select(2, ...).L = setmetatable({
         <p>(Retail) Enable "Always Update Buffs/Debuffs" in General tab, if indicators do not update correctly.</p>
         <br/>
 
+        <h1>r238-release (Aug 7, 2024, 15:25 GMT+8)</h1>
+        <p>* Fixed missing indicators.</p>
+        <p>* Updated deDE and zhTW.</p>
+        <br/>
+
         <h1>r237-release (Aug 6, 2024, 21:30 GMT+8)</h1>
         <p>* (TWW) Updated default indicator spells (PR #165).</p>
         <p>* Updated gradient colors (PR #181).</p>
