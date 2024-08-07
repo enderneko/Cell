@@ -1938,7 +1938,9 @@ function Cell.GetUnitFramesForLGF(unit, frames, priorities)
         --     end
         -- end
         --! just use the first (can be "XXtarget", whatever)
-        frames[spotlights[1].widgets.highLevelFrame] = "CellSpotlightUnitFrame"
+        if spotlights[1] then
+            frames[spotlights[1].widgets.highLevelFrame] = "CellSpotlightUnitFrame"
+        end
     end
 
     if quickAssist then
