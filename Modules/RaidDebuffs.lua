@@ -2137,7 +2137,7 @@ end
 -- open encounter journal -- from grid2
 -------------------------------------------------
 OpenEncounterJournal = function(instanceId)
-    if not IsAddOnLoaded("Blizzard_EncounterJournal") then LoadAddOn("Blizzard_EncounterJournal") end
+    if not C_AddOns.IsAddOnLoaded("Blizzard_EncounterJournal") then C_AddOns.LoadAddOn("Blizzard_EncounterJournal") end
 
     local difficulty
     if IsInInstance() then
