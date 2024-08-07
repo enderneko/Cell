@@ -2,7 +2,7 @@
 -- File: Cell\RaidDebuffs\RaidDebuffs_Cata.lua
 -- Author: enderneko (enderneko-dev@outlook.com)
 -- Created : 2022-08-05 16:11:02 +08:00
--- Modified: 2024-06-10 23:50 +08:00
+-- Modified: 2024-08-07 14:20 +08:00
 ---------------------------------------------------------------------
 
 local _, Cell = ...
@@ -844,5 +844,20 @@ local debuffs = {
         },
     },
 }
+
+if Cell.isRetail then
+    debuffs[71] = { -- Grim Batol
+        ["general"] = {
+        },
+        [2617] = { -- General Umbriss
+        },
+        [2627] = { -- Forgemaster Throngus
+        },
+        [2618] = { -- Drahga Shadowburner
+        },
+        [2619] = { -- Erudax, the Duke of Below
+        },
+    }
+end
 
 F:LoadBuiltInDebuffs(debuffs)
