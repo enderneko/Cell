@@ -2098,7 +2098,7 @@ CELL_RANGE_CHECK_HOSTILE = {}
 CELL_RANGE_CHECK_DEAD = {}
 CELL_RANGE_CHECK_PET = {}
 
-rc:SetScript("OnEvent", function()
+local function SPELLS_CHANGED()
     spell_friend = CELL_RANGE_CHECK_FRIENDLY[playerClass] or friendSpells[playerClass]
     spell_harm = CELL_RANGE_CHECK_HOSTILE[playerClass] or harmSpells[playerClass]
     spell_dead = CELL_RANGE_CHECK_DEAD[playerClass] or deadSpells[playerClass]
@@ -2132,7 +2132,15 @@ rc:SetScript("OnEvent", function()
         "\nharm:", spell_harm or "nil",
         "\ndead:", spell_dead or "nil"
     )
-end)
+end
+
+local timer
+local function DELAYED_SPELLS_CHANGED()
+    if timer then timer:Cancel() end
+    timer = C_Timer.After(1, SPELLS_CHANGED)
+end
+
+rc:SetScript("OnEvent", DELAYED_SPELLS_CHANGED)
 
 function F:IsInRange(unit)
     if not UnitIsVisible(unit) then
