@@ -2323,7 +2323,6 @@ function F:Revise()
             end
         end
     end
-    ]=]
 
     -- r200-release
     if CellDB["revise"] and dbRevision < 200 then
@@ -2623,6 +2622,7 @@ function F:Revise()
             CellDB["appearance"]["gradientColors"] = {{1,0,0}, {1,0.7,0}, {0.7,1,0}}
         end
     end
+    ]=]
 
     -- r221-release
     if CellDB["revise"] and dbRevision < 221 then
@@ -3114,14 +3114,14 @@ function F:Revise()
                 if t["type"] == "built-in" and toValidate[name] then
                     if i == toValidate[name] then
                         -- copy correct indicator
-                        -- print(layoutName, "CORRECT_FOUND", i, name)
+                        F:Debug(layoutName, "CORRECT_FOUND", i, name)
                         tinsert(temp, i, t)
                     else
                         -- search for correct indicator
                         local found
                         for j = i, #layout["indicators"] do
                             if name == layout["indicators"][j]["indicatorName"] then
-                                -- print(layoutName, "WRONG_FOUND", j, "->", toValidate[name], name)
+                                F:Debug(layoutName, "WRONG_FOUND", j, "->", toValidate[name], name)
                                 found = true
                                 tinsert(temp, toValidate[name], layout["indicators"][j])
                                 break
@@ -3129,7 +3129,7 @@ function F:Revise()
                         end
                         -- not found, copy from Defaults
                         if not found then
-                            -- print(layoutName, "WRONG_NOT_FOUND", i, name)
+                            F:Debug(layoutName, "WRONG_NOT_FOUND", i, name)
                             tinsert(temp, toValidate[name], F:Copy(Cell.defaults.layout.indicators[toValidate[name]]))
                         end
                     end
@@ -3141,16 +3141,30 @@ function F:Revise()
             -- fix missing indicators
             for name, index in pairs(toValidate) do
                 if temp[index] then --? possible?
-                    -- print(layoutName, "FIXED_MISSING_REPLACE", index, name)
+                    F:Debug(layoutName, "FIXED_MISSING_REPLACE", index, name)
                     temp[index] = F:Copy(Cell.defaults.layout.indicators[index])
                 else
-                    -- print(layoutName, "FIXED_MISSING_INSERT", index, name)
+                    F:Debug(layoutName, "FIXED_MISSING_INSERT", index, name)
                     tinsert(temp, index, F:Copy(Cell.defaults.layout.indicators[index]))
                 end
             end
 
+            -- check indices
+            local maxKey
+            for i, t in pairs(temp) do
+                local name = t["indicatorName"]
+                if Cell.defaults.indicatorIndices[name] ~= i then
+                    temp[i] = F:Copy(Cell.defaults.layout.indicators[index])
+                    F:Print(L["Reset"] .. " " .. L[t["name"]])
+                end
+                maxKey = max(maxKey or 0, i)
+            end
+            for i = Cell.defaults.builtIns + 1, maxKey do
+                temp[i] = nil
+            end
+
             -- customs
-            for i, t in ipairs(layout["indicators"]) do
+            for i, t in pairs(layout["indicators"]) do
                 if t["type"] ~= "built-in" then
                     tinsert(temp, t)
                 end
