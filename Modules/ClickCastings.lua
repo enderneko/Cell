@@ -564,7 +564,8 @@ local function ApplyClickCastings(b)
             end
         elseif t[2] == "macro" then
             local attr = string.gsub(bindKey, "type", "macro")
-            b:SetAttribute(attr, GetMacroIndexByName(t[3]))
+            -- b:SetAttribute(attr, GetMacroIndexByName(t[3]))
+            b:SetAttribute(attr, t[3])
         elseif t[2] == "custom" then
             b:SetAttribute(bindKey, "macro")
             local attr = string.gsub(bindKey, "type", "macrotext")
