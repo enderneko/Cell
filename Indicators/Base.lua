@@ -1307,7 +1307,7 @@ local function Bars_SetCooldown(bar, start, duration, debuffType, texture, count
 end
 
 local function Bars_SetMaxValue(bars, maxValue)
-    if maxValue == 0 then
+    if maxValue[1] == 0 then
         bars.maxValue = nil
         bars.allowSmaller = nil
     else
