@@ -51,6 +51,7 @@ __如果更新后遇到各种问题，先检查/禁用代码片段。__
 ## 不支持的功能（未来可能也不会考虑做）
 
 - 自定义边框
+- 根据队伍人数切换布局
 - Clique 等类似的插件
 
 &nbsp;
@@ -58,6 +59,15 @@ __如果更新后遇到各种问题，先检查/禁用代码片段。__
 ## 斜杠命令
 
 Use __/cell__ for more information.
+
+&nbsp;
+
+## Guides & Sharing
+
+- [ULTIMATE Cell Raid Frames AddOn Setup GUIDE for HEALERS (Reat TV)](https://www.youtube.com/watch?v=ntXko7htO2I)
+- [Healer UI & Addon Guide for Dragonflight Season 4 (yumytv)](https://www.youtube.com/watch?v=XcXvXxFipOE)
+- [Addon Spotlight: How to set up Cell + OmniCD for Augmentation Evoker (JFunkGaming)](https://www.youtube.com/watch?v=PMvtgJv-808)
+- [团队框架插件 Cell 配置流程分享 (钛锬)](https://bbs.nga.cn/read.php?tid=32921170)
 
 &nbsp;
 
@@ -70,6 +80,18 @@ Use __/cell__ for more information.
 ## 本地化翻译
 
 如果你想要帮忙完善本地化，请访问<https://legacy.curseforge.com/wow/addons/cell/localization>，而不要直接提交PR。
+
+&nbsp;
+
+## 关于 Pull Request
+
+- 在提交任何有关新功能或功能优化/改动的PR前，最好先与我沟通，否则大概率不会通过。
+- 任何在上面被列为“不支持的功能”，将被驳回。
+
+如果你的PR没有通过，可能并不是因为它不够好，而是不符合我的设计理念。  
+对于被驳回的PR，我建议你想办法通过代码片段的方式实现。  
+我想表达的是，我不反对任何代码片段，无论它们对Cell做出了何种改动，即使不是我想要的。  
+无论如何，我都十分感激你所做出的贡献！
 
 &nbsp;
 
