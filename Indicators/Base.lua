@@ -1506,6 +1506,38 @@ local function Texture_OnUpdate(texture, elapsed)
     end
 end
 
+local function Texture_SetCooldown(texture, start, duration)
+    if duration ~= 0 and texture.fadeOut then
+        texture._start = start
+        texture._duration = duration
+        texture._elapsed = 0.1 -- update immediately
+        texture:SetScript("OnUpdate", Texture_OnUpdate)
+    else
+        texture:SetScript("OnUpdate", nil)
+        texture.tex:SetAlpha(texture.colorAlpha)
+        texture._start = nil
+        texture._duration = nil
+        texture._remain = nil
+        texture._elapsed = nil
+    end
+    texture:Show()
+end
+
+local function Texture_SetFadeOut(texture, fadeOut)
+    texture.fadeOut = fadeOut
+end
+
+local function Texture_SetTexture(texture, texTbl) -- texture, rotation, color
+    if strfind(strlower(texTbl[1]), "^interface") then
+        texture.tex:SetTexture(texTbl[1])
+    else
+        texture.tex:SetAtlas(texTbl[1])
+    end
+    texture.tex:SetRotation(texTbl[2] * math.pi / 180)
+    texture.tex:SetVertexColor(unpack(texTbl[3]))
+    texture.colorAlpha = texTbl[3][4]
+end
+
 function I.CreateAura_Texture(name, parent)
     local texture = CreateFrame("Frame", name, parent)
     texture:Hide()
@@ -1515,38 +1547,9 @@ function I.CreateAura_Texture(name, parent)
     texture.tex = tex
     tex:SetAllPoints(texture)
 
-    function texture:SetCooldown(start, duration)
-        if texture.fadeOut then
-            texture._start = start
-            texture._duration = duration
-            texture._elapsed = 0.1 -- update immediately
-            texture:SetScript("OnUpdate", Texture_OnUpdate)
-        else
-            texture:SetScript("OnUpdate", nil)
-            tex:SetAlpha(texture.colorAlpha)
-            texture._start = nil
-            texture._duration = nil
-            texture._remain = nil
-            texture._elapsed = nil
-            tex:SetAlpha(1)
-        end
-        texture:Show()
-    end
-
-    function texture:SetFadeOut(fadeOut)
-        texture.fadeOut = fadeOut
-    end
-
-    function texture:SetTexture(texTbl) -- texture, rotation, color
-        if strfind(strlower(texTbl[1]), "^interface") then
-            tex:SetTexture(texTbl[1])
-        else
-            tex:SetAtlas(texTbl[1])
-        end
-        tex:SetRotation(texTbl[2] * math.pi / 180)
-        tex:SetVertexColor(unpack(texTbl[3]))
-        texture.colorAlpha = texTbl[3][4]
-    end
+    texture.SetCooldown = Texture_SetCooldown
+    texture.SetFadeOut = Texture_SetFadeOut
+    texture.SetTexture = Texture_SetTexture
 
     return texture
 end
