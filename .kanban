@@ -172,7 +172,7 @@
         {
           "id": "49fa23b6-7197-45c5-b107-97210fb53fde",
           "listId": "fc9baa7c-c3e7-49a4-8526-816c794e5ed9",
-          "title": "Use ObjectPool to create indicators",
+          "title": "Use ObjectPool to make indicators reusable",
           "description": "",
           "labels": [],
           "checkboxes": [],
