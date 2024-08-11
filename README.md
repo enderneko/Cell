@@ -49,6 +49,7 @@ Check <https://github.com/enderneko/Cell/tree/master/.snippets> for more snippet
 ## Not supported and probably won't be included in the future
 
 - Custom border
+- Changing layout based on group size
 - Addons like Clique
 
 &nbsp;
@@ -56,6 +57,15 @@ Check <https://github.com/enderneko/Cell/tree/master/.snippets> for more snippet
 ## Slash Commands
 
 Use __/cell__ for more information.
+
+&nbsp;
+
+## Guides & Sharing
+
+- [ULTIMATE Cell Raid Frames AddOn Setup GUIDE for HEALERS (Reat TV)](https://www.youtube.com/watch?v=ntXko7htO2I)
+- [Healer UI & Addon Guide for Dragonflight Season 4 (yumytv)](https://www.youtube.com/watch?v=XcXvXxFipOE)
+- [Addon Spotlight: How to set up Cell + OmniCD for Augmentation Evoker (JFunkGaming)](https://www.youtube.com/watch?v=PMvtgJv-808)
+- [团队框架插件 Cell 配置流程分享 (钛锬)](https://bbs.nga.cn/read.php?tid=32921170)
 
 &nbsp;
 
@@ -71,12 +81,15 @@ If you want to help with the localization, please visit <https://legacy.cursefor
 
 &nbsp;
 
-## Guides & Sharing
+## About Pull Requests
 
-- [ULTIMATE Cell Raid Frames AddOn Setup GUIDE for HEALERS (Reat TV)](https://www.youtube.com/watch?v=ntXko7htO2I)
-- [Healer UI & Addon Guide for Dragonflight Season 4 (yumytv)](https://www.youtube.com/watch?v=XcXvXxFipOE)
-- [Addon Spotlight: How to set up Cell + OmniCD for Augmentation Evoker (JFunkGaming)](https://www.youtube.com/watch?v=PMvtgJv-808)
-- [团队框架插件 Cell 配置流程分享 (钛锬)](https://bbs.nga.cn/read.php?tid=32921170)
+- Before submitting any PRs related to new features or feature optimizations/changes, it's best to ask me first. Otherwise, there's a high chance they won't be accepted.
+- Features that are listed as "not supported" above will be rejected.
+
+If a PR is not accepted, it might not be because it's not good enough, it just doesn't align with my design philosophy.  
+For rejected PRs, I suggest you implement them through code snippets.  
+What I want to express is that I don't oppose any code snippets making changes to Cell, even if it's not what I envisioned.  
+Regardless, I appreciate all the contributions you've made!
 
 &nbsp;
 
