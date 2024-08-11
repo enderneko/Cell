@@ -740,6 +740,9 @@ local function Icons_SetSize(icons, width, height)
 
     for i = 1, icons.maxNum do
         icons[i]:SetSize(width, height)
+        --! width & height P.Scaled
+        icons[i].width = nil
+        icons[i].height = nil
     end
 
     icons:UpdateSize()
@@ -789,6 +792,7 @@ end
 
 local function Icons_UpdatePixelPerfect(icons)
     P:Repoint(icons)
+    P:Resize(icons)
     for i = 1, icons.maxNum do
         icons[i]:UpdatePixelPerfect()
     end
