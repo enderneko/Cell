@@ -743,6 +743,14 @@ end
 --     end)
 -- end
 
+local function UpdateSpecVars()
+    Cell.vars.playerSpecID, Cell.vars.playerSpecName, _, Cell.vars.playerSpecIcon, Cell.vars.playerSpecRole = GetSpecializationInfo(GetSpecialization())
+    if Cell.vars.playerSpecName == "" then
+        Cell.vars.playerSpecName = L["No Spec"]
+        Cell.vars.playerSpecIcon = 134400
+    end
+end
+
 function eventFrame:PLAYER_LOGIN()
     F:Debug("|cffbbbbbb=== PLAYER_LOGIN ===")
     eventFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
@@ -762,11 +770,7 @@ function eventFrame:PLAYER_LOGIN()
     Cell.vars.playerGUID = UnitGUID("player")
 
     -- update spec vars
-    Cell.vars.playerSpecID, Cell.vars.playerSpecName, _, Cell.vars.playerSpecIcon, Cell.vars.playerSpecRole = GetSpecializationInfo(GetSpecialization())
-    if Cell.vars.playerSpecName == "" then
-        Cell.vars.playerSpecName = L["No Spec"]
-        Cell.vars.playerSpecIcon = 134400
-    end
+    UpdateSpecVars()
 
     --! init Cell.vars.currentLayout and Cell.vars.currentLayoutTable
     eventFrame:GROUP_ROSTER_UPDATE()
@@ -843,7 +847,7 @@ function eventFrame:ACTIVE_TALENT_GROUP_CHANGED()
         F:Debug("|cffbbbbbb=== ACTIVE_TALENT_GROUP_CHANGED ===")
 
         -- update spec vars
-        Cell.vars.playerSpecID, Cell.vars.playerSpecName, _, Cell.vars.playerSpecIcon, Cell.vars.playerSpecRole = GetSpecializationInfo(spec)
+        UpdateSpecVars()
 
         if not Cell.vars.playerSpecID then
             -- NOTE: when join in battleground, spec auto switched, during loading, can't get info from GetSpecializationInfo, until PLAYER_ENTERING_WORLD
