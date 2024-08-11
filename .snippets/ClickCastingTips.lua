@@ -1,7 +1,7 @@
 -------------------------------------------------
--- 2024-07-03 19:50:03 GMT+8
+-- 2024-08-11 15:15:19 GMT+8
 -- show tips for click-casting bindings (spell only)
--- config
+-- 点击施法所绑定法术的鼠标提示
 -------------------------------------------------
 local point = "TOPRIGHT"
 local relativePoint = "TOPLEFT"
@@ -28,6 +28,32 @@ local mouseKeyIDs = {
     ["Middle"] = 3,
     ["Button4"] = 4,
     ["Button5"] = 5,
+    ["Button6"] = 6,
+    ["Button7"] = 7,
+    ["Button8"] = 8,
+    ["Button9"] = 9,
+    ["Button10"] = 10,
+    ["Button11"] = 11,
+    ["Button12"] = 12,
+    ["Button13"] = 13,
+    ["Button14"] = 14,
+    ["Button15"] = 15,
+    ["Button16"] = 16,
+    ["Button17"] = 17,
+    ["Button18"] = 18,
+    ["Button19"] = 19,
+    ["Button20"] = 20,
+    ["Button21"] = 21,
+    ["Button22"] = 22,
+    ["Button23"] = 23,
+    ["Button24"] = 24,
+    ["Button25"] = 25,
+    ["Button26"] = 26,
+    ["Button27"] = 27,
+    ["Button28"] = 28,
+    ["Button29"] = 29,
+    ["Button30"] = 30,
+    ["Button31"] = 31,
 }
 
 local function GetBindingDisplay(modifier, key)
