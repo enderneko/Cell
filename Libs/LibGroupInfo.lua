@@ -2,10 +2,10 @@
 -- File: Cell\Libs\LibGroupInfo.lua
 -- Author: enderneko (enderneko-dev@outlook.com)
 -- Created : 2022-07-29 15:04 +08:00
--- Modified: 2024-06-18 10:50 +08:00
+-- Modified: 2024-08-11 17:03 +08:00
 ---------------------------------------------------------------------
 
-local MAJOR, MINOR = "LibGroupInfo", 6
+local MAJOR, MINOR = "LibGroupInfo", 7
 local lib = LibStub:NewLibrary(MAJOR, MINOR)
 if not lib then return end -- already loaded
 
@@ -228,6 +228,8 @@ local function BuildAndNotify(unit)
     Print("|cffff7777LGI:BuildAndNotify|r", unit)
 
     local guid = UnitGUID(unit)
+    if not guid then return end
+
     UpdateBaseInfo(unit, guid)
 
     local specId, role
