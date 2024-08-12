@@ -1,4 +1,4 @@
-F = Cell.funcs
+local F = Cell.funcs
 
 local blizzardFrames = {
     "PlayerFrame",
