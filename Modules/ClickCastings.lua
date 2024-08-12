@@ -586,7 +586,7 @@ function F:UpdateClickCastOnFrame(frame, snippet)
     ApplyClickCastings(b)
 end
 
-function UpdateClickCastings(noReload, onlyqueued)
+function F:UpdateClickCastings(noReload, onlyqueued)
     F:Debug("|cff77ff77UpdateClickCastings:|r useCommon:", Cell.vars.clickCastings["useCommon"])
     clickCastingTable = Cell.vars.clickCastings["useCommon"] and Cell.vars.clickCastings["common"] or Cell.vars.clickCastings[Cell.vars.playerSpecID]
 
@@ -635,7 +635,7 @@ function UpdateClickCastings(noReload, onlyqueued)
 
     previousClickCastings = F:Copy(clickCastingTable)
 end
-Cell:RegisterCallback("UpdateClickCastings", "UpdateClickCastings", UpdateClickCastings)
+Cell:RegisterCallback("UpdateClickCastings", "UpdateClickCastings", F.UpdateClickCastings)
 
 local function UpdateQueuedClickCastings()
     UpdateClickCastings(true, true)
