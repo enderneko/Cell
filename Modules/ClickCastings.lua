@@ -383,6 +383,9 @@ else
     end
 end
 
+function F:SetBindingClicks(b)
+    SetBindingClicks(b)
+end
 -- FIXME: hope BLZ fix this bug
 local function GetMouseWheelBindKey(fullKey, noTypePrefix)
     local modifier, key = strmatch(fullKey, "^(.*)type%-(.+)$")
@@ -395,7 +398,7 @@ local function GetMouseWheelBindKey(fullKey, noTypePrefix)
     end
 end
 
-local function GetBindingSnippet()
+function F:GetBindingSnippet()
     local bindingClicks = {}
     for _, t in pairs(clickCastingTable) do
         if t[1] ~= "notBound" then
@@ -440,7 +443,7 @@ end
 -- update click-castings
 -------------------------------------------------
 local previousClickCastings
-local function ClearClickCastings(b)
+function F:ClearClickCastings(b)
     if not previousClickCastings then return end
     b:SetAttribute("cell", nil)
     b:SetAttribute("menu", nil)
@@ -482,7 +485,7 @@ local function UpdatePlaceholder(b, attr)
     end
 end
 
-local function ApplyClickCastings(b)
+function F:ApplyClickCastings(b)
     for i, t in pairs(clickCastingTable) do
         local bindKey = t[1]
         if strfind(bindKey, "SCROLL") then
@@ -577,7 +580,7 @@ local function ApplyClickCastings(b)
     end
 end
 
-local function UpdateClickCastings(noReload, onlyqueued)
+function F:UpdateClickCastings(noReload, onlyqueued)
     F:Debug("|cff77ff77UpdateClickCastings:|r useCommon:", Cell.vars.clickCastings["useCommon"])
     clickCastingTable = Cell.vars.clickCastings["useCommon"] and Cell.vars.clickCastings["common"] or Cell.vars.clickCastings[Cell.vars.playerSpecID]
 
@@ -598,7 +601,7 @@ local function UpdateClickCastings(noReload, onlyqueued)
         end
     end
 
-    local snippet = GetBindingSnippet()
+    local snippet = F:GetBindingSnippet()
     F:Debug(snippet)
 
     -- REVIEW:
@@ -622,20 +625,20 @@ local function UpdateClickCastings(noReload, onlyqueued)
 
     F:IterateAllUnitButtons(function(b)
         -- clear if attribute already set
-        ClearClickCastings(b)
+        F:ClearClickCastings(b)
         -- update bindingClicks
         b:SetAttribute("snippet", snippet)
-        SetBindingClicks(b)
+        F:SetBindingClicks(b)
         -- load db and set attribute
-        ApplyClickCastings(b)
+        F:ApplyClickCastings(b)
     end, false, true)
 
     previousClickCastings = F:Copy(clickCastingTable)
 end
-Cell:RegisterCallback("UpdateClickCastings", "UpdateClickCastings", UpdateClickCastings)
+Cell:RegisterCallback("UpdateClickCastings", "UpdateClickCastings", F.UpdateClickCastings)
 
 local function UpdateQueuedClickCastings()
-    UpdateClickCastings(true, true)
+    F:UpdateClickCastings(true, true)
 end
 Cell:RegisterCallback("UpdateQueuedClickCastings", "UpdateQueuedClickCastings", UpdateQueuedClickCastings)
 
