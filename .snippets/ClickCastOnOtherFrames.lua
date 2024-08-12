@@ -14,24 +14,16 @@ local blizzardFrames = {
     "PartyMemberFrame4PetFrame",
 }
 
-local function UpdateClickCastFrame(frame, snippet)
-    if frame then
-        F:ClearClickCastings(frame)
-        frame:SetAttribute("snippet", snippet)
-        F:SetBindingClicks(frame)
-        F:ApplyClickCastings(frame)
-    end
-end
 
 local function UpdateClickCastings(noReload, onlyqueued)
     F:UpdateClickCastings(noReload, onlyqueued)
     local snippet = F:GetBindingSnippet()
     local ClickCastFrames = _G.ClickCastFrames or {}
     for frame, _ in pairs(ClickCastFrames) do
-        UpdateClickCastFrame(frame, snippet)
+        F:UpdateClickCastOnFrame(frame, snippet)
     end
     for _, name in pairs(blizzardFrames) do
-        UpdateClickCastFrame(_G[name], snippet)
+        F:UpdateClickCastOnFrame(_G[name], snippet)
     end
 end
 Cell:UnregisterCallback("UpdateClickCastings",  "ThirdPartyClickCastings")

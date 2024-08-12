@@ -383,9 +383,6 @@ else
     end
 end
 
-function F:SetBindingClicks(b)
-    SetBindingClicks(b)
-end
 -- FIXME: hope BLZ fix this bug
 local function GetMouseWheelBindKey(fullKey, noTypePrefix)
     local modifier, key = strmatch(fullKey, "^(.*)type%-(.+)$")
@@ -443,7 +440,7 @@ end
 -- update click-castings
 -------------------------------------------------
 local previousClickCastings
-function F:ClearClickCastings(b)
+function ClearClickCastings(b)
     if not previousClickCastings then return end
     b:SetAttribute("cell", nil)
     b:SetAttribute("menu", nil)
@@ -485,7 +482,7 @@ local function UpdatePlaceholder(b, attr)
     end
 end
 
-function F:ApplyClickCastings(b)
+function ApplyClickCastings(b)
     for i, t in pairs(clickCastingTable) do
         local bindKey = t[1]
         if strfind(bindKey, "SCROLL") then
@@ -580,7 +577,16 @@ function F:ApplyClickCastings(b)
     end
 end
 
-function F:UpdateClickCastings(noReload, onlyqueued)
+function F:UpdateClickCastOnFrame(frame, snippet)
+    ClearClickCastings(b)
+    -- update bindingClicks
+    b:SetAttribute("snippet", snippet)
+    SetBindingClicks(b)
+    -- load db and set attribute
+    ApplyClickCastings(b)
+end
+
+function UpdateClickCastings(noReload, onlyqueued)
     F:Debug("|cff77ff77UpdateClickCastings:|r useCommon:", Cell.vars.clickCastings["useCommon"])
     clickCastingTable = Cell.vars.clickCastings["useCommon"] and Cell.vars.clickCastings["common"] or Cell.vars.clickCastings[Cell.vars.playerSpecID]
 
@@ -624,21 +630,15 @@ function F:UpdateClickCastings(noReload, onlyqueued)
     -- end
 
     F:IterateAllUnitButtons(function(b)
-        -- clear if attribute already set
-        F:ClearClickCastings(b)
-        -- update bindingClicks
-        b:SetAttribute("snippet", snippet)
-        F:SetBindingClicks(b)
-        -- load db and set attribute
-        F:ApplyClickCastings(b)
+        F:UpdateClickCastOnFrame(b, snippet)
     end, false, true)
 
     previousClickCastings = F:Copy(clickCastingTable)
 end
-Cell:RegisterCallback("UpdateClickCastings", "UpdateClickCastings", F.UpdateClickCastings)
+Cell:RegisterCallback("UpdateClickCastings", "UpdateClickCastings", UpdateClickCastings)
 
 local function UpdateQueuedClickCastings()
-    F:UpdateClickCastings(true, true)
+    UpdateClickCastings(true, true)
 end
 Cell:RegisterCallback("UpdateQueuedClickCastings", "UpdateQueuedClickCastings", UpdateQueuedClickCastings)
 
