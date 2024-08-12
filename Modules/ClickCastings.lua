@@ -440,7 +440,7 @@ end
 -- update click-castings
 -------------------------------------------------
 local previousClickCastings
-function ClearClickCastings(b)
+local function ClearClickCastings(b)
     if not previousClickCastings then return end
     b:SetAttribute("cell", nil)
     b:SetAttribute("menu", nil)
@@ -482,7 +482,7 @@ local function UpdatePlaceholder(b, attr)
     end
 end
 
-function ApplyClickCastings(b)
+local function ApplyClickCastings(b)
     for i, t in pairs(clickCastingTable) do
         local bindKey = t[1]
         if strfind(bindKey, "SCROLL") then
