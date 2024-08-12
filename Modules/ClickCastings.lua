@@ -578,12 +578,14 @@ local function ApplyClickCastings(b)
 end
 
 function F:UpdateClickCastOnFrame(frame, snippet)
-    ClearClickCastings(frame)
-    -- update bindingClicks
-    frame:SetAttribute("snippet", snippet)
-    SetBindingClicks(frame)
-    -- load db and set attribute
-    ApplyClickCastings(frame)
+    if frame then
+        ClearClickCastings(frame)
+        -- update bindingClicks
+        frame:SetAttribute("snippet", snippet)
+        SetBindingClicks(frame)
+        -- load db and set attribute
+        ApplyClickCastings(frame)
+    end
 end
 
 function F:UpdateClickCastings(noReload, onlyqueued)
