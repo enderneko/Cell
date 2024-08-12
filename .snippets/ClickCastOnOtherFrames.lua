@@ -14,7 +14,6 @@ local blizzardFrames = {
     "PartyMemberFrame4PetFrame",
 }
 
-
 local function UpdateClickCastings(noReload, onlyqueued)
     F:UpdateClickCastings(noReload, onlyqueued)
     local snippet = F:GetBindingSnippet()
@@ -26,11 +25,13 @@ local function UpdateClickCastings(noReload, onlyqueued)
         F:UpdateClickCastOnFrame(_G[name], snippet)
     end
 end
+
 local function UpdateQueuedClickCastings()
     UpdateClickCastings(true, true)
 end
+
 Cell:UnregisterCallback("UpdateClickCastings",  "UpdateClickCastings")
 Cell:UnregisterCallback("UpdateQueuedClickCastings",  "UpdateQueuedClickCastings")
+
 Cell:RegisterCallback("UpdateQueuedClickCastings", "UpdateQueuedClickCastings", UpdateQueuedClickCastings)
 Cell:RegisterCallback("UpdateClickCastings",  "UpdateClickCastings", UpdateClickCastings)
-
