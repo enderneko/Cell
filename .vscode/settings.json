@@ -1,0 +1,12 @@
+{
+    "files.trimFinalNewlines": true,
+    "files.trimTrailingWhitespace": true,
+    "scm.diffDecorationsIgnoreTrimWhitespace": "true",
+    "Lua.runtime.version": "Lua 5.1",
+    "Lua.workspace.library": [
+        "~\\.vscode\\extensions\\ketho.wow-api-0.16.6\\Annotations"
+    ],
+    "Lua.diagnostics.globals": [
+        "CELL",
+    ]
+}

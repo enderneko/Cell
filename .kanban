@@ -144,6 +144,15 @@
           "labels": [],
           "checkboxes": [],
           "comments": []
+        },
+        {
+          "id": "d784577e-950e-49b7-acec-f27449b994a4",
+          "listId": "7915d51e-5603-44aa-aa3a-8dff734ea7c6",
+          "title": "Indicator icon glow conditions",
+          "description": "",
+          "labels": [],
+          "checkboxes": [],
+          "comments": []
         }
       ]
     },
@@ -191,6 +200,33 @@
           "id": "de0f55f3-cb55-4d5b-9eff-ec182a2d9120",
           "listId": "fc9baa7c-c3e7-49a4-8526-816c794e5ed9",
           "title": "Load indicator based on spec",
+          "description": "",
+          "labels": [],
+          "checkboxes": [],
+          "comments": []
+        },
+        {
+          "id": "d0361c06-5cff-478c-b378-230c9d4df2e5",
+          "listId": "fc9baa7c-c3e7-49a4-8526-816c794e5ed9",
+          "title": "New animation for Actions",
+          "description": "",
+          "labels": [],
+          "checkboxes": [],
+          "comments": []
+        },
+        {
+          "id": "cde22c90-c34e-47c5-af95-446eeda36e1d",
+          "listId": "fc9baa7c-c3e7-49a4-8526-816c794e5ed9",
+          "title": "Shape options for Dispels",
+          "description": "",
+          "labels": [],
+          "checkboxes": [],
+          "comments": []
+        },
+        {
+          "id": "7d616cba-3918-493c-a164-edd96bafd21b",
+          "listId": "fc9baa7c-c3e7-49a4-8526-816c794e5ed9",
+          "title": "Show if not found",
           "description": "",
           "labels": [],
           "checkboxes": [],
