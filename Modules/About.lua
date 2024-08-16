@@ -173,12 +173,13 @@ local function GetSupporters(t)
     local str = ""
     local n = #t
     for i = 1, n do
-        for _, name in pairs(t[i]) do
+        local total = #t[i]
+        for j, name in ipairs(t[i]) do
             name = name:gsub("%(.+%)", function(s)
                 return "|cff777777"..s.."|r"
             end)
             str = str .. name
-            if i ~= n then
+            if j ~= total or i ~= n then
                 str = str .. "\n"
             end
         end
