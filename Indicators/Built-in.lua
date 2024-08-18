@@ -426,7 +426,9 @@ local function Debuffs_ShowTooltip(debuffs, show)
             end)
 
             -- https://warcraft.wiki.gg/wiki/API_ScriptRegion_EnableMouse
-            debuffs[i]:SetMouseClickEnabled(false)
+            if not debuffs.enableBlacklistShortcut then
+                debuffs[i]:SetMouseClickEnabled(false)
+            end
         else
             debuffs[i]:SetScript("OnEnter", nil)
             debuffs[i]:SetScript("OnLeave", nil)
