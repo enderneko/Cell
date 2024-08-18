@@ -4879,6 +4879,14 @@ local function CreateSetting_ActionsPreview(parent)
         typeE:SetSize(70, 50)
         typeE:SetPoint("TOPLEFT", typeC1, "BOTTOMLEFT", 0, -5)
 
+        local typeF = CreateActionPreview(widget, "F")
+        typeF:SetSize(70, 50)
+        typeF:SetPoint("TOPLEFT", typeE, "TOPRIGHT", 5, 0)
+
+        local typeG = CreateActionPreview(widget, "G")
+        typeG:SetSize(70, 50)
+        typeG:SetPoint("TOPLEFT", typeF, "TOPRIGHT", 5, 0)
+
         local previews = {
             A = typeA,
             B = typeB,
@@ -4887,6 +4895,8 @@ local function CreateSetting_ActionsPreview(parent)
             C3 = typeC3,
             D = typeD,
             E = typeE,
+            F = typeF,
+            G = typeG,
         }
 
         local speedSlider = addon:CreateSlider(_G.SPEED, widget, 0.5, 1.5, 145, 0.01)
@@ -5033,7 +5043,7 @@ local function CreateActionButtons(parent, spellTable, updateHeightFunc)
             end)
 
             local items = {}
-            for _, style in pairs({"A", "B", "C1", "C2", "C3", "D", "E"}) do
+            for _, style in pairs({"A", "B", "C1", "C2", "C3", "D", "E", "F", "G"}) do
                 tinsert(items, {
                     ["text"] = style,
                     ["onClick"] = function()
