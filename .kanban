@@ -137,15 +137,6 @@
           "comments": []
         },
         {
-          "id": "9c356d02-9218-463c-ad83-e137293a05ce",
-          "listId": "7915d51e-5603-44aa-aa3a-8dff734ea7c6",
-          "title": "Raid group orientation",
-          "description": "",
-          "labels": [],
-          "checkboxes": [],
-          "comments": []
-        },
-        {
           "id": "d784577e-950e-49b7-acec-f27449b994a4",
           "listId": "7915d51e-5603-44aa-aa3a-8dff734ea7c6",
           "title": "Indicator icon glow conditions",
@@ -161,10 +152,10 @@
       "title": "IN PROGRESS",
       "cards": [
         {
-          "id": "abd28941-e6a1-4784-8465-e922be72f888",
+          "id": "9c356d02-9218-463c-ad83-e137293a05ce",
           "listId": "fc9baa7c-c3e7-49a4-8526-816c794e5ed9",
-          "title": "Refactor Layouts",
-          "description": "Main/Spotlight/NPC/Pet can have their own layout",
+          "title": "Raid group orientation",
+          "description": "",
           "labels": [],
           "checkboxes": [],
           "comments": []
@@ -174,6 +165,15 @@
           "listId": "fc9baa7c-c3e7-49a4-8526-816c794e5ed9",
           "title": "Fix raid group anchors ",
           "description": "when first group of each row/column not full",
+          "labels": [],
+          "checkboxes": [],
+          "comments": []
+        },
+        {
+          "id": "abd28941-e6a1-4784-8465-e922be72f888",
+          "listId": "fc9baa7c-c3e7-49a4-8526-816c794e5ed9",
+          "title": "Refactor Layouts",
+          "description": "Main/Spotlight/NPC/Pet can have their own layout",
           "labels": [],
           "checkboxes": [],
           "comments": []
@@ -197,15 +197,6 @@
           "comments": []
         },
         {
-          "id": "d0361c06-5cff-478c-b378-230c9d4df2e5",
-          "listId": "fc9baa7c-c3e7-49a4-8526-816c794e5ed9",
-          "title": "New animation for Actions",
-          "description": "",
-          "labels": [],
-          "checkboxes": [],
-          "comments": []
-        },
-        {
           "id": "7d616cba-3918-493c-a164-edd96bafd21b",
           "listId": "fc9baa7c-c3e7-49a4-8526-816c794e5ed9",
           "title": "Show if not found (custom indicator)",
@@ -220,6 +211,15 @@
       "id": "7b0c4654-92fe-4b4e-9566-15e8c706d9c9",
       "title": "DONE",
       "cards": [
+        {
+          "id": "d0361c06-5cff-478c-b378-230c9d4df2e5",
+          "listId": "7b0c4654-92fe-4b4e-9566-15e8c706d9c9",
+          "title": "New animation for Actions",
+          "description": "",
+          "labels": [],
+          "checkboxes": [],
+          "comments": []
+        },
         {
           "id": "cde22c90-c34e-47c5-af95-446eeda36e1d",
           "listId": "7b0c4654-92fe-4b4e-9566-15e8c706d9c9",
