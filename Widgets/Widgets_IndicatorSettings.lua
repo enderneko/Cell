@@ -6062,6 +6062,86 @@ local function CreateSetting_MaxValue(parent)
     return widget
 end
 
+local function CreateSetting_IconStyle(parent)
+    local widget
+
+    if not settingWidgets["iconStyle"] then
+        widget = addon:CreateFrame("CellIndicatorSettings_IconStyle", parent, 240, 50)
+        settingWidgets["iconStyle"] = widget
+
+        widget.iconStyle = addon:CreateDropdown(widget, 245)
+        widget.iconStyle:SetPoint("TOPLEFT", 5, -20)
+
+        -- dispels
+        do
+            local dispels = {
+                {
+                    ["text"] = L["None"],
+                    ["value"] = "none",
+                    ["onClick"] = function()
+                        widget.func("none")
+                    end,
+                },
+                {
+                    -- ["text"] = "blizzard",
+                    ["value"] = "blizzard",
+                    ["onClick"] = function()
+                        widget.func("blizzard")
+                    end,
+                },
+                {
+                    -- ["text"] = "rhombus",
+                    ["value"] = "rhombus",
+                    ["onClick"] = function()
+                        widget.func("rhombus")
+                    end,
+                },
+            }
+            widget.dispels = dispels
+
+            local types = {"Magic", "Curse", "Disease", "Poison", "Bleed"}
+
+            -- blizzard
+            local blizzard = ""
+            local blizzard_icon = "|TInterface\\AddOns\\Cell\\Media\\Debuffs\\%s:0|t"
+
+            -- rhombus
+            local rhombus = ""
+            local rhombus_icon = "|TInterface\\AddOns\\Cell\\Media\\Debuffs\\Rhombus:0:0:0:0:16:16:0:16:0:16:%s:%s:%s|t"
+
+            for _, t in pairs(types) do
+                blizzard = blizzard .. blizzard_icon:format(t) .. " "
+
+                local r, g, b = F:ConvertRGB_256(I.GetDebuffTypeColor(t))
+                rhombus = rhombus .. rhombus_icon:format(r, g, b) .. " "
+            end
+
+            dispels[2].text = blizzard
+            dispels[3].text = rhombus
+        end
+
+        widget.iconStyleText = widget:CreateFontString(nil, "OVERLAY", font_name)
+        widget.iconStyleText:SetText(L["Icon Style"])
+        widget.iconStyleText:SetPoint("BOTTOMLEFT", widget.iconStyle, "TOPLEFT", 0, 1)
+
+        -- callback
+        function widget:SetFunc(func)
+            widget.func = func
+        end
+
+        -- show db value
+        function widget:SetDBValue(iconStyle, indicatorName)
+            widget.iconStyle:SetItems(widget[indicatorName])
+            widget.iconStyle:SetSelectedValue(iconStyle)
+        end
+    else
+        widget = settingWidgets["iconStyle"]
+    end
+
+    widget:Show()
+    return widget
+end
+
 -----------------------------------------
 -- update parent height
 -----------------------------------------
@@ -6132,6 +6212,7 @@ local builders = {
     ["castBy"] = CreateSetting_CastBy,
     -- ["showOn"] = CreateSetting_ShowOn,
     ["maxValue"] = CreateSetting_MaxValue,
+    ["iconStyle"] = CreateSetting_IconStyle,
 }
 
 function addon:CreateIndicatorSettings(parent, settingsTable)

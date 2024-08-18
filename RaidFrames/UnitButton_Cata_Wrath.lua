@@ -274,9 +274,9 @@ local function HandleIndicators(b)
         if t["highlightType"] then
             indicator:UpdateHighlight(t["highlightType"])
         end
-        -- update dispel icons
-        if type(t["showDispelTypeIcons"]) == "boolean" then
-            indicator:ShowIcons(t["showDispelTypeIcons"])
+        -- update icon style
+        if t["iconStyle"] then
+            indicator:SetIconStyle(t["iconStyle"])
         end
         -- update duration
         if type(t["showDuration"]) == "boolean" or type(t["showDuration"]) == "number" then
@@ -768,6 +768,11 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                 b.indicators[indicatorName]:UpdateGlowOptions(value)
                 UnitButton_UpdateAuras(b)
             end, true)
+        elseif setting == "iconStyle" then
+            F:IterateAllUnitButtons(function(b)
+                b.indicators[indicatorName]:SetIconStyle(value)
+                UnitButton_UpdateAuras(b)
+            end, true)
         elseif setting == "checkbutton" then
             if value == "showGroupNumber" then
                 F:IterateAllUnitButtons(function(b)
@@ -804,11 +809,6 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                 indicatorBooleans[indicatorName] = value2
                 F:IterateAllUnitButtons(function(b)
                     UnitButton_UpdateShieldAbsorbs(b)
-                end, true)
-            elseif value == "showDispelTypeIcons" then
-                F:IterateAllUnitButtons(function(b)
-                    b.indicators[indicatorName]:ShowIcons(value2)
-                    UnitButton_UpdateAuras(b)
                 end, true)
             elseif value == "showStack" then
                 F:IterateAllUnitButtons(function(b)

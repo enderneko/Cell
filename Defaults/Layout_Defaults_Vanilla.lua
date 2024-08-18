@@ -332,7 +332,7 @@ Cell.defaults.layout = {
                 ["Bleed"] = true,
             },
             ["highlightType"] = "gradient-half",
-            ["showDispelTypeIcons"] = true,
+            ["iconStyle"] = "blizzard",
             ["orientation"] = "right-to-left",
         }, -- 19
         {

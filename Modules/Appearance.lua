@@ -1494,7 +1494,7 @@ local function CreateUnitButtonStylePane()
     oversColorPicker:SetPoint("TOPLEFT", oversCB, "TOPRIGHT", 5, 0)
 
     -- reset
-    local resetBtn = Cell:CreateButton(unitButtonPane, L["Reset All"], "accent", {77, 17}, nil, nil, nil, nil, nil, L["Reset All"], L["[Ctrl+LeftClick] to reset these settings"])
+    local resetBtn = Cell:CreateButton(unitButtonPane, L["Reset All"], "accent", {77, 17}, nil, nil, nil, nil, nil, L["Reset All"], L["[Ctrl+Left-Click] to reset these settings"])
     resetBtn:SetPoint("TOPRIGHT")
     resetBtn:SetScript("OnClick", function()
         if IsControlKeyDown() then
@@ -1555,7 +1555,7 @@ local function CreateDebuffTypeColorPane()
     bleedCP:SetPoint("TOPLEFT", curseCP, "BOTTOMLEFT", 0, -7)
 
     -- reset
-    local resetBtn = Cell:CreateButton(dtcPane, L["Reset All"], "accent", {77, 17}, nil, nil, nil, nil, nil, L["Reset All"], L["[Ctrl+LeftClick] to reset these settings"])
+    local resetBtn = Cell:CreateButton(dtcPane, L["Reset All"], "accent", {77, 17}, nil, nil, nil, nil, nil, L["Reset All"], L["[Ctrl+Left-Click] to reset these settings"])
     resetBtn:SetPoint("TOPRIGHT")
     resetBtn:SetScript("OnClick", function()
         if IsControlKeyDown() then

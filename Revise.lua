@@ -3100,6 +3100,20 @@ function F:Revise()
         end
     end
 
+    -- r239-release
+    if CellDB["revise"] and dbRevision < 239 then
+        for _, layout in pairs(CellDB["layouts"]) do
+            for _, i in pairs(layout["indicators"]) do
+                if i.indicatorName == "dispels" then
+                    if not i.iconStyle then
+                        i.iconStyle = i.showDispelTypeIcons and "blizzard" or "none"
+                        i.showDispelTypeIcons = nil
+                    end
+                end
+            end
+        end
+    end
+
     -- ----------------------------------------------------------------------- --
     --            update from old versions, validate all indicators            --
     -- ----------------------------------------------------------------------- --

@@ -3244,7 +3244,7 @@ local function CreateSpellsPane()
     end)
 
     -- reset ----------------------------------------------------------------- --
-    local resetBtn = Cell:CreateButton(pages.spell, L["Reset Offensive Spells"], "accent", {205, 17}, nil, nil, nil, nil, nil, L["Reset Offensive Spells"], L["[Ctrl+LeftClick] to reset these settings"])
+    local resetBtn = Cell:CreateButton(pages.spell, L["Reset Offensive Spells"], "accent", {205, 17}, nil, nil, nil, nil, nil, L["Reset Offensive Spells"], L["[Ctrl+Left-Click] to reset these settings"])
     resetBtn:SetPoint("BOTTOMRIGHT")
     resetBtn:SetScript("OnClick", function()
         if IsControlKeyDown() then
