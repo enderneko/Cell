@@ -50,7 +50,7 @@ Check <https://github.com/enderneko/Cell/tree/master/.snippets> for more snippet
 
 - Custom border
 - Changing layout based on group size
-- Addons like Clique
+- Other click-casting addons
 
 &nbsp;
 
@@ -86,9 +86,9 @@ If you want to help with the localization, please visit <https://legacy.cursefor
 - Before submitting any PRs related to new features or feature optimizations/changes, it's best to ask me first. Otherwise, there's a high chance they won't be accepted.
 - Features that are listed as "not supported" above will be rejected.
 
-If a PR is not accepted, it might not be because it's not good enough, it just doesn't align with my design philosophy.  
-For rejected PRs, I suggest you implement them through code snippets.  
-What I want to express is that I don't oppose any code snippets making changes to Cell, even if it's not what I envisioned.  
+If a PR is not accepted, it might not be because it's not good enough, it just doesn't align with my design philosophy.
+For rejected PRs, I suggest you implement them through code snippets.
+What I want to express is that I don't oppose any code snippets making changes to Cell, even if it's not what I envisioned.
 Regardless, I appreciate all the contributions you've made!
 
 &nbsp;
