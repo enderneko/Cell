@@ -86,6 +86,7 @@ function F:UpdateLayout(layoutGroupType)
         F:IterateAllUnitButtons(function(b)
             b._indicatorsReady = nil
         end, true)
+
         Cell:Fire("UpdateLayout", Cell.vars.currentLayout)
         Cell:Fire("UpdateIndicators")
     end

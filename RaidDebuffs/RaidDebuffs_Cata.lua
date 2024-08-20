@@ -2,7 +2,7 @@
 -- File: Cell\RaidDebuffs\RaidDebuffs_Cata.lua
 -- Author: enderneko (enderneko-dev@outlook.com)
 -- Created : 2022-08-05 16:11:02 +08:00
--- Modified: 2024-08-18 23:46 +08:00
+-- Modified: 2024-08-19 11:02 +08:00
 ---------------------------------------------------------------------
 
 local _, Cell = ...
@@ -885,7 +885,7 @@ if Cell.isRetail then
             "449985", -- 暗影飓风
             "461513", -- 暗影飓风
         },
-    },
+    }
 end
 
 F:LoadBuiltInDebuffs(debuffs)

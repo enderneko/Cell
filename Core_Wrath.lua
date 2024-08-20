@@ -54,17 +54,17 @@ local UnitGUID = UnitGUID
 -------------------------------------------------
 -- layout
 -------------------------------------------------
-local delayedLayoutGroupType, delayedUpdateIndicators
+local delayedLayoutGroupType
 local delayedFrame = CreateFrame("Frame")
 delayedFrame:SetScript("OnEvent", function()
     delayedFrame:UnregisterEvent("PLAYER_REGEN_ENABLED")
-    F:UpdateLayout(delayedLayoutGroupType, delayedUpdateIndicators)
+    F:UpdateLayout(delayedLayoutGroupType)
 end)
 
-function F:UpdateLayout(layoutGroupType, updateIndicators)
+function F:UpdateLayout(layoutGroupType)
     if InCombatLockdown() then
         F:Debug("|cFF7CFC00F:UpdateLayout(\""..layoutGroupType.."\") DELAYED")
-        delayedLayoutGroupType, delayedUpdateIndicators = layoutGroupType, updateIndicators
+        delayedLayoutGroupType = layoutGroupType
         delayedFrame:RegisterEvent("PLAYER_REGEN_ENABLED")
     else
         F:Debug("|cFF7CFC00F:UpdateLayout(\""..layoutGroupType.."\")")
@@ -76,10 +76,12 @@ function F:UpdateLayout(layoutGroupType, updateIndicators)
         Cell.vars.currentLayoutTable = CellDB["layouts"][layout]
         Cell.vars.layoutGroupType = layoutGroupType
 
+        F:IterateAllUnitButtons(function(b)
+            b._indicatorsReady = nil
+        end, true)
+
         Cell:Fire("UpdateLayout", Cell.vars.currentLayout)
-        if updateIndicators then
-            Cell:Fire("UpdateIndicators")
-        end
+        Cell:Fire("UpdateIndicators")
     end
 end
 
