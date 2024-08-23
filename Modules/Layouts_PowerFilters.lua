@@ -58,19 +58,19 @@ else
 
     local function UpdateButton(b, enabled)
         b.tex:SetDesaturated(not enabled)
-        -- if enabled then
-        --     b:SetBackdropColor(unpack(b.hoverColor))
-        --     b:SetScript("OnEnter", nil)
-        --     b:SetScript("OnLeave", nil)
-        -- else
-        --     b:SetBackdropColor(unpack(b.color))
-        --     b:SetScript("OnEnter", function()
-        --         b:SetBackdropColor(unpack(b.hoverColor))
-        --     end)
-        --     b:SetScript("OnLeave", function()
-        --         b:SetBackdropColor(unpack(b.color))
-        --     end)
-        -- end
+        if enabled then
+            b:SetBackdropColor(unpack(b.hoverColor))
+            b:SetScript("OnEnter", nil)
+            b:SetScript("OnLeave", nil)
+        else
+            b:SetBackdropColor(unpack(b.color))
+            b:SetScript("OnEnter", function()
+                b:SetBackdropColor(unpack(b.hoverColor))
+            end)
+            b:SetScript("OnLeave", function()
+                b:SetBackdropColor(unpack(b.color))
+            end)
+        end
     end
 
     CreatePowerFilter = function(parent, class, buttons, width, height, color, bgColor)
