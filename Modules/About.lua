@@ -9,7 +9,7 @@ aboutTab:SetAllPoints(Cell.frames.optionsFrame)
 aboutTab:Hide()
 
 local authorText, specialThanksText, supportersText1, supportersText2
-local translatorsTextCN, translatorsTextKR, translatorsTextPT, translatorsTextDE, translatorsTextRU
+local translatorsTextCN, translatorsTextKR, translatorsTextPT, translatorsTextDE, translatorsTextRU, translatorsTextFR
 local UpdateFont
 
 -------------------------------------------------
@@ -47,7 +47,7 @@ end
 -------------------------------------------------
 local function CreateAuthorPane()
     local authorPane = Cell:CreateTitledPane(aboutTab, L["Author"], 205, 50)
-    authorPane:SetPoint("TOPLEFT", aboutTab, "TOPLEFT", 5, -165)
+    authorPane:SetPoint("TOPLEFT", aboutTab, "TOPLEFT", 5, -150)
 
     authorText = authorPane:CreateFontString(nil, "OVERLAY")
     authorText:SetPoint("TOPLEFT", 5, -27)
@@ -63,7 +63,7 @@ end
 -------------------------------------------------
 local function CreateSlashPane()
     local slashPane = Cell:CreateTitledPane(aboutTab, L["Slash Commands"], 205, 50)
-    slashPane:SetPoint("TOPLEFT", aboutTab, "TOPLEFT", 5, -230)
+    slashPane:SetPoint("TOPLEFT", aboutTab, "TOPLEFT", 222, -150)
 
     local commandText = slashPane:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
     commandText:SetPoint("TOPLEFT", 5, -27)
@@ -74,8 +74,8 @@ end
 -- translators
 -------------------------------------------------
 local function CreateTranslatorsPane()
-    local translatorsPane = Cell:CreateTitledPane(aboutTab, L["Translators"], 205, 120)
-    translatorsPane:SetPoint("TOPLEFT", aboutTab, "TOPLEFT", 222, -165)
+    local translatorsPane = Cell:CreateTitledPane(aboutTab, L["Translators"], 422, 120)
+    translatorsPane:SetPoint("TOPLEFT", aboutTab, "TOPLEFT", 5, -205)
 
     -- zhTW
     translatorsTextCN = translatorsPane:CreateFontString(nil, "OVERLAY")
@@ -84,10 +84,9 @@ local function CreateTranslatorsPane()
     UpdateFont(translatorsTextCN)
 
     translatorsTextCN:SetPoint("TOPLEFT", 5, -27)
-    translatorsTextCN:SetPoint("TOPRIGHT", -5, -27)
     translatorsTextCN:SetSpacing(5)
     translatorsTextCN:SetJustifyH("LEFT")
-    translatorsTextCN:SetText("zhTW: RainbowUI, BNS333, Mili")
+    translatorsTextCN:SetText("|cff999999zhTW:|r RainbowUI, BNS333, Mili")
 
     -- koKR
     translatorsTextKR = translatorsPane:CreateFontString(nil, "OVERLAY")
@@ -95,12 +94,10 @@ local function CreateTranslatorsPane()
     translatorsTextKR.size = 12
     UpdateFont(translatorsTextKR)
 
-    translatorsTextKR:SetPoint("LEFT", 5, 0)
-    translatorsTextKR:SetPoint("RIGHT", -5, 0)
-    translatorsTextKR:SetPoint("TOP", translatorsTextCN, "BOTTOM", 0, -5)
+    translatorsTextKR:SetPoint("TOPLEFT", translatorsTextCN, 215, 0)
     translatorsTextKR:SetSpacing(5)
     translatorsTextKR:SetJustifyH("LEFT")
-    translatorsTextKR:SetText("koKR: naragok79, netaras, 부패질")
+    translatorsTextKR:SetText("|cff999999koKR:|r naragok79, netaras, 부패질")
 
     -- ptBR
     translatorsTextPT = translatorsPane:CreateFontString(nil, "OVERLAY")
@@ -108,12 +105,10 @@ local function CreateTranslatorsPane()
     translatorsTextPT.size = 12
     UpdateFont(translatorsTextPT)
 
-    translatorsTextPT:SetPoint("LEFT", 5, 0)
-    translatorsTextPT:SetPoint("RIGHT", -5, 0)
-    translatorsTextPT:SetPoint("TOP", translatorsTextKR, "BOTTOM", 0, -5)
+    translatorsTextPT:SetPoint("TOPLEFT", translatorsTextCN, "BOTTOMLEFT", 0, -5)
     translatorsTextPT:SetSpacing(5)
     translatorsTextPT:SetJustifyH("LEFT")
-    translatorsTextPT:SetText("ptBR: cathtail")
+    translatorsTextPT:SetText("|cff999999ptBR:|r cathtail")
 
     -- deDE
     translatorsTextDE = translatorsPane:CreateFontString(nil, "OVERLAY")
@@ -121,12 +116,10 @@ local function CreateTranslatorsPane()
     translatorsTextDE.size = 12
     UpdateFont(translatorsTextDE)
 
-    translatorsTextDE:SetPoint("LEFT", 5, 0)
-    translatorsTextDE:SetPoint("RIGHT", -5, 0)
-    translatorsTextDE:SetPoint("TOP", translatorsTextPT, "BOTTOM", 0, -5)
+    translatorsTextDE:SetPoint("TOPLEFT", translatorsTextPT, 215, 0)
     translatorsTextDE:SetSpacing(5)
     translatorsTextDE:SetJustifyH("LEFT")
-    translatorsTextDE:SetText("deDE: CheersItsJulian")
+    translatorsTextDE:SetText("|cff999999deDE:|r CheersItsJulian")
 
     -- ruRU
     translatorsTextRU = translatorsPane:CreateFontString(nil, "OVERLAY")
@@ -134,12 +127,21 @@ local function CreateTranslatorsPane()
     translatorsTextRU.size = 12
     UpdateFont(translatorsTextRU)
 
-    translatorsTextRU:SetPoint("LEFT", 5, 0)
-    translatorsTextRU:SetPoint("RIGHT", -5, 0)
-    translatorsTextRU:SetPoint("TOP", translatorsTextDE, "BOTTOM", 0, -5)
+    translatorsTextRU:SetPoint("TOPLEFT", translatorsTextPT, "BOTTOMLEFT", 0, -5)
     translatorsTextRU:SetSpacing(5)
     translatorsTextRU:SetJustifyH("LEFT")
-    translatorsTextRU:SetText("ruRU: SkywardenSylvanas")
+    translatorsTextRU:SetText("|cff999999ruRU:|r KnewOne, SkywardenSylvanas, MORROSION")
+
+    -- frFR
+    translatorsTextFR = translatorsPane:CreateFontString(nil, "OVERLAY")
+    translatorsTextFR.font = UNIT_NAME_FONT_ROMAN
+    translatorsTextFR.size = 12
+    UpdateFont(translatorsTextFR)
+
+    translatorsTextFR:SetPoint("TOPLEFT", translatorsTextRU, "BOTTOMLEFT", 0, -5)
+    translatorsTextFR:SetSpacing(5)
+    translatorsTextFR:SetJustifyH("LEFT")
+    translatorsTextFR:SetText("|cff999999frFR:|r epino46")
 end
 
 -------------------------------------------------
@@ -147,7 +149,7 @@ end
 -------------------------------------------------
 local function CreateSpecialThanksPane()
     local specialThanksPane = Cell:CreateTitledPane(aboutTab, L["Special Thanks"], 422, 120)
-    specialThanksPane:SetPoint("TOPLEFT", aboutTab, "TOPLEFT", 5, -300)
+    specialThanksPane:SetPoint("TOPLEFT", aboutTab, "TOPLEFT", 5, -320)
 
     specialThanksText = specialThanksPane:CreateFontString(nil, "OVERLAY")
     specialThanksText.font = UNIT_NAME_FONT_CHINESE
@@ -406,7 +408,7 @@ end
 
 local function CreateLinksPane()
     local linksPane = Cell:CreateTitledPane(aboutTab, L["Links"], 422, 100)
-    linksPane:SetPoint("TOPLEFT", aboutTab, "TOPLEFT", 5, -440)
+    linksPane:SetPoint("TOPLEFT", aboutTab, "TOPLEFT", 5, -460)
 
     local current
 
@@ -490,7 +492,7 @@ end
 -------------------------------------------------
 local function CreateImportExportPane()
     local iePane = Cell:CreateTitledPane(aboutTab, L["Import & Export All Settings"], 422, 50)
-    iePane:SetPoint("TOPLEFT", 5, -555)
+    iePane:SetPoint("TOPLEFT", 5, -575)
 
     local importBtn = Cell:CreateButton(iePane, L["Import"], "accent-hover", {200, 20})
     importBtn:SetPoint("TOPLEFT", 5, -27)
@@ -542,6 +544,7 @@ function Cell:UpdateAboutFont()
     UpdateFont(translatorsTextPT)
     UpdateFont(translatorsTextDE)
     UpdateFont(translatorsTextRU)
+    UpdateFont(translatorsTextFR)
     UpdateFont(specialThanksText)
     UpdateFont(supportersText1)
     UpdateFont(supportersText2)

@@ -7,4 +7,5 @@
     <Script file="ptBR.lua"/>
     <Script file="deDE.lua"/>
     <Script file="ruRU.lua"/>
+    <Script file="frFR.lua"/>
 </Ui>
