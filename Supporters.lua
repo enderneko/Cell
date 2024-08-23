@@ -63,6 +63,7 @@ local supporters1 = { -- wowIDs
         "Druvoke-Blackhand (EU)",
         "Drumonji-Blackhand (EU)",
     }, -- Ko-fi
+    {"Saintara-Blackhand (EU)"}, -- Ko-fi
 }
 
 local supporters2 = { -- 有些早期的发电记录已经丢失了……
@@ -149,6 +150,8 @@ local supporters2 = { -- 有些早期的发电记录已经丢失了……
     {"男月月", "Ko-fi"}, -- 2024-07-31
     {"Akanma·Starsong", "爱发电"}, -- 2024-08-01
     {"Druladin-Blackhand", "Ko-fi"}, -- 2024-08-12
+    {"Zion", "Ko-fi"}, -- 2024-08-18
+    {"Saintara-Blackhand", "Ko-fi"}, -- 2024-08-23
 }
 
 -------------------------------------------------
