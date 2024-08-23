@@ -2813,10 +2813,8 @@ end
 
 -- pixel perfect
 function B:UpdatePixelPerfect(button, updateIndicators)
-    button:SetBackdrop({bgFile = Cell.vars.whiteTexture, edgeFile = Cell.vars.whiteTexture, edgeSize = P:Scale(CELL_BORDER_SIZE)})
-    button:SetBackdropColor(0, 0, 0, CellDB["appearance"]["bgAlpha"])
-    button:SetBackdropBorderColor(unpack(CELL_BORDER_COLOR))
     if not InCombatLockdown() then P:Resize(button) end
+    P:Reborder(button)
 
     P:Repoint(button.widgets.healthBar)
     P:Repoint(button.widgets.healthBarLoss)

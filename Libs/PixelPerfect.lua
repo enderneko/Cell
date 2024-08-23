@@ -189,13 +189,22 @@ function P:Resize(frame)
     end
 end
 
-function P:Reborder(frame)
+function P:Reborder(frame, ignoreSnippetVar)
     if not frame.backdropInfo then return end
 
     local _r, _g, _b, _a = frame:GetBackdropColor()
     local r, g, b, a = frame:GetBackdropBorderColor()
 
-    frame.backdropInfo.edgeSize = P:Scale(CELL_BORDER_SIZE or 1)
+    if ignoreSnippetVar then
+        frame.backdropInfo.edgeSize = P:Scale(1)
+    else
+        if CELL_BORDER_SIZE == 0 then
+            frame.backdropInfo.edgeFile = nil
+            frame.backdropInfo.edgeSize = nil
+        else
+            frame.backdropInfo.edgeSize = P:Scale(CELL_BORDER_SIZE or 1)
+        end
+    end
     frame:ApplyBackdrop()
 
     if _r then frame:SetBackdropColor(_r, _g, _b, _a) end

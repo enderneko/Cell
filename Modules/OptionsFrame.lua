@@ -132,7 +132,7 @@ local function Init()
     if not init then
         init = true
         P:Resize(optionsFrame)
-        P:Reborder(optionsFrame)
+        P:Reborder(optionsFrame, true)
         CreateTabButtons()
         F:CreateUtilityList(utilitiesBtn)
     end
