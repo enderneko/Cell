@@ -2320,7 +2320,7 @@ UnitButton_UpdateNameTextColor = function(self)
 
     if enabledIndicators["nameText"] then
         if indicatorColors["nameText"][1] == "class_color" or not UnitIsConnected(unit)
-        or ((UnitIsPlayer(unit) or UnitInPartyIsAI(unit)) and UnitIsCharmed(unit)) then
+        or ((UnitIsPlayer(unit) or UnitInPartyIsAI(unit)) and UnitIsCharmed(unit)) or self.states.inVehicle then
             self.indicators.nameText:SetColor(F:GetUnitClassColor(unit))
         else
             self.indicators.nameText:SetColor(unpack(indicatorColors["nameText"][2]))

@@ -87,6 +87,25 @@ select(2, ...).L = setmetatable({
         <p>(Retail) Enable "Always Update Buffs/Debuffs" in General tab, if indicators do not update correctly.</p>
         <br/>
 
+        <h1>r239-release (Aug 23, 2024, 22:00 GMT+8)</h1>
+        <p>+ Snippet for enabled click cast on non-cell frames (PR #199).</p>
+        <p>* Updated default indicator spells (PR #208).</p>
+        <p>* Fixed an issue if CELL_BORDER_SIZE = 0.</p>
+        <p>* (TWW) Fixed range check for Evokers.</p>
+        <p>* Fixed blacklist shortcut for Debuffs indicator.</p>
+        <p>* Fixed "Bars" indicators.</p>
+        <p>* Fixed "Texture" indicators.</p>
+        <p>* Fixed indicator list (especially the amount and order).</p>
+        <p>* Fixed Cell.GetUnitFramesForLGF for Spotlights.</p>
+        <p>* Macro click-castings are now bound by name.</p>
+        <p>* Refactored Actions using ObjectPool.</p>
+        <p>* Updated appearance of power filter option buttons.</p>
+        <p>* (TWW) Updated debuffs for Nerub-ar Palace (Thanks Reat).</p>
+        <p>* (TWW) Update dungeon debuffs.</p>
+        <p>+ Added a new dispel icon style.</p>
+        <p>+ Updated locales: deDE, frFR, ptBR, ruRU, zhTW.</p>
+        <br/>
+
         <h1>r238-release (Aug 7, 2024, 15:25 GMT+8)</h1>
         <p>* Fixed missing indicators.</p>
         <p>* Updated deDE and zhTW.</p>
