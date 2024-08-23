@@ -1966,7 +1966,7 @@ local IsSpellInRange = (C_Spell and C_Spell.IsSpellInRange) and C_Spell.IsSpellI
 local IsItemInRange = (C_Spell and C_Item.IsItemInRange) and C_Item.IsItemInRange or IsItemInRange
 local CheckInteractDistance = CheckInteractDistance
 local UnitIsDead = UnitIsDead
-local IsSpellKnown = IsSpellKnown
+local IsSpellKnownOrOverridesKnown = IsSpellKnownOrOverridesKnown
 -- local GetSpellTabInfo = GetSpellTabInfo
 -- local GetNumSpellTabs = GetNumSpellTabs
 -- local GetSpellBookItemName = GetSpellBookItemName
@@ -1987,7 +1987,9 @@ local friendSpells = {
     -- ["DEATHKNIGHT"] = 47541,
     -- ["DEMONHUNTER"] = ,
     ["DRUID"] = (Cell.isWrath or Cell.isVanilla) and 5185 or 8936, -- 治疗之触 / 愈合
-    ["EVOKER"] = 361469, -- 活化烈焰
+    -- FIXME: [361469 活化烈焰] 会被英雄天赋 [431443 时序烈焰] 替代，但它而且有问题
+    -- IsSpellInRange 始终返回 nil
+    ["EVOKER"] = 355913, -- 翡翠之花
     -- ["HUNTER"] = 136,
     ["MAGE"] = 1459, -- 奥术智慧 / 奥术光辉
     ["MONK"] = 116670, -- 活血术
@@ -2000,7 +2002,7 @@ local friendSpells = {
 }
 
 local deadSpells = {
-    ["EVOKER"] = 361227, -- resurrection range, need separately for evoker
+    ["EVOKER"] = 461526, -- resurrection range, need separately for evoker
 }
 
 local petSpells = {
@@ -2008,19 +2010,21 @@ local petSpells = {
 }
 
 local harmSpells = {
-    ["DEATHKNIGHT"] = 47541,
-    ["DEMONHUNTER"] = 185123,
-    ["DRUID"] = 5176,
-    ["EVOKER"] = 361469,
-    ["HUNTER"] = 75,
-    ["MAGE"] = Cell.isRetail and 116 or 133,
-    ["MONK"] = 117952,
-    ["PALADIN"] = 20271,
-    ["PRIEST"] = Cell.isRetail and 589 or 585,
-    ["ROGUE"] = 1752,
-    ["SHAMAN"] = Cell.isRetail and 188196 or 403,
-    ["WARLOCK"] = 686,
-    ["WARRIOR"] = 355,
+    ["DEATHKNIGHT"] = 47541, -- 凋零缠绕
+    ["DEMONHUNTER"] = 185123, -- 投掷利刃
+    ["DRUID"] = 5176, -- 愤怒
+    -- FIXME: [361469 活化烈焰] 会被英雄天赋 [431443 时序烈焰] 替代，但它而且有问题
+    -- IsSpellInRange 始终返回 nil
+    ["EVOKER"] = 362969, -- 碧蓝打击
+    ["HUNTER"] = 75, -- 自动射击
+    ["MAGE"] = Cell.isRetail and 116 or 133, -- 寒冰箭 / 火球术
+    ["MONK"] = 117952, -- 碎玉闪电
+    ["PALADIN"] = 20271, -- 审判
+    ["PRIEST"] = Cell.isRetail and 589 or 585, -- 暗言术：痛 / 惩击
+    ["ROGUE"] = 1752, -- 影袭
+    ["SHAMAN"] = Cell.isRetail and 188196 or 403, -- 闪电箭
+    ["WARLOCK"] = 686, -- 暗影箭
+    ["WARRIOR"] = 355, -- 嘲讽
 }
 
 -- local friendItems = {
@@ -2104,22 +2108,22 @@ local function SPELLS_CHANGED()
     spell_dead = CELL_RANGE_CHECK_DEAD[playerClass] or deadSpells[playerClass]
     spell_pet = CELL_RANGE_CHECK_PET[playerClass] or petSpells[playerClass]
 
-    if spell_friend and IsSpellKnown(spell_friend) then
+    if spell_friend and IsSpellKnownOrOverridesKnown(spell_friend) then
         spell_friend = F:GetSpellInfo(spell_friend)
     else
         spell_friend = nil
     end
-    if spell_harm and IsSpellKnown(spell_harm) then
+    if spell_harm and IsSpellKnownOrOverridesKnown(spell_harm) then
         spell_harm = F:GetSpellInfo(spell_harm)
     else
         spell_harm = nil
     end
-    if spell_dead and IsSpellKnown(spell_dead) then
+    if spell_dead and IsSpellKnownOrOverridesKnown(spell_dead) then
         spell_dead = F:GetSpellInfo(spell_dead)
     else
         spell_dead = nil
     end
-    if spell_pet and IsSpellKnown(spell_pet) then
+    if spell_pet and IsSpellKnownOrOverridesKnown(spell_pet) then
         spell_pet = F:GetSpellInfo(spell_pet)
     else
         spell_pet = nil

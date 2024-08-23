@@ -1749,7 +1749,7 @@ local function UpdateAppearance(which)
             end
             -- outOfRangeAlpha
             if which == "outOfRangeAlpha" or which == "reset" then
-                b.states.wasInRange = nil
+                b.states.wasInRange = false
             end
             -- shields
             if not which or which == "shields" or which == "reset" then
