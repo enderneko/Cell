@@ -395,7 +395,7 @@ local function GetMouseWheelBindKey(fullKey, noTypePrefix)
     end
 end
 
-local function GetBindingSnippet()
+function F:GetBindingSnippet()
     local bindingClicks = {}
     for _, t in pairs(clickCastingTable) do
         if t[1] ~= "notBound" then
@@ -577,7 +577,18 @@ local function ApplyClickCastings(b)
     end
 end
 
-local function UpdateClickCastings(noReload, onlyqueued)
+function F:UpdateClickCastOnFrame(frame, snippet)
+    if frame then
+        ClearClickCastings(frame)
+        -- update bindingClicks
+        frame:SetAttribute("snippet", snippet)
+        SetBindingClicks(frame)
+        -- load db and set attribute
+        ApplyClickCastings(frame)
+    end
+end
+
+function F:UpdateClickCastings(noReload, onlyqueued)
     F:Debug("|cff77ff77UpdateClickCastings:|r useCommon:", Cell.vars.clickCastings["useCommon"])
     clickCastingTable = Cell.vars.clickCastings["useCommon"] and Cell.vars.clickCastings["common"] or Cell.vars.clickCastings[Cell.vars.playerSpecID]
 
@@ -598,7 +609,7 @@ local function UpdateClickCastings(noReload, onlyqueued)
         end
     end
 
-    local snippet = GetBindingSnippet()
+    local snippet = F:GetBindingSnippet()
     F:Debug(snippet)
 
     -- REVIEW:
@@ -621,18 +632,12 @@ local function UpdateClickCastings(noReload, onlyqueued)
     -- end
 
     F:IterateAllUnitButtons(function(b)
-        -- clear if attribute already set
-        ClearClickCastings(b)
-        -- update bindingClicks
-        b:SetAttribute("snippet", snippet)
-        SetBindingClicks(b)
-        -- load db and set attribute
-        ApplyClickCastings(b)
+        F:UpdateClickCastOnFrame(b, snippet)
     end, false, true)
 
     previousClickCastings = F:Copy(clickCastingTable)
 end
-Cell:RegisterCallback("UpdateClickCastings", "UpdateClickCastings", UpdateClickCastings)
+Cell:RegisterCallback("UpdateClickCastings", "UpdateClickCastings", F.UpdateClickCastings)
 
 local function UpdateQueuedClickCastings()
     UpdateClickCastings(true, true)
