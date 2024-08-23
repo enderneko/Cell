@@ -91,56 +91,56 @@ end
 -------------------------------------------------
 local aoeHealings = {
     -- druid
-    740, -- Tranquility - 宁静
-    145205, -- Efflorescence - 百花齐放
+    740, -- 宁静 - Tranquility
+    145205, -- 百花齐放 - Efflorescence
 
     -- evoker
-    355916, -- Emerald Blossom - 翡翠之花
-    361361, -- Fluttering Seedlings - 婆娑幼苗
-    363534, -- Rewind - 回溯
-    367230, -- Spiritbloom - 精神之花
-    370984, -- Emerald Communion - 翡翠交融
-    371441, -- Life-Giver's Flame - 赐命者之焰
-    371879, -- Cycle of Life - 生生不息
+    355916, -- 翡翠之花 - Emerald Blossom
+    361361, -- 婆娑幼苗 - Fluttering Seedlings
+    363534, -- 回溯 - Rewind
+    367230, -- 精神之花 - Spiritbloom
+    370984, -- 翡翠交融 - Emerald Communion
+    371441, -- 赐命者之焰 - Life-Giver's Flame
+    371879, -- 生生不息 - Cycle of Life
 
     -- monk
-    115098, -- Chi Wave - 真气波
-    123986, -- Chi Burst - 真气爆裂
-    115310, -- Revival - 还魂术
-    322118, -- Invoke Yu'lon, the Jade Serpent - 青龙下凡 (SUMMON)
+    115098, -- 真气波 - Chi Wave
+    123986, -- 真气爆裂 - Chi Burst
+    115310, -- 还魂术 - Revival
+    322118, -- 青龙下凡 (SUMMON) - Invoke Yu'lon, the Jade Serpent
     388193, -- 碧火踏 - Jadefire Stomp
-    443028, -- Celestial Conduit - 天神御身
+    443028, -- 天神御身 - Celestial Conduit
 
     -- paladin
-    85222, -- Light of Dawn - 黎明之光
-    119952, -- Arcing Light - 弧形圣光
-    114165, -- Holy Prism - 神圣棱镜
-    200654, -- Tyr's Deliverance - 提尔的拯救
-    216371, -- Avenging Crusader - 复仇十字军
+    85222, -- 黎明之光 - Light of Dawn
+    119952, -- 弧形圣光 - Arcing Light
+    114165, -- 神圣棱镜 - Holy Prism
+    200654, -- 提尔的拯救 - Tyr's Deliverance
+    216371, -- 复仇十字军 - Avenging Crusader
 
     -- priest
-    120517, -- Halo - 光晕
-    34861, -- Holy Word: Sanctify - 圣言术：灵
-    596, -- Prayer of Healing - 治疗祷言
-    64843, -- Divine Hymn - 神圣赞美诗
-    110744, -- Divine Star - 神圣之星
-    204883, -- Circle of Healing - 治疗之环
-    281265, -- Holy Nova - 神圣新星
-    314867, -- Shadow Covenant - 暗影盟约
-    15290, -- Vampiric Embrace - 吸血鬼的拥抱
-    372787, -- Divine Word: Sanctuary-- 神言术：佑
+    120517, -- 光晕 - Halo
+    34861, -- 圣言术：灵 - Holy Word: Sanctify
+    596, -- 治疗祷言 - Prayer of Healing
+    64843, -- 神圣赞美诗 - Divine Hymn
+    110744, -- 神圣之星 - Divine Star
+    204883, -- 治疗之环 - Circle of Healing
+    281265, -- 神圣新星 - Holy Nova
+    314867, -- 暗影盟约 - Shadow Covenant
+    15290, -- 吸血鬼的拥抱 - Vampiric Embrace
+    372787, -- 神言术：佑 - Divine Word: Sanctuary
 
     -- shaman
-    1064, -- Chain Heal - 治疗链
-    73920, -- Healing Rain - 治疗之雨
-    108280, -- Healing Tide Totem - 治疗之潮图腾 (SUMMON)
-    52042, -- Healing Stream Totem - 治疗之泉图腾 (SUMMON)
-    197995, -- Wellspring - 奔涌之流
-    157503, -- Cloudburst - 暴雨图腾
-    114911, -- Ancestral Guidance - 先祖指引
-    382311, -- Ancestral Awakening - 先祖复苏
-    207778, -- Downpour - 倾盆大雨
-    114083, -- Restorative Mists - 恢复迷雾 (升腾)
+    1064, -- 治疗链 - Chain Heal
+    73920, -- 治疗之雨 - Healing Rain
+    108280, -- 治疗之潮图腾 (SUMMON) - Healing Tide Totem
+    52042, -- 治疗之泉图腾 (SUMMON) - Healing Stream Totem
+    197995, -- 奔涌之流 - Wellspring
+    157503, -- 暴雨图腾 - Cloudburst
+    114911, -- 先祖指引 - Ancestral Guidance
+    382311, -- 先祖复苏 - Ancestral Awakening
+    207778, -- 倾盆大雨 - Downpour
+    114083, -- 恢复迷雾 (升腾) - Restorative Mists
 }
 
 local aoeHealingIDs = {
@@ -190,30 +190,30 @@ end
 -------------------------------------------------
 local externals = { -- true: track by name, false: track by id
     ["DEATHKNIGHT"] = {
-        [51052] = true, -- Anti-Magic Zone - 反魔法领域
+        [51052] = true, -- 反魔法领域 - Anti-Magic Zone
     },
 
     ["DEMONHUNTER"] = {
-        [196718] = true, -- Darkness - 黑暗
+        [196718] = true, -- 黑暗 - Darkness
     },
 
     ["DRUID"] = {
-        [102342] = true, -- Ironbark - 铁木树皮
+        [102342] = true, -- 铁木树皮 - Ironbark
     },
 
     ["EVOKER"] = {
-        [374227] = true, -- Zephyr - 微风
-        [357170] = true, -- Time Dilation - 时间膨胀
-        [378441] = true, -- Time Stop (pvp) - 时间停止
-        [374348] = true, -- Renewing blaze - 新生光焰
+        [374227] = true, -- 微风 - Zephyr
+        [357170] = true, -- 时间膨胀 - Time Dilation
+        [378441] = true, -- 时间停止 - Time Stop (pvp)
+        [374348] = true, -- 新生光焰 - Renewing blaze
     },
 
     ["MAGE"] = {
-        [198158] = true, -- Mass Invisibility - 群体隐形
-        [414660] = { -- Mass Barrier - 群体屏障
-            [414661] = false, -- Ice Barrier - 寒冰护体
-            [414662] = false, -- Blazing Barrier - 烈焰护体
-            [414663] = false, -- Prismatic Barrier - 棱光护体
+        [198158] = true, -- 群体隐形 - Mass Invisibility
+        [414660] = { -- 群体屏障 - Mass Barrier
+            [414661] = false, -- 寒冰护体 - Ice Barrier
+            [414662] = false, -- 烈焰护体 - Blazing Barrier
+            [414663] = false, -- 棱光护体 - Prismatic Barrier
             -- [11426] = false, -- 寒冰护体 (self)
             -- [235313] = false, -- 烈焰护体 (self)
             -- [235450] = false, -- 棱光护体 (self)
@@ -221,44 +221,44 @@ local externals = { -- true: track by name, false: track by id
     },
 
     ["MONK"] = {
-        [116849] = true, -- Life Cocoon - 作茧缚命
-        [202248] = false, -- Guided Meditation - 偏转冥想
+        [116849] = true, -- 作茧缚命 - Life Cocoon
+        [202248] = false, -- 偏转冥想 - Guided Meditation
     },
 
     ["PALADIN"] = {
-        [1022] = true, -- Blessing of Protection - 保护祝福
-        [6940] = true, -- Blessing of Sacrifice - 牺牲祝福
-        [204018] = true, -- Blessing of Spellwarding-- 破咒祝福
-        [31821] = true, -- Aura Mastery - 光环掌握
-        [210256] = true, -- Blessing of Sanctuary - 庇护祝福
-        [228050] = false, -- Divine Shield - 圣盾术 (被遗忘的女王护卫)
+        [1022] = true, -- 保护祝福 - Blessing of Protection
+        [6940] = true, -- 牺牲祝福 - Blessing of Sacrifice
+        [204018] = true, -- 破咒祝福 - Blessing of Spellwarding
+        [31821] = true, -- 光环掌握 - Aura Mastery
+        [210256] = true, -- 庇护祝福 - Blessing of Sanctuary
+        [228050] = false, -- 圣盾术 (被遗忘的女王护卫) - Divine Shield
         -- [211210] = true, -- 提尔的保护
         -- [216328] = true, -- 光之优雅
     },
 
     ["PRIEST"] = {
-        [33206] = true, -- Pain Suppression - 痛苦压制
-        [47788] = true, -- Guardian Spirit - 守护之魂
-        [62618] = true, -- Power Word: Barrier - 真言术：障
-        [213610] = true, -- Holy Ward - 神圣守卫
-        [197268] = true, -- Ray of Hope - 希望之光
+        [33206] = true, -- 痛苦压制 - Pain Suppression
+        [47788] = true, -- 守护之魂 - Guardian Spirit
+        [62618] = true, -- 真言术：障 - Power Word: Barrier
+        [213610] = true, -- 神圣守卫 - Holy Ward
+        [197268] = true, -- 希望之光 - Ray of Hope
     },
 
     ["ROGUE"] = {
-        [114018] = true, -- Shroud of Concealment - 潜伏帷幕
+        [114018] = true, -- 潜伏帷幕 - Shroud of Concealment
     },
 
     ["SHAMAN"] = {
-        [98008] = true, -- Spirit Link Totem - 灵魂链接图腾
-        [201633] = true, -- Earthen Wall - 大地之墙图腾
-        [8178] = true, -- Grounding Totem - 根基图腾
-        [383018] = true, -- Stoneskin - 石肤图腾
+        [98008] = true, -- 灵魂链接图腾 - Spirit Link Totem
+        [201633] = true, -- 大地之墙图腾 - Earthen Wall
+        [8178] = true, -- 根基图腾 - Grounding Totem
+        [383018] = true, -- 石肤图腾 - Stoneskin
     },
 
     ["WARRIOR"] = {
-        [97462] = true, -- Rallying Cry - 集结呐喊
-        [3411] = true, -- Intervene - 援护
-        [213871] = true, -- Bodyguard - 护卫
+        [97462] = true, -- 集结呐喊 - Rallying Cry
+        [3411] = true, -- 援护 - Intervene
+        [213871] = true, -- 护卫 - Bodyguard
     },
 }
 
@@ -355,8 +355,8 @@ local defensives = { -- true: track by name, false: track by id
         [363916] = true, -- 黑曜鳞片 - Obsidian Scales
         [374348] = true, -- 新生光焰 - Renewing Blaze
         [370960] = true, -- 翡翠交融 - Emerald Communion
-        [431872] = false, -- Temporality (Chronowarden Hero Talent)
-        [377088] = false, -- Rush of Vitality
+        [431872] = false, -- 瞬息之隔 - Temporality (Chronowarden Hero Talent)
+        [377088] = false, -- 活力迸射 - Rush of Vitality
     },
 
     ["HUNTER"] = {
@@ -367,8 +367,8 @@ local defensives = { -- true: track by name, false: track by id
     ["MAGE"] = {
         [45438] = true, -- 寒冰屏障 - Ice Block
         [414658] = true, -- 深寒凝冰 - Ice Cold
-        [113862] = false, -- Greater Invisibility - 强化隐形术
-        [55342] = false, -- 镜像，使用 CLEU 而非 UNIT_AURA - Mirror Image
+        [113862] = false, -- 强化隐形术 - Greater Invisibility
+        [55342] = false, -- 镜像（使用 CLEU 而非 UNIT_AURA） - Mirror Image
         [342246] = true, -- 操控时间 - Alter Time
     },
 
@@ -407,7 +407,7 @@ local defensives = { -- true: track by name, false: track by id
     ["SHAMAN"] = {
         [108271] = true, -- 星界转移 - Astral Shift
         [409293] = true, -- 掘地三尺 - Burrow (PVP)
-        [114893] = true, -- Stone Bulwark
+        [114893] = true, -- 石壁 - Stone Bulwark
     },
 
     ["WARLOCK"] = {
@@ -712,86 +712,86 @@ end
 -------------------------------------------------
 local spells =  {
     -- druid
-    8936, -- Regrowth - 愈合
-    774, -- Rejuvenation - 回春术
-    155777, -- Rejuvenation (Germination) - 回春术（萌芽）
-    33763, -- Lifebloom - 生命绽放
-    188550, -- Lifebloom - 生命绽放
-    48438, -- Wild Growth - 野性成长
-    102351, -- Cenarion Ward - 塞纳里奥结界
-    102352, -- Cenarion Ward - 塞纳里奥结界
-    391891, -- Adaptive Swarm - 激变蜂群
-    145205, -- Efflorescence - 百花齐放
-    383193, -- Grove Tending - 林地护理
-    439530, -- Symbiotic Blooms - 共生绽华
-    429224, -- Minor Cenarion Ward - 次级塞纳里奥结界
+    8936, -- 愈合 - Regrowth
+    774, -- 回春术 - Rejuvenation
+    155777, -- 回春术（萌芽） - Rejuvenation (Germination)
+    33763, -- 生命绽放 - Lifebloom
+    188550, -- 生命绽放 - Lifebloom
+    48438, -- 野性成长 - Wild Growth
+    102351, -- 塞纳里奥结界 - Cenarion Ward
+    102352, -- 塞纳里奥结界 - Cenarion Ward
+    391891, -- 激变蜂群 - Adaptive Swarm
+    145205, -- 百花齐放 - Efflorescence
+    383193, -- 林地护理 - Grove Tending
+    439530, -- 共生绽华 - Symbiotic Blooms
+    429224, -- 次级塞纳里奥结界 - Minor Cenarion Ward
 
     -- evoker
-    363502, -- Dream Flight - 梦境飞行
-    370889, -- Twin Guardian - 双生护卫
-    364343, -- Echo - 回响
-    355941, -- Dream Breath - 梦境吐息
-    376788, -- Dream Breath (Echo) - 梦境吐息（回响）
-    366155, -- Reversion - 逆转
-    367364, -- Reversion (Echo) - 逆转（回响）
-    373862, -- Temporal Anomaly - 时空畸体
-    378001, -- Dream Projection (pvp) - 梦境投影（pvp）
-    373267, -- Lifebind - 缚誓生命
-    395296, -- Ebon Might - 黑檀之力 (self)
-    395152, -- Ebon Might - 黑檀之力
-    360827, -- Blistering Scales - 炽火龙鳞
-    410089, -- Prescience - 先知先觉
-    406732, -- Spatial Paradox - 空间悖论 (self)
-    406789, -- Spatial Paradox - 空间悖论
-    445740, -- Enkindle- 纵焰
-    409895, -- Spiritbloom (Reverberations, Chronowarden Hero Talent)
+    363502, -- 梦境飞行 - Dream Flight
+    370889, -- 双生护卫 - Twin Guardian
+    364343, -- 回响 - Echo
+    355941, -- 梦境吐息 - Dream Breath
+    376788, -- 梦境吐息（回响） - Dream Breath (Echo)
+    366155, -- 逆转 - Reversion
+    367364, -- 逆转（回响） - Reversion (Echo)
+    373862, -- 时空畸体 - Temporal Anomaly
+    378001, -- 梦境投影（pvp） - Dream Projection (pvp)
+    373267, -- 缚誓生命 - Lifebind
+    395296, -- 黑檀之力 (self) - Ebon Might
+    395152, -- 黑檀之力 - Ebon Might
+    360827, -- 炽火龙鳞 - Blistering Scales
+    410089, -- 先知先觉 - Prescience
+    406732, -- 空间悖论 (self) - Spatial Paradox
+    406789, -- 空间悖论 - Spatial Paradox
+    445740, -- 纵焰 - Enkindle
+    409895, -- 精神之花 - Spiritbloom (Reverberations, Chronowarden Hero Talent)
 
     -- monk
-    119611, -- Renewing Mist - 复苏之雾
-    124682, -- Enveloping Mist - 氤氲之雾
-    325209, -- Enveloping Breath - 氤氲之息
-    406139, -- Chi Cocoon - 真气之茧
+    119611, -- 复苏之雾 - Renewing Mist
+    124682, -- 氤氲之雾 - Enveloping Mist
+    325209, -- 氤氲之息 - Enveloping Breath
+    406139, -- 真气之茧 - Chi Cocoon
     -- 386276, -- 骨尘酒
     -- 115175, -- 抚慰之雾
     -- 198533, -- 抚慰之雾
     -- 387766, -- 滋养真气
-    -- 196725, -- Refreshing Jade Wind - 碧愈疾风
-    450805, -- Purified Spirit - 净化之魂
-    423439, -- Chi Harmony
+    -- 196725, -- 碧愈疾风 - Refreshing Jade Wind
+    450805, -- 净化之魂 - Purified Spirit
+    423439, -- 真气宁和 - Chi Harmony
 
     -- paladin
-    53563, -- Beacon of Light - 圣光道标
-    223306, -- Bestow Faith - 赋予信仰
-    148039, -- Barrier of Faith - 信仰屏障
-    156910, -- Beacon of Faith - 信仰道标
-    200025, -- Beacon of Virtue - 美德道标
-    287280, -- Glimmer of Light - 圣光闪烁
-    156322, -- Eternal Flame - 永恒之火
-    431381, -- Dawnlight - 晨光
-    388013, -- Blessing of Spring - 阳春祝福
-    388007, -- Blessing of Summer - 仲夏祝福
-    388010, -- Blessing of Autumn - 暮秋祝福
-    388011, -- Blessing of Winter - 凛冬祝福
-    200654, -- Tyr's Deliverance - 提尔的拯救
+    53563, -- 圣光道标 - Beacon of Light
+    223306, -- 赋予信仰 - Bestow Faith
+    148039, -- 信仰屏障 - Barrier of Faith
+    156910, -- 信仰道标 - Beacon of Faith
+    200025, -- 美德道标 - Beacon of Virtue
+    287280, -- 圣光闪烁 - Glimmer of Light
+    156322, -- 永恒之火 - Eternal Flame
+    431381, -- 晨光 - Dawnlight
+    388013, -- 阳春祝福 - Blessing of Spring
+    388007, -- 仲夏祝福 - Blessing of Summer
+    388010, -- 暮秋祝福 - Blessing of Autumn
+    388011, -- 凛冬祝福 - Blessing of Winter
+    200654, -- 提尔的拯救 - Tyr's Deliverance
 
     -- priest
-    139, -- Renew - 恢复
-    41635, -- Prayer of Mending - 愈合祷言
-    17, -- Power Word: Shield - 真言术：盾
-    194384, -- Atonement - 救赎
-    77489, -- Echo of Light - 圣光回响
-    372847, -- Blessed Bolt - 光明之泉恢复
-    443526, -- Premonition of Solace -- 慰藉预兆
+    139, -- 恢复 - Renew
+    41635, -- 愈合祷言 - Prayer of Mending
+    17, -- 真言术：盾 - Power Word: Shield
+    194384, -- 救赎 - Atonement
+    77489, -- 圣光回响 - Echo of Light
+    372847, -- 光明之泉恢复 - Blessed Bolt
+    443526, -- 慰藉预兆 - Premonition of Solace
 
     -- shaman
-    974, -- Earth Shield - 大地之盾
-    383648, -- Earth Shield - 大地之盾（天赋）
-    61295, -- Riptide - 激流
-    382024, -- Earthliving Weapon - 大地生命武器
-    375986, -- Primordial Wave - 始源之潮
-    444490, -- Hydrobubble - 源水气泡
-    -- 73920, -- Healing Rain - 治疗之雨
-    -- 456366, -- Healing Rain - 治疗之雨
+    974, -- 大地之盾 - Earth Shield
+    383648, -- 大地之盾（天赋） - Earth Shield
+    61295, -- 激流 - Riptide
+    382024, -- 大地生命武器 - Earthliving Weapon
+    375986, -- 始源之潮 - Primordial Wave
+    444490, -- 源水气泡 - Hydrobubble
+    -- 73920, -- 治疗之雨 - Healing Rain
+    -- 456366, -- 治疗之雨 - Healing Rain
 }
 
 function F:FirstRun()
@@ -960,7 +960,7 @@ function I.GetDefaultTargetedSpellsGlow()
 end
 
 -------------------------------------------------
--- Actions: Healing Potion & Healthstone ...
+-- Actions
 -------------------------------------------------
 local actions = {
     {
@@ -968,29 +968,13 @@ local actions = {
         {"A", {0.4, 1, 0}},
     },
     {
-        431416, -- Algari Healing Potion
+        431416, -- 阿加治疗药水 - Algari Healing Potion
         {"A", {1, 0.1, 0.1}},
     },
     {
-        431932, -- Tempered Potion
+        431932, -- 淬火药水 - Tempered Potion
         {"C3", {1, 1, 0}},
     },
-    -- {
-    --     370511, -- 振奋治疗药水 - Refreshing Healing Potion
-    --     {"A", {1, 0.1, 0.1}},
-    -- },
-    -- {
-    --     371024, -- 元素强能药水 - Elemental Potion of Power
-    --     {"C3", {1, 1, 0}},
-    -- },
-    -- {
-    --     359867, -- 宇宙治疗药水
-    --     {"A", {1, 0.1, 0.1}},
-    -- },
-    -- {
-    --     307192, -- 灵魂治疗药水
-    --     {"A", {1, 0.1, 0.1}},
-    -- },
 }
 
 
