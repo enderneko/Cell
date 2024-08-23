@@ -17,21 +17,21 @@ end
 -- debuffBlacklist
 -------------------------------------------------
 local debuffBlacklist = {
-    8326, -- 鬼魂
-    160029, -- 正在复活
-    255234, -- 图腾复生
-    225080, -- 复生
-    57723, -- 筋疲力尽
-    57724, -- 心满意足
-    80354, -- 时空错位
-    264689, -- 疲倦
-    390435, -- 筋疲力尽
-    206151, -- 挑战者的负担
-    195776, -- 月羽疫病
-    352562, -- 起伏机动
-    356419, -- 审判灵魂
-    387847, -- 邪甲术
-    213213, -- 伪装
+    8326, -- 鬼魂 - Ghost
+    160029, -- 正在复活 - Resurrecting
+    255234, -- 图腾复生 - Totemic Revival
+    225080, -- 复生 - Reincarnation
+    57723, -- 筋疲力尽 - Exhaustion
+    57724, -- 心满意足 - Sated
+    80354, -- 时空错位 - Temporal Displacement
+    264689, -- 疲倦 - Fatigued
+    390435, -- 筋疲力尽 - Exhaustion
+    206151, -- 挑战者的负担 - Challenger's Burden
+    195776, -- 月羽疫病 - Moonfeather Fever
+    352562, -- 起伏机动 - Undulating Maneuvers
+    356419, -- 审判灵魂 - Judge Soul
+    387847, -- 邪甲术 - Fel Armor
+    213213, -- 伪装 - Masquerade
 }
 
 function I.GetDefaultDebuffBlacklist()
@@ -47,11 +47,11 @@ end
 -- bigDebuffs
 -------------------------------------------------
 local bigDebuffs = {
-    46392, -- 专注打击
+    46392, -- 专注打击 - Focused Assault
     -----------------------------------------------
-    240443, -- 爆裂
-    209858, -- 死疽溃烂
-    240559, -- 重伤
+    240443, -- 爆裂 - Burst
+    209858, -- 死疽溃烂 - Necrotic Wound
+    240559, -- 重伤 - Grievous Wound
     -- 226512, -- 鲜血脓液（血池）
     -----------------------------------------------
     -- NOTE: Thundering Affix - Dragonflight Season 1
@@ -163,14 +163,14 @@ end
 
 local summonDuration = {
     -- evoker
-    [377509] = 6, -- 梦境投影（pvp）
+    [377509] = 6, -- 梦境投影（pvp）- Dream Projection
 
     -- monk
-    [322118] = 25, -- 青龙下凡
+    [322118] = 25, -- 青龙下凡 - Invoke Yu'lon, the Jade Serpent
 
     -- shaman
-    [108280] = 12, -- 治疗之潮图腾
-    [52042] = 15, -- 治疗之泉图腾
+    [108280] = 12, -- 治疗之潮图腾 - Healing Tide Totem
+    [52042] = 15, -- 治疗之泉图腾 - Healing Stream Totem
 }
 
 do
@@ -329,96 +329,99 @@ end
 -------------------------------------------------
 local defensives = { -- true: track by name, false: track by id
     ["DEATHKNIGHT"] = {
-        [48707] = true, -- 反魔法护罩
-        [48792] = true, -- 冰封之韧
-        [49028] = true, -- 符文刃舞
-        [55233] = true, -- 吸血鬼之血
-        [49039] = true, -- 巫妖之躯
-        [194679] = true, -- 符文分流
+        [48707] = true, -- 反魔法护罩 - Anti-Magic Shell
+        [48792] = true, -- 冰封之韧 - Icebound Fortitude
+        [49028] = true, -- 符文刃舞 - Dancing Rune Weapon
+        [55233] = true, -- 吸血鬼之血 - Vampiric Blood
+        [49039] = true, -- 巫妖之躯 - Lichborne
+        [194679] = true, -- 符文分流 - Rune Tap
     },
 
     ["DEMONHUNTER"] = {
-        [196555] = true, -- 虚空行走
-        [198589] = true, -- 疾影
-        [187827] = false, -- 恶魔变形 162264(DPS)
+        [196555] = true, -- 虚空行走 - Netherwalk
+        [198589] = true, -- 疾影 - Blur
+        [187827] = false, -- 恶魔变形 162264(DPS) - Metamorphosis
     },
 
     ["DRUID"] = {
-        [22812] = true, -- 树皮术
-        [61336] = true, -- 生存本能
-        [200851] = true, -- 沉睡者之怒
-        [102558] = true, -- 化身：乌索克的守护者
-        [22842] = true, -- 狂暴回复
+        [22812] = true, -- 树皮术 - Barkskin
+        [61336] = true, -- 生存本能 - Survival Instincts
+        [200851] = true, -- 沉睡者之怒 - Rage of the Sleeper
+        [102558] = true, -- 化身：乌索克的守护者 - Incarnation: Guardian of Ursoc
+        [22842] = true, -- 狂暴回复 - Frenzied Regeneration
     },
 
     ["EVOKER"] = {
-        [363916] = true, -- 黑曜鳞片
-        [374348] = true, -- 新生光焰
-        [370960] = true, -- 翡翠交融
+        [363916] = true, -- 黑曜鳞片 - Obsidian Scales
+        [374348] = true, -- 新生光焰 - Renewing Blaze
+        [370960] = true, -- 翡翠交融 - Emerald Communion
+        [431872] = false, -- Temporality (Chronowarden Hero Talent)
+        [377088] = false, -- Rush of Vitality
     },
 
     ["HUNTER"] = {
-        [186265] = true, -- 灵龟守护
-        [264735] = true, -- 优胜劣汰
+        [186265] = true, -- 灵龟守护 - Aspect of the Turtle
+        [264735] = true, -- 优胜劣汰 - Survival of the Fittest
     },
 
     ["MAGE"] = {
-        [45438] = true, -- 寒冰屏障
-        [414658] = true, -- 深寒凝冰
+        [45438] = true, -- 寒冰屏障 - Ice Block
+        [414658] = true, -- 深寒凝冰 - Ice Cold
         [113862] = false, -- Greater Invisibility - 强化隐形术
-        [55342] = false, -- 镜像，使用 CLEU 而非 UNIT_AURA
-        [342246] = true, -- 操控时间
+        [55342] = false, -- 镜像，使用 CLEU 而非 UNIT_AURA - Mirror Image
+        [342246] = true, -- 操控时间 - Alter Time
     },
 
     ["MONK"] = {
-        [115176] = false, -- 禅悟冥想
-        [115203] = true, -- 壮胆酒
-        [122278] = true, -- 躯不坏
-        [122783] = true, -- 散魔功
-        [125174] = true, -- 业报之触
+        [115176] = false, -- 禅悟冥想 - Zen Meditation
+        [115203] = true, -- 壮胆酒 - Fortifying Brew
+        [122278] = true, -- 躯不坏 - Dampen Harm
+        [122783] = true, -- 散魔功 - Diffuse Magic
+        [125174] = true, -- 业报之触 - Touch of Karma
     },
 
     ["PALADIN"] = {
-        [498] = true, -- 圣佑术
-        [642] = true, -- 圣盾术
-        [31850] = true, -- 炽热防御者
-        [212641] = true, -- 远古列王守卫
-        [205191] = true, -- 以眼还眼
-        [389539] = true, -- 戒卫
-        [184662] = true, -- 复仇之盾
+        [498] = true, -- 圣佑术 - Divine Protection
+        [642] = true, -- 圣盾术 - Divine Shield
+        [31850] = true, -- 炽热防御者 - Ardent Defender
+        [212641] = true, -- 远古列王守卫 - Guardian of Ancient Kings
+        [205191] = true, -- 以眼还眼 - Eye for an Eye
+        [389539] = true, -- 戒卫 - Sentinel
+        [184662] = true, -- 复仇之盾 - Shield of Vengeance
     },
 
     ["PRIEST"] = {
-        [47585] = true, -- 消散
-        [19236] = true, -- 绝望祷言
-        [586] = true, -- 渐隐术 -- TODO: 373446 通透影像
-        [193065] = true, -- 防护圣光
-        [27827] = true, -- 救赎之魂
+        [47585] = true, -- 消散 - Dispersion
+        [19236] = true, -- 绝望祷言 - Desperate Prayer
+        [586] = true, -- 渐隐术 -- TODO: 373446 通透影像 - Fade
+        [193065] = true, -- 防护圣光 - Protective Light
+        [27827] = true, -- 救赎之魂 - Spirit of Redemption
     },
 
     ["ROGUE"] = {
-        [1966] = true, -- 佯攻
-        [5277] = true, -- 闪避
-        [31224] = false, -- 暗影斗篷
+        [1966] = true, -- 佯攻 - Feint
+        [5277] = true, -- 闪避 - Evasion
+        [31224] = false, -- 暗影斗篷 - Cloak of Shadows
     },
 
     ["SHAMAN"] = {
-        [108271] = true, -- 星界转移
-        [409293] = true, -- 掘地三尺
+        [108271] = true, -- 星界转移 - Astral Shift
+        [409293] = true, -- 掘地三尺 - Burrow (PVP)
+        [114893] = true, -- Stone Bulwark
     },
 
     ["WARLOCK"] = {
-        [104773] = true, -- 不灭决心
-        [212295] = true, -- 虚空守卫
-        [108416] = true, -- 黑暗契约
+        [104773] = true, -- 不灭决心 - Unending Resolve
+        [212295] = true, -- 虚空守卫 - Nether Ward (PVP)
+        [108416] = true, -- 黑暗契约 - Dark Pact
     },
 
     ["WARRIOR"] = {
-        [871] = true, -- 盾墙
-        [12975] = true, -- 破釜沉舟
-        [23920] = true, -- 法术反射
-        [118038] = true, -- 剑在人在
-        [184364] = true, -- 狂怒回复
+        [871] = true, -- 盾墙 - Shield Wall
+        [12975] = true, -- 破釜沉舟 - Last Stand
+        [23920] = true, -- 法术反射 - Spell Reflection
+        [118038] = true, -- 剑在人在 - Die by the Sword
+        [184364] = true, -- 狂怒回复 - Enraged Regeneration
     },
 }
 
@@ -468,22 +471,22 @@ end
 local tankActiveMitigations = {
     -- death knight
     -- 77535, -- 鲜血护盾
-    195181, -- 白骨之盾
+    195181, -- 白骨之盾 - Bone Shield
 
     -- demon hunter
-    203720, -- 恶魔尖刺
+    203720, -- 恶魔尖刺 - Demon Spikes
 
     -- druid
-    192081, -- 铁鬃
+    192081, -- 铁鬃 - Ironfur
 
     -- monk
-    215479, -- 酒醒入定
+    215479, -- 酒醒入定 - Shuffle
 
     -- paladin
-    132403, -- 正义盾击
+    132403, -- 正义盾击 - Shield of the Righteous
 
     -- warrior
-    2565, -- 盾牌格挡
+    2565, -- 盾牌格挡 - Shield Block
 }
 
 local tankActiveMitigationNames = {
@@ -683,13 +686,13 @@ end
 -- drinking
 -------------------------------------------------
 local drinks = {
-    170906, -- 食物和饮水
-    167152, -- 进食饮水
-    430, -- 喝水
-    43182, -- 饮水
-    172786, -- 饮料
-    308433, -- 食物和饮料
-    369162, -- 饮用
+    170906, -- 食物和饮水 - Food & Drink
+    167152, -- 进食饮水 - Refreshment
+    430, -- 喝水 - Drink
+    43182, -- 饮水 - Drink
+    172786, -- 饮料 - Drink
+    308433, -- 食物和饮料 - Food & Drink
+    369162, -- 饮用 - Drink
 }
 
 do
@@ -741,6 +744,7 @@ local spells =  {
     406732, -- Spatial Paradox - 空间悖论 (self)
     406789, -- Spatial Paradox - 空间悖论
     445740, -- Enkindle- 纵焰
+    409895, -- Spiritbloom (Reverberations, Chronowarden Hero Talent)
 
     -- monk
     119611, -- Renewing Mist - 复苏之雾
@@ -753,6 +757,7 @@ local spells =  {
     -- 387766, -- 滋养真气
     -- 196725, -- Refreshing Jade Wind - 碧愈疾风
     450805, -- Purified Spirit - 净化之魂
+    423439, -- Chi Harmony
 
     -- paladin
     53563, -- Beacon of Light - 圣光道标
@@ -868,73 +873,82 @@ end
 -------------------------------------------------
 local targetedSpells = {
     -- Mists of Pandaria -----------
-    -- 青龙寺
-    106823, -- 翔龙猛袭
-    106841, -- 青龙猛袭
+    -- 青龙寺 - Temple of the Jade Serpent
+    106823, -- 翔龙猛袭 - Serpent Strike
+    106841, -- 青龙猛袭 - Jade Serpent Strike
 
     -- Legion ----------------------
-    -- 群星庭院
-    211473, -- 暗影鞭笞
-    -- 英灵殿
-    193092, -- 放血扫击
-    193659, -- 邪炽冲刺
-    192018, -- 光明之盾
-    196838, -- 血之气息
+    -- 群星庭院 - Court of Stars
+    211473, -- 暗影鞭笞 - Shadow Slash
+    -- 英灵殿 - Halls of Valor
+    193092, -- 放血扫击 - Bloodletting Sweep
+    193659, -- 邪炽冲刺 - Felblaze Rush
+    192018, -- 光明之盾 - Shield of Light
+    196838, -- 血之气息 - Scent of Blood
 
     -- Shadowlands -----------------
-    320788, -- 冻结之缚
-    344496, -- 震荡爆发
-    319941, -- 碎石之跃
-    322614, -- 心灵连接
-    320132, -- 暗影之怒
-    334053, -- 净化冲击波
-    320596, -- 深重呕吐
-    356924, -- 屠戮
-    356666, -- 刺骨之寒
-    319713, -- 巨兽奔袭
-    338606, -- 病态凝视
-    343556, -- 病态凝视
-    324079, -- 收割之镰
-    317963, -- 知识烦扰
-    333861, -- 回旋利刃
-    332234, -- 挥发精油
+    -- Necrotic Wake
+    320788, -- 冻结之缚 - Frozen Binds
+    320596, -- 深重呕吐 - Heaving Retch
+    338606, -- 病态凝视 - Morbid Fixation
+    343556, -- 病态凝视 - Morbid Fixation
+    -- Castle Nathria
+    344496, -- 震荡爆发 - Reverberating Eruption
+    -- Halls of Atonement
+    319941, -- 碎石之跃 - Stone Shattering Leap
+    -- Mists of Tirna Scithe
+    322614, -- 心灵连接 - Mind Link
+    -- De Other Side
+    320132, -- 暗影之怒 - Shadowfury
+    332234, -- 挥发精油 - Essential Oil
+    -- Spires of Ascenscion
+    334053, -- 净化冲击波 - Purifying Blast
+    317963, -- 知识烦扰 - Burden of Knowledge
+    -- Sanguine Depths
+    319713, -- 巨兽奔袭 - Juggernaut Rush
+    -- Theater of Pain
+    324079, -- 收割之镰 - Reaping Scythe
+    333861, -- 回旋利刃 - Ricocheting Blade
+    -- Plaguefall
     -- 328429, -- 窒息勒压
+    356924, -- 屠戮 - Carnage
+    356666, -- 刺骨之寒 - Biting Cold
 
     -- Dragonflight ----------------
-    -- 化身巨龙牢窟
-    375870, -- 致死石爪
-    395906, -- 电化之颌
-    372158, -- 破甲一击
-    372056, -- 碾压
-    375580, -- 西风猛击
-    376276, -- 震荡猛击
-    -- 亚贝鲁斯，焰影熔炉
-    401022, -- 灾祸掠击
-    407790, -- 身影碎离
-    -- 阿梅达希尔，梦境之愿
-    418637, -- 狂怒冲锋
-    -- 红玉新生法池
-    372858, -- 灼热打击
-    381512, -- 风暴猛击
-    -- 奈萨鲁斯
-    374533, -- 炽热挥舞
-    377018, -- 熔火真金
-    -- 蕨皮山谷
-    381444, -- 野蛮冲撞
-    373912, -- 腐朽打击
-    -- 碧蓝魔馆
-    374789, -- 注能打击
-    372222, -- 奥术顺劈
-    384978, -- 巨龙打击
-    391136, -- 肩部猛击
-    -- 诺库德阻击战
-    376827, -- 传导打击
-    376829, -- 雷霆打击
-    375937, -- 撕裂猛击
-    375929, -- 野蛮打击
-    376644, -- 钢铁之矛
-    376865, -- 静电之矛
-    382836, -- 残杀
+    -- 化身巨龙牢窟 - Vault of the Incarnates
+    375870, -- 致死石爪 - Mortal Stoneclaws
+    395906, -- 电化之颌 - Electrified Jaws
+    372158, -- 破甲一击 - Sundering Strike
+    372056, -- 碾压 - Crush
+    375580, -- 西风猛击 - Zephyr Slam
+    376276, -- 震荡猛击 - Concussive Slam
+    -- 亚贝鲁斯，焰影熔炉 - Aberrus, the Shadowed Crucible
+    401022, -- 灾祸掠击 - Calamitous Strike
+    407790, -- 身影碎离 - Sunder Shadow
+    -- 阿梅达希尔，梦境之愿 - Amirdrassil, the Dream's Hope
+    418637, -- 狂怒冲锋 - Furious Charge
+    -- 红玉新生法池 - Ruby Life Pools
+    372858, -- 灼热打击 - Searing Blows
+    381512, -- 风暴猛击 - Stormslam
+    -- 奈萨鲁斯 - Neltharus
+    374533, -- 炽热挥舞 - Heated Swings
+    377018, -- 熔火真金 - Molten Gold
+    -- 蕨皮山谷 - Brackenhid Hollow
+    381444, -- 野蛮冲撞 - Savage Charge
+    373912, -- 腐朽打击 - Decaystrike
+    -- 碧蓝魔馆 - Azure Vault
+    374789, -- 注能打击 - Infused Strike
+    372222, -- 奥术顺劈 - Arcane Cleave
+    384978, -- 巨龙打击 - Dragon Strike
+    391136, -- 肩部猛击 - Shoulder Slam
+    -- 诺库德阻击战 - The Nokhud Offensive
+    376827, -- 传导打击 - Conductive Strike
+    376829, -- 雷霆打击 - Thunder Strike
+    375937, -- 撕裂猛击 - Rending Strike
+    375929, -- 野蛮打击 - Savage Strike
+    376644, -- 钢铁之矛 - Iron Spear
+    376865, -- 静电之矛 - Static Spear
+    382836, -- 残杀 - Brutalize
 }
 
 function I.GetDefaultTargetedSpellsList()
@@ -950,17 +964,25 @@ end
 -------------------------------------------------
 local actions = {
     {
-        6262, -- 治疗石
+        6262, -- 治疗石 - Healthstone
         {"A", {0.4, 1, 0}},
     },
     {
-        370511, -- 振奋治疗药水
+        431416, -- Algari Healing Potion
         {"A", {1, 0.1, 0.1}},
     },
     {
-        371024, -- 元素强能药水
+        431932, -- Tempered Potion
         {"C3", {1, 1, 0}},
     },
+    -- {
+    --     370511, -- 振奋治疗药水 - Refreshing Healing Potion
+    --     {"A", {1, 0.1, 0.1}},
+    -- },
+    -- {
+    --     371024, -- 元素强能药水 - Elemental Potion of Power
+    --     {"C3", {1, 1, 0}},
+    -- },
     -- {
     --     359867, -- 宇宙治疗药水
     --     {"A", {1, 0.1, 0.1}},
@@ -1040,135 +1062,135 @@ end
 -------------------------------------------------
 local crowdControls = { -- true: track by name, false: track by id
     ["DEATHKNIGHT"] = {
-        [47476] = true, -- 绞袭
-        [91800] = true, -- 撕扯
-        [207167] = true, -- 致盲冰雨
-        [210128] = true, -- 复苏
-        [221562] = true, -- 窒息
-        [287254] = false, -- 寒冬死神
-        [377048] = true, -- 绝对零度
+        [47476] = true, -- 绞袭 - Strangulate (PVP)
+        [91800] = true, -- 撕扯 - Gnaw
+        [207167] = true, -- 致盲冰雨 - Blinding Sleet
+        [210128] = true, -- 复苏 - Reanimation
+        [221562] = true, -- 窒息 - Asphyxiate
+        [287254] = false, -- 寒冬死神 - Dead of Winter
+        [377048] = true, -- 绝对零度 - Absolute Zero
     },
 
     ["DEMONHUNTER"] = {
-        [179057] = true, -- 混乱新星
-        [205630] = true, -- 伊利丹之握
-        [204490] = true, -- 沉默咒符
-        [207684] = true, -- 悲苦咒符
-        [211881] = true, -- 邪能爆发
-        [217832] = true, -- 禁锢
+        [179057] = true, -- 混乱新星 - Chaos Nova
+        [205630] = true, -- 伊利丹之握 - Illidan's Grasp
+        [204490] = true, -- 沉默咒符 - Sigil of Silence
+        [207684] = true, -- 悲苦咒符 - Sigil of Misery
+        [211881] = true, -- 邪能爆发 - Fel Eruption
+        [217832] = true, -- 禁锢 - Imprison
         -- [213491] = true, -- 恶魔践踏
     },
 
     ["DRUID"] = {
-        [99] = true, -- 夺魂咆哮
-        [2637] = true, -- 休眠
-        [5211] = true, -- 蛮力猛击
-        [22570] = true, -- 割碎
-        [33786] = true, -- 旋风
-        [81261] = true, -- 日光术
-        [127797] = true, -- 乌索尔旋风
-        [163505] = false, -- 斜掠
-        [209749] = true, -- 精灵虫群
-        [202244] = true, -- 蛮力冲锋
-        [410065] = false, -- 活性树脂
+        [99] = true, -- 夺魂咆哮 - Incapacitating Roar
+        [2637] = true, -- 休眠 - Hibernate
+        [5211] = true, -- 蛮力猛击 - Mighty Bash
+        [22570] = true, -- 割碎 - Maim
+        [33786] = true, -- 旋风 - Cyclone
+        [81261] = true, -- 日光术 - Solar Beam
+        [127797] = true, -- 乌索尔旋风 - Ursol's Vortex
+        [163505] = false, -- 斜掠 - Rake
+        [209749] = true, -- 精灵虫群 - Faerie Swarm
+        [202244] = true, -- 蛮力冲锋 - Overrun
+        [410065] = false, -- 活性树脂 - Reactive Resin
     },
 
     ["EVOKER"] = {
-        [360806] = true, -- 梦游
-        [372245] = true, -- 天空霸主
-        [408544] = true, -- 震地猛击
+        [360806] = true, -- 梦游 - Sleep Walk
+        [372245] = true, -- 天空霸主 - Terror of the Skies
+        [408544] = true, -- 震地猛击 - Seismic Slam
     },
 
     ["HUNTER"] = {
-        [1513] = true, -- 恐吓野兽
-        [3355] = true, -- 冰冻陷阱
-        [24394] = true, -- 胁迫
-        [117526] = true, -- 束缚射击
-        [213691] = true, -- 驱散射击
-        [357021] = false, -- 连续震荡
-        [407032] = true, -- 粘稠焦油炸弹
+        [1513] = true, -- 恐吓野兽 - Scare Beast
+        [3355] = true, -- 冰冻陷阱 - Freezing Trap
+        [24394] = true, -- 胁迫 - Intimidation
+        [117526] = true, -- 束缚射击 - Binding Shot
+        [213691] = true, -- 驱散射击 - Scatter Shot
+        [357021] = false, -- 连续震荡 - Consecutive Concussion
+        [407032] = true, -- 粘稠焦油炸弹 - Sticky Tar Bomb
     },
 
     ["MAGE"] = {
-        [118] = true, -- 变形术
-        [31661] = true, -- 龙息术
-        [82691] = true, -- 冰霜之环
-        [383121] = true, -- 群体变形
-        [389831] = false, -- 积雪
+        [118] = true, -- 变形术 - Polymorph
+        [31661] = true, -- 龙息术 - Dragon's Breath
+        [82691] = true, -- 冰霜之环 - Ring of Frost
+        [383121] = true, -- 群体变形 - Mass Polymorph
+        [389831] = false, -- 积雪 - Snowdrift
     },
 
     ["MONK"] = {
-        [115078] = true, -- 分筋错骨
-        [119381] = true, -- 扫堂腿
-        [198909] = true, -- 赤精之歌
-        [202274] = true, -- 热酿
-        [202346] = true, -- 醉上加醉
-        [233759] = true, -- 抓钩武器
+        [115078] = true, -- 分筋错骨 - Paralysis
+        [119381] = true, -- 扫堂腿 - Leg Sweep
+        [198909] = true, -- 赤精之歌 - Song of Chi-Ji
+        [202274] = true, -- 热酿 - Hot Trub
+        [202346] = true, -- 醉上加醉 - Double Barrel
+        [233759] = true, -- 抓钩武器 - Grapple Weapon (PVP)
     },
 
     ["PALADIN"] = {
-        [853] = true, -- 制裁之锤
-        [10326] = true, -- 超度邪恶
-        [20066] = true, -- 忏悔
-        [105421] = true, -- 盲目之光
-        [234299] = true, -- 制裁之拳
-        [255941] = false, -- 灰烬觉醒
+        [853] = true, -- 制裁之锤 - Hammer of Justice
+        [10326] = true, -- 超度邪恶 - Turn Evil
+        [20066] = true, -- 忏悔 - Repentance
+        [105421] = true, -- 盲目之光 - Blinding Light
+        [234299] = true, -- 制裁之拳 - Fist of Justice
+        [255941] = false, -- 灰烬觉醒 - Wake of Ashes
     },
 
     ["PRIEST"] = {
-        [605] = true, -- 精神控制
-        [8122] = true, -- 心灵尖啸
-        [9484] = true, -- 束缚亡灵
-        [15487] = true, -- 沉默
-        [64044] = true, -- 心灵惊骇
-        [88625] = true, -- 圣言术-罚
+        [605] = true, -- 精神控制 - Mind Control
+        [8122] = true, -- 心灵尖啸 - Psychic Scream
+        [9484] = true, -- 束缚亡灵 - Shackle Undead
+        [15487] = true, -- 沉默 - Silence
+        [64044] = true, -- 心灵惊骇 - Psychic Horror
+        [88625] = true, -- 圣言术-罚 - Holy Word: Chastise
         -- [226943] = true, -- 心灵炸弹
     },
 
     ["ROGUE"] = {
-        [408] = true, -- 肾击
-        [1776] = true, -- 凿击
-        [1833] = true, -- 偷袭
-        [2094] = true, -- 致盲
-        [6770] = true, -- 闷棍
-        [207777] = true, -- 卸除武装
-        [212183] = true, -- 烟雾弹
-        [305485] = true, -- 闪电磁索
+        [408] = true, -- 肾击 - Kidney Shot
+        [1776] = true, -- 凿击 - Gouge
+        [1833] = true, -- 偷袭 - Cheap Shot
+        [2094] = true, -- 致盲 - Blind
+        [6770] = true, -- 闷棍 - Sap
+        [207777] = true, -- 卸除武装 - Dismantle (PVP)
+        [212183] = true, -- 烟雾弹 - Smoke Bomb
     },
 
     ["SHAMAN"] = {
-        [51514] = true, -- 妖术
-        [77505] = true, -- 地震术
-        [118345] = true, -- 粉碎
-        [118905] = true, -- 静电充能
-        [197214] = true, -- 裂地术
+        [51514] = true, -- 妖术 - Hex
+        [77505] = true, -- 地震术 - Earthquake
+        [118345] = true, -- 粉碎 - Pulverize
+        [118905] = true, -- 静电充能 - Static Charge
+        [197214] = true, -- 裂地术 - Sundering
+        [305485] = true, -- 闪电磁索 - Lightning Lasso
     },
 
     ["WARLOCK"] = {
-        [710] = true, -- 放逐术
-        [5484] = true, -- 恐惧嚎叫
-        [5782] = true, -- 恐惧
-        [6358] = true, -- 诱惑
-        [6789] = true, -- 死亡缠绕
-        [22703] = true, -- 地狱火觉醒
-        [30283] = true, -- 暗影之怒
-        [89766] = true, -- 巨斧投掷
-        [196364] = false, -- 痛苦无常
-        [213688] = true, -- 邪能顺劈
+        [710] = true, -- 放逐术 - Banish
+        [5484] = true, -- 恐惧嚎叫 - Howl of Terror
+        [5782] = true, -- 恐惧 - Fear
+        [6358] = true, -- 诱惑 - Seduction
+        [6789] = true, -- 死亡缠绕 - Mortal Coil
+        [22703] = true, -- 地狱火觉醒 - Infernal Awakening
+        [30283] = true, -- 暗影之怒 - Shadowfury
+        [89766] = true, -- 巨斧投掷 - Axe Toss
+        [196364] = false, -- 痛苦无常 - Unstable Affliction
+        [213688] = true, -- 邪能顺劈 - Fel Cleave
     },
 
     ["WARRIOR"] = {
-        [5246] = true, -- 破胆怒吼
-        [132168] = true, -- 震荡波
-        [132169] = true, -- 风暴之锤
-        [236077] = true, -- 缴械
+        [5246] = true, -- 破胆怒吼 - Intimidating Shout
+        [132168] = true, -- 震荡波 - Shockwave
+        [132169] = true, -- 风暴之锤 - Storm Bolt
+        [236077] = true, -- 缴械 - Disarm (PVP)
     },
 
     ["UNCATEGORIZED"] = {
-        [20549] = true, -- 战争践踏
-        [107079] = true, -- 震山掌
-        [255723] = true, -- 蛮牛冲撞
-        [287712] = true, -- 强力一击
+        [20549] = true, -- 战争践踏 - War Stomp
+        [107079] = true, -- 震山掌 - Quaking Palm
+        [255723] = true, -- 蛮牛冲撞 - Bull Rush
+        [287712] = true, -- 强力一击 - Haymaker
     }
 }
 
