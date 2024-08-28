@@ -669,8 +669,8 @@ local function CheckDivineAegis()
     end
 end
 
-local function UpdateSpecVars(exceptActiveTalentGroup)
-    if not exceptActiveTalentGroup then
+local function UpdateSpecVars(skipTalentUpdate)
+    if not skipTalentUpdate then
         Cell.vars.activeTalentGroup = GetActiveTalentGroup()
         Cell.vars.playerSpecID = Cell.vars.activeTalentGroup
     end

@@ -746,7 +746,7 @@ end
 
 local function UpdateSpecVars()
     Cell.vars.playerSpecID, Cell.vars.playerSpecName, _, Cell.vars.playerSpecIcon, Cell.vars.playerSpecRole = GetSpecializationInfo(GetSpecialization())
-    if Cell.vars.playerSpecName == "" then
+    if not Cell.vars.playerSpecName or Cell.vars.playerSpecName == "" then
         Cell.vars.playerSpecName = L["No Spec"]
         Cell.vars.playerSpecIcon = 134400
     end
