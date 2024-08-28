@@ -9,7 +9,7 @@ local deflateConfig = {level = 9}
 
 local isImport, imported, exported = false, nil, ""
 
-local importExportFrame, importBtn, title, textArea, includeNicknamesCB, includeCharacterCB
+local importExportFrame, importBtn, title, textArea, includeNicknamesCB, includeCharacterCB, includeClickCastingsCB
 
 local function DoImport()
     -- raid debuffs
@@ -57,23 +57,33 @@ local function DoImport()
 
     -- click-castings
     local clickCastings
-    if imported["clickCastings"] then
-        if Cell.isRetail then -- RETAIL -> RETAIL
-            clickCastings = imported["clickCastings"]
-        else -- RETAIL -> WRATH
-            clickCastings = nil
-        end
-        imported["clickCastings"] = nil
-
-    elseif imported["characterDB"] and imported["characterDB"]["clickCastings"] then
-        if (Cell.isVanilla or Cell.isWrath or Cell.isCata) and imported["characterDB"]["clickCastings"]["class"] == Cell.vars.playerClass then -- WRATH -> WRATH, same class
-            clickCastings = imported["characterDB"]["clickCastings"]
-            if Cell.isVanilla then -- no dual spec system
-                clickCastings["useCommon"] = true
+    if includeClickCastingsCB:GetChecked() then
+        if imported["clickCastings"] then
+            if Cell.isRetail then -- RETAIL -> RETAIL
+                clickCastings = imported["clickCastings"]
+            else -- RETAIL -> WRATH
+                clickCastings = nil
             end
-        else -- WRATH -> RETAIL
-            clickCastings = nil
+        elseif imported["characterDB"] and imported["characterDB"]["clickCastings"] then
+            if (Cell.isVanilla or Cell.isWrath or Cell.isCata) and imported["characterDB"]["clickCastings"]["class"] == Cell.vars.playerClass then -- WRATH -> WRATH, same class
+                clickCastings = imported["characterDB"]["clickCastings"]
+                if Cell.isVanilla then -- no dual spec system
+                    clickCastings["useCommon"] = true
+                end
+            end
         end
+    else
+        -- preserve current click casting settings
+        if Cell.isRetail then
+            clickCastings = CellDB["clickCastings"]
+        else
+            clickCastings = CellCharacterDB["clickCastings"]
+        end
+    end
+
+    -- remove click castings from imported data to prevent overwriting
+    imported["clickCastings"] = nil
+    if imported["characterDB"] then
         imported["characterDB"]["clickCastings"] = nil
     end
 
@@ -211,6 +221,11 @@ local function CreateImportExportFrame()
     includeCharacterCB:Hide()
     Cell:SetTooltips(includeCharacterCB, "ANCHOR_TOPLEFT", 0, 2, L["Click-Castings"]..", "..L["Layout Auto Switch"])
 
+    -- import include click casting settings
+    includeClickCastingsCB = Cell:CreateCheckButton(importExportFrame, L["Include Click Casting Settings"], function() end)
+    includeClickCastingsCB:SetPoint("TOPLEFT", 5, -25)
+    includeClickCastingsCB:Hide()
+
     -- textArea
     textArea = Cell:CreateScrollEditBox(importExportFrame, function(eb, userChanged)
         if userChanged then
@@ -298,8 +313,11 @@ function F:ShowImportFrame()
 
     includeNicknamesCB:Hide()
     includeCharacterCB:Hide()
-    textArea:SetPoint("TOPLEFT", 5, -20)
-    P:Height(importExportFrame, 170)
+    includeClickCastingsCB:SetChecked(false)
+    includeClickCastingsCB:Show()
+
+    textArea:SetPoint("TOPLEFT", 5, -50)
+    P:Height(importExportFrame, 200)
 end
 
 function F:ShowExportFrame()
