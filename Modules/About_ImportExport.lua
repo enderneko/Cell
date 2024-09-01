@@ -10,7 +10,11 @@ local deflateConfig = {level = 9}
 local isImport, imported, exported = false, nil, ""
 
 local importExportFrame, importBtn, title, textArea, includeNicknamesCB, includeCharacterCB
+local confirmationFrame
 
+---------------------------------------------------------------------
+-- do import
+---------------------------------------------------------------------
 local function DoImport()
     -- raid debuffs
     for instanceID in pairs(imported["raidDebuffs"]) do
@@ -130,6 +134,9 @@ local function DoImport()
     ReloadUI()
 end
 
+---------------------------------------------------------------------
+-- generate export string
+---------------------------------------------------------------------
 local function GetExportString(includeNicknames, includeCharacter)
     local prefix = "!CELL:"..Cell.versionNum..":ALL!"
 
@@ -150,6 +157,45 @@ local function GetExportString(includeNicknames, includeCharacter)
     return prefix..str
 end
 
+---------------------------------------------------------------------
+-- import confirmation
+---------------------------------------------------------------------
+local function CreateImportConfirmationFrame()
+    confirmationFrame = CreateFrame("Frame", nil, Cell.frames.aboutTab, "BackdropTemplate")
+    confirmationFrame:SetSize(220, 165)
+    Cell:StylizeFrame(confirmationFrame, {0.1, 0.1, 0.1, 0.95}, Cell:GetAccentColorTable())
+    confirmationFrame:EnableMouse(true)
+    confirmationFrame:SetFrameLevel(Cell.frames.aboutTab:GetFrameLevel() + 300)
+    confirmationFrame:SetPoint("TOPLEFT", importExportFrame, 117, -25)
+    confirmationFrame:Hide()
+
+    -- no
+    local button2 = Cell:CreateButton(confirmationFrame, L["No"], "red", {40, 17})
+    button2:SetPoint("BOTTOMRIGHT")
+    button2:SetBackdropBorderColor(Cell:GetAccentColorRGB())
+    button2:SetScript("OnClick", function()
+        confirmationFrame:Hide()
+        importExportFrame:Hide()
+    end)
+
+    -- yes
+    local button1 = Cell:CreateButton(confirmationFrame, L["Yes"], "green", {40, 17})
+    button1:SetPoint("BOTTOMRIGHT", button2, "BOTTOMLEFT", P:Scale(1), 0)
+    button1:SetBackdropBorderColor(Cell:GetAccentColorRGB())
+    button1:SetScript("OnClick", function()
+        confirmationFrame:Hide()
+        importExportFrame:Hide()
+    end)
+
+    confirmationFrame:SetScript("OnHide", function()
+        confirmationFrame:Hide()
+        if Cell.frames.aboutTab.mask then Cell.frames.aboutTab.mask:Hide() end
+    end)
+end
+
+---------------------------------------------------------------------
+-- import/export frame
+---------------------------------------------------------------------
 local function CreateImportExportFrame()
     importExportFrame = CreateFrame("Frame", "CellOptionsFrame_ImportExport", Cell.frames.aboutTab, "BackdropTemplate")
     importExportFrame:Hide()
@@ -177,15 +223,17 @@ local function CreateImportExportFrame()
         -- lower frame level
         importExportFrame:SetFrameLevel(Cell.frames.aboutTab:GetFrameLevel() + 20)
 
-        local text = "|cFFFF7070"..L["All Cell settings will be overwritten!"].."|r\n"..
-            "|cFFB7B7B7"..L["Autorun will be disabled for all code snippets"].."|r\n"..
-            L["|cff1Aff1AYes|r - Overwrite"].."\n".."|cffff1A1A"..L["No"].."|r - "..L["Cancel"]
-        local popup = Cell:CreateConfirmPopup(Cell.frames.aboutTab, 200, text, function(self)
-            DoImport()
-        end, function()
-            importExportFrame:Hide()
-        end, true)
-        popup:SetPoint("TOPLEFT", importExportFrame, 117, -25)
+        confirmationFrame:Show()
+
+        -- local text = "|cFFFF7070"..L["All Cell settings will be overwritten!"].."|r\n"..
+        --     "|cFFB7B7B7"..L["Autorun will be disabled for all code snippets"].."|r\n"..
+        --     L["|cff1Aff1AYes|r - Overwrite"].."\n".."|cffff1A1A"..L["No"].."|r - "..L["Cancel"]
+        -- local popup = Cell:CreateConfirmPopup(Cell.frames.aboutTab, 200, text, function(self)
+        --     DoImport()
+        -- end, function()
+        --     importExportFrame:Hide()
+        -- end, true)
+        -- popup:SetPoint("TOPLEFT", importExportFrame, 117, -25)
 
         textArea.eb:ClearFocus()
     end)
@@ -279,11 +327,15 @@ local function CreateImportExportFrame()
     end)
 end
 
+---------------------------------------------------------------------
+-- show import
+---------------------------------------------------------------------
 local init
 function F:ShowImportFrame()
     if not init then
         init = true
         CreateImportExportFrame()
+        CreateImportConfirmationFrame()
     end
 
     importExportFrame:Show()
@@ -299,13 +351,17 @@ function F:ShowImportFrame()
     includeNicknamesCB:Hide()
     includeCharacterCB:Hide()
     textArea:SetPoint("TOPLEFT", 5, -20)
-    P:Height(importExportFrame, 170)
+    P:Height(importExportFrame, 200)
 end
 
+---------------------------------------------------------------------
+-- show export
+---------------------------------------------------------------------
 function F:ShowExportFrame()
     if not init then
         init = true
         CreateImportExportFrame()
+        CreateImportConfirmationFrame()
     end
 
     importExportFrame:Show()
@@ -326,5 +382,5 @@ function F:ShowExportFrame()
         includeCharacterCB:Show()
     end
     textArea:SetPoint("TOPLEFT", 5, -50)
-    P:Height(importExportFrame, 200)
+    P:Height(importExportFrame, 230)
 end
