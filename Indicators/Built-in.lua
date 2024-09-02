@@ -579,10 +579,13 @@ local function Dispels_SetDispels(self, dispelTypes)
                 found = true
                 local r, g, b = I.GetDebuffTypeColor(dispelType)
                 if self.highlightType == "entire" then
+                    self.highlight:SetTexture(Cell.vars.whiteTexture)
                     self.highlight:SetVertexColor(r, g, b, 0.5)
                 elseif self.highlightType == "current" or self.highlightType == "current+" then
+                    self.highlight:SetTexture(Cell.vars.texture)
                     self.highlight:SetVertexColor(r, g, b, 1)
                 elseif self.highlightType == "gradient" or self.highlightType == "gradient-half" then
+                    self.highlight:SetTexture(Cell.vars.whiteTexture)
                     self.highlight:SetGradient("VERTICAL", CreateColor(r, g, b, 1), CreateColor(r, g, b, 0))
                 end
                 self.highlight:Show()
