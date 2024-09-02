@@ -64,6 +64,12 @@ local supporters1 = { -- wowIDs
         "Drumonji-Blackhand (EU)",
     }, -- Ko-fi
     {"Saintara-Blackhand (EU)"}, -- Ko-fi
+    {"Lúthieñ-Ravencrest (EU)"}, -- Zion (Ko-fi)
+    {"Jeânnîne-Hyjal (EU)"}, -- Jânine (Ko-fi)
+    {
+        "Angelofbliss-TarrenMill (EU)",
+        "Angelique-Dawnbringer (EU)",
+    }, -- Angelofbliss (Ko-fi)
 }
 
 local supporters2 = { -- 有些早期的发电记录已经丢失了……
@@ -152,6 +158,9 @@ local supporters2 = { -- 有些早期的发电记录已经丢失了……
     {"Druladin-Blackhand", "Ko-fi"}, -- 2024-08-12
     {"Zion", "Ko-fi"}, -- 2024-08-18
     {"Saintara-Blackhand", "Ko-fi"}, -- 2024-08-23
+    {"Jânine", "Ko-fi"}, -- 2024-08-24
+    {"Angelofbliss", "Ko-fi"}, -- 2024-08-24
+    {"Magicpork", "Ko-fi"}, -- 2024-08-30
 }
 
 -------------------------------------------------
