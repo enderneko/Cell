@@ -3,7 +3,7 @@
 ## Version: r239-release
 ## Author: enderneko
 ## X-Flavor: Cata
-## SavedVariables: CellDB
+## SavedVariables: CellDB, CellDBBackup
 ## SavedVariablesPerCharacter: CellCharacterDB
 
 ## X-Curse-Project-ID: 409666

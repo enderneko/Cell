@@ -3,7 +3,7 @@
 ## Version: r239-release
 ## Author: enderneko
 ## X-Flavor: Mainline
-## SavedVariables: CellDB
+## SavedVariables: CellDB, CellDBBackup
 ## AddonCompartmentFunc: Cell_OnAddonCompartmentClick
 ## IconTexture: Interface\AddOns\Cell\Media\icon.tga
 

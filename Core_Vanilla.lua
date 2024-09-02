@@ -133,6 +133,7 @@ function eventFrame:ADDON_LOADED(arg1)
 
         if type(CellDB) ~= "table" then CellDB = {} end
         if type(CellCharacterDB) ~= "table" then CellCharacterDB = {} end
+        if type(CellDBBackup) ~= "table" then CellDBBackup = {} end
 
         if type(CellDB["optionsFramePosition"]) ~= "table" then CellDB["optionsFramePosition"] = {} end
 

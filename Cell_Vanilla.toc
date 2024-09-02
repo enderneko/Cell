@@ -3,7 +3,7 @@
 ## Version: r239-beta
 ## Author: enderneko
 ## X-Flavor: Vanilla
-## SavedVariables: CellDB
+## SavedVariables: CellDB, CellDBBackup
 ## SavedVariablesPerCharacter: CellCharacterDB
 
 ## X-Curse-Project-ID: 409666

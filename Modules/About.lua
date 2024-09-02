@@ -494,13 +494,20 @@ local function CreateImportExportPane()
     local iePane = Cell:CreateTitledPane(aboutTab, L["Import & Export All Settings"], 422, 50)
     iePane:SetPoint("TOPLEFT", 5, -575)
 
-    local importBtn = Cell:CreateButton(iePane, L["Import"], "accent-hover", {200, 20})
+    local importBtn = Cell:CreateButton(iePane, L["Import"], "accent-hover", {134, 20})
     importBtn:SetPoint("TOPLEFT", 5, -27)
     importBtn:SetScript("OnClick", F.ShowImportFrame)
+    importBtn:SetTexture("Interface\\AddOns\\Cell\\Media\\Icons\\import", {16, 16}, {"LEFT", 2, 0})
 
-    local exportBtn = Cell:CreateButton(iePane, L["Export"], "accent-hover", {200, 20})
-    exportBtn:SetPoint("TOPRIGHT", -5, -27)
+    local exportBtn = Cell:CreateButton(iePane, L["Export"], "accent-hover", {134, 20})
+    exportBtn:SetPoint("TOPLEFT", importBtn, "TOPRIGHT", 5, 0)
     exportBtn:SetScript("OnClick", F.ShowExportFrame)
+    exportBtn:SetTexture("Interface\\AddOns\\Cell\\Media\\Icons\\export", {16, 16}, {"LEFT", 2, 0})
+
+    local backupBtn = Cell:CreateButton(iePane, L["Backups"], "accent-hover", {134, 20})
+    backupBtn:SetPoint("TOPLEFT", exportBtn, "TOPRIGHT", 5, 0)
+    backupBtn:SetScript("OnClick", F.ShowBackupFrame)
+    backupBtn:SetTexture("Interface\\AddOns\\Cell\\Media\\Icons\\backup", {16, 16}, {"LEFT", 2, 0})
 end
 
 -------------------------------------------------

@@ -828,6 +828,12 @@ L["Remember to backup your profile"] = "记得备份你的配置"
 -- L["Autorun will be disabled for all code snippets"] = "将禁用所有代码片段的自动运行"
 L["Include Nickname Settings"] = "包含昵称设置"
 L["Include Character Settings"] = "包含角色设置"
+L["Backups"] = "备份"
+L["Create Backup"] = "创建备份"
+L["Restore backup"] = "恢复备份"
+L["Delete backup"] = "删除备份"
+L["BACKUP_TIPS"] = "备份并不总是可靠，尤其当它们的年代过于久远时。推荐时常备份你的配置。当分享配置时，这些备份不包含在内。"
+L["BACKUP_TIPS2"] = "怀旧服玩家请注意：备份不包含其他角色的点击施法与布局自动切换"
 
 -------------------------------------------------
 -- code snippets

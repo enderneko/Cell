@@ -168,6 +168,7 @@ function eventFrame:ADDON_LOADED(arg1)
         eventFrame:UnregisterEvent("ADDON_LOADED")
 
         if type(CellDB) ~= "table" then CellDB = {} end
+        if type(CellDBBackup) ~= "table" then CellDBBackup = {} end
 
         if type(CellDB["optionsFramePosition"]) ~= "table" then CellDB["optionsFramePosition"] = {} end
 
