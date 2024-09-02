@@ -11,6 +11,7 @@ local isImport, imported, exported = false, nil, ""
 
 local importExportFrame, importBtn, title, textArea, includeNicknamesCB, includeCharacterCB
 local confirmationFrame
+local ignoredIndices = {}
 
 ---------------------------------------------------------------------
 -- do import
@@ -113,22 +114,37 @@ local function DoImport()
     -- F:FilterInvalidSpells(imported["cleuAuras"])
 
     -- disable autorun
-    for i = 1, #imported["snippets"] do
-        imported["snippets"][i]["autorun"] = false
+    -- for i = 1, #imported["snippets"] do
+    --     imported["snippets"][i]["autorun"] = false
+    -- end
+
+    --! filter out ignored
+    for index, ignored in pairs(ignoredIndices) do
+        if ignored then
+            imported[index] = nil
+        end
     end
 
-    -- texplore(imported)
-
     --! overwrite
-    CellDB = imported
-
     if Cell.isRetail then
-        CellDB["clickCastings"] = clickCastings
-        CellDB["layoutAutoSwitch"] = layoutAutoSwitch
+        if not ignoredIndices["clickCastings"] then
+            CellDB["clickCastings"] = clickCastings
+        end
+        if not ignoredIndices["layouts"] then
+            CellDB["layoutAutoSwitch"] = layoutAutoSwitch
+        end
     else
-        CellCharacterDB["clickCastings"] = clickCastings
-        CellCharacterDB["layoutAutoSwitch"] = layoutAutoSwitch
+        if not ignoredIndices["clickCastings"] then
+            CellCharacterDB["clickCastings"] = clickCastings
+        end
+        if not ignoredIndices["layouts"] then
+            CellCharacterDB["layoutAutoSwitch"] = layoutAutoSwitch
+        end
         CellCharacterDB["revise"] = imported["revise"]
+    end
+
+    for k, v in pairs(imported) do
+        CellDB[k] = v
     end
 
     ReloadUI()
@@ -162,15 +178,15 @@ end
 ---------------------------------------------------------------------
 local function CreateImportConfirmationFrame()
     confirmationFrame = CreateFrame("Frame", nil, Cell.frames.aboutTab, "BackdropTemplate")
-    confirmationFrame:SetSize(220, 165)
+    confirmationFrame:SetSize(361, 165)
     Cell:StylizeFrame(confirmationFrame, {0.1, 0.1, 0.1, 0.95}, Cell:GetAccentColorTable())
     confirmationFrame:EnableMouse(true)
     confirmationFrame:SetFrameLevel(Cell.frames.aboutTab:GetFrameLevel() + 300)
-    confirmationFrame:SetPoint("TOPLEFT", importExportFrame, 117, -25)
+    confirmationFrame:SetPoint("TOP", importExportFrame, 0, -25)
     confirmationFrame:Hide()
 
     -- no
-    local button2 = Cell:CreateButton(confirmationFrame, L["No"], "red", {40, 17})
+    local button2 = Cell:CreateButton(confirmationFrame, L["No"], "red", {55, 17})
     button2:SetPoint("BOTTOMRIGHT")
     button2:SetBackdropBorderColor(Cell:GetAccentColorRGB())
     button2:SetScript("OnClick", function()
@@ -179,17 +195,123 @@ local function CreateImportConfirmationFrame()
     end)
 
     -- yes
-    local button1 = Cell:CreateButton(confirmationFrame, L["Yes"], "green", {40, 17})
+    local button1 = Cell:CreateButton(confirmationFrame, L["Yes"], "green", {55, 17})
     button1:SetPoint("BOTTOMRIGHT", button2, "BOTTOMLEFT", P:Scale(1), 0)
     button1:SetBackdropBorderColor(Cell:GetAccentColorRGB())
     button1:SetScript("OnClick", function()
+        DoImport()
         confirmationFrame:Hide()
         importExportFrame:Hide()
     end)
 
+    -- message
+    local text1 = confirmationFrame:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET_TITLE")
+    text1:SetPoint("LEFT", 10, 0)
+    text1:SetPoint("RIGHT", -10, 0)
+    text1:SetPoint("TOP", 0, -10)
+    text1:SetSpacing(5)
+    text1:SetText("|cFFFF7070"..L["Cell settings will be overwritten!"])
+
+    local text2 = confirmationFrame:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
+    text2:SetPoint("LEFT", 10, 0)
+    text2:SetPoint("RIGHT", -10, 0)
+    text2:SetPoint("TOP", text1, "BOTTOM", 0, -5)
+    text2:SetSpacing(5)
+    text2:SetText( "|cFFB7B7B7"..L["Unselected settings will remain"])
+
+    local text3 = confirmationFrame:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
+    text3:SetPoint("BOTTOMLEFT", 5, 5)
+    text3:SetPoint("RIGHT", button1, "LEFT", -10, 0)
+    text3:SetJustifyH("LEFT")
+    text3:SetText( "|cFFABABAB"..L["Remember to backup your profile"])
+
+    -- checkboxes
+    local checkboxes = {}
+
+    -- 1:general
+    checkboxes.general = Cell:CreateCheckButton(confirmationFrame, L["General"], function(checked)
+        ignoredIndices["general"] = not checked
+    end)
+    checkboxes.general:SetPoint("TOPLEFT", 15, -55)
+
+    -- 2:appearance
+    checkboxes.appearance = Cell:CreateCheckButton(confirmationFrame, L["Appearance"], function(checked)
+        ignoredIndices["appearance"] = not checked
+        ignoredIndices["debuffTypeColor"] = not checked
+    end)
+    checkboxes.appearance:SetPoint("TOPLEFT", checkboxes.general, 165, 0)
+
+    -- 3:click-castings
+    checkboxes.clickCastings = Cell:CreateCheckButton(confirmationFrame, L["Click-Castings"], function(checked)
+        ignoredIndices["clickCastings"] = not checked
+    end)
+    checkboxes.clickCastings:SetPoint("TOPLEFT", checkboxes.general, "BOTTOMLEFT", 0, -7)
+
+    -- 4:layouts
+    checkboxes.layouts = Cell:CreateCheckButton(confirmationFrame, L["Layouts"] .. " & " .. L["Indicators"], function(checked)
+        ignoredIndices["layouts"] = not checked
+        ignoredIndices["layoutAutoSwitch"] = not checked
+        ignoredIndices["dispelBlacklist"] = not checked
+        ignoredIndices["debuffBlacklist"] = not checked
+        ignoredIndices["bigDebuffs"] = not checked
+        ignoredIndices["defensives"] = not checked
+        ignoredIndices["externals"] = not checked
+        ignoredIndices["targetedSpellsList"] = not checked
+        ignoredIndices["targetedSpellsGlow"] = not checked
+        ignoredIndices["crowdControls"] = not checked
+        ignoredIndices["actions"] = not checked
+        ignoredIndices["indicatorPreview"] = not checked
+        ignoredIndices["customTextures"] = not checked
+    end)
+    checkboxes.layouts:SetPoint("TOPLEFT", checkboxes.appearance, "BOTTOMLEFT", 0, -7)
+
+    -- 5:raid debuffs
+    checkboxes.raidDebuffs = Cell:CreateCheckButton(confirmationFrame, L["Raid Debuffs"], function(checked)
+        ignoredIndices["raidDebuffs"] = not checked
+    end)
+    checkboxes.raidDebuffs:SetPoint("TOPLEFT", checkboxes.clickCastings, "BOTTOMLEFT", 0, -7)
+
+    -- 6:utilities
+    checkboxes.utilities = Cell:CreateCheckButton(confirmationFrame, L["Utilities"], function(checked)
+        ignoredIndices["tools"] = not checked
+        ignoredIndices["spellRequest"] = not checked
+        ignoredIndices["dispelRequest"] = not checked
+        ignoredIndices["quickAssist"] = not checked
+        ignoredIndices["quickCast"] = not checked
+    end)
+    checkboxes.utilities:SetPoint("TOPLEFT", checkboxes.layouts, "BOTTOMLEFT", 0, -7)
+
+    -- 7:code snippets
+    checkboxes.snippets = Cell:CreateCheckButton(confirmationFrame, L["Code Snippets"], function(checked)
+        ignoredIndices["snippets"] = not checked
+    end)
+    checkboxes.snippets:SetPoint("TOPLEFT", checkboxes.raidDebuffs, "BOTTOMLEFT", 0, -7)
+
+    -- 8:nickname
+    checkboxes.nickname = Cell:CreateCheckButton(confirmationFrame, L["Nickname"], function(checked)
+        ignoredIndices["nicknames"] = not checked
+    end)
+    checkboxes.nickname:SetPoint("TOPLEFT", checkboxes.utilities, "BOTTOMLEFT", 0, -7)
+
+    -- OnHide
     confirmationFrame:SetScript("OnHide", function()
         confirmationFrame:Hide()
         if Cell.frames.aboutTab.mask then Cell.frames.aboutTab.mask:Hide() end
+    end)
+
+    -- OnShow
+    confirmationFrame:SetScript("OnShow", function()
+        wipe(ignoredIndices)
+        ignoredIndices["nicknames"] = true
+
+        for name, cb in pairs(checkboxes) do
+            if name == "nickname" then
+                cb:SetChecked(false)
+                cb:SetEnabled(imported["nicknames"])
+            else
+                cb:SetChecked(true)
+            end
+        end
     end)
 end
 
