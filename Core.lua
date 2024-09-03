@@ -877,6 +877,9 @@ end)
 SLASH_CELL1 = "/cell"
 function SlashCmdList.CELL(msg, editbox)
     local command, rest = msg:match("^(%S*)%s*(.-)$")
+    command = strlower(command or "")
+    rest = strlower(rest or "")
+
     if command == "options" or command == "opt" then
         F:ShowOptionsFrame()
 
