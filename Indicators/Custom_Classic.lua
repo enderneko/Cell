@@ -289,9 +289,11 @@ function I.ShowCustomIndicators(unitButton, auraType)
                     if not t[i] then break end
                     -- 1:order, 2:start, 3:duration, 4:debuffType, 5:icon, 6:count, 7:refreshing, 8:color
                     indicator[i]:SetCooldown(t[i][2], t[i][3], t[i][4], t[i][5], t[i][6], t[i][7], t[i][8])
-                    indicator:Show()
                 end
-                indicator:UpdateSize(#t)
+                if t[1] then
+                    indicator:Show()
+                    indicator:UpdateSize()
+                end
             else
                 if indicatorTable["top"][unit] and indicatorTable["top"][unit]["start"] then
                     indicator:SetCooldown(
