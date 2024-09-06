@@ -99,6 +99,7 @@ bleedList = {
     [426660] = true, -- Razor Jaws
     [426587] = true, -- Bramble Burst
     [426284] = true, -- Finishing Wound
+    [425555] = true, -- Crude Weapons
     [424493] = true, -- Shadow Rupture
     [424426] = true, -- Lunging Strike
     [424414] = true, -- Pierce Armor
