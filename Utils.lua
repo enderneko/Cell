@@ -2023,7 +2023,7 @@ local harmSpells = {
     ["PRIEST"] = Cell.isRetail and 589 or 585, -- 暗言术：痛 / 惩击
     ["ROGUE"] = 1752, -- 影袭
     ["SHAMAN"] = Cell.isRetail and 188196 or 403, -- 闪电箭
-    ["WARLOCK"] = 686, -- 暗影箭
+    ["WARLOCK"] = 234153, -- 吸取生命
     ["WARRIOR"] = 355, -- 嘲讽
 }
 
