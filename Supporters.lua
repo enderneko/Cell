@@ -70,6 +70,7 @@ local supporters1 = { -- wowIDs
         "Angelofbliss-TarrenMill (EU)",
         "Angelique-Dawnbringer (EU)",
     }, -- Angelofbliss (Ko-fi)
+    {"Stormpork-Silvermoon (EU)"}, -- Magicpork (Ko-fi)
 }
 
 local supporters2 = { -- 有些早期的发电记录已经丢失了……
