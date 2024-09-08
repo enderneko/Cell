@@ -482,6 +482,21 @@ local function UpdatePlaceholder(b, attr)
     end
 end
 
+-- do
+--     print(C_SpellBook.GetSpellBookItemName(FindSpellBookSlotBySpellID(428332), Enum.SpellBookSpellBank.Player))
+--     local f = CreateFrame("Frame")
+--     f:RegisterEvent("SPELLS_CHANGED")
+--     f:SetScript("OnEvent", function()
+--         f:UnregisterAllEvents()
+--         local pw = Spell:CreateFromSpellID(428332)
+--         pw:ContinueOnSpellLoad(function()
+--               local name = pw:GetSpellName()
+--               local sub = pw:GetSpellSubtext()
+--               print(name, sub)
+--         end)
+--     end)
+-- end
+
 local function ApplyClickCastings(b)
     for i, t in pairs(clickCastingTable) do
         local bindKey = t[1]
@@ -506,10 +521,12 @@ local function ApplyClickCastings(b)
         if t[2] == "spell" then
             local spellName = F:GetSpellInfo(t[3]) or ""
 
-            --! NOTE: only Necrolord shamans have this issue
+            --! NOTE: fix Primordial Wave
+            -- NOTE: only Necrolord shamans have this issue
             -- https://www.wowhead.com/spell=375982/primordial-wave#comments:id=5484251
             if t[3] == 428332 then
-                spellName = spellName .. "(" .. EXPANSION_NAME8 .. ")"
+                local subtext = C_Spell.GetSpellSubtext(428332)
+                spellName = spellName .. "(" .. (subtext or EXPANSION_NAME8) .. ")"
             end
 
             local condition = ""
