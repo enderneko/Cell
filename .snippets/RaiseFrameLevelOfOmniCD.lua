@@ -1,5 +1,5 @@
 -------------------------------------------------
--- 2024-05-18 02:22:47 GMT+8
+-- 2024-09-08 16:38:53 GMT+8
 -- raise frame level of OmniCD icons
 -- 提升 OmniCD 图标的层级
 -------------------------------------------------
@@ -17,7 +17,7 @@ f:SetScript("OnEvent", function(self, event, arg)
                 if not E.db.position.detached then
                     local relFrame = self:FindRelativeFrame(guid)
                     if relFrame then
-                        info.bar:SetFrameLevel(relFrame:GetFrameLevel()+20)
+                        info.bar:SetFrameLevel(relFrame:GetFrameLevel()+300)
                     end
                 end
             end
