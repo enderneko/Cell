@@ -949,6 +949,10 @@ local targetedSpells = {
     376644, -- 钢铁之矛 - Iron Spear
     376865, -- 静电之矛 - Static Spear
     382836, -- 残杀 - Brutalize
+
+    -- The War Within --------------
+    -- 圣焰隐修院
+    424420, -- 余烬冲击
 }
 
 function I.GetDefaultTargetedSpellsList()
