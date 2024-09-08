@@ -853,6 +853,7 @@ function eventFrame:ACTIVE_TALENT_GROUP_CHANGED()
 
         if not Cell.vars.playerSpecID then
             -- NOTE: when join in battleground, spec auto switched, during loading, can't get info from GetSpecializationInfo, until PLAYER_ENTERING_WORLD
+            prevSpec = nil
             checkSpecFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
             F:Debug("|cffffbb77SpecChanged:|r FAILED")
         else

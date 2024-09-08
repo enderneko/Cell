@@ -2129,13 +2129,13 @@ local function SPELLS_CHANGED()
         spell_pet = nil
     end
 
-    F:Debug(
-        "[RANGE CHECK]",
-        "\nfriend:", spell_friend or "nil",
-        "\npet:", spell_pet or "nil",
-        "\nharm:", spell_harm or "nil",
-        "\ndead:", spell_dead or "nil"
-    )
+    -- F:Debug(
+    --     "[RANGE CHECK]",
+    --     "\nfriend:", spell_friend or "nil",
+    --     "\npet:", spell_pet or "nil",
+    --     "\nharm:", spell_harm or "nil",
+    --     "\ndead:", spell_dead or "nil"
+    -- )
 end
 
 local timer
