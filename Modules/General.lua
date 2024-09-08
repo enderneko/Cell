@@ -283,7 +283,7 @@ end
 -------------------------------------------------
 -- misc
 -------------------------------------------------
-local alwaysUpdateBuffsCB, alwaysUpdateDebuffsCB, framePriorityWidget, useCleuCB, translitCB
+local alwaysUpdateAurasCB, framePriorityWidget, useCleuCB, translitCB
 
 -- TODO: move to Widgets.lua
 local function CreateFramePriorityWidget(parent)
@@ -374,23 +374,17 @@ local function CreateMiscPane()
     local miscPane = Cell:CreateTitledPane(generalTab, L["Misc"], 422, 140)
     miscPane:SetPoint("TOPLEFT", generalTab, 5, -420)
 
-    alwaysUpdateBuffsCB = Cell:CreateCheckButton(miscPane, L["Always Update Buffs"], function(checked, self)
-        CellDB["general"]["alwaysUpdateBuffs"] = checked
+    alwaysUpdateAurasCB = Cell:CreateCheckButton(miscPane, L["Always Update Auras"], function(checked, self)
+        CellDB["general"]["alwaysUpdateAuras"] = checked
     end, L["Ignore UNIT_AURA payloads"], L["This may help solve issues of indicators not updating correctly"])
-    alwaysUpdateBuffsCB:SetPoint("TOPLEFT", 5, -27)
-    alwaysUpdateBuffsCB:SetEnabled(Cell.isRetail)
-
-    alwaysUpdateDebuffsCB = Cell:CreateCheckButton(miscPane, L["Always Update Debuffs"], function(checked, self)
-        CellDB["general"]["alwaysUpdateDebuffs"] = checked
-    end, L["Ignore UNIT_AURA payloads"], L["This may help solve issues of indicators not updating correctly"])
-    alwaysUpdateDebuffsCB:SetPoint("TOPLEFT", 222, -27)
-    alwaysUpdateDebuffsCB:SetEnabled(Cell.isRetail)
+    alwaysUpdateAurasCB:SetPoint("TOPLEFT", 5, -27)
+    alwaysUpdateAurasCB:SetEnabled(Cell.isRetail)
 
     framePriorityWidget = CreateFramePriorityWidget(miscPane)
-    framePriorityWidget:SetPoint("TOPLEFT", alwaysUpdateBuffsCB, "BOTTOMLEFT", 0, -29)
+    framePriorityWidget:SetPoint("TOPLEFT", alwaysUpdateAurasCB, "BOTTOMLEFT", 0, -29)
 
     -- framePriorityDD = Cell:CreateDropdown(miscPane, 250)
-    -- framePriorityDD:SetPoint("TOPLEFT", alwaysUpdateBuffsCB, "BOTTOMLEFT", 0, -29)
+    -- framePriorityDD:SetPoint("TOPLEFT", alwaysUpdateAurasCB, "BOTTOMLEFT", 0, -29)
     -- framePriorityDD:SetItems({
     --     {
     --         ["text"] = L["Main"].." > "..L["Spotlight"].." > "..L["Quick Assist"],
@@ -496,8 +490,7 @@ local function ShowTab(tab)
         syncCB:SetChecked(CellDB["nicknames"]["sync"])
 
         -- misc
-        alwaysUpdateBuffsCB:SetChecked(CellDB["general"]["alwaysUpdateBuffs"])
-        alwaysUpdateDebuffsCB:SetChecked(CellDB["general"]["alwaysUpdateDebuffs"])
+        alwaysUpdateAurasCB:SetChecked(CellDB["general"]["alwaysUpdateAuras"])
         framePriorityWidget:Load(CellDB["general"]["framePriority"])
         useCleuCB:SetChecked(CellDB["general"]["useCleuHealthUpdater"])
         translitCB:SetChecked(CellDB["general"]["translit"])

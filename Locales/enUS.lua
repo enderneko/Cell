@@ -86,7 +86,7 @@ select(2, ...).L = setmetatable({
 
     ["CHANGELOGS"] = [[
         <h1>If there are any issues after an update, check through all code snippets first.</h1>
-        <p>(Retail) Enable "Always Update Buffs/Debuffs" in General tab, if indicators do not update correctly.</p>
+        <p>(Retail) Enable "Always Update Auras" in General tab, if indicators do not update correctly.</p>
         <br/>
 
         <h1>r239-release (Aug 23, 2024, 22:00 GMT+8)</h1>

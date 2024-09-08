@@ -1594,36 +1594,36 @@ UnitButton_UpdateAuras = function(self, updateInfo)
         buffsChanged = true
         debuffsChanged = true
     else
-        if updateInfo.addedAuras then
-            for _, aura in pairs(updateInfo.addedAuras) do
-                if aura.isHelpful then buffsChanged = true end
-                if aura.isHarmful then debuffsChanged = true end
-            end
-        end
-
-        if updateInfo.updatedAuraInstanceIDs then
-            for _, auraInstanceID in pairs(updateInfo.updatedAuraInstanceIDs) do
-                if self._buffs_cache[auraInstanceID] then buffsChanged = true end
-                if self._debuffs_cache[auraInstanceID] then debuffsChanged = true end
-            end
-        end
-
-        if updateInfo.removedAuraInstanceIDs then
-            for _, auraInstanceID in pairs(updateInfo.removedAuraInstanceIDs) do
-                if self._buffs_cache[auraInstanceID] then
-                    self._buffs_cache[auraInstanceID] = nil
-                    buffsChanged = true
-                end
-                if self._debuffs_cache[auraInstanceID] then
-                    self._debuffs_cache[auraInstanceID] = nil
-                    debuffsChanged = true
+        if Cell.loaded and CellDB["general"]["alwaysUpdateAuras"] then
+            buffsChanged = true
+            debuffsChanged = true
+        else
+            if updateInfo.addedAuras then
+                for _, aura in pairs(updateInfo.addedAuras) do
+                    if aura.isHelpful then buffsChanged = true end
+                    if aura.isHarmful then debuffsChanged = true end
                 end
             end
-        end
 
-        if Cell.loaded then
-            if CellDB["general"]["alwaysUpdateBuffs"] then buffsChanged = true end
-            if CellDB["general"]["alwaysUpdateDebuffs"] then debuffsChanged = true end
+            if updateInfo.updatedAuraInstanceIDs then
+                for _, auraInstanceID in pairs(updateInfo.updatedAuraInstanceIDs) do
+                    if self._buffs_cache[auraInstanceID] then buffsChanged = true end
+                    if self._debuffs_cache[auraInstanceID] then debuffsChanged = true end
+                end
+            end
+
+            if updateInfo.removedAuraInstanceIDs then
+                for _, auraInstanceID in pairs(updateInfo.removedAuraInstanceIDs) do
+                    if self._buffs_cache[auraInstanceID] then
+                        self._buffs_cache[auraInstanceID] = nil
+                        buffsChanged = true
+                    end
+                    if self._debuffs_cache[auraInstanceID] then
+                        self._debuffs_cache[auraInstanceID] = nil
+                        debuffsChanged = true
+                    end
+                end
+            end
         end
     end
 

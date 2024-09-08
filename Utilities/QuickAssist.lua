@@ -260,7 +260,7 @@ local function QuickAssist_UpdateAuras(self, updateInfo)
         end
 
         if Cell.loaded then
-            if CellDB["general"]["alwaysUpdateBuffs"] then buffsChanged = true end
+            if CellDB["general"]["alwaysUpdateAuras"] then buffsChanged = true end
         end
     end
 

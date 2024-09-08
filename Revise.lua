@@ -3114,6 +3114,11 @@ function F:Revise()
         end
     end
 
+    -- r240-release
+    if CellDB["revise"] and dbRevision < 240 then
+        CellDB["general"]["alwaysUpdateAuras"] = CellDB["general"]["alwaysUpdateBuffs"] or CellDB["general"]["alwaysUpdateDebuffs"]
+    end
+
     -- ----------------------------------------------------------------------- --
     --            update from old versions, validate all indicators            --
     -- ----------------------------------------------------------------------- --
