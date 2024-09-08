@@ -4108,10 +4108,21 @@ local function GetExportString(t)
     local s = ""
     local n = 0
     for i, id in ipairs(t) do
-        if type(id) == "table" then id = id[1] end
+        local color = ""
+        if type(id) == "table" then
+            color = " {"
+            for j, c in pairs(id[2]) do
+                color = color .. F:Round(c, 3)
+                if j ~= 4 then
+                    color = color .. ","
+                end
+            end
+            color = color .. "}"
+            id = id[1]
+        end
         local name = F:GetSpellInfo(id)
         if name then
-            s = s .. (i == 1 and "" or "\n") .. id .. ", -- " .. name
+            s = s .. (i == 1 and "" or "\n") .. id .. ", -- " .. name .. color
             n = n + 1
         end
     end
@@ -4120,6 +4131,42 @@ end
 
 local auraButtons = {}
 local auraImportExportFrame
+
+local function ConvertAuraData(text)
+    if not text or text == "" then return end
+
+    local data = {}
+
+    if auraImportExportFrame.parent.hasColorPicker then
+        for i, line in pairs({strsplit("\n", text)}) do
+            line = strtrim(line)
+            if line ~= "" then
+                local id = strmatch(line, "^(%d+).*$")
+                id = tonumber(id)
+                if id then
+                    local color = strmatch(line, "^%d+, %-%- .+ %{(.+)%}$")
+                    if color then
+                        color = F:StringToTable(color, ",", true)
+                    else
+                        color = {1, 0.26667, 0.4, 1}
+                    end
+                    tinsert(data, {id, color})
+                end
+            end
+        end
+    else
+        for i, line in pairs({strsplit("\n", text)}) do
+            line = strtrim(line)
+            local id = strmatch(line, "^(%d+),.+$")
+            id = tonumber(id)
+            if id then
+                tinsert(data, id)
+            end
+        end
+    end
+
+    return data
+end
 
 local function CreateSetting_Auras(parent, index)
     local widget
@@ -4145,10 +4192,10 @@ local function CreateSetting_Auras(parent, index)
         auraImportExportFrame.textArea = addon:CreateScrollEditBox(auraImportExportFrame, function(eb, userChanged)
             if userChanged then
                 if auraImportExportFrame.isImport then
-                    local data = string.gsub(eb:GetText(), "[^%d]+", ",")
-                    if data ~= "" then
-                        auraImportExportFrame.data = F:StringToTable(data, ",", true)
-                        auraImportExportFrame.info:SetText(addon:GetAccentColorString()..L["Spells"]..":|r "..#auraImportExportFrame.data)
+                    local data = ConvertAuraData(eb:GetText())
+                    if data and #data ~= 0 then
+                        auraImportExportFrame.data = data
+                        auraImportExportFrame.info:SetText(addon:GetAccentColorString()..L["Spells"]..":|r "..#data)
                         auraImportExportFrame.importBtn:SetEnabled(true)
                     else
                         auraImportExportFrame.info:SetText(addon:GetAccentColorString()..L["Spells"]..":|r 0")
@@ -4185,11 +4232,16 @@ local function CreateSetting_Auras(parent, index)
         auraImportExportFrame.importBtn:SetScript("OnClick", function()
             -- replace old
             wipe(auraImportExportFrame.parent.t)
-            for _, id in pairs(auraImportExportFrame.data) do
-                tinsert(auraImportExportFrame.parent.t, id)
+            for _, data in pairs(auraImportExportFrame.data) do
+                tinsert(auraImportExportFrame.parent.t, data)
             end
             -- update list
-            auraImportExportFrame.parent:SetDBValue(auraImportExportFrame.parent.title, auraImportExportFrame.parent.t, auraImportExportFrame.parent.noUpDownButtons, auraImportExportFrame.parent.isZeroValid)
+            auraImportExportFrame.parent:SetDBValue(auraImportExportFrame.parent.title,
+                auraImportExportFrame.parent.t,
+                auraImportExportFrame.parent.noUpDownButtons,
+                auraImportExportFrame.parent.isZeroValid,
+                auraImportExportFrame.parent.hasColorPicker
+            )
             auraImportExportFrame:Hide()
             -- update height
             addon:UpdateIndicatorSettingsHeight()

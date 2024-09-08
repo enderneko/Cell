@@ -394,12 +394,20 @@ else
     end
 end
 
-function F:KeepDecimals(num, n)
-    if num < 0 then
-        return -(abs(num) - abs(num) % 0.1 ^ n)
-    else
-        return num - num % 0.1 ^ n
+-- function F:KeepDecimals(num, n)
+--     if num < 0 then
+--         return -(abs(num) - abs(num) % 0.1 ^ n)
+--     else
+--         return num - num % 0.1 ^ n
+--     end
+-- end
+
+function F:Round(num, numDecimalPlaces)
+    if numDecimalPlaces and numDecimalPlaces >= 0 then
+        local mult = 10 ^ numDecimalPlaces
+        return floor(num * mult + 0.5) / mult
     end
+    return floor(num + 0.5)
 end
 
 -------------------------------------------------
