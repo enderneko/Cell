@@ -31,15 +31,14 @@ L["Aggro (border)"] = "Menace (Bordure)"
 L["all"] = "Tous"
 L["ALL"] = "TOUS"
 L["All Bosses"] = "Tous les boss"
-L["All Cell settings will be overwritten!"] = "Tous les paramètres de Cell vont être écrasé !"
 L["All indicators of %s will be replaced with those in %s"] = "Tous les indicateurs de %s seront remplacés par ceux de %s"
 L["All snippets have been disabled, due to the version update"] = "Tous les extraits de code ont été désactivés en raison de la mise à jour de la version."
 L["Allow smaller value"] = "Autoriser une valeur plus petite"
 L["Alpha"] = "Alpha"
 L["Always"] = "Toujours"
 L["Always Targeting"] = "Toujours cibler"
-L["Always Update Buffs"] = "Toujours mettre à jour les améliorations"
-L["Always Update Debuffs"] = "Toujours mettre à jour les affaiblissements"
+--[[Translation missing --]]
+--[[ L["Always Update Auras"] = ""--]]
 L["Anchor Point"] = "Point d'Ancrage"
 L["Anchor To"] = "Ancrer à"
 L["Anchored To"] = "Ancré à"
@@ -60,6 +59,12 @@ L["Available slash commands"] = "Commandes slash disponibles"
 L["Awesome!"] = "Génial !"
 L["Background Alpha"] = "Alpha d'arrière-plan"
 L["Background Color"] = "Couleur d'arrière-plan"
+--[[Translation missing --]]
+--[[ L["BACKUP_TIPS"] = "Backups are not always reliable, especially when they are too old. It is recommended to backup often. When sharing profiles, backups are not included."--]]
+--[[Translation missing --]]
+--[[ L["BACKUP_TIPS2"] = "Note for Classic players: Backups do not include Click-Castings and Layout Auto Switch of other characters"--]]
+--[[Translation missing --]]
+--[[ L["Backups"] = ""--]]
 L["Bar"] = "Barre"
 L["Bar Animation"] = "Animation de barre"
 L["Bar Orientation"] = "Orientation de la barre"
@@ -119,6 +124,7 @@ L["Cast By"] = "Lancer par"
 L["castByMe"] = "Afficher uniquement les améliorations que j'ai lancés"
 --[[Translation missing --]]
 --[[ L["Casts"] = ""--]]
+L["Cell settings will be overwritten!"] = "Tous les paramètres de Cell vont être écrasé !"
 L["Cell will report all deaths during a raid encounter."] = "Cell signalera toutes les morts lors d'un raid."
 L["Cell will report first %d deaths during a raid encounter."] = "Cell signalera les %d premières morts lors d'un raid."
 L["CENTER"] = "Centre"
@@ -138,9 +144,9 @@ L["Class Color"] = "Couleur de classe"
 L["Class Color (dark)"] = "Couleur de classe (sombre)"
 L["Class Filter"] = "Filtre de classe"
 --[[Translation missing --]]
---[[ L["clear"] = ""--]]
---[[Translation missing --]]
 --[[ L["Clear"] = "Clear"--]]
+--[[Translation missing --]]
+--[[ L["clear"] = ""--]]
 --[[Translation missing --]]
 --[[ L["clear unit"] = ""--]]
 L["cleuAurasTips"] = "Vérifier les événements CLEU pour les auras invisibles"
@@ -163,6 +169,8 @@ L["Copy"] = "Copie"
 L["Copy indicators from one layout to another"] = "Copier des indicateurs d'une mise en page à une autre"
 L["Create"] = "Créer"
 L["create a \"Healers\" indicator"] = "créer un indicateur \"Soigneur\""
+--[[Translation missing --]]
+--[[ L["Create Backup"] = ""--]]
 L["Create new debuff (id)"] = "Créer un nouvel affaiblissement (id)"
 L["Create new indicator"] = "Créer un nouvel indicateur"
 L["Create new layout"] = "Créer une nouvelle mise en page"
@@ -203,6 +211,8 @@ L["DECLINED"] = "DÉCLINÉ"
 L["Default layout"] = "Mise en page par défaut"
 L["Defensive Cooldowns"] = "Temps de recharge défensifs"
 L["Delete"] = "Supprimer"
+--[[Translation missing --]]
+--[[ L["Delete backup"] = ""--]]
 L["Delete debuff?"] = "Supprimer l'affaiblissement ?"
 L["Delete indicator"] = "Supprimer l'indicateur"
 L["Delete layout"] = "Supprimer la mise en page"
@@ -568,8 +578,8 @@ L["Party"] = "Groupe"
 --[[ L["Party Assignment Icon"] = ""--]]
 L["PENDING"] = "EN ATTENTE"
 L["Percentage"] = "Pourcentage"
-L["PET"] = "FAMILLIER"
 L["Pet"] = "Famillier"
+L["PET"] = "FAMILLIER"
 L["Pixel"] = "Pixel"
 --[[Translation missing --]]
 --[[ L["Pixel Perfect"] = "Pixel Perfect"--]]
@@ -629,6 +639,8 @@ L["Rect"] = "Rect"
 --[[ L["Refreshing unit buttons (%s)..."] = ""--]]
 --[[Translation missing --]]
 --[[ L["Remaining Time"] = "Remaining Time"--]]
+--[[Translation missing --]]
+--[[ L["Remember to backup your profile"] = ""--]]
 L["Remove"] = "Retirer"
 L["Rename"] = "Renommer"
 L["Rename indicator"] = "Renommer l'indicateur"
@@ -675,6 +687,8 @@ L["RESET_YES_NO"] = "|cff22ff22Oui|r - Réinitialiser Cell\n|cffff2222Non|r - Je
 --[[ L["Respond to whispers"] = "Respond to whispers"--]]
 --[[Translation missing --]]
 --[[ L["Response Type"] = "Response Type"--]]
+--[[Translation missing --]]
+--[[ L["Restore backup"] = ""--]]
 --[[Translation missing --]]
 --[[ L["Reverse Fill"] = "Reverse Fill"--]]
 L["Right"] = "Droite"
@@ -778,9 +792,9 @@ L["Size (Big)"] = "Taille (Grande)"
 --[[Translation missing --]]
 --[[ L["Smart Resurrection"] = "Smart Resurrection"--]]
 --[[Translation missing --]]
---[[ L["smooth"] = "Smooth"--]]
---[[Translation missing --]]
 --[[ L["Smooth"] = ""--]]
+--[[Translation missing --]]
+--[[ L["smooth"] = "Smooth"--]]
 L["SNIPPETS_TIPS"] = "[Double-clic] pour renommer. [Maj-clic] pour supprimer. Tous les extraits cochés seront automatiquement invoqués à la fin du processus d'initialisation de la cellule (dans l'événement ADDON_LOADED)."
 --[[Translation missing --]]
 --[[ L["Solid"] = "Solid"--]]
@@ -914,6 +928,8 @@ L["Unit's Target"] = "Cible de l'unité"
 L["Unlimited"] = "Illimité"
 L["Unlock"] = "Déverrouiller"
 L["unnamed"] = "sans nom"
+--[[Translation missing --]]
+--[[ L["Unselected settings will remain"] = ""--]]
 L["Use %s addon"] = "Utiliser l'addon %s"
 L["Use |cFFFFB5C5/cell buff X|r to set icon size"] = "Utilisez |cFFFFB5C5/cell buff X|r pour définir la taille de l'icône"
 L["Use |cFFFFB5C5/cell report X|r to set the number of reports during a raid encounter"] = "Utilisez |cFFFFB5C5/cell report X|r pour définir le nombre de rapports lors d'une rencontre de raid"
