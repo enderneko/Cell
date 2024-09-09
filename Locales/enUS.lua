@@ -89,6 +89,15 @@ select(2, ...).L = setmetatable({
         <p>(Retail) Enable "Always Update Auras" in General tab, if indicators do not update correctly.</p>
         <br/>
 
+        <h1>r240-release (Sep 9, 2024, 19:00 GMT+8)</h1>
+        <p>* Updated bleedList for TWW (PR #215).</p>
+        <p>+ Implemented Backups.</p>
+        <p>* Updated profile import.</p>
+        <p>* Fixed aura import/export.</p>
+        <p>* Fixed layout auto switch.</p>
+        <p>* Updated locales.</p>
+        <br/>
+
         <h1>r239-release (Aug 23, 2024, 22:00 GMT+8)</h1>
         <p>+ Snippet for enabled click cast on non-cell frames (PR #199).</p>
         <p>* Updated default indicator spells (PR #208).</p>
