@@ -203,7 +203,7 @@ local function Shared_CreateCooldown_Clock(frame)
     cooldown:SetReverse(true)
     cooldown:SetDrawEdge(false)
     cooldown:SetSwipeTexture(Cell.vars.whiteTexture)
-    cooldown:SetSwipeColor(0, 0, 0, 0.8)
+    cooldown:SetSwipeColor(0, 0, 0, 0.77)
     -- cooldown:SetEdgeTexture([[Interface\Cooldown\UI-HUD-ActionBar-SecondaryCooldown]])
 
     -- cooldown text
