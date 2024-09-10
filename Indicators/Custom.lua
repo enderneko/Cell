@@ -301,13 +301,13 @@ function I.ShowCustomIndicators(unitButton, auraType)
         if indicator and enabledIndicators[indicatorName] then
             if indicatorTable["num"] then
                 local t = indicatorTable["found"][unit]
-                sort(t, comparator)
-                for i = 1, indicatorTable["num"] do
-                    if not t[i] then break end
-                    -- 1:order, 2:start, 3:duration, 4:debuffType, 5:icon, 6:count, 7:refreshing, 8:color
-                    indicator[i]:SetCooldown(t[i][2], t[i][3], t[i][4], t[i][5], t[i][6], t[i][7], t[i][8])
-                end
                 if t[1] then
+                    sort(t, comparator)
+                    for i = 1, indicatorTable["num"] do
+                        if not t[i] then break end
+                        -- 1:order, 2:start, 3:duration, 4:debuffType, 5:icon, 6:count, 7:refreshing, 8:color
+                        indicator[i]:SetCooldown(t[i][2], t[i][3], t[i][4], t[i][5], t[i][6], t[i][7], t[i][8])
+                    end
                     indicator:Show()
                     indicator:UpdateSize()
                 end
