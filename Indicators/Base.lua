@@ -158,9 +158,9 @@ local function Shared_CreateCooldown_Vertical(frame)
     local icon = cooldown:CreateTexture(nil, "ARTWORK")
     cooldown.icon = icon
     -- icon:SetTexCoord(0.12, 0.88, 0.12, 0.88)
-    icon:SetDesaturated(true)
+    -- icon:SetDesaturated(true)
     icon:SetAllPoints(frame.icon)
-    icon:SetVertexColor(0.5, 0.5, 0.5, 1)
+    icon:SetVertexColor(0.4, 0.4, 0.4, 1)
     icon:AddMaskTexture(mask)
 end
 
