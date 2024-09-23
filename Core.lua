@@ -880,7 +880,7 @@ function SlashCmdList.CELL(msg, editbox)
     command = strlower(command or "")
     rest = strlower(rest or "")
 
-    if command == "options" or command == "opt" or command == "config" or command == "conf"then
+    if command == "options" or command == "opt" or command == "config" or command == "conf" then
         F:ShowOptionsFrame()
 
     elseif command == "healers" then
