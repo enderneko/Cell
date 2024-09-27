@@ -11,8 +11,8 @@
 
 [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/enderneko)
 
-Cell is a nice raid frame addon inspired by several great addons, such as __CompactRaid__, __Grid2__, __Aptechka__ and __VuhDo__.
-With a more human-friendly interface, Cell can provide a better user experience, better than ever.
+Cell is a nice raid frame addon inspired by several great addons, such as __CompactRaid__, __Grid2__, __Aptechka__ and __VuhDo__.  
+With a more human-friendly interface, Cell can provide a better user experience, better than ever.  
 Hope you enjoy.
 
 &nbsp;
