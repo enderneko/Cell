@@ -953,6 +953,8 @@ local targetedSpells = {
     -- The War Within --------------
     -- 圣焰隐修院
     424420, -- 余烬冲击
+    -- 艾拉-卡拉，回响之城
+    439506, -- 钻地冲击
 }
 
 function I.GetDefaultTargetedSpellsList()

@@ -3119,6 +3119,17 @@ function F:Revise()
         CellDB["general"]["alwaysUpdateAuras"] = CellDB["general"]["alwaysUpdateBuffs"] or CellDB["general"]["alwaysUpdateDebuffs"]
     end
 
+
+    -- r241-release
+    if CellDB["revise"] and dbRevision < 241 then
+        if Cell.isRetail then
+            if not F:TContains(CellDB["targetedSpellsList"], 439506) then -- 钻地冲击
+                tinsert(CellDB["targetedSpellsList"], 439506)
+                Cell.vars.targetedSpellsList = F:ConvertTable(CellDB["targetedSpellsList"])
+            end
+        end
+    end
+
     -- ----------------------------------------------------------------------- --
     --            update from old versions, validate all indicators            --
     -- ----------------------------------------------------------------------- --
