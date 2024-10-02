@@ -3125,8 +3125,29 @@ function F:Revise()
         if Cell.isRetail then
             if not F:TContains(CellDB["targetedSpellsList"], 439506) then -- 钻地冲击
                 tinsert(CellDB["targetedSpellsList"], 439506)
-                Cell.vars.targetedSpellsList = F:ConvertTable(CellDB["targetedSpellsList"])
             end
+            if not F:TContains(CellDB["targetedSpellsList"], 429545) then -- 噤声齿轮
+                tinsert(CellDB["targetedSpellsList"], 429545)
+            end
+            if not F:TContains(CellDB["targetedSpellsList"], 424888) then -- 震地猛击
+                tinsert(CellDB["targetedSpellsList"], 424888)
+            end
+            if not F:TContains(CellDB["targetedSpellsList"], 463248) then -- 排斥
+                tinsert(CellDB["targetedSpellsList"], 463248)
+            end
+            if not F:TContains(CellDB["targetedSpellsList"], 321828) then -- 拍手手
+                tinsert(CellDB["targetedSpellsList"], 321828)
+            end
+            if not F:TContains(CellDB["targetedSpellsList"], 323057) then -- 灵魂之箭
+                tinsert(CellDB["targetedSpellsList"], 323057)
+            end
+            if not F:TContains(CellDB["targetedSpellsList"], 333479) then -- 吐疫
+                tinsert(CellDB["targetedSpellsList"], 333479)
+            end
+            if not F:TContains(CellDB["targetedSpellsList"], 454438) then -- 艾泽里特炸药
+                tinsert(CellDB["targetedSpellsList"], 454438)
+            end
+            Cell.vars.targetedSpellsList = F:ConvertTable(CellDB["targetedSpellsList"])
         end
     end
 
