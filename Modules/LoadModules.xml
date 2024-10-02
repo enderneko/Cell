@@ -1,25 +1,33 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://www.blizzard.com/wow/ui/ https://raw.githubusercontent.com/Gethe/wow-ui-source/live/Interface/FrameXML/UI_shared.xsd">
+    xsi:schemaLocation="http://www.blizzard.com/wow/ui/ https://raw.githubusercontent.com/Gethe/wow-ui-source/live/Interface/AddOns/Blizzard_SharedXML/UI.xsd">
     <Script file="OptionsFrame.lua"/>
-    <Script file="General.lua"/>
-    <Script file="General_Nicknames.lua"/>
-    <Script file="Appearance.lua"/>
-    <Script file="Layouts.lua"/>
-    <Script file="Layouts_PowerFilters.lua"/>
-    <Script file="Layouts_ImportExport.lua"/>
-    <Script file="ClickCastings.lua"/>
-    <Script file="ClickCastings_ImportExport.lua"/>
-    <Script file="Indicators.lua"/>
-    <Script file="Indicators_Copy.lua"/>
-    <Script file="Indicators_Export.lua"/>
-    <Script file="Indicators_Import.lua"/>
-    <Script file="Indicators_TextureSelector.lua"/>
-    <Script file="RaidDebuffs.lua"/>
-    <Script file="RaidDebuffs_ImportExport.lua"/>
-    <Script file="Utilities.lua"/>
-    <Script file="About.lua"/>
-    <Script file="About_ImportExport.lua"/>
-    <Script file="About_Backup.lua"/>
-    <Script file="Changelogs.lua"/>
-    <Script file="CodeSnippets.lua"/>
+    <!-- General -->
+    <Script file="General\General.lua"/>
+    <Script file="General\Nicknames.lua"/>
+    <!-- Appearance -->
+    <Script file="Appearance\Appearance.lua"/>
+    <!-- Click-Castings -->
+    <Script file="ClickCastings\ClickCastings.lua"/>
+    <Script file="ClickCastings\ImportExport.lua"/>
+    <!-- Layouts -->
+    <Script file="Layouts\Layouts.lua"/>
+    <Script file="Layouts\PowerFilters.lua"/>
+    <Script file="Layouts\ImportExport.lua"/>
+    <!-- Indicators -->
+    <Script file="Indicators\Indicators.lua"/>
+    <Script file="Indicators\Copy.lua"/>
+    <Script file="Indicators\Export.lua"/>
+    <Script file="Indicators\Import.lua"/>
+    <Script file="Indicators\TextureSelector.lua"/>
+    <!-- RaidDebuffs -->
+    <Script file="RaidDebuffs\RaidDebuffs.lua"/>
+    <Script file="RaidDebuffs\ImportExport.lua"/>
+    <!-- Utilities -->
+    <Script file="Utilities\Utilities.lua"/>
+    <!-- About -->
+    <Script file="About\About.lua"/>
+    <Script file="About\ImportExport.lua"/>
+    <Script file="About\Backup.lua"/>
+    <Script file="About\Changelogs.lua"/>
+    <Script file="About\CodeSnippets.lua"/>
 </Ui>
