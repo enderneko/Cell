@@ -15,7 +15,7 @@ local supporters1 = { -- wowIDs
     {"Sjerry-死亡之翼 (CN)"}, -- 爱发电用户_7957f
     {"貼饼子-匕首岭 (CN)"},
     {"心耀-冰风岗 (CN)"}, -- warbaby (爱不易)
-    {"秋末旷夜-凤凰之神 (CN)"}, --
+    {"秋末旷夜-凤凰之神 (CN)", "秋末旷叶-凤凰之神 (CN)"}, -- 爱发电用户_760ee (爱发电)
     {"曾經活過-憤怒使者 (TW)"}, -- ZzZ (爱发电)
     {"音速豆奶-白银之手 (CN)"}, -- 爱发电用户_83f12
     {"Hardpp-Illidan (US)", "六月的奶德-艾露恩 (CN)"}, -- 爱发电用户_15402
@@ -43,11 +43,11 @@ local supporters1 = { -- wowIDs
     }, -- Martin van Vuuren (Ko-fi)
     {"Shendreakah-Zul'jin (US)"}, -- Shendreakah - Zul-jin (Ko-fi)
     {"Palymoo-Twistingnether (EU)"}, -- Palymoo-Twistingnether (EU) (Ko-fi)
-    {"Skywarden-Sylvanas (EU)"}, -- Serghei Iakovlev (Ko-fi)
+    {"|cffff8000Skywarden-Sylvanas (EU)|r"}, -- Serghei Iakovlev (Ko-fi)
     {"Fourdigitiq-Blackrock (EU)"}, -- Rou (Ko-fi)
     {"Leako-Draenor (EU)"}, -- Leako (Ko-fi)
-    {"Asuranpala-Draenor (EU)"}, -- AsuranDex (Ko-fi)
-    {"Poolparty-Khaz'goroth (US)"}, -- Poolparty (Ko-fi)
+    {"|cffff8000Asuranpala-Draenor (EU)|r"}, -- AsuranDex (Ko-fi)
+    {"|cffff8000Poolparty-Khaz'goroth (US)|r"}, -- Poolparty (Ko-fi)
     {"Tenspiritak-Drakthul (EU)"}, -- Tenspiritak (Ko-fi)
     {"Darrágh-Blackrock (EU)"}, -- Jim (Ko-fi)
     {"Cerrmor-Stormrage (US)"}, -- (Ko-fi)
@@ -64,13 +64,19 @@ local supporters1 = { -- wowIDs
         "Drumonji-Blackhand (EU)",
     }, -- Ko-fi
     {"Saintara-Blackhand (EU)"}, -- Ko-fi
-    {"Lúthieñ-Ravencrest (EU)"}, -- Zion (Ko-fi)
+    {"|cffff8000Lúthieñ-Ravencrest (EU)|r"}, -- Zion (Ko-fi)
     {"Jeânnîne-Hyjal (EU)"}, -- Jânine (Ko-fi)
     {
         "Angelofbliss-TarrenMill (EU)",
         "Angelique-Dawnbringer (EU)",
     }, -- Angelofbliss (Ko-fi)
     {"Stormpork-Silvermoon (EU)"}, -- Magicpork (Ko-fi)
+    {"日理万基-罗宁 (CN)"}, -- LPRO (爱发电)
+    {"Kimo-海克泰尔 (CN)"}, -- 爱发电用户_30f63 (爱发电)
+    {"Fróger-TarrenMill (EU)"}, -- Fróger (Ko-fi)
+    {"风不竞-影之哀伤 (CN)"}, -- 空想无量自在 (爱发电)
+    {"絵野-金色平原 (CN)"}, -- Neet_F (爱发电)
+    {"Shichiki-Antonidas (EU)"}, -- Shichiki-EU-Antonidas (Ko-fi)
 }
 
 local supporters2 = { -- 有些早期的发电记录已经丢失了……
@@ -136,15 +142,15 @@ local supporters2 = { -- 有些早期的发电记录已经丢失了……
     {"8xs3", "爱发电"}, -- 2024-05-12 爱发电用户_8xs3
     {"Palymoo", "Ko-fi"}, -- 2024-05-12
     {"Winkupo", "Ko-fi"}, -- 2024-05-14
-    {"Serghei Iakovlev", "Ko-fi"}, -- 2024-05-15
+    {"|cffff8000Serghei Iakovlev|r", "Ko-fi"}, -- 2024-05-15
     {"Rou", "Ko-fi"}, -- 2024-05-23
     {"Leako", "Ko-fi"}, -- 2024-05-30
     {"lfence", "Ko-fi"}, -- 2024-06-03
-    {"AsuranDex", "Ko-fi"}, -- 2024-06-24
+    {"|cffff8000AsuranDex|r", "Ko-fi"}, -- 2024-06-24
     {"fca53", "爱发电"}, -- 2024-07-01 爱发电用户_fca53
     {"Likle", "Ko-fi"}, -- 2024-07-03
     {"eWhK", "爱发电"}, -- 2024-07-03 爱发电用户_eWhK
-    {"Poolparty", "Ko-fi"}, -- 2024-07-07
+    {"|cffff8000Poolparty|r", "Ko-fi"}, -- 2024-07-07
     {"Tenspiritak", "Ko-fi"}, -- 2024-07-07
     {"Jim", "Ko-fi"}, -- 2024-07-13
     {"Cerrmor-Stormrage", "Ko-fi"}, -- 2024-07-15
@@ -157,11 +163,21 @@ local supporters2 = { -- 有些早期的发电记录已经丢失了……
     {"男月月", "Ko-fi"}, -- 2024-07-31
     {"Akanma·Starsong", "爱发电"}, -- 2024-08-01
     {"Druladin-Blackhand", "Ko-fi"}, -- 2024-08-12
-    {"Zion", "Ko-fi"}, -- 2024-08-18
+    {"|cffff8000Zion|r", "Ko-fi"}, -- 2024-08-18
     {"Saintara-Blackhand", "Ko-fi"}, -- 2024-08-23
     {"Jânine", "Ko-fi"}, -- 2024-08-24
     {"Angelofbliss", "Ko-fi"}, -- 2024-08-24
     {"Magicpork", "Ko-fi"}, -- 2024-08-30
+    {"LPRO", "爱发电"}, -- 2024-09-08
+    {"30f63", "爱发电"}, -- 2024-09-09
+    {"760ee", "爱发电"}, -- 2024-09-11
+    {"Xonqevo", "Ko-fi"}, -- 2024-09-16
+    {"Fróger", "Ko-fi"}, -- 2024-09-21
+    {"空想无量自在", "爱发电"}, -- 2024-09-25
+    {"httpete", "Ko-fi"}, -- 2024-09-28
+    {"Neet_F", "爱发电"}, -- 2024-09-28
+    {"冷冽谷尬舞队队长", "爱发电"}, -- 2024-10-01
+    {"Shichiki-EU-Antonidas", "Ko-fi"}, -- 2024-10-03
 }
 
 -------------------------------------------------
@@ -181,7 +197,12 @@ local wowSupporters = {}
 do
     for _, t in pairs(supporters1) do
         for i, name in pairs(t) do
-            local fullName = strmatch(t[i], "^(.+%-.+) %(%u%u%)$")
+            local fullName
+            if strfind(name, "^|") then
+                fullName = strmatch(name, "^|cff......(.+%-.+) %(%u%u%)|r$")
+            else
+                fullName = strmatch(name, "^(.+%-.+) %(%u%u%)$")
+            end
             wowSupporters[fullName] = true
         end
     end
