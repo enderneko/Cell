@@ -3151,6 +3151,31 @@ function F:Revise()
         if type(CellDB["nicknames"]["blacklist"]) ~= "table" then
             CellDB["nicknames"]["blacklist"] = {}
         end
+
+        if type(CellDB["appearance"]["colorThresholds"]) ~= "table" then
+            CellDB["appearance"]["colorThresholds"] = CellDB["appearance"]["gradientColors"]
+            CellDB["appearance"]["gradientColors"] = nil
+            tinsert(CellDB["appearance"]["colorThresholds"], true)
+            CellDB["appearance"]["colorThresholdsLoss"] = CellDB["appearance"]["gradientColorsLoss"]
+            CellDB["appearance"]["gradientColorsLoss"] = nil
+            tinsert(CellDB["appearance"]["colorThresholdsLoss"], true)
+        end
+
+        if CellDB["appearance"]["barColor"][1] == "gradient" then
+            CellDB["appearance"]["barColor"][1] = "threshold1"
+        elseif CellDB["appearance"]["barColor"][1] == "gradient2" then
+            CellDB["appearance"]["barColor"][1] = "threshold2"
+        elseif CellDB["appearance"]["barColor"][1] == "gradient3" then
+            CellDB["appearance"]["barColor"][1] = "threshold3"
+        end
+
+        if CellDB["appearance"]["lossColor"][1] == "gradient" then
+            CellDB["appearance"]["lossColor"][1] = "threshold1"
+        elseif CellDB["appearance"]["lossColor"][1] == "gradient2" then
+            CellDB["appearance"]["lossColor"][1] = "threshold2"
+        elseif CellDB["appearance"]["lossColor"][1] == "gradient3" then
+            CellDB["appearance"]["lossColor"][1] = "threshold3"
+        end
     end
 
     -- ----------------------------------------------------------------------- --
