@@ -72,8 +72,6 @@ L["Author"] = "제작자"
 --[[Translation missing --]]
 --[[ L["Autorun will be disabled for all code snippets"] = "Autorun will be disabled for all code snippets"--]]
 L["Available slash commands"] = "사용 가능한 슬래시 명령"
---[[Translation missing --]]
---[[ L["Awesome!"] = "Awesome!"--]]
 L["Background Alpha"] = "배경 투명도"
 --[[Translation missing --]]
 --[[ L["Background Color"] = ""--]]
@@ -95,6 +93,8 @@ L["BG 1-15"] = "전장 1-15"
 L["BG 16-40"] = "전장 16-40"
 --[[Translation missing --]]
 --[[ L["Big Debuffs"] = "Big Debuffs"--]]
+--[[Translation missing --]]
+--[[ L["Blacklist Target Player"] = ""--]]
 --[[Translation missing --]]
 --[[ L["Bleed"] = ""--]]
 --[[Translation missing --]]
@@ -188,6 +188,8 @@ L["Color"] = "색상"
 --[[ L["Color By"] = ""--]]
 --[[Translation missing --]]
 --[[ L["Color Duration Text"] = "Color Duration Text"--]]
+--[[Translation missing --]]
+--[[ L["Color Thresholds"] = ""--]]
 --[[Translation missing --]]
 --[[ L["Columns"] = ""--]]
 --[[Translation missing --]]
@@ -291,6 +293,8 @@ L["Edit spell"] = "주문 편집"
 --[[Translation missing --]]
 --[[ L["En"] = "En"--]]
 L["Enable"] = "사용"
+--[[Translation missing --]]
+--[[ L["Enable Color Gradient"] = ""--]]
 L["Enable Death Color"] = "죽음 색상 사용"
 --[[Translation missing --]]
 --[[ L["Enable Full Health Color"] = "Enable Full Health Color"--]]
@@ -318,6 +322,7 @@ L["Fade out menu buttons on mouseout"] = "마우스가 벗어날때 메뉴 옵�
 --[[ L["Fade Out These Buttons"] = "Fade Out These Buttons"--]]
 --[[Translation missing --]]
 --[[ L["fadeOut"] = "Fade out over time"--]]
+L["Faster Health Updates"] = "생명력 업데이트 속도 증가"
 --[[Translation missing --]]
 --[[ L["Filter Auto Switch"] = ""--]]
 L["first %d"] = "처음 %d명"
@@ -427,7 +432,6 @@ L["Import & Export All Settings"] = "모든 설정 가져오기 & 내보내기"
 --[[ L["Include Character Settings"] = ""--]]
 L["Include Nickname Settings"] = "별명 설정 포함"
 L["Incompatible Version"] = "비호환 버전"
-L["Increase Health Update Rate"] = "생명력 업데이트 속도 증가"
 L["Indicator Settings"] = "표시기 설정"
 L["Indicator settings are part of Layout settings which are account-wide."] = "표시기 설정은 계정 전체 배치 설정의 일부입니다."
 L["Indicator Sync"] = "표시기 동기화"
@@ -539,7 +543,10 @@ L["Name: "] = "이름:"
 L["New"] = "신규"
 L["New version found (%s). Please visit %s to get the latest version."] = "새로운 버전을 찾았습니다 (%s). 최신 버전을 받으시려면 %s|1을;를; 방문하십시오."
 L["Nickname"] = "별명"
+--[[Translation missing --]]
+--[[ L["Nickname Blacklist"] = ""--]]
 L["Nickname Options"] = "별명 옵션"
+L["Nickname Sync"] = "다른 사람과 별명 동기화"
 L["No"] = "아니요"
 L["No custom debuffs to export!"] = "내보낼 사용자 정의 약화 효과가 없습니다!"
 --[[Translation missing --]]
@@ -870,7 +877,6 @@ L["Status Text Position"] = "상태 문자 위치"
 --[[ L["Style"] = ""--]]
 --[[Translation missing --]]
 --[[ L["Supporters"] = "Supporters"--]]
-L["Sync Nicknames with Others"] = "다른 사람과 별명 동기화"
 L["Sync Status"] = "동기화 상태"
 --[[Translation missing --]]
 --[[ L["Sync With"] = "Sync With"--]]

@@ -37,8 +37,7 @@ L["Allow smaller value"] = "Permitir valor menor"
 L["Alpha"] = "Alpha"
 L["Always"] = "Sempre"
 L["Always Targeting"] = "Sempre Alvejando"
---[[Translation missing --]]
---[[ L["Always Update Auras"] = ""--]]
+L["Always Update Auras"] = "Sempre atualize as auras"
 L["Anchor Point"] = "Ponto de Ancoragem "
 L["Anchor To"] = "Ancorar à  "
 L["Anchored To"] = "Ancorado à "
@@ -55,15 +54,12 @@ L["Author"] = "Autor"
 L["Autorun will be disabled for all code snippets"] = [=[A execução automática será desativada para todos os snippets
 ]=]
 L["Available slash commands"] = "Comandos de barra disponíveis"
-L["Awesome!"] = "Demais!"
 L["Background Alpha"] = "Alpha do Background"
 L["Background Color"] = "Cor do Background"
---[[Translation missing --]]
---[[ L["BACKUP_TIPS"] = "Backups are not always reliable, especially when they are too old. It is recommended to backup often. When sharing profiles, backups are not included."--]]
---[[Translation missing --]]
---[[ L["BACKUP_TIPS2"] = "Note for Classic players: Backups do not include Click-Castings and Layout Auto Switch of other characters"--]]
---[[Translation missing --]]
---[[ L["Backups"] = ""--]]
+L["BACKUP_TIPS"] = [=[Os backups nem sempre são confiáveis, especialmente quando são muito antigos. Recomendo fazer backups com frequência. Ao compartilhar perfis, os backups não são incluídos.
+]=]
+L["BACKUP_TIPS2"] = "Nota para jogadores do Classic: os backups não incluem 'Lançar com clique' e 'Troca Automática de Layout' de outros personagens"
+L["Backups"] = "Backups"
 L["Bar"] = "Barra"
 L["Bar Animation"] = "Animação da Barra"
 L["Bar Orientation"] = "Orientação da Barra"
@@ -73,6 +69,8 @@ L["Beat"] = "Pulsar"
 L["BG 1-15"] = "BG 1-15"
 L["BG 16-40"] = "BG 16-40"
 L["Big Debuffs"] = "Grandes Debuffs"
+--[[Translation missing --]]
+--[[ L["Blacklist Target Player"] = ""--]]
 L["Bleed"] = "Sangramento"
 L["Blink"] = "Piscar"
 L["Blizzard Frames"] = "Frames da Blizzard"
@@ -108,7 +106,7 @@ L["cast Inner spell"] = "lançar Feitiço Interno"
 L["cast Outer spell"] = "lançar Feitiço Externo"
 L["castByMe"] = "Mostrar apenas buffs lançados por mim"
 L["Casts"] = "Lançamentos"
-L["Cell settings will be overwritten!"] = "Todas as configurações do Cell serão substituídas!"
+L["Cell settings will be overwritten!"] = "Todas as configurações do Cell serão sobrescritas!"
 L["Cell will report all deaths during a raid encounter."] = "Cell reportará todas as mortes durante um encontro de raid."
 L["Cell will report first %d deaths during a raid encounter."] = "Cell reportará as primeiras %d mortes durante um encontro de raid."
 L["CENTER"] = "Centro"
@@ -134,6 +132,8 @@ L["Code Snippets"] = "Code Snippets"
 L["Color"] = "Cor"
 L["Color By"] = "Colorir Por"
 L["Color Duration Text"] = "Cor do texto de duração"
+--[[Translation missing --]]
+--[[ L["Color Thresholds"] = ""--]]
 L["Columns"] = "Colunas"
 L["Combine Groups"] = "Combinar grupos"
 L["Common"] = "Comum"
@@ -146,8 +146,7 @@ L["Copy"] = "Copiar"
 L["Copy indicators from one layout to another"] = "Copiar indicadores de um layout pro outro"
 L["Create"] = "Criar"
 L["create a \"Healers\" indicator"] = "Criar um indicador para \"Healers\""
---[[Translation missing --]]
---[[ L["Create Backup"] = ""--]]
+L["Create Backup"] = "Criar Backup"
 L["Create new debuff (id)"] = "Criar um novo debuff (id)"
 L["Create new indicator"] = "Criar novo indicador"
 L["Create new layout"] = "Criar um novo layout"
@@ -181,8 +180,7 @@ L["DECLINED"] = "RECUSADO"
 L["Default layout"] = "Layout padrão"
 L["Defensive Cooldowns"] = "Cooldowns Defensivos"
 L["Delete"] = "Deletar"
---[[Translation missing --]]
---[[ L["Delete backup"] = ""--]]
+L["Delete backup"] = "Deletar Backup"
 L["Delete debuff?"] = "Deletar debuff?"
 L["Delete indicator"] = "Deletar indicador"
 L["Delete layout"] = "Deletar layout"
@@ -209,6 +207,8 @@ L["Edit"] = "Editar"
 L["Edit spell"] = "Editar feitiço"
 L["En"] = "En"
 L["Enable"] = "Enable"
+--[[Translation missing --]]
+--[[ L["Enable Color Gradient"] = ""--]]
 L["Enable Death Color"] = "Habilitar Cor de Morte"
 L["Enable Full Health Color"] = "Habilitar Cor de Vida Cheia"
 L["Enable Spotlight Frame"] = "Habilitar o Frame de Spotlight"
@@ -228,6 +228,7 @@ L["Fade Out Menu"] = "Desvanecer o Menu"
 L["Fade out menu buttons on mouseout"] = "Desvanecer os botões de menu ao passar o mouse"
 L["Fade Out These Buttons"] = "Desvanecer estes botões"
 L["fadeOut"] = "Desvanecer com o tempo"
+L["Faster Health Updates"] = "Aumentar a Taxa de Atualização de Vida"
 L["Filter Auto Switch"] = "Filtro de Troca Automática"
 L["first %d"] = "primeiro %d"
 L["Flash"] = "Flash"
@@ -305,7 +306,6 @@ L["Import & Export All Settings"] = "Importar & Exportar todas as configuraçõe
 L["Include Character Settings"] = "Incluir Configurações de Personagem"
 L["Include Nickname Settings"] = "Incluir configurações de apelido"
 L["Incompatible Version"] = "Versão Incompatível"
-L["Increase Health Update Rate"] = "Aumentar a Taxa de Atualização de Vida"
 L["Indicator Settings"] = "Configurações de indicador"
 L["Indicator settings are part of Layout settings which are account-wide."] = [=[As configurações do indicador fazem parte das configurações de layout que abrangem toda a conta.
 ]=]
@@ -383,7 +383,10 @@ L["Never"] = "Nunca"
 L["New"] = "Novo"
 L["New version found (%s). Please visit %s to get the latest version."] = "Nova versão encontrada (%s). Visite %s para obter a versão mais recente."
 L["Nickname"] = "Apelido"
+--[[Translation missing --]]
+--[[ L["Nickname Blacklist"] = ""--]]
 L["Nickname Options"] = "Opções de Apelido"
+L["Nickname Sync"] = "Sincronizar apelido com Outros"
 L["No"] = "Não"
 L["No custom debuffs to export!"] = "Nenhum debuff personalizado para exportar!"
 L["No guarantee of the order of members in each subgroup"] = "Nenhuma garantia da ordem dos membros em cada subgrupo"
@@ -469,8 +472,7 @@ L["Rect"] = "Retângulo"
 L["refresh unit buttons"] = "atualizar botões de unidade"
 L["Refreshing unit buttons (%s)..."] = "Atualizando botões de unidade (%s)..."
 L["Remaining Time"] = "Tempo Restante"
---[[Translation missing --]]
---[[ L["Remember to backup your profile"] = ""--]]
+L["Remember to backup your profile"] = "Lembre-se de fazer backup do seu perfil"
 L["Remove"] = "Remover"
 L["Rename"] = "Renomear"
 L["Rename indicator"] = "Renomear indicador"
@@ -503,8 +505,7 @@ L["Respond to requests that are only sent to me"] = "Responder a solicitações 
 L["Respond to specific dispellable debuffs"] = "Responda a debuffs dissipáveis ​​específicos"
 L["Respond to whispers"] = "Responda aos sussurros"
 L["Response Type"] = "Tipo de Resposta"
---[[Translation missing --]]
---[[ L["Restore backup"] = ""--]]
+L["Restore backup"] = "Restaurar Backup"
 L["Reverse Fill"] = "Preenchimento Reverso"
 L["Right"] = "Direita"
 L["RIGHT"] = "Direita"
@@ -597,7 +598,6 @@ L["Status Text Position"] = "Posição do Texto de Status"
 L["Strata"] = "Strata"
 L["Style"] = "Estilo"
 L["Supporters"] = "Apoiadores"
-L["Sync Nicknames with Others"] = "Sincronizar apelido com Outros"
 L["Sync Status"] = "Status de Sincronização"
 L["Sync With"] = "Sincronizar com"
 L["syncTips"] = "Defina o layout mestre aqui\nTodos os indicadores do slave-layout estão totalmente sincronizados com o mestre\nÉ uma sincronização bidirecional, mas todos os indicadores do slave-layout serão perdidos quando definido um mestre."
@@ -668,8 +668,7 @@ L["Unit's Target"] = "Alvo da Unidade"
 L["Unlimited"] = "Ilimitado"
 L["Unlock"] = "Destravar"
 L["unnamed"] = "sem nome"
---[[Translation missing --]]
---[[ L["Unselected settings will remain"] = ""--]]
+L["Unselected settings will remain"] = "As configurações não selecionadas permanecerão"
 L["Use %s addon"] = "Usar o addon %s"
 L["Use |cFFFFB5C5/cell buff X|r to set icon size"] = "Use |cFFFFB5C5/cell buff X|r para definir o tamanho do ícone"
 L["Use |cFFFFB5C5/cell report X|r to set the number of reports during a raid encounter"] = "Use |cFFFFB5C5/cell report X|r para definir o número de relatórios durante um encontro de raid"

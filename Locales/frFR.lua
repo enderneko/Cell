@@ -56,7 +56,6 @@ L["Aura Icon Options"] = "Options d'icône d'aura"
 L["Author"] = "Auteur"
 L["Autorun will be disabled for all code snippets"] = "L'exécution automatique sera désactivée pour tous les extraits de code"
 L["Available slash commands"] = "Commandes slash disponibles"
-L["Awesome!"] = "Génial !"
 L["Background Alpha"] = "Alpha d'arrière-plan"
 L["Background Color"] = "Couleur d'arrière-plan"
 --[[Translation missing --]]
@@ -77,6 +76,8 @@ L["BG 1-15"] = "BG 1-15"
 L["BG 16-40"] = "BG 16-40"
 --[[Translation missing --]]
 --[[ L["Big Debuffs"] = "Big Debuffs"--]]
+--[[Translation missing --]]
+--[[ L["Blacklist Target Player"] = ""--]]
 --[[Translation missing --]]
 --[[ L["Bleed"] = ""--]]
 --[[Translation missing --]]
@@ -157,6 +158,8 @@ L["Code Snippets"] = "Extraits de code"
 L["Color"] = "Couleur"
 L["Color By"] = "Couleur par"
 L["Color Duration Text"] = "Couleur du texte de la durée"
+--[[Translation missing --]]
+--[[ L["Color Thresholds"] = ""--]]
 L["Columns"] = "Colonnes"
 L["Combine Groups"] = "Combiner les groupes"
 L["Common"] = "Commun"
@@ -248,6 +251,8 @@ L["Edit spell"] = "Modifier le sort"
 --[[Translation missing --]]
 --[[ L["En"] = "En"--]]
 L["Enable"] = "Activer"
+--[[Translation missing --]]
+--[[ L["Enable Color Gradient"] = ""--]]
 L["Enable Death Color"] = "Activer la couleur de la mort"
 --[[Translation missing --]]
 --[[ L["Enable Full Health Color"] = "Enable Full Health Color"--]]
@@ -280,6 +285,8 @@ L["External Cooldowns"] = "Temps de recharge externes"
 --[[ L["Fade Out These Buttons"] = "Fade Out These Buttons"--]]
 --[[Translation missing --]]
 --[[ L["fadeOut"] = "Fade out over time"--]]
+--[[Translation missing --]]
+--[[ L["Faster Health Updates"] = "Faster Health Updates"--]]
 --[[Translation missing --]]
 --[[ L["Filter Auto Switch"] = ""--]]
 L["first %d"] = "%d premier"
@@ -404,8 +411,6 @@ L["Import"] = "Importer"
 --[[ L["Include Nickname Settings"] = "Include Nickname Settings"--]]
 --[[Translation missing --]]
 --[[ L["Incompatible Version"] = "Incompatible Version"--]]
---[[Translation missing --]]
---[[ L["Increase Health Update Rate"] = "Increase Health Update Rate"--]]
 L["Indicator Settings"] = "Paramètres de l'indicateur"
 L["Indicator settings are part of Layout settings which are account-wide."] = "Les paramètres de l'indicateur font partie des paramètres de mise en page qui s'appliquent à l'ensemble du compte."
 --[[Translation missing --]]
@@ -513,7 +518,11 @@ L["Never"] = "Jamais"
 L["New"] = "Nouveau"
 L["New version found (%s). Please visit %s to get the latest version."] = "Nouvelle version trouvée (%s). Merci de visiter %s pour avoir la dernière version."
 L["Nickname"] = "Surnom"
+--[[Translation missing --]]
+--[[ L["Nickname Blacklist"] = ""--]]
 L["Nickname Options"] = "Options de surnom"
+--[[Translation missing --]]
+--[[ L["Nickname Sync"] = "Nickname Sync"--]]
 L["No"] = "Non"
 L["No custom debuffs to export!"] = "Aucun affaiblissement personnalisé à exporter!"
 --[[Translation missing --]]
@@ -835,8 +844,6 @@ L["Strata"] = "Couches"
 L["Style"] = "Style"
 --[[Translation missing --]]
 --[[ L["Supporters"] = "Supporters"--]]
---[[Translation missing --]]
---[[ L["Sync Nicknames with Others"] = "Sync Nicknames with Others"--]]
 --[[Translation missing --]]
 --[[ L["Sync Status"] = "Sync Status"--]]
 --[[Translation missing --]]
