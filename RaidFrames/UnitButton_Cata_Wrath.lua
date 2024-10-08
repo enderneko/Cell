@@ -2586,8 +2586,10 @@ local function UnitButton_OnEvent(self, event, unit)
 
     else
         if event == "GROUP_ROSTER_UPDATE" then
-            self._updateRequired = 1
-            self._powerBarUpdateRequired = 1
+            self.__tickCount = 2
+            self.__updateElapsed = 0.25
+            -- self._updateRequired = 1
+            -- self._powerBarUpdateRequired = 1
 
         elseif event == "PLAYER_REGEN_ENABLED" or event == "PLAYER_REGEN_DISABLED" then
             UnitButton_UpdateLeader(self, event)
