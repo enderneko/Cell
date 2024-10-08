@@ -811,6 +811,8 @@ function eventFrame:PLAYER_LOGIN()
     I.UpdateCrowdControls(CellDB["crowdControls"])
     -- update pixel perfect
     Cell:Fire("UpdatePixelPerfect")
+    -- update LGF
+    F:UpdateFramePriority()
 end
 
 function eventFrame:UI_SCALE_CHANGED()

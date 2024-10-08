@@ -666,6 +666,8 @@ function eventFrame:PLAYER_LOGIN()
     Cell:Fire("UpdatePixelPerfect")
     -- LibHealComm
     -- F:EnableLibHealComm(CellDB["appearance"]["useLibHealComm"])
+    -- update LGF
+    F:UpdateFramePriority()
 end
 
 function eventFrame:UI_SCALE_CHANGED()

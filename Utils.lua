@@ -1931,26 +1931,30 @@ end
 -- LibGetFrame
 -------------------------------------------------
 local frame_priorities = {}
+local inited_priorities = {}
+local modified_priorities = {}
 local spotlightPriorityEnabled
 local quickAssistPriorityEnabled
 
 function F:UpdateFramePriority()
     wipe(frame_priorities)
+    wipe(modified_priorities)
     spotlightPriorityEnabled = nil
     quickAssistPriorityEnabled = nil
 
-    for i = #CellDB["general"]["framePriority"], 1, -1 do
-        local t = CellDB["general"]["framePriority"][i]
+    for i, t  in pairs(CellDB["general"]["framePriority"]) do
         if t[2] then
             if t[1] == "Main" then
-                tinsert(frame_priorities, "^CellNormalUnitFrame$")
+                tinsert(frame_priorities, i, "^CellNormalUnitFrame$")
             elseif t[1] == "Spotlight" then
-                tinsert(frame_priorities, "^CellSpotlightUnitFrame$")
+                tinsert(frame_priorities, i, "^CellSpotlightUnitFrame$")
                 spotlightPriorityEnabled = true
             else
-                tinsert(frame_priorities, "^CellQuickAssistUnitFrame$")
+                tinsert(frame_priorities, i, "^CellQuickAssistUnitFrame$")
                 quickAssistPriorityEnabled = true
             end
+        else
+            tinsert(frame_priorities, i, "^CellPlaceholder$")
         end
     end
 
@@ -1983,8 +1987,18 @@ function Cell.GetUnitFramesForLGF(unit, frames, priorities)
         frames[quickAssist] = "CellQuickAssistUnitFrame"
     end
 
-    for _, p in ipairs(frame_priorities) do
-        tinsert(priorities, 1, p)
+    if not inited_priorities[priorities] then
+        inited_priorities[priorities] = true
+        for i = 1, 3 do
+            tinsert(priorities, i, "^CellPlaceholder$")
+        end
+    end
+
+    if not modified_priorities[priorities] then
+        modified_priorities[priorities] = true
+        for i, p in ipairs(frame_priorities) do
+            priorities[i] = p
+        end
     end
 
     return frames

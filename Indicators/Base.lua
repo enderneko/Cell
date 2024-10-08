@@ -1573,7 +1573,7 @@ local function Glow_OnUpdate(glow, elapsed)
 end
 
 local function Glow_SetCooldown(glow, start, duration)
-    if glow.fadeOut then
+    if glow.fadeOut and duration ~= 0 then
         glow._start = start
         glow._duration = duration
         glow._elapsed = 0.1 -- update immediately
