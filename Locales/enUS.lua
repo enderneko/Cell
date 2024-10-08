@@ -89,6 +89,15 @@ select(2, ...).L = setmetatable({
         <p>(Retail) Enable "Always Update Auras" in General tab, if indicators do not update correctly.</p>
         <br/>
 
+        <h1>r241-release (Oct 8, 2024, 18:25 GMT+8)</h1>
+        <p>+ Implemented Nickname Blacklist and a hardcoded bad words list.</p>
+        <p>* Fixed Cell.GetUnitFramesForLGF.</p>
+        <p>* Fixed Power Text.</p>
+        <p>* Changed Gradient Color related options.</p>
+        <p>* Updated raid debuffs.</p>
+        <p>* Updated locales. Added esEs (thanks Zurent!).</p>
+        <br/>
+
         <h1>r240-release (Sep 9, 2024, 19:00 GMT+8)</h1>
         <p>* Updated bleedList for TWW (PR #215).</p>
         <p>+ Implemented Backups.</p>

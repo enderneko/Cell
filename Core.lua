@@ -200,7 +200,7 @@ function eventFrame:ADDON_LOADED(arg1)
                 ["locked"] = false,
                 ["fadeOut"] = false,
                 ["menuPosition"] = "top_bottom",
-                ["alwaysUpdateAuras"] = false,
+                ["alwaysUpdateAuras"] = true,
                 ["framePriority"] = {
                     {"Main", true},
                     {"Spotlight", false},

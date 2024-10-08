@@ -1,12 +1,11 @@
-[Full Changelog](https://github.com/enderneko/Cell/compare/r239-release...09860af26fddcb251c12a9b99adb4b375655a654)
+[Full Changelog](https://github.com/enderneko/Cell/compare/r240-release...09f80589eeca3cbc0830ab3cfaa8a3856d7d49f3)
 
-- Update bleedList for TWW (#215)
-- Update import
-- Implement backups
-- Change alwaysUpdateAuras
-- Fix auto layout switch
-- Fix aura import/export
-- Fix range check
-- Fix Primordial Wave
-- Update slash (strlower)
+- Implement nickname blacklist
+- Fix Cell.GetUnitFramesForLGF
+- Fix powerMax
+- Fix GROUP_ROSTER_UPDATE
+- Change GradientColors to ColorThresholds
+- Update raid debuffs
+- Update targeted spells
+- Add esES (Thanks Zurent!)
 - Update locales
