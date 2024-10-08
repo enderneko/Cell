@@ -1968,7 +1968,7 @@ UnitButton_UpdatePowerMax = function(self)
     if not unit then return end
 
     self.states.powerMax = UnitPowerMax(unit)
-    if self.states.powerMax < 0 then self.states.powerMax = 0 end
+    if self.states.powerMax <= 0 then self.states.powerMax = 1 end
 
     if barAnimationType == "Smooth" then
         self.widgets.powerBar:SetMinMaxSmoothedValue(0, self.states.powerMax)
