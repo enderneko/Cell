@@ -197,6 +197,7 @@ function eventFrame:ADDON_LOADED(arg1)
                 ["sync"] = false,
                 ["custom"] = false,
                 ["list"] = {},
+                ["blacklist"] = {},
             }
         end
 

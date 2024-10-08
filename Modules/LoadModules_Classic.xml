@@ -3,7 +3,8 @@
     <Script file="OptionsFrame.lua"/>
     <!-- General -->
     <Script file="General\General.lua"/>
-    <Script file="General\Nicknames.lua"/>
+    <Script file="General\Nicknames_Custom.lua"/>
+    <Script file="General\Nicknames_Blacklist.lua"/>
     <!-- Appearance -->
     <Script file="Appearance\Appearance.lua"/>
     <!-- Click-Castings -->

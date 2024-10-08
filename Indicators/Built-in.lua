@@ -1111,13 +1111,13 @@ function I.CreateNameText(parent)
         local name
 
         -- supporter rainbow
-        if nameText.name.rainbow then
-            nameText.name.updater:SetScript("OnUpdate", nil)
-            if nameText.name.timer then
-                nameText.name.timer:Cancel()
-                nameText.name.timer = nil
-            end
-        end
+        -- if nameText.name.rainbow then
+        --     nameText.name.updater:SetScript("OnUpdate", nil)
+        --     if nameText.name.timer then
+        --         nameText.name.timer:Cancel()
+        --         nameText.name.timer = nil
+        --     end
+        -- end
 
         -- only check nickname for players
         if parent.states.isPlayer then

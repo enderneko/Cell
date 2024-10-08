@@ -15,7 +15,7 @@ generalTab:Hide()
 local showSoloCB, showPartyCB, showRaidCB, hideBlizzardPartyCB, hideBlizzardRaidCB
 
 local function CreateVisibilityPane()
-    local visibilityPane = Cell:CreateTitledPane(generalTab, L["Visibility"], 205, 110)
+    local visibilityPane = Cell:CreateTitledPane(generalTab, L["Visibility"], 205, 130)
     visibilityPane:SetPoint("TOPLEFT", generalTab, "TOPLEFT", 5, -5)
 
     showSoloCB = Cell:CreateCheckButton(visibilityPane, L["Show Solo"], function(checked, self)
@@ -81,7 +81,7 @@ local function UpdateTooltipsOptions()
 end
 
 local function CreateTooltipsPane()
-    local tooltipsPane = Cell:CreateTitledPane(generalTab, L["Tooltips"], 205, 280)
+    local tooltipsPane = Cell:CreateTitledPane(generalTab, L["Tooltips"], 205, 270)
     tooltipsPane:SetPoint("TOPLEFT", generalTab, "TOPLEFT", 222, -5)
 
     enableTooltipsCB = Cell:CreateCheckButton(tooltipsPane, L["Enabled"], function(checked, self)
@@ -176,7 +176,7 @@ local lockCB, fadeOutCB, menuPositionDD
 
 local function CreatePositionPane()
     local positionPane = Cell:CreateTitledPane(generalTab, L["Position"], 205, 120)
-    positionPane:SetPoint("TOPLEFT", generalTab, 5, -145)
+    positionPane:SetPoint("TOPLEFT", generalTab, 5, -150)
 
     lockCB = Cell:CreateCheckButton(positionPane, L["Lock Cell Frames"], function(checked, self)
         CellDB["general"]["locked"] = checked
@@ -221,14 +221,16 @@ end
 -------------------------------------------------
 local nicknameEB, syncCB
 local function CreateNicknamePane()
-    local nicknamePane = Cell:CreateTitledPane(generalTab, L["Nickname"], 422, 110)
-    nicknamePane:SetPoint("TOPLEFT", generalTab, 5, -290)
+    local nicknamePane = Cell:CreateTitledPane(generalTab, L["Nickname"], 205, 130)
+    nicknamePane:SetPoint("TOPLEFT", generalTab, 5, -300)
 
     -- my nickname
-    nicknameEB = Cell:CreateEditBox(nicknamePane, 260, 20)
+    nicknameEB = Cell:CreateEditBox(nicknamePane, 195, 20)
     nicknameEB:SetPoint("TOPLEFT", 5, -27)
     nicknameEB:SetScript("OnTextChanged", function(self, userChanged)
         local text = strtrim(nicknameEB:GetText())
+        nicknameEB.tip:SetShown(text == "")
+
         if userChanged then
             if CellDB["nicknames"]["mine"] ~= "" then -- already set a nickname
                 if text ~= CellDB["nicknames"]["mine"] then -- not the same nickname
@@ -244,7 +246,7 @@ local function CreateNicknamePane()
         end
     end)
 
-    nicknameEB.confirmBtn = Cell:CreateButton(nicknameEB, L["Awesome!"], "accent", {100, 20})
+    nicknameEB.confirmBtn = Cell:CreateButton(nicknameEB, "OK", "accent", {50, 20})
     nicknameEB.confirmBtn:SetPoint("TOPRIGHT", nicknameEB)
     nicknameEB.confirmBtn:Hide()
     nicknameEB.confirmBtn:SetScript("OnHide", function()
@@ -260,12 +262,12 @@ local function CreateNicknamePane()
     end)
 
     nicknameEB.tip = nicknameEB:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
-    nicknameEB.tip:SetPoint("RIGHT", -5, 0)
+    nicknameEB.tip:SetPoint("LEFT", 5, 0)
     nicknameEB.tip:SetTextColor(0.4, 0.4, 0.4, 1)
     nicknameEB.tip:SetText(L["My Nickname"])
 
     -- sync with others
-    syncCB = Cell:CreateCheckButton(nicknamePane, L["Sync Nicknames with Others"], function(checked, self)
+    syncCB = Cell:CreateCheckButton(nicknamePane, L["Nickname Sync"], function(checked, self)
         CellDB["nicknames"]["sync"] = checked
         Cell:Fire("UpdateNicknames", "sync", checked)
     end)
@@ -278,12 +280,48 @@ local function CreateNicknamePane()
     customNicknamesBtn:SetScript("OnClick", function()
         F:ShowCustomNicknames()
     end)
+
+    -- custom
+    local blacklistBtn = Cell:CreateButton(nicknamePane, L["Nickname Blacklist"], "accent-hover", {137, 20})
+    blacklistBtn:SetPoint("TOPLEFT", customNicknamesBtn, "BOTTOMLEFT", 0, -7)
+    Cell.frames.generalTab.nicknameBlacklistBtn = blacklistBtn
+    blacklistBtn:SetScript("OnClick", function()
+        F:ShowNicknameBlacklist()
+    end)
 end
 
 -------------------------------------------------
 -- misc
 -------------------------------------------------
-local alwaysUpdateAurasCB, framePriorityWidget, useCleuCB, translitCB
+local alwaysUpdateAurasCB, useCleuCB, translitCB
+
+local function CreateMiscPane()
+    local miscPane = Cell:CreateTitledPane(generalTab, L["Misc"], 205, 130)
+    miscPane:SetPoint("TOPLEFT", generalTab, 222, -300)
+
+    alwaysUpdateAurasCB = Cell:CreateCheckButton(miscPane, L["Always Update Auras"], function(checked, self)
+        CellDB["general"]["alwaysUpdateAuras"] = checked
+    end, L["Ignore UNIT_AURA payloads"], L["This may help solve issues of indicators not updating correctly"])
+    alwaysUpdateAurasCB:SetPoint("TOPLEFT", 5, -27)
+    alwaysUpdateAurasCB:SetEnabled(Cell.isRetail)
+
+    useCleuCB = Cell:CreateCheckButton(miscPane, L["Faster Health Updates"], function(checked, self)
+        CellDB["general"]["useCleuHealthUpdater"] = checked
+        Cell:Fire("UpdateCLEU")
+    end, "|cffff2727"..L["HIGH CPU USAGE"].." (EXPERIMENTAL)", L["Use CLEU events to increase health update rate"])
+    useCleuCB:SetPoint("TOPLEFT", alwaysUpdateAurasCB, "BOTTOMLEFT", 0, -9)
+
+    translitCB = Cell:CreateCheckButton(miscPane, L["Translit Cyrillic to Latin"], function(checked, self)
+        CellDB["general"]["translit"] = checked
+        Cell:Fire("TranslitNames")
+    end)
+    translitCB:SetPoint("TOPLEFT", useCleuCB, "BOTTOMLEFT", 0, -9)
+end
+
+-------------------------------------------------
+-- LibGetFrame
+-------------------------------------------------
+local framePriorityWidget
 
 -- TODO: move to Widgets.lua
 local function CreateFramePriorityWidget(parent)
@@ -370,18 +408,12 @@ local function CreateFramePriorityWidget(parent)
     return f
 end
 
-local function CreateMiscPane()
-    local miscPane = Cell:CreateTitledPane(generalTab, L["Misc"], 422, 140)
-    miscPane:SetPoint("TOPLEFT", generalTab, 5, -420)
-
-    alwaysUpdateAurasCB = Cell:CreateCheckButton(miscPane, L["Always Update Auras"], function(checked, self)
-        CellDB["general"]["alwaysUpdateAuras"] = checked
-    end, L["Ignore UNIT_AURA payloads"], L["This may help solve issues of indicators not updating correctly"])
-    alwaysUpdateAurasCB:SetPoint("TOPLEFT", 5, -27)
-    alwaysUpdateAurasCB:SetEnabled(Cell.isRetail)
+local function CreateLibGetFramePane()
+    local miscPane = Cell:CreateTitledPane(generalTab, "LibGetFrame", 422, 80)
+    miscPane:SetPoint("TOPLEFT", generalTab, 5, -450)
 
     framePriorityWidget = CreateFramePriorityWidget(miscPane)
-    framePriorityWidget:SetPoint("TOPLEFT", alwaysUpdateAurasCB, "BOTTOMLEFT", 0, -29)
+    framePriorityWidget:SetPoint("TOPLEFT", 5, -45)
 
     -- framePriorityDD = Cell:CreateDropdown(miscPane, 250)
     -- framePriorityDD:SetPoint("TOPLEFT", alwaysUpdateAurasCB, "BOTTOMLEFT", 0, -29)
@@ -410,20 +442,8 @@ local function CreateMiscPane()
     -- })
 
     local framePriorityText = miscPane:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
-    framePriorityText:SetPoint("BOTTOMLEFT", framePriorityWidget, "TOPLEFT", 0, 1)
+    framePriorityText:SetPoint("BOTTOMLEFT", framePriorityWidget, "TOPLEFT", 0, 7)
     framePriorityText:SetText(L["Frame priorities for LibGetFrame"])
-
-    useCleuCB = Cell:CreateCheckButton(miscPane, L["Increase Health Update Rate"], function(checked, self)
-        CellDB["general"]["useCleuHealthUpdater"] = checked
-        Cell:Fire("UpdateCLEU")
-    end, "|cffff2727"..L["HIGH CPU USAGE"].." (EXPERIMENTAL)", L["Use CLEU events to increase health update rate"])
-    useCleuCB:SetPoint("TOPLEFT", framePriorityWidget, "BOTTOMLEFT", 0, -9)
-
-    translitCB = Cell:CreateCheckButton(miscPane, L["Translit Cyrillic to Latin"], function(checked, self)
-        CellDB["general"]["translit"] = checked
-        Cell:Fire("TranslitNames")
-    end)
-    translitCB:SetPoint("TOPLEFT", useCleuCB, "BOTTOMLEFT", 0, -9)
 end
 
 -------------------------------------------------
@@ -438,6 +458,7 @@ local function ShowTab(tab)
             CreatePositionPane()
             CreateNicknamePane()
             CreateMiscPane()
+            CreateLibGetFramePane()
 
             -- mask
             F:ApplyCombatProtectionToFrame(generalTab)

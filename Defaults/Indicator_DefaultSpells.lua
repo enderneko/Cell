@@ -889,6 +889,9 @@ local targetedSpells = {
     -- Battle for Azeroth ----------
     -- 围攻伯拉勒斯
     454438, -- 艾泽里特炸药
+    272571, -- 窒息之水
+    257063, -- 盐渍飞弹
+    256709, -- 钢刃之歌
 
     -- Shadowlands -----------------
     -- 通灵战潮 - Necrotic Wake
@@ -966,6 +969,12 @@ local targetedSpells = {
     -- 矶石宝库
     429545, -- 噤声齿轮
     424888, -- 震地猛击
+    459210, -- 暗影爪击
+    428711, -- 火成岩锤
+    -- 破晨号
+    431491, -- 污邪斩击
+    451119, -- 深渊轰击
+    431303, -- 暗夜箭
 }
 
 function I.GetDefaultTargetedSpellsList()

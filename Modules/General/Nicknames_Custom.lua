@@ -21,7 +21,7 @@ local function CreateCustomNicknamesFrame()
     customNicknamesFrame:SetScript("OnHide", function()
         customNicknamesFrame:Hide()
         Cell.frames.generalTab.mask:Hide()
-        Cell.frames.generalTab.customNicknamesBtn:SetFrameLevel(Cell.frames.generalTab:GetFrameLevel() + 1)
+        Cell.frames.generalTab.customNicknamesBtn:SetFrameLevel(Cell.frames.generalTab:GetFrameLevel() + 2)
         newItem:Hide()
     end)
 
@@ -306,7 +306,7 @@ function F:ShowCustomNicknames()
 
     if customNicknamesFrame:IsShown() then
         customNicknamesFrame:Hide()
-        Cell.frames.generalTab.customNicknamesBtn:SetFrameLevel(Cell.frames.generalTab:GetFrameLevel() + 1)
+        Cell.frames.generalTab.customNicknamesBtn:SetFrameLevel(Cell.frames.generalTab:GetFrameLevel() + 2)
     else
         customNicknamesFrame:Show()
         Cell.frames.generalTab.customNicknamesBtn:SetFrameLevel(Cell.frames.generalTab:GetFrameLevel() + 50)

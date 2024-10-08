@@ -3123,31 +3123,33 @@ function F:Revise()
     -- r241-release
     if CellDB["revise"] and dbRevision < 241 then
         if Cell.isRetail then
-            if not F:TContains(CellDB["targetedSpellsList"], 439506) then -- 钻地冲击
-                tinsert(CellDB["targetedSpellsList"], 439506)
-            end
-            if not F:TContains(CellDB["targetedSpellsList"], 429545) then -- 噤声齿轮
-                tinsert(CellDB["targetedSpellsList"], 429545)
-            end
-            if not F:TContains(CellDB["targetedSpellsList"], 424888) then -- 震地猛击
-                tinsert(CellDB["targetedSpellsList"], 424888)
-            end
-            if not F:TContains(CellDB["targetedSpellsList"], 463248) then -- 排斥
-                tinsert(CellDB["targetedSpellsList"], 463248)
-            end
-            if not F:TContains(CellDB["targetedSpellsList"], 321828) then -- 拍手手
-                tinsert(CellDB["targetedSpellsList"], 321828)
-            end
-            if not F:TContains(CellDB["targetedSpellsList"], 323057) then -- 灵魂之箭
-                tinsert(CellDB["targetedSpellsList"], 323057)
-            end
-            if not F:TContains(CellDB["targetedSpellsList"], 333479) then -- 吐疫
-                tinsert(CellDB["targetedSpellsList"], 333479)
-            end
-            if not F:TContains(CellDB["targetedSpellsList"], 454438) then -- 艾泽里特炸药
-                tinsert(CellDB["targetedSpellsList"], 454438)
+            local spells = {
+                439506, -- 钻地冲击
+                429545, -- 噤声齿轮
+                424888, -- 震地猛击
+                463248, -- 排斥
+                321828, -- 拍手手
+                323057, -- 灵魂之箭
+                333479, -- 吐疫
+                454438, -- 艾泽里特炸药
+                272571, -- 窒息之水
+                257063, -- 盐渍飞弹
+                431491, -- 污邪斩击
+                451119, -- 深渊轰击
+                428711, -- 火成岩锤
+                459210, -- 暗影爪击
+                256709, -- 钢刃之歌
+            }
+            for _, spell in pairs(spells) do
+                if not F:TContains(CellDB["targetedSpellsList"], spell) then
+                    tinsert(CellDB["targetedSpellsList"], spell)
+                end
             end
             Cell.vars.targetedSpellsList = F:ConvertTable(CellDB["targetedSpellsList"])
+        end
+
+        if type(CellDB["nicknames"]["blacklist"]) ~= "table" then
+            CellDB["nicknames"]["blacklist"] = {}
         end
     end
 
