@@ -94,7 +94,7 @@ local function LoadInstanceList(tier, instanceType, list)
     end
 end
 
-local CURRENT_SEASON_INDEX = Cell.isTWW and 12 or 10
+local CURRENT_SEASON_INDEX = 12
 
 local function LoadList()
     local currentTier = EJ_GetCurrentTier()

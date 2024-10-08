@@ -3139,6 +3139,7 @@ function F:Revise()
                 428711, -- 火成岩锤
                 459210, -- 暗影爪击
                 256709, -- 钢刃之歌
+                434786, -- 蛛网箭
             }
             for _, spell in pairs(spells) do
                 if not F:TContains(CellDB["targetedSpellsList"], spell) then

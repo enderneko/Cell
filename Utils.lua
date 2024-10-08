@@ -18,6 +18,16 @@ Cell.isWrath = WOW_PROJECT_ID == WOW_PROJECT_WRATH_CLASSIC
 Cell.isCata = WOW_PROJECT_ID == WOW_PROJECT_CATACLYSM_CLASSIC
 Cell.isTWW = LE_EXPANSION_LEVEL_CURRENT == LE_EXPANSION_WAR_WITHIN
 
+if Cell.isRetail then
+    Cell.flavor = "retail"
+elseif Cell.isCata then
+    Cell.flavor = "cata"
+elseif Cell.isWrath then
+    Cell.flavor = "wrath"
+elseif Cell.isVanilla then
+    Cell.flavor = "vanilla"
+end
+
 -------------------------------------------------
 -- class
 -------------------------------------------------
@@ -1726,7 +1736,7 @@ end
 -- frame
 -------------------------------------------------
 function F:GetMouseFocus()
-    if Cell.isTWW then
+    if Cell.isRetail then
         return GetMouseFoci()[1]   -- Latest Beta build changed this to return the table under key `1`
     else
         return GetMouseFocus()

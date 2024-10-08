@@ -33,9 +33,10 @@ local function DoImport()
         imported["appearance"]["healAbsorb"][1] = false
     end
 
-    -- indicators
+    -- layouts
     local builtInFound = {}
     for _, layout in pairs(imported["layouts"]) do
+        -- indicators
         for i =  #layout["indicators"], 1, -1 do
             if layout["indicators"][i]["type"] == "built-in" then -- remove unsupported built-in
                 local indicatorName = layout["indicators"][i]["indicatorName"]
@@ -46,6 +47,10 @@ local function DoImport()
             else -- remove invalid spells from custom indicators
                 F:FilterInvalidSpells(layout["indicators"][i]["auras"])
             end
+        end
+        -- powerFilters
+        if Cell.flavor ~= imported.flavor then
+            layout.powerFilters = F:Copy(Cell.defaults.layout.powerFilters)
         end
     end
 
@@ -165,6 +170,8 @@ local function GetExportString(includeNicknames, includeCharacter)
     if includeCharacter then
         db["characterDB"] = F:Copy(CellCharacterDB)
     end
+
+    db["flavor"] = Cell.flavor
 
     local str = Serializer:Serialize(db) -- serialize
     str = LibDeflate:CompressDeflate(str, deflateConfig) -- compress
