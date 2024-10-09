@@ -100,7 +100,7 @@ select(2, ...).L = setmetatable({
         <p>* Fixed Power Text.</p>
         <p>* Changed Gradient Color related options.</p>
         <p>* Updated raid debuffs.</p>
-        <p>* Updated locales. Added esEs (thanks Zurent!).</p>
+        <p>* Updated locales. Added esES (thanks Zurent!).</p>
         <br/>
 
         <h1>r240-release (Sep 9, 2024, 19:00 GMT+8)</h1>
