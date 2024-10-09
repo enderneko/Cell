@@ -12,6 +12,7 @@
     <Include file="AceComm-3.0\AceComm-3.0.xml"/>
     <Include file="LibSerialize\lib.xml"/>
     <Include file="LibDeflate\lib.xml"/>
+    <Script file="LibBadWords.lua"/>
     <Include file="LibTranslit-1.0\LibTranslit-1.0.xml"/>
     <!-- <Script file="LibGroupInfo.lua"/> -->
     <!-- <Script file="LibRangeCheck-2.0\LibRangeCheck-2.0.lua"/> -->
