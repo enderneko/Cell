@@ -1,11 +1,5 @@
-[Full Changelog](https://github.com/enderneko/Cell/compare/r240-release...09f80589eeca3cbc0830ab3cfaa8a3856d7d49f3)
+[Full Changelog](https://github.com/enderneko/Cell/compare/r241-release...2776dda6aae139ec0f1152528485d5deed8aeac4)
 
-- Implement nickname blacklist
-- Fix Cell.GetUnitFramesForLGF
-- Fix powerMax
-- Fix GROUP_ROSTER_UPDATE
-- Change GradientColors to ColorThresholds
-- Update raid debuffs
-- Update targeted spells
-- Add esES (Thanks Zurent!)
-- Update locales
+- Fix classic lib
+- Update deDE, esES, zhTW
+- Update toc

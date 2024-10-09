@@ -89,6 +89,11 @@ select(2, ...).L = setmetatable({
         <p>(Retail) Enable "Always Update Auras" in General tab, if indicators do not update correctly.</p>
         <br/>
 
+        <h1>r242-release (Oct 9, 2024, 10:30 GMT+8)</h1>
+        <p>* Fixed for Classic.</p>
+        <p>* Updated deDE, esES, zhTW.</p>
+        <br/>
+
         <h1>r241-release (Oct 8, 2024, 18:25 GMT+8)</h1>
         <p>+ Implemented Nickname Blacklist and a hardcoded bad words list.</p>
         <p>* Fixed Cell.GetUnitFramesForLGF.</p>
