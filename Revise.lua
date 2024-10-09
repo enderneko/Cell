@@ -3190,28 +3190,11 @@ function F:Revise()
             -- built-ins
             for i, t in ipairs(layout["indicators"]) do
                 local name = t["indicatorName"]
-                if t["type"] == "built-in" and toValidate[name] then
-                    if i == toValidate[name] then
-                        -- copy correct indicator
-                        F:Debug(layoutName, "CORRECT_FOUND", i, name)
-                        tinsert(temp, i, t)
-                    else
-                        -- search for correct indicator
-                        local found
-                        for j = i, #layout["indicators"] do
-                            if name == layout["indicators"][j]["indicatorName"] then
-                                F:Debug(layoutName, "WRONG_FOUND", j, "->", toValidate[name], name)
-                                found = true
-                                tinsert(temp, toValidate[name], layout["indicators"][j])
-                                break
-                            end
-                        end
-                        -- not found, copy from Defaults
-                        if not found then
-                            F:Debug(layoutName, "WRONG_NOT_FOUND", i, name)
-                            tinsert(temp, toValidate[name], F:Copy(Cell.defaults.layout.indicators[toValidate[name]]))
-                        end
-                    end
+                local correctIndex = toValidate[name]
+
+                if t["type"] == "built-in" and correctIndex then
+                    F:Debug(layoutName, "CORRECT_FOUND", correctIndex, name)
+                    temp[correctIndex] = t
                     -- remove validated
                     toValidate[name] = nil
                 end
@@ -3219,27 +3202,24 @@ function F:Revise()
 
             -- fix missing indicators
             for name, index in pairs(toValidate) do
-                if temp[index] then --? possible?
-                    F:Debug(layoutName, "FIXED_MISSING_REPLACE", index, name)
-                    temp[index] = F:Copy(Cell.defaults.layout.indicators[index])
-                else
-                    F:Debug(layoutName, "FIXED_MISSING_INSERT", index, name)
-                    tinsert(temp, index, F:Copy(Cell.defaults.layout.indicators[index]))
-                end
+                F:Debug(layoutName, "FIXED_MISSING", index, name)
+                temp[index] = F:Copy(Cell.defaults.layout.indicators[index])
             end
 
-            -- check indices
-            local maxKey
-            for i, t in pairs(temp) do
-                local name = t["indicatorName"]
-                if Cell.defaults.indicatorIndices[name] ~= i then
-                    temp[i] = F:Copy(Cell.defaults.layout.indicators[index])
-                    F:Print(L["Reset"] .. " " .. L[t["name"]])
-                end
-                maxKey = max(maxKey or 0, i)
+            --? check again
+            local maxKey = 0
+            for i in pairs(temp) do
+                maxKey = max(maxKey, i)
             end
-            for i = Cell.defaults.builtIns + 1, maxKey do
-                temp[i] = nil
+            for i = 1, maxKey do
+                if i <= Cell.defaults.builtIns then
+                    if not temp[i] or i ~= Cell.defaults.indicatorIndices[temp[i]["indicatorName"]] then
+                        F:Debug(layoutName, "RESET_WRONG", i, name)
+                        temp[i] = F:Copy(Cell.defaults.layout.indicators[i])
+                    end
+                else
+                    temp[i] = nil
+                end
             end
 
             -- customs
