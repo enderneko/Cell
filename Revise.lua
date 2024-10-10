@@ -3122,33 +3122,6 @@ function F:Revise()
 
     -- r241-release
     if CellDB["revise"] and dbRevision < 241 then
-        if Cell.isRetail then
-            local spells = {
-                439506, -- 钻地冲击
-                429545, -- 噤声齿轮
-                424888, -- 震地猛击
-                463248, -- 排斥
-                321828, -- 拍手手
-                323057, -- 灵魂之箭
-                333479, -- 吐疫
-                454438, -- 艾泽里特炸药
-                272571, -- 窒息之水
-                257063, -- 盐渍飞弹
-                431491, -- 污邪斩击
-                451119, -- 深渊轰击
-                428711, -- 火成岩锤
-                459210, -- 暗影爪击
-                256709, -- 钢刃之歌
-                434786, -- 蛛网箭
-            }
-            for _, spell in pairs(spells) do
-                if not F:TContains(CellDB["targetedSpellsList"], spell) then
-                    tinsert(CellDB["targetedSpellsList"], spell)
-                end
-            end
-            Cell.vars.targetedSpellsList = F:ConvertTable(CellDB["targetedSpellsList"])
-        end
-
         if type(CellDB["nicknames"]["blacklist"]) ~= "table" then
             CellDB["nicknames"]["blacklist"] = {}
         end
@@ -3176,6 +3149,43 @@ function F:Revise()
             CellDB["appearance"]["lossColor"][1] = "threshold2"
         elseif CellDB["appearance"]["lossColor"][1] == "gradient3" then
             CellDB["appearance"]["lossColor"][1] = "threshold3"
+        end
+    end
+
+    -- r243-release
+    if CellDB["revise"] and dbRevision < 243 then
+        if Cell.isRetail then
+            local spells = {
+                439506, -- 钻地冲击
+                429545, -- 噤声齿轮
+                424888, -- 震地猛击
+                463248, -- 排斥
+                321828, -- 拍手手
+                323057, -- 灵魂之箭
+                333479, -- 吐疫
+                454438, -- 艾泽里特炸药
+                272571, -- 窒息之水
+                257063, -- 盐渍飞弹
+                431491, -- 污邪斩击
+                451119, -- 深渊轰击
+                428711, -- 火成岩锤
+                459210, -- 暗影爪击
+                256709, -- 钢刃之歌
+                434786, -- 蛛网箭
+                451971, -- 熔岩之拳
+                451224, -- 暗影烈焰笼罩
+                451364, -- 残忍打击
+                451261, -- 大地之箭
+                449444, -- 熔火乱舞
+                450100, -- 碾碎
+                463217, -- 心能挥砍
+            }
+            for _, spell in pairs(spells) do
+                if not F:TContains(CellDB["targetedSpellsList"], spell) then
+                    tinsert(CellDB["targetedSpellsList"], spell)
+                end
+            end
+            Cell.vars.targetedSpellsList = F:ConvertTable(CellDB["targetedSpellsList"])
         end
     end
 

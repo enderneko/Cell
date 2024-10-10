@@ -872,6 +872,15 @@ end
 -- targetedSpells
 -------------------------------------------------
 local targetedSpells = {
+    -- Cataclysm -------------------
+    -- 格瑞姆巴托
+    451971, -- 熔岩之拳
+    451224, -- 暗影烈焰笼罩
+    451364, -- 残忍打击
+    451261, -- 大地之箭
+    449444, -- 熔火乱舞
+    450100, -- 碾碎
+
     -- Mists of Pandaria -----------
     -- 青龙寺 - Temple of the Jade Serpent
     106823, -- 翔龙猛袭 - Serpent Strike
@@ -909,6 +918,7 @@ local targetedSpells = {
     321828, -- 拍手手
     322614, -- 心灵连接 - Mind Link
     463248, -- 排斥
+    463217, -- 心能挥砍
     -- De Other Side
     320132, -- 暗影之怒 - Shadowfury
     332234, -- 挥发精油 - Essential Oil
