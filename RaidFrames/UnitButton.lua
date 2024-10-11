@@ -57,6 +57,7 @@ local CombatLogGetCurrentEventInfo = CombatLogGetCurrentEventInfo
 -- local GetAuraDataByAuraInstanceID = C_UnitAuras.GetAuraDataByAuraInstanceID
 local GetAuraSlots = C_UnitAuras.GetAuraSlots
 local GetAuraDataBySlot = C_UnitAuras.GetAuraDataBySlot
+local IsDelveInProgress = C_PartyInfo.IsDelveInProgress
 
 --! for AI followers, UnitClassBase is buggy
 local UnitClassBase = function(unit)
@@ -2654,10 +2655,14 @@ local function UnitButton_OnEvent(self, event, unit, arg)
 
     else
         if event == "GROUP_ROSTER_UPDATE" then
-            self.__tickCount = 2
-            self.__updateElapsed = 0.25
-            -- self._updateRequired = 1
-            -- self._powerBarUpdateRequired = 1
+            -- FIXME:
+            if IsDelveInProgress() then
+                self.__tickCount = 2
+                self.__updateElapsed = 0.25
+            else
+                self._updateRequired = 1
+                self._powerBarUpdateRequired = 1
+            end
 
         elseif event == "PLAYER_REGEN_ENABLED" or event == "PLAYER_REGEN_DISABLED" then
             UnitButton_UpdateLeader(self, event)
