@@ -270,6 +270,7 @@ Cell.defaults.layout = {
             ["position"] = {"BOTTOMLEFT", "BOTTOMLEFT", 0, 0},
             ["frameLevel"] = 5,
             ["height"] = 4,
+            ["texture"] = "Cell ".._G.DEFAULT,
             ["color"] = {1, 1, 0, 1},
             ["onlyShowOvershields"] = false,
         }, -- 15
