@@ -3282,6 +3282,51 @@ local function CreateSetting_Duration(parent)
     return widget
 end
 
+local function CreateSetting_Stack(parent)
+    local widget
+
+    if not settingWidgets["stack"] then
+        widget = addon:CreateFrame("CellIndicatorSettings_Stack", parent, 240, 52)
+        settingWidgets["stack"] = widget
+
+        -- show stack
+        widget.stackCB = addon:CreateCheckButton(widget, L["showStack"], function(checked, self)
+            widget.stackTbl[1] = checked
+            widget.func(widget.stackTbl)
+            -- widget.circledStackCB:SetEnabled(checked)
+        end)
+        widget.stackCB:SetPoint("TOPLEFT", 5, -8)
+
+        -- circled stack nums
+        widget.circledStackCB = addon:CreateCheckButton(widget, L["circledStackNums"], function(checked, self)
+            CellDropdownList:Hide()
+            widget.stackTbl[2] = checked
+            addon:SetEnabled(not checked, widget.durationDecimalText1, widget.durationDecimalText2, widget.durationDecimalDropdown)
+            widget.func(widget.stackTbl)
+        end, L["circledStackNums"], L["Require font support"])
+        widget.circledStackCB:SetPoint("TOPLEFT", widget.stackCB, "BOTTOMLEFT", 0, -8)
+
+        -- callback
+        function widget:SetFunc(func)
+            -- NOTE: to notify indicator update
+            widget.func = func
+        end
+
+        -- show db value
+        function widget:SetDBValue(stackTbl)
+            widget.stackTbl = stackTbl
+            widget.stackCB:SetChecked(stackTbl[1])
+            widget.circledStackCB:SetChecked(stackTbl[2])
+            -- widget.circledStackCB:SetEnabled(stackTbl[1])
+        end
+    else
+        widget = settingWidgets["stack"]
+    end
+
+    widget:Show()
+    return widget
+end
+
 local function CreateSetting_RoleTexture(parent)
     local widget
 
@@ -6254,6 +6299,7 @@ local builders = {
     ["color-power"] = CreateSetting_PowerColor,
     ["statusColors"] = CreateSetting_StatusColors,
     ["duration"] = CreateSetting_Duration,
+    ["stack"] = CreateSetting_Stack,
     ["roleTexture"] = CreateSetting_RoleTexture,
     ["glow"] = CreateSetting_Glow,
     ["glowOptions"] = CreateSetting_Glow,

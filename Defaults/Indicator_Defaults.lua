@@ -43,7 +43,10 @@ function I.GetDefaultCustomIndicatorTable(name, indicatorName, type, auraType)
                 false, -- round up duration
                 0, -- decimal
             },
-            ["circledStackNums"] = false,
+            ["stack"] = {
+                true, -- show stack
+                false, -- circled stack nums
+            },
         }
     elseif type == "bar" then
         t = {

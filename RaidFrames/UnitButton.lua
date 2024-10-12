@@ -286,13 +286,13 @@ local function HandleIndicators(b)
         if t["iconStyle"] then
             indicator:SetIconStyle(t["iconStyle"])
         end
-        -- update duration
-        if type(t["showDuration"]) == "boolean" or type(t["showDuration"]) == "number" then
-            indicator:ShowDuration(t["showDuration"])
-        end
         -- update animation
         if type(t["showAnimation"]) == "boolean" then
             indicator:ShowAnimation(t["showAnimation"])
+        end
+        -- update duration
+        if type(t["showDuration"]) == "boolean" or type(t["showDuration"]) == "number" then
+            indicator:ShowDuration(t["showDuration"])
         end
         -- update stack
         if type(t["showStack"]) == "boolean" then
@@ -302,9 +302,9 @@ local function HandleIndicators(b)
         if t["duration"] then
             indicator:SetDuration(t["duration"])
         end
-        -- update circled nums
-        if type(t["circledStackNums"]) == "boolean" then
-            indicator:SetCircledStackNums(t["circledStackNums"])
+        -- update stack
+        if t["stack"] then
+            indicator:SetStack(t["stack"])
         end
         -- update groupNumber
         if type(t["showGroupNumber"]) == "boolean" then
@@ -747,6 +747,11 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
             F:IterateAllUnitButtons(function(b)
                 UnitButton_UpdateAuras(b)
             end, true)
+        elseif setting == "stack" then
+            F:IterateAllUnitButtons(function(b)
+                b.indicators[indicatorName]:SetStack(value)
+                UnitButton_UpdateAuras(b)
+            end, true)
         elseif setting == "highlightType" then
             F:IterateAllUnitButtons(function(b)
                 b.indicators[indicatorName]:UpdateHighlight(value)
@@ -847,11 +852,6 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                 F:IterateAllUnitButtons(function(b)
                     b.indicators[indicatorName]:EnableBlacklistShortcut(value2)
                 end, true)
-            elseif value == "circledStackNums" then
-                F:IterateAllUnitButtons(function(b)
-                    b.indicators[indicatorName]:SetCircledStackNums(value2)
-                    UnitButton_UpdateAuras(b)
-                end, true)
             elseif value == "hideDamager" then
                 F:IterateAllUnitButtons(function(b)
                     b.indicators[indicatorName]:HideDamager(value2)
@@ -926,13 +926,13 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                 if value["texture"] then
                     indicator:SetTexture(value["texture"])
                 end
-                -- update showDuration
-                if type(value["showDuration"]) ~= "nil" then
-                    indicator:ShowDuration(value["showDuration"])
-                end
                 -- update showAnimation
                 if type(value["showAnimation"]) == "boolean" then
                     indicator:ShowAnimation(value["showAnimation"])
+                end
+                -- update showDuration
+                if type(value["showDuration"]) ~= "nil" then
+                    indicator:ShowDuration(value["showDuration"])
                 end
                 -- update showStack
                 if type(value["showStack"]) ~= "nil" then
@@ -942,9 +942,9 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                 if value["duration"] then
                     indicator:SetDuration(value["duration"])
                 end
-                -- update circled nums
-                if type(value["circledStackNums"]) == "boolean" then
-                    indicator:SetCircledStackNums(value["circledStackNums"])
+                -- update stack
+                if value["stack"] then
+                    indicator:SetStack(value["stack"])
                 end
                 -- update fadeOut
                 if type(value["fadeOut"]) == "boolean" then

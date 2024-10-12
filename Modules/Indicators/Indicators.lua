@@ -729,13 +729,13 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                 if t["texture"] then
                     indicator:SetTexture(t["texture"])
                 end
-                -- update duration
-                if type(t["showDuration"]) == "boolean" or type(t["showDuration"]) == "number" then
-                    indicator:ShowDuration(t["showDuration"])
-                end
                 -- update animation
                 if type(t["showAnimation"]) == "boolean" then
                     indicator:ShowAnimation(t["showAnimation"])
+                end
+                -- update duration
+                if type(t["showDuration"]) == "boolean" or type(t["showDuration"]) == "number" then
+                    indicator:ShowDuration(t["showDuration"])
                 end
                 -- update stack
                 if type(t["showStack"]) == "boolean" then
@@ -745,13 +745,13 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                 if t["duration"] then
                     indicator:SetDuration(t["duration"])
                 end
+                -- update stack
+                if t["stack"] then
+                    indicator:SetStack(t["stack"])
+                end
                 -- speed
                 if t["speed"] then
                     indicator:SetSpeed(t["speed"])
-                end
-                 -- update circled nums
-                 if type(t["circledStackNums"]) == "boolean" then
-                    indicator:SetCircledStackNums(t["circledStackNums"])
                 end
                 -- update dispel highlight
                 if t["highlightType"] then
@@ -911,6 +911,12 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                 indicator:Hide()
                 indicator:Show()
             end
+        elseif setting == "stack" then
+            indicator:SetStack(value)
+            if indicator.enabled then
+                indicator:Hide()
+                indicator:Show()
+            end
         elseif setting == "highlightType" then
             indicator:UpdateHighlight(value)
             indicator.init = false
@@ -956,13 +962,6 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                 end
             elseif value == "showStack" then
                 indicator:ShowStack(value2)
-            elseif value == "circledStackNums" then
-                indicator:SetCircledStackNums(value2)
-                if indicator.enabled then
-                    -- update through OnShow
-                    indicator:Hide()
-                    indicator:Show()
-                end
             elseif value == "fadeOut" then
                 indicator:SetFadeOut(value2)
                 -- indicator:SetCooldown(GetTime(), 13)
@@ -1049,9 +1048,9 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
             if value["duration"] then
                 indicator:SetDuration(value["duration"])
             end
-            -- update circled nums
-            if type(value["circledStackNums"]) == "boolean" then
-                indicator:SetCircledStackNums(value["circledStackNums"])
+            -- update stack
+            if value["stack"] then
+                indicator:SetStack(value["stack"])
             end
             -- update fadeOut
             if type(value["fadeOut"]) == "boolean" then
@@ -1677,7 +1676,7 @@ local function ShowIndicatorSettings(id)
         elseif indicatorType == "icons" then
             settingsTable = {"enabled", "auras", "checkbutton3:showStack", "durationVisibility", "checkbutton4:showAnimation", CELL_RECTANGULAR_CUSTOM_INDICATOR_ICONS and "size" or "size-square", "num:10", "numPerLine:10", "spacing", "orientation", "position", "frameLevel", "font1:stackFont", "font2:durationFont"}
         elseif indicatorType == "text" then
-            settingsTable = {"enabled", "auras", "duration", "checkbutton3:circledStackNums:"..L["Require font support"], "colors", "position", "frameLevel", "font-noOffset"}
+            settingsTable = {"enabled", "auras", "duration", "stack", "colors", "position", "frameLevel", "font-noOffset"}
         elseif indicatorType == "bar" then
             settingsTable = {"enabled", "auras", "colors", "checkbutton3:showStack", "durationVisibility", "barOrientation", "size", "position", "frameLevel", "font1:stackFont", "font2:durationFont"}
         elseif indicatorType == "bars" then

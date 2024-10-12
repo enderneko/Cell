@@ -870,8 +870,9 @@ local function Text_SetDuration(frame, durationTbl)
     frame.durationTbl = durationTbl
 end
 
-local function Text_SetCircledStackNums(frame, circled)
-    frame.circledStackNums = circled
+local function Text_SetStack(frame, stack)
+    frame.showStack = stack[1]
+    frame.circledStackNums = stack[2]
 end
 
 local function Text_SetColors(frame, colors)
@@ -937,9 +938,11 @@ end
 local circled = {"①","②","③","④","⑤","⑥","⑦","⑧","⑨","⑩","⑪","⑫","⑬","⑭","⑮","⑯","⑰","⑱","⑲","⑳","㉑","㉒","㉓","㉔","㉕","㉖","㉗","㉘","㉙","㉚","㉛","㉜","㉝","㉞","㉟","㊱","㊲","㊳","㊴","㊵","㊶","㊷","㊸","㊹","㊺","㊻","㊼","㊽","㊾","㊿"}
 local function Text_SetCooldown(frame, start, duration, debuffType, texture, count)
     if duration == 0 then
+        -- always show stack
         count = count == 0 and 1 or count
         count = frame.circledStackNums and circled[count] or count
         frame.text:SetText(count)
+        frame.text:SetTextColor(frame.colors[1][1], frame.colors[1][2], frame.colors[1][3], frame.colors[1][4])
         frame:SetScript("OnUpdate", nil)
         frame._count = nil
         frame._start = nil
@@ -951,17 +954,20 @@ local function Text_SetCooldown(frame, start, duration, debuffType, texture, cou
         frame._duration = duration
 
         if frame.durationTbl[1] then
-            if count == 0 then
-                frame._count = ""
-            elseif frame.circledStackNums then
-                frame._count = circled[count].." "
+            if frame.showStack and count ~= 0 then
+                if frame.circledStackNums then
+                    frame._count = circled[count].." "
+                else
+                    frame._count = count.." "
+                end
             else
-                frame._count = count.." "
+                frame._count = ""
             end
 
             frame._elapsed = 0.1 -- update immediately
             frame:SetScript("OnUpdate", Text_OnUpdateDuration)
         else
+            -- always show stack
             count = count == 0 and 1 or count
             if frame.circledStackNums then
                 frame.text:SetText(circled[count])
@@ -991,7 +997,7 @@ function I.CreateAura_Text(name, parent)
     frame.SetPoint = Text_SetPoint
     frame.SetCooldown = Text_SetCooldown
     frame.SetDuration = Text_SetDuration
-    frame.SetCircledStackNums = Text_SetCircledStackNums
+    frame.SetStack = Text_SetStack
     frame.SetColors = Text_SetColors
 
     return frame

@@ -3187,6 +3187,20 @@ function F:Revise()
             end
             Cell.vars.targetedSpellsList = F:ConvertTable(CellDB["targetedSpellsList"])
         end
+
+        for _, layout in pairs(CellDB["layouts"]) do
+            for _, i in pairs(layout["indicators"]) do
+                if i.type == "text" then
+                    if not i.stack then
+                        i.stack = {
+                            true,
+                            i.circledStackNums,
+                        }
+                        i.circledStackNums = nil
+                    end
+                end
+            end
+        end
     end
 
     -- ----------------------------------------------------------------------- --
