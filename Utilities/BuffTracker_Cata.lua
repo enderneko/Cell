@@ -629,15 +629,15 @@ function buffTrackerFrame:GROUP_ROSTER_UPDATE(immediate)
         buffTrackerFrame:RegisterEvent("UNIT_FLAGS")
         buffTrackerFrame:RegisterEvent("PLAYER_UNGHOST")
         buffTrackerFrame:RegisterEvent("UNIT_AURA")
-        buffTrackerFrame:RegisterEvent("PARTY_MEMBER_ENABLE")
-        buffTrackerFrame:RegisterEvent("PARTY_MEMBER_DISABLE")
+        -- buffTrackerFrame:RegisterEvent("PARTY_MEMBER_ENABLE")
+        -- buffTrackerFrame:RegisterEvent("PARTY_MEMBER_DISABLE")
     else
         buffTrackerFrame:UnregisterEvent("READY_CHECK")
         buffTrackerFrame:UnregisterEvent("UNIT_FLAGS")
         buffTrackerFrame:UnregisterEvent("PLAYER_UNGHOST")
         buffTrackerFrame:UnregisterEvent("UNIT_AURA")
-        buffTrackerFrame:UnregisterEvent("PARTY_MEMBER_ENABLE")
-        buffTrackerFrame:UnregisterEvent("PARTY_MEMBER_DISABLE")
+        -- buffTrackerFrame:UnregisterEvent("PARTY_MEMBER_ENABLE")
+        -- buffTrackerFrame:UnregisterEvent("PARTY_MEMBER_DISABLE")
 
         Reset()
         RepointButtons()
@@ -663,13 +663,13 @@ function buffTrackerFrame:PLAYER_UNGHOST()
     buffTrackerFrame:GROUP_ROSTER_UPDATE()
 end
 
-function buffTrackerFrame:PARTY_MEMBER_ENABLE()
-    buffTrackerFrame:GROUP_ROSTER_UPDATE()
-end
+-- function buffTrackerFrame:PARTY_MEMBER_ENABLE()
+--     buffTrackerFrame:GROUP_ROSTER_UPDATE()
+-- end
 
-function buffTrackerFrame:PARTY_MEMBER_DISABLE()
-    buffTrackerFrame:GROUP_ROSTER_UPDATE()
-end
+-- function buffTrackerFrame:PARTY_MEMBER_DISABLE()
+--     buffTrackerFrame:GROUP_ROSTER_UPDATE()
+-- end
 
 function buffTrackerFrame:UNIT_AURA(unit)
     if IsInRaid() then
