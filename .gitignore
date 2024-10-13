@@ -1,5 +1,6 @@
 .release/
 .resources/
+.utils/*.csv
 
 #external libraries
 Libs/*
