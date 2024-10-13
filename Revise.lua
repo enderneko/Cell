@@ -3198,6 +3198,8 @@ function F:Revise()
                         }
                         i.circledStackNums = nil
                     end
+                elseif i.indicatorName == "healthText" then
+                    i.format = "[effective_percent]"
                 end
             end
         end

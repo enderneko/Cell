@@ -162,9 +162,6 @@ local function ResetIndicators()
         if t["dispellableByMe"] ~= nil then
             indicatorBooleans[t["indicatorName"]] = t["dispellableByMe"]
         end
-        if t["hideIfEmptyOrFull"] ~= nil then
-            indicatorBooleans[t["indicatorName"]] = t["hideIfEmptyOrFull"]
-        end
         if t["onlyShowTopGlow"] ~= nil then
             indicatorBooleans[t["indicatorName"]] = t["onlyShowTopGlow"]
         end
@@ -359,6 +356,10 @@ local function HandleIndicators(b)
         -- max value
         if t["maxValue"] then
             indicator:SetMaxValue(t["maxValue"])
+        end
+        -- update hideIfEmptyOrFull
+        if type(t["hideIfEmptyOrFull"]) == "boolean" then
+            indicator:SetHideIfEmptyOrFull(t["hideIfEmptyOrFull"])
         end
 
         -- init
@@ -805,13 +806,14 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                     b.indicators[indicatorName]:ShowBackground(value2)
                 end, true)
             elseif value == "hideIfEmptyOrFull" then
-                indicatorBooleans[indicatorName] = value2
                 if indicatorName == "healthText" then
                     F:IterateAllUnitButtons(function(b)
+                        b.indicators[indicatorName]:SetHideIfEmptyOrFull(value2)
                         B:UpdateHealthText(b)
                     end, true)
                 elseif indicatorName == "powerText" then
                     F:IterateAllUnitButtons(function(b)
+                        b.indicators[indicatorName]:SetHideIfEmptyOrFull(value2)
                         B:UpdatePowerText(b)
                     end, true)
                 end
@@ -1645,6 +1647,7 @@ local function UpdateUnitHealthState(self, diff)
     self.states.health = health
     self.states.healthMax = healthMax
     self.states.totalAbsorbs = UnitGetTotalAbsorbs(unit)
+    self.states.healAbsorbs = UnitGetTotalHealAbsorbs(unit)
 
     if healthMax == 0 then
         self.states.healthPercent = 0
@@ -1670,18 +1673,8 @@ local function UpdateUnitHealthState(self, diff)
         UnitButton_UpdateHealthColor(self)
     end
 
-    if enabledIndicators["healthText"] and healthMax ~= 0 then
-        if indicatorBooleans["healthText"] then
-            if health == healthMax or self.states.isDeadOrGhost or self.states.isDead then
-                self.indicators.healthText:Hide()
-            else
-                self.indicators.healthText:SetValue(health, healthMax, self.states.totalAbsorbs)
-                self.indicators.healthText:Show()
-            end
-        else
-            self.indicators.healthText:SetValue(health, healthMax, self.states.totalAbsorbs)
-            self.indicators.healthText:Show()
-        end
+    if enabledIndicators["healthText"] and not self.states.isDeadOrGhost then
+        self.indicators.healthText:SetValue(health, healthMax, self.states.totalAbsorbs, self.states.healAbsorbs)
     else
         self.indicators.healthText:Hide()
     end
@@ -1934,18 +1927,8 @@ local function UnitButton_FinishReadyCheck(self)
 end
 
 local function UnitButton_UpdatePowerText(self)
-    if enabledIndicators["powerText"] and self.states.powerMax and self.states.power then
-        if indicatorBooleans["powerText"] then
-            if self.states.power == self.states.powerMax or self.states.power == 0 then
-                self.indicators.powerText:Hide()
-            else
-                self.indicators.powerText:SetValue(self.states.power, self.states.powerMax)
-                self.indicators.powerText:Show()
-            end
-        else
-            self.indicators.powerText:SetValue(self.states.power, self.states.powerMax)
-            self.indicators.powerText:Show()
-        end
+    if enabledIndicators["powerText"] and self.states.powerMax and self.states.power and not self.states.isDeadOrGhost then
+        self.indicators.powerText:SetValue(self.states.power, self.states.powerMax)
     else
         self.indicators.powerText:Hide()
     end
@@ -2137,11 +2120,10 @@ local function UnitButton_UpdateHealAbsorbs(self)
     local unit = self.states.displayedUnit
     if not unit then return end
 
-    local value = UnitGetTotalHealAbsorbs(unit)
-    if value > 0 then
-        UpdateUnitHealthState(self)
+    UpdateUnitHealthState(self)
 
-        local absorbsPercent = value / self.states.healthMax
+    if self.states.healAbsorbs > 0 then
+        local absorbsPercent = self.states.healAbsorbs / self.states.healthMax
         self.widgets.absorbsBar:SetValue(absorbsPercent, self.states.healthPercent)
     else
         self.widgets.absorbsBar:Hide()

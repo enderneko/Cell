@@ -967,115 +967,89 @@ local function CreateSetting_HealthFormat(parent)
     local widget
 
     if not settingWidgets["healthFormat"] then
-        widget = addon:CreateFrame("CellIndicatorSettings_HealthFormat", parent, 240, 50)
+        widget = addon:CreateFrame("CellIndicatorSettings_HealthFormat", parent, 240, 500)
         settingWidgets["healthFormat"] = widget
 
-        widget.format = addon:CreateDropdown(widget, 245)
+        widget.format = addon:CreateEditBox(widget, 245, 20)
         widget.format:SetPoint("TOPLEFT", 5, -20)
-        widget.format:SetItems({
-            {
-                ["text"] = "32%",
-                ["value"] = "percentage",
-                ["onClick"] = function()
-                    widget.func("percentage")
-                end,
-            },
-            {
-                ["text"] = "32%+25% |cFFA7A7A7+"..L["shields"],
-                ["value"] = "percentage-absorbs",
-                ["onClick"] = function()
-                    widget.func("percentage-absorbs")
-                end,
-            },
-            {
-                ["text"] = "57% |cFFA7A7A7+"..L["shields"],
-                ["value"] = "percentage-absorbs-merged",
-                ["onClick"] = function()
-                    widget.func("percentage-absorbs-merged")
-                end,
-            },
-            {
-                ["text"] = "-67%",
-                ["value"] = "percentage-deficit",
-                ["onClick"] = function()
-                    widget.func("percentage-deficit")
-                end,
-            },
-            {
-                ["text"] = "21377",
-                ["value"] = "number",
-                ["onClick"] = function()
-                    widget.func("number")
-                end,
-            },
-            {
-                ["text"] = F:FormatNumber(21377),
-                ["value"] = "number-short",
-                ["onClick"] = function()
-                    widget.func("number-short")
-                end,
-            },
-            {
-                ["text"] = F:FormatNumber(21377).."+"..F:FormatNumber(16384).." |cFFA7A7A7+"..L["shields"],
-                ["value"] = "number-absorbs-short",
-                ["onClick"] = function()
-                    widget.func("number-absorbs-short")
-                end,
-            },
-            {
-                ["text"] = F:FormatNumber(21377+16384).." |cFFA7A7A7+"..L["shields"],
-                ["value"] = "number-absorbs-merged-short",
-                ["onClick"] = function()
-                    widget.func("number-absorbs-merged-short")
-                end,
-            },
-            {
-                ["text"] = "-44158",
-                ["value"] = "number-deficit",
-                ["onClick"] = function()
-                    widget.func("number-deficit")
-                end,
-            },
-            {
-                ["text"] = F:FormatNumber(-44158),
-                ["value"] = "number-deficit-short",
-                ["onClick"] = function()
-                    widget.func("number-deficit-short")
-                end,
-            },
-            {
-                ["text"] = F:FormatNumber(21377).." 32% |cFFA7A7A7HP",
-                ["value"] = "current-short-percentage",
-                ["onClick"] = function()
-                    widget.func("current-short-percentage")
-                end,
-            },
-            {
-                ["text"] = "16384 |cFFA7A7A7"..L["shields"],
-                ["value"] = "absorbs-only",
-                ["onClick"] = function()
-                    widget.func("absorbs-only")
-                end,
-            },
-            {
-                ["text"] = F:FormatNumber(16384).." |cFFA7A7A7"..L["shields"],
-                ["value"] = "absorbs-only-short",
-                ["onClick"] = function()
-                    widget.func("absorbs-only-short")
-                end,
-            },
-            {
-                ["text"] = "25% |cFFA7A7A7"..L["shields"],
-                ["value"] = "absorbs-only-percentage",
-                ["onClick"] = function()
-                    widget.func("absorbs-only-percentage")
-                end,
-            },
-        })
+
+        widget.format.confirmBtn = addon:CreateButton(widget.format, "OK", "accent", {27, 20})
+        widget.format.confirmBtn:SetPoint("RIGHT", widget.format)
+        widget.format.confirmBtn:Hide()
+        widget.format.confirmBtn:SetScript("OnHide", function()
+            widget.format.confirmBtn:Hide()
+        end)
+        widget.format.confirmBtn:SetScript("OnClick", function()
+            local format = widget.format:GetText()
+            format = strtrim(format)
+            widget.format:SetText(format)
+            widget.format.confirmBtn:Hide()
+            widget.func(format)
+        end)
+
+        widget.format:SetScript("OnTextChanged", function(self, userChanged)
+            if userChanged then
+                widget.format.confirmBtn:Show()
+            end
+        end)
 
         widget.formatText = widget:CreateFontString(nil, "OVERLAY", font_name)
         widget.formatText:SetText(L["Format"])
+        widget.formatText:SetTextColor(addon:GetAccentColorRGB())
         widget.formatText:SetPoint("BOTTOMLEFT", widget.format, "TOPLEFT", 0, 1)
+
+        -- formatter
+        local formatter = {
+            -- effective
+            {"[effective_percent]", format("%d%%", (21377+16384-21011)/65535*100), L["Format Options"]},
+
+            -- health
+            {"[health]", 21377, L["Health"]},
+            {"[health_short]", F:FormatNumber(21377)},
+            {"[health_percent]", format("%d%%", 21377/65535*100)},
+            {"[deficit]", 21377-65535},
+            {"[deficit_short]", F:FormatNumber(21377-65535)},
+            {"[deficit_percent]", format("%d%%", (21377-65535)/65535*100)},
+
+            -- absorb
+            {"[absorbs]", 16384, L["Absorbs"]},
+            {"[absorbs_short]", F:FormatNumber(16384)},
+            {"[absorbs_percent]", format("%d%%", 16384/65535*100)},
+
+            -- heal absorbs
+            {"[healabsorbs]", 21011, L["Heal Absorbs"]},
+            {"[healabsorbs_short]", F:FormatNumber(21011)},
+            {"[healabsorbs_percent]", format("%d%%", 21011/65535*100)},
+        }
+
+        local list = {}
+        local offset
+        for i, t in pairs(formatter) do
+            list[i] = addon:CreateEditBox(widget, 170, 20)
+            list[i]:SetText(t[1])
+            list[i]:SetScript("OnTextChanged", function(self, userChanged)
+                if userChanged then
+                    self:SetText(t[1])
+                end
+            end)
+
+            list[i].example = list[i]:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
+            list[i].example:SetText(t[2])
+            list[i].example:SetPoint("LEFT", list[i], "RIGHT", 5, 0)
+
+            if t[3] then
+                list[i].group = list[i]:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
+                list[i].group:SetText(t[3])
+                list[i].group:SetTextColor(addon:GetAccentColorRGB())
+                list[i].group:SetPoint("BOTTOMLEFT", list[i], "TOPLEFT", 0, 1)
+                offset = -30
+            else
+                offset = -8
+            end
+
+            list[i]:SetPoint("TOPLEFT", i == 1 and widget.format or list[i-1], "BOTTOMLEFT", 0, offset)
+        end
+
 
         -- callback
         function widget:SetFunc(func)
@@ -1084,7 +1058,7 @@ local function CreateSetting_HealthFormat(parent)
 
         -- show db value
         function widget:SetDBValue(format)
-            widget.format:SetSelectedValue(format)
+            widget.format:SetText(format)
         end
     else
         widget = settingWidgets["healthFormat"]

@@ -1422,94 +1422,90 @@ end
 -------------------------------------------------
 -- health text
 -------------------------------------------------
-local function SetHealth_Percentage(self, current, max, totalAbsorbs)
-    self.text:SetFormattedText("%d%%", current/max*100)
-    self:SetWidth(self.text:GetStringWidth())
-end
+local formatter = {
+    -- health
+    ["health"] = function(hideIfEmptyOrFull, currentHealth, maxHealth, absorbs, healAbsorbs)
+        return currentHealth, hideIfEmptyOrFull and (currentHealth == 0 or currentHealth == maxHealth)
+    end,
+    ["health_short"] = function(hideIfEmptyOrFull, currentHealth, maxHealth, absorbs, healAbsorbs)
+        return F:FormatNumber(currentHealth), hideIfEmptyOrFull and (currentHealth == 0 or currentHealth == maxHealth)
+    end,
+    ["health_percent"] = function(hideIfEmptyOrFull, currentHealth, maxHealth, absorbs, healAbsorbs)
+        return format("%d%%", currentHealth/maxHealth*100), hideIfEmptyOrFull and (currentHealth == 0 or currentHealth == maxHealth)
+    end,
+    ["deficit"] = function(hideIfEmptyOrFull, currentHealth, maxHealth, absorbs, healAbsorbs)
+        return currentHealth - maxHealth, hideIfEmptyOrFull and (currentHealth == 0 or currentHealth == maxHealth)
+    end,
+    ["deficit_short"] = function(hideIfEmptyOrFull, currentHealth, maxHealth, absorbs, healAbsorbs)
+        return F:FormatNumber(currentHealth - maxHealth), hideIfEmptyOrFull and (currentHealth == 0 or currentHealth == maxHealth)
+    end,
+    ["deficit_percent"] = function(hideIfEmptyOrFull, currentHealth, maxHealth, absorbs, healAbsorbs)
+        return format("%d%%", (currentHealth-maxHealth)/maxHealth*100), hideIfEmptyOrFull and (currentHealth == 0 or currentHealth == maxHealth)
+    end,
 
-local function SetHealth_Percentage_Absorbs(self, current, max, totalAbsorbs)
-    if totalAbsorbs == 0 then
-        self.text:SetFormattedText("%d%%", current/max*100)
-    else
-        self.text:SetFormattedText("%d%%+%d%%", current/max*100, totalAbsorbs/max*100)
+    -- absorb
+    ["absorbs"] = function(hideIfEmptyOrFull, currentHealth, maxHealth, absorbs, healAbsorbs)
+        return absorbs, hideIfEmptyOrFull and absorbs == 0
+    end,
+    ["absorbs_short"] = function(hideIfEmptyOrFull, currentHealth, maxHealth, absorbs, healAbsorbs)
+        return F:FormatNumber(absorbs), hideIfEmptyOrFull and absorbs == 0
+    end,
+    ["absorbs_percent"] = function(hideIfEmptyOrFull, currentHealth, maxHealth, absorbs, healAbsorbs)
+        return format("%d%%", absorbs/maxHealth*100), hideIfEmptyOrFull and absorbs == 0
+    end,
+
+    -- heal absorbs
+    ["healabsorbs"] = function(hideIfEmptyOrFull, currentHealth, maxHealth, absorbs, healAbsorbs)
+        return healAbsorbs, hideIfEmptyOrFull and healAbsorbs == 0
+    end,
+    ["healabsorbs_short"] = function(hideIfEmptyOrFull, currentHealth, maxHealth, absorbs, healAbsorbs)
+        return F:FormatNumber(healAbsorbs), hideIfEmptyOrFull and healAbsorbs == 0
+    end,
+    ["healabsorbs_percent"] = function(hideIfEmptyOrFull, currentHealth, maxHealth, absorbs, healAbsorbs)
+        return format("%d%%", healAbsorbs/maxHealth*100), hideIfEmptyOrFull and healAbsorbs == 0
+    end,
+
+    -- effective
+    ["effective_percent"] = function(hideIfEmptyOrFull, currentHealth, maxHealth, absorbs, healAbsorbs)
+        return format("%d%%", (currentHealth+absorbs-healAbsorbs)/maxHealth*100), hideIfEmptyOrFull and (currentHealth == 0 or currentHealth == maxHealth) and (absorbs == 0) and (healAbsorbs == 0)
+    end,
+}
+
+local function HealthText_SetFormat(self, format)
+    self.format = format
+    self.value = wipe(self.value or {})
+    for k in string.gmatch(format, "%[([a-z_]+)%]") do
+        self.value[k] = ""
     end
-    self:SetWidth(self.text:GetStringWidth())
 end
 
-local function SetHealth_Percentage_Absorbs_Merged(self, current, max, totalAbsorbs)
-    self.text:SetFormattedText("%d%%", (current+totalAbsorbs)/max*100)
-    self:SetWidth(self.text:GetStringWidth())
-end
-
-local function SetHealth_Percentage_Deficit(self, current, max, totalAbsorbs)
-    self.text:SetFormattedText("%d%%", (current-max)/max*100)
-    self:SetWidth(self.text:GetStringWidth())
-end
-
-local function SetHealth_Number(self, current, max, totalAbsorbs)
-    self.text:SetText(current)
-    self:SetWidth(self.text:GetStringWidth())
-end
-
-local function SetHealth_Number_Short(self, current, max, totalAbsorbs)
-    self.text:SetText(F:FormatNumber(current))
-    self:SetWidth(self.text:GetStringWidth())
-end
-
-local function SetHealth_Number_Absorbs_Short(self, current, max, totalAbsorbs)
-    if totalAbsorbs == 0 then
-        self.text:SetText(F:FormatNumber(current))
-    else
-        self.text:SetFormattedText("%s+%s", F:FormatNumber(current), F:FormatNumber(totalAbsorbs))
+local gsub = string.gsub
+local function HealthText_SetValue(self, currentHealth, maxHealth, absorbs, healAbsorbs, isDeadOrGhost)
+    maxHealth = maxHealth == 0 and 1 or maxHealth
+    local hideAll = true
+    local hide
+    for k in pairs(self.value) do
+        if formatter[k] then
+            self.value[k], hide = formatter[k](self.hideIfEmptyOrFull, currentHealth, maxHealth, absorbs, healAbsorbs)
+            if hide then
+                self.value[k] = ""
+            end
+        end
+        hideAll = hide and hideAll
     end
-    self:SetWidth(self.text:GetStringWidth())
-end
 
-local function SetHealth_Number_Absorbs_Merged_Short(self, current, max, totalAbsorbs)
-    self.text:SetText(F:FormatNumber(current+totalAbsorbs))
-    self:SetWidth(self.text:GetStringWidth())
-end
-
-local function SetHealth_Number_Deficit(self, current, max, totalAbsorbs)
-    self.text:SetText(current-max)
-    self:SetWidth(self.text:GetStringWidth())
-end
-
-local function SetHealth_Number_Deficit_Short(self, current, max, totalAbsorbs)
-    self.text:SetText(F:FormatNumber(current-max))
-    self:SetWidth(self.text:GetStringWidth())
-end
-
-local function SetHealth_Current_Short_Percentage(self, current, max, totalAbsorbs)
-    self.text:SetFormattedText("%s %d%%", F:FormatNumber(current), (current/max*100))
-    self:SetWidth(self.text:GetStringWidth())
-end
-
-local function SetHealth_Absorbs_Only(self, current, max, totalAbsorbs)
-    if totalAbsorbs == 0 then
-        self.text:SetText("")
+    if hideAll then
+        self:Hide()
     else
-        self.text:SetText(totalAbsorbs)
+        local text = gsub(self.format, "%[([a-z_]+)%]", self.value)
+        self.text:SetText(text)
+        self:SetWidth(self.text:GetStringWidth())
+        self:Show()
     end
-    self:SetWidth(self.text:GetStringWidth())
 end
 
-local function SetHealth_Absorbs_Only_Short(self, current, max, totalAbsorbs)
-    if totalAbsorbs == 0 then
-        self.text:SetText("")
-    else
-        self.text:SetText(F:FormatNumber(totalAbsorbs))
-    end
-    self:SetWidth(self.text:GetStringWidth())
-end
-
-local function SetHealth_Absorbs_Only_Percentage(self, current, max, totalAbsorbs)
-    if totalAbsorbs == 0 then
-        self.text:SetText("")
-    else
-        self.text:SetFormattedText("%d%%", totalAbsorbs/max*100)
-    end
-    self:SetWidth(self.text:GetStringWidth())
+local function HealthText_SetHideIfEmptyOrFull(self, hideIfEmptyOrFull)
+    self.hideIfEmptyOrFull = hideIfEmptyOrFull
 end
 
 local function HealthText_SetFont(self, font, size, outline, shadow)
@@ -1547,38 +1543,7 @@ local function HealthText_SetPoint(self, point, relativeTo, relativePoint, x, y)
         self.text:SetPoint("CENTER")
     end
     self:_SetPoint(point, relativeTo, relativePoint, x, y)
-end
-
-local function HealthText_SetFormat(self, format)
-    if format == "percentage" then
-        self.SetValue = SetHealth_Percentage
-    elseif format == "percentage-absorbs" then
-        self.SetValue = SetHealth_Percentage_Absorbs
-    elseif format == "percentage-absorbs-merged" then
-        self.SetValue = SetHealth_Percentage_Absorbs_Merged
-    elseif format == "percentage-deficit" then
-        self.SetValue = SetHealth_Percentage_Deficit
-    elseif format == "number" then
-        self.SetValue = SetHealth_Number
-    elseif format == "number-short" then
-        self.SetValue = SetHealth_Number_Short
-    elseif format == "number-absorbs-short" then
-        self.SetValue = SetHealth_Number_Absorbs_Short
-    elseif format == "number-absorbs-merged-short" then
-        self.SetValue = SetHealth_Number_Absorbs_Merged_Short
-    elseif format == "number-deficit" then
-        self.SetValue = SetHealth_Number_Deficit
-    elseif format == "number-deficit-short" then
-        self.SetValue = SetHealth_Number_Deficit_Short
-    elseif format == "current-short-percentage" then
-        self.SetValue = SetHealth_Current_Short_Percentage
-    elseif format == "absorbs-only" then
-        self.SetValue = SetHealth_Absorbs_Only
-    elseif format == "absorbs-only-short" then
-        self.SetValue = SetHealth_Absorbs_Only_Short
-    elseif format == "absorbs-only-percentage" then
-        self.SetValue = SetHealth_Absorbs_Only_Percentage
-    end
+    I.JustifyText(self.text, point)
 end
 
 local function HealthText_SetColor(self, r, g, b)
@@ -1605,28 +1570,43 @@ function I.CreateHealthText(parent)
     healthText._SetPoint = healthText.SetPoint
     healthText.SetPoint = HealthText_SetPoint
     healthText.SetFormat = HealthText_SetFormat
+    healthText.SetValue = HealthText_SetValue
     healthText.SetColor = HealthText_SetColor
+    healthText.SetHideIfEmptyOrFull = HealthText_SetHideIfEmptyOrFull
     healthText.UpdatePreviewColor = HealthText_UpdatePreviewColor
-
-    function healthText:SetValue() end
 end
 
 -------------------------------------------------
 -- power text
 -------------------------------------------------
-local function SetPower_Percentage(self, current, max, totalAbsorbs)
-    self.text:SetFormattedText("%d%%", current/max*100)
-    self:SetWidth(self.text:GetStringWidth())
+local function SetPower_Percentage(self, current, max)
+    if self.hideIfEmptyOrFull and (current == 0 or current == max) then
+        self:Hide()
+    else
+        self.text:SetFormattedText("%d%%", current/max*100)
+        self:SetWidth(self.text:GetStringWidth())
+        self:Show()
+    end
 end
 
-local function SetPower_Number(self, current, max, totalAbsorbs)
-    self.text:SetText(current)
-    self:SetWidth(self.text:GetStringWidth())
+local function SetPower_Number(self, current, max)
+    if self.hideIfEmptyOrFull and (current == 0 or current == max) then
+        self:Hide()
+    else
+        self.text:SetText(current)
+        self:SetWidth(self.text:GetStringWidth())
+        self:Show()
+    end
 end
 
-local function SetPower_Number_Short(self, current, max, totalAbsorbs)
-    self.text:SetText(F:FormatNumber(current))
-    self:SetWidth(self.text:GetStringWidth())
+local function SetPower_Number_Short(self, current, max)
+    if self.hideIfEmptyOrFull and (current == 0 or current == max) then
+        self:Hide()
+    else
+        self.text:SetText(F:FormatNumber(current))
+        self:SetWidth(self.text:GetStringWidth())
+        self:Show()
+    end
 end
 
 local function PowerText_SetFont(self, font, size, outline, shadow)
@@ -1680,6 +1660,10 @@ local function PowerText_SetColor(self, r, g, b)
     self.text:SetTextColor(r, g, b)
 end
 
+local function PowerText_SetHideIfEmptyOrFull(self, hideIfEmptyOrFull)
+    self.hideIfEmptyOrFull = hideIfEmptyOrFull
+end
+
 local function PowerText_UpdatePreviewColor(self, color)
     local r, g, b
     if color[1] == "power_color" then
@@ -1705,6 +1689,7 @@ function I.CreatePowerText(parent)
     powerText.SetPoint = PowerText_SetPoint
     powerText.SetFormat = PowerText_SetFormat
     powerText.SetColor = PowerText_SetColor
+    powerText.SetHideIfEmptyOrFull = PowerText_SetHideIfEmptyOrFull
     powerText.UpdatePreviewColor = PowerText_UpdatePreviewColor
 
     function powerText:SetValue() end

@@ -161,7 +161,7 @@ Cell.defaults.layout = {
             ["frameLevel"] = 2,
             ["font"] = {"Cell ".._G.DEFAULT, 10, "None", true},
             ["color"] = {"custom_color", {1, 1, 1}},
-            ["format"] = "percentage",
+            ["format"] = "[effective_percent]",
             ["hideIfEmptyOrFull"] = true,
         }, -- 3
         {

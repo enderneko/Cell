@@ -13,7 +13,7 @@ CELL_COOLDOWN_STYLE = "VERTICAL"
 -------------------------------------------------
 -- SetFont
 -------------------------------------------------
-local function JustifyText(text, point)
+function I.JustifyText(text, point)
     if strfind(point, "LEFT$") then
         text:SetJustifyH("LEFT")
     elseif strfind(point, "RIGHT$") then
@@ -55,7 +55,7 @@ function I.SetFont(fs, anchorTo, font, size, outline, shadow, anchor, xOffset, y
 
     P:ClearPoints(fs)
     P:Point(fs, anchor, anchorTo, anchor, xOffset, yOffset)
-    JustifyText(fs, anchor)
+    I.JustifyText(fs, anchor)
 
     if color then
         fs.r = color[1]
@@ -863,7 +863,7 @@ local function Text_SetPoint(frame, point, relativeTo, relativePoint, x, y)
     frame.text:ClearAllPoints()
     frame.text:SetPoint(point)
     frame:_SetPoint(point, relativeTo, relativePoint, x, y)
-    JustifyText(frame.text, point)
+    I.JustifyText(frame.text, point)
 end
 
 local function Text_SetDuration(frame, durationTbl)
