@@ -144,7 +144,7 @@ function I.UpdateStatusIcon_Resurrection(button, start, duration)
     local unit = button.states.unit
     local resurrectionIcon = button.indicators.resurrectionIcon
 
-    if not (guid or unit) then
+    if not (guid and unit) then
         resurrectionIcon:Hide()
         return
     end
