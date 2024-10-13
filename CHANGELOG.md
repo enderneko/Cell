@@ -1,5 +1,10 @@
-[Full Changelog](https://github.com/enderneko/Cell/compare/r241-release...2776dda6aae139ec0f1152528485d5deed8aeac4)
+[Full Changelog](https://github.com/enderneko/Cell/compare/r242-release...16402c234159ae4dd8b357e9c30e941dea8d7cea)
 
-- Fix classic lib
-- Update deDE, esES, zhTW
-- Update toc
+- Fix wrath power filter
+- Fix indicator revision process
+- Add stack options for custom text indicators
+- Update health text format
+- Update bleed list
+- Update buff tracker events
+- Update range check
+- Revert some GROUP_ROSTER_UPDATE changes

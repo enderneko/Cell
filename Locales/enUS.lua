@@ -89,6 +89,15 @@ select(2, ...).L = setmetatable({
         <p>(Retail) Enable "Always Update Auras" in General tab, if indicators do not update correctly.</p>
         <br/>
 
+        <h1>r243-release (Oct 13, 2024, 21:37 GMT+8)</h1>
+        <p>* Fixed power filters for Wrath(CN).</p>
+        <p>* Fixed indicator revision process.</p>
+        <p>+ Added stack options for custom text indicators.</p>
+        <p>* Updated health text format option.</p>
+        <p>* Updated bleed list.</p>
+        <p>* Reverted some changes.</p>
+        <br/>
+
         <h1>r242-release (Oct 9, 2024, 10:30 GMT+8)</h1>
         <p>* Fixed for Classic.</p>
         <p>* Updated deDE, esES, zhTW.</p>
