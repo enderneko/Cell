@@ -4,6 +4,7 @@ local F = addon.funcs
 local I = addon.iFuncs
 local P = addon.pixelPerfectFuncs
 local LCG = LibStub("LibCustomGlow-1.0")
+local LSM = LibStub("LibSharedMedia-3.0", true)
 
 -----------------------------------------
 -- Color
@@ -3760,6 +3761,63 @@ local function CreateSetting_Texture(parent)
     return widget
 end
 
+local function CreateSetting_BarTexture(parent)
+    local widget
+
+    if not settingWidgets["bartexture"] then
+        widget = addon:CreateFrame("CellIndicatorSettings_BarTexture", parent, 240, 50)
+        settingWidgets["bartexture"] = widget
+
+        widget.textureDropdown = addon:CreateDropdown(widget, 245, "texture")
+        widget.textureDropdown:SetPoint("TOPLEFT", 5, -20)
+
+        local items = {}
+        local textures, textureNames
+        local defaultTexture, defaultTextureName = "Interface\\AddOns\\Cell\\Media\\statusbar.tga", "Cell ".._G.DEFAULT
+
+        textures, textureNames = F:Copy(LSM:HashTable("statusbar")), F:Copy(LSM:List("statusbar"))
+
+        -- make default texture first
+        F:TRemove(textureNames, defaultTextureName)
+        tinsert(textureNames, 1, defaultTextureName)
+
+        for _, name in pairs(textureNames) do
+            tinsert(items, {
+                ["text"] = name,
+                ["texture"] = textures[name],
+                ["onClick"] = function()
+                    widget.func(name)
+                end,
+            })
+        end
+
+        widget.textureDropdown:SetItems(items)
+
+        widget.durationVisibilityText = widget:CreateFontString(nil, "OVERLAY", font_name)
+        widget.durationVisibilityText:SetText(L["Texture"])
+        widget.durationVisibilityText:SetPoint("BOTTOMLEFT", widget.textureDropdown, "TOPLEFT", 0, 1)
+
+        -- callback
+        function widget:SetFunc(func)
+            widget.func = func
+        end
+
+        -- show db value
+        function widget:SetDBValue(value)
+            if textures[value] then
+                widget.textureDropdown:SetSelected(value, textures[value])
+            else
+                widget.textureDropdown:SetSelected(defaultTextureName, defaultTexture)
+            end
+        end
+    else
+        widget = settingWidgets["bartexture"]
+    end
+
+    widget:Show()
+    return widget
+end
+
 local function CreateAuraButtons(parent, auraButtons, auraTable, noUpDownButtons, isZeroValid, hasColorPicker, updateHeightFunc)
     local n = #auraTable
 
@@ -6279,6 +6337,7 @@ local builders = {
     ["glowOptions"] = CreateSetting_Glow,
     ["targetedSpellsGlow"] = CreateSetting_Glow,
     ["texture"] = CreateSetting_Texture,
+    ["bartexture"] = CreateSetting_BarTexture,
     ["builtInDefensives"] = CreateSetting_BuiltIns,
     ["builtInExternals"] = CreateSetting_BuiltIns,
     ["builtInCrowdControls"] = CreateSetting_BuiltIns,
