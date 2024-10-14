@@ -778,7 +778,7 @@ function SlashCmdList.CELL(msg, editbox)
     command = strlower(command or "")
     rest = strlower(rest or "")
 
-    if command == "options" or command == "opt" then
+    if command == "options" or command == "opt" or command == "config" or command == "conf" then
         F:ShowOptionsFrame()
 
     elseif command == "healers" then
@@ -856,7 +856,7 @@ function SlashCmdList.CELL(msg, editbox)
 
     else
         F:Print(L["Available slash commands"]..":\n"..
-            "|cFFFFB5C5/cell options|r, |cFFFFB5C5/cell opt|r: "..L["show Cell options frame"]..".\n"..
+            "|cFFFFB5C5/cell options|r, |cFFFFB5C5/cell opt|r, |cFFFFB5C5/cell config|r, |cFFFFB5C5/cell conf|r: "..L["show Cell options frame"]..".\n"..
             "|cFFFFB5C5/cell healers|r: "..L["create a \"Healers\" indicator"]..".\n"..
             "|cFFFF7777"..L["These \"reset\" commands below affect all your characters in this account"]..".|r\n"..
             "|cFFFFB5C5/cell reset position|r: "..L["reset Cell position"]..".\n"..
