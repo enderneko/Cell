@@ -986,6 +986,8 @@ local targetedSpells = {
     431491, -- 污邪斩击
     451119, -- 深渊轰击
     431303, -- 暗夜箭
+    -- 尼鲁巴尔王宫
+    459524, -- 致命之箭
 }
 
 function I.GetDefaultTargetedSpellsList()
