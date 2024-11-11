@@ -387,6 +387,9 @@ local resurrections_for_dead = {
     -- SHAMAN
     2008, -- 先祖之魂
     212048, -- 先祖视界
+
+    -- WARLOCK
+    20707, -- 灵魂石
 }
 
 do
