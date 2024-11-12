@@ -393,6 +393,12 @@ end
 -------------------------------------------------
 -- create text
 -------------------------------------------------
+local flipBookFrames = {
+    ["A"] = 31,
+    ["B"] = 30,
+    ["C"] = 25,
+}
+
 function U:CreateDispelRequestText(parent)
     local drText = CreateFrame("Frame", parent:GetName().."DispelRequestText", parent.widgets.indicatorFrame)
     parent.widgets.drText = drText
@@ -414,8 +420,8 @@ function U:CreateDispelRequestText(parent)
     local flip = ag:CreateAnimation("FlipBook")
     flip:SetDuration(1)
     flip:SetFlipBookRows(8)
-    flip:SetFlipBookColumns(2)
-    flip:SetFlipBookFrames(16)
+    flip:SetFlipBookColumns(4)
+    flip:SetFlipBookFrames(31)
     --flip:SetFlipBookFrameWidth(0)
     --flip:SetFlipBookFrameHeight(0)
     flip:SetChildKey("Flipbook")
@@ -427,6 +433,7 @@ function U:CreateDispelRequestText(parent)
 
     function drText:SetType(type)
         tex:SetTexture("Interface/AddOns/Cell/Media/FlipBooks/dispel_"..type..".png")
+        flip:SetFlipBookFrames(flipBookFrames[type])
     end
 
     function drText:SetColor(color)
