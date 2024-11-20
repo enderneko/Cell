@@ -398,6 +398,24 @@ function unit:SetUnit(index, target)
         F:Print(L["Invalid unit."])
     end
 end
+function spotlightFrame:ToggleUnit(target)
+    local firstAvailable
+    for i, f in pairs(Cell.unitButtons.spotlight) do
+        local unit = f:GetAttribute("unit")
+        if not unit and not firstAvailable then
+            firstAvailable = i
+        end
+        if unit and unit == target then
+            f:SetAttribute("unit", nil)
+            f:SetAttribute("refreshOnUpdate", nil)
+            f:SetAttribute("updateOnTargetChanged", nil)
+            assignmentButtons[i]:SetText("none")
+            menu:Save(i, nil)
+            return
+        end
+    end
+    unit:SetUnit(firstAvailable, target)
+end
 
 unitname = Cell:CreateButton(menu, L["Unit's Name"], "transparent-accent", {20, 20}, true, false, nil, nil, "SecureHandlerAttributeTemplate,SecureHandlerClickTemplate")
 P:Point(unitname, "TOPLEFT", unit, "BOTTOMLEFT")
@@ -426,6 +444,32 @@ function unitname:SetUnit(index, target)
             Cell.unitButtons.spotlight[previous]:SetAttribute("unit", nil)
             assignmentButtons[previous]:SetText("|cffababab"..NONE)
             menu:Save(previous, nil)
+        end
+    else
+        F:Print(L["Invalid unit."])
+    end
+end
+function spotlightFrame:ToggleUnitName(target)
+    local unitId = F:GetTargetUnitID(target)
+    if unitId and (UnitIsPlayer(unitId) or UnitInPartyIsAI(unitId)) then
+        local name = GetUnitName(unitId, true)
+        local existing = names[name]
+        if existing then
+            local f = Cell.unitButtons.spotlight[existing]
+            f:SetAttribute("unit", nil)
+            f:SetAttribute("refreshOnUpdate", nil)
+            f:SetAttribute("updateOnTargetChanged", nil)
+            assignmentButtons[existing]:SetText("none")
+            menu:Save(existing, nil)
+            return
+        end
+
+        for i, f in pairs(Cell.unitButtons.spotlight) do
+            local unit = f:GetAttribute("unit")
+            if not unit then
+                unitname:SetUnit(i, target)
+                return
+            end
         end
     else
         F:Print(L["Invalid unit."])
