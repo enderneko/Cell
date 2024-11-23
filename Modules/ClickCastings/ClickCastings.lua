@@ -529,6 +529,13 @@ local function ApplyClickCastings(b)
                 spellName = spellName .. "(" .. (subtext or EXPANSION_NAME8) .. ")"
             end
 
+            if Cell.isVanilla then
+                local subtext = C_Spell.GetSpellSubtext(t[3]) -- Get spell rank
+                if subtext then
+                    spellName = spellName .. "(" .. subtext .. ")"
+                end
+            end
+
             local condition = ""
             if not F:IsSoulstone(spellName) then
                 condition = F:IsResurrectionForDead(spellName) and ",dead" or ",nodead"
