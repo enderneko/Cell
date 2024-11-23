@@ -531,7 +531,7 @@ local function ApplyClickCastings(b)
 
             if Cell.isVanilla then
                 local subtext = C_Spell.GetSpellSubtext(t[3]) -- Get spell rank
-                if subtext then
+                if subtext and subtext ~= "" then
                     spellName = spellName .. "(" .. subtext .. ")"
                 end
             end
