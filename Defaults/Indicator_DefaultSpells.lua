@@ -693,6 +693,7 @@ local drinks = {
     172786, -- 饮料 - Drink
     308433, -- 食物和饮料 - Food & Drink
     369162, -- 饮用 - Drink
+    461063, -- Quiet Contemplation (Earthen)
 }
 
 do
