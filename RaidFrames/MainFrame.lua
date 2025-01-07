@@ -460,6 +460,16 @@ local function UpdatePosition()
             P:Point(raid, "TOPRIGHT", options, "TOPLEFT", -1, 0)
             tooltipPoint, tooltipRelativePoint, tooltipX, tooltipY = "BOTTOMRIGHT", "TOPRIGHT", 0, 3
             -- hoverTop, hoverBottom, hoverLeft, hoverRight = 20, -5, -20, 20
+        elseif anchor == "TOP" then
+            cellMainFrame:SetPoint("TOP", anchorFrame, "BOTTOM", 0, -4)
+            P:Point(raid, "TOP", options, "TOP", -1, 0)
+            tooltipPoint, tooltipRelativePoint, tooltipX, tooltipY = "BOTTOMRIGHT", "TOPRIGHT", 0, 3
+            -- hoverTop, hoverBottom, hoverLeft, hoverRight = 20, -5, -20, 20
+        elseif anchor == "BOTTOM" then
+            cellMainFrame:SetPoint("BOTTOM", anchorFrame, "TOP", 0, -4)
+            P:Point(raid, "TOPRIGHT", options, "TOPLEFT", -1, 0)
+            tooltipPoint, tooltipRelativePoint, tooltipX, tooltipY = "BOTTOMRIGHT", "TOPRIGHT", 0, 3
+            -- hoverTop, hoverBottom, hoverLeft, hoverRight = 20, -5, -20, 20
         end
     else -- left_right
         P:Size(anchorFrame, 10, 20)
@@ -489,6 +499,16 @@ local function UpdatePosition()
             P:Point(raid, "TOPRIGHT", options, "BOTTOMRIGHT", 0, -1)
             tooltipPoint, tooltipRelativePoint, tooltipX, tooltipY = "TOPLEFT", "TOPRIGHT", 3, 0
             -- hoverTop, hoverBottom, hoverLeft, hoverRight = 20, -20, -5, 20
+        elseif anchor == "TOP" then
+            cellMainFrame:SetPoint("TOP", anchorFrame, "BOTTOMRIGHT", 0, -4)
+            P:Point(raid, "TOPRIGHT", options, "TOPLEFT", -1, 0)
+            tooltipPoint, tooltipRelativePoint, tooltipX, tooltipY = "BOTTOMRIGHT", "TOPRIGHT", 0, 3
+            -- hoverTop, hoverBottom, hoverLeft, hoverRight = 20, -5, -20, 20
+        elseif anchor == "BOTTOM" then
+            cellMainFrame:SetPoint("TOP", anchorFrame, "BOTTOMRIGHT", 0, -4)
+            P:Point(raid, "TOPRIGHT", options, "TOPLEFT", -1, 0)
+            tooltipPoint, tooltipRelativePoint, tooltipX, tooltipY = "BOTTOMRIGHT", "TOPRIGHT", 0, 3
+            -- hoverTop, hoverBottom, hoverLeft, hoverRight = 20, -5, -20, 20
         end
     end
 

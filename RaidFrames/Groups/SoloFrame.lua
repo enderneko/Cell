@@ -80,6 +80,12 @@ local function SoloFrame_UpdateLayout(layout, which)
             elseif layout["main"]["anchor"] == "TOPRIGHT" then
                 point, anchorPoint = "TOPRIGHT", "BOTTOMRIGHT"
                 unitSpacing = -layout["main"]["spacingY"]
+            elseif layout["main"]["anchor"] == "TOP" then
+                point, anchorPoint = "TOP", "BOTTOMRIGHT"
+                unitSpacing = -layout["main"]["spacingY"]
+            elseif layout["main"]["anchor"] == "BOTTOM" then
+                point, anchorPoint = "BOTTOM", "BOTTOMRIGHT"
+                unitSpacing = -layout["main"]["spacingY"]
             end
 
             petButton:SetPoint(point, playerButton, anchorPoint, 0, unitSpacing)
@@ -98,6 +104,12 @@ local function SoloFrame_UpdateLayout(layout, which)
             elseif layout["main"]["anchor"] == "TOPRIGHT" then
                 point, anchorPoint = "TOPRIGHT", "TOPLEFT"
                 unitSpacing = -layout["main"]["spacingX"]
+            elseif layout["main"]["anchor"] == "TOP" then
+                point, anchorPoint = "TOP", "BOTTOM"
+                unitSpacing = -layout["main"]["spacingY"]
+            elseif layout["main"]["anchor"] == "BOTTOM" then
+                point, anchorPoint = "BOTTOM", "TOP"
+                unitSpacing = -layout["main"]["spacingY"]
             end
 
             petButton:SetPoint(point, playerButton, anchorPoint, unitSpacing, 0)

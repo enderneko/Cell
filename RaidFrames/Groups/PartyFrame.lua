@@ -129,6 +129,16 @@ local function PartyFrame_UpdateLayout(layout, which)
                 headerPoint = "TOP"
                 playerSpacing = -spacingY
                 petSpacing = -spacingX
+            elseif anchor == "TOP" then
+                point, playerAnchorPoint, petAnchorPoint = "TOP", "TOPLEFT", "BOTTOMRIGHT"
+                headerPoint = "RIGHT"
+                playerSpacing = -spacingY
+                petSpacing = -spacingX
+            elseif anchor == "BOTTOM" then
+                point, playerAnchorPoint, petAnchorPoint = "BOTTOM", "TOPLEFT", "BOTTOMRIGHT"
+                headerPoint = "RIGHT"
+                playerSpacing = -spacingY
+                petSpacing = -spacingX
             end
 
             header:SetAttribute("xOffset", 0)
@@ -152,6 +162,16 @@ local function PartyFrame_UpdateLayout(layout, which)
                 petSpacing = -spacingY
             elseif anchor == "TOPRIGHT" then
                 point, playerAnchorPoint, petAnchorPoint = "TOPRIGHT", "TOPLEFT", "BOTTOMRIGHT"
+                headerPoint = "RIGHT"
+                playerSpacing = -spacingX
+                petSpacing = -spacingY
+            elseif anchor == "TOP" then
+                point, playerAnchorPoint, petAnchorPoint = "TOP", "TOPLEFT", "BOTTOMRIGHT"
+                headerPoint = "RIGHT"
+                playerSpacing = -spacingX
+                petSpacing = -spacingY
+            elseif anchor == "BOTTOM" then
+                point, playerAnchorPoint, petAnchorPoint = "BOTTOM", "BOTTOMRIGHT", "BOTTOMRIGHT"
                 headerPoint = "RIGHT"
                 playerSpacing = -spacingX
                 petSpacing = -spacingY

@@ -49,6 +49,10 @@ raidFrame:SetAttribute("_onattributechanged", [[
             point, anchorPoint = "TOPLEFT", "TOPRIGHT"
         elseif anchor == "TOPRIGHT" then
             point, anchorPoint = "TOPRIGHT", "TOPLEFT"
+        elseif anchor == "TOP" then
+            point, anchorPoint = "TOP", "TOPRIGHT"
+        elseif anchor == "BOTTOM" then
+            point, anchorPoint = "BOTTOM", "TOPLEFT"
         end
 
         npcFrameAnchor:SetPoint(point, header, anchorPoint, spacing, 0)
@@ -61,6 +65,10 @@ raidFrame:SetAttribute("_onattributechanged", [[
             point, anchorPoint = "TOPLEFT", "BOTTOMLEFT"
         elseif anchor == "TOPRIGHT" then
             point, anchorPoint = "TOPRIGHT", "BOTTOMRIGHT"
+        elseif anchor == "TOP" then
+            point, anchorPoint = "TOP", "BOTTOMRIGHT"
+        elseif anchor == "BOTTOM" then
+            point, anchorPoint = "BOTTOM", "BOTTOMRIGHT"
         end
 
         npcFrameAnchor:SetPoint(point, header, anchorPoint, 0, spacing)
@@ -237,6 +245,20 @@ local function GetPoints(layout)
             groupSpacing = -spacingX
             unitSpacingX, unitSpacingY = spacingX, -spacingY
             verticalSpacing = -spacingY-layout["main"]["groupSpacing"]
+        elseif anchor == "TOP" then
+            point, anchorPoint, groupAnchorPoint = "TOP", "BOTTOMRIGHT", "TOPLEFT"
+            headerPoint, headerColumnAnchorPoint = "TOP", "RIGHT"
+            unitSpacing = -spacingY
+            groupSpacing = -spacingX
+            unitSpacingX, unitSpacingY = spacingX, -spacingY
+            verticalSpacing = -spacingY-layout["main"]["groupSpacing"]
+        elseif anchor == "BOTTOM" then
+            point, anchorPoint, groupAnchorPoint = "BOTTOM", "BOTTOMRIGHT", "TOPLEFT"
+            headerPoint, headerColumnAnchorPoint = "TOP", "RIGHT"
+            unitSpacing = -spacingY
+            groupSpacing = -spacingX
+            unitSpacingX, unitSpacingY = spacingX, -spacingY
+            verticalSpacing = -spacingY-layout["main"]["groupSpacing"]
         end
     else
         if anchor == "BOTTOMLEFT" then
@@ -262,6 +284,20 @@ local function GetPoints(layout)
             horizontalSpacing = spacingX+layout["main"]["groupSpacing"]
         elseif anchor == "TOPRIGHT" then
             point, anchorPoint, groupAnchorPoint = "TOPRIGHT", "TOPLEFT", "BOTTOMRIGHT"
+            headerPoint, headerColumnAnchorPoint = "RIGHT", "TOP"
+            unitSpacing = -spacingX
+            groupSpacing = -spacingY
+            unitSpacingX, unitSpacingY = -spacingX, spacingY
+            horizontalSpacing = -spacingX-layout["main"]["groupSpacing"]
+        elseif anchor == "TOP" then
+            point, anchorPoint, groupAnchorPoint = "TOP", "TOPLEFT", "BOTTOMRIGHT"
+            headerPoint, headerColumnAnchorPoint = "RIGHT", "TOP"
+            unitSpacing = -spacingX
+            groupSpacing = -spacingY
+            unitSpacingX, unitSpacingY = -spacingX, spacingY
+            horizontalSpacing = -spacingX-layout["main"]["groupSpacing"]
+        elseif anchor == "BOTTOM" then
+            point, anchorPoint, groupAnchorPoint = "BOTTOM", "TOPLEFT", "BOTTOMRIGHT"
             headerPoint, headerColumnAnchorPoint = "RIGHT", "TOP"
             unitSpacing = -spacingX
             groupSpacing = -spacingY

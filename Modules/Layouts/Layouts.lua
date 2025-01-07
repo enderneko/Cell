@@ -240,6 +240,204 @@ local function CreateLayoutPreview()
     end
 end
 
+-- applied to the first unit of the first group
+local InitialGrowthDirection = {
+    ["TOP"] = {
+        top_bottom = {"BOTTOM", "TOPLEFT"},
+        left_right = {"BOTTOM", "TOPLEFT"},
+    },
+    ["TOPLEFT"] = {
+        top_bottom = {"BOTTOMLEFT", "TOPLEFT"},
+        left_right = {"BOTTOMLEFT", "TOPLEFT"},
+    },
+    ["TOPRIGHT"] = {
+        top_bottom = {"BOTTOMRIGHT", "TOPRIGHT"},
+        left_right = {"BOTTOMRIGHT", "TOPRIGHT"},
+    },
+    ["BOTTOM"] = {
+        top_bottom = {"TOP", "BOTTOMRIGHT"},
+        left_right = {"TOP", "BOTTOMRIGHT"},
+    },
+    ["BOTTOMLEFT"] = {
+        top_bottom = {"TOPLEFT", "BOTTOMLEFT"},
+        left_right = {"TOPLEFT", "BOTTOMLEFT"},
+    },
+    ["BOTTOMRIGHT"] = {
+        top_bottom = {"TOPRIGHT", "BOTTOMRIGHT"},
+        left_right = {"TOPRIGHT", "BOTTOMRIGHT"},
+    },
+}
+
+-- applied to the first unit of the 2nd+ group
+local groupsGrowDirection = {
+    ["TOP"] = {
+        horizontal = {"BOTTOM", "TOP"},
+        vertical = {"RIGHT", "LEFT"},
+    },
+    ["TOPLEFT"] = {
+        horizontal = {"BOTTOM", "TOP"},
+        vertical = {"RIGHT", "LEFT"},
+    },
+    ["TOPRIGHT"] = {
+        horizontal = {"BOTTOM", "TOP"},
+        vertical = {"LEFT", "RIGHT"},
+    },
+    ["BOTTOM"] = {
+        horizontal = {"TOP", "BOTTOM"},
+        vertical = {"LEFT", "RIGHT"},
+    },
+    ["BOTTOMLEFT"] = {
+        horizontal = {"TOP", "BOTTOM"},
+        vertical = {"RIGHT", "LEFT"},
+    },
+    ["BOTTOMRIGHT"] = {
+        horizontal = {"TOP", "BOTTOM"},
+        vertical = {"LEFT", "RIGHT"},
+    },
+}
+
+-- applied to the rest of the units
+local growthDirection = {
+    ["TOP"] = {
+        horizontal = {"RIGHT", "LEFT"},
+        vertical = {"BOTTOM", "TOP"},
+    },
+    ["TOPLEFT"] = {
+        horizontal = {"RIGHT", "LEFT"},
+        vertical = {"BOTTOM", "TOP"},
+    },
+    ["TOPRIGHT"] = {
+        horizontal = {"LEFT", "RIGHT"},
+        vertical = {"BOTTOM", "TOP"},
+    },
+    ["BOTTOM"] = {
+        horizontal = {"LEFT", "RIGHT"},
+        vertical = {"TOP", "BOTTOM"},
+    },
+    ["BOTTOMLEFT"] = {
+        horizontal = {"RIGHT", "LEFT"},
+        vertical = {"TOP", "BOTTOM"},
+    },
+    ["BOTTOMRIGHT"] = {
+        horizontal = {"LEFT", "RIGHT"},
+        vertical = {"TOP", "BOTTOM"},
+    },
+}
+
+local function directionToGrowth(groupNumber, numberInGroup)
+    local growth = selectedLayoutTable["main"]["orientation"]
+    local anchorPoint = selectedLayoutTable["main"]["anchor"]
+    local menu_position = CellDB["general"]["menuPosition"]
+
+    -- first panel can grow only up or down
+    if groupNumber == 1 and numberInGroup == 1 then
+        local directions = InitialGrowthDirection[anchorPoint][menu_position]
+        return directions[1], directions[2]
+    end
+
+    -- first element
+    if numberInGroup == 1 then
+        local directions = groupsGrowDirection[anchorPoint][growth]
+        return directions[1], directions[2]
+    end
+
+    -- all other elements
+    local directions = growthDirection[anchorPoint][growth]
+    return directions[1], directions[2]
+end
+
+
+local function getSpacing(parentAnchorPoint, childAnchorPoint)
+    local spacingX = selectedLayoutTable["main"]["spacingX"]
+    local spacingY = selectedLayoutTable["main"]["spacingY"]
+    if string.match(parentAnchorPoint, "TOP.*") ~= nil and string.match(childAnchorPoint, "BOTTOM.*") ~= nil then
+        return 0, spacingY
+    end
+    if string.match(parentAnchorPoint, "BOTTOM.*") ~= nil and string.match(childAnchorPoint, "TOP.*") ~= nil then
+        return 0, -spacingY
+    end
+    if string.match(parentAnchorPoint, ".*RIGHT") ~= nil and string.match(childAnchorPoint, ".*LEFT") ~= nil then
+        return spacingX, 0
+    end
+    if string.match(parentAnchorPoint, ".*LEFT") ~= nil and string.match(childAnchorPoint, ".*RIGHT") ~= nil then
+        return -spacingX, 0
+    end
+end
+
+
+local function placeGroupFrame(groups)
+    -- read parameters to reduce cognitive complexity
+    local spacingX = selectedLayoutTable["main"]["spacingX"]
+    local sizeX = selectedLayoutTable["main"]["size"][1]
+    local sizeY = selectedLayoutTable["main"]["size"][2]
+    local anchorPoint = selectedLayoutTable["main"]["anchor"]
+    local growth = selectedLayoutTable["main"]["orientation"]
+
+    -- calculate frame size
+    -- need mostly for TOP/BOTTOM anchorPoint
+    local longestGroup = 1
+    for _, group in ipairs(groups) do
+        if #group > longestGroup then
+            longestGroup = #group
+        end
+    end
+
+    local frameWitdth
+    if growth == "vertical" then
+        frameWitdth = #groups * sizeX + (#groups - 1) * spacingX
+    else
+        frameWitdth = longestGroup * sizeX + (longestGroup - 1) * spacingX
+    end
+
+    -- need to calculate first element position
+    local offsetX = 0
+    local offsetY = 0
+
+    -- calculate first element position
+    if anchorPoint == "TOP" then
+        offsetY = -4
+        offsetX = -frameWitdth / 2
+    elseif anchorPoint == "BOTTOM" then
+        offsetY = 4
+        offsetX = frameWitdth / 2
+    elseif anchorPoint == "BOTTOMLEFT" or anchorPoint == "BOTTOMRIGHT" then
+        offsetY = 4
+    elseif anchorPoint == "TOPLEFT" or anchorPoint == "TOPRIGHT" then
+        offsetY = -4
+    end
+
+
+    for groupNumber, group in ipairs(groups) do
+        local previous
+
+        for numberInGroup, playerPlate in ipairs(group) do
+            P:Size(playerPlate, sizeX, sizeY)
+            playerPlate:ClearAllPoints()
+
+            local actualAnchorPoint, actualAnchorPointChild = directionToGrowth(groupNumber, numberInGroup)
+
+            -- the first unit in the group is attached
+            -- to the first unit in the previous group
+            if numberInGroup == 1 and groupNumber > 1 then
+                previous = groups[groupNumber - 1][1]
+            end
+
+            -- the very first item is attached to the anchor
+            if numberInGroup == 1 and groupNumber == 1 then
+                previous = layoutPreviewAnchor
+            else
+                -- applied to all 2th to 5th unit in the group
+                offsetX, offsetY = getSpacing(actualAnchorPoint, actualAnchorPointChild)
+            end
+
+            playerPlate:SetPoint(actualAnchorPointChild, previous, actualAnchorPoint, offsetX, offsetY)
+
+            previous = playerPlate
+        end
+    end
+end
+
+
 local function UpdateLayoutPreview()
     if not layoutPreview then
         CreateLayoutPreview()
@@ -263,6 +461,12 @@ local function UpdateLayoutPreview()
         elseif selectedLayoutTable["main"]["anchor"] == "TOPRIGHT" then
             layoutPreview:SetPoint("TOPRIGHT", layoutPreviewAnchor, "BOTTOMRIGHT", 0, -4)
             layoutPreviewName:SetPoint("RIGHT", layoutPreviewAnchor, "LEFT", -5, 0)
+        elseif selectedLayoutTable["main"]["anchor"] == "TOP" then
+            layoutPreview:SetPoint("TOP", layoutPreviewAnchor, "BOTTOM", 0, -4)
+            layoutPreviewName:SetPoint("RIGHT", layoutPreviewAnchor, "LEFT", -5, 0)
+        elseif selectedLayoutTable["main"]["anchor"] == "BOTTOM" then
+            layoutPreview:SetPoint("BOTTOM", layoutPreviewAnchor, "TOP", 0, 4)
+            layoutPreviewName:SetPoint("RIGHT", layoutPreviewAnchor, "LEFT", 5, 0)
         end
     else
         P:Size(layoutPreviewAnchor, 10, 20)
@@ -278,6 +482,12 @@ local function UpdateLayoutPreview()
         elseif selectedLayoutTable["main"]["anchor"] == "TOPRIGHT" then
             layoutPreview:SetPoint("TOPRIGHT", layoutPreviewAnchor, "TOPLEFT", -4, 0)
             layoutPreviewName:SetPoint("BOTTOMRIGHT", layoutPreviewAnchor, "TOPRIGHT", 0, 5)
+        elseif selectedLayoutTable["main"]["anchor"] == "TOP" then
+            layoutPreview:SetPoint("TOP", layoutPreviewAnchor, "BOTTOM", 0, -4)
+            layoutPreviewName:SetPoint("RIGHT", layoutPreviewAnchor, "LEFT", -5, 0)
+        elseif selectedLayoutTable["main"]["anchor"] == "BOTTOM" then
+            layoutPreview:SetPoint("BOTTOM", layoutPreviewAnchor, "TOP", 0, 4)
+            layoutPreviewName:SetPoint("RIGHT", layoutPreviewAnchor, "LEFT", 5, 0)
         end
     end
 
@@ -294,55 +504,7 @@ local function UpdateLayoutPreview()
     layoutPreviewName:SetText(L["Layout"]..": "..selectedLayout)
 
     -- re-arrange
-    local spacingX = selectedLayoutTable["main"]["spacingX"]
-    local spacingY = selectedLayoutTable["main"]["spacingY"]
-    local point, anchorPoint, groupAnchorPoint, unitSpacing, groupSpacing, verticalSpacing, horizontalSpacing
-
-    if selectedLayoutTable["main"]["orientation"] == "vertical" then
-        if selectedLayoutTable["main"]["anchor"] == "BOTTOMLEFT" then
-            point, anchorPoint, groupAnchorPoint = "BOTTOMLEFT", "TOPLEFT", "BOTTOMRIGHT"
-            unitSpacing = spacingY
-            groupSpacing = spacingX
-            verticalSpacing = spacingY+selectedLayoutTable["main"]["groupSpacing"]
-        elseif selectedLayoutTable["main"]["anchor"] == "BOTTOMRIGHT" then
-            point, anchorPoint, groupAnchorPoint = "BOTTOMRIGHT", "TOPRIGHT", "BOTTOMLEFT"
-            unitSpacing = spacingY
-            groupSpacing = -spacingX
-            verticalSpacing = spacingY+selectedLayoutTable["main"]["groupSpacing"]
-        elseif selectedLayoutTable["main"]["anchor"] == "TOPLEFT" then
-            point, anchorPoint, groupAnchorPoint = "TOPLEFT", "BOTTOMLEFT", "TOPRIGHT"
-            unitSpacing = -spacingY
-            groupSpacing = spacingX
-            verticalSpacing = -spacingY-selectedLayoutTable["main"]["groupSpacing"]
-        elseif selectedLayoutTable["main"]["anchor"] == "TOPRIGHT" then
-            point, anchorPoint, groupAnchorPoint = "TOPRIGHT", "BOTTOMRIGHT", "TOPLEFT"
-            unitSpacing = -spacingY
-            groupSpacing = -spacingX
-            verticalSpacing = -spacingY-selectedLayoutTable["main"]["groupSpacing"]
-        end
-    else
-        if selectedLayoutTable["main"]["anchor"] == "BOTTOMLEFT" then
-            point, anchorPoint, groupAnchorPoint = "BOTTOMLEFT", "BOTTOMRIGHT", "TOPLEFT"
-            unitSpacing = spacingX
-            groupSpacing = spacingY
-            horizontalSpacing = spacingX+selectedLayoutTable["main"]["groupSpacing"]
-        elseif selectedLayoutTable["main"]["anchor"] == "BOTTOMRIGHT" then
-            point, anchorPoint, groupAnchorPoint = "BOTTOMRIGHT", "BOTTOMLEFT", "TOPRIGHT"
-            unitSpacing = -spacingX
-            groupSpacing = spacingY
-            horizontalSpacing = -spacingX-selectedLayoutTable["main"]["groupSpacing"]
-        elseif selectedLayoutTable["main"]["anchor"] == "TOPLEFT" then
-            point, anchorPoint, groupAnchorPoint = "TOPLEFT", "TOPRIGHT", "BOTTOMLEFT"
-            unitSpacing = spacingX
-            groupSpacing = -spacingY
-            horizontalSpacing = spacingX+selectedLayoutTable["main"]["groupSpacing"]
-        elseif selectedLayoutTable["main"]["anchor"] == "TOPRIGHT" then
-            point, anchorPoint, groupAnchorPoint = "TOPRIGHT", "TOPLEFT", "BOTTOMRIGHT"
-            unitSpacing = -spacingX
-            groupSpacing = -spacingY
-            horizontalSpacing = -spacingX-selectedLayoutTable["main"]["groupSpacing"]
-        end
-    end
+    local point = selectedLayoutTable["main"]["anchor"]
 
     if selectedLayoutTable["main"]["combineGroups"] and previewMode ~= 1 then
         -- hide separatedHeaders
@@ -364,41 +526,16 @@ local function UpdateLayoutPreview()
         --     units = min(5, units)
         -- end
 
-        if selectedLayoutTable["main"]["orientation"] == "vertical" then
-            P:Size(layoutPreview.combinedHeader,
-                selectedLayoutTable["main"]["size"][1]*maxColumns+abs(groupSpacing)*(maxColumns-1),
-                selectedLayoutTable["main"]["size"][2]*unitsPerColumn+abs(unitSpacing)*(unitsPerColumn-1))
-
-            for i = 1, min(40, units) do
-                local header = layoutPreview.combinedHeader
-                header[i]:ClearAllPoints()
-
-                if i == 1 then
-                    header[i]:SetPoint(point)
-                elseif i % selectedLayoutTable["main"]["unitsPerColumn"] == 1 then
-                    header[i]:SetPoint(point, header[i-selectedLayoutTable["main"]["unitsPerColumn"]], groupAnchorPoint, groupSpacing, 0)
-                else
-                    header[i]:SetPoint(point, header[i-1], anchorPoint, 0, unitSpacing)
-                end
-            end
-        else
-            P:Size(layoutPreview.combinedHeader,
-                selectedLayoutTable["main"]["size"][1]*unitsPerColumn+abs(unitSpacing)*(unitsPerColumn-1),
-                selectedLayoutTable["main"]["size"][2]*maxColumns+abs(groupSpacing)*(maxColumns-1))
-
-            for i = 1, min(40, units) do
-                local header = layoutPreview.combinedHeader
-                header[i]:ClearAllPoints()
-
-                if i == 1 then
-                    header[i]:SetPoint(point)
-                elseif i % selectedLayoutTable["main"]["unitsPerColumn"] == 1 then
-                    header[i]:SetPoint(point, header[i-selectedLayoutTable["main"]["unitsPerColumn"]], groupAnchorPoint, 0, groupSpacing)
-                else
-                    header[i]:SetPoint(point, header[i-1], anchorPoint, unitSpacing, 0)
-                end
+        local combined = {}
+        local subtable = {}
+        for i = 1, min(40, units) do
+            table.insert(subtable, layoutPreview.combinedHeader[i])
+            if i % unitsPerColumn == 0 then
+                table.insert(combined, subtable)
+                subtable = {}
             end
         end
+        placeGroupFrame(combined)
 
         -- hide unused
         for i = 1, 40 do
@@ -435,60 +572,10 @@ local function UpdateLayoutPreview()
         local shownGroups = {}
         for i, isShown in ipairs(selectedLayoutTable["groupFilter"]) do
             if isShown then
-                tinsert(shownGroups, i)
+                tinsert(shownGroups, layoutPreview.separatedHeaders[i])
             end
         end
-
-        for i, group in ipairs(shownGroups) do
-            local header = layoutPreview.separatedHeaders[group]
-            header:ClearAllPoints()
-
-            if selectedLayoutTable["main"]["orientation"] == "vertical" then
-                P:Size(header, selectedLayoutTable["main"]["size"][1], selectedLayoutTable["main"]["size"][2]*5+abs(unitSpacing)*4)
-                for j = 1, 5 do
-                    P:Size(header[j], selectedLayoutTable["main"]["size"][1], selectedLayoutTable["main"]["size"][2])
-                    header[j]:ClearAllPoints()
-
-                    if j == 1 then
-                        header[j]:SetPoint(point)
-                    else
-                        header[j]:SetPoint(point, header[j-1], anchorPoint, 0, unitSpacing)
-                    end
-                end
-
-                if i == 1 then
-                    header:SetPoint(point)
-                else
-                    if i / selectedLayoutTable["main"]["maxColumns"] > 1 then -- not the first row
-                        header:SetPoint(point, layoutPreview.separatedHeaders[shownGroups[i-selectedLayoutTable["main"]["maxColumns"]]], anchorPoint, 0, verticalSpacing)
-                    else
-                        header:SetPoint(point, layoutPreview.separatedHeaders[shownGroups[i-1]], groupAnchorPoint, groupSpacing, 0)
-                    end
-                end
-            else
-                P:Size(header, selectedLayoutTable["main"]["size"][1]*5+abs(unitSpacing)*4, selectedLayoutTable["main"]["size"][2])
-                for j = 1, 5 do
-                    P:Size(header[j], selectedLayoutTable["main"]["size"][1], selectedLayoutTable["main"]["size"][2])
-                    header[j]:ClearAllPoints()
-
-                    if j == 1 then
-                        header[j]:SetPoint(point)
-                    else
-                        header[j]:SetPoint(point, header[j-1], anchorPoint, unitSpacing, 0)
-                    end
-                end
-
-                if i == 1 then
-                    header:SetPoint(point)
-                else
-                    if i / selectedLayoutTable["main"]["maxColumns"] > 1 then -- not the first column
-                        header:SetPoint(point, layoutPreview.separatedHeaders[shownGroups[i-selectedLayoutTable["main"]["maxColumns"]]], anchorPoint, horizontalSpacing, 0)
-                    else
-                        header:SetPoint(point, layoutPreview.separatedHeaders[shownGroups[i-1]], groupAnchorPoint, 0, groupSpacing)
-                    end
-                end
-            end
-        end
+        placeGroupFrame(shownGroups)
     end
 
     if not layoutPreview:IsShown() then
@@ -1205,6 +1292,16 @@ local function UpdateSpotlightPreview()
             groupPoint = "TOPLEFT"
             unitSpacingX = -spacingX
             unitSpacingY = -spacingY
+        elseif anchor == "TOP" then
+            point, anchorPoint = "TOPLEFT", "BOTTOMLEFT"
+            groupPoint = "TOPRIGHT"
+            unitSpacingX = spacingX
+            unitSpacingY = -spacingY
+        elseif anchor == "BOTTOM" then
+            point, anchorPoint = "TOPRIGHT", "BOTTOMRIGHT"
+            groupPoint = "TOPLEFT"
+            unitSpacingX = -spacingX
+            unitSpacingY = -spacingY
         end
     else
         if anchor == "BOTTOMLEFT" then
@@ -1223,6 +1320,16 @@ local function UpdateSpotlightPreview()
             unitSpacingX = spacingX
             unitSpacingY = -spacingY
         elseif anchor == "TOPRIGHT" then
+            point, anchorPoint = "TOPRIGHT", "TOPLEFT"
+            groupPoint = "BOTTOMRIGHT"
+            unitSpacingX = -spacingX
+            unitSpacingY = -spacingY
+        elseif anchor == "TOP" then
+            point, anchorPoint = "TOPLEFT", "TOPRIGHT"
+            groupPoint = "BOTTOMLEFT"
+            unitSpacingX = spacingX
+            unitSpacingY = -spacingY
+        elseif anchor == "BOTTOM" then
             point, anchorPoint = "TOPRIGHT", "TOPLEFT"
             groupPoint = "BOTTOMRIGHT"
             unitSpacingX = -spacingX
@@ -2273,6 +2380,22 @@ local function CreateLayoutSetupPane()
             ["value"] = "TOPRIGHT",
             ["onClick"] = function()
                 selectedLayoutTable[selectedPage]["anchor"] = "TOPRIGHT"
+                UpdateArrangement()
+            end,
+        },
+        {
+            ["text"] = L["TOP"],
+            ["value"] = "TOP",
+            ["onClick"] = function()
+                selectedLayoutTable[selectedPage]["anchor"] = "TOP"
+                UpdateArrangement()
+            end,
+        },
+        {
+            ["text"] = L["BOTTOM"],
+            ["value"] = "BOTTOM",
+            ["onClick"] = function()
+                selectedLayoutTable[selectedPage]["anchor"] = "BOTTOM"
                 UpdateArrangement()
             end,
         },

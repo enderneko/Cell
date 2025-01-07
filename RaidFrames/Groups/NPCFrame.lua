@@ -515,6 +515,14 @@ local function NPCFrame_UpdateLayout(layout, which)
                 point, anchorPoint, groupAnchorPoint = "TOPRIGHT", "BOTTOMRIGHT", "TOPLEFT"
                 unitSpacing = -spacingY
                 groupSpacing = -spacingX
+            elseif anchor == "TOP" then
+                point, anchorPoint, groupAnchorPoint = "TOPLEFT", "BOTTOMLEFT", "TOPRIGHT"
+                unitSpacing = -spacingY
+                groupSpacing = spacingX
+            elseif anchor == "BOTTOM" then
+                point, anchorPoint, groupAnchorPoint = "TOPRIGHT", "BOTTOMRIGHT", "TOPLEFT"
+                unitSpacing = -spacingY
+                groupSpacing = -spacingX
             end
 
             if not layout["npc"]["separate"] then
@@ -548,6 +556,14 @@ local function NPCFrame_UpdateLayout(layout, which)
                 groupSpacing = -spacingY
             elseif anchor == "TOPRIGHT" then
                 point, anchorPoint, groupAnchorPoint = "TOPRIGHT", "TOPLEFT", "BOTTOMRIGHT"
+                unitSpacing = -spacingX
+                groupSpacing = -spacingY
+            elseif anchor == "TOP" then
+                point, anchorPoint, groupAnchorPoint = "TOP", "TOPLEFT", "BOTTOMRIGHT"
+                unitSpacing = -spacingX
+                groupSpacing = -spacingY
+            elseif anchor == "BOTTOM" then
+                point, anchorPoint, groupAnchorPoint = "BOTTOM", "TOPLEFT", "BOTTOMRIGHT"
                 unitSpacing = -spacingX
                 groupSpacing = -spacingY
             end

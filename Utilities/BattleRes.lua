@@ -254,6 +254,14 @@ local function UpdatePosition()
     elseif anchor == "TOPRIGHT" then
         point, relativePoint = "BOTTOMRIGHT", "TOPRIGHT"
         onShow, onHide = 4, -10
+
+    elseif anchor == "TOP" then
+        point, relativePoint = "TOP", "TOPRIGHT"
+        onShow, onHide = 4, -10
+
+    elseif anchor == "BOTTOM" then
+        point, relativePoint = "BOTTOM", "TOPRIGHT"
+        onShow, onHide = 4, -10
     end
 
     if CellDB["general"]["menuPosition"] == "top_bottom" then

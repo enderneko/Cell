@@ -639,6 +639,14 @@ local function UpdateLayoutPreview()
             point, relativePoint, groupRelativePoint = "TOPRIGHT", "TOPLEFT", "BOTTOMRIGHT"
             unitSpacing = -layoutTable["spacingX"]
             groupSpacing = -layoutTable["spacingY"]
+        elseif layoutTable["anchor"] == "TOP" then
+            point, relativePoint, groupRelativePoint = "TOPRIGHT", "TOPLEFT", "BOTTOMRIGHT"
+            unitSpacing = -layoutTable["spacingX"]
+            groupSpacing = -layoutTable["spacingY"]
+        elseif layoutTable["anchor"] == "BOTTOM" then
+            point, relativePoint, groupRelativePoint = "TOPRIGHT", "TOPLEFT", "BOTTOMRIGHT"
+            unitSpacing = -layoutTable["spacingX"]
+            groupSpacing = -layoutTable["spacingY"]
         end
     else
         if layoutTable["anchor"] == "BOTTOMLEFT" then
@@ -657,6 +665,14 @@ local function UpdateLayoutPreview()
             point, relativePoint, groupRelativePoint = "TOPRIGHT", "BOTTOMRIGHT", "TOPLEFT"
             unitSpacing = -layoutTable["spacingY"]
             groupSpacing = -layoutTable["spacingX"]
+        elseif layoutTable["anchor"] == "TOP" then
+            point, relativePoint, groupRelativePoint = "TOPRIGHT", "TOPLEFT", "BOTTOMRIGHT"
+            unitSpacing = -layoutTable["spacingX"]
+            groupSpacing = -layoutTable["spacingY"]
+        elseif layoutTable["anchor"] == "BOTTOM" then
+            point, relativePoint, groupRelativePoint = "TOPRIGHT", "TOPLEFT", "BOTTOMRIGHT"
+            unitSpacing = -layoutTable["spacingX"]
+            groupSpacing = -layoutTable["spacingY"]
         end
     end
 

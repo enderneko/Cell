@@ -816,6 +816,20 @@ local function UpdateLayout(layout, which)
                 unitSpacingY = -spacingY
                 menuAnchorPoint = "TOPLEFT"
                 menuX, menuY = -4, 0
+            elseif anchor == "TOP" then
+                point, anchorPoint = "TOP", "BOTTOMLEFT"
+                groupPoint = "TOPRIGHT"
+                unitSpacingX = spacingX
+                unitSpacingY = -spacingY
+                menuAnchorPoint = "TOPRIGHT"
+                menuX, menuY = 4, 0
+            elseif anchor == "BOTTOM" then
+                point, anchorPoint = "BOTTOM", "BOTTOMRIGHT"
+                groupPoint = "TOPLEFT"
+                unitSpacingX = -spacingX
+                unitSpacingY = -spacingY
+                menuAnchorPoint = "TOPLEFT"
+                menuX, menuY = -4, 0
             end
         else
             if anchor == "BOTTOMLEFT" then
@@ -846,6 +860,20 @@ local function UpdateLayout(layout, which)
                 unitSpacingY = -spacingY
                 menuAnchorPoint = "BOTTOMRIGHT"
                 menuX, menuY = 0, -4
+            elseif anchor == "TOP" then
+                point, anchorPoint = "TOP", "BOTTOMLEFT"
+                groupPoint = "TOPRIGHT"
+                unitSpacingX = spacingX
+                unitSpacingY = -spacingY
+                menuAnchorPoint = "TOPRIGHT"
+                menuX, menuY = 4, 0
+            elseif anchor == "BOTTOM" then
+                point, anchorPoint = "BOTTOM", "BOTTOMRIGHT"
+                groupPoint = "TOPLEFT"
+                unitSpacingX = -spacingX
+                unitSpacingY = -spacingY
+                menuAnchorPoint = "TOPLEFT"
+                menuX, menuY = -4, 0
             end
         end
 
