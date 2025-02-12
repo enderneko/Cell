@@ -314,7 +314,7 @@ function eventFrame:ADDON_LOADED(arg1)
                 ["type"] = "text",
                 ["textOptions"] = {
                     "A",
-                    {1, 0, 0, 1}, -- [1] color
+                    {1, 1, 1, 1}, -- [1] color
                     32, -- [2] size
                     "TOPLEFT", -- [3] anchor
                     "TOPLEFT", -- [4] anchorTo

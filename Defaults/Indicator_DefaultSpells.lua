@@ -693,7 +693,8 @@ local drinks = {
     172786, -- 饮料 - Drink
     308433, -- 食物和饮料 - Food & Drink
     369162, -- 饮用 - Drink
-    461063, -- Quiet Contemplation (Earthen)
+    456574, -- 燧烬蜜露 - Cinder Nectar
+    461063, -- 静默省思（土灵）- Quiet Contemplation (Earthen)
 }
 
 do
@@ -987,6 +988,8 @@ local targetedSpells = {
     431491, -- 污邪斩击
     451119, -- 深渊轰击
     431303, -- 暗夜箭
+    -- 尼鲁巴尔王宫
+    459524, -- 致命之箭
 }
 
 function I.GetDefaultTargetedSpellsList()

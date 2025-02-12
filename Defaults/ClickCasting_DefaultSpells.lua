@@ -387,6 +387,9 @@ local resurrections_for_dead = {
     -- SHAMAN
     2008, -- 先祖之魂
     212048, -- 先祖视界
+
+    -- WARLOCK
+    20707, -- 灵魂石
 }
 
 do
@@ -397,9 +400,10 @@ do
     resurrections_for_dead = temp
 end
 
-local spell_soulstone = F:GetSpellInfo(20707)
+-- local spell_soulstone = F:GetSpellInfo(20707)
 function F:IsSoulstone(spell)
-    return spell == spell_soulstone
+    -- return spell == spell_soulstone
+    return false
 end
 
 function F:IsResurrectionForDead(spell)

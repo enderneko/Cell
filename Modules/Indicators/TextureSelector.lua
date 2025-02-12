@@ -85,6 +85,7 @@ local function CreateTextureSelector()
         Cell.frames.indicatorsTab.mask:Hide()
         textureSelector:Hide()
         addEB.tip:Show()
+        addEB:SetText("")
     end)
 end
 
@@ -111,11 +112,11 @@ LoadTextures = function()
                 b:SetBackdropBorderColor(unpack(Cell:GetAccentColorTable()))
                 b.delBtn:SetBackdropBorderColor(unpack(Cell:GetAccentColorTable()))
 
-                F:FitWidth(currentTexturePath, path, "right")
+                F:FitWidth(currentTexturePath, b.path, "right")
             end)
             b:SetScript("OnLeave", function()
                 currentTexturePath:SetText("")
-                if selectedPath ~= path then
+                if selectedPath ~= b.path then
                     b:SetBackdropBorderColor(0, 0, 0, 1)
                     b.delBtn:SetBackdropBorderColor(0, 0, 0, 1)
                 end
@@ -136,11 +137,13 @@ LoadTextures = function()
             end)
             b.delBtn:SetScript("OnClick", function()
                 -- update db
-                F:TRemove(CellDB["customTextures"], path)
+                F:TRemove(CellDB["customTextures"], b.path)
                 -- reload
                 LoadTextures()
             end)
         end
+
+        b.path = path
 
         -- point
         b:ClearAllPoints()

@@ -19,8 +19,9 @@ local function DiedWithSoulstone(b)
 end
 
 local rez = {}
-local SOULSTONE = F:GetSpellInfo(20707)
 local soulstones = {}
+local SOULSTONE = F:GetSpellInfo(20707)
+local RESURRECTING = F:GetSpellInfo(160029)
 
 local cleuFrame = CreateFrame("Frame")
 cleuFrame:SetScript("OnEvent", function()
@@ -33,6 +34,9 @@ cleuFrame:SetScript("OnEvent", function()
             C_Timer.After(0.1, function()
                 soulstones[destGUID] = nil
             end)
+        elseif spellName == RESURRECTING then
+            rez[destGUID] = nil
+            F:HandleUnitButton("guid", destGUID, I.UpdateStatusIcon_Resurrection)
         end
     elseif subEvent == "UNIT_DIED" then
         -- print("died", timestamp, destName)
@@ -205,8 +209,13 @@ if Cell.isRetail then
             icon:SetTexture("Interface\\RaidFrame\\Raid-Icon-Rez")
             icon:SetTexCoord(0, 1, 0, 1)
             icon:Show()
-        elseif button.states.hasRezDebuff or button.states.hasSoulstone then
+        elseif button.states.hasRezDebuff then
             icon:SetVertexColor(0.6, 1, 0.6, 1)
+            icon:SetTexture("Interface\\RaidFrame\\Raid-Icon-Rez")
+            icon:SetTexCoord(0, 1, 0, 1)
+            icon:Show()
+        elseif button.states.hasSoulstone then
+            icon:SetVertexColor(1, 0.4, 1, 1)
             icon:SetTexture("Interface\\RaidFrame\\Raid-Icon-Rez")
             icon:SetTexCoord(0, 1, 0, 1)
             icon:Show()

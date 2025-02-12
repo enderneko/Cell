@@ -792,6 +792,7 @@ local nameList = {}
 local nameToPriority = {}
 
 local function GetPriority(class, specId)
+    if not specFilter then return end
     if not class then return end
     if not specId or specId == 0 then return end
 

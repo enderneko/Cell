@@ -839,6 +839,88 @@ Cell_ExpansionData.data = {
             },
         }, -- [4]
         {
+            ["id"] = 745,
+            ["image"] = 1396587,
+            ["name"] = "Naxxramas",
+            ["bosses"] = {
+                {
+                    ["id"] = 1552,
+                    ["image"] = 1378964,
+                    ["name"] = "Anub'Rekhan",
+                }, -- [1]
+                {
+                    ["id"] = 1553,
+                    ["image"] = 1378980,
+                    ["name"] = "Großwitwe Faerlina",
+                }, -- [2]
+                {
+                    ["id"] = 1554,
+                    ["image"] = 1378994,
+                    ["name"] = "Maexxna",
+                }, -- [3]
+                {
+                    ["id"] = 1555,
+                    ["image"] = 1379004,
+                    ["name"] = "Noth der Seuchenfürst",
+                }, -- [4]
+                {
+                    ["id"] = 1556,
+                    ["image"] = 1378984,
+                    ["name"] = "Heigan der Unreine",
+                }, -- [5]
+                {
+                    ["id"] = 1557,
+                    ["image"] = 1378991,
+                    ["name"] = "Loatheb",
+                }, -- [6]
+                {
+                    ["id"] = 1558,
+                    ["image"] = 1378988,
+                    ["name"] = "Instrukteur Razuvious",
+                }, -- [7]
+                {
+                    ["id"] = 1559,
+                    ["image"] = 1378979,
+                    ["name"] = "Gothik der Ernter",
+                }, -- [8]
+                {
+                    ["id"] = 1560,
+                    ["image"] = 1385732,
+                    ["name"] = "Die Vier Reiter",
+                }, -- [9]
+                {
+                    ["id"] = 1561,
+                    ["image"] = 1379005,
+                    ["name"] = "Flickwerk",
+                }, -- [10]
+                {
+                    ["id"] = 1562,
+                    ["image"] = 1378981,
+                    ["name"] = "Grobbulus",
+                }, -- [11]
+                {
+                    ["id"] = 1563,
+                    ["image"] = 1378977,
+                    ["name"] = "Gluth",
+                }, -- [12]
+                {
+                    ["id"] = 1564,
+                    ["image"] = 1379019,
+                    ["name"] = "Thaddius",
+                }, -- [13]
+                {
+                    ["id"] = 1565,
+                    ["image"] = 1379010,
+                    ["name"] = "Saphiron",
+                }, -- [14]
+                {
+                    ["id"] = 1566,
+                    ["image"] = 1378989,
+                    ["name"] = "Kel'Thuzad",
+                }, -- [15]
+            },
+        }, -- [5]
+        {
             ["id"] = 64,
             ["image"] = 522358,
             ["name"] = "Burg Schattenfang",
@@ -869,7 +951,7 @@ Cell_ExpansionData.data = {
                     ["name"] = "Lord Godfrey",
                 }, -- [5]
             },
-        }, -- [5]
+        }, -- [6]
         {
             ["id"] = 316,
             ["image"] = 608214,
@@ -891,7 +973,7 @@ Cell_ExpansionData.data = {
                     ["name"] = "Hochinquisitorin Weißsträhne",
                 }, -- [3]
             },
-        }, -- [6]
+        }, -- [7]
         {
             ["id"] = 238,
             ["image"] = 608223,
@@ -913,7 +995,7 @@ Cell_ExpansionData.data = {
                     ["name"] = "Randolph Moloch",
                 }, -- [3]
             },
-        }, -- [7]
+        }, -- [8]
         {
             ["id"] = 226,
             ["image"] = 608211,
@@ -940,7 +1022,7 @@ Cell_ExpansionData.data = {
                     ["name"] = "Lavawache Gordoth",
                 }, -- [4]
             },
-        }, -- [8]
+        }, -- [9]
         {
             ["id"] = 237,
             ["image"] = 608217,
@@ -967,7 +1049,7 @@ Cell_ExpansionData.data = {
                     ["name"] = "Eranikus' Schemen",
                 }, -- [4]
             },
-        }, -- [9]
+        }, -- [10]
         {
             ["id"] = 230,
             ["image"] = 608200,
@@ -1054,7 +1136,7 @@ Cell_ExpansionData.data = {
                     ["name"] = "König Gordok",
                 }, -- [16]
             },
-        }, -- [10]
+        }, -- [11]
         {
             ["id"] = 231,
             ["image"] = 608202,
@@ -1086,7 +1168,7 @@ Cell_ExpansionData.data = {
                     ["name"] = "Robogenieur Thermadraht",
                 }, -- [5]
             },
-        }, -- [11]
+        }, -- [12]
         {
             ["id"] = 240,
             ["image"] = 608229,
@@ -1133,7 +1215,7 @@ Cell_ExpansionData.data = {
                     ["name"] = "Mutanus der Verschlinger",
                 }, -- [8]
             },
-        }, -- [12]
+        }, -- [13]
         {
             ["id"] = 233,
             ["image"] = 608212,
@@ -1165,7 +1247,7 @@ Cell_ExpansionData.data = {
                     ["name"] = "Amnennar der Kältebringer",
                 }, -- [5]
             },
-        }, -- [13]
+        }, -- [14]
         {
             ["id"] = 234,
             ["image"] = 608213,
@@ -1197,7 +1279,7 @@ Cell_ExpansionData.data = {
                     ["name"] = "Charlga Klingenflanke",
                 }, -- [5]
             },
-        }, -- [14]
+        }, -- [15]
         {
             ["id"] = 232,
             ["image"] = 608209,
@@ -1244,7 +1326,7 @@ Cell_ExpansionData.data = {
                     ["name"] = "Prinzessin Theradras",
                 }, -- [8]
             },
-        }, -- [15]
+        }, -- [16]
         {
             ["id"] = 311,
             ["image"] = 643262,
@@ -1266,7 +1348,7 @@ Cell_ExpansionData.data = {
                     ["name"] = "Flammenwirker Koegler",
                 }, -- [3]
             },
-        }, -- [16]
+        }, -- [17]
         {
             ["id"] = 246,
             ["image"] = 608215,
@@ -1298,7 +1380,7 @@ Cell_ExpansionData.data = {
                     ["name"] = "Dunkelmeister Gandling",
                 }, -- [5]
             },
-        }, -- [17]
+        }, -- [18]
         {
             ["id"] = 228,
             ["image"] = 608196,
@@ -1395,7 +1477,7 @@ Cell_ExpansionData.data = {
                     ["name"] = "Imperator Dagran Thaurissan",
                 }, -- [18]
             },
-        }, -- [18]
+        }, -- [19]
         {
             ["id"] = 236,
             ["image"] = 608216,
@@ -1467,7 +1549,7 @@ Cell_ExpansionData.data = {
                     ["name"] = "Baron Aurius Totenschwur",
                 }, -- [13]
             },
-        }, -- [19]
+        }, -- [20]
         {
             ["id"] = 227,
             ["image"] = 608195,
@@ -1514,7 +1596,7 @@ Cell_ExpansionData.data = {
                     ["name"] = "Aku'mai",
                 }, -- [8]
             },
-        }, -- [20]
+        }, -- [21]
         {
             ["id"] = 63,
             ["image"] = 522352,
@@ -1551,7 +1633,7 @@ Cell_ExpansionData.data = {
                     ["name"] = "Vanessa van Cleef",
                 }, -- [6]
             },
-        }, -- [21]
+        }, -- [22]
         {
             ["id"] = 239,
             ["image"] = 608225,
@@ -1598,7 +1680,7 @@ Cell_ExpansionData.data = {
                     ["name"] = "Archaedas",
                 }, -- [8]
             },
-        }, -- [22]
+        }, -- [23]
         {
             ["id"] = 229,
             ["image"] = 608197,
@@ -1650,7 +1732,7 @@ Cell_ExpansionData.data = {
                     ["name"] = "Oberanführer Wyrmthalak",
                 }, -- [9]
             },
-        }, -- [23]
+        }, -- [24]
         {
             ["id"] = 241,
             ["image"] = 608230,
@@ -1687,7 +1769,7 @@ Cell_ExpansionData.data = {
                     ["name"] = "Häuptling Ukorz Sandskalp",
                 }, -- [6]
             },
-        }, -- [24]
+        }, -- [25]
     },
     ["Burning Crusade"] = {
         {

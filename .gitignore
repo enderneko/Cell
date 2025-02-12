@@ -1,3 +1,4 @@
+.vscode/
 .release/
 .resources/
 .utils/*.csv
