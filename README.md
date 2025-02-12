@@ -1,3 +1,5 @@
+[English](https://github.com/enderneko/Cell/blob/master/README.md) | [简体中文](https://github.com/enderneko/Cell/blob/master/README_zhCN.md)
+
 # Cell
 
 [![version](https://img.shields.io/github/v/release/enderneko/Cell)](https://github.com/enderneko/Cell/releases)
