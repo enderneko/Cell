@@ -1728,7 +1728,11 @@ end
 -- frame
 -------------------------------------------------
 function F:GetMouseFocus()
-  return GetMouseFoci()[1]   -- Latest Beta build changed this to return the table under key `1`
+    if GetMouseFoci then
+        return GetMouseFoci()[1]
+    else
+        return GetMouseFocus()
+    end
 end
 
 -------------------------------------------------
