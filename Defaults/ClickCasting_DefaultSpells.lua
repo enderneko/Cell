@@ -400,10 +400,9 @@ do
     resurrections_for_dead = temp
 end
 
--- local spell_soulstone = F:GetSpellInfo(20707)
+local spell_soulstone = F:GetSpellInfo(20707)
 function F:IsSoulstone(spell)
-    -- return spell == spell_soulstone
-    return false
+    return spell == spell_soulstone
 end
 
 function F:IsResurrectionForDead(spell)
