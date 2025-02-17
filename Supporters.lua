@@ -5,12 +5,19 @@ local addonName, ns = ...
 -------------------------------------------------
 local supporters1 = { -- wowIDs
     -- {"wowID1", "wowID2"...}
-    {"小兔姬-影之哀伤 (CN)", "渺渺-影之哀伤 (CN)"}, -- 呆小七 (爱发电)
+    {
+        "|cffff8000小兔姬-影之哀伤 (CN)|r",
+        "|cffff8000渺渺-影之哀伤 (CN)|r"
+    }, -- 呆小七 (爱发电)
     {"夏木沐-伊森利恩 (CN)"}, -- 夏木沐 (爱发电)
     {"七月核桃丶-白银之手 (CN)"}, -- 爱发电用户_ac5d4
     {"芋包-影之哀伤 (CN)", "月刃丶-世界之樹 (TW)", "月刄-影之哀伤 (CN)"}, -- Smile (爱发电)
     {"青乙-影之哀伤 (CN)", "永离诸幻-影之哀伤 (CN)"},
-    {"黑诺-影之哀伤 (CN)", "黑丨诺-影之哀伤 (CN)", "黑丶诺-影之哀伤 (CN)"},
+    {
+        "|cffff8000黑诺-影之哀伤 (CN)|r",
+        "|cffff8000黑丨诺-影之哀伤 (CN)|r",
+        "|cffff8000黑丶诺-影之哀伤 (CN)|r"
+    },
     {"大领主王大发-莫格莱尼 (CN)"}, -- Shawn (爱发电)
     {"Sjerry-死亡之翼 (CN)"}, -- 爱发电用户_7957f
     {"貼饼子-匕首岭 (CN)"},
@@ -32,14 +39,17 @@ local supporters1 = { -- wowIDs
     {"Phæro-Antonidas (EU)", "Callistò-Antonidas (EU)"}, -- Phæro (Ko-fi)
     {"Synthatt-Illidan (US)"}, -- Synthatt (Ko-fi)
     {"Holystora-Antonidas (EU)"}, -- devo (Ko-fi)
-    {"Tithaya-Kel'Thuzad (US)"}, -- tithaya (Ko-fi)
     {
-        "Everessian-Ravencrest (EU)",
-        "Thornar-Ravencrest (EU)",
-        "Shylanelle-Ravencrest (EU)",
-        "Alenlin-Ravencrest (EU)",
-        "Kulresh-Ravencrest (EU)",
-        "Grundihm-Ravencrest (EU)",
+        "|cffff8000Tithaya-Kel'Thuzad (US)|r",
+        "|cffff8000Yesiram-Kel'Thuzad (US)|r",
+    }, -- tithaya (Ko-fi)
+    {
+        "|cffff8000Everessian-Ravencrest (EU)|r",
+        "|cffff8000Thornar-Ravencrest (EU)|r",
+        "|cffff8000Shylanelle-Ravencrest (EU)|r",
+        "|cffff8000Alenlin-Ravencrest (EU)|r",
+        "|cffff8000Kulresh-Ravencrest (EU)|r",
+        "|cffff8000Moorlaen-Ravencrest (EU)|r",
     }, -- Martin van Vuuren (Ko-fi)
     {"Shendreakah-Zul'jin (US)"}, -- Shendreakah - Zul-jin (Ko-fi)
     {"Palymoo-Twistingnether (EU)"}, -- Palymoo-Twistingnether (EU) (Ko-fi)
@@ -78,17 +88,27 @@ local supporters1 = { -- wowIDs
     {"白夜之翼-影之哀伤 (CN)"}, -- 大宇 (爱发电)
     {"絵野-金色平原 (CN)"}, -- Neet_F (爱发电)
     {"Shichiki-Antonidas (EU)"}, -- Shichiki-EU-Antonidas (Ko-fi)
+    {
+        "|cffff8000露露缇娅-迅捷微风 (CN)|r",
+        "|cffff8000露露缇娅丶-霜语 (CN)|r",
+    }, -- 露露缇娅 (爱发电)
+    {
+        "|cffff8000Rëat-Silvermoon (EU)|r",
+        "|cffff8000Reatsham-Silvermoon (EU)|r",
+        "|cffff8000Reatvoker-Silvermoon (EU)|r",
+    }, -- Reat
+    {"Daydream-Dalaran (EU)"}, -- luana11
 }
 
 local supporters2 = { -- 有些早期的发电记录已经丢失了……
-    {"钛锬", "NGA"}, -- 2021-11-15
-    {"呆小七", "爱发电"}, -- 2021-11-15
+    {"|cffff8000钛锬|r", "NGA"}, -- 2021-11-15
+    {"|cffff8000呆小七|r", "爱发电"}, -- 2021-11-15
     {"黑色之城", "NGA"}, -- 2022-03-16
     {"flappysmurf", "爱发电"}, -- 2022-04-16
     {"Mike", "爱发电"}, -- 2022-08-06
     {"七月核桃丶", "爱发电"}, -- 2022-08-08 爱发电用户_ac5d4
-    {"Smile", "爱发电"}, -- 2022-08-11
-    {"黑诺", "爱发电"}, -- 2022-08-15
+    {"|cffff8000Smile|r", "爱发电"}, -- 2022-08-11
+    {"|cffff8000黑诺|r", "爱发电"}, -- 2022-08-15
     {"古月文武", "爱发电"},
     {"CC", "爱发电"},
     {"Shawn", "爱发电"}, -- 2022-09-16
@@ -118,7 +138,7 @@ local supporters2 = { -- 有些早期的发电记录已经丢失了……
     {"往事", "爱发电"}, -- 2023-07-30
     {"哄哄", "爱发电"}, -- 2023-08-15
     {"acm447", "爱发电"}, -- 2023-08-15
-    {"花爺", "爱发电"}, -- 2023-09-13
+    {"|cffff8000花爺|r", "爱发电"}, -- 2023-09-13
     {"黑哥哥", "爱发电"}, -- 2023-09-23 爱发电用户_fdc1d
     {"得闲饮茶", "爱发电"}, -- 2023-12-03
     {"北方", "爱发电"}, -- 2023-12-06
@@ -136,9 +156,9 @@ local supporters2 = { -- 有些早期的发电记录已经丢失了……
     {"Synthatt", "Ko-fi"}, -- 2024-03-26
     {"devo", "Ko-fi"}, -- 2024-04-07
     {"QBbY", "爱发电"}, -- 2024-04-09 爱发电用户_QBbY
-    {"tithaya", "Ko-fi"}, -- 2024-04-18
+    {"|cffff8000tithaya|r", "Ko-fi"}, -- 2024-04-18
     {"Pandora", "Ko-fi"}, -- 2024-04-22
-    {"Martin van Vuuren", "Ko-fi"}, -- 2024-05-06
+    {"|cffff8000Martin van Vuuren|r", "Ko-fi"}, -- 2024-05-06
     {"Shendreakah", "Ko-fi"}, -- 2024-05-12
     {"8xs3", "爱发电"}, -- 2024-05-12 爱发电用户_8xs3
     {"Palymoo", "Ko-fi"}, -- 2024-05-12
@@ -180,6 +200,8 @@ local supporters2 = { -- 有些早期的发电记录已经丢失了……
     {"Neet_F", "爱发电"}, -- 2024-09-28
     {"冷冽谷尬舞队队长", "爱发电"}, -- 2024-10-01
     {"Shichiki-EU-Antonidas", "Ko-fi"}, -- 2024-10-03
+    {"|cffff8000露露缇娅|r", "爱发电"}, -- 2024-12-20
+    {"luana11", "Ko-fi"}, -- 2025-01-25
 }
 
 -------------------------------------------------
