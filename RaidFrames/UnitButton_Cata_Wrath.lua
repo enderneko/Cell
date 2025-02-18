@@ -142,7 +142,7 @@ local function ResetIndicators()
             I.EnableMissingBuffs(t["enabled"])
         end
         -- update extra
-        if t["indicatorName"] == "nameText" or t["indicatorName"] == "healthText" or t["indicatorName"] == "powerText" then
+        if t["indicatorName"] == "nameText" or t["indicatorName"] == "powerText" then
             indicatorColors[t["indicatorName"]] = t["color"]
         end
         if t["indicatorName"] == "dispels" then
@@ -256,7 +256,7 @@ local function HandleIndicators(b)
             end
         end
         -- update color
-        if t["color"] and t["indicatorName"] ~= "nameText" and t["indicatorName"] ~="healthText" and t["indicatorName"] ~="powerText" then
+        if t["color"] and t["indicatorName"] ~= "nameText" and t["indicatorName"] ~="powerText" then
             indicator:SetColor(unpack(t["color"]))
         end
         -- update colors
@@ -356,7 +356,7 @@ local function HandleIndicators(b)
 
         -- init
         -- update name visibility
-        if t["indicatorName"] == "nameText" then
+        if t["indicatorName"] == "nameText" or t["indicatorName"] == "healthText" then
             if t["enabled"] then
                 indicator:Show()
             else
@@ -549,6 +549,11 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                 end, true)
             elseif indicatorName == "healthText" then
                 F:IterateAllUnitButtons(function(b)
+                    if value then
+                        b.indicators[indicatorName]:Show()
+                    else
+                        b.indicators[indicatorName]:Hide()
+                    end
                     B:UpdateHealthText(b)
                 end, true)
             elseif indicatorName == "powerText" then
@@ -677,11 +682,6 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                 F:IterateAllUnitButtons(function(b)
                     UnitButton_UpdateNameTextColor(b)
                 end, true)
-            elseif indicatorName == "healthText" then
-                indicatorColors[indicatorName] = value
-                F:IterateAllUnitButtons(function(b)
-                    UnitButton_UpdateHealthTextColor(b)
-                end, true)
             elseif indicatorName == "powerText" then
                 indicatorColors[indicatorName] = value
                 F:IterateAllUnitButtons(function(b)
@@ -794,12 +794,7 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                     b.indicators[indicatorName]:ShowBackground(value2)
                 end, true)
             elseif value == "hideIfEmptyOrFull" then
-                if indicatorName == "healthText" then
-                    F:IterateAllUnitButtons(function(b)
-                        b.indicators[indicatorName]:SetHideIfEmptyOrFull(value2)
-                        B:UpdateHealthText(b)
-                    end, true)
-                elseif indicatorName == "powerText" then
+                if indicatorName == "powerText" then
                     F:IterateAllUnitButtons(function(b)
                         b.indicators[indicatorName]:SetHideIfEmptyOrFull(value2)
                         B:UpdatePowerText(b)
@@ -2033,11 +2028,7 @@ UnitButton_UpdateHealthTextColor = function(self)
     if not unit then return end
 
     if enabledIndicators["healthText"] then
-        if indicatorColors["healthText"][1] == "class_color" then
-            self.indicators.healthText:SetColor(F:GetUnitClassColor(unit))
-        else
-            self.indicators.healthText:SetColor(unpack(indicatorColors["healthText"][2]))
-        end
+        self.indicators.healthText:SetColor(F:GetUnitClassColor(unit))
     end
 end
 

@@ -2622,7 +2622,6 @@ function F:Revise()
             CellDB["appearance"]["gradientColors"] = {{1,0,0}, {1,0.7,0}, {0.7,1,0}}
         end
     end
-    ]=]
 
     -- r221-release
     if CellDB["revise"] and dbRevision < 221 then
@@ -3113,6 +3112,7 @@ function F:Revise()
             end
         end
     end
+    ]=]
 
     -- r240-release
     if CellDB["revise"] and dbRevision < 240 then
@@ -3198,8 +3198,17 @@ function F:Revise()
                         }
                         i.circledStackNums = nil
                     end
-                elseif i.indicatorName == "healthText" then
-                    i.format = "[effective_percent]"
+                end
+            end
+        end
+    end
+
+    -- r244-release
+    if CellDB["revise"] and dbRevision < 244 then
+        for _, layout in pairs(CellDB["layouts"]) do
+            for i, t in pairs(layout["indicators"]) do
+                if t.indicatorName == "healthText" then
+                    layout["indicators"][i] = F:Copy(Cell.defaults.layout.indicators[Cell.defaults.indicatorIndices.healthText])
                 end
             end
         end

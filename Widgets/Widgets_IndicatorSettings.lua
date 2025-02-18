@@ -967,89 +967,279 @@ local function CreateSetting_HealthFormat(parent)
     local widget
 
     if not settingWidgets["healthFormat"] then
-        widget = addon:CreateFrame("CellIndicatorSettings_HealthFormat", parent, 240, 500)
+        widget = addon:CreateFrame("CellIndicatorSettings_HealthFormat", parent, 240, 270)
         settingWidgets["healthFormat"] = widget
 
-        widget.format = addon:CreateEditBox(widget, 245, 20)
-        widget.format:SetPoint("TOPLEFT", 5, -20)
+        local health, healthMax = 213777, 300000
+        local shield = 65535
+        local healAbsorb = 88127
 
-        widget.format.confirmBtn = addon:CreateButton(widget.format, "OK", "accent", {27, 20})
-        widget.format.confirmBtn:SetPoint("RIGHT", widget.format)
-        widget.format.confirmBtn:Hide()
-        widget.format.confirmBtn:SetScript("OnHide", function()
-            widget.format.confirmBtn:Hide()
-        end)
-        widget.format.confirmBtn:SetScript("OnClick", function()
-            local format = widget.format:GetText()
-            format = strtrim(format)
-            widget.format:SetText(format)
-            widget.format.confirmBtn:Hide()
-            widget.func(format)
-        end)
+        local function UpdateWidgets()
+            local healthEnabled = widget.format.health.format ~= "none"
+            widget.hideIfEmptyOrFullCB:SetEnabled(healthEnabled)
+            widget.healthColorDropdown:SetEnabled(healthEnabled)
+            widget.healthColorPicker:SetEnabled(healthEnabled)
 
-        widget.format:SetScript("OnTextChanged", function(self, userChanged)
-            if userChanged then
-                widget.format.confirmBtn:Show()
-            end
-        end)
+            local shieldEnabled = widget.format.shields.format ~= "none"
+            widget.shieldDelimiterDropdown:SetEnabled(shieldEnabled)
+            widget.shieldColorDropdown:SetEnabled(shieldEnabled)
+            widget.shieldColorPicker:SetEnabled(shieldEnabled)
 
-        widget.formatText = widget:CreateFontString(nil, "OVERLAY", font_name)
-        widget.formatText:SetText(L["Format"])
-        widget.formatText:SetTextColor(addon:GetAccentColorRGB())
-        widget.formatText:SetPoint("BOTTOMLEFT", widget.format, "TOPLEFT", 0, 1)
-
-        -- formatter
-        local formatter = {
-            -- effective
-            {"[effective_percent]", format("%d%%", (21377+16384-21011)/65535*100), L["Format Options"]},
-
-            -- health
-            {"[health]", 21377, L["Health"]},
-            {"[health_short]", F:FormatNumber(21377)},
-            {"[health_percent]", format("%d%%", 21377/65535*100)},
-            {"[deficit]", 21377-65535},
-            {"[deficit_short]", F:FormatNumber(21377-65535)},
-            {"[deficit_percent]", format("%d%%", (21377-65535)/65535*100)},
-
-            -- absorb
-            {"[absorbs]", 16384, L["Absorbs"]},
-            {"[absorbs_short]", F:FormatNumber(16384)},
-            {"[absorbs_percent]", format("%d%%", 16384/65535*100)},
-
-            -- heal absorbs
-            {"[healabsorbs]", 21011, L["Heal Absorbs"]},
-            {"[healabsorbs_short]", F:FormatNumber(21011)},
-            {"[healabsorbs_percent]", format("%d%%", 21011/65535*100)},
-        }
-
-        local list = {}
-        local offset
-        for i, t in pairs(formatter) do
-            list[i] = addon:CreateEditBox(widget, 170, 20)
-            list[i]:SetText(t[1])
-            list[i]:SetScript("OnTextChanged", function(self, userChanged)
-                if userChanged then
-                    self:SetText(t[1])
-                end
-            end)
-
-            list[i].example = list[i]:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
-            list[i].example:SetText(t[2])
-            list[i].example:SetPoint("LEFT", list[i], "RIGHT", 5, 0)
-
-            if t[3] then
-                list[i].group = list[i]:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
-                list[i].group:SetText(t[3])
-                list[i].group:SetTextColor(addon:GetAccentColorRGB())
-                list[i].group:SetPoint("BOTTOMLEFT", list[i], "TOPLEFT", 0, 1)
-                offset = -30
-            else
-                offset = -8
-            end
-
-            list[i]:SetPoint("TOPLEFT", i == 1 and widget.format or list[i-1], "BOTTOMLEFT", 0, offset)
+            local healAbsorbEnabled = widget.format.healAbsorbs.format ~= "none"
+            widget.healAbsorbDelimiterDropdown:SetEnabled(healAbsorbEnabled)
+            widget.healAbsorbColorDropdown:SetEnabled(healAbsorbEnabled)
+            widget.healAbsorbColorPicker:SetEnabled(healAbsorbEnabled)
         end
 
+        local function GetItems(which, list)
+            local items = {}
+            for _, v in pairs(list) do
+                tinsert(items, {
+                    ["text"] = v[1],
+                    ["value"] = v[2],
+                    ["onClick"] = function()
+                        widget.format[which].format = v[2]
+                        UpdateWidgets()
+                        widget.func()
+                    end,
+                })
+            end
+            return items
+        end
+
+        local function GetDelimiterItems(which)
+            return {
+                {
+                    ["text"] = L["None"],
+                    ["value"] = "none",
+                    ["onClick"] = function()
+                        widget.format[which].delimiter = "none"
+                        widget.func()
+                    end,
+                },
+                {
+                    ["text"] = L["Space"],
+                    ["value"] = "space",
+                    ["onClick"] = function()
+                        widget.format[which].delimiter = "space"
+                        widget.func()
+                    end,
+                },
+                {
+                    ["text"] = "+",
+                    ["value"] = "+",
+                    ["onClick"] = function()
+                        widget.format[which].delimiter = "+"
+                        widget.func()
+                    end,
+                },
+                {
+                    ["text"] = "-",
+                    ["value"] = "-",
+                    ["onClick"] = function()
+                        widget.format[which].delimiter = "-"
+                        widget.func()
+                    end,
+                },
+                {
+                    ["text"] = "/",
+                    ["value"] = "/",
+                    ["onClick"] = function()
+                        widget.format[which].delimiter = "/"
+                        widget.func()
+                    end,
+                },
+                {
+                    ["text"] = "|",
+                    ["value"] = "|",
+                    ["onClick"] = function()
+                        widget.format[which].delimiter = "||"
+                        widget.func()
+                    end,
+                },
+            }
+        end
+
+        -- health -------------------------------
+        local effective = " |cff7b7b7b" .. L["Effective"] .. "|r"
+        local healthList = {
+            {L["None"], "none"},
+            {(health + shield - healAbsorb) .. effective, "effective"},
+            {F:FormatNumber(health + shield - healAbsorb) .. effective, "effective_short"},
+            {F:Round((health + shield - healAbsorb) / healthMax * 100) .. "%" .. effective, "effective_percent"},
+            {F:Round((health + shield - healAbsorb) / healthMax * 100) .. effective, "effective_percent_no_sign"},
+            {health, "health"},
+            {F:FormatNumber(health), "health_short"},
+            {F:Round(health / healthMax * 100) .. "%", "health_percent"},
+            {F:Round(health / healthMax * 100), "health_percent_no_sign"},
+            {health - healthMax, "deficit"},
+            {F:FormatNumber(health - healthMax), "deficit_short"},
+            {F:Round((health - healthMax) / healthMax * 100) .. "%", "deficit_percent"},
+            {F:Round((health - healthMax) / healthMax * 100), "deficit_percent_no_sign"},
+        }
+
+        widget.healthFormatDropdown = addon:CreateDropdown(widget, 127)
+        widget.healthFormatDropdown:SetPoint("TOPLEFT", 5, -20)
+        widget.healthFormatDropdown:SetItems(GetItems("health", healthList))
+
+        local healthText = widget:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
+        healthText:SetPoint("BOTTOMLEFT", widget.healthFormatDropdown, "TOPLEFT", 0, 1)
+        healthText:SetText(L["Health"])
+
+        -- hideIfEmptyOrFull
+        widget.hideIfEmptyOrFullCB = addon:CreateCheckButton(widget, L["hideIfEmptyOrFull"], function(checked)
+            widget.format.health.hideIfEmptyOrFull = checked
+            widget.func()
+        end)
+        widget.hideIfEmptyOrFullCB:SetPoint("TOPLEFT", widget.healthFormatDropdown, "BOTTOMLEFT", 0, -10)
+
+        -- color
+        widget.healthColorDropdown = addon:CreateDropdown(widget, 127)
+        widget.healthColorDropdown:SetPoint("TOPLEFT", widget.hideIfEmptyOrFullCB, "BOTTOMLEFT", 0, -10)
+        widget.healthColorDropdown:SetItems({
+            {
+                ["text"] = L["Class Color"],
+                ["value"] = "class_color",
+                ["onClick"] = function()
+                    widget.format.health.color[1] = "class_color"
+                    widget.func()
+                    widget.healthColorPicker:Hide()
+                end,
+            },
+            {
+                ["text"] = L["Custom Color"],
+                ["value"] = "custom_color",
+                ["onClick"] = function()
+                    widget.format.health.color[1] = "custom_color"
+                    widget.func()
+                    widget.healthColorPicker:Show()
+                end,
+            },
+        })
+
+        widget.healthColorPicker = addon:CreateColorPicker(widget, "", false, function(r, g, b)
+            widget.format.health.color[2][1] = r
+            widget.format.health.color[2][2] = g
+            widget.format.health.color[2][3] = b
+            widget.func()
+        end)
+        widget.healthColorPicker:SetPoint("LEFT", widget.healthColorDropdown, "RIGHT", 5, 0)
+
+        -- shield -------------------------------
+        local shieldList = {
+            {L["None"], "none"},
+            {shield, "shields"},
+            {F:FormatNumber(shield), "shields_short"},
+            {F:Round(shield / healthMax * 100) .. "%", "shields_percent"},
+            {F:Round(shield / healthMax * 100), "shields_percent_no_sign"},
+        }
+
+        widget.shieldFormatDropdown = addon:CreateDropdown(widget, 127)
+        widget.shieldFormatDropdown:SetPoint("TOPLEFT", widget.healthColorDropdown, "BOTTOMLEFT", 0, -35)
+        widget.shieldFormatDropdown:SetItems(GetItems("shields", shieldList))
+
+        local shieldText = widget:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
+        shieldText:SetPoint("BOTTOMLEFT", widget.shieldFormatDropdown, "TOPLEFT", 0, 1)
+        shieldText:SetText(L["Shields"])
+
+        -- delimiter
+        widget.shieldDelimiterDropdown = addon:CreateDropdown(widget, 70)
+        widget.shieldDelimiterDropdown:SetPoint("TOPLEFT", widget.shieldFormatDropdown, "TOPRIGHT", 25, 0)
+        widget.shieldDelimiterDropdown:SetItems(GetDelimiterItems("shields"))
+
+        local shieldDelimiterText = widget:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
+        shieldDelimiterText:SetPoint("BOTTOMLEFT", widget.shieldDelimiterDropdown, "TOPLEFT", 0, 1)
+        shieldDelimiterText:SetText(L["Delimiter"])
+
+        -- color
+        widget.shieldColorDropdown = addon:CreateDropdown(widget, 127)
+        widget.shieldColorDropdown:SetPoint("TOPLEFT", widget.shieldFormatDropdown, "BOTTOMLEFT", 0, -10)
+        widget.shieldColorDropdown:SetItems({
+            {
+                ["text"] = L["Class Color"],
+                ["value"] = "class_color",
+                ["onClick"] = function()
+                    widget.format.shields.color[1] = "class_color"
+                    widget.func()
+                    widget.shieldColorPicker:Hide()
+                end,
+            },
+            {
+                ["text"] = L["Custom Color"],
+                ["value"] = "custom_color",
+                ["onClick"] = function()
+                    widget.format.shields.color[1] = "custom_color"
+                    widget.func()
+                    widget.shieldColorPicker:Show()
+                end,
+            },
+        })
+
+        widget.shieldColorPicker = addon:CreateColorPicker(widget, "", false, function(r, g, b)
+            widget.format.shields.color[2][1] = r
+            widget.format.shields.color[2][2] = g
+            widget.format.shields.color[2][3] = b
+            widget.func()
+        end)
+        widget.shieldColorPicker:SetPoint("LEFT", widget.shieldColorDropdown, "RIGHT", 5, 0)
+
+        -- heal absorb --------------------------
+        local healAbsorbList = {
+            {L["None"], "none"},
+            {healAbsorb, "healabsorbs"},
+            {F:FormatNumber(healAbsorb), "healabsorbs_short"},
+            {F:Round(healAbsorb / healthMax * 100) .. "%", "healabsorbs_percent"},
+            {F:Round(healAbsorb / healthMax * 100), "healabsorbs_percent_no_sign"},
+        }
+
+        widget.healAbsorbFormatDropdown = addon:CreateDropdown(widget, 127)
+        widget.healAbsorbFormatDropdown:SetPoint("TOPLEFT", widget.shieldColorDropdown, "BOTTOMLEFT", 0, -35)
+        widget.healAbsorbFormatDropdown:SetItems(GetItems("healAbsorbs", healAbsorbList))
+
+        local healAbsorbText = widget:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
+        healAbsorbText:SetPoint("BOTTOMLEFT", widget.healAbsorbFormatDropdown, "TOPLEFT", 0, 1)
+        healAbsorbText:SetText(L["Heal Absorbs"])
+
+        -- delimiter
+        widget.healAbsorbDelimiterDropdown = addon:CreateDropdown(widget, 70)
+        widget.healAbsorbDelimiterDropdown:SetPoint("TOPLEFT", widget.healAbsorbFormatDropdown, "TOPRIGHT", 25, 0)
+        widget.healAbsorbDelimiterDropdown:SetItems(GetDelimiterItems("healAbsorbs"))
+
+        local healAbsorbDelimiterText = widget:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
+        healAbsorbDelimiterText:SetPoint("BOTTOMLEFT", widget.healAbsorbDelimiterDropdown, "TOPLEFT", 0, 1)
+        healAbsorbDelimiterText:SetText(L["Delimiter"])
+
+        -- color
+        widget.healAbsorbColorDropdown = addon:CreateDropdown(widget, 127)
+        widget.healAbsorbColorDropdown:SetPoint("TOPLEFT", widget.healAbsorbFormatDropdown, "BOTTOMLEFT", 0, -10)
+        widget.healAbsorbColorDropdown:SetItems({
+            {
+                ["text"] = L["Class Color"],
+                ["value"] = "class_color",
+                ["onClick"] = function()
+                    widget.format.healAbsorbs.color[1] = "class_color"
+                    widget.func()
+                    widget.healAbsorbColorPicker:Hide()
+                end,
+            },
+            {
+                ["text"] = L["Custom Color"],
+                ["value"] = "custom_color",
+                ["onClick"] = function()
+                    widget.format.healAbsorbs.color[1] = "custom_color"
+                    widget.func()
+                    widget.healAbsorbColorPicker:Show()
+                end,
+            }
+        })
+
+        widget.healAbsorbColorPicker = addon:CreateColorPicker(widget, "", false, function(r, g, b)
+            widget.format.healAbsorbs.color[2][1] = r
+            widget.format.healAbsorbs.color[2][2] = g
+            widget.format.healAbsorbs.color[2][3] = b
+            widget.func()
+        end)
+        widget.healAbsorbColorPicker:SetPoint("LEFT", widget.healAbsorbColorDropdown, "RIGHT", 5, 0)
 
         -- callback
         function widget:SetFunc(func)
@@ -1058,7 +1248,26 @@ local function CreateSetting_HealthFormat(parent)
 
         -- show db value
         function widget:SetDBValue(format)
-            widget.format:SetText(format)
+            widget.format = format
+            UpdateWidgets()
+
+            -- health
+            widget.healthFormatDropdown:SetSelectedValue(format.health.format)
+            widget.hideIfEmptyOrFullCB:SetChecked(format.health.hideIfEmptyOrFull)
+            widget.healthColorDropdown:SetSelectedValue(format.health.color[1])
+            widget.healthColorPicker:SetColor(unpack(format.health.color[2]))
+
+            -- shields
+            widget.shieldFormatDropdown:SetSelectedValue(format.shields.format)
+            widget.shieldDelimiterDropdown:SetSelectedValue(format.shields.delimiter)
+            widget.shieldColorDropdown:SetSelectedValue(format.shields.color[1])
+            widget.shieldColorPicker:SetColor(unpack(format.shields.color[2]))
+
+            -- heal absorbs
+            widget.healAbsorbFormatDropdown:SetSelectedValue(format.healAbsorbs.format)
+            widget.healAbsorbDelimiterDropdown:SetSelectedValue(format.healAbsorbs.delimiter)
+            widget.healAbsorbColorDropdown:SetSelectedValue(format.healAbsorbs.color[1])
+            widget.healAbsorbColorPicker:SetColor(unpack(format.healAbsorbs.color[2]))
         end
     else
         widget = settingWidgets["healthFormat"]

@@ -387,6 +387,14 @@ end
 -------------------------------------------------
 -- number
 -------------------------------------------------
+function F:Round(num, numDecimalPlaces)
+    if numDecimalPlaces and numDecimalPlaces >= 0 then
+        local mult = 10 ^ numDecimalPlaces
+        return floor(num * mult + 0.5) / mult
+    end
+    return floor(num + 0.5)
+end
+
 local symbol_1K, symbol_10K, symbol_1B
 if LOCALE_zhCN then
     symbol_1K, symbol_10K, symbol_1B = "千", "万", "亿"
@@ -396,14 +404,14 @@ elseif LOCALE_koKR then
     symbol_1K, symbol_10K, symbol_1B = "천", "만", "억"
 end
 
+local abs = math.abs
+
 if Cell.isAsian then
     function F:FormatNumber(n)
         if abs(n) >= 100000000 then
-            return string.format("%.3f"..symbol_1B, n/100000000)
+            return F:Round(n / 100000000, 2) .. symbol_1B
         elseif abs(n) >= 10000 then
-            return string.format("%.2f"..symbol_10K, n/10000)
-        -- elseif abs(n) >= 1000 then
-        --     return string.format("%.1f"..symbol_1K, n/1000)
+            return F:Round(n / 10000, 1) .. symbol_10K
         else
             return n
         end
@@ -411,23 +419,15 @@ if Cell.isAsian then
 else
     function F:FormatNumber(n)
         if abs(n) >= 1000000000 then
-            return string.format("%.3fB", n/1000000000)
+            return F:Round(n / 1000000000, 2) .. "B"
         elseif abs(n) >= 1000000 then
-            return string.format("%.2fM", n/1000000)
+            return F:Round(n / 1000000, 2) .. "M"
         elseif abs(n) >= 1000 then
-            return string.format("%.1fK", n/1000)
+            return F:Round(n / 1000, 1) .. "K"
         else
             return n
         end
     end
-end
-
-function F:Round(num, numDecimalPlaces)
-    if numDecimalPlaces and numDecimalPlaces >= 0 then
-        local mult = 10 ^ numDecimalPlaces
-        return floor(num * mult + 0.5) / mult
-    end
-    return floor(num + 0.5)
 end
 
 -------------------------------------------------

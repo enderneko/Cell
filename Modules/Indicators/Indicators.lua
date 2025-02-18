@@ -671,9 +671,9 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                 if t["format"] then
                     indicator:SetFormat(t["format"])
                     if t["indicatorName"] == "healthText" then
-                        indicator:SetValue(21377, 65535, 16384, 21011)
+                        indicator:SetValue(213777, 300000, 65535, 88127)
                     elseif t["indicatorName"] == "powerText" then
-                        indicator:SetValue(25000, 50000)
+                        indicator:SetValue(250000, 500000)
                     end
                 end
                 -- update numPerLine
@@ -870,9 +870,9 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
         elseif setting == "format" then
             indicator:SetFormat(value)
             if indicatorName == "healthText" then
-                indicator:SetValue(21377, 65535, 16384, 21011)
+                indicator:SetValue(213777, 300000, 65535, 88127)
             elseif indicatorName == "powerText" then
-                indicator:SetValue(25000, 50000)
+                indicator:SetValue(250000, 500000)
             end
         elseif setting == "spacing" then
             indicator:SetSpacing(value)
@@ -1536,7 +1536,7 @@ if Cell.isRetail then
     indicatorSettings = {
         ["nameText"] = {"enabled", "color-class", "textWidth", "checkbutton:showGroupNumber", "vehicleNamePosition", "namePosition", "frameLevel", "font-noOffset"},
         ["statusText"] = {"enabled", "checkbutton:showTimer", "checkbutton2:showBackground", "statusColors", "statusPosition", "frameLevel", "font-noOffset"},
-        ["healthText"] = {"|cffff7727"..L["MODERATE CPU USAGE"], "enabled", "color-class", "healthFormat", "checkbutton:hideIfEmptyOrFull", "position", "frameLevel", "font-noOffset"},
+        ["healthText"] = {"|cffff7727"..L["MODERATE CPU USAGE"], "enabled", "healthFormat", "position", "frameLevel", "font-noOffset"},
         ["powerText"] = {"enabled", "color-power", "powerFormat", "checkbutton:hideIfEmptyOrFull", "position", "frameLevel", "font-noOffset"},
         ["statusIcon"] = {
             -- "|A:dungeonskull:18:18|a "..
@@ -1578,7 +1578,7 @@ elseif Cell.isCata or Cell.isWrath then
     indicatorSettings = {
         ["nameText"] = {"enabled", "color-class", "textWidth", "checkbutton:showGroupNumber", "vehicleNamePosition", "namePosition", "frameLevel", "font-noOffset"},
         ["statusText"] = {"enabled", "checkbutton:showTimer", "checkbutton2:showBackground", "statusColors", "statusPosition", "frameLevel", "font-noOffset"},
-        ["healthText"] = {"|cffff7727"..L["MODERATE CPU USAGE"], "enabled", "color-class", "healthFormat", "checkbutton:hideIfEmptyOrFull", "position", "frameLevel", "font-noOffset"},
+        ["healthText"] = {"|cffff7727"..L["MODERATE CPU USAGE"], "enabled", "healthFormat", "position", "frameLevel", "font-noOffset"},
         ["powerText"] = {"enabled", "color-power", "powerFormat", "checkbutton:hideIfEmptyOrFull", "position", "frameLevel", "font-noOffset"},
         ["statusIcon"] = {
             -- "|A:dungeonskull:18:18|a "..
@@ -1614,7 +1614,7 @@ elseif Cell.isVanilla then
     indicatorSettings = {
         ["nameText"] = {"enabled", "color-class", "textWidth", "checkbutton:showGroupNumber", "vehicleNamePosition", "namePosition", "frameLevel", "font-noOffset"},
         ["statusText"] = {"enabled", "checkbutton:showTimer", "checkbutton2:showBackground", "statusColors", "statusPosition", "frameLevel", "font-noOffset"},
-        ["healthText"] = {"|cffff7727"..L["MODERATE CPU USAGE"], "enabled", "color-class", "healthFormat", "checkbutton:hideIfEmptyOrFull", "position", "frameLevel", "font-noOffset"},
+        ["healthText"] = {"|cffff7727"..L["MODERATE CPU USAGE"], "enabled", "healthFormat", "position", "frameLevel", "font-noOffset"},
         ["powerText"] = {"enabled", "color-power", "powerFormat", "checkbutton:hideIfEmptyOrFull", "position", "frameLevel", "font-noOffset"},
         ["statusIcon"] = {
             -- "|A:dungeonskull:18:18|a "..
@@ -1734,7 +1734,7 @@ local function ShowIndicatorSettings(id)
         if currentSetting == "namePosition" or currentSetting == "statusPosition" or currentSetting == "position-noHCenter" or currentSetting == "shieldBarPosition" then currentSetting = "position" end
         if currentSetting == "barOrientation" then currentSetting = "orientation" end
         if currentSetting == "durationVisibility" then currentSetting = "showDuration" end
-        if currentSetting == "healthFormat" or currentSetting == "powerFormat" then currentSetting = "format" end
+        if currentSetting == "powerFormat" then currentSetting = "format" end
 
         -- enabled
         if currentSetting == "enabled" then
@@ -1978,6 +1978,14 @@ local function ShowIndicatorSettings(id)
             w:SetFunc(function(value)
                 indicatorTable[currentSetting] = value
                 Cell:Fire("UpdateIndicators", notifiedLayout, indicatorName, currentSetting, value)
+            end)
+
+        -- healthFormat
+        elseif currentSetting == "healthFormat" then
+            w:SetDBValue(indicatorTable["format"])
+            w:SetFunc(function(value)
+                -- NOTE: already changed in widget
+                Cell:Fire("UpdateIndicators", notifiedLayout, indicatorName, "format", indicatorTable["format"])
             end)
 
         -- common

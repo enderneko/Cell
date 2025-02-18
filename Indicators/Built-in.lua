@@ -1422,90 +1422,154 @@ end
 -------------------------------------------------
 -- health text
 -------------------------------------------------
+local sub = string.sub
+local gsub = string.gsub
+local find = string.find
+local format = string.format
+local tinsert = table.insert
+
 local formatter = {
-    -- health
-    ["health"] = function(hideIfEmptyOrFull, currentHealth, maxHealth, absorbs, healAbsorbs)
-        return currentHealth, hideIfEmptyOrFull and (currentHealth == 0 or currentHealth == maxHealth)
-    end,
-    ["health_short"] = function(hideIfEmptyOrFull, currentHealth, maxHealth, absorbs, healAbsorbs)
-        return F:FormatNumber(currentHealth), hideIfEmptyOrFull and (currentHealth == 0 or currentHealth == maxHealth)
-    end,
-    ["health_percent"] = function(hideIfEmptyOrFull, currentHealth, maxHealth, absorbs, healAbsorbs)
-        return format("%d%%", currentHealth/maxHealth*100), hideIfEmptyOrFull and (currentHealth == 0 or currentHealth == maxHealth)
-    end,
-    ["deficit"] = function(hideIfEmptyOrFull, currentHealth, maxHealth, absorbs, healAbsorbs)
-        return currentHealth - maxHealth, hideIfEmptyOrFull and (currentHealth == 0 or currentHealth == maxHealth)
-    end,
-    ["deficit_short"] = function(hideIfEmptyOrFull, currentHealth, maxHealth, absorbs, healAbsorbs)
-        return F:FormatNumber(currentHealth - maxHealth), hideIfEmptyOrFull and (currentHealth == 0 or currentHealth == maxHealth)
-    end,
-    ["deficit_percent"] = function(hideIfEmptyOrFull, currentHealth, maxHealth, absorbs, healAbsorbs)
-        return format("%d%%", (currentHealth-maxHealth)/maxHealth*100), hideIfEmptyOrFull and (currentHealth == 0 or currentHealth == maxHealth)
+    ["none"] = function()
+        return ""
     end,
 
-    -- absorb
-    ["absorbs"] = function(hideIfEmptyOrFull, currentHealth, maxHealth, absorbs, healAbsorbs)
-        return absorbs, hideIfEmptyOrFull and absorbs == 0
+    -- health
+    ["health"] = function(self, hideIfEmptyOrFull, currentHealth, maxHealth, absorbs, healAbsorbs)
+        if hideIfEmptyOrFull and (currentHealth == 0 or currentHealth == maxHealth) then return "" end
+        return self.health:format(currentHealth)
     end,
-    ["absorbs_short"] = function(hideIfEmptyOrFull, currentHealth, maxHealth, absorbs, healAbsorbs)
-        return F:FormatNumber(absorbs), hideIfEmptyOrFull and absorbs == 0
+    ["health_short"] = function(self, hideIfEmptyOrFull, currentHealth, maxHealth, absorbs, healAbsorbs)
+        if hideIfEmptyOrFull and (currentHealth == 0 or currentHealth == maxHealth) then return "" end
+        return self.health:format(F:FormatNumber(currentHealth))
     end,
-    ["absorbs_percent"] = function(hideIfEmptyOrFull, currentHealth, maxHealth, absorbs, healAbsorbs)
-        return format("%d%%", absorbs/maxHealth*100), hideIfEmptyOrFull and absorbs == 0
+    ["health_percent"] = function(self, hideIfEmptyOrFull, currentHealth, maxHealth, absorbs, healAbsorbs)
+        if hideIfEmptyOrFull and (currentHealth == 0 or currentHealth == maxHealth) then return "" end
+        return self.health:format(F:Round(currentHealth / maxHealth * 100))
+    end,
+    ["deficit"] = function(self, hideIfEmptyOrFull, currentHealth, maxHealth, absorbs, healAbsorbs)
+        if hideIfEmptyOrFull and (currentHealth == 0 or currentHealth == maxHealth) then return "" end
+        return self.health:format(currentHealth - maxHealth)
+    end,
+    ["deficit_short"] = function(self, hideIfEmptyOrFull, currentHealth, maxHealth, absorbs, healAbsorbs)
+        if hideIfEmptyOrFull and (currentHealth == 0 or currentHealth == maxHealth) then return "" end
+        return self.health:format(F:FormatNumber(currentHealth - maxHealth))
+    end,
+    ["deficit_percent"] = function(self, hideIfEmptyOrFull, currentHealth, maxHealth, absorbs, healAbsorbs)
+        if hideIfEmptyOrFull and (currentHealth == 0 or currentHealth == maxHealth) then return "" end
+        return self.health:format(F:Round((currentHealth - maxHealth) / maxHealth * 100))
+    end,
+
+    -- effective health
+    ["effective"] = function(self, hideIfEmptyOrFull, currentHealth, maxHealth, absorbs, healAbsorbs)
+        if hideIfEmptyOrFull and (currentHealth == 0 or currentHealth == maxHealth) and absorbs == 0 and healAbsorbs == 0 then return "" end
+        return self.health:format(currentHealth + absorbs - healAbsorbs)
+    end,
+    ["effective_short"] = function(self, hideIfEmptyOrFull, currentHealth, maxHealth, absorbs, healAbsorbs)
+        if hideIfEmptyOrFull and (currentHealth == 0 or currentHealth == maxHealth) and absorbs == 0 and healAbsorbs == 0 then return "" end
+        return self.health:format(F:FormatNumber(currentHealth + absorbs - healAbsorbs))
+    end,
+    ["effective_percent"] = function(self, hideIfEmptyOrFull, currentHealth, maxHealth, absorbs, healAbsorbs)
+        if hideIfEmptyOrFull and (currentHealth == 0 or currentHealth == maxHealth) and absorbs == 0 and healAbsorbs == 0 then return "" end
+        return self.health:format(F:Round((currentHealth + absorbs - healAbsorbs) / maxHealth * 100))
+    end,
+
+    -- shields
+    ["shields"] = function(self, currentHealth, maxHealth, absorbs, healAbsorbs)
+        if absorbs == 0 then return "" end
+        return self.shields:format(absorbs)
+    end,
+    ["shields_short"] = function(self, currentHealth, maxHealth, absorbs, healAbsorbs)
+        if absorbs == 0 then return "" end
+        return self.shields:format(F:FormatNumber(absorbs))
+    end,
+    ["shields_percent"] = function(self, currentHealth, maxHealth, absorbs, healAbsorbs)
+        if absorbs == 0 then return "" end
+        return self.shields:format(F:Round(absorbs / maxHealth * 100))
     end,
 
     -- heal absorbs
-    ["healabsorbs"] = function(hideIfEmptyOrFull, currentHealth, maxHealth, absorbs, healAbsorbs)
-        return healAbsorbs, hideIfEmptyOrFull and healAbsorbs == 0
+    ["healabsorbs"] = function(self, currentHealth, maxHealth, absorbs, healAbsorbs)
+        if healAbsorbs == 0 then return "" end
+        return self.healAbsorbs:format(healAbsorbs)
     end,
-    ["healabsorbs_short"] = function(hideIfEmptyOrFull, currentHealth, maxHealth, absorbs, healAbsorbs)
-        return F:FormatNumber(healAbsorbs), hideIfEmptyOrFull and healAbsorbs == 0
+    ["healabsorbs_short"] = function(self, currentHealth, maxHealth, absorbs, healAbsorbs)
+        if healAbsorbs == 0 then return "" end
+        return self.healAbsorbs:format(F:FormatNumber(healAbsorbs))
     end,
-    ["healabsorbs_percent"] = function(hideIfEmptyOrFull, currentHealth, maxHealth, absorbs, healAbsorbs)
-        return format("%d%%", healAbsorbs/maxHealth*100), hideIfEmptyOrFull and healAbsorbs == 0
-    end,
-
-    -- effective
-    ["effective_percent"] = function(hideIfEmptyOrFull, currentHealth, maxHealth, absorbs, healAbsorbs)
-        return format("%d%%", (currentHealth+absorbs-healAbsorbs)/maxHealth*100), hideIfEmptyOrFull and (currentHealth == 0 or currentHealth == maxHealth) and (absorbs == 0) and (healAbsorbs == 0)
+    ["healabsorbs_percent"] = function(self, currentHealth, maxHealth, absorbs, healAbsorbs)
+        if healAbsorbs == 0 then return "" end
+        return self.healAbsorbs:format(F:Round(healAbsorbs / maxHealth * 100))
     end,
 }
 
 local function HealthText_SetFormat(self, format)
-    self.format = format
-    self.value = wipe(self.value or {})
-    for k in string.gmatch(format, "%[([a-z_]+)%]") do
-        self.value[k] = ""
-    end
-end
+    self.GetHealth = formatter[format.health.format:gsub("_no_sign$", "")]
+    self.GetAbsorbs = formatter[format.shields.format:gsub("_no_sign$", "")]
+    self.GetHealAbsorbs = formatter[format.healAbsorbs.format:gsub("_no_sign$", "")]
 
-local gsub = string.gsub
-local function HealthText_SetValue(self, currentHealth, maxHealth, absorbs, healAbsorbs, isDeadOrGhost)
-    maxHealth = maxHealth == 0 and 1 or maxHealth
-    local hideAll = true
-    local hide
-    for k in pairs(self.value) do
-        if formatter[k] then
-            self.value[k], hide = formatter[k](self.hideIfEmptyOrFull, currentHealth, maxHealth, absorbs, healAbsorbs)
-            if hide then
-                self.value[k] = ""
-            end
+    if format.health.format ~= "none" then
+        self.hideHealthIfEmptyOrFull = format.health.hideIfEmptyOrFull
+        local suffix = format.health.format:find("percent$") and "%%" or ""
+        if format.health.color[1] == "class_color" then
+            self.health = "%s" .. suffix
+        else
+            self.health = "|cff" .. F:ConvertRGBToHEX(F:ConvertRGB_256(unpack(format.health.color[2]))) .. "%s" .. suffix .. "|r"
         end
-        hideAll = hide and hideAll
+    else
+        self.health = ""
     end
 
-    if hideAll then
-        self:Hide()
+    if format.shields.format ~= "none" then
+        local prefix
+        if format.shields.delimiter == "none" then
+            prefix = ""
+        elseif format.shields.delimiter == "space" then
+            prefix = " "
+        else
+            prefix = "|cffababab" .. format.shields.delimiter .. "|r"
+        end
+
+        local suffix = format.shields.format:find("percent$") and "%%" or ""
+
+        if format.shields.color[1] == "class_color" then
+            self.shields = prefix .. "%s" .. suffix
+        else
+            self.shields = prefix .. "|cff" .. F:ConvertRGBToHEX(F:ConvertRGB_256(unpack(format.shields.color[2]))) .. "%s" .. suffix .. "|r"
+        end
     else
-        local text = gsub(self.format, "%[([a-z_]+)%]", self.value)
-        self.text:SetText(text)
-        self:SetWidth(self.text:GetStringWidth())
-        self:Show()
+        self.shields = ""
+    end
+
+    if format.healAbsorbs.format ~= "none" then
+        local prefix
+
+        if format.healAbsorbs.delimiter == "none" then
+            prefix = ""
+        elseif format.healAbsorbs.delimiter == "space" then
+            prefix = " "
+        else
+            prefix = "|cffababab" .. format.healAbsorbs.delimiter .. "|r"
+        end
+
+        local suffix = format.healAbsorbs.format:find("percent$") and "%%" or ""
+        if format.healAbsorbs.color[1] == "class_color" then
+            self.healAbsorbs = prefix .. "%s" .. suffix
+        else
+            self.healAbsorbs = prefix .. "|cff" .. F:ConvertRGBToHEX(F:ConvertRGB_256(unpack(format.healAbsorbs.color[2]))) .. "%s" .. suffix .. "|r"
+        end
+    else
+        self.healAbsorbs = ""
     end
 end
 
-local function HealthText_SetHideIfEmptyOrFull(self, hideIfEmptyOrFull)
-    self.hideIfEmptyOrFull = hideIfEmptyOrFull
+local function HealthText_SetValue(self, currentHealth, maxHealth, shields, healAbsorbs)
+    maxHealth = maxHealth == 0 and 1 or maxHealth
+
+    self.text:SetFormattedText("%s%s%s",
+        self:GetHealth(self.hideHealthIfEmptyOrFull, currentHealth, maxHealth, shields, healAbsorbs),
+        self:GetAbsorbs(currentHealth, maxHealth, shields, healAbsorbs),
+        self:GetHealAbsorbs(currentHealth, maxHealth, shields, healAbsorbs))
+    self:SetWidth(self.text:GetStringWidth())
 end
 
 local function HealthText_SetFont(self, font, size, outline, shadow)
@@ -1551,11 +1615,11 @@ local function HealthText_SetColor(self, r, g, b)
 end
 
 local function HealthText_UpdatePreviewColor(self, color)
-    if color[1] == "class_color" then
+    -- if color[1] == "class_color" then
         self.text:SetTextColor(F:GetClassColor(Cell.vars.playerClass))
-    else
-        self.text:SetTextColor(unpack(color[2]))
-    end
+    -- else
+    --     self.text:SetTextColor(unpack(color[2]))
+    -- end
 end
 
 function I.CreateHealthText(parent)
@@ -1566,13 +1630,16 @@ function I.CreateHealthText(parent)
     local text = healthText:CreateFontString(nil, "OVERLAY", "CELL_FONT_STATUS")
     healthText.text = text
 
+    healthText.GetHealth = formatter.none
+    healthText.GetShields = formatter.none
+    healthText.GetHealAbsorbs = formatter.none
+
     healthText.SetFont = HealthText_SetFont
     healthText._SetPoint = healthText.SetPoint
     healthText.SetPoint = HealthText_SetPoint
     healthText.SetFormat = HealthText_SetFormat
     healthText.SetValue = HealthText_SetValue
     healthText.SetColor = HealthText_SetColor
-    healthText.SetHideIfEmptyOrFull = HealthText_SetHideIfEmptyOrFull
     healthText.UpdatePreviewColor = HealthText_UpdatePreviewColor
 end
 

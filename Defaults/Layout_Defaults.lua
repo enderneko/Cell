@@ -157,12 +157,26 @@ Cell.defaults.layout = {
             ["indicatorName"] = "healthText",
             ["type"] = "built-in",
             ["enabled"] = false,
-            ["position"] = {"TOP", "CENTER", 0, -5},
+            ["position"] = {"TOP", "CENTER", 0, -6},
             ["frameLevel"] = 2,
             ["font"] = {"Cell ".._G.DEFAULT, 10, "None", true},
-            ["color"] = {"custom_color", {1, 1, 1}},
-            ["format"] = "[effective_percent]",
-            ["hideIfEmptyOrFull"] = true,
+            ["format"] = {
+                ["health"] = {
+                    ["format"] = "effective_percent",
+                    ["color"] = {"custom_color", {1, 1, 1}},
+                    ["hideIfEmptyOrFull"] = false,
+                },
+                ["shields"] = {
+                    ["format"] = "none",
+                    ["color"] = {"custom_color", {0, 1, 0}},
+                    ["delimiter"] = "+",
+                },
+                ["healAbsorbs"] = {
+                    ["format"] = "none",
+                    ["color"] = {"custom_color", {1, 0, 0}},
+                    ["delimiter"] = "-",
+                },
+            },
         }, -- 3
         {
             ["name"] = "Power Text",
