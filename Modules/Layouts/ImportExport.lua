@@ -11,7 +11,7 @@ local isImport, imported, exported = false, {}, ""
 
 local importExportFrame, importBtn, title, textArea
 
-local function DoImport(isOverwrite)
+local function DoImport(overwriteExisting)
     local name, layout = imported["name"], imported["data"]
 
     -- indicators
@@ -39,11 +39,13 @@ local function DoImport(isOverwrite)
 
     -- texplore(imported.data)
 
-    if isOverwrite then
+    if overwriteExisting then
         --! overwrite if exists
         CellDB["layouts"][name] = layout
         Cell:Fire("LayoutImported", name)
-        importExportFrame:Hide()
+        if importExportFrame then
+            importExportFrame:Hide()
+        end
     else
         --! create new
         local i = 2
@@ -54,7 +56,9 @@ local function DoImport(isOverwrite)
 
         CellDB["layouts"][name] = layout
         Cell:Fire("LayoutImported", name)
-        importExportFrame:Hide()
+        if importExportFrame then
+            importExportFrame:Hide()
+        end
     end
     F:Print(L["Layout imported: %s."]:format(name))
 end
@@ -213,4 +217,35 @@ function F:ShowLayoutExportFrame(layoutName, layoutTable)
 
     textArea:SetText(exported)
     textArea.eb:SetFocus(true)
+end
+
+---------------------------------------------------------------------
+-- for "installer" addons
+---------------------------------------------------------------------
+
+---@param layoutString string
+---@param overwriteExisting boolean whether to overwrite existing layout with the same name
+---@return boolean success
+function Cell.ImportLayout(layoutString, overwriteExisting)
+    local version, name, data = string.match(layoutString, "^!CELL:(%d+):LAYOUT:(.+)!(.+)$")
+    version = tonumber(version)
+
+    if name and version and data then
+        if version >= Cell.MIN_LAYOUTS_VERSION then
+            local success
+            data = LibDeflate:DecodeForPrint(data) -- decode
+            success, data = pcall(LibDeflate.DecompressDeflate, LibDeflate, data) -- decompress
+            success, data = Serializer:Deserialize(data) -- deserialize
+
+            if success and data then
+                imported = {}
+                imported["name"] = name
+                imported["data"] = data
+                DoImport(overwriteExisting)
+                return true
+            end
+        end
+    end
+
+    return false
 end

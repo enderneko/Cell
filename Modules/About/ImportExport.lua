@@ -16,7 +16,7 @@ local ignoredIndices = {}
 ---------------------------------------------------------------------
 -- do import
 ---------------------------------------------------------------------
-local function DoImport()
+local function DoImport(noReload)
     -- raid debuffs
     for instanceID in pairs(imported["raidDebuffs"]) do
         if not Cell.snippetVars.loadedDebuffs[instanceID] then
@@ -152,7 +152,12 @@ local function DoImport()
         CellDB[k] = v
     end
 
-    ReloadUI()
+    if noReload then
+        F:Print(L["Profile imported successfully."])
+        -- TODO: F:Print(L["Profile imported: %s."])
+    else
+        ReloadUI()
+    end
 end
 
 ---------------------------------------------------------------------
@@ -512,4 +517,37 @@ function F:ShowExportFrame()
     end
     textArea:SetPoint("TOPLEFT", 5, -50)
     P:Height(importExportFrame, 230)
+end
+
+---------------------------------------------------------------------
+-- for "installer" addons
+---------------------------------------------------------------------
+
+---@param profileString string
+---@param profileName string? not used for now
+---@return boolean success
+function Cell.ImportProfile(profileString, profileName)
+    imported = nil
+    local version, data = string.match(profileString, "^!CELL:(%d+):ALL!(.+)$")
+    version = tonumber(version)
+
+    if version and data then
+        if version >= Cell.MIN_VERSION and version <= Cell.versionNum then
+            local success
+            data = LibDeflate:DecodeForPrint(data) -- decode
+            success, data = pcall(LibDeflate.DecompressDeflate, LibDeflate, data) -- decompress
+            success, data = Serializer:Deserialize(data) -- deserialize
+
+            if success and data then
+                imported = data
+            end
+        end
+    end
+
+    if imported then
+        DoImport(true)
+        return true
+    end
+
+    return false
 end

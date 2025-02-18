@@ -20,6 +20,7 @@ local function CreateItem(index)
 
     b.text = b:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
     b.text:SetJustifyH("LEFT")
+    b.text:SetWordWrap(false)
     b.text:SetPoint("LEFT", 100, 0)
     b.text:SetPoint("RIGHT", -45, 0)
 

@@ -2900,7 +2900,7 @@ Cell:RegisterCallback("UpdateIndicators", "LayoutsTab_UpdateIndicators", UpdateI
 local function LayoutImported(name)
     if Cell.vars.currentLayout == name then -- update overwrite
         F:UpdateLayout(Cell.vars.layoutGroupType, true)
-    else -- load new
+    elseif init then -- load new
         -- update dropdown
         layoutDropdown:AddItem({
             ["text"] = name,
@@ -2912,8 +2912,11 @@ local function LayoutImported(name)
         })
         LoadAutoSwitchDropdowns()
     end
-    LoadLayoutDB(name)
-    UpdateButtonStates()
+
+    if init then
+        LoadLayoutDB(name)
+        UpdateButtonStates()
+    end
 end
 Cell:RegisterCallback("LayoutImported", "LayoutsTab_LayoutImported", LayoutImported)
 

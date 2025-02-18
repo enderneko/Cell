@@ -351,6 +351,7 @@ L["set unit's pet"] = "设置为目标单位的宠物"
 L["not in combat"] = "非战斗中"
 
 L["Invalid layout name."] = "无效布局名称。"
+L["Profile imported successfully."] = "配置导入成功。"
 L["Layout imported: %s."] = "已导入布局：%s。"
 L["Layout added: %s."] = "已创建布局：%s。"
 L["Layout deleted: %s."] = "已删除布局：%s。"
