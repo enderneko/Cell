@@ -525,8 +525,9 @@ end
 
 ---@param profileString string
 ---@param profileName string? not used for now
+---@param ignoredIndicesExternal table?
 ---@return boolean success
-function Cell.ImportProfile(profileString, profileName)
+function Cell.ImportProfile(profileString, profileName, ignoredIndicesExternal)
     imported = nil
     local version, data = string.match(profileString, "^!CELL:(%d+):ALL!(.+)$")
     version = tonumber(version)
@@ -542,6 +543,13 @@ function Cell.ImportProfile(profileString, profileName)
                 imported = data
             end
         end
+    end
+
+    if ignoredIndicesExternal then
+      wipe(ignoredIndices)
+      for index, value in pairs(ignoredIndicesExternal) do
+        ignoredIndices[index] = value
+      end
     end
 
     if imported then
