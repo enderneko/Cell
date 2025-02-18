@@ -1805,10 +1805,47 @@ if Cell.isRetail then
         end
     end
 else
+    local GetSpellInfo = GetSpellInfo
     function F:GetSpellInfo(spellId)
         if not spellId then return end
+        local rank
+        spellId, rank = strsplit(":", spellId)
         local name, _, icon = GetSpellInfo(spellId)
-        return name, icon
+        return name, icon, tonumber(rank)
+    end
+end
+
+if Cell.isWrath or Cell.isVanilla then
+    local GetSpellInfo = GetSpellInfo
+    local GetNumSpellTabs = GetNumSpellTabs
+    local GetSpellTabInfo = GetSpellTabInfo
+    local GetSpellBookItemName = GetSpellBookItemName
+    local PATTERN = TRADESKILL_RANK_HEADER:gsub(" ", ""):gsub("%%d", "%%s*(%%d+)")
+
+    function F:GetMaxSpellRank(spellId)
+        local spellName = select(1, GetSpellInfo(spellId))
+        if not spellName then return end
+
+        local maxRank = 0
+        local bookType = BOOKTYPE_SPELL
+
+        local totalSpells = 0
+        for tab = 1, GetNumSpellTabs() do
+            local name, texture, offset, numSpells = GetSpellTabInfo(tab)
+            totalSpells = totalSpells + numSpells
+        end
+
+        for i = 1, totalSpells do
+            local name, subText = GetSpellBookItemName(i, bookType)
+            if name == spellName and subText then
+                local rank = tonumber(subText:match(PATTERN))
+                if rank and rank > maxRank then
+                    maxRank = rank
+                end
+            end
+        end
+
+        return maxRank
     end
 end
 

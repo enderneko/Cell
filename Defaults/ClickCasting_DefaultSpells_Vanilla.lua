@@ -159,7 +159,7 @@ function F:GetClickCastingSpellList(class)
         end
 
         local name, icon = F:GetSpellInfo(spellId)
-        spells[i] = {icon, name, spellType, spellId}
+        spells[i] = {icon, name, spellType, spellId, F:GetMaxSpellRank(spellId)}
     end
 
     -- texplore(spells)

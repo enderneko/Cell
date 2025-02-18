@@ -3,6 +3,8 @@ local L = Cell.L
 local F = Cell.funcs
 local P = Cell.pixelPerfectFuncs
 
+local RANK = _G.TRADESKILL_RANK_HEADER:gsub(" ", ""):gsub("%%d", "")
+
 local clickCastingsTab = Cell:CreateFrame("CellOptionsFrame_ClickCastingsTab", Cell.frames.optionsFrame, nil, nil, true)
 Cell.frames.clickCastingsTab = clickCastingsTab
 clickCastingsTab:SetAllPoints(Cell.frames.optionsFrame)
@@ -519,7 +521,12 @@ local function ApplyClickCastings(b)
         end
 
         if t[2] == "spell" then
-            local spellName = F:GetSpellInfo(t[3]) or ""
+            local spellName, _, rank = F:GetSpellInfo(t[3])
+            spellName = spellName or ""
+
+            if rank then
+                spellName = spellName.."(".. RANK .. " " .. rank ..")"
+            end
 
             --! NOTE: fix Primordial Wave
             -- NOTE: only Necrolord shamans have this issue
@@ -1322,7 +1329,7 @@ local function ShowActionsMenu(index, b)
         -- {icon, name, type(C/S/P), id}
 
         for _, t in ipairs(spells) do
-            tinsert(items, {
+            local spellItem = {
                 --! CANNOT use "|T****|t", if too many items (over 10?), it will cause game stuck!! I don't know why!
                 -- ["text"] = "|T"..t[1]..":12:12:0:0:12:12:1:11:1:11|t "..t[2]..(t[3] and (" |cff777777("..t[3]..")") or ""),
                 ["text"] = t[2]..(t[3] and (" |cff777777("..t[3]..")") or ""),
@@ -1340,13 +1347,38 @@ local function ShowActionsMenu(index, b)
                     end
                     CheckChanged(index, b)
                     CheckChanges()
-                end,
-            })
+                end
+            }
+
+            if t[5] and t[5] > 1 then
+                spellItem.children = {}
+                for i = 1, t[5] do
+                    tinsert(spellItem.children, {
+                        ["text"] = RANK .. " " .. i,
+                        ["onClick"] = function()
+                            changed[index] = changed[index] or {b}
+                            if b.bindAction ~= t[4]..":"..i then
+                                changed[index]["bindAction"] = t[4]..":"..i
+                                b.actionGrid:SetText(t[2].."|cff777777("..i..")|r")
+                                b:ShowSpellIcon(t[4])
+                            else
+                                changed[index]["bindAction"] = nil
+                                b.actionGrid:SetText(b.bindActionDisplay)
+                                b:ShowSpellIcon(b.bindAction)
+                            end
+                            CheckChanged(index, b)
+                            CheckChanges()
+                        end
+                    })
+                end
+            end
+
+            tinsert(items, spellItem)
         end
     end
 
-    menu:SetWidths(b.actionGrid:GetWidth())
     menu:SetItems(items, 15)
+    menu:SetWidths(b.actionGrid:GetWidth(), 70)
     P:ClearPoints(menu)
     P:Point(menu, "TOPLEFT", b.actionGrid, "BOTTOMLEFT", 0, -1)
     menu:ShowMenu()
@@ -1526,7 +1558,11 @@ CreateBindingListButton = function(modifier, bindKey, bindType, bindAction, i)
         b:HideIcon()
     elseif bindType == "spell" then
         if bindAction ~= "" then
-            if type(bindAction) ~= "number" then
+            if strfind(bindAction, ":") then
+                local spellId, rank = strsplit(":", bindAction)
+                b.bindActionDisplay = F:GetSpellInfo(spellId).."|cff777777("..rank..")|r"
+                b:ShowSpellIcon(spellId)
+            elseif type(bindAction) ~= "number" then
                 b.bindActionDisplay = "|cFFFF3030"..L["Invalid"]
                 b:ShowSpellIcon()
             else

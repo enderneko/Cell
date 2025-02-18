@@ -2197,14 +2197,20 @@ local function CreateItemButtons(items, itemTable, itemParent, level)
                 menu[level+1]:SetPoint("TOPLEFT", b, "TOPRIGHT", 2, 1)
                 menu[level+1]:Show()
 
-                for _, b in ipairs(b) do
-                    b:Show()
+                for _, sub in ipairs(b) do
+                    sub:Show()
                 end
+
+                menu[level+1]:SetHeight(2 + #item.children*18)
             end)
 
             -- clear parent menuItem's onClick
             b:SetScript("OnClick", function()
                 PlaySound(SOUNDKIT.U_CHAT_SCROLL_BUTTON)
+                if item.onClick then
+                    menu:Hide()
+                    item.onClick(item.text)
+                end
             end)
         else
             if b.childrenSymbol then b.childrenSymbol:Hide() end
@@ -2227,7 +2233,7 @@ local function CreateItemButtons(items, itemTable, itemParent, level)
     itemParent:SetHeight(2 + #items*18)
 end
 
-local function CreateItemButtons_Scroll(items, itemTable, limit)
+local function CreateItemButtons_Scroll(items, itemTable, limit, level)
     menu:SetScript("OnHide", function(self) self:Hide() end)
 
     for i, item in pairs(items) do
@@ -2295,17 +2301,65 @@ local function CreateItemButtons_Scroll(items, itemTable, limit)
         --     end
         -- end
 
-        if b.childrenSymbol then b.childrenSymbol:Hide() end
+        if item.children then
+            -- create sub menu level+1
+            if not menu[level+1] then
+                -- menu[level+1] parent == menu[level]
+                menu[level+1] = addon:CreateFrame(addonName.."CascadingSubMenu"..level, level == 0 and menu or menu[level], 100, 20)
+                menu[level+1]:SetFrameLevel((level == 0 and menu or menu[level]):GetFrameLevel() + 10)
+                menu[level+1]:SetBackdropColor(0.115, 0.115, 0.115, 1)
+                menu[level+1]:SetBackdropBorderColor(accentColor.t[1], accentColor.t[2], accentColor.t[3], 1)
+                -- menu[level+1]:SetScript("OnHide", function(self) self:Hide() end)
+            end
 
-        b:SetScript("OnEnter", function()
-            b:SetBackdropColor(unpack(b.hoverColor))
-        end)
+            if not b.childrenSymbol then
+                b.childrenSymbol = b:CreateFontString(nil, "OVERLAY", font_name)
+                b.childrenSymbol:SetText("|cFF777777>")
+                b.childrenSymbol:SetPoint("RIGHT", -5, 0)
+            end
+            b.childrenSymbol:Show()
 
-        b:SetScript("OnClick", function()
-            PlaySound(SOUNDKIT.U_CHAT_SCROLL_BUTTON)
-            menu:Hide()
-            if item.onClick then item.onClick(item.text) end
-        end)
+            CreateItemButtons(item.children, b, menu[level+1], level+1) -- itemTable == b, insert children to its table
+
+            b:SetScript("OnEnter", function()
+                b:SetBackdropColor(unpack(b.hoverColor))
+
+                menu[level+1]:Hide()
+
+                menu[level+1]:ClearAllPoints()
+                menu[level+1]:SetPoint("TOPLEFT", b, "TOPRIGHT", 2, 1)
+                menu[level+1]:Show()
+
+                for _, sub in ipairs(b) do
+                    sub:Show()
+                end
+
+                menu[level+1]:SetHeight(2 + #item.children*18)
+            end)
+
+            -- clear parent menuItem's onClick
+            b:SetScript("OnClick", function()
+                PlaySound(SOUNDKIT.U_CHAT_SCROLL_BUTTON)
+                if item.onClick then
+                    menu:Hide()
+                    item.onClick(item.text)
+                end
+            end)
+        else
+            if b.childrenSymbol then b.childrenSymbol:Hide() end
+
+            b:SetScript("OnEnter", function()
+                b:SetBackdropColor(unpack(b.hoverColor))
+
+                if menu[level+1] then menu[level+1]:Hide() end
+            end)
+
+            b:SetScript("OnClick", function()
+                PlaySound(SOUNDKIT.U_CHAT_SCROLL_BUTTON)
+                menu:Hide()
+                if item.onClick then item.onClick(item.text) end
+            end)
+        end
     end
 
     -- update height
@@ -2337,7 +2391,7 @@ function menu:SetItems(items, limit)
     -- create buttons -- items, itemTable, itemParent, level
     if limit then
         menu.scrollFrame:Show()
-        CreateItemButtons_Scroll(items, menu.items, limit)
+        CreateItemButtons_Scroll(items, menu.items, limit, 0)
     else
         menu.scrollFrame:Hide()
         CreateItemButtons(items, menu.items, menu, 0)
@@ -3306,6 +3360,7 @@ function addon:CreateBindingListButton(parent, modifier, bindKey, bindType, bind
     function b:ShowSpellIcon(spell)
         local icon = nil
         if spell then
+            spell = strsplit(":", spell) -- has spell rank
             icon = select(2, F:GetSpellInfo(spell))
         end
         b:ShowIcon(icon)
