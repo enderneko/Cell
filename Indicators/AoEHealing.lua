@@ -19,7 +19,7 @@ eventFrame:SetScript("OnEvent", function()
     -- if subevent == "SPELL_SUMMON" then print(subevent, sourceName, sourceGUID, destName, destGUID, spellName) end
     if subevent == "SPELL_SUMMON" then
         -- print(sourceGUID == Cell.vars.playerGUID, destGUID, spellName, spellId)
-        if sourceGUID == Cell.vars.playerGUID and destGUID and (I.IsAoEHealing(spellName) or I.IsAoEHealing(spellId)) then
+        if sourceGUID == Cell.vars.playerGUID and destGUID and I.IsAoEHealing(spellName, spellId) then
             local duration = I.GetSummonDuration(spellName)
             if duration then
                 playerSummoned[destGUID] = GetTime() + duration -- expirationTime
@@ -34,7 +34,7 @@ eventFrame:SetScript("OnEvent", function()
     if subevent == "SPELL_HEAL" or subevent == "SPELL_PERIODIC_HEAL" then
         if destGUID then
             -- print(sourceGUID, playerSummoned[sourceGUID])
-            if (sourceGUID == Cell.vars.playerGUID and (I.IsAoEHealing(spellName) or I.IsAoEHealing(spellId))) or playerSummoned[sourceGUID] then
+            if (sourceGUID == Cell.vars.playerGUID and I.IsAoEHealing(spellName, spellId)) or playerSummoned[sourceGUID] then
                 F:HandleUnitButton("guid", destGUID, Display)
             end
         end

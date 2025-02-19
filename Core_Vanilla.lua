@@ -394,10 +394,13 @@ function eventFrame:ADDON_LOADED(arg1)
         end
         Cell.vars.bigDebuffs = F:ConvertTable(CellDB["bigDebuffs"])
 
-        -- debuffTypeColor -----------------------------------------------------------------------------
+        -- debuffTypeColor ------------------------------------------------------------------------
         if type(CellDB["debuffTypeColor"]) ~= "table" then
             I.ResetDebuffTypeColor()
         end
+
+        -- aoeHealings ----------------------------------------------------------------------------
+        if type(CellDB["aoeHealings"]) ~= "table" then CellDB["aoeHealings"] = {["disabled"]={}, ["custom"]={}} end
 
         -- defensives/externals -------------------------------------------------------------------
         if type(CellDB["defensives"]) ~= "table" then CellDB["defensives"] = {["disabled"]={}, ["custom"]={}} end
@@ -660,6 +663,7 @@ function eventFrame:PLAYER_LOGIN()
     -- update CLEU
     Cell:Fire("UpdateCLEU")
     -- update builtIns and customs
+    I.UpdateAoEHealings(CellDB["aoeHealings"])
     I.UpdateDefensives(CellDB["defensives"])
     I.UpdateExternals(CellDB["externals"])
     -- update pixel perfect

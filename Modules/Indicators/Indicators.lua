@@ -297,11 +297,15 @@ local function InitIndicator(indicatorName)
         indicator:SetStatusBarColor(1, 0, 0)
         indicator.value = 0
         indicator:SetScript("OnUpdate", function(self, elapsed)
-            self.value = self.value + 1
-            if self.value >= 100 then
-                self.value = 0
+            self.elapsed = (self.elapsed or 0) + elapsed
+            if self.elapsed >= 0.01 then
+                self.elapsed = 0
+                self.value = self.value + 1
+                if self.value >= 100 then
+                    self.value = 0
+                end
+                self:SetValue(self.value)
             end
-            self:SetValue(self.value)
         end)
 
     elseif indicatorName == "shieldBar" then
@@ -330,11 +334,15 @@ local function InitIndicator(indicatorName)
         indicator:SetMinMaxValues(0, 100)
         indicator:SetValue(0)
         indicator:SetScript("OnUpdate", function(self, elapsed)
-            self.value = self.value + 1
-            if self.value >= 100 then
-                self.value = 0
+            self.elapsed = (self.elapsed or 0) + elapsed
+            if self.elapsed >= 0.01 then
+                self.elapsed = 0
+                self.value = self.value + 1
+                if self.value >= 100 then
+                    self.value = 0
+                end
+                self:SetValue(self.value)
             end
-            self:SetValue(self.value)
         end)
         function indicator:SetColor(cType, cTable)
             if cType == "class_color" then
@@ -1558,7 +1566,7 @@ if Cell.isRetail then
         ["aggroBorder"] = {"enabled", "thickness", "frameLevel"},
         ["aggroBar"] = {"enabled", "size", "position", "frameLevel"},
         ["shieldBar"] = {"enabled", "checkbutton:onlyShowOvershields", "color-alpha", "height", "shieldBarPosition", "frameLevel"},
-        ["aoeHealing"] = {"|cffb7b7b7"..L["Display a gradient texture when the unit receives a heal from your certain AoE healing spells."], "enabled", "color", "height"},
+        ["aoeHealing"] = {"|cffb7b7b7"..L["Display a gradient texture when the unit receives a heal from your certain healing spells."], "enabled", "builtInAoEHealings", "customAoEHealings", "color", "height"},
         ["externalCooldowns"] = {L["Even if disabled, the settings below affect \"Externals + Defensives\" indicator"], "enabled", "builtInExternals", "customExternals", "durationVisibility", "checkbutton:showAnimation", "size", "num:5", "orientation", "position", "frameLevel", "font1:stackFont", "font2:durationFont"},
         ["defensiveCooldowns"] = {L["Even if disabled, the settings below affect \"Externals + Defensives\" indicator"], "enabled", "builtInDefensives", "customDefensives", "durationVisibility", "checkbutton:showAnimation", "size", "num:5", "orientation", "position", "frameLevel", "font1:stackFont", "font2:durationFont"},
         ["allCooldowns"] = {"enabled", "durationVisibility", "checkbutton:showAnimation", "size", "num:5", "orientation", "position", "frameLevel", "font1:stackFont", "font2:durationFont"},
@@ -1597,7 +1605,7 @@ elseif Cell.isCata or Cell.isWrath then
         ["aggroBar"] = {"enabled", "size", "position", "frameLevel"},
         ["shieldBar"] = {"enabled", "checkbutton:onlyShowOvershields", "color-alpha", "height", "shieldBarPosition", "frameLevel"},
         ["powerWordShield"] = {L["To show shield value, |cffff2727Glyph of Power Word: Shield|r is required"], "enabled", "checkbutton:shieldByMe", "shape", "size-square", "position", "frameLevel"},
-        ["aoeHealing"] = {"|cffb7b7b7"..L["Display a gradient texture when the unit receives a heal from your certain AoE healing spells."], "enabled", "color", "height"},
+        ["aoeHealing"] = {"|cffb7b7b7"..L["Display a gradient texture when the unit receives a heal from your certain healing spells."], "enabled", "builtInAoEHealings", "customAoEHealings", "color", "height"},
         ["externalCooldowns"] = {L["Even if disabled, the settings below affect \"Externals + Defensives\" indicator"], "enabled", "builtInExternals", "customExternals", "durationVisibility", "checkbutton:showAnimation", "size", "num:5", "orientation", "position", "frameLevel", "font1:stackFont", "font2:durationFont"},
         ["defensiveCooldowns"] = {L["Even if disabled, the settings below affect \"Externals + Defensives\" indicator"], "enabled", "builtInDefensives", "customDefensives", "durationVisibility", "checkbutton:showAnimation", "size", "num:5", "orientation", "position", "frameLevel", "font1:stackFont", "font2:durationFont"},
         ["allCooldowns"] = {"enabled", "durationVisibility", "checkbutton:showAnimation", "size", "num:5", "orientation", "position", "frameLevel", "font1:stackFont", "font2:durationFont"},
@@ -1631,7 +1639,7 @@ elseif Cell.isVanilla then
         ["aggroBlink"] = {"enabled", "size", "position", "frameLevel"},
         ["aggroBorder"] = {"enabled", "thickness", "frameLevel"},
         ["aggroBar"] = {"enabled", "size", "position", "frameLevel"},
-        ["aoeHealing"] = {"|cffb7b7b7"..L["Display a gradient texture when the unit receives a heal from your certain AoE healing spells."], "enabled", "color", "height"},
+        ["aoeHealing"] = {"|cffb7b7b7"..L["Display a gradient texture when the unit receives a heal from your certain healing spells."], "enabled", "builtInAoEHealings", "customAoEHealings", "color", "height"},
         ["externalCooldowns"] = {L["Even if disabled, the settings below affect \"Externals + Defensives\" indicator"], "enabled", "builtInExternals", "customExternals", "durationVisibility", "checkbutton:showAnimation", "size", "num:5", "orientation", "position", "frameLevel", "font1:stackFont", "font2:durationFont"},
         ["defensiveCooldowns"] = {L["Even if disabled, the settings below affect \"Externals + Defensives\" indicator"], "enabled", "builtInDefensives", "customDefensives", "durationVisibility", "checkbutton:showAnimation", "size", "num:5", "orientation", "position", "frameLevel", "font1:stackFont", "font2:durationFont"},
         ["allCooldowns"] = {"enabled", "durationVisibility", "checkbutton:showAnimation", "size", "num:5", "orientation", "position", "frameLevel", "font1:stackFont", "font2:durationFont"},
@@ -1805,6 +1813,25 @@ local function ShowIndicatorSettings(id)
                 CellDB["dispelBlacklist"] = value
                 Cell.vars.dispelBlacklist = F:ConvertTable(CellDB["dispelBlacklist"])
                 Cell:Fire("UpdateIndicators", notifiedLayout, "", "dispelBlacklist")
+            end)
+
+        -- builtInAoEHealings
+        elseif currentSetting == "builtInAoEHealings" then
+            w:SetDBValue(I.GetAoEHealings(), CellDB["aoeHealings"]["disabled"])
+            w:SetFunc(function()
+                I.UpdateAoEHealings(CellDB["aoeHealings"])
+                -- NOTE: no need to fire UpdateIndicators
+                -- Cell:Fire("UpdateIndicators", notifiedLayout, "", "aoeHealings")
+            end)
+
+        -- customAoEHealings
+        elseif currentSetting == "customAoEHealings" then
+            w:SetDBValue(_G.CUSTOM, CellDB["aoeHealings"]["custom"], true)
+            w:SetFunc(function(value)
+                CellDB["aoeHealings"]["custom"] = value
+                I.UpdateAoEHealings(CellDB["aoeHealings"])
+                -- NOTE: no need to fire UpdateIndicators
+                -- Cell:Fire("UpdateIndicators", notifiedLayout, "", "aoeHealings")
             end)
 
         -- builtInDefensives

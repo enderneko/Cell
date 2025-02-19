@@ -37,39 +37,60 @@ function I.GetDefaultBigDebuffs()
     return bigDebuffs
 end
 
-
 -------------------------------------------------
 -- aoeHealings
 -------------------------------------------------
 local aoeHealings = {
-    -- druid
-    740, -- 宁静
-
-    -- priest
-    596, -- 治疗祷言
-    64843, -- 神圣赞美诗
-    34866, -- 治疗之环
-
-    -- shaman
-    1064, -- 治疗链
+    ["DRUID"] = {
+        [740] = true, -- 宁静
+    },
+    ["PRIEST"] = {
+        [596]  = true, -- 治疗祷言
+        [64843] = true, -- 神圣赞美诗
+        [34866] = true, -- 治疗之环
+    },
+    ["SHAMAN"] = {
+        [1064] = true, -- 治疗链
+    },
 }
 
-do
-    local temp = {}
-    for _, id in pairs(aoeHealings) do
-        temp[F:GetSpellInfo(id)] = true
+function I.GetAoEHealings()
+    return aoeHealings
+end
+
+local builtInAoEHealings = {}
+local customAoEHealings = {}
+
+function I.UpdateAoEHealings(t)
+    -- user disabled
+    wipe(builtInAoEHealings)
+    for class, spells in pairs(aoeHealings) do
+        for id, trackByName in pairs(spells) do
+            if not t["disabled"][id] then -- not disabled
+                if trackByName then
+                    local name = F:GetSpellInfo(id)
+                    if name then
+                        builtInAoEHealings[name] = true
+                    end
+                else
+                    builtInAoEHealings[id] = true
+                end
+            end
+        end
     end
-    aoeHealings = temp
+
+    -- user created
+    wipe(customAoEHealings)
+    for _, id in pairs(t["custom"]) do
+        customAoEHealings[id] = true
+    end
 end
 
-function I.IsAoEHealing(name)
-    if not name then return false end
-    return aoeHealings[name]
+function I.IsAoEHealing(name, id)
+    return builtInAoEHealings[name] or builtInAoEHealings[id] or customAoEHealings[id]
 end
 
-local summonDuration = {
-
-}
+local summonDuration = {}
 
 do
     local temp = {}

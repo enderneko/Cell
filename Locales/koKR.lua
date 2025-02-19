@@ -274,7 +274,7 @@ L["Discard"] = "취소"
 L["dispellableByMe"] = "자신이 해제 가능한 약화 효과만"
 L["Dispels"] = "해제 가능 디버프"
 --[[Translation missing --]]
---[[ L["Display a gradient texture when the unit receives a heal from your certain AoE healing spells."] = ""--]]
+--[[ L["Display a gradient texture when the unit receives a heal from your certain healing spells."] = ""--]]
 --[[Translation missing --]]
 --[[ L["Display elapsed time since debuff applied"] = ""--]]
 --[[Translation missing --]]

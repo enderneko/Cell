@@ -234,7 +234,7 @@ L["Dispellable By Me"] = "Dissipable par moi"
 L["dispellableByMe"] = "Afficher uniquement les affaiblissements que je peux dissiper"
 --[[Translation missing --]]
 --[[ L["Dispels"] = "Dispels"--]]
-L["Display a gradient texture when the unit receives a heal from your certain AoE healing spells."] = "Affiche une texture dégradée lorsque l'unité reçoit un soin de certains de vos sorts de soins de zone."
+L["Display a gradient texture when the unit receives a heal from your certain healing spells."] = "Affiche une texture dégradée lorsque l'unité reçoit un soin de certains de vos sorts de soins de zone."
 L["Display elapsed time since debuff applied"] = "Afficher le temps écoulé depuis l'application de l'affaiblissement"
 L["Display One Decimal Place When"] = "Afficher une décimale lorsque"
 L["Displayed Per Line"] = "Affiché par ligne"

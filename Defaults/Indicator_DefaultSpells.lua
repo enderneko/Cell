@@ -90,75 +90,101 @@ end
 -- aoeHealings
 -------------------------------------------------
 local aoeHealings = {
-    -- druid
-    740, -- 宁静 - Tranquility
-    145205, -- 百花齐放 - Efflorescence
+    ["DRUID"] = {
+        [740] = true,      -- 宁静 - Tranquility
+        [145205] = true,   -- 百花齐放 - Efflorescence
+    },
 
-    -- evoker
-    355916, -- 翡翠之花 - Emerald Blossom
-    361361, -- 婆娑幼苗 - Fluttering Seedlings
-    363534, -- 回溯 - Rewind
-    367230, -- 精神之花 - Spiritbloom
-    370984, -- 翡翠交融 - Emerald Communion
-    371441, -- 赐命者之焰 - Life-Giver's Flame
-    371879, -- 生生不息 - Cycle of Life
+    ["EVOKER"] = {
+        [355916] = true,   -- 翡翠之花 - Emerald Blossom
+        [361361] = true,   -- 婆娑幼苗 - Fluttering Seedlings
+        [363534] = true,   -- 回溯 - Rewind
+        [367230] = true,   -- 精神之花 - Spiritbloom
+        [370984] = true,   -- 翡翠交融 - Emerald Communion
+        [371441] = true,   -- 赐命者之焰 - Life-Giver's Flame
+        [371879] = true,   -- 生生不息 - Cycle of Life
+        [377509] = false,  -- 梦境投影（pvp）- Dream Projection
+    },
 
-    -- monk
-    115098, -- 真气波 - Chi Wave
-    123986, -- 真气爆裂 - Chi Burst
-    115310, -- 还魂术 - Revival
-    322118, -- 青龙下凡 (SUMMON) - Invoke Yu'lon, the Jade Serpent
-    388193, -- 碧火踏 - Jadefire Stomp
-    443028, -- 天神御身 - Celestial Conduit
+    ["MONK"] = {
+        [115098] = true,   -- 真气波 - Chi Wave
+        [123986] = true,   -- 真气爆裂 - Chi Burst
+        [115310] = true,   -- 还魂术 - Revival
+        [322118] = true,   -- 青龙下凡 (SUMMON) - Invoke Yu'lon, the Jade Serpent
+        [388193] = true,   -- 碧火踏 - Jadefire Stomp
+        [443028] = true,   -- 天神御身 - Celestial Conduit
+        [343819] = false,  -- 迷雾之风 (朱鹤下凡产生的“迷雾之风”的施法者是玩家) - Gust of Mists
+    },
 
-    -- paladin
-    85222, -- 黎明之光 - Light of Dawn
-    119952, -- 弧形圣光 - Arcing Light
-    114165, -- 神圣棱镜 - Holy Prism
-    200654, -- 提尔的拯救 - Tyr's Deliverance
-    216371, -- 复仇十字军 - Avenging Crusader
+    ["PALADIN"] = {
+        [85222]  = true,   -- 黎明之光 - Light of Dawn
+        [119952] = true,   -- 弧形圣光 - Arcing Light
+        [114165] = true,   -- 神圣棱镜 - Holy Prism
+        [200654] = true,   -- 提尔的拯救 - Tyr's Deliverance
+        [216371] = true,   -- 复仇十字军 - Avenging Crusader
+    },
 
-    -- priest
-    120517, -- 光晕 - Halo
-    34861, -- 圣言术：灵 - Holy Word: Sanctify
-    596, -- 治疗祷言 - Prayer of Healing
-    64843, -- 神圣赞美诗 - Divine Hymn
-    110744, -- 神圣之星 - Divine Star
-    204883, -- 治疗之环 - Circle of Healing
-    281265, -- 神圣新星 - Holy Nova
-    314867, -- 暗影盟约 - Shadow Covenant
-    15290, -- 吸血鬼的拥抱 - Vampiric Embrace
-    372787, -- 神言术：佑 - Divine Word: Sanctuary
+    ["PRIEST"] = {
+        [120517] = true,   -- 光晕 - Halo
+        [34861]  = true,   -- 圣言术：灵 - Holy Word: Sanctify
+        [596]    = true,   -- 治疗祷言 - Prayer of Healing
+        [64843]  = true,   -- 神圣赞美诗 - Divine Hymn
+        [110744] = true,   -- 神圣之星 - Divine Star
+        [204883] = true,   -- 治疗之环 - Circle of Healing
+        [281265] = true,   -- 神圣新星 - Holy Nova
+        [314867] = true,   -- 暗影盟约 - Shadow Covenant
+        [15290]  = true,   -- 吸血鬼的拥抱 - Vampiric Embrace
+        [372787] = true,   -- 神言术：佑 - Divine Word: Sanctuary
+    },
 
-    -- shaman
-    1064, -- 治疗链 - Chain Heal
-    73920, -- 治疗之雨 - Healing Rain
-    108280, -- 治疗之潮图腾 (SUMMON) - Healing Tide Totem
-    52042, -- 治疗之泉图腾 (SUMMON) - Healing Stream Totem
-    197995, -- 奔涌之流 - Wellspring
-    157503, -- 暴雨图腾 - Cloudburst
-    114911, -- 先祖指引 - Ancestral Guidance
-    382311, -- 先祖复苏 - Ancestral Awakening
-    207778, -- 倾盆大雨 - Downpour
-    114083, -- 恢复迷雾 (升腾) - Restorative Mists
+    ["SHAMAN"] = {
+        [1064]   = true,   -- 治疗链 - Chain Heal
+        [73920]  = true,   -- 治疗之雨 - Healing Rain
+        [108280] = true,   -- 治疗之潮图腾 (SUMMON) - Healing Tide Totem
+        [52042]  = true,   -- 治疗之泉图腾 (SUMMON) - Healing Stream Totem
+        [197995] = true,   -- 奔涌之流 - Wellspring
+        [157503] = true,   -- 暴雨图腾 - Cloudburst
+        [114911] = true,   -- 先祖指引 - Ancestral Guidance
+        [382311] = true,   -- 先祖复苏 - Ancestral Awakening
+        [207778] = true,   -- 倾盆大雨 - Downpour
+        [114083] = true,   -- 恢复迷雾 (升腾) - Restorative Mists
+    },
 }
 
-local aoeHealingIDs = {
-    [343819] = true, -- 朱鹤下凡，朱鹤产生的“迷雾之风”的施法者是玩家
-    [377509] = true, -- 梦境投影（pvp）
-}
-
-do
-    local temp = {}
-    for _, id in pairs(aoeHealings) do
-        temp[F:GetSpellInfo(id)] = true
-    end
-    aoeHealings = temp
+function I.GetAoEHealings()
+    return aoeHealings
 end
 
-function I.IsAoEHealing(nameOrID)
-    if not nameOrID then return false end
-    return aoeHealings[nameOrID] or aoeHealingIDs[nameOrID]
+local builtInAoEHealings = {}
+local customAoEHealings = {}
+
+function I.UpdateAoEHealings(t)
+    -- user disabled
+    wipe(builtInAoEHealings)
+    for class, spells in pairs(aoeHealings) do
+        for id, trackByName in pairs(spells) do
+            if not t["disabled"][id] then -- not disabled
+                if trackByName then
+                    local name = F:GetSpellInfo(id)
+                    if name then
+                        builtInAoEHealings[name] = true
+                    end
+                else
+                    builtInAoEHealings[id] = true
+                end
+            end
+        end
+    end
+
+    -- user created
+    wipe(customAoEHealings)
+    for _, id in pairs(t["custom"]) do
+        customAoEHealings[id] = true
+    end
+end
+
+function I.IsAoEHealing(name, id)
+    return builtInAoEHealings[name] or builtInAoEHealings[id] or customAoEHealings[id]
 end
 
 local summonDuration = {
