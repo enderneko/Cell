@@ -99,11 +99,14 @@ local function CreateIndicatorsExportFrame()
 
             -- data.related
             local name = CellDB["layouts"][fromLayout]["indicators"][index]["indicatorName"]
+            if name == "aoeHealing" then
+                data["related"]["aoeHealings"] = CellDB["aoeHealings"]
+            end
             if name == "defensiveCooldowns" or name == "allCooldowns" then
-                data["related"]["customDefensives"] = CellDB["customDefensives"]
+                data["related"]["defensives"] = CellDB["defensives"]
             end
             if name == "externalCooldowns" or name == "allCooldowns" then
-                data["related"]["customExternals"] = CellDB["customExternals"]
+                data["related"]["externals"] = CellDB["externals"]
             end
 
             if name == "debuffs" then
