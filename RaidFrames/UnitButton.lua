@@ -2238,11 +2238,12 @@ local function UnitButton_UpdateThreatBar(self)
 end
 
 -- UNIT_IN_RANGE_UPDATE: unit, inRange
+local IsInRange = F.IsInRange
 local function UnitButton_UpdateInRange(self, ir)
     local unit = self.states.displayedUnit
     if not unit then return end
 
-    local inRange = F:IsInRange(unit)
+    local inRange = IsInRange(unit)
 
     self.states.inRange = inRange
     if Cell.loaded then
