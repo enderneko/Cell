@@ -75,15 +75,16 @@ local CheckCLEURequired
 -------------------------------------------------
 local UnitButton_UpdateAll
 local UnitButton_UpdateAuras, UnitButton_UpdateRole, UnitButton_UpdateLeader, UnitButton_UpdateStatusText
-local UnitButton_UpdateHealthColor, UnitButton_UpdateNameTextColor, UnitButton_UpdateHealthTextColor, UnitButton_UpdatePowerTextColor
-local UnitButton_UpdatePowerMax, UnitButton_UpdatePower, UnitButton_UpdatePowerType
+local UnitButton_UpdateHealthColor, UnitButton_UpdateNameTextColor, UnitButton_UpdateHealthTextColor
+local UnitButton_UpdatePowerMax, UnitButton_UpdatePower, UnitButton_UpdatePowerType, UnitButton_UpdatePowerText, UnitButton_UpdatePowerTextColor
 local UnitButton_UpdateShieldAbsorbs
+local CheckPowerEventRegistration, ShouldShowPowerText, ShouldShowPowerBar
 
 -------------------------------------------------
 -- unit button init indicators
 -------------------------------------------------
-local enabledIndicators, indicatorNums = {}, {}
-local indicatorBooleans, indicatorColors = {}, {}
+local enabledIndicators = {}
+local indicatorNums, indicatorBooleans, indicatorColors, indicatorCustoms = {}, {}, {}, {}
 
 local function UpdateIndicatorParentVisibility(b, indicatorName, enabled)
     if not (indicatorName == "debuffs" or
@@ -119,42 +120,47 @@ local function ResetIndicators()
         if t["num"] then
             indicatorNums[t["indicatorName"]] = t["num"]
         end
+
         -- update statusIcon
         if t["indicatorName"] == "statusIcon" then
             I.EnableStatusIcon(t["enabled"])
-        end
+
         -- update aoehealing
-        if t["indicatorName"] == "aoeHealing" then
+        elseif t["indicatorName"] == "aoeHealing" then
             I.EnableAoEHealing(t["enabled"])
-        end
+
         -- update targetCounter
-        if t["indicatorName"] == "targetCounter" then
+        elseif t["indicatorName"] == "targetCounter" then
             I.UpdateTargetCounterFilters(t["filters"], true)
             I.EnableTargetCounter(t["enabled"])
-        end
+
         -- update targetedSpells
-        if t["indicatorName"] == "targetedSpells" then
+        elseif t["indicatorName"] == "targetedSpells" then
             I.UpdateTargetedSpellsNum(t["num"])
             I.ShowAllTargetedSpells(t["showAllSpells"])
             I.EnableTargetedSpells(t["enabled"])
-        end
+
         -- update actions
-        if t["indicatorName"] == "actions" then
+        elseif t["indicatorName"] == "actions" then
             I.EnableActions(t["enabled"])
-        end
+
         -- update healthThresholds
-        if t["indicatorName"] == "healthThresholds" then
+        elseif t["indicatorName"] == "healthThresholds" then
             I.UpdateHealthThresholds()
-        end
+
         -- update missingBuffs
-        if t["indicatorName"] == "missingBuffs" then
+        elseif t["indicatorName"] == "missingBuffs" then
             I.UpdateMissingBuffsNum(t["num"], true)
             I.UpdateMissingBuffsFilters(t["filters"], true)
             I.EnableMissingBuffs(t["enabled"])
         end
+
         -- update extra
         if t["indicatorName"] == "nameText" or t["indicatorName"] == "powerText" then
             indicatorColors[t["indicatorName"]] = t["color"]
+        end
+        if t["indicatorName"] == "powerText" then
+            indicatorCustoms[t["indicatorName"]] = t["filters"]
         end
         if t["indicatorName"] == "dispels" then
             indicatorBooleans["dispels"] = t["filters"]
@@ -559,14 +565,20 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
                 F:IterateAllUnitButtons(function(b)
                     if value then
                         b.indicators[indicatorName]:Show()
+                        B:UpdateHealthText(b)
                     else
                         b.indicators[indicatorName]:Hide()
                     end
-                    B:UpdateHealthText(b)
                 end, true)
             elseif indicatorName == "powerText" then
                 F:IterateAllUnitButtons(function(b)
-                    B:UpdatePowerText(b)
+                    b._shouldShowPowerText = ShouldShowPowerText(b)
+                    CheckPowerEventRegistration(b)
+                    if b._shouldShowPowerText then
+                        B:UpdatePowerText(b)
+                    else
+                        b.indicators[indicatorName]:Hide()
+                    end
                 end, true)
             elseif indicatorName == "shieldBar" then
                 F:IterateAllUnitButtons(function(b)
@@ -771,6 +783,16 @@ local function UpdateIndicators(layout, indicatorName, setting, value, value2)
         elseif setting == "privateAuraOptions" then
             F:IterateAllUnitButtons(function(b)
                 b.indicators[indicatorName]:UpdateOptions(value)
+            end, true)
+        elseif setting == "powerTextFilters" then
+            F:IterateAllUnitButtons(function(b)
+                b._shouldShowPowerText = ShouldShowPowerText(b)
+                CheckPowerEventRegistration(b)
+                if b._shouldShowPowerText then
+                    B:UpdatePowerText(b)
+                else
+                    b.indicators[indicatorName]:Hide()
+                end
             end, true)
         elseif setting == "missingBuffsFilters" then
             I.UpdateMissingBuffsFilters()
@@ -1632,7 +1654,7 @@ UnitButton_UpdateAuras = function(self, updateInfo)
     I.UpdateStatusIcon(self)
 end
 
-local function UpdateUnitHealthState(self, diff)
+local function UnitButton_UpdateHealthStates(self, diff)
     local unit = self.states.displayedUnit
 
     local health = UnitHealth(unit) + (diff or 0)
@@ -1675,6 +1697,15 @@ local function UpdateUnitHealthState(self, diff)
     end
 end
 
+local function UnitButton_UpdatePowerStates(self)
+    local unit = self.states.displayedUnit
+    if not unit then return end
+
+    self.states.power = UnitPower(unit)
+    self.states.powerMax = UnitPowerMax(unit)
+    if self.states.powerMax <= 0 then self.states.powerMax = 1 end
+end
+
 -------------------------------------------------
 -- power filter funcs
 -------------------------------------------------
@@ -1688,7 +1719,49 @@ local function GetRole(b)
     return info.role
 end
 
-local function ShouldShowPowerBar(b)
+ShouldShowPowerText = function(b)
+    if not enabledIndicators["powerText"] then return end
+    if not (b:IsVisible() or b.isPreview) then return end
+
+    if not b.states.guid then
+        return true
+    end
+
+    local class, role
+    if b.states.inVehicle then
+        class = "VEHICLE"
+    elseif F:IsPlayer(b.states.guid) then
+        class = b.states.class
+        role = GetRole(b)
+    elseif F:IsPet(b.states.guid) then
+        class = "PET"
+    elseif F:IsNPC(b.states.guid) then
+        if UnitInPartyIsAI(b.states.unit) then
+            class = b.states.class
+            role = GetRole(b)
+        else
+            class = "NPC"
+        end
+    elseif F:IsVehicle(b.states.guid) then
+        class = "VEHICLE"
+    end
+
+    if class then
+        if type(indicatorCustoms["powerText"][class]) == "boolean" then
+            return indicatorCustoms["powerText"][class]
+        else
+            if role then
+                return indicatorCustoms["powerText"][class][role]
+            else
+                return true -- show power if role not found
+            end
+        end
+    end
+
+    return true
+end
+
+ShouldShowPowerBar = function(b)
     if not (b:IsVisible() or b.isPreview) then return end
     if not b.powerSize or b.powerSize == 0 then return end
 
@@ -1730,12 +1803,21 @@ local function ShouldShowPowerBar(b)
     return true
 end
 
-local function ShowPowerBar(b)
-    if b:IsVisible() and not b.isPreview then
+CheckPowerEventRegistration = function(b)
+    if b:IsVisible() and not b.isPreview and (b._shouldShowPowerText or b._shouldShowPowerBar) then
         b:RegisterEvent("UNIT_POWER_FREQUENT")
         b:RegisterEvent("UNIT_MAXPOWER")
         b:RegisterEvent("UNIT_DISPLAYPOWER")
+        return true
+    else
+        b:UnregisterEvent("UNIT_POWER_FREQUENT")
+        b:UnregisterEvent("UNIT_MAXPOWER")
+        b:UnregisterEvent("UNIT_DISPLAYPOWER")
+        return false
     end
+end
+
+local function ShowPowerBar(b)
     b.widgets.powerBar:Show()
     b.widgets.powerBarLoss:Show()
     b.widgets.gapTexture:Show()
@@ -1756,16 +1838,16 @@ local function ShowPowerBar(b)
 
     if b:IsVisible() then
         -- update now
+        CheckPowerEventRegistration(b)
+        UnitButton_UpdatePowerStates(b)
+        UnitButton_UpdatePowerType(b)
         UnitButton_UpdatePowerMax(b)
         UnitButton_UpdatePower(b)
-        UnitButton_UpdatePowerType(b)
     end
 end
 
 local function HidePowerBar(b)
-    b:UnregisterEvent("UNIT_POWER_FREQUENT")
-    b:UnregisterEvent("UNIT_MAXPOWER")
-    b:UnregisterEvent("UNIT_DISPLAYPOWER")
+    CheckPowerEventRegistration(b)
     b.widgets.powerBar:Hide()
     b.widgets.powerBarLoss:Hide()
     b.widgets.gapTexture:Hide()
@@ -1921,8 +2003,10 @@ local function UnitButton_FinishReadyCheck(self)
     end)
 end
 
-local function UnitButton_UpdatePowerText(self)
-    if enabledIndicators["powerText"] and self.states.powerMax and self.states.power and not self.states.isDeadOrGhost then
+UnitButton_UpdatePowerText = function(self)
+    if not self._shouldShowPowerText then return end
+
+    if self.states.powerMax and self.states.power and not self.states.isDeadOrGhost then
         self.indicators.powerText:SetValue(self.states.power, self.states.powerMax)
     else
         self.indicators.powerText:Hide()
@@ -1930,48 +2014,39 @@ local function UnitButton_UpdatePowerText(self)
 end
 
 UnitButton_UpdatePowerTextColor = function(self)
+    if not self._shouldShowPowerText then return end
+
     local unit = self.states.displayedUnit
     if not unit then return end
 
-    if enabledIndicators["powerText"] then
-        if indicatorColors["powerText"][1] == "power_color" then
-            self.indicators.powerText:SetColor(F:GetPowerColor(unit))
-        elseif indicatorColors["powerText"][1] == "class_color" then
-            self.indicators.powerText:SetColor(F:GetUnitClassColor(unit))
-        else
-            self.indicators.powerText:SetColor(unpack(indicatorColors["powerText"][2]))
-        end
+    if indicatorColors["powerText"][1] == "power_color" then
+        self.indicators.powerText:SetColor(F:GetPowerColor(unit))
+    elseif indicatorColors["powerText"][1] == "class_color" then
+        self.indicators.powerText:SetColor(F:GetUnitClassColor(unit))
+    else
+        self.indicators.powerText:SetColor(unpack(indicatorColors["powerText"][2]))
     end
 end
 
 UnitButton_UpdatePowerMax = function(self)
-    local unit = self.states.displayedUnit
-    if not unit then return end
-
-    self.states.powerMax = UnitPowerMax(unit)
-    if self.states.powerMax <= 0 then self.states.powerMax = 1 end
+    if not (self._shouldShowPowerBar and self.states.powerMax) then return end
 
     if barAnimationType == "Smooth" then
         self.widgets.powerBar:SetMinMaxSmoothedValue(0, self.states.powerMax)
     else
         self.widgets.powerBar:SetMinMaxValues(0, self.states.powerMax)
     end
-
-    UnitButton_UpdatePowerText(self)
 end
 
 UnitButton_UpdatePower = function(self)
-    local unit = self.states.displayedUnit
-    if not unit then return end
-
-    self.states.power = UnitPower(unit)
+    if not (self._shouldShowPowerBar and self.states.power) then return end
 
     self.widgets.powerBar:SetBarValue(self.states.power)
-
-    UnitButton_UpdatePowerText(self)
 end
 
 UnitButton_UpdatePowerType = function(self)
+    if not self._shouldShowPowerBar then return end
+
     local unit = self.states.displayedUnit
     if not unit then return end
 
@@ -1987,15 +2062,13 @@ UnitButton_UpdatePowerType = function(self)
 
     self.widgets.powerBar:SetStatusBarColor(r, g, b)
     self.widgets.powerBarLoss:SetVertexColor(lossR, lossG, lossB)
-
-    UnitButton_UpdatePowerTextColor(self)
 end
 
 local function UnitButton_UpdateHealthMax(self)
     local unit = self.states.displayedUnit
     if not unit then return end
 
-    UpdateUnitHealthState(self)
+    UnitButton_UpdateHealthStates(self)
 
     if barAnimationType == "Smooth" then
         self.widgets.healthBar:SetMinMaxSmoothedValue(0, self.states.healthMax)
@@ -2012,7 +2085,7 @@ local function UnitButton_UpdateHealth(self, diff)
     local unit = self.states.displayedUnit
     if not unit then return end
 
-    UpdateUnitHealthState(self, diff)
+    UnitButton_UpdateHealthStates(self, diff)
     local healthPercent = self.states.healthPercent
 
     if barAnimationType == "Flash" then
@@ -2063,7 +2136,7 @@ local function UnitButton_UpdateHealPrediction(self)
         return
     end
 
-    UpdateUnitHealthState(self)
+    UnitButton_UpdateHealthStates(self)
 
     self.widgets.incomingHeal:SetValue(value / self.states.healthMax, self.states.healthPercent)
 end
@@ -2072,7 +2145,7 @@ UnitButton_UpdateShieldAbsorbs = function(self)
     local unit = self.states.displayedUnit
     if not unit then return end
 
-    UpdateUnitHealthState(self)
+    UnitButton_UpdateHealthStates(self)
 
     if self.states.totalAbsorbs > 0 then
         local shieldPercent = self.states.totalAbsorbs / self.states.healthMax
@@ -2115,7 +2188,7 @@ local function UnitButton_UpdateHealAbsorbs(self)
     local unit = self.states.displayedUnit
     if not unit then return end
 
-    UpdateUnitHealthState(self)
+    UnitButton_UpdateHealthStates(self)
 
     if self.states.healAbsorbs > 0 then
         local absorbsPercent = self.states.healAbsorbs / self.states.healthMax
@@ -2211,14 +2284,6 @@ local function UnitButton_UpdateVehicleStatus(self)
         self.states.inVehicle = nil
         self.states.displayedUnit = self.states.unit
         self.indicators.nameText.vehicle:SetText("")
-    end
-
-    if Cell.loaded then
-        if ShouldShowPowerBar(self) then
-            ShowPowerBar(self)
-        else
-            HidePowerBar(self)
-        end
     end
 end
 
@@ -2441,17 +2506,29 @@ UnitButton_UpdateAll = function(self)
     -- UnitButton_UpdateStatusIcon(self)
     I.UpdateStatusIcon_Resurrection(self)
 
-    if Cell.loaded and self._powerBarUpdateRequired then
-        self._powerBarUpdateRequired = nil
-        if ShouldShowPowerBar(self) then
-            ShowPowerBar(self)
-        else
-            HidePowerBar(self)
+    UnitButton_UpdatePowerStates(self)
+    if Cell.loaded then
+        if self._powerUpdateRequired then
+            self._powerUpdateRequired = nil
+
+            self._shouldShowPowerText = ShouldShowPowerText(self)
+            self._shouldShowPowerBar = ShouldShowPowerBar(self)
+            CheckPowerEventRegistration(self)
+
+            if self._shouldShowPowerText then
+                UnitButton_UpdatePowerTextColor(self)
+                UnitButton_UpdatePowerText(self)
+            else
+                self.indicators.powerText:Hide()
+            end
+
+            if self._shouldShowPowerBar then
+                ShowPowerBar(self)
+            else
+                HidePowerBar(self)
+            end
+
         end
-    else
-        UnitButton_UpdatePowerType(self)
-        UnitButton_UpdatePowerMax(self)
-        UnitButton_UpdatePower(self)
     end
 
     UnitButton_UpdateAuras(self)
@@ -2549,7 +2626,7 @@ local function UnitButton_OnEvent(self, event, unit, arg)
     if unit and (self.states.displayedUnit == unit or self.states.unit == unit) then
         if  event == "UNIT_ENTERED_VEHICLE" or event == "UNIT_EXITED_VEHICLE" or event == "UNIT_CONNECTION" then
             self._updateRequired = 1
-            self._powerBarUpdateRequired = 1
+            self._powerUpdateRequired = 1
 
         elseif event == "UNIT_NAME_UPDATE" then
             UnitButton_UpdateName(self)
@@ -2582,16 +2659,23 @@ local function UnitButton_OnEvent(self, event, unit, arg)
             UnitButton_UpdateHealAbsorbs(self)
 
         elseif event == "UNIT_MAXPOWER" then
+            UnitButton_UpdatePowerStates(self)
             UnitButton_UpdatePowerMax(self)
             UnitButton_UpdatePower(self)
+            UnitButton_UpdatePowerText(self)
 
         elseif event == "UNIT_POWER_FREQUENT" then
+            UnitButton_UpdatePowerStates(self)
             UnitButton_UpdatePower(self)
+            UnitButton_UpdatePowerText(self)
 
         elseif event == "UNIT_DISPLAYPOWER" then
+            UnitButton_UpdatePowerStates(self)
             UnitButton_UpdatePowerMax(self)
             UnitButton_UpdatePower(self)
             UnitButton_UpdatePowerType(self)
+            UnitButton_UpdatePowerTextColor(self)
+            UnitButton_UpdatePowerText(self)
 
         elseif event == "UNIT_AURA" then
             UnitButton_UpdateAuras(self, arg)
@@ -2622,7 +2706,7 @@ local function UnitButton_OnEvent(self, event, unit, arg)
         elseif event == "UNIT_PORTRAIT_UPDATE" then -- pet summoned far away
             if self.states.healthMax == 0 then
                 self._updateRequired = 1
-                self._powerBarUpdateRequired = 1
+                self._powerUpdateRequired = 1
             end
         end
 
@@ -2634,7 +2718,7 @@ local function UnitButton_OnEvent(self, event, unit, arg)
                 self.__updateElapsed = 0.25
             else
                 self._updateRequired = 1
-                self._powerBarUpdateRequired = 1
+                self._powerUpdateRequired = 1
             end
 
         elseif event == "PLAYER_REGEN_ENABLED" or event == "PLAYER_REGEN_DISABLED" then
@@ -2738,7 +2822,7 @@ Cell.vars.names = {} -- name to unitid
 local function UnitButton_OnShow(self)
     -- print(GetTime(), "OnShow", self:GetName())
     self._updateRequired = nil -- prevent UnitButton_UpdateAll twice. when convert party <-> raid, GROUP_ROSTER_UPDATE fired.
-    self._powerBarUpdateRequired = 1
+    self._powerUpdateRequired = 1
     UnitButton_RegisterEvents(self)
 
     --[[
@@ -2815,7 +2899,7 @@ local function UnitButton_OnTick(self)
                 self.__displayedGuid = displayedGuid
                 if displayedGuid then --? clearing unit may come before hiding
                     self._updateRequired = 1
-                    self._powerBarUpdateRequired = 1
+                    self._powerUpdateRequired = 1
                 end
             end
 
@@ -2882,13 +2966,16 @@ function B:SetPowerSize(button, size)
 
     if size == 0 then
         HidePowerBar(button)
+        button._shouldShowPowerBar = false
     else
-        if ShouldShowPowerBar(button) then
+        button._shouldShowPowerBar = ShouldShowPowerBar(button)
+        if button._shouldShowPowerBar then
             ShowPowerBar(button)
         else
             HidePowerBar(button)
         end
     end
+    CheckPowerEventRegistration(button)
 end
 
 function B:UpdateShields(button)
@@ -2927,6 +3014,7 @@ end
 function B:UpdateColor(button)
     UnitButton_UpdateHealthColor(button)
     UnitButton_UpdatePowerType(button)
+    UnitButton_UpdatePowerTextColor(button)
     button:SetBackdropColor(0, 0, 0, CellDB["appearance"]["bgAlpha"])
 end
 
@@ -3395,13 +3483,14 @@ end
 -- healthText
 function B:UpdateHealthText(button)
     if button.states.displayedUnit then
-        UpdateUnitHealthState(button)
+        UnitButton_UpdateHealthStates(button)
     end
 end
 
 -- powerText
 function B:UpdatePowerText(button)
     if button.states.displayedUnit then
+        UnitButton_UpdatePowerStates(button)
         UnitButton_UpdatePowerText(button)
         UnitButton_UpdatePowerTextColor(button)
     end

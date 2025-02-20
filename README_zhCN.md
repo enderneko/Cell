@@ -11,7 +11,7 @@
 
 [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/enderneko)
 
-<a href="https://afdian.net/a/enderneko"><img width="200" src="https://pic1.afdiancdn.com/static/img/welcome/button-sponsorme.png" alt=""></a >
+<a href="https://afdian.com/a/enderneko"><img width="200" src="https://pic1.afdiancdn.com/static/img/welcome/button-sponsorme.png" alt=""></a >
 
 Cell 团队框架的灵感来主要来自 CompactRaid 与 Grid2，同时也稍微参考了 Aptechka 和 VuhDo。
 Cell 不轻量，也并非全能，其目标是提供相比以往更好的用户体验。

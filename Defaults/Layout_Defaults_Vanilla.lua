@@ -178,6 +178,20 @@ Cell.defaults.layout = {
             ["color"] = {"custom_color", {1, 1, 1}},
             ["format"] = "number",
             ["hideIfEmptyOrFull"] = true,
+            ["filters"] = {
+                ["DRUID"] = true,
+                ["HUNTER"] = true,
+                ["MAGE"] = true,
+                ["PALADIN"] = true,
+                ["PRIEST"] = true,
+                ["ROGUE"] = true,
+                ["SHAMAN"] = true,
+                ["WARLOCK"] = true,
+                ["WARRIOR"] = true,
+                ["PET"] = true,
+                ["VEHICLE"] = true,
+                ["NPC"] = true,
+            },
         }, -- 4
         {
             ["name"] = "Health Thresholds",

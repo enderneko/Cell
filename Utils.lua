@@ -58,8 +58,8 @@ do
     -- DEMONHUNTER = 12,
     -- EVOKER = 13,
     for i = 1, GetNumClasses() do --! returns the highest class ID
-        local classFile = select(2, GetClassInfo(i))
-        if classFile then --! returns nil for classes that don't exist in Classic.
+        local classFile, classID = select(2, GetClassInfo(i))
+        if classFile and classID == i then
             tinsert(sortedClasses, classFile)
             classFileToID[classFile] = i
             classIDToFile[i] = classFile

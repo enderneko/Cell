@@ -3209,6 +3209,10 @@ function F:Revise()
             for i, t in pairs(layout["indicators"]) do
                 if t.indicatorName == "healthText" then
                     layout["indicators"][i] = F:Copy(Cell.defaults.layout.indicators[Cell.defaults.indicatorIndices.healthText])
+                elseif t.indicatorName == "powerText" then
+                    if not t.filters then
+                        t.filters = F:Copy(Cell.defaults.layout.indicators[Cell.defaults.indicatorIndices.powerText].filters)
+                    end
                 end
             end
         end

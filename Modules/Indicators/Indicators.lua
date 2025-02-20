@@ -1545,7 +1545,7 @@ if Cell.isRetail then
         ["nameText"] = {"enabled", "color-class", "textWidth", "checkbutton:showGroupNumber", "vehicleNamePosition", "namePosition", "frameLevel", "font-noOffset"},
         ["statusText"] = {"enabled", "checkbutton:showTimer", "checkbutton2:showBackground", "statusColors", "statusPosition", "frameLevel", "font-noOffset"},
         ["healthText"] = {"|cffff7727"..L["MODERATE CPU USAGE"], "enabled", "healthFormat", "position", "frameLevel", "font-noOffset"},
-        ["powerText"] = {"enabled", "color-power", "powerFormat", "checkbutton:hideIfEmptyOrFull", "position", "frameLevel", "font-noOffset"},
+        ["powerText"] = {"enabled", "color-power", "powerFormat", "powerTextFilters", "checkbutton:hideIfEmptyOrFull", "position", "frameLevel", "font-noOffset"},
         ["statusIcon"] = {
             -- "|A:dungeonskull:18:18|a "..
             "|TInterface\\LFGFrame\\LFG-Eye:18:18:0:0:512:256:72:120:72:120|t "..
@@ -1587,7 +1587,7 @@ elseif Cell.isCata or Cell.isWrath then
         ["nameText"] = {"enabled", "color-class", "textWidth", "checkbutton:showGroupNumber", "vehicleNamePosition", "namePosition", "frameLevel", "font-noOffset"},
         ["statusText"] = {"enabled", "checkbutton:showTimer", "checkbutton2:showBackground", "statusColors", "statusPosition", "frameLevel", "font-noOffset"},
         ["healthText"] = {"|cffff7727"..L["MODERATE CPU USAGE"], "enabled", "healthFormat", "position", "frameLevel", "font-noOffset"},
-        ["powerText"] = {"enabled", "color-power", "powerFormat", "checkbutton:hideIfEmptyOrFull", "position", "frameLevel", "font-noOffset"},
+        ["powerText"] = {"enabled", "color-power", "powerFormat", "powerTextFilters", "checkbutton:hideIfEmptyOrFull", "position", "frameLevel", "font-noOffset"},
         ["statusIcon"] = {
             -- "|A:dungeonskull:18:18|a "..
             "|TInterface\\LFGFrame\\LFG-Eye:18:18:0:0:512:256:72:120:72:120|t "..
@@ -1623,7 +1623,7 @@ elseif Cell.isVanilla then
         ["nameText"] = {"enabled", "color-class", "textWidth", "checkbutton:showGroupNumber", "vehicleNamePosition", "namePosition", "frameLevel", "font-noOffset"},
         ["statusText"] = {"enabled", "checkbutton:showTimer", "checkbutton2:showBackground", "statusColors", "statusPosition", "frameLevel", "font-noOffset"},
         ["healthText"] = {"|cffff7727"..L["MODERATE CPU USAGE"], "enabled", "healthFormat", "position", "frameLevel", "font-noOffset"},
-        ["powerText"] = {"enabled", "color-power", "powerFormat", "checkbutton:hideIfEmptyOrFull", "position", "frameLevel", "font-noOffset"},
+        ["powerText"] = {"enabled", "color-power", "powerFormat", "powerTextFilters", "checkbutton:hideIfEmptyOrFull", "position", "frameLevel", "font-noOffset"},
         ["statusIcon"] = {
             -- "|A:dungeonskull:18:18|a "..
             "|TInterface\\LFGFrame\\LFG-Eye:18:18:0:0:512:256:72:120:72:120|t "..
@@ -1992,7 +1992,8 @@ local function ShowIndicatorSettings(id)
             end)
 
         -- missingBuffsFilters / targetCounterFilters / dispelFilters
-        elseif currentSetting == "missingBuffsFilters" or currentSetting == "targetCounterFilters" or currentSetting == "dispelFilters" then
+        elseif currentSetting == "missingBuffsFilters" or currentSetting == "targetCounterFilters" or currentSetting == "dispelFilters"
+        or currentSetting == "powerTextFilters" then
             w:SetDBValue(indicatorTable["filters"])
             w:SetFunc(function()
                 -- NOTE: already changed in widget
@@ -2019,8 +2020,10 @@ local function ShowIndicatorSettings(id)
         else
             w:SetDBValue(indicatorTable[currentSetting])
             w:SetFunc(function(value)
+                if value ~= nil then
                 indicatorTable[currentSetting] = value
-                Cell:Fire("UpdateIndicators", notifiedLayout, indicatorName, currentSetting, value)
+                end
+                Cell:Fire("UpdateIndicators", notifiedLayout, indicatorName, currentSetting, indicatorTable[currentSetting])
             end)
         end
     end

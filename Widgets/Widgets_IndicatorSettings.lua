@@ -1284,7 +1284,7 @@ local function CreateSetting_PowerFormat(parent)
         widget = addon:CreateFrame("CellIndicatorSettings_PowerFormat", parent, 240, 50)
         settingWidgets["powerFormat"] = widget
 
-        widget.format = addon:CreateDropdown(widget, 245)
+        widget.format = addon:CreateDropdown(widget, 127)
         widget.format:SetPoint("TOPLEFT", 5, -20)
         widget.format:SetItems({
             {
@@ -6432,6 +6432,243 @@ local function CreateSetting_IconStyle(parent)
     return widget
 end
 
+local CLASS_ROLES = {
+    ["DEATHKNIGHT"] = {"TANK", "DAMAGER"},
+    ["DEMONHUNTER"] = {"TANK", "DAMAGER"},
+    ["DRUID"] = {"TANK", "HEALER", "DAMAGER"},
+    ["EVOKER"] = {"HEALER", "DAMAGER"},
+    ["HUNTER"] = {"DAMAGER"},
+    ["MAGE"] = {"DAMAGER"},
+    ["MONK"] = {"TANK", "HEALER", "DAMAGER"},
+    ["PALADIN"] = {"TANK", "HEALER", "DAMAGER"},
+    ["PRIEST"] = {"HEALER", "DAMAGER"},
+    ["ROGUE"] = {"DAMAGER"},
+    ["SHAMAN"] = {"HEALER", "DAMAGER"},
+    ["WARLOCK"] = {"DAMAGER"},
+    ["WARRIOR"] = {"TANK", "DAMAGER"},
+    ["PET"] = {"DAMAGER"},
+    ["VEHICLE"] = {"DAMAGER"},
+    ["NPC"] = {"DAMAGER"},
+}
+
+local function RoleFilter_UpdateButton(b, enabled)
+    b.tex:SetDesaturated(not enabled)
+    if enabled then
+        b:SetBackdropColor(unpack(b.hoverColor))
+        b:SetScript("OnEnter", nil)
+        b:SetScript("OnLeave", nil)
+    else
+        b:SetBackdropColor(unpack(b.color))
+        b:SetScript("OnEnter", function()
+            b:SetBackdropColor(unpack(b.hoverColor))
+        end)
+        b:SetScript("OnLeave", function()
+            b:SetBackdropColor(unpack(b.color))
+        end)
+    end
+end
+
+
+local function CreateRoleFilter(parent, class, roles)
+    local filter = CreateFrame("Frame", nil, parent, "BackdropTemplate")
+    Cell:StylizeFrame(filter)
+    P:Size(filter, 170, 20)
+
+    filter.text = filter:CreateFontString(nil, "OVERLAY", "CELL_FONT_WIDGET")
+    filter.text:SetPoint("LEFT", 5, 0)
+    if class == "VEHICLE" or class == "PET" or class == "NPC" then
+        filter.text:SetText("|cff00ff33"..L[class])
+    else
+        filter.text:SetText(F:GetClassColorStr(class)..F:GetLocalizedClassName(class))
+    end
+
+    filter.buttons = {}
+    local last
+    for i = #roles, 1, -1 do
+        local b = Cell:CreateButton(filter, nil, "accent-hover", {20, 20})
+        filter.buttons[roles[i]] = b
+        b:SetTexture(F:GetDefaultRoleIcon(roles[i]), {16, 16}, {"CENTER", 0, 0})
+
+        if last then
+            b:SetPoint("BOTTOMRIGHT", last, "BOTTOMLEFT", P:Scale(1), 0)
+        else
+            b:SetPoint("BOTTOMRIGHT", filter)
+        end
+        last = b
+
+        b:SetScript("OnClick", function()
+            local settingsTable = parent.settingsTable
+            local enabled
+            if type(settingsTable[class]) == "boolean" then
+                settingsTable[class] = not settingsTable[class]
+                enabled = settingsTable[class]
+            else
+                settingsTable[class][roles[i]] = not settingsTable[class][roles[i]]
+                enabled = settingsTable[class][roles[i]]
+            end
+            RoleFilter_UpdateButton(b, enabled)
+            parent.func() -- fire
+        end)
+    end
+
+    function filter:Load(t)
+        if type(t) == "boolean" then
+            RoleFilter_UpdateButton(filter.buttons["DAMAGER"], t)
+        else
+            for role, b in pairs(filter.buttons) do
+                RoleFilter_UpdateButton(b, t[role])
+            end
+        end
+    end
+
+    return filter
+end
+
+local function CreateSetting_RoleFilters(parent)
+    local widget
+
+    if not settingWidgets["roleFilters"] then
+        widget = addon:CreateFrame("CellIndicatorSettings_RoleFilters", parent, 240, 50)
+        settingWidgets["roleFilters"] = widget
+
+        -- filters
+        widget.filters = {}
+
+        local last
+        for class in F:IterateClasses() do
+            widget.filters[class] = CreateRoleFilter(widget, class, CLASS_ROLES[class])
+            if last then
+                widget.filters[class]:SetPoint("TOPLEFT", last, "BOTTOMLEFT", 0, -5)
+            else
+                widget.filters[class]:SetPoint("TOPLEFT", 5, -5)
+            end
+            last = widget.filters[class]
+        end
+
+        for _, class in pairs({"PET", "VEHICLE", "NPC"}) do
+            widget.filters[class] = CreateRoleFilter(widget, class, CLASS_ROLES[class])
+            widget.filters[class]:SetPoint("TOPLEFT", last, "BOTTOMLEFT", 0, -5)
+            last = widget.filters[class]
+        end
+
+        local n = F:Getn(widget.filters)
+        P:Height(widget, 10 + 20 * n + 5 * (n - 1))
+
+        -- callback
+        function widget:SetFunc(func)
+            widget.func = func
+        end
+
+        -- show db value
+        function widget:SetDBValue(settings)
+            widget.settingsTable = settings
+            for class, filter in pairs(widget.filters) do
+                filter:Load(settings[class])
+            end
+        end
+    else
+        widget = settingWidgets["roleFilters"]
+    end
+
+    widget:Show()
+    return widget
+end
+
+local function ClassFilter_UpdateButton(b, enabled)
+    b.tex:SetDesaturated(not enabled)
+    if enabled then
+        b.fs:SetTextColor(unpack(b.classColor))
+    else
+        b.fs:SetTextColor(0.4, 0.4, 0.4)
+    end
+end
+
+local function CreateClassFilter(parent, class)
+    local filter = addon:CreateButton(parent, class, "accent-hover", {120, 20})
+    filter:SetTexture("classicon-"..strlower(class), {16, 16}, {"LEFT", 2, 0}, true, true)
+
+
+    if class == "VEHICLE" or class == "PET" or class == "NPC" then
+        filter.classColor = {0, 1, 0.2}
+        filter:SetText(L[class])
+    else
+        filter.classColor = {F:GetClassColor(class)}
+        filter:SetText(F:GetLocalizedClassName(class))
+    end
+
+    filter:SetScript("OnClick", function()
+        local settingsTable = parent.settingsTable
+        settingsTable[class] = not settingsTable[class]
+        ClassFilter_UpdateButton(filter, settingsTable[class])
+        parent.func() -- fire
+    end)
+
+    function filter:Load(enabled)
+        ClassFilter_UpdateButton(filter, enabled)
+    end
+
+    return filter
+end
+
+local function CreateSetting_ClassFilters(parent)
+    local widget
+
+    if not settingWidgets["classFilters"] then
+        widget = addon:CreateFrame("CellIndicatorSettings_ClassFilters", parent, 240, 50)
+        settingWidgets["classFilters"] = widget
+
+        -- filters
+        widget.filters = {}
+
+        local classes = {}
+        for class in F:IterateClasses() do
+            tinsert(classes, class)
+        end
+        tinsert(classes, "PET")
+        tinsert(classes, "VEHICLE")
+        tinsert(classes, "NPC")
+
+        local i, last, lastRow = 1
+        for _, class in pairs(classes) do
+            widget.filters[class] = CreateClassFilter(widget, class)
+            if last then
+                if i % 2 == 1 then
+                    widget.filters[class]:SetPoint("TOPLEFT", lastRow, "BOTTOMLEFT", 0, -5)
+                    lastRow = widget.filters[class]
+                else
+                    widget.filters[class]:SetPoint("TOPLEFT", last, "TOPRIGHT", 5, 0)
+                end
+            else
+                widget.filters[class]:SetPoint("TOPLEFT", 5, -5)
+                lastRow = widget.filters[class]
+            end
+            i = i + 1
+            last = widget.filters[class]
+        end
+
+        local n = ceil(F:Getn(widget.filters) / 2)
+        P:Height(widget, 10 + 20 * n + 5 * (n - 1))
+
+        -- callback
+        function widget:SetFunc(func)
+            widget.func = func
+        end
+
+        -- show db value
+        function widget:SetDBValue(settings)
+            widget.settingsTable = settings
+            for class, filter in pairs(widget.filters) do
+                filter:Load(settings[class])
+            end
+        end
+    else
+        widget = settingWidgets["classFilters"]
+    end
+
+    widget:Show()
+    return widget
+end
+
 -----------------------------------------
 -- update parent height
 -----------------------------------------
@@ -6505,6 +6742,7 @@ local builders = {
     -- ["showOn"] = CreateSetting_ShowOn,
     ["maxValue"] = CreateSetting_MaxValue,
     ["iconStyle"] = CreateSetting_IconStyle,
+    ["powerTextFilters"] = addon.isVanilla and CreateSetting_ClassFilters or CreateSetting_RoleFilters,
 }
 
 function addon:CreateIndicatorSettings(parent, settingsTable)

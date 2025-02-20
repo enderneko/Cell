@@ -181,6 +181,21 @@ Cell.defaults.layout = {
             ["color"] = {"custom_color", {1, 1, 1}},
             ["format"] = "number",
             ["hideIfEmptyOrFull"] = true,
+            ["filters"] = {
+                ["DEATHKNIGHT"] = {["TANK"] = true, ["DAMAGER"] = true},
+                ["DRUID"] = {["TANK"] = true, ["DAMAGER"] = true, ["HEALER"] = true},
+                ["HUNTER"] = true,
+                ["MAGE"] = true,
+                ["PALADIN"] = {["TANK"] = true, ["DAMAGER"] = true, ["HEALER"] = true},
+                ["PRIEST"] = {["DAMAGER"] = true, ["HEALER"] = true},
+                ["ROGUE"] = true,
+                ["SHAMAN"] = {["DAMAGER"] = true, ["HEALER"] = true},
+                ["WARLOCK"] = true,
+                ["WARRIOR"] = {["TANK"] = true, ["DAMAGER"] = true},
+                ["PET"] = true,
+                ["VEHICLE"] = true,
+                ["NPC"] = true,
+            },
         }, -- 4
         {
             ["name"] = "Health Thresholds",
